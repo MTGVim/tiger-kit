@@ -25,6 +25,10 @@ Recommended project-local artifact tree:
 
 Use the current git branch name when available. If unavailable, use a short user-provided work id.
 
+## Git ignore policy
+
+`.gap/` artifacts are usually local workflow notes. In a git repository, check whether `.gap/` is ignored or intentionally tracked before creating artifacts. If it is neither ignored nor tracked, suggest adding `.gap/` to `.gitignore` instead of silently changing the repository.
+
 ## File responsibilities
 
 | File | Purpose |
