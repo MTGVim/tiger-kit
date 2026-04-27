@@ -1,7 +1,7 @@
 {
   "name": "tigap",
   "description": "모호한 요청을 갭 분석, 구현 계획, 검증 가능한 실행 단계로 바꾸는 Claude Code 스킬 모음입니다.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": {
     "name": "MTGVim"
   },
