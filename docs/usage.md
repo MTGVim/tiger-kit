@@ -2,13 +2,27 @@
 
 ## 1. Gap analysis
 
-Run:
+Run with source material or a source extraction instruction:
 
 ```text
-/tigap:gap
+/tigap:gap <source references or extraction instruction>
 ```
 
-Provide one or more source references when asked:
+Examples:
+
+```text
+/tigap:gap GitHub issues를 가져와서 분석해.
+/tigap:gap docs/spec.md와 현재 구현을 비교해.
+/tigap:gap 인터뷰 방식으로 요구사항부터 정리해.
+```
+
+If no source is provided, the command should stop before analysis and ask for one of these paths:
+
+- provide source references directly
+- ask Claude to fetch or extract sources
+- start an interview to collect requirements
+
+Valid source references include:
 
 - issue tracker ticket
 - knowledge-base page
