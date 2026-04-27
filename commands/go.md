@@ -1,11 +1,13 @@
 ---
-description: Execute the next TIGAP task narrowly and update progress files.
+description: 다음 TIGAP 작업 하나를 좁게 실행하고 진행 파일을 갱신합니다.
 ---
 
-Use the `go` skill from this plugin.
+이 플러그인의 `go` 스킬을 사용합니다.
 
-Goal: read `.gap/{branch_name}/tasks.md`, select the next small task, inspect relevant code, implement narrowly, validate, and update `.gap/{branch_name}/execution-log.md` plus task status.
+사용자에게는 한글로 답합니다. TIGAP 산출물도 한글로 작성합니다. 단, 인용한 원문, 코드, 명령어, 파일 경로, 식별자는 원문 그대로 유지할 수 있습니다.
 
-Before changing code or workflow artifacts, check branch/work-id context. If the current branch is `main`, `master`, `develop`, or the repository default branch, recommend moving the work to a source-of-truth-specific branch or explicit work id. Do not create or switch branches without user approval.
+목표: `.gap/{branch_name}/tasks.md`를 읽고, 다음 작은 작업 하나를 선택하고, 관련 코드를 확인하고, 좁게 구현하고, 검증한 뒤 `.gap/{branch_name}/execution-log.md`와 작업 상태를 갱신합니다.
 
-Execute one task at a time unless explicitly requested otherwise.
+코드나 workflow 산출물을 바꾸기 전에 브랜치/작업 ID 맥락을 확인합니다. 현재 브랜치가 `main`, `master`, `develop` 또는 저장소 기본 브랜치라면 원천 자료에 맞는 작업 브랜치나 명시적 작업 ID로 작업을 옮길 것을 권장합니다. 사용자 승인 없이 브랜치를 만들거나 전환하지 않습니다.
+
+명시적으로 요청받지 않는 한 한 번에 작업 하나만 실행합니다.
