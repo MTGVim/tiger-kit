@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eval Review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --bg: #faf9f5;
+      --surface: #ffffff;
+      --border: #e8e6dc;
+      --text: #141413;
+      --text-muted: #b0aea5;
+      --accent: #d97757;
+      --accent-hover: #c4613f;
+      --green: #788c5d;
+      --green-bg: #eef2e8;
+      --red: #c44;
+      --red-bg: #fceaea;
+      --header-bg: #141413;
+      --header-text: #faf9f5;
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- Header ---- */
+    .header {
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .header .instructions {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 0.25rem;
+    }
+    .header .progress {
+      font-size: 0.875rem;
+      opacity: 0.8;
+      text-align: right;
+    }
+
+    /* ---- Main content ---- */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* ---- Sections ---- */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .section-header {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .section-body {
+      padding: 1rem;
+    }
+
+    /* ---- Config badge ---- */
+    .config-badge {
+      display: inline-block;
+      padding: 0.2rem 0.625rem;
+      border-radius: 9999px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-left: 0.75rem;
+      vertical-align: middle;
+    }
+    .config-badge.config-primary {
+      background: rgba(33, 150, 243, 0.12);
+      color: #1976d2;
+    }
+    .config-badge.config-baseline {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f57f17;
+    }
+
+    /* ---- Prompt ---- */
+    .prompt-text {
+      white-space: pre-wrap;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    /* ---- Outputs ---- */
+    .output-file {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .output-file + .output-file {
+      margin-top: 1rem;
+    }
+    .output-file-header {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .output-file-header .dl-btn {
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      cursor: pointer;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 500;
+      opacity: 0.8;
+    }
+    .output-file-header .dl-btn:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .output-file-content {
+      padding: 0.75rem;
+      overflow-x: auto;
+    }
+    .output-file-content pre {
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    }
+    .output-file-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+    .output-file-content iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+    .output-file-content table {
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      width: 100%;
+    }
+    .output-file-content table td,
+    .output-file-content table th {
+      border: 1px solid var(--border);
+      padding: 0.375rem 0.5rem;
+      text-align: left;
+    }
+    .output-file-content table th {
+      background: var(--bg);
+      font-weight: 600;
+    }
+    .output-file-content .download-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    .output-file-content .download-link:hover {
+      background: var(--border);
+    }
+    .empty-state {
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* ---- Feedback ---- */
+    .prev-feedback {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.625rem 0.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .prev-feedback-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.25rem;
+      color: var(--text-muted);
+    }
+    .feedback-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      resize: vertical;
+      color: var(--text);
+    }
+    .feedback-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .feedback-status {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      min-height: 1.1em;
+    }
+
+    /* ---- Grades (collapsible) ---- */
+    .grades-toggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .grades-toggle:hover {
+      color: var(--accent);
+    }
+    .grades-toggle .arrow {
+      margin-right: 0.5rem;
+      transition: transform 0.15s;
+      font-size: 0.75rem;
+    }
+    .grades-toggle .arrow.open {
+      transform: rotate(90deg);
+    }
+    .grades-content {
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .grades-content.open {
+      display: block;
+    }
+    .grades-summary {
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .grade-badge {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .grade-pass { background: var(--green-bg); color: var(--green); }
+    .grade-fail { background: var(--red-bg); color: var(--red); }
+    .assertion-list {
+      list-style: none;
+    }
+    .assertion-item {
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8125rem;
+    }
+    .assertion-item:last-child { border-bottom: none; }
+    .assertion-status {
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+    .assertion-status.pass { color: var(--green); }
+    .assertion-status.fail { color: var(--red); }
+    .assertion-evidence {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      padding-left: 1.5rem;
+    }
+
+    /* ---- View tabs ---- */
+    .view-tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 2rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .view-tab {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .view-tab:hover { color: var(--text); }
+    .view-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .view-panel { display: none; }
+    .view-panel.active { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+
+    /* ---- Benchmark view ---- */
+    .benchmark-view {
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .benchmark-table {
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    .benchmark-table th, .benchmark-table td {
+      padding: 0.625rem 0.75rem;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    .benchmark-table th {
+      font-family: 'Poppins', sans-serif;
+      background: var(--header-bg);
+      color: var(--header-text);
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .benchmark-table tr:hover { background: var(--bg); }
+    .benchmark-table tr.benchmark-row-with { background: rgba(33, 150, 243, 0.06); }
+    .benchmark-table tr.benchmark-row-without { background: rgba(255, 193, 7, 0.06); }
+    .benchmark-table tr.benchmark-row-with:hover { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-without:hover { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-table tr.benchmark-row-avg { font-weight: 600; border-top: 2px solid var(--border); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-with { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-without { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-delta-positive { color: var(--green); font-weight: 600; }
+    .benchmark-delta-negative { color: var(--red); font-weight: 600; }
+    .benchmark-notes {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+    .benchmark-notes h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+    }
+    .benchmark-notes ul {
+      list-style: disc;
+      padding-left: 1.25rem;
+    }
+    .benchmark-notes li {
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      margin-bottom: 0.375rem;
+    }
+    .benchmark-empty {
+      color: var(--text-muted);
+      font-style: italic;
+      text-align: center;
+      padding: 3rem;
+    }
+
+    /* ---- Navigation ---- */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    .nav-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .done-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .done-btn:hover {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .done-btn.ready {
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+    }
+    .done-btn.ready:hover {
+      background: var(--accent-hover);
+    }
+    /* ---- Done overlay ---- */
+    .done-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    .done-overlay.visible {
+      display: flex;
+    }
+    .done-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 2rem 3rem;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+    }
+    .done-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .done-card p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .done-card .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .done-card button {
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    .done-card button:hover {
+      background: var(--bg);
+    }
+    /* ---- Toast ---- */
+    .toast {
+      position: fixed;
+      bottom: 5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .toast.visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" style="height:100vh; display:flex; flex-direction:column;">
+    <div class="header">
+      <div>
+        <h1>Eval Review: <span id="skill-name"></span></h1>
+        <div class="instructions">Review each output and leave feedback below. Navigate with arrow keys or buttons. When done, copy feedback and paste into Claude Code.</div>
+      </div>
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <!-- View tabs (only shown when benchmark data exists) -->
+    <div class="view-tabs" id="view-tabs" style="display:none;">
+      <button class="view-tab active" onclick="switchView('outputs')">Outputs</button>
+      <button class="view-tab" onclick="switchView('benchmark')">Benchmark</button>
+    </div>
+
+    <!-- Outputs panel (qualitative review) -->
+    <div class="view-panel active" id="panel-outputs">
+    <div class="main">
+      <!-- Prompt -->
+      <div class="section">
+        <div class="section-header">Prompt <span class="config-badge" id="config-badge" style="display:none;"></span></div>
+        <div class="section-body">
+          <div class="prompt-text" id="prompt-text"></div>
+        </div>
+      </div>
+
+      <!-- Outputs -->
+      <div class="section">
+        <div class="section-header">Output</div>
+        <div class="section-body" id="outputs-body">
+          <div class="empty-state">No output files found</div>
+        </div>
+      </div>
+
+      <!-- Previous Output (collapsible) -->
+      <div class="section" id="prev-outputs-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="togglePrevOutputs()">
+            <span class="arrow" id="prev-outputs-arrow">&#9654;</span>
+            Previous Output
+          </div>
+        </div>
+        <div class="grades-content" id="prev-outputs-content"></div>
+      </div>
+
+      <!-- Grades (collapsible) -->
+      <div class="section" id="grades-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="toggleGrades()">
+            <span class="arrow" id="grades-arrow">&#9654;</span>
+            Formal Grades
+          </div>
+        </div>
+        <div class="grades-content" id="grades-content"></div>
+      </div>
+
+      <!-- Feedback -->
+      <div class="section">
+        <div class="section-header">Your Feedback</div>
+        <div class="section-body">
+          <textarea
+            class="feedback-textarea"
+            id="feedback"
+            placeholder="What do you think of this output? Any issues, suggestions, or things that look great?"
+          ></textarea>
+          <div class="feedback-status" id="feedback-status"></div>
+          <div class="prev-feedback" id="prev-feedback" style="display:none;">
+            <div class="prev-feedback-label">Previous feedback</div>
+            <div id="prev-feedback-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav" id="outputs-nav">
+      <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">&#8592; Previous</button>
+      <button class="done-btn" id="done-btn" onclick="showDoneDialog()">Submit All Reviews</button>
+      <button class="nav-btn" id="next-btn" onclick="navigate(1)">Next &#8594;</button>
+    </div>
+    </div><!-- end panel-outputs -->
+
+    <!-- Benchmark panel (quantitative stats) -->
+    <div class="view-panel" id="panel-benchmark">
+      <div class="benchmark-view" id="benchmark-content">
+        <div class="benchmark-empty">No benchmark data available. Run a benchmark to see quantitative results here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Done overlay -->
+  <div class="done-overlay" id="done-overlay">
+    <div class="done-card">
+      <h2>Review Complete</h2>
+      <p>Your feedback has been saved. Go back to your Claude Code session and tell Claude you're done reviewing.</p>
+      <div class="btn-row">
+        <button onclick="closeDoneDialog()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ---- Embedded data (injected by generate_review.py) ----
+    const EMBEDDED_DATA = {"skill_name": "gap", "runs": [{"id": "eval-1-stop-when-no-source-old_skill", "prompt": "\uc774 \uc800\uc7a5\uc18c\uc5d0\uc11c \ubd80\uc871\ud55c \uc810\uc744 gap \ubd84\uc11d\ud574\uc918.", "eval_id": 1, "outputs": [{"name": "final_response.md", "type": "text", "content": "Gap \ubd84\uc11d\uc744 \uc2dc\uc791\ud558\ub824\uba74 \uc6d0\ucc9c \uc790\ub8cc\uac00 \ud544\uc694\ud569\ub2c8\ub2e4.\n\n\ud604\uc7ac \uc694\uccad\uc740 \u201c\uc774 \uc800\uc7a5\uc18c\uc5d0\uc11c \ubd80\uc871\ud55c \uc810\uc744 gap \ubd84\uc11d\ud574\uc918\u201d\uc774\uc9c0\ub9cc, \ubd84\uc11d \uae30\uc900\uc774 \ub420 \uc6d0\ucc9c \uc790\ub8cc\ub098 \uc790\ub8cc \ucd94\ucd9c \uc9c0\uc2dc\uac00 \uc81c\uacf5\ub418\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4. \ub530\ub77c\uc11c \uc800\uc7a5\uc18c\ub97c \uc784\uc758\ub85c \uc6d0\ucc9c \uc790\ub8cc\ub85c \uc0bc\uc544 \ubd84\uc11d\ud558\uac70\ub098 `.gap/` \uc0b0\ucd9c\ubb3c\uc744 \ub9cc\ub4e4 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4.\n\n\ub2e4\uc74c \uc911 \ud558\ub098\ub97c \uc81c\uacf5\ud558\uac70\ub098 \uc120\ud0dd\ud574 \uc8fc\uc138\uc694.\n\n1. \uc774\uc288 \ud2b8\ub798\ucee4 \ud2f0\ucf13, \ubb38\uc11c, PRD, \ub514\uc790\uc778, \ube0c\ub9ac\ud504, \uc2a4\ud06c\ub9b0\uc0f7, \ucf54\ub4dc \uacbd\ub85c\n2. \u201cGitHub issues\ub97c \uac00\uc838\uc640\u201d, \u201c\uc774 PR\uc744 \uae30\uc900\uc73c\ub85c \ubd84\uc11d\ud574\u201d, \u201cREADME\uc640 \ud604\uc7ac \uad6c\ud604\uc744 \ube44\uad50\ud574\u201d \uac19\uc740 \uc790\ub8cc \ucd94\ucd9c \uc9c0\uc2dc\n3. \uc778\ud130\ubdf0 \ubc29\uc2dd\uc73c\ub85c \uc694\uad6c\uc0ac\ud56d \uc815\ub9ac \uc2dc\uc791\n\n\uc778\ud130\ubdf0 \ubc29\uc2dd\uc73c\ub85c \uc9c4\ud589\ud558\ub824\uba74 \uc544\ub798 \uc9c8\ubb38\ubd80\ud130 \ub2f5\ud574 \uc8fc\uc138\uc694.\n\n- \ud574\uacb0\ud558\ub824\ub294 \ubb38\uc81c\ub294 \ubb34\uc5c7\uc778\uac00\uc694?\n- \uc6d0\ud558\ub294 \uc644\ub8cc \uc0c1\ud0dc\ub294 \ubb34\uc5c7\uc778\uac00\uc694?\n- \ubc18\ub4dc\uc2dc \uc9c0\ucf1c\uc57c \ud560 \uc81c\uc57d\uc774\ub098 \uc81c\uc678\ud560 \ubc94\uc704\uac00 \uc788\ub098\uc694?\n- \ucc38\uace0\ud574\uc57c \ud560 \uae30\uc874 \uad6c\ud604, \ubb38\uc11c, \ud654\uba74, \uc774\uc288\uac00 \uc788\ub098\uc694?\n"}], "grading": {"run_id": "eval-1-stop-when-no-source-old_skill", "expectations": [{"text": "\uc6d0\ucc9c \uc790\ub8cc\uac00 \uc5c6\ub2e4\uace0 \ubcf4\uace0\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc6d0\ucc9c, \uc790\ub8cc\uac00"}, {"text": "\uc800\uc7a5\uc18c\ub97c \uc784\uc758\ub85c \uc6d0\ucc9c \uc790\ub8cc \uc0bc\uc544 \ubd84\uc11d\ud558\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc800\uc7a5\uc18c\ub97c, \uc784\uc758\ub85c, \uc6d0\ucc9c, \uc790\ub8cc, \uc0bc\uc544"}, {"text": ".gap/ \uc0b0\ucd9c\ubb3c\uc744 \ub9cc\ub4e4\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: gap, \uc0b0\ucd9c\ubb3c\uc744"}, {"text": "\uc790\ub8cc \uc81c\uacf5, \uc790\ub8cc \ucd94\ucd9c \uc9c0\uc2dc, \uc778\ud130\ubdf0 \uc2dc\uc791 \uc911 \ud558\ub098\ub97c \uc694\uccad\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc790\ub8cc, \uc81c\uacf5, \uc790\ub8cc, \ucd94\ucd9c, \uc9c0\uc2dc, \uc778\ud130\ubdf0, \uc2dc\uc791, \ud558\ub098\ub97c"}, {"text": "\uad6c\ud604\uc744 \uc2dc\uc791\ud558\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uad6c\ud604\uc744"}]}}, {"id": "eval-1-stop-when-no-source-with_skill", "prompt": "\uc774 \uc800\uc7a5\uc18c\uc5d0\uc11c \ubd80\uc871\ud55c \uc810\uc744 gap \ubd84\uc11d\ud574\uc918.", "eval_id": 1, "outputs": [{"name": "final_response.md", "type": "text", "content": "Gap \ubd84\uc11d\uc744 \uc2dc\uc791\ud558\ub824\uba74 \uc6d0\ucc9c \uc790\ub8cc\uac00 \ud544\uc694\ud569\ub2c8\ub2e4.\n\n\ud604\uc7ac \uc694\uccad\uc740 \u201c\uc774 \uc800\uc7a5\uc18c\uc5d0\uc11c \ubd80\uc871\ud55c \uc810\uc744 gap \ubd84\uc11d\ud574\uc918\u201d\uc774\uc9c0\ub9cc, \ubd84\uc11d \uae30\uc900\uc774 \ub420 \uc6d0\ucc9c \uc790\ub8cc\ub098 \uc790\ub8cc \ucd94\ucd9c \uc9c0\uc2dc\uac00 \uc81c\uacf5\ub418\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4. \ub530\ub77c\uc11c \uc800\uc7a5\uc18c\ub97c \uc784\uc758\ub85c \uc6d0\ucc9c \uc790\ub8cc\ub85c \uc0bc\uc544 \ubd84\uc11d\uc744 \uc2dc\uc791\ud558\uac70\ub098 `.gap/` \uc0b0\ucd9c\ubb3c\uc744 \ub9cc\ub4e4 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4.\n\n\ub2e4\uc74c \uc911 \ud558\ub098\ub97c \uc81c\uacf5\ud558\uac70\ub098 \uc120\ud0dd\ud574 \uc8fc\uc138\uc694.\n\n1. \uc774\uc288 \ud2b8\ub798\ucee4 \ud2f0\ucf13, \ubb38\uc11c, PRD, \ub514\uc790\uc778, \ube0c\ub9ac\ud504, \uc2a4\ud06c\ub9b0\uc0f7, \ucf54\ub4dc \uacbd\ub85c\n2. \u201cGitHub issues\ub97c \uac00\uc838\uc640\u201d, \u201c\uc774 PR\uc744 \uae30\uc900\uc73c\ub85c \ubd84\uc11d\ud574\u201d, \u201cREADME\uc640 \ud604\uc7ac \uad6c\ud604\uc744 \ube44\uad50\ud574\u201d, \u201cdocs/usage.md\uc640 skill \ub3d9\uc791\uc744 \ube44\uad50\ud574\u201d \uac19\uc740 \uc790\ub8cc \ucd94\ucd9c \uc9c0\uc2dc\n3. \uc778\ud130\ubdf0 \ubc29\uc2dd\uc73c\ub85c \uc694\uad6c\uc0ac\ud56d \uc815\ub9ac \uc2dc\uc791\n\n\uc778\ud130\ubdf0 \ubc29\uc2dd\uc73c\ub85c \uc9c4\ud589\ud558\ub824\uba74 \uba3c\uc800 \uc544\ub798 \uc9c8\ubb38\uc5d0 \ub2f5\ud574 \uc8fc\uc138\uc694.\n\n- \ud574\uacb0\ud558\ub824\ub294 \ubb38\uc81c\ub294 \ubb34\uc5c7\uc778\uac00\uc694?\n- \uc6d0\ud558\ub294 \uc644\ub8cc \uc0c1\ud0dc\ub294 \ubb34\uc5c7\uc778\uac00\uc694?\n- \ubc18\ub4dc\uc2dc \uc9c0\ucf1c\uc57c \ud560 \uc81c\uc57d\uc774\ub098 \uc81c\uc678\ud560 \ubc94\uc704\uac00 \uc788\ub098\uc694?\n- \ucc38\uace0\ud574\uc57c \ud560 \uae30\uc874 \uad6c\ud604, \ubb38\uc11c, \ud654\uba74, \uc774\uc288\uac00 \uc788\ub098\uc694?\n"}], "grading": {"run_id": "eval-1-stop-when-no-source-with_skill", "expectations": [{"text": "\uc6d0\ucc9c \uc790\ub8cc\uac00 \uc5c6\ub2e4\uace0 \ubcf4\uace0\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc6d0\ucc9c, \uc790\ub8cc\uac00"}, {"text": "\uc800\uc7a5\uc18c\ub97c \uc784\uc758\ub85c \uc6d0\ucc9c \uc790\ub8cc \uc0bc\uc544 \ubd84\uc11d\ud558\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc800\uc7a5\uc18c\ub97c, \uc784\uc758\ub85c, \uc6d0\ucc9c, \uc790\ub8cc, \uc0bc\uc544"}, {"text": ".gap/ \uc0b0\ucd9c\ubb3c\uc744 \ub9cc\ub4e4\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: gap, \uc0b0\ucd9c\ubb3c\uc744"}, {"text": "\uc790\ub8cc \uc81c\uacf5, \uc790\ub8cc \ucd94\ucd9c \uc9c0\uc2dc, \uc778\ud130\ubdf0 \uc2dc\uc791 \uc911 \ud558\ub098\ub97c \uc694\uccad\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc790\ub8cc, \uc81c\uacf5, \uc790\ub8cc, \ucd94\ucd9c, \uc9c0\uc2dc, \uc778\ud130\ubdf0, \uc2dc\uc791, \ud558\ub098\ub97c"}, {"text": "\uad6c\ud604\uc744 \uc2dc\uc791\ud558\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uad6c\ud604\uc744"}], "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0}}}, {"id": "eval-1-stop-when-no-source-z_old_skill", "prompt": "\uc774 \uc800\uc7a5\uc18c\uc5d0\uc11c \ubd80\uc871\ud55c \uc810\uc744 gap \ubd84\uc11d\ud574\uc918.", "eval_id": 1, "outputs": [{"name": "final_response.md", "type": "text", "content": "Gap \ubd84\uc11d\uc744 \uc2dc\uc791\ud558\ub824\uba74 \uc6d0\ucc9c \uc790\ub8cc\uac00 \ud544\uc694\ud569\ub2c8\ub2e4.\n\n\ud604\uc7ac \uc694\uccad\uc740 \u201c\uc774 \uc800\uc7a5\uc18c\uc5d0\uc11c \ubd80\uc871\ud55c \uc810\uc744 gap \ubd84\uc11d\ud574\uc918\u201d\uc774\uc9c0\ub9cc, \ubd84\uc11d \uae30\uc900\uc774 \ub420 \uc6d0\ucc9c \uc790\ub8cc\ub098 \uc790\ub8cc \ucd94\ucd9c \uc9c0\uc2dc\uac00 \uc81c\uacf5\ub418\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4. \ub530\ub77c\uc11c \uc800\uc7a5\uc18c\ub97c \uc784\uc758\ub85c \uc6d0\ucc9c \uc790\ub8cc\ub85c \uc0bc\uc544 \ubd84\uc11d\ud558\uac70\ub098 `.gap/` \uc0b0\ucd9c\ubb3c\uc744 \ub9cc\ub4e4 \uc218 \uc5c6\uc2b5\ub2c8\ub2e4.\n\n\ub2e4\uc74c \uc911 \ud558\ub098\ub97c \uc81c\uacf5\ud558\uac70\ub098 \uc120\ud0dd\ud574 \uc8fc\uc138\uc694.\n\n1. \uc774\uc288 \ud2b8\ub798\ucee4 \ud2f0\ucf13, \ubb38\uc11c, PRD, \ub514\uc790\uc778, \ube0c\ub9ac\ud504, \uc2a4\ud06c\ub9b0\uc0f7, \ucf54\ub4dc \uacbd\ub85c\n2. \u201cGitHub issues\ub97c \uac00\uc838\uc640\u201d, \u201c\uc774 PR\uc744 \uae30\uc900\uc73c\ub85c \ubd84\uc11d\ud574\u201d, \u201cREADME\uc640 \ud604\uc7ac \uad6c\ud604\uc744 \ube44\uad50\ud574\u201d \uac19\uc740 \uc790\ub8cc \ucd94\ucd9c \uc9c0\uc2dc\n3. \uc778\ud130\ubdf0 \ubc29\uc2dd\uc73c\ub85c \uc694\uad6c\uc0ac\ud56d \uc815\ub9ac \uc2dc\uc791\n\n\uc778\ud130\ubdf0 \ubc29\uc2dd\uc73c\ub85c \uc9c4\ud589\ud558\ub824\uba74 \uc544\ub798 \uc9c8\ubb38\ubd80\ud130 \ub2f5\ud574 \uc8fc\uc138\uc694.\n\n- \ud574\uacb0\ud558\ub824\ub294 \ubb38\uc81c\ub294 \ubb34\uc5c7\uc778\uac00\uc694?\n- \uc6d0\ud558\ub294 \uc644\ub8cc \uc0c1\ud0dc\ub294 \ubb34\uc5c7\uc778\uac00\uc694?\n- \ubc18\ub4dc\uc2dc \uc9c0\ucf1c\uc57c \ud560 \uc81c\uc57d\uc774\ub098 \uc81c\uc678\ud560 \ubc94\uc704\uac00 \uc788\ub098\uc694?\n- \ucc38\uace0\ud574\uc57c \ud560 \uae30\uc874 \uad6c\ud604, \ubb38\uc11c, \ud654\uba74, \uc774\uc288\uac00 \uc788\ub098\uc694?\n"}], "grading": {"run_id": "eval-1-stop-when-no-source-z_old_skill", "expectations": [{"text": "\uc6d0\ucc9c \uc790\ub8cc\uac00 \uc5c6\ub2e4\uace0 \ubcf4\uace0\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc6d0\ucc9c, \uc790\ub8cc\uac00"}, {"text": "\uc800\uc7a5\uc18c\ub97c \uc784\uc758\ub85c \uc6d0\ucc9c \uc790\ub8cc \uc0bc\uc544 \ubd84\uc11d\ud558\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc800\uc7a5\uc18c\ub97c, \uc784\uc758\ub85c, \uc6d0\ucc9c, \uc790\ub8cc, \uc0bc\uc544"}, {"text": ".gap/ \uc0b0\ucd9c\ubb3c\uc744 \ub9cc\ub4e4\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: gap, \uc0b0\ucd9c\ubb3c\uc744"}, {"text": "\uc790\ub8cc \uc81c\uacf5, \uc790\ub8cc \ucd94\ucd9c \uc9c0\uc2dc, \uc778\ud130\ubdf0 \uc2dc\uc791 \uc911 \ud558\ub098\ub97c \uc694\uccad\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc790\ub8cc, \uc81c\uacf5, \uc790\ub8cc, \ucd94\ucd9c, \uc9c0\uc2dc, \uc778\ud130\ubdf0, \uc2dc\uc791, \ud558\ub098\ub97c"}, {"text": "\uad6c\ud604\uc744 \uc2dc\uc791\ud558\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uad6c\ud604\uc744"}], "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0}}}, {"id": "eval-2-normalize-brief-and-gap-old_skill", "prompt": "\uc6d0\ucc9c \uc790\ub8cc: \ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \uc0ac\uc6a9\uc790\ub294 \uc2e4\ud328 \uc774\uc720\uc640 \ub2e4\uc74c \ud589\ub3d9\uc744 \uc54c\uc544\uc57c \ud55c\ub2e4. \ud604\uc7ac\ub294 'error'\ub9cc \ub72c\ub2e4. \uc774 \uae30\uc900\uc73c\ub85c gap \ubd84\uc11d\ud574\uc918.", "eval_id": 2, "outputs": [{"name": "final_response.md", "type": "text", "content": "\ud604\uc7ac \uc694\uccad\uc740 \uc0ac\uc6a9\uc790\uac00 \uc791\uc131\ud55c \ube0c\ub9ac\ud504\ub97c \uc6d0\ucc9c \uc790\ub8cc\ub85c \ubcfc \uc218 \uc788\uc73c\ubbc0\ub85c, \uc774 \uae30\uc900\uc73c\ub85c \uac2d \ubd84\uc11d\uc744 \uc9c4\ud589\ud588\uc2b5\ub2c8\ub2e4. \uc774 \ud3c9\uac00 \uc2e4\ud589\uc5d0\uc11c\ub294 \uc2e4\uc81c `.gap/` \uc0b0\ucd9c\ubb3c\uc744 \ub9cc\ub4e4\uc9c0 \uc54a\uace0, \uc544\ub798\uc5d0 \uc0dd\uc131\ud588\uc744 \uc0b0\ucd9c\ubb3c \uc694\uc57d\uc744 \ud568\uaed8 \ub0a8\uae41\ub2c8\ub2e4.\n\n## \uc6d0\ucc9c \uc790\ub8cc \uc815\uaddc\ud654 \uc694\uc57d\n\n### \ubaa9\ud45c\n\n\ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \uc0ac\uc6a9\uc790\uac00 \uc2e4\ud328 \uc774\uc720\ub97c \uc774\ud574\ud558\uace0, \ub2e4\uc74c\uc5d0 \ubb34\uc5c7\uc744 \ud574\uc57c \ud558\ub294\uc9c0 \uc54c \uc218 \uc788\ub3c4\ub85d \uc624\ub958 \uacbd\ud5d8\uc744 \uac1c\uc120\ud55c\ub2e4.\n\n### \ubb38\uc81c\n\n\ud604\uc7ac \ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \ud654\uba74\uc5d0 `error`\ub9cc \ud45c\uc2dc\ub418\uc5b4 \uc0ac\uc6a9\uc790\uac00 \uc2e4\ud328 \uc6d0\uc778\uacfc \ud574\uacb0 \ud589\ub3d9\uc744 \uc54c \uc218 \uc5c6\ub2e4.\n\n### \ud655\uc778\ub41c \uc694\uad6c\uc0ac\ud56d\n\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uc0c1\ud669\uc5d0\uc11c \ub2e8\uc21c\ud55c `error` \ub300\uc2e0 \uc2e4\ud328 \uc774\uc720\ub97c \uc0ac\uc6a9\uc790\uc5d0\uac8c \uc54c\ub824\uc57c \ud55c\ub2e4.\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uc0c1\ud669\uc5d0\uc11c \uc0ac\uc6a9\uc790\uac00 \ucde8\ud560 \uc218 \uc788\ub294 \ub2e4\uc74c \ud589\ub3d9\uc744 \uc548\ub0b4\ud574\uc57c \ud55c\ub2e4.\n- \uc548\ub0b4 \ubb38\uad6c\ub294 \uc0ac\uc6a9\uc790\uac00 \uc774\ud574\ud560 \uc218 \uc788\ub294 \ud45c\ud604\uc774\uc5b4\uc57c \ud55c\ub2e4.\n\n### \uc778\uc218 \uc870\uac74\n\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \ud654\uba74\uc5d0 `error`\ub9cc \ub2e8\ub3c5\uc73c\ub85c \ud45c\uc2dc\ub418\uc9c0 \uc54a\ub294\ub2e4.\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uba54\uc2dc\uc9c0\ub294 \uc2e4\ud328 \uc774\uc720\ub97c \ud3ec\ud568\ud55c\ub2e4.\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uba54\uc2dc\uc9c0\ub294 \ub2e4\uc74c \ud589\ub3d9\uc744 \ud3ec\ud568\ud55c\ub2e4.\n- \uc0ac\uc6a9\uc790\ub294 \uba54\uc2dc\uc9c0\ub9cc \ubcf4\uace0 \uc7ac\uc2dc\ub3c4, \uc785\ub825 \uc218\uc815, \ube44\ubc00\ubc88\ud638 \uc7ac\uc124\uc815, \uc9c0\uc6d0 \ubb38\uc758 \ub4f1 \uc801\uc808\ud55c \ub2e4\uc74c \ud589\ub3d9\uc744 \ud310\ub2e8\ud560 \uc218 \uc788\ub2e4.\n\n### \uc81c\uc57d\n\n- \uc81c\uacf5\ub41c \uc6d0\ucc9c \uc790\ub8cc\uc5d0\ub294 \uad6c\uccb4\uc801\uc778 \ub85c\uadf8\uc778 \ubc29\uc2dd, \uc778\uc99d API, \uc5d0\ub7ec \ucf54\ub4dc, UI \uc704\uce58, \uc9c0\uc6d0 \ucc44\ub110\uc774 \uba85\uc2dc\ub418\uc5b4 \uc788\uc9c0 \uc54a\ub2e4.\n- \ud604\uc7ac \uad6c\ud604 \ud30c\uc77c\uc774\ub098 \ud654\uba74 \uc790\ub8cc\ub294 \uc81c\uacf5\ub418\uc9c0 \uc54a\uc558\ub2e4.\n\n### \uc81c\uc678 \ubc94\uc704\n\n- \uc2e4\uc81c \uad6c\ud604 \ubcc0\uacbd\uc740 \uc774 \ub2e8\uacc4\uc5d0\uc11c \uc218\ud589\ud558\uc9c0 \uc54a\ub294\ub2e4.\n- \ub85c\uadf8\uc778 \uc815\ucc45, \uacc4\uc815 \uc7a0\uae08 \uc815\ucc45, MFA \uc815\ucc45 \uc790\uccb4\uc758 \ubcc0\uacbd \uc5ec\ubd80\ub294 \uc544\uc9c1 \ud655\uc815\ud558\uc9c0 \uc54a\ub294\ub2e4.\n\n### \uc5f4\ub9b0 \uc9c8\ubb38\n\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uc774\uc720\ub97c \uc5b4\ub514\uae4c\uc9c0 \uad6c\uccb4\uc801\uc73c\ub85c \ub178\ucd9c\ud560 \uac83\uc778\uac00?\n- \ubcf4\uc548\uc0c1 \uc0ac\uc6a9\uc790 \uc874\uc7ac \uc5ec\ubd80\ub97c \ucd94\ub860\ud560 \uc218 \uc788\ub294 \ubb38\uad6c\ub97c \ud53c\ud574\uc57c \ud558\ub294\uac00?\n- \uc2e4\ud328 \uc720\ud615\uc740 \uc5b4\ub5a4 \uac83\ub4e4\uc774 \uc788\ub294\uac00? \uc608: \uc798\ubabb\ub41c \ube44\ubc00\ubc88\ud638, \uc874\uc7ac\ud558\uc9c0 \uc54a\ub294 \uacc4\uc815, \uc7a0\uae34 \uacc4\uc815, \ube44\ud65c\uc131 \uacc4\uc815, \ub124\ud2b8\uc6cc\ud06c \uc624\ub958, \uc11c\ubc84 \uc624\ub958, \uc778\uc99d \ub9cc\ub8cc \ub4f1.\n- \ube44\ubc00\ubc88\ud638 \uc7ac\uc124\uc815, \ud68c\uc6d0\uac00\uc785, \uace0\uac1d\uc9c0\uc6d0 \ub4f1 \ub2e4\uc74c \ud589\ub3d9 \ub9c1\ud06c\uac00 \uc774\ubbf8 \uc874\uc7ac\ud558\ub294\uac00?\n- \ubb38\uad6c\ub294 \uc5b4\ub5a4 \ud1a4\uc564\ub9e4\ub108\uc640 \uc5b8\uc5b4 \uc815\ucc45\uc744 \ub530\ub77c\uc57c \ud558\ub294\uac00?\n\n## \uac2d \ubd84\uc11d \ubcf4\uace0\uc11c\n\n### \uc694\uc57d\n\n\ud604\uc7ac \uc694\uad6c\ub294 \u201c\ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc `error`\ub9cc \ubcf4\uc774\ub294 \ubb38\uc81c\ub97c \uac1c\uc120\ud558\uc5ec \uc2e4\ud328 \uc774\uc720\uc640 \ub2e4\uc74c \ud589\ub3d9\uc744 \uc81c\uacf5\ud55c\ub2e4\u201d\ub294 \uac83\uc785\ub2c8\ub2e4. \ud575\uc2ec \uac2d\uc740 \uc5d0\ub7ec \ud45c\uc2dc\uac00 \uc9c0\ub098\uce58\uac8c \uc77c\ubc18\uc801\uc774\ub77c \uc0ac\uc6a9\uc790\uac00 \ubb38\uc81c\ub97c \ud574\uacb0\ud560 \uc218 \uc5c6\ub2e4\ub294 UX \uac2d\uc785\ub2c8\ub2e4. \ub2e4\ub9cc \uc2e4\ud328 \uc720\ud615, \ubcf4\uc548 \uc815\ucc45, \ub178\ucd9c \uac00\ub2a5\ud55c \uc0c1\uc138 \uc218\uc900, \uc2e4\uc81c \ud604\uc7ac \uad6c\ud604 \uc704\uce58\uac00 \uc544\uc9c1 \ud655\uc778\ub418\uc9c0 \uc54a\uc544 \uad6c\ud604 \uacc4\ud68d \uc804 \ucd94\uac00 \ud655\uc778\uc774 \ud544\uc694\ud569\ub2c8\ub2e4.\n\n### \ud655\uc778\ub41c \uc694\uad6c\uc0ac\ud56d\n\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \uc0ac\uc6a9\uc790\uc5d0\uac8c \uc2e4\ud328 \uc774\uc720\ub97c \uc54c\ub824\uc57c \ud55c\ub2e4.\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \uc0ac\uc6a9\uc790\uc5d0\uac8c \ub2e4\uc74c \ud589\ub3d9\uc744 \uc54c\ub824\uc57c \ud55c\ub2e4.\n- \ud604\uc7ac\uc758 `error` \ub2e8\ub3c5 \ud45c\uc2dc\ub294 \uae30\uc900\uc744 \ub9cc\uc871\ud558\uc9c0 \uc54a\ub294\ub2e4.\n- \uc624\ub958 \uba54\uc2dc\uc9c0\ub294 \uc0ac\uc6a9\uc790\uac00 \uc774\ud574 \uac00\ub2a5\ud55c \ubb38\uc7a5\uc774\uc5b4\uc57c \ud55c\ub2e4.\n\n### \ub204\ub77d\ub41c \uc694\uad6c\uc0ac\ud56d\n\n- \uc2e4\ud328 \uc720\ud615\ubcc4 \uba54\uc2dc\uc9c0 \uae30\uc900\uc774 \uc5c6\ub2e4.\n- \uc2e4\ud328 \uc720\ud615\ubcc4 \ub2e4\uc74c \ud589\ub3d9 \ub9e4\ud551\uc774 \uc5c6\ub2e4.\n- \ubcf4\uc548\uc0c1 \ub178\ucd9c \uac00\ub2a5\ud55c \uc2e4\ud328 \uc774\uc720\uc758 \ubc94\uc704\uac00 \uc815\uc758\ub418\uc9c0 \uc54a\uc558\ub2e4.\n- \uba54\uc2dc\uc9c0 \ud45c\uc2dc \uc704\uce58, \ub514\uc790\uc778, \uc811\uadfc\uc131 \uae30\uc900\uc774 \uc5c6\ub2e4.\n- \uc11c\ubc84/API\uc5d0\uc11c \ub0b4\ub824\uc624\ub294 \uc5d0\ub7ec \ucf54\ub4dc\uc640 \ud504\ub860\ud2b8\uc5d4\ub4dc \ubb38\uad6c \ub9e4\ud551 \uae30\uc900\uc774 \uc5c6\ub2e4.\n- \ub85c\uae45\uc774\ub098 \ubaa8\ub2c8\ud130\ub9c1 \uae30\uc900\uc774 \uc5c6\ub2e4.\n- \ud14c\uc2a4\ud2b8 \uae30\uc900\uc774 \uad6c\uccb4\ud654\ub418\uc5b4 \uc788\uc9c0 \uc54a\ub2e4.\n\n### \ubaa8\ud638\ud55c \uc694\uad6c\uc0ac\ud56d\n\n- \u201c\uc2e4\ud328 \uc774\uc720\u201d\uac00 \uae30\uc220\uc801 \uc6d0\uc778\uc778\uc9c0, \uc0ac\uc6a9\uc790 \uce5c\ud654\uc801 \ubc94\uc8fc\uc778\uc9c0 \ubd88\uba85\ud655\ud558\ub2e4.\n- \u201c\ub2e4\uc74c \ud589\ub3d9\u201d\uc774 \ub2e8\uc21c \ubb38\uad6c\uc778\uc9c0, \ub9c1\ud06c/\ubc84\ud2bc\uae4c\uc9c0 \ud3ec\ud568\ud558\ub294\uc9c0 \ubd88\uba85\ud655\ud558\ub2e4.\n- \ubaa8\ub4e0 \ub85c\uadf8\uc778 \uc2e4\ud328\uc5d0 \ub3d9\uc77c\ud55c \uc548\ub0b4\ub97c \uc4f8\uc9c0, \uc2e4\ud328 \uc720\ud615\ubcc4\ub85c \ub2e4\ub974\uac8c \uc548\ub0b4\ud560\uc9c0 \ubd88\uba85\ud655\ud558\ub2e4.\n- `error`\uac00 \ud654\uba74 \ubb38\uad6c\uc778\uc9c0, \ud1a0\uc2a4\ud2b8/\uc54c\ub9bc/\ud544\ub4dc \uc5d0\ub7ec/\ucf58\uc194 \ub85c\uadf8\uc778\uc9c0 \ubd88\uba85\ud655\ud558\ub2e4.\n\n### \ucda9\ub3cc\ud558\ub294 \uc815\ubcf4\n\n- \uc81c\uacf5\ub41c \uc790\ub8cc \uc548\uc5d0\uc11c\ub294 \ucda9\ub3cc\ud558\ub294 \uc815\ubcf4\uac00 \ud655\uc778\ub418\uc9c0 \uc54a\uc558\ub2e4.\n\n### \uad6c\ud604 \uac2d\n\n- \ud604\uc7ac \uad6c\ud604 \ud30c\uc77c\uc774 \uc81c\uacf5\ub418\uc9c0 \uc54a\uc544 \uc2e4\uc81c \ucf54\ub4dc \ud655\uc778\uc740 \uc218\ud589\ud558\uc9c0 \ubabb\ud588\ub2e4.\n- \ud604\uc7ac\ub294 \ub85c\uadf8\uc778 \uc2e4\ud328 \uc751\ub2f5\uc774 \uc0ac\uc6a9\uc790 \uce5c\ud654\uc801\uc778 \uba54\uc2dc\uc9c0\ub85c \ubcc0\ud658\ub418\uc9c0 \uc54a\uace0 `error`\ub85c \ud45c\uc2dc\ub418\ub294 \uac83\uc73c\ub85c \ubcf4\uc778\ub2e4.\n- \uc778\uc99d \uc2e4\ud328 \uc751\ub2f5\uc758 \uc5d0\ub7ec \ud0c0\uc785 \ub610\ub294 \uc0c1\ud0dc \ucf54\ub4dc\uac00 UI \uba54\uc2dc\uc9c0\ub85c \ub9e4\ud551\ub418\ub294 \uad6c\uc870\uac00 \ud544\uc694\ud558\ub2e4.\n- \uc608\uc0c1 \uad6c\ud604 \uc9c0\uc810\uc740 \ub85c\uadf8\uc778 \uc694\uccad \ucc98\ub9ac, \uc5d0\ub7ec \ud578\ub4e4\ub9c1, \uba54\uc2dc\uc9c0 \ub80c\ub354\ub9c1, \ud14c\uc2a4\ud2b8 \ucf54\ub4dc\ub2e4.\n\n### UX / UI \uac2d\n\n- `error`\ub294 \uc0ac\uc6a9\uc790\uac00 \uc6d0\uc778\uacfc \ud574\uacb0 \ubc29\ubc95\uc744 \uc774\ud574\ud558\uae30\uc5d0 \ubd80\uc871\ud558\ub2e4.\n- \uc785\ub825\uac12 \uc624\ub958, \uacc4\uc815 \ubb38\uc81c, \uc2dc\uc2a4\ud15c \ubb38\uc81c\ub97c \uad6c\ubd84\ud574 \uc548\ub0b4\ud558\uc9c0 \uc54a\uc73c\uba74 \uc0ac\uc6a9\uc790\uac00 \ubd88\ud544\uc694\ud558\uac8c \ubc18\ubcf5 \uc2dc\ub3c4\ud560 \uc218 \uc788\ub2e4.\n- \ub2e4\uc74c \ud589\ub3d9\uc774 \uc5c6\uc73c\uba74 \ube44\ubc00\ubc88\ud638 \uc7ac\uc124\uc815, \uc785\ub825 \ud655\uc778, \uc7a0\uc2dc \ud6c4 \uc7ac\uc2dc\ub3c4, \uace0\uac1d\uc9c0\uc6d0 \ubb38\uc758 \uac19\uc740 \ud574\uacb0 \uacbd\ub85c\uac00 \ub9c9\ud78c\ub2e4.\n- \uc5d0\ub7ec \ubb38\uad6c\uac00 \ud544\ub4dc \uc8fc\ubcc0\uc5d0 \ud45c\uc2dc\ub418\uc5b4\uc57c \ud558\ub294\uc9c0, \uc804\uc5ed \uc54c\ub9bc\uc73c\ub85c \ud45c\uc2dc\ub418\uc5b4\uc57c \ud558\ub294\uc9c0 \uc815\ud574\uc838 \uc788\uc9c0 \uc54a\ub2e4.\n\n### API / \ub370\uc774\ud130 \uac2d\n\n- \uc778\uc99d API\uac00 \uc2e4\ud328 \uc6d0\uc778\uc744 \uad6c\ubd84 \uac00\ub2a5\ud55c \ucf54\ub4dc\ub85c \uc81c\uacf5\ud558\ub294\uc9c0 \ud655\uc778\uc774 \ud544\uc694\ud558\ub2e4.\n- API\uac00 \ub2e8\uc21c \ubb38\uc790\uc5f4 `error`\ub9cc \ubc18\ud658\ud55c\ub2e4\uba74, \ud504\ub860\ud2b8\uc5d4\ub4dc\uc5d0\uc11c \ucda9\ubd84\ud55c \uc548\ub0b4\ub97c \uc81c\uacf5\ud558\uae30 \uc5b4\ub835\ub2e4.\n- \uc5d0\ub7ec \ucf54\ub4dc \uc608\uc2dc\uc640 \uba54\uc2dc\uc9c0 \ub9e4\ud551 \ud45c\uac00 \ud544\uc694\ud558\ub2e4.\n- \ub124\ud2b8\uc6cc\ud06c \uc624\ub958\uc640 \uc778\uc99d \uc2e4\ud328\ub97c \uad6c\ubd84\ud560 \uc218 \uc788\uc5b4\uc57c \ud55c\ub2e4.\n\n### \uc5e3\uc9c0 \ucf00\uc774\uc2a4\n\n- \uc774\uba54\uc77c/\uc544\uc774\ub514 \ud615\uc2dd \uc624\ub958\n- \ube44\ubc00\ubc88\ud638 \uc624\uc785\ub825\n- \uc874\uc7ac\ud558\uc9c0 \uc54a\ub294 \uacc4\uc815\n- \ube44\ud65c\uc131\ud654 \ub610\ub294 \uc7a0\uae34 \uacc4\uc815\n- \ube44\ubc00\ubc88\ud638 \uc7ac\uc124\uc815\uc774 \ud544\uc694\ud55c \uacc4\uc815\n- \ub124\ud2b8\uc6cc\ud06c \uc5f0\uacb0 \uc2e4\ud328\n- \uc11c\ubc84 \uc7a5\uc560\n- \ub108\ubb34 \ub9ce\uc740 \ub85c\uadf8\uc778 \uc2dc\ub3c4\n- MFA \ub610\ub294 \ucd94\uac00 \uc778\uc99d\uc774 \ud544\uc694\ud55c \uacc4\uc815\n- \uc138\uc158 \ub9cc\ub8cc \ud6c4 \uc7ac\ub85c\uadf8\uc778 \uc2e4\ud328\n\n### \uc704\ud5d8\n\n- \uc2e4\ud328 \uc774\uc720\ub97c \ub108\ubb34 \uc790\uc138\ud788 \ub178\ucd9c\ud558\uba74 \uacc4\uc815 \uc874\uc7ac \uc5ec\ubd80\ub098 \ubcf4\uc548 \uc0c1\ud0dc\uac00 \ucd94\ub860\ub420 \uc218 \uc788\ub2e4.\n- \uc2e4\ud328 \uc720\ud615\uc744 \uacfc\ub3c4\ud558\uac8c \ub2e8\uc21c\ud654\ud558\uba74 \uc0ac\uc6a9\uc790\uac00 \uc2e4\uc81c \ud574\uacb0 \ud589\ub3d9\uc744 \ucc3e\uc9c0 \ubabb\ud560 \uc218 \uc788\ub2e4.\n- API \uc5d0\ub7ec \ucf54\ub4dc\uac00 \uc548\uc815\uc801\uc774\uc9c0 \uc54a\uc73c\uba74 UI \ubb38\uad6c\uac00 \uc798\ubabb \ud45c\uc2dc\ub420 \uc218 \uc788\ub2e4.\n- \ub2e4\uad6d\uc5b4 \uc81c\ud488\uc774\ub77c\uba74 \ubb38\uad6c \uad00\ub9ac\uc640 \ubc88\uc5ed \ub204\ub77d \uc704\ud5d8\uc774 \uc788\ub2e4.\n- \ud14c\uc2a4\ud2b8 \uc5c6\uc774 \ubcc0\uacbd\ud558\uba74 \uae30\uc874 \ub85c\uadf8\uc778 \uc2e4\ud328 \ud50c\ub85c\uc6b0\uac00 \uae68\uc9c8 \uc218 \uc788\ub2e4.\n\n### \ud655\uc778\uc774 \ud544\uc694\ud55c \uc9c8\ubb38\n\n1. \ub85c\uadf8\uc778 \uc2e4\ud328 \uc774\uc720\ub97c \uc0ac\uc6a9\uc790\uc5d0\uac8c \uc5b4\ub290 \uc218\uc900\uae4c\uc9c0 \ub178\ucd9c\ud574\ub3c4 \ub418\ub098\uc694?\n2. \ud604\uc7ac \uc778\uc99d API\ub294 \uc2e4\ud328 \uc720\ud615\ubcc4 \uc5d0\ub7ec \ucf54\ub4dc\ub098 \uc0c1\ud0dc \ucf54\ub4dc\ub97c \uc81c\uacf5\ud558\ub098\uc694?\n3. `error`\uac00 \ud45c\uc2dc\ub418\ub294 \ud654\uba74 \ub610\ub294 \ucf54\ub4dc \uacbd\ub85c\ub294 \uc5b4\ub514\uc778\uac00\uc694?\n4. \ube44\ubc00\ubc88\ud638 \uc7ac\uc124\uc815, \ud68c\uc6d0\uac00\uc785, \uace0\uac1d\uc9c0\uc6d0 \ub9c1\ud06c\uac00 \uc774\ubbf8 \uc788\ub098\uc694?\n5. \uc2e4\ud328 \uc720\ud615\ubcc4 \ubb38\uad6c\ub97c \ubcc4\ub3c4\ub85c \ub9cc\ub4e4\uae4c\uc694, \uc544\ub2c8\uba74 \ubcf4\uc548\uc0c1 \uc77c\ubc18\ud654\ub41c \ubb38\uad6c\ub97c \uc0ac\uc6a9\ud560\uae4c\uc694?\n6. \uc811\uadfc\uc131 \uae30\uc900\uc774\ub098 \ub514\uc790\uc778 \uc2dc\uc2a4\ud15c\uc758 \uc5d0\ub7ec \uba54\uc2dc\uc9c0 \ucef4\ud3ec\ub10c\ud2b8\uac00 \uc788\ub098\uc694?\n\n### \ucd94\ucc9c \ub2e4\uc74c \ub2e8\uacc4\n\n1. \ud604\uc7ac \ub85c\uadf8\uc778 \uad6c\ud604 \uacbd\ub85c\uc640 \uc778\uc99d API \uc751\ub2f5 \ud615\uc2dd\uc744 \ud655\uc778\ud55c\ub2e4.\n2. \uc2e4\ud328 \uc720\ud615\ubcc4 \uba54\uc2dc\uc9c0\uc640 \ub2e4\uc74c \ud589\ub3d9 \ub9e4\ud551\ud45c\ub97c \uc815\uc758\ud55c\ub2e4.\n3. \ubcf4\uc548 \uc815\ucc45\uc5d0 \ub9de\ucdb0 \uacc4\uc815 \uc874\uc7ac \uc5ec\ubd80\uac00 \ub178\ucd9c\ub418\uc9c0 \uc54a\ub3c4\ub85d \ubb38\uad6c \uc218\uc900\uc744 \uacb0\uc815\ud55c\ub2e4.\n4. `/tigap:gaplan`\uc73c\ub85c \uad6c\ud604 \uacc4\ud68d\uacfc \uc791\uc5c5 \ubaa9\ub85d\uc744 \uc791\uc131\ud55c\ub2e4.\n\n## \uc0dd\uc131\ud588\uc744 \uc0b0\ucd9c\ubb3c \uc694\uc57d\n\n\ud3c9\uac00 \uc9c0\uc2dc\uc5d0 \ub530\ub77c \uc2e4\uc81c `.gap/` \ud30c\uc77c\uc740 \ub9cc\ub4e4\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4. \uc77c\ubc18 \uc2e4\ud589\uc774\uc5c8\ub2e4\uba74 \ub2e4\uc74c \ud30c\uc77c\uc744 \uc791\uc131\ud588\uc744 \uac83\uc785\ub2c8\ub2e4.\n\n- `.gap/{branch_name}/normalized/source-packet.md`: \uc704 \u201c\uc6d0\ucc9c \uc790\ub8cc \uc815\uaddc\ud654 \uc694\uc57d\u201d \ub0b4\uc6a9\uc744 \uae30\ubc18\uc73c\ub85c \ubaa9\ud45c, \ubb38\uc81c, \uc694\uad6c\uc0ac\ud56d, \uc778\uc218 \uc870\uac74, \uc81c\uc57d, \uc5f4\ub9b0 \uc9c8\ubb38\uc744 \uc815\ub9ac\n- `.gap/{branch_name}/analysis/gap-report.md`: \uc704 \u201c\uac2d \ubd84\uc11d \ubcf4\uace0\uc11c\u201d \ub0b4\uc6a9\uc744 \ud15c\ud50c\ub9bf\uc5d0 \ub9de\ucdb0 \uc815\ub9ac\n\n\ub2e4\uc74c \ub2e8\uacc4\ub85c\ub294 `/tigap:gaplan`\uc744 \uc2e4\ud589\ud574 \uc774 \uac2d \ubd84\uc11d\uc744 \uad6c\ud604 \uacc4\ud68d\uacfc \uc791\uc5c5 \ubaa9\ub85d\uc73c\ub85c \ubc14\uafb8\ub294 \uac83\uc744 \uad8c\uc7a5\ud569\ub2c8\ub2e4.\n"}], "grading": {"run_id": "eval-2-normalize-brief-and-gap-old_skill", "expectations": [{"text": "\ubaa9\ud45c, \uc694\uad6c\uc0ac\ud56d, \uc778\uc218 \uc870\uac74, \uc5f4\ub9b0 \uc9c8\ubb38\uc744 \uc815\ub9ac\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ubaa9\ud45c, \uc694\uad6c\uc0ac\ud56d, \uc778\uc218, \uc870\uac74, \uc5f4\ub9b0, \uc9c8\ubb38\uc744"}, {"text": "\ub85c\uadf8\uc778 \uc2e4\ud328 UX\uc758 \uad6c\ud604 \uac2d \ub610\ub294 UX \uac2d\uc744 \ud3ec\ud568\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ub85c\uadf8\uc778, \uc2e4\ud328, \uad6c\ud604, \ub610\ub294, UX, \ud3ec\ud568\ud55c\ub2e4"}, {"text": "\ubaa8\ud638\ud55c \uc694\uad6c\uc0ac\ud56d\uc774\ub098 \ud655\uc778 \uc9c8\ubb38\uc744 \ubd84\ub9ac\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ubaa8\ud638\ud55c, \ud655\uc778, \uc9c8\ubb38\uc744"}, {"text": "\ucf54\ub4dc\ub97c \uad6c\ud604\ud558\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ucf54\ub4dc\ub97c, \uc54a\ub294\ub2e4"}, {"text": "\ub2e4\uc74c \ub2e8\uacc4\ub85c /tigap:gaplan\uc744 \uc81c\uc548\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ub2e4\uc74c, \ub2e8\uacc4\ub85c"}]}}, {"id": "eval-2-normalize-brief-and-gap-with_skill", "prompt": "\uc6d0\ucc9c \uc790\ub8cc: \ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \uc0ac\uc6a9\uc790\ub294 \uc2e4\ud328 \uc774\uc720\uc640 \ub2e4\uc74c \ud589\ub3d9\uc744 \uc54c\uc544\uc57c \ud55c\ub2e4. \ud604\uc7ac\ub294 'error'\ub9cc \ub72c\ub2e4. \uc774 \uae30\uc900\uc73c\ub85c gap \ubd84\uc11d\ud574\uc918.", "eval_id": 2, "outputs": [{"name": "final_response.md", "type": "text", "content": "\uac2d \ubd84\uc11d\uc744 \uc644\ub8cc\ud588\uc2b5\ub2c8\ub2e4. \uc774\ubc88 \ud3c9\uac00 \uc2e4\ud589 \uc9c0\uc2dc\uc5d0 \ub530\ub77c \uc2e4\uc81c `.gap/` \uc0b0\ucd9c\ubb3c\uc740 \ub9cc\ub4e4\uc9c0 \uc54a\uace0, \uc544\ub798\uc5d0 \uc791\uc131 \uc608\uc815 \uc0b0\ucd9c\ubb3c \uc694\uc57d\uc744 \ud3ec\ud568\ud569\ub2c8\ub2e4.\n\n## Source Packet \uc694\uc57d\n\n- \uc791\uc5c5 ID: `login-failure-error-message-gap`\n- \uc6d0\ucc9c \uc790\ub8cc \uc720\ud615: \uc0ac\uc6a9\uc790 \ube0c\ub9ac\ud504\n- \uad00\ub828 \uc6d0\ucc9c \uc790\ub8cc: \u201c\ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \uc0ac\uc6a9\uc790\ub294 \uc2e4\ud328 \uc774\uc720\uc640 \ub2e4\uc74c \ud589\ub3d9\uc744 \uc54c\uc544\uc57c \ud55c\ub2e4. \ud604\uc7ac\ub294 'error'\ub9cc \ub72c\ub2e4.\u201d\n\n### \ubb38\uc81c\n\n\ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \uc0ac\uc6a9\uc790\uc5d0\uac8c \ub2e8\uc21c\ud788 `error`\ub9cc \ud45c\uc2dc\ub418\uc5b4, \uc2e4\ud328 \uc6d0\uc778\uacfc \uc774\ud6c4 \uc870\uce58 \ubc29\ubc95\uc744 \uc54c \uc218 \uc5c6\uc2b5\ub2c8\ub2e4.\n\n### \ubaa9\ud45c\n\n\ub85c\uadf8\uc778 \uc2e4\ud328 \uc0c1\ud669\uc5d0\uc11c \uc0ac\uc6a9\uc790\uac00 \uc2e4\ud328 \uc774\uc720\ub97c \uc774\ud574\ud558\uace0 \ub2e4\uc74c \ud589\ub3d9\uc744 \uc120\ud0dd\ud560 \uc218 \uc788\ub3c4\ub85d \uba85\ud655\ud55c \uc548\ub0b4 \uba54\uc2dc\uc9c0\ub97c \uc81c\uacf5\ud574\uc57c \ud569\ub2c8\ub2e4.\n\n### \ud655\uc778\ub41c \uc694\uad6c\uc0ac\ud56d\n\n1. \ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \uc2e4\ud328 \uc774\uc720\ub97c \uc0ac\uc6a9\uc790\uc5d0\uac8c \uc54c\ub824\uc57c \ud569\ub2c8\ub2e4.\n2. \ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \uc0ac\uc6a9\uc790\uac00 \ucde8\ud560 \uc218 \uc788\ub294 \ub2e4\uc74c \ud589\ub3d9\uc744 \uc548\ub0b4\ud574\uc57c \ud569\ub2c8\ub2e4.\n3. \ud604\uc7ac\ucc98\ub7fc `error`\ub9cc \ud45c\uc2dc\ub418\ub294 \uc0c1\ud0dc\ub294 \uc694\uad6c\uc0ac\ud56d\uc744 \ucda9\uc871\ud558\uc9c0 \uc54a\uc2b5\ub2c8\ub2e4.\n\n### \uc778\uc218 \uc870\uac74\n\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \ud654\uba74 \ub610\ub294 \uba54\uc2dc\uc9c0\uc5d0\uc11c \ub2e8\uc21c `error` \ub300\uc2e0 \uc0ac\ub78c\uc774 \uc774\ud574\ud560 \uc218 \uc788\ub294 \uc2e4\ud328 \uc548\ub0b4\uac00 \ud45c\uc2dc\ub429\ub2c8\ub2e4.\n- \uc548\ub0b4 \ubb38\uad6c\uc5d0\ub294 \uc2e4\ud328 \uc774\uc720\uac00 \ud3ec\ud568\ub429\ub2c8\ub2e4.\n- \uc548\ub0b4 \ubb38\uad6c\uc5d0\ub294 \uc0ac\uc6a9\uc790\uac00 \ub2e4\uc74c\uc5d0 \ud560 \uc218 \uc788\ub294 \ud589\ub3d9\uc774 \ud3ec\ud568\ub429\ub2c8\ub2e4.\n\n### \uc81c\uc57d / \uc81c\uc678 \ubc94\uc704\n\n- \uc81c\uacf5\ub41c \uc790\ub8cc\ub9cc\uc73c\ub85c\ub294 \ub300\uc0c1 \ud50c\ub7ab\ud3fc, \ub85c\uadf8\uc778 \ubc29\uc2dd, \uc778\uc99d API, \ud654\uba74 \uc704\uce58, \ubb38\uad6c \ud1a4, \ubcf4\uc548 \uc815\ucc45\uc740 \ud655\uc815\ub418\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4.\n- \ud604\uc7ac \uad6c\ud604 \ucf54\ub4dc \uacbd\ub85c\uac00 \uc81c\uacf5\ub418\uc9c0 \uc54a\uc558\uc73c\ubbc0\ub85c \uc2e4\uc81c \uad6c\ud604 \ud30c\uc77c\uc774\ub098 \ub370\uc774\ud130 \ud750\ub984\uc740 \ud655\uc778\ud558\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4.\n\n## \uac2d \ubd84\uc11d \ubcf4\uace0\uc11c\n\n### \uc694\uc57d\n\n\ud604\uc7ac \ub85c\uadf8\uc778 \uc2e4\ud328 UX\ub294 \uc0ac\uc6a9\uc790\uc5d0\uac8c `error`\ub9cc \ubcf4\uc5ec \uc8fc\ub294 \uc218\uc900\uc73c\ub85c, \uc2e4\ud328 \uc774\uc720\uc640 \ub2e4\uc74c \ud589\ub3d9\uc744 \uc54c\ub824\uc57c \ud55c\ub2e4\ub294 \uc694\uad6c\uc0ac\ud56d\uacfc \uba85\ud655\ud55c \ucc28\uc774\uac00 \uc788\uc2b5\ub2c8\ub2e4. \uc694\uad6c\uc0ac\ud56d\uc740 \ubc29\ud5a5\uc131\uc774 \ubd84\uba85\ud558\uc9c0\ub9cc, \uc5b4\ub5a4 \uc2e4\ud328 \uc774\uc720\ub97c \uc5b4\ub5a4 \uc218\uc900\uae4c\uc9c0 \ub178\ucd9c\ud560\uc9c0\uc640 \uc5b4\ub5a4 \ub2e4\uc74c \ud589\ub3d9\uc744 \uc81c\uacf5\ud560\uc9c0\ub294 \ucd94\uac00 \uacb0\uc815\uc774 \ud544\uc694\ud569\ub2c8\ub2e4.\n\n### \ud655\uc778\ub41c \uc694\uad6c\uc0ac\ud56d\n\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \uc0ac\uc6a9\uc790\ub294 \uc2e4\ud328 \uc774\uc720\ub97c \uc54c\uc544\uc57c \ud569\ub2c8\ub2e4.\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \uc0ac\uc6a9\uc790\ub294 \ub2e4\uc74c \ud589\ub3d9\uc744 \uc54c\uc544\uc57c \ud569\ub2c8\ub2e4.\n- \ud45c\uc2dc \uba54\uc2dc\uc9c0\ub294 \ub2e8\uc21c \uae30\uc220 \ubb38\uc790\uc5f4\uc778 `error`\uac00 \uc544\ub2c8\ub77c \uc0ac\uc6a9\uc790\uac00 \uc774\ud574 \uac00\ub2a5\ud55c \uc548\ub0b4\uc5ec\uc57c \ud569\ub2c8\ub2e4.\n\n### \ub204\ub77d\ub41c \uc694\uad6c\uc0ac\ud56d\n\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uc720\ud615\ubcc4 \uba54\uc2dc\uc9c0 \uae30\uc900\uc774 \uc5c6\uc2b5\ub2c8\ub2e4.\n  - \uc608: \uc798\ubabb\ub41c \ube44\ubc00\ubc88\ud638, \uc874\uc7ac\ud558\uc9c0 \uc54a\ub294 \uacc4\uc815, \uc7a0\uae34 \uacc4\uc815, \ube44\ud65c\uc131 \uacc4\uc815, \ub124\ud2b8\uc6cc\ud06c \uc624\ub958, \uc11c\ubc84 \uc624\ub958, \uc778\uc99d \ub9cc\ub8cc \ub4f1\n- \uc2e4\ud328 \uc720\ud615\ubcc4 \ub2e4\uc74c \ud589\ub3d9\uc774 \uc815\uc758\ub418\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4.\n  - \uc608: \ub2e4\uc2dc \uc2dc\ub3c4, \ube44\ubc00\ubc88\ud638 \uc7ac\uc124\uc815, \uacc4\uc815 \ucc3e\uae30, \uad00\ub9ac\uc790 \ubb38\uc758, \uc7a0\uc2dc \ud6c4 \uc7ac\uc2dc\ub3c4 \ub4f1\n- \uba54\uc2dc\uc9c0 \ub178\ucd9c \uc704\uce58\uc640 UI \ud615\ud0dc\uac00 \uc815\uc758\ub418\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4.\n  - \uc608: \uc785\ub825 \ud544\ub4dc \ud558\ub2e8, \ud3fc \uc0c1\ub2e8 \ubc30\ub108, \ud1a0\uc2a4\ud2b8, \ubaa8\ub2ec \ub4f1\n- \uc811\uadfc\uc131 \uc694\uad6c\uc0ac\ud56d\uc774 \uc5c6\uc2b5\ub2c8\ub2e4.\n  - \uc608: \uc2a4\ud06c\ub9b0 \ub9ac\ub354 \uc54c\ub9bc, \ud3ec\ucee4\uc2a4 \uc774\ub3d9, \uc0c9\uc0c1 \ub300\ube44\n- \ub85c\uae45/\ubd84\uc11d \uc694\uad6c\uc0ac\ud56d\uc774 \uc5c6\uc2b5\ub2c8\ub2e4.\n  - \uc608: \uc5b4\ub5a4 \uc2e4\ud328 \uc0ac\uc720\uac00 \ubc1c\uc0dd\ud588\ub294\uc9c0 \ub0b4\ubd80 \ub85c\uadf8\uc5d0\ub294 \ub0a8\uae30\ub418 \uc0ac\uc6a9\uc790\uc5d0\uac8c\ub294 \uc548\uc804\ud55c \uba54\uc2dc\uc9c0\ub9cc \ud45c\uc2dc\n\n### \ubaa8\ud638\ud55c \uc694\uad6c\uc0ac\ud56d\n\n- \u201c\uc2e4\ud328 \uc774\uc720\u201d\ub97c \uc5b4\ub290 \uc815\ub3c4 \uad6c\uccb4\uc801\uc73c\ub85c \ubcf4\uc5ec \uc904\uc9c0 \ubd88\uba85\ud655\ud569\ub2c8\ub2e4.\n  - \ubcf4\uc548\uc0c1 \u201c\uacc4\uc815\uc774 \uc5c6\uc74c\u201d\uacfc \u201c\ube44\ubc00\ubc88\ud638\uac00 \ud2c0\ub9bc\u201d\uc744 \uad6c\ubd84\ud574 \ub178\ucd9c\ud558\uc9c0 \uc54a\uc544\uc57c \ud560 \uc218 \uc788\uc2b5\ub2c8\ub2e4.\n- \u201c\ub2e4\uc74c \ud589\ub3d9\u201d\uc758 \ubc94\uc704\uac00 \ubd88\uba85\ud655\ud569\ub2c8\ub2e4.\n  - \ub2e8\uc21c \uc7ac\uc2dc\ub3c4 \uc548\ub0b4\uc778\uc9c0, \ube44\ubc00\ubc88\ud638 \uc7ac\uc124\uc815/\ud68c\uc6d0\uac00\uc785/\uace0\uac1d\uc13c\ud130 \uc5f0\uacb0\uae4c\uc9c0 \ud3ec\ud568\ud558\ub294\uc9c0 \uacb0\uc815\uc774 \ud544\uc694\ud569\ub2c8\ub2e4.\n- \ub85c\uadf8\uc778 \uc2e4\ud328\uc758 \ubc94\uc704\uac00 \ubd88\uba85\ud655\ud569\ub2c8\ub2e4.\n  - \uc77c\ubc18 ID/PW \ub85c\uadf8\uc778\ub9cc\uc778\uc9c0, \uc18c\uc15c \ub85c\uadf8\uc778, SSO, 2FA, \uacc4\uc815 \uc7a0\uae08\uae4c\uc9c0 \ud3ec\ud568\ud558\ub294\uc9c0 \ud655\uc778\uc774 \ud544\uc694\ud569\ub2c8\ub2e4.\n- \ub300\uc0c1 \uc0ac\uc6a9\uc790\uc640 \ubb38\uad6c \ud1a4\uc774 \uc815\ud574\uc9c0\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4.\n\n### \ucda9\ub3cc\ud558\ub294 \uc815\ubcf4\n\n- \uc81c\uacf5\ub41c \uc6d0\ucc9c \uc790\ub8cc \ub0b4\uc5d0\uc11c \ucda9\ub3cc\ud558\ub294 \uc815\ubcf4\ub294 \uc5c6\uc2b5\ub2c8\ub2e4.\n\n### \uad6c\ud604 \uac2d\n\n- \ud604\uc7ac \ub3d9\uc791\uc740 `error`\ub9cc \ud45c\uc2dc\ub41c\ub2e4\uace0 \ub418\uc5b4 \uc788\uc5b4, \uc0ac\uc6a9\uc790 \uce5c\ud654\uc801\uc778 \uc5d0\ub7ec \uba54\uc2dc\uc9c0 \ub9e4\ud551\uc774 \uc5c6\uac70\ub098 UI\uc5d0 \ubc18\uc601\ub418\uc9c0 \uc54a\ub294 \uac2d\uc774 \uc788\uc2b5\ub2c8\ub2e4.\n- \uc2e4\uc81c \ucf54\ub4dc \uacbd\ub85c\uac00 \uc81c\uacf5\ub418\uc9c0 \uc54a\uc544 \ub2e4\uc74c \ud56d\ubaa9\uc740 \ud655\uc778\ud558\uc9c0 \ubabb\ud588\uc2b5\ub2c8\ub2e4.\n  - \uc778\uc99d API \uc5d0\ub7ec \uc751\ub2f5 \uad6c\uc870\n  - \ud504\ub860\ud2b8\uc5d4\ub4dc \uc5d0\ub7ec \ucc98\ub9ac \uc704\uce58\n  - \uae30\uc874 i18n/\ubb38\uad6c \uad00\ub9ac \ubc29\uc2dd\n  - \ud14c\uc2a4\ud2b8 \uc874\uc7ac \uc5ec\ubd80\n\n### UX / UI \uac2d\n\n- `error`\ub294 \uc0ac\uc6a9\uc790\uac00 \uc6d0\uc778\uacfc \uc870\uce58 \ubc29\ubc95\uc744 \uc774\ud574\ud558\uae30\uc5d0 \ubd80\uc871\ud569\ub2c8\ub2e4.\n- \uc2e4\ud328 \uba54\uc2dc\uc9c0\uc5d0 \ub2e4\uc74c \ud589\ub3d9 \ub9c1\ud06c\ub098 \ubc84\ud2bc\uc774 \ud3ec\ud568\ub418\uc5b4\uc57c \ud560 \uac00\ub2a5\uc131\uc774 \ub192\uc2b5\ub2c8\ub2e4.\n  - \uc608: \u201c\uc774\uba54\uc77c \ub610\ub294 \ube44\ubc00\ubc88\ud638\uac00 \uc62c\ubc14\ub974\uc9c0 \uc54a\uc2b5\ub2c8\ub2e4. \ub2e4\uc2dc \uc785\ub825\ud558\uac70\ub098 \ube44\ubc00\ubc88\ud638\ub97c \uc7ac\uc124\uc815\ud574 \uc8fc\uc138\uc694.\u201d\n- \uc2e4\ud328 \ud6c4 \uc0ac\uc6a9\uc790\uac00 \uc5b4\ub514\ub97c \uc218\uc815\ud574\uc57c \ud558\ub294\uc9c0 \uc54c \uc218 \uc788\ub3c4\ub85d \uc785\ub825 \ud544\ub4dc, \ud3fc \uc0c1\ud0dc, \ud3ec\ucee4\uc2a4 \ucc98\ub9ac \uae30\uc900\uc774 \ud544\uc694\ud569\ub2c8\ub2e4.\n\n### API / \ub370\uc774\ud130 \uac2d\n\n- \ud074\ub77c\uc774\uc5b8\ud2b8\uac00 \uc2e4\ud328 \uc0ac\uc720\ub97c \uad6c\ubd84\ud560 \uc218 \uc788\ub294 API \uc5d0\ub7ec \ucf54\ub4dc\uac00 \uc788\ub294\uc9c0 \ud655\uc778\uc774 \ud544\uc694\ud569\ub2c8\ub2e4.\n- \ubcf4\uc548 \uc815\ucc45\uc0c1 \uc0ac\uc6a9\uc790\uc5d0\uac8c \ub178\ucd9c \uac00\ub2a5\ud55c \uc5d0\ub7ec \ucf54\ub4dc/\uba54\uc2dc\uc9c0\uc640 \ub0b4\ubd80 \ub85c\uae45\uc6a9 \uc5d0\ub7ec \ucf54\ub4dc\ub97c \ubd84\ub9ac\ud574\uc57c \ud560 \uc218 \uc788\uc2b5\ub2c8\ub2e4.\n- \ub124\ud2b8\uc6cc\ud06c \uc624\ub958\uc640 \uc778\uc99d \uc2e4\ud328\ucc98\ub7fc \uc0ac\uc6a9\uc790 \ud589\ub3d9\uc774 \ub2e4\ub978 \uc624\ub958\ub97c \uad6c\ubd84\ud560 \uc218 \uc788\uc5b4\uc57c \ud569\ub2c8\ub2e4.\n\n### \uc5e3\uc9c0 \ucf00\uc774\uc2a4\n\n- \uc774\uba54\uc77c/\uc544\uc774\ub514\uac00 \uc874\uc7ac\ud558\uc9c0 \uc54a\ub294 \uacbd\uc6b0\n- \ube44\ubc00\ubc88\ud638\uac00 \ud2c0\ub9b0 \uacbd\uc6b0\n- \uacc4\uc815\uc774 \uc7a0\uae34 \uacbd\uc6b0\n- \uacc4\uc815\uc774 \ube44\ud65c\uc131\ud654\ub418\uc5c8\uac70\ub098 \uc778\uc99d\ub418\uc9c0 \uc54a\uc740 \uacbd\uc6b0\n- \uc18c\uc15c \ub85c\uadf8\uc778 \ub610\ub294 SSO \uc2e4\ud328\n- 2\ub2e8\uacc4 \uc778\uc99d \uc2e4\ud328\n- \ub124\ud2b8\uc6cc\ud06c \uc624\ub958 \ub610\ub294 \uc11c\ubc84 \uc7a5\uc560\n- \ub108\ubb34 \ub9ce\uc740 \ub85c\uadf8\uc778 \uc2dc\ub3c4\ub85c \uc778\ud55c rate limit\n- \uc138\uc158 \ub9cc\ub8cc \ud6c4 \uc7ac\ub85c\uadf8\uc778 \uc2e4\ud328\n\n### \uc704\ud5d8\n\n- \uc2e4\ud328 \uc774\uc720\ub97c \uc9c0\ub098\uce58\uac8c \uad6c\uccb4\uc801\uc73c\ub85c \ub178\ucd9c\ud558\uba74 \uacc4\uc815 \uc874\uc7ac \uc5ec\ubd80\ub97c \ucd94\uce21\ud560 \uc218 \uc788\ub294 \ubcf4\uc548 \ubb38\uc81c\uac00 \uc0dd\uae38 \uc218 \uc788\uc2b5\ub2c8\ub2e4.\n- \ubaa8\ub4e0 \uc2e4\ud328\ub97c \ub3d9\uc77c \ubb38\uad6c\ub85c \ucc98\ub9ac\ud558\uba74 \uc0ac\uc6a9\uc790 \uc694\uad6c\uc0ac\ud56d\uc778 \u201c\uc2e4\ud328 \uc774\uc720\u201d\ub97c \ucda9\ubd84\ud788 \ub9cc\uc871\ud558\uc9c0 \ubabb\ud560 \uc218 \uc788\uc2b5\ub2c8\ub2e4.\n- API \uc5d0\ub7ec \ucf54\ub4dc\uc640 UI \uba54\uc2dc\uc9c0 \ub9e4\ud551\uc774 \uba85\ud655\ud558\uc9c0 \uc54a\uc73c\uba74 \uc7ac\ubc1c\ud558\uac70\ub098 \uc77c\ubd80 \ucf00\uc774\uc2a4\uc5d0\uc11c \ub2e4\uc2dc `error`\uac00 \ub178\ucd9c\ub420 \uc218 \uc788\uc2b5\ub2c8\ub2e4.\n- i18n\uc774 \uc788\ub294 \uc11c\ube44\uc2a4\ub77c\uba74 \ud55c\uad6d\uc5b4/\uc601\uc5b4 \ub4f1 \ub2e4\uad6d\uc5b4 \ubb38\uad6c \ub204\ub77d \uc704\ud5d8\uc774 \uc788\uc2b5\ub2c8\ub2e4.\n\n### \ud655\uc778\uc774 \ud544\uc694\ud55c \uc9c8\ubb38\n\n1. \ub85c\uadf8\uc778 \ubc29\uc2dd\uc740 \ubb34\uc5c7\uc778\uac00\uc694? ID/PW\ub9cc \ud3ec\ud568\ud558\ub098\uc694, \uc18c\uc15c \ub85c\uadf8\uc778/SSO/2FA\ub3c4 \ud3ec\ud568\ud558\ub098\uc694?\n2. \ubcf4\uc548 \uc815\ucc45\uc0c1 \uc0ac\uc6a9\uc790\uc5d0\uac8c \uacc4\uc815 \uc874\uc7ac \uc5ec\ubd80\ub098 \uc7a0\uae08 \uc0ac\uc720\ub97c \uad6c\uccb4\uc801\uc73c\ub85c \uc54c\ub824\ub3c4 \ub418\ub098\uc694?\n3. \uc2e4\ud328 \uc720\ud615\ubcc4\ub85c API \uc5d0\ub7ec \ucf54\ub4dc\uac00 \uc774\ubbf8 \uad6c\ubd84\ub418\uc5b4 \uc788\ub098\uc694?\n4. \uc6d0\ud558\ub294 \ub2e4\uc74c \ud589\ub3d9\uc740 \ubb34\uc5c7\uc778\uac00\uc694? \uc7ac\uc2dc\ub3c4, \ube44\ubc00\ubc88\ud638 \uc7ac\uc124\uc815, \uacc4\uc815 \ucc3e\uae30, \uace0\uac1d\uc13c\ud130 \ubb38\uc758 \uc911 \ubb34\uc5c7\uc744 \ud3ec\ud568\ud574\uc57c \ud558\ub098\uc694?\n5. \uc5d0\ub7ec \uba54\uc2dc\uc9c0\ub294 \uc5b4\ub514\uc5d0 \ud45c\uc2dc\ud574\uc57c \ud558\ub098\uc694? \ud3fc \uc0c1\ub2e8, \ud544\ub4dc \ud558\ub2e8, \ud1a0\uc2a4\ud2b8, \ubaa8\ub2ec \uc911 \uc120\ud638\uac00 \uc788\ub098\uc694?\n6. \uae30\uc874 \ubb38\uad6c \uc2a4\ud0c0\uc77c \ub610\ub294 i18n \uccb4\uacc4\uac00 \uc788\ub098\uc694?\n7. \uc774 \ubcc0\uacbd\uc758 \ub300\uc0c1 \ud654\uba74\uc774\ub098 \ucf54\ub4dc \uacbd\ub85c\uac00 \uc788\ub098\uc694?\n\n### \ucd94\ucc9c \ub2e4\uc74c \ub2e8\uacc4\n\n1. \ub85c\uadf8\uc778 \uc2e4\ud328 \uc720\ud615\uacfc \uc0ac\uc6a9\uc790 \ub178\ucd9c \uac00\ub2a5 \uc218\uc900\uc744 \ud655\uc815\ud569\ub2c8\ub2e4.\n2. \uc2e4\ud328 \uc720\ud615\ubcc4 \uc0ac\uc6a9\uc790 \uba54\uc2dc\uc9c0\uc640 \ub2e4\uc74c \ud589\ub3d9\uc744 \ud45c\ub85c \uc815\uc758\ud569\ub2c8\ub2e4.\n3. \uad00\ub828 \ucf54\ub4dc \uacbd\ub85c\ub97c \uc81c\uacf5\ubc1b\uc544 \ud604\uc7ac \uc5d0\ub7ec \ucc98\ub9ac \ud750\ub984\uacfc API \uc751\ub2f5 \uad6c\uc870\ub97c \ud655\uc778\ud569\ub2c8\ub2e4.\n4. \uc774\ud6c4 `/tigap:gaplan`\uc73c\ub85c \uad6c\ud604 \uacc4\ud68d\uacfc \uc791\uc5c5 \ubaa9\ub85d\uc744 \uc791\uc131\ud569\ub2c8\ub2e4.\n"}], "grading": {"run_id": "eval-2-normalize-brief-and-gap-with_skill", "expectations": [{"text": "\ubaa9\ud45c, \uc694\uad6c\uc0ac\ud56d, \uc778\uc218 \uc870\uac74, \uc5f4\ub9b0 \uc9c8\ubb38\uc744 \uc815\ub9ac\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ubaa9\ud45c, \uc694\uad6c\uc0ac\ud56d, \uc778\uc218, \uc870\uac74"}, {"text": "\ub85c\uadf8\uc778 \uc2e4\ud328 UX\uc758 \uad6c\ud604 \uac2d \ub610\ub294 UX \uac2d\uc744 \ud3ec\ud568\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ub85c\uadf8\uc778, \uc2e4\ud328, \uad6c\ud604, \ub610\ub294, UX"}, {"text": "\ubaa8\ud638\ud55c \uc694\uad6c\uc0ac\ud56d\uc774\ub098 \ud655\uc778 \uc9c8\ubb38\uc744 \ubd84\ub9ac\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ubaa8\ud638\ud55c, \ud655\uc778"}, {"text": "\ucf54\ub4dc\ub97c \uad6c\ud604\ud558\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ucf54\ub4dc\ub97c"}, {"text": "\ub2e4\uc74c \ub2e8\uacc4\ub85c /tigap:gaplan\uc744 \uc81c\uc548\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ub2e4\uc74c"}], "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0}}}, {"id": "eval-2-normalize-brief-and-gap-z_old_skill", "prompt": "\uc6d0\ucc9c \uc790\ub8cc: \ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \uc0ac\uc6a9\uc790\ub294 \uc2e4\ud328 \uc774\uc720\uc640 \ub2e4\uc74c \ud589\ub3d9\uc744 \uc54c\uc544\uc57c \ud55c\ub2e4. \ud604\uc7ac\ub294 'error'\ub9cc \ub72c\ub2e4. \uc774 \uae30\uc900\uc73c\ub85c gap \ubd84\uc11d\ud574\uc918.", "eval_id": 2, "outputs": [{"name": "final_response.md", "type": "text", "content": "\ud604\uc7ac \uc694\uccad\uc740 \uc0ac\uc6a9\uc790\uac00 \uc791\uc131\ud55c \ube0c\ub9ac\ud504\ub97c \uc6d0\ucc9c \uc790\ub8cc\ub85c \ubcfc \uc218 \uc788\uc73c\ubbc0\ub85c, \uc774 \uae30\uc900\uc73c\ub85c \uac2d \ubd84\uc11d\uc744 \uc9c4\ud589\ud588\uc2b5\ub2c8\ub2e4. \uc774 \ud3c9\uac00 \uc2e4\ud589\uc5d0\uc11c\ub294 \uc2e4\uc81c `.gap/` \uc0b0\ucd9c\ubb3c\uc744 \ub9cc\ub4e4\uc9c0 \uc54a\uace0, \uc544\ub798\uc5d0 \uc0dd\uc131\ud588\uc744 \uc0b0\ucd9c\ubb3c \uc694\uc57d\uc744 \ud568\uaed8 \ub0a8\uae41\ub2c8\ub2e4.\n\n## \uc6d0\ucc9c \uc790\ub8cc \uc815\uaddc\ud654 \uc694\uc57d\n\n### \ubaa9\ud45c\n\n\ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \uc0ac\uc6a9\uc790\uac00 \uc2e4\ud328 \uc774\uc720\ub97c \uc774\ud574\ud558\uace0, \ub2e4\uc74c\uc5d0 \ubb34\uc5c7\uc744 \ud574\uc57c \ud558\ub294\uc9c0 \uc54c \uc218 \uc788\ub3c4\ub85d \uc624\ub958 \uacbd\ud5d8\uc744 \uac1c\uc120\ud55c\ub2e4.\n\n### \ubb38\uc81c\n\n\ud604\uc7ac \ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \ud654\uba74\uc5d0 `error`\ub9cc \ud45c\uc2dc\ub418\uc5b4 \uc0ac\uc6a9\uc790\uac00 \uc2e4\ud328 \uc6d0\uc778\uacfc \ud574\uacb0 \ud589\ub3d9\uc744 \uc54c \uc218 \uc5c6\ub2e4.\n\n### \ud655\uc778\ub41c \uc694\uad6c\uc0ac\ud56d\n\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uc0c1\ud669\uc5d0\uc11c \ub2e8\uc21c\ud55c `error` \ub300\uc2e0 \uc2e4\ud328 \uc774\uc720\ub97c \uc0ac\uc6a9\uc790\uc5d0\uac8c \uc54c\ub824\uc57c \ud55c\ub2e4.\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uc0c1\ud669\uc5d0\uc11c \uc0ac\uc6a9\uc790\uac00 \ucde8\ud560 \uc218 \uc788\ub294 \ub2e4\uc74c \ud589\ub3d9\uc744 \uc548\ub0b4\ud574\uc57c \ud55c\ub2e4.\n- \uc548\ub0b4 \ubb38\uad6c\ub294 \uc0ac\uc6a9\uc790\uac00 \uc774\ud574\ud560 \uc218 \uc788\ub294 \ud45c\ud604\uc774\uc5b4\uc57c \ud55c\ub2e4.\n\n### \uc778\uc218 \uc870\uac74\n\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \ud654\uba74\uc5d0 `error`\ub9cc \ub2e8\ub3c5\uc73c\ub85c \ud45c\uc2dc\ub418\uc9c0 \uc54a\ub294\ub2e4.\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uba54\uc2dc\uc9c0\ub294 \uc2e4\ud328 \uc774\uc720\ub97c \ud3ec\ud568\ud55c\ub2e4.\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uba54\uc2dc\uc9c0\ub294 \ub2e4\uc74c \ud589\ub3d9\uc744 \ud3ec\ud568\ud55c\ub2e4.\n- \uc0ac\uc6a9\uc790\ub294 \uba54\uc2dc\uc9c0\ub9cc \ubcf4\uace0 \uc7ac\uc2dc\ub3c4, \uc785\ub825 \uc218\uc815, \ube44\ubc00\ubc88\ud638 \uc7ac\uc124\uc815, \uc9c0\uc6d0 \ubb38\uc758 \ub4f1 \uc801\uc808\ud55c \ub2e4\uc74c \ud589\ub3d9\uc744 \ud310\ub2e8\ud560 \uc218 \uc788\ub2e4.\n\n### \uc81c\uc57d\n\n- \uc81c\uacf5\ub41c \uc6d0\ucc9c \uc790\ub8cc\uc5d0\ub294 \uad6c\uccb4\uc801\uc778 \ub85c\uadf8\uc778 \ubc29\uc2dd, \uc778\uc99d API, \uc5d0\ub7ec \ucf54\ub4dc, UI \uc704\uce58, \uc9c0\uc6d0 \ucc44\ub110\uc774 \uba85\uc2dc\ub418\uc5b4 \uc788\uc9c0 \uc54a\ub2e4.\n- \ud604\uc7ac \uad6c\ud604 \ud30c\uc77c\uc774\ub098 \ud654\uba74 \uc790\ub8cc\ub294 \uc81c\uacf5\ub418\uc9c0 \uc54a\uc558\ub2e4.\n\n### \uc81c\uc678 \ubc94\uc704\n\n- \uc2e4\uc81c \uad6c\ud604 \ubcc0\uacbd\uc740 \uc774 \ub2e8\uacc4\uc5d0\uc11c \uc218\ud589\ud558\uc9c0 \uc54a\ub294\ub2e4.\n- \ub85c\uadf8\uc778 \uc815\ucc45, \uacc4\uc815 \uc7a0\uae08 \uc815\ucc45, MFA \uc815\ucc45 \uc790\uccb4\uc758 \ubcc0\uacbd \uc5ec\ubd80\ub294 \uc544\uc9c1 \ud655\uc815\ud558\uc9c0 \uc54a\ub294\ub2e4.\n\n### \uc5f4\ub9b0 \uc9c8\ubb38\n\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uc774\uc720\ub97c \uc5b4\ub514\uae4c\uc9c0 \uad6c\uccb4\uc801\uc73c\ub85c \ub178\ucd9c\ud560 \uac83\uc778\uac00?\n- \ubcf4\uc548\uc0c1 \uc0ac\uc6a9\uc790 \uc874\uc7ac \uc5ec\ubd80\ub97c \ucd94\ub860\ud560 \uc218 \uc788\ub294 \ubb38\uad6c\ub97c \ud53c\ud574\uc57c \ud558\ub294\uac00?\n- \uc2e4\ud328 \uc720\ud615\uc740 \uc5b4\ub5a4 \uac83\ub4e4\uc774 \uc788\ub294\uac00? \uc608: \uc798\ubabb\ub41c \ube44\ubc00\ubc88\ud638, \uc874\uc7ac\ud558\uc9c0 \uc54a\ub294 \uacc4\uc815, \uc7a0\uae34 \uacc4\uc815, \ube44\ud65c\uc131 \uacc4\uc815, \ub124\ud2b8\uc6cc\ud06c \uc624\ub958, \uc11c\ubc84 \uc624\ub958, \uc778\uc99d \ub9cc\ub8cc \ub4f1.\n- \ube44\ubc00\ubc88\ud638 \uc7ac\uc124\uc815, \ud68c\uc6d0\uac00\uc785, \uace0\uac1d\uc9c0\uc6d0 \ub4f1 \ub2e4\uc74c \ud589\ub3d9 \ub9c1\ud06c\uac00 \uc774\ubbf8 \uc874\uc7ac\ud558\ub294\uac00?\n- \ubb38\uad6c\ub294 \uc5b4\ub5a4 \ud1a4\uc564\ub9e4\ub108\uc640 \uc5b8\uc5b4 \uc815\ucc45\uc744 \ub530\ub77c\uc57c \ud558\ub294\uac00?\n\n## \uac2d \ubd84\uc11d \ubcf4\uace0\uc11c\n\n### \uc694\uc57d\n\n\ud604\uc7ac \uc694\uad6c\ub294 \u201c\ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc `error`\ub9cc \ubcf4\uc774\ub294 \ubb38\uc81c\ub97c \uac1c\uc120\ud558\uc5ec \uc2e4\ud328 \uc774\uc720\uc640 \ub2e4\uc74c \ud589\ub3d9\uc744 \uc81c\uacf5\ud55c\ub2e4\u201d\ub294 \uac83\uc785\ub2c8\ub2e4. \ud575\uc2ec \uac2d\uc740 \uc5d0\ub7ec \ud45c\uc2dc\uac00 \uc9c0\ub098\uce58\uac8c \uc77c\ubc18\uc801\uc774\ub77c \uc0ac\uc6a9\uc790\uac00 \ubb38\uc81c\ub97c \ud574\uacb0\ud560 \uc218 \uc5c6\ub2e4\ub294 UX \uac2d\uc785\ub2c8\ub2e4. \ub2e4\ub9cc \uc2e4\ud328 \uc720\ud615, \ubcf4\uc548 \uc815\ucc45, \ub178\ucd9c \uac00\ub2a5\ud55c \uc0c1\uc138 \uc218\uc900, \uc2e4\uc81c \ud604\uc7ac \uad6c\ud604 \uc704\uce58\uac00 \uc544\uc9c1 \ud655\uc778\ub418\uc9c0 \uc54a\uc544 \uad6c\ud604 \uacc4\ud68d \uc804 \ucd94\uac00 \ud655\uc778\uc774 \ud544\uc694\ud569\ub2c8\ub2e4.\n\n### \ud655\uc778\ub41c \uc694\uad6c\uc0ac\ud56d\n\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \uc0ac\uc6a9\uc790\uc5d0\uac8c \uc2e4\ud328 \uc774\uc720\ub97c \uc54c\ub824\uc57c \ud55c\ub2e4.\n- \ub85c\uadf8\uc778 \uc2e4\ud328 \uc2dc \uc0ac\uc6a9\uc790\uc5d0\uac8c \ub2e4\uc74c \ud589\ub3d9\uc744 \uc54c\ub824\uc57c \ud55c\ub2e4.\n- \ud604\uc7ac\uc758 `error` \ub2e8\ub3c5 \ud45c\uc2dc\ub294 \uae30\uc900\uc744 \ub9cc\uc871\ud558\uc9c0 \uc54a\ub294\ub2e4.\n- \uc624\ub958 \uba54\uc2dc\uc9c0\ub294 \uc0ac\uc6a9\uc790\uac00 \uc774\ud574 \uac00\ub2a5\ud55c \ubb38\uc7a5\uc774\uc5b4\uc57c \ud55c\ub2e4.\n\n### \ub204\ub77d\ub41c \uc694\uad6c\uc0ac\ud56d\n\n- \uc2e4\ud328 \uc720\ud615\ubcc4 \uba54\uc2dc\uc9c0 \uae30\uc900\uc774 \uc5c6\ub2e4.\n- \uc2e4\ud328 \uc720\ud615\ubcc4 \ub2e4\uc74c \ud589\ub3d9 \ub9e4\ud551\uc774 \uc5c6\ub2e4.\n- \ubcf4\uc548\uc0c1 \ub178\ucd9c \uac00\ub2a5\ud55c \uc2e4\ud328 \uc774\uc720\uc758 \ubc94\uc704\uac00 \uc815\uc758\ub418\uc9c0 \uc54a\uc558\ub2e4.\n- \uba54\uc2dc\uc9c0 \ud45c\uc2dc \uc704\uce58, \ub514\uc790\uc778, \uc811\uadfc\uc131 \uae30\uc900\uc774 \uc5c6\ub2e4.\n- \uc11c\ubc84/API\uc5d0\uc11c \ub0b4\ub824\uc624\ub294 \uc5d0\ub7ec \ucf54\ub4dc\uc640 \ud504\ub860\ud2b8\uc5d4\ub4dc \ubb38\uad6c \ub9e4\ud551 \uae30\uc900\uc774 \uc5c6\ub2e4.\n- \ub85c\uae45\uc774\ub098 \ubaa8\ub2c8\ud130\ub9c1 \uae30\uc900\uc774 \uc5c6\ub2e4.\n- \ud14c\uc2a4\ud2b8 \uae30\uc900\uc774 \uad6c\uccb4\ud654\ub418\uc5b4 \uc788\uc9c0 \uc54a\ub2e4.\n\n### \ubaa8\ud638\ud55c \uc694\uad6c\uc0ac\ud56d\n\n- \u201c\uc2e4\ud328 \uc774\uc720\u201d\uac00 \uae30\uc220\uc801 \uc6d0\uc778\uc778\uc9c0, \uc0ac\uc6a9\uc790 \uce5c\ud654\uc801 \ubc94\uc8fc\uc778\uc9c0 \ubd88\uba85\ud655\ud558\ub2e4.\n- \u201c\ub2e4\uc74c \ud589\ub3d9\u201d\uc774 \ub2e8\uc21c \ubb38\uad6c\uc778\uc9c0, \ub9c1\ud06c/\ubc84\ud2bc\uae4c\uc9c0 \ud3ec\ud568\ud558\ub294\uc9c0 \ubd88\uba85\ud655\ud558\ub2e4.\n- \ubaa8\ub4e0 \ub85c\uadf8\uc778 \uc2e4\ud328\uc5d0 \ub3d9\uc77c\ud55c \uc548\ub0b4\ub97c \uc4f8\uc9c0, \uc2e4\ud328 \uc720\ud615\ubcc4\ub85c \ub2e4\ub974\uac8c \uc548\ub0b4\ud560\uc9c0 \ubd88\uba85\ud655\ud558\ub2e4.\n- `error`\uac00 \ud654\uba74 \ubb38\uad6c\uc778\uc9c0, \ud1a0\uc2a4\ud2b8/\uc54c\ub9bc/\ud544\ub4dc \uc5d0\ub7ec/\ucf58\uc194 \ub85c\uadf8\uc778\uc9c0 \ubd88\uba85\ud655\ud558\ub2e4.\n\n### \ucda9\ub3cc\ud558\ub294 \uc815\ubcf4\n\n- \uc81c\uacf5\ub41c \uc790\ub8cc \uc548\uc5d0\uc11c\ub294 \ucda9\ub3cc\ud558\ub294 \uc815\ubcf4\uac00 \ud655\uc778\ub418\uc9c0 \uc54a\uc558\ub2e4.\n\n### \uad6c\ud604 \uac2d\n\n- \ud604\uc7ac \uad6c\ud604 \ud30c\uc77c\uc774 \uc81c\uacf5\ub418\uc9c0 \uc54a\uc544 \uc2e4\uc81c \ucf54\ub4dc \ud655\uc778\uc740 \uc218\ud589\ud558\uc9c0 \ubabb\ud588\ub2e4.\n- \ud604\uc7ac\ub294 \ub85c\uadf8\uc778 \uc2e4\ud328 \uc751\ub2f5\uc774 \uc0ac\uc6a9\uc790 \uce5c\ud654\uc801\uc778 \uba54\uc2dc\uc9c0\ub85c \ubcc0\ud658\ub418\uc9c0 \uc54a\uace0 `error`\ub85c \ud45c\uc2dc\ub418\ub294 \uac83\uc73c\ub85c \ubcf4\uc778\ub2e4.\n- \uc778\uc99d \uc2e4\ud328 \uc751\ub2f5\uc758 \uc5d0\ub7ec \ud0c0\uc785 \ub610\ub294 \uc0c1\ud0dc \ucf54\ub4dc\uac00 UI \uba54\uc2dc\uc9c0\ub85c \ub9e4\ud551\ub418\ub294 \uad6c\uc870\uac00 \ud544\uc694\ud558\ub2e4.\n- \uc608\uc0c1 \uad6c\ud604 \uc9c0\uc810\uc740 \ub85c\uadf8\uc778 \uc694\uccad \ucc98\ub9ac, \uc5d0\ub7ec \ud578\ub4e4\ub9c1, \uba54\uc2dc\uc9c0 \ub80c\ub354\ub9c1, \ud14c\uc2a4\ud2b8 \ucf54\ub4dc\ub2e4.\n\n### UX / UI \uac2d\n\n- `error`\ub294 \uc0ac\uc6a9\uc790\uac00 \uc6d0\uc778\uacfc \ud574\uacb0 \ubc29\ubc95\uc744 \uc774\ud574\ud558\uae30\uc5d0 \ubd80\uc871\ud558\ub2e4.\n- \uc785\ub825\uac12 \uc624\ub958, \uacc4\uc815 \ubb38\uc81c, \uc2dc\uc2a4\ud15c \ubb38\uc81c\ub97c \uad6c\ubd84\ud574 \uc548\ub0b4\ud558\uc9c0 \uc54a\uc73c\uba74 \uc0ac\uc6a9\uc790\uac00 \ubd88\ud544\uc694\ud558\uac8c \ubc18\ubcf5 \uc2dc\ub3c4\ud560 \uc218 \uc788\ub2e4.\n- \ub2e4\uc74c \ud589\ub3d9\uc774 \uc5c6\uc73c\uba74 \ube44\ubc00\ubc88\ud638 \uc7ac\uc124\uc815, \uc785\ub825 \ud655\uc778, \uc7a0\uc2dc \ud6c4 \uc7ac\uc2dc\ub3c4, \uace0\uac1d\uc9c0\uc6d0 \ubb38\uc758 \uac19\uc740 \ud574\uacb0 \uacbd\ub85c\uac00 \ub9c9\ud78c\ub2e4.\n- \uc5d0\ub7ec \ubb38\uad6c\uac00 \ud544\ub4dc \uc8fc\ubcc0\uc5d0 \ud45c\uc2dc\ub418\uc5b4\uc57c \ud558\ub294\uc9c0, \uc804\uc5ed \uc54c\ub9bc\uc73c\ub85c \ud45c\uc2dc\ub418\uc5b4\uc57c \ud558\ub294\uc9c0 \uc815\ud574\uc838 \uc788\uc9c0 \uc54a\ub2e4.\n\n### API / \ub370\uc774\ud130 \uac2d\n\n- \uc778\uc99d API\uac00 \uc2e4\ud328 \uc6d0\uc778\uc744 \uad6c\ubd84 \uac00\ub2a5\ud55c \ucf54\ub4dc\ub85c \uc81c\uacf5\ud558\ub294\uc9c0 \ud655\uc778\uc774 \ud544\uc694\ud558\ub2e4.\n- API\uac00 \ub2e8\uc21c \ubb38\uc790\uc5f4 `error`\ub9cc \ubc18\ud658\ud55c\ub2e4\uba74, \ud504\ub860\ud2b8\uc5d4\ub4dc\uc5d0\uc11c \ucda9\ubd84\ud55c \uc548\ub0b4\ub97c \uc81c\uacf5\ud558\uae30 \uc5b4\ub835\ub2e4.\n- \uc5d0\ub7ec \ucf54\ub4dc \uc608\uc2dc\uc640 \uba54\uc2dc\uc9c0 \ub9e4\ud551 \ud45c\uac00 \ud544\uc694\ud558\ub2e4.\n- \ub124\ud2b8\uc6cc\ud06c \uc624\ub958\uc640 \uc778\uc99d \uc2e4\ud328\ub97c \uad6c\ubd84\ud560 \uc218 \uc788\uc5b4\uc57c \ud55c\ub2e4.\n\n### \uc5e3\uc9c0 \ucf00\uc774\uc2a4\n\n- \uc774\uba54\uc77c/\uc544\uc774\ub514 \ud615\uc2dd \uc624\ub958\n- \ube44\ubc00\ubc88\ud638 \uc624\uc785\ub825\n- \uc874\uc7ac\ud558\uc9c0 \uc54a\ub294 \uacc4\uc815\n- \ube44\ud65c\uc131\ud654 \ub610\ub294 \uc7a0\uae34 \uacc4\uc815\n- \ube44\ubc00\ubc88\ud638 \uc7ac\uc124\uc815\uc774 \ud544\uc694\ud55c \uacc4\uc815\n- \ub124\ud2b8\uc6cc\ud06c \uc5f0\uacb0 \uc2e4\ud328\n- \uc11c\ubc84 \uc7a5\uc560\n- \ub108\ubb34 \ub9ce\uc740 \ub85c\uadf8\uc778 \uc2dc\ub3c4\n- MFA \ub610\ub294 \ucd94\uac00 \uc778\uc99d\uc774 \ud544\uc694\ud55c \uacc4\uc815\n- \uc138\uc158 \ub9cc\ub8cc \ud6c4 \uc7ac\ub85c\uadf8\uc778 \uc2e4\ud328\n\n### \uc704\ud5d8\n\n- \uc2e4\ud328 \uc774\uc720\ub97c \ub108\ubb34 \uc790\uc138\ud788 \ub178\ucd9c\ud558\uba74 \uacc4\uc815 \uc874\uc7ac \uc5ec\ubd80\ub098 \ubcf4\uc548 \uc0c1\ud0dc\uac00 \ucd94\ub860\ub420 \uc218 \uc788\ub2e4.\n- \uc2e4\ud328 \uc720\ud615\uc744 \uacfc\ub3c4\ud558\uac8c \ub2e8\uc21c\ud654\ud558\uba74 \uc0ac\uc6a9\uc790\uac00 \uc2e4\uc81c \ud574\uacb0 \ud589\ub3d9\uc744 \ucc3e\uc9c0 \ubabb\ud560 \uc218 \uc788\ub2e4.\n- API \uc5d0\ub7ec \ucf54\ub4dc\uac00 \uc548\uc815\uc801\uc774\uc9c0 \uc54a\uc73c\uba74 UI \ubb38\uad6c\uac00 \uc798\ubabb \ud45c\uc2dc\ub420 \uc218 \uc788\ub2e4.\n- \ub2e4\uad6d\uc5b4 \uc81c\ud488\uc774\ub77c\uba74 \ubb38\uad6c \uad00\ub9ac\uc640 \ubc88\uc5ed \ub204\ub77d \uc704\ud5d8\uc774 \uc788\ub2e4.\n- \ud14c\uc2a4\ud2b8 \uc5c6\uc774 \ubcc0\uacbd\ud558\uba74 \uae30\uc874 \ub85c\uadf8\uc778 \uc2e4\ud328 \ud50c\ub85c\uc6b0\uac00 \uae68\uc9c8 \uc218 \uc788\ub2e4.\n\n### \ud655\uc778\uc774 \ud544\uc694\ud55c \uc9c8\ubb38\n\n1. \ub85c\uadf8\uc778 \uc2e4\ud328 \uc774\uc720\ub97c \uc0ac\uc6a9\uc790\uc5d0\uac8c \uc5b4\ub290 \uc218\uc900\uae4c\uc9c0 \ub178\ucd9c\ud574\ub3c4 \ub418\ub098\uc694?\n2. \ud604\uc7ac \uc778\uc99d API\ub294 \uc2e4\ud328 \uc720\ud615\ubcc4 \uc5d0\ub7ec \ucf54\ub4dc\ub098 \uc0c1\ud0dc \ucf54\ub4dc\ub97c \uc81c\uacf5\ud558\ub098\uc694?\n3. `error`\uac00 \ud45c\uc2dc\ub418\ub294 \ud654\uba74 \ub610\ub294 \ucf54\ub4dc \uacbd\ub85c\ub294 \uc5b4\ub514\uc778\uac00\uc694?\n4. \ube44\ubc00\ubc88\ud638 \uc7ac\uc124\uc815, \ud68c\uc6d0\uac00\uc785, \uace0\uac1d\uc9c0\uc6d0 \ub9c1\ud06c\uac00 \uc774\ubbf8 \uc788\ub098\uc694?\n5. \uc2e4\ud328 \uc720\ud615\ubcc4 \ubb38\uad6c\ub97c \ubcc4\ub3c4\ub85c \ub9cc\ub4e4\uae4c\uc694, \uc544\ub2c8\uba74 \ubcf4\uc548\uc0c1 \uc77c\ubc18\ud654\ub41c \ubb38\uad6c\ub97c \uc0ac\uc6a9\ud560\uae4c\uc694?\n6. \uc811\uadfc\uc131 \uae30\uc900\uc774\ub098 \ub514\uc790\uc778 \uc2dc\uc2a4\ud15c\uc758 \uc5d0\ub7ec \uba54\uc2dc\uc9c0 \ucef4\ud3ec\ub10c\ud2b8\uac00 \uc788\ub098\uc694?\n\n### \ucd94\ucc9c \ub2e4\uc74c \ub2e8\uacc4\n\n1. \ud604\uc7ac \ub85c\uadf8\uc778 \uad6c\ud604 \uacbd\ub85c\uc640 \uc778\uc99d API \uc751\ub2f5 \ud615\uc2dd\uc744 \ud655\uc778\ud55c\ub2e4.\n2. \uc2e4\ud328 \uc720\ud615\ubcc4 \uba54\uc2dc\uc9c0\uc640 \ub2e4\uc74c \ud589\ub3d9 \ub9e4\ud551\ud45c\ub97c \uc815\uc758\ud55c\ub2e4.\n3. \ubcf4\uc548 \uc815\ucc45\uc5d0 \ub9de\ucdb0 \uacc4\uc815 \uc874\uc7ac \uc5ec\ubd80\uac00 \ub178\ucd9c\ub418\uc9c0 \uc54a\ub3c4\ub85d \ubb38\uad6c \uc218\uc900\uc744 \uacb0\uc815\ud55c\ub2e4.\n4. `/tigap:gaplan`\uc73c\ub85c \uad6c\ud604 \uacc4\ud68d\uacfc \uc791\uc5c5 \ubaa9\ub85d\uc744 \uc791\uc131\ud55c\ub2e4.\n\n## \uc0dd\uc131\ud588\uc744 \uc0b0\ucd9c\ubb3c \uc694\uc57d\n\n\ud3c9\uac00 \uc9c0\uc2dc\uc5d0 \ub530\ub77c \uc2e4\uc81c `.gap/` \ud30c\uc77c\uc740 \ub9cc\ub4e4\uc9c0 \uc54a\uc558\uc2b5\ub2c8\ub2e4. \uc77c\ubc18 \uc2e4\ud589\uc774\uc5c8\ub2e4\uba74 \ub2e4\uc74c \ud30c\uc77c\uc744 \uc791\uc131\ud588\uc744 \uac83\uc785\ub2c8\ub2e4.\n\n- `.gap/{branch_name}/normalized/source-packet.md`: \uc704 \u201c\uc6d0\ucc9c \uc790\ub8cc \uc815\uaddc\ud654 \uc694\uc57d\u201d \ub0b4\uc6a9\uc744 \uae30\ubc18\uc73c\ub85c \ubaa9\ud45c, \ubb38\uc81c, \uc694\uad6c\uc0ac\ud56d, \uc778\uc218 \uc870\uac74, \uc81c\uc57d, \uc5f4\ub9b0 \uc9c8\ubb38\uc744 \uc815\ub9ac\n- `.gap/{branch_name}/analysis/gap-report.md`: \uc704 \u201c\uac2d \ubd84\uc11d \ubcf4\uace0\uc11c\u201d \ub0b4\uc6a9\uc744 \ud15c\ud50c\ub9bf\uc5d0 \ub9de\ucdb0 \uc815\ub9ac\n\n\ub2e4\uc74c \ub2e8\uacc4\ub85c\ub294 `/tigap:gaplan`\uc744 \uc2e4\ud589\ud574 \uc774 \uac2d \ubd84\uc11d\uc744 \uad6c\ud604 \uacc4\ud68d\uacfc \uc791\uc5c5 \ubaa9\ub85d\uc73c\ub85c \ubc14\uafb8\ub294 \uac83\uc744 \uad8c\uc7a5\ud569\ub2c8\ub2e4.\n"}], "grading": {"run_id": "eval-2-normalize-brief-and-gap-z_old_skill", "expectations": [{"text": "\ubaa9\ud45c, \uc694\uad6c\uc0ac\ud56d, \uc778\uc218 \uc870\uac74, \uc5f4\ub9b0 \uc9c8\ubb38\uc744 \uc815\ub9ac\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ubaa9\ud45c, \uc694\uad6c\uc0ac\ud56d, \uc778\uc218, \uc870\uac74, \uc5f4\ub9b0, \uc9c8\ubb38\uc744"}, {"text": "\ub85c\uadf8\uc778 \uc2e4\ud328 UX\uc758 \uad6c\ud604 \uac2d \ub610\ub294 UX \uac2d\uc744 \ud3ec\ud568\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ub85c\uadf8\uc778, \uc2e4\ud328, \uad6c\ud604, \ub610\ub294, UX, \ud3ec\ud568\ud55c\ub2e4"}, {"text": "\ubaa8\ud638\ud55c \uc694\uad6c\uc0ac\ud56d\uc774\ub098 \ud655\uc778 \uc9c8\ubb38\uc744 \ubd84\ub9ac\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ubaa8\ud638\ud55c, \ud655\uc778, \uc9c8\ubb38\uc744"}, {"text": "\ucf54\ub4dc\ub97c \uad6c\ud604\ud558\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ucf54\ub4dc\ub97c, \uc54a\ub294\ub2e4"}, {"text": "\ub2e4\uc74c \ub2e8\uacc4\ub85c /tigap:gaplan\uc744 \uc81c\uc548\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ub2e4\uc74c, \ub2e8\uacc4\ub85c"}], "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0}}}], "previous_feedback": {}, "previous_outputs": {}, "benchmark": {"metadata": {"skill_name": "gap", "skill_path": "<path/to/skill>", "executor_model": "<model-name>", "analyzer_model": "<model-name>", "timestamp": "2026-04-27T16:09:46Z", "evals_run": [1, 2], "runs_per_configuration": 3}, "runs": [{"eval_id": 1, "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5, "time_seconds": 38.4, "tokens": 123, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "\uc6d0\ucc9c \uc790\ub8cc\uac00 \uc5c6\ub2e4\uace0 \ubcf4\uace0\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc6d0\ucc9c, \uc790\ub8cc\uac00"}, {"text": "\uc800\uc7a5\uc18c\ub97c \uc784\uc758\ub85c \uc6d0\ucc9c \uc790\ub8cc \uc0bc\uc544 \ubd84\uc11d\ud558\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc800\uc7a5\uc18c\ub97c, \uc784\uc758\ub85c, \uc6d0\ucc9c, \uc790\ub8cc, \uc0bc\uc544"}, {"text": ".gap/ \uc0b0\ucd9c\ubb3c\uc744 \ub9cc\ub4e4\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: gap, \uc0b0\ucd9c\ubb3c\uc744"}, {"text": "\uc790\ub8cc \uc81c\uacf5, \uc790\ub8cc \ucd94\ucd9c \uc9c0\uc2dc, \uc778\ud130\ubdf0 \uc2dc\uc791 \uc911 \ud558\ub098\ub97c \uc694\uccad\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc790\ub8cc, \uc81c\uacf5, \uc790\ub8cc, \ucd94\ucd9c, \uc9c0\uc2dc, \uc778\ud130\ubdf0, \uc2dc\uc791, \ud558\ub098\ub97c"}, {"text": "\uad6c\ud604\uc744 \uc2dc\uc791\ud558\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uad6c\ud604\uc744"}], "notes": []}, {"eval_id": 2, "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5, "time_seconds": 53.5, "tokens": 0, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "\ubaa9\ud45c, \uc694\uad6c\uc0ac\ud56d, \uc778\uc218 \uc870\uac74, \uc5f4\ub9b0 \uc9c8\ubb38\uc744 \uc815\ub9ac\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ubaa9\ud45c, \uc694\uad6c\uc0ac\ud56d, \uc778\uc218, \uc870\uac74"}, {"text": "\ub85c\uadf8\uc778 \uc2e4\ud328 UX\uc758 \uad6c\ud604 \uac2d \ub610\ub294 UX \uac2d\uc744 \ud3ec\ud568\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ub85c\uadf8\uc778, \uc2e4\ud328, \uad6c\ud604, \ub610\ub294, UX"}, {"text": "\ubaa8\ud638\ud55c \uc694\uad6c\uc0ac\ud56d\uc774\ub098 \ud655\uc778 \uc9c8\ubb38\uc744 \ubd84\ub9ac\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ubaa8\ud638\ud55c, \ud655\uc778"}, {"text": "\ucf54\ub4dc\ub97c \uad6c\ud604\ud558\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ucf54\ub4dc\ub97c"}, {"text": "\ub2e4\uc74c \ub2e8\uacc4\ub85c /tigap:gaplan\uc744 \uc81c\uc548\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ub2e4\uc74c"}], "notes": []}, {"eval_id": 1, "configuration": "z_old_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5, "time_seconds": 31.4, "tokens": 0, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "\uc6d0\ucc9c \uc790\ub8cc\uac00 \uc5c6\ub2e4\uace0 \ubcf4\uace0\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc6d0\ucc9c, \uc790\ub8cc\uac00"}, {"text": "\uc800\uc7a5\uc18c\ub97c \uc784\uc758\ub85c \uc6d0\ucc9c \uc790\ub8cc \uc0bc\uc544 \ubd84\uc11d\ud558\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc800\uc7a5\uc18c\ub97c, \uc784\uc758\ub85c, \uc6d0\ucc9c, \uc790\ub8cc, \uc0bc\uc544"}, {"text": ".gap/ \uc0b0\ucd9c\ubb3c\uc744 \ub9cc\ub4e4\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: gap, \uc0b0\ucd9c\ubb3c\uc744"}, {"text": "\uc790\ub8cc \uc81c\uacf5, \uc790\ub8cc \ucd94\ucd9c \uc9c0\uc2dc, \uc778\ud130\ubdf0 \uc2dc\uc791 \uc911 \ud558\ub098\ub97c \uc694\uccad\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc790\ub8cc, \uc81c\uacf5, \uc790\ub8cc, \ucd94\ucd9c, \uc9c0\uc2dc, \uc778\ud130\ubdf0, \uc2dc\uc791, \ud558\ub098\ub97c"}, {"text": "\uad6c\ud604\uc744 \uc2dc\uc791\ud558\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uad6c\ud604\uc744"}], "notes": []}, {"eval_id": 2, "configuration": "z_old_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 5, "failed": 0, "total": 5, "time_seconds": 40.6, "tokens": 0, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "\ubaa9\ud45c, \uc694\uad6c\uc0ac\ud56d, \uc778\uc218 \uc870\uac74, \uc5f4\ub9b0 \uc9c8\ubb38\uc744 \uc815\ub9ac\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ubaa9\ud45c, \uc694\uad6c\uc0ac\ud56d, \uc778\uc218, \uc870\uac74, \uc5f4\ub9b0, \uc9c8\ubb38\uc744"}, {"text": "\ub85c\uadf8\uc778 \uc2e4\ud328 UX\uc758 \uad6c\ud604 \uac2d \ub610\ub294 UX \uac2d\uc744 \ud3ec\ud568\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ub85c\uadf8\uc778, \uc2e4\ud328, \uad6c\ud604, \ub610\ub294, UX, \ud3ec\ud568\ud55c\ub2e4"}, {"text": "\ubaa8\ud638\ud55c \uc694\uad6c\uc0ac\ud56d\uc774\ub098 \ud655\uc778 \uc9c8\ubb38\uc744 \ubd84\ub9ac\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ubaa8\ud638\ud55c, \ud655\uc778, \uc9c8\ubb38\uc744"}, {"text": "\ucf54\ub4dc\ub97c \uad6c\ud604\ud558\uc9c0 \uc54a\ub294\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ucf54\ub4dc\ub97c, \uc54a\ub294\ub2e4"}, {"text": "\ub2e4\uc74c \ub2e8\uacc4\ub85c /tigap:gaplan\uc744 \uc81c\uc548\ud55c\ub2e4.", "passed": true, "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ub2e4\uc74c, \ub2e8\uacc4\ub85c"}], "notes": []}], "run_summary": {"with_skill": {"pass_rate": {"mean": 1.0, "stddev": 0.0, "min": 1.0, "max": 1.0}, "time_seconds": {"mean": 45.95, "stddev": 10.6773, "min": 38.4, "max": 53.5}, "tokens": {"mean": 61.5, "stddev": 86.9741, "min": 0, "max": 123}}, "z_old_skill": {"pass_rate": {"mean": 1.0, "stddev": 0.0, "min": 1.0, "max": 1.0}, "time_seconds": {"mean": 36.0, "stddev": 6.5054, "min": 31.4, "max": 40.6}, "tokens": {"mean": 0.0, "stddev": 0.0, "min": 0, "max": 0}}, "delta": {"pass_rate": "+0.00", "time_seconds": "+10.0", "tokens": "+62"}}, "notes": []}};
+
+    // ---- State ----
+    let feedbackMap = {};  // run_id -> feedback text
+    let currentIndex = 0;
+    let visitedRuns = new Set();
+
+    // ---- Init ----
+    async function init() {
+      // Load saved feedback from server — but only if this isn't a fresh
+      // iteration (indicated by previous_feedback being present). When
+      // previous feedback exists, the feedback.json on disk is stale from
+      // the prior iteration and should not pre-fill the textareas.
+      const hasPrevious = Object.keys(EMBEDDED_DATA.previous_feedback || {}).length > 0
+        || Object.keys(EMBEDDED_DATA.previous_outputs || {}).length > 0;
+      if (!hasPrevious) {
+        try {
+          const resp = await fetch("/api/feedback");
+          const data = await resp.json();
+          if (data.reviews) {
+            for (const r of data.reviews) feedbackMap[r.run_id] = r.feedback;
+          }
+        } catch { /* first run, no feedback yet */ }
+      }
+
+      document.getElementById("skill-name").textContent = EMBEDDED_DATA.skill_name;
+      showRun(0);
+
+      // Wire up feedback auto-save
+      const textarea = document.getElementById("feedback");
+      let saveTimeout = null;
+      textarea.addEventListener("input", () => {
+        clearTimeout(saveTimeout);
+        document.getElementById("feedback-status").textContent = "";
+        saveTimeout = setTimeout(() => saveCurrentFeedback(), 800);
+      });
+    }
+
+    // ---- Navigation ----
+    function navigate(delta) {
+      const newIndex = currentIndex + delta;
+      if (newIndex >= 0 && newIndex < EMBEDDED_DATA.runs.length) {
+        saveCurrentFeedback();
+        showRun(newIndex);
+      }
+    }
+
+    function updateNavButtons() {
+      document.getElementById("prev-btn").disabled = currentIndex === 0;
+      document.getElementById("next-btn").disabled =
+        currentIndex === EMBEDDED_DATA.runs.length - 1;
+    }
+
+    // ---- Show a run ----
+    function showRun(index) {
+      currentIndex = index;
+      const run = EMBEDDED_DATA.runs[index];
+
+      // Progress
+      document.getElementById("progress").textContent =
+        `${index + 1} of ${EMBEDDED_DATA.runs.length}`;
+
+      // Prompt
+      document.getElementById("prompt-text").textContent = run.prompt;
+
+      // Config badge
+      const badge = document.getElementById("config-badge");
+      const configMatch = run.id.match(/(with_skill|without_skill|new_skill|old_skill)/);
+      if (configMatch) {
+        const config = configMatch[1];
+        const isBaseline = config === "without_skill" || config === "old_skill";
+        badge.textContent = config.replace(/_/g, " ");
+        badge.className = "config-badge " + (isBaseline ? "config-baseline" : "config-primary");
+        badge.style.display = "inline-block";
+      } else {
+        badge.style.display = "none";
+      }
+
+      // Outputs
+      renderOutputs(run);
+
+      // Previous outputs
+      renderPrevOutputs(run);
+
+      // Grades
+      renderGrades(run);
+
+      // Previous feedback
+      const prevFb = (EMBEDDED_DATA.previous_feedback || {})[run.id];
+      const prevEl = document.getElementById("prev-feedback");
+      if (prevFb) {
+        document.getElementById("prev-feedback-text").textContent = prevFb;
+        prevEl.style.display = "block";
+      } else {
+        prevEl.style.display = "none";
+      }
+
+      // Feedback
+      document.getElementById("feedback").value = feedbackMap[run.id] || "";
+      document.getElementById("feedback-status").textContent = "";
+
+      updateNavButtons();
+
+      // Track visited runs and promote done button when all visited
+      visitedRuns.add(index);
+      const doneBtn = document.getElementById("done-btn");
+      if (visitedRuns.size >= EMBEDDED_DATA.runs.length) {
+        doneBtn.classList.add("ready");
+      }
+
+      // Scroll main content to top
+      document.querySelector(".main").scrollTop = 0;
+    }
+
+    // ---- Render outputs ----
+    function renderOutputs(run) {
+      const container = document.getElementById("outputs-body");
+      container.innerHTML = "";
+
+      const outputs = run.outputs || [];
+      if (outputs.length === 0) {
+        container.innerHTML = '<div class="empty-state">No output files</div>';
+        return;
+      }
+
+      for (const file of outputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        // Always show file header with download link
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const content = document.createElement("div");
+        content.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          content.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          content.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          content.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(content, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          content.appendChild(a);
+        } else if (file.type === "error") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          pre.style.color = "var(--red)";
+          content.appendChild(pre);
+        }
+
+        fileDiv.appendChild(content);
+        container.appendChild(fileDiv);
+      }
+    }
+
+    // ---- XLSX rendering via SheetJS ----
+    function renderXlsx(container, b64Data) {
+      try {
+        const raw = Uint8Array.from(atob(b64Data), c => c.charCodeAt(0));
+        const wb = XLSX.read(raw, { type: "array" });
+
+        for (let i = 0; i < wb.SheetNames.length; i++) {
+          const sheetName = wb.SheetNames[i];
+          const ws = wb.Sheets[sheetName];
+
+          if (wb.SheetNames.length > 1) {
+            const sheetLabel = document.createElement("div");
+            sheetLabel.style.cssText =
+              "font-weight:600; font-size:0.8rem; color:#b0aea5; margin-top:0.5rem; margin-bottom:0.25rem;";
+            sheetLabel.textContent = "Sheet: " + sheetName;
+            container.appendChild(sheetLabel);
+          }
+
+          const htmlStr = XLSX.utils.sheet_to_html(ws, { editable: false });
+          const wrapper = document.createElement("div");
+          wrapper.innerHTML = htmlStr;
+          container.appendChild(wrapper);
+        }
+      } catch (err) {
+        container.textContent = "Error rendering spreadsheet: " + err.message;
+      }
+    }
+
+    // ---- Grades ----
+    function renderGrades(run) {
+      const section = document.getElementById("grades-section");
+      const content = document.getElementById("grades-content");
+
+      if (!run.grading) {
+        section.style.display = "none";
+        return;
+      }
+
+      const grading = run.grading;
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("grades-arrow").classList.remove("open");
+
+      const summary = grading.summary || {};
+      const expectations = grading.expectations || [];
+
+      let html = '<div style="padding: 1rem;">';
+
+      // Summary line
+      const passRate = summary.pass_rate != null
+        ? Math.round(summary.pass_rate * 100) + "%"
+        : "?";
+      const badgeClass = summary.pass_rate >= 0.8 ? "grade-pass" : summary.pass_rate >= 0.5 ? "" : "grade-fail";
+      html += '<div class="grades-summary">';
+      html += '<span class="grade-badge ' + badgeClass + '">' + passRate + '</span>';
+      html += '<span>' + (summary.passed || 0) + ' passed, ' + (summary.failed || 0) + ' failed of ' + (summary.total || 0) + '</span>';
+      html += '</div>';
+
+      // Assertions list
+      html += '<ul class="assertion-list">';
+      for (const exp of expectations) {
+        const statusClass = exp.passed ? "pass" : "fail";
+        const statusIcon = exp.passed ? "\u2713" : "\u2717";
+        html += '<li class="assertion-item">';
+        html += '<span class="assertion-status ' + statusClass + '">' + statusIcon + '</span>';
+        html += '<span>' + escapeHtml(exp.text) + '</span>';
+        if (exp.evidence) {
+          html += '<div class="assertion-evidence">' + escapeHtml(exp.evidence) + '</div>';
+        }
+        html += '</li>';
+      }
+      html += '</ul>';
+
+      html += '</div>';
+      content.innerHTML = html;
+    }
+
+    function toggleGrades() {
+      const content = document.getElementById("grades-content");
+      const arrow = document.getElementById("grades-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Previous outputs (collapsible) ----
+    function renderPrevOutputs(run) {
+      const section = document.getElementById("prev-outputs-section");
+      const content = document.getElementById("prev-outputs-content");
+      const prevOutputs = (EMBEDDED_DATA.previous_outputs || {})[run.id];
+
+      if (!prevOutputs || prevOutputs.length === 0) {
+        section.style.display = "none";
+        return;
+      }
+
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("prev-outputs-arrow").classList.remove("open");
+
+      // Render the files into the content area
+      content.innerHTML = "";
+      const wrapper = document.createElement("div");
+      wrapper.style.padding = "1rem";
+
+      for (const file of prevOutputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const fc = document.createElement("div");
+        fc.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          fc.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          fc.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          fc.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(fc, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          fc.appendChild(a);
+        }
+
+        fileDiv.appendChild(fc);
+        wrapper.appendChild(fileDiv);
+      }
+
+      content.appendChild(wrapper);
+    }
+
+    function togglePrevOutputs() {
+      const content = document.getElementById("prev-outputs-content");
+      const arrow = document.getElementById("prev-outputs-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Feedback (saved to server -> feedback.json) ----
+    function saveCurrentFeedback() {
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // Build reviews array from map
+      const reviews = [];
+      for (const [run_id, feedback] of Object.entries(feedbackMap)) {
+        if (feedback.trim()) {
+          reviews.push({ run_id, feedback, timestamp: new Date().toISOString() });
+        }
+      }
+
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviews, status: "in_progress" }),
+      }).then(() => {
+        document.getElementById("feedback-status").textContent = "Saved";
+      }).catch(() => {
+        // Static mode or server unavailable — no-op on auto-save,
+        // feedback will be downloaded on final submit
+        document.getElementById("feedback-status").textContent = "Will download on submit";
+      });
+    }
+
+    // ---- Done ----
+    function showDoneDialog() {
+      // Save current textarea to feedbackMap (but don't POST yet)
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // POST once with status: complete — include ALL runs so the model
+      // can distinguish "no feedback" (looks good) from "not reviewed"
+      const reviews = [];
+      const ts = new Date().toISOString();
+      for (const r of EMBEDDED_DATA.runs) {
+        reviews.push({ run_id: r.id, feedback: feedbackMap[r.id] || "", timestamp: ts });
+      }
+      const payload = JSON.stringify({ reviews, status: "complete" }, null, 2);
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+      }).then(() => {
+        document.getElementById("done-overlay").classList.add("visible");
+      }).catch(() => {
+        // Server not available (static mode) — download as file
+        const blob = new Blob([payload], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "feedback.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        document.getElementById("done-overlay").classList.add("visible");
+      });
+    }
+
+    function closeDoneDialog() {
+      // Reset status back to in_progress
+      saveCurrentFeedback();
+      document.getElementById("done-overlay").classList.remove("visible");
+    }
+
+    // ---- Toast ----
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      setTimeout(() => toast.classList.remove("visible"), 2000);
+    }
+
+    // ---- Keyboard nav ----
+    document.addEventListener("keydown", (e) => {
+      // Don't capture when typing in textarea
+      if (e.target.tagName === "TEXTAREA") return;
+
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        navigate(-1);
+      } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        navigate(1);
+      }
+    });
+
+    // ---- Util ----
+    function getDownloadUri(file) {
+      if (file.data_uri) return file.data_uri;
+      if (file.data_b64) return "data:application/octet-stream;base64," + file.data_b64;
+      if (file.type === "text") return "data:text/plain;charset=utf-8," + encodeURIComponent(file.content);
+      return "#";
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ---- View switching ----
+    function switchView(view) {
+      document.querySelectorAll(".view-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
+      document.querySelector(`[onclick="switchView('${view}')"]`).classList.add("active");
+      document.getElementById("panel-" + view).classList.add("active");
+    }
+
+    // ---- Benchmark rendering ----
+    function renderBenchmark() {
+      const data = EMBEDDED_DATA.benchmark;
+      if (!data) return;
+
+      // Show the tabs
+      document.getElementById("view-tabs").style.display = "flex";
+
+      const container = document.getElementById("benchmark-content");
+      const summary = data.run_summary || {};
+      const metadata = data.metadata || {};
+      const notes = data.notes || [];
+
+      let html = "";
+
+      // Header
+      html += "<h2 style='font-family: Poppins, sans-serif; margin-bottom: 0.5rem;'>Benchmark Results</h2>";
+      html += "<p style='color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.25rem;'>";
+      if (metadata.skill_name) html += "<strong>" + escapeHtml(metadata.skill_name) + "</strong> &mdash; ";
+      if (metadata.timestamp) html += metadata.timestamp + " &mdash; ";
+      if (metadata.evals_run) html += "Evals: " + metadata.evals_run.join(", ") + " &mdash; ";
+      html += (metadata.runs_per_configuration || "?") + " runs per configuration";
+      html += "</p>";
+
+      // Summary table
+      html += '<table class="benchmark-table">';
+
+      function fmtStat(stat, pct) {
+        if (!stat) return "—";
+        const suffix = pct ? "%" : "";
+        const m = pct ? (stat.mean * 100).toFixed(0) : stat.mean.toFixed(1);
+        const s = pct ? (stat.stddev * 100).toFixed(0) : stat.stddev.toFixed(1);
+        return m + suffix + " ± " + s + suffix;
+      }
+
+      function deltaClass(val) {
+        if (!val) return "";
+        const n = parseFloat(val);
+        if (n > 0) return "benchmark-delta-positive";
+        if (n < 0) return "benchmark-delta-negative";
+        return "";
+      }
+
+      // Discover config names dynamically (everything except "delta")
+      const configs = Object.keys(summary).filter(k => k !== "delta");
+      const configA = configs[0] || "config_a";
+      const configB = configs[1] || "config_b";
+      const labelA = configA.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const labelB = configB.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const a = summary[configA] || {};
+      const b = summary[configB] || {};
+      const delta = summary.delta || {};
+
+      html += "<thead><tr><th>Metric</th><th>" + escapeHtml(labelA) + "</th><th>" + escapeHtml(labelB) + "</th><th>Delta</th></tr></thead>";
+      html += "<tbody>";
+
+      html += "<tr><td><strong>Pass Rate</strong></td>";
+      html += "<td>" + fmtStat(a.pass_rate, true) + "</td>";
+      html += "<td>" + fmtStat(b.pass_rate, true) + "</td>";
+      html += '<td class="' + deltaClass(delta.pass_rate) + '">' + (delta.pass_rate || "—") + "</td></tr>";
+
+      // Time (only show row if data exists)
+      if (a.time_seconds || b.time_seconds) {
+        html += "<tr><td><strong>Time (s)</strong></td>";
+        html += "<td>" + fmtStat(a.time_seconds, false) + "</td>";
+        html += "<td>" + fmtStat(b.time_seconds, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.time_seconds) + '">' + (delta.time_seconds ? delta.time_seconds + "s" : "—") + "</td></tr>";
+      }
+
+      // Tokens (only show row if data exists)
+      if (a.tokens || b.tokens) {
+        html += "<tr><td><strong>Tokens</strong></td>";
+        html += "<td>" + fmtStat(a.tokens, false) + "</td>";
+        html += "<td>" + fmtStat(b.tokens, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.tokens) + '">' + (delta.tokens || "—") + "</td></tr>";
+      }
+
+      html += "</tbody></table>";
+
+      // Per-eval breakdown (if runs data available)
+      const runs = data.runs || [];
+      if (runs.length > 0) {
+        const evalIds = [...new Set(runs.map(r => r.eval_id))].sort((a, b) => a - b);
+
+        html += "<h3 style='font-family: Poppins, sans-serif; margin-bottom: 0.75rem;'>Per-Eval Breakdown</h3>";
+
+        const hasTime = runs.some(r => r.result && r.result.time_seconds != null);
+        const hasErrors = runs.some(r => r.result && r.result.errors > 0);
+
+        for (const evalId of evalIds) {
+          const evalRuns = runs.filter(r => r.eval_id === evalId);
+          const evalName = evalRuns[0] && evalRuns[0].eval_name ? evalRuns[0].eval_name : "Eval " + evalId;
+
+          html += "<h4 style='font-family: Poppins, sans-serif; margin: 1rem 0 0.5rem; color: var(--text);'>" + escapeHtml(evalName) + "</h4>";
+          html += '<table class="benchmark-table">';
+          html += "<thead><tr><th>Config</th><th>Run</th><th>Pass Rate</th>";
+          if (hasTime) html += "<th>Time (s)</th>";
+          if (hasErrors) html += "<th>Crashes During Execution</th>";
+          html += "</tr></thead>";
+          html += "<tbody>";
+
+          // Group by config and render with average rows
+          const configGroups = [...new Set(evalRuns.map(r => r.configuration))];
+          for (let ci = 0; ci < configGroups.length; ci++) {
+            const config = configGroups[ci];
+            const configRuns = evalRuns.filter(r => r.configuration === config);
+            if (configRuns.length === 0) continue;
+
+            const rowClass = ci === 0 ? "benchmark-row-with" : "benchmark-row-without";
+            const configLabel = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+            for (const run of configRuns) {
+              const r = run.result || {};
+              const prClass = r.pass_rate >= 0.8 ? "benchmark-delta-positive" : r.pass_rate < 0.5 ? "benchmark-delta-negative" : "";
+              html += '<tr class="' + rowClass + '">';
+              html += "<td>" + configLabel + "</td>";
+              html += "<td>" + run.run_number + "</td>";
+              html += '<td class="' + prClass + '">' + ((r.pass_rate || 0) * 100).toFixed(0) + "% (" + (r.passed || 0) + "/" + (r.total || 0) + ")</td>";
+              if (hasTime) html += "<td>" + (r.time_seconds != null ? r.time_seconds.toFixed(1) : "—") + "</td>";
+              if (hasErrors) html += "<td>" + (r.errors || 0) + "</td>";
+              html += "</tr>";
+            }
+
+            // Average row
+            const rates = configRuns.map(r => (r.result || {}).pass_rate || 0);
+            const avgRate = rates.reduce((a, b) => a + b, 0) / rates.length;
+            const avgPrClass = avgRate >= 0.8 ? "benchmark-delta-positive" : avgRate < 0.5 ? "benchmark-delta-negative" : "";
+            html += '<tr class="benchmark-row-avg ' + rowClass + '">';
+            html += "<td>" + configLabel + "</td>";
+            html += "<td>Avg</td>";
+            html += '<td class="' + avgPrClass + '">' + (avgRate * 100).toFixed(0) + "%</td>";
+            if (hasTime) {
+              const times = configRuns.map(r => (r.result || {}).time_seconds).filter(t => t != null);
+              html += "<td>" + (times.length ? (times.reduce((a, b) => a + b, 0) / times.length).toFixed(1) : "—") + "</td>";
+            }
+            if (hasErrors) html += "<td></td>";
+            html += "</tr>";
+          }
+          html += "</tbody></table>";
+
+          // Per-assertion detail for this eval
+          const runsWithExpectations = {};
+          for (const config of configGroups) {
+            runsWithExpectations[config] = evalRuns.filter(r => r.configuration === config && r.expectations && r.expectations.length > 0);
+          }
+          const hasAnyExpectations = Object.values(runsWithExpectations).some(runs => runs.length > 0);
+          if (hasAnyExpectations) {
+            // Collect all unique assertion texts across all configs
+            const allAssertions = [];
+            const seen = new Set();
+            for (const config of configGroups) {
+              for (const run of runsWithExpectations[config]) {
+                for (const exp of (run.expectations || [])) {
+                  if (!seen.has(exp.text)) {
+                    seen.add(exp.text);
+                    allAssertions.push(exp.text);
+                  }
+                }
+              }
+            }
+
+            html += '<table class="benchmark-table" style="margin-top: 0.5rem;">';
+            html += "<thead><tr><th>Assertion</th>";
+            for (const config of configGroups) {
+              const label = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+              html += "<th>" + escapeHtml(label) + "</th>";
+            }
+            html += "</tr></thead><tbody>";
+
+            for (const assertionText of allAssertions) {
+              html += "<tr><td>" + escapeHtml(assertionText) + "</td>";
+
+              for (const config of configGroups) {
+                html += "<td>";
+                for (const run of runsWithExpectations[config]) {
+                  const exp = (run.expectations || []).find(e => e.text === assertionText);
+                  if (exp) {
+                    const cls = exp.passed ? "benchmark-delta-positive" : "benchmark-delta-negative";
+                    const icon = exp.passed ? "\u2713" : "\u2717";
+                    html += '<span class="' + cls + '" title="Run ' + run.run_number + ': ' + escapeHtml(exp.evidence || "") + '">' + icon + "</span> ";
+                  } else {
+                    html += "— ";
+                  }
+                }
+                html += "</td>";
+              }
+              html += "</tr>";
+            }
+            html += "</tbody></table>";
+          }
+        }
+      }
+
+      // Notes
+      if (notes.length > 0) {
+        html += '<div class="benchmark-notes">';
+        html += "<h3>Analysis Notes</h3>";
+        html += "<ul>";
+        for (const note of notes) {
+          html += "<li>" + escapeHtml(note) + "</li>";
+        }
+        html += "</ul></div>";
+      }
+
+      container.innerHTML = html;
+    }
+
+    // ---- Start ----
+    init();
+    renderBenchmark();
+  </script>
+</body>
+</html>

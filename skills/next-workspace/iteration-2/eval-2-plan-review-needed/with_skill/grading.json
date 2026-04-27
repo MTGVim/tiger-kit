@@ -1,0 +1,36 @@
+{
+  "run_id": "eval-2-plan-review-needed-with_skill",
+  "expectations": [
+    {
+      "text": "plan-review-needed로 판단한다.",
+      "passed": true,
+      "evidence": "키워드 확인: plan-review-needed"
+    },
+    {
+      "text": "구현 계획 검토와 승인 필요성을 안내한다.",
+      "passed": true,
+      "evidence": "일치 단서: 구현, 계획, 검토와, 승인"
+    },
+    {
+      "text": "승인 후 tasks.md 생성이 필요하다고 말한다.",
+      "passed": true,
+      "evidence": "일치 단서: 승인, tasks, md"
+    },
+    {
+      "text": "읽기 전용을 유지한다.",
+      "passed": true,
+      "evidence": "키워드 확인: 읽기 전용"
+    },
+    {
+      "text": "근거 산출물 경로를 언급한다.",
+      "passed": true,
+      "evidence": "일치 단서: 근거, 산출물"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,236 @@
+{
+  "metadata": {
+    "skill_name": "gaplan",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-04-27T16:15:33Z",
+    "evals_run": [
+      1,
+      2
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 46.8,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "\ucf54\ub4dc \uad6c\ud604\uc744 \uc2dc\uc791\ud558\uc9c0 \uc54a\ub294\ub2e4.",
+          "passed": true,
+          "evidence": "\ud0a4\uc6cc\ub4dc \ud655\uc778: \uad6c\ud604\ud558\uc9c0, \ucf54\ub4dc, \uc218\uc815\ud558\uc9c0"
+        },
+        {
+          "text": "implementation-plan.md \ucd08\uc548\uc5d0 \ub4e4\uc5b4\uac08 \ub0b4\uc6a9\uc744 \uc81c\uc2dc\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\ud0a4\uc6cc\ub4dc \ud655\uc778: implementation-plan.md, \uad6c\ud604 \uacc4\ud68d \ucd08\uc548, \uacc4\ud68d \ucd08\uc548"
+        },
+        {
+          "text": "\uac01 \uc791\uc5c5 \ud6c4\ubcf4\uc5d0 \uac80\uc99d \ubc29\ubc95\uc744 \ud3ec\ud568\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc791\uc5c5, \uac80\uc99d"
+        },
+        {
+          "text": "\uc2b9\uc778 \uc804 tasks.md \ud655\uc815\uc744 \ud558\uc9c0 \uc54a\ub294\ub2e4.",
+          "passed": true,
+          "evidence": "\ud0a4\uc6cc\ub4dc \ud655\uc778: tasks.md, \ud655\uc815\ud558\uc9c0, \uc2b9\uc778 \uc804"
+        },
+        {
+          "text": "\uc0ac\uc6a9\uc790 \uac80\ud1a0 \ub610\ub294 \uc2b9\uc778\uc744 \uc694\uccad\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\ud0a4\uc6cc\ub4dc \ud655\uc778: \uac80\ud1a0, \uc2b9\uc778"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 12.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "source-packet \ub610\ub294 gap-report\uac00 \ud544\uc694\ud558\ub2e4\uace0 \ub9d0\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: source-packet"
+        },
+        {
+          "text": "/tigap:gap\uc744 \uba3c\uc800 \uc2e4\ud589\ud558\ub77c\uace0 \uc548\ub0b4\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uba3c\uc800"
+        },
+        {
+          "text": "\uc784\uc758\ub85c \uc791\uc5c5 \ubaa9\ub85d\uc744 \ub9cc\ub4e4\uc9c0 \uc54a\ub294\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc791\uc5c5, \ubaa9\ub85d\uc744, \ub9cc\ub4e4\uc9c0"
+        },
+        {
+          "text": "\ucf54\ub4dc \uad6c\ud604\uc744 \uc2dc\uc791\ud558\uc9c0 \uc54a\ub294\ub2e4.",
+          "passed": true,
+          "evidence": "\ud0a4\uc6cc\ub4dc \ud655\uc778: \uad6c\ud604\ud558\uc9c0, \ucf54\ub4dc, \uc218\uc815\ud558\uc9c0"
+        },
+        {
+          "text": "\ud544\uc694\ud55c \uc785\ub825 \uc0b0\ucd9c\ubb3c \uacbd\ub85c\ub97c \uc5b8\uae09\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc785\ub825, \uc0b0\ucd9c\ubb3c"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "z_old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 4,
+        "failed": 1,
+        "total": 5,
+        "time_seconds": 24.8,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "\ucf54\ub4dc \uad6c\ud604\uc744 \uc2dc\uc791\ud558\uc9c0 \uc54a\ub294\ub2e4.",
+          "passed": false,
+          "evidence": "\uad00\ub828 \ud0a4\uc6cc\ub4dc\ub97c \ucc3e\uc9c0 \ubabb\ud568"
+        },
+        {
+          "text": "implementation-plan.md \ucd08\uc548\uc5d0 \ub4e4\uc5b4\uac08 \ub0b4\uc6a9\uc744 \uc81c\uc2dc\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\ud0a4\uc6cc\ub4dc \ud655\uc778: implementation-plan.md, \uad6c\ud604 \uacc4\ud68d \ucd08\uc548, \uacc4\ud68d \ucd08\uc548"
+        },
+        {
+          "text": "\uac01 \uc791\uc5c5 \ud6c4\ubcf4\uc5d0 \uac80\uc99d \ubc29\ubc95\uc744 \ud3ec\ud568\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc791\uc5c5, \uac80\uc99d"
+        },
+        {
+          "text": "\uc2b9\uc778 \uc804 tasks.md \ud655\uc815\uc744 \ud558\uc9c0 \uc54a\ub294\ub2e4.",
+          "passed": true,
+          "evidence": "\ud0a4\uc6cc\ub4dc \ud655\uc778: tasks.md, \ud655\uc815\ud558\uc9c0, \uc2b9\uc778 \uc804"
+        },
+        {
+          "text": "\uc0ac\uc6a9\uc790 \uac80\ud1a0 \ub610\ub294 \uc2b9\uc778\uc744 \uc694\uccad\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\ud0a4\uc6cc\ub4dc \ud655\uc778: \uac80\ud1a0, \uc2b9\uc778"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "z_old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 4,
+        "failed": 1,
+        "total": 5,
+        "time_seconds": 19.1,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "source-packet \ub610\ub294 gap-report\uac00 \ud544\uc694\ud558\ub2e4\uace0 \ub9d0\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: source-packet, \ub610\ub294"
+        },
+        {
+          "text": "/tigap:gap\uc744 \uba3c\uc800 \uc2e4\ud589\ud558\ub77c\uace0 \uc548\ub0b4\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uba3c\uc800"
+        },
+        {
+          "text": "\uc784\uc758\ub85c \uc791\uc5c5 \ubaa9\ub85d\uc744 \ub9cc\ub4e4\uc9c0 \uc54a\ub294\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc791\uc5c5, \ubaa9\ub85d\uc744"
+        },
+        {
+          "text": "\ucf54\ub4dc \uad6c\ud604\uc744 \uc2dc\uc791\ud558\uc9c0 \uc54a\ub294\ub2e4.",
+          "passed": false,
+          "evidence": "\uad00\ub828 \ud0a4\uc6cc\ub4dc\ub97c \ucc3e\uc9c0 \ubabb\ud568"
+        },
+        {
+          "text": "\ud544\uc694\ud55c \uc785\ub825 \uc0b0\ucd9c\ubb3c \uacbd\ub85c\ub97c \uc5b8\uae09\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc0b0\ucd9c\ubb3c"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 29.4,
+        "stddev": 24.6073,
+        "min": 12.0,
+        "max": 46.8
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "z_old_skill": {
+      "pass_rate": {
+        "mean": 0.8,
+        "stddev": 0.0,
+        "min": 0.8,
+        "max": 0.8
+      },
+      "time_seconds": {
+        "mean": 21.95,
+        "stddev": 4.0305,
+        "min": 19.1,
+        "max": 24.8
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.20",
+      "time_seconds": "+7.4",
+      "tokens": "+0"
+    }
+  },
+  "notes": []
+}

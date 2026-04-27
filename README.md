@@ -4,7 +4,7 @@
 
 `tigap-skills`는 모호한 요청을 정리된 구현 루프로 바꾸기 위한 Claude Code / 에이전트 워크플로우 스킬 모음입니다.
 
-제공하는 스킬은 네 가지입니다.
+제공하는 명령/스킬 흐름은 다섯 단계입니다.
 
 - `/tigap:plan` — 원천 자료가 없을 때 인터뷰와 계획 모드로 아이디어를 구체화합니다.
 - `/tigap:gap` — 자료를 수집하고 갭 분석 보고서를 만듭니다.
@@ -60,7 +60,7 @@ PowerShell에서는 다음 명령을 사용합니다.
 ./scripts/install-standalone.ps1 -TargetProject C:\path\to\project
 ```
 
-Standalone 모드에서는 같은 흐름을 `/plan`, `/gap`, `/gaplan`, `/go`로 호출합니다.
+Standalone 모드에서는 같은 흐름을 `/plan`, `/gap`, `/gaplan`, `/go`, `/next`로 호출합니다.
 
 ## 산출물 구조
 

@@ -1,0 +1,12 @@
+{
+  "eval_id": 1,
+  "eval_name": "plan-from-existing-gap-report",
+  "prompt": "이미 .gap/feature-login/analysis/gap-report.md가 있다고 가정하고 구현 계획을 세워줘. 아직 승인 전이니 작업 목록 확정은 하지 마.",
+  "assertions": [
+    "코드 구현을 시작하지 않는다.",
+    "implementation-plan.md 초안에 들어갈 내용을 제시한다.",
+    "각 작업 후보에 검증 방법을 포함한다.",
+    "승인 전 tasks.md 확정을 하지 않는다.",
+    "사용자 검토 또는 승인을 요청한다."
+  ]
+}

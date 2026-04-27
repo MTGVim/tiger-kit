@@ -1,0 +1,36 @@
+{
+  "run_id": "eval-1-execute-one-ready-task-z_old_skill",
+  "expectations": [
+    {
+      "text": "Ready 작업 하나만 선택한다.",
+      "passed": true,
+      "evidence": "일치 단서: Ready, 작업, 하나만"
+    },
+    {
+      "text": "여러 작업을 한꺼번에 처리하지 않는다.",
+      "passed": true,
+      "evidence": "일치 단서: 여러, 작업을"
+    },
+    {
+      "text": "수정 전 관련 파일과 검증 계획을 확인한다.",
+      "passed": false,
+      "evidence": "일치 단서: 수정"
+    },
+    {
+      "text": "작업 완료 후 tasks.md와 execution-log.md 갱신을 보고한다.",
+      "passed": true,
+      "evidence": "일치 단서: 작업, 완료, tasks, execution-log, md"
+    },
+    {
+      "text": "Done/In Progress/Ready/Blocked 기준 진행률을 보고한다.",
+      "passed": true,
+      "evidence": "일치 단서: In, Progress, Ready"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 1,
+    "total": 5,
+    "pass_rate": 0.8
+  }
+}

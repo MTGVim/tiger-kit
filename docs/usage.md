@@ -107,7 +107,7 @@ TIGAP 명령은 사용자에게 한글로 답하고 TIGAP 산출물도 한글로
 /tigap:next
 ```
 
-명령은 파일을 수정하지 않고 `.gap/{branch_name}/` 산출물을 읽어 현재 workflow 단계, 브랜치/작업 ID 맥락, 다음 명령 또는 작업을 보고합니다. `implementation-plan.md`는 있지만 `tasks.md`가 없거나 계획 검토 대기 상태라면 `plan-review-needed`로 보고합니다. 다음 행동이 변경 가능한 작업이고 현재 맥락이 기반 브랜치라면 먼저 작업 브랜치나 작업 ID를 정하라고 권장합니다.
+스킬은 파일을 수정하지 않고 `.gap/{branch_name}/` 산출물을 읽어 현재 workflow 단계, 브랜치/작업 ID 맥락, 다음 명령 또는 작업을 보고합니다. `implementation-plan.md`는 있지만 `tasks.md`가 없거나 계획 검토 대기 상태라면 `plan-review-needed`로 보고합니다. 다음 행동이 변경 가능한 작업이고 현재 맥락이 기반 브랜치라면 먼저 작업 브랜치나 작업 ID를 정하라고 권장합니다.
 
 ## 추천 명령 문장
 

@@ -48,14 +48,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `.claude-plugin/plugin.json`: `tigap` 플러그인의 command/skill manifest. 새 command나 skill을 추가하면 여기 등록해야 한다.
 - `.claude-plugin/marketplace.json`: marketplace 등록용 manifest.
-- `commands/*.md`: `/tigap:gap`, `/tigap:gaplan`, `/tigap:go`, `/tigap:next` slash command entrypoint. command 파일은 짧게 유지하고 자세한 절차는 skill 문서에 둔다.
+- `commands/*.md`: `/tigap:plan`, `/tigap:gap`, `/tigap:gaplan`, `/tigap:go`, `/tigap:next` slash command entrypoint. command 파일은 짧게 유지하고 자세한 절차는 skill 문서에 둔다.
 - `skills/*/SKILL.md`: 재사용 가능한 TIGAP workflow 지침. 실제 동작 방식과 중단 조건은 주로 여기에 정의한다.
 - `docs/usage.md`: 사용자 관점의 명령 사용법.
 - `docs/artifact-layout.md`: `.gap/{branch_name}/` 산출물 구조와 workflow stage 기준.
-- `scripts/install-standalone.*`: `skills/gap`, `skills/gaplan`, `skills/go`를 대상 프로젝트의 `.claude/skills`로 복사한다.
+- `scripts/install-standalone.*`: `skills/plan`, `skills/gap`, `skills/gaplan`, `skills/go`, `skills/next`를 대상 프로젝트의 `.claude/skills`로 복사한다.
 
 ## TIGAP workflow 개요
 
+- `/tigap:plan`: 원천 자료가 없을 때 인터뷰와 계획 모드로 아이디어를 구체화한다.
 - `/tigap:gap`: 원천 자료를 수집/정규화하고 갭 보고서를 만든다. 원천 자료나 추출 지시가 없으면 저장소를 임의 분석하지 말고 멈춰서 자료 제공, 자료 추출, 인터뷰 중 하나를 요청한다.
 - `/tigap:gaplan`: 갭 보고서를 구현 계획과 작업 목록으로 바꾼다. 구현은 하지 않는다.
 - `/tigap:go`: `.gap/{branch_name}/tasks.md`의 Ready 작업 하나만 좁게 실행하고 `tasks.md`와 `execution-log.md`를 갱신한다.
@@ -65,5 +66,5 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `.gap/`은 이 저장소에서 로컬 workflow note로 취급되어 `.gitignore` 대상이다. 사용자가 명시하지 않는 한 커밋 대상으로 포함하지 않는다.
 - command/skill 변경 후에는 `.claude-plugin/plugin.json`의 command/skill 목록과 README/docs의 명령 목록이 서로 맞는지 확인한다.
-- `commands/next.md`는 읽기 전용 명령이므로 파일, 브랜치, git 상태를 변경하는 지시를 넣지 않는다.
+- `/tigap:next`와 `skills/next/SKILL.md`는 읽기 전용이므로 파일, 브랜치, git 상태를 변경하는 지시를 넣지 않는다.
 - TIGAP workflow에서 `main`, `master`, `develop` 같은 기반 브랜치에서 변경 가능한 작업을 시작하게 될 때는 전용 작업 브랜치나 작업 ID 구성을 권유해야 하며, 사용자 승인 없이 브랜치 생성이나 전환을 수행하지 않는다.

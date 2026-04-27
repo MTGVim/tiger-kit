@@ -1,0 +1,236 @@
+{
+  "metadata": {
+    "skill_name": "go",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-04-27T16:09:46Z",
+    "evals_run": [
+      1,
+      2
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 26.1,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Ready \uc791\uc5c5 \ud558\ub098\ub9cc \uc120\ud0dd\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: Ready, \uc791\uc5c5, \ud558\ub098\ub9cc"
+        },
+        {
+          "text": "\uc5ec\ub7ec \uc791\uc5c5\uc744 \ud55c\uaebc\ubc88\uc5d0 \ucc98\ub9ac\ud558\uc9c0 \uc54a\ub294\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc5ec\ub7ec, \uc791\uc5c5\uc744"
+        },
+        {
+          "text": "\uc218\uc815 \uc804 \uad00\ub828 \ud30c\uc77c\uacfc \uac80\uc99d \uacc4\ud68d\uc744 \ud655\uc778\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc218\uc815, \ud30c\uc77c\uacfc, \uac80\uc99d"
+        },
+        {
+          "text": "\uc791\uc5c5 \uc644\ub8cc \ud6c4 tasks.md\uc640 execution-log.md \uac31\uc2e0\uc744 \ubcf4\uace0\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc791\uc5c5, \uc644\ub8cc, tasks, execution-log, md"
+        },
+        {
+          "text": "Done/In Progress/Ready/Blocked \uae30\uc900 \uc9c4\ud589\ub960\uc744 \ubcf4\uace0\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: Done, In, Progress, Ready"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 19.1,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "\ud604\uc7ac \uc791\uc5c5 \ubc94\uc704\ub97c \ub118\ub294 \ub9ac\ud329\ud130\ub9c1\uc740 \uc911\ub2e8\ud558\uac70\ub098 \ubcc4\ub3c4 \uc791\uc5c5\uc73c\ub85c \uc81c\uc548\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ud604\uc7ac, \uc791\uc5c5, \ubc94\uc704\ub97c, \ub118\ub294, \ubcc4\ub3c4, \uc791\uc5c5\uc73c\ub85c"
+        },
+        {
+          "text": "\uc0ac\uc6a9\uc790 \uc2b9\uc778 \uc5c6\uc774 \ubc94\uc704\ub97c \ud655\ub300\ud558\uc9c0 \uc54a\ub294\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc0ac\uc6a9\uc790, \uc2b9\uc778, \uc5c6\uc774, \ubc94\uc704\ub97c"
+        },
+        {
+          "text": "commit, push, PR\uc744 \uc2e4\ud589\ud558\uc9c0 \uc54a\ub294\ub2e4.",
+          "passed": true,
+          "evidence": "\ud0a4\uc6cc\ub4dc \ud655\uc778: \uc2b9\uc778"
+        },
+        {
+          "text": "\ud544\uc694 \uc2dc Blocked \ub610\ub294 \ud6c4\uc18d \uc791\uc5c5\uc73c\ub85c \uae30\ub85d\ud55c\ub2e4\uace0 \ub9d0\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ud544\uc694, Blocked, \ub610\ub294, \ud6c4\uc18d, \uc791\uc5c5\uc73c\ub85c"
+        },
+        {
+          "text": "\uc120\ud0dd\ud55c Ready \uc791\uc5c5 \ud558\ub098\ub9cc \ucc98\ub9ac\ud55c\ub2e4\ub294 \uc6d0\uce59\uc744 \uc720\uc9c0\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc120\ud0dd\ud55c, Ready, \uc791\uc5c5, \ud558\ub098\ub9cc"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "z_old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 4,
+        "failed": 1,
+        "total": 5,
+        "time_seconds": 19.8,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Ready \uc791\uc5c5 \ud558\ub098\ub9cc \uc120\ud0dd\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: Ready, \uc791\uc5c5, \ud558\ub098\ub9cc"
+        },
+        {
+          "text": "\uc5ec\ub7ec \uc791\uc5c5\uc744 \ud55c\uaebc\ubc88\uc5d0 \ucc98\ub9ac\ud558\uc9c0 \uc54a\ub294\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc5ec\ub7ec, \uc791\uc5c5\uc744"
+        },
+        {
+          "text": "\uc218\uc815 \uc804 \uad00\ub828 \ud30c\uc77c\uacfc \uac80\uc99d \uacc4\ud68d\uc744 \ud655\uc778\ud55c\ub2e4.",
+          "passed": false,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc218\uc815"
+        },
+        {
+          "text": "\uc791\uc5c5 \uc644\ub8cc \ud6c4 tasks.md\uc640 execution-log.md \uac31\uc2e0\uc744 \ubcf4\uace0\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc791\uc5c5, \uc644\ub8cc, tasks, execution-log, md"
+        },
+        {
+          "text": "Done/In Progress/Ready/Blocked \uae30\uc900 \uc9c4\ud589\ub960\uc744 \ubcf4\uace0\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: In, Progress, Ready"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "z_old_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.4,
+        "passed": 2,
+        "failed": 3,
+        "total": 5,
+        "time_seconds": 19.2,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "\ud604\uc7ac \uc791\uc5c5 \ubc94\uc704\ub97c \ub118\ub294 \ub9ac\ud329\ud130\ub9c1\uc740 \uc911\ub2e8\ud558\uac70\ub098 \ubcc4\ub3c4 \uc791\uc5c5\uc73c\ub85c \uc81c\uc548\ud55c\ub2e4.",
+          "passed": false,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \uc791\uc5c5, \ubc94\uc704\ub97c"
+        },
+        {
+          "text": "\uc0ac\uc6a9\uc790 \uc2b9\uc778 \uc5c6\uc774 \ubc94\uc704\ub97c \ud655\ub300\ud558\uc9c0 \uc54a\ub294\ub2e4.",
+          "passed": false,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ubc94\uc704\ub97c"
+        },
+        {
+          "text": "commit, push, PR\uc744 \uc2e4\ud589\ud558\uc9c0 \uc54a\ub294\ub2e4.",
+          "passed": false,
+          "evidence": "\uad00\ub828 \ud0a4\uc6cc\ub4dc\ub97c \ucc3e\uc9c0 \ubabb\ud568"
+        },
+        {
+          "text": "\ud544\uc694 \uc2dc Blocked \ub610\ub294 \ud6c4\uc18d \uc791\uc5c5\uc73c\ub85c \uae30\ub85d\ud55c\ub2e4\uace0 \ub9d0\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: \ud544\uc694, \ub610\ub294"
+        },
+        {
+          "text": "\uc120\ud0dd\ud55c Ready \uc791\uc5c5 \ud558\ub098\ub9cc \ucc98\ub9ac\ud55c\ub2e4\ub294 \uc6d0\uce59\uc744 \uc720\uc9c0\ud55c\ub2e4.",
+          "passed": true,
+          "evidence": "\uc77c\uce58 \ub2e8\uc11c: Ready, \uc791\uc5c5, \ud558\ub098\ub9cc"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 22.6,
+        "stddev": 4.9497,
+        "min": 19.1,
+        "max": 26.1
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "z_old_skill": {
+      "pass_rate": {
+        "mean": 0.6,
+        "stddev": 0.2828,
+        "min": 0.4,
+        "max": 0.8
+      },
+      "time_seconds": {
+        "mean": 19.5,
+        "stddev": 0.4243,
+        "min": 19.2,
+        "max": 19.8
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.40",
+      "time_seconds": "+3.1",
+      "tokens": "+0"
+    }
+  },
+  "notes": []
+}

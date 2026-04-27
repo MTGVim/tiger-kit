@@ -1,0 +1,30 @@
+{
+  "run_id": "eval-1-plan-from-existing-gap-report-old_skill",
+  "expectations": [
+    {
+      "text": "코드 구현을 시작하지 않는다.",
+      "passed": false,
+      "evidence": "관련 키워드를 찾지 못함"
+    },
+    {
+      "text": "implementation-plan.md 초안에 들어갈 내용을 제시한다.",
+      "passed": true,
+      "evidence": "일치 단서: md, 내용을"
+    },
+    {
+      "text": "각 작업 후보에 검증 방법을 포함한다.",
+      "passed": true,
+      "evidence": "일치 단서: 작업, 검증"
+    },
+    {
+      "text": "승인 전 tasks.md 확정을 하지 않는다.",
+      "passed": true,
+      "evidence": "일치 단서: 승인, tasks, md, 하지"
+    },
+    {
+      "text": "사용자 검토 또는 승인을 요청한다.",
+      "passed": false,
+      "evidence": "문장 내 직접 단서를 찾지 못함"
+    }
+  ]
+}

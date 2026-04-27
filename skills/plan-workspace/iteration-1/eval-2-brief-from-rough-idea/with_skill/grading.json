@@ -1,0 +1,36 @@
+{
+  "run_id": "eval-2-brief-from-rough-idea-with_skill",
+  "expectations": [
+    {
+      "text": "원천 자료가 없음을 전제로 인터뷰 또는 브리프 정리로 진행한다.",
+      "passed": true,
+      "evidence": "일치 단서: 원천, 자료가, 인터뷰, 또는, 브리프"
+    },
+    {
+      "text": "완료 조건과 인수 조건을 구분한다.",
+      "passed": true,
+      "evidence": "일치 단서: 완료, 인수, 조건을"
+    },
+    {
+      "text": "성공 검증 방법을 최소 1개 이상 포함한다.",
+      "passed": true,
+      "evidence": "일치 단서: 성공, 검증, 최소, 1개, 이상"
+    },
+    {
+      "text": "tasks.md를 확정하지 않는다.",
+      "passed": true,
+      "evidence": "일치 단서: 않는다"
+    },
+    {
+      "text": "코드 구현을 시작하지 않는다.",
+      "passed": true,
+      "evidence": "키워드 확인: 구현하지, 코드"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

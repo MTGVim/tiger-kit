@@ -1,0 +1,12 @@
+{
+  "eval_id": 2,
+  "eval_name": "plan-review-needed",
+  "prompt": ".gap/feature-a/normalized/source-packet.md, analysis/gap-report.md, plan/implementation-plan.md는 있는데 tasks.md는 없어. 다음 행동 알려줘.",
+  "assertions": [
+    "plan-review-needed로 판단한다.",
+    "구현 계획 검토와 승인 필요성을 안내한다.",
+    "승인 후 tasks.md 생성이 필요하다고 말한다.",
+    "읽기 전용을 유지한다.",
+    "근거 산출물 경로를 언급한다."
+  ]
+}

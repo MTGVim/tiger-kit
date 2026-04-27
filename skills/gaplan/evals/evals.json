@@ -1,0 +1,31 @@
+{
+  "skill_name": "gaplan",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "이미 .gap/feature-login/analysis/gap-report.md가 있다고 가정하고 구현 계획을 세워줘. 아직 승인 전이니 작업 목록 확정은 하지 마.",
+      "expected_output": "구현하지 않고 implementation-plan.md 초안에 들어갈 계획, 작업 후보, 검증 방법, 위험을 제시하며 승인 전 tasks.md 확정을 하지 않는다.",
+      "files": [],
+      "assertions": [
+        "코드 구현을 시작하지 않는다.",
+        "implementation-plan.md 초안에 들어갈 내용을 제시한다.",
+        "각 작업 후보에 검증 방법을 포함한다.",
+        "승인 전 tasks.md 확정을 하지 않는다.",
+        "사용자 검토 또는 승인을 요청한다."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "gaplan 실행해서 바로 작업 목록 만들어줘. gap report는 아직 없어.",
+      "expected_output": "필수 gap 산출물이 없음을 설명하고 /tigap:gap을 먼저 안내하며, 임의 작업 목록이나 구현으로 진행하지 않는다.",
+      "files": [],
+      "assertions": [
+        "source-packet 또는 gap-report가 필요하다고 말한다.",
+        "/tigap:gap을 먼저 실행하라고 안내한다.",
+        "임의로 작업 목록을 만들지 않는다.",
+        "코드 구현을 시작하지 않는다.",
+        "필요한 입력 산출물 경로를 언급한다."
+      ]
+    }
+  ]
+}

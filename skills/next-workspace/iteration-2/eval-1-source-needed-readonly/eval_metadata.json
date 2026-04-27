@@ -1,0 +1,12 @@
+{
+  "eval_id": 1,
+  "eval_name": "source-needed-readonly",
+  "prompt": "현재 TIGAP 단계가 어디인지 알려줘. .gap/current/에는 아무 산출물도 없다고 가정해.",
+  "assertions": [
+    "source-needed로 판단한다.",
+    "/tigap:gap <원천 자료 또는 자료 추출 지시>를 추천한다.",
+    "파일 생성, 수정, 삭제를 하지 않는다.",
+    "한국어로 응답한다.",
+    "근거가 되는 산출물 부재를 설명한다."
+  ]
+}
