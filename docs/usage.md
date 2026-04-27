@@ -81,7 +81,7 @@ Run:
 /tigap:next
 ```
 
-The command reads `.gap/{branch_name}/` artifacts without modifying files, reports the current workflow stage, and recommends the next command or task.
+The command reads `.gap/{branch_name}/` artifacts without modifying files, reports the current workflow stage, branch/work-id context, and recommends the next command or task. If the next action is mutable and the current context is a base branch, it should recommend choosing a work branch or work id first.
 
 ## Suggested command language
 

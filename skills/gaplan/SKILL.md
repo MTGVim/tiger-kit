@@ -34,6 +34,8 @@ description: 갭 분석 보고서를 구현 계획, 작업 분해, 검증 전략
 
 또는 먼저 최소한의 자료 수집을 수행합니다.
 
+기존 산출물의 branch/work id를 유지합니다. 현재 브랜치가 `main`, `master`, `develop` 또는 저장소 기본 브랜치이고 새 planning artifact를 쓰려는 경우, source-of-truth 전용 작업 브랜치나 명시적 work id로 계속할지 권유합니다. 사용자 승인 없이 branch 생성이나 checkout을 수행하지 않습니다.
+
 ## 필수 출력 파일
 
 다음 파일을 생성하거나 갱신합니다.
