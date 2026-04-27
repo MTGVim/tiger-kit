@@ -22,6 +22,11 @@ Determine the stage from artifacts in this order:
 When reporting, include:
 
 - current stage
+- current branch or work id context
+- whether the context appears to be a base branch such as `main`, `master`, `develop`, or the repository default branch
 - evidence from existing artifact paths
 - the next recommended command or action
+- a branch/work-id recommendation before mutable next steps when the current context is a base branch
 - the first Ready or In Progress task when `tasks.md` exists
+
+Remain read-only. Do not create, modify, or delete files or branches.
