@@ -67,10 +67,21 @@ Run:
 
 The skill reads `tasks.md`, picks the next small task, inspects relevant code, implements narrowly, validates, then updates the task status.
 
+## 4. Status / next action
+
+Run:
+
+```text
+/tigap:next
+```
+
+The command reads `.gap/{branch_name}/` artifacts without modifying files, reports the current workflow stage, and recommends the next command or task.
+
 ## Suggested command language
 
 ```text
 /tigap:gap 이 브랜치 기준으로 source of truth 요청부터 시작해.
 /tigap:gaplan 갭 분석 결과를 바탕으로 plan mode처럼 구현계획 짜줘.
 /tigap:go tasks.md 기준으로 다음 task 하나만 진행해.
+/tigap:next 지금 어느 단계인지랑 다음에 뭐할지 알려줘.
 ```
