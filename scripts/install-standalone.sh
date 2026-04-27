@@ -10,6 +10,7 @@ mkdir -p "$TARGET_SKILLS"
 cp -R "$REPO_ROOT/skills/gap" "$TARGET_SKILLS/"
 cp -R "$REPO_ROOT/skills/gaplan" "$TARGET_SKILLS/"
 cp -R "$REPO_ROOT/skills/go" "$TARGET_SKILLS/"
+cp -R "$REPO_ROOT/skills/plan" "$TARGET_SKILLS/"
 
 echo "Installed tigap skills into: $TARGET_SKILLS"
-echo "Standalone commands may be available as: /gap, /gaplan, /go"
+echo "Standalone commands may be available as: /gap, /gaplan, /go, /plan"

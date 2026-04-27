@@ -10,6 +10,7 @@ New-Item -ItemType Directory -Force -Path $TargetSkills | Out-Null
 Copy-Item -Recurse -Force (Join-Path $RepoRoot "skills\gap") $TargetSkills
 Copy-Item -Recurse -Force (Join-Path $RepoRoot "skills\gaplan") $TargetSkills
 Copy-Item -Recurse -Force (Join-Path $RepoRoot "skills\go") $TargetSkills
+Copy-Item -Recurse -Force (Join-Path $RepoRoot "skills\plan") $TargetSkills
 
 Write-Host "Installed tigap skills into: $TargetSkills"
-Write-Host "Standalone commands may be available as: /gap, /gaplan, /go"
+Write-Host "Standalone commands may be available as: /gap, /gaplan, /go, /plan"

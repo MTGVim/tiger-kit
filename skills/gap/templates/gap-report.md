@@ -1,25 +1,25 @@
-# Gap Report
+# 갭 분석 보고서
 
-## Summary
+## 요약
 
-## Confirmed Requirements
+## 확인된 요구사항
 
-## Missing Requirements
+## 누락된 요구사항
 
-## Ambiguous Requirements
+## 모호한 요구사항
 
-## Conflicting Information
+## 충돌하는 정보
 
-## Implementation Gaps
+## 구현 갭
 
-## UX / UI Gaps
+## UX / UI 갭
 
-## API / Data Gaps
+## API / 데이터 갭
 
-## Edge Cases
+## 엣지 케이스
 
-## Risks
+## 위험
 
-## Required Clarifications
+## 확인이 필요한 질문
 
-## Recommended Next Steps
+## 추천 다음 단계

@@ -1,8 +1,8 @@
-# Execution Rules
+# 실행 규칙
 
-- One active task at a time.
-- Inspect before edit.
-- Validate before marking done.
-- Update task state after every meaningful step.
-- Record blockers explicitly.
-- Avoid broad refactors unless the task requires them.
+- 한 번에 진행 중인 작업은 하나만 둡니다.
+- 수정 전에 먼저 확인합니다.
+- 완료로 표시하기 전에 검증합니다.
+- 의미 있는 단계마다 작업 상태를 갱신합니다.
+- 차단 사유를 명확히 기록합니다.
+- 작업이 요구하지 않는 넓은 리팩터링은 피합니다.
