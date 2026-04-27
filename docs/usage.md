@@ -1,20 +1,24 @@
-# Usage
+# 사용법
 
-## Branch setup
+## 언어
 
-Before starting mutable TIGAP work, prefer a branch or work id that maps to the source-of-truth. If the current branch is `main`, `master`, `develop`, or the repository default branch, ask whether to create or switch to a work branch, or ask for a work id to use under `.gap/{work_id}/`.
+TIGAP 명령은 사용자에게 한글로 답하고 TIGAP 산출물도 한글로 작성합니다. 인용한 원문, 코드, 명령어, 경로, 식별자는 원문 그대로 유지할 수 있습니다.
 
-Branch creation and checkout require user approval and should not happen silently.
+## 브랜치 구성
 
-## 1. Gap analysis
+변경 가능한 TIGAP 작업을 시작하기 전에 원천 자료와 연결되는 브랜치 또는 작업 ID를 우선 사용합니다. 현재 브랜치가 `main`, `master`, `develop` 또는 저장소 기본 브랜치라면 작업 브랜치를 만들거나 전환할지, 또는 `.gap/{work_id}/` 아래에서 사용할 작업 ID를 정할지 물어봅니다.
 
-Run with source material or a source extraction instruction:
+브랜치 생성과 전환은 사용자 승인 없이 조용히 수행하지 않습니다.
+
+## 1. 갭 분석
+
+원천 자료나 자료 추출 지시와 함께 실행합니다.
 
 ```text
-/tigap:gap <source references or extraction instruction>
+/tigap:gap <원천 자료 또는 자료 추출 지시>
 ```
 
-Examples:
+예시:
 
 ```text
 /tigap:gap GitHub issues를 가져와서 분석해.
@@ -22,72 +26,72 @@ Examples:
 /tigap:gap 인터뷰 방식으로 요구사항부터 정리해.
 ```
 
-If no source is provided, the command should stop before analysis and ask for one of these paths:
+자료가 없으면 분석 전에 멈추고 다음 중 하나를 요청합니다.
 
-- provide source references directly
-- ask Claude to fetch or extract sources
-- start an interview to collect requirements
+- 원천 자료 직접 제공
+- Claude에게 자료 가져오기 또는 추출 지시
+- 인터뷰 방식 요구사항 수집 시작
 
-Valid source references include:
+사용 가능한 원천 자료 예시는 다음과 같습니다.
 
-- issue tracker ticket
-- knowledge-base page
+- 이슈 트래커 티켓
+- 지식베이스 문서
 - PRD
-- design document
-- user-written brief
-- screenshot
-- code path
-- existing implementation reference
+- 디자인 문서
+- 사용자 작성 브리프
+- 스크린샷
+- 코드 경로
+- 기존 구현 참고 자료
 
-The skill should produce:
+스킬은 다음 산출물을 작성합니다.
 
 ```text
 .gap/{branch_name}/normalized/source-packet.md
 .gap/{branch_name}/analysis/gap-report.md
 ```
 
-## 2. Planning
+## 2. 계획
 
-Run:
+실행:
 
 ```text
 /tigap:gaplan
 ```
 
-The skill reads the gap report, then creates:
+스킬은 갭 보고서를 읽고 다음 파일을 작성합니다.
 
 ```text
 .gap/{branch_name}/plan/implementation-plan.md
 .gap/{branch_name}/tasks.md
 ```
 
-It should bias toward plan-mode style behavior: inspect, reason, split, then defer implementation until the task list is clear.
+plan mode 스타일로 확인, 추론, 분해를 먼저 수행하고 작업 목록이 명확해질 때까지 구현을 미룹니다.
 
-## 3. Execution
+## 3. 실행
 
-Run:
+실행:
 
 ```text
 /tigap:go
 ```
 
-The skill reads `tasks.md`, picks the next small task, inspects relevant code, implements narrowly, validates, then updates the task status.
+스킬은 `tasks.md`를 읽고, 다음 작은 작업 하나를 선택하고, 관련 코드를 확인하고, 좁게 구현하고, 검증한 뒤 작업 상태를 갱신합니다.
 
-## 4. Status / next action
+## 4. 상태 / 다음 행동
 
-Run:
+실행:
 
 ```text
 /tigap:next
 ```
 
-The command reads `.gap/{branch_name}/` artifacts without modifying files, reports the current workflow stage, branch/work-id context, and recommends the next command or task. If the next action is mutable and the current context is a base branch, it should recommend choosing a work branch or work id first.
+명령은 파일을 수정하지 않고 `.gap/{branch_name}/` 산출물을 읽어 현재 workflow 단계, 브랜치/작업 ID 맥락, 다음 명령 또는 작업을 보고합니다. 다음 행동이 변경 가능한 작업이고 현재 맥락이 기반 브랜치라면 먼저 작업 브랜치나 작업 ID를 정하라고 권장합니다.
 
-## Suggested command language
+## 추천 명령 문장
 
 ```text
-/tigap:gap 이 브랜치 기준으로 source of truth 요청부터 시작해.
+/tigap:gap 이 브랜치 기준으로 원천 자료 요청부터 시작해.
 /tigap:gaplan 갭 분석 결과를 바탕으로 plan mode처럼 구현계획 짜줘.
-/tigap:go tasks.md 기준으로 다음 task 하나만 진행해.
+/tigap:go tasks.md 기준으로 다음 작업 하나만 진행해.
 /tigap:next 지금 어느 단계인지랑 다음에 뭐할지 알려줘.
 ```

@@ -56,14 +56,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## TIGAP workflow 개요
 
-- `/tigap:gap`: source-of-truth를 수집/정규화하고 gap report를 만든다. source 자료나 추출 지시가 없으면 저장소를 임의 분석하지 말고 멈춰서 자료 제공, 자료 추출, 인터뷰 중 하나를 요청한다.
-- `/tigap:gaplan`: gap report를 구현 계획과 작업 목록으로 바꾼다. 구현은 하지 않는다.
+- `/tigap:gap`: 원천 자료를 수집/정규화하고 갭 보고서를 만든다. 원천 자료나 추출 지시가 없으면 저장소를 임의 분석하지 말고 멈춰서 자료 제공, 자료 추출, 인터뷰 중 하나를 요청한다.
+- `/tigap:gaplan`: 갭 보고서를 구현 계획과 작업 목록으로 바꾼다. 구현은 하지 않는다.
 - `/tigap:go`: `.gap/{branch_name}/tasks.md`의 Ready 작업 하나만 좁게 실행하고 `tasks.md`와 `execution-log.md`를 갱신한다.
-- `/tigap:next`: `.gap/{branch_name}/` artifacts를 읽어 현재 단계와 다음 행동을 알려준다. read-only여야 한다.
+- `/tigap:next`: `.gap/{branch_name}/` 산출물을 읽어 현재 단계와 다음 행동을 알려준다. 읽기 전용이어야 한다.
 
 ## 작업 시 주의사항
 
 - `.gap/`은 이 저장소에서 로컬 workflow note로 취급되어 `.gitignore` 대상이다. 사용자가 명시하지 않는 한 커밋 대상으로 포함하지 않는다.
 - command/skill 변경 후에는 `.claude-plugin/plugin.json`의 command/skill 목록과 README/docs의 명령 목록이 서로 맞는지 확인한다.
-- `commands/next.md`는 read-only command이므로 파일, branch, git 상태를 변경하는 지시를 넣지 않는다.
-- TIGAP workflow에서 `main`, `master`, `develop` 같은 기반 브랜치에서 mutable work를 시작하게 될 때는 전용 작업 브랜치나 work id 구성을 권유해야 하며, 사용자 승인 없이 branch 생성이나 checkout을 수행하지 않는다.
+- `commands/next.md`는 읽기 전용 명령이므로 파일, 브랜치, git 상태를 변경하는 지시를 넣지 않는다.
+- TIGAP workflow에서 `main`, `master`, `develop` 같은 기반 브랜치에서 변경 가능한 작업을 시작하게 될 때는 전용 작업 브랜치나 작업 ID 구성을 권유해야 하며, 사용자 승인 없이 브랜치 생성이나 전환을 수행하지 않는다.

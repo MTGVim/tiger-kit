@@ -1,32 +1,34 @@
 ---
-description: Show the current TIGAP workflow stage and recommend the next action.
+description: 현재 TIGAP workflow 단계와 다음 행동을 안내합니다.
 ---
 
-Inspect `.gap/{branch_name}/` for the current git branch and report the current TIGAP workflow stage.
+현재 git 브랜치 기준으로 `.gap/{branch_name}/`을 확인하고 현재 TIGAP workflow 단계를 보고합니다.
 
-This command is read-only. Do not create, modify, or delete files.
+사용자에게는 한글로 답합니다. 인용한 원문, 코드, 명령어, 파일 경로, 식별자는 원문 그대로 유지할 수 있습니다.
 
-Use the current git branch name when available. If branch detection is unavailable, ask for the work id or infer a safe short slug from the user's context.
+이 명령은 읽기 전용입니다. 파일이나 브랜치를 만들거나, 수정하거나, 삭제하지 않습니다.
 
-Determine the stage from artifacts in this order:
+가능하면 현재 git 브랜치 이름을 사용합니다. 브랜치를 확인할 수 없다면 작업 ID를 묻거나 사용자 맥락에서 안전한 짧은 slug를 추론합니다.
 
-1. If `.gap/{branch_name}/normalized/source-packet.md` is missing, report `source-needed` and recommend `/tigap:gap <source material or extraction instruction>`.
-2. If `source-packet.md` exists but `.gap/{branch_name}/analysis/gap-report.md` is missing, report `analysis-needed` and recommend `/tigap:gap` with the known source material.
-3. If `gap-report.md` exists but `.gap/{branch_name}/plan/implementation-plan.md` or `.gap/{branch_name}/tasks.md` is missing, report `plan-needed` and recommend `/tigap:gaplan`.
-4. If `tasks.md` exists, inspect it and report:
-   - `blocked` when there are unresolved Blocked tasks that prevent ready work
-   - `in-progress` when a task is under In Progress
-   - `execution-ready` when Ready has unchecked tasks
-   - `complete` when all planned tasks are done and none are blocked
+다음 순서로 단계를 판단합니다.
 
-When reporting, include:
+1. `.gap/{branch_name}/normalized/source-packet.md`가 없으면 `source-needed`로 보고하고 `/tigap:gap <원천 자료 또는 자료 추출 지시>`를 추천합니다.
+2. `source-packet.md`는 있지만 `.gap/{branch_name}/analysis/gap-report.md`가 없으면 `analysis-needed`로 보고하고, 확인된 원천 자료로 `/tigap:gap`을 이어가라고 추천합니다.
+3. `gap-report.md`는 있지만 `.gap/{branch_name}/plan/implementation-plan.md` 또는 `.gap/{branch_name}/tasks.md`가 없으면 `plan-needed`로 보고하고 `/tigap:gaplan`을 추천합니다.
+4. `tasks.md`가 있으면 내용을 확인해 다음처럼 보고합니다.
+   - 해결되지 않은 Blocked 작업이 Ready 작업을 막고 있으면 `blocked`
+   - In Progress 작업이 있으면 `in-progress`
+   - Ready에 미완료 작업이 있으면 `execution-ready`
+   - 계획된 작업이 모두 끝났고 blocker가 없으면 `complete`
 
-- current stage
-- current branch or work id context
-- whether the context appears to be a base branch such as `main`, `master`, `develop`, or the repository default branch
-- evidence from existing artifact paths
-- the next recommended command or action
-- a branch/work-id recommendation before mutable next steps when the current context is a base branch
-- the first Ready or In Progress task when `tasks.md` exists
+보고에는 다음을 포함합니다.
 
-Remain read-only. Do not create, modify, or delete files or branches.
+- 현재 단계
+- 현재 브랜치 또는 작업 ID 맥락
+- 현재 맥락이 `main`, `master`, `develop` 또는 저장소 기본 브랜치 같은 기반 브랜치로 보이는지 여부
+- 근거가 되는 기존 산출물 경로
+- 다음 추천 명령 또는 행동
+- 현재 맥락이 기반 브랜치이고 다음 행동이 변경 가능한 작업이라면 브랜치/작업 ID 권장 사항
+- `tasks.md`가 있으면 첫 Ready 또는 In Progress 작업
+
+읽기 전용을 유지합니다. 파일이나 브랜치를 만들거나, 수정하거나, 삭제하지 않습니다.
