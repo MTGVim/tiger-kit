@@ -1,5 +1,11 @@
 # Usage
 
+## Branch setup
+
+Before starting mutable TIGAP work, prefer a branch or work id that maps to the source-of-truth. If the current branch is `main`, `master`, `develop`, or the repository default branch, ask whether to create or switch to a work branch, or ask for a work id to use under `.gap/{work_id}/`.
+
+Branch creation and checkout require user approval and should not happen silently.
+
 ## 1. Gap analysis
 
 Run with source material or a source extraction instruction:

@@ -21,9 +21,14 @@ Recommended project-local artifact tree:
   review-checklist.md
 ```
 
-## Branch name
+## Branch name and work id
 
-Use the current git branch name when available. If unavailable, use a short user-provided work id.
+Use the current git branch name when it represents the work being done. If the current branch is a base branch such as `main`, `master`, `develop`, or the repository default branch, prefer one of these before writing mutable workflow artifacts:
+
+- create or switch to a source-of-truth-specific work branch after user approval
+- ask the user for a short work id and use it under `.gap/{work_id}/`
+
+Do not create or switch branches automatically. If git branch detection is unavailable, use a short user-provided work id.
 
 ## Git ignore policy
 
