@@ -1,10 +1,10 @@
-# Source Types
+# 원천 자료 유형
 
-Use generic source categories rather than product-specific assumptions.
+제품별 가정보다는 범용 원천 자료 범주를 사용합니다.
 
-## Issue Tracker
+## 이슈 트래커
 
-Common fields:
+공통 필드:
 
 ```yaml
 source_type: issue_tracker
@@ -20,9 +20,9 @@ assignee: string
 updated_at: string
 ```
 
-## Knowledge Base
+## 지식베이스
 
-Common fields:
+공통 필드:
 
 ```yaml
 source_type: knowledge_base
@@ -36,9 +36,9 @@ related_sources: string[]
 updated_at: string
 ```
 
-## PRD or Brief
+## PRD 또는 브리프
 
-Common fields:
+공통 필드:
 
 ```yaml
 source_type: prd_or_brief
