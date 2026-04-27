@@ -39,3 +39,17 @@ Use the current git branch name when available. If unavailable, use a short user
 | `tasks.md` | Checkbox task list for execution |
 | `execution-log.md` | Running notes while executing tasks |
 | `review-checklist.md` | Pre-review verification list |
+
+## Workflow stages
+
+`/tigap:next` infers the current stage from these artifacts:
+
+| Stage | Evidence | Recommended next action |
+|---|---|---|
+| `source-needed` | `normalized/source-packet.md` is missing | Run `/tigap:gap <source material or extraction instruction>` |
+| `analysis-needed` | `source-packet.md` exists and `analysis/gap-report.md` is missing | Continue `/tigap:gap` |
+| `plan-needed` | `gap-report.md` exists and plan/tasks are missing | Run `/tigap:gaplan` |
+| `execution-ready` | `tasks.md` has unchecked Ready tasks | Run `/tigap:go` |
+| `in-progress` | `tasks.md` has an In Progress task | Finish or unblock that task |
+| `blocked` | `tasks.md` has unresolved blocking tasks and no ready work | Resolve the blocker |
+| `complete` | All planned tasks are done | Review and finalize |
