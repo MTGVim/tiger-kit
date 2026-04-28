@@ -1,22 +1,16 @@
 {
   "name": "tigap",
-  "description": "모호한 요청을 갭 분석, 구현 계획, 검증 가능한 실행 단계로 바꾸는 Claude Code 스킬 모음입니다.",
+  "description": "모호한 요청과 흩어진 자료를 작업 기준으로 정리하고 현재 상태와의 갭을 분석하는 Claude Code 스킬 모음입니다.",
   "version": "1.0.5",
   "author": {
     "name": "MTGVim"
   },
   "commands": [
-    "./commands/gap.md",
-    "./commands/gaplan.md",
-    "./commands/go.md",
-    "./commands/next.md",
-    "./commands/plan.md"
+    "./commands/prep.md",
+    "./commands/gap.md"
   ],
   "skills": [
-    "./skills/gap",
-    "./skills/gaplan",
-    "./skills/go",
-    "./skills/next",
-    "./skills/plan"
+    "./skills/prep",
+    "./skills/gap"
   ]
 }
