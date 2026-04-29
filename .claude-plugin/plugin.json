@@ -1,18 +1,18 @@
 {
-  "name": "tigap",
-  "description": "모호한 요청과 흩어진 자료를 작업 기준으로 정리하고 현재 상태와의 갭을 분석하는 Claude Code 스킬 모음입니다.",
-  "version": "1.2.0",
+  "name": "tk",
+  "description": "요구사항 정제, 답변 해독, 요구사항 대비 갭 확인을 돕는 TigerKit Claude Code 스킬 모음입니다.",
+  "version": "2.0.0",
   "author": {
     "name": "MTGVim"
   },
   "commands": [
-    "./commands/prep.md",
-    "./commands/gap.md",
-    "./commands/what.md"
+    "./commands/req.md",
+    "./commands/what.md",
+    "./commands/gap.md"
   ],
   "skills": [
-    "./skills/prep",
-    "./skills/gap",
-    "./skills/what"
+    "./skills/req",
+    "./skills/what",
+    "./skills/gap"
   ]
 }
