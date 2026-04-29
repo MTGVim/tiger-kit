@@ -1,0 +1,40 @@
+{
+  "planPath": "docs/superpowers/plans/2026-04-29-tigap-what-integration.md",
+  "tasks": [
+    {
+      "id": 1,
+      "subject": "Task 1: Add `what` command and skill",
+      "status": "completed",
+      "description": "**Goal:** Create the user-facing `/tigap:what` entrypoint and the reusable skill instructions that define the approved Korean output format.\n\n**Files:**\n- Create: `commands/what.md`\n- Create: `skills/what/SKILL.md`\n\n**Acceptance Criteria:**\n- [ ] `/tigap:what` command file exists and delegates to the `what` skill.\n- [ ] `skills/what/SKILL.md` triggers on Korean and English “what does this mean” prompts.\n- [ ] The default output uses `🐯 제가 요약해드리죠`, `🎯 하려던 것`, `😵 막히는 지점`, `💡 이렇게 답하면 됨`.\n- [ ] The skill forbids vague hedging such as `~에 가까워요`.\n- [ ] The skill says not to invent action when the source has no actionable content.\n\n**Verify:** `test -f commands/what.md && test -f skills/what/SKILL.md && grep -q \"제가 요약해드리죠\" skills/what/SKILL.md`\n\n```json:metadata\n{\"files\":[\"commands/what.md\",\"skills/what/SKILL.md\"],\"verifyCommand\":\"test -f commands/what.md && test -f skills/what/SKILL.md && grep -q \\\"제가 요약해드리죠\\\" skills/what/SKILL.md\",\"acceptanceCriteria\":[\"command file exists\",\"skill triggers on Korean and English prompts\",\"approved four block output\",\"avoids vague hedging\",\"does not invent action\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: Register `what` in plugin metadata and standalone installers",
+      "status": "completed",
+      "blockedBy": [1],
+      "description": "**Goal:** Make `/tigap:what` available through the plugin manifest and make standalone installs include the new skill.\n\n**Files:**\n- Modify: `.claude-plugin/plugin.json`\n- Modify: `scripts/install-standalone.sh`\n- Modify: `scripts/install-standalone.ps1`\n\n**Acceptance Criteria:**\n- [ ] Plugin version is `1.2.0`.\n- [ ] Manifest commands include `./commands/what.md`.\n- [ ] Manifest skills include `./skills/what`.\n- [ ] Bash standalone installer copies `skills/what`.\n- [ ] PowerShell standalone installer copies `skills\\what`.\n- [ ] Standalone install output mentions `/prep, /gap, /what`.\n\n**Verify:** `python -m json.tool .claude-plugin/plugin.json >/dev/null && grep -q './commands/what.md' .claude-plugin/plugin.json && grep -q 'skills/what' scripts/install-standalone.sh scripts/install-standalone.ps1`\n\n```json:metadata\n{\"files\":[\".claude-plugin/plugin.json\",\"scripts/install-standalone.sh\",\"scripts/install-standalone.ps1\"],\"verifyCommand\":\"python -m json.tool .claude-plugin/plugin.json >/dev/null && grep -q './commands/what.md' .claude-plugin/plugin.json && grep -q 'skills/what' scripts/install-standalone.sh scripts/install-standalone.ps1\",\"acceptanceCriteria\":[\"version 1.2.0\",\"manifest registers command\",\"manifest registers skill\",\"standalone installers copy what\"]}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: Document the `what → prep → gap` workflow and kickoff decisions",
+      "status": "completed",
+      "blockedBy": [2],
+      "description": "**Goal:** Make the new command discoverable and preserve the design decisions from the kickoff conversation.\n\n**Files:**\n- Modify: `README.md`\n- Modify: `docs/usage.md`\n- Create: `docs/kickoff.md`\n\n**Acceptance Criteria:**\n- [ ] README lists `/tigap:what`, `/tigap:prep`, and `/tigap:gap`.\n- [ ] README recommended flow is `what → prep → gap`.\n- [ ] Usage docs explain when to use `/tigap:what`.\n- [ ] Usage docs include `/tigap:what` in recommended command phrases.\n- [ ] `docs/kickoff.md` summarizes the approved `what` design and integration decision.\n\n**Verify:** `grep -q '/tigap:what' README.md docs/usage.md docs/kickoff.md && grep -q 'what → prep → gap' README.md docs/kickoff.md`\n\n```json:metadata\n{\"files\":[\"README.md\",\"docs/usage.md\",\"docs/kickoff.md\"],\"verifyCommand\":\"grep -q '/tigap:what' README.md docs/usage.md docs/kickoff.md && grep -q 'what → prep → gap' README.md docs/kickoff.md\",\"acceptanceCriteria\":[\"README lists all commands\",\"README shows what → prep → gap\",\"usage docs explain what\",\"kickoff captures decisions\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: Add eval coverage for `what`",
+      "status": "completed",
+      "blockedBy": [3],
+      "description": "**Goal:** Add objective eval prompts so future changes can check that `what` preserves the approved format and behavior.\n\n**Files:**\n- Modify: `evals/evals.json`\n\n**Acceptance Criteria:**\n- [ ] Evals include a confusing LLM answer case.\n- [ ] Evals include an already-actionable answer case.\n- [ ] Evals include a no-action answer case.\n- [ ] Each `what` eval checks the approved four block labels.\n- [ ] JSON remains valid.\n\n**Verify:** `python -m json.tool evals/evals.json >/dev/null && grep -q 'what-confusing-answer' evals/evals.json && grep -q 'what-no-action' evals/evals.json`\n\n```json:metadata\n{\"files\":[\"evals/evals.json\"],\"verifyCommand\":\"python -m json.tool evals/evals.json >/dev/null && grep -q 'what-confusing-answer' evals/evals.json && grep -q 'what-no-action' evals/evals.json\",\"acceptanceCriteria\":[\"confusing answer eval\",\"already actionable eval\",\"no action eval\",\"approved block labels checked\",\"valid JSON\"]}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 5: Validate, commit plan artifacts, and push",
+      "status": "pending",
+      "blockedBy": [4],
+      "description": "**Goal:** Validate the integrated plugin, commit the planning artifacts, and push the approved changes to the tracked remote branch.\n\n**Files:**\n- Create: `docs/superpowers/plans/2026-04-29-tigap-what-integration.md`\n- Create: `docs/superpowers/plans/2026-04-29-tigap-what-integration.md.tasks.json`\n\n**Acceptance Criteria:**\n- [ ] Plugin manifest validation passes.\n- [ ] Repository plugin validation passes.\n- [ ] Whitespace check passes.\n- [ ] Git status only contains the known untracked `skills/prep-gap-eval-workspace/` outside this work.\n- [ ] Plan artifacts are committed.\n- [ ] Branch is pushed to its tracked remote.\n\n**Verify:** `claude plugin validate .claude-plugin/plugin.json && claude plugin validate . && git diff --check && git status --short --branch`\n\n```json:metadata\n{\"files\":[\"docs/superpowers/plans/2026-04-29-tigap-what-integration.md\",\"docs/superpowers/plans/2026-04-29-tigap-what-integration.md.tasks.json\"],\"verifyCommand\":\"claude plugin validate .claude-plugin/plugin.json && claude plugin validate . && git diff --check && git status --short --branch\",\"acceptanceCriteria\":[\"manifest validation passes\",\"repository validation passes\",\"whitespace check passes\",\"plan artifacts committed\",\"branch pushed\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-04-29T00:00:00Z"
+}
