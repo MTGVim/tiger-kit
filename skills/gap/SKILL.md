@@ -1,15 +1,17 @@
 ---
 name: gap
-description: 캡처된 작업 기준과 현재 구현, 문서, 동작 사이의 차이를 분석합니다. .gap/{work_id}/normalized/source-packet.md가 준비된 뒤 누락 조건, 모호함, 충돌, 구현 갭, 위험을 찾을 때 반드시 사용합니다.
+description: requirements.md와 현재 구현, 문서, 테스트, 관찰 가능한 동작 사이의 차이를 분석합니다. .tigerkit/{work_id}/requirements.md가 준비된 뒤 요구사항 coverage, remaining gaps, 확인 불가 항목, ship blocker를 확인할 때 반드시 사용합니다.
 ---
 
 # gap
 
 ## 목적
 
-`prep` 단계에서 정리한 작업 기준을 바탕으로 현재 상태와의 갭을 분석합니다.
+`req` 단계에서 정리한 `requirements.md`를 바탕으로 현재 상태와의 갭을 분석합니다.
 
-계획이나 구현을 시작하기 전에 무엇이 빠졌는지, 모호한지, 충돌하는지, 위험한지, 아직 구현되지 않았는지 파악해야 할 때 이 스킬을 사용합니다.
+중간 점검과 최종 검산을 별도 skill로 나누지 않습니다. 남은 gap이 있으면 아직 작업 중이고, 확인 가능한 기준에서 gap이 없고 확인 불가 항목도 없으면 출고 가능 후보입니다.
+
+이 스킬은 구현 계획을 만들거나 코드를 수정하는 단계가 아닙니다. 사용자가 이 스킬 밖에서 명시적으로 요청하지 않는 한 구현 계획, task breakdown, 파일별 수정 지시, 코드 변경을 하지 않습니다.
 
 ## 동작 방식
 
@@ -17,55 +19,49 @@ description: 캡처된 작업 기준과 현재 구현, 문서, 동작 사이의 
 
 사용자가 명시적으로 워크플로우를 건너뛰라고 하지 않는 한 이 스킬에서는 코드를 구현하지 않습니다.
 
-이 스킬은 자료 수집이나 기준 자료 작성을 담당하지 않습니다. 다음에 집중합니다.
+이 스킬은 자료 수집이나 requirements 작성을 담당하지 않습니다. 다음에 집중합니다.
 
-1. 작업 기준 확인
+1. 요구사항 기준 확인
 2. 캐시 확인
 3. 현재 상태 확인
-4. 갭 분석
-5. Next Move 정리
+4. coverage/gap 분석
+5. 짧은 다음 행동 정리
 
 ## 필수 입력
 
 다음 파일이 있어야 합니다.
 
 ```text
-.gap/{work_id}/normalized/source-packet.md
+.tigerkit/{work_id}/requirements.md
 ```
 
-작업 기준 파일이 없거나 어떤 작업을 분석해야 하는지 불명확하면 분석을 시작하지 않고 `/tk:req`로 기준 자료를 먼저 정리하라고 안내합니다.
+작업 기준 파일이 없거나 어떤 작업을 분석해야 하는지 불명확하면 분석을 시작하지 않고 `/tk:req`로 요구사항 기준을 먼저 정리하라고 안내합니다.
 
 저장소를 임의로 기준 자료로 삼아 분석하지 않습니다.
-
-## 산출물 디렉터리
-
-`source-packet.md`가 있는 `.gap/{work_id}/`를 사용합니다.
-
-브랜치 이름이나 작업 ID가 불명확하고 여러 `.gap/` 후보가 있으면 사용자에게 어느 작업을 분석할지 묻습니다.
 
 ## 출력 파일
 
 다음 파일을 생성하거나 갱신합니다.
 
 ```text
-.gap/{work_id}/analysis/gap-report.md
+.tigerkit/{work_id}/gap.md
 ```
 
 ## 캐시 메타데이터
 
-`gap-report.md`를 생성하거나 재사용할 때 다음 메타데이터를 함께 관리합니다.
+`gap.md`를 생성하거나 재사용할 때 다음 메타데이터를 함께 관리합니다.
 
 ```text
-.gap/{work_id}/analysis/gap-report.meta.json
+.tigerkit/{work_id}/gap.meta.json
 ```
 
 메타데이터에는 최소한 다음을 기록합니다.
 
-- `artifact`: `gap-report.md`
-- `artifact_hash`: 생성 또는 재사용된 `gap-report.md`의 해시
+- `artifact`: `gap.md`
+- `artifact_hash`: 생성 또는 재사용된 `gap.md`의 해시
 - `git_commit_sha`: 분석 기준 git commit SHA
 - `working_tree_dirty`: 작업 트리에 커밋되지 않은 변경이 있었는지 여부
-- `source_packet_hash`: `source-packet.md`의 해시
+- `requirements_hash`: `requirements.md`의 해시
 - `gap_prompt_version`: gap 스킬 또는 지시문 버전
 - `scope_hash`: 분석 범위를 정규화한 해시
 - `checked_paths`: 실제로 확인한 주요 파일 경로
@@ -73,29 +69,29 @@ description: 캡처된 작업 기준과 현재 구현, 문서, 동작 사이의 
 
 ## 진행 절차
 
-### 1. 작업 기준 확인
+### 1. 요구사항 기준 확인
 
-`source-packet.md`에서 다음을 확인합니다.
+`requirements.md`에서 다음을 확인합니다.
 
-- 목표
-- 확인된 요구사항
-- 인수 조건
-- 제약
-- 제외 범위
-- 결정 사항
-- 열린 질문
-- 관련 자료
+- Source Inputs
+- Normalized Requirements
+- Acceptance Signal
+- Scope Boundary
+- Conflicts / Ambiguities
+- Assumptions
+- Unknowns
+- Gap Check Basis
 
-열린 질문이나 추정이 갭 분석에 영향을 주면 보고서에 명시합니다.
+Unknowns, assumptions, conflicts가 coverage 판단에 영향을 주면 보고서에 명시합니다.
 
 ### 2. 캐시 확인
 
-`--force`가 명시되지 않았고 기존 `gap-report.md`와 `gap-report.meta.json`이 있으면 캐시를 확인합니다.
+`--force`가 명시되지 않았고 기존 `gap.md`와 `gap.meta.json`이 있으면 캐시를 확인합니다.
 
-다음 값이 모두 같고 작업 트리에 커밋되지 않은 변경이 없으면 기존 `gap-report.md`를 재사용합니다.
+다음 값이 모두 같고 작업 트리에 커밋되지 않은 변경이 없으면 기존 `gap.md`를 재사용합니다.
 
 - `git_commit_sha`
-- `source_packet_hash`
+- `requirements_hash`
 - `gap_prompt_version`
 - `scope_hash`
 
@@ -105,81 +101,80 @@ description: 캡처된 작업 기준과 현재 구현, 문서, 동작 사이의 
 
 ### 3. 현재 상태 확인
 
-캐시 hit이면 이 단계를 건너뛰고 기존 `gap-report.md`를 재사용합니다.
+캐시 hit이면 이 단계를 건너뛰고 기존 `gap.md`를 재사용합니다.
 
-캐시 miss이거나 `--force`이면 작업 기준에 코드 경로, 현재 구현, 비교 대상, 문서 경로가 포함된 경우에만 관련 파일을 확인합니다.
+캐시 miss이거나 `--force`이면 requirements에 코드 경로, 현재 구현, 비교 대상, 문서 경로가 포함된 경우에만 관련 파일을 확인합니다.
 
-다음을 살펴봅니다.
+요구사항에 비교 대상이 충분히 없으면 저장소 전체를 임의로 훑지 말고 `Unable to Verify` 또는 확인 질문으로 남깁니다.
 
-- 기존 동작
-- 관련 컴포넌트
-- 기존 데이터 흐름
-- 검증 규칙
-- 테스트
-- feature flag
-- 에러 처리
-- 네이밍 패턴
+현재 상태 확인은 coverage 판단에 필요한 증거 수집까지만 수행합니다. 구현 방안 설계, 수정 순서 작성, 패치 작성은 하지 않습니다.
 
-작업 기준에 비교 대상이 충분히 없으면 저장소 전체를 임의로 훑지 말고 확인이 필요한 질문으로 남깁니다.
+### 4. gap.md 작성
 
-### 4. 갭 분석 보고서 작성
+보고서는 다음 구조를 기본으로 합니다.
 
-발견 사항은 기존 카테고리를 유지해 다음으로 분류합니다.
+```md
+# Gap Report
 
-- 충족된 요구사항
-- 누락된 요구사항
-- 모호한 요구사항
-- 충돌하는 정보
-- 구현 갭
-- UX/UI 갭
-- API/데이터 갭
-- 엣지 케이스
-- 위험
-- 확인이 필요한 질문
+## Verdict
+GAPS_FOUND / NO_GAPS_FOUND / UNVERIFIABLE
 
-모든 카테고리를 빈 섹션으로 만들지 않습니다. 실제 finding이 있는 항목만 작성합니다.
+## Requirement Coverage
+| Requirement ID | Status | Evidence | Gap |
+|---|---|---|---|
 
-각 finding은 최소한 다음 정보를 포함합니다.
+## Remaining Gaps
+| Gap ID | Requirement ID | Severity | Description | Suggested Next Move |
+|---|---|---|---|---|
 
-- 분류
-- 내용
-- 근거
-- 다음 행동
+## Unable to Verify
+| Requirement ID | Reason | Needed Evidence |
+|---|---|---|
 
-근거에는 가능한 경우 작업 기준 항목과 현재 상태의 파일 경로 또는 관찰 내용을 함께 적습니다.
+## Notes
+-
+```
 
-보고서에는 짧은 summary 표를 포함하되, 상태머신, dependency graph, decision ledger, task 변환표는 만들지 않습니다.
+Requirement Coverage의 `Status`는 다음 중 하나를 사용합니다.
 
-### 5. Next Move 정리
+- `Covered`: 요구사항과 acceptance signal을 현재 증거로 충족한다고 볼 수 있음
+- `Partial`: 일부만 충족하거나 edge case, 문서, 테스트, 동작 증거가 부족함
+- `Missing`: 요구사항을 충족하는 구현, 문서, 테스트, 관찰 가능한 동작을 찾지 못함
+- `Unverified`: 확인에 필요한 경로, 실행 환경, 자료, 권한, 관찰 증거가 부족함
 
-보고서 마지막에는 `Next Move`를 하나만 제안합니다.
+Verdict 규칙:
 
-`Next Move`는 바로 실행 가능해야 하며, 왜 그것이 가장 우선인지 한 문장으로 설명합니다.
+- 남은 gap이 있으면 `GAPS_FOUND`입니다.
+- 확인 불가능한 requirement가 있으면 `NO_GAPS_FOUND`를 쓰지 않습니다.
+- 확인 불가능한 항목이 주요 coverage 판단을 막으면 `UNVERIFIABLE`을 사용합니다.
+- 확인 가능한 기준에서 충족되고 확인 불가 항목이 없을 때만 `NO_GAPS_FOUND`를 사용합니다.
+- `NO_GAPS_FOUND`는 “현재 확인 가능한 기준에서는 남은 gap 없음”이라고 표현합니다.
 
-여러 선택지를 나열하거나 계획/task 목록으로 확장하지 않습니다. 특정 계획 명령이나 실행 명령으로 자동 연결하지 않습니다.
+Remaining Gaps의 `Suggested Next Move`는 한 문장 수준의 다음 행동 후보만 적습니다. 구현 계획이나 세부 작업 목록으로 확장하지 않습니다.
+
+## 사용자 인계
+
+전체 보고서를 채팅에 길게 출력하지 않습니다.
+
+사용자 응답에는 다음만 포함합니다.
+
+- 생성 또는 재사용 여부와 cache hit/miss 이유
+- Verdict
+- `gap.md` 파일 경로
+- 핵심 gap 1~3개
+- 확인 불가 항목이 있으면 그 수와 가장 중요한 이유
+- 다음 행동 1개
+
+상세 내용은 `gap.md`에 남겼다고 안내하고 마무리합니다.
 
 ## 완료 기준
 
 이 스킬은 다음 조건을 만족하면 완료됩니다.
 
-- 작업 기준 파일을 확인함
-- 가능한 범위에서 현재 상태를 확인함
-- cache hit이면 기존 `gap-report.md`를 재사용하고 이유를 알림
-- cache miss 또는 `--force`이면 갭 분석 보고서와 메타데이터가 갱신됨
-- 누락, 모호함, 충돌, 위험, 확인 질문이 분리됨
-- 각 finding에 분류, 내용, 근거, 다음 행동이 포함됨
-- 보고서 끝에 실행 가능한 `Next Move` 하나와 우선 이유가 정리됨
-
-## 인계
-
-갭 분석 보고서가 준비되면 전체 보고서를 채팅에 길게 출력하지 않습니다.
-
-사용자 응답에는 다음만 포함합니다.
-
-- 생성 또는 재사용 여부와 cache hit/miss 이유
-- `gap-report.md` 파일 경로
-- 간단한 gap summary 표
-- key issues
-- next move 1개
-
-상세 내용은 `gap-report.md`에 남겼다고 안내하고 마무리합니다.
+- `requirements.md`를 작업 기준으로 확인함
+- 가능한 범위에서 현재 구현, 문서, 테스트, 관찰 가능한 동작을 확인함
+- cache hit이면 기존 `gap.md`를 재사용하고 이유를 알림
+- cache miss 또는 `--force`이면 `gap.md`와 `gap.meta.json`이 갱신됨
+- Verdict, Requirement Coverage, Remaining Gaps, Unable to Verify, Notes가 포함됨
+- 확인 불가 requirement가 있으면 `NO_GAPS_FOUND`를 사용하지 않음
+- 구현 계획이나 코드 변경 없이 coverage/gap 결과만 인계함
