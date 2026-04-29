@@ -1,0 +1,68 @@
+{
+  "planPath": "docs/superpowers/plans/2026-04-29-tigerkit-structure-implementation.md",
+  "tasks": [
+    {
+      "id": 1,
+      "subject": "Task 1: Add TigerKit eval contracts",
+      "status": "completed",
+      "description": "**Goal:** Establish failing-but-clear evaluation contracts for the new TigerKit surface before changing implementation docs.\n\n**Files:**\n- Modify: `evals/evals.json`\n- Create: `skills/req/evals/evals.json`\n- Modify: `skills/gap/evals/evals.json`\n- Delete after migration: `skills/prep/evals/evals.json`\n\n**Acceptance Criteria:**\n- [ ] Workflow evals use `/tk:req`, `/tk:gap`, `/tk:what` instead of `/tigap:*`.\n- [ ] Req evals expect `.tigerkit/{work_id}/requirements.md` and `requirements.meta.json`.\n- [ ] Gap evals expect `.tigerkit/{work_id}/requirements.md`, `.tigerkit/{work_id}/gap.md`, verdict behavior, and no implementation planning.\n- [ ] What evals keep the existing four-block answer clarification behavior.\n- [ ] JSON files are valid.\n\n```json:metadata\n{\"files\":[\"evals/evals.json\",\"skills/req/evals/evals.json\",\"skills/gap/evals/evals.json\",\"skills/prep/evals/evals.json\"],\"verifyCommand\":\"python -m json.tool evals/evals.json >/dev/null && python -m json.tool skills/req/evals/evals.json >/dev/null && python -m json.tool skills/gap/evals/evals.json >/dev/null && grep -R \\\"/tigap\\\\\\\\|source-packet\\\\\\\\|gap-report\\\\\\\\|\\\\\\\\.gap/\\\" -n evals skills/req/evals skills/gap/evals\",\"acceptanceCriteria\":[\"Workflow evals use /tk:*\",\"Req evals expect requirements.md\",\"Gap evals expect verdict coverage\",\"What evals keep four-block behavior\",\"JSON files are valid\"]}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: Rename plugin surface to tk",
+      "status": "completed",
+      "blockedBy": [
+        1
+      ],
+      "description": "**Goal:** Make the plugin expose only `/tk:req`, `/tk:what`, and `/tk:gap`, with no legacy `/tigap:*` or `prep` command registration.\n\n**Files:**\n- Create: `commands/req.md`\n- Modify: `commands/what.md`\n- Modify: `commands/gap.md`\n- Create: `skills/req/SKILL.md`\n- Modify: `skills/what/SKILL.md`\n- Modify: `skills/gap/SKILL.md`\n- Delete: `commands/prep.md`\n- Delete: `skills/prep/SKILL.md`\n- Modify: `.claude-plugin/plugin.json`\n\n```json:metadata\n{\"files\":[\"commands/req.md\",\"commands/what.md\",\"commands/gap.md\",\"skills/req/SKILL.md\",\"skills/what/SKILL.md\",\"skills/gap/SKILL.md\",\"commands/prep.md\",\"skills/prep/SKILL.md\",\".claude-plugin/plugin.json\"],\"verifyCommand\":\"claude plugin validate .claude-plugin/plugin.json && ! grep -R \\\"commands/prep\\\\\\\\|skills/prep\\\\\\\\|/tigap\\\" -n .claude-plugin commands skills/req/SKILL.md skills/gap/SKILL.md skills/what/SKILL.md\",\"acceptanceCriteria\":[\"Manifest name is tk\",\"prep command removed\",\"prep skill removed\",\"commands mention TigerKit\",\"plugin manifest validates\"]}\n```",
+      "lastUpdated": "2026-04-29T18:00:08.850283+00:00"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: Rewrite req skill",
+      "status": "pending",
+      "blockedBy": [
+        2
+      ],
+      "description": "**Goal:** Replace prep/source-packet behavior with a requirements normalization workflow that does not create implementation plans.\n\n**Files:**\n- Modify: `skills/req/SKILL.md`\n\n```json:metadata\n{\"files\":[\"skills/req/SKILL.md\"],\"verifyCommand\":\"grep -n \\\"source-packet\\\\\\\\|source_packet\\\\\\\\|\\\\\\\\.gap/\\\\\\\\|/tigap\\\\\\\\|prep\\\" skills/req/SKILL.md\",\"acceptanceCriteria\":[\"Frontmatter name is req\",\"Output is requirements.md\",\"Inputs directory documented\",\"Metadata path documented\",\"Requirements format included\",\"Implementation planning forbidden\",\"Short handoff documented\"]}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: Rewrite gap skill",
+      "status": "pending",
+      "blockedBy": [
+        2
+      ],
+      "description": "**Goal:** Make `gap` compare `.tigerkit/{work_id}/requirements.md` against current implementation/docs/tests and report verdict-based coverage.\n\n**Files:**\n- Modify: `skills/gap/SKILL.md`\n- Modify: `commands/gap.md`\n\n```json:metadata\n{\"files\":[\"skills/gap/SKILL.md\",\"commands/gap.md\"],\"verifyCommand\":\"grep -n \\\"source-packet\\\\\\\\|source_packet\\\\\\\\|gap-report\\\\\\\\|\\\\\\\\.gap/\\\\\\\\|/tigap\\\\\\\\|prep\\\" skills/gap/SKILL.md commands/gap.md\",\"acceptanceCriteria\":[\"Input is requirements.md\",\"Output is gap.md\",\"Metadata path documented\",\"requirements_hash used\",\"Report sections included\",\"NO_GAPS_FOUND rule enforced\",\"Implementation planning forbidden\"]}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 5: Update docs and installers",
+      "status": "pending",
+      "blockedBy": [
+        3,
+        4
+      ],
+      "description": "**Goal:** Make every user-facing document and installer describe TigerKit, `tk:*`, `.tigerkit/`, `requirements.md`, and `gap.md` consistently.\n\n**Files:**\n- Modify: `README.md`\n- Modify: `docs/usage.md`\n- Modify: `docs/artifact-layout.md`\n- Modify: `docs/kickoff.md`\n- Modify: `CLAUDE.md`\n- Modify: `.claude-plugin/marketplace.json`\n- Modify: `scripts/install-standalone.sh`\n- Modify: `scripts/install-standalone.ps1`\n\n```json:metadata\n{\"files\":[\"README.md\",\"docs/usage.md\",\"docs/artifact-layout.md\",\"docs/kickoff.md\",\"CLAUDE.md\",\".claude-plugin/marketplace.json\",\"scripts/install-standalone.sh\",\"scripts/install-standalone.ps1\"],\"verifyCommand\":\"! grep -R \\\"/tigap\\\\\\\\|source-packet\\\\\\\\|gap-report\\\\\\\\|\\\\\\\\.gap/\\\\\\\\|tigap-skills\\\" -n CLAUDE.md README.md docs commands skills .claude-plugin scripts\",\"acceptanceCriteria\":[\"README lists /tk commands\",\"Install docs use tiger-kit slug\",\"Artifact docs use .tigerkit\",\"CLAUDE.md updated\",\"Installers copy req\",\"Marketplace says TigerKit\"]}\n```"
+    },
+    {
+      "id": 6,
+      "subject": "Task 6: Validate and commit artifacts",
+      "status": "pending",
+      "blockedBy": [
+        5
+      ],
+      "description": "**Goal:** Ensure the repository is internally consistent before changing remote repository metadata.\n\n**Files:**\n- Inspect: all modified files\n- Create/commit: `docs/superpowers/specs/2026-04-29-tigerkit-structure-design.md`\n- Create/commit: `docs/superpowers/plans/2026-04-29-tigerkit-structure-implementation.md`\n- Create/commit: `docs/superpowers/plans/2026-04-29-tigerkit-structure-implementation.md.tasks.json`\n\n```json:metadata\n{\"files\":[\"docs/superpowers/specs/2026-04-29-tigerkit-structure-design.md\",\"docs/superpowers/plans/2026-04-29-tigerkit-structure-implementation.md\",\"docs/superpowers/plans/2026-04-29-tigerkit-structure-implementation.md.tasks.json\"],\"verifyCommand\":\"claude plugin validate .claude-plugin/plugin.json && claude plugin validate . && git diff --check && git status --short\",\"acceptanceCriteria\":[\"Manifest validates\",\"Repository validates\",\"Whitespace check passes\",\"Old prep changes staged or removed\",\"Pre-existing workspaces not staged\",\"Plan/spec committed\"]}\n```"
+    },
+    {
+      "id": 7,
+      "subject": "Task 7: Rename GitHub repository slug",
+      "status": "pending",
+      "blockedBy": [
+        6
+      ],
+      "description": "**Goal:** Rename the uploaded GitHub repository from `MTGVim/tigap-skills` to `MTGVim/tiger-kit`, then update local origin to the new slug and push the completed branch.\n\n**Files:**\n- No repository file changes expected.\n- Remote repository metadata changes via GitHub CLI.\n\n```json:metadata\n{\"files\":[],\"verifyCommand\":\"git remote -v && gh repo view MTGVim/tiger-kit --json nameWithOwner,url\",\"acceptanceCriteria\":[\"Current repo verified\",\"GitHub rename succeeds\",\"Local origin updated\",\"Push succeeds\",\"New slug verified\"]}\n```"
+    }
+  ],
+  "lastUpdated": "2026-04-29T18:00:08.850283+00:00"
+}
