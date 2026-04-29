@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 언어 및 산출물 규칙
 
-- 이 저장소에서 만드는 작업 산출물(`.gap/{work_id}/normalized/source-packet.md`, `.gap/{work_id}/analysis/gap-report.md`)은 반드시 한글로 작성한다.
+- 이 저장소에서 만드는 작업 산출물(`.gap/{work_id}/to-be.md`, `.gap/{work_id}/gap.md`)은 반드시 한글로 작성한다.
 - 사용자에게 진행 상황, 계획, 검증 결과를 보고할 때도 한글을 기본으로 사용한다.
 - 기존 공개 문서나 manifest가 영어 문구를 쓰는 경우에는 주변 문맥과 일관성을 우선하되, `.gap/` 산출물은 한글 규칙을 유지한다.
 
@@ -56,8 +56,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 명령 개요
 
-- `/tigap:prep`: 아이디어, 앞선 대화, 파일 경로, 기획서 URL, 티켓, 메모를 이번 작업의 기준 자료로 정리한다. 앞선 대화로 바로 정리할지, 별도 자료를 받을지, 스펙명/작업 ID를 어떻게 잡을지 먼저 확인한다.
-- `/tigap:gap`: `.gap/{work_id}/normalized/source-packet.md`를 기준으로 현재 구현, 문서, 동작과의 갭을 분석하고 `.gap/{work_id}/analysis/gap-report.md`를 작성한다. 기준 자료가 없으면 `/tigap:prep`을 먼저 안내한다.
+- `/tigap:prep`: 아이디어, 앞선 대화, 파일 경로, 기획서 URL, 티켓, 메모를 이번 작업의 목표 상태인 `.gap/{work_id}/to-be.md`로 정리한다. 앞선 대화로 바로 정리할지, 별도 자료를 받을지, 스펙명/작업 ID를 어떻게 잡을지 먼저 확인한다.
+- `/tigap:gap`: 현재 repo/as-is와 `.gap/{work_id}/to-be.md` 사이의 갭을 분석하고 `.gap/{work_id}/gap.md`를 작성한다. 목표 상태 파일이 없으면 `/tigap:prep`을 먼저 안내한다.
 
 ## 작업 시 주의사항
 

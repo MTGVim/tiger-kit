@@ -4,10 +4,10 @@
     {
       "id": 1,
       "prompt": "이 저장소에서 부족한 점을 gap 분석해줘.",
-      "expected_output": "작업 기준 파일이나 명시된 작업 기준이 없음을 설명하고 저장소를 임의 분석하지 않으며, 먼저 /tigap:prep으로 기준 자료를 정리하라고 안내한다.",
+      "expected_output": "목표 상태 파일이나 명시된 작업 기준이 없음을 설명하고 저장소를 임의 분석하지 않으며, 먼저 /tigap:prep으로 기준 자료를 정리하라고 안내한다.",
       "files": [],
       "assertions": [
-        "작업 기준이 없다고 보고한다.",
+        "목표 상태가 없다고 보고한다.",
         "저장소를 임의로 기준 자료 삼아 분석하지 않는다.",
         ".gap/ 산출물을 만들지 않는다.",
         "먼저 /tigap:prep을 안내한다.",
@@ -16,15 +16,15 @@
     },
     {
       "id": 2,
-      "prompt": ".gap/login-failure-ux/normalized/source-packet.md 기준으로 gap 분석해줘.",
-      "expected_output": "준비된 source-packet을 기준으로 현재 상태를 확인하려 하고, 로그인 실패 UX의 구현 갭과 모호한 질문을 gap report 관점으로 분리한 뒤 후속 선택지를 제안한다.",
+      "prompt": ".gap/login-failure-ux/to-be.md 기준으로 gap 분석해줘.",
+      "expected_output": "준비된 to-be를 기준으로 현재 상태를 확인하려 하고, 로그인 실패 UX의 구현 갭과 모호한 질문을 gap 관점으로 분리한 뒤 Next Move 하나를 제안한다.",
       "files": [],
       "assertions": [
-        "source-packet.md를 작업 기준으로 삼는다.",
+        "to-be.md를 목표 상태로 삼는다.",
         "로그인 실패 UX의 구현 갭 또는 UX 갭을 포함한다.",
         "모호한 요구사항이나 확인 질문을 분리한다.",
         "코드를 구현하지 않는다.",
-        "후속 선택지를 제안하되 특정 계획 명령으로 자동 연결하지 않는다."
+        "Next Move 하나를 제안하되 특정 계획 명령으로 자동 연결하지 않는다."
       ]
     }
   ]

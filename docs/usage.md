@@ -37,9 +37,9 @@
 
 이 명령은 코드를 구현하거나 파일을 수정하지 않습니다. 먼저 말뜻, 의도, 막히는 지점, 사용자가 보낼 수 있는 답장을 짧게 정리합니다.
 
-## 2. 작업 기준 정리
+## 2. 목표 상태 정리
 
-아이디어, 앞선 대화, 파일 경로, 기획서 URL, 티켓, 메모를 갭 분석 기준으로 정리할 때 실행합니다.
+아이디어, 앞선 대화, 파일 경로, 기획서 URL, 티켓, 메모를 갭 분석 기준인 목표 상태/to-be로 정리할 때 실행합니다.
 
 ```text
 /tigap:prep <아이디어, 자료, 또는 정리 요청>
@@ -48,9 +48,9 @@
 예시:
 
 ```text
-/tigap:prep 지금까지 얘기한 내용 기준으로 작업 기준 잡아줘.
-/tigap:prep docs/spec.md를 기준 자료로 정리해줘.
-/tigap:prep 아직 티켓은 없는데 짧게 브레인스토밍하고 기준 자료로 캡처해줘.
+/tigap:prep 지금까지 얘기한 내용 기준으로 목표 상태 잡아줘.
+/tigap:prep docs/spec.md를 to-be 기준으로 정리해줘.
+/tigap:prep 아직 티켓은 없는데 짧게 브레인스토밍하고 목표 상태로 캡처해줘.
 ```
 
 이 명령은 먼저 다음을 확인합니다.
@@ -64,23 +64,23 @@
 주요 산출물:
 
 ```text
-.gap/{work_id}/normalized/source-packet.md
-.gap/{work_id}/normalized/source-packet.meta.json
+.gap/{work_id}/to-be.md
+.gap/{work_id}/to-be.meta.json
 ```
 
-동일한 입력 자료, prep 지시문 버전, 범위, source identity로 다시 실행하면 기존 `source-packet.md`를 재사용합니다. 하나라도 다르거나 `--force`를 붙이면 다시 생성합니다.
+동일한 입력 자료, prep 지시문 버전, 범위, input identity로 다시 실행하면 기존 `to-be.md`를 재사용합니다. 하나라도 다르거나 `--force`를 붙이면 다시 생성합니다.
 
 실행 후 채팅 응답은 생성/재사용 여부, 파일 경로, 3줄 이내 요약만 짧게 표시합니다.
 
 필요하면 제공 자료의 스냅샷이나 요약을 다음 경로에 둡니다.
 
 ```text
-.gap/{work_id}/sources/
+.gap/{work_id}/inputs/
 ```
 
 ## 3. 갭 분석
 
-준비된 작업 기준과 현재 구현, 문서, 동작 사이의 차이를 분석할 때 실행합니다.
+준비된 목표 상태/to-be와 현재 구현, 문서, 동작 사이의 차이를 분석할 때 실행합니다.
 
 ```text
 /tigap:gap
@@ -96,21 +96,21 @@
 `gap`은 다음 파일을 기준으로 분석합니다.
 
 ```text
-.gap/{work_id}/normalized/source-packet.md
+.gap/{work_id}/to-be.md
 ```
 
-작업 기준 파일이 없거나 어떤 작업을 분석해야 하는지 불명확하면 분석을 시작하지 않고 `/tigap:prep`으로 기준 자료를 먼저 정리하라고 안내합니다.
+목표 상태 파일이 없거나 어떤 작업을 분석해야 하는지 불명확하면 분석을 시작하지 않고 `/tigap:prep`으로 기준 자료를 먼저 정리하라고 안내합니다.
 
 주요 산출물:
 
 ```text
-.gap/{work_id}/analysis/gap-report.md
-.gap/{work_id}/analysis/gap-report.meta.json
+.gap/{work_id}/gap.md
+.gap/{work_id}/gap.meta.json
 ```
 
-동일한 git commit, source-packet 해시, gap 지시문 버전, 범위로 다시 실행하고 작업 트리가 clean이면 기존 `gap-report.md`를 재사용합니다. 하나라도 다르거나 작업 트리가 dirty이거나 `--force`를 붙이면 다시 분석합니다.
+동일한 git commit, to-be 해시, gap 지시문 버전, 범위로 다시 실행하고 작업 트리가 clean이면 기존 `gap.md`를 재사용합니다. 하나라도 다르거나 작업 트리가 dirty이거나 `--force`를 붙이면 다시 분석합니다.
 
-실행 후 채팅 응답은 전체 보고서를 길게 출력하지 않고, 보고서 경로, 간단한 summary 표, key issues, next move 1개만 표시합니다.
+실행 후 채팅 응답은 전체 보고서를 길게 출력하지 않고, `gap.md` 경로, 간단한 summary 표, key issues, next move 1개만 표시합니다.
 
 보고서는 다음을 분리해서 정리합니다.
 
