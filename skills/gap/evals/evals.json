@@ -17,10 +17,11 @@
     {
       "id": 2,
       "prompt": ".tigerkit/login-failure-ux/requirements.md 기준으로 gap 분석해줘.",
-      "expected_output": "준비된 requirements.md를 기준으로 현재 상태를 확인하려 하고, .tigerkit/login-failure-ux/gap.md에 로그인 실패 UX의 requirement coverage, remaining gaps, unable to verify를 분리한 뒤 verdict를 제시한다.",
+      "expected_output": "준비된 .tigerkit/{work_id}/requirements.md를 기준으로 현재 상태를 확인하려 하고, .tigerkit/{work_id}/gap.md에 로그인 실패 UX의 requirement coverage, remaining gaps, unable to verify를 분리한 뒤 verdict를 제시한다. 예시 경로로 .tigerkit/login-failure-ux/gap.md를 사용할 수 있다.",
       "files": [],
       "assertions": [
-        "requirements.md를 작업 기준으로 삼는다.",
+        ".tigerkit/{work_id}/requirements.md를 작업 기준 경로 개념으로 삼는다.",
+        ".tigerkit/{work_id}/gap.md를 분석 산출물 경로 개념으로 삼는다.",
         "Verdict를 GAPS_FOUND, NO_GAPS_FOUND, UNVERIFIABLE 중 하나로 제시한다.",
         "Requirement Coverage를 포함한다.",
         "Unable to Verify가 있으면 NO_GAPS_FOUND로 판정하지 않는다.",
