@@ -166,10 +166,10 @@ tk:req
 
 ## Scope Boundary
 ### In Scope
-- 
+-
 
 ### Out of Scope
-- 
+-
 
 ## Conflicts / Ambiguities
 | ID | Issue | Sources | Impact | Suggested Resolution |
@@ -210,7 +210,7 @@ GAPS_FOUND / NO_GAPS_FOUND / UNVERIFIABLE
 |---|---|---|
 
 ## Notes
-- 
+-
 ```
 
 판정 규칙:
