@@ -38,7 +38,12 @@
 
 ```text
 .gap/{work_id}/normalized/source-packet.md
+.gap/{work_id}/normalized/source-packet.meta.json
 ```
+
+동일한 입력 자료, prep 지시문 버전, 범위, source identity로 다시 실행하면 기존 `source-packet.md`를 재사용합니다. 하나라도 다르거나 `--force`를 붙이면 다시 생성합니다.
+
+실행 후 채팅 응답은 생성/재사용 여부, 파일 경로, 3줄 이내 요약만 짧게 표시합니다.
 
 필요하면 제공 자료의 스냅샷이나 요약을 다음 경로에 둡니다.
 
@@ -73,7 +78,12 @@
 
 ```text
 .gap/{work_id}/analysis/gap-report.md
+.gap/{work_id}/analysis/gap-report.meta.json
 ```
+
+동일한 git commit, source-packet 해시, gap 지시문 버전, 범위로 다시 실행하고 작업 트리가 clean이면 기존 `gap-report.md`를 재사용합니다. 하나라도 다르거나 작업 트리가 dirty이거나 `--force`를 붙이면 다시 분석합니다.
+
+실행 후 채팅 응답은 전체 보고서를 길게 출력하지 않고, 보고서 경로, 간단한 summary 표, key issues, next move 1개만 표시합니다.
 
 보고서는 다음을 분리해서 정리합니다.
 
@@ -88,7 +98,9 @@
 - 위험
 - 확인이 필요한 질문
 
-분석 후에는 특정 계획/실행 명령으로 자동 연결하지 않습니다. 보고서의 선택지를 보고 사용자가 구현, 보류, 추가 확인 같은 다음 행동을 고릅니다.
+각 finding은 분류, 내용, 근거, 다음 행동을 포함합니다.
+
+분석 후에는 특정 계획/실행 명령으로 자동 연결하지 않습니다. 보고서 끝의 `Next Move` 하나를 참고해 사용자가 구현, 보류, 추가 확인 같은 다음 행동을 고릅니다.
 
 ## 추천 명령 문장
 

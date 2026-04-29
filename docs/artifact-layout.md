@@ -12,8 +12,10 @@
     code/
   normalized/
     source-packet.md
+    source-packet.meta.json
   analysis/
     gap-report.md
+    gap-report.meta.json
   archive/
     sources/
     analysis/
@@ -52,7 +54,9 @@ Archive는 현재 작업 흐름에서 산출물을 숨기기 위한 구조이며
 | 파일 | 역할 |
 |---|---|
 | `source-packet.md` | 이번 작업의 기준 자료 스냅샷 |
+| `source-packet.meta.json` | `source-packet.md` 재사용 여부를 판단하는 캐시 메타데이터 |
 | `gap-report.md` | 기준 대비 누락, 모호함, 충돌, 위험, 구현 갭 분석 |
+| `gap-report.meta.json` | `gap-report.md` 재사용 여부를 판단하는 캐시 메타데이터 |
 
 ## 작업 흐름 단계
 
@@ -60,4 +64,12 @@ Archive는 현재 작업 흐름에서 산출물을 숨기기 위한 구조이며
 |---|---|---|
 | `prep-needed` | `normalized/source-packet.md` 없음 | `/tigap:prep` 실행 |
 | `analysis-needed` | `source-packet.md`는 있고 `analysis/gap-report.md` 없음 | `/tigap:gap` 실행 |
-| `analysis-complete` | `gap-report.md` 있음 | 분석 결과를 보고 구현, 보류, 추가 확인 중 선택 |
+| `analysis-complete` | `gap-report.md` 있음 | 분석 결과의 `Next Move`를 보고 구현, 보류, 추가 확인 중 선택 |
+
+## 캐시 정책
+
+`/tigap:prep`은 입력 자료 해시, prep 지시문 버전, 범위 해시, source identity가 같으면 기존 `source-packet.md`를 재사용합니다. 하나라도 다르거나 `--force`가 있으면 다시 생성합니다.
+
+`/tigap:gap`은 현재 git commit SHA, `source-packet.md` 해시, gap 지시문 버전, 범위 해시가 같고 작업 트리가 clean이면 기존 `gap-report.md`를 재사용합니다. 하나라도 다르거나 작업 트리가 dirty이거나 `--force`가 있으면 다시 분석합니다.
+
+각 명령은 cache hit/miss 이유를 사용자에게 짧게 표시합니다.

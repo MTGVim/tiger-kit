@@ -1,0 +1,45 @@
+{
+  "skill_name": "prep-gap-cache-ux",
+  "evals": [
+    {
+      "id": 0,
+      "name": "prep-cache-hit",
+      "prompt": "You are evaluating the tigap prep skill instructions. A project already has .gap/checkout-retry/normalized/source-packet.md and .gap/checkout-retry/normalized/source-packet.meta.json. The meta fields input_source_hash, prep_prompt_version, scope_hash, and source_identities all match the current request. The user runs: /tigap:prep checkout retry 기준 자료 다시 정리해줘. Describe exactly what Claude should do and what the user-facing response should include. Do not write files.",
+      "expected_output": "Should reuse the existing source-packet, state cache hit reason briefly, include the source-packet path, keep the response short with a three-line-or-less summary, and avoid dumping the whole source-packet.",
+      "files": [],
+      "expectations": [
+        "Says the existing source-packet should be reused because cache keys match",
+        "Names the source-packet path in the user-facing response",
+        "Says the user-facing response should be short and include a three-line-or-less summary",
+        "Does not instruct regenerating source-packet or metadata on cache hit"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "prep-force-miss",
+      "prompt": "You are evaluating the tigap prep skill instructions. A previous source-packet exists for .gap/search-filter/normalized/source-packet.md, but the user runs: /tigap:prep --force docs/search-filter.md 기준으로 다시 정리해줘. Describe exactly what Claude should do and what the user-facing response should include. Do not write files.",
+      "expected_output": "Should ignore the cache because --force was requested, regenerate source-packet and metadata, briefly explain the force/cache miss reason, show the path, and keep the chat response short.",
+      "files": [],
+      "expectations": [
+        "Says --force makes Claude ignore or bypass the existing cache",
+        "Says source-packet should be regenerated from docs/search-filter.md",
+        "Says source-packet metadata should be updated or regenerated",
+        "Says the user-facing response should include the path and stay short"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "gap-report-ux",
+      "prompt": "You are evaluating the tigap gap skill instructions. A source-packet exists at .gap/onboarding-copy/normalized/source-packet.md, the repository has relevant docs and code paths, and the user runs: /tigap:gap 방금 정리한 기준 대비 현재 구현 갭 분석해줘. Describe the expected report structure and the final user-facing response. Do not write files.",
+      "expected_output": "Should describe cache check based on git commit, source-packet hash, gap prompt version, and scope; write/reuse gap-report with metadata; keep findings minimally structured with category/content/evidence/next action; end report with one Next Move; final chat response should not dump the full report and should include path, summary table, key issues, and one next move.",
+      "files": [],
+      "expectations": [
+        "Describes gap cache checking with git commit, source-packet hash, prompt version, and scope",
+        "Mentions gap-report metadata",
+        "Requires each finding to include category, content, evidence, and next action",
+        "Ends the report with exactly one Next Move rather than a numbered list of choices",
+        "Says the chat response should not dump the full report and should include path, summary table, key issues, and one next move"
+      ]
+    }
+  ]
+}

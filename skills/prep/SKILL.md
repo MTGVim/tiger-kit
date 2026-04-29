@@ -81,6 +81,26 @@ description: 아이디어, 앞선 대화, 파일 경로, 기획서 URL, 티켓, 
 
 Git 저장소에서 실행 중이라면 `.gap/`이 ignore 또는 의도적으로 track되는지 확인합니다. 둘 다 아니라면 산출물 생성 전에 `.gap/`을 `.gitignore`에 추가하라고 제안합니다. 사용자 저장소의 ignore 정책은 강제하지 않습니다.
 
+## 캐시 메타데이터
+
+`source-packet.md`를 생성하거나 재사용할 때 다음 메타데이터를 함께 관리합니다.
+
+```text
+.gap/{work_id}/normalized/source-packet.meta.json
+```
+
+메타데이터에는 최소한 다음을 기록합니다.
+
+- `artifact`: `source-packet.md`
+- `artifact_hash`: 생성 또는 재사용된 `source-packet.md`의 해시
+- `input_source_hash`: source-packet 생성에 실제 사용한 입력 자료의 해시
+- `prep_prompt_version`: prep 스킬 또는 지시문 버전
+- `scope_hash`: 작업 ID, 스펙명, 포함 범위, 제외 범위를 정규화한 해시
+- `source_identities`: 사람이 확인할 수 있는 입력 자료 목록
+- `created_at`: 메타데이터 작성 시각
+
+전체 대화가 아니라 source-packet 생성에 실제 사용한 입력만 해시합니다.
+
 ## 진행 절차
 
 ### 1. 기준 선택
@@ -95,9 +115,26 @@ Git 저장소에서 실행 중이라면 `.gap/`이 ignore 또는 의도적으로
 - 이번에 제외할 범위
 - 검증 방법
 
-### 2. 작업 기준 정리
+### 2. 캐시 확인
 
-모든 자료를 하나의 작업 기준으로 정규화합니다.
+`--force`가 명시되지 않았고 기존 `source-packet.md`와 `source-packet.meta.json`이 있으면 캐시를 확인합니다.
+
+다음 값이 모두 같으면 기존 `source-packet.md`를 재사용합니다.
+
+- `input_source_hash`
+- `prep_prompt_version`
+- `scope_hash`
+- `source_identities`
+
+하나라도 다르면 `source-packet.md`를 다시 생성합니다.
+
+사용자에게 cache hit/miss 여부와 이유를 한 문장으로 알려줍니다. `--force`가 명시되면 기존 캐시를 무시하고 다시 생성합니다.
+
+### 3. 작업 기준 정리
+
+캐시 hit이면 이 단계를 건너뛰고 기존 `source-packet.md`를 재사용합니다.
+
+캐시 miss이거나 `--force`이면 모든 자료를 하나의 작업 기준으로 정규화합니다.
 
 다음을 분리해서 기록합니다.
 
@@ -115,22 +152,35 @@ Git 저장소에서 실행 중이라면 `.gap/`이 ignore 또는 의도적으로
 
 확인된 사실과 추정을 섞지 않습니다. 두 자료가 충돌하면 조용히 합치지 말고 충돌을 명시합니다.
 
-### 3. 저장과 인계
+### 4. 저장과 인계
 
-`source-packet.md`를 작성한 뒤, 다음에 `/tigap:gap`으로 갭 분석을 진행할 수 있다고 안내합니다.
+`source-packet.md`를 작성하거나 재사용한 뒤, 다음에 `/tigap:gap`으로 갭 분석을 진행할 수 있다고 안내합니다.
+
+사용자 응답에는 다음만 포함합니다.
+
+- 생성 또는 재사용 여부와 cache hit/miss 이유
+- `source-packet.md` 파일 경로
+- 3줄 이내 요약
+  - 무엇에 대한 source-packet인지
+  - 핵심 기준이 무엇인지
+  - 기존 문서 대비 바뀐 점이 있다면 무엇인지
+
+전체 source-packet 내용을 채팅에 길게 출력하지 않습니다.
 
 ## 완료 기준
 
 이 스킬은 다음 조건을 만족하면 완료됩니다.
 
 - 작업 기준 이름이 정해짐
-- 기준 자료가 `source-packet.md`에 정리됨
+- cache hit이면 기존 `source-packet.md`를 재사용하고 이유를 알림
+- cache miss 또는 `--force`이면 기준 자료가 `source-packet.md`에 정리되고 메타데이터가 갱신됨
 - 확인된 사실, 결정 사항, 열린 질문, 추정이 분리됨
 - 다음 단계가 `/tigap:gap`으로 명확함
+- 사용자 응답이 파일 경로와 3줄 이내 요약 중심으로 짧게 정리됨
 
 ## 인계
 
-작업 기준이 준비되면 다음 명령을 추천하며 마무리합니다.
+작업 기준이 준비되면 생성 또는 재사용된 파일 경로를 반드시 표시하고, 다음 명령을 짧게 추천하며 마무리합니다.
 
 ```text
 /tigap:gap
