@@ -6,7 +6,7 @@
 
 ## 브랜치와 작업 ID
 
-변경 가능한 작업 산출물을 쓰기 전에 작업과 연결되는 브랜치 또는 작업 ID를 우선 사용합니다. 현재 브랜치가 `main`, `master`, `develop` 또는 저장소 기본 브랜치라면 작업 브랜치를 만들거나 전환할지, 또는 `.gap/{work_id}/` 아래에서 사용할 작업 ID를 정할지 물어봅니다.
+변경 가능한 작업 산출물을 쓰기 전에 작업과 연결되는 브랜치 또는 작업 ID를 우선 사용합니다. 현재 브랜치가 `main`, `master`, `develop` 또는 저장소 기본 브랜치라면 작업 브랜치를 만들거나 전환할지, 또는 `.tigerkit/{work_id}/` 아래에서 사용할 작업 ID를 정할지 물어봅니다.
 
 브랜치 생성과 전환은 사용자 승인 없이 조용히 수행하지 않습니다.
 
@@ -15,15 +15,15 @@
 긴 LLM 답변, 애매한 설명, 회의록식 덤프가 결국 무슨 말인지 모르겠을 때 실행합니다.
 
 ```text
-/tigap:what <긴 답변, 설명, 또는 정리 요청>
+/tk:what <긴 답변, 설명, 또는 정리 요청>
 ```
 
 예시:
 
 ```text
-/tigap:what 이 답변 뭐라는거야?
-/tigap:what 아래 LLM 답변을 실행 가능하게 정리해줘.
-/tigap:what 그래서 내가 뭐라고 답하면 되는지 알려줘.
+/tk:what 이 답변 뭐라는거야?
+/tk:what 아래 LLM 답변을 실행 가능하게 정리해줘.
+/tk:what 그래서 내가 뭐라고 답하면 되는지 알려줘.
 ```
 
 기본 출력은 네 블록입니다.
@@ -37,20 +37,20 @@
 
 이 명령은 코드를 구현하거나 파일을 수정하지 않습니다. 먼저 말뜻, 의도, 막히는 지점, 사용자가 보낼 수 있는 답장을 짧게 정리합니다.
 
-## 2. 작업 기준 정리
+## 2. 요구사항 기준 정리
 
 아이디어, 앞선 대화, 파일 경로, 기획서 URL, 티켓, 메모를 갭 분석 기준으로 정리할 때 실행합니다.
 
 ```text
-/tigap:prep <아이디어, 자료, 또는 정리 요청>
+/tk:req <아이디어, 자료, 또는 정리 요청>
 ```
 
 예시:
 
 ```text
-/tigap:prep 지금까지 얘기한 내용 기준으로 작업 기준 잡아줘.
-/tigap:prep docs/spec.md를 기준 자료로 정리해줘.
-/tigap:prep 아직 티켓은 없는데 짧게 브레인스토밍하고 기준 자료로 캡처해줘.
+/tk:req 지금까지 얘기한 내용 기준으로 요구사항 잡아줘.
+/tk:req docs/spec.md를 요구사항 기준 문서로 정리해줘.
+/tk:req 아직 티켓은 없는데 짧게 브레인스토밍하고 요구사항 기준으로 캡처해줘.
 ```
 
 이 명령은 먼저 다음을 확인합니다.
@@ -64,75 +64,70 @@
 주요 산출물:
 
 ```text
-.gap/{work_id}/normalized/source-packet.md
-.gap/{work_id}/normalized/source-packet.meta.json
+.tigerkit/{work_id}/requirements.md
+.tigerkit/{work_id}/requirements.meta.json
 ```
 
-동일한 입력 자료, prep 지시문 버전, 범위, source identity로 다시 실행하면 기존 `source-packet.md`를 재사용합니다. 하나라도 다르거나 `--force`를 붙이면 다시 생성합니다.
+동일한 입력 자료, req 지시문 버전, 범위, input identity로 다시 실행하면 기존 `requirements.md`를 재사용합니다. 하나라도 다르거나 `--force`를 붙이면 다시 생성합니다.
 
 실행 후 채팅 응답은 생성/재사용 여부, 파일 경로, 3줄 이내 요약만 짧게 표시합니다.
 
 필요하면 제공 자료의 스냅샷이나 요약을 다음 경로에 둡니다.
 
 ```text
-.gap/{work_id}/sources/
+.tigerkit/{work_id}/inputs/
 ```
 
 ## 3. 갭 분석
 
-준비된 작업 기준과 현재 구현, 문서, 동작 사이의 차이를 분석할 때 실행합니다.
+준비된 요구사항 기준과 현재 구현, 문서, 테스트, 관찰 가능한 동작 사이의 차이를 분석할 때 실행합니다.
 
 ```text
-/tigap:gap
+/tk:gap
 ```
 
 예시:
 
 ```text
-/tigap:gap 방금 prep한 기준으로 현재 구현 갭 분석해줘.
-/tigap:gap .gap/checkout-errors 기준으로 docs와 코드를 비교해줘.
+/tk:gap 방금 정리한 요구사항 대비 현재 구현 갭 분석해줘.
+/tk:gap .tigerkit/checkout-errors 기준으로 docs와 코드를 비교해줘.
 ```
 
 `gap`은 다음 파일을 기준으로 분석합니다.
 
 ```text
-.gap/{work_id}/normalized/source-packet.md
+.tigerkit/{work_id}/requirements.md
 ```
 
-작업 기준 파일이 없거나 어떤 작업을 분석해야 하는지 불명확하면 분석을 시작하지 않고 `/tigap:prep`으로 기준 자료를 먼저 정리하라고 안내합니다.
+요구사항 기준 파일이 없거나 어떤 작업을 분석해야 하는지 불명확하면 분석을 시작하지 않고 `/tk:req`로 기준 자료를 먼저 정리하라고 안내합니다.
 
 주요 산출물:
 
 ```text
-.gap/{work_id}/analysis/gap-report.md
-.gap/{work_id}/analysis/gap-report.meta.json
+.tigerkit/{work_id}/gap.md
+.tigerkit/{work_id}/gap.meta.json
 ```
 
-동일한 git commit, source-packet 해시, gap 지시문 버전, 범위로 다시 실행하고 작업 트리가 clean이면 기존 `gap-report.md`를 재사용합니다. 하나라도 다르거나 작업 트리가 dirty이거나 `--force`를 붙이면 다시 분석합니다.
+동일한 git commit, requirements 해시, gap 지시문 버전, 범위로 다시 실행하고 작업 트리가 clean이면 기존 `gap.md`를 재사용합니다. 하나라도 다르거나 작업 트리가 dirty이거나 `--force`를 붙이면 다시 분석합니다.
 
-실행 후 채팅 응답은 전체 보고서를 길게 출력하지 않고, 보고서 경로, 간단한 summary 표, key issues, next move 1개만 표시합니다.
+실행 후 채팅 응답은 전체 보고서를 길게 출력하지 않고, 보고서 경로, Verdict, 핵심 gap, next move 1개만 표시합니다.
 
 보고서는 다음을 분리해서 정리합니다.
 
-- 충족된 요구사항
-- 누락된 요구사항
-- 모호한 요구사항
-- 충돌하는 정보
-- 구현 갭
-- UX/UI 갭
-- API/데이터 갭
-- 엣지 케이스
-- 위험
-- 확인이 필요한 질문
+- Verdict
+- Requirement Coverage
+- Remaining Gaps
+- Unable to Verify
+- Notes
 
-각 finding은 분류, 내용, 근거, 다음 행동을 포함합니다.
+각 finding은 요구사항 ID, 상태, 근거, 갭, 다음 행동을 포함합니다.
 
 분석 후에는 특정 계획/실행 명령으로 자동 연결하지 않습니다. 보고서 끝의 `Next Move` 하나를 참고해 사용자가 구현, 보류, 추가 확인 같은 다음 행동을 고릅니다.
 
 ## 추천 명령 문장
 
 ```text
-/tigap:what 이 긴 답변 뭐라는 건지 정리해줘.
-/tigap:prep 앞선 대화 기준으로 작업 기준 정리해줘.
-/tigap:gap 방금 정리한 기준 대비 현재 구현 갭 분석해줘.
+/tk:what 이 긴 답변 뭐라는 건지 정리해줘.
+/tk:req 앞선 대화 기준으로 요구사항 정리해줘.
+/tk:gap 방금 정리한 요구사항 대비 현재 구현 갭 분석해줘.
 ```
