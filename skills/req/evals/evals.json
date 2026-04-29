@@ -4,14 +4,15 @@
     {
       "id": 1,
       "prompt": "아직 티켓은 없는데 결제 실패 알림 UX를 개선하고 싶어. 바로 구현하지 말고 요구사항부터 잡아줘.",
-      "expected_output": "한국어로 앞선 대화 기준으로 정리할지 별도 자료를 받을지 확인하고, 작업 ID를 제안하며, 요구사항·acceptance signal·scope boundary·unknowns를 requirements.md 기준으로 정리한다.",
+      "expected_output": "한국어로 앞선 대화 기준으로 정리할지 별도 자료를 받을지 확인하고, 작업 ID를 제안하며, 요구사항·acceptance signal·scope boundary·unknowns를 .tigerkit/{work_id}/requirements.md 기준으로 정리하고 requirements.meta.json 메타데이터를 함께 기대한다.",
       "files": [],
       "assertions": [
         "한국어로 응답한다.",
         "구현이나 파일 수정을 시작하지 않는다.",
         "앞선 대화로 정리할지 별도 자료를 제공할지 확인한다.",
         "스펙명 또는 작업 ID를 제안하거나 확인한다.",
-        "requirements.md를 기준 산출물로 언급한다.",
+        ".tigerkit/{work_id}/requirements.md를 기준 산출물 경로 개념으로 언급한다.",
+        "requirements.meta.json 메타데이터를 함께 언급한다.",
         "구현 계획이나 task breakdown을 만들지 않는다.",
         "다음 단계로 /tk:gap 또는 별도 구현 계획 workflow를 짧게 안내한다."
       ]
@@ -19,13 +20,15 @@
     {
       "id": 2,
       "prompt": "우리 앱 온보딩이 너무 길다는 피드백이 있어. source 문서는 없고, 먼저 범위랑 완료조건을 정리해줘.",
-      "expected_output": "별도 자료가 없으면 앞선 대화 맥락을 기준으로 정리할 수 있음을 확인하고, 완료 조건과 acceptance signal을 분리하되 구현 작업 목록은 확정하지 않는다.",
+      "expected_output": "별도 자료가 없으면 앞선 대화 맥락을 기준으로 정리할 수 있음을 확인하고, 완료 조건과 acceptance signal을 분리하되 구현 작업 목록은 확정하지 않으며 .tigerkit/{work_id}/requirements.md와 requirements.meta.json 산출물을 기대한다.",
       "files": [],
       "assertions": [
         "별도 자료가 없음을 전제로 대화 맥락 기반 정리를 제안한다.",
         "Normalized Requirements와 Acceptance Signal 관점으로 정리한다.",
         "In Scope와 Out of Scope를 구분한다.",
         "Unknowns 또는 Conflicts / Ambiguities를 분리한다.",
+        ".tigerkit/{work_id}/requirements.md 경로에 요구사항 산출물을 기대한다.",
+        "requirements.meta.json 메타데이터 산출물을 기대한다.",
         "코드 구현을 시작하지 않는다."
       ]
     }
