@@ -1,5 +1,5 @@
 {
-  "skill_name": "prep-gap-cache-ux",
+  "skill_name": "tigap-workflow",
   "evals": [
     {
       "id": 0,
@@ -39,6 +39,48 @@
         "Requires each finding to include category, content, evidence, and next action",
         "Ends the report with exactly one Next Move rather than a numbered list of choices",
         "Says the chat response should not dump the full report and should include path, summary table, key issues, and one next move"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "what-confusing-answer",
+      "prompt": "You are evaluating the tigap what skill instructions. The user runs /tigap:what with this source answer: '이 기능은 확장성을 고려해서 모듈화하고, 상태 관리는 나중에 요구사항이 명확해지면 정하는 게 좋겠습니다. 우선 데이터 흐름을 정리하고 컴포넌트 경계를 잡는 방향으로 접근하면 될 것 같습니다.' Describe the expected user-facing response. Do not write files.",
+      "expected_output": "Should use the four approved Korean blocks, explain that the answer means structure first rather than immediate implementation, identify missing component boundary and state-management decision criteria, and provide a practical reply draft.",
+      "files": [],
+      "expectations": [
+        "Includes the block label '🐯 제가 요약해드리죠'",
+        "Includes the block label '🎯 하려던 것'",
+        "Includes the block label '😵 막히는 지점'",
+        "Includes the block label '💡 이렇게 답하면 됨'",
+        "Explains the source answer directly instead of producing a generic summary",
+        "Mentions that component boundaries or state-management decision criteria are missing",
+        "Provides a message the user can send or adapt"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "what-already-actionable",
+      "prompt": "You are evaluating the tigap what skill instructions. The user runs /tigap:what with this source answer: '먼저 src/auth/session.ts의 만료 시간 계산을 30분으로 바꾸고, tests/auth/session.test.ts에 만료 케이스를 추가한 뒤 npm test -- auth/session.test.ts를 실행하세요.' Describe the expected user-facing response. Do not write files.",
+      "expected_output": "Should use the four approved Korean blocks, say the answer is already actionable, keep the blocked section short, and provide a concise confirmation reply.",
+      "files": [],
+      "expectations": [
+        "Includes the four approved block labels",
+        "Says the source answer is already actionable or has no major blocking point",
+        "Does not invent additional tasks beyond editing src/auth/session.ts, adding tests, and running the named test command",
+        "Provides a concise message the user can send or adapt"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "what-no-action",
+      "prompt": "You are evaluating the tigap what skill instructions. The user runs /tigap:what with this source answer: '좋은 질문입니다. 이 주제는 여러 관점에서 볼 수 있으며, 상황과 맥락에 따라 접근이 달라질 수 있습니다. 충분히 고민해보는 것이 중요합니다.' Describe the expected user-facing response. Do not write files.",
+      "expected_output": "Should use the four approved Korean blocks, clearly state that there is no actionable content, avoid inventing work, and provide a reply asking for concrete criteria or next steps.",
+      "files": [],
+      "expectations": [
+        "Includes the four approved block labels",
+        "States that the source answer has no real actionable content",
+        "Does not invent implementation steps or decisions not present in the source",
+        "Provides a reply asking for concrete criteria, options, or next steps"
       ]
     }
   ]
