@@ -1,16 +1,16 @@
 {
-  "name": "tigap-skills",
+  "name": "tiger-kit",
   "owner": {
     "name": "MTGVim"
   },
   "metadata": {
-    "description": "모호한 요청을 갭 분석, 구현 계획, 검증 가능한 실행 단계로 바꾸는 Claude Code 스킬 모음입니다."
+    "description": "요구사항 정제, 답변 해독, 요구사항 대비 갭 확인을 돕는 TigerKit Claude Code 스킬 모음입니다."
   },
   "plugins": [
     {
-      "name": "tigap",
+      "name": "tk",
       "source": "./",
-      "description": "모호한 요청을 갭 분석, 구현 계획, 검증 가능한 실행 단계로 바꾸는 Claude Code 스킬 모음입니다."
+      "description": "요구사항 정제, 답변 해독, 요구사항 대비 갭 확인을 돕는 TigerKit Claude Code 스킬 모음입니다."
     }
   ]
 }
