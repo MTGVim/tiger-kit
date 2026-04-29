@@ -4,27 +4,28 @@
     {
       "id": 1,
       "prompt": "이 저장소에서 부족한 점을 gap 분석해줘.",
-      "expected_output": "작업 기준 파일이나 명시된 작업 기준이 없음을 설명하고 저장소를 임의 분석하지 않으며, 먼저 /tigap:prep으로 기준 자료를 정리하라고 안내한다.",
+      "expected_output": "requirements.md 또는 명시된 작업 기준이 없음을 설명하고 저장소를 임의 분석하지 않으며, 먼저 /tk:req로 요구사항 기준을 정리하라고 안내한다.",
       "files": [],
       "assertions": [
         "작업 기준이 없다고 보고한다.",
         "저장소를 임의로 기준 자료 삼아 분석하지 않는다.",
-        ".gap/ 산출물을 만들지 않는다.",
-        "먼저 /tigap:prep을 안내한다.",
+        ".tigerkit/ 산출물을 만들지 않는다.",
+        "먼저 /tk:req를 안내한다.",
         "구현을 시작하지 않는다."
       ]
     },
     {
       "id": 2,
-      "prompt": ".gap/login-failure-ux/normalized/source-packet.md 기준으로 gap 분석해줘.",
-      "expected_output": "준비된 source-packet을 기준으로 현재 상태를 확인하려 하고, 로그인 실패 UX의 구현 갭과 모호한 질문을 gap report 관점으로 분리한 뒤 후속 선택지를 제안한다.",
+      "prompt": ".tigerkit/login-failure-ux/requirements.md 기준으로 gap 분석해줘.",
+      "expected_output": "준비된 requirements.md를 기준으로 현재 상태를 확인하려 하고, 로그인 실패 UX의 requirement coverage, remaining gaps, unable to verify를 분리한 뒤 verdict를 제시한다.",
       "files": [],
       "assertions": [
-        "source-packet.md를 작업 기준으로 삼는다.",
-        "로그인 실패 UX의 구현 갭 또는 UX 갭을 포함한다.",
-        "모호한 요구사항이나 확인 질문을 분리한다.",
+        "requirements.md를 작업 기준으로 삼는다.",
+        "Verdict를 GAPS_FOUND, NO_GAPS_FOUND, UNVERIFIABLE 중 하나로 제시한다.",
+        "Requirement Coverage를 포함한다.",
+        "Unable to Verify가 있으면 NO_GAPS_FOUND로 판정하지 않는다.",
         "코드를 구현하지 않는다.",
-        "후속 선택지를 제안하되 특정 계획 명령으로 자동 연결하지 않는다."
+        "구현 계획 대신 짧은 다음 행동 후보만 제시한다."
       ]
     }
   ]
