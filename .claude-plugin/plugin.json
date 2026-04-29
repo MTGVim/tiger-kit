@@ -1,16 +1,18 @@
 {
   "name": "tigap",
   "description": "모호한 요청과 흩어진 자료를 작업 기준으로 정리하고 현재 상태와의 갭을 분석하는 Claude Code 스킬 모음입니다.",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "author": {
     "name": "MTGVim"
   },
   "commands": [
     "./commands/prep.md",
-    "./commands/gap.md"
+    "./commands/gap.md",
+    "./commands/what.md"
   ],
   "skills": [
     "./skills/prep",
-    "./skills/gap"
+    "./skills/gap",
+    "./skills/what"
   ]
 }
