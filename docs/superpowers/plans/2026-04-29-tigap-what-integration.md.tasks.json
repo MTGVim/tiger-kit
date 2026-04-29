@@ -31,7 +31,7 @@
     {
       "id": 5,
       "subject": "Task 5: Validate, commit plan artifacts, and push",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [4],
       "description": "**Goal:** Validate the integrated plugin, commit the planning artifacts, and push the approved changes to the tracked remote branch.\n\n**Files:**\n- Create: `docs/superpowers/plans/2026-04-29-tigap-what-integration.md`\n- Create: `docs/superpowers/plans/2026-04-29-tigap-what-integration.md.tasks.json`\n\n**Acceptance Criteria:**\n- [ ] Plugin manifest validation passes.\n- [ ] Repository plugin validation passes.\n- [ ] Whitespace check passes.\n- [ ] Git status only contains the known untracked `skills/prep-gap-eval-workspace/` outside this work.\n- [ ] Plan artifacts are committed.\n- [ ] Branch is pushed to its tracked remote.\n\n**Verify:** `claude plugin validate .claude-plugin/plugin.json && claude plugin validate . && git diff --check && git status --short --branch`\n\n```json:metadata\n{\"files\":[\"docs/superpowers/plans/2026-04-29-tigap-what-integration.md\",\"docs/superpowers/plans/2026-04-29-tigap-what-integration.md.tasks.json\"],\"verifyCommand\":\"claude plugin validate .claude-plugin/plugin.json && claude plugin validate . && git diff --check && git status --short --branch\",\"acceptanceCriteria\":[\"manifest validation passes\",\"repository validation passes\",\"whitespace check passes\",\"plan artifacts committed\",\"branch pushed\"]}\n```"
     }
