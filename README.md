@@ -2,7 +2,7 @@
 
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
 
-TigerKit(`tiger-kit`)은 요구사항 소스를 정제하고, 긴 답변을 해독하며, 요구사항 대비 현재 상태의 갭을 확인하기 위한 Claude Code 스킬 모음입니다.
+TigerKit(`tk`)은 요구사항 소스를 정제하고, 긴 답변을 해독하며, 요구사항 대비 현재 상태의 갭을 확인하기 위한 Claude Code 스킬 모음입니다.
 
 제공하는 명령/스킬 흐름은 세 단계입니다.
 
