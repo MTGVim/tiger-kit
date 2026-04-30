@@ -7,9 +7,9 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 TARGET_SKILLS="$TARGET_PROJECT/.claude/skills"
 
 mkdir -p "$TARGET_SKILLS"
-cp -R "$REPO_ROOT/skills/req" "$TARGET_SKILLS/"
+cp -R "$REPO_ROOT/skills/prep" "$TARGET_SKILLS/"
 cp -R "$REPO_ROOT/skills/gap" "$TARGET_SKILLS/"
-cp -R "$REPO_ROOT/skills/what" "$TARGET_SKILLS/"
+cp -R "$REPO_ROOT/skills/mwhat" "$TARGET_SKILLS/"
 
 echo "Installed TigerKit skills into: $TARGET_SKILLS"
-echo "Standalone commands may be available as: /req, /gap, /what"
+echo "Standalone commands may be available as: /prep, /gap, /mwhat"

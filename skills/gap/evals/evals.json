@@ -4,26 +4,28 @@
     {
       "id": 1,
       "prompt": "이 저장소에서 부족한 점을 gap 분석해줘.",
-      "expected_output": "requirements.md 또는 명시된 작업 기준이 없음을 설명하고 저장소를 임의 분석하지 않으며, 먼저 /tk:req로 요구사항 기준을 정리하라고 안내한다.",
+      "expected_output": "requirements.md 또는 명시된 작업 기준이 없음을 설명하고 저장소를 임의 분석하지 않으며, 먼저 /tk:prep로 요구사항 기준을 정리하라고 안내한다.",
       "files": [],
       "assertions": [
         "작업 기준이 없다고 보고한다.",
         "저장소를 임의로 기준 자료 삼아 분석하지 않는다.",
         ".tigerkit/ 산출물을 만들지 않는다.",
-        "먼저 /tk:req를 안내한다.",
+        "먼저 /tk:prep를 안내한다.",
         "구현을 시작하지 않는다."
       ]
     },
     {
       "id": 2,
       "prompt": ".tigerkit/login-failure-ux/requirements.md 기준으로 gap 분석해줘.",
-      "expected_output": "준비된 .tigerkit/{work_id}/requirements.md를 기준으로 현재 상태를 확인하려 하고, .tigerkit/{work_id}/gap.md에 로그인 실패 UX의 requirement coverage, remaining gaps, unable to verify를 분리한 뒤 verdict를 제시한다. 예시 경로로 .tigerkit/login-failure-ux/gap.md를 사용할 수 있다.",
+      "expected_output": "준비된 .tigerkit/{work_id}/requirements.md를 기준으로 현재 상태를 확인하려 하고, .tigerkit/{work_id}/gap.md에 로그인 실패 UX의 Requirement Coverage, Remaining Gaps, Unable to Verify를 모두 Markdown 표로 분리한 뒤 verdict를 제시한다. gap이나 확인 불가 항목이 0개여도 표 섹션과 헤더를 생략하지 않고 없음 행을 둔다. 예시 경로로 .tigerkit/login-failure-ux/gap.md를 사용할 수 있다.",
       "files": [],
       "assertions": [
         ".tigerkit/{work_id}/requirements.md를 작업 기준 경로 개념으로 삼는다.",
         ".tigerkit/{work_id}/gap.md를 분석 산출물 경로 개념으로 삼는다.",
         "Verdict를 GAPS_FOUND, NO_GAPS_FOUND, UNVERIFIABLE 중 하나로 제시한다.",
-        "Requirement Coverage를 포함한다.",
+        "Requirement Coverage를 Markdown 표로 포함한다.",
+        "Remaining Gaps를 Markdown 표로 포함하고 gap이 없으면 없음 행을 둔다.",
+        "Unable to Verify를 Markdown 표로 포함하고 확인 불가 항목이 없으면 없음 행을 둔다.",
         "Unable to Verify가 있으면 NO_GAPS_FOUND로 판정하지 않는다.",
         "코드를 구현하지 않는다.",
         "구현 계획 대신 짧은 다음 행동 후보만 제시한다."

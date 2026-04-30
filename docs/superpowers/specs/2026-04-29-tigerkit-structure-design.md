@@ -2,34 +2,34 @@
 
 ## Goal
 
-TigerKit은 요구사항을 정제하는 `tk:req`, 긴 답변의 의미를 해독하는 `tk:what`, 요구사항 대비 남은 차이를 확인하는 `tk:gap`으로 구성된 개인용 agent workflow 보조 키트다.
+TigerKit은 요구사항을 정제하는 `tk:prep`, 긴 답변의 의미를 해독하는 `tk:what`, 요구사항 대비 남은 차이를 확인하는 `tk:gap`으로 구성된 개인용 agent workflow 보조 키트다.
 
 TigerKit은 구현 계획, 실행, 코드 리뷰, 학습 축적을 대체하지 않는다. Compound Engineering, Superpowers, Claude Reflect 같은 workflow 앞뒤와 중간에서 기준 정리와 차이 확인을 돕는다.
 
 ## Current State
 
-현재 저장소는 `tigap-skills` 플러그인으로 구성되어 있고 공개 흐름은 `what → prep → gap`이다.
+현재 저장소는 `tigap-skills` 플러그인으로 구성되어 있고 공개 흐름은 `mwhat → prep → gap`이다.
 
-- `/tigap:what`: 긴 LLM 답변이나 애매한 설명을 짧은 한국어 실행 해설로 바꾼다. 파일 산출물은 만들지 않는다.
+- `/tigap:mwhat`: 긴 LLM 답변이나 애매한 설명을 짧은 한국어 실행 해설로 바꾼다. 파일 산출물은 만들지 않는다.
 - `/tigap:prep`: 아이디어, 대화 맥락, 별도 자료를 `.gap/{work_id}/normalized/source-packet.md`로 정리한다.
 - `/tigap:gap`: `source-packet.md`와 현재 구현, 문서, 동작 사이의 갭을 `.gap/{work_id}/analysis/gap-report.md`로 분석한다.
 
-현재 `what`은 이미 “작업 상태 재정렬”이 아니라 “이 말이 뭐라는지 해독”으로 설계되어 있고 eval도 그 역할을 검증한다. 작업 중간/최종 상태 점검은 `gap`의 책임으로 통합하는 것이 더 단순하다.
+현재 `mwhat`은 이미 “작업 상태 재정렬”이 아니라 “이 말이 뭐라는지 해독”으로 설계되어 있고 eval도 그 역할을 검증한다. 작업 중간/최종 상태 점검은 `gap`의 책임으로 통합하는 것이 더 단순하다.
 
 ## Product Model
 
 새 core는 다음 세 개다.
 
 ```text
-/tk:what  # 긴 답변/애매한 설명 해독
-/tk:req   # 요구사항 소스 정제와 기준 문서 생성
+/tk:mwhat  # 긴 답변/애매한 설명 해독
+/tk:prep   # 요구사항 소스 정제와 기준 문서 생성
 /tk:gap   # requirements.md 대비 현재 상태 차이 확인
 ```
 
 권장 참고 흐름은 다음과 같다.
 
 ```text
-tk:req
+tk:prep
 → ce-plan
 → ce-work
 → tk:gap
@@ -46,7 +46,7 @@ tk:req
 
 ### `tk:what`
 
-`tk:what`은 기존 `/tigap:what`의 역할을 유지한다.
+`tk:what`은 기존 `/tigap:mwhat`의 역할을 유지한다.
 
 사용 시점:
 
@@ -62,18 +62,18 @@ tk:req
 - 구현 계획 작성
 - 파일 수정
 
-기본 출력은 기존 네 블록을 유지한다.
+기본 출력은 두 블록을 유지한다.
 
 ```md
-🐯 제가 요약해드리죠
-🎯 하려던 것
-😵 막히는 지점
-💡 이렇게 답하면 됨
+🤔 뭣? 쉽게 말하면
+🎯 하던 것
+😵 문제 상황
+💡 추천
 ```
 
-### `tk:req`
+### `tk:prep`
 
-`tk:req`는 기존 `prep`을 대체하는 요구사항 정제 도구다.
+`tk:prep`는 기존 `prep`을 대체하는 요구사항 정제 도구다.
 
 사용 시점:
 
@@ -224,8 +224,8 @@ GAPS_FOUND / NO_GAPS_FOUND / UNVERIFIABLE
 
 ### Minimum viable implementation
 
-1. `prep`을 `req`로 rename/reframe한다.
-2. command namespace를 `/tk:req`, `/tk:what`, `/tk:gap`로 바꾼다.
+1. `prep` 이름을 유지하고 requirements 기준 정리 역할로 reframe한다.
+2. command namespace를 `/tk:prep`, `/tk:mwhat`, `/tk:gap`로 바꾼다.
 3. 산출물을 `.tigerkit/{work_id}/requirements.md`와 `.tigerkit/{work_id}/gap.md`로 바꾼다.
 4. README, docs, CLAUDE.md, evals, install scripts, plugin manifests를 새 이름으로 정렬한다.
 5. 기존 `/tigap:*`와 `.gap/`은 문서에서 primary로 다루지 않는다.
@@ -236,8 +236,8 @@ GAPS_FOUND / NO_GAPS_FOUND / UNVERIFIABLE
 
 호환성을 남긴다면:
 
-- `/tigap:what` → `/tk:what`
-- `/tigap:prep` → `/tk:req`
+- `/tigap:mwhat` → `/tk:mwhat`
+- `/tigap:prep` → `/tk:prep`
 - `/tigap:gap` → `/tk:gap`
 
 단, alias가 늘어나면 manifest와 문서가 복잡해지므로 첫 구현에서는 권장하지 않는다.
@@ -249,17 +249,17 @@ GAPS_FOUND / NO_GAPS_FOUND / UNVERIFIABLE
 ### `tk:what`
 
 ```text
-🐯 제가 요약해드리죠
+🤔 뭣? 쉽게 말하면
 ...
-🎯 하려던 것
+🎯 하던 것
 ...
-😵 막히는 지점
+😵 문제 상황
 ...
-💡 이렇게 답하면 됨
+💡 추천
 ...
 ```
 
-### `tk:req`
+### `tk:prep`
 
 ```text
 생성: .tigerkit/{work_id}/requirements.md
@@ -303,7 +303,7 @@ grep -R "tigap\|/tigap\|prep\|source-packet\|gap-report\|\.gap/" -n CLAUDE.md RE
 첫 구현은 다음 기준으로 진행한다.
 
 - 기존 `/tigap:*` alias는 남기지 않고 `/tk:*`로 단순화한다.
-- 기존 `prep` command/skill은 `req`로 대체한다.
+- 기존 `prep` command/skill은 requirements 기준 정리 역할로 유지한다.
 - 산출물 루트는 `.gap/`에서 `.tigerkit/`으로 바꾼다.
 - 저장소 디렉터리나 GitHub repository 이름 변경은 이번 구현 범위에서 제외한다.
 - plugin/package 이름, 문서의 제품명, namespace, standalone install 안내는 TigerKit과 `tk:*` 기준으로 바꾼다.

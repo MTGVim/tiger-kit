@@ -48,16 +48,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `.claude-plugin/plugin.json`: 플러그인의 command/skill manifest. 새 command나 skill을 추가하면 여기 등록해야 한다.
 - `.claude-plugin/marketplace.json`: marketplace 등록용 manifest.
-- `commands/req.md`, `commands/what.md`, `commands/gap.md`: `/tk:req`, `/tk:what`, `/tk:gap` slash command entrypoint. command 파일은 짧게 유지하고 자세한 절차는 skill 문서에 둔다.
-- `skills/req/SKILL.md`, `skills/what/SKILL.md`, `skills/gap/SKILL.md`: 재사용 가능한 작업 흐름 지침. 실제 동작 방식과 중단 조건은 주로 여기에 정의한다.
+- `commands/prep.md`, `commands/mwhat.md`, `commands/gap.md`: `/tk:prep`, `/tk:mwhat`, `/tk:gap` slash command entrypoint. command 파일은 짧게 유지하고 자세한 절차는 skill 문서에 둔다.
+- `skills/prep/SKILL.md`, `skills/mwhat/SKILL.md`, `skills/gap/SKILL.md`: 재사용 가능한 작업 흐름 지침. 실제 동작 방식과 중단 조건은 주로 여기에 정의한다.
 - `docs/usage.md`: 사용자 관점의 명령 사용법.
 - `docs/artifact-layout.md`: `.tigerkit/{work_id}/` 산출물 구조와 작업 단계 기준.
-- `scripts/install-standalone.*`: `skills/req`, `skills/gap`, `skills/what`을 대상 프로젝트의 `.claude/skills`로 복사한다.
+- `scripts/install-standalone.*`: `skills/prep`, `skills/gap`, `skills/mwhat`을 대상 프로젝트의 `.claude/skills`로 복사한다.
 
 ## 명령 개요
 
-- `/tk:what`: 긴 LLM 답변이나 애매한 설명을 짧고 실행 가능하게 해독한다.
-- `/tk:req`: 외부 요구사항 소스와 대화 맥락을 `requirements.md` 기준 문서로 정리한다.
+- `/tk:mwhat`: 긴 LLM 답변이나 애매한 설명을 짧고 실행 가능하게 해독한다.
+- `/tk:prep`: 외부 요구사항 소스와 대화 맥락을 `requirements.md` 기준 문서로 정리한다.
 - `/tk:gap`: `requirements.md` 대비 현재 구현, 문서, 테스트의 남은 차이를 확인하고 `gap.md`를 작성한다.
 
 ## 작업 시 주의사항

@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers-extended-cc:subagent-driven-development (recommended) or superpowers-extended-cc:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Convert the current `tigap-skills` plugin into TigerKit with `/tk:what`, `/tk:req`, `/tk:gap`, `.tigerkit/{work_id}/requirements.md`, and `.tigerkit/{work_id}/gap.md` as the primary workflow.
+**Goal:** Convert the current `tigap-skills` plugin into TigerKit with `/tk:mwhat`, `/tk:prep`, `/tk:gap`, `.tigerkit/{work_id}/requirements.md`, and `.tigerkit/{work_id}/gap.md` as the primary workflow.
 
-**Architecture:** Keep the existing command/skill/documentation-only plugin architecture, but rename the product surface from `tigap` to `tk` and replace `prep/source-packet` with `req/requirements.md`. Preserve the existing `what` behavior as answer clarification, and make `gap` a requirements coverage checker rather than an implementation planner.
+**Architecture:** Keep the existing command/skill/documentation-only plugin architecture, but rename the product surface from `tigap` to `tk` and replace `prep/source-packet` with `prep/requirements.md`. Preserve the existing `mwhat` behavior as answer clarification, and make `gap` a requirements coverage checker rather than an implementation planner.
 
 **Tech Stack:** Claude Code plugin manifest JSON, Markdown command files, Markdown skill instructions, Bash/PowerShell standalone installers, JSON eval fixtures, `claude plugin validate`, `git diff --check`, GitHub CLI `gh`.
 
@@ -14,26 +14,26 @@
 
 Create/replace these files:
 
-- Create: `commands/req.md` — `/tk:req` slash command entrypoint.
-- Modify: `commands/what.md` — update wording from tigap to TigerKit/tk while keeping behavior.
+- Create: `commands/prep.md` — `/tk:prep` slash command entrypoint.
+- Modify: `commands/mwhat.md` — update wording from tigap to TigerKit/tk while keeping behavior.
 - Modify: `commands/gap.md` — update required input/output paths and verdict wording.
-- Create: `skills/req/SKILL.md` — requirements normalization workflow replacing `skills/prep`.
-- Modify: `skills/what/SKILL.md` — keep answer clarification behavior, update product naming.
+- Create: `skills/prep/SKILL.md` — requirements normalization workflow replacing `skills/prep`.
+- Modify: `skills/mwhat/SKILL.md` — keep answer clarification behavior, update product naming.
 - Modify: `skills/gap/SKILL.md` — read `.tigerkit/{work_id}/requirements.md`, write `.tigerkit/{work_id}/gap.md`.
 - Delete: `commands/prep.md` — no legacy `/tigap:prep` alias in first TigerKit implementation.
-- Delete: `skills/prep/SKILL.md` and `skills/prep/` — replaced by `skills/req/`.
-- Modify: `.claude-plugin/plugin.json` — plugin name `tk`, command/skill list for req/gap/what.
+- Delete: `skills/prep/SKILL.md` and `skills/prep/` — replaced by `skills/prep/`.
+- Modify: `.claude-plugin/plugin.json` — plugin name `tk`, command/skill list for req/gap/mwhat.
 - Modify: `.claude-plugin/marketplace.json` — package/repository-facing name and description for TigerKit.
-- Modify: `scripts/install-standalone.sh` — install `req`, `gap`, `what`; print `/req`, `/gap`, `/what`.
+- Modify: `scripts/install-standalone.sh` — install `prep`, `gap`, `what`; print `/prep`, `/gap`, `/mwhat`.
 - Modify: `scripts/install-standalone.ps1` — same for PowerShell.
 - Modify: `README.md` — product name, install command, command overview, artifact path.
-- Modify: `docs/usage.md` — usage for `/tk:what`, `/tk:req`, `/tk:gap`.
+- Modify: `docs/usage.md` — usage for `/tk:mwhat`, `/tk:prep`, `/tk:gap`.
 - Modify: `docs/artifact-layout.md` — `.tigerkit/{work_id}/` structure.
 - Modify: `docs/kickoff.md` — add TigerKit restructuring decision without preserving old primary flow.
 - Modify: `CLAUDE.md` — repository guidance for TigerKit and `.tigerkit/` artifacts.
-- Modify: `evals/evals.json` — workflow-level evals for req/gap/what.
+- Modify: `evals/evals.json` — workflow-level evals for req/gap/mwhat.
 - Modify: `skills/gap/evals/evals.json` — gap-specific evals for requirements path/verdict behavior.
-- Modify: `skills/prep/evals/evals.json` by moving content to `skills/req/evals/evals.json` — req-specific evals.
+- Modify: `skills/prep/evals/evals.json` by moving content to `skills/prep/evals/evals.json` — prep-specific evals.
 
 Do not edit or stage pre-existing untracked evaluation workspace directories such as `skills/prep-gap-eval-workspace/`.
 
@@ -45,18 +45,18 @@ Do not edit or stage pre-existing untracked evaluation workspace directories suc
 
 **Files:**
 - Modify: `evals/evals.json`
-- Create: `skills/req/evals/evals.json`
+- Create: `skills/prep/evals/evals.json`
 - Modify: `skills/gap/evals/evals.json`
 - Delete after migration: `skills/prep/evals/evals.json`
 
 **Acceptance Criteria:**
-- [ ] Workflow evals use `/tk:req`, `/tk:gap`, `/tk:what` instead of `/tigap:*`.
-- [ ] Req evals expect `.tigerkit/{work_id}/requirements.md` and `requirements.meta.json`.
+- [ ] Workflow evals use `/tk:prep`, `/tk:gap`, `/tk:mwhat` instead of `/tigap:*`.
+- [ ] Prep evals expect `.tigerkit/{work_id}/requirements.md` and `requirements.meta.json`.
 - [ ] Gap evals expect `.tigerkit/{work_id}/requirements.md`, `.tigerkit/{work_id}/gap.md`, verdict behavior, and no implementation planning.
 - [ ] What evals keep the existing four-block answer clarification behavior.
 - [ ] JSON files are valid.
 
-**Verify:** `python -m json.tool evals/evals.json >/dev/null && python -m json.tool skills/req/evals/evals.json >/dev/null && python -m json.tool skills/gap/evals/evals.json >/dev/null && grep -R "/tigap\|source-packet\|gap-report\|\.gap/" -n evals skills/req/evals skills/gap/evals` → JSON commands succeed; final grep returns no matches.
+**Verify:** `python -m json.tool evals/evals.json >/dev/null && python -m json.tool skills/prep/evals/evals.json >/dev/null && python -m json.tool skills/gap/evals/evals.json >/dev/null && grep -R "/tigap\|source-packet\|gap-report\|\.gap/" -n evals skills/prep/evals skills/gap/evals` → JSON commands succeed; final grep returns no matches.
 
 **Steps:**
 
@@ -65,7 +65,7 @@ Do not edit or stage pre-existing untracked evaluation workspace directories suc
 Run:
 
 ```bash
-mkdir -p skills/req/evals
+mkdir -p skills/prep/evals
 ```
 
 Expected: command exits with status 0.
@@ -80,8 +80,8 @@ Write this exact JSON shape, preserving valid JSON string escaping:
   "evals": [
     {
       "id": 0,
-      "name": "req-cache-hit",
-      "prompt": "You are evaluating the TigerKit req skill instructions. A project already has .tigerkit/checkout-retry/requirements.md and .tigerkit/checkout-retry/requirements.meta.json. The meta fields input_source_hash, req_prompt_version, scope_hash, and input_identities all match the current request. The user runs: /tk:req checkout retry 요구사항 다시 정리해줘. Describe exactly what Claude should do and what the user-facing response should include. Do not write files.",
+      "name": "prep-cache-hit",
+      "prompt": "You are evaluating the TigerKit prep skill instructions. A project already has .tigerkit/checkout-retry/requirements.md and .tigerkit/checkout-retry/requirements.meta.json. The meta fields input_source_hash, prep_prompt_version, scope_hash, and input_identities all match the current request. The user runs: /tk:prep checkout retry 요구사항 다시 정리해줘. Describe exactly what Claude should do and what the user-facing response should include. Do not write files.",
       "expected_output": "Should reuse the existing requirements.md, state cache hit reason briefly, include the requirements.md path, keep the response short, and avoid dumping the whole requirements document.",
       "files": [],
       "expectations": [
@@ -93,8 +93,8 @@ Write this exact JSON shape, preserving valid JSON string escaping:
     },
     {
       "id": 1,
-      "name": "req-force-miss",
-      "prompt": "You are evaluating the TigerKit req skill instructions. A previous requirements.md exists for .tigerkit/search-filter/requirements.md, but the user runs: /tk:req --force docs/search-filter.md 기준으로 다시 정리해줘. Describe exactly what Claude should do and what the user-facing response should include. Do not write files.",
+      "name": "prep-force-miss",
+      "prompt": "You are evaluating the TigerKit prep skill instructions. A previous requirements.md exists for .tigerkit/search-filter/requirements.md, but the user runs: /tk:prep --force docs/search-filter.md 기준으로 다시 정리해줘. Describe exactly what Claude should do and what the user-facing response should include. Do not write files.",
       "expected_output": "Should ignore the cache because --force was requested, regenerate requirements.md and metadata, briefly explain the force/cache miss reason, show the path, and keep the chat response short.",
       "files": [],
       "expectations": [
@@ -120,15 +120,15 @@ Write this exact JSON shape, preserving valid JSON string escaping:
     },
     {
       "id": 3,
-      "name": "what-confusing-answer",
-      "prompt": "You are evaluating the TigerKit what skill instructions. The user runs /tk:what with this source answer: '이 기능은 확장성을 고려해서 모듈화하고, 상태 관리는 나중에 요구사항이 명확해지면 정하는 게 좋겠습니다. 우선 데이터 흐름을 정리하고 컴포넌트 경계를 잡는 방향으로 접근하면 될 것 같습니다.' Describe the expected user-facing response. Do not write files.",
-      "expected_output": "Should use the four approved Korean blocks, explain that the answer means structure first rather than immediate implementation, identify missing component boundary and state-management decision criteria, and provide a practical reply draft.",
+      "name": "mwhat-confusing-answer",
+      "prompt": "You are evaluating the TigerKit mwhat skill instructions. The user runs /tk:mwhat with this source answer: '이 기능은 확장성을 고려해서 모듈화하고, 상태 관리는 나중에 요구사항이 명확해지면 정하는 게 좋겠습니다. 우선 데이터 흐름을 정리하고 컴포넌트 경계를 잡는 방향으로 접근하면 될 것 같습니다.' Describe the expected user-facing response. Do not write files.",
+      "expected_output": "Should use the two approved Korean blocks, explain that the answer means structure first rather than immediate implementation, identify missing component boundary and state-management decision criteria, and provide a practical reply draft.",
       "files": [],
       "expectations": [
-        "Includes the block label '🐯 제가 요약해드리죠'",
-        "Includes the block label '🎯 하려던 것'",
-        "Includes the block label '😵 막히는 지점'",
-        "Includes the block label '💡 이렇게 답하면 됨'",
+        "Includes the block label '🤔 뭣? 쉽게 말하면'",
+        "Includes the block label '🎯 하던 것'",
+        "Includes the block label '😵 문제 상황'",
+        "Includes the block label '💡 추천'",
         "Explains the source answer directly instead of producing a generic summary",
         "Mentions that component boundaries or state-management decision criteria are missing",
         "Provides a message the user can send or adapt"
@@ -138,13 +138,13 @@ Write this exact JSON shape, preserving valid JSON string escaping:
 }
 ```
 
-- [ ] **Step 3: Write `skills/req/evals/evals.json`**
+- [ ] **Step 3: Write `skills/prep/evals/evals.json`**
 
 Use this JSON:
 
 ```json
 {
-  "skill_name": "req",
+  "skill_name": "prep",
   "evals": [
     {
       "id": 1,
@@ -189,13 +189,13 @@ Use this JSON:
     {
       "id": 1,
       "prompt": "이 저장소에서 부족한 점을 gap 분석해줘.",
-      "expected_output": "requirements.md 또는 명시된 작업 기준이 없음을 설명하고 저장소를 임의 분석하지 않으며, 먼저 /tk:req로 요구사항 기준을 정리하라고 안내한다.",
+      "expected_output": "requirements.md 또는 명시된 작업 기준이 없음을 설명하고 저장소를 임의 분석하지 않으며, 먼저 /tk:prep로 요구사항 기준을 정리하라고 안내한다.",
       "files": [],
       "assertions": [
         "작업 기준이 없다고 보고한다.",
         "저장소를 임의로 기준 자료 삼아 분석하지 않는다.",
         ".tigerkit/ 산출물을 만들지 않는다.",
-        "먼저 /tk:req를 안내한다.",
+        "먼저 /tk:prep를 안내한다.",
         "구현을 시작하지 않는다."
       ]
     },
@@ -234,9 +234,9 @@ Run:
 
 ```bash
 python -m json.tool evals/evals.json >/dev/null
-python -m json.tool skills/req/evals/evals.json >/dev/null
+python -m json.tool skills/prep/evals/evals.json >/dev/null
 python -m json.tool skills/gap/evals/evals.json >/dev/null
-! grep -R "/tigap\|source-packet\|gap-report\|\.gap/" -n evals skills/req/evals skills/gap/evals
+! grep -R "/tigap\|source-packet\|gap-report\|\.gap/" -n evals skills/prep/evals skills/gap/evals
 ```
 
 Expected: JSON commands exit 0; grep command exits 0 because `! grep` found no matches.
@@ -244,40 +244,40 @@ Expected: JSON commands exit 0; grep command exits 0 because `! grep` found no m
 Commit:
 
 ```bash
-git add evals/evals.json skills/req/evals/evals.json skills/gap/evals/evals.json
+git add evals/evals.json skills/prep/evals/evals.json skills/gap/evals/evals.json
 git add -u skills/prep/evals
 git commit -m "test: define TigerKit workflow evals"
 ```
 
 ---
 
-### Task 2: Rename plugin surface to `tk` and create `req` command/skill shell
+### Task 2: Rename plugin surface to `tk` and create `prep` command/skill shell
 
-**Goal:** Make the plugin expose only `/tk:req`, `/tk:what`, and `/tk:gap`, with no legacy `/tigap:*` or `prep` command registration.
+**Goal:** Make the plugin expose only `/tk:prep`, `/tk:mwhat`, and `/tk:gap`, with no legacy `/tigap:*` or `prep` command registration.
 
 **Files:**
-- Create: `commands/req.md`
-- Modify: `commands/what.md`
+- Create: `commands/prep.md`
+- Modify: `commands/mwhat.md`
 - Modify: `commands/gap.md`
-- Create: `skills/req/SKILL.md`
-- Modify: `skills/what/SKILL.md`
+- Create: `skills/prep/SKILL.md`
+- Modify: `skills/mwhat/SKILL.md`
 - Modify: `skills/gap/SKILL.md`
 - Delete: `commands/prep.md`
 - Delete: `skills/prep/SKILL.md`
 - Modify: `.claude-plugin/plugin.json`
 
 **Acceptance Criteria:**
-- [ ] `.claude-plugin/plugin.json` has name `tk` and command list `req`, `what`, `gap`.
+- [ ] `.claude-plugin/plugin.json` has name `tk` and command list `prep`, `what`, `gap`.
 - [ ] `commands/prep.md` is removed.
-- [ ] `skills/prep/SKILL.md` is removed after `skills/req/SKILL.md` exists.
+- [ ] `skills/prep/SKILL.md` is removed after `skills/prep/SKILL.md` exists.
 - [ ] Command entrypoints mention TigerKit and `tk` names.
 - [ ] Plugin validation for `.claude-plugin/plugin.json` succeeds.
 
-**Verify:** `claude plugin validate .claude-plugin/plugin.json && ! grep -R "commands/prep\|skills/prep\|/tigap" -n .claude-plugin commands skills/req/SKILL.md skills/gap/SKILL.md skills/what/SKILL.md` → validation succeeds; grep finds no matches.
+**Verify:** `claude plugin validate .claude-plugin/plugin.json && ! grep -R "commands/prep\|skills/prep\|/tigap" -n .claude-plugin commands skills/prep/SKILL.md skills/gap/SKILL.md skills/mwhat/SKILL.md` → validation succeeds; grep finds no matches.
 
 **Steps:**
 
-- [ ] **Step 1: Create `commands/req.md`**
+- [ ] **Step 1: Create `commands/prep.md`**
 
 Write:
 
@@ -286,7 +286,7 @@ Write:
 description: 외부 요구사항 소스를 정제해 이후 계획과 갭 확인의 기준이 되는 requirements.md로 정리합니다.
 ---
 
-TigerKit의 `req` 스킬을 사용합니다.
+TigerKit의 `prep` 스킬을 사용합니다.
 
 사용자에게는 한글로 답합니다. 작업 산출물도 한글로 작성합니다. 단, 인용한 원문, 코드, 명령어, 파일 경로, 식별자는 원문 그대로 유지할 수 있습니다.
 
@@ -297,12 +297,12 @@ TigerKit의 `req` 스킬을 사용합니다.
 명시적으로 요청받지 않는 한 이 명령에서는 구현 계획을 확정하거나 코드를 수정하지 않습니다.
 ```
 
-- [ ] **Step 2: Update `commands/what.md` wording**
+- [ ] **Step 2: Update `commands/mwhat.md` wording**
 
 Replace the line `이 플러그인의 \`what\` 스킬을 사용합니다.` with:
 
 ```markdown
-TigerKit의 `what` 스킬을 사용합니다.
+TigerKit의 `mwhat` 스킬을 사용합니다.
 ```
 
 Keep the four-block output description and the “do not implement or edit files” rule unchanged.
@@ -318,7 +318,7 @@ TigerKit의 `gap` 스킬을 사용합니다.
 
 목표: `.tigerkit/{work_id}/requirements.md`에 정리된 요구사항 기준을 읽고, 필요한 범위에서 현재 구현이나 문서를 확인한 뒤 `.tigerkit/{work_id}/gap.md`를 작성합니다.
 
-작업 기준 파일이 없거나 어떤 작업을 분석해야 하는지 불명확하면 분석을 시작하지 말고 `/tk:req`로 요구사항 기준을 먼저 정리하라고 안내합니다.
+작업 기준 파일이 없거나 어떤 작업을 분석해야 하는지 불명확하면 분석을 시작하지 말고 `/tk:prep`로 요구사항 기준을 먼저 정리하라고 안내합니다.
 
 명시적으로 요청받지 않는 한 이 명령에서는 코드를 구현하거나 구현 계획을 새로 만들지 않습니다.
 ```
@@ -328,11 +328,11 @@ TigerKit의 `gap` 스킬을 사용합니다.
 Run:
 
 ```bash
-mkdir -p skills/req
-cp skills/prep/SKILL.md skills/req/SKILL.md
+mkdir -p skills/prep
+cp skills/prep/SKILL.md skills/prep/SKILL.md
 ```
 
-Expected: `skills/req/SKILL.md` exists. Task 3 rewrites it fully.
+Expected: `skills/prep/SKILL.md` exists. Task 3 rewrites it fully.
 
 - [ ] **Step 5: Update plugin manifest**
 
@@ -347,13 +347,13 @@ Replace `.claude-plugin/plugin.json` with:
     "name": "MTGVim"
   },
   "commands": [
-    "./commands/req.md",
-    "./commands/what.md",
+    "./commands/prep.md",
+    "./commands/mwhat.md",
     "./commands/gap.md"
   ],
   "skills": [
-    "./skills/req",
-    "./skills/what",
+    "./skills/prep",
+    "./skills/mwhat",
     "./skills/gap"
   ]
 }
@@ -377,7 +377,7 @@ Run:
 
 ```bash
 claude plugin validate .claude-plugin/plugin.json
-! grep -R "commands/prep\|skills/prep\|/tigap" -n .claude-plugin commands skills/req/SKILL.md skills/gap/SKILL.md skills/what/SKILL.md
+! grep -R "commands/prep\|skills/prep\|/tigap" -n .claude-plugin commands skills/prep/SKILL.md skills/gap/SKILL.md skills/mwhat/SKILL.md
 ```
 
 Expected: validation succeeds; grep command exits 0 because there are no matches.
@@ -385,22 +385,22 @@ Expected: validation succeeds; grep command exits 0 because there are no matches
 Commit:
 
 ```bash
-git add .claude-plugin/plugin.json commands/req.md commands/what.md commands/gap.md skills/req/SKILL.md skills/what/SKILL.md skills/gap/SKILL.md
+git add .claude-plugin/plugin.json commands/prep.md commands/mwhat.md commands/gap.md skills/prep/SKILL.md skills/mwhat/SKILL.md skills/gap/SKILL.md
 git add -u commands/prep.md skills/prep
 git commit -m "feat: rename plugin surface to TigerKit tk"
 ```
 
 ---
 
-### Task 3: Rewrite `req` skill around `requirements.md`
+### Task 3: Rewrite `prep` skill around `requirements.md`
 
 **Goal:** Replace prep/source-packet behavior with a requirements normalization workflow that does not create implementation plans.
 
 **Files:**
-- Modify: `skills/req/SKILL.md`
+- Modify: `skills/prep/SKILL.md`
 
 **Acceptance Criteria:**
-- [ ] Frontmatter name is `req`.
+- [ ] Frontmatter name is `prep`.
 - [ ] Required output is `.tigerkit/{work_id}/requirements.md`.
 - [ ] Optional source storage is `.tigerkit/{work_id}/inputs/`.
 - [ ] Metadata path is `.tigerkit/{work_id}/requirements.meta.json`.
@@ -408,21 +408,21 @@ git commit -m "feat: rename plugin surface to TigerKit tk"
 - [ ] Skill explicitly forbids implementation planning, task breakdown, file-level patch instructions, and code edits.
 - [ ] User handoff is short and points to `requirements.md` plus `/tk:gap` or a separate implementation planning workflow.
 
-**Verify:** `grep -n "source-packet\|source_packet\|\.gap/\|/tigap\|prep" skills/req/SKILL.md` → no output.
+**Verify:** `grep -n "source-packet\|source_packet\|\.gap/\|/tigap\|prep" skills/prep/SKILL.md` → no output.
 
 **Steps:**
 
-- [ ] **Step 1: Replace `skills/req/SKILL.md` with req instructions**
+- [ ] **Step 1: Replace `skills/prep/SKILL.md` with req instructions**
 
 Write this file structure exactly, filling prose in Korean as shown:
 
 ```markdown
 ---
-name: req
+name: prep
 description: 외부 요구사항 소스와 대화 맥락을 이후 계획과 갭 확인의 기준이 되는 requirements.md로 정리합니다. 사용자가 요구사항을 정리하거나, source of truth 후보를 합치거나, gap 분석 전에 기준 문서를 만들려 할 때 반드시 사용합니다.
 ---
 
-# req
+# prep
 
 ## 목적
 
@@ -519,7 +519,7 @@ Git 저장소에서 실행 중이라면 `.tigerkit/`이 ignore 또는 의도적�
 - `artifact`: `requirements.md`
 - `artifact_hash`: 생성 또는 재사용된 `requirements.md`의 해시
 - `input_source_hash`: requirements 생성에 실제 사용한 입력 자료의 해시
-- `req_prompt_version`: req 스킬 또는 지시문 버전
+- `prep_prompt_version`: prep 스킬 또는 지시문 버전
 - `scope_hash`: 작업 ID, 스펙명, 포함 범위, 제외 범위를 정규화한 해시
 - `input_identities`: 사람이 확인할 수 있는 입력 자료 목록
 - `created_at`: 메타데이터 작성 시각
@@ -583,7 +583,7 @@ Git 저장소에서 실행 중이라면 `.tigerkit/`이 ignore 또는 의도적�
 다음 값이 모두 같으면 기존 `requirements.md`를 재사용합니다.
 
 - `input_source_hash`
-- `req_prompt_version`
+- `prep_prompt_version`
 - `scope_hash`
 - `input_identities`
 
@@ -641,7 +641,7 @@ Git 저장소에서 실행 중이라면 `.tigerkit/`이 ignore 또는 의도적�
 Run:
 
 ```bash
-! grep -n "source-packet\|source_packet\|\.gap/\|/tigap\|prep" skills/req/SKILL.md
+! grep -n "source-packet\|source_packet\|\.gap/\|/tigap\|prep" skills/prep/SKILL.md
 ```
 
 Expected: command exits 0 because grep finds no matches.
@@ -651,7 +651,7 @@ Expected: command exits 0 because grep finds no matches.
 Run:
 
 ```bash
-git add skills/req/SKILL.md
+git add skills/prep/SKILL.md
 git commit -m "feat: define req requirements workflow"
 ```
 
@@ -692,7 +692,7 @@ description: requirements.md와 현재 구현, 문서, 테스트, 관찰 가능�
 
 ## 목적
 
-`req` 단계에서 정리한 `requirements.md`를 바탕으로 현재 상태와의 갭을 분석합니다.
+`prep` 단계에서 정리한 `requirements.md`를 바탕으로 현재 상태와의 갭을 분석합니다.
 
 중간 점검과 최종 검산을 별도 skill로 나누지 않습니다. 남은 gap이 있으면 아직 작업 중이고, 확인 가능한 기준에서 gap이 없고 확인 불가 항목도 없으면 출고 가능 후보입니다.
 
@@ -718,7 +718,7 @@ description: requirements.md와 현재 구현, 문서, 테스트, 관찰 가능�
 .tigerkit/{work_id}/requirements.md
 ```
 
-작업 기준 파일이 없거나 어떤 작업을 분석해야 하는지 불명확하면 분석을 시작하지 않고 `/tk:req`로 요구사항 기준을 먼저 정리하라고 안내합니다.
+작업 기준 파일이 없거나 어떤 작업을 분석해야 하는지 불명확하면 분석을 시작하지 않고 `/tk:prep`로 요구사항 기준을 먼저 정리하라고 안내합니다.
 
 저장소를 임의로 기준 자료로 삼아 분석하지 않습니다.
 
@@ -873,11 +873,11 @@ git commit -m "feat: align gap with requirements coverage"
 - Modify: `scripts/install-standalone.ps1`
 
 **Acceptance Criteria:**
-- [ ] README opens with TigerKit and lists `/tk:what`, `/tk:req`, `/tk:gap`.
+- [ ] README opens with TigerKit and lists `/tk:mwhat`, `/tk:prep`, `/tk:gap`.
 - [ ] Installation docs use `MTGVim/tiger-kit` and `tk@tiger-kit` as the target GitHub slug/package examples.
 - [ ] Artifact docs use `.tigerkit/{work_id}/inputs/`, `requirements.md`, `requirements.meta.json`, `gap.md`, `gap.meta.json`.
 - [ ] CLAUDE.md Korean instructions use `.tigerkit/` artifact rules and `tk:*` command overview.
-- [ ] Install scripts copy `skills/req`, `skills/gap`, `skills/what`.
+- [ ] Install scripts copy `skills/prep`, `skills/gap`, `skills/mwhat`.
 - [ ] Marketplace metadata says TigerKit, not tigap.
 
 **Verify:** `! grep -R "/tigap\|source-packet\|gap-report\|\.gap/\|tigap-skills" -n CLAUDE.md README.md docs commands skills .claude-plugin scripts` → no output, except historical text in `docs/kickoff.md` may remain only if clearly marked as history.
@@ -902,7 +902,7 @@ Use this content:
   gap.meta.json
 ```
 
-`/tk:req`는 입력 자료와 대화 맥락을 `requirements.md`로 정리합니다. `/tk:gap`은 현재 repo 상태와 `requirements.md`의 차이를 `gap.md`에 기록합니다.
+`/tk:prep`는 입력 자료와 대화 맥락을 `requirements.md`로 정리합니다. `/tk:gap`은 현재 repo 상태와 `requirements.md`의 차이를 `gap.md`에 기록합니다.
 
 ## 브랜치 이름과 작업 ID
 
@@ -927,13 +927,13 @@ Use this content:
 
 | 단계 | 근거 | 추천 다음 행동 |
 |---|---|---|
-| `req-needed` | `requirements.md` 없음 | `/tk:req` 실행 |
+| `req-needed` | `requirements.md` 없음 | `/tk:prep` 실행 |
 | `gap-needed` | `requirements.md`는 있고 `gap.md` 없음 | `/tk:gap` 실행 |
 | `gap-complete` | `gap.md` 있음 | Verdict와 Remaining Gaps를 보고 구현, 보류, 추가 확인 중 선택 |
 
 ## 캐시 정책
 
-`/tk:req`는 입력 자료 해시, req 지시문 버전, 범위 해시, input identity가 같으면 기존 `requirements.md`를 재사용합니다. 하나라도 다르거나 `--force`가 있으면 다시 생성합니다.
+`/tk:prep`는 입력 자료 해시, prep 지시문 버전, 범위 해시, input identity가 같으면 기존 `requirements.md`를 재사용합니다. 하나라도 다르거나 `--force`가 있으면 다시 생성합니다.
 
 `/tk:gap`은 현재 git commit SHA, `requirements.md` 해시, gap 지시문 버전, 범위 해시가 같고 작업 트리가 clean이면 기존 `gap.md`를 재사용합니다. 하나라도 다르거나 작업 트리가 dirty이거나 `--force`가 있으면 다시 분석합니다.
 
@@ -942,18 +942,18 @@ Use this content:
 
 - [ ] **Step 2: Update installers**
 
-In `scripts/install-standalone.sh`, replace `skills/prep` with `skills/req` and final echo with:
+In `scripts/install-standalone.sh`, replace `skills/prep` with `skills/prep` and final echo with:
 
 ```bash
 echo "Installed TigerKit skills into: $TARGET_SKILLS"
-echo "Standalone commands may be available as: /req, /gap, /what"
+echo "Standalone commands may be available as: /prep, /gap, /mwhat"
 ```
 
-In `scripts/install-standalone.ps1`, replace `skills\prep` with `skills\req` and final output with:
+In `scripts/install-standalone.ps1`, replace `skills\prep` with `skills\prep` and final output with:
 
 ```powershell
 Write-Host "Installed TigerKit skills into: $TargetSkills"
-Write-Host "Standalone commands may be available as: /req, /gap, /what"
+Write-Host "Standalone commands may be available as: /prep, /gap, /mwhat"
 ```
 
 - [ ] **Step 3: Update `.claude-plugin/marketplace.json`**
@@ -986,16 +986,16 @@ Make README command overview exactly use:
 ```markdown
 제공하는 명령/스킬 흐름은 세 단계입니다.
 
-- `/tk:what` — 긴 LLM 답변이나 애매한 설명이 결국 무슨 말인지 짧고 실행 가능하게 풀어줍니다.
-- `/tk:req` — 외부 요구사항 소스와 대화 맥락을 `requirements.md` 기준 문서로 정리합니다.
+- `/tk:mwhat` — 긴 LLM 답변이나 애매한 설명이 결국 무슨 말인지 짧고 실행 가능하게 풀어줍니다.
+- `/tk:prep` — 외부 요구사항 소스와 대화 맥락을 `requirements.md` 기준 문서로 정리합니다.
 - `/tk:gap` — `requirements.md` 대비 현재 구현, 문서, 테스트의 남은 차이를 확인합니다.
 ```
 
 Make recommended flow:
 
 ```text
-/tk:what  # 장문/애매한 답변 해독
-/tk:req   # 요구사항 기준 정리
+/tk:mwhat  # 장문/애매한 답변 해독
+/tk:prep   # 요구사항 기준 정리
 /tk:gap   # 기준 대비 갭 분석
 ```
 
@@ -1015,7 +1015,7 @@ In `docs/usage.md`, rename sections to:
 ## 3. 갭 분석
 ```
 
-and use `/tk:what`, `/tk:req`, `/tk:gap` in all examples.
+and use `/tk:mwhat`, `/tk:prep`, `/tk:gap` in all examples.
 
 - [ ] **Step 5: Update `CLAUDE.md`**
 
@@ -1028,12 +1028,12 @@ Change the language/output rules to mention:
 Change command overview to:
 
 ```markdown
-- `/tk:what`: 긴 LLM 답변이나 애매한 설명을 짧고 실행 가능하게 해독한다.
-- `/tk:req`: 외부 요구사항 소스와 대화 맥락을 `requirements.md` 기준 문서로 정리한다.
+- `/tk:mwhat`: 긴 LLM 답변이나 애매한 설명을 짧고 실행 가능하게 해독한다.
+- `/tk:prep`: 외부 요구사항 소스와 대화 맥락을 `requirements.md` 기준 문서로 정리한다.
 - `/tk:gap`: `requirements.md` 대비 현재 구현, 문서, 테스트의 남은 차이를 확인하고 `gap.md`를 작성한다.
 ```
 
-Change repository structure bullets to use `commands/req.md`, `skills/req/SKILL.md`, and `.tigerkit/`.
+Change repository structure bullets to use `commands/prep.md`, `skills/prep/SKILL.md`, and `.tigerkit/`.
 
 - [ ] **Step 6: Verify docs and commit**
 
@@ -1219,7 +1219,7 @@ Expected: local checkout path changes to `/home/tigeryoo/workspace/tiger-kit`.
 ## Dependencies
 
 - Task 1 must complete before Tasks 2-5 so eval contracts describe the new surface.
-- Task 2 must complete before Tasks 3-5 because `req` paths and plugin naming need to exist.
+- Task 2 must complete before Tasks 3-5 because `prep` paths and plugin naming need to exist.
 - Tasks 3 and 4 can run independently after Task 2.
 - Task 5 should run after Tasks 2-4 so docs match final skill behavior.
 - Task 6 runs after Tasks 1-5.
@@ -1227,7 +1227,7 @@ Expected: local checkout path changes to `/home/tigeryoo/workspace/tiger-kit`.
 
 ## Self-Review
 
-- Spec coverage: The plan covers `tk:what`, `tk:req`, `tk:gap`, `.tigerkit/{work_id}/requirements.md`, `.tigerkit/{work_id}/gap.md`, no `audit` skill, no `tk:what` state-realignment mode, short user notifications, docs/evals/installers/manifests, validation, and GitHub slug rename.
+- Spec coverage: The plan covers `tk:what`, `tk:prep`, `tk:gap`, `.tigerkit/{work_id}/requirements.md`, `.tigerkit/{work_id}/gap.md`, no `audit` skill, no `tk:what` state-realignment mode, short user notifications, docs/evals/installers/manifests, validation, and GitHub slug rename.
 - Placeholder scan: No `TBD`, `TODO`, `implement later`, or vague “write tests” placeholders are present.
-- Type/name consistency: The plan consistently uses `req_prompt_version`, `input_identities`, `requirements_hash`, `.tigerkit/`, `requirements.md`, `gap.md`, `/tk:req`, `/tk:what`, and `/tk:gap`.
+- Type/name consistency: The plan consistently uses `prep_prompt_version`, `input_identities`, `requirements_hash`, `.tigerkit/`, `requirements.md`, `gap.md`, `/tk:prep`, `/tk:mwhat`, and `/tk:gap`.
 - Risk note: GitHub repository rename and push are explicitly requested by the user, but they are still isolated to Task 7 after local validation succeeds.

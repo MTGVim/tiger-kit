@@ -3,8 +3,8 @@
   "evals": [
     {
       "id": 0,
-      "name": "req-cache-hit",
-      "prompt": "You are evaluating the TigerKit req skill instructions. A project already has .tigerkit/checkout-retry/requirements.md and .tigerkit/checkout-retry/requirements.meta.json. The meta fields input_source_hash, req_prompt_version, scope_hash, and input_identities all match the current request. The user runs: /tk:req checkout retry 요구사항 다시 정리해줘. Describe exactly what Claude should do and what the user-facing response should include. Do not write files.",
+      "name": "prep-cache-hit",
+      "prompt": "You are evaluating the TigerKit prep skill instructions. A project already has .tigerkit/checkout-retry/requirements.md and .tigerkit/checkout-retry/requirements.meta.json. The meta fields input_source_hash, prep_prompt_version, scope_hash, and input_identities all match the current request. The user runs: /tk:prep checkout retry 요구사항 다시 정리해줘. Describe exactly what Claude should do and what the user-facing response should include. Do not write files.",
       "expected_output": "Should reuse the existing requirements.md, state cache hit reason briefly, include the requirements.md path, keep the response short, and avoid dumping the whole requirements document.",
       "files": [],
       "expectations": [
@@ -16,8 +16,8 @@
     },
     {
       "id": 1,
-      "name": "req-force-miss",
-      "prompt": "You are evaluating the TigerKit req skill instructions. A previous requirements.md exists for .tigerkit/search-filter/requirements.md, but the user runs: /tk:req --force docs/search-filter.md 기준으로 다시 정리해줘. Describe exactly what Claude should do and what the user-facing response should include. Do not write files.",
+      "name": "prep-force-miss",
+      "prompt": "You are evaluating the TigerKit prep skill instructions. A previous requirements.md exists for .tigerkit/search-filter/requirements.md, but the user runs: /tk:prep --force docs/search-filter.md 기준으로 다시 정리해줘. Describe exactly what Claude should do and what the user-facing response should include. Do not write files.",
       "expected_output": "Should ignore the cache because --force was requested, regenerate requirements.md and metadata, briefly explain the force/cache miss reason, show the path, and keep the chat response short.",
       "files": [],
       "expectations": [
@@ -31,27 +31,28 @@
       "id": 2,
       "name": "gap-requirement-coverage",
       "prompt": "You are evaluating the TigerKit gap skill instructions. A requirements document exists at .tigerkit/onboarding-copy/requirements.md, the repository has relevant docs and code paths, and the user runs: /tk:gap 방금 정리한 요구사항 대비 현재 구현 갭 분석해줘. Describe the expected report structure and the final user-facing response. Do not write files.",
-      "expected_output": "Should describe cache check based on git commit, requirements hash, gap prompt version, and scope; write/reuse gap.md with metadata; include Verdict, Requirement Coverage, Remaining Gaps, Unable to Verify, and Notes; final chat response should not dump the full report and should include verdict, path, core gaps, and one next action.",
+      "expected_output": "Should describe cache check based on git commit, requirements hash, gap prompt version, and scope; write/reuse gap.md with metadata; include Verdict, Requirement Coverage, Remaining Gaps, Unable to Verify, and Notes; Requirement Coverage, Remaining Gaps, and Unable to Verify must be Markdown tables even when empty; final chat response should not dump the full report and should include verdict, path, core gaps, and one next action.",
       "files": [],
       "expectations": [
         "Describes gap cache checking with git commit, requirements hash, prompt version, and scope",
         "Mentions gap.md metadata",
         "Requires Verdict with GAPS_FOUND, NO_GAPS_FOUND, or UNVERIFIABLE",
+        "Requires Requirement Coverage, Remaining Gaps, and Unable to Verify as Markdown tables",
+        "Requires empty Remaining Gaps and Unable to Verify tables to keep a header and 없음 row",
         "Says Unable to Verify prevents a NO_GAPS_FOUND verdict",
         "Says the chat response should not dump the full report and should include verdict, path, core gaps, and one next action"
       ]
     },
     {
       "id": 3,
-      "name": "what-confusing-answer",
-      "prompt": "You are evaluating the TigerKit what skill instructions. The user runs /tk:what with this source answer: '이 기능은 확장성을 고려해서 모듈화하고, 상태 관리는 나중에 요구사항이 명확해지면 정하는 게 좋겠습니다. 우선 데이터 흐름을 정리하고 컴포넌트 경계를 잡는 방향으로 접근하면 될 것 같습니다.' Describe the expected user-facing response. Do not write files.",
-      "expected_output": "Should use the four approved Korean blocks, explain that the answer means structure first rather than immediate implementation, identify missing component boundary and state-management decision criteria, and provide a practical reply draft.",
+      "name": "mwhat-confusing-answer",
+      "prompt": "You are evaluating the TigerKit mwhat skill instructions. The user says: '뭐라는거야? 이 기능은 확장성을 고려해서 모듈화하고, 상태 관리는 나중에 요구사항이 명확해지면 정하는 게 좋겠습니다. 우선 데이터 흐름을 정리하고 컴포넌트 경계를 잡는 방향으로 접근하면 될 것 같습니다.' Describe the expected user-facing response. Do not write files.",
+      "expected_output": "Should use the two approved Korean blocks, explain in at most 3 lines that the answer means structure first rather than immediate implementation and that component boundary/state-management decision criteria are missing, then provide a recommendation using 이렇게 말하세요: or 이렇게 하세요: without quote-wrapping it.",
       "files": [],
       "expectations": [
-        "Includes the block label '🐯 제가 요약해드리죠'",
-        "Includes the block label '🎯 하려던 것'",
-        "Includes the block label '😵 막히는 지점'",
-        "Includes the block label '💡 이렇게 답하면 됨'",
+        "Includes the block label '🤔 뭣? 쉽게 말하면'",
+        "Includes the block label '💡 추천'",
+        "Does not include extra structural block labels such as 하던 것 or 문제 상황",
         "Explains the source answer directly instead of producing a generic summary",
         "Mentions that component boundaries or state-management decision criteria are missing",
         "Provides a message the user can send or adapt"

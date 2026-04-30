@@ -11,7 +11,7 @@
   gap.meta.json
 ```
 
-`/tk:req`는 입력 자료와 대화 맥락을 `requirements.md`로 정리합니다. `/tk:gap`은 현재 repo 상태와 `requirements.md`의 차이를 `gap.md`에 기록합니다.
+`/tk:prep`는 입력 자료와 대화 맥락을 `requirements.md`로 정리합니다. `/tk:gap`은 현재 repo 상태와 `requirements.md`의 차이를 `gap.md`에 기록합니다.
 
 ## 브랜치 이름과 작업 ID
 
@@ -36,13 +36,13 @@
 
 | 단계 | 근거 | 추천 다음 행동 |
 |---|---|---|
-| `req-needed` | `requirements.md` 없음 | `/tk:req` 실행 |
+| `req-needed` | `requirements.md` 없음 | `/tk:prep` 실행 |
 | `gap-needed` | `requirements.md`는 있고 `gap.md` 없음 | `/tk:gap` 실행 |
 | `gap-complete` | `gap.md` 있음 | Verdict와 Remaining Gaps를 보고 구현, 보류, 추가 확인 중 선택 |
 
 ## 캐시 정책
 
-`/tk:req`는 입력 자료 해시, req 지시문 버전, 범위 해시, input identity가 같으면 기존 `requirements.md`를 재사용합니다. 하나라도 다르거나 `--force`가 있으면 다시 생성합니다.
+`/tk:prep`는 입력 자료 해시, prep 지시문 버전, 범위 해시, input identity가 같으면 기존 `requirements.md`를 재사용합니다. 하나라도 다르거나 `--force`가 있으면 다시 생성합니다.
 
 `/tk:gap`은 현재 git commit SHA, `requirements.md` 해시, gap 지시문 버전, 범위 해시가 같고 작업 트리가 clean이면 기존 `gap.md`를 재사용합니다. 하나라도 다르거나 작업 트리가 dirty이거나 `--force`가 있으면 다시 분석합니다.
 
