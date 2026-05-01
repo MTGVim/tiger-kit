@@ -28,6 +28,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   git diff --check
   ```
 
+- Eval fixture JSON 문법 검증:
+
+  ```bash
+  python3 -m json.tool evals/evals.json >/dev/null
+  python3 -m json.tool skills/prep/evals/evals.json >/dev/null
+  python3 -m json.tool skills/gap/evals/evals.json >/dev/null
+  ```
+
 - Standalone 설치 스크립트 실행:
 
   ```bash
@@ -40,7 +48,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   ./scripts/install-standalone.ps1 -TargetProject C:\path\to\project
   ```
 
-이 저장소에는 package manager 기반 build/test/lint 설정이 없다. 기능 변경 후에는 위 plugin validation과 `git diff --check`를 우선 실행한다.
+이 저장소에는 package manager 기반 build/test/lint 설정이 없다. 기능 변경 후에는 위 plugin validation, eval fixture JSON 문법 검증, `git diff --check`를 우선 실행한다. 현재 저장소에는 `evals/evals.json`, `skills/prep/evals/evals.json`, `skills/gap/evals/evals.json`을 자동 실행하는 harness가 확인되지 않았으므로, fixture는 JSON 문법 검증과 수동 기대 동작 검토 대상으로 취급한다.
 
 ## 저장소 구조
 

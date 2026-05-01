@@ -128,6 +128,57 @@
 
 분석 후에는 특정 계획/실행 명령으로 자동 연결하지 않습니다. 보고서 끝의 `Next Move` 하나를 참고해 사용자가 구현, 보류, 추가 확인 같은 다음 행동을 고릅니다.
 
+## 검증
+
+TigerKit 저장소에는 package manager 기반 build/test/lint 설정이 없습니다. 명령, 스킬, manifest, 설치 스크립트, eval fixture를 수정한 뒤에는 다음 검증을 기본으로 실행합니다.
+
+```bash
+claude plugin validate .claude-plugin/plugin.json
+claude plugin validate .
+git diff --check
+```
+
+Eval fixture를 수정했다면 JSON 문법도 확인합니다.
+
+```bash
+python3 -m json.tool evals/evals.json >/dev/null
+python3 -m json.tool skills/prep/evals/evals.json >/dev/null
+python3 -m json.tool skills/gap/evals/evals.json >/dev/null
+```
+
+현재 저장소 안에서 확인되는 eval 자산은 다음 세 가지입니다.
+
+| 경로 | 역할 | 현재 가능한 검증 |
+| --- | --- | --- |
+| `evals/evals.json` | `/tk:prep`, `/tk:gap`, `/tk:mwhat` 전체 흐름의 기대 동작 fixture | `python3 -m json.tool`로 JSON 문법 확인, fixture prompt/expectation 수동 검토 |
+| `skills/prep/evals/evals.json` | `prep` skill 단독 기대 동작 fixture | `python3 -m json.tool`로 JSON 문법 확인, fixture prompt/assertion 수동 검토 |
+| `skills/gap/evals/evals.json` | `gap` skill 단독 기대 동작 fixture | `python3 -m json.tool`로 JSON 문법 확인, fixture prompt/assertion 수동 검토 |
+
+Claude CLI의 plugin 명령에는 현재 `validate`가 있지만, 이 저장소의 eval fixture를 자동 실행하는 공식 harness나 명령은 저장소 안에서 확인되지 않습니다. 따라서 “fixture는 있으나 자동 실행 경로는 확인 필요”로 보고하고, 자동 판정이 필요한 변경에서는 별도 eval harness 제공 여부를 먼저 확인해야 합니다.
+
+Standalone 설치 스크립트는 임시 프로젝트를 대상으로 smoke 검증할 수 있습니다.
+
+```bash
+tmpdir="$(mktemp -d)"
+./scripts/install-standalone.sh "$tmpdir"
+test -f "$tmpdir/.claude/skills/prep/SKILL.md"
+test -f "$tmpdir/.claude/skills/gap/SKILL.md"
+test -f "$tmpdir/.claude/skills/mwhat/SKILL.md"
+rm -rf "$tmpdir"
+```
+
+PowerShell 경로를 바꿨다면 Windows 또는 PowerShell 사용 가능 환경에서 같은 관점으로 확인합니다.
+
+```powershell
+$TargetProject = Join-Path $env:TEMP "tigerkit-smoke"
+Remove-Item -Recurse -Force $TargetProject -ErrorAction SilentlyContinue
+./scripts/install-standalone.ps1 -TargetProject $TargetProject
+Test-Path (Join-Path $TargetProject ".claude\skills\prep\SKILL.md")
+Test-Path (Join-Path $TargetProject ".claude\skills\gap\SKILL.md")
+Test-Path (Join-Path $TargetProject ".claude\skills\mwhat\SKILL.md")
+Remove-Item -Recurse -Force $TargetProject
+```
+
 ## 추천 명령 문장
 
 ```text
