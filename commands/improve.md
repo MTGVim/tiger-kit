@@ -9,5 +9,6 @@ TigerKit의 `improve` 스킬을 사용합니다.
 목표: `CLAUDE.md`, `AGENTS.md`, `.claude/rules`, command docs, skills, README/docs 같은 existing knowledge layer를 읽고 bloat, contradiction, staleness, missing boundary, skill hygiene 문제를 찾아 작은 patch 후보를 제안합니다.
 
 기본 출력은 `Improve Report`입니다. 명시적으로 승인받지 않는 한 파일을 수정하지 않습니다.
+`Improve Report` 안의 finding ID(`IMP-001` 같은 식별자)는 `Findings`와 `Proposed Patches`에서 같은 값으로 반복해 승인 대상을 쉽게 고를 수 있게 유지합니다.
 
 automatic broad rewrite, self-modifying workflow, hook, queue, history scan, automatic apply를 구현하거나 실행하지 않습니다.

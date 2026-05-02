@@ -162,7 +162,7 @@
 /tk:improve 최근 작업 흐름 기준으로 문서와 스킬 보완 후보만 추려줘.
 ```
 
-주요 출력은 `Improve Report` 형식의 audit finding과 patch proposal입니다. 보고서는 우선순위가 있는 개선 후보를 제안하지만, 범위가 큰 전면 재작성으로 바로 이어지지 않으며 변경을 자동 적용하지도 않습니다.
+주요 출력은 `Improve Report` 형식의 audit finding과 patch proposal입니다. 보고서는 우선순위가 있는 개선 후보를 제안하지만, 범위가 큰 전면 재작성으로 바로 이어지지 않으며 변경을 자동 적용하지도 않습니다. finding ID(`IMP-001` 같은 식별자)는 `Findings` 표와 `Proposed Patches` 요약/상세 섹션에서 같은 값으로 반복해 승인 대상을 쉽게 고를 수 있게 유지합니다.
 
 이 명령은 저장소 전체를 광범위하게 다시 쓰지 않습니다. 필요한 경우에도 사용자가 승인한 선택적 patch만 반영 대상으로 삼습니다.
 
@@ -188,9 +188,9 @@ python3 -m json.tool skills/gap/evals/evals.json >/dev/null
 
 | 경로 | 역할 | 현재 가능한 검증 |
 | --- | --- | --- |
-| `evals/evals.json` | `/tk:prep`, `/tk:gap`, `/tk:mwhat` 전체 흐름의 기대 동작 fixture | `python3 -m json.tool`로 JSON 문법 확인, fixture prompt/expectation 수동 검토 |
-| `skills/prep/evals/evals.json` | `prep` skill 단독 기대 동작 fixture | `python3 -m json.tool`로 JSON 문법 확인, fixture prompt/assertion 수동 검토 |
-| `skills/gap/evals/evals.json` | `gap` skill 단독 기대 동작 fixture | `python3 -m json.tool`로 JSON 문법 확인, fixture prompt/assertion 수동 검토 |
+| `evals/evals.json` | `/tk:prep`, `/tk:gap`, `/tk:mwhat` 전체 흐름의 기대 동작 fixture (`expectations` 필드 사용) | `python3 -m json.tool`로 JSON 문법 확인, fixture prompt/expectation 수동 검토 |
+| `skills/prep/evals/evals.json` | `prep` skill 단독 기대 동작 fixture (`assertions` 필드 사용) | `python3 -m json.tool`로 JSON 문법 확인, fixture prompt/assertion 수동 검토 |
+| `skills/gap/evals/evals.json` | `gap` skill 단독 기대 동작 fixture (`assertions` 필드 사용) | `python3 -m json.tool`로 JSON 문법 확인, fixture prompt/assertion 수동 검토 |
 
 Claude CLI의 plugin 명령에는 현재 `validate`가 있지만, 이 저장소의 eval fixture를 자동 실행하는 공식 harness나 명령은 저장소 안에서 확인되지 않습니다. 따라서 “fixture는 있으나 자동 실행 경로는 확인 필요”로 보고하고, 자동 판정이 필요한 변경에서는 별도 eval harness 제공 여부를 먼저 확인해야 합니다.
 

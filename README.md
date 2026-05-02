@@ -66,7 +66,8 @@ PowerShell에서는 다음 명령을 사용합니다.
 ./scripts/install-standalone.ps1 -TargetProject C:\path\to\project
 ```
 
-Standalone 모드에서는 같은 흐름과 유지보수 유틸리티를 `/mwhat`, `/prep`, `/gap`, `/reflect`, `/improve`로 호출합니다.
+Standalone 모드에서는 `skills/`가 대상 프로젝트의 `.claude/skills`로 복사됩니다.
+사용 환경에 따라 이 스킬들이 `/mwhat`, `/prep`, `/gap`, `/reflect`, `/improve` 같은 slash command로 노출될 수 있지만, 최소 보장은 skill 설치 자체입니다.
 
 ## 산출물 구조
 
