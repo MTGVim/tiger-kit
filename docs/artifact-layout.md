@@ -13,6 +13,8 @@
 
 `/tk:prep`는 입력 자료와 대화 맥락을 `requirements.md`로 정리합니다. `/tk:gap`은 현재 repo 상태와 `requirements.md`의 차이를 `gap.md`에 기록합니다.
 
+`/tk:reflect`는 요청이 있거나 durable target이 불명확할 때 세션 로컬 유지보수 메모로 `.tigerkit/{work_id}/reflection.md` 작성을 제안할 수 있습니다. 이 파일은 선택적인 maintenance output일 뿐이며 `prep → gap` 라이프사이클의 필수 단계가 아니고, `requirements.md`/`gap.md` 캐시 정책에도 포함되지 않습니다.
+
 ## 브랜치 이름과 작업 ID
 
 현재 git 브랜치가 진행 중인 작업을 나타낸다면 그 브랜치 이름을 사용할 수 있습니다. 현재 브랜치가 `main`, `master`, `develop` 또는 저장소 기본 브랜치 같은 기반 브랜치라면 변경 가능한 산출물을 쓰기 전에 다음 중 하나를 우선합니다.
@@ -31,6 +33,7 @@
 | `requirements.meta.json` | `requirements.md` 재사용 여부를 판단하는 캐시 메타데이터 |
 | `gap.md` | 현재 상태와 `requirements.md` 사이의 coverage/gap 분석 |
 | `gap.meta.json` | `gap.md` 재사용 여부를 판단하는 캐시 메타데이터 |
+| `reflection.md` | 선택적으로 남기는 세션 로컬 유지보수 회고 메모. `prep → gap` 필수 단계는 아님 |
 
 ## 작업 흐름 단계
 

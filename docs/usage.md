@@ -128,6 +128,44 @@
 
 분석 후에는 특정 계획/실행 명령으로 자동 연결하지 않습니다. 보고서 끝의 `Next Move` 하나를 참고해 사용자가 구현, 보류, 추가 확인 같은 다음 행동을 고릅니다.
 
+## 4. 세션 회고
+
+현재 세션에서 반복된 교정 포인트, 놓친 확인 절차, 다음부터 줄이고 싶은 실수를 짧게 회고할 때 실행합니다.
+
+```text
+/tk:reflect
+```
+
+예시:
+
+```text
+/tk:reflect 이번 세션에서 내가 자주 놓친 점만 정리해줘.
+/tk:reflect 방금 수정 흐름 기준으로 다음 세션에 남길 회고를 만들어줘.
+```
+
+주요 출력은 `Session Reflection` 형식의 짧은 회고 보고서입니다. 상황에 따라 채팅 응답으로만 끝낼 수 있고, 사용자가 요청했거나 durable target이 불명확할 때는 세션 로컬 유지보수 메모로 `reflection.md` 작성을 제안할 수 있습니다.
+
+이 명령은 사용자 사전 승인 없이 파일을 수정하지 않습니다. hook, queue, 히스토리 스캔, 자동 memory capture를 수행하지 않고, 현재 세션에서 드러난 내용만 바탕으로 patch proposal 또는 다음 확인 포인트를 정리합니다.
+
+## 5. Knowledge layer 개선 audit
+
+저장소의 CLAUDE.md, 스킬, 명령 문서, 운영 메모처럼 knowledge layer에 해당하는 내용을 가볍게 점검하고 개선 후보를 찾고 싶을 때 실행합니다.
+
+```text
+/tk:improve
+```
+
+예시:
+
+```text
+/tk:improve 지금 저장소 knowledge layer에서 보강할 점을 audit해줘.
+/tk:improve 최근 작업 흐름 기준으로 문서와 스킬 보완 후보만 추려줘.
+```
+
+주요 출력은 `Improve Report` 형식의 audit finding과 patch proposal입니다. 보고서는 우선순위가 있는 개선 후보를 제안하지만, 범위가 큰 전면 재작성으로 바로 이어지지 않으며 변경을 자동 적용하지도 않습니다.
+
+이 명령은 저장소 전체를 광범위하게 다시 쓰지 않습니다. 필요한 경우에도 사용자가 승인한 선택적 patch만 반영 대상으로 삼습니다.
+
 ## 검증
 
 TigerKit 저장소에는 package manager 기반 build/test/lint 설정이 없습니다. 명령, 스킬, manifest, 설치 스크립트, eval fixture를 수정한 뒤에는 다음 검증을 기본으로 실행합니다.
@@ -164,6 +202,8 @@ tmpdir="$(mktemp -d)"
 test -f "$tmpdir/.claude/skills/prep/SKILL.md"
 test -f "$tmpdir/.claude/skills/gap/SKILL.md"
 test -f "$tmpdir/.claude/skills/mwhat/SKILL.md"
+test -f "$tmpdir/.claude/skills/reflect/SKILL.md"
+test -f "$tmpdir/.claude/skills/improve/SKILL.md"
 rm -rf "$tmpdir"
 ```
 
@@ -176,6 +216,8 @@ Remove-Item -Recurse -Force $TargetProject -ErrorAction SilentlyContinue
 Test-Path (Join-Path $TargetProject ".claude\skills\prep\SKILL.md")
 Test-Path (Join-Path $TargetProject ".claude\skills\gap\SKILL.md")
 Test-Path (Join-Path $TargetProject ".claude\skills\mwhat\SKILL.md")
+Test-Path (Join-Path $TargetProject ".claude\skills\reflect\SKILL.md")
+Test-Path (Join-Path $TargetProject ".claude\skills\improve\SKILL.md")
 Remove-Item -Recurse -Force $TargetProject
 ```
 
@@ -185,4 +227,6 @@ Remove-Item -Recurse -Force $TargetProject
 /tk:mwhat 이 긴 답변 뭐라는 건지 정리해줘.
 /tk:prep 앞선 대화 기준으로 요구사항 정리해줘.
 /tk:gap 방금 정리한 요구사항 대비 현재 구현 갭 분석해줘.
+/tk:reflect 이번 세션에서 반복된 실수만 짧게 회고해줘.
+/tk:improve 이 저장소 knowledge layer 개선 후보를 audit해줘.
 ```
