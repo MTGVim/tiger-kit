@@ -2,17 +2,18 @@
 
 ## 2026-04-29: TigerKit restructuring
 
-TigerKit은 사용자가 장문 답변을 이해하고, 요구사항 기준을 고정하고, 현재 상태와의 차이를 확인하는 세 단계 흐름으로 정리한다.
+TigerKit은 장문 답변 해독, 요구사항 기준 정리, 현재 상태와의 갭 확인, 그리고 가벼운 knowledge layer 유지보수를 제공한다. 핵심 흐름은 `prep → gap`이고, `mwhat`은 독립 유틸리티이며, 유지보수 명령은 별도 묶음으로 다룬다.
 
 현재 제품명: TigerKit
 
 현재 플러그인 이름: `tk`
 
-현재 명령 흐름:
+현재 명령 묶음:
 
 ```text
-/tk:mwhat → /tk:prep → /tk:gap
-해독 → 요구사항 기준 정리 → 요구사항 대비 갭 분석
+Core gap workflow: /tk:prep → /tk:gap
+Utility: /tk:mwhat
+Maintenance: /tk:reflect, /tk:improve
 ```
 
 ## 명령별 결정
@@ -27,15 +28,11 @@ Approved default output:
 🤔 뭣? 쉽게 말하면
 ...
 
-🎯 하던 것
-...
-
-😵 문제 상황
-...
-
 💡 추천
 ...
 ```
+
+`하던 것`과 `문제 상황`은 필요하면 `🤔 뭣? 쉽게 말하면` 안에서 함께 풀고, 별도 출력 블록으로 분리하지 않는다.
 
 Tone decisions:
 

@@ -2,27 +2,33 @@
 
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
 
-TigerKit(`tk`)은 요구사항 소스를 정제하고, 긴 답변을 해독하며, 요구사항 대비 현재 상태의 갭을 확인하기 위한 Claude Code 스킬 모음입니다.
+TigerKit(`tiger-kit`, plugin `tk`)은 요구사항 정제, 긴 답변 해독, 요구사항 대비 갭 확인, 그리고 가벼운 저장소 knowledge layer 유지보수를 위한 Claude Code 스킬 모음입니다.
 
-제공하는 명령/스킬 흐름은 세 단계입니다.
+제공하는 명령/스킬은 세 묶음으로 나뉩니다.
 
-- `/tk:mwhat` — “뭐라고?”, “뭐라는거야?”, “무슨말이죠?”, “뭣” 싶은 긴 답변이나 애매한 설명을 짧고 실행 가능하게 풀어줍니다.
-- `/tk:prep` — 외부 요구사항 소스와 대화 맥락을 `requirements.md` 기준 문서로 정리합니다.
-- `/tk:gap` — `requirements.md` 대비 현재 구현, 문서, 테스트의 남은 차이를 확인합니다.
+- Core gap workflow
+  - `/tk:prep` — 외부 요구사항 소스와 대화 맥락을 `requirements.md` 기준 문서로 정리합니다.
+  - `/tk:gap` — `requirements.md` 대비 현재 구현, 문서, 테스트의 남은 차이를 확인합니다.
+- Utility
+  - `/tk:mwhat` — “뭐라고?”, “뭐라는거야?”, “무슨말이죠?”, “뭣” 싶은 긴 답변이나 애매한 설명을 짧고 실행 가능하게 풀어줍니다.
+- Maintenance
+  - `/tk:reflect` — 현재 세션에서 드러난 반복 패턴과 교정 포인트를 짧게 회고하고 유지보수 후보를 정리합니다.
+  - `/tk:improve` — 저장소의 knowledge layer를 가볍게 점검해 보완할 audit finding과 patch proposal을 정리합니다.
 
 이 흐름은 이슈 트래커 티켓, 지식베이스 문서, PRD, 디자인 문서, 사용자가 작성한 브리프, 스크린샷, 코드 참조, 간단한 메모를 모두 입력 자료로 사용할 수 있게 설계되어 있습니다.
 
 ## 권장 흐름
 
 ```text
-/tk:mwhat  # 장문/애매한 답변 해독
-/tk:prep   # 요구사항 기준 정리
+/tk:prep  # 요구사항 기준 정리
 /tk:gap   # 기준 대비 갭 분석
 ```
 
-흐름으로 보면 `mwhat → prep → gap`입니다. 먼저 말뜻과 막히는 지점을 풀고, 그다음 요구사항 기준으로 고정한 뒤, 마지막으로 현재 상태와의 차이를 봅니다.
+TigerKit의 core gap workflow는 `prep → gap`입니다. 먼저 앞선 대화와 외부 자료를 `requirements.md` 기준으로 고정하고, 그다음 현재 구현, 문서, 테스트와의 차이를 `gap.md`로 확인합니다.
 
-`mwhat`은 긴 답변의 핵심과 막히는 지점을 짧게 풀어줍니다. `prep`은 앞선 대화 내용과 외부 요구사항 소스를 `requirements.md`로 정리합니다. `gap`은 준비된 요구사항 기준을 바탕으로 현재 구현, 문서, 테스트의 남은 차이를 분석합니다.
+`/tk:mwhat`은 이 흐름에 묶이지 않는 독립 유틸리티입니다. 긴 답변이나 애매한 설명의 핵심을 짧게 풀어 사용자가 다음 질문이나 행동을 정하기 쉽게 돕습니다.
+
+`/tk:reflect`와 `/tk:improve`는 gap lifecycle 밖에서 쓰는 maintenance 유틸리티입니다. 둘 다 자동으로 대규모 수정을 적용하지 않으며, 사용자가 명시적으로 승인한 patch만 선택적으로 반영합니다.
 
 ## 설치
 
@@ -60,7 +66,7 @@ PowerShell에서는 다음 명령을 사용합니다.
 ./scripts/install-standalone.ps1 -TargetProject C:\path\to\project
 ```
 
-Standalone 모드에서는 같은 흐름을 `/mwhat`, `/prep`, `/gap`으로 호출합니다.
+Standalone 모드에서는 같은 흐름과 유지보수 유틸리티를 `/mwhat`, `/prep`, `/gap`, `/reflect`, `/improve`로 호출합니다.
 
 ## 산출물 구조
 
@@ -85,7 +91,7 @@ python3 -m json.tool skills/gap/evals/evals.json >/dev/null
 
 `evals/evals.json`, `skills/prep/evals/evals.json`, `skills/gap/evals/evals.json`은 Claude가 따라야 할 동작을 설명하는 fixture입니다. 현재 저장소에는 이 fixture들을 자동으로 실행하는 별도 harness가 없으므로, JSON 문법 검증과 fixture 내용 수동 확인까지가 저장소 안에서 확인 가능한 범위입니다.
 
-Standalone 설치 경로는 임시 프로젝트에 설치한 뒤 `.claude/skills/prep`, `.claude/skills/gap`, `.claude/skills/mwhat` 디렉터리와 각 `SKILL.md`가 복사됐는지 확인하는 방식으로 smoke 검증합니다. 자세한 절차는 `docs/usage.md`를 참고하세요.
+Standalone 설치 경로는 임시 프로젝트에 설치한 뒤 `.claude/skills/prep`, `.claude/skills/gap`, `.claude/skills/mwhat`, `.claude/skills/reflect`, `.claude/skills/improve` 디렉터리와 각 `SKILL.md`가 복사됐는지 확인하는 방식으로 smoke 검증합니다. 자세한 절차는 `docs/usage.md`를 참고하세요.
 
 ## 설계 원칙
 
@@ -93,6 +99,14 @@ Standalone 설치 경로는 임시 프로젝트에 설치한 뒤 `.claude/skills
 - 모든 입력은 분석 전에 요구사항 기준 스냅샷으로 정리합니다.
 - 갭 분석은 요구사항 기준과 현재 상태의 차이를 찾는 데 집중합니다.
 - 분석 이후의 구현, 보류, 추가 확인은 사용자가 결과를 보고 선택합니다.
+
+## Attribution
+
+`reflect`는 `claude-reflect`에서 아이디어를 참고해 TigerKit에 맞게 다시 다듬었습니다. TigerKit 버전은 hook, queue, 히스토리 스캔 없이 현재 세션에서 확인된 교정 포인트를 짧은 patch proposal로 정리하는 데 집중합니다.
+
+`improve`는 OACP `self-improve`에서 문제의식을 빌려와 TigerKit 스타일로 재구성했습니다. TigerKit 버전은 저장소 knowledge layer의 audit finding과 patch proposal에 집중하며, 광범위한 자동 재작성 흐름은 포함하지 않습니다.
+
+두 유지보수 흐름 모두 외부 워크플로를 그대로 복제하지 않고, TigerKit 목적에 맞게 축약한 형태로 제공합니다. 또한 어떤 patch든 사용자 승인 없이 자동 적용하지 않고, 사용자가 고른 변경만 반영합니다.
 
 ## Contributors
 

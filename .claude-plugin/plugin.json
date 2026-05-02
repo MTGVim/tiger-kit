@@ -1,18 +1,22 @@
 {
   "name": "tk",
-  "description": "요구사항 정제, 답변 해독, 요구사항 대비 갭 확인을 돕는 TigerKit Claude Code 스킬 모음입니다.",
-  "version": "2.1.1",
+  "description": "요구사항 정제, 답변 해독, 요구사항 대비 갭 확인, 지식 레이어 정비를 돕는 TigerKit Claude Code 스킬 모음입니다.",
+  "version": "2.2.0",
   "author": {
     "name": "MTGVim"
   },
   "commands": [
     "./commands/prep.md",
     "./commands/mwhat.md",
-    "./commands/gap.md"
+    "./commands/gap.md",
+    "./commands/reflect.md",
+    "./commands/improve.md"
   ],
   "skills": [
     "./skills/prep",
     "./skills/mwhat",
-    "./skills/gap"
+    "./skills/gap",
+    "./skills/reflect",
+    "./skills/improve"
   ]
 }
