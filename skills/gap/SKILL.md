@@ -1,6 +1,6 @@
 ---
 name: gap
-description: requirements.md와 현재 구현, 문서, 테스트, 관찰 가능한 동작 사이의 차이를 분석합니다. .tigerkit/{work_id}/requirements.md가 준비된 뒤 요구사항 coverage, remaining gaps, 확인 불가 항목, ship blocker를 확인할 때 반드시 사용합니다.
+description: requirements.md와 현재 구현, 문서, 테스트, 관찰 가능한 동작 사이의 차이를 분석합니다. .tigerkit/{work_id}/requirements.md가 준비된 뒤 요구사항 coverage, remaining gaps, 확인 불가 항목을 확인할 때 반드시 사용합니다.
 ---
 
 # gap
