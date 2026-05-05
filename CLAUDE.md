@@ -32,35 +32,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
   ```bash
   python3 -m json.tool evals/evals.json >/dev/null
-  python3 -m json.tool skills/prep/evals/evals.json >/dev/null
-  python3 -m json.tool skills/gap/evals/evals.json >/dev/null
   ```
 
-- Standalone 설치 스크립트 실행:
-
-  ```bash
-  ./scripts/install-standalone.sh /path/to/project
-  ```
-
-- PowerShell standalone 설치:
-
-  ```powershell
-  ./scripts/install-standalone.ps1 -TargetProject C:\path\to\project
-  ```
-
-이 저장소에는 package manager 기반 build/test/lint 설정이 없다. 기능 변경 후에는 위 plugin validation, eval fixture JSON 문법 검증, `git diff --check`를 우선 실행한다. 현재 저장소에는 `evals/evals.json`, `skills/prep/evals/evals.json`, `skills/gap/evals/evals.json`을 자동 실행하는 harness가 확인되지 않았으므로, fixture는 JSON 문법 검증과 수동 기대 동작 검토 대상으로 취급한다.
+이 저장소에는 package manager 기반 build/test/lint 설정이 없다. 기능 변경 후에는 위 plugin validation, eval fixture JSON 문법 검증, `git diff --check`를 우선 실행한다. 현재 저장소에는 `evals/evals.json`을 자동 실행하는 harness가 확인되지 않았으므로, fixture는 JSON 문법 검증과 수동 기대 동작 검토 대상으로 취급한다.
 
 ## 저장소 구조
 
-이 저장소는 Claude Code용 TigerKit `tk` 플러그인과 standalone skill 설치 스크립트를 제공한다.
+이 저장소는 Claude Code용 TigerKit `tk` 플러그인만 제공한다.
 
 - `.claude-plugin/plugin.json`: 플러그인의 command/skill manifest. 새 command나 skill을 추가하면 여기 등록해야 한다.
 - `.claude-plugin/marketplace.json`: marketplace 등록용 manifest.
-- `commands/prep.md`, `commands/mwhat.md`, `commands/gap.md`, `commands/reflect.md`, `commands/improve.md`: TigerKit slash command entrypoint. command 파일은 짧게 유지하고 자세한 절차는 skill 문서에 둔다.
-- `skills/prep/SKILL.md`, `skills/mwhat/SKILL.md`, `skills/gap/SKILL.md`, `skills/reflect/SKILL.md`, `skills/improve/SKILL.md`: 재사용 가능한 작업 흐름 지침. 실제 동작 방식과 중단 조건은 주로 여기에 정의한다.
+- `commands/prep.md`, `commands/mwhat.md`, `commands/gap.md`, `commands/reflect.md`, `commands/improve.md`: TigerKit slash command entrypoint. command 파일이 직접 절차와 중단 조건을 안내한다.
+- `skills/mwhat/SKILL.md`: `mwhat`만 유지되는 재사용 가능한 작업 흐름 지침.
 - `docs/usage.md`: 사용자 관점의 명령 사용법.
 - `docs/artifact-layout.md`: `.tigerkit/{work_id}/` 산출물 구조와 작업 단계 기준.
-- `scripts/install-standalone.*`: `skills/prep`, `skills/gap`, `skills/mwhat`, `skills/reflect`, `skills/improve`를 대상 프로젝트의 `.claude/skills`로 복사한다.
 
 ## 명령 개요
 

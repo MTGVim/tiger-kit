@@ -1,6 +1,6 @@
 # Kickoff Notes
 
-이 문서는 restructuring 시점의 kickoff snapshot이다. 최신 운영 계약은 `README.md`, `docs/usage.md`, 각 `skills/*/SKILL.md`를 우선한다.
+이 문서는 restructuring 시점의 kickoff snapshot이다. 최신 운영 계약은 `README.md`, `docs/usage.md`, `commands/prep.md`, `commands/gap.md`, `commands/reflect.md`, `commands/improve.md`, `commands/mwhat.md`, 그리고 `skills/mwhat/SKILL.md`를 우선한다.
 
 ## 2026-04-29: TigerKit restructuring
 
@@ -21,7 +21,7 @@ Maintenance: /tk:reflect, /tk:improve
 ## 명령별 결정
 
 아래 상세 결정은 core 3개 명령(`/tk:mwhat`, `/tk:prep`, `/tk:gap`) 중심으로 기록한다.
-maintenance 명령(`/tk:reflect`, `/tk:improve`)의 최신 계약은 각 `SKILL.md`와 README/docs를 우선한다.
+maintenance 명령(`/tk:reflect`, `/tk:improve`)의 최신 계약은 `commands/reflect.md`, `commands/improve.md`, `README.md`, `docs/usage.md`를 우선한다.
 
 ### `/tk:mwhat`
 
