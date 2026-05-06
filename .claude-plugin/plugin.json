@@ -1,7 +1,7 @@
 {
   "name": "tk",
   "description": "요구사항 정제, 답변 해독, 요구사항 대비 갭 확인, 지식 레이어 정비를 돕는 TigerKit Claude Code 플러그인입니다.",
-  "version": "2.2.2",
+  "version": "2.3.0",
   "author": {
     "name": "MTGVim"
   },
