@@ -4,20 +4,21 @@
     {
       "id": 0,
       "name": "prep-cache-hit",
-      "prompt": "You are evaluating the TigerKit prep skill instructions. A project already has .tigerkit/checkout-retry/requirements.md and .tigerkit/checkout-retry/requirements.meta.json. The meta fields input_source_hash, prep_prompt_version, scope_hash, and input_identities all match the current request. The user runs: /tk:prep checkout retry 요구사항 다시 정리해줘. Describe exactly what Claude should do and what the user-facing response should include. Do not write files.",
+      "prompt": "You are evaluating the TigerKit prep command instructions. A project already has .tigerkit/checkout-retry/requirements.md and .tigerkit/checkout-retry/requirements.meta.json. The meta fields input_source_hash, prep_prompt_version, scope_hash, and input_identities all match the current request. The user runs: /tk:prep checkout retry 요구사항 다시 정리해줘. Describe exactly what Claude should do and what the user-facing response should include. Do not write files.",
       "expected_output": "Should reuse the existing requirements.md, state cache hit reason briefly, include the requirements.md path, keep the response short, and avoid dumping the whole requirements document.",
       "files": [],
       "expectations": [
         "Says the existing requirements.md should be reused because cache keys match",
         "Names the requirements.md path in the user-facing response",
         "Says the user-facing response should be short and include source/requirement/ambiguity counts when known",
-        "Does not instruct regenerating requirements.md or metadata on cache hit"
+        "Does not instruct regenerating requirements.md or metadata on cache hit",
+        "Ends the user-facing response with '다음 추천: /tk:gap'"
       ]
     },
     {
       "id": 1,
       "name": "prep-force-miss",
-      "prompt": "You are evaluating the TigerKit prep skill instructions. A previous requirements.md exists for .tigerkit/search-filter/requirements.md, but the user runs: /tk:prep --force docs/search-filter.md 기준으로 다시 정리해줘. Describe exactly what Claude should do and what the user-facing response should include. Do not write files.",
+      "prompt": "You are evaluating the TigerKit prep command instructions. A previous requirements.md exists for .tigerkit/search-filter/requirements.md, but the user runs: /tk:prep --force docs/search-filter.md 기준으로 다시 정리해줘. Describe exactly what Claude should do and what the user-facing response should include. Do not write files.",
       "expected_output": "Should ignore the cache because --force was requested, regenerate requirements.md and metadata, briefly explain the force/cache miss reason, show the path, and keep the chat response short.",
       "files": [],
       "expectations": [
@@ -30,7 +31,7 @@
     {
       "id": 2,
       "name": "gap-requirement-coverage",
-      "prompt": "You are evaluating the TigerKit gap skill instructions. A requirements document exists at .tigerkit/onboarding-copy/requirements.md, the repository has relevant docs and code paths, and the user runs: /tk:gap 방금 정리한 요구사항 대비 현재 구현 갭 분석해줘. Describe the expected report structure and the final user-facing response. Do not write files.",
+      "prompt": "You are evaluating the TigerKit gap command instructions. A requirements document exists at .tigerkit/onboarding-copy/requirements.md, the repository has relevant docs and code paths, and the user runs: /tk:gap 방금 정리한 요구사항 대비 현재 구현 갭 분석해줘. Describe the expected report structure and the final user-facing response. Do not write files.",
       "expected_output": "Should describe cache check based on git commit, requirements hash, gap prompt version, and scope; write/reuse gap.md with metadata; include Verdict, Requirement Coverage, Remaining Gaps, Unable to Verify, and Notes; Requirement Coverage, Remaining Gaps, and Unable to Verify must be Markdown tables even when empty; final chat response should not dump the full report and should include verdict, path, core gaps, and one next action.",
       "files": [],
       "expectations": [
@@ -40,22 +41,310 @@
         "Requires Requirement Coverage, Remaining Gaps, and Unable to Verify as Markdown tables",
         "Requires empty Remaining Gaps and Unable to Verify tables to keep a header and 없음 row",
         "Says Unable to Verify prevents a NO_GAPS_FOUND verdict",
-        "Says the chat response should not dump the full report and should include verdict, path, core gaps, and one next action"
+        "Says the chat response should not dump the full report and should include verdict, path, core gaps, and one next action",
+        "Ends the user-facing response with '다음 추천: /tk:plan'"
       ]
     },
     {
       "id": 3,
-      "name": "mwhat-confusing-answer",
-      "prompt": "You are evaluating the TigerKit mwhat skill instructions. The user says: '뭐라는거야? 이 기능은 확장성을 고려해서 모듈화하고, 상태 관리는 나중에 요구사항이 명확해지면 정하는 게 좋겠습니다. 우선 데이터 흐름을 정리하고 컴포넌트 경계를 잡는 방향으로 접근하면 될 것 같습니다.' Describe the expected user-facing response. Do not write files.",
-      "expected_output": "Should use the two approved Korean blocks, explain in at most 3 lines that the answer means structure first rather than immediate implementation and that component boundary/state-management decision criteria are missing, then provide a recommendation using 이렇게 말하세요: or 이렇게 하세요: without quote-wrapping it.",
+      "name": "mwhat-command-alias-and-narrow-skill",
+      "prompt": "You are evaluating the TigerKit mwhat command instructions. The user runs: /tk:mwhat 뭐라는거야? 이 기능은 확장성을 고려해서 모듈화하고, 상태 관리는 나중에 요구사항이 명확해지면 정하는 게 좋겠습니다. 우선 데이터 흐름을 정리하고 컴포넌트 경계를 잡는 방향으로 접근하면 될 것 같습니다. Describe the expected user-facing response. Do not write files.",
+      "expected_output": "Should support /tk:mwhat as an explicit command alias and support natural skill trigger only for the exact phrase 뭣?. It should not auto-trigger on broader confusion phrases like 뭐라고? or 무슨 말이야?. The response should use the two approved Korean blocks and stay short.",
       "files": [],
       "expectations": [
-        "Includes the block label '🤔 뭣? 쉽게 말하면'",
-        "Includes the block label '💡 추천'",
+        "Treats /tk:mwhat as an explicit alias for the mwhat behavior",
+        "Allows natural skill trigger only for exact 뭣?",
+        "Does not auto-trigger on broader confusion phrases like 뭐라고? or 무슨 말이야?",
+        "Includes the block label '뭣? 쉽게 말하면'",
+        "Includes the block label '추천'",
         "Does not include extra structural block labels such as 하던 것 or 문제 상황",
         "Explains the source answer directly instead of producing a generic summary",
-        "Mentions that component boundaries or state-management decision criteria are missing",
         "Provides a message the user can send or adapt"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "plan-no-task-before-approval",
+      "prompt": "You are evaluating the TigerKit plan command instructions. A gap report exists at .tigerkit/github-issues/gap.md and the user runs: /tk:plan 각 gap당 task로 나눠서 실행계획 세워. Describe exactly what Claude should do before the user approves the plan. Do not write files.",
+      "expected_output": "Should read gap.md, produce an implementation plan with task breakdown and dependencies, but must not create tasks.md before approval. The response should make clear that implementation does not start automatically.",
+      "files": [],
+      "expectations": [
+        "Uses gap.md as the planning source",
+        "Includes Context, Recommended Approach, Task Breakdown, Dependencies, and Verification",
+        "Does not create tasks.md before approval",
+        "Does not start code implementation automatically",
+        "Ends the user-facing response with '다음 추천: /tk:breakdown'"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "breakdown-gap-to-task-list",
+      "prompt": "You are evaluating the TigerKit breakdown command instructions. A gap report exists with Remaining Gaps and the user runs: /tk:breakdown gap을 실행 task로 쪼개줘. Describe the expected tasks.md content and final user-facing response. Do not write files.",
+      "expected_output": "Should transform each actionable gap into a small task with ID, status, goal, checklist, done criteria, and blockers. It should not implement the tasks, commit, push, or open a PR.",
+      "files": [],
+      "expectations": [
+        "Creates or updates .tigerkit/{work_id}/tasks.md",
+        "Uses only todo, in_progress, blocked, done, dropped statuses",
+        "Includes blocker relationships when known",
+        "Does not implement code automatically",
+        "Does not commit, push, or create PRs without user approval",
+        "Ends the user-facing response with '다음 추천: /tk:next'"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "next-task-ready-recommends-one-task",
+      "prompt": "You are evaluating the TigerKit next command instructions. A .tigerkit/work/tasks.md file contains one in_progress task, several todo tasks, and one blocked task. The user runs: /tk:next. Describe the expected behavior. Do not write files.",
+      "expected_output": "Should detect task-ready state and recommend exactly one executable task plus /tk:do. It should choose the in_progress task, exclude blocked/done/dropped tasks, and not perform implementation itself.",
+      "files": [],
+      "expectations": [
+        "Detects task-ready state from tasks.md",
+        "Recommends exactly one task",
+        "Prefers in_progress over todo",
+        "Excludes blocked tasks from execution candidates",
+        "Recommends /tk:do for implementation",
+        "Does not perform implementation itself",
+        "Ends with one '다음 추천:' line"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "close-no-shared-actions-without-approval",
+      "prompt": "You are evaluating the TigerKit close command instructions. The user runs: /tk:close at the end of a session with uncommitted changes and remaining tasks. Describe the expected close report behavior. Do not write files.",
+      "expected_output": "Should summarize remaining gaps/tasks, verification status, cleanup candidates, and one next command. It may suggest commit/push/PR/archive actions but must not perform them without explicit user approval.",
+      "files": [],
+      "expectations": [
+        "Includes remaining gap or blocked task information",
+        "Includes verification status",
+        "Includes cleanup/archive candidates",
+        "Suggests one next command or action",
+        "Does not create branches, commits, pushes, PRs, or delete files without approval"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "prototype-ui-variants",
+      "prompt": "You are evaluating the TigerKit prototype command instructions. The user runs: /tk:prototype settings billing 섹션 UI를 몇 가지로 비교해보고 싶어. Describe the expected approach. Do not write files.",
+      "expected_output": "Should treat this as a throwaway FE UI prototype, prefer mounting variants into an existing page, use ?variant= search params with three structurally different variants, include a floating switcher, hide it in production, and explain cleanup after a winner is chosen.",
+      "files": [],
+      "expectations": [
+        "Treats prototype as throwaway code answering one UI question",
+        "Prefers an existing page over a new prototype route",
+        "Uses ?variant= URL search params",
+        "Defaults to three structurally different variants",
+        "Requires a floating bottom switcher with URL-stable navigation",
+        "Requires the switcher to be hidden in production builds",
+        "Does not promote prototype code directly to production",
+        "Explains deleting loser variants and switcher after a winner is chosen"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "caveman-skill-trigger",
+      "prompt": "You are evaluating the TigerKit caveman skill instructions. The user says: caveman mode, less tokens from now on. Describe the expected behavior. Do not write files.",
+      "expected_output": "Should activate persistent caveman communication mode via the skill, keep technical accuracy, drop filler and pleasantries, preserve code/errors/commands, and temporarily relax compression for security warnings or irreversible-action confirmations. /tk:caveman should behave as an alias for the same mode.",
+      "files": [],
+      "expectations": [
+        "Treats caveman as a skill with natural-language triggers",
+        "Persists across later responses until normal mode or stop caveman",
+        "Keeps technical terms, code blocks, commands, and error text intact",
+        "Drops filler, pleasantries, and unnecessary background",
+        "Temporarily relaxes for security warnings and irreversible actions",
+        "Treats /tk:caveman as a command alias for the skill"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "write-a-skill-lightweight",
+      "prompt": "You are evaluating the TigerKit write-a-skill skill instructions. The user says: 기존 skill-creator는 너무 장황해. 이 workflow를 짧은 skill로 만들어줘. Describe the expected behavior. Do not write files.",
+      "expected_output": "Should gather only minimal requirements, draft a concise skills/{skill-name}/SKILL.md with name and trigger-focused description, avoid broad framework behavior, split files only when needed, and ask for focused review points.",
+      "files": [],
+      "expectations": [
+        "Treats write-a-skill as a lightweight replacement for verbose skill creator flows",
+        "Asks only the minimum requirements needed for the skill domain and triggers",
+        "Creates SKILL.md as the default artifact shape",
+        "Requires name and description frontmatter",
+        "Keeps description trigger-focused with Use when wording",
+        "Splits reference files or scripts only when needed",
+        "Avoids broad automation or heavy framework ceremony"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "mwhat-no-broad-confusion-trigger",
+      "prompt": "You are evaluating the TigerKit mwhat skill trigger boundary. The user says only: 뭐라고? Describe whether the mwhat skill should auto-trigger. Do not write files.",
+      "expected_output": "Should not auto-trigger mwhat. The mwhat natural trigger is limited to exact 뭣?; broader confusion phrases should be handled as normal conversation unless the user invokes /tk:mwhat explicitly.",
+      "files": [],
+      "expectations": [
+        "Does not trigger mwhat for 뭐라고?",
+        "States the natural trigger is exact 뭣? only",
+        "Allows /tk:mwhat as explicit invocation",
+        "Avoids broad confusion-trigger behavior"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "help-workflow-overview",
+      "prompt": "You are evaluating the TigerKit help command instructions. The user runs: /tk:help. Describe the expected response. Do not write files.",
+      "expected_output": "Should briefly show the recommended TigerKit workflow from prep to close, list core commands and utility commands, and end with one situation-aware 다음 추천 line. It should not modify files.",
+      "files": [],
+      "expectations": [
+        "Includes /tk:prep, /tk:gap, /tk:plan, /tk:breakdown, /tk:do or /tk:do-all, and /tk:close",
+        "Briefly explains utility commands like /tk:mwhat, /tk:grill-me, /tk:caveman, and /tk:prototype",
+        "Mentions mwhat natural trigger is only 뭣?",
+        "Ends with one '다음 추천:' line",
+        "Does not modify files"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "next-recommends-requirements-to-gap",
+      "prompt": "You are evaluating the TigerKit next command instructions. .tigerkit/search/requirements.md exists, but gap.md, plan.md, and tasks.md do not. The user runs: /tk:next. Describe expected behavior. Do not write files.",
+      "expected_output": "Should detect gap-needed state and recommend /tk:gap using requirements.md as the basis. It should not modify files or perform the gap analysis itself.",
+      "files": [],
+      "expectations": [
+        "Detects gap-needed state",
+        "Uses .tigerkit/{work_id}/requirements.md as the basis file",
+        "Recommends /tk:gap when state is clear",
+        "Does not perform file modifications itself",
+        "Ends with '다음 추천: /tk:gap'"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "next-asks-when-work-id-ambiguous",
+      "prompt": "You are evaluating the TigerKit next command instructions. .tigerkit/ contains multiple work_id directories and the user runs: /tk:next with no other context. Describe expected behavior. Do not write files.",
+      "expected_output": "Should not guess which work_id to use. It should ask the user to choose a work_id or provide a .tigerkit/{work_id}/ path.",
+      "files": [],
+      "expectations": [
+        "Does not guess between multiple work_id directories",
+        "Asks for work_id or path",
+        "Does not create or modify artifacts before the work_id is clear"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "do-single-task-tdd-judgment",
+      "prompt": "You are evaluating the TigerKit do command instructions. tasks.md contains T-003: fix checkout state transition bug with observable behavior and existing tests. The user runs: /tk:do T-003. Describe expected behavior. Do not write files.",
+      "expected_output": "Should select T-003, recommend TDD because it is behavior/state/bug-fix work with regression risk, use a vertical red-green-refactor loop through public interfaces, choose inline or sub-agent based on scope, verify, update task state, and avoid commit/push/PR without approval.",
+      "files": [],
+      "expectations": [
+        "Selects the requested task ID",
+        "States TDD recommendation before implementation",
+        "Uses one behavior test at a time, not horizontal slices",
+        "Tests public observable behavior rather than implementation details",
+        "Mocks only system boundaries when needed",
+        "Chooses inline or sub-agent mode based on scope",
+        "Updates task status after verification",
+        "Does not commit, push, or create PRs without approval"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "do-doc-task-no-tdd",
+      "prompt": "You are evaluating the TigerKit do command instructions. tasks.md contains T-002: update README wording only. The user runs: /tk:do T-002. Describe expected behavior. Do not write files.",
+      "expected_output": "Should select T-002 and state TDD is not recommended or is skipped because this is docs/copy work. It should implement inline, run appropriate docs/plugin/whitespace verification, update task status, and avoid commit/push/PR without approval.",
+      "files": [],
+      "expectations": [
+        "Selects the requested docs task",
+        "Skips or does not recommend TDD for docs/copy work",
+        "Uses inline mode unless scope unexpectedly grows",
+        "Runs appropriate verification",
+        "Updates task status",
+        "Does not commit, push, or create PRs without approval"
+      ]
+    },
+    {
+      "id": 17,
+      "name": "do-all-processes-tasks-sequentially",
+      "prompt": "You are evaluating the TigerKit do-all command instructions. tasks.md has one in_progress task, two todo tasks, and one blocked task. The user runs: /tk:do-all. Describe expected behavior. Do not write files.",
+      "expected_output": "Should process executable tasks one at a time, in_progress first then todo tasks, applying /tk:do judgment per task. It should skip blocked tasks, stop on verification failure or ambiguity, update task status after each task, and not commit/push/PR without approval. If all executable tasks complete and no blockers remain, it should run exactly one tail gap check, update gap.md if new gaps exist, and stop rather than starting another implementation loop.",
+      "files": [],
+      "expectations": [
+        "Processes tasks one at a time",
+        "Starts with in_progress before todo",
+        "Skips blocked tasks",
+        "Decides TDD and inline/sub-agent mode per task",
+        "Stops on blocker, ambiguity, or verification failure",
+        "Updates task status after each task",
+        "Does not commit, push, or create PRs without approval",
+        "Runs exactly one tail gap check after all executable tasks complete and no blockers remain",
+        "Updates gap.md if new gaps are found and stops before another implementation loop",
+        "Recommends /tk:plan when tail gap check finds new gaps",
+        "Recommends /tk:close when tail gap check finds no new gaps"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "next-recommends-gap-after-last-task",
+      "prompt": "You are evaluating the TigerKit next command instructions. tasks.md shows all tasks done and no blocked tasks, but gap has not been re-run yet. The user runs /tk:next. Describe expected behavior. Do not write files.",
+      "expected_output": "Should recommend /tk:gap for re-evaluation after implementation. It must not run gap itself and must not start another implementation loop automatically.",
+      "files": [],
+      "expectations": [
+        "Detects re-eval-needed state",
+        "Recommends /tk:gap after implementation is done",
+        "Does not modify files",
+        "Does not recursively start another implementation loop"
+      ]
+    },
+    {
+      "id": 19,
+      "name": "state-overview",
+      "prompt": "You are evaluating the TigerKit state command instructions. A work_id has requirements.md, gap.md, plan.md, tasks.md, with one in_progress task and one blocked task. The user runs: /tk:state. Describe expected behavior. Do not write files.",
+      "expected_output": "Should summarize the .tigerkit state: work_id, current stage, artifact presence, task summary, blocker summary, and one next recommendation. It must not modify files.",
+      "files": [],
+      "expectations": [
+        "Shows work_id",
+        "Shows current stage",
+        "Shows artifact presence",
+        "Shows task and blocker summary",
+        "Ends with one '다음 추천:' line",
+        "Does not modify files"
+      ]
+    },
+    {
+      "id": 20,
+      "name": "auto-one-cycle",
+      "prompt": "You are evaluating the TigerKit auto command instructions. requirements.md exists and work_id is clear. The user runs: /tk:auto. Describe expected behavior. Do not write files.",
+      "expected_output": "Should run exactly one cycle of gap -> plan -> breakdown -> do-all -> gap. It should stop if blockers, ambiguity, verification failures, or new gaps require re-planning. It must not automatically start a second cycle.",
+      "files": [],
+      "expectations": [
+        "Requires clear work_id and requirements.md",
+        "Runs one cycle only",
+        "Includes gap, plan, breakdown, do-all, and final gap",
+        "Stops on blockers or ambiguity",
+        "Recommends /tk:plan when new gaps appear after re-evaluation",
+        "Does not automatically start a second cycle"
+      ]
+    },
+    {
+      "id": 21,
+      "name": "review-brief-request",
+      "prompt": "You are evaluating the TigerKit review command instructions. A task has just been completed and the user runs: /tk:review. Describe expected behavior. Do not write files.",
+      "expected_output": "Should prepare a concise Review Brief with review scope, what changed, expected behavior, diff/files or commit range, verification method, and specific risks/questions for the reviewer. It may connect to an available review surface but should not commit, push, or create a PR without approval.",
+      "files": [],
+      "expectations": [
+        "Creates a Review Brief",
+        "Includes review scope and what changed",
+        "Includes expected behavior and verification method",
+        "Includes risks or questions for reviewer",
+        "Does not dump full session history",
+        "Does not commit, push, or create PRs without approval"
+      ]
+    },
+    {
+      "id": 22,
+      "name": "review-fix-verify-before-fix",
+      "prompt": "You are evaluating the TigerKit review-fix command instructions. The user has review feedback with one unclear item and one likely incorrect suggestion, then runs: /tk:review-fix. Describe expected behavior. Do not write files.",
+      "expected_output": "Should avoid performative agreement, clarify unclear items before changing code, verify suggestions against the codebase, fix technically correct items one at a time, and push back with technical reasoning when a suggestion seems wrong. It must not blindly implement everything.",
+      "files": [],
+      "expectations": [
+        "Avoids performative agreement language",
+        "Clarifies unclear items first",
+        "Verifies suggestions against codebase reality",
+        "Fixes items one at a time",
+        "Allows technical pushback when reviewer is wrong",
+        "Does not blindly implement all feedback"
       ]
     }
   ]
