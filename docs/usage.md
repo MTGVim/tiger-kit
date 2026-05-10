@@ -40,7 +40,7 @@
 /tk:breakdown
 ```
 
-core workflow command는 채팅 응답 마지막에 `다음 추천: ...` 한 줄을 붙여 다음 단계를 안내합니다.
+core workflow command와 상태 조회 command는 채팅 응답 마지막에 `다음 추천: ...` 한 줄을 붙여 다음 단계를 안내합니다. 반대로 `reflect`, `improve` 같은 maintenance 보고서에는 기본으로 붙이지 않습니다.
 
 ## 1. 도움말
 
@@ -350,7 +350,7 @@ variant는 색이나 copy 차이가 아니라 layout, information hierarchy, pri
 /tk:reflect
 ```
 
-`/tk:reflect`는 maintenance alias로 유지합니다. 종료 루틴은 `/tk:close`를 우선합니다.
+`/tk:reflect`는 session learning과 knowledge patch 후보를 정리하는 maintenance command입니다. 작업 종료 상태 정리는 `/tk:close`가 맡습니다.
 
 주요 출력은 `Session Reflection` 형식의 짧은 회고 보고서입니다. 이 명령은 사용자 사전 승인 없이 파일을 수정하지 않습니다. hook, queue, 히스토리 스캔, 자동 memory capture를 수행하지 않고, 현재 세션에서 드러난 내용만 바탕으로 patch proposal 또는 다음 확인 포인트를 정리합니다.
 

@@ -34,7 +34,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   python3 -m json.tool evals/evals.json >/dev/null
   ```
 
-이 저장소에는 package manager 기반 build/test/lint 설정이 없다. 기능 변경 후에는 위 plugin validation, eval fixture JSON 문법 검증, `git diff --check`를 우선 실행한다. `evals/evals.json`은 자동 실행 테스트가 아니라 기대 동작 fixture다. 현재 저장소에는 이 fixture를 LLM에 넣어 pass/fail 판정하는 runner나 harness가 없으므로, “eval 검증”은 JSON 문법 검증과 수동 기대 동작 검토만 의미한다.
+이 저장소에는 package manager 기반 build/test/lint 설정이 없다. 기능 변경 후에는 위 plugin validation, eval fixture JSON 문법 검증, `git diff --check`를 우선 실행한다. `evals/evals.json`은 자동 실행 테스트가 아니라 기대 동작 fixture다. 현재 저장소에는 이 fixture를 LLM에 넣어 pass/fail 판정하는 runner나 harness가 없으므로, “eval 검증”은 JSON 문법 검증과 수동 기대 동작 검토만 의미한다. plugin version을 올릴 때는 로컬 파일만 기준으로 계산하지 말고 먼저 `origin/main`의 현재 version을 확인한 뒤 minor/patch를 결정한다.
 
 ## 저장소 구조
 
@@ -68,7 +68,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `/tk:prototype`: FE 화면 결정을 브라우저에서 비교 가능한 throwaway UI variants로 검증한다.
 - `/tk:review`: 구현 직후나 merge 전에 review 맥락을 정리하고 코드 리뷰를 요청한다.
 - `/tk:review-fix`: 받은 리뷰 피드백을 검증하고 맞는 것만 순서대로 반영한다.
-- `/tk:reflect`: 현재 세션의 재사용 가능한 learning 후보를 회고하고 patch 후보를 제안한다. 종료 루틴은 `/tk:close`를 우선한다.
+- `/tk:reflect`: 현재 세션의 재사용 가능한 learning 후보를 회고하고 knowledge patch 후보를 제안한다.
 - `/tk:improve`: 저장소 knowledge layer를 audit하고 작은 patch 후보를 제안한다.
 
 ## 작업 시 주의사항
