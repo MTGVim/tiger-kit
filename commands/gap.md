@@ -17,3 +17,5 @@ description: requirements.md와 현재 상태 사이의 요구사항 coverage와
 - `.tigerkit/{work_id}/gap.meta.json`
 
 명시적으로 요청받지 않는 한 이 명령에서는 코드를 구현하거나 새로운 구현 계획을 만들지 않습니다.
+
+채팅 응답 마지막에는 `다음 추천: /tk:plan`을 표시합니다.

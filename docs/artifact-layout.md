@@ -14,9 +14,9 @@
   close.md
 ```
 
-`/tk:prep`는 입력 자료와 대화 맥락을 `requirements.md`로 정리합니다. `/tk:gap`은 현재 repo 상태와 `requirements.md`의 차이를 `gap.md`에 기록합니다. `/tk:plan`은 요구사항 또는 gap 결과를 승인 가능한 실행계획으로 정리합니다. `/tk:breakdown`과 `/tk:tasks`는 실행 단위와 상태를 `tasks.md`에 둡니다. `/tk:close`는 세션 종료 요약을 필요할 때 `close.md`로 남길 수 있습니다.
+`/tk:prep`는 입력 자료와 대화 맥락을 `requirements.md`로 정리합니다. `/tk:gap`은 현재 repo 상태와 `requirements.md`의 차이를 `gap.md`에 기록합니다. `/tk:plan`은 gap 결과를 승인 가능한 실행계획으로 정리합니다. `/tk:breakdown`은 gap 또는 plan을 `tasks.md`로 내립니다. `/tk:state`는 `.tigerkit/{work_id}` 전체 상태를 읽습니다. `/tk:close`는 세션 종료 요약을 필요할 때 `close.md`로 남길 수 있습니다.
 
-`/tk:reflect`는 maintenance alias로 유지되지만 `prep → gap → plan → breakdown → tasks/next → close` 라이프사이클의 필수 단계는 아닙니다.
+`/tk:reflect`는 maintenance alias로 유지되지만 `prep → gap → plan → breakdown → do/do-all → gap → close` 라이프사이클의 필수 단계는 아닙니다.
 
 ## 브랜치 이름과 작업 ID
 
@@ -48,8 +48,11 @@
 | `gap-needed` | `requirements.md`는 있고 `gap.md` 없음 | `/tk:gap` 실행 |
 | `plan-needed` | `gap.md`는 있고 `plan.md` 없음 | `/tk:plan` 실행 |
 | `tasks-needed` | `plan.md` 또는 `gap.md`는 있고 `tasks.md` 없음 | `/tk:breakdown` 실행 |
-| `task-ready` | 실행 가능한 `todo` 또는 `in_progress` task 있음 | `/tk:next` 실행 |
-| `close-needed` | 세션 종료 전 상태 정리 필요 | `/tk:close` 실행 |
+| `task-ready` | 실행 가능한 `todo` 또는 `in_progress` task 있음 | `/tk:do` 또는 `/tk:do-all` 실행 |
+| `re-eval-needed` | 구현 후 gap 재확인 필요 | `/tk:gap` 실행 |
+| `close-needed` | gap 재확인까지 끝났고 새 gap 없음 | `/tk:close` 실행 |
+
+`/tk:state`는 위 상태를 요약해 보여주고, `/tk:next`는 위 상태를 바탕으로 다음 command나 다음 task 1개를 추천합니다. source나 work_id가 불명확하면 추측하지 않고 사용자에게 묻습니다.
 
 ## task 상태값
 
