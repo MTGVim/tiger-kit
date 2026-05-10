@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 언어 및 산출물 규칙
 
-- 이 저장소에서 만드는 작업 산출물(`.tigerkit/{work_id}/requirements.md`, `.tigerkit/{work_id}/gap.md`)은 반드시 한글로 작성한다.
+- 이 저장소에서 만드는 작업 산출물(`.tigerkit/{work_id}/requirements.md`, `.tigerkit/{work_id}/gap.md`, `.tigerkit/{work_id}/plan.md`, `.tigerkit/{work_id}/tasks.md`, `.tigerkit/{work_id}/close.md`)은 반드시 한글로 작성한다.
 - 사용자에게 진행 상황, 계획, 검증 결과를 보고할 때도 한글을 기본으로 사용한다.
 - 기존 공개 문서나 manifest가 영어 문구를 쓰는 경우에는 주변 문맥과 일관성을 우선하되, `.tigerkit/` 산출물은 한글 규칙을 유지한다.
 
@@ -42,8 +42,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `.claude-plugin/plugin.json`: 플러그인의 command/skill manifest. 새 command나 skill을 추가하면 여기 등록해야 한다.
 - `.claude-plugin/marketplace.json`: marketplace 등록용 manifest.
-- `commands/prep.md`, `commands/mwhat.md`, `commands/gap.md`, `commands/reflect.md`, `commands/improve.md`: TigerKit slash command entrypoint. command 파일이 직접 절차와 중단 조건을 안내한다.
-- `skills/mwhat/SKILL.md`: `mwhat`만 유지되는 재사용 가능한 작업 흐름 지침.
+- `commands/*.md`: TigerKit slash command entrypoint. command 파일이 직접 절차와 중단 조건을 안내한다.
+- `skills/caveman/SKILL.md`: 자연어 트리거와 세션 지속성이 필요한 caveman 응답 모드 지침.
+- `skills/write-a-skill/SKILL.md`: 장황한 skill creator 대체용 경량 skill 작성 지침.
 - `docs/usage.md`: 사용자 관점의 명령 사용법.
 - `docs/artifact-layout.md`: `.tigerkit/{work_id}/` 산출물 구조와 작업 단계 기준.
 
@@ -52,7 +53,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `/tk:mwhat`: 긴 LLM 답변이나 애매한 설명을 짧고 실행 가능하게 해독한다.
 - `/tk:prep`: 외부 요구사항 소스와 대화 맥락을 `requirements.md` 기준 문서로 정리한다.
 - `/tk:gap`: `requirements.md` 대비 현재 구현, 문서, 테스트의 남은 차이를 확인하고 `gap.md`를 작성한다.
-- `/tk:reflect`: 현재 세션의 재사용 가능한 learning 후보를 회고하고 patch 후보를 제안한다.
+- `/tk:plan`: `requirements.md` 또는 `gap.md` 기준으로 실행계획을 정리한다.
+- `/tk:breakdown`: `gap.md` 또는 `plan.md`를 작은 실행 task로 분해한다.
+- `/tk:tasks`: `tasks.md`를 만들거나 업데이트해 작업 상태를 관리한다.
+- `/tk:next`: 현재 task 목록에서 다음에 진행할 task 하나를 고른다.
+- `/tk:close`: 세션 종료 전 남은 gap, task, 검증, cleanup 후보를 정리한다.
+- `/tk:grill-me`: 계획, 설계, 결정의 허점을 질문 하나씩 파고든다.
+- `/tk:caveman`: `caveman` skill alias로, 기술 정확도를 유지하며 응답을 초압축한다.
+- `/tk:prototype`: FE 화면 결정을 브라우저에서 비교 가능한 throwaway UI variants로 검증한다.
+- `/tk:reflect`: 현재 세션의 재사용 가능한 learning 후보를 회고하고 patch 후보를 제안한다. 종료 루틴은 `/tk:close`를 우선한다.
 - `/tk:improve`: 저장소 knowledge layer를 audit하고 작은 patch 후보를 제안한다.
 
 ## 작업 시 주의사항

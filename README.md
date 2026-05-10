@@ -2,33 +2,48 @@
 
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
 
-TigerKit(`tiger-kit`, plugin `tk`)은 요구사항 정제, 긴 답변 해독, 요구사항 대비 갭 확인, 그리고 가벼운 저장소 knowledge layer 유지보수를 위한 Claude Code 플러그인입니다.
+TigerKit(`tiger-kit`, plugin `tk`)은 요구사항 정제, 긴 답변 해독, 요구사항 대비 갭 확인, 실행 task 분해, 세션 정리, 그리고 가벼운 저장소 knowledge layer 유지보수를 위한 Claude Code 플러그인입니다.
 
-제공하는 명령/스킬은 세 묶음으로 나뉩니다.
+제공 기능은 slash command 중심입니다. 자연어 trigger가 중요한 기능은 skill로도 제공합니다. `caveman`은 `/tk:caveman` alias도 있고, `write-a-skill`은 장황한 skill creator 대체용 경량 skill입니다.
 
 - Core gap workflow
   - `/tk:prep` — 외부 요구사항 소스와 대화 맥락을 `requirements.md` 기준 문서로 정리합니다.
   - `/tk:gap` — `requirements.md` 대비 현재 구현, 문서, 테스트의 남은 차이를 확인합니다.
+  - `/tk:plan` — `requirements.md` 또는 `gap.md` 기준으로 구현 묶음과 검증 순서를 정리합니다.
+  - `/tk:breakdown` — `gap.md` 또는 `plan.md`를 작은 실행 task로 분해합니다.
+  - `/tk:tasks` — `.tigerkit/{work_id}/tasks.md`를 만들거나 업데이트합니다.
+  - `/tk:next` — 현재 task 목록에서 다음에 진행할 task 하나만 고릅니다.
+  - `/tk:close` — 세션 종료 전 남은 gap, task, 검증, cleanup 후보를 정리합니다.
 - Utility
-  - `/tk:mwhat` — “뭐라고?”, “뭐라는거야?”, “무슨말이죠?”, “뭣” 싶은 긴 답변이나 애매한 설명을 짧고 실행 가능하게 풀어줍니다.
+  - `/tk:mwhat` — 긴 답변이나 애매한 설명을 짧고 실행 가능하게 풀어줍니다.
+  - `/tk:grill-me` — 계획, 설계, 결정의 허점을 질문 하나씩 파고듭니다.
+  - `/tk:caveman` — `caveman` skill alias입니다. 기술 정확도를 유지하며 응답을 초압축합니다.
+  - `/tk:prototype` — FE 화면 결정을 브라우저에서 비교 가능한 throwaway UI variants로 검증합니다.
+- Skills
+  - `caveman` — 자연어 요청으로 응답 초압축 모드를 켭니다. `/tk:caveman`도 같은 alias입니다.
+  - `write-a-skill` — 새 skill을 짧고 실용적인 `SKILL.md` 중심으로 작성합니다.
 - Maintenance
-  - `/tk:reflect` — 현재 세션에서 드러난 반복 패턴과 교정 포인트를 짧게 회고하고 유지보수 후보를 정리합니다.
-  - `/tk:improve` — 저장소의 knowledge layer를 가볍게 점검해 보완할 audit finding과 patch proposal을 정리합니다.
+  - `/tk:reflect` — 현재 세션에서 드러난 반복 패턴과 교정 포인트를 짧게 회고합니다. 종료 루틴은 `/tk:close`를 우선합니다.
+  - `/tk:improve` — 저장소의 knowledge layer를 가볍게 점검해 audit finding과 patch proposal을 정리합니다.
 
 이 흐름은 이슈 트래커 티켓, 지식베이스 문서, PRD, 디자인 문서, 사용자가 작성한 브리프, 스크린샷, 코드 참조, 간단한 메모를 모두 입력 자료로 사용할 수 있게 설계되어 있습니다.
 
 ## 권장 흐름
 
 ```text
-/tk:prep  # 요구사항 기준 정리
-/tk:gap   # 기준 대비 갭 분석
+/tk:prep      # 요구사항 기준 정리
+/tk:gap       # 기준 대비 갭 분석
+/tk:plan      # 구현 묶음과 검증 순서 정리
+/tk:breakdown  # 실행 task 분해
+/tk:next      # 다음 task 하나 선택
+/tk:close     # 종료 전 상태 정리
 ```
 
-TigerKit의 core gap workflow는 `prep → gap`입니다. 먼저 앞선 대화와 외부 자료를 `requirements.md` 기준으로 고정하고, 그다음 현재 구현, 문서, 테스트와의 차이를 `gap.md`로 확인합니다.
+TigerKit의 core workflow는 `prep → gap → plan → breakdown → tasks/next → close`입니다. 먼저 요구사항 기준을 고정하고, 현재 상태와의 차이를 확인한 뒤, 승인 가능한 실행계획과 작은 task로 내려갑니다.
 
-`/tk:mwhat`은 이 흐름에 묶이지 않는 독립 유틸리티입니다. 긴 답변이나 애매한 설명의 핵심을 짧게 풀어 사용자가 다음 질문이나 행동을 정하기 쉽게 돕습니다.
+`/tk:mwhat`, `/tk:grill-me`, `/tk:caveman`, `/tk:prototype`은 core workflow 밖에서 쓰는 독립 유틸리티입니다. `caveman`과 `write-a-skill`은 자연어 요청에도 켜질 수 있는 skill입니다.
 
-`/tk:reflect`와 `/tk:improve`는 gap lifecycle 밖에서 쓰는 maintenance 유틸리티입니다. 둘 다 자동으로 대규모 수정을 적용하지 않으며, 사용자가 명시적으로 승인한 patch만 선택적으로 반영합니다.
+`/tk:reflect`와 `/tk:improve`는 maintenance 유틸리티입니다. 둘 다 자동으로 대규모 수정을 적용하지 않으며, 사용자가 명시적으로 승인한 patch만 선택적으로 반영합니다.
 
 ## 설치
 
@@ -54,11 +69,11 @@ claude --plugin-dir ./tiger-kit
 
 ## 산출물 구조
 
-작업 산출물은 기본적으로 현재 프로젝트의 `.tigerkit/{work_id}/` 아래에 저장합니다. 입력 자료는 `.tigerkit/{work_id}/inputs/`에 둘 수 있고, 주요 산출물은 `requirements.md`, `requirements.meta.json`, `gap.md`, `gap.meta.json`입니다. 자세한 파일 구조는 `docs/artifact-layout.md`를 참고하세요.
+작업 산출물은 기본적으로 현재 프로젝트의 `.tigerkit/{work_id}/` 아래에 저장합니다. 입력 자료는 `.tigerkit/{work_id}/inputs/`에 둘 수 있고, 주요 산출물은 `requirements.md`, `requirements.meta.json`, `gap.md`, `gap.meta.json`, `plan.md`, `tasks.md`, `close.md`입니다. 자세한 파일 구조는 `docs/artifact-layout.md`를 참고하세요.
 
 `main`, `master`, `develop` 같은 기반 브랜치에서 작업을 시작했다면, 실제 변경 전에 작업 브랜치나 작업 ID를 정하는 것을 권장합니다.
 
-command 문서와 `skills/mwhat/SKILL.md`는 재사용 가능한 작업 흐름 지침입니다. 실행 중 만들어지는 산출물은 프로젝트 로컬 작업 노트로 취급합니다. commit, push, PR 생성은 제안할 수 있지만 사용자 승인 없이 실행하지 않습니다.
+command 문서와 `skills/*/SKILL.md`는 재사용 가능한 작업 흐름 지침입니다. 실행 중 만들어지는 산출물은 프로젝트 로컬 작업 노트로 취급합니다. commit, push, PR 생성은 제안할 수 있지만 사용자 승인 없이 실행하지 않습니다.
 
 ## 검증
 
@@ -78,6 +93,7 @@ python3 -m json.tool evals/evals.json >/dev/null
 - 입력 자료 수집은 특정 도구나 문서 형식에 묶이지 않게 유지합니다.
 - 모든 입력은 분석 전에 요구사항 기준 스냅샷으로 정리합니다.
 - 갭 분석은 요구사항 기준과 현재 상태의 차이를 찾는 데 집중합니다.
+- 실행계획과 task 분해는 구현을 자동 시작하지 않고 사용자가 다음 행동을 고르게 돕습니다.
 - 분석 이후의 구현, 보류, 추가 확인은 사용자가 결과를 보고 선택합니다.
 
 ## Attribution

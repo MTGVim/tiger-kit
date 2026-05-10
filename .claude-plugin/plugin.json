@@ -1,7 +1,7 @@
 {
   "name": "tk",
-  "description": "요구사항 정제, 답변 해독, 요구사항 대비 갭 확인, 지식 레이어 정비를 돕는 TigerKit Claude Code 플러그인입니다.",
-  "version": "2.3.0",
+  "description": "요구사항 정제, 갭 분석, 실행 task 분해, 대화 보조, 지식 레이어 정비를 돕는 TigerKit Claude Code 플러그인입니다.",
+  "version": "2.4.0",
   "author": {
     "name": "MTGVim"
   },
@@ -9,10 +9,19 @@
     "./commands/prep.md",
     "./commands/mwhat.md",
     "./commands/gap.md",
+    "./commands/plan.md",
+    "./commands/breakdown.md",
+    "./commands/tasks.md",
+    "./commands/next.md",
+    "./commands/close.md",
+    "./commands/grill-me.md",
+    "./commands/caveman.md",
+    "./commands/prototype.md",
     "./commands/reflect.md",
     "./commands/improve.md"
   ],
   "skills": [
-    "./skills/mwhat"
+    "./skills/caveman",
+    "./skills/write-a-skill"
   ]
 }
