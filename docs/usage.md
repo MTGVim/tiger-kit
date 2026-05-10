@@ -364,6 +364,8 @@ variant는 색이나 copy 차이가 아니라 layout, information hierarchy, pri
 
 주요 출력은 `Improve Report` 형식의 audit finding과 patch proposal입니다. 보고서는 우선순위가 있는 개선 후보를 제안하지만, 범위가 큰 전면 재작성으로 바로 이어지지 않으며 변경을 자동 적용하지도 않습니다. finding ID(`IMP-001` 같은 식별자)는 `Findings` 표와 `Proposed Patches` 요약/상세 섹션에서 같은 값으로 반복해 승인 대상을 쉽게 고를 수 있게 유지합니다.
 
+이 명령은 저장소 전체를 광범위하게 다시 쓰지 않습니다. 필요한 경우에도 사용자가 승인한 선택적 patch만 반영 대상으로 삼습니다.
+
 ## 검증
 
 TigerKit 저장소에는 package manager 기반 build/test/lint 설정이 없습니다. 명령, manifest, eval fixture를 수정한 뒤에는 다음 검증을 기본으로 실행합니다.

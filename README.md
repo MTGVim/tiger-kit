@@ -2,7 +2,7 @@
 
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
 
-TigerKit(`tiger-kit`, plugin `tk`)은 요구사항 정제, 긴 답변 해독, 요구사항 대비 갭 확인, 실행 task 분해, 세션 정리, 그리고 가벼운 저장소 knowledge layer 유지보수를 위한 Claude Code 플러그인입니다.
+TigerKit(`tiger-kit`, plugin `tk`)은 요구사항 정제, 긴 답변 해독, 요구사항 대비 갭 확인, 실행 task 분해, 세션 정리, 응답 초압축, 그리고 가벼운 저장소 knowledge layer 유지보수를 위한 Claude Code 플러그인입니다.
 
 제공 기능은 slash command 중심입니다. 자연어 trigger가 중요한 기능은 skill로도 제공합니다. `caveman`은 `/tk:caveman` alias도 있고, `write-a-skill`은 장황한 skill creator 대체용 경량 skill입니다.
 
