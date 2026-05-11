@@ -499,6 +499,23 @@
         "Mentions /tk:grill-me, targeted question, brainstorming, or assumption choice",
         "Does not start /tk:do while clarification is the next required action"
       ]
+    },
+    {
+      "id": 30,
+      "name": "issue-to-task-midwork-course-correction",
+      "prompt": "You are evaluating the TigerKit issue-to-task skill instructions. During /tk:do on a UI task, the user says: 이 UI 디자인 잘못 구현함. Describe expected behavior. Do not write files.",
+      "expected_output": "Should pause implementation momentum, restate the issue, ask at most one targeted clarification question if needed, optionally offer 2-3 task framings with trade-offs, classify the issue as task insertion, task revision, Clarification Action, or Shared Blocker, propose concise queue wording, and recommend /tk:plan. It must not implement code, edit tasks.md, commit, push, or create a PR without approval.",
+      "files": [],
+      "expectations": [
+        "Stops implementation momentum instead of continuing /tk:do",
+        "Restates the reported issue in one sentence",
+        "Asks at most one targeted clarification question when needed",
+        "Optionally offers 2-3 task framings with trade-offs",
+        "Classifies the issue as task insertion, task revision, Clarification Action, or Shared Blocker",
+        "Proposes concise task or clarification wording for the queue",
+        "Recommends /tk:plan as the next step",
+        "Does not edit code, mutate tasks.md, commit, push, or create a PR without approval"
+      ]
     }
   ]
 }
