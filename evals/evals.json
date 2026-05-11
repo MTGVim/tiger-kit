@@ -95,6 +95,8 @@
         "Includes an included-work or gap summary per task ID",
         "Includes blocker relationships when known",
         "Creates API Follow-up Tasks for mock_api_contract slices instead of blocking every implementation task",
+        "Routes spec_unclear or ambiguous requirements to Clarification Actions instead of terminal blocked tasks",
+        "Groups external blockers such as permission_required or external_dependency_unavailable in Shared Blockers",
         "Deduplicates shared API capabilities into one TK-API follow-up task",
         "Does not implement code automatically",
         "Does not commit, push, or create PRs without user approval",
@@ -276,7 +278,7 @@
       "id": 17,
       "name": "do-all-processes-tasks-sequentially",
       "prompt": "You are evaluating the TigerKit do-all command instructions. tasks.md has one in_progress task, two todo tasks, and one blocked task. The user runs: /tk:do-all. Describe expected behavior. Do not write files.",
-      "expected_output": "Should process executable tasks one at a time, in_progress first then todo tasks, applying /tk:do judgment per task. It should skip blocked tasks except that TK-API-* blocked follow-ups do not stop mock-based general task implementation; stop on verification failure or ambiguity, update task status after each task, commit each code-changing task after successful verification, and not push/PR without approval. If all executable general tasks complete and no general blockers remain, it should run exactly one tail gap check, update gap.md if new gaps exist, and stop rather than starting another implementation loop. For each task it should re-evaluate agent routing, including tk-elyvilon for cleanup/docs hygiene, and may use independent agents inside a task, but main agent must merge diff, verify, and commit task-by-task.",
+      "expected_output": "Should process executable tasks one at a time, in_progress first then todo tasks, applying /tk:do judgment per task. It should skip blocked tasks except that TK-API-* blocked follow-ups do not stop mock-based general task implementation; stop on verification failure, external blocker, or needed Clarification Actions, update task status after each task, commit each code-changing task after successful verification, and not push/PR without approval. Ambiguity should be reported as Clarification Actions rather than terminal blocked tasks. If all executable general tasks complete and no external blockers remain, it should run exactly one tail gap check, update gap.md if new gaps exist, and stop rather than starting another implementation loop. For each task it should re-evaluate agent routing, including tk-elyvilon for cleanup/docs hygiene, and may use independent agents inside a task, but main agent must merge diff, verify, and commit task-by-task.",
       "files": [],
       "expectations": [
         "Processes tasks one at a time",
@@ -284,11 +286,11 @@
         "Skips blocked tasks",
         "Does not treat TK-API-* blocked follow-ups as blockers for remaining mock-based general tasks",
         "Decides TDD and inline/sub-agent mode per task",
-        "Stops on general blocker, ambiguity, or verification failure",
+        "Stops on external blocker, needed Clarification Actions, or verification failure",
         "Updates task status after each task",
         "Does not push or create PRs without approval",
         "Commits each code-changing task after successful verification before moving to the next task",
-        "Runs exactly one tail gap check after all executable general tasks complete and no general blockers remain",
+        "Runs exactly one tail gap check after all executable general tasks complete and no external blockers remain",
         "Reports unresolved TK-API-* as merge blockers rather than close-ready completion",
         "Updates gap.md if new gaps are found and stops before another implementation loop",
         "Recommends /tk:plan when tail gap check finds new gaps",
@@ -316,13 +318,13 @@
       "id": 19,
       "name": "state-overview",
       "prompt": "You are evaluating the TigerKit state command instructions. A work_id has requirements.md, gap.md, plan.md, tasks.md, with one in_progress task and one blocked task. The user runs: /tk:state. Describe expected behavior. Do not write files.",
-      "expected_output": "Should summarize the .tigerkit state: work_id, current stage, artifact presence, task summary, blocker summary, and one next recommendation. It must not modify files.",
+      "expected_output": "Should summarize the .tigerkit state: work_id, current stage, artifact presence, task summary, unresolved Clarification Actions, external blocker summary, and one next recommendation. It must not modify files.",
       "files": [],
       "expectations": [
         "Shows work_id",
         "Shows current stage",
         "Shows artifact presence",
-        "Shows task and blocker summary",
+        "Shows task, unresolved Clarification Actions, and external blocker summary",
         "Ends with one '다음 추천:' line",
         "Does not modify files"
       ]
@@ -331,7 +333,7 @@
       "id": 20,
       "name": "auto-one-cycle",
       "prompt": "You are evaluating the TigerKit auto command instructions. requirements.md exists and work_id is clear. The user runs: /tk:auto. Describe expected behavior. Do not write files.",
-      "expected_output": "Should run exactly one cycle of gap -> plan -> breakdown -> do-all -> gap. If API or official contract cannot be verified and the user has not marked it out of scope, it should continue with mock_api_contract and TK-API follow-up blockers. During do-all, code-changing tasks should be committed after successful verification. It should stop if general blockers, ambiguity, verification failures, or new gaps require re-planning. It must not automatically start a second cycle. During do-all it follows the same agent routing rules as /tk:do-all, including tk-elyvilon for cleanup/docs hygiene.",
+      "expected_output": "Should run exactly one cycle of gap -> plan -> breakdown -> do-all -> gap. If API or official contract cannot be verified and the user has not marked it out of scope, it should continue with mock_api_contract and TK-API follow-up blockers. During do-all, code-changing tasks should be committed after successful verification. It should stop if external blockers, needed Clarification Actions, verification failures, or new gaps require re-planning. Ambiguity should be recorded as Clarification Actions, not terminal blocked tasks. It must not automatically start a second cycle. During do-all it follows the same agent routing rules as /tk:do-all, including tk-elyvilon for cleanup/docs hygiene.",
       "files": [],
       "expectations": [
         "Requires clear work_id and requirements.md",
@@ -340,7 +342,7 @@
         "Defaults unverifiable required APIs to mock_api_contract unless user marks them out of scope",
         "Keeps TK-API-* blocked follow-ups as merge blockers without stopping executable general tasks",
         "Commits code-changing tasks during the do-all phase after successful verification",
-        "Stops on general blockers or ambiguity",
+        "Stops on external blockers or needed Clarification Actions",
         "Recommends /tk:plan when new gaps appear after re-evaluation",
         "Does not automatically start a second cycle",
         "Follows /tk:do-all agent routing during the implementation phase, including tk-elyvilon for cleanup/docs hygiene"
@@ -460,6 +462,37 @@
         "Keeps read-only agents on non-editing tools",
         "Keeps final artifact updates, verification, task status, and commits under main agent control",
         "Uses tk-elyvilon for cleanup, docs hygiene, and healing-style consistency work"
+      ]
+    },
+    {
+      "id": 28,
+      "name": "breakdown-clarification-actions-and-shared-blockers",
+      "prompt": "You are evaluating the TigerKit breakdown command instructions. plan.md has one feature slice with ambiguous acceptance criteria and three tasks waiting on the same external permission. The user runs: /tk:breakdown. Describe expected tasks.md behavior. Do not write files.",
+      "expected_output": "Should not turn spec_unclear or ambiguous acceptance criteria into terminal blocked tasks. It should add a Clarification Actions section with a TK-CLARIFY-* item and a next action such as /tk:grill-me, targeted question, brainstorming, or assumption choice. It should group the shared permission_required dependency under Shared Blockers with affected tasks and resolution criteria instead of duplicating blocked tasks.",
+      "files": [],
+      "expectations": [
+        "Does not mark ambiguous requirements as blocked tasks",
+        "Creates or updates a Clarification Actions section",
+        "Uses TK-CLARIFY-* IDs for unresolved clarification work",
+        "Recommends /tk:grill-me, targeted question, brainstorming, or assumption choice for ambiguity reduction",
+        "Uses Shared Blockers for permission_required external dependency",
+        "Lists affected tasks and resolution criteria on the shared blocker",
+        "Avoids duplicating one shared external blocker across multiple blocked tasks"
+      ]
+    },
+    {
+      "id": 29,
+      "name": "next-prioritizes-clarification-actions",
+      "prompt": "You are evaluating the TigerKit next command instructions. tasks.md contains unresolved Clarification Actions, one todo implementation task, and one external Shared Blocker. The user runs: /tk:next. Describe expected behavior. Do not write files.",
+      "expected_output": "Should detect clarification-needed state and recommend exactly one clarification path before treating the situation as blocked or starting implementation. It should report the unresolved TK-CLARIFY-* item and suggest /tk:grill-me, targeted question, brainstorming, or assumption choice.",
+      "files": [],
+      "expectations": [
+        "Detects clarification-needed from unresolved Clarification Actions",
+        "Does not report ambiguity as terminal blocked",
+        "Recommends one clarification path before implementation",
+        "Names the relevant TK-CLARIFY-* item",
+        "Mentions /tk:grill-me, targeted question, brainstorming, or assumption choice",
+        "Does not start /tk:do while clarification is the next required action"
       ]
     }
   ]
