@@ -14,6 +14,7 @@ description: tasks.md의 실행 가능한 task를 끝날 때까지 하나씩 구
 - 그다음 `todo` task를 순서대로 처리합니다.
 - `blocked`, `done`, `dropped`는 건너뜁니다.
 - dependency나 blocker가 명시된 task는 blocker 완료 전 처리하지 않습니다.
+- 단, `API Follow-up Tasks`의 `TK-API-* blocked`만 남은 경우에는 일반 `todo`/`in_progress` task를 계속 처리합니다. `TK-API-* blocked`는 merge blocker로 보고하되 mock 기준 구현을 막는 일반 blocker로 취급하지 않습니다.
 
 ## 처리 방식
 
@@ -34,7 +35,7 @@ description: tasks.md의 실행 가능한 task를 끝날 때까지 하나씩 구
 - task 요구사항이 모호함
 - work_id가 불명확함
 - 검증 실패가 반복됨
-- blocker가 있음
+- blocker가 있음. 단 `TK-API-* blocked`만 있고 mock 기준 일반 task가 남아 있으면 중단하지 않습니다.
 - 예상보다 범위가 커져 사용자 결정이 필요함
 - main/master/develop 같은 기반 브랜치에서 변경 승인이 필요함
 
@@ -62,14 +63,15 @@ TDD 적용 시 한 test → minimal implementation → green → 다음 test 순
 
 ## Tail gap check
 
-실행 가능한 task를 모두 처리했고 blocked task가 없다면, 종료 전에 gap을 한 번만 다시 확인합니다.
+실행 가능한 일반 task를 모두 처리했고 일반 blocked task가 없다면, 종료 전에 gap을 한 번만 다시 확인합니다.
 
 규칙:
 - tail gap check는 최대 1회만 수행합니다.
 - `requirements.md`를 기준으로 현재 구현, 문서, 테스트, 관찰 가능한 동작을 다시 비교합니다.
 - 새 gap이 있으면 `gap.md`를 갱신하고 멈춥니다. 바로 다시 구현 loop를 돌지 않습니다.
-- 새 gap이 없으면 `/tk:close`를 추천합니다.
-- blocked task가 남아 있거나 검증 실패가 있으면 tail gap check를 하지 않고 blocker를 보고합니다.
+- 새 gap이 없고 unresolved `TK-API-*`가 없으면 `/tk:close`를 추천합니다.
+- unresolved `TK-API-*`가 남아 있으면 merge blocker와 incomplete 상태를 보고하고 API/contract 확인 요청을 다음 action으로 추천합니다.
+- 일반 blocked task가 남아 있거나 검증 실패가 있으면 tail gap check를 하지 않고 blocker를 보고합니다.
 
 ## 출력
 

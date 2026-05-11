@@ -34,6 +34,8 @@ description: .tigerkit/{work_id} 상태를 보고 지금 해야 할 다음 comma
 - `in_progress`가 있으면 그것을 우선 표시합니다.
 - `in_progress`가 없으면 첫 번째 `todo`를 표시합니다.
 - `blocked`, `done`, `dropped`는 실행 후보에서 제외합니다.
+- 실행 가능한 일반 task가 있고 `API Follow-up Tasks`에 `TK-API-* blocked`가 남아 있으면 일반 task를 추천하되 merge 전 API/contract 확인 필요를 주의로 함께 표시합니다.
+- 실행 가능한 일반 task가 없고 `TK-API-* blocked`만 남아 있으면 기다림이 아니라 해당 API/contract 확인 요청을 다음 action으로 추천합니다.
 
 ## 출력
 
@@ -41,6 +43,8 @@ description: .tigerkit/{work_id} 상태를 보고 지금 해야 할 다음 comma
 
 - 현재 상태
 - 다음 command 또는 다음 task 1개
+- task를 보여줄 때는 task ID만 적지 말고, 그 task에 묶인 gap 또는 포함 작업을 한 줄로 함께 적습니다.
+- 가능하면 `포함 작업` 또는 유사한 칼럼명을 사용합니다.
 - 사용한 기준 파일
 - blocker가 있으면 blocker
 - `다음 추천: ...`

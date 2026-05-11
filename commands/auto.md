@@ -21,8 +21,8 @@ description: requirements.md가 준비된 뒤 gap -> plan -> breakdown -> do-all
 정확히 아래만 수행합니다.
 
 1. `/tk:gap`에 준해 gap 분석
-2. `/tk:plan`에 준해 실행계획 정리
-3. `/tk:breakdown`에 준해 task 분해
+2. `/tk:plan`에 준해 실행계획 정리. API나 공식 contract를 확인할 수 없고 사용자가 범위 밖이라고 명시하지 않았으면 기본값 `mock_api_contract`로 진행합니다.
+3. `/tk:breakdown`에 준해 task 분해. `mock_api_contract` slice는 일반 task를 계속 만들고 `TK-API-*` follow-up만 blocked로 둡니다.
 4. `/tk:do-all`에 준해 실행 가능한 task 처리
 5. `/tk:gap`으로 재평가 1회
 
@@ -40,7 +40,7 @@ description: requirements.md가 준비된 뒤 gap -> plan -> breakdown -> do-all
 
 - work_id 불명확
 - `requirements.md` 부재
-- blocker 존재
+- blocker 존재. 단 `mock_api_contract`에 따른 `TK-API-* blocked`만 있으면 일반 task 진행은 멈추지 않고 merge blocker로 보고합니다.
 - 요구사항 모호함
 - 검증 실패 반복
 - 기반 브랜치에서 변경 승인이 필요함
@@ -57,4 +57,5 @@ description: requirements.md가 준비된 뒤 gap -> plan -> breakdown -> do-all
 - 완료 task 수와 blocked 수
 - 검증 결과
 - 마지막 gap 재확인 결과
-- `다음 추천: /tk:plan`, `/tk:do-all`, 또는 `/tk:close`
+- unresolved `TK-API-*`가 있으면 API/contract 확인 필요 여부
+- `다음 추천: /tk:plan`, `/tk:do-all`, `/tk:next`, 또는 `/tk:close`
