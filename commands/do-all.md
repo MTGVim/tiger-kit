@@ -6,7 +6,7 @@ description: tasks.md의 실행 가능한 task를 끝날 때까지 하나씩 구
 
 사용자에게는 한글로 답합니다. 코드, 테스트 이름, 파일 경로, 식별자, 오류 메시지는 원문 그대로 유지할 수 있습니다.
 
-목표: `.tigerkit/{work_id}/tasks.md`에서 실행 가능한 task를 순서대로 처리해 가능한 만큼 완료합니다.
+목표: `.tigerkit/{work_id}/tasks.md`에서 실행 가능한 task를 순서대로 처리해 가능한 만큼 완료합니다. 코드 수정이 포함된 task는 각 task 검증 통과 후 local commit으로 남깁니다.
 
 ## 처리 대상
 
@@ -26,7 +26,18 @@ description: tasks.md의 실행 가능한 task를 끝날 때까지 하나씩 구
 - inline 또는 sub-agent 실행 방식
 - 검증 명령 또는 수동 확인 방법
 
-여러 task를 한 번에 묶어 구현하지 않습니다. task 하나를 완료/blocked 처리한 뒤 다음 task로 넘어갑니다.
+여러 task를 한 번에 묶어 구현하지 않습니다. task 하나를 완료/blocked 처리하고, 코드 수정이 포함됐으면 검증 통과 후 해당 task 변경만 commit한 뒤 다음 task로 넘어갑니다.
+
+### Agent routing
+
+각 task마다 `/tk:do`와 같은 routing을 다시 판단합니다. 독립 task를 서로 묶어 처리하지 않지만, 한 task 내부에서 파일 영역이 독립적이고 충돌 위험이 낮으면 여러 `tk-fixer` 또는 조사 agent를 병렬로 쓸 수 있습니다. 이 경우에도 main agent가 diff를 합치고 task 단위 검증과 commit을 수행합니다.
+
+- 탐색/영향 범위: Claude Code 내장 `Explore`
+- API/contract 확인: `tk-api-librarian`
+- bounded implementation: `tk-fixer`
+- UI/prototype: `tk-designer`
+- visual artifact 분석: `tk-observer`
+- review/risk 판단: `tk-reviewer`
 
 ## 중단 조건
 
@@ -56,7 +67,8 @@ TDD 적용 시 한 test → minimal implementation → green → 다음 test 순
 
 ## 안전 경계
 
-- commit, push, PR 생성은 사용자 승인 없이 실행하지 않습니다.
+- 코드 수정 task의 local commit은 task별 검증 통과 후 수행합니다.
+- push, PR 생성, branch 생성은 사용자 승인 없이 실행하지 않습니다.
 - 검증 실패를 우회하지 않습니다.
 - task 범위를 넘어선 대규모 refactor를 하지 않습니다.
 - sub-agent가 구현한 경우에도 최종 diff와 검증은 main agent가 확인합니다.
@@ -81,6 +93,7 @@ TDD 적용 시 한 test → minimal implementation → green → 다음 test 순
 - blocked task 수
 - 각 task의 TDD/실행 방식 요약
 - 검증 결과
+- 생성한 commit 수와 commit hash
 - 남은 task
 - tail gap check 결과
 - `다음 추천: /tk:plan`, `/tk:close`, 또는 `/tk:next`

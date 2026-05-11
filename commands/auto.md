@@ -23,7 +23,7 @@ description: requirements.md가 준비된 뒤 gap -> plan -> breakdown -> do-all
 1. `/tk:gap`에 준해 gap 분석
 2. `/tk:plan`에 준해 실행계획 정리. API나 공식 contract를 확인할 수 없고 사용자가 범위 밖이라고 명시하지 않았으면 기본값 `mock_api_contract`로 진행합니다.
 3. `/tk:breakdown`에 준해 task 분해. `mock_api_contract` slice는 일반 task를 계속 만들고 `TK-API-*` follow-up만 blocked로 둡니다.
-4. `/tk:do-all`에 준해 실행 가능한 task 처리
+4. `/tk:do-all`에 준해 실행 가능한 task 처리. 코드 수정이 포함된 task는 task별 검증 통과 후 local commit으로 남깁니다.
 5. `/tk:gap`으로 재평가 1회
 
 ## TDD와 실행 방식
@@ -33,6 +33,7 @@ description: requirements.md가 준비된 뒤 gap -> plan -> breakdown -> do-all
 - behavior/API/business logic/bug fix/regression risk면 TDD 추천
 - docs/prompt/manifest/config/copy 변경은 TDD 생략 가능
 - 작은 task는 inline, 큰 독립 task는 sub-agent 방식을 스스로 판단
+- agent routing은 `/tk:do-all` 규칙을 따릅니다. API/contract 확인은 `tk-api-librarian`, bounded implementation은 `tk-fixer`, UI/prototype은 `tk-designer`, visual artifact 분석은 `tk-observer`, review/risk 판단은 `tk-reviewer`를 우선 고려합니다.
 
 ## 중단 조건
 
@@ -56,6 +57,7 @@ description: requirements.md가 준비된 뒤 gap -> plan -> breakdown -> do-all
 - 수행한 단계
 - 완료 task 수와 blocked 수
 - 검증 결과
+- 생성한 commit 수와 commit hash
 - 마지막 gap 재확인 결과
 - unresolved `TK-API-*`가 있으면 API/contract 확인 필요 여부
 - `다음 추천: /tk:plan`, `/tk:do-all`, `/tk:next`, 또는 `/tk:close`
