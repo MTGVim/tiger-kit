@@ -32,15 +32,16 @@
       "id": 2,
       "name": "gap-requirement-coverage",
       "prompt": "You are evaluating the TigerKit gap command instructions. A requirements document exists at .tigerkit/onboarding-copy/requirements.md, the repository has relevant docs and code paths, and the user runs: /tk:gap 방금 정리한 요구사항 대비 현재 구현 갭 분석해줘. Describe the expected report structure and the final user-facing response. Do not write files.",
-      "expected_output": "Should describe cache check based on git commit, requirements hash, gap prompt version, and scope; write/reuse gap.md with metadata; include Verdict, Requirement Coverage, Remaining Gaps, Unable to Verify, and Notes; Requirement Coverage, Remaining Gaps, and Unable to Verify must be Markdown tables even when empty; final chat response should not dump the full report and should include verdict, path, core gaps, and one next action.",
+      "expected_output": "Should describe cache check based on git commit, requirements hash, gap prompt version, and scope; write/reuse gap.md with metadata; include Verdict, Requirement Coverage, Remaining Gaps, API Contract Drift, Unable to Verify, and Notes; Requirement Coverage, Remaining Gaps, API Contract Drift, and Unable to Verify must be Markdown tables even when empty; final chat response should not dump the full report and should include verdict, path, core gaps, and one next action.",
       "files": [],
       "expectations": [
         "Describes gap cache checking with git commit, requirements hash, prompt version, and scope",
         "Mentions gap.md metadata",
         "Requires Verdict with GAPS_FOUND, NO_GAPS_FOUND, or UNVERIFIABLE",
-        "Requires Requirement Coverage, Remaining Gaps, and Unable to Verify as Markdown tables",
-        "Requires empty Remaining Gaps and Unable to Verify tables to keep a header and 없음 row",
+        "Requires Requirement Coverage, Remaining Gaps, API Contract Drift, and Unable to Verify as Markdown tables",
+        "Requires empty Remaining Gaps, API Contract Drift, and Unable to Verify tables to keep a header and 없음 row",
         "Says Unable to Verify prevents a NO_GAPS_FOUND verdict",
+        "Says API or contract absence should prompt a cross-check unless explicitly out of scope",
         "Says the chat response should not dump the full report and should include verdict, path, core gaps, and one next action",
         "Ends the user-facing response with '다음 추천: /tk:plan'"
       ]
@@ -66,11 +67,12 @@
       "id": 4,
       "name": "plan-no-task-before-approval",
       "prompt": "You are evaluating the TigerKit plan command instructions. A gap report exists at .tigerkit/github-issues/gap.md and the user runs: /tk:plan 각 gap당 task로 나눠서 실행계획 세워. Describe exactly what Claude should do before the user approves the plan. Do not write files.",
-      "expected_output": "Should read gap.md, produce an implementation plan with task breakdown and dependencies, but must not create tasks.md before approval. The response should make clear that implementation does not start automatically.",
+      "expected_output": "Should read gap.md, produce an implementation plan with Revision Notes, Context, Recommended Approach, API Readiness, Task Breakdown, Dependencies, and Verification, but must not create tasks.md before approval. The response should make clear that implementation does not start automatically.",
       "files": [],
       "expectations": [
         "Uses gap.md as the planning source",
-        "Includes Context, Recommended Approach, Task Breakdown, Dependencies, and Verification",
+        "Includes Revision Notes, Context, Recommended Approach, API Readiness, Task Breakdown, Dependencies, and Verification",
+        "Keeps plan.md as the canonical latest plan instead of creating plan.v2.md",
         "Does not create tasks.md before approval",
         "Does not start code implementation automatically",
         "Ends the user-facing response with '다음 추천: /tk:breakdown'"
@@ -80,12 +82,15 @@
       "id": 5,
       "name": "breakdown-gap-to-task-list",
       "prompt": "You are evaluating the TigerKit breakdown command instructions. A gap report exists with Remaining Gaps and the user runs: /tk:breakdown gap을 실행 task로 쪼개줘. Describe the expected tasks.md content and final user-facing response. Do not write files.",
-      "expected_output": "Should transform each actionable gap into a small task with ID, status, goal, checklist, done criteria, and blockers. It should not implement the tasks, commit, push, or open a PR.",
+      "expected_output": "Should transform each actionable gap into small tasks with ID, status, goal, included-work summary, checklist, done criteria, and blockers. If API Readiness contains mock_api_contract, it should avoid duplicating blocked implementation tasks and instead add API Follow-up Tasks with TK-API IDs. It should not implement the tasks, commit, push, or open a PR.",
       "files": [],
       "expectations": [
         "Creates or updates .tigerkit/{work_id}/tasks.md",
         "Uses only todo, in_progress, blocked, done, dropped statuses",
+        "Includes an included-work or gap summary per task ID",
         "Includes blocker relationships when known",
+        "Creates API Follow-up Tasks for mock_api_contract slices instead of blocking every implementation task",
+        "Deduplicates shared API capabilities into one TK-API follow-up task",
         "Does not implement code automatically",
         "Does not commit, push, or create PRs without user approval",
         "Ends the user-facing response with '다음 추천: /tk:next'"
@@ -258,20 +263,22 @@
       "id": 17,
       "name": "do-all-processes-tasks-sequentially",
       "prompt": "You are evaluating the TigerKit do-all command instructions. tasks.md has one in_progress task, two todo tasks, and one blocked task. The user runs: /tk:do-all. Describe expected behavior. Do not write files.",
-      "expected_output": "Should process executable tasks one at a time, in_progress first then todo tasks, applying /tk:do judgment per task. It should skip blocked tasks, stop on verification failure or ambiguity, update task status after each task, and not commit/push/PR without approval. If all executable tasks complete and no blockers remain, it should run exactly one tail gap check, update gap.md if new gaps exist, and stop rather than starting another implementation loop.",
+      "expected_output": "Should process executable tasks one at a time, in_progress first then todo tasks, applying /tk:do judgment per task. It should skip blocked tasks except that TK-API-* blocked follow-ups do not stop mock-based general task implementation; stop on verification failure or ambiguity, update task status after each task, and not commit/push/PR without approval. If all executable general tasks complete and no general blockers remain, it should run exactly one tail gap check, update gap.md if new gaps exist, and stop rather than starting another implementation loop.",
       "files": [],
       "expectations": [
         "Processes tasks one at a time",
         "Starts with in_progress before todo",
         "Skips blocked tasks",
+        "Does not treat TK-API-* blocked follow-ups as blockers for remaining mock-based general tasks",
         "Decides TDD and inline/sub-agent mode per task",
-        "Stops on blocker, ambiguity, or verification failure",
+        "Stops on general blocker, ambiguity, or verification failure",
         "Updates task status after each task",
         "Does not commit, push, or create PRs without approval",
-        "Runs exactly one tail gap check after all executable tasks complete and no blockers remain",
+        "Runs exactly one tail gap check after all executable general tasks complete and no general blockers remain",
+        "Reports unresolved TK-API-* as merge blockers rather than close-ready completion",
         "Updates gap.md if new gaps are found and stops before another implementation loop",
         "Recommends /tk:plan when tail gap check finds new gaps",
-        "Recommends /tk:close when tail gap check finds no new gaps"
+        "Recommends /tk:close only when tail gap check finds no new gaps and no unresolved TK-API-* remains"
       ]
     },
     {
@@ -306,13 +313,15 @@
       "id": 20,
       "name": "auto-one-cycle",
       "prompt": "You are evaluating the TigerKit auto command instructions. requirements.md exists and work_id is clear. The user runs: /tk:auto. Describe expected behavior. Do not write files.",
-      "expected_output": "Should run exactly one cycle of gap -> plan -> breakdown -> do-all -> gap. It should stop if blockers, ambiguity, verification failures, or new gaps require re-planning. It must not automatically start a second cycle.",
+      "expected_output": "Should run exactly one cycle of gap -> plan -> breakdown -> do-all -> gap. If API or official contract cannot be verified and the user has not marked it out of scope, it should continue with mock_api_contract and TK-API follow-up blockers. It should stop if general blockers, ambiguity, verification failures, or new gaps require re-planning. It must not automatically start a second cycle.",
       "files": [],
       "expectations": [
         "Requires clear work_id and requirements.md",
         "Runs one cycle only",
         "Includes gap, plan, breakdown, do-all, and final gap",
-        "Stops on blockers or ambiguity",
+        "Defaults unverifiable required APIs to mock_api_contract unless user marks them out of scope",
+        "Keeps TK-API-* blocked follow-ups as merge blockers without stopping executable general tasks",
+        "Stops on general blockers or ambiguity",
         "Recommends /tk:plan when new gaps appear after re-evaluation",
         "Does not automatically start a second cycle"
       ]
@@ -345,6 +354,66 @@
         "Fixes items one at a time",
         "Allows technical pushback when reviewer is wrong",
         "Does not blindly implement all feedback"
+      ]
+    },
+    {
+      "id": 23,
+      "name": "plan-api-missing-defaults-to-mock-contract",
+      "prompt": "You are evaluating the TigerKit plan command instructions. gap.md says a feature slice needs an API, but the repo has no real endpoint and no official contract. The user did not mark the API out of scope and gives no answer to the API cross-check. The user runs: /tk:plan. Describe expected behavior. Do not write files.",
+      "expected_output": "Should not stop just because the API is missing. It should create/update plan.md with API Readiness at feature slice granularity, mark the slice as mock_api_contract, describe the assumed contract/mock boundary, and note that a TK-API follow-up is required before merge-ready completion.",
+      "files": [],
+      "expectations": [
+        "Does not block planning solely because the API or contract is missing",
+        "Creates API Readiness by feature slice, not one global state",
+        "Uses mock_api_contract when API and official contract are unavailable and not out of scope",
+        "Mentions assumed contract and mock API/MSW-style boundary",
+        "Says mock_api_contract is development-progress only, not merge-ready completion",
+        "Requires a TK-API follow-up for real API confirmation and replacement"
+      ]
+    },
+    {
+      "id": 24,
+      "name": "breakdown-shared-mock-api-followup",
+      "prompt": "You are evaluating the TigerKit breakdown command instructions. plan.md has API Readiness with three feature slices that all need the same missing members API and are marked mock_api_contract. The user runs: /tk:breakdown. Describe expected tasks.md behavior. Do not write files.",
+      "expected_output": "Should keep feature implementation tasks executable under mock_api_contract, avoid creating three duplicated blocked tasks for the same missing API, and create one TK-API follow-up in API Follow-up Tasks with all affected slices listed.",
+      "files": [],
+      "expectations": [
+        "Does not mark every feature implementation task blocked just because the shared API is missing",
+        "Creates API Follow-up Tasks as a separate section",
+        "Deduplicates the shared missing API into one TK-API ID",
+        "Lists all affected feature slices on the TK-API follow-up",
+        "Uses existing status values such as blocked and todo",
+        "Requires FIXME(TK-API-<n>) or TODO fallback at the mock boundary"
+      ]
+    },
+    {
+      "id": 25,
+      "name": "next-api-followup-ready-to-replace",
+      "prompt": "You are evaluating the TigerKit next command instructions. tasks.md has no general todo or in_progress tasks, but API Follow-up Tasks contains TK-API-1 with status todo because the real API contract is now available. The user runs: /tk:next. Describe expected behavior. Do not write files.",
+      "expected_output": "Should recommend TK-API-1 as the next executable replacement task with /tk:do, instead of saying everything is blocked or close-ready.",
+      "files": [],
+      "expectations": [
+        "Detects that no general executable tasks remain",
+        "Detects TK-API-* todo in API Follow-up Tasks",
+        "Recommends the TK-API replacement task rather than waiting",
+        "Recommends /tk:do for the replacement task",
+        "Does not report close-ready while TK-API-* todo remains"
+      ]
+    },
+    {
+      "id": 26,
+      "name": "do-api-followup-replaces-mock-contract",
+      "prompt": "You are evaluating the TigerKit do command instructions. tasks.md has TK-API-1 todo for replacing an assumed invite API contract now that the real API is available. The user runs: /tk:do TK-API-1. Describe expected behavior. Do not write files.",
+      "expected_output": "Should treat TK-API-1 as an API follow-up replacement task: compare the real API or official contract to the assumed contract, update implementation and tests away from the mock boundary where appropriate, resolve or update FIXME(TK-API-1), verify real API behavior, and only mark done when replacement is complete.",
+      "files": [],
+      "expectations": [
+        "Selects the requested TK-API follow-up task",
+        "Uses the real API or official contract as the source of truth",
+        "Compares the real API to the assumed contract and handles drift",
+        "Replaces or narrows the mock boundary as appropriate",
+        "Resolves or updates the FIXME/TODO marker for the TK-API ID",
+        "Runs relevant verification before marking done",
+        "Does not mark done if real API replacement remains incomplete"
       ]
     }
   ]

@@ -49,8 +49,9 @@
 | `plan-needed` | `gap.md`는 있고 `plan.md` 없음 | `/tk:plan` 실행 |
 | `tasks-needed` | `plan.md` 또는 `gap.md`는 있고 `tasks.md` 없음 | `/tk:breakdown` 실행 |
 | `task-ready` | 실행 가능한 `todo` 또는 `in_progress` task 있음 | `/tk:do` 또는 `/tk:do-all` 실행 |
+| `blocked` | 실행 가능한 일반 task가 없고 `blocked`만 있음 | blocker 해결 또는 API/contract 확인 |
 | `re-eval-needed` | 구현 후 gap 재확인 필요 | `/tk:gap` 실행 |
-| `close-needed` | gap 재확인까지 끝났고 새 gap 없음 | `/tk:close` 실행 |
+| `close-ready` | gap 재확인까지 끝났고 새 gap 없음 | `/tk:close` 실행 |
 
 `/tk:state`는 위 상태를 요약해 보여주고, `/tk:next`는 위 상태를 바탕으로 다음 command나 다음 task 1개를 추천합니다. task를 보여줄 때는 task ID만 적지 말고 `포함 작업` 같은 짧은 요약으로 묶인 gap/작업을 함께 보여줍니다. source나 work_id가 불명확하면 추측하지 않고 사용자에게 묻습니다.
 
