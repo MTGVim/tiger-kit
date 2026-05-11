@@ -14,17 +14,18 @@ description: requirements.md가 준비된 뒤 gap -> plan -> breakdown -> do-all
 - `requirements.md`가 있어야 합니다.
 - worktree나 작업 브랜치 경계가 필요한 경우 먼저 사용자 승인을 따릅니다.
 
-`requirements.md`가 없으면 자동으로 인터뷰를 시작하지 않고 `/tk:prep`를 추천하고 멈춥니다.
+`requirements.md`가 없으면 자동으로 인터뷰나 prep을 시작하지 않습니다. source 문서나 메모가 있으면 `/tk:prep`, 아이디어가 흐릿하면 `/tk:interview`, 불명확하면 확인 질문을 추천하고 멈춥니다.
 
 ## 1사이클 범위
 
 정확히 아래만 수행합니다.
 
-1. `/tk:gap`에 준해 gap 분석
-2. `/tk:plan`에 준해 실행계획 정리. API나 공식 contract를 확인할 수 없고 사용자가 범위 밖이라고 명시하지 않았으면 기본값 `mock_api_contract`로 진행합니다.
-3. `/tk:breakdown`에 준해 task 분해. `mock_api_contract` slice는 일반 task를 계속 만들고 `TK-API-*` follow-up만 blocked로 둡니다.
-4. `/tk:do-all`에 준해 실행 가능한 task 처리. 코드 수정이 포함된 task는 task별 검증 통과 후 local commit으로 남깁니다.
-5. `/tk:gap`으로 재평가 1회
+1. `/tk:gap`에 준해 gap 분석. 단 `/tk:auto` 내부에서는 API/contract cross-check 질문으로 멈추지 않고 확인 필요를 follow-up으로 기록합니다.
+2. 첫 gap 판정을 확인합니다. `NO_GAPS_FOUND`면 구현 loop를 시작하지 않고 `/tk:close` 또는 `/tk:next`를 추천합니다. `UNVERIFIABLE`이고 실행 가능한 구현 gap이 없으면 확인 필요만 보고하고 멈춥니다. `GAPS_FOUND`이거나 실행 가능한 gap이 있고 API/contract만 follow-up으로 남길 수 있으면 다음 단계로 진행합니다.
+3. `/tk:plan`에 준해 실행계획 정리. API나 공식 contract를 확인할 수 없고 사용자가 범위 밖이라고 명시하지 않았으면 기본값 `mock_api_contract`로 진행합니다.
+4. `/tk:breakdown`에 준해 task 분해. `mock_api_contract` slice는 일반 task를 계속 만들고 `TK-API-*` follow-up만 blocked로 둡니다.
+5. `/tk:do-all`에 준해 실행 가능한 task 처리. 코드 수정이 포함된 task는 task별 검증 통과 후 local commit으로 남깁니다.
+6. `/tk:gap`으로 재평가 1회
 
 ## TDD와 실행 방식
 

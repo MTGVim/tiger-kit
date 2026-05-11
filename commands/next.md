@@ -19,7 +19,7 @@ description: .tigerkit/{work_id} 상태를 보고 지금 해야 할 다음 comma
 
 | 상태 | 근거 | 추천 |
 |---|---|---|
-| `req-needed` | `requirements.md` 없음 | `/tk:prep` |
+| `req-needed` | `requirements.md` 없음 | source 문서나 메모가 있으면 `/tk:prep`, 아이디어가 흐릿하면 `/tk:interview`; 불명확하면 어느 쪽인지 질문 |
 | `gap-needed` | `requirements.md` 있음, `gap.md` 없음 | `/tk:gap` |
 | `plan-needed` | `gap.md` 있음, `plan.md` 없음 | `/tk:plan` |
 | `tasks-needed` | `plan.md` 또는 `gap.md` 있음, `tasks.md` 없음 | `/tk:breakdown` |
