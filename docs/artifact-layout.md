@@ -37,7 +37,7 @@
 | `gap.md` | 현재 상태와 `requirements.md` 사이의 coverage/gap 분석. `API Contract Drift`를 항상 포함 |
 | `gap.meta.json` | `gap.md` 재사용 여부를 판단하는 캐시 메타데이터 |
 | `plan.md` | 구현 묶음, API Readiness, 선행관계, 검증 순서를 담은 canonical 실행계획 |
-| `tasks.md` | 작은 실행 task, API Follow-up Tasks, 상태, 포함 작업 요약, 완료 기준, blocker 목록 |
+| `tasks.md` | 작은 실행 task, API Follow-up Tasks, Clarification Actions, Shared Blockers, 상태, 포함 작업 요약, 완료 기준 |
 | `close.md` | 선택적으로 남기는 세션 종료 요약, 남은 gap, 검증 상태, cleanup 후보 |
 
 ## 작업 흐름 단계
@@ -48,8 +48,9 @@
 | `gap-needed` | `requirements.md`는 있고 `gap.md` 없음 | `/tk:gap` 실행 |
 | `plan-needed` | `gap.md`는 있고 `plan.md` 없음 | `/tk:plan` 실행 |
 | `tasks-needed` | `plan.md` 또는 `gap.md`는 있고 `tasks.md` 없음 | `/tk:breakdown` 실행 |
+| `clarification-needed` | unresolved `Clarification Actions` 있음 | `/tk:grill-me`, targeted question, brainstorming, assumption 선택 |
 | `task-ready` | 실행 가능한 `todo` 또는 `in_progress` task 있음 | `/tk:do` 또는 `/tk:do-all` 실행 |
-| `blocked` | 실행 가능한 일반 task가 없고 `blocked`만 있음 | blocker 해결 또는 API/contract 확인 |
+| `blocked` | 실행 가능한 일반 task가 없고 외부 `blocked` 또는 `Shared Blockers`만 있음 | blocker 해결 또는 API/contract 확인 |
 | `re-eval-needed` | 구현 후 gap 재확인 필요 | `/tk:gap` 실행 |
 | `close-ready` | gap 재확인까지 끝났고 새 gap 없음 | `/tk:close` 실행 |
 
@@ -61,6 +62,12 @@ API나 공식 contract가 없지만 기능을 진행해야 하면 `/tk:plan`은 
 
 `/tk:breakdown`은 `mock_api_contract` slice의 일반 task를 전부 `blocked`로 만들지 않고, 별도 `API Follow-up Tasks`에 공유 API capability별 `TK-API-*` 항목 하나만 둡니다. unresolved `TK-API-*`는 `/tk:close`에서 merge blocker입니다.
 
+## 모호함과 외부 blocker
+
+`spec_unclear`나 모호한 요구사항은 terminal `blocked`가 아닙니다. `tasks.md`의 `Clarification Actions`에 `TK-CLARIFY-<n>` 항목으로 올리고 `/tk:grill-me`, targeted question, brainstorming, assumption 선택 중 다음 행동을 남깁니다.
+
+`blocked`와 `Shared Blockers`는 외부에서만 풀 수 있는 `api_contract_missing`, `permission_required`, `external_dependency_unavailable`, `human_decision_required` 같은 상태에 사용합니다. 같은 blocker를 공유하는 task는 task별로 복제하지 않고 `Shared Blockers` 항목 하나에 영향 task와 해소 조건을 모읍니다.
+
 ## task 상태값
 
 `tasks.md`의 상태값은 아래만 사용합니다.
@@ -69,7 +76,7 @@ API나 공식 contract가 없지만 기능을 진행해야 하면 `/tk:plan`은 
 |---|---|
 | `todo` | 아직 시작하지 않은 실행 가능 task |
 | `in_progress` | 현재 진행 중인 task |
-| `blocked` | 외부 결정, 정보, 선행 작업 때문에 진행 불가 |
+| `blocked` | 외부 결정, 접근 권한, 정보/API, 의존성 때문에 진행 불가 |
 | `done` | 완료 기준을 충족한 task |
 | `dropped` | 더 이상 진행하지 않기로 한 task |
 

@@ -23,14 +23,16 @@ description: .tigerkit/{work_id} 상태를 보고 지금 해야 할 다음 comma
 | `gap-needed` | `requirements.md` 있음, `gap.md` 없음 | `/tk:gap` |
 | `plan-needed` | `gap.md` 있음, `plan.md` 없음 | `/tk:plan` |
 | `tasks-needed` | `plan.md` 또는 `gap.md` 있음, `tasks.md` 없음 | `/tk:breakdown` |
+| `clarification-needed` | `Clarification Actions`에 unresolved 항목 있음 | `/tk:grill-me`, brainstorming, targeted question, assumption 선택 중 하나 |
 | `task-ready` | `tasks.md`에 `in_progress` 또는 `todo` 있음 | 다음 task 1개와 `/tk:do` |
-| `blocked` | 실행 가능 task 없고 `blocked`만 있음 | blocker 해결에 필요한 사용자 결정 |
+| `blocked` | 실행 가능 task 없고 외부 `blocked` 또는 `Shared Blockers`만 있음 | blocker 해결에 필요한 사용자 결정 또는 접근 확보 |
 | `re-eval-needed` | task가 모두 `done`/`dropped`이고 gap 재확인 전 | `/tk:gap` |
 | `close-ready` | gap 재확인까지 끝났고 새 gap 없음 | `/tk:close` |
 
 ## task 선택 규칙
 
 `tasks.md`가 있는 경우:
+- unresolved `Clarification Actions`가 있으면 모호함을 `blocked`로 보고하지 말고 clarification action과 추천 경로(`/tk:grill-me`, targeted question, brainstorming, assumption 선택)를 먼저 표시합니다.
 - 일반 `in_progress`가 있으면 그것을 우선 표시합니다.
 - 일반 `in_progress`가 없으면 첫 번째 일반 `todo`를 표시합니다.
 - `blocked`, `done`, `dropped`는 실행 후보에서 제외합니다.

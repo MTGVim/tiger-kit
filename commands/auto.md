@@ -41,8 +41,8 @@ description: requirements.md가 준비된 뒤 gap -> plan -> breakdown -> do-all
 
 - work_id 불명확
 - `requirements.md` 부재
-- blocker 존재. 단 `mock_api_contract`에 따른 `TK-API-* blocked`만 있으면 일반 task 진행은 멈추지 않고 merge blocker로 보고합니다.
-- 요구사항 모호함
+- 외부 blocker 존재. 단 `mock_api_contract`에 따른 `TK-API-* blocked`만 있으면 일반 task 진행은 멈추지 않고 merge blocker로 보고합니다.
+- 요구사항 모호함. 이 경우 `blocked`로 만들지 않고 `Clarification Actions`와 다음 clarification 경로를 보고합니다.
 - 검증 실패 반복
 - 기반 브랜치에서 변경 승인이 필요함
 - 새 gap이 생겨 계획 재합의가 필요함

@@ -87,6 +87,12 @@ agent 사용 여부와 관계없이 task 선택, 상태 갱신, 최종 검증, l
 
 선택한 task가 `API Follow-up Tasks`의 `TK-API-*`이면 실제 API나 공식 contract를 기준으로 assumed contract와 mock 경계를 교체합니다. 관련 `FIXME(TK-API-<n>)` 또는 `TODO(TK-API-<n>)` marker를 해결하거나, 실제 API 차단 사유가 남으면 marker와 task blocker 이유를 갱신합니다. 교체 완료 전에는 `done`으로 표시하지 않습니다.
 
+## ambiguity와 external blocker 처리
+
+구현 중 요구사항 모호함이 드러나면 task를 terminal `blocked`로 만들지 않습니다. `Clarification Actions`에 `TK-CLARIFY-<n>` 항목을 남기고 `/tk:grill-me`, brainstorming, targeted question, assumption 선택 중 하나를 다음 행동으로 제안합니다. 사용자가 assumption을 선택하면 그 가정을 task/gap에 명시하고 계속할 수 있습니다.
+
+외부에서만 풀 수 있는 `api_contract_missing`, `permission_required`, `external_dependency_unavailable`, `human_decision_required`는 `Shared Blockers`에 모아 영향 task와 해소 조건을 기록합니다.
+
 ## 구현 루프
 
 1. task를 `in_progress`로 표시합니다.
@@ -100,7 +106,7 @@ agent 사용 여부와 관계없이 task 선택, 상태 갱신, 최종 검증, l
 9. 완료 기준을 충족하면 task를 `done`으로 갱신합니다.
 10. 코드 수정이 포함됐고 검증이 통과했으면 관련 변경 파일만 stage해 새 commit을 만듭니다. commit message는 repo의 최근 commit 스타일에 맞춥니다.
 11. commit hook이 실패하면 우회하지 말고 원인을 고친 뒤 새 commit을 다시 시도합니다.
-12. 실패하거나 막히면 `blocked`로 갱신하고 이유를 남깁니다.
+12. 실패하거나 외부 blocker에 막히면 `blocked` 또는 `Shared Blockers`로 갱신하고 이유를 남깁니다. 요구사항 모호함이면 `blocked`가 아니라 `Clarification Actions`로 올립니다.
 
 ## 안전 경계
 
