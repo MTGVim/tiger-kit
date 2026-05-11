@@ -1,5 +1,7 @@
 # TigerKit
 
+![TigerKit](assets/tigerkit-cover.png)
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
 
 TigerKit(`tiger-kit`, plugin `tk`)은 요구사항 정제, 긴 답변 해독, 요구사항 대비 갭 확인, 실행 task 분해, 세션 정리, 응답 초압축, 그리고 가벼운 저장소 knowledge layer 유지보수를 위한 Claude Code 플러그인입니다.
