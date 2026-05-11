@@ -6,18 +6,18 @@ description: requirements.md 또는 gap.md를 기준으로 구현 묶음, 선행
 
 사용자에게는 한글로 답합니다. 작업 산출물도 한글로 작성합니다. 단, 인용한 원문, 코드, 명령어, 파일 경로, 식별자는 원문 그대로 유지할 수 있습니다.
 
-목표: `.tigerkit/{work_id}/requirements.md` 또는 `.tigerkit/{work_id}/gap.md`를 기준으로 구현 전에 합의해야 할 실행계획을 작성합니다.
+목표: `.tigerkit/{work_id}/requirements.md`, `.tigerkit/{work_id}/gap.md`, 또는 `/tk:prep`, `/tk:interview`, `issue-to-task`가 제안한 queue 변경 후보를 기준으로 구현 전에 합의해야 할 실행계획을 작성합니다.
 
-기준 파일이 없거나 어떤 작업을 계획해야 하는지 불명확하면 계획을 만들지 말고 `/tk:prep` 또는 `/tk:gap`로 기준을 먼저 정리하라고 안내합니다.
+기준 파일이나 queue 변경 후보가 없거나 어떤 작업을 계획해야 하는지 불명확하면 계획을 만들지 말고, source 문서나 메모가 있으면 `/tk:prep`, 아이디어가 흐릿하면 `/tk:interview`, `requirements.md`만 있으면 `/tk:gap`으로 기준을 먼저 정리하라고 안내합니다.
 
 기본 산출물:
 - `.tigerkit/{work_id}/plan.md`
 
-계획에는 Revision Notes, Context, Recommended Approach, API Readiness, Task Breakdown, Dependencies, Verification을 포함합니다.
+계획에는 `수정 기록`, `맥락`, `권장 접근`, `API 준비도`, `Task Breakdown`, `의존성`, `검증`을 포함합니다.
 
-`plan.md`는 항상 canonical 최신 계획입니다. 재실행 시 `plan.v2.md` 같은 버전 파일을 만들지 말고, 기존 `plan.md`, `gap.md`, `tasks.md`에서 유지/폐기/새로 배운 것/API readiness 변경을 읽어 상단 `Revision Notes`에 짧게 기록한 뒤 새 `plan.md`로 갱신합니다.
+`plan.md`는 항상 canonical 최신 계획입니다. 재실행 시 `plan.v2.md` 같은 버전 파일을 만들지 말고, 기존 `plan.md`, `gap.md`, `tasks.md`에서 유지/폐기/새로 배운 것/API 준비도 변경을 읽어 상단 `수정 기록`에 짧게 기록한 뒤 새 `plan.md`로 갱신합니다.
 
-`API Readiness`는 work_id 전체가 아니라 feature slice 단위 표로 작성합니다. 열은 `Feature Slice`, `Required API`, `Readiness`, `근거`, `Action`을 기본으로 합니다. `Readiness` 값은 아래만 사용합니다.
+`API 준비도`는 work_id 전체가 아니라 feature slice 단위 표로 작성합니다. 열은 `기능 조각`, `필요 API`, `준비도`, `근거`, `다음 행동`을 기본으로 합니다. `준비도` 값은 아래만 사용합니다.
 
 - `ready`: 실제 API 또는 공식 contract가 확인되어 정상 진행 가능
 - `mock_api_contract`: 실제 API와 공식 contract를 확인할 수 없어 assumed contract와 mock API로 진행
@@ -29,12 +29,14 @@ description: requirements.md 또는 gap.md를 기준으로 구현 묶음, 선행
 
 Agent 이름은 짧은 표기를 쓰되, plugin runtime이 `tk:tk-*`로 표시하면 그 namespaced 이름을 사용합니다.
 
-- API readiness 판단에 실제 API, 공식 contract, SDK docs 확인이 필요하면 `tk-sif-muna`를 사용합니다.
+- API 준비도 판단에 실제 API, 공식 contract, SDK docs 확인이 필요하면 `tk-sif-muna`를 사용합니다.
 - architecture trade-off, data integrity, 보안, 큰 refactor risk가 있으면 `tk-ru`로 계획을 압박 검토합니다.
 - UI slice의 prototype 또는 visual hierarchy 결정이 핵심이면 `tk-nemelex-xobeh`를 계획 검토에 사용할 수 있습니다.
 - 시각 자료가 계획 입력이면 `tk-ashenzari`로 관찰 결과를 먼저 구조화합니다.
 
-agent를 사용해도 canonical `plan.md`, `Revision Notes`, task 분해 전 승인 경계는 유지합니다.
+agent를 사용해도 canonical `plan.md`, `수정 기록`, task 분해 전 승인 경계는 유지합니다.
+
+queue 변경 후보가 입력이면 기존 `requirements.md`, `gap.md`, `tasks.md`를 함께 읽고 canonical `plan.md`에 반영/보류/폐기 판단을 정리합니다.
 
 승인 전에는 `.tigerkit/{work_id}/tasks.md`를 만들지 않습니다. 명시적으로 요청받지 않는 한 코드를 구현하지 않습니다.
 

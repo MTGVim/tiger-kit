@@ -54,6 +54,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `/tk:help`: 권장 loop와 command 선택 기준을 짧게 안내한다.
 - `/tk:mwhat`: 긴 LLM 답변이나 애매한 설명을 짧고 실행 가능하게 해독한다.
+- `/tk:interview`: 흐릿한 아이디어를 brainstorming과 deep interview로 좁혀 `requirements.md` 기준 또는 queue 반영 후보로 정리한다.
 - `/tk:prep`: 외부 요구사항 소스와 대화 맥락을 `requirements.md` 기준 문서로 정리한다.
 - `/tk:gap`: `requirements.md` 대비 현재 구현, 문서, 테스트의 남은 차이를 확인하고 `gap.md`를 작성한다.
 - `/tk:plan`: `gap.md` 기준으로 실행계획을 정리한다.

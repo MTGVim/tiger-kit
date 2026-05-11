@@ -14,9 +14,9 @@
   close.md
 ```
 
-`/tk:prep`는 입력 자료와 대화 맥락을 `requirements.md`로 정리합니다. `/tk:gap`은 현재 repo 상태와 `requirements.md`의 차이를 `gap.md`에 기록합니다. `/tk:plan`은 gap 결과를 승인 가능한 실행계획으로 정리합니다. `/tk:breakdown`은 gap 또는 plan을 `tasks.md`로 내립니다. `/tk:state`는 `.tigerkit/{work_id}` 전체 상태를 읽습니다. `/tk:close`는 세션 종료 요약을 필요할 때 `close.md`로 남길 수 있습니다.
+`/tk:interview`는 source 문서가 아직 없을 때 흐릿한 아이디어를 대화로 좁혀 `requirements.md`와 `requirements.meta.json`으로 정리합니다. `/tk:prep`는 이미 있는 입력 자료와 대화 맥락을 `requirements.md`와 `requirements.meta.json`으로 정규화합니다. `/tk:gap`은 현재 repo 상태와 `requirements.md`의 차이를 `gap.md`에 기록합니다. `/tk:plan`은 gap 결과를 승인 가능한 실행계획으로 정리합니다. `/tk:breakdown`은 gap 또는 plan을 `tasks.md`로 내립니다. `/tk:state`는 `.tigerkit/{work_id}` 전체 상태를 읽습니다. `/tk:close`는 세션 종료 요약을 필요할 때 `close.md`로 남길 수 있습니다.
 
-`/tk:reflect`는 maintenance alias로 유지되지만 `prep → gap → plan → breakdown → do/do-all → gap → close` 라이프사이클의 필수 단계는 아닙니다.
+`/tk:reflect`는 maintenance alias로 유지되지만 `interview/prep → gap → plan → breakdown → do/do-all → gap → close` 라이프사이클의 필수 단계는 아닙니다.
 
 ## 브랜치 이름과 작업 ID
 
@@ -33,10 +33,10 @@
 |---|---|
 | `inputs/` | `requirements.md`를 만들 때 참고한 원문 자료, 메모, 캡처, 참고 코드 보관 위치 |
 | `requirements.md` | 이번 작업의 정규화된 요구사항 기준 문서 |
-| `requirements.meta.json` | `requirements.md` 재사용 여부를 판단하는 캐시 메타데이터 |
-| `gap.md` | 현재 상태와 `requirements.md` 사이의 coverage/gap 분석. `API Contract Drift`를 항상 포함 |
+| `requirements.meta.json` | `/tk:prep`의 cache 판단 또는 `/tk:interview`의 결정 출처와 범위를 기록하는 메타데이터 |
+| `gap.md` | 현재 상태와 `requirements.md` 사이의 coverage/gap 분석. `API 계약 차이`를 항상 포함 |
 | `gap.meta.json` | `gap.md` 재사용 여부를 판단하는 캐시 메타데이터 |
-| `plan.md` | 구현 묶음, API Readiness, 선행관계, 검증 순서를 담은 canonical 실행계획 |
+| `plan.md` | 구현 묶음, API 준비도, 선행관계, 검증 순서를 담은 canonical 실행계획 |
 | `tasks.md` | 작은 실행 task, API Follow-up Tasks, Clarification Actions, Shared Blockers, 상태, 포함 작업 요약, 완료 기준 |
 | `close.md` | 선택적으로 남기는 세션 종료 요약, 남은 gap, 검증 상태, cleanup 후보 |
 
@@ -44,7 +44,7 @@
 
 | 단계 | 근거 | 추천 다음 행동 |
 |---|---|---|
-| `req-needed` | `requirements.md` 없음 | `/tk:prep` 실행 |
+| `req-needed` | `requirements.md` 없음 | source 문서나 메모가 있으면 `/tk:prep`, 아이디어가 흐릿하면 `/tk:interview`, 불명확하면 질문 |
 | `gap-needed` | `requirements.md`는 있고 `gap.md` 없음 | `/tk:gap` 실행 |
 | `plan-needed` | `gap.md`는 있고 `plan.md` 없음 | `/tk:plan` 실행 |
 | `tasks-needed` | `plan.md` 또는 `gap.md`는 있고 `tasks.md` 없음 | `/tk:breakdown` 실행 |
@@ -58,7 +58,7 @@
 
 ## API 의존성 흐름
 
-API나 공식 contract가 없지만 기능을 진행해야 하면 `/tk:plan`은 feature slice 단위 `API Readiness`에서 `mock_api_contract`를 사용할 수 있습니다. 이 상태는 assumed contract와 mock API로 개발/검증을 계속하는 뜻이며 완료나 merge-ready를 뜻하지 않습니다.
+API나 공식 contract가 없지만 기능을 진행해야 하면 `/tk:plan`은 feature slice 단위 `API 준비도`에서 `mock_api_contract`를 사용할 수 있습니다. 이 상태는 assumed contract와 mock API로 개발/검증을 계속하는 뜻이며 완료나 merge-ready를 뜻하지 않습니다.
 
 `/tk:breakdown`은 `mock_api_contract` slice의 일반 task를 전부 `blocked`로 만들지 않고, 별도 `API Follow-up Tasks`에 공유 API capability별 `TK-API-*` 항목 하나만 둡니다. unresolved `TK-API-*`는 `/tk:close`에서 merge blocker입니다.
 
@@ -82,7 +82,9 @@ API나 공식 contract가 없지만 기능을 진행해야 하면 `/tk:plan`은 
 
 ## 캐시 정책
 
-`/tk:prep`는 입력 자료 해시, prep 지시문 버전, 범위 해시, input identity가 같으면 기존 `requirements.md`를 재사용합니다. 하나라도 다르거나 `--force`가 있으면 다시 생성합니다.
+`/tk:prep`는 `input_source_hash`, `prep_prompt_version`, `scope_hash`, `input_identities`가 같으면 기존 `requirements.md`를 재사용합니다. 하나라도 다르거나 `--force`가 있으면 다시 생성합니다.
+
+`/tk:interview`는 `requirements.meta.json`에 `source_type: "interview"`, interview 지시문 버전, 범위 해시, conversation/decision hash, input identity, provenance를 남깁니다. 기본 목적은 cache보다 결정 출처 추적이며, `source_type`, interview 지시문 버전, 범위 해시, conversation/decision hash, input identity가 모두 일치할 때만 기존 `requirements.md`를 재사용합니다.
 
 `/tk:gap`은 현재 git commit SHA, `requirements.md` 해시, gap 지시문 버전, 범위 해시가 같고 작업 트리가 clean이면 기존 `gap.md`를 재사용합니다. 하나라도 다르거나 작업 트리가 dirty이거나 `--force`가 있으면 다시 분석합니다.
 
