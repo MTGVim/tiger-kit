@@ -62,6 +62,10 @@ sub-agent를 선택하는 경우:
 
 sub-agent를 쓴 경우에도 최종 diff와 검증 결과는 main agent가 확인합니다.
 
+## `mock_api_contract` task 처리
+
+선택한 task가 `mock_api_contract` slice를 구현한다면 mock API는 외부 API boundary로만 둡니다. mock boundary 파일에는 `FIXME(TK-API-<n>)` marker를 남기고, 저장소 규칙상 `FIXME`가 금지되면 `TODO(TK-API-<n>)`로 낮춥니다. 검증은 mock API 기준 golden path, loading, error를 포함하고, empty state는 list/search/nullable data slice일 때 포함합니다.
+
 ## 구현 루프
 
 1. task를 `in_progress`로 표시합니다.

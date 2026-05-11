@@ -34,10 +34,10 @@
 | `inputs/` | `requirements.md`를 만들 때 참고한 원문 자료, 메모, 캡처, 참고 코드 보관 위치 |
 | `requirements.md` | 이번 작업의 정규화된 요구사항 기준 문서 |
 | `requirements.meta.json` | `requirements.md` 재사용 여부를 판단하는 캐시 메타데이터 |
-| `gap.md` | 현재 상태와 `requirements.md` 사이의 coverage/gap 분석 |
+| `gap.md` | 현재 상태와 `requirements.md` 사이의 coverage/gap 분석. `API Contract Drift`를 항상 포함 |
 | `gap.meta.json` | `gap.md` 재사용 여부를 판단하는 캐시 메타데이터 |
-| `plan.md` | 구현 묶음, 선행관계, 검증 순서를 담은 실행계획 |
-| `tasks.md` | 작은 실행 task, 상태, 완료 기준, blocker 목록 |
+| `plan.md` | 구현 묶음, API Readiness, 선행관계, 검증 순서를 담은 canonical 실행계획 |
+| `tasks.md` | 작은 실행 task, API Follow-up Tasks, 상태, 포함 작업 요약, 완료 기준, blocker 목록 |
 | `close.md` | 선택적으로 남기는 세션 종료 요약, 남은 gap, 검증 상태, cleanup 후보 |
 
 ## 작업 흐름 단계
@@ -52,7 +52,13 @@
 | `re-eval-needed` | 구현 후 gap 재확인 필요 | `/tk:gap` 실행 |
 | `close-needed` | gap 재확인까지 끝났고 새 gap 없음 | `/tk:close` 실행 |
 
-`/tk:state`는 위 상태를 요약해 보여주고, `/tk:next`는 위 상태를 바탕으로 다음 command나 다음 task 1개를 추천합니다. source나 work_id가 불명확하면 추측하지 않고 사용자에게 묻습니다.
+`/tk:state`는 위 상태를 요약해 보여주고, `/tk:next`는 위 상태를 바탕으로 다음 command나 다음 task 1개를 추천합니다. task를 보여줄 때는 task ID만 적지 말고 `포함 작업` 같은 짧은 요약으로 묶인 gap/작업을 함께 보여줍니다. source나 work_id가 불명확하면 추측하지 않고 사용자에게 묻습니다.
+
+## API 의존성 흐름
+
+API나 공식 contract가 없지만 기능을 진행해야 하면 `/tk:plan`은 feature slice 단위 `API Readiness`에서 `mock_api_contract`를 사용할 수 있습니다. 이 상태는 assumed contract와 mock API로 개발/검증을 계속하는 뜻이며 완료나 merge-ready를 뜻하지 않습니다.
+
+`/tk:breakdown`은 `mock_api_contract` slice의 일반 task를 전부 `blocked`로 만들지 않고, 별도 `API Follow-up Tasks`에 공유 API capability별 `TK-API-*` 항목 하나만 둡니다. unresolved `TK-API-*`는 `/tk:close`에서 merge blocker입니다.
 
 ## task 상태값
 
