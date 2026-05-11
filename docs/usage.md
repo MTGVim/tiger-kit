@@ -348,7 +348,7 @@ skill-creator 말고 짧은 SKILL.md로 정리해줘.
 /tk:review
 ```
 
-출력은 `Review Brief`입니다. review scope, 변경 요약, 기대 동작, verify 방법, reviewer가 봐야 할 risk를 포함합니다. 사용 가능한 외부 review surface가 없고 TigerKit agent가 사용 가능하면 `tk-ru`를 reviewer로 사용할 수 있습니다. 둘 다 없으면 `Review Brief`만 남기고 멈춥니다.
+출력은 `Review Brief`입니다. review scope, 변경 요약, 기대 동작, verify 방법, reviewer가 봐야 할 risk를 포함합니다. 사용 가능한 외부 review surface가 없고 TigerKit agent가 사용 가능하면 `tk-ru`를 reviewer로 사용할 수 있습니다. 외부 review를 요청하기 전에 코드베이스 내부 맥락 정리가 필요할 때도 `tk-ru`를 사용할 수 있습니다. 둘 다 없으면 `Review Brief`만 남기고 멈춥니다.
 
 ## 17. review 반영
 

@@ -350,7 +350,7 @@
       "id": 21,
       "name": "review-brief-request",
       "prompt": "You are evaluating the TigerKit review command instructions. A task has just been completed and the user runs: /tk:review. Describe expected behavior. Do not write files.",
-      "expected_output": "Should prepare a concise Review Brief with review scope, what changed, expected behavior, diff/files or commit range, verification method, and specific risks/questions for the reviewer. It may connect to an available external review surface but should not commit, push, or create a PR without approval. If no external review surface exists and TigerKit agents are available, it may use tk-ru; if neither exists, it should stop after the Review Brief. API readiness review may include tk-sif-muna, UI review tk-nemelex-xobeh, and visual evidence tk-ashenzari.",
+      "expected_output": "Should prepare a concise Review Brief with review scope, what changed, expected behavior, diff/files or commit range, verification method, and specific risks/questions for the reviewer. It may connect to an available external review surface but should not commit, push, or create a PR without approval. If no external review surface exists and TigerKit agents are available, it may use tk-ru; if neither exists, it should stop after the Review Brief. Before requesting external review, it may also use tk-ru to organize internal codebase context without replacing the external review surface. API readiness review may include tk-sif-muna, UI review tk-nemelex-xobeh, and visual evidence tk-ashenzari.",
       "files": [],
       "expectations": [
         "Creates a Review Brief",
@@ -361,6 +361,7 @@
         "Does not commit, push, or create PRs without approval",
         "Uses tk-ru as internal review surface when no external review mechanism is available and TigerKit agents are available",
         "Falls back to Review Brief only when neither external review surface nor TigerKit reviewer agent is available",
+        "Allows tk-ru before external review when internal codebase context needs to be organized without replacing the external review surface",
         "Does not pass full session history to reviewer agents"
       ]
     },
