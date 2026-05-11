@@ -56,6 +56,8 @@ description: 코드 리뷰 피드백을 검증하고, 맞는 것만 순서대로
 
 ## Agent routing
 
+Agent 이름은 짧은 표기를 쓰되, plugin runtime이 `tk:tk-*`로 표시하면 그 namespaced 이름을 사용합니다.
+
 피드백 검증과 trade-off 판단은 `tk-ru`를 사용할 수 있습니다. API/contract 관련 피드백은 `tk-sif-muna`를 사용할 수 있습니다. cleanup, docs hygiene, 작은 정리성 patch는 `tk-elyvilon`을 사용할 수 있습니다. 실제 bounded implementation이 명확하면 `tk-trog`를 사용할 수 있습니다.
 
 agent를 사용해도 최종 반영 여부, 검증, task 상태, local commit은 이 명령을 실행하는 main agent가 책임집니다.

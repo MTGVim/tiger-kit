@@ -238,7 +238,7 @@
       "id": 15,
       "name": "do-single-task-tdd-judgment",
       "prompt": "You are evaluating the TigerKit do command instructions. tasks.md contains T-003: fix checkout state transition bug with observable behavior and existing tests. The user runs: /tk:do T-003. Describe expected behavior. Do not write files.",
-      "expected_output": "Should select T-003, recommend TDD because it is behavior/state/bug-fix work with regression risk, use a vertical red-green-refactor loop through public interfaces, choose inline or sub-agent based on scope, verify, update task state, commit the code-changing task after successful verification, and avoid push/PR without approval. For sub-agent mode, it should route bounded implementation to tk-trog, API follow-ups to tk-sif-muna, UI work to tk-nemelex-xobeh, visual artifact checks to tk-ashenzari, and risk review to tk-ru.",
+      "expected_output": "Should select T-003, recommend TDD because it is behavior/state/bug-fix work with regression risk, use a vertical red-green-refactor loop through public interfaces, choose inline or sub-agent based on scope, verify, update task state, commit the code-changing task after successful verification, and avoid push/PR without approval. For sub-agent mode, it should route bounded implementation to tk-trog, API follow-ups to tk-sif-muna, cleanup/docs hygiene to tk-elyvilon, UI work to tk-nemelex-xobeh, visual artifact checks to tk-ashenzari, and risk review to tk-ru.",
       "files": [],
       "expectations": [
         "Selects the requested task ID",
@@ -252,6 +252,7 @@
         "Does not push or create PRs without approval",
         "Routes bounded implementation to tk-trog when sub-agent mode is useful",
         "Routes API follow-up or contract replacement work to tk-sif-muna when needed",
+        "Routes cleanup or docs-hygiene consistency work to tk-elyvilon when needed",
         "Keeps final diff review, verification, task update, and local commit responsibility with the main agent"
       ]
     },
@@ -275,7 +276,7 @@
       "id": 17,
       "name": "do-all-processes-tasks-sequentially",
       "prompt": "You are evaluating the TigerKit do-all command instructions. tasks.md has one in_progress task, two todo tasks, and one blocked task. The user runs: /tk:do-all. Describe expected behavior. Do not write files.",
-      "expected_output": "Should process executable tasks one at a time, in_progress first then todo tasks, applying /tk:do judgment per task. It should skip blocked tasks except that TK-API-* blocked follow-ups do not stop mock-based general task implementation; stop on verification failure or ambiguity, update task status after each task, commit each code-changing task after successful verification, and not push/PR without approval. If all executable general tasks complete and no general blockers remain, it should run exactly one tail gap check, update gap.md if new gaps exist, and stop rather than starting another implementation loop. For each task it should re-evaluate agent routing and may use independent agents inside a task, but main agent must merge diff, verify, and commit task-by-task.",
+      "expected_output": "Should process executable tasks one at a time, in_progress first then todo tasks, applying /tk:do judgment per task. It should skip blocked tasks except that TK-API-* blocked follow-ups do not stop mock-based general task implementation; stop on verification failure or ambiguity, update task status after each task, commit each code-changing task after successful verification, and not push/PR without approval. If all executable general tasks complete and no general blockers remain, it should run exactly one tail gap check, update gap.md if new gaps exist, and stop rather than starting another implementation loop. For each task it should re-evaluate agent routing, including tk-elyvilon for cleanup/docs hygiene, and may use independent agents inside a task, but main agent must merge diff, verify, and commit task-by-task.",
       "files": [],
       "expectations": [
         "Processes tasks one at a time",
@@ -293,6 +294,7 @@
         "Recommends /tk:plan when tail gap check finds new gaps",
         "Recommends /tk:close only when tail gap check finds no new gaps and no unresolved TK-API-* remains",
         "Re-evaluates agent routing for each task",
+        "Routes cleanup or docs-hygiene tasks to tk-elyvilon",
         "Allows parallel agents only for independent work within a task with low conflict risk",
         "Keeps task-by-task verification and commits under main agent control"
       ]
@@ -329,7 +331,7 @@
       "id": 20,
       "name": "auto-one-cycle",
       "prompt": "You are evaluating the TigerKit auto command instructions. requirements.md exists and work_id is clear. The user runs: /tk:auto. Describe expected behavior. Do not write files.",
-      "expected_output": "Should run exactly one cycle of gap -> plan -> breakdown -> do-all -> gap. If API or official contract cannot be verified and the user has not marked it out of scope, it should continue with mock_api_contract and TK-API follow-up blockers. During do-all, code-changing tasks should be committed after successful verification. It should stop if general blockers, ambiguity, verification failures, or new gaps require re-planning. It must not automatically start a second cycle. During do-all it follows the same agent routing rules as /tk:do-all.",
+      "expected_output": "Should run exactly one cycle of gap -> plan -> breakdown -> do-all -> gap. If API or official contract cannot be verified and the user has not marked it out of scope, it should continue with mock_api_contract and TK-API follow-up blockers. During do-all, code-changing tasks should be committed after successful verification. It should stop if general blockers, ambiguity, verification failures, or new gaps require re-planning. It must not automatically start a second cycle. During do-all it follows the same agent routing rules as /tk:do-all, including tk-elyvilon for cleanup/docs hygiene.",
       "files": [],
       "expectations": [
         "Requires clear work_id and requirements.md",
@@ -341,14 +343,14 @@
         "Stops on general blockers or ambiguity",
         "Recommends /tk:plan when new gaps appear after re-evaluation",
         "Does not automatically start a second cycle",
-        "Follows /tk:do-all agent routing during the implementation phase"
+        "Follows /tk:do-all agent routing during the implementation phase, including tk-elyvilon for cleanup/docs hygiene"
       ]
     },
     {
       "id": 21,
       "name": "review-brief-request",
       "prompt": "You are evaluating the TigerKit review command instructions. A task has just been completed and the user runs: /tk:review. Describe expected behavior. Do not write files.",
-      "expected_output": "Should prepare a concise Review Brief with review scope, what changed, expected behavior, diff/files or commit range, verification method, and specific risks/questions for the reviewer. It may connect to an available review surface but should not commit, push, or create a PR without approval. If no external review surface exists, it may use tk-ru; API readiness review may include tk-sif-muna, UI review tk-nemelex-xobeh, and visual evidence tk-ashenzari.",
+      "expected_output": "Should prepare a concise Review Brief with review scope, what changed, expected behavior, diff/files or commit range, verification method, and specific risks/questions for the reviewer. It may connect to an available external review surface but should not commit, push, or create a PR without approval. If no external review surface exists and TigerKit agents are available, it may use tk-ru; if neither exists, it should stop after the Review Brief. API readiness review may include tk-sif-muna, UI review tk-nemelex-xobeh, and visual evidence tk-ashenzari.",
       "files": [],
       "expectations": [
         "Creates a Review Brief",
@@ -357,7 +359,8 @@
         "Includes risks or questions for reviewer",
         "Does not dump full session history",
         "Does not commit, push, or create PRs without approval",
-        "Uses tk-ru as review surface when no external review mechanism is available",
+        "Uses tk-ru as internal review surface when no external review mechanism is available and TigerKit agents are available",
+        "Falls back to Review Brief only when neither external review surface nor TigerKit reviewer agent is available",
         "Does not pass full session history to reviewer agents"
       ]
     },
@@ -443,7 +446,7 @@
       "id": 27,
       "name": "agent-routing-command-owned",
       "prompt": "You are evaluating TigerKit agent orchestration. The user runs /tk:do on a task that includes API contract uncertainty, UI changes, and screenshot evidence. Describe how Claude should choose agents and who owns final workflow state. Do not write files.",
-      "expected_output": "Should keep TigerKit command-first workflow. It may use tk-sif-muna for API/contract uncertainty, tk-nemelex-xobeh for UI work, tk-ashenzari for screenshot evidence, tk-trog for bounded implementation, and tk-ru for risk review. Main agent must own task selection, artifact updates, final diff review, verification, task status, and local commit for code-changing work. Cleanup and docs-hygiene follow-up should route to tk-elyvilon.",
+      "expected_output": "Should keep TigerKit command-first workflow. It may use tk-sif-muna for API/contract uncertainty, tk-nemelex-xobeh for UI work, tk-ashenzari for screenshot evidence, tk-trog for bounded implementation, and tk-ru for risk review. Short tk-* names are shorthand; if runtime exposes tk:tk-* identifiers, it should use those namespaced IDs. Main agent must own task selection, artifact updates, final diff review, verification, task status, and local commit for code-changing work. Cleanup and docs-hygiene follow-up should route to tk-elyvilon.",
       "files": [],
       "expectations": [
         "Keeps command-first workflow rather than replacing commands with agents",
@@ -452,6 +455,8 @@
         "Uses tk-ashenzari for screenshot or visual artifact evidence",
         "Uses tk-trog only for clear bounded implementation",
         "Uses tk-ru for risk, review, or YAGNI judgment",
+        "Treats tk-* as short names and uses namespaced tk:tk-* identifiers when the plugin runtime exposes them",
+        "Keeps read-only agents on non-editing tools",
         "Keeps final artifact updates, verification, task status, and commits under main agent control",
         "Uses tk-elyvilon for cleanup, docs hygiene, and healing-style consistency work"
       ]
