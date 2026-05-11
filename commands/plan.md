@@ -27,10 +27,10 @@ description: requirements.md 또는 gap.md를 기준으로 구현 묶음, 선행
 
 ## Agent routing
 
-- API readiness 판단에 실제 API, 공식 contract, SDK docs 확인이 필요하면 `tk-api-librarian`을 사용합니다.
-- architecture trade-off, data integrity, 보안, 큰 refactor risk가 있으면 `tk-reviewer`로 계획을 압박 검토합니다.
-- UI slice의 prototype 또는 visual hierarchy 결정이 핵심이면 `tk-designer`를 계획 검토에 사용할 수 있습니다.
-- 시각 자료가 계획 입력이면 `tk-observer`로 관찰 결과를 먼저 구조화합니다.
+- API readiness 판단에 실제 API, 공식 contract, SDK docs 확인이 필요하면 `tk-sif-muna`을 사용합니다.
+- architecture trade-off, data integrity, 보안, 큰 refactor risk가 있으면 `tk-ru`로 계획을 압박 검토합니다.
+- UI slice의 prototype 또는 visual hierarchy 결정이 핵심이면 `tk-nemelex-xobeh`를 계획 검토에 사용할 수 있습니다.
+- 시각 자료가 계획 입력이면 `tk-ashenzari`로 관찰 결과를 먼저 구조화합니다.
 
 agent를 사용해도 canonical `plan.md`, `Revision Notes`, task 분해 전 승인 경계는 유지합니다.
 

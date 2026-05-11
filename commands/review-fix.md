@@ -54,6 +54,12 @@ description: 코드 리뷰 피드백을 검증하고, 맞는 것만 순서대로
 
 이 경우에는 기술 근거를 짧게 제시합니다.
 
+## Agent routing
+
+피드백 검증과 trade-off 판단은 `tk-ru`를 사용할 수 있습니다. API/contract 관련 피드백은 `tk-sif-muna`를 사용할 수 있습니다. cleanup, docs hygiene, 작은 정리성 patch는 `tk-elyvilon`을 사용할 수 있습니다. 실제 bounded implementation이 명확하면 `tk-trog`를 사용할 수 있습니다.
+
+agent를 사용해도 최종 반영 여부, 검증, task 상태, local commit은 이 명령을 실행하는 main agent가 책임집니다.
+
 ## 출력
 
 기본 출력은 `Review Response`입니다.

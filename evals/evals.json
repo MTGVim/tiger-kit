@@ -32,7 +32,7 @@
       "id": 2,
       "name": "gap-requirement-coverage",
       "prompt": "You are evaluating the TigerKit gap command instructions. A requirements document exists at .tigerkit/onboarding-copy/requirements.md, the repository has relevant docs and code paths, and the user runs: /tk:gap 방금 정리한 요구사항 대비 현재 구현 갭 분석해줘. Describe the expected report structure and the final user-facing response. Do not write files.",
-      "expected_output": "Should describe cache check based on git commit, requirements hash, gap prompt version, and scope; write/reuse gap.md with metadata; include Verdict, Requirement Coverage, Remaining Gaps, API Contract Drift, Unable to Verify, and Notes; Requirement Coverage, Remaining Gaps, API Contract Drift, and Unable to Verify must be Markdown tables even when empty; final chat response should not dump the full report and should include verdict, path, core gaps, and one next action. When API or visual artifact evidence is unclear, it may use tk-api-librarian or tk-observer as supporting agents while main agent owns the final gap.md verdict.",
+      "expected_output": "Should describe cache check based on git commit, requirements hash, gap prompt version, and scope; write/reuse gap.md with metadata; include Verdict, Requirement Coverage, Remaining Gaps, API Contract Drift, Unable to Verify, and Notes; Requirement Coverage, Remaining Gaps, API Contract Drift, and Unable to Verify must be Markdown tables even when empty; final chat response should not dump the full report and should include verdict, path, core gaps, and one next action. When API or visual artifact evidence is unclear, it may use tk-sif-muna or tk-ashenzari as supporting agents while main agent owns the final gap.md verdict.",
       "files": [],
       "expectations": [
         "Describes gap cache checking with git commit, requirements hash, prompt version, and scope",
@@ -44,7 +44,7 @@
         "Says API or contract absence should prompt a cross-check unless explicitly out of scope",
         "Says the chat response should not dump the full report and should include verdict, path, core gaps, and one next action",
         "Ends the user-facing response with '다음 추천: /tk:plan'",
-        "Allows tk-api-librarian for API/contract verification and tk-observer for visual artifact evidence",
+        "Allows tk-sif-muna for API/contract verification and tk-ashenzari for visual artifact evidence",
         "Keeps final gap.md and Verdict responsibility with the main command agent"
       ]
     },
@@ -69,7 +69,7 @@
       "id": 4,
       "name": "plan-no-task-before-approval",
       "prompt": "You are evaluating the TigerKit plan command instructions. A gap report exists at .tigerkit/github-issues/gap.md and the user runs: /tk:plan 각 gap당 task로 나눠서 실행계획 세워. Describe exactly what Claude should do before the user approves the plan. Do not write files.",
-      "expected_output": "Should read gap.md, produce an implementation plan with Revision Notes, Context, Recommended Approach, API Readiness, Task Breakdown, Dependencies, and Verification, but must not create tasks.md before approval. The response should make clear that implementation does not start automatically. It may use tk-api-librarian for API readiness and tk-reviewer for high-risk plan review, but must preserve canonical plan.md and no tasks before approval.",
+      "expected_output": "Should read gap.md, produce an implementation plan with Revision Notes, Context, Recommended Approach, API Readiness, Task Breakdown, Dependencies, and Verification, but must not create tasks.md before approval. The response should make clear that implementation does not start automatically. It may use tk-sif-muna for API readiness and tk-ru for high-risk plan review, but must preserve canonical plan.md and no tasks before approval.",
       "files": [],
       "expectations": [
         "Uses gap.md as the planning source",
@@ -78,8 +78,8 @@
         "Does not create tasks.md before approval",
         "Does not start code implementation automatically",
         "Ends the user-facing response with '다음 추천: /tk:breakdown'",
-        "Uses tk-api-librarian when API readiness needs real API or official contract confirmation",
-        "Uses tk-reviewer for architecture, correctness, or risk-heavy plan review when useful",
+        "Uses tk-sif-muna when API readiness needs real API or official contract confirmation",
+        "Uses tk-ru for architecture, correctness, or risk-heavy plan review when useful",
         "Preserves canonical plan.md and does not create tasks.md before approval even when agents are used"
       ]
     },
@@ -135,7 +135,7 @@
       "id": 8,
       "name": "prototype-ui-variants",
       "prompt": "You are evaluating the TigerKit prototype command instructions. The user runs: /tk:prototype settings billing 섹션 UI를 몇 가지로 비교해보고 싶어. Describe the expected approach. Do not write files.",
-      "expected_output": "Should treat this as a throwaway FE UI prototype, prefer mounting variants into an existing page, use ?variant= search params with three structurally different variants, include a floating switcher, hide it in production, and explain cleanup after a winner is chosen. If UI/UX judgment is central, it may use tk-designer; if screenshots or visual captures are input, it may use tk-observer.",
+      "expected_output": "Should treat this as a throwaway FE UI prototype, prefer mounting variants into an existing page, use ?variant= search params with three structurally different variants, include a floating switcher, hide it in production, and explain cleanup after a winner is chosen. If UI/UX judgment is central, it may use tk-nemelex-xobeh; if screenshots or visual captures are input, it may use tk-ashenzari.",
       "files": [],
       "expectations": [
         "Treats prototype as throwaway code answering one UI question",
@@ -146,8 +146,8 @@
         "Requires the switcher to be hidden in production builds",
         "Does not promote prototype code directly to production",
         "Explains deleting loser variants and switcher after a winner is chosen",
-        "Uses tk-designer for UI/UX variant design when useful",
-        "Uses tk-observer for screenshot or visual artifact interpretation when useful"
+        "Uses tk-nemelex-xobeh for UI/UX variant design when useful",
+        "Uses tk-ashenzari for screenshot or visual artifact interpretation when useful"
       ]
     },
     {
@@ -238,7 +238,7 @@
       "id": 15,
       "name": "do-single-task-tdd-judgment",
       "prompt": "You are evaluating the TigerKit do command instructions. tasks.md contains T-003: fix checkout state transition bug with observable behavior and existing tests. The user runs: /tk:do T-003. Describe expected behavior. Do not write files.",
-      "expected_output": "Should select T-003, recommend TDD because it is behavior/state/bug-fix work with regression risk, use a vertical red-green-refactor loop through public interfaces, choose inline or sub-agent based on scope, verify, update task state, commit the code-changing task after successful verification, and avoid push/PR without approval. For sub-agent mode, it should route bounded implementation to tk-fixer, API follow-ups to tk-api-librarian, UI work to tk-designer, visual artifact checks to tk-observer, and risk review to tk-reviewer.",
+      "expected_output": "Should select T-003, recommend TDD because it is behavior/state/bug-fix work with regression risk, use a vertical red-green-refactor loop through public interfaces, choose inline or sub-agent based on scope, verify, update task state, commit the code-changing task after successful verification, and avoid push/PR without approval. For sub-agent mode, it should route bounded implementation to tk-trog, API follow-ups to tk-sif-muna, UI work to tk-nemelex-xobeh, visual artifact checks to tk-ashenzari, and risk review to tk-ru.",
       "files": [],
       "expectations": [
         "Selects the requested task ID",
@@ -250,8 +250,8 @@
         "Updates task status after verification",
         "Creates a local commit after successful verification because the task changes code",
         "Does not push or create PRs without approval",
-        "Routes bounded implementation to tk-fixer when sub-agent mode is useful",
-        "Routes API follow-up or contract replacement work to tk-api-librarian when needed",
+        "Routes bounded implementation to tk-trog when sub-agent mode is useful",
+        "Routes API follow-up or contract replacement work to tk-sif-muna when needed",
         "Keeps final diff review, verification, task update, and local commit responsibility with the main agent"
       ]
     },
@@ -348,7 +348,7 @@
       "id": 21,
       "name": "review-brief-request",
       "prompt": "You are evaluating the TigerKit review command instructions. A task has just been completed and the user runs: /tk:review. Describe expected behavior. Do not write files.",
-      "expected_output": "Should prepare a concise Review Brief with review scope, what changed, expected behavior, diff/files or commit range, verification method, and specific risks/questions for the reviewer. It may connect to an available review surface but should not commit, push, or create a PR without approval. If no external review surface exists, it may use tk-reviewer; API readiness review may include tk-api-librarian, UI review tk-designer, and visual evidence tk-observer.",
+      "expected_output": "Should prepare a concise Review Brief with review scope, what changed, expected behavior, diff/files or commit range, verification method, and specific risks/questions for the reviewer. It may connect to an available review surface but should not commit, push, or create a PR without approval. If no external review surface exists, it may use tk-ru; API readiness review may include tk-sif-muna, UI review tk-nemelex-xobeh, and visual evidence tk-ashenzari.",
       "files": [],
       "expectations": [
         "Creates a Review Brief",
@@ -357,7 +357,7 @@
         "Includes risks or questions for reviewer",
         "Does not dump full session history",
         "Does not commit, push, or create PRs without approval",
-        "Uses tk-reviewer as review surface when no external review mechanism is available",
+        "Uses tk-ru as review surface when no external review mechanism is available",
         "Does not pass full session history to reviewer agents"
       ]
     },
@@ -365,7 +365,7 @@
       "id": 22,
       "name": "review-fix-verify-before-fix",
       "prompt": "You are evaluating the TigerKit review-fix command instructions. The user has review feedback with one unclear item and one likely incorrect suggestion, then runs: /tk:review-fix. Describe expected behavior. Do not write files.",
-      "expected_output": "Should avoid performative agreement, clarify unclear items before changing code, verify suggestions against the codebase, fix technically correct items one at a time, commit code-changing review fixes after successful verification, and push back with technical reasoning when a suggestion seems wrong. It must not blindly implement everything.",
+      "expected_output": "Should avoid performative agreement, clarify unclear items before changing code, verify suggestions against the codebase, fix technically correct items one at a time, commit code-changing review fixes after successful verification, and push back with technical reasoning when a suggestion seems wrong. It must not blindly implement everything. Cleanup or docs-hygiene review fixes may use tk-elyvilon, while trade-off validation uses tk-ru and API feedback uses tk-sif-muna.",
       "files": [],
       "expectations": [
         "Avoids performative agreement language",
@@ -374,7 +374,9 @@
         "Fixes items one at a time",
         "Allows technical pushback when reviewer is wrong",
         "Commits code-changing fixes after successful verification",
-        "Does not blindly implement all feedback"
+        "Does not blindly implement all feedback",
+        "May use tk-elyvilon for cleanup or docs-hygiene review fixes",
+        "Keeps final verification and commit responsibility with the main agent even when agents are used"
       ]
     },
     {
@@ -441,16 +443,17 @@
       "id": 27,
       "name": "agent-routing-command-owned",
       "prompt": "You are evaluating TigerKit agent orchestration. The user runs /tk:do on a task that includes API contract uncertainty, UI changes, and screenshot evidence. Describe how Claude should choose agents and who owns final workflow state. Do not write files.",
-      "expected_output": "Should keep TigerKit command-first workflow. It may use tk-api-librarian for API/contract uncertainty, tk-designer for UI work, tk-observer for screenshot evidence, tk-fixer for bounded implementation, and tk-reviewer for risk review. Main agent must own task selection, artifact updates, final diff review, verification, task status, and local commit for code-changing work.",
+      "expected_output": "Should keep TigerKit command-first workflow. It may use tk-sif-muna for API/contract uncertainty, tk-nemelex-xobeh for UI work, tk-ashenzari for screenshot evidence, tk-trog for bounded implementation, and tk-ru for risk review. Main agent must own task selection, artifact updates, final diff review, verification, task status, and local commit for code-changing work. Cleanup and docs-hygiene follow-up should route to tk-elyvilon.",
       "files": [],
       "expectations": [
         "Keeps command-first workflow rather than replacing commands with agents",
-        "Uses tk-api-librarian for API/contract uncertainty",
-        "Uses tk-designer for UI work",
-        "Uses tk-observer for screenshot or visual artifact evidence",
-        "Uses tk-fixer only for clear bounded implementation",
-        "Uses tk-reviewer for risk, review, or YAGNI judgment",
-        "Keeps final artifact updates, verification, task status, and commits under main agent control"
+        "Uses tk-sif-muna for API/contract uncertainty",
+        "Uses tk-nemelex-xobeh for UI work",
+        "Uses tk-ashenzari for screenshot or visual artifact evidence",
+        "Uses tk-trog only for clear bounded implementation",
+        "Uses tk-ru for risk, review, or YAGNI judgment",
+        "Keeps final artifact updates, verification, task status, and commits under main agent control",
+        "Uses tk-elyvilon for cleanup, docs hygiene, and healing-style consistency work"
       ]
     }
   ]

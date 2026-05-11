@@ -30,14 +30,14 @@ description: tasks.md의 실행 가능한 task를 끝날 때까지 하나씩 구
 
 ### Agent routing
 
-각 task마다 `/tk:do`와 같은 routing을 다시 판단합니다. 독립 task를 서로 묶어 처리하지 않지만, 한 task 내부에서 파일 영역이 독립적이고 충돌 위험이 낮으면 여러 `tk-fixer` 또는 조사 agent를 병렬로 쓸 수 있습니다. 이 경우에도 main agent가 diff를 합치고 task 단위 검증과 commit을 수행합니다.
+각 task마다 `/tk:do`와 같은 routing을 다시 판단합니다. 독립 task를 서로 묶어 처리하지 않지만, 한 task 내부에서 파일 영역이 독립적이고 충돌 위험이 낮으면 여러 `tk-trog` 또는 조사 agent를 병렬로 쓸 수 있습니다. 이 경우에도 main agent가 diff를 합치고 task 단위 검증과 commit을 수행합니다.
 
 - 탐색/영향 범위: Claude Code 내장 `Explore`
-- API/contract 확인: `tk-api-librarian`
-- bounded implementation: `tk-fixer`
-- UI/prototype: `tk-designer`
-- visual artifact 분석: `tk-observer`
-- review/risk 판단: `tk-reviewer`
+- API/contract 확인: `tk-sif-muna`
+- bounded implementation: `tk-trog`
+- UI/prototype: `tk-nemelex-xobeh`
+- visual artifact 분석: `tk-ashenzari`
+- review/risk 판단: `tk-ru`
 
 ## 중단 조건
 
