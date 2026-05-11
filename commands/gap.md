@@ -18,8 +18,10 @@ description: requirements.md와 현재 상태 사이의 요구사항 coverage와
 
 ## Agent routing
 
+Agent 이름은 짧은 표기를 쓰되, plugin runtime이 `tk:tk-*`로 표시하면 그 namespaced 이름을 사용합니다.
+
 - repo 내부 coverage와 영향 범위 탐색이 넓으면 Claude Code 내장 `Explore`를 사용합니다.
-- API 부재, official contract 확인, `mock_api_contract` 흔적과 실제 API drift 비교가 필요하면 `tk-sif-muna`을 사용합니다.
+- API 부재, official contract 확인, `mock_api_contract` 흔적과 실제 API drift 비교가 필요하면 `tk-sif-muna`를 사용합니다.
 - screenshot, PDF, diagram 같은 시각 자료가 요구사항 근거면 `tk-ashenzari`를 사용합니다.
 - gap 판정이 architecture나 correctness 판단에 크게 의존하면 `tk-ru`로 second opinion을 받을 수 있습니다.
 

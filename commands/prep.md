@@ -17,6 +17,14 @@ description: 외부 요구사항 소스를 정제해 이후 계획과 갭 확인
 - `.tigerkit/{work_id}/requirements.meta.json`
 - 필요 시 `.tigerkit/{work_id}/inputs/`
 
+## Agent routing
+
+Agent 이름은 짧은 표기를 쓰되, plugin runtime이 `tk:tk-*`로 표시하면 그 namespaced 이름을 사용합니다.
+
+- source가 screenshot, PDF, diagram, UI capture 같은 visual artifact면 `tk-ashenzari`로 관찰 결과를 먼저 구조화할 수 있습니다.
+
+agent를 사용해도 최종 `requirements.md`, metadata, scope boundary 판단은 이 명령을 실행하는 main agent가 책임집니다.
+
 명시적으로 요청받지 않는 한 이 명령에서는 구현 계획을 최종 확정하거나 코드를 수정하지 않습니다.
 
 채팅 응답 마지막에는 `다음 추천: /tk:gap`을 표시합니다.

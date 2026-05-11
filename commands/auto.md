@@ -33,7 +33,7 @@ description: requirements.md가 준비된 뒤 gap -> plan -> breakdown -> do-all
 - behavior/API/business logic/bug fix/regression risk면 TDD 추천
 - docs/prompt/manifest/config/copy 변경은 TDD 생략 가능
 - 작은 task는 inline, 큰 독립 task는 sub-agent 방식을 스스로 판단
-- agent routing은 `/tk:do-all` 규칙을 따릅니다. API/contract 확인은 `tk-sif-muna`, bounded implementation은 `tk-trog`, UI/prototype은 `tk-nemelex-xobeh`, visual artifact 분석은 `tk-ashenzari`, review/risk 판단은 `tk-ru`를 우선 고려합니다.
+- agent routing은 `/tk:do-all` 규칙을 따릅니다. Agent 이름은 짧은 표기를 쓰되, plugin runtime이 `tk:tk-*`로 표시하면 그 namespaced 이름을 사용합니다. API/contract 확인은 `tk-sif-muna`, bounded implementation은 `tk-trog`, cleanup/docs hygiene은 `tk-elyvilon`, UI/prototype은 `tk-nemelex-xobeh`, visual artifact 분석은 `tk-ashenzari`, review/risk 판단은 `tk-ru`를 우선 고려합니다.
 
 ## 중단 조건
 

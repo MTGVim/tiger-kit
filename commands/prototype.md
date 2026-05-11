@@ -24,6 +24,8 @@ prototype은 오래 남길 코드가 아니라 질문 하나에 답하기 위한
 
 ## Agent routing
 
+Agent 이름은 짧은 표기를 쓰되, plugin runtime이 `tk:tk-*`로 표시하면 그 namespaced 이름을 사용합니다.
+
 UI/UX 판단, variant 설계, responsive layout, visual polish가 핵심이면 `tk-nemelex-xobeh`를 사용합니다. screenshot, PDF, 기존 화면 capture를 해석해야 하면 먼저 `tk-ashenzari`로 관찰을 구조화합니다. business logic, state machine, data model 결정은 prototype agent routing 대상이 아닙니다.
 
 ## route 선택
