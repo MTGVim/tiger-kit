@@ -12,7 +12,7 @@ description: requirements.md와 현재 상태 사이의 요구사항 coverage와
 
 보고서는 Verdict, Requirement Coverage, Remaining Gaps, API Contract Drift, Unable to Verify, Notes를 포함합니다. 확인 불가 요구사항이 하나라도 있으면 `NO_GAPS_FOUND`로 판정하지 않습니다.
 
-`API Contract Drift`는 항상 포함합니다. 확인된 drift가 없으면 `확인된 drift 없음`을 남깁니다. mock 또는 assumed contract 흔적이 있고 실제 API나 공식 contract를 관찰할 수 있으면 contract mismatch와 implementation gap을 구분합니다.
+`API Contract Drift`는 항상 Markdown 표로 포함합니다. 확인된 drift가 없더라도 헤더를 유지하고 `없음` 행을 남깁니다. mock 또는 assumed contract 흔적이 있고 실제 API나 공식 contract를 관찰할 수 있으면 contract mismatch와 implementation gap을 구분합니다.
 
 요구사항에 API 의존성이 있는데 현재 repo에서 실제 API나 공식 contract를 확인할 수 없으면 `Unable to Verify`에 외부 API/문서 확인 필요를 남깁니다. 기존 `mock_api_contract` 또는 `TK-API-* blocked`가 있거나 API 부재가 계속 관찰되면, 사용자가 이번 범위 밖이라고 명시하지 않은 한 채팅 응답 끝에서 실제 API나 공식 contract가 준비됐는지 cross-check 질문을 합니다.
 

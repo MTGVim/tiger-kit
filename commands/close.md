@@ -25,4 +25,4 @@ branch 생성, commit, push, PR 생성, 파일 삭제는 사용자 승인 없이
 
 `/tk:close`는 작업 종료 상태 정리용 command입니다. 세션 learning이나 knowledge patch 회고는 `/tk:reflect`가 맡습니다.
 
-종료 전에 task가 모두 끝났고 blocked task가 없는데 tail gap check가 아직 수행되지 않았다면 gap을 한 번만 다시 확인합니다. task 완료와 gap 해소를 같은 뜻으로 취급하지 않습니다. 새 gap이 있으면 `/tk:plan`을 추천하고, 새 gap이 없으면 `다음 추천: 없음`을 표시합니다.
+종료 전에 실행 가능한 일반 task가 모두 끝났고 일반 blocked task가 없는데 tail gap check가 아직 수행되지 않았다면 gap을 한 번만 다시 확인합니다. unresolved `TK-API-*`가 남아 있으면 tail gap check 후에도 merge blocker와 incomplete 상태로 표시하고 API/contract 확인을 다음 action으로 둡니다. task 완료와 gap 해소를 같은 뜻으로 취급하지 않습니다. 새 gap이 있으면 `/tk:plan`을 추천하고, 새 gap이 없고 unresolved `TK-API-*`도 없으면 `다음 추천: 없음`을 표시합니다.
