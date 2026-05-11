@@ -14,7 +14,7 @@ description: tasks.md의 실행 가능한 task를 끝날 때까지 하나씩 구
 - 그다음 `todo` task를 순서대로 처리합니다.
 - `blocked`, `done`, `dropped`는 건너뜁니다.
 - dependency나 외부 blocker가 명시된 task는 blocker 완료 전 처리하지 않습니다.
-- `Clarification Actions`가 있으면 모호함을 terminal blocker로 보지 말고 `/tk:grill-me`, brainstorming, targeted question, assumption 선택을 다음 행동으로 보고합니다.
+- `Clarification Actions`에 `unresolved` 항목이 있으면 구현 loop를 시작하지 않습니다. 모호함을 terminal blocker로 보지 말고 `/tk:grill-me`, brainstorming, targeted question, assumption 선택을 다음 행동으로 보고합니다.
 - 단, `API Follow-up Tasks`의 `TK-API-* blocked`만 남은 경우에는 일반 `todo`/`in_progress` task를 계속 처리합니다. `TK-API-* blocked`는 merge blocker로 보고하되 mock 기준 구현을 막는 일반 blocker로 취급하지 않습니다.
 
 ## 처리 방식
@@ -79,22 +79,23 @@ TDD 적용 시 한 test → minimal implementation → green → 다음 test 순
 
 ## Tail gap check
 
-실행 가능한 일반 task를 모두 처리했고 외부 blocked task나 `Shared Blockers`가 없다면, 종료 전에 gap을 한 번만 다시 확인합니다.
+실행 가능한 일반 task를 모두 처리했고 unresolved `Clarification Actions`, 외부 blocked task, `Shared Blockers`의 `상태=blocked` 항목이 없다면, 종료 전에 gap을 한 번만 다시 확인합니다.
 
 규칙:
 - tail gap check는 최대 1회만 수행합니다.
 - `requirements.md`를 기준으로 현재 구현, 문서, 테스트, 관찰 가능한 동작을 다시 비교합니다.
 - 새 gap이 있으면 `gap.md`를 갱신하고 멈춥니다. 바로 다시 구현 loop를 돌지 않습니다.
-- 새 gap이 없고 unresolved `TK-API-*`가 없으면 `/tk:close`를 추천합니다.
+- 새 gap이 없고 unresolved `Clarification Actions`, unresolved `TK-API-*`, `Shared Blockers`의 `상태=blocked` 항목이 없으면 `/tk:close`를 추천합니다.
+- unresolved `Clarification Actions`가 남아 있으면 clarification next action을 보고하고 `/tk:close`를 추천하지 않습니다.
 - unresolved `TK-API-*`가 남아 있으면 merge blocker와 incomplete 상태를 보고하고 API/contract 확인 요청을 다음 action으로 추천합니다.
-- 외부 blocked task나 `Shared Blockers`가 남아 있거나 검증 실패가 있으면 tail gap check를 하지 않고 blocker를 보고합니다.
+- 외부 blocked task나 `Shared Blockers`의 `상태=blocked` 항목이 남아 있거나 검증 실패가 있으면 tail gap check를 하지 않고 blocker를 보고합니다.
 
 ## 출력
 
 마지막에는 아래만 짧게 보고합니다.
 
 - 완료 task 수
-- blocked task 수
+- 외부 blocked task 수, `Shared Blockers`의 `상태=blocked` 항목 수, unresolved `Clarification Actions` 수
 - 각 task의 TDD/실행 방식 요약
 - 검증 결과
 - 생성한 commit 수와 commit hash

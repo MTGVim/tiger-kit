@@ -50,9 +50,9 @@
 | `tasks-needed` | `plan.md` 또는 `gap.md`는 있고 `tasks.md` 없음 | `/tk:breakdown` 실행 |
 | `clarification-needed` | unresolved `Clarification Actions` 있음 | `/tk:grill-me`, targeted question, brainstorming, assumption 선택 |
 | `task-ready` | 실행 가능한 `todo` 또는 `in_progress` task 있음 | `/tk:do` 또는 `/tk:do-all` 실행 |
-| `blocked` | 실행 가능한 일반 task가 없고 외부 `blocked` 또는 `Shared Blockers`만 있음 | blocker 해결 또는 API/contract 확인 |
+| `blocked` | 실행 가능한 일반 task가 없고 외부 `blocked` 또는 `Shared Blockers`의 `상태=blocked` 항목만 있음 | blocker 해결 또는 API/contract 확인 |
 | `re-eval-needed` | 구현 후 gap 재확인 필요 | `/tk:gap` 실행 |
-| `close-ready` | gap 재확인까지 끝났고 새 gap 없음 | `/tk:close` 실행 |
+| `close-ready` | gap 재확인까지 끝났고 새 gap, unresolved `Clarification Actions`, unresolved `TK-API-*`, `Shared Blockers`의 `상태=blocked` 항목 없음 | `/tk:close` 실행 |
 
 `/tk:state`는 위 상태를 요약해 보여주고, `/tk:next`는 위 상태를 바탕으로 다음 command나 다음 task 1개를 추천합니다. task를 보여줄 때는 task ID만 적지 말고 `포함 작업` 같은 짧은 요약으로 묶인 gap/작업을 함께 보여줍니다. source나 work_id가 불명확하면 추측하지 않고 사용자에게 묻습니다.
 
@@ -64,9 +64,9 @@ API나 공식 contract가 없지만 기능을 진행해야 하면 `/tk:plan`은 
 
 ## 모호함과 외부 blocker
 
-`spec_unclear`나 모호한 요구사항은 terminal `blocked`가 아닙니다. `tasks.md`의 `Clarification Actions`에 `TK-CLARIFY-<n>` 항목으로 올리고 `/tk:grill-me`, targeted question, brainstorming, assumption 선택 중 다음 행동을 남깁니다.
+`spec_unclear`나 모호한 요구사항은 terminal `blocked`가 아닙니다. `tasks.md`의 `Clarification Actions`에 `TK-CLARIFY-<n>` 항목으로 올리고 `/tk:grill-me`, targeted question, brainstorming, assumption 선택 중 다음 행동을 남깁니다. 표에는 `ID`, `상태`, `모호점`, `추천 경로`, `영향 task`, `완료 조건`을 포함합니다. 상태는 `unresolved` 또는 `resolved`로 표시합니다.
 
-`blocked`와 `Shared Blockers`는 외부에서만 풀 수 있는 `api_contract_missing`, `permission_required`, `external_dependency_unavailable`, `human_decision_required` 같은 상태에 사용합니다. 같은 blocker를 공유하는 task는 task별로 복제하지 않고 `Shared Blockers` 항목 하나에 영향 task와 해소 조건을 모읍니다.
+`blocked`와 `Shared Blockers`는 외부에서만 풀 수 있는 `api_contract_missing`, `permission_required`, `external_dependency_unavailable`, `human_decision_required` 같은 상태에 사용합니다. 같은 blocker를 공유하는 task는 task별로 복제하지 않고 `Shared Blockers` 항목 하나에 영향 task와 해소 조건을 모읍니다. 표에는 `ID`, `유형`, `상태`, `영향 task`, `해소 조건`, `현재 근거`를 포함합니다. 상태는 `blocked` 또는 `resolved`로 표시합니다.
 
 ## task 상태값
 

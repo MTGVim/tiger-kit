@@ -55,7 +55,7 @@ description: requirements.md가 준비된 뒤 gap -> plan -> breakdown -> do-all
 
 - 사용한 work_id
 - 수행한 단계
-- 완료 task 수와 blocked 수
+- 완료 task 수, 외부 blocked 수, `Shared Blockers`의 `상태=blocked` 항목 수, unresolved `Clarification Actions` 수
 - 검증 결과
 - 생성한 commit 수와 commit hash
 - 마지막 gap 재확인 결과
