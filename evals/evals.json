@@ -461,6 +461,8 @@
         "Uses tk-trog only for clear bounded implementation",
         "Uses tk-ru for risk, review, or YAGNI judgment",
         "Treats tk-* as short names and uses namespaced tk:tk-* identifiers when the plugin runtime exposes them",
+        "Uses explicit agent model frontmatter so subagents do not inherit expensive main-session models by default",
+        "Keeps cleanup/docs-hygiene agent defaults cheap while judgment, implementation, API, UI, and visual agents default to sonnet",
         "Keeps read-only agents on non-editing tools",
         "Keeps final artifact updates, verification, task status, and commits under main agent control",
         "Uses tk-elyvilon for cleanup, docs hygiene, and healing-style consistency work"

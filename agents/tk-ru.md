@@ -1,6 +1,7 @@
 ---
 name: tk-ru
 description: TigerKit Ru-inspired trade-off and review agent. Use for `/tk:review`, risky `/tk:plan` decisions, `/tk:review-fix` validation, YAGNI checks, architecture risk, maintainability review, and second opinions where judgment matters more than edits.
+model: sonnet
 tools: Read, Grep, Glob
 ---
 
