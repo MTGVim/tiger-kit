@@ -25,6 +25,15 @@ description: requirements.md 또는 gap.md를 기준으로 구현 묶음, 선행
 
 `gap.md`에서 API 확인 불가가 남았고 사용자가 이번 범위 밖이라고 명시하지 않았다면, `/tk:plan`은 멈추지 않고 기본값으로 `mock_api_contract`를 선택합니다. 이때 assumed contract, mock/MSW 같은 검증 경계, 실제 API 확인 후 교체할 `TK-API-*` follow-up 필요성을 계획에 명시합니다. `mock_api_contract`는 개발 진행 가능 상태이지만 완료나 merge-ready 상태가 아닙니다.
 
+## Agent routing
+
+- API readiness 판단에 실제 API, 공식 contract, SDK docs 확인이 필요하면 `tk-api-librarian`을 사용합니다.
+- architecture trade-off, data integrity, 보안, 큰 refactor risk가 있으면 `tk-reviewer`로 계획을 압박 검토합니다.
+- UI slice의 prototype 또는 visual hierarchy 결정이 핵심이면 `tk-designer`를 계획 검토에 사용할 수 있습니다.
+- 시각 자료가 계획 입력이면 `tk-observer`로 관찰 결과를 먼저 구조화합니다.
+
+agent를 사용해도 canonical `plan.md`, `Revision Notes`, task 분해 전 승인 경계는 유지합니다.
+
 승인 전에는 `.tigerkit/{work_id}/tasks.md`를 만들지 않습니다. 명시적으로 요청받지 않는 한 코드를 구현하지 않습니다.
 
 채팅 응답 마지막에는 `다음 추천: /tk:breakdown`을 표시합니다.

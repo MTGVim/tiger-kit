@@ -16,6 +16,15 @@ description: requirements.md와 현재 상태 사이의 요구사항 coverage와
 
 요구사항에 API 의존성이 있는데 현재 repo에서 실제 API나 공식 contract를 확인할 수 없으면 `Unable to Verify`에 외부 API/문서 확인 필요를 남깁니다. 기존 `mock_api_contract` 또는 `TK-API-* blocked`가 있거나 API 부재가 계속 관찰되면, 사용자가 이번 범위 밖이라고 명시하지 않은 한 채팅 응답 끝에서 실제 API나 공식 contract가 준비됐는지 cross-check 질문을 합니다.
 
+## Agent routing
+
+- repo 내부 coverage와 영향 범위 탐색이 넓으면 Claude Code 내장 `Explore`를 사용합니다.
+- API 부재, official contract 확인, `mock_api_contract` 흔적과 실제 API drift 비교가 필요하면 `tk-api-librarian`을 사용합니다.
+- screenshot, PDF, diagram 같은 시각 자료가 요구사항 근거면 `tk-observer`를 사용합니다.
+- gap 판정이 architecture나 correctness 판단에 크게 의존하면 `tk-reviewer`로 second opinion을 받을 수 있습니다.
+
+agent 결과는 근거로만 쓰고, 최종 `gap.md` 작성과 Verdict 책임은 이 명령을 실행하는 main agent가 가집니다.
+
 기본 산출물:
 - `.tigerkit/{work_id}/gap.md`
 - `.tigerkit/{work_id}/gap.meta.json`

@@ -22,6 +22,10 @@ prototype은 오래 남길 코드가 아니라 질문 하나에 답하기 위한
 기존 `/settings` 화면에서 billing section 배치를 세 가지 variant로 비교한다.
 ```
 
+## Agent routing
+
+UI/UX 판단, variant 설계, responsive layout, visual polish가 핵심이면 `tk-designer`를 사용합니다. screenshot, PDF, 기존 화면 capture를 해석해야 하면 먼저 `tk-observer`로 관찰을 구조화합니다. business logic, state machine, data model 결정은 prototype agent routing 대상이 아닙니다.
+
 ## route 선택
 
 기본은 기존 화면에 붙이는 방식입니다.
