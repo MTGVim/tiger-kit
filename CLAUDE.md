@@ -46,6 +46,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `skills/mwhat/SKILL.md`: `뭣?` trigger로만 자동 실행되는 답변 해독 지침.
 - `skills/caveman/SKILL.md`: 자연어 트리거와 세션 지속성이 필요한 caveman 응답 모드 지침.
 - `skills/write-a-skill/SKILL.md`: 장황한 skill creator 대체용 경량 skill 작성 지침.
+- `skills/issue-to-task/SKILL.md`: 진행 중 제기된 문제를 task insertion, task revision, clarification, shared blocker 후보로 정리하는 지침.
 - `docs/usage.md`: 사용자 관점의 명령 사용법.
 - `docs/artifact-layout.md`: `.tigerkit/{work_id}/` 산출물 구조와 작업 단계 기준.
 

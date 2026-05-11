@@ -333,7 +333,11 @@ branch 생성, commit, push, PR 생성, 파일 삭제는 사용자 승인 없이
 
 기술 용어, 코드 블록, 오류 메시지는 유지하고 filler와 장황한 설명을 줄입니다. 보안 경고, 되돌리기 어려운 action 확인, 순서가 중요한 절차에서는 일시적으로 더 명확히 씁니다.
 
-## 15. skill 작성
+## 15. 진행 중 이슈 task화
+
+진행 중 사용자가 “이 UI 디자인 잘못 구현함”, “방향이 틀림”, “이 요구가 빠짐”처럼 course correction을 제기하면 `issue-to-task` skill이 문제를 task insertion, task revision, `Clarification Actions`, `Shared Blockers` 후보로 정리합니다. 구현을 계속하지 않고 task queue에 넣을 wording을 제안한 뒤 `다음 추천: /tk:plan`으로 돌아갑니다.
+
+## 16. skill 작성
 
 새 Claude Code skill을 만들거나 기존 skill을 가볍게 고칠 때는 `write-a-skill` skill을 사용합니다.
 
@@ -347,7 +351,7 @@ skill-creator 말고 짧은 SKILL.md로 정리해줘.
 
 기본은 `skills/{skill-name}/SKILL.md` 하나입니다. reference나 scripts는 필요할 때만 추가합니다.
 
-## 16. review 요청
+## 17. review 요청
 
 구현 직후나 merge 전에 review에 필요한 맥락을 정리하고 코드 리뷰를 요청할 때 실행합니다.
 
@@ -357,7 +361,7 @@ skill-creator 말고 짧은 SKILL.md로 정리해줘.
 
 출력은 `Review Brief`입니다. review scope, 변경 요약, 기대 동작, verify 방법, reviewer가 봐야 할 risk를 포함합니다. 사용 가능한 외부 review surface가 없고 TigerKit agent가 사용 가능하면 `tk-ru`를 reviewer로 사용할 수 있습니다. 외부 review를 요청하기 전에 코드베이스 내부 맥락 정리가 필요할 때도 `tk-ru`를 사용할 수 있습니다. 둘 다 없으면 `Review Brief`만 남기고 멈춥니다.
 
-## 17. review 반영
+## 18. review 반영
 
 받은 리뷰 피드백을 검증하고, 맞는 것만 순서대로 반영할 때 실행합니다.
 
@@ -367,7 +371,7 @@ skill-creator 말고 짧은 SKILL.md로 정리해줘.
 
 모호한 항목은 먼저 clarification을 요청합니다. reviewer가 틀릴 수 있다고 가정하되, 기술적으로 검증한 뒤 처리합니다. cleanup이나 docs hygiene 성격이면 `tk-elyvilon`을 사용할 수 있습니다. 코드 수정이 포함되면 검증 통과 후 local commit으로 남깁니다.
 
-## 18. FE prototype 범위 정리
+## 19. FE prototype 범위 정리
 
 프론트엔드 화면 결정을 production 코드로 확정하기 전에 브라우저에서 비교 가능한 throwaway UI prototype으로 검증할 때 실행합니다.
 
@@ -381,7 +385,7 @@ variant는 색이나 copy 차이가 아니라 layout, information hierarchy, pri
 
 완료 후에는 winner와 이유만 남기고 loser variant와 switcher를 삭제합니다. 명시적으로 요청받지 않는 한 코드를 구현하지 않습니다.
 
-## 19. 세션 회고
+## 20. 세션 회고
 
 현재 세션에서 반복된 교정 포인트, 놓친 확인 절차, 다음부터 줄이고 싶은 실수를 짧게 회고할 때 실행합니다.
 
@@ -393,7 +397,7 @@ variant는 색이나 copy 차이가 아니라 layout, information hierarchy, pri
 
 주요 출력은 `Session Reflection` 형식의 짧은 회고 보고서입니다. 이 명령은 사용자 사전 승인 없이 파일을 수정하지 않습니다. hook, queue, 히스토리 스캔, 자동 memory capture를 수행하지 않고, 현재 세션에서 드러난 내용만 바탕으로 patch proposal 또는 다음 확인 포인트를 정리합니다.
 
-## 20. Knowledge layer 개선 audit
+## 21. Knowledge layer 개선 audit
 
 저장소의 CLAUDE.md, command 문서, 운영 메모처럼 knowledge layer에 해당하는 내용을 가볍게 점검하고 개선 후보를 찾고 싶을 때 실행합니다.
 
