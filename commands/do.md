@@ -89,9 +89,9 @@ agent 사용 여부와 관계없이 task 선택, 상태 갱신, 최종 검증, l
 
 ## ambiguity와 external blocker 처리
 
-구현 중 요구사항 모호함이 드러나면 task를 terminal `blocked`로 만들지 않습니다. `Clarification Actions`에 `TK-CLARIFY-<n>` 항목을 남기고 `/tk:grill-me`, brainstorming, targeted question, assumption 선택 중 하나를 다음 행동으로 제안합니다. 사용자가 assumption을 선택하면 그 가정을 task/gap에 명시하고 계속할 수 있습니다.
+구현 중 요구사항 모호함이 드러나면 task를 terminal `blocked`로 만들지 않습니다. `Clarification Actions`에 `TK-CLARIFY-<n>` 항목을 남기고 `상태=unresolved`, 모호점, 추천 경로, 영향 task, 완료 조건을 기록합니다. 추천 경로는 `/tk:grill-me`, brainstorming, targeted question, assumption 선택 중 하나입니다. 사용자가 assumption을 선택하면 그 가정을 task/gap에 명시하고 계속할 수 있습니다.
 
-외부에서만 풀 수 있는 `api_contract_missing`, `permission_required`, `external_dependency_unavailable`, `human_decision_required`는 `Shared Blockers`에 모아 영향 task와 해소 조건을 기록합니다.
+외부에서만 풀 수 있는 `api_contract_missing`, `permission_required`, `external_dependency_unavailable`, `human_decision_required`는 `Shared Blockers`에 모아 유형, 상태, 영향 task, 해소 조건, 현재 근거를 기록합니다.
 
 ## 구현 루프
 
