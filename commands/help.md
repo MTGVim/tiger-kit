@@ -40,11 +40,10 @@ specialist / utility:
 /tk:caveman    # 응답 초압축 skill alias
 ```
 
-legacy / internal note:
+legacy note:
 
 ```text
 /tk:interview, /tk:prep  # `/tk:start` 내부 mode 또는 legacy 진입점
-execute-queue            # hidden queue execution primitive
 ```
 
 새 skill 작성이나 기존 skill 경량화 요청은 `write-a-skill` skill이 맡는다고 짧게 안내할 수 있습니다.

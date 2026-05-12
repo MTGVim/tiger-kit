@@ -72,6 +72,6 @@ agent를 사용해도 최종 반영 여부, 검증, task 상태, local commit은
 - Rejected or questioned
 - Verification
 - Commit
-- `다음 추천: /tk:do`, `/tk:do-all`, 또는 `/tk:review`
+- `다음 추천: /tk:do`, `/tk:auto`, 또는 `/tk:review`
 
 코드 수정이 포함된 review fix의 local commit은 검증 통과 후 수행합니다. push, PR 생성, branch 생성은 사용자 승인 없이 실행하지 않습니다.

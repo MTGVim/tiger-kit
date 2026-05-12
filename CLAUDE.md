@@ -46,9 +46,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `skills/mwhat/SKILL.md`: `뭣?` trigger로만 자동 실행되는 답변 해독 지침.
 - `skills/caveman/SKILL.md`: 자연어 트리거와 세션 지속성이 필요한 caveman 응답 모드 지침.
 - `skills/write-a-skill/SKILL.md`: 장황한 skill creator 대체용 경량 skill 작성 지침.
-- `skills/issue-to-task/SKILL.md`: 진행 중 제기된 문제를 task insertion, task revision, clarification, shared blocker 후보로 정리하는 지침.
+- `skills/fixme/SKILL.md`: 진행 중 제기된 문제를 task insertion, task revision, clarification, shared blocker 후보로 정리하는 지침.
 - `docs/usage.md`: 사용자 관점의 명령 사용법.
 - `docs/artifact-layout.md`: `.tigerkit/{work_id}/` 산출물 구조와 작업 단계 기준.
+- `docs/contracts/execute-queue.md`: `/tk:auto` task 단계에서만 참조하는 내부 queue 실행 contract.
 
 ## 명령 개요
 
@@ -62,8 +63,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `/tk:state`: `.tigerkit/{work_id}` 전체 상태를 요약한다.
 - `/tk:next`: 현재 상태를 기준으로 다음 command 또는 다음 task 하나를 추천한다.
 - `/tk:do`: 현재 task 1건을 구현하고 검증한다.
-- `/tk:do-all`: 실행 가능한 task를 끝날 때까지 하나씩 구현하고, 완료 후 tail gap check를 한 번 수행한다.
-- `/tk:auto`: `gap -> plan -> breakdown -> do-all -> gap` 1사이클을 자율주행한다.
+- `/tk:auto`: `gap -> plan -> breakdown -> execute-queue -> gap` 1사이클을 자율주행한다. `execute-queue`는 사용자 command가 아니라 내부 contract다.
 - `/tk:close`: 세션 종료 전 남은 gap, task, 검증, cleanup 후보를 정리한다.
 - `/tk:grill-me`: `prep`이나 `plan`에서 허점을 질문 하나씩 파고든다.
 - `/tk:caveman`: `caveman` skill alias로, 기술 정확도를 유지하며 응답을 초압축한다.

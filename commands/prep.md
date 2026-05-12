@@ -15,9 +15,11 @@ description: 외부 요구사항 소스를 정제해 이후 계획과 갭 확인
 기본 산출물:
 - `.tigerkit/{work_id}/requirements.md`
 - `.tigerkit/{work_id}/requirements.meta.json`
-- 필요 시 `.tigerkit/{work_id}/inputs/`
+- 필요 시 `.tigerkit/{work_id}/inputs/sources/<kind>/<name>/`
 
 `requirements.meta.json`에는 cache 판단에 필요한 `input_source_hash`, `prep_prompt_version`, `scope_hash`, `input_identities`를 남깁니다. 같은 입력 자료, prep 지시문 버전, 범위, input identity로 다시 실행하면 기존 `requirements.md`를 재사용합니다. 하나라도 다르거나 `--force`가 있으면 기존 cache를 우회하고 다시 생성합니다.
+
+비정형 source를 저장해야 하면 `.tigerkit/{work_id}/inputs/sources/<kind>/<name>/` 아래에 `*.raw.<ext>`, `meta.json`, 가능하면 `summary.md`를 둡니다. 기존 raw artifact는 silent overwrite 하지 않고, command는 `summary.md`를 먼저 읽은 뒤 필요한 경우에만 raw 원본을 참조합니다.
 
 `requirements.md`의 `요구사항` 섹션은 가능하면 stable requirement ID와 적용 방식을 함께 기록합니다.
 

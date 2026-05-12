@@ -1,12 +1,12 @@
 ---
-description: requirements.md가 준비된 뒤 gap -> plan -> breakdown -> do-all -> gap 1사이클을 자율주행합니다.
+description: requirements.md가 준비된 뒤 gap -> plan -> breakdown -> execute-queue -> gap 1사이클을 자율주행합니다.
 ---
 
 이 명령은 아래 계약을 직접 따릅니다.
 
 사용자에게는 한글로 답합니다. 코드, 테스트 이름, 파일 경로, 식별자, 오류 메시지는 원문 그대로 유지할 수 있습니다.
 
-목표: `.tigerkit/{work_id}/requirements.md`가 준비된 상태에서 `gap -> plan -> breakdown -> do-all -> gap` 1사이클만 자율주행으로 처리합니다.
+목표: `.tigerkit/{work_id}/requirements.md`가 준비된 상태에서 `gap -> plan -> breakdown -> execute-queue -> gap` 1사이클만 자율주행으로 처리합니다.
 
 ## 시작 조건
 
@@ -39,7 +39,7 @@ description: requirements.md가 준비된 뒤 gap -> plan -> breakdown -> do-all
 2. 첫 gap 판정을 확인합니다. `NO_GAPS_FOUND`면 구현 loop를 시작하지 않고 `/tk:close` 또는 `/tk:next`를 추천합니다. `UNVERIFIABLE`이고 실행 가능한 구현 gap이 없으면 확인 필요만 보고하고 멈춥니다. `GAPS_FOUND`이거나 실행 가능한 gap이 있고 API/contract만 follow-up으로 남길 수 있으면 다음 단계로 진행합니다.
 3. `/tk:plan`에 준해 실행계획 정리. API나 공식 contract를 확인할 수 없고 사용자가 범위 밖이라고 명시하지 않았으면 기본값 `mock_api_contract`로 진행합니다.
 4. `/tk:breakdown`에 준해 task 분해. `mock_api_contract` slice는 일반 task를 계속 만들고 `TK-API-*` follow-up만 blocked로 둡니다.
-5. `/tk:do-all`에 준해 실행 가능한 task 처리. 각 task는 `Requirement Pinning`과 `Spec Adherence Gate`를 거칩니다. 코드 수정이 포함된 task는 task별 검증 통과 후 local commit으로 남깁니다.
+5. `docs/contracts/execute-queue.md` contract에 따라 실행 가능한 task를 처리합니다. 각 task는 `Requirement Pinning`과 `Spec Adherence Gate`를 거칩니다. 코드 수정이 포함된 task는 task별 검증 통과 후 local commit으로 남깁니다.
 6. `/tk:gap`으로 재평가 1회
 
 ## TDD와 실행 방식
@@ -49,7 +49,7 @@ description: requirements.md가 준비된 뒤 gap -> plan -> breakdown -> do-all
 - behavior/API/business logic/bug fix/regression risk면 TDD 추천
 - docs/prompt/manifest/config/copy 변경은 TDD 생략 가능
 - 작은 task는 inline, 큰 독립 task는 sub-agent 방식을 스스로 판단
-- agent routing은 `/tk:do-all` 규칙을 따릅니다. Agent 이름은 짧은 표기를 쓰되, plugin runtime이 `tk:tk-*`로 표시하면 그 namespaced 이름을 사용합니다. API/contract 확인은 `tk-sif-muna`, bounded implementation은 `tk-trog`, cleanup/docs hygiene은 `tk-elyvilon`, UI/prototype은 `tk-nemelex-xobeh`, visual artifact 분석은 `tk-ashenzari`, review/risk 판단은 `tk-ru`를 우선 고려합니다.
+- agent routing은 `execute-queue` contract를 따릅니다. Agent 이름은 짧은 표기를 쓰되, plugin runtime이 `tk:tk-*`로 표시하면 그 namespaced 이름을 사용합니다. API/contract 확인은 `tk-sif-muna`, bounded implementation은 `tk-trog`, cleanup/docs hygiene은 `tk-elyvilon`, UI/prototype은 `tk-nemelex-xobeh`, visual artifact 분석은 `tk-ashenzari`, spec-adherence review와 risk 판단은 `tk-ru`를 우선 고려합니다.
 
 ## 중단 조건
 
@@ -59,6 +59,7 @@ description: requirements.md가 준비된 뒤 gap -> plan -> breakdown -> do-all
 - `requirements.md` 부재
 - 외부 blocker 존재. 단 `mock_api_contract`에 따른 `TK-API-* blocked`만 있으면 일반 task 진행은 멈추지 않고 merge blocker로 보고합니다.
 - 요구사항 모호함. 이 경우 `blocked`로 만들지 않고 `Clarification Actions`와 다음 clarification 경로를 보고합니다.
+- task별 `Spec Adherence Gate` verdict가 `FAIL_SPEC_VIOLATION` 또는 `NEEDS_CLARIFICATION`임. 이 경우 failed task ID, requirement ID, 필요한 수정 또는 clarification을 보고합니다.
 - 검증 실패 반복
 - 기반 브랜치에서 변경 승인이 필요함
 - 새 gap이 생겨 계획 재합의가 필요함
@@ -76,4 +77,4 @@ description: requirements.md가 준비된 뒤 gap -> plan -> breakdown -> do-all
 - 상세 기록 경로
 - 마지막 gap 재확인 결과
 - unresolved `TK-API-*`가 있으면 API/contract 확인 필요 여부
-- `다음 추천: /tk:plan`, `/tk:do-all`, `/tk:next`, 또는 `/tk:close`
+- `다음 추천: /tk:plan`, `/tk:auto`, `/tk:next`, 또는 `/tk:close`

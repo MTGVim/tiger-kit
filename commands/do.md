@@ -93,6 +93,24 @@ agent 사용 여부와 관계없이 task 선택, 상태 갱신, 최종 검증, l
 
 외부에서만 풀 수 있는 `api_contract_missing`, `permission_required`, `external_dependency_unavailable`, `human_decision_required`는 `Shared Blockers`에 모아 유형, 상태, 영향 task, 해소 조건, 현재 근거를 기록합니다.
 
+## Requirement Traceability Gate
+
+구현 전 `Requirement Pinning`으로 task가 어떤 요구사항을 구현하는지 고정합니다.
+
+- Task ID
+- `Source requirements` 또는 현재 task가 근거하는 요구사항 ID
+- 각 requirement의 적용 방식: `verbatim`, `semantic`, `flexible`, `assumption`
+- exact copy, strict constraint, allowed discretion
+- unresolved ambiguity 여부
+
+구현 후 `Spec Adherence Gate`로 결과가 source requirement를 지켰는지 확인합니다.
+
+- `PASS`: 요구사항과 검증이 맞아 task 완료 가능
+- `FAIL_SPEC_VIOLATION`: 구현이 source requirement와 충돌. task 완료/commit 금지
+- `NEEDS_CLARIFICATION`: source가 부족하거나 사용자 결정이 필요함. `TK-CLARIFY-*` 후보 생성
+
+사용자-visible copy가 `verbatim`이면 다른 문구로 바꿔 구현할 수 없습니다. 사용자-visible copy가 필요한데 source가 없으면 문구를 invent하지 말고 clarification으로 올립니다.
+
 ## 구현 루프
 
 1. task를 `in_progress`로 표시합니다.

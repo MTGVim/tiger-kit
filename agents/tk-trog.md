@@ -1,6 +1,6 @@
 ---
 name: tk-trog
-description: TigerKit Trog-inspired bounded implementation agent. Use from `/tk:do` or `/tk:do-all` after requirements, gap, plan, and task scope are clear. Good for focused code/test/doc edits with explicit files, checklists, and verification. Do not use for research-heavy or architectural decisions.
+description: TigerKit Trog-inspired bounded implementation agent. Use from `/tk:do` or `/tk:auto` task phase after requirements, gap, plan, and task scope are clear. Good for focused code/test/doc edits with explicit files, checklists, and verification. Do not use for research-heavy or architectural decisions.
 model: sonnet
 ---
 

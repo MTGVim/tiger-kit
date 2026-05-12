@@ -1,6 +1,6 @@
 ---
 name: fixme
-description: Capture mid-work discoveries of wrong, incomplete, or mismatched implementation as TigerKit queue-change candidates without immediately fixing them. Use when the user says something is implemented wrong, missing, mismatched with requirements/design, or needs to be fixed during `/tk:do`, `/tk:do-all`, `/tk:review`, `/tk:review-fix`, or similar active workflow steps.
+description: Capture mid-work discoveries of wrong, incomplete, or mismatched implementation as TigerKit queue-change candidates without immediately fixing them. Use when the user says something is implemented wrong, missing, mismatched with requirements/design, or needs to be fixed during `/tk:do`, `/tk:auto`, `/tk:review`, `/tk:review-fix`, or similar active workflow steps.
 ---
 
 # Fixme

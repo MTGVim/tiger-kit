@@ -31,6 +31,8 @@ description: .tigerkit/{work_id} 상태를 보고 지금 해야 할 다음 comma
 
 ## task 선택 규칙
 
+`tasks.index.json`이 있으면 먼저 compact 상태와 다음 후보를 확인합니다. 상세 판단이 필요할 때만 `tasks.md`의 active queue를 읽습니다. `archive/tasks.done.md`는 사용자가 특정 완료 task를 묻는 경우가 아니면 읽지 않습니다.
+
 `tasks.md`가 있는 경우:
 - unresolved `Clarification Actions`가 있으면 모호함을 `blocked`로 보고하지 말고 clarification action과 추천 경로(`/tk:grill-me`, targeted question, brainstorming, assumption 선택)를 먼저 표시합니다.
 - 일반 `in_progress`가 있으면 그것을 우선 표시합니다.

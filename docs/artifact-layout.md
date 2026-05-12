@@ -5,6 +5,12 @@
 ```text
 .tigerkit/{work_id}/
   inputs/
+    sources/
+      <kind>/
+        <name>/
+          <artifact>.raw.<ext>
+          meta.json
+          summary.md
   requirements.md
   requirements.meta.json
   gap.md
@@ -19,7 +25,7 @@
 
 `/tk:interview`는 source 문서가 아직 없을 때 흐릿한 아이디어를 대화로 좁혀 `requirements.md`와 `requirements.meta.json`으로 정리합니다. `/tk:prep`는 이미 있는 입력 자료와 대화 맥락을 `requirements.md`와 `requirements.meta.json`으로 정규화합니다. `/tk:gap`은 현재 repo 상태와 `requirements.md`의 차이를 `gap.md`에 기록합니다. `/tk:plan`은 gap 결과를 승인 가능한 실행계획으로 정리합니다. `/tk:breakdown`은 gap 또는 plan을 `tasks.md`로 내립니다. `/tk:state`는 `.tigerkit/{work_id}` 전체 상태를 읽습니다. `/tk:close`는 세션 종료 요약을 필요할 때 `close.md`로 남길 수 있습니다.
 
-`/tk:reflect`는 maintenance alias로 유지되지만 `interview/prep → gap → plan → breakdown → do/do-all → gap → close` 라이프사이클의 필수 단계는 아닙니다.
+`/tk:reflect`는 maintenance alias로 유지되지만 `interview/prep → gap → plan → breakdown → do/execute-queue → gap → close` 라이프사이클의 필수 단계는 아닙니다.
 
 ## 브랜치 이름과 작업 ID
 
@@ -35,6 +41,7 @@
 | 파일 | 역할 |
 |---|---|
 | `inputs/` | `requirements.md`를 만들 때 참고한 원문 자료, 메모, 캡처, 참고 코드 보관 위치 |
+| `inputs/sources/<kind>/<name>/` | Figma MCP 응답, API response, screenshot, PDF, HTML snapshot 같은 비정형 source snapshot 보관 위치 |
 | `requirements.md` | 이번 작업의 정규화된 요구사항 기준 문서 |
 | `requirements.meta.json` | `/tk:prep`의 cache 판단 또는 `/tk:interview`의 결정 출처와 범위를 기록하는 메타데이터 |
 | `gap.md` | 현재 상태와 `requirements.md` 사이의 coverage/gap 분석. `API 계약 차이`를 항상 포함 |
@@ -77,9 +84,13 @@ API나 공식 contract가 없지만 기능을 진행해야 하면 `/tk:plan`은 
 
 기본 실행 경로에서 command는 `tasks.md`의 active queue와 `tasks.index.json`만 우선 읽습니다. `done`과 `dropped` task의 상세 본문은 `archive/tasks.done.md`로 분리하고, `tasks.md`에는 필요하면 compact pointer만 남깁니다.
 
-- `/tk:do-all`, `/tk:auto`, `/tk:next`, `/tk:state`는 기본적으로 completed task 본문을 다시 읽지 않습니다.
+- `execute-queue`, `/tk:auto`, `/tk:next`, `/tk:state`는 기본적으로 completed task 본문을 다시 읽지 않습니다.
 - archive는 사용자가 특정 완료 task를 물어보거나, regression/close/review 근거가 필요할 때만 읽습니다.
-- 외부 source raw snapshot의 canonical 위치는 기본적으로 `.tigerkit/{work_id}/inputs/`입니다. `.agent/` 같은 별도 cache는 선택적 additive layer로만 취급합니다.
+- 외부 source raw snapshot의 canonical 위치는 `.tigerkit/{work_id}/inputs/sources/<kind>/<name>/`입니다.
+- raw 원본은 `*.raw.<ext>` 형식으로 저장합니다. XML, JSON, PNG, PDF, HTML, TXT 등 원본 포맷을 유지합니다.
+- 각 source 디렉터리는 `meta.json`을 포함합니다. 가능하면 `summary.md`를 함께 두고, command는 기본적으로 `summary.md`를 먼저 읽은 뒤 필요할 때만 raw를 참조합니다.
+- 기존 raw artifact는 silent overwrite 하지 않습니다. 같은 source를 다시 캡처하면 새 이름을 쓰거나 `meta.json`에 갱신 근거를 명시합니다.
+- 별도 agent cache는 이 저장소의 canonical artifact 위치로 쓰지 않습니다.
 
 ## task 상태값
 
