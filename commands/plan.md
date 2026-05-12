@@ -6,7 +6,7 @@ description: requirements.md 또는 gap.md를 기준으로 구현 묶음, 선행
 
 사용자에게는 한글로 답합니다. 작업 산출물도 한글로 작성합니다. 단, 인용한 원문, 코드, 명령어, 파일 경로, 식별자는 원문 그대로 유지할 수 있습니다.
 
-목표: `.tigerkit/{work_id}/requirements.md`, `.tigerkit/{work_id}/gap.md`, 또는 `/tk:prep`, `/tk:interview`, `issue-to-task`가 제안한 queue 변경 후보를 기준으로 구현 전에 합의해야 할 실행계획을 작성합니다.
+목표: `.tigerkit/{work_id}/requirements.md`, `.tigerkit/{work_id}/gap.md`, 또는 `/tk:prep`, `/tk:interview`, `fixme`가 제안한 queue 변경 후보를 기준으로 구현 전에 합의해야 할 실행계획을 작성합니다.
 
 기준 파일이나 queue 변경 후보가 없거나 어떤 작업을 계획해야 하는지 불명확하면 계획을 만들지 말고, source 문서나 메모가 있으면 `/tk:prep`, 아이디어가 흐릿하면 `/tk:interview`, `requirements.md`만 있으면 `/tk:gap`으로 기준을 먼저 정리하라고 안내합니다.
 

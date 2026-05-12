@@ -19,6 +19,14 @@ description: 외부 요구사항 소스를 정제해 이후 계획과 갭 확인
 
 `requirements.meta.json`에는 cache 판단에 필요한 `input_source_hash`, `prep_prompt_version`, `scope_hash`, `input_identities`를 남깁니다. 같은 입력 자료, prep 지시문 버전, 범위, input identity로 다시 실행하면 기존 `requirements.md`를 재사용합니다. 하나라도 다르거나 `--force`가 있으면 기존 cache를 우회하고 다시 생성합니다.
 
+`requirements.md`의 `요구사항` 섹션은 가능하면 stable requirement ID와 적용 방식을 함께 기록합니다.
+
+| ID | Type | Requirement | Source | Application |
+|---|---|---|---|---|
+| R-001 | behavior/copy/UI/... | 요구사항 본문 | user/research/doc/code | `verbatim` / `semantic` / `flexible` / `assumption` |
+
+사용자-visible copy가 source에 명시되어 있으면 기본적으로 `verbatim`으로 취급합니다.
+
 ## Agent routing
 
 Agent 이름은 짧은 표기를 쓰되, plugin runtime이 `tk:tk-*`로 표시하면 그 namespaced 이름을 사용합니다.

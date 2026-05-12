@@ -97,16 +97,27 @@ agent 사용 여부와 관계없이 task 선택, 상태 갱신, 최종 검증, l
 
 1. task를 `in_progress`로 표시합니다.
 2. 필요한 파일을 읽습니다.
-3. TDD 적용 시 한 behavior test부터 작성하고 실패를 확인합니다.
-4. 최소 구현으로 green을 만듭니다.
-5. 필요한 behavior만 반복합니다.
-6. refactor가 필요하면 green 상태에서만 작게 수행합니다.
-7. 검증을 실행합니다.
-8. `tasks.md`의 체크리스트뿐 아니라 현재 `gap.md`, 요구사항 문서, 실제 repo 상태와도 task 완료 판단이 맞는지 교차 확인합니다.
-9. 완료 기준을 충족하면 task를 `done`으로 갱신합니다.
-10. 코드 수정이 포함됐고 검증이 통과했으면 관련 변경 파일만 stage해 새 commit을 만듭니다. commit message는 repo의 최근 commit 스타일에 맞춥니다.
-11. commit hook이 실패하면 우회하지 말고 원인을 고친 뒤 새 commit을 다시 시도합니다.
-12. 실패하거나 외부 blocker에 막히면 `blocked` 또는 `Shared Blockers`로 갱신하고 이유를 남깁니다. 요구사항 모호함이면 `blocked`가 아니라 `Clarification Actions`로 올립니다.
+3. `Requirement Pinning`을 짧게 정리합니다.
+   - Task ID
+   - Source requirements 또는 현재 task가 근거하는 요구사항
+   - exact copy, strict constraint, allowed discretion
+   - unresolved ambiguity 여부
+4. 관련 요구사항을 특정할 수 없거나 exact copy가 필요한데 source가 없으면 구현을 시작하지 않고 `Clarification Actions`로 올립니다.
+5. TDD 적용 시 한 behavior test부터 작성하고 실패를 확인합니다.
+6. 최소 구현으로 green을 만듭니다.
+7. 필요한 behavior만 반복합니다.
+8. refactor가 필요하면 green 상태에서만 작게 수행합니다.
+9. 검증을 실행합니다.
+10. `Spec Adherence Gate`를 수행합니다.
+   - checked requirements
+   - unsourced assumptions
+   - missing verification
+   - verdict: `PASS`, `FAIL_SPEC_VIOLATION`, `NEEDS_CLARIFICATION`
+11. `tasks.md`의 체크리스트뿐 아니라 현재 `gap.md`, 요구사항 문서, 실제 repo 상태와도 task 완료 판단이 맞는지 교차 확인합니다.
+12. `Spec Adherence Gate`가 `PASS`일 때만 완료 기준을 충족한 것으로 보고 task를 `done`으로 갱신합니다.
+13. 코드 수정이 포함됐고 검증이 통과했으면 관련 변경 파일만 stage해 새 commit을 만듭니다. commit message는 repo의 최근 commit 스타일에 맞춥니다.
+14. commit hook이 실패하면 우회하지 말고 원인을 고친 뒤 새 commit을 다시 시도합니다.
+15. 실패하거나 외부 blocker에 막히면 `blocked` 또는 `Shared Blockers`로 갱신하고 이유를 남깁니다. 요구사항 모호함이면 `blocked`가 아니라 `Clarification Actions`로 올립니다.
 
 ## 안전 경계
 

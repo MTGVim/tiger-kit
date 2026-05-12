@@ -1,12 +1,13 @@
 {
   "name": "tk",
   "description": "요구사항 정제, 갭 분석, 실행 task 분해, 대화 보조, 지식 레이어 정비를 돕는 TigerKit Claude Code 플러그인입니다.",
-  "version": "3.4.1",
+  "version": "3.5.0",
   "author": {
     "name": "MTGVim"
   },
   "commands": [
     "./commands/help.md",
+    "./commands/start.md",
     "./commands/prep.md",
     "./commands/interview.md",
     "./commands/mwhat.md",
@@ -16,7 +17,6 @@
     "./commands/state.md",
     "./commands/next.md",
     "./commands/do.md",
-    "./commands/do-all.md",
     "./commands/auto.md",
     "./commands/close.md",
     "./commands/review.md",
@@ -31,6 +31,6 @@
     "./skills/mwhat",
     "./skills/caveman",
     "./skills/write-a-skill",
-    "./skills/issue-to-task"
+    "./skills/fixme"
   ]
 }

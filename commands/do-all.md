@@ -13,6 +13,7 @@ description: tasks.md의 실행 가능한 task를 끝날 때까지 하나씩 구
 - `in_progress` task가 있으면 먼저 처리합니다.
 - 그다음 `todo` task를 순서대로 처리합니다.
 - `blocked`, `done`, `dropped`는 건너뜁니다.
+- 기본 prompt context에서는 completed task 본문을 다시 읽지 않습니다. active queue만 읽고, 완료 이력은 compact summary 또는 archive pointer로 다룹니다.
 - dependency나 외부 blocker가 명시된 task는 blocker 완료 전 처리하지 않습니다.
 - `Clarification Actions`에 `unresolved` 항목이 있으면 구현 loop를 시작하지 않습니다. 모호함을 terminal blocker로 보지 말고 `/tk:grill-me`, brainstorming, targeted question, assumption 선택을 다음 행동으로 보고합니다.
 - 단, `API Follow-up Tasks`의 `TK-API-* blocked`만 남은 경우에는 일반 `todo`/`in_progress` task를 계속 처리합니다. `TK-API-* blocked`는 merge blocker로 보고하되 mock 기준 구현을 막는 일반 blocker로 취급하지 않습니다.
@@ -20,6 +21,13 @@ description: tasks.md의 실행 가능한 task를 끝날 때까지 하나씩 구
 ## 처리 방식
 
 각 task는 `/tk:do`와 같은 규칙으로 처리합니다.
+
+각 task마다 아래 gate를 다시 수행합니다.
+- `Requirement Pinning`
+- 구현 및 검증
+- `Spec Adherence Gate`
+
+`FAIL_SPEC_VIOLATION` 또는 `NEEDS_CLARIFICATION`이 나오면 다음 task로 넘어가지 않고 즉시 멈춥니다.
 
 각 task 시작 전 스스로 판단합니다.
 

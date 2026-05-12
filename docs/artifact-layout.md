@@ -11,6 +11,9 @@
   gap.meta.json
   plan.md
   tasks.md
+  tasks.index.json
+  archive/
+    tasks.done.md
   close.md
 ```
 
@@ -37,7 +40,9 @@
 | `gap.md` | 현재 상태와 `requirements.md` 사이의 coverage/gap 분석. `API 계약 차이`를 항상 포함 |
 | `gap.meta.json` | `gap.md` 재사용 여부를 판단하는 캐시 메타데이터 |
 | `plan.md` | 구현 묶음, API 준비도, 선행관계, 검증 순서를 담은 canonical 실행계획 |
-| `tasks.md` | 작은 실행 task, API Follow-up Tasks, Clarification Actions, Shared Blockers, 상태, 포함 작업 요약, 완료 기준 |
+| `tasks.md` | active task queue, API Follow-up Tasks, Clarification Actions, Shared Blockers, 상태, 포함 작업 요약, 완료 기준, compact completed pointer |
+| `tasks.index.json` | compact task status/index. command routing과 token-efficient 상태 확인용 메타데이터 |
+| `archive/tasks.done.md` | 완료 또는 dropped task의 상세 이력 archive |
 | `close.md` | 선택적으로 남기는 세션 종료 요약, 남은 gap, 검증 상태, cleanup 후보 |
 
 ## 작업 흐름 단계
@@ -49,7 +54,7 @@
 | `plan-needed` | `gap.md`는 있고 `plan.md` 없음 | `/tk:plan` 실행 |
 | `tasks-needed` | `plan.md` 또는 `gap.md`는 있고 `tasks.md` 없음 | `/tk:breakdown` 실행 |
 | `clarification-needed` | unresolved `Clarification Actions` 있음 | `/tk:grill-me`, targeted question, brainstorming, assumption 선택 |
-| `task-ready` | 실행 가능한 `todo` 또는 `in_progress` task 있음 | `/tk:do` 또는 `/tk:do-all` 실행 |
+| `task-ready` | 실행 가능한 `todo` 또는 `in_progress` task 있음 | `/tk:auto` 또는 `/tk:do` 실행 |
 | `blocked` | 실행 가능한 일반 task가 없고 외부 `blocked` 또는 `Shared Blockers`의 `상태=blocked` 항목만 있음 | blocker 해결 또는 API/contract 확인 |
 | `re-eval-needed` | 구현 후 gap 재확인 필요 | `/tk:gap` 실행 |
 | `close-ready` | gap 재확인까지 끝났고 새 gap, unresolved `Clarification Actions`, unresolved `TK-API-*`, `Shared Blockers`의 `상태=blocked` 항목 없음 | `/tk:close` 실행 |
@@ -67,6 +72,14 @@ API나 공식 contract가 없지만 기능을 진행해야 하면 `/tk:plan`은 
 `spec_unclear`나 모호한 요구사항은 terminal `blocked`가 아닙니다. `tasks.md`의 `Clarification Actions`에 `TK-CLARIFY-<n>` 항목으로 올리고 `/tk:grill-me`, targeted question, brainstorming, assumption 선택 중 다음 행동을 남깁니다. 표에는 `ID`, `상태`, `모호점`, `추천 경로`, `영향 task`, `완료 조건`을 포함합니다. 상태는 `unresolved` 또는 `resolved`로 표시합니다.
 
 `blocked`와 `Shared Blockers`는 외부에서만 풀 수 있는 `api_contract_missing`, `permission_required`, `external_dependency_unavailable`, `human_decision_required` 같은 상태에 사용합니다. 같은 blocker를 공유하는 task는 task별로 복제하지 않고 `Shared Blockers` 항목 하나에 영향 task와 해소 조건을 모읍니다. 표에는 `ID`, `유형`, `상태`, `영향 task`, `해소 조건`, `현재 근거`를 포함합니다. 상태는 `blocked` 또는 `resolved`로 표시합니다.
+
+## active queue와 완료 이력
+
+기본 실행 경로에서 command는 `tasks.md`의 active queue와 `tasks.index.json`만 우선 읽습니다. `done`과 `dropped` task의 상세 본문은 `archive/tasks.done.md`로 분리하고, `tasks.md`에는 필요하면 compact pointer만 남깁니다.
+
+- `/tk:do-all`, `/tk:auto`, `/tk:next`, `/tk:state`는 기본적으로 completed task 본문을 다시 읽지 않습니다.
+- archive는 사용자가 특정 완료 task를 물어보거나, regression/close/review 근거가 필요할 때만 읽습니다.
+- 외부 source raw snapshot의 canonical 위치는 기본적으로 `.tigerkit/{work_id}/inputs/`입니다. `.agent/` 같은 별도 cache는 선택적 additive layer로만 취급합니다.
 
 ## task 상태값
 
