@@ -40,13 +40,22 @@ specialist / utility:
 /tk:caveman    # 응답 초압축 skill alias
 ```
 
+natural-language skills:
+
+```text
+mwhat          # `뭣?` trigger 답변 해독
+caveman        # 응답 초압축 mode
+write-a-skill  # 짧은 SKILL.md 작성/정리
+fixme          # 진행 중 발견한 mismatch를 queue 변경 후보로 캡처
+```
+
 legacy note:
 
 ```text
 /tk:interview, /tk:prep  # `/tk:start` 내부 mode 또는 legacy 진입점
 ```
 
-새 skill 작성이나 기존 skill 경량화 요청은 `write-a-skill` skill이 맡는다고 짧게 안내할 수 있습니다.
+진행 중 구현 mismatch, 누락, 방향 오류는 `fixme` skill이 queue 변경 후보로 정리한다고 짧게 안내할 수 있습니다.
 
 마지막 줄에는 현재 상황별 다음 추천 1개를 제안합니다.
 
