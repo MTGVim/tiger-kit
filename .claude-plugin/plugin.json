@@ -1,7 +1,7 @@
 {
   "name": "tk",
   "description": "requirements, task status, blocker, API follow-up, handoff를 관리하는 repo-local TigerKit Claude Code 플러그인입니다.",
-  "version": "3.8.1",
+  "version": "3.8.2",
   "author": {
     "name": "MTGVim"
   },
