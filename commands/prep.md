@@ -1,12 +1,12 @@
 ---
-description: 요구사항 source를 .tigerkit task ledger로 정리하고 implementation-context.md/tasks.md/tasks.index.json을 만듭니다.
+description: 요구사항 source를 .tigerkit task ledger로 정리하고 light-gap까지 반영합니다.
 ---
 
 이 명령은 아래 계약을 직접 따릅니다.
 
 사용자에게는 한글로 답합니다. 작업 산출물도 한글로 작성합니다. 단, 인용한 원문, 코드, 명령어, 파일 경로, 식별자는 원문 그대로 유지할 수 있습니다.
 
-목표: 사용자 요구사항 source를 `.tigerkit/{work_id}/requirements.md`와 실행 가능한 task queue로 정리합니다. `/tk:prep`은 project planning command가 아니라 source-to-task-ledger command입니다.
+목표: 사용자 요구사항 source를 `.tigerkit/{work_id}/requirements.md`와 실행 가능한 task queue로 정리합니다. `/tk:prep`은 project planning command가 아니라 source-to-task-ledger command이며, 마지막에 경량 light-gap sanity pass를 수행합니다.
 
 ## 기본 산출물
 
@@ -14,6 +14,7 @@ description: 요구사항 source를 .tigerkit task ledger로 정리하고 implem
 - `.tigerkit/{work_id}/implementation-context.md`
 - `.tigerkit/{work_id}/tasks.md`
 - `.tigerkit/{work_id}/tasks.index.json`
+- `.tigerkit/{work_id}/decisions.md`
 - 필요 시 `.tigerkit/{work_id}/inputs/sources/<kind>/<name>/`
 
 기존 workdir에 `leverage.md`가 있어도 신규 기본 산출물로 유지하지 않습니다. legacy `leverage.md` 호환성은 `/tk:do`에서만 처리합니다.
@@ -29,11 +30,29 @@ description: 요구사항 source를 .tigerkit task ledger로 정리하고 implem
 
 1. source material을 요구사항, scope, non-goal, acceptance signal로 정리합니다.
 2. source가 부족하면 사용자가 중간에 자료를 추가한 뒤 reply로 이어갈 수 있게 필요한 추가 source만 요청하고 멈춥니다.
-3. plan을 길게 만들기 전에 implementation context를 먼저 정리합니다.
+3. implementation context 초안을 먼저 정리합니다.
 4. 요구사항을 작은 task로 소분합니다.
 5. `tasks.md`를 active task ledger로 작성/갱신합니다.
 6. `tasks.index.json`을 compact state index로 작성/갱신합니다.
-7. API 문제는 미리 taxonomy로 만들지 않습니다. source에 명시된 외부 blocker만 기록하고, 실제 API follow-up은 `/tk:do`에서 lazy하게 만듭니다.
+7. `decisions.md`를 초기화하거나 기존 구조를 유지합니다.
+8. API 문제는 planning 단계에서 taxonomy로 만들지 않습니다. source에 명시된 외부 blocker만 기록하고, 실제 API follow-up은 `/tk:do`에서 lazy하게 만듭니다.
+9. 마지막에 light-gap sanity pass를 수행합니다.
+
+## light-gap
+
+`/tk:prep`의 light-gap는 `/tk:gap`을 대체하지 않습니다. 아래만 경량 점검합니다.
+
+- requirement 누락/중복
+- task granularity 과대/과소
+- immediate clarification 필요 여부
+- obvious shared blocker
+- 바로 실행 가능한 task 존재 여부
+
+하지 않는 일:
+- merge-ready 판단
+- API follow-up 병합 후보 정밀 검토
+- detailed readiness audit
+- report-only 장문 gap 출력
 
 ## source 접근 기록
 
@@ -100,31 +119,6 @@ CSS, layout, spacing, color, typography 같은 UI 요소를 확인할 때는 이
 추가/수정할 참고 대상이나 제약이 있으면 첨삭해주세요.
 ```
 
-## tasks.md 권장 구조
-
-```md
-# Tasks
-
-## Active Tasks
-
-| ID | Status | Summary | Req | API Follow-ups | Done Criteria |
-|---|---|---|---|---|---|
-
-## API Follow-ups
-
-| ID | Status | Summary | Affected Tasks | Mock Location | Resolution |
-|---|---|---|---|---|---|
-
-## Shared Blockers
-
-| ID | Type | Status | Summary | Affected Tasks | Resolution |
-|---|---|---|---|---|---|
-
-## Done Archive
-
-Moved to archive/tasks.done.md
-```
-
 ## tasks.index.json 최소 schema
 
 ```json
@@ -135,11 +129,19 @@ Moved to archive/tasks.done.md
       "status": "todo",
       "summary": "...",
       "sourceRequirements": ["R-001"],
-      "apiFollowups": []
+      "apiFollowups": [],
+      "decisionLogRef": "decisions.md#t-001",
+      "changedFiles": []
     }
   ],
   "apiFollowups": [],
-  "sharedBlockers": []
+  "sharedBlockers": [],
+  "steer": {
+    "active": false
+  },
+  "reflect": {
+    "pendingCandidateCount": 0
+  }
 }
 ```
 
@@ -152,7 +154,7 @@ Moved to archive/tasks.done.md
 - 과도한 plan 문서 생성
 - API capability taxonomy 생성
 - 강한 API key 생성
-- task와 무관한 review/prototype/reflect/improve 흐름 시작
+- task와 무관한 reflect 승격 흐름 시작
 - 구현, commit, push, PR 생성, merge, deploy
 
 ## 출력
@@ -165,8 +167,7 @@ task ledger 만들었습니다.
 - requirements: `.tigerkit/search-ui/requirements.md`
 - implementation context: `.tigerkit/search-ui/implementation-context.md`
 - tasks: T-001..T-004
-- index: `.tigerkit/search-ui/tasks.index.json`
-- pending context correction: 1
+- light-gap: task-ready
 
-다음 추천: /tk:next
+다음 추천: /tk:task
 ```
