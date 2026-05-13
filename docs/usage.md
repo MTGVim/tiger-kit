@@ -36,9 +36,6 @@ skill은 command surface 밖에서 유지됩니다. `issue`는 자연어 auto-tr
 
 | Skill | 역할 |
 | --- | --- |
-| `mwhat` | `뭣?` trigger 답변 해독 |
-| `caveman` | 초압축 응답 mode |
-| `write-a-skill` | 짧은 `SKILL.md` 작성 |
 | `issue` | command가 명시적으로 요청할 때 issue/task-ledger 변경 draft 작성. 자연어 auto-trigger 없음 |
 
 ## 1. 준비

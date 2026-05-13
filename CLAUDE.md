@@ -47,9 +47,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `commands/do.md`: task 하나를 구현하고 lazy API follow-up을 갱신한다.
 - `commands/gap.md`: requirements/task/API/blocker/readiness를 report-only로 점검한다.
 - `commands/close.md`: handoff와 merge-ready 판단을 정리한다.
-- `skills/mwhat/SKILL.md`: `뭣?` trigger 답변 해독 지침.
-- `skills/caveman/SKILL.md`: 자연어 트리거와 세션 지속성이 필요한 caveman 응답 모드 지침.
-- `skills/write-a-skill/SKILL.md`: 장황한 skill creator 대체용 경량 skill 작성 지침.
 - `skills/issue/SKILL.md`: command가 명시적으로 요청할 때 issue/task-ledger 변경 draft를 만드는 지침. 자연어 auto-trigger는 없다.
 - `docs/usage.md`: 사용자 관점의 명령 사용법.
 - `docs/artifact-layout.md`: `.tigerkit/{work_id}/` task ledger 구조.
