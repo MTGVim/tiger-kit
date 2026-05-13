@@ -45,7 +45,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `commands/prep.md`: requirements source를 `.tigerkit` task ledger로 변환한다.
 - `commands/next.md`: `tasks.index.json` 기준 다음 task 하나를 추천한다.
 - `commands/do.md`: task 하나를 구현하고 lazy API follow-up을 갱신한다.
-- `commands/check.md`: requirements/task/API/blocker/readiness를 report-only로 점검한다.
+- `commands/gap.md`: requirements/task/API/blocker/readiness를 report-only로 점검한다.
 - `commands/close.md`: handoff와 merge-ready 판단을 정리한다.
 - `skills/mwhat/SKILL.md`: `뭣?` trigger 답변 해독 지침.
 - `skills/caveman/SKILL.md`: 자연어 트리거와 세션 지속성이 필요한 caveman 응답 모드 지침.
@@ -60,7 +60,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `/tk:prep`: 요구사항 source를 `.tigerkit` task ledger로 정리하고 `tasks.md`, `tasks.index.json`을 만든다.
 - `/tk:next`: `tasks.index.json`을 읽고 다음 task 또는 action 하나만 추천한다.
 - `/tk:do`: task 하나를 구현하고 lazy API follow-up을 생성/재사용한다.
-- `/tk:check`: requirements 대비 누락, task 상태, API follow-up, shared blocker, close/merge readiness를 점검한다.
+- `/tk:gap`: requirements 대비 누락, task 상태, API follow-up, shared blocker, close/merge readiness를 점검한다.
 - `/tk:close`: 완료/잔여 task, unresolved API follow-up, blocker, handoff, merge-ready 여부를 정리한다.
 
 ## 핵심 정책

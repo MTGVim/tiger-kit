@@ -61,7 +61,7 @@ unresolved API = close/merge blocker
 1. 새 API 문제가 발견되면 기존 `API Follow-ups`와 `tasks.index.json.apiFollowups`를 확인합니다.
 2. 같은 문제로 확신하면 기존 `TK-API-*`를 재사용합니다.
 3. 애매하면 새 `TK-API-*`를 만듭니다.
-4. `/tk:check` 또는 `/tk:close`에서 중복 병합 후보를 보고합니다.
+4. `/tk:gap` 또는 `/tk:close`에서 중복 병합 후보를 보고합니다.
 
 ## 구현 루프
 

@@ -92,7 +92,7 @@
       "id": 5,
       "name": "do-reuse-existing-api-followup",
       "prompt": "You are evaluating TigerKit /tk:do T-005. The same missing API appears to match an existing TK-API-001. Describe expected behavior. Do not write files.",
-      "expected_output": "Should inspect existing API Follow-ups, reuse TK-API-001 when it is clearly the same issue, add T-005 to affected tasks, and avoid creating a normalized API capability key. If uncertain, it may create a separate follow-up and let /tk:check suggest merge later.",
+      "expected_output": "Should inspect existing API Follow-ups, reuse TK-API-001 when it is clearly the same issue, add T-005 to affected tasks, and avoid creating a normalized API capability key. If uncertain, it may create a separate follow-up and let /tk:gap suggest merge later.",
       "files": [],
       "expectations": [
         "Checks existing TK-API-* follow-ups",
@@ -100,17 +100,17 @@
         "Adds the current task to affected tasks",
         "Does not create API capability taxonomy",
         "Creates separate follow-up only when matching is ambiguous",
-        "Leaves duplicate merge decisions to /tk:check or /tk:close"
+        "Leaves duplicate merge decisions to /tk:gap or /tk:close"
       ]
     },
     {
       "id": 6,
-      "name": "check-gap-demoted-report-only",
-      "prompt": "You are evaluating TigerKit /tk:check. Several tasks are done, one API follow-up is unresolved, and requirements may have one missing acceptance item. Describe expected behavior. Do not write files.",
-      "expected_output": "Should act as a report-only reduced gap/check gate: compare requirements and task state, identify missing coverage, API follow-up duplicates, shared blockers, unresolved blockers, and close/merge readiness. It should not create tasks or implement code.",
+      "name": "gap-report-only",
+      "prompt": "You are evaluating TigerKit /tk:gap. Several tasks are done, one API follow-up is unresolved, and requirements may have one missing acceptance item. Describe expected behavior. Do not write files.",
+      "expected_output": "Should act as a report-only gap gate: compare requirements and task state, identify missing coverage, API follow-up duplicates, shared blockers, unresolved blockers, and close/merge readiness. It should not create tasks or implement code.",
       "files": [],
       "expectations": [
-        "Treats check as reduced gap validation gate",
+        "Treats gap as report-only validation gate",
         "Checks requirements coverage",
         "Checks task state consistency",
         "Checks duplicate API follow-up candidates",
@@ -141,13 +141,13 @@
       "id": 8,
       "name": "command-surface-small",
       "prompt": "You are evaluating TigerKit active command surface. Describe the user-facing commands after the ledger redesign. Do not write files.",
-      "expected_output": "Should list only /tk:prep, /tk:next, /tk:do, /tk:check, and /tk:close as user-facing commands. It should keep legacy workflow aliases out of the active command surface.",
+      "expected_output": "Should list only /tk:prep, /tk:next, /tk:do, /tk:gap, and /tk:close as user-facing commands. It should keep legacy workflow aliases out of the active command surface.",
       "files": [],
       "expectations": [
         "Lists /tk:prep",
         "Lists /tk:next",
         "Lists /tk:do",
-        "Lists /tk:check",
+        "Lists /tk:gap",
         "Lists /tk:close",
         "Does not list legacy analysis/planning aliases as active top-level commands",
         "Does not list legacy task-splitting aliases as active top-level commands",

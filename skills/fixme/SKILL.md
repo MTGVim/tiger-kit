@@ -1,6 +1,6 @@
 ---
 name: fixme
-description: Capture mid-work discoveries of wrong, incomplete, or mismatched implementation as TigerKit task-ledger change candidates without immediately fixing them. Use when the user says something is implemented wrong, missing, mismatched with requirements/design, or needs to be fixed during `/tk:do`, `/tk:next`, `/tk:check`, `/tk:close`, or similar active TigerKit steps.
+description: Capture mid-work discoveries of wrong, incomplete, or mismatched implementation as TigerKit task-ledger change candidates without immediately fixing them. Use when the user says something is implemented wrong, missing, mismatched with requirements/design, or needs to be fixed during `/tk:do`, `/tk:next`, `/tk:gap`, `/tk:close`, or similar active TigerKit steps.
 ---
 
 # Fixme
@@ -36,7 +36,7 @@ description: Capture mid-work discoveries of wrong, incomplete, or mismatched im
 - `TK-API follow-up 후보`: API Follow-ups 갱신 승인 요청
 - `Clarification Action 후보`: targeted question
 - `Shared Blocker 후보`: blocker 해소 action
-- 상태만 다시 봐야 하면 `다음 추천: /tk:next` 또는 `/tk:check`
+- 상태만 다시 봐야 하면 `다음 추천: /tk:next` 또는 `/tk:gap`
 
 ## Output
 

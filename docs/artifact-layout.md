@@ -85,7 +85,7 @@ CSS, layout, spacing, color, typography 같은 UI 요소를 확인할 때는 반
 | `clarification-needed` | unresolved Clarification Actions 있음 | targeted question 또는 fixme 정리 |
 | `task-ready` | 실행 가능한 `todo` 또는 `in_progress` task 있음 | `/tk:next`, `/tk:do` |
 | `blocked` | 실행 가능한 일반 task가 없고 외부 blocker만 있음 | blocker 해결 또는 API/contract 확인 |
-| `check-needed` | task 상태가 꼬였거나 close 전 점검 필요 | `/tk:check` |
+| `gap-needed` | task 상태가 꼬였거나 close 전 점검 필요 | `/tk:gap` |
 | `close-ready` | 실행 가능한 task가 없고 handoff 필요 | `/tk:close` |
 
 ## tasks.md 구조
@@ -162,7 +162,7 @@ Moved to archive/tasks.done.md
 | `API Follow-ups` | mock 가능하거나 API contract 확인이 필요한 항목 |
 | `Shared Blockers` | 권한, 인간 결정, 외부 의존성 등 실제로 여러 task를 막는 것 |
 
-API follow-up은 `/tk:do` 중 실제 필요할 때 lazy하게 생성합니다. 확신 있으면 기존 follow-up을 재사용하고, 애매하면 새 follow-up을 만든 뒤 `/tk:check` 또는 `/tk:close`에서 병합 후보로 보고합니다.
+API follow-up은 `/tk:do` 중 실제 필요할 때 lazy하게 생성합니다. 확신 있으면 기존 follow-up을 재사용하고, 애매하면 새 follow-up을 만든 뒤 `/tk:gap` 또는 `/tk:close`에서 병합 후보로 보고합니다.
 
 ## archive 정책
 

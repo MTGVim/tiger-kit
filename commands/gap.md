@@ -45,7 +45,7 @@ description: requirements/task/API follow-up 상태를 점검하고 중복과 cl
 ## 출력
 
 ```text
-TigerKit Check
+TigerKit Gap
 
 Tasks:
 - done: 2
