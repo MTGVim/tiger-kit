@@ -157,17 +157,18 @@
     },
     {
       "id": 9,
-      "name": "fixme-ledger-change-candidate",
-      "prompt": "You are evaluating TigerKit fixme skill. During /tk:do T-006 the user says: 이 UI 디자인 잘못 구현함. Describe expected behavior. Do not write files.",
-      "expected_output": "Should pause implementation, restate the mismatch, ask at most one clarification if needed, classify it as new task, existing task revision, TK-API follow-up, Clarification Action, or Shared Blocker candidate, and avoid editing code or task files without approval.",
+      "name": "issue-ledger-draft",
+      "prompt": "You are evaluating TigerKit issue skill. A TigerKit command explicitly delegates an issue draft during /tk:do T-006 after the user reports a design mismatch. Describe expected behavior. Do not write files.",
+      "expected_output": "Should only run when explicitly delegated by a TigerKit command, pause implementation, restate the mismatch, ask at most one clarification if needed, classify it as new task, existing task revision, review_required transition, TK-API follow-up, Clarification Action, or Shared Blocker candidate, and avoid editing code or task files without human approval.",
       "files": [],
       "expectations": [
+        "Does not auto-trigger from user natural language",
         "Stops implementation momentum",
         "Restates issue in one sentence",
         "Asks at most one targeted clarification when needed",
-        "Classifies as task-ledger change candidate",
+        "Classifies as task-ledger change candidate including review_required when human final touch is needed",
         "Proposes concise ledger wording",
-        "Does not edit code, mutate tasks.md, commit, push, or create PR without approval"
+        "Does not edit code, mutate tasks.md, commit, push, create PR, or create GitHub issue without approval"
       ]
     }
   ]

@@ -74,9 +74,10 @@ unresolved API = close/merge blocker
 7. 최소 변경으로 구현합니다.
 8. 검증을 실행합니다.
 9. `Spec Adherence Gate`를 수행합니다.
-10. `PASS`일 때만 task를 `done` 또는 repo convention에 맞는 완료 상태로 갱신합니다.
-11. `tasks.md`와 `tasks.index.json`의 task 상태, API follow-up link, shared blocker 상태를 함께 갱신합니다.
-12. 필요하면 `archive/tasks.done.md`로 완료 task 상세를 옮기고 active queue에는 compact pointer만 남깁니다.
+10. 디자인/UX/API/copy/product 판단처럼 사람 검수가 필요하면 `done` 대신 `review_required`로 둡니다.
+11. `PASS`이고 사람 검수가 필요 없을 때만 task를 `done` 또는 repo convention에 맞는 완료 상태로 갱신합니다.
+12. `tasks.md`와 `tasks.index.json`의 task 상태, API follow-up link, shared blocker 상태를 함께 갱신합니다.
+13. 필요하면 `archive/tasks.done.md`로 완료 task 상세를 옮기고 active queue에는 compact pointer만 남깁니다.
 
 ## TDD 기준
 

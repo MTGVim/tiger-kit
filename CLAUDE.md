@@ -50,7 +50,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `skills/mwhat/SKILL.md`: `뭣?` trigger 답변 해독 지침.
 - `skills/caveman/SKILL.md`: 자연어 트리거와 세션 지속성이 필요한 caveman 응답 모드 지침.
 - `skills/write-a-skill/SKILL.md`: 장황한 skill creator 대체용 경량 skill 작성 지침.
-- `skills/fixme/SKILL.md`: 진행 중 제기된 문제를 task-ledger 변경 후보로 정리하는 지침.
+- `skills/issue/SKILL.md`: command가 명시적으로 요청할 때 issue/task-ledger 변경 draft를 만드는 지침. 자연어 auto-trigger는 없다.
 - `docs/usage.md`: 사용자 관점의 명령 사용법.
 - `docs/artifact-layout.md`: `.tigerkit/{work_id}/` task ledger 구조.
 - `docs/output-contract.md`: command 응답 receipt 규칙.
@@ -73,6 +73,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - mock이 false confidence를 만들거나 유효하지 않은 구현을 강제하면 task를 `blocked`로 둔다.
 - 강한 API Capability Key나 taxonomy를 만들지 않는다. `TK-API-*` follow-up ID만 사용한다.
 - `tasks.index.json`은 compact state index다. 긴 plan, evidence log, 복잡한 dependency graph를 넣지 않는다.
+- TigerKit은 초안과 draft를 만든다. 최종 wording, `done` 전환, 디자인/UX/API 승인 여부는 사람이 결정한다.
+- 사람 검수가 필요하면 `done` 대신 `review_required` 상태를 사용한다.
 
 ## 작업 시 주의사항
 

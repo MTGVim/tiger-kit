@@ -82,7 +82,7 @@ CSS, layout, spacing, color, typography 같은 UI 요소를 확인할 때는 반
 | --- | --- | --- |
 | `req-needed` | `requirements.md` 없음 | `/tk:prep` |
 | `task-ledger-needed` | `requirements.md`는 있고 `tasks.md` 또는 `tasks.index.json` 없음 | `/tk:prep`로 ledger 생성/갱신 |
-| `clarification-needed` | unresolved Clarification Actions 있음 | targeted question 또는 fixme 정리 |
+| `clarification-needed` | unresolved Clarification Actions 있음 | targeted question 또는 issue draft 정리 |
 | `task-ready` | 실행 가능한 `todo` 또는 `in_progress` task 있음 | `/tk:next`, `/tk:do` |
 | `blocked` | 실행 가능한 일반 task가 없고 외부 blocker만 있음 | blocker 해결 또는 API/contract 확인 |
 | `gap-needed` | task 상태가 꼬였거나 close 전 점검 필요 | `/tk:gap` |
