@@ -1,560 +1,173 @@
 {
-  "skill_name": "tigerkit-workflow",
+  "skill_name": "tiger-kit-ledger",
   "evals": [
     {
       "id": 0,
-      "name": "prep-cache-hit",
-      "prompt": "You are evaluating the TigerKit prep command instructions. A project already has .tigerkit/checkout-retry/requirements.md and .tigerkit/checkout-retry/requirements.meta.json. The meta fields input_source_hash, prep_prompt_version, scope_hash, and input_identities all match the current request. The user runs: /tk:prep checkout retry 요구사항 다시 정리해줘. Describe exactly what Claude should do and what the user-facing response should include. Do not write files.",
-      "expected_output": "Should reuse the existing requirements.md, state cache hit reason briefly, include the requirements.md path, keep the response short, and avoid dumping the whole requirements document.",
+      "name": "prep-requirements-to-task-ledger",
+      "prompt": "You are evaluating TigerKit /tk:prep. The user provides a feature request and asks TigerKit to prep. Describe expected behavior. Do not write files.",
+      "expected_output": "Should create or update .tigerkit/{work_id}/requirements.md, leverage.md, tasks.md, and tasks.index.json. It should split requirements into actionable tasks, avoid broad current-implementation gap analysis, avoid API capability taxonomy, and not implement code.",
       "files": [],
       "expectations": [
-        "Says the existing requirements.md should be reused because cache keys match",
-        "Names the requirements.md path in the user-facing response",
-        "Says the user-facing response should be short and avoid dumping the whole requirements document",
-        "Does not instruct regenerating requirements.md or metadata on cache hit",
-        "Ends the user-facing response with '다음 추천: /tk:gap'"
+        "Uses .tigerkit/{work_id} as source of truth",
+        "Creates or updates requirements.md",
+        "Creates or updates leverage.md",
+        "Creates or updates tasks.md",
+        "Creates or updates compact tasks.index.json",
+        "Does not create Backlog.md dependencies",
+        "Does not run broad gap analysis",
+        "If source material is insufficient, asks for only the missing source and can continue from the user's reply after they add it",
+        "For large MCP sources such as Figma, records access index fields such as URL, file key, frame id, node id, selection id, and refetch steps instead of raw dump or long summary",
+        "When CSS/layout/spacing/color/typography details are needed, requires a fresh MCP read instead of relying on stale access records or screenshot summaries",
+        "For Figma frame-based sources, allows extracted metadata/style chunks such as chunks/chunk-001.md with frame id, node id, selection id, text labels, and CSS values, while still avoiding full node-tree raw dumps",
+        "Does not create API capability taxonomy",
+        "Does not implement, commit, push, open PRs, merge, or deploy"
       ]
     },
     {
       "id": 1,
-      "name": "prep-force-miss",
-      "prompt": "You are evaluating the TigerKit prep command instructions. A previous requirements.md exists for .tigerkit/search-filter/requirements.md, but the user runs: /tk:prep --force docs/search-filter.md 기준으로 다시 정리해줘. Describe exactly what Claude should do and what the user-facing response should include. Do not write files.",
-      "expected_output": "Should ignore the cache because --force was requested, regenerate requirements.md and metadata, briefly explain the force/cache miss reason, show the path, and keep the chat response short.",
+      "name": "prep-index-minimal-schema",
+      "prompt": "You are evaluating TigerKit tasks.index.json guidance. Describe the minimum schema and what must not be included. Do not write files.",
+      "expected_output": "Should keep tasks.index.json small: tasks with id/status/summary/sourceRequirements/apiFollowups, apiFollowups with id/status/summary/affectedTasks/mergeBlocker/mockLocation/resolution, and sharedBlockers. It should not include long plans, evidence logs, complex API taxonomy, or detailed dependency graphs.",
       "files": [],
       "expectations": [
-        "Says --force makes Claude ignore or bypass the existing cache",
-        "Says requirements.md should be regenerated from docs/search-filter.md",
-        "Says requirements metadata should be updated or regenerated",
-        "Says the user-facing response should include the path and stay short"
+        "Includes compact tasks array",
+        "Includes compact apiFollowups array",
+        "Includes sharedBlockers array",
+        "Uses TK-API-* follow-up IDs rather than API capability keys",
+        "Avoids long plan bodies",
+        "Avoids excessive evidence logs",
+        "Avoids complex dependency graphs"
       ]
     },
     {
       "id": 2,
-      "name": "gap-requirement-coverage",
-      "prompt": "You are evaluating the TigerKit gap command instructions. A requirements document exists at .tigerkit/onboarding-copy/requirements.md, the repository has relevant docs and code paths, and the user runs: /tk:gap 방금 정리한 요구사항 대비 현재 구현 갭 분석해줘. Describe the expected report structure and the final user-facing response. Do not write files.",
-      "expected_output": "Should describe cache check based on git commit, requirements hash, gap prompt version, and scope; write/reuse gap.md with metadata; include Korean report sections for 판정, 요구사항 커버리지, 남은 갭, API 계약 차이, 확인 불가, and 메모; 요구사항 커버리지, 남은 갭, API 계약 차이, and 확인 불가 must be Markdown tables even when empty; final chat response should not dump the full report and should include verdict value, path, core gaps, and one next action. When API or visual artifact evidence is unclear, it may use tk-sif-muna or tk-ashenzari as supporting agents while main agent owns the final gap.md verdict.",
+      "name": "next-one-task-only",
+      "prompt": "You are evaluating TigerKit /tk:next. tasks.index.json has one in_progress task, several todo tasks, unresolved TK-API-001, and one blocked task. Describe expected behavior. Do not write files.",
+      "expected_output": "Should read tasks.index.json first, recommend exactly one executable task, prefer the in_progress task, exclude blocked/done/dropped tasks, show related API follow-up and whether it blocks execution or only close/merge, and not modify files.",
       "files": [],
       "expectations": [
-        "Describes gap cache checking with git commit, requirements hash, prompt version, and scope",
-        "Mentions gap.md metadata",
-        "Requires 판정 with GAPS_FOUND, NO_GAPS_FOUND, or UNVERIFIABLE",
-        "Requires 요구사항 커버리지, 남은 갭, API 계약 차이, and 확인 불가 as Markdown tables",
-        "Requires empty 남은 갭, API 계약 차이, and 확인 불가 tables to keep a header and 없음 row",
-        "Says 확인 불가 prevents a NO_GAPS_FOUND verdict",
-        "Says API or contract absence should prompt a cross-check unless explicitly out of scope",
-        "Says the chat response should not dump the full report and should include verdict, path, core gaps, and one next action",
-        "Ends the user-facing response with '다음 추천: /tk:plan'",
-        "Allows tk-sif-muna for API/contract verification and tk-ashenzari for visual artifact evidence",
-        "Keeps final gap.md and Verdict responsibility with the main command agent"
+        "Reads tasks.index.json first",
+        "Recommends exactly one task or one user action",
+        "Prefers in_progress over todo",
+        "Excludes blocked, done, and dropped tasks",
+        "Shows related TK-API-* follow-up",
+        "Distinguishes task execution blocker from close/merge blocker",
+        "Does not rebuild a plan or run implementation",
+        "Does not modify files"
       ]
     },
     {
       "id": 3,
-      "name": "mwhat-command-alias-and-narrow-skill",
-      "prompt": "You are evaluating the TigerKit mwhat command instructions. The user runs: /tk:mwhat 뭐라는거야? 이 기능은 확장성을 고려해서 모듈화하고, 상태 관리는 나중에 요구사항이 명확해지면 정하는 게 좋겠습니다. 우선 데이터 흐름을 정리하고 컴포넌트 경계를 잡는 방향으로 접근하면 될 것 같습니다. Describe the expected user-facing response. Do not write files.",
-      "expected_output": "Should support /tk:mwhat as an explicit command alias and support natural skill trigger only for the exact phrase 뭣?. It should not auto-trigger on broader confusion phrases like 뭐라고? or 무슨 말이야?. The response should use the two approved Korean blocks and stay short.",
+      "name": "do-lazy-api-followup-safe-mock",
+      "prompt": "You are evaluating TigerKit /tk:do T-003. The task needs an unavailable user search API, but a mock contract can safely support the UI states. Describe expected behavior. Do not write files.",
+      "expected_output": "Should continue the task, create or reuse a TK-API-* follow-up, link affected tasks, record mock location and resolution, update tasks.md and tasks.index.json, and treat the unresolved API follow-up as close/merge blocker rather than development blocker.",
       "files": [],
       "expectations": [
-        "Treats /tk:mwhat as an explicit alias for the mwhat behavior",
-        "Allows natural skill trigger only for exact 뭣?",
-        "Does not auto-trigger on broader confusion phrases like 뭐라고? or 무슨 말이야?",
-        "Includes the block label '뭣? 쉽게 말하면'",
-        "Includes the block label '추천'",
-        "Does not include extra structural block labels such as 하던 것 or 문제 상황",
-        "Explains the source answer directly instead of producing a generic summary",
-        "Provides a message the user can send or adapt"
+        "Checks API need at implementation time, not during start",
+        "Does not block solely because API is missing",
+        "Classifies the case as mock_api_contract",
+        "Creates or reuses TK-API-* follow-up lazily",
+        "Links the affected task to the follow-up",
+        "Records mock location and resolution criteria",
+        "Updates tasks.md and tasks.index.json",
+        "Treats unresolved API follow-up as close/merge blocker"
       ]
     },
     {
       "id": 4,
-      "name": "plan-no-task-before-approval",
-      "prompt": "You are evaluating the TigerKit plan command instructions. A gap report exists at .tigerkit/github-issues/gap.md and the user runs: /tk:plan 각 gap당 task로 나눠서 실행계획 세워. Describe exactly what Claude should do before the user approves the plan. Do not write files.",
-      "expected_output": "Should read gap.md, produce an implementation plan with Korean sections for 수정 기록, 맥락, 권장 접근, API 준비도, Task Breakdown, 의존성, and 검증, but must not create tasks.md before approval. The response should make clear that implementation does not start automatically. It may use tk-sif-muna for API 준비도 and tk-ru for high-risk plan review, but must preserve canonical plan.md and no tasks before approval.",
+      "name": "do-api-missing-unsafe-mock",
+      "prompt": "You are evaluating TigerKit /tk:do T-004. The task depends on auth/permission behavior and a mock would create false confidence. Describe expected behavior. Do not write files.",
+      "expected_output": "Should mark the task blocked, record blocked reason and required user/API decision, and avoid fake implementation. The API follow-up may be blocked, and the task should not be treated as done.",
       "files": [],
       "expectations": [
-        "Uses gap.md as the planning source",
-        "Includes 수정 기록, 맥락, 권장 접근, API 준비도, Task Breakdown, 의존성, and 검증",
-        "Keeps plan.md as the canonical latest plan instead of creating plan.v2.md",
-        "Does not create tasks.md before approval",
-        "Does not start code implementation automatically",
-        "Ends the user-facing response with '다음 추천: /tk:breakdown'",
-        "Uses tk-sif-muna when API 준비도 needs real API or official contract confirmation",
-        "Uses tk-ru for architecture, correctness, or risk-heavy plan review when useful",
-        "Preserves canonical plan.md and does not create tasks.md before approval even when agents are used"
+        "Detects unsafe mock",
+        "Marks selected task blocked",
+        "Records blocked reason",
+        "Records required contract or decision",
+        "Does not proceed with false-confidence mock",
+        "Does not mark task done"
       ]
     },
     {
       "id": 5,
-      "name": "breakdown-gap-to-task-list",
-      "prompt": "You are evaluating the TigerKit breakdown command instructions. A gap report exists with Remaining Gaps and the user runs: /tk:breakdown gap을 실행 task로 쪼개줘. Describe the expected tasks.md content and final user-facing response. Do not write files.",
-      "expected_output": "Should transform each actionable gap into small tasks with ID, status, goal, included-work summary, checklist, done criteria, and blockers. If API 준비도 contains mock_api_contract, it should avoid duplicating blocked implementation tasks and instead add API Follow-up Tasks with TK-API IDs. It should not implement the tasks, commit, push, or open a PR.",
+      "name": "do-reuse-existing-api-followup",
+      "prompt": "You are evaluating TigerKit /tk:do T-005. The same missing API appears to match an existing TK-API-001. Describe expected behavior. Do not write files.",
+      "expected_output": "Should inspect existing API Follow-ups, reuse TK-API-001 when it is clearly the same issue, add T-005 to affected tasks, and avoid creating a normalized API capability key. If uncertain, it may create a separate follow-up and let /tk:check suggest merge later.",
       "files": [],
       "expectations": [
-        "Creates or updates .tigerkit/{work_id}/tasks.md",
-        "Uses only todo, in_progress, blocked, done, dropped statuses",
-        "Includes an included-work or gap summary per task ID",
-        "Includes blocker relationships when known",
-        "Creates API Follow-up Tasks for mock_api_contract slices instead of blocking every implementation task",
-        "Routes spec_unclear or ambiguous requirements to Clarification Actions instead of terminal blocked tasks",
-        "Requires Clarification Actions to include status, recommended path, affected tasks, and done criteria",
-        "Groups external blockers such as permission_required or external_dependency_unavailable in Shared Blockers",
-        "Requires Shared Blockers to include type, status, affected tasks, resolution criteria, and evidence",
-        "Deduplicates shared API capabilities into one TK-API follow-up task",
-        "Does not implement code automatically",
-        "Does not commit, push, or create PRs without user approval",
-        "Ends the user-facing response with '다음 추천: /tk:next'"
+        "Checks existing TK-API-* follow-ups",
+        "Reuses the follow-up when clearly same issue",
+        "Adds the current task to affected tasks",
+        "Does not create API capability taxonomy",
+        "Creates separate follow-up only when matching is ambiguous",
+        "Leaves duplicate merge decisions to /tk:check or /tk:close"
       ]
     },
     {
       "id": 6,
-      "name": "next-task-ready-recommends-one-task",
-      "prompt": "You are evaluating the TigerKit next command instructions. A .tigerkit/work/tasks.md file contains one in_progress task, several todo tasks, and one blocked task. The user runs: /tk:next. Describe the expected behavior. Do not write files.",
-      "expected_output": "Should detect task-ready state and recommend exactly one executable task plus /tk:do. It should choose the in_progress task, exclude blocked/done/dropped tasks, and not perform implementation itself.",
+      "name": "check-gap-demoted-report-only",
+      "prompt": "You are evaluating TigerKit /tk:check. Several tasks are done, one API follow-up is unresolved, and requirements may have one missing acceptance item. Describe expected behavior. Do not write files.",
+      "expected_output": "Should act as a report-only reduced gap/check gate: compare requirements and task state, identify missing coverage, API follow-up duplicates, shared blockers, unresolved blockers, and close/merge readiness. It should not create tasks or implement code.",
       "files": [],
       "expectations": [
-        "Detects task-ready state from tasks.md",
-        "Recommends exactly one task",
-        "Prefers in_progress over todo",
-        "Excludes blocked tasks from execution candidates",
-        "Recommends /tk:do for implementation",
-        "Does not perform implementation itself",
-        "Ends with one '다음 추천:' line"
+        "Treats check as reduced gap validation gate",
+        "Checks requirements coverage",
+        "Checks task state consistency",
+        "Checks duplicate API follow-up candidates",
+        "Checks shared blockers",
+        "Reports close/merge readiness",
+        "Does not create tasks automatically",
+        "Does not implement, commit, push, open PRs, merge, or deploy"
       ]
     },
     {
       "id": 7,
-      "name": "close-no-shared-actions-without-approval",
-      "prompt": "You are evaluating the TigerKit close command instructions. The user runs: /tk:close at the end of a session with uncommitted changes and remaining tasks. Describe the expected close report behavior. Do not write files.",
-      "expected_output": "Should summarize remaining gaps/tasks, unresolved Clarification Actions, unresolved TK-API-* follow-ups, Shared Blockers with status=blocked, verification status, cleanup candidates, and one next command. It may suggest commit/push/PR/archive actions but must not perform them without explicit user approval.",
+      "name": "close-readiness-handoff",
+      "prompt": "You are evaluating TigerKit /tk:close. Development tasks are done but TK-API-001 remains mock_api_contract. Describe expected behavior. Do not write files.",
+      "expected_output": "Should summarize done and remaining tasks, unresolved API follow-ups, shared blockers, and handoff. It should say development progress may be OK but merge-ready is NO while unresolved TK-API-* remains.",
       "files": [],
       "expectations": [
-        "Includes remaining gap, unresolved Clarification Actions, unresolved TK-API-* follow-ups, external blocked task, or Shared Blockers with status=blocked information",
-        "Includes verification status",
-        "Includes cleanup/archive candidates",
-        "Suggests one next command or action",
-        "Does not create branches, commits, pushes, PRs, or delete files without approval"
+        "Summarizes completed tasks",
+        "Summarizes remaining tasks",
+        "Lists unresolved TK-API-* follow-ups",
+        "Lists shared blockers",
+        "Writes or presents handoff.md content",
+        "Distinguishes development progress from merge-ready",
+        "Marks merge-ready NO when unresolved API follow-up remains",
+        "Does not open PRs, merge, push, or deploy"
       ]
     },
     {
       "id": 8,
-      "name": "prototype-ui-variants",
-      "prompt": "You are evaluating the TigerKit prototype command instructions. The user runs: /tk:prototype settings billing 섹션 UI를 몇 가지로 비교해보고 싶어. Describe the expected approach. Do not write files.",
-      "expected_output": "Should treat this as a throwaway FE UI prototype, prefer mounting variants into an existing page, use ?variant= search params with three structurally different variants, include a floating switcher, hide it in production, and explain cleanup after a winner is chosen. If UI/UX judgment is central, it may use tk-nemelex-xobeh; if screenshots or visual captures are input, it may use tk-ashenzari.",
+      "name": "command-surface-small",
+      "prompt": "You are evaluating TigerKit active command surface. Describe the user-facing commands after the ledger redesign. Do not write files.",
+      "expected_output": "Should list only /tk:prep, /tk:next, /tk:do, /tk:check, and /tk:close as user-facing commands. It should keep legacy workflow aliases out of the active command surface.",
       "files": [],
       "expectations": [
-        "Treats prototype as throwaway code answering one UI question",
-        "Prefers an existing page over a new prototype route",
-        "Uses ?variant= URL search params",
-        "Defaults to three structurally different variants",
-        "Requires a floating bottom switcher with URL-stable navigation",
-        "Requires the switcher to be hidden in production builds",
-        "Does not promote prototype code directly to production",
-        "Explains deleting loser variants and switcher after a winner is chosen",
-        "Uses tk-nemelex-xobeh for UI/UX variant design when useful",
-        "Uses tk-ashenzari for screenshot or visual artifact interpretation when useful"
+        "Lists /tk:prep",
+        "Lists /tk:next",
+        "Lists /tk:do",
+        "Lists /tk:check",
+        "Lists /tk:close",
+        "Does not list legacy analysis/planning aliases as active top-level commands",
+        "Does not list legacy task-splitting aliases as active top-level commands",
+        "Does not list legacy workflow-runner aliases as active command runners",
+        "Keeps natural-language skills conceptually separate from command surface"
       ]
     },
     {
       "id": 9,
-      "name": "caveman-skill-trigger",
-      "prompt": "You are evaluating the TigerKit caveman skill instructions. The user says: caveman mode, less tokens from now on. Describe the expected behavior. Do not write files.",
-      "expected_output": "Should activate persistent caveman communication mode via the skill, keep technical accuracy, drop filler and pleasantries, preserve code/errors/commands, and temporarily relax compression for security warnings or irreversible-action confirmations. /tk:caveman should behave as an alias for the same mode.",
+      "name": "fixme-ledger-change-candidate",
+      "prompt": "You are evaluating TigerKit fixme skill. During /tk:do T-006 the user says: 이 UI 디자인 잘못 구현함. Describe expected behavior. Do not write files.",
+      "expected_output": "Should pause implementation, restate the mismatch, ask at most one clarification if needed, classify it as new task, existing task revision, TK-API follow-up, Clarification Action, or Shared Blocker candidate, and avoid editing code or task files without approval.",
       "files": [],
       "expectations": [
-        "Treats caveman as a skill with natural-language triggers",
-        "Persists across later responses until normal mode or stop caveman",
-        "Keeps technical terms, code blocks, commands, and error text intact",
-        "Drops filler, pleasantries, and unnecessary background",
-        "Temporarily relaxes for security warnings and irreversible actions",
-        "Treats /tk:caveman as a command alias for the skill"
-      ]
-    },
-    {
-      "id": 10,
-      "name": "write-a-skill-lightweight",
-      "prompt": "You are evaluating the TigerKit write-a-skill skill instructions. The user says: 기존 skill-creator는 너무 장황해. 이 workflow를 짧은 skill로 만들어줘. Describe the expected behavior. Do not write files.",
-      "expected_output": "Should gather only minimal requirements, draft a concise skills/{skill-name}/SKILL.md with name and trigger-focused description, avoid broad framework behavior, split files only when needed, and ask for focused review points.",
-      "files": [],
-      "expectations": [
-        "Treats write-a-skill as a lightweight replacement for verbose skill creator flows",
-        "Asks only the minimum requirements needed for the skill domain and triggers",
-        "Creates SKILL.md as the default artifact shape",
-        "Requires name and description frontmatter",
-        "Keeps description trigger-focused with Use when wording",
-        "Splits reference files or scripts only when needed",
-        "Avoids broad automation or heavy framework ceremony"
-      ]
-    },
-    {
-      "id": 11,
-      "name": "mwhat-no-broad-confusion-trigger",
-      "prompt": "You are evaluating the TigerKit mwhat skill trigger boundary. The user says only: 뭐라고? Describe whether the mwhat skill should auto-trigger. Do not write files.",
-      "expected_output": "Should not auto-trigger mwhat. The mwhat natural trigger is limited to exact 뭣?; broader confusion phrases should be handled as normal conversation unless the user invokes /tk:mwhat explicitly.",
-      "files": [],
-      "expectations": [
-        "Does not trigger mwhat for 뭐라고?",
-        "States the natural trigger is exact 뭣? only",
-        "Allows /tk:mwhat as explicit invocation",
-        "Avoids broad confusion-trigger behavior"
-      ]
-    },
-    {
-      "id": 12,
-      "name": "help-workflow-overview",
-      "prompt": "You are evaluating the TigerKit help command instructions. The user runs: /tk:help. Describe the expected response. Do not write files.",
-      "expected_output": "Should briefly show the primary TigerKit workflow from /tk:start to /tk:close, separate primary, advanced, and utility command tiers, mention legacy interview/prep briefly, avoid exposing execute-queue as a user command, and end with one situation-aware 다음 추천 line. It should not modify files.",
-      "files": [],
-      "expectations": [
-        "Includes /tk:start, /tk:auto, /tk:next, /tk:state, and /tk:close as the primary workflow surface",
-        "Separates advanced commands such as /tk:gap, /tk:plan, /tk:breakdown, and /tk:do from the primary surface",
-        "Briefly explains utility commands like /tk:mwhat, /tk:grill-me, /tk:caveman, and /tk:prototype",
-        "Mentions mwhat natural trigger is only 뭣?",
-        "Ends with one '다음 추천:' line",
-        "Does not modify files"
-      ]
-    },
-    {
-      "id": 13,
-      "name": "next-recommends-requirements-to-gap",
-      "prompt": "You are evaluating the TigerKit next command instructions. .tigerkit/search/requirements.md exists, but gap.md, plan.md, and tasks.md do not. The user runs: /tk:next. Describe expected behavior. Do not write files.",
-      "expected_output": "Should detect gap-needed state and recommend /tk:gap using requirements.md as the basis. It should not modify files or perform the gap analysis itself.",
-      "files": [],
-      "expectations": [
-        "Detects gap-needed state",
-        "Uses .tigerkit/{work_id}/requirements.md as the basis file",
-        "Recommends /tk:gap when state is clear",
-        "Does not perform file modifications itself",
-        "Ends with '다음 추천: /tk:gap'"
-      ]
-    },
-    {
-      "id": 14,
-      "name": "next-asks-when-work-id-ambiguous",
-      "prompt": "You are evaluating the TigerKit next command instructions. .tigerkit/ contains multiple work_id directories and the user runs: /tk:next with no other context. Describe expected behavior. Do not write files.",
-      "expected_output": "Should not guess which work_id to use. It should ask the user to choose a work_id or provide a .tigerkit/{work_id}/ path.",
-      "files": [],
-      "expectations": [
-        "Does not guess between multiple work_id directories",
-        "Asks for work_id or path",
-        "Does not create or modify artifacts before the work_id is clear"
-      ]
-    },
-    {
-      "id": 15,
-      "name": "do-single-task-tdd-judgment",
-      "prompt": "You are evaluating the TigerKit do command instructions. tasks.md contains T-003: fix checkout state transition bug with observable behavior and existing tests. The user runs: /tk:do T-003. Describe expected behavior. Do not write files.",
-      "expected_output": "Should select T-003, recommend TDD because it is behavior/state/bug-fix work with regression risk, use a vertical red-green-refactor loop through public interfaces, choose inline or sub-agent based on scope, verify, update task state, commit the code-changing task after successful verification, and avoid push/PR without approval. For sub-agent mode, it should route bounded implementation to tk-trog, API follow-ups to tk-sif-muna, cleanup/docs hygiene to tk-elyvilon, UI work to tk-nemelex-xobeh, visual artifact checks to tk-ashenzari, and risk review to tk-ru.",
-      "files": [],
-      "expectations": [
-        "Selects the requested task ID",
-        "States TDD recommendation before implementation",
-        "Uses one behavior test at a time, not horizontal slices",
-        "Tests public observable behavior rather than implementation details",
-        "Mocks only system boundaries when needed",
-        "Chooses inline or sub-agent mode based on scope",
-        "Updates task status after verification",
-        "Creates a local commit after successful verification because the task changes code",
-        "Does not push or create PRs without approval",
-        "Routes bounded implementation to tk-trog when sub-agent mode is useful",
-        "Routes API follow-up or contract replacement work to tk-sif-muna when needed",
-        "Routes cleanup or docs-hygiene consistency work to tk-elyvilon when needed",
-        "Keeps final diff review, verification, task update, and local commit responsibility with the main agent"
-      ]
-    },
-    {
-      "id": 16,
-      "name": "do-doc-task-no-tdd",
-      "prompt": "You are evaluating the TigerKit do command instructions. tasks.md contains T-002: update README wording only. The user runs: /tk:do T-002. Describe expected behavior. Do not write files.",
-      "expected_output": "Should select T-002 and state TDD is not recommended or is skipped because this is docs/copy work. It should implement inline, run appropriate docs/plugin/whitespace verification, update task status, avoid auto-committing docs-only work unless requested, and avoid push/PR without approval.",
-      "files": [],
-      "expectations": [
-        "Selects the requested docs task",
-        "Skips or does not recommend TDD for docs/copy work",
-        "Uses inline mode unless scope unexpectedly grows",
-        "Runs appropriate verification",
-        "Updates task status",
-        "Does not auto-commit docs-only work unless requested",
-        "Does not push or create PRs without approval"
-      ]
-    },
-    {
-      "id": 17,
-      "name": "execute-queue-processes-tasks-sequentially",
-      "prompt": "You are evaluating the TigerKit internal execute-queue contract. tasks.md has one in_progress task, two todo tasks, and one blocked task, and /tk:auto has reached the task execution phase. Describe expected behavior. Do not write files.",
-      "expected_output": "Should process executable tasks one at a time, in_progress first then todo tasks, applying /tk:do judgment per task. It should run Requirement Pinning before edits and Spec Adherence Gate before marking each task done; FAIL_SPEC_VIOLATION or NEEDS_CLARIFICATION stops queue execution. It should skip blocked tasks except that TK-API-* blocked follow-ups do not stop mock-based general task implementation; stop on verification failure, external blocker, or needed Clarification Actions, update task status after each task, commit each code-changing task after successful verification, and not push/PR without approval. Ambiguity should be reported as Clarification Actions rather than terminal blocked tasks. If all executable general tasks complete and no unresolved Clarification Actions, external blockers, or Shared Blockers with status=blocked remain, it should run exactly one tail gap check, update gap.md if new gaps exist, and stop rather than starting another implementation loop. For each task it should re-evaluate agent routing, including tk-elyvilon for cleanup/docs hygiene and tk-ru for spec-adherence review when needed, and may use independent agents inside a task, but main agent must merge diff, verify, and commit task-by-task.",
-      "files": [],
-      "expectations": [
-        "Processes tasks one at a time",
-        "Starts with in_progress before todo",
-        "Skips blocked tasks",
-        "Does not treat TK-API-* blocked follow-ups as blockers for remaining mock-based general tasks",
-        "Decides TDD and inline/sub-agent mode per task",
-        "Stops on external blocker, needed Clarification Actions, FAIL_SPEC_VIOLATION, NEEDS_CLARIFICATION, or verification failure",
-        "Updates task status after each task",
-        "Does not push or create PRs without approval",
-        "Commits each code-changing task after successful verification before moving to the next task",
-        "Runs exactly one tail gap check after all executable general tasks complete and no unresolved Clarification Actions, external blockers, or Shared Blockers with status=blocked remain",
-        "Reports unresolved TK-API-* as merge blockers rather than close-ready completion",
-        "Updates gap.md if new gaps are found and stops before another implementation loop",
-        "Recommends /tk:plan when tail gap check finds new gaps",
-        "Recommends /tk:close only when tail gap check finds no new gaps and no unresolved Clarification Actions, unresolved TK-API-*, or Shared Blockers with status=blocked remain",
-        "Re-evaluates agent routing for each task",
-        "Runs Requirement Pinning and Spec Adherence Gate for each task",
-        "Routes cleanup or docs-hygiene tasks to tk-elyvilon",
-        "Allows parallel agents only for independent work within a task with low conflict risk",
-        "Keeps task-by-task verification and commits under main agent control"
-      ]
-    },
-    {
-      "id": 18,
-      "name": "next-recommends-gap-after-last-task",
-      "prompt": "You are evaluating the TigerKit next command instructions. tasks.md shows all tasks done and no blocked tasks, but gap has not been re-run yet. The user runs /tk:next. Describe expected behavior. Do not write files.",
-      "expected_output": "Should recommend /tk:gap for re-evaluation after implementation. It must not run gap itself and must not start another implementation loop automatically.",
-      "files": [],
-      "expectations": [
-        "Detects re-eval-needed state",
-        "Recommends /tk:gap after implementation is done",
-        "Does not modify files",
-        "Does not recursively start another implementation loop"
-      ]
-    },
-    {
-      "id": 19,
-      "name": "state-overview",
-      "prompt": "You are evaluating the TigerKit state command instructions. A work_id has requirements.md, gap.md, plan.md, tasks.md, with one in_progress task and one blocked task. The user runs: /tk:state. Describe expected behavior. Do not write files.",
-      "expected_output": "Should summarize the .tigerkit state: work_id, current stage, artifact presence, task summary, unresolved Clarification Actions, external blocker summary, and one next recommendation. It must not modify files.",
-      "files": [],
-      "expectations": [
-        "Shows work_id",
-        "Shows current stage",
-        "Shows artifact presence",
-        "Shows task, unresolved Clarification Actions, and external blocker summary",
-        "Ends with one '다음 추천:' line",
-        "Does not modify files"
-      ]
-    },
-    {
-      "id": 20,
-      "name": "auto-one-cycle",
-      "prompt": "You are evaluating the TigerKit auto command instructions. requirements.md exists and work_id is clear. The user runs: /tk:auto. Describe expected behavior. Do not write files.",
-      "expected_output": "Should run exactly one cycle of gap -> plan -> breakdown -> execute-queue -> gap. If API or official contract cannot be verified and the user has not marked it out of scope, it should continue with mock_api_contract and TK-API follow-up blockers. During execute-queue, code-changing tasks should be committed after successful verification and each task should pass Requirement Pinning and Spec Adherence Gate. It should stop if external blockers, needed Clarification Actions, FAIL_SPEC_VIOLATION, NEEDS_CLARIFICATION, verification failures, or new gaps require re-planning. Ambiguity should be recorded as Clarification Actions, not terminal blocked tasks. It must not automatically start a second cycle. During execute-queue it follows the same agent routing rules as the internal contract, including tk-elyvilon for cleanup/docs hygiene and tk-ru for spec-adherence review when needed.",
-      "files": [],
-      "expectations": [
-        "Requires clear work_id and requirements.md",
-        "Runs one cycle only",
-        "Includes gap, plan, breakdown, execute-queue, and final gap",
-        "Defaults unverifiable required APIs to mock_api_contract unless user marks them out of scope",
-        "Keeps TK-API-* blocked follow-ups as merge blockers without stopping executable general tasks",
-        "Commits code-changing tasks during execute-queue after successful verification",
-        "Stops on external blockers or needed Clarification Actions",
-        "Recommends /tk:plan when new gaps appear after re-evaluation",
-        "Does not automatically start a second cycle",
-        "Follows execute-queue agent routing during the implementation phase, including tk-elyvilon for cleanup/docs hygiene and tk-ru for spec-adherence review when needed"
-      ]
-    },
-    {
-      "id": 21,
-      "name": "review-brief-request",
-      "prompt": "You are evaluating the TigerKit review command instructions. A task has just been completed and the user runs: /tk:review. Describe expected behavior. Do not write files.",
-      "expected_output": "Should prepare a concise Review Brief with review scope, what changed, expected behavior, diff/files or commit range, verification method, and specific risks/questions for the reviewer. It may connect to an available external review surface but should not commit, push, or create a PR without approval. If no external review surface exists and TigerKit agents are available, it may use tk-ru; if neither exists, it should stop after the Review Brief. Before requesting external review, it may also use tk-ru to organize internal codebase context without replacing the external review surface. API 준비도 review may include tk-sif-muna, UI review tk-nemelex-xobeh, and visual evidence tk-ashenzari.",
-      "files": [],
-      "expectations": [
-        "Creates a Review Brief",
-        "Includes review scope and what changed",
-        "Includes expected behavior and verification method",
-        "Includes risks or questions for reviewer",
-        "Does not dump full session history",
-        "Does not commit, push, or create PRs without approval",
-        "Uses tk-ru as internal review surface when no external review mechanism is available and TigerKit agents are available",
-        "Falls back to Review Brief only when neither external review surface nor TigerKit reviewer agent is available",
-        "Allows tk-ru before external review when internal codebase context needs to be organized without replacing the external review surface",
-        "Does not pass full session history to reviewer agents"
-      ]
-    },
-    {
-      "id": 22,
-      "name": "review-fix-verify-before-fix",
-      "prompt": "You are evaluating the TigerKit review-fix command instructions. The user has review feedback with one unclear item and one likely incorrect suggestion, then runs: /tk:review-fix. Describe expected behavior. Do not write files.",
-      "expected_output": "Should avoid performative agreement, clarify unclear items before changing code, verify suggestions against the codebase, fix technically correct items one at a time, commit code-changing review fixes after successful verification, and push back with technical reasoning when a suggestion seems wrong. It must not blindly implement everything. Cleanup or docs-hygiene review fixes may use tk-elyvilon, while trade-off validation uses tk-ru and API feedback uses tk-sif-muna.",
-      "files": [],
-      "expectations": [
-        "Avoids performative agreement language",
-        "Clarifies unclear items first",
-        "Verifies suggestions against codebase reality",
-        "Fixes items one at a time",
-        "Allows technical pushback when reviewer is wrong",
-        "Commits code-changing fixes after successful verification",
-        "Does not blindly implement all feedback",
-        "May use tk-elyvilon for cleanup or docs-hygiene review fixes",
-        "Keeps final verification and commit responsibility with the main agent even when agents are used"
-      ]
-    },
-    {
-      "id": 23,
-      "name": "plan-api-missing-defaults-to-mock-contract",
-      "prompt": "You are evaluating the TigerKit plan command instructions. gap.md says a feature slice needs an API, but the repo has no real endpoint and no official contract. The user did not mark the API out of scope and gives no answer to the API cross-check. The user runs: /tk:plan. Describe expected behavior. Do not write files.",
-      "expected_output": "Should not stop just because the API is missing. It should create/update plan.md with API 준비도 at feature slice granularity, mark the slice as mock_api_contract, describe the assumed contract/mock boundary, and note that a TK-API follow-up is required before merge-ready completion.",
-      "files": [],
-      "expectations": [
-        "Does not block planning solely because the API or contract is missing",
-        "Creates API 준비도 by feature slice, not one global state",
-        "Uses mock_api_contract when API and official contract are unavailable and not out of scope",
-        "Mentions assumed contract and mock API/MSW-style boundary",
-        "Says mock_api_contract is development-progress only, not merge-ready completion",
-        "Requires a TK-API follow-up for real API confirmation and replacement"
-      ]
-    },
-    {
-      "id": 24,
-      "name": "breakdown-shared-mock-api-followup",
-      "prompt": "You are evaluating the TigerKit breakdown command instructions. plan.md has API 준비도 with three feature slices that all need the same missing members API and are marked mock_api_contract. The user runs: /tk:breakdown. Describe expected tasks.md behavior. Do not write files.",
-      "expected_output": "Should keep feature implementation tasks executable under mock_api_contract, avoid creating three duplicated blocked tasks for the same missing API, and create one TK-API follow-up in API Follow-up Tasks with all affected slices listed.",
-      "files": [],
-      "expectations": [
-        "Does not mark every feature implementation task blocked just because the shared API is missing",
-        "Creates API Follow-up Tasks as a separate section",
-        "Deduplicates the shared missing API into one TK-API ID",
-        "Lists all affected feature slices on the TK-API follow-up",
-        "Uses existing status values such as blocked and todo",
-        "Requires FIXME(TK-API-<n>) or TODO fallback at the mock boundary"
-      ]
-    },
-    {
-      "id": 25,
-      "name": "next-api-followup-ready-to-replace",
-      "prompt": "You are evaluating the TigerKit next command instructions. tasks.md has no general todo or in_progress tasks, but API Follow-up Tasks contains TK-API-1 with status todo because the real API contract is now available. The user runs: /tk:next. Describe expected behavior. Do not write files.",
-      "expected_output": "Should recommend TK-API-1 as the next executable replacement task with /tk:do, instead of saying everything is blocked or close-ready.",
-      "files": [],
-      "expectations": [
-        "Detects that no general executable tasks remain",
-        "Detects TK-API-* todo in API Follow-up Tasks",
-        "Recommends the TK-API replacement task rather than waiting",
-        "Recommends /tk:do for the replacement task",
-        "Does not report close-ready while TK-API-* todo remains"
-      ]
-    },
-    {
-      "id": 26,
-      "name": "do-api-followup-replaces-mock-contract",
-      "prompt": "You are evaluating the TigerKit do command instructions. tasks.md has TK-API-1 todo for replacing an assumed invite API contract now that the real API is available. The user runs: /tk:do TK-API-1. Describe expected behavior. Do not write files.",
-      "expected_output": "Should treat TK-API-1 as an API follow-up replacement task: compare the real API or official contract to the assumed contract, update implementation and tests away from the mock boundary where appropriate, resolve or update FIXME(TK-API-1), verify real API behavior, and only mark done when replacement is complete.",
-      "files": [],
-      "expectations": [
-        "Selects the requested TK-API follow-up task",
-        "Uses the real API or official contract as the source of truth",
-        "Compares the real API to the assumed contract and handles drift",
-        "Replaces or narrows the mock boundary as appropriate",
-        "Resolves or updates the FIXME/TODO marker for the TK-API ID",
-        "Runs relevant verification before marking done",
-        "Does not mark done if real API replacement remains incomplete"
-      ]
-    },
-    {
-      "id": 27,
-      "name": "agent-routing-command-owned",
-      "prompt": "You are evaluating TigerKit agent orchestration. The user runs /tk:do on a task that includes API contract uncertainty, UI changes, and screenshot evidence. Describe how Claude should choose agents and who owns final workflow state. Do not write files.",
-      "expected_output": "Should keep TigerKit command-first workflow. It may use tk-sif-muna for API/contract uncertainty, tk-nemelex-xobeh for UI work, tk-ashenzari for screenshot evidence, tk-trog for bounded implementation, and tk-ru for risk review. Short tk-* names are shorthand; if runtime exposes tk:tk-* identifiers, it should use those namespaced IDs. Main agent must own task selection, artifact updates, final diff review, verification, task status, and local commit for code-changing work. Cleanup and docs-hygiene follow-up should route to tk-elyvilon.",
-      "files": [],
-      "expectations": [
-        "Keeps command-first workflow rather than replacing commands with agents",
-        "Uses tk-sif-muna for API/contract uncertainty",
-        "Uses tk-nemelex-xobeh for UI work",
-        "Uses tk-ashenzari for screenshot or visual artifact evidence",
-        "Uses tk-trog only for clear bounded implementation",
-        "Uses tk-ru for risk, review, or YAGNI judgment",
-        "Treats tk-* as short names and uses namespaced tk:tk-* identifiers when the plugin runtime exposes them",
-        "Uses explicit agent model frontmatter so subagents do not inherit expensive main-session models by default",
-        "Keeps cleanup/docs-hygiene agent defaults cheap while judgment, implementation, API, UI, and visual agents default to sonnet",
-        "Keeps read-only agents on non-editing tools",
-        "Keeps final artifact updates, verification, task status, and commits under main agent control",
-        "Uses tk-elyvilon for cleanup, docs hygiene, and healing-style consistency work"
-      ]
-    },
-    {
-      "id": 28,
-      "name": "breakdown-clarification-actions-and-shared-blockers",
-      "prompt": "You are evaluating the TigerKit breakdown command instructions. plan.md has one feature slice with ambiguous acceptance criteria and three tasks waiting on the same external permission. The user runs: /tk:breakdown. Describe expected tasks.md behavior. Do not write files.",
-      "expected_output": "Should not turn spec_unclear or ambiguous acceptance criteria into terminal blocked tasks. It should add a Clarification Actions section with a TK-CLARIFY-* item, unresolved/resolved status, affected tasks, done criteria, and a next action such as /tk:grill-me, targeted question, brainstorming, or assumption choice. It should group the shared permission_required dependency under Shared Blockers with type, status, affected tasks, resolution criteria, and evidence instead of duplicating blocked tasks.",
-      "files": [],
-      "expectations": [
-        "Does not mark ambiguous requirements as blocked tasks",
-        "Creates or updates a Clarification Actions section",
-        "Uses TK-CLARIFY-* IDs for unresolved clarification work",
-        "Records status, affected tasks, and done criteria on Clarification Actions",
-        "Recommends /tk:grill-me, targeted question, brainstorming, or assumption choice for ambiguity reduction",
-        "Uses Shared Blockers for permission_required external dependency",
-        "Lists type, status, affected tasks, resolution criteria, and evidence on the shared blocker",
-        "Avoids duplicating one shared external blocker across multiple blocked tasks"
-      ]
-    },
-    {
-      "id": 29,
-      "name": "next-prioritizes-clarification-actions",
-      "prompt": "You are evaluating the TigerKit next command instructions. tasks.md contains unresolved Clarification Actions, one todo implementation task, and one external Shared Blocker. The user runs: /tk:next. Describe expected behavior. Do not write files.",
-      "expected_output": "Should detect clarification-needed state and recommend exactly one clarification path before treating the situation as blocked or starting implementation. It should report the unresolved TK-CLARIFY-* item and suggest /tk:grill-me, targeted question, brainstorming, or assumption choice.",
-      "files": [],
-      "expectations": [
-        "Detects clarification-needed from unresolved Clarification Actions",
-        "Does not report ambiguity as terminal blocked",
-        "Recommends one clarification path before implementation",
-        "Names the relevant TK-CLARIFY-* item",
-        "Mentions /tk:grill-me, targeted question, brainstorming, or assumption choice",
-        "Does not start /tk:do while clarification is the next required action"
-      ]
-    },
-    {
-      "id": 30,
-      "name": "fixme-midwork-course-correction",
-      "prompt": "You are evaluating the TigerKit fixme skill instructions. During /tk:do on a UI task, the user says: 이 UI 디자인 잘못 구현함. Describe expected behavior. Do not write files.",
-      "expected_output": "Should pause implementation momentum, restate the fixme, ask at most one targeted clarification question if needed, optionally offer 2-3 queue framings with trade-offs, classify the issue as 새 수정 task, 기존 task 수정, clarification 필요, or shared blocker, propose concise queue wording, and recommend a scope-appropriate next action. It must not implement code, edit tasks.md, commit, push, or create a PR without approval.",
-      "files": [],
-      "expectations": [
-        "Stops implementation momentum instead of continuing /tk:do",
-        "Restates the reported issue in one sentence",
-        "Asks at most one targeted clarification question when needed",
-        "Optionally offers 2-3 task framings with trade-offs",
-        "Classifies the issue as 새 수정 task, 기존 task 수정, clarification 필요, or shared blocker",
-        "Proposes concise queue wording",
-        "Routes the next step by scope, such as /tk:plan for task changes or /tk:grill-me for clarification",
-        "Does not edit code, mutate tasks.md, commit, push, or create a PR without approval"
-      ]
-    },
-    {
-      "id": 31,
-      "name": "interview-brainstorming-to-requirements",
-      "prompt": "You are evaluating the TigerKit interview command instructions. The user runs: /tk:interview 아직 문서화되지 않은 아이디어를 요구사항으로 좁혀줘. Describe expected behavior. Do not write files.",
-      "expected_output": "Should treat this as a collaborative brainstorming plus deep interview flow for turning a fuzzy idea into requirements.md and requirements.meta.json. It should inspect code or existing .tigerkit context before asking code-answerable questions, ask at most one material question at a time, use AskUserQuestion or an equivalent explicit user-input mechanism when an answer is needed, offer 2-3 approaches with trade-offs when the problem is broad, maintain decisions/constraints/non-goals/open questions with provenance/source metadata, restate the final requirements for user approval, and only then create or propose requirements artifacts. If an existing tasks.md only needs queue changes, it should propose Task insertion, Task revision, Clarification Action, or Shared Blocker wording for /tk:plan instead of mutating tasks.md.",
-      "files": [],
-      "expectations": [
-        "Distinguishes /tk:interview from /tk:prep by using conversation to create the source of truth",
-        "Uses collaborative brainstorming rather than grill-me style pressure",
-        "Asks at most one material question per assistant response during the interview",
-        "Uses AskUserQuestion or an equivalent explicit user-input mechanism when a real answer is needed",
-        "Does not force internal status labels like 현재 가정 or 남은 모호함 into the user-facing prompt",
-        "Reads code or existing .tigerkit context before asking questions that can be answered from files",
-        "Offers 2-3 approaches with trade-offs when the idea is broad",
-        "Tracks decisions, constraints, non-goals, open questions, and evidence provenance",
-        "Requires final restatement and user approval before writing requirements.md",
-        "Uses requirements.md and requirements.meta.json as the default artifacts",
-        "Records provenance or source metadata for interview decisions",
-        "Proposes queue changes instead of directly editing tasks.md when the issue only affects existing tasks",
-        "Does not implement code, commit, push, or create a PR"
-      ]
-    },
-    {
-      "id": 32,
-      "name": "prep-captures-raw-source-artifacts",
-      "prompt": "You are evaluating TigerKit prep source capture guidance. The user provides a Figma MCP XML response and asks /tk:prep to preserve the source before requirements extraction. Describe expected behavior. Do not write files.",
-      "expected_output": "Should use .tigerkit/{work_id}/inputs/sources/<kind>/<name>/ as the canonical source snapshot location, preserve the original response as *.raw.<ext>, create meta.json, create summary.md when useful, read summary.md before raw content on later passes, and avoid silent overwrite of existing raw artifacts. It should not use a separate agent cache as the canonical location.",
-      "files": [],
-      "expectations": [
-        "Uses .tigerkit/{work_id}/inputs/sources/<kind>/<name>/ for source snapshots",
-        "Stores original content as *.raw.<ext> without changing XML/JSON/PNG/PDF/HTML/TXT formats",
-        "Creates meta.json for source metadata",
-        "Creates summary.md when useful",
-        "Uses summary-first read policy before raw artifact rehydration",
-        "Does not silently overwrite existing raw artifacts",
-        "Does not treat a separate agent cache as the canonical location"
+        "Stops implementation momentum",
+        "Restates issue in one sentence",
+        "Asks at most one targeted clarification when needed",
+        "Classifies as task-ledger change candidate",
+        "Proposes concise ledger wording",
+        "Does not edit code, mutate tasks.md, commit, push, or create PR without approval"
       ]
     }
   ]
