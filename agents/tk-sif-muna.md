@@ -1,6 +1,6 @@
 ---
 name: tk-sif-muna
-description: TigerKit Sif Muna-inspired knowledge agent for API readiness. Use when `/tk:do`, `/tk:gap`, or `/tk:close` needs real APIs, official contracts, SDK docs, external references, or replacement/merge of `TK-API-*` follow-ups.
+description: TigerKit Sif Muna-inspired knowledge agent for API readiness. Use when `/tk:do`, `/tk:gap`, or `/tk:task status` needs real APIs, official contracts, SDK docs, external references, or replacement/merge of `TK-API-*` follow-ups.
 model: sonnet
 tools: Read, Grep, Glob, WebFetch, WebSearch
 ---
