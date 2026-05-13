@@ -1,6 +1,8 @@
 # 산출물 구조
 
-권장 프로젝트 로컬 산출물 구조:
+TigerKit은 Backlog.md에 의존하지 않습니다. `.tigerkit/{work_id}/`가 repo-local source of truth입니다.
+
+## 권장 구조
 
 ```text
 .tigerkit/{work_id}/
@@ -8,112 +10,164 @@
     sources/
       <kind>/
         <name>/
-          <artifact>.raw.<ext>
+          access.md
           meta.json
-          summary.md
   requirements.md
-  requirements.meta.json
-  gap.md
-  gap.meta.json
-  plan.md
+  leverage.md
   tasks.md
   tasks.index.json
+  handoff.md
   archive/
     tasks.done.md
-  close.md
 ```
-
-`/tk:interview`는 source 문서가 아직 없을 때 흐릿한 아이디어를 대화로 좁혀 `requirements.md`와 `requirements.meta.json`으로 정리합니다. `/tk:prep`는 이미 있는 입력 자료와 대화 맥락을 `requirements.md`와 `requirements.meta.json`으로 정규화합니다. `/tk:gap`은 현재 repo 상태와 `requirements.md`의 차이를 `gap.md`에 기록합니다. `/tk:plan`은 gap 결과를 승인 가능한 실행계획으로 정리합니다. `/tk:breakdown`은 gap 또는 plan을 `tasks.md`로 내립니다. `/tk:state`는 `.tigerkit/{work_id}` 전체 상태를 읽습니다. `/tk:close`는 세션 종료 요약을 필요할 때 `close.md`로 남길 수 있습니다.
-
-`/tk:reflect`는 maintenance alias로 유지되지만 `interview/prep → gap → plan → breakdown → do/execute-queue → gap → close` 라이프사이클의 필수 단계는 아닙니다.
-
-## 브랜치 이름과 작업 ID
-
-현재 git 브랜치가 진행 중인 작업을 나타낸다면 그 브랜치 이름을 사용할 수 있습니다. 현재 브랜치가 `main`, `master`, `develop` 또는 저장소 기본 브랜치 같은 기반 브랜치라면 변경 가능한 산출물을 쓰기 전에 다음 중 하나를 우선합니다.
-
-- 사용자 승인 후 작업 브랜치를 만들거나 전환
-- 사용자에게 짧은 작업 ID를 묻고 `.tigerkit/{work_id}/` 아래에 사용
-
-브랜치를 자동으로 만들거나 전환하지 않습니다. git 브랜치를 확인할 수 없다면 사용자가 제공한 짧은 작업 ID를 사용합니다.
 
 ## 파일 책임
 
 | 파일 | 역할 |
-|---|---|
-| `inputs/` | `requirements.md`를 만들 때 참고한 원문 자료, 메모, 캡처, 참고 코드 보관 위치 |
-| `inputs/sources/<kind>/<name>/` | Figma MCP 응답, API response, screenshot, PDF, HTML snapshot 같은 비정형 source snapshot 보관 위치 |
-| `requirements.md` | 이번 작업의 정규화된 요구사항 기준 문서 |
-| `requirements.meta.json` | `/tk:prep`의 cache 판단 또는 `/tk:interview`의 결정 출처와 범위를 기록하는 메타데이터 |
-| `gap.md` | 현재 상태와 `requirements.md` 사이의 coverage/gap 분석. `API 계약 차이`를 항상 포함 |
-| `gap.meta.json` | `gap.md` 재사용 여부를 판단하는 캐시 메타데이터 |
-| `plan.md` | 구현 묶음, API 준비도, 선행관계, 검증 순서를 담은 canonical 실행계획 |
-| `tasks.md` | active task queue, API Follow-up Tasks, Clarification Actions, Shared Blockers, 상태, 포함 작업 요약, 완료 기준, compact completed pointer |
-| `tasks.index.json` | compact task status/index. command routing과 token-efficient 상태 확인용 메타데이터 |
+| --- | --- |
+| `inputs/` | 요구사항 정리에 참고한 source 접근 index 보관 위치. Figma 같은 대형 MCP source는 raw 대신 접근 방법만 기록 |
+| `requirements.md` | 작업 기준점. 사용자 요구사항과 합의된 범위 |
+| `leverage.md` | 참고 화면, reuse 후보, 피해야 할 구현, non-goals, API/외부 의존성, pending 질문 |
+| `tasks.md` | 사람이 읽는 task ledger |
+| `tasks.index.json` | Claude가 적은 token으로 현재 상태를 파악하기 위한 compact state index |
+| `handoff.md` | 며칠 뒤 재진입을 위한 요약 |
 | `archive/tasks.done.md` | 완료 또는 dropped task의 상세 이력 archive |
-| `close.md` | 선택적으로 남기는 세션 종료 요약, 남은 gap, 검증 상태, cleanup 후보 |
+
+## source 접근 기록
+
+Figma, design MCP, large document MCP처럼 큰 source는 원문 전체를 저장하지 않습니다. raw 저장은 context overflow를 만들고, 요약은 중요한 UI/detail 정보를 잃게 만들 수 있습니다. 대신 `access.md`에 다시 MCP로 접근할 수 있는 index만 남깁니다.
+
+`access.md` 권장 항목:
+
+```md
+# Source Access
+
+provider: figma
+mcp_tool: figma.get_file | figma.get_node | ...
+url: ...
+file_key: ...
+page_id: ...
+frame_id: ...
+node_ids:
+- ...
+selection_ids:
+- ...
+query_or_focus: ...
+refetch_steps:
+- MCP에서 file_key와 node_ids로 다시 조회
+purpose: requirements/leverage 확인
+checked_at: YYYY-MM-DD
+```
+
+작은 텍스트 source만 `*.raw.<ext>`를 둘 수 있습니다. 대형 MCP source에는 raw dump와 긴 `summary.md`를 만들지 않습니다.
+
+Figma처럼 frame 단위 구조가 있는 source는 관련 frame을 각각 MCP로 새로 읽고, raw 대신 추출한 metadata/style 값만 chunk로 저장할 수 있습니다.
+
+```text
+inputs/sources/figma/<name>/
+  access.md
+  frames.index.json
+  chunks/
+    chunk-001.md
+    chunk-002.md
+```
+
+chunk에는 frame id, node id, selection id, component name, text label, CSS/layout/spacing/color/typography 값, 관찰 목적만 둡니다. 전체 node tree raw dump는 넣지 않습니다.
+
+CSS, layout, spacing, color, typography 같은 UI 요소를 확인할 때는 반드시 MCP source를 새로 읽습니다. `access.md`는 다시 접근하기 위한 index일 뿐이며, style 값의 최신 근거로 재사용하지 않습니다.
 
 ## 작업 흐름 단계
 
 | 단계 | 근거 | 추천 다음 행동 |
-|---|---|---|
-| `req-needed` | `requirements.md` 없음 | source 문서나 메모가 있으면 `/tk:prep`, 아이디어가 흐릿하면 `/tk:interview`, 불명확하면 질문 |
-| `gap-needed` | `requirements.md`는 있고 `gap.md` 없음 | `/tk:gap` 실행 |
-| `plan-needed` | `gap.md`는 있고 `plan.md` 없음 | `/tk:plan` 실행 |
-| `tasks-needed` | `plan.md` 또는 `gap.md`는 있고 `tasks.md` 없음 | `/tk:breakdown` 실행 |
-| `clarification-needed` | unresolved `Clarification Actions` 있음 | `/tk:grill-me`, targeted question, brainstorming, assumption 선택 |
-| `task-ready` | 실행 가능한 `todo` 또는 `in_progress` task 있음 | `/tk:auto` 또는 `/tk:do` 실행 |
-| `blocked` | 실행 가능한 일반 task가 없고 외부 `blocked` 또는 `Shared Blockers`의 `상태=blocked` 항목만 있음 | blocker 해결 또는 API/contract 확인 |
-| `re-eval-needed` | 구현 후 gap 재확인 필요 | `/tk:gap` 실행 |
-| `close-ready` | gap 재확인까지 끝났고 새 gap, unresolved `Clarification Actions`, unresolved `TK-API-*`, `Shared Blockers`의 `상태=blocked` 항목 없음 | `/tk:close` 실행 |
+| --- | --- | --- |
+| `req-needed` | `requirements.md` 없음 | `/tk:prep` |
+| `task-ledger-needed` | `requirements.md`는 있고 `tasks.md` 또는 `tasks.index.json` 없음 | `/tk:prep`로 ledger 생성/갱신 |
+| `clarification-needed` | unresolved Clarification Actions 있음 | targeted question 또는 fixme 정리 |
+| `task-ready` | 실행 가능한 `todo` 또는 `in_progress` task 있음 | `/tk:next`, `/tk:do` |
+| `blocked` | 실행 가능한 일반 task가 없고 외부 blocker만 있음 | blocker 해결 또는 API/contract 확인 |
+| `check-needed` | task 상태가 꼬였거나 close 전 점검 필요 | `/tk:check` |
+| `close-ready` | 실행 가능한 task가 없고 handoff 필요 | `/tk:close` |
 
-`/tk:state`는 위 상태를 요약해 보여주고, `/tk:next`는 위 상태를 바탕으로 다음 command나 다음 task 1개를 추천합니다. task를 보여줄 때는 task ID만 적지 말고 `포함 작업` 같은 짧은 요약으로 묶인 gap/작업을 함께 보여줍니다. source나 work_id가 불명확하면 추측하지 않고 사용자에게 묻습니다.
+## tasks.md 구조
 
-## API 의존성 흐름
+```md
+# Tasks
 
-API나 공식 contract가 없지만 기능을 진행해야 하면 `/tk:plan`은 feature slice 단위 `API 준비도`에서 `mock_api_contract`를 사용할 수 있습니다. 이 상태는 assumed contract와 mock API로 개발/검증을 계속하는 뜻이며 완료나 merge-ready를 뜻하지 않습니다.
+## Active Tasks
 
-`/tk:breakdown`은 `mock_api_contract` slice의 일반 task를 전부 `blocked`로 만들지 않고, 별도 `API Follow-up Tasks`에 공유 API capability별 `TK-API-*` 항목 하나만 둡니다. unresolved `TK-API-*`는 `/tk:close`에서 merge blocker입니다.
+| ID | Status | Summary | Req | API Follow-ups | Done Criteria |
+|---|---|---|---|---|---|
 
-## 모호함과 외부 blocker
+## API Follow-ups
 
-`spec_unclear`나 모호한 요구사항은 terminal `blocked`가 아닙니다. `tasks.md`의 `Clarification Actions`에 `TK-CLARIFY-<n>` 항목으로 올리고 `/tk:grill-me`, targeted question, brainstorming, assumption 선택 중 다음 행동을 남깁니다. 표에는 `ID`, `상태`, `모호점`, `추천 경로`, `영향 task`, `완료 조건`을 포함합니다. 상태는 `unresolved` 또는 `resolved`로 표시합니다.
+| ID | Status | Summary | Affected Tasks | Mock Location | Resolution |
+|---|---|---|---|---|---|
 
-`blocked`와 `Shared Blockers`는 외부에서만 풀 수 있는 `api_contract_missing`, `permission_required`, `external_dependency_unavailable`, `human_decision_required` 같은 상태에 사용합니다. 같은 blocker를 공유하는 task는 task별로 복제하지 않고 `Shared Blockers` 항목 하나에 영향 task와 해소 조건을 모읍니다. 표에는 `ID`, `유형`, `상태`, `영향 task`, `해소 조건`, `현재 근거`를 포함합니다. 상태는 `blocked` 또는 `resolved`로 표시합니다.
+## Shared Blockers
 
-## active queue와 완료 이력
+| ID | Type | Status | Summary | Affected Tasks | Resolution |
+|---|---|---|---|---|---|
 
-기본 실행 경로에서 command는 `tasks.md`의 active queue와 `tasks.index.json`만 우선 읽습니다. `done`과 `dropped` task의 상세 본문은 `archive/tasks.done.md`로 분리하고, `tasks.md`에는 필요하면 compact pointer만 남깁니다.
+## Done Archive
 
-- `execute-queue`, `/tk:auto`, `/tk:next`, `/tk:state`는 기본적으로 completed task 본문을 다시 읽지 않습니다.
-- archive는 사용자가 특정 완료 task를 물어보거나, regression/close/review 근거가 필요할 때만 읽습니다.
-- 외부 source raw snapshot의 canonical 위치는 `.tigerkit/{work_id}/inputs/sources/<kind>/<name>/`입니다.
-- raw 원본은 `*.raw.<ext>` 형식으로 저장합니다. XML, JSON, PNG, PDF, HTML, TXT 등 원본 포맷을 유지합니다.
-- 각 source 디렉터리는 `meta.json`을 포함합니다. 가능하면 `summary.md`를 함께 두고, command는 기본적으로 `summary.md`를 먼저 읽은 뒤 필요할 때만 raw를 참조합니다.
-- 기존 raw artifact는 silent overwrite 하지 않습니다. 같은 source를 다시 캡처하면 새 이름을 쓰거나 `meta.json`에 갱신 근거를 명시합니다.
-- 별도 agent cache는 이 저장소의 canonical artifact 위치로 쓰지 않습니다.
+Moved to archive/tasks.done.md
+```
 
-## task 상태값
+## tasks.index.json 최소 구조
 
-`tasks.md`의 상태값은 아래만 사용합니다.
+```json
+{
+  "tasks": [
+    {
+      "id": "T-003",
+      "status": "done",
+      "summary": "사용자 검색 UI 구현",
+      "sourceRequirements": ["R-002"],
+      "apiFollowups": ["TK-API-001"]
+    },
+    {
+      "id": "T-004",
+      "status": "todo",
+      "summary": "검색 결과 empty state 구현",
+      "sourceRequirements": ["R-003"],
+      "apiFollowups": ["TK-API-001"]
+    }
+  ],
+  "apiFollowups": [
+    {
+      "id": "TK-API-001",
+      "status": "mock_api_contract",
+      "summary": "사용자 검색 API contract 불명",
+      "affectedTasks": ["T-003", "T-004"],
+      "mergeBlocker": true,
+      "mockLocation": "src/mocks/users.ts",
+      "resolution": "실제 API contract 확인 후 mock 교체"
+    }
+  ],
+  "sharedBlockers": []
+}
+```
 
-| 상태 | 의미 |
-|---|---|
-| `todo` | 아직 시작하지 않은 실행 가능 task |
-| `in_progress` | 현재 진행 중인 task |
-| `blocked` | 외부 결정, 접근 권한, 정보/API, 의존성 때문에 진행 불가 |
-| `done` | 완료 기준을 충족한 task |
-| `dropped` | 더 이상 진행하지 않기로 한 task |
+넣지 말 것:
 
-## 캐시 정책
+- 복잡한 API taxonomy
+- 과도한 evidence log
+- 긴 plan 전문
+- 상세 dependency graph
 
-`/tk:prep`는 `input_source_hash`, `prep_prompt_version`, `scope_hash`, `input_identities`가 같으면 기존 `requirements.md`를 재사용합니다. 하나라도 다르거나 `--force`가 있으면 다시 생성합니다.
+## API Follow-ups와 Shared Blockers
 
-`/tk:interview`는 `requirements.meta.json`에 `source_type: "interview"`, interview 지시문 버전, 범위 해시, conversation/decision hash, input identity, provenance를 남깁니다. 기본 목적은 cache보다 결정 출처 추적이며, `source_type`, interview 지시문 버전, 범위 해시, conversation/decision hash, input identity가 모두 일치할 때만 기존 `requirements.md`를 재사용합니다.
+| 섹션 | 용도 |
+| --- | --- |
+| `API Follow-ups` | mock 가능하거나 API contract 확인이 필요한 항목 |
+| `Shared Blockers` | 권한, 인간 결정, 외부 의존성 등 실제로 여러 task를 막는 것 |
 
-`/tk:gap`은 현재 git commit SHA, `requirements.md` 해시, gap 지시문 버전, 범위 해시가 같고 작업 트리가 clean이면 기존 `gap.md`를 재사용합니다. 하나라도 다르거나 작업 트리가 dirty이거나 `--force`가 있으면 다시 분석합니다.
+API follow-up은 `/tk:do` 중 실제 필요할 때 lazy하게 생성합니다. 확신 있으면 기존 follow-up을 재사용하고, 애매하면 새 follow-up을 만든 뒤 `/tk:check` 또는 `/tk:close`에서 병합 후보로 보고합니다.
 
-각 명령은 cache hit/miss 이유를 사용자에게 짧게 표시합니다.
+## archive 정책
+
+기본 실행 경로에서 command는 `tasks.index.json`과 `tasks.md`의 active queue만 우선 읽습니다. 완료/dropped 상세 본문은 `archive/tasks.done.md`로 분리하고, active queue에는 pointer와 count만 남깁니다.
 
 ## cleanup 경계
 
-`/tk:close`는 archive, branch push, PR 생성, 파일 삭제 같은 cleanup 후보를 제안할 수 있습니다. 하지만 branch 생성, commit, push, PR 생성, 파일 삭제는 사용자 승인 없이 실행하지 않습니다.
+`/tk:close`는 cleanup 후보를 제안할 수 있지만 branch 생성, commit, push, PR 생성, merge, deploy, 파일 삭제는 사용자 승인 없이 실행하지 않습니다.

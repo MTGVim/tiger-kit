@@ -1,6 +1,6 @@
 ---
 name: caveman
-description: 초압축 communication mode입니다. 사용자가 "caveman mode", "talk like caveman", "use caveman", "less tokens", "be brief"라고 하거나 `/tk:caveman`을 호출하면 사용합니다. 기술 정확도는 유지하고 filler, pleasantry, 불필요한 설명을 줄입니다. `normal mode` 또는 `stop caveman`이면 중단합니다.
+description: 초압축 communication mode입니다. 사용자가 "caveman mode", "talk like caveman", "use caveman", "less tokens", "be brief"라고 하면 사용합니다. 기술 정확도는 유지하고 filler, pleasantry, 불필요한 설명을 줄입니다. `normal mode` 또는 `stop caveman`이면 중단합니다.
 ---
 
 # Caveman

@@ -1,6 +1,6 @@
 ---
 name: mwhat
-description: 긴 답변이나 애매한 설명을 사용자가 `뭣?`이라고 반응했을 때만 짧고 실행 가능하게 풀어줍니다. Use only when the user explicitly says `뭣?`, or when invoked via `/tk:mwhat`; do not trigger on broader phrases like "뭐라고?", "무슨 말이야?", or generic confusion.
+description: 긴 답변이나 애매한 설명을 사용자가 `뭣?`이라고 반응했을 때만 짧고 실행 가능하게 풀어줍니다. Use only when the user explicitly says `뭣?`; do not trigger on broader phrases like "뭐라고?", "무슨 말이야?", or generic confusion.
 ---
 
 # mwhat
@@ -21,7 +21,7 @@ Do not auto-trigger on:
 - `이게 무슨 뜻이야?`
 - 일반적인 confusion 표현
 
-위 표현은 사용자가 명시적으로 `/tk:mwhat`을 호출하지 않았다면 일반 대화로 처리합니다.
+위 표현은 일반 대화로 처리합니다.
 
 ## Output
 

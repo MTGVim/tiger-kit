@@ -1,44 +1,152 @@
 ---
-description: 외부 요구사항 소스를 정제해 이후 계획과 갭 확인의 기준이 되는 requirements.md로 정리합니다.
+description: 요구사항 source를 .tigerkit task ledger로 정리하고 tasks.md/tasks.index.json을 만듭니다.
 ---
 
 이 명령은 아래 계약을 직접 따릅니다.
 
 사용자에게는 한글로 답합니다. 작업 산출물도 한글로 작성합니다. 단, 인용한 원문, 코드, 명령어, 파일 경로, 식별자는 원문 그대로 유지할 수 있습니다.
 
-목표: Jira 티켓, Confluence 문서, PRD, 사용자 메모, 회의 요약, 기존 요구사항 문서 같은 source of truth 후보를 중복 제거, 충돌/모호점 표시, acceptance signal, scope boundary 중심으로 정규화해 이후 계획과 갭 확인의 기준이 되는 요구사항 기준 문서로 정리합니다.
+목표: 사용자 요구사항 source를 `.tigerkit/{work_id}/requirements.md`와 실행 가능한 task queue로 정리합니다. `/tk:prep`은 project planning command가 아니라 source-to-task-ledger command입니다.
 
-먼저 앞선 대화에서 추론한 스펙명 또는 작업 ID를 제안하고, 그 이름으로 `.tigerkit/{work_id}/`에 정리해도 되는지 확인합니다.
+## 기본 산출물
 
-아이디어가 아직 퍼져 있거나 추상적이면 바로 문서화를 강행하지 말고 `/tk:interview`를 추천하거나, 범위, 성공 조건, 제외 범위를 먼저 좁혀서 정리합니다.
-
-기본 산출물:
 - `.tigerkit/{work_id}/requirements.md`
-- `.tigerkit/{work_id}/requirements.meta.json`
+- `.tigerkit/{work_id}/leverage.md`
+- `.tigerkit/{work_id}/tasks.md`
+- `.tigerkit/{work_id}/tasks.index.json`
 - 필요 시 `.tigerkit/{work_id}/inputs/sources/<kind>/<name>/`
 
-`requirements.meta.json`에는 cache 판단에 필요한 `input_source_hash`, `prep_prompt_version`, `scope_hash`, `input_identities`를 남깁니다. 같은 입력 자료, prep 지시문 버전, 범위, input identity로 다시 실행하면 기존 `requirements.md`를 재사용합니다. 하나라도 다르거나 `--force`가 있으면 기존 cache를 우회하고 다시 생성합니다.
+## work_id 결정
 
-비정형 source를 저장해야 하면 `.tigerkit/{work_id}/inputs/sources/<kind>/<name>/` 아래에 `*.raw.<ext>`, `meta.json`, 가능하면 `summary.md`를 둡니다. 기존 raw artifact는 silent overwrite 하지 않고, command는 `summary.md`를 먼저 읽은 뒤 필요한 경우에만 raw 원본을 참조합니다.
+1. 사용자가 work_id 또는 `.tigerkit/{work_id}/` 경로를 지정했으면 그것을 사용합니다.
+2. 앞선 대화나 source에서 자연스러운 작업명이 명확하면 후보 work_id를 제안합니다.
+3. 후보가 없거나 여러 개면 추측하지 말고 work_id를 물어봅니다.
+4. `main`, `master`, `develop` 같은 기반 브랜치에서 변경 가능한 작업을 시작한다면 작업 브랜치 사용을 권유하지만, 브랜치 생성/전환은 사용자 승인 없이 하지 않습니다.
 
-`requirements.md`의 `요구사항` 섹션은 가능하면 stable requirement ID와 적용 방식을 함께 기록합니다.
+## 절차
 
-| ID | Type | Requirement | Source | Application |
-|---|---|---|---|---|
-| R-001 | behavior/copy/UI/... | 요구사항 본문 | user/research/doc/code | `verbatim` / `semantic` / `flexible` / `assumption` |
+1. source material을 요구사항, scope, non-goal, acceptance signal로 정리합니다.
+2. source가 부족하면 사용자가 중간에 자료를 추가한 뒤 reply로 이어갈 수 있게 필요한 추가 source만 요청하고 멈춥니다.
+3. plan을 길게 만들기 전에 leverage를 확인합니다.
+4. 요구사항을 작은 task로 소분합니다.
+5. `tasks.md`를 active task ledger로 작성/갱신합니다.
+6. `tasks.index.json`을 compact state index로 작성/갱신합니다.
+7. API 문제는 미리 taxonomy로 만들지 않습니다. source에 명시된 외부 blocker만 기록하고, 실제 API follow-up은 `/tk:do`에서 lazy하게 만듭니다.
 
-사용자-visible copy가 source에 명시되어 있으면 기본적으로 `verbatim`으로 취급합니다.
+## source 접근 기록
 
-## Agent routing
+Figma처럼 큰 MCP source는 raw 전체를 저장하지 않습니다. raw는 context overflow를 만들고, 요약은 정보 손실을 만듭니다. 대신 `.tigerkit/{work_id}/inputs/sources/<kind>/<name>/access.md`에 다시 접근할 수 있는 index만 기록합니다.
 
-Agent 이름은 짧은 표기를 쓰되, plugin runtime이 `tk:tk-*`로 표시하면 그 namespaced 이름을 사용합니다.
+기록 항목:
 
-- source가 screenshot, PDF, diagram, UI capture 같은 visual artifact면 `tk-ashenzari`로 관찰 결과를 먼저 구조화할 수 있습니다.
+- provider와 MCP tool 이름
+- source URL
+- file/project key
+- page/frame id
+- node id 또는 selection id 목록
+- 사용한 query/focus
+- 다시 불러오는 방법
+- 확인한 시점과 목적
 
-agent를 사용해도 최종 `requirements.md`, metadata, scope boundary 판단은 이 명령을 실행하는 main agent가 책임집니다.
+작은 텍스트 source만 raw snapshot을 둘 수 있습니다. 대형 MCP source에는 `*.raw.*`와 긴 `summary.md`를 만들지 않습니다.
 
-기존 `tasks.md`가 있고 새 입력이 task insertion, task revision, clarification, shared blocker 수준의 course correction이면 `requirements.md`를 덮어쓰지 말고 queue 변경 후보만 제안한 뒤 `/tk:plan`으로 넘깁니다.
+Figma처럼 frame 단위 구조가 있는 source는 관련 frame을 각각 MCP로 새로 읽고, raw 대신 추출한 metadata/style 값만 chunk로 저장할 수 있습니다.
 
-명시적으로 요청받지 않는 한 이 명령에서는 구현 계획을 최종 확정하거나 코드를 수정하지 않습니다.
+권장 구조:
 
-채팅 응답 마지막에는 source가 충분히 정리되어 `requirements.md`를 만들었거나 재사용했으면 `다음 추천: /tk:gap`을 표시합니다. 아이디어가 아직 흐리거나 source 기준이 부족하면 `requirements.md`를 만들지 말고 `다음 추천: /tk:interview`를 표시합니다. 기존 task queue에 반영할 course correction 후보만 정리했다면 `다음 추천: /tk:plan`을 표시합니다.
+```text
+inputs/sources/figma/<name>/
+  access.md
+  frames.index.json
+  chunks/
+    chunk-001.md
+    chunk-002.md
+```
+
+chunk에는 frame id, node id, selection id, component name, text label, CSS/layout/spacing/color/typography 값, 관찰 목적만 둡니다. 전체 node tree raw dump는 넣지 않습니다.
+
+CSS, layout, spacing, color, typography 같은 UI 요소를 확인할 때는 이전 `access.md`나 오래된 screenshot 요약에 의존하지 않습니다. 반드시 현재 MCP source를 새로 읽고, 사용한 node id/selection id와 refetch steps를 다시 기록합니다.
+
+## Leverage 확인
+
+한 번에 하나의 material question만 묻습니다. 답을 못 하면 `pending`으로 기록하고 안전한 범위에서 계속합니다.
+
+질문 후보:
+
+```text
+1. 참고할 기존 화면, flow, 구현이 있나요?
+2. 반드시 재사용해야 하는 컴포넌트, 함수, 패턴이 있나요?
+3. 피해야 할 구현, dependency, UX, 접근이 있나요?
+4. 이번 task 범위 밖인 것은 무엇인가요?
+5. API contract, permission, 외부 의존성이 이미 정해졌나요?
+```
+
+## tasks.md 권장 구조
+
+```md
+# Tasks
+
+## Active Tasks
+
+| ID | Status | Summary | Req | API Follow-ups | Done Criteria |
+|---|---|---|---|---|---|
+
+## API Follow-ups
+
+| ID | Status | Summary | Affected Tasks | Mock Location | Resolution |
+|---|---|---|---|---|---|
+
+## Shared Blockers
+
+| ID | Type | Status | Summary | Affected Tasks | Resolution |
+|---|---|---|---|---|---|
+
+## Done Archive
+
+Moved to archive/tasks.done.md
+```
+
+## tasks.index.json 최소 schema
+
+```json
+{
+  "tasks": [
+    {
+      "id": "T-001",
+      "status": "todo",
+      "summary": "...",
+      "sourceRequirements": ["R-001"],
+      "apiFollowups": []
+    }
+  ],
+  "apiFollowups": [],
+  "sharedBlockers": []
+}
+```
+
+`tasks.index.json`에는 긴 plan, evidence log, 복잡한 API taxonomy, 상세 dependency graph를 넣지 않습니다. 목적은 다음 상태를 적은 token으로 읽는 것입니다.
+
+## 금지
+
+- 현재 구현 전체 분석
+- gap report 대량 생성
+- 과도한 plan 문서 생성
+- API capability taxonomy 생성
+- 강한 API key 생성
+- task와 무관한 review/prototype/reflect/improve 흐름 시작
+- 구현, commit, push, PR 생성, merge, deploy
+
+## 출력
+
+receipt-first로 짧게 보고합니다.
+
+```text
+task ledger 만들었습니다.
+- work_id: search-ui
+- requirements: `.tigerkit/search-ui/requirements.md`
+- tasks: T-001..T-004
+- index: `.tigerkit/search-ui/tasks.index.json`
+- pending leverage: 1
+
+다음 추천: /tk:next
+```

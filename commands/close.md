@@ -1,29 +1,100 @@
 ---
-description: 세션 종료 전 남은 gap, task 상태, 검증, cleanup 후보를 짧게 정리합니다.
+description: 완료/잔여 task, API follow-up, blocker, merge-ready 여부를 handoff로 정리합니다.
 ---
 
 이 명령은 아래 계약을 직접 따릅니다.
 
 사용자에게는 한글로 답합니다. 작업 산출물도 한글로 작성합니다. 단, 인용한 원문, 코드, 명령어, 파일 경로, 식별자는 원문 그대로 유지할 수 있습니다.
 
-목표: 현재 세션을 닫기 전에 `.tigerkit/{work_id}/` 산출물, git 상태, 남은 gap/task, 검증 상태, 다음 재진입 포인트를 짧게 정리합니다.
+목표: `.tigerkit/{work_id}/`의 task ledger를 닫으며 다음 세션 재진입용 handoff와 readiness 판단을 남깁니다.
 
-기본 출력은 `Close Report`입니다. 필요하면 사용자의 승인 후 `.tigerkit/{work_id}/close.md`를 작성할 수 있습니다.
+기본 산출물:
+- `.tigerkit/{work_id}/handoff.md`
 
-확인 항목:
-- 남은 gap, unresolved `Clarification Actions`, 외부 blocked task 또는 `Shared Blockers`
-- unresolved `Clarification Actions`가 있으면 blocked가 아니라 `/tk:grill-me`, targeted question, brainstorming, assumption 선택 중 다음 action으로 표시합니다.
-- unresolved `TK-API-*` follow-up. 남아 있으면 사용자가 mock 포함 merge를 명시적으로 허용하지 않는 한 merge blocker와 incomplete 상태로 표시합니다.
-- 완료한 task와 아직 남은 task
-- task를 표나 목록으로 보여줄 때는 task ID만 적지 말고, 각 task에 묶인 gap 또는 포함 작업을 한 줄로 함께 적습니다.
-- 가능하면 `포함 작업` 또는 유사한 칼럼명을 사용합니다.
-- 실행한 검증과 실패한 검증
-- tail gap check 필요 여부와 결과
-- archive 또는 cleanup 후보
-- 다음에 이어갈 명령 1개
+## 확인 항목
 
-branch 생성, commit, push, PR 생성, 파일 삭제는 사용자 승인 없이 실행하지 않습니다.
+- 완료한 task
+- 남은 task
+- unresolved API follow-ups
+- Shared Blockers
+- pending leverage 또는 Clarification Actions
+- 검증 상태
+- Development progress 여부
+- Merge-ready 여부
+- 다음 세션 첫 행동
 
-`/tk:close`는 작업 종료 상태 정리용 command입니다. 세션 learning이나 knowledge patch 회고는 `/tk:reflect`가 맡습니다.
+## readiness 정책
 
-종료 전에 실행 가능한 일반 task가 모두 끝났고 unresolved `Clarification Actions`, 외부 blocked task, `Shared Blockers`의 `상태=blocked` 항목이 없는데 tail gap check가 아직 수행되지 않았다면 gap을 한 번만 다시 확인합니다. unresolved `Clarification Actions`가 남아 있으면 tail gap check보다 clarification next action을 우선 표시합니다. `Shared Blockers`의 `상태=blocked` 항목이 남아 있으면 해소 조건을 다음 action으로 표시합니다. unresolved `TK-API-*`가 남아 있으면 tail gap check 후에도 merge blocker와 incomplete 상태로 표시하고 API/contract 확인을 다음 action으로 둡니다. task 완료와 gap 해소를 같은 뜻으로 취급하지 않습니다. 새 gap이 있으면 `/tk:plan`을 추천하고, 새 gap이 없고 unresolved `Clarification Actions`, unresolved `TK-API-*`, `Shared Blockers`의 `상태=blocked` 항목이 모두 없으면 `다음 추천: 없음`을 표시합니다.
+```text
+unresolved TK-API-* 있음
+→ development may be complete
+→ merge-ready는 아님
+```
+
+API follow-up이 `mock_api_contract`이면 task 자체는 완료됐을 수 있지만 close/merge blocker로 남깁니다.
+
+## handoff.md 권장 형식
+
+```md
+# TigerKit Handoff
+
+## Done
+
+- T-003 사용자 검색 UI 구현
+
+## Remaining
+
+- T-004 검색 empty state 구현
+
+## Unresolved API Follow-ups
+
+- TK-API-001 사용자 검색 API contract 불명
+  - affected: T-003, T-004
+  - mock: src/mocks/users.ts
+  - merge blocker: true
+
+## Shared Blockers
+
+- 없음
+
+## Readiness
+
+- Development progress: OK
+- Merge-ready: NO
+
+## Next Session
+
+- 실제 API contract 확인 후 TK-API-001 처리
+```
+
+## 금지
+
+- PR 생성
+- branch merge
+- remote push
+- deploy
+- production readiness 최종 선언
+- 사용자 승인 없는 branch 생성, commit, 파일 삭제
+
+## 출력
+
+```text
+Close Summary
+
+Done:
+- T-003 사용자 검색 UI 구현
+
+Unresolved API Follow-ups:
+- TK-API-001 사용자 검색 API contract 불명
+
+Readiness:
+- Development progress: OK
+- Merge-ready: NO
+
+Handoff: `.tigerkit/search/handoff.md`
+
+No PR opened.
+No merge performed.
+No remote push performed.
+No deploy performed.
+```
