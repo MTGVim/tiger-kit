@@ -152,7 +152,7 @@
         "Does not list legacy analysis/planning aliases as active top-level commands",
         "Does not list legacy task-splitting aliases as active top-level commands",
         "Does not list legacy workflow-runner aliases as active command runners",
-        "Keeps natural-language skills conceptually separate from command surface"
+        "Keeps command-delegated issue skill separate from command surface"
       ]
     },
     {
