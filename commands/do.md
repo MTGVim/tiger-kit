@@ -26,6 +26,71 @@ description: .tigerkit task ledger의 task 하나를 구현하고 lazy API follo
 - 실행 방식: `inline`, `sub-agent`
 - 검증 명령 또는 확인 방법
 
+## Implementation Context Scan Gate
+
+구현 전에는 blank context 질문으로 시작하지 않습니다. 먼저 조사하고, 그 결과를 기준으로 사용자에게 correction만 요청합니다.
+
+순서:
+
+1. 선택 task와 연결 requirement를 확인합니다.
+2. relevant user-level learning from reflect가 있으면 먼저 읽고 이번 scan의 operational guidance로 적용합니다.
+3. `.tigerkit/{work_id}/requirements.md`를 읽습니다.
+4. `.tigerkit/{work_id}/implementation-context.md`를 먼저 읽습니다.
+5. `implementation-context.md`가 없고 legacy `.tigerkit/{work_id}/leverage.md`가 있으면 fallback으로 읽습니다.
+6. 관련 화면, route, page, component, hook, util, form pattern, API usage, test, source reference를 조사합니다.
+7. `Proposed Implementation Context`를 짧게 제시합니다.
+8. 사용자는 blank form 작성자가 아니라 agent scan의 editor여야 합니다. 추가/수정이 있으면 첨삭받고, 없으면 그 기준으로 진행합니다.
+9. 사용자 correction은 `implementation-context.md`에 기록합니다.
+
+`User-Level Prior Applied`는 personal profile dump가 아니라 이번 task에서 적용한 operational guidance로 씁니다.
+
+좋은 예:
+
+```text
+- 먼저 조사한 뒤 기준을 제시하고 첨삭받기
+- 기존 구현, 컴포넌트 재사용 우선
+- product/copy/API intent는 추측하지 않기
+```
+
+피할 예:
+
+```text
+- 이 사용자는 X를 싫어한다
+```
+
+출력 패턴:
+
+```md
+구현 전 컨텍스트를 먼저 확인했습니다.
+
+## 적용한 사용자 레벨 기준
+- ...
+
+## 참고할 기존 구현
+- ...
+
+## 재사용 후보
+- ...
+
+## 피해야 할 접근
+- ...
+
+## 범위 밖
+- ...
+
+## 아직 애매한 점
+- ...
+
+이 기준으로 진행하겠습니다.
+추가로 참고해야 할 화면/컴포넌트/source,
+반드시 재사용해야 할 hook/util/pattern,
+피해야 할 접근,
+범위 밖 항목이 있으면 첨삭해주세요.
+없으면 이 기준으로 진행합니다.
+```
+
+`reflect`의 durable knowledge는 사용자 승인 없이 갱신하지 않습니다. 읽어서 priors로 적용할 수는 있지만, 쓰기나 promotion은 명시적 승인 뒤에만 합니다.
+
 ## API 정책
 
 API 존재 여부는 planning 단계에서 미리 전부 확인하지 않습니다. task 구현 시점에 필요한 만큼 확인합니다.
@@ -113,12 +178,15 @@ agent를 사용해도 task 선택, 상태 갱신, 최종 검증은 main agent가
 - task 범위 밖 refactor
 - 사용자 승인 없는 branch 생성, commit, push, PR 생성, merge, deploy
 - 검증 실패 숨김
+- blank context interview로 구현 시작
+- 사용자 승인 없는 durable reflect mutation
 
 ## 출력
 
 ```text
 처리했습니다.
 - task: T-004 검색 결과 empty state 구현
+- implementation context: `.tigerkit/search/implementation-context.md`
 - API: TK-API-001 mock_api_contract, close/merge blocker
 - 변경 파일: ...
 - 검증: 통과

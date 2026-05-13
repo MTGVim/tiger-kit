@@ -18,7 +18,7 @@ description: 완료/잔여 task, API follow-up, blocker, merge-ready 여부를 h
 - 남은 task
 - unresolved API follow-ups
 - Shared Blockers
-- pending leverage 또는 Clarification Actions
+- pending implementation context correction 또는 Clarification Actions
 - 검증 상태
 - Development progress 여부
 - Merge-ready 여부

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 언어 및 산출물 규칙
 
-- 이 저장소에서 만드는 작업 산출물(`.tigerkit/{work_id}/requirements.md`, `.tigerkit/{work_id}/leverage.md`, `.tigerkit/{work_id}/tasks.md`, `.tigerkit/{work_id}/tasks.index.json`, `.tigerkit/{work_id}/handoff.md`, `.tigerkit/{work_id}/archive/tasks.done.md`)은 반드시 한글로 작성한다.
+- 이 저장소에서 만드는 작업 산출물(`.tigerkit/{work_id}/requirements.md`, `.tigerkit/{work_id}/implementation-context.md`, `.tigerkit/{work_id}/tasks.md`, `.tigerkit/{work_id}/tasks.index.json`, `.tigerkit/{work_id}/handoff.md`, `.tigerkit/{work_id}/archive/tasks.done.md`)은 반드시 한글로 작성한다.
 - 사용자에게 진행 상황, 계획, 검증 결과를 보고할 때도 한글을 기본으로 사용한다.
 - 기존 공개 문서나 manifest가 영어 문구를 쓰는 경우에는 주변 문맥과 일관성을 우선한다.
 
@@ -47,6 +47,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `commands/do.md`: task 하나를 구현하고 lazy API follow-up을 갱신한다.
 - `commands/gap.md`: requirements/task/API/blocker/readiness를 report-only로 점검한다.
 - `commands/close.md`: handoff와 merge-ready 판단을 정리한다.
+- `commands/watchme.md`: teach-by-demonstration WatchMe mode를 시작한다.
+- `commands/watchme-end.md`: WatchMe retrospective와 Reflect promotion 후보를 정리한다.
 - `skills/issue/SKILL.md`: command가 명시적으로 요청할 때 issue/task-ledger 변경 draft를 만드는 지침. 자연어 auto-trigger는 없다.
 - `docs/usage.md`: 사용자 관점의 명령 사용법.
 - `docs/artifact-layout.md`: `.tigerkit/{work_id}/` task ledger 구조.
@@ -54,11 +56,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 명령 개요
 
-- `/tk:prep`: 요구사항 source를 `.tigerkit` task ledger로 정리하고 `tasks.md`, `tasks.index.json`을 만든다.
+- `/tk:prep`: 요구사항 source를 `.tigerkit` task ledger로 정리하고 `implementation-context.md`, `tasks.md`, `tasks.index.json`을 만든다.
 - `/tk:next`: `tasks.index.json`을 읽고 다음 task 또는 action 하나만 추천한다.
-- `/tk:do`: task 하나를 구현하고 lazy API follow-up을 생성/재사용한다.
+- `/tk:do`: task 하나를 구현하고 implementation context scan 뒤 lazy API follow-up을 생성/재사용한다.
 - `/tk:gap`: requirements 대비 누락, task 상태, API follow-up, shared blocker, close/merge readiness를 점검한다.
 - `/tk:close`: 완료/잔여 task, unresolved API follow-up, blocker, handoff, merge-ready 여부를 정리한다.
+- `/tk:watchme`: teach-by-demonstration mode를 시작한다.
+- `/tk:watchme-end`: WatchMe retrospective와 Reflect promotion 후보를 정리한다.
 
 ## 핵심 정책
 

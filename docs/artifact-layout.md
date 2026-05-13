@@ -13,7 +13,7 @@ TigerKit은 Backlog.md에 의존하지 않습니다. `.tigerkit/{work_id}/`가 r
           access.md
           meta.json
   requirements.md
-  leverage.md
+  implementation-context.md
   tasks.md
   tasks.index.json
   handoff.md
@@ -27,7 +27,7 @@ TigerKit은 Backlog.md에 의존하지 않습니다. `.tigerkit/{work_id}/`가 r
 | --- | --- |
 | `inputs/` | 요구사항 정리에 참고한 source 접근 index 보관 위치. Figma 같은 대형 MCP source는 raw 대신 접근 방법만 기록 |
 | `requirements.md` | 작업 기준점. 사용자 요구사항과 합의된 범위 |
-| `leverage.md` | 참고 화면, reuse 후보, 피해야 할 구현, non-goals, API/외부 의존성, pending 질문 |
+| `implementation-context.md` | 참고 화면, 재사용 후보, 피해야 할 구현, non-goals, unknowns, 사용자 correction, 최종 implementation context |
 | `tasks.md` | 사람이 읽는 task ledger |
 | `tasks.index.json` | Claude가 적은 token으로 현재 상태를 파악하기 위한 compact state index |
 | `handoff.md` | 며칠 뒤 재진입을 위한 요약 |
@@ -75,6 +75,22 @@ inputs/sources/figma/<name>/
 chunk에는 frame id, node id, selection id, component name, text label, CSS/layout/spacing/color/typography 값, 관찰 목적만 둡니다. 전체 node tree raw dump는 넣지 않습니다.
 
 CSS, layout, spacing, color, typography 같은 UI 요소를 확인할 때는 반드시 MCP source를 새로 읽습니다. `access.md`는 다시 접근하기 위한 index일 뿐이며, style 값의 최신 근거로 재사용하지 않습니다.
+
+기존 workdir의 `leverage.md`는 legacy alias입니다. 신규 기본 산출물은 `implementation-context.md`이며, `/tk:do`는 새 파일이 없을 때만 `leverage.md`를 fallback으로 읽습니다.
+
+WatchMe active state는 artifact ledger가 아니라 local runtime state입니다.
+
+```text
+.tigerkit/watchme-state.json
+.tigerkit/{work_id}/watchme-state.json
+```
+
+WatchMe retrospective는 runtime state가 아니라 작업 산출물입니다.
+
+```text
+.tigerkit/watchme-retrospective.md
+.tigerkit/{work_id}/watchme-retrospective.md
+```
 
 ## 작업 흐름 단계
 

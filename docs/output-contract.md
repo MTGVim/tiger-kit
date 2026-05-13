@@ -15,6 +15,14 @@ Chat output is a receipt, not the artifact itself.
 3. artifact paths
 4. next action
 
+WatchMe mode가 active일 때는 substantive 내용 위에 compact indicator 한 줄을 추가할 수 있습니다.
+
+```text
+still watching… 👀
+```
+
+`/tk:watchme-end`는 긴 retrospective 본문을 채팅에 dump하지 않습니다. receipt와 retrospective artifact path만 보고합니다.
+
 ## 기본 형식
 
 ```md

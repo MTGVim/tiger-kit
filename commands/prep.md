@@ -1,5 +1,5 @@
 ---
-description: 요구사항 source를 .tigerkit task ledger로 정리하고 tasks.md/tasks.index.json을 만듭니다.
+description: 요구사항 source를 .tigerkit task ledger로 정리하고 implementation-context.md/tasks.md/tasks.index.json을 만듭니다.
 ---
 
 이 명령은 아래 계약을 직접 따릅니다.
@@ -11,10 +11,12 @@ description: 요구사항 source를 .tigerkit task ledger로 정리하고 tasks.
 ## 기본 산출물
 
 - `.tigerkit/{work_id}/requirements.md`
-- `.tigerkit/{work_id}/leverage.md`
+- `.tigerkit/{work_id}/implementation-context.md`
 - `.tigerkit/{work_id}/tasks.md`
 - `.tigerkit/{work_id}/tasks.index.json`
 - 필요 시 `.tigerkit/{work_id}/inputs/sources/<kind>/<name>/`
+
+기존 workdir에 `leverage.md`가 있어도 신규 기본 산출물로 유지하지 않습니다. legacy `leverage.md` 호환성은 `/tk:do`에서만 처리합니다.
 
 ## work_id 결정
 
@@ -27,7 +29,7 @@ description: 요구사항 source를 .tigerkit task ledger로 정리하고 tasks.
 
 1. source material을 요구사항, scope, non-goal, acceptance signal로 정리합니다.
 2. source가 부족하면 사용자가 중간에 자료를 추가한 뒤 reply로 이어갈 수 있게 필요한 추가 source만 요청하고 멈춥니다.
-3. plan을 길게 만들기 전에 leverage를 확인합니다.
+3. plan을 길게 만들기 전에 implementation context를 먼저 정리합니다.
 4. 요구사항을 작은 task로 소분합니다.
 5. `tasks.md`를 active task ledger로 작성/갱신합니다.
 6. `tasks.index.json`을 compact state index로 작성/갱신합니다.
@@ -67,18 +69,35 @@ chunk에는 frame id, node id, selection id, component name, text label, CSS/lay
 
 CSS, layout, spacing, color, typography 같은 UI 요소를 확인할 때는 이전 `access.md`나 오래된 screenshot 요약에 의존하지 않습니다. 반드시 현재 MCP source를 새로 읽고, 사용한 node id/selection id와 refetch steps를 다시 기록합니다.
 
-## Leverage 확인
+## Implementation Context 초안
 
-한 번에 하나의 material question만 묻습니다. 답을 못 하면 `pending`으로 기록하고 안전한 범위에서 계속합니다.
+사용자를 blank interview로 시작시키지 않습니다. agent가 먼저 source와 repo 맥락을 바탕으로 implementation context 초안을 만들고, 사용자는 그 초안을 첨삭합니다.
 
-질문 후보:
+`implementation-context.md`에는 아래 범주를 담습니다.
+
+- 참고할 기존 화면, flow, 구현
+- 재사용 후보 컴포넌트, hook, util, pattern
+- 피해야 할 구현, dependency, UX, protected contract
+- inferred non-goal, scope boundary, do-not-touch 범위
+- material unknowns와 safe assumption
+- 사용자가 수정한 context
+- 최종 implementation context
+
+한 번에 하나의 material question만 묻습니다. 답을 못 해도 `pending`으로 기록하고 안전한 범위에서 계속합니다.
+
+질문은 blank form이 아니라 correction prompt여야 합니다.
 
 ```text
-1. 참고할 기존 화면, flow, 구현이 있나요?
-2. 반드시 재사용해야 하는 컴포넌트, 함수, 패턴이 있나요?
-3. 피해야 할 구현, dependency, UX, 접근이 있나요?
-4. 이번 task 범위 밖인 것은 무엇인가요?
-5. API contract, permission, 외부 의존성이 이미 정해졌나요?
+제가 먼저 확인한 기준은 이렇습니다.
+
+- 참고할 기존 구현: ...
+- 재사용 후보: ...
+- 피해야 할 접근: ...
+- 범위 밖: ...
+- 아직 애매한 점: ...
+
+이 기준으로 진행하겠습니다.
+추가/수정할 참고 대상이나 제약이 있으면 첨삭해주세요.
 ```
 
 ## tasks.md 권장 구조
@@ -144,9 +163,10 @@ receipt-first로 짧게 보고합니다.
 task ledger 만들었습니다.
 - work_id: search-ui
 - requirements: `.tigerkit/search-ui/requirements.md`
+- implementation context: `.tigerkit/search-ui/implementation-context.md`
 - tasks: T-001..T-004
 - index: `.tigerkit/search-ui/tasks.index.json`
-- pending leverage: 1
+- pending context correction: 1
 
 다음 추천: /tk:next
 ```

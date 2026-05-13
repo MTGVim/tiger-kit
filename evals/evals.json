@@ -5,12 +5,12 @@
       "id": 0,
       "name": "prep-requirements-to-task-ledger",
       "prompt": "You are evaluating TigerKit /tk:prep. The user provides a feature request and asks TigerKit to prep. Describe expected behavior. Do not write files.",
-      "expected_output": "Should create or update .tigerkit/{work_id}/requirements.md, leverage.md, tasks.md, and tasks.index.json. It should split requirements into actionable tasks, avoid broad current-implementation gap analysis, avoid API capability taxonomy, and not implement code.",
+      "expected_output": "Should create or update .tigerkit/{work_id}/requirements.md, implementation-context.md, tasks.md, and tasks.index.json. It should split requirements into actionable tasks, avoid broad current-implementation gap analysis, avoid API capability taxonomy, and not implement code.",
       "files": [],
       "expectations": [
         "Uses .tigerkit/{work_id} as source of truth",
         "Creates or updates requirements.md",
-        "Creates or updates leverage.md",
+        "Creates or updates implementation-context.md",
         "Creates or updates tasks.md",
         "Creates or updates compact tasks.index.json",
         "Does not create Backlog.md dependencies",
@@ -60,10 +60,13 @@
       "id": 3,
       "name": "do-lazy-api-followup-safe-mock",
       "prompt": "You are evaluating TigerKit /tk:do T-003. The task needs an unavailable user search API, but a mock contract can safely support the UI states. Describe expected behavior. Do not write files.",
-      "expected_output": "Should continue the task, create or reuse a TK-API-* follow-up, link affected tasks, record mock location and resolution, update tasks.md and tasks.index.json, and treat the unresolved API follow-up as close/merge blocker rather than development blocker.",
+      "expected_output": "Should first load implementation context and relevant user-level learning from reflect when available, propose implementation context for correction rather than asking a blank interview, then continue the task, create or reuse a TK-API-* follow-up, link affected tasks, record mock location and resolution, update tasks.md and tasks.index.json, and treat the unresolved API follow-up as close/merge blocker rather than development blocker.",
       "files": [],
       "expectations": [
         "Checks API need at implementation time, not during start",
+        "Loads implementation-context.md before implementation when available",
+        "Loads relevant user-level learning from reflect when available",
+        "Presents a correction-first implementation context proposal instead of blank context questions",
         "Does not block solely because API is missing",
         "Classifies the case as mock_api_contract",
         "Creates or reuses TK-API-* follow-up lazily",
@@ -141,7 +144,7 @@
       "id": 8,
       "name": "command-surface-small",
       "prompt": "You are evaluating TigerKit active command surface. Describe the user-facing commands after the ledger redesign. Do not write files.",
-      "expected_output": "Should list only /tk:prep, /tk:next, /tk:do, /tk:gap, and /tk:close as user-facing commands. It should keep legacy workflow aliases out of the active command surface.",
+      "expected_output": "Should list /tk:prep, /tk:next, /tk:do, /tk:gap, /tk:close, /tk:watchme, and /tk:watchme-end as user-facing commands. It should keep legacy workflow aliases out of the active command surface and avoid claiming direct /reflect support when the plugin does not expose it.",
       "files": [],
       "expectations": [
         "Lists /tk:prep",
@@ -149,14 +152,60 @@
         "Lists /tk:do",
         "Lists /tk:gap",
         "Lists /tk:close",
+        "Lists /tk:watchme",
+        "Lists /tk:watchme-end",
         "Does not list legacy analysis/planning aliases as active top-level commands",
         "Does not list legacy task-splitting aliases as active top-level commands",
         "Does not list legacy workflow-runner aliases as active command runners",
+        "Does not claim direct /reflect support unless separately exposed",
         "Keeps command-delegated issue skill separate from command surface"
       ]
     },
     {
       "id": 9,
+      "name": "do-implementation-context-fallback",
+      "prompt": "You are evaluating TigerKit /tk:do for an existing workdir that still has leverage.md but does not yet have implementation-context.md. Describe expected behavior. Do not write files.",
+      "expected_output": "Should prefer implementation-context.md for new work, but when only legacy leverage.md exists it should read leverage.md as a fallback, scan related code, present a correction-first proposed implementation context, and continue without requiring the user to fill in blank context from scratch.",
+      "files": [],
+      "expectations": [
+        "Prefers implementation-context.md when present",
+        "Falls back to legacy leverage.md when implementation-context.md is absent",
+        "Scans related code and source artifacts before implementation",
+        "Asks for corrections rather than a blank interview",
+        "Does not silently mutate durable reflect knowledge"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "watchme-start",
+      "prompt": "You are evaluating TigerKit /tk:watchme. The user wants to lead step by step and have the agent observe closely. Describe expected behavior. Do not write files.",
+      "expected_output": "Should start teach-by-demonstration WatchMe mode, mark it active in local .tigerkit runtime state rather than .git, show a compact watching indicator, and avoid treating the mode as autonomy or durable knowledge mutation.",
+      "files": [],
+      "expectations": [
+        "Starts WatchMe as teach-by-demonstration mode",
+        "Uses local .tigerkit runtime state rather than .git storage",
+        "Shows a compact watching indicator",
+        "Follows user-led steps closely",
+        "Does not silently write durable knowledge"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "watchme-end-retrospective",
+      "prompt": "You are evaluating TigerKit /tk:watchme-end. WatchMe mode is active and the user wants to end the session. Describe expected behavior. Do not write files.",
+      "expected_output": "Should clear the active WatchMe indicator, produce a retrospective that explains what the user demonstrated and how the agent should improve, include a Promote to Reflect section, classify lessons as user-level by default, and avoid silent durable mutation.",
+      "files": [],
+      "expectations": [
+        "Clears active WatchMe state",
+        "Stops the watching indicator",
+        "Produces a retrospective instead of a plain summary",
+        "Includes Promote to Reflect section",
+        "Defaults WatchMe lessons to user-level learning candidates",
+        "Does not silently mutate durable knowledge"
+      ]
+    },
+    {
+      "id": 12,
       "name": "issue-ledger-draft",
       "prompt": "You are evaluating TigerKit issue skill. A TigerKit command explicitly delegates an issue draft during /tk:do T-006 after the user reports a design mismatch. Describe expected behavior. Do not write files.",
       "expected_output": "Should only run when explicitly delegated by a TigerKit command, pause implementation, restate the mismatch, ask at most one clarification if needed, classify it as new task, existing task revision, review_required transition, TK-API follow-up, Clarification Action, or Shared Blocker candidate, and avoid editing code or task files without human approval.",
