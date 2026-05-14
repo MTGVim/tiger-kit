@@ -147,15 +147,18 @@ implementation drift로 보입니다.
 
 하는 일:
 
-1. 현재 conversation/session review
-2. `.tigerkit/requirements.md` review
-3. `.tigerkit/gap.md` review
-4. 최근 diff/commit review
-5. durable learning과 one-off correction 분리
-6. `.tigerkit/reflect.md` 갱신
-7. `DESIGN.md`/`reuse-map.md` 업데이트 제안 또는 적용
+1. 현재 대화 context review
+2. explicit user confirmation 확인
+3. `.tigerkit/requirements.md` review
+4. `.tigerkit/gap.md` review
+5. 최근 diff/commit review
+6. durable learning과 one-off correction 분리
+7. `.tigerkit/reflect.md` 갱신
+8. 기존 `DESIGN.md`/`reuse-map.md` 업데이트 제안 또는 적용
 
-reflect는 저장된 진행 상태에 의존하지 않습니다. session 전체를 재구성합니다.
+reflect는 현재 대화 context를 primary source로 사용합니다. artifact와 git evidence는 보조 근거입니다. 대화 context에 없는 내용은 추측하지 않고 `확인 불가`로 둡니다.
+
+`DESIGN.md`가 없으면 새로 만들지 않습니다. `DESIGN.md`에 넣을 derived design knowledge가 있으면 사용자에게 초기화 필요를 알립니다.
 
 ## Evidence Rule
 

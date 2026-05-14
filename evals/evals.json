@@ -69,25 +69,51 @@
     },
     {
       "id": 4,
-      "name": "reflect-maintains-derived-repo-knowledge",
-      "prompt": "You are evaluating TigerKit /tk:reflect after a session where the user corrected a reuse pattern twice and one one-off copy issue was resolved. Describe expected behavior. Do not write files.",
-      "expected_output": "Should review the session, requirements.md, gap.md, and recent diff or commit if available; update .tigerkit/reflect.md; separate durable learning from one-off correction; and propose or apply DESIGN.md and reuse-map.md updates only when grounded.",
+      "name": "reflect-conversation-first-reconstruction",
+      "prompt": "You are evaluating TigerKit /tk:reflect after a session where the user corrected a reuse pattern twice and one one-off copy issue was resolved. There are also stale artifacts from earlier work. Describe expected behavior. Do not write files.",
+      "expected_output": "Should use current conversation context as the primary source, use requirements.md, gap.md, and recent diff or commit only as supporting evidence, mark anything absent from the conversation context as 확인 불가, update .tigerkit/reflect.md, and separate durable learning from one-off correction.",
       "files": [],
       "expectations": [
-        "Reviews session-wide evidence",
-        "Reviews requirements.md when available",
-        "Reviews gap.md when available",
-        "Reviews recent diff or commit when available",
+        "Uses current conversation context as primary source",
+        "Uses requirements.md only as supporting evidence when available",
+        "Uses gap.md only as supporting evidence when available",
+        "Uses recent diff or commit only as supporting evidence when available",
+        "Marks missing conversation context as 확인 불가 instead of guessing",
         "Writes or updates .tigerkit/reflect.md",
         "Separates durable learning from one-off correction",
-        "Proposes or applies DESIGN.md updates through reflection",
-        "Proposes or applies reuse-map.md updates through reflection",
-        "Uses session evidence rather than bookkeeping artifacts",
-        "Does not create unrelated artifacts"
+        "Does not let stale artifacts override conversation evidence"
       ]
     },
     {
       "id": 5,
+      "name": "reflect-design-missing-notification",
+      "prompt": "You are evaluating TigerKit /tk:reflect. The session produced durable design knowledge that belongs in DESIGN.md, but the repository does not currently have DESIGN.md. Describe expected behavior. Do not write files.",
+      "expected_output": "Should not create DESIGN.md. It should record the proposed design knowledge in .tigerkit/reflect.md or the receipt as a pending design note, notify the user that DESIGN.md needs external or user-driven initialization, and wait for the file to exist before applying the update.",
+      "files": [],
+      "expectations": [
+        "Does not create DESIGN.md when absent",
+        "Records proposed design knowledge in .tigerkit/reflect.md or receipt",
+        "Notifies user that DESIGN.md initialization is needed",
+        "Explains DESIGN.md should be initialized externally or by user choice",
+        "Waits for DESIGN.md to exist before applying updates",
+        "Does not drop the derived design knowledge silently"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "reflect-design-missing-no-design-knowledge",
+      "prompt": "You are evaluating TigerKit /tk:reflect. DESIGN.md is absent, but the session produced no durable design knowledge. Describe expected behavior. Do not write files.",
+      "expected_output": "Should not create DESIGN.md and should not notify the user to initialize DESIGN.md, because there is no derived design knowledge to place there. It should still update .tigerkit/reflect.md if reflection evidence exists.",
+      "files": [],
+      "expectations": [
+        "Does not create DESIGN.md when absent",
+        "Does not show DESIGN.md initialization notification without derived design knowledge",
+        "Does not treat missing DESIGN.md alone as an issue",
+        "Updates .tigerkit/reflect.md when reflection evidence exists"
+      ]
+    },
+    {
+      "id": 7,
       "name": "command-surface-final-three",
       "prompt": "You are evaluating TigerKit active command surface after the source-loss-prevention redesign. Describe the user-facing commands. Do not write files.",
       "expected_output": "Should list only /tk:prep, /tk:gap, and /tk:reflect as user-facing commands, and describe TigerKit as a source indexer, gap recorder, and reflection maintainer rather than an execution orchestrator.",

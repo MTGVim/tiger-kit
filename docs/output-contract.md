@@ -46,11 +46,12 @@ gap 기록했습니다.
 ```text
 reflection 정리했습니다.
 - 기록: `.tigerkit/reflect.md`
+- primary source: current conversation context
 - durable learning: evidence 있는 항목만 분리
 - one-off correction: session 한정으로 유지
-- proposed docs: `DESIGN.md`, `reuse-map.md`
+- design note: 조건부 표시. `DESIGN.md`가 없고 넣을 derived design knowledge가 있을 때만 초기화 필요 알림
 
-다음 추천: 제안된 derived doc 변경 검토
+다음 추천: 제안된 derived knowledge 검토
 ```
 
 ## detail 원칙

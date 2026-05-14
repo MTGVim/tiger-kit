@@ -44,7 +44,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `.claude-plugin/marketplace.json`: marketplace 등록용 manifest.
 - `commands/prep.md`: source-of-truth reference와 직접 사용자 인터뷰를 `.tigerkit/requirements.md`에 인덱싱한다.
 - `commands/gap.md`: indexed SOT reference와 reproducible code baseline을 비교해 `.tigerkit/gap.md`에 evidence-based gap을 기록한다.
-- `commands/reflect.md`: session-wide reflection으로 `.tigerkit/reflect.md`를 갱신하고 `DESIGN.md`/`reuse-map.md` 업데이트를 제안하거나 적용한다.
+- `commands/reflect.md`: 현재 대화 context를 먼저 재구성해 `.tigerkit/reflect.md`를 갱신하고 기존 `DESIGN.md`/`reuse-map.md` 업데이트를 제안하거나 적용한다.
 - `docs/usage.md`: 사용자 관점의 명령 사용법.
 - `docs/artifact-layout.md`: `.tigerkit/`, `DESIGN.md`, `reuse-map.md` 산출물 구조.
 - `docs/output-contract.md`: command 응답 receipt 규칙.
@@ -53,7 +53,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `/tk:prep`: 외부 source는 reference만 저장하고, 현재 session의 직접 사용자 인터뷰만 raw text에 가깝게 보존한다. pseudo-requirement를 만들지 않는다.
 - `/tk:gap`: 특정 SOT reference와 특정 code baseline을 비교해 evidence, finding, interpretation, required resolution을 기록한다. gap을 실행 대기열로 바꾸지 않는다.
-- `/tk:reflect`: session 전체를 재구성해 durable learning과 one-off correction을 분리하고, derived repo knowledge 업데이트를 관리한다.
+- `/tk:reflect`: 현재 대화 context를 먼저 재구성해 durable learning과 one-off correction을 분리하고, derived repo knowledge 업데이트를 관리한다.
 
 ## 핵심 정책
 
@@ -68,9 +68,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - gap 분석 전 clean working tree + HEAD commit hash가 반드시 필요하다.
 - working tree가 clean하지 않으면 gap 기록을 시작하지 않고, 먼저 commit하거나 변경 정리를 요청한다.
 - ambiguity를 조용히 해결하지 않는다. source가 결론을 지지하지 않으면 gap으로 기록하고 필요하면 사용자에게 묻는다.
-- `.tigerkit/reflect.md`는 저장된 진행 상태가 아니라 session-wide reconstruction 기반이다.
+- `.tigerkit/reflect.md`는 현재 대화 context를 primary source로 사용하고, artifact와 git evidence는 보조 근거로만 사용한다.
+- 대화 context에 남아 있지 않은 내용은 추측하지 않고 `확인 불가`로 둔다.
 - `DESIGN.md`와 `reuse-map.md`는 derived repo-level knowledge이며 외부 SOT를 대체하지 않는다.
 - `DESIGN.md`와 `reuse-map.md` 업데이트는 prep/gap 중 직접 하지 말고 reflection을 통해 제안하거나 적용한다.
+- `DESIGN.md`가 없으면 TigerKit이 새로 생성하지 않는다. 넣을 derived design knowledge가 있으면 사용자에게 초기화 필요를 알린다.
 - inspect하지 않은 component prop, API field, behavior, reusable capability를 기록하지 않는다.
 
 ## Evidence Rule
