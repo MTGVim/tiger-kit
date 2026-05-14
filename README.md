@@ -4,259 +4,164 @@
 
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
 
-TigerKit(`tiger-kit`, plugin `tk`)은 repo-local requirements/task/status/API-followup/decision ledger를 관리하는 작은 Claude Code 플러그인입니다.
+TigerKit(`tiger-kit`, plugin `tk`)은 AI-induced source loss를 줄이기 위한 작은 Claude Code 플러그인입니다.
 
 ```text
-requirements
-→ tasks
-→ task status
-→ blocked reason
-→ API follow-up
-→ decisions
+source-of-truth references
+→ reproducible code baseline comparison
+→ session reflection
+→ derived repo knowledge
 ```
 
-TigerKit은 Backlog.md에 의존하지 않습니다. `.tigerkit/{work_id}/` 아래 artifact를 source of truth로 둡니다.
+TigerKit은 요구사항을 대신 쓰거나, 실행 대기열을 관리하거나, LLM의 절차 기억을 source of truth로 만들지 않습니다.
 
 ## Command Surface
 
 | Command | 역할 |
 | --- | --- |
-| `/tk:prep` | 요구사항 source를 `.tigerkit` task ledger로 정리하고 light-gap까지 반영 |
-| `/tk:task` | task ledger 상태 조회, 추가, 상태 갱신, 상위 status snapshot |
-| `/tk:next` | 다음 task 또는 사용자 action 하나 추천 |
-| `/tk:do` | autopilot으로 task 하나 구현, decisions/API follow-up 갱신 |
-| `/tk:steer` | user-steered execution 시작 |
-| `/tk:steer-end` | steer 세션 종료, correction/reflect candidate 정리 |
-| `/tk:gap` | requirements/task/API/blocker/readiness deep audit |
-| `/tk:statusline` | steer/reflect indicator 표시 위치 설정 |
+| `/tk:prep` | source-of-truth reference와 사용자 인터뷰 원문을 `.tigerkit/requirements.md`에 인덱싱 |
+| `/tk:gap` | indexed SOT reference와 reproducible code baseline을 비교해 `.tigerkit/gap.md`에 evidence-based gap 기록 |
+| `/tk:reflect` | session-wide reflection으로 `.tigerkit/reflect.md`를 갱신하고 `DESIGN.md`/`reuse-map.md` 업데이트 제안 또는 적용 |
 
-## Workflow
+## Command Order
 
 ```mermaid
 graph TD
     A[Start] --> B[/tk:prep]
-    B --> C[/tk:task]
-    C --> D{What now?}
-
-    D -->|Need overview| E[/tk:task list]
-    D -->|Need next step| F[/tk:next]
-    D -->|Want autopilot| G[/tk:do]
-    D -->|Want direct drive| H[/tk:steer]
-
-    G --> I[Update tasks.md / tasks.index.json]
-    G --> J[Write decisions.md]
-    G --> K[/tk:task status]
-
-    H --> L[Follow user instruction step by step]
-    H --> M[Write decisions.md]
-    H --> N[Capture correction / reuse / ask-rules]
-    H --> O[/tk:steer-end]
-
-    E --> C
-    F --> C
-    I --> K
-    J --> K
-    L --> O
-    M --> K
-    N --> K
-    O --> K
-
-    K --> P{Need deeper audit?}
-    P -->|Yes| Q[/tk:gap]
-    P -->|No| C
-    Q --> C
-
-    R[/tk:statusline] --> S["[🛞] [🪞 2] [🛞 / 🪞 2]"]
+    B --> C[.tigerkit/requirements.md]
+    C --> D[/tk:gap]
+    D --> E[.tigerkit/gap.md]
+    E --> F[/tk:reflect]
+    F --> G[.tigerkit/reflect.md]
+    F --> H[DESIGN.md]
+    F --> I[reuse-map.md]
 ```
 
-기본 흐름:
+권장 순서:
 
 ```text
 /tk:prep
-/tk:task
-/tk:next
-/tk:do T-001
-/tk:task status
 /tk:gap
-```
-
-직접주행 흐름:
-
-```text
-/tk:prep
-/tk:task
-/tk:steer
-... 자연어로 지시/교정 ...
-/tk:steer-end
-/tk:task status
+/tk:reflect
 ```
 
 ## Mental Model
 
-- `/tk:do` = autopilot
-- `/tk:steer` = direct drive
-- `/tk:task` = 상태판 entrypoint
-- `/tk:gap` = deep audit
+- `/tk:prep` = source index, not requirement rewrite
+- `/tk:gap` = SOT reference vs commit/code comparison
+- `/tk:reflect` = session-wide reconstruction and repo knowledge maintenance
 
 ## Artifact Layout
 
 ```text
-.tigerkit/{work_id}/
-  inputs/
+.tigerkit/
   requirements.md
-  implementation-context.md
-  tasks.md
-  tasks.index.json
-  decisions.md
-  steer-state.json
-  archive/
-    tasks.done.md
+  gap.md
+  reflect.md
+
+DESIGN.md
+reuse-map.md
 ```
 
 | Artifact | 역할 |
 | --- | --- |
-| `requirements.md` | 작업 기준점. 사용자 요구사항과 합의된 범위 |
-| `implementation-context.md` | 참고 구현, 재사용 후보, 피해야 할 구현, non-goals, unknowns, 사용자 첨삭을 담는 구현 전 컨텍스트 |
-| `tasks.md` | 사람이 읽는 task ledger |
-| `tasks.index.json` | Claude가 적은 token으로 현재 상태를 파악하는 compact state index |
-| `decisions.md` | `do`와 `steer`가 남기는 compact decision trace |
-| `steer-state.json` | local steer runtime state |
-| `archive/tasks.done.md` | 완료 task archive |
-
-기존 workdir의 `leverage.md`는 legacy alias입니다. 신규 기본 산출물은 `implementation-context.md`이며, `/tk:do`는 새 파일이 없을 때만 `leverage.md`를 fallback으로 읽습니다.
+| `.tigerkit/requirements.md` | source-of-truth reference index. 외부 source는 reference만 저장하고, 현재 session 사용자 인터뷰만 raw text로 보존 |
+| `.tigerkit/gap.md` | specific SOT reference와 specific code baseline 사이 evidence-based comparison 기록 |
+| `.tigerkit/reflect.md` | session-wide reflection. durable learning과 one-off correction 분리 |
+| `DESIGN.md` | derived repo-level design knowledge. 외부 SOT 대체 금지 |
+| `reuse-map.md` | 기존 component/hook/util/pattern 재사용 지도. inspect한 code만 기록 |
 
 ## Core Policy
 
-TigerKit은 초안을 만들고, 최종 touch와 승인은 사람이 합니다.
+TigerKit의 목표는 source loss 방지입니다.
 
-| 상황 | task 상태 | API follow-up 상태 | 의미 |
-| --- | --- | --- | --- |
-| API 없음, mock 가능 | `todo` / `in_progress` / `done` 가능 | `mock_api_contract` | 개발은 진행 가능, merge 전 확인 필요 |
-| API 없음, mock 불가 | `blocked` | `blocked` | task 실행 불가 |
-| API 있음 | 일반 진행 | 없음 | 정상 구현 가능 |
-| 사람 검수 필요 | `review_required` | 상황별 | 디자인/UX/API/copy/product 판단 전에는 done 아님 |
+source loss 예:
 
-원칙:
+- 중요한 wording을 요약으로 잃음
+- 외부 요구사항을 local pseudo-requirement로 재작성
+- 별개 source를 하나의 synthetic requirement로 병합
+- interpretation을 fact처럼 저장
+- uncertainty를 숨김
+- missing behavior를 추측
+- stale summary 사용
+- derived docs를 너무 일찍 업데이트
+- evidence를 work item으로 바꿈
 
-```text
-API 없음 = 무조건 blocked 아님
-mock 가능 = 개발 진행 가능
-unresolved API = merge blocker
-```
-
-강한 API Capability Key는 만들지 않습니다. `TK-API-*` follow-up ID만 lazy하게 생성/재사용합니다.
-
-## Prep Light-Gap vs Gap
-
-`/tk:prep`은 끝에서 light-gap sanity pass를 수행합니다.
-
-- requirement 누락/중복
-- task granularity 과대/과소
-- immediate clarification 필요 여부
-- obvious shared blocker
-- 바로 실행 가능한 task 존재 여부
-
-`/tk:gap`는 이보다 깊은 audit입니다.
-
-- requirements coverage
-- task state consistency
-- API follow-up duplicate 후보
-- blocker/readiness 판단
-
-## Steering / Reflect Indicators
-
-기본 indicator 규칙:
-
-- steer only -> `[🛞]`
-- reflect pending only -> `[🪞 2]`
-- both -> `[🛞 / 🪞 2]`
-- none -> 숨김
-
-기본 delivery는 trailing이며, `/tk:statusline`으로 statusline 표시를 설정할 수 있습니다.
-
-## tasks.md 구조
-
-```md
-# Tasks
-
-## Active Tasks
-
-| ID | Status | Summary | Req | API Follow-ups | Done Criteria |
-|---|---|---|---|---|---|
-
-## API Follow-ups
-
-| ID | Status | Summary | Affected Tasks | Mock Location | Resolution |
-|---|---|---|---|---|---|
-
-## Shared Blockers
-
-| ID | Type | Status | Summary | Affected Tasks | Resolution |
-|---|---|---|---|---|---|
-
-## Done Archive
-
-Moved to archive/tasks.done.md
-```
-
-## tasks.index.json 최소 구조
-
-```json
-{
-  "tasks": [
-    {
-      "id": "T-003",
-      "status": "done",
-      "summary": "사용자 검색 UI 구현",
-      "sourceRequirements": ["R-002"],
-      "apiFollowups": ["TK-API-001"],
-      "decisionLogRef": "decisions.md#t-003",
-      "changedFiles": ["src/components/Search.tsx"]
-    }
-  ],
-  "apiFollowups": [
-    {
-      "id": "TK-API-001",
-      "status": "mock_api_contract",
-      "summary": "사용자 검색 API contract 불명",
-      "affectedTasks": ["T-003"],
-      "mergeBlocker": true,
-      "mockLocation": "src/mocks/users.ts",
-      "resolution": "실제 API contract 확인 후 mock 교체"
-    }
-  ],
-  "sharedBlockers": [],
-  "steer": {
-    "active": false
-  },
-  "reflect": {
-    "pendingCandidateCount": 0
-  }
-}
-```
-
-넣지 말 것:
-
-- 복잡한 API taxonomy
-- 과도한 evidence log
-- 긴 plan 전문
-- 상세 dependency graph
-
-## 설치
-
-### Marketplace로 설치
+대신 아래를 따릅니다.
 
 ```text
-/plugin marketplace add MTGVim/tiger-kit
-/plugin install tk@tiger-kit
-/reload-plugins
+store reference, not summary
+record gap, not work plan
+reflect later, not now
+ask user, do not guess
 ```
 
-### 로컬 플러그인 디렉터리로 사용
+## requirements.md
 
-```bash
-claude --plugin-dir ./tiger-kit
+`requirements.md`는 source of truth가 아닙니다. source of truth 위치를 가리키는 index입니다.
+
+외부 source는 reference만 저장합니다.
+
+- URL
+- file path
+- ticket link
+- Figma link
+- PRD link
+- issue link
+- API docs link
+- source code path
+- commit hash
+
+직접 사용자 인터뷰 내용만 local text로 저장할 수 있습니다. raw text와 derived interpretation을 분리합니다.
+
+## gap.md
+
+`gap.md`가 TigerKit의 중심입니다.
+
+각 gap은 아래 비교를 기록합니다.
+
+```text
+specific SOT reference
+vs
+specific code baseline
 ```
+
+working tree가 clean하지 않으면 gap 기록을 시작하지 않습니다. 먼저 commit하거나 변경을 정리해 reproducible baseline을 만듭니다.
+
+각 gap은 evidence record입니다.
+
+- compared SOT
+- compared code baseline
+- inspected files
+- evidence
+- finding
+- interpretation, if any
+- resolution
+- required resolution
+
+## reflect.md
+
+`reflect.md`는 저장된 진행 상태 기반이 아닙니다. session 전체를 재구성합니다.
+
+사용 대상:
+
+- repeated failure patterns
+- durable learnings
+- one-off corrections
+- proposed updates to `DESIGN.md`
+- proposed updates to `reuse-map.md`
+
+one-off correction은 future work에 영향을 줘야 한다는 evidence가 있을 때만 durable rule로 승격합니다.
+
+## DESIGN.md / reuse-map.md
+
+`DESIGN.md`와 `reuse-map.md`는 derived repo-level knowledge입니다. 외부 SOT를 대체하지 않습니다.
+
+`DESIGN.md`에는 architecture, boundaries, data flow, UI/API conventions, stable constraints, non-goals, repo-specific decisions를 담을 수 있습니다.
+
+`reuse-map.md`에는 reusable components, hooks, utilities, API clients, form/validation/UI/test patterns, deprecated patterns를 구체 path와 함께 담을 수 있습니다.
+
+inspect하지 않은 capability, prop, behavior는 기록하지 않습니다.
 
 ## 검증
 
@@ -273,13 +178,11 @@ git diff --check
 
 ## Inspired by
 
-TigerKit은 아래 workflow와 skill/repo에서 아이디어를 참고해 목적에 맞게 축약했습니다.
+TigerKit은 아래 project에서 아이디어를 참고해 source-loss prevention 목적에 맞게 축약했습니다.
 
 - [`claude-reflect`](https://github.com/dontriskit/claude-reflect)
 - [OACP `self-improve`](https://github.com/OpenAgentic/agentic-coding-protocol/tree/main/commands/self-improve)
-- [Matt Pocock `tdd`](https://github.com/mattpocock/skills/tree/main/skills/engineering/tdd)
 - [Q00 `ouroboros`](https://github.com/Q00/ouroboros)
-- [superpowers `executing-plans`](https://github.com/pcvelz/superpowers/blob/main/skills/executing-plans/SKILL.md)
 
 ## Contributors
 

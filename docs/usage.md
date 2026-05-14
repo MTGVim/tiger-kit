@@ -2,266 +2,191 @@
 
 ## 언어
 
-명령은 사용자에게 한글로 답하고 작업 산출물도 한글로 작성합니다. 인용한 원문, 코드, 명령어, 경로, 식별자는 원문 그대로 유지할 수 있습니다.
+명령은 사용자에게 한글로 답하고 작업 산출물도 한글로 작성합니다. URL, 코드, 명령어, 경로, 식별자, commit hash는 원문 그대로 유지할 수 있습니다.
 
 ## 핵심 모델
 
 ```text
-TigerKit = repo-local requirements/task/status/API-followup/decision ledger
+TigerKit = source-of-truth index + reproducible gap record + session reflection
 ```
 
-TigerKit은 Backlog.md에 의존하지 않습니다. `.tigerkit/{work_id}/` 아래 artifact가 source of truth입니다.
+TigerKit은 LLM의 장기 절차 기억에 실행 순서나 진행 상태를 맡기지 않습니다.
 
-기본 흐름:
+권장 순서:
 
 ```text
 /tk:prep
-/tk:task
-/tk:next
-/tk:do T-001
-/tk:task status
 /tk:gap
-```
-
-직접주행 흐름:
-
-```text
-/tk:prep
-/tk:task
-/tk:steer
-... 자연어로 지시/교정 ...
-/tk:steer-end
-/tk:task status
+/tk:reflect
 ```
 
 ## Command Surface
 
 | Command | 역할 |
 | --- | --- |
-| `/tk:prep` | 요구사항 source를 task ledger로 정리하고 light-gap까지 반영 |
-| `/tk:task` | task ledger 상태 조회, 새 task 추가, 상태 갱신, status snapshot |
-| `/tk:next` | 다음 task 또는 사용자 action 하나 추천 |
-| `/tk:do` | autopilot으로 task 하나 구현, decisions/API follow-up 갱신 |
-| `/tk:steer` | user-steered execution 시작 |
-| `/tk:steer-end` | steer 세션 종료, correction/reflect candidate 정리 |
-| `/tk:gap` | requirements/task/API/blocker/readiness deep audit |
-| `/tk:statusline` | steer/reflect indicator 표시 위치 설정 |
+| `/tk:prep` | source-of-truth reference와 직접 사용자 인터뷰를 `.tigerkit/requirements.md`에 인덱싱 |
+| `/tk:gap` | indexed SOT reference와 특정 code baseline을 비교해 `.tigerkit/gap.md`에 evidence-based gap 기록 |
+| `/tk:reflect` | session 전체를 재구성해 `.tigerkit/reflect.md`를 갱신하고 derived repo docs 업데이트 제안/적용 |
 
-## 1. 준비
+## 1. Source index
 
 ```text
-/tk:prep <요구사항, 티켓, 메모, source>
+/tk:prep <요구사항 source, 티켓, Figma, PRD, issue, 직접 인터뷰>
 ```
 
 하는 일:
 
-1. 사용자 요구사항 정리
-2. implementation context 초안 정리
-3. `requirements.md` 생성/갱신
-4. `implementation-context.md` 생성/갱신
-5. requirements를 작은 task로 소분
-6. `tasks.md` 생성/갱신
-7. `tasks.index.json` 생성/갱신
-8. `decisions.md` 초기화 또는 유지
-9. 끝에서 light-gap sanity pass 수행
-
-light-gap가 보는 것:
-- requirement 누락/중복
-- task granularity 과대/과소
-- immediate clarification 필요 여부
-- obvious shared blocker
-- 바로 실행 가능한 task 존재 여부
+1. 외부 source와 직접 사용자 인터뷰를 분리
+2. 외부 source는 reference만 저장
+3. 현재 session 사용자 인터뷰는 raw text에 가깝게 저장
+4. derived interpretation은 별도 표시
+5. ambiguity를 숨기지 않고 기록
 
 하지 않는 일:
-- Figma 같은 대형 MCP source raw dump 저장
-- 대형 source 긴 요약 생성
-- 현재 구현 전체 분석
-- API capability taxonomy 생성
-- deep gap report 생성
+
+- external source 내용을 local requirement로 재작성
+- source summary를 official requirement처럼 저장
+- 실행 대기열 생성
+- `DESIGN.md` 또는 `reuse-map.md` 업데이트
 - 구현, commit, push, PR 생성
 
-## source 접근 기록
+권장 구조:
 
-Figma처럼 큰 MCP source는 raw 전체를 받거나 저장하지 않습니다. `inputs/sources/<kind>/<name>/access.md`에 URL, file key, frame id, node id, selection id, MCP tool, 다시 접근하는 방법만 index처럼 기록합니다. 작은 텍스트 source만 raw snapshot을 둘 수 있습니다.
+```md
+# TigerKit Requirements Index
 
-Figma처럼 frame 단위 구조가 있는 source는 관련 frame을 각각 MCP로 새로 읽고, raw 대신 추출한 metadata/style 값만 `chunks/chunk-001.md`처럼 나눠 저장할 수 있습니다. chunk에는 frame id, node id, selection id, component name, text label, CSS/layout/spacing/color/typography 값, 관찰 목적만 둡니다.
+## External Sources
 
-CSS, layout, spacing, color, typography 같은 UI 요소를 확인할 때는 반드시 현재 MCP source를 새로 읽습니다. 오래된 access 기록이나 screenshot 요약만으로 style 값을 확정하지 않습니다.
+- PRD: https://...
+- Figma: https://...
+- GitHub Issue: https://...
 
-## 2. 상태판 진입
+## Interviewed Requirements
 
-```text
-/tk:task
+### Raw
+
+> 사용자 원문에 가까운 내용
+
+### Derived Interpretation
+
+- 명시적으로 파생 해석임을 표시
+
+## Ambiguities
+
+- 확인되지 않은 점
 ```
 
-bare 호출은 현재 상태 요약과 사용법 가이드입니다.
-
-예:
-
-```text
-task ledger 확인했습니다.
-- work_id: search-ui
-- active: 3, blocked: 1, review_required: 1
-- reflect pending: 2
-
-다음 추천: /tk:task list
-```
-
-지원 형태:
-
-```text
-/tk:task list
-/tk:task status
-/tk:task T-003
-/tk:task add
-/tk:task T-003 in_progress
-/tk:task T-003 blocked auth contract unclear
-/tk:task T-003 review_required
-/tk:task T-003 done
-```
-
-### `task status`
-
-`/tk:task status`는 old close/state/handoff 역할을 흡수합니다.
-
-보여줄 것:
-- active task summary
-- review_required / blocked
-- unresolved API follow-ups
-- merge-ready 여부
-- next action 1개
-- decisions/reflect badge 상태
-
-`/tk:task status`는 snapshot입니다. deeper audit은 `/tk:gap`가 담당합니다.
-
-## 3. 다음 action 추천
-
-```text
-/tk:next
-```
-
-역할:
-1. `tasks.index.json` 읽기
-2. 실행 가능한 task 또는 사용자 action 하나 고르기
-3. 연결된 blocker/API follow-up 표시
-4. 다음 한 걸음만 제안
-
-원칙:
-
-```text
-/tk:next는 전체 계획을 다시 만들지 않고 다음 한 걸음만 보여준다.
-```
-
-## 4. autopilot 실행
-
-```text
-/tk:do T-004
-```
-
-하는 일:
-1. task 하나 선택
-2. 구현 시점에 현재 코드 확인
-3. 필요한 API 확인
-4. 구현
-5. 테스트/검증
-6. task 상태 갱신
-7. 필요하면 API Follow-up 생성/연결
-8. `decisions.md` 기록
-
-핵심:
-- `/tk:do`는 autopilot이다.
-- 먼저 조사하고 correction-only prompt를 제시한다.
-- `decisions.md`에 실제 판단 흔적을 남긴다.
-- reflect는 optional 후보만 남긴다.
-
-## API 정책
-
-```text
-TigerKit은 API 부재를 항상 개발 blocker로 취급하지 않는다.
-
-API missing + safe mock
-→ 개발 진행 가능
-→ TK-API-* follow-up 생성/재사용
-→ unresolved는 merge blocker
-
-API missing + unsafe mock
-→ blocked
-```
-
-강한 API Capability Key는 만들지 않습니다.
-
-## 5. direct drive
-
-```text
-/tk:steer
-```
-
-역할:
-1. 사용자가 운전대를 잡고 step-by-step으로 지시
-2. agent는 그 지시를 따라 실행
-3. correction/reuse/ask-rule을 `decisions.md`에 기록
-4. reflect는 후보만 남김
-
-중요:
-- `steer`는 `do` 후처리 전용이 아니다.
-- `do` 없이도 시작 가능하다.
-- blank interview로 시작하지 않는다.
-- autonomy mode처럼 행동하지 않는다.
-
-종료:
-
-```text
-/tk:steer-end
-```
-
-종료 시:
-- steer state clear
-- correction/decision flush
-- reflect candidate pending count 유지 가능
-- 장문 retrospective 강제 없음
-
-## 6. 점검
+## 2. Gap record
 
 ```text
 /tk:gap
 ```
 
-`/tk:gap`는 `prep`의 light-gap보다 깊은 audit입니다.
+하는 일:
 
-역할:
-1. requirements 대비 누락 확인
-2. task 상태 정리
-3. `tasks.index.json`과 `tasks.md` 불일치 확인
-4. API follow-up 중복 병합 후보 확인
-5. shared blocker 확인
-6. unresolved blocker 확인
-7. merge/review readiness 판단
+1. `.tigerkit/requirements.md`에서 compared SOT reference 확인
+2. code baseline 확인
+3. working tree가 clean하지 않으면 commit 또는 정리 요청
+4. 관련 code path inspection
+5. evidence와 interpretation 분리
+6. `.tigerkit/gap.md`에 gap 기록
 
-`/tk:gap`는 report-only입니다. 파일 수정, task 생성, follow-up 자동 병합, PR/merge/push/deploy를 하지 않습니다.
-
-## 7. indicator 설정
+baseline 원칙:
 
 ```text
-/tk:statusline
+clean working tree + HEAD commit hash = required baseline
 ```
 
-지원:
+gap은 evidence record입니다.
+
+```md
+## GAP-001 — Tooltip copy mismatch
+
+Type: mismatch
+Resolution: open
+
+### Compared SOT
+- Source: PRD
+- Reference: https://...
+- Section: Tooltip copy
+
+### Compared Code
+- Baseline: abc1234
+- Files inspected:
+  - src/...
+
+### Evidence
+SOT:
+> short exact excerpt or pointer
+
+Code:
+> short exact excerpt or pointer
+
+### Finding
+PRD copy와 구현 tooltip copy가 다릅니다.
+
+### Interpretation
+implementation drift로 보입니다.
+
+### Required Resolution
+사용자 확인 또는 code update 필요.
+```
+
+하지 않는 일:
+
+- gap을 실행 대기열로 변환
+- ambiguity를 조용히 해소
+- `DESIGN.md` 또는 `reuse-map.md` 업데이트
+- 구현, commit, push, PR 생성
+
+## 3. Reflection
 
 ```text
-/tk:statusline install
-/tk:statusline remove
-/tk:statusline trailing
-/tk:statusline trailing on
-/tk:statusline trailing off
+/tk:reflect
 ```
 
-badge 규칙:
-- steer only -> `[🛞]`
-- reflect pending only -> `[🪞 2]`
-- both -> `[🛞 / 🪞 2]`
-- none -> 숨김
+하는 일:
 
-기본은 trailing입니다. statusline은 token-saving 옵션입니다.
+1. 현재 conversation/session review
+2. `.tigerkit/requirements.md` review
+3. `.tigerkit/gap.md` review
+4. 최근 diff/commit review
+5. durable learning과 one-off correction 분리
+6. `.tigerkit/reflect.md` 갱신
+7. `DESIGN.md`/`reuse-map.md` 업데이트 제안 또는 적용
+
+reflect는 저장된 진행 상태에 의존하지 않습니다. session 전체를 재구성합니다.
+
+## Evidence Rule
+
+중요 claim은 아래 중 하나에 근거해야 합니다.
+
+- external SOT reference
+- direct user interview text
+- code path
+- commit hash
+- observed diff
+- explicit user confirmation
+- gap record
+- derived artifact clearly marked as derived
+
+항상 분리합니다.
+
+```text
+Evidence = directly observed
+Interpretation = inferred from evidence
+Decision = confirmed by user or SOT
+Suggestion = proposed, not confirmed
+```
+
+## Ambiguity Rule
+
+source가 결론을 지지하지 않으면 추측하지 않습니다.
+
+```text
+record gap, not work plan
+ask user, do not guess
+```
 
 ## 검증
 
