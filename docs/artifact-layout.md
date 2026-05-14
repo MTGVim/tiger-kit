@@ -1,195 +1,204 @@
 # 산출물 구조
 
-TigerKit은 Backlog.md에 의존하지 않습니다. `.tigerkit/{work_id}/`가 repo-local source of truth입니다.
+TigerKit은 절차 상태 파일에 의존하지 않습니다. 기본 산출물은 source reference, gap evidence, reflection record입니다.
 
-## 권장 구조
+## 기본 구조
 
 ```text
-.tigerkit/{work_id}/
-  inputs/
-    sources/
-      <kind>/
-        <name>/
-          access.md
-          meta.json
+.tigerkit/
   requirements.md
-  implementation-context.md
-  tasks.md
-  tasks.index.json
-  decisions.md
-  steer-state.json
-  archive/
-    tasks.done.md
+  gap.md
+  reflect.md
+
+DESIGN.md
+reuse-map.md
 ```
+
+`.tigerkit/`는 TigerKit working material입니다. `DESIGN.md`와 `reuse-map.md`는 repo-level derived knowledge입니다.
 
 ## 파일 책임
 
 | 파일 | 역할 |
 | --- | --- |
-| `inputs/` | 요구사항 정리에 참고한 source 접근 index 보관 위치. Figma 같은 대형 MCP source는 raw 대신 접근 방법만 기록 |
-| `requirements.md` | 작업 기준점. 사용자 요구사항과 합의된 범위 |
-| `implementation-context.md` | 참고 화면, 재사용 후보, 피해야 할 구현, non-goals, unknowns, 사용자 correction, 최종 implementation context |
-| `tasks.md` | 사람이 읽는 task ledger |
-| `tasks.index.json` | Claude가 적은 token으로 현재 상태를 파악하기 위한 compact state index |
-| `decisions.md` | `do`와 `steer`가 남기는 compact decision trace |
-| `steer-state.json` | local steer runtime state |
-| `archive/tasks.done.md` | 완료 또는 dropped task의 상세 이력 archive |
+| `.tigerkit/requirements.md` | source-of-truth reference index. 외부 source는 reference만 저장하고 현재 session 직접 사용자 인터뷰만 local text로 보존 |
+| `.tigerkit/gap.md` | specific SOT reference와 specific code baseline 사이 evidence-based comparison 기록 |
+| `.tigerkit/reflect.md` | session-wide reflection. durable learning, one-off correction, derived doc proposal 분리 |
+| `DESIGN.md` | architecture, boundaries, data flow, UI/API conventions, stable constraints, non-goals 같은 derived repo-level design knowledge |
+| `reuse-map.md` | reusable component/hook/util/API client/pattern/test helper와 deprecated pattern reference |
 
-## source 접근 기록
+## requirements.md
 
-Figma, design MCP, large document MCP처럼 큰 source는 원문 전체를 저장하지 않습니다. raw 저장은 context overflow를 만들고, 요약은 중요한 UI/detail 정보를 잃게 만들 수 있습니다. 대신 `access.md`에 다시 MCP로 접근할 수 있는 index만 남깁니다.
+`requirements.md`는 source of truth가 아닙니다. source of truth 위치를 가리키는 index입니다.
 
-`access.md` 권장 항목:
+외부 source는 reference만 저장합니다.
 
-```md
-# Source Access
+- URL
+- file path
+- ticket link
+- Figma link
+- PRD link
+- issue link
+- API docs link
+- source code path
+- commit hash
 
-provider: figma
-mcp_tool: figma.get_file | figma.get_node | ...
-url: ...
-file_key: ...
-page_id: ...
-frame_id: ...
-node_ids:
-- ...
-selection_ids:
-- ...
-query_or_focus: ...
-refetch_steps:
-- MCP에서 file_key와 node_ids로 다시 조회
-purpose: requirements/leverage 확인
-checked_at: YYYY-MM-DD
-```
-
-작은 텍스트 source만 `*.raw.<ext>`를 둘 수 있습니다. 대형 MCP source에는 raw dump와 긴 `summary.md`를 만들지 않습니다.
-
-Figma처럼 frame 단위 구조가 있는 source는 관련 frame을 각각 MCP로 새로 읽고, raw 대신 추출한 metadata/style 값만 chunk로 저장할 수 있습니다.
-
-```text
-inputs/sources/figma/<name>/
-  access.md
-  frames.index.json
-  chunks/
-    chunk-001.md
-    chunk-002.md
-```
-
-chunk에는 frame id, node id, selection id, component name, text label, CSS/layout/spacing/color/typography 값, 관찰 목적만 둡니다. 전체 node tree raw dump는 넣지 않습니다.
-
-CSS, layout, spacing, color, typography 같은 UI 요소를 확인할 때는 반드시 MCP source를 새로 읽습니다. `access.md`는 다시 접근하기 위한 index일 뿐이며, style 값의 최신 근거로 재사용하지 않습니다.
-
-기존 workdir의 `leverage.md`는 legacy alias입니다. 신규 기본 산출물은 `implementation-context.md`이며, `/tk:do`는 새 파일이 없을 때만 `leverage.md`를 fallback으로 읽습니다.
-
-## steer state
-
-steer active state는 artifact ledger와 분리된 local runtime state입니다.
-
-```text
-.tigerkit/{work_id}/steer-state.json
-```
-
-## 작업 흐름 단계
-
-| 단계 | 근거 | 추천 다음 행동 |
-| --- | --- | --- |
-| `req-needed` | `requirements.md` 없음 | `/tk:prep` |
-| `task-ledger-needed` | `requirements.md`는 있고 `tasks.md` 또는 `tasks.index.json` 없음 | `/tk:prep`로 ledger 생성/갱신 |
-| `clarification-needed` | unresolved Clarification Actions 있음 | targeted question |
-| `task-ready` | 실행 가능한 `todo` 또는 `in_progress` task 있음 | `/tk:task`, `/tk:next`, `/tk:do`, `/tk:steer` |
-| `blocked` | 실행 가능한 일반 task가 없고 외부 blocker만 있음 | blocker 해결 또는 API/contract 확인 |
-| `gap-needed` | task 상태가 꼬였거나 deeper audit 필요 | `/tk:gap` |
-| `status-check` | 현재 스냅샷과 next action 확인 필요 | `/tk:task status` |
-
-## tasks.md 구조
+직접 사용자 인터뷰는 local text로 저장할 수 있습니다. raw와 derived interpretation을 분리합니다.
 
 ```md
-# Tasks
+# TigerKit Requirements Index
 
-## Active Tasks
+## External Sources
 
-| ID | Status | Summary | Req | API Follow-ups | Done Criteria |
-|---|---|---|---|---|---|
+- PRD: https://...
+- Figma: https://...
+- GitHub Issue: https://...
+- Source Code: src/...
+- Commit: abc1234
 
-## API Follow-ups
+## Interviewed Requirements
 
-| ID | Status | Summary | Affected Tasks | Mock Location | Resolution |
-|---|---|---|---|---|---|
+### Raw
 
-## Shared Blockers
+> 사용자 원문에 가까운 내용
 
-| ID | Type | Status | Summary | Affected Tasks | Resolution |
-|---|---|---|---|---|---|
+### Derived Interpretation
 
-## Done Archive
+- 명시적으로 파생 해석임을 표시
 
-Moved to archive/tasks.done.md
+## Ambiguities
+
+- 확인되지 않은 점과 확인이 필요한 source
 ```
 
-## tasks.index.json 최소 구조
+## gap.md
 
-```json
-{
-  "tasks": [
-    {
-      "id": "T-003",
-      "status": "done",
-      "summary": "사용자 검색 UI 구현",
-      "sourceRequirements": ["R-002"],
-      "apiFollowups": ["TK-API-001"],
-      "decisionLogRef": "decisions.md#t-003",
-      "changedFiles": ["src/components/Search.tsx"]
-    },
-    {
-      "id": "T-004",
-      "status": "todo",
-      "summary": "검색 결과 empty state 구현",
-      "sourceRequirements": ["R-003"],
-      "apiFollowups": ["TK-API-001"],
-      "decisionLogRef": "decisions.md#t-004",
-      "changedFiles": []
-    }
-  ],
-  "apiFollowups": [
-    {
-      "id": "TK-API-001",
-      "status": "mock_api_contract",
-      "summary": "사용자 검색 API contract 불명",
-      "affectedTasks": ["T-003", "T-004"],
-      "mergeBlocker": true,
-      "mockLocation": "src/mocks/users.ts",
-      "resolution": "실제 API contract 확인 후 mock 교체"
-    }
-  ],
-  "sharedBlockers": [],
-  "steer": {
-    "active": false
-  },
-  "reflect": {
-    "pendingCandidateCount": 0
-  }
-}
+`gap.md`는 TigerKit의 중심 기록입니다.
+
+각 gap은 아래 비교를 명시합니다.
+
+```text
+specific SOT reference
+vs
+specific code baseline
 ```
 
-넣지 말 것:
+baseline 기준:
 
-- 복잡한 API taxonomy
-- 과도한 evidence log
-- 긴 plan 전문
-- 상세 dependency graph
+- clean working tree + HEAD commit hash
 
-## API Follow-ups와 Shared Blockers
+각 gap shape:
 
-| 섹션 | 용도 |
-| --- | --- |
-| `API Follow-ups` | mock 가능하거나 API contract 확인이 필요한 항목 |
-| `Shared Blockers` | 권한, 인간 결정, 외부 의존성 등 실제로 여러 task를 막는 것 |
+```md
+## GAP-001 — Short title
 
-API follow-up은 `/tk:do` 중 실제 필요할 때 lazy하게 생성합니다. 확신 있으면 기존 follow-up을 재사용하고, 애매하면 새 follow-up을 만든 뒤 `/tk:gap`에서 병합 후보로 보고합니다.
+Type: mismatch | missing | ambiguity | drift | unknown
+Resolution: open | resolved | needs-confirmation
 
-## archive 정책
+### Compared SOT
 
-기본 실행 경로에서 command는 `tasks.index.json`과 `tasks.md`의 active queue만 우선 읽습니다. 완료/dropped 상세 본문은 `archive/tasks.done.md`로 분리하고, active queue에는 pointer와 count만 남깁니다.
+- Source: PRD
+- Reference: https://...
+- Section: ...
 
-## cleanup 경계
+### Compared Code
 
-`/tk:task status`와 `/tk:gap`는 cleanup 후보를 제안할 수 있지만 branch 생성, commit, push, PR 생성, merge, deploy, 파일 삭제는 사용자 승인 없이 실행하지 않습니다.
+- Baseline: abc1234
+- Files inspected:
+  - src/...
+
+### Evidence
+
+SOT:
+> exact excerpt or pointer
+
+Code:
+> exact excerpt or pointer
+
+### Finding
+
+관찰된 차이.
+
+### Interpretation
+
+증거에서 파생한 해석. 없으면 생략 가능.
+
+### Required Resolution
+
+확인 또는 변경 기준. 실행 대기열 아님.
+```
+
+## reflect.md
+
+`reflect.md`는 session-wide reconstruction입니다. 저장된 진행 상태에 의존하지 않습니다.
+
+권장 구조:
+
+```md
+# TigerKit Reflection
+
+## Session Evidence Reviewed
+
+- Conversation/session
+- .tigerkit/requirements.md
+- .tigerkit/gap.md
+- Diff or commit: ...
+
+## Durable Learnings
+
+- Evidence가 있는 future-facing learning
+
+## One-off Corrections
+
+- 이번 session에만 해당하는 correction
+
+## Proposed DESIGN.md Updates
+
+- 제안 또는 적용 내역
+
+## Proposed reuse-map.md Updates
+
+- 제안 또는 적용 내역
+```
+
+## DESIGN.md
+
+`DESIGN.md`는 derived repo-level knowledge입니다. 외부 SOT를 대체하지 않습니다.
+
+담을 수 있는 것:
+
+- architecture overview
+- feature boundaries
+- data flow
+- UI conventions
+- API integration patterns
+- stable constraints
+- non-goals
+- repo-specific design decisions
+
+## reuse-map.md
+
+`reuse-map.md`는 기존 code 재사용을 돕는 leverage map입니다.
+
+구체 reference를 선호합니다.
+
+```md
+## Components
+
+### Button
+
+Path:
+- src/components/Button.tsx
+
+Use when:
+- Standard button UI가 필요할 때.
+
+Known variants:
+- primary
+- secondary
+- ghost
+
+Example usage:
+- src/features/example/ExampleForm.tsx
+```
+
+inspect하지 않은 capability, prop, behavior를 기록하지 않습니다.

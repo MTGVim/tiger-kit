@@ -1,229 +1,104 @@
 {
-  "skill_name": "tiger-kit-ledger",
+  "skill_name": "tiger-kit-source-loss-prevention",
   "evals": [
     {
       "id": 0,
-      "name": "prep-requirements-to-task-ledger-with-light-gap",
-      "prompt": "You are evaluating TigerKit /tk:prep. The user provides a feature request and asks TigerKit to prep. Describe expected behavior. Do not write files.",
-      "expected_output": "Should create or update .tigerkit/{work_id}/requirements.md, implementation-context.md, tasks.md, tasks.index.json, and decisions.md. It should split requirements into actionable tasks, perform a lightweight light-gap sanity pass, avoid deep gap auditing, avoid API capability taxonomy, and not implement code.",
+      "name": "prep-indexes-external-sources-without-rewriting",
+      "prompt": "You are evaluating TigerKit /tk:prep. The user provides a PRD URL, a Figma URL, a GitHub issue link, and a short direct interview note. Describe expected behavior. Do not write files.",
+      "expected_output": "Should create or update .tigerkit/requirements.md as a source-of-truth reference index. External sources should be stored as references only, direct user interview text should be preserved close to raw wording, derived interpretation should be clearly separated, ambiguity should be recorded, and no pseudo-requirements should be created.",
       "files": [],
       "expectations": [
-        "Uses .tigerkit/{work_id} as source of truth",
-        "Creates or updates requirements.md",
-        "Creates or updates implementation-context.md",
-        "Creates or updates tasks.md",
-        "Creates or updates compact tasks.index.json",
-        "Creates or initializes decisions.md",
-        "Performs a lightweight light-gap sanity pass",
-        "Checks requirement omission or duplication at a high level",
-        "Checks task granularity at a high level",
-        "Checks immediate clarification needs or obvious shared blockers",
-        "Does not run a deep readiness audit",
-        "Does not create API capability taxonomy",
+        "Uses .tigerkit/requirements.md as a source reference index",
+        "Stores PRD, Figma, and issue as references only",
+        "Preserves direct user interview wording close to raw text",
+        "Separates raw interview text from derived interpretation",
+        "Records ambiguity instead of guessing",
+        "Does not summarize external sources into local requirements",
+        "Does not create unrelated artifacts",
+        "Does not update DESIGN.md or reuse-map.md during prep",
         "Does not implement, commit, push, open PRs, merge, or deploy"
       ]
     },
     {
       "id": 1,
-      "name": "prep-index-minimal-schema",
-      "prompt": "You are evaluating TigerKit tasks.index.json guidance after the redesign. Describe the minimum schema and what must not be included. Do not write files.",
-      "expected_output": "Should keep tasks.index.json small: tasks with id/status/summary/sourceRequirements/apiFollowups/decisionLogRef/changedFiles, apiFollowups, sharedBlockers, and compact steer/reflect state. It should not include long plans, evidence logs, complex API taxonomy, or detailed dependency graphs.",
+      "name": "gap-records-sot-vs-reproducible-baseline",
+      "prompt": "You are evaluating TigerKit /tk:gap. The requirements index points to a PRD tooltip copy section, and the repo has a clean working tree at HEAD abc1234. Describe expected behavior. Do not write files.",
+      "expected_output": "Should identify the compared SOT reference and clean HEAD code baseline, inspect relevant files, record evidence and finding in .tigerkit/gap.md, separate interpretation from evidence, include required resolution, and avoid creating a work plan.",
       "files": [],
       "expectations": [
-        "Includes compact tasks array",
-        "Includes compact apiFollowups array",
-        "Includes sharedBlockers array",
-        "Includes compact steer state",
-        "Includes compact reflect pending count",
-        "Uses TK-API-* follow-up IDs rather than API capability keys",
-        "Avoids long plan bodies",
-        "Avoids excessive evidence logs",
-        "Avoids complex dependency graphs"
+        "Identifies compared SOT reference",
+        "Records baseline as HEAD commit abc1234 when clean",
+        "Lists inspected files",
+        "Includes SOT evidence as exact excerpt or pointer",
+        "Includes code evidence as exact excerpt or pointer",
+        "Separates finding from interpretation",
+        "Includes required resolution",
+        "Does not convert gap into work plan",
+        "Does not update DESIGN.md or reuse-map.md during gap"
       ]
     },
     {
       "id": 2,
-      "name": "next-one-action-only",
-      "prompt": "You are evaluating TigerKit /tk:next. tasks.index.json has one in_progress task, several todo tasks, unresolved TK-API-001, and one blocked task. Describe expected behavior. Do not write files.",
-      "expected_output": "Should read tasks.index.json first, recommend exactly one executable task or one user action, prefer the in_progress task, exclude blocked/done/dropped tasks, show related API follow-up and whether it blocks execution or only merge, and not modify files.",
+      "name": "gap-requires-clean-baseline",
+      "prompt": "You are evaluating TigerKit /tk:gap while the working tree has uncommitted changes. Describe expected behavior. Do not write files.",
+      "expected_output": "Should stop before recording gaps, explain that a reproducible baseline is missing, and ask the user to commit or clean up the working tree before running gap analysis.",
       "files": [],
       "expectations": [
-        "Reads tasks.index.json first",
-        "Recommends exactly one task or one user action",
-        "Prefers in_progress over todo",
-        "Excludes blocked, done, and dropped tasks",
-        "Shows related TK-API-* follow-up",
-        "Distinguishes task execution blocker from merge blocker",
-        "Does not rebuild a plan or run implementation",
-        "Does not modify files"
+        "Does not record gaps without a clean baseline",
+        "Explains reproducible baseline is missing",
+        "Asks user to commit or clean up changes",
+        "Does not invent a commit hash",
+        "Does not treat uncommitted changes as a reproducible baseline"
       ]
     },
     {
       "id": 3,
-      "name": "do-lazy-api-followup-safe-mock-with-decisions",
-      "prompt": "You are evaluating TigerKit /tk:do T-003. The task needs an unavailable user search API, but a mock contract can safely support the UI states. Describe expected behavior. Do not write files.",
-      "expected_output": "Should first load implementation context and relevant user-level learning from reflect when available, propose implementation context for correction rather than asking a blank interview, then continue the task, create or reuse a TK-API-* follow-up, link affected tasks, record mock location and resolution, update tasks.md and tasks.index.json, write a compact decisions artifact, and treat the unresolved API follow-up as merge blocker rather than development blocker.",
+      "name": "gap-ambiguity-recorded-not-resolved",
+      "prompt": "You are evaluating TigerKit /tk:gap. The indexed source does not specify whether archived users should appear in search results, but code excludes them. Describe expected behavior. Do not write files.",
+      "expected_output": "Should record an ambiguity gap with compared SOT, compared code baseline, inspected code, evidence, finding, interpretation if any, and required user or source confirmation. It should not choose behavior silently or store a guessed decision.",
       "files": [],
       "expectations": [
-        "Checks API need at implementation time, not during start",
-        "Loads implementation-context.md before implementation when available",
-        "Loads relevant user-level learning from reflect when available",
-        "Presents a correction-first implementation context proposal instead of blank context questions",
-        "Does not block solely because API is missing",
-        "Classifies the case as mock_api_contract",
-        "Creates or reuses TK-API-* follow-up lazily",
-        "Links the affected task to the follow-up",
-        "Records mock location and resolution criteria",
-        "Updates tasks.md and tasks.index.json",
-        "Writes compact decisions artifact",
-        "Treats unresolved API follow-up as merge blocker"
+        "Records ambiguity as a gap",
+        "Shows source does not specify the behavior",
+        "Shows code behavior with path or excerpt",
+        "Separates evidence from interpretation",
+        "Requests confirmation or source update as required resolution",
+        "Does not silently choose implementation behavior",
+        "Does not store guessed answer as decision"
       ]
     },
     {
       "id": 4,
-      "name": "do-api-missing-unsafe-mock",
-      "prompt": "You are evaluating TigerKit /tk:do T-004. The task depends on auth/permission behavior and a mock would create false confidence. Describe expected behavior. Do not write files.",
-      "expected_output": "Should mark the task blocked, record blocked reason and required user/API decision, and avoid fake implementation. The API follow-up may be blocked, and the task should not be treated as done.",
+      "name": "reflect-maintains-derived-repo-knowledge",
+      "prompt": "You are evaluating TigerKit /tk:reflect after a session where the user corrected a reuse pattern twice and one one-off copy issue was resolved. Describe expected behavior. Do not write files.",
+      "expected_output": "Should review the session, requirements.md, gap.md, and recent diff or commit if available; update .tigerkit/reflect.md; separate durable learning from one-off correction; and propose or apply DESIGN.md and reuse-map.md updates only when grounded.",
       "files": [],
       "expectations": [
-        "Detects unsafe mock",
-        "Marks selected task blocked",
-        "Records blocked reason",
-        "Records required contract or decision",
-        "Does not proceed with false-confidence mock",
-        "Does not mark task done"
+        "Reviews session-wide evidence",
+        "Reviews requirements.md when available",
+        "Reviews gap.md when available",
+        "Reviews recent diff or commit when available",
+        "Writes or updates .tigerkit/reflect.md",
+        "Separates durable learning from one-off correction",
+        "Proposes or applies DESIGN.md updates through reflection",
+        "Proposes or applies reuse-map.md updates through reflection",
+        "Uses session evidence rather than bookkeeping artifacts",
+        "Does not create unrelated artifacts"
       ]
     },
     {
       "id": 5,
-      "name": "task-bare-help-and-status-entrypoint",
-      "prompt": "You are evaluating TigerKit /tk:task with no arguments. Describe expected behavior. Do not write files.",
-      "expected_output": "Should show current work/task summary, usage guidance, and next suggested command. It should act as the main task ledger entrypoint rather than mutating state immediately.",
-      "files": [],
-      "expectations": [
-        "Shows current work or task summary",
-        "Shows usage guidance for list, status, add, and task-id mutation forms",
-        "Treats tk:task as main task entrypoint",
-        "Does not mutate state on bare call",
-        "Provides a next suggested command"
-      ]
-    },
-    {
-      "id": 6,
-      "name": "task-status-absorbs-close-state-handoff",
-      "prompt": "You are evaluating TigerKit /tk:task status. Development tasks are done but TK-API-001 remains mock_api_contract and one task is review_required. Describe expected behavior. Do not write files.",
-      "expected_output": "Should summarize active tasks, review_required and blocked states, unresolved API follow-ups, merge-ready status, next action, and badge state. It should replace old close/state/handoff behavior without requiring a separate handoff command.",
-      "files": [],
-      "expectations": [
-        "Summarizes active task state",
-        "Includes review_required or blocked state when present",
-        "Lists unresolved TK-API-* follow-ups",
-        "Distinguishes development progress from merge-ready",
-        "Marks merge-ready NO when unresolved API or review_required remains",
-        "Provides next action",
-        "Does not require separate handoff command",
-        "Does not open PRs, merge, push, or deploy"
-      ]
-    },
-    {
-      "id": 7,
-      "name": "task-add-new-task-without-issue-skill",
-      "prompt": "You are evaluating TigerKit /tk:task add. The user discovered a missing implementation task during steering and wants it added to the ledger. Describe expected behavior. Do not write files.",
-      "expected_output": "Should add a new task directly to the task ledger with summary, rationale or source requirement, and done criteria. It should not route through a separate issue skill or require issue draft workflow.",
-      "files": [],
-      "expectations": [
-        "Adds a new task directly to the ledger",
-        "Includes summary",
-        "Includes requirement or rationale",
-        "Includes done criteria",
-        "Updates tasks.md and tasks.index.json together",
-        "Does not invoke or mention issue skill as required path"
-      ]
-    },
-    {
-      "id": 8,
-      "name": "command-surface-redesigned",
-      "prompt": "You are evaluating TigerKit active command surface after the redesign. Describe the user-facing commands. Do not write files.",
-      "expected_output": "Should list /tk:prep, /tk:task, /tk:next, /tk:do, /tk:steer, /tk:steer-end, /tk:gap, and /tk:statusline as user-facing commands. It should not list close, watchme, watchme-end, issue, or direct /reflect support.",
+      "name": "command-surface-final-three",
+      "prompt": "You are evaluating TigerKit active command surface after the source-loss-prevention redesign. Describe the user-facing commands. Do not write files.",
+      "expected_output": "Should list only /tk:prep, /tk:gap, and /tk:reflect as user-facing commands, and describe TigerKit as a source indexer, gap recorder, and reflection maintainer rather than an execution orchestrator.",
       "files": [],
       "expectations": [
         "Lists /tk:prep",
-        "Lists /tk:task",
-        "Lists /tk:next",
-        "Lists /tk:do",
-        "Lists /tk:steer",
-        "Lists /tk:steer-end",
         "Lists /tk:gap",
-        "Lists /tk:statusline",
-        "Does not list /tk:close",
-        "Does not list /tk:watchme or /tk:watchme-end",
-        "Does not list issue skill",
-        "Does not claim direct /reflect support"
-      ]
-    },
-    {
-      "id": 9,
-      "name": "steer-independent-start-and-decisions",
-      "prompt": "You are evaluating TigerKit /tk:steer. The user wants to direct implementation step by step without using /tk:do first. Describe expected behavior. Do not write files.",
-      "expected_output": "Should start user-steered execution independently of do, keep scope narrow, follow explicit instructions, ask only when needed, and write compact correction/reuse/ask-rule decisions. It should not behave like autonomy mode or rely on heavy retrospective flow.",
-      "files": [],
-      "expectations": [
-        "Allows steer without prior do",
-        "Defines steer as user-steered execution",
-        "Follows explicit user steps closely",
-        "Asks only when needed",
-        "Writes compact decisions artifact",
-        "Does not behave like autonomy mode",
-        "Does not require heavy retrospective"
-      ]
-    },
-    {
-      "id": 10,
-      "name": "steer-end-reflect-candidates-optional",
-      "prompt": "You are evaluating TigerKit /tk:steer-end. Steer mode is active and there are two reflect candidates. Describe expected behavior. Do not write files.",
-      "expected_output": "Should clear active steer state, stop steering indicator, flush compact decision/correction summary, keep reflect candidates pending, and avoid silent durable promotion. Reflect should remain optional rather than mandatory.",
-      "files": [],
-      "expectations": [
-        "Clears active steer state",
-        "Stops steering indicator",
-        "Flushes compact decision or correction summary",
-        "Keeps reflect candidates pending rather than auto-promoting",
-        "Treats reflect as optional durable promotion",
-        "Does not silently mutate durable knowledge"
-      ]
-    },
-    {
-      "id": 11,
-      "name": "gap-deep-audit-not-light-gap",
-      "prompt": "You are evaluating TigerKit /tk:gap after the redesign. Several tasks are done, one API follow-up is unresolved, and requirements may have one missing acceptance item. Describe expected behavior. Do not write files.",
-      "expected_output": "Should act as a deeper report-only audit gate beyond prep's light-gap: compare requirements and task state, identify missing coverage, API follow-up duplicates, shared blockers, unresolved blockers, and merge readiness. It should not create tasks or implement code.",
-      "files": [],
-      "expectations": [
-        "Treats gap as deeper audit than prep light-gap",
-        "Checks requirements coverage",
-        "Checks task state consistency",
-        "Checks duplicate API follow-up candidates",
-        "Checks shared blockers",
-        "Reports merge or review readiness",
-        "Does not create tasks automatically",
-        "Does not implement, commit, push, open PRs, merge, or deploy"
-      ]
-    },
-    {
-      "id": 12,
-      "name": "statusline-trailing-and-badges",
-      "prompt": "You are evaluating TigerKit /tk:statusline. Describe expected behavior for install/remove/trailing and badge meanings. Do not write files.",
-      "expected_output": "Should explain that trailing is the default indicator delivery mode, statusline is a token-saving option, install/remove control statusline, trailing on/off controls message-end badges, and badge meanings are [🛞], [🪞 2], and [🛞 / 🪞 2].",
-      "files": [],
-      "expectations": [
-        "States trailing is default",
-        "Explains install enables statusline indicator",
-        "Explains remove disables statusline indicator",
-        "Explains trailing on or off",
-        "Defines [🛞]",
-        "Defines [🪞 2] as reflect candidate pending count",
-        "Defines [🛞 / 🪞 2]",
-        "Does not confuse reflect pending with durable write completion"
+        "Lists /tk:reflect",
+        "Lists no other TigerKit commands",
+        "Describes TigerKit as source indexer, gap recorder, and reflection maintainer",
+        "Does not describe TigerKit as an execution orchestrator"
       ]
     }
   ]
