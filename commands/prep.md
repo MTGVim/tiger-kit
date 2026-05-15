@@ -1,5 +1,5 @@
 ---
-description: source-of-truth reference와 사용자 인터뷰 원문을 .tigerkit/requirements.md에 인덱싱합니다. pseudo-requirement를 만들지 않습니다.
+description: source-of-truth reference와 사용자 인터뷰 원문을 branch-local .tigerkit/branches/{escaped-branch}/requirements.md에 인덱싱합니다. pseudo-requirement를 만들지 않습니다.
 ---
 
 이 명령은 아래 계약을 직접 따릅니다.
@@ -14,13 +14,25 @@ prep = index sources, preserve interview, avoid source loss
 
 ## 기본 산출물
 
-- `.tigerkit/requirements.md`
+- `.tigerkit/branches/{escaped-branch}/requirements.md`
 
-기본 위치는 repository root 기준 `.tigerkit/requirements.md`입니다.
+`{escaped-branch}`는 현재 git branch name을 collision-safe하게 path-safe 변환한 값입니다. ASCII letter, digit, `.`, `_`, `-`는 그대로 두고 다른 byte는 `~HH` uppercase hex로 encode합니다. 예: `feature/foo` → `feature~2Ffoo`, `feature__foo` → `feature__foo`.
+
+Root-level `.tigerkit/requirements.md`는 deprecated artifact입니다. 발견하면 현재 branch-local 위치로 migration할지 제안하되, 사용자 승인 없이 이동하지 않습니다.
+
+## branch safety rule
+
+prep 기록 전에 현재 branch를 확인합니다.
+
+- detached HEAD이면 기록하지 않고 branch switch/create를 요청합니다.
+- `main`, `master`, `develop`이면 기록하지 않고 feature branch switch/create를 요청합니다.
+- working tree가 어떤 상태인지 receipt에 표시합니다.
+
+TigerKit artifact는 branch-local working material입니다. Protected branch나 detached HEAD에 기록하지 않습니다.
 
 ## 핵심 원칙
 
-`requirements.md`는 source of truth가 아닙니다. source of truth를 가리키는 index입니다.
+`requirements.md`는 source of truth가 아닙니다. source of truth를 가리키는 branch-local index입니다.
 
 외부 source는 reference만 저장합니다.
 
@@ -34,7 +46,7 @@ prep = index sources, preserve interview, avoid source loss
 - source code path
 - commit hash
 
-외부 source 내용을 local requirement text로 복사, 요약, 정규화, 재작성하지 않습니다. 중요한 wording이 있으면 짧은 exact excerpt 또는 section pointer만 남기고, 원문 위치를 우선합니다.
+외부 source 내용을 local requirement text로 복사, 요약, 정규화, 재작성하지 않습니다. 중요한 wording이 있으면 section pointer만 남기고, 원문 위치를 우선합니다.
 
 현재 세션의 직접 사용자 인터뷰 내용만 local text로 저장할 수 있습니다. 가능한 한 사용자 wording을 보존하고, `Raw`와 `Derived Interpretation`을 분리합니다.
 
@@ -68,12 +80,16 @@ prep = index sources, preserve interview, avoid source loss
 
 ## 절차
 
-1. 사용자가 제공한 source를 external reference와 direct interview text로 분리합니다.
-2. 외부 source는 pointer만 기록합니다.
-3. 사용자 인터뷰 내용은 raw quote에 가깝게 기록합니다.
-4. 파생 해석은 `Derived Interpretation` 아래에 표시합니다.
-5. source가 conclusion을 지지하지 않으면 추측하지 말고 ambiguity로 남깁니다.
-6. 지정된 source index 외의 산출물을 만들지 않습니다.
+1. 현재 branch를 확인합니다.
+2. detached HEAD 또는 protected branch이면 branch switch/create를 요청하고 멈춥니다.
+3. 사용자가 제공한 source를 external reference와 direct interview text로 분리합니다.
+4. 외부 source는 pointer만 기록합니다.
+5. 사용자 인터뷰 내용은 raw quote에 가깝게 기록합니다.
+6. 파생 해석은 `Derived Interpretation` 아래에 표시합니다.
+7. source가 conclusion을 지지하지 않으면 추측하지 말고 ambiguity로 남깁니다.
+8. `.tigerkit/branches/{escaped-branch}/requirements.md` 외의 산출물을 만들지 않습니다.
+9. root-level `.tigerkit/requirements.md`가 있으면 migration 후보로만 표시합니다.
+10. `CLAUDE.md` TigerKit managed section이 없으면 추가 후보로만 표시합니다.
 
 ## ambiguity rule
 
@@ -85,12 +101,26 @@ source does not specify X
 → 필요하면 사용자에게 확인
 ```
 
+## CLAUDE.md TigerKit section proposal
+
+`CLAUDE.md`가 있으면 TigerKit managed section 존재 여부를 확인합니다.
+
+Marker:
+
+```md
+<!-- TIGERKIT:START -->
+<!-- TIGERKIT:END -->
+```
+
+없으면 추가 후보로 제안만 합니다. `/tk:prep`은 `CLAUDE.md`를 직접 수정하지 않습니다. 실제 반영은 `/tk:reflect` escalation gate에서 사용자 승인 후에만 수행합니다.
+
 ## 금지
 
 - 실행 대기열이나 진행 상태 파일 생성
 - external source를 local requirement처럼 요약/재작성
 - 여러 source를 하나의 synthetic requirement로 병합
-- `DESIGN.md` 또는 `reuse-map.md` 직접 업데이트
+- `CLAUDE.md`, `DESIGN.md`, `reuse-map.md` 직접 업데이트
+- root-level `.tigerkit/requirements.md` 새로 쓰기
 - implementation, commit, push, PR 생성, merge, deploy
 
 ## 출력
@@ -98,11 +128,13 @@ source does not specify X
 receipt-first로 짧게 보고합니다.
 
 ```text
-source index 갱신했습니다.
-- 기록: `.tigerkit/requirements.md`
+source index 기록 준비했습니다.
+- branch: `feature__example`
+- 기록: `.tigerkit/branches/feature__example/requirements.md`
 - external sources: reference만 저장
 - interview: raw와 interpretation 분리
-- ambiguity: 확인 필요 항목 기록
+- root artifact: migration 후보가 있으면 표시
+- CLAUDE.md: TigerKit section 후보가 있으면 표시
 
 다음 추천: /tk:gap
 ```

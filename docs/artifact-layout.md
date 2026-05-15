@@ -1,34 +1,46 @@
 # 산출물 구조
 
-TigerKit은 절차 상태 파일에 의존하지 않습니다. 기본 산출물은 source reference, gap evidence, reflection record입니다.
+TigerKit은 절차 상태 파일에 의존하지 않습니다. 기본 산출물은 branch-local source reference, gap evidence, reflection record, handoff contract입니다.
 
 ## 기본 구조
 
 ```text
 .tigerkit/
-  requirements.md
-  gap.md
-  reflect.md
+  branches/
+    feature__example/
+      requirements.md
+      gap.md
+      reflect.md
+      handoff.md
 
 DESIGN.md        # existing-only, not created by TigerKit
 reuse-map.md
+CLAUDE.md        # optional TigerKit managed section proposal
 ```
 
-`.tigerkit/`는 TigerKit working material입니다. `DESIGN.md`와 `reuse-map.md`는 repo-level derived knowledge입니다.
+`.tigerkit/branches/{escaped-branch}/`는 TigerKit working material입니다. `DESIGN.md`와 `reuse-map.md`는 repo-level derived knowledge입니다. `CLAUDE.md`는 repo instruction이며 TigerKit managed section 후보를 가질 수 있습니다.
+
+Root-level `.tigerkit/requirements.md`, `.tigerkit/gap.md`, `.tigerkit/reflect.md` are deprecated artifacts. TigerKit commands should treat them as migration candidates, not active write targets.
+
+`{escaped-branch}` is collision-safe path encoding of current git branch. ASCII letter, digit, `.`, `_`, `-` stay unchanged; other bytes encode as `~HH` uppercase hex. Example: `feature/foo` → `feature~2Ffoo`, `feature__foo` → `feature__foo`.
+
+TigerKit branch-local artifacts are not written on detached HEAD or protected branches (`main`, `master`, `develop`). Switch to a feature branch before running write commands.
 
 ## 파일 책임
 
 | 파일 | 역할 |
 | --- | --- |
-| `.tigerkit/requirements.md` | source-of-truth reference index. 외부 source는 reference만 저장하고 현재 session 직접 사용자 인터뷰만 local text로 보존 |
-| `.tigerkit/gap.md` | specific SOT reference와 specific code baseline 사이 evidence-based comparison 기록 |
-| `.tigerkit/reflect.md` | session-wide reflection. durable learning, one-off correction, derived doc proposal 분리 |
+| `.tigerkit/branches/{escaped-branch}/requirements.md` | source-of-truth reference index. 외부 source는 reference만 저장하고 현재 session 직접 사용자 인터뷰만 local text로 보존 |
+| `.tigerkit/branches/{escaped-branch}/gap.md` | specific SOT reference와 specific code baseline 사이 evidence-based comparison 기록 |
+| `.tigerkit/branches/{escaped-branch}/reflect.md` | session-wide reflection. durable learning, one-off correction, escalation candidate 분리 |
+| `.tigerkit/branches/{escaped-branch}/handoff.md` | 다음 모델/세션을 위한 continuation contract, artifact map, baseline checkpoint |
+| `CLAUDE.md` | repo instruction. TigerKit managed section은 사용자 승인 후만 추가/갱신 |
 | `DESIGN.md` | architecture, boundaries, data flow, UI/API conventions, stable constraints, non-goals 같은 derived repo-level design knowledge. 파일이 없으면 생성하지 않으며, 반영할 derived design knowledge가 있을 때만 초기화 필요를 알림 |
 | `reuse-map.md` | reusable component/hook/util/API client/pattern/test helper와 deprecated pattern reference |
 
 ## requirements.md
 
-`requirements.md`는 source of truth가 아닙니다. source of truth 위치를 가리키는 index입니다.
+`requirements.md`는 source of truth가 아닙니다. source of truth 위치를 가리키는 branch-local index입니다.
 
 외부 source는 reference만 저장합니다.
 
@@ -84,7 +96,9 @@ specific code baseline
 
 baseline 기준:
 
-- clean working tree + HEAD commit hash
+- feature branch
+- clean working tree
+- HEAD commit hash
 
 각 gap shape:
 
@@ -140,8 +154,9 @@ Code:
 
 - Current conversation context: primary
 - Explicit user confirmation
-- .tigerkit/requirements.md: supporting evidence
-- .tigerkit/gap.md: supporting evidence
+- .tigerkit/branches/{escaped-branch}/requirements.md: supporting evidence
+- .tigerkit/branches/{escaped-branch}/gap.md: supporting evidence
+- .tigerkit/branches/{escaped-branch}/handoff.md: supporting evidence, if present
 - Diff or commit: supporting evidence
 - 확인 불가: context에 남아 있지 않은 내용
 
@@ -153,14 +168,97 @@ Code:
 
 - 이번 session에만 해당하는 correction
 
-## Proposed DESIGN.md Updates
+## Escalation Candidates
 
-- 제안 또는 적용 내역
+### CLAUDE.md
 
-## Proposed reuse-map.md Updates
+- repo instruction 또는 TigerKit managed section 후보
 
-- 제안 또는 적용 내역
+### MEMORY.md
+
+- 사용자 preference, project direction, reference, feedback 후보
+
+### DESIGN.md
+
+- architecture, boundary, data flow, stable design decision 후보
+
+### reuse-map.md
+
+- inspect한 component/hook/util/API/pattern 재사용 정보 후보
 ```
+
+`reflect.md` 갱신과 durable artifact 반영은 분리합니다. 사용자 승인 전에는 `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `reuse-map.md`를 수정하지 않습니다.
+
+## handoff.md
+
+`handoff.md`는 다음 모델/세션을 위한 continuation contract입니다. task queue가 아니며, handoff-read는 현재 repo 상태로 stale 여부를 먼저 확인해야 합니다.
+
+권장 구조:
+
+```md
+# TigerKit Handoff
+
+## Current Goal
+
+## Write-Time Context
+
+- Branch:
+- HEAD:
+- Working tree:
+- Last verification:
+
+## TigerKit Artifact Map
+
+### Requirements Index
+
+- Path:
+- Status:
+- Relevant entries:
+
+### Gap Records
+
+- Path:
+- Status:
+- Open gaps:
+- Resolved gaps:
+
+### Reflection
+
+- Path:
+- Status:
+- Escalation candidates:
+
+## Decisions
+
+## Evidence
+
+## Interpretation
+
+## Not Confirmed
+
+## Ambiguities
+
+## Open Questions
+
+## Next Safe Actions
+
+## Do Not Do
+
+## Key Files To Read First
+```
+
+## CLAUDE.md
+
+TigerKit은 `CLAUDE.md`에 managed section 추가 또는 갱신을 제안할 수 있습니다. 직접 반영은 `/tk:reflect` escalation gate에서 사용자 승인 후에만 수행합니다.
+
+Marker:
+
+```md
+<!-- TIGERKIT:START -->
+<!-- TIGERKIT:END -->
+```
+
+`CLAUDE.md`가 없으면 TigerKit이 자동 생성하지 않습니다.
 
 ## DESIGN.md
 
@@ -204,3 +302,15 @@ Example usage:
 ```
 
 inspect하지 않은 capability, prop, behavior를 기록하지 않습니다.
+
+## 분류 규칙
+
+```text
+Decision = 사용자 또는 SOT가 확정
+Evidence = 직접 관찰
+Interpretation = evidence에서 추론
+Not Confirmed = 아직 확인하지 않음
+Ambiguity = 확인했지만 source가 결론을 지지하지 않거나 source끼리 충돌
+```
+
+모호하지 않은 항목을 ambiguity로 승격하지 않습니다. 아직 확인하지 않은 항목은 `Not Confirmed`로 둡니다.

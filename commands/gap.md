@@ -1,12 +1,12 @@
 ---
-description: indexed source-of-truth reference와 reproducible code baseline을 비교해 evidence-based gap을 .tigerkit/gap.md에 기록합니다. 실행 대기열로 변환하지 않습니다.
+description: branch-local indexed source-of-truth reference와 reproducible code baseline을 비교해 evidence-based gap을 .tigerkit/branches/{escaped-branch}/gap.md에 기록합니다. 실행 대기열로 변환하지 않습니다.
 ---
 
 이 명령은 아래 계약을 직접 따릅니다.
 
 사용자에게는 한글로 답합니다. URL, 파일 경로, commit hash, ticket id, 코드 식별자, 오류 메시지는 원문 그대로 유지할 수 있습니다.
 
-목표: `/tk:gap`은 TigerKit의 중심 명령입니다. `.tigerkit/requirements.md`에 인덱싱된 SOT reference와 특정 code baseline을 비교하고, 증거 기반 차이를 `.tigerkit/gap.md`에 기록합니다.
+목표: `/tk:gap`은 TigerKit의 중심 명령입니다. `.tigerkit/branches/{escaped-branch}/requirements.md`에 인덱싱된 SOT reference와 특정 code baseline을 비교하고, 증거 기반 차이를 `.tigerkit/branches/{escaped-branch}/gap.md`에 기록합니다.
 
 ```text
 gap = SOT reference vs commit/code comparison
@@ -14,7 +14,11 @@ gap = SOT reference vs commit/code comparison
 
 ## 기본 산출물
 
-- `.tigerkit/gap.md`
+- `.tigerkit/branches/{escaped-branch}/gap.md`
+
+입력 source index는 같은 branch-local directory의 `.tigerkit/branches/{escaped-branch}/requirements.md`를 우선 사용합니다.
+
+Root-level `.tigerkit/gap.md`는 deprecated artifact입니다. 발견하면 migration 후보로만 표시하고 사용자 승인 없이 이동하지 않습니다.
 
 ## baseline rule
 
@@ -25,6 +29,12 @@ gap 분석 전에 code baseline을 식별합니다.
 ```text
 clean working tree + HEAD commit hash
 ```
+
+추가 branch 조건:
+
+- detached HEAD이면 gap 기록을 시작하지 않습니다.
+- `main`, `master`, `develop`이면 gap 기록을 시작하지 않습니다.
+- feature branch에서 clean working tree + HEAD commit hash를 baseline으로 사용합니다.
 
 working tree가 clean하지 않으면 gap 기록을 시작하지 않습니다. 먼저 commit하거나 변경을 정리해 reproducible baseline을 만듭니다.
 
@@ -114,31 +124,35 @@ source가 결론을 지지하지 않으면 추측하지 않습니다.
 
 ## 절차
 
-1. `.tigerkit/requirements.md`에서 비교할 SOT reference를 확인합니다.
-2. working tree 상태와 HEAD commit을 확인해 baseline을 정합니다.
-3. working tree가 clean하지 않으면 commit 또는 정리를 요청하고 멈춥니다.
-4. 관련 code file을 읽고 inspected files에 기록합니다.
-5. exact excerpt나 pointer 중심으로 evidence를 남깁니다.
-6. finding과 interpretation을 분리합니다.
-7. required resolution을 해결 기준으로 적습니다.
-8. `.tigerkit/gap.md`를 갱신합니다.
+1. 현재 branch를 확인합니다.
+2. detached HEAD 또는 protected branch이면 branch switch/create를 요청하고 멈춥니다.
+3. `.tigerkit/branches/{escaped-branch}/requirements.md`에서 비교할 SOT reference를 확인합니다.
+4. working tree 상태와 HEAD commit을 확인해 baseline을 정합니다.
+5. working tree가 clean하지 않으면 commit 또는 정리를 요청하고 멈춥니다.
+6. 관련 code file을 읽고 inspected files에 기록합니다.
+7. exact excerpt나 pointer 중심으로 evidence를 남깁니다.
+8. finding과 interpretation을 분리합니다.
+9. required resolution을 해결 기준으로 적습니다.
+10. `.tigerkit/branches/{escaped-branch}/gap.md`를 갱신합니다.
 
 ## 금지
 
 - gap을 실행 대기열로 변환
 - ambiguity silent resolution
 - external source 요약을 official requirement처럼 저장
-- `DESIGN.md` 또는 `reuse-map.md` 직접 업데이트
+- `CLAUDE.md`, `DESIGN.md` 또는 `reuse-map.md` 직접 업데이트
+- root-level `.tigerkit/gap.md` 새로 쓰기
 - implementation, commit, push, PR 생성, merge, deploy
 
 ## 출력
 
 ```text
 gap 기록했습니다.
+- branch: `feature__example`
 - baseline: `abc1234`
 - inspected files: source 비교에 필요한 파일
 - recorded: `GAP-001`, `GAP-002`
-- 기록: `.tigerkit/gap.md`
+- 기록: `.tigerkit/branches/feature__example/gap.md`
 
 다음 추천: /tk:reflect
 ```
