@@ -1,12 +1,12 @@
 ---
-description: 현재 session 전체를 재구성해 durable learning과 one-off correction을 분리하고 기존 DESIGN.md/reuse-map.md 업데이트 또는 초기화 필요를 제안합니다.
+description: 현재 session 전체를 branch-local .tigerkit/branches/{escaped-branch}/reflect.md에 재구성하고 CLAUDE.md/MEMORY.md/DESIGN.md/reuse-map.md 격상 후보를 제안합니다.
 ---
 
 이 명령은 아래 계약을 직접 따릅니다.
 
 사용자에게는 한글로 답합니다. 코드, 파일 경로, URL, commit hash, 식별자는 원문 그대로 유지할 수 있습니다.
 
-목표: `/tk:reflect`는 현재 대화 context를 먼저 재구성해 derived repo knowledge를 유지합니다. `.tigerkit/reflect.md`에 reflection을 남기고, 필요할 때만 기존 `DESIGN.md`와 `reuse-map.md` 업데이트를 제안하거나 적용합니다.
+목표: `/tk:reflect`는 현재 대화 context를 먼저 재구성해 derived repo knowledge를 유지합니다. `.tigerkit/branches/{escaped-branch}/reflect.md`에 reflection을 남기고, `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `reuse-map.md` escalation 후보를 제안합니다.
 
 ```text
 reflect = session-wide reconstruction and repo knowledge maintenance
@@ -14,11 +14,24 @@ reflect = session-wide reconstruction and repo knowledge maintenance
 
 ## 기본 산출물
 
-- `.tigerkit/reflect.md`
-- 필요 시 기존 `DESIGN.md`
-- 필요 시 `reuse-map.md`
+- `.tigerkit/branches/{escaped-branch}/reflect.md`
 
-`.tigerkit/reflect.md`는 TigerKit working material입니다. `DESIGN.md`와 `reuse-map.md`는 repo-level derived artifact입니다. `DESIGN.md` 초기화 알림은 derived design knowledge가 있고 파일이 없을 때만 표시합니다.
+Escalation 후보:
+
+- `CLAUDE.md`
+- `MEMORY.md`
+- `DESIGN.md`
+- `reuse-map.md`
+
+`reflect.md`는 branch-local working material입니다. Escalation 대상은 durable guidance 또는 derived repo-level knowledge입니다.
+
+## branch safety rule
+
+reflect 기록 전에 현재 branch를 확인합니다.
+
+- detached HEAD이면 기록하지 않고 branch switch/create를 요청합니다.
+- `main`, `master`, `develop`이면 기록하지 않고 feature branch switch/create를 요청합니다.
+- root-level `.tigerkit/reflect.md`는 deprecated artifact이며 migration 후보로만 표시합니다.
 
 ## review inputs
 
@@ -26,21 +39,65 @@ reflect = session-wide reconstruction and repo knowledge maintenance
 
 1. 현재 대화 context
 2. explicit user confirmation
-3. `.tigerkit/requirements.md`
-4. `.tigerkit/gap.md`
-5. 최근 diff 또는 commit
+3. `.tigerkit/branches/{escaped-branch}/requirements.md`
+4. `.tigerkit/branches/{escaped-branch}/gap.md`
+5. `.tigerkit/branches/{escaped-branch}/handoff.md`, if present
+6. 최근 diff 또는 commit
+7. `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `reuse-map.md`, if present
 
-현재 대화 context가 primary source입니다. artifact와 git evidence는 보조 근거입니다. 대화 context에 남아 있지 않은 내용은 추측하지 말고 `확인 불가`로 둡니다.
+현재 대화 context가 primary source입니다. artifact와 git evidence는 보조 근거입니다. 대화 context에 없는 내용은 추측하지 말고 `확인 불가`로 둡니다.
 
 ## reflect 대상
 
 - repeated failure patterns
 - durable learnings
 - one-off corrections
+- proposed updates to `CLAUDE.md`
+- proposed updates to `MEMORY.md`
 - proposed updates to `DESIGN.md`
 - proposed updates to `reuse-map.md`
 
 one-off correction을 durable rule로 승격하지 않습니다. future work에 영향을 줘야 한다는 evidence가 있을 때만 durable learning으로 분리합니다.
+
+## escalation gate
+
+`reflect.md` 갱신과 durable artifact 반영을 반드시 분리합니다.
+
+1. 먼저 `.tigerkit/branches/{escaped-branch}/reflect.md`를 기록합니다.
+2. 다음 대상별 escalation candidate를 분류합니다.
+   - `CLAUDE.md`: repo instruction 또는 TigerKit managed section에 넣을 future-facing rule
+   - `MEMORY.md`: 사용자 preference, project direction, reference, feedback으로 유지할 내용
+   - `DESIGN.md`: architecture, boundary, data flow, stable design decision
+   - `reuse-map.md`: inspect한 component/hook/util/API/pattern 재사용 정보
+3. 사용자에게 실제 반영할지 묻습니다.
+4. 승인된 파일만 수정합니다.
+5. 승인 전에는 durable artifact를 수정하지 않습니다.
+
+Receipt에는 아래 상태를 명시합니다.
+
+- `recorded only`: `reflect.md`만 갱신
+- `applied`: 실제 반영한 durable artifact 목록
+- `pending escalation`: 반영 후보 목록
+- `skipped`: 파일 없음, 사용자 미승인, evidence 부족 같은 이유
+
+## CLAUDE.md
+
+`CLAUDE.md`는 repo instruction입니다. TigerKit이 durable workflow rule을 발견하면 managed section 추가 또는 갱신 후보로 제안할 수 있습니다.
+
+Marker:
+
+```md
+<!-- TIGERKIT:START -->
+<!-- TIGERKIT:END -->
+```
+
+`CLAUDE.md`가 없으면 새로 만들지 않습니다. 사용자 승인 없이 marker 밖 내용을 수정하지 않습니다.
+
+## MEMORY.md
+
+`MEMORY.md`는 Claude Code memory index입니다. 사용자 preference, project direction, reference, feedback으로 유지할 내용만 escalation candidate가 됩니다.
+
+`MEMORY.md`와 개별 memory file 수정은 사용자 승인 후에만 수행합니다. One-off correction은 durable evidence가 없으면 memory candidate로 만들지 않습니다.
 
 ## DESIGN.md
 
@@ -57,9 +114,9 @@ one-off correction을 durable rule로 승격하지 않습니다. future work에 
 - non-goals
 - repo-specific design decisions
 
-prep 단계에서 업데이트하지 않습니다. reflection을 통해 제안하거나 적용합니다.
+prep 단계에서 업데이트하지 않습니다. reflection을 통해 제안하거나, escalation gate에서 사용자 승인 후 적용합니다.
 
-`DESIGN.md`가 없으면 새로 만들지 않습니다. `DESIGN.md`에 넣을 만한 derived design knowledge가 생겼는데 파일이 없으면, `.tigerkit/reflect.md`와 채팅 receipt에 `DESIGN.md` 초기화가 필요하다고 알립니다. `DESIGN.md`는 외부 도구나 사용자 선택으로 먼저 초기화되는 파일입니다.
+`DESIGN.md`가 없으면 새로 만들지 않습니다. `DESIGN.md`에 넣을 만한 derived design knowledge가 생겼는데 파일이 없으면, `.tigerkit/branches/{escaped-branch}/reflect.md`와 채팅 receipt에 `DESIGN.md` 초기화가 필요하다고 알립니다. `DESIGN.md`는 외부 도구나 사용자 선택으로 먼저 초기화되는 파일입니다.
 
 ## reuse-map.md
 
@@ -103,15 +160,16 @@ inspect하지 않은 capability, prop, behavior를 만들지 않습니다.
 
 ## 절차
 
-1. 현재 대화 context에서 evidence, interpretation, decision, suggestion을 먼저 분리합니다.
-2. 대화 context에 없는 내용은 `확인 불가`로 표시합니다.
-3. `.tigerkit/requirements.md`와 `.tigerkit/gap.md`가 있으면 보조 근거로 읽습니다.
-4. 최근 diff/commit이 있으면 보조 근거로 사용합니다.
-5. durable learning과 one-off correction을 분리합니다.
-6. `.tigerkit/reflect.md`를 갱신합니다.
-7. `DESIGN.md`가 있으면 변경을 제안하거나, 사용자가 허용한 범위에서만 적용합니다.
-8. `DESIGN.md`가 없고 넣을 derived design knowledge가 있으면 생성하지 말고 사용자에게 초기화 필요를 알립니다.
-9. `reuse-map.md` 변경은 제안하거나, 사용자가 허용한 범위에서만 적용합니다.
+1. 현재 branch를 확인합니다.
+2. detached HEAD 또는 protected branch이면 branch switch/create를 요청하고 멈춥니다.
+3. 현재 대화 context에서 evidence, interpretation, decision, suggestion을 먼저 분리합니다.
+4. 대화 context에 없는 내용은 `확인 불가`로 표시합니다.
+5. branch-local requirements/gap/handoff artifact가 있으면 보조 근거로 읽습니다.
+6. 최근 diff/commit이 있으면 보조 근거로 사용합니다.
+7. durable learning과 one-off correction을 분리합니다.
+8. `.tigerkit/branches/{escaped-branch}/reflect.md`를 갱신합니다.
+9. `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `reuse-map.md` escalation candidates를 제안합니다.
+10. 사용자 승인 전에는 durable artifact를 수정하지 않습니다.
 
 ## 금지
 
@@ -121,17 +179,17 @@ inspect하지 않은 capability, prop, behavior를 만들지 않습니다.
 - external SOT를 `DESIGN.md`로 대체
 - `DESIGN.md`가 없을 때 새로 생성
 - inspect하지 않은 재사용 capability 추측
+- 사용자 승인 없이 `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `reuse-map.md` 수정
 - implementation, commit, push, PR 생성, merge, deploy
 
 ## 출력
 
 ```text
-reflection 정리했습니다.
-- 기록: `.tigerkit/reflect.md`
+reflection 기록했습니다.
+- 기록: `.tigerkit/branches/feature__example/reflect.md`
 - primary source: current conversation context
-- durable learning: evidence 있는 항목만 분리
-- one-off correction: session 한정으로 유지
-- design note: 조건부 표시. `DESIGN.md`가 없고 넣을 derived design knowledge가 있을 때만 초기화 필요 알림
+- applied: none
+- pending escalation: `CLAUDE.md`, `reuse-map.md`
 
-다음 추천: 제안된 derived knowledge 검토
+질문: 위 후보를 실제 반영할까요?
 ```

@@ -4,13 +4,13 @@
     "name": "MTGVim"
   },
   "metadata": {
-    "description": "source-of-truth reference indexing, reproducible gap recording, and session reflection을 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다."
+    "description": "branch-local source-of-truth reference indexing, reproducible gap recording, session reflection, and operational handoff를 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다."
   },
   "plugins": [
     {
       "name": "tk",
       "source": "./",
-      "description": "source-of-truth reference indexing, reproducible gap recording, and session reflection을 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다."
+      "description": "branch-local source-of-truth reference indexing, reproducible gap recording, session reflection, and operational handoff를 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다."
     }
   ]
 }

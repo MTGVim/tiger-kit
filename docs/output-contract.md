@@ -13,18 +13,19 @@ Chat output is a receipt, not the artifact itself.
 1. outcome
 2. evidence/risk/ambiguity
 3. artifact paths
-4. next action
+4. next action or required confirmation
 
-전체 `requirements.md`, `gap.md`, `reflect.md`, `DESIGN.md`, `reuse-map.md`를 채팅에 dump하지 않습니다.
+전체 `requirements.md`, `gap.md`, `reflect.md`, `handoff.md`, `DESIGN.md`, `reuse-map.md`를 채팅에 dump하지 않습니다.
 
 ## prep receipt
 
 ```text
-source index 갱신했습니다.
-- 기록: `.tigerkit/requirements.md`
+source index 기록 준비했습니다.
+- branch: `feature__example`
+- 기록: `.tigerkit/branches/feature__example/requirements.md`
 - external sources: reference만 저장
 - interview: raw와 interpretation 분리
-- ambiguity: 확인 필요 항목 기록
+- migration: root artifact 후보 표시
 
 다음 추천: /tk:gap
 ```
@@ -33,10 +34,10 @@ source index 갱신했습니다.
 
 ```text
 gap 기록했습니다.
+- branch: `feature__example`
 - baseline: `abc1234`
-- inspected files: source 비교에 필요한 파일
 - recorded: `GAP-001`, `GAP-002`
-- 기록: `.tigerkit/gap.md`
+- 기록: `.tigerkit/branches/feature__example/gap.md`
 
 다음 추천: /tk:reflect
 ```
@@ -44,14 +45,47 @@ gap 기록했습니다.
 ## reflect receipt
 
 ```text
-reflection 정리했습니다.
-- 기록: `.tigerkit/reflect.md`
-- primary source: current conversation context
-- durable learning: evidence 있는 항목만 분리
-- one-off correction: session 한정으로 유지
-- design note: 조건부 표시. `DESIGN.md`가 없고 넣을 derived design knowledge가 있을 때만 초기화 필요 알림
+reflection 기록했습니다.
+- 기록: `.tigerkit/branches/feature__example/reflect.md`
+- applied: none
+- pending escalation: `CLAUDE.md`, `reuse-map.md`
 
-다음 추천: 제안된 derived knowledge 검토
+질문: 위 후보를 실제 반영할까요?
+```
+
+## handoff-write receipt
+
+```text
+handoff 기록했습니다.
+- 기록: `.tigerkit/branches/feature__example/handoff.md`
+- baseline: `abc1234`
+- artifact map: requirements/gap/reflect 상태 포함
+- open gaps: 2
+- ambiguity: 1
+
+다음 추천: 다음 세션에서 /tk:handoff-read
+```
+
+## handoff-read receipt
+
+```text
+handoff 읽었습니다.
+- handoff: `.tigerkit/branches/feature__example/handoff.md`
+- baseline match: yes
+- artifact map: requirements/gap/reflect 확인
+- stale risk: 없음
+- 확인 필요: 1개
+
+next safe action: 사용자 확인 후 GAP-001 관련 파일 inspect
+```
+
+## protected branch receipt
+
+```text
+기록하지 않았습니다.
+- reason: protected branch `main`
+- required action: feature branch로 switch/create
+- artifact: 변경 없음
 ```
 
 ## detail 원칙
@@ -62,6 +96,7 @@ reflection 정리했습니다.
 - 다음 행동은 하나 이상 명확히 제시합니다.
 - evidence, interpretation, decision, suggestion을 섞지 않습니다.
 - ambiguity를 resolved처럼 말하지 않습니다.
+- `recorded only`, `applied`, `pending escalation`, `skipped`를 구분합니다.
 
 ## 피할 것
 
@@ -71,3 +106,4 @@ reflection 정리했습니다.
 - 내부 진행 상태 노출
 - source summary를 requirement처럼 확정하는 문구
 - 사용자가 요청하지 않은 verbose retrospective
+- `reflect.md` 기록과 durable artifact 반영을 같은 outcome처럼 말하기

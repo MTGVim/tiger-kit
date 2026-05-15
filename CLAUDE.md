@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 언어 및 산출물 규칙
 
-- 이 저장소에서 만드는 TigerKit 작업 산출물(`.tigerkit/requirements.md`, `.tigerkit/gap.md`, `.tigerkit/reflect.md`)은 반드시 한글로 작성한다.
+- 이 저장소에서 만드는 TigerKit 작업 산출물(`.tigerkit/branches/{escaped-branch}/requirements.md`, `gap.md`, `reflect.md`, `handoff.md`)은 반드시 한글로 작성한다.
 - 사용자에게 진행 상황, 계획, 검증 결과를 보고할 때도 한글을 기본으로 사용한다.
 - 기존 공개 문서나 manifest가 영어 문구를 쓰는 경우에는 주변 문맥과 일관성을 우선한다.
 
@@ -42,9 +42,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `.claude-plugin/plugin.json`: 플러그인의 command manifest.
 - `.claude-plugin/marketplace.json`: marketplace 등록용 manifest.
-- `commands/prep.md`: source-of-truth reference와 직접 사용자 인터뷰를 `.tigerkit/requirements.md`에 인덱싱한다.
-- `commands/gap.md`: indexed SOT reference와 reproducible code baseline을 비교해 `.tigerkit/gap.md`에 evidence-based gap을 기록한다.
-- `commands/reflect.md`: 현재 대화 context를 먼저 재구성해 `.tigerkit/reflect.md`를 갱신하고 기존 `DESIGN.md`/`reuse-map.md` 업데이트를 제안하거나 적용한다.
+- `commands/prep.md`: source-of-truth reference와 직접 사용자 인터뷰를 branch-local `requirements.md`에 인덱싱한다.
+- `commands/gap.md`: branch-local indexed SOT reference와 reproducible code baseline을 비교해 branch-local `gap.md`에 evidence-based gap을 기록한다.
+- `commands/reflect.md`: 현재 대화 context를 먼저 재구성해 branch-local `reflect.md`를 갱신하고 `CLAUDE.md`/`MEMORY.md`/`DESIGN.md`/`reuse-map.md` escalation 후보를 제안한다.
+- `commands/handoff-write.md`: 다음 모델/세션을 위한 branch-local continuation contract를 `handoff.md`에 기록한다.
+- `commands/handoff-read.md`: branch-local handoff와 artifact map을 읽고 stale risk와 next safe action을 확인한다.
 - `docs/usage.md`: 사용자 관점의 명령 사용법.
 - `docs/artifact-layout.md`: `.tigerkit/`, `DESIGN.md`, `reuse-map.md` 산출물 구조.
 - `docs/output-contract.md`: command 응답 receipt 규칙.
@@ -58,20 +60,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 핵심 정책
 
 - TigerKit의 목적은 AI-induced source loss를 줄이는 것이다.
-- 기본 command set은 `/tk:prep`, `/tk:gap`, `/tk:reflect`다.
-- `.tigerkit/requirements.md`는 source of truth가 아니라 SOT reference index다.
+- 기본 command set은 `/tk:prep`, `/tk:gap`, `/tk:reflect`, `/tk:handoff-write`, `/tk:handoff-read`다.
+- TigerKit working material은 branch-local `.tigerkit/branches/{escaped-branch}/` 아래에 기록한다.
+- root-level `.tigerkit/requirements.md`, `.tigerkit/gap.md`, `.tigerkit/reflect.md`는 deprecated artifact이며 migration 후보로만 다룬다.
+- `{escaped-branch}`는 collision-safe path encoding이다. ASCII letter, digit, `.`, `_`, `-`는 그대로 두고 다른 byte는 `~HH` uppercase hex로 encode한다.
+- branch-local `requirements.md`는 source of truth가 아니라 SOT reference index다.
 - 외부 source는 URL, path, ticket, Figma, PRD, issue, API docs, source code path, commit hash 같은 reference만 저장한다.
 - 외부 source 내용을 local requirement text로 복사, 요약, 정규화, 재작성하지 않는다.
 - 현재 session에서 사용자가 직접 말한 인터뷰 내용만 local text로 저장할 수 있다.
 - raw interview text와 derived interpretation을 분리한다.
-- `.tigerkit/gap.md`가 TigerKit의 중심이다. gap은 SOT reference vs code baseline comparison record다.
-- gap 분석 전 clean working tree + HEAD commit hash가 반드시 필요하다.
+- branch-local `gap.md`가 TigerKit의 중심이다. gap은 SOT reference vs code baseline comparison record다.
+- gap 분석 전 feature branch + clean working tree + HEAD commit hash가 반드시 필요하다.
 - working tree가 clean하지 않으면 gap 기록을 시작하지 않고, 먼저 commit하거나 변경 정리를 요청한다.
 - ambiguity를 조용히 해결하지 않는다. source가 결론을 지지하지 않으면 gap으로 기록하고 필요하면 사용자에게 묻는다.
-- `.tigerkit/reflect.md`는 현재 대화 context를 primary source로 사용하고, artifact와 git evidence는 보조 근거로만 사용한다.
+- branch-local `reflect.md`는 현재 대화 context를 primary source로 사용하고, artifact와 git evidence는 보조 근거로만 사용한다.
+- `/tk:reflect`는 `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `reuse-map.md` escalation 후보를 제안하고, 사용자 승인 전에는 durable artifact를 수정하지 않는다.
+- `/tk:handoff-write`는 current goal, branch/HEAD, artifact map, gap context, ambiguity/not-confirmed 분류, next safe action을 handoff에 남긴다.
+- `/tk:handoff-read`는 handoff를 맹신하지 않고 현재 branch/HEAD, artifact map, `CLAUDE.md`, `DESIGN.md`, `reuse-map.md`를 확인한 뒤 stale/missing/conflict/needs-confirmation을 분리한다.
 - 대화 context에 남아 있지 않은 내용은 추측하지 않고 `확인 불가`로 둔다.
 - `DESIGN.md`와 `reuse-map.md`는 derived repo-level knowledge이며 외부 SOT를 대체하지 않는다.
-- `DESIGN.md`와 `reuse-map.md` 업데이트는 prep/gap 중 직접 하지 말고 reflection을 통해 제안하거나 적용한다.
+- `DESIGN.md`와 `reuse-map.md` 업데이트는 prep/gap 중 직접 하지 말고 reflection escalation gate를 통해 제안하고 사용자 승인 후에만 적용한다.
 - `DESIGN.md`가 없으면 TigerKit이 새로 생성하지 않는다. 넣을 derived design knowledge가 있으면 사용자에게 초기화 필요를 알린다.
 - inspect하지 않은 component prop, API field, behavior, reusable capability를 기록하지 않는다.
 

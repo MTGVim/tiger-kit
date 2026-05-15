@@ -1,13 +1,15 @@
 {
   "name": "tk",
-  "description": "source-of-truth reference indexing, reproducible gap recording, and session reflection을 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다.",
-  "version": "5.0.1",
+  "description": "branch-local source-of-truth reference indexing, reproducible gap recording, session reflection, and operational handoff를 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다.",
+  "version": "5.0.2",
   "author": {
     "name": "MTGVim"
   },
   "commands": [
     "./commands/prep.md",
     "./commands/gap.md",
-    "./commands/reflect.md"
+    "./commands/reflect.md",
+    "./commands/handoff-write.md",
+    "./commands/handoff-read.md"
   ]
 }
