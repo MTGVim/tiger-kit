@@ -21,7 +21,7 @@ TigerKit은 LLM의 장기 절차 기억에 실행 순서나 진행 상태를 맡
 /tk:handoff-write
 ```
 
-이어받는 세션은 `/tk:handoff-read`로 시작합니다.
+이전 세션의 `handoff.md`가 있고 현재 feature branch가 확인되면 이어받는 세션은 `/tk:handoff-read`로 시작합니다. detached HEAD나 `main`, `master`, `develop`이면 먼저 feature branch 전환을 안내합니다.
 
 ## Branch-local artifacts
 
@@ -53,6 +53,17 @@ TigerKit branch-local artifacts are not written on detached HEAD or protected br
 | `/tk:handoff-write` | 다음 모델/세션을 위한 branch-local continuation contract 작성 |
 | `/tk:handoff-read` | handoff와 artifact map을 읽고 현재 repo 상태와 stale risk 확인 |
 
+## 일반 대화에서 TigerKit 유도
+
+사용자가 slash command를 직접 입력하지 않아도, 일반 대화에 external source나 gap 비교 요청이 들어오면 TigerKit command contract를 명시적으로 강하게 권장합니다.
+
+권장 기준:
+
+- Jira, Figma, Confluence, ClickUp, GitHub issue/PR, API docs, MCP resource, backend repo, source path가 언급되면 `/tk:prep`로 reference를 먼저 기록하도록 강하게 권장
+- "backend API와 맞는지 봐줘"처럼 구현과 외부 기준을 대조하려는 요청이면 backend repo, branch basis, lookup commit, open PR review scope를 SOT candidate로 잡아 `/tk:prep`에 기록하도록 강하게 권장
+- "gap 봐줘", "요구사항 대비 빠진 것 찾아줘"처럼 비교 기반 누락 확인 요청이면 `/tk:gap`을 권장
+- 세션 종료 시점까지 SOT candidate가 정리되지 않았으면 `/tk:reflect`에서 next safe action을 `/tk:prep`로 남기도록 권장
+
 ## 1. Source index
 
 ```text
@@ -82,25 +93,25 @@ TigerKit branch-local artifacts are not written on detached HEAD or protected br
 권장 구조:
 
 ```md
-# TigerKit Requirements Index
+# TigerKit 요구사항 인덱스
 
-## External Sources
+## 외부 소스 참조
 
-- PRD: https://...
-- Figma: https://...
-- GitHub Issue: https://...
+- PRD 참조: https://...
+- Figma 참조: https://...
+- GitHub Issue 참조: https://...
 
-## Interviewed Requirements
+## 사용자 인터뷰 요구사항
 
-### Raw
+### 원문
 
 > 사용자 원문에 가까운 내용
 
-### Derived Interpretation
+### 파생 해석
 
 - 명시적으로 파생 해석임을 표시
 
-## Ambiguities
+## 모호성
 
 - 확인되지 않은 점
 ```
@@ -127,38 +138,42 @@ baseline 원칙:
 feature branch + clean working tree + HEAD commit hash = required baseline
 ```
 
+`/tk:gap`은 clean HEAD commit만 baseline으로 사용합니다. staged, unstaged, untracked 변경이 하나라도 있으면 gap record를 시작하지 않습니다. 특히 staged 변경은 commit hash가 없으므로 먼저 commit하거나 working tree를 정리한 뒤 다시 실행해야 합니다.
+
+`/tk:gap`은 기능 구현 누락만이 아니라 design consistency, hierarchy, density, component reuse risk, design-system drift, nearby screen pattern mismatch도 gap으로 기록할 수 있습니다. Figma 등 design SOT와 비교할 때는 의미가 비슷해 보여도 fixture 표현 차이, label/copy 차이, date/time/number/currency/line break format 차이를 중대한 gap 사유로 봅니다. 현재 구현 증거가 부족하면 문제 화면의 DOM, accessibility tree, screenshot, rendered text, style token evidence를 확보하거나 사용자에게 요청할 수 있습니다. `reuse-map.md`는 cache-0 discovery aid일 뿐 SOT가 아니며, 거기에 항목이 없다는 사실만으로 새 구현을 정당화할 수 없습니다. 새 component/hook/util/mapper/API client/layout primitive/UI pattern 생성 전에는 repo-wide exploration이 필요하고, 공통 모듈 수정 전에는 callsite impact analysis와 명시적 사용자 승인이 필요합니다.
+
 gap은 evidence record입니다.
 
 ```md
-## GAP-001 — Tooltip copy mismatch
+## GAP-001 — Tooltip copy 불일치
 
-Type: mismatch
-Resolution: open
+유형: mismatch
+상태: open
 
-### Compared SOT
+### 비교한 SOT
 - Source: PRD
-- Reference: https://...
-- Section: Tooltip copy
+- 참조: https://...
+- 섹션: Tooltip copy
 
-### Compared Code
+### 비교한 코드
 - Baseline: abc1234
-- Files inspected:
+- 확인한 파일:
   - src/...
 
-### Evidence
+### 증거
 SOT:
-> short exact excerpt or pointer
+> short exact excerpt 또는 pointer
 
 Code:
-> short exact excerpt or pointer
+> short exact excerpt 또는 pointer
 
-### Finding
+### 발견 사항
 PRD copy와 구현 tooltip copy가 다릅니다.
 
-### Interpretation
+### 해석
 implementation drift로 보입니다.
 
-### Required Resolution
+### 필요한 해결 기준
 사용자 확인 또는 code update 필요.
 ```
 
