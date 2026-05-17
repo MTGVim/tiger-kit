@@ -48,14 +48,47 @@ TigerKit artifact는 branch-local working material입니다. Protected branch나
 
 외부 source 내용을 local requirement text로 복사, 요약, 정규화, 재작성하지 않습니다. 중요한 wording이 있으면 section pointer만 남기고, 원문 위치를 우선합니다.
 
-현재 세션의 직접 사용자 인터뷰 내용만 local text로 저장할 수 있습니다. 가능한 한 사용자 wording을 보존하고, `Raw`와 `Derived Interpretation`을 분리합니다.
+현재 세션의 직접 사용자 인터뷰 내용만 local text로 저장할 수 있습니다. 가능한 한 사용자 wording을 보존하고, `원문`과 `파생 해석`을 분리합니다.
+
+## 일반 대화 SOT 후보 유도
+
+일반 대화에서 사용자가 아래 같은 source를 주면 구현, gap 분석, API 검증, design 비교 전에 SOT 후보로 분류합니다.
+
+- Jira
+- Figma
+- Confluence
+- ClickUp
+- GitHub issue/PR
+- API docs
+- MCP resource
+- backend repo
+- source path
+
+이런 source가 보이면 branch-local `requirements.md`에 reference를 남기기 위해 `/tk:prep`를 강하게 권장합니다. 사용자가 slash command를 직접 치지 않아도 동의하면 `/tk:prep` 계약으로 진행할 수 있습니다.
+
+artifact를 쓰기 전에 `requirements.md`에 reference를 기록한다고 먼저 밝힙니다.
+
+외부 source 내용은 local requirement text로 복사, 요약, 정규화, 재작성하지 않습니다. URL, resource id, path, ticket id, title, source owner, lookup time 같은 pointer metadata만 기록합니다.
+
+### API 검증 source
+
+API 검증은 가능하면 backend state reference set을 우선합니다.
+
+- backend repo name
+- branch policy: 조회 시점의 최신 `develop`
+- lookup HEAD commit
+- open PR list 또는 관련 PR
+- endpoint, schema, source path
+- 관련 API docs, ticket, issue reference
+
+backend repo나 PR 본문 내용은 local requirements text로 복사하지 않습니다.
 
 ## 권장 구조
 
 ```md
-# TigerKit Requirements Index
+# TigerKit 요구사항 인덱스
 
-## External Sources
+## 외부 소스 참조
 
 - PRD: https://...
 - Figma: https://...
@@ -63,17 +96,17 @@ TigerKit artifact는 branch-local working material입니다. Protected branch나
 - Source Code: src/...
 - Commit: abc1234
 
-## Interviewed Requirements
+## 사용자 인터뷰 요구사항
 
-### Raw
+### 원문
 
 > 사용자 원문에 가까운 내용
 
-### Derived Interpretation
+### 파생 해석
 
 - 명시적으로 파생 해석임을 표시
 
-## Ambiguities
+## 모호성
 
 - 확인되지 않은 점과 확인이 필요한 source
 ```
@@ -85,11 +118,11 @@ TigerKit artifact는 branch-local working material입니다. Protected branch나
 3. 사용자가 제공한 source를 external reference와 direct interview text로 분리합니다.
 4. 외부 source는 pointer만 기록합니다.
 5. 사용자 인터뷰 내용은 raw quote에 가깝게 기록합니다.
-6. 파생 해석은 `Derived Interpretation` 아래에 표시합니다.
+6. 파생 해석은 `파생 해석` 아래에 표시합니다.
 7. source가 conclusion을 지지하지 않으면 추측하지 말고 ambiguity로 남깁니다.
 8. `.tigerkit/branches/{escaped-branch}/requirements.md` 외의 산출물을 만들지 않습니다.
 9. root-level `.tigerkit/requirements.md`가 있으면 migration 후보로만 표시합니다.
-10. `CLAUDE.md` TigerKit managed section이 없으면 이후 `/tk:reflect`에서 실제 반영을 강하게 추천해야 할 고우선 후보로 표시합니다.
+10. target repo의 active `CLAUDE.md`를 확인하고, missing 사항은 update proposal로 분리합니다.
 
 ## ambiguity rule
 
@@ -101,9 +134,23 @@ source does not specify X
 → 필요하면 사용자에게 확인
 ```
 
-## CLAUDE.md TigerKit section proposal
+## target repo CLAUDE.md guidance
 
-`CLAUDE.md`가 있으면 TigerKit managed section 존재 여부를 확인합니다.
+이 플러그인 repo의 `CLAUDE.md`가 아니라 현재 작업 대상 repo의 active `CLAUDE.md`를 확인합니다.
+
+확인 항목:
+
+- active `CLAUDE.md` 자체가 없는지
+- TigerKit managed section이 없는지
+- 아래 현재 plugin 권장 규칙이 빠져 있거나 기존 managed section 내용이 오래되어 불일치하는지
+  - SOT 후보 유도 규칙
+  - API reference set 규칙
+  - `reuse-map.md`를 cache-0 discovery aid로만 다루는 규칙
+  - 새 모듈 생성 전 repo-wide exploration 규칙
+  - 공통 모듈 수정 전 callsite impact analysis와 사용자 승인 규칙
+  - `/tk:gap` clean HEAD baseline 규칙
+
+위 항목 중 하나라도 비어 있거나 stale이면 `requirements.md` 기록과 분리해서 `CLAUDE.md` update proposal을 강하게 권장하고, 적용 여부를 사용자에게 묻습니다.
 
 Marker:
 
@@ -112,7 +159,7 @@ Marker:
 <!-- TIGERKIT:END -->
 ```
 
-없으면 단순 참고가 아니라 이후 `/tk:reflect`에서 실제 반영을 강하게 추천해야 할 고우선 후보로 제안합니다. `/tk:prep`은 `CLAUDE.md`를 직접 수정하지 않습니다. 실제 반영은 `/tk:reflect` escalation gate에서 사용자 승인 후에만 수행합니다.
+`/tk:prep`은 `CLAUDE.md`를 직접 수정하지 않습니다. `requirements.md` 기록과 `CLAUDE.md` update proposal을 분리하고, 실제 수정은 사용자 승인 후에만 진행합니다.
 
 ## 금지
 

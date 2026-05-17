@@ -91,11 +91,11 @@
       "id": 5,
       "name": "reflect-design-missing-notification",
       "prompt": "You are evaluating TigerKit /tk:reflect. The session produced durable design knowledge that belongs in DESIGN.md, but the repository does not currently have DESIGN.md. Describe expected behavior. Do not write files.",
-      "expected_output": "Should not create DESIGN.md. It should record the proposed design knowledge in branch-local reflect.md or the receipt as a pending design note, notify the user that DESIGN.md needs external or user-driven initialization, and wait for the file to exist before applying the update.",
+      "expected_output": "Should not create DESIGN.md. It should record the proposed design knowledge in branch-local reflect.md, mention DESIGN.md initialization need in the receipt, and wait for the file to exist before applying the update.",
       "files": [],
       "expectations": [
         "Does not create DESIGN.md when absent",
-        "Records proposed design knowledge in branch-local reflect.md or receipt",
+        "Records proposed design knowledge in branch-local reflect.md",
         "Notifies user that DESIGN.md initialization is needed",
         "Explains DESIGN.md should be initialized externally or by user choice",
         "Waits for DESIGN.md to exist before applying updates",
@@ -188,6 +188,106 @@
         "Checks CLAUDE.md, DESIGN.md, and reuse-map.md when present",
         "Classifies stale, missing, conflict, and needs-confirmation items",
         "Does not implement or modify files during handoff-read"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "prep-prompts-for-general-chat-external-sot",
+      "prompt": "You are evaluating TigerKit behavior during a normal conversation, not an explicit /tk:prep invocation. The user shares a Jira ticket and a Figma MCP resource, then asks you to implement the feature. Describe expected behavior. Do not write files.",
+      "expected_output": "Should classify the Jira ticket and Figma MCP resource as source-of-truth candidates, strongly recommend branch-local requirements.md reference indexing via /tk:prep before implementation, avoid copying or summarizing external source content into local requirements text, and allow the /tk:prep contract flow if the user agrees even without typing the slash command.",
+      "files": [],
+      "expectations": [
+        "Classifies the Jira ticket as a source-of-truth candidate",
+        "Classifies the Figma MCP resource as a source-of-truth candidate",
+        "Strongly recommends branch-local requirements.md reference indexing via /tk:prep before implementation",
+        "Does not copy external source content into requirements.md",
+        "Does not summarize external source content into requirements.md",
+        "Allows the /tk:prep command contract if the user agrees without typing the slash command",
+        "Does not start implementation before handling the source indexing recommendation"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "prep-records-api-backend-reference-set",
+      "prompt": "You are evaluating TigerKit /tk:prep behavior for API investigation. The user asks whether the frontend API mapping matches backend behavior. The backend repo is billing-api, and the source should be current develop plus open PRs. Describe expected behavior. Do not write files.",
+      "expected_output": "Should recommend recording a backend reference set in branch-local requirements.md using references only: backend repo name, latest develop branch policy at lookup time, looked-up HEAD commit, open PR list or relevant PRs, endpoint and schema references, source paths, and related docs, tickets, or issues. It should not copy backend implementation details into requirements.md.",
+      "files": [],
+      "expectations": [
+        "Recommends recording backend repo billing-api as a reference",
+        "Recommends recording the latest develop branch policy at lookup time",
+        "Recommends looking up and recording the backend HEAD commit",
+        "Recommends recording the open PR list or relevant PR references",
+        "Recommends recording endpoint, schema, and source path references",
+        "Recommends recording related docs, tickets, or issues as references",
+        "Does not copy backend implementation into requirements.md",
+        "Treats the backend source set as references only"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "gap-blocks-on-staged-or-dirty-working-tree",
+      "prompt": "You are evaluating TigerKit /tk:gap on a safe feature branch where the working tree has staged changes. Describe expected behavior. Do not write files.",
+      "expected_output": "Should stop before writing branch-local gap.md because only a clean HEAD is a reproducible baseline, report that staged changes are present, avoid comparing staged diff as the baseline, and strongly recommend committing the staged changes or cleaning the working tree before rerunning /tk:gap.",
+      "files": [],
+      "expectations": [
+        "Stops before writing branch-local gap.md",
+        "Explains that only a clean HEAD is a reproducible baseline",
+        "Reports that staged changes are present",
+        "Does not compare staged diff as the baseline",
+        "Strongly recommends committing staged changes or cleaning the working tree before rerunning /tk:gap",
+        "Does not proceed with gap analysis on a dirty working tree"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "gap-records-insufficient-reuse-exploration",
+      "prompt": "You are evaluating TigerKit /tk:gap for a new FooCard proposal after the session checked only reuse-map.md and the local directory, without repo-wide component search or callsite inspection. Describe expected behavior. Do not write files.",
+      "expected_output": "Should record a high-severity insufficient reuse exploration gap. It should treat reuse-map.md as cache-0 only, state that a miss there is not evidence, require repo-wide exploration plus candidate and callsite inspection, require a recorded reuse, adapt, or create decision, mention design-system drift or nearby pattern mismatch risk, and not treat common module modification as confirmed without repo-wide callsite impact analysis and explicit user approval.",
+      "files": [],
+      "expectations": [
+        "Records a high-severity insufficient reuse exploration gap",
+        "States that reuse-map.md is cache-0 only",
+        "States that a reuse-map miss is not evidence",
+        "Requires repo-wide exploration",
+        "Requires candidate and callsite inspection",
+        "Requires a recorded reuse, adapt, or create decision",
+        "Mentions design-system drift or nearby pattern mismatch risk",
+        "Requires repo-wide callsite impact analysis before common module modification",
+        "Requires explicit user approval before treating common module modification as confirmed"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "reflect-records-missing-sot-candidates-and-stale-claude-guidance",
+      "prompt": "You are evaluating TigerKit /tk:reflect after a session used a Figma MCP resource and backend repo API source, but never ran /tk:prep. The target repo CLAUDE.md exists but lacks current TigerKit managed rules for source-of-truth prompts, API reference sets, reuse-map cache-0 handling, new-module repo-wide exploration, common-module impact analysis and user approval, and clean HEAD baseline guidance. Describe expected behavior. Do not write files.",
+      "expected_output": "Should record in branch-local reflect.md that source-of-truth candidates were used but not indexed, list the missing candidates and their risk, suggest /tk:prep as the next safe action, and present a pending escalation asking whether to update the target repo CLAUDE.md managed section with missing current rules for SOT prompts, API reference sets, reuse-map cache-0 handling, new-module repo-wide exploration, common-module impact analysis and user approval, and clean HEAD baseline. It should not directly modify requirements.md, CLAUDE.md, DESIGN.md, or reuse-map.md without approval.",
+      "files": [],
+      "expectations": [
+        "Records in branch-local reflect.md that source-of-truth candidates were used but not indexed",
+        "Lists the missing source-of-truth candidates",
+        "Explains the risk of missing indexing",
+        "Suggests /tk:prep as the next safe action",
+        "Presents a pending escalation asking whether to update the target repo CLAUDE.md managed section",
+        "Includes missing new-module repo-wide exploration guidance in the CLAUDE.md escalation",
+        "Includes missing common-module impact analysis and user approval guidance in the CLAUDE.md escalation",
+        "Does not directly modify requirements.md without approval",
+        "Does not directly modify CLAUDE.md without approval",
+        "Does not directly modify DESIGN.md or reuse-map.md without approval"
+      ]
+    },
+    {
+      "id": 17,
+      "name": "gap-records-design-fixture-and-format-drift",
+      "prompt": "You are evaluating TigerKit /tk:gap against a Figma SOT. The implementation uses semantically similar but different fixture text, and renders a date as `yyyy-MM-dd hh:mm:ss` while Figma expects `yyyy-MM-dd` and `hh:mm:ss` on separate lines. Current DOM evidence has not been captured. Describe expected behavior. Do not write files.",
+      "expected_output": "Should treat fixture wording differences and date/time format or line-break differences as serious design gaps, not acceptable drift. Should record the compared Figma SOT, current implementation evidence, and required resolution in branch-local gap.md. If current rendered evidence is insufficient, it should request or collect reproducible evidence such as DOM, accessibility tree, screenshot, rendered text, or style token evidence before concluding.",
+      "files": [],
+      "expectations": [
+        "Treats fixture wording differences as gap evidence even when meaning is similar",
+        "Treats date/time format and line-break differences as serious design gaps",
+        "Does not dismiss the difference as acceptable drift without SOT or user confirmation",
+        "Records compared Figma SOT and current implementation evidence in branch-local gap.md",
+        "Requests or collects DOM, accessibility tree, screenshot, rendered text, or style token evidence when current rendered evidence is insufficient",
+        "Includes required resolution for the fixture or format mismatch"
       ]
     }
   ]
