@@ -89,7 +89,7 @@ TigerKit artifact는 branch-local working material입니다. Protected branch나
 7. source가 conclusion을 지지하지 않으면 추측하지 말고 ambiguity로 남깁니다.
 8. `.tigerkit/branches/{escaped-branch}/requirements.md` 외의 산출물을 만들지 않습니다.
 9. root-level `.tigerkit/requirements.md`가 있으면 migration 후보로만 표시합니다.
-10. `CLAUDE.md` TigerKit managed section이 없으면 추가 후보로만 표시합니다.
+10. `CLAUDE.md` TigerKit managed section이 없으면 이후 `/tk:reflect`에서 실제 반영을 강하게 추천해야 할 고우선 후보로 표시합니다.
 
 ## ambiguity rule
 
@@ -112,7 +112,7 @@ Marker:
 <!-- TIGERKIT:END -->
 ```
 
-없으면 추가 후보로 제안만 합니다. `/tk:prep`은 `CLAUDE.md`를 직접 수정하지 않습니다. 실제 반영은 `/tk:reflect` escalation gate에서 사용자 승인 후에만 수행합니다.
+없으면 단순 참고가 아니라 이후 `/tk:reflect`에서 실제 반영을 강하게 추천해야 할 고우선 후보로 제안합니다. `/tk:prep`은 `CLAUDE.md`를 직접 수정하지 않습니다. 실제 반영은 `/tk:reflect` escalation gate에서 사용자 승인 후에만 수행합니다.
 
 ## 금지
 
@@ -134,7 +134,7 @@ source index 기록 준비했습니다.
 - external sources: reference만 저장
 - interview: raw와 interpretation 분리
 - root artifact: migration 후보가 있으면 표시
-- CLAUDE.md: TigerKit section 후보가 있으면 표시
+- CLAUDE.md: managed section이 없으면 이후 반영을 강하게 추천할 고우선 후보로 표시
 
 다음 추천: /tk:gap
 ```

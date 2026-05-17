@@ -65,7 +65,7 @@ one-off correction을 durable rule로 승격하지 않습니다. future work에 
 
 1. 먼저 `.tigerkit/branches/{escaped-branch}/reflect.md`를 기록합니다.
 2. 다음 대상별 escalation candidate를 분류합니다.
-   - `CLAUDE.md`: repo instruction 또는 TigerKit managed section에 넣을 future-facing rule
+   - `CLAUDE.md`: repo instruction 또는 TigerKit managed section에 넣을 future-facing rule. managed section이 없으면 실제 반영을 강하게 추천할 고우선 후보로 취급
    - `MEMORY.md`: 사용자 preference, project direction, reference, feedback으로 유지할 내용
    - `DESIGN.md`: architecture, boundary, data flow, stable design decision
    - `reuse-map.md`: inspect한 component/hook/util/API/pattern 재사용 정보
@@ -82,7 +82,7 @@ Receipt에는 아래 상태를 명시합니다.
 
 ## CLAUDE.md
 
-`CLAUDE.md`는 repo instruction입니다. TigerKit이 durable workflow rule을 발견하면 managed section 추가 또는 갱신 후보로 제안할 수 있습니다.
+`CLAUDE.md`는 repo instruction입니다. TigerKit이 durable workflow rule을 발견하면 managed section 추가 또는 갱신 후보를 제안할 수 있습니다. 특히 managed section이 없으면 약한 참고가 아니라 실제 반영을 강하게 추천해야 할 고우선 escalation candidate로 다룹니다.
 
 Marker:
 
@@ -168,7 +168,7 @@ inspect하지 않은 capability, prop, behavior를 만들지 않습니다.
 6. 최근 diff/commit이 있으면 보조 근거로 사용합니다.
 7. durable learning과 one-off correction을 분리합니다.
 8. `.tigerkit/branches/{escaped-branch}/reflect.md`를 갱신합니다.
-9. `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `reuse-map.md` escalation candidates를 제안합니다.
+9. `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `reuse-map.md` escalation candidates를 제안합니다. `CLAUDE.md` managed section이 없으면 강한 반영 추천 상태를 분명히 표시합니다.
 10. 사용자 승인 전에는 durable artifact를 수정하지 않습니다.
 
 ## 금지
@@ -188,8 +188,8 @@ inspect하지 않은 capability, prop, behavior를 만들지 않습니다.
 reflection 기록했습니다.
 - 기록: `.tigerkit/branches/feature__example/reflect.md`
 - primary source: current conversation context
-- applied: none
-- pending escalation: `CLAUDE.md`, `reuse-map.md`
+- recorded only: `reflect.md`
+- pending escalation: `CLAUDE.md` managed section 추가 강한 추천, `reuse-map.md`
 
 질문: 위 후보를 실제 반영할까요?
 ```

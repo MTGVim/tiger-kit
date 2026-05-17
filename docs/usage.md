@@ -68,7 +68,7 @@ TigerKit branch-local artifacts are not written on detached HEAD or protected br
 5. derived interpretation은 별도 표시
 6. ambiguity를 숨기지 않고 기록
 7. root artifact가 있으면 migration 후보로 표시
-8. `CLAUDE.md` TigerKit managed section이 없으면 추가 후보로 표시
+8. `CLAUDE.md` TigerKit managed section이 없으면 이후 `/tk:reflect`에서 실제 반영을 강하게 추천해야 할 고우선 후보로 표시
 
 하지 않는 일:
 
@@ -186,7 +186,8 @@ implementation drift로 보입니다.
 6. durable learning과 one-off correction 분리
 7. `.tigerkit/branches/{escaped-branch}/reflect.md` 갱신
 8. `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `reuse-map.md` escalation 후보 제안
-9. 실제 반영할지 사용자에게 질문
+9. `CLAUDE.md` managed section이 없으면 약한 후보가 아니라 강한 반영 추천 상태로 명시
+10. 실제 반영할지 사용자에게 질문
 
 reflect는 현재 대화 context를 primary source로 사용합니다. artifact와 git evidence는 보조 근거입니다. 대화 context에 없는 내용은 추측하지 않고 `확인 불가`로 둡니다.
 

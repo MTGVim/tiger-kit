@@ -26,6 +26,7 @@ source index 기록 준비했습니다.
 - external sources: reference만 저장
 - interview: raw와 interpretation 분리
 - migration: root artifact 후보 표시
+- CLAUDE.md: managed section이 없으면 이후 반영을 강하게 추천할 고우선 후보 표시
 
 다음 추천: /tk:gap
 ```
@@ -47,8 +48,8 @@ gap 기록했습니다.
 ```text
 reflection 기록했습니다.
 - 기록: `.tigerkit/branches/feature__example/reflect.md`
-- applied: none
-- pending escalation: `CLAUDE.md`, `reuse-map.md`
+- recorded only: `reflect.md`
+- pending escalation: `CLAUDE.md` managed section 추가 강한 추천, `reuse-map.md`
 
 질문: 위 후보를 실제 반영할까요?
 ```
