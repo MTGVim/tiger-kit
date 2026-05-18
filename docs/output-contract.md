@@ -23,9 +23,11 @@ Chat output is a receipt, not the artifact itself.
 source index 기록 준비했습니다.
 - branch: `feature__example`
 - 기록: `.tigerkit/branches/feature__example/requirements.md`
-- external sources: reference만 저장
+- external sources: reference와 access status만 저장
+- pending SOT: 접근 불가 source는 fallback 요청
+- local asset: binding visual SOT는 `./docs/assets/sot/...` 경로 권장
 - interview: raw와 interpretation 분리
-- migration: root artifact 후보 표시
+- migration: root artifact와 기존 SOT docs 후보 표시
 - CLAUDE.md: managed section이 없으면 이후 반영을 강하게 추천할 고우선 후보 표시
 
 다음 추천: /tk:gap
@@ -39,9 +41,10 @@ gap 기록했습니다.
 - workflow step: `checkpoint-ready`
 - baseline: `abc1234`
 - recorded: `GAP-001`, `GAP-002`
+- SOT coverage: partial, `SOT-IMG-001` pending_user_input
 - 기록: `.tigerkit/branches/feature__example/gap.md`
 
-해야 할 일: high-impact ambiguity가 있으면 /tk:checkpoint로 계속 진행 가능 여부를 판단하고, 없으면 gap별 필요한 해결 기준에 따라 진행합니다.
+해야 할 일: 접근 불가 binding SOT가 있으면 file, local path, screenshot/export, pasted content를 요청하고, 없으면 gap별 필요한 해결 기준에 따라 진행합니다.
 ```
 
 ## checkpoint receipt
@@ -122,9 +125,11 @@ NO_FINDINGS
 reflection 기록했습니다.
 - 기록: `.tigerkit/branches/feature__example/reflect.md`
 - recorded only: `reflect.md`
+- pending SOT: `SOT-IMG-001` auth_required, fallback 필요
 - pending escalation: `CLAUDE.md` managed section 추가 강한 추천, `reuse-map.md`
 
-질문: 위 후보를 실제 반영할까요?
+질문: 위 escalation 후보를 실제 반영할까요?
+SOT fallback 필요: `SOT-IMG-001` 파일 업로드, 로컬 경로, screenshot/export, pasted content를 제공해 주세요.
 ```
 
 ## handoff-write receipt
@@ -184,6 +189,7 @@ gap 기록을 시작하지 않았습니다.
 - `/tk:gap` receipt는 `workflow step`과 `해야 할 일`을 포함합니다.
 - `/tk:checkpoint`는 required sections와 final status를 포함합니다.
 - `/tk:review`는 finding별 severity, 위치, 규칙, evidence, 영향, 필요한 수정을 포함하거나 `NO_FINDINGS`만 출력합니다.
+- SOT 접근성 receipt는 access status, pending SOT, fallback 필요 여부를 구분합니다.
 - evidence, interpretation, decision, suggestion을 섞지 않습니다.
 - ambiguity를 resolved처럼 말하지 않습니다.
 - `recorded only`, `applied`, `pending escalation`, `skipped`를 구분합니다.
@@ -197,6 +203,7 @@ gap 기록을 시작하지 않았습니다.
 - `/tk:reflect`를 default next command로 추천
 - `/tk:review`에서 preference 수준 wording을 blocking finding으로 격상
 - inaccessible SOT-dependent item을 evidence 없이 `Match`로 표시
+- pending SOT를 confirmed requirement처럼 출력
 - source summary를 requirement처럼 확정하는 문구
 - 사용자가 요청하지 않은 verbose retrospective
 - `reflect.md` 기록과 durable artifact 반영을 같은 outcome처럼 말하기

@@ -121,16 +121,17 @@
       "id": 7,
       "name": "command-surface-includes-handoff",
       "prompt": "You are evaluating TigerKit active command surface after the branch-local handoff redesign. Describe the user-facing commands. Do not write files.",
-      "expected_output": "Should list /tk:prep, /tk:gap, /tk:checkpoint, /tk:reflect, /tk:handoff-write, and /tk:handoff-read as user-facing commands, and describe TigerKit as a source indexer, gap recorder, decision gate, reflection maintainer, and handoff verifier rather than an execution orchestrator.",
+      "expected_output": "Should list /tk:prep, /tk:gap, /tk:checkpoint, /tk:review, /tk:reflect, /tk:handoff-write, and /tk:handoff-read as user-facing commands, and describe TigerKit as a source indexer, gap recorder, decision gate, compliance reviewer, reflection maintainer, and handoff verifier rather than an execution orchestrator.",
       "files": [],
       "expectations": [
         "Lists /tk:prep",
         "Lists /tk:gap",
         "Lists /tk:checkpoint",
+        "Lists /tk:review",
         "Lists /tk:reflect",
         "Lists /tk:handoff-write",
         "Lists /tk:handoff-read",
-        "Describes TigerKit as source indexer, gap recorder, decision gate, reflection maintainer, and handoff verifier",
+        "Describes TigerKit as source indexer, gap recorder, decision gate, compliance reviewer, reflection maintainer, and handoff verifier",
         "Does not describe TigerKit as an execution orchestrator"
       ]
     },
@@ -363,6 +364,74 @@
         "Requires external sources to be stored as references only",
         "Requires direct interview raw text to be separated from derived interpretation",
         "Does not modify files during review"
+      ]
+    },
+    {
+      "id": 22,
+      "name": "prep-records-pending-sot-accessibility",
+      "prompt": "You are evaluating TigerKit /tk:prep when the user provides a private image URL for section 1.1.1 and the runtime cannot access it. Existing target repo files include docs/SOT_MANIFEST.md and docs/DESIGN.md. Describe expected behavior. Do not write files.",
+      "expected_output": "Should validate SOT accessibility before materialization, record the image as a pending SOT entry with explicit access_status such as auth_required or pending_user_input, preserve the original reference without treating it as inspected, ask for a file upload, local path, screenshot/export, or pasted content, recommend a stable local asset path such as ./docs/assets/sot/requirements/1.1.1.png, intake existing docs/SOT_MANIFEST.md, docs/REQUIREMENTS.md, docs/DESIGN.md, docs/IMPLEMENTATION_POLICY.md, and docs/COMPONENT_REUSE_MAP.md as SOT category candidates without merging them into a single SOT.md, and avoid writing image-derived requirements as confirmed.",
+      "files": [],
+      "expectations": [
+        "Validates SOT accessibility before materialization",
+        "Records inaccessible image as pending SOT entry",
+        "Includes explicit access_status",
+        "Preserves original reference for traceability",
+        "Does not treat inaccessible image as inspected",
+        "Asks for file upload, local path, screenshot/export, or pasted content",
+        "Recommends ./docs/assets/sot/requirements/1.1.1.png or equivalent stable local asset path",
+        "Intakes existing docs/SOT_MANIFEST.md as SOT category candidate",
+        "Intakes existing docs/REQUIREMENTS.md as SOT category candidate",
+        "Intakes existing docs/DESIGN.md as SOT category candidate",
+        "Intakes existing docs/IMPLEMENTATION_POLICY.md as SOT category candidate",
+        "Intakes existing docs/COMPONENT_REUSE_MAP.md as SOT category candidate",
+        "Does not merge existing SOT categories into a single SOT.md",
+        "Does not write image-derived requirements as confirmed"
+      ]
+    },
+    {
+      "id": 23,
+      "name": "gap-reports-partial-sot-access-coverage",
+      "prompt": "You are evaluating TigerKit /tk:gap when branch-local requirements.md lists SOT-IMG-001 as a binding design image with access_status pending_user_input. Describe expected behavior. Do not write files.",
+      "expected_output": "Should include SOT Access Coverage, state that the audit is partial because the binding SOT image is inaccessible, not mark image-dependent implementation as Match, record a Not verifiable or coverage gap, use pending_user_asset or equivalent resolution classification, and ask for user-provided file, local path, screenshot/export, or pasted content.",
+      "files": [],
+      "expectations": [
+        "Includes SOT Access Coverage",
+        "States audit is partial because binding SOT is inaccessible",
+        "Does not mark image-dependent implementation as Match",
+        "Records Not verifiable or coverage gap",
+        "Uses pending_user_asset or equivalent resolution classification",
+        "Asks for user-provided file, local path, screenshot/export, or pasted content"
+      ]
+    },
+    {
+      "id": 24,
+      "name": "review-catches-sot-access-coverage-omissions",
+      "prompt": "You are evaluating TigerKit /tk:review for a /tk:gap change that compares against a binding inaccessible Figma image but omits SOT Access Coverage, does not say the audit is partial, and does not ask for fallback content. Describe expected behavior. Do not write files.",
+      "expected_output": "Should report FINDINGS, flag missing SOT Access Coverage, flag missing partial audit statement for inaccessible binding SOT, flag missing fallback request, require pending_user_asset or not_verifiable classification, and avoid implementing fixes during review.",
+      "files": [],
+      "expectations": [
+        "Outputs FINDINGS rather than NO_FINDINGS",
+        "Flags missing SOT Access Coverage",
+        "Flags missing partial audit statement",
+        "Flags missing fallback request",
+        "Requires pending_user_asset or not_verifiable classification",
+        "Does not implement fixes during review"
+      ]
+    },
+    {
+      "id": 25,
+      "name": "reflect-records-inaccessible-sot-fallback",
+      "prompt": "You are evaluating TigerKit /tk:reflect after the user mentioned a private Figma image URL during the session, but no branch-local requirements entry exists and the asset is not accessible. Describe expected behavior. Do not write files.",
+      "expected_output": "Should record a pending SOT candidate in reflect.md with access_status such as auth_required or pending_user_input, preserve the original reference, state that no confirmed image-derived requirement was materialized, ask for file upload, local path, screenshot/export, or pasted content, and avoid recommending /tk:reflect as a command-style next action.",
+      "files": [],
+      "expectations": [
+        "Records pending SOT candidate in reflect.md",
+        "Includes explicit access_status",
+        "Preserves original reference",
+        "Does not materialize confirmed image-derived requirements",
+        "Asks for file upload, local path, screenshot/export, or pasted content",
+        "Does not recommend /tk:reflect as command-style next action"
       ]
     }
   ]

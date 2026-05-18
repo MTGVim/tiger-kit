@@ -63,8 +63,15 @@ TigerKit review는 구현자가 놓친 contract drift를 잡는 적대적 검토
 
 - high-impact ambiguity, inaccessible SOT, SOT conflict, user decision, external dependency, broad/risky refactor가 `/tk:checkpoint` 대상인지 확인합니다.
 - inaccessible SOT 내용을 추측하거나 dependent item을 evidence 없이 `Match`로 표시했는지 확인합니다.
+- SOT accessibility validation 없이 URL/image/Figma/local path를 inspected source처럼 다뤘는지 확인합니다.
+- pending SOT entry와 accessible fallback request가 누락됐는지 확인합니다.
+- binding visual SOT에 stable local asset reference(`./docs/assets/sot/...`)를 선호하는지 확인합니다.
+- 기존 `docs/SOT_MANIFEST.md`, `docs/REQUIREMENTS.md`, `docs/DESIGN.md`, `docs/IMPLEMENTATION_POLICY.md`, `docs/COMPONENT_REUSE_MAP.md`를 단일 `SOT.md`로 합쳤는지 확인합니다.
 - checkpoint final status가 `CLEAR`, `PROCEED_WITH_ASSUMPTIONS`, `PAUSE_FOR_USER_DECISION`, `BLOCKED_BY_ACCESS`, `NEED_VERIFICATION` 중 하나인지 확인합니다.
 - low-risk trivial detail마다 불필요하게 pause를 만들었는지 확인합니다.
+- `/tk:gap`이 `SOT Access Coverage`를 누락했는지 확인합니다.
+- inaccessible binding SOT가 있는데 audit partial statement가 누락됐는지 확인합니다.
+- pending fallback이 필요한데 자연어 fallback 요청이 빠졌는지 확인합니다.
 
 ### 5. Reuse and common module discipline
 

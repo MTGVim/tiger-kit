@@ -49,21 +49,44 @@ reflect 기록 전에 현재 branch를 확인합니다.
 
 ## 누락된 SOT 후보 회수
 
-`/tk:reflect`는 external SOT reference를 직접 `requirements.md`에 쓰지 않습니다. 그 책임은 `/tk:prep`에 있습니다.
+현재 session에서 external SOT 후보가 언급됐지만 branch-local `requirements.md`에 index되지 않았다면, `/tk:reflect`는 SOT 후보를 회수합니다. inaccessible SOT 후보는 confirmed requirement로 바꾸지 않고 pending SOT manifest candidate로 기록합니다.
+
+특히 사용자가 URL, image, screenshot, Figma/design link, local file path, pasted reference를 SOT로 언급하면 접근성 검증 상태를 분리합니다.
+
+`/tk:reflect`는 external SOT 내용을 durable requirement로 복사하지 않습니다. 접근 가능 여부와 pending/fallback 필요성만 `reflect.md`에 남기고, materialization은 `/tk:prep` 계약에 맡깁니다.
 
 현재 session에서 external SOT 후보가 언급됐지만 branch-local `requirements.md`에 index되지 않았다면, `reflect.md`에 아래 형식으로 회수 후보를 남깁니다.
 
 - Evidence: 현재 대화 context에서 실제로 언급된 reference
 - Interpretation: 아직 `requirements.md`에 index되지 않은 SOT 후보라는 해석
 - Risk: 다음 session이나 다음 모델이 source를 놓치거나 pseudo-requirement로 대체할 위험
-- Suggested next safe action: `/tk:prep`
+- Access Status: accessible, mirrored_local, provided_inline, local_missing, inaccessible, auth_required, expired_or_unavailable, unsupported_format, pending_user_input, decorative_non_binding, not_verifiable 중 하나
+- Pending SOT Entry: inaccessible source면 SOT ID, original reference, represents, binding 여부, needed fallback 기록
+- Suggested natural guidance: command-style next action 대신 파일 업로드, 로컬 경로, screenshot/export, pasted content 요청
+
+예시 pending entry:
+
+```md
+### Pending SOT candidate: SOT-IMG-001
+
+- Original Reference: https://example.com/private/1.1.1.png
+- Access Status: `auth_required`
+- Represents: 1.1.1 기획서 이미지
+- Binding: binding
+- Needed fallback: user-provided file, local path, screenshot/export, or pasted content
+- Recommended local path: `./docs/assets/sot/requirements/1.1.1.png`
+- Materialization: unverified image-derived requirements not recorded
+```
 
 예시 후보:
 
 - Jira, Figma, Confluence, ClickUp, GitHub issue, GitHub PR
+- PRD/spec/design document URL
+- image URL, screenshot URL, pasted screenshot, local file path
 - API docs, MCP resource
 - backend repo, source path
 - API validation backend repo, latest develop, open PR list, lookup commit
+- existing `docs/SOT_MANIFEST.md`, `docs/REQUIREMENTS.md`, `docs/DESIGN.md`, `docs/IMPLEMENTATION_POLICY.md`, `docs/COMPONENT_REUSE_MAP.md`
 
 이 section은 SOT 내용을 복사하거나 요약하는 곳이 아닙니다. reference 누락 risk와 다음 안전 행동만 기록합니다.
 
@@ -219,9 +242,10 @@ inspect하지 않은 capability, prop, behavior를 만들지 않습니다.
 6. 최근 diff/commit이 있으면 보조 근거로 사용합니다.
 7. durable learning과 one-off correction을 분리합니다.
 8. `.tigerkit/branches/{escaped-branch}/reflect.md`를 갱신합니다.
-9. session에서 언급됐지만 index되지 않은 external SOT 후보가 있으면 누락 risk와 `/tk:prep`를 next safe action으로 기록합니다.
-10. target repo active `CLAUDE.md`를 기준으로 `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `reuse-map.md` escalation candidates를 제안합니다. `CLAUDE.md` managed section이 없으면 강한 반영 추천 상태를 분명히 표시합니다.
-11. 사용자 승인 전에는 durable artifact를 수정하지 않습니다.
+9. session에서 언급됐지만 index되지 않은 external SOT 후보가 있으면 access status, pending SOT entry, fallback 필요성을 기록합니다.
+10. inaccessible SOT는 command-style next action 대신 파일 업로드, 로컬 경로, screenshot/export, pasted content 요청으로 안내합니다.
+11. target repo active `CLAUDE.md`를 기준으로 `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `reuse-map.md` escalation candidates를 제안합니다. `CLAUDE.md` managed section이 없으면 강한 반영 추천 상태를 분명히 표시합니다.
+12. 사용자 승인 전에는 durable artifact를 수정하지 않습니다.
 
 ## 금지
 
@@ -229,6 +253,8 @@ inspect하지 않은 capability, prop, behavior를 만들지 않습니다.
 - 대화 context에 없는 내용 추측
 - one-off correction을 durable rule로 과승격
 - external SOT를 `DESIGN.md`로 대체
+- inaccessible SOT를 inspected/confirmed requirement처럼 기록
+- unverified image/design-derived requirement를 materialize
 - `DESIGN.md`가 없을 때 새로 생성
 - 확인하지 않은 props나 inspect하지 않은 재사용 capability 추측
 - 단일 callsite에서 본 내용만으로 repo-level reusable pattern 일반화
@@ -243,7 +269,9 @@ reflection 기록했습니다.
 - 기록: `.tigerkit/branches/feature__example/reflect.md`
 - primary source: current conversation context
 - recorded only: `reflect.md`
+- pending SOT: `SOT-IMG-001` auth_required, confirmed requirement로 materialize하지 않음
 - pending escalation: `CLAUDE.md` managed section 추가 강한 추천, `reuse-map.md`
 
-질문: 위 후보를 실제 반영할까요?
+질문: 위 escalation 후보를 실제 반영할까요?
+SOT fallback 필요: `SOT-IMG-001` 파일 업로드, 로컬 경로, screenshot/export, pasted content를 제공해 주세요.
 ```

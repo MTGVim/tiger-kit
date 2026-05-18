@@ -167,6 +167,37 @@ implementation drift로 보입니다. source ambiguity는 아닙니다.
 사용자 확인 또는 code update 필요.
 ```
 
+## SOT access coverage
+
+`/tk:gap`은 branch-local `requirements.md`의 SOT 접근성 manifest 또는 equivalent metadata를 확인하고, audit coverage를 gap record에 포함합니다.
+
+필수 section:
+
+```md
+## SOT Access Coverage
+
+| SOT ID | Source | Access Status | Used in Audit | Result |
+|---|---|---|---|---|
+| SOT-REQ-001 | ./docs/REQUIREMENTS.md | accessible | yes | audited |
+| SOT-IMG-001 | https://.../1.1.1.png | pending_user_input | no | Not verifiable |
+```
+
+binding SOT asset이 inaccessible, auth_required, local_missing, pending_user_input, not_verifiable이면 audit이 partial임을 명시합니다.
+
+```text
+Audit is partial because 1 binding SOT asset is inaccessible.
+```
+
+접근 불가 binding asset에 의존하는 구현은 `Match`로 표시하지 않습니다. `Not verifiable`, `Coverage gap`, 또는 `pending_user_asset` resolution class로 기록합니다.
+
+예시:
+
+```text
+resolution_class: pending_user_asset
+selfResolvable: false
+requires: user-provided file, local path, screenshot/export, or pasted content
+```
+
 ## Decision Gate rule
 
 각 gap은 severity와 resolvability를 분리합니다.
@@ -183,6 +214,7 @@ requiresUserDecision
 externalDependency
 notVerifiable
 needsVerification
+pending_user_asset
 largeOrRiskyRefactor
 shouldPauseBeforeFix
 blocker
@@ -196,9 +228,10 @@ safeAutoFixReason
 - `externalDependency`: backend, API, infrastructure, external owner 변경이 필요합니다.
 - `notVerifiable`: SOT, document, image, file, API를 현재 inspect할 수 없습니다.
 - `needsVerification`: code, type, schema, data source 확인이 필요합니다.
+- `pending_user_asset`: binding SOT asset을 inspect할 수 없어 user-provided file, local path, screenshot/export, pasted content가 필요합니다.
 - `largeOrRiskyRefactor`: fix 범위가 넓거나 위험해 승인 없이 auto-resolve하지 않습니다.
 
-SOT reference에 접근할 수 없으면 내용을 추론하지 않습니다. dependent item을 `Match`로 표시하지 않고, accessible file, image, local path, export, pasted content를 요청합니다.
+SOT reference에 접근할 수 없으면 내용을 추론하지 않습니다. dependent item을 `Match`로 표시하지 않고, accessible file, local path, screenshot/export, pasted content를 요청합니다. binding visual SOT는 `./docs/assets/sot/requirements/` 또는 `./docs/assets/sot/design/` 아래 stable local asset reference를 선호합니다.
 
 high-impact ambiguity가 있으면 `/tk:checkpoint`를 실행하거나 report 안에서 checkpoint 필요성을 안내합니다. trivial copy나 local one-line fix처럼 SOT가 명확하고 safe action이 분명하면 checkpoint를 남발하지 않습니다.
 
@@ -384,9 +417,10 @@ gap 기록했습니다.
 - baseline: `abc1234`
 - inspected files: source 비교에 필요한 파일
 - recorded: `GAP-001`, `GAP-002`
+- SOT coverage: partial, `SOT-IMG-001` pending_user_input
 - 기록: `.tigerkit/branches/feature__example/gap.md`
 
-해야 할 일: high-impact ambiguity가 있으면 /tk:checkpoint로 계속 진행 가능 여부를 판단하고, 없으면 gap별 필요한 해결 기준에 따라 진행합니다.
+해야 할 일: 접근 불가 binding SOT가 있으면 file, local path, screenshot/export, pasted content를 요청하고, 없으면 gap별 필요한 해결 기준에 따라 진행합니다.
 ```
 
 blocked 예시:
