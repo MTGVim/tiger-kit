@@ -330,6 +330,40 @@
         "Does not present external dependency gaps as locally fixable",
         "Does not recommend /tk:reflect as the default next command"
       ]
+    },
+    {
+      "id": 20,
+      "name": "review-catches-missing-reuse-exploration",
+      "prompt": "You are evaluating TigerKit /tk:review for a change that adds a new SummaryCard component after checking only reuse-map.md and the local feature directory. No repo-wide keyword search, import/export search, candidate inspection, or callsite inspection is recorded. Describe expected behavior. Do not write files.",
+      "expected_output": "Should report FINDINGS with a High severity missing reuse exploration item. It should state that reuse-map.md is cache-0 only, a miss there is not evidence that no reusable module exists, and new component creation requires repo-wide exploration including file inventory, source root and package/domain scope, keyword search, import/export search, candidate inspection, callsite inspection, explored/excluded scope, and candidate rejection rationale. It should not modify artifacts or implement a fix.",
+      "files": [],
+      "expectations": [
+        "Outputs FINDINGS rather than NO_FINDINGS",
+        "Marks missing reuse exploration as High severity",
+        "States that reuse-map.md is cache-0 only",
+        "States that a reuse-map miss is not evidence",
+        "Requires repo-wide exploration before new module creation",
+        "Requires candidate and callsite inspection",
+        "Requires explored scope and excluded scope with reasons",
+        "Requires existing candidate rejection rationale",
+        "Does not modify artifacts or implement a fix"
+      ]
+    },
+    {
+      "id": 21,
+      "name": "review-covers-source-loss-and-command-sync",
+      "prompt": "You are evaluating TigerKit /tk:review for a command change where README documents /tk:review but plugin.json omits it, and a prep example copies a PRD paragraph into requirements.md as an official requirement. Describe expected behavior. Do not write files.",
+      "expected_output": "Should report FINDINGS for both command surface drift and source-loss risk. It should identify plugin/docs/evals/manifest sync as required for command changes, reject copying external SOT into requirements.md as official requirement text, ask for external source references only plus direct interview raw text separation, and avoid fixing files itself.",
+      "files": [],
+      "expectations": [
+        "Outputs FINDINGS rather than NO_FINDINGS",
+        "Flags README and plugin.json command surface drift",
+        "Requires docs, evals, and manifest command surface sync",
+        "Flags copied external PRD text as source-loss risk",
+        "Requires external sources to be stored as references only",
+        "Requires direct interview raw text to be separated from derived interpretation",
+        "Does not modify files during review"
+      ]
     }
   ]
 }
