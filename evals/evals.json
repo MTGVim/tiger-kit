@@ -121,15 +121,16 @@
       "id": 7,
       "name": "command-surface-includes-handoff",
       "prompt": "You are evaluating TigerKit active command surface after the branch-local handoff redesign. Describe the user-facing commands. Do not write files.",
-      "expected_output": "Should list /tk:prep, /tk:gap, /tk:reflect, /tk:handoff-write, and /tk:handoff-read as user-facing commands, and describe TigerKit as a source indexer, gap recorder, reflection maintainer, and handoff verifier rather than an execution orchestrator.",
+      "expected_output": "Should list /tk:prep, /tk:gap, /tk:checkpoint, /tk:reflect, /tk:handoff-write, and /tk:handoff-read as user-facing commands, and describe TigerKit as a source indexer, gap recorder, decision gate, reflection maintainer, and handoff verifier rather than an execution orchestrator.",
       "files": [],
       "expectations": [
         "Lists /tk:prep",
         "Lists /tk:gap",
+        "Lists /tk:checkpoint",
         "Lists /tk:reflect",
         "Lists /tk:handoff-write",
         "Lists /tk:handoff-read",
-        "Describes TigerKit as source indexer, gap recorder, reflection maintainer, and handoff verifier",
+        "Describes TigerKit as source indexer, gap recorder, decision gate, reflection maintainer, and handoff verifier",
         "Does not describe TigerKit as an execution orchestrator"
       ]
     },
@@ -290,6 +291,44 @@
         "Records compared Figma SOT and current implementation evidence in branch-local gap.md",
         "Requests or collects DOM, accessibility tree, screenshot, rendered text, or style token evidence when current rendered evidence is insufficient",
         "Includes required resolution for the fixture or format mismatch"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "checkpoint-produces-decision-gate",
+      "prompt": "You are evaluating TigerKit /tk:checkpoint during a task with one inaccessible requirement image, one design/spec copy conflict, one local visible label mismatch, and one backend-provided field uncertainty. Describe expected behavior. Do not write files.",
+      "expected_output": "Should produce the required Checkpoint sections, classify inaccessible SOT as not verifiable or blocked by access, list the copy conflict under SOT / Policy Conflicts, identify the local visible label mismatch as self-resolvable when SOT is clear, classify backend field uncertainty as needs verification or external dependency, and end with exactly one final status from CLEAR, PROCEED_WITH_ASSUMPTIONS, PAUSE_FOR_USER_DECISION, BLOCKED_BY_ACCESS, or NEED_VERIFICATION.",
+      "files": [],
+      "expectations": [
+        "Lists Current Status",
+        "Lists Blocking Questions",
+        "Lists User Decisions Needed",
+        "Lists Assumptions Being Made",
+        "Lists Not Verifiable Items",
+        "Lists SOT / Policy Conflicts",
+        "Lists Self-resolvable Items",
+        "Lists Items Not Safe to Auto-resolve",
+        "Ends with one defined final status",
+        "Does not infer inaccessible SOT contents",
+        "Does not mark inaccessible SOT-dependent items as Match",
+        "Does not recommend /tk:reflect as the default next command"
+      ]
+    },
+    {
+      "id": 19,
+      "name": "gap-separates-severity-from-resolvability",
+      "prompt": "You are evaluating TigerKit /tk:gap with a low-severity policy-token ambiguity, a high-severity locally fixable copy mismatch, and a missing backend-provided value. Describe expected behavior. Do not write files.",
+      "expected_output": "Should record severity separately from resolvability, mark the policy-token ambiguity as requiring user decision or partial self-resolution, mark the locally fixable copy mismatch as self-resolvable when SOT is clear, mark the missing backend-provided value as external dependency, set shouldPauseBeforeFix where needed, and avoid presenting external dependency gaps as locally fixable.",
+      "files": [],
+      "expectations": [
+        "Separates severity from resolvability",
+        "Marks self-resolvable gaps clearly",
+        "Marks user-decision-required gaps clearly",
+        "Marks external dependency gaps clearly",
+        "Uses shouldPauseBeforeFix where needed",
+        "Does not auto-resolve user-decision-required gaps",
+        "Does not present external dependency gaps as locally fixable",
+        "Does not recommend /tk:reflect as the default next command"
       ]
     }
   ]
