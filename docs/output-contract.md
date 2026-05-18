@@ -95,6 +95,27 @@ Final status: `CLEAR | PROCEED_WITH_ASSUMPTIONS | PAUSE_FOR_USER_DECISION | BLOC
 한 줄 설명.
 ```
 
+## review receipt
+
+finding이 있을 때:
+
+```md
+FINDINGS
+
+1. [High] repo-wide reuse exploration 누락
+- 위치: `commands/gap.md:...`
+- 규칙: 새 module 생성 전 candidate/callsite inspection 필요
+- evidence: `reuse-map.md` miss만 확인하고 새 component 생성을 전제함
+- 영향: unnecessary new implementation, design-system drift 가능
+- 필요한 수정: repo-wide exploration과 배제 근거 기록
+```
+
+finding이 없을 때:
+
+```text
+NO_FINDINGS
+```
+
 ## reflect receipt
 
 ```text
@@ -162,6 +183,7 @@ gap 기록을 시작하지 않았습니다.
 - 다음 행동은 하나 이상 명확히 제시합니다.
 - `/tk:gap` receipt는 `workflow step`과 `해야 할 일`을 포함합니다.
 - `/tk:checkpoint`는 required sections와 final status를 포함합니다.
+- `/tk:review`는 finding별 severity, 위치, 규칙, evidence, 영향, 필요한 수정을 포함하거나 `NO_FINDINGS`만 출력합니다.
 - evidence, interpretation, decision, suggestion을 섞지 않습니다.
 - ambiguity를 resolved처럼 말하지 않습니다.
 - `recorded only`, `applied`, `pending escalation`, `skipped`를 구분합니다.
@@ -173,6 +195,7 @@ gap 기록을 시작하지 않았습니다.
 - 실행 대기열 생성
 - 내부 진행 상태 노출
 - `/tk:reflect`를 default next command로 추천
+- `/tk:review`에서 preference 수준 wording을 blocking finding으로 격상
 - inaccessible SOT-dependent item을 evidence 없이 `Match`로 표시
 - source summary를 requirement처럼 확정하는 문구
 - 사용자가 요청하지 않은 verbose retrospective

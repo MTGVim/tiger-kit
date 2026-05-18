@@ -44,6 +44,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `.claude-plugin/marketplace.json`: marketplace 등록용 manifest.
 - `commands/prep.md`: source-of-truth reference와 직접 사용자 인터뷰를 branch-local `requirements.md`에 인덱싱한다.
 - `commands/gap.md`: branch-local indexed SOT reference와 reproducible code baseline을 비교해 branch-local `gap.md`에 evidence-based gap을 기록한다.
+- `commands/checkpoint.md`: ambiguity, user decision, unverifiable source, conflict, self-resolvable item을 분리하는 Decision Gate다.
+- `commands/review.md`: TigerKit 준수룰 위반을 적대적으로 검토하는 artifact-free compliance review다.
 - `commands/reflect.md`: 현재 대화 context를 먼저 재구성해 branch-local `reflect.md`를 갱신하고 `CLAUDE.md`/`MEMORY.md`/`DESIGN.md`/`reuse-map.md` escalation 후보를 제안한다.
 - `commands/handoff-write.md`: 다음 모델/세션을 위한 branch-local continuation contract를 `handoff.md`에 기록한다.
 - `commands/handoff-read.md`: branch-local handoff와 artifact map을 읽고 stale risk와 next safe action을 확인한다.
@@ -55,12 +57,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `/tk:prep`: 외부 source는 reference만 저장하고, 현재 session의 직접 사용자 인터뷰만 raw text에 가깝게 보존한다. pseudo-requirement를 만들지 않는다.
 - `/tk:gap`: 특정 SOT reference와 특정 code baseline을 비교해 evidence, finding, interpretation, required resolution을 기록한다. gap을 실행 대기열로 바꾸지 않는다.
+- `/tk:checkpoint`: ambiguity, user decision, unverifiable source, conflict, self-resolvable item을 분리하고 계속 진행 가능 여부를 판단한다.
+- `/tk:review`: source-loss, reuse exploration, baseline, Decision Gate, handoff/reflect contract 위반을 artifact-free finding 또는 `NO_FINDINGS`로 검토한다.
 - `/tk:reflect`: 현재 대화 context를 먼저 재구성해 durable learning과 one-off correction을 분리하고, derived repo knowledge 업데이트를 관리한다.
 
 ## 핵심 정책
 
 - TigerKit의 목적은 AI-induced source loss를 줄이는 것이다.
-- 기본 command set은 `/tk:prep`, `/tk:gap`, `/tk:reflect`, `/tk:handoff-write`, `/tk:handoff-read`다.
+- 기본 command set은 `/tk:prep`, `/tk:gap`, `/tk:checkpoint`, `/tk:review`, `/tk:reflect`, `/tk:handoff-write`, `/tk:handoff-read`다.
 - TigerKit working material은 branch-local `.tigerkit/branches/{escaped-branch}/` 아래에 기록한다.
 - root-level `.tigerkit/requirements.md`, `.tigerkit/gap.md`, `.tigerkit/reflect.md`는 deprecated artifact이며 migration 후보로만 다룬다.
 - `{escaped-branch}`는 collision-safe path encoding이다. ASCII letter, digit, `.`, `_`, `-`는 그대로 두고 다른 byte는 `~HH` uppercase hex로 encode한다.

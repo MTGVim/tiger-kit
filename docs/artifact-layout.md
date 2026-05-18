@@ -34,6 +34,7 @@ TigerKit branch-local artifact는 detached HEAD나 protected branch(`main`, `mas
 | `.tigerkit/branches/{escaped-branch}/gap.md` | 특정 SOT reference와 특정 code baseline 사이 evidence-based comparison 기록 |
 | `.tigerkit/branches/{escaped-branch}/reflect.md` | session-wide reflection. 지속 학습, 일회성 correction, escalation candidate 분리 |
 | `.tigerkit/branches/{escaped-branch}/handoff.md` | 다음 모델/세션을 위한 continuation contract, artifact map, baseline checkpoint |
+| `/tk:review` output | 파일 산출물이 아닌 chat compliance review. TigerKit 준수룰 위반 finding 또는 `NO_FINDINGS` |
 | `CLAUDE.md` | repo instruction. TigerKit managed section은 사용자 승인 후만 추가/갱신 |
 | `DESIGN.md` | architecture, boundaries, data flow, UI/API conventions, stable constraints, non-goals 같은 derived repo-level design knowledge. 파일이 없으면 생성하지 않으며, 반영할 derived design knowledge가 있을 때만 초기화 필요를 알림 |
 | `reuse-map.md` | reusable component/hook/util/API client/pattern/test helper와 deprecated pattern reference |
