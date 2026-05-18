@@ -26,7 +26,8 @@ TigerKit review는 구현자가 놓친 contract drift를 잡는 적대적 검토
 5. `README.md`, `docs/usage.md`, `docs/output-contract.md`, `docs/artifact-layout.md`
 6. `evals/evals.json`
 7. branch-local TigerKit artifacts if task is artifact review
-8. `CLAUDE.md`, `DESIGN.md`, `reuse-map.md` if mentioned or modified
+8. `CLAUDE.md`, `DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `COMPONENT_REUSE_MAP.md` if mentioned or modified
+9. `reuse-map.md` only as legacy alias/migration candidate if mentioned or modified
 
 ## Finding severity
 
@@ -66,7 +67,9 @@ TigerKit review는 구현자가 놓친 contract drift를 잡는 적대적 검토
 - SOT accessibility validation 없이 URL/image/Figma/local path를 inspected source처럼 다뤘는지 확인합니다.
 - pending SOT entry와 accessible fallback request가 누락됐는지 확인합니다.
 - binding visual SOT에 stable local asset reference(`./docs/assets/sot/...`)를 선호하는지 확인합니다.
-- 기존 `docs/SOT_MANIFEST.md`, `docs/REQUIREMENTS.md`, `docs/DESIGN.md`, `docs/IMPLEMENTATION_POLICY.md`, `docs/COMPONENT_REUSE_MAP.md`를 단일 `SOT.md`로 합쳤는지 확인합니다.
+- 기존 `docs/SOT_MANIFEST.md`, `docs/REQUIREMENTS.md`, `docs/DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `docs/assets/sot/`를 단일 `SOT.md`로 합쳤는지 확인합니다.
+- `IMPLEMENTATION_POLICY.md`가 있으면 binding project policy SOT candidate로 다뤘는지 확인합니다.
+- `COMPONENT_REUSE_MAP.md`를 target repo가 명시적으로 SOT로 정의하지 않았는데 external SOT처럼 다뤘는지 확인합니다.
 - checkpoint final status가 `CLEAR`, `PROCEED_WITH_ASSUMPTIONS`, `PAUSE_FOR_USER_DECISION`, `BLOCKED_BY_ACCESS`, `NEED_VERIFICATION` 중 하나인지 확인합니다.
 - low-risk trivial detail마다 불필요하게 pause를 만들었는지 확인합니다.
 - `/tk:gap`이 `SOT Access Coverage`를 누락했는지 확인합니다.
@@ -77,8 +80,9 @@ TigerKit review는 구현자가 놓친 contract drift를 잡는 적대적 검토
 
 Reuse omission은 TigerKit review의 high-priority target입니다.
 
-- `reuse-map.md` hit을 review candidate로만 다뤘는지 확인합니다.
-- `reuse-map.md` miss를 reusable module 없음의 evidence로 사용했는지 확인합니다.
+- `COMPONENT_REUSE_MAP.md` hit을 review candidate로만 다뤘는지 확인합니다.
+- `COMPONENT_REUSE_MAP.md` miss를 reusable module 없음의 evidence로 사용했는지 확인합니다.
+- `reuse-map.md`를 legacy alias/migration candidate 외 용도로 사용했는지 확인합니다.
 - 새 component/hook/util/mapper/API client/layout primitive/UI pattern 생성 전 repo-wide exploration이 있었는지 확인합니다.
 - exploration에 file inventory, source root/package/domain structure, keyword search, import/export search, naming search, candidate file inspection, callsite inspection이 포함됐는지 확인합니다.
 - explored scope, excluded scope, exclusion reason, shared package/design system/common module 포함 여부가 기록됐는지 확인합니다.
@@ -88,7 +92,7 @@ Reuse omission은 TigerKit review의 high-priority target입니다.
 ### 6. Reflection and durable artifacts
 
 - `/tk:reflect`가 현재 대화 context를 primary source로 썼는지 확인합니다.
-- `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `reuse-map.md` 수정이 user approval 전 적용됐는지 확인합니다.
+- `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `COMPONENT_REUSE_MAP.md` 수정이 user approval 전 적용됐는지 확인합니다.
 - `DESIGN.md`가 없을 때 TigerKit이 새로 만들었는지 확인합니다.
 - inspect하지 않은 reusable capability, prop, API field, behavior를 기록했는지 확인합니다.
 - `/tk:reflect`를 default next command로 추천했는지 확인합니다.

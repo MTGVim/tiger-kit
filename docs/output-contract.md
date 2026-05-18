@@ -13,9 +13,9 @@ Chat output is a receipt, not the artifact itself.
 1. outcome
 2. evidence/risk/ambiguity
 3. artifact paths
-4. next action or required confirmation
+4. natural-language next action or required confirmation
 
-전체 `requirements.md`, `gap.md`, `reflect.md`, `handoff.md`, `DESIGN.md`, `reuse-map.md`를 채팅에 dump하지 않습니다.
+전체 `requirements.md`, `gap.md`, `reflect.md`, `handoff.md`, `DESIGN.md`, `COMPONENT_REUSE_MAP.md`를 채팅에 dump하지 않습니다. `reuse-map.md`는 legacy alias/migration candidate로 언급할 때만 다룹니다.
 
 ## prep receipt
 
@@ -30,7 +30,7 @@ source index 기록 준비했습니다.
 - migration: root artifact와 기존 SOT docs 후보 표시
 - CLAUDE.md: managed section이 없으면 이후 반영을 강하게 추천할 고우선 후보 표시
 
-다음 추천: /tk:gap
+해야 할 일: 접근 불가 SOT가 있으면 파일 업로드, 로컬 경로, screenshot/export, pasted content를 제공해 주세요.
 ```
 
 ## gap receipt
@@ -108,7 +108,7 @@ FINDINGS
 1. [High] repo-wide reuse exploration 누락
 - 위치: `commands/gap.md:...`
 - 규칙: 새 module 생성 전 candidate/callsite inspection 필요
-- evidence: `reuse-map.md` miss만 확인하고 새 component 생성을 전제함
+- evidence: `COMPONENT_REUSE_MAP.md` miss만 확인하고 새 component 생성을 전제함
 - 영향: unnecessary new implementation, design-system drift 가능
 - 필요한 수정: repo-wide exploration과 배제 근거 기록
 ```
@@ -126,7 +126,7 @@ reflection 기록했습니다.
 - 기록: `.tigerkit/branches/feature__example/reflect.md`
 - recorded only: `reflect.md`
 - pending SOT: `SOT-IMG-001` auth_required, fallback 필요
-- pending escalation: `CLAUDE.md` managed section 추가 강한 추천, `reuse-map.md`
+- pending escalation: `CLAUDE.md` managed section 추가 강한 추천, `COMPONENT_REUSE_MAP.md`
 
 질문: 위 escalation 후보를 실제 반영할까요?
 SOT fallback 필요: `SOT-IMG-001` 파일 업로드, 로컬 경로, screenshot/export, pasted content를 제공해 주세요.
@@ -142,7 +142,7 @@ handoff 기록했습니다.
 - open gaps: 2
 - ambiguity: 1
 
-다음 추천: 다음 세션에서 /tk:handoff-read
+해야 할 일: 이어받는 세션에서는 handoff 내용을 먼저 확인하고 baseline이 stale하지 않은지 점검하세요.
 ```
 
 ## handoff-read receipt
@@ -155,7 +155,7 @@ handoff 읽었습니다.
 - stale risk: 없음
 - 확인 필요: 1개
 
-next safe action: 사용자 확인 후 GAP-001 관련 파일 inspect
+해야 할 일: 사용자 확인 후 GAP-001 관련 파일을 inspect하세요.
 ```
 
 ## gap blocked receipt
@@ -167,7 +167,7 @@ gap 기록을 시작하지 않았습니다.
 - staged: yes
 - unstaged: no
 - untracked: yes
-- 해야 할 일: staged 변경은 commit하고, 나머지 변경은 정리하거나 함께 commit한 뒤 rerun `/tk:gap`
+- 해야 할 일: staged 변경은 commit하고, 나머지 변경은 정리하거나 함께 commit한 뒤 clean baseline에서 gap 분석을 다시 요청하세요.
 ```
 
 ## protected branch receipt
@@ -185,7 +185,8 @@ gap 기록을 시작하지 않았습니다.
 - 상세 내용은 artifact path로 안내합니다.
 - 사용자가 명시적으로 원할 때만 verbose report를 보여줍니다.
 - command별 출력은 보통 3~6줄 안팎을 목표로 합니다.
-- 다음 행동은 하나 이상 명확히 제시합니다.
+- 다음 행동은 command-style recommendation이 아니라 자연어로 하나 이상 명확히 제시합니다.
+- default receipt는 사용자가 명시적으로 command를 묻지 않는 한 “다음 추천: /tk:*”, “추천 다음 동작”, “next command”, “next safe action: /tk:*” 형식을 쓰지 않습니다.
 - `/tk:gap` receipt는 `workflow step`과 `해야 할 일`을 포함합니다.
 - `/tk:checkpoint`는 required sections와 final status를 포함합니다.
 - `/tk:review`는 finding별 severity, 위치, 규칙, evidence, 영향, 필요한 수정을 포함하거나 `NO_FINDINGS`만 출력합니다.

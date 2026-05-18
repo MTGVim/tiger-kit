@@ -35,8 +35,10 @@ handoff 작성 전에 현재 branch를 확인합니다.
 5. `.tigerkit/branches/{escaped-branch}/reflect.md`, if present
 6. `CLAUDE.md`, if present
 7. `DESIGN.md`, if present
-8. `reuse-map.md`, if present
-9. 최근 diff 또는 commit
+8. `IMPLEMENTATION_POLICY.md`, if present
+9. `COMPONENT_REUSE_MAP.md`, if present
+10. `reuse-map.md`, legacy alias/migration candidate로만, if present
+11. 최근 diff 또는 commit
 
 ## handoff shape
 
@@ -85,7 +87,7 @@ handoff 작성 전에 현재 branch를 확인합니다.
 
 ## Open Questions
 
-## Next Safe Actions
+## 이어서 확인할 안전한 행동
 
 ## Do Not Do
 
@@ -123,5 +125,5 @@ handoff 기록했습니다.
 - open gaps: 2
 - ambiguity: 1
 
-다음 추천: 다음 세션에서 /tk:handoff-read
+해야 할 일: 이어받는 세션에서는 handoff 내용을 먼저 확인하고 baseline이 stale하지 않은지 점검하세요.
 ```

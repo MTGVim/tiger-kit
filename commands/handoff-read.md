@@ -34,7 +34,9 @@ handoff 읽기 전에 현재 branch를 확인합니다.
 4. handoff의 Artifact Map에 있는 requirements/gap/reflect path
 5. `CLAUDE.md`, if present
 6. `DESIGN.md`, if present
-7. `reuse-map.md`, if present
+7. `IMPLEMENTATION_POLICY.md`, if present
+8. `COMPONENT_REUSE_MAP.md`, if present
+9. `reuse-map.md`, legacy alias/migration candidate로만, if present
 
 ## verification rule
 
@@ -90,5 +92,5 @@ handoff 읽었습니다.
 - stale risk: 없음
 - 확인 필요: 1개
 
-next safe action: 사용자 확인 후 GAP-001 관련 파일 inspect
+해야 할 일: 사용자 확인 후 GAP-001 관련 파일을 inspect하세요.
 ```

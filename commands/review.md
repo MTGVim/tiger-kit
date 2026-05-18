@@ -16,7 +16,7 @@ review = TigerKit compliance check, not implementation
 
 - 없음
 
-`/tk:review`는 chat review만 출력합니다. `.tigerkit/branches/{escaped-branch}/` artifact, `CLAUDE.md`, `DESIGN.md`, `reuse-map.md`, docs, source code를 수정하지 않습니다.
+`/tk:review`는 chat review만 출력합니다. `.tigerkit/branches/{escaped-branch}/` artifact, `CLAUDE.md`, `DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `COMPONENT_REUSE_MAP.md`, docs, source code를 수정하지 않습니다. `reuse-map.md`는 legacy alias/migration candidate로만 검토합니다.
 
 ## 검토 입력
 
@@ -29,7 +29,8 @@ review = TigerKit compliance check, not implementation
 5. `README.md`, `docs/usage.md`, `docs/output-contract.md`, `docs/artifact-layout.md`
 6. `evals/evals.json`
 7. branch-local TigerKit artifacts, if present and relevant
-8. `CLAUDE.md`, `DESIGN.md`, `reuse-map.md`, if mentioned or modified
+8. `CLAUDE.md`, `DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `COMPONENT_REUSE_MAP.md`, if mentioned or modified
+9. `reuse-map.md`, legacy alias/migration candidate로 mentioned or modified인 경우
 
 ## severity
 
@@ -68,18 +69,25 @@ review = TigerKit compliance check, not implementation
 - SOT 접근성 검증 없이 URL/image/Figma/local path를 inspected source처럼 다루지 않았는지 확인합니다.
 - pending SOT entry와 accessible fallback 요청이 빠지지 않았는지 확인합니다.
 - binding visual SOT에 stable local asset reference(`./docs/assets/sot/...`)를 선호하는지 확인합니다.
-- 기존 `docs/SOT_MANIFEST.md`, `docs/REQUIREMENTS.md`, `docs/DESIGN.md`, `docs/IMPLEMENTATION_POLICY.md`, `docs/COMPONENT_REUSE_MAP.md`를 단일 `SOT.md`로 합치지 않았는지 확인합니다.
+- 기존 `docs/SOT_MANIFEST.md`, `docs/REQUIREMENTS.md`, `docs/DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `docs/assets/sot/`를 단일 `SOT.md`로 합치지 않았는지 확인합니다.
+- `IMPLEMENTATION_POLICY.md`가 있으면 binding project policy SOT candidate로 다뤘는지 확인합니다.
+- `COMPONENT_REUSE_MAP.md`를 target repo가 명시적으로 SOT로 정의하지 않았는데 external SOT처럼 다루지 않았는지 확인합니다.
+- `reuse-map.md`를 legacy alias/migration candidate가 아니라 active source of truth 또는 preferred artifact처럼 다루지 않았는지 확인합니다.
 - checkpoint final status가 정의된 값 중 하나인지 확인합니다.
 - low-risk trivial detail마다 불필요하게 pause를 만들지 않았는지 확인합니다.
 - `/tk:gap`이 `SOT Access Coverage`를 누락했는지 확인합니다.
+- `/tk:gap`이 scoped SOT item의 `Coverage Inventory`를 누락했는지 확인합니다.
 - inaccessible binding SOT가 있는데 audit partial statement가 누락됐는지 확인합니다.
 - pending fallback이 필요한데 자연어 fallback 요청이 빠졌는지 확인합니다.
+- low-severity visible copy/label/placeholder/tooltip/modal/table/status/format mismatch를 누락하거나 exact-match target을 meaning-similar로 무시하지 않았는지 확인합니다.
+- project policy required/avoided/banned/deprecated/preferred rule 위반을 기능 동작만 보고 gap에서 누락하지 않았는지 확인합니다.
 
 ### Reuse and common module discipline
 
 재사용 탐사 누락은 high-priority finding입니다.
 
-- `reuse-map.md` miss를 reusable module 없음의 evidence로 사용하지 않았는지 확인합니다.
+- `COMPONENT_REUSE_MAP.md` miss를 reusable module 없음의 evidence로 사용하지 않았는지 확인합니다.
+- `reuse-map.md` legacy alias miss를 reusable module 없음의 evidence로 사용하지 않았는지 확인합니다.
 - 새 component, hook, util, mapper, API client, layout primitive, UI pattern 생성 전 repo-wide exploration이 있었는지 확인합니다.
 - repo-wide exploration에 file inventory, source root/package/domain structure, keyword search, import/export search, naming search, candidate file inspection, callsite inspection이 포함됐는지 확인합니다.
 - explored scope, excluded scope, exclusion reason, shared package/design system/common module 포함 여부가 기록됐는지 확인합니다.
@@ -89,7 +97,7 @@ review = TigerKit compliance check, not implementation
 ### Reflection and durable artifacts
 
 - `/tk:reflect`가 현재 대화 context를 primary source로 썼는지 확인합니다.
-- `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `reuse-map.md` 수정이 user approval 전 적용되지 않았는지 확인합니다.
+- `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `COMPONENT_REUSE_MAP.md` 수정이 user approval 전 적용되지 않았는지 확인합니다.
 - `DESIGN.md`가 없을 때 TigerKit이 새로 만들지 않았는지 확인합니다.
 - inspect하지 않은 reusable capability, prop, API field, behavior를 기록하지 않았는지 확인합니다.
 - `/tk:reflect`를 default next command로 추천하지 않았는지 확인합니다.
