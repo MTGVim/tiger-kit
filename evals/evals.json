@@ -16,7 +16,7 @@
         "Does not summarize external sources into local requirements",
         "Does not create unrelated artifacts",
         "Treats root .tigerkit/requirements.md as deprecated migration candidate",
-        "Does not update CLAUDE.md, DESIGN.md, or reuse-map.md during prep",
+        "Does not update CLAUDE.md, DESIGN.md, or COMPONENT_REUSE_MAP.md during prep",
         "Does not implement, commit, push, open PRs, merge, or deploy"
       ]
     },
@@ -37,7 +37,7 @@
         "Shows current gap workflow step and next action in the receipt",
         "Writes or updates branch-local gap.md",
         "Does not convert gap into work plan",
-        "Does not update CLAUDE.md, DESIGN.md, or reuse-map.md during gap"
+        "Does not update CLAUDE.md, DESIGN.md, or COMPONENT_REUSE_MAP.md during gap"
       ]
     },
     {
@@ -152,15 +152,15 @@
     {
       "id": 9,
       "name": "reflect-requires-escalation-confirmation",
-      "prompt": "You are evaluating TigerKit /tk:reflect after a session produced durable guidance for CLAUDE.md and reuse-map.md. Describe expected behavior. Do not write files.",
-      "expected_output": "Should record branch-local reflect.md first, then present escalation candidates for CLAUDE.md and reuse-map.md, ask the user whether to apply them, and avoid modifying durable artifacts before approval. Receipt should distinguish recorded only, applied, pending escalation, and skipped items.",
+      "prompt": "You are evaluating TigerKit /tk:reflect after a session produced durable guidance for CLAUDE.md and COMPONENT_REUSE_MAP.md. Describe expected behavior. Do not write files.",
+      "expected_output": "Should record branch-local reflect.md first, then present escalation candidates for CLAUDE.md and COMPONENT_REUSE_MAP.md, ask the user whether to apply them, and avoid modifying durable artifacts before approval. Receipt should distinguish recorded only, applied, pending escalation, and skipped items.",
       "files": [],
       "expectations": [
         "Writes or updates branch-local reflect.md",
         "Lists CLAUDE.md escalation candidate when durable repo instruction exists",
-        "Lists reuse-map.md escalation candidate when inspected reusable code knowledge exists",
+        "Lists COMPONENT_REUSE_MAP.md escalation candidate when inspected reusable code knowledge exists",
         "Asks user before applying durable artifact updates",
-        "Does not modify CLAUDE.md, MEMORY.md, DESIGN.md, or reuse-map.md before approval",
+        "Does not modify CLAUDE.md, MEMORY.md, DESIGN.md, or COMPONENT_REUSE_MAP.md before approval",
         "Receipt distinguishes recorded only from applied"
       ]
     },
@@ -183,13 +183,13 @@
       "id": 11,
       "name": "handoff-read-verifies-before-acting",
       "prompt": "You are evaluating TigerKit /tk:handoff-read in a new session. Describe expected behavior. Do not write files.",
-      "expected_output": "Should read branch-local handoff.md, verify current branch and HEAD against the handoff baseline, inspect the artifact map for requirements, gap, and reflect files, check CLAUDE.md, DESIGN.md, and reuse-map.md when present, classify matched, stale, missing, conflict, and needs-confirmation items, and provide next safe action without implementing.",
+      "expected_output": "Should read branch-local handoff.md, verify current branch and HEAD against the handoff baseline, inspect the artifact map for requirements, gap, and reflect files, check CLAUDE.md, DESIGN.md, and COMPONENT_REUSE_MAP.md when present, classify matched, stale, missing, conflict, and needs-confirmation items, and provide next safe action without implementing.",
       "files": [],
       "expectations": [
         "Reads branch-local handoff.md",
         "Compares current branch and HEAD with handoff baseline",
         "Checks requirements, gap, and reflect artifacts from artifact map",
-        "Checks CLAUDE.md, DESIGN.md, and reuse-map.md when present",
+        "Checks CLAUDE.md, DESIGN.md, and COMPONENT_REUSE_MAP.md when present",
         "Classifies stale, missing, conflict, and needs-confirmation items",
         "Does not implement or modify files during handoff-read"
       ]
@@ -245,13 +245,13 @@
     {
       "id": 15,
       "name": "gap-records-insufficient-reuse-exploration",
-      "prompt": "You are evaluating TigerKit /tk:gap for a new FooCard proposal after the session checked only reuse-map.md and the local directory, without repo-wide component search or callsite inspection. Describe expected behavior. Do not write files.",
-      "expected_output": "Should record a high-severity insufficient reuse exploration gap. It should treat reuse-map.md as cache-0 only, state that a miss there is not evidence, require repo-wide exploration plus candidate and callsite inspection, require a recorded reuse, adapt, or create decision, mention design-system drift or nearby pattern mismatch risk, and not treat common module modification as confirmed without repo-wide callsite impact analysis and explicit user approval.",
+      "prompt": "You are evaluating TigerKit /tk:gap for a new FooCard proposal after the session checked only COMPONENT_REUSE_MAP.md and the local directory, without repo-wide component search or callsite inspection. Describe expected behavior. Do not write files.",
+      "expected_output": "Should record a high-severity insufficient reuse exploration gap. It should treat COMPONENT_REUSE_MAP.md as cache-0 only, state that a miss there is not evidence, require repo-wide exploration plus candidate and callsite inspection, require a recorded reuse, adapt, or create decision, mention design-system drift or nearby pattern mismatch risk, and not treat common module modification as confirmed without repo-wide callsite impact analysis and explicit user approval.",
       "files": [],
       "expectations": [
         "Records a high-severity insufficient reuse exploration gap",
-        "States that reuse-map.md is cache-0 only",
-        "States that a reuse-map miss is not evidence",
+        "States that COMPONENT_REUSE_MAP.md is cache-0 only",
+        "States that a COMPONENT_REUSE_MAP.md miss is not evidence",
         "Requires repo-wide exploration",
         "Requires candidate and callsite inspection",
         "Requires a recorded reuse, adapt, or create decision",
@@ -263,20 +263,20 @@
     {
       "id": 16,
       "name": "reflect-records-missing-sot-candidates-and-stale-claude-guidance",
-      "prompt": "You are evaluating TigerKit /tk:reflect after a session used a Figma MCP resource and backend repo API source, but never ran /tk:prep. The target repo CLAUDE.md exists but lacks current TigerKit managed rules for source-of-truth prompts, API reference sets, reuse-map cache-0 handling, new-module repo-wide exploration, common-module impact analysis and user approval, and clean HEAD baseline guidance. Describe expected behavior. Do not write files.",
-      "expected_output": "Should record in branch-local reflect.md that source-of-truth candidates were used but not indexed, list the missing candidates and their risk, suggest /tk:prep as the next safe action, and present a pending escalation asking whether to update the target repo CLAUDE.md managed section with missing current rules for SOT prompts, API reference sets, reuse-map cache-0 handling, new-module repo-wide exploration, common-module impact analysis and user approval, and clean HEAD baseline. It should not directly modify requirements.md, CLAUDE.md, DESIGN.md, or reuse-map.md without approval.",
+      "prompt": "You are evaluating TigerKit /tk:reflect after a session used a Figma MCP resource and backend repo API source, but never ran /tk:prep. The target repo CLAUDE.md exists but lacks current TigerKit managed rules for source-of-truth prompts, API reference sets, COMPONENT_REUSE_MAP.md cache-0 with reuse-map.md legacy fallback handling, new-module repo-wide exploration, common-module impact analysis and user approval, and clean HEAD baseline guidance. Describe expected behavior. Do not write files.",
+      "expected_output": "Should record in branch-local reflect.md that source-of-truth candidates were used but not indexed, list the missing candidates and their risk, use natural-language guidance that source reference indexing is needed, and present a pending escalation asking whether to update the target repo CLAUDE.md managed section with missing current rules for SOT prompts, API reference sets, COMPONENT_REUSE_MAP.md cache-0 with reuse-map.md legacy fallback handling, new-module repo-wide exploration, common-module impact analysis and user approval, and clean HEAD baseline. It should not directly modify requirements.md, CLAUDE.md, DESIGN.md, or COMPONENT_REUSE_MAP.md without approval.",
       "files": [],
       "expectations": [
         "Records in branch-local reflect.md that source-of-truth candidates were used but not indexed",
         "Lists the missing source-of-truth candidates",
         "Explains the risk of missing indexing",
-        "Suggests /tk:prep as the next safe action",
+        "Uses natural-language guidance that source reference indexing is needed",
         "Presents a pending escalation asking whether to update the target repo CLAUDE.md managed section",
         "Includes missing new-module repo-wide exploration guidance in the CLAUDE.md escalation",
         "Includes missing common-module impact analysis and user approval guidance in the CLAUDE.md escalation",
         "Does not directly modify requirements.md without approval",
         "Does not directly modify CLAUDE.md without approval",
-        "Does not directly modify DESIGN.md or reuse-map.md without approval"
+        "Does not directly modify DESIGN.md or COMPONENT_REUSE_MAP.md without approval"
       ]
     },
     {
@@ -335,14 +335,14 @@
     {
       "id": 20,
       "name": "review-catches-missing-reuse-exploration",
-      "prompt": "You are evaluating TigerKit /tk:review for a change that adds a new SummaryCard component after checking only reuse-map.md and the local feature directory. No repo-wide keyword search, import/export search, candidate inspection, or callsite inspection is recorded. Describe expected behavior. Do not write files.",
-      "expected_output": "Should report FINDINGS with a High severity missing reuse exploration item. It should state that reuse-map.md is cache-0 only, a miss there is not evidence that no reusable module exists, and new component creation requires repo-wide exploration including file inventory, source root and package/domain scope, keyword search, import/export search, candidate inspection, callsite inspection, explored/excluded scope, and candidate rejection rationale. It should not modify artifacts or implement a fix.",
+      "prompt": "You are evaluating TigerKit /tk:review for a change that adds a new SummaryCard component after checking only COMPONENT_REUSE_MAP.md and the local feature directory. No repo-wide keyword search, import/export search, candidate inspection, or callsite inspection is recorded. Describe expected behavior. Do not write files.",
+      "expected_output": "Should report FINDINGS with a High severity missing reuse exploration item. It should state that COMPONENT_REUSE_MAP.md is cache-0 only, a miss there is not evidence that no reusable module exists, and new component creation requires repo-wide exploration including file inventory, source root and package/domain scope, keyword search, import/export search, candidate inspection, callsite inspection, explored/excluded scope, and candidate rejection rationale. It should not modify artifacts or implement a fix.",
       "files": [],
       "expectations": [
         "Outputs FINDINGS rather than NO_FINDINGS",
         "Marks missing reuse exploration as High severity",
-        "States that reuse-map.md is cache-0 only",
-        "States that a reuse-map miss is not evidence",
+        "States that COMPONENT_REUSE_MAP.md is cache-0 only",
+        "States that a COMPONENT_REUSE_MAP.md miss is not evidence",
         "Requires repo-wide exploration before new module creation",
         "Requires candidate and callsite inspection",
         "Requires explored scope and excluded scope with reasons",
@@ -370,7 +370,7 @@
       "id": 22,
       "name": "prep-records-pending-sot-accessibility",
       "prompt": "You are evaluating TigerKit /tk:prep when the user provides a private image URL for section 1.1.1 and the runtime cannot access it. Existing target repo files include docs/SOT_MANIFEST.md and docs/DESIGN.md. Describe expected behavior. Do not write files.",
-      "expected_output": "Should validate SOT accessibility before materialization, record the image as a pending SOT entry with explicit access_status such as auth_required or pending_user_input, preserve the original reference without treating it as inspected, ask for a file upload, local path, screenshot/export, or pasted content, recommend a stable local asset path such as ./docs/assets/sot/requirements/1.1.1.png, intake existing docs/SOT_MANIFEST.md, docs/REQUIREMENTS.md, docs/DESIGN.md, docs/IMPLEMENTATION_POLICY.md, and docs/COMPONENT_REUSE_MAP.md as SOT category candidates without merging them into a single SOT.md, and avoid writing image-derived requirements as confirmed.",
+      "expected_output": "Should validate SOT accessibility before materialization, record the image as a pending SOT entry with explicit access_status such as auth_required or pending_user_input, preserve the original reference without treating it as inspected, ask for a file upload, local path, screenshot/export, or pasted content, recommend a stable local asset path such as ./docs/assets/sot/requirements/1.1.1.png, intake existing docs/SOT_MANIFEST.md, docs/REQUIREMENTS.md, docs/DESIGN.md, IMPLEMENTATION_POLICY.md, and docs/assets/sot/ as SOT category candidates without merging them into a single SOT.md, while treating COMPONENT_REUSE_MAP.md as a derived reuse map unless the target repo explicitly defines it as SOT, and avoid writing image-derived requirements as confirmed.",
       "files": [],
       "expectations": [
         "Validates SOT accessibility before materialization",
@@ -383,8 +383,8 @@
         "Intakes existing docs/SOT_MANIFEST.md as SOT category candidate",
         "Intakes existing docs/REQUIREMENTS.md as SOT category candidate",
         "Intakes existing docs/DESIGN.md as SOT category candidate",
-        "Intakes existing docs/IMPLEMENTATION_POLICY.md as SOT category candidate",
-        "Intakes existing docs/COMPONENT_REUSE_MAP.md as SOT category candidate",
+        "Intakes existing IMPLEMENTATION_POLICY.md as SOT category candidate",
+        "Treats existing COMPONENT_REUSE_MAP.md as derived reuse map unless target repo explicitly defines it as SOT",
         "Does not merge existing SOT categories into a single SOT.md",
         "Does not write image-derived requirements as confirmed"
       ]
@@ -432,6 +432,118 @@
         "Does not materialize confirmed image-derived requirements",
         "Asks for file upload, local path, screenshot/export, or pasted content",
         "Does not recommend /tk:reflect as command-style next action"
+      ]
+    },
+    {
+      "id": 26,
+      "name": "prep-receipt-uses-natural-guidance-not-next-command",
+      "prompt": "You are evaluating TigerKit /tk:prep after successful source indexing with one pending inaccessible design asset. Describe the receipt. Do not write files.",
+      "expected_output": "Should provide a short receipt with outcome, artifact path, pending SOT access status, and natural-language fallback guidance. It should not include a default next-command recommendation such as 다음 추천: /tk:gap.",
+      "files": [],
+      "expectations": [
+        "Shows source index outcome and artifact path",
+        "Mentions pending SOT access status when present",
+        "Asks for file upload, local path, screenshot/export, or pasted content when fallback is needed",
+        "Does not include 다음 추천: /tk:gap",
+        "Does not include 추천 다음 동작 or next command wording"
+      ]
+    },
+    {
+      "id": 27,
+      "name": "component-reuse-map-preferred-with-legacy-ambiguity",
+      "prompt": "You are evaluating TigerKit when both COMPONENT_REUSE_MAP.md and reuse-map.md exist in a target repo. Describe expected behavior. Do not write files.",
+      "expected_output": "Should treat COMPONENT_REUSE_MAP.md as the preferred derived reuse map, treat reuse-map.md only as a legacy alias or migration candidate, warn that duplicate reuse maps can diverge, and use checkpoint-style ambiguity before relying on conflicting entries.",
+      "files": [],
+      "expectations": [
+        "Prefers COMPONENT_REUSE_MAP.md as the active derived reuse artifact name",
+        "Treats reuse-map.md only as legacy alias or migration candidate",
+        "Does not treat either file as external SOT unless target repo explicitly defines it as SOT",
+        "Warns that duplicate reuse maps can diverge",
+        "Does not write both files for the same target repo state"
+      ]
+    },
+    {
+      "id": 28,
+      "name": "legacy-reuse-map-fallback",
+      "prompt": "You are evaluating TigerKit when only reuse-map.md exists and COMPONENT_REUSE_MAP.md is absent. Describe expected behavior. Do not write files.",
+      "expected_output": "Should read reuse-map.md only as a legacy fallback or migration candidate, not as the preferred active artifact name or source of truth. It should not auto-create COMPONENT_REUSE_MAP.md unless user-approved command contract allows it.",
+      "files": [],
+      "expectations": [
+        "Reads reuse-map.md as legacy fallback or migration candidate only",
+        "Does not call reuse-map.md the preferred active artifact",
+        "Does not treat reuse-map.md as source of truth",
+        "Does not auto-create COMPONENT_REUSE_MAP.md",
+        "Mentions initialization may be useful only when inspected reuse knowledge should be preserved"
+      ]
+    },
+    {
+      "id": 29,
+      "name": "design-visible-copy-conflict-not-silent-match",
+      "prompt": "You are evaluating TigerKit /tk:gap when design SOT says a button label is A, requirements SOT says the button label is B, and actual implementation uses B. Describe expected behavior. Do not write files.",
+      "expected_output": "Should record a sot_conflict or Decision Gate entry, state the current priority rule for visible UI copy, avoid silently merging the two sources, and not mark the item as Match without inspected evidence and a stated priority rule.",
+      "files": [],
+      "expectations": [
+        "Records design-versus-requirements visible copy conflict as sot_conflict or Decision Gate item",
+        "States current priority rule for visible UI copy",
+        "Treats design SOT as generally winning when it explicitly provides visible target copy",
+        "Does not silently merge conflicting sources into synthetic requirement",
+        "Does not mark conflict-dependent item as Match without inspected evidence and priority rule"
+      ]
+    },
+    {
+      "id": 30,
+      "name": "requirements-validation-logic-beats-visual-design-state",
+      "prompt": "You are evaluating TigerKit /tk:gap when requirements specify a validation condition and design only shows a visual error state without defining behavior. Describe expected behavior. Do not write files.",
+      "expected_output": "Should treat requirements SOT as binding for validation behavior unless design explicitly overrides functional behavior. It should record implementation mismatch as a gap and not let visual design override business logic by implication.",
+      "files": [],
+      "expectations": [
+        "Uses requirements SOT for validation behavior",
+        "Does not infer behavior override from visual design state alone",
+        "Records validation mismatch as gap when implementation differs from requirements",
+        "Separates business logic priority from visible UI priority",
+        "Does not use existing code as authority over active requirements SOT"
+      ]
+    },
+    {
+      "id": 31,
+      "name": "policy-violation-is-gap-even-when-working",
+      "prompt": "You are evaluating TigerKit /tk:gap when project policy says LegacyComponent is avoided/deprecated for a flow, but actual implementation uses LegacyComponent and appears to work. Describe expected behavior. Do not write files.",
+      "expected_output": "Should record a policy gap using the project policy SOT, keep severity separate from resolvability, and avoid saying the implementation is acceptable just because it works. Generic docs should use neutral placeholders, not real package names.",
+      "files": [],
+      "expectations": [
+        "Records policy violation as a gap",
+        "Uses project policy SOT when accessible and inspected",
+        "Does not treat working behavior as justification for violating active policy",
+        "Separates severity from resolvability",
+        "Uses neutral placeholder names such as LegacyComponent instead of real package names"
+      ]
+    },
+    {
+      "id": 32,
+      "name": "gap-inventory-covers-low-severity-items",
+      "prompt": "You are evaluating TigerKit /tk:gap where scoped SOT includes a label, tooltip, modal okText, and table column. One low-severity text mismatch exists. Describe expected behavior. Do not write files.",
+      "expected_output": "Should include a Coverage Inventory listing each scoped item, mark which items were compared, record the low-severity copy mismatch as a gap, and avoid treating meaning-similar text as Match when exact text differs.",
+      "files": [],
+      "expectations": [
+        "Includes Coverage Inventory",
+        "Lists label, tooltip, modal okText, and table column items",
+        "Shows Compared? and Result per item",
+        "Records low-severity copy mismatch as a gap",
+        "Does not treat meaning-similar text as Match when exact text differs"
+      ]
+    },
+    {
+      "id": 33,
+      "name": "generic-docs-avoid-real-deprecated-dependency-examples",
+      "prompt": "You are evaluating generic TigerKit docs for dependency policy examples. Describe expected behavior. Do not write files.",
+      "expected_output": "Should avoid declaring any real third-party package, library, vendor, or component library globally deprecated. Examples should use neutral placeholders such as DeprecatedPackage, ProjectPreferredComponent, ProjectPolicyDependency, or LegacyComponent.",
+      "files": [],
+      "expectations": [
+        "Does not declare a real package deprecated globally",
+        "Does not hard-code project-specific dependency examples in generic docs",
+        "Uses neutral placeholders for policy examples",
+        "Treats dependency policy as project SOT when present",
+        "Does not introduce /tk:implement"
       ]
     }
   ]

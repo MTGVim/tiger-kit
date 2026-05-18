@@ -46,11 +46,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `commands/gap.md`: branch-local indexed SOT reference와 reproducible code baseline을 비교해 branch-local `gap.md`에 evidence-based gap을 기록한다.
 - `commands/checkpoint.md`: ambiguity, user decision, unverifiable source, conflict, self-resolvable item을 분리하는 Decision Gate다.
 - `commands/review.md`: TigerKit 준수룰 위반을 적대적으로 검토하는 artifact-free compliance review다.
-- `commands/reflect.md`: 현재 대화 context를 먼저 재구성해 branch-local `reflect.md`를 갱신하고 `CLAUDE.md`/`MEMORY.md`/`DESIGN.md`/`reuse-map.md` escalation 후보를 제안한다.
+- `commands/reflect.md`: 현재 대화 context를 먼저 재구성해 branch-local `reflect.md`를 갱신하고 `CLAUDE.md`/`MEMORY.md`/`DESIGN.md`/`COMPONENT_REUSE_MAP.md` escalation 후보를 제안한다.
 - `commands/handoff-write.md`: 다음 모델/세션을 위한 branch-local continuation contract를 `handoff.md`에 기록한다.
 - `commands/handoff-read.md`: branch-local handoff와 artifact map을 읽고 stale risk와 next safe action을 확인한다.
 - `docs/usage.md`: 사용자 관점의 명령 사용법.
-- `docs/artifact-layout.md`: `.tigerkit/`, `DESIGN.md`, `reuse-map.md` 산출물 구조.
+- `docs/artifact-layout.md`: `.tigerkit/`, `DESIGN.md`, `COMPONENT_REUSE_MAP.md`, legacy `reuse-map.md` 산출물 구조.
 - `docs/output-contract.md`: command 응답 receipt 규칙.
 
 ## 명령 개요
@@ -74,7 +74,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - SOT reference는 접근 가능하고 inspect되기 전까지 binding-auditable로 다루지 않는다.
 - inaccessible URL, image, Figma/design link, screenshot URL, local path는 pending SOT entry로 기록하고 file, local path, screenshot/export, pasted content를 요청한다.
 - binding visual SOT는 `./docs/assets/sot/requirements/` 또는 `./docs/assets/sot/design/` 아래 stable local asset reference를 선호한다.
-- 기존 `docs/SOT_MANIFEST.md`, `docs/REQUIREMENTS.md`, `docs/DESIGN.md`, `docs/IMPLEMENTATION_POLICY.md`, `docs/COMPONENT_REUSE_MAP.md`는 SOT category candidate로 intake하고 단일 `SOT.md`로 합치지 않는다.
+- 기존 `docs/SOT_MANIFEST.md`, `docs/REQUIREMENTS.md`, `docs/DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `docs/assets/sot/`는 SOT category candidate로 intake하고 단일 `SOT.md`로 합치지 않는다. `COMPONENT_REUSE_MAP.md`는 target repo가 명시적으로 SOT로 정의한 경우가 아니면 derived reuse map으로 다룬다.
 - 현재 session에서 사용자가 직접 말한 인터뷰 내용만 local text로 저장할 수 있다.
 - raw interview text와 derived interpretation을 분리한다.
 - branch-local `gap.md`가 TigerKit의 중심이다. gap은 SOT reference vs code baseline comparison record다.
@@ -82,13 +82,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - working tree가 clean하지 않으면 gap 기록을 시작하지 않고, 먼저 commit하거나 변경 정리를 요청한다.
 - ambiguity를 조용히 해결하지 않는다. source가 결론을 지지하지 않으면 gap으로 기록하고 필요하면 사용자에게 묻는다.
 - branch-local `reflect.md`는 현재 대화 context를 primary source로 사용하고, artifact와 git evidence는 보조 근거로만 사용한다.
-- `/tk:reflect`는 `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `reuse-map.md` escalation 후보를 제안하고, 사용자 승인 전에는 durable artifact를 수정하지 않는다.
+- `/tk:reflect`는 `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `COMPONENT_REUSE_MAP.md` escalation 후보를 제안하고, 사용자 승인 전에는 durable artifact를 수정하지 않는다.
 - `/tk:handoff-write`는 current goal, branch/HEAD, artifact map, gap context, ambiguity/not-confirmed 분류, next safe action을 handoff에 남긴다.
-- `/tk:handoff-read`는 handoff를 맹신하지 않고 현재 branch/HEAD, artifact map, `CLAUDE.md`, `DESIGN.md`, `reuse-map.md`를 확인한 뒤 stale/missing/conflict/needs-confirmation을 분리한다.
+- `/tk:handoff-read`는 handoff를 맹신하지 않고 현재 branch/HEAD, artifact map, `CLAUDE.md`, `DESIGN.md`, `COMPONENT_REUSE_MAP.md`, legacy `reuse-map.md`를 확인한 뒤 stale/missing/conflict/needs-confirmation을 분리한다.
 - `/tk:gap`은 SOT access coverage를 기록하고 inaccessible binding SOT가 있으면 audit이 partial임을 명시한다.
 - 대화 context에 남아 있지 않은 내용은 추측하지 않고 `확인 불가`로 둔다.
-- `DESIGN.md`와 `reuse-map.md`는 derived repo-level knowledge이며 외부 SOT를 대체하지 않는다.
-- `DESIGN.md`와 `reuse-map.md` 업데이트는 prep/gap 중 직접 하지 말고 reflection escalation gate를 통해 제안하고 사용자 승인 후에만 적용한다.
+- `DESIGN.md`와 `COMPONENT_REUSE_MAP.md`는 derived repo-level knowledge이며 외부 SOT를 대체하지 않는다. `reuse-map.md`는 legacy alias/migration candidate로만 다룬다.
+- `DESIGN.md`와 `COMPONENT_REUSE_MAP.md` 업데이트는 prep/gap 중 직접 하지 말고 reflection escalation gate를 통해 제안하고 사용자 승인 후에만 적용한다. `reuse-map.md`는 legacy migration 후보로만 제안한다.
 - `DESIGN.md`가 없으면 TigerKit이 새로 생성하지 않는다. 넣을 derived design knowledge가 있으면 사용자에게 초기화 필요를 알린다.
 - inspect하지 않은 component prop, API field, behavior, reusable capability를 기록하지 않는다.
 

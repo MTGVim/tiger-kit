@@ -87,9 +87,13 @@ Having a URL is not the same as seeing the image, reading the document, or inspe
 - local file path
 - pasted reference
 - file attachment
-- 기존 `docs/SOT_MANIFEST.md`, `docs/REQUIREMENTS.md`, `docs/DESIGN.md`, `docs/IMPLEMENTATION_POLICY.md`, `docs/COMPONENT_REUSE_MAP.md`
+- 기존 `docs/SOT_MANIFEST.md`, `docs/REQUIREMENTS.md`, `docs/DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `COMPONENT_REUSE_MAP.md`
 
-Do not rename everything to a single `SOT.md` file. 기존 구조는 `SOT.md` 같은 단일 파일로 합치지 않습니다. 위 파일들이 있으면 source category별 active SOT candidate로 intake하고, branch-local `requirements.md`의 SOT 접근성 manifest에 연결합니다.
+Do not rename everything to a single `SOT.md` file. 기존 구조는 `SOT.md` 같은 단일 파일로 합치지 않습니다. 위 파일들이 있으면 source category별 candidate로 intake하고, branch-local `requirements.md`의 SOT 접근성 manifest에 연결합니다.
+
+- `IMPLEMENTATION_POLICY.md`가 있으면 binding project policy SOT candidate로 intake합니다. Architecture decision, dependency policy, required/avoided/banned/deprecated/preferred component or pattern, durable user-confirmed feedback, implementation constraint, non-goal, policy exception을 담을 수 있습니다.
+- `COMPONENT_REUSE_MAP.md`는 기본적으로 derived repo-level reuse map입니다. target repo가 명시적으로 SOT로 정의한 경우가 아니면 external SOT처럼 다루지 않습니다.
+- `reuse-map.md`가 있으면 legacy alias 또는 migration candidate로만 표시합니다. `COMPONENT_REUSE_MAP.md`와 둘 다 있으면 duplicate reuse maps can diverge 경고 또는 checkpoint-style ambiguity로 기록합니다.
 
 권장 access status:
 
@@ -191,7 +195,7 @@ A source is not binding-auditable until TigerKit can access and inspect it, or e
 1. 현재 branch를 확인합니다.
 2. detached HEAD 또는 protected branch이면 branch switch/create를 요청하고 멈춥니다.
 3. 사용자가 제공한 source를 external reference와 direct interview text로 분리합니다.
-4. 기존 `docs/SOT_MANIFEST.md`, `docs/REQUIREMENTS.md`, `docs/DESIGN.md`, `docs/IMPLEMENTATION_POLICY.md`, `docs/COMPONENT_REUSE_MAP.md`, `docs/assets/sot/`가 있으면 active SOT candidate로 intake합니다.
+4. 기존 `docs/SOT_MANIFEST.md`, `docs/REQUIREMENTS.md`, `docs/DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `docs/assets/sot/`가 있으면 active SOT candidate로 intake합니다. `COMPONENT_REUSE_MAP.md`는 target repo가 명시적으로 SOT로 정의한 경우가 아니면 derived reuse map으로 intake하고, `reuse-map.md`는 legacy fallback/migration candidate로만 표시합니다.
 5. 각 SOT candidate의 type과 access status를 검증합니다.
 6. 외부 source는 pointer와 access metadata만 기록합니다.
 7. inaccessible source는 pending SOT entry로 기록하고 fallback을 요청합니다.
@@ -223,7 +227,7 @@ source does not specify X
 - 아래 현재 plugin 권장 규칙이 빠져 있거나 기존 managed section 내용이 오래되어 불일치하는지
   - SOT 후보 유도 규칙
   - API reference set 규칙
-  - `reuse-map.md`를 cache-0 discovery aid로만 다루는 규칙
+  - `COMPONENT_REUSE_MAP.md`를 preferred derived reuse map으로 다루고 `reuse-map.md`를 legacy fallback/migration candidate로만 다루는 규칙
   - 새 모듈 생성 전 repo-wide exploration 규칙
   - 공통 모듈 수정 전 callsite impact analysis와 사용자 승인 규칙
   - `/tk:gap` clean HEAD baseline 규칙
@@ -246,7 +250,7 @@ Marker:
 - inaccessible URL, image, Figma, screenshot, local path를 inspected SOT처럼 기록
 - unverified asset-derived requirement를 confirmed requirement처럼 materialize
 - 여러 source를 하나의 synthetic requirement로 병합
-- `CLAUDE.md`, `DESIGN.md`, `reuse-map.md` 직접 업데이트
+- `CLAUDE.md`, `DESIGN.md`, `COMPONENT_REUSE_MAP.md` 직접 업데이트
 - root-level `.tigerkit/requirements.md` 새로 쓰기
 - implementation, commit, push, PR 생성, merge, deploy
 
