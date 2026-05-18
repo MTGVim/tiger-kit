@@ -36,12 +36,63 @@ source index 기록 준비했습니다.
 ```text
 gap 기록했습니다.
 - branch: `feature__example`
-- workflow step: `reflection-ready`
+- workflow step: `checkpoint-ready`
 - baseline: `abc1234`
 - recorded: `GAP-001`, `GAP-002`
 - 기록: `.tigerkit/branches/feature__example/gap.md`
 
-해야 할 일: /tk:reflect
+해야 할 일: high-impact ambiguity가 있으면 /tk:checkpoint로 계속 진행 가능 여부를 판단하고, 없으면 gap별 필요한 해결 기준에 따라 진행합니다.
+```
+
+## checkpoint receipt
+
+```md
+# Checkpoint
+
+## 1. Current Status
+
+현재 확인한 source와 task state를 짧게 기록합니다.
+
+## 2. Blocking Questions
+
+| ID | Question | Source | Why it matters | Consequence if wrong | Pause? |
+|---|---|---|---|---|---|
+
+## 3. User Decisions Needed
+
+| ID | Decision | Options | Current assumption | Recommended handling | Pause? |
+|---|---|---|---|---|---|
+
+## 4. Assumptions Being Made
+
+| ID | Assumption | Source | Risk | Consequence if wrong |
+|---|---|---|---|---|
+
+## 5. Not Verifiable Items
+
+| ID | Item | Reason | Needed input | Current handling |
+|---|---|---|---|---|
+
+## 6. SOT / Policy Conflicts
+
+| ID | Conflict | Sources | Current priority rule | Needs user decision? |
+|---|---|---|---|---|
+
+## 7. Self-resolvable Items
+
+| ID | Item | Why self-resolvable | Safe action |
+|---|---|---|---|
+
+## 8. Items Not Safe to Auto-resolve
+
+| ID | Item | Reason | Required next input |
+|---|---|---|---|
+
+## 9. Continue / Pause Judgment
+
+Final status: `CLEAR | PROCEED_WITH_ASSUMPTIONS | PAUSE_FOR_USER_DECISION | BLOCKED_BY_ACCESS | NEED_VERIFICATION`
+
+한 줄 설명.
 ```
 
 ## reflect receipt
@@ -110,6 +161,7 @@ gap 기록을 시작하지 않았습니다.
 - command별 출력은 보통 3~6줄 안팎을 목표로 합니다.
 - 다음 행동은 하나 이상 명확히 제시합니다.
 - `/tk:gap` receipt는 `workflow step`과 `해야 할 일`을 포함합니다.
+- `/tk:checkpoint`는 required sections와 final status를 포함합니다.
 - evidence, interpretation, decision, suggestion을 섞지 않습니다.
 - ambiguity를 resolved처럼 말하지 않습니다.
 - `recorded only`, `applied`, `pending escalation`, `skipped`를 구분합니다.
@@ -120,6 +172,8 @@ gap 기록을 시작하지 않았습니다.
 - 전체 artifact dump
 - 실행 대기열 생성
 - 내부 진행 상태 노출
+- `/tk:reflect`를 default next command로 추천
+- inaccessible SOT-dependent item을 evidence 없이 `Match`로 표시
 - source summary를 requirement처럼 확정하는 문구
 - 사용자가 요청하지 않은 verbose retrospective
 - `reflect.md` 기록과 durable artifact 반영을 같은 outcome처럼 말하기

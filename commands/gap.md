@@ -31,7 +31,7 @@ Root-level `.tigerkit/gap.md`는 deprecated artifact입니다. 발견하면 migr
 3. `baseline-check`: clean HEAD working tree와 HEAD commit hash를 확인합니다.
 4. `evidence-collection`: SOT와 code evidence, reuse exploration evidence를 수집합니다.
 5. `gap-recording`: `.tigerkit/branches/{escaped-branch}/gap.md`를 갱신합니다.
-6. `reflection-ready`: gap 기록 후 `/tk:reflect`를 다음 행동으로 제안합니다.
+6. `checkpoint-ready`: gap 기록 후 high-impact ambiguity, access, verification, user decision 점검 필요 여부를 안내합니다.
 
 receipt에는 최소한 아래를 포함합니다.
 
@@ -166,6 +166,43 @@ implementation drift로 보입니다. source ambiguity는 아닙니다.
 
 사용자 확인 또는 code update 필요.
 ```
+
+## Decision Gate rule
+
+각 gap은 severity와 resolvability를 분리합니다.
+
+```text
+Severity != Resolvability
+```
+
+필요한 경우 gap record에 아래 필드를 추가합니다.
+
+```text
+selfResolvable
+requiresUserDecision
+externalDependency
+notVerifiable
+needsVerification
+largeOrRiskyRefactor
+shouldPauseBeforeFix
+blocker
+safeAutoFixReason
+```
+
+분류 기준:
+
+- `selfResolvable`: SOT가 명확하고 local low-risk fix가 가능합니다.
+- `requiresUserDecision`: policy, interpretation, token, scope, behavior 선택이 필요합니다.
+- `externalDependency`: backend, API, infrastructure, external owner 변경이 필요합니다.
+- `notVerifiable`: SOT, document, image, file, API를 현재 inspect할 수 없습니다.
+- `needsVerification`: code, type, schema, data source 확인이 필요합니다.
+- `largeOrRiskyRefactor`: fix 범위가 넓거나 위험해 승인 없이 auto-resolve하지 않습니다.
+
+SOT reference에 접근할 수 없으면 내용을 추론하지 않습니다. dependent item을 `Match`로 표시하지 않고, accessible file, image, local path, export, pasted content를 요청합니다.
+
+high-impact ambiguity가 있으면 `/tk:checkpoint`를 실행하거나 report 안에서 checkpoint 필요성을 안내합니다. trivial copy나 local one-line fix처럼 SOT가 명확하고 safe action이 분명하면 checkpoint를 남발하지 않습니다.
+
+`/tk:reflect`는 default next command로 추천하지 않습니다. project policy나 repeated user preference를 durable하게 남길 필요가 있을 때만 자연어로 안내합니다.
 
 ## evidence rule
 
@@ -325,7 +362,7 @@ repo-wide exploration을 다시 수행하고, inspected candidates와 callsite e
 11. exact excerpt나 pointer 중심으로 evidence를 남깁니다.
 12. finding과 interpretation을 분리합니다.
 13. required resolution을 해결 기준으로 적습니다.
-14. `.tigerkit/branches/{escaped-branch}/gap.md`를 갱신하고 `workflow step: reflection-ready`로 다음 행동을 안내합니다.
+14. `.tigerkit/branches/{escaped-branch}/gap.md`를 갱신하고 `workflow step: checkpoint-ready`로 Decision Gate 필요 여부를 안내합니다.
 
 ## 금지
 
@@ -343,13 +380,13 @@ repo-wide exploration을 다시 수행하고, inspected candidates와 callsite e
 ```text
 gap 기록했습니다.
 - branch: `feature__example`
-- workflow step: `reflection-ready`
+- workflow step: `checkpoint-ready`
 - baseline: `abc1234`
 - inspected files: source 비교에 필요한 파일
 - recorded: `GAP-001`, `GAP-002`
 - 기록: `.tigerkit/branches/feature__example/gap.md`
 
-해야 할 일: /tk:reflect
+해야 할 일: high-impact ambiguity가 있으면 /tk:checkpoint로 계속 진행 가능 여부를 판단하고, 없으면 gap별 필요한 해결 기준에 따라 진행합니다.
 ```
 
 blocked 예시:
