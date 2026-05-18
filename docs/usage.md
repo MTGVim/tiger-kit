@@ -48,7 +48,7 @@ TigerKit branch-local artifacts are not written on detached HEAD or protected br
 | Command | 역할 |
 | --- | --- |
 | `/tk:prep` | source-of-truth reference와 직접 사용자 인터뷰를 branch-local requirements index에 기록 |
-| `/tk:gap` | branch-local indexed SOT reference와 clean HEAD baseline을 비교해 evidence-based gap 기록 |
+| `/tk:gap` | branch-local indexed SOT reference와 clean HEAD baseline을 비교해 evidence-based gap 기록, workflow step과 해야 할 일 안내 |
 | `/tk:reflect` | session을 재구성해 branch-local reflection을 기록하고 durable artifact 격상 후보 제안 |
 | `/tk:handoff-write` | 다음 모델/세션을 위한 branch-local continuation contract 작성 |
 | `/tk:handoff-read` | handoff와 artifact map을 읽고 현재 repo 상태와 stale risk 확인 |
@@ -121,6 +121,17 @@ TigerKit branch-local artifacts are not written on detached HEAD or protected br
 ```text
 /tk:gap
 ```
+
+`/tk:gap`은 현재 workflow step과 그 단계에서 해야 할 일을 receipt에 함께 보여줍니다. 별도 상태 파일을 만들지 않는 read-only guidance입니다.
+
+workflow step:
+
+1. `branch-check`: feature branch인지 확인
+2. `source-index-check`: branch-local `requirements.md`의 SOT reference 확인
+3. `baseline-check`: clean HEAD와 commit hash 확인
+4. `evidence-collection`: SOT, code, reuse evidence 수집
+5. `gap-recording`: branch-local `gap.md` 갱신
+6. `reflection-ready`: `/tk:reflect`로 넘어갈 준비 완료
 
 하는 일:
 

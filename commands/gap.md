@@ -20,6 +20,25 @@ gap = SOT reference vs commit/code comparison
 
 Root-level `.tigerkit/gap.md`는 deprecated artifact입니다. 발견하면 migration 후보로만 표시하고 사용자 승인 없이 이동하지 않습니다.
 
+## workflow status guidance
+
+`/tk:gap`은 현재 gap workflow 단계와 해당 단계의 next action을 receipt에 명확히 포함합니다. 이 정보는 read-only guidance이며 별도 상태 artifact를 만들지 않습니다.
+
+단계는 아래 순서로 판정합니다.
+
+1. `branch-check`: 현재 branch가 feature branch인지 확인합니다.
+2. `source-index-check`: branch-local `requirements.md`에서 compared SOT reference를 확인합니다.
+3. `baseline-check`: clean HEAD working tree와 HEAD commit hash를 확인합니다.
+4. `evidence-collection`: SOT와 code evidence, reuse exploration evidence를 수집합니다.
+5. `gap-recording`: `.tigerkit/branches/{escaped-branch}/gap.md`를 갱신합니다.
+6. `reflection-ready`: gap 기록 후 `/tk:reflect`를 다음 행동으로 제안합니다.
+
+receipt에는 최소한 아래를 포함합니다.
+
+- `workflow step`: 현재 단계
+- `해야 할 일`: 해당 단계에서 사용자가 하거나 모델이 다음에 해야 하는 한 가지 행동
+- blocked 상태이면 `blocked` reason과 `해야 할 일`
+
 ## baseline rule
 
 gap 분석 전에 code baseline을 식별합니다.
@@ -48,7 +67,7 @@ blocked receipt에는 아래를 포함합니다.
 - staged status
 - unstaged status
 - untracked status
-- recommended next action
+- 해야 할 일
 
 ## gap scope
 
@@ -293,20 +312,20 @@ repo-wide exploration을 다시 수행하고, inspected candidates와 callsite e
 
 ## 절차
 
-1. 현재 branch를 확인합니다.
+1. 현재 branch를 확인하고 `workflow step: branch-check`를 판정합니다.
 2. detached HEAD 또는 protected branch이면 branch switch/create를 요청하고 멈춥니다.
-3. `.tigerkit/branches/{escaped-branch}/requirements.md`에서 비교할 SOT reference를 확인합니다.
-4. working tree 상태와 HEAD commit을 확인해 baseline을 정합니다.
+3. `.tigerkit/branches/{escaped-branch}/requirements.md`에서 비교할 SOT reference를 확인하고 `workflow step: source-index-check`를 판정합니다.
+4. working tree 상태와 HEAD commit을 확인해 baseline을 정하고 `workflow step: baseline-check`를 판정합니다.
 5. staged, unstaged, untracked 변경 중 하나라도 있으면 `blocked: working tree not clean`으로 보고하고 멈춥니다.
 6. staged diff를 baseline으로 비교하지 않고 gap evidence로도 기록하지 않습니다.
-7. gap scope를 functional, design, reuse 관점으로 잡습니다.
+7. gap scope를 functional, design, reuse 관점으로 잡고 `workflow step: evidence-collection`을 판정합니다.
 8. repo-wide exploration으로 재사용 후보를 탐사합니다.
 9. 관련 code file과 candidate file, callsite를 읽고 inspected files에 기록합니다.
 10. design SOT와 rendered UI 비교가 필요하면 현재 DOM, accessibility tree, screenshot, rendered text, style token evidence 중 재현 가능한 자료를 확보하거나 사용자에게 요청합니다.
 11. exact excerpt나 pointer 중심으로 evidence를 남깁니다.
 12. finding과 interpretation을 분리합니다.
 13. required resolution을 해결 기준으로 적습니다.
-14. `.tigerkit/branches/{escaped-branch}/gap.md`를 갱신합니다.
+14. `.tigerkit/branches/{escaped-branch}/gap.md`를 갱신하고 `workflow step: reflection-ready`로 다음 행동을 안내합니다.
 
 ## 금지
 
@@ -324,21 +343,23 @@ repo-wide exploration을 다시 수행하고, inspected candidates와 callsite e
 ```text
 gap 기록했습니다.
 - branch: `feature__example`
+- workflow step: `reflection-ready`
 - baseline: `abc1234`
 - inspected files: source 비교에 필요한 파일
 - recorded: `GAP-001`, `GAP-002`
 - 기록: `.tigerkit/branches/feature__example/gap.md`
 
-다음 추천: /tk:reflect
+해야 할 일: /tk:reflect
 ```
 
 blocked 예시:
 
 ```text
 gap 기록을 시작하지 않았습니다.
+- workflow step: `baseline-check`
 - blocked: working tree not clean
 - staged: yes
 - unstaged: no
 - untracked: yes
-- recommended next action: staged 변경은 commit하고, 나머지 변경은 정리하거나 함께 commit한 뒤 rerun `/tk:gap`
+- 해야 할 일: staged 변경은 commit하고, 나머지 변경은 정리하거나 함께 commit한 뒤 rerun `/tk:gap`
 ```

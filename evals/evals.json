@@ -34,6 +34,7 @@
         "Includes code evidence as exact excerpt or pointer",
         "Separates finding from interpretation",
         "Includes required resolution",
+        "Shows current gap workflow step and next action in the receipt",
         "Writes or updates branch-local gap.md",
         "Does not convert gap into work plan",
         "Does not update CLAUDE.md, DESIGN.md, or reuse-map.md during gap"
@@ -49,6 +50,7 @@
         "Does not record gaps without a clean baseline",
         "Explains reproducible baseline is missing",
         "Asks user to commit or clean up changes",
+        "Shows the blocked workflow step and the action needed before rerunning /tk:gap",
         "Does not invent a commit hash",
         "Does not treat uncommitted changes as a reproducible baseline"
       ]

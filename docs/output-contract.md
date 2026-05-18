@@ -36,11 +36,12 @@ source index 기록 준비했습니다.
 ```text
 gap 기록했습니다.
 - branch: `feature__example`
+- workflow step: `reflection-ready`
 - baseline: `abc1234`
 - recorded: `GAP-001`, `GAP-002`
 - 기록: `.tigerkit/branches/feature__example/gap.md`
 
-다음 추천: /tk:reflect
+해야 할 일: /tk:reflect
 ```
 
 ## reflect receipt
@@ -80,12 +81,25 @@ handoff 읽었습니다.
 next safe action: 사용자 확인 후 GAP-001 관련 파일 inspect
 ```
 
+## gap blocked receipt
+
+```text
+gap 기록을 시작하지 않았습니다.
+- workflow step: `baseline-check`
+- blocked: working tree not clean
+- staged: yes
+- unstaged: no
+- untracked: yes
+- 해야 할 일: staged 변경은 commit하고, 나머지 변경은 정리하거나 함께 commit한 뒤 rerun `/tk:gap`
+```
+
 ## protected branch receipt
 
 ```text
 기록하지 않았습니다.
+- workflow step: `branch-check`
 - reason: protected branch `main`
-- required action: feature branch로 switch/create
+- 해야 할 일: feature branch로 switch/create
 - artifact: 변경 없음
 ```
 
@@ -95,6 +109,7 @@ next safe action: 사용자 확인 후 GAP-001 관련 파일 inspect
 - 사용자가 명시적으로 원할 때만 verbose report를 보여줍니다.
 - command별 출력은 보통 3~6줄 안팎을 목표로 합니다.
 - 다음 행동은 하나 이상 명확히 제시합니다.
+- `/tk:gap` receipt는 `workflow step`과 `해야 할 일`을 포함합니다.
 - evidence, interpretation, decision, suggestion을 섞지 않습니다.
 - ambiguity를 resolved처럼 말하지 않습니다.
 - `recorded only`, `applied`, `pending escalation`, `skipped`를 구분합니다.
