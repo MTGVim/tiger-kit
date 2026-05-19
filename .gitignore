@@ -1,3 +1,6 @@
-.tigerkit/
+.tigerkit/*
+!.tigerkit/docs/
+.tigerkit/docs/*
+!.tigerkit/docs/*.md
 .worktrees/
 docs/superpowers/
