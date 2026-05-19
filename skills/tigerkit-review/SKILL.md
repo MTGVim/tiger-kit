@@ -23,7 +23,7 @@ TigerKit review는 구현자가 놓친 contract drift를 잡는 적대적 검토
 2. relevant diff 또는 changed files
 3. `.claude-plugin/plugin.json`
 4. `commands/*.md`
-5. `README.md`, `docs/usage.md`, `docs/output-contract.md`, `docs/artifact-layout.md`
+5. `README.md`, `.tigerkit/docs/usage.md`, `.tigerkit/docs/output-contract.md`, `.tigerkit/docs/artifact-layout.md`
 6. `evals/evals.json`
 7. branch-local TigerKit artifacts if task is artifact review
 8. `CLAUDE.md`, `DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `COMPONENT_REUSE_MAP.md` if mentioned or modified

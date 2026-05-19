@@ -20,24 +20,26 @@ gap = SOT reference vs commit/code comparison
 
 Root-level `.tigerkit/gap.md`는 deprecated artifact입니다. 발견하면 migration 후보로만 표시하고 사용자 승인 없이 이동하지 않습니다.
 
-## workflow status guidance
+## gap record state guidance
 
-`/tk:gap`은 현재 gap workflow 단계와 해당 단계의 `해야 할 일`을 receipt에 명확히 포함합니다. 이 정보는 read-only guidance이며 별도 상태 artifact를 만들지 않습니다.
+`/tk:gap`은 workflow orchestration이나 task queue 안내를 하지 않습니다. receipt에 넣는 상태 표현이 필요하면 비교 기록 관점의 현재 상태만 간단히 말합니다. 이 정보는 read-only state이며 별도 상태 artifact를 만들지 않습니다.
 
-단계는 아래 순서로 판정합니다.
+권장 상태 표현:
 
-1. `branch-check`: 현재 branch가 feature branch인지 확인합니다.
-2. `source-index-check`: branch-local `requirements.md`에서 compared SOT reference를 확인합니다.
-3. `baseline-check`: clean HEAD working tree와 HEAD commit hash를 확인합니다.
-4. `evidence-collection`: SOT와 code evidence, reuse exploration evidence를 수집합니다.
-5. `gap-recording`: `.tigerkit/branches/{escaped-branch}/gap.md`를 갱신합니다.
-6. `checkpoint-ready`: gap 기록 후 high-impact ambiguity, access, verification, user decision 점검 필요 여부를 안내합니다.
+- `branch_invalid`: gap 기록을 시작할 수 없는 branch 상태
+- `source_index_missing`: 비교할 SOT reference index가 부족한 상태
+- `baseline_not_reproducible`: clean HEAD working tree 또는 HEAD commit hash가 없는 상태
+- `comparison_in_progress`: SOT/code/reuse evidence를 비교 중인 상태
+- `gap_recorded`: `.tigerkit/branches/{escaped-branch}/gap.md` 기록이 끝난 상태
+- `needs_decision_gate`: gap record는 남겼지만 ambiguity, access, verification, user decision 점검이 더 필요한 상태
 
 receipt에는 최소한 아래를 포함합니다.
 
-- `workflow step`: 현재 단계
-- `해야 할 일`: 해당 단계에서 사용자가 하거나 모델이 다음에 해야 하는 한 가지 행동
-- blocked 상태이면 `blocked` reason과 `해야 할 일`
+- `state`: 현재 gap record 상태
+- `blocked`, if applicable
+- `reason`, if applicable
+- `recorded`, if applicable
+- `next safe action`, if applicable
 
 ## baseline rule
 
@@ -442,20 +444,20 @@ repo-wide exploration을 다시 수행하고, inspected candidates와 callsite e
 
 ## 절차
 
-1. 현재 branch를 확인하고 `workflow step: branch-check`를 판정합니다.
+1. 현재 branch를 확인합니다.
 2. detached HEAD 또는 protected branch이면 branch switch/create를 요청하고 멈춥니다.
-3. `.tigerkit/branches/{escaped-branch}/requirements.md`에서 비교할 SOT reference를 확인하고 `workflow step: source-index-check`를 판정합니다.
-4. working tree 상태와 HEAD commit을 확인해 baseline을 정하고 `workflow step: baseline-check`를 판정합니다.
+3. `.tigerkit/branches/{escaped-branch}/requirements.md`에서 비교할 SOT reference를 확인합니다.
+4. working tree 상태와 HEAD commit을 확인해 reproducible baseline인지 판정합니다.
 5. staged, unstaged, untracked 변경 중 하나라도 있으면 `blocked: working tree not clean`으로 보고하고 멈춥니다.
 6. staged diff를 baseline으로 비교하지 않고 gap evidence로도 기록하지 않습니다.
-7. gap scope를 functional, design, reuse 관점으로 잡고 `workflow step: evidence-collection`을 판정합니다.
+7. gap scope를 functional, design, reuse 관점으로 잡습니다.
 8. repo-wide exploration으로 재사용 후보를 탐사합니다.
 9. 관련 code file과 candidate file, callsite를 읽고 inspected files에 기록합니다.
 10. design SOT와 rendered UI 비교가 필요하면 현재 DOM, accessibility tree, screenshot, rendered text, style token evidence 중 재현 가능한 자료를 확보하거나 사용자에게 요청합니다.
 11. exact excerpt나 pointer 중심으로 evidence를 남깁니다.
 12. finding과 interpretation을 분리합니다.
 13. required resolution을 해결 기준으로 적습니다.
-14. `.tigerkit/branches/{escaped-branch}/gap.md`를 갱신하고 `workflow step: checkpoint-ready`로 Decision Gate 필요 여부를 안내합니다.
+14. `.tigerkit/branches/{escaped-branch}/gap.md`를 갱신하고 추가 Decision Gate가 필요한지만 안내합니다.
 
 ## 금지
 
@@ -473,24 +475,23 @@ repo-wide exploration을 다시 수행하고, inspected candidates와 callsite e
 ```text
 gap 기록했습니다.
 - branch: `feature__example`
-- workflow step: `checkpoint-ready`
+- state: `needs_decision_gate`
 - baseline: `abc1234`
 - inspected files: source 비교에 필요한 파일
 - recorded: `GAP-001`, `GAP-002`
 - SOT coverage: partial, `SOT-IMG-001` pending_user_input
 - 기록: `.tigerkit/branches/feature__example/gap.md`
-
-해야 할 일: 접근 불가 binding SOT가 있으면 file, local path, screenshot/export, pasted content를 요청하고, 없으면 gap별 필요한 해결 기준에 따라 진행합니다.
+- next safe action: 접근 불가 binding SOT가 있으면 file, local path, screenshot/export, pasted content를 요청하고, 없으면 gap별 필요한 해결 기준에 따라 진행합니다.
 ```
 
 blocked 예시:
 
 ```text
 gap 기록을 시작하지 않았습니다.
-- workflow step: `baseline-check`
+- state: `baseline_not_reproducible`
 - blocked: working tree not clean
 - staged: yes
 - unstaged: no
 - untracked: yes
-- 해야 할 일: staged 변경은 commit하고, 나머지 변경은 정리하거나 함께 commit한 뒤 clean baseline에서 gap 분석을 다시 요청하세요.
+- next safe action: staged 변경은 commit하고, 나머지 변경은 정리하거나 함께 commit한 뒤 clean baseline에서 gap 분석을 다시 요청하세요.
 ```

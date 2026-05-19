@@ -1,4 +1,6 @@
-# Output Contract
+# TigerKit 운영 Output Contract
+
+이 문서는 `.tigerkit/docs/` 아래 TigerKit 운영 문서 중 receipt/output contract를 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
 
 TigerKit command의 기본 채팅 응답은 artifact 자체가 아니라 receipt입니다.
 
@@ -27,8 +29,6 @@ source index 기록 준비했습니다.
 - pending SOT: 접근 불가 source는 fallback 요청
 - local asset: binding visual SOT는 `./docs/assets/sot/...` 경로 권장
 - interview: raw와 interpretation 분리
-- migration: root artifact와 기존 SOT docs 후보 표시
-- CLAUDE.md: managed section이 없으면 이후 반영을 강하게 추천할 고우선 후보 표시
 
 해야 할 일: 접근 불가 SOT가 있으면 파일 업로드, 로컬 경로, screenshot/export, pasted content를 제공해 주세요.
 ```
@@ -38,13 +38,12 @@ source index 기록 준비했습니다.
 ```text
 gap 기록했습니다.
 - branch: `feature__example`
-- workflow step: `checkpoint-ready`
 - baseline: `abc1234`
 - recorded: `GAP-001`, `GAP-002`
 - SOT coverage: partial, `SOT-IMG-001` pending_user_input
 - 기록: `.tigerkit/branches/feature__example/gap.md`
 
-해야 할 일: 접근 불가 binding SOT가 있으면 file, local path, screenshot/export, pasted content를 요청하고, 없으면 gap별 필요한 해결 기준에 따라 진행합니다.
+해야 할 일: 접근 불가 binding SOT가 있으면 file, local path, screenshot/export, pasted content를 요청해 주세요.
 ```
 
 ## checkpoint receipt
@@ -141,8 +140,6 @@ handoff 기록했습니다.
 - artifact map: requirements/gap/reflect 상태 포함
 - open gaps: 2
 - ambiguity: 1
-
-해야 할 일: 이어받는 세션에서는 handoff 내용을 먼저 확인하고 baseline이 stale하지 않은지 점검하세요.
 ```
 
 ## handoff-read receipt
@@ -154,8 +151,6 @@ handoff 읽었습니다.
 - artifact map: requirements/gap/reflect 확인
 - stale risk: 없음
 - 확인 필요: 1개
-
-해야 할 일: 사용자 확인 후 GAP-001 관련 파일을 inspect하세요.
 ```
 
 ## gap blocked receipt
@@ -185,26 +180,8 @@ gap 기록을 시작하지 않았습니다.
 - 상세 내용은 artifact path로 안내합니다.
 - 사용자가 명시적으로 원할 때만 verbose report를 보여줍니다.
 - command별 출력은 보통 3~6줄 안팎을 목표로 합니다.
-- 다음 행동은 command-style recommendation이 아니라 자연어로 하나 이상 명확히 제시합니다.
-- default receipt는 사용자가 명시적으로 command를 묻지 않는 한 “다음 추천: /tk:*”, “추천 다음 동작”, “next command”, “next safe action: /tk:*” 형식을 쓰지 않습니다.
-- `/tk:gap` receipt는 `workflow step`과 `해야 할 일`을 포함합니다.
-- `/tk:checkpoint`는 required sections와 final status를 포함합니다.
-- `/tk:review`는 finding별 severity, 위치, 규칙, evidence, 영향, 필요한 수정을 포함하거나 `NO_FINDINGS`만 출력합니다.
-- SOT 접근성 receipt는 access status, pending SOT, fallback 필요 여부를 구분합니다.
-- evidence, interpretation, decision, suggestion을 섞지 않습니다.
-- ambiguity를 resolved처럼 말하지 않습니다.
-- `recorded only`, `applied`, `pending escalation`, `skipped`를 구분합니다.
+- 다음 행동은 command-style recommendation이 아니라 자연어로 짧게 제시합니다.
 
-## 피할 것
+## 운영 메모
 
-- JSON-like metadata dump
-- 전체 artifact dump
-- 실행 대기열 생성
-- 내부 진행 상태 노출
-- `/tk:reflect`를 default next command로 추천
-- `/tk:review`에서 preference 수준 wording을 blocking finding으로 격상
-- inaccessible SOT-dependent item을 evidence 없이 `Match`로 표시
-- pending SOT를 confirmed requirement처럼 출력
-- source summary를 requirement처럼 확정하는 문구
-- 사용자가 요청하지 않은 verbose retrospective
-- `reflect.md` 기록과 durable artifact 반영을 같은 outcome처럼 말하기
+세부 정책과 분류 규칙은 `CLAUDE.md`를 기준으로 봅니다.

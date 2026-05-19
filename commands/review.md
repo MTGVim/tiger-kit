@@ -26,7 +26,7 @@ review = TigerKit compliance check, not implementation
 2. current diff 또는 review 대상 file set
 3. `.claude-plugin/plugin.json`
 4. `commands/*.md`
-5. `README.md`, `docs/usage.md`, `docs/output-contract.md`, `docs/artifact-layout.md`
+5. `README.md`, `.tigerkit/docs/usage.md`, `.tigerkit/docs/output-contract.md`, `.tigerkit/docs/artifact-layout.md`
 6. `evals/evals.json`
 7. branch-local TigerKit artifacts, if present and relevant
 8. `CLAUDE.md`, `DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `COMPONENT_REUSE_MAP.md`, if mentioned or modified

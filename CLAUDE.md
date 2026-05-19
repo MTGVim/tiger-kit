@@ -1,65 +1,18 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## 언어 및 산출물 규칙
 
 - 이 저장소에서 만드는 TigerKit 작업 산출물(`.tigerkit/branches/{escaped-branch}/requirements.md`, `gap.md`, `reflect.md`, `handoff.md`)은 반드시 한글로 작성한다.
 - 사용자에게 진행 상황, 계획, 검증 결과를 보고할 때도 한글을 기본으로 사용한다.
 - 기존 공개 문서나 manifest가 영어 문구를 쓰는 경우에는 주변 문맥과 일관성을 우선한다.
 
-## 자주 쓰는 명령
+## 검증 및 참조 규칙
 
-- 플러그인 manifest 검증:
-
-  ```bash
-  claude plugin validate .claude-plugin/plugin.json
-  ```
-
-- 저장소 플러그인 패키지 검증:
-
-  ```bash
-  claude plugin validate .
-  ```
-
-- 변경 파일 whitespace 검증:
-
-  ```bash
-  git diff --check
-  ```
-
-- Eval fixture JSON 문법 검증:
-
-  ```bash
-  python3 -m json.tool evals/evals.json >/dev/null
-  ```
-
-이 저장소에는 package manager 기반 build/test/lint 설정이 없다. 기능 변경 후에는 위 plugin validation, eval fixture JSON 문법 검증, `git diff --check`를 우선 실행한다. `evals/evals.json`은 자동 실행 테스트가 아니라 기대 동작 fixture다. 현재 저장소에는 이 fixture를 LLM에 넣어 pass/fail 판정하는 runner나 harness가 없으므로, “eval 검증”은 JSON 문법 검증과 수동 기대 동작 검토만 의미한다. plugin version을 올릴 때는 로컬 파일만 기준으로 계산하지 말고 먼저 `origin/main`의 현재 version을 확인한 뒤 결정한다.
-
-## 저장소 구조
-
-이 저장소는 Claude Code용 `tk` 플러그인만 제공한다.
-
-- `.claude-plugin/plugin.json`: 플러그인의 command manifest.
-- `.claude-plugin/marketplace.json`: marketplace 등록용 manifest.
-- `commands/prep.md`: source-of-truth reference와 직접 사용자 인터뷰를 branch-local `requirements.md`에 인덱싱한다.
-- `commands/gap.md`: branch-local indexed SOT reference와 reproducible code baseline을 비교해 branch-local `gap.md`에 evidence-based gap을 기록한다.
-- `commands/checkpoint.md`: ambiguity, user decision, unverifiable source, conflict, self-resolvable item을 분리하는 Decision Gate다.
-- `commands/review.md`: TigerKit 준수룰 위반을 적대적으로 검토하는 artifact-free compliance review다.
-- `commands/reflect.md`: 현재 대화 context를 먼저 재구성해 branch-local `reflect.md`를 갱신하고 `CLAUDE.md`/`MEMORY.md`/`DESIGN.md`/`COMPONENT_REUSE_MAP.md` escalation 후보를 제안한다.
-- `commands/handoff-write.md`: 다음 모델/세션을 위한 branch-local continuation contract를 `handoff.md`에 기록한다.
-- `commands/handoff-read.md`: branch-local handoff와 artifact map을 읽고 stale risk와 next safe action을 확인한다.
-- `docs/usage.md`: 사용자 관점의 명령 사용법.
-- `docs/artifact-layout.md`: `.tigerkit/`, `DESIGN.md`, `COMPONENT_REUSE_MAP.md`, legacy `reuse-map.md` 산출물 구조.
-- `docs/output-contract.md`: command 응답 receipt 규칙.
-
-## 명령 개요
-
-- `/tk:prep`: 외부 source는 reference만 저장하고, 현재 session의 직접 사용자 인터뷰만 raw text에 가깝게 보존한다. pseudo-requirement를 만들지 않는다.
-- `/tk:gap`: 특정 SOT reference와 특정 code baseline을 비교해 evidence, finding, interpretation, required resolution을 기록한다. gap을 실행 대기열로 바꾸지 않는다.
-- `/tk:checkpoint`: ambiguity, user decision, unverifiable source, conflict, self-resolvable item을 분리하고 계속 진행 가능 여부를 판단한다.
-- `/tk:review`: source-loss, reuse exploration, baseline, Decision Gate, handoff/reflect contract 위반을 artifact-free finding 또는 `NO_FINDINGS`로 검토한다.
-- `/tk:reflect`: 현재 대화 context를 먼저 재구성해 durable learning과 one-off correction을 분리하고, derived repo knowledge 업데이트를 관리한다.
+- 이 저장소에는 package manager 기반 build/test/lint 설정이 없다.
+- 기능 변경 후에는 `claude plugin validate .claude-plugin/plugin.json`, `claude plugin validate .`, `python3 -m json.tool evals/evals.json >/dev/null`, `git diff --check`를 우선 실행한다.
+- `evals/evals.json`은 자동 실행 테스트가 아니라 기대 동작 fixture다. eval 검증은 JSON 문법 검증과 수동 기대 동작 검토를 뜻한다.
+- plugin version을 올릴 때는 로컬 파일만 기준으로 계산하지 말고 먼저 `origin/main`의 현재 version을 확인한다.
+- 사용자 관점 사용법, 산출물 구조, 응답 receipt 세부 규칙은 `.tigerkit/docs/usage.md`, `.tigerkit/docs/artifact-layout.md`, `.tigerkit/docs/output-contract.md`를 기준으로 본다.
 
 ## 핵심 정책
 

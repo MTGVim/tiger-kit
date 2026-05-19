@@ -34,6 +34,24 @@ reflect 기록 전에 현재 branch를 확인합니다.
 - `main`, `master`, `develop`이면 기록하지 않고 feature branch switch/create를 요청합니다.
 - root-level `.tigerkit/reflect.md`는 deprecated artifact이며 migration 후보로만 표시합니다.
 
+## legacy/root shape migration guidance
+
+`/tk:reflect`는 legacy 또는 root-level artifact shape를 발견하면 migration guidance를 자동으로 surface합니다. migration guidance는 reflection 결과의 일부이며, 파일 이동이나 durable artifact 수정이 아닙니다.
+
+간단한 대상 범위:
+
+- root-level `.tigerkit/requirements.md`
+- root-level `.tigerkit/gap.md`
+- root-level `.tigerkit/reflect.md`
+- `reuse-map.md` legacy alias
+
+기록 원칙:
+
+- 현재 위치를 evidence로 적습니다.
+- branch-local 또는 preferred target을 함께 적습니다.
+- `deprecated artifact`, `legacy alias`, `migration candidate`처럼 상태를 분명히 적습니다.
+- 사용자 승인 전에는 이동, 삭제, rename, durable doc 수정 없이 guidance만 남깁니다.
+
 ## review inputs
 
 입력 우선순위는 아래와 같습니다.
@@ -125,9 +143,10 @@ Receipt에는 아래 상태를 명시합니다.
 - `recorded only`: `reflect.md`만 갱신
 - `applied`: 실제 반영한 durable artifact 목록
 - `pending escalation`: 반영 후보 목록
+- `pending migration guidance`: 발견한 legacy/root shape와 권장 target
 - `skipped`: 파일 없음, 사용자 미승인, evidence 부족 같은 이유
 
-승인 전에는 durable artifact를 직접 수정하지 않습니다. receipt는 recorded only, applied, pending escalation, skipped를 서로 섞지 않고 분리해 보여야 합니다.
+승인 전에는 durable artifact를 직접 수정하지 않습니다. receipt는 recorded only, applied, pending escalation, pending migration guidance, skipped를 서로 섞지 않고 분리해 보여야 합니다.
 
 ## target repo CLAUDE.md escalation
 
@@ -254,8 +273,9 @@ inspect하지 않은 capability, prop, behavior를 만들지 않습니다.
 8. `.tigerkit/branches/{escaped-branch}/reflect.md`를 갱신합니다.
 9. session에서 언급됐지만 index되지 않은 external SOT 후보가 있으면 access status, pending SOT entry, fallback 필요성을 기록합니다.
 10. inaccessible SOT는 command-style next action 대신 파일 업로드, 로컬 경로, screenshot/export, pasted content 요청으로 안내합니다.
-11. target repo active `CLAUDE.md`를 기준으로 `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `COMPONENT_REUSE_MAP.md` escalation candidates를 제안합니다. `reuse-map.md`는 legacy fallback/migration candidate로만 표시합니다. `CLAUDE.md` managed section이 없으면 강한 반영 추천 상태를 분명히 표시합니다.
-12. 사용자 승인 전에는 durable artifact를 수정하지 않습니다.
+11. legacy/root artifact shape가 보이면 evidence와 preferred target을 함께 적고 migration guidance를 자동으로 surface합니다. `reuse-map.md`는 legacy fallback/migration candidate로만 표시합니다.
+12. target repo active `CLAUDE.md`를 기준으로 `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `COMPONENT_REUSE_MAP.md` escalation candidates를 제안합니다. `CLAUDE.md` managed section이 없으면 강한 반영 추천 상태를 분명히 표시합니다.
+13. 사용자 승인 전에는 durable artifact를 수정하지 않습니다.
 
 ## 금지
 
@@ -282,6 +302,7 @@ reflection 기록했습니다.
 - recorded only: `reflect.md`
 - pending SOT: `SOT-IMG-001` auth_required, confirmed requirement로 materialize하지 않음
 - pending escalation: `CLAUDE.md` managed section 추가 강한 추천, `COMPONENT_REUSE_MAP.md`
+- pending migration guidance: root `.tigerkit/reflect.md` -> `.tigerkit/branches/feature__example/reflect.md`, `reuse-map.md` -> `COMPONENT_REUSE_MAP.md` migration candidate
 
 질문: 위 escalation 후보를 실제 반영할까요?
 SOT fallback 필요: `SOT-IMG-001` 파일 업로드, 로컬 경로, screenshot/export, pasted content를 제공해 주세요.
