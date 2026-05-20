@@ -1,20 +1,16 @@
 # TigerKit
 
-TigerKit(`tiger-kit`, plugin `tk`)은 branch-local source-of-truth reference indexing, reproducible gap recording, session reflection, and operational handoff를 통해 AI-induced source loss를 줄이기 위한 Claude Code 플러그인입니다.
+TigerKit(`tiger-kit`, plugin namespace `/tk:*`) helps reduce AI-induced source loss by comparing basis materials with implementation or PR artifacts, reflecting durable feedback into repo rules, and writing safe handoffs.
 
-TigerKit은 요구사항을 대신 재작성하거나 실행 대기열을 관리하지 않습니다. 필요한 운영 규칙과 상세 계약은 아래 문서를 기준으로 봅니다.
+해당 workflow를 명시한 natural language request는 대응하는 `/tk:*` command contract로 처리합니다.
 
 ## Command Surface
 
 | Command | 역할 |
 | --- | --- |
-| `/tk:prep` | source-of-truth reference와 직접 사용자 인터뷰를 branch-local requirements index에 기록 |
-| `/tk:gap` | branch-local indexed SOT reference와 clean HEAD baseline을 비교해 evidence-based gap 기록 |
-| `/tk:checkpoint` | ambiguity, user decision, unverifiable source, conflict, self-resolvable item을 분리하는 Decision Gate |
-| `/tk:review` | TigerKit 준수룰 위반을 적대적으로 검토하는 artifact-free compliance review |
-| `/tk:reflect` | session을 재구성해 branch-local reflection을 기록하고 durable artifact 격상 후보 제안 |
-| `/tk:handoff-write` | 다음 모델/세션을 위한 branch-local continuation contract 작성 |
-| `/tk:handoff-read` | handoff와 artifact map을 읽고 현재 repo 상태와 stale risk 확인 |
+| `/tk:gap` | Compare basis materials with a target artifact and produce gap analysis or PR-ready review comments. |
+| `/tk:reflect` | Propose updates to `CLAUDE.md` and `.claude/rules/*` from durable feedback, repeated mistakes, gap findings, or review findings. |
+| `/tk:handoff` | Write `.claude/handoffs/current.md` so the next session can continue safely. |
 
 ## Operational Docs
 

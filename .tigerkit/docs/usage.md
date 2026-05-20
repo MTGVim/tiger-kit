@@ -1,6 +1,6 @@
 # TigerKit 운영 사용법
 
-이 문서는 `.tigerkit/docs/` 아래 TigerKit 운영 문서 중 사용 가이드입니다. 산출물 위치는 `.tigerkit/docs/artifact-layout.md`, receipt 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
+이 문서는 `.tigerkit/docs/` 아래 TigerKit 사용 가이드입니다. 산출물 위치는 `.tigerkit/docs/artifact-layout.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
 
 ## 언어
 
@@ -9,92 +9,54 @@
 ## 핵심 모델
 
 ```text
-TigerKit = source-of-truth index + reproducible gap record + decision gate + compliance review + session reflection + operational handoff
+TigerKit = basis gap analysis + durable reflection + safe handoff
 ```
 
-TigerKit은 LLM의 장기 절차 기억에 실행 순서나 진행 상태를 맡기지 않습니다.
-
-기본 흐름:
-
-```text
-/tk:prep
-/tk:gap
-/tk:handoff-write
-```
-
-조건부 명령:
-
-- `/tk:checkpoint`: high-impact ambiguity, inaccessible SOT, SOT conflict, user decision, external dependency, broad refactor risk가 있을 때 Decision Gate로 사용합니다.
-- `/tk:review`: TigerKit command/docs/evals/artifact/implementation 변경에서 source-loss, reuse exploration, baseline, Decision Gate, handoff/reflect contract 위반을 검토할 때 사용합니다.
-- `/tk:reflect`: project policy나 repeated user preference를 durable하게 남길 필요가 있을 때 사용합니다.
-
-이전 세션의 `handoff.md`가 있고 현재 feature branch가 확인되면 이어받는 세션은 `/tk:handoff-read`로 시작합니다. detached HEAD나 `main`, `master`, `develop`이면 먼저 feature branch 전환을 안내합니다.
-
-## Branch-local artifacts
-
-TigerKit working material은 branch별로 격리합니다.
-
-```text
-.tigerkit/
-  branches/
-    feature__example/
-      requirements.md
-      gap.md
-      reflect.md
-      handoff.md
-```
-
-`{escaped-branch}`는 현재 git branch name을 collision-safe하게 path-safe 변환한 값입니다. ASCII letter, digit, `.`, `_`, `-`는 그대로 두고 다른 byte는 `~HH` uppercase hex로 encode합니다. 예: `feature/foo` → `feature~2Ffoo`, `feature__foo` → `feature__foo`.
-
-Root-level `.tigerkit/requirements.md`, `.tigerkit/gap.md`, `.tigerkit/reflect.md`는 deprecated artifact입니다. active write target이 아니라 migration candidate로 다룹니다.
-
-TigerKit branch-local artifacts are not written on detached HEAD or protected branches (`main`, `master`, `develop`). Switch to a feature branch before running write commands.
+TigerKit은 요구사항을 재작성하거나 실행 대기열을 관리하지 않습니다. 기준자료와 대상 산출물을 비교하고, 반복되는 피드백을 repo 규칙 후보로 제안하며, 다음 세션이 안전하게 이어받을 문맥을 남깁니다.
 
 ## Command Surface
 
+Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요청은 대응하는 `/tk:*` command contract로 처리합니다.
+
 | Command | 역할 |
 | --- | --- |
-| `/tk:prep` | source-of-truth reference와 직접 사용자 인터뷰를 branch-local requirements index에 기록 |
-| `/tk:gap` | branch-local indexed SOT reference와 clean HEAD baseline을 비교해 evidence-based gap을 기록 |
-| `/tk:checkpoint` | ambiguity, user decision, unverifiable source, conflict, self-resolvable item을 분리하는 Decision Gate |
-| `/tk:review` | TigerKit 준수룰 위반을 적대적으로 검토하는 artifact-free compliance review |
-| `/tk:reflect` | session을 재구성해 branch-local reflection을 기록하고 durable artifact 격상 후보 제안 |
-| `/tk:handoff-write` | 다음 모델/세션을 위한 branch-local continuation contract 작성 |
-| `/tk:handoff-read` | handoff와 artifact map을 읽고 현재 repo 상태와 stale risk 확인 |
+| `/tk:gap` | 기준자료와 대상 산출물을 비교해 gap analysis 또는 PR-ready review comment를 만듭니다. |
+| `/tk:reflect` | durable feedback, 반복 실수, gap/review 결과에서 `CLAUDE.md`와 `.claude/rules/*` 업데이트 후보를 제안합니다. |
+| `/tk:handoff` | 다음 세션이 이어받을 수 있도록 `.claude/handoffs/current.md`를 작성합니다. |
 
-## 운영 사용 기준
+## 사용 예시
 
-- external source, ticket, Figma, issue, API docs를 먼저 묶어야 하면 `/tk:prep`
-- indexed SOT와 현재 clean HEAD baseline을 비교해 누락이나 불일치를 기록하려면 `/tk:gap`
-- 계속 진행 전 ambiguity, user decision, access 문제를 분리해야 하면 `/tk:checkpoint`
-- TigerKit command, docs, evals, artifact, implementation 변경을 준수 관점에서 점검하려면 `/tk:review`
-- session 정리, durable 반영 후보, handoff 전 상태 정리가 필요하면 `/tk:reflect`
-- 다음 세션으로 넘길 작업 맥락을 남기려면 `/tk:handoff-write`
-- 기존 handoff를 이어받아 stale 여부를 확인하려면 `/tk:handoff-read`
+```text
+/tk:gap spec <url> vs current implementation
+/tk:gap pr #123 mode=review
+/tk:gap figma <url> vs pr #123 mode=both
+/tk:reflect gap 결과에서 반복되는 리뷰 포인트를 rules로 제안해줘
+/tk:reflect apply=true 이 copy rule을 반영해줘
+/tk:handoff 현재 작업 이어받을 수 있게 남겨줘
+/tk:handoff tiger-kit skill refactor archive=true
+```
 
 ## Command notes
 
-### `/tk:prep`
-- 외부 source는 reference와 access status만 기록합니다.
-- 직접 사용자 인터뷰만 local text로 보존합니다.
-- local artifact 위치와 책임은 `.tigerkit/docs/artifact-layout.md`를 봅니다.
-
 ### `/tk:gap`
-- branch-local `requirements.md`에 index된 SOT와 clean HEAD baseline을 비교해 `gap.md`에 기록합니다.
-- 접근 불가 SOT가 있으면 partial coverage와 fallback 필요를 함께 남깁니다.
 
-### `/tk:checkpoint`
-- 확인이 더 필요한 항목과 바로 진행 가능한 항목을 나눌 때 사용합니다.
-
-### `/tk:review`
-- TigerKit contract 위반이 있으면 finding, 없으면 `NO_FINDINGS`를 반환합니다.
+- 입력된 기준자료와 대상 산출물을 직접 확인 가능한 근거로 비교합니다.
+- `mode=analysis`는 gap analysis를 출력합니다.
+- `mode=review`는 PR-ready review comment만 출력합니다.
+- `mode=both`는 analysis 뒤에 review comment를 출력합니다.
+- 근거가 부족하면 확인 불가로 남기고 추측으로 채우지 않습니다.
 
 ### `/tk:reflect`
-- branch-local reflection을 기록하고 durable artifact 반영 후보를 surfaced 합니다.
 
-### `/tk:handoff-write`, `/tk:handoff-read`
-- handoff는 다음 세션용 continuation contract입니다.
-- handoff-read는 현재 repo 상태와 artifact freshness를 먼저 확인합니다.
+- durable하게 남길 만한 피드백, 반복 실수, gap/review finding을 분류합니다.
+- 기본은 제안만 합니다.
+- `apply=true` 또는 명시 승인 없이는 파일을 수정하지 않습니다.
+
+### `/tk:handoff`
+
+- 기본 출력 대상은 `.claude/handoffs/current.md`입니다.
+- `archive=true` 또는 명시 요청이 있을 때만 dated archive copy를 만듭니다.
+- handoff에는 Reader Guide와 Resume Prompt를 포함합니다.
 
 ## 운영 범위 메모
 

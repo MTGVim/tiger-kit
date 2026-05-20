@@ -1,309 +1,164 @@
 ---
-description: 현재 session 전체를 branch-local .tigerkit/branches/{escaped-branch}/reflect.md에 재구성하고 CLAUDE.md/MEMORY.md/DESIGN.md/COMPONENT_REUSE_MAP.md 격상 후보를 제안합니다. reuse-map.md는 legacy alias로만 다룹니다.
+description: 사용자 피드백, gap/review 결과, 반복 실수에서 durable repo rule 후보를 추출하고 CLAUDE.md 또는 .claude/rules/* 변경을 제안합니다.
+argument-hint: "[scope] [apply=true]"
 ---
 
-이 명령은 아래 계약을 직접 따릅니다.
+사용자 응답은 한글로 유지합니다. 코드, path, URL, ticket, commit, hash, identifier, error는 원문 그대로 둘 수 있습니다.
 
-사용자에게는 한글로 답합니다. 코드, 파일 경로, URL, commit hash, 식별자는 원문 그대로 유지할 수 있습니다.
-
-목표: `/tk:reflect`는 현재 대화 context를 먼저 재구성해 derived repo-level knowledge를 유지합니다. `.tigerkit/branches/{escaped-branch}/reflect.md`에 reflection을 남기고, `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `COMPONENT_REUSE_MAP.md` escalation 후보를 제안합니다.
+목표: `/tk:reflect`는 generic retrospective가 아닙니다. Claude project memory와 repo rule을 큐레이션하는 명령입니다.
 
 ```text
-reflect = session-wide reconstruction and repo knowledge maintenance
+reflect = durable rule extraction + scoped rule proposal
 ```
 
-## 기본 산출물
-
-- `.tigerkit/branches/{escaped-branch}/reflect.md`
-
-Escalation 후보:
+## 관리 대상
 
 - `CLAUDE.md`
-- `MEMORY.md`
-- `DESIGN.md`
-- `IMPLEMENTATION_POLICY.md`
-- `COMPONENT_REUSE_MAP.md`
-
-`reflect.md`는 branch-local working material입니다. Escalation 대상은 durable guidance 또는 derived repo-level knowledge입니다. `reuse-map.md`는 legacy alias 또는 migration candidate로만 제안합니다.
-
-## branch safety rule
-
-reflect 기록 전에 현재 branch를 확인합니다.
-
-- detached HEAD이면 기록하지 않고 branch switch/create를 요청합니다.
-- `main`, `master`, `develop`이면 기록하지 않고 feature branch switch/create를 요청합니다.
-- root-level `.tigerkit/reflect.md`는 deprecated artifact이며 migration 후보로만 표시합니다.
-
-## legacy/root shape migration guidance
-
-`/tk:reflect`는 legacy 또는 root-level artifact shape를 발견하면 migration guidance를 자동으로 surface합니다. migration guidance는 reflection 결과의 일부이며, 파일 이동이나 durable artifact 수정이 아닙니다.
-
-간단한 대상 범위:
-
-- root-level `.tigerkit/requirements.md`
-- root-level `.tigerkit/gap.md`
-- root-level `.tigerkit/reflect.md`
-- `reuse-map.md` legacy alias
-
-기록 원칙:
-
-- 현재 위치를 evidence로 적습니다.
-- branch-local 또는 preferred target을 함께 적습니다.
-- `deprecated artifact`, `legacy alias`, `migration candidate`처럼 상태를 분명히 적습니다.
-- 사용자 승인 전에는 이동, 삭제, rename, durable doc 수정 없이 guidance만 남깁니다.
-
-## review inputs
-
-입력 우선순위는 아래와 같습니다.
-
-1. 현재 대화 context
-2. explicit user confirmation
-3. `.tigerkit/branches/{escaped-branch}/requirements.md`
-4. `.tigerkit/branches/{escaped-branch}/gap.md`
-5. `.tigerkit/branches/{escaped-branch}/handoff.md`, if present
-6. 최근 diff 또는 commit
-7. `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `COMPONENT_REUSE_MAP.md`, if present. `reuse-map.md`는 legacy alias 또는 migration candidate로만, if present
-
-현재 대화 context가 primary source입니다. artifact와 git evidence는 보조 근거입니다. 대화 context에 없는 내용은 추측하지 말고 `확인 불가`로 둡니다.
-
-## 누락된 SOT 후보 회수
-
-현재 session에서 external SOT 후보가 언급됐지만 branch-local `requirements.md`에 index되지 않았다면, `/tk:reflect`는 SOT 후보를 회수합니다. inaccessible SOT 후보는 confirmed requirement로 바꾸지 않고 pending SOT manifest candidate로 기록합니다.
-
-특히 사용자가 URL, image, screenshot, Figma/design link, local file path, pasted reference를 SOT로 언급하면 접근성 검증 상태를 분리합니다.
-
-`/tk:reflect`는 external SOT 내용을 durable requirement로 복사하지 않습니다. 접근 가능 여부와 pending/fallback 필요성만 `reflect.md`에 남기고, materialization은 `/tk:prep` 계약에 맡깁니다.
-
-현재 session에서 external SOT 후보가 언급됐지만 branch-local `requirements.md`에 index되지 않았다면, `reflect.md`에 아래 형식으로 회수 후보를 남깁니다.
-
-- Evidence: 현재 대화 context에서 실제로 언급된 reference
-- Interpretation: 아직 `requirements.md`에 index되지 않은 SOT 후보라는 해석
-- Risk: 다음 session이나 다음 모델이 source를 놓치거나 pseudo-requirement로 대체할 위험
-- Access Status: accessible, mirrored_local, provided_inline, local_missing, inaccessible, auth_required, expired_or_unavailable, unsupported_format, pending_user_input, decorative_non_binding, not_verifiable 중 하나
-- Pending SOT Entry: inaccessible source면 SOT ID, original reference, represents, binding 여부, needed fallback 기록
-- Suggested natural guidance: command-style next action 대신 파일 업로드, 로컬 경로, screenshot/export, pasted content 요청
-
-예시 pending entry:
-
-```md
-### Pending SOT candidate: SOT-IMG-001
-
-- Original Reference: https://example.com/private/1.1.1.png
-- Access Status: `auth_required`
-- Represents: 1.1.1 기획서 이미지
-- Binding: binding
-- Needed fallback: user-provided file, local path, screenshot/export, or pasted content
-- Recommended local path: `./docs/assets/sot/requirements/1.1.1.png`
-- Materialization: unverified image-derived requirements not recorded
-```
-
-예시 후보:
-
-- Jira, Figma, Confluence, ClickUp, GitHub issue, GitHub PR
-- PRD/spec/design document URL
-- image URL, screenshot URL, pasted screenshot, local file path
-- API docs, MCP resource
-- backend repo, source path
-- API validation backend repo, latest develop, open PR list, lookup commit
-- existing `docs/SOT_MANIFEST.md`, `docs/REQUIREMENTS.md`, `docs/DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `docs/assets/sot/`, plus `COMPONENT_REUSE_MAP.md` as derived reuse map unless target repo explicitly defines it as SOT
-
-이 section은 SOT 내용을 복사하거나 요약하는 곳이 아닙니다. reference 누락 risk와 다음 안전 행동만 기록합니다.
-
-## reflect 대상
-
-- repeated failure patterns
-- durable learnings
-- one-off corrections
-- proposed updates to `CLAUDE.md`
-- proposed updates to `MEMORY.md`
-- proposed updates to `DESIGN.md`
-- proposed updates to `IMPLEMENTATION_POLICY.md` when current session has durable policy evidence
-- proposed updates to `COMPONENT_REUSE_MAP.md`
-
-one-off correction을 durable rule로 승격하지 않습니다. future work에 영향을 줘야 한다는 evidence가 있을 때만 durable learning으로 분리합니다.
-
-## escalation gate
-
-`reflect.md` 갱신과 durable artifact 반영을 반드시 분리합니다.
-
-1. 먼저 `.tigerkit/branches/{escaped-branch}/reflect.md`를 기록합니다.
-2. 다음 대상별 escalation candidate를 분류합니다.
-   - `CLAUDE.md`: repo instruction 또는 TigerKit managed section에 넣을 future-facing rule. managed section이 없으면 실제 반영을 강하게 추천할 고우선 후보로 취급
-   - `MEMORY.md`: 사용자 preference, project direction, reference, feedback으로 유지할 내용
-   - `DESIGN.md`: architecture, boundary, data flow, stable design decision
-   - `IMPLEMENTATION_POLICY.md`: current session에 durable policy evidence가 있을 때 binding policy 후보. 적용은 사용자 승인 후만
-   - `COMPONENT_REUSE_MAP.md`: inspect한 component/hook/util/API/pattern 재사용 정보
-   - `reuse-map.md`: legacy alias 또는 migration candidate로만
-3. 사용자에게 실제 반영할지 묻습니다.
-4. 승인된 파일만 수정합니다.
-5. 승인 전에는 durable artifact를 수정하지 않습니다.
-
-Receipt에는 아래 상태를 명시합니다.
-
-- `recorded only`: `reflect.md`만 갱신
-- `applied`: 실제 반영한 durable artifact 목록
-- `pending escalation`: 반영 후보 목록
-- `pending migration guidance`: 발견한 legacy/root shape와 권장 target
-- `skipped`: 파일 없음, 사용자 미승인, evidence 부족 같은 이유
-
-승인 전에는 durable artifact를 직접 수정하지 않습니다. receipt는 recorded only, applied, pending escalation, pending migration guidance, skipped를 서로 섞지 않고 분리해 보여야 합니다.
-
-## target repo CLAUDE.md escalation
-
-`/tk:reflect`는 plugin repo의 `CLAUDE.md`가 아니라 현재 target repo에서 active하게 적용되는 `CLAUDE.md`를 확인합니다.
-
-아래 경우에는 `reflect.md`에 pending escalation로 기록하고, 실제 갱신할지 사용자에게 묻습니다.
-
-- active `CLAUDE.md`가 없음
-- TigerKit managed section이 없음
-- 현재 plugin이 권장하는 rule이 누락되었거나 stale함
-
-우선 점검 rule:
-
-- SOT candidate prompt rule
-- API reference set rule
-- COMPONENT_REUSE_MAP.md preferred derived reuse map rule and `reuse-map.md` legacy fallback rule
-- new module before repo-wide exploration rule
-- common module impact/user approval rule
-- `/tk:gap` clean HEAD baseline rule
-
-이 section에서는 수정 제안과 반영 필요성만 기록합니다. 사용자 승인 전에는 `CLAUDE.md`를 수정하지 않습니다.
-
-## CLAUDE.md
-
-`CLAUDE.md`는 repo instruction입니다. TigerKit이 durable workflow rule을 발견하면 managed section 추가 또는 갱신 후보를 제안할 수 있습니다. 특히 managed section이 없으면 약한 참고가 아니라 실제 반영을 강하게 추천해야 할 고우선 escalation candidate로 다룹니다.
-
-Marker:
-
-```md
-<!-- TIGERKIT:START -->
-<!-- TIGERKIT:END -->
-```
-
-`CLAUDE.md`가 없으면 새로 만들지 않습니다. 사용자 승인 없이 marker 밖 내용을 수정하지 않습니다.
-
-## MEMORY.md
-
-`MEMORY.md`는 Claude Code memory index입니다. 사용자 preference, project direction, reference, feedback으로 유지할 내용만 escalation candidate가 됩니다.
-
-`MEMORY.md`와 개별 memory file 수정은 사용자 승인 후에만 수행합니다. One-off correction은 durable evidence가 없으면 memory candidate로 만들지 않습니다.
-
-## DESIGN.md
-
-`DESIGN.md`는 derived repo-level knowledge입니다. 외부 SOT를 대체하지 않습니다.
-
-담을 수 있는 것:
-
-- architecture overview
-- feature boundaries
-- data flow
-- UI conventions
-- API integration patterns
-- stable constraints
-- non-goals
-- repo-specific design decisions
-
-prep 단계에서 업데이트하지 않습니다. reflection을 통해 제안하거나, escalation gate에서 사용자 승인 후 적용합니다.
-
-`DESIGN.md`가 없으면 새로 만들지 않습니다. `DESIGN.md`에 넣을 만한 derived design knowledge가 생겼는데 파일이 없으면, `.tigerkit/branches/{escaped-branch}/reflect.md`와 채팅 receipt에 `DESIGN.md` 초기화가 필요하다고 알립니다. `DESIGN.md`는 외부 도구나 사용자 선택으로 먼저 초기화되는 파일입니다.
-
-## IMPLEMENTATION_POLICY.md
-
-`IMPLEMENTATION_POLICY.md`는 target repo에 있을 때 binding project policy SOT candidate입니다. current session에 architecture decision, dependency policy, required/avoided/banned/deprecated/preferred component or pattern, durable user-confirmed feedback, implementation constraint, non-goal, policy exception 같은 durable policy evidence가 있으면 escalation 후보로 제안할 수 있습니다.
-
-TigerKit은 이 파일을 자동 생성하지 않고, 외부 SOT 내용을 사용자 승인 없이 복사하지 않습니다. 적용은 escalation gate에서 사용자 승인 후만 가능합니다.
-
-## COMPONENT_REUSE_MAP.md
-
-`COMPONENT_REUSE_MAP.md`는 LLM이 기존 코드를 재발명하지 않도록 돕는 preferred derived leverage map입니다. source of truth가 아니며, inspect한 evidence를 재사용 관점으로 정리한 derived artifact입니다. `reuse-map.md`는 legacy alias 또는 migration candidate로만 다룹니다.
-
-reflect는 실제로 inspect한 reusable component, hook, utility, API client, mapper, adapter, form pattern, validation pattern, UI composition pattern, deprecated pattern, avoid pattern에 대해서만 `COMPONENT_REUSE_MAP.md` 갱신 후보를 제안할 수 있습니다.
-
-담을 수 있는 것:
-
-- reusable components
-- hooks
-- utilities
-- API clients
-- mappers
-- adapters
-- form patterns
-- validation patterns
-- UI composition patterns
-- deprecated patterns to avoid
-- avoid patterns
-
-구체 reference를 선호합니다.
-
-```md
-## Components
-
-### Button
-
-Path:
-- src/components/Button.tsx
-
-Use when:
-- Standard button UI가 필요할 때.
-
-Known variants:
-- primary
-- secondary
-- ghost
-
-Example usage:
-- src/features/example/ExampleForm.tsx
-```
-
-inspect하지 않은 capability, prop, behavior를 만들지 않습니다.
-확인하지 않은 props를 invent하지 않습니다.
-확인하지 않은 module의 capability를 기록하지 않습니다.
-단일 callsite 하나만 보고 repo-level reusable pattern으로 일반화하지 않습니다.
-`COMPONENT_REUSE_MAP.md`를 external SOT나 user decision의 source of truth처럼 제시하지 않습니다. `reuse-map.md`를 active source of truth나 preferred artifact처럼 제시하지 않습니다.
+- `.claude/rules/**/*.md`
+- `.claude/skills/*/SKILL.md` audit/proposal only
+- `.claude/handoffs/current.md` current-state handoff only
+
+## 분류 대상
+
+| 대상 | 언제 분류하나 |
+| --- | --- |
+| `CLAUDE.md` | 저장소 전반에 항상 적용되어야 하는 상위 작업 규칙, 협업 규칙, evidence rule, approval gate, 금지사항처럼 global rule일 때 |
+| `.claude/rules/*` | 특정 경로, 도메인, 파일군, 워크플로우에만 적용되는 path-scoped rule일 때 |
+| `.claude/skills/*/SKILL.md` | skill contract, prompt, trigger, output shape의 audit/proposal이 필요할 때. 직접 수정 대상이 아니라 감사와 제안만 한다 |
+| `.claude/handoffs/current.md` | durable rule이 아니라 현재 상태, 진행 맥락, 남은 확인사항을 다음 세션에 넘겨야 할 때 |
+| local/private memory | 사용자 개인 선호, 로컬 환경 습관, 특정 머신 맥락처럼 repo에 커밋하면 안 되는 정보일 때 |
+| no action | one-off correction, 이미 해결된 단발성 메모, 근거 부족, 중복, 기존 규칙과 충돌하지만 아직 결론이 없는 경우 |
+
+## 책임
+
+- user feedback, repeated mistakes, gap results, PR review results에서 durable rule candidate를 추출합니다.
+- global rule과 path-scoped rule을 구분합니다.
+- 적절한 `.claude/rules/...` target file path를 제안합니다.
+- 기존 rule과 충돌하는지 확인합니다.
+- 중복 rule은 merge/update 대상으로 정리합니다.
+- vague advice를 검증 가능한 rule로 다시 씁니다.
+- 무엇이 `CLAUDE.md`에 가야 하는지와 `.claude/rules/*`에 가야 하는지를 구분합니다.
+
+## 적용 게이트
+
+- 기본값은 파일을 수정하지 않고 proposed patch만 출력합니다.
+- `apply=true`가 있거나 사용자가 `적용해`, `반영해`, `승인`처럼 명시 승인한 경우에만 파일을 수정합니다.
+- 충돌이 있으면 적용하지 않고 conflict를 먼저 보고합니다.
+
+## Rule quality bar
+
+- specific
+- verifiable
+- scoped
+- short
+- non-duplicative
+- non-conflicting
+- not based only on legacy code unless explicitly confirmed
+
+모든 rule은 ID를 사용합니다.
+
+예시 ID:
+- `COPY-001`
+- `LIB-001`
+- `FORM-001`
+- `MODAL-001`
+- `GAP-001`
+- `REVIEW-001`
+
+## `CLAUDE.md`에 들어갈 것과 넣지 않을 것
+
+`CLAUDE.md`에 들어갈 것:
+- 저장소 전체에 적용되는 global instruction
+- evidence, approval, safety, branch, review 같은 공통 규칙
+- 여러 디렉터리와 워크플로우를 가로지르는 상위 규칙
+- path-specific file로 쪼개면 오히려 찾기 어려워지는 핵심 운영 규칙
+
+`CLAUDE.md`에 넣지 않을 것:
+- 특정 디렉터리, 기능, 파일군에만 적용되는 세부 규칙
+- 일회성 incident 메모
+- 현재 세션 전용 handoff
+- 개인 로컬 환경 선호
+- skill implementation detail
+- inspect되지 않은 legacy code 관성만으로 만든 규칙
+
+경계가 애매하면 먼저 scoped rule을 우선 검토하고, 정말 전역 규칙일 때만 `CLAUDE.md`를 제안합니다.
 
 ## 절차
 
-1. 현재 branch를 확인합니다.
-2. detached HEAD 또는 protected branch이면 branch switch/create를 요청하고 멈춥니다.
-3. 현재 대화 context에서 evidence, interpretation, decision, suggestion을 먼저 분리합니다.
-4. 대화 context에 없는 내용은 `확인 불가`로 표시합니다.
-5. branch-local requirements/gap/handoff artifact가 있으면 보조 근거로 읽습니다.
-6. 최근 diff/commit이 있으면 보조 근거로 사용합니다.
-7. durable learning과 one-off correction을 분리합니다.
-8. `.tigerkit/branches/{escaped-branch}/reflect.md`를 갱신합니다.
-9. session에서 언급됐지만 index되지 않은 external SOT 후보가 있으면 access status, pending SOT entry, fallback 필요성을 기록합니다.
-10. inaccessible SOT는 command-style next action 대신 파일 업로드, 로컬 경로, screenshot/export, pasted content 요청으로 안내합니다.
-11. legacy/root artifact shape가 보이면 evidence와 preferred target을 함께 적고 migration guidance를 자동으로 surface합니다. `reuse-map.md`는 legacy fallback/migration candidate로만 표시합니다.
-12. target repo active `CLAUDE.md`를 기준으로 `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `COMPONENT_REUSE_MAP.md` escalation candidates를 제안합니다. `CLAUDE.md` managed section이 없으면 강한 반영 추천 상태를 분명히 표시합니다.
-13. 사용자 승인 전에는 durable artifact를 수정하지 않습니다.
+1. 현재 대화와 산출물에서 feedback, gap, review, repeated mistake evidence를 모읍니다.
+2. Evidence와 Interpretation을 분리합니다.
+3. one-off correction과 durable rule candidate를 구분합니다.
+4. global rule인지 path-scoped rule인지 분류합니다.
+5. 기존 `CLAUDE.md`, `.claude/rules/**/*.md`, 관련 skill/handoff와 충돌 또는 중복 여부를 점검합니다.
+6. vague advice를 테스트 가능한 문장으로 재작성합니다.
+7. 기본값에서는 patch proposal만 출력합니다.
+8. `apply=true` 또는 사용자 승인 시에만 안전한 대상 파일을 수정합니다.
+9. conflict가 남아 있으면 적용을 중단하고 conflict부터 보고합니다.
+
+## 출력 템플릿
+
+아래 섹션을 이 순서로 사용합니다.
+
+### Reflect Result
+- 무엇을 durable rule candidate로 추출했는지 요약합니다.
+- global rule인지 scoped rule인지 표시합니다.
+- apply 여부를 표시합니다.
+
+### Classification
+- 각 candidate를 어느 대상으로 분류했는지 적습니다.
+- 필요하면 target path 예시를 함께 적습니다.
+
+### Reason
+- 왜 그 분류가 맞는지 evidence 기반으로 설명합니다.
+- user feedback, gap, review, repeated mistake 중 어디서 왔는지 밝힙니다.
+
+### Proposed Patch
+- 기본 동작입니다.
+- 실제 파일 수정 대신 diff 또는 삽입안 형태로 제안합니다.
+- `apply=true`가 없으면 반드시 이 섹션에 머뭅니다.
+
+### Conflicts
+- 기존 rule과 충돌, 중복, 우선순위 불명확성을 적습니다.
+- conflict가 있으면 적용하지 않습니다.
+
+### Follow-up Audit
+- `.claude/skills/*/SKILL.md`는 audit/proposal only인지 확인합니다.
+- `.claude/handoffs/current.md`는 current-state only인지 확인합니다.
+- 추가로 검토할 rule file 또는 merge 대상이 있으면 적습니다.
 
 ## 금지
 
-- artifact나 git evidence를 현재 대화 context보다 우선하기
-- 대화 context에 없는 내용 추측
-- one-off correction을 durable rule로 과승격
-- external SOT를 `DESIGN.md`로 대체
-- inaccessible SOT를 inspected/confirmed requirement처럼 기록
-- unverified image/design-derived requirement를 materialize
-- `DESIGN.md`가 없을 때 새로 생성
-- 확인하지 않은 props나 inspect하지 않은 재사용 capability 추측
-- 단일 callsite에서 본 내용만으로 repo-level reusable pattern 일반화
-- `COMPONENT_REUSE_MAP.md`를 source of truth처럼 제시
-- `reuse-map.md`를 preferred active artifact처럼 제시
-- 사용자 승인 없이 `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `COMPONENT_REUSE_MAP.md` 수정
-- implementation, commit, push, PR 생성, merge, deploy
+- generic retrospective처럼 감상문을 쓰기
+- apply 승인 없이 파일 수정하기
+- conflict가 있는데도 적용하기
+- user feedback 없는 추측 규칙 만들기
+- repeated evidence 없이 one-off correction을 durable rule로 승격하기
+- global rule인데 scoped file에 숨기기
+- scoped rule인데 `CLAUDE.md`에 과도하게 넣기
+- `.claude/skills/*/SKILL.md`를 일반 rule 저장소처럼 취급하기
+- `.claude/handoffs/current.md`에 durable rule을 저장하기
+- legacy code만 보고 확정 규칙처럼 일반화하기
 
-## 출력
+## 간단 예시
 
 ```text
-reflection 기록했습니다.
-- 기록: `.tigerkit/branches/feature__example/reflect.md`
-- primary source: current conversation context
-- recorded only: `reflect.md`
-- pending SOT: `SOT-IMG-001` auth_required, confirmed requirement로 materialize하지 않음
-- pending escalation: `CLAUDE.md` managed section 추가 강한 추천, `COMPONENT_REUSE_MAP.md`
-- pending migration guidance: root `.tigerkit/reflect.md` -> `.tigerkit/branches/feature__example/reflect.md`, `reuse-map.md` -> `COMPONENT_REUSE_MAP.md` migration candidate
+Reflect Result
+- REVIEW-001 추출, scoped rule, apply=false
 
-질문: 위 escalation 후보를 실제 반영할까요?
-SOT fallback 필요: `SOT-IMG-001` 파일 업로드, 로컬 경로, screenshot/export, pasted content를 제공해 주세요.
+Classification
+- `.claude/rules/review/frontend.md` 제안
+
+Reason
+- 최근 PR review에서 동일한 누락이 3회 반복됨
+- user feedback이 특정 frontend form 경로에만 한정됨
+
+Proposed Patch
++ REVIEW-001: forms under `src/features/**` must declare loading/error/empty state explicitly.
+
+Conflicts
+- 기존 `FORM-001`과 일부 겹침. merge 후 단일 rule로 정리 필요
+
+Follow-up Audit
+- `.claude/skills/frontend-review/SKILL.md`는 rule 반영 대상이 아니라 audit/proposal only
+- `.claude/handoffs/current.md`에는 이번 reflect 결과 요약만 남길 수 있음
 ```

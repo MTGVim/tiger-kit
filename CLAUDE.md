@@ -2,7 +2,7 @@
 
 ## 언어 및 산출물 규칙
 
-- 이 저장소에서 만드는 TigerKit 작업 산출물(`.tigerkit/branches/{escaped-branch}/requirements.md`, `gap.md`, `reflect.md`, `handoff.md`)은 반드시 한글로 작성한다.
+- 이 저장소에서 만드는 TigerKit 작업 산출물(`.claude/rules/**/*.md`, `.claude/handoffs/current.md`, `.tigerkit/docs/*.md`)은 반드시 한글로 작성한다.
 - 사용자에게 진행 상황, 계획, 검증 결과를 보고할 때도 한글을 기본으로 사용한다.
 - 기존 공개 문서나 manifest가 영어 문구를 쓰는 경우에는 주변 문맥과 일관성을 우선한다.
 
@@ -17,31 +17,23 @@
 ## 핵심 정책
 
 - TigerKit의 목적은 AI-induced source loss를 줄이는 것이다.
-- 기본 command set은 `/tk:prep`, `/tk:gap`, `/tk:checkpoint`, `/tk:review`, `/tk:reflect`, `/tk:handoff-write`, `/tk:handoff-read`다.
-- TigerKit working material은 branch-local `.tigerkit/branches/{escaped-branch}/` 아래에 기록한다.
-- root-level `.tigerkit/requirements.md`, `.tigerkit/gap.md`, `.tigerkit/reflect.md`는 deprecated artifact이며 migration 후보로만 다룬다.
-- `{escaped-branch}`는 collision-safe path encoding이다. ASCII letter, digit, `.`, `_`, `-`는 그대로 두고 다른 byte는 `~HH` uppercase hex로 encode한다.
-- branch-local `requirements.md`는 source of truth가 아니라 SOT reference index와 access manifest다.
-- 외부 source는 URL, path, ticket, Figma, PRD, issue, API docs, source code path, commit hash 같은 reference와 access status만 저장한다.
-- 외부 source 내용을 local requirement text로 복사, 요약, 정규화, 재작성하지 않는다.
-- SOT reference는 접근 가능하고 inspect되기 전까지 binding-auditable로 다루지 않는다.
-- inaccessible URL, image, Figma/design link, screenshot URL, local path는 pending SOT entry로 기록하고 file, local path, screenshot/export, pasted content를 요청한다.
-- binding visual SOT는 `./docs/assets/sot/requirements/` 또는 `./docs/assets/sot/design/` 아래 stable local asset reference를 선호한다.
-- 기존 `docs/SOT_MANIFEST.md`, `docs/REQUIREMENTS.md`, `docs/DESIGN.md`, `IMPLEMENTATION_POLICY.md`, `docs/assets/sot/`는 SOT category candidate로 intake하고 단일 `SOT.md`로 합치지 않는다. `COMPONENT_REUSE_MAP.md`는 target repo가 명시적으로 SOT로 정의한 경우가 아니면 derived reuse map으로 다룬다.
+- 핵심 command set은 `/tk:gap`, `/tk:reflect`, `/tk:handoff`다.
+- Claude Code plugin command는 namespace를 사용하므로 slash invocation은 `/tk:*` 형태다. 자연어 요청은 같은 프로토콜을 따른다.
+- `/tk:gap`은 basis와 target을 비교해 gap analysis 또는 PR-ready review comment를 만든다.
+- `/tk:reflect`는 `CLAUDE.md`와 `.claude/rules/*` 유지보수 제안을 만든다. `apply=true` 또는 사용자 명시 승인 전에는 파일을 수정하지 않는다.
+- `/tk:handoff`는 `.claude/handoffs/current.md`를 기본 handoff로 작성한다. `archive=true` 또는 사용자 명시 요청이 있을 때만 dated copy도 만든다.
+- repo convention은 `.claude/rules/**/*.md`를 우선 확인한다.
+- UI copy는 basis와 exact match여야 한다. 의미상 유사함은 충분하지 않다.
+- 외부 근거는 URL, path, ticket, Figma, PRD, issue, API docs, source code path, commit hash 같은 reference와 access status로 관리한다.
+- 외부 근거 내용을 로컬 요구사항 텍스트로 복사, 요약, 정규화, 재작성하지 않는다.
+- 접근 불가 URL, image, Figma/design link, screenshot URL, local path는 pending reference로 기록하고 file, local path, screenshot/export, pasted content를 요청한다.
 - 현재 session에서 사용자가 직접 말한 인터뷰 내용만 local text로 저장할 수 있다.
 - raw interview text와 derived interpretation을 분리한다.
-- branch-local `gap.md`가 TigerKit의 중심이다. gap은 SOT reference vs code baseline comparison record다.
-- gap 분석 전 feature branch + clean working tree + HEAD commit hash가 반드시 필요하다.
-- working tree가 clean하지 않으면 gap 기록을 시작하지 않고, 먼저 commit하거나 변경 정리를 요청한다.
-- ambiguity를 조용히 해결하지 않는다. source가 결론을 지지하지 않으면 gap으로 기록하고 필요하면 사용자에게 묻는다.
-- branch-local `reflect.md`는 현재 대화 context를 primary source로 사용하고, artifact와 git evidence는 보조 근거로만 사용한다.
-- `/tk:reflect`는 `CLAUDE.md`, `MEMORY.md`, `DESIGN.md`, `COMPONENT_REUSE_MAP.md` escalation 후보를 제안하고, 사용자 승인 전에는 durable artifact를 수정하지 않는다.
-- `/tk:handoff-write`는 current goal, branch/HEAD, artifact map, gap context, ambiguity/not-confirmed 분류, next safe action을 handoff에 남긴다.
-- `/tk:handoff-read`는 handoff를 맹신하지 않고 현재 branch/HEAD, artifact map, `CLAUDE.md`, `DESIGN.md`, `COMPONENT_REUSE_MAP.md`, legacy `reuse-map.md`를 확인한 뒤 stale/missing/conflict/needs-confirmation을 분리한다.
-- `/tk:gap`은 SOT access coverage를 기록하고 inaccessible binding SOT가 있으면 audit이 partial임을 명시한다.
+- gap 분석 시 basis, target, 현재 관측 가능한 baseline을 먼저 식별한다.
+- working tree가 dirty하거나 target state가 재현 불가해도 관측 가능한 비교는 진행할 수 있다. 다만 재현 불가 항목은 `cannot_verify` 또는 근거 부족으로 명시한다.
+- ambiguity를 조용히 해결하지 않는다. 근거가 결론을 지지하지 않으면 gap으로 기록하고 필요하면 사용자에게 묻는다.
 - 대화 context에 남아 있지 않은 내용은 추측하지 않고 `확인 불가`로 둔다.
-- `DESIGN.md`와 `COMPONENT_REUSE_MAP.md`는 derived repo-level knowledge이며 외부 SOT를 대체하지 않는다. `reuse-map.md`는 legacy alias/migration candidate로만 다룬다.
-- `DESIGN.md`와 `COMPONENT_REUSE_MAP.md` 업데이트는 prep/gap 중 직접 하지 말고 reflection escalation gate를 통해 제안하고 사용자 승인 후에만 적용한다. `reuse-map.md`는 legacy migration 후보로만 제안한다.
+- `DESIGN.md`와 `COMPONENT_REUSE_MAP.md`는 derived repo-level knowledge다. basis나 사용자 확인을 대체하지 않는다. `reuse-map.md`는 legacy alias/migration candidate로만 다룬다.
 - `DESIGN.md`가 없으면 TigerKit이 새로 생성하지 않는다. 넣을 derived design knowledge가 있으면 사용자에게 초기화 필요를 알린다.
 - inspect하지 않은 component prop, API field, behavior, reusable capability를 기록하지 않는다.
 
@@ -49,7 +41,7 @@
 
 중요 claim은 아래 중 하나에 근거해야 한다.
 
-- external SOT reference
+- external basis reference
 - direct user interview text
 - code path
 - commit hash
@@ -63,7 +55,7 @@
 ```text
 Evidence = directly observed
 Interpretation = inferred from evidence
-Decision = confirmed by user or SOT
+Decision = confirmed by user or basis
 Suggestion = proposed, not confirmed
 ```
 

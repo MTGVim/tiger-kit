@@ -1,549 +1,205 @@
 {
   "skill_name": "tiger-kit-source-loss-prevention",
+  "command_surface": {
+    "core_commands": [
+      "/tk:gap",
+      "/tk:reflect",
+      "/tk:handoff"
+    ],
+    "removed_commands": [
+      "/tk:prep",
+      "/tk:checkpoint",
+      "/tk:review",
+      "/tk:handoff-write",
+      "/tk:handoff-read"
+    ]
+  },
   "evals": [
     {
       "id": 0,
-      "name": "prep-indexes-external-sources-without-rewriting",
-      "prompt": "You are evaluating TigerKit /tk:prep on a safe feature branch. The user provides a PRD URL, a Figma URL, a GitHub issue link, and a short direct interview note. Describe expected behavior. Do not write files.",
-      "expected_output": "Should create or update branch-local .tigerkit/branches/{escaped-branch}/requirements.md as a source-of-truth reference index. External sources should be stored as references only, direct user interview text should be preserved close to raw wording, derived interpretation should be clearly separated, ambiguity should be recorded, root .tigerkit/requirements.md should be treated as deprecated migration candidate, and no pseudo-requirements should be created.",
+      "name": "command-surface-lists-core-commands",
+      "prompt": "You are evaluating TigerKit active command surface after the core commands refactor. Describe the user-facing commands. Do not write files.",
+      "expected_output": "Should list /tk:gap, /tk:reflect, and /tk:handoff as the active user-facing commands, explain that gap analysis and PR-ready review comments are handled through /tk:gap modes, and describe removed commands only as deprecated or removed surface.",
       "files": [],
       "expectations": [
-        "Uses .tigerkit/branches/{escaped-branch}/requirements.md as a source reference index",
-        "Stores PRD, Figma, and issue as references only",
-        "Preserves direct user interview wording close to raw text",
-        "Separates raw interview text from derived interpretation",
-        "Records ambiguity instead of guessing",
-        "Does not summarize external sources into local requirements",
-        "Does not create unrelated artifacts",
-        "Treats root .tigerkit/requirements.md as deprecated migration candidate",
-        "Does not update CLAUDE.md, DESIGN.md, or COMPONENT_REUSE_MAP.md during prep",
-        "Does not implement, commit, push, open PRs, merge, or deploy"
+        "Lists /tk:gap",
+        "Lists /tk:reflect",
+        "Lists /tk:handoff",
+        "Explains that /tk:gap supports analysis, review, and both modes",
+        "Treats /tk:prep, /tk:checkpoint, /tk:review, /tk:handoff-write, and /tk:handoff-read as removed commands",
+        "Does not describe removed commands as active workflow steps"
       ]
     },
     {
       "id": 1,
-      "name": "gap-records-sot-vs-reproducible-baseline",
-      "prompt": "You are evaluating TigerKit /tk:gap on a safe feature branch. The branch-local requirements index points to a PRD tooltip copy section, and the repo has a clean working tree at HEAD abc1234. Describe expected behavior. Do not write files.",
-      "expected_output": "Should identify the compared SOT reference from .tigerkit/branches/{escaped-branch}/requirements.md and clean HEAD code baseline, inspect relevant files, record evidence and finding in .tigerkit/branches/{escaped-branch}/gap.md, separate interpretation from evidence, include required resolution, and avoid creating a work plan.",
+      "name": "gap-analysis-uses-new-taxonomy",
+      "prompt": "You are evaluating TigerKit /tk:gap for the input `/tk:gap spec <url> vs current implementation mode=analysis`. The basis says a required summary row is missing in the UI, and the current implementation has no matching row. Describe expected behavior. Do not write files.",
+      "expected_output": "Should emit analysis output with Scope, Summary, Findings, Open Questions, and Recommended Next Actions. The finding should use the new taxonomy such as missing_requirement with judgment not_satisfied and severity from critical, major, minor, info, or unknown.",
       "files": [],
       "expectations": [
-        "Identifies compared SOT reference from branch-local requirements index",
-        "Records baseline as HEAD commit abc1234 when clean",
-        "Lists inspected files",
-        "Includes SOT evidence as exact excerpt or pointer",
-        "Includes code evidence as exact excerpt or pointer",
-        "Separates finding from interpretation",
-        "Includes required resolution",
-        "Shows current gap workflow step and next action in the receipt",
-        "Writes or updates branch-local gap.md",
-        "Does not convert gap into work plan",
-        "Does not update CLAUDE.md, DESIGN.md, or COMPONENT_REUSE_MAP.md during gap"
+        "Uses mode=analysis output structure",
+        "Includes Scope",
+        "Includes Summary",
+        "Includes Findings",
+        "Includes Open Questions",
+        "Includes Recommended Next Actions",
+        "Uses a finding type from the allowed list",
+        "Uses a judgment from the allowed list",
+        "Uses a severity from the allowed list",
+        "Does not use High, Medium, or Low",
+        "Does not use missing_behavior or behavior_mismatch"
       ]
     },
     {
       "id": 2,
-      "name": "gap-requires-clean-baseline",
-      "prompt": "You are evaluating TigerKit /tk:gap on a safe feature branch while the working tree has uncommitted changes. Describe expected behavior. Do not write files.",
-      "expected_output": "Should stop before recording gaps, explain that a reproducible baseline is missing, and ask the user to commit or clean up the working tree before running gap analysis.",
+      "name": "gap-review-mode-emits-pr-ready-comments",
+      "prompt": "You are evaluating TigerKit /tk:gap for the input `PR #123 기준으로 코멘트 남길 수 있게 봐줘`. The basis shows button text `저장`, but the current diff renders `확인`. Describe expected behavior. Do not write files.",
+      "expected_output": "Should infer or use review mode and emit PR-ready review comments only. Each comment should start with severity on the first line, then include basis, evidence, why, and ask or suggested change when clear.",
       "files": [],
       "expectations": [
-        "Does not record gaps without a clean baseline",
-        "Explains reproducible baseline is missing",
-        "Asks user to commit or clean up changes",
-        "Shows the blocked workflow step and the action needed before rerunning /tk:gap",
-        "Does not invent a commit hash",
-        "Does not treat uncommitted changes as a reproducible baseline"
+        "Uses /tk:gap protocol",
+        "Infers or uses mode=review",
+        "Outputs PR-ready review comments only",
+        "Puts severity on the first line",
+        "Includes basis evidence",
+        "Includes current evidence",
+        "Includes why the mismatch matters",
+        "Includes suggested change when clear",
+        "Uses copy_exact_mismatch for visible copy difference",
+        "Does not emit a long analysis table unless mode=both is requested"
       ]
     },
     {
       "id": 3,
-      "name": "gap-ambiguity-recorded-not-resolved",
-      "prompt": "You are evaluating TigerKit /tk:gap on a safe feature branch. The indexed source does not specify whether archived users should appear in search results, but code excludes them. Describe expected behavior. Do not write files.",
-      "expected_output": "Should record an ambiguity gap in branch-local gap.md with compared SOT, compared code baseline, inspected code, evidence, finding, interpretation if any, and required user or source confirmation. It should not choose behavior silently or store a guessed decision.",
+      "name": "gap-both-mode-combines-analysis-and-review",
+      "prompt": "You are evaluating TigerKit /tk:gap for the input `/tk:gap jira PROJ-123 vs pr #456 mode=both`. Describe expected behavior. Do not write files.",
+      "expected_output": "Should emit analysis output first and then a block of PR-ready review comments. The two sections should follow the same finding taxonomy and evidence discipline.",
       "files": [],
       "expectations": [
-        "Records ambiguity as a gap",
-        "Shows source does not specify the behavior",
-        "Shows code behavior with path or excerpt",
-        "Separates evidence from interpretation",
-        "Requests confirmation or source update as required resolution",
-        "Does not silently choose implementation behavior",
-        "Does not store guessed answer as decision"
+        "Uses mode=both",
+        "Outputs analysis first",
+        "Outputs review comments after analysis",
+        "Keeps the same finding taxonomy across both sections",
+        "Maintains evidence versus interpretation separation"
       ]
     },
     {
       "id": 4,
-      "name": "reflect-conversation-first-reconstruction",
-      "prompt": "You are evaluating TigerKit /tk:reflect on a safe feature branch after a session where the user corrected a reuse pattern twice and one one-off copy issue was resolved. There are also stale artifacts from earlier work. Describe expected behavior. Do not write files.",
-      "expected_output": "Should use current conversation context as the primary source, use branch-local requirements.md, gap.md, handoff.md, and recent diff or commit only as supporting evidence, mark anything absent from the conversation context as 확인 불가, update branch-local reflect.md, and separate durable learning from one-off correction.",
+      "name": "gap-copy-mismatch-defaults-to-major",
+      "prompt": "You are evaluating TigerKit /tk:gap on visible UI copy. The basis shows a normal table column label, but the implementation uses a different phrase with the same meaning. Describe expected behavior. Do not write files.",
+      "expected_output": "Should treat the visible text difference as copy_exact_mismatch and default severity to major unless the context justifies another allowed severity. It should not accept meaning similarity as a pass.",
       "files": [],
       "expectations": [
-        "Uses current conversation context as primary source",
-        "Uses branch-local requirements.md only as supporting evidence when available",
-        "Uses branch-local gap.md only as supporting evidence when available",
-        "Uses branch-local handoff.md only as supporting evidence when available",
-        "Uses recent diff or commit only as supporting evidence when available",
-        "Marks missing conversation context as 확인 불가 instead of guessing",
-        "Writes or updates branch-local reflect.md",
-        "Separates durable learning from one-off correction",
-        "Does not let stale artifacts override conversation evidence"
+        "Uses copy_exact_mismatch",
+        "Does not treat meaning-similar text as satisfied",
+        "Defaults severity to major for ordinary visible copy mismatch unless evidence justifies otherwise",
+        "Keeps visible UI copy under exact match rules"
       ]
     },
     {
       "id": 5,
-      "name": "reflect-design-missing-notification",
-      "prompt": "You are evaluating TigerKit /tk:reflect. The session produced durable design knowledge that belongs in DESIGN.md, but the repository does not currently have DESIGN.md. Describe expected behavior. Do not write files.",
-      "expected_output": "Should not create DESIGN.md. It should record the proposed design knowledge in branch-local reflect.md, mention DESIGN.md initialization need in the receipt, and wait for the file to exist before applying the update.",
+      "name": "gap-copy-mismatch-escalates-for-compliance-context",
+      "prompt": "You are evaluating TigerKit /tk:gap on a consent checkbox label. The basis text and current implementation differ. Describe expected behavior. Do not write files.",
+      "expected_output": "Should classify the issue as copy_exact_mismatch and raise severity to critical or major because the text affects consent, legal, privacy, security, payment, or compliance meaning.",
       "files": [],
       "expectations": [
-        "Does not create DESIGN.md when absent",
-        "Records proposed design knowledge in branch-local reflect.md",
-        "Notifies user that DESIGN.md initialization is needed",
-        "Explains DESIGN.md should be initialized externally or by user choice",
-        "Waits for DESIGN.md to exist before applying updates",
-        "Does not drop the derived design knowledge silently"
+        "Uses copy_exact_mismatch",
+        "Uses severity critical or major",
+        "Explains that consent, legal, privacy, security, payment, or compliance context increases severity",
+        "Does not downgrade the issue to minor by default"
       ]
     },
     {
       "id": 6,
-      "name": "reflect-design-missing-no-design-knowledge",
-      "prompt": "You are evaluating TigerKit /tk:reflect. DESIGN.md is absent, but the session produced no durable design knowledge. Describe expected behavior. Do not write files.",
-      "expected_output": "Should not create DESIGN.md and should not notify the user to initialize DESIGN.md, because there is no derived design knowledge to place there. It should still update branch-local reflect.md if reflection evidence exists.",
+      "name": "gap-uses-cannot-verify-for-unreproducible-target",
+      "prompt": "You are evaluating TigerKit /tk:gap where the basis is clear, but the current target state cannot be reproduced from the available repo state and the needed rendered evidence was not captured. Describe expected behavior. Do not write files.",
+      "expected_output": "Should continue the analysis without inventing certainty, identify the current observable baseline when possible, and mark the item cannot_verify or insufficient_evidence rather than blocking the entire command.",
       "files": [],
       "expectations": [
-        "Does not create DESIGN.md when absent",
-        "Does not show DESIGN.md initialization notification without derived design knowledge",
-        "Does not treat missing DESIGN.md alone as an issue",
-        "Updates branch-local reflect.md when reflection evidence exists"
+        "Identifies basis, target, and observable baseline when possible",
+        "Uses cannot_verify when the target state is not reproducible",
+        "May use insufficient_evidence as the finding type",
+        "Does not require a clean HEAD before every gap analysis",
+        "Does not invent missing evidence"
       ]
     },
     {
       "id": 7,
-      "name": "command-surface-includes-handoff",
-      "prompt": "You are evaluating TigerKit active command surface after the branch-local handoff redesign. Describe the user-facing commands. Do not write files.",
-      "expected_output": "Should list /tk:prep, /tk:gap, /tk:checkpoint, /tk:review, /tk:reflect, /tk:handoff-write, and /tk:handoff-read as user-facing commands, and describe TigerKit as a source indexer, gap recorder, decision gate, compliance reviewer, reflection maintainer, and handoff verifier rather than an execution orchestrator.",
+      "name": "gap-reports-conflicting-basis-explicitly",
+      "prompt": "You are evaluating TigerKit /tk:gap when one basis document says button label A and another basis document says button label B. The implementation uses B. Describe expected behavior. Do not write files.",
+      "expected_output": "Should explicitly report conflicting basis material as conflicting_sources instead of silently merging them or inventing a synthetic requirement.",
       "files": [],
       "expectations": [
-        "Lists /tk:prep",
-        "Lists /tk:gap",
-        "Lists /tk:checkpoint",
-        "Lists /tk:review",
-        "Lists /tk:reflect",
-        "Lists /tk:handoff-write",
-        "Lists /tk:handoff-read",
-        "Describes TigerKit as source indexer, gap recorder, decision gate, compliance reviewer, reflection maintainer, and handoff verifier",
-        "Does not describe TigerKit as an execution orchestrator"
+        "Uses conflicting_sources",
+        "States that basis materials conflict",
+        "Does not silently merge the two references",
+        "Does not mark the item satisfied without resolving the conflict"
       ]
     },
     {
       "id": 8,
-      "name": "branch-local-artifacts-require-safe-branch",
-      "prompt": "You are evaluating TigerKit when the current checkout is detached HEAD or protected branch main. Describe expected behavior for write commands. Do not write files.",
-      "expected_output": "Should stop before writing branch-local TigerKit artifacts, explain that detached HEAD or protected branch is not a safe branch-local target, and ask the user to switch or create a feature branch. It should not write root .tigerkit artifacts or migrate deprecated root artifacts.",
+      "name": "reflect-defaults-to-proposal-only",
+      "prompt": "You are evaluating TigerKit /tk:reflect after repeated review comments showed that visible UI copy must exact-match the basis. Describe expected behavior. Do not write files.",
+      "expected_output": "Should emit Reflect Result, Classification, Reason, Proposed Patch, Conflicts, and Follow-up Audit. By default it should stay proposal-only and avoid modifying files.",
       "files": [],
       "expectations": [
-        "Does not write artifacts on detached HEAD",
-        "Does not write artifacts on main, master, or develop",
-        "Asks user to switch or create a feature branch",
-        "Does not create root .tigerkit artifacts",
-        "Does not migrate deprecated root artifacts without approval"
+        "Includes Reflect Result",
+        "Includes Classification",
+        "Includes Reason",
+        "Includes Proposed Patch",
+        "Includes Conflicts",
+        "Includes Follow-up Audit",
+        "States apply status",
+        "Does not modify files without apply=true or explicit approval"
       ]
     },
     {
       "id": 9,
-      "name": "reflect-requires-escalation-confirmation",
-      "prompt": "You are evaluating TigerKit /tk:reflect after a session produced durable guidance for CLAUDE.md and COMPONENT_REUSE_MAP.md. Describe expected behavior. Do not write files.",
-      "expected_output": "Should record branch-local reflect.md first, then present escalation candidates for CLAUDE.md and COMPONENT_REUSE_MAP.md, ask the user whether to apply them, and avoid modifying durable artifacts before approval. Receipt should distinguish recorded only, applied, pending escalation, and skipped items.",
+      "name": "reflect-apply-gate-allows-explicit-application",
+      "prompt": "You are evaluating TigerKit /tk:reflect for the input `/tk:reflect UI copy exact match rule apply=true`. Describe expected behavior. Do not write files.",
+      "expected_output": "Should use the same reflect structure, but when apply=true is present and there is no unresolved conflict, it may apply the approved patch to the appropriate rule file or CLAUDE.md target.",
       "files": [],
       "expectations": [
-        "Writes or updates branch-local reflect.md",
-        "Lists CLAUDE.md escalation candidate when durable repo instruction exists",
-        "Lists COMPONENT_REUSE_MAP.md escalation candidate when inspected reusable code knowledge exists",
-        "Asks user before applying durable artifact updates",
-        "Does not modify CLAUDE.md, MEMORY.md, DESIGN.md, or COMPONENT_REUSE_MAP.md before approval",
-        "Receipt distinguishes recorded only from applied"
+        "Uses reflect output structure",
+        "Recognizes apply=true as application permission",
+        "Still reports conflicts before applying when needed",
+        "Does not apply changes when conflicts remain unresolved"
       ]
     },
     {
       "id": 10,
-      "name": "handoff-write-preserves-artifact-map-and-gap-context",
-      "prompt": "You are evaluating TigerKit /tk:handoff-write after prep, gap, and reflect have branch-local artifacts. Describe expected behavior. Do not write files.",
-      "expected_output": "Should write branch-local handoff.md containing current goal, write-time branch and HEAD, TigerKit artifact map, requirements context, gap context, reflection context, decisions, evidence, interpretation, not confirmed items, ambiguities, open questions, next safe actions, do-not-do notes, key files, and last verification.",
+      "name": "handoff-writes-current-template-sections",
+      "prompt": "You are evaluating TigerKit /tk:handoff for the input `/tk:handoff 현재 작업 이어받을 수 있게 남겨줘`. Describe expected behavior. Do not write files.",
+      "expected_output": "Should write .claude/handoffs/current.md using the command template sections exactly, including Reader Guide and Resume Prompt, and report the written path with the next safe action.",
       "files": [],
       "expectations": [
-        "Writes branch-local handoff.md",
-        "Records branch and HEAD baseline",
-        "Includes requirements, gap, and reflect artifact map",
-        "Includes open and resolved gap context",
-        "Separates decisions, evidence, interpretation, not confirmed, and ambiguities",
-        "Includes next safe actions and do-not-do notes"
+        "Writes .claude/handoffs/current.md",
+        "Uses section title `Reader Guide`",
+        "Uses section title `Mission`",
+        "Uses section title `Current State`",
+        "Uses section title `Key Decisions`",
+        "Uses section title `Relevant Files`",
+        "Uses section title `Basis / References`",
+        "Uses section title `Completed Work`",
+        "Uses section title `Pending Work`",
+        "Uses section title `Known Risks / Unknowns`",
+        "Uses section title `Failed Attempts / Do Not Repeat`",
+        "Uses section title `Validation`",
+        "Uses section title `Next Actions`",
+        "Uses section title `Resume Prompt`",
+        "Reports the current handoff path in the receipt"
       ]
     },
     {
       "id": 11,
-      "name": "handoff-read-verifies-before-acting",
-      "prompt": "You are evaluating TigerKit /tk:handoff-read in a new session. Describe expected behavior. Do not write files.",
-      "expected_output": "Should read branch-local handoff.md, verify current branch and HEAD against the handoff baseline, inspect the artifact map for requirements, gap, and reflect files, check CLAUDE.md, DESIGN.md, and COMPONENT_REUSE_MAP.md when present, classify matched, stale, missing, conflict, and needs-confirmation items, and provide next safe action without implementing.",
+      "name": "handoff-archive-is-opt-in",
+      "prompt": "You are evaluating TigerKit /tk:handoff when the user did not request archive=true or any explicit archive request. Describe expected behavior. Do not write files.",
+      "expected_output": "Should write only .claude/handoffs/current.md by default and avoid creating a dated archive unless archive=true or an explicit archive request is present.",
       "files": [],
       "expectations": [
-        "Reads branch-local handoff.md",
-        "Compares current branch and HEAD with handoff baseline",
-        "Checks requirements, gap, and reflect artifacts from artifact map",
-        "Checks CLAUDE.md, DESIGN.md, and COMPONENT_REUSE_MAP.md when present",
-        "Classifies stale, missing, conflict, and needs-confirmation items",
-        "Does not implement or modify files during handoff-read"
-      ]
-    },
-    {
-      "id": 12,
-      "name": "prep-prompts-for-general-chat-external-sot",
-      "prompt": "You are evaluating TigerKit behavior during a normal conversation, not an explicit /tk:prep invocation. The user shares a Jira ticket and a Figma MCP resource, then asks you to implement the feature. Describe expected behavior. Do not write files.",
-      "expected_output": "Should classify the Jira ticket and Figma MCP resource as source-of-truth candidates, strongly recommend branch-local requirements.md reference indexing via /tk:prep before implementation, avoid copying or summarizing external source content into local requirements text, and allow the /tk:prep contract flow if the user agrees even without typing the slash command.",
-      "files": [],
-      "expectations": [
-        "Classifies the Jira ticket as a source-of-truth candidate",
-        "Classifies the Figma MCP resource as a source-of-truth candidate",
-        "Strongly recommends branch-local requirements.md reference indexing via /tk:prep before implementation",
-        "Does not copy external source content into requirements.md",
-        "Does not summarize external source content into requirements.md",
-        "Allows the /tk:prep command contract if the user agrees without typing the slash command",
-        "Does not start implementation before handling the source indexing recommendation"
-      ]
-    },
-    {
-      "id": 13,
-      "name": "prep-records-api-backend-reference-set",
-      "prompt": "You are evaluating TigerKit /tk:prep behavior for API investigation. The user asks whether the frontend API mapping matches backend behavior. The backend repo is billing-api, and the source should be current develop plus open PRs. Describe expected behavior. Do not write files.",
-      "expected_output": "Should recommend recording a backend reference set in branch-local requirements.md using references only: backend repo name, latest develop branch policy at lookup time, looked-up HEAD commit, open PR list or relevant PRs, endpoint and schema references, source paths, and related docs, tickets, or issues. It should not copy backend implementation details into requirements.md.",
-      "files": [],
-      "expectations": [
-        "Recommends recording backend repo billing-api as a reference",
-        "Recommends recording the latest develop branch policy at lookup time",
-        "Recommends looking up and recording the backend HEAD commit",
-        "Recommends recording the open PR list or relevant PR references",
-        "Recommends recording endpoint, schema, and source path references",
-        "Recommends recording related docs, tickets, or issues as references",
-        "Does not copy backend implementation into requirements.md",
-        "Treats the backend source set as references only"
-      ]
-    },
-    {
-      "id": 14,
-      "name": "gap-blocks-on-staged-or-dirty-working-tree",
-      "prompt": "You are evaluating TigerKit /tk:gap on a safe feature branch where the working tree has staged changes. Describe expected behavior. Do not write files.",
-      "expected_output": "Should stop before writing branch-local gap.md because only a clean HEAD is a reproducible baseline, report that staged changes are present, avoid comparing staged diff as the baseline, and strongly recommend committing the staged changes or cleaning the working tree before rerunning /tk:gap.",
-      "files": [],
-      "expectations": [
-        "Stops before writing branch-local gap.md",
-        "Explains that only a clean HEAD is a reproducible baseline",
-        "Reports that staged changes are present",
-        "Does not compare staged diff as the baseline",
-        "Strongly recommends committing staged changes or cleaning the working tree before rerunning /tk:gap",
-        "Does not proceed with gap analysis on a dirty working tree"
-      ]
-    },
-    {
-      "id": 15,
-      "name": "gap-records-insufficient-reuse-exploration",
-      "prompt": "You are evaluating TigerKit /tk:gap for a new FooCard proposal after the session checked only COMPONENT_REUSE_MAP.md and the local directory, without repo-wide component search or callsite inspection. Describe expected behavior. Do not write files.",
-      "expected_output": "Should record a high-severity insufficient reuse exploration gap. It should treat COMPONENT_REUSE_MAP.md as cache-0 only, state that a miss there is not evidence, require repo-wide exploration plus candidate and callsite inspection, require a recorded reuse, adapt, or create decision, mention design-system drift or nearby pattern mismatch risk, and not treat common module modification as confirmed without repo-wide callsite impact analysis and explicit user approval.",
-      "files": [],
-      "expectations": [
-        "Records a high-severity insufficient reuse exploration gap",
-        "States that COMPONENT_REUSE_MAP.md is cache-0 only",
-        "States that a COMPONENT_REUSE_MAP.md miss is not evidence",
-        "Requires repo-wide exploration",
-        "Requires candidate and callsite inspection",
-        "Requires a recorded reuse, adapt, or create decision",
-        "Mentions design-system drift or nearby pattern mismatch risk",
-        "Requires repo-wide callsite impact analysis before common module modification",
-        "Requires explicit user approval before treating common module modification as confirmed"
-      ]
-    },
-    {
-      "id": 16,
-      "name": "reflect-records-missing-sot-candidates-and-stale-claude-guidance",
-      "prompt": "You are evaluating TigerKit /tk:reflect after a session used a Figma MCP resource and backend repo API source, but never ran /tk:prep. The target repo CLAUDE.md exists but lacks current TigerKit managed rules for source-of-truth prompts, API reference sets, COMPONENT_REUSE_MAP.md cache-0 with reuse-map.md legacy fallback handling, new-module repo-wide exploration, common-module impact analysis and user approval, and clean HEAD baseline guidance. Describe expected behavior. Do not write files.",
-      "expected_output": "Should record in branch-local reflect.md that source-of-truth candidates were used but not indexed, list the missing candidates and their risk, use natural-language guidance that source reference indexing is needed, and present a pending escalation asking whether to update the target repo CLAUDE.md managed section with missing current rules for SOT prompts, API reference sets, COMPONENT_REUSE_MAP.md cache-0 with reuse-map.md legacy fallback handling, new-module repo-wide exploration, common-module impact analysis and user approval, and clean HEAD baseline. It should not directly modify requirements.md, CLAUDE.md, DESIGN.md, or COMPONENT_REUSE_MAP.md without approval.",
-      "files": [],
-      "expectations": [
-        "Records in branch-local reflect.md that source-of-truth candidates were used but not indexed",
-        "Lists the missing source-of-truth candidates",
-        "Explains the risk of missing indexing",
-        "Uses natural-language guidance that source reference indexing is needed",
-        "Presents a pending escalation asking whether to update the target repo CLAUDE.md managed section",
-        "Includes missing new-module repo-wide exploration guidance in the CLAUDE.md escalation",
-        "Includes missing common-module impact analysis and user approval guidance in the CLAUDE.md escalation",
-        "Does not directly modify requirements.md without approval",
-        "Does not directly modify CLAUDE.md without approval",
-        "Does not directly modify DESIGN.md or COMPONENT_REUSE_MAP.md without approval"
-      ]
-    },
-    {
-      "id": 17,
-      "name": "gap-records-design-fixture-and-format-drift",
-      "prompt": "You are evaluating TigerKit /tk:gap against a Figma SOT. The implementation uses semantically similar but different fixture text, and renders a date as `yyyy-MM-dd hh:mm:ss` while Figma expects `yyyy-MM-dd` and `hh:mm:ss` on separate lines. Current DOM evidence has not been captured. Describe expected behavior. Do not write files.",
-      "expected_output": "Should treat fixture wording differences and date/time format or line-break differences as serious design gaps, not acceptable drift. Should record the compared Figma SOT, current implementation evidence, and required resolution in branch-local gap.md. If current rendered evidence is insufficient, it should request or collect reproducible evidence such as DOM, accessibility tree, screenshot, rendered text, or style token evidence before concluding.",
-      "files": [],
-      "expectations": [
-        "Treats fixture wording differences as gap evidence even when meaning is similar",
-        "Treats date/time format and line-break differences as serious design gaps",
-        "Does not dismiss the difference as acceptable drift without SOT or user confirmation",
-        "Records compared Figma SOT and current implementation evidence in branch-local gap.md",
-        "Requests or collects DOM, accessibility tree, screenshot, rendered text, or style token evidence when current rendered evidence is insufficient",
-        "Includes required resolution for the fixture or format mismatch"
-      ]
-    },
-    {
-      "id": 18,
-      "name": "checkpoint-produces-decision-gate",
-      "prompt": "You are evaluating TigerKit /tk:checkpoint during a task with one inaccessible requirement image, one design/spec copy conflict, one local visible label mismatch, and one backend-provided field uncertainty. Describe expected behavior. Do not write files.",
-      "expected_output": "Should produce the required Checkpoint sections, classify inaccessible SOT as not verifiable or blocked by access, list the copy conflict under SOT / Policy Conflicts, identify the local visible label mismatch as self-resolvable when SOT is clear, classify backend field uncertainty as needs verification or external dependency, and end with exactly one final status from CLEAR, PROCEED_WITH_ASSUMPTIONS, PAUSE_FOR_USER_DECISION, BLOCKED_BY_ACCESS, or NEED_VERIFICATION.",
-      "files": [],
-      "expectations": [
-        "Lists Current Status",
-        "Lists Blocking Questions",
-        "Lists User Decisions Needed",
-        "Lists Assumptions Being Made",
-        "Lists Not Verifiable Items",
-        "Lists SOT / Policy Conflicts",
-        "Lists Self-resolvable Items",
-        "Lists Items Not Safe to Auto-resolve",
-        "Ends with one defined final status",
-        "Does not infer inaccessible SOT contents",
-        "Does not mark inaccessible SOT-dependent items as Match",
-        "Does not recommend /tk:reflect as the default next command"
-      ]
-    },
-    {
-      "id": 19,
-      "name": "gap-separates-severity-from-resolvability",
-      "prompt": "You are evaluating TigerKit /tk:gap with a low-severity policy-token ambiguity, a high-severity locally fixable copy mismatch, and a missing backend-provided value. Describe expected behavior. Do not write files.",
-      "expected_output": "Should record severity separately from resolvability, mark the policy-token ambiguity as requiring user decision or partial self-resolution, mark the locally fixable copy mismatch as self-resolvable when SOT is clear, mark the missing backend-provided value as external dependency, set shouldPauseBeforeFix where needed, and avoid presenting external dependency gaps as locally fixable.",
-      "files": [],
-      "expectations": [
-        "Separates severity from resolvability",
-        "Marks self-resolvable gaps clearly",
-        "Marks user-decision-required gaps clearly",
-        "Marks external dependency gaps clearly",
-        "Uses shouldPauseBeforeFix where needed",
-        "Does not auto-resolve user-decision-required gaps",
-        "Does not present external dependency gaps as locally fixable",
-        "Does not recommend /tk:reflect as the default next command"
-      ]
-    },
-    {
-      "id": 20,
-      "name": "review-catches-missing-reuse-exploration",
-      "prompt": "You are evaluating TigerKit /tk:review for a change that adds a new SummaryCard component after checking only COMPONENT_REUSE_MAP.md and the local feature directory. No repo-wide keyword search, import/export search, candidate inspection, or callsite inspection is recorded. Describe expected behavior. Do not write files.",
-      "expected_output": "Should report FINDINGS with a High severity missing reuse exploration item. It should state that COMPONENT_REUSE_MAP.md is cache-0 only, a miss there is not evidence that no reusable module exists, and new component creation requires repo-wide exploration including file inventory, source root and package/domain scope, keyword search, import/export search, candidate inspection, callsite inspection, explored/excluded scope, and candidate rejection rationale. It should not modify artifacts or implement a fix.",
-      "files": [],
-      "expectations": [
-        "Outputs FINDINGS rather than NO_FINDINGS",
-        "Marks missing reuse exploration as High severity",
-        "States that COMPONENT_REUSE_MAP.md is cache-0 only",
-        "States that a COMPONENT_REUSE_MAP.md miss is not evidence",
-        "Requires repo-wide exploration before new module creation",
-        "Requires candidate and callsite inspection",
-        "Requires explored scope and excluded scope with reasons",
-        "Requires existing candidate rejection rationale",
-        "Does not modify artifacts or implement a fix"
-      ]
-    },
-    {
-      "id": 21,
-      "name": "review-covers-source-loss-and-command-sync",
-      "prompt": "You are evaluating TigerKit /tk:review for a command change where README documents /tk:review but plugin.json omits it, and a prep example copies a PRD paragraph into requirements.md as an official requirement. Describe expected behavior. Do not write files.",
-      "expected_output": "Should report FINDINGS for both command surface drift and source-loss risk. It should identify plugin/docs/evals/manifest sync as required for command changes, reject copying external SOT into requirements.md as official requirement text, ask for external source references only plus direct interview raw text separation, and avoid fixing files itself.",
-      "files": [],
-      "expectations": [
-        "Outputs FINDINGS rather than NO_FINDINGS",
-        "Flags README and plugin.json command surface drift",
-        "Requires docs, evals, and manifest command surface sync",
-        "Flags copied external PRD text as source-loss risk",
-        "Requires external sources to be stored as references only",
-        "Requires direct interview raw text to be separated from derived interpretation",
-        "Does not modify files during review"
-      ]
-    },
-    {
-      "id": 22,
-      "name": "prep-records-pending-sot-accessibility",
-      "prompt": "You are evaluating TigerKit /tk:prep when the user provides a private image URL for section 1.1.1 and the runtime cannot access it. Existing target repo files include docs/SOT_MANIFEST.md and docs/DESIGN.md. Describe expected behavior. Do not write files.",
-      "expected_output": "Should validate SOT accessibility before materialization, record the image as a pending SOT entry with explicit access_status such as auth_required or pending_user_input, preserve the original reference without treating it as inspected, ask for a file upload, local path, screenshot/export, or pasted content, recommend a stable local asset path such as ./docs/assets/sot/requirements/1.1.1.png, intake existing docs/SOT_MANIFEST.md, docs/REQUIREMENTS.md, docs/DESIGN.md, IMPLEMENTATION_POLICY.md, and docs/assets/sot/ as SOT category candidates without merging them into a single SOT.md, while treating COMPONENT_REUSE_MAP.md as a derived reuse map unless the target repo explicitly defines it as SOT, and avoid writing image-derived requirements as confirmed.",
-      "files": [],
-      "expectations": [
-        "Validates SOT accessibility before materialization",
-        "Records inaccessible image as pending SOT entry",
-        "Includes explicit access_status",
-        "Preserves original reference for traceability",
-        "Does not treat inaccessible image as inspected",
-        "Asks for file upload, local path, screenshot/export, or pasted content",
-        "Recommends ./docs/assets/sot/requirements/1.1.1.png or equivalent stable local asset path",
-        "Intakes existing docs/SOT_MANIFEST.md as SOT category candidate",
-        "Intakes existing docs/REQUIREMENTS.md as SOT category candidate",
-        "Intakes existing docs/DESIGN.md as SOT category candidate",
-        "Intakes existing IMPLEMENTATION_POLICY.md as SOT category candidate",
-        "Treats existing COMPONENT_REUSE_MAP.md as derived reuse map unless target repo explicitly defines it as SOT",
-        "Does not merge existing SOT categories into a single SOT.md",
-        "Does not write image-derived requirements as confirmed"
-      ]
-    },
-    {
-      "id": 23,
-      "name": "gap-reports-partial-sot-access-coverage",
-      "prompt": "You are evaluating TigerKit /tk:gap when branch-local requirements.md lists SOT-IMG-001 as a binding design image with access_status pending_user_input. Describe expected behavior. Do not write files.",
-      "expected_output": "Should include SOT Access Coverage, state that the audit is partial because the binding SOT image is inaccessible, not mark image-dependent implementation as Match, record a Not verifiable or coverage gap, use pending_user_asset or equivalent resolution classification, and ask for user-provided file, local path, screenshot/export, or pasted content.",
-      "files": [],
-      "expectations": [
-        "Includes SOT Access Coverage",
-        "States audit is partial because binding SOT is inaccessible",
-        "Does not mark image-dependent implementation as Match",
-        "Records Not verifiable or coverage gap",
-        "Uses pending_user_asset or equivalent resolution classification",
-        "Asks for user-provided file, local path, screenshot/export, or pasted content"
-      ]
-    },
-    {
-      "id": 24,
-      "name": "review-catches-sot-access-coverage-omissions",
-      "prompt": "You are evaluating TigerKit /tk:review for a /tk:gap change that compares against a binding inaccessible Figma image but omits SOT Access Coverage, does not say the audit is partial, and does not ask for fallback content. Describe expected behavior. Do not write files.",
-      "expected_output": "Should report FINDINGS, flag missing SOT Access Coverage, flag missing partial audit statement for inaccessible binding SOT, flag missing fallback request, require pending_user_asset or not_verifiable classification, and avoid implementing fixes during review.",
-      "files": [],
-      "expectations": [
-        "Outputs FINDINGS rather than NO_FINDINGS",
-        "Flags missing SOT Access Coverage",
-        "Flags missing partial audit statement",
-        "Flags missing fallback request",
-        "Requires pending_user_asset or not_verifiable classification",
-        "Does not implement fixes during review"
-      ]
-    },
-    {
-      "id": 25,
-      "name": "reflect-records-inaccessible-sot-fallback",
-      "prompt": "You are evaluating TigerKit /tk:reflect after the user mentioned a private Figma image URL during the session, but no branch-local requirements entry exists and the asset is not accessible. Describe expected behavior. Do not write files.",
-      "expected_output": "Should record a pending SOT candidate in reflect.md with access_status such as auth_required or pending_user_input, preserve the original reference, state that no confirmed image-derived requirement was materialized, ask for file upload, local path, screenshot/export, or pasted content, and avoid recommending /tk:reflect as a command-style next action.",
-      "files": [],
-      "expectations": [
-        "Records pending SOT candidate in reflect.md",
-        "Includes explicit access_status",
-        "Preserves original reference",
-        "Does not materialize confirmed image-derived requirements",
-        "Asks for file upload, local path, screenshot/export, or pasted content",
-        "Does not recommend /tk:reflect as command-style next action"
-      ]
-    },
-    {
-      "id": 26,
-      "name": "prep-receipt-uses-natural-guidance-not-next-command",
-      "prompt": "You are evaluating TigerKit /tk:prep after successful source indexing with one pending inaccessible design asset. Describe the receipt. Do not write files.",
-      "expected_output": "Should provide a short receipt with outcome, artifact path, pending SOT access status, and natural-language fallback guidance. It should not include a default next-command recommendation such as 다음 추천: /tk:gap.",
-      "files": [],
-      "expectations": [
-        "Shows source index outcome and artifact path",
-        "Mentions pending SOT access status when present",
-        "Asks for file upload, local path, screenshot/export, or pasted content when fallback is needed",
-        "Does not include 다음 추천: /tk:gap",
-        "Does not include 추천 다음 동작 or next command wording"
-      ]
-    },
-    {
-      "id": 27,
-      "name": "component-reuse-map-preferred-with-legacy-ambiguity",
-      "prompt": "You are evaluating TigerKit when both COMPONENT_REUSE_MAP.md and reuse-map.md exist in a target repo. Describe expected behavior. Do not write files.",
-      "expected_output": "Should treat COMPONENT_REUSE_MAP.md as the preferred derived reuse map, treat reuse-map.md only as a legacy alias or migration candidate, warn that duplicate reuse maps can diverge, and use checkpoint-style ambiguity before relying on conflicting entries.",
-      "files": [],
-      "expectations": [
-        "Prefers COMPONENT_REUSE_MAP.md as the active derived reuse artifact name",
-        "Treats reuse-map.md only as legacy alias or migration candidate",
-        "Does not treat either file as external SOT unless target repo explicitly defines it as SOT",
-        "Warns that duplicate reuse maps can diverge",
-        "Does not write both files for the same target repo state"
-      ]
-    },
-    {
-      "id": 28,
-      "name": "legacy-reuse-map-fallback",
-      "prompt": "You are evaluating TigerKit when only reuse-map.md exists and COMPONENT_REUSE_MAP.md is absent. Describe expected behavior. Do not write files.",
-      "expected_output": "Should read reuse-map.md only as a legacy fallback or migration candidate, not as the preferred active artifact name or source of truth. It should not auto-create COMPONENT_REUSE_MAP.md unless user-approved command contract allows it.",
-      "files": [],
-      "expectations": [
-        "Reads reuse-map.md as legacy fallback or migration candidate only",
-        "Does not call reuse-map.md the preferred active artifact",
-        "Does not treat reuse-map.md as source of truth",
-        "Does not auto-create COMPONENT_REUSE_MAP.md",
-        "Mentions initialization may be useful only when inspected reuse knowledge should be preserved"
-      ]
-    },
-    {
-      "id": 29,
-      "name": "design-visible-copy-conflict-not-silent-match",
-      "prompt": "You are evaluating TigerKit /tk:gap when design SOT says a button label is A, requirements SOT says the button label is B, and actual implementation uses B. Describe expected behavior. Do not write files.",
-      "expected_output": "Should record a sot_conflict or Decision Gate entry, state the current priority rule for visible UI copy, avoid silently merging the two sources, and not mark the item as Match without inspected evidence and a stated priority rule.",
-      "files": [],
-      "expectations": [
-        "Records design-versus-requirements visible copy conflict as sot_conflict or Decision Gate item",
-        "States current priority rule for visible UI copy",
-        "Treats design SOT as generally winning when it explicitly provides visible target copy",
-        "Does not silently merge conflicting sources into synthetic requirement",
-        "Does not mark conflict-dependent item as Match without inspected evidence and priority rule"
-      ]
-    },
-    {
-      "id": 30,
-      "name": "requirements-validation-logic-beats-visual-design-state",
-      "prompt": "You are evaluating TigerKit /tk:gap when requirements specify a validation condition and design only shows a visual error state without defining behavior. Describe expected behavior. Do not write files.",
-      "expected_output": "Should treat requirements SOT as binding for validation behavior unless design explicitly overrides functional behavior. It should record implementation mismatch as a gap and not let visual design override business logic by implication.",
-      "files": [],
-      "expectations": [
-        "Uses requirements SOT for validation behavior",
-        "Does not infer behavior override from visual design state alone",
-        "Records validation mismatch as gap when implementation differs from requirements",
-        "Separates business logic priority from visible UI priority",
-        "Does not use existing code as authority over active requirements SOT"
-      ]
-    },
-    {
-      "id": 31,
-      "name": "policy-violation-is-gap-even-when-working",
-      "prompt": "You are evaluating TigerKit /tk:gap when project policy says LegacyComponent is avoided/deprecated for a flow, but actual implementation uses LegacyComponent and appears to work. Describe expected behavior. Do not write files.",
-      "expected_output": "Should record a policy gap using the project policy SOT, keep severity separate from resolvability, and avoid saying the implementation is acceptable just because it works. Generic docs should use neutral placeholders, not real package names.",
-      "files": [],
-      "expectations": [
-        "Records policy violation as a gap",
-        "Uses project policy SOT when accessible and inspected",
-        "Does not treat working behavior as justification for violating active policy",
-        "Separates severity from resolvability",
-        "Uses neutral placeholder names such as LegacyComponent instead of real package names"
-      ]
-    },
-    {
-      "id": 32,
-      "name": "gap-inventory-covers-low-severity-items",
-      "prompt": "You are evaluating TigerKit /tk:gap where scoped SOT includes a label, tooltip, modal okText, and table column. One low-severity text mismatch exists. Describe expected behavior. Do not write files.",
-      "expected_output": "Should include a Coverage Inventory listing each scoped item, mark which items were compared, record the low-severity copy mismatch as a gap, and avoid treating meaning-similar text as Match when exact text differs.",
-      "files": [],
-      "expectations": [
-        "Includes Coverage Inventory",
-        "Lists label, tooltip, modal okText, and table column items",
-        "Shows Compared? and Result per item",
-        "Records low-severity copy mismatch as a gap",
-        "Does not treat meaning-similar text as Match when exact text differs"
-      ]
-    },
-    {
-      "id": 33,
-      "name": "generic-docs-avoid-real-deprecated-dependency-examples",
-      "prompt": "You are evaluating generic TigerKit docs for dependency policy examples. Describe expected behavior. Do not write files.",
-      "expected_output": "Should avoid declaring any real third-party package, library, vendor, or component library globally deprecated. Examples should use neutral placeholders such as DeprecatedPackage, ProjectPreferredComponent, ProjectPolicyDependency, or LegacyComponent.",
-      "files": [],
-      "expectations": [
-        "Does not declare a real package deprecated globally",
-        "Does not hard-code project-specific dependency examples in generic docs",
-        "Uses neutral placeholders for policy examples",
-        "Treats dependency policy as project SOT when present",
-        "Does not introduce /tk:implement"
+        "Writes .claude/handoffs/current.md by default",
+        "Does not create a dated archive by default",
+        "Creates a dated archive only with archive=true or explicit archive request"
       ]
     }
   ]

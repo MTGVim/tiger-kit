@@ -1,11 +1,9 @@
 # TigerKit 운영 Output Contract
 
-이 문서는 `.tigerkit/docs/` 아래 TigerKit 운영 문서 중 receipt/output contract를 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
-
-TigerKit command의 기본 채팅 응답은 artifact 자체가 아니라 receipt입니다.
+이 문서는 TigerKit command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
 
 ```text
-Chat output is a receipt, not the artifact itself.
+Chat output is the primary receipt. File writes happen only when the command contract allows them.
 ```
 
 ## 원칙
@@ -13,175 +11,204 @@ Chat output is a receipt, not the artifact itself.
 기본 응답은 아래 네 가지에 집중합니다.
 
 1. outcome
-2. evidence/risk/ambiguity
-3. artifact paths
+2. evidence, risk, ambiguity
+3. artifact paths when files are written
 4. natural-language next action or required confirmation
 
-전체 `requirements.md`, `gap.md`, `reflect.md`, `handoff.md`, `DESIGN.md`, `COMPONENT_REUSE_MAP.md`를 채팅에 dump하지 않습니다. `reuse-map.md`는 legacy alias/migration candidate로 언급할 때만 다룹니다.
+상세 보고서는 사용자가 원하거나 command mode가 요구할 때만 출력합니다.
 
-## prep receipt
+## `/tk:gap` Output Contract
 
-```text
-source index 기록 준비했습니다.
-- branch: `feature__example`
-- 기록: `.tigerkit/branches/feature__example/requirements.md`
-- external sources: reference와 access status만 저장
-- pending SOT: 접근 불가 source는 fallback 요청
-- local asset: binding visual SOT는 `./docs/assets/sot/...` 경로 권장
-- interview: raw와 interpretation 분리
+- 목적: basis와 target을 비교해 gap analysis 또는 PR-ready review comment를 생성합니다.
+- 허용 mode: `analysis`, `review`, `both`
+- `mode=analysis`: 분석 형식을 출력합니다.
+- `mode=review`: PR-ready review comment만 출력합니다.
+- `mode=both`: 분석 형식 뒤에 review comment를 이어서 출력합니다.
+- visible UI copy 차이는 `copy_exact_mismatch`로 기록합니다.
+- basis끼리 충돌하면 `conflicting_sources`로 기록합니다.
+- 근거가 부족하거나 target state를 재현할 수 없으면 `cannot_verify` judgment 또는 `insufficient_evidence` finding을 사용합니다.
+- clean working tree가 아니어도 관측 가능한 baseline이 있으면 분석은 진행할 수 있습니다. 다만 재현 불가 상태는 `cannot_verify`로 둡니다.
 
-해야 할 일: 접근 불가 SOT가 있으면 파일 업로드, 로컬 경로, screenshot/export, pasted content를 제공해 주세요.
-```
+### finding type
 
-## gap receipt
+아래 목록만 사용합니다.
 
-```text
-gap 기록했습니다.
-- branch: `feature__example`
-- baseline: `abc1234`
-- recorded: `GAP-001`, `GAP-002`
-- SOT coverage: partial, `SOT-IMG-001` pending_user_input
-- 기록: `.tigerkit/branches/feature__example/gap.md`
+- `copy_exact_mismatch`
+- `repo_convention_violation`
+- `wrong_component_choice`
+- `unsupported_library_usage`
+- `missing_requirement`
+- `requirement_mismatch`
+- `partial_implementation`
+- `ambiguous_basis`
+- `conflicting_sources`
+- `insufficient_evidence`
+- `test_gap`
+- `accessibility_gap`
+- `unknown`
 
-해야 할 일: 접근 불가 binding SOT가 있으면 file, local path, screenshot/export, pasted content를 요청해 주세요.
-```
+### judgment
 
-## checkpoint receipt
+아래 목록만 사용합니다.
 
-```md
-# Checkpoint
+- `satisfied`
+- `partially_satisfied`
+- `not_satisfied`
+- `cannot_verify`
+- `conflicting_sources`
+- `out_of_scope`
 
-## 1. Current Status
+### severity
 
-현재 확인한 source와 task state를 짧게 기록합니다.
+아래 목록만 사용합니다.
 
-## 2. Blocking Questions
+- `critical`
+- `major`
+- `minor`
+- `info`
+- `unknown`
 
-| ID | Question | Source | Why it matters | Consequence if wrong | Pause? |
-|---|---|---|---|---|---|
-
-## 3. User Decisions Needed
-
-| ID | Decision | Options | Current assumption | Recommended handling | Pause? |
-|---|---|---|---|---|---|
-
-## 4. Assumptions Being Made
-
-| ID | Assumption | Source | Risk | Consequence if wrong |
-|---|---|---|---|---|
-
-## 5. Not Verifiable Items
-
-| ID | Item | Reason | Needed input | Current handling |
-|---|---|---|---|---|
-
-## 6. SOT / Policy Conflicts
-
-| ID | Conflict | Sources | Current priority rule | Needs user decision? |
-|---|---|---|---|---|
-
-## 7. Self-resolvable Items
-
-| ID | Item | Why self-resolvable | Safe action |
-|---|---|---|---|
-
-## 8. Items Not Safe to Auto-resolve
-
-| ID | Item | Reason | Required next input |
-|---|---|---|---|
-
-## 9. Continue / Pause Judgment
-
-Final status: `CLEAR | PROCEED_WITH_ASSUMPTIONS | PAUSE_FOR_USER_DECISION | BLOCKED_BY_ACCESS | NEED_VERIFICATION`
-
-한 줄 설명.
-```
-
-## review receipt
-
-finding이 있을 때:
+### `mode=analysis` 형식
 
 ```md
-FINDINGS
+## Scope
+- basis:
+- target:
+- mode: analysis
+- compared areas:
+- excluded areas:
 
-1. [High] repo-wide reuse exploration 누락
-- 위치: `commands/gap.md:...`
-- 규칙: 새 module 생성 전 candidate/callsite inspection 필요
-- evidence: `COMPONENT_REUSE_MAP.md` miss만 확인하고 새 component 생성을 전제함
-- 영향: unnecessary new implementation, design-system drift 가능
-- 필요한 수정: repo-wide exploration과 배제 근거 기록
+## Summary
+- overall judgment:
+- key risks:
+- mode reason: 필요할 때만 짧게
+
+## Findings
+
+| ID | Type | Judgment | Severity | Basis | Target Evidence | Summary | Rule ID | Suggested Action |
+|---|---|---|---|---|---|---|---|---|
+| GAP-001 | missing_requirement | not_satisfied | major | spec 3.2 | `src/...` | 요구 동작 누락 | RULE-123 또는 빈칸 | 구현 또는 기준자료 확인 |
+
+## Open Questions
+- 확인이 더 필요한 항목
+- 증거 부족 항목
+- 충돌하는 기준자료 항목
+
+## Recommended Next Actions
+- 바로 수정 가능한 항목
+- 사용자 확인이 필요한 항목
+- 추가 증거 확보가 필요한 항목
 ```
 
-finding이 없을 때:
+### `mode=review` 형식
 
-```text
-NO_FINDINGS
+```md
+[major] copy_exact_mismatch
+Basis: spec 3.2
+Evidence: `src/...`의 버튼 텍스트가 `저장`이 아니라 `확인`입니다.
+Why: visible copy는 exact match 기준이라 의미가 비슷해도 허용되지 않습니다.
+Ask: spec 기준으로 문구를 exact match로 맞춰 주세요.
 ```
 
-## reflect receipt
+규칙:
+- 첫 줄은 severity로 시작합니다.
+- `Basis`에는 기준자료 근거를 적습니다.
+- `Evidence`에는 현재 target 근거를 적습니다.
+- `Why`에는 영향이나 mismatch 이유를 적습니다.
+- 수정 방향이 명확할 때만 `Ask` 또는 동등한 suggested change를 적습니다.
+- speculative finding을 confirmed defect처럼 쓰지 않습니다.
 
-```text
-reflection 기록했습니다.
-- 기록: `.tigerkit/branches/feature__example/reflect.md`
-- recorded only: `reflect.md`
-- pending SOT: `SOT-IMG-001` auth_required, fallback 필요
-- pending escalation: `CLAUDE.md` managed section 추가 강한 추천, `COMPONENT_REUSE_MAP.md`
+### `mode=both` 형식
 
-질문: 위 escalation 후보를 실제 반영할까요?
-SOT fallback 필요: `SOT-IMG-001` 파일 업로드, 로컬 경로, screenshot/export, pasted content를 제공해 주세요.
+순서:
+1. `mode=analysis` 형식
+2. `mode=review` comment 묶음
+
+## `/tk:reflect` Output Contract
+
+- 목적: durable repo rule candidate를 추출하고 `CLAUDE.md` 또는 `.claude/rules/*` 변경을 제안합니다.
+- 기본값은 proposal-only입니다.
+- `apply=true` 또는 사용자 명시 승인 전에는 파일을 수정하지 않습니다.
+- conflict가 남아 있으면 적용하지 않고 먼저 보고합니다.
+
+필수 섹션 순서:
+
+```md
+### Reflect Result
+- durable rule candidate 요약
+- global rule인지 scoped rule인지 표시
+- apply 여부 표시
+
+### Classification
+- 각 candidate의 target 분류
+
+### Reason
+- evidence 기반 이유
+
+### Proposed Patch
+- proposal-only 기본 동작
+- apply=false면 실제 수정 대신 patch 제안
+
+### Conflicts
+- 충돌, 중복, 우선순위 불명확성
+
+### Follow-up Audit
+- 추가 검토 대상과 audit 범위
 ```
 
-## handoff-write receipt
+적용했을 때는 수정한 파일 경로와 적용 범위를 짧게 보고합니다. 적용하지 않았을 때는 proposal-only 상태를 명시합니다.
 
-```text
-handoff 기록했습니다.
-- 기록: `.tigerkit/branches/feature__example/handoff.md`
-- baseline: `abc1234`
-- artifact map: requirements/gap/reflect 상태 포함
-- open gaps: 2
-- ambiguity: 1
+## `/tk:handoff` Output Contract
+
+- 기본 기록 위치: `.claude/handoffs/current.md`
+- `archive=true` 또는 사용자 명시 archive 요청이 있을 때만 dated archive를 추가로 만듭니다.
+- 섹션 제목은 `commands/handoff.md` template과 정확히 맞춰야 합니다.
+
+```md
+# Handoff: <task title>
+
+## Reader Guide
+
+## Mission
+
+## Current State
+
+## Key Decisions
+
+## Relevant Files
+
+## Basis / References
+
+## Completed Work
+
+## Pending Work
+
+## Known Risks / Unknowns
+
+## Failed Attempts / Do Not Repeat
+
+## Validation
+
+## Next Actions
+
+## Resume Prompt
 ```
 
-## handoff-read receipt
+채팅 receipt는 작성된 파일, archive 여부, 핵심 next action만 짧게 보고합니다.
+
+## Evidence Rule
+
+중요 판단은 아래 구분을 유지합니다.
 
 ```text
-handoff 읽었습니다.
-- handoff: `.tigerkit/branches/feature__example/handoff.md`
-- baseline match: yes
-- artifact map: requirements/gap/reflect 확인
-- stale risk: 없음
-- 확인 필요: 1개
-```
-
-## gap blocked receipt
-
-```text
-gap 기록을 시작하지 않았습니다.
-- workflow step: `baseline-check`
-- blocked: working tree not clean
-- staged: yes
-- unstaged: no
-- untracked: yes
-- 해야 할 일: staged 변경은 commit하고, 나머지 변경은 정리하거나 함께 commit한 뒤 clean baseline에서 gap 분석을 다시 요청하세요.
-```
-
-## protected branch receipt
-
-```text
-기록하지 않았습니다.
-- workflow step: `branch-check`
-- reason: protected branch `main`
-- 해야 할 일: feature branch로 switch/create
-- artifact: 변경 없음
+Evidence = directly observed
+Interpretation = inferred from evidence
+Decision = confirmed by user or basis
+Suggestion = proposed, not confirmed
 ```
 
 ## detail 원칙
 
-- 상세 내용은 artifact path로 안내합니다.
-- 사용자가 명시적으로 원할 때만 verbose report를 보여줍니다.
-- command별 출력은 보통 3~6줄 안팎을 목표로 합니다.
+- command별 출력은 필요한 만큼만 작성합니다.
 - 다음 행동은 command-style recommendation이 아니라 자연어로 짧게 제시합니다.
-
-## 운영 메모
-
-세부 정책과 분류 규칙은 `CLAUDE.md`를 기준으로 봅니다.
+- 근거가 부족한 항목은 추측하지 않고 `cannot_verify`로 둡니다.
