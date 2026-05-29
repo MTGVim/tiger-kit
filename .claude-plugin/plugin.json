@@ -1,7 +1,7 @@
 {
   "name": "tk",
   "description": "basis-based gap analysis, repo rule reflection, and operational handoff를 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다.",
-  "version": "6.3.0",
+  "version": "6.3.1",
   "author": {
     "name": "MTGVim"
   },
