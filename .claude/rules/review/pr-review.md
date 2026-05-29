@@ -12,6 +12,7 @@ paths:
 - Explain why the mismatch matters.
 - Provide a suggested change when the fix is clear.
 - Do not post speculative findings as confirmed defects.
+- If ambiguity remains after checking code/docs/similar implementations, include the question category (`implementation-blocking` or `reference-only`), recommendation, and evidence.
 
 ## REVIEW-002: Review mode emits PR-ready comments
 
