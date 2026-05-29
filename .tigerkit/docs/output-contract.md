@@ -191,6 +191,41 @@ Ask: spec 기준으로 문구를 exact match로 맞춰 주세요.
 
 적용했을 때는 수정한 파일 경로와 적용 범위를 짧게 보고합니다. 적용하지 않았을 때는 proposal-only 상태를 명시합니다.
 
+## `/tk:meta-feedback` Output Contract
+
+- 목적: TigerKit command 또는 skill 사용 friction을 프로젝트 자산 유출 없이 일반화된 TigerKit 개선안으로 정리합니다.
+- 기본값은 proposal-only입니다.
+- `--out <path>`가 있을 때만 파일을 작성할 수 있습니다.
+- chat output과 file output은 모두 같은 redacted format이어야 합니다.
+- raw session evidence, 사용자 원문 quote, repo 이름, product 이름, 도메인 고유명, 내부 path, URL, ticket, branch, PR 번호, commit hash를 출력하지 않습니다.
+- 증거는 `source_type=session_correction`, `source_type=repeated_friction`, `source_type=output_shape_feedback` 같은 class로만 표시합니다.
+- 안전하게 일반화할 수 없으면 `cannot_generalize_safely`로 중단합니다.
+
+필수 섹션 순서:
+
+```md
+## Meta Feedback Summary
+- Target: <skill-or-command>
+- Feedback class: <ux|output-format|taxonomy|safety|dispatch|docs>
+- Privacy status: generalized
+
+## Generalized Friction
+- Situation: <generic situation>
+- Problem: <generic problem>
+- Impact: <generic impact>
+
+## Proposed Improvement
+- Change: <generic skill/command improvement>
+- Why: <reason without project-specific evidence>
+
+## Redaction Receipt
+- Removed: <repo names|paths|URLs|domain labels|quoted user text>
+- Kept: <abstract pattern only>
+- Unsafe details included: none
+```
+
+중단 시에는 `Privacy status: cannot_generalize_safely`, `Change: none`, `Why: privacy gate failed`를 사용합니다.
+
 ## `/tk:handoff` Output Contract
 
 - 기본 기록 위치: `.claude/handoffs/current.md`

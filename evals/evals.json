@@ -4,6 +4,7 @@
     "core_commands": [
       "/tk:gap",
       "/tk:reflect",
+      "/tk:meta-feedback",
       "/tk:handoff"
     ],
     "removed_commands": [
@@ -19,13 +20,15 @@
       "id": 0,
       "name": "command-surface-lists-core-commands",
       "prompt": "You are evaluating TigerKit active command surface after the core commands refactor. Describe the user-facing commands. Do not write files.",
-      "expected_output": "Should list /tk:gap, /tk:reflect, and /tk:handoff as the active user-facing commands, explain that gap analysis and PR-ready basis-target gap comments are handled through /tk:gap modes, and describe removed commands only as deprecated or removed surface.",
+      "expected_output": "Should list /tk:gap, /tk:reflect, /tk:meta-feedback, and /tk:handoff as the active user-facing commands, explain that gap analysis and PR-ready basis-target gap comments are handled through /tk:gap modes, explain that /tk:meta-feedback emits generalized TigerKit command or skill feedback without exposing project assets, and describe removed commands only as deprecated or removed surface.",
       "files": [],
       "expectations": [
         "Lists /tk:gap",
         "Lists /tk:reflect",
+        "Lists /tk:meta-feedback",
         "Lists /tk:handoff",
         "Explains that /tk:gap supports analysis, review, and both modes",
+        "Explains that /tk:meta-feedback emits generalized TigerKit feedback without project asset leakage",
         "Treats /tk:prep, /tk:checkpoint, /tk:review, /tk:handoff-write, and /tk:handoff-read as removed commands",
         "Does not describe removed commands as active workflow steps"
       ]
@@ -258,6 +261,27 @@
         "Splits questions into implementation-blocking and reference-only",
         "In analysis mode, keeps questions inside the single Findings table instead of a separate Open Questions section",
         "In review mode, writes ambiguity as an Ask rather than a confirmed defect"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "meta-feedback-output-is-generalized-and-redacted",
+      "prompt": "You are evaluating TigerKit /tk:meta-feedback after a user corrected a TigerKit command output using repo-specific names, internal paths, URLs, and a direct quote. Describe expected behavior. Do not write files.",
+      "expected_output": "Should emit Meta Feedback Summary, Generalized Friction, Proposed Improvement, and Redaction Receipt. The output itself should already be generalized: it should use placeholders or evidence classes, avoid raw quotes, avoid repo/product/domain names, avoid internal paths, avoid URLs, avoid tickets, avoid branch/PR/commit identifiers, and stop with cannot_generalize_safely if safe generalization is not possible. It should not propose repo rule patches like /tk:reflect.",
+      "files": [],
+      "expectations": [
+        "Includes Meta Feedback Summary",
+        "Includes Generalized Friction",
+        "Includes Proposed Improvement",
+        "Includes Redaction Receipt",
+        "Uses Privacy status generalized when safe",
+        "Uses placeholders or evidence classes instead of project-specific details",
+        "Does not include raw user quotes",
+        "Does not include repo names, product names, or domain-specific labels",
+        "Does not include internal paths or source file names",
+        "Does not include URLs, tickets, branch names, PR numbers, or commit hashes",
+        "Stops with cannot_generalize_safely when safe generalization is not possible",
+        "Does not propose CLAUDE.md or .claude/rules/* patches as the primary output"
       ]
     }
   ]
