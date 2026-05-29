@@ -19,110 +19,143 @@ Chat output is the primary receipt. File writes happen only when the command con
 
 ## `/tk:gap` Output Contract
 
-- 목적: basis와 target을 비교해 gap analysis 또는 PR-ready review comment를 생성합니다.
+- 목적: basis와 target을 비교해 gap analysis 또는 PR-ready basis-target gap comment를 생성합니다.
+- basis는 현재 비교에 쓰는 자료이며 Spec reference를 포함할 수 있고, 절대적 진실로 단정하지 않습니다.
 - 허용 mode: `analysis`, `review`, `both`
-- `mode=analysis`: 분석 형식을 출력합니다.
-- `mode=review`: PR-ready review comment만 출력합니다.
-- `mode=both`: 분석 형식 뒤에 review comment를 이어서 출력합니다.
-- visible UI copy 차이는 `copy_exact_mismatch`로 기록합니다.
-- basis끼리 충돌하면 `conflicting_sources`로 기록합니다.
-- 근거가 부족하거나 target state를 재현할 수 없으면 `cannot_verify` judgment 또는 `insufficient_evidence` finding을 사용합니다.
+- `mode=analysis`: compact `## TL;DR`와 `## Findings` 단일 table만 출력합니다.
+- `mode=review`: PR에 바로 붙일 수 있는 basis-target gap comment만 출력합니다. 일반 code review가 아닙니다.
+- `mode=both`: analysis 형식 뒤에 basis-target gap comment를 이어서 출력하며 같은 finding에는 같은 stable ID를 사용합니다.
+- visible UI copy 차이는 exact match 기준으로 판단합니다. 의미상 유사함은 충분하지 않습니다.
+- basis끼리 충돌하면 Status `conflicting_sources`로 기록합니다.
+- 근거가 부족하거나 target state를 재현할 수 없으면 Type `unverifiable`, Status `cannot_verify`를 사용합니다.
+- 접근할 수 없는 외부 URL, image, Figma/design link, screenshot URL, local path는 Type `unverifiable`, Status `blocked_external`로 기록합니다.
 - clean working tree가 아니어도 관측 가능한 baseline이 있으면 분석은 진행할 수 있습니다. 다만 재현 불가 상태는 `cannot_verify`로 둡니다.
+- ambiguity가 있으면 먼저 code, docs, similar implementation, repo rules, reuse-map을 더 탐색하고, 그래도 불명확할 때만 질문합니다.
+- 질문은 recommendation과 evidence를 포함하고 `implementation-blocking` 또는 `reference-only`로 구분합니다.
+- Judgment는 더 이상 출력 축으로 사용하지 않습니다.
 
-### finding type
+### Ambiguity Handling
 
-아래 목록만 사용합니다.
+아래 조건 중 하나라도 있으면 조용히 결정하지 않습니다.
 
-- `copy_exact_mismatch`
-- `repo_convention_violation`
-- `wrong_component_choice`
-- `unsupported_library_usage`
-- `missing_requirement`
-- `requirement_mismatch`
-- `partial_implementation`
-- `ambiguous_basis`
-- `conflicting_sources`
-- `insufficient_evidence`
-- `test_gap`
-- `accessibility_gap`
-- `unknown`
+1. requirements document와 code가 충돌합니다.
+2. 2개 이상의 유사 구현이 서로 다른 pattern을 사용합니다.
+3. Spec reference 또는 source basis에 접근할 수 없습니다.
+4. reuse-map에 entry가 없고 repo-wide exploration이 아직 충분하지 않습니다.
+5. UI/UX intent를 copy나 screenshot만으로 확인할 수 없습니다.
+6. API response, DTO, permission, state transition이 불명확합니다.
+7. 변경 범위가 common module에 영향을 줄 수 있습니다.
 
-### judgment
+처리 규칙:
 
-아래 목록만 사용합니다.
+- 먼저 관측 가능한 code/docs/similar implementation/repo rules/reuse-map을 더 확인합니다.
+- 불명확성이 남으면 `cannot_verify`, `conflicting_sources`, `blocked_external` 중 맞는 Status로 Findings에 남깁니다.
+- `mode=analysis`에서는 별도 Open Questions 섹션을 만들지 않고 단일 Findings table 안에 질문 구분, recommendation, evidence를 포함합니다.
+- `mode=review`에서는 confirmed defect가 아니라 확인 요청으로 작성하고 `Ask:`에 질문 구분, recommendation, evidence를 포함합니다.
 
-- `satisfied`
-- `partially_satisfied`
-- `not_satisfied`
-- `cannot_verify`
-- `conflicting_sources`
-- `out_of_scope`
+### Taxonomy
 
-### severity
+아래 값만 사용합니다.
 
-아래 목록만 사용합니다.
+Type:
 
-- `critical`
-- `major`
-- `minor`
-- `info`
-- `unknown`
+- `missing`: basis에 있는 요구, UI, 동작, 검증, 접근성, 산출물이 target에 없음
+- `mismatch`: basis와 target이 서로 다름
+- `convention`: repo convention, `.claude/rules/*`, reuse/component/API 규칙 위반
+- `unverifiable`: 근거 부족, 접근 불가, 재현 불가로 확인할 수 없음
+- `out_of_scope`: 현재 요청 scope 밖임
+
+Severity:
+
+- `critical`: 핵심 업무 흐름, 데이터 손실, 보안/권한, 결제/정산, 법무/승인, destructive action에 직접 영향
+- `major`: 요구 충족, 사용자 이해, 운영 품질, 회귀 위험에 의미 있는 영향
+- `minor`: 국소적 copy, 보조 UI, 낮은 위험의 convention 또는 후속 확인 항목
+
+Status:
+
+- `needs_fix`: basis와 target을 비교한 결과 수정이 필요함
+- `cannot_verify`: 증거가 부족하거나 재현할 수 없어 판정할 수 없음
+- `conflicting_sources`: basis끼리 충돌함
+- `blocked_external`: 외부 근거에 접근할 수 없어 사용자 제공 자료가 필요함
+- `out_of_scope`: 현재 요청 범위 밖임
+
+Type은 finding의 성격, Severity는 영향도, Status는 처리 상태입니다.
+
+### Stable Finding ID
+
+finding ID는 안정적인 slug를 사용합니다.
+
+```text
+gap-<scope-slug>-<finding-slug>
+```
+
+규칙:
+
+- 같은 scope와 같은 finding은 `mode=analysis`, `mode=review`, `mode=both`에서 같은 ID를 사용합니다.
+- `GAP-001` 같은 순번 기반 finding ID를 만들지 않습니다.
+- scope slug는 사람이 읽는 scope label에서 만들고, finding slug는 관측된 문제의 핵심 명사구에서 만듭니다.
+- Scope label은 섹션 번호만 쓰지 않습니다. 사람이 읽을 수 있는 title, menu, page, component, row 이름을 포함합니다.
+- 좋은 Scope label 예: `§3.2 Summary Row`, `Settings > Billing Page`, `Login Modal Confirm Button`.
+- 나쁜 Scope label 예: `§3.2`, `3.2`, `row 4`.
 
 ### `mode=analysis` 형식
 
+출력은 compact analysis table만 생성합니다. H2는 아래 두 개만 사용합니다.
+
 ```md
-## Scope
+## TL;DR
 - basis:
 - target:
-- mode: analysis
-- compared areas:
-- excluded areas:
-
-## Summary
-- overall judgment:
-- key risks:
-- mode reason: 필요할 때만 짧게
+- summary:
+- note: mode가 애매해 analysis를 기본값으로 선택한 경우에만 짧게 작성
 
 ## Findings
 
-| ID | Type | Judgment | Severity | Basis | Target Evidence | Summary | Rule ID | Suggested Action |
+| ID | Scope | Type | Severity | Status | Basis | Target Evidence | Finding | Suggested Action |
 |---|---|---|---|---|---|---|---|---|
-| GAP-001 | missing_requirement | not_satisfied | major | spec 3.2 | `src/...` | 요구 동작 누락 | RULE-123 또는 빈칸 | 구현 또는 기준자료 확인 |
-
-## Open Questions
-- 확인이 더 필요한 항목
-- 증거 부족 항목
-- 충돌하는 기준자료 항목
-
-## Recommended Next Actions
-- 바로 수정 가능한 항목
-- 사용자 확인이 필요한 항목
-- 추가 증거 확보가 필요한 항목
+| gap-summary-row-missing-total | §3.2 Summary Row | missing | major | needs_fix | spec §3.2 `Total` row | `src/...`에서 해당 row 미관측 | Summary Row의 `Total` row가 없습니다. | basis에 맞춰 row를 추가해 주세요. |
 ```
+
+규칙:
+
+- Findings table은 단일 table입니다. 별도 보조 섹션이나 구형 multi-section template을 만들지 않습니다.
+- open question, 추가 증거 요청, 범위 밖 항목도 필요하면 같은 table에 Status로 표현합니다.
+- Scope 칸은 반드시 사람이 읽을 수 있는 title, menu, page, component, row 이름을 포함합니다.
+- Evidence, Interpretation, Decision, Suggestion 구분은 table 안의 Basis, Target Evidence, Finding, Suggested Action 표현에서 유지합니다.
 
 ### `mode=review` 형식
 
+출력은 PR에 바로 붙일 수 있는 basis-target gap comment만 생성합니다. 일반 code review가 아닙니다. 설명문, 서론, 분석 본문을 덧붙이지 않습니다.
+
 ```md
-[major] copy_exact_mismatch
-Basis: spec 3.2
+[major] gap-summary-row-copy-save-button | mismatch | needs_fix
+Scope: §3.2 Summary Row
+Basis: spec §3.2의 button label은 `저장`입니다.
 Evidence: `src/...`의 버튼 텍스트가 `저장`이 아니라 `확인`입니다.
 Why: visible copy는 exact match 기준이라 의미가 비슷해도 허용되지 않습니다.
 Ask: spec 기준으로 문구를 exact match로 맞춰 주세요.
 ```
 
 규칙:
-- 첫 줄은 severity로 시작합니다.
-- `Basis`에는 기준자료 근거를 적습니다.
-- `Evidence`에는 현재 target 근거를 적습니다.
-- `Why`에는 영향이나 mismatch 이유를 적습니다.
-- 수정 방향이 명확할 때만 `Ask` 또는 동등한 suggested change를 적습니다.
-- speculative finding을 confirmed defect처럼 쓰지 않습니다.
+
+- 첫 줄은 `[severity] stable-id | type | status` 형식입니다.
+- 첫 줄에는 Severity, stable ID, Type, Status가 모두 있어야 합니다.
+- 본문은 `Scope:`, `Basis:`, `Evidence:`, `Why:`, `Ask:` 순서를 지킵니다.
+- `Scope:`는 반드시 사람이 읽을 수 있는 title, menu, page, component, row 이름을 포함합니다.
+- speculative finding은 confirmed defect처럼 쓰지 말고 Status를 `cannot_verify`, `conflicting_sources`, `blocked_external`, `out_of_scope` 중 맞는 값으로 둡니다.
 
 ### `mode=both` 형식
 
 순서:
+
 1. `mode=analysis` 형식
-2. `mode=review` comment 묶음
+2. `mode=review` basis-target gap comment 묶음
+
+규칙:
+
+- analysis table과 basis-target gap comment는 같은 finding에 같은 stable ID를 사용합니다.
+- basis-target gap comment는 analysis에서 Status `needs_fix`인 항목을 우선 작성합니다.
+- `cannot_verify`, `conflicting_sources`, `blocked_external`, `out_of_scope` 항목을 basis-target gap comment로 포함해야 한다면 confirmed defect가 아니라 확인 요청으로 작성합니다.
 
 ## `/tk:reflect` Output Contract
 

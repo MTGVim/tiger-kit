@@ -19,7 +19,7 @@
 - TigerKit의 목적은 AI-induced source loss를 줄이는 것이다.
 - 핵심 command set은 `/tk:gap`, `/tk:reflect`, `/tk:handoff`다.
 - Claude Code plugin command는 namespace를 사용하므로 slash invocation은 `/tk:*` 형태다. 자연어 요청은 같은 프로토콜을 따른다.
-- `/tk:gap`은 basis와 target을 비교해 gap analysis 또는 PR-ready review comment를 만든다.
+- `/tk:gap`은 basis와 target을 비교해 gap analysis 또는 PR-ready basis-target gap comment를 만든다.
 - `/tk:reflect`는 `CLAUDE.md`와 `.claude/rules/*` 유지보수 제안을 만든다. `apply=true` 또는 사용자 명시 승인 전에는 파일을 수정하지 않는다.
 - `/tk:handoff`는 `.claude/handoffs/current.md`를 기본 handoff로 작성한다. `archive=true` 또는 사용자 명시 요청이 있을 때만 dated copy도 만든다.
 - repo convention은 `.claude/rules/**/*.md`를 우선 확인한다.

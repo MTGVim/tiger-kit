@@ -19,7 +19,7 @@
       "id": 0,
       "name": "command-surface-lists-core-commands",
       "prompt": "You are evaluating TigerKit active command surface after the core commands refactor. Describe the user-facing commands. Do not write files.",
-      "expected_output": "Should list /tk:gap, /tk:reflect, and /tk:handoff as the active user-facing commands, explain that gap analysis and PR-ready review comments are handled through /tk:gap modes, and describe removed commands only as deprecated or removed surface.",
+      "expected_output": "Should list /tk:gap, /tk:reflect, and /tk:handoff as the active user-facing commands, explain that gap analysis and PR-ready basis-target gap comments are handled through /tk:gap modes, and describe removed commands only as deprecated or removed surface.",
       "files": [],
       "expectations": [
         "Lists /tk:gap",
@@ -32,40 +32,47 @@
     },
     {
       "id": 1,
-      "name": "gap-analysis-uses-new-taxonomy",
+      "name": "gap-analysis-uses-current-compact-table-taxonomy",
       "prompt": "You are evaluating TigerKit /tk:gap for the input `/tk:gap spec <url> vs current implementation mode=analysis`. The basis says a required summary row is missing in the UI, and the current implementation has no matching row. Describe expected behavior. Do not write files.",
-      "expected_output": "Should emit analysis output with Scope, Summary, Findings, Open Questions, and Recommended Next Actions. The finding should use the new taxonomy such as missing_requirement with judgment not_satisfied and severity from critical, major, minor, info, or unknown.",
+      "expected_output": "Should emit compact analysis output with only `## TL;DR` and `## Findings`. `## Findings` should be a single table using columns such as ID, Scope, Type, Severity, Status, Basis, Target Evidence, Finding, and Suggested Action. The finding should use a stable slug ID like `gap-summary-row-missing-total`, a meaningful scope label such as `§3.2 Summary Row`, Type `missing`, Severity `major`, and Status `needs_fix`.",
       "files": [],
       "expectations": [
         "Uses mode=analysis output structure",
-        "Includes Scope",
-        "Includes Summary",
-        "Includes Findings",
-        "Includes Open Questions",
-        "Includes Recommended Next Actions",
-        "Uses a finding type from the allowed list",
-        "Uses a judgment from the allowed list",
-        "Uses a severity from the allowed list",
-        "Does not use High, Medium, or Low",
-        "Does not use missing_behavior or behavior_mismatch"
+        "Includes `## TL;DR`",
+        "Includes `## Findings`",
+        "Uses one Findings table",
+        "Uses stable slug IDs in the form `gap-<scope-slug>-<finding-slug>`",
+        "Does not use sequential finding IDs like `GAP-001`",
+        "Uses a human-readable Scope label that is not only a section number",
+        "Uses Type from missing, mismatch, convention, unverifiable, or out_of_scope",
+        "Uses Severity from critical, major, or minor",
+        "Uses Status from needs_fix, cannot_verify, conflicting_sources, blocked_external, or out_of_scope",
+        "Uses Suggested Action column for recommended next actions",
+        "Does not include legacy `Scope`, `Summary`, `Open Questions`, or `Recommended Next Actions` sections",
+        "Does not use old Finding Type or Judgment axes",
+        "Does not use High, Medium, Low, info, or unknown severity",
+        "Does not split findings into separate tables by severity"
       ]
     },
     {
       "id": 2,
       "name": "gap-review-mode-emits-pr-ready-comments",
       "prompt": "You are evaluating TigerKit /tk:gap for the input `PR #123 기준으로 코멘트 남길 수 있게 봐줘`. The basis shows button text `저장`, but the current diff renders `확인`. Describe expected behavior. Do not write files.",
-      "expected_output": "Should infer or use review mode and emit PR-ready review comments only. Each comment should start with severity on the first line, then include basis, evidence, why, and ask or suggested change when clear.",
+      "expected_output": "Should infer or use mode=review and emit PR-ready basis-target gap comments only. Each comment should start with `[severity] stable-id | type | status`, for example `[major] gap-summary-row-save-button-copy | mismatch | needs_fix`, then include Scope with a full human-readable label, Basis, Evidence, Why, and Ask when clear.",
       "files": [],
       "expectations": [
         "Uses /tk:gap protocol",
         "Infers or uses mode=review",
-        "Outputs PR-ready review comments only",
-        "Puts severity on the first line",
+        "Outputs PR-ready basis-target gap comments only",
+        "Puts Severity, stable ID, Type, and Status on the first line",
+        "Uses a stable slug ID instead of a sequential ID",
+        "Uses a full human-readable Scope label and not only a section number",
         "Includes basis evidence",
-        "Includes current evidence",
+        "Includes current target evidence",
         "Includes why the mismatch matters",
         "Includes suggested change when clear",
-        "Uses copy_exact_mismatch for visible copy difference",
+        "Uses Type `mismatch` for visible copy difference",
+        "Uses Status `needs_fix` for confirmed target gaps",
         "Does not emit a long analysis table unless mode=both is requested"
       ]
     },
@@ -73,67 +80,83 @@
       "id": 3,
       "name": "gap-both-mode-combines-analysis-and-review",
       "prompt": "You are evaluating TigerKit /tk:gap for the input `/tk:gap jira PROJ-123 vs pr #456 mode=both`. Describe expected behavior. Do not write files.",
-      "expected_output": "Should emit analysis output first and then a block of PR-ready review comments. The two sections should follow the same finding taxonomy and evidence discipline.",
+      "expected_output": "Should emit compact analysis first with `## TL;DR` and a single `## Findings` table using a `Suggested Action` column, then PR-ready basis-target gap comments whose body uses `Scope`, `Basis`, `Evidence`, `Why`, and `Ask`. Analysis rows and basis-target gap comments for the same finding should share the same stable slug IDs and the same Type, Severity, and Status taxonomy.",
       "files": [],
       "expectations": [
         "Uses mode=both",
-        "Outputs analysis first",
-        "Outputs review comments after analysis",
-        "Keeps the same finding taxonomy across both sections",
-        "Maintains evidence versus interpretation separation"
+        "Outputs compact analysis first",
+        "Analysis includes `## TL;DR` and `## Findings` only",
+        "Analysis uses one Findings table",
+        "Analysis table uses Suggested Action column",
+        "Outputs basis-target gap comments after analysis",
+        "Review comments use Scope, Basis, Evidence, Why, and Ask fields",
+        "Keeps the same stable IDs across analysis rows and basis-target gap comments",
+        "Keeps the same Type, Severity, and Status taxonomy across both sections",
+        "Maintains evidence versus interpretation separation",
+        "Does not introduce legacy Judgment output"
       ]
     },
     {
       "id": 4,
-      "name": "gap-copy-mismatch-defaults-to-major",
+      "name": "gap-copy-mismatch-uses-impact-based-severity",
       "prompt": "You are evaluating TigerKit /tk:gap on visible UI copy. The basis shows a normal table column label, but the implementation uses a different phrase with the same meaning. Describe expected behavior. Do not write files.",
-      "expected_output": "Should treat the visible text difference as copy_exact_mismatch and default severity to major unless the context justifies another allowed severity. It should not accept meaning similarity as a pass.",
+      "expected_output": "Should treat the visible text difference as Type `mismatch` with Status `needs_fix` and choose Severity `major` or `minor` based on impact. It should not accept meaning similarity as a pass because UI copy requires exact match.",
       "files": [],
       "expectations": [
-        "Uses copy_exact_mismatch",
+        "Uses Type `mismatch`",
+        "Uses Status `needs_fix`",
         "Does not treat meaning-similar text as satisfied",
-        "Defaults severity to major for ordinary visible copy mismatch unless evidence justifies otherwise",
-        "Keeps visible UI copy under exact match rules"
+        "Uses impact-based Severity `major` or `minor` for ordinary visible copy mismatch",
+        "Keeps visible UI copy under exact match rules",
+        "Does not use old `copy_exact_mismatch` finding type"
       ]
     },
     {
       "id": 5,
       "name": "gap-copy-mismatch-escalates-for-compliance-context",
       "prompt": "You are evaluating TigerKit /tk:gap on a consent checkbox label. The basis text and current implementation differ. Describe expected behavior. Do not write files.",
-      "expected_output": "Should classify the issue as copy_exact_mismatch and raise severity to critical or major because the text affects consent, legal, privacy, security, payment, or compliance meaning.",
+      "expected_output": "Should classify the issue as Type `mismatch` with Status `needs_fix` and raise Severity to `critical` or `major` because the text affects consent, legal, privacy, security, payment, or compliance meaning.",
       "files": [],
       "expectations": [
-        "Uses copy_exact_mismatch",
-        "Uses severity critical or major",
+        "Uses Type `mismatch`",
+        "Uses Status `needs_fix`",
+        "Uses Severity critical or major",
         "Explains that consent, legal, privacy, security, payment, or compliance context increases severity",
-        "Does not downgrade the issue to minor by default"
+        "Does not downgrade the issue to minor by default",
+        "Does not use old `copy_exact_mismatch` finding type"
       ]
     },
     {
       "id": 6,
       "name": "gap-uses-cannot-verify-for-unreproducible-target",
       "prompt": "You are evaluating TigerKit /tk:gap where the basis is clear, but the current target state cannot be reproduced from the available repo state and the needed rendered evidence was not captured. Describe expected behavior. Do not write files.",
-      "expected_output": "Should continue the analysis without inventing certainty, identify the current observable baseline when possible, and mark the item cannot_verify or insufficient_evidence rather than blocking the entire command.",
+      "expected_output": "Should continue the analysis without inventing certainty, identify the current observable baseline when possible, and represent the item as a Findings row with Type `unverifiable` and Status `cannot_verify` rather than blocking the entire command. Any open question should be represented in the Findings table, not a separate Open Questions section.",
       "files": [],
       "expectations": [
         "Identifies basis, target, and observable baseline when possible",
-        "Uses cannot_verify when the target state is not reproducible",
-        "May use insufficient_evidence as the finding type",
+        "Uses Type `unverifiable` when the target state is not reproducible",
+        "Uses Status `cannot_verify` when the target state is not reproducible",
+        "Represents open questions as Findings rows with Status `cannot_verify`",
+        "Does not create a separate `Open Questions` section",
         "Does not require a clean HEAD before every gap analysis",
-        "Does not invent missing evidence"
+        "Does not invent missing evidence",
+        "Does not use old `insufficient_evidence` finding type"
       ]
     },
     {
       "id": 7,
       "name": "gap-reports-conflicting-basis-explicitly",
       "prompt": "You are evaluating TigerKit /tk:gap when one basis document says button label A and another basis document says button label B. The implementation uses B. Describe expected behavior. Do not write files.",
-      "expected_output": "Should explicitly report conflicting basis material as conflicting_sources instead of silently merging them or inventing a synthetic requirement.",
+      "expected_output": "Should explicitly report conflicting basis material with Status `conflicting_sources` instead of silently merging them, inventing a synthetic requirement, or treating `conflicting_sources` as a finding type or judgment.",
       "files": [],
       "expectations": [
-        "Uses conflicting_sources",
+        "Uses Status `conflicting_sources`",
+        "Does not use `conflicting_sources` as Type",
+        "Does not use `conflicting_sources` as Judgment",
         "States that basis materials conflict",
         "Does not silently merge the two references",
-        "Does not mark the item satisfied without resolving the conflict"
+        "Does not mark the item satisfied without resolving the conflict",
+        "Uses a stable slug ID and meaningful Scope label if emitted as an analysis row or review comment"
       ]
     },
     {
@@ -200,6 +223,41 @@
         "Writes .claude/handoffs/current.md by default",
         "Does not create a dated archive by default",
         "Creates a dated archive only with archive=true or explicit archive request"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "gap-analysis-regression-no-legacy-sections-or-sequential-ids",
+      "prompt": "You are evaluating TigerKit /tk:gap for the input `/tk:gap spec <url> vs pr #456 mode=analysis` with multiple major and minor findings in spec section 3.2 Summary Row. Describe expected behavior. Do not write files.",
+      "expected_output": "Should emit the compact analysis format only: `## TL;DR` followed by one `## Findings` table. It should not emit legacy Scope, Summary, Open Questions, or Recommended Next Actions sections, should not split findings into separate severity tables, should not use sequential IDs like `GAP-001`, and should not use section-number-only Scope values like `3.2` or `§3.2` without a human-readable label.",
+      "files": [],
+      "expectations": [
+        "Includes `## TL;DR`",
+        "Includes one `## Findings` table",
+        "Does not include legacy `Scope`, `Summary`, `Open Questions`, or `Recommended Next Actions` sections",
+        "Does not use sequential finding IDs like `GAP-001`",
+        "Does not use section-number-only Scope values",
+        "Does not split findings into multiple tables by severity",
+        "Uses Type, Severity, and Status columns",
+        "Uses Suggested Action column for recommended next actions"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "gap-ambiguity-handling-explores-before-questions",
+      "prompt": "You are evaluating TigerKit /tk:gap when a requirements document and code conflict, two similar implementations use different patterns, and the API response shape is unclear. Describe expected behavior. Do not write files.",
+      "expected_output": "Should not decide silently or mark a speculative defect as confirmed. It should first explore available code, docs, similar implementations, repo rules, and reuse-map. If ambiguity remains, it should create questions with recommendation and evidence, split them into implementation-blocking and reference-only, and represent them in the /tk:gap output using Status `cannot_verify`, `conflicting_sources`, or `blocked_external` as appropriate.",
+      "files": [],
+      "expectations": [
+        "Does not decide silently when requirements and code conflict",
+        "Checks code, docs, similar implementations, repo rules, and reuse-map before asking",
+        "Uses Status `conflicting_sources` for conflicting basis material when applicable",
+        "Uses Status `cannot_verify` when API response, DTO, permission, or state transition remains unclear",
+        "Uses Status `blocked_external` when Spec reference or source basis is inaccessible",
+        "Includes recommendation and evidence in each remaining question",
+        "Splits questions into implementation-blocking and reference-only",
+        "In analysis mode, keeps questions inside the single Findings table instead of a separate Open Questions section",
+        "In review mode, writes ambiguity as an Ask rather than a confirmed defect"
       ]
     }
   ]

@@ -20,7 +20,7 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 
 | Command | 역할 |
 | --- | --- |
-| `/tk:gap` | 기준자료와 대상 산출물을 비교해 gap analysis 또는 PR-ready review comment를 만듭니다. |
+| `/tk:gap` | 기준자료와 대상 산출물을 비교해 gap analysis 또는 PR-ready basis-target gap comment를 만듭니다. |
 | `/tk:reflect` | durable feedback, 반복 실수, gap/review 결과에서 `CLAUDE.md`와 `.claude/rules/*` 업데이트 후보를 제안합니다. |
 | `/tk:handoff` | 다음 세션이 이어받을 수 있도록 `.claude/handoffs/current.md`를 작성합니다. |
 
@@ -40,11 +40,20 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 
 ### `/tk:gap`
 
-- 입력된 기준자료와 대상 산출물을 직접 확인 가능한 근거로 비교합니다.
-- `mode=analysis`는 gap analysis를 출력합니다.
-- `mode=review`는 PR-ready review comment만 출력합니다.
-- `mode=both`는 analysis 뒤에 review comment를 출력합니다.
-- 근거가 부족하면 확인 불가로 남기고 추측으로 채우지 않습니다.
+- 입력된 basis와 target을 직접 확인 가능한 근거로 비교합니다. basis는 Spec reference를 포함할 수 있는 비교 자료이지 절대적 진실이 아닙니다.
+- `mode=analysis`는 compact `## TL;DR`와 `## Findings` 단일 table만 출력합니다.
+- `mode=review`는 PR-ready basis-target gap comment만 출력합니다. 일반 code review가 아닙니다.
+- `mode=both`는 analysis 뒤에 basis-target gap comment를 출력하며 같은 finding에 같은 stable ID를 사용합니다.
+- stable finding ID는 `gap-<scope-slug>-<finding-slug>` 형식입니다. `GAP-001` 같은 순번 기반 finding ID를 쓰지 않습니다.
+- Scope label은 섹션 번호만 쓰지 않고 사람이 읽을 수 있는 title, menu, page, component, row 이름을 포함합니다.
+- Type은 `missing`, `mismatch`, `convention`, `unverifiable`, `out_of_scope` 중 하나입니다.
+- Severity는 `critical`, `major`, `minor` 중 하나입니다.
+- Status는 `needs_fix`, `cannot_verify`, `conflicting_sources`, `blocked_external`, `out_of_scope` 중 하나입니다.
+- Judgment는 출력 축으로 사용하지 않습니다.
+- 보이는 UI copy는 exact match 기준입니다. 의미상 유사함은 충분하지 않습니다.
+- 근거가 부족하면 `cannot_verify`, basis끼리 충돌하면 `conflicting_sources`, 접근 불가 외부 근거는 `blocked_external`로 남기고 추측으로 채우지 않습니다.
+- ambiguity가 있으면 code/docs/similar implementation을 먼저 더 확인하고, 남은 질문은 recommendation과 evidence를 포함해 `implementation-blocking` 또는 `reference-only`로 구분합니다.
+- Evidence, Interpretation, Decision, Suggestion 구분을 유지합니다.
 
 ### `/tk:reflect`
 
