@@ -81,18 +81,21 @@ Status:
 
 Type은 finding의 성격, Severity는 영향도, Status는 처리 상태입니다.
 
-### Stable Finding ID
+### Finding IDs
 
-finding ID는 안정적인 slug를 사용합니다.
+finding은 사용자 소통용 short ID와 추적용 stable ID를 함께 사용합니다.
 
 ```text
-gap-<scope-slug>-<finding-slug>
+Short ID: G<number>
+Stable ID: gap-<scope-slug>-<finding-slug>
 ```
 
 규칙:
 
-- 같은 scope와 같은 finding은 `mode=analysis`, `mode=review`, `mode=both`에서 같은 ID를 사용합니다.
-- `GAP-001` 같은 순번 기반 finding ID를 만들지 않습니다.
+- Short ID는 `G1`, `G2`처럼 한 응답 안에서 순서대로 부여하며, 사용자가 대화에서 지칭하는 기본 ID입니다.
+- Stable ID는 같은 scope와 같은 finding에 대해 `mode=analysis`, `mode=review`, `mode=both`에서 같은 값을 사용합니다.
+- Stable ID는 사용자 소통용이 아니므로 table에서는 `Stable` 보조 열로 가장 오른쪽에 두고, 다른 열보다 짧은 header를 사용합니다.
+- `GAP-001` 같은 순번 기반 stable ID를 만들지 않습니다.
 - scope slug는 사람이 읽는 scope label에서 만들고, finding slug는 관측된 문제의 핵심 명사구에서 만듭니다.
 - Scope label은 섹션 번호만 쓰지 않습니다. 사람이 읽을 수 있는 title, menu, page, component, row 이름을 포함합니다.
 - 좋은 Scope label 예: `§3.2 Summary Row`, `Settings > Billing Page`, `Login Modal Confirm Button`.
@@ -111,9 +114,9 @@ gap-<scope-slug>-<finding-slug>
 
 ## Findings
 
-| ID | Scope | Type | Severity | Status | Basis | Target Evidence | Finding | Suggested Action |
-|---|---|---|---|---|---|---|---|---|
-| gap-summary-row-missing-total | §3.2 Summary Row | missing | major | needs_fix | spec §3.2 `Total` row | `src/...`에서 해당 row 미관측 | Summary Row의 `Total` row가 없습니다. | basis에 맞춰 row를 추가해 주세요. |
+| ID | Scope | Type | Severity | Status | Basis | Target Evidence | Finding | Suggested Action | Stable |
+|---|---|---|---|---|---|---|---|---|---|
+| G1 | §3.2 Summary Row | missing | major | needs_fix | spec §3.2 `Total` row | `src/...`에서 해당 row 미관측 | Summary Row의 `Total` row가 없습니다. | basis에 맞춰 row를 추가해 주세요. | gap-summary-row-missing-total |
 
 ## Bottom Recap
 - Needs fix: 2
@@ -135,7 +138,8 @@ gap-<scope-slug>-<finding-slug>
 출력은 PR에 바로 붙일 수 있는 basis-target gap comment만 생성합니다. 일반 code review가 아닙니다. 설명문, 서론, 분석 본문을 덧붙이지 않습니다.
 
 ```md
-[major] gap-summary-row-copy-save-button | mismatch | needs_fix
+[major] G1 | mismatch | needs_fix
+Stable: gap-summary-row-copy-save-button
 Scope: §3.2 Summary Row
 Basis: spec §3.2의 button label은 `저장`입니다.
 Evidence: `src/...`의 버튼 텍스트가 `저장`이 아니라 `확인`입니다.
@@ -145,9 +149,10 @@ Ask: spec 기준으로 문구를 exact match로 맞춰 주세요.
 
 규칙:
 
-- 첫 줄은 `[severity] stable-id | type | status` 형식입니다.
-- 첫 줄에는 Severity, stable ID, Type, Status가 모두 있어야 합니다.
-- 본문은 `Scope:`, `Basis:`, `Evidence:`, `Why:`, `Ask:` 순서를 지킵니다.
+- 첫 줄은 `[severity] short-id | type | status` 형식입니다.
+- 첫 줄에는 Severity, Short ID, Type, Status가 모두 있어야 합니다.
+- 두 번째 줄에는 `Stable:`로 stable ID를 적습니다.
+- 본문은 `Stable:`, `Scope:`, `Basis:`, `Evidence:`, `Why:`, `Ask:` 순서를 지킵니다.
 - `Scope:`는 반드시 사람이 읽을 수 있는 title, menu, page, component, row 이름을 포함합니다.
 - speculative finding은 confirmed defect처럼 쓰지 말고 Status를 `cannot_verify`, `conflicting_sources`, `blocked_external`, `out_of_scope` 중 맞는 값으로 둡니다.
 
@@ -160,7 +165,7 @@ Ask: spec 기준으로 문구를 exact match로 맞춰 주세요.
 
 규칙:
 
-- analysis table과 basis-target gap comment는 같은 finding에 같은 stable ID를 사용합니다.
+- analysis table과 basis-target gap comment는 같은 finding에 같은 Short ID와 stable ID를 사용합니다.
 - basis-target gap comment는 analysis에서 Status `needs_fix`인 항목을 우선 작성합니다.
 - `cannot_verify`, `conflicting_sources`, `blocked_external`, `out_of_scope` 항목을 basis-target gap comment로 포함해야 한다면 confirmed defect가 아니라 확인 요청으로 작성합니다.
 

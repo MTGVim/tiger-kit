@@ -46,8 +46,8 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 - 입력된 basis와 target을 직접 확인 가능한 근거로 비교합니다. basis는 Spec reference를 포함할 수 있는 비교 자료이지 절대적 진실이 아닙니다.
 - `mode=analysis`는 compact `## Summary Table`, `## Findings`, `## Bottom Recap`만 출력합니다. Summary Table은 결과 count와 핵심 next action을 table로 보여주고, Bottom Recap은 긴 Findings 뒤에 핵심 결론을 반복합니다.
 - `mode=review`는 PR-ready basis-target gap comment만 출력합니다. 일반 code review가 아닙니다.
-- `mode=both`는 analysis 뒤에 basis-target gap comment를 출력하며 같은 finding에 같은 stable ID를 사용합니다.
-- stable finding ID는 `gap-<scope-slug>-<finding-slug>` 형식입니다. `GAP-001` 같은 순번 기반 finding ID를 쓰지 않습니다.
+- `mode=both`는 analysis 뒤에 basis-target gap comment를 출력하며 같은 finding에 같은 Short ID와 stable ID를 사용합니다.
+- 사용자가 대화에서 지칭하는 기본 ID는 `G1`, `G2` 같은 Short ID입니다. stable ID는 `gap-<scope-slug>-<finding-slug>` 형식이며 analysis table에서는 오른쪽 `Stable` 보조 열로 둡니다. `GAP-001` 같은 순번 기반 stable ID를 쓰지 않습니다.
 - Scope label은 섹션 번호만 쓰지 않고 사람이 읽을 수 있는 title, menu, page, component, row 이름을 포함합니다.
 - Type은 `missing`, `mismatch`, `convention`, `unverifiable`, `out_of_scope` 중 하나입니다.
 - Severity는 `critical`, `major`, `minor` 중 하나입니다.
