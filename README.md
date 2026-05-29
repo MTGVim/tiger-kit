@@ -8,7 +8,7 @@ TigerKit(`tiger-kit`, plugin namespace `/tk:*`) helps reduce AI-induced source l
 
 | Command | 역할 |
 | --- | --- |
-| `/tk:gap` | Compare basis materials with a target artifact and produce gap analysis or PR-ready review comments. |
+| `/tk:gap` | Compare basis materials with a target artifact and produce gap analysis or PR-ready basis-target gap comments. |
 | `/tk:reflect` | Propose updates to `CLAUDE.md` and `.claude/rules/*` from durable feedback, repeated mistakes, gap findings, or review findings. |
 | `/tk:handoff` | Write `.claude/handoffs/current.md` so the next session can continue safely. |
 
