@@ -4,6 +4,7 @@
     "core_commands": [
       "/tk:gap",
       "/tk:reflect",
+      "/tk:meta-feedback",
       "/tk:handoff"
     ],
     "removed_commands": [
@@ -19,13 +20,15 @@
       "id": 0,
       "name": "command-surface-lists-core-commands",
       "prompt": "You are evaluating TigerKit active command surface after the core commands refactor. Describe the user-facing commands. Do not write files.",
-      "expected_output": "Should list /tk:gap, /tk:reflect, and /tk:handoff as the active user-facing commands, explain that gap analysis and PR-ready basis-target gap comments are handled through /tk:gap modes, and describe removed commands only as deprecated or removed surface.",
+      "expected_output": "Should list /tk:gap, /tk:reflect, /tk:meta-feedback, and /tk:handoff as the active user-facing commands, explain that gap analysis and PR-ready basis-target gap comments are handled through /tk:gap modes, explain that /tk:meta-feedback emits generalized TigerKit command or skill feedback without exposing project assets, and describe removed commands only as deprecated or removed surface.",
       "files": [],
       "expectations": [
         "Lists /tk:gap",
         "Lists /tk:reflect",
+        "Lists /tk:meta-feedback",
         "Lists /tk:handoff",
         "Explains that /tk:gap supports analysis, review, and both modes",
+        "Explains that /tk:meta-feedback emits generalized TigerKit feedback without project asset leakage",
         "Treats /tk:prep, /tk:checkpoint, /tk:review, /tk:handoff-write, and /tk:handoff-read as removed commands",
         "Does not describe removed commands as active workflow steps"
       ]
@@ -34,13 +37,16 @@
       "id": 1,
       "name": "gap-analysis-uses-current-compact-table-taxonomy",
       "prompt": "You are evaluating TigerKit /tk:gap for the input `/tk:gap spec <url> vs current implementation mode=analysis`. The basis says a required summary row is missing in the UI, and the current implementation has no matching row. Describe expected behavior. Do not write files.",
-      "expected_output": "Should emit compact analysis output with only `## TL;DR` and `## Findings`. `## Findings` should be a single table using columns such as ID, Scope, Type, Severity, Status, Basis, Target Evidence, Finding, and Suggested Action. The finding should use a stable slug ID like `gap-summary-row-missing-total`, a meaningful scope label such as `§3.2 Summary Row`, Type `missing`, Severity `major`, and Status `needs_fix`.",
+      "expected_output": "Should emit compact analysis output with only `## Summary Table`, `## Findings`, and `## Bottom Recap`. `## Summary Table` should be a table with result counts and a key next action so the summary is intentionally structured. `## Findings` should be a single table using columns such as ID, Scope, Type, Severity, Status, Basis, Target Evidence, Finding, and Suggested Action. `## Bottom Recap` should repeat key counts and the next action after long findings. The finding should use a stable slug ID like `gap-summary-row-missing-total`, a meaningful scope label such as `§3.2 Summary Row`, Type `missing`, Severity `major`, and Status `needs_fix`.",
       "files": [],
       "expectations": [
         "Uses mode=analysis output structure",
-        "Includes `## TL;DR`",
+        "Includes `## Summary Table`",
+        "Uses a summary table with result counts and a key next action",
         "Includes `## Findings`",
         "Uses one Findings table",
+        "Includes `## Bottom Recap`",
+        "Repeats key counts and next action after Findings",
         "Uses stable slug IDs in the form `gap-<scope-slug>-<finding-slug>`",
         "Does not use sequential finding IDs like `GAP-001`",
         "Uses a human-readable Scope label that is not only a section number",
@@ -80,13 +86,15 @@
       "id": 3,
       "name": "gap-both-mode-combines-analysis-and-review",
       "prompt": "You are evaluating TigerKit /tk:gap for the input `/tk:gap jira PROJ-123 vs pr #456 mode=both`. Describe expected behavior. Do not write files.",
-      "expected_output": "Should emit compact analysis first with `## TL;DR` and a single `## Findings` table using a `Suggested Action` column, then PR-ready basis-target gap comments whose body uses `Scope`, `Basis`, `Evidence`, `Why`, and `Ask`. Analysis rows and basis-target gap comments for the same finding should share the same stable slug IDs and the same Type, Severity, and Status taxonomy.",
+      "expected_output": "Should emit compact analysis first with `## Summary Table`, a single `## Findings` table using a `Suggested Action` column, and `## Bottom Recap`, then PR-ready basis-target gap comments whose body uses `Scope`, `Basis`, `Evidence`, `Why`, and `Ask`. Analysis rows and basis-target gap comments for the same finding should share the same stable slug IDs and the same Type, Severity, and Status taxonomy.",
       "files": [],
       "expectations": [
         "Uses mode=both",
         "Outputs compact analysis first",
-        "Analysis includes `## TL;DR` and `## Findings` only",
+        "Analysis includes `## Summary Table`, `## Findings`, and `## Bottom Recap` only",
+        "Analysis uses a summary table with result counts and a key next action",
         "Analysis uses one Findings table",
+        "Analysis repeats key counts and next action in Bottom Recap",
         "Analysis table uses Suggested Action column",
         "Outputs basis-target gap comments after analysis",
         "Review comments use Scope, Basis, Evidence, Why, and Ask fields",
@@ -229,11 +237,14 @@
       "id": 12,
       "name": "gap-analysis-regression-no-legacy-sections-or-sequential-ids",
       "prompt": "You are evaluating TigerKit /tk:gap for the input `/tk:gap spec <url> vs pr #456 mode=analysis` with multiple major and minor findings in spec section 3.2 Summary Row. Describe expected behavior. Do not write files.",
-      "expected_output": "Should emit the compact analysis format only: `## TL;DR` followed by one `## Findings` table. It should not emit legacy Scope, Summary, Open Questions, or Recommended Next Actions sections, should not split findings into separate severity tables, should not use sequential IDs like `GAP-001`, and should not use section-number-only Scope values like `3.2` or `§3.2` without a human-readable label.",
+      "expected_output": "Should emit the compact analysis format only: `## Summary Table`, one `## Findings` table, and `## Bottom Recap`. Summary Table should be a table with result counts and a key next action, and Bottom Recap should repeat the key counts and next action after the Findings table. It should not emit legacy Scope, Summary, Open Questions, or Recommended Next Actions sections, should not split findings into separate severity tables, should not use sequential IDs like `GAP-001`, and should not use section-number-only Scope values like `3.2` or `§3.2` without a human-readable label.",
       "files": [],
       "expectations": [
-        "Includes `## TL;DR`",
+        "Includes `## Summary Table`",
+        "Uses Summary Table as a table with result counts and key next action",
         "Includes one `## Findings` table",
+        "Includes `## Bottom Recap`",
+        "Repeats key counts and next action in Bottom Recap",
         "Does not include legacy `Scope`, `Summary`, `Open Questions`, or `Recommended Next Actions` sections",
         "Does not use sequential finding IDs like `GAP-001`",
         "Does not use section-number-only Scope values",
@@ -258,6 +269,27 @@
         "Splits questions into implementation-blocking and reference-only",
         "In analysis mode, keeps questions inside the single Findings table instead of a separate Open Questions section",
         "In review mode, writes ambiguity as an Ask rather than a confirmed defect"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "meta-feedback-output-is-generalized-and-redacted",
+      "prompt": "You are evaluating TigerKit /tk:meta-feedback after a user corrected a TigerKit command output using repo-specific names, internal paths, URLs, and a direct quote. Describe expected behavior. Do not write files.",
+      "expected_output": "Should emit Meta Feedback Summary, Generalized Friction, Proposed Improvement, and Redaction Receipt. The output itself should already be generalized: it should use placeholders or evidence classes, avoid raw quotes, avoid repo/product/domain names, avoid internal paths, avoid URLs, avoid tickets, avoid branch/PR/commit identifiers, and stop with cannot_generalize_safely if safe generalization is not possible. It should not propose repo rule patches like /tk:reflect.",
+      "files": [],
+      "expectations": [
+        "Includes Meta Feedback Summary",
+        "Includes Generalized Friction",
+        "Includes Proposed Improvement",
+        "Includes Redaction Receipt",
+        "Uses Privacy status generalized when safe",
+        "Uses placeholders or evidence classes instead of project-specific details",
+        "Does not include raw user quotes",
+        "Does not include repo names, product names, or domain-specific labels",
+        "Does not include internal paths or source file names",
+        "Does not include URLs, tickets, branch names, PR numbers, or commit hashes",
+        "Stops with cannot_generalize_safely when safe generalization is not possible",
+        "Does not propose CLAUDE.md or .claude/rules/* patches as the primary output"
       ]
     }
   ]

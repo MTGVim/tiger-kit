@@ -34,7 +34,7 @@
 
 ## GAP-005: Match output to the selected mode
 
-- `mode=analysis` emits only compact `## TL;DR` and `## Findings` with one findings table.
+- `mode=analysis` emits only compact `## Summary Table`, `## Findings`, and `## Bottom Recap`. Summary Table must be a table with result counts and key next action; Bottom Recap repeats the key counts and next action after long Findings.
 - `mode=review` emits PR-ready basis-target gap comments only; it is not general code review.
 - `mode=both` emits analysis first, then basis-target gap comments, using the same stable IDs for the same findings.
 

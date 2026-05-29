@@ -22,7 +22,7 @@ Chat output is the primary receipt. File writes happen only when the command con
 - 목적: basis와 target을 비교해 gap analysis 또는 PR-ready basis-target gap comment를 생성합니다.
 - basis는 현재 비교에 쓰는 자료이며 Spec reference를 포함할 수 있고, 절대적 진실로 단정하지 않습니다.
 - 허용 mode: `analysis`, `review`, `both`
-- `mode=analysis`: compact `## TL;DR`와 `## Findings` 단일 table만 출력합니다.
+- `mode=analysis`: compact `## Summary Table`, `## Findings`, `## Bottom Recap`만 출력합니다. 상단 summary는 table이어야 하며, 하단 recap은 긴 Findings 뒤에 핵심 count와 next action을 반복합니다.
 - `mode=review`: PR에 바로 붙일 수 있는 basis-target gap comment만 출력합니다. 일반 code review가 아닙니다.
 - `mode=both`: analysis 형식 뒤에 basis-target gap comment를 이어서 출력하며 같은 finding에는 같은 stable ID를 사용합니다.
 - visible UI copy 차이는 exact match 기준으로 판단합니다. 의미상 유사함은 충분하지 않습니다.
@@ -100,25 +100,32 @@ gap-<scope-slug>-<finding-slug>
 
 ### `mode=analysis` 형식
 
-출력은 compact analysis table만 생성합니다. H2는 아래 두 개만 사용합니다.
+출력은 summary-first compact analysis만 생성합니다. H2는 아래 세 개만 사용합니다.
 
 ```md
-## TL;DR
-- basis:
-- target:
-- summary:
-- note: mode가 애매해 analysis를 기본값으로 선택한 경우에만 짧게 작성
+## Summary Table
+
+| Basis | Target | Total Findings | Needs Fix | Cannot Verify | Blocked External | Key Next Action |
+|---|---|---:|---:|---:|---:|---|
+| spec <reference> | current implementation | 3 | 2 | 1 | 0 | needs_fix 2건을 먼저 반영해 주세요. |
 
 ## Findings
 
 | ID | Scope | Type | Severity | Status | Basis | Target Evidence | Finding | Suggested Action |
 |---|---|---|---|---|---|---|---|---|
 | gap-summary-row-missing-total | §3.2 Summary Row | missing | major | needs_fix | spec §3.2 `Total` row | `src/...`에서 해당 row 미관측 | Summary Row의 `Total` row가 없습니다. | basis에 맞춰 row를 추가해 주세요. |
+
+## Bottom Recap
+- Needs fix: 2
+- Cannot verify: 1
+- Key next action: needs_fix 2건을 먼저 반영해 주세요.
 ```
 
 규칙:
 
+- Summary Table은 반드시 table입니다. 긴 Findings가 이어지기 전에 전체 count와 핵심 next action을 보여줍니다.
 - Findings table은 단일 table입니다. 별도 보조 섹션이나 구형 multi-section template을 만들지 않습니다.
+- Bottom Recap은 긴 Findings 뒤에서도 사용자가 결론을 다시 볼 수 있도록 Summary Table의 핵심 count와 next action을 반복합니다.
 - open question, 추가 증거 요청, 범위 밖 항목도 필요하면 같은 table에 Status로 표현합니다.
 - Scope 칸은 반드시 사람이 읽을 수 있는 title, menu, page, component, row 이름을 포함합니다.
 - Evidence, Interpretation, Decision, Suggestion 구분은 table 안의 Basis, Target Evidence, Finding, Suggested Action 표현에서 유지합니다.
@@ -148,7 +155,7 @@ Ask: spec 기준으로 문구를 exact match로 맞춰 주세요.
 
 순서:
 
-1. `mode=analysis` 형식
+1. `mode=analysis` 형식, 즉 `## Summary Table`, `## Findings`, `## Bottom Recap`
 2. `mode=review` basis-target gap comment 묶음
 
 규칙:
@@ -190,6 +197,41 @@ Ask: spec 기준으로 문구를 exact match로 맞춰 주세요.
 ```
 
 적용했을 때는 수정한 파일 경로와 적용 범위를 짧게 보고합니다. 적용하지 않았을 때는 proposal-only 상태를 명시합니다.
+
+## `/tk:meta-feedback` Output Contract
+
+- 목적: TigerKit command 또는 skill 사용 friction을 프로젝트 자산 유출 없이 일반화된 TigerKit 개선안으로 정리합니다.
+- 기본값은 proposal-only입니다.
+- `--out <path>`가 있을 때만 파일을 작성할 수 있습니다.
+- chat output과 file output은 모두 같은 redacted format이어야 합니다.
+- raw session evidence, 사용자 원문 quote, repo 이름, product 이름, 도메인 고유명, 내부 path, URL, ticket, branch, PR 번호, commit hash를 출력하지 않습니다.
+- 증거는 `source_type=session_correction`, `source_type=repeated_friction`, `source_type=output_shape_feedback` 같은 class로만 표시합니다.
+- 안전하게 일반화할 수 없으면 `cannot_generalize_safely`로 중단합니다.
+
+필수 섹션 순서:
+
+```md
+## Meta Feedback Summary
+- Target: <skill-or-command>
+- Feedback class: <ux|output-format|taxonomy|safety|dispatch|docs>
+- Privacy status: generalized
+
+## Generalized Friction
+- Situation: <generic situation>
+- Problem: <generic problem>
+- Impact: <generic impact>
+
+## Proposed Improvement
+- Change: <generic skill/command improvement>
+- Why: <reason without project-specific evidence>
+
+## Redaction Receipt
+- Removed: <repo names|paths|URLs|domain labels|quoted user text>
+- Kept: <abstract pattern only>
+- Unsafe details included: none
+```
+
+중단 시에는 `Privacy status: cannot_generalize_safely`, `Change: none`, `Why: privacy gate failed`를 사용합니다.
 
 ## `/tk:handoff` Output Contract
 

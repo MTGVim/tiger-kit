@@ -9,10 +9,10 @@
 ## 핵심 모델
 
 ```text
-TigerKit = basis gap analysis + durable reflection + safe handoff
+TigerKit = basis gap analysis + durable reflection + generalized meta-feedback + safe handoff
 ```
 
-TigerKit은 요구사항을 재작성하거나 실행 대기열을 관리하지 않습니다. 기준자료와 대상 산출물을 비교하고, 반복되는 피드백을 repo 규칙 후보로 제안하며, 다음 세션이 안전하게 이어받을 문맥을 남깁니다.
+TigerKit은 요구사항을 재작성하거나 실행 대기열을 관리하지 않습니다. 기준자료와 대상 산출물을 비교하고, 반복되는 피드백을 repo 규칙 후보로 제안하며, 프로젝트 자산을 노출하지 않는 일반화된 TigerKit 개선안을 추출하고, 다음 세션이 안전하게 이어받을 문맥을 남깁니다.
 
 ## Command Surface
 
@@ -22,6 +22,7 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 | --- | --- |
 | `/tk:gap` | 기준자료와 대상 산출물을 비교해 gap analysis 또는 PR-ready basis-target gap comment를 만듭니다. |
 | `/tk:reflect` | durable feedback, 반복 실수, gap/review 결과에서 `CLAUDE.md`와 `.claude/rules/*` 업데이트 후보를 제안합니다. |
+| `/tk:meta-feedback` | TigerKit command/skill 사용 friction을 프로젝트 자산 유출 없이 일반화된 개선안으로 정리합니다. |
 | `/tk:handoff` | 다음 세션이 이어받을 수 있도록 `.claude/handoffs/current.md`를 작성합니다. |
 
 ## 사용 예시
@@ -32,6 +33,8 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 /tk:gap figma <url> vs pr #123 mode=both
 /tk:reflect gap 결과에서 반복되는 리뷰 포인트를 rules로 제안해줘
 /tk:reflect apply=true 이 copy rule을 반영해줘
+/tk:meta-feedback gap output UX에서 생긴 friction을 일반화해줘
+/tk:meta-feedback gap --out tk-feedback/gap-output-ux.md
 /tk:handoff 현재 작업 이어받을 수 있게 남겨줘
 /tk:handoff tiger-kit skill refactor archive=true
 ```
@@ -41,7 +44,7 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 ### `/tk:gap`
 
 - 입력된 basis와 target을 직접 확인 가능한 근거로 비교합니다. basis는 Spec reference를 포함할 수 있는 비교 자료이지 절대적 진실이 아닙니다.
-- `mode=analysis`는 compact `## TL;DR`와 `## Findings` 단일 table만 출력합니다.
+- `mode=analysis`는 compact `## Summary Table`, `## Findings`, `## Bottom Recap`만 출력합니다. Summary Table은 결과 count와 핵심 next action을 table로 보여주고, Bottom Recap은 긴 Findings 뒤에 핵심 결론을 반복합니다.
 - `mode=review`는 PR-ready basis-target gap comment만 출력합니다. 일반 code review가 아닙니다.
 - `mode=both`는 analysis 뒤에 basis-target gap comment를 출력하며 같은 finding에 같은 stable ID를 사용합니다.
 - stable finding ID는 `gap-<scope-slug>-<finding-slug>` 형식입니다. `GAP-001` 같은 순번 기반 finding ID를 쓰지 않습니다.
@@ -60,6 +63,15 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 - durable하게 남길 만한 피드백, 반복 실수, gap/review finding을 분류합니다.
 - 기본은 제안만 합니다.
 - `apply=true` 또는 명시 승인 없이는 파일을 수정하지 않습니다.
+
+### `/tk:meta-feedback`
+
+- TigerKit command 또는 skill 사용 중 드러난 friction, 사용자 교정, 반복 실수를 TigerKit 자체 개선안으로 정리합니다.
+- 출력 자체가 이미 generalize되어야 합니다. repo 이름, product 이름, 도메인 고유명, 내부 path, URL, ticket, branch, PR 번호, commit hash, 사용자 원문 quote를 포함하지 않습니다.
+- 기본은 제안만 합니다.
+- `--out <path>`가 있을 때만 같은 redacted output을 파일로 작성할 수 있습니다.
+- 안전하게 일반화할 수 없으면 `cannot_generalize_safely`로 중단합니다.
+- repo rule 제안은 `/tk:reflect`, basis-target 비교는 `/tk:gap` 대상으로 분리합니다.
 
 ### `/tk:handoff`
 

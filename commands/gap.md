@@ -69,7 +69,7 @@ mode는 기능 분기가 아니라 출력 profile입니다.
 - PR, diff, review, comment, `붙일 수 있게`가 중심이면 `mode=review`입니다.
 - analysis, missing, spec vs implementation, current implementation이 중심이면 `mode=analysis`입니다.
 - 둘 다 명시적으로 원하면 `mode=both`입니다.
-- 애매하면 기본값은 `mode=analysis`입니다. 이때 `## TL;DR`에 mode를 analysis로 선택했다는 짧은 note를 남깁니다.
+- 애매하면 기본값은 `mode=analysis`입니다. 이때 `## Summary Table`의 Key Next Action에 mode를 analysis로 선택했다는 짧은 note를 포함합니다.
 
 ## Hard Rule: UI Copy Exactness
 
@@ -146,13 +146,13 @@ finding ID는 안정적인 slug를 사용합니다.
 
 ### mode=analysis
 
-출력은 compact analysis table만 생성합니다. H2는 아래 두 개만 사용합니다.
+출력은 summary-first compact analysis로 생성합니다. H2는 아래 세 개만 사용합니다.
 
-    ## TL;DR
-    - basis:
-    - target:
-    - summary:
-    - note: mode가 애매해 analysis를 기본값으로 선택한 경우에만 짧게 작성
+    ## Summary Table
+
+    | Basis | Target | Total Findings | Needs Fix | Cannot Verify | Blocked External | Key Next Action |
+    |---|---|---:|---:|---:|---:|---|
+    | spec <reference> | current implementation | 3 | 2 | 1 | 0 | needs_fix 2건을 먼저 반영해 주세요. |
 
     ## Findings
 
@@ -160,8 +160,15 @@ finding ID는 안정적인 slug를 사용합니다.
     |---|---|---|---|---|---|---|---|---|
     | gap-summary-row-missing-total | §3.2 Summary Row | missing | major | needs_fix | spec §3.2 `Total` row | `src/...`에서 해당 row 미관측 | Summary Row의 `Total` row가 없습니다. | basis에 맞춰 row를 추가해 주세요. |
 
+    ## Bottom Recap
+    - Needs fix: 2
+    - Cannot verify: 1
+    - Key next action: needs_fix 2건을 먼저 반영해 주세요.
+
 규칙:
+- Summary Table은 반드시 table이어야 하며 긴 Findings에 앞서 전체 결과 count와 핵심 next action을 보여줍니다.
 - Findings table은 단일 table입니다. 별도 Scope, Summary, Open Questions, Recommended Next Actions 섹션을 만들지 않습니다.
+- Bottom Recap은 긴 Findings 뒤에서도 사용자가 결론을 다시 볼 수 있도록 Summary Table의 핵심 count와 next action을 반복합니다.
 - open question, 추가 증거 요청, 범위 밖 항목도 필요하면 같은 table에 Status로 표현합니다.
 - Scope 칸은 반드시 사람이 읽을 수 있는 title, menu, page, component, row 이름을 포함합니다.
 
