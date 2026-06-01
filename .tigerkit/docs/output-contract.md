@@ -175,8 +175,10 @@ Ask: spec 기준으로 문구를 exact match로 맞춰 주세요.
 - 기본값은 proposal-only입니다.
 - `apply=true` 또는 사용자 명시 승인 전에는 파일을 수정하지 않습니다.
 - conflict가 남아 있으면 적용하지 않고 먼저 보고합니다.
+- target root에 `CLAUDE.md`가 없고 일반 작업 트리라면 scoped rule 제안과 별개로 root instruction bootstrap 후보를 제안합니다.
+- 세션 의사결정 경로 추적이 필요하면 optional `### Session Decision Recap`을 `### Reflect Result` 뒤에 출력할 수 있습니다. durable rule이 0건이어도 recap은 별도 receipt로 출력할 수 있습니다.
 
-필수 섹션 순서:
+섹션 순서:
 
 ```md
 ### Reflect Result
@@ -184,8 +186,14 @@ Ask: spec 기준으로 문구를 exact match로 맞춰 주세요.
 - global rule인지 scoped rule인지 표시
 - apply 여부 표시
 
+### Session Decision Recap
+- optional
+- Evidence → Interpretation → Decision 흐름 요약
+- durable rule이 아니라 추적성 receipt임을 유지
+
 ### Classification
 - 각 candidate의 target 분류
+- `CLAUDE.md` bootstrap 후보와 scoped rule 후보를 별도 항목으로 분리
 
 ### Reason
 - evidence 기반 이유

@@ -63,6 +63,8 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 - durable하게 남길 만한 피드백, 반복 실수, gap/review finding을 분류합니다.
 - 기본은 제안만 합니다.
 - `apply=true` 또는 명시 승인 없이는 파일을 수정하지 않습니다.
+- 필요하면 `### Session Decision Recap`으로 Evidence → Interpretation → Decision 흐름을 짧게 요약합니다.
+- target root에 `CLAUDE.md`가 없고 일반 작업 트리라면 scoped rule과 별개로 root instruction bootstrap 후보를 제안합니다.
 
 ### `/tk:meta-feedback`
 
