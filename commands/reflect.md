@@ -34,6 +34,7 @@ reflect = durable rule extraction + scoped rule proposal
 - user feedback, repeated mistakes, gap results, PR review results에서 durable rule candidate를 추출합니다.
 - global rule과 path-scoped rule을 구분합니다.
 - 적절한 `.claude/rules/...` target file path를 제안합니다.
+- target root에 `CLAUDE.md`가 없고 일반 작업 트리라면 scoped rule 제안과 별개로 root instruction bootstrap 후보를 제시합니다.
 - 기존 rule과 충돌하는지 확인합니다.
 - 중복 rule은 merge/update 대상으로 정리합니다.
 - vague advice를 검증 가능한 rule로 다시 씁니다.
@@ -89,23 +90,32 @@ reflect = durable rule extraction + scoped rule proposal
 2. Evidence와 Interpretation을 분리합니다.
 3. one-off correction과 durable rule candidate를 구분합니다.
 4. global rule인지 path-scoped rule인지 분류합니다.
-5. 기존 `CLAUDE.md`, `.claude/rules/**/*.md`, 관련 skill/handoff와 충돌 또는 중복 여부를 점검합니다.
-6. vague advice를 테스트 가능한 문장으로 재작성합니다.
-7. 기본값에서는 patch proposal만 출력합니다.
-8. `apply=true` 또는 사용자 승인 시에만 안전한 대상 파일을 수정합니다.
-9. conflict가 남아 있으면 적용을 중단하고 conflict부터 보고합니다.
+5. target root에 `CLAUDE.md`가 있는지와 현재 작업 트리가 일반 작업 트리인지 확인합니다.
+6. root instruction file이 없고 일반 작업 트리라면 scoped rule과 별개로 `CLAUDE.md` bootstrap 후보를 분류에 포함합니다.
+7. 기존 `CLAUDE.md`, `.claude/rules/**/*.md`, 관련 skill/handoff와 충돌 또는 중복 여부를 점검합니다.
+8. vague advice를 테스트 가능한 문장으로 재작성합니다.
+9. 기본값에서는 patch proposal만 출력합니다.
+10. `apply=true` 또는 사용자 승인 시에만 안전한 대상 파일을 수정합니다.
+11. conflict가 남아 있으면 적용을 중단하고 conflict부터 보고합니다.
 
 ## 출력 템플릿
 
-아래 섹션을 이 순서로 사용합니다.
+아래 섹션을 이 순서로 사용합니다. `### Session Decision Recap`은 optional이지만, 사용자가 decision path나 세션 맥락 추적을 필요로 한 경우에는 durable rule 0건이어도 출력할 수 있습니다.
 
 ### Reflect Result
 - 무엇을 durable rule candidate로 추출했는지 요약합니다.
 - global rule인지 scoped rule인지 표시합니다.
 - apply 여부를 표시합니다.
 
+### Session Decision Recap
+- optional 섹션입니다.
+- Evidence → Interpretation → Decision 흐름을 사람 친화적으로 1회 요약합니다.
+- recap은 durable rule 자체가 아니라 추적성 receipt입니다.
+- 사용자 원문 quote를 불필요하게 반복하지 않습니다.
+
 ### Classification
 - 각 candidate를 어느 대상으로 분류했는지 적습니다.
+- `CLAUDE.md` bootstrap 후보와 scoped rule 후보를 별도 항목으로 분리합니다.
 - 필요하면 target path 예시를 함께 적습니다.
 
 ### Reason
@@ -129,8 +139,10 @@ reflect = durable rule extraction + scoped rule proposal
 ## 금지
 
 - generic retrospective처럼 감상문을 쓰기
+- `Session Decision Recap`을 durable rule이나 적용 승인처럼 취급하기
 - apply 승인 없이 파일 수정하기
 - conflict가 있는데도 적용하기
+- root instruction file이 없는데 scoped rule만 제안하고 bootstrap 후보를 누락하기
 - user feedback 없는 추측 규칙 만들기
 - repeated evidence 없이 one-off correction을 durable rule로 승격하기
 - global rule인데 scoped file에 숨기기
