@@ -201,6 +201,36 @@
       ]
     },
     {
+      "id": 15,
+      "name": "reflect-can-emit-session-decision-recap",
+      "prompt": "You are evaluating TigerKit /tk:reflect after a session produced no durable rule patch, but the user needs a human-readable recap of how evidence led to interpretation and decision. Describe expected behavior. Do not write files.",
+      "expected_output": "Should keep /tk:reflect proposal-only behavior while allowing an optional `### Session Decision Recap` after `### Reflect Result`. The recap should summarize Evidence, Interpretation, and Decision flow as a traceability receipt, should not be treated as a durable rule or apply permission, and may appear even when there are zero durable rule candidates.",
+      "files": [],
+      "expectations": [
+        "Allows optional `### Session Decision Recap` after Reflect Result",
+        "Summarizes Evidence to Interpretation to Decision flow",
+        "Treats recap as a traceability receipt rather than a durable rule",
+        "Allows recap even when durable rule candidate count is zero",
+        "Keeps proposal-only behavior unless apply=true or explicit approval is present",
+        "Does not treat recap as file modification approval"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "reflect-proposes-root-instruction-bootstrap",
+      "prompt": "You are evaluating TigerKit /tk:reflect when the target repository has no root CLAUDE.md and the session produced a scoped durable rule candidate in a normal working tree. Describe expected behavior. Do not write files.",
+      "expected_output": "Should check whether the target root has CLAUDE.md. If it is missing in a normal working tree, /tk:reflect should propose a root instruction bootstrap candidate separately from any scoped `.claude/rules/*` proposal. The bootstrap remains under the same apply gate and should not be silently applied.",
+      "files": [],
+      "expectations": [
+        "Checks whether target root CLAUDE.md exists",
+        "Detects missing root instruction file in a normal working tree",
+        "Proposes CLAUDE.md bootstrap separately from scoped rule proposals",
+        "Keeps scoped rule proposal available when appropriate",
+        "Keeps bootstrap under apply=true or explicit approval gate",
+        "Does not silently apply root instruction file creation"
+      ]
+    },
+    {
       "id": 10,
       "name": "handoff-writes-current-template-sections",
       "prompt": "You are evaluating TigerKit /tk:handoff for the input `/tk:handoff 현재 작업 이어받을 수 있게 남겨줘`. Describe expected behavior. Do not write files.",
