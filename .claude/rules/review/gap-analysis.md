@@ -24,22 +24,22 @@
 - Do not use Judgment as an output axis.
 - Visible UI copy differences are Type `mismatch`; exact match is required unless basis explicitly allows variation.
 
-## GAP-004: Use short user IDs, stable tracking IDs, and meaningful scopes
+## GAP-004: Use `G<number>` IDs and meaningful scopes
 
-- Findings use a user-facing Short ID such as `G1`, `G2` plus a tracking Stable ID such as `gap-<scope-slug>-<finding-slug>`.
-- Short ID is the primary ID users refer to in conversation.
-- Stable ID must stay the same for the same scope and finding across `mode=analysis`, `mode=review`, and `mode=both`.
-- In analysis tables, Stable ID belongs in a rightmost auxiliary column named `Stable` to reduce the user-facing table area.
-- Do not use sequential stable IDs like `GAP-001` for findings.
+- Findings use a single user-facing ID such as `G1`, `G2`.
+- `G<number>` is the canonical handle users refer to in conversation.
+- The same finding must use the same `G<number>` across `mode=analysis`, `mode=review`, and `mode=both` within one generated gap result.
+- Do not emit separate slug-style stable IDs such as `gap-<scope-slug>-<finding-slug>`.
+- Do not emit a `Stable` column or `Stable:` line.
 - Rule IDs in this file, such as `GAP-001` and `GAP-002`, are repo rule IDs. They are not `/tk:gap` finding IDs.
 - Scope labels must include a human-readable title, menu, page, component, row, or equivalent name.
 - Do not use section numbers alone as Scope labels.
 
 ## GAP-005: Match output to the selected mode
 
-- `mode=analysis` emits only compact `## Summary Table`, `## Findings`, and `## Bottom Recap`. Summary Table must be a table with result counts and key next action; Bottom Recap repeats the key counts and next action after long Findings.
-- `mode=review` emits PR-ready basis-target gap comments only; it is not general code review.
-- `mode=both` emits analysis first, then basis-target gap comments, using the same Short IDs and Stable IDs for the same findings.
+- `mode=analysis` emits only compact `## Summary Table`, `## Findings`, and `## Bottom Recap`. Summary Table must use `Target`, `Counts`, `Next`; Findings must use `ID / Scope`, `Class`, `Evidence`, `Finding`, `Ask`; Bottom Recap repeats the key counts and next action after long Findings.
+- `mode=review` emits PR-ready basis-target gap comments only; it is not general code review and must not include `Stable:` lines.
+- `mode=both` emits analysis first, then basis-target gap comments, using the same `G<number>` IDs for the same findings.
 
 ## GAP-006: Explore ambiguity before asking or deciding
 
