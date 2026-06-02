@@ -62,7 +62,7 @@ Required handling:
 - In `mode=analysis`, keep questions inside the single Findings table.
 - In `mode=review`, write ambiguity as an `Ask:` with the question category, recommendation, and evidence, not as a confirmed defect.
 
-## GAP-007: Check current implementation freshness before comparing
+## Target freshness: Check current implementation freshness before comparing
 
 When the target means `current implementation`, current working tree, current branch, or local checkout:
 
