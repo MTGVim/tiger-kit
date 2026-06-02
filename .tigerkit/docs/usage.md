@@ -81,6 +81,59 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 - `archive=true` 또는 명시 요청이 있을 때만 dated archive copy를 만듭니다.
 - handoff에는 Reader Guide와 Resume Prompt를 포함합니다.
 
+## 선택형 Stop hook
+
+TigerKit은 선택 기능으로 Claude Code `Stop` 시점에 실행되는 hook을 제공할 수 있습니다.
+
+```text
+hooks/tigerkit-stop-advisor.sh
+hooks/hooks.json
+```
+
+이 hook은 TigerKit 핵심 command surface(`/tk:gap`, `/tk:reflect`, `/tk:handoff`)를 대체하지 않습니다. 정상 응답 종료 직전에 아래 두 advisor를 순서대로 실행합니다.
+
+1. `verification-manifest-guard`
+2. `handoff-reflect-advisor`
+
+### `verification-manifest-guard`
+
+변경사항이 있는데 변경 파일별 검증 상태 manifest가 없거나 누락되어 있으면 `stderr`와 `exit 2`로 Stop을 막습니다.
+
+검증 manifest는 repo 안에 만들지 않고 아래 임시 경로만 사용합니다.
+
+```text
+${TMPDIR:-/tmp}/tiger-kit/{repo-hash}/{branch-hash}/{session-id}/verification.md
+```
+
+각 변경 파일은 아래 상태 중 하나와 `method`, `result`, `note`를 가져야 합니다.
+
+- `verified`
+- `unverified`
+- `not-applicable`
+
+특정 package manager나 test/build/typecheck 명령은 강제하지 않습니다.
+
+### `handoff-reflect-advisor`
+
+마지막 assistant 응답이 blocked/stalled 또는 작업 단위 완료 경계로 보이면 `/tk:handoff`와 `/tk:reflect`를 선택지로 제안합니다.
+
+- `/tk:handoff`를 강제하지 않습니다.
+- `/tk:reflect`를 강제하지 않습니다.
+- `/tk:handoff` 또는 `/tk:reflect`를 자동 실행하지 않습니다.
+- milestone signature별로 한 번만 제안합니다.
+
+### 제한과 비목표
+
+이 hook은 정상 `Stop` 시점만 대상으로 합니다. 아래 상황에서는 안정적으로 실행된다고 기대하지 않습니다.
+
+- `Ctrl+C`
+- 터미널 종료
+- process kill
+- 사용자 인터럽트
+- OS/process-level 강제 종료
+
+이 hook은 `.tigerkit` 또는 기타 repo-local state path에 verification state를 쓰지 않습니다. 또한 `/tk:gap`, `/tk:reflect`, `/tk:handoff` 실행을 강제하지 않습니다.
+
 ## 운영 범위 메모
 
 세부 정책, 우선순위 규칙, 검증 원칙은 `CLAUDE.md`를 기준으로 봅니다.
