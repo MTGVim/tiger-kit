@@ -61,3 +61,14 @@ Required handling:
 - Split questions into `implementation-blocking` and `reference-only`.
 - In `mode=analysis`, keep questions inside the single Findings table.
 - In `mode=review`, write ambiguity as an `Ask:` with the question category, recommendation, and evidence, not as a confirmed defect.
+
+## GAP-007: Check current implementation freshness before comparing
+
+When the target means `current implementation`, current working tree, current branch, or local checkout:
+
+- Identify the integration branch tip first. Prefer the repository default remote branch; use `origin/main` when that is the repository convention.
+- Refresh or verify remote metadata when possible. If freshness cannot be verified, report base freshness as `cannot_verify` evidence.
+- If local `HEAD` is behind the integration branch, check whether files in the requested scope or target evidence changed between `HEAD` and the integration tip.
+- If behind changes affect the target area, compare against the integration branch tip shape instead of stale local `HEAD`, and report the base state in the Summary Table or first finding.
+- If behind changes do not affect the target area, the local target may still be used, but report the freshness check briefly.
+- If the user explicitly names a commit, branch, PR diff, or working tree state as the target, do not switch targets silently; report stale status as evidence instead.
