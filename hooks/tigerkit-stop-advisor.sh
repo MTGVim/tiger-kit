@@ -38,7 +38,6 @@ if [ -z "$cwd" ]; then
   cwd="$(pwd)"
 fi
 
-last_assistant_message="$(json_field last_assistant_message)"
 stop_hook_active="$(json_field stop_hook_active)"
 
 if [ ! -d "$cwd" ]; then
@@ -192,57 +191,6 @@ if [ -n "$changed_files" ]; then
   fi
   if ! validation_output="$(validate_manifest 2>&1)"; then
     block_for_manifest "$validation_output"
-  fi
-fi
-
-advisor_signal="$(LAST_ASSISTANT_MESSAGE="$last_assistant_message" python3 - <<'PY'
-import os, re
-msg = os.environ.get("LAST_ASSISTANT_MESSAGE", "") or ""
-low = msg.lower()
-blocked = [
-    "blocked", "stalled", "cannot proceed", "can't proceed", "needs human",
-    "human follow-up", "막힘", "막혔", "중단", "확인 필요", "사람 확인",
-]
-section = [
-    "completed", "done", "finished", "pass", "완료", "처리 완료", "검증", "pass", "작업 완료",
-]
-if any(token in low or token in msg for token in blocked):
-    print("blocked")
-elif any(token in low or token in msg for token in section):
-    print("section-complete")
-else:
-    print("")
-PY
-)"
-
-if [ -n "$advisor_signal" ]; then
-  signature="$(LAST_ASSISTANT_MESSAGE="$last_assistant_message" SIGNAL="$advisor_signal" python3 - <<'PY'
-import hashlib, os, re
-signal = os.environ.get("SIGNAL", "")
-msg = os.environ.get("LAST_ASSISTANT_MESSAGE", "") or ""
-normalized = re.sub(r"\s+", " ", msg).strip()[:800]
-print(hashlib.sha1((signal + "\n" + normalized).encode()).hexdigest()[:16])
-PY
-)"
-  seen_file="${state_dir}/advisor-${signature}"
-  if [ ! -f "$seen_file" ]; then
-    printf '%s
-' "$advisor_signal" > "$seen_file"
-    {
-      echo "TigerKit handoff/reflect advisor:"
-      echo
-      if [ "$advisor_signal" = "blocked" ]; then
-        echo "현재 응답이 blocked/stalled 경계에 도달한 것으로 보입니다."
-      else
-        echo "현재 응답이 작업 단위 완료 경계에 도달한 것으로 보입니다."
-      fi
-      echo
-      echo "다음 세션에서 이어갈 필요가 있다면 /tk:handoff를 고려하세요."
-      echo "이번 세션에서 얻은 durable rule, 제약, 반복 실수가 있다면 /tk:reflect도 고려하세요."
-      echo
-      echo "이것은 선택형 제안입니다. handoff/reflect 없이 계속 진행해도 됩니다."
-    } >&2
-    exit 2
   fi
 fi
 
