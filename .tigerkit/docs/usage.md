@@ -90,10 +90,7 @@ hooks/tigerkit-stop-advisor.sh
 hooks/hooks.json
 ```
 
-이 hook은 TigerKit 핵심 command surface(`/tk:gap`, `/tk:reflect`, `/tk:handoff`)를 대체하지 않습니다. 정상 응답 종료 직전에 아래 두 advisor를 순서대로 실행합니다.
-
-1. `verification-manifest-guard`
-2. `handoff-reflect-advisor`
+이 hook은 TigerKit 핵심 command surface(`/tk:gap`, `/tk:reflect`, `/tk:handoff`)를 대체하지 않습니다. 정상 응답 종료 직전에 `verification-manifest-guard`만 실행합니다.
 
 ### `verification-manifest-guard`
 
@@ -112,15 +109,6 @@ ${TMPDIR:-/tmp}/tiger-kit/{repo-hash}/{branch-hash}/{session-id}/verification.md
 - `not-applicable`
 
 특정 package manager나 test/build/typecheck 명령은 강제하지 않습니다.
-
-### `handoff-reflect-advisor`
-
-마지막 assistant 응답이 blocked/stalled 또는 작업 단위 완료 경계로 보이면 `/tk:handoff`와 `/tk:reflect`를 선택지로 제안합니다.
-
-- `/tk:handoff`를 강제하지 않습니다.
-- `/tk:reflect`를 강제하지 않습니다.
-- `/tk:handoff` 또는 `/tk:reflect`를 자동 실행하지 않습니다.
-- milestone signature별로 한 번만 제안합니다.
 
 ### 제한과 비목표
 
