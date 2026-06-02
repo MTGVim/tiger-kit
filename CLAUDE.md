@@ -2,7 +2,7 @@
 
 ## 언어 및 산출물 규칙
 
-- 이 저장소에서 만드는 TigerKit 작업 산출물(`.claude/rules/**/*.md`, `.claude/handoffs/current.md`, `.tigerkit/docs/*.md`)은 반드시 한글로 작성한다.
+- 이 저장소에서 만드는 TigerKit 작업 산출물(`.claude/rules/**/*.md`, `.claude/tigerkit-reflections.md`, `.tigerkit/docs/*.md`)은 반드시 한글로 작성한다.
 - 사용자에게 진행 상황, 계획, 검증 결과를 보고할 때도 한글을 기본으로 사용한다.
 - 기존 공개 문서나 manifest가 영어 문구를 쓰는 경우에는 주변 문맥과 일관성을 우선한다.
 
@@ -17,21 +17,23 @@
 ## 핵심 정책
 
 - TigerKit의 목적은 AI-induced source loss를 줄이는 것이다.
-- 핵심 command set은 `/tk:gap`, `/tk:reflect`, `/tk:handoff`다.
+- v7 핵심 command set은 `/tk:spec`, `/tk:gap`, `/tk:verify-before-stop`, `/tk:reflect`다.
 - Claude Code plugin command는 namespace를 사용하므로 slash invocation은 `/tk:*` 형태다. 자연어 요청은 같은 프로토콜을 따른다.
-- `/tk:gap`은 basis와 target을 비교해 gap analysis 또는 PR-ready basis-target gap comment를 만든다.
-- `/tk:reflect`는 `CLAUDE.md`와 `.claude/rules/*` 유지보수 제안을 만든다. `apply=true` 또는 사용자 명시 승인 전에는 파일을 수정하지 않는다.
-- `/tk:handoff`는 `.claude/handoffs/current.md`를 기본 handoff로 작성한다. `archive=true` 또는 사용자 명시 요청이 있을 때만 dated copy도 만든다.
+- `/tk:spec`은 현재 session에서 사용자가 직접 제공한 지시, 브레인스토밍, 회의 메모, 결정사항을 현재 브랜치 전용 Spec Patch로 저장한다.
+- `/tk:gap`은 Product/Design Spec, Implementation Plan, Current Implementation을 Contract로 비교해 JudgeMergerAgent가 확정한 actionable finding만 branch-local artifact로 저장한다.
+- `/tk:verify-before-stop`은 작업 종료 전 최신 Spec Patch와 Gap Run 기준의 verification evidence를 branch-local artifact로 저장한다.
+- `/tk:reflect`는 branch-local working memory에서 repo에 영구 보존할 insight만 추출한다. 기본 동작은 `apply=true`이며, source code는 수정하지 않고 durable insight target만 수정한다.
 - repo convention은 `.claude/rules/**/*.md`를 우선 확인한다.
-- UI copy는 basis와 exact match여야 한다. 의미상 유사함은 충분하지 않다.
+- UI copy는 basis 또는 confirmed contract와 exact match여야 한다. 의미상 유사함은 충분하지 않다.
 - 외부 근거는 URL, path, ticket, Figma, PRD, issue, API docs, source code path, commit hash 같은 reference와 access status로 관리한다.
-- 외부 근거 내용을 로컬 요구사항 텍스트로 복사, 요약, 정규화, 재작성하지 않는다.
+- 외부 근거 내용을 repo-wide durable 요구사항 텍스트로 복사, 요약, 정규화, 재작성하지 않는다.
+- `/tk:spec`은 현재 branch-local working memory에만 raw instruction과 derived Spec Item을 저장할 수 있다. 이것은 repo-wide durable knowledge가 아니며 `/tk:reflect`를 거치기 전에는 durable insight가 아니다.
 - 접근 불가 URL, image, Figma/design link, screenshot URL, local path는 pending reference로 기록하고 file, local path, screenshot/export, pasted content를 요청한다.
 - 현재 session에서 사용자가 직접 말한 인터뷰 내용만 local text로 저장할 수 있다.
-- raw interview text와 derived interpretation을 분리한다.
-- gap 분석 시 basis, target, 현재 관측 가능한 baseline을 먼저 식별한다.
-- working tree가 dirty하거나 target state가 재현 불가해도 관측 가능한 비교는 진행할 수 있다. 다만 재현 불가 항목은 `cannot_verify` 또는 근거 부족으로 명시한다.
-- ambiguity를 조용히 해결하지 않는다. 근거가 결론을 지지하지 않으면 gap으로 기록하고 필요하면 사용자에게 묻는다.
+- raw source text와 derived interpretation을 분리한다.
+- gap 분석 시 source contracts, target, 현재 관측 가능한 baseline을 먼저 식별한다.
+- working tree가 dirty하거나 target state가 재현 불가해도 관측 가능한 비교는 진행할 수 있다. 다만 재현 불가 항목은 rejected `unverifiable`, source conflict, 또는 근거 부족으로 명시한다.
+- ambiguity를 조용히 해결하지 않는다. 근거가 결론을 지지하지 않으면 source conflict 또는 rejected candidate로 기록하고 필요하면 사용자에게 묻는다.
 - 대화 context에 남아 있지 않은 내용은 추측하지 않고 `확인 불가`로 둔다.
 - `DESIGN.md`와 `COMPONENT_REUSE_MAP.md`는 derived repo-level knowledge다. basis나 사용자 확인을 대체하지 않는다. `reuse-map.md`는 legacy alias/migration candidate로만 다룬다.
 - `DESIGN.md`가 없으면 TigerKit이 새로 생성하지 않는다. 넣을 derived design knowledge가 있으면 사용자에게 초기화 필요를 알린다.
@@ -48,6 +50,7 @@
 - observed diff
 - explicit user confirmation
 - gap record
+- branch-local TigerKit artifact clearly marked as generated working memory
 - derived artifact clearly marked as derived
 
 항상 구분한다.
@@ -62,5 +65,6 @@ Suggestion = proposed, not confirmed
 ## 작업 시 주의사항
 
 - command 변경 후에는 `.claude-plugin/plugin.json`의 command 목록과 README/docs의 명령 목록이 서로 맞는지 확인한다.
+- `.claude/tigerkit/`은 generated branch-local working memory이므로 git ignore 대상이다. `.claude/` 전체를 ignore하지 않는다.
 - `main`, `master`, `develop` 같은 기반 브랜치에서 변경 가능한 작업을 시작하게 될 때는 전용 브랜치 사용을 권유해야 하며, 사용자 승인 없이 브랜치 생성이나 전환을 수행하지 않는다.
 - commit, push, PR 생성, merge, deploy는 사용자 승인 없이 수행하지 않는다.

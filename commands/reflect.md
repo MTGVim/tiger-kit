@@ -1,176 +1,219 @@
 ---
-description: 사용자 피드백, gap/review 결과, 반복 실수에서 durable repo rule 후보를 추출하고 CLAUDE.md 또는 .claude/rules/* 변경을 제안합니다.
-argument-hint: "[scope] [apply=true]"
+description: branch-local TigerKit working memory에서 repo에 영구 보존할 insight만 추출하고 기본 apply=true로 durable target에 반영합니다.
+argument-hint: "[--dry-run] [--apply=true|false] [--target <path>]"
 ---
 
-사용자 응답은 한글로 유지합니다. 코드, path, URL, ticket, commit, hash, identifier, error는 원문 그대로 둘 수 있습니다.
+이 명령은 TigerKit v7 reflect contract를 따릅니다.
 
-목표: `/tk:reflect`는 generic retrospective가 아닙니다. Claude project memory와 repo rule을 큐레이션하는 명령입니다.
+사용자에게는 한글로 답합니다. 코드, path, URL, ticket, commit, hash, identifier, error는 원문 그대로 둘 수 있습니다.
+
+목표: `/tk:reflect`는 branch-local Spec Patch, Gap Run, Verify Run에서 repo-wide 가치가 있는 durable insight만 추출해 durable insight target에 반영합니다.
 
 ```text
-reflect = durable rule extraction + scoped rule proposal
+reflect = branch-local working memory -> durable insight extraction
 ```
 
-## 관리 대상
+## Command surface
 
-- `CLAUDE.md`
-- `.claude/rules/**/*.md`
-- `.claude/skills/*/SKILL.md` audit/proposal only
-- `.claude/handoffs/current.md` current-state handoff only
+- plugin slash invocation은 `/tk:reflect`입니다.
+- `tiger-kit reflect` CLI 표현은 이 plugin command의 사용자 관점 alias로 취급합니다.
 
-## 분류 대상
+## 핵심 원칙
 
-| 대상 | 언제 분류하나 |
+- spec/gap/verify 산출물 자체는 repo-wide durable knowledge가 아닙니다.
+- repo에 영구적으로 남길 insight는 reflect를 통해서만 추출합니다.
+- `/tk:reflect` 기본 동작은 apply=true입니다.
+- source code는 수정하지 않습니다.
+- apply mode의 content write는 durable insight target만 수정합니다.
+- branch recency bookkeeping으로 `global-index.json`의 `lastUsedAt`은 갱신할 수 있습니다.
+- 같은 insight를 중복 반영하지 않습니다.
+- 적용 결과 diff/summary를 출력합니다.
+
+## Apply behavior
+
+| Command | 동작 |
 | --- | --- |
-| `CLAUDE.md` | 저장소 전반에 항상 적용되어야 하는 상위 작업 규칙, 협업 규칙, evidence rule, approval gate, 금지사항처럼 global rule일 때 |
-| `.claude/rules/*` | 특정 경로, 도메인, 파일군, 워크플로우에만 적용되는 path-scoped rule일 때 |
-| `.claude/skills/*/SKILL.md` | skill contract, prompt, trigger, output shape의 audit/proposal이 필요할 때. 직접 수정 대상이 아니라 감사와 제안만 한다 |
-| `.claude/handoffs/current.md` | durable rule이 아니라 현재 상태, 진행 맥락, 남은 확인사항을 다음 세션에 넘겨야 할 때 |
-| local/private memory | 사용자 개인 선호, 로컬 환경 습관, 특정 머신 맥락처럼 repo에 커밋하면 안 되는 정보일 때 |
-| no action | one-off correction, 이미 해결된 단발성 메모, 근거 부족, 중복, 기존 규칙과 충돌하지만 아직 결론이 없는 경우 |
+| `/tk:reflect` | `apply=true` |
+| `/tk:reflect --apply=true` | 기본값과 동일 |
+| `/tk:reflect --dry-run` | `apply=false` |
+| `/tk:reflect --apply=false` | dry-run alias |
 
-## 책임
+v7에서는 `--apply=true`가 redundant여도 warning을 내지 않습니다. v2 이후 warning은 별도 검토 대상입니다.
 
-- user feedback, repeated mistakes, gap results, PR review results에서 durable rule candidate를 추출합니다.
-- global rule과 path-scoped rule을 구분합니다.
-- 적절한 `.claude/rules/...` target file path를 제안합니다.
-- target root에 `CLAUDE.md`가 없고 일반 작업 트리라면 scoped rule 제안과 별개로 root instruction bootstrap 후보를 제시합니다.
-- 기존 rule과 충돌하는지 확인합니다.
-- 중복 rule은 merge/update 대상으로 정리합니다.
-- vague advice를 검증 가능한 rule로 다시 씁니다.
-- 무엇이 `CLAUDE.md`에 가야 하는지와 `.claude/rules/*`에 가야 하는지를 구분합니다.
+## Inputs
 
-## 적용 게이트
+Reflect는 current branch scope의 branch-local working memory를 읽습니다.
 
-- 기본값은 파일을 수정하지 않고 proposed patch만 출력합니다.
-- `apply=true`가 있거나 사용자가 `적용해`, `반영해`, `승인`처럼 명시 승인한 경우에만 파일을 수정합니다.
-- 충돌이 있으면 적용하지 않고 conflict를 먼저 보고합니다.
+```text
+.claude/tigerkit/branches/<branch-key>/specs/
+.claude/tigerkit/branches/<branch-key>/runs/gap/
+.claude/tigerkit/branches/<branch-key>/runs/verify/
+.claude/tigerkit/branches/<branch-key>/branch-state.json
+```
 
-## Rule quality bar
+읽을 수 있는 evidence class:
 
-- specific
-- verifiable
-- scoped
-- short
-- non-duplicative
-- non-conflicting
-- not based only on legacy code unless explicitly confirmed
+- active/superseded Spec Patch metadata와 confirmed item
+- accepted gap finding pattern
+- rejected/downgraded observation reason
+- source conflict와 resolution 상태
+- verify-before-stop checklist evidence
+- current code/worktree context needed to classify repo-wide value
 
-모든 rule은 ID를 사용합니다.
+## Durable insight target
 
-예시 ID:
-- `COPY-001`
-- `LIB-001`
-- `FORM-001`
-- `MODAL-001`
-- `GAP-001`
-- `REVIEW-001`
+기본 target:
 
-## `CLAUDE.md`에 들어갈 것과 넣지 않을 것
+```text
+.claude/tigerkit-reflections.md
+```
 
-`CLAUDE.md`에 들어갈 것:
-- 저장소 전체에 적용되는 global instruction
-- evidence, approval, safety, branch, review 같은 공통 규칙
-- 여러 디렉터리와 워크플로우를 가로지르는 상위 규칙
-- path-specific file로 쪼개면 오히려 찾기 어려워지는 핵심 운영 규칙
+`--target <path>`가 있으면 current worktree root 내부의 durable insight file만 허용합니다. 권장 target은 `.claude/tigerkit-reflections.md` 또는 `docs/tigerkit-reflections.md`입니다.
 
-`CLAUDE.md`에 넣지 않을 것:
-- 특정 디렉터리, 기능, 파일군에만 적용되는 세부 규칙
-- 일회성 incident 메모
-- 현재 세션 전용 handoff
-- 개인 로컬 환경 선호
-- skill implementation detail
-- inspect되지 않은 legacy code 관성만으로 만든 규칙
+허용 target 조건:
 
-경계가 애매하면 먼저 scoped rule을 우선 검토하고, 정말 전역 규칙일 때만 `CLAUDE.md`를 제안합니다.
+- current worktree root 내부 path
+- filename이 `tigerkit-reflections.md`
+- `.claude/tigerkit/` 아래가 아님
+- source code path가 아님
 
-## 절차
+금지 target:
 
-1. 현재 대화와 산출물에서 feedback, gap, review, repeated mistake evidence를 모읍니다.
-2. Evidence와 Interpretation을 분리합니다.
-3. one-off correction과 durable rule candidate를 구분합니다.
-4. global rule인지 path-scoped rule인지 분류합니다.
-5. target root에 `CLAUDE.md`가 있는지와 현재 작업 트리가 일반 작업 트리인지 확인합니다.
-6. root instruction file이 없고 일반 작업 트리라면 scoped rule과 별개로 `CLAUDE.md` bootstrap 후보를 분류에 포함합니다.
-7. 기존 `CLAUDE.md`, `.claude/rules/**/*.md`, 관련 skill/handoff와 충돌 또는 중복 여부를 점검합니다.
-8. vague advice를 테스트 가능한 문장으로 재작성합니다.
-9. 기본값에서는 patch proposal만 출력합니다.
-10. `apply=true` 또는 사용자 승인 시에만 안전한 대상 파일을 수정합니다.
-11. conflict가 남아 있으면 적용을 중단하고 conflict부터 보고합니다.
+- `.claude/tigerkit/**`
+- source code path
+- command file path
+- rule file path
+- arbitrary docs file such as `.tigerkit/docs/usage.md`
+- current worktree root 밖 path
+- `/tmp`
+- user home global path
 
-## 출력 템플릿
+프로젝트가 `.claude/` 전체를 ignore하면 warning을 출력합니다. `.claude/tigerkit/`만 ignore하는 것은 정상입니다.
 
-아래 섹션을 이 순서로 사용합니다. `### Session Decision Recap`은 optional이지만, 사용자가 decision path나 세션 맥락 추적을 필요로 한 경우에는 durable rule 0건이어도 출력할 수 있습니다.
+## Durable insight 후보
 
-### Reflect Result
-- 무엇을 durable rule candidate로 추출했는지 요약합니다.
-- global rule인지 scoped rule인지 표시합니다.
-- apply 여부를 표시합니다.
+reflect는 아래만 durable insight 후보로 삼습니다.
 
-### Session Decision Recap
-- optional 섹션입니다.
-- Evidence → Interpretation → Decision 흐름을 사람 친화적으로 1회 요약합니다.
-- recap은 durable rule 자체가 아니라 추적성 receipt입니다.
-- 사용자 원문 quote를 불필요하게 반복하지 않습니다.
+- 반복적으로 등장한 accepted finding pattern
+- branch에서 확정된 product/design decision 중 repo-wide 가치가 있는 것
+- design-system 또는 component convention으로 승격할 만한 내용
+- verify-before-stop에서 반복적으로 필요한 checklist
+- source conflict에서 확정된 resolution
 
-### Classification
-- 각 candidate를 어느 대상으로 분류했는지 적습니다.
-- `CLAUDE.md` bootstrap 후보와 scoped rule 후보를 별도 항목으로 분리합니다.
-- 필요하면 target path 예시를 함께 적습니다.
+reflect는 아래를 durable insight로 만들지 않습니다.
 
-### Reason
-- 왜 그 분류가 맞는지 evidence 기반으로 설명합니다.
-- user feedback, gap, review, repeated mistake 중 어디서 왔는지 밝힙니다.
+- branch-specific one-off decision
+- 임시 Spec Patch 자체
+- superseded된 결정
+- P3/nit
+- rejected finding
+- low-confidence observation
+- source conflict가 unresolved인 내용
+- implementation detail that only applies to this branch
 
-### Proposed Patch
-- 기본 동작입니다.
-- 실제 파일 수정 대신 diff 또는 삽입안 형태로 제안합니다.
-- `apply=true`가 없으면 반드시 이 섹션에 머뭅니다.
+## Classification
 
-### Conflicts
-- 기존 rule과 충돌, 중복, 우선순위 불명확성을 적습니다.
-- conflict가 있으면 적용하지 않습니다.
+각 insight candidate는 아래 중 하나로 분류합니다.
 
-### Follow-up Audit
-- `.claude/skills/*/SKILL.md`는 audit/proposal only인지 확인합니다.
-- `.claude/handoffs/current.md`는 current-state only인지 확인합니다.
-- 추가로 검토할 rule file 또는 merge 대상이 있으면 적습니다.
+| Target | 사용 조건 |
+| --- | --- |
+| `.claude/tigerkit-reflections.md` | v7 기본 durable insight target |
+| `.claude/rules/**/*.md` proposal | repo convention rule로 승격할 가치가 있으나 직접 수정 대상이 아닐 때 |
+| `CLAUDE.md` proposal | 저장소 전반 운영 규칙 후보지만 직접 수정 대상이 아닐 때 |
+| no action | one-off, duplicate, unresolved, low-confidence일 때 |
+
+v7 기본 apply는 durable insight target에만 적용합니다. `.claude/rules/*`, `CLAUDE.md`, source code는 제안으로만 다룹니다.
+
+## Dedupe
+
+동일 insight를 중복 반영하지 않습니다.
+
+Dedupe key는 아래를 조합합니다.
+
+```text
+normalized insight title + target surface + source evidence class
+```
+
+이미 target에 같은 insight가 있으면 `skipped as duplicate`로 집계합니다.
+
+## Output
+
+기본 출력:
+
+```text
+Reflect Complete
+Apply: true
+Target: .claude/tigerkit-reflections.md
+
+Applied Insights:
+- <added> added
+- <updated> updated
+- <skipped> skipped as duplicate
+
+Summary:
+- <one-line insight summary>
+```
+
+`--dry-run` 또는 `--apply=false`일 때:
+
+```text
+Reflect Complete
+Apply: false
+Target: .claude/tigerkit-reflections.md
+
+Preview Insights:
+- <added> would add
+- <updated> would update
+- <skipped> skipped as duplicate
+
+Summary:
+- <one-line preview summary>
+```
+
+## Durable target format
+
+`.claude/tigerkit-reflections.md`는 한글로 작성합니다. 각 insight는 evidence class와 scope를 분리합니다.
+
+```md
+# TigerKit Reflection 기록
+
+## <insight title>
+
+- 상태: active
+- 출처: branch-local TigerKit memory
+- 근거 분류: accepted_finding_pattern | verify_checklist | source_conflict_resolution | repo_wide_decision
+- 범위: repo-wide | design-system | component-convention | workflow
+- 인사이트: <durable insight>
+- 적용 방법: <short operational rule>
+```
+
+## Procedure
+
+1. current worktree root 계산
+2. current branch-key 계산
+3. branch scope 초기화
+4. branch lock 획득
+5. apply mode 계산: `apply = dryRun ? false : apply !== false`
+6. durable insight target resolve
+7. branch-local memory 로드
+8. durable insight 후보 추출
+9. one-off, superseded, P3/nit, rejected, low-confidence 후보 제거
+10. duplicate 제거
+11. apply=true이면 durable target을 수정하고 `global-index.json`에 branch `lastUsedAt` 갱신
+12. apply=false이면 preview만 출력하고 저장 없이 종료
+13. branch lock 해제
+14. summary 출력
+
+## Conflict handling
+
+충돌 또는 unresolved source conflict가 있으면 해당 candidate는 적용하지 않습니다. summary에 skipped reason을 적습니다.
 
 ## 금지
 
-- generic retrospective처럼 감상문을 쓰기
-- `Session Decision Recap`을 durable rule이나 적용 승인처럼 취급하기
-- apply 승인 없이 파일 수정하기
-- conflict가 있는데도 적용하기
-- root instruction file이 없는데 scoped rule만 제안하고 bootstrap 후보를 누락하기
-- user feedback 없는 추측 규칙 만들기
-- repeated evidence 없이 one-off correction을 durable rule로 승격하기
-- global rule인데 scoped file에 숨기기
-- scoped rule인데 `CLAUDE.md`에 과도하게 넣기
-- `.claude/skills/*/SKILL.md`를 일반 rule 저장소처럼 취급하기
-- `.claude/handoffs/current.md`에 durable rule을 저장하기
-- legacy code만 보고 확정 규칙처럼 일반화하기
-
-## 간단 예시
-
-```text
-Reflect Result
-- REVIEW-001 추출, scoped rule, apply=false
-
-Classification
-- `.claude/rules/review/frontend.md` 제안
-
-Reason
-- 최근 PR review에서 동일한 누락이 3회 반복됨
-- user feedback이 특정 frontend form 경로에만 한정됨
-
-Proposed Patch
-+ REVIEW-001: forms under `src/features/**` must declare loading/error/empty state explicitly.
-
-Conflicts
-- 기존 `FORM-001`과 일부 겹침. merge 후 단일 rule로 정리 필요
-
-Follow-up Audit
-- `.claude/skills/frontend-review/SKILL.md`는 rule 반영 대상이 아니라 audit/proposal only
-- `.claude/handoffs/current.md`에는 이번 reflect 결과 요약만 남길 수 있음
-```
+- source code 수정
+- `.claude/tigerkit/` 아래 durable insight 저장
+- branch-local Spec Patch 내용을 repo-wide rule처럼 그대로 복사
+- P3/nit, rejected finding, low-confidence observation 반영
+- unresolved source conflict를 확정 insight처럼 반영
+- duplicate insight 중복 append
+- default를 proposal-only로 유지
