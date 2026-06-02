@@ -39,6 +39,18 @@ basis끼리 충돌하면 Status를 `conflicting_sources`로 둡니다.
 증거가 부족해 판정할 수 없으면 Status를 `cannot_verify`로 둡니다.
 접근할 수 없는 외부 URL, 이미지, Figma/design link, screenshot URL, local path는 Status를 `blocked_external`로 둡니다.
 
+## Target Freshness Preflight
+
+`target`이 `current implementation`, 현재 작업 트리, 현재 branch, local checkout을 뜻하면 gap 분석 전에 target freshness를 확인합니다.
+
+규칙:
+- Git repository이면 integration branch tip을 식별합니다. 기본 후보는 `origin/main`이며, repository default branch가 다르면 그 remote tracking branch를 사용합니다.
+- 가능하면 remote metadata를 먼저 갱신하거나 현재 `origin/<default-branch>`가 최신인지 확인합니다. 확인할 수 없으면 base freshness를 `cannot_verify` 근거로 보고합니다.
+- 현재 `HEAD`가 integration branch tip보다 behind이면, 요청 scope 또는 target evidence로 읽을 파일들이 `HEAD..integration` 사이에서 바뀌었는지 확인합니다.
+- behind이고 대상 영역 파일이 영향권이면 stale checkout을 target으로 삼아 `needs_fix`를 재보고하지 않습니다. 비교 target을 integration branch tip 형상으로 전환하고, Summary Table의 `Target` 또는 `Key Next Action`에 base 상태와 전환 사실을 명시합니다.
+- behind이지만 대상 영역 파일이 영향권이 아니면 기존 target으로 비교할 수 있습니다. 이때도 Summary Table 또는 첫 finding에 checkout freshness 상태를 짧게 남깁니다.
+- 사용자가 특정 commit, branch, PR diff, working tree 상태를 명시적으로 target으로 고정하면 임의로 전환하지 않습니다. 대신 stale 여부를 evidence로 보고합니다.
+
 ## Ambiguity Handling
 
 아래 조건 중 하나라도 있으면 조용히 결정하지 않습니다.
@@ -245,11 +257,12 @@ rule ID가 있으면 Basis 또는 Finding에 함께 적습니다.
 ## 절차
 
 1. basis와 target을 식별합니다.
-2. 요청에서 mode output profile을 결정합니다.
-3. 관련 basis와 target evidence를 읽습니다.
-4. UI copy exactness, 요구사항 충족, 규칙 준수, 접근성, 테스트 공백을 확인합니다.
-5. 각 finding에 Short ID, stable ID, Scope, Type, Severity, Status를 부여합니다.
-6. `mode=analysis`, `mode=review`, `mode=both` 중 하나의 형식으로 답합니다.
+2. target이 current implementation 계열이면 Target Freshness Preflight를 실행합니다.
+3. 요청에서 mode output profile을 결정합니다.
+4. 관련 basis와 target evidence를 읽습니다.
+5. UI copy exactness, 요구사항 충족, 규칙 준수, 접근성, 테스트 공백을 확인합니다.
+6. 각 finding에 Short ID, stable ID, Scope, Type, Severity, Status를 부여합니다.
+7. `mode=analysis`, `mode=review`, `mode=both` 중 하나의 형식으로 답합니다.
 
 ## 금지
 
