@@ -1,3 +1,6 @@
+# Tiger Kit branch-local working memory
+.claude/tigerkit/
+
 .tigerkit/*
 !.tigerkit/docs/
 .tigerkit/docs/*

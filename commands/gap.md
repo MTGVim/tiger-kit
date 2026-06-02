@@ -1,93 +1,304 @@
 ---
-description: 기준자료(basis)와 대상 artifact를 비교해 gap analysis 또는 PR-ready basis-target gap comment를 생성합니다.
-argument-hint: "[basis] [target] [mode=analysis|review|both]"
+description: Product/Design Spec contract와 현재 구현/계획을 비교해 branch-local Contract-based Gap Review를 생성합니다.
+argument-hint: "[--strict|--no-strict] [--spec <SP-ID|path>] [--no-specs] [--legacy] [--print-report]"
 ---
 
-이 명령은 아래 계약을 직접 따릅니다.
+이 명령은 TigerKit v7 Contract-based Gap Review contract를 따릅니다.
 
-사용자에게는 한글로 답합니다. 코드, 경로, URL, ticket, commit, hash, identifier, error message는 원문 그대로 둘 수 있습니다.
+사용자에게는 한글로 답합니다. 코드, path, URL, ticket, commit, hash, identifier, error는 원문 그대로 둘 수 있습니다.
 
-목표: `/tk:gap`은 basis와 target을 비교해 누락, 불일치, 검증 불가, 저장소 규칙 위반, 범위 밖 항목을 찾습니다.
+목표: `/tk:gap`은 현재 브랜치의 Product/Design Spec, implementation plan, current implementation을 비교해 수정 가치가 있는 actionable finding만 도출하고 branch-local run artifact로 저장합니다.
 
-명령 표면:
+```text
+gap = branch-local contract-based inspection + judge-driven final finding
+```
+
+## Command surface
+
 - plugin slash invocation은 `/tk:gap`입니다.
-- 자연어 요청도 같은 프로토콜을 따릅니다.
+- `tiger-kit gap` CLI 표현은 이 plugin command의 사용자 관점 alias로 취급합니다.
+- legacy Figma diff style은 정식 사용자 모드가 아닙니다.
 
-예시:
-- `/tk:gap spec <url> scope="3.3.1 2-1~5"`
-- `/tk:gap figma <url> vs pr #123`
-- `/tk:gap jira PROJ-123 vs pr #456 mode=review`
-- `/tk:gap pr #456 mode=review`
-- `/tk:gap spec <url> vs current implementation mode=analysis`
+## 핵심 원칙
 
-## Basis / Spec reference 정의
+- Product/Design Spec 기반 inspection입니다.
+- basis는 현재 비교 자료이며 절대적 진실이 아닙니다.
+- subagent는 candidate만 생성합니다.
+- JudgeMergerAgent만 final finding을 확정합니다.
+- final accepted finding에는 P0/P1/P2만 포함합니다.
+- P3/nit/duplicate/unverifiable/source_conflict는 final finding이 아닙니다.
+- current implementation 비교 전에는 integration branch freshness를 확인합니다.
+- visible UI copy는 confirmed contract와 exact match가 필요합니다.
+- finding이 안 나올 때까지 반복하지 않습니다.
+- strict red-team pass는 최대 1회입니다.
+- stdout은 summary만 출력하고 상세는 report.md에 저장합니다.
 
-basis는 현재 비교에 쓰는 기준자료이며 Spec reference를 포함할 수 있습니다. 절대적 진실로 가정하지 않습니다.
+## Terminology
 
-가능한 basis 예시:
-- spec
-- Figma
-- Jira
-- Confluence
-- PR
-- code
-- screenshot
-- `CLAUDE.md`
-- `.claude/rules/*`
+내부 개념은 source tool 이름이 아니라 spec class로 부릅니다.
 
-basis끼리 충돌하면 Status를 `conflicting_sources`로 둡니다.
-증거가 부족해 판정할 수 없으면 Status를 `cannot_verify`로 둡니다.
-접근할 수 없는 외부 URL, 이미지, Figma/design link, screenshot URL, local path는 Status를 `blocked_external`로 둡니다.
+| Source 예 | 내부 개념 |
+| --- | --- |
+| PRD, ticket, ad-hoc instruction | Product Spec |
+| design file, design guide, screenshot, design feedback | Design Spec |
+| design system docs | Design System Spec |
+| implementation plan | Implementation Plan |
+| current code/rendering | Current Implementation |
 
-## Target Freshness Preflight
+권장 표현:
 
-`target`이 `current implementation`, 현재 작업 트리, 현재 branch, local checkout을 뜻하면 gap 분석 전에 target freshness를 확인합니다.
+- Product Spec
+- Design Spec
+- Design System Spec
+- Spec Patch
+- Contract-based Gap Review
+- Actionable Finding
 
-규칙:
-- Git repository이면 integration branch tip을 식별합니다. 기본 후보는 `origin/main`이며, repository default branch가 다르면 그 remote tracking branch를 사용합니다.
-- 가능하면 remote metadata를 먼저 갱신하거나 현재 `origin/<default-branch>`가 최신인지 확인합니다. 확인할 수 없으면 base freshness를 `cannot_verify` 근거로 보고합니다.
-- 현재 `HEAD`가 integration branch tip보다 behind이면, 요청 scope 또는 target evidence로 읽을 파일들이 `HEAD..integration` 사이에서 바뀌었는지 확인합니다.
-- behind이고 대상 영역 파일이 영향권이면 stale checkout을 target으로 삼아 `needs_fix`를 재보고하지 않습니다. 비교 target을 integration branch tip 형상으로 전환하고, Summary Table의 `Target` 또는 `Key Next Action`에 base 상태와 전환 사실을 명시합니다.
-- behind이지만 대상 영역 파일이 영향권이 아니면 기존 target으로 비교할 수 있습니다. 이때도 Summary Table 또는 첫 finding에 checkout freshness 상태를 짧게 남깁니다.
-- 사용자가 특정 commit, branch, PR diff, working tree 상태를 명시적으로 target으로 고정하면 임의로 전환하지 않습니다. 대신 stale 여부를 evidence로 보고합니다.
+금지 표현:
 
-## Ambiguity Handling
+- Figma gap
+- Figma diff
+- PRD review skill
+- Design review skill
 
-아래 조건 중 하나라도 있으면 조용히 결정하지 않습니다.
+## Branch-local storage
 
-1. requirements document와 code가 충돌합니다.
-2. 서로 다른 pattern의 유사 구현이 2개 이상 있습니다.
-3. Spec reference 또는 source basis에 접근할 수 없습니다.
-4. reuse-map에 entry가 없고 repo-wide exploration이 아직 충분하지 않습니다.
-5. UI/UX intent를 copy나 screenshot만으로 확인할 수 없습니다.
-6. API response, DTO, permission, state transition이 불명확합니다.
-7. 변경 범위가 common module에 영향을 줄 수 있습니다.
+반드시 current worktree root 아래에 저장합니다.
 
-절차:
-- 먼저 code, docs, similar implementation, repo rules, reuse-map을 더 탐색합니다.
-- 탐색 후에도 불명확하면 질문을 만듭니다.
-- 질문에는 recommendation과 evidence를 함께 적습니다.
-- 질문은 `implementation-blocking`과 `reference-only`로 구분합니다.
-- `mode=analysis`에서는 별도 Open Questions 섹션을 만들지 않고 Findings table의 `Finding` 또는 `Ask`에 질문 구분을 적습니다.
-- `mode=review`에서는 confirmed defect처럼 쓰지 말고 `Ask:`에 질문 구분, recommendation, evidence를 포함합니다.
+```text
+.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/
+```
 
-## Mode 선택
+필수 파일:
 
-mode는 기능 분기가 아니라 출력 profile입니다.
+```text
+input-manifest.json
+contracts.json
+candidates.json
+judge-result.json
+report.md
+```
 
-규칙:
-- 명시적 `mode=`가 있으면 그것이 우선입니다.
-- `mode=`가 없으면 요청 뉘앙스에서 출력 profile 하나만 추론합니다.
-- PR, diff, review, comment, `붙일 수 있게`가 중심이면 `mode=review`입니다.
-- analysis, missing, spec vs implementation, current implementation이 중심이면 `mode=analysis`입니다.
-- 둘 다 명시적으로 원하면 `mode=both`입니다.
-- 애매하면 기본값은 `mode=analysis`입니다. 이때 `## Summary Table`의 Key Next Action에 mode를 analysis로 선택했다는 짧은 note를 포함합니다.
+`input-manifest.json`과 `judge-result.json`에는 `strictExecuted`와 `autoStrictTriggers`를 반드시 기록합니다.
 
-## Hard Rule: UI Copy Exactness
+`.claude/tigerkit/`은 generated branch-local working memory이며 repo-wide durable knowledge가 아닙니다.
 
-보이는 UI 문구는 exact match가 기본입니다.
+## CLI options
 
-exact-match 대상:
+- default: auto mode
+- `--strict`: default review 후 CriticalRedTeamAgent 1회 실행
+- `--no-strict`: risk trigger가 있어도 red-team pass 미실행
+- `--spec <SP-ID>`: current branch scope의 `specs/index.json`에서만 resolve
+- `--spec <path>`: current worktree root 내부 path만 허용
+- `--no-specs`: active Spec Patch 자동 참조 비활성화
+- `--legacy`: debug/rollback fallback only
+- `--print-report`: 저장된 report.md 본문을 stdout에도 출력
+
+`TIGERKIT_GAP_LEGACY=1`도 debug fallback으로만 허용합니다. legacy 실행 시 v1/v7 공식 경로가 아님을 warning으로 표시합니다.
+
+## Contract schema
+
+Contract는 review 기준으로 쓰는 normalized requirement입니다.
+
+```text
+Contract = {
+  id,
+  source: product | design | design_system | engineering | qa | analytics,
+  sourceRef,
+  origin,
+  type,
+  status: confirmed | draft | assumed | unclear | conflict | superseded,
+  expected,
+  verification,
+  severityHint: P0 | P1 | P2 | P3,
+  supersedes,
+  notes
+}
+```
+
+Final finding evidence로 사용 가능한 contract는 `confirmed`이고 superseded가 아니어야 합니다.
+
+## Active Spec Patch loading
+
+기본으로 current branch scope에서 아래 조건을 만족하는 Spec Patch item만 contract로 normalize합니다.
+
+- Spec Patch status = `active`
+- Spec Item status = `confirmed`
+- item ID가 `itemSupersedes`의 old item으로 등록되지 않음
+
+명시 `--spec`으로 draft/conflict patch를 참조하면 warning을 출력하고, confirmed가 아닌 item은 final finding evidence로 쓰지 않습니다.
+
+Spec ID를 찾지 못하면 아래 메시지로 중단합니다.
+
+```text
+Spec Patch <SP-ID> was not found in the current branch scope.
+Use --spec <path> to reference a file explicitly.
+```
+
+## Agents
+
+Default agents:
+
+- ProductContractAgent
+- DesignContractAgent
+- PlanCoverageAgent
+- ImplementationComplianceAgent
+- JudgeMergerAgent
+
+Strict 추가 agent:
+
+- CriticalRedTeamAgent
+
+공통 agent rule:
+
+```text
+You are not the final judge.
+You may only produce structured contracts or candidate findings.
+A valid result may contain zero items.
+Do not invent issues.
+Do not report subjective preferences.
+Do not report P3/nit issues unless explicitly requested.
+Do not repeat issues already covered by broader candidates.
+Every candidate must include concrete evidence and a fix hint.
+```
+
+### ProductContractAgent
+
+Product source에서 검증 가능한 Product Contract만 추출합니다. behavior, validation, permission, business_rule, data_behavior, error_handling, empty_state, loading_state, content, analytics를 담당합니다. implementation gap 판단, final finding 생성, final severity 결정을 하지 않습니다.
+
+### DesignContractAgent
+
+Design source에서 검증 가능한 Design Contract만 추출합니다. screen_structure, visual_hierarchy, required_visible_element, interaction_state, responsive, component_composition, design_system, accessibility를 담당합니다. raw Figma diff, 1-2px nit, subjective preference를 생성하지 않습니다.
+
+### PlanCoverageAgent
+
+Implementation Plan이 contract를 커버하는지 비교하고 `plan_gap` candidate만 생성합니다. plan evidence로 확인되는 누락이나 불완전 coverage만 후보가 됩니다.
+
+### ImplementationComplianceAgent
+
+Current Implementation이 contract를 만족하는지 비교하고 `implementation_gap` candidate만 생성합니다. user-visible하지 않은 DOM 구조 차이나 subjective visual preference는 candidate가 아닙니다.
+
+### CriticalRedTeamAgent
+
+strict mode에서 두 가지만 수행합니다.
+
+1. accepted finding의 false positive 공격
+2. missed P0/P1 issue 탐색
+
+P2/P3/nit는 보고하지 않습니다. 새 candidate가 0개인 결과도 유효합니다.
+
+### JudgeMergerAgent
+
+final finding을 확정하는 유일한 agent입니다.
+
+각 candidate에 대해:
+
+- evidence 검증
+- actionability gate 검증
+- severity 분류
+- duplicate merge
+- P3/nit/unverifiable/source_conflict reject
+- P0/P1/P2 actionable finding만 accept
+
+## CandidateFinding schema
+
+```text
+CandidateFinding = {
+  id: CAND-<KIND>-YYYYMMDD-HHmmss-RAND-NN,
+  kind: plan_gap | implementation_gap | red_team_candidate,
+  sourceContracts: string[],
+  category,
+  expected,
+  actual,
+  evidence: string[],
+  proposedSeverity: P0 | P1 | P2 | P3 | unverifiable,
+  confidence: low | medium | high,
+  fixHint
+}
+```
+
+Candidate validation:
+
+- `sourceContracts` must not be empty.
+- `evidence` must not be empty.
+- `expected` must derive from source contracts.
+- `actual` must describe plan or implementation state.
+- `fixHint` must be implementable without guessing.
+
+## AcceptedFinding schema
+
+```text
+AcceptedFinding = {
+  id: FND-YYYYMMDD-HHmmss-RAND-NN,
+  finalSeverity: P0 | P1 | P2,
+  title,
+  sourceContracts: string[],
+  evidence: string[],
+  requiredChange: string[],
+  category: string[],
+  confidence: medium | high,
+  decisionReason
+}
+```
+
+`finalSeverity` cannot be P3. `confidence` cannot be low.
+
+## RejectedFinding reasons
+
+- `P3_nit`
+- `duplicate`
+- `unverifiable`
+- `source_conflict`
+- `not_user_visible`
+- `not_actionable`
+- `low_confidence`
+- `missing_evidence`
+- `superseded_source`
+
+## SourceConflict schema
+
+Source conflicts are not final findings.
+
+```text
+SourceConflict = {
+  id: CONFLICT-YYYYMMDD-HHmmss-RAND-NN,
+  involvedContracts: string[],
+  summary,
+  impact: behavior | validation | permission | content | layout | interaction_state | design_system | unknown,
+  decision: clarification_needed,
+  reason
+}
+```
+
+## Judge Actionability Gate
+
+Candidate를 final finding으로 accept하려면 모두 true여야 합니다.
+
+1. user-visible, requirement-relevant, 또는 interaction-affecting입니다.
+2. expected result가 Product Spec, Design Spec, Design System Spec, Engineering Constraint, QA Contract, Analytics Contract, 또는 Implementation Plan에서 검증 가능합니다.
+3. actual behavior 또는 plan gap이 concrete evidence로 뒷받침됩니다.
+4. 엔지니어가 추측 없이 수정할 수 있습니다.
+5. 기존 accepted finding의 duplicate 또는 하위 사례가 아닙니다.
+6. 수정했을 때 품질 개선이 구현 비용/위험보다 큽니다.
+7. source contract가 confirmed이며 superseded가 아닙니다.
+8. candidate confidence가 low가 아닙니다.
+
+하나라도 false면 reject 또는 downgrade합니다.
+
+## Severity
+
+- P0: core task 불가능, business rule 위반, permission 위반, validation 누락, invalid data flow, destructive/payment/auth/data mutation correctness 위반
+- P1: task completion, 사용자 이해, 핵심 CTA 상태/위치/문구, error/loading/empty state, product correctness content에 큰 영향
+- P2: visible layout/consistency mismatch, 정보 위계 약화, design-system consistency 훼손
+- P3: minor polish. final finding에 포함하지 않음
+- Unverifiable: source에서 기대 결과를 확인할 수 없음. final finding에 포함하지 않음
+
+## UI copy exactness
+
+Visible UI copy는 exact match가 기본입니다.
+
+Exact-match 대상:
+
 - button label
 - field label
 - placeholder
@@ -95,184 +306,148 @@ exact-match 대상:
 - validation text
 - tooltip
 - toast/snackbar
-- modal title
-- modal body
+- modal title/body
 - confirm/cancel/ok text
 - table column name
 - tab name
 - status label
 - empty/loading/error text
 - date/time/number/currency format
-- 의도된 visible line break
+- intended visible line break
 
-판정 기준:
-- 공백, 줄바꿈, 구두점, 조사, 접두/접미 표현 차이도 보이는 결과가 다르면 Type `mismatch`입니다.
-- 의미가 비슷해도 문자열이 다르면 exactness 위반입니다.
-- basis가 variation 허용을 명시한 경우에만 예외를 인정합니다.
-- 핵심 action, destructive action, approval, legal/compliance, 결제/정산, 권한, 상태 해석을 바꾸는 copy 차이는 Severity `critical` 또는 `major`입니다.
-- 일반 입력 라벨, 안내 문구, empty/loading/error text, 표 헤더, 포맷 차이는 영향도에 따라 Severity `major` 또는 `minor`입니다.
-- confirmed exact-match 위반은 Status `needs_fix`를 유지합니다. 영향도만 불확실하면 위험도에 따라 Severity `minor` 또는 `major`를 사용하고, mismatch 자체가 basis/target evidence 부족으로 확인되지 않을 때만 Status `cannot_verify`를 사용합니다.
+공백, 줄바꿈, 구두점, 조사, 접두/접미 표현 차이도 보이는 결과가 다르면 mismatch입니다. 의미가 비슷해도 문자열이 다르면 contract 위반입니다. contract가 variation 허용을 명시한 경우에만 예외를 인정합니다.
 
-## Taxonomy
+## Target freshness preflight
 
-아래 값만 사용합니다.
+Current Implementation이 current branch, current working tree, local checkout을 뜻하면 비교 전에 integration branch freshness를 확인합니다.
 
-Type:
-- `missing`: basis에 있는 요구, UI, 동작, 검증, 접근성, 산출물이 target에 없음
-- `mismatch`: basis와 target이 서로 다름
-- `convention`: repo convention, `.claude/rules/*`, reuse/component/API 규칙 위반
-- `unverifiable`: 근거 부족, 접근 불가, 재현 불가로 확인할 수 없음
-- `out_of_scope`: 현재 요청 scope 밖임
+- repository default remote branch를 식별합니다. 이 저장소 convention은 `origin/main`입니다.
+- 가능하면 remote metadata를 refresh 또는 verify합니다.
+- local `HEAD`가 integration branch tip보다 behind이면 requested scope 또는 target evidence 파일이 `HEAD..integration` 사이에서 바뀌었는지 확인합니다.
+- behind changes가 target area에 영향을 주면 stale checkout을 target으로 삼지 않고 integration branch tip shape를 비교 기준으로 보고합니다.
+- 사용자가 특정 commit, branch, PR diff, working tree state를 target으로 고정하면 target을 전환하지 않고 stale 여부만 evidence로 기록합니다.
 
-Severity:
-- `critical`: 핵심 업무 흐름, 데이터 손실, 보안/권한, 결제/정산, 법무/승인, destructive action에 직접 영향
-- `major`: 요구 충족, 사용자 이해, 운영 품질, 회귀 위험에 의미 있는 영향
-- `minor`: 국소적 copy, 보조 UI, 낮은 위험의 convention 또는 후속 확인 항목
+## Auto strict triggers
 
-Status:
-- `needs_fix`: basis와 target을 비교한 결과 수정이 필요함
-- `cannot_verify`: 증거가 부족하거나 재현할 수 없어 판정할 수 없음
-- `conflicting_sources`: basis끼리 충돌함
-- `blocked_external`: 외부 근거에 접근할 수 없어 사용자 제공 자료가 필요함
-- `out_of_scope`: 현재 요청 범위 밖임
+Auto mode에서 아래 중 하나라도 true면 CriticalRedTeamAgent를 1회 실행합니다.
 
-Type은 finding의 성격, Severity는 영향도, Status는 처리 상태입니다. Judgment를 별도 출력 축으로 만들지 않습니다.
+- `accepted_or_candidate_P0_exists`
+- `product_contract_includes_validation`
+- `product_contract_includes_permission`
+- `product_contract_includes_authentication`
+- `product_contract_includes_payment`
+- `product_contract_includes_data_mutation`
+- `product_contract_includes_destructive_action`
+- `product_contract_includes_submit_flow`
+- `design_contract_includes_primary_cta`
+- `design_contract_includes_error_state`
+- `design_contract_includes_empty_state`
+- `design_contract_includes_loading_state`
+- `design_contract_includes_critical_interaction_state`
+- `source_conflict_exists`
+- `judge_confidence_below_high`
+- `implementation_plan_has_missing_P0_or_P1_coverage`
+- `changed_files_count_gte_10`
+- `touches_shared_component`
+- `touches_design_system_component`
+- `review_context_is_release_gate`
 
-## Finding IDs
+Mode rule:
 
-finding ID는 `G<number>` 하나만 사용합니다.
+```text
+if mode == strict: strictExecuted = true
+if mode == no-strict: strictExecuted = false
+if mode == auto: strictExecuted = any(autoStrictTrigger == true)
+```
 
-형식:
+## Loop policy
 
-    G<number>
+금지:
 
-규칙:
-- `G1`, `G2`처럼 한 응답 안에서 순서대로 부여합니다.
-- 사용자가 대화에서 지칭하는 canonical handle입니다.
-- `mode=analysis`, `mode=review`, `mode=both`에서 같은 finding에는 같은 `G<number>`를 사용합니다.
-- 별도 slug-style stable ID(`gap-<scope-slug>-<finding-slug>`)를 만들지 않습니다.
-- `GAP-001` 같은 rule ID 또는 순번 기반 stable ID를 finding ID로 사용하지 않습니다.
-- scope label은 섹션 번호만 쓰지 않습니다. 사람이 읽을 수 있는 title, menu, page, component, row 이름을 포함합니다.
-- 좋은 scope label 예: `§3.2 Summary Row`, `Settings > Billing Page`, `Login Modal Confirm Button`.
-- 나쁜 scope label 예: `§3.2`, `3.2`, `row 4`.
+```text
+finding이 안 나올 때까지 반복
+```
 
-## 출력 형식
+Default: loop 없음.
 
-### mode=analysis
+Strict: red-team 1회만 수행.
 
-출력은 summary-first compact analysis로 생성합니다. H2는 아래 세 개만 사용합니다.
+향후 loop가 생겨도 P3, nit, duplicate, unverifiable, source_conflict 때문에 continuation하면 안 됩니다.
 
-    ## Summary Table
+## Run procedure
 
-    | Target | Counts | Next |
-    |---|---|---|
-    | current implementation | total 3 / fix 2 / verify 1 / blocked 0 | G1, G2를 먼저 반영해 주세요. |
+1. current worktree root 계산
+2. current branch-key 계산
+3. branch scope 초기화
+4. branch lock 획득
+5. `--no-specs`가 없으면 active Spec Patch 로드. `--no-specs`가 있으면 Spec Patch 자동 로드를 생략
+6. Product/Design/Design System/Engineering/QA/Analytics source 로드
+7. Implementation Plan 로드
+8. Current Implementation 분석
+9. ProductContractAgent 실행
+10. DesignContractAgent 실행
+11. Spec Patch items를 Contract로 normalize
+12. draft/unclear/conflict/superseded contract 제거
+13. PlanCoverageAgent 실행
+14. ImplementationComplianceAgent 실행
+15. JudgeMergerAgent 실행
+16. auto strict trigger 평가
+17. 필요 시 CriticalRedTeamAgent 1회 실행
+18. JudgeMergerAgent 재실행
+19. run artifact 저장
+20. `branch-state.json`에 `lastGapRunId` 기록
+21. `global-index.json`에 branch `lastUsedAt` 갱신
+22. branch lock 해제
+23. stdout summary 출력
 
-    ## Findings
+## Output
 
-    | ID / Scope | Class | Evidence | Finding | Ask |
-    |---|---|---|---|---|
-    | G1 / §3.2 Summary Row | missing/major/needs_fix | spec §3.2 requires `Total`; target has no row in `src/...` | `Total` row missing | Add row per spec |
+기본 stdout은 summary만 출력합니다.
 
-    ## Bottom Recap
-    - Needs fix: 2
-    - Cannot verify: 1
-    - Key next action: needs_fix 2건을 먼저 반영해 주세요.
+```text
+Gap Review Complete: <GAP-ID>
+Branch Scope: <branch-key>
+Mode: <auto|strict|no-strict>
+Strict Executed: <yes|no>
+Report: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md
 
-규칙:
-- Summary Table은 반드시 `Target`, `Counts`, `Next` 세 열 table이어야 하며 긴 Findings에 앞서 전체 결과 count와 핵심 next action을 보여줍니다.
-- Findings table은 `ID / Scope`, `Class`, `Evidence`, `Finding`, `Ask` 다섯 열의 단일 table입니다. 별도 Scope, Summary, Open Questions, Recommended Next Actions 섹션을 만들지 않습니다.
-- `Class`는 `<type>/<severity>/<status>` 형식입니다.
-- `Evidence`는 basis fragment와 target fragment를 한 문장 또는 세미콜론 구분 fragment로 합칩니다.
-- `Finding`은 gap을 설명하는 짧은 한 문장입니다.
-- `Ask`는 짧은 imperative action입니다.
-- Bottom Recap은 긴 Findings 뒤에서도 사용자가 결론을 다시 볼 수 있도록 Summary Table의 핵심 count와 next action을 반복합니다.
-- open question, 추가 증거 요청, 범위 밖 항목도 필요하면 같은 table의 `Class`, `Evidence`, `Ask`로 표현합니다.
-- `ID / Scope`의 scope는 반드시 사람이 읽을 수 있는 title, menu, page, component, row 이름을 포함합니다.
+Findings:
+- P0: <count>
+- P1: <count>
+- P2: <count>
 
-### mode=review
+Source Conflicts: <count>
+Rejected/Downgraded: <count>
+```
 
-출력은 PR에 바로 붙일 수 있는 basis-target gap comment만 생성합니다.
-설명문, 서론, 분석 본문을 덧붙이지 않습니다.
+`--print-report`가 있을 때만 report.md 본문을 함께 출력합니다.
 
-    [major] G1 | mismatch | needs_fix
-    Scope: §3.2 Summary Row
-    Basis: spec §3.2의 button label은 `저장`입니다.
-    Evidence: `src/...`의 버튼 텍스트가 `확인`입니다.
-    Why: visible copy는 exact match 기준입니다.
-    Ask: 문구를 `저장`으로 변경해 주세요.
+## Report shape
 
-규칙:
-- 첫 줄은 `[severity] G<number> | type | status` 형식입니다.
-- 첫 줄에는 Severity, `G<number>`, Type, Status가 모두 있어야 합니다.
-- `Stable:` line은 쓰지 않습니다.
-- 본문은 `Scope:`, `Basis:`, `Evidence:`, `Why:`, `Ask:` 순서를 지킵니다.
-- `Scope:`는 반드시 사람이 읽을 수 있는 title, menu, page, component, row 이름을 포함합니다.
-- speculative finding은 confirmed defect처럼 쓰지 말고 Status를 `cannot_verify`, `conflicting_sources`, `blocked_external`, `out_of_scope` 중 맞는 값으로 둡니다.
+`report.md`는 아래 H2를 사용합니다.
 
-### mode=both
+```md
+# Tiger Kit Gap Report: <GAP-ID>
 
-순서:
-1. `mode=analysis` 형식
-2. `mode=review` basis-target gap comment 묶음
+## Summary
 
-규칙:
-- analysis table과 basis-target gap comment는 같은 finding에 같은 `G<number>` ID를 사용합니다.
-- basis-target gap comment는 analysis에서 Status `needs_fix`인 항목을 우선 작성합니다.
-- `cannot_verify`, `conflicting_sources`, `blocked_external`, `out_of_scope` 항목을 basis-target gap comment로 포함해야 한다면 confirmed defect가 아니라 확인 요청으로 작성합니다.
+## Sources Used
 
-## Evidence Rule
+## Actionable Findings
 
-중요 판단은 아래 구분을 유지합니다.
+## Rejected / Downgraded Observations
 
-    Evidence = directly observed
-    Interpretation = inferred from evidence
-    Decision = confirmed by user or basis
-    Suggestion = proposed, not confirmed
-
-규칙:
-- Basis와 Target Evidence를 분리합니다.
-- Evidence에는 직접 관측한 path, URL, ticket, screenshot, source line, diff, commit, 사용자 발화만 적습니다.
-- Interpretation은 evidence에서 추론한 의미입니다.
-- Decision은 basis 또는 사용자가 확인한 내용입니다.
-- Suggestion은 제안이며 확정된 요구처럼 쓰지 않습니다.
-
-## Repo Rules
-
-저장소 규칙 확인 시 관련 `.claude/rules/*`를 repo convention basis로 사용합니다.
-rule ID가 있으면 Basis 또는 Finding에 함께 적습니다.
-명시된 규칙이 있는데 구현이 어기면 Type `convention`, Status `needs_fix`로 분류합니다.
-
-## 판단 원칙
-
-- basis와 target을 실제로 확인한 증거만 사용합니다.
-- basis를 절대적 진실처럼 단정하지 않습니다.
-- basis 충돌을 조용히 합치지 않습니다.
-- 근거가 부족하면 Type `unverifiable`, Status `cannot_verify`를 사용합니다.
-- 접근 불가 외부 근거 때문에 확인할 수 없으면 Type `unverifiable`, Status `blocked_external`을 사용하고 필요한 자료를 `Ask`에 적습니다.
-- basis끼리 충돌하면 Status `conflicting_sources`를 사용합니다.
-- 범위 밖 항목은 Type `out_of_scope`, Status `out_of_scope`로 둡니다.
-- 접근성, 테스트, 컴포넌트 재사용, API 필드, 동작 차이는 별도 Type을 만들지 않고 위 taxonomy로 매핑합니다.
-- ambiguity는 terminal blocked로 끝내지 말고 추가 탐색 후 `cannot_verify`, `conflicting_sources`, `blocked_external` 중 맞는 Status로 라우팅합니다.
-- 남은 질문은 recommendation과 evidence를 포함해 `implementation-blocking` 또는 `reference-only`로 구분합니다.
-
-## 절차
-
-1. basis와 target을 식별합니다.
-2. target이 current implementation 계열이면 Target Freshness Preflight를 실행합니다.
-3. 요청에서 mode output profile을 결정합니다.
-4. 관련 basis와 target evidence를 읽습니다.
-5. UI copy exactness, 요구사항 충족, 규칙 준수, 접근성, 테스트 공백을 확인합니다.
-6. 각 finding에 `G<number>` ID, Scope, Type, Severity, Status를 부여합니다.
-7. `mode=analysis`, `mode=review`, `mode=both` 중 하나의 형식으로 답합니다.
+## Source Conflicts / Clarification Needed
+```
 
 ## 금지
 
 - basis를 절대적 진실처럼 단정
-- 충돌하는 basis를 임의로 합성
-- 근거 없는 추정으로 충족 판정
-- Judgment를 출력 축으로 추가
-- `GAP-001` 같은 repo rule ID를 finding ID로 사용
-- 사람에게 의미 없는 section number만 Scope로 사용
-- review mode에서 PR에 붙일 수 없는 장황한 설명 추가
-- 사용자 응답을 영어 위주로 작성
+- conflict source를 임의 병합
+- subagent candidate를 final finding처럼 출력
+- P3/nit를 final finding으로 출력
+- unverifiable/source_conflict를 final finding으로 출력
+- strict red-team을 2회 이상 실행
+- finding이 0개가 될 때까지 loop
+- default stdout에 전체 report 출력
+- `/tmp`, `$GIT_COMMON_DIR`, user home에 gap run 저장

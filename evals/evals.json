@@ -1,330 +1,154 @@
 {
-  "skill_name": "tiger-kit-source-loss-prevention",
+  "skill_name": "tiger-kit-v7-branch-scoped-pipeline",
   "command_surface": {
     "core_commands": [
+      "/tk:spec",
       "/tk:gap",
-      "/tk:reflect",
+      "/tk:verify-before-stop",
+      "/tk:reflect"
+    ],
+    "legacy_or_removed_commands": [
       "/tk:meta-feedback",
       "/tk:handoff"
-    ],
-    "removed_commands": [
-      "/tk:prep",
-      "/tk:checkpoint",
-      "/tk:review",
-      "/tk:handoff-write",
-      "/tk:handoff-read"
     ]
   },
   "evals": [
     {
       "id": 0,
-      "name": "command-surface-lists-core-commands",
-      "prompt": "You are evaluating TigerKit active command surface after the core commands refactor. Describe the user-facing commands. Do not write files.",
-      "expected_output": "Should list /tk:gap, /tk:reflect, /tk:meta-feedback, and /tk:handoff as the active user-facing commands, explain that gap analysis and PR-ready basis-target gap comments are handled through /tk:gap modes, explain that /tk:meta-feedback emits generalized TigerKit command or skill feedback without exposing project assets, and describe removed commands only as deprecated or removed surface.",
+      "name": "command-surface-lists-v7-commands",
+      "prompt": "You are evaluating TigerKit v7 active command surface. Describe the user-facing commands. Do not write files.",
+      "expected_output": "Should list /tk:spec, /tk:gap, /tk:verify-before-stop, and /tk:reflect as the active user-facing commands. Should explain that spec/gap/verify-before-stop write branch-local working memory under .claude/tigerkit/branches/<branch-key>/ and that reflect is the only durable insight path. Should treat /tk:meta-feedback and /tk:handoff as non-core legacy or removed surface for v7.",
       "files": [],
       "expectations": [
+        "Lists /tk:spec",
         "Lists /tk:gap",
+        "Lists /tk:verify-before-stop",
         "Lists /tk:reflect",
-        "Lists /tk:meta-feedback",
-        "Lists /tk:handoff",
-        "Explains that /tk:gap supports analysis, review, and both modes",
-        "Explains that /tk:meta-feedback emits generalized TigerKit feedback without project asset leakage",
-        "Treats /tk:prep, /tk:checkpoint, /tk:review, /tk:handoff-write, and /tk:handoff-read as removed commands",
-        "Does not describe removed commands as active workflow steps"
+        "Explains spec/gap/verify-before-stop branch-local working memory",
+        "Explains reflect-only durable insight",
+        "Mentions .claude/tigerkit/branches/<branch-key>/ storage",
+        "Does not list /tk:meta-feedback as active v7 core command",
+        "Does not list /tk:handoff as active v7 core command"
       ]
     },
     {
       "id": 1,
-      "name": "gap-analysis-uses-current-compact-table-taxonomy",
-      "prompt": "You are evaluating TigerKit /tk:gap for the input `/tk:gap spec <url> vs current implementation mode=analysis`. The basis says a required summary row is missing in the UI, and the current implementation has no matching row. Describe expected behavior. Do not write files.",
-      "expected_output": "Should emit compact analysis output with only `## Summary Table`, `## Findings`, and `## Bottom Recap`. `## Summary Table` should be a table with result counts and a key next action so the summary is intentionally structured. `## Findings` should be a single table using columns such as ID, Scope, Type, Severity, Status, Basis, Target Evidence, Finding, Suggested Action, and a rightmost auxiliary Stable column. `## Bottom Recap` should repeat key counts and the next action after long findings. The finding should use a user-facing Short ID like `G1`, a stable slug in the Stable column like `gap-summary-row-missing-total`, a meaningful scope label such as `§3.2 Summary Row`, Type `missing`, Severity `major`, and Status `needs_fix`.",
+      "name": "spec-creates-branch-local-spec-patch",
+      "prompt": "You are evaluating TigerKit v7 /tk:spec for the input `/tk:spec \"방금 정해졌는데 모바일에서는 CTA를 하단 sticky로 해야 된대. 데스크톱은 기존처럼 우상단 유지.\"`. Describe expected behavior. Do not write files.",
+      "expected_output": "Should create a branch-local Spec Patch under .claude/tigerkit/branches/<branch-key>/specs/, update specs/index.json and branch-state.json when indexing is enabled, assign SP-YYYYMMDD-HHmmss-RAND and item IDs such as P-SP-... and D-SP-..., classify confirmed wording as confirmed, avoid implementation analysis and findings, and print only a summary by default unless --print-body is used.",
       "files": [],
       "expectations": [
-        "Uses mode=analysis output structure",
-        "Includes `## Summary Table`",
-        "Uses a summary table with result counts and a key next action",
-        "Includes `## Findings`",
-        "Uses one Findings table",
-        "Includes `## Bottom Recap`",
-        "Repeats key counts and next action after Findings",
-        "Uses user-facing Short IDs such as `G1` in the ID column",
-        "Uses stable slug IDs in the rightmost `Stable` column in the form `gap-<scope-slug>-<finding-slug>`",
-        "Does not use sequential stable IDs like `GAP-001`",
-        "Uses a human-readable Scope label that is not only a section number",
-        "Uses Type from missing, mismatch, convention, unverifiable, or out_of_scope",
-        "Uses Severity from critical, major, or minor",
-        "Uses Status from needs_fix, cannot_verify, conflicting_sources, blocked_external, or out_of_scope",
-        "Uses Suggested Action column for recommended next actions",
-        "Does not include legacy `Scope`, `Summary`, `Open Questions`, or `Recommended Next Actions` sections",
-        "Does not use old Finding Type or Judgment axes",
-        "Does not use High, Medium, Low, info, or unknown severity",
-        "Does not split findings into separate tables by severity"
+        "Creates branch-local Spec Patch under .claude/tigerkit/branches/<branch-key>/specs/",
+        "Updates specs/index.json by default",
+        "Updates branch-state.json with lastSpecPatchId",
+        "Uses SP-YYYYMMDD-HHmmss-RAND Spec Patch ID",
+        "Uses typed Spec Item IDs such as P-SP and D-SP",
+        "Does not create gap findings",
+        "Does not analyze implementation",
+        "Prints summary only by default",
+        "Allows full body only with --print-body"
       ]
     },
     {
       "id": 2,
-      "name": "gap-review-mode-emits-pr-ready-comments",
-      "prompt": "You are evaluating TigerKit /tk:gap for the input `PR #123 기준으로 코멘트 남길 수 있게 봐줘`. The basis shows button text `저장`, but the current diff renders `확인`. Describe expected behavior. Do not write files.",
-      "expected_output": "Should infer or use mode=review and emit PR-ready basis-target gap comments only. Each comment should start with `[severity] short-id | type | status`, for example `[major] G1 | mismatch | needs_fix`, then include `Stable:` with a stable slug like `gap-summary-row-save-button-copy`, Scope with a full human-readable label, Basis, Evidence, Why, and Ask when clear.",
+      "name": "gap-uses-contract-pipeline-and-judge-finality",
+      "prompt": "You are evaluating TigerKit v7 /tk:gap with active confirmed Spec Patch items and current implementation. Describe expected behavior. Do not write files.",
+      "expected_output": "Should load active confirmed Spec Patch items, normalize Product/Design/Design System/Engineering/QA/Analytics sources into contracts, let subagents produce only candidates, let JudgeMergerAgent be the only authority for final accepted findings, save run artifacts under branch-local runs/gap/<GAP-ID>/, exclude P3/nit/duplicate/unverifiable/source_conflict from final findings, and run strict red-team exactly once only when requested or triggered by auto mode.",
       "files": [],
       "expectations": [
-        "Uses /tk:gap protocol",
-        "Infers or uses mode=review",
-        "Outputs PR-ready basis-target gap comments only",
-        "Puts Severity, Short ID, Type, and Status on the first line",
-        "Includes `Stable:` with a stable slug ID",
-        "Uses a stable slug ID instead of a sequential stable ID",
-        "Uses a full human-readable Scope label and not only a section number",
-        "Includes basis evidence",
-        "Includes current target evidence",
-        "Includes why the mismatch matters",
-        "Includes suggested change when clear",
-        "Uses Type `mismatch` for visible copy difference",
-        "Uses Status `needs_fix` for confirmed target gaps",
-        "Does not emit a long analysis table unless mode=both is requested"
+        "Loads active confirmed Spec Patch items by default",
+        "Normalizes Spec Patch items into contracts",
+        "Subagents produce candidates only",
+        "JudgeMergerAgent is the only final finding authority",
+        "Final findings include only P0, P1, or P2",
+        "Rejects P3/nit as final findings",
+        "Rejects duplicate findings or merges them",
+        "Classifies unverifiable/source_conflict outside final accepted findings",
+        "Does not loop until no findings",
+        "Stores input-manifest.json, contracts.json, candidates.json, judge-result.json, and report.md"
       ]
     },
     {
       "id": 3,
-      "name": "gap-both-mode-combines-analysis-and-review",
-      "prompt": "You are evaluating TigerKit /tk:gap for the input `/tk:gap jira PROJ-123 vs pr #456 mode=both`. Describe expected behavior. Do not write files.",
-      "expected_output": "Should emit compact analysis first with `## Summary Table`, a single `## Findings` table using `Suggested Action` and rightmost `Stable` columns, and `## Bottom Recap`, then PR-ready basis-target gap comments whose body uses `Stable`, `Scope`, `Basis`, `Evidence`, `Why`, and `Ask`. Analysis rows and basis-target gap comments for the same finding should share the same Short IDs, stable slug IDs, and the same Type, Severity, and Status taxonomy.",
+      "name": "gap-strict-mode-rules",
+      "prompt": "You are evaluating TigerKit v7 /tk:gap mode selection for `tiger-kit gap`, `tiger-kit gap --strict`, and `tiger-kit gap --no-strict`. Describe expected behavior. Do not write files.",
+      "expected_output": "Should treat auto as default, run CriticalRedTeamAgent once when auto strict triggers exist, run exactly one red-team pass in --strict even without triggers, and run no red-team pass in --no-strict even if triggers exist. Should record strictExecuted and autoStrictTriggers in input-manifest.json and judge-result.json.",
       "files": [],
       "expectations": [
-        "Uses mode=both",
-        "Outputs compact analysis first",
-        "Analysis includes `## Summary Table`, `## Findings`, and `## Bottom Recap` only",
-        "Analysis uses a summary table with result counts and a key next action",
-        "Analysis uses one Findings table",
-        "Analysis repeats key counts and next action in Bottom Recap",
-        "Analysis table uses Suggested Action column",
-        "Analysis table uses a rightmost Stable column",
-        "Outputs basis-target gap comments after analysis",
-        "Review comments use Stable, Scope, Basis, Evidence, Why, and Ask fields",
-        "Keeps the same Short IDs and stable IDs across analysis rows and basis-target gap comments",
-        "Keeps the same Type, Severity, and Status taxonomy across both sections",
-        "Maintains evidence versus interpretation separation",
-        "Does not introduce legacy Judgment output"
+        "Uses auto mode by default",
+        "Auto mode runs strict only when risk triggers exist",
+        "--strict runs exactly one red-team pass",
+        "--no-strict runs zero red-team passes",
+        "Records strictExecuted",
+        "Records autoStrictTriggers",
+        "Does not run unbounded review loops"
       ]
     },
     {
       "id": 4,
-      "name": "gap-copy-mismatch-uses-impact-based-severity",
-      "prompt": "You are evaluating TigerKit /tk:gap on visible UI copy. The basis shows a normal table column label, but the implementation uses a different phrase with the same meaning. Describe expected behavior. Do not write files.",
-      "expected_output": "Should treat the visible text difference as Type `mismatch` with Status `needs_fix` and choose Severity `major` or `minor` based on impact. It should not accept meaning similarity as a pass because UI copy requires exact match.",
+      "name": "verify-before-stop-saves-branch-local-evidence",
+      "prompt": "You are evaluating TigerKit v7 /tk:verify-before-stop when no gap run exists for the current branch scope. Describe expected behavior. Do not write files.",
+      "expected_output": "Should create a verify run under .claude/tigerkit/branches/<branch-key>/runs/verify/<VFY-ID>/ by default, write checklist.md, evidence.json, and report.md, mark checks that depend on a latest gap run as unknown or skipped rather than failed, set overall verification status to unknown when no meaningful pass/fail can be proven, and print only a summary unless --print-report is used.",
       "files": [],
       "expectations": [
-        "Uses Type `mismatch`",
-        "Uses Status `needs_fix`",
-        "Does not treat meaning-similar text as satisfied",
-        "Uses impact-based Severity `major` or `minor` for ordinary visible copy mismatch",
-        "Keeps visible UI copy under exact match rules",
-        "Does not use old `copy_exact_mismatch` finding type"
+        "Saves verify run under branch-local runs/verify/<VFY-ID>/",
+        "Writes checklist.md",
+        "Writes evidence.json",
+        "Writes report.md",
+        "Handles missing latest gap run as unknown or skipped",
+        "Does not fail solely because no gap run exists",
+        "Prints summary only by default",
+        "Allows report body with --print-report"
       ]
     },
     {
       "id": 5,
-      "name": "gap-copy-mismatch-escalates-for-compliance-context",
-      "prompt": "You are evaluating TigerKit /tk:gap on a consent checkbox label. The basis text and current implementation differ. Describe expected behavior. Do not write files.",
-      "expected_output": "Should classify the issue as Type `mismatch` with Status `needs_fix` and raise Severity to `critical` or `major` because the text affects consent, legal, privacy, security, payment, or compliance meaning.",
+      "name": "reflect-defaults-to-apply-true",
+      "prompt": "You are evaluating TigerKit v7 /tk:reflect after branch-local gap and verify runs produced durable repo-wide insight candidates. Describe expected behavior. Do not write files.",
+      "expected_output": "Should default to apply=true, read branch-local TigerKit memory, write only the durable insight target such as .claude/tigerkit-reflections.md, treat --dry-run and --apply=false as preview-only aliases, avoid modifying source code, dedupe repeated insights, and print Apply, Target, Applied Insights, and Summary.",
       "files": [],
       "expectations": [
-        "Uses Type `mismatch`",
-        "Uses Status `needs_fix`",
-        "Uses Severity critical or major",
-        "Explains that consent, legal, privacy, security, payment, or compliance context increases severity",
-        "Does not downgrade the issue to minor by default",
-        "Does not use old `copy_exact_mismatch` finding type"
+        "Defaults /tk:reflect to apply=true",
+        "Treats --dry-run as apply=false",
+        "Treats --apply=false as dry-run alias",
+        "Allows --apply=true as redundant default",
+        "Reads branch-local specs/gap/verify memory",
+        "Writes only durable insight target",
+        "Does not modify source code",
+        "Skips duplicate insights",
+        "Prints apply summary"
       ]
     },
     {
       "id": 6,
-      "name": "gap-uses-cannot-verify-for-unreproducible-target",
-      "prompt": "You are evaluating TigerKit /tk:gap where the basis is clear, but the current target state cannot be reproduced from the available repo state and the needed rendered evidence was not captured. Describe expected behavior. Do not write files.",
-      "expected_output": "Should continue the analysis without inventing certainty, identify the current observable baseline when possible, and represent the item as a Findings row with Type `unverifiable` and Status `cannot_verify` rather than blocking the entire command. Any open question should be represented in the Findings table, not a separate Open Questions section.",
+      "name": "gap-preserves-freshness-ambiguity-and-copy-safety",
+      "prompt": "You are evaluating TigerKit v7 /tk:gap when target is current implementation, the checkout may be behind origin/main, a visible button label differs from a confirmed contract, and one source is ambiguous. Describe expected behavior. Do not write files.",
+      "expected_output": "Should verify origin/main freshness before comparing current implementation, report freshness evidence, enforce visible UI copy exact-match against confirmed contracts, avoid accepting ambiguous or conflicting source material as a final finding, and classify unresolved ambiguity as a rejected candidate or SourceConflict with a question containing evidence and recommendation.",
       "files": [],
       "expectations": [
-        "Identifies basis, target, and observable baseline when possible",
-        "Uses Type `unverifiable` when the target state is not reproducible",
-        "Uses Status `cannot_verify` when the target state is not reproducible",
-        "Represents open questions as Findings rows with Status `cannot_verify`",
-        "Does not create a separate `Open Questions` section",
-        "Does not require a clean HEAD before every gap analysis",
-        "Does not invent missing evidence",
-        "Does not use old `insufficient_evidence` finding type"
+        "Checks integration branch freshness before current implementation comparison",
+        "Reports freshness evidence in manifest or report summary",
+        "Enforces visible UI copy exact-match for confirmed contracts",
+        "Does not treat meaning-similar visible copy as satisfied",
+        "Does not accept ambiguous source material as final finding evidence",
+        "Records unresolved ambiguity as rejected candidate or SourceConflict",
+        "Includes recommendation and evidence for remaining questions"
       ]
     },
     {
       "id": 7,
-      "name": "gap-reports-conflicting-basis-explicitly",
-      "prompt": "You are evaluating TigerKit /tk:gap when one basis document says button label A and another basis document says button label B. The implementation uses B. Describe expected behavior. Do not write files.",
-      "expected_output": "Should explicitly report conflicting basis material with Status `conflicting_sources` instead of silently merging them, inventing a synthetic requirement, or treating `conflicting_sources` as a finding type or judgment.",
+      "name": "branch-state-and-global-index-are-refreshed",
+      "prompt": "You are evaluating TigerKit v7 branch-local state updates after /tk:spec, /tk:gap, /tk:verify-before-stop, and /tk:reflect. Describe expected behavior. Do not write files.",
+      "expected_output": "Should update branch-state.json with lastSpecPatchId, lastGapRunId, and lastVerifyRunId when the corresponding commands save artifacts, and should refresh global-index.json lastUsedAt for /tk:spec, /tk:gap, /tk:verify-before-stop, and /tk:reflect apply runs.",
       "files": [],
       "expectations": [
-        "Uses Status `conflicting_sources`",
-        "Does not use `conflicting_sources` as Type",
-        "Does not use `conflicting_sources` as Judgment",
-        "States that basis materials conflict",
-        "Does not silently merge the two references",
-        "Does not mark the item satisfied without resolving the conflict",
-        "Uses a stable slug ID and meaningful Scope label if emitted as an analysis row or review comment"
-      ]
-    },
-    {
-      "id": 8,
-      "name": "reflect-defaults-to-proposal-only",
-      "prompt": "You are evaluating TigerKit /tk:reflect after repeated review comments showed that visible UI copy must exact-match the basis. Describe expected behavior. Do not write files.",
-      "expected_output": "Should emit Reflect Result, Classification, Reason, Proposed Patch, Conflicts, and Follow-up Audit. By default it should stay proposal-only and avoid modifying files.",
-      "files": [],
-      "expectations": [
-        "Includes Reflect Result",
-        "Includes Classification",
-        "Includes Reason",
-        "Includes Proposed Patch",
-        "Includes Conflicts",
-        "Includes Follow-up Audit",
-        "States apply status",
-        "Does not modify files without apply=true or explicit approval"
-      ]
-    },
-    {
-      "id": 9,
-      "name": "reflect-apply-gate-allows-explicit-application",
-      "prompt": "You are evaluating TigerKit /tk:reflect for the input `/tk:reflect UI copy exact match rule apply=true`. Describe expected behavior. Do not write files.",
-      "expected_output": "Should use the same reflect structure, but when apply=true is present and there is no unresolved conflict, it may apply the approved patch to the appropriate rule file or CLAUDE.md target.",
-      "files": [],
-      "expectations": [
-        "Uses reflect output structure",
-        "Recognizes apply=true as application permission",
-        "Still reports conflicts before applying when needed",
-        "Does not apply changes when conflicts remain unresolved"
-      ]
-    },
-    {
-      "id": 15,
-      "name": "reflect-can-emit-session-decision-recap",
-      "prompt": "You are evaluating TigerKit /tk:reflect after a session produced no durable rule patch, but the user needs a human-readable recap of how evidence led to interpretation and decision. Describe expected behavior. Do not write files.",
-      "expected_output": "Should keep /tk:reflect proposal-only behavior while allowing an optional `### Session Decision Recap` after `### Reflect Result`. The recap should summarize Evidence, Interpretation, and Decision flow as a traceability receipt, should not be treated as a durable rule or apply permission, and may appear even when there are zero durable rule candidates.",
-      "files": [],
-      "expectations": [
-        "Allows optional `### Session Decision Recap` after Reflect Result",
-        "Summarizes Evidence to Interpretation to Decision flow",
-        "Treats recap as a traceability receipt rather than a durable rule",
-        "Allows recap even when durable rule candidate count is zero",
-        "Keeps proposal-only behavior unless apply=true or explicit approval is present",
-        "Does not treat recap as file modification approval"
-      ]
-    },
-    {
-      "id": 16,
-      "name": "reflect-proposes-root-instruction-bootstrap",
-      "prompt": "You are evaluating TigerKit /tk:reflect when the target repository has no root CLAUDE.md and the session produced a scoped durable rule candidate in a normal working tree. Describe expected behavior. Do not write files.",
-      "expected_output": "Should check whether the target root has CLAUDE.md. If it is missing in a normal working tree, /tk:reflect should propose a root instruction bootstrap candidate separately from any scoped `.claude/rules/*` proposal. The bootstrap remains under the same apply gate and should not be silently applied.",
-      "files": [],
-      "expectations": [
-        "Checks whether target root CLAUDE.md exists",
-        "Detects missing root instruction file in a normal working tree",
-        "Proposes CLAUDE.md bootstrap separately from scoped rule proposals",
-        "Keeps scoped rule proposal available when appropriate",
-        "Keeps bootstrap under apply=true or explicit approval gate",
-        "Does not silently apply root instruction file creation"
-      ]
-    },
-    {
-      "id": 10,
-      "name": "handoff-writes-current-template-sections",
-      "prompt": "You are evaluating TigerKit /tk:handoff for the input `/tk:handoff 현재 작업 이어받을 수 있게 남겨줘`. Describe expected behavior. Do not write files.",
-      "expected_output": "Should write .claude/handoffs/current.md using the command template sections exactly, including Reader Guide and Resume Prompt, and report the written path with the next safe action.",
-      "files": [],
-      "expectations": [
-        "Writes .claude/handoffs/current.md",
-        "Uses section title `Reader Guide`",
-        "Uses section title `Mission`",
-        "Uses section title `Current State`",
-        "Uses section title `Key Decisions`",
-        "Uses section title `Relevant Files`",
-        "Uses section title `Basis / References`",
-        "Uses section title `Completed Work`",
-        "Uses section title `Pending Work`",
-        "Uses section title `Known Risks / Unknowns`",
-        "Uses section title `Failed Attempts / Do Not Repeat`",
-        "Uses section title `Validation`",
-        "Uses section title `Next Actions`",
-        "Uses section title `Resume Prompt`",
-        "Reports the current handoff path in the receipt"
-      ]
-    },
-    {
-      "id": 11,
-      "name": "handoff-archive-is-opt-in",
-      "prompt": "You are evaluating TigerKit /tk:handoff when the user did not request archive=true or any explicit archive request. Describe expected behavior. Do not write files.",
-      "expected_output": "Should write only .claude/handoffs/current.md by default and avoid creating a dated archive unless archive=true or an explicit archive request is present.",
-      "files": [],
-      "expectations": [
-        "Writes .claude/handoffs/current.md by default",
-        "Does not create a dated archive by default",
-        "Creates a dated archive only with archive=true or explicit archive request"
-      ]
-    },
-    {
-      "id": 12,
-      "name": "gap-analysis-regression-no-legacy-sections-or-sequential-ids",
-      "prompt": "You are evaluating TigerKit /tk:gap for the input `/tk:gap spec <url> vs pr #456 mode=analysis` with multiple major and minor findings in spec section 3.2 Summary Row. Describe expected behavior. Do not write files.",
-      "expected_output": "Should emit the compact analysis format only: `## Summary Table`, one `## Findings` table, and `## Bottom Recap`. Summary Table should be a table with result counts and a key next action, and Bottom Recap should repeat the key counts and next action after the Findings table. It should not emit legacy Scope, Summary, Open Questions, or Recommended Next Actions sections, should not split findings into separate severity tables, should use user-facing Short IDs like `G1` plus a rightmost `Stable` column, should not use sequential stable IDs like `GAP-001`, and should not use section-number-only Scope values like `3.2` or `§3.2` without a human-readable label.",
-      "files": [],
-      "expectations": [
-        "Includes `## Summary Table`",
-        "Uses Summary Table as a table with result counts and key next action",
-        "Includes one `## Findings` table",
-        "Includes `## Bottom Recap`",
-        "Repeats key counts and next action in Bottom Recap",
-        "Does not include legacy `Scope`, `Summary`, `Open Questions`, or `Recommended Next Actions` sections",
-        "Uses user-facing Short IDs such as `G1`",
-        "Uses a rightmost `Stable` column for stable slug IDs",
-        "Does not use sequential stable IDs like `GAP-001`",
-        "Does not use section-number-only Scope values",
-        "Does not split findings into multiple tables by severity",
-        "Uses Type, Severity, and Status columns",
-        "Uses Suggested Action column for recommended next actions"
-      ]
-    },
-    {
-      "id": 13,
-      "name": "gap-ambiguity-handling-explores-before-questions",
-      "prompt": "You are evaluating TigerKit /tk:gap when a requirements document and code conflict, two similar implementations use different patterns, and the API response shape is unclear. Describe expected behavior. Do not write files.",
-      "expected_output": "Should not decide silently or mark a speculative defect as confirmed. It should first explore available code, docs, similar implementations, repo rules, and reuse-map. If ambiguity remains, it should create questions with recommendation and evidence, split them into implementation-blocking and reference-only, and represent them in the /tk:gap output using Status `cannot_verify`, `conflicting_sources`, or `blocked_external` as appropriate.",
-      "files": [],
-      "expectations": [
-        "Does not decide silently when requirements and code conflict",
-        "Checks code, docs, similar implementations, repo rules, and reuse-map before asking",
-        "Uses Status `conflicting_sources` for conflicting basis material when applicable",
-        "Uses Status `cannot_verify` when API response, DTO, permission, or state transition remains unclear",
-        "Uses Status `blocked_external` when Spec reference or source basis is inaccessible",
-        "Includes recommendation and evidence in each remaining question",
-        "Splits questions into implementation-blocking and reference-only",
-        "In analysis mode, keeps questions inside the single Findings table instead of a separate Open Questions section",
-        "In review mode, writes ambiguity as an Ask rather than a confirmed defect"
-      ]
-    },
-    {
-      "id": 14,
-      "name": "meta-feedback-output-is-generalized-and-redacted",
-      "prompt": "You are evaluating TigerKit /tk:meta-feedback after a user corrected a TigerKit command output using repo-specific names, internal paths, URLs, and a direct quote. Describe expected behavior. Do not write files.",
-      "expected_output": "Should emit Meta Feedback Summary, Generalized Friction, Proposed Improvement, and Redaction Receipt. The output itself should already be generalized: it should use placeholders or evidence classes, avoid raw quotes, avoid repo/product/domain names, avoid internal paths, avoid URLs, avoid tickets, avoid branch/PR/commit identifiers, and stop with cannot_generalize_safely if safe generalization is not possible. It should not propose repo rule patches like /tk:reflect.",
-      "files": [],
-      "expectations": [
-        "Includes Meta Feedback Summary",
-        "Includes Generalized Friction",
-        "Includes Proposed Improvement",
-        "Includes Redaction Receipt",
-        "Uses Privacy status generalized when safe",
-        "Uses placeholders or evidence classes instead of project-specific details",
-        "Does not include raw user quotes",
-        "Does not include repo names, product names, or domain-specific labels",
-        "Does not include internal paths or source file names",
-        "Does not include URLs, tickets, branch names, PR numbers, or commit hashes",
-        "Stops with cannot_generalize_safely when safe generalization is not possible",
-        "Does not propose CLAUDE.md or .claude/rules/* patches as the primary output"
+        "Spec records lastSpecPatchId",
+        "Gap records lastGapRunId",
+        "Verify records lastVerifyRunId",
+        "Spec refreshes global-index lastUsedAt",
+        "Gap refreshes global-index lastUsedAt",
+        "Verify refreshes global-index lastUsedAt",
+        "Reflect apply refreshes global-index lastUsedAt"
       ]
     }
   ]
