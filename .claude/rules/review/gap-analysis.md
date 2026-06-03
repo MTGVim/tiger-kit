@@ -23,7 +23,7 @@
 - Candidate kind must be one of `plan_gap`, `implementation_gap`, or `red_team_candidate`.
 - Accepted final severity must be one of `P0`, `P1`, or `P2`.
 - Do not accept `P3` as a final finding.
-- Rejected reason must be one of `P3_nit`, `duplicate`, `unverifiable`, `source_conflict`, `not_user_visible`, `not_actionable`, `low_confidence`, `missing_evidence`, or `superseded_source`.
+- Rejected reason must be one of `P3_nit`, `duplicate`, `unverifiable`, `source_conflict`, `not_user_visible`, `not_actionable`, `low_confidence`, `missing_evidence`, `missing_producer_evidence`, or `superseded_source`.
 - Source conflicts are not final findings. Record them as `SourceConflict` entries.
 - Visible UI copy differences are actionable when confirmed contracts require exact copy. Meaning similarity is not enough unless the contract explicitly allows variation.
 
@@ -123,3 +123,11 @@ When the target means `current implementation`, current working tree, current br
 - If the cited coordinate is stale but the same target surface contains the correct span, repair the coordinate and record the repair evidence.
 - If the current target surface cannot support the cited claim, downgrade candidate confidence to `low` and let JudgeMergerAgent reject it as `low_confidence`, `missing_evidence`, or `unverifiable`.
 - Do not rely on CriticalRedTeamAgent to repair stale coordinates. In strict mode red-team should attack finding validity after the coordinate gate runs.
+
+## GAP-012: Require producer evidence for producer-absence claims
+
+- A producer-absence claim says a backend, API, serializer, DTO, data layer, or other producer does not provide, persist, transform, expose, or cover a required value or behavior.
+- Do not infer producer absence from consumer-side UI shape, fallback/default branch, empty state, mock, fixture, mapper, or missing consumer usage alone.
+- Before a producer-absence candidate can become P0/P1/P2 or `SourceConflict`, it must cite direct producer-side evidence such as API contract, schema, serializer, endpoint response, data model, persistence logic, backend test fixture, or owner-confirmed producer behavior.
+- If only consumer-side evidence exists, keep the observation as a rejected candidate with `missing_producer_evidence`, `missing_evidence`, or `unverifiable` instead of an accepted finding or `SourceConflict`.
+- If the producer may provide equivalent data through another serialization or transformation path, treat the claim as ambiguous until producer evidence confirms absence.
