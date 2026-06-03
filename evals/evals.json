@@ -72,7 +72,7 @@
       "id": 2,
       "name": "gap-strict-for-risky-backend-work",
       "prompt": "You are evaluating TigerKit v7.2 /tk:gap on a backend Jira ticket touching validation and data mutation. Describe expected behavior. Do not write files.",
-      "expected_output": "Should recommend and run strict when no preset flag is provided because backend validation and data mutation increase false-positive and missed-edge-case risk. If the user explicitly passed --lite, it should still run lite and leave a strict rerun trail. It should require concrete source contract and target implementation evidence before accepting backend findings. It should avoid inferring DTO, permission, persistence, or state-transition semantics without source support. If the API contract is ambiguous, even when one interpretation looks likely, it should create Clarification Needed, SourceConflict, or rejected unverifiable/missing_evidence instead of accepting a final finding until user consent or owner confirmation exists. Strict should also apply source/plan dispatch skips when classes are absent.",
+      "expected_output": "Should recommend and run strict when no preset flag is provided because backend validation and data mutation increase false-positive and missed-edge-case risk. If the user explicitly passed --lite, it should still run lite and leave a strict rerun trail. It should require concrete source contract and target implementation evidence before accepting backend findings. It should avoid inferring DTO, permission, persistence, or state-transition semantics without source support. It should not infer producer absence from consumer-side UI shape, fallback/default branches, empty states, mocks, fixtures, mappers, or missing consumer usage alone. Producer-absence candidates should require direct producer-side evidence such as API contract, schema, serializer, endpoint response, data model, persistence logic, backend test fixture, or owner-confirmed behavior before they can become P-level findings or SourceConflict. If producer-side evidence is missing, it should reject or downgrade with missing_producer_evidence, missing_evidence, or unverifiable. If the API contract is ambiguous, even when one interpretation looks likely, it should create Clarification Needed, SourceConflict, or rejected unverifiable/missing_evidence instead of accepting a final finding until user consent or owner confirmation exists. Strict should also apply source/plan dispatch skips when classes are absent.",
       "files": [],
       "expectations": [
         "Recommends strict for backend validation or data mutation",
@@ -82,6 +82,9 @@
         "Requires target implementation evidence for backend findings",
         "Does not infer DTO semantics from compatible names alone",
         "Does not infer permission, persistence, or state transition behavior without evidence",
+        "Does not infer producer absence from consumer-side fallback/default/empty paths alone",
+        "Requires direct producer-side evidence before accepting producer-absence findings or SourceConflict",
+        "Rejects or downgrades producer-absence claims without producer evidence as missing_producer_evidence, missing_evidence, or unverifiable",
         "Routes unclear backend semantics to Clarification Needed, SourceConflict, rejected unverifiable, or rejected missing_evidence instead of accepted finding",
         "Requires user consent or owner confirmation before treating ambiguous API meaning as confirmed",
         "Records dispatch skips when source or plan classes are absent"
@@ -91,7 +94,7 @@
       "id": 3,
       "name": "meta-feedback-uses-session-history-for-gap-improvements",
       "prompt": "You are evaluating TigerKit v7.2 /tk:meta-feedback after a session where the user said gap took 15 minutes on a small ticket, backend findings had false positives, mode wording was confusing, and ambiguous UI/API decisions should be resolved with the user. Describe expected behavior. Do not write files.",
-      "expected_output": "Should use the session history as evidence, generalize the feedback without exposing project assets, and propose TigerKit command or skill improvements. It should capture performance friction for gap preset selection, strict-default scoring, dispatch gate needs, candidate evidence precision gates for stale file:line/module-path coordinates, rerun trail UX, backend false-positive reduction, ambiguity consent gate guidance, and UI clarification via tables or aligned TUI/ASCII mockups. It should not create repo rule patches like reflect and should not output raw user quotes, paths, tickets, PR numbers, branch names, or project-specific labels.",
+      "expected_output": "Should use the session history as evidence, generalize the feedback without exposing project assets, and propose TigerKit command or skill improvements. It should capture performance friction for gap preset selection, strict-default scoring, dispatch gate needs, candidate evidence precision gates for stale file:line/module-path coordinates, producer-absence evidence gates for backend false-positive reduction, rerun trail UX, ambiguity consent gate guidance, and UI clarification via tables or aligned TUI/ASCII mockups. It should not create repo rule patches like reflect and should not output raw user quotes, paths, tickets, PR numbers, branch names, or project-specific labels.",
       "files": [],
       "expectations": [
         "Uses session history as the evidence source",
@@ -99,6 +102,7 @@
         "Generalizes strict-default scoring improvement",
         "Generalizes dispatch gate improvement",
         "Generalizes candidate evidence precision gate improvement",
+        "Generalizes producer-absence evidence gate improvement",
         "Generalizes rerun trail and mode wording UX improvement",
         "Generalizes backend false-positive feedback",
         "Generalizes ambiguity consent gate feedback",
