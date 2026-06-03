@@ -1,6 +1,6 @@
 # TigerKit 운영 Output Contract
 
-이 문서는 TigerKit v7.2.6 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2.7 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
 
 ```text
 stdout is a receipt. Full spec/gap bodies are saved as branch-local artifacts unless explicit print option is used.
@@ -42,7 +42,7 @@ Items:
 - 목적: Product/Design Spec contract와 implementation plan/current implementation을 비교합니다.
 - 기본 저장 위치: `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/`
 - `/tk:gap`은 단일 `/tk:gap` 실행로 실행합니다.
-- `lite`와 `strict`는 user-facing quality mode가 아닙니다.
+- `--lite`와 `--strict`는 compatibility flag로만 기록하며 user-facing quality mode가 아닙니다.
 - 분석 범위는 `analysisDepth: direct|bounded|expanded|exhaustive-capped`와 `depthReasons`로 기록합니다. hard trigger가 risk score보다 우선하며, 명시된 `--analysis-depth`가 위험 표면의 heuristic minimum보다 낮으면 낮추지 않고 escalation을 기록합니다.
 - subagent는 final finding을 확정하지 못합니다.
 - candidate의 file:line 또는 module-path evidence는 JudgeMergerAgent queue 진입 전에 현재 target surface에서 read-back으로 재확인합니다.
@@ -71,6 +71,7 @@ Branch Scope: <branch-key>
 Report: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md
 성능 증명: <improvementRatio>x by <measurementMethod>
 개선 증명: FP <ratio>x / FN <ratio>x / speed <ratio>x / depth <ratio>x
+Proof freshness: <pass|blocked>
 
 Findings:
 - P0: <count>
@@ -119,6 +120,7 @@ Gap run metadata must include:
 - `targetSurfaceCoverageGate`
 - `dispatchCompletenessGate`
 - `blockedClarifications`
+- `claimFreshnessGate`
 - `heuristicProof`
 
 Performance proof fields:
@@ -133,7 +135,7 @@ Performance proof fields:
 
 Speed improvement may be claimed only when numeric performance fields are recorded and `performance.improvementRatio >= 1.3`. Credited `dispatchSkips` may contribute to the proof only when `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true` are recorded. Vague wording such as `expected`, `estimated`, or `likely` is not proof.
 
-Current optimized `/tk:gap` contract target uses `baselineCriticalPathScore = 87.1`, `currentCriticalPathScore <= 50.3`, and `minimumTargetImprovementRatio >= 1.73` by `contract-derived-critical-path-proxy`. Concrete runs must recompute actual run proof from `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count.
+Current optimized `/tk:gap` contract target uses `baselineCriticalPathScore = 87.1`, `currentCriticalPathScore <= 51.6`, and `minimumTargetImprovementRatio >= 1.69` by `contract-derived-critical-path-proxy`. Concrete runs must recompute actual run proof from `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count.
 
 Heuristic proof fields:
 
@@ -162,17 +164,21 @@ Heuristic proof fields:
 - `heuristicProof.analysisDepth.currentTriggerCoverage`
 - `heuristicProof.analysisDepth.improvementRatio`
 - `heuristicProof.analysisDepth.claimAllowed`
+- `claimFreshnessGate.status`
+- `claimFreshnessGate.checkedAfter`
+- `claimFreshnessGate.staleInputs`
+- `claimFreshnessGate.repairedInputs`
 - `heuristicProof.claimAllowed`
 
-Heuristic proof metrics use fixed denominators from the command contract: false-positive counts accepted-path blocking predicates, false-negative counts critical contract and target surface coverage predicates, speed uses the critical path score, and analysis depth counts required depth trigger predicates. A gap run may claim the combined false-positive, false-negative, speed, and analysis-depth improvement only when all four subproofs have `improvementRatio >= heuristicProof.requiredImprovementRatio` and `claimAllowed: true`.
+Heuristic proof metrics use fixed denominators from the command contract: false-positive counts accepted-path blocking predicates, false-negative counts critical contract and target surface coverage predicates, speed uses the critical path score, and analysis depth counts required depth trigger predicates. ClaimFreshnessGate is a separate claim gate, not a score denominator. A gap run may claim the combined false-positive, false-negative, speed, and analysis-depth improvement only when all four subproofs have `improvementRatio >= heuristicProof.requiredImprovementRatio`, all four have `claimAllowed: true`, and ClaimFreshnessGate passes.
 
 Contract-level improvement proof target:
 
 ```text
-falsePositive: baselinePredicateScore = 5, currentPredicateScore = 7, improvementRatio = 1.40
-falseNegative: baselinePredicateScore = 4, currentPredicateScore = 6, improvementRatio = 1.50
-speed: baselineCriticalPathScore = 87.1, currentCriticalPathScore <= 50.3, improvementRatio >= 1.73
-analysisDepth: baselineTriggerCoverage = 6, currentTriggerCoverage = 8, improvementRatio = 1.33
+falsePositive: baselinePredicateScore = 5, currentPredicateScore = 7, improvementRatio = 7 / 5 = 1.40
+falseNegative: baselinePredicateScore = 4, currentPredicateScore = 6, improvementRatio = 6 / 4 = 1.50
+speed: baselineCriticalPathScore = 87.1, currentCriticalPathScore <= 51.6, improvementRatio >= 87.1 / 51.6 = 1.69
+analysisDepth: baselineTriggerCoverage = 6, currentTriggerCoverage = 8, improvementRatio = 8 / 6 = 1.33
 ```
 
 Concrete runs must recompute actual run proof from metadata before claiming improvement.
@@ -197,6 +203,13 @@ Candidate intake metadata must include:
 - `candidateIntakeGate.severityScope`
 - `candidateIntakeGate.finalQueue`
 - `candidateIntakeGate.reasons`
+
+Claim freshness metadata must include:
+
+- `claimFreshnessGate.status`
+- `claimFreshnessGate.checkedAfter`
+- `claimFreshnessGate.staleInputs`
+- `claimFreshnessGate.repairedInputs`
 
 Clarification table shape:
 
