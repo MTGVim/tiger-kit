@@ -1,5 +1,5 @@
 {
-  "skill_name": "tiger-kit-v7-2-4-gap-short-ref-ux",
+  "skill_name": "tiger-kit-v7-2-5-gap-proof-heuristics",
   "command_surface": {
     "core_commands": [
       "/tk:spec",
@@ -66,7 +66,7 @@
       "id": 2,
       "name": "gap-analysis-depth-heuristic",
       "prompt": "Evaluate /tk:gap analysis depth selection. Do not write files.",
-      "expected_output": "Should choose direct only for one explicit local surface with no API/DTO/state/auth/payment/data mutation/shared component/ambiguity trigger. Should choose bounded for single screen/component/command with nearby 1-depth usage lookup or representative samples up to 3. Should choose expanded or exhaustive-capped for shared/API/auth/payment/mutation/release/cross-module/P0/P1 triggers. Should record analysisDepth, depthReasons, riskScore, sideEffectConfidence, verificationEscalation, and compatibilityFlags. Should not call the choice lite or strict mode.",
+      "expected_output": "Should choose direct only for one explicit local surface with no API/DTO/state/auth/payment/data mutation/shared component/ambiguity trigger. Should choose bounded for single screen/component/command with nearby 1-depth usage lookup or representative samples up to 3. Should choose expanded for shared component, design-system, API/DTO/state transition, source conflict risk, inaccessible reference, ambiguous Product/API/Design decision, or divergent similar implementations. Should choose exhaustive-capped for P0/P1 candidate, auth/permission/payment/data mutation/destructive action, release gate, or cross-module impact. Hard triggers should run before riskScore tie-breakers. Should record analysisDepth, depthReasons, riskScore, sideEffectConfidence, verificationEscalation, compatibilityFlags, dispatchPlan, dispatchSkips, and heuristicProof.analysisDepth. Explicit --analysis-depth should not lower the heuristic-required minimum depth for risky surfaces; lower requested depth should be escalated and recorded. Should not call the choice lite or strict mode.",
       "files": [
         "commands/gap.md",
         ".claude/rules/review/gap-analysis.md",
@@ -76,6 +76,9 @@
         "Depth heuristic covers risk axes",
         "No quality downgrade",
         "Metadata records decision",
+        "Records dispatchPlan and dispatchSkips",
+        "Records heuristicProof.analysisDepth",
+        "Hard triggers run before riskScore tie-breakers",
         "No lite/strict mode wording"
       ]
     },
@@ -83,13 +86,16 @@
       "id": 3,
       "name": "gap-performance-proof",
       "prompt": "Evaluate /tk:gap performance proof requirements for the single /tk:gap execution. Do not write files.",
-      "expected_output": "Should require a measured performance proof rather than a vague estimate. Should use the contract-derived critical path proxy when runtime wall-clock instrumentation is unavailable. Should require improvementRatio >= 1.3, with baselineCriticalPathScore and currentCriticalPathScore recorded in the run receipt or manifest. Should not claim success from phrases such as expected, estimated, or likely.",
+      "expected_output": "Should require a measured performance proof rather than a vague estimate. Should use the contract-derived critical path proxy when runtime wall-clock instrumentation is unavailable. Should require performance.improvementRatio >= 1.3, with performance.baselineCriticalPathScore, performance.currentCriticalPathScore, performance.agentCriticalPathGroups, performance.deterministicStageGroups, performance.runProcedureSteps, performance.measurementMethod, and heuristicProof.speed recorded in the run receipt or manifest. Current optimized contract target should show performance.baselineCriticalPathScore = 87.1, performance.currentCriticalPathScore <= 49.2, and minimumTargetImprovementRatio >= 1.77 by contract-derived-critical-path-proxy. Should calculate baseline and current with the same proxy weights. Credited dispatchSkips may count only when credited, criticalPathDelta, and evidenceCoveragePreserved are recorded. Should not claim success from phrases such as expected, estimated, or likely.",
       "files": [
         "commands/gap.md",
         ".tigerkit/docs/output-contract.md"
       ],
       "expectations": [
         "Uses measured proxy fields",
+        "Requires measurementMethod and critical path components",
+        "Requires heuristicProof.speed",
+        "Requires credited dispatch skip fields before counting skip benefit",
         "Requires improvementRatio >= 1.3",
         "Rejects estimate-only proof"
       ]
@@ -98,15 +104,17 @@
       "id": 4,
       "name": "gap-consumer-fallback-not-producer-absence",
       "prompt": "Evaluate a /tk:gap candidate that claims an API does not provide a required value, but cites only frontend fallback/default/mapper evidence. Do not write files.",
-      "expected_output": "Should not accept the candidate as P0/P1/P2 and should not create SourceConflict from consumer-only evidence. Should reject or downgrade with missing_producer_evidence, missing_evidence, or unverifiable. Should state producer-side evidence is required.",
+      "expected_output": "Should not accept the candidate as P0/P1/P2 and should not create SourceConflict from consumer-only evidence. If API contract, schema, endpoint response, serializer, data model, backend fixture, or owner-confirmed producer behavior is provided or discoverable in the repo, it should inspect that producer surface before asking the user. Should reject or downgrade with missing_producer_evidence, missing_evidence, or unverifiable only after available producer surfaces are checked. Should state producer-side evidence is required, tell the user what producer evidence was checked and what is still missing, and create a ClarificationNeeded confirmation request when the missing producer evidence blocks the gap decision.",
       "files": [
         "commands/gap.md",
         ".claude/rules/review/gap-analysis.md"
       ],
       "expectations": [
         "Rejects consumer-only producer absence claim",
-        "Uses missing_producer_evidence",
-        "Does not accept SourceConflict without producer evidence"
+        "Checks provided or discoverable producer evidence before asking user",
+        "Uses missing_producer_evidence only after available producer surfaces are checked",
+        "Does not accept SourceConflict without producer evidence",
+        "Creates ClarificationNeeded for missing producer evidence when decision-blocking"
       ]
     },
     {
@@ -128,13 +136,14 @@
       "id": 6,
       "name": "gap-final-receipt-single-execution",
       "prompt": "Evaluate /tk:gap stdout receipt for a completed run. Do not write files.",
-      "expected_output": "Should output analysis depth, expansion reasons, verification escalation, report path, P0/P1/P2 counts, source conflict count, clarification-needed count, rejected/downgraded count, performance proof, and compact Actionable Findings and Rejected/Downgraded tables using short run-local Ref values instead of long canonical Candidate/Finding IDs. Should not output executed preset, recommended preset, or Strict executed as primary labels.",
+      "expected_output": "Should output analysis depth, expansion reasons, verification escalation, dispatch skip summary, Candidate Intake Gate summary, report path, P0/P1/P2 counts, source conflict count, clarification-needed count, rejected/downgraded count, numeric performance proof, and compact Actionable Findings and Rejected/Downgraded tables using short run-local Ref values instead of long canonical Candidate/Finding IDs. Should not output executed preset, recommended preset, or Strict executed as primary labels.",
       "files": [
         "commands/gap.md",
         ".tigerkit/docs/output-contract.md"
       ],
       "expectations": [
         "Receipt is depth-based",
+        "Includes dispatch skip and Candidate Intake Gate summaries",
         "No primary preset labels",
         "Compact tables preserved",
         "Compact tables use short Ref values instead of long canonical IDs"
@@ -193,6 +202,27 @@
         "Does not create tigerkit-reflections sidecar file",
         "Skips duplicate insights",
         "Prints apply summary"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "gap-combined-heuristic-proof-claim",
+      "prompt": "Evaluate whether /tk:gap may claim the current 1.3x improvement target for false-positive reduction, speed, and analysis depth. Do not write files.",
+      "expected_output": "Should require heuristicProof.requiredImprovementRatio = 1.3. Should require heuristicProof.falsePositive.metric, denominator, baselinePredicateScore, currentPredicateScore, improvementRatio, and claimAllowed. Should require heuristicProof.speed.metric, denominator, baselineCriticalPathScore, currentCriticalPathScore, improvementRatio, and claimAllowed. Should require heuristicProof.analysisDepth.metric, denominator, baselineTriggerCoverage, currentTriggerCoverage, improvementRatio, and claimAllowed. Should allow the combined claim only when all three improvementRatio values are >= 1.3 and all three claimAllowed values are true. Should reject the combined claim if consumer-only producer evidence, uncredited dispatch skips, or risk-score-before-hard-trigger depth selection is used.",
+      "files": [
+        "commands/gap.md",
+        ".claude/rules/review/gap-analysis.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "Requires heuristicProof.requiredImprovementRatio = 1.3",
+        "Requires false-positive subproof",
+        "Requires speed subproof",
+        "Requires analysis-depth subproof",
+        "Rejects combined claim if any subproof is below threshold",
+        "Rejects consumer-only producer evidence",
+        "Rejects uncredited dispatch skip benefit",
+        "Rejects risk-score-before-hard-trigger depth selection"
       ]
     }
   ]
