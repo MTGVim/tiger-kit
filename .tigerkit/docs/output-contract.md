@@ -1,6 +1,6 @@
 # TigerKit 운영 Output Contract
 
-이 문서는 TigerKit v7.2.7 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2.8 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
 
 ```text
 stdout is a receipt. Full spec/gap bodies are saved as branch-local artifacts unless explicit print option is used.
@@ -69,8 +69,10 @@ Branch Scope: <branch-key>
 검증 강화: <none|targeted-red-team>
 상태: 완료
 Report: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md
-성능 증명: <improvementRatio>x by <measurementMethod>
-개선 증명: FP <ratio>x / FN <ratio>x / speed <ratio>x / depth <ratio>x
+성능 증명: cumulative <ratio>x / iteration <ratio>x by <measurementMethod>
+누적 개선 증명: FP <ratio>x / FN <ratio>x / speed <ratio>x / depth <ratio>x
+반복 개선 증명: FP <ratio>x / FN <ratio>x / speed <ratio>x / depth <ratio>x
+Baseline: cumulative <sourceRef> / iteration <sourceRef>
 Proof freshness: <pass|blocked>
 
 Findings:
@@ -125,63 +127,85 @@ Gap run metadata must include:
 
 Performance proof fields:
 
-- `performance.baselineCriticalPathScore`
+- `performance.cumulativeBaselineCriticalPathScore`
+- `performance.iterationBaselineCriticalPathScore`
 - `performance.currentCriticalPathScore`
-- `performance.improvementRatio` (must be `>= 1.3` when claiming speed improvement)
+- `performance.cumulativeImprovementRatio`
+- `performance.iterationImprovementRatio`
 - `performance.agentCriticalPathGroups`
 - `performance.deterministicStageGroups`
 - `performance.runProcedureSteps`
 - `performance.measurementMethod`
 
-Speed improvement may be claimed only when numeric performance fields are recorded and `performance.improvementRatio >= 1.3`. Credited `dispatchSkips` may contribute to the proof only when `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true` are recorded. Vague wording such as `expected`, `estimated`, or `likely` is not proof.
+Speed improvement may be claimed only when numeric performance fields are recorded and speed's cumulative and iteration ratios are calculated with `baselineScore / currentScore` because speed is `lower_is_better`. Credited `dispatchSkips` may contribute to the proof only when `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true` are recorded. Vague wording such as `expected`, `estimated`, or `likely` is not proof.
 
-Current optimized `/tk:gap` contract target uses `baselineCriticalPathScore = 87.1`, `currentCriticalPathScore <= 51.6`, and `minimumTargetImprovementRatio >= 1.69` by `contract-derived-critical-path-proxy`. Concrete runs must recompute actual run proof from `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count.
+Current optimized `/tk:gap` contract target uses cumulative baseline `87.1`, iteration baseline `51.6`, `currentCriticalPathScore <= 50.5`, `cumulativeImprovementRatio = 87.1 / 50.5 = 1.724...` with display ratio `1.72`, and `iterationImprovementRatio = 51.6 / 50.5 = 1.021...` with display ratio `1.02` by `contract-derived-critical-path-proxy`. Concrete runs must recompute actual run proof from `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count.
 
 Heuristic proof fields:
 
-- `heuristicProof.requiredImprovementRatio` (fixed at `1.3` for the current target)
+- `heuristicProof.cumulativeRequiredImprovementRatio` (fixed at `1.3` for the cumulative target)
+- `heuristicProof.iterationRequiredImprovementRatio` (`>1.0` for per-iteration numeric improvement)
 - `heuristicProof.falsePositive.metric: accepted_path_blocking_predicate_coverage`
 - `heuristicProof.falsePositive.denominator: required_false_positive_predicates`
-- `heuristicProof.falsePositive.baselinePredicateScore`
-- `heuristicProof.falsePositive.currentPredicateScore`
-- `heuristicProof.falsePositive.improvementRatio`
+- `heuristicProof.falsePositive.scoreDirection: higher_is_better`
+- `heuristicProof.falsePositive.cumulativeBaseline`
+- `heuristicProof.falsePositive.iterationBaseline`
+- `heuristicProof.falsePositive.currentScore`
+- `heuristicProof.falsePositive.cumulativeImprovementRatio`
+- `heuristicProof.falsePositive.iterationImprovementRatio`
+- `heuristicProof.falsePositive.improvementFormula`
 - `heuristicProof.falsePositive.claimAllowed`
 - `heuristicProof.falseNegative.metric: critical_contract_and_target_surface_coverage`
 - `heuristicProof.falseNegative.denominator: required_false_negative_predicates`
-- `heuristicProof.falseNegative.baselinePredicateScore`
-- `heuristicProof.falseNegative.currentPredicateScore`
-- `heuristicProof.falseNegative.improvementRatio`
+- `heuristicProof.falseNegative.scoreDirection: higher_is_better`
+- `heuristicProof.falseNegative.cumulativeBaseline`
+- `heuristicProof.falseNegative.iterationBaseline`
+- `heuristicProof.falseNegative.currentScore`
+- `heuristicProof.falseNegative.cumulativeImprovementRatio`
+- `heuristicProof.falseNegative.iterationImprovementRatio`
+- `heuristicProof.falseNegative.improvementFormula`
 - `heuristicProof.falseNegative.claimAllowed`
 - `heuristicProof.speed.metric: contract_critical_path_score`
-- `heuristicProof.speed.denominator: baselineCriticalPathScore`
-- `heuristicProof.speed.baselineCriticalPathScore`
-- `heuristicProof.speed.currentCriticalPathScore`
-- `heuristicProof.speed.improvementRatio`
+- `heuristicProof.speed.scoreDirection: lower_is_better`
+- `heuristicProof.speed.cumulativeBaseline`
+- `heuristicProof.speed.iterationBaseline`
+- `heuristicProof.speed.currentScore`
+- `heuristicProof.speed.cumulativeImprovementRatio`
+- `heuristicProof.speed.iterationImprovementRatio`
+- `heuristicProof.speed.improvementFormula`
 - `heuristicProof.speed.claimAllowed`
 - `heuristicProof.analysisDepth.metric: hard_trigger_selection_coverage`
 - `heuristicProof.analysisDepth.denominator: required_depth_trigger_predicates`
-- `heuristicProof.analysisDepth.baselineTriggerCoverage`
-- `heuristicProof.analysisDepth.currentTriggerCoverage`
-- `heuristicProof.analysisDepth.improvementRatio`
+- `heuristicProof.analysisDepth.scoreDirection: higher_is_better`
+- `heuristicProof.analysisDepth.cumulativeBaseline`
+- `heuristicProof.analysisDepth.iterationBaseline`
+- `heuristicProof.analysisDepth.currentScore`
+- `heuristicProof.analysisDepth.cumulativeImprovementRatio`
+- `heuristicProof.analysisDepth.iterationImprovementRatio`
+- `heuristicProof.analysisDepth.improvementFormula`
 - `heuristicProof.analysisDepth.claimAllowed`
 - `claimFreshnessGate.status`
 - `claimFreshnessGate.checkedAfter`
 - `claimFreshnessGate.staleInputs`
 - `claimFreshnessGate.repairedInputs`
+- `heuristicProof.baselineProvenance.cumulativeSourceRef`
+- `heuristicProof.baselineProvenance.iterationSourceRef`
+- `heuristicProof.baselineProvenance.capturedFrom`
+- `heuristicProof.baselineProvenance.scoreDirectionVerified`
 - `heuristicProof.claimAllowed`
 
-Heuristic proof metrics use fixed denominators from the command contract: false-positive counts accepted-path blocking predicates, false-negative counts critical contract and target surface coverage predicates, speed uses the critical path score, and analysis depth counts required depth trigger predicates. ClaimFreshnessGate is a separate claim gate, not a score denominator. A gap run may claim the combined false-positive, false-negative, speed, and analysis-depth improvement only when all four subproofs have `improvementRatio >= heuristicProof.requiredImprovementRatio`, all four have `claimAllowed: true`, and ClaimFreshnessGate passes.
+Heuristic proof metrics use fixed denominators from the command contract and must record both `cumulativeBaseline` and `iterationBaseline`. False-positive counts accepted-path plus baseline-provenance blocking predicates, false-negative counts critical contract/target surface plus baseline-provenance predicates, speed uses the critical path score, and analysis depth counts required depth trigger plus baseline auto-refresh predicates. Higher-is-better metrics use `currentScore / baselineScore`; speed uses `baselineScore / currentScore`. ClaimFreshnessGate is a separate claim gate, not a score denominator. A gap run may claim combined improvement only when all four subproofs record cumulative and iteration ratios, cumulative ratios meet the cumulative target, iteration ratios are `> 1.0`, all four have `claimAllowed: true`, and ClaimFreshnessGate passes.
 
 Contract-level improvement proof target:
 
 ```text
-falsePositive: baselinePredicateScore = 5, currentPredicateScore = 7, improvementRatio = 7 / 5 = 1.40
-falseNegative: baselinePredicateScore = 4, currentPredicateScore = 6, improvementRatio = 6 / 4 = 1.50
-speed: baselineCriticalPathScore = 87.1, currentCriticalPathScore <= 51.6, improvementRatio >= 87.1 / 51.6 = 1.69
-analysisDepth: baselineTriggerCoverage = 6, currentTriggerCoverage = 8, improvementRatio = 8 / 6 = 1.33
+falsePositive: cumulativeBaseline = 5, iterationBaseline = 7, currentScore = 8, cumulativeImprovementRatio = 8 / 5 = 1.60, iterationImprovementRatio = 8 / 7 = 1.14
+falseNegative: cumulativeBaseline = 4, iterationBaseline = 6, currentScore = 7, cumulativeImprovementRatio = 7 / 4 = 1.75, iterationImprovementRatio = 7 / 6 = 1.17
+speed: cumulativeBaseline = 87.1, iterationBaseline = 51.6, currentScore <= 50.5, cumulativeImprovementRatio = 87.1 / 50.5 = 1.724... (display 1.72), iterationImprovementRatio = 51.6 / 50.5 = 1.021... (display 1.02)
+analysisDepth: cumulativeBaseline = 6, iterationBaseline = 8, currentScore = 9, cumulativeImprovementRatio = 9 / 6 = 1.50, iterationImprovementRatio = 9 / 8 = 1.125 (display 1.13)
 ```
 
-Concrete runs must recompute actual run proof from metadata before claiming improvement.
+Concrete runs must recompute actual run proof from metadata before claiming improvement. Do not claim new iteration improvement from the fixed cumulative baseline alone; update `iterationBaseline` from the previous main version for each run.
 
 False-negative coverage metadata must include:
 
