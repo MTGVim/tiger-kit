@@ -7,7 +7,7 @@ argument-hint: "[scope] [--dry-run] [--apply=true|false] [--target <CLAUDE.md|.c
 
 사용자에게는 한글로 답합니다. 코드, path, URL, ticket, commit, hash, identifier, error는 원문 그대로 둘 수 있습니다.
 
-목표: `/tk:reflect`는 branch-local Spec Patch, Gap Run, Verify Run에서 repo-wide 가치가 있는 durable insight만 추출해 적절한 durable surface에 직접 반영합니다.
+목표: `/tk:reflect`는 branch-local Spec Patch와 Gap Run에서 repo-wide 가치가 있는 durable insight만 추출해 적절한 durable surface에 직접 반영합니다.
 
 ```text
 reflect = branch-local working memory -> CLAUDE.md/.claude/rules durable reflection
@@ -47,7 +47,6 @@ Reflect는 current branch scope의 branch-local working memory를 읽습니다.
 ```text
 .claude/tigerkit/branches/<branch-key>/specs/
 .claude/tigerkit/branches/<branch-key>/runs/gap/
-.claude/tigerkit/branches/<branch-key>/runs/verify/
 .claude/tigerkit/branches/<branch-key>/branch-state.json
 ```
 
@@ -57,7 +56,6 @@ Reflect는 current branch scope의 branch-local working memory를 읽습니다.
 - accepted gap finding pattern
 - rejected/downgraded observation reason
 - source conflict와 resolution 상태
-- verify-before-stop checklist evidence
 - current code/worktree context needed to classify repo-wide value
 
 ## Durable target classification
@@ -79,7 +77,6 @@ reflect는 아래만 durable insight 후보로 삼습니다.
 - 반복적으로 등장한 accepted finding pattern
 - branch에서 확정된 product/design decision 중 repo-wide 가치가 있는 것
 - design-system 또는 component convention으로 승격할 만한 내용
-- verify-before-stop에서 반복적으로 필요한 checklist
 - source conflict에서 확정된 resolution
 - 사용자 대화에 명시적으로 확인된 TigerKit 운영 규칙
 
