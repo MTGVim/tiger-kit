@@ -3,11 +3,11 @@ description: Product/Design Spec contract와 현재 구현/계획을 비교해 b
 argument-hint: "[--analysis-depth <direct|bounded|expanded|exhaustive-capped>] [--spec <SP-ID|path>] [--no-specs] [--print-report]"
 ---
 
-이 명령은 TigerKit v7.2 Contract-based Gap Review contract를 따릅니다.
+이 명령은 TigerKit v7.2.6 Contract-based Gap Review contract를 따릅니다.
 
 사용자에게는 한글로 답합니다. 코드, path, URL, ticket, commit, hash, identifier, error는 원문 그대로 둘 수 있습니다.
 
-목표: `/tk:gap`은 현재 브랜치의 Product/Design Spec, implementation plan, current implementation을 비교해 수정 가치가 있는 actionable finding만 도출하고 branch-local run artifact로 저장합니다.
+목표: `/tk:gap`은 현재 브랜치의 Product/Design Spec, implementation plan, current implementation을 비교해 수정 가치가 있는 actionable finding만 도출하고, missed critical issue를 줄이는 coverage proof와 함께 branch-local run artifact로 저장합니다.
 
 ```text
 gap = branch-local contract-based inspection + judge-driven final finding
@@ -17,7 +17,7 @@ gap = branch-local contract-based inspection + judge-driven final finding
 
 - plugin slash invocation은 `/tk:gap`입니다.
 - `tiger-kit gap` CLI 표현은 이 plugin command의 사용자 관점 alias로 취급합니다.
-- `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.5 mode가 아닙니다.
+- `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.6 mode가 아닙니다.
 - v6-era legacy behavior는 미지원 과거 동작입니다. `lite`의 별칭이나 계승 mode로 표현하지 않습니다.
 - legacy Figma diff style은 정식 사용자 모드가 아닙니다.
 
@@ -35,6 +35,7 @@ gap = branch-local contract-based inspection + judge-driven final finding
 - `/tk:gap`은 하나의 실행으로 동작합니다.
 - 속도는 quality mode가 아니라 `analysisDepth`와 `verificationEscalation`으로 제어합니다.
 - 모든 final finding은 analysis depth와 관계없이 evidence precision, producer evidence, ambiguity, JudgeMerger gate를 통과해야 합니다.
+- missed P0/P1 방지를 위해 source/target coverage, dispatch completeness, CriticalRedTeamAgent missed-critical search 결과를 false-negative proof로 기록합니다.
 - `lite`, `strict`, `preset`, `mode`는 현재 동작에서 user-facing quality concept이 아닙니다.
 - 사용자가 files/scope를 명시하지 않는 기본 흐름은 issue ticket, design node link, screenshot, pasted notes 같은 user-provided references에서 target hints를 추출합니다.
 - changed files는 primary scope가 아니라 Current Implementation 후보 evidence입니다.
@@ -92,7 +93,7 @@ judge-result.json
 report.md
 ```
 
-`input-manifest.json` 또는 `judge-result.json`에는 `qualityGates`, `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `compatibilityFlags`, `dispatchPlan`, `dispatchSkips`, `candidateIntakeGate`, `evidencePrecisionGate`, `blockedClarifications`, `performance`, `heuristicProof`를 반드시 기록합니다. 둘 다에 중복 기록할 필요는 없지만, `report.md`와 stdout은 같은 canonical metadata를 참조해야 합니다.
+`input-manifest.json` 또는 `judge-result.json`에는 `qualityGates`, `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `compatibilityFlags`, `dispatchPlan`, `dispatchSkips`, `candidateIntakeGate`, `evidencePrecisionGate`, `targetSurfaceCoverageGate`, `dispatchCompletenessGate`, `blockedClarifications`, `performance`, `heuristicProof`를 반드시 기록합니다. 둘 다에 중복 기록할 필요는 없지만, `report.md`와 stdout은 같은 canonical metadata를 참조해야 합니다.
 
 `.claude/tigerkit/`은 generated branch-local working memory이며 repo-wide durable knowledge가 아닙니다.
 
@@ -105,7 +106,7 @@ report.md
 - `--no-specs`: active Spec Patch 자동 참조 비활성화
 - `--print-report`: 저장된 report.md 본문을 stdout에도 출력
 
-`--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.5 mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
+`--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.6 mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
 
 ## Contract schema
 
@@ -171,6 +172,7 @@ Do not report subjective preferences.
 Do not report P3/nit issues unless explicitly requested.
 Do not repeat issues already covered by broader candidates.
 Every candidate must include concrete evidence and a fix hint.
+Do not omit a P0/P1 candidate because a narrower depth was requested when a hard trigger requires escalation.
 When citing file:line or module path evidence, cite a current read-back confirmed span.
 ```
 
@@ -260,6 +262,8 @@ CandidateIntakeGateResult = {
   evidencePrecision: pass | repair | reject | downgrade,
   producerEvidence: pass | reject | downgrade | not_applicable,
   conflictClarification: pass | blocked,
+  requirementTraceability: pass | reject | downgrade,
+  severityScope: pass | reject | downgrade,
   finalQueue: judge | rejected | source_conflict | clarification_needed,
   reasons: string[]
 }
@@ -269,6 +273,14 @@ HeuristicProof = {
   falsePositive: {
     metric: accepted_path_blocking_predicate_coverage,
     denominator: required_false_positive_predicates,
+    baselinePredicateScore,
+    currentPredicateScore,
+    improvementRatio,
+    claimAllowed
+  },
+  falseNegative: {
+    metric: critical_contract_and_target_surface_coverage,
+    denominator: required_false_negative_predicates,
     baselinePredicateScore,
     currentPredicateScore,
     improvementRatio,
@@ -296,9 +308,21 @@ HeuristicProof = {
 
 Heuristic proof metrics use fixed denominators from this contract, not ad-hoc run scoring.
 
-- `falsePositive.baselinePredicateScore` and `currentPredicateScore` count covered accepted-path blocking predicates from CandidateShapeGate, EvidencePrecisionGate, ProducerEvidenceGate, ConflictClarificationGate, and JudgeMergerAgent. `currentPredicateScore` must include producer-absence and ambiguity blockers before claim is allowed.
+- `falsePositive.baselinePredicateScore` and `currentPredicateScore` count covered accepted-path blocking predicates from CandidateShapeGate, EvidencePrecisionGate, ProducerEvidenceGate, ConflictClarificationGate, RequirementTraceabilityGate, SeverityScopeGate, and JudgeMergerAgent. Current v7.2.6 must score all seven; baseline v7.2.5 scores five because requirement traceability and severity scope were embedded in broader gates, not separately blocked before Judge.
+- `falseNegative.baselinePredicateScore` and `currentPredicateScore` count covered missed-critical prevention predicates from SourcePresenceManifest, ActiveSpecPatchCoverage, TargetHintExtraction, TargetSurfaceCoverageGate, DispatchCompletenessGate, and CriticalRedTeamAgent missed-P0/P1 search. Current v7.2.6 must score all six; baseline v7.2.5 scores four because it lacks explicit TargetSurfaceCoverageGate and DispatchCompletenessGate.
 - `speed` uses the critical path formula in Performance measurement contract.
-- `analysisDepth.baselineTriggerCoverage` and `currentTriggerCoverage` count covered depth trigger predicates from direct/bounded/expanded/exhaustive-capped selection rules. Hard triggers must be covered before risk-score tie-breaker coverage can count.
+- `analysisDepth.baselineTriggerCoverage` and `currentTriggerCoverage` count covered depth trigger predicates from direct/bounded/expanded/exhaustive-capped selection rules, requested-depth escalation, post-candidate P0/P1 escalation, target-surface depth backstop, and dispatch-completeness depth backstop. Current v7.2.6 must score eight; baseline v7.2.5 scores six because it lacks the target-surface and dispatch-completeness backstops. Hard triggers must be covered before risk-score tie-breaker coverage can count.
+
+Contract-level improvement proof target:
+
+```text
+falsePositive: baselinePredicateScore = 5, currentPredicateScore = 7, improvementRatio = 7 / 5 = 1.40
+falseNegative: baselinePredicateScore = 4, currentPredicateScore = 6, improvementRatio = 6 / 4 = 1.50
+speed: baselineCriticalPathScore = 87.1, currentCriticalPathScore <= 50.3, improvementRatio >= 87.1 / 50.3 = 1.73
+analysisDepth: baselineTriggerCoverage = 6, currentTriggerCoverage = 8, improvementRatio = 8 / 6 = 1.33
+```
+
+Combined claim requires every ratio above to be recomputed from actual run metadata and remain `>= 1.3`.
 
 ## Candidate Intake Gate
 
@@ -340,6 +364,14 @@ Consumer-side UI shape, fallback/default branch, empty state, mock, fixture, map
 
 When the rejected reason is `missing_producer_evidence`, the stdout receipt and `report.md` must still tell the user what producer evidence was checked, what remains missing, and ask for confirmation or owner-mediated evidence. Add a `ClarificationNeeded` entry with `category: implementation-blocking` when the missing producer evidence blocks the gap decision, or `category: reference-only` when it only documents why the observation was rejected.
 
+### RequirementTraceabilityGate
+
+Reject or downgrade before Judge when expected, actual, evidence, or requiredChange cannot be traced to a confirmed contract field and a current target observation. This gate prevents plausible but ungrounded findings from reaching Judge as accepted-path candidates.
+
+### SeverityScopeGate
+
+Reject or downgrade before Judge when the candidate is P3/nit, not user-visible, not requirement-relevant, not interaction-affecting, duplicate, or below the P0/P1/P2 threshold. JudgeMergerAgent remains final authority for candidates that pass, but this gate prevents low-value candidates from inflating the accepted-path queue.
+
 ### ConflictClarificationGate
 
 Block Judge accept path before accepted finding consideration. Route by source state:
@@ -352,6 +384,27 @@ Block Judge accept path before accepted finding consideration. Route by source s
 These blocked items are not final findings. They must record evidence, impact, recommendation, and status, then stay out of `finalQueue: judge` until the blocking decision is supplied.
 
 Candidate Intake Gate replaces ad-hoc candidate validation. It preserves JudgeMergerAgent as the only final authority over candidates that reach the judge queue.
+
+## False-negative coverage gates
+
+Missed critical issue를 줄이기 위해 candidate accept/reject 판단과 별도로 coverage gate를 기록합니다.
+
+### TargetSurfaceCoverageGate
+
+- Contract마다 target hint, current implementation surface, plan surface, producer surface 필요 여부를 기록합니다.
+- `analysisDepth`가 `bounded` 이상이면 대표 usage 1-3개 또는 1-depth caller/consumer 확인 결과를 기록합니다.
+- `analysisDepth`가 `expanded` 이상이면 shared component, design-system, API/DTO/state transition, similar implementation divergence surface 확인 결과를 기록합니다.
+- `analysisDepth`가 `exhaustive-capped`이면 P0/P1, auth/permission/payment/data mutation/destructive action, release gate, cross-module surface cap과 checked surface 목록을 기록합니다.
+- 확인하지 못한 required surface는 accepted finding을 만들지 않는 근거가 아니라 `ClarificationNeeded` 또는 rejected `missing_evidence`/`unverifiable` 근거로 남깁니다.
+
+### DispatchCompletenessGate
+
+- Source/plan/current implementation presence manifest와 `dispatchPlan`을 비교해 required agent가 누락되지 않았는지 확인합니다.
+- Skipped agent마다 `criticalPathEffect`, `evidenceCoveragePreserved`, `falseNegativeRisk`를 기록합니다.
+- Missing source 때문에 agent를 skip한 경우 speed proof에는 credit하지 않고, false-negative proof에는 coverage blocker 또는 reference-only clarification으로 반영합니다.
+- CriticalRedTeamAgent는 would-be accepted 후보 검증뿐 아니라 selected analysis depth에서 missed P0/P1 candidate가 없는지 targeted search를 1회 수행합니다.
+
+`heuristicProof.falseNegative`는 위 두 gate와 SourcePresenceManifest, ActiveSpecPatchCoverage, TargetHintExtraction, CriticalRedTeamAgent missed-P0/P1 search를 합산합니다. Combined improvement claim은 `falseNegative.improvementRatio >= 1.3`이고 `claimAllowed: true`일 때만 허용됩니다.
 
 ## AcceptedFinding schema
 
@@ -610,19 +663,19 @@ agentCriticalPathGroups <= 4
   CriticalRedTeamAgent
   JudgeMergerAgent
 
-deterministicStageGroups <= 7
-runProcedureSteps <= 22
-currentCriticalPathScore <= 49.2
-achievedImprovementRatio >= 1.77
+deterministicStageGroups <= 8
+runProcedureSteps <= 23
+currentCriticalPathScore <= 50.3
+achievedImprovementRatio >= 1.73
 requiredImprovementRatio >= 1.3
 ```
 
-Contract target proof for the v7.2.5 default procedure:
+Contract target proof for the v7.2.6 default procedure:
 
 ```text
 baselineCriticalPathScore = 87.1
-currentCriticalPathScore <= 4 * 10 + 7 * 1 + 22 * 0.1 = 49.2
-minimumTargetImprovementRatio = 87.1 / 49.2 = 1.77
+currentCriticalPathScore <= 4 * 10 + 8 * 1 + 23 * 0.1 = 50.3
+minimumTargetImprovementRatio = 87.1 / 50.3 = 1.73
 ```
 
 A concrete run must recompute these fields from its actual `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count. Do not copy the target proof as run proof when actual run metadata differs.
@@ -631,7 +684,7 @@ The run receipt or manifest must record the measured proxy fields when a gap run
 
 `dispatchSkips` may contribute to speed proof only when each credited skip records `agent`, `reason`, `sourceClass`, `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true`. A skip caused by missing or ambiguous evidence may reduce agent dispatch, but it cannot be credited to speed improvement unless the run still preserves the required evidence coverage for the selected `analysisDepth`.
 
-`heuristicProof.speed` mirrors the performance fields and sets `claimAllowed: true` only when `performance.improvementRatio >= heuristicProof.requiredImprovementRatio`. `heuristicProof.claimAllowed` is true only when false-positive, speed, and analysis-depth subproofs are all allowed.
+`heuristicProof.speed` mirrors the performance fields and sets `claimAllowed: true` only when `performance.improvementRatio >= heuristicProof.requiredImprovementRatio`. `heuristicProof.claimAllowed` is true only when false-positive, false-negative, speed, and analysis-depth subproofs are all allowed.
 
 ## Loop policy
 
@@ -654,7 +707,7 @@ Implementation 개선 작업에서는 `redesign -> analysis -> review -> feedbac
 1. Emit start receipt with GAP-ID, branch-key, and planned report path.
 2. In parallel, bind current worktree root, branch-key, run-id, user-provided references, target hints, current implementation candidates, and integration freshness metadata.
 3. Build source/plan/current implementation presence manifest.
-4. Freeze `dispatchPlan` from the presence manifest and record initial `dispatchSkips` with `criticalPathEffect`.
+4. Freeze `dispatchPlan` from the presence manifest and record initial `dispatchSkips` with `criticalPathEffect`, `evidenceCoveragePreserved`, and `falseNegativeRisk`.
 5. Compute `riskScore`, `sideEffectConfidence`, `analysisDepth`, `depthReasons`, and `verificationEscalation`.
 6. Record deprecated compatibility inputs in `compatibilityFlags` without changing quality gates.
 7. Load active Spec Patch unless `--no-specs` is present.
@@ -664,16 +717,18 @@ Implementation 개선 작업에서는 `redesign -> analysis -> review -> feedbac
 11. In parallel, run ProductContractAgent when product source exists and DesignContractAgent when design/design-system source exists; otherwise use recorded dispatch skip.
 12. Normalize Spec Patch items deterministically.
 13. Freeze merged contract set after removing draft, unclear, conflict, and superseded contracts from final evidence eligibility.
-14. In parallel, run PlanCoverageAgent when implementation plan exists and ImplementationComplianceAgent when current implementation exists; otherwise use recorded dispatch skip or rejected missing evidence observation.
-15. Run Candidate Intake Gate for all candidates.
-16. Run CriticalRedTeamAgent once against would-be accepted and high-risk gated candidates.
-17. Run Candidate Intake Gate for any red-team candidate.
-18. Run JudgeMergerAgent once on the final judge queue.
-19. Run ambiguity/source-conflict receipt materialization for blocked items.
-20. Compute and record `performance` fields from the final dispatch plan and deterministic stage count.
-21. Compute and record `heuristicProof` from false-positive gate coverage, performance proof, and analysis-depth trigger coverage.
-22. Acquire branch lock, write required artifacts, update branch/global index, release lock.
-23. Emit final stdout receipt and compact tables.
+14. Run TargetSurfaceCoverageGate for the selected `analysisDepth` and record unchecked required surfaces.
+15. In parallel, run PlanCoverageAgent when implementation plan exists and ImplementationComplianceAgent when current implementation exists; otherwise use recorded dispatch skip or rejected missing evidence observation.
+16. Run Candidate Intake Gate for all candidates.
+17. Run DispatchCompletenessGate before Judge queue construction.
+18. Run CriticalRedTeamAgent once against would-be accepted, high-risk gated candidates, and missed P0/P1 search scope.
+19. Run Candidate Intake Gate for any red-team candidate.
+20. Run JudgeMergerAgent once on the final judge queue.
+21. Run ambiguity/source-conflict receipt materialization for blocked items.
+22. Compute and record `performance` fields from the final dispatch plan and deterministic stage count.
+23. Compute and record `heuristicProof` from false-positive gate coverage, false-negative coverage, performance proof, and analysis-depth trigger coverage.
+24. Acquire branch lock, write required artifacts, update branch/global index, release lock.
+25. Emit final stdout receipt and compact tables.
 
 ## Output
 
@@ -689,6 +744,7 @@ Branch Scope: <branch-key>
 상태: 완료
 Report: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md
 성능 증명: <improvementRatio>x by <measurementMethod>
+개선 증명: FP <ratio>x / FN <ratio>x / speed <ratio>x / depth <ratio>x
 
 Findings:
 - P0: <count>
@@ -736,7 +792,7 @@ Rejected/Downgraded: <count>
 ## Source Conflicts / Clarification Needed
 ```
 
-`## Summary`에는 `qualityGates`, `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, dispatch skip summary, Candidate Intake Gate summary, evidence precision gate summary, performance proof를 포함합니다. compatibility flag는 입력 기록으로만 포함하고 primary label로 출력하지 않습니다. `report.md`의 상세 finding/observation/conflict/clarification 항목은 `G1`, `R1`, `C1`, `Q1` 같은 Ref를 heading 또는 첫 필드로 쓰고 canonical ID를 별도 metadata로 둡니다.
+`## Summary`에는 `qualityGates`, `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, dispatch skip summary, Candidate Intake Gate summary, evidence precision gate summary, TargetSurfaceCoverageGate summary, DispatchCompletenessGate summary, performance proof, heuristic proof를 포함합니다. compatibility flag는 입력 기록으로만 포함하고 primary label로 출력하지 않습니다. `report.md`의 상세 finding/observation/conflict/clarification 항목은 `G1`, `R1`, `C1`, `Q1` 같은 Ref를 heading 또는 첫 필드로 쓰고 canonical ID를 별도 metadata로 둡니다.
 
 `## Source Conflicts / Clarification Needed`는 implementation-blocking과 reference-only를 구분합니다. 질문은 option/evidence/impact/recommendation/status를 표로 제시합니다. UI 판단이 필요한 경우 오른쪽 border가 정렬된 TUI/ASCII prototype을 함께 둡니다.
 

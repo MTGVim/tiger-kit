@@ -1,5 +1,5 @@
 {
-  "skill_name": "tiger-kit-v7-2-5-gap-proof-heuristics",
+  "skill_name": "tiger-kit-v7-2-6-gap-fp-fn-proof-heuristics",
   "command_surface": {
     "core_commands": [
       "/tk:spec",
@@ -9,6 +9,7 @@
       "/tk:meta-feedback"
     ],
     "gap_quality_gates": ["evidencePrecision", "producerEvidence", "ambiguity", "JudgeMerger"],
+    "gap_coverage_gates": ["targetSurfaceCoverageGate", "dispatchCompletenessGate"],
     "gap_analysis_depths": [
       "direct",
       "bounded",
@@ -86,7 +87,7 @@
       "id": 3,
       "name": "gap-performance-proof",
       "prompt": "Evaluate /tk:gap performance proof requirements for the single /tk:gap execution. Do not write files.",
-      "expected_output": "Should require a measured performance proof rather than a vague estimate. Should use the contract-derived critical path proxy when runtime wall-clock instrumentation is unavailable. Should require performance.improvementRatio >= 1.3, with performance.baselineCriticalPathScore, performance.currentCriticalPathScore, performance.agentCriticalPathGroups, performance.deterministicStageGroups, performance.runProcedureSteps, performance.measurementMethod, and heuristicProof.speed recorded in the run receipt or manifest. Current optimized contract target should show performance.baselineCriticalPathScore = 87.1, performance.currentCriticalPathScore <= 49.2, and minimumTargetImprovementRatio >= 1.77 by contract-derived-critical-path-proxy. Should calculate baseline and current with the same proxy weights. Credited dispatchSkips may count only when credited, criticalPathDelta, and evidenceCoveragePreserved are recorded. Should not claim success from phrases such as expected, estimated, or likely.",
+      "expected_output": "Should require a measured performance proof rather than a vague estimate. Should use the contract-derived critical path proxy when runtime wall-clock instrumentation is unavailable. Should require performance.improvementRatio >= 1.3, with performance.baselineCriticalPathScore, performance.currentCriticalPathScore, performance.agentCriticalPathGroups, performance.deterministicStageGroups, performance.runProcedureSteps, performance.measurementMethod, and heuristicProof.speed recorded in the run receipt or manifest. Current optimized contract target should show performance.baselineCriticalPathScore = 87.1, performance.currentCriticalPathScore <= 50.3, and minimumTargetImprovementRatio >= 1.73 by contract-derived-critical-path-proxy. Should calculate baseline and current with the same proxy weights. Credited dispatchSkips may count only when credited, criticalPathDelta, and evidenceCoveragePreserved are recorded. Should not claim success from phrases such as expected, estimated, or likely.",
       "files": [
         "commands/gap.md",
         ".tigerkit/docs/output-contract.md"
@@ -136,7 +137,7 @@
       "id": 6,
       "name": "gap-final-receipt-single-execution",
       "prompt": "Evaluate /tk:gap stdout receipt for a completed run. Do not write files.",
-      "expected_output": "Should output analysis depth, expansion reasons, verification escalation, dispatch skip summary, Candidate Intake Gate summary, report path, P0/P1/P2 counts, source conflict count, clarification-needed count, rejected/downgraded count, numeric performance proof, and compact Actionable Findings and Rejected/Downgraded tables using short run-local Ref values instead of long canonical Candidate/Finding IDs. Should not output executed preset, recommended preset, or Strict executed as primary labels.",
+      "expected_output": "Should output analysis depth, expansion reasons, verification escalation, dispatch skip summary, Candidate Intake Gate summary, heuristic proof summary with FP/FN/speed/depth ratios, report path, P0/P1/P2 counts, source conflict count, clarification-needed count, rejected/downgraded count, numeric performance proof, and compact Actionable Findings and Rejected/Downgraded tables using short run-local Ref values instead of long canonical Candidate/Finding IDs. Should not output executed preset, recommended preset, or Strict executed as primary labels.",
       "files": [
         "commands/gap.md",
         ".tigerkit/docs/output-contract.md"
@@ -144,6 +145,7 @@
       "expectations": [
         "Receipt is depth-based",
         "Includes dispatch skip and Candidate Intake Gate summaries",
+        "Includes heuristic proof summary with FP/FN/speed/depth ratios",
         "No primary preset labels",
         "Compact tables preserved",
         "Compact tables use short Ref values instead of long canonical IDs"
@@ -206,9 +208,28 @@
     },
     {
       "id": 10,
+      "name": "gap-false-negative-coverage-proof",
+      "prompt": "Evaluate a /tk:gap run that could miss a P0/P1 issue because target surfaces or skipped agents were not checked. Do not write files.",
+      "expected_output": "Should require TargetSurfaceCoverageGate and DispatchCompletenessGate before claiming false-negative improvement. TargetSurfaceCoverageGate should record checked contract surfaces, target/plan/producer surfaces, and unchecked required surfaces for the selected analysisDepth. DispatchCompletenessGate should compare SourcePresenceManifest with dispatchPlan and record falseNegativeRisk for skipped agents. CriticalRedTeamAgent should perform one missed-P0/P1 targeted search within the selected depth scope. heuristicProof.falseNegative should include metric, denominator, baselinePredicateScore, currentPredicateScore, improvementRatio, and claimAllowed, and claimAllowed should be false if required surfaces are unchecked or dispatch completeness is missing.",
+      "files": [
+        "commands/gap.md",
+        ".claude/rules/review/gap-analysis.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "Requires TargetSurfaceCoverageGate",
+        "Requires DispatchCompletenessGate",
+        "Records falseNegativeRisk for skipped agents",
+        "Runs missed P0/P1 targeted search once",
+        "Requires heuristicProof.falseNegative numeric fields",
+        "Blocks false-negative claim when required coverage is missing"
+      ]
+    },
+    {
+      "id": 11,
       "name": "gap-combined-heuristic-proof-claim",
-      "prompt": "Evaluate whether /tk:gap may claim the current 1.3x improvement target for false-positive reduction, speed, and analysis depth. Do not write files.",
-      "expected_output": "Should require heuristicProof.requiredImprovementRatio = 1.3. Should require heuristicProof.falsePositive.metric, denominator, baselinePredicateScore, currentPredicateScore, improvementRatio, and claimAllowed. Should require heuristicProof.speed.metric, denominator, baselineCriticalPathScore, currentCriticalPathScore, improvementRatio, and claimAllowed. Should require heuristicProof.analysisDepth.metric, denominator, baselineTriggerCoverage, currentTriggerCoverage, improvementRatio, and claimAllowed. Should allow the combined claim only when all three improvementRatio values are >= 1.3 and all three claimAllowed values are true. Should reject the combined claim if consumer-only producer evidence, uncredited dispatch skips, or risk-score-before-hard-trigger depth selection is used.",
+      "prompt": "Evaluate whether /tk:gap may claim the current 1.3x improvement target for false-positive reduction, false-negative reduction, speed, and analysis depth. Do not write files.",
+      "expected_output": "Should require heuristicProof.requiredImprovementRatio = 1.3. Should require heuristicProof.falsePositive.metric, denominator, baselinePredicateScore, currentPredicateScore, improvementRatio, and claimAllowed, with accepted-path coverage including RequirementTraceabilityGate and SeverityScopeGate. Should require heuristicProof.falseNegative.metric, denominator, baselinePredicateScore, currentPredicateScore, improvementRatio, and claimAllowed. Should require heuristicProof.speed.metric, denominator, baselineCriticalPathScore, currentCriticalPathScore, improvementRatio, and claimAllowed. Should require heuristicProof.analysisDepth.metric, denominator, baselineTriggerCoverage, currentTriggerCoverage, improvementRatio, and claimAllowed. Should allow the combined claim only when all four improvementRatio values are >= 1.3 and all four claimAllowed values are true. Should reject the combined claim if consumer-only producer evidence, unchecked target surfaces, missing dispatch completeness, uncredited dispatch skips, or risk-score-before-hard-trigger depth selection is used.",
       "files": [
         "commands/gap.md",
         ".claude/rules/review/gap-analysis.md",
@@ -217,10 +238,14 @@
       "expectations": [
         "Requires heuristicProof.requiredImprovementRatio = 1.3",
         "Requires false-positive subproof",
+        "Requires RequirementTraceabilityGate and SeverityScopeGate in FP proof",
+        "Requires false-negative subproof",
         "Requires speed subproof",
         "Requires analysis-depth subproof",
         "Rejects combined claim if any subproof is below threshold",
         "Rejects consumer-only producer evidence",
+        "Rejects unchecked target surfaces",
+        "Rejects missing dispatch completeness",
         "Rejects uncredited dispatch skip benefit",
         "Rejects risk-score-before-hard-trigger depth selection"
       ]

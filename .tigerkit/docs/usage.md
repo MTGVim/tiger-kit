@@ -1,6 +1,6 @@
 # TigerKit 운영 사용법
 
-이 문서는 TigerKit v7.2.5 사용 가이드입니다. 산출물 위치는 `.tigerkit/docs/artifact-layout.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2.6 사용 가이드입니다. 산출물 위치는 `.tigerkit/docs/artifact-layout.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
 
 ## 언어
 
@@ -74,7 +74,8 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 - `exhaustive-capped`는 P0/P1 후보, auth/permission/payment/data mutation/destructive action, release gate, cross-module impact에 사용합니다.
 - `--legacy`, `--deep`, `--no-strict`는 active mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
 - changed files는 primary scope가 아니라 Current Implementation 후보 evidence입니다.
-- source/plan이 없으면 관련 agent는 skip하고 이유를 artifact에 기록합니다.
+- source/plan이 없으면 관련 agent는 skip하고 이유, evidenceCoveragePreserved, falseNegativeRisk를 artifact에 기록합니다.
+- missed P0/P1 방지를 위해 target surface coverage와 dispatch completeness를 확인하고 `heuristicProof.falseNegative`에 수치 proof를 남깁니다.
 - Product Spec, Design Spec, API contract, source priority, owner decision이 모호하면 user consent 전에는 final finding으로 확정하지 않고 `Clarification Needed` 또는 `SourceConflict`로 둡니다.
 - UI 판단이 모호하면 option/evidence/impact/recommendation 표와 오른쪽 border가 정렬된 TUI/ASCII prototype으로 확인합니다.
 - subagent는 candidate만 생성합니다.
