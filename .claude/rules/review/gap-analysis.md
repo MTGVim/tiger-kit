@@ -50,7 +50,7 @@
 - Detailed evidence, source contract detail, and canonical ID mapping remain in `report.md` or JSON artifacts unless `--print-report` is used.
 - Full report stdout is allowed only with `--print-report`.
 - Run artifacts must include `input-manifest.json`, `contracts.json`, `candidates.json`, `judge-result.json`, and `report.md`.
-- `input-manifest.json` or `judge-result.json` must record `qualityGates`, `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `compatibilityFlags`, dispatch skips, blocked clarifications, Candidate Intake Gate summary, and performance proof.
+- `input-manifest.json` or `judge-result.json` must record `qualityGates`, `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `compatibilityFlags`, `dispatchPlan`, `dispatchSkips`, `candidateIntakeGate`, `evidencePrecisionGate`, `blockedClarifications`, `performance`, and `heuristicProof`.
 - Do not store generated gap artifacts in `/tmp`, `$GIT_COMMON_DIR`, `.git/worktrees/*`, user home, or current worktree root outside `.claude/tigerkit/branches/<branch-key>/`.
 
 ## GAP-006: JudgeMergerAgent is the only final authority
@@ -105,13 +105,16 @@ When the target means `current implementation`, current working tree, current br
 - `/tk:gap`은 하나의 실행으로 동작합니다.
 - `lite`, `strict`, `preset`, and `mode` are not user-facing quality concepts.
 - `--lite` and `--strict` are compatibility flags only and must not skip evidence precision, producer evidence, ambiguity, or JudgeMerger gates.
+- Explicit `--analysis-depth` may not lower the heuristic-required minimum depth for risky surfaces; lower requested depth must be escalated and recorded in `depthReasons`.
 - Analysis depth is one of `direct`, `bounded`, `expanded`, or `exhaustive-capped`.
 - Use `direct` only when one explicit source/target maps to one local surface and no API/DTO/state/auth/payment/data mutation/shared component/ambiguity trigger exists.
 - Use `bounded` for single screen/component/command with nearby 1-depth usage lookup or representative usage samples up to 3.
 - Use `expanded` for shared component, design-system, API/DTO/state transition, source conflict risk, inaccessible reference, ambiguous Product/API/Design decision, or divergent similar implementations.
 - Use `exhaustive-capped` for P0/P1 candidate, auth/permission/payment/data mutation/destructive action, release gate, or cross-module impact.
-- Record `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, and any compatibility flags in `input-manifest.json` or `judge-result.json`.
-- `--legacy`, `--deep`, and `--no-strict` are not active v7.2.4 modes. v6-era legacy behavior is unsupported history, not a `lite` alias.
+- Record `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `dispatchSkips`, `heuristicProof`, and any compatibility flags in `input-manifest.json` or `judge-result.json`.
+- Source/plan/current implementation presence must determine `dispatchPlan` before agent execution. Skipped agents must record `agent`, `reason`, `sourceClass`, and `criticalPathEffect`.
+- Performance proof must use the same critical path proxy weights for baseline and current flow when wall-clock instrumentation is unavailable.
+- `--legacy`, `--deep`, and `--no-strict` are not active v7.2.5 modes. v6-era legacy behavior is unsupported history, not a `lite` alias.
 
 ## GAP-010: No unbounded loop
 
@@ -125,7 +128,7 @@ When the target means `current implementation`, current working tree, current br
 - Before any candidate enters the JudgeMergerAgent queue, including targeted red-team candidates, read back every file:line or module-path evidence coordinate against the current target surface.
 - If the cited coordinate matches the candidate claim, record it as confirmed in the run artifact evidence precision gate summary.
 - If the cited coordinate is stale but the same target surface contains the correct span, repair the coordinate and record the repair evidence.
-- If the current target surface cannot support the cited claim, downgrade candidate confidence to `low` and let JudgeMergerAgent reject it as `low_confidence`, `missing_evidence`, or `unverifiable`.
+- If the current target surface cannot support the cited claim, downgrade candidate confidence to `low` and route it out of the accepted path as `low_confidence`, `missing_evidence`, or `unverifiable` before JudgeMergerAgent considers final acceptance.
 - Do not rely on CriticalRedTeamAgent to repair stale coordinates. Targeted red-team should attack finding validity after the Candidate Intake Gate runs.
 
 ## GAP-012: Require producer evidence for producer-absence claims
@@ -133,12 +136,31 @@ When the target means `current implementation`, current working tree, current br
 - A producer-absence claim says a backend, API, serializer, DTO, data layer, or other producer does not provide, persist, transform, expose, or cover a required value or behavior.
 - Do not infer producer absence from consumer-side UI shape, fallback/default branch, empty state, mock, fixture, mapper, or missing consumer usage alone.
 - Before a producer-absence candidate can become P0/P1/P2 or `SourceConflict`, it must cite direct producer-side evidence such as API contract, schema, serializer, endpoint response, data model, persistence logic, backend test fixture, or owner-confirmed producer behavior.
-- If only consumer-side evidence exists, keep the observation as a rejected candidate with `missing_producer_evidence`, `missing_evidence`, or `unverifiable` instead of an accepted finding or `SourceConflict`.
+- If producer-side evidence is provided by the user, referenced by source material, or discoverable in the current repo scope, inspect that producer surface before asking the user and record the checked surface plus access status.
+- If only consumer-side evidence exists after checking available producer surfaces, keep the observation as a rejected candidate with `missing_producer_evidence`, `missing_evidence`, or `unverifiable` instead of an accepted finding or `SourceConflict`.
+- Do not create `SourceConflict` from consumer-only producer-absence evidence; conflict requires conflicting source contracts or producer-side evidence.
+- When using `missing_producer_evidence`, tell the user which producer evidence was checked, which evidence is still missing, and create a `ClarificationNeeded` confirmation request unless the producer question is already answered by another confirmed source.
 - If the producer may provide equivalent data through another serialization or transformation path, treat the claim as ambiguous until producer evidence confirms absence.
 
 ## GAP-013: Run Candidate Intake Gate before JudgeMergerAgent
 
 - No candidate may enter JudgeMergerAgent until CandidateShapeGate, EvidencePrecisionGate, ProducerEvidenceGate, and ConflictClarificationGate have run.
-- Gate failures must route to rejected observation, SourceConflict, or ClarificationNeeded instead of accepted finding path.
+- Gate failures must route to rejected observation, SourceConflict, or ClarificationNeeded before JudgeMergerAgent queue construction instead of accepted finding path.
 - Candidate gate results must be recorded in `input-manifest.json`, `candidates.json`, or `judge-result.json`.
 - JudgeMergerAgent remains the only final authority for accepted/rejected/downgraded final decisions among candidates that reach the judge queue.
+
+## GAP-014: Require performance proof for speed claims
+
+- A `/tk:gap` run may claim speed improvement only when `performance.baselineCriticalPathScore`, `performance.currentCriticalPathScore`, `performance.improvementRatio`, and `performance.measurementMethod` are recorded.
+- When runtime wall-clock instrumentation is unavailable, use the documented contract-derived critical path proxy with identical weights for baseline and current flow.
+- `performance.improvementRatio` must be `>= 1.3` for the current improvement target.
+- Do not treat vague wording such as `expected`, `estimated`, or `likely` as proof of speed improvement.
+- Credited `dispatchSkips` may count toward performance proof only when `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true` are recorded.
+
+## GAP-015: Require combined heuristic proof for improvement claims
+
+- A `/tk:gap` run receipt, report, or contract output may claim the current 1.3x improvement target only when `heuristicProof.requiredImprovementRatio` is `1.3` and false-positive, speed, and analysis-depth subproofs all meet or exceed it with `claimAllowed: true`.
+- `heuristicProof.falsePositive` must prove accepted-path gate coverage, including CandidateShapeGate, EvidencePrecisionGate, ProducerEvidenceGate, ConflictClarificationGate, and JudgeMergerAgent.
+- `heuristicProof.speed` must mirror recorded `performance` fields and may not count uncredited dispatch skips.
+- `heuristicProof.analysisDepth` must prove hard-trigger coverage before risk-score tie-breaker use.
+- If any subproof is missing or below threshold, set `heuristicProof.claimAllowed: false` and avoid claiming combined improvement.
