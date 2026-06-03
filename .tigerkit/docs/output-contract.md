@@ -41,45 +41,49 @@ Items:
 
 - 목적: Product/Design Spec contract와 implementation plan/current implementation을 비교합니다.
 - 기본 저장 위치: `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/`
-- 기본 호출은 preflight skim 후 실행 preset을 결정하고 자동 실행합니다. stdout에는 실행 preset과 이유를 기본 출력합니다.
-- `--lite`는 빠른 contract-based preset입니다. bounded target resolver와 bounded usage lookup을 사용합니다.
-- `--strict`는 기본 추천에 가까운 보수적 contract-based preset입니다. expanded discovery와 `CriticalRedTeamAgent` 1회를 사용합니다.
-- `lite`는 side-effect confidence >= 90, risk score <= 15, hard strict trigger 없음일 때만 추천합니다.
-- 신규 화면/flow, BE/API/DTO, auth/permission/payment/data mutation, shared component, source conflict, inaccessible source, 모호한 Product/API/Design decision은 strict trigger입니다.
-- `--legacy`, `--deep`, `--no-strict`는 active mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작입니다.
+- `/tk:gap`은 단일 `/tk:gap` 실행로 실행합니다.
+- `lite`와 `strict`는 user-facing quality mode가 아닙니다.
+- 분석 범위는 `analysisDepth: direct|bounded|expanded|exhaustive-capped`와 `depthReasons`로 기록합니다.
 - subagent는 final finding을 확정하지 못합니다.
 - candidate의 file:line 또는 module-path evidence는 JudgeMergerAgent queue 진입 전에 현재 target surface에서 read-back으로 재확인합니다.
+- producer-absence claim은 producer-side evidence gate를 통과해야 합니다.
+- ambiguity와 source conflict는 Judge accept path 전에 `Clarification Needed` 또는 `SourceConflict`로 기록합니다.
 - JudgeMergerAgent만 final accepted finding을 확정합니다.
 - final finding에는 P0/P1/P2만 포함합니다.
 - P3/nit/duplicate/unverifiable/source_conflict는 final finding으로 출력하지 않습니다.
-- Product/API/Design ambiguity는 user consent 전 final finding으로 출력하지 않고 `Clarification Needed` 또는 `SourceConflict`로 기록합니다.
 - finding이 안 나올 때까지 반복하지 않습니다.
 
 기본 stdout:
 
 ```text
-실행 preset: <lite|strict>
-이유: <한글 이유>
-Discovery depth: <bounded|expanded>
-Verification strength: <standard|red-team>
-상태: <lite|strict> preset 기준 완료
-추천 preset: <lite|strict, 실행 preset과 다를 때만 출력>
-추천 이유: <한글 이유, 실행 preset과 다를 때만 출력>
-
-Gap Review 완료: <GAP-ID>
+Gap Review 시작: <GAP-ID>
 Branch Scope: <branch-key>
-Strict 실행: <yes|no>
+품질 gate: evidence precision + producer evidence + ambiguity + JudgeMerger
+분석 깊이: <direct|bounded|expanded|exhaustive-capped>
+확장 이유: <none|summary>
+검증 강화: <none|targeted-red-team>
+상태: 완료
 Report: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md
+성능 증명: <improvementRatio>x by <measurementMethod>
 
 Findings:
 - P0: <count>
 - P1: <count>
 - P2: <count>
 
+Actionable Findings:
+| ID | Sev | 요약 | 의미 | Required change |
+| --- | --- | --- | --- | --- |
+| FND-... | P1 | <final finding 1줄 요약> | <사용자/제품 관점 영향 1줄> | <수정 방향 1줄> |
+
+Rejected/Downgraded:
+| ID | Reason | 요약 | 왜 final gap 아님 |
+| --- | --- | --- | --- |
+| CAND-... | missing_evidence | <observation 1줄 요약> | <reject/downgrade 이유 1줄> |
+
 Source Conflicts: <count>
 Clarification Needed: <count>
 Rejected/Downgraded: <count>
-Rerun: <none|/tk:gap --lite|/tk:gap --strict + reason>
 ```
 
 Run artifact files:
@@ -92,9 +96,38 @@ judge-result.json
 report.md
 ```
 
-`input-manifest.json`과 `judge-result.json`에는 `mode`, `strictExecuted`, `recommendedMode`, `recommendationReasons`, `discoveryDepth`, `verificationStrength`, `dispatchSkips`, `evidencePrecisionGate`, `blockedClarifications`, `rerunTrail`을 기록합니다.
+Gap run metadata must include:
 
-`추천 preset`은 실행 preset과 다를 때만 stdout에 출력합니다. 같은 경우에는 실행 preset과 이유만 출력하면 충분합니다. 더 넓은 discovery 또는 강한 verification이 필요할 때만 `Rerun`에 재실행 안내를 남깁니다.
+- `qualityGates: evidencePrecision|producerEvidence|ambiguity|JudgeMerger`
+- `analysisDepth: direct|bounded|expanded|exhaustive-capped`
+- `depthReasons: string[]`
+- `riskScore: number`
+- `sideEffectConfidence: number`
+- `verificationEscalation: none|targeted-red-team`
+- `compatibilityFlags: string[]`
+- `dispatchSkips`
+- `candidateIntakeGate`
+- `evidencePrecisionGate`
+- `blockedClarifications`
+
+Performance proof fields:
+
+- `performance.baselineCriticalPathScore`
+- `performance.currentCriticalPathScore`
+- `performance.improvementRatio` (must be `>= 1.3` when claiming speed improvement)
+- `performance.agentCriticalPathGroups`
+- `performance.deterministicStageGroups`
+- `performance.runProcedureSteps`
+- `performance.measurementMethod`
+
+Candidate intake metadata must include:
+
+- `candidateIntakeGate.shape`
+- `candidateIntakeGate.evidencePrecision`
+- `candidateIntakeGate.producerEvidence`
+- `candidateIntakeGate.conflictClarification`
+- `candidateIntakeGate.finalQueue`
+- `candidateIntakeGate.reasons`
 
 Clarification table shape:
 
@@ -137,6 +170,7 @@ Rejected finding uses one of:
 - `not_actionable`
 - `low_confidence`
 - `missing_evidence`
+- `missing_producer_evidence`
 - `superseded_source`
 
 ## `/tk:reflect` Output Contract

@@ -11,7 +11,7 @@
 ## 핵심 모델
 
 ```text
-TigerKit = branch-scoped spec + fast/strict gap + durable reflection + continuation handoff + generalized meta-feedback
+TigerKit = branch-scoped spec + gap + durable reflection + continuation handoff + generalized meta-feedback
 ```
 
 TigerKit은 branch-local working memory와 durable repo insight를 분리합니다.
@@ -29,7 +29,7 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 | Command | 역할 | 저장 성격 |
 | --- | --- | --- |
 | `/tk:spec` | 즉석 지시, 브레인스토밍, 회의 메모를 gap 분석용 Spec Patch로 저장합니다. | branch-local |
-| `/tk:gap` | Product/Design Spec + implementation plan + current implementation을 `lite` 또는 `strict`로 비교합니다. | branch-local |
+| `/tk:gap` | Product/Design Spec + implementation plan + current implementation을 단일 `/tk:gap` 실행로 비교합니다. | branch-local |
 | `/tk:reflect` | branch-local 산출물에서 repo에 남길 insight만 추출하고 반영합니다. | durable insight |
 | `/tk:handoff` | 다음 세션이나 다음 작업자가 이어받을 수 있도록 continuation 문서를 작성합니다. | continuation |
 | `/tk:meta-feedback` | 현재 세션에서 드러난 TigerKit command/skill 개선안을 프로젝트 자산 유출 없이 일반화합니다. | generalized feedback |
@@ -39,8 +39,8 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 ```text
 /tk:spec "방금 정해졌는데 모바일에서는 CTA를 하단 sticky로 해야 된대. 데스크톱은 기존처럼 우상단 유지."
 /tk:gap
-/tk:gap --lite
-/tk:gap --strict
+/tk:gap --analysis-depth bounded
+/tk:gap --analysis-depth expanded
 /tk:gap --spec SP-20260602-143012-A7F3
 /tk:reflect
 /tk:reflect --dry-run
@@ -64,11 +64,12 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 - 기존 Figma diff tool이 아닙니다.
 - Product Spec, Design Spec, Design System Spec, Engineering Constraint, QA Acceptance Criteria, Analytics Contract를 Contract로 normalize해 비교합니다.
 - active/confirmed Spec Patch item을 기본 참조합니다.
-- 기본 호출은 user-provided references, target hints, Current Implementation 후보, 위험 신호를 먼저 skim한 뒤 실행 preset을 결정하고 자동 실행합니다.
-- `lite`와 `strict`는 agent 유무가 아니라 discovery depth와 verification strength의 preset 차이입니다.
-- 기본 성향은 `strict`입니다. `lite`는 side-effect confidence >= 90, risk score <= 15, hard strict trigger 없음일 때만 추천합니다.
-- `--lite`는 빠른 contract-based preset입니다. issue ticket 1개 수준, FE-only, single screen/component, copy/layout/simple validation, API/DTO/state/auth/permission/payment/data mutation/shared component 영향 없음, ambiguity 없음일 때만 적합합니다.
-- `--strict`는 확장 contract-based preset입니다. 신규 화면/flow, BE/API/DTO, shared component, auth/permission/payment/data mutation, source conflict, inaccessible source, 모호한 Product/API/Design decision이면 strict가 기본입니다. 관련 docs/rules/similar implementations/shared component 영향 범위까지 더 넓게 찾고 `CriticalRedTeamAgent`를 1회 실행합니다.
+- 기본 호출은 user-provided references, target hints, Current Implementation 후보, 위험 신호를 먼저 skim한 뒤 단일 `/tk:gap` 실행로 실행합니다.
+- `lite`와 `strict`는 user-facing quality mode가 아닙니다.
+- 분석 범위 조절은 내부 `analysisDepth` 휴리스틱 또는 명시 `--analysis-depth <direct|bounded|expanded|exhaustive-capped>`로 표현합니다.
+- `direct`는 단일 explicit local surface, ambiguity 없음, API/DTO/state/auth/payment/data mutation/shared component 영향 없음일 때만 사용합니다.
+- `bounded`는 single screen/component/command와 주변 1-depth 또는 대표 usage 1-3개를 확인합니다.
+- `expanded`와 `exhaustive-capped`는 shared/design-system/API/DTO/state/auth/payment/data mutation, source conflict, inaccessible source, 모호한 Product/API/Design decision, release gate, cross-module, P0/P1 후보에 사용합니다.
 - `--legacy`, `--deep`, `--no-strict`는 active mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
 - changed files는 primary scope가 아니라 Current Implementation 후보 evidence입니다.
 - source/plan이 없으면 관련 agent는 skip하고 이유를 artifact에 기록합니다.
@@ -82,7 +83,7 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 - finding이 0개가 될 때까지 반복하지 않습니다.
 - run artifact는 `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/` 아래에 저장합니다.
 - 기본 stdout은 summary만 출력합니다. 전체 report는 `--print-report`가 있을 때만 출력합니다.
-- stdout과 report에는 실행 preset 기준 완료 상태와 다른 preset으로 재실행할 수 있는 rerun trail을 남깁니다.
+- stdout과 report에는 단일 `/tk:gap` 실행 완료 상태, analysis depth, 확장 이유, 성능 증명, compact tables를 남깁니다.
 
 ## `/tk:reflect`
 

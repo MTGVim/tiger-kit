@@ -39,15 +39,15 @@
 
 ## GAP-005: Match output to v7 storage and stdout contract
 
-- Default stdout emits summary receipt plus compact tables: run ID, branch scope, executed preset, execution reason, discovery depth, verification strength, strict status, report path, P0/P1/P2 counts, compact Actionable Findings table, compact Rejected/Downgraded table, source conflict count, clarification-needed count, rejected/downgraded count, and rerun trail.
-- Use `실행 preset` by default. Output `추천 preset` only when it differs from the executed preset.
-- Do not use ambiguous labels like `선택모드` and `실행모드`.
-- State that the run is complete for the executed preset; do not imply the gap is unfinished.
+- Default stdout emits summary receipt plus compact tables: run ID, branch scope, quality gates, analysis depth, expansion reasons, verification escalation, status, report path, performance proof, P0/P1/P2 counts, compact Actionable Findings table, compact Rejected/Downgraded table, source conflict count, clarification-needed count, and rejected/downgraded count.
+- Use `품질 gate: evidence precision + producer evidence + ambiguity + JudgeMerger` and `분석 깊이` by default. Do not use preset labels as primary output.
+- Do not use ambiguous labels like `선택모드`, `실행모드`, `실행 preset`, and `추천 preset`.
+- State that the run is complete for the 단일 `/tk:gap` 실행; do not imply the gap is unfinished.
 - Full report is stored at `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md`.
 - Compact stdout tables may include accepted finding and rejected/downgraded observation summaries, but detailed evidence and source contract detail remain in `report.md` unless `--print-report` is used.
 - Full report stdout is allowed only with `--print-report`.
 - Run artifacts must include `input-manifest.json`, `contracts.json`, `candidates.json`, `judge-result.json`, and `report.md`.
-- `input-manifest.json` or `judge-result.json` must record recommendation reasons, dispatch skips, blocked clarifications, and rerun trail.
+- `input-manifest.json` or `judge-result.json` must record `qualityGates`, `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `compatibilityFlags`, dispatch skips, blocked clarifications, Candidate Intake Gate summary, and performance proof.
 - Do not store generated gap artifacts in `/tmp`, `$GIT_COMMON_DIR`, `.git/worktrees/*`, user home, or current worktree root outside `.claude/tigerkit/branches/<branch-key>/`.
 
 ## GAP-006: JudgeMergerAgent is the only final authority
@@ -97,33 +97,33 @@ When the target means `current implementation`, current working tree, current br
 - If behind changes do not affect the target area, the local target may still be used, but report the freshness check briefly.
 - If the user explicitly names a commit, branch, PR diff, or working tree state as the target, do not switch targets silently; report stale status as evidence instead.
 
-## GAP-009: Recommend preset, then run selected preset
+## GAP-009: Use 단일 `/tk:gap` 실행 with analysis depth heuristic
 
-- `/tk:gap` computes risk score and side-effect confidence after a short preflight skim.
-- `lite` and `strict` are v7 supported presets over discovery depth and verification strength.
-- Default posture is strict. Use `lite` only when side-effect confidence is very high.
-- `--lite` is allowed only for low-risk work such as one source reference, FE-only, single screen/component, copy/layout/simple validation, no API/DTO/state transition, no auth/permission/payment/data mutation/destructive action, no shared component/design-system impact, and no ambiguity.
-- Recommend `lite` only when `sideEffectConfidence >= 90`, `riskScore <= 15`, and no hard strict trigger exists.
-- Hard strict triggers include BE/API/DTO/persistence/state transition, auth/permission/payment/data mutation/destructive action, shared component/design-system component, source conflict, inaccessible source, ambiguous Product/API/Design decision, 2+ similar implementations with different patterns, cross-module impact, 신규 화면 또는 신규 flow 개발, release gate context, or `accepted_or_candidate_P0_exists`.
-- `--strict` is the expanded contract-based preset. It uses expanded discovery and one red-team pass.
-- If no preset flag is given, run the recommended preset automatically and record why.
-- If the user explicitly passes `--lite` or `--strict`, run that preset and leave a rerun trail when another preset would be useful.
-- `--legacy`, `--deep`, and `--no-strict` are not active v7.2 modes. v6-era legacy behavior is unsupported history, not a `lite` alias.
+- `/tk:gap`은 하나의 실행으로 동작합니다.
+- `lite`, `strict`, `preset`, and `mode` are not user-facing quality concepts.
+- `--lite` and `--strict` are compatibility flags only and must not skip evidence precision, producer evidence, ambiguity, or JudgeMerger gates.
+- Analysis depth is one of `direct`, `bounded`, `expanded`, or `exhaustive-capped`.
+- Use `direct` only when one explicit source/target maps to one local surface and no API/DTO/state/auth/payment/data mutation/shared component/ambiguity trigger exists.
+- Use `bounded` for single screen/component/command with nearby 1-depth usage lookup or representative usage samples up to 3.
+- Use `expanded` for shared component, design-system, API/DTO/state transition, source conflict risk, inaccessible reference, ambiguous Product/API/Design decision, or divergent similar implementations.
+- Use `exhaustive-capped` for P0/P1 candidate, auth/permission/payment/data mutation/destructive action, release gate, or cross-module impact.
+- Record `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, and any compatibility flags in `input-manifest.json` or `judge-result.json`.
+- `--legacy`, `--deep`, and `--no-strict` are not active v7.2.3 modes. v6-era legacy behavior is unsupported history, not a `lite` alias.
 
 ## GAP-010: No unbounded loop
 
-- Lite mode runs no review loop.
-- Strict mode runs CriticalRedTeamAgent exactly once.
+- Direct, bounded, expanded, and exhaustive-capped analysis depths run no review loop.
+- CriticalRedTeamAgent runs at most once as targeted verification.
 - Never continue because of P3, nit, duplicate, unverifiable, source conflict, or clarification-needed observations.
-- Re-run only when the user explicitly asks or follows the recorded rerun trail.
+- Re-run only when the user explicitly asks with new source, changed target, or a different `--analysis-depth`.
 
 ## GAP-011: Confirm candidate evidence coordinates before judge merge
 
-- Before any candidate enters the JudgeMergerAgent queue, including strict-mode red-team candidates, read back every file:line or module-path evidence coordinate against the current target surface.
+- Before any candidate enters the JudgeMergerAgent queue, including targeted red-team candidates, read back every file:line or module-path evidence coordinate against the current target surface.
 - If the cited coordinate matches the candidate claim, record it as confirmed in the run artifact evidence precision gate summary.
 - If the cited coordinate is stale but the same target surface contains the correct span, repair the coordinate and record the repair evidence.
 - If the current target surface cannot support the cited claim, downgrade candidate confidence to `low` and let JudgeMergerAgent reject it as `low_confidence`, `missing_evidence`, or `unverifiable`.
-- Do not rely on CriticalRedTeamAgent to repair stale coordinates. In strict mode red-team should attack finding validity after the coordinate gate runs.
+- Do not rely on CriticalRedTeamAgent to repair stale coordinates. Targeted red-team should attack finding validity after the Candidate Intake Gate runs.
 
 ## GAP-012: Require producer evidence for producer-absence claims
 
@@ -132,3 +132,10 @@ When the target means `current implementation`, current working tree, current br
 - Before a producer-absence candidate can become P0/P1/P2 or `SourceConflict`, it must cite direct producer-side evidence such as API contract, schema, serializer, endpoint response, data model, persistence logic, backend test fixture, or owner-confirmed producer behavior.
 - If only consumer-side evidence exists, keep the observation as a rejected candidate with `missing_producer_evidence`, `missing_evidence`, or `unverifiable` instead of an accepted finding or `SourceConflict`.
 - If the producer may provide equivalent data through another serialization or transformation path, treat the claim as ambiguous until producer evidence confirms absence.
+
+## GAP-013: Run Candidate Intake Gate before JudgeMergerAgent
+
+- No candidate may enter JudgeMergerAgent until CandidateShapeGate, EvidencePrecisionGate, ProducerEvidenceGate, and ConflictClarificationGate have run.
+- Gate failures must route to rejected observation, SourceConflict, or ClarificationNeeded instead of accepted finding path.
+- Candidate gate results must be recorded in `input-manifest.json`, `candidates.json`, or `judge-result.json`.
+- JudgeMergerAgent remains the only final authority for accepted/rejected/downgraded final decisions among candidates that reach the judge queue.
