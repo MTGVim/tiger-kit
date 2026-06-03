@@ -41,7 +41,7 @@
 
 ## GAP-005: Match output to v7 storage and stdout contract
 
-- Default stdout emits summary receipt plus compact tables: run ID, branch scope, quality gates, analysis depth, expansion reasons, verification escalation, status, report path, performance proof, P0/P1/P2 counts, compact Actionable Findings table, compact Rejected/Downgraded table, source conflict count, clarification-needed count, and rejected/downgraded count.
+- Default stdout emits summary receipt plus compact tables: run ID, branch scope, quality gates, analysis depth, expansion reasons, verification escalation, status, report path, performance proof, heuristic proof, P0/P1/P2 counts, compact Actionable Findings table, compact Rejected/Downgraded table, source conflict count, clarification-needed count, and rejected/downgraded count.
 - Use `품질 gate: evidence precision + producer evidence + ambiguity + JudgeMerger` and `분석 깊이` by default. Do not use preset labels as primary output.
 - Do not use ambiguous labels like `선택모드`, `실행모드`, `실행 preset`, and `추천 preset`.
 - State that the run is complete for the 단일 `/tk:gap` 실행; do not imply the gap is unfinished.
@@ -50,7 +50,7 @@
 - Detailed evidence, source contract detail, and canonical ID mapping remain in `report.md` or JSON artifacts unless `--print-report` is used.
 - Full report stdout is allowed only with `--print-report`.
 - Run artifacts must include `input-manifest.json`, `contracts.json`, `candidates.json`, `judge-result.json`, and `report.md`.
-- `input-manifest.json` or `judge-result.json` must record `qualityGates`, `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `compatibilityFlags`, `dispatchPlan`, `dispatchSkips`, `candidateIntakeGate`, `evidencePrecisionGate`, `blockedClarifications`, `performance`, and `heuristicProof`.
+- `input-manifest.json` or `judge-result.json` must record `qualityGates`, `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `compatibilityFlags`, `dispatchPlan`, `dispatchSkips`, `candidateIntakeGate`, `evidencePrecisionGate`, `targetSurfaceCoverageGate`, `dispatchCompletenessGate`, `blockedClarifications`, `performance`, and `heuristicProof`.
 - Do not store generated gap artifacts in `/tmp`, `$GIT_COMMON_DIR`, `.git/worktrees/*`, user home, or current worktree root outside `.claude/tigerkit/branches/<branch-key>/`.
 
 ## GAP-006: JudgeMergerAgent is the only final authority
@@ -111,10 +111,10 @@ When the target means `current implementation`, current working tree, current br
 - Use `bounded` for single screen/component/command with nearby 1-depth usage lookup or representative usage samples up to 3.
 - Use `expanded` for shared component, design-system, API/DTO/state transition, source conflict risk, inaccessible reference, ambiguous Product/API/Design decision, or divergent similar implementations.
 - Use `exhaustive-capped` for P0/P1 candidate, auth/permission/payment/data mutation/destructive action, release gate, or cross-module impact.
-- Record `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `dispatchSkips`, `heuristicProof`, and any compatibility flags in `input-manifest.json` or `judge-result.json`.
-- Source/plan/current implementation presence must determine `dispatchPlan` before agent execution. Skipped agents must record `agent`, `reason`, `sourceClass`, and `criticalPathEffect`.
+- Record `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `dispatchSkips`, `targetSurfaceCoverageGate`, `dispatchCompletenessGate`, `heuristicProof`, and any compatibility flags in `input-manifest.json` or `judge-result.json`.
+- Source/plan/current implementation presence must determine `dispatchPlan` before agent execution. Skipped agents must record `agent`, `reason`, `sourceClass`, `criticalPathEffect`, `evidenceCoveragePreserved`, and `falseNegativeRisk`.
 - Performance proof must use the same critical path proxy weights for baseline and current flow when wall-clock instrumentation is unavailable.
-- `--legacy`, `--deep`, and `--no-strict` are not active v7.2.5 modes. v6-era legacy behavior is unsupported history, not a `lite` alias.
+- `--legacy`, `--deep`, and `--no-strict` are not active v7.2.6 modes. v6-era legacy behavior is unsupported history, not a `lite` alias.
 
 ## GAP-010: No unbounded loop
 
@@ -144,12 +144,21 @@ When the target means `current implementation`, current working tree, current br
 
 ## GAP-013: Run Candidate Intake Gate before JudgeMergerAgent
 
-- No candidate may enter JudgeMergerAgent until CandidateShapeGate, EvidencePrecisionGate, ProducerEvidenceGate, and ConflictClarificationGate have run.
+- No candidate may enter JudgeMergerAgent until CandidateShapeGate, EvidencePrecisionGate, ProducerEvidenceGate, ConflictClarificationGate, RequirementTraceabilityGate, and SeverityScopeGate have run.
 - Gate failures must route to rejected observation, SourceConflict, or ClarificationNeeded before JudgeMergerAgent queue construction instead of accepted finding path.
 - Candidate gate results must be recorded in `input-manifest.json`, `candidates.json`, or `judge-result.json`.
 - JudgeMergerAgent remains the only final authority for accepted/rejected/downgraded final decisions among candidates that reach the judge queue.
 
-## GAP-014: Require performance proof for speed claims
+## GAP-014: Require false-negative coverage proof for missed-critical claims
+
+- A `/tk:gap` run may claim false-negative improvement only when `heuristicProof.falseNegative` records `metric`, `denominator`, `baselinePredicateScore`, `currentPredicateScore`, `improvementRatio`, and `claimAllowed`.
+- The false-negative denominator is `required_false_negative_predicates` and covers SourcePresenceManifest, ActiveSpecPatchCoverage, TargetHintExtraction, TargetSurfaceCoverageGate, DispatchCompletenessGate, and CriticalRedTeamAgent missed-P0/P1 search.
+- TargetSurfaceCoverageGate must record checked contract surfaces, checked target/plan/producer surfaces, and unchecked required surfaces for the selected `analysisDepth`.
+- DispatchCompletenessGate must compare the presence manifest with `dispatchPlan`; skipped agents must record `falseNegativeRisk` and whether evidence coverage is preserved.
+- Missing or ambiguous source may justify a skip, but it must not be counted as false-negative coverage unless the required surface is covered by another confirmed source or recorded as blocked/rejected evidence.
+- `heuristicProof.falseNegative.improvementRatio` must be `>= 1.3` before combined improvement can be claimed.
+
+## GAP-015: Require performance proof for speed claims
 
 - A `/tk:gap` run may claim speed improvement only when `performance.baselineCriticalPathScore`, `performance.currentCriticalPathScore`, `performance.improvementRatio`, and `performance.measurementMethod` are recorded.
 - When runtime wall-clock instrumentation is unavailable, use the documented contract-derived critical path proxy with identical weights for baseline and current flow.
@@ -157,10 +166,12 @@ When the target means `current implementation`, current working tree, current br
 - Do not treat vague wording such as `expected`, `estimated`, or `likely` as proof of speed improvement.
 - Credited `dispatchSkips` may count toward performance proof only when `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true` are recorded.
 
-## GAP-015: Require combined heuristic proof for improvement claims
+## GAP-016: Require combined heuristic proof for improvement claims
 
-- A `/tk:gap` run receipt, report, or contract output may claim the current 1.3x improvement target only when `heuristicProof.requiredImprovementRatio` is `1.3` and false-positive, speed, and analysis-depth subproofs all meet or exceed it with `claimAllowed: true`.
-- `heuristicProof.falsePositive` must prove accepted-path gate coverage, including CandidateShapeGate, EvidencePrecisionGate, ProducerEvidenceGate, ConflictClarificationGate, and JudgeMergerAgent.
+- A `/tk:gap` run receipt, report, or contract output may claim the current 1.3x improvement target only when `heuristicProof.requiredImprovementRatio` is `1.3` and false-positive, false-negative, speed, and analysis-depth subproofs all meet or exceed it with `claimAllowed: true`.
+- `heuristicProof.falsePositive` must prove accepted-path gate coverage, including CandidateShapeGate, EvidencePrecisionGate, ProducerEvidenceGate, ConflictClarificationGate, RequirementTraceabilityGate, SeverityScopeGate, and JudgeMergerAgent.
+- `heuristicProof.falseNegative` must prove missed-critical coverage, including SourcePresenceManifest, ActiveSpecPatchCoverage, TargetHintExtraction, TargetSurfaceCoverageGate, DispatchCompletenessGate, and CriticalRedTeamAgent missed-P0/P1 search.
 - `heuristicProof.speed` must mirror recorded `performance` fields and may not count uncredited dispatch skips.
-- `heuristicProof.analysisDepth` must prove hard-trigger coverage before risk-score tie-breaker use.
+- `heuristicProof.analysisDepth` must prove hard-trigger coverage before risk-score tie-breaker use, including target-surface and dispatch-completeness backstops.
+- Contract-level target ratios are FP `7 / 5 = 1.40`, FN `6 / 4 = 1.50`, speed `87.1 / 50.3 = 1.73`, and analysis depth `8 / 6 = 1.33`. Concrete runs must recompute from actual metadata.
 - If any subproof is missing or below threshold, set `heuristicProof.claimAllowed: false` and avoid claiming combined improvement.

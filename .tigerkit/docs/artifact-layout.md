@@ -1,6 +1,6 @@
 # TigerKit 운영 산출물 구조
 
-이 문서는 TigerKit v7.2.5 산출물 배치와 책임을 설명합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2.6 산출물 배치와 책임을 설명합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
 
 TigerKit은 branch-local working memory와 durable insight를 분리합니다.
 
@@ -64,7 +64,7 @@ judge-result.json
 report.md
 ```
 
-단일 `/tk:gap` 실행은 metadata와 execution order를 바꾸며, artifact location이나 required file name은 바꾸지 않습니다. `heuristicProof`, `performance`, `dispatchPlan`, `dispatchSkips`, `candidateIntakeGate`는 `input-manifest.json` 또는 `judge-result.json`에 기록합니다.
+단일 `/tk:gap` 실행은 metadata와 execution order를 바꾸며, artifact location이나 required file name은 바꾸지 않습니다. `heuristicProof`, `performance`, `dispatchPlan`, `dispatchSkips`, `candidateIntakeGate`, `targetSurfaceCoverageGate`, `dispatchCompletenessGate`는 `input-manifest.json` 또는 `judge-result.json`에 기록합니다.
 
 ## Branch key
 

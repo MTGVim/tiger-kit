@@ -1,6 +1,6 @@
 # TigerKit 운영 Output Contract
 
-이 문서는 TigerKit v7.2.5 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2.6 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
 
 ```text
 stdout is a receipt. Full spec/gap bodies are saved as branch-local artifacts unless explicit print option is used.
@@ -55,6 +55,7 @@ Items:
 - 유저향 stdout/report table은 run-local short Ref(`G1`, `R1`, `C1`, `Q1`)를 우선 표시하고 긴 canonical ID는 JSON artifact와 report 상세/참조 영역에 보관합니다.
 - final finding에는 P0/P1/P2만 포함합니다.
 - P3/nit/duplicate/unverifiable/source_conflict는 final finding으로 출력하지 않습니다.
+- missed P0/P1 방지를 위해 target surface coverage와 dispatch completeness를 기록하고 `heuristicProof.falseNegative`로 수치화합니다.
 - finding이 안 나올 때까지 반복하지 않습니다.
 
 기본 stdout:
@@ -69,6 +70,7 @@ Branch Scope: <branch-key>
 상태: 완료
 Report: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md
 성능 증명: <improvementRatio>x by <measurementMethod>
+개선 증명: FP <ratio>x / FN <ratio>x / speed <ratio>x / depth <ratio>x
 
 Findings:
 - P0: <count>
@@ -111,9 +113,11 @@ Gap run metadata must include:
 - `verificationEscalation: none|targeted-red-team`
 - `compatibilityFlags: string[]`
 - `dispatchPlan`
-- `dispatchSkips` with `agent`, `reason`, `sourceClass`, and `criticalPathEffect` for every skip; credited speed-proof skips also include `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true`
+- `dispatchSkips` with `agent`, `reason`, `sourceClass`, `criticalPathEffect`, `evidenceCoveragePreserved`, and `falseNegativeRisk` for every skip; credited speed-proof skips also include `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true`
 - `candidateIntakeGate`
 - `evidencePrecisionGate`
+- `targetSurfaceCoverageGate`
+- `dispatchCompletenessGate`
 - `blockedClarifications`
 - `heuristicProof`
 
@@ -129,7 +133,7 @@ Performance proof fields:
 
 Speed improvement may be claimed only when numeric performance fields are recorded and `performance.improvementRatio >= 1.3`. Credited `dispatchSkips` may contribute to the proof only when `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true` are recorded. Vague wording such as `expected`, `estimated`, or `likely` is not proof.
 
-Current optimized `/tk:gap` contract target uses `baselineCriticalPathScore = 87.1`, `currentCriticalPathScore <= 49.2`, and `minimumTargetImprovementRatio >= 1.77` by `contract-derived-critical-path-proxy`. Concrete runs must recompute actual run proof from `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count.
+Current optimized `/tk:gap` contract target uses `baselineCriticalPathScore = 87.1`, `currentCriticalPathScore <= 50.3`, and `minimumTargetImprovementRatio >= 1.73` by `contract-derived-critical-path-proxy`. Concrete runs must recompute actual run proof from `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count.
 
 Heuristic proof fields:
 
@@ -140,6 +144,12 @@ Heuristic proof fields:
 - `heuristicProof.falsePositive.currentPredicateScore`
 - `heuristicProof.falsePositive.improvementRatio`
 - `heuristicProof.falsePositive.claimAllowed`
+- `heuristicProof.falseNegative.metric: critical_contract_and_target_surface_coverage`
+- `heuristicProof.falseNegative.denominator: required_false_negative_predicates`
+- `heuristicProof.falseNegative.baselinePredicateScore`
+- `heuristicProof.falseNegative.currentPredicateScore`
+- `heuristicProof.falseNegative.improvementRatio`
+- `heuristicProof.falseNegative.claimAllowed`
 - `heuristicProof.speed.metric: contract_critical_path_score`
 - `heuristicProof.speed.denominator: baselineCriticalPathScore`
 - `heuristicProof.speed.baselineCriticalPathScore`
@@ -154,7 +164,28 @@ Heuristic proof fields:
 - `heuristicProof.analysisDepth.claimAllowed`
 - `heuristicProof.claimAllowed`
 
-Heuristic proof metrics use fixed denominators from the command contract: false-positive counts accepted-path blocking predicates, speed uses the critical path score, and analysis depth counts required depth trigger predicates. A gap run may claim the combined false-positive, speed, and analysis-depth improvement only when all three subproofs have `improvementRatio >= heuristicProof.requiredImprovementRatio` and `claimAllowed: true`.
+Heuristic proof metrics use fixed denominators from the command contract: false-positive counts accepted-path blocking predicates, false-negative counts critical contract and target surface coverage predicates, speed uses the critical path score, and analysis depth counts required depth trigger predicates. A gap run may claim the combined false-positive, false-negative, speed, and analysis-depth improvement only when all four subproofs have `improvementRatio >= heuristicProof.requiredImprovementRatio` and `claimAllowed: true`.
+
+Contract-level improvement proof target:
+
+```text
+falsePositive: baselinePredicateScore = 5, currentPredicateScore = 7, improvementRatio = 1.40
+falseNegative: baselinePredicateScore = 4, currentPredicateScore = 6, improvementRatio = 1.50
+speed: baselineCriticalPathScore = 87.1, currentCriticalPathScore <= 50.3, improvementRatio >= 1.73
+analysisDepth: baselineTriggerCoverage = 6, currentTriggerCoverage = 8, improvementRatio = 1.33
+```
+
+Concrete runs must recompute actual run proof from metadata before claiming improvement.
+
+False-negative coverage metadata must include:
+
+- `targetSurfaceCoverageGate.contractsChecked`
+- `targetSurfaceCoverageGate.surfacesChecked`
+- `targetSurfaceCoverageGate.uncheckedRequiredSurfaces`
+- `dispatchCompletenessGate.requiredAgents`
+- `dispatchCompletenessGate.skippedAgents`
+- `dispatchCompletenessGate.falseNegativeRiskSummary`
+- `dispatchCompletenessGate.missedP0P1SearchStatus`
 
 Candidate intake metadata must include:
 
@@ -162,6 +193,8 @@ Candidate intake metadata must include:
 - `candidateIntakeGate.evidencePrecision`
 - `candidateIntakeGate.producerEvidence`
 - `candidateIntakeGate.conflictClarification`
+- `candidateIntakeGate.requirementTraceability`
+- `candidateIntakeGate.severityScope`
 - `candidateIntakeGate.finalQueue`
 - `candidateIntakeGate.reasons`
 
