@@ -1,6 +1,6 @@
 # TigerKit 운영 산출물 구조
 
-이 문서는 TigerKit v7.2.9 산출물 배치와 책임을 설명합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2.10 산출물 배치와 책임을 설명합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
 
 TigerKit은 branch-local working memory와 durable insight를 분리합니다.
 

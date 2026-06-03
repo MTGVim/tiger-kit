@@ -17,17 +17,8 @@
     }
   },
   "iterationBaseline": {
-    "sourceRef": "origin/main@v7.2.8 before v7.2.9 iteration",
-    "bootstrapIterationSeed": true,
-    "scores": {
-      "falsePositive": 8,
-      "falseNegative": 7,
-      "speed": 50.5,
-      "analysisDepth": 9
-    }
-  },
-  "currentTarget": {
-    "sourceRef": "v7.2.9 contract target",
+    "sourceRef": "origin/main@v7.2.9 currentTarget before v7.2.10 maintenance iteration",
+    "bootstrapIterationSeed": false,
     "scores": {
       "falsePositive": 9,
       "falseNegative": 8,
@@ -35,5 +26,24 @@
       "analysisDepth": 10
     }
   },
-  "promotionRule": "After this version lands on main, the next iteration must load currentTarget as iterationBaseline from origin/main instead of reusing fixed cumulative scores."
+  "currentTarget": {
+    "sourceRef": "v7.2.10 maintenance target; no new numeric improvement over v7.2.9",
+    "scores": {
+      "falsePositive": 9,
+      "falseNegative": 8,
+      "speed": 50.3,
+      "analysisDepth": 10
+    }
+  },
+  "promotionRule": "After this version lands on main, the next iteration must load currentTarget as iterationBaseline from origin/main instead of reusing fixed cumulative scores.",
+  "latestIterationAssessment": {
+    "numericImprovementAvailable": false,
+    "reason": "v7.2.9 currentTarget already covers the fair FP/FN/depth predicates and speed proxy cannot be lowered without artificial gate inflation or procedure renumbering.",
+    "iterationImprovementRatios": {
+      "falsePositive": 1,
+      "falseNegative": 1,
+      "speed": 1,
+      "analysisDepth": 1
+    }
+  }
 }

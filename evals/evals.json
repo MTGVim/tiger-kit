@@ -1,5 +1,5 @@
 {
-  "skill_name": "tiger-kit-v7-2-9-gap-baseline-auto-refresh",
+  "skill_name": "tiger-kit-v7-2-10-gap-baseline-no-new-numeric-improvement",
   "command_surface": {
     "core_commands": [
       "/tk:spec",
@@ -89,7 +89,7 @@
       "id": 3,
       "name": "gap-performance-proof",
       "prompt": "Evaluate /tk:gap performance proof requirements for the single /tk:gap execution. Do not write files.",
-      "expected_output": "Should require a measured performance proof rather than a vague estimate. Should use the contract-derived critical path proxy when runtime wall-clock instrumentation is unavailable. Should require speed proof to record cumulativeBaseline, refreshed origin/main iterationBaseline, currentScore, cumulativeImprovementRatio, iterationImprovementRatio, score direction lower_is_better, performance.agentCriticalPathGroups, performance.deterministicStageGroups, performance.runProcedureSteps, performance.measurementMethod, baselineAutoRefreshGate, baseline-snapshot.json, and heuristicProof.speed in the run receipt or manifest. Current optimized contract target should show cumulative baseline 87.1, iteration baseline 50.5, currentScore <= 50.3, cumulativeImprovementRatio = 87.1 / 50.3 = 1.731... with display ratio 1.73, and iterationImprovementRatio = 50.5 / 50.3 = 1.00398... with display ratio 1.004 by contract-derived-critical-path-proxy. Should calculate baseline and current with the same proxy weights. Credited dispatchSkips may count only when credited, criticalPathDelta, and evidenceCoveragePreserved are recorded. Should not claim success from phrases such as expected, estimated, or likely.",
+      "expected_output": "Should require a measured performance proof rather than a vague estimate. Should use the contract-derived critical path proxy when runtime wall-clock instrumentation is unavailable. Should require speed proof to record cumulativeBaseline, refreshed origin/main iterationBaseline, currentScore, cumulativeImprovementRatio, iterationImprovementRatio, score direction lower_is_better, performance.agentCriticalPathGroups, performance.deterministicStageGroups, performance.runProcedureSteps, performance.measurementMethod, baselineAutoRefreshGate, baseline-snapshot.json, and heuristicProof.speed in the run receipt or manifest. Current optimized contract target should show cumulative baseline 87.1, iteration baseline 50.3, currentScore <= 50.3, cumulativeImprovementRatio = 87.1 / 50.3 = 1.731... with display ratio 1.73, and iterationImprovementRatio = 50.3 / 50.3 = 1.00 with no new iteration speed improvement claim by contract-derived-critical-path-proxy. Should calculate baseline and current with the same proxy weights. Credited dispatchSkips may count only when credited, criticalPathDelta, and evidenceCoveragePreserved are recorded. Should not claim success from phrases such as expected, estimated, or likely.",
       "files": [
         "commands/gap.md",
         ".tigerkit/docs/output-contract.md",

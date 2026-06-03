@@ -3,7 +3,7 @@ description: Product/Design Spec contract와 현재 구현/계획을 비교해 b
 argument-hint: "[--analysis-depth <direct|bounded|expanded|exhaustive-capped>] [--spec <SP-ID|path>] [--no-specs] [--print-report]"
 ---
 
-이 명령은 TigerKit v7.2.9 Contract-based Gap Review contract를 따릅니다.
+이 명령은 TigerKit v7.2.10 Contract-based Gap Review contract를 따릅니다.
 
 사용자에게는 한글로 답합니다. 코드, path, URL, ticket, commit, hash, identifier, error는 원문 그대로 둘 수 있습니다.
 
@@ -17,8 +17,8 @@ gap = branch-local contract-based inspection + judge-driven final finding
 
 - plugin slash invocation은 `/tk:gap`입니다.
 - `tiger-kit gap` CLI 표현은 이 plugin command의 사용자 관점 alias로 취급합니다.
-- `--lite`와 `--strict`는 compatibility flag로만 기록하며 active v7.2.9 user-facing quality mode가 아닙니다.
-- `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.9 mode가 아닙니다.
+- `--lite`와 `--strict`는 compatibility flag로만 기록하며 active v7.2.10 user-facing quality mode가 아닙니다.
+- `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.10 mode가 아닙니다.
 - v6-era legacy behavior는 미지원 과거 동작입니다. `lite`의 별칭이나 계승 mode로 표현하지 않습니다.
 - legacy Figma diff style은 정식 사용자 모드가 아닙니다.
 
@@ -108,7 +108,7 @@ report.md
 - `--no-specs`: active Spec Patch 자동 참조 비활성화
 - `--print-report`: 저장된 report.md 본문을 stdout에도 출력
 
-`--lite`와 `--strict`는 compatibility flag로만 기록하고 quality gate를 바꾸지 않습니다. `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.9 mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
+`--lite`와 `--strict`는 compatibility flag로만 기록하고 quality gate를 바꾸지 않습니다. `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.10 mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
 
 ## Contract schema
 
@@ -365,24 +365,24 @@ Contract-level improvement proof target separates cumulative baseline from itera
 
 ```text
 falsePositive:
-  cumulativeBaseline = 5, iterationBaseline = 8, currentScore = 9
+  cumulativeBaseline = 5, iterationBaseline = 9, currentScore = 9
   cumulativeImprovementRatio = 9 / 5 = 1.80
-  iterationImprovementRatio = 9 / 8 = 1.125 (display 1.13)
+  iterationImprovementRatio = 9 / 9 = 1.00 (no new iteration claim)
 falseNegative:
-  cumulativeBaseline = 4, iterationBaseline = 7, currentScore = 8
+  cumulativeBaseline = 4, iterationBaseline = 8, currentScore = 8
   cumulativeImprovementRatio = 8 / 4 = 2.00
-  iterationImprovementRatio = 8 / 7 = 1.142... (display 1.14)
+  iterationImprovementRatio = 8 / 8 = 1.00 (no new iteration claim)
 speed:
-  cumulativeBaseline = 87.1, iterationBaseline = 50.5, currentScore <= 50.3
+  cumulativeBaseline = 87.1, iterationBaseline = 50.3, currentScore <= 50.3
   cumulativeImprovementRatio = 87.1 / 50.3 = 1.731... (display 1.73)
-  iterationImprovementRatio = 50.5 / 50.3 = 1.001... (display 1.00, raw ratio must stay > 1.0)
+  iterationImprovementRatio = 50.3 / 50.3 = 1.00 (no new iteration claim)
 analysisDepth:
-  cumulativeBaseline = 6, iterationBaseline = 9, currentScore = 10
+  cumulativeBaseline = 6, iterationBaseline = 10, currentScore = 10
   cumulativeImprovementRatio = 10 / 6 = 1.666... (display 1.67)
-  iterationImprovementRatio = 10 / 9 = 1.111... (display 1.11)
+  iterationImprovementRatio = 10 / 10 = 1.00 (no new iteration claim)
 ```
 
-Combined claim requires every cumulative ratio and every iteration ratio above to be recomputed from actual run metadata. Do not claim a new iteration improvement from the fixed cumulative baseline alone.
+Combined claim requires every cumulative ratio and every iteration ratio above to be recomputed from actual run metadata. Do not claim a new iteration improvement from the fixed cumulative baseline alone. When every iteration ratio is `1.00`, report cumulative proof and explicit no-new-iteration-improvement status instead of a combined improvement claim.
 
 ## Candidate Intake Gate
 
@@ -750,22 +750,24 @@ runProcedureSteps <= 23
 currentCriticalPathScore <= 50.3
 cumulativeImprovementRatio = 87.1 / 50.3 = 1.731...
 cumulativeImprovementRatioDisplay = 1.73
-iterationImprovementRatio = 50.5 / 50.3 = 1.00398...
-iterationImprovementRatioDisplay = 1.004
+iterationImprovementRatio = 50.3 / 50.3 = 1.00
+iterationImprovementRatioDisplay = 1.00
 cumulativeRequiredImprovementRatio >= 1.3
 iterationRequiredImprovementRatio > 1.0
+newIterationImprovementClaimAllowed = false
 ```
 
-Contract target proof for the v7.2.9 default procedure:
+Contract target proof for the v7.2.10 default procedure:
 
 ```text
 cumulativeBaselineCriticalPathScore = 87.1
-iterationBaselineCriticalPathScore = 50.5
+iterationBaselineCriticalPathScore = 50.3
 currentCriticalPathScore <= 4 * 10 + 8 * 1 + 23 * 0.1 = 50.3
 cumulativeImprovementRatio = 87.1 / 50.3 = 1.731...
 cumulativeImprovementRatioDisplay = 1.73
-iterationImprovementRatio = 50.5 / 50.3 = 1.00398...
-iterationImprovementRatioDisplay = 1.004
+iterationImprovementRatio = 50.3 / 50.3 = 1.00
+iterationImprovementRatioDisplay = 1.00
+newIterationImprovementClaimAllowed = false
 ```
 
 A concrete run must recompute these fields from its actual `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count. Do not copy the target proof as run proof when actual run metadata differs.
