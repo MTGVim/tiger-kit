@@ -4,7 +4,6 @@
     "core_commands": [
       "/tk:spec",
       "/tk:gap",
-      "/tk:verify-before-stop",
       "/tk:reflect",
       "/tk:handoff",
       "/tk:meta-feedback"
@@ -24,18 +23,17 @@
       "id": 0,
       "name": "command-surface-restores-existing-commands",
       "prompt": "You are evaluating TigerKit v7.2 active command surface. Describe the user-facing commands. Do not write files.",
-      "expected_output": "Should list /tk:spec, /tk:gap, /tk:verify-before-stop, /tk:reflect, /tk:handoff, and /tk:meta-feedback as active user-facing commands. Should explain that handoff and meta-feedback were preserved existing commands, not newly invented v7 commands. Should explain that spec/gap/verify-before-stop write branch-local working memory, reflect creates durable insight, handoff creates continuation context, and meta-feedback extracts generalized TigerKit improvement feedback from session history.",
+      "expected_output": "Should list /tk:spec, /tk:gap, /tk:reflect, /tk:handoff, and /tk:meta-feedback as active user-facing commands. Should explain that handoff and meta-feedback were preserved existing commands, not newly invented v7 commands. Should explain that spec/gap write branch-local working memory, reflect creates durable insight, handoff creates continuation context, and meta-feedback extracts generalized TigerKit improvement feedback from session history.",
       "files": [],
       "expectations": [
         "Lists /tk:spec",
         "Lists /tk:gap",
-        "Lists /tk:verify-before-stop",
         "Lists /tk:reflect",
         "Lists /tk:handoff",
         "Lists /tk:meta-feedback",
         "Treats handoff as restored existing continuation command",
         "Treats meta-feedback as restored existing session-history improvement command",
-        "Explains spec/gap/verify-before-stop branch-local working memory",
+        "Explains spec/gap branch-local working memory",
         "Explains reflect-only durable insight"
       ]
     },
@@ -118,43 +116,29 @@
     {
       "id": 4,
       "name": "handoff-remains-continuation-command",
-      "prompt": "You are evaluating TigerKit v7.2 /tk:handoff after a branch has spec, gap, and verify artifacts. Describe expected behavior. Do not write files.",
-      "expected_output": "Should preserve /tk:handoff as the existing continuation command. It should write .claude/handoffs/current.md by default, include Reader Guide and Resume Prompt, optionally mention latest branch-local Spec Patch, Gap Run, and Verify Run paths when observed, and create a dated archive only when archive=true or an explicit archive request is present.",
+      "prompt": "You are evaluating TigerKit v7.2 /tk:handoff after a branch has spec and gap artifacts. Describe expected behavior. Do not write files.",
+      "expected_output": "Should preserve /tk:handoff as the existing continuation command. It should write .claude/handoffs/current.md by default, include Reader Guide and Resume Prompt, optionally mention latest branch-local Spec Patch and Gap Run paths when observed, and create a dated archive only when archive=true or an explicit archive request is present.",
       "files": [],
       "expectations": [
         "Preserves /tk:handoff as active command",
         "Writes .claude/handoffs/current.md by default",
         "Includes Reader Guide",
         "Includes Resume Prompt",
-        "Can reference latest branch-local Spec Patch, Gap Run, and Verify Run paths",
+        "Can reference latest branch-local Spec Patch and Gap Run paths",
         "Does not create dated archive without archive=true or explicit archive request"
-      ]
-    },
-    {
-      "id": 5,
-      "name": "verify-before-stop-is-hook-preparation-command",
-      "prompt": "You are evaluating TigerKit v7.2 /tk:verify-before-stop. Describe why it exists as a command even though Stop hook verifies before stopping. Do not write files.",
-      "expected_output": "Should explain that /tk:verify-before-stop is a manual preparation command and the Stop hook is the automatic guard. The command prepares or refreshes branch-local verification evidence before the hook checks it. It should not introduce /tk:verify as a separate active command.",
-      "files": [],
-      "expectations": [
-        "Explains command is manual preparation",
-        "Explains Stop hook is automatic guard",
-        "Explains command prepares evidence the hook can check",
-        "Does not introduce /tk:verify as active command",
-        "Keeps /tk:verify-before-stop as active command"
       ]
     },
     {
       "id": 6,
       "name": "reflect-applies-directly-to-rules-and-claude",
-      "prompt": "You are evaluating TigerKit v7.2 /tk:reflect after branch-local gap and verify runs produced durable repo-wide insight candidates. Describe expected behavior. Do not write files.",
+      "prompt": "You are evaluating TigerKit v7.2 /tk:reflect after branch-local gap runs produced durable repo-wide insight candidates. Describe expected behavior. Do not write files.",
       "expected_output": "Should default to apply=true, read branch-local TigerKit memory, write directly to CLAUDE.md or .claude/rules/* depending on target scope, treat --dry-run and --apply=false as preview-only aliases, avoid modifying source code, dedupe repeated insights, and avoid creating a separate tigerkit-reflections sidecar file.",
       "files": [],
       "expectations": [
         "Defaults /tk:reflect to apply=true",
         "Treats --dry-run as apply=false",
         "Treats --apply=false as dry-run alias",
-        "Reads branch-local specs/gap/verify memory",
+        "Reads branch-local specs/gap memory",
         "Writes directly to CLAUDE.md or .claude/rules/*",
         "Does not modify source code",
         "Does not create tigerkit-reflections sidecar file",

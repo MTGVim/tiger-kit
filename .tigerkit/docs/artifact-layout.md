@@ -25,11 +25,6 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
               candidates.json
               judge-result.json
               report.md
-          verify/
-            VFY-YYYYMMDD-HHmmss-RAND/
-              checklist.md
-              evidence.json
-              report.md
         cache/
         branch-state.json
   handoffs/
@@ -47,13 +42,12 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
 
 | 파일 | 역할 | 저장 성격 |
 | --- | --- | --- |
-| `.claude/tigerkit/global-index.json` | branch-key 목록과 마지막 접근 정보. 저장 또는 apply를 수행한 `/tk:spec`, `/tk:gap`, `/tk:verify-before-stop`, `/tk:reflect` 실행 시 `lastUsedAt`을 갱신합니다. `--no-index`, `--no-save`, `--dry-run`, `--apply=false`처럼 저장하지 않는 실행은 recency를 갱신하지 않습니다. 손상되어도 branch-local index에서 복구 가능해야 합니다. | generated |
-| `.claude/tigerkit/branches/<branch-key>/branch-state.json` | 현재 branch scope의 마지막 spec/gap/verify run pointer. | branch-local |
+| `.claude/tigerkit/global-index.json` | branch-key 목록과 마지막 접근 정보. 저장 또는 apply를 수행한 `/tk:spec`, `/tk:gap`, `/tk:reflect` 실행 시 `lastUsedAt`을 갱신합니다. `--no-index`, `--no-save`, `--dry-run`, `--apply=false`처럼 저장하지 않는 실행은 recency를 갱신하지 않습니다. 손상되어도 branch-local index에서 복구 가능해야 합니다. | generated |
+| `.claude/tigerkit/branches/<branch-key>/branch-state.json` | 현재 branch scope의 마지막 spec/gap run pointer. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/specs/index.json` | 현재 branch scope의 Spec Patch index와 item supersede mapping. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/specs/SP-*.md` | branch-local Spec Patch. PRD나 Design Guide의 영구 대체물이 아닙니다. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/*.json` | gap input, contract, candidate, judge result artifact. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md` | 저장된 gap report 본문. | branch-local |
-| `.claude/tigerkit/branches/<branch-key>/runs/verify/<VFY-ID>/*` | verify-before-stop checklist, evidence, report. | branch-local |
 | `.claude/handoffs/current.md` | `/tk:handoff`가 생성하는 기본 continuation 문서. | continuation |
 | `.claude/handoffs/YYYY-MM-DD-task-name.md` | `archive=true` 또는 명시적 archive 요청 때만 생성하는 continuation archive. | continuation |
 | `.claude/rules/**/*.md` | repo convention basis이자 `/tk:reflect apply=true`의 scoped durable apply target입니다. | durable rule |
@@ -112,7 +106,6 @@ linked worktree는 repository common dir를 공유할 수 있으므로 common di
 - `judge-result.json`
 - `candidates.json`
 - `contracts.json`
-- `evidence.json`
 
 절차:
 
@@ -123,7 +116,7 @@ linked worktree는 repository common dir를 공유할 수 있으므로 common di
 
 ## Branch lock
 
-동일 branch scope에서 `spec`, `gap`, `verify-before-stop`, `reflect`가 동시에 실행될 수 있으므로 lock을 사용합니다.
+동일 branch scope에서 `spec`, `gap`, `reflect`가 동시에 실행될 수 있으므로 lock을 사용합니다.
 
 ```text
 .claude/tigerkit/branches/<branch-key>/.lock

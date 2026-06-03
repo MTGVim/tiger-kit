@@ -1,6 +1,6 @@
 # TigerKit
 
-TigerKit(`tk`, plugin namespace `/tk:*`)은 branch-scoped Spec / Gap / Verify / Reflect pipeline과 continuation handoff, generalized meta-feedback으로 AI-induced source loss를 줄입니다.
+TigerKit(`tk`, plugin namespace `/tk:*`)은 branch-scoped Spec / Gap / Reflect pipeline과 continuation handoff, generalized meta-feedback으로 AI-induced source loss를 줄입니다.
 
 해당 workflow를 명시한 natural language request는 대응하는 `/tk:*` command contract로 처리합니다.
 
@@ -10,7 +10,6 @@ TigerKit(`tk`, plugin namespace `/tk:*`)은 branch-scoped Spec / Gap / Verify / 
 | --- | --- | --- |
 | `/tk:spec` | 즉석 지시, 브레인스토밍, 회의 메모를 현재 브랜치의 Spec Patch로 저장합니다. | branch-local |
 | `/tk:gap` | Product/Design Spec, implementation plan, current implementation을 빠른 `lite` 또는 확장 `strict` contract-based preset으로 비교하고 rerun trail을 남깁니다. | branch-local |
-| `/tk:verify-before-stop` | Stop hook이 확인할 verification evidence를 수동으로 미리 생성/보완합니다. | branch-local |
 | `/tk:reflect` | branch-local working memory에서 repo에 영구 보존할 insight만 추출하고 durable target에 반영합니다. | durable insight |
 | `/tk:handoff` | 다음 세션이나 다음 작업자가 이어받을 continuation 문서를 작성합니다. | continuation |
 | `/tk:meta-feedback` | 세션 내역에서 TigerKit command/skill 개선안을 일반화해 추출합니다. | generalized feedback |
@@ -20,13 +19,12 @@ TigerKit(`tk`, plugin namespace `/tk:*`)은 branch-scoped Spec / Gap / Verify / 
 ```text
 spec = 현재 브랜치 전용 요건 패치 생성
 gap = 현재 브랜치 전용 요건 대비 구현/계획 리뷰
-verify-before-stop = Stop hook 검증 evidence 수동 준비
 reflect = branch-local working memory에서 repo에 영구 보존할 insight만 추출/반영
 handoff = 다음 세션/작업자용 continuation context
 meta-feedback = 세션 내 TigerKit 개선 피드백 일반화
 ```
 
-`spec`, `gap`, `verify-before-stop` 산출물은 `.claude/tigerkit/branches/<branch-key>/` 아래의 generated working memory입니다. repo-wide durable knowledge가 아닙니다.
+`spec`, `gap` 산출물은 `.claude/tigerkit/branches/<branch-key>/` 아래의 generated working memory입니다. repo-wide durable knowledge가 아닙니다.
 
 `reflect`는 durable insight를 생성하고 `apply=true`일 때 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에 직접 반영합니다.
 

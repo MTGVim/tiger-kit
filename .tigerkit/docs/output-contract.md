@@ -3,7 +3,7 @@
 이 문서는 TigerKit v7.2 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
 
 ```text
-stdout is a receipt. Full spec/gap/verify bodies are saved as branch-local artifacts unless explicit print option is used.
+stdout is a receipt. Full spec/gap bodies are saved as branch-local artifacts unless explicit print option is used.
 ```
 
 ## 공통 원칙
@@ -139,35 +139,6 @@ Rejected finding uses one of:
 - `missing_evidence`
 - `superseded_source`
 
-## `/tk:verify-before-stop` Output Contract
-
-- 목적: Stop hook이 자동 확인할 verification evidence를 수동으로 준비하거나 보완합니다.
-- command는 manual preparation입니다.
-- Stop hook은 automatic guard입니다.
-- 기본 저장 위치: `.claude/tigerkit/branches/<branch-key>/runs/verify/<VFY-ID>/`
-- 기본은 저장입니다.
-- `--no-save`는 debugging 용도입니다.
-- 전체 report는 `--print-report`가 있을 때만 stdout에 함께 출력합니다.
-
-기본 stdout:
-
-```text
-Verification 완료: <VFY-ID>
-Branch Scope: <branch-key>
-상태: <passed|failed|unknown>
-Report: .claude/tigerkit/branches/<branch-key>/runs/verify/<VFY-ID>/report.md
-```
-
-Verify run files:
-
-```text
-checklist.md
-evidence.json
-report.md
-```
-
-최신 gap run이 없으면 gap-dependent checks는 `unknown` 또는 `skipped`로 둡니다. gap run 부재만으로 failed 처리하지 않고 overall status는 `unknown`으로 둡니다.
-
 ## `/tk:reflect` Output Contract
 
 - 목적: branch-local working memory에서 durable repo insight만 추출합니다.
@@ -232,7 +203,7 @@ Reflect excludes:
 - 목적: 다음 세션이나 다른 작업자가 이어받을 continuation 문서를 작성합니다.
 - 기본 기록 위치: `.claude/handoffs/current.md`
 - `archive=true` 또는 사용자 명시 archive 요청이 있을 때만 dated archive를 추가로 만듭니다.
-- v7.2에서는 최신 branch-local Spec Patch, Gap Run, Verify Run path를 Relevant Files 또는 Validation에 포함할 수 있습니다.
+- v7.2에서는 최신 branch-local Spec Patch와 Gap Run path를 Relevant Files 또는 Validation에 포함할 수 있습니다.
 - handoff는 durable rule 저장소가 아닙니다.
 
 채팅 receipt:
@@ -312,7 +283,7 @@ Suggestion = proposed, not confirmed
 
 ## Storage Rule
 
-`spec`, `gap`, `verify-before-stop` generated artifacts는 current worktree root 아래 `.claude/tigerkit/branches/<branch-key>/`에 저장합니다.
+`spec`, `gap` generated artifacts는 current worktree root 아래 `.claude/tigerkit/branches/<branch-key>/`에 저장합니다.
 
 금지:
 

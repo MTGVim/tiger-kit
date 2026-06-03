@@ -11,12 +11,12 @@
 ## 핵심 모델
 
 ```text
-TigerKit = branch-scoped spec + fast/strict gap + verification evidence + durable reflection + continuation handoff + generalized meta-feedback
+TigerKit = branch-scoped spec + fast/strict gap + durable reflection + continuation handoff + generalized meta-feedback
 ```
 
 TigerKit은 branch-local working memory와 durable repo insight를 분리합니다.
 
-- `spec`, `gap`, `verify-before-stop` 산출물은 현재 브랜치의 working memory입니다.
+- `spec`, `gap` 산출물은 현재 브랜치의 working memory입니다.
 - 해당 산출물은 repo-wide durable knowledge가 아닙니다.
 - repo에 영구적으로 남길 insight는 `reflect`만 추출하고 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에 반영합니다.
 - 다음 세션을 위한 사람이 읽는 continuation은 `handoff`가 담당합니다.
@@ -30,7 +30,6 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 | --- | --- | --- |
 | `/tk:spec` | 즉석 지시, 브레인스토밍, 회의 메모를 gap 분석용 Spec Patch로 저장합니다. | branch-local |
 | `/tk:gap` | Product/Design Spec + implementation plan + current implementation을 `lite` 또는 `strict`로 비교합니다. | branch-local |
-| `/tk:verify-before-stop` | Stop hook이 확인할 verification evidence를 수동으로 미리 생성/보완합니다. | branch-local |
 | `/tk:reflect` | branch-local 산출물에서 repo에 남길 insight만 추출하고 반영합니다. | durable insight |
 | `/tk:handoff` | 다음 세션이나 다음 작업자가 이어받을 수 있도록 continuation 문서를 작성합니다. | continuation |
 | `/tk:meta-feedback` | 현재 세션에서 드러난 TigerKit command/skill 개선안을 프로젝트 자산 유출 없이 일반화합니다. | generalized feedback |
@@ -43,7 +42,6 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 /tk:gap --lite
 /tk:gap --strict
 /tk:gap --spec SP-20260602-143012-A7F3
-/tk:verify-before-stop
 /tk:reflect
 /tk:reflect --dry-run
 /tk:handoff 현재 작업 이어받을 수 있게 남겨줘
@@ -86,19 +84,9 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 - 기본 stdout은 summary만 출력합니다. 전체 report는 `--print-report`가 있을 때만 출력합니다.
 - stdout과 report에는 실행 preset 기준 완료 상태와 다른 preset으로 재실행할 수 있는 rerun trail을 남깁니다.
 
-## `/tk:verify-before-stop`
-
-- Stop hook이 자동으로 확인할 verification evidence를 사용자가 미리 준비하거나 보완하는 command입니다.
-- Stop hook은 자동 guard이고, `/tk:verify-before-stop`은 수동 preparation입니다.
-- 기본 저장 위치는 `.claude/tigerkit/branches/<branch-key>/runs/verify/<VFY-ID>/`입니다.
-- `checklist.md`, `evidence.json`, `report.md`를 생성합니다.
-- 최신 gap run이 없으면 관련 check는 `unknown` 또는 `skipped`로 둡니다.
-- gap run 부재만으로 failed 처리하지 않습니다.
-- 기본 stdout은 summary만 출력합니다. 전체 report는 `--print-report`가 있을 때만 출력합니다.
-
 ## `/tk:reflect`
 
-- branch-local specs/gap/verify memory에서 durable insight 후보만 추출합니다.
+- branch-local specs/gap memory에서 durable insight 후보만 추출합니다.
 - 기본 동작은 `apply=true`입니다.
 - `--dry-run`과 `--apply=false`는 preview-only입니다.
 - 기본 apply target은 `CLAUDE.md` 또는 `.claude/rules/**/*.md`입니다.
@@ -110,7 +98,7 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 
 - 기존 continuation command입니다. v7.2에서도 active command로 유지합니다.
 - 기본 출력 대상은 `.claude/handoffs/current.md`입니다.
-- 최신 branch-local Spec Patch, Gap Run, Verify Run이 있으면 handoff의 relevant files나 validation에 참조할 수 있습니다.
+- 최신 branch-local Spec Patch와 Gap Run이 있으면 handoff의 relevant files나 validation에 참조할 수 있습니다.
 - `archive=true` 또는 명시적 archive 요청이 있을 때만 dated copy를 만듭니다.
 - `Reader Guide`와 `Resume Prompt`를 포함합니다.
 
