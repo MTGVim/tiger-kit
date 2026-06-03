@@ -1,5 +1,5 @@
 {
-  "skill_name": "tiger-kit-v7-2-3-gap-single-execution",
+  "skill_name": "tiger-kit-v7-2-4-gap-short-ref-ux",
   "command_surface": {
     "core_commands": [
       "/tk:spec",
@@ -128,7 +128,7 @@
       "id": 6,
       "name": "gap-final-receipt-single-execution",
       "prompt": "Evaluate /tk:gap stdout receipt for a completed run. Do not write files.",
-      "expected_output": "Should output analysis depth, expansion reasons, verification escalation, report path, P0/P1/P2 counts, source conflict count, clarification-needed count, rejected/downgraded count, performance proof, and compact Actionable Findings and Rejected/Downgraded tables. Should not output executed preset, recommended preset, or Strict executed as primary labels.",
+      "expected_output": "Should output analysis depth, expansion reasons, verification escalation, report path, P0/P1/P2 counts, source conflict count, clarification-needed count, rejected/downgraded count, performance proof, and compact Actionable Findings and Rejected/Downgraded tables using short run-local Ref values instead of long canonical Candidate/Finding IDs. Should not output executed preset, recommended preset, or Strict executed as primary labels.",
       "files": [
         "commands/gap.md",
         ".tigerkit/docs/output-contract.md"
@@ -136,7 +136,8 @@
       "expectations": [
         "Receipt is depth-based",
         "No primary preset labels",
-        "Compact tables preserved"
+        "Compact tables preserved",
+        "Compact tables use short Ref values instead of long canonical IDs"
       ]
     },
     {

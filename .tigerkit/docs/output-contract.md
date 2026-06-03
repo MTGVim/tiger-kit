@@ -49,6 +49,7 @@ Items:
 - producer-absence claim은 producer-side evidence gate를 통과해야 합니다.
 - ambiguity와 source conflict는 Judge accept path 전에 `Clarification Needed` 또는 `SourceConflict`로 기록합니다.
 - JudgeMergerAgent만 final accepted finding을 확정합니다.
+- 유저향 stdout/report table은 run-local short Ref(`G1`, `R1`, `C1`, `Q1`)를 우선 표시하고 긴 canonical ID는 JSON artifact와 report 상세/참조 영역에 보관합니다.
 - final finding에는 P0/P1/P2만 포함합니다.
 - P3/nit/duplicate/unverifiable/source_conflict는 final finding으로 출력하지 않습니다.
 - finding이 안 나올 때까지 반복하지 않습니다.
@@ -72,14 +73,14 @@ Findings:
 - P2: <count>
 
 Actionable Findings:
-| ID | Sev | 요약 | 의미 | Required change |
+| Ref | Sev | 요약 | 의미 | Required change |
 | --- | --- | --- | --- | --- |
-| FND-... | P1 | <final finding 1줄 요약> | <사용자/제품 관점 영향 1줄> | <수정 방향 1줄> |
+| G1 | P1 | <final finding 1줄 요약> | <사용자/제품 관점 영향 1줄> | <수정 방향 1줄> |
 
 Rejected/Downgraded:
-| ID | Reason | 요약 | 왜 final gap 아님 |
+| Ref | Reason | 요약 | 왜 final gap 아님 |
 | --- | --- | --- | --- |
-| CAND-... | missing_evidence | <observation 1줄 요약> | <reject/downgrade 이유 1줄> |
+| R1 | missing_evidence | <observation 1줄 요약> | <reject/downgrade 이유 1줄> |
 
 Source Conflicts: <count>
 Clarification Needed: <count>
@@ -98,6 +99,7 @@ report.md
 
 Gap run metadata must include:
 
+- `displayRefs` or item-level `displayRef` mapping between run-local Ref and canonical IDs
 - `qualityGates: evidencePrecision|producerEvidence|ambiguity|JudgeMerger`
 - `analysisDepth: direct|bounded|expanded|exhaustive-capped`
 - `depthReasons: string[]`
@@ -132,10 +134,12 @@ Candidate intake metadata must include:
 Clarification table shape:
 
 ```md
-| ID | Category | Question | Options | Evidence | Impact | Recommendation | Status |
+| Ref | Category | Question | Options | Evidence | Impact | Recommendation | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| CLAR-... | implementation-blocking | <질문> | A / B | <근거> | <영향> | <추천> | blocked_pending_user |
+| Q1 | implementation-blocking | <질문> | A / B | <근거> | <영향> | <추천> | blocked_pending_user |
 ```
+
+긴 `CLAR-...` canonical ID는 JSON artifact와 report 상세/참조 영역에 보관합니다.
 
 UI clarification prototype은 오른쪽 border 정렬을 맞춥니다.
 
@@ -153,7 +157,8 @@ Option B
 
 Accepted finding uses:
 
-- ID: `FND-YYYYMMDD-HHmmss-RAND-NN`
+- canonical ID: `FND-YYYYMMDD-HHmmss-RAND-NN`
+- user-facing displayRef: `G<N>`
 - finalSeverity: `P0`, `P1`, or `P2`
 - sourceContracts referencing confirmed, non-superseded contracts
 - concrete evidence

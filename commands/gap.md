@@ -43,6 +43,7 @@ gap = branch-local contract-based inspection + judge-driven final finding
 - finding이 안 나올 때까지 반복하지 않습니다.
 - CriticalRedTeamAgent pass는 targeted verification으로 최대 1회입니다.
 - stdout은 summary receipt와 compact finding tables만 출력하고 상세는 report.md에 저장합니다.
+- 유저향 stdout/report table은 run-local short Ref(`G1`, `R1`, `C1`, `Q1`)를 우선 표시하고 긴 canonical ID는 JSON artifact와 report 상세/참조 영역에 보관합니다.
 - run summary와 report에는 analysis depth, 확장 이유, 성능 증명을 남깁니다.
 
 ## Terminology
@@ -104,7 +105,7 @@ report.md
 - `--no-specs`: active Spec Patch 자동 참조 비활성화
 - `--print-report`: 저장된 report.md 본문을 stdout에도 출력
 
-`--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.3 mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
+`--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.4 mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
 
 ## Contract schema
 
@@ -228,6 +229,7 @@ final finding을 확정하는 유일한 agent입니다.
 ```text
 CandidateFinding = {
   id: CAND-<KIND>-YYYYMMDD-HHmmss-RAND-NN,
+  displayRef?: R<N>,
   kind: plan_gap | implementation_gap | red_team_candidate,
   sourceContracts: string[],
   category,
@@ -315,6 +317,7 @@ Candidate Intake Gate replaces ad-hoc candidate validation. It preserves JudgeMe
 ```text
 AcceptedFinding = {
   id: FND-YYYYMMDD-HHmmss-RAND-NN,
+  displayRef: G<N>,
   finalSeverity: P0 | P1 | P2,
   title,
   sourceContracts: string[],
@@ -348,6 +351,7 @@ Source conflicts are not final findings.
 ```text
 SourceConflict = {
   id: CONFLICT-YYYYMMDD-HHmmss-RAND-NN,
+  displayRef: C<N>,
   involvedContracts: string[],
   summary,
   impact: behavior | validation | permission | content | layout | interaction_state | design_system | unknown,
@@ -363,6 +367,7 @@ ClarificationNeeded entries are not final findings. They temporarily block only 
 ```text
 ClarificationNeeded = {
   id: CLAR-YYYYMMDD-HHmmss-RAND-NN,
+  displayRef: Q<N>,
   category: implementation-blocking | reference-only,
   question,
   options: string[],
@@ -614,23 +619,25 @@ Findings:
 - P2: <count>
 
 Actionable Findings:
-| ID | Sev | 요약 | 의미 | Required change |
+| Ref | Sev | 요약 | 의미 | Required change |
 | --- | --- | --- | --- | --- |
-| FND-... | P1 | <final finding 1줄 요약> | <사용자/제품 관점 영향 1줄> | <수정 방향 1줄> |
+| G1 | P1 | <final finding 1줄 요약> | <사용자/제품 관점 영향 1줄> | <수정 방향 1줄> |
 
 Rejected/Downgraded:
-| ID | Reason | 요약 | 왜 final gap 아님 |
+| Ref | Reason | 요약 | 왜 final gap 아님 |
 | --- | --- | --- | --- |
-| CAND-... | missing_evidence | <observation 1줄 요약> | <reject/downgrade 이유 1줄> |
+| R1 | missing_evidence | <observation 1줄 요약> | <reject/downgrade 이유 1줄> |
 
 Source Conflicts: <count>
 Clarification Needed: <count>
 Rejected/Downgraded: <count>
 ```
 
-`Actionable Findings` table에는 JudgeMergerAgent가 accept한 P0/P1/P2 final finding만 출력합니다. 각 row는 ID, severity, gap 요약, 사용자/제품 관점 의미, requiredChange 1줄 요약만 포함합니다. final finding이 없으면 `없음` 1줄을 출력합니다.
+`Actionable Findings` table에는 JudgeMergerAgent가 accept한 P0/P1/P2 final finding만 출력합니다. 각 row는 run-local Ref, severity, gap 요약, 사용자/제품 관점 의미, requiredChange 1줄 요약만 포함합니다. final finding이 없으면 `없음` 1줄을 출력합니다.
 
-`Rejected/Downgraded` table에는 final gap이 아닌 observation을 간략히 출력합니다. 각 row는 ID, reason, observation 요약, final gap이 아닌 이유 1줄만 포함합니다. 항목이 없으면 `없음` 1줄을 출력합니다. P3/nit/duplicate/unverifiable/source_conflict 같은 rejected item을 confirmed defect처럼 쓰면 안 됩니다.
+`Rejected/Downgraded` table에는 final gap이 아닌 observation을 간략히 출력합니다. 각 row는 run-local Ref, reason, observation 요약, final gap이 아닌 이유 1줄만 포함합니다. 항목이 없으면 `없음` 1줄을 출력합니다. P3/nit/duplicate/unverifiable/source_conflict 같은 rejected item을 confirmed defect처럼 쓰면 안 됩니다.
+
+유저향 compact table에는 긴 canonical ID를 column으로 직접 노출하지 않습니다. canonical ID는 JSON artifact의 `id`와 `displayRef` mapping, 또는 `report.md` 상세/참조 영역에서 확인할 수 있어야 합니다.
 
 `--print-report`가 있을 때만 report.md 본문을 함께 출력합니다.
 
@@ -652,7 +659,7 @@ Rejected/Downgraded: <count>
 ## Source Conflicts / Clarification Needed
 ```
 
-`## Summary`에는 `qualityGates`, `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, dispatch skip summary, Candidate Intake Gate summary, evidence precision gate summary, performance proof를 포함합니다. compatibility flag는 입력 기록으로만 포함하고 primary label로 출력하지 않습니다.
+`## Summary`에는 `qualityGates`, `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, dispatch skip summary, Candidate Intake Gate summary, evidence precision gate summary, performance proof를 포함합니다. compatibility flag는 입력 기록으로만 포함하고 primary label로 출력하지 않습니다. `report.md`의 상세 finding/observation/conflict/clarification 항목은 `G1`, `R1`, `C1`, `Q1` 같은 Ref를 heading 또는 첫 필드로 쓰고 canonical ID를 별도 metadata로 둡니다.
 
 `## Source Conflicts / Clarification Needed`는 implementation-blocking과 reference-only를 구분합니다. 질문은 option/evidence/impact/recommendation/status를 표로 제시합니다. UI 판단이 필요한 경우 오른쪽 border가 정렬된 TUI/ASCII prototype을 함께 둡니다.
 
@@ -666,4 +673,5 @@ Rejected/Downgraded: <count>
 - targeted red-team을 2회 이상 실행
 - finding이 0개가 될 때까지 loop
 - default stdout에 전체 report 출력
+- 유저향 compact table에서 긴 canonical Candidate/Finding ID를 primary column으로 출력
 - `/tmp`, `$GIT_COMMON_DIR`, user home에 gap run 저장
