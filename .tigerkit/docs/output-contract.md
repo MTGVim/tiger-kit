@@ -1,6 +1,6 @@
 # TigerKit 운영 Output Contract
 
-이 문서는 TigerKit v7.2.8 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2.9 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
 
 ```text
 stdout is a receipt. Full spec/gap bodies are saved as branch-local artifacts unless explicit print option is used.
@@ -73,6 +73,7 @@ Report: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md
 누적 개선 증명: FP <ratio>x / FN <ratio>x / speed <ratio>x / depth <ratio>x
 반복 개선 증명: FP <ratio>x / FN <ratio>x / speed <ratio>x / depth <ratio>x
 Baseline: cumulative <sourceRef> / iteration <sourceRef>
+Baseline refresh: <pass|blocked> from <registryPath>
 Proof freshness: <pass|blocked>
 
 Findings:
@@ -102,6 +103,7 @@ input-manifest.json
 contracts.json
 candidates.json
 judge-result.json
+baseline-snapshot.json
 report.md
 ```
 
@@ -122,6 +124,8 @@ Gap run metadata must include:
 - `targetSurfaceCoverageGate`
 - `dispatchCompletenessGate`
 - `blockedClarifications`
+- `baselineAutoRefreshGate`
+- `baseline-snapshot.json` with `seriesId`, `metricDirections`, `cumulativeBaseline`, `iterationBaseline`, `currentScore`, `cumulativeImprovementRatio`, `iterationImprovementRatio`, `promotionCandidate`, `sourceRefs`, `capturedAt`, and `status`
 - `claimFreshnessGate`
 - `heuristicProof`
 
@@ -139,7 +143,7 @@ Performance proof fields:
 
 Speed improvement may be claimed only when numeric performance fields are recorded and speed's cumulative and iteration ratios are calculated with `baselineScore / currentScore` because speed is `lower_is_better`. Credited `dispatchSkips` may contribute to the proof only when `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true` are recorded. Vague wording such as `expected`, `estimated`, or `likely` is not proof.
 
-Current optimized `/tk:gap` contract target uses cumulative baseline `87.1`, iteration baseline `51.6`, `currentCriticalPathScore <= 50.5`, `cumulativeImprovementRatio = 87.1 / 50.5 = 1.724...` with display ratio `1.72`, and `iterationImprovementRatio = 51.6 / 50.5 = 1.021...` with display ratio `1.02` by `contract-derived-critical-path-proxy`. Concrete runs must recompute actual run proof from `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count.
+Current optimized `/tk:gap` contract target uses cumulative baseline `87.1`, iteration baseline loaded from previous main `50.5`, `currentCriticalPathScore <= 50.3`, `cumulativeImprovementRatio = 87.1 / 50.3 = 1.731...` with display ratio `1.73`, and `iterationImprovementRatio = 50.5 / 50.3 = 1.00398...` with display ratio `1.004` by `contract-derived-critical-path-proxy`. Concrete runs must recompute actual run proof from `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count.
 
 Heuristic proof fields:
 
@@ -188,24 +192,32 @@ Heuristic proof fields:
 - `claimFreshnessGate.checkedAfter`
 - `claimFreshnessGate.staleInputs`
 - `claimFreshnessGate.repairedInputs`
+- `heuristicProof.baselineProvenance.registrySourceRef`
 - `heuristicProof.baselineProvenance.cumulativeSourceRef`
 - `heuristicProof.baselineProvenance.iterationSourceRef`
+- `heuristicProof.baselineProvenance.currentSourceRef`
 - `heuristicProof.baselineProvenance.capturedFrom`
 - `heuristicProof.baselineProvenance.scoreDirectionVerified`
+- `heuristicProof.baselineProvenance.autoRefreshVerified`
+- `heuristicProof.baselineAutoRefreshGate.status`
+- `heuristicProof.baselineAutoRefreshGate.registryPath`
+- `heuristicProof.baselineAutoRefreshGate.bootstrapIterationSeed`
+- `heuristicProof.baselineAutoRefreshGate.promotionCandidate`
+- `heuristicProof.baselineAutoRefreshGate.staleFixedBaselineReuse`
 - `heuristicProof.claimAllowed`
 
-Heuristic proof metrics use fixed denominators from the command contract and must record both `cumulativeBaseline` and `iterationBaseline`. False-positive counts accepted-path plus baseline-provenance blocking predicates, false-negative counts critical contract/target surface plus baseline-provenance predicates, speed uses the critical path score, and analysis depth counts required depth trigger plus baseline auto-refresh predicates. Higher-is-better metrics use `currentScore / baselineScore`; speed uses `baselineScore / currentScore`. ClaimFreshnessGate is a separate claim gate, not a score denominator. A gap run may claim combined improvement only when all four subproofs record cumulative and iteration ratios, cumulative ratios meet the cumulative target, iteration ratios are `> 1.0`, all four have `claimAllowed: true`, and ClaimFreshnessGate passes.
+Heuristic proof metrics use fixed denominators from the command contract and must record both `cumulativeBaseline` and `iterationBaseline`. False-positive counts accepted-path plus baseline-provenance and baseline-auto-refresh blocking predicates, false-negative counts critical contract/target surface plus baseline-provenance and baseline-auto-refresh predicates, speed uses the critical path score, and analysis depth counts required depth trigger plus baseline provenance and baseline auto-refresh predicates. Higher-is-better metrics use `currentScore / baselineScore`; speed uses `baselineScore / currentScore`. ClaimFreshnessGate is a separate claim gate, not a score denominator. A gap run may claim combined improvement only when all four subproofs record cumulative and iteration ratios, cumulative ratios meet the cumulative target, iteration ratios are `> 1.0`, BaselineAutoRefreshGate proves iteration baseline came from previous refreshed `origin/main`, all four have `claimAllowed: true`, and ClaimFreshnessGate passes.
 
 Contract-level improvement proof target:
 
 ```text
-falsePositive: cumulativeBaseline = 5, iterationBaseline = 7, currentScore = 8, cumulativeImprovementRatio = 8 / 5 = 1.60, iterationImprovementRatio = 8 / 7 = 1.14
-falseNegative: cumulativeBaseline = 4, iterationBaseline = 6, currentScore = 7, cumulativeImprovementRatio = 7 / 4 = 1.75, iterationImprovementRatio = 7 / 6 = 1.17
-speed: cumulativeBaseline = 87.1, iterationBaseline = 51.6, currentScore <= 50.5, cumulativeImprovementRatio = 87.1 / 50.5 = 1.724... (display 1.72), iterationImprovementRatio = 51.6 / 50.5 = 1.021... (display 1.02)
-analysisDepth: cumulativeBaseline = 6, iterationBaseline = 8, currentScore = 9, cumulativeImprovementRatio = 9 / 6 = 1.50, iterationImprovementRatio = 9 / 8 = 1.125 (display 1.13)
+falsePositive: cumulativeBaseline = 5, iterationBaseline = 8, currentScore = 9, cumulativeImprovementRatio = 9 / 5 = 1.80, iterationImprovementRatio = 9 / 8 = 1.125 (display 1.13)
+falseNegative: cumulativeBaseline = 4, iterationBaseline = 7, currentScore = 8, cumulativeImprovementRatio = 8 / 4 = 2.00, iterationImprovementRatio = 8 / 7 = 1.142... (display 1.14)
+speed: cumulativeBaseline = 87.1, iterationBaseline = 50.5, currentScore <= 50.3, cumulativeImprovementRatio = 87.1 / 50.3 = 1.731... (display 1.73), iterationImprovementRatio = 50.5 / 50.3 = 1.00398... (display 1.004)
+analysisDepth: cumulativeBaseline = 6, iterationBaseline = 9, currentScore = 10, cumulativeImprovementRatio = 10 / 6 = 1.666... (display 1.67), iterationImprovementRatio = 10 / 9 = 1.111... (display 1.11)
 ```
 
-Concrete runs must recompute actual run proof from metadata before claiming improvement. Do not claim new iteration improvement from the fixed cumulative baseline alone; update `iterationBaseline` from the previous main version for each run.
+Concrete runs must recompute actual run proof from metadata before claiming improvement. Do not claim new iteration improvement from the fixed cumulative baseline alone; update `iterationBaseline` from the previous main version for each run. BaselineAutoRefreshGate must load `.tigerkit/docs/gap-baselines.json` from refreshed `origin/main`, or use a `bootstrapIterationSeed` from fresh `origin/main` contract score only when the registry does not exist yet. It must write `baseline-snapshot.json` and block iteration claims when `staleFixedBaselineReuse: true` or no registry/seed source exists.
 
 False-negative coverage metadata must include:
 

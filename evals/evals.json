@@ -1,5 +1,5 @@
 {
-  "skill_name": "tiger-kit-v7-2-8-gap-proof-precision-heuristics",
+  "skill_name": "tiger-kit-v7-2-9-gap-baseline-auto-refresh",
   "command_surface": {
     "core_commands": [
       "/tk:spec",
@@ -68,7 +68,7 @@
       "id": 2,
       "name": "gap-analysis-depth-heuristic",
       "prompt": "Evaluate /tk:gap analysis depth selection. Do not write files.",
-      "expected_output": "Should choose direct only for one explicit local surface with no API/DTO/state/auth/payment/data mutation/shared component/ambiguity trigger. Should choose bounded for single screen/component/command with nearby 1-depth usage lookup or representative samples up to 3. Should choose expanded for shared component, design-system, API/DTO/state transition, source conflict risk, inaccessible reference, ambiguous Product/API/Design decision, or divergent similar implementations. Should choose exhaustive-capped for P0/P1 candidate, auth/permission/payment/data mutation/destructive action, release gate, or cross-module impact. Hard triggers should run before riskScore tie-breakers. Should record analysisDepth, depthReasons, riskScore, sideEffectConfidence, verificationEscalation, compatibilityFlags, dispatchPlan, dispatchSkips, claimFreshnessGate, and heuristicProof.analysisDepth with cumulativeBaseline, iterationBaseline, currentScore, cumulativeImprovementRatio, iterationImprovementRatio, score direction, and claimAllowed true before claiming depth improvement. Explicit --analysis-depth should not lower the heuristic-required minimum depth for risky surfaces; lower requested depth should be escalated and recorded. Should not call the choice lite or strict mode.",
+      "expected_output": "Should choose direct only for one explicit local surface with no API/DTO/state/auth/payment/data mutation/shared component/ambiguity trigger. Should choose bounded for single screen/component/command with nearby 1-depth usage lookup or representative samples up to 3. Should choose expanded for shared component, design-system, API/DTO/state transition, source conflict risk, inaccessible reference, ambiguous Product/API/Design decision, or divergent similar implementations. Should choose exhaustive-capped for P0/P1 candidate, auth/permission/payment/data mutation/destructive action, release gate, or cross-module impact. Hard triggers should run before riskScore tie-breakers. Should record analysisDepth, depthReasons, riskScore, sideEffectConfidence, verificationEscalation, compatibilityFlags, dispatchPlan, dispatchSkips, baselineAutoRefreshGate, claimFreshnessGate, and heuristicProof.analysisDepth with cumulativeBaseline, refreshed origin/main iterationBaseline, currentScore, cumulativeImprovementRatio, iterationImprovementRatio, score direction, and claimAllowed true before claiming depth improvement. Explicit --analysis-depth should not lower the heuristic-required minimum depth for risky surfaces; lower requested depth should be escalated and recorded. Should not call the choice lite or strict mode.",
       "files": [
         "commands/gap.md",
         ".claude/rules/review/gap-analysis.md",
@@ -80,7 +80,7 @@
         "Metadata records decision",
         "Records dispatchPlan and dispatchSkips",
         "Records heuristicProof.analysisDepth",
-        "Requires analysisDepth cumulativeBaseline iterationBaseline currentScore ratios and claimAllowed true",
+        "Requires analysisDepth cumulativeBaseline refreshed iterationBaseline currentScore ratios and claimAllowed true",
         "Hard triggers run before riskScore tie-breakers",
         "No lite/strict mode wording"
       ]
@@ -89,15 +89,16 @@
       "id": 3,
       "name": "gap-performance-proof",
       "prompt": "Evaluate /tk:gap performance proof requirements for the single /tk:gap execution. Do not write files.",
-      "expected_output": "Should require a measured performance proof rather than a vague estimate. Should use the contract-derived critical path proxy when runtime wall-clock instrumentation is unavailable. Should require speed proof to record cumulativeBaseline, iterationBaseline, currentScore, cumulativeImprovementRatio, iterationImprovementRatio, score direction lower_is_better, performance.agentCriticalPathGroups, performance.deterministicStageGroups, performance.runProcedureSteps, performance.measurementMethod, and heuristicProof.speed in the run receipt or manifest. Current optimized contract target should show cumulative baseline 87.1, iteration baseline 51.6, currentScore <= 50.5, cumulativeImprovementRatio = 87.1 / 50.5 = 1.724... with display ratio 1.72, and iterationImprovementRatio = 51.6 / 50.5 = 1.021... with display ratio 1.02 by contract-derived-critical-path-proxy. Should calculate baseline and current with the same proxy weights. Credited dispatchSkips may count only when credited, criticalPathDelta, and evidenceCoveragePreserved are recorded. Should not claim success from phrases such as expected, estimated, or likely.",
+      "expected_output": "Should require a measured performance proof rather than a vague estimate. Should use the contract-derived critical path proxy when runtime wall-clock instrumentation is unavailable. Should require speed proof to record cumulativeBaseline, refreshed origin/main iterationBaseline, currentScore, cumulativeImprovementRatio, iterationImprovementRatio, score direction lower_is_better, performance.agentCriticalPathGroups, performance.deterministicStageGroups, performance.runProcedureSteps, performance.measurementMethod, baselineAutoRefreshGate, baseline-snapshot.json, and heuristicProof.speed in the run receipt or manifest. Current optimized contract target should show cumulative baseline 87.1, iteration baseline 50.5, currentScore <= 50.3, cumulativeImprovementRatio = 87.1 / 50.3 = 1.731... with display ratio 1.73, and iterationImprovementRatio = 50.5 / 50.3 = 1.00398... with display ratio 1.004 by contract-derived-critical-path-proxy. Should calculate baseline and current with the same proxy weights. Credited dispatchSkips may count only when credited, criticalPathDelta, and evidenceCoveragePreserved are recorded. Should not claim success from phrases such as expected, estimated, or likely.",
       "files": [
         "commands/gap.md",
-        ".tigerkit/docs/output-contract.md"
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/gap-baselines.json"
       ],
       "expectations": [
         "Uses measured proxy fields",
         "Requires measurementMethod and critical path components",
-        "Requires cumulative and iteration speed baselines",
+        "Requires cumulative and refreshed origin/main iteration speed baselines",
         "Requires heuristicProof.speed",
         "Requires credited dispatch skip fields before counting skip benefit",
         "Requires cumulative and iteration improvement ratios with explicit formula",
@@ -140,7 +141,7 @@
       "id": 6,
       "name": "gap-final-receipt-single-execution",
       "prompt": "Evaluate /tk:gap stdout receipt for a completed run. Do not write files.",
-      "expected_output": "Should output analysis depth, expansion reasons, verification escalation, dispatch skip summary, Candidate Intake Gate summary, ClaimFreshnessGate status, heuristic proof summary with cumulative and iteration FP/FN/speed/depth ratios, report path, P0/P1/P2 counts, source conflict count, clarification-needed count, rejected/downgraded count, numeric performance proof, and compact Actionable Findings and Rejected/Downgraded tables using short run-local Ref values instead of long canonical Candidate/Finding IDs. Should not output executed preset, recommended preset, or Strict executed as primary labels.",
+      "expected_output": "Should output analysis depth, expansion reasons, verification escalation, dispatch skip summary, Candidate Intake Gate summary, BaselineAutoRefreshGate status, ClaimFreshnessGate status, heuristic proof summary with cumulative and refreshed iteration FP/FN/speed/depth ratios, report path, P0/P1/P2 counts, source conflict count, clarification-needed count, rejected/downgraded count, numeric performance proof, and compact Actionable Findings and Rejected/Downgraded tables using short run-local Ref values instead of long canonical Candidate/Finding IDs. Should not output executed preset, recommended preset, or Strict executed as primary labels.",
       "files": [
         "commands/gap.md",
         ".tigerkit/docs/output-contract.md"
@@ -148,6 +149,7 @@
       "expectations": [
         "Receipt is depth-based",
         "Includes dispatch skip and Candidate Intake Gate summaries",
+        "Includes BaselineAutoRefreshGate status",
         "Includes ClaimFreshnessGate status",
         "Includes heuristic proof summary with cumulative and iteration FP/FN/speed/depth ratios",
         "No primary preset labels",
