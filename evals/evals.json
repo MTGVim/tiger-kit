@@ -1,5 +1,5 @@
 {
-  "skill_name": "tiger-kit-v7-2-4-gap-short-ref-ux",
+  "skill_name": "tiger-kit-v7-2-5-gap-proof-heuristics",
   "command_surface": {
     "core_commands": [
       "/tk:spec",
@@ -66,7 +66,7 @@
       "id": 2,
       "name": "gap-analysis-depth-heuristic",
       "prompt": "Evaluate /tk:gap analysis depth selection. Do not write files.",
-      "expected_output": "Should choose direct only for one explicit local surface with no API/DTO/state/auth/payment/data mutation/shared component/ambiguity trigger. Should choose bounded for single screen/component/command with nearby 1-depth usage lookup or representative samples up to 3. Should choose expanded for shared component, design-system, API/DTO/state transition, source conflict risk, inaccessible reference, ambiguous Product/API/Design decision, or divergent similar implementations. Should choose exhaustive-capped for P0/P1 candidate, auth/permission/payment/data mutation/destructive action, release gate, or cross-module impact. Should record analysisDepth, depthReasons, riskScore, sideEffectConfidence, verificationEscalation, compatibilityFlags, dispatchPlan, and dispatchSkips. Explicit --analysis-depth should not lower the heuristic-required minimum depth for risky surfaces; lower requested depth should be escalated and recorded. Should not call the choice lite or strict mode.",
+      "expected_output": "Should choose direct only for one explicit local surface with no API/DTO/state/auth/payment/data mutation/shared component/ambiguity trigger. Should choose bounded for single screen/component/command with nearby 1-depth usage lookup or representative samples up to 3. Should choose expanded for shared component, design-system, API/DTO/state transition, source conflict risk, inaccessible reference, ambiguous Product/API/Design decision, or divergent similar implementations. Should choose exhaustive-capped for P0/P1 candidate, auth/permission/payment/data mutation/destructive action, release gate, or cross-module impact. Hard triggers should run before riskScore tie-breakers. Should record analysisDepth, depthReasons, riskScore, sideEffectConfidence, verificationEscalation, compatibilityFlags, dispatchPlan, dispatchSkips, and heuristicProof.analysisDepth. Explicit --analysis-depth should not lower the heuristic-required minimum depth for risky surfaces; lower requested depth should be escalated and recorded. Should not call the choice lite or strict mode.",
       "files": [
         "commands/gap.md",
         ".claude/rules/review/gap-analysis.md",
@@ -77,6 +77,8 @@
         "No quality downgrade",
         "Metadata records decision",
         "Records dispatchPlan and dispatchSkips",
+        "Records heuristicProof.analysisDepth",
+        "Hard triggers run before riskScore tie-breakers",
         "No lite/strict mode wording"
       ]
     },
@@ -84,7 +86,7 @@
       "id": 3,
       "name": "gap-performance-proof",
       "prompt": "Evaluate /tk:gap performance proof requirements for the single /tk:gap execution. Do not write files.",
-      "expected_output": "Should require a measured performance proof rather than a vague estimate. Should use the contract-derived critical path proxy when runtime wall-clock instrumentation is unavailable. Should require improvementRatio >= 1.3, with baselineCriticalPathScore, currentCriticalPathScore, agentCriticalPathGroups, deterministicStageGroups, runProcedureSteps, and measurementMethod recorded in the run receipt or manifest. Current optimized contract proof should show baselineCriticalPathScore = 87.1, currentCriticalPathScore <= 49.2, and improvementRatio >= 1.77 by contract-derived-critical-path-proxy. Should calculate baseline and current with the same proxy weights. Should not claim success from phrases such as expected, estimated, or likely.",
+      "expected_output": "Should require a measured performance proof rather than a vague estimate. Should use the contract-derived critical path proxy when runtime wall-clock instrumentation is unavailable. Should require performance.improvementRatio >= 1.3, with performance.baselineCriticalPathScore, performance.currentCriticalPathScore, performance.agentCriticalPathGroups, performance.deterministicStageGroups, performance.runProcedureSteps, performance.measurementMethod, and heuristicProof.speed recorded in the run receipt or manifest. Current optimized contract target should show performance.baselineCriticalPathScore = 87.1, performance.currentCriticalPathScore <= 49.2, and minimumTargetImprovementRatio >= 1.77 by contract-derived-critical-path-proxy. Should calculate baseline and current with the same proxy weights. Credited dispatchSkips may count only when credited, criticalPathDelta, and evidenceCoveragePreserved are recorded. Should not claim success from phrases such as expected, estimated, or likely.",
       "files": [
         "commands/gap.md",
         ".tigerkit/docs/output-contract.md"
@@ -92,6 +94,8 @@
       "expectations": [
         "Uses measured proxy fields",
         "Requires measurementMethod and critical path components",
+        "Requires heuristicProof.speed",
+        "Requires credited dispatch skip fields before counting skip benefit",
         "Requires improvementRatio >= 1.3",
         "Rejects estimate-only proof"
       ]
@@ -198,6 +202,27 @@
         "Does not create tigerkit-reflections sidecar file",
         "Skips duplicate insights",
         "Prints apply summary"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "gap-combined-heuristic-proof-claim",
+      "prompt": "Evaluate whether /tk:gap may claim the current 1.3x improvement target for false-positive reduction, speed, and analysis depth. Do not write files.",
+      "expected_output": "Should require heuristicProof.requiredImprovementRatio = 1.3. Should require heuristicProof.falsePositive.metric, denominator, baselinePredicateScore, currentPredicateScore, improvementRatio, and claimAllowed. Should require heuristicProof.speed.metric, denominator, baselineCriticalPathScore, currentCriticalPathScore, improvementRatio, and claimAllowed. Should require heuristicProof.analysisDepth.metric, denominator, baselineTriggerCoverage, currentTriggerCoverage, improvementRatio, and claimAllowed. Should allow the combined claim only when all three improvementRatio values are >= 1.3 and all three claimAllowed values are true. Should reject the combined claim if consumer-only producer evidence, uncredited dispatch skips, or risk-score-before-hard-trigger depth selection is used.",
+      "files": [
+        "commands/gap.md",
+        ".claude/rules/review/gap-analysis.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "Requires heuristicProof.requiredImprovementRatio = 1.3",
+        "Requires false-positive subproof",
+        "Requires speed subproof",
+        "Requires analysis-depth subproof",
+        "Rejects combined claim if any subproof is below threshold",
+        "Rejects consumer-only producer evidence",
+        "Rejects uncredited dispatch skip benefit",
+        "Rejects risk-score-before-hard-trigger depth selection"
       ]
     }
   ]

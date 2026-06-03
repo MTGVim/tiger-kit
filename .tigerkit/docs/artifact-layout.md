@@ -1,6 +1,6 @@
 # TigerKit 운영 산출물 구조
 
-이 문서는 TigerKit v7.1 산출물 배치와 책임을 설명합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2.5 산출물 배치와 책임을 설명합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
 
 TigerKit은 branch-local working memory와 durable insight를 분리합니다.
 
@@ -48,6 +48,11 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
 | `.claude/tigerkit/branches/<branch-key>/specs/SP-*.md` | branch-local Spec Patch. PRD나 Design Guide의 영구 대체물이 아닙니다. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/*.json` | gap input, contract, candidate, judge result artifact. 유저향 short Ref와 canonical ID mapping을 `displayRef` 또는 equivalent ref map으로 보존합니다. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md` | 저장된 gap report 본문. | branch-local |
+| `.claude/handoffs/current.md` | `/tk:handoff`가 생성하는 기본 continuation 문서. | continuation |
+| `.claude/handoffs/YYYY-MM-DD-task-name.md` | `archive=true` 또는 명시적 archive 요청 때만 생성하는 continuation archive. | continuation |
+| `.claude/rules/**/*.md` | repo convention basis이자 `/tk:reflect apply=true`의 scoped durable apply target입니다. | durable rule |
+| `CLAUDE.md` | repo instruction과 durable project guidance이자 `/tk:reflect apply=true`의 global durable apply target입니다. | durable rule |
+| `.tigerkit/docs/*.md` | TigerKit usage, artifact, output contract documentation. | docs |
 
 Gap run은 단일 `/tk:gap` 실행에서도 아래 필수 run artifact 이름과 위치를 유지합니다.
 
@@ -59,12 +64,7 @@ judge-result.json
 report.md
 ```
 
-Single 단일 `/tk:gap` 실행은 metadata와 execution order를 바꾸며, artifact location이나 required file name은 바꾸지 않습니다.
-| `.claude/handoffs/current.md` | `/tk:handoff`가 생성하는 기본 continuation 문서. | continuation |
-| `.claude/handoffs/YYYY-MM-DD-task-name.md` | `archive=true` 또는 명시적 archive 요청 때만 생성하는 continuation archive. | continuation |
-| `.claude/rules/**/*.md` | repo convention basis이자 `/tk:reflect apply=true`의 scoped durable apply target입니다. | durable rule |
-| `CLAUDE.md` | repo instruction과 durable project guidance이자 `/tk:reflect apply=true`의 global durable apply target입니다. | durable rule |
-| `.tigerkit/docs/*.md` | TigerKit usage, artifact, output contract documentation. | docs |
+단일 `/tk:gap` 실행은 metadata와 execution order를 바꾸며, artifact location이나 required file name은 바꾸지 않습니다. `heuristicProof`, `performance`, `dispatchPlan`, `dispatchSkips`, `candidateIntakeGate`는 `input-manifest.json` 또는 `judge-result.json`에 기록합니다.
 
 ## Branch key
 
