@@ -50,7 +50,7 @@
 - Detailed evidence, source contract detail, and canonical ID mapping remain in `report.md` or JSON artifacts unless `--print-report` is used.
 - Full report stdout is allowed only with `--print-report`.
 - Run artifacts must include `input-manifest.json`, `contracts.json`, `candidates.json`, `judge-result.json`, and `report.md`.
-- `input-manifest.json` or `judge-result.json` must record `qualityGates`, `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `compatibilityFlags`, dispatch skips, blocked clarifications, Candidate Intake Gate summary, and performance proof.
+- `input-manifest.json` or `judge-result.json` must record `qualityGates`, `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `compatibilityFlags`, `dispatchPlan`, `dispatchSkips`, `candidateIntakeGate`, `evidencePrecisionGate`, `blockedClarifications`, `performance`, and `heuristicProof`.
 - Do not store generated gap artifacts in `/tmp`, `$GIT_COMMON_DIR`, `.git/worktrees/*`, user home, or current worktree root outside `.claude/tigerkit/branches/<branch-key>/`.
 
 ## GAP-006: JudgeMergerAgent is the only final authority
@@ -111,10 +111,10 @@ When the target means `current implementation`, current working tree, current br
 - Use `bounded` for single screen/component/command with nearby 1-depth usage lookup or representative usage samples up to 3.
 - Use `expanded` for shared component, design-system, API/DTO/state transition, source conflict risk, inaccessible reference, ambiguous Product/API/Design decision, or divergent similar implementations.
 - Use `exhaustive-capped` for P0/P1 candidate, auth/permission/payment/data mutation/destructive action, release gate, or cross-module impact.
-- Record `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `dispatchSkips`, and any compatibility flags in `input-manifest.json` or `judge-result.json`.
+- Record `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `dispatchSkips`, `heuristicProof`, and any compatibility flags in `input-manifest.json` or `judge-result.json`.
 - Source/plan/current implementation presence must determine `dispatchPlan` before agent execution. Skipped agents must record `agent`, `reason`, `sourceClass`, and `criticalPathEffect`.
 - Performance proof must use the same critical path proxy weights for baseline and current flow when wall-clock instrumentation is unavailable.
-- `--legacy`, `--deep`, and `--no-strict` are not active v7.2.4 modes. v6-era legacy behavior is unsupported history, not a `lite` alias.
+- `--legacy`, `--deep`, and `--no-strict` are not active v7.2.5 modes. v6-era legacy behavior is unsupported history, not a `lite` alias.
 
 ## GAP-010: No unbounded loop
 
@@ -155,3 +155,12 @@ When the target means `current implementation`, current working tree, current br
 - When runtime wall-clock instrumentation is unavailable, use the documented contract-derived critical path proxy with identical weights for baseline and current flow.
 - `performance.improvementRatio` must be `>= 1.3` for the current improvement target.
 - Do not treat vague wording such as `expected`, `estimated`, or `likely` as proof of speed improvement.
+- Credited `dispatchSkips` may count toward performance proof only when `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true` are recorded.
+
+## GAP-015: Require combined heuristic proof for improvement claims
+
+- A `/tk:gap` run receipt, report, or contract output may claim the current 1.3x improvement target only when `heuristicProof.requiredImprovementRatio` is `1.3` and false-positive, speed, and analysis-depth subproofs all meet or exceed it with `claimAllowed: true`.
+- `heuristicProof.falsePositive` must prove accepted-path gate coverage, including CandidateShapeGate, EvidencePrecisionGate, ProducerEvidenceGate, ConflictClarificationGate, and JudgeMergerAgent.
+- `heuristicProof.speed` must mirror recorded `performance` fields and may not count uncredited dispatch skips.
+- `heuristicProof.analysisDepth` must prove hard-trigger coverage before risk-score tie-breaker use.
+- If any subproof is missing or below threshold, set `heuristicProof.claimAllowed: false` and avoid claiming combined improvement.

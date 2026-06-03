@@ -1,6 +1,6 @@
 # TigerKit 운영 사용법
 
-이 문서는 TigerKit v7.2 사용 가이드입니다. 산출물 위치는 `.tigerkit/docs/artifact-layout.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2.5 사용 가이드입니다. 산출물 위치는 `.tigerkit/docs/artifact-layout.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
 
 ## 언어
 
@@ -67,9 +67,11 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 - 기본 호출은 user-provided references, target hints, Current Implementation 후보, 위험 신호를 먼저 skim한 뒤 단일 `/tk:gap` 실행로 실행합니다.
 - `lite`와 `strict`는 user-facing quality mode가 아닙니다.
 - 분석 범위 조절은 내부 `analysisDepth` 휴리스틱 또는 명시 `--analysis-depth <direct|bounded|expanded|exhaustive-capped>`로 표현합니다.
+- depth 선택은 hard trigger를 먼저 적용하고 `riskScore`는 tie-breaker로만 사용합니다.
 - `direct`는 단일 explicit local surface, ambiguity 없음, API/DTO/state/auth/payment/data mutation/shared component 영향 없음일 때만 사용합니다.
 - `bounded`는 single screen/component/command와 주변 1-depth 또는 대표 usage 1-3개를 확인합니다.
-- `expanded`와 `exhaustive-capped`는 shared/design-system/API/DTO/state/auth/payment/data mutation, source conflict, inaccessible source, 모호한 Product/API/Design decision, release gate, cross-module, P0/P1 후보에 사용합니다.
+- `expanded`는 shared/design-system/API/DTO/state transition, source conflict risk, inaccessible source, 모호한 Product/API/Design decision, divergent similar implementation에 사용합니다.
+- `exhaustive-capped`는 P0/P1 후보, auth/permission/payment/data mutation/destructive action, release gate, cross-module impact에 사용합니다.
 - `--legacy`, `--deep`, `--no-strict`는 active mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
 - changed files는 primary scope가 아니라 Current Implementation 후보 evidence입니다.
 - source/plan이 없으면 관련 agent는 skip하고 이유를 artifact에 기록합니다.

@@ -1,6 +1,6 @@
 # TigerKit 운영 Output Contract
 
-이 문서는 TigerKit v7.2 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2.5 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
 
 ```text
 stdout is a receipt. Full spec/gap bodies are saved as branch-local artifacts unless explicit print option is used.
@@ -15,7 +15,7 @@ stdout is a receipt. Full spec/gap bodies are saved as branch-local artifacts un
 3. artifact paths when files are written
 4. counts, risks, next action
 
-상세 보고서는 파일에 저장하고, 사용자가 `--print-body` 또는 `--print-report`를 지정한 경우에만 stdout에 함께 출력합니다.
+상세 본문은 파일에 저장하고, 각 command가 지원하는 explicit print option을 지정한 경우에만 stdout에 함께 출력합니다. `/tk:spec`은 `--print-body`, `/tk:gap`은 `--print-report`를 사용합니다.
 
 사용자 대화에 보이는 안내, 추천, 요약, next action은 계약용어, path, identifier, field name을 제외하고 한글로 씁니다.
 
@@ -43,7 +43,7 @@ Items:
 - 기본 저장 위치: `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/`
 - `/tk:gap`은 단일 `/tk:gap` 실행로 실행합니다.
 - `lite`와 `strict`는 user-facing quality mode가 아닙니다.
-- 분석 범위는 `analysisDepth: direct|bounded|expanded|exhaustive-capped`와 `depthReasons`로 기록합니다. 명시된 `--analysis-depth`가 위험 표면의 heuristic minimum보다 낮으면 낮추지 않고 escalation을 기록합니다.
+- 분석 범위는 `analysisDepth: direct|bounded|expanded|exhaustive-capped`와 `depthReasons`로 기록합니다. hard trigger가 risk score보다 우선하며, 명시된 `--analysis-depth`가 위험 표면의 heuristic minimum보다 낮으면 낮추지 않고 escalation을 기록합니다.
 - subagent는 final finding을 확정하지 못합니다.
 - candidate의 file:line 또는 module-path evidence는 JudgeMergerAgent queue 진입 전에 현재 target surface에서 read-back으로 재확인합니다.
 - producer-absence claim은 producer-side evidence gate를 통과해야 합니다.
@@ -111,10 +111,11 @@ Gap run metadata must include:
 - `verificationEscalation: none|targeted-red-team`
 - `compatibilityFlags: string[]`
 - `dispatchPlan`
-- `dispatchSkips` with `agent`, `reason`, `sourceClass`, and `criticalPathEffect`
+- `dispatchSkips` with `agent`, `reason`, `sourceClass`, and `criticalPathEffect` for every skip; credited speed-proof skips also include `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true`
 - `candidateIntakeGate`
 - `evidencePrecisionGate`
 - `blockedClarifications`
+- `heuristicProof`
 
 Performance proof fields:
 
@@ -126,9 +127,34 @@ Performance proof fields:
 - `performance.runProcedureSteps`
 - `performance.measurementMethod`
 
-Speed improvement may be claimed only when numeric performance fields are recorded and `performance.improvementRatio >= 1.3`. Vague wording such as `expected`, `estimated`, or `likely` is not proof.
+Speed improvement may be claimed only when numeric performance fields are recorded and `performance.improvementRatio >= 1.3`. Credited `dispatchSkips` may contribute to the proof only when `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true` are recorded. Vague wording such as `expected`, `estimated`, or `likely` is not proof.
 
-Current optimized `/tk:gap` contract proof uses `baselineCriticalPathScore = 87.1`, `currentCriticalPathScore <= 49.2`, and `improvementRatio >= 1.77` by `contract-derived-critical-path-proxy`.
+Current optimized `/tk:gap` contract target uses `baselineCriticalPathScore = 87.1`, `currentCriticalPathScore <= 49.2`, and `minimumTargetImprovementRatio >= 1.77` by `contract-derived-critical-path-proxy`. Concrete runs must recompute actual run proof from `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count.
+
+Heuristic proof fields:
+
+- `heuristicProof.requiredImprovementRatio` (fixed at `1.3` for the current target)
+- `heuristicProof.falsePositive.metric: accepted_path_blocking_predicate_coverage`
+- `heuristicProof.falsePositive.denominator: required_false_positive_predicates`
+- `heuristicProof.falsePositive.baselinePredicateScore`
+- `heuristicProof.falsePositive.currentPredicateScore`
+- `heuristicProof.falsePositive.improvementRatio`
+- `heuristicProof.falsePositive.claimAllowed`
+- `heuristicProof.speed.metric: contract_critical_path_score`
+- `heuristicProof.speed.denominator: baselineCriticalPathScore`
+- `heuristicProof.speed.baselineCriticalPathScore`
+- `heuristicProof.speed.currentCriticalPathScore`
+- `heuristicProof.speed.improvementRatio`
+- `heuristicProof.speed.claimAllowed`
+- `heuristicProof.analysisDepth.metric: hard_trigger_selection_coverage`
+- `heuristicProof.analysisDepth.denominator: required_depth_trigger_predicates`
+- `heuristicProof.analysisDepth.baselineTriggerCoverage`
+- `heuristicProof.analysisDepth.currentTriggerCoverage`
+- `heuristicProof.analysisDepth.improvementRatio`
+- `heuristicProof.analysisDepth.claimAllowed`
+- `heuristicProof.claimAllowed`
+
+Heuristic proof metrics use fixed denominators from the command contract: false-positive counts accepted-path blocking predicates, speed uses the critical path score, and analysis depth counts required depth trigger predicates. A gap run may claim the combined false-positive, speed, and analysis-depth improvement only when all three subproofs have `improvementRatio >= heuristicProof.requiredImprovementRatio` and `claimAllowed: true`.
 
 Candidate intake metadata must include:
 
