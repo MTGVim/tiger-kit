@@ -3,7 +3,7 @@ description: Product/Design Spec contract와 현재 구현/계획을 비교해 b
 argument-hint: "[--analysis-depth <direct|bounded|expanded|exhaustive-capped>] [--spec <SP-ID|path>] [--no-specs] [--print-report]"
 ---
 
-이 명령은 TigerKit v7.2.7 Contract-based Gap Review contract를 따릅니다.
+이 명령은 TigerKit v7.2.8 Contract-based Gap Review contract를 따릅니다.
 
 사용자에게는 한글로 답합니다. 코드, path, URL, ticket, commit, hash, identifier, error는 원문 그대로 둘 수 있습니다.
 
@@ -17,8 +17,8 @@ gap = branch-local contract-based inspection + judge-driven final finding
 
 - plugin slash invocation은 `/tk:gap`입니다.
 - `tiger-kit gap` CLI 표현은 이 plugin command의 사용자 관점 alias로 취급합니다.
-- `--lite`와 `--strict`는 compatibility flag로만 기록하며 active v7.2.7 user-facing quality mode가 아닙니다.
-- `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.7 mode가 아닙니다.
+- `--lite`와 `--strict`는 compatibility flag로만 기록하며 active v7.2.8 user-facing quality mode가 아닙니다.
+- `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.8 mode가 아닙니다.
 - v6-era legacy behavior는 미지원 과거 동작입니다. `lite`의 별칭이나 계승 mode로 표현하지 않습니다.
 - legacy Figma diff style은 정식 사용자 모드가 아닙니다.
 
@@ -107,7 +107,7 @@ report.md
 - `--no-specs`: active Spec Patch 자동 참조 비활성화
 - `--print-report`: 저장된 report.md 본문을 stdout에도 출력
 
-`--lite`와 `--strict`는 compatibility flag로만 기록하고 quality gate를 바꾸지 않습니다. `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.7 mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
+`--lite`와 `--strict`는 compatibility flag로만 기록하고 quality gate를 바꾸지 않습니다. `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.8 mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
 
 ## Contract schema
 
@@ -270,61 +270,104 @@ CandidateIntakeGateResult = {
 }
 
 HeuristicProof = {
-  requiredImprovementRatio: 1.3,
+  cumulativeRequiredImprovementRatio: 1.3,
+  iterationRequiredImprovementRatio: >1.0,
   falsePositive: {
     metric: accepted_path_blocking_predicate_coverage,
     denominator: required_false_positive_predicates,
-    baselinePredicateScore,
-    currentPredicateScore,
-    improvementRatio,
+    scoreDirection: higher_is_better,
+    cumulativeBaseline,
+    iterationBaseline,
+    currentScore,
+    cumulativeImprovementRatio,
+    iterationImprovementRatio,
+    improvementFormula: currentScore / baselineScore,
     claimAllowed
   },
   falseNegative: {
     metric: critical_contract_and_target_surface_coverage,
     denominator: required_false_negative_predicates,
-    baselinePredicateScore,
-    currentPredicateScore,
-    improvementRatio,
+    scoreDirection: higher_is_better,
+    cumulativeBaseline,
+    iterationBaseline,
+    currentScore,
+    cumulativeImprovementRatio,
+    iterationImprovementRatio,
+    improvementFormula: currentScore / baselineScore,
     claimAllowed
   },
   speed: {
     metric: contract_critical_path_score,
-    denominator: baselineCriticalPathScore,
-    baselineCriticalPathScore,
-    currentCriticalPathScore,
-    improvementRatio,
+    scoreDirection: lower_is_better,
+    cumulativeBaseline,
+    iterationBaseline,
+    currentScore,
+    cumulativeImprovementRatio,
+    iterationImprovementRatio,
+    improvementFormula: baselineScore / currentScore,
     claimAllowed
   },
   analysisDepth: {
     metric: hard_trigger_selection_coverage,
     denominator: required_depth_trigger_predicates,
-    baselineTriggerCoverage,
-    currentTriggerCoverage,
-    improvementRatio,
+    scoreDirection: higher_is_better,
+    cumulativeBaseline,
+    iterationBaseline,
+    currentScore,
+    cumulativeImprovementRatio,
+    iterationImprovementRatio,
+    improvementFormula: currentScore / baselineScore,
     claimAllowed
+  },
+  baselineProvenance: {
+    cumulativeSourceRef,
+    iterationSourceRef,
+    capturedFrom: origin/main | explicit_ref,
+    capturedAt,
+    scoreDirectionVerified: boolean
   },
   claimAllowed: boolean
 }
 ```
 
-Heuristic proof metrics use fixed denominators from this contract, not ad-hoc run scoring.
+Heuristic proof metrics use fixed denominators from this contract, not ad-hoc run scoring. Each metric records two baselines:
 
-- `falsePositive.baselinePredicateScore` and `currentPredicateScore` count covered accepted-path blocking predicates from CandidateShapeGate, EvidencePrecisionGate, ProducerEvidenceGate, ConflictClarificationGate, RequirementTraceabilityGate, SeverityScopeGate, and JudgeMergerAgent. Current v7.2.7 must score all seven; baseline v7.2.5 scores five because requirement traceability and severity scope were embedded in broader gates, not separately blocked before Judge.
-- `falseNegative.baselinePredicateScore` and `currentPredicateScore` count covered missed-critical prevention predicates from SourcePresenceManifest, ActiveSpecPatchCoverage, TargetHintExtraction, TargetSurfaceCoverageGate, DispatchCompletenessGate, and CriticalRedTeamAgent missed-P0/P1 search. Current v7.2.7 must score all six; baseline v7.2.5 scores four because it lacks explicit TargetSurfaceCoverageGate and DispatchCompletenessGate.
-- `speed` uses the critical path formula in Performance measurement contract.
-- `analysisDepth.baselineTriggerCoverage` and `currentTriggerCoverage` count covered depth trigger predicates from direct/bounded/expanded/exhaustive-capped selection rules, requested-depth escalation, post-candidate P0/P1 escalation, target-surface depth backstop, and dispatch-completeness depth backstop. Current v7.2.7 must score eight; baseline v7.2.5 scores six because it lacks the target-surface and dispatch-completeness backstops. Hard triggers must be covered before risk-score tie-breaker coverage can count.
+- `cumulativeBaseline`: 최초 tracked baseline contract score. This proves accumulated improvement across the whole improvement series.
+- `iterationBaseline`: 직전 `origin/main` contract score for the same metric. This proves the current iteration improved over the previous main version.
+- `currentScore`: 이번 contract score from current run metadata.
+- `cumulativeImprovementRatio` and `iterationImprovementRatio`: use `currentScore / baselineScore` when `scoreDirection: higher_is_better`, and `baselineScore / currentScore` when `scoreDirection: lower_is_better`.
+
+Metric scoring:
+
+- `falsePositive.currentScore` counts covered accepted-path and improvement-claim blocking predicates from CandidateShapeGate, EvidencePrecisionGate, ProducerEvidenceGate, ConflictClarificationGate, RequirementTraceabilityGate, SeverityScopeGate, JudgeMergerAgent, and BaselineProvenanceGate.
+- `falseNegative.currentScore` counts covered missed-critical prevention predicates from SourcePresenceManifest, ActiveSpecPatchCoverage, TargetHintExtraction, TargetSurfaceCoverageGate, DispatchCompletenessGate, CriticalRedTeamAgent missed-P0/P1 search, and BaselineProvenanceGate.
+- `speed.currentScore` uses the critical path formula in Performance measurement contract.
+- `analysisDepth.currentScore` counts covered depth trigger predicates from direct/bounded/expanded/exhaustive-capped selection rules, requested-depth escalation, post-candidate P0/P1 escalation, target-surface depth backstop, dispatch-completeness depth backstop, and baseline auto-refresh backstop. Hard triggers must be covered before risk-score tie-breaker coverage can count.
+- BaselineProvenanceGate proves `cumulativeBaseline`, `iterationBaseline`, `currentScore`, score direction, and formula for each metric. It counts as a proof predicate because it prevents false improvement claims from stale fixed baselines.
 - ClaimFreshnessGate is a separate claim gate, not a score denominator. It can block `heuristicProof.claimAllowed`, but it does not inflate false-positive, false-negative, or analysis-depth ratios.
 
-Contract-level improvement proof target:
+Contract-level improvement proof target separates cumulative baseline from iteration baseline:
 
 ```text
-falsePositive: baselinePredicateScore = 5, currentPredicateScore = 7, improvementRatio = 7 / 5 = 1.40
-falseNegative: baselinePredicateScore = 4, currentPredicateScore = 6, improvementRatio = 6 / 4 = 1.50
-speed: baselineCriticalPathScore = 87.1, currentCriticalPathScore <= 51.6, improvementRatio >= 87.1 / 51.6 = 1.69
-analysisDepth: baselineTriggerCoverage = 6, currentTriggerCoverage = 8, improvementRatio = 8 / 6 = 1.33
+falsePositive:
+  cumulativeBaseline = 5, iterationBaseline = 7, currentScore = 8
+  cumulativeImprovementRatio = 8 / 5 = 1.60
+  iterationImprovementRatio = 8 / 7 = 1.14
+falseNegative:
+  cumulativeBaseline = 4, iterationBaseline = 6, currentScore = 7
+  cumulativeImprovementRatio = 7 / 4 = 1.75
+  iterationImprovementRatio = 7 / 6 = 1.17
+speed:
+  cumulativeBaseline = 87.1, iterationBaseline = 51.6, currentScore <= 50.5
+  cumulativeImprovementRatio = 87.1 / 50.5 = 1.724... (display 1.72)
+  iterationImprovementRatio = 51.6 / 50.5 = 1.021... (display 1.02)
+analysisDepth:
+  cumulativeBaseline = 6, iterationBaseline = 8, currentScore = 9
+  cumulativeImprovementRatio = 9 / 6 = 1.50
+  iterationImprovementRatio = 9 / 8 = 1.125 (display 1.13)
 ```
 
-Combined claim requires every ratio above to be recomputed from actual run metadata and remain `>= 1.3`.
+Combined claim requires every cumulative ratio and every iteration ratio above to be recomputed from actual run metadata. Do not claim a new iteration improvement from the fixed cumulative baseline alone.
 
 ## Candidate Intake Gate
 
@@ -406,7 +449,7 @@ Missed critical issue를 줄이기 위해 candidate accept/reject 판단과 별�
 - Missing source 때문에 agent를 skip한 경우 speed proof에는 credit하지 않고, false-negative proof에는 coverage blocker 또는 reference-only clarification으로 반영합니다.
 - CriticalRedTeamAgent는 would-be accepted 후보 검증뿐 아니라 selected analysis depth에서 missed P0/P1 candidate가 없는지 targeted search를 1회 수행합니다.
 
-`heuristicProof.falseNegative`는 위 두 gate와 SourcePresenceManifest, ActiveSpecPatchCoverage, TargetHintExtraction, CriticalRedTeamAgent missed-P0/P1 search를 합산합니다. Combined improvement claim은 `falseNegative.improvementRatio >= 1.3`, `claimAllowed: true`, ClaimFreshnessGate `pass`일 때만 허용됩니다.
+`heuristicProof.falseNegative`는 위 두 gate와 SourcePresenceManifest, ActiveSpecPatchCoverage, TargetHintExtraction, CriticalRedTeamAgent missed-P0/P1 search, BaselineProvenanceGate를 합산합니다. Combined improvement claim은 cumulative/iteration ratio가 모두 기록되고, cumulative ratio는 누적 기준을 충족하며, iteration ratio는 `> 1.0`, `claimAllowed: true`, ClaimFreshnessGate `pass`일 때만 허용됩니다.
 
 ## ClaimFreshnessGate
 
@@ -634,7 +677,7 @@ else:
   analysisDepth = heuristicRequiredDepth
 ```
 
-`heuristicProof.analysisDepth` records baseline trigger coverage, current trigger coverage, and `improvementRatio`. Analysis depth improvement may be claimed only when hard-trigger coverage is current, ClaimFreshnessGate passes, and `heuristicProof.analysisDepth.improvementRatio >= 1.3`.
+`heuristicProof.analysisDepth` records cumulative baseline, iteration baseline, current score, score direction, cumulative ratio, and iteration ratio. Analysis depth improvement may be claimed only when hard-trigger coverage is current, baseline provenance is current, ClaimFreshnessGate passes, cumulative ratio satisfies the cumulative target, and iteration ratio is `> 1.0`.
 
 `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `dispatchSkips`, `claimFreshnessGate`, `heuristicProof`, and `compatibilityFlags` must be recorded in run metadata.
 
@@ -646,7 +689,8 @@ Proxy formula:
 
 ```text
 criticalPathScore = agentCriticalPathGroups * 10 + deterministicStageGroups * 1 + runProcedureSteps * 0.1
-improvementRatio = baselineCriticalPathScore / currentCriticalPathScore
+cumulativeImprovementRatio = cumulativeBaselineScore / currentScore
+iterationImprovementRatio = iterationBaselineScore / currentScore
 ```
 
 Baseline for v7.2 strict-shaped flow:
@@ -675,28 +719,36 @@ agentCriticalPathGroups <= 4
   CriticalRedTeamAgent
   JudgeMergerAgent
 
-deterministicStageGroups <= 9
-runProcedureSteps <= 26
-currentCriticalPathScore <= 51.6
-achievedImprovementRatio >= 1.69
-requiredImprovementRatio >= 1.3
+deterministicStageGroups <= 8
+runProcedureSteps <= 25
+currentCriticalPathScore <= 50.5
+cumulativeImprovementRatio = 87.1 / 50.5 = 1.724...
+cumulativeImprovementRatioDisplay = 1.72
+iterationImprovementRatio = 51.6 / 50.5 = 1.021...
+iterationImprovementRatioDisplay = 1.02
+cumulativeRequiredImprovementRatio >= 1.3
+iterationRequiredImprovementRatio > 1.0
 ```
 
-Contract target proof for the v7.2.7 default procedure:
+Contract target proof for the v7.2.8 default procedure:
 
 ```text
-baselineCriticalPathScore = 87.1
-currentCriticalPathScore <= 4 * 10 + 9 * 1 + 26 * 0.1 = 51.6
-minimumTargetImprovementRatio = 87.1 / 51.6 = 1.69
+cumulativeBaselineCriticalPathScore = 87.1
+iterationBaselineCriticalPathScore = 51.6
+currentCriticalPathScore <= 4 * 10 + 8 * 1 + 25 * 0.1 = 50.5
+cumulativeImprovementRatio = 87.1 / 50.5 = 1.724...
+cumulativeImprovementRatioDisplay = 1.72
+iterationImprovementRatio = 51.6 / 50.5 = 1.021...
+iterationImprovementRatioDisplay = 1.02
 ```
 
 A concrete run must recompute these fields from its actual `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count. Do not copy the target proof as run proof when actual run metadata differs.
 
-The run receipt or manifest must record the measured proxy fields when a gap run claims performance improvement. `measurementMethod` defaults to `contract-derived-critical-path-proxy` unless actual wall-clock instrumentation exists. Do not claim speed success from vague phrases such as `expected`, `estimated`, or `likely`; success requires recorded numeric fields and `improvementRatio >= 1.3`.
+The run receipt or manifest must record the measured proxy fields when a gap run claims performance improvement. `measurementMethod` defaults to `contract-derived-critical-path-proxy` unless actual wall-clock instrumentation exists. Do not claim speed success from vague phrases such as `expected`, `estimated`, or `likely`; success requires recorded cumulative baseline, iteration baseline, current score, score direction, and both improvement ratios. Do not use the fixed cumulative baseline alone to claim iteration speed improvement.
 
 `dispatchSkips` may contribute to speed proof only when each credited skip records `agent`, `reason`, `sourceClass`, `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true`. A skip caused by missing or ambiguous evidence may reduce agent dispatch, but it cannot be credited to speed improvement unless the run still preserves the required evidence coverage for the selected `analysisDepth`.
 
-`heuristicProof.speed` mirrors the performance fields and sets `claimAllowed: true` only when `performance.improvementRatio >= heuristicProof.requiredImprovementRatio`. `heuristicProof.claimAllowed` is true only when false-positive, false-negative, speed, and analysis-depth subproofs are all allowed and ClaimFreshnessGate passes.
+`heuristicProof.speed` mirrors the performance fields and sets `claimAllowed: true` only when cumulative and iteration ratios use `baselineScore / currentScore`, cumulative ratio satisfies `heuristicProof.cumulativeRequiredImprovementRatio`, and iteration ratio is `> 1.0`. `heuristicProof.claimAllowed` is true only when false-positive, false-negative, speed, and analysis-depth subproofs are all allowed and ClaimFreshnessGate passes.
 
 ## Loop policy
 
@@ -717,7 +769,7 @@ Implementation 개선 작업에서는 `redesign -> analysis -> review -> feedbac
 ## Run procedure
 
 1. Emit start receipt with GAP-ID, branch-key, and planned report path.
-2. In parallel, bind current worktree root, branch-key, run-id, user-provided references, target hints, current implementation candidates, and integration freshness metadata.
+2. In parallel, bind current worktree root, branch-key, run-id, user-provided references, target hints, current implementation candidates, integration freshness metadata, cumulative baseline metadata, and iteration baseline metadata from previous `origin/main`.
 3. Build source/plan/current implementation presence manifest.
 4. Freeze `dispatchPlan` from the presence manifest and record initial `dispatchSkips` with `criticalPathEffect`, `evidenceCoveragePreserved`, and `falseNegativeRisk`.
 5. Compute `riskScore`, `sideEffectConfidence`, `analysisDepth`, `depthReasons`, and `verificationEscalation`.
@@ -738,10 +790,9 @@ Implementation 개선 작업에서는 `redesign -> analysis -> review -> feedbac
 20. Run JudgeMergerAgent once on the final judge queue.
 21. Run ambiguity/source-conflict receipt materialization for blocked items.
 22. Compute and record `performance` fields from the final dispatch plan and deterministic stage count.
-23. Run ClaimFreshnessGate against final candidate gates, coverage gates, dispatch metadata, performance proof, and analysis-depth decision.
-24. Compute and record `heuristicProof` from false-positive gate coverage, false-negative coverage, performance proof, analysis-depth trigger coverage, and ClaimFreshnessGate.
-25. Acquire branch lock, write required artifacts, update branch/global index, release lock.
-26. Emit final stdout receipt and compact tables.
+23. Compute and record `heuristicProof` from false-positive gate coverage, false-negative coverage, performance proof, analysis-depth trigger coverage, BaselineProvenanceGate, and projected ClaimFreshnessGate in one deterministic proof stage.
+24. Acquire branch lock, write required artifacts, update branch/global index, release lock.
+25. Emit final stdout receipt and compact tables.
 
 ## Output
 
@@ -756,8 +807,10 @@ Branch Scope: <branch-key>
 검증 강화: <none|targeted-red-team>
 상태: 완료
 Report: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md
-성능 증명: <improvementRatio>x by <measurementMethod>
-개선 증명: FP <ratio>x / FN <ratio>x / speed <ratio>x / depth <ratio>x
+성능 증명: cumulative <ratio>x / iteration <ratio>x by <measurementMethod>
+누적 개선 증명: FP <ratio>x / FN <ratio>x / speed <ratio>x / depth <ratio>x
+반복 개선 증명: FP <ratio>x / FN <ratio>x / speed <ratio>x / depth <ratio>x
+Baseline: cumulative <sourceRef> / iteration <sourceRef>
 Proof freshness: <pass|blocked>
 
 Findings:
