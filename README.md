@@ -9,7 +9,7 @@ TigerKit(`tk`, plugin namespace `/tk:*`)은 branch-scoped Spec / Gap / Verify / 
 | Command | 역할 | 저장 성격 |
 | --- | --- | --- |
 | `/tk:spec` | 즉석 지시, 브레인스토밍, 회의 메모를 현재 브랜치의 Spec Patch로 저장합니다. | branch-local |
-| `/tk:gap` | Product/Design Spec, implementation plan, current implementation을 빠른 `lite` 또는 정밀 `strict`로 비교합니다. | branch-local |
+| `/tk:gap` | Product/Design Spec, implementation plan, current implementation을 빠른 `lite` 또는 확장 `strict` contract-based preset으로 비교하고 rerun trail을 남깁니다. | branch-local |
 | `/tk:verify-before-stop` | Stop hook이 확인할 verification evidence를 수동으로 미리 생성/보완합니다. | branch-local |
 | `/tk:reflect` | branch-local working memory에서 repo에 영구 보존할 insight만 추출하고 durable target에 반영합니다. | durable insight |
 | `/tk:handoff` | 다음 세션이나 다음 작업자가 이어받을 continuation 문서를 작성합니다. | continuation |
