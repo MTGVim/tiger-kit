@@ -9,7 +9,7 @@ TigerKit(`tk`, plugin namespace `/tk:*`)은 branch-scoped Spec / Gap / Reflect p
 | Command | 역할 | 저장 성격 |
 | --- | --- | --- |
 | `/tk:spec` | 즉석 지시, 브레인스토밍, 회의 메모를 현재 브랜치의 Spec Patch로 저장합니다. | branch-local |
-| `/tk:gap` | Product/Design Spec, implementation plan, current implementation을 단일 adaptive contract-based review로 비교하고 compact Ref 중심 report를 남깁니다. | branch-local |
+| `/tk:gap` | Product/Design Spec, implementation plan, current implementation을 단일 adaptive contract-based review로 비교하고 analysis depth, evidence gates, 성능 증명, compact Ref 중심 report를 남깁니다. | branch-local |
 | `/tk:reflect` | branch-local working memory에서 repo에 영구 보존할 insight만 추출하고 durable target에 반영합니다. | durable insight |
 | `/tk:handoff` | 다음 세션이나 다음 작업자가 이어받을 continuation 문서를 작성합니다. | continuation |
 | `/tk:meta-feedback` | 세션 내역에서 TigerKit command/skill 개선안을 일반화해 추출합니다. | generalized feedback |

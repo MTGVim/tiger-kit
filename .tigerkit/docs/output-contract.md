@@ -43,10 +43,13 @@ Items:
 - 기본 저장 위치: `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/`
 - `/tk:gap`은 단일 `/tk:gap` 실행로 실행합니다.
 - `lite`와 `strict`는 user-facing quality mode가 아닙니다.
-- 분석 범위는 `analysisDepth: direct|bounded|expanded|exhaustive-capped`와 `depthReasons`로 기록합니다.
+- 분석 범위는 `analysisDepth: direct|bounded|expanded|exhaustive-capped`와 `depthReasons`로 기록합니다. 명시된 `--analysis-depth`가 위험 표면의 heuristic minimum보다 낮으면 낮추지 않고 escalation을 기록합니다.
 - subagent는 final finding을 확정하지 못합니다.
 - candidate의 file:line 또는 module-path evidence는 JudgeMergerAgent queue 진입 전에 현재 target surface에서 read-back으로 재확인합니다.
 - producer-absence claim은 producer-side evidence gate를 통과해야 합니다.
+- user-provided source, referenced source, repo에서 접근 가능한 API contract/schema/endpoint/serializer/data model이 있으면 사용자에게 묻기 전에 먼저 확인합니다.
+- consumer-only fallback/default/mapper evidence는 producer absence accepted finding이나 `SourceConflict`로 승격하지 않습니다.
+- `missing_producer_evidence`는 숨기지 않습니다. stdout/report에서 확인한 producer surface, access status, 아직 필요한 producer evidence를 알리고 `Clarification Needed`로 사용자 또는 owner 확인을 요청합니다.
 - ambiguity와 source conflict는 Judge accept path 전에 `Clarification Needed` 또는 `SourceConflict`로 기록합니다.
 - JudgeMergerAgent만 final accepted finding을 확정합니다.
 - 유저향 stdout/report table은 run-local short Ref(`G1`, `R1`, `C1`, `Q1`)를 우선 표시하고 긴 canonical ID는 JSON artifact와 report 상세/참조 영역에 보관합니다.
@@ -107,7 +110,8 @@ Gap run metadata must include:
 - `sideEffectConfidence: number`
 - `verificationEscalation: none|targeted-red-team`
 - `compatibilityFlags: string[]`
-- `dispatchSkips`
+- `dispatchPlan`
+- `dispatchSkips` with `agent`, `reason`, `sourceClass`, and `criticalPathEffect`
 - `candidateIntakeGate`
 - `evidencePrecisionGate`
 - `blockedClarifications`
@@ -121,6 +125,10 @@ Performance proof fields:
 - `performance.deterministicStageGroups`
 - `performance.runProcedureSteps`
 - `performance.measurementMethod`
+
+Speed improvement may be claimed only when numeric performance fields are recorded and `performance.improvementRatio >= 1.3`. Vague wording such as `expected`, `estimated`, or `likely` is not proof.
+
+Current optimized `/tk:gap` contract proof uses `baselineCriticalPathScore = 87.1`, `currentCriticalPathScore <= 49.2`, and `improvementRatio >= 1.77` by `contract-derived-critical-path-proxy`.
 
 Candidate intake metadata must include:
 
