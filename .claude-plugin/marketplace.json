@@ -4,13 +4,13 @@
     "name": "MTGVim"
   },
   "metadata": {
-    "description": "branch-scoped spec, contract-based gap review, verification evidence, and durable reflection을 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다."
+    "description": "branch-scoped spec, fast/strict contract-based gap review, verification evidence, durable reflection, meta-feedback, and handoff를 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다."
   },
   "plugins": [
     {
       "name": "tk",
       "source": "./",
-      "description": "branch-scoped spec, contract-based gap review, verification evidence, and durable reflection을 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다."
+      "description": "branch-scoped spec, fast/strict contract-based gap review, verification evidence, durable reflection, meta-feedback, and handoff를 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다."
     }
   ]
 }
