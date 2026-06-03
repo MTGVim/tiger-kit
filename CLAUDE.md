@@ -2,8 +2,9 @@
 
 ## 언어 및 산출물 규칙
 
-- 이 저장소에서 만드는 TigerKit 작업 산출물(`.claude/rules/**/*.md`, `.claude/tigerkit-reflections.md`, `.tigerkit/docs/*.md`)은 반드시 한글로 작성한다.
+- 이 저장소에서 만드는 TigerKit 작업 산출물(`.claude/rules/**/*.md`, `.claude/handoffs/current.md`, `.tigerkit/docs/*.md`)은 반드시 한글로 작성한다.
 - 사용자에게 진행 상황, 계획, 검증 결과를 보고할 때도 한글을 기본으로 사용한다.
+- 사용자 대화에 보이는 안내, 추천, 요약, next action은 변수명, path, identifier, contract field name 같은 계약용어를 제외하고 한글로 작성한다.
 - 기존 공개 문서나 manifest가 영어 문구를 쓰는 경우에는 주변 문맥과 일관성을 우선한다.
 
 ## 검증 및 참조 규칙
@@ -17,12 +18,15 @@
 ## 핵심 정책
 
 - TigerKit의 목적은 AI-induced source loss를 줄이는 것이다.
-- v7 핵심 command set은 `/tk:spec`, `/tk:gap`, `/tk:verify-before-stop`, `/tk:reflect`다.
+- v7.1 핵심 command set은 `/tk:spec`, `/tk:gap`, `/tk:verify-before-stop`, `/tk:reflect`, `/tk:handoff`, `/tk:meta-feedback`다.
+- 기존 command를 v7 정리 과정에서 임의 제거하지 않는다. command surface 변경은 compatibility와 docs/evals 동기화를 함께 검토한다.
 - Claude Code plugin command는 namespace를 사용하므로 slash invocation은 `/tk:*` 형태다. 자연어 요청은 같은 프로토콜을 따른다.
 - `/tk:spec`은 현재 session에서 사용자가 직접 제공한 지시, 브레인스토밍, 회의 메모, 결정사항을 현재 브랜치 전용 Spec Patch로 저장한다.
-- `/tk:gap`은 Product/Design Spec, Implementation Plan, Current Implementation을 Contract로 비교해 JudgeMergerAgent가 확정한 actionable finding만 branch-local artifact로 저장한다.
-- `/tk:verify-before-stop`은 작업 종료 전 최신 Spec Patch와 Gap Run 기준의 verification evidence를 branch-local artifact로 저장한다.
-- `/tk:reflect`는 branch-local working memory에서 repo에 영구 보존할 insight만 추출한다. 기본 동작은 `apply=true`이며, source code는 수정하지 않고 durable insight target만 수정한다.
+- `/tk:gap`은 Product/Design Spec, Implementation Plan, Current Implementation을 Contract로 비교해 JudgeMergerAgent가 확정한 actionable finding만 branch-local artifact로 저장한다. 기본은 빠른 `lite`이며, `--strict`는 사용자가 명시했을 때만 실행한다.
+- `/tk:verify-before-stop`은 Stop hook이 확인할 verification evidence를 수동으로 미리 생성/보완하는 command다. Stop hook은 자동 guard다.
+- `/tk:reflect`는 branch-local working memory에서 repo에 영구 보존할 insight만 추출한다. 기본 동작은 `apply=true`이며, source code는 수정하지 않고 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에 직접 반영한다.
+- `/tk:handoff`는 다음 세션이나 다음 작업자가 이어받을 continuation 문서를 작성한다.
+- `/tk:meta-feedback`은 현재 세션 내역에서 TigerKit command/skill 개선안을 일반화해 추출한다.
 - repo convention은 `.claude/rules/**/*.md`를 우선 확인한다.
 - UI copy는 basis 또는 confirmed contract와 exact match여야 한다. 의미상 유사함은 충분하지 않다.
 - 외부 근거는 URL, path, ticket, Figma, PRD, issue, API docs, source code path, commit hash 같은 reference와 access status로 관리한다.

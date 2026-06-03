@@ -85,10 +85,16 @@ When the target means `current implementation`, current working tree, current br
 - If behind changes do not affect the target area, the local target may still be used, but report the freshness check briefly.
 - If the user explicitly names a commit, branch, PR diff, or working tree state as the target, do not switch targets silently; report stale status as evidence instead.
 
-## GAP-009: No unbounded loop
+## GAP-009: Use lite by default and strict only when explicit
 
-- Default mode runs no review loop.
-- Auto mode runs CriticalRedTeamAgent once only when risk triggers exist.
+- Default `/tk:gap` runs `lite` after a short preflight skim and one Korean mode recommendation.
+- `--lite` is the fast path for small or low-risk work.
+- `--strict` is the explicit slower path for BE validation, permission, auth, payment, data mutation, destructive action, shared component, or high ambiguity risk.
+- Do not auto-run strict on a plain `/tk:gap` call. Recommend strict when risk is high, then tell the user to re-run with `--strict`.
+- `--legacy`, `--deep`, and `--no-strict` are not active v7.1 modes.
+
+## GAP-010: No unbounded loop
+
+- Lite mode runs no review loop.
 - Strict mode runs CriticalRedTeamAgent exactly once.
-- No-strict mode runs zero red-team passes.
 - Never continue because of P3, nit, duplicate, unverifiable, or source conflict observations.

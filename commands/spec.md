@@ -3,7 +3,7 @@ description: 즉석 지시, 브레인스토밍, 회의 메모를 현재 branch-l
 argument-hint: "<instruction?> [--status active|draft] [--title <title>] [--origin <origin>] [--supersedes <item-id>] [--out <path>] [--no-index] [--print-body]"
 ---
 
-이 명령은 TigerKit v7 branch-scoped Spec Patch contract를 따릅니다.
+이 명령은 TigerKit v7.1 branch-scoped Spec Patch contract를 따릅니다.
 
 사용자에게는 한글로 답합니다. 코드, path, URL, ticket, commit, hash, identifier, error는 원문 그대로 둘 수 있습니다.
 
@@ -250,9 +250,9 @@ Tiger Kit does not read or write files outside the current worktree by default.
 기본 stdout은 summary만 출력합니다.
 
 ```text
-Created Spec Patch: <SP-ID>
+Spec Patch 생성: <SP-ID>
 Branch Scope: <branch-key>
-Path: .claude/tigerkit/branches/<branch-key>/specs/<SP-ID>-<slug>.md
+경로: .claude/tigerkit/branches/<branch-key>/specs/<SP-ID>-<slug>.md
 Items:
 - <ITEM-ID>
 ```

@@ -1,154 +1,140 @@
 {
-  "skill_name": "tiger-kit-v7-branch-scoped-pipeline",
+  "skill_name": "tiger-kit-v7-1-command-surface-restoration",
   "command_surface": {
     "core_commands": [
       "/tk:spec",
       "/tk:gap",
       "/tk:verify-before-stop",
-      "/tk:reflect"
+      "/tk:reflect",
+      "/tk:handoff",
+      "/tk:meta-feedback"
     ],
-    "legacy_or_removed_commands": [
-      "/tk:meta-feedback",
-      "/tk:handoff"
+    "gap_modes": [
+      "lite",
+      "strict"
+    ],
+    "removed_gap_modes": [
+      "legacy",
+      "deep",
+      "no-strict"
     ]
   },
   "evals": [
     {
       "id": 0,
-      "name": "command-surface-lists-v7-commands",
-      "prompt": "You are evaluating TigerKit v7 active command surface. Describe the user-facing commands. Do not write files.",
-      "expected_output": "Should list /tk:spec, /tk:gap, /tk:verify-before-stop, and /tk:reflect as the active user-facing commands. Should explain that spec/gap/verify-before-stop write branch-local working memory under .claude/tigerkit/branches/<branch-key>/ and that reflect is the only durable insight path. Should treat /tk:meta-feedback and /tk:handoff as non-core legacy or removed surface for v7.",
+      "name": "command-surface-restores-existing-commands",
+      "prompt": "You are evaluating TigerKit v7.1 active command surface. Describe the user-facing commands. Do not write files.",
+      "expected_output": "Should list /tk:spec, /tk:gap, /tk:verify-before-stop, /tk:reflect, /tk:handoff, and /tk:meta-feedback as active user-facing commands. Should explain that handoff and meta-feedback were preserved existing commands, not newly invented v7 commands. Should explain that spec/gap/verify-before-stop write branch-local working memory, reflect creates durable insight, handoff creates continuation context, and meta-feedback extracts generalized TigerKit improvement feedback from session history.",
       "files": [],
       "expectations": [
         "Lists /tk:spec",
         "Lists /tk:gap",
         "Lists /tk:verify-before-stop",
         "Lists /tk:reflect",
+        "Lists /tk:handoff",
+        "Lists /tk:meta-feedback",
+        "Treats handoff as restored existing continuation command",
+        "Treats meta-feedback as restored existing session-history improvement command",
         "Explains spec/gap/verify-before-stop branch-local working memory",
-        "Explains reflect-only durable insight",
-        "Mentions .claude/tigerkit/branches/<branch-key>/ storage",
-        "Does not list /tk:meta-feedback as active v7 core command",
-        "Does not list /tk:handoff as active v7 core command"
+        "Explains reflect-only durable insight"
       ]
     },
     {
       "id": 1,
-      "name": "spec-creates-branch-local-spec-patch",
-      "prompt": "You are evaluating TigerKit v7 /tk:spec for the input `/tk:spec \"방금 정해졌는데 모바일에서는 CTA를 하단 sticky로 해야 된대. 데스크톱은 기존처럼 우상단 유지.\"`. Describe expected behavior. Do not write files.",
-      "expected_output": "Should create a branch-local Spec Patch under .claude/tigerkit/branches/<branch-key>/specs/, update specs/index.json and branch-state.json when indexing is enabled, assign SP-YYYYMMDD-HHmmss-RAND and item IDs such as P-SP-... and D-SP-..., classify confirmed wording as confirmed, avoid implementation analysis and findings, and print only a summary by default unless --print-body is used.",
+      "name": "gap-default-recommends-lite-or-strict",
+      "prompt": "You are evaluating TigerKit v7.1 /tk:gap when a user calls `/tk:gap` with mixed Jira, current implementation, and design notes for a small ticket. Describe expected behavior. Do not write files.",
+      "expected_output": "Should skim the materials and changed scope first, print a one-time mode recommendation, default to lite for small or low-risk work, and avoid running strict automatically. Lite should target legacy-like speed while preserving v7 contract normalization. Strict should be available only by explicit --strict when validation, permission, data mutation, auth, payment, destructive action, shared component, or high ambiguity risk exists.",
       "files": [],
       "expectations": [
-        "Creates branch-local Spec Patch under .claude/tigerkit/branches/<branch-key>/specs/",
-        "Updates specs/index.json by default",
-        "Updates branch-state.json with lastSpecPatchId",
-        "Uses SP-YYYYMMDD-HHmmss-RAND Spec Patch ID",
-        "Uses typed Spec Item IDs such as P-SP and D-SP",
-        "Does not create gap findings",
-        "Does not analyze implementation",
-        "Prints summary only by default",
-        "Allows full body only with --print-body"
+        "Skims materials and changed scope before selecting mode",
+        "Prints one mode recommendation",
+        "Defaults to lite for small or low-risk work",
+        "Does not run strict automatically by default",
+        "Explains lite is faster and may have higher false-positive risk",
+        "Explains strict is slower and reduces false positives or missed edge cases",
+        "Uses --strict for high-risk review",
+        "Does not mention --legacy as an active mode",
+        "Does not mention --deep as an active mode",
+        "Does not mention --no-strict as an active mode"
       ]
     },
     {
       "id": 2,
-      "name": "gap-uses-contract-pipeline-and-judge-finality",
-      "prompt": "You are evaluating TigerKit v7 /tk:gap with active confirmed Spec Patch items and current implementation. Describe expected behavior. Do not write files.",
-      "expected_output": "Should load active confirmed Spec Patch items, normalize Product/Design/Design System/Engineering/QA/Analytics sources into contracts, let subagents produce only candidates, let JudgeMergerAgent be the only authority for final accepted findings, save run artifacts under branch-local runs/gap/<GAP-ID>/, exclude P3/nit/duplicate/unverifiable/source_conflict from final findings, and run strict red-team exactly once only when requested or triggered by auto mode.",
+      "name": "gap-strict-for-risky-backend-work",
+      "prompt": "You are evaluating TigerKit v7.1 /tk:gap on a backend Jira ticket touching validation and data mutation. Describe expected behavior. Do not write files.",
+      "expected_output": "Should recommend strict because backend validation and data mutation increase false-positive and missed-edge-case risk. Should still keep strict explicit unless the user passed --strict. Should require concrete source contract and target evidence before accepting backend findings, and should avoid inferring DTO, permission, or persistence semantics without source support.",
       "files": [],
       "expectations": [
-        "Loads active confirmed Spec Patch items by default",
-        "Normalizes Spec Patch items into contracts",
-        "Subagents produce candidates only",
-        "JudgeMergerAgent is the only final finding authority",
-        "Final findings include only P0, P1, or P2",
-        "Rejects P3/nit as final findings",
-        "Rejects duplicate findings or merges them",
-        "Classifies unverifiable/source_conflict outside final accepted findings",
-        "Does not loop until no findings",
-        "Stores input-manifest.json, contracts.json, candidates.json, judge-result.json, and report.md"
+        "Recommends strict for backend validation or data mutation",
+        "Keeps strict explicit unless --strict is provided",
+        "Requires source contract evidence for backend findings",
+        "Requires target implementation evidence for backend findings",
+        "Does not infer DTO semantics from compatible names alone",
+        "Does not infer permission or persistence behavior without evidence",
+        "Routes unclear backend semantics to rejected/unverifiable/source conflict instead of accepted finding"
       ]
     },
     {
       "id": 3,
-      "name": "gap-strict-mode-rules",
-      "prompt": "You are evaluating TigerKit v7 /tk:gap mode selection for `tiger-kit gap`, `tiger-kit gap --strict`, and `tiger-kit gap --no-strict`. Describe expected behavior. Do not write files.",
-      "expected_output": "Should treat auto as default, run CriticalRedTeamAgent once when auto strict triggers exist, run exactly one red-team pass in --strict even without triggers, and run no red-team pass in --no-strict even if triggers exist. Should record strictExecuted and autoStrictTriggers in input-manifest.json and judge-result.json.",
+      "name": "meta-feedback-uses-session-history-for-gap-improvements",
+      "prompt": "You are evaluating TigerKit v7.1 /tk:meta-feedback after a session where the user said gap took 15 minutes on a small ticket and backend findings had false positives. Describe expected behavior. Do not write files.",
+      "expected_output": "Should use the session history as evidence, generalize the feedback without exposing project assets, and propose TigerKit command or skill improvements. It should capture performance friction for gap lite/strict selection and backend false-positive reduction guidance. It should not create repo rule patches like reflect and should not output raw user quotes, paths, tickets, PR numbers, branch names, or project-specific labels.",
       "files": [],
       "expectations": [
-        "Uses auto mode by default",
-        "Auto mode runs strict only when risk triggers exist",
-        "--strict runs exactly one red-team pass",
-        "--no-strict runs zero red-team passes",
-        "Records strictExecuted",
-        "Records autoStrictTriggers",
-        "Does not run unbounded review loops"
+        "Uses session history as the evidence source",
+        "Generalizes gap performance friction",
+        "Generalizes backend false-positive feedback",
+        "Proposes TigerKit command or skill improvement",
+        "Does not expose raw user quotes",
+        "Does not expose paths, tickets, PR numbers, branch names, or project-specific labels",
+        "Does not behave like /tk:reflect repo rule patching"
       ]
     },
     {
       "id": 4,
-      "name": "verify-before-stop-saves-branch-local-evidence",
-      "prompt": "You are evaluating TigerKit v7 /tk:verify-before-stop when no gap run exists for the current branch scope. Describe expected behavior. Do not write files.",
-      "expected_output": "Should create a verify run under .claude/tigerkit/branches/<branch-key>/runs/verify/<VFY-ID>/ by default, write checklist.md, evidence.json, and report.md, mark checks that depend on a latest gap run as unknown or skipped rather than failed, set overall verification status to unknown when no meaningful pass/fail can be proven, and print only a summary unless --print-report is used.",
+      "name": "handoff-remains-continuation-command",
+      "prompt": "You are evaluating TigerKit v7.1 /tk:handoff after a branch has spec, gap, and verify artifacts. Describe expected behavior. Do not write files.",
+      "expected_output": "Should preserve /tk:handoff as the existing continuation command. It should write .claude/handoffs/current.md by default, include Reader Guide and Resume Prompt, optionally mention latest branch-local Spec Patch, Gap Run, and Verify Run paths when observed, and create a dated archive only when archive=true or an explicit archive request is present.",
       "files": [],
       "expectations": [
-        "Saves verify run under branch-local runs/verify/<VFY-ID>/",
-        "Writes checklist.md",
-        "Writes evidence.json",
-        "Writes report.md",
-        "Handles missing latest gap run as unknown or skipped",
-        "Does not fail solely because no gap run exists",
-        "Prints summary only by default",
-        "Allows report body with --print-report"
+        "Preserves /tk:handoff as active command",
+        "Writes .claude/handoffs/current.md by default",
+        "Includes Reader Guide",
+        "Includes Resume Prompt",
+        "Can reference latest branch-local Spec Patch, Gap Run, and Verify Run paths",
+        "Does not create dated archive without archive=true or explicit archive request"
       ]
     },
     {
       "id": 5,
-      "name": "reflect-defaults-to-apply-true",
-      "prompt": "You are evaluating TigerKit v7 /tk:reflect after branch-local gap and verify runs produced durable repo-wide insight candidates. Describe expected behavior. Do not write files.",
-      "expected_output": "Should default to apply=true, read branch-local TigerKit memory, write only the durable insight target such as .claude/tigerkit-reflections.md, treat --dry-run and --apply=false as preview-only aliases, avoid modifying source code, dedupe repeated insights, and print Apply, Target, Applied Insights, and Summary.",
+      "name": "verify-before-stop-is-hook-preparation-command",
+      "prompt": "You are evaluating TigerKit v7.1 /tk:verify-before-stop. Describe why it exists as a command even though Stop hook verifies before stopping. Do not write files.",
+      "expected_output": "Should explain that /tk:verify-before-stop is a manual preparation command and the Stop hook is the automatic guard. The command prepares or refreshes branch-local verification evidence before the hook checks it. It should not introduce /tk:verify as a separate active command.",
+      "files": [],
+      "expectations": [
+        "Explains command is manual preparation",
+        "Explains Stop hook is automatic guard",
+        "Explains command prepares evidence the hook can check",
+        "Does not introduce /tk:verify as active command",
+        "Keeps /tk:verify-before-stop as active command"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "reflect-applies-directly-to-rules-and-claude",
+      "prompt": "You are evaluating TigerKit v7.1 /tk:reflect after branch-local gap and verify runs produced durable repo-wide insight candidates. Describe expected behavior. Do not write files.",
+      "expected_output": "Should default to apply=true, read branch-local TigerKit memory, write directly to CLAUDE.md or .claude/rules/* depending on target scope, treat --dry-run and --apply=false as preview-only aliases, avoid modifying source code, dedupe repeated insights, and avoid creating a separate tigerkit-reflections sidecar file.",
       "files": [],
       "expectations": [
         "Defaults /tk:reflect to apply=true",
         "Treats --dry-run as apply=false",
         "Treats --apply=false as dry-run alias",
-        "Allows --apply=true as redundant default",
         "Reads branch-local specs/gap/verify memory",
-        "Writes only durable insight target",
+        "Writes directly to CLAUDE.md or .claude/rules/*",
         "Does not modify source code",
+        "Does not create tigerkit-reflections sidecar file",
         "Skips duplicate insights",
         "Prints apply summary"
-      ]
-    },
-    {
-      "id": 6,
-      "name": "gap-preserves-freshness-ambiguity-and-copy-safety",
-      "prompt": "You are evaluating TigerKit v7 /tk:gap when target is current implementation, the checkout may be behind origin/main, a visible button label differs from a confirmed contract, and one source is ambiguous. Describe expected behavior. Do not write files.",
-      "expected_output": "Should verify origin/main freshness before comparing current implementation, report freshness evidence, enforce visible UI copy exact-match against confirmed contracts, avoid accepting ambiguous or conflicting source material as a final finding, and classify unresolved ambiguity as a rejected candidate or SourceConflict with a question containing evidence and recommendation.",
-      "files": [],
-      "expectations": [
-        "Checks integration branch freshness before current implementation comparison",
-        "Reports freshness evidence in manifest or report summary",
-        "Enforces visible UI copy exact-match for confirmed contracts",
-        "Does not treat meaning-similar visible copy as satisfied",
-        "Does not accept ambiguous source material as final finding evidence",
-        "Records unresolved ambiguity as rejected candidate or SourceConflict",
-        "Includes recommendation and evidence for remaining questions"
-      ]
-    },
-    {
-      "id": 7,
-      "name": "branch-state-and-global-index-are-refreshed",
-      "prompt": "You are evaluating TigerKit v7 branch-local state updates after /tk:spec, /tk:gap, /tk:verify-before-stop, and /tk:reflect. Describe expected behavior. Do not write files.",
-      "expected_output": "Should update branch-state.json with lastSpecPatchId, lastGapRunId, and lastVerifyRunId when the corresponding commands save artifacts, and should refresh global-index.json lastUsedAt for /tk:spec, /tk:gap, /tk:verify-before-stop, and /tk:reflect apply runs.",
-      "files": [],
-      "expectations": [
-        "Spec records lastSpecPatchId",
-        "Gap records lastGapRunId",
-        "Verify records lastVerifyRunId",
-        "Spec refreshes global-index lastUsedAt",
-        "Gap refreshes global-index lastUsedAt",
-        "Verify refreshes global-index lastUsedAt",
-        "Reflect apply refreshes global-index lastUsedAt"
       ]
     }
   ]
