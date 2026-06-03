@@ -1,32 +1,57 @@
 ---
-description: TigerKit command 또는 skill 사용 중 드러난 friction을 프로젝트 자산 유출 없이 일반화된 TigerKit 개선안으로 정리합니다.
-argument-hint: "[target-skill-name?] [--out <path>]"
+description: 현재 세션에서 드러난 TigerKit command 또는 skill 사용 friction을 프로젝트 자산 유출 없이 일반화된 개선안으로 정리합니다.
+argument-hint: "[target-skill-or-command?] [--out <path>]"
 ---
+
+이 명령은 기존 TigerKit improvement command이며 v7.1에서도 active command로 유지합니다.
 
 사용자 응답은 한글로 유지합니다. 단, 이 command의 핵심 안전 조건은 출력 자체가 이미 일반화되어 있어야 한다는 점입니다.
 
-목표: `/tk:meta-feedback`은 현재 세션에서 관측된 TigerKit command/skill 사용 friction, 사용자 교정, 반복 실수를 TigerKit 자체 개선안으로 추출합니다. 이 명령은 repo rule을 제안하는 `/tk:reflect`가 아닙니다.
+목표: `/tk:meta-feedback`은 현재 세션 전체 내역에서 관측된 TigerKit command/skill 사용 friction, 사용자 교정, 반복 실수, output UX 문제, latency 문제, false-positive pattern을 TigerKit 자체 개선안으로 추출합니다. 이 명령은 repo rule을 제안하는 `/tk:reflect`가 아닙니다.
 
 ```text
-meta-feedback = generalized skill improvement proposal + privacy-first redaction receipt
+meta-feedback = session-history-based generalized skill improvement proposal + privacy-first redaction receipt
 ```
 
 ## 역할 경계
 
 | 구분 | `/tk:reflect` | `/tk:meta-feedback` |
 | --- | --- | --- |
-| 대상 | 사용자 repo의 durable rule | TigerKit command/skill 자체 |
-| 산출 | `CLAUDE.md`, `.claude/rules/*` 변경 제안 | 일반화된 TigerKit 개선안 또는 issue draft |
-| 표현 | repo context를 유지할 수 있음 | repo context를 반드시 제거 |
-| 기본 동작 | proposal-only | proposal-only |
+| 대상 | 사용자 repo의 durable insight | TigerKit command/skill 자체 |
+| 입력 | branch-local specs/gap/verify memory와 repo context | 현재 세션 내역 전체의 feedback/friction |
+| 산출 | repo rule direct-apply contract 개선안 또는 issue draft | 일반화된 TigerKit 개선안 또는 issue draft |
+| 표현 | repo context를 제한적으로 유지할 수 있음 | repo context를 반드시 제거 |
+| 기본 동작 | apply=true | proposal-only |
 
 ## 기본 동작
 
 - 기본값은 파일을 수정하지 않고 일반화된 proposal만 출력합니다.
-- `--out <path>`가 있을 때만 지정 경로에 파일을 작성할 수 있습니다.
+- `--out <path>`가 있을 때만 current worktree root 내부 경로에 파일을 작성할 수 있습니다.
 - `--out` 파일 내용도 chat output과 같은 redacted format이어야 합니다.
+- worktree root 밖 경로, user home, `/tmp`, hidden control file path에는 쓰지 않습니다.
 - 출력하기 전에 privacy gate를 통과해야 합니다.
 - 안전하게 일반화할 수 없으면 개선안을 만들지 않고 `cannot_generalize_safely`로 중단합니다.
+
+## v7.1 feedback classes
+
+허용 feedback class:
+
+- `ux`
+- `output-format`
+- `taxonomy`
+- `safety`
+- `dispatch`
+- `docs`
+- `performance`
+- `false-positive`
+
+예시:
+
+- `/tk:gap`이 작은 ticket에서도 오래 걸리는 performance friction
+- BE DTO, permission, persistence 의미를 과추론해 오탐을 내는 false-positive pattern
+- `lite`/`strict` 추천 UX 혼동
+- 기존 command를 제거해 compatibility가 깨진 command surface feedback
+- 사용자 대화에 보이는 안내가 영어라 이해 비용이 커지는 output-format feedback
 
 ## Privacy Gate
 
@@ -51,6 +76,8 @@ meta-feedback = generalized skill improvement proposal + privacy-first redaction
 - `source_type=session_correction`
 - `source_type=repeated_friction`
 - `source_type=output_shape_feedback`
+- `source_type=latency_feedback`
+- `source_type=false_positive_feedback`
 
 ## Generalization Rules
 
@@ -62,11 +89,13 @@ meta-feedback = generalized skill improvement proposal + privacy-first redaction
 | URL, ticket, issue, PR, branch, commit | `<reference>` |
 | 사용자 원문 발화 | `source_type=session_correction` |
 | 세션의 구체적 시행착오 | `source_type=repeated_friction` |
+| gap latency feedback | `source_type=latency_feedback` |
+| backend false positive feedback | `source_type=false_positive_feedback` |
 
 ## 절차
 
 1. target이 있으면 `<skill>` 또는 `<command>` 수준으로만 식별합니다.
-2. 현재 세션에서 TigerKit command/skill 개선과 관련 있는 friction만 고릅니다.
+2. 현재 세션 전체 내역에서 TigerKit command/skill 개선과 관련 있는 friction만 고릅니다.
 3. repo rule, product requirement, implementation TODO는 제외하거나 `/tk:reflect` 또는 `/tk:gap` 대상으로 분류합니다.
 4. 원문 evidence를 직접 출력하지 않고 evidence class만 남깁니다.
 5. 모든 고유명, path, URL, ticket, branch, PR, commit, raw quote를 placeholder로 치환합니다.
@@ -81,7 +110,7 @@ meta-feedback = generalized skill improvement proposal + privacy-first redaction
 ```md
 ## Meta Feedback Summary
 - Target: <skill-or-command>
-- Feedback class: <ux|output-format|taxonomy|safety|dispatch|docs>
+- Feedback class: <ux|output-format|taxonomy|safety|dispatch|docs|performance|false-positive>
 - Privacy status: generalized
 
 ## Generalized Friction

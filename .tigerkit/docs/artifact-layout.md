@@ -1,6 +1,6 @@
 # TigerKit 운영 산출물 구조
 
-이 문서는 TigerKit v7 산출물 배치와 책임을 설명합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.1 산출물 배치와 책임을 설명합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
 
 TigerKit은 branch-local working memory와 durable insight를 분리합니다.
 
@@ -32,7 +32,9 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
               report.md
         cache/
         branch-state.json
-  tigerkit-reflections.md
+  handoffs/
+    current.md
+    YYYY-MM-DD-task-name.md
 
 .tigerkit/
   docs/
@@ -52,9 +54,10 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
 | `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/*.json` | gap input, contract, candidate, judge result artifact. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md` | 저장된 gap report 본문. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/runs/verify/<VFY-ID>/*` | verify-before-stop checklist, evidence, report. | branch-local |
-| `.claude/tigerkit-reflections.md` | reflect가 생성/갱신하는 기본 durable insight target. | durable insight |
-| `.claude/rules/**/*.md` | repo convention basis. v7 reflect 기본 apply 대상은 아니며 필요 시 proposal target입니다. | durable rule |
-| `CLAUDE.md` | repo instruction과 durable project guidance. v7 reflect 기본 apply 대상은 아니며 필요 시 proposal target입니다. | durable rule |
+| `.claude/handoffs/current.md` | `/tk:handoff`가 생성하는 기본 continuation 문서. | continuation |
+| `.claude/handoffs/YYYY-MM-DD-task-name.md` | `archive=true` 또는 명시적 archive 요청 때만 생성하는 continuation archive. | continuation |
+| `.claude/rules/**/*.md` | repo convention basis이자 `/tk:reflect apply=true`의 scoped durable apply target입니다. | durable rule |
+| `CLAUDE.md` | repo instruction과 durable project guidance이자 `/tk:reflect apply=true`의 global durable apply target입니다. | durable rule |
 | `.tigerkit/docs/*.md` | TigerKit usage, artifact, output contract documentation. | docs |
 
 ## Branch key
@@ -97,7 +100,7 @@ linked worktree는 repository common dir를 공유할 수 있으므로 common di
 
 - `.claude/` 전체를 ignore하지 않습니다.
 - `.claude/tigerkit/`만 ignore합니다.
-- `.claude/tigerkit-reflections.md`는 durable insight target이므로 `.claude/tigerkit/` 아래에 두지 않습니다.
+- reflect의 durable apply target은 `.claude/tigerkit/` 아래가 아니라 `CLAUDE.md` 또는 `.claude/rules/**/*.md`입니다.
 
 ## Atomic write 대상
 

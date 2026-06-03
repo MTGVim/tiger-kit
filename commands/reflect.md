@@ -1,16 +1,16 @@
 ---
-description: branch-local TigerKit working memory에서 repo에 영구 보존할 insight만 추출하고 기본 apply=true로 durable target에 반영합니다.
-argument-hint: "[--dry-run] [--apply=true|false] [--target <path>]"
+description: branch-local TigerKit working memory에서 repo에 영구 보존할 insight만 추출하고 apply=true일 때 CLAUDE.md 또는 .claude/rules/*에 직접 반영합니다.
+argument-hint: "[scope] [--dry-run] [--apply=true|false] [--target <CLAUDE.md|.claude/rules/...>]"
 ---
 
-이 명령은 TigerKit v7 reflect contract를 따릅니다.
+이 명령은 TigerKit v7.1 reflect contract를 따릅니다.
 
 사용자에게는 한글로 답합니다. 코드, path, URL, ticket, commit, hash, identifier, error는 원문 그대로 둘 수 있습니다.
 
-목표: `/tk:reflect`는 branch-local Spec Patch, Gap Run, Verify Run에서 repo-wide 가치가 있는 durable insight만 추출해 durable insight target에 반영합니다.
+목표: `/tk:reflect`는 branch-local Spec Patch, Gap Run, Verify Run에서 repo-wide 가치가 있는 durable insight만 추출해 적절한 durable surface에 직접 반영합니다.
 
 ```text
-reflect = branch-local working memory -> durable insight extraction
+reflect = branch-local working memory -> CLAUDE.md/.claude/rules durable reflection
 ```
 
 ## Command surface
@@ -22,9 +22,9 @@ reflect = branch-local working memory -> durable insight extraction
 
 - spec/gap/verify 산출물 자체는 repo-wide durable knowledge가 아닙니다.
 - repo에 영구적으로 남길 insight는 reflect를 통해서만 추출합니다.
-- `/tk:reflect` 기본 동작은 apply=true입니다.
+- `/tk:reflect` 기본 동작은 `apply=true`입니다.
 - source code는 수정하지 않습니다.
-- apply mode의 content write는 durable insight target만 수정합니다.
+- apply mode의 content write는 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에만 적용합니다.
 - branch recency bookkeeping으로 `global-index.json`의 `lastUsedAt`은 갱신할 수 있습니다.
 - 같은 insight를 중복 반영하지 않습니다.
 - 적용 결과 diff/summary를 출력합니다.
@@ -38,7 +38,7 @@ reflect = branch-local working memory -> durable insight extraction
 | `/tk:reflect --dry-run` | `apply=false` |
 | `/tk:reflect --apply=false` | dry-run alias |
 
-v7에서는 `--apply=true`가 redundant여도 warning을 내지 않습니다. v2 이후 warning은 별도 검토 대상입니다.
+v7.1에서는 `--apply=true`가 redundant여도 warning을 내지 않습니다.
 
 ## Inputs
 
@@ -60,35 +60,17 @@ Reflect는 current branch scope의 branch-local working memory를 읽습니다.
 - verify-before-stop checklist evidence
 - current code/worktree context needed to classify repo-wide value
 
-## Durable insight target
+## Durable target classification
 
-기본 target:
+각 insight candidate는 아래 중 하나로 분류합니다.
 
-```text
-.claude/tigerkit-reflections.md
-```
+| Target | 사용 조건 |
+| --- | --- |
+| `CLAUDE.md` | 저장소 전반에 항상 적용돼야 하는 상위 작업 규칙, evidence rule, approval gate, language/output 규칙일 때 |
+| `.claude/rules/**/*.md` | 특정 review/workflow/domain/path에만 적용되는 scoped rule일 때 |
+| `no action` | one-off, duplicate, unresolved, low-confidence, superseded일 때 |
 
-`--target <path>`가 있으면 current worktree root 내부의 durable insight file만 허용합니다. 권장 target은 `.claude/tigerkit-reflections.md` 또는 `docs/tigerkit-reflections.md`입니다.
-
-허용 target 조건:
-
-- current worktree root 내부 path
-- filename이 `tigerkit-reflections.md`
-- `.claude/tigerkit/` 아래가 아님
-- source code path가 아님
-
-금지 target:
-
-- `.claude/tigerkit/**`
-- source code path
-- command file path
-- rule file path
-- arbitrary docs file such as `.tigerkit/docs/usage.md`
-- current worktree root 밖 path
-- `/tmp`
-- user home global path
-
-프로젝트가 `.claude/` 전체를 ignore하면 warning을 출력합니다. `.claude/tigerkit/`만 ignore하는 것은 정상입니다.
+기본 apply는 위 target에 직접 적용합니다. `--target`이 있으면 명시 target을 우선 사용하되 `CLAUDE.md` 또는 `.claude/rules/**/*.md`만 허용합니다. proposal-only preview는 dry-run에서 출력합니다.
 
 ## Durable insight 후보
 
@@ -99,6 +81,7 @@ reflect는 아래만 durable insight 후보로 삼습니다.
 - design-system 또는 component convention으로 승격할 만한 내용
 - verify-before-stop에서 반복적으로 필요한 checklist
 - source conflict에서 확정된 resolution
+- 사용자 대화에 명시적으로 확인된 TigerKit 운영 규칙
 
 reflect는 아래를 durable insight로 만들지 않습니다.
 
@@ -111,19 +94,6 @@ reflect는 아래를 durable insight로 만들지 않습니다.
 - source conflict가 unresolved인 내용
 - implementation detail that only applies to this branch
 
-## Classification
-
-각 insight candidate는 아래 중 하나로 분류합니다.
-
-| Target | 사용 조건 |
-| --- | --- |
-| `.claude/tigerkit-reflections.md` | v7 기본 durable insight target |
-| `.claude/rules/**/*.md` proposal | repo convention rule로 승격할 가치가 있으나 직접 수정 대상이 아닐 때 |
-| `CLAUDE.md` proposal | 저장소 전반 운영 규칙 후보지만 직접 수정 대상이 아닐 때 |
-| no action | one-off, duplicate, unresolved, low-confidence일 때 |
-
-v7 기본 apply는 durable insight target에만 적용합니다. `.claude/rules/*`, `CLAUDE.md`, source code는 제안으로만 다룹니다.
-
 ## Dedupe
 
 동일 insight를 중복 반영하지 않습니다.
@@ -131,60 +101,47 @@ v7 기본 apply는 durable insight target에만 적용합니다. `.claude/rules/
 Dedupe key는 아래를 조합합니다.
 
 ```text
-normalized insight title + target surface + source evidence class
+normalized insight title + target file + source evidence class
 ```
 
-이미 target에 같은 insight가 있으면 `skipped as duplicate`로 집계합니다.
+이미 target에 같은 insight가 있으면 `중복으로 건너뜀`으로 집계합니다.
 
 ## Output
 
 기본 출력:
 
 ```text
-Reflect Complete
+Reflect 완료
 Apply: true
-Target: .claude/tigerkit-reflections.md
+적용 대상:
+- CLAUDE.md
+- .claude/rules/<path>.md
 
-Applied Insights:
+적용 결과:
 - <added> added
 - <updated> updated
 - <skipped> skipped as duplicate
 
-Summary:
-- <one-line insight summary>
+요약:
+- <한글 insight summary>
 ```
 
 `--dry-run` 또는 `--apply=false`일 때:
 
 ```text
-Reflect Complete
+Reflect 완료
 Apply: false
-Target: .claude/tigerkit-reflections.md
+예상 대상:
+- CLAUDE.md
+- .claude/rules/<path>.md
 
-Preview Insights:
+미리보기 결과:
 - <added> would add
 - <updated> would update
 - <skipped> skipped as duplicate
 
-Summary:
-- <one-line preview summary>
-```
-
-## Durable target format
-
-`.claude/tigerkit-reflections.md`는 한글로 작성합니다. 각 insight는 evidence class와 scope를 분리합니다.
-
-```md
-# TigerKit Reflection 기록
-
-## <insight title>
-
-- 상태: active
-- 출처: branch-local TigerKit memory
-- 근거 분류: accepted_finding_pattern | verify_checklist | source_conflict_resolution | repo_wide_decision
-- 범위: repo-wide | design-system | component-convention | workflow
-- 인사이트: <durable insight>
-- 적용 방법: <short operational rule>
+요약:
+- <한글 preview summary>
 ```
 
 ## Procedure
@@ -194,12 +151,12 @@ Summary:
 3. branch scope 초기화
 4. branch lock 획득
 5. apply mode 계산: `apply = dryRun ? false : apply !== false`
-6. durable insight target resolve
-7. branch-local memory 로드
-8. durable insight 후보 추출
+6. branch-local memory 로드
+7. durable insight 후보 추출
+8. 각 후보를 `CLAUDE.md`, `.claude/rules/**/*.md`, `no action`으로 분류
 9. one-off, superseded, P3/nit, rejected, low-confidence 후보 제거
 10. duplicate 제거
-11. apply=true이면 durable target을 수정하고 `global-index.json`에 branch `lastUsedAt` 갱신
+11. apply=true이면 target rule file 또는 `CLAUDE.md`를 직접 수정하고 `global-index.json`에 branch `lastUsedAt` 갱신
 12. apply=false이면 preview만 출력하고 저장 없이 종료
 13. branch lock 해제
 14. summary 출력
@@ -216,4 +173,4 @@ Summary:
 - P3/nit, rejected finding, low-confidence observation 반영
 - unresolved source conflict를 확정 insight처럼 반영
 - duplicate insight 중복 append
-- default를 proposal-only로 유지
+- `apply=true`인데도 별도 `tigerkit-reflections.md` sidecar를 만드는 것
