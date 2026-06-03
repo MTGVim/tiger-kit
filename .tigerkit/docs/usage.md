@@ -1,6 +1,6 @@
 # TigerKit 운영 사용법
 
-이 문서는 TigerKit v7.1 사용 가이드입니다. 산출물 위치는 `.tigerkit/docs/artifact-layout.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2 사용 가이드입니다. 산출물 위치는 `.tigerkit/docs/artifact-layout.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
 
 ## 언어
 
@@ -66,10 +66,16 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 - 기존 Figma diff tool이 아닙니다.
 - Product Spec, Design Spec, Design System Spec, Engineering Constraint, QA Acceptance Criteria, Analytics Contract를 Contract로 normalize해 비교합니다.
 - active/confirmed Spec Patch item을 기본 참조합니다.
-- 기본 호출은 자료와 변경 범위를 먼저 skim한 뒤 한글로 `모드 추천`을 출력하고 `lite`로 실행합니다.
-- `--lite`는 작은 ticket, 단순 UI/content/layout, 낮은 위험 변경을 빠르게 봅니다. 기존 lightweight gap 사용감에 가깝습니다.
-- `--strict`는 BE validation, permission, auth, payment, data mutation, destructive action, shared component, 높은 ambiguity가 있을 때 오탐과 누락을 줄이는 느린 경로입니다.
-- `--legacy`, `--deep`, `--no-strict`는 active mode가 아닙니다.
+- 기본 호출은 user-provided references, target hints, Current Implementation 후보, 위험 신호를 먼저 skim한 뒤 실행 preset을 결정하고 자동 실행합니다.
+- `lite`와 `strict`는 agent 유무가 아니라 discovery depth와 verification strength의 preset 차이입니다.
+- 기본 성향은 `strict`입니다. `lite`는 side-effect confidence >= 90, risk score <= 15, hard strict trigger 없음일 때만 추천합니다.
+- `--lite`는 빠른 contract-based preset입니다. issue ticket 1개 수준, FE-only, single screen/component, copy/layout/simple validation, API/DTO/state/auth/permission/payment/data mutation/shared component 영향 없음, ambiguity 없음일 때만 적합합니다.
+- `--strict`는 확장 contract-based preset입니다. 신규 화면/flow, BE/API/DTO, shared component, auth/permission/payment/data mutation, source conflict, inaccessible source, 모호한 Product/API/Design decision이면 strict가 기본입니다. 관련 docs/rules/similar implementations/shared component 영향 범위까지 더 넓게 찾고 `CriticalRedTeamAgent`를 1회 실행합니다.
+- `--legacy`, `--deep`, `--no-strict`는 active mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
+- changed files는 primary scope가 아니라 Current Implementation 후보 evidence입니다.
+- source/plan이 없으면 관련 agent는 skip하고 이유를 artifact에 기록합니다.
+- Product Spec, Design Spec, API contract, source priority, owner decision이 모호하면 user consent 전에는 final finding으로 확정하지 않고 `Clarification Needed` 또는 `SourceConflict`로 둡니다.
+- UI 판단이 모호하면 option/evidence/impact/recommendation 표와 오른쪽 border가 정렬된 TUI/ASCII prototype으로 확인합니다.
 - subagent는 candidate만 생성합니다.
 - JudgeMergerAgent만 final finding을 확정합니다.
 - final finding은 P0/P1/P2만 포함합니다.
@@ -77,6 +83,7 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 - finding이 0개가 될 때까지 반복하지 않습니다.
 - run artifact는 `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/` 아래에 저장합니다.
 - 기본 stdout은 summary만 출력합니다. 전체 report는 `--print-report`가 있을 때만 출력합니다.
+- stdout과 report에는 실행 preset 기준 완료 상태와 다른 preset으로 재실행할 수 있는 rerun trail을 남깁니다.
 
 ## `/tk:verify-before-stop`
 
@@ -100,7 +107,7 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 
 ## `/tk:handoff`
 
-- 기존 continuation command입니다. v7.1에서도 active command로 유지합니다.
+- 기존 continuation command입니다. v7.2에서도 active command로 유지합니다.
 - 기본 출력 대상은 `.claude/handoffs/current.md`입니다.
 - 최신 branch-local Spec Patch, Gap Run, Verify Run이 있으면 handoff의 relevant files나 validation에 참조할 수 있습니다.
 - `archive=true` 또는 명시적 archive 요청이 있을 때만 dated copy를 만듭니다.
@@ -108,7 +115,7 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 
 ## `/tk:meta-feedback`
 
-- 기존 TigerKit improvement command입니다. v7.1에서도 active command로 유지합니다.
+- 기존 TigerKit improvement command입니다. v7.2에서도 active command로 유지합니다.
 - 현재 세션 내역에서 TigerKit command/skill 사용 friction과 반복 피드백을 찾습니다.
 - gap 속도, BE 오탐, mode 추천 UX, output shape 같은 개선안을 일반화합니다.
 - repo 이름, product 이름, 내부 path, URL, ticket, branch, PR 번호, commit hash, 사용자 원문 quote는 출력하지 않습니다.
