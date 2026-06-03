@@ -39,11 +39,12 @@
 
 ## GAP-005: Match output to v7 storage and stdout contract
 
-- Default stdout emits only summary receipt: run ID, branch scope, executed preset, execution reason, discovery depth, verification strength, strict status, report path, P0/P1/P2 counts, source conflict count, clarification-needed count, rejected/downgraded count, and rerun trail.
+- Default stdout emits summary receipt plus compact tables: run ID, branch scope, executed preset, execution reason, discovery depth, verification strength, strict status, report path, P0/P1/P2 counts, compact Actionable Findings table, compact Rejected/Downgraded table, source conflict count, clarification-needed count, rejected/downgraded count, and rerun trail.
 - Use `실행 preset` by default. Output `추천 preset` only when it differs from the executed preset.
 - Do not use ambiguous labels like `선택모드` and `실행모드`.
 - State that the run is complete for the executed preset; do not imply the gap is unfinished.
 - Full report is stored at `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md`.
+- Compact stdout tables may include accepted finding and rejected/downgraded observation summaries, but detailed evidence and source contract detail remain in `report.md` unless `--print-report` is used.
 - Full report stdout is allowed only with `--print-report`.
 - Run artifacts must include `input-manifest.json`, `contracts.json`, `candidates.json`, `judge-result.json`, and `report.md`.
 - `input-manifest.json` or `judge-result.json` must record recommendation reasons, dispatch skips, blocked clarifications, and rerun trail.

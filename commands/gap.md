@@ -40,7 +40,7 @@ gap = branch-local contract-based inspection + judge-driven final finding
 - visible UI copy는 confirmed contract와 exact match가 필요합니다.
 - finding이 안 나올 때까지 반복하지 않습니다.
 - strict red-team pass는 최대 1회입니다.
-- stdout은 summary만 출력하고 상세는 report.md에 저장합니다.
+- stdout은 summary receipt와 compact finding tables만 출력하고 상세는 report.md에 저장합니다.
 - run summary와 report에는 다른 preset으로 재실행 가능한 rerun trail을 남깁니다.
 
 ## Terminology
@@ -563,7 +563,7 @@ Strict: red-team 1회만 수행.
 
 ## Output
 
-기본 stdout은 summary만 출력합니다.
+기본 stdout은 summary receipt와 compact finding tables만 출력합니다.
 
 ```text
 실행 preset: <lite|strict>
@@ -584,11 +584,25 @@ Findings:
 - P1: <count>
 - P2: <count>
 
+Actionable Findings:
+| ID | Sev | 요약 | 의미 | Required change |
+| --- | --- | --- | --- | --- |
+| FND-... | P1 | <final finding 1줄 요약> | <사용자/제품 관점 영향 1줄> | <수정 방향 1줄> |
+
+Rejected/Downgraded:
+| ID | Reason | 요약 | 왜 final gap 아님 |
+| --- | --- | --- | --- |
+| CAND-... | missing_evidence | <observation 1줄 요약> | <reject/downgrade 이유 1줄> |
+
 Source Conflicts: <count>
 Clarification Needed: <count>
 Rejected/Downgraded: <count>
 Rerun: <none|/tk:gap --lite|/tk:gap --strict + reason>
 ```
+
+`Actionable Findings` table에는 JudgeMergerAgent가 accept한 P0/P1/P2 final finding만 출력합니다. 각 row는 ID, severity, gap 요약, 사용자/제품 관점 의미, requiredChange 1줄 요약만 포함합니다. final finding이 없으면 `없음` 1줄을 출력합니다.
+
+`Rejected/Downgraded` table에는 final gap이 아닌 observation을 간략히 출력합니다. 각 row는 ID, reason, observation 요약, final gap이 아닌 이유 1줄만 포함합니다. 항목이 없으면 `없음` 1줄을 출력합니다. P3/nit/duplicate/unverifiable/source_conflict 같은 rejected item을 confirmed defect처럼 쓰면 안 됩니다.
 
 `--print-report`가 있을 때만 report.md 본문을 함께 출력합니다.
 
