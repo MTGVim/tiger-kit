@@ -29,6 +29,7 @@ gap = branch-local contract-based inspection + judge-driven final finding
 - JudgeMergerAgent만 final finding을 확정합니다.
 - final accepted finding에는 P0/P1/P2만 포함합니다.
 - P3/nit/duplicate/unverifiable/source_conflict는 final finding이 아닙니다.
+- candidate의 file:line 또는 module-path evidence는 JudgeMergerAgent queue 진입 전에 현재 target surface에서 read-back으로 재확인합니다.
 - current implementation 비교 전에는 integration branch freshness를 확인합니다.
 - `/tk:gap`은 discovery depth와 verification strength를 추천하고, 기본은 추천 preset으로 자동 진행합니다.
 - `lite`와 `strict`는 agent 유무가 아니라 discovery depth와 verification strength의 preset 차이입니다.
@@ -87,7 +88,7 @@ judge-result.json
 report.md
 ```
 
-`input-manifest.json`과 `judge-result.json`에는 `mode`, `strictExecuted`, `recommendedMode`, `recommendationReasons`, `discoveryDepth`, `verificationStrength`, `dispatchSkips`, `blockedClarifications`, `rerunTrail`을 반드시 기록합니다.
+`input-manifest.json`과 `judge-result.json`에는 `mode`, `strictExecuted`, `recommendedMode`, `recommendationReasons`, `discoveryDepth`, `verificationStrength`, `dispatchSkips`, `evidencePrecisionGate`, `blockedClarifications`, `rerunTrail`을 반드시 기록합니다.
 
 `.claude/tigerkit/`은 generated branch-local working memory이며 repo-wide durable knowledge가 아닙니다.
 
@@ -167,6 +168,7 @@ Do not report subjective preferences.
 Do not report P3/nit issues unless explicitly requested.
 Do not repeat issues already covered by broader candidates.
 Every candidate must include concrete evidence and a fix hint.
+When citing file:line or module path evidence, cite a current read-back confirmed span.
 ```
 
 ### Agent dispatch gate
@@ -243,6 +245,17 @@ Candidate validation:
 - `expected` must derive from source contracts.
 - `actual` must describe plan or implementation state.
 - `fixHint` must be implementable without guessing.
+
+## Candidate evidence precision gate
+
+JudgeMergerAgent queue에 넣기 전에 모든 candidate evidence 좌표를 현재 target surface에서 재확인합니다. 이 gate는 `lite`와 `strict` 모두에서 실행하며, strict의 red-team candidate도 JudgeMergerAgent 재실행 전에 같은 gate를 통과해야 합니다.
+
+- file:line evidence는 해당 파일의 현재 span을 read-back해 expected/actual 주장과 같은 위치인지 확인합니다.
+- module-path evidence는 현재 파일 또는 manifest에서 path 존재와 관련 symbol/section을 확인합니다.
+- read-back이 성공하면 `evidencePrecisionGate`에 confirmed로 기록합니다.
+- 위치가 틀렸지만 같은 target surface에서 실제 span을 찾을 수 있으면 candidate 좌표를 repair하고 repair evidence를 기록합니다.
+- 같은 주장을 뒷받침할 현재 span을 찾지 못하면 candidate confidence를 `low`로 낮추고 JudgeMergerAgent가 `low_confidence`, `missing_evidence`, 또는 `unverifiable`로 reject하도록 넘깁니다.
+- strict mode의 CriticalRedTeamAgent는 좌표 보정보다 finding validity 공격에 집중합니다.
 
 ## AcceptedFinding schema
 
@@ -518,16 +531,18 @@ Strict: red-team 1회만 수행.
 16. draft/unclear/conflict/superseded contract 제거
 17. Implementation Plan이 있으면 PlanCoverageAgent 실행. 없으면 dispatch skip 기록
 18. Current Implementation이 있으면 ImplementationComplianceAgent 실행. 없으면 관련 candidate를 `unverifiable` 또는 `missing_evidence`로만 기록
-19. JudgeMergerAgent 실행
-20. 실행 preset이 `strict`이면 CriticalRedTeamAgent 1회 실행
-21. 실행 preset이 `strict`이면 JudgeMergerAgent 재실행
-22. ambiguity consent gate에 걸린 항목을 `ClarificationNeeded` 또는 `SourceConflict`로 확정
-23. rerun trail 작성
-24. run artifact 저장
-25. `branch-state.json`에 `lastGapRunId` 기록
-26. `global-index.json`에 branch `lastUsedAt` 갱신
-27. branch lock 해제
-28. stdout summary 출력
+19. candidate evidence precision gate 실행: file:line/module-path evidence를 현재 target surface에서 read-back하고 좌표를 confirm, repair, 또는 low-confidence downgrade 처리
+20. JudgeMergerAgent 실행
+21. 실행 preset이 `strict`이면 CriticalRedTeamAgent 1회 실행
+22. 실행 preset이 `strict`이고 red-team candidate가 있으면 candidate evidence precision gate를 다시 실행
+23. 실행 preset이 `strict`이면 JudgeMergerAgent 재실행
+24. ambiguity consent gate에 걸린 항목을 `ClarificationNeeded` 또는 `SourceConflict`로 확정
+25. rerun trail 작성
+26. run artifact 저장
+27. `branch-state.json`에 `lastGapRunId` 기록
+28. `global-index.json`에 branch `lastUsedAt` 갱신
+29. branch lock 해제
+30. stdout summary 출력
 
 ## Output
 
@@ -578,7 +593,7 @@ Rerun: <none|/tk:gap --lite|/tk:gap --strict + reason>
 ## Source Conflicts / Clarification Needed
 ```
 
-`## Summary`에는 실행 preset, 실행 이유, discovery depth, verification strength, dispatch skip summary, rerun trail을 포함합니다. 추천 preset은 실행 preset과 다를 때만 포함합니다.
+`## Summary`에는 실행 preset, 실행 이유, discovery depth, verification strength, dispatch skip summary, evidence precision gate summary, rerun trail을 포함합니다. 추천 preset은 실행 preset과 다를 때만 포함합니다.
 
 `## Source Conflicts / Clarification Needed`는 implementation-blocking과 reference-only를 구분합니다. 질문은 option/evidence/impact/recommendation/status를 표로 제시합니다. UI 판단이 필요한 경우 오른쪽 border가 정렬된 TUI/ASCII prototype을 함께 둡니다.
 
