@@ -1,5 +1,5 @@
 {
-  "skill_name": "tiger-kit-v7-1-command-surface-restoration",
+  "skill_name": "tiger-kit-v7-2-gap-policy-presets",
   "command_surface": {
     "core_commands": [
       "/tk:spec",
@@ -23,7 +23,7 @@
     {
       "id": 0,
       "name": "command-surface-restores-existing-commands",
-      "prompt": "You are evaluating TigerKit v7.1 active command surface. Describe the user-facing commands. Do not write files.",
+      "prompt": "You are evaluating TigerKit v7.2 active command surface. Describe the user-facing commands. Do not write files.",
       "expected_output": "Should list /tk:spec, /tk:gap, /tk:verify-before-stop, /tk:reflect, /tk:handoff, and /tk:meta-feedback as active user-facing commands. Should explain that handoff and meta-feedback were preserved existing commands, not newly invented v7 commands. Should explain that spec/gap/verify-before-stop write branch-local working memory, reflect creates durable insight, handoff creates continuation context, and meta-feedback extracts generalized TigerKit improvement feedback from session history.",
       "files": [],
       "expectations": [
@@ -42,18 +42,26 @@
     {
       "id": 1,
       "name": "gap-default-recommends-lite-or-strict",
-      "prompt": "You are evaluating TigerKit v7.1 /tk:gap when a user calls `/tk:gap` with mixed Jira, current implementation, and design notes for a small ticket. Describe expected behavior. Do not write files.",
-      "expected_output": "Should skim the materials and changed scope first, print a one-time mode recommendation, default to lite for small or low-risk work, and avoid running strict automatically. Lite should target legacy-like speed while preserving v7 contract normalization. Strict should be available only by explicit --strict when validation, permission, data mutation, auth, payment, destructive action, shared component, or high ambiguity risk exists.",
+      "prompt": "You are evaluating TigerKit v7.2 /tk:gap when a user calls `/tk:gap` with mixed Jira, current implementation, and design notes for a small ticket. Describe expected behavior. Do not write files.",
+      "expected_output": "Should skim user-provided references, target hints, current implementation candidates, and risk signals first. Should compute risk score and side-effect confidence, then run the selected preset automatically. Default posture should be strict. Lite should be recommended only when side-effect confidence is at least 90, risk score is at most 15, and no hard strict trigger exists. Lite is the fast v7 contract-based preset with bounded target resolving and bounded usage lookup, not a legacy alias. Strict is the expanded preset with broader discovery and one red-team pass for 신규 화면/flow, validation, permission, data mutation, auth, payment, destructive action, shared component, inaccessible source, source conflict, release gate, or high ambiguity risk. Changed files are current implementation evidence candidates, not the primary scope. Source or plan classes that are absent should cause related agent dispatch skips with reasons recorded. Stdout should show executed preset and reason by default, and show recommended preset only when it differs from executed preset. The result should include a rerun trail for a different preset when useful, and should avoid confusing labels like `선택모드: lite 실행모드: lite`.",
       "files": [],
       "expectations": [
-        "Skims materials and changed scope before selecting mode",
-        "Prints one mode recommendation",
-        "Defaults to lite for small or low-risk work",
-        "Does not run strict automatically by default",
-        "Explains lite is faster and may have higher false-positive risk",
-        "Explains strict is slower and reduces false positives or missed edge cases",
-        "Uses --strict for high-risk review",
+        "Skims user-provided references and target hints before selecting preset",
+        "Treats changed files as current implementation evidence candidates, not primary scope",
+        "Computes risk score and side-effect confidence",
+        "Runs the selected preset automatically when no preset flag is provided",
+        "Defaults toward strict unless lite confidence is very high",
+        "Recommends lite only when side-effect confidence >= 90 and risk score <= 15",
+        "Explains lite is bounded contract-based review",
+        "Explains strict is expanded discovery plus one red-team pass",
+        "Treats 신규 화면 or 신규 flow as strict trigger",
+        "Records dispatch skips when source or plan classes are absent",
+        "Leaves rerun trail for useful alternate preset",
+        "Shows executed preset and reason by default",
+        "Shows recommended preset only when it differs from executed preset",
+        "Does not use confusing selection/execution wording",
         "Does not mention --legacy as an active mode",
+        "Explains legacy is v6-era unsupported behavior, not a lite alias",
         "Does not mention --deep as an active mode",
         "Does not mention --no-strict as an active mode"
       ]
@@ -61,29 +69,37 @@
     {
       "id": 2,
       "name": "gap-strict-for-risky-backend-work",
-      "prompt": "You are evaluating TigerKit v7.1 /tk:gap on a backend Jira ticket touching validation and data mutation. Describe expected behavior. Do not write files.",
-      "expected_output": "Should recommend strict because backend validation and data mutation increase false-positive and missed-edge-case risk. Should still keep strict explicit unless the user passed --strict. Should require concrete source contract and target evidence before accepting backend findings, and should avoid inferring DTO, permission, or persistence semantics without source support.",
+      "prompt": "You are evaluating TigerKit v7.2 /tk:gap on a backend Jira ticket touching validation and data mutation. Describe expected behavior. Do not write files.",
+      "expected_output": "Should recommend and run strict when no preset flag is provided because backend validation and data mutation increase false-positive and missed-edge-case risk. If the user explicitly passed --lite, it should still run lite and leave a strict rerun trail. It should require concrete source contract and target implementation evidence before accepting backend findings. It should avoid inferring DTO, permission, persistence, or state-transition semantics without source support. If the API contract is ambiguous, even when one interpretation looks likely, it should create Clarification Needed, SourceConflict, or rejected unverifiable/missing_evidence instead of accepting a final finding until user consent or owner confirmation exists. Strict should also apply source/plan dispatch skips when classes are absent.",
       "files": [],
       "expectations": [
         "Recommends strict for backend validation or data mutation",
-        "Keeps strict explicit unless --strict is provided",
+        "Runs strict automatically when strict is the recommended preset and no preset flag is provided",
+        "Honors explicit --lite while leaving strict rerun trail",
         "Requires source contract evidence for backend findings",
         "Requires target implementation evidence for backend findings",
         "Does not infer DTO semantics from compatible names alone",
-        "Does not infer permission or persistence behavior without evidence",
-        "Routes unclear backend semantics to rejected/unverifiable/source conflict instead of accepted finding"
+        "Does not infer permission, persistence, or state transition behavior without evidence",
+        "Routes unclear backend semantics to Clarification Needed, SourceConflict, rejected unverifiable, or rejected missing_evidence instead of accepted finding",
+        "Requires user consent or owner confirmation before treating ambiguous API meaning as confirmed",
+        "Records dispatch skips when source or plan classes are absent"
       ]
     },
     {
       "id": 3,
       "name": "meta-feedback-uses-session-history-for-gap-improvements",
-      "prompt": "You are evaluating TigerKit v7.1 /tk:meta-feedback after a session where the user said gap took 15 minutes on a small ticket and backend findings had false positives. Describe expected behavior. Do not write files.",
-      "expected_output": "Should use the session history as evidence, generalize the feedback without exposing project assets, and propose TigerKit command or skill improvements. It should capture performance friction for gap lite/strict selection and backend false-positive reduction guidance. It should not create repo rule patches like reflect and should not output raw user quotes, paths, tickets, PR numbers, branch names, or project-specific labels.",
+      "prompt": "You are evaluating TigerKit v7.2 /tk:meta-feedback after a session where the user said gap took 15 minutes on a small ticket, backend findings had false positives, mode wording was confusing, and ambiguous UI/API decisions should be resolved with the user. Describe expected behavior. Do not write files.",
+      "expected_output": "Should use the session history as evidence, generalize the feedback without exposing project assets, and propose TigerKit command or skill improvements. It should capture performance friction for gap preset selection, strict-default scoring, dispatch gate needs, rerun trail UX, backend false-positive reduction, ambiguity consent gate guidance, and UI clarification via tables or aligned TUI/ASCII mockups. It should not create repo rule patches like reflect and should not output raw user quotes, paths, tickets, PR numbers, branch names, or project-specific labels.",
       "files": [],
       "expectations": [
         "Uses session history as the evidence source",
         "Generalizes gap performance friction",
+        "Generalizes strict-default scoring improvement",
+        "Generalizes dispatch gate improvement",
+        "Generalizes rerun trail and mode wording UX improvement",
         "Generalizes backend false-positive feedback",
+        "Generalizes ambiguity consent gate feedback",
+        "Mentions tables or aligned TUI/ASCII mockups for UI clarification",
         "Proposes TigerKit command or skill improvement",
         "Does not expose raw user quotes",
         "Does not expose paths, tickets, PR numbers, branch names, or project-specific labels",
@@ -93,7 +109,7 @@
     {
       "id": 4,
       "name": "handoff-remains-continuation-command",
-      "prompt": "You are evaluating TigerKit v7.1 /tk:handoff after a branch has spec, gap, and verify artifacts. Describe expected behavior. Do not write files.",
+      "prompt": "You are evaluating TigerKit v7.2 /tk:handoff after a branch has spec, gap, and verify artifacts. Describe expected behavior. Do not write files.",
       "expected_output": "Should preserve /tk:handoff as the existing continuation command. It should write .claude/handoffs/current.md by default, include Reader Guide and Resume Prompt, optionally mention latest branch-local Spec Patch, Gap Run, and Verify Run paths when observed, and create a dated archive only when archive=true or an explicit archive request is present.",
       "files": [],
       "expectations": [
@@ -108,7 +124,7 @@
     {
       "id": 5,
       "name": "verify-before-stop-is-hook-preparation-command",
-      "prompt": "You are evaluating TigerKit v7.1 /tk:verify-before-stop. Describe why it exists as a command even though Stop hook verifies before stopping. Do not write files.",
+      "prompt": "You are evaluating TigerKit v7.2 /tk:verify-before-stop. Describe why it exists as a command even though Stop hook verifies before stopping. Do not write files.",
       "expected_output": "Should explain that /tk:verify-before-stop is a manual preparation command and the Stop hook is the automatic guard. The command prepares or refreshes branch-local verification evidence before the hook checks it. It should not introduce /tk:verify as a separate active command.",
       "files": [],
       "expectations": [
@@ -122,7 +138,7 @@
     {
       "id": 6,
       "name": "reflect-applies-directly-to-rules-and-claude",
-      "prompt": "You are evaluating TigerKit v7.1 /tk:reflect after branch-local gap and verify runs produced durable repo-wide insight candidates. Describe expected behavior. Do not write files.",
+      "prompt": "You are evaluating TigerKit v7.2 /tk:reflect after branch-local gap and verify runs produced durable repo-wide insight candidates. Describe expected behavior. Do not write files.",
       "expected_output": "Should default to apply=true, read branch-local TigerKit memory, write directly to CLAUDE.md or .claude/rules/* depending on target scope, treat --dry-run and --apply=false as preview-only aliases, avoid modifying source code, dedupe repeated insights, and avoid creating a separate tigerkit-reflections sidecar file.",
       "files": [],
       "expectations": [
@@ -135,6 +151,24 @@
         "Does not create tigerkit-reflections sidecar file",
         "Skips duplicate insights",
         "Prints apply summary"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "gap-ambiguity-requires-user-consent",
+      "prompt": "You are evaluating TigerKit v7.2 /tk:gap on a ticket where Product Spec and API contract can be interpreted two ways, and a UI decision has two plausible layouts. Describe expected behavior. Do not write files.",
+      "expected_output": "Should not choose a likely Product/API/Design interpretation as confirmed by itself. It should explore according to the selected preset, then mark ambiguous decision paths as Clarification Needed, SourceConflict, or rejected unverifiable/missing_evidence until user consent or owner confirmation exists. It should continue clear checks. Questions should be split into implementation-blocking and reference-only. For UI ambiguity it should use a compact option/evidence/impact/recommendation table and, when helpful, an aligned TUI/ASCII prototype whose right borders do not drift with Korean text.",
+      "files": [],
+      "expectations": [
+        "Does not self-confirm ambiguous Product Spec interpretation",
+        "Does not self-confirm ambiguous API contract interpretation",
+        "Does not accept final finding from ambiguous interpretation without user consent or owner confirmation",
+        "Uses Clarification Needed, SourceConflict, rejected unverifiable, or rejected missing_evidence for ambiguous paths",
+        "Continues clear non-ambiguous checks",
+        "Splits questions into implementation-blocking and reference-only",
+        "Includes options, evidence, impact, recommendation, and status in clarification questions",
+        "Uses aligned TUI/ASCII prototype for UI ambiguity when helpful",
+        "Keeps right borders aligned for Korean text"
       ]
     }
   ]

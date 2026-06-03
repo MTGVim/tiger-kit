@@ -39,10 +39,14 @@
 
 ## GAP-005: Match output to v7 storage and stdout contract
 
-- Default stdout emits only summary receipt: run ID, branch scope, mode, strict status, report path, P0/P1/P2 counts, source conflict count, and rejected/downgraded count.
+- Default stdout emits only summary receipt: run ID, branch scope, executed preset, execution reason, discovery depth, verification strength, strict status, report path, P0/P1/P2 counts, source conflict count, clarification-needed count, rejected/downgraded count, and rerun trail.
+- Use `실행 preset` by default. Output `추천 preset` only when it differs from the executed preset.
+- Do not use ambiguous labels like `선택모드` and `실행모드`.
+- State that the run is complete for the executed preset; do not imply the gap is unfinished.
 - Full report is stored at `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md`.
 - Full report stdout is allowed only with `--print-report`.
 - Run artifacts must include `input-manifest.json`, `contracts.json`, `candidates.json`, `judge-result.json`, and `report.md`.
+- `input-manifest.json` or `judge-result.json` must record recommendation reasons, dispatch skips, blocked clarifications, and rerun trail.
 - Do not store generated gap artifacts in `/tmp`, `$GIT_COMMON_DIR`, `.git/worktrees/*`, user home, or current worktree root outside `.claude/tigerkit/branches/<branch-key>/`.
 
 ## GAP-006: JudgeMergerAgent is the only final authority
@@ -55,24 +59,31 @@
 - Accepted findings must cite confirmed, non-superseded source contracts.
 - Accepted findings must include concrete evidence and requiredChange that engineers can apply without guessing.
 
-## GAP-007: Explore ambiguity before asking or deciding
+## GAP-007: Explore ambiguity, then use user consent gate
 
-Do not decide silently when any of these apply:
+Do not decide silently when any of these apply, even if one interpretation looks likely:
 
 - Requirements document and code conflict.
+- Product Spec, Design Spec, API contract, QA expectation, or source priority can be read more than one way.
 - 2+ similar implementations exist with different patterns.
 - Spec reference or source basis is inaccessible.
-- reuse-map lacks an entry and repo-wide exploration is not sufficient yet.
+- reuse-map lacks an entry and bounded exploration is not sufficient yet.
 - UI/UX intent cannot be confirmed by copy or screenshot alone.
-- API response, DTO, permission, or state transition is unclear.
+- API response, DTO, permission, persistence, or state transition is unclear.
 - Change scope can affect common modules.
+- The decision belongs to user, PM, Design, BE owner, QA, or another department.
 
 Required handling:
 
-- First explore code, docs, similar implementations, repo rules, and reuse-map more.
-- If still unclear, create a source conflict, rejected candidate, or question instead of guessing.
-- Each question must include recommendation and evidence.
+- First explore code, docs, similar implementations, repo rules, and reuse-map according to the selected discovery depth.
+- If still unclear, do not accept a final finding from the likely interpretation.
+- Create a `SourceConflict`, rejected candidate (`unverifiable` or `missing_evidence`), or `ClarificationNeeded` entry instead of guessing.
+- Mark decision-needed items as temporarily blocked until user consent or user-mediated owner confirmation.
+- The blocked state applies to the ambiguous finding path only; continue other clear checks.
 - Split questions into `implementation-blocking` and `reference-only`.
+- Each question must include options, evidence, impact, recommendation, and status.
+- Use compact tables for ambiguity resolution.
+- For UI decisions, include TUI/ASCII prototypes when useful. Right borders must align; account for Korean full-width glyphs and padding.
 
 ## GAP-008: Check current implementation freshness before comparing
 
@@ -85,16 +96,22 @@ When the target means `current implementation`, current working tree, current br
 - If behind changes do not affect the target area, the local target may still be used, but report the freshness check briefly.
 - If the user explicitly names a commit, branch, PR diff, or working tree state as the target, do not switch targets silently; report stale status as evidence instead.
 
-## GAP-009: Use lite by default and strict only when explicit
+## GAP-009: Recommend preset, then run selected preset
 
-- Default `/tk:gap` runs `lite` after a short preflight skim and one Korean mode recommendation.
-- `--lite` is the fast path for small or low-risk work.
-- `--strict` is the explicit slower path for BE validation, permission, auth, payment, data mutation, destructive action, shared component, or high ambiguity risk.
-- Do not auto-run strict on a plain `/tk:gap` call. Recommend strict when risk is high, then tell the user to re-run with `--strict`.
-- `--legacy`, `--deep`, and `--no-strict` are not active v7.1 modes.
+- `/tk:gap` computes risk score and side-effect confidence after a short preflight skim.
+- `lite` and `strict` are v7 supported presets over discovery depth and verification strength.
+- Default posture is strict. Use `lite` only when side-effect confidence is very high.
+- `--lite` is allowed only for low-risk work such as one source reference, FE-only, single screen/component, copy/layout/simple validation, no API/DTO/state transition, no auth/permission/payment/data mutation/destructive action, no shared component/design-system impact, and no ambiguity.
+- Recommend `lite` only when `sideEffectConfidence >= 90`, `riskScore <= 15`, and no hard strict trigger exists.
+- Hard strict triggers include BE/API/DTO/persistence/state transition, auth/permission/payment/data mutation/destructive action, shared component/design-system component, source conflict, inaccessible source, ambiguous Product/API/Design decision, 2+ similar implementations with different patterns, cross-module impact, 신규 화면 또는 신규 flow 개발, release gate context, or `accepted_or_candidate_P0_exists`.
+- `--strict` is the expanded contract-based preset. It uses expanded discovery and one red-team pass.
+- If no preset flag is given, run the recommended preset automatically and record why.
+- If the user explicitly passes `--lite` or `--strict`, run that preset and leave a rerun trail when another preset would be useful.
+- `--legacy`, `--deep`, and `--no-strict` are not active v7.2 modes. v6-era legacy behavior is unsupported history, not a `lite` alias.
 
 ## GAP-010: No unbounded loop
 
 - Lite mode runs no review loop.
 - Strict mode runs CriticalRedTeamAgent exactly once.
-- Never continue because of P3, nit, duplicate, unverifiable, or source conflict observations.
+- Never continue because of P3, nit, duplicate, unverifiable, source conflict, or clarification-needed observations.
+- Re-run only when the user explicitly asks or follows the recorded rerun trail.

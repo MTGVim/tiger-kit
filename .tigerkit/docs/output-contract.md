@@ -1,6 +1,6 @@
 # TigerKit 운영 Output Contract
 
-이 문서는 TigerKit v7.1 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
 
 ```text
 stdout is a receipt. Full spec/gap/verify bodies are saved as branch-local artifacts unless explicit print option is used.
@@ -41,22 +41,29 @@ Items:
 
 - 목적: Product/Design Spec contract와 implementation plan/current implementation을 비교합니다.
 - 기본 저장 위치: `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/`
-- 기본 호출은 preflight skim 후 한글 `모드 추천`을 출력하고 `lite`로 실행합니다.
-- `--lite`는 빠른 기본 review입니다.
-- `--strict`는 BE validation, permission, auth, payment, data mutation, destructive action, shared component, 높은 ambiguity에서 오탐/누락을 줄이는 느린 review입니다.
-- `--legacy`, `--deep`, `--no-strict`는 active mode가 아닙니다.
+- 기본 호출은 preflight skim 후 실행 preset을 결정하고 자동 실행합니다. stdout에는 실행 preset과 이유를 기본 출력합니다.
+- `--lite`는 빠른 contract-based preset입니다. bounded target resolver와 bounded usage lookup을 사용합니다.
+- `--strict`는 기본 추천에 가까운 보수적 contract-based preset입니다. expanded discovery와 `CriticalRedTeamAgent` 1회를 사용합니다.
+- `lite`는 side-effect confidence >= 90, risk score <= 15, hard strict trigger 없음일 때만 추천합니다.
+- 신규 화면/flow, BE/API/DTO, auth/permission/payment/data mutation, shared component, source conflict, inaccessible source, 모호한 Product/API/Design decision은 strict trigger입니다.
+- `--legacy`, `--deep`, `--no-strict`는 active mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작입니다.
 - subagent는 final finding을 확정하지 못합니다.
 - JudgeMergerAgent만 final accepted finding을 확정합니다.
 - final finding에는 P0/P1/P2만 포함합니다.
 - P3/nit/duplicate/unverifiable/source_conflict는 final finding으로 출력하지 않습니다.
+- Product/API/Design ambiguity는 user consent 전 final finding으로 출력하지 않고 `Clarification Needed` 또는 `SourceConflict`로 기록합니다.
 - finding이 안 나올 때까지 반복하지 않습니다.
 
 기본 stdout:
 
 ```text
-모드 추천: <lite|strict>
+실행 preset: <lite|strict>
 이유: <한글 이유>
-실행 모드: <lite|strict>
+Discovery depth: <bounded|expanded>
+Verification strength: <standard|red-team>
+상태: <lite|strict> preset 기준 완료
+추천 preset: <lite|strict, 실행 preset과 다를 때만 출력>
+추천 이유: <한글 이유, 실행 preset과 다를 때만 출력>
 
 Gap Review 완료: <GAP-ID>
 Branch Scope: <branch-key>
@@ -69,7 +76,9 @@ Findings:
 - P2: <count>
 
 Source Conflicts: <count>
+Clarification Needed: <count>
 Rejected/Downgraded: <count>
+Rerun: <none|/tk:gap --lite|/tk:gap --strict + reason>
 ```
 
 Run artifact files:
@@ -82,7 +91,31 @@ judge-result.json
 report.md
 ```
 
-`input-manifest.json`과 `judge-result.json`에는 `mode`, `strictExecuted`, `recommendedMode`, `recommendationReasons`를 기록합니다.
+`input-manifest.json`과 `judge-result.json`에는 `mode`, `strictExecuted`, `recommendedMode`, `recommendationReasons`, `discoveryDepth`, `verificationStrength`, `dispatchSkips`, `blockedClarifications`, `rerunTrail`을 기록합니다.
+
+`추천 preset`은 실행 preset과 다를 때만 stdout에 출력합니다. 같은 경우에는 실행 preset과 이유만 출력하면 충분합니다. 더 넓은 discovery 또는 강한 verification이 필요할 때만 `Rerun`에 재실행 안내를 남깁니다.
+
+Clarification table shape:
+
+```md
+| ID | Category | Question | Options | Evidence | Impact | Recommendation | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| CLAR-... | implementation-blocking | <질문> | A / B | <근거> | <영향> | <추천> | blocked_pending_user |
+```
+
+UI clarification prototype은 오른쪽 border 정렬을 맞춥니다.
+
+```text
+Option A
+┌────────────────────┐
+│ 저장               │
+└────────────────────┘
+
+Option B
+┌────────────────────┐
+│ 변경사항 저장      │
+└────────────────────┘
+```
 
 Accepted finding uses:
 
@@ -198,7 +231,7 @@ Reflect excludes:
 - 목적: 다음 세션이나 다른 작업자가 이어받을 continuation 문서를 작성합니다.
 - 기본 기록 위치: `.claude/handoffs/current.md`
 - `archive=true` 또는 사용자 명시 archive 요청이 있을 때만 dated archive를 추가로 만듭니다.
-- v7.1에서는 최신 branch-local Spec Patch, Gap Run, Verify Run path를 Relevant Files 또는 Validation에 포함할 수 있습니다.
+- v7.2에서는 최신 branch-local Spec Patch, Gap Run, Verify Run path를 Relevant Files 또는 Validation에 포함할 수 있습니다.
 - handoff는 durable rule 저장소가 아닙니다.
 
 채팅 receipt:
