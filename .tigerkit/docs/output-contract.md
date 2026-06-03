@@ -1,6 +1,6 @@
 # TigerKit 운영 Output Contract
 
-이 문서는 TigerKit v7.2.9 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2.10 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
 
 ```text
 stdout is a receipt. Full spec/gap bodies are saved as branch-local artifacts unless explicit print option is used.
@@ -143,7 +143,7 @@ Performance proof fields:
 
 Speed improvement may be claimed only when numeric performance fields are recorded and speed's cumulative and iteration ratios are calculated with `baselineScore / currentScore` because speed is `lower_is_better`. Credited `dispatchSkips` may contribute to the proof only when `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true` are recorded. Vague wording such as `expected`, `estimated`, or `likely` is not proof.
 
-Current optimized `/tk:gap` contract target uses cumulative baseline `87.1`, iteration baseline loaded from previous main `50.5`, `currentCriticalPathScore <= 50.3`, `cumulativeImprovementRatio = 87.1 / 50.3 = 1.731...` with display ratio `1.73`, and `iterationImprovementRatio = 50.5 / 50.3 = 1.00398...` with display ratio `1.004` by `contract-derived-critical-path-proxy`. Concrete runs must recompute actual run proof from `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count.
+Current optimized `/tk:gap` contract target keeps cumulative baseline `87.1`, loads iteration baseline from previous main `50.3`, and keeps `currentCriticalPathScore <= 50.3`. Cumulative speed proof remains `87.1 / 50.3 = 1.731...` with display ratio `1.73`; iteration speed ratio is `50.3 / 50.3 = 1.00`, so v7.2.10 makes no new iteration speed improvement claim. Concrete runs must recompute actual run proof from `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count.
 
 Heuristic proof fields:
 
@@ -211,10 +211,10 @@ Heuristic proof metrics use fixed denominators from the command contract and mus
 Contract-level improvement proof target:
 
 ```text
-falsePositive: cumulativeBaseline = 5, iterationBaseline = 8, currentScore = 9, cumulativeImprovementRatio = 9 / 5 = 1.80, iterationImprovementRatio = 9 / 8 = 1.125 (display 1.13)
-falseNegative: cumulativeBaseline = 4, iterationBaseline = 7, currentScore = 8, cumulativeImprovementRatio = 8 / 4 = 2.00, iterationImprovementRatio = 8 / 7 = 1.142... (display 1.14)
-speed: cumulativeBaseline = 87.1, iterationBaseline = 50.5, currentScore <= 50.3, cumulativeImprovementRatio = 87.1 / 50.3 = 1.731... (display 1.73), iterationImprovementRatio = 50.5 / 50.3 = 1.00398... (display 1.004)
-analysisDepth: cumulativeBaseline = 6, iterationBaseline = 9, currentScore = 10, cumulativeImprovementRatio = 10 / 6 = 1.666... (display 1.67), iterationImprovementRatio = 10 / 9 = 1.111... (display 1.11)
+falsePositive: cumulativeBaseline = 5, iterationBaseline = 9, currentScore = 9, cumulativeImprovementRatio = 9 / 5 = 1.80, iterationImprovementRatio = 9 / 9 = 1.00 (no new iteration claim)
+falseNegative: cumulativeBaseline = 4, iterationBaseline = 8, currentScore = 8, cumulativeImprovementRatio = 8 / 4 = 2.00, iterationImprovementRatio = 8 / 8 = 1.00 (no new iteration claim)
+speed: cumulativeBaseline = 87.1, iterationBaseline = 50.3, currentScore <= 50.3, cumulativeImprovementRatio = 87.1 / 50.3 = 1.731... (display 1.73), iterationImprovementRatio = 50.3 / 50.3 = 1.00 (no new iteration claim)
+analysisDepth: cumulativeBaseline = 6, iterationBaseline = 10, currentScore = 10, cumulativeImprovementRatio = 10 / 6 = 1.666... (display 1.67), iterationImprovementRatio = 10 / 10 = 1.00 (no new iteration claim)
 ```
 
 Concrete runs must recompute actual run proof from metadata before claiming improvement. Do not claim new iteration improvement from the fixed cumulative baseline alone; update `iterationBaseline` from the previous main version for each run. BaselineAutoRefreshGate must load `.tigerkit/docs/gap-baselines.json` from refreshed `origin/main`, or use a `bootstrapIterationSeed` from fresh `origin/main` contract score only when the registry does not exist yet. It must write `baseline-snapshot.json` and block iteration claims when `staleFixedBaselineReuse: true` or no registry/seed source exists.
