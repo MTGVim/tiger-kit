@@ -48,6 +48,7 @@ Items:
 - 신규 화면/flow, BE/API/DTO, auth/permission/payment/data mutation, shared component, source conflict, inaccessible source, 모호한 Product/API/Design decision은 strict trigger입니다.
 - `--legacy`, `--deep`, `--no-strict`는 active mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작입니다.
 - subagent는 final finding을 확정하지 못합니다.
+- candidate의 file:line 또는 module-path evidence는 JudgeMergerAgent queue 진입 전에 현재 target surface에서 read-back으로 재확인합니다.
 - JudgeMergerAgent만 final accepted finding을 확정합니다.
 - final finding에는 P0/P1/P2만 포함합니다.
 - P3/nit/duplicate/unverifiable/source_conflict는 final finding으로 출력하지 않습니다.
@@ -91,7 +92,7 @@ judge-result.json
 report.md
 ```
 
-`input-manifest.json`과 `judge-result.json`에는 `mode`, `strictExecuted`, `recommendedMode`, `recommendationReasons`, `discoveryDepth`, `verificationStrength`, `dispatchSkips`, `blockedClarifications`, `rerunTrail`을 기록합니다.
+`input-manifest.json`과 `judge-result.json`에는 `mode`, `strictExecuted`, `recommendedMode`, `recommendationReasons`, `discoveryDepth`, `verificationStrength`, `dispatchSkips`, `evidencePrecisionGate`, `blockedClarifications`, `rerunTrail`을 기록합니다.
 
 `추천 preset`은 실행 preset과 다를 때만 stdout에 출력합니다. 같은 경우에는 실행 preset과 이유만 출력하면 충분합니다. 더 넓은 discovery 또는 강한 verification이 필요할 때만 `Rerun`에 재실행 안내를 남깁니다.
 

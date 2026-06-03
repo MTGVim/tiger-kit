@@ -115,3 +115,11 @@ When the target means `current implementation`, current working tree, current br
 - Strict mode runs CriticalRedTeamAgent exactly once.
 - Never continue because of P3, nit, duplicate, unverifiable, source conflict, or clarification-needed observations.
 - Re-run only when the user explicitly asks or follows the recorded rerun trail.
+
+## GAP-011: Confirm candidate evidence coordinates before judge merge
+
+- Before any candidate enters the JudgeMergerAgent queue, including strict-mode red-team candidates, read back every file:line or module-path evidence coordinate against the current target surface.
+- If the cited coordinate matches the candidate claim, record it as confirmed in the run artifact evidence precision gate summary.
+- If the cited coordinate is stale but the same target surface contains the correct span, repair the coordinate and record the repair evidence.
+- If the current target surface cannot support the cited claim, downgrade candidate confidence to `low` and let JudgeMergerAgent reject it as `low_confidence`, `missing_evidence`, or `unverifiable`.
+- Do not rely on CriticalRedTeamAgent to repair stale coordinates. In strict mode red-team should attack finding validity after the coordinate gate runs.
