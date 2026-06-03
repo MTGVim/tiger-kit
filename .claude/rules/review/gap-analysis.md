@@ -27,14 +27,16 @@
 - Source conflicts are not final findings. Record them as `SourceConflict` entries.
 - Visible UI copy differences are actionable when confirmed contracts require exact copy. Meaning similarity is not enough unless the contract explicitly allows variation.
 
-## GAP-004: Use v7 IDs consistently
+## GAP-004: Separate machine IDs from user-facing refs
 
-- Spec Patch IDs use `SP-YYYYMMDD-HHmmss-RAND`.
-- Spec Item IDs use `<PREFIX>-SP-YYYYMMDD-HHmmss-RAND-NN`, where prefix is `P`, `D`, `DS`, `E`, `QA`, or `A`.
-- Gap Run IDs use `GAP-YYYYMMDD-HHmmss-RAND`.
-- Candidate Finding IDs use `CAND-<KIND>-YYYYMMDD-HHmmss-RAND-NN`.
-- Accepted Finding IDs use `FND-YYYYMMDD-HHmmss-RAND-NN`.
-- Source Conflict IDs use `CONFLICT-YYYYMMDD-HHmmss-RAND-NN`.
+- Spec Patch machine IDs use `SP-YYYYMMDD-HHmmss-RAND`.
+- Spec Item machine IDs use `<PREFIX>-SP-YYYYMMDD-HHmmss-RAND-NN`, where prefix is `P`, `D`, `DS`, `E`, `QA`, or `A`.
+- Gap Run machine IDs use `GAP-YYYYMMDD-HHmmss-RAND`.
+- Candidate Finding machine IDs use `CAND-<KIND>-YYYYMMDD-HHmmss-RAND-NN`.
+- Accepted Finding machine IDs use `FND-YYYYMMDD-HHmmss-RAND-NN`.
+- Source Conflict machine IDs use `CONFLICT-YYYYMMDD-HHmmss-RAND-NN`.
+- User-facing finding tables use run-local short refs instead of long machine IDs: `G<N>` for accepted findings, `R<N>` for rejected/downgraded observations, `C<N>` for source conflicts, and `Q<N>` for clarifications.
+- Run artifacts should preserve the mapping with `displayRef` or an equivalent ref map so users can say `G1`/`R1` while artifacts keep canonical IDs.
 - Rule IDs in this file, such as `GAP-001`, are repo rule IDs. They are not `/tk:gap` finding IDs.
 
 ## GAP-005: Match output to v7 storage and stdout contract
@@ -44,7 +46,8 @@
 - Do not use ambiguous labels like `선택모드`, `실행모드`, `실행 preset`, and `추천 preset`.
 - State that the run is complete for the 단일 `/tk:gap` 실행; do not imply the gap is unfinished.
 - Full report is stored at `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md`.
-- Compact stdout tables may include accepted finding and rejected/downgraded observation summaries, but detailed evidence and source contract detail remain in `report.md` unless `--print-report` is used.
+- Compact stdout tables may include accepted finding and rejected/downgraded observation summaries, but they must use run-local `Ref` values rather than long canonical Candidate/Finding IDs.
+- Detailed evidence, source contract detail, and canonical ID mapping remain in `report.md` or JSON artifacts unless `--print-report` is used.
 - Full report stdout is allowed only with `--print-report`.
 - Run artifacts must include `input-manifest.json`, `contracts.json`, `candidates.json`, `judge-result.json`, and `report.md`.
 - `input-manifest.json` or `judge-result.json` must record `qualityGates`, `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `compatibilityFlags`, dispatch skips, blocked clarifications, Candidate Intake Gate summary, and performance proof.
@@ -108,7 +111,7 @@ When the target means `current implementation`, current working tree, current br
 - Use `expanded` for shared component, design-system, API/DTO/state transition, source conflict risk, inaccessible reference, ambiguous Product/API/Design decision, or divergent similar implementations.
 - Use `exhaustive-capped` for P0/P1 candidate, auth/permission/payment/data mutation/destructive action, release gate, or cross-module impact.
 - Record `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, and any compatibility flags in `input-manifest.json` or `judge-result.json`.
-- `--legacy`, `--deep`, and `--no-strict` are not active v7.2.3 modes. v6-era legacy behavior is unsupported history, not a `lite` alias.
+- `--legacy`, `--deep`, and `--no-strict` are not active v7.2.4 modes. v6-era legacy behavior is unsupported history, not a `lite` alias.
 
 ## GAP-010: No unbounded loop
 

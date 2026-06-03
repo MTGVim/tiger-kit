@@ -46,7 +46,7 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
 | `.claude/tigerkit/branches/<branch-key>/branch-state.json` | 현재 branch scope의 마지막 spec/gap run pointer. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/specs/index.json` | 현재 branch scope의 Spec Patch index와 item supersede mapping. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/specs/SP-*.md` | branch-local Spec Patch. PRD나 Design Guide의 영구 대체물이 아닙니다. | branch-local |
-| `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/*.json` | gap input, contract, candidate, judge result artifact. | branch-local |
+| `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/*.json` | gap input, contract, candidate, judge result artifact. 유저향 short Ref와 canonical ID mapping을 `displayRef` 또는 equivalent ref map으로 보존합니다. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md` | 저장된 gap report 본문. | branch-local |
 
 Gap run은 단일 `/tk:gap` 실행에서도 아래 필수 run artifact 이름과 위치를 유지합니다.

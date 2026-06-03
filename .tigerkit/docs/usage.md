@@ -84,6 +84,7 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 - run artifact는 `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/` 아래에 저장합니다.
 - 기본 stdout은 summary만 출력합니다. 전체 report는 `--print-report`가 있을 때만 출력합니다.
 - stdout과 report에는 단일 `/tk:gap` 실행 완료 상태, analysis depth, 확장 이유, 성능 증명, compact tables를 남깁니다.
+- 유저향 compact table은 긴 Candidate/Finding ID 대신 run-local short Ref(`G1`, `R1`, `C1`, `Q1`)를 우선 표시하고, canonical ID는 JSON artifact와 report 상세/참조 영역에 보관합니다.
 
 ## `/tk:reflect`
 
