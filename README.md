@@ -33,6 +33,7 @@ meta-feedback = 세션 내 TigerKit 개선 피드백 일반화
 - [Usage](.tigerkit/docs/usage.md)
 - [Artifact layout](.tigerkit/docs/artifact-layout.md)
 - [Output contract](.tigerkit/docs/output-contract.md)
+- [Gap baseline registry](.tigerkit/docs/gap-baselines.json)
 
 ## Generated State
 

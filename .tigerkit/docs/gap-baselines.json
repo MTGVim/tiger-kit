@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "seriesId": "gap-proof-heuristics-v7.2",
+  "metricDirections": {
+    "falsePositive": "higher_is_better",
+    "falseNegative": "higher_is_better",
+    "speed": "lower_is_better",
+    "analysisDepth": "higher_is_better"
+  },
+  "cumulativeBaseline": {
+    "sourceRef": "v7.2.5 contract seed",
+    "scores": {
+      "falsePositive": 5,
+      "falseNegative": 4,
+      "speed": 87.1,
+      "analysisDepth": 6
+    }
+  },
+  "iterationBaseline": {
+    "sourceRef": "origin/main@v7.2.8 before v7.2.9 iteration",
+    "bootstrapIterationSeed": true,
+    "scores": {
+      "falsePositive": 8,
+      "falseNegative": 7,
+      "speed": 50.5,
+      "analysisDepth": 9
+    }
+  },
+  "currentTarget": {
+    "sourceRef": "v7.2.9 contract target",
+    "scores": {
+      "falsePositive": 9,
+      "falseNegative": 8,
+      "speed": 50.3,
+      "analysisDepth": 10
+    }
+  },
+  "promotionRule": "After this version lands on main, the next iteration must load currentTarget as iterationBaseline from origin/main instead of reusing fixed cumulative scores."
+}
