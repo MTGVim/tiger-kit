@@ -1,0 +1,10 @@
+{
+  "name": "tiger-kit",
+  "private": true,
+  "scripts": {
+    "type-check": "claude plugin validate .claude-plugin/plugin.json",
+    "lint": "claude plugin validate . && git diff --check",
+    "test": "python3 -m json.tool evals/evals.json >/dev/null",
+    "validate": "bun run type-check && bun run lint && bun run test"
+  }
+}
