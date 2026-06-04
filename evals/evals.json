@@ -89,7 +89,7 @@
       "id": 3,
       "name": "gap-performance-proof",
       "prompt": "Evaluate /tk:gap performance proof requirements for the single /tk:gap execution. Do not write files.",
-      "expected_output": "Should require a measured performance proof rather than a vague estimate. Should use the contract-derived critical path proxy when runtime wall-clock instrumentation is unavailable. Should require speed proof to record cumulativeBaseline, refreshed origin/main iterationBaseline, currentScore, cumulativeImprovementRatio, iterationImprovementRatio, score direction lower_is_better, performance.agentCriticalPathGroups, performance.deterministicStageGroups, performance.runProcedureSteps, performance.measurementMethod, baselineAutoRefreshGate, baseline-snapshot.json, and heuristicProof.speed in the run receipt or manifest. Current optimized contract target should show cumulative baseline 87.1, iteration baseline 50.3, currentScore <= 50.3, cumulativeImprovementRatio = 87.1 / 50.3 = 1.731... with display ratio 1.73, and iterationImprovementRatio = 50.3 / 50.3 = 1.00 with no new iteration speed improvement claim by contract-derived-critical-path-proxy. Should calculate baseline and current with the same proxy weights. Credited dispatchSkips may count only when credited, criticalPathDelta, and evidenceCoveragePreserved are recorded. Should not claim success from phrases such as expected, estimated, or likely.",
+      "expected_output": "Should require a measured performance proof rather than a vague estimate. Should use the contract-derived critical path proxy when runtime wall-clock instrumentation is unavailable. Should require speed proof to record cumulativeBaseline, refreshed origin/main iterationBaseline, currentScore, cumulativeImprovementRatio, iterationImprovementRatio, score direction lower_is_better, performance.agentCriticalPathGroups, performance.deterministicStageGroups, performance.runProcedureSteps, performance.measurementMethod, baselineAutoRefreshGate, baseline-snapshot.json, and heuristicProof.speed in report.md or JSON artifacts. Current optimized contract target should show cumulative baseline 87.1, iteration baseline 50.3, currentScore <= 50.3, cumulativeImprovementRatio = 87.1 / 50.3 = 1.731... with display ratio 1.73, and iterationImprovementRatio = 50.3 / 50.3 = 1.00 with no new iteration speed improvement claim by contract-derived-critical-path-proxy. Should calculate baseline and current with the same proxy weights. Credited dispatchSkips may count only when credited, criticalPathDelta, and evidenceCoveragePreserved are recorded. Should not claim success from phrases such as expected, estimated, or likely.",
       "files": [
         "commands/gap.md",
         ".tigerkit/docs/output-contract.md",
@@ -141,19 +141,20 @@
       "id": 6,
       "name": "gap-final-receipt-single-execution",
       "prompt": "Evaluate /tk:gap stdout receipt for a completed run. Do not write files.",
-      "expected_output": "Should output analysis depth, expansion reasons, verification escalation, dispatch skip summary, Candidate Intake Gate summary, BaselineAutoRefreshGate status, ClaimFreshnessGate status, heuristic proof summary with cumulative and refreshed iteration FP/FN/speed/depth ratios, report path, P0/P1/P2 counts, source conflict count, clarification-needed count, rejected/downgraded count, numeric performance proof, and compact Actionable Findings and Rejected/Downgraded tables using short run-local Ref values instead of long canonical Candidate/Finding IDs. Should not output executed preset, recommended preset, or Strict executed as primary labels.",
+      "expected_output": "Should output a compact user receipt with run ID, branch scope, P0/P1/P2 counts, source conflict count, clarification-needed count, report path, and one next action. Should include compact Actionable Findings only when accepted findings exist, and compact Clarification Needed only when user confirmation is needed. Should use short run-local Ref values instead of long canonical Candidate/Finding IDs. Should not print analysis depth, expansion reasons, verification escalation, dispatch skip summary, Candidate Intake Gate summary, BaselineAutoRefreshGate status, ClaimFreshnessGate status, heuristic proof ratios, rejected/downgraded observation lists, numeric performance proof, or artifact file lists in default stdout. Those details should remain in report.md or JSON artifacts. Should not output executed preset, recommended preset, or Strict executed as primary labels.",
       "files": [
         "commands/gap.md",
         ".tigerkit/docs/output-contract.md"
       ],
       "expectations": [
-        "Receipt is depth-based",
-        "Includes dispatch skip and Candidate Intake Gate summaries",
-        "Includes BaselineAutoRefreshGate status",
-        "Includes ClaimFreshnessGate status",
-        "Includes heuristic proof summary with cumulative and iteration FP/FN/speed/depth ratios",
+        "Receipt is compact and action-oriented",
+        "Includes report path and next action",
+        "Includes finding and clarification counts",
+        "Keeps proof and baseline details out of default stdout",
+        "Keeps rejected/downgraded observation list out of default stdout",
+        "Keeps artifact file list out of default stdout",
         "No primary preset labels",
-        "Compact tables preserved",
+        "Compact tables are conditional",
         "Compact tables use short Ref values instead of long canonical IDs"
       ]
     },

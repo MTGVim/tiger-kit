@@ -72,6 +72,8 @@ baseline-snapshot.json
 report.md
 ```
 
+이 6개 파일은 모두 필요합니다. 다만 사용자 기본 output surface는 파일 목록 전체가 아니라 `report.md` 경로입니다. JSON 파일과 `baseline-snapshot.json`은 reproducible audit, machine-readable proof, canonical ID mapping, baseline refresh를 위한 내부/검증 표면입니다.
+
 단일 `/tk:gap` 실행은 metadata와 execution order를 바꾸며, artifact location은 유지하고 기존 required file name에 `baseline-snapshot.json`을 추가합니다. `heuristicProof`, `heuristicProof.baselineProvenance`, `heuristicProof.baselineAutoRefreshGate`, `baselineAutoRefreshGate`, `performance`, `dispatchPlan`, `dispatchSkips`, `candidateIntakeGate`, `targetSurfaceCoverageGate`, `dispatchCompletenessGate`, `claimFreshnessGate`는 `input-manifest.json` 또는 `judge-result.json`에 기록합니다. `baseline-snapshot.json`은 same-run baseline score snapshot과 next iteration promotion candidate를 보관합니다.
 
 ## Branch key
