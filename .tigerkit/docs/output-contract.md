@@ -1,6 +1,6 @@
 # TigerKit 운영 Output Contract
 
-이 문서는 TigerKit v7.2.11 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2.12 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
 
 ```text
 stdout is a receipt. Full spec/gap bodies are saved as branch-local artifacts unless explicit print option is used.
@@ -146,7 +146,7 @@ Performance proof fields:
 
 Speed improvement may be claimed only when numeric performance fields are recorded and speed's cumulative and iteration ratios are calculated with `baselineScore / currentScore` because speed is `lower_is_better`. Credited `dispatchSkips` may contribute to the proof only when `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true` are recorded. Vague wording such as `expected`, `estimated`, or `likely` is not proof.
 
-Current optimized `/tk:gap` contract target keeps cumulative baseline `87.1`, loads iteration baseline from previous main `50.3`, and keeps `currentCriticalPathScore <= 50.3`. Cumulative speed proof remains `87.1 / 50.3 = 1.731...` with display ratio `1.73`; iteration speed ratio is `50.3 / 50.3 = 1.00`, so v7.2.11 makes no new iteration speed improvement claim. Concrete runs must recompute actual run proof from `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count.
+Current optimized `/tk:gap` contract target keeps cumulative baseline `87.1`, loads iteration baseline from previous main `50.3`, and keeps `currentCriticalPathScore <= 50.3`. Cumulative speed proof remains `87.1 / 50.3 = 1.731...` with display ratio `1.73`; iteration speed ratio is `50.3 / 50.3 = 1.00`, so v7.2.12 makes no new iteration speed improvement claim. Concrete runs must recompute actual run proof from `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count.
 
 Heuristic proof fields:
 
@@ -359,8 +359,9 @@ Reflect excludes:
 ## `/tk:handoff` Output Contract
 
 - 목적: 다음 세션이나 다른 작업자가 이어받을 continuation 문서를 작성합니다.
-- 기본 기록 위치: `.claude/handoffs/current.md`
-- `archive=true` 또는 사용자 명시 archive 요청이 있을 때만 dated archive를 추가로 만듭니다.
+- canonical 기록 위치: `.claude/tigerkit/branches/<branch-key>/handoffs/current.md`
+- `archive=true` 또는 사용자 명시 archive 요청이 있을 때만 branch-local dated archive를 추가로 만듭니다.
+- `.claude/handoffs/current.md`는 optional convenience pointer이며 canonical handoff를 대체하지 않습니다.
 - v7.2에서는 최신 branch-local Spec Patch와 Gap Run path를 Relevant Files 또는 Validation에 포함할 수 있습니다.
 - handoff는 durable rule 저장소가 아닙니다.
 
@@ -368,9 +369,10 @@ Reflect excludes:
 
 ```text
 handoff 작성했습니다.
-- 기록: .claude/handoffs/current.md
+- 기록: .claude/tigerkit/branches/<branch-key>/handoffs/current.md
 - archive: 없음
-- next action: .claude/handoffs/current.md 읽고 Next Actions부터 이어가.
+- pointer: 없음
+- next action: .claude/tigerkit/branches/<branch-key>/handoffs/current.md 읽고 Next Actions부터 이어가.
 ```
 
 필수 section:
