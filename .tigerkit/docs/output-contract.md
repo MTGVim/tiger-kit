@@ -1,6 +1,6 @@
 # TigerKit 운영 Output Contract
 
-이 문서는 TigerKit v7.2.12 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2.14 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
 
 ```text
 stdout is a receipt. Full spec/gap bodies are saved as branch-local artifacts unless explicit print option is used.
@@ -41,24 +41,24 @@ Items:
 
 ## `/tk:gap` Output Contract
 
-- 목적: Product/Design Spec contract와 implementation plan/current implementation을 비교합니다.
+- 목적: Product/Design Spec contract와 implementation plan/current implementation을 비교해 사용자가 바로 고치거나 확인할 항목만 남깁니다.
 - 기본 저장 위치: `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/`
+- 기본 산출물은 `report.md`와 `run.json`입니다.
 - `/tk:gap`은 단일 `/tk:gap` 실행로 실행합니다.
 - `--lite`와 `--strict`는 compatibility flag로만 기록하며 user-facing quality mode가 아닙니다.
-- 분석 범위는 `analysisDepth: direct|bounded|expanded|exhaustive-capped`와 `depthReasons`로 기록합니다. hard trigger가 risk score보다 우선하며, 명시된 `--analysis-depth`가 위험 표면의 heuristic minimum보다 낮으면 낮추지 않고 escalation을 기록합니다.
+- `--maintainer-proof`는 maintainer/self-eval 전용입니다. 일반 사용자 품질 모드나 더 강한 gap 분석 옵션처럼 표현하지 않습니다.
 - subagent는 final finding을 확정하지 못합니다.
-- candidate의 file:line 또는 module-path evidence는 JudgeMergerAgent queue 진입 전에 현재 target surface에서 read-back으로 재확인합니다.
+- candidate의 file:line, module-path, rendered output evidence는 JudgeMergerAgent queue 진입 전에 현재 target surface에서 read-back으로 재확인합니다.
 - producer-absence claim은 producer-side evidence gate를 통과해야 합니다.
 - user-provided source, referenced source, repo에서 접근 가능한 API contract/schema/endpoint/serializer/data model이 있으면 사용자에게 묻기 전에 먼저 확인합니다.
 - consumer-only fallback/default/mapper evidence는 producer absence accepted finding이나 `SourceConflict`로 승격하지 않습니다.
-- `missing_producer_evidence`는 숨기지 않습니다. stdout/report에서 확인한 producer surface, access status, 아직 필요한 producer evidence를 알리고 `Clarification Needed`로 사용자 또는 owner 확인을 요청합니다.
+- `missing_producer_evidence`는 숨기지 않습니다. 기본 stdout에서는 `Clarification Needed`로 짧게 보여주고, 확인한 producer surface와 missing evidence 상세는 `report.md`에 둡니다.
 - ambiguity와 source conflict는 Judge accept path 전에 `Clarification Needed` 또는 `SourceConflict`로 기록합니다.
 - JudgeMergerAgent만 final accepted finding을 확정합니다.
-- 유저향 stdout/report table은 run-local short Ref(`G1`, `R1`, `C1`, `Q1`)를 우선 표시하고 긴 canonical ID는 JSON artifact와 report 상세/참조 영역에 보관합니다.
+- 유저향 stdout/report table은 run-local short Ref(`G1`, `R1`, `C1`, `Q1`)를 우선 표시하고 긴 canonical ID는 `run.json` 또는 maintainer proof artifact에 보관합니다.
 - `mode`, `preset`, `lite`, `strict`는 stdout에서 품질 선택지처럼 표시하지 않습니다. compatibility flag로 언급해야 할 때도 quality mode나 추천 preset으로 쓰지 않습니다.
 - final finding에는 P0/P1/P2만 포함합니다.
 - P3/nit/duplicate/unverifiable/source_conflict는 final finding으로 출력하지 않습니다.
-- missed P0/P1 방지를 위해 target surface coverage와 dispatch completeness를 기록하고 `heuristicProof.falseNegative`로 수치화합니다.
 - finding이 안 나올 때까지 반복하지 않습니다.
 
 기본 stdout:
@@ -68,6 +68,7 @@ Gap Review 완료: <GAP-ID>
 Branch Scope: <branch-key>
 결과: P0 <count> / P1 <count> / P2 <count> / Source Conflicts <count> / Clarification Needed <count>
 Report: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md
+Run JSON: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/run.json
 다음 행동: <G1 먼저 수정|Q1 확인 필요|없음>
 
 Actionable Findings:
@@ -83,168 +84,64 @@ Clarification Needed:
 
 `Actionable Findings`는 accepted finding이 있을 때만 출력합니다. `Clarification Needed`는 확인 질문이 있을 때만 출력합니다. 둘 다 없으면 table 대신 `다음 행동: 없음`만 출력합니다.
 
-Default stdout에 아래 항목을 직접 출력하지 않습니다. 사용자가 확인해야 하는 세부 근거는 `report.md`, 기계 판정과 proof는 JSON artifact에 저장합니다.
+Default stdout에 아래 항목을 직접 출력하지 않습니다. 기본 `report.md`와 `run.json`에도 proof/self-eval metadata를 필수로 요구하지 않습니다.
 
-- quality gate
-- analysis depth와 확장 이유
+- quality gate dump
+- analysis depth proof와 확장 이유 dump
+- risk score, side-effect confidence
 - verification escalation
+- dispatch plan/skip proof
+- target surface coverage proof
 - performance proof
 - heuristic proof
 - baseline refresh
 - proof freshness
-- rejected/downgraded observation 목록
+- rejected/downgraded observation 상세 목록
 - artifact file list
+- false-positive/false-negative/speed/analysis-depth improvement claim
 
-Run artifact files are required audit/machine surfaces, not the default user output surface:
-
-```text
-input-manifest.json
-contracts.json
-candidates.json
-judge-result.json
-baseline-snapshot.json
-report.md
-```
-
-Gap run metadata must include:
-
-- `displayRefs` or item-level `displayRef` mapping between run-local Ref and canonical IDs
-- `qualityGates: evidencePrecision|producerEvidence|ambiguity|JudgeMerger`
-- `analysisDepth: direct|bounded|expanded|exhaustive-capped`
-- `depthReasons: string[]`
-- `riskScore: number`
-- `sideEffectConfidence: number`
-- `verificationEscalation: none|targeted-red-team`
-- `compatibilityFlags: string[]`
-- `dispatchPlan`
-- `dispatchSkips` with `agent`, `reason`, `sourceClass`, `criticalPathEffect`, `evidenceCoveragePreserved`, and `falseNegativeRisk` for every skip; credited speed-proof skips also include `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true`
-- `candidateIntakeGate`
-- `evidencePrecisionGate`
-- `targetSurfaceCoverageGate`
-- `dispatchCompletenessGate`
-- `blockedClarifications`
-- `baselineAutoRefreshGate`
-- `baseline-snapshot.json` with `seriesId`, `metricDirections`, `cumulativeBaseline`, `iterationBaseline`, `currentScore`, `cumulativeImprovementRatio`, `iterationImprovementRatio`, `promotionCandidate`, `sourceRefs`, `capturedAt`, and `status`
-- `claimFreshnessGate`
-- `heuristicProof`
-
-Performance proof fields:
-
-- `performance.cumulativeBaselineCriticalPathScore`
-- `performance.iterationBaselineCriticalPathScore`
-- `performance.currentCriticalPathScore`
-- `performance.cumulativeImprovementRatio`
-- `performance.iterationImprovementRatio`
-- `performance.agentCriticalPathGroups`
-- `performance.deterministicStageGroups`
-- `performance.runProcedureSteps`
-- `performance.measurementMethod`
-
-Speed improvement may be claimed only when numeric performance fields are recorded and speed's cumulative and iteration ratios are calculated with `baselineScore / currentScore` because speed is `lower_is_better`. Credited `dispatchSkips` may contribute to the proof only when `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true` are recorded. Vague wording such as `expected`, `estimated`, or `likely` is not proof.
-
-Current optimized `/tk:gap` contract target keeps cumulative baseline `87.1`, loads iteration baseline from previous main `50.3`, and keeps `currentCriticalPathScore <= 50.3`. Cumulative speed proof remains `87.1 / 50.3 = 1.731...` with display ratio `1.73`; iteration speed ratio is `50.3 / 50.3 = 1.00`, so v7.2.12 makes no new iteration speed improvement claim. Concrete runs must recompute actual run proof from `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count.
-
-Heuristic proof fields:
-
-- `heuristicProof.cumulativeRequiredImprovementRatio` (fixed at `1.3` for the cumulative target)
-- `heuristicProof.iterationRequiredImprovementRatio` (`>1.0` for per-iteration numeric improvement)
-- `heuristicProof.falsePositive.metric: accepted_path_blocking_predicate_coverage`
-- `heuristicProof.falsePositive.denominator: required_false_positive_predicates`
-- `heuristicProof.falsePositive.scoreDirection: higher_is_better`
-- `heuristicProof.falsePositive.cumulativeBaseline`
-- `heuristicProof.falsePositive.iterationBaseline`
-- `heuristicProof.falsePositive.currentScore`
-- `heuristicProof.falsePositive.cumulativeImprovementRatio`
-- `heuristicProof.falsePositive.iterationImprovementRatio`
-- `heuristicProof.falsePositive.improvementFormula`
-- `heuristicProof.falsePositive.claimAllowed`
-- `heuristicProof.falseNegative.metric: critical_contract_and_target_surface_coverage`
-- `heuristicProof.falseNegative.denominator: required_false_negative_predicates`
-- `heuristicProof.falseNegative.scoreDirection: higher_is_better`
-- `heuristicProof.falseNegative.cumulativeBaseline`
-- `heuristicProof.falseNegative.iterationBaseline`
-- `heuristicProof.falseNegative.currentScore`
-- `heuristicProof.falseNegative.cumulativeImprovementRatio`
-- `heuristicProof.falseNegative.iterationImprovementRatio`
-- `heuristicProof.falseNegative.improvementFormula`
-- `heuristicProof.falseNegative.claimAllowed`
-- `heuristicProof.speed.metric: contract_critical_path_score`
-- `heuristicProof.speed.scoreDirection: lower_is_better`
-- `heuristicProof.speed.cumulativeBaseline`
-- `heuristicProof.speed.iterationBaseline`
-- `heuristicProof.speed.currentScore`
-- `heuristicProof.speed.cumulativeImprovementRatio`
-- `heuristicProof.speed.iterationImprovementRatio`
-- `heuristicProof.speed.improvementFormula`
-- `heuristicProof.speed.claimAllowed`
-- `heuristicProof.analysisDepth.metric: hard_trigger_selection_coverage`
-- `heuristicProof.analysisDepth.denominator: required_depth_trigger_predicates`
-- `heuristicProof.analysisDepth.scoreDirection: higher_is_better`
-- `heuristicProof.analysisDepth.cumulativeBaseline`
-- `heuristicProof.analysisDepth.iterationBaseline`
-- `heuristicProof.analysisDepth.currentScore`
-- `heuristicProof.analysisDepth.cumulativeImprovementRatio`
-- `heuristicProof.analysisDepth.iterationImprovementRatio`
-- `heuristicProof.analysisDepth.improvementFormula`
-- `heuristicProof.analysisDepth.claimAllowed`
-- `claimFreshnessGate.status`
-- `claimFreshnessGate.checkedAfter`
-- `claimFreshnessGate.staleInputs`
-- `claimFreshnessGate.repairedInputs`
-- `heuristicProof.baselineProvenance.registrySourceRef`
-- `heuristicProof.baselineProvenance.cumulativeSourceRef`
-- `heuristicProof.baselineProvenance.iterationSourceRef`
-- `heuristicProof.baselineProvenance.currentSourceRef`
-- `heuristicProof.baselineProvenance.capturedFrom`
-- `heuristicProof.baselineProvenance.scoreDirectionVerified`
-- `heuristicProof.baselineProvenance.autoRefreshVerified`
-- `heuristicProof.baselineAutoRefreshGate.status`
-- `heuristicProof.baselineAutoRefreshGate.registryPath`
-- `heuristicProof.baselineAutoRefreshGate.bootstrapIterationSeed`
-- `heuristicProof.baselineAutoRefreshGate.promotionCandidate`
-- `heuristicProof.baselineAutoRefreshGate.staleFixedBaselineReuse`
-- `heuristicProof.claimAllowed`
-
-Heuristic proof metrics use fixed denominators from the command contract and must record both `cumulativeBaseline` and `iterationBaseline`. False-positive counts accepted-path plus baseline-provenance and baseline-auto-refresh blocking predicates, false-negative counts critical contract/target surface plus baseline-provenance and baseline-auto-refresh predicates, speed uses the critical path score, and analysis depth counts required depth trigger plus baseline provenance and baseline auto-refresh predicates. Higher-is-better metrics use `currentScore / baselineScore`; speed uses `baselineScore / currentScore`. ClaimFreshnessGate is a separate claim gate, not a score denominator. A gap run may claim combined improvement only when all four subproofs record cumulative and iteration ratios, cumulative ratios meet the cumulative target, iteration ratios are `> 1.0`, BaselineAutoRefreshGate proves iteration baseline came from previous refreshed `origin/main`, all four have `claimAllowed: true`, and ClaimFreshnessGate passes.
-
-Contract-level improvement proof target:
+기본 `run.json` 필드:
 
 ```text
-falsePositive: cumulativeBaseline = 5, iterationBaseline = 9, currentScore = 9, cumulativeImprovementRatio = 9 / 5 = 1.80, iterationImprovementRatio = 9 / 9 = 1.00 (no new iteration claim)
-falseNegative: cumulativeBaseline = 4, iterationBaseline = 8, currentScore = 8, cumulativeImprovementRatio = 8 / 4 = 2.00, iterationImprovementRatio = 8 / 8 = 1.00 (no new iteration claim)
-speed: cumulativeBaseline = 87.1, iterationBaseline = 50.3, currentScore <= 50.3, cumulativeImprovementRatio = 87.1 / 50.3 = 1.731... (display 1.73), iterationImprovementRatio = 50.3 / 50.3 = 1.00 (no new iteration claim)
-analysisDepth: cumulativeBaseline = 6, iterationBaseline = 10, currentScore = 10, cumulativeImprovementRatio = 10 / 6 = 1.666... (display 1.67), iterationImprovementRatio = 10 / 10 = 1.00 (no new iteration claim)
+runId
+command
+branchScope
+status
+reportPath
+runJsonPath
+maintainerProofEnabled: false
+sourceRefs
+counts
+findings
+clarifications
+sourceConflicts
+rejectedSummary
+displayRefs
+checkedEvidenceRefs
+nextAction
 ```
 
-Concrete runs must recompute actual run proof from metadata before claiming improvement. Do not claim new iteration improvement from the fixed cumulative baseline alone; update `iterationBaseline` from the previous main version for each run. BaselineAutoRefreshGate must load `.tigerkit/docs/gap-baselines.json` from refreshed `origin/main`, or use a `bootstrapIterationSeed` from fresh `origin/main` contract score only when the registry does not exist yet. It must write `baseline-snapshot.json` and block iteration claims when `staleFixedBaselineReuse: true` or no registry/seed source exists.
+기본 `report.md` H2:
 
-False-negative coverage metadata must include:
+```md
+# Tiger Kit Gap Report: <GAP-ID>
 
-- `targetSurfaceCoverageGate.contractsChecked`
-- `targetSurfaceCoverageGate.surfacesChecked`
-- `targetSurfaceCoverageGate.uncheckedRequiredSurfaces`
-- `dispatchCompletenessGate.requiredAgents`
-- `dispatchCompletenessGate.skippedAgents`
-- `dispatchCompletenessGate.falseNegativeRiskSummary`
-- `dispatchCompletenessGate.missedP0P1SearchStatus`
+## Summary
 
-Candidate intake metadata must include:
+## Sources Used
 
-- `candidateIntakeGate.shape`
-- `candidateIntakeGate.evidencePrecision`
-- `candidateIntakeGate.producerEvidence`
-- `candidateIntakeGate.conflictClarification`
-- `candidateIntakeGate.requirementTraceability`
-- `candidateIntakeGate.severityScope`
-- `candidateIntakeGate.finalQueue`
-- `candidateIntakeGate.reasons`
+## Actionable Findings
 
-Claim freshness metadata must include:
+## Clarification Needed
 
-- `claimFreshnessGate.status`
-- `claimFreshnessGate.checkedAfter`
-- `claimFreshnessGate.staleInputs`
-- `claimFreshnessGate.repairedInputs`
+## Not Accepted Summary
+
+## Next Action
+```
+
+`## Actionable Findings`에는 accepted P0/P1/P2 final finding만 둡니다.
+
+`## Clarification Needed`는 implementation-blocking과 reference-only를 구분합니다. 질문은 option/evidence/impact/recommendation/status를 표로 제시합니다.
 
 Clarification table shape:
 
@@ -254,7 +151,7 @@ Clarification table shape:
 | Q1 | implementation-blocking | <질문> | A / B | <근거> | <영향> | <추천> | blocked_pending_user |
 ```
 
-긴 `CLAR-...` canonical ID는 JSON artifact와 report 상세/참조 영역에 보관합니다.
+긴 `CLAR-...` canonical ID는 `run.json` 또는 maintainer proof artifact에 보관합니다.
 
 UI clarification prototype은 오른쪽 border 정렬을 맞춥니다.
 
@@ -292,6 +189,40 @@ Rejected finding uses one of:
 - `missing_evidence`
 - `missing_producer_evidence`
 - `superseded_source`
+
+### `/tk:gap --maintainer-proof` Output Contract
+
+`--maintainer-proof`를 명시한 경우에만 self-eval/performance proof와 내부 gate/debug metadata를 생성하거나 claim할 수 있습니다.
+
+Maintainer proof artifact location:
+
+```text
+.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/maintainer-proof/
+```
+
+Maintainer proof mode에서만 아래 metadata가 허용됩니다.
+
+- `input-manifest.json`
+- `contracts.json`
+- `candidates.json`
+- `judge-result.json`
+- `baseline-snapshot.json`
+- `proof.json`
+- `qualityGates`
+- `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`
+- `verificationEscalation`, `compatibilityFlags`
+- `dispatchPlan`, `dispatchSkips`
+- `candidateIntakeGate`, `evidencePrecisionGate`
+- `targetSurfaceCoverageGate`, `dispatchCompletenessGate`
+- `baselineAutoRefreshGate`, `claimFreshnessGate`
+- `performance`
+- `heuristicProof`
+
+Speed improvement may be claimed only in maintainer proof mode when numeric performance fields are recorded and speed's cumulative and iteration ratios are calculated with `baselineScore / currentScore` because speed is `lower_is_better`. Credited `dispatchSkips` may contribute to the proof only when `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true` are recorded. Vague wording such as `expected`, `estimated`, or `likely` is not proof.
+
+Heuristic proof metrics use fixed denominators from the command contract and must record both `cumulativeBaseline` and `iterationBaseline`. Higher-is-better metrics use `currentScore / baselineScore`; speed uses `baselineScore / currentScore`. ClaimFreshnessGate is a separate claim gate, not a score denominator. A gap run may claim combined improvement only when all four subproofs record cumulative and iteration ratios, cumulative ratios meet the cumulative target, iteration ratios are `> 1.0`, BaselineAutoRefreshGate proves iteration baseline came from previous refreshed `origin/main`, all four have `claimAllowed: true`, and ClaimFreshnessGate passes.
+
+Concrete maintainer proof runs must recompute actual run proof from metadata before claiming improvement. Do not claim new iteration improvement from the fixed cumulative baseline alone; update `iterationBaseline` from the previous main version for each run.
 
 ## `/tk:reflect` Output Contract
 

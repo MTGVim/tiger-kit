@@ -1,6 +1,6 @@
 # TigerKit 운영 산출물 구조
 
-이 문서는 TigerKit v7.2.12 산출물 배치와 책임을 설명합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2.14 산출물 배치와 책임을 설명합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
 
 TigerKit은 branch-local working memory와 durable insight를 분리합니다.
 
@@ -20,12 +20,15 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
         runs/
           gap/
             GAP-YYYYMMDD-HHmmss-RAND/
-              input-manifest.json
-              contracts.json
-              candidates.json
-              judge-result.json
-              baseline-snapshot.json
               report.md
+              run.json
+              maintainer-proof/        # only with --maintainer-proof
+                input-manifest.json
+                contracts.json
+                candidates.json
+                judge-result.json
+                baseline-snapshot.json
+                proof.json
         handoffs/
           current.md
           YYYY-MM-DD-task-name.md
@@ -50,18 +53,47 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
 | `.claude/tigerkit/branches/<branch-key>/branch-state.json` | 현재 branch scope의 마지막 spec/gap run pointer. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/specs/index.json` | 현재 branch scope의 Spec Patch index와 item supersede mapping. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/specs/SP-*.md` | branch-local Spec Patch. PRD나 Design Guide의 영구 대체물이 아닙니다. | branch-local |
-| `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/*.json` | gap input, contract, candidate, judge result artifact. 유저향 short Ref와 canonical ID mapping을 `displayRef` 또는 equivalent ref map으로 보존합니다. | branch-local |
-| `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/baseline-snapshot.json` | 해당 run이 사용한 cumulative baseline, refreshed `origin/main` iteration baseline, current score, ratio, 다음 반복 승격 후보를 기록합니다. | branch-local |
-| `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md` | 저장된 gap report 본문. | branch-local |
+| `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md` | 사용자가 읽는 기본 gap report 본문. Actionable Findings, Clarification Needed, next action 중심입니다. | branch-local |
+| `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/run.json` | 후속 대화와 기계 처리를 위한 최소 run record. user-facing short Ref와 canonical ID mapping을 보존합니다. | branch-local |
+| `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/maintainer-proof/` | `--maintainer-proof`가 명시된 경우에만 생성하는 self-eval/performance proof, gate/debug metadata, baseline snapshot 영역입니다. | branch-local maintainer-only |
 | `.claude/tigerkit/branches/<branch-key>/handoffs/current.md` | `/tk:handoff`가 생성하는 canonical continuation 문서. | branch-local continuation |
 | `.claude/tigerkit/branches/<branch-key>/handoffs/YYYY-MM-DD-task-name.md` | `archive=true` 또는 명시적 archive 요청 때만 생성하는 branch-local continuation archive. | branch-local continuation |
 | `.claude/handoffs/current.md` | optional convenience pointer. canonical handoff를 대체하지 않습니다. | pointer |
 | `.claude/rules/**/*.md` | repo convention basis이자 `/tk:reflect apply=true`의 scoped durable apply target입니다. | durable rule |
 | `CLAUDE.md` | repo instruction과 durable project guidance이자 `/tk:reflect apply=true`의 global durable apply target입니다. | durable rule |
 | `.tigerkit/docs/*.md` | TigerKit usage, artifact, output contract documentation. | docs |
-| `.tigerkit/docs/gap-baselines.json` | `/tk:gap` 휴리스틱 proof의 누적 기준, 직전 main 반복 기준, 현재 contract target score registry. 다음 반복은 `origin/main`의 `currentTarget`을 `iterationBaseline`으로 자동 승격해 사용합니다. | docs |
+| `.tigerkit/docs/gap-baselines.json` | `--maintainer-proof`에서만 쓰는 `/tk:gap` proof baseline registry. 기본 사용자 경로의 산출물이나 사용자-facing report 요구사항이 아닙니다. | docs |
 
-Gap run은 단일 `/tk:gap` 실행에서도 아래 필수 run artifact 이름과 위치를 유지합니다.
+## 기본 `/tk:gap` artifact
+
+기본 gap run은 사용자 행동 가능한 표면만 필수로 생성합니다.
+
+```text
+.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/
+  report.md
+  run.json
+```
+
+`report.md`는 사용자가 읽는 표면입니다. `run.json`은 후속 대화, short Ref mapping, 최소 machine-readable record를 위한 표면입니다.
+
+기본 `run.json`은 아래 성격의 정보만 가집니다.
+
+- run identity
+- branch scope
+- source refs와 access status
+- P0/P1/P2 count
+- source conflict count
+- clarification-needed count
+- findings
+- clarifications
+- rejected summary
+- displayRef mapping
+- checked evidence refs
+- report/run path
+- next action
+- `maintainerProofEnabled: false`
+
+기본 gap run은 아래 파일을 필수로 만들지 않습니다.
 
 ```text
 input-manifest.json
@@ -69,12 +101,63 @@ contracts.json
 candidates.json
 judge-result.json
 baseline-snapshot.json
-report.md
+proof.json
 ```
 
-이 6개 파일은 모두 필요합니다. 다만 사용자 기본 output surface는 파일 목록 전체가 아니라 `report.md` 경로입니다. JSON 파일과 `baseline-snapshot.json`은 reproducible audit, machine-readable proof, canonical ID mapping, baseline refresh를 위한 내부/검증 표면입니다.
+기본 gap run의 `report.md`와 `run.json`은 아래 self-eval/proof/debug metadata를 요구하지 않습니다.
 
-단일 `/tk:gap` 실행은 metadata와 execution order를 바꾸며, artifact location은 유지하고 기존 required file name에 `baseline-snapshot.json`을 추가합니다. `heuristicProof`, `heuristicProof.baselineProvenance`, `heuristicProof.baselineAutoRefreshGate`, `baselineAutoRefreshGate`, `performance`, `dispatchPlan`, `dispatchSkips`, `candidateIntakeGate`, `targetSurfaceCoverageGate`, `dispatchCompletenessGate`, `claimFreshnessGate`는 `input-manifest.json` 또는 `judge-result.json`에 기록합니다. `baseline-snapshot.json`은 same-run baseline score snapshot과 next iteration promotion candidate를 보관합니다.
+- `qualityGates`
+- `heuristicProof`
+- `performance`
+- `baselinePredicateScore`
+- `currentPredicateScore`
+- `analysisDepth` proof
+- `riskScore`
+- `sideEffectConfidence`
+- `verificationEscalation`
+- `dispatchPlan` dump
+- `dispatchSkips` dump
+- `targetSurfaceCoverageGate` proof
+- `dispatchCompletenessGate` proof
+- `claimFreshnessGate`
+- artifact inventory dump
+
+확인하지 못한 target/producer/plan surface가 사용자 결정을 막으면 proof dump가 아니라 `Clarification Needed` 또는 `Not Accepted Summary`로 표현합니다.
+
+## `--maintainer-proof` artifact
+
+`--maintainer-proof`가 명시된 gap run은 기본 artifact에 더해 maintainer-only proof artifact를 생성할 수 있습니다.
+
+```text
+.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/
+  report.md
+  run.json
+  maintainer-proof/
+    input-manifest.json
+    contracts.json
+    candidates.json
+    judge-result.json
+    baseline-snapshot.json
+    proof.json
+```
+
+`maintainer-proof/` 아래 파일은 일반 사용자 output surface가 아닙니다. TigerKit 자체 성능개선, regression 검증, self-eval proof, baseline refresh, detailed gate/debug 확인에만 씁니다.
+
+Maintainer proof artifact에만 아래를 기록할 수 있습니다.
+
+- `qualityGates`
+- `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`
+- `verificationEscalation`, `compatibilityFlags`
+- `dispatchPlan`, `dispatchSkips`
+- `candidateIntakeGate`, `evidencePrecisionGate`
+- `targetSurfaceCoverageGate`, `dispatchCompletenessGate`
+- `baselineAutoRefreshGate`, `claimFreshnessGate`
+- `performance`
+- `heuristicProof`
+- cumulative/iteration baseline
+- false-positive/false-negative/speed/analysis-depth improvement claim proof
+
+`run.json`에는 `maintainerProofEnabled: true`와 `maintainerProofPath`만 추가하면 충분합니다. 기본 사용자 receipt에는 maintainer proof artifact list를 출력하지 않습니다.
 
 ## Branch key
 
@@ -127,9 +210,11 @@ linked worktree는 repository common dir를 공유할 수 있으므로 common di
 - `specs/index.json`
 - `branch-state.json`
 - `global-index.json`
-- `judge-result.json`
-- `candidates.json`
-- `contracts.json`
+- `run.json`
+- `maintainer-proof/judge-result.json`
+- `maintainer-proof/candidates.json`
+- `maintainer-proof/contracts.json`
+- `maintainer-proof/proof.json`
 
 절차:
 

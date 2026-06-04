@@ -1,6 +1,6 @@
 # TigerKit 운영 사용법
 
-이 문서는 TigerKit v7.2.12 사용 가이드입니다. 산출물 위치는 `.tigerkit/docs/artifact-layout.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2.14 사용 가이드입니다. 산출물 위치는 `.tigerkit/docs/artifact-layout.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
 
 ## 언어
 
@@ -29,7 +29,7 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 | Command | 역할 | 저장 성격 |
 | --- | --- | --- |
 | `/tk:spec` | 즉석 지시, 브레인스토밍, 회의 메모를 gap 분석용 Spec Patch로 저장합니다. | branch-local |
-| `/tk:gap` | Product/Design Spec + implementation plan + current implementation을 단일 `/tk:gap` 실행로 비교합니다. | branch-local |
+| `/tk:gap` | Product/Design Spec + implementation plan + current implementation을 단일 실행으로 비교해 사용자가 고칠 finding과 답할 clarification을 남깁니다. | branch-local |
 | `/tk:reflect` | branch-local 산출물에서 repo에 남길 insight만 추출하고 반영합니다. | durable insight |
 | `/tk:handoff` | 다음 세션이나 다음 작업자가 이어받을 수 있도록 continuation 문서를 작성합니다. | continuation |
 | `/tk:meta-feedback` | 현재 세션에서 드러난 TigerKit command/skill 개선안을 프로젝트 자산 유출 없이 일반화합니다. | generalized feedback |
@@ -42,6 +42,7 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 /tk:gap --analysis-depth bounded
 /tk:gap --analysis-depth expanded
 /tk:gap --spec SP-20260602-143012-A7F3
+/tk:gap --maintainer-proof
 /tk:reflect
 /tk:reflect --dry-run
 /tk:handoff 현재 작업 이어받을 수 있게 남겨줘
@@ -65,33 +66,55 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 - Product Spec, Design Spec, Design System Spec, Engineering Constraint, QA Acceptance Criteria, Analytics Contract를 Contract로 normalize해 비교합니다.
 - active/confirmed Spec Patch item을 기본 참조합니다.
 - 기본 호출은 user-provided references, target hints, Current Implementation 후보, 위험 신호를 먼저 skim한 뒤 단일 `/tk:gap` 실행로 실행합니다.
+- 기본 산출물은 `report.md`와 `run.json`입니다.
+- 기본 stdout은 run 결과, finding/clarification count, report path, run.json path, next action만 출력합니다.
+- 전체 report는 `--print-report`가 있을 때만 출력합니다.
 - `--lite`와 `--strict`는 compatibility flag로만 기록하며 user-facing quality mode가 아닙니다.
-- 분석 범위 조절은 내부 `analysisDepth` 휴리스틱 또는 명시 `--analysis-depth <direct|bounded|expanded|exhaustive-capped>`로 표현합니다.
-- depth 선택은 hard trigger를 먼저 적용하고 `riskScore`는 tie-breaker로만 사용합니다.
+- `--legacy`, `--deep`, `--no-strict`는 active mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
+- `--analysis-depth <direct|bounded|expanded|exhaustive-capped>`는 품질 gate를 낮추지 않고 source discovery depth만 명시합니다.
 - `direct`는 단일 explicit local surface, ambiguity 없음, API/DTO/state/auth/payment/data mutation/shared component 영향 없음일 때만 사용합니다.
 - `bounded`는 single screen/component/command와 주변 1-depth 또는 대표 usage 1-3개를 확인합니다.
 - `expanded`는 shared/design-system/API/DTO/state transition, source conflict risk, inaccessible source, 모호한 Product/API/Design decision, divergent similar implementation에 사용합니다.
 - `exhaustive-capped`는 P0/P1 후보, auth/permission/payment/data mutation/destructive action, release gate, cross-module impact에 사용합니다.
-- `--legacy`, `--deep`, `--no-strict`는 active mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
 - changed files는 primary scope가 아니라 Current Implementation 후보 evidence입니다.
-- source/plan이 없으면 관련 agent는 skip하고 이유, evidenceCoveragePreserved, falseNegativeRisk를 artifact에 기록합니다.
-- missed P0/P1 방지를 위해 target surface coverage와 dispatch completeness를 확인하고 `heuristicProof.falseNegative`에 수치 proof를 남깁니다.
-- 개선 증명은 false-positive, false-negative, speed, analysis-depth 4종 subproof가 모두 `cumulativeBaseline`, refreshed `origin/main`에서 자동 로드한 `iterationBaseline`, `currentScore`, 지표 방향별 `cumulativeImprovementRatio`, `iterationImprovementRatio`를 기록하고 `claimAllowed: true`이며 BaselineAutoRefreshGate와 ClaimFreshnessGate가 `pass`일 때만 claim합니다.
-- 반복 개선은 직전 main의 `iterationBaseline` 대비로만 주장합니다. 최초 기준 점수인 `cumulativeBaseline`만으로 새 반복 개선을 주장하지 않습니다.
-- baseline registry는 `.tigerkit/docs/gap-baselines.json`입니다. 각 run은 `baseline-snapshot.json`에 이번 점수와 다음 반복 승격 후보를 기록합니다.
 - Product Spec, Design Spec, API contract, source priority, owner decision이 모호하면 user consent 전에는 final finding으로 확정하지 않고 `Clarification Needed` 또는 `SourceConflict`로 둡니다.
 - UI 판단이 모호하면 option/evidence/impact/recommendation 표와 오른쪽 border가 정렬된 TUI/ASCII prototype으로 확인합니다.
 - subagent는 candidate만 생성합니다.
-- candidate의 file:line 또는 module-path evidence는 JudgeMergerAgent queue 진입 전에 현재 target surface에서 read-back으로 재확인합니다.
+- candidate의 file:line, module-path, rendered output evidence는 JudgeMergerAgent queue 진입 전에 현재 target surface에서 read-back으로 재확인합니다.
+- producer가 값을 미제공/미커버한다는 claim은 producer-side evidence 없이는 final finding이나 `SourceConflict`로 승격하지 않습니다.
 - JudgeMergerAgent만 final finding을 확정합니다.
 - final finding은 P0/P1/P2만 포함합니다.
 - P3/nit/duplicate/unverifiable/source_conflict는 final finding이 아닙니다.
 - finding이 0개가 될 때까지 반복하지 않습니다.
 - run artifact는 `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/` 아래에 저장합니다.
-- 기본 stdout은 run 결과, finding/clarification count, report path, next action만 출력합니다. 전체 report는 `--print-report`가 있을 때만 출력합니다.
-- analysis depth, 확장 이유, 성능 증명, heuristic proof, baseline 상태, rejected/downgraded observation, artifact file list는 기본 stdout이 아니라 `report.md`와 JSON artifact에 저장합니다.
-- 유저향 compact table은 긴 Candidate/Finding ID 대신 run-local short Ref(`G1`, `R1`, `C1`, `Q1`)를 우선 표시하고, canonical ID는 JSON artifact와 report 상세/참조 영역에 보관합니다.
+- 유저향 compact table은 긴 Candidate/Finding ID 대신 run-local short Ref(`G1`, `R1`, `C1`, `Q1`)를 우선 표시하고, canonical ID는 `run.json` 또는 maintainer proof artifact에 보관합니다.
 - hook은 사용자-facing receipt, artifact path, finding Ref 안전장치일 때만 추가합니다. repo 유지보수용 sync/lint 성격이면 hook을 두지 않습니다.
+
+### `/tk:gap` 기본 출력 예시
+
+```text
+Gap Review 완료: GAP-20260604-131500-A7F3
+Branch Scope: feature-foo--a1b2c3
+결과: P0 0 / P1 1 / P2 2 / Source Conflicts 0 / Clarification Needed 1
+Report: .claude/tigerkit/branches/feature-foo--a1b2c3/runs/gap/GAP-20260604-131500-A7F3/report.md
+Run JSON: .claude/tigerkit/branches/feature-foo--a1b2c3/runs/gap/GAP-20260604-131500-A7F3/run.json
+다음 행동: G1 먼저 수정하거나 Q1에 답해주세요.
+```
+
+### Maintainer only: `--maintainer-proof`
+
+`--maintainer-proof`는 TigerKit maintainer가 자체 성능개선, regression 검증, proof artifact 확인을 할 때만 씁니다. 일반 사용자가 gap 결과를 더 좋게 만들기 위해 선택하는 품질 모드가 아닙니다.
+
+이 옵션을 명시한 경우에만 아래가 허용됩니다.
+
+- `maintainer-proof/` artifact 생성
+- `input-manifest.json`, `contracts.json`, `candidates.json`, `judge-result.json`, `baseline-snapshot.json`, `proof.json`
+- `heuristicProof`, `performance`, baseline/current score
+- false-positive/false-negative/speed/analysis-depth improvement claim
+- target coverage proof와 dispatch completeness proof
+- ClaimFreshnessGate와 BaselineAutoRefreshGate
+
+기본 `/tk:gap`은 성능개선이나 false-positive/false-negative 개선 claim을 하지 않습니다. 사용자에게 중요한 정보는 Actionable Findings, Clarification Needed, next action입니다.
 
 ## `/tk:reflect`
 
