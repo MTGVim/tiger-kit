@@ -1,5 +1,5 @@
 {
-  "skill_name": "tiger-kit-v7-2-10-gap-baseline-no-new-numeric-improvement",
+  "skill_name": "tiger-kit-v7-2-14-user-facing-gap-maintainer-proof",
   "command_surface": {
     "core_commands": [
       "/tk:spec",
@@ -8,9 +8,24 @@
       "/tk:handoff",
       "/tk:meta-feedback"
     ],
-    "gap_quality_gates": ["evidencePrecision", "producerEvidence", "ambiguity", "JudgeMerger"],
-    "gap_coverage_gates": ["targetSurfaceCoverageGate", "dispatchCompletenessGate"],
-    "gap_proof_baselines": ["cumulativeBaseline", "iterationBaseline", "currentScore"],
+    "gap_quality_gates": [
+      "evidenceReadBack",
+      "producerEvidence",
+      "ambiguityConsent",
+      "JudgeMerger"
+    ],
+    "gap_default_artifacts": [
+      "report.md",
+      "run.json"
+    ],
+    "gap_maintainer_proof_artifacts": [
+      "maintainer-proof/input-manifest.json",
+      "maintainer-proof/contracts.json",
+      "maintainer-proof/candidates.json",
+      "maintainer-proof/judge-result.json",
+      "maintainer-proof/baseline-snapshot.json",
+      "maintainer-proof/proof.json"
+    ],
     "gap_analysis_depths": [
       "direct",
       "bounded",
@@ -20,6 +35,9 @@
     "compatibility_flags": [
       "--lite",
       "--strict"
+    ],
+    "maintainer_flags": [
+      "--maintainer-proof"
     ],
     "removed_gap_modes": [
       "legacy",
@@ -32,7 +50,7 @@
       "id": 0,
       "name": "command-surface-restores-existing-commands",
       "prompt": "You are evaluating TigerKit active command surface. Describe the user-facing commands. Do not write files.",
-      "expected_output": "Should list /tk:spec, /tk:gap, /tk:reflect, /tk:handoff, and /tk:meta-feedback as active user-facing commands. Should explain that handoff and meta-feedback were preserved existing commands, not newly invented commands. Should explain that spec/gap write branch-local working memory, reflect creates durable insight, handoff creates continuation context, and meta-feedback extracts generalized TigerKit improvement feedback from session history.",
+      "expected_output": "Should list /tk:spec, /tk:gap, /tk:reflect, /tk:handoff, and /tk:meta-feedback as active user-facing commands. Should explain that handoff and meta-feedback are active existing commands, not newly invented commands. Should explain that spec/gap write branch-local working memory, reflect creates durable insight, handoff creates continuation context, and meta-feedback extracts generalized TigerKit improvement feedback from session history.",
       "files": [],
       "expectations": [
         "Lists /tk:spec",
@@ -40,35 +58,60 @@
         "Lists /tk:reflect",
         "Lists /tk:handoff",
         "Lists /tk:meta-feedback",
-        "Treats handoff as restored existing continuation command",
-        "Treats meta-feedback as restored existing session-history improvement command",
+        "Treats handoff as active continuation command",
+        "Treats meta-feedback as active session-history improvement command",
         "Explains spec/gap branch-local working memory",
         "Explains reflect-only durable insight"
       ]
     },
     {
       "id": 1,
-      "name": "gap-single-execution",
-      "prompt": "Evaluate the /tk:gap command surface. Do not write files.",
-      "expected_output": "Should describe /tk:gap as a single /tk:gap execution. Should not describe lite and strict as active user-facing quality modes. Should say --lite and --strict are compatibility flags only that do not change quality gates if mentioned. Should describe analysisDepth as direct, bounded, expanded, or exhaustive-capped. Should preserve existing /tk:gap command and not create a new skill or remove an existing skill.",
+      "name": "gap-default-user-facing-surface",
+      "prompt": "Evaluate the default /tk:gap user-facing command surface. Do not write files.",
+      "expected_output": "Should describe default /tk:gap as a single user-facing gap review execution that compares Product/Design Spec, implementation plan, and current implementation. Should say default artifacts are report.md and run.json. Should say default stdout is compact and action-oriented with run ID, branch scope, P0/P1/P2 counts, source conflict count, clarification-needed count, report path, run.json path, and next action. Should not require input-manifest.json, contracts.json, candidates.json, judge-result.json, baseline-snapshot.json, heuristicProof, performance, baseline scores, or proof artifact inventory in the default path. Should preserve existing /tk:gap command and not create a new skill or remove an existing skill.",
       "files": [
         "commands/gap.md",
-        "CLAUDE.md",
-        ".tigerkit/docs/usage.md"
+        ".tigerkit/docs/usage.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/artifact-layout.md"
       ],
       "expectations": [
-        "No user-facing lite/strict quality split",
-        "Required quality gates preserved",
-        "analysisDepth replaces preset",
+        "Default /tk:gap is single execution",
+        "Default artifacts are report.md and run.json",
+        "Default stdout is compact and action-oriented",
+        "No default proof artifact requirement",
+        "No default heuristicProof requirement",
+        "No default performance proof requirement",
         "No new skill creation",
         "No existing skill removal"
       ]
     },
     {
       "id": 2,
-      "name": "gap-analysis-depth-heuristic",
+      "name": "gap-maintainer-proof-is-explicit-only",
+      "prompt": "Evaluate /tk:gap --maintainer-proof. Do not write files.",
+      "expected_output": "Should describe --maintainer-proof as maintainer/self-eval only, not as a user-facing quality mode or recommended stronger preset. Should allow proof/debug artifacts only when --maintainer-proof is explicit, under maintainer-proof/. Should allow input-manifest.json, contracts.json, candidates.json, judge-result.json, baseline-snapshot.json, proof.json, heuristicProof, performance, baselineAutoRefreshGate, claimFreshnessGate, targetSurfaceCoverageGate, and dispatchCompletenessGate only in the maintainer-proof path. Should still keep default stdout compact even when proof artifacts exist unless --print-report is used.",
+      "files": [
+        "commands/gap.md",
+        ".claude/rules/review/gap-analysis.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/artifact-layout.md",
+        ".tigerkit/docs/usage.md"
+      ],
+      "expectations": [
+        "Requires explicit --maintainer-proof for proof artifacts",
+        "Does not describe maintainer proof as user quality mode",
+        "Uses maintainer-proof/ artifact scope",
+        "Allows heuristicProof only in maintainer path",
+        "Allows performance proof only in maintainer path",
+        "Keeps stdout compact"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "gap-analysis-depth-user-facing-boundary",
       "prompt": "Evaluate /tk:gap analysis depth selection. Do not write files.",
-      "expected_output": "Should choose direct only for one explicit local surface with no API/DTO/state/auth/payment/data mutation/shared component/ambiguity trigger. Should choose bounded for single screen/component/command with nearby 1-depth usage lookup or representative samples up to 3. Should choose expanded for shared component, design-system, API/DTO/state transition, source conflict risk, inaccessible reference, ambiguous Product/API/Design decision, or divergent similar implementations. Should choose exhaustive-capped for P0/P1 candidate, auth/permission/payment/data mutation/destructive action, release gate, or cross-module impact. Hard triggers should run before riskScore tie-breakers. Should record analysisDepth, depthReasons, riskScore, sideEffectConfidence, verificationEscalation, compatibilityFlags, dispatchPlan, dispatchSkips, baselineAutoRefreshGate, claimFreshnessGate, and heuristicProof.analysisDepth with cumulativeBaseline, refreshed origin/main iterationBaseline, currentScore, cumulativeImprovementRatio, iterationImprovementRatio, score direction, and claimAllowed true before claiming depth improvement. Explicit --analysis-depth should not lower the heuristic-required minimum depth for risky surfaces; lower requested depth should be escalated and recorded. Should not call the choice lite or strict mode.",
+      "expected_output": "Should choose direct only for one explicit local surface with no API/DTO/state/auth/payment/data mutation/shared component/ambiguity trigger. Should choose bounded for single screen/component/command with nearby 1-depth usage lookup or representative samples up to 3. Should choose expanded for shared component, design-system, API/DTO/state transition, source conflict risk, inaccessible reference, ambiguous Product/API/Design decision, or divergent similar implementations. Should choose exhaustive-capped for P0/P1 candidate, auth/permission/payment/data mutation/destructive action, release gate, or cross-module impact. Hard triggers should run before riskScore tie-breakers. Explicit --analysis-depth should not lower the heuristic-required minimum depth for risky surfaces. Should not call the choice lite or strict mode. Should not require analysisDepth proof, riskScore, depthReasons dump, baseline, or improvement ratio in default stdout/report/run.json; those are maintainer-proof only if claimed.",
       "files": [
         "commands/gap.md",
         ".claude/rules/review/gap-analysis.md",
@@ -77,39 +120,17 @@
       "expectations": [
         "Depth heuristic covers risk axes",
         "No quality downgrade",
-        "Metadata records decision",
-        "Records dispatchPlan and dispatchSkips",
-        "Records heuristicProof.analysisDepth",
-        "Requires analysisDepth cumulativeBaseline refreshed iterationBaseline currentScore ratios and claimAllowed true",
         "Hard triggers run before riskScore tie-breakers",
-        "No lite/strict mode wording"
-      ]
-    },
-    {
-      "id": 3,
-      "name": "gap-performance-proof",
-      "prompt": "Evaluate /tk:gap performance proof requirements for the single /tk:gap execution. Do not write files.",
-      "expected_output": "Should require a measured performance proof rather than a vague estimate. Should use the contract-derived critical path proxy when runtime wall-clock instrumentation is unavailable. Should require speed proof to record cumulativeBaseline, refreshed origin/main iterationBaseline, currentScore, cumulativeImprovementRatio, iterationImprovementRatio, score direction lower_is_better, performance.agentCriticalPathGroups, performance.deterministicStageGroups, performance.runProcedureSteps, performance.measurementMethod, baselineAutoRefreshGate, baseline-snapshot.json, and heuristicProof.speed in report.md or JSON artifacts. Current optimized contract target should show cumulative baseline 87.1, iteration baseline 50.3, currentScore <= 50.3, cumulativeImprovementRatio = 87.1 / 50.3 = 1.731... with display ratio 1.73, and iterationImprovementRatio = 50.3 / 50.3 = 1.00 with no new iteration speed improvement claim by contract-derived-critical-path-proxy. Should calculate baseline and current with the same proxy weights. Credited dispatchSkips may count only when credited, criticalPathDelta, and evidenceCoveragePreserved are recorded. Should not claim success from phrases such as expected, estimated, or likely.",
-      "files": [
-        "commands/gap.md",
-        ".tigerkit/docs/output-contract.md",
-        ".tigerkit/docs/gap-baselines.json"
-      ],
-      "expectations": [
-        "Uses measured proxy fields",
-        "Requires measurementMethod and critical path components",
-        "Requires cumulative and refreshed origin/main iteration speed baselines",
-        "Requires heuristicProof.speed",
-        "Requires credited dispatch skip fields before counting skip benefit",
-        "Requires cumulative and iteration improvement ratios with explicit formula",
-        "Rejects estimate-only proof"
+        "No lite/strict mode wording",
+        "No default analysisDepth proof requirement",
+        "Analysis-depth improvement proof is maintainer-only"
       ]
     },
     {
       "id": 4,
       "name": "gap-consumer-fallback-not-producer-absence",
       "prompt": "Evaluate a /tk:gap candidate that claims an API does not provide a required value, but cites only frontend fallback/default/mapper evidence. Do not write files.",
-      "expected_output": "Should not accept the candidate as P0/P1/P2 and should not create SourceConflict from consumer-only evidence. If API contract, schema, endpoint response, serializer, data model, backend fixture, or owner-confirmed producer behavior is provided or discoverable in the repo, it should inspect that producer surface before asking the user. Should reject or downgrade with missing_producer_evidence, missing_evidence, or unverifiable only after available producer surfaces are checked. Should state producer-side evidence is required, tell the user what producer evidence was checked and what is still missing, and create a ClarificationNeeded confirmation request when the missing producer evidence blocks the gap decision.",
+      "expected_output": "Should not accept the candidate as P0/P1/P2 and should not create SourceConflict from consumer-only evidence. If API contract, schema, endpoint response, serializer, data model, backend fixture, or owner-confirmed producer behavior is provided or discoverable in the repo, it should inspect that producer surface before asking the user. Should reject or downgrade with missing_producer_evidence, missing_evidence, or unverifiable only after available producer surfaces are checked. Should state producer-side evidence is required, tell the user what producer evidence was checked and what is still missing in report.md, and create a Clarification Needed confirmation request when the missing producer evidence blocks the gap decision.",
       "files": [
         "commands/gap.md",
         ".claude/rules/review/gap-analysis.md"
@@ -119,36 +140,37 @@
         "Checks provided or discoverable producer evidence before asking user",
         "Uses missing_producer_evidence only after available producer surfaces are checked",
         "Does not accept SourceConflict without producer evidence",
-        "Creates ClarificationNeeded for missing producer evidence when decision-blocking"
+        "Creates Clarification Needed for missing producer evidence when decision-blocking"
       ]
     },
     {
       "id": 5,
       "name": "gap-ambiguity-blocks-judge-accept-path",
       "prompt": "Evaluate a /tk:gap candidate where Product/API/Design source priority is ambiguous. Do not write files.",
-      "expected_output": "Should not silently choose the likely interpretation. Should route the item to SourceConflict or ClarificationNeeded before accepted finding path. Should continue other clear checks. Should record evidence, impact, recommendation, and status for the clarification.",
+      "expected_output": "Should not silently choose the likely interpretation. Should route the item to SourceConflict or Clarification Needed before accepted finding path. Should continue other clear checks. Should record evidence, impact, recommendation, and status for the clarification, using user-facing short Ref such as Q1.",
       "files": [
         "commands/gap.md",
         ".claude/rules/review/gap-analysis.md"
       ],
       "expectations": [
         "Ambiguity blocks accept path",
-        "Creates SourceConflict or ClarificationNeeded",
-        "No guessed final finding"
+        "Creates SourceConflict or Clarification Needed",
+        "No guessed final finding",
+        "Uses short Ref for user-facing clarification"
       ]
     },
     {
       "id": 6,
       "name": "gap-final-receipt-single-execution",
-      "prompt": "Evaluate /tk:gap stdout receipt for a completed run. Do not write files.",
-      "expected_output": "Should output a compact user receipt with run ID, branch scope, P0/P1/P2 counts, source conflict count, clarification-needed count, report path, and one next action. Should include compact Actionable Findings only when accepted findings exist, and compact Clarification Needed only when user confirmation is needed. Should use short run-local Ref values instead of long canonical Candidate/Finding IDs. Should not print analysis depth, expansion reasons, verification escalation, dispatch skip summary, Candidate Intake Gate summary, BaselineAutoRefreshGate status, ClaimFreshnessGate status, heuristic proof ratios, rejected/downgraded observation lists, numeric performance proof, or artifact file lists in default stdout. Those details should remain in report.md or JSON artifacts. Should not output executed preset, recommended preset, or Strict executed as primary labels.",
+      "prompt": "Evaluate /tk:gap stdout receipt for a completed default run. Do not write files.",
+      "expected_output": "Should output a compact user receipt with run ID, branch scope, P0/P1/P2 counts, source conflict count, clarification-needed count, report path, run.json path, and one next action. Should include compact Actionable Findings only when accepted findings exist, and compact Clarification Needed only when user confirmation is needed. Should use short run-local Ref values instead of long canonical Candidate/Finding IDs. Should not print analysis depth, expansion reasons, verification escalation, dispatch skip summary, Candidate Intake Gate summary, TargetSurfaceCoverageGate proof, DispatchCompletenessGate proof, BaselineAutoRefreshGate status, ClaimFreshnessGate status, heuristic proof ratios, rejected/downgraded observation lists, numeric performance proof, or artifact file lists in default stdout. Should not output executed preset, recommended preset, or Strict executed as primary labels.",
       "files": [
         "commands/gap.md",
         ".tigerkit/docs/output-contract.md"
       ],
       "expectations": [
         "Receipt is compact and action-oriented",
-        "Includes report path and next action",
+        "Includes report path, run.json path, and next action",
         "Includes finding and clarification counts",
         "Keeps proof and baseline details out of default stdout",
         "Keeps rejected/downgraded observation list out of default stdout",
@@ -160,15 +182,119 @@
     },
     {
       "id": 7,
+      "name": "gap-default-excludes-proof-metadata",
+      "prompt": "Evaluate whether default /tk:gap should create or require proof metadata. Do not write files.",
+      "expected_output": "Should say default /tk:gap does not require heuristicProof, performance, baseline-snapshot.json, input-manifest.json, judge-result.json, qualityGates dump, dispatchPlan dump, dispatchSkips proof, targetSurfaceCoverageGate proof, dispatchCompletenessGate proof, claimFreshnessGate, baselineAutoRefreshGate, false-positive improvement claim, false-negative improvement claim, speed improvement claim, analysis-depth improvement claim, or combined heuristic proof claim. Should say those are allowed only with explicit --maintainer-proof. Should still preserve evidence read-back, producer evidence gate, ambiguity gate, and JudgeMergerAgent decision quality in the default path.",
+      "files": [
+        "commands/gap.md",
+        ".claude/rules/review/gap-analysis.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/artifact-layout.md"
+      ],
+      "expectations": [
+        "No default heuristicProof",
+        "No default performance proof",
+        "No default baseline-snapshot requirement",
+        "No default input-manifest or judge-result requirement",
+        "No default improvement claim",
+        "Maintainer proof is explicit only",
+        "Default quality gates remain"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "gap-maintainer-performance-proof",
+      "prompt": "Evaluate /tk:gap --maintainer-proof performance proof requirements. Do not write files.",
+      "expected_output": "Should require a measured performance proof rather than a vague estimate only when --maintainer-proof is explicit. Should use the contract-derived critical path proxy when runtime wall-clock instrumentation is unavailable. Should require speed proof to record cumulativeBaseline, refreshed origin/main iterationBaseline, currentScore, cumulativeImprovementRatio, iterationImprovementRatio, score direction lower_is_better, performance agent critical path groups, deterministic stage groups, run procedure steps, measurementMethod, baselineAutoRefreshGate, baseline-snapshot.json, and heuristicProof.speed in maintainer-proof artifacts. Should calculate baseline and current with the same proxy weights. Credited dispatchSkips may count only when credited, criticalPathDelta, and evidenceCoveragePreserved are recorded. Should not claim success from phrases such as expected, estimated, or likely.",
+      "files": [
+        "commands/gap.md",
+        ".claude/rules/review/gap-analysis.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/gap-baselines.json"
+      ],
+      "expectations": [
+        "Requires explicit --maintainer-proof",
+        "Uses measured proxy fields",
+        "Requires measurementMethod and critical path components",
+        "Requires cumulative and refreshed origin/main iteration speed baselines",
+        "Requires heuristicProof.speed in maintainer artifacts",
+        "Requires credited dispatch skip fields before counting skip benefit",
+        "Rejects estimate-only proof"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "gap-maintainer-false-negative-coverage-proof",
+      "prompt": "Evaluate /tk:gap --maintainer-proof for a run that could miss a P0/P1 issue because target surfaces or skipped agents were not checked. Do not write files.",
+      "expected_output": "Should require TargetSurfaceCoverageGate, DispatchCompletenessGate, and ClaimFreshnessGate before claiming false-negative improvement only in maintainer-proof mode. TargetSurfaceCoverageGate should record checked contract surfaces, target/plan/producer surfaces, and unchecked required surfaces for the selected analysisDepth. DispatchCompletenessGate should compare SourcePresenceManifest with dispatchPlan and record falseNegativeRisk for skipped agents. CriticalRedTeamAgent should perform one missed-P0/P1 targeted search within the selected depth scope. heuristicProof.falseNegative should include metric, denominator, cumulativeBaseline, iterationBaseline, currentScore, cumulativeImprovementRatio, iterationImprovementRatio, improvement formula, and claimAllowed, and claimAllowed should be false if required surfaces are unchecked, dispatch completeness is missing, or proof inputs are stale.",
+      "files": [
+        "commands/gap.md",
+        ".claude/rules/review/gap-analysis.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "Requires explicit --maintainer-proof",
+        "Requires TargetSurfaceCoverageGate for FN claim",
+        "Requires DispatchCompletenessGate for FN claim",
+        "Requires ClaimFreshnessGate for FN claim",
+        "Records falseNegativeRisk for skipped agents in maintainer proof",
+        "Runs missed P0/P1 targeted search once",
+        "Requires heuristicProof.falseNegative numeric fields",
+        "Blocks false-negative claim when required coverage is missing"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "gap-maintainer-combined-heuristic-proof-claim",
+      "prompt": "Evaluate whether /tk:gap --maintainer-proof may claim cumulative and per-iteration improvement for false-positive reduction, false-negative reduction, speed, and analysis depth. Do not write files.",
+      "expected_output": "Should require explicit --maintainer-proof before any combined improvement claim. Should require heuristicProof cumulativeRequiredImprovementRatio and iterationRequiredImprovementRatio. For falsePositive, falseNegative, speed, and analysisDepth, should require metric, scoreDirection, cumulativeBaseline, iterationBaseline, currentScore, cumulativeImprovementRatio, iterationImprovementRatio, improvementFormula, and claimAllowed. Higher-is-better metrics should use currentScore / baselineScore; speed should use baselineScore / currentScore. Should require ClaimFreshnessGate status, checkedAfter, staleInputs, and repairedInputs as a separate claim gate rather than a score denominator. Should allow the combined claim only when all four cumulative ratios meet the cumulative target, all four iteration ratios are > 1.0, all four claimAllowed values are true, and ClaimFreshnessGate passes. Should reject the combined claim if fixed cumulative baseline alone is used for a new iteration claim, consumer-only producer evidence, unchecked target surfaces, missing dispatch completeness, uncredited dispatch skips, risk-score-before-hard-trigger depth selection, or stale proof inputs are used.",
+      "files": [
+        "commands/gap.md",
+        ".claude/rules/review/gap-analysis.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "Requires explicit --maintainer-proof",
+        "Requires cumulativeRequiredImprovementRatio and iterationRequiredImprovementRatio",
+        "Requires false-positive subproof",
+        "Requires ClaimFreshnessGate as separate claim gate",
+        "Requires false-negative subproof",
+        "Requires speed subproof",
+        "Requires analysis-depth subproof",
+        "Rejects combined claim if any cumulative or iteration subproof is below threshold",
+        "Rejects fixed cumulative baseline used as iteration proof",
+        "Rejects consumer-only producer evidence",
+        "Rejects unchecked target surfaces",
+        "Rejects missing dispatch completeness",
+        "Rejects uncredited dispatch skip benefit",
+        "Rejects risk-score-before-hard-trigger depth selection",
+        "Rejects stale proof inputs"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "handoff-remains-continuation-command",
+      "prompt": "You are evaluating /tk:handoff after a branch has spec and gap artifacts. Describe expected behavior. Do not write files.",
+      "expected_output": "Should preserve /tk:handoff as the existing continuation command. It should write the canonical branch-local handoff current.md by default, include Reader Guide and Resume Prompt, optionally mention latest branch-local Spec Patch and Gap Run paths when observed, and create a dated archive only when archive=true or an explicit archive request is present.",
+      "files": [],
+      "expectations": [
+        "Preserves /tk:handoff as active command",
+        "Writes branch-local handoff current.md by default",
+        "Includes Reader Guide",
+        "Includes Resume Prompt",
+        "Can reference latest branch-local Spec Patch and Gap Run paths",
+        "Does not create dated archive without archive=true or explicit archive request"
+      ]
+    },
+    {
+      "id": 12,
       "name": "meta-feedback-uses-session-history-for-gap-improvements",
       "prompt": "You are evaluating /tk:meta-feedback after a session where the user said gap was slow, backend findings had false positives, mode wording was confusing, and ambiguous UI/API decisions should be resolved with the user. Describe expected behavior. Do not write files.",
-      "expected_output": "Should use the session history as evidence, generalize the feedback without exposing project assets, and propose TigerKit command or skill improvements. It should capture performance friction for gap analysis depth, dispatch gate needs, candidate evidence precision gates for stale file:line/module-path coordinates, producer-absence evidence gates for backend false-positive reduction, ambiguity consent gate guidance, and UI clarification via tables or aligned TUI/ASCII mockups. It should not create repo rule patches like reflect and should not output raw user quotes, paths, tickets, PR numbers, branch names, or project-specific labels.",
+      "expected_output": "Should use the session history as evidence, generalize the feedback without exposing project assets, and propose TigerKit command or skill improvements. It should capture performance friction as a maintainer/self-eval concern only when relevant, candidate evidence precision gates for stale file:line/module-path coordinates, producer-absence evidence gates for backend false-positive reduction, ambiguity consent gate guidance, and UI clarification via tables or aligned TUI/ASCII mockups. It should not create repo rule patches like reflect and should not output raw user quotes, paths, tickets, PR numbers, branch names, or project-specific labels.",
       "files": [],
       "expectations": [
         "Uses session history as the evidence source",
-        "Generalizes gap performance friction",
-        "Generalizes analysis depth improvement",
-        "Generalizes dispatch gate improvement",
+        "Generalizes performance friction without making default /tk:gap proof-heavy",
         "Generalizes candidate evidence precision gate improvement",
         "Generalizes producer-absence evidence gate improvement",
         "Generalizes backend false-positive feedback",
@@ -181,22 +307,7 @@
       ]
     },
     {
-      "id": 8,
-      "name": "handoff-remains-continuation-command",
-      "prompt": "You are evaluating /tk:handoff after a branch has spec and gap artifacts. Describe expected behavior. Do not write files.",
-      "expected_output": "Should preserve /tk:handoff as the existing continuation command. It should write .claude/handoffs/current.md by default, include Reader Guide and Resume Prompt, optionally mention latest branch-local Spec Patch and Gap Run paths when observed, and create a dated archive only when archive=true or an explicit archive request is present.",
-      "files": [],
-      "expectations": [
-        "Preserves /tk:handoff as active command",
-        "Writes .claude/handoffs/current.md by default",
-        "Includes Reader Guide",
-        "Includes Resume Prompt",
-        "Can reference latest branch-local Spec Patch and Gap Run paths",
-        "Does not create dated archive without archive=true or explicit archive request"
-      ]
-    },
-    {
-      "id": 9,
+      "id": 13,
       "name": "reflect-applies-directly-to-rules-and-claude",
       "prompt": "You are evaluating /tk:reflect after branch-local gap runs produced durable repo-wide insight candidates. Describe expected behavior. Do not write files.",
       "expected_output": "Should default to apply=true, read branch-local TigerKit memory, write directly to CLAUDE.md or .claude/rules/* depending on target scope, treat --dry-run and --apply=false as preview-only aliases, avoid modifying source code, dedupe repeated insights, and avoid creating a separate tigerkit-reflections sidecar file.",
@@ -211,54 +322,6 @@
         "Does not create tigerkit-reflections sidecar file",
         "Skips duplicate insights",
         "Prints apply summary"
-      ]
-    },
-    {
-      "id": 10,
-      "name": "gap-false-negative-coverage-proof",
-      "prompt": "Evaluate a /tk:gap run that could miss a P0/P1 issue because target surfaces or skipped agents were not checked. Do not write files.",
-      "expected_output": "Should require TargetSurfaceCoverageGate, DispatchCompletenessGate, and ClaimFreshnessGate before claiming false-negative improvement. TargetSurfaceCoverageGate should record checked contract surfaces, target/plan/producer surfaces, and unchecked required surfaces for the selected analysisDepth. DispatchCompletenessGate should compare SourcePresenceManifest with dispatchPlan and record falseNegativeRisk for skipped agents. CriticalRedTeamAgent should perform one missed-P0/P1 targeted search within the selected depth scope. heuristicProof.falseNegative should include metric, denominator, cumulativeBaseline, iterationBaseline, currentScore, cumulativeImprovementRatio, iterationImprovementRatio, improvement formula, and claimAllowed, and claimAllowed should be false if required surfaces are unchecked, dispatch completeness is missing, or proof inputs are stale.",
-      "files": [
-        "commands/gap.md",
-        ".claude/rules/review/gap-analysis.md",
-        ".tigerkit/docs/output-contract.md"
-      ],
-      "expectations": [
-        "Requires TargetSurfaceCoverageGate",
-        "Requires DispatchCompletenessGate",
-        "Requires ClaimFreshnessGate",
-        "Records falseNegativeRisk for skipped agents",
-        "Runs missed P0/P1 targeted search once",
-        "Requires heuristicProof.falseNegative numeric fields",
-        "Blocks false-negative claim when required coverage is missing"
-      ]
-    },
-    {
-      "id": 11,
-      "name": "gap-combined-heuristic-proof-claim",
-      "prompt": "Evaluate whether /tk:gap may claim cumulative and per-iteration improvement for false-positive reduction, false-negative reduction, speed, and analysis depth. Do not write files.",
-      "expected_output": "Should require heuristicProof.cumulativeRequiredImprovementRatio = 1.3 and heuristicProof.iterationRequiredImprovementRatio > 1.0. For falsePositive, falseNegative, speed, and analysisDepth, should require metric, scoreDirection, cumulativeBaseline, iterationBaseline, currentScore, cumulativeImprovementRatio, iterationImprovementRatio, improvementFormula, and claimAllowed. Higher-is-better metrics should use currentScore / baselineScore; speed should use baselineScore / currentScore. Should require claimFreshnessGate status, checkedAfter, staleInputs, and repairedInputs as a separate claim gate rather than a score denominator. Should allow the combined claim only when all four cumulative ratios meet the cumulative target, all four iteration ratios are > 1.0, all four claimAllowed values are true, and ClaimFreshnessGate passes. Should reject the combined claim if fixed cumulative baseline alone is used for a new iteration claim, consumer-only producer evidence, unchecked target surfaces, missing dispatch completeness, uncredited dispatch skips, risk-score-before-hard-trigger depth selection, or stale proof inputs are used.",
-      "files": [
-        "commands/gap.md",
-        ".claude/rules/review/gap-analysis.md",
-        ".tigerkit/docs/output-contract.md"
-      ],
-      "expectations": [
-        "Requires cumulativeRequiredImprovementRatio and iterationRequiredImprovementRatio",
-        "Requires false-positive subproof",
-        "Requires RequirementTraceabilityGate and SeverityScopeGate in FP proof",
-        "Requires ClaimFreshnessGate as separate claim gate",
-        "Requires false-negative subproof",
-        "Requires speed subproof",
-        "Requires analysis-depth subproof",
-        "Rejects combined claim if any cumulative or iteration subproof is below threshold",
-        "Rejects fixed cumulative baseline used as iteration proof",
-        "Rejects consumer-only producer evidence",
-        "Rejects unchecked target surfaces",
-        "Rejects missing dispatch completeness",
-        "Rejects uncredited dispatch skip benefit",
-        "Rejects risk-score-before-hard-trigger depth selection",
-        "Rejects stale proof inputs"
       ]
     }
   ]

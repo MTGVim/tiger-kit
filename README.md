@@ -9,7 +9,7 @@ TigerKit(`tk`, plugin namespace `/tk:*`)은 branch-scoped Spec / Gap / Reflect p
 | Command | 역할 | 저장 성격 |
 | --- | --- | --- |
 | `/tk:spec` | 즉석 지시, 브레인스토밍, 회의 메모를 현재 브랜치의 Spec Patch로 저장합니다. | branch-local |
-| `/tk:gap` | Product/Design Spec, implementation plan, current implementation을 단일 adaptive contract-based review로 비교하고 analysis depth, evidence gates, compact Ref 중심 report를 남깁니다. | branch-local |
+| `/tk:gap` | Product/Design Spec, implementation plan, current implementation을 비교해 사용자가 바로 고칠 Actionable Finding과 답할 Clarification Needed를 `report.md`와 `run.json`에 남깁니다. | branch-local |
 | `/tk:reflect` | branch-local working memory에서 repo에 영구 보존할 insight만 추출하고 durable target에 반영합니다. | durable insight |
 | `/tk:handoff` | 다음 세션이나 다음 작업자가 이어받을 continuation 문서를 작성합니다. | continuation |
 | `/tk:meta-feedback` | 세션 내역에서 TigerKit command/skill 개선안을 일반화해 추출합니다. | generalized feedback |
@@ -25,6 +25,8 @@ meta-feedback = 세션 내 TigerKit 개선 피드백 일반화
 ```
 
 `spec`, `gap`, canonical `handoff` 산출물은 `.claude/tigerkit/branches/<branch-key>/` 아래의 branch-local generated working memory입니다. repo-wide durable knowledge가 아닙니다.
+
+`/tk:gap` 기본 실행은 사용자-facing `report.md`와 `run.json`만 필수로 생성합니다. TigerKit 자체 성능개선이나 regression 검증을 위한 proof artifact는 maintainer-only `--maintainer-proof` 옵션에서만 생성합니다.
 
 `reflect`는 durable insight를 생성하고 `apply=true`일 때 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에 직접 반영합니다.
 
