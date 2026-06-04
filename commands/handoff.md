@@ -1,5 +1,5 @@
 ---
-description: 다음 세션 또는 다른 작업자가 이어받을 수 있도록 .claude/handoffs/current.md handoff 문서를 작성합니다.
+description: 다음 세션이나 작업자가 이어받을 `.claude/handoffs/current.md`를 작성합니다.
 argument-hint: "[task title] [archive=true]"
 ---
 

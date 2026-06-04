@@ -1,6 +1,6 @@
 # TigerKit 운영 Output Contract
 
-이 문서는 TigerKit v7.2.10 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2.11 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
 
 ```text
 stdout is a receipt. Full spec/gap bodies are saved as branch-local artifacts unless explicit print option is used.
@@ -18,6 +18,8 @@ stdout is a receipt. Full spec/gap bodies are saved as branch-local artifacts un
 상세 본문은 파일에 저장하고, 각 command가 지원하는 explicit print option을 지정한 경우에만 stdout에 함께 출력합니다. `/tk:spec`은 `--print-body`, `/tk:gap`은 `--print-report`를 사용합니다.
 
 사용자 대화에 보이는 안내, 추천, 요약, next action은 계약용어, path, identifier, field name을 제외하고 한글로 씁니다.
+
+Hook guard는 repo 유지보수용 command/docs sync나 eval JSON 점검이 아니라 플러그인 사용자가 실제로 보는 receipt, artifact path, finding Ref, explicit print option 경계를 보호할 때만 둡니다. 그런 user-facing guard 표면이 없으면 hook을 추가하지 않습니다.
 
 ## `/tk:spec` Output Contract
 
@@ -53,6 +55,7 @@ Items:
 - ambiguity와 source conflict는 Judge accept path 전에 `Clarification Needed` 또는 `SourceConflict`로 기록합니다.
 - JudgeMergerAgent만 final accepted finding을 확정합니다.
 - 유저향 stdout/report table은 run-local short Ref(`G1`, `R1`, `C1`, `Q1`)를 우선 표시하고 긴 canonical ID는 JSON artifact와 report 상세/참조 영역에 보관합니다.
+- `mode`, `preset`, `lite`, `strict`는 stdout에서 품질 선택지처럼 표시하지 않습니다. compatibility flag로 언급해야 할 때도 quality mode나 추천 preset으로 쓰지 않습니다.
 - final finding에는 P0/P1/P2만 포함합니다.
 - P3/nit/duplicate/unverifiable/source_conflict는 final finding으로 출력하지 않습니다.
 - missed P0/P1 방지를 위해 target surface coverage와 dispatch completeness를 기록하고 `heuristicProof.falseNegative`로 수치화합니다.
@@ -143,7 +146,7 @@ Performance proof fields:
 
 Speed improvement may be claimed only when numeric performance fields are recorded and speed's cumulative and iteration ratios are calculated with `baselineScore / currentScore` because speed is `lower_is_better`. Credited `dispatchSkips` may contribute to the proof only when `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true` are recorded. Vague wording such as `expected`, `estimated`, or `likely` is not proof.
 
-Current optimized `/tk:gap` contract target keeps cumulative baseline `87.1`, loads iteration baseline from previous main `50.3`, and keeps `currentCriticalPathScore <= 50.3`. Cumulative speed proof remains `87.1 / 50.3 = 1.731...` with display ratio `1.73`; iteration speed ratio is `50.3 / 50.3 = 1.00`, so v7.2.10 makes no new iteration speed improvement claim. Concrete runs must recompute actual run proof from `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count.
+Current optimized `/tk:gap` contract target keeps cumulative baseline `87.1`, loads iteration baseline from previous main `50.3`, and keeps `currentCriticalPathScore <= 50.3`. Cumulative speed proof remains `87.1 / 50.3 = 1.731...` with display ratio `1.73`; iteration speed ratio is `50.3 / 50.3 = 1.00`, so v7.2.11 makes no new iteration speed improvement claim. Concrete runs must recompute actual run proof from `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count.
 
 Heuristic proof fields:
 

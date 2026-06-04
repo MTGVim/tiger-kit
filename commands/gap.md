@@ -1,9 +1,9 @@
 ---
-description: Product/Design Spec contract와 현재 구현/계획을 비교해 branch-local Contract-based Gap Review를 생성합니다.
+description: Product/Design Spec contract와 구현·계획을 비교해 branch-local Gap Review를 생성합니다.
 argument-hint: "[--analysis-depth <direct|bounded|expanded|exhaustive-capped>] [--spec <SP-ID|path>] [--no-specs] [--print-report]"
 ---
 
-이 명령은 TigerKit v7.2.10 Contract-based Gap Review contract를 따릅니다.
+이 명령은 TigerKit v7.2.11 Contract-based Gap Review contract를 따릅니다.
 
 사용자에게는 한글로 답합니다. 코드, path, URL, ticket, commit, hash, identifier, error는 원문 그대로 둘 수 있습니다.
 
@@ -17,8 +17,8 @@ gap = branch-local contract-based inspection + judge-driven final finding
 
 - plugin slash invocation은 `/tk:gap`입니다.
 - `tiger-kit gap` CLI 표현은 이 plugin command의 사용자 관점 alias로 취급합니다.
-- `--lite`와 `--strict`는 compatibility flag로만 기록하며 active v7.2.10 user-facing quality mode가 아닙니다.
-- `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.10 mode가 아닙니다.
+- `--lite`와 `--strict`는 compatibility flag로만 기록하며 active v7.2.11 user-facing quality mode가 아닙니다.
+- `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.11 mode가 아닙니다.
 - v6-era legacy behavior는 미지원 과거 동작입니다. `lite`의 별칭이나 계승 mode로 표현하지 않습니다.
 - legacy Figma diff style은 정식 사용자 모드가 아닙니다.
 
@@ -46,6 +46,7 @@ gap = branch-local contract-based inspection + judge-driven final finding
 - CriticalRedTeamAgent pass는 targeted verification으로 최대 1회입니다.
 - stdout은 summary receipt와 compact finding tables만 출력하고 상세는 report.md에 저장합니다.
 - 유저향 stdout/report table은 run-local short Ref(`G1`, `R1`, `C1`, `Q1`)를 우선 표시하고 긴 canonical ID는 JSON artifact와 report 상세/참조 영역에 보관합니다.
+- Hook guard는 repo 유지보수 sync/lint가 아니라 플러그인 사용자가 보는 receipt, artifact path, finding Ref 안전장치일 때만 사용합니다. 그런 user-facing guard 표면이 없으면 hook을 추가하지 않습니다.
 - run summary와 report에는 analysis depth, 확장 이유, 성능 증명을 남깁니다.
 
 ## Terminology
@@ -108,7 +109,7 @@ report.md
 - `--no-specs`: active Spec Patch 자동 참조 비활성화
 - `--print-report`: 저장된 report.md 본문을 stdout에도 출력
 
-`--lite`와 `--strict`는 compatibility flag로만 기록하고 quality gate를 바꾸지 않습니다. `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.10 mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
+`--lite`와 `--strict`는 compatibility flag로만 기록하고 quality gate를 바꾸지 않습니다. `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.11 mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
 
 ## Contract schema
 
@@ -167,7 +168,7 @@ Targeted verification agent:
 
 ```text
 You are not the final judge.
-You may only produce structured contracts or candidate findings.
+Use only the output type assigned to your role: contract agents produce contracts only, candidate agents produce candidates only, and JudgeMergerAgent produces final judge decisions only.
 A valid result may contain zero items.
 Do not invent issues.
 Do not report subjective preferences.
@@ -229,6 +230,19 @@ final finding을 확정하는 유일한 agent입니다.
 - duplicate merge
 - P3/nit/unverifiable/source_conflict reject
 - P0/P1/P2 actionable finding만 accept
+
+## Candidate Intake Gate
+
+JudgeMergerAgent queue에 넣기 전에 모든 candidate는 아래 gate를 통과해야 합니다.
+
+1. CandidateShapeGate: kind, severity, evidence, fixHint, sourceContracts shape 확인
+2. EvidencePrecisionGate: file:line, module path, rendered output 좌표 read-back 확인 또는 repair
+3. ProducerEvidenceGate: producer-absence claim에 producer-side evidence 존재 여부 확인
+4. ConflictClarificationGate: source conflict나 owner decision ambiguity를 accept path에서 분리
+5. RequirementTraceabilityGate: confirmed, non-superseded contract trace 확인
+6. SeverityScopeGate: P0/P1/P2 user-visible 또는 requirement-relevant impact 확인
+
+Gate 결과가 `judge`가 아니면 JudgeMergerAgent queue에 넣지 않고 rejected observation, SourceConflict, 또는 ClarificationNeeded로 기록합니다.
 
 ## CandidateFinding schema
 
@@ -757,7 +771,7 @@ iterationRequiredImprovementRatio > 1.0
 newIterationImprovementClaimAllowed = false
 ```
 
-Contract target proof for the v7.2.10 default procedure:
+Contract target proof for the v7.2.11 default procedure:
 
 ```text
 cumulativeBaselineCriticalPathScore = 87.1

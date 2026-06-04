@@ -1,5 +1,5 @@
 ---
-description: branch-local TigerKit working memory에서 repo에 영구 보존할 insight만 추출하고 apply=true일 때 CLAUDE.md 또는 .claude/rules/*에 직접 반영합니다.
+description: branch-local TigerKit memory에서 repo에 보존할 insight만 추출·반영합니다.
 argument-hint: "[scope] [--dry-run] [--apply=true|false] [--target <CLAUDE.md|.claude/rules/...>]"
 ---
 
