@@ -1,5 +1,5 @@
 ---
-description: 현재 세션에서 드러난 TigerKit command 또는 skill 사용 friction을 프로젝트 자산 유출 없이 일반화된 개선안으로 정리합니다.
+description: 현재 세션의 TigerKit command/skill friction을 일반화된 개선안으로 정리합니다.
 argument-hint: "[target-skill-or-command?] [--out <path>]"
 ---
 

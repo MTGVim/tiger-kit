@@ -1,6 +1,6 @@
 # TigerKit 운영 산출물 구조
 
-이 문서는 TigerKit v7.2.10 산출물 배치와 책임을 설명합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2.11 산출물 배치와 책임을 설명합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
 
 TigerKit은 branch-local working memory와 durable insight를 분리합니다.
 
@@ -97,6 +97,8 @@ detached-<shortHeadSha7>--<worktreeRootHash6>
 - `/tmp`
 
 linked worktree는 repository common dir를 공유할 수 있으므로 common dir에 쓰면 산출물이 섞일 수 있습니다.
+
+플러그인 hook은 사용자가 실제로 찾는 artifact path 또는 receipt 경계를 보호할 수 있을 때만 추가합니다. repo 유지보수용 sync/lint 목적이면 hook을 추가하지 않고 검증 절차나 문서 계약으로 둡니다.
 
 ## Git ignore
 

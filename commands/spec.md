@@ -1,5 +1,5 @@
 ---
-description: 즉석 지시, 브레인스토밍, 회의 메모를 현재 branch-local Spec Patch로 저장합니다.
+description: 현재 세션의 지시·결정·회의 메모를 branch-local Spec Patch로 저장합니다.
 argument-hint: "<instruction?> [--status active|draft] [--title <title>] [--origin <origin>] [--supersedes <item-id>] [--out <path>] [--no-index] [--print-body]"
 ---
 
