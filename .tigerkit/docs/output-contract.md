@@ -64,42 +64,38 @@ Items:
 기본 stdout:
 
 ```text
-Gap Review 시작: <GAP-ID>
+Gap Review 완료: <GAP-ID>
 Branch Scope: <branch-key>
-품질 gate: evidence precision + producer evidence + ambiguity + JudgeMerger
-분석 깊이: <direct|bounded|expanded|exhaustive-capped>
-확장 이유: <none|summary>
-검증 강화: <none|targeted-red-team>
-상태: 완료
+결과: P0 <count> / P1 <count> / P2 <count> / Source Conflicts <count> / Clarification Needed <count>
 Report: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md
-성능 증명: cumulative <ratio>x / iteration <ratio>x by <measurementMethod>
-누적 개선 증명: FP <ratio>x / FN <ratio>x / speed <ratio>x / depth <ratio>x
-반복 개선 증명: FP <ratio>x / FN <ratio>x / speed <ratio>x / depth <ratio>x
-Baseline: cumulative <sourceRef> / iteration <sourceRef>
-Baseline refresh: <pass|blocked> from <registryPath>
-Proof freshness: <pass|blocked>
-
-Findings:
-- P0: <count>
-- P1: <count>
-- P2: <count>
+다음 행동: <G1 먼저 수정|Q1 확인 필요|없음>
 
 Actionable Findings:
-| Ref | Sev | 요약 | 의미 | Required change |
-| --- | --- | --- | --- | --- |
-| G1 | P1 | <final finding 1줄 요약> | <사용자/제품 관점 영향 1줄> | <수정 방향 1줄> |
-
-Rejected/Downgraded:
-| Ref | Reason | 요약 | 왜 final gap 아님 |
+| Ref | Sev | 요약 | Required change |
 | --- | --- | --- | --- |
-| R1 | missing_evidence | <observation 1줄 요약> | <reject/downgrade 이유 1줄> |
+| G1 | P1 | <final finding 1줄 요약> | <수정 방향 1줄> |
 
-Source Conflicts: <count>
-Clarification Needed: <count>
-Rejected/Downgraded: <count>
+Clarification Needed:
+| Ref | 질문 | 추천 |
+| --- | --- | --- |
+| Q1 | <확인 질문 1줄> | <추천 1줄> |
 ```
 
-Run artifact files:
+`Actionable Findings`는 accepted finding이 있을 때만 출력합니다. `Clarification Needed`는 확인 질문이 있을 때만 출력합니다. 둘 다 없으면 table 대신 `다음 행동: 없음`만 출력합니다.
+
+Default stdout에 아래 항목을 직접 출력하지 않습니다. 사용자가 확인해야 하는 세부 근거는 `report.md`, 기계 판정과 proof는 JSON artifact에 저장합니다.
+
+- quality gate
+- analysis depth와 확장 이유
+- verification escalation
+- performance proof
+- heuristic proof
+- baseline refresh
+- proof freshness
+- rejected/downgraded observation 목록
+- artifact file list
+
+Run artifact files are required audit/machine surfaces, not the default user output surface:
 
 ```text
 input-manifest.json

@@ -44,10 +44,10 @@ gap = branch-local contract-based inspection + judge-driven final finding
 - visible UI copy는 confirmed contract와 exact match가 필요합니다.
 - finding이 안 나올 때까지 반복하지 않습니다.
 - CriticalRedTeamAgent pass는 targeted verification으로 최대 1회입니다.
-- stdout은 summary receipt와 compact finding tables만 출력하고 상세는 report.md에 저장합니다.
+- stdout은 run 결과, finding/clarification count, report path, next action만 기본 출력하고 상세는 report.md와 JSON artifact에 저장합니다.
 - 유저향 stdout/report table은 run-local short Ref(`G1`, `R1`, `C1`, `Q1`)를 우선 표시하고 긴 canonical ID는 JSON artifact와 report 상세/참조 영역에 보관합니다.
 - Hook guard는 repo 유지보수 sync/lint가 아니라 플러그인 사용자가 보는 receipt, artifact path, finding Ref 안전장치일 때만 사용합니다. 그런 user-facing guard 표면이 없으면 hook을 추가하지 않습니다.
-- run summary와 report에는 analysis depth, 확장 이유, 성능 증명을 남깁니다.
+- `report.md`와 JSON artifact에는 analysis depth, 확장 이유, 성능 증명을 남깁니다.
 
 ## Terminology
 
@@ -96,7 +96,9 @@ baseline-snapshot.json
 report.md
 ```
 
-`input-manifest.json` 또는 `judge-result.json`에는 `qualityGates`, `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `compatibilityFlags`, `dispatchPlan`, `dispatchSkips`, `candidateIntakeGate`, `evidencePrecisionGate`, `targetSurfaceCoverageGate`, `dispatchCompletenessGate`, `blockedClarifications`, `baselineAutoRefreshGate`, `claimFreshnessGate`, `performance`, `heuristicProof`를 반드시 기록합니다. `baseline-snapshot.json`에는 같은 run에서 사용한 cumulative/iteration/current score snapshot과 다음 반복 승격 후보를 저장합니다. 둘 다에 중복 기록할 필요는 없지만, `report.md`와 stdout은 같은 canonical metadata를 참조해야 합니다.
+이 6개 파일은 모두 gap run의 audit/machine surface입니다. 기본 stdout에 파일 목록을 노출하지 말고, 사용자가 열 기본 표면은 `report.md`로 안내합니다.
+
+`input-manifest.json` 또는 `judge-result.json`에는 `qualityGates`, `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `compatibilityFlags`, `dispatchPlan`, `dispatchSkips`, `candidateIntakeGate`, `evidencePrecisionGate`, `targetSurfaceCoverageGate`, `dispatchCompletenessGate`, `blockedClarifications`, `baselineAutoRefreshGate`, `claimFreshnessGate`, `performance`, `heuristicProof`를 반드시 기록합니다. `baseline-snapshot.json`에는 같은 run에서 사용한 cumulative/iteration/current score snapshot과 다음 반복 승격 후보를 저장합니다. 둘 다에 중복 기록할 필요는 없지만, `report.md`와 JSON artifact는 같은 canonical metadata를 참조해야 합니다.
 
 `.claude/tigerkit/`은 generated branch-local working memory이며 repo-wide durable knowledge가 아닙니다.
 
@@ -786,7 +788,7 @@ newIterationImprovementClaimAllowed = false
 
 A concrete run must recompute these fields from its actual `dispatchPlan`, credited `dispatchSkips`, deterministic stage count, and run procedure step count. Do not copy the target proof as run proof when actual run metadata differs.
 
-The run receipt or manifest must record the measured proxy fields when a gap run claims performance improvement. `measurementMethod` defaults to `contract-derived-critical-path-proxy` unless actual wall-clock instrumentation exists. Do not claim speed success from vague phrases such as `expected`, `estimated`, or `likely`; success requires recorded cumulative baseline, iteration baseline, current score, score direction, and both improvement ratios. Do not use the fixed cumulative baseline alone to claim iteration speed improvement.
+`report.md` or JSON artifact must record the measured proxy fields when a gap run claims performance improvement. `measurementMethod` defaults to `contract-derived-critical-path-proxy` unless actual wall-clock instrumentation exists. Do not claim speed success from vague phrases such as `expected`, `estimated`, or `likely`; success requires recorded cumulative baseline, iteration baseline, current score, score direction, and both improvement ratios. Do not use the fixed cumulative baseline alone to claim iteration speed improvement.
 
 `dispatchSkips` may contribute to speed proof only when each credited skip records `agent`, `reason`, `sourceClass`, `credited: true`, `criticalPathDelta`, and `evidenceCoveragePreserved: true`. A skip caused by missing or ambiguous evidence may reduce agent dispatch, but it cannot be credited to speed improvement unless the run still preserves the required evidence coverage for the selected `analysisDepth`.
 
@@ -836,47 +838,33 @@ Implementation 개선 작업에서는 `redesign -> analysis -> review -> feedbac
 
 ## Output
 
-기본 stdout은 summary receipt와 compact finding tables만 출력합니다.
+기본 stdout은 사용자가 바로 행동할 수 있는 receipt만 출력합니다.
 
 ```text
-Gap Review 시작: <GAP-ID>
+Gap Review 완료: <GAP-ID>
 Branch Scope: <branch-key>
-품질 gate: evidence precision + producer evidence + ambiguity + JudgeMerger
-분석 깊이: <direct|bounded|expanded|exhaustive-capped>
-확장 이유: <none|summary>
-검증 강화: <none|targeted-red-team>
-상태: 완료
+결과: P0 <count> / P1 <count> / P2 <count> / Source Conflicts <count> / Clarification Needed <count>
 Report: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md
-성능 증명: cumulative <ratio>x / iteration <ratio>x by <measurementMethod>
-누적 개선 증명: FP <ratio>x / FN <ratio>x / speed <ratio>x / depth <ratio>x
-반복 개선 증명: FP <ratio>x / FN <ratio>x / speed <ratio>x / depth <ratio>x
-Baseline: cumulative <sourceRef> / iteration <sourceRef>
-Baseline refresh: <pass|blocked> from <registryPath>
-Proof freshness: <pass|blocked>
-
-Findings:
-- P0: <count>
-- P1: <count>
-- P2: <count>
+다음 행동: <G1 먼저 수정|Q1 확인 필요|없음>
 
 Actionable Findings:
-| Ref | Sev | 요약 | 의미 | Required change |
-| --- | --- | --- | --- | --- |
-| G1 | P1 | <final finding 1줄 요약> | <사용자/제품 관점 영향 1줄> | <수정 방향 1줄> |
-
-Rejected/Downgraded:
-| Ref | Reason | 요약 | 왜 final gap 아님 |
+| Ref | Sev | 요약 | Required change |
 | --- | --- | --- | --- |
-| R1 | missing_evidence | <observation 1줄 요약> | <reject/downgrade 이유 1줄> |
+| G1 | P1 | <final finding 1줄 요약> | <수정 방향 1줄> |
 
-Source Conflicts: <count>
-Clarification Needed: <count>
-Rejected/Downgraded: <count>
+Clarification Needed:
+| Ref | 질문 | 추천 |
+| --- | --- | --- |
+| Q1 | <확인 질문 1줄> | <추천 1줄> |
 ```
 
-`Actionable Findings` table에는 JudgeMergerAgent가 accept한 P0/P1/P2 final finding만 출력합니다. 각 row는 run-local Ref, severity, gap 요약, 사용자/제품 관점 의미, requiredChange 1줄 요약만 포함합니다. final finding이 없으면 `없음` 1줄을 출력합니다.
+`Actionable Findings` table에는 JudgeMergerAgent가 accept한 P0/P1/P2 final finding만 출력합니다. 각 row는 run-local Ref, severity, gap 요약, requiredChange 1줄 요약만 포함합니다. final finding이 없으면 table을 생략합니다.
 
-`Rejected/Downgraded` table에는 final gap이 아닌 observation을 간략히 출력합니다. 각 row는 run-local Ref, reason, observation 요약, final gap이 아닌 이유 1줄만 포함합니다. 항목이 없으면 `없음` 1줄을 출력합니다. `missing_producer_evidence` row는 필요한 producer evidence와 `Q<N>` 확인 요청 Ref를 함께 언급합니다. P3/nit/duplicate/unverifiable/source_conflict 같은 rejected item을 confirmed defect처럼 쓰면 안 됩니다.
+`Clarification Needed` table에는 사용자가 답해야 다음 행동이 가능한 질문만 출력합니다. 각 row는 run-local Ref, 질문 1줄, 추천 1줄만 포함합니다. 확인 질문이 없으면 table을 생략합니다.
+
+Default stdout에는 quality gate, analysis depth, 확장 이유, verification escalation, performance proof, heuristic proof, baseline refresh, proof freshness, rejected/downgraded observation 목록, artifact file list를 출력하지 않습니다. 이 정보는 `report.md`와 JSON artifact에 저장합니다.
+
+Rejected/Downgraded observation은 기본 stdout에 출력하지 않습니다. `missing_producer_evidence`처럼 사용자가 확인해야 하는 항목은 `Clarification Needed`의 `Q<N>`으로 요약하고, 상세 rejected reason과 producer evidence 상태는 `report.md`에 둡니다. P3/nit/duplicate/unverifiable/source_conflict 같은 rejected item을 confirmed defect처럼 쓰면 안 됩니다.
 
 유저향 compact table에는 긴 canonical ID를 column으로 직접 노출하지 않습니다. canonical ID는 JSON artifact의 `id`와 `displayRef` mapping, 또는 `report.md` 상세/참조 영역에서 확인할 수 있어야 합니다.
 
