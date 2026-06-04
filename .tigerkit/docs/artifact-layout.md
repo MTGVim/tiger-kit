@@ -66,7 +66,7 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
 
 ## 기본 `/tk:gap` artifact
 
-기본 gap run은 사용자 행동 가능한 표면만 필수로 생성합니다.
+기본 gap run의 필수 artifact는 `report.md`와 `run.json`만입니다.
 
 ```text
 .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/
@@ -74,7 +74,7 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
   run.json
 ```
 
-`report.md`는 사용자가 읽는 표면입니다. `run.json`은 후속 대화, short Ref mapping, 최소 machine-readable record를 위한 표면입니다.
+`report.md`는 사용자가 읽는 표면입니다. `run.json`은 후속 대화, short Ref mapping, 최소 machine-readable record를 위한 표면입니다. proof/debug artifact는 기본 artifact가 아니며, 기본 stdout/report에 섞이면 안 됩니다.
 
 기본 `run.json`은 아래 성격의 정보만 가집니다.
 
@@ -124,9 +124,9 @@ proof.json
 
 확인하지 못한 target/producer/plan surface가 사용자 결정을 막으면 proof dump가 아니라 `Clarification Needed` 또는 `Not Accepted Summary`로 표현합니다.
 
-## `--maintainer-proof` artifact
+## Maintainer-only artifacts
 
-`--maintainer-proof`가 명시된 gap run은 기본 artifact에 더해 maintainer-only proof artifact를 생성할 수 있습니다.
+`--maintainer-proof`가 명시된 gap run만 기본 artifact에 더해 maintainer-only proof artifact를 생성할 수 있습니다.
 
 ```text
 .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/
@@ -141,7 +141,7 @@ proof.json
     proof.json
 ```
 
-`maintainer-proof/` 아래 파일은 일반 사용자 output surface가 아닙니다. TigerKit 자체 성능개선, regression 검증, self-eval proof, baseline refresh, detailed gate/debug 확인에만 씁니다.
+`maintainer-proof/` 아래 파일은 일반 사용자 output surface가 아닙니다. TigerKit 자체 성능개선, regression 검증, self-eval proof, baseline refresh, detailed gate/debug 확인에만 씁니다. 기본 stdout과 기본 `report.md`에는 maintainer proof artifact 목록, gate dump, proof ratio, baseline snapshot 내용을 노출하지 않습니다.
 
 Maintainer proof artifact에만 아래를 기록할 수 있습니다.
 
