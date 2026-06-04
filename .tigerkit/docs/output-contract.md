@@ -41,6 +41,8 @@ Items:
 
 ## `/tk:gap` Output Contract
 
+이 section은 `/tk:gap default stdout`의 authoritative contract입니다. `commands/gap.md`, `.claude/rules/review/gap-analysis.md`, `evals/evals.json`은 이 section을 기준으로 사용자-facing stdout과 artifact 노출을 맞춥니다.
+
 - 목적: Product/Design Spec contract와 implementation plan/current implementation을 비교해 사용자가 바로 고치거나 확인할 항목만 남깁니다.
 - 기본 저장 위치: `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/`
 - 기본 산출물은 `report.md`와 `run.json`입니다.
@@ -61,7 +63,9 @@ Items:
 - P3/nit/duplicate/unverifiable/source_conflict는 final finding으로 출력하지 않습니다.
 - finding이 안 나올 때까지 반복하지 않습니다.
 
-기본 stdout:
+### `/tk:gap default stdout`
+
+기본 stdout은 compact receipt입니다. 아래 필드는 항상 이 순서로 출력합니다.
 
 ```text
 Gap Review 완료: <GAP-ID>
@@ -83,6 +87,8 @@ Clarification Needed:
 ```
 
 `Actionable Findings`는 accepted finding이 있을 때만 출력합니다. `Clarification Needed`는 확인 질문이 있을 때만 출력합니다. 둘 다 없으면 table 대신 `다음 행동: 없음`만 출력합니다.
+
+`--print-report`가 있을 때만 저장된 `report.md` 본문을 stdout에 추가 출력합니다. `--maintainer-proof`가 있어도 기본 stdout은 위 receipt와 compact table 경계를 유지하고, maintainer proof artifact list나 proof metadata를 dump하지 않습니다.
 
 Default stdout에 아래 항목을 직접 출력하지 않습니다. 기본 `report.md`와 `run.json`에도 proof/self-eval metadata를 필수로 요구하지 않습니다.
 

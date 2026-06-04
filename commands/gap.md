@@ -13,7 +13,9 @@ argument-hint: "[--analysis-depth <direct|bounded|expanded|exhaustive-capped>] [
 gap = branch-local user-facing contract review + judge-driven final finding
 ```
 
-## Product principle
+## User-facing command interface
+
+### Product principle
 
 기본 `/tk:gap`은 proof generator가 아닙니다. 기본 실행에는 사용자가 고치거나 답할 수 있는 것만 남깁니다.
 
@@ -90,98 +92,21 @@ TigerKit 자체 성능 개선, baseline, heuristic proof, performance proof, fal
 
 ## Branch-local storage
 
-반드시 current worktree root 아래에 저장합니다.
+반드시 current worktree root 아래 `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/`에 저장합니다.
 
-```text
-.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/
-```
+기본 `/tk:gap` 필수 파일은 `report.md`와 `run.json`입니다. `report.md`는 사용자가 읽는 표면이고, `run.json`은 후속 대화와 기계 처리를 위한 최소 run record입니다.
 
-기본 `/tk:gap` 필수 파일:
-
-```text
-report.md
-run.json
-```
-
-`report.md`는 사용자가 읽는 표면입니다. `run.json`은 후속 대화와 기계 처리를 위한 최소 run record입니다.
-
-기본 `run.json`에는 아래만 기록합니다.
-
-```text
-runId
-command
-branchScope
-status
-reportPath
-runJsonPath
-maintainerProofEnabled: false
-sourceRefs
-counts
-findings
-clarifications
-sourceConflicts
-rejectedSummary
-displayRefs
-checkedEvidenceRefs
-nextAction
-```
-
-기본 `report.md`와 `run.json`에는 아래 self-eval/proof/debug 필드를 요구하지 않습니다.
-
-```text
-qualityGates
-heuristicProof
-performance
-baseline-snapshot.json
-baselinePredicateScore
-currentPredicateScore
-analysisDepth proof
-depthReasons dump
-riskScore
-sideEffectConfidence
-verificationEscalation
-dispatchPlan dump
-dispatchSkips dump
-targetSurfaceCoverageGate proof
-dispatchCompletenessGate proof
-claimFreshnessGate
-artifact inventory
-```
+상세 artifact layout은 `.tigerkit/docs/artifact-layout.md`를 기준으로 합니다. 상세 stdout/report/run.json 계약은 `.tigerkit/docs/output-contract.md`의 `/tk:gap default stdout` 섹션을 기준으로 합니다.
 
 `.claude/tigerkit/`은 generated branch-local working memory이며 repo-wide durable knowledge가 아닙니다.
 
 ## Maintainer proof mode
 
-`--maintainer-proof`가 명시된 경우에만 self-eval/performance proof artifact를 생성하거나 요구합니다.
+`--maintainer-proof`가 명시된 경우에만 `maintainer-proof/` 아래 self-eval/performance proof artifact를 생성하거나 요구합니다.
 
-```text
-.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/
-  report.md
-  run.json
-  maintainer-proof/
-    input-manifest.json
-    contracts.json
-    candidates.json
-    judge-result.json
-    baseline-snapshot.json
-    proof.json
-```
+기본 사용자 경로는 false-positive, false-negative, speed, analysis-depth improvement claim을 하지 않습니다. 기본 stdout/report/run.json에 proof/debug artifact 목록이나 self-eval metadata를 섞지 않습니다.
 
-Maintainer proof mode에서만 아래를 기록하거나 claim할 수 있습니다.
-
-- `qualityGates`
-- `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`
-- `verificationEscalation`, `compatibilityFlags`
-- `dispatchPlan`, `dispatchSkips`
-- `candidateIntakeGate`, `evidencePrecisionGate`
-- `targetSurfaceCoverageGate`, `dispatchCompletenessGate`
-- `baselineAutoRefreshGate`, `claimFreshnessGate`
-- `performance`
-- `heuristicProof`
-- cumulative/iteration baseline
-- false-positive/false-negative/speed/analysis-depth improvement claim
-
-`--maintainer-proof` 없이 `/tk:gap`은 false-positive, false-negative, speed, analysis-depth improvement claim을 하지 않습니다. 기본 사용자 결과에는 “성능 개선됨”, “오탐 감소 proof”, “missed issue 감소 proof” 같은 self-eval 표현을 쓰지 않습니다.
+Maintainer-only artifact와 boundary는 `.tigerkit/docs/artifact-layout.md`를 기준으로 합니다. maintainer proof 노출 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 합니다.
 
 ## CLI options
 
@@ -233,6 +158,10 @@ Spec ID를 찾지 못하면 아래 메시지로 중단합니다.
 Spec Patch <SP-ID> was not found in the current branch scope.
 Use --spec <path> to reference a file explicitly.
 ```
+
+## Internal agent, gate, and proof contract
+
+이 아래 section은 runtime 내부 판정 절차와 maintainer/debug 계약입니다. 사용자-facing receipt와 artifact interface는 위 Command surface, Branch-local storage, 그리고 `.tigerkit/docs/output-contract.md`를 따릅니다.
 
 ## Agents
 
@@ -671,36 +600,16 @@ Implementation 개선 작업에서는 `redesign -> analysis -> review -> feedbac
 
 기본 stdout은 사용자가 바로 행동할 수 있는 receipt만 출력합니다.
 
-```text
-Gap Review 완료: <GAP-ID>
-Branch Scope: <branch-key>
-결과: P0 <count> / P1 <count> / P2 <count> / Source Conflicts <count> / Clarification Needed <count>
-Report: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md
-Run JSON: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/run.json
-다음 행동: <G1 먼저 수정|Q1 확인 필요|없음>
+Interface 요약:
 
-Actionable Findings:
-| Ref | Sev | 요약 | Required change |
-| --- | --- | --- | --- |
-| G1 | P1 | <final finding 1줄 요약> | <수정 방향 1줄> |
+- 완료한 단일 `/tk:gap` 실행의 run ID, branch scope, P0/P1/P2 count, Source Conflict count, Clarification Needed count를 출력합니다.
+- `report.md`와 `run.json` path, 다음 행동을 출력합니다.
+- Actionable Findings와 Clarification Needed table은 row가 있을 때만 compact하게 출력합니다.
+- 유저향 table은 run-local Ref(`G<N>`, `Q<N>`)를 우선 사용합니다.
+- `--print-report`가 있을 때만 저장된 `report.md` 본문을 stdout에도 출력합니다.
+- proof/debug/self-eval metadata와 rejected/downgraded 상세 목록은 기본 stdout에 출력하지 않습니다.
 
-Clarification Needed:
-| Ref | 질문 | 추천 |
-| --- | --- | --- |
-| Q1 | <확인 질문 1줄> | <추천 1줄> |
-```
-
-`Actionable Findings` table에는 JudgeMergerAgent가 accept한 P0/P1/P2 final finding만 출력합니다. 각 row는 run-local Ref, severity, gap 요약, requiredChange 1줄 요약만 포함합니다. final finding이 없으면 table을 생략합니다.
-
-`Clarification Needed` table에는 사용자가 답해야 다음 행동이 가능한 질문만 출력합니다. 각 row는 run-local Ref, 질문 1줄, 추천 1줄만 포함합니다. 확인 질문이 없으면 table을 생략합니다.
-
-Default stdout에는 quality gate, analysis depth proof, 확장 이유 dump, verification escalation, performance proof, heuristic proof, baseline refresh, proof freshness, rejected/downgraded observation 목록, artifact file list를 출력하지 않습니다.
-
-Rejected/Downgraded observation은 기본 stdout에 출력하지 않습니다. `missing_producer_evidence`처럼 사용자가 확인해야 하는 항목은 `Clarification Needed`의 `Q<N>`으로 요약하고, 상세 rejected reason과 producer evidence 상태는 `report.md`에 둡니다. P3/nit/duplicate/unverifiable/source_conflict 같은 rejected item을 confirmed defect처럼 쓰면 안 됩니다.
-
-유저향 compact table에는 긴 canonical ID를 column으로 직접 노출하지 않습니다. canonical ID는 `run.json` 또는 maintainer proof artifact에서 확인할 수 있어야 합니다.
-
-`--print-report`가 있을 때만 `report.md` 본문을 함께 출력합니다.
+Authoritative stdout contract는 `.tigerkit/docs/output-contract.md`의 `/tk:gap default stdout` 섹션입니다. artifact boundary는 `.tigerkit/docs/artifact-layout.md`를 기준으로 합니다.
 
 ## Report shape
 
