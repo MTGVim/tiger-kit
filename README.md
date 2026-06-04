@@ -24,7 +24,7 @@ handoff = 다음 세션/작업자용 continuation context
 meta-feedback = 세션 내 TigerKit 개선 피드백 일반화
 ```
 
-`spec`, `gap` 산출물은 `.claude/tigerkit/branches/<branch-key>/` 아래의 generated working memory입니다. repo-wide durable knowledge가 아닙니다.
+`spec`, `gap`, canonical `handoff` 산출물은 `.claude/tigerkit/branches/<branch-key>/` 아래의 branch-local generated working memory입니다. repo-wide durable knowledge가 아닙니다.
 
 `reflect`는 durable insight를 생성하고 `apply=true`일 때 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에 직접 반영합니다.
 

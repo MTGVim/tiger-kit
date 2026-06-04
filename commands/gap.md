@@ -3,7 +3,7 @@ description: Product/Design Spec contract와 구현·계획을 비교해 branch-
 argument-hint: "[--analysis-depth <direct|bounded|expanded|exhaustive-capped>] [--spec <SP-ID|path>] [--no-specs] [--print-report]"
 ---
 
-이 명령은 TigerKit v7.2.11 Contract-based Gap Review contract를 따릅니다.
+이 명령은 TigerKit v7.2.12 Contract-based Gap Review contract를 따릅니다.
 
 사용자에게는 한글로 답합니다. 코드, path, URL, ticket, commit, hash, identifier, error는 원문 그대로 둘 수 있습니다.
 
@@ -17,8 +17,8 @@ gap = branch-local contract-based inspection + judge-driven final finding
 
 - plugin slash invocation은 `/tk:gap`입니다.
 - `tiger-kit gap` CLI 표현은 이 plugin command의 사용자 관점 alias로 취급합니다.
-- `--lite`와 `--strict`는 compatibility flag로만 기록하며 active v7.2.11 user-facing quality mode가 아닙니다.
-- `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.11 mode가 아닙니다.
+- `--lite`와 `--strict`는 compatibility flag로만 기록하며 active v7.2.12 user-facing quality mode가 아닙니다.
+- `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.12 mode가 아닙니다.
 - v6-era legacy behavior는 미지원 과거 동작입니다. `lite`의 별칭이나 계승 mode로 표현하지 않습니다.
 - legacy Figma diff style은 정식 사용자 모드가 아닙니다.
 
@@ -109,7 +109,7 @@ report.md
 - `--no-specs`: active Spec Patch 자동 참조 비활성화
 - `--print-report`: 저장된 report.md 본문을 stdout에도 출력
 
-`--lite`와 `--strict`는 compatibility flag로만 기록하고 quality gate를 바꾸지 않습니다. `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.11 mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
+`--lite`와 `--strict`는 compatibility flag로만 기록하고 quality gate를 바꾸지 않습니다. `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v7.2.12 mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
 
 ## Contract schema
 
@@ -771,7 +771,7 @@ iterationRequiredImprovementRatio > 1.0
 newIterationImprovementClaimAllowed = false
 ```
 
-Contract target proof for the v7.2.11 default procedure:
+Contract target proof for the v7.2.12 default procedure:
 
 ```text
 cumulativeBaselineCriticalPathScore = 87.1

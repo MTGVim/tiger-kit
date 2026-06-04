@@ -1,6 +1,6 @@
 # TigerKit 운영 사용법
 
-이 문서는 TigerKit v7.2.11 사용 가이드입니다. 산출물 위치는 `.tigerkit/docs/artifact-layout.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
+이 문서는 TigerKit v7.2.12 사용 가이드입니다. 산출물 위치는 `.tigerkit/docs/artifact-layout.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
 
 ## 언어
 
@@ -106,9 +106,10 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 ## `/tk:handoff`
 
 - 기존 continuation command입니다. v7.2에서도 active command로 유지합니다.
-- 기본 출력 대상은 `.claude/handoffs/current.md`입니다.
+- canonical 출력 대상은 `.claude/tigerkit/branches/<branch-key>/handoffs/current.md`입니다.
 - 최신 branch-local Spec Patch와 Gap Run이 있으면 handoff의 relevant files나 validation에 참조할 수 있습니다.
-- `archive=true` 또는 명시적 archive 요청이 있을 때만 dated copy를 만듭니다.
+- `archive=true` 또는 명시적 archive 요청이 있을 때만 branch-local dated copy를 만듭니다.
+- `.claude/handoffs/current.md`는 optional convenience pointer이며 canonical handoff를 대체하지 않습니다.
 - `Reader Guide`와 `Resume Prompt`를 포함합니다.
 
 ## `/tk:meta-feedback`
