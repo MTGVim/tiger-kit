@@ -88,8 +88,8 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 - P3/nit/duplicate/unverifiable/source_conflict는 final finding이 아닙니다.
 - finding이 0개가 될 때까지 반복하지 않습니다.
 - run artifact는 `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/` 아래에 저장합니다.
-- 기본 stdout은 summary만 출력합니다. 전체 report는 `--print-report`가 있을 때만 출력합니다.
-- stdout과 report에는 단일 `/tk:gap` 실행 완료 상태, analysis depth, 확장 이유, 성능 증명, compact tables를 남깁니다.
+- 기본 stdout은 run 결과, finding/clarification count, report path, next action만 출력합니다. 전체 report는 `--print-report`가 있을 때만 출력합니다.
+- analysis depth, 확장 이유, 성능 증명, heuristic proof, baseline 상태, rejected/downgraded observation, artifact file list는 기본 stdout이 아니라 `report.md`와 JSON artifact에 저장합니다.
 - 유저향 compact table은 긴 Candidate/Finding ID 대신 run-local short Ref(`G1`, `R1`, `C1`, `Q1`)를 우선 표시하고, canonical ID는 JSON artifact와 report 상세/참조 영역에 보관합니다.
 - hook은 사용자-facing receipt, artifact path, finding Ref 안전장치일 때만 추가합니다. repo 유지보수용 sync/lint 성격이면 hook을 두지 않습니다.
 

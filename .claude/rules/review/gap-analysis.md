@@ -41,15 +41,15 @@
 
 ## GAP-005: Match output to v7 storage and stdout contract
 
-- Default stdout emits summary receipt plus compact tables: run ID, branch scope, quality gates, analysis depth, expansion reasons, verification escalation, status, report path, performance proof, heuristic proof, P0/P1/P2 counts, compact Actionable Findings table, compact Rejected/Downgraded table, source conflict count, clarification-needed count, and rejected/downgraded count.
-- Use `품질 gate: evidence precision + producer evidence + ambiguity + JudgeMerger` and `분석 깊이` by default. Do not use preset labels as primary output.
+- Default stdout emits a compact user receipt only: run ID, branch scope, P0/P1/P2 counts, source conflict count, clarification-needed count, report path, and next action.
+- Do not print quality gate, analysis depth, expansion reasons, verification escalation, performance proof, heuristic proof, baseline refresh, proof freshness, or artifact file lists in default stdout. Store them in `report.md` or JSON artifacts.
 - Do not use ambiguous labels like `선택모드`, `실행모드`, `실행 preset`, and `추천 preset`.
 - State that the run is complete for the 단일 `/tk:gap` 실행; do not imply the gap is unfinished.
 - Full report is stored at `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md`.
-- Compact stdout tables may include accepted finding and rejected/downgraded observation summaries, but they must use run-local `Ref` values rather than long canonical Candidate/Finding IDs.
-- Detailed evidence, source contract detail, and canonical ID mapping remain in `report.md` or JSON artifacts unless `--print-report` is used.
+- Default stdout may include compact Actionable Findings and Clarification Needed tables only when those rows exist. Tables must use run-local `Ref` values rather than long canonical Candidate/Finding IDs.
+- Detailed evidence, source contract detail, rejected/downgraded observations, proof metadata, artifact inventory, and canonical ID mapping remain in `report.md` or JSON artifacts unless `--print-report` is used.
 - Full report stdout is allowed only with `--print-report`.
-- Run artifacts must include `input-manifest.json`, `contracts.json`, `candidates.json`, `judge-result.json`, and `report.md`.
+- Run artifacts must include `input-manifest.json`, `contracts.json`, `candidates.json`, `judge-result.json`, `baseline-snapshot.json`, and `report.md`; these files are audit/machine surfaces, not the default user output surface.
 - `input-manifest.json` or `judge-result.json` must record `qualityGates`, `analysisDepth`, `depthReasons`, `riskScore`, `sideEffectConfidence`, `verificationEscalation`, `compatibilityFlags`, `dispatchPlan`, `dispatchSkips`, `candidateIntakeGate`, `evidencePrecisionGate`, `targetSurfaceCoverageGate`, `dispatchCompletenessGate`, `blockedClarifications`, `performance`, and `heuristicProof`.
 - Do not store generated gap artifacts in `/tmp`, `$GIT_COMMON_DIR`, `.git/worktrees/*`, user home, or current worktree root outside `.claude/tigerkit/branches/<branch-key>/`.
 
@@ -168,7 +168,7 @@ When the target means `current implementation`, current working tree, current br
 
 ## GAP-016: Require combined heuristic proof for improvement claims
 
-- A `/tk:gap` run receipt, report, or contract output may claim the current 1.3x improvement target only when `heuristicProof.requiredImprovementRatio` is `1.3` and false-positive, false-negative, speed, and analysis-depth subproofs all meet or exceed it with `claimAllowed: true`.
+- A `/tk:gap` report or contract output may claim the current 1.3x improvement target only when `heuristicProof.requiredImprovementRatio` is `1.3` and false-positive, false-negative, speed, and analysis-depth subproofs all meet or exceed it with `claimAllowed: true`. Default stdout does not print this proof claim.
 - `heuristicProof.falsePositive` must prove accepted-path gate coverage, including CandidateShapeGate, EvidencePrecisionGate, ProducerEvidenceGate, ConflictClarificationGate, RequirementTraceabilityGate, SeverityScopeGate, and JudgeMergerAgent.
 - `heuristicProof.falseNegative` must prove missed-critical coverage, including SourcePresenceManifest, ActiveSpecPatchCoverage, TargetHintExtraction, TargetSurfaceCoverageGate, DispatchCompletenessGate, and CriticalRedTeamAgent missed-P0/P1 search.
 - `heuristicProof.speed` must mirror recorded `performance` fields and may not count uncredited dispatch skips.
