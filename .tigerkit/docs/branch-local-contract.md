@@ -1,0 +1,175 @@
+# TigerKit branch-local storage contract
+
+이 문서는 TigerKit v7.2 branch-local working memory의 저장 위치, branch key, index, write safety, handoff/reflect 경계를 설명합니다. 산출물 전체 구조는 `.tigerkit/docs/artifact-layout.md`, `/tk:gap` stdout/report/run.json 계약은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
+
+## 기본 저장 위치
+
+TigerKit branch-local working memory는 반드시 current worktree root 아래에 저장합니다.
+
+```text
+.claude/tigerkit/branches/<branch-key>/
+```
+
+Spec Patch 기본 위치:
+
+```text
+.claude/tigerkit/branches/<branch-key>/specs/
+```
+
+Gap Run 기본 위치:
+
+```text
+.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/
+```
+
+Handoff canonical 위치:
+
+```text
+.claude/tigerkit/branches/<branch-key>/handoffs/current.md
+```
+
+금지 저장 위치:
+
+- `$GIT_COMMON_DIR/.claude/tigerkit`
+- `.git/worktrees/*`
+- user home global path
+- `/tmp`
+- current worktree root 밖 경로
+
+`.claude/tigerkit/`은 generated branch-local working memory이며 repo-wide durable knowledge가 아닙니다.
+
+## Branch key
+
+브랜치명을 디렉터리명으로 직접 쓰지 않습니다.
+
+Normal branch:
+
+1. `worktreeRoot = git rev-parse --show-toplevel`
+2. `branchName = git symbolic-ref --quiet --short HEAD`
+3. `fullRefName = refs/heads/<branchName>`
+4. branch slug는 `/`, `\`, 공백, `:`, `*`, `?`, `"`, `<`, `>`, `|`를 `-`로 바꾸고 연속 `-`를 하나로 줄입니다.
+5. 앞뒤 `-`를 제거하고 빈 값이면 `unknown`을 씁니다.
+6. `shortHash = sha256(fullRefName).slice(0, 6)`
+7. `branchKey = <branch-slug>--<shortHash>`
+
+Detached HEAD:
+
+```text
+branchKey = detached-<shortHeadSha7>--<sha256(worktreeRoot).slice(0, 6)>
+```
+
+Detached 상태면 summary에 branch scope가 detached임을 알립니다.
+
+## Index files
+
+기본적으로 아래 파일을 atomic write로 갱신합니다.
+
+```text
+.claude/tigerkit/branches/<branch-key>/specs/index.json
+.claude/tigerkit/branches/<branch-key>/branch-state.json
+.claude/tigerkit/global-index.json
+```
+
+`branch-state.json`에는 `lastSpecPatchId`를 기록합니다. `global-index.json`에는 branch `lastUsedAt`을 갱신합니다.
+
+`--no-index`가 있으면 Spec Patch 파일만 만들고 index와 branch-state 갱신은 생략합니다. 이 경우 summary에 index 미등록을 명시합니다.
+
+## Lock and write safety
+
+branch scope 작업 전 `.claude/tigerkit/branches/<branch-key>/.lock`을 exclusive create로 획득합니다.
+
+- lock 내용에는 `pid`, `command`, `createdAt`을 기록합니다.
+- 30분 미만 lock이 있으면 중단합니다.
+- 30분 이상 lock은 stale warning 후 제거할 수 있습니다.
+- `TIGERKIT_FORCE_LOCK=1`이면 즉시 override할 수 있습니다.
+
+Atomic write 대상:
+
+- `specs/index.json`
+- `branch-state.json`
+- `global-index.json`
+
+절차:
+
+1. `target.tmp.<pid>.<rand>`에 씁니다.
+2. 가능하면 fsync합니다.
+3. rename으로 target을 교체합니다.
+4. 실패 시 tmp 파일을 삭제합니다.
+
+## Path safety
+
+`--out` 경로는 normalize 후 current worktree root 내부이면서 `.claude/tigerkit/branches/<branch-key>/specs/` 아래여야 합니다. `--no-index`가 있어도 branch-local specs directory 밖으로 쓰지 않습니다. worktree root 밖이거나 branch-local specs directory 밖이면 중단하고 아래 메시지를 사용합니다.
+
+```text
+Tiger Kit does not read or write files outside the current worktree by default.
+```
+
+## `/tk:gap` branch-local storage
+
+`/tk:gap`은 반드시 current worktree root 아래 `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/`에 저장합니다.
+
+기본 `/tk:gap` 필수 파일은 `report.md`와 `run.json`입니다. `report.md`는 사용자가 읽는 표면이고, `run.json`은 후속 대화와 기계 처리를 위한 최소 run record입니다.
+
+상세 artifact layout은 `.tigerkit/docs/artifact-layout.md`를 기준으로 합니다. 상세 stdout/report/run.json 계약은 `.tigerkit/docs/output-contract.md`의 `/tk:gap default stdout` 섹션을 기준으로 합니다.
+
+`.claude/tigerkit/`은 generated branch-local working memory이며 repo-wide durable knowledge가 아닙니다.
+
+## `/tk:handoff` branch-local context
+
+`archive=true` 또는 사용자의 명시 archive 요청이 있으면 branch-local dated copy도 함께 생성합니다.
+
+예:
+
+```text
+.claude/tigerkit/branches/<branch-key>/handoffs/2026-06-03-tigerkit-v7-gap.md
+```
+
+`.claude/handoffs/current.md`는 optional convenience pointer입니다. 생성하더라도 canonical handoff를 대체하지 않습니다.
+
+`archive=true` 또는 사용자의 명시 요청이 없으면 dated archive를 만들지 않습니다.
+
+최신 branch-local TigerKit artifact가 관측되면 handoff에 참조할 수 있습니다.
+
+- 최신 Spec Patch: `.claude/tigerkit/branches/<branch-key>/specs/SP-*.md`
+- 최신 Gap Run: `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md`
+- branch state: `.claude/tigerkit/branches/<branch-key>/branch-state.json`
+
+handoff는 branch-local artifact 자체를 durable rule로 승격하지 않습니다. 다음 작업자가 읽을 continuation 요약만 작성합니다.
+
+## `/tk:handoff` classification rule
+
+항상 아래 분류를 구분합니다.
+
+```text
+Fact = directly observed
+Decision = confirmed by user or source contract
+Interpretation = inferred from fact
+Unknown = not verified
+Risk = possible failure mode
+```
+
+- 직접 확인한 사항만 `Fact`로 기록합니다.
+- 사용자 또는 source contract가 확정한 사항만 `Decision`으로 기록합니다.
+- 관찰한 사실에서 추론한 내용은 `Interpretation`으로 기록합니다.
+- 확인하지 못한 내용은 `Unknown`으로 둡니다.
+- 가능한 실패 모드나 주의점은 `Risk`로 기록합니다.
+
+## `/tk:reflect` branch-local input/output preconditions
+
+Reflect는 current branch scope의 branch-local working memory를 읽습니다.
+
+```text
+.claude/tigerkit/branches/<branch-key>/specs/
+.claude/tigerkit/branches/<branch-key>/runs/gap/
+.claude/tigerkit/branches/<branch-key>/branch-state.json
+```
+
+읽을 수 있는 evidence class:
+
+- active/superseded Spec Patch metadata와 confirmed item
+- accepted gap finding pattern
+- rejected/downgraded observation reason
+- source conflict와 resolution 상태
+- current code/worktree context needed to classify repo-wide value
+
+Reflect는 branch-local working memory를 repo-wide durable knowledge 후보로 분류할 수 있지만, source code를 수정하지 않습니다.
