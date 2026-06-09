@@ -1,7 +1,7 @@
 {
   "name": "tk",
   "description": "branch-scoped spec, user-facing contract-based gap review, durable reflection, meta-feedback, and handoff를 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다.",
-  "version": "7.2.15",
+  "version": "7.2.16",
   "author": {
     "name": "MTGVim"
   },
