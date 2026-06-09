@@ -66,6 +66,8 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 - Product Spec, Design Spec, Design System Spec, Engineering Constraint, QA Acceptance Criteria, Analytics Contract를 Contract로 normalize해 비교합니다.
 - active/confirmed Spec Patch item을 기본 참조합니다.
 - 기본 호출은 user-provided references, target hints, Current Implementation 후보, 위험 신호를 먼저 skim한 뒤 단일 `/tk:gap` 실행로 실행합니다.
+- 다중 breakpoint/variant/case처럼 source set이 크면 원하는 전달 포맷을 먼저 제안하고 source 단위로 수집·측정·대조·lock한 뒤 다음 source로 진행하는 경로를 권장합니다. source가 적으면 기존 일괄 경로를 유지할 수 있습니다.
+- design source는 `structural_context`와 `visual_capture` 신뢰 축을 분리합니다. `visual_capture`는 layout/구성 확인에 쓰고, 색·간격·치수 같은 수치 값은 구조/메타 자료, design token, 또는 confirmed source 없이는 확정하지 않습니다. 기존 구현은 대조·추론 보조로만 씁니다.
 - 기본 산출물은 `report.md`와 `run.json`입니다.
 - 기본 stdout은 run 결과, finding/clarification count, report path, run.json path, next action만 출력합니다.
 - 전체 report는 `--print-report`가 있을 때만 출력합니다.

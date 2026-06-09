@@ -87,6 +87,7 @@ Required handling:
 - Use compact tables for ambiguity resolution.
 - For UI decisions, include TUI/ASCII prototypes when useful. Right borders must align; account for Korean full-width glyphs and padding.
 
+
 ## GAP-008: Check current implementation freshness before comparing
 
 When the target means `current implementation`, current working tree, current branch, or local checkout:
@@ -180,3 +181,23 @@ When the target means `current implementation`, current working tree, current br
 - `heuristicProof.analysisDepth` must prove hard-trigger coverage before risk-score tie-breaker use, including target-surface and dispatch-completeness backstops.
 - If any subproof is missing or below threshold, set `heuristicProof.claimAllowed: false` and avoid claiming combined improvement.
 - Default user-facing `/tk:gap` output must not expose this proof surface.
+
+## GAP-018: Use source-by-source locked intake for large source sets
+
+When a `/tk:gap` input includes many independent sources such as multiple breakpoints, variants, or auxiliary case sets:
+
+- Do not collapse all sources into one untracked batch when that would blur independent verification.
+- First state the preferred delivery format when asking for or organizing the source set.
+- Process sources one at a time when practical: record raw reference, source_type, access status, derived Contract, comparison result, and clarification state separately.
+- Lock each source after measurement and comparison. If later material changes that source, treat it as a new source or superseding source instead of silently mutating the locked basis.
+- If the source set is small or inherently one bundle, batch intake remains allowed.
+
+## GAP-019: Separate design source trust axes
+
+For design evidence:
+
+- Treat structural or metadata evidence as `source_type=structural_context`. Examples include frame/node structure, text layers, design tokens, component hierarchy, variant metadata, exported specs, or owner-confirmed values.
+- Treat screenshots, screen recordings, raster exports, and scaled visual captures as `source_type=visual_capture`.
+- Use `visual_capture` for layout, composition, visible state, hierarchy, and presence checks.
+- Do not confirm color, spacing, dimensions, typography scale, or other numeric design values from `visual_capture` alone because capture scale, compression, rendering, and sampling can distort them.
+- Numeric design values require structural/context evidence, design tokens, or explicit user/source confirmation. Existing implementation may support comparison or inference, but is not a design SOT by itself. If still insufficient, create `ClarificationNeeded` or reject as `unverifiable` instead of accepting a final finding.
