@@ -50,6 +50,7 @@ TigerKit 자체 성능 개선, baseline, heuristic proof, performance proof, fal
 - current implementation 비교 전에는 integration branch freshness를 확인합니다.
 - 모든 final finding은 analysis depth와 관계없이 evidence precision, producer evidence, ambiguity, JudgeMerger gate를 통과해야 합니다.
 - 사용자가 files/scope를 명시하지 않는 기본 흐름은 issue ticket, design node link, screenshot, pasted notes 같은 user-provided references에서 target hints를 추출합니다.
+- source set이 커서 다중 breakpoint/variant/case를 한 번에 받으면 source-by-source locked intake를 권장합니다. 먼저 원하는 전달 포맷을 명시하고, source 단위로 수집·측정·대조·lock한 뒤 다음 source로 진행합니다. source가 적고 독립 검증이 흐려지지 않으면 기존 일괄 intake를 유지할 수 있습니다.
 - changed files는 primary scope가 아니라 Current Implementation 후보 evidence입니다.
 - Product Spec, Design Spec, API contract, source priority, owner decision의 ambiguity는 명확해 보여도 user consent 전에는 confirmed contract로 승격하지 않습니다.
 - visible UI copy는 confirmed contract와 exact match가 필요합니다.
@@ -89,6 +90,24 @@ TigerKit 자체 성능 개선, baseline, heuristic proof, performance proof, fal
 - Design review skill
 - quality mode
 - preset 추천
+
+## Source intake and design evidence trust
+
+대량 source intake에서는 독립 검증과 사용자 확정 시점을 보존합니다.
+
+- source set이 다중 breakpoint, variant, 보조 case set처럼 커 보이면 먼저 전달 포맷을 제안합니다.
+- source 단위로 raw reference, derived Contract, current implementation 비교 결과, clarification 여부를 분리해 기록합니다.
+- 각 source는 측정·대조가 끝난 시점에 lock하고, lock 후 새 자료가 오면 같은 source를 조용히 덮어쓰지 않고 추가 source 또는 superseding source로 다룹니다.
+- locked intake는 누락·과적을 줄이기 위한 권장 경로입니다. source가 적거나 서로 의존하는 단일 bundle이면 기존 일괄 intake를 사용할 수 있습니다.
+
+Design source는 trust axis를 분리합니다.
+
+| source_type | 역할 | 제한 |
+| --- | --- | --- |
+| `structural_context` | frame/node 구조, text layer, token/metadata, component hierarchy, variant 관계 확인 | 접근 불가하거나 불완전하면 missing evidence로 표시 |
+| `visual_capture` | layout, 구성, hierarchy, state 비교의 보조 근거 | 색, 간격, 치수 같은 수치 값을 단독 확정하지 않음 |
+
+색·간격·치수 같은 numeric design value는 구조/메타 자료, design token, 또는 명시된 confirmed source가 필요합니다. 기존 구현은 대조·추론 보조로만 쓰며 단독 design SOT가 아닙니다. visual capture만 있거나 배율/렌더링 왜곡 가능성이 남으면 수치 단정 대신 `Clarification Needed` 또는 rejected `unverifiable`로 기록합니다.
 
 ## Branch-local storage
 

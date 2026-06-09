@@ -323,6 +323,29 @@
         "Skips duplicate insights",
         "Prints apply summary"
       ]
+    },
+    {
+      "id": 14,
+      "name": "gap-source-by-source-intake-and-design-trust-axis",
+      "prompt": "Evaluate /tk:gap behavior when the user provides many design sources across breakpoints, variants, and auxiliary cases, including both structural metadata and visual captures. Do not write files.",
+      "expected_output": "Should recommend source-by-source locked intake when a large source set would blur independent verification: first state the preferred delivery format, then collect, measure, compare, and lock each source before proceeding. It should preserve small-source batch intake when independent verification is not at risk. It should classify design evidence into structural_context and visual_capture, use visual_capture only for layout/composition/state/hierarchy support, and avoid confirming color, spacing, dimensions, typography scale, or other numeric design values from visual_capture alone. Numeric design values should require structural metadata, design tokens, or explicit source/user confirmation, with existing implementation used only as comparison or inference support rather than design SOT; otherwise the result should become Clarification Needed or rejected unverifiable rather than an accepted finding.",
+      "files": [
+        "commands/gap.md",
+        ".claude/rules/review/gap-analysis.md",
+        ".tigerkit/docs/usage.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "Recommends source-by-source locked intake for large source sets",
+        "States preferred delivery format before large intake",
+        "Locks each source after measurement and comparison",
+        "Preserves batch intake for small or inherently bundled source sets",
+        "Separates structural_context from visual_capture",
+        "Uses visual_capture for layout and composition only",
+        "Does not confirm numeric design values from visual_capture alone",
+        "Requires structural metadata, design tokens, or explicit confirmation for numeric design values",
+        "Creates Clarification Needed or rejected unverifiable when numeric evidence is insufficient"
+      ]
     }
   ]
 }
