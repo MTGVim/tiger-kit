@@ -16,6 +16,7 @@ spec = branch-local requirement patch creation
 ## Command surface
 
 - plugin slash invocation은 `/tk:spec`입니다.
+- 이 contract는 `commands/spec.md`와 `.claude-plugin/plugin.json`에 등록된 Claude Code plugin command가 소유합니다. 별도 repo-local skill 파일은 필요하지 않습니다.
 - 자연어로 “방금 결정된 요구사항을 gap 기준으로 저장해줘”처럼 요청해도 같은 contract를 따릅니다.
 - `tiger-kit spec` CLI 표현은 이 plugin command의 사용자 관점 alias로 취급합니다.
 
