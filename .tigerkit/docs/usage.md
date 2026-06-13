@@ -127,11 +127,15 @@ Run JSON: .claude/tigerkit/branches/feature-foo--a1b2c3/runs/gap/GAP-20260604-13
 - `.claude/tigerkit/` 아래에는 durable insight를 저장하지 않습니다.
 - source code는 수정하지 않습니다.
 - branch-specific one-off decision, 임시 Spec Patch, superseded 결정, P3/nit, rejected finding, low-confidence observation은 durable insight로 만들지 않습니다.
+- branch-local specs/gap 산출물이 없으면 산출물 기반 후보는 없는 것으로 처리합니다. 사용자 대화에서 명시적으로 확인된 TigerKit 운영 규칙은 후보가 될 수 있지만, 반복 관측 패턴이나 실행자 해석만으로 durable insight를 만들지 않습니다.
+- apply가 저장을 수행하면 `global-index.json`에 current branch entry가 없을 때 새 entry를 만들 수 있습니다.
 
 ## `/tk:handoff`
 
 - 기존 continuation command입니다. v7.2에서도 active command로 유지합니다.
 - canonical 출력 대상은 `.claude/tigerkit/branches/<branch-key>/handoffs/current.md`입니다.
+- `/tk:handoff`는 `.claude/tigerkit/global-index.json`의 current branch entry에 `latestHandoffPath`를 함께 기록합니다.
+- 경로를 지정하지 않은 resume 지시는 `global-index.json`의 `latestHandoffPath`를 1순위로 확인합니다.
 - 최신 branch-local Spec Patch와 Gap Run이 있으면 handoff의 relevant files나 validation에 참조할 수 있습니다.
 - `archive=true` 또는 명시적 archive 요청이 있을 때만 branch-local dated copy를 만듭니다.
 - `.claude/handoffs/current.md`는 optional convenience pointer이며 canonical handoff를 대체하지 않습니다.
