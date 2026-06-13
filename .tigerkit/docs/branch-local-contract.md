@@ -70,7 +70,7 @@ Detached 상태면 summary에 branch scope가 detached임을 알립니다.
 .claude/tigerkit/global-index.json
 ```
 
-`branch-state.json`에는 `lastSpecPatchId`를 기록합니다. `global-index.json`에는 branch `lastUsedAt`을 갱신합니다.
+`branch-state.json`에는 `lastSpecPatchId`와 최신 handoff pointer를 기록할 수 있습니다. `global-index.json`에는 branch `lastUsedAt`과 최신 handoff pointer를 기록합니다. branch entry가 없으면 저장 또는 apply를 수행하는 command가 현재 branch 정보로 새 entry를 생성할 수 있습니다.
 
 `--no-index`가 있으면 Spec Patch 파일만 만들고 index와 branch-state 갱신은 생략합니다. 이 경우 summary에 index 미등록을 명시합니다.
 
@@ -124,6 +124,10 @@ Tiger Kit does not read or write files outside the current worktree by default.
 .claude/tigerkit/branches/<branch-key>/handoffs/2026-06-03-tigerkit-v7-gap.md
 ```
 
+`.claude/tigerkit/global-index.json`의 current branch entry에는 `latestHandoffPath`와 `lastHandoffAt`을 기록합니다. 경로를 지정하지 않은 resume 지시는 이 index pointer를 1순위로 조회합니다.
+
+`.claude/tigerkit/branches/<branch-key>/branch-state.json`에도 `latestHandoffPath`와 `lastHandoffAt`을 기록할 수 있습니다.
+
 `.claude/handoffs/current.md`는 optional convenience pointer입니다. 생성하더라도 canonical handoff를 대체하지 않습니다.
 
 `archive=true` 또는 사용자의 명시 요청이 없으면 dated archive를 만들지 않습니다.
@@ -170,6 +174,9 @@ Reflect는 current branch scope의 branch-local working memory를 읽습니다.
 - accepted gap finding pattern
 - rejected/downgraded observation reason
 - source conflict와 resolution 상태
+- 사용자 대화에서 명시적으로 확인된 TigerKit 운영 규칙
 - current code/worktree context needed to classify repo-wide value
+
+branch-local specs/gap 산출물이 없으면 산출물 기반 후보는 없는 것으로 처리합니다. 사용자 대화에서 명시적으로 확인된 TigerKit 운영 규칙은 후보가 될 수 있지만, 반복 관측 패턴이나 실행자 해석만으로 repo-wide durable insight를 만들지 않습니다.
 
 Reflect는 branch-local working memory를 repo-wide durable knowledge 후보로 분류할 수 있지만, source code를 수정하지 않습니다.

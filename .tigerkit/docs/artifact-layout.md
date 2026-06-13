@@ -49,14 +49,14 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
 
 | 파일 | 역할 | 저장 성격 |
 | --- | --- | --- |
-| `.claude/tigerkit/global-index.json` | branch-key 목록과 마지막 접근 정보. 저장 또는 apply를 수행한 `/tk:spec`, `/tk:gap`, `/tk:reflect` 실행 시 `lastUsedAt`을 갱신합니다. `--no-index`, `--no-save`, `--dry-run`, `--apply=false`처럼 저장하지 않는 실행은 recency를 갱신하지 않습니다. 손상되어도 branch-local index에서 복구 가능해야 합니다. | generated |
-| `.claude/tigerkit/branches/<branch-key>/branch-state.json` | 현재 branch scope의 마지막 spec/gap run pointer. | branch-local |
+| `.claude/tigerkit/global-index.json` | branch-key 목록, 마지막 접근 정보, current branch 최신 handoff pointer. 저장 또는 apply를 수행한 `/tk:spec`, `/tk:gap`, `/tk:reflect` 실행 시 `lastUsedAt`을 갱신합니다. `/tk:handoff` 실행 시 branch entry의 `latestHandoffPath`와 `lastHandoffAt`을 갱신합니다. entry가 없으면 현재 branch 정보로 생성할 수 있습니다. `--no-index`, `--no-save`, `--dry-run`, `--apply=false`처럼 저장하지 않는 실행은 recency를 갱신하지 않습니다. 손상되어도 branch-local index에서 복구 가능해야 합니다. | generated |
+| `.claude/tigerkit/branches/<branch-key>/branch-state.json` | 현재 branch scope의 마지막 spec/gap run pointer와 최신 handoff pointer. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/specs/index.json` | 현재 branch scope의 Spec Patch index와 item supersede mapping. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/specs/SP-*.md` | branch-local Spec Patch. PRD나 Design Guide의 영구 대체물이 아닙니다. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md` | 사용자가 읽는 기본 gap report 본문. Actionable Findings, Clarification Needed, next action 중심입니다. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/run.json` | 후속 대화와 기계 처리를 위한 최소 run record. user-facing short Ref와 canonical ID mapping을 보존합니다. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/maintainer-proof/` | `--maintainer-proof`가 명시된 경우에만 생성하는 self-eval/performance proof, gate/debug metadata, baseline snapshot 영역입니다. | branch-local maintainer-only |
-| `.claude/tigerkit/branches/<branch-key>/handoffs/current.md` | `/tk:handoff`가 생성하는 canonical continuation 문서. | branch-local continuation |
+| `.claude/tigerkit/branches/<branch-key>/handoffs/current.md` | `/tk:handoff`가 생성하는 canonical continuation 문서. 최신 경로는 `global-index.json`과 `branch-state.json`에 pointer로 기록합니다. | branch-local continuation |
 | `.claude/tigerkit/branches/<branch-key>/handoffs/YYYY-MM-DD-task-name.md` | `archive=true` 또는 명시적 archive 요청 때만 생성하는 branch-local continuation archive. | branch-local continuation |
 | `.claude/handoffs/current.md` | optional convenience pointer. canonical handoff를 대체하지 않습니다. | pointer |
 | `.claude/rules/**/*.md` | repo convention basis이자 `/tk:reflect apply=true`의 scoped durable apply target입니다. | durable rule |

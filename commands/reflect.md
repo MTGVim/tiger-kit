@@ -25,7 +25,8 @@ reflect = branch-local working memory -> CLAUDE.md/.claude/rules durable reflect
 - `/tk:reflect` 기본 동작은 `apply=true`입니다.
 - source code는 수정하지 않습니다.
 - apply mode의 content write는 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에만 적용합니다.
-- branch recency bookkeeping으로 `global-index.json`의 `lastUsedAt`은 갱신할 수 있습니다.
+- branch recency bookkeeping으로 `global-index.json`의 branch entry를 생성하거나 `lastUsedAt`을 갱신할 수 있습니다.
+- branch-local specs/gap 산출물이 없다는 사실만으로 세션 관측 패턴을 durable insight 후보로 승격하지 않습니다.
 - 같은 insight를 중복 반영하지 않습니다.
 - 적용 결과 diff/summary를 출력합니다.
 
@@ -56,7 +57,10 @@ Reflect는 current branch scope의 branch-local working memory를 읽습니다.
 - accepted gap finding pattern
 - rejected/downgraded observation reason
 - source conflict와 resolution 상태
+- 사용자 대화에서 명시적으로 확인된 TigerKit 운영 규칙
 - current code/worktree context needed to classify repo-wide value
+
+branch-local specs/gap 산출물이 없으면 산출물 기반 후보는 없는 것으로 처리합니다. 이 경우에도 사용자 대화에서 명시적으로 확인된 TigerKit 운영 규칙은 후보가 될 수 있지만, 반복 관측 패턴이나 실행자 해석만으로 repo-wide durable insight를 만들지 않습니다.
 
 ## Durable target classification
 
@@ -153,7 +157,7 @@ Apply: false
 8. 각 후보를 `CLAUDE.md`, `.claude/rules/**/*.md`, `no action`으로 분류
 9. one-off, superseded, P3/nit, rejected, low-confidence 후보 제거
 10. duplicate 제거
-11. apply=true이면 target rule file 또는 `CLAUDE.md`를 직접 수정하고 `global-index.json`에 branch `lastUsedAt` 갱신
+11. apply=true이면 target rule file 또는 `CLAUDE.md`를 직접 수정하고 `global-index.json`에 branch entry가 없으면 생성한 뒤 `lastUsedAt` 갱신
 12. apply=false이면 preview만 출력하고 저장 없이 종료
 13. branch lock 해제
 14. summary 출력
