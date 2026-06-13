@@ -1,6 +1,6 @@
 ---
 description: branch-local TigerKit memory에서 repo에 보존할 insight만 추출·반영합니다.
-argument-hint: "[scope] [--dry-run] [--apply=true|false] [--target <CLAUDE.md|.claude/rules/...>]"
+argument-hint: "[scope] [--dry-run] [--apply=true|false] [--target <CLAUDE.md|.claude/rules/...>] [--no-meta-feedback|--meta-feedback=false]"
 ---
 
 이 명령은 TigerKit v7.1 reflect contract를 따릅니다.
@@ -28,6 +28,8 @@ reflect = branch-local working memory -> CLAUDE.md/.claude/rules durable reflect
 - branch recency bookkeeping으로 `global-index.json`의 `lastUsedAt`은 갱신할 수 있습니다.
 - 같은 insight를 중복 반영하지 않습니다.
 - 적용 결과 diff/summary를 출력합니다.
+- 기본적으로 reflect 처리 직후 같은 세션에서 `/tk:meta-feedback`을 proposal-only로 함께 제출합니다.
+- `--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 meta-feedback 제출을 생략합니다.
 
 ## Apply behavior
 
@@ -35,8 +37,10 @@ reflect = branch-local working memory -> CLAUDE.md/.claude/rules durable reflect
 | --- | --- |
 | `/tk:reflect` | `apply=true` |
 | `/tk:reflect --apply=true` | 기본값과 동일 |
-| `/tk:reflect --dry-run` | `apply=false` |
-| `/tk:reflect --apply=false` | dry-run alias |
+| `/tk:reflect --dry-run` | `apply=false`, meta-feedback 기본 제출 |
+| `/tk:reflect --apply=false` | dry-run alias, meta-feedback 기본 제출 |
+| `/tk:reflect --no-meta-feedback` | reflect만 실행하고 meta-feedback 제출 생략 |
+| `/tk:reflect --meta-feedback=false` | `--no-meta-feedback` alias |
 
 v7.1에서는 `--apply=true`가 redundant여도 warning을 내지 않습니다.
 
@@ -121,6 +125,9 @@ Apply: true
 
 요약:
 - <한글 insight summary>
+
+Meta Feedback:
+- submitted
 ```
 
 `--dry-run` 또는 `--apply=false`일 때:
@@ -139,6 +146,9 @@ Apply: false
 
 요약:
 - <한글 preview summary>
+
+Meta Feedback:
+- submitted
 ```
 
 ## Procedure
@@ -156,7 +166,10 @@ Apply: false
 11. apply=true이면 target rule file 또는 `CLAUDE.md`를 직접 수정하고 `global-index.json`에 branch `lastUsedAt` 갱신
 12. apply=false이면 preview만 출력하고 저장 없이 종료
 13. branch lock 해제
-14. summary 출력
+14. `--no-meta-feedback` 또는 `--meta-feedback=false`가 없으면 `/tk:meta-feedback`을 proposal-only로 제출
+15. reflect summary와 meta-feedback 제출 상태를 출력
+
+`--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 `Meta Feedback: skipped by opt-out`으로 출력합니다.
 
 ## Conflict handling
 

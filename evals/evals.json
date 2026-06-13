@@ -310,7 +310,7 @@
       "id": 13,
       "name": "reflect-applies-directly-to-rules-and-claude",
       "prompt": "You are evaluating /tk:reflect after branch-local gap runs produced durable repo-wide insight candidates. Describe expected behavior. Do not write files.",
-      "expected_output": "Should default to apply=true, read branch-local TigerKit memory, write directly to CLAUDE.md or .claude/rules/* depending on target scope, treat --dry-run and --apply=false as preview-only aliases, avoid modifying source code, dedupe repeated insights, and avoid creating a separate tigerkit-reflections sidecar file.",
+      "expected_output": "Should default to apply=true, read branch-local TigerKit memory, write directly to CLAUDE.md or .claude/rules/* depending on target scope, treat --dry-run and --apply=false as preview-only aliases, submit /tk:meta-feedback proposal-only after reflect processing by default, allow --no-meta-feedback or --meta-feedback=false to opt out, avoid modifying source code, dedupe repeated insights, and avoid creating a separate tigerkit-reflections sidecar file.",
       "files": [],
       "expectations": [
         "Defaults /tk:reflect to apply=true",
@@ -321,7 +321,10 @@
         "Does not modify source code",
         "Does not create tigerkit-reflections sidecar file",
         "Skips duplicate insights",
-        "Prints apply summary"
+        "Prints apply summary",
+        "Submits meta-feedback proposal-only by default",
+        "Supports --no-meta-feedback opt-out",
+        "Supports --meta-feedback=false opt-out"
       ]
     },
     {

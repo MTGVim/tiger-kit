@@ -45,6 +45,7 @@ Plugin namespace는 `/tk:*`입니다. 해당 workflow를 명시한 자연어 요
 /tk:gap --maintainer-proof
 /tk:reflect
 /tk:reflect --dry-run
+/tk:reflect --no-meta-feedback
 /tk:handoff 현재 작업 이어받을 수 있게 남겨줘
 /tk:meta-feedback gap 결과가 느리고 BE 오탐이 난 패턴을 일반화해줘
 ```
@@ -127,6 +128,8 @@ Run JSON: .claude/tigerkit/branches/feature-foo--a1b2c3/runs/gap/GAP-20260604-13
 - `.claude/tigerkit/` 아래에는 durable insight를 저장하지 않습니다.
 - source code는 수정하지 않습니다.
 - branch-specific one-off decision, 임시 Spec Patch, superseded 결정, P3/nit, rejected finding, low-confidence observation은 durable insight로 만들지 않습니다.
+- reflect 처리 직후 `/tk:meta-feedback`을 proposal-only로 함께 제출합니다.
+- `--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 meta-feedback 제출을 생략합니다.
 
 ## `/tk:handoff`
 
