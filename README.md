@@ -2,6 +2,8 @@
 
 TigerKit(`tk`, plugin namespace `/tk:*`)은 branch-scoped Spec / Gap / Reflect pipeline과 continuation handoff, generalized meta-feedback으로 AI-induced source loss를 줄입니다.
 
+공개 실행 표면은 Claude Code plugin command입니다. 별도 repo-local skill 파일 없이 `commands/*.md`와 `.claude-plugin/plugin.json`이 `/tk:*` contract를 소유합니다.
+
 해당 workflow를 명시한 natural language request는 대응하는 `/tk:*` command contract로 처리합니다.
 
 ## Installation
