@@ -1,6 +1,7 @@
 {
   "skill_name": "tiger-kit-v7-2-14-user-facing-gap-maintainer-proof",
   "command_surface": {
+    "surface_model": "TigerKit v7.2 exposes Claude Code plugin commands; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts without separate repo-local skill files.",
     "core_commands": [
       "/tk:spec",
       "/tk:gap",
@@ -50,7 +51,7 @@
       "id": 0,
       "name": "command-surface-restores-existing-commands",
       "prompt": "You are evaluating TigerKit active command surface. Describe the user-facing commands. Do not write files.",
-      "expected_output": "Should list /tk:spec, /tk:gap, /tk:reflect, /tk:handoff, and /tk:meta-feedback as active user-facing commands. Should explain that handoff and meta-feedback are active existing commands, not newly invented commands. Should explain that spec/gap write branch-local working memory, reflect creates durable insight, handoff creates continuation context, and meta-feedback extracts generalized TigerKit improvement feedback from session history.",
+      "expected_output": "Should list /tk:spec, /tk:gap, /tk:reflect, /tk:handoff, and /tk:meta-feedback as active user-facing commands. Should explain that TigerKit v7.2 exposes Claude Code plugin commands, not separate repo-local skill files, and that commands/*.md plus .claude-plugin/plugin.json own the /tk:* contracts. Should explain that handoff and meta-feedback are active existing commands, not newly invented commands. Should explain that spec/gap write branch-local working memory, reflect creates durable insight, handoff creates continuation context, and meta-feedback extracts generalized TigerKit improvement feedback from session history.",
       "files": [],
       "expectations": [
         "Lists /tk:spec",
@@ -58,6 +59,7 @@
         "Lists /tk:reflect",
         "Lists /tk:handoff",
         "Lists /tk:meta-feedback",
+        "Treats /tk:* as command-owned plugin contracts, not separate repo-local skills",
         "Treats handoff as active continuation command",
         "Treats meta-feedback as active session-history improvement command",
         "Explains spec/gap branch-local working memory",
@@ -275,11 +277,12 @@
       "id": 11,
       "name": "handoff-remains-continuation-command",
       "prompt": "You are evaluating /tk:handoff after a branch has spec and gap artifacts. Describe expected behavior. Do not write files.",
-      "expected_output": "Should preserve /tk:handoff as the existing continuation command. It should write the canonical branch-local handoff current.md by default, include Reader Guide and Resume Prompt, optionally mention latest branch-local Spec Patch and Gap Run paths when observed, and create a dated archive only when archive=true or an explicit archive request is present.",
+      "expected_output": "Should preserve /tk:handoff as the existing continuation command. It should write the canonical branch-local handoff current.md by default, record latestHandoffPath in .claude/tigerkit/global-index.json for pathless resume instructions, include Reader Guide and Resume Prompt, optionally mention latest branch-local Spec Patch and Gap Run paths when observed, and create a dated archive only when archive=true or an explicit archive request is present.",
       "files": [],
       "expectations": [
         "Preserves /tk:handoff as active command",
         "Writes branch-local handoff current.md by default",
+        "Records latestHandoffPath in global-index.json for pathless resume",
         "Includes Reader Guide",
         "Includes Resume Prompt",
         "Can reference latest branch-local Spec Patch and Gap Run paths",
@@ -310,13 +313,15 @@
       "id": 13,
       "name": "reflect-applies-directly-to-rules-and-claude",
       "prompt": "You are evaluating /tk:reflect after branch-local gap runs produced durable repo-wide insight candidates. Describe expected behavior. Do not write files.",
-      "expected_output": "Should default to apply=true, read branch-local TigerKit memory, write directly to CLAUDE.md or .claude/rules/* depending on target scope, treat --dry-run and --apply=false as preview-only aliases, submit /tk:meta-feedback proposal-only after reflect processing by default, allow --no-meta-feedback or --meta-feedback=false to opt out, avoid modifying source code, dedupe repeated insights, and avoid creating a separate tigerkit-reflections sidecar file.",
+      "expected_output": "Should default to apply=true, read branch-local TigerKit memory, write directly to CLAUDE.md or .claude/rules/* depending on target scope, treat --dry-run and --apply=false as preview-only aliases, submit /tk:meta-feedback proposal-only after reflect processing by default, allow --no-meta-feedback or --meta-feedback=false to opt out, avoid modifying source code, dedupe repeated insights, create or update the current branch entry in global-index.json for apply bookkeeping, not promote session observation patterns when specs/gap artifacts are absent unless the user explicitly confirmed a TigerKit operating rule, and avoid creating a separate tigerkit-reflections sidecar file.",
       "files": [],
       "expectations": [
         "Defaults /tk:reflect to apply=true",
         "Treats --dry-run as apply=false",
         "Treats --apply=false as dry-run alias",
         "Reads branch-local specs/gap memory",
+        "Does not promote session observation patterns when specs/gap artifacts are absent unless explicitly user-confirmed",
+        "Creates or updates current branch entry in global-index.json for apply bookkeeping",
         "Writes directly to CLAUDE.md or .claude/rules/*",
         "Does not modify source code",
         "Does not create tigerkit-reflections sidecar file",

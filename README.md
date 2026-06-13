@@ -2,6 +2,8 @@
 
 TigerKit(`tk`, plugin namespace `/tk:*`)은 branch-scoped Spec / Gap / Reflect pipeline과 continuation handoff, generalized meta-feedback으로 AI-induced source loss를 줄입니다.
 
+공개 실행 표면은 Claude Code plugin command입니다. 별도 repo-local skill 파일 없이 `commands/*.md`와 `.claude-plugin/plugin.json`이 `/tk:*` contract를 소유합니다.
+
 해당 workflow를 명시한 natural language request는 대응하는 `/tk:*` command contract로 처리합니다.
 
 ## Installation
@@ -48,7 +50,7 @@ handoff = 다음 세션/작업자용 continuation context
 meta-feedback = 세션 내 TigerKit 개선 피드백 일반화
 ```
 
-`spec`, `gap`, canonical `handoff` 산출물은 `.claude/tigerkit/branches/<branch-key>/` 아래의 branch-local generated working memory입니다. repo-wide durable knowledge가 아닙니다.
+`spec`, `gap`, canonical `handoff` 산출물은 `.claude/tigerkit/branches/<branch-key>/` 아래의 branch-local generated working memory입니다. `/tk:handoff`는 경로 미지정 resume을 위해 `.claude/tigerkit/global-index.json`에 최신 handoff pointer도 기록합니다. repo-wide durable knowledge가 아닙니다.
 
 `/tk:gap` 기본 실행은 사용자-facing `report.md`와 `run.json`만 필수로 생성합니다. TigerKit 자체 성능개선이나 regression 검증을 위한 proof artifact는 maintainer-only `--maintainer-proof` 옵션에서만 생성합니다.
 

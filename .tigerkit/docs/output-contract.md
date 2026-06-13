@@ -244,7 +244,8 @@ Concrete maintainer proof runs must recompute actual run proof from metadata bef
 - `.claude/tigerkit/` 아래에는 durable insight를 저장하지 않습니다.
 - source code는 수정하지 않습니다.
 - content write는 `CLAUDE.md` 또는 `.claude/rules/**/*.md`만 수정합니다.
-- branch recency bookkeeping으로 `global-index.json`의 `lastUsedAt`은 갱신할 수 있습니다.
+- branch recency bookkeeping으로 `global-index.json`의 branch entry를 생성하거나 `lastUsedAt`을 갱신할 수 있습니다.
+- branch-local specs/gap 산출물이 없다는 사실만으로 세션 관측 패턴을 durable insight 후보로 승격하지 않습니다.
 - 같은 insight를 중복 반영하지 않습니다.
 - reflect 처리 직후 `/tk:meta-feedback`을 proposal-only로 함께 제출합니다.
 - `--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 meta-feedback 제출을 생략합니다.
@@ -308,6 +309,8 @@ Reflect excludes:
 
 - 목적: 다음 세션이나 다른 작업자가 이어받을 continuation 문서를 작성합니다.
 - canonical 기록 위치: `.claude/tigerkit/branches/<branch-key>/handoffs/current.md`
+- 최신 handoff path는 `.claude/tigerkit/global-index.json`의 current branch entry에 `latestHandoffPath`로 함께 기록합니다.
+- 경로를 지정하지 않은 resume 지시는 `.claude/tigerkit/global-index.json`의 `latestHandoffPath`를 1순위로 조회합니다.
 - `archive=true` 또는 사용자 명시 archive 요청이 있을 때만 branch-local dated archive를 추가로 만듭니다.
 - `.claude/handoffs/current.md`는 optional convenience pointer이며 canonical handoff를 대체하지 않습니다.
 - v7.2에서는 최신 branch-local Spec Patch와 Gap Run path를 Relevant Files 또는 Validation에 포함할 수 있습니다.
@@ -318,9 +321,10 @@ Reflect excludes:
 ```text
 handoff 작성했습니다.
 - 기록: .claude/tigerkit/branches/<branch-key>/handoffs/current.md
+- index pointer: .claude/tigerkit/global-index.json 갱신
 - archive: 없음
 - pointer: 없음
-- next action: .claude/tigerkit/branches/<branch-key>/handoffs/current.md 읽고 Next Actions부터 이어가.
+- next action: .claude/tigerkit/global-index.json의 latestHandoffPath를 확인하고 Next Actions부터 이어가.
 ```
 
 필수 section:
