@@ -45,6 +45,7 @@ Plugin namespace는 `/tk:*`입니다. TigerKit v7.2의 공개 실행 표면은 C
 /tk:gap --maintainer-proof
 /tk:reflect
 /tk:reflect --dry-run
+/tk:reflect --no-meta-feedback
 /tk:handoff 현재 작업 이어받을 수 있게 남겨줘
 /tk:meta-feedback gap 결과가 느리고 BE 오탐이 난 패턴을 일반화해줘
 ```
@@ -129,6 +130,8 @@ Run JSON: .claude/tigerkit/branches/feature-foo--a1b2c3/runs/gap/GAP-20260604-13
 - branch-specific one-off decision, 임시 Spec Patch, superseded 결정, P3/nit, rejected finding, low-confidence observation은 durable insight로 만들지 않습니다.
 - branch-local specs/gap 산출물이 없으면 산출물 기반 후보는 없는 것으로 처리합니다. 사용자 대화에서 명시적으로 확인된 TigerKit 운영 규칙은 후보가 될 수 있지만, 반복 관측 패턴이나 실행자 해석만으로 durable insight를 만들지 않습니다.
 - apply가 저장을 수행하면 `global-index.json`에 current branch entry가 없을 때 새 entry를 만들 수 있습니다.
+- reflect 처리 직후 `/tk:meta-feedback`을 proposal-only로 함께 제출합니다.
+- `--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 meta-feedback 제출을 생략합니다.
 
 ## `/tk:handoff`
 

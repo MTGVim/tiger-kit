@@ -26,6 +26,7 @@ meta-feedback = session-history-based generalized skill improvement proposal + p
 ## 기본 동작
 
 - 기본값은 파일을 수정하지 않고 일반화된 proposal만 출력합니다.
+- `/tk:reflect`가 기본 후속 단계로 제출할 때도 같은 proposal-only 동작과 privacy gate를 유지합니다.
 - `--out <path>`가 있을 때만 current worktree root 내부 경로에 파일을 작성할 수 있습니다.
 - `--out` 파일 내용도 chat output과 같은 redacted format이어야 합니다.
 - worktree root 밖 경로, user home, `/tmp`, hidden control file path에는 쓰지 않습니다.

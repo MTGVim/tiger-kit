@@ -247,6 +247,8 @@ Concrete maintainer proof runs must recompute actual run proof from metadata bef
 - branch recency bookkeeping으로 `global-index.json`의 branch entry를 생성하거나 `lastUsedAt`을 갱신할 수 있습니다.
 - branch-local specs/gap 산출물이 없다는 사실만으로 세션 관측 패턴을 durable insight 후보로 승격하지 않습니다.
 - 같은 insight를 중복 반영하지 않습니다.
+- reflect 처리 직후 `/tk:meta-feedback`을 proposal-only로 함께 제출합니다.
+- `--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 meta-feedback 제출을 생략합니다.
 
 기본 stdout:
 
@@ -264,6 +266,9 @@ Apply: true
 
 요약:
 - <한글 insight summary>
+
+Meta Feedback:
+- submitted
 ```
 
 Dry-run stdout:
@@ -282,7 +287,12 @@ Apply: false
 
 요약:
 - <한글 preview summary>
+
+Meta Feedback:
+- submitted
 ```
+
+`--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 `Meta Feedback: skipped by opt-out`으로 출력합니다.
 
 Reflect excludes:
 
