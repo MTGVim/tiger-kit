@@ -4,6 +4,30 @@ TigerKit(`tk`, plugin namespace `/tk:*`)은 branch-scoped Spec / Gap / Reflect p
 
 해당 workflow를 명시한 natural language request는 대응하는 `/tk:*` command contract로 처리합니다.
 
+## Installation
+
+Claude Code에서 TigerKit marketplace를 등록한 뒤 `tk` plugin을 설치합니다.
+
+```bash
+claude plugin marketplace add MTGVim/tiger-kit
+claude plugin install tk@tiger-kit --scope user
+```
+
+설치 여부와 사용 가능한 명령을 확인합니다.
+
+```bash
+claude plugin list --available --json
+claude plugin details tk
+```
+
+프로젝트 단위로만 설치하려면 설치 명령의 scope를 `project`로 바꿉니다.
+
+```bash
+claude plugin install tk@tiger-kit --scope project
+```
+
+설치 후 Claude Code를 다시 시작하고 `/tk:spec`, `/tk:gap`, `/tk:reflect`, `/tk:handoff`, `/tk:meta-feedback` 명령을 사용합니다.
+
 ## Command Surface
 
 | Command | 역할 | 저장 성격 |
