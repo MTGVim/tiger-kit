@@ -246,10 +246,12 @@ Concrete maintainer proof runs must recompute actual run proof from metadata bef
 - 기본 동작은 `apply=true`입니다.
 - 반영할 durable insight가 없으면 파일을 수정하지 않는 정상 성공이 가능합니다.
 - `--dry-run`과 `--apply=false`는 preview-only입니다.
-- 기본 apply target은 `CLAUDE.md` 또는 `.claude/rules/**/*.md`입니다.
+- 기본 apply target은 `CLAUDE.local.md`, `CLAUDE.md`, 또는 `.claude/rules/**/*.md`입니다.
+- 현재 worktree root에 `CLAUDE.local.md`가 있으면 `CLAUDE.md` 대상 후보를 먼저 `CLAUDE.local.md`에 반영합니다.
+- `CLAUDE.local.md`가 관리되는 경우 프로젝트 공용 지시로 보이는 후보도 local에 기재하고, `CLAUDE.md` 승격은 제안으로 남깁니다.
 - `.claude/tigerkit/` 아래에는 durable insight를 저장하지 않습니다.
 - source code는 수정하지 않습니다.
-- content write는 `CLAUDE.md` 또는 `.claude/rules/**/*.md`만 수정합니다.
+- content write는 `CLAUDE.local.md`, `CLAUDE.md`, 또는 `.claude/rules/**/*.md`만 수정합니다.
 - branch recency bookkeeping으로 `global-index.json`의 branch entry를 생성하거나 `lastUsedAt`을 갱신할 수 있습니다.
 - branch-local specs/gap 산출물이 없다는 사실만으로 세션 관측 패턴을 durable insight 후보로 승격하지 않습니다.
 - 같은 insight를 중복 반영하지 않습니다.
@@ -264,7 +266,7 @@ Concrete maintainer proof runs must recompute actual run proof from metadata bef
 Reflect 완료
 Apply: true
 적용 대상:
-- CLAUDE.md
+- CLAUDE.local.md
 - .claude/rules/<path>.md
 
 적용 결과:
@@ -288,7 +290,7 @@ Dry-run stdout:
 Reflect 완료
 Apply: false
 예상 대상:
-- CLAUDE.md
+- CLAUDE.local.md
 - .claude/rules/<path>.md
 
 미리보기 결과:

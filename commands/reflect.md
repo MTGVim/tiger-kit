@@ -1,6 +1,6 @@
 ---
 description: branch-local TigerKit memory에서 repo에 보존할 insight만 추출·반영합니다.
-argument-hint: "[scope] [--dry-run] [--apply=true|false] [--target <CLAUDE.md|.claude/rules/...>] [--no-meta-feedback|--meta-feedback=false]"
+argument-hint: "[scope] [--dry-run] [--apply=true|false] [--target <CLAUDE.local.md|CLAUDE.md|.claude/rules/...>] [--no-meta-feedback|--meta-feedback=false]"
 ---
 
 이 명령은 TigerKit v7.1 reflect contract를 따릅니다.
@@ -10,7 +10,7 @@ argument-hint: "[scope] [--dry-run] [--apply=true|false] [--target <CLAUDE.md|.c
 목표: `/tk:reflect`는 branch-local Spec Patch와 Gap Run에서 repo-wide 가치가 있는 durable insight만 추출해 적절한 durable surface에 직접 반영합니다.
 
 ```text
-reflect = branch-local working memory -> CLAUDE.md/.claude/rules durable reflection
+reflect = branch-local working memory -> CLAUDE.local.md/CLAUDE.md/.claude/rules durable reflection
 ```
 
 ## Command surface
@@ -25,11 +25,13 @@ reflect = branch-local working memory -> CLAUDE.md/.claude/rules durable reflect
 - `/tk:reflect` 기본 동작은 `apply=true`입니다.
 - 반영할 durable insight가 없으면 아무 파일도 수정하지 않는 것이 정상 성공입니다.
 - source code는 수정하지 않습니다.
-- apply mode의 content write는 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에만 적용합니다.
+- apply mode의 content write는 `CLAUDE.local.md`, `CLAUDE.md`, 또는 `.claude/rules/**/*.md`에만 적용합니다.
+- 현재 worktree root에 `CLAUDE.local.md`가 있으면 `CLAUDE.md` target 후보는 먼저 `CLAUDE.local.md`에 반영합니다.
+- `CLAUDE.local.md`가 관리되는 경우 프로젝트 공용 지시로 보이는 후보도 일단 `CLAUDE.local.md`에 기재하고, `CLAUDE.md` 승격은 제안으로 남깁니다.
 - branch recency bookkeeping으로 `global-index.json`의 branch entry를 생성하거나 `lastUsedAt`을 갱신할 수 있습니다.
 - branch-local specs/gap 산출물이 없다는 사실만으로 세션 관측 패턴을 durable insight 후보로 승격하지 않습니다.
 - 같은 insight를 중복 반영하지 않습니다.
-- 후보 평가 전 기존 `CLAUDE.md`와 `.claude/rules/**/*.md`를 inventory해 이미 커버되는 guidance를 찾습니다.
+- 후보 평가 전 기존 `CLAUDE.local.md`, `CLAUDE.md`, `.claude/rules/**/*.md`를 inventory해 이미 커버되는 guidance를 찾습니다.
 - 적용 결과 diff/summary를 출력합니다.
 - 기본적으로 reflect 처리 직후 같은 세션에서 `/tk:meta-feedback`을 proposal-only로 함께 제출합니다.
 - `--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 meta-feedback 제출을 생략합니다.
@@ -74,11 +76,12 @@ branch-local specs/gap 산출물이 없으면 산출물 기반 후보는 없는 
 
 | Target | 사용 조건 |
 | --- | --- |
-| `CLAUDE.md` | 저장소 전반에 항상 적용돼야 하는 상위 작업 규칙, evidence rule, approval gate, language/output 규칙일 때 |
+| `CLAUDE.local.md` | 현재 worktree root에 파일이 있고, 후보가 원래 `CLAUDE.md`에 들어갈 저장소 전반 규칙일 때 |
+| `CLAUDE.md` | `CLAUDE.local.md`가 없고, 저장소 전반에 항상 적용돼야 하는 상위 작업 규칙, evidence rule, approval gate, language/output 규칙일 때 |
 | `.claude/rules/**/*.md` | 특정 review/workflow/domain/path에만 적용되는 scoped rule일 때 |
 | `no action` | one-off, duplicate, unresolved, low-confidence, superseded일 때 |
 
-기본 apply는 위 target에 직접 적용합니다. `--target`이 있으면 명시 target을 우선 사용하되 `CLAUDE.md` 또는 `.claude/rules/**/*.md`만 허용합니다. proposal-only preview는 dry-run에서 출력합니다.
+기본 apply는 위 target에 직접 적용합니다. `--target`이 있으면 명시 target을 우선 사용하되 `CLAUDE.local.md`, `CLAUDE.md`, 또는 `.claude/rules/**/*.md`만 허용합니다. proposal-only preview는 dry-run에서 출력합니다. `CLAUDE.local.md`가 있는 기본 apply에서 `CLAUDE.md` 승격 가치가 있는 후보는 적용 summary나 Needs more evidence에 승격 제안으로 남깁니다.
 
 ## Durable insight 후보
 
@@ -98,7 +101,7 @@ reflect는 아래만 durable insight 후보로 삼습니다.
 | Cost | 매번 다시 발견하거나 설명하는 비용이 큼 |
 | Risk | 누락 시 source loss, decision loss, bug, regression, 오판 가능성이 있음 |
 | Stability | 현재 branch에만 묶이지 않고 앞으로도 유지될 규칙임 |
-| Coverage | 기존 `CLAUDE.md` 또는 `.claude/rules/**/*.md`가 이미 커버하지 않음 |
+| Coverage | 기존 `CLAUDE.local.md`, `CLAUDE.md`, 또는 `.claude/rules/**/*.md`가 이미 커버하지 않음 |
 
 통과하지 못한 후보는 `no action`으로 분류합니다. 근거가 부족하지만 후속 확인 가치가 있으면 `Needs more evidence`에 남깁니다.
 
@@ -133,7 +136,7 @@ normalized insight title + target file + source evidence class
 Reflect 완료
 Apply: true
 적용 대상:
-- CLAUDE.md
+- CLAUDE.local.md
 - .claude/rules/<path>.md
 
 적용 결과:
@@ -182,7 +185,7 @@ Meta Feedback:
 Reflect 완료
 Apply: false
 예상 대상:
-- CLAUDE.md
+- CLAUDE.local.md
 - .claude/rules/<path>.md
 
 미리보기 결과:
@@ -205,13 +208,13 @@ Meta Feedback:
 4. branch lock 획득
 5. apply mode 계산: `apply = dryRun ? false : apply !== false`
 6. branch-local memory 로드
-7. 기존 durable guidance inventory로 `CLAUDE.md`와 `.claude/rules/**/*.md`의 coverage 확인
+7. 기존 durable guidance inventory로 `CLAUDE.local.md`, `CLAUDE.md`, `.claude/rules/**/*.md`의 coverage 확인
 8. durable insight 후보 추출
 9. Frequency, Cost, Risk, Stability, Coverage rubric으로 후보 평가
-10. 각 후보를 `CLAUDE.md`, `.claude/rules/**/*.md`, `no action`, `needs more evidence`로 분류
+10. 각 후보를 `CLAUDE.local.md`, `CLAUDE.md`, `.claude/rules/**/*.md`, `no action`, `needs more evidence`로 분류
 11. one-off, superseded, P3/nit, rejected, low-confidence 후보 제거
 12. duplicate 제거
-13. apply=true이고 적용 대상이 있으면 target rule file 또는 `CLAUDE.md`를 직접 수정하고 `global-index.json`에 branch entry가 없으면 생성한 뒤 `lastUsedAt` 갱신
+13. apply=true이고 적용 대상이 있으면 target rule file, `CLAUDE.local.md`, 또는 `CLAUDE.md`를 직접 수정하고 `global-index.json`에 branch entry가 없으면 생성한 뒤 `lastUsedAt` 갱신
 14. apply=true이지만 적용 대상이 없으면 파일을 수정하지 않고 정상 완료합니다.
 15. apply=false이면 preview만 출력하고 저장 없이 종료
 16. branch lock 해제
@@ -228,6 +231,7 @@ Meta Feedback:
 
 - source code 수정
 - `.claude/tigerkit/` 아래 durable insight 저장
+- `CLAUDE.local.md`가 있는 기본 apply에서 `CLAUDE.md`에 바로 쓰는 것
 - branch-local Spec Patch 내용을 repo-wide rule처럼 그대로 복사
 - P3/nit, rejected finding, low-confidence observation 반영
 - unresolved source conflict를 확정 insight처럼 반영
