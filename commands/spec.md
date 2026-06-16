@@ -72,6 +72,12 @@ Timestamp는 local timezone 기준 `YYYYMMDD-HHmmss`입니다. Random suffix는 
 - QA Acceptance Criteria: `QA-SP-YYYYMMDD-HHmmss-RAND-NN`
 - Analytics Contract: `A-SP-YYYYMMDD-HHmmss-RAND-NN`
 
+## Source material and authority
+
+`/tk:spec`은 사용자 입력, 문서, 스크린샷, 회의 메모, 이전 계획을 source material로 저장합니다. source material은 그 자체로 authority가 아닙니다.
+
+confirmed 또는 명시 scope가 있는 항목만 `/tk:gap` final finding evidence나 durable repo guidance 후보가 될 수 있습니다. draft, assumed, unclear, conflict, inaccessible SOT에 막힌 항목은 raw source와 derived interpretation을 분리하고 `## Clarification Needed`에 남깁니다.
+
 ## Input
 
 입력 source는 인자 또는 stdin에서 수집합니다.
@@ -109,6 +115,7 @@ Timestamp는 local timezone 기준 `YYYYMMDD-HHmmss`입니다. Random suffix는 
 - `draft`: 초안, final finding evidence로 사용 금지
 - `assumed`: 추정, final finding evidence로 사용 금지
 - `unclear`: 불명확, final finding evidence로 사용 금지
+- `blocked`: inaccessible SOT나 owner decision 대기, final finding evidence로 사용 금지
 - `conflict`: source conflict 존재, final finding evidence로 사용 금지
 - `superseded`: 대체됨, final finding evidence로 사용 금지
 
@@ -117,6 +124,7 @@ Timestamp는 local timezone 기준 `YYYYMMDD-HHmmss`입니다. Random suffix는 
 - `방금 정해졌는데`, `결정됐는데`, `최종적으로`, `PM이 confirmed`, `디자인에서 확정`, `해야 된대`, `must`, `should be changed to`는 confirmed 후보입니다.
 - `아마`, `같음`, `나을 듯`, `고민 중`, `어떨까`, `maybe`, `probably`, `could`, `might`는 draft 또는 assumed로 둡니다.
 - `적당히`, `예쁘게`, `자연스럽게`, `알아서`, `비슷하게`는 unclear로 둡니다.
+- inaccessible URL, 접근 불가 design/source, owner decision 대기는 blocked로 둡니다.
 - `기존처럼`은 기존 source가 명확하게 제공될 때만 confirmed가 될 수 있습니다.
 
 ## Spec Patch Markdown template

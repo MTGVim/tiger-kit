@@ -16,10 +16,11 @@ TigerKit = branch-scoped spec + gap + durable reflection + continuation handoff 
 
 TigerKit은 branch-local working memory와 durable repo insight를 분리합니다.
 
+- 사용자 입력, 문서, 스크린샷, 회의 메모, 이전 계획은 source material이며 그 자체로 authority가 아닙니다.
 - `spec`, `gap` 산출물은 현재 브랜치의 working memory입니다.
 - 해당 산출물은 repo-wide durable knowledge가 아닙니다.
 - repo에 영구적으로 남길 insight는 `reflect`만 추출하고 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에 반영합니다.
-- 다음 세션을 위한 사람이 읽는 continuation은 `handoff`가 담당합니다.
+- 다음 세션을 위한 사람이 읽는 continuation과 pending follow-up queue는 `handoff`가 담당합니다.
 - TigerKit command/skill 자체 개선 피드백은 `meta-feedback`이 담당합니다.
 
 ## Command Surface
@@ -53,10 +54,11 @@ Plugin namespace는 `/tk:*`입니다. TigerKit v7.2의 공개 실행 표면은 C
 ## `/tk:spec`
 
 - raw instruction을 branch-local Spec Patch로 저장합니다.
+- source material과 authority를 분리합니다. confirmed 또는 명시 scope가 있는 항목만 gap evidence 후보가 됩니다.
 - 기본 저장 위치는 `.claude/tigerkit/branches/<branch-key>/specs/`입니다.
 - 기본 상태는 `active`입니다.
 - confirmed item만 `/tk:gap` final finding evidence로 사용될 수 있습니다.
-- ambiguous instruction은 confirmed로 세탁하지 않고 `draft`, `assumed`, `unclear`, 또는 clarification 대상으로 둡니다.
+- ambiguous instruction은 confirmed로 세탁하지 않고 `draft`, `assumed`, `unclear`, `blocked`, 또는 clarification 대상으로 둡니다.
 - `spec`은 구현 분석을 하지 않고 finding을 만들지 않습니다.
 - 기본 stdout은 ID, branch scope, path, item list summary만 출력합니다.
 - 전체 본문은 `--print-body`가 있을 때만 출력합니다.
@@ -71,6 +73,7 @@ Plugin namespace는 `/tk:*`입니다. TigerKit v7.2의 공개 실행 표면은 C
 - design source는 `structural_context`와 `visual_capture` 신뢰 축을 분리합니다. `visual_capture`는 layout/구성 확인에 쓰고, 색·간격·치수 같은 수치 값은 구조/메타 자료, design token, 또는 confirmed source 없이는 확정하지 않습니다. 기존 구현은 대조·추론 보조로만 씁니다.
 - 기본 산출물은 `report.md`와 `run.json`입니다.
 - 기본 stdout은 run 결과, finding/clarification count, report path, run.json path, next action만 출력합니다.
+- report에는 clarification, finding, re-check, re-run 순서를 보여주는 graph-lite `Next Action Graph`를 포함할 수 있습니다. 이것은 full runner나 execution graph가 아닙니다.
 - 전체 report는 `--print-report`가 있을 때만 출력합니다.
 - `--lite`와 `--strict`는 compatibility flag로만 기록하며 user-facing quality mode가 아닙니다.
 - `--legacy`, `--deep`, `--no-strict`는 active mode가 아닙니다. v6-era legacy behavior는 미지원 과거 동작이며 `lite`의 별칭이 아닙니다.
@@ -123,10 +126,14 @@ Run JSON: .claude/tigerkit/branches/feature-foo--a1b2c3/runs/gap/GAP-20260604-13
 
 - branch-local specs/gap memory에서 durable insight 후보만 추출합니다.
 - 기본 동작은 `apply=true`입니다.
+- 반영할 durable insight가 없으면 아무 파일도 수정하지 않고 성공할 수 있습니다.
 - `--dry-run`과 `--apply=false`는 preview-only입니다.
 - 기본 apply target은 `CLAUDE.md` 또는 `.claude/rules/**/*.md`입니다.
 - `.claude/tigerkit/` 아래에는 durable insight를 저장하지 않습니다.
 - source code는 수정하지 않습니다.
+- 후보는 Frequency, Cost, Risk, Stability, Coverage를 모두 통과해야 합니다.
+- 기존 `CLAUDE.md`와 `.claude/rules/**/*.md`를 먼저 inventory해 중복 durable guidance를 피합니다.
+- 근거가 부족한 후보는 `Needs more evidence`로 남기고 durable rule로 승격하지 않습니다.
 - branch-specific one-off decision, 임시 Spec Patch, superseded 결정, P3/nit, rejected finding, low-confidence observation은 durable insight로 만들지 않습니다.
 - branch-local specs/gap 산출물이 없으면 산출물 기반 후보는 없는 것으로 처리합니다. 사용자 대화에서 명시적으로 확인된 TigerKit 운영 규칙은 후보가 될 수 있지만, 반복 관측 패턴이나 실행자 해석만으로 durable insight를 만들지 않습니다.
 - apply가 저장을 수행하면 `global-index.json`에 current branch entry가 없을 때 새 entry를 만들 수 있습니다.
@@ -140,6 +147,7 @@ Run JSON: .claude/tigerkit/branches/feature-foo--a1b2c3/runs/gap/GAP-20260604-13
 - `/tk:handoff`는 `.claude/tigerkit/global-index.json`의 current branch entry에 `latestHandoffPath`를 함께 기록합니다.
 - 경로를 지정하지 않은 resume 지시는 `global-index.json`의 `latestHandoffPath`를 1순위로 확인합니다.
 - 최신 branch-local Spec Patch와 Gap Run이 있으면 handoff의 relevant files나 validation에 참조할 수 있습니다.
+- 현재 작업을 방해하면 안 되는 follow-up은 `Pending Backlog`에 source/evidence/priority/blocked-by/next action과 함께 남길 수 있습니다.
 - `archive=true` 또는 명시적 archive 요청이 있을 때만 branch-local dated copy를 만듭니다.
 - `.claude/handoffs/current.md`는 optional convenience pointer이며 canonical handoff를 대체하지 않습니다.
 - `Reader Guide`와 `Resume Prompt`를 포함합니다.
@@ -150,7 +158,8 @@ Run JSON: .claude/tigerkit/branches/feature-foo--a1b2c3/runs/gap/GAP-20260604-13
 - 현재 세션 내역에서 TigerKit command/skill 사용 friction과 반복 피드백을 찾습니다.
 - gap 속도, BE 오탐, mode 추천 UX, output shape 같은 개선안을 일반화합니다.
 - repo 이름, product 이름, 내부 path, URL, ticket, branch, PR 번호, commit hash, 사용자 원문 quote는 출력하지 않습니다.
-- repo rule patch는 `/tk:reflect`, basis-target 비교는 `/tk:gap` 대상으로 분리합니다.
+- repo rule patch는 `/tk:reflect`, basis-target 비교는 `/tk:gap`, follow-up 보관은 `/tk:handoff` 대상으로 분리합니다.
+- agent runtime/config, MCP permission, custom agent 추천은 TigerKit 본체 범위 밖으로 둡니다.
 
 ## Generated state
 

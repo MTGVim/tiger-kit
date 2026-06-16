@@ -354,6 +354,37 @@
         "Requires structural metadata, design tokens, or explicit confirmation for numeric design values",
         "Creates Clarification Needed or rejected unverifiable when numeric evidence is insufficient"
       ]
+    },
+    {
+      "id": 15,
+      "name": "reflect-source-authority-backlog-and-meta-boundaries",
+      "prompt": "Evaluate TigerKit docs after reviewing dryforge and oh-my-opencode-slim reflect ideas. Do not write files.",
+      "expected_output": "Should say source material is not authority and only confirmed or explicitly scoped items may become gap evidence or durable guidance. Should describe /tk:reflect as a durable repo guidance promotion gate that inventories existing guidance first, scores candidates with Frequency, Cost, Risk, Stability, and Coverage, supports Needs more evidence, and treats promoting nothing as a successful outcome. Should describe /tk:handoff as the place for a branch-local Pending Backlog with source, evidence, priority, blocked-by, and suggested next action rather than introducing separate active backlog/drain commands. Should describe /tk:gap as optionally including a graph-lite Next Action Graph for clarification/fix/re-check ordering while staying out of full runner or execution graph ownership. Should keep /tk:meta-feedback focused on TigerKit command or skill improvements and keep repo durable guidance in /tk:reflect, with agent runtime/config, MCP permission, and custom agent recommendations outside TigerKit core scope.",
+      "files": [
+        "commands/spec.md",
+        "commands/reflect.md",
+        "commands/handoff.md",
+        "commands/gap.md",
+        "commands/meta-feedback.md",
+        ".tigerkit/docs/usage.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/artifact-layout.md",
+        "README.md"
+      ],
+      "expectations": [
+        "Separates source material from authority",
+        "Requires confirmed or explicitly scoped items for gap evidence or durable guidance",
+        "Scores reflect candidates with Frequency, Cost, Risk, Stability, and Coverage",
+        "Inventories existing durable guidance before reflect apply",
+        "Supports Needs more evidence for reflect",
+        "Treats no durable insight promoted as successful reflect outcome",
+        "Uses handoff Pending Backlog for follow-up queue",
+        "Does not introduce separate active backlog or drain commands",
+        "Adds graph-lite Next Action Graph to gap report",
+        "Does not make TigerKit a full runner or execution graph owner",
+        "Separates meta-feedback from reflect responsibilities",
+        "Keeps agent runtime/config, MCP permission, and custom agent recommendations outside TigerKit core scope"
+      ]
     }
   ]
 }
