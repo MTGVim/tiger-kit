@@ -18,11 +18,12 @@
 ## 핵심 정책
 
 - TigerKit의 목적은 AI-induced source loss를 줄이는 것이다.
-- v7.2 핵심 command set은 `/tk:spec`, `/tk:gap`, `/tk:reflect`, `/tk:handoff`, `/tk:meta-feedback`다.
+- v8.0 핵심 command flow는 `/tk:gap`, `/tk:launch`, `/tk:reflect`이며 compatibility/secondary command는 `/tk:spec`, `/tk:gap --review`, `/tk:handoff`, `/tk:meta-feedback`다.
 - 기존 command를 v7 정리 과정에서 임의 제거하지 않는다. command surface 변경은 compatibility와 docs/evals 동기화를 함께 검토한다.
 - Claude Code plugin command는 namespace를 사용하므로 slash invocation은 `/tk:*` 형태다. 자연어 요청은 같은 프로토콜을 따른다.
 - `/tk:spec`은 현재 session에서 사용자가 직접 제공한 지시, 브레인스토밍, 회의 메모, 결정사항을 현재 브랜치 전용 Spec Patch로 저장한다.
-- `/tk:gap`은 Product/Design Spec, Implementation Plan, Current Implementation을 Contract로 비교해 JudgeMergerAgent가 확정한 actionable finding만 branch-local artifact로 저장한다. 기본 실행은 단일 `/tk:gap` 실행이며, 속도 차이는 품질 mode가 아니라 analysis depth 휴리스틱과 verification escalation으로 제어한다.
+- 기본 `/tk:gap`은 source grounding, ambiguity attack, sealed launch workflow 생성을 수행하고 `GAP_READY` 또는 `GAP_BLOCKED`로 끝난다. v7 Contract-based Gap Review는 `/tk:gap --review` compatibility mode로 유지한다.
+- `/tk:launch`는 `GAP_READY` sealed workflow만 실행하며, workflow 밖 scope 확장, missing requirement 임의 해석, verification 없는 success 선언, preflight 승인 없는 commit을 금지한다.
 - `/tk:reflect`는 branch-local working memory에서 repo에 영구 보존할 insight만 추출한다. 기본 동작은 `apply=true`이며, source code는 수정하지 않고 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에 직접 반영한다.
 - `/tk:handoff`는 다음 세션이나 다음 작업자가 이어받을 continuation 문서를 작성한다.
 - `/tk:meta-feedback`은 현재 세션 내역에서 TigerKit command/skill 개선안을 일반화해 추출한다.
