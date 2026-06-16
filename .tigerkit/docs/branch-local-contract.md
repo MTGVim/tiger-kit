@@ -1,6 +1,6 @@
 # TigerKit branch-local storage contract
 
-이 문서는 TigerKit v7.2 branch-local working memory의 저장 위치, branch key, index, write safety, handoff/reflect 경계를 설명합니다. 산출물 전체 구조는 `.tigerkit/docs/artifact-layout.md`, `/tk:gap` stdout/report/run.json 계약은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
+이 문서는 TigerKit v8.0 branch-local working memory의 저장 위치, branch key, index, write safety, gap/launch/handoff/reflect 경계를 설명합니다. 산출물 전체 구조는 `.tigerkit/docs/artifact-layout.md`, command stdout 계약은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
 
 ## 기본 저장 위치
 
@@ -16,7 +16,20 @@ Spec Patch 기본 위치:
 .claude/tigerkit/branches/<branch-key>/specs/
 ```
 
-Gap Run 기본 위치:
+Sealed workflow 기본 위치:
+
+```text
+.claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
+.claude/tigerkit/branches/<branch-key>/gap/current.md
+```
+
+Launch run 기본 위치:
+
+```text
+.claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/
+```
+
+Gap Review compatibility 기본 위치:
 
 ```text
 .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/
@@ -113,6 +126,34 @@ Tiger Kit does not read or write files outside the current worktree by default.
 상세 artifact layout은 `.tigerkit/docs/artifact-layout.md`를 기준으로 합니다. 상세 stdout/report/run.json 계약은 `.tigerkit/docs/output-contract.md`의 `/tk:gap default stdout` 섹션을 기준으로 합니다.
 
 `.claude/tigerkit/`은 generated branch-local working memory이며 repo-wide durable knowledge가 아닙니다.
+
+## `/tk:gap` sealed workflow storage
+
+기본 `/tk:gap`은 launch 가능 여부에 따라 아래 중 하나를 저장합니다.
+
+```text
+.claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
+.claude/tigerkit/branches/<branch-key>/gap/current.md
+.claude/tigerkit/branches/<branch-key>/gap/<GAP-ID>.md
+```
+
+- `GAP_READY`이면 sealed workflow archive와 `current.md` copy를 씁니다.
+- `GAP_BLOCKED`이면 blocked report만 쓰고 `tigerkit-launch-workflow` block은 쓰지 않습니다.
+- `branch-state.json`에는 `lastWorkflowId`, `lastWorkflowPath`, `lastWorkflowHash`, `lastGapStatus`를 기록할 수 있습니다.
+
+## `/tk:launch` branch-local context
+
+`/tk:launch`는 실행 또는 abort 결과를 아래에 저장합니다.
+
+```text
+.claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/report.md
+.claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/run.json
+.claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/reflect-report.md
+```
+
+- launch run은 workflow hash, task/gate 결과, abort code, commit decision을 기록합니다.
+- `reflect-report.md`는 generated branch-local trace이며 durable apply가 아닙니다.
+- `branch-state.json`에는 `lastLaunchId`, `lastLaunchPath`, `lastLaunchStatus`를 기록할 수 있습니다.
 
 ## `/tk:handoff` branch-local context
 

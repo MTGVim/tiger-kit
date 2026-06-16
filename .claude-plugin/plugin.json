@@ -1,6 +1,6 @@
 {
   "name": "tk",
-  "description": "branch-scoped spec, user-facing contract-based gap review, durable reflection, meta-feedback, and handoff를 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다.",
+  "description": "branch-scoped spec, user-facing contract-based gap review, sealed GAP workflow, human-approved launch, durable reflection, meta-feedback, and handoff를 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다.",
   "version": "7.4.2",
   "author": {
     "name": "MTGVim"
@@ -8,6 +8,7 @@
   "commands": [
     "./commands/spec.md",
     "./commands/gap.md",
+    "./commands/launch.md",
     "./commands/reflect.md",
     "./commands/meta-feedback.md",
     "./commands/handoff.md"

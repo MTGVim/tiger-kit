@@ -17,8 +17,10 @@
 - Label proposed next steps as Suggestion.
 - Keep raw source text and derived Spec Item or Contract text separate.
 
-## GAP-003: Use the v7 `/tk:gap` finding schema
+## GAP-003: Use the v8 `/tk:gap --review` finding schema
 
+- Default `/tk:gap` produces `GAP_READY` with a sealed workflow or `GAP_BLOCKED` without a workflow block.
+- v7 Contract-based Gap Review behavior belongs to `/tk:gap --review` compatibility mode.
 - Contract sources must be one of `product`, `design`, `design_system`, `engineering`, `qa`, or `analytics`.
 - Candidate kind must be one of `plan_gap`, `implementation_gap`, or `red_team_candidate`.
 - Accepted final severity must be one of `P0`, `P1`, or `P2`.
@@ -41,7 +43,8 @@
 
 ## GAP-005: Match output to user-facing storage and stdout contract
 
-- Default stdout emits a compact user receipt only: run ID, branch scope, P0/P1/P2 counts, source conflict count, clarification-needed count, report path, run.json path, and next action.
+- Default `/tk:gap` stdout emits a compact `GAP_READY` or `GAP_BLOCKED` receipt. `GAP_READY` must include workflow path and hash; `GAP_BLOCKED` must include blocked counts and no workflow block.
+- `/tk:gap --review` stdout emits a compact user receipt only: run ID, branch scope, P0/P1/P2 counts, source conflict count, clarification-needed count, report path, run.json path, and next action.
 - Default stdout may include compact Actionable Findings and Clarification Needed tables only when those rows exist. Tables must use run-local `Ref` values rather than long canonical Candidate/Finding IDs.
 - Do not print quality gate, analysis depth proof, expansion reasons dump, verification escalation, performance proof, heuristic proof, baseline refresh, proof freshness, rejected/downgraded observation lists, or artifact file lists in default stdout.
 - Do not use ambiguous labels like `선택모드`, `실행모드`, `실행 preset`, and `추천 preset`.

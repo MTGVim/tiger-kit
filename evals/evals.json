@@ -1,389 +1,271 @@
 {
-  "skill_name": "tiger-kit-v7-2-14-user-facing-gap-maintainer-proof",
+  "skill_name": "tiger-kit-v8-sealed-gap-launch-reflect",
   "command_surface": {
-    "surface_model": "TigerKit v7.2 exposes Claude Code plugin commands; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts without separate repo-local skill files.",
+    "surface_model": "TigerKit v8.0 exposes Claude Code plugin commands; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts without separate repo-local skill files.",
     "core_commands": [
-      "/tk:spec",
       "/tk:gap",
-      "/tk:reflect",
+      "/tk:launch",
+      "/tk:reflect"
+    ],
+    "compatibility_commands": [
+      "/tk:gap --review",
+      "/tk:spec",
       "/tk:handoff",
       "/tk:meta-feedback"
     ],
-    "gap_quality_gates": [
-      "evidenceReadBack",
-      "producerEvidence",
-      "ambiguityConsent",
-      "JudgeMerger"
+    "gap_terminal_statuses": [
+      "GAP_READY",
+      "GAP_BLOCKED"
     ],
-    "gap_default_artifacts": [
-      "report.md",
-      "run.json"
+    "launch_abort_codes": [
+      "WORKFLOW_NOT_FOUND",
+      "MULTIPLE_WORKFLOW_BLOCKS",
+      "WORKFLOW_HASH_MISMATCH",
+      "GAP_BLOCKED",
+      "HUMAN_DECISION_REQUIRED",
+      "AUTOPILOT_DISABLED",
+      "AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1",
+      "OUT_OF_SCOPE_DIFF",
+      "HYDRATION_CONFLICT",
+      "VERIFICATION_FAILED"
     ],
-    "gap_maintainer_proof_artifacts": [
-      "maintainer-proof/input-manifest.json",
-      "maintainer-proof/contracts.json",
-      "maintainer-proof/candidates.json",
-      "maintainer-proof/judge-result.json",
-      "maintainer-proof/baseline-snapshot.json",
-      "maintainer-proof/proof.json"
-    ],
-    "gap_analysis_depths": [
-      "direct",
-      "bounded",
-      "expanded",
-      "exhaustive-capped"
-    ],
-    "compatibility_flags": [
-      "--lite",
-      "--strict"
-    ],
-    "maintainer_flags": [
-      "--maintainer-proof"
-    ],
-    "removed_gap_modes": [
-      "legacy",
-      "deep",
-      "no-strict"
+    "phase_1_boundaries": [
+      "Claude Code command-contract runner only",
+      "no adapter implementation files",
+      "no runtime parser or binary",
+      "autopilot recovery disabled"
     ]
   },
   "evals": [
     {
       "id": 0,
-      "name": "command-surface-restores-existing-commands",
-      "prompt": "You are evaluating TigerKit active command surface. Describe the user-facing commands. Do not write files.",
-      "expected_output": "Should list /tk:spec, /tk:gap, /tk:reflect, /tk:handoff, and /tk:meta-feedback as active user-facing commands. Should explain that TigerKit v7.2 exposes Claude Code plugin commands, not separate repo-local skill files, and that commands/*.md plus .claude-plugin/plugin.json own the /tk:* contracts. Should explain that handoff and meta-feedback are active existing commands, not newly invented commands. Should explain that spec/gap write branch-local working memory, reflect creates durable insight, handoff creates continuation context, and meta-feedback extracts generalized TigerKit improvement feedback from session history.",
-      "files": [],
+      "name": "command-surface-adds-launch-preserves-existing-commands",
+      "prompt": "Evaluate TigerKit v8 active command surface. Do not write files.",
+      "expected_output": "Should list /tk:gap, /tk:launch, and /tk:reflect as the primary v8 flow. Should also preserve /tk:spec, /tk:gap --review, /tk:handoff, and /tk:meta-feedback as compatibility or secondary commands. Should explain that commands/*.md plus .claude-plugin/plugin.json own the /tk:* contracts and that existing commands are not removed.",
+      "files": [
+        ".claude-plugin/plugin.json",
+        "README.md",
+        ".tigerkit/docs/usage.md"
+      ],
       "expectations": [
-        "Lists /tk:spec",
         "Lists /tk:gap",
+        "Lists /tk:launch",
         "Lists /tk:reflect",
-        "Lists /tk:handoff",
-        "Lists /tk:meta-feedback",
-        "Treats /tk:* as command-owned plugin contracts, not separate repo-local skills",
-        "Treats handoff as active continuation command",
-        "Treats meta-feedback as active session-history improvement command",
-        "Explains spec/gap branch-local working memory",
-        "Explains reflect-only durable insight"
+        "Preserves /tk:spec",
+        "Preserves /tk:handoff",
+        "Preserves /tk:meta-feedback",
+        "Mentions /tk:gap --review compatibility",
+        "Treats /tk:* as command-owned plugin contracts"
       ]
     },
     {
       "id": 1,
-      "name": "gap-default-user-facing-surface",
-      "prompt": "Evaluate the default /tk:gap user-facing command surface. Do not write files.",
-      "expected_output": "Should describe default /tk:gap as a single user-facing gap review execution that compares Product/Design Spec, implementation plan, and current implementation. Should say default artifacts are report.md and run.json. Should say default stdout is compact and action-oriented with run ID, branch scope, P0/P1/P2 counts, source conflict count, clarification-needed count, report path, run.json path, and next action. Should not require input-manifest.json, contracts.json, candidates.json, judge-result.json, baseline-snapshot.json, heuristicProof, performance, baseline scores, or proof artifact inventory in the default path. Should preserve existing /tk:gap command and not create a new skill or remove an existing skill.",
+      "name": "gap-ready-produces-sealed-workflow",
+      "prompt": "Evaluate default /tk:gap when enough source exists to create a launch workflow. Do not write files.",
+      "expected_output": "Should end with GAP_READY, include a sealed tigerkit-launch-workflow block, include workflow path, workflow hash, task count, verification gate count, autopilot allowed false, commit policy preflight_decision_required, and next action /tk:launch. GAP_READY cannot be claimed without a launch workflow.",
       "files": [
         "commands/gap.md",
-        ".tigerkit/docs/usage.md",
         ".tigerkit/docs/output-contract.md",
         ".tigerkit/docs/artifact-layout.md"
       ],
       "expectations": [
-        "Default /tk:gap is single execution",
-        "Default artifacts are report.md and run.json",
-        "Default stdout is compact and action-oriented",
-        "No default proof artifact requirement",
-        "No default heuristicProof requirement",
-        "No default performance proof requirement",
-        "No new skill creation",
-        "No existing skill removal"
+        "Ends with GAP_READY",
+        "Includes tigerkit-launch-workflow",
+        "Includes workflow path",
+        "Includes workflow hash",
+        "Includes task count",
+        "Includes verification gate count",
+        "Autopilot allowed false in Phase 1",
+        "Next action is /tk:launch"
       ]
     },
     {
       "id": 2,
-      "name": "gap-maintainer-proof-is-explicit-only",
-      "prompt": "Evaluate /tk:gap --maintainer-proof. Do not write files.",
-      "expected_output": "Should describe --maintainer-proof as maintainer/self-eval only, not as a user-facing quality mode or recommended stronger preset. Should allow proof/debug artifacts only when --maintainer-proof is explicit, under maintainer-proof/. Should allow input-manifest.json, contracts.json, candidates.json, judge-result.json, baseline-snapshot.json, proof.json, heuristicProof, performance, baselineAutoRefreshGate, claimFreshnessGate, targetSurfaceCoverageGate, and dispatchCompletenessGate only in the maintainer-proof path. Should still keep default stdout compact even when proof artifacts exist unless --print-report is used.",
+      "name": "gap-blocked-never-emits-workflow",
+      "prompt": "Evaluate default /tk:gap when an unresolved API decision or missing source blocks execution. Do not write files.",
+      "expected_output": "Should end with GAP_BLOCKED, record blocked reasons, human decisions or missing sources, and next action for clarification or source supply. Should not include a tigerkit-launch-workflow block because launch is forbidden until the blocking issue is resolved.",
       "files": [
         "commands/gap.md",
-        ".claude/rules/review/gap-analysis.md",
-        ".tigerkit/docs/output-contract.md",
-        ".tigerkit/docs/artifact-layout.md",
-        ".tigerkit/docs/usage.md"
+        ".tigerkit/docs/output-contract.md"
       ],
       "expectations": [
-        "Requires explicit --maintainer-proof for proof artifacts",
-        "Does not describe maintainer proof as user quality mode",
-        "Uses maintainer-proof/ artifact scope",
-        "Allows heuristicProof only in maintainer path",
-        "Allows performance proof only in maintainer path",
-        "Keeps stdout compact"
+        "Ends with GAP_BLOCKED",
+        "Records blocked reasons",
+        "Records human decisions when needed",
+        "Records missing sources when needed",
+        "Does not include tigerkit-launch-workflow",
+        "Does not silently guess decisions"
       ]
     },
     {
       "id": 3,
-      "name": "gap-analysis-depth-user-facing-boundary",
-      "prompt": "Evaluate /tk:gap analysis depth selection. Do not write files.",
-      "expected_output": "Should choose direct only for one explicit local surface with no API/DTO/state/auth/payment/data mutation/shared component/ambiguity trigger. Should choose bounded for single screen/component/command with nearby 1-depth usage lookup or representative samples up to 3. Should choose expanded for shared component, design-system, API/DTO/state transition, source conflict risk, inaccessible reference, ambiguous Product/API/Design decision, or divergent similar implementations. Should choose exhaustive-capped for P0/P1 candidate, auth/permission/payment/data mutation/destructive action, release gate, or cross-module impact. Hard triggers should run before riskScore tie-breakers. Explicit --analysis-depth should not lower the heuristic-required minimum depth for risky surfaces. Should not call the choice lite or strict mode. Should not require analysisDepth proof, riskScore, depthReasons dump, baseline, or improvement ratio in default stdout/report/run.json; those are maintainer-proof only if claimed.",
+      "name": "gap-review-preserves-v7-contract-review",
+      "prompt": "Evaluate /tk:gap --review behavior. Do not write files.",
+      "expected_output": "Should preserve v7 Contract-based Gap Review behavior: compare Product/Design Spec, implementation plan, and current implementation; emit report.md and run.json; use JudgeMergerAgent for final findings; keep P0/P1/P2 accepted findings only; keep default stdout compact. Should not describe --review as a stronger quality mode.",
       "files": [
         "commands/gap.md",
         ".claude/rules/review/gap-analysis.md",
         ".tigerkit/docs/output-contract.md"
       ],
       "expectations": [
-        "Depth heuristic covers risk axes",
-        "No quality downgrade",
-        "Hard triggers run before riskScore tie-breakers",
-        "No lite/strict mode wording",
-        "No default analysisDepth proof requirement",
-        "Analysis-depth improvement proof is maintainer-only"
+        "Uses /tk:gap --review for v7 review",
+        "Default artifacts are report.md and run.json",
+        "JudgeMergerAgent remains final authority",
+        "Final findings are P0/P1/P2 only",
+        "Compact stdout remains",
+        "No quality mode wording"
       ]
     },
     {
       "id": 4,
-      "name": "gap-consumer-fallback-not-producer-absence",
-      "prompt": "Evaluate a /tk:gap candidate that claims an API does not provide a required value, but cites only frontend fallback/default/mapper evidence. Do not write files.",
-      "expected_output": "Should not accept the candidate as P0/P1/P2 and should not create SourceConflict from consumer-only evidence. If API contract, schema, endpoint response, serializer, data model, backend fixture, or owner-confirmed producer behavior is provided or discoverable in the repo, it should inspect that producer surface before asking the user. Should reject or downgrade with missing_producer_evidence, missing_evidence, or unverifiable only after available producer surfaces are checked. Should state producer-side evidence is required, tell the user what producer evidence was checked and what is still missing in report.md, and create a Clarification Needed confirmation request when the missing producer evidence blocks the gap decision.",
+      "name": "launch-missing-workflow-aborts",
+      "prompt": "Evaluate /tk:launch when no workflow path or current workflow exists. Do not write files.",
+      "expected_output": "Should abort before execution with WORKFLOW_NOT_FOUND. Should not invent a workflow, ask mid-flight questions, or run tasks. Should emit an aborted launch receipt with report and reflect trace paths when possible.",
       "files": [
-        "commands/gap.md",
-        ".claude/rules/review/gap-analysis.md"
+        "commands/launch.md",
+        ".tigerkit/docs/output-contract.md"
       ],
       "expectations": [
-        "Rejects consumer-only producer absence claim",
-        "Checks provided or discoverable producer evidence before asking user",
-        "Uses missing_producer_evidence only after available producer surfaces are checked",
-        "Does not accept SourceConflict without producer evidence",
-        "Creates Clarification Needed for missing producer evidence when decision-blocking"
+        "Abort code WORKFLOW_NOT_FOUND",
+        "No invented workflow",
+        "No task execution",
+        "No mid-flight question",
+        "Aborted receipt shape"
       ]
     },
     {
       "id": 5,
-      "name": "gap-ambiguity-blocks-judge-accept-path",
-      "prompt": "Evaluate a /tk:gap candidate where Product/API/Design source priority is ambiguous. Do not write files.",
-      "expected_output": "Should not silently choose the likely interpretation. Should route the item to SourceConflict or Clarification Needed before accepted finding path. Should continue other clear checks. Should record evidence, impact, recommendation, and status for the clarification, using user-facing short Ref such as Q1.",
+      "name": "launch-multiple-workflow-blocks-aborts",
+      "prompt": "Evaluate /tk:launch when the workflow file contains two tigerkit-launch-workflow blocks. Do not write files.",
+      "expected_output": "Should abort before execution with MULTIPLE_WORKFLOW_BLOCKS. Should require exactly one launch workflow block and should not pick one silently.",
       "files": [
-        "commands/gap.md",
-        ".claude/rules/review/gap-analysis.md"
+        "commands/launch.md",
+        ".tigerkit/docs/output-contract.md"
       ],
       "expectations": [
-        "Ambiguity blocks accept path",
-        "Creates SourceConflict or Clarification Needed",
-        "No guessed final finding",
-        "Uses short Ref for user-facing clarification"
+        "Abort code MULTIPLE_WORKFLOW_BLOCKS",
+        "Requires exactly one workflow block",
+        "Does not choose silently"
       ]
     },
     {
       "id": 6,
-      "name": "gap-final-receipt-single-execution",
-      "prompt": "Evaluate /tk:gap stdout receipt for a completed default run. Do not write files.",
-      "expected_output": "Should output a compact user receipt with run ID, branch scope, P0/P1/P2 counts, source conflict count, clarification-needed count, report path, run.json path, and one next action. Should include compact Actionable Findings only when accepted findings exist, and compact Clarification Needed only when user confirmation is needed. Should use short run-local Ref values instead of long canonical Candidate/Finding IDs. Should not print analysis depth, expansion reasons, verification escalation, dispatch skip summary, Candidate Intake Gate summary, TargetSurfaceCoverageGate proof, DispatchCompletenessGate proof, BaselineAutoRefreshGate status, ClaimFreshnessGate status, heuristic proof ratios, rejected/downgraded observation lists, numeric performance proof, or artifact file lists in default stdout. Should not output executed preset, recommended preset, or Strict executed as primary labels.",
+      "name": "launch-hash-mismatch-aborts",
+      "prompt": "Evaluate /tk:launch when workflow_sha256 does not match the fenced block body. Do not write files.",
+      "expected_output": "Should calculate SHA-256 from the raw UTF-8 bytes inside the single tigerkit-launch-workflow fenced block after LF normalization and exactly one final LF, excluding fence lines and without YAML sorting. Should abort with WORKFLOW_HASH_MISMATCH when the calculated hash differs.",
       "files": [
-        "commands/gap.md",
+        "commands/launch.md",
         ".tigerkit/docs/output-contract.md"
       ],
       "expectations": [
-        "Receipt is compact and action-oriented",
-        "Includes report path, run.json path, and next action",
-        "Includes finding and clarification counts",
-        "Keeps proof and baseline details out of default stdout",
-        "Keeps rejected/downgraded observation list out of default stdout",
-        "Keeps artifact file list out of default stdout",
-        "No primary preset labels",
-        "Compact tables are conditional",
-        "Compact tables use short Ref values instead of long canonical IDs"
+        "Calculates hash from block body",
+        "Excludes fence lines",
+        "Normalizes line endings to LF",
+        "Ensures one final LF",
+        "Does not YAML-normalize",
+        "Abort code WORKFLOW_HASH_MISMATCH"
       ]
     },
     {
       "id": 7,
-      "name": "gap-default-excludes-proof-metadata",
-      "prompt": "Evaluate whether default /tk:gap should create or require proof metadata. Do not write files.",
-      "expected_output": "Should say default /tk:gap does not require heuristicProof, performance, baseline-snapshot.json, input-manifest.json, judge-result.json, qualityGates dump, dispatchPlan dump, dispatchSkips proof, targetSurfaceCoverageGate proof, dispatchCompletenessGate proof, claimFreshnessGate, baselineAutoRefreshGate, false-positive improvement claim, false-negative improvement claim, speed improvement claim, analysis-depth improvement claim, or combined heuristic proof claim. Should say those are allowed only with explicit --maintainer-proof. Should still preserve evidence read-back, producer evidence gate, ambiguity gate, and JudgeMergerAgent decision quality in the default path.",
+      "name": "launch-human-decision-required-no-question",
+      "prompt": "Evaluate /tk:launch when execution reveals a new product or API decision is required. Do not write files.",
+      "expected_output": "Should not ask the user a mid-flight question. Should abort with HUMAN_DECISION_REQUIRED, preserve completed task count, failed gate or reason, and next action for human decision or workflow regeneration.",
       "files": [
-        "commands/gap.md",
-        ".claude/rules/review/gap-analysis.md",
-        ".tigerkit/docs/output-contract.md",
-        ".tigerkit/docs/artifact-layout.md"
+        "commands/launch.md",
+        ".tigerkit/docs/output-contract.md"
       ],
       "expectations": [
-        "No default heuristicProof",
-        "No default performance proof",
-        "No default baseline-snapshot requirement",
-        "No default input-manifest or judge-result requirement",
-        "No default improvement claim",
-        "Maintainer proof is explicit only",
-        "Default quality gates remain"
+        "No mid-flight question",
+        "Abort code HUMAN_DECISION_REQUIRED",
+        "Preserves completed task count",
+        "Provides next action"
       ]
     },
     {
       "id": 8,
-      "name": "gap-maintainer-performance-proof",
-      "prompt": "Evaluate /tk:gap --maintainer-proof performance proof requirements. Do not write files.",
-      "expected_output": "Should require a measured performance proof rather than a vague estimate only when --maintainer-proof is explicit. Should use the contract-derived critical path proxy when runtime wall-clock instrumentation is unavailable. Should require speed proof to record cumulativeBaseline, refreshed origin/main iterationBaseline, currentScore, cumulativeImprovementRatio, iterationImprovementRatio, score direction lower_is_better, performance agent critical path groups, deterministic stage groups, run procedure steps, measurementMethod, baselineAutoRefreshGate, baseline-snapshot.json, and heuristicProof.speed in maintainer-proof artifacts. Should calculate baseline and current with the same proxy weights. Credited dispatchSkips may count only when credited, criticalPathDelta, and evidenceCoveragePreserved are recorded. Should not claim success from phrases such as expected, estimated, or likely.",
+      "name": "launch-autopilot-disabled-in-phase1",
+      "prompt": "Evaluate /tk:launch --autopilot in Phase 1. Do not write files.",
+      "expected_output": "Should not perform bounded recovery in Phase 1. If workflow autopilot_policy.enabled is false, abort with AUTOPILOT_DISABLED. If recovery is requested by the command surface but unavailable in Phase 1, abort with AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1. Should not change requirements or expand scope.",
       "files": [
-        "commands/gap.md",
-        ".claude/rules/review/gap-analysis.md",
-        ".tigerkit/docs/output-contract.md",
-        ".tigerkit/docs/gap-baselines.json"
+        "commands/launch.md",
+        ".tigerkit/docs/usage.md"
       ],
       "expectations": [
-        "Requires explicit --maintainer-proof",
-        "Uses measured proxy fields",
-        "Requires measurementMethod and critical path components",
-        "Requires cumulative and refreshed origin/main iteration speed baselines",
-        "Requires heuristicProof.speed in maintainer artifacts",
-        "Requires credited dispatch skip fields before counting skip benefit",
-        "Rejects estimate-only proof"
+        "No recovery in Phase 1",
+        "Abort code AUTOPILOT_DISABLED when policy disabled",
+        "Abort code AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1 when implementation unavailable",
+        "No scope expansion"
       ]
     },
     {
       "id": 9,
-      "name": "gap-maintainer-false-negative-coverage-proof",
-      "prompt": "Evaluate /tk:gap --maintainer-proof for a run that could miss a P0/P1 issue because target surfaces or skipped agents were not checked. Do not write files.",
-      "expected_output": "Should require TargetSurfaceCoverageGate, DispatchCompletenessGate, and ClaimFreshnessGate before claiming false-negative improvement only in maintainer-proof mode. TargetSurfaceCoverageGate should record checked contract surfaces, target/plan/producer surfaces, and unchecked required surfaces for the selected analysisDepth. DispatchCompletenessGate should compare SourcePresenceManifest with dispatchPlan and record falseNegativeRisk for skipped agents. CriticalRedTeamAgent should perform one missed-P0/P1 targeted search within the selected depth scope. heuristicProof.falseNegative should include metric, denominator, cumulativeBaseline, iterationBaseline, currentScore, cumulativeImprovementRatio, iterationImprovementRatio, improvement formula, and claimAllowed, and claimAllowed should be false if required surfaces are unchecked, dispatch completeness is missing, or proof inputs are stale.",
+      "name": "launch-out-of-scope-diff-aborts",
+      "prompt": "Evaluate /tk:launch when completing a task would require files or behavior outside the sealed workflow scope. Do not write files.",
+      "expected_output": "Should abort with OUT_OF_SCOPE_DIFF rather than broadening scope. Should not commit out-of-scope changes and should report the blocked reason in the launch receipt.",
       "files": [
-        "commands/gap.md",
-        ".claude/rules/review/gap-analysis.md",
+        "commands/launch.md",
         ".tigerkit/docs/output-contract.md"
       ],
       "expectations": [
-        "Requires explicit --maintainer-proof",
-        "Requires TargetSurfaceCoverageGate for FN claim",
-        "Requires DispatchCompletenessGate for FN claim",
-        "Requires ClaimFreshnessGate for FN claim",
-        "Records falseNegativeRisk for skipped agents in maintainer proof",
-        "Runs missed P0/P1 targeted search once",
-        "Requires heuristicProof.falseNegative numeric fields",
-        "Blocks false-negative claim when required coverage is missing"
+        "Abort code OUT_OF_SCOPE_DIFF",
+        "No scope broadening",
+        "No out-of-scope commit",
+        "Reports blocked reason"
       ]
     },
     {
       "id": 10,
-      "name": "gap-maintainer-combined-heuristic-proof-claim",
-      "prompt": "Evaluate whether /tk:gap --maintainer-proof may claim cumulative and per-iteration improvement for false-positive reduction, false-negative reduction, speed, and analysis depth. Do not write files.",
-      "expected_output": "Should require explicit --maintainer-proof before any combined improvement claim. Should require heuristicProof cumulativeRequiredImprovementRatio and iterationRequiredImprovementRatio. For falsePositive, falseNegative, speed, and analysisDepth, should require metric, scoreDirection, cumulativeBaseline, iterationBaseline, currentScore, cumulativeImprovementRatio, iterationImprovementRatio, improvementFormula, and claimAllowed. Higher-is-better metrics should use currentScore / baselineScore; speed should use baselineScore / currentScore. Should require ClaimFreshnessGate status, checkedAfter, staleInputs, and repairedInputs as a separate claim gate rather than a score denominator. Should allow the combined claim only when all four cumulative ratios meet the cumulative target, all four iteration ratios are > 1.0, all four claimAllowed values are true, and ClaimFreshnessGate passes. Should reject the combined claim if fixed cumulative baseline alone is used for a new iteration claim, consumer-only producer evidence, unchecked target surfaces, missing dispatch completeness, uncredited dispatch skips, risk-score-before-hard-trigger depth selection, or stale proof inputs are used.",
+      "name": "reflect-after-launch-no-durable-apply-without-approval",
+      "prompt": "Evaluate reflect behavior after /tk:launch completes or aborts. Do not write files.",
+      "expected_output": "Should allow /tk:launch to write a generated reflect-report.md trace for /tk:reflect. Should not apply durable CLAUDE.md or .claude/rules changes or create commits unless preflight approval recorded that action. Should classify repo durable insight, skill proposal, TigerKit meta-feedback, verification gap, workflow weakness, and unresolved follow-up separately.",
       "files": [
-        "commands/gap.md",
-        ".claude/rules/review/gap-analysis.md",
+        "commands/launch.md",
+        "commands/reflect.md",
         ".tigerkit/docs/output-contract.md"
       ],
       "expectations": [
-        "Requires explicit --maintainer-proof",
-        "Requires cumulativeRequiredImprovementRatio and iterationRequiredImprovementRatio",
-        "Requires false-positive subproof",
-        "Requires ClaimFreshnessGate as separate claim gate",
-        "Requires false-negative subproof",
-        "Requires speed subproof",
-        "Requires analysis-depth subproof",
-        "Rejects combined claim if any cumulative or iteration subproof is below threshold",
-        "Rejects fixed cumulative baseline used as iteration proof",
-        "Rejects consumer-only producer evidence",
-        "Rejects unchecked target surfaces",
-        "Rejects missing dispatch completeness",
-        "Rejects uncredited dispatch skip benefit",
-        "Rejects risk-score-before-hard-trigger depth selection",
-        "Rejects stale proof inputs"
+        "Launch writes generated reflect report",
+        "No durable apply without approval",
+        "No commit without approval",
+        "Reflect reads launch trace",
+        "Separates durable insight from proposals and follow-ups"
       ]
     },
     {
       "id": 11,
-      "name": "handoff-remains-continuation-command",
-      "prompt": "You are evaluating /tk:handoff after a branch has spec and gap artifacts. Describe expected behavior. Do not write files.",
-      "expected_output": "Should preserve /tk:handoff as the existing continuation command. It should write the canonical branch-local handoff current.md by default, record latestHandoffPath in .claude/tigerkit/global-index.json for pathless resume instructions, include Reader Guide and Resume Prompt, optionally mention latest branch-local Spec Patch and Gap Run paths when observed, and create a dated archive only when archive=true or an explicit archive request is present.",
-      "files": [],
+      "name": "worktree-hydration-conflict-blocks-tracked-symlink",
+      "prompt": "Evaluate /tk:launch --worktree hydration policy when a tracked file would be symlinked. Do not write files.",
+      "expected_output": "Should treat tracked file symlink hydration as a conflict and abort or block with HYDRATION_CONFLICT. Hydration must never mutate source_worktree and tracked files must not be symlinked by default.",
+      "files": [
+        "commands/launch.md",
+        ".tigerkit/docs/artifact-layout.md",
+        ".tigerkit/docs/branch-local-contract.md"
+      ],
       "expectations": [
-        "Preserves /tk:handoff as active command",
-        "Writes branch-local handoff current.md by default",
-        "Records latestHandoffPath in global-index.json for pathless resume",
-        "Includes Reader Guide",
-        "Includes Resume Prompt",
-        "Can reference latest branch-local Spec Patch and Gap Run paths",
-        "Does not create dated archive without archive=true or explicit archive request"
+        "Abort or block with HYDRATION_CONFLICT",
+        "Does not mutate source_worktree",
+        "Does not symlink tracked files by default",
+        "Records worktree decision in contract"
       ]
     },
     {
       "id": 12,
-      "name": "meta-feedback-uses-session-history-for-gap-improvements",
-      "prompt": "You are evaluating /tk:meta-feedback after a session where the user said gap was slow, backend findings had false positives, mode wording was confusing, and ambiguous UI/API decisions should be resolved with the user. Describe expected behavior. Do not write files.",
-      "expected_output": "Should use the session history as evidence, generalize the feedback without exposing project assets, and propose TigerKit command or skill improvements. It should capture performance friction as a maintainer/self-eval concern only when relevant, candidate evidence precision gates for stale file:line/module-path coordinates, producer-absence evidence gates for backend false-positive reduction, ambiguity consent gate guidance, and UI clarification via tables or aligned TUI/ASCII mockups. It should not create repo rule patches like reflect and should not output raw user quotes, paths, tickets, PR numbers, branch names, or project-specific labels.",
-      "files": [],
-      "expectations": [
-        "Uses session history as the evidence source",
-        "Generalizes performance friction without making default /tk:gap proof-heavy",
-        "Generalizes candidate evidence precision gate improvement",
-        "Generalizes producer-absence evidence gate improvement",
-        "Generalizes backend false-positive feedback",
-        "Generalizes ambiguity consent gate feedback",
-        "Mentions tables or aligned TUI/ASCII mockups for UI clarification",
-        "Proposes TigerKit command or skill improvement",
-        "Does not expose raw user quotes",
-        "Does not expose paths, tickets, PR numbers, branch names, or project-specific labels",
-        "Does not behave like /tk:reflect repo rule patching"
-      ]
-    },
-    {
-      "id": 13,
-      "name": "reflect-applies-directly-to-rules-and-claude",
-      "prompt": "You are evaluating /tk:reflect after branch-local gap runs produced durable repo-wide insight candidates. Describe expected behavior. Do not write files.",
-      "expected_output": "Should default to apply=true, read branch-local TigerKit memory, write directly to CLAUDE.md or .claude/rules/* depending on target scope, treat --dry-run and --apply=false as preview-only aliases, submit /tk:meta-feedback proposal-only after reflect processing by default, allow --no-meta-feedback or --meta-feedback=false to opt out, avoid modifying source code, dedupe repeated insights, create or update the current branch entry in global-index.json for apply bookkeeping, not promote session observation patterns when specs/gap artifacts are absent unless the user explicitly confirmed a TigerKit operating rule, and avoid creating a separate tigerkit-reflections sidecar file.",
-      "files": [],
-      "expectations": [
-        "Defaults /tk:reflect to apply=true",
-        "Treats --dry-run as apply=false",
-        "Treats --apply=false as dry-run alias",
-        "Reads branch-local specs/gap memory",
-        "Does not promote session observation patterns when specs/gap artifacts are absent unless explicitly user-confirmed",
-        "Creates or updates current branch entry in global-index.json for apply bookkeeping",
-        "Writes directly to CLAUDE.md or .claude/rules/*",
-        "Does not modify source code",
-        "Does not create tigerkit-reflections sidecar file",
-        "Skips duplicate insights",
-        "Prints apply summary",
-        "Submits meta-feedback proposal-only by default",
-        "Supports --no-meta-feedback opt-out",
-        "Supports --meta-feedback=false opt-out"
-      ]
-    },
-    {
-      "id": 14,
-      "name": "gap-source-by-source-intake-and-design-trust-axis",
-      "prompt": "Evaluate /tk:gap behavior when the user provides many design sources across breakpoints, variants, and auxiliary cases, including both structural metadata and visual captures. Do not write files.",
-      "expected_output": "Should recommend source-by-source locked intake when a large source set would blur independent verification: first state the preferred delivery format, then collect, measure, compare, and lock each source before proceeding. It should preserve small-source batch intake when independent verification is not at risk. It should classify design evidence into structural_context and visual_capture, use visual_capture only for layout/composition/state/hierarchy support, and avoid confirming color, spacing, dimensions, typography scale, or other numeric design values from visual_capture alone. Numeric design values should require structural metadata, design tokens, or explicit source/user confirmation, with existing implementation used only as comparison or inference support rather than design SOT; otherwise the result should become Clarification Needed or rejected unverifiable rather than an accepted finding.",
+      "name": "plugin-version-and-command-manifest-v8",
+      "prompt": "Evaluate marketplace plugin metadata for TigerKit v8. Do not write files.",
+      "expected_output": "Should set .claude-plugin/plugin.json version to 8.0.0 when origin/main version is 7.4.1 and latest origin/main commit is not a version bump. Should include ./commands/launch.md and preserve existing command entries.",
       "files": [
-        "commands/gap.md",
-        ".claude/rules/review/gap-analysis.md",
-        ".tigerkit/docs/usage.md",
-        ".tigerkit/docs/output-contract.md"
+        ".claude-plugin/plugin.json",
+        "commands/launch.md"
       ],
       "expectations": [
-        "Recommends source-by-source locked intake for large source sets",
-        "States preferred delivery format before large intake",
-        "Locks each source after measurement and comparison",
-        "Preserves batch intake for small or inherently bundled source sets",
-        "Separates structural_context from visual_capture",
-        "Uses visual_capture for layout and composition only",
-        "Does not confirm numeric design values from visual_capture alone",
-        "Requires structural metadata, design tokens, or explicit confirmation for numeric design values",
-        "Creates Clarification Needed or rejected unverifiable when numeric evidence is insufficient"
-      ]
-    },
-    {
-      "id": 15,
-      "name": "reflect-source-authority-backlog-and-meta-boundaries",
-      "prompt": "Evaluate TigerKit docs after reviewing dryforge and oh-my-opencode-slim reflect ideas. Do not write files.",
-      "expected_output": "Should say source material is not authority and only confirmed or explicitly scoped items may become gap evidence or durable guidance. Should describe /tk:reflect as a durable repo guidance promotion gate that inventories existing guidance first, scores candidates with Frequency, Cost, Risk, Stability, and Coverage, supports Needs more evidence, and treats promoting nothing as a successful outcome. Should describe /tk:handoff as the place for a branch-local Pending Backlog with source, evidence, priority, blocked-by, and suggested next action rather than introducing separate active backlog/drain commands. Should describe /tk:gap as optionally including a graph-lite Next Action Graph for clarification/fix/re-check ordering while staying out of full runner or execution graph ownership. Should keep /tk:meta-feedback focused on TigerKit command or skill improvements and keep repo durable guidance in /tk:reflect, with agent runtime/config, MCP permission, and custom agent recommendations outside TigerKit core scope.",
-      "files": [
-        "commands/spec.md",
-        "commands/reflect.md",
-        "commands/handoff.md",
-        "commands/gap.md",
-        "commands/meta-feedback.md",
-        ".tigerkit/docs/usage.md",
-        ".tigerkit/docs/output-contract.md",
-        ".tigerkit/docs/artifact-layout.md",
-        "README.md"
-      ],
-      "expectations": [
-        "Separates source material from authority",
-        "Requires confirmed or explicitly scoped items for gap evidence or durable guidance",
-        "Scores reflect candidates with Frequency, Cost, Risk, Stability, and Coverage",
-        "Inventories existing durable guidance before reflect apply",
-        "Supports Needs more evidence for reflect",
-        "Treats no durable insight promoted as successful reflect outcome",
-        "Uses handoff Pending Backlog for follow-up queue",
-        "Does not introduce separate active backlog or drain commands",
-        "Adds graph-lite Next Action Graph to gap report",
-        "Does not make TigerKit a full runner or execution graph owner",
-        "Separates meta-feedback from reflect responsibilities",
-        "Keeps agent runtime/config, MCP permission, and custom agent recommendations outside TigerKit core scope"
+        "Version is 8.0.0",
+        "Includes ./commands/launch.md",
+        "Preserves spec command",
+        "Preserves gap command",
+        "Preserves reflect command",
+        "Preserves handoff command",
+        "Preserves meta-feedback command"
       ]
     },
     {
