@@ -32,6 +32,8 @@ reflect = branch-local working memory -> CLAUDE.md/.claude/rules durable reflect
 - 후보 평가 전 기존 `CLAUDE.md`와 `.claude/rules/**/*.md`를 inventory해 이미 커버되는 guidance를 찾습니다.
 - 적용 결과 diff/summary를 출력합니다.
 - 기본적으로 reflect 처리 직후 같은 세션에서 `/tk:meta-feedback`을 proposal-only로 함께 제출합니다.
+- Meta Feedback 출력은 제출 상태, proposal-only 상태, 사용자 확인용 reference만 담고 reflect 요약이나 durable insight 내용을 담지 않습니다.
+- 제출 reference를 얻을 수 있으면 link 또는 path를 표시하고, 얻을 수 없으면 `reference unavailable`로 명시합니다.
 - `--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 meta-feedback 제출을 생략합니다.
 
 ## Apply behavior
@@ -149,7 +151,9 @@ Needs more evidence:
 - <확인 필요 항목 또는 None>
 
 Meta Feedback:
-- submitted
+- status: submitted
+- mode: proposal-only
+- reference: <link|path|reference unavailable>
 ```
 
 반영할 durable insight가 없을 때:
@@ -173,7 +177,9 @@ Needs more evidence:
 - <확인 필요 항목 또는 None>
 
 Meta Feedback:
-- submitted
+- status: submitted
+- mode: proposal-only
+- reference: <link|path|reference unavailable>
 ```
 
 `--dry-run` 또는 `--apply=false`일 때:
@@ -194,7 +200,9 @@ Apply: false
 - <한글 preview summary>
 
 Meta Feedback:
-- submitted
+- status: submitted
+- mode: proposal-only
+- reference: <link|path|reference unavailable>
 ```
 
 ## Procedure
@@ -218,7 +226,14 @@ Meta Feedback:
 17. `--no-meta-feedback` 또는 `--meta-feedback=false`가 없으면 `/tk:meta-feedback`을 proposal-only로 제출
 18. reflect summary, Needs more evidence, meta-feedback 제출 상태를 출력
 
-`--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 `Meta Feedback: skipped by opt-out`으로 출력합니다.
+`--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 아래처럼 출력합니다.
+
+```text
+Meta Feedback:
+- status: skipped by opt-out
+- mode: not submitted
+- reference: none
+```
 
 ## Conflict handling
 

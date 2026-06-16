@@ -385,6 +385,25 @@
         "Separates meta-feedback from reflect responsibilities",
         "Keeps agent runtime/config, MCP permission, and custom agent recommendations outside TigerKit core scope"
       ]
+    },
+    {
+      "id": 16,
+      "name": "reflect-meta-feedback-receipt-boundary",
+      "prompt": "Evaluate /tk:reflect default stdout after it submits /tk:meta-feedback proposal-only. Do not write files.",
+      "expected_output": "Should keep Reflect summary and Meta Feedback as separate sections. The Meta Feedback section should report only /tk:meta-feedback submission status, proposal-only status, and a user-visible reference such as a link, path, or unavailable-reference note. It should not contain durable insight summaries, reflect no-action summaries, or repo rule patch content. If --no-meta-feedback or --meta-feedback=false is used, it should say skipped by opt-out and should not imply a link exists.",
+      "files": [
+        "commands/reflect.md",
+        "commands/meta-feedback.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "Keeps Reflect summary outside Meta Feedback section",
+        "Meta Feedback reports submission status",
+        "Meta Feedback reports proposal-only status",
+        "Meta Feedback includes link, path, or unavailable-reference note",
+        "Meta Feedback does not contain reflect durable insight content",
+        "Opt-out output does not imply a submitted link"
+      ]
     }
   ]
 }

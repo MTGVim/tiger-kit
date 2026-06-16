@@ -256,6 +256,8 @@ Concrete maintainer proof runs must recompute actual run proof from metadata bef
 - 기존 durable guidance inventory 후 Frequency, Cost, Risk, Stability, Coverage rubric으로 후보를 평가합니다.
 - 근거가 부족한 후보는 `Needs more evidence`로 남기고 durable rule로 승격하지 않습니다.
 - reflect 처리 직후 `/tk:meta-feedback`을 proposal-only로 함께 제출합니다.
+- Meta Feedback 출력은 제출 상태, proposal-only 상태, 사용자 확인용 reference만 담고 reflect 요약이나 durable insight 내용을 담지 않습니다.
+- 제출 reference를 얻을 수 있으면 link 또는 path를 표시하고, 얻을 수 없으면 `reference unavailable`로 명시합니다.
 - `--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 meta-feedback 제출을 생략합니다.
 
 기본 stdout:
@@ -279,7 +281,9 @@ Needs more evidence:
 - <확인 필요 항목 또는 None>
 
 Meta Feedback:
-- submitted
+- status: submitted
+- mode: proposal-only
+- reference: <link|path|reference unavailable>
 ```
 
 Dry-run stdout:
@@ -303,10 +307,19 @@ Needs more evidence:
 - <확인 필요 항목 또는 None>
 
 Meta Feedback:
-- submitted
+- status: submitted
+- mode: proposal-only
+- reference: <link|path|reference unavailable>
 ```
 
-`--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 `Meta Feedback: skipped by opt-out`으로 출력합니다.
+`--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 아래처럼 출력합니다.
+
+```text
+Meta Feedback:
+- status: skipped by opt-out
+- mode: not submitted
+- reference: none
+```
 
 Reflect no-op success:
 
@@ -329,7 +342,9 @@ Needs more evidence:
 - <확인 필요 항목 또는 None>
 
 Meta Feedback:
-- submitted
+- status: submitted
+- mode: proposal-only
+- reference: <link|path|reference unavailable>
 ```
 
 Reflect excludes:
