@@ -21,11 +21,12 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
           WF-YYYYMMDD-HHmmss-RAND.md
           current.md
           GAP-YYYYMMDD-HHmmss-RAND.md
-        launches/
-          LCH-YYYYMMDD-HHmmss-RAND/
-            report.md
-            run.json
-            reflect-report.md
+        launch/
+          LCH-YYYYMMDD-HHmmss-RAND.md
+          current.md
+        reflect/
+          RFL-YYYYMMDD-HHmmss-RAND.md
+          current.md
         runs/
           gap/
             GAP-YYYYMMDD-HHmmss-RAND/
@@ -65,9 +66,10 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
 | `.claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md` | `/tk:gap`이 `GAP_READY`일 때 만드는 sealed launch workflow archive입니다. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/gap/current.md` | 최신 sealed launch workflow copy입니다. hash seal의 authoritative source는 archive workflow 파일입니다. | branch-local pointer |
 | `.claude/tigerkit/branches/<branch-key>/gap/<GAP-ID>.md` | `/tk:gap`이 `GAP_BLOCKED`일 때 만드는 blocked report입니다. workflow block을 포함하지 않습니다. | branch-local |
-| `.claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/report.md` | `/tk:launch` 실행 또는 abort report입니다. | branch-local execution |
-| `.claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/run.json` | launch status, task/gate 결과, abort code, commit decision을 보존하는 최소 run record입니다. | branch-local execution |
-| `.claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/reflect-report.md` | launch postflight에서 `/tk:reflect`가 읽을 수 있게 남기는 generated report입니다. durable apply가 아닙니다. | branch-local generated |
+| `.claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md` | `/tk:launch` 실행 또는 abort report입니다. | branch-local execution |
+| `.claude/tigerkit/branches/<branch-key>/launch/current.md` | launch status, task/gate 결과, abort code, commit decision을 보존하는 최소 run record입니다. | branch-local execution |
+| `.claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md` | `/tk:reflect` generated report archive입니다. `tigerkit-reflect-report` block을 포함합니다. durable apply가 아닙니다. | branch-local generated |
+| `.claude/tigerkit/branches/<branch-key>/reflect/current.md` | 최신 reflect report copy입니다. | branch-local pointer |
 | `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md` | `/tk:gap --review` 사용자가 읽는 compatibility gap report 본문입니다. Actionable Findings, Clarification Needed, next action 중심입니다. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/run.json` | `/tk:gap --review` 후속 대화와 기계 처리를 위한 최소 run record입니다. user-facing short Ref와 canonical ID mapping을 보존합니다. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/maintainer-proof/` | `--maintainer-proof`가 명시된 경우에만 생성하는 self-eval/performance proof, gate/debug metadata, baseline snapshot 영역입니다. | branch-local maintainer-only |
@@ -81,7 +83,17 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
 
 ## 기본 `/tk:gap` artifact
 
-기본 gap run의 필수 artifact는 `report.md`와 `run.json`만입니다.
+기본 `/tk:gap`은 v8 sealed workflow builder입니다. launch 가능 여부에 따라 아래 중 하나를 씁니다.
+
+```text
+.claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md       # GAP_READY archive
+.claude/tigerkit/branches/<branch-key>/gap/current.md       # latest GAP_READY copy
+.claude/tigerkit/branches/<branch-key>/gap/<GAP-ID>.md      # GAP_BLOCKED report
+```
+
+`GAP_READY` archive는 사람용 report와 정확히 하나의 `tigerkit-gap-status` block, 정확히 하나의 `tigerkit-launch-workflow` block을 포함합니다. `GAP_BLOCKED` report는 `tigerkit-gap-status` block만 포함하고 `tigerkit-launch-workflow` block을 포함하지 않습니다.
+
+`/tk:gap --review` compatibility mode만 v7 review layout을 씁니다.
 
 ```text
 .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/
@@ -89,26 +101,9 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
   run.json
 ```
 
-`report.md`는 사용자가 읽는 표면입니다. `run.json`은 후속 대화, short Ref mapping, 최소 machine-readable record를 위한 표면입니다. proof/debug artifact는 기본 artifact가 아니며, 기본 stdout/report에 섞이면 안 됩니다.
+`--maintainer-proof`가 있을 때만 `runs/gap/<GAP-ID>/maintainer-proof/` 아래 proof/debug artifact를 추가할 수 있습니다.
 
-기본 `run.json`은 아래 성격의 정보만 가집니다.
-
-- run identity
-- branch scope
-- source refs와 access status
-- P0/P1/P2 count
-- source conflict count
-- clarification-needed count
-- findings
-- clarifications
-- rejected summary
-- displayRef mapping
-- checked evidence refs
-- report/run path
-- next action
-- `maintainerProofEnabled: false`
-
-기본 gap run은 아래 파일을 필수로 만들지 않습니다.
+기본 gap workflow/report는 아래 self-eval/proof/debug metadata를 요구하지 않습니다.
 
 ```text
 input-manifest.json
@@ -119,7 +114,7 @@ baseline-snapshot.json
 proof.json
 ```
 
-기본 gap run의 `report.md`와 `run.json`은 아래 self-eval/proof/debug metadata를 요구하지 않습니다.
+기본 gap workflow/report와 `/tk:gap --review` compatibility run은 아래 self-eval/proof/debug metadata를 요구하지 않습니다.
 
 - `qualityGates`
 - `heuristicProof`

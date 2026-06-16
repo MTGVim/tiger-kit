@@ -54,7 +54,7 @@ Reflect는 current branch scope의 branch-local working memory를 읽습니다.
 ```text
 .claude/tigerkit/branches/<branch-key>/specs/
 .claude/tigerkit/branches/<branch-key>/gap/
-.claude/tigerkit/branches/<branch-key>/launches/
+.claude/tigerkit/branches/<branch-key>/launch/
 .claude/tigerkit/branches/<branch-key>/runs/gap/
 .claude/tigerkit/branches/<branch-key>/branch-state.json
 ```

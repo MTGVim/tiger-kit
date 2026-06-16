@@ -43,7 +43,7 @@ launch = execute sealed workflow + verify gates + abort safely + reflect trace
 2. workflow 파일을 찾습니다.
 3. `tigerkit-launch-workflow` fenced block이 정확히 하나인지 확인합니다.
 4. block body를 LF로 정규화하고 final LF를 하나 보장한 뒤 SHA-256을 계산합니다.
-5. workflow 안의 `workflow_sha256`과 계산값을 비교합니다.
+5. `tigerkit-gap-status`와 `branch-state.json`에 기록된 외부 `workflow_sha256`과 계산값을 비교합니다. `tigerkit-launch-workflow` 내부 자기참조 hash는 사용하지 않습니다.
 6. `status`가 `GAP_READY`인지 확인합니다.
 7. `source_refs`, `requirements`, `tasks`, `verification_gates`, `abort_policy`, `commit_policy`를 확인합니다.
 8. `autopilot_policy.enabled`가 false인데 `--autopilot`이면 abort합니다.
@@ -79,7 +79,7 @@ launch = execute sealed workflow + verify gates + abort safely + reflect trace
 
 각 verification gate는 아래 field를 가져야 합니다.
 
-```yaml
+```text
 id: VG1
 command_id: V1
 purpose: <검증 목적>
@@ -109,8 +109,10 @@ Workflow Hash: <sha256>
 Tasks: <done>/<total>
 Verification Gates: <passed>/<total>
 Commit: <created|skipped_preflight_required|skipped_not_requested>
-Report: .claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/report.md
-Reflect: .claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/reflect-report.md
+Report: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
+Current: .claude/tigerkit/branches/<branch-key>/launch/current.md
+Reflect: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
+Reflect Current: .claude/tigerkit/branches/<branch-key>/reflect/current.md
 다음 행동: <없음|reflect 제안 검토|commit 승인 필요>
 ```
 
@@ -126,8 +128,10 @@ Abort Code: <CODE>
 원인: <한글 1줄>
 Completed Tasks: <done>/<total>
 Failed Gate: <VG-ID|없음>
-Report: .claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/report.md
-Reflect: .claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/reflect-report.md
+Report: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
+Current: .claude/tigerkit/branches/<branch-key>/launch/current.md
+Reflect: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
+Reflect Current: .claude/tigerkit/branches/<branch-key>/reflect/current.md
 다음 행동: <human decision|workflow 재생성|scope 조정|검증 실패 수정>
 ```
 

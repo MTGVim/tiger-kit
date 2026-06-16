@@ -218,7 +218,7 @@
       "id": 10,
       "name": "reflect-after-launch-no-durable-apply-without-approval",
       "prompt": "Evaluate reflect behavior after /tk:launch completes or aborts. Do not write files.",
-      "expected_output": "Should allow /tk:launch to write a generated reflect-report.md trace for /tk:reflect. Should not apply durable CLAUDE.md or .claude/rules changes or create commits unless preflight approval recorded that action. Should classify repo durable insight, skill proposal, TigerKit meta-feedback, verification gap, workflow weakness, and unresolved follow-up separately.",
+      "expected_output": "Should allow /tk:launch to write generated reflect trace artifacts at reflect/<RFL-ID>.md and reflect/current.md for /tk:reflect. Should not apply durable CLAUDE.md or .claude/rules changes or create commits unless preflight approval recorded that action. Should classify repo durable insight, skill proposal, TigerKit meta-feedback, verification gap, workflow weakness, and unresolved follow-up separately.",
       "files": [
         "commands/launch.md",
         "commands/reflect.md",
@@ -253,7 +253,7 @@
       "id": 12,
       "name": "plugin-version-and-command-manifest-v8",
       "prompt": "Evaluate marketplace plugin metadata for TigerKit v8. Do not write files.",
-      "expected_output": "Should set .claude-plugin/plugin.json version to 8.0.0 when origin/main version is 7.4.1 and latest origin/main commit is not a version bump. Should include ./commands/launch.md and preserve existing command entries.",
+      "expected_output": "Should set .claude-plugin/plugin.json version to 8.0.0 when the current origin/main version is a lower patch release produced before the v8 contract correction. Should include ./commands/launch.md and preserve existing command entries.",
       "files": [
         ".claude-plugin/plugin.json",
         "commands/launch.md"
