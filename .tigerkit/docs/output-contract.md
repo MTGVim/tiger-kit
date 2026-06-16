@@ -1,6 +1,6 @@
 # TigerKit 운영 Output Contract
 
-이 문서는 TigerKit v7.2.14 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
+이 문서는 TigerKit v8.0 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
 
 ```text
 stdout is a receipt. Full spec/gap bodies are saved as branch-local artifacts unless explicit print option is used.
@@ -42,7 +42,68 @@ Items:
 
 ## `/tk:gap` Output Contract
 
-이 section은 `/tk:gap default stdout`의 authoritative contract입니다. `commands/gap.md`, `.claude/rules/review/gap-analysis.md`, `evals/evals.json`은 이 section을 기준으로 사용자-facing stdout과 artifact 노출을 맞춥니다.
+이 section은 v8.0 기본 `/tk:gap` stdout의 authoritative contract입니다. `/tk:gap --review` compatibility stdout은 아래 `/tk:gap --review` section을 따릅니다.
+
+- 목적: source를 ground하고 ambiguity를 attack한 뒤 launch 가능한 sealed workflow를 만들거나 launch 금지 사유를 기록합니다.
+- `/tk:gap`은 반드시 `GAP_READY` 또는 `GAP_BLOCKED` 중 하나로 끝납니다.
+- `GAP_READY`는 정확히 하나의 `tigerkit-launch-workflow` block을 포함해야 합니다.
+- `GAP_BLOCKED`는 `tigerkit-launch-workflow` block을 포함하면 안 됩니다.
+- 기본 workflow archive 위치: `.claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md`
+- 최신 workflow pointer copy: `.claude/tigerkit/branches/<branch-key>/gap/current.md`
+
+### `/tk:gap default stdout`
+
+`GAP_READY` stdout:
+
+```text
+GAP_READY: <WF-ID>
+Branch Scope: <branch-key>
+Workflow: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
+Workflow Hash: <sha256>
+Tasks: <count>
+Verification Gates: <count>
+Autopilot Allowed: false
+Commit Policy: preflight_decision_required
+다음 행동: /tk:launch
+```
+
+`GAP_BLOCKED` stdout:
+
+```text
+GAP_BLOCKED: <GAP-ID>
+Branch Scope: <branch-key>
+Blocked Reasons: <count>
+Human Decisions: <count>
+Missing Sources: <count>
+Report: .claude/tigerkit/branches/<branch-key>/gap/<GAP-ID>.md
+다음 행동: <Q1 확인 후 /tk:gap 재실행|source 제공 필요>
+```
+
+### `tigerkit-gap-status` block
+
+```yaml
+status: GAP_READY | GAP_BLOCKED
+workflow_id: WF-YYYYMMDD-HHmmss-RAND | null
+workflow_path: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md | null
+workflow_sha256: <sha256> | null
+blocked_reasons: []
+human_decisions: []
+missing_sources: []
+```
+
+### `tigerkit-launch-workflow` seal
+
+`workflow_sha256`은 단일 `tigerkit-launch-workflow` fenced block body의 SHA-256입니다.
+
+- opening fence와 closing fence line은 제외합니다.
+- block body는 LF로 정규화합니다.
+- hashing 전 final LF를 정확히 하나 보장합니다.
+- YAML-normalize 또는 key sort를 하지 않습니다.
+- archive workflow 파일이 authoritative입니다. `current.md`는 최신 copy입니다.
+
+## `/tk:gap --review` Output Contract
+
+이 section은 v7 Contract-based Gap Review compatibility stdout의 authoritative contract입니다. `commands/gap.md`, `.claude/rules/review/gap-analysis.md`, `evals/evals.json`은 이 section을 기준으로 사용자-facing stdout과 artifact 노출을 맞춥니다.
 
 - 목적: Product/Design Spec contract와 implementation plan/current implementation을 비교해 사용자가 바로 고치거나 확인할 항목만 남깁니다.
 - 기본 저장 위치: `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/`
@@ -66,7 +127,7 @@ Items:
 - P3/nit/duplicate/unverifiable/source_conflict는 final finding으로 출력하지 않습니다.
 - finding이 안 나올 때까지 반복하지 않습니다.
 
-### `/tk:gap default stdout`
+### `/tk:gap --review default stdout`
 
 기본 stdout은 compact receipt입니다. 아래 필드는 항상 이 순서로 출력합니다.
 
@@ -240,9 +301,65 @@ Heuristic proof metrics use fixed denominators from the command contract and mus
 
 Concrete maintainer proof runs must recompute actual run proof from metadata before claiming improvement. Do not claim new iteration improvement from the fixed cumulative baseline alone; update `iterationBaseline` from the previous main version for each run.
 
+## `/tk:launch` Output Contract
+
+- 목적: sealed launch workflow를 실행하고 verification gate 결과, abort reason, reflect trace를 branch-local artifact로 남깁니다.
+- 기본 입력은 `.claude/tigerkit/branches/<branch-key>/gap/current.md` 또는 명시 workflow path입니다.
+- `tigerkit-launch-workflow` block은 정확히 하나여야 합니다.
+- hash mismatch, missing workflow, multiple blocks, blocked workflow는 실행 전 abort합니다.
+- mid-flight 질문은 금지합니다. 새 결정이 필요하면 `HUMAN_DECISION_REQUIRED`로 abort합니다.
+- Phase 1에서 `--autopilot` recovery는 실행하지 않습니다.
+- commit은 preflight approval evidence 없이는 금지합니다.
+
+SUCCESS stdout:
+
+```text
+Launch 완료: <LCH-ID>
+Branch Scope: <branch-key>
+Workflow: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
+Workflow Hash: <sha256>
+결과: SUCCESS
+Tasks: <done>/<total>
+Verification Gates: <passed>/<total>
+Commit: <created|skipped_preflight_required|skipped_not_requested>
+Report: .claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/report.md
+Reflect: .claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/reflect-report.md
+다음 행동: <없음|reflect 제안 검토|commit 승인 필요>
+```
+
+ABORTED stdout:
+
+```text
+Launch 중단: <LCH-ID>
+Branch Scope: <branch-key>
+Workflow: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
+Workflow Hash: <sha256|unknown>
+결과: ABORTED
+Abort Code: <CODE>
+원인: <한글 1줄>
+Completed Tasks: <done>/<total>
+Failed Gate: <VG-ID|없음>
+Report: .claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/report.md
+Reflect: .claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/reflect-report.md
+다음 행동: <human decision|workflow 재생성|scope 조정|검증 실패 수정>
+```
+
+Abort code 목록:
+
+- `WORKFLOW_NOT_FOUND`
+- `MULTIPLE_WORKFLOW_BLOCKS`
+- `WORKFLOW_HASH_MISMATCH`
+- `GAP_BLOCKED`
+- `HUMAN_DECISION_REQUIRED`
+- `AUTOPILOT_DISABLED`
+- `AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1`
+- `OUT_OF_SCOPE_DIFF`
+- `HYDRATION_CONFLICT`
+- `VERIFICATION_FAILED`
+
 ## `/tk:reflect` Output Contract
 
-- 목적: branch-local working memory에서 durable repo insight만 추출합니다.
+- 목적: branch-local working memory와 gap+launch trace에서 durable repo insight만 추출합니다.
 - 기본 동작은 `apply=true`입니다.
 - 반영할 durable insight가 없으면 파일을 수정하지 않는 정상 성공이 가능합니다.
 - `--dry-run`과 `--apply=false`는 preview-only입니다.
@@ -354,7 +471,7 @@ Reflect excludes:
 - 현재 작업을 방해하면 안 되는 follow-up은 `Pending Backlog`에 source/evidence/priority/blocked-by/next action과 함께 저장할 수 있습니다.
 - `archive=true` 또는 사용자 명시 archive 요청이 있을 때만 branch-local dated archive를 추가로 만듭니다.
 - `.claude/handoffs/current.md`는 optional convenience pointer이며 canonical handoff를 대체하지 않습니다.
-- v7.2에서는 최신 branch-local Spec Patch와 Gap Run path를 Relevant Files 또는 Validation에 포함할 수 있습니다.
+- v8.0에서는 최신 branch-local Spec Patch, Gap workflow, Launch Run path를 Relevant Files 또는 Validation에 포함할 수 있습니다.
 - handoff는 durable rule 저장소가 아닙니다.
 
 채팅 receipt:

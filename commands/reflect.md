@@ -3,14 +3,14 @@ description: branch-local TigerKit memory에서 repo에 보존할 insight만 추
 argument-hint: "[scope] [--dry-run] [--apply=true|false] [--target <CLAUDE.local.md|CLAUDE.md|.claude/rules/...>] [--no-meta-feedback|--meta-feedback=false]"
 ---
 
-이 명령은 TigerKit v7.1 reflect contract를 따릅니다.
+이 명령은 TigerKit v8.0 reflect contract를 따릅니다.
 
 사용자에게는 한글로 답합니다. 코드, path, URL, ticket, commit, hash, identifier, error는 원문 그대로 둘 수 있습니다.
 
-목표: `/tk:reflect`는 branch-local Spec Patch와 Gap Run에서 repo-wide 가치가 있는 durable insight만 추출해 적절한 durable surface에 직접 반영합니다.
+목표: `/tk:reflect`는 branch-local Spec Patch, Gap workflow, Launch trace에서 repo-wide 가치가 있는 durable insight만 추출해 적절한 durable surface에 직접 반영합니다.
 
 ```text
-reflect = branch-local working memory -> CLAUDE.local.md/CLAUDE.md/.claude/rules durable reflection
+reflect = branch-local spec/gap/launch working memory -> CLAUDE.local.md/CLAUDE.md/.claude/rules durable reflection
 ```
 
 ## Command surface
@@ -20,7 +20,7 @@ reflect = branch-local working memory -> CLAUDE.local.md/CLAUDE.md/.claude/rules
 
 ## 핵심 원칙
 
-- spec/gap/verify 산출물 자체는 repo-wide durable knowledge가 아닙니다.
+- spec/gap/launch/verify 산출물 자체는 repo-wide durable knowledge가 아닙니다.
 - repo에 영구적으로 남길 insight는 reflect를 통해서만 추출합니다.
 - `/tk:reflect` 기본 동작은 `apply=true`입니다.
 - 반영할 durable insight가 없으면 아무 파일도 수정하지 않는 것이 정상 성공입니다.
@@ -47,7 +47,7 @@ reflect = branch-local working memory -> CLAUDE.local.md/CLAUDE.md/.claude/rules
 | `/tk:reflect --no-meta-feedback` | reflect만 실행하고 meta-feedback 제출 생략 |
 | `/tk:reflect --meta-feedback=false` | `--no-meta-feedback` alias |
 
-v7.1에서는 `--apply=true`가 redundant여도 warning을 내지 않습니다.
+v8.0에서는 `--apply=true`가 redundant여도 warning을 내지 않습니다.
 
 ## Inputs
 
@@ -55,6 +55,8 @@ Reflect는 current branch scope의 branch-local working memory를 읽습니다.
 
 ```text
 .claude/tigerkit/branches/<branch-key>/specs/
+.claude/tigerkit/branches/<branch-key>/gap/
+.claude/tigerkit/branches/<branch-key>/launches/
 .claude/tigerkit/branches/<branch-key>/runs/gap/
 .claude/tigerkit/branches/<branch-key>/branch-state.json
 ```
