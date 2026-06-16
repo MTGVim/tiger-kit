@@ -56,6 +56,8 @@ TigerKit 자체 성능 개선, baseline, heuristic proof, performance proof, fal
 - visible UI copy는 confirmed contract와 exact match가 필요합니다.
 - finding이 안 나올 때까지 반복하지 않습니다.
 - CriticalRedTeamAgent pass는 targeted verification으로 최대 1회입니다.
+- full execution graph나 runner를 소유하지 않습니다.
+- report에는 clarification, finding, re-check 순서를 이해시키는 graph-lite `Next Action Graph`를 포함할 수 있습니다.
 - stdout은 run 결과, finding/clarification count, report path, run.json path, next action만 기본 출력합니다.
 - 유저향 stdout/report table은 run-local short Ref(`G1`, `R1`, `C1`, `Q1`)를 우선 표시하고 긴 canonical ID는 `run.json` 또는 maintainer proof artifact에 보관합니다.
 - Hook guard는 repo 유지보수 sync/lint가 아니라 플러그인 사용자가 보는 receipt, artifact path, finding Ref 안전장치일 때만 사용합니다. 그런 user-facing guard 표면이 없으면 hook을 추가하지 않습니다.
@@ -647,6 +649,8 @@ Authoritative stdout contract는 `.tigerkit/docs/output-contract.md`의 `/tk:gap
 
 ## Not Accepted Summary
 
+## Next Action Graph
+
 ## Next Action
 ```
 
@@ -659,6 +663,8 @@ Authoritative stdout contract는 `.tigerkit/docs/output-contract.md`의 `/tk:gap
 `## Clarification Needed`는 implementation-blocking과 reference-only를 구분합니다. 질문은 option/evidence/impact/recommendation/status를 표로 제시합니다. UI 판단이 필요한 경우 오른쪽 border가 정렬된 TUI/ASCII prototype을 함께 둡니다.
 
 `## Not Accepted Summary`는 rejected/downgraded 상세 목록이 아니라 reason별 count와 사용자에게 의미 있는 짧은 요약만 둡니다. 상세 proof나 candidate dump는 `--maintainer-proof`에서만 허용합니다.
+
+`## Next Action Graph`는 구현 runner가 아닙니다. 사용자가 clarification, fixing, re-check, re-run 순서를 이해하도록 run-local Ref로만 가벼운 순서를 적습니다. 예: `Q1 확인 -> G1 수정 -> G2 재확인 -> /tk:gap 재실행`.
 
 ## 금지
 

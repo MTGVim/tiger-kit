@@ -23,6 +23,8 @@ meta-feedback = session-history-based generalized skill improvement proposal + p
 | 표현 | repo context를 제한적으로 유지할 수 있음 | repo context를 반드시 제거 |
 | 기본 동작 | apply=true | proposal-only |
 
+`/tk:meta-feedback`은 TigerKit 본체 개선만 다룹니다. agent runtime 설정, MCP permission/config, custom agent 생성, editor/CLI harness 튜닝은 TigerKit command contract 범위 밖으로 두고 필요하면 별도 외부 작업으로 제안만 분리합니다.
+
 ## 기본 동작
 
 - 기본값은 파일을 수정하지 않고 일반화된 proposal만 출력합니다.
@@ -97,12 +99,13 @@ meta-feedback = session-history-based generalized skill improvement proposal + p
 
 1. target이 있으면 `<skill>` 또는 `<command>` 수준으로만 식별합니다.
 2. 현재 세션 전체 내역에서 TigerKit command/skill 개선과 관련 있는 friction만 고릅니다.
-3. repo rule, product requirement, implementation TODO는 제외하거나 `/tk:reflect` 또는 `/tk:gap` 대상으로 분류합니다.
-4. 원문 evidence를 직접 출력하지 않고 evidence class만 남깁니다.
-5. 모든 고유명, path, URL, ticket, branch, PR, commit, raw quote를 placeholder로 치환합니다.
-6. 치환 후에도 특정 프로젝트를 추정할 수 있으면 `cannot_generalize_safely`로 중단합니다.
-7. 개선안을 TigerKit command/skill 수준의 generic change로 씁니다.
-8. `--out <path>`가 있으면 같은 redacted output만 파일로 작성합니다.
+3. repo rule, product requirement, implementation TODO는 제외하거나 `/tk:reflect`, `/tk:gap`, `/tk:handoff` 대상으로 분류합니다.
+4. agent runtime/config, MCP permission, custom agent 추천은 TigerKit 본체 개선안에서 제외합니다.
+5. 원문 evidence를 직접 출력하지 않고 evidence class만 남깁니다.
+6. 모든 고유명, path, URL, ticket, branch, PR, commit, raw quote를 placeholder로 치환합니다.
+7. 치환 후에도 특정 프로젝트를 추정할 수 있으면 `cannot_generalize_safely`로 중단합니다.
+8. 개선안을 TigerKit command/skill 수준의 generic change로 씁니다.
+9. `--out <path>`가 있으면 같은 redacted output만 파일로 작성합니다.
 
 ## 출력 템플릿
 

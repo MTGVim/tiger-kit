@@ -23,11 +23,13 @@ reflect = branch-local working memory -> CLAUDE.md/.claude/rules durable reflect
 - spec/gap/verify 산출물 자체는 repo-wide durable knowledge가 아닙니다.
 - repo에 영구적으로 남길 insight는 reflect를 통해서만 추출합니다.
 - `/tk:reflect` 기본 동작은 `apply=true`입니다.
+- 반영할 durable insight가 없으면 아무 파일도 수정하지 않는 것이 정상 성공입니다.
 - source code는 수정하지 않습니다.
 - apply mode의 content write는 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에만 적용합니다.
 - branch recency bookkeeping으로 `global-index.json`의 branch entry를 생성하거나 `lastUsedAt`을 갱신할 수 있습니다.
 - branch-local specs/gap 산출물이 없다는 사실만으로 세션 관측 패턴을 durable insight 후보로 승격하지 않습니다.
 - 같은 insight를 중복 반영하지 않습니다.
+- 후보 평가 전 기존 `CLAUDE.md`와 `.claude/rules/**/*.md`를 inventory해 이미 커버되는 guidance를 찾습니다.
 - 적용 결과 diff/summary를 출력합니다.
 - 기본적으로 reflect 처리 직후 같은 세션에서 `/tk:meta-feedback`을 proposal-only로 함께 제출합니다.
 - `--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 meta-feedback 제출을 생략합니다.
@@ -88,6 +90,18 @@ reflect는 아래만 durable insight 후보로 삼습니다.
 - source conflict에서 확정된 resolution
 - 사용자 대화에 명시적으로 확인된 TigerKit 운영 규칙
 
+후보는 durable target classification 전에 아래 rubric을 모두 통과해야 합니다.
+
+| 기준 | 통과 조건 |
+| --- | --- |
+| Frequency | 반복됐거나 반복될 가능성이 높음 |
+| Cost | 매번 다시 발견하거나 설명하는 비용이 큼 |
+| Risk | 누락 시 source loss, decision loss, bug, regression, 오판 가능성이 있음 |
+| Stability | 현재 branch에만 묶이지 않고 앞으로도 유지될 규칙임 |
+| Coverage | 기존 `CLAUDE.md` 또는 `.claude/rules/**/*.md`가 이미 커버하지 않음 |
+
+통과하지 못한 후보는 `no action`으로 분류합니다. 근거가 부족하지만 후속 확인 가치가 있으면 `Needs more evidence`에 남깁니다.
+
 reflect는 아래를 durable insight로 만들지 않습니다.
 
 - branch-specific one-off decision
@@ -126,9 +140,37 @@ Apply: true
 - <added> added
 - <updated> updated
 - <skipped> skipped as duplicate
+- <no_action> no action
 
 요약:
 - <한글 insight summary>
+
+Needs more evidence:
+- <확인 필요 항목 또는 None>
+
+Meta Feedback:
+- submitted
+```
+
+반영할 durable insight가 없을 때:
+
+```text
+Reflect 완료
+Apply: true
+적용 대상:
+- 없음
+
+적용 결과:
+- 0 added
+- 0 updated
+- <skipped> skipped as duplicate
+- <no_action> no action
+
+요약:
+- No durable insight promoted.
+
+Needs more evidence:
+- <확인 필요 항목 또는 None>
 
 Meta Feedback:
 - submitted
@@ -163,15 +205,18 @@ Meta Feedback:
 4. branch lock 획득
 5. apply mode 계산: `apply = dryRun ? false : apply !== false`
 6. branch-local memory 로드
-7. durable insight 후보 추출
-8. 각 후보를 `CLAUDE.md`, `.claude/rules/**/*.md`, `no action`으로 분류
-9. one-off, superseded, P3/nit, rejected, low-confidence 후보 제거
-10. duplicate 제거
-11. apply=true이면 target rule file 또는 `CLAUDE.md`를 직접 수정하고 `global-index.json`에 branch entry가 없으면 생성한 뒤 `lastUsedAt` 갱신
-12. apply=false이면 preview만 출력하고 저장 없이 종료
-13. branch lock 해제
-14. `--no-meta-feedback` 또는 `--meta-feedback=false`가 없으면 `/tk:meta-feedback`을 proposal-only로 제출
-15. reflect summary와 meta-feedback 제출 상태를 출력
+7. 기존 durable guidance inventory로 `CLAUDE.md`와 `.claude/rules/**/*.md`의 coverage 확인
+8. durable insight 후보 추출
+9. Frequency, Cost, Risk, Stability, Coverage rubric으로 후보 평가
+10. 각 후보를 `CLAUDE.md`, `.claude/rules/**/*.md`, `no action`, `needs more evidence`로 분류
+11. one-off, superseded, P3/nit, rejected, low-confidence 후보 제거
+12. duplicate 제거
+13. apply=true이고 적용 대상이 있으면 target rule file 또는 `CLAUDE.md`를 직접 수정하고 `global-index.json`에 branch entry가 없으면 생성한 뒤 `lastUsedAt` 갱신
+14. apply=true이지만 적용 대상이 없으면 파일을 수정하지 않고 정상 완료합니다.
+15. apply=false이면 preview만 출력하고 저장 없이 종료
+16. branch lock 해제
+17. `--no-meta-feedback` 또는 `--meta-feedback=false`가 없으면 `/tk:meta-feedback`을 proposal-only로 제출
+18. reflect summary, Needs more evidence, meta-feedback 제출 상태를 출력
 
 `--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 `Meta Feedback: skipped by opt-out`으로 출력합니다.
 
