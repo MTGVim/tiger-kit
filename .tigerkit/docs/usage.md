@@ -36,6 +36,7 @@ Hermes Agent, Codex CLI, `npx skills` 기반 command-skill adapter는 v8 MVP에 
 | `/tk:gap --review` | v7 Contract-based Gap Review compatibility mode로 사용자가 고칠 finding과 답할 clarification을 남깁니다. | branch-local |
 | `/tk:launch` | sealed workflow만 실행하고 verification, abort receipt, reflect trace를 남깁니다. | branch-local execution |
 | `/tk:reflect` | gap+launch trace와 branch-local 산출물에서 repo에 남길 insight만 추출하고 반영합니다. | durable insight |
+| `/tk:next` | current state와 TigerKit artifact를 읽어 다음 안전 행동을 추천합니다. 실행·commit·PR은 하지 않습니다. | stdout utility |
 | `/tk:handoff` | 다음 세션이나 다음 작업자가 이어받을 수 있도록 continuation 문서를 작성합니다. | continuation |
 | `/tk:meta-feedback` | 현재 세션에서 드러난 TigerKit command/skill 개선안을 프로젝트 자산 유출 없이 일반화합니다. | generalized feedback |
 
@@ -54,6 +55,8 @@ Hermes Agent, Codex CLI, `npx skills` 기반 command-skill adapter는 v8 MVP에 
 /tk:reflect
 /tk:reflect --dry-run
 /tk:reflect --no-meta-feedback
+/tk:next
+/tk:next "이 브랜치에서 다음 뭐 하지?"
 /tk:handoff 현재 작업 이어받을 수 있게 남겨줘
 /tk:meta-feedback gap 결과가 느리고 BE 오탐이 난 패턴을 일반화해줘
 ```
@@ -148,6 +151,15 @@ Report: .claude/tigerkit/branches/main--c0ffee/gap/GAP-20260617-143012-A7F3.md
 - apply가 저장을 수행하면 `global-index.json`에 current branch entry가 없을 때 새 entry를 만들 수 있습니다.
 - reflect 처리 직후 `/tk:meta-feedback`을 proposal-only로 함께 제출합니다.
 - `--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 meta-feedback 제출을 생략합니다.
+
+## `/tk:next`
+
+- `/tk:next`는 GAP → Launch → Reflect pipeline 밖의 utility command입니다.
+- current workspace/repo state, latest GAP workflow/status, latest launch receipt, latest reflect report, latest handoff를 읽고 다음 안전 행동 하나를 추천합니다.
+- source file, durable rule, commit, PR을 만들지 않습니다.
+- MVP 동작은 stdout-only입니다. `.claude/tigerkit/.../next/` artifact를 쓰지 않습니다.
+- output은 `Next Action`, `Status`, `Recommended Command`, `Why`, `Blocked By`, `References` 중심입니다.
+- 추천 상태는 `recommended`, `blocked`, `optional`, `manual`, `none` 중 하나입니다.
 
 ## `/tk:handoff`
 

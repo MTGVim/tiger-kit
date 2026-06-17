@@ -4,13 +4,13 @@
     "name": "MTGVim"
   },
   "metadata": {
-    "description": "branch-scoped source intake, sealed GAP workflow, human-approved launch, durable reflection, meta-feedback, and handoff를 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다."
+    "description": "branch-scoped source intake, sealed GAP workflow, human-approved launch, durable reflection, next-action guidance, meta-feedback, and handoff를 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다."
   },
   "plugins": [
     {
       "name": "tk",
       "source": "./",
-      "description": "branch-scoped source intake, sealed GAP workflow, human-approved launch, durable reflection, meta-feedback, and handoff를 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다."
+      "description": "branch-scoped source intake, sealed GAP workflow, human-approved launch, durable reflection, next-action guidance, meta-feedback, and handoff를 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다."
     }
   ]
 }

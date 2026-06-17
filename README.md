@@ -30,7 +30,7 @@ claude plugin details tk
 claude plugin install tk@tiger-kit --scope project
 ```
 
-설치 후 Claude Code를 다시 시작하고 `/tk:gap`, `/tk:launch`, `/tk:reflect`, `/tk:handoff`, `/tk:meta-feedback` 명령을 사용합니다. v8 MVP에서 source intake와 spec normalization은 `/tk:gap`이 담당하므로 `/tk:spec`은 공개 command surface에서 제거되었습니다.
+설치 후 Claude Code를 다시 시작하고 `/tk:gap`, `/tk:launch`, `/tk:reflect`, `/tk:next`, `/tk:handoff`, `/tk:meta-feedback` 명령을 사용합니다. v8 MVP에서 source intake와 spec normalization은 `/tk:gap`이 담당하므로 `/tk:spec`은 공개 command surface에서 제거되었습니다.
 
 ## Command Surface
 
@@ -40,6 +40,7 @@ claude plugin install tk@tiger-kit --scope project
 | `/tk:gap --review` | v7 Contract-based Gap Review compatibility mode로 Actionable Finding과 Clarification Needed를 `report.md`와 `run.json`에 남깁니다. | branch-local |
 | `/tk:launch` | sealed workflow만 실행하고 verification, abort receipt, reflect trace를 남깁니다. | branch-local execution |
 | `/tk:reflect` | gap+launch trace와 branch-local working memory에서 repo에 영구 보존할 insight만 rubric으로 선별하고 durable target에 반영한 뒤 기본적으로 meta-feedback을 함께 제출합니다. | durable insight |
+| `/tk:next` | 현재 TigerKit 상태와 workspace/repo context를 읽고 다음 안전 행동 하나를 추천합니다. 실행·commit·PR은 하지 않습니다. | stdout utility |
 | `/tk:handoff` | 다음 세션이나 다음 작업자가 이어받을 continuation 문서와 pending follow-up queue를 작성합니다. | continuation |
 | `/tk:meta-feedback` | 세션 내역에서 TigerKit command/skill 개선안을 일반화해 추출합니다. | generalized feedback |
 
@@ -49,6 +50,7 @@ claude plugin install tk@tiger-kit --scope project
 gap = source intake + source grounding + ambiguity attack + sealed launch workflow 생성
 launch = sealed workflow 실행 + verification + abort/reflect receipt
 reflect = gap+launch trace와 branch-local working memory에서 repo에 영구 보존할 insight만 추출/반영
+next = 현재 상태를 읽고 다음 안전 행동 추천
 handoff = 다음 세션/작업자용 continuation context
 meta-feedback = 세션 내 TigerKit 개선 피드백 일반화
 ```
@@ -56,6 +58,8 @@ meta-feedback = 세션 내 TigerKit 개선 피드백 일반화
 `gap`과 canonical `handoff` 산출물은 `.claude/tigerkit/branches/<branch-key>/` 아래의 branch-local generated working memory입니다. 기존 branch-local Spec Patch가 있으면 `/tk:gap`의 source material로 읽을 수 있지만, v8 MVP는 `/tk:spec` command를 노출하지 않습니다. `/tk:handoff`는 경로 미지정 resume을 위해 `.claude/tigerkit/global-index.json`에 최신 handoff pointer도 기록합니다. repo-wide durable knowledge가 아닙니다.
 
 `/tk:gap` 기본 실행은 `GAP_READY` 또는 `GAP_BLOCKED`로 끝납니다. `GAP_READY`에는 sealed `tigerkit-launch-workflow`가 포함되어야 하고, `GAP_BLOCKED`에는 unresolved decision/conflict/missing source 때문에 workflow block을 포함하지 않습니다. v7 review behavior는 `/tk:gap --review`에서 유지합니다.
+
+`/tk:next`는 primary execution pipeline 밖의 stdout-only utility입니다. 현재 TigerKit artifact와 workspace 상태를 읽어 `/tk:gap`, `/tk:launch`, `/tk:reflect`, `/tk:handoff`, 또는 manual action 중 다음 안전 행동을 추천하지만 실행하지 않습니다.
 
 `reflect`는 durable insight를 Frequency, Cost, Risk, Stability, Coverage rubric으로 평가하고 `apply=true`일 때 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에 직접 반영합니다. 반영할 durable insight가 없으면 파일을 수정하지 않는 것도 정상 성공입니다. reflect 처리 직후 `/tk:meta-feedback`을 proposal-only로 제출하며, `--no-meta-feedback` 또는 `--meta-feedback=false`로 생략할 수 있습니다.
 
