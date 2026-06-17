@@ -3,7 +3,7 @@
 이 문서는 TigerKit v8.0 command의 출력 계약을 정의합니다. 사용 흐름은 `.tigerkit/docs/usage.md`, 산출물 위치는 `.tigerkit/docs/artifact-layout.md`를 기준으로 봅니다.
 
 ```text
-stdout is a receipt. Full spec/gap bodies are saved as branch-local artifacts unless explicit print option is used.
+stdout is a receipt. Full gap bodies are saved as branch-local artifacts unless explicit print option is used.
 ```
 
 ## 공통 원칙
@@ -15,30 +15,15 @@ stdout is a receipt. Full spec/gap bodies are saved as branch-local artifacts un
 3. artifact paths when files are written
 4. counts, risks, next action
 
-상세 본문은 파일에 저장하고, 각 command가 지원하는 explicit print option을 지정한 경우에만 stdout에 함께 출력합니다. `/tk:spec`은 `--print-body`, `/tk:gap`은 `--print-report`를 사용합니다.
+상세 본문은 파일에 저장하고, 각 command가 지원하는 explicit print option을 지정한 경우에만 stdout에 함께 출력합니다. v8 MVP 공개 command surface에서는 `/tk:gap`의 `--print-report`가 이에 해당합니다.
 
 사용자 대화에 보이는 안내, 추천, 요약, next action은 계약용어, path, identifier, field name을 제외하고 한글로 씁니다.
 
 Hook guard는 repo 유지보수용 command/docs sync나 eval JSON 점검이 아니라 플러그인 사용자가 실제로 보는 receipt, artifact path, finding Ref, explicit print option 경계를 보호할 때만 둡니다. 그런 user-facing guard 표면이 없으면 hook을 추가하지 않습니다.
 
-## `/tk:spec` Output Contract
+## Legacy Spec Patch note
 
-- 목적: raw instruction을 현재 branch-local Spec Patch로 저장합니다.
-- source material과 authority를 분리합니다. confirmed 또는 명시 scope가 있는 항목만 gap evidence 후보가 됩니다.
-- 기본 저장 위치: `.claude/tigerkit/branches/<branch-key>/specs/`
-- 기본 stdout은 summary만 출력합니다.
-- Spec Patch 전체 본문은 `--print-body`가 있을 때만 출력합니다.
-- `spec`은 finding을 만들지 않고 구현 분석을 하지 않습니다.
-
-기본 stdout:
-
-```text
-Spec Patch 생성: <SP-ID>
-Branch Scope: <branch-key>
-경로: .claude/tigerkit/branches/<branch-key>/specs/<SP-ID>-<slug>.md
-Items:
-- <ITEM-ID>
-```
+v8 MVP는 `/tk:spec` command를 공개하지 않습니다. 기존 `.claude/tigerkit/branches/<branch-key>/specs/` 자료가 있으면 `/tk:gap`이 source material 후보로 읽을 수 있지만, 출력 계약의 대상은 아닙니다.
 
 ## `/tk:gap` Output Contract
 

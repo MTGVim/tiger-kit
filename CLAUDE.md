@@ -18,11 +18,10 @@
 ## 핵심 정책
 
 - TigerKit의 목적은 AI-induced source loss를 줄이는 것이다.
-- v8.0 핵심 command flow는 `/tk:gap`, `/tk:launch`, `/tk:reflect`이며 compatibility/secondary command는 `/tk:spec`, `/tk:gap --review`, `/tk:handoff`, `/tk:meta-feedback`다.
-- 기존 command를 v7 정리 과정에서 임의 제거하지 않는다. command surface 변경은 compatibility와 docs/evals 동기화를 함께 검토한다.
+- v8.0 핵심 command flow는 `/tk:gap`, `/tk:launch`, `/tk:reflect`이며 compatibility/secondary command는 `/tk:gap --review`, `/tk:handoff`, `/tk:meta-feedback`다.
+- 공개 command surface 변경은 compatibility와 docs/evals 동기화를 함께 검토한다. v8 MVP에서 `/tk:spec`은 공개 command로 노출하지 않는다.
 - Claude Code plugin command는 namespace를 사용하므로 slash invocation은 `/tk:*` 형태다. 자연어 요청은 같은 프로토콜을 따른다.
-- `/tk:spec`은 현재 session에서 사용자가 직접 제공한 지시, 브레인스토밍, 회의 메모, 결정사항을 현재 브랜치 전용 Spec Patch로 저장한다.
-- 기본 `/tk:gap`은 source grounding, ambiguity attack, sealed launch workflow 생성을 수행하고 `GAP_READY` 또는 `GAP_BLOCKED`로 끝난다. v7 Contract-based Gap Review는 `/tk:gap --review` compatibility mode로 유지한다.
+- 기본 `/tk:gap`은 사용자 지시, 브레인스토밍, 회의 메모, 결정사항, URL/ticket/docs, legacy branch-local Spec Patch를 source material로 intake하고, source grounding, ambiguity attack, sealed launch workflow 생성을 수행한 뒤 `GAP_READY` 또는 `GAP_BLOCKED`로 끝난다. v7 Contract-based Gap Review는 `/tk:gap --review` compatibility mode로 유지한다.
 - `/tk:launch`는 `GAP_READY` sealed workflow만 실행하며, workflow 밖 scope 확장, missing requirement 임의 해석, verification 없는 success 선언, preflight 승인 없는 commit을 금지한다.
 - `/tk:reflect`는 branch-local working memory에서 repo에 영구 보존할 insight만 추출한다. 기본 동작은 `apply=true`이며, source code는 수정하지 않고 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에 직접 반영한다.
 - `/tk:handoff`는 다음 세션이나 다음 작업자가 이어받을 continuation 문서를 작성한다.
@@ -31,7 +30,7 @@
 - UI copy는 basis 또는 confirmed contract와 exact match여야 한다. 의미상 유사함은 충분하지 않다.
 - 외부 근거는 URL, path, ticket, Figma, PRD, issue, API docs, source code path, commit hash 같은 reference와 access status로 관리한다.
 - 외부 근거 내용을 repo-wide durable 요구사항 텍스트로 복사, 요약, 정규화, 재작성하지 않는다.
-- `/tk:spec`은 현재 branch-local working memory에만 raw instruction과 derived Spec Item을 저장할 수 있다. 이것은 repo-wide durable knowledge가 아니며 `/tk:reflect`를 거치기 전에는 durable insight가 아니다.
+- legacy branch-local Spec Patch가 남아 있으면 `/tk:gap` source material 후보로만 다룬다. 이것은 repo-wide durable knowledge가 아니며 `/tk:reflect`를 거치기 전에는 durable insight가 아니다.
 - 접근 불가 URL, image, Figma/design link, screenshot URL, local path는 pending reference로 기록하고 file, local path, screenshot/export, pasted content를 요청한다.
 - 현재 session에서 사용자가 직접 말한 인터뷰 내용만 local text로 저장할 수 있다.
 - raw source text와 derived interpretation을 분리한다.

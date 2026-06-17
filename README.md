@@ -30,14 +30,13 @@ claude plugin details tk
 claude plugin install tk@tiger-kit --scope project
 ```
 
-설치 후 Claude Code를 다시 시작하고 `/tk:spec`, `/tk:gap`, `/tk:launch`, `/tk:reflect`, `/tk:handoff`, `/tk:meta-feedback` 명령을 사용합니다.
+설치 후 Claude Code를 다시 시작하고 `/tk:gap`, `/tk:launch`, `/tk:reflect`, `/tk:handoff`, `/tk:meta-feedback` 명령을 사용합니다. v8 MVP에서 source intake와 spec normalization은 `/tk:gap`이 담당하므로 `/tk:spec`은 공개 command surface에서 제거되었습니다.
 
 ## Command Surface
 
 | Command | 역할 | 저장 성격 |
 | --- | --- | --- |
-| `/tk:spec` | 즉석 지시, 브레인스토밍, 회의 메모를 source material로 저장하되 authority와 분리합니다. | branch-local |
-| `/tk:gap` | source를 ground하고 ambiguity를 attack한 뒤 launch 가능한 sealed workflow를 만들거나 `GAP_BLOCKED`로 중단합니다. | branch-local |
+| `/tk:gap` | 즉석 지시, 브레인스토밍, 회의 메모, URL, ticket, 기존 branch-local Spec Patch를 source material로 intake하고, source를 ground하고 ambiguity를 attack한 뒤 launch 가능한 sealed workflow를 만들거나 `GAP_BLOCKED`로 중단합니다. | branch-local |
 | `/tk:gap --review` | v7 Contract-based Gap Review compatibility mode로 Actionable Finding과 Clarification Needed를 `report.md`와 `run.json`에 남깁니다. | branch-local |
 | `/tk:launch` | sealed workflow만 실행하고 verification, abort receipt, reflect trace를 남깁니다. | branch-local execution |
 | `/tk:reflect` | gap+launch trace와 branch-local working memory에서 repo에 영구 보존할 insight만 rubric으로 선별하고 durable target에 반영한 뒤 기본적으로 meta-feedback을 함께 제출합니다. | durable insight |
@@ -47,15 +46,14 @@ claude plugin install tk@tiger-kit --scope project
 ## Core Model
 
 ```text
-spec = 현재 브랜치 전용 요건 패치 생성
-gap = source grounding + ambiguity attack + sealed launch workflow 생성
+gap = source intake + source grounding + ambiguity attack + sealed launch workflow 생성
 launch = sealed workflow 실행 + verification + abort/reflect receipt
 reflect = gap+launch trace와 branch-local working memory에서 repo에 영구 보존할 insight만 추출/반영
 handoff = 다음 세션/작업자용 continuation context
 meta-feedback = 세션 내 TigerKit 개선 피드백 일반화
 ```
 
-`spec`, `gap`, canonical `handoff` 산출물은 `.claude/tigerkit/branches/<branch-key>/` 아래의 branch-local generated working memory입니다. `/tk:handoff`는 경로 미지정 resume을 위해 `.claude/tigerkit/global-index.json`에 최신 handoff pointer도 기록합니다. repo-wide durable knowledge가 아닙니다.
+`gap`과 canonical `handoff` 산출물은 `.claude/tigerkit/branches/<branch-key>/` 아래의 branch-local generated working memory입니다. 기존 branch-local Spec Patch가 있으면 `/tk:gap`의 source material로 읽을 수 있지만, v8 MVP는 `/tk:spec` command를 노출하지 않습니다. `/tk:handoff`는 경로 미지정 resume을 위해 `.claude/tigerkit/global-index.json`에 최신 handoff pointer도 기록합니다. repo-wide durable knowledge가 아닙니다.
 
 `/tk:gap` 기본 실행은 `GAP_READY` 또는 `GAP_BLOCKED`로 끝납니다. `GAP_READY`에는 sealed `tigerkit-launch-workflow`가 포함되어야 하고, `GAP_BLOCKED`에는 unresolved decision/conflict/missing source 때문에 workflow block을 포함하지 않습니다. v7 review behavior는 `/tk:gap --review`에서 유지합니다.
 

@@ -11,13 +11,14 @@
 ## 핵심 모델
 
 ```text
-TigerKit = branch-scoped spec + sealed gap workflow + human-approved launch + durable reflection + continuation handoff + generalized meta-feedback
+TigerKit = branch-scoped source intake + sealed gap workflow + human-approved launch + durable reflection + continuation handoff + generalized meta-feedback
 ```
 
 TigerKit은 branch-local working memory와 durable repo insight를 분리합니다.
 
 - 사용자 입력, 문서, 스크린샷, 회의 메모, 이전 계획은 source material이며 그 자체로 authority가 아닙니다.
-- `spec`, `gap` 산출물은 현재 브랜치의 working memory입니다.
+- `gap` 산출물은 현재 브랜치의 working memory입니다.
+- 기존 branch-local Spec Patch가 있으면 `/tk:gap`이 source material로 읽을 수 있지만, v8 MVP는 `/tk:spec` command를 노출하지 않습니다.
 - 해당 산출물은 repo-wide durable knowledge가 아닙니다.
 - repo에 영구적으로 남길 insight는 `reflect`만 추출하고 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에 반영합니다.
 - 다음 세션을 위한 사람이 읽는 continuation과 pending follow-up queue는 `handoff`가 담당합니다.
@@ -31,8 +32,7 @@ Hermes Agent, Codex CLI, `npx skills` 기반 command-skill adapter는 v8 MVP에 
 
 | Command | 역할 | 저장 성격 |
 | --- | --- | --- |
-| `/tk:spec` | 즉석 지시, 브레인스토밍, 회의 메모를 gap 분석용 Spec Patch로 저장합니다. | branch-local |
-| `/tk:gap` | source grounding, ambiguity attack, sealed launch workflow 생성을 수행하고 `GAP_READY` 또는 `GAP_BLOCKED`로 끝납니다. | branch-local |
+| `/tk:gap` | 사용자 입력, 문서, 스크린샷, 회의 메모, 기존 branch-local Spec Patch를 source material로 intake하고, source grounding, ambiguity attack, sealed launch workflow 생성을 수행한 뒤 `GAP_READY` 또는 `GAP_BLOCKED`로 끝납니다. | branch-local |
 | `/tk:gap --review` | v7 Contract-based Gap Review compatibility mode로 사용자가 고칠 finding과 답할 clarification을 남깁니다. | branch-local |
 | `/tk:launch` | sealed workflow만 실행하고 verification, abort receipt, reflect trace를 남깁니다. | branch-local execution |
 | `/tk:reflect` | gap+launch trace와 branch-local 산출물에서 repo에 남길 insight만 추출하고 반영합니다. | durable insight |
@@ -42,8 +42,7 @@ Hermes Agent, Codex CLI, `npx skills` 기반 command-skill adapter는 v8 MVP에 
 ## 사용 예시
 
 ```text
-/tk:spec "방금 정해졌는데 모바일에서는 CTA를 하단 sticky로 해야 된대. 데스크톱은 기존처럼 우상단 유지."
-/tk:gap
+/tk:gap "방금 정해졌는데 모바일에서는 CTA를 하단 sticky로 해야 된대. 데스크톱은 기존처럼 우상단 유지."
 /tk:gap --review
 /tk:gap --analysis-depth bounded
 /tk:gap --analysis-depth expanded
@@ -59,23 +58,12 @@ Hermes Agent, Codex CLI, `npx skills` 기반 command-skill adapter는 v8 MVP에 
 /tk:meta-feedback gap 결과가 느리고 BE 오탐이 난 패턴을 일반화해줘
 ```
 
-## `/tk:spec`
-
-- raw instruction을 branch-local Spec Patch로 저장합니다.
-- source material과 authority를 분리합니다. confirmed 또는 명시 scope가 있는 항목만 gap evidence 후보가 됩니다.
-- 기본 저장 위치는 `.claude/tigerkit/branches/<branch-key>/specs/`입니다.
-- 기본 상태는 `active`입니다.
-- confirmed item만 `/tk:gap` final finding evidence로 사용될 수 있습니다.
-- ambiguous instruction은 confirmed로 세탁하지 않고 `draft`, `assumed`, `unclear`, `blocked`, 또는 clarification 대상으로 둡니다.
-- `spec`은 구현 분석을 하지 않고 finding을 만들지 않습니다.
-- 기본 stdout은 ID, branch scope, path, item list summary만 출력합니다.
-- 전체 본문은 `--print-body`가 있을 때만 출력합니다.
-
 ## `/tk:gap`
 
-- 기본 `/tk:gap`은 v8.0에서 Ground / Attack / Produce workflow command입니다.
+- 기본 `/tk:gap`은 v8.0에서 source intake, Ground / Attack / Produce workflow command입니다.
 - 사용자 의도, URL, ticket, notes, screenshots, repo context, prior specs, conversation decisions를 source material로 intake합니다.
 - source material과 authority를 분리하고 confirmed requirement, assumption, rejected assumption, non-goal을 정규화합니다.
+- legacy branch-local Spec Patch가 있으면 active confirmed item만 source material 후보로 읽을 수 있습니다.
 - ambiguity attack으로 contradiction, missing decision, hidden dependency, edge case, failure mode, verification gap을 찾습니다.
 - launch 가능한 sealed workflow가 있으면 `GAP_READY`로 끝내고 `tigerkit-launch-workflow` block을 생성합니다.
 - unresolved decision/conflict/missing source 때문에 launch하면 안 되면 `GAP_BLOCKED`로 끝내고 workflow block을 생성하지 않습니다.
