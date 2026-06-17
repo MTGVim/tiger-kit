@@ -59,10 +59,10 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
 
 | 파일 | 역할 | 저장 성격 |
 | --- | --- | --- |
-| `.claude/tigerkit/global-index.json` | branch-key 목록, 마지막 접근 정보, current branch 최신 handoff pointer. 저장 또는 apply를 수행한 `/tk:spec`, `/tk:gap`, `/tk:reflect` 실행 시 `lastUsedAt`을 갱신합니다. `/tk:handoff` 실행 시 branch entry의 `latestHandoffPath`와 `lastHandoffAt`을 갱신합니다. entry가 없으면 현재 branch 정보로 생성할 수 있습니다. `--no-index`, `--no-save`, `--dry-run`, `--apply=false`처럼 저장하지 않는 실행은 recency를 갱신하지 않습니다. 손상되어도 branch-local index에서 복구 가능해야 합니다. | generated |
-| `.claude/tigerkit/branches/<branch-key>/branch-state.json` | 현재 branch scope의 마지막 spec/gap run pointer와 최신 handoff pointer. | branch-local |
-| `.claude/tigerkit/branches/<branch-key>/specs/index.json` | 현재 branch scope의 Spec Patch index와 item supersede mapping. | branch-local |
-| `.claude/tigerkit/branches/<branch-key>/specs/SP-*.md` | branch-local Spec Patch. PRD나 Design Guide의 영구 대체물이 아닙니다. | branch-local |
+| `.claude/tigerkit/global-index.json` | branch-key 목록, 마지막 접근 정보, current branch 최신 handoff pointer. 저장 또는 apply를 수행한 `/tk:gap`, `/tk:reflect` 실행 시 `lastUsedAt`을 갱신합니다. `/tk:handoff` 실행 시 branch entry의 `latestHandoffPath`와 `lastHandoffAt`을 갱신합니다. entry가 없으면 현재 branch 정보로 생성할 수 있습니다. `--no-save`, `--dry-run`, `--apply=false`처럼 저장하지 않는 실행은 recency를 갱신하지 않습니다. 손상되어도 branch-local index에서 복구 가능해야 합니다. | generated |
+| `.claude/tigerkit/branches/<branch-key>/branch-state.json` | 현재 branch scope의 최신 gap workflow/review, launch, reflect, handoff pointer. | branch-local |
+| `.claude/tigerkit/branches/<branch-key>/specs/index.json` | legacy Spec Patch index와 item supersede mapping. v8 MVP command가 새로 생성하지 않으며 `/tk:gap` source material discovery에만 사용할 수 있습니다. | legacy branch-local |
+| `.claude/tigerkit/branches/<branch-key>/specs/SP-*.md` | legacy branch-local Spec Patch. PRD나 Design Guide의 영구 대체물이 아니며 `/tk:gap` source material 후보입니다. | legacy branch-local |
 | `.claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md` | `/tk:gap`이 `GAP_READY`일 때 만드는 sealed launch workflow archive입니다. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/gap/current.md` | 최신 sealed launch workflow copy입니다. hash seal의 authoritative source는 archive workflow 파일입니다. | branch-local pointer |
 | `.claude/tigerkit/branches/<branch-key>/gap/<GAP-ID>.md` | `/tk:gap`이 `GAP_BLOCKED`일 때 만드는 blocked report입니다. workflow block을 포함하지 않습니다. | branch-local |
@@ -217,7 +217,6 @@ linked worktree는 repository common dir를 공유할 수 있으므로 common di
 
 아래 파일은 atomic write로 갱신합니다.
 
-- `specs/index.json`
 - `branch-state.json`
 - `global-index.json`
 - `run.json`
@@ -235,7 +234,7 @@ linked worktree는 repository common dir를 공유할 수 있으므로 common di
 
 ## Branch lock
 
-동일 branch scope에서 `spec`, `gap`, `reflect`가 동시에 실행될 수 있으므로 lock을 사용합니다.
+동일 branch scope에서 `gap`, `launch`, `reflect`, `handoff`가 동시에 같은 branch-local state를 갱신할 수 있으므로 lock을 사용합니다.
 
 ```text
 .claude/tigerkit/branches/<branch-key>/.lock

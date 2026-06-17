@@ -1,6 +1,6 @@
 ---
 description: source를 근거로 고정하고 모호함을 공격해 sealed launch workflow 또는 blocked report를 생성합니다.
-argument-hint: "[--review] [--analysis-depth <direct|bounded|expanded|exhaustive-capped>] [--spec <SP-ID|path>] [--no-specs] [--print-report] [--maintainer-proof]"
+argument-hint: "[source/intake text or refs...] [--review] [--analysis-depth <direct|bounded|expanded|exhaustive-capped>] [--spec <SP-ID|path>] [--no-specs] [--print-report] [--maintainer-proof]"
 ---
 
 이 명령은 TigerKit v8.0 sealed GAP workflow contract를 따릅니다. `/tk:gap --review`는 v7 Contract-based Gap Review compatibility mode입니다.

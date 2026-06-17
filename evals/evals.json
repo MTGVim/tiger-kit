@@ -9,7 +9,6 @@
     ],
     "compatibility_commands": [
       "/tk:gap --review",
-      "/tk:spec",
       "/tk:handoff",
       "/tk:meta-feedback"
     ],
@@ -41,9 +40,9 @@
   "evals": [
     {
       "id": 0,
-      "name": "command-surface-adds-launch-preserves-existing-commands",
+      "name": "command-surface-v8-gap-launch-reflect-without-spec",
       "prompt": "Evaluate TigerKit v8 active command surface. Do not write files.",
-      "expected_output": "Should list /tk:gap, /tk:launch, and /tk:reflect as the primary v8 flow. Should also preserve /tk:spec, /tk:gap --review, /tk:handoff, and /tk:meta-feedback as compatibility or secondary commands. Should explain that commands/*.md plus .claude-plugin/plugin.json own the /tk:* contracts, that existing commands are not removed, and that Hermes/Codex/npx-skills command adapters are out of MVP scope with no adapter files shipped.",
+      "expected_output": "Should list /tk:gap, /tk:launch, and /tk:reflect as the primary v8 flow. Should preserve /tk:gap --review, /tk:handoff, and /tk:meta-feedback as compatibility or secondary commands. Should explain that /tk:spec is not exposed in the v8 MVP command surface because source intake is owned by /tk:gap. Should explain that commands/*.md plus .claude-plugin/plugin.json own the /tk:* contracts and that Hermes/Codex/npx-skills command adapters are out of MVP scope with no adapter files shipped.",
       "files": [
         ".claude-plugin/plugin.json",
         "README.md",
@@ -53,7 +52,7 @@
         "Lists /tk:gap",
         "Lists /tk:launch",
         "Lists /tk:reflect",
-        "Preserves /tk:spec",
+        "Does not expose /tk:spec",
         "Preserves /tk:handoff",
         "Preserves /tk:meta-feedback",
         "Mentions /tk:gap --review compatibility",
@@ -258,7 +257,7 @@
       "id": 12,
       "name": "plugin-version-and-command-manifest-v8",
       "prompt": "Evaluate marketplace plugin metadata for TigerKit v8. Do not write files.",
-      "expected_output": "Should set .claude-plugin/plugin.json version to 8.0.0 when the current origin/main version is a lower patch release produced before the v8 contract correction. Should include ./commands/launch.md and preserve existing command entries.",
+      "expected_output": "Should set .claude-plugin/plugin.json version to 8.0.0 when the current origin/main version is a lower patch release produced before the v8 contract correction. Should include ./commands/launch.md, preserve /tk:gap, /tk:reflect, /tk:handoff, and /tk:meta-feedback command entries, and not include ./commands/spec.md because v8 source intake is owned by /tk:gap.",
       "files": [
         ".claude-plugin/plugin.json",
         "commands/launch.md"
@@ -266,7 +265,7 @@
       "expectations": [
         "Version is 8.0.0",
         "Includes ./commands/launch.md",
-        "Preserves spec command",
+        "Does not include ./commands/spec.md",
         "Preserves gap command",
         "Preserves reflect command",
         "Preserves handoff command",

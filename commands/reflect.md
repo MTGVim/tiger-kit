@@ -7,7 +7,7 @@ argument-hint: "[scope] [--dry-run] [--apply=true|false] [--target <CLAUDE.md|.c
 
 사용자에게는 한글로 답합니다. 코드, path, URL, ticket, commit, hash, identifier, error는 원문 그대로 둘 수 있습니다.
 
-목표: `/tk:reflect`는 branch-local Spec Patch, Gap workflow, Launch trace에서 repo-wide 가치가 있는 durable insight만 추출해 적절한 durable surface에 직접 반영합니다.
+목표: `/tk:reflect`는 Gap workflow, Launch trace, Gap이 already-grounded source로 채택한 legacy Spec Patch reference에서 repo-wide 가치가 있는 durable insight만 추출해 적절한 durable surface에 직접 반영합니다.
 
 ```text
 reflect = branch-local gap+launch working memory -> CLAUDE.md/.claude/rules durable reflection
@@ -20,7 +20,7 @@ reflect = branch-local gap+launch working memory -> CLAUDE.md/.claude/rules dura
 
 ## 핵심 원칙
 
-- spec/gap/launch/verify 산출물 자체는 repo-wide durable knowledge가 아닙니다.
+- gap/launch/verify 산출물과 legacy Spec Patch 자체는 repo-wide durable knowledge가 아닙니다.
 - repo에 영구적으로 남길 insight는 reflect를 통해서만 추출합니다.
 - `/tk:reflect` 기본 동작은 `apply=true`입니다.
 - 반영할 durable insight가 없으면 아무 파일도 수정하지 않는 것이 정상 성공입니다.
@@ -52,23 +52,24 @@ v8.0에서는 `--apply=true`가 redundant여도 warning을 내지 않습니다.
 Reflect는 current branch scope의 branch-local working memory를 읽습니다.
 
 ```text
-.claude/tigerkit/branches/<branch-key>/specs/
 .claude/tigerkit/branches/<branch-key>/gap/
 .claude/tigerkit/branches/<branch-key>/launch/
 .claude/tigerkit/branches/<branch-key>/runs/gap/
 .claude/tigerkit/branches/<branch-key>/branch-state.json
 ```
 
+Legacy `.claude/tigerkit/branches/<branch-key>/specs/`는 `/tk:gap`이 source material로 채택해 gap artifact에 trace한 경우에만 간접 evidence로 참고합니다. Reflect가 legacy Spec Patch를 repo-wide rule로 직접 승격하지 않습니다.
+
 읽을 수 있는 evidence class:
 
-- active/superseded Spec Patch metadata와 confirmed item
+- gap artifact에 trace된 legacy Spec Patch reference와 accepted/rejected treatment
 - accepted gap finding pattern
 - rejected/downgraded observation reason
 - source conflict와 resolution 상태
 - 사용자 대화에서 명시적으로 확인된 TigerKit 운영 규칙
 - current code/worktree context needed to classify repo-wide value
 
-branch-local specs/gap 산출물이 없으면 산출물 기반 후보는 없는 것으로 처리합니다. 이 경우에도 사용자 대화에서 명시적으로 확인된 TigerKit 운영 규칙은 후보가 될 수 있지만, 반복 관측 패턴이나 실행자 해석만으로 repo-wide durable insight를 만들지 않습니다.
+branch-local gap 산출물이 없으면 산출물 기반 후보는 없는 것으로 처리합니다. 이 경우에도 사용자 대화에서 명시적으로 확인된 TigerKit 운영 규칙은 후보가 될 수 있지만, legacy Spec Patch나 실행자 해석만으로 repo-wide durable insight를 만들지 않습니다.
 
 ## Durable target classification
 

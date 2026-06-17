@@ -6,7 +6,6 @@
     "name": "MTGVim"
   },
   "commands": [
-    "./commands/spec.md",
     "./commands/gap.md",
     "./commands/launch.md",
     "./commands/reflect.md",
