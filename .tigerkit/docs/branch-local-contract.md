@@ -147,7 +147,7 @@ Tiger Kit does not read or write files outside the current worktree by default.
 .claude/tigerkit/branches/<branch-key>/gap/<GAP-ID>.md
 ```
 
-- `GAP_READY`이면 sealed workflow archive와 `current.md` copy를 씁니다.
+- `GAP_READY`이면 task별 `assumed_preconditions`와 봉인 전 `readonly_preflight` 결과를 포함한 sealed workflow archive와 `current.md` copy를 씁니다.
 - `GAP_BLOCKED`이면 blocked report만 쓰고 `tigerkit-launch-workflow` block은 쓰지 않습니다.
 - `branch-state.json`에는 `lastWorkflowId`, `lastWorkflowPath`, `lastWorkflowHash`, `lastGapStatus`를 기록할 수 있습니다.
 
@@ -177,7 +177,8 @@ Proposal safety contract:
 .claude/tigerkit/branches/<branch-key>/reflect/current.md
 ```
 
-- launch run은 workflow hash, runtime harness, worktree context proposal status, task/gate 결과, abort code, commit decision을 기록합니다.
+- launch run은 workflow hash, runtime harness, worktree context proposal status, task/precondition/gate 결과, abort code, commit decision을 기록합니다.
+- `HUMAN_DECISION_REQUIRED` 또는 `VERIFICATION_FAILED` abort는 다음 `/tk:gap`이 입력으로 소비할 수 있는 structured feedback fact를 기록합니다.
 - reflect archive와 `reflect/current.md`는 generated branch-local trace이며 durable apply가 아닙니다.
 - `branch-state.json`에는 `lastLaunchId`, `lastLaunchPath`, `lastLaunchStatus`, `lastReflectId`, `lastReflectPath`를 기록할 수 있습니다.
 

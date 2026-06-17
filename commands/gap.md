@@ -48,9 +48,11 @@ TigerKit 자체 성능 개선, baseline, heuristic proof, performance proof, fal
 3. confirmed requirement, assumption, rejected assumption, non-goal을 정규화합니다.
 4. bounded ambiguity attack으로 contradiction, missing decision, hidden dependency, edge case, failure mode, verification gap을 탐지합니다.
 5. YAGNI trim으로 workflow 밖 future extensibility를 제거합니다.
-6. task graph, success/failure condition, verification gate, abort policy, commit policy를 작성합니다.
-7. launch 가능하면 `GAP_READY`와 sealed `tigerkit-launch-workflow`를 저장합니다.
-8. launch 금지 사유가 남으면 `GAP_BLOCKED`와 blocked report를 저장합니다.
+6. task graph, task별 `assumed_preconditions`, success/failure condition, verification gate, abort policy, commit policy를 작성합니다.
+7. verification gate 중 static/read-only로 확인 가능한 항목을 봉인 전 preflight로 1회 확인하고, 도구 가정 불일치나 unmet precondition을 launch-blocking item으로 승격합니다.
+8. 이전 `/tk:launch` abort trace가 있으면 구조화된 gap input으로 반영해 같은 `HUMAN_DECISION_REQUIRED`/`VERIFICATION_FAILED` 사실을 재발견하지 않습니다.
+9. launch 가능하면 `GAP_READY`와 sealed `tigerkit-launch-workflow`를 저장합니다.
+10. launch 금지 사유가 남으면 `GAP_BLOCKED`와 blocked report를 저장합니다.
 
 Workflow hash는 fenced block body raw UTF-8 bytes를 LF로 정규화하고 final LF를 하나 보장한 뒤 SHA-256으로 계산합니다. opening/closing fence line은 hash에서 제외하고 YAML key sort나 normalize를 하지 않습니다.
 
@@ -676,14 +678,16 @@ Implementation 개선 작업에서는 `redesign -> analysis -> review -> feedbac
 3. Load active Spec Patch unless `--no-specs` is present, but do not treat draft/conflict items as confirmed requirements.
 4. Ground sources by authority and access status: user decisions, URLs/tickets, docs, screenshots, current repo files, and existing branch-local TigerKit artifacts.
 5. Normalize confirmed requirements, non-goals, assumptions, rejected assumptions, human decisions, and missing sources.
-6. Attack ambiguity: contradictions, unresolved decisions, hidden dependencies, edge cases, failure modes, verification holes, and scope creep.
-7. Apply YAGNI trim: keep only work needed for the mission; cut/defer future extensibility or convert it to abort conditions.
-8. Build a sealed launch workflow with stable task IDs, task dependencies, allowed/forbidden changes, success conditions, verification gates, abort policy, commit policy, autopilot policy, and reflect policy.
-9. If unresolved launch-blocking items remain, materialize `GAP_BLOCKED` with blocked reasons, human decisions needed, missing sources, and no `tigerkit-launch-workflow` block.
-10. If launchable, materialize `GAP_READY` with exactly one `tigerkit-gap-status` block and exactly one `tigerkit-launch-workflow` block.
-11. Compute `workflow_sha256` from the `tigerkit-launch-workflow` block body and record it externally in `tigerkit-gap-status` and branch state. Do not put the hash inside the workflow block.
-12. Acquire branch lock, write archive artifact and `gap/current.md` copy for `GAP_READY`, or blocked report for `GAP_BLOCKED`; update branch/global index; release lock.
-13. Emit final stdout receipt matching `.tigerkit/docs/output-contract.md`.
+6. Attack ambiguity: contradictions, unresolved decisions, hidden dependencies, task preconditions, edge cases, failure modes, verification holes, and scope creep.
+7. If a prior `/tk:launch` trace aborted with `HUMAN_DECISION_REQUIRED` or `VERIFICATION_FAILED`, convert its structured abort facts into gap source input so the next workflow records or blocks on the discovered fact instead of rediscovering it during execution.
+8. Apply YAGNI trim: keep only work needed for the mission; cut/defer future extensibility or convert it to abort conditions.
+9. Build a sealed launch workflow with stable task IDs, task dependencies, task-level `assumed_preconditions`, allowed/forbidden changes, success conditions, verification gates, abort policy, commit policy, autopilot policy, and reflect policy.
+10. Run static/read-only preflight once for checkable `assumed_preconditions` and verification gates before sealing. If a required predicate fails or cannot be verified with available evidence, record a launch-blocking item instead of emitting a launchable workflow.
+11. If unresolved launch-blocking items remain, materialize `GAP_BLOCKED` with blocked reasons, human decisions needed, missing sources, failed preflight predicates, and no `tigerkit-launch-workflow` block.
+12. If launchable, materialize `GAP_READY` with exactly one `tigerkit-gap-status` block and exactly one `tigerkit-launch-workflow` block.
+13. Compute `workflow_sha256` from the `tigerkit-launch-workflow` block body and record it externally in `tigerkit-gap-status` and branch state. Do not put the hash inside the workflow block.
+14. Acquire branch lock, write archive artifact and `gap/current.md` copy for `GAP_READY`, or blocked report for `GAP_BLOCKED`; update branch/global index; release lock.
+15. Emit final stdout receipt matching `.tigerkit/docs/output-contract.md`.
 
 ## `/tk:gap --review` compatibility run procedure
 
