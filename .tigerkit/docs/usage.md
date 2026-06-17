@@ -138,7 +138,8 @@ Report: .claude/tigerkit/branches/main--c0ffee/gap/GAP-20260617-143012-A7F3.md
 - workflow 밖 scope 확장, missing requirement 임의 해석, public API/DB/product behavior 재정의, verification 없는 success 선언, out-of-scope diff commit을 금지합니다.
 - mid-flight 질문을 하지 않습니다. 새 사용자 결정이 필요하면 `HUMAN_DECISION_REQUIRED`로 abort합니다.
 - `/tk:launch --autopilot`은 Phase 1에서 recovery를 수행하지 않고 `AUTOPILOT_DISABLED` 또는 `AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1`로 abort합니다.
-- `/tk:launch`는 `.claude/tigerkit/local/session-start/current.json`의 SessionStart hydration receipt를 읽고 `HYDRATION_CONFLICT`면 task 실행 전 abort합니다.
+- `/tk:launch`는 linked worktree에서 base worktree에만 있는 root-level Markdown과 `.claude/` 후보를 proposal-only로 기록합니다. 자동 symlink/copy는 하지 않습니다.
+- workflow가 worktree context 적용을 required precondition으로 두었는데 승인/evidence가 없으면 `WORKTREE_CONTEXT_APPROVAL_REQUIRED`로 task 실행 전 abort합니다.
 - `/tk:launch`는 `tk-runner` runtime harness를 receipt에 기록합니다. Claude Code 배포 agent는 `model: sonnet`이며, unavailable/fallback 상태를 숨기지 않습니다.
 - commit은 preflight receipt에 `user_preapproved_commit=true`와 `approval_source_ref`가 있을 때만 가능합니다.
 
@@ -205,16 +206,19 @@ Report: .claude/tigerkit/branches/main--c0ffee/gap/GAP-20260617-143012-A7F3.md
 - repo rule patch는 `/tk:reflect`, basis-target 비교는 `/tk:gap`, follow-up 보관은 `/tk:handoff` 대상으로 분리합니다.
 - agent runtime/config, MCP permission, custom agent 추천은 TigerKit 본체 범위 밖으로 둡니다.
 
-## SessionStart worktree hydration
+## Worktree context proposal
 
-TigerKit은 Claude Code `SessionStart` hook으로 linked git worktree의 local context symlink/hydration을 best-effort로 점검합니다.
+TigerKit은 Git worktree context를 Claude Code `SessionStart` hook으로 자동 symlink하지 않습니다. `/tk:launch` preflight와 `/tk:next` continuation scan에서 base/source worktree에만 있는 root-level Markdown(`AGENTS.md`, `CLAUDE.local.md`, `DESIGN.md` 등)과 `.claude/` 후보를 감지해 proposal-only로 기록합니다.
 
-- hook: `hooks/hooks.json` → `SessionStart` → `"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd" session-start`
-- config: `.claude/tigerkit/local/worktree-hydration.json`
-- receipt: `.claude/tigerkit/local/session-start/current.json`
-- archive: `.claude/tigerkit/local/session-start/SSH-YYYYMMDD-HHmmss-RAND.json`
+안전 정책:
 
-Hook은 regular file을 덮어쓰지 않고, tracked file/directory를 symlink하지 않으며, source worktree를 수정하지 않습니다. `.claude/tigerkit/local` 자체는 hook config/receipt control dir이므로 기본 symlink 대상이 아닙니다. 충돌은 receipt에 `HYDRATION_CONFLICT`로 남기고 `/tk:launch`가 preflight에서 차단합니다. `node_modules`는 기본적으로 symlink하지 않습니다.
+- 자동 symlink/copy 금지
+- tracked file symlink 금지
+- regular file overwrite 금지
+- `.claude/` 전체 symlink 금지
+- `node_modules` symlink 금지
+- `DESIGN.md`는 branch-specific 가능성이 있어 copy/skip 검토 권장
+- plugin root `CLAUDE.md`는 Claude Code project context로 자동 로드된다고 의존하지 않음
 
 ## Generated state
 

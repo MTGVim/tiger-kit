@@ -29,7 +29,7 @@ Dispatcher는 아래를 제공해야 합니다.
 - verification gates
 - abort policy
 - commit policy
-- latest SessionStart worktree hydration receipt path 또는 `none`
+- worktree context proposal status 또는 `none`
 
 입력이 부족하면 실행하지 말고 `ABORTED`와 abort code를 반환합니다.
 
@@ -39,7 +39,7 @@ Dispatcher는 아래를 제공해야 합니다.
 - 각 task 시작/완료/실패를 task ID와 함께 기록합니다.
 - workflow 밖 파일이나 동작이 필요하면 즉시 `OUT_OF_SCOPE_DIFF`로 abort합니다.
 - 새 사용자/owner 결정이 필요하면 질문하지 말고 `HUMAN_DECISION_REQUIRED`로 abort합니다.
-- SessionStart hydration receipt가 `HYDRATION_CONFLICT`이면 task 실행 전 중단합니다.
+- worktree context proposal이 `approval_required`이면 task 실행 전 중단합니다.
 - verification gate는 반드시 실행하거나, 실행 불가 시 `VERIFICATION_UNAVAILABLE`로 abort합니다.
 - 성공은 verification evidence가 있을 때만 선언합니다.
 - commit/push/PR/merge/release/deploy는 dispatcher가 명시한 preflight approval evidence 없이는 수행하지 않습니다.

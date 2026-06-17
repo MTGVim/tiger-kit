@@ -47,11 +47,6 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
           current.md
         cache/
         branch-state.json
-    local/
-      worktree-hydration.json
-      session-start/
-        current.json
-        SSH-YYYYMMDD-HHmmss-RAND.json
   handoffs/
     current.md  # optional pointer to branch-local handoff
 
@@ -95,9 +90,6 @@ MVP에서는 path compatibility를 위해 `branches/` 아래에 저장하지만 
 | `.claude/tigerkit/branches/<branch-key>/handoffs/YYYY-MM-DD-task-name.md` | `archive=true` 또는 명시적 archive 요청 때만 생성하는 branch-local continuation archive. | branch-local continuation |
 | `.claude/tigerkit/branches/<branch-key>/next/<NXT-ID>.md` | `/tk:next`가 실제 이어서 시도한 continuation run receipt archive입니다. | branch-local continuation execution |
 | `.claude/tigerkit/branches/<branch-key>/next/current.md` | 최신 next receipt copy입니다. | branch-local pointer |
-| `.claude/tigerkit/local/worktree-hydration.json` | SessionStart worktree hydration/symlink policy. current worktree root local generated config이며 repo-wide durable rule이 아닙니다. | local generated config |
-| `.claude/tigerkit/local/session-start/current.json` | SessionStart hook의 최신 worktree hydration receipt입니다. `/tk:launch` preflight가 `HYDRATION_CONFLICT`를 확인할 때 읽습니다. | local generated receipt |
-| `.claude/tigerkit/local/session-start/SSH-*.json` | SessionStart hydration receipt archive입니다. | local generated receipt |
 | `.claude/handoffs/current.md` | optional convenience pointer. canonical handoff를 대체하지 않습니다. | pointer |
 | `.claude/rules/**/*.md` | repo convention basis이자 `/tk:reflect apply=true`의 scoped durable apply target입니다. | durable rule |
 | `CLAUDE.md` | repo instruction과 durable project guidance이자 `/tk:reflect apply=true`의 global durable apply target입니다. | durable rule |
@@ -159,13 +151,26 @@ proof.json
 
 ## `/tk:next` artifact policy
 
-`/tk:next`는 v8.0 MVP에서 stdout-only utility입니다. 아래 경로를 생성하지 않습니다.
+`/tk:next`는 steering replacement continuation run마다 generated receipt를 남깁니다. 기본 위치는 아래와 같습니다.
 
 ```text
 .claude/tigerkit/branches/<branch-key>/next/
+  NXT-YYYYMMDD-HHmmss-RAND.md
+  current.md
 ```
 
-필요한 경우 latest GAP/launch/reflect/handoff artifact를 읽어 recommendation의 `References`에 path만 기록합니다.
+Plain workspace fallback도 `branches/<scope-key>/next/` layout을 사용하고 receipt에 `Scope Kind: workspace`를 표시합니다. next receipt는 branch/workspace-local generated working memory이며 durable repo rule이나 source of truth가 아닙니다.
+
+## Worktree context proposal artifacts
+
+Worktree context 후보 감지는 별도 SessionStart hook artifact를 만들지 않습니다. `/tk:launch`와 `/tk:next`는 각자의 receipt 안에 proposal-only 상태를 기록합니다.
+
+기록 원칙:
+
+- base/source worktree에만 있는 root-level Markdown 후보와 `.claude/` 후보만 요약합니다.
+- 자동 symlink/copy 결과를 기록하지 않습니다. 적용은 별도 승인된 action이어야 합니다.
+- `$GIT_COMMON_DIR`, `.git/worktrees/*`, user home, `/tmp`에는 기록하지 않습니다.
+- `.claude/` 전체 symlink, tracked file symlink, regular file overwrite, `node_modules` symlink는 금지 정책으로 기록합니다.
 
 ## Maintainer-only artifacts
 

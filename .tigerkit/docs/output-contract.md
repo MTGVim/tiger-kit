@@ -346,7 +346,8 @@ Concrete maintainer proof runs must recompute actual run proof from metadata bef
 - mid-flight 질문은 금지합니다. 새 결정이 필요하면 `HUMAN_DECISION_REQUIRED`로 abort합니다.
 - Phase 1에서 `--autopilot` recovery는 실행하지 않습니다.
 - commit은 preflight approval evidence 없이는 금지합니다.
-- `.claude/tigerkit/local/session-start/current.json`에 `HYDRATION_CONFLICT`가 있으면 task 실행 전 abort합니다.
+- worktree context 후보는 proposal-only로 기록합니다. 자동 symlink/copy는 하지 않습니다.
+- workflow가 worktree context 적용을 required precondition으로 두었는데 승인/evidence가 없으면 `WORKTREE_CONTEXT_APPROVAL_REQUIRED`로 task 실행 전 abort합니다.
 - required `tk-runner`/model harness가 unavailable이면 `MODEL_HARNESS_UNAVAILABLE`로 abort합니다.
 
 ### `tigerkit-launch-receipt` block
@@ -360,7 +361,7 @@ workflow_id: WF-YYYYMMDD-HHmmss-RAND
 workflow_path: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
 workflow_sha256: <sha256>
 status: SUCCESS_NO_COMMIT | SUCCESS_COMMITTED | ABORTED | FAILED_PREFLIGHT
-abort_code: null | WORKFLOW_NOT_FOUND | MULTIPLE_WORKFLOW_BLOCKS | WORKFLOW_HASH_MISMATCH | GAP_BLOCKED | HUMAN_DECISION_REQUIRED | MODEL_HARNESS_UNAVAILABLE | AUTOPILOT_DISABLED | AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1 | OUT_OF_SCOPE_DIFF | HYDRATION_CONFLICT | VERIFICATION_FAILED | ARTIFACT_ROOT_UNWRITABLE | COMMIT_REQUIRED_UNAVAILABLE | GITHUB_REQUIRED_UNAVAILABLE | VERIFICATION_UNAVAILABLE
+abort_code: null | WORKFLOW_NOT_FOUND | MULTIPLE_WORKFLOW_BLOCKS | WORKFLOW_HASH_MISMATCH | GAP_BLOCKED | HUMAN_DECISION_REQUIRED | MODEL_HARNESS_UNAVAILABLE | WORKTREE_CONTEXT_APPROVAL_REQUIRED | AUTOPILOT_DISABLED | AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1 | OUT_OF_SCOPE_DIFF | VERIFICATION_FAILED | ARTIFACT_ROOT_UNWRITABLE | COMMIT_REQUIRED_UNAVAILABLE | GITHUB_REQUIRED_UNAVAILABLE | VERIFICATION_UNAVAILABLE
 runtime_harness:
   role: tk-runner
   expected_host_binding: claude_code_agent
@@ -369,9 +370,15 @@ runtime_harness:
   effort_tier: medium
   status: active | fallback_inline | unavailable
   fallback_reason: null | agent_unavailable | host_does_not_support_subagents | model_binding_unobservable
-hydration:
-  receipt_path: .claude/tigerkit/local/session-start/current.json | null
-  status: OK | SKIPPED | HYDRATION_CONFLICT | unknown
+worktree_context:
+  detected: true | false
+  linked_worktree: true | false
+  source_worktree: <absolute path|null>
+  missing_root_markdown: []
+  missing_claude_dir: true | false
+  proposal_only: true
+  approval_required: true | false
+  approval_present: true | false
 commit_created: false
 commit_status: created | skipped_preflight_required | skipped_not_requested | skipped_not_git_repo | skipped_no_github_remote | skipped_readonly_workspace | skipped_commit_policy_skip
 reflect_report_path: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
@@ -388,6 +395,7 @@ Workflow Hash: <sha256>
 결과: SUCCESS
 
 Runtime Harness: tk-runner / model=sonnet / status=<active|fallback_inline|unavailable>
+Worktree Context: <none|proposal:<count>|approval_required>
 Tasks: <done>/<total>
 Verification Gates: <passed>/<total>
 Commit: <created|skipped_preflight_required|skipped_not_requested|skipped_not_git_repo|skipped_no_github_remote|skipped_readonly_workspace|skipped_commit_policy_skip>
@@ -412,6 +420,7 @@ Abort Code: <CODE>
 원인: <한글 1줄>
 
 Runtime Harness: tk-runner / model=sonnet / status=<active|fallback_inline|unavailable>
+Worktree Context: <none|proposal:<count>|approval_required>
 Completed Tasks: <done>/<total>
 Failed Gate: <VG-ID|없음>
 
@@ -433,10 +442,10 @@ Abort code 목록:
 - `GAP_BLOCKED`
 - `HUMAN_DECISION_REQUIRED`
 - `MODEL_HARNESS_UNAVAILABLE`
+- `WORKTREE_CONTEXT_APPROVAL_REQUIRED`
 - `AUTOPILOT_DISABLED`
 - `AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1`
 - `OUT_OF_SCOPE_DIFF`
-- `HYDRATION_CONFLICT`
 - `VERIFICATION_FAILED`
 - `ARTIFACT_ROOT_UNWRITABLE`
 - `COMMIT_REQUIRED_UNAVAILABLE`
@@ -467,9 +476,13 @@ scope_kind: git_branch | git_detached | git_no_remote | workspace
 scope_key: <branch-key-or-workspace-key>
 status: NEXT_DONE | NEXT_PARTIAL | NEXT_BLOCKED | NEXT_SKIPPED
 selected_action:
-  source: user | handoff | gap | launch | reflect | session_start | repo_state | none
+  source: user | handoff | gap | launch | reflect | worktree_context | repo_state | none
   ref: <path#section or none>
   summary: <one sentence>
+worktree_context:
+  detected: true | false
+  proposal_only: true | false
+  candidates: []
 executed_actions: []
 changed_files: []
 verification: []
@@ -496,7 +509,7 @@ Approval: <not_required|present:<source>|missing:<needed_action>>
 
 Report: .claude/tigerkit/branches/<branch-key>/next/<NXT-ID>.md
 Current: .claude/tigerkit/branches/<branch-key>/next/current.md
-Blocked By: <none | human decision | missing source | approval required | sealed workflow required | dirty workspace | verification failure | hydration conflict | capability unavailable | other>
+Blocked By: <none | human decision | missing source | approval required | sealed workflow required | dirty workspace | verification failure | worktree context approval required | capability unavailable | other>
 
 다음 행동: <없음|한글 한 문장>
 ```
