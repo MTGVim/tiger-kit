@@ -39,7 +39,7 @@ launch = execute sealed workflow + verify gates + abort safely + reflect trace
 
 ## Preflight
 
-1. current worktree root와 branch key를 계산합니다.
+1. current worktree/workspace root와 scope key를 계산합니다. git이 없으면 `scope_kind=workspace` fallback을 사용합니다.
 2. workflow 파일을 찾습니다.
 3. `tigerkit-launch-workflow` fenced block이 정확히 하나인지 확인합니다.
 4. block body를 LF로 정규화하고 final LF를 하나 보장한 뒤 SHA-256을 계산합니다.
@@ -48,7 +48,34 @@ launch = execute sealed workflow + verify gates + abort safely + reflect trace
 7. `source_refs`, `requirements`, `tasks`, `verification_gates`, `abort_policy`, `commit_policy`를 확인합니다.
 8. `autopilot_policy.enabled`가 false인데 `--autopilot`이면 abort합니다.
 9. worktree 선택이 명시되어 있으면 workflow의 worktree policy와 충돌하지 않는지 확인합니다.
-10. commit 가능 여부는 `commit_policy`와 preflight approval evidence로만 판단합니다.
+10. commit 가능 여부는 `commit_policy`, workspace capability, preflight approval evidence로만 판단합니다. git/GitHub가 없어도 workflow가 commit/PR을 요구하지 않으면 launch를 계속할 수 있습니다.
+
+## Commit and VCS fallback
+
+Missing git or GitHub is not an abort by itself. It becomes an abort only when the sealed workflow requires commit/PR behavior.
+
+Allowed commit receipt values:
+
+```text
+created
+skipped_preflight_required
+skipped_not_requested
+skipped_not_git_repo
+skipped_no_github_remote
+skipped_readonly_workspace
+skipped_commit_policy_skip
+```
+
+If git diff is unavailable, use the workflow diff policy:
+
+```yaml
+diff_scope:
+  mode: git_diff | file_manifest_snapshot | receipt_only
+  before_files: <manifest path|null>
+  after_files: <manifest path|null>
+  changed_files: <list|unknown>
+  diff_lines: <number|unknown>
+```
 
 ## Abort codes
 
@@ -64,6 +91,10 @@ launch = execute sealed workflow + verify gates + abort safely + reflect trace
 | `OUT_OF_SCOPE_DIFF` | workflow 밖 파일·동작 변경 필요 또는 발생 | 변경 중단 후 abort |
 | `HYDRATION_CONFLICT` | tracked file symlink 등 hydration 충돌 | hydration 중단 후 abort |
 | `VERIFICATION_FAILED` | verification gate 실패 | 실패 evidence와 함께 abort |
+| `ARTIFACT_ROOT_UNWRITABLE` | branch/workspace-local artifact root에 쓸 수 없음 | 실행 전 abort |
+| `COMMIT_REQUIRED_UNAVAILABLE` | workflow가 commit을 요구하지만 git/commit capability가 없음 | 실행 전 abort |
+| `GITHUB_REQUIRED_UNAVAILABLE` | workflow가 PR/GitHub 작업을 요구하지만 GitHub capability가 없음 | 실행 전 abort |
+| `VERIFICATION_UNAVAILABLE` | required verification을 수행할 방법이 없음 | 실행 전 abort |
 
 ## Execution rules
 
@@ -73,7 +104,7 @@ launch = execute sealed workflow + verify gates + abort safely + reflect trace
 - mid-flight 질문을 하지 않습니다. 결정이 필요하면 `HUMAN_DECISION_REQUIRED`로 abort합니다.
 - out-of-scope diff를 만들지 않습니다. 발견하면 `OUT_OF_SCOPE_DIFF`로 abort합니다.
 - verification 없이 success를 선언하지 않습니다.
-- commit은 `commit_policy.mode=commit_on_success`만으로 수행하지 않습니다. preflight receipt에 `user_preapproved_commit=true`와 `approval_source_ref`가 있어야 합니다.
+- commit은 `commit_policy.mode=commit_on_success`만으로 수행하지 않습니다. commit unavailable 상태라도 commit이 required가 아니면 skip reason을 기록하고 success가 가능합니다. preflight receipt에 `user_preapproved_commit=true`와 `approval_source_ref`가 있어야 합니다.
 
 ## Verification gates
 
@@ -108,7 +139,7 @@ Workflow Hash: <sha256>
 결과: SUCCESS
 Tasks: <done>/<total>
 Verification Gates: <passed>/<total>
-Commit: <created|skipped_preflight_required|skipped_not_requested>
+Commit: <created|skipped_preflight_required|skipped_not_requested|skipped_not_git_repo|skipped_no_github_remote|skipped_readonly_workspace|skipped_commit_policy_skip>
 Report: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
 Current: .claude/tigerkit/branches/<branch-key>/launch/current.md
 Reflect: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
@@ -145,3 +176,4 @@ Reflect Current: .claude/tigerkit/branches/<branch-key>/reflect/current.md
 - mid-flight 사용자 질문
 - Phase 1 autopilot recovery 수행
 - preflight 승인 없는 commit
+- commit/PR이 optional인 workflow를 git/GitHub 부재만으로 abort

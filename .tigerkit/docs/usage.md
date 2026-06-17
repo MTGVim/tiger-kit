@@ -14,15 +14,33 @@
 TigerKit = branch-scoped source intake + sealed gap workflow + human-approved launch + durable reflection + continuation handoff + generalized meta-feedback
 ```
 
-TigerKit은 branch-local working memory와 durable repo insight를 분리합니다.
+TigerKit은 branch/workspace-local working memory와 durable repo insight를 분리합니다.
 
 - 사용자 입력, 문서, 스크린샷, 회의 메모, 이전 계획은 source material이며 그 자체로 authority가 아닙니다.
-- `gap` 산출물은 현재 브랜치의 working memory입니다.
+- `gap` 산출물은 현재 branch 또는 plain workspace scope의 working memory입니다.
 - 기존 branch-local Spec Patch가 있으면 `/tk:gap`이 source material로 읽을 수 있지만, v8 MVP는 `/tk:spec` command를 노출하지 않습니다.
 - 해당 산출물은 repo-wide durable knowledge가 아닙니다.
 - repo에 영구적으로 남길 insight는 `reflect`만 추출하고 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에 반영합니다.
 - 다음 세션을 위한 사람이 읽는 continuation과 pending follow-up queue는 `handoff`가 담당합니다.
 - TigerKit command/skill 자체 개선 피드백은 `meta-feedback`이 담당합니다.
+
+## Workspace fallback mode
+
+TigerKit은 GitHub repo 전용 도구가 아닙니다. 아래 context에서도 `/tk:gap`, `/tk:launch`, `/tk:reflect`가 동작해야 합니다.
+
+- GitHub remote가 없는 git repo
+- git 자체가 없는 plain workspace
+- notes/docs/operations runbook folder
+- commit이나 PR을 원하지 않는 작업
+- 코드 수정이 아닌 문서 생성, research, checklist, data cleanup 작업
+
+원칙:
+
+- git/GitHub 부재는 기본적으로 launch blocker가 아닙니다.
+- commit/PR은 workflow가 명시적으로 요구할 때만 필요합니다.
+- non-git workspace에서는 `scope_kind=workspace`와 안정적인 `scope_key`를 기록합니다.
+- 검증은 test command뿐 아니라 `file_exists`, `file_contains`, `artifact_written`, `schema_valid`, `manual_review_required`, `receipt_only` 같은 non-code gate도 허용합니다.
+- reflect는 repo durable target이 없으면 generated report와 user-level memory candidate/proposal 중심으로 fallback합니다.
 
 ## Command Surface
 
@@ -34,7 +52,7 @@ Hermes Agent, Codex CLI, `npx skills` 기반 command-skill adapter는 v8 MVP에 
 | --- | --- | --- |
 | `/tk:gap` | 사용자 입력, 문서, 스크린샷, 회의 메모, 기존 branch-local Spec Patch를 source material로 intake하고, source grounding, ambiguity attack, sealed launch workflow 생성을 수행한 뒤 `GAP_READY` 또는 `GAP_BLOCKED`로 끝납니다. | branch-local |
 | `/tk:gap --review` | v7 Contract-based Gap Review compatibility mode로 사용자가 고칠 finding과 답할 clarification을 남깁니다. | branch-local |
-| `/tk:launch` | sealed workflow만 실행하고 verification, abort receipt, reflect trace를 남깁니다. | branch-local execution |
+| `/tk:launch` | sealed workflow만 실행하고 verification, abort receipt, reflect trace를 남깁니다. git/GitHub/commit은 capability로 기록하고 필요 없으면 skip reason으로 성공할 수 있습니다. | branch/workspace-local execution |
 | `/tk:reflect` | gap+launch trace와 branch-local 산출물에서 repo에 남길 insight만 추출하고 반영합니다. | durable insight |
 | `/tk:next` | current state와 TigerKit artifact를 읽어 다음 안전 행동을 추천합니다. 실행·commit·PR은 하지 않습니다. | stdout utility |
 | `/tk:handoff` | 다음 세션이나 다음 작업자가 이어받을 수 있도록 continuation 문서를 작성합니다. | continuation |
@@ -114,6 +132,9 @@ Report: .claude/tigerkit/branches/main--c0ffee/gap/GAP-20260617-143012-A7F3.md
 ### `/tk:launch`
 
 - `/tk:launch`는 sealed workflow만 실행합니다.
+- missing git/GitHub는 workflow가 commit/PR을 요구하지 않는 한 abort 사유가 아닙니다.
+- non-git workspace 성공 시 commit은 `skipped_not_git_repo`로 기록할 수 있습니다.
+- git diff가 없으면 file manifest snapshot 또는 receipt-only diff scope를 workflow policy에 따라 사용합니다.
 - workflow 밖 scope 확장, missing requirement 임의 해석, public API/DB/product behavior 재정의, verification 없는 success 선언, out-of-scope diff commit을 금지합니다.
 - mid-flight 질문을 하지 않습니다. 새 사용자 결정이 필요하면 `HUMAN_DECISION_REQUIRED`로 abort합니다.
 - `/tk:launch --autopilot`은 Phase 1에서 recovery를 수행하지 않고 `AUTOPILOT_DISABLED` 또는 `AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1`로 abort합니다.

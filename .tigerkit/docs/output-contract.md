@@ -13,7 +13,7 @@ stdout is a receipt. Full gap bodies are saved as branch-local artifacts unless 
 1. outcome
 2. branch scope
 3. artifact paths when files are written
-4. counts, risks, next action
+4. counts, risks, capability/skip reason, next action
 
 상세 본문은 파일에 저장하고, 각 command가 지원하는 explicit print option을 지정한 경우에만 stdout에 함께 출력합니다. v8 MVP 공개 command surface에서는 `/tk:gap`의 `--print-report`가 이에 해당합니다.
 
@@ -82,6 +82,16 @@ missing_sources: []
 
 ```tigerkit-launch-workflow
 version: 1
+workspace_context:
+  root: <absolute path>
+  scope_kind: git_branch | git_detached | git_no_remote | workspace
+  scope_key: <stable key>
+  git:
+    available: true | false
+    commit_available: true | false
+  github:
+    remote_available: true | false
+    issue_pr_available: true | false
 workflow_id: WF-YYYYMMDD-HHmmss-RAND
 created_at: <ISO-8601>
 source_refs: []
@@ -108,8 +118,10 @@ autopilot_policy:
   max_task_retries: 0
   forbidden: []
 commit_policy:
-  mode: preflight_decision_required
+  mode: preflight_decision_required | skip | commit_on_success
   allowed: false
+  commit_available: true | false
+  skip_reason: null | not_git_repo | no_commit_requested | github_unavailable | readonly_workspace
 reflect_policy:
   mode: generated_report_only
   durable_apply_requires_preflight_approval: true
@@ -349,6 +361,7 @@ workflow_sha256: <sha256>
 status: SUCCESS_NO_COMMIT | SUCCESS_COMMITTED | ABORTED | FAILED_PREFLIGHT
 abort_code: null
 commit_created: false
+commit_status: created | skipped_preflight_required | skipped_not_requested | skipped_not_git_repo | skipped_no_github_remote | skipped_readonly_workspace | skipped_commit_policy_skip
 reflect_report_path: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
 reflect_current_path: .claude/tigerkit/branches/<branch-key>/reflect/current.md
 ```
@@ -363,7 +376,7 @@ Workflow Hash: <sha256>
 결과: SUCCESS
 Tasks: <done>/<total>
 Verification Gates: <passed>/<total>
-Commit: <created|skipped_preflight_required|skipped_not_requested>
+Commit: <created|skipped_preflight_required|skipped_not_requested|skipped_not_git_repo|skipped_no_github_remote|skipped_readonly_workspace|skipped_commit_policy_skip>
 Report: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
 Current: .claude/tigerkit/branches/<branch-key>/launch/current.md
 Reflect: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
@@ -402,6 +415,10 @@ Abort code 목록:
 - `OUT_OF_SCOPE_DIFF`
 - `HYDRATION_CONFLICT`
 - `VERIFICATION_FAILED`
+- `ARTIFACT_ROOT_UNWRITABLE`
+- `COMMIT_REQUIRED_UNAVAILABLE`
+- `GITHUB_REQUIRED_UNAVAILABLE`
+- `VERIFICATION_UNAVAILABLE`
 
 ## `/tk:next` Output Contract
 
@@ -456,6 +473,7 @@ mode: generated_report_only | durable_apply
 applied: []
 skipped: []
 proposal_only: []
+user_memory_candidates: []
 ```
 
 기본 stdout:
@@ -477,6 +495,10 @@ Apply: true
 
 Needs more evidence:
 - <확인 필요 항목 또는 None>
+
+User-level Memory Candidates:
+- <candidate or None>
+  Auto-applied: false
 
 Meta Feedback:
 - submitted
@@ -501,6 +523,10 @@ Apply: false
 
 Needs more evidence:
 - <확인 필요 항목 또는 None>
+
+User-level Memory Candidates:
+- <candidate or None>
+  Auto-applied: false
 
 Meta Feedback:
 - submitted
@@ -527,6 +553,10 @@ Apply: true
 
 Needs more evidence:
 - <확인 필요 항목 또는 None>
+
+User-level Memory Candidates:
+- <candidate or None>
+  Auto-applied: false
 
 Meta Feedback:
 - submitted

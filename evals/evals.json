@@ -26,7 +26,11 @@
       "AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1",
       "OUT_OF_SCOPE_DIFF",
       "HYDRATION_CONFLICT",
-      "VERIFICATION_FAILED"
+      "VERIFICATION_FAILED",
+      "ARTIFACT_ROOT_UNWRITABLE",
+      "COMMIT_REQUIRED_UNAVAILABLE",
+      "GITHUB_REQUIRED_UNAVAILABLE",
+      "VERIFICATION_UNAVAILABLE"
     ],
     "phase_1_boundaries": [
       "Claude Code command-contract runner only",
@@ -39,7 +43,8 @@
     "plugin_version_policy": "Authoritative version is .claude-plugin/plugin.json; evals must not hard-code a concrete version literal.",
     "utility_commands": [
       "/tk:next"
-    ]
+    ],
+    "workspace_fallback": "GitHub, git, and commit are capabilities, not prerequisites; plain workspace scope uses workspace-<slug>--<hash>."
   },
   "evals": [
     {
@@ -308,6 +313,77 @@
         "Does not mutate source files",
         "Stdout-only in v8 MVP",
         "Uses side-effect-minimized git status inspection"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "workspace-gap-ready-without-git",
+      "prompt": "Evaluate /tk:gap in a plain folder with no .git when enough source exists. Do not write files.",
+      "expected_output": "Should not fail merely because git rev-parse fails. Should use scope_kind=workspace, compute a stable workspace scope_key, write under .claude/tigerkit/branches/<scope-key>/ when writable, and produce GAP_READY with workspace_context when launchable. If artifacts are not writable, should block with ARTIFACT_ROOT_UNWRITABLE rather than pretending success.",
+      "files": [
+        "commands/gap.md",
+        ".tigerkit/docs/branch-local-contract.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "Allows non-git workspace",
+        "Uses scope_kind workspace",
+        "Computes workspace scope_key",
+        "GAP_READY can be valid without git",
+        "Writable artifact root required",
+        "Does not require GitHub"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "workspace-launch-success-skips-commit",
+      "prompt": "Evaluate /tk:launch for a GAP_READY workflow in a non-git workspace where verification passes and commit is not required. Do not write files.",
+      "expected_output": "Should execute the sealed workflow, pass verification, report SUCCESS, and record Commit: skipped_not_git_repo. Missing git/GitHub must not abort unless commit or PR is required by the workflow.",
+      "files": [
+        "commands/launch.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/usage.md"
+      ],
+      "expectations": [
+        "SUCCESS allowed without git",
+        "Commit skipped_not_git_repo",
+        "Missing GitHub is not blocker",
+        "Commit required unavailable has explicit abort",
+        "PR required unavailable has explicit abort"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "reflect-fallback-user-memory-proposal",
+      "prompt": "Evaluate /tk:reflect in a non-git workspace without CLAUDE.md or .claude/rules. Do not write files.",
+      "expected_output": "Should not create repo durable rule files by default. Should produce generated reflect report when possible and include User-level Memory Candidates or explicitly say none. Candidates are proposal-only and Auto-applied false unless a host adapter and user approval support memory writes.",
+      "files": [
+        "commands/reflect.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/usage.md"
+      ],
+      "expectations": [
+        "No durable rule creation by default",
+        "Generated reflect report when writable",
+        "Includes user-level memory candidates",
+        "Auto-applied false",
+        "Proposal-only fallback"
+      ]
+    },
+    {
+      "id": 17,
+      "name": "non-code-workflow-task-and-verification-types",
+      "prompt": "Evaluate sealed workflow schema for non-code work such as docs/research/runbook generation. Do not write files.",
+      "expected_output": "Should allow task_type values such as docs_change, research, file_generation, data_cleanup, ops_runbook, communication_draft, analysis, and manual_receipt. Verification gates may use file_exists, file_contains, artifact_written, link_checked, schema_valid, manual_review_required, or receipt_only; code tests are not mandatory.",
+      "files": [
+        "commands/gap.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "Allows non-code task types",
+        "Allows artifact verification gates",
+        "Does not require code tests",
+        "Manual review gate supported"
       ]
     }
   ]
