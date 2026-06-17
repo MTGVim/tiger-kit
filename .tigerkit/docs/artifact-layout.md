@@ -134,6 +134,16 @@ proof.json
 
 확인하지 못한 target/producer/plan surface가 사용자 결정을 막으면 proof dump가 아니라 `Clarification Needed` 또는 `Not Accepted Summary`로 표현합니다.
 
+## `/tk:next` artifact policy
+
+`/tk:next`는 v8.0 MVP에서 stdout-only utility입니다. 아래 경로를 생성하지 않습니다.
+
+```text
+.claude/tigerkit/branches/<branch-key>/next/
+```
+
+필요한 경우 latest GAP/launch/reflect/handoff artifact를 읽어 recommendation의 `References`에 path만 기록합니다.
+
 ## Maintainer-only artifacts
 
 `--maintainer-proof`가 명시된 gap run만 기본 artifact에 더해 maintainer-only proof artifact를 생성할 수 있습니다.

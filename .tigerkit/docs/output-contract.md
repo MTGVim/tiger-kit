@@ -403,6 +403,27 @@ Abort code 목록:
 - `HYDRATION_CONFLICT`
 - `VERIFICATION_FAILED`
 
+## `/tk:next` Output Contract
+
+- 목적: 현재 TigerKit artifact와 workspace/repo context를 읽고 다음 안전 행동 하나를 추천합니다.
+- MVP는 stdout-only입니다. branch-local artifact를 쓰지 않습니다.
+- `/tk:next`는 `/tk:launch`, commit, PR, source mutation을 실행하지 않습니다.
+- missing artifact는 오류가 아니라 다음 행동 판단 근거입니다.
+
+기본 stdout:
+
+```text
+Next Action: <한글 한 문장 또는 없음>
+Status: recommended | blocked | optional | manual | none
+Recommended Command: </tk:gap ... | /tk:launch | /tk:reflect | /tk:handoff | manual | none>
+Why: <근거 기반 한 줄>
+Blocked By: <none | missing source | human decision | dirty workspace | verification failure | artifact missing | other>
+References:
+- <artifact path or source ref>
+```
+
+`Alternatives`가 필요하면 최대 세 개만 출력합니다. 긴 artifact 본문은 출력하지 않고 path로 참조합니다.
+
 ## `/tk:reflect` Output Contract
 
 - 목적: branch-local working memory와 gap+launch trace에서 durable repo insight만 추출합니다.

@@ -10,20 +10,21 @@
 ## 검증 및 참조 규칙
 
 - 이 저장소에는 package manager 기반 build/test/lint 설정이 없다.
-- 기능 변경 후에는 `claude plugin validate .claude-plugin/plugin.json`, `claude plugin validate .`, `python3 -m json.tool evals/evals.json >/dev/null`, `git diff --check`를 우선 실행한다.
+- 기능 변경 후에는 `claude plugin validate .claude-plugin/plugin.json`, `claude plugin validate .`, `python3 -m json.tool evals/evals.json >/dev/null`, `python3 scripts/check-plugin-version.py`, `git diff --check`를 우선 실행한다.
 - `evals/evals.json`은 자동 실행 테스트가 아니라 기대 동작 fixture다. eval 검증은 JSON 문법 검증과 수동 기대 동작 검토를 뜻한다.
-- plugin version을 올릴 때는 로컬 파일만 기준으로 계산하지 말고 먼저 `origin/main`의 현재 version을 확인한다.
+- plugin version을 올릴 때는 로컬 파일만 기준으로 계산하지 말고 먼저 `origin/main`의 현재 version을 확인한다. 변경은 `python3 scripts/bump-plugin-version.py <version>` 또는 `--part patch|minor|major`를 사용한다. 이 스크립트는 기본적으로 `origin/main:.claude-plugin/plugin.json`을 기준으로 계산하며, eval에는 특정 version literal을 하드코딩하지 않는다.
 - 사용자 관점 사용법, 산출물 구조, 응답 receipt 세부 규칙은 `.tigerkit/docs/usage.md`, `.tigerkit/docs/artifact-layout.md`, `.tigerkit/docs/output-contract.md`를 기준으로 본다.
 
 ## 핵심 정책
 
 - TigerKit의 목적은 AI-induced source loss를 줄이는 것이다.
-- v8.0 핵심 command flow는 `/tk:gap`, `/tk:launch`, `/tk:reflect`이며 compatibility/secondary command는 `/tk:gap --review`, `/tk:handoff`, `/tk:meta-feedback`다.
+- v8.0 핵심 command flow는 `/tk:gap`, `/tk:launch`, `/tk:reflect`이며 utility/compatibility/secondary command는 `/tk:next`, `/tk:gap --review`, `/tk:handoff`, `/tk:meta-feedback`다.
 - 공개 command surface 변경은 compatibility와 docs/evals 동기화를 함께 검토한다. v8 MVP에서 `/tk:spec`은 공개 command로 노출하지 않는다.
 - Claude Code plugin command는 namespace를 사용하므로 slash invocation은 `/tk:*` 형태다. 자연어 요청은 같은 프로토콜을 따른다.
 - 기본 `/tk:gap`은 사용자 지시, 브레인스토밍, 회의 메모, 결정사항, URL/ticket/docs, legacy branch-local Spec Patch를 source material로 intake하고, source grounding, ambiguity attack, sealed launch workflow 생성을 수행한 뒤 `GAP_READY` 또는 `GAP_BLOCKED`로 끝난다. v7 Contract-based Gap Review는 `/tk:gap --review` compatibility mode로 유지한다.
 - `/tk:launch`는 `GAP_READY` sealed workflow만 실행하며, workflow 밖 scope 확장, missing requirement 임의 해석, verification 없는 success 선언, preflight 승인 없는 commit을 금지한다.
 - `/tk:reflect`는 branch-local working memory에서 repo에 영구 보존할 insight만 추출한다. 기본 동작은 `apply=true`이며, source code는 수정하지 않고 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에 직접 반영한다.
+- `/tk:next`는 현재 TigerKit artifact와 workspace/repo 상태를 읽어 다음 안전 행동을 추천하는 stdout-only utility이며, launch/commit/PR/source mutation을 실행하지 않는다.
 - `/tk:handoff`는 다음 세션이나 다음 작업자가 이어받을 continuation 문서를 작성한다.
 - `/tk:meta-feedback`은 현재 세션 내역에서 TigerKit command/skill 개선안을 일반화해 추출한다.
 - repo convention은 `.claude/rules/**/*.md`를 우선 확인한다.
