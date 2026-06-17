@@ -1,0 +1,249 @@
+#!/usr/bin/env bash
+# TigerKit SessionStart hook: safely hydrate opted-in worktree-local symlinks.
+# The hook is best-effort and never blocks Claude Code startup. Conflicts are
+# recorded for /tk:launch preflight to consume as HYDRATION_CONFLICT.
+
+if ! command -v python3 >/dev/null 2>&1; then
+  exit 0
+fi
+
+python3 - <<'PY'
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+import subprocess
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+
+def now() -> str:
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def run(cmd: list[str], cwd: Path) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(cmd, cwd=str(cwd), text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+
+
+def safe_real(path: Path) -> str:
+    try:
+        return str(path.resolve(strict=False))
+    except Exception:
+        return str(path.absolute())
+
+
+def repo_root(cwd: Path) -> Path | None:
+    result = run(["git", "rev-parse", "--show-toplevel"], cwd)
+    if result.returncode != 0:
+        return None
+    return Path(result.stdout.strip()).resolve()
+
+
+def git_path(cwd: Path, arg: str) -> Path | None:
+    result = run(["git", "rev-parse", arg], cwd)
+    if result.returncode != 0:
+        return None
+    raw = result.stdout.strip()
+    if not raw:
+        return None
+    path = Path(raw)
+    if not path.is_absolute():
+        path = cwd / path
+    return path.resolve(strict=False)
+
+
+def is_linked_worktree(root: Path) -> bool:
+    git_dir = git_path(root, "--git-dir")
+    common_dir = git_path(root, "--git-common-dir")
+    if git_dir is None or common_dir is None:
+        return False
+    return safe_real(git_dir) != safe_real(common_dir)
+
+
+def is_tracked(root: Path, rel: str) -> bool:
+    result = run(["git", "ls-files", "--error-unmatch", "--", rel], root)
+    return result.returncode == 0
+
+
+def write_receipt(root: Path, receipt: dict[str, Any]) -> Path | None:
+    local_dir = root / ".claude" / "tigerkit" / "local" / "session-start"
+    try:
+        local_dir.mkdir(parents=True, exist_ok=True)
+        current = local_dir / "current.json"
+        archive = local_dir / f"{receipt['run_id']}.json"
+        data = json.dumps(receipt, ensure_ascii=False, indent=2) + "\n"
+        current.write_text(data)
+        archive.write_text(data)
+        return current
+    except Exception as exc:
+        print(f"TigerKit worktree hydration: receipt write failed: {exc}", file=sys.stderr)
+        return None
+
+
+def load_config(root: Path) -> tuple[dict[str, Any] | None, Path]:
+    config_path = root / ".claude" / "tigerkit" / "local" / "worktree-hydration.json"
+    if not config_path.exists():
+        return None, config_path
+    try:
+        return json.loads(config_path.read_text()), config_path
+    except Exception as exc:
+        return {"_config_error": str(exc)}, config_path
+
+
+def rel_is_safe(rel: str) -> bool:
+    p = Path(rel)
+    return rel and not p.is_absolute() and ".." not in p.parts
+
+
+def same_symlink(target: Path, source: Path) -> bool:
+    if not target.is_symlink():
+        return False
+    try:
+        return safe_real((target.parent / os.readlink(target)).resolve(strict=False)) == safe_real(source)
+    except Exception:
+        return False
+
+
+def main() -> int:
+    cwd = Path.cwd().resolve()
+    root = repo_root(cwd)
+    if root is None:
+        return 0
+
+    linked = is_linked_worktree(root)
+    config, config_path = load_config(root)
+    if not linked and config is None:
+        return 0
+
+    run_id = "SSH-" + datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S-") + hashlib.sha256(str(root).encode()).hexdigest()[:6].upper()
+    receipt: dict[str, Any] = {
+        "version": 1,
+        "run_id": run_id,
+        "created_at": now(),
+        "hook": "SessionStart",
+        "workspace_root": str(root),
+        "linked_worktree": linked,
+        "config_path": str(config_path),
+        "status": "SKIPPED",
+        "reason": None,
+        "source_worktree": None,
+        "hydrated": [],
+        "skipped": [],
+        "conflicts": [],
+    }
+
+    if config is None:
+        receipt["reason"] = "linked_worktree_without_hydration_config"
+        path = write_receipt(root, receipt)
+        print(f"🟡 TigerKit worktree hydration: skipped (no config) — {path or 'receipt unavailable'}")
+        return 0
+
+    if "_config_error" in config:
+        receipt["status"] = "HYDRATION_CONFLICT"
+        receipt["reason"] = "invalid_config"
+        receipt["conflicts"].append({"path": str(config_path), "reason": config["_config_error"]})
+        path = write_receipt(root, receipt)
+        print(f"🔴 TigerKit worktree hydration: config conflict — {path or 'receipt unavailable'}")
+        return 0
+
+    source_raw = os.environ.get("TIGERKIT_HYDRATION_SOURCE_WORKTREE") or config.get("hydrationSourceWorktree")
+    if not isinstance(source_raw, str) or not source_raw:
+        receipt["reason"] = "missing_hydrationSourceWorktree"
+        path = write_receipt(root, receipt)
+        print(f"🟡 TigerKit worktree hydration: skipped (missing source worktree) — {path or 'receipt unavailable'}")
+        return 0
+
+    source_root = Path(source_raw).expanduser().resolve(strict=False)
+    receipt["source_worktree"] = str(source_root)
+    if source_root == root or not source_root.exists():
+        receipt["status"] = "HYDRATION_CONFLICT"
+        receipt["reason"] = "invalid_source_worktree"
+        receipt["conflicts"].append({"path": str(source_root), "reason": "source must exist and differ from current worktree"})
+        path = write_receipt(root, receipt)
+        print(f"🔴 TigerKit worktree hydration: source conflict — {path or 'receipt unavailable'}")
+        return 0
+
+    policies: dict[str, str] = {}
+    files = config.get("files", {})
+    if isinstance(files, dict):
+        policies.update({str(k): str(v) for k, v in files.items()})
+    tigerkit = config.get("tigerkit", {})
+    if isinstance(tigerkit, dict):
+        shared = tigerkit.get("shared", [])
+        if isinstance(shared, list):
+            for name in shared:
+                if isinstance(name, str):
+                    policies[f".claude/tigerkit/{name}"] = "symlink"
+
+    never = {"node_modules"}
+    extra_never = config.get("neverSymlink", [])
+    if isinstance(extra_never, list):
+        never.update(str(item) for item in extra_never)
+
+    if not policies:
+        receipt["reason"] = "no_symlink_policies"
+        path = write_receipt(root, receipt)
+        print(f"🟡 TigerKit worktree hydration: skipped (no policies) — {path or 'receipt unavailable'}")
+        return 0
+
+    for rel, policy in sorted(policies.items()):
+        if not rel_is_safe(rel):
+            receipt["conflicts"].append({"path": rel, "reason": "unsafe_relative_path"})
+            continue
+        if rel in never or rel.split("/", 1)[0] in never:
+            receipt["skipped"].append({"path": rel, "reason": "never_symlink"})
+            continue
+        if policy not in {"symlink", "create-source-and-symlink"}:
+            receipt["skipped"].append({"path": rel, "reason": f"policy_{policy}"})
+            continue
+
+        target = root / rel
+        source = source_root / rel
+        if not source.exists():
+            receipt["skipped"].append({"path": rel, "reason": "missing_source"})
+            continue
+        if is_tracked(root, rel) or is_tracked(source_root, rel):
+            receipt["conflicts"].append({"path": rel, "reason": "tracked_file_or_directory_not_symlinked"})
+            continue
+        if target.exists() or target.is_symlink():
+            if same_symlink(target, source):
+                receipt["skipped"].append({"path": rel, "reason": "already_same_symlink"})
+            elif rel == ".claude/tigerkit/local" and target.is_dir() and not target.is_symlink():
+                receipt["skipped"].append({"path": rel, "reason": "local_control_dir_not_symlinked"})
+            else:
+                receipt["conflicts"].append({"path": rel, "reason": "target_exists_or_different_symlink"})
+            continue
+        try:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            os.symlink(source, target, target_is_directory=source.is_dir())
+            receipt["hydrated"].append({"path": rel, "source": str(source), "target": str(target)})
+        except Exception as exc:
+            receipt["conflicts"].append({"path": rel, "reason": f"symlink_failed: {exc}"})
+
+    if receipt["conflicts"]:
+        receipt["status"] = "HYDRATION_CONFLICT"
+        receipt["reason"] = "one_or_more_conflicts"
+        icon = "🔴"
+    else:
+        receipt["status"] = "OK" if receipt["hydrated"] else "SKIPPED"
+        receipt["reason"] = "completed" if receipt["hydrated"] else "nothing_to_hydrate"
+        icon = "🟢" if receipt["hydrated"] else "🟡"
+
+    path = write_receipt(root, receipt)
+    print(
+        f"{icon} TigerKit worktree hydration: {receipt['status']} "
+        f"({len(receipt['hydrated'])} linked, {len(receipt['conflicts'])} conflicts) — {path or 'receipt unavailable'}"
+    )
+    return 0
+
+
+try:
+    raise SystemExit(main())
+except Exception as exc:
+    # Best effort: do not block session startup.
+    print(f"🟡 TigerKit worktree hydration: hook error skipped — {exc}", file=sys.stderr)
+    raise SystemExit(0)
+PY

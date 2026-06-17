@@ -339,14 +339,15 @@ Concrete maintainer proof runs must recompute actual run proof from metadata bef
 
 ## `/tk:launch` Output Contract
 
-- 목적: sealed launch workflow를 실행하고 verification gate 결과, abort reason, reflect trace를 branch-local artifact로 남깁니다.
+- 목적: sealed launch workflow를 `tk-runner` subagent로 실행하고 verification gate 결과, runtime harness, abort reason, reflect trace를 branch-local artifact로 남깁니다.
 - 기본 입력은 `.claude/tigerkit/branches/<branch-key>/gap/current.md` 또는 명시 workflow path입니다.
 - `tigerkit-launch-workflow` block은 정확히 하나여야 합니다.
 - hash mismatch, missing workflow, multiple blocks, blocked workflow는 실행 전 abort합니다.
 - mid-flight 질문은 금지합니다. 새 결정이 필요하면 `HUMAN_DECISION_REQUIRED`로 abort합니다.
 - Phase 1에서 `--autopilot` recovery는 실행하지 않습니다.
 - commit은 preflight approval evidence 없이는 금지합니다.
-
+- `.claude/tigerkit/local/session-start/current.json`에 `HYDRATION_CONFLICT`가 있으면 task 실행 전 abort합니다.
+- required `tk-runner`/model harness가 unavailable이면 `MODEL_HARNESS_UNAVAILABLE`로 abort합니다.
 
 ### `tigerkit-launch-receipt` block
 
@@ -359,7 +360,18 @@ workflow_id: WF-YYYYMMDD-HHmmss-RAND
 workflow_path: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
 workflow_sha256: <sha256>
 status: SUCCESS_NO_COMMIT | SUCCESS_COMMITTED | ABORTED | FAILED_PREFLIGHT
-abort_code: null
+abort_code: null | WORKFLOW_NOT_FOUND | MULTIPLE_WORKFLOW_BLOCKS | WORKFLOW_HASH_MISMATCH | GAP_BLOCKED | HUMAN_DECISION_REQUIRED | MODEL_HARNESS_UNAVAILABLE | AUTOPILOT_DISABLED | AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1 | OUT_OF_SCOPE_DIFF | HYDRATION_CONFLICT | VERIFICATION_FAILED | ARTIFACT_ROOT_UNWRITABLE | COMMIT_REQUIRED_UNAVAILABLE | GITHUB_REQUIRED_UNAVAILABLE | VERIFICATION_UNAVAILABLE
+runtime_harness:
+  role: tk-runner
+  expected_host_binding: claude_code_agent
+  expected_model: sonnet
+  model_tier: balanced
+  effort_tier: medium
+  status: active | fallback_inline | unavailable
+  fallback_reason: null | agent_unavailable | host_does_not_support_subagents | model_binding_unobservable
+hydration:
+  receipt_path: .claude/tigerkit/local/session-start/current.json | null
+  status: OK | SKIPPED | HYDRATION_CONFLICT | unknown
 commit_created: false
 commit_status: created | skipped_preflight_required | skipped_not_requested | skipped_not_git_repo | skipped_no_github_remote | skipped_readonly_workspace | skipped_commit_policy_skip
 reflect_report_path: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
@@ -369,39 +381,49 @@ reflect_current_path: .claude/tigerkit/branches/<branch-key>/reflect/current.md
 SUCCESS stdout:
 
 ```text
-Launch 완료: <LCH-ID>
+✅ Launch 완료: <LCH-ID>
 Branch Scope: <branch-key>
 Workflow: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
 Workflow Hash: <sha256>
 결과: SUCCESS
+
+Runtime Harness: tk-runner / model=sonnet / status=<active|fallback_inline|unavailable>
 Tasks: <done>/<total>
 Verification Gates: <passed>/<total>
 Commit: <created|skipped_preflight_required|skipped_not_requested|skipped_not_git_repo|skipped_no_github_remote|skipped_readonly_workspace|skipped_commit_policy_skip>
+
 Report: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
 Current: .claude/tigerkit/branches/<branch-key>/launch/current.md
 Reflect: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
 Reflect Current: .claude/tigerkit/branches/<branch-key>/reflect/current.md
+
 다음 행동: <없음|reflect 제안 검토|commit 승인 필요>
 ```
 
 ABORTED stdout:
 
 ```text
-Launch 중단: <LCH-ID>
+🛑 Launch 중단: <LCH-ID>
 Branch Scope: <branch-key>
 Workflow: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
 Workflow Hash: <sha256|unknown>
 결과: ABORTED
 Abort Code: <CODE>
 원인: <한글 1줄>
+
+Runtime Harness: tk-runner / model=sonnet / status=<active|fallback_inline|unavailable>
 Completed Tasks: <done>/<total>
 Failed Gate: <VG-ID|없음>
+
 Report: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
 Current: .claude/tigerkit/branches/<branch-key>/launch/current.md
 Reflect: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
 Reflect Current: .claude/tigerkit/branches/<branch-key>/reflect/current.md
+
 다음 행동: <human decision|workflow 재생성|scope 조정|검증 실패 수정>
 ```
+
+상태 기호는 첫 줄에만 씁니다. Logical group 사이에는 빈 줄을 두어 receipt를 읽기 쉽게 만듭니다.
 
 Abort code 목록:
 
@@ -410,6 +432,7 @@ Abort code 목록:
 - `WORKFLOW_HASH_MISMATCH`
 - `GAP_BLOCKED`
 - `HUMAN_DECISION_REQUIRED`
+- `MODEL_HARNESS_UNAVAILABLE`
 - `AUTOPILOT_DISABLED`
 - `AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1`
 - `OUT_OF_SCOPE_DIFF`
@@ -422,24 +445,68 @@ Abort code 목록:
 
 ## `/tk:next` Output Contract
 
-- 목적: 현재 TigerKit artifact와 workspace/repo context를 읽고 다음 안전 행동 하나를 추천합니다.
-- MVP는 stdout-only입니다. branch-local artifact를 쓰지 않습니다.
-- `/tk:next`는 `/tk:launch`, commit, PR, source mutation을 실행하지 않습니다.
+- 목적: 현재 TigerKit artifact와 workspace/repo context를 읽고 다음 안전 실행 항목 하나를 실제로 이어서 시도합니다.
+- `/tk:next`는 추천 전용 stdout-only utility가 아닙니다. 안전하게 할 수 있는 작업이 있으면 수행하고 receipt를 남깁니다.
+- sealed workflow가 필요한 구현은 `/tk:gap → /tk:launch`를 우회하지 않습니다.
+- commit, push, PR, merge, release, deploy, GitHub issue write 같은 외부 side effect는 사용자 승인 또는 artifact상의 명시 approval 없이는 수행하지 않습니다.
 - missing artifact는 오류가 아니라 다음 행동 판단 근거입니다.
+
+기본 receipt 위치:
+
+```text
+.claude/tigerkit/branches/<branch-key>/next/NXT-YYYYMMDD-HHmmss-RAND.md
+.claude/tigerkit/branches/<branch-key>/next/current.md
+```
+
+Machine-readable block:
+
+```tigerkit-next-receipt
+version: 1
+next_id: NXT-YYYYMMDD-HHmmss-RAND
+scope_kind: git_branch | git_detached | git_no_remote | workspace
+scope_key: <branch-key-or-workspace-key>
+status: NEXT_DONE | NEXT_PARTIAL | NEXT_BLOCKED | NEXT_SKIPPED
+selected_action:
+  source: user | handoff | gap | launch | reflect | session_start | repo_state | none
+  ref: <path#section or none>
+  summary: <one sentence>
+executed_actions: []
+changed_files: []
+verification: []
+approval:
+  required: true | false
+  present: true | false
+  source_ref: <message|artifact|none>
+blocked_by: []
+next_action: <one sentence or 없음>
+```
 
 기본 stdout:
 
 ```text
-Next Action: <한글 한 문장 또는 없음>
-Status: recommended | blocked | optional | manual | none
-Recommended Command: </tk:gap ... | /tk:launch | /tk:reflect | /tk:handoff | manual | none>
-Why: <근거 기반 한 줄>
-Blocked By: <none | missing source | human decision | dirty workspace | verification failure | artifact missing | other>
-References:
-- <artifact path or source ref>
+✅ Next 완료: <NXT-ID>
+Branch Scope: <branch-key>
+결과: NEXT_DONE | NEXT_PARTIAL | NEXT_BLOCKED | NEXT_SKIPPED
+Selected Action: <한글 한 문장>
+
+Executed: <count>
+Changed Files: <count>
+Verification: <passed>/<total> | not_run:<reason>
+Approval: <not_required|present:<source>|missing:<needed_action>>
+
+Report: .claude/tigerkit/branches/<branch-key>/next/<NXT-ID>.md
+Current: .claude/tigerkit/branches/<branch-key>/next/current.md
+Blocked By: <none | human decision | missing source | approval required | sealed workflow required | dirty workspace | verification failure | hydration conflict | capability unavailable | other>
+
+다음 행동: <없음|한글 한 문장>
 ```
 
-`Alternatives`가 필요하면 최대 세 개만 출력합니다. 긴 artifact 본문은 출력하지 않고 path로 참조합니다.
+상태 기호:
+
+- `✅` = `NEXT_DONE`
+- `⚠️` = `NEXT_PARTIAL`
+- `🛑` = `NEXT_BLOCKED`
+- `⏭️` = `NEXT_SKIPPED`
 
 ## `/tk:reflect` Output Contract
 

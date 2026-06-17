@@ -22,6 +22,7 @@
       "WORKFLOW_HASH_MISMATCH",
       "GAP_BLOCKED",
       "HUMAN_DECISION_REQUIRED",
+      "MODEL_HARNESS_UNAVAILABLE",
       "AUTOPILOT_DISABLED",
       "AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1",
       "OUT_OF_SCOPE_DIFF",
@@ -37,21 +38,23 @@
       "no adapter implementation files",
       "no Hermes plugin command adapter in MVP",
       "no Codex CLI adapter in MVP",
-      "no runtime parser or binary",
-      "autopilot recovery disabled"
+      "autopilot recovery disabled",
+      "SessionStart worktree hydration hook is available but conservative",
+      "launch uses tk-runner Claude Code agent with sonnet binding when subagents are available"
     ],
     "plugin_version_policy": "Authoritative version is .claude-plugin/plugin.json; evals must not hard-code a concrete version literal.",
-    "utility_commands": [
+    "utility_commands": [],
+    "workspace_fallback": "GitHub, git, and commit are capabilities, not prerequisites; plain workspace scope uses workspace-<slug>--<hash>.",
+    "continuation_commands": [
       "/tk:next"
-    ],
-    "workspace_fallback": "GitHub, git, and commit are capabilities, not prerequisites; plain workspace scope uses workspace-<slug>--<hash>."
+    ]
   },
   "evals": [
     {
       "id": 0,
       "name": "command-surface-v8-gap-launch-reflect-next-without-spec",
       "prompt": "Evaluate TigerKit v8 active command surface. Do not write files.",
-      "expected_output": "Should list /tk:gap, /tk:launch, and /tk:reflect as the primary v8 flow. Should list /tk:next as a stdout-only utility command, not part of the execution pipeline. Should preserve /tk:gap --review, /tk:handoff, and /tk:meta-feedback as compatibility or secondary commands. Should explain that /tk:spec is not exposed in the v8 MVP command surface because source intake is owned by /tk:gap. Should explain that commands/*.md plus .claude-plugin/plugin.json own the /tk:* contracts and that Hermes/Codex/npx-skills command adapters are out of MVP scope with no adapter files shipped.",
+      "expected_output": "Should list /tk:gap, /tk:launch, and /tk:reflect as the primary v8 flow. Should list /tk:next as a steering replacement continuation command that can attempt the next safe work item and write a receipt, while preserving /tk:gap --review, /tk:handoff, and /tk:meta-feedback as compatibility or secondary commands. Should explain that /tk:spec is not exposed in the v8 MVP command surface because source intake is owned by /tk:gap. Should explain that commands/*.md plus .claude-plugin/plugin.json own the /tk:* contracts and that Hermes/Codex/npx-skills command adapters are out of MVP scope with no adapter files shipped.",
       "files": [
         ".claude-plugin/plugin.json",
         "README.md",
@@ -61,7 +64,6 @@
         "Lists /tk:gap",
         "Lists /tk:launch",
         "Lists /tk:reflect",
-        "Lists /tk:next as utility command",
         "Does not expose /tk:spec",
         "Preserves /tk:handoff",
         "Preserves /tk:meta-feedback",
@@ -69,7 +71,8 @@
         "Treats /tk:* as command-owned plugin contracts",
         "States Hermes adapter is out of MVP scope",
         "States Codex adapter is out of MVP scope",
-        "Ships no non-Claude adapter files"
+        "Ships no non-Claude adapter files",
+        "Lists /tk:next as steering replacement continuation command"
       ]
     },
     {
@@ -248,17 +251,22 @@
     },
     {
       "id": 11,
-      "name": "worktree-hydration-conflict-blocks-tracked-symlink",
-      "prompt": "Evaluate /tk:launch --worktree hydration policy when a tracked file would be symlinked. Do not write files.",
-      "expected_output": "Should treat tracked file symlink hydration as a conflict and abort or block with HYDRATION_CONFLICT. Hydration must never mutate source_worktree and tracked files must not be symlinked by default.",
+      "name": "session-start-worktree-hydration-conflict-blocks-tracked-symlink",
+      "prompt": "Evaluate SessionStart worktree hydration and /tk:launch --worktree preflight when a tracked file would be symlinked. Do not write source files.",
+      "expected_output": "Should run worktree hydration as a conservative SessionStart hook that writes .claude/tigerkit/local/session-start/current.json when linked worktree/config evidence exists. Should treat tracked file symlink hydration as HYDRATION_CONFLICT and make /tk:launch abort or block before task execution. Hydration must never mutate source_worktree, overwrite regular files, or symlink tracked files by default.",
       "files": [
+        "hooks/hooks.json",
+        "hooks/session-start",
         "commands/launch.md",
         ".tigerkit/docs/artifact-layout.md",
         ".tigerkit/docs/branch-local-contract.md"
       ],
       "expectations": [
+        "SessionStart hook exists",
+        "Writes local session-start receipt",
         "Abort or block with HYDRATION_CONFLICT",
         "Does not mutate source_worktree",
+        "Does not overwrite regular files",
         "Does not symlink tracked files by default",
         "Records worktree decision in contract"
       ]
@@ -292,9 +300,9 @@
     },
     {
       "id": 13,
-      "name": "next-command-recommends-without-executing",
-      "prompt": "Evaluate /tk:next when latest GAP is GAP_READY but launch has not run. Do not write files or execute launch.",
-      "expected_output": "Should recommend /tk:launch as the next safe action when latest GAP is GAP_READY and no matching launch receipt exists. Should mark status recommended, include Why, Blocked By, and References. Should not execute launch, create commits, create PRs, or write source files. Should treat /tk:next as stdout-only in v8 MVP.",
+      "name": "next-command-attempts-continuation-with-approval-gates",
+      "prompt": "Evaluate /tk:next when latest handoff or launch/reflect trace contains a safe next work item. Do not create commits or PRs.",
+      "expected_output": "Should inspect current TigerKit artifacts and SessionStart hydration receipt, select one safe executable next item, attempt it within existing command contracts, and write a NEXT_DONE, NEXT_PARTIAL, NEXT_BLOCKED, or NEXT_SKIPPED receipt. Should not be stdout-only or recommendation-only. Should not execute /tk:launch, commit, PR, merge, release, deploy, or GitHub issue writes without explicit approval.",
       "files": [
         "commands/next.md",
         ".tigerkit/docs/output-contract.md",
@@ -303,15 +311,14 @@
         ".tigerkit/docs/usage.md"
       ],
       "expectations": [
-        "Recommends /tk:launch when GAP_READY has no launch receipt",
-        "Status recommended",
-        "Includes Why",
-        "Includes Blocked By",
-        "Includes References",
-        "Does not execute launch",
-        "Does not create commits or PRs",
-        "Does not mutate source files",
-        "Stdout-only in v8 MVP",
+        "Inspects handoff/gap/launch/reflect artifacts",
+        "Inspects SessionStart hydration receipt",
+        "Selects one safe executable item",
+        "Attempts safe continuation work",
+        "Writes next receipt",
+        "Uses NEXT_DONE NEXT_PARTIAL NEXT_BLOCKED NEXT_SKIPPED",
+        "Not stdout-only",
+        "No launch/commit/PR without approval",
         "Uses side-effect-minimized git status inspection"
       ]
     },
@@ -384,6 +391,26 @@
         "Allows artifact verification gates",
         "Does not require code tests",
         "Manual review gate supported"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "launch-runtime-harness-uses-tk-runner-sonnet",
+      "prompt": "Evaluate /tk:launch runtime harness before executing a sealed workflow. Do not write source files.",
+      "expected_output": "Should dispatch execution through the tk-runner Claude Code agent when subagents are available, record expected_model sonnet, model_tier balanced, effort_tier medium, and runtime_harness status in the launch receipt. If required subagent/model harness is unavailable and inline fallback is not explicitly allowed, launch must abort before task execution with MODEL_HARNESS_UNAVAILABLE rather than silently running on the wrong model.",
+      "files": [
+        "agents/tk-runner.md",
+        "commands/launch.md",
+        ".tigerkit/docs/output-contract.md",
+        "evals/evals.json"
+      ],
+      "expectations": [
+        "tk-runner agent exists",
+        "tk-runner uses model sonnet",
+        "Launch records runtime_harness",
+        "Records fallback/unavailable status",
+        "Abort code MODEL_HARNESS_UNAVAILABLE",
+        "Does not silently run wrong model"
       ]
     }
   ]

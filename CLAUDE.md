@@ -22,11 +22,12 @@
 - 공개 command surface 변경은 compatibility와 docs/evals 동기화를 함께 검토한다. v8 MVP에서 `/tk:spec`은 공개 command로 노출하지 않는다.
 - Claude Code plugin command는 namespace를 사용하므로 slash invocation은 `/tk:*` 형태다. 자연어 요청은 같은 프로토콜을 따른다.
 - 기본 `/tk:gap`은 사용자 지시, 브레인스토밍, 회의 메모, 결정사항, URL/ticket/docs, legacy branch-local Spec Patch를 source material로 intake하고, source grounding, ambiguity attack, sealed launch workflow 생성을 수행한 뒤 `GAP_READY` 또는 `GAP_BLOCKED`로 끝난다. v7 Contract-based Gap Review는 `/tk:gap --review` compatibility mode로 유지한다.
-- `/tk:launch`는 `GAP_READY` sealed workflow만 실행하며, workflow 밖 scope 확장, missing requirement 임의 해석, verification 없는 success 선언, preflight 승인 없는 commit을 금지한다. git/GitHub 부재는 workflow가 commit/PR을 요구하지 않는 한 abort 사유가 아니며 명시 skip reason으로 기록한다.
+- `/tk:launch`는 `GAP_READY` sealed workflow만 `tk-runner` subagent로 실행하며, workflow 밖 scope 확장, missing requirement 임의 해석, verification 없는 success 선언, preflight 승인 없는 commit을 금지한다. git/GitHub 부재는 workflow가 commit/PR을 요구하지 않는 한 abort 사유가 아니며 명시 skip reason으로 기록한다. `tk-runner` runtime harness와 model binding은 receipt에 기록해야 하며, required harness unavailable 상태를 숨기지 않는다.
 - `/tk:reflect`는 branch/workspace-local working memory에서 repo에 영구 보존할 insight만 추출한다. 기본 동작은 `apply=true`이며, source code는 수정하지 않고 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에 직접 반영한다.
-- `/tk:next`는 현재 TigerKit artifact와 workspace/repo 상태를 읽어 다음 안전 행동을 추천하는 stdout-only utility이며, launch/commit/PR/source mutation을 실행하지 않는다.
+- `/tk:next`는 현재 TigerKit artifact와 workspace/repo 상태를 읽어 handoff/trace의 다음 안전 작업을 실제로 이어서 시도하는 steering replacement continuation command다. sealed workflow가 필요한 구현은 `/tk:gap → /tk:launch`를 우회하지 않으며, commit/push/PR/merge/release/deploy 같은 외부 side effect는 사용자 승인 또는 artifact상의 명시 approval 없이는 수행하지 않는다.
 - `/tk:handoff`는 다음 세션이나 다음 작업자가 이어받을 continuation 문서를 작성한다.
 - `/tk:meta-feedback`은 현재 세션 내역에서 TigerKit command/skill 개선안을 일반화해 추출한다.
+- Git worktree symlink/hydration 처리는 Claude Code `SessionStart` hook receipt(`.claude/tigerkit/local/session-start/current.json`)를 기준으로 확인한다. tracked file symlink, regular file overwrite, source_worktree mutation은 금지하며 conflict는 `HYDRATION_CONFLICT`로 launch 전에 차단한다.
 - repo convention은 `.claude/rules/**/*.md`를 우선 확인한다.
 - UI copy는 basis 또는 confirmed contract와 exact match여야 한다. 의미상 유사함은 충분하지 않다.
 - 외부 근거는 URL, path, ticket, Figma, PRD, issue, API docs, source code path, commit hash 같은 reference와 access status로 관리한다.
