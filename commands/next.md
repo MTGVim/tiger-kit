@@ -42,24 +42,22 @@ next = inspect continuation state + select next safe executable work item + atte
 - handoff `Pending Work`, `Pending Backlog`, `Next Actions`, `Resume Prompt`
 - launch abort receipt와 failed task/gate
 - reflect `Needs more evidence`, proposal-only follow-up, TigerKit meta-feedback
-- worktree context candidates from current/base worktree comparison
+- `TIGERKIT_SESSION_START` worktree context proposal from SessionStart additional context, plus matching decline marker when present
 - current git status when git is available, using side-effect-minimized inspection such as `git --no-optional-locks status --porcelain=v1 -b`
 - explicit user-provided goal/context in the command arguments
 
 Missing artifacts are not fatal by themselves. Treat them as evidence for either a safe next action or `NEXT_BLOCKED`.
 
-## Worktree context candidate scan
+## Worktree context session proposal
 
-`/tk:next`는 SessionStart hook이나 plugin root `CLAUDE.md`에 의존하지 않습니다. 필요하면 current worktree와 base/source worktree 후보를 비교해 context 후보를 proposal-only로 정리합니다.
+`/tk:next`는 command마다 worktree 후보를 다시 스캔하거나 다시 묻지 않습니다. SessionStart hook이 주입한 `TIGERKIT_SESSION_START` additional context 또는 matching decline marker를 소비합니다.
 
-Scan policy:
+Session policy:
 
-1. current root가 linked git worktree인지 확인합니다.
-2. source/base worktree 후보를 찾습니다.
-3. base root에는 있고 current root에는 없는 root-level `*.md` / `*.MD` 파일을 찾습니다.
-4. base root에 `.claude/`가 있고 current root에 없으면 후보로 표시합니다.
-5. 자동 symlink/copy를 수행하지 않습니다.
-6. 승인 없이 regular file overwrite, tracked file symlink, `.claude/` 전체 symlink, `node_modules` symlink를 수행하지 않습니다.
+1. `TIGERKIT_SESSION_START` context가 있으면 candidate signature, source/base worktree, missing root Markdown, missing `.claude/` 후보를 읽습니다.
+2. matching decline marker가 있으면 proposal을 suppressed로 처리하고 다시 묻지 않습니다.
+3. 자동 symlink/copy를 수행하지 않습니다.
+4. 승인 없이 regular file overwrite, tracked file symlink, `.claude/` 전체 symlink, `node_modules` symlink를 수행하지 않습니다.
 
 Safe next action examples:
 
@@ -74,7 +72,7 @@ Safe next action examples:
 
 1. User-provided explicit next goal/context가 있으면 그것을 우선합니다.
 2. latest handoff의 `Pending Work`와 `Next Actions`를 우선합니다.
-3. worktree context 후보가 있고 launch/verification에 영향을 줄 수 있으면 proposal receipt 작성 또는 승인 필요 상태로 정리합니다.
+3. `TIGERKIT_SESSION_START` worktree context proposal이 있고 launch/verification에 영향을 줄 수 있으면 session context를 receipt에 반영하거나 승인 필요 상태로 정리합니다. 같은 candidate signature를 command마다 다시 묻지 않습니다.
 4. launch가 `ABORTED`이면 abort receipt의 next action과 failed task/gate를 우선합니다.
 5. reflect가 proposal-only follow-up이나 `Needs more evidence`를 남겼으면 안전한 정리/문서/확인 작업을 선택합니다.
 6. latest GAP이 `GAP_BLOCKED`이면 blocking decision/source를 해결할 수 있는 repo-local 확인 작업만 수행합니다. 인간 결정이 필요하면 차단합니다.

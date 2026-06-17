@@ -59,7 +59,7 @@ meta-feedback = 세션 내 TigerKit 개선 피드백 일반화
 
 `/tk:gap` 기본 실행은 git/GitHub가 없는 workspace에서도 `GAP_READY` 또는 `GAP_BLOCKED`로 끝날 수 있습니다. `GAP_READY`에는 sealed `tigerkit-launch-workflow`가 포함되어야 하고, `GAP_BLOCKED`에는 unresolved decision/conflict/missing source 때문에 workflow block을 포함하지 않습니다. v7 review behavior는 `/tk:gap --review`에서 유지합니다.
 
-GitHub remote, git branch, commit 가능 여부는 launch preflight capability로 기록하며 prerequisite가 아닙니다. commit/PR이 불가능해도 workflow가 commit/PR을 요구하지 않으면 `/tk:launch`는 `Commit: skipped_not_git_repo` 같은 명시 skip reason으로 성공할 수 있습니다. Git worktree context는 자동 hook으로 symlink하지 않고, `/tk:launch`와 `/tk:next`가 base worktree에만 있는 root-level Markdown과 `.claude/` 후보를 proposal-only로 제안합니다.
+GitHub remote, git branch, commit 가능 여부는 launch preflight capability로 기록하며 prerequisite가 아닙니다. commit/PR이 불가능해도 workflow가 commit/PR을 요구하지 않으면 `/tk:launch`는 `Commit: skipped_not_git_repo` 같은 명시 skip reason으로 성공할 수 있습니다. Git worktree context는 Superpowers-style `SessionStart` read-only hook이 세션 시작 시 한 번 점검하고, base/source worktree에만 있는 root-level Markdown과 `.claude/` 후보를 `additionalContext`로 proposal-only 제안합니다. `/tk:gap`은 이 context를 source grounding에 포함하고, `/tk:launch`와 `/tk:next`는 command마다 같은 후보를 다시 묻지 않습니다. 사용자가 거절한 동일 candidate signature는 `.claude/tigerkit/local/session-start/worktree-context-declines.json`로 suppress합니다.
 
 `/tk:next`는 primary execution pipeline을 대체하지 않는 steering replacement continuation command입니다. 현재 TigerKit artifact와 workspace 상태를 읽어 handoff/trace의 다음 안전 작업을 실제로 이어서 시도하고, commit/push/PR/merge/release/deploy/GitHub issue write 같은 외부 side effect는 사용자 승인 또는 artifact상의 명시 approval 없이는 수행하지 않습니다.
 

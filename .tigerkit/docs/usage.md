@@ -54,7 +54,7 @@ Hermes Agent, Codex CLI, `npx skills` 기반 command-skill adapter는 v8 MVP에 
 | `/tk:gap --review` | v7 Contract-based Gap Review compatibility mode로 사용자가 고칠 finding과 답할 clarification을 남깁니다. | branch-local |
 | `/tk:launch` | sealed workflow만 `tk-runner` subagent로 실행하고 verification, abort receipt, runtime harness, reflect trace를 남깁니다. git/GitHub/commit은 capability로 기록하고 필요 없으면 skip reason으로 성공할 수 있습니다. | branch/workspace-local execution |
 | `/tk:reflect` | gap+launch trace와 branch-local 산출물에서 repo에 남길 insight만 추출하고 반영합니다. | durable insight |
-| `/tk:next` | current state와 TigerKit artifact를 읽어 다음 안전 행동을 추천합니다. 실행·commit·PR은 하지 않습니다. | stdout utility |
+| `/tk:next` | current state와 TigerKit artifact를 읽어 다음 안전 실행 항목 하나를 실제로 이어서 시도하며 receipt를 남깁니다. | branch/workspace-local continuation execution |
 | `/tk:handoff` | 다음 세션이나 다음 작업자가 이어받을 수 있도록 continuation 문서를 작성합니다. | continuation |
 | `/tk:meta-feedback` | 현재 세션에서 드러난 TigerKit command/skill 개선안을 프로젝트 자산 유출 없이 일반화합니다. | generalized feedback |
 
@@ -82,7 +82,7 @@ Hermes Agent, Codex CLI, `npx skills` 기반 command-skill adapter는 v8 MVP에 
 ## `/tk:gap`
 
 - 기본 `/tk:gap`은 v8.0에서 source intake, Ground / Attack / Produce workflow command입니다.
-- 사용자 의도, URL, ticket, notes, screenshots, repo context, prior specs, conversation decisions를 source material로 intake합니다.
+- 사용자 의도, URL, ticket, notes, screenshots, repo context, prior specs, conversation decisions, `SessionStart`의 `TIGERKIT_SESSION_START` worktree context proposal을 source material 후보로 intake합니다.
 - source material과 authority를 분리하고 confirmed requirement, assumption, rejected assumption, non-goal을 정규화합니다.
 - legacy branch-local Spec Patch가 있으면 active confirmed item만 source material 후보로 읽을 수 있습니다.
 - ambiguity attack으로 contradiction, missing decision, hidden dependency, edge case, failure mode, verification gap을 찾습니다.
@@ -138,7 +138,7 @@ Report: .claude/tigerkit/branches/main--c0ffee/gap/GAP-20260617-143012-A7F3.md
 - workflow 밖 scope 확장, missing requirement 임의 해석, public API/DB/product behavior 재정의, verification 없는 success 선언, out-of-scope diff commit을 금지합니다.
 - mid-flight 질문을 하지 않습니다. 새 사용자 결정이 필요하면 `HUMAN_DECISION_REQUIRED`로 abort합니다.
 - `/tk:launch --autopilot`은 Phase 1에서 recovery를 수행하지 않고 `AUTOPILOT_DISABLED` 또는 `AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1`로 abort합니다.
-- `/tk:launch`는 linked worktree에서 base worktree에만 있는 root-level Markdown과 `.claude/` 후보를 proposal-only로 기록합니다. 자동 symlink/copy는 하지 않습니다.
+- `/tk:launch`는 `SessionStart`가 주입한 `TIGERKIT_SESSION_START` worktree context proposal을 preflight capability로 기록합니다. 자동 symlink/copy는 하지 않으며, 같은 candidate signature를 command마다 다시 묻지 않습니다.
 - workflow가 worktree context 적용을 required precondition으로 두었는데 승인/evidence가 없으면 `WORKTREE_CONTEXT_APPROVAL_REQUIRED`로 task 실행 전 abort합니다.
 - `/tk:launch`는 `tk-runner` runtime harness를 receipt에 기록합니다. Claude Code 배포 agent는 `model: sonnet`이며, unavailable/fallback 상태를 숨기지 않습니다.
 - commit은 preflight receipt에 `user_preapproved_commit=true`와 `approval_source_ref`가 있을 때만 가능합니다.
@@ -178,12 +178,11 @@ Report: .claude/tigerkit/branches/main--c0ffee/gap/GAP-20260617-143012-A7F3.md
 
 ## `/tk:next`
 
-- `/tk:next`는 GAP → Launch → Reflect pipeline 밖의 utility command입니다.
-- current workspace/repo state, latest GAP workflow/status, latest launch receipt, latest reflect report, latest handoff를 읽고 다음 안전 행동 하나를 추천합니다.
-- source file, durable rule, commit, PR을 만들지 않습니다.
-- MVP 동작은 stdout-only입니다. `.claude/tigerkit/.../next/` artifact를 쓰지 않습니다.
-- output은 `Next Action`, `Status`, `Recommended Command`, `Why`, `Blocked By`, `References` 중심입니다.
-- 추천 상태는 `recommended`, `blocked`, `optional`, `manual`, `none` 중 하나입니다.
+- `/tk:next`는 GAP → Launch → Reflect pipeline 밖의 steering replacement continuation command입니다.
+- current workspace/repo state, latest GAP workflow/status, latest launch receipt, latest reflect report, latest handoff, `SessionStart` worktree context proposal을 읽고 다음 안전 실행 항목 하나를 선택합니다.
+- 안전하게 할 수 있는 작업이 있으면 시도하고, 할 수 없으면 `NEXT_BLOCKED`, `NEXT_PARTIAL`, `NEXT_SKIPPED` 중 하나로 멈춘 이유를 남깁니다.
+- 사용자 승인 또는 artifact상의 명시 approval 없이 commit, PR, GitHub issue write, worktree context symlink/copy를 수행하지 않습니다.
+- 같은 worktree context candidate signature가 이미 거절되었으면 다시 묻지 않습니다.
 
 ## `/tk:handoff`
 
@@ -208,7 +207,7 @@ Report: .claude/tigerkit/branches/main--c0ffee/gap/GAP-20260617-143012-A7F3.md
 
 ## Worktree context proposal
 
-TigerKit은 Git worktree context를 Claude Code `SessionStart` hook으로 자동 symlink하지 않습니다. `/tk:launch` preflight와 `/tk:next` continuation scan에서 base/source worktree에만 있는 root-level Markdown(`AGENTS.md`, `CLAUDE.local.md`, `DESIGN.md` 등)과 `.claude/` 후보를 감지해 proposal-only로 기록합니다.
+TigerKit은 Git worktree context를 Claude Code `SessionStart` hook으로 세션 시작 시 한 번 read-only 점검합니다. Hook은 base/source worktree에만 있는 root-level Markdown(`AGENTS.md`, `CLAUDE.local.md`, `DESIGN.md` 등)과 `.claude/` 후보를 `TIGERKIT_SESSION_START` additional context로 제안합니다. `/tk:gap`은 이를 source grounding에 포함하고, `/tk:launch`와 `/tk:next`는 command마다 다시 묻지 않습니다.
 
 안전 정책:
 
@@ -218,7 +217,7 @@ TigerKit은 Git worktree context를 Claude Code `SessionStart` hook으로 자동
 - `.claude/` 전체 symlink 금지
 - `node_modules` symlink 금지
 - `DESIGN.md`는 branch-specific 가능성이 있어 copy/skip 검토 권장
-- plugin root `CLAUDE.md`는 Claude Code project context로 자동 로드된다고 의존하지 않음
+- 같은 candidate signature를 거절하면 `.claude/tigerkit/local/session-start/worktree-context-declines.json`에 기록해 다시 묻지 않음
 
 ## Generated state
 

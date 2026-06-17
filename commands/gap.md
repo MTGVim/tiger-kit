@@ -81,6 +81,19 @@ workspace_context:
 
 If git is unavailable, use `scope_kind=workspace` and compute `scope_key = workspace-<basename-slug>--<sha256(absWorkspaceRoot).slice(0, 8)>`. Missing git or GitHub is not a blocker unless the requested workflow explicitly requires commit or PR behavior.
 
+## SessionStart worktree context
+
+If the session includes `TIGERKIT_SESSION_START` additional context from the TigerKit `SessionStart` hook, treat it as source-grounding context.
+
+Rules:
+
+- Include the worktree context proposal in source material discovery and source grounding.
+- Record the candidate signature and decline marker path when relevant.
+- Do not turn proposal candidates into confirmed requirements without user decision or explicit source basis.
+- Do not ask again about the same candidate signature when the session context says it was declined or a matching decline marker exists.
+- Do not symlink, copy, hydrate, or mutate worktree context during `/tk:gap`.
+- If the missing context may affect launch workflow quality, encode it as a preflight assumption, human decision, missing source, or abort condition rather than silently ignoring it.
+
 Sealed workflow tasks are not limited to code changes. Allowed task types include:
 
 ```text
