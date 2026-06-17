@@ -42,8 +42,16 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
         handoffs/
           current.md
           YYYY-MM-DD-task-name.md
+        next/
+          NXT-YYYYMMDD-HHmmss-RAND.md
+          current.md
         cache/
         branch-state.json
+    local/
+      worktree-hydration.json
+      session-start/
+        current.json
+        SSH-YYYYMMDD-HHmmss-RAND.json
   handoffs/
     current.md  # optional pointer to branch-local handoff
 
@@ -85,6 +93,11 @@ MVP에서는 path compatibility를 위해 `branches/` 아래에 저장하지만 
 | `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/maintainer-proof/` | `--maintainer-proof`가 명시된 경우에만 생성하는 self-eval/performance proof, gate/debug metadata, baseline snapshot 영역입니다. | branch-local maintainer-only |
 | `.claude/tigerkit/branches/<branch-key>/handoffs/current.md` | `/tk:handoff`가 생성하는 canonical continuation 문서. 최신 경로는 `global-index.json`과 `branch-state.json`에 pointer로 기록합니다. 현재 작업을 방해하면 안 되는 follow-up은 `Pending Backlog` 섹션에 source/evidence/priority/blocked-by/next action과 함께 보관할 수 있습니다. | branch-local continuation |
 | `.claude/tigerkit/branches/<branch-key>/handoffs/YYYY-MM-DD-task-name.md` | `archive=true` 또는 명시적 archive 요청 때만 생성하는 branch-local continuation archive. | branch-local continuation |
+| `.claude/tigerkit/branches/<branch-key>/next/<NXT-ID>.md` | `/tk:next`가 실제 이어서 시도한 continuation run receipt archive입니다. | branch-local continuation execution |
+| `.claude/tigerkit/branches/<branch-key>/next/current.md` | 최신 next receipt copy입니다. | branch-local pointer |
+| `.claude/tigerkit/local/worktree-hydration.json` | SessionStart worktree hydration/symlink policy. current worktree root local generated config이며 repo-wide durable rule이 아닙니다. | local generated config |
+| `.claude/tigerkit/local/session-start/current.json` | SessionStart hook의 최신 worktree hydration receipt입니다. `/tk:launch` preflight가 `HYDRATION_CONFLICT`를 확인할 때 읽습니다. | local generated receipt |
+| `.claude/tigerkit/local/session-start/SSH-*.json` | SessionStart hydration receipt archive입니다. | local generated receipt |
 | `.claude/handoffs/current.md` | optional convenience pointer. canonical handoff를 대체하지 않습니다. | pointer |
 | `.claude/rules/**/*.md` | repo convention basis이자 `/tk:reflect apply=true`의 scoped durable apply target입니다. | durable rule |
 | `CLAUDE.md` | repo instruction과 durable project guidance이자 `/tk:reflect apply=true`의 global durable apply target입니다. | durable rule |
