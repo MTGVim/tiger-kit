@@ -24,7 +24,7 @@
 - 기본 `/tk:gap`은 사용자 지시, 브레인스토밍, 회의 메모, 결정사항, URL/ticket/docs, legacy branch-local Spec Patch를 source material로 intake하고, source grounding, ambiguity attack, sealed launch workflow 생성을 수행한 뒤 `GAP_READY` 또는 `GAP_BLOCKED`로 끝난다. v7 Contract-based Gap Review는 `/tk:gap --review` compatibility mode로 유지한다.
 - `/tk:launch`는 `GAP_READY` sealed workflow만 실행하며, workflow 밖 scope 확장, missing requirement 임의 해석, verification 없는 success 선언, preflight 승인 없는 commit을 금지한다. git/GitHub 부재는 workflow가 commit/PR을 요구하지 않는 한 abort 사유가 아니며 명시 skip reason으로 기록한다.
 - `/tk:reflect`는 branch/workspace-local working memory에서 repo에 영구 보존할 insight만 추출한다. 기본 동작은 `apply=true`이며, source code는 수정하지 않고 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에 직접 반영한다.
-- `/tk:next`는 현재 TigerKit artifact와 workspace/repo 상태를 읽어 다음 안전 행동을 추천하는 stdout-only utility이며, launch/commit/PR/source mutation을 실행하지 않는다.
+- `/tk:next`는 현재 TigerKit artifact와 workspace/repo 상태를 읽어 handoff/trace의 다음 안전 작업을 실제로 이어서 시도하는 steering replacement continuation command다. sealed workflow가 필요한 구현은 `/tk:gap → /tk:launch`를 우회하지 않으며, commit/push/PR/merge/release/deploy 같은 외부 side effect는 사용자 승인 또는 artifact상의 명시 approval 없이는 수행하지 않는다.
 - `/tk:handoff`는 다음 세션이나 다음 작업자가 이어받을 continuation 문서를 작성한다.
 - `/tk:meta-feedback`은 현재 세션 내역에서 TigerKit command/skill 개선안을 일반화해 추출한다.
 - repo convention은 `.claude/rules/**/*.md`를 우선 확인한다.

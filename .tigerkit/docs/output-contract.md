@@ -422,24 +422,65 @@ Abort code 목록:
 
 ## `/tk:next` Output Contract
 
-- 목적: 현재 TigerKit artifact와 workspace/repo context를 읽고 다음 안전 행동 하나를 추천합니다.
-- MVP는 stdout-only입니다. branch-local artifact를 쓰지 않습니다.
-- `/tk:next`는 `/tk:launch`, commit, PR, source mutation을 실행하지 않습니다.
-- missing artifact는 오류가 아니라 다음 행동 판단 근거입니다.
+- 목적: 현재 TigerKit artifact와 workspace/repo context를 읽고 handoff/trace의 다음 안전 작업을 실제로 이어서 시도합니다.
+- `/tk:next`는 steering replacement continuation command이며, 단순 추천 전용 stdout utility가 아닙니다.
+- sealed workflow가 필요한 구현은 `/tk:gap → /tk:launch`를 우회하지 않습니다.
+- commit, push, PR, merge, release, deploy, GitHub issue write 같은 외부 side effect는 사용자 승인 또는 artifact상의 명시 approval 없이는 수행하지 않습니다.
+- missing artifact는 오류가 아니라 다음 행동 판단 근거입니다. 실행 가능한 항목이 없으면 `NEXT_BLOCKED` 또는 `NEXT_SKIPPED`로 끝냅니다.
+- 기본 receipt 위치는 `.claude/tigerkit/branches/<branch-key>/next/<NXT-ID>.md`와 `.claude/tigerkit/branches/<branch-key>/next/current.md`입니다.
+
+최종 상태:
+
+```text
+NEXT_DONE
+NEXT_PARTIAL
+NEXT_BLOCKED
+NEXT_SKIPPED
+```
+
+### `tigerkit-next-receipt` block
+
+Next report는 사람용 H2와 별도로 정확히 하나의 machine-readable block을 포함합니다.
+
+```tigerkit-next-receipt
+version: 1
+next_id: NXT-YYYYMMDD-HHmmss-RAND
+scope_kind: git_branch | git_detached | git_no_remote | workspace
+scope_key: <branch-key-or-workspace-key>
+status: NEXT_DONE | NEXT_PARTIAL | NEXT_BLOCKED | NEXT_SKIPPED
+selected_action:
+  source: user | handoff | gap | launch | reflect | repo_state | none
+  ref: <path#section or none>
+  summary: <one sentence>
+executed_actions: []
+changed_files: []
+verification: []
+approval:
+  required: true | false
+  present: true | false
+  source_ref: <message|artifact|none>
+blocked_by: []
+next_action: <one sentence or 없음>
+```
 
 기본 stdout:
 
 ```text
-Next Action: <한글 한 문장 또는 없음>
-Status: recommended | blocked | optional | manual | none
-Recommended Command: </tk:gap ... | /tk:launch | /tk:reflect | /tk:handoff | manual | none>
-Why: <근거 기반 한 줄>
-Blocked By: <none | missing source | human decision | dirty workspace | verification failure | artifact missing | other>
-References:
-- <artifact path or source ref>
+Next 완료: <NXT-ID>
+Branch Scope: <branch-key>
+결과: NEXT_DONE | NEXT_PARTIAL | NEXT_BLOCKED | NEXT_SKIPPED
+Selected Action: <한글 한 문장>
+Executed: <count>
+Changed Files: <count>
+Verification: <passed>/<total> | not_run:<reason>
+Approval: <not_required|present:<source>|missing:<needed_action>>
+Report: .claude/tigerkit/branches/<branch-key>/next/<NXT-ID>.md
+Current: .claude/tigerkit/branches/<branch-key>/next/current.md
+Blocked By: <none | human decision | missing source | approval required | sealed workflow required | dirty workspace | verification failure | capability unavailable | other>
+다음 행동: <없음|한글 한 문장>
 ```
 
-`Alternatives`가 필요하면 최대 세 개만 출력합니다. 긴 artifact 본문은 출력하지 않고 path로 참조합니다.
+`NEXT_BLOCKED`여도 가능한 한 receipt를 씁니다. artifact root가 쓸 수 없으면 stdout에 `Report: unavailable`과 이유를 적습니다.
 
 ## `/tk:reflect` Output Contract
 

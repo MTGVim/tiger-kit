@@ -146,13 +146,15 @@ proof.json
 
 ## `/tk:next` artifact policy
 
-`/tk:next`는 v8.0 MVP에서 stdout-only utility입니다. 아래 경로를 생성하지 않습니다.
+`/tk:next`는 steering replacement continuation run마다 generated receipt를 남깁니다. 기본 위치는 아래와 같습니다.
 
 ```text
 .claude/tigerkit/branches/<branch-key>/next/
+  NXT-YYYYMMDD-HHmmss-RAND.md
+  current.md
 ```
 
-필요한 경우 latest GAP/launch/reflect/handoff artifact를 읽어 recommendation의 `References`에 path만 기록합니다.
+Plain workspace fallback도 `branches/<scope-key>/next/` layout을 사용하고 receipt에 `Scope Kind: workspace`를 표시합니다. next receipt는 branch/workspace-local generated working memory이며 durable repo rule이나 source of truth가 아닙니다.
 
 ## Maintainer-only artifacts
 

@@ -54,7 +54,7 @@ Hermes Agent, Codex CLI, `npx skills` 기반 command-skill adapter는 v8 MVP에 
 | `/tk:gap --review` | v7 Contract-based Gap Review compatibility mode로 사용자가 고칠 finding과 답할 clarification을 남깁니다. | branch-local |
 | `/tk:launch` | sealed workflow만 실행하고 verification, abort receipt, reflect trace를 남깁니다. git/GitHub/commit은 capability로 기록하고 필요 없으면 skip reason으로 성공할 수 있습니다. | branch/workspace-local execution |
 | `/tk:reflect` | gap+launch trace와 branch-local 산출물에서 repo에 남길 insight만 추출하고 반영합니다. | durable insight |
-| `/tk:next` | current state와 TigerKit artifact를 읽어 다음 안전 행동을 추천합니다. 실행·commit·PR은 하지 않습니다. | stdout utility |
+| `/tk:next` | current state와 TigerKit artifact를 읽어 handoff/trace의 다음 안전 작업을 실제로 이어서 시도하고 receipt를 남깁니다. | branch/workspace-local continuation execution |
 | `/tk:handoff` | 다음 세션이나 다음 작업자가 이어받을 수 있도록 continuation 문서를 작성합니다. | continuation |
 | `/tk:meta-feedback` | 현재 세션에서 드러난 TigerKit command/skill 개선안을 프로젝트 자산 유출 없이 일반화합니다. | generalized feedback |
 
@@ -74,7 +74,7 @@ Hermes Agent, Codex CLI, `npx skills` 기반 command-skill adapter는 v8 MVP에 
 /tk:reflect --dry-run
 /tk:reflect --no-meta-feedback
 /tk:next
-/tk:next "이 브랜치에서 다음 뭐 하지?"
+/tk:next "이 브랜치에서 하던 거 이어서 해봐"
 /tk:handoff 현재 작업 이어받을 수 있게 남겨줘
 /tk:meta-feedback gap 결과가 느리고 BE 오탐이 난 패턴을 일반화해줘
 ```
@@ -175,12 +175,13 @@ Report: .claude/tigerkit/branches/main--c0ffee/gap/GAP-20260617-143012-A7F3.md
 
 ## `/tk:next`
 
-- `/tk:next`는 GAP → Launch → Reflect pipeline 밖의 utility command입니다.
-- current workspace/repo state, latest GAP workflow/status, latest launch receipt, latest reflect report, latest handoff를 읽고 다음 안전 행동 하나를 추천합니다.
-- source file, durable rule, commit, PR을 만들지 않습니다.
-- MVP 동작은 stdout-only입니다. `.claude/tigerkit/.../next/` artifact를 쓰지 않습니다.
-- output은 `Next Action`, `Status`, `Recommended Command`, `Why`, `Blocked By`, `References` 중심입니다.
-- 추천 상태는 `recommended`, `blocked`, `optional`, `manual`, `none` 중 하나입니다.
+- `/tk:next`는 GAP → Launch → Reflect primary flow를 대체하지 않는 steering replacement continuation command입니다.
+- current workspace/repo state, latest GAP workflow/status, latest launch receipt, latest reflect report, latest handoff를 읽고 다음 안전 실행 항목 하나를 선택합니다.
+- handoff `Pending Work`, `Pending Backlog`, `Next Actions`, launch abort receipt, reflect follow-up처럼 이미 근거가 남은 항목을 우선합니다.
+- 안전하게 실행 가능한 항목이면 실제 수행을 시도하고 `.claude/tigerkit/branches/<branch-key>/next/` 아래에 receipt를 남깁니다.
+- sealed workflow가 필요한 구현은 `/tk:gap → /tk:launch`를 우회하지 않습니다.
+- commit, push, PR, merge, release, deploy, GitHub issue write 같은 외부 side effect는 사용자 승인 또는 artifact상의 명시 approval 없이는 수행하지 않습니다.
+- output은 `NEXT_DONE`, `NEXT_PARTIAL`, `NEXT_BLOCKED`, `NEXT_SKIPPED` 결과, selected action, executed count, changed files, verification, approval, blocker, report path 중심입니다.
 
 ## `/tk:handoff`
 

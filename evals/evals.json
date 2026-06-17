@@ -41,17 +41,17 @@
       "autopilot recovery disabled"
     ],
     "plugin_version_policy": "Authoritative version is .claude-plugin/plugin.json; evals must not hard-code a concrete version literal.",
-    "utility_commands": [
+    "workspace_fallback": "GitHub, git, and commit are capabilities, not prerequisites; plain workspace scope uses workspace-<slug>--<hash>.",
+    "continuation_commands": [
       "/tk:next"
-    ],
-    "workspace_fallback": "GitHub, git, and commit are capabilities, not prerequisites; plain workspace scope uses workspace-<slug>--<hash>."
+    ]
   },
   "evals": [
     {
       "id": 0,
       "name": "command-surface-v8-gap-launch-reflect-next-without-spec",
       "prompt": "Evaluate TigerKit v8 active command surface. Do not write files.",
-      "expected_output": "Should list /tk:gap, /tk:launch, and /tk:reflect as the primary v8 flow. Should list /tk:next as a stdout-only utility command, not part of the execution pipeline. Should preserve /tk:gap --review, /tk:handoff, and /tk:meta-feedback as compatibility or secondary commands. Should explain that /tk:spec is not exposed in the v8 MVP command surface because source intake is owned by /tk:gap. Should explain that commands/*.md plus .claude-plugin/plugin.json own the /tk:* contracts and that Hermes/Codex/npx-skills command adapters are out of MVP scope with no adapter files shipped.",
+      "expected_output": "Should list /tk:gap, /tk:launch, and /tk:reflect as the primary v8 flow. Should list /tk:next as a steering replacement continuation command that attempts the next safe work item without bypassing GAP/Launch/Reflect contracts. Should preserve /tk:gap --review, /tk:handoff, and /tk:meta-feedback as compatibility or secondary commands. Should explain that /tk:spec is not exposed in the v8 MVP command surface because source intake is owned by /tk:gap. Should explain that commands/*.md plus .claude-plugin/plugin.json own the /tk:* contracts and that Hermes/Codex/npx-skills command adapters are out of MVP scope with no adapter files shipped.",
       "files": [
         ".claude-plugin/plugin.json",
         "README.md",
@@ -61,7 +61,7 @@
         "Lists /tk:gap",
         "Lists /tk:launch",
         "Lists /tk:reflect",
-        "Lists /tk:next as utility command",
+        "Lists /tk:next as steering replacement continuation command",
         "Does not expose /tk:spec",
         "Preserves /tk:handoff",
         "Preserves /tk:meta-feedback",
@@ -292,9 +292,9 @@
     },
     {
       "id": 13,
-      "name": "next-command-recommends-without-executing",
-      "prompt": "Evaluate /tk:next when latest GAP is GAP_READY but launch has not run. Do not write files or execute launch.",
-      "expected_output": "Should recommend /tk:launch as the next safe action when latest GAP is GAP_READY and no matching launch receipt exists. Should mark status recommended, include Why, Blocked By, and References. Should not execute launch, create commits, create PRs, or write source files. Should treat /tk:next as stdout-only in v8 MVP.",
+      "name": "next-command-executes-safe-continuation-work",
+      "prompt": "Evaluate /tk:next when latest handoff or launch/reflect trace contains a safe next action. Do not perform external side effects unless approval evidence is present.",
+      "expected_output": "Should inspect latest GAP, launch, reflect, handoff, branch-state, global-index, and workspace state; select the next safe executable work item; attempt it when it stays within existing contracts; write a next receipt under .claude/tigerkit/branches/<branch-key>/next/; and report NEXT_DONE, NEXT_PARTIAL, NEXT_BLOCKED, or NEXT_SKIPPED. Should not be recommendation-only. Should not bypass sealed workflow requirements. Should not commit, push, open PRs, merge, release, deploy, or write GitHub issues without explicit approval evidence.",
       "files": [
         "commands/next.md",
         ".tigerkit/docs/output-contract.md",
@@ -303,15 +303,14 @@
         ".tigerkit/docs/usage.md"
       ],
       "expectations": [
-        "Recommends /tk:launch when GAP_READY has no launch receipt",
-        "Status recommended",
-        "Includes Why",
-        "Includes Blocked By",
-        "Includes References",
-        "Does not execute launch",
-        "Does not create commits or PRs",
-        "Does not mutate source files",
-        "Stdout-only in v8 MVP",
+        "Inspects continuation artifacts and workspace state",
+        "Selects next safe executable work item",
+        "Attempts the work when within existing contracts",
+        "Writes next receipt artifact",
+        "Reports NEXT_DONE NEXT_PARTIAL NEXT_BLOCKED or NEXT_SKIPPED",
+        "Not recommendation-only",
+        "Does not bypass sealed workflow requirements",
+        "No external side effects without approval evidence",
         "Uses side-effect-minimized git status inspection"
       ]
     },
