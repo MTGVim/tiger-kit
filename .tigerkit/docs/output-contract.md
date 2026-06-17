@@ -731,7 +731,10 @@ handoff 작성했습니다.
 - `--out <path>`가 있을 때만 current worktree root 내부 지정 경로에 파일을 작성할 수 있습니다.
 - worktree root 밖 경로, user home, `/tmp`, hidden control file path에는 쓰지 않습니다.
 - raw session evidence, 사용자 원문 quote, repo 이름, product 이름, 도메인 고유명, 내부 path, URL, ticket, branch, PR 번호, commit hash를 출력하지 않습니다.
-- repo rule patch는 `/tk:reflect`, basis-target 비교는 `/tk:gap`, follow-up 보관은 `/tk:handoff` 대상으로 분리합니다.
+- emit 전에 Domain-term guard를 실행해 project/framework/product 이름, path fragment, 파일 확장자, CamelCase/code identifier, domain entity, URL/reference 형태가 남은 proposal을 rewrite 또는 reject합니다.
+- 각 proposal은 “다른 repo·다른 도메인에서도 그대로 말이 되는가?”라는 Restate test를 통과해야 합니다.
+- repo rule patch와 repo/도메인 insight는 `/tk:reflect`, basis-target 비교는 `/tk:gap`, follow-up 보관은 `/tk:handoff`, command·skill 계약 friction은 `/tk:meta-feedback` 대상으로 분리합니다.
+- 산출물은 대상 command/skill의 자체 계약 어휘와 feedback taxonomy만 사용합니다.
 - agent runtime/config, MCP permission, custom agent 추천은 TigerKit 본체 범위 밖으로 둡니다.
 
 필수 section:
@@ -754,10 +757,12 @@ handoff 작성했습니다.
 ## Redaction Receipt
 - Removed: <repo names|paths|URLs|domain labels|quoted user text>
 - Kept: <abstract pattern only>
+- Generalization gate: passed
+- Restate test: passed
 - Unsafe details included: none
 ```
 
-안전하게 일반화할 수 없으면 `Privacy status: cannot_generalize_safely`, `Change: none`, `Why: privacy gate failed`를 사용합니다.
+안전하게 일반화할 수 없거나 Restate test를 통과하지 못하면 `Privacy status: cannot_generalize_safely`, `Change: none`, `Why: privacy gate failed` 또는 `Why: generalization gate failed`를 사용합니다.
 
 ## Evidence Rule
 

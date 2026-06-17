@@ -48,6 +48,47 @@ meta-feedback = session-history-based generalized skill improvement proposal + p
 - `performance`
 - `false-positive`
 
+## Generalization Gate
+
+`/tk:meta-feedback`은 emit 전에 모든 proposal을 일반화 게이트에 통과시켜야 합니다. 이 게이트는 privacy gate보다 넓은 품질 게이트이며, 통과하지 못한 proposal은 rewrite하거나 reject합니다.
+
+### Domain-term guard
+
+Proposal 본문에서 host-specific 명사를 탐지하면 그대로 출력하지 않습니다.
+
+탐지 대상:
+
+- project, framework, product, customer, organization 이름
+- 파일, 디렉토리, source path, 확장자를 포함한 path fragment
+- symbol, class, function, command 구현체 이름 같은 CamelCase 또는 코드 식별자
+- feature, page, menu, UI label, domain entity 이름
+- URL, ticket, issue, PR, branch, commit, local environment reference
+
+휴리스틱으로 고유명사, path separator, 파일 확장자, CamelCase, snake_case/kebab-case 식별자, issue/PR/hash 형태를 확인합니다. 단, `/tk:*`, `gap`, `launch`, `reflect`, `handoff`, `meta-feedback`, `seal`, `precondition`, `verification_gate`, `abort code`, `privacy gate`, `generalization gate`처럼 TigerKit command contract 자체 어휘는 허용합니다.
+
+### Restate test
+
+각 proposal은 아래 자가검증 질문을 통과해야 합니다.
+
+```text
+다른 repo·다른 도메인에서도 그대로 말이 되는가?
+```
+
+도메인 명사를 제거했을 때 friction이 사라지면 command-level friction이 아니므로 `/tk:meta-feedback` 대상이 아닙니다. 이 경우 repo/도메인 insight는 `/tk:reflect`로 route하고, command·skill 계약 friction만 추출해 meta-feedback로 남깁니다.
+
+### Routing rule
+
+- repo/도메인 insight → `/tk:reflect` 또는 repo durable rule 후보
+- command·skill 계약 friction → `/tk:meta-feedback`
+- continuation/follow-up 보관 → `/tk:handoff`
+- basis-target 비교 finding → `/tk:gap` 또는 `/tk:gap --review`
+
+한 사실이 두 채널에 걸치면 domain-specific 부분은 제거하거나 `/tk:reflect`로 분리하고, mechanism-level 부분만 `/tk:meta-feedback` proposal로 작성합니다.
+
+### Vocabulary constraint
+
+`/tk:meta-feedback` 산출물은 대상 command/skill의 자체 계약 어휘와 feedback taxonomy만 사용합니다. 외부 repo의 domain vocabulary로 설명해야만 이해되는 proposal은 generalization gate 실패입니다.
+
 예시:
 
 - `/tk:gap`이 작은 ticket에서도 오래 걸리는 performance friction
@@ -103,9 +144,12 @@ meta-feedback = session-history-based generalized skill improvement proposal + p
 4. agent runtime/config, MCP permission, custom agent 추천은 TigerKit 본체 개선안에서 제외합니다.
 5. 원문 evidence를 직접 출력하지 않고 evidence class만 남깁니다.
 6. 모든 고유명, path, URL, ticket, branch, PR, commit, raw quote를 placeholder로 치환합니다.
-7. 치환 후에도 특정 프로젝트를 추정할 수 있으면 `cannot_generalize_safely`로 중단합니다.
-8. 개선안을 TigerKit command/skill 수준의 generic change로 씁니다.
-9. `--out <path>`가 있으면 같은 redacted output만 파일로 작성합니다.
+7. Domain-term guard를 실행하고 host-specific 명사가 남으면 rewrite 또는 reject합니다.
+8. Restate test를 실행하고 다른 repo·다른 도메인에서 그대로 말이 되지 않으면 `/tk:reflect`, `/tk:handoff`, `/tk:gap` 계열로 route합니다.
+9. 대상 command/skill의 자체 계약 어휘와 feedback taxonomy만 사용했는지 확인합니다.
+10. 치환 후에도 특정 프로젝트를 추정할 수 있으면 `cannot_generalize_safely`로 중단합니다.
+11. 개선안을 TigerKit command/skill 수준의 generic change로 씁니다.
+12. `--out <path>`가 있으면 같은 redacted output만 파일로 작성합니다.
 
 ## 출력 템플릿
 
@@ -129,6 +173,8 @@ meta-feedback = session-history-based generalized skill improvement proposal + p
 ## Redaction Receipt
 - Removed: <repo names|paths|URLs|domain labels|quoted user text>
 - Kept: <abstract pattern only>
+- Generalization gate: passed
+- Restate test: passed
 - Unsafe details included: none
 ```
 
