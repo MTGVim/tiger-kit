@@ -1,0 +1,197 @@
+#!/usr/bin/env bash
+# TigerKit SessionStart hook.
+# Performs a read-only worktree context check and injects a one-time proposal
+# when the current linked worktree appears to be missing root-level agent context.
+
+set -u
+
+escape_for_json() {
+  local s="$1"
+  s="${s//\\/\\\\}"
+  s="${s//\"/\\\"}"
+  s="${s//$'\n'/\\n}"
+  s="${s//$'\r'/\\r}"
+  s="${s//$'\t'/\\t}"
+  printf '%s' "$s"
+}
+
+emit_context() {
+  local raw_context="$1"
+  local context
+  context="$(escape_for_json "$raw_context")"
+
+  if [ -n "${CURSOR_PLUGIN_ROOT:-}" ]; then
+    printf '{\n  "additional_context": "%s"\n}\n' "$context"
+  elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ] && [ -z "${COPILOT_CLI:-}" ]; then
+    printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "SessionStart",\n    "additionalContext": "%s"\n  }\n}\n' "$context"
+  else
+    printf '{\n  "additionalContext": "%s"\n}\n' "$context"
+  fi
+}
+
+emit_empty() {
+  emit_context ""
+}
+
+abs_dir() {
+  local dir="$1"
+  [ -d "$dir" ] || return 1
+  (cd "$dir" 2>/dev/null && pwd -P) || return 1
+}
+
+hash_text() {
+  if command -v sha256sum >/dev/null 2>&1; then
+    printf '%s' "$1" | sha256sum | awk '{print $1}'
+  elif command -v shasum >/dev/null 2>&1; then
+    printf '%s' "$1" | shasum -a 256 | awk '{print $1}'
+  else
+    printf '%s' "unavailable"
+  fi
+}
+
+extract_cwd_from_stdin() {
+  local payload="$1"
+  if command -v python3 >/dev/null 2>&1 && [ -n "$payload" ]; then
+    HOOK_PAYLOAD="$payload" python3 - <<'PY' 2>/dev/null || true
+import json, os
+payload = os.environ.get("HOOK_PAYLOAD", "")
+try:
+    data = json.loads(payload)
+except Exception:
+    data = {}
+for key in ("cwd", "workspaceRoot", "workspace_root", "projectRoot", "project_root"):
+    value = data.get(key)
+    if isinstance(value, str) and value:
+        print(value)
+        break
+PY
+  fi
+}
+
+is_declined() {
+  local marker="$1"
+  local signature="$2"
+  [ -f "$marker" ] || return 1
+  if command -v python3 >/dev/null 2>&1; then
+    python3 - "$marker" "$signature" <<'PY' 2>/dev/null
+import json, sys
+path, sig = sys.argv[1], sys.argv[2]
+try:
+    data = json.load(open(path, encoding="utf-8"))
+except Exception:
+    sys.exit(1)
+for item in data.get("declines", []):
+    if item.get("signature") == sig:
+        sys.exit(0)
+sys.exit(1)
+PY
+    return $?
+  fi
+  grep -Fq "\"signature\"" "$marker" && grep -Fq "$signature" "$marker"
+}
+
+hook_input="$(cat 2>/dev/null || true)"
+input_cwd="$(extract_cwd_from_stdin "$hook_input")"
+workspace_root="${TIGERKIT_WORKSPACE_ROOT:-${input_cwd:-$PWD}}"
+workspace_root="$(abs_dir "$workspace_root" 2>/dev/null || true)"
+[ -n "$workspace_root" ] || { emit_empty; exit 0; }
+
+if ! command -v git >/dev/null 2>&1; then
+  emit_empty
+  exit 0
+fi
+
+repo_root="$(git -C "$workspace_root" rev-parse --show-toplevel 2>/dev/null || true)"
+repo_root="$(abs_dir "${repo_root:-$workspace_root}" 2>/dev/null || true)"
+[ -n "$repo_root" ] || { emit_empty; exit 0; }
+
+worktree_output="$(git -C "$repo_root" worktree list --porcelain 2>/dev/null || true)"
+[ -n "$worktree_output" ] || { emit_empty; exit 0; }
+
+current_root="$repo_root"
+worktree_count="$(printf '%s\n' "$worktree_output" | awk '/^worktree / { count++ } END { print count+0 }')"
+[ "$worktree_count" -gt 1 ] || { emit_empty; exit 0; }
+
+source_worktree="$(printf '%s\n' "$worktree_output" | awk -v cur="$current_root" '
+  /^worktree / {
+    path = substr($0, 10)
+    if (path != cur && first == "") first = path
+  }
+  END { print first }
+')"
+source_worktree="$(abs_dir "$source_worktree" 2>/dev/null || true)"
+[ -n "$source_worktree" ] || { emit_empty; exit 0; }
+[ "$source_worktree" != "$current_root" ] || { emit_empty; exit 0; }
+
+candidates=""
+for path in "$source_worktree"/*.md "$source_worktree"/*.MD; do
+  [ -f "$path" ] || continue
+  name="$(basename "$path")"
+  [ -e "$current_root/$name" ] && continue
+  case "$name" in
+    DESIGN.md|design.md|DESIGN.MD)
+      action="copy_or_skip_candidate"
+      reason="DESIGN.md may be branch-specific; inspect before sharing."
+      ;;
+    *)
+      action="inspect_then_symlink_or_copy_candidate"
+      reason="base/source worktree has root-level Markdown context missing from this worktree."
+      ;;
+  esac
+  candidates="${candidates}- path: ${name}\n  action: ${action}\n  reason: ${reason}\n"
+done
+
+current_claude_has_user_content=false
+if [ -d "$current_root/.claude" ]; then
+  if find "$current_root/.claude" -mindepth 1 \
+    ! -path "$current_root/.claude/tigerkit" \
+    ! -path "$current_root/.claude/tigerkit/*" \
+    -print -quit 2>/dev/null | grep -q .; then
+    current_claude_has_user_content=true
+  fi
+fi
+
+if [ -d "$source_worktree/.claude" ] && [ "$current_claude_has_user_content" != "true" ]; then
+  candidates="${candidates}- path: .claude/\n  action: inspect_selected_children_only\n  reason: base/source worktree has .claude/ but full-directory symlink is forbidden.\n"
+fi
+
+[ -n "$candidates" ] || { emit_empty; exit 0; }
+
+signature_payload="current=${current_root}
+source=${source_worktree}
+${candidates}"
+signature="$(hash_text "$signature_payload")"
+decline_marker="${current_root}/.claude/tigerkit/local/session-start/worktree-context-declines.json"
+if is_declined "$decline_marker" "$signature"; then
+  emit_empty
+  exit 0
+fi
+
+context="<TIGERKIT_SESSION_START>
+TigerKit ran a read-only worktree context check for this session.
+
+Status: WORKTREE_CONTEXT_PROPOSAL
+Current root: ${current_root}
+Source/base worktree: ${source_worktree}
+Candidate signature: ${signature}
+Decline marker: .claude/tigerkit/local/session-start/worktree-context-declines.json
+
+Detected missing context candidates:
+${candidates}
+Safety contract:
+- Do not automatically symlink, copy, hydrate, or mutate files from this hook.
+- Do not mutate the source/base worktree.
+- Never symlink tracked files by default.
+- Never overwrite regular files.
+- Never symlink .claude/ as a whole directory.
+- Never symlink node_modules by default.
+- If the user declines this proposal, record the candidate signature in the decline marker and do not ask again for the same signature.
+
+Command behavior:
+- /tk:gap should consider this proposal during source grounding and sealed workflow creation.
+- /tk:launch should consume this session context during preflight instead of re-prompting per command.
+- /tk:next should not re-ask about the same proposal when this session context or a matching decline marker exists.
+</TIGERKIT_SESSION_START>"
+
+emit_context "$context"
+exit 0

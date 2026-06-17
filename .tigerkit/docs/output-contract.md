@@ -346,7 +346,8 @@ Concrete maintainer proof runs must recompute actual run proof from metadata bef
 - mid-flight 질문은 금지합니다. 새 결정이 필요하면 `HUMAN_DECISION_REQUIRED`로 abort합니다.
 - Phase 1에서 `--autopilot` recovery는 실행하지 않습니다.
 - commit은 preflight approval evidence 없이는 금지합니다.
-- worktree context 후보는 proposal-only로 기록합니다. 자동 symlink/copy는 하지 않습니다.
+- `TIGERKIT_SESSION_START` worktree context proposal은 SessionStart additional context에서 소비합니다. Command마다 같은 후보를 다시 스캔하거나 다시 묻지 않습니다.
+- 자동 symlink/copy는 하지 않습니다.
 - workflow가 worktree context 적용을 required precondition으로 두었는데 승인/evidence가 없으면 `WORKTREE_CONTEXT_APPROVAL_REQUIRED`로 task 실행 전 abort합니다.
 - required `tk-runner`/model harness가 unavailable이면 `MODEL_HARNESS_UNAVAILABLE`로 abort합니다.
 
@@ -379,6 +380,9 @@ worktree_context:
   proposal_only: true
   approval_required: true | false
   approval_present: true | false
+  candidate_signature: <sha256|null>
+  decline_marker: .claude/tigerkit/local/session-start/worktree-context-declines.json | null
+  suppressed_by_decline: true | false
 commit_created: false
 commit_status: created | skipped_preflight_required | skipped_not_requested | skipped_not_git_repo | skipped_no_github_remote | skipped_readonly_workspace | skipped_commit_policy_skip
 reflect_report_path: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md

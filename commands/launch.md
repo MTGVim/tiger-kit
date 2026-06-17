@@ -41,19 +41,15 @@ launch = preflight + tk-runner sealed workflow execution + verify gates + abort 
 
 ## Worktree context proposal preflight
 
-TigerKit은 Claude Code `SessionStart` hook으로 symlink/hydration을 자동 실행하지 않습니다. Plugin root `CLAUDE.md`도 Claude Code project context로 자동 로드된다고 가정하지 않습니다. Worktree context 처리는 `/tk:launch` preflight 또는 `/tk:next` continuation scan에서 **proposal-only**로 수행합니다.
+TigerKit은 Claude Code `SessionStart` hook으로 worktree context를 세션 시작 시 한 번 read-only 점검합니다. Plugin root `CLAUDE.md`가 Claude Code project context로 자동 로드된다고 가정하지 않습니다. `/tk:launch`는 command마다 같은 후보를 다시 스캔하거나 다시 묻지 않고, 세션의 `TIGERKIT_SESSION_START` additional context 또는 matching decline marker를 소비합니다.
 
-Preflight 감지:
+Preflight 처리:
 
-1. current root가 linked git worktree인지 확인합니다.
-2. source/base worktree 후보를 찾습니다. 우선순위는 아래와 같습니다.
-   - sealed workflow의 `worktree_policy.source_worktree` 또는 `workspace_context.source_worktree`
-   - `git worktree list --porcelain`에서 같은 repository의 primary/main-like worktree 후보
-   - 사용자가 command argument나 preflight approval로 제공한 absolute path
-3. source/base root에는 있고 current root에는 없는 root-level `*.md` / `*.MD` 파일을 후보로 나열합니다.
-4. source/base root에 `.claude/`가 있고 current root에 없으면 후보로 나열합니다.
-5. 자동 symlink/copy를 수행하지 않습니다.
-6. proposal은 launch receipt의 `worktree_context`에 기록합니다.
+1. session context에 `TIGERKIT_SESSION_START`가 있는지 확인합니다.
+2. context에 있는 candidate signature, source/base worktree, missing root Markdown, missing `.claude/` 후보를 receipt의 `worktree_context`에 기록합니다.
+3. matching decline marker가 있으면 worktree context proposal을 suppressed로 기록하고 다시 묻지 않습니다.
+4. 자동 symlink/copy를 수행하지 않습니다.
+5. workflow가 missing worktree context를 required precondition으로 명시했는데 승인/적용 evidence가 없으면 `WORKTREE_CONTEXT_APPROVAL_REQUIRED`로 task 실행 전 abort합니다.
 
 Proposal safety policy:
 
@@ -135,7 +131,7 @@ runtime_harness:
 5. `tigerkit-gap-status`와 `branch-state.json`에 기록된 외부 `workflow_sha256`과 계산값을 비교합니다. `tigerkit-launch-workflow` 내부 자기참조 hash는 사용하지 않습니다.
 6. `status`가 `GAP_READY`인지 확인합니다.
 7. `source_refs`, `requirements`, `tasks`, `verification_gates`, `abort_policy`, `commit_policy`를 확인합니다.
-8. worktree context 후보를 proposal-only로 감지하고 receipt에 기록합니다.
+8. `TIGERKIT_SESSION_START` worktree context proposal 또는 matching decline marker를 확인하고 receipt에 기록합니다. Command마다 같은 후보를 다시 스캔하거나 다시 묻지 않습니다.
 9. workflow가 worktree context를 required precondition으로 명시했으면 approval/apply evidence가 있는지 확인합니다.
 10. runtime harness를 확인합니다. `tk-runner` subagent를 사용할 수 있는지, fallback 허용 여부, model binding 관측 가능성을 기록합니다.
 11. `autopilot_policy.enabled`가 false인데 `--autopilot`이면 abort합니다.

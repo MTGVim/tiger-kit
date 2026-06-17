@@ -39,7 +39,7 @@
       "no Hermes plugin command adapter in MVP",
       "no Codex CLI adapter in MVP",
       "autopilot recovery disabled",
-      "worktree context handling is proposal-only with no SessionStart hook side effects",
+      "worktree context handling is read-only SessionStart proposal with no automatic symlink/copy side effects",
       "launch uses tk-runner Claude Code agent with sonnet binding when subagents are available"
     ],
     "plugin_version_policy": "Authoritative version is .claude-plugin/plugin.json; evals must not hard-code a concrete version literal.",
@@ -251,25 +251,31 @@
     },
     {
       "id": 11,
-      "name": "worktree-context-proposal-does-not-auto-symlink",
-      "prompt": "Evaluate /tk:launch --worktree preflight when a base worktree has root Markdown files and .claude/ that are missing in the current linked worktree. Do not write source files.",
-      "expected_output": "Should not run startup hook side effects, create symlinks, overwrite regular files, mutate source_worktree, or write local startup receipts. Should detect base-only root-level Markdown and .claude/ as proposal-only worktree context candidates. /tk:launch should continue unless the sealed workflow marks context application as a required precondition; in that case it should abort before task execution with WORKTREE_CONTEXT_APPROVAL_REQUIRED.",
+      "name": "session-start-worktree-context-proposal-read-only",
+      "prompt": "Evaluate SessionStart worktree context proposal when a base worktree has root Markdown files and .claude/ that are missing in the current linked worktree. Do not write source files.",
+      "expected_output": "Should register a SessionStart read-only hook that injects TIGERKIT_SESSION_START additional context with candidate signature, source/base worktree, base-only root-level Markdown candidates, base-only .claude/ candidate, safety contract, and decline marker path. It must not create symlinks, copy files, overwrite regular files, mutate source_worktree, or hydrate context automatically. /tk:gap should consume this context during source grounding. /tk:launch and /tk:next should consume the session context or matching decline marker instead of re-asking per command.",
       "files": [
         "hooks/hooks.json",
+        "hooks/session-start",
+        "hooks/run-hook.cmd",
+        "commands/gap.md",
         "commands/launch.md",
+        "commands/next.md",
         ".tigerkit/docs/artifact-layout.md",
         ".tigerkit/docs/branch-local-contract.md"
       ],
       "expectations": [
-        "SessionStart hook is empty",
-        "No local startup receipt",
+        "SessionStart read-only hook exists",
+        "Injects TIGERKIT_SESSION_START additional context",
+        "Includes candidate signature",
+        "Includes decline marker path",
         "Detects base-only root Markdown candidates",
         "Detects missing .claude candidate",
-        "Proposal-only by default",
         "Does not mutate source_worktree",
         "Does not overwrite regular files",
-        "Does not symlink tracked files by default",
-        "Abort code WORKTREE_CONTEXT_APPROVAL_REQUIRED only when context is required"
+        "Does not symlink or copy files automatically",
+        "/tk:gap consumes session context during source grounding",
+        "/tk:launch and /tk:next do not re-ask per command"
       ]
     },
     {
@@ -303,7 +309,7 @@
       "id": 13,
       "name": "next-command-attempts-continuation-with-approval-gates",
       "prompt": "Evaluate /tk:next when latest handoff or launch/reflect trace contains a safe next work item. Do not create commits or PRs.",
-      "expected_output": "Should inspect current TigerKit artifacts and worktree context candidates, select one safe executable next item, attempt it within existing command contracts, and write a NEXT_DONE, NEXT_PARTIAL, NEXT_BLOCKED, or NEXT_SKIPPED receipt. Should not be stdout-only or recommendation-only. Should not execute /tk:launch, commit, PR, merge, release, deploy, GitHub issue writes, or worktree context symlink/copy without explicit approval.",
+      "expected_output": "Should inspect current TigerKit artifacts and any TIGERKIT_SESSION_START worktree context proposal, select one safe executable next item, attempt it within existing command contracts, and write a NEXT_DONE, NEXT_PARTIAL, NEXT_BLOCKED, or NEXT_SKIPPED receipt. Should not be stdout-only or recommendation-only. Should not execute /tk:launch, commit, PR, merge, release, deploy, GitHub issue writes, re-ask the same worktree candidate signature, or apply worktree context symlink/copy without explicit approval.",
       "files": [
         "commands/next.md",
         ".tigerkit/docs/output-contract.md",
@@ -313,7 +319,7 @@
       ],
       "expectations": [
         "Inspects handoff/gap/launch/reflect artifacts",
-        "Inspects worktree context candidates",
+        "Consumes TIGERKIT_SESSION_START worktree context when present",
         "Selects one safe executable item",
         "Attempts safe continuation work",
         "Writes next receipt",

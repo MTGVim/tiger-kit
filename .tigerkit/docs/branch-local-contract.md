@@ -153,7 +153,7 @@ Tiger Kit does not read or write files outside the current worktree by default.
 
 ## Worktree context proposal local context
 
-TigerKit은 worktree context를 Claude Code `SessionStart` hook으로 자동 symlink하지 않습니다. `/tk:launch` preflight와 `/tk:next` continuation scan은 current/base worktree를 비교해 proposal-only 상태를 각 command receipt에 기록합니다.
+TigerKit은 Claude Code `SessionStart` hook으로 worktree context를 세션 시작 시 한 번 read-only 점검합니다. Hook은 symlink/copy/hydration을 수행하지 않고 `TIGERKIT_SESSION_START` additional context만 주입합니다. `/tk:gap`은 이를 source grounding에 반영하고, `/tk:launch`와 `/tk:next`는 command마다 다시 묻지 않고 session context 또는 matching decline marker를 소비합니다.
 
 Proposal safety contract:
 
@@ -164,6 +164,7 @@ Proposal safety contract:
 - `.claude/` 전체 symlink와 `node_modules` symlink는 금지합니다.
 - source worktree를 수정하지 않습니다.
 - proposal 자체는 abort 사유가 아니지만, workflow가 context 적용을 required precondition으로 두고 승인/evidence가 없으면 `WORKTREE_CONTEXT_APPROVAL_REQUIRED`로 task 실행 전 중단합니다.
+- 사용자가 같은 candidate signature를 거절하면 `.claude/tigerkit/local/session-start/worktree-context-declines.json`에 기록해 다시 묻지 않을 수 있습니다.
 
 ## `/tk:launch` branch-local context
 

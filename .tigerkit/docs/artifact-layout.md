@@ -163,7 +163,7 @@ Plain workspace fallback도 `branches/<scope-key>/next/` layout을 사용하고 
 
 ## Worktree context proposal artifacts
 
-Worktree context 후보 감지는 별도 SessionStart hook artifact를 만들지 않습니다. `/tk:launch`와 `/tk:next`는 각자의 receipt 안에 proposal-only 상태를 기록합니다.
+SessionStart worktree context check는 read-only hook입니다. Hook 자체는 symlink/copy/hydration artifact를 만들지 않고, `TIGERKIT_SESSION_START` additional context만 주입합니다. `/tk:gap`, `/tk:launch`, `/tk:next`는 session context 또는 matching decline marker를 소비합니다.
 
 기록 원칙:
 
@@ -171,6 +171,7 @@ Worktree context 후보 감지는 별도 SessionStart hook artifact를 만들지
 - 자동 symlink/copy 결과를 기록하지 않습니다. 적용은 별도 승인된 action이어야 합니다.
 - `$GIT_COMMON_DIR`, `.git/worktrees/*`, user home, `/tmp`에는 기록하지 않습니다.
 - `.claude/` 전체 symlink, tracked file symlink, regular file overwrite, `node_modules` symlink는 금지 정책으로 기록합니다.
+- 사용자가 거절한 동일 candidate signature는 `.claude/tigerkit/local/session-start/worktree-context-declines.json`에 기록해 다시 묻지 않을 수 있습니다.
 
 ## Maintainer-only artifacts
 
