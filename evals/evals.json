@@ -419,6 +419,27 @@
         "Abort code MODEL_HARNESS_UNAVAILABLE",
         "Does not silently run wrong model"
       ]
+    },
+    {
+      "id": 19,
+      "name": "meta-feedback-generalization-gate",
+      "prompt": "Evaluate /tk:meta-feedback when session feedback contains command friction mixed with repo-specific or domain-specific terms. Do not write files.",
+      "expected_output": "Should run a pre-emit Domain-term guard, rewrite or reject proposals that contain host-specific nouns such as project/framework names, paths, symbols, domain entities, tickets, branches, PRs, commits, or URLs, and apply a Restate test asking whether the proposal still works in another repo and domain. Should route repo/domain insight to /tk:reflect, basis-target comparison to /tk:gap, follow-up storage to /tk:handoff, and only command or skill contract friction to /tk:meta-feedback. Output should use only the target command or skill contract vocabulary and feedback taxonomy, and the Redaction Receipt should report generalization gate and Restate test status.",
+      "files": [
+        "commands/meta-feedback.md",
+        ".tigerkit/docs/usage.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "Runs Domain-term guard before emit",
+        "Rejects or rewrites host-specific nouns",
+        "Runs Restate test per proposal",
+        "Routes repo or domain insight to /tk:reflect",
+        "Routes command or skill friction to /tk:meta-feedback",
+        "Uses command contract vocabulary only",
+        "Redaction Receipt includes generalization gate status",
+        "Redaction Receipt includes Restate test status"
+      ]
     }
   ]
 }

@@ -201,8 +201,10 @@ Report: .claude/tigerkit/branches/main--c0ffee/gap/GAP-20260617-143012-A7F3.md
 - 기존 TigerKit improvement command입니다. v8.0에서도 active compatibility command로 유지합니다.
 - 현재 세션 내역에서 TigerKit command/skill 사용 friction과 반복 피드백을 찾습니다.
 - gap 속도, BE 오탐, mode 추천 UX, output shape 같은 개선안을 일반화합니다.
-- repo 이름, product 이름, 내부 path, URL, ticket, branch, PR 번호, commit hash, 사용자 원문 quote는 출력하지 않습니다.
-- repo rule patch는 `/tk:reflect`, basis-target 비교는 `/tk:gap`, follow-up 보관은 `/tk:handoff` 대상으로 분리합니다.
+- emit 전에 Domain-term guard를 실행해 repo 이름, product 이름, framework 이름, domain entity, 내부 path, symbol, URL, ticket, branch, PR 번호, commit hash, 사용자 원문 quote가 남은 proposal을 rewrite 또는 reject합니다.
+- 각 proposal은 “다른 repo·다른 도메인에서도 그대로 말이 되는가?”라는 Restate test를 통과해야 합니다.
+- repo/도메인 insight는 `/tk:reflect`, basis-target 비교는 `/tk:gap`, follow-up 보관은 `/tk:handoff`, command·skill 계약 friction은 `/tk:meta-feedback`으로 분리합니다.
+- `/tk:meta-feedback` 산출물은 대상 command/skill의 자체 계약 어휘와 feedback taxonomy만 사용합니다.
 - agent runtime/config, MCP permission, custom agent 추천은 TigerKit 본체 범위 밖으로 둡니다.
 
 ## Worktree context proposal
