@@ -1,6 +1,6 @@
 # TigerKit
 
-TigerKit(`tk`, plugin namespace `/tk:*`)은 sealed GAP → Launch → Reflect 흐름과 continuation handoff, generalized meta-feedback으로 AI-induced source loss를 줄입니다.
+TigerKit(`tk`, plugin namespace `/tk:*`)은 sealed GAP → Launch → Reflect 흐름과 continuation handoff, generalized meta-feedback으로 AI-induced source loss를 줄입니다. GitHub PR/commit은 선택 capability이며, plain workspace에서도 workflow 작성·실행·회고가 가능해야 합니다.
 
 공개 실행 표면은 Claude Code plugin command입니다. 별도 repo-local skill 파일 없이 `commands/*.md`와 `.claude-plugin/plugin.json`이 `/tk:*` contract를 소유합니다.
 
@@ -57,7 +57,9 @@ meta-feedback = 세션 내 TigerKit 개선 피드백 일반화
 
 `gap`과 canonical `handoff` 산출물은 `.claude/tigerkit/branches/<branch-key>/` 아래의 branch-local generated working memory입니다. 기존 branch-local Spec Patch가 있으면 `/tk:gap`의 source material로 읽을 수 있지만, v8 MVP는 `/tk:spec` command를 노출하지 않습니다. `/tk:handoff`는 경로 미지정 resume을 위해 `.claude/tigerkit/global-index.json`에 최신 handoff pointer도 기록합니다. repo-wide durable knowledge가 아닙니다.
 
-`/tk:gap` 기본 실행은 `GAP_READY` 또는 `GAP_BLOCKED`로 끝납니다. `GAP_READY`에는 sealed `tigerkit-launch-workflow`가 포함되어야 하고, `GAP_BLOCKED`에는 unresolved decision/conflict/missing source 때문에 workflow block을 포함하지 않습니다. v7 review behavior는 `/tk:gap --review`에서 유지합니다.
+`/tk:gap` 기본 실행은 git/GitHub가 없는 workspace에서도 `GAP_READY` 또는 `GAP_BLOCKED`로 끝날 수 있습니다. `GAP_READY`에는 sealed `tigerkit-launch-workflow`가 포함되어야 하고, `GAP_BLOCKED`에는 unresolved decision/conflict/missing source 때문에 workflow block을 포함하지 않습니다. v7 review behavior는 `/tk:gap --review`에서 유지합니다.
+
+GitHub remote, git branch, commit 가능 여부는 launch preflight capability로 기록하며 prerequisite가 아닙니다. commit/PR이 불가능해도 workflow가 commit/PR을 요구하지 않으면 `/tk:launch`는 `Commit: skipped_not_git_repo` 같은 명시 skip reason으로 성공할 수 있습니다.
 
 `/tk:next`는 primary execution pipeline 밖의 stdout-only utility입니다. 현재 TigerKit artifact와 workspace 상태를 읽어 `/tk:gap`, `/tk:launch`, `/tk:reflect`, `/tk:handoff`, 또는 manual action 중 다음 안전 행동을 추천하지만 실행하지 않습니다.
 

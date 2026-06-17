@@ -1,6 +1,6 @@
 # TigerKit branch-local storage contract
 
-이 문서는 TigerKit v8.0 branch-local working memory의 저장 위치, branch key, index, write safety, gap/launch/handoff/reflect 경계를 설명합니다. 산출물 전체 구조는 `.tigerkit/docs/artifact-layout.md`, command stdout 계약은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
+이 문서는 TigerKit v8.0 branch/workspace-local working memory의 저장 위치, scope key, index, write safety, gap/launch/handoff/reflect 경계를 설명합니다. 산출물 전체 구조는 `.tigerkit/docs/artifact-layout.md`, command stdout 계약은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
 
 ## 기본 저장 위치
 
@@ -52,11 +52,11 @@ Handoff canonical 위치:
 - `/tmp`
 - current worktree root 밖 경로
 
-`.claude/tigerkit/`은 generated branch-local working memory이며 repo-wide durable knowledge가 아닙니다.
+`.claude/tigerkit/`은 generated branch/workspace-local working memory이며 repo-wide durable knowledge가 아닙니다.
 
-## Branch key
+## Scope key
 
-브랜치명을 디렉터리명으로 직접 쓰지 않습니다.
+브랜치명이나 workspace path를 디렉터리명으로 직접 쓰지 않습니다.
 
 Normal branch:
 
@@ -75,6 +75,15 @@ branchKey = detached-<shortHeadSha7>--<sha256(worktreeRoot).slice(0, 6)>
 ```
 
 Detached 상태면 summary에 branch scope가 detached임을 알립니다.
+
+Plain workspace fallback:
+
+```text
+scopeKind = workspace
+scopeKey = workspace-<basename-slug>--<sha256(absWorkspaceRoot).slice(0, 8)>
+```
+
+`git rev-parse --show-toplevel`이 실패하면 current working directory를 `workspaceRoot`로 사용합니다. basename slug가 비거나 안전하지 않으면 `workspace--<hash>`를 씁니다. stdout과 machine-readable receipt에는 `Scope Kind: workspace`를 함께 표시합니다.
 
 ## Index files
 
@@ -112,7 +121,7 @@ Atomic write 대상:
 
 ## Path safety
 
-TigerKit generated artifact 경로는 normalize 후 current worktree root 내부이면서 `.claude/tigerkit/branches/<branch-key>/` 아래여야 합니다. worktree root 밖이면 중단하고 아래 메시지를 사용합니다.
+TigerKit generated artifact 경로는 normalize 후 current worktree/workspace root 내부이면서 `.claude/tigerkit/branches/<scope-key>/` 아래여야 합니다. worktree root 밖이면 중단하고 아래 메시지를 사용합니다.
 
 ```text
 Tiger Kit does not read or write files outside the current worktree by default.
@@ -126,7 +135,7 @@ Tiger Kit does not read or write files outside the current worktree by default.
 
 상세 artifact layout은 `.tigerkit/docs/artifact-layout.md`를 기준으로 합니다. 상세 stdout/report 계약은 `.tigerkit/docs/output-contract.md`를 기준으로 합니다.
 
-`.claude/tigerkit/`은 generated branch-local working memory이며 repo-wide durable knowledge가 아닙니다.
+`.claude/tigerkit/`은 generated branch/workspace-local working memory이며 repo-wide durable knowledge가 아닙니다.
 
 ## `/tk:gap` sealed workflow storage
 

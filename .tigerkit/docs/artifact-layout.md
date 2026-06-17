@@ -55,6 +55,16 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
     gap-baselines.json
 ```
 
+## Workspace fallback storage
+
+Git이 없는 plain workspace도 같은 generated state root를 사용합니다. 이때 `<branch-key>` 자리에 workspace fallback `scope_key`를 사용합니다.
+
+```text
+.claude/tigerkit/branches/workspace-<basename-slug>--<hash>/
+```
+
+MVP에서는 path compatibility를 위해 `branches/` 아래에 저장하지만 receipt에는 `Scope Kind: workspace`를 반드시 표시합니다.
+
 ## 파일 책임
 
 | 파일 | 역할 | 저장 성격 |

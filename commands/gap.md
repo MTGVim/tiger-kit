@@ -54,6 +54,45 @@ TigerKit 자체 성능 개선, baseline, heuristic proof, performance proof, fal
 
 Workflow hash는 fenced block body raw UTF-8 bytes를 LF로 정규화하고 final LF를 하나 보장한 뒤 SHA-256으로 계산합니다. opening/closing fence line은 hash에서 제외하고 YAML key sort나 normalize를 하지 않습니다.
 
+## Workspace context and fallback mode
+
+`/tk:gap`은 git/GitHub repository를 prerequisite로 요구하지 않습니다. preflight/source grounding 중 아래 capability를 normalized context로 기록합니다.
+
+```yaml
+workspace_context:
+  root: <absolute path>
+  scope_kind: git_branch | git_detached | git_no_remote | workspace
+  scope_key: <stable key>
+  git:
+    available: true | false
+    repo_root: <path|null>
+    branch: <name|null>
+    detached_head: true | false
+    dirty_state_available: true | false
+    commit_available: true | false
+  github:
+    remote_available: true | false
+    owner_repo: <owner/repo|null>
+    issue_pr_available: true | false
+  artifact_root:
+    path: .claude/tigerkit/branches/<scope-key>
+    writable: true | false
+```
+
+If git is unavailable, use `scope_kind=workspace` and compute `scope_key = workspace-<basename-slug>--<sha256(absWorkspaceRoot).slice(0, 8)>`. Missing git or GitHub is not a blocker unless the requested workflow explicitly requires commit or PR behavior.
+
+Sealed workflow tasks are not limited to code changes. Allowed task types include:
+
+```text
+code_change | docs_change | research | file_generation | data_cleanup | ops_runbook | communication_draft | analysis | manual_receipt
+```
+
+Verification gates may be shell-based or artifact-based:
+
+```text
+shell_command | file_exists | file_contains | artifact_written | link_checked | schema_valid | manual_review_required | receipt_only
+```
+
 ## `/tk:gap --review` 핵심 원칙
 
 - Product/Design Spec 기반 inspection입니다.

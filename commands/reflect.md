@@ -10,7 +10,7 @@ argument-hint: "[scope] [--dry-run] [--apply=true|false] [--target <CLAUDE.md|.c
 목표: `/tk:reflect`는 Gap workflow, Launch trace, Gap이 already-grounded source로 채택한 legacy Spec Patch reference에서 repo-wide 가치가 있는 durable insight만 추출해 적절한 durable surface에 직접 반영합니다.
 
 ```text
-reflect = branch-local gap+launch working memory -> CLAUDE.md/.claude/rules durable reflection
+reflect = branch/workspace-local gap+launch working memory -> safest available durable/proposal target
 ```
 
 ## Command surface
@@ -22,10 +22,10 @@ reflect = branch-local gap+launch working memory -> CLAUDE.md/.claude/rules dura
 
 - gap/launch/verify 산출물과 legacy Spec Patch 자체는 repo-wide durable knowledge가 아닙니다.
 - repo에 영구적으로 남길 insight는 reflect를 통해서만 추출합니다.
-- `/tk:reflect` 기본 동작은 `apply=true`입니다.
+- `/tk:reflect` 기본 동작은 repo durable target이 안전하게 존재할 때 `apply=true`입니다. non-git/plain workspace에서는 proposal-only fallback이 기본입니다.
 - 반영할 durable insight가 없으면 아무 파일도 수정하지 않는 것이 정상 성공입니다.
 - source code는 수정하지 않습니다.
-- apply mode의 content write는 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에만 적용합니다.
+- apply mode의 content write는 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에만 적용합니다. 해당 target이 없거나 workflow가 preapprove하지 않은 plain workspace에서는 생성하지 않습니다.
 - branch recency bookkeeping으로 `global-index.json`의 branch entry를 생성하거나 `lastUsedAt`을 갱신할 수 있습니다.
 - branch-local specs/gap 산출물이 없다는 사실만으로 세션 관측 패턴을 durable insight 후보로 승격하지 않습니다.
 - 같은 insight를 중복 반영하지 않습니다.
@@ -70,6 +70,37 @@ Legacy `.claude/tigerkit/branches/<branch-key>/specs/`는 `/tk:gap`이 source ma
 - current code/worktree context needed to classify repo-wide value
 
 branch-local gap 산출물이 없으면 산출물 기반 후보는 없는 것으로 처리합니다. 이 경우에도 사용자 대화에서 명시적으로 확인된 TigerKit 운영 규칙은 후보가 될 수 있지만, legacy Spec Patch나 실행자 해석만으로 repo-wide durable insight를 만들지 않습니다.
+
+## Fallback reflect targets
+
+Reflect target tiers:
+
+```yaml
+reflect_targets:
+  repo_durable_rules:
+    available: true | false
+    paths:
+      - CLAUDE.md
+      - .claude/rules/**/*.md
+  workspace_generated_report:
+    available: true | false
+    path: .claude/tigerkit/branches/<scope-key>/reflect/current.md
+  user_memory_proposal:
+    available: host_specific
+    apply_default: false
+  meta_feedback:
+    available: true | false
+```
+
+Fallback defaults:
+
+- GitHub repo with durable rules: existing durable apply policy may run.
+- git repo without GitHub: durable apply is allowed only when rule files exist and policy permits.
+- non-git workspace with rule files: cautious apply only with preapproval; otherwise proposal-only.
+- non-git workspace without durable rule files: write generated reflect report and include `User-level Memory Candidates`; do not create durable rule files by default.
+- read-only workspace: stdout receipt only unless receipt persistence was required.
+
+User-level memory candidates are proposals by default. Host adapters such as Hermes may map them to a safe memory-review flow, but `/tk:reflect` must not auto-write host-global memory without explicit adapter support and user approval.
 
 ## Durable target classification
 
