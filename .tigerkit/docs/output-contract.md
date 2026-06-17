@@ -81,7 +81,7 @@ Report: .claude/tigerkit/branches/<branch-key>/gap/<GAP-ID>.md
 
 ### `tigerkit-gap-status` block
 
-```yaml
+```tigerkit-gap-status
 status: GAP_READY | GAP_BLOCKED
 workflow_id: WF-YYYYMMDD-HHmmss-RAND | null
 workflow_path: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md | null
@@ -91,15 +91,54 @@ human_decisions: []
 missing_sources: []
 ```
 
+### `tigerkit-launch-workflow` block
+
+`GAP_READY` artifact는 정확히 하나의 named fenced block을 포함합니다. 이 block은 `/tk:launch`가 소비하는 sealed workflow contract입니다. `workflow_sha256`은 이 block 안에 넣지 않습니다.
+
+```tigerkit-launch-workflow
+version: 1
+workflow_id: WF-YYYYMMDD-HHmmss-RAND
+created_at: <ISO-8601>
+source_refs: []
+mission: <one sentence>
+scope: []
+non_goals: []
+human_decisions: []
+assumptions: []
+rejected_assumptions: []
+tasks:
+  - id: T1
+    title: <short title>
+    goal: <task goal>
+    files: []
+    depends_on: []
+    allowed_changes: []
+    forbidden_changes: []
+    success_conditions: []
+    verification: []
+    abort_conditions: []
+autopilot_policy:
+  allowed: false
+  max_recovery_attempts: 0
+  max_task_retries: 0
+  forbidden: []
+commit_policy:
+  mode: preflight_decision_required
+  allowed: false
+reflect_policy:
+  mode: generated_report_only
+  durable_apply_requires_preflight_approval: true
+```
+
 ### `tigerkit-launch-workflow` seal
 
-`workflow_sha256`은 단일 `tigerkit-launch-workflow` fenced block body의 SHA-256입니다.
+`workflow_sha256`은 단일 `tigerkit-launch-workflow` fenced block body의 SHA-256이며, `tigerkit-gap-status`와 `branch-state.json`에 기록하는 외부 seal입니다. `tigerkit-launch-workflow` block 내부에 자기참조 field로 넣지 않습니다.
 
 - opening fence와 closing fence line은 제외합니다.
 - block body는 LF로 정규화합니다.
 - hashing 전 final LF를 정확히 하나 보장합니다.
 - YAML-normalize 또는 key sort를 하지 않습니다.
-- archive workflow 파일이 authoritative입니다. `current.md`는 최신 copy입니다.
+- archive workflow 파일이 authoritative입니다. `current.md`는 최신 copy입니다. `/tk:launch`는 archive block hash, `current.md` block hash, branch-state hash가 일치하지 않으면 `WORKFLOW_HASH_MISMATCH`로 중단합니다.
 
 ## `/tk:gap --review` Output Contract
 
@@ -311,6 +350,24 @@ Concrete maintainer proof runs must recompute actual run proof from metadata bef
 - Phase 1에서 `--autopilot` recovery는 실행하지 않습니다.
 - commit은 preflight approval evidence 없이는 금지합니다.
 
+
+### `tigerkit-launch-receipt` block
+
+Launch report는 사람용 H2와 별도로 정확히 하나의 machine-readable block을 포함합니다.
+
+```tigerkit-launch-receipt
+version: 1
+launch_id: LCH-YYYYMMDD-HHmmss-RAND
+workflow_id: WF-YYYYMMDD-HHmmss-RAND
+workflow_path: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
+workflow_sha256: <sha256>
+status: SUCCESS_NO_COMMIT | SUCCESS_COMMITTED | ABORTED | FAILED_PREFLIGHT
+abort_code: null
+commit_created: false
+reflect_report_path: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
+reflect_current_path: .claude/tigerkit/branches/<branch-key>/reflect/current.md
+```
+
 SUCCESS stdout:
 
 ```text
@@ -322,8 +379,10 @@ Workflow Hash: <sha256>
 Tasks: <done>/<total>
 Verification Gates: <passed>/<total>
 Commit: <created|skipped_preflight_required|skipped_not_requested>
-Report: .claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/report.md
-Reflect: .claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/reflect-report.md
+Report: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
+Current: .claude/tigerkit/branches/<branch-key>/launch/current.md
+Reflect: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
+Reflect Current: .claude/tigerkit/branches/<branch-key>/reflect/current.md
 다음 행동: <없음|reflect 제안 검토|commit 승인 필요>
 ```
 
@@ -339,8 +398,10 @@ Abort Code: <CODE>
 원인: <한글 1줄>
 Completed Tasks: <done>/<total>
 Failed Gate: <VG-ID|없음>
-Report: .claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/report.md
-Reflect: .claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/reflect-report.md
+Report: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
+Current: .claude/tigerkit/branches/<branch-key>/launch/current.md
+Reflect: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
+Reflect Current: .claude/tigerkit/branches/<branch-key>/reflect/current.md
 다음 행동: <human decision|workflow 재생성|scope 조정|검증 실패 수정>
 ```
 
@@ -374,6 +435,22 @@ Abort code 목록:
 - 근거가 부족한 후보는 `Needs more evidence`로 남기고 durable rule로 승격하지 않습니다.
 - reflect 처리 직후 `/tk:meta-feedback`을 proposal-only로 함께 제출합니다.
 - `--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 meta-feedback 제출을 생략합니다.
+
+
+### `tigerkit-reflect-report` block
+
+Reflect report는 정확히 하나의 machine-readable block을 포함합니다.
+
+```tigerkit-reflect-report
+version: 1
+reflect_id: RFL-YYYYMMDD-HHmmss-RAND
+workflow_id: WF-YYYYMMDD-HHmmss-RAND
+launch_id: LCH-YYYYMMDD-HHmmss-RAND
+mode: generated_report_only | durable_apply
+applied: []
+skipped: []
+proposal_only: []
+```
 
 기본 stdout:
 

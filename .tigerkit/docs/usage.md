@@ -115,7 +115,7 @@ Report: .claude/tigerkit/branches/main--c0ffee/gap/GAP-20260617-143012-A7F3.md
 - subagent는 candidate만 생성하고 JudgeMergerAgent만 final finding을 확정합니다.
 - final finding은 P0/P1/P2만 포함합니다.
 - P3/nit/duplicate/unverifiable/source_conflict는 final finding이 아닙니다.
-- run artifact는 `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/` 아래에 저장합니다.
+- `/tk:gap --review` run artifact는 `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/` 아래에 저장합니다. 기본 `/tk:gap` sealed workflow는 `.claude/tigerkit/branches/<branch-key>/gap/` 아래에 저장합니다.
 - 유저향 compact table은 run-local short Ref(`G1`, `R1`, `C1`, `Q1`)를 우선 표시합니다.
 
 ### `/tk:launch`

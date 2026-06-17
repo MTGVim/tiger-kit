@@ -26,7 +26,8 @@ Sealed workflow 기본 위치:
 Launch run 기본 위치:
 
 ```text
-.claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/
+.claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
+.claude/tigerkit/branches/<branch-key>/launch/current.md
 ```
 
 Gap Review compatibility 기본 위치:
@@ -119,11 +120,11 @@ Tiger Kit does not read or write files outside the current worktree by default.
 
 ## `/tk:gap` branch-local storage
 
-`/tk:gap`은 반드시 current worktree root 아래 `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/`에 저장합니다.
+기본 `/tk:gap`은 v8 sealed workflow builder입니다. `GAP_READY`이면 `.claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md` archive와 `gap/current.md` copy를 쓰고, `GAP_BLOCKED`이면 `.claude/tigerkit/branches/<branch-key>/gap/<GAP-ID>.md` blocked report를 쓰며 launch workflow block은 쓰지 않습니다.
 
-기본 `/tk:gap` 필수 파일은 `report.md`와 `run.json`입니다. `report.md`는 사용자가 읽는 표면이고, `run.json`은 후속 대화와 기계 처리를 위한 최소 run record입니다.
+`/tk:gap --review` compatibility mode만 v7 review layout인 `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md`와 `run.json`을 씁니다.
 
-상세 artifact layout은 `.tigerkit/docs/artifact-layout.md`를 기준으로 합니다. 상세 stdout/report/run.json 계약은 `.tigerkit/docs/output-contract.md`의 `/tk:gap default stdout` 섹션을 기준으로 합니다.
+상세 artifact layout은 `.tigerkit/docs/artifact-layout.md`를 기준으로 합니다. 상세 stdout/report 계약은 `.tigerkit/docs/output-contract.md`를 기준으로 합니다.
 
 `.claude/tigerkit/`은 generated branch-local working memory이며 repo-wide durable knowledge가 아닙니다.
 
@@ -146,14 +147,15 @@ Tiger Kit does not read or write files outside the current worktree by default.
 `/tk:launch`는 실행 또는 abort 결과를 아래에 저장합니다.
 
 ```text
-.claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/report.md
-.claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/run.json
-.claude/tigerkit/branches/<branch-key>/launches/<LCH-ID>/reflect-report.md
+.claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
+.claude/tigerkit/branches/<branch-key>/launch/current.md
+.claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
+.claude/tigerkit/branches/<branch-key>/reflect/current.md
 ```
 
 - launch run은 workflow hash, task/gate 결과, abort code, commit decision을 기록합니다.
-- `reflect-report.md`는 generated branch-local trace이며 durable apply가 아닙니다.
-- `branch-state.json`에는 `lastLaunchId`, `lastLaunchPath`, `lastLaunchStatus`를 기록할 수 있습니다.
+- reflect archive와 `reflect/current.md`는 generated branch-local trace이며 durable apply가 아닙니다.
+- `branch-state.json`에는 `lastLaunchId`, `lastLaunchPath`, `lastLaunchStatus`, `lastReflectId`, `lastReflectPath`를 기록할 수 있습니다.
 
 ## `/tk:handoff` branch-local context
 
@@ -176,7 +178,8 @@ Tiger Kit does not read or write files outside the current worktree by default.
 최신 branch-local TigerKit artifact가 관측되면 handoff에 참조할 수 있습니다.
 
 - 최신 Spec Patch: `.claude/tigerkit/branches/<branch-key>/specs/SP-*.md`
-- 최신 Gap Run: `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md`
+- 최신 Gap Workflow: `.claude/tigerkit/branches/<branch-key>/gap/current.md`
+- 최신 Gap Review: `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md`
 - branch state: `.claude/tigerkit/branches/<branch-key>/branch-state.json`
 
 handoff는 branch-local artifact 자체를 durable rule로 승격하지 않습니다. 다음 작업자가 읽을 continuation 요약만 작성합니다.
@@ -205,7 +208,10 @@ Reflect는 current branch scope의 branch-local working memory를 읽습니다.
 
 ```text
 .claude/tigerkit/branches/<branch-key>/specs/
-.claude/tigerkit/branches/<branch-key>/runs/gap/
+.claude/tigerkit/branches/<branch-key>/gap/
+.claude/tigerkit/branches/<branch-key>/launch/
+.claude/tigerkit/branches/<branch-key>/reflect/
+.claude/tigerkit/branches/<branch-key>/runs/gap/  # only /tk:gap --review
 .claude/tigerkit/branches/<branch-key>/branch-state.json
 ```
 

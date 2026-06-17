@@ -130,11 +130,13 @@ Design source는 trust axis를 분리합니다.
 
 ## Branch-local storage
 
-반드시 current worktree root 아래 `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/`에 저장합니다.
+기본 `/tk:gap`은 current worktree root 아래 `.claude/tigerkit/branches/<branch-key>/gap/`에 저장합니다.
 
-기본 `/tk:gap` 필수 파일은 `report.md`와 `run.json`입니다. `report.md`는 사용자가 읽는 표면이고, `run.json`은 후속 대화와 기계 처리를 위한 최소 run record입니다.
+- `GAP_READY`: `.claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md` archive와 `gap/current.md` copy를 씁니다.
+- `GAP_BLOCKED`: `.claude/tigerkit/branches/<branch-key>/gap/<GAP-ID>.md` blocked report를 쓰고 `tigerkit-launch-workflow` block은 쓰지 않습니다.
+- `/tk:gap --review`: v7 compatibility layout인 `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md`와 `run.json`을 씁니다.
 
-상세 artifact layout은 `.tigerkit/docs/artifact-layout.md`를 기준으로 합니다. 상세 stdout/report/run.json 계약은 `.tigerkit/docs/output-contract.md`의 `/tk:gap default stdout` 섹션을 기준으로 합니다.
+상세 artifact layout은 `.tigerkit/docs/artifact-layout.md`를 기준으로 합니다. 상세 stdout/report 계약은 `.tigerkit/docs/output-contract.md`를 기준으로 합니다.
 
 `.claude/tigerkit/`은 generated branch-local working memory이며 repo-wide durable knowledge가 아닙니다.
 
@@ -142,19 +144,20 @@ Design source는 trust axis를 분리합니다.
 
 `--maintainer-proof`가 명시된 경우에만 `maintainer-proof/` 아래 self-eval/performance proof artifact를 생성하거나 요구합니다.
 
-기본 사용자 경로는 false-positive, false-negative, speed, analysis-depth improvement claim을 하지 않습니다. 기본 stdout/report/run.json에 proof/debug artifact 목록이나 self-eval metadata를 섞지 않습니다.
+기본 사용자 경로는 false-positive, false-negative, speed, analysis-depth improvement claim을 하지 않습니다. 기본 stdout/workflow/report와 `/tk:gap --review` run.json에 proof/debug artifact 목록이나 self-eval metadata를 섞지 않습니다.
 
 Maintainer-only artifact와 boundary는 `.tigerkit/docs/artifact-layout.md`를 기준으로 합니다. maintainer proof 노출 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 합니다.
 
 ## CLI options
 
-- default: 단일 `/tk:gap` 실행으로 실행하고 사용자-facing `report.md`와 `run.json`을 생성합니다.
+- default: source를 ground하고 ambiguity를 attack해 `GAP_READY` sealed workflow 또는 `GAP_BLOCKED` blocked report를 생성합니다.
+- `--review`: v7 Contract-based Gap Review compatibility mode입니다. 이 mode에서만 사용자-facing `report.md`와 `run.json`을 생성합니다.
 - `--analysis-depth <direct|bounded|expanded|exhaustive-capped>`: 품질 gate를 낮추지 않고 source discovery depth만 명시합니다. 기본 stdout에는 proof나 확장 이유 dump를 출력하지 않습니다.
 - `--spec <SP-ID>`: current branch scope의 `specs/index.json`에서만 resolve합니다.
 - `--spec <path>`: current worktree root 내부 path만 허용합니다.
 - `--no-specs`: active Spec Patch 자동 참조를 비활성화합니다.
-- `--print-report`: 저장된 `report.md` 본문을 stdout에도 출력합니다.
-- `--maintainer-proof`: maintainer/self-eval 전용 proof artifact를 `maintainer-proof/` 아래에 추가 생성합니다.
+- `--print-report`: 저장된 gap workflow/report 본문을 stdout에도 출력합니다.
+- `--maintainer-proof`: `/tk:gap --review` maintainer/self-eval 전용 proof artifact를 `maintainer-proof/` 아래에 추가 생성합니다.
 
 `--lite`와 `--strict`는 compatibility flag로만 기록하고 quality gate를 바꾸지 않습니다. `--legacy`, `TIGERKIT_GAP_LEGACY`, `--deep`, `--no-strict`는 active v8.0 mode가 아닙니다.
 
@@ -537,7 +540,7 @@ Analysis depth values:
 
 Depth selection uses hard triggers before risk-score tie-breakers. Explicit `--analysis-depth` may not lower the heuristic-required minimum depth for risky surfaces; lower requested depth is escalated internally without changing user-facing quality mode.
 
-기본 stdout/report/run.json은 depth proof를 요구하지 않습니다. `--maintainer-proof`에서만 analysis depth score, baseline, improvement ratio를 기록할 수 있습니다.
+기본 stdout/workflow/report와 `/tk:gap --review` run.json은 depth proof를 요구하지 않습니다. `--maintainer-proof`에서만 analysis depth score, baseline, improvement ratio를 기록할 수 있습니다.
 
 ## Maintainer proof contracts
 
@@ -614,7 +617,23 @@ Targeted verification: CriticalRedTeamAgent 1회만 수행.
 
 Implementation 개선 작업에서는 `redesign -> analysis -> review -> feedback incorporation` 루프를 사용할 수 있지만, 이것은 command contract를 갱신하고 검증하는 개발 절차입니다. `/tk:gap` runtime은 단일 실행과 capped verification을 유지합니다.
 
-## Run procedure
+## Default `/tk:gap` run procedure
+
+1. Emit start receipt with branch-key and planned `gap/<WF-ID>.md` or `gap/<GAP-ID>.md` path.
+2. Bind current worktree root, branch-key, user-provided references, target hints, prior specs, conversation decisions, and repo context.
+3. Load active Spec Patch unless `--no-specs` is present, but do not treat draft/conflict items as confirmed requirements.
+4. Ground sources by authority and access status: user decisions, URLs/tickets, docs, screenshots, current repo files, and existing branch-local TigerKit artifacts.
+5. Normalize confirmed requirements, non-goals, assumptions, rejected assumptions, human decisions, and missing sources.
+6. Attack ambiguity: contradictions, unresolved decisions, hidden dependencies, edge cases, failure modes, verification holes, and scope creep.
+7. Apply YAGNI trim: keep only work needed for the mission; cut/defer future extensibility or convert it to abort conditions.
+8. Build a sealed launch workflow with stable task IDs, task dependencies, allowed/forbidden changes, success conditions, verification gates, abort policy, commit policy, autopilot policy, and reflect policy.
+9. If unresolved launch-blocking items remain, materialize `GAP_BLOCKED` with blocked reasons, human decisions needed, missing sources, and no `tigerkit-launch-workflow` block.
+10. If launchable, materialize `GAP_READY` with exactly one `tigerkit-gap-status` block and exactly one `tigerkit-launch-workflow` block.
+11. Compute `workflow_sha256` from the `tigerkit-launch-workflow` block body and record it externally in `tigerkit-gap-status` and branch state. Do not put the hash inside the workflow block.
+12. Acquire branch lock, write archive artifact and `gap/current.md` copy for `GAP_READY`, or blocked report for `GAP_BLOCKED`; update branch/global index; release lock.
+13. Emit final stdout receipt matching `.tigerkit/docs/output-contract.md`.
+
+## `/tk:gap --review` compatibility run procedure
 
 1. Emit start receipt with GAP-ID, branch-key, planned report path, and planned run.json path.
 2. Bind current worktree root, branch-key, run-id, user-provided references, target hints, current implementation candidates, and integration freshness metadata.
@@ -631,27 +650,56 @@ Implementation 개선 작업에서는 `redesign -> analysis -> review -> feedbac
 13. Run JudgeMergerAgent once on final judge queue.
 14. Materialize Actionable Findings, Source Conflicts, Clarification Needed, and rejected summary.
 15. If `--maintainer-proof` is present, compute maintainer proof metadata and write `maintainer-proof/` artifacts.
-16. Acquire branch lock, write `report.md`, `run.json`, update branch/global index, release lock.
+16. Acquire branch lock, write `runs/gap/<GAP-ID>/report.md`, `runs/gap/<GAP-ID>/run.json`, update branch/global index, release lock.
 17. Emit final stdout receipt and compact tables.
 
 ## Output
 
-기본 stdout은 사용자가 바로 행동할 수 있는 receipt만 출력합니다.
+기본 stdout은 launch 가능 여부를 판단할 수 있는 receipt만 출력합니다.
 
 Interface 요약:
 
-- 완료한 단일 `/tk:gap` 실행의 run ID, branch scope, P0/P1/P2 count, Source Conflict count, Clarification Needed count를 출력합니다.
-- `report.md`와 `run.json` path, 다음 행동을 출력합니다.
-- Actionable Findings와 Clarification Needed table은 row가 있을 때만 compact하게 출력합니다.
-- 유저향 table은 run-local Ref(`G<N>`, `Q<N>`)를 우선 사용합니다.
-- `--print-report`가 있을 때만 저장된 `report.md` 본문을 stdout에도 출력합니다.
+- `GAP_READY` 또는 `GAP_BLOCKED`, branch scope, artifact path, 다음 행동을 출력합니다.
+- `GAP_READY`는 workflow path, workflow hash, task count, verification gate count, autopilot allowed, commit policy를 출력합니다.
+- `GAP_BLOCKED`는 blocked reason count, human decision count, missing source count, blocked report path를 출력합니다.
+- `GAP_READY` artifact는 정확히 하나의 `tigerkit-gap-status` block과 정확히 하나의 `tigerkit-launch-workflow` block을 포함합니다.
+- `GAP_BLOCKED` artifact는 `tigerkit-launch-workflow` block을 포함하지 않습니다.
+- `--print-report`가 있을 때만 저장된 workflow/report 본문을 stdout에도 출력합니다.
 - proof/debug/self-eval metadata와 rejected/downgraded 상세 목록은 기본 stdout에 출력하지 않습니다.
 
 Authoritative stdout contract는 `.tigerkit/docs/output-contract.md`의 `/tk:gap default stdout` 섹션입니다. artifact boundary는 `.tigerkit/docs/artifact-layout.md`를 기준으로 합니다.
 
-## Report shape
+## Default GAP artifact shape
 
-기본 `report.md`는 아래 H2를 사용합니다.
+`GAP_READY` archive와 `gap/current.md` copy는 아래 H2를 사용합니다.
+
+```md
+# TigerKit GAP Workflow: <WF-ID>
+
+## Status
+
+## Grounded Sources
+
+## Normalized Requirements
+
+## Ambiguity Attack
+
+## YAGNI Trim
+
+## Produced Launch Workflow
+
+## Human Decisions
+
+## Not Ready Reasons
+```
+
+`## Produced Launch Workflow`에는 정확히 하나의 `tigerkit-launch-workflow` fenced block을 둡니다. `workflow_sha256`은 이 block 안이 아니라 `tigerkit-gap-status`와 branch state에만 외부 seal로 둡니다.
+
+`GAP_BLOCKED` report는 같은 H2를 사용할 수 있지만 `## Produced Launch Workflow`에 workflow block을 쓰지 않고, `## Not Ready Reasons`와 `## Human Decisions`를 launch 차단 사유 중심으로 채웁니다.
+
+## `/tk:gap --review` report shape
+
+Compatibility `report.md`는 아래 H2를 사용합니다.
 
 ```md
 # Tiger Kit Gap Report: <GAP-ID>
@@ -681,7 +729,7 @@ Authoritative stdout contract는 `.tigerkit/docs/output-contract.md`의 `/tk:gap
 
 `## Not Accepted Summary`는 rejected/downgraded 상세 목록이 아니라 reason별 count와 사용자에게 의미 있는 짧은 요약만 둡니다. 상세 proof나 candidate dump는 `--maintainer-proof`에서만 허용합니다.
 
-`## Next Action Graph`는 구현 runner가 아닙니다. 사용자가 clarification, fixing, re-check, re-run 순서를 이해하도록 run-local Ref로만 가벼운 순서를 적습니다. 예: `Q1 확인 -> G1 수정 -> G2 재확인 -> /tk:gap 재실행`.
+`## Next Action Graph`는 구현 runner가 아닙니다. 사용자가 clarification, fixing, re-check, re-run 순서를 이해하도록 run-local Ref로만 가벼운 순서를 적습니다. 예: `Q1 확인 -> G1 수정 -> G2 재확인 -> /tk:gap --review 재실행`.
 
 ## 금지
 
