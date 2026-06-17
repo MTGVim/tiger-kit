@@ -79,7 +79,7 @@
       "id": 1,
       "name": "gap-ready-produces-sealed-workflow",
       "prompt": "Evaluate default /tk:gap when enough source exists to create a launch workflow. Do not write files.",
-      "expected_output": "Should end with GAP_READY, include a sealed tigerkit-launch-workflow block, include workflow path, workflow hash, task count, verification gate count, autopilot allowed false, commit policy preflight_decision_required, and next action /tk:launch. GAP_READY cannot be claimed without a launch workflow.",
+      "expected_output": "Should end with GAP_READY, include a sealed tigerkit-launch-workflow block, include workflow path, workflow hash, task count, verification gate count, task assumed_preconditions, readonly_preflight status, autopilot allowed false, commit policy preflight_decision_required, and next action /tk:launch. GAP_READY cannot be claimed without a launch workflow or without checking static/read-only preflight predicates.",
       "files": [
         "commands/gap.md",
         ".tigerkit/docs/output-contract.md",
@@ -92,6 +92,8 @@
         "Includes workflow hash",
         "Includes task count",
         "Includes verification gate count",
+        "Includes task assumed_preconditions",
+        "Includes readonly_preflight status",
         "Autopilot allowed false in Phase 1",
         "Next action is /tk:launch"
       ]
@@ -99,8 +101,8 @@
     {
       "id": 2,
       "name": "gap-blocked-never-emits-workflow",
-      "prompt": "Evaluate default /tk:gap when an unresolved API decision or missing source blocks execution. Do not write files.",
-      "expected_output": "Should end with GAP_BLOCKED, record blocked reasons, human decisions or missing sources, and next action for clarification or source supply. Should not include a tigerkit-launch-workflow block because launch is forbidden until the blocking issue is resolved.",
+      "prompt": "Evaluate default /tk:gap when an unresolved API decision, missing source, or failed static/read-only preflight predicate blocks execution. Do not write files.",
+      "expected_output": "Should end with GAP_BLOCKED, record blocked reasons, human decisions, missing sources, or failed preflight predicates, and next action for clarification or source supply. Should not include a tigerkit-launch-workflow block because launch is forbidden until the blocking issue is resolved.",
       "files": [
         "commands/gap.md",
         ".tigerkit/docs/output-contract.md"
@@ -110,6 +112,7 @@
         "Records blocked reasons",
         "Records human decisions when needed",
         "Records missing sources when needed",
+        "Records failed preflight predicates",
         "Does not include tigerkit-launch-workflow",
         "Does not silently guess decisions"
       ]
@@ -187,7 +190,7 @@
       "id": 7,
       "name": "launch-human-decision-required-no-question",
       "prompt": "Evaluate /tk:launch when execution reveals a new product or API decision is required. Do not write files.",
-      "expected_output": "Should not ask the user a mid-flight question. Should abort with HUMAN_DECISION_REQUIRED, preserve completed task count, failed gate or reason, and next action for human decision or workflow regeneration.",
+      "expected_output": "Should not ask the user a mid-flight question. Should abort with HUMAN_DECISION_REQUIRED, preserve completed task count, failed precondition, failed gate or reason, and next action for human decision or workflow regeneration. The launch trace should structure the abort fact as reusable gap input.",
       "files": [
         "commands/launch.md",
         ".tigerkit/docs/output-contract.md"
@@ -196,6 +199,8 @@
         "No mid-flight question",
         "Abort code HUMAN_DECISION_REQUIRED",
         "Preserves completed task count",
+        "Records failed precondition when applicable",
+        "Records reusable gap input",
         "Provides next action"
       ]
     },
@@ -422,6 +427,27 @@
     },
     {
       "id": 19,
+      "name": "gap-preflights-launch-preconditions-before-sealing",
+      "prompt": "Evaluate default /tk:gap for a workflow whose task depends on a static target relation or verification tool assumption that can be checked read-only before mutation. Do not write files.",
+      "expected_output": "Should record task-level assumed_preconditions as checkable predicates, run static/read-only preflight before sealing, and only emit GAP_READY when required predicates pass. If a predicate fails or is unverifiable, should emit GAP_BLOCKED without tigerkit-launch-workflow. If a prior /tk:launch trace aborted with HUMAN_DECISION_REQUIRED or VERIFICATION_FAILED, should treat the structured abort fact as gap input so the same fact is not rediscovered during launch.",
+      "files": [
+        "commands/gap.md",
+        "commands/launch.md",
+        "agents/tk-runner.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/usage.md"
+      ],
+      "expectations": [
+        "Tasks include assumed_preconditions",
+        "Static/read-only preflight runs before sealing",
+        "Failed preflight produces GAP_BLOCKED",
+        "GAP_BLOCKED has no tigerkit-launch-workflow",
+        "Launch checks preconditions before mutation",
+        "Launch abort feedback is reusable gap input"
+      ]
+    },
+    {
+      "id": 20,
       "name": "meta-feedback-generalization-gate",
       "prompt": "Evaluate /tk:meta-feedback when session feedback contains command friction mixed with repo-specific or domain-specific terms. Do not write files.",
       "expected_output": "Should run a pre-emit Domain-term guard, rewrite or reject proposals that contain host-specific nouns such as project/framework names, paths, symbols, domain entities, tickets, branches, PRs, commits, or URLs, and apply a Restate test asking whether the proposal still works in another repo and domain. Should route repo/domain insight to /tk:reflect, basis-target comparison to /tk:gap, follow-up storage to /tk:handoff, and only command or skill contract friction to /tk:meta-feedback. Output should use only the target command or skill contract vocabulary and feedback taxonomy, and the Redaction Receipt should report generalization gate and Restate test status.",

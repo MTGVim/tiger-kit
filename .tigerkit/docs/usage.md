@@ -85,7 +85,9 @@ Hermes Agent, Codex CLI, `npx skills` 기반 command-skill adapter는 v8 MVP에 
 - 사용자 의도, URL, ticket, notes, screenshots, repo context, prior specs, conversation decisions, `SessionStart`의 `TIGERKIT_SESSION_START` worktree context proposal을 source material 후보로 intake합니다.
 - source material과 authority를 분리하고 confirmed requirement, assumption, rejected assumption, non-goal을 정규화합니다.
 - legacy branch-local Spec Patch가 있으면 active confirmed item만 source material 후보로 읽을 수 있습니다.
-- ambiguity attack으로 contradiction, missing decision, hidden dependency, edge case, failure mode, verification gap을 찾습니다.
+- ambiguity attack으로 contradiction, missing decision, hidden dependency, task precondition, edge case, failure mode, verification gap을 찾습니다.
+- 각 task의 `assumed_preconditions`를 checkable predicate로 기록하고, verification gate 중 static/read-only 부분은 봉인 전 preflight로 1회 확인합니다.
+- 이전 `/tk:launch`가 `HUMAN_DECISION_REQUIRED` 또는 `VERIFICATION_FAILED`로 멈춘 trace가 있으면 다음 `/tk:gap` 입력으로 구조화해 같은 사실을 재발견하지 않습니다.
 - launch 가능한 sealed workflow가 있으면 `GAP_READY`로 끝내고 `tigerkit-launch-workflow` block을 생성합니다.
 - unresolved decision/conflict/missing source 때문에 launch하면 안 되면 `GAP_BLOCKED`로 끝내고 workflow block을 생성하지 않습니다.
 - `/tk:gap --review`는 v7 Contract-based Gap Review compatibility mode입니다.
@@ -136,6 +138,7 @@ Report: .claude/tigerkit/branches/main--c0ffee/gap/GAP-20260617-143012-A7F3.md
 - non-git workspace 성공 시 commit은 `skipped_not_git_repo`로 기록할 수 있습니다.
 - git diff가 없으면 file manifest snapshot 또는 receipt-only diff scope를 workflow policy에 따라 사용합니다.
 - workflow 밖 scope 확장, missing requirement 임의 해석, public API/DB/product behavior 재정의, verification 없는 success 선언, out-of-scope diff commit을 금지합니다.
+- mutation 전에 required `assumed_preconditions`를 read-only로 확인합니다.
 - mid-flight 질문을 하지 않습니다. 새 사용자 결정이 필요하면 `HUMAN_DECISION_REQUIRED`로 abort합니다.
 - `/tk:launch --autopilot`은 Phase 1에서 recovery를 수행하지 않고 `AUTOPILOT_DISABLED` 또는 `AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1`로 abort합니다.
 - `/tk:launch`는 `SessionStart`가 주입한 `TIGERKIT_SESSION_START` worktree context proposal을 preflight capability로 기록합니다. 자동 symlink/copy는 하지 않으며, 같은 candidate signature를 command마다 다시 묻지 않습니다.

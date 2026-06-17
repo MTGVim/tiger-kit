@@ -25,6 +25,7 @@ Dispatcher는 아래를 제공해야 합니다.
 - workflow sha256
 - branch/workspace scope key
 - ordered task graph
+- task별 assumed_preconditions
 - allowed_changes / forbidden_changes
 - verification gates
 - abort policy
@@ -36,6 +37,8 @@ Dispatcher는 아래를 제공해야 합니다.
 ## Execution rules
 
 - stable task ID(`T1`, `T2`, ...) 단위로만 실행합니다.
+- 각 task 시작 전에 required `assumed_preconditions`를 read-only로 확인합니다.
+- precondition이 실패하거나 사용자/owner 결정이 필요하면 mutation 없이 `HUMAN_DECISION_REQUIRED` 또는 해당 abort code로 중단합니다.
 - 각 task 시작/완료/실패를 task ID와 함께 기록합니다.
 - workflow 밖 파일이나 동작이 필요하면 즉시 `OUT_OF_SCOPE_DIFF`로 abort합니다.
 - 새 사용자/owner 결정이 필요하면 질문하지 말고 `HUMAN_DECISION_REQUIRED`로 abort합니다.
@@ -53,6 +56,7 @@ Runtime Harness: tk-runner / model=sonnet / status=<active|fallback|unavailable>
 Result: SUCCESS | ABORTED
 Completed Tasks: <done>/<total>
 Failed Task: <T-ID|없음>
+Failed Precondition: <ID|없음>
 Failed Gate: <VG-ID|없음>
 Abort Code: <CODE|없음>
 Changed Files: <count or unknown>

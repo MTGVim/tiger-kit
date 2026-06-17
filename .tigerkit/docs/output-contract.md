@@ -109,9 +109,20 @@ tasks:
     depends_on: []
     allowed_changes: []
     forbidden_changes: []
+    assumed_preconditions:
+      - id: PC1
+        predicate: <checkable read-only predicate>
+        evidence: <path/ref/command id>
+        required: true
+        failure_abort_code: HUMAN_DECISION_REQUIRED | VERIFICATION_UNAVAILABLE | WORKTREE_CONTEXT_APPROVAL_REQUIRED
     success_conditions: []
     verification: []
     abort_conditions: []
+readonly_preflight:
+  status: passed | blocked
+  checked_preconditions: []
+  checked_verification_gates: []
+  blocked_reasons: []
 autopilot_policy:
   allowed: false
   max_recovery_attempts: 0
@@ -343,6 +354,7 @@ Concrete maintainer proof runs must recompute actual run proof from metadata bef
 - 기본 입력은 `.claude/tigerkit/branches/<branch-key>/gap/current.md` 또는 명시 workflow path입니다.
 - `tigerkit-launch-workflow` block은 정확히 하나여야 합니다.
 - hash mismatch, missing workflow, multiple blocks, blocked workflow는 실행 전 abort합니다.
+- 각 task의 required `assumed_preconditions`는 mutation 전에 read-only로 확인합니다.
 - mid-flight 질문은 금지합니다. 새 결정이 필요하면 `HUMAN_DECISION_REQUIRED`로 abort합니다.
 - Phase 1에서 `--autopilot` recovery는 실행하지 않습니다.
 - commit은 preflight approval evidence 없이는 금지합니다.
@@ -383,6 +395,16 @@ worktree_context:
   candidate_signature: <sha256|null>
   decline_marker: .claude/tigerkit/local/session-start/worktree-context-declines.json | null
   suppressed_by_decline: true | false
+preconditions:
+  checked: []
+  failed: []
+abort_feedback:
+  reusable_gap_input: true | false
+  failed_task: <T-ID|null>
+  failed_precondition: <ID|null>
+  failed_gate: <VG-ID|null>
+  observed_evidence: []
+  required_decision: <text|null>
 commit_created: false
 commit_status: created | skipped_preflight_required | skipped_not_requested | skipped_not_git_repo | skipped_no_github_remote | skipped_readonly_workspace | skipped_commit_policy_skip
 reflect_report_path: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
