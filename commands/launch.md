@@ -173,7 +173,7 @@ diff_scope:
 | `MULTIPLE_WORKFLOW_BLOCKS` | launch workflow block이 2개 이상 | 실행하지 않음 |
 | `WORKFLOW_HASH_MISMATCH` | block hash가 seal과 다름 | 실행하지 않음 |
 | `GAP_BLOCKED` | workflow status가 launch 불가 | 실행하지 않음 |
-| `HUMAN_DECISION_REQUIRED` | 실행 중 새 사용자/owner 결정 필요 | 질문하지 않고 abort |
+| `HUMAN_DECISION_REQUIRED` | task `assumed_preconditions` 또는 실행 중 evidence가 새 사용자/owner 결정을 요구 | 질문하지 않고 abort |
 | `MODEL_HARNESS_UNAVAILABLE` | required `tk-runner` subagent/model harness를 사용할 수 없음 | task 실행 전 abort |
 | `WORKTREE_CONTEXT_APPROVAL_REQUIRED` | workflow가 worktree context 적용을 요구하지만 승인/evidence가 없음 | task 실행 전 abort |
 | `AUTOPILOT_DISABLED` | workflow가 autopilot을 금지 | recovery 없이 abort |
@@ -189,7 +189,8 @@ diff_scope:
 
 - workflow의 task graph 순서만 따릅니다.
 - 가능한 경우 `tk-runner` subagent를 dispatch해 task execution을 격리합니다.
-- dispatch prompt에는 workflow path/hash, task graph, allowed/forbidden changes, verification gates, abort policy, commit policy, worktree context proposal status를 포함합니다.
+- dispatch prompt에는 workflow path/hash, task graph, task별 `assumed_preconditions`, allowed/forbidden changes, verification gates, abort policy, commit policy, worktree context proposal status를 포함합니다.
+- mutation 전에 required `assumed_preconditions`를 read-only로 확인합니다. 실패하거나 사용자/owner 결정이 필요하면 task를 시작하지 않고 abort합니다.
 - missing requirement를 임의 해석하지 않습니다.
 - public API, DB, product behavior를 workflow 밖에서 재정의하지 않습니다.
 - mid-flight 질문을 하지 않습니다. 결정이 필요하면 `HUMAN_DECISION_REQUIRED`로 abort합니다.
@@ -216,6 +217,8 @@ failure_abort_code: VERIFICATION_FAILED
 ## Reflect postflight
 
 SUCCESS 또는 ABORTED 후 `/tk:launch`는 generated launch report를 남기고 `/tk:reflect`가 읽을 수 있는 trace를 branch-local artifact로 기록합니다.
+
+`HUMAN_DECISION_REQUIRED` 또는 `VERIFICATION_FAILED` abort는 다음 `/tk:gap`이 source input으로 소비할 수 있게 failed task, failed precondition/gate, observed evidence, required decision 또는 failed tool assumption을 구조화해 기록합니다.
 
 Reflect postflight는 durable apply나 commit을 자동 수행하지 않습니다. preflight에서 승인되지 않은 durable rule 변경은 proposal 또는 generated report에만 남깁니다.
 
