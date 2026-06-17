@@ -1,7 +1,7 @@
 {
   "skill_name": "tiger-kit-v8-sealed-gap-launch-reflect",
   "command_surface": {
-    "surface_model": "TigerKit v8.0 exposes Claude Code plugin commands; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts without separate repo-local skill files.",
+    "surface_model": "TigerKit v8.0 MVP exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts without separate repo-local skill or non-Claude adapter files.",
     "core_commands": [
       "/tk:gap",
       "/tk:launch",
@@ -32,6 +32,8 @@
     "phase_1_boundaries": [
       "Claude Code command-contract runner only",
       "no adapter implementation files",
+      "no Hermes plugin command adapter in MVP",
+      "no Codex CLI adapter in MVP",
       "no runtime parser or binary",
       "autopilot recovery disabled"
     ]
@@ -41,7 +43,7 @@
       "id": 0,
       "name": "command-surface-adds-launch-preserves-existing-commands",
       "prompt": "Evaluate TigerKit v8 active command surface. Do not write files.",
-      "expected_output": "Should list /tk:gap, /tk:launch, and /tk:reflect as the primary v8 flow. Should also preserve /tk:spec, /tk:gap --review, /tk:handoff, and /tk:meta-feedback as compatibility or secondary commands. Should explain that commands/*.md plus .claude-plugin/plugin.json own the /tk:* contracts and that existing commands are not removed.",
+      "expected_output": "Should list /tk:gap, /tk:launch, and /tk:reflect as the primary v8 flow. Should also preserve /tk:spec, /tk:gap --review, /tk:handoff, and /tk:meta-feedback as compatibility or secondary commands. Should explain that commands/*.md plus .claude-plugin/plugin.json own the /tk:* contracts, that existing commands are not removed, and that Hermes/Codex/npx-skills command adapters are out of MVP scope with no adapter files shipped.",
       "files": [
         ".claude-plugin/plugin.json",
         "README.md",
@@ -55,7 +57,10 @@
         "Preserves /tk:handoff",
         "Preserves /tk:meta-feedback",
         "Mentions /tk:gap --review compatibility",
-        "Treats /tk:* as command-owned plugin contracts"
+        "Treats /tk:* as command-owned plugin contracts",
+        "States Hermes adapter is out of MVP scope",
+        "States Codex adapter is out of MVP scope",
+        "Ships no non-Claude adapter files"
       ]
     },
     {
