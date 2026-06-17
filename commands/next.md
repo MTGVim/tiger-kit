@@ -42,11 +42,31 @@ next = inspect continuation state + select next safe executable work item + atte
 - handoff `Pending Work`, `Pending Backlog`, `Next Actions`, `Resume Prompt`
 - launch abort receipt와 failed task/gate
 - reflect `Needs more evidence`, proposal-only follow-up, TigerKit meta-feedback
-- SessionStart worktree hydration receipt: `.claude/tigerkit/local/session-start/current.json`
+- worktree context candidates from current/base worktree comparison
 - current git status when git is available, using side-effect-minimized inspection such as `git --no-optional-locks status --porcelain=v1 -b`
 - explicit user-provided goal/context in the command arguments
 
 Missing artifacts are not fatal by themselves. Treat them as evidence for either a safe next action or `NEXT_BLOCKED`.
+
+## Worktree context candidate scan
+
+`/tk:next`는 SessionStart hook이나 plugin root `CLAUDE.md`에 의존하지 않습니다. 필요하면 current worktree와 base/source worktree 후보를 비교해 context 후보를 proposal-only로 정리합니다.
+
+Scan policy:
+
+1. current root가 linked git worktree인지 확인합니다.
+2. source/base worktree 후보를 찾습니다.
+3. base root에는 있고 current root에는 없는 root-level `*.md` / `*.MD` 파일을 찾습니다.
+4. base root에 `.claude/`가 있고 current root에 없으면 후보로 표시합니다.
+5. 자동 symlink/copy를 수행하지 않습니다.
+6. 승인 없이 regular file overwrite, tracked file symlink, `.claude/` 전체 symlink, `node_modules` symlink를 수행하지 않습니다.
+
+Safe next action examples:
+
+- 후보 목록을 `next/current.md` receipt에 proposal로 정리
+- 승인된 경우에만 특정 root-level Markdown 파일 symlink/copy 적용
+- `.claude/`는 전체 symlink가 아니라 필요한 하위만 사용자가 선택하도록 `NEXT_BLOCKED` 또는 `NEXT_PARTIAL`로 남김
+- `DESIGN.md`는 branch-specific 가능성이 있으므로 copy/skip 검토를 권장
 
 ## Selection policy
 
@@ -54,7 +74,7 @@ Missing artifacts are not fatal by themselves. Treat them as evidence for either
 
 1. User-provided explicit next goal/context가 있으면 그것을 우선합니다.
 2. latest handoff의 `Pending Work`와 `Next Actions`를 우선합니다.
-3. SessionStart hydration receipt가 `HYDRATION_CONFLICT`이면 safe local repair가 가능한지 판단하고, 불가능하면 `NEXT_BLOCKED`로 멈춥니다.
+3. worktree context 후보가 있고 launch/verification에 영향을 줄 수 있으면 proposal receipt 작성 또는 승인 필요 상태로 정리합니다.
 4. launch가 `ABORTED`이면 abort receipt의 next action과 failed task/gate를 우선합니다.
 5. reflect가 proposal-only follow-up이나 `Needs more evidence`를 남겼으면 안전한 정리/문서/확인 작업을 선택합니다.
 6. latest GAP이 `GAP_BLOCKED`이면 blocking decision/source를 해결할 수 있는 repo-local 확인 작업만 수행합니다. 인간 결정이 필요하면 차단합니다.
@@ -73,7 +93,7 @@ Missing artifacts are not fatal by themselves. Treat them as evidence for either
 - handoff에 명시된 문서 정리 또는 generated TigerKit artifact 작성
 - `/tk:gap`, `/tk:launch`, `/tk:reflect`, `/tk:handoff`, `/tk:meta-feedback` contract에 해당하는 작업을 해당 command 규칙대로 수행
 - launch abort를 고치기 위한 bounded local repair, 단 sealed workflow 또는 handoff가 허용한 범위 안에서만 수행
-- SessionStart hydration conflict를 해결하기 위한 non-destructive local check 또는 config/receipt 정리. regular file overwrite, tracked file symlink, source_worktree mutation은 금지합니다.
+- worktree context candidate proposal 작성 또는 승인된 context 적용
 - reflect가 남긴 proposal-only 항목을 별도 GAP/issue/handoff 후보로 정리
 - 검증 명령 실행
 - next receipt 작성
@@ -93,7 +113,8 @@ Missing artifacts are not fatal by themselves. Treat them as evidence for either
 - 사용자 승인 또는 artifact/contract상의 명시 승인 없이 commit, push, PR, merge, release, deploy를 수행합니다.
 - 사용자 승인 또는 artifact/contract상의 명시 승인 없이 GitHub issue를 생성/수정/close합니다.
 - user home, 다른 repo, 외부 서비스에 side effect를 만들면서 approval evidence를 남기지 않습니다.
-- worktree hydration conflict를 해결한다는 이유로 tracked file을 symlink하거나 regular file을 덮어씁니다.
+- worktree context 후보를 해결한다는 이유로 tracked file을 symlink하거나 regular file을 덮어씁니다.
+- `.claude/` 전체나 `node_modules`를 자동 symlink합니다.
 
 `/tk:next` may:
 
@@ -116,6 +137,7 @@ Missing artifacts are not fatal by themselves. Treat them as evidence for either
 - CI/deploy config 변경
 - production/staging deploy
 - 외부 서비스 API write
+- worktree context symlink/copy 적용
 
 승인은 다음 중 하나여야 합니다.
 
@@ -188,9 +210,13 @@ scope_kind: git_branch | git_detached | git_no_remote | workspace
 scope_key: <branch-key-or-workspace-key>
 status: NEXT_DONE | NEXT_PARTIAL | NEXT_BLOCKED | NEXT_SKIPPED
 selected_action:
-  source: user | handoff | gap | launch | reflect | session_start | repo_state | none
+  source: user | handoff | gap | launch | reflect | worktree_context | repo_state | none
   ref: <path#section or none>
   summary: <one sentence>
+worktree_context:
+  detected: true | false
+  proposal_only: true | false
+  candidates: []
 executed_actions: []
 changed_files: []
 verification: []
@@ -229,7 +255,7 @@ Approval: <not_required|present:<source>|missing:<needed_action>>
 
 Report: .claude/tigerkit/branches/<branch-key>/next/<NXT-ID>.md
 Current: .claude/tigerkit/branches/<branch-key>/next/current.md
-Blocked By: <none | human decision | missing source | approval required | sealed workflow required | dirty workspace | verification failure | hydration conflict | capability unavailable | other>
+Blocked By: <none | human decision | missing source | approval required | sealed workflow required | dirty workspace | verification failure | worktree context approval required | capability unavailable | other>
 
 다음 행동: <없음|한글 한 문장>
 ```
@@ -278,24 +304,24 @@ Blocked By: approval required
 다음 행동: /tk:launch 승인 후 다시 /tk:next 실행
 ```
 
-SessionStart hydration conflict가 있는 경우:
+Worktree context 후보가 있는 경우:
 
 ```text
-🛑 Next 완료: NXT-20260617-143012-A7F3
+⚠️ Next 완료: NXT-20260617-143012-A7F3
 Branch Scope: feature-x--c0ffee
-결과: NEXT_BLOCKED
-Selected Action: worktree hydration conflict 확인
+결과: NEXT_PARTIAL
+Selected Action: worktree context 후보를 proposal로 정리
 
 Executed: 1
-Changed Files: 0
-Verification: not_run: hydration conflict blocks launch
-Approval: not_required
+Changed Files: 1
+Verification: not_run: proposal-only
+Approval: missing: context symlink/copy 적용 승인 필요
 
 Report: .claude/tigerkit/branches/feature-x--c0ffee/next/NXT-20260617-143012-A7F3.md
 Current: .claude/tigerkit/branches/feature-x--c0ffee/next/current.md
-Blocked By: hydration conflict
+Blocked By: worktree context approval required
 
-다음 행동: .claude/tigerkit/local/session-start/current.json의 conflict path를 확인하고 config 또는 target file을 정리
+다음 행동: AGENTS.md, CLAUDE.local.md, .claude/ 후보 중 적용할 항목 승인
 ```
 
 Dry run:

@@ -26,7 +26,7 @@
       "AUTOPILOT_DISABLED",
       "AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1",
       "OUT_OF_SCOPE_DIFF",
-      "HYDRATION_CONFLICT",
+      "WORKTREE_CONTEXT_APPROVAL_REQUIRED",
       "VERIFICATION_FAILED",
       "ARTIFACT_ROOT_UNWRITABLE",
       "COMMIT_REQUIRED_UNAVAILABLE",
@@ -39,7 +39,7 @@
       "no Hermes plugin command adapter in MVP",
       "no Codex CLI adapter in MVP",
       "autopilot recovery disabled",
-      "SessionStart worktree hydration hook is available but conservative",
+      "worktree context handling is proposal-only with no SessionStart hook side effects",
       "launch uses tk-runner Claude Code agent with sonnet binding when subagents are available"
     ],
     "plugin_version_policy": "Authoritative version is .claude-plugin/plugin.json; evals must not hard-code a concrete version literal.",
@@ -251,24 +251,25 @@
     },
     {
       "id": 11,
-      "name": "session-start-worktree-hydration-conflict-blocks-tracked-symlink",
-      "prompt": "Evaluate SessionStart worktree hydration and /tk:launch --worktree preflight when a tracked file would be symlinked. Do not write source files.",
-      "expected_output": "Should run worktree hydration as a conservative SessionStart hook that writes .claude/tigerkit/local/session-start/current.json when linked worktree/config evidence exists. Should treat tracked file symlink hydration as HYDRATION_CONFLICT and make /tk:launch abort or block before task execution. Hydration must never mutate source_worktree, overwrite regular files, or symlink tracked files by default.",
+      "name": "worktree-context-proposal-does-not-auto-symlink",
+      "prompt": "Evaluate /tk:launch --worktree preflight when a base worktree has root Markdown files and .claude/ that are missing in the current linked worktree. Do not write source files.",
+      "expected_output": "Should not run startup hook side effects, create symlinks, overwrite regular files, mutate source_worktree, or write local startup receipts. Should detect base-only root-level Markdown and .claude/ as proposal-only worktree context candidates. /tk:launch should continue unless the sealed workflow marks context application as a required precondition; in that case it should abort before task execution with WORKTREE_CONTEXT_APPROVAL_REQUIRED.",
       "files": [
         "hooks/hooks.json",
-        "hooks/session-start",
         "commands/launch.md",
         ".tigerkit/docs/artifact-layout.md",
         ".tigerkit/docs/branch-local-contract.md"
       ],
       "expectations": [
-        "SessionStart hook exists",
-        "Writes local session-start receipt",
-        "Abort or block with HYDRATION_CONFLICT",
+        "SessionStart hook is empty",
+        "No local startup receipt",
+        "Detects base-only root Markdown candidates",
+        "Detects missing .claude candidate",
+        "Proposal-only by default",
         "Does not mutate source_worktree",
         "Does not overwrite regular files",
         "Does not symlink tracked files by default",
-        "Records worktree decision in contract"
+        "Abort code WORKTREE_CONTEXT_APPROVAL_REQUIRED only when context is required"
       ]
     },
     {
@@ -302,7 +303,7 @@
       "id": 13,
       "name": "next-command-attempts-continuation-with-approval-gates",
       "prompt": "Evaluate /tk:next when latest handoff or launch/reflect trace contains a safe next work item. Do not create commits or PRs.",
-      "expected_output": "Should inspect current TigerKit artifacts and SessionStart hydration receipt, select one safe executable next item, attempt it within existing command contracts, and write a NEXT_DONE, NEXT_PARTIAL, NEXT_BLOCKED, or NEXT_SKIPPED receipt. Should not be stdout-only or recommendation-only. Should not execute /tk:launch, commit, PR, merge, release, deploy, or GitHub issue writes without explicit approval.",
+      "expected_output": "Should inspect current TigerKit artifacts and worktree context candidates, select one safe executable next item, attempt it within existing command contracts, and write a NEXT_DONE, NEXT_PARTIAL, NEXT_BLOCKED, or NEXT_SKIPPED receipt. Should not be stdout-only or recommendation-only. Should not execute /tk:launch, commit, PR, merge, release, deploy, GitHub issue writes, or worktree context symlink/copy without explicit approval.",
       "files": [
         "commands/next.md",
         ".tigerkit/docs/output-contract.md",
@@ -312,7 +313,7 @@
       ],
       "expectations": [
         "Inspects handoff/gap/launch/reflect artifacts",
-        "Inspects SessionStart hydration receipt",
+        "Inspects worktree context candidates",
         "Selects one safe executable item",
         "Attempts safe continuation work",
         "Writes next receipt",

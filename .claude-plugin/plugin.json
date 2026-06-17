@@ -1,7 +1,7 @@
 {
   "name": "tk",
   "description": "sealed GAP workflow, human-approved launch, durable reflection, steering replacement continuation, meta-feedback, and handoff를 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다.",
-  "version": "8.1.1",
+  "version": "8.1.2",
   "author": {
     "name": "MTGVim"
   },

@@ -27,7 +27,7 @@
 - `/tk:next`는 현재 TigerKit artifact와 workspace/repo 상태를 읽어 handoff/trace의 다음 안전 작업을 실제로 이어서 시도하는 steering replacement continuation command다. sealed workflow가 필요한 구현은 `/tk:gap → /tk:launch`를 우회하지 않으며, commit/push/PR/merge/release/deploy 같은 외부 side effect는 사용자 승인 또는 artifact상의 명시 approval 없이는 수행하지 않는다.
 - `/tk:handoff`는 다음 세션이나 다음 작업자가 이어받을 continuation 문서를 작성한다.
 - `/tk:meta-feedback`은 현재 세션 내역에서 TigerKit command/skill 개선안을 일반화해 추출한다.
-- Git worktree symlink/hydration 처리는 Claude Code `SessionStart` hook receipt(`.claude/tigerkit/local/session-start/current.json`)를 기준으로 확인한다. tracked file symlink, regular file overwrite, source_worktree mutation은 금지하며 conflict는 `HYDRATION_CONFLICT`로 launch 전에 차단한다.
+- Git worktree context 처리는 자동 SessionStart hook이 아니라 `/tk:launch` preflight와 `/tk:next` continuation scan에서 proposal-only로 다룬다. base worktree에만 있는 root-level Markdown과 `.claude/` 후보를 제안하되, tracked file symlink, regular file overwrite, `.claude/` 전체 symlink, `node_modules` symlink, source_worktree mutation은 금지한다.
 - repo convention은 `.claude/rules/**/*.md`를 우선 확인한다.
 - UI copy는 basis 또는 confirmed contract와 exact match여야 한다. 의미상 유사함은 충분하지 않다.
 - 외부 근거는 URL, path, ticket, Figma, PRD, issue, API docs, source code path, commit hash 같은 reference와 access status로 관리한다.

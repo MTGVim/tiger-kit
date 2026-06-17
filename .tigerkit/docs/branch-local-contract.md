@@ -151,25 +151,19 @@ Tiger Kit does not read or write files outside the current worktree by default.
 - `GAP_BLOCKED`이면 blocked report만 쓰고 `tigerkit-launch-workflow` block은 쓰지 않습니다.
 - `branch-state.json`에는 `lastWorkflowId`, `lastWorkflowPath`, `lastWorkflowHash`, `lastGapStatus`를 기록할 수 있습니다.
 
-## SessionStart worktree hydration local context
+## Worktree context proposal local context
 
-Claude Code `SessionStart` hook은 linked git worktree 또는 local hydration config가 있을 때 current worktree root 아래 local generated receipt를 씁니다.
+TigerKit은 worktree context를 Claude Code `SessionStart` hook으로 자동 symlink하지 않습니다. `/tk:launch` preflight와 `/tk:next` continuation scan은 current/base worktree를 비교해 proposal-only 상태를 각 command receipt에 기록합니다.
 
-```text
-.claude/tigerkit/local/worktree-hydration.json
-.claude/tigerkit/local/session-start/current.json
-.claude/tigerkit/local/session-start/SSH-YYYYMMDD-HHmmss-RAND.json
-```
+Proposal safety contract:
 
-Hook safety contract:
-
-- current worktree root 밖에는 쓰지 않습니다. `.claude/tigerkit/local` 자체는 hook config/receipt control dir이므로 기본 symlink 대상이 아닙니다.
+- current worktree root 밖에는 쓰지 않습니다.
 - `$GIT_COMMON_DIR`, `.git/worktrees/*`, user home, `/tmp`에는 쓰지 않습니다.
 - target regular file과 different symlink를 덮어쓰지 않습니다.
 - tracked file/directory는 기본적으로 symlink하지 않습니다.
-- `node_modules`는 기본적으로 symlink하지 않습니다.
+- `.claude/` 전체 symlink와 `node_modules` symlink는 금지합니다.
 - source worktree를 수정하지 않습니다.
-- conflict는 `HYDRATION_CONFLICT`로 receipt에 기록하고 `/tk:launch`가 task 실행 전 차단합니다.
+- proposal 자체는 abort 사유가 아니지만, workflow가 context 적용을 required precondition으로 두고 승인/evidence가 없으면 `WORKTREE_CONTEXT_APPROVAL_REQUIRED`로 task 실행 전 중단합니다.
 
 ## `/tk:launch` branch-local context
 
@@ -182,7 +176,7 @@ Hook safety contract:
 .claude/tigerkit/branches/<branch-key>/reflect/current.md
 ```
 
-- launch run은 workflow hash, runtime harness, SessionStart hydration receipt status, task/gate 결과, abort code, commit decision을 기록합니다.
+- launch run은 workflow hash, runtime harness, worktree context proposal status, task/gate 결과, abort code, commit decision을 기록합니다.
 - reflect archive와 `reflect/current.md`는 generated branch-local trace이며 durable apply가 아닙니다.
 - `branch-state.json`에는 `lastLaunchId`, `lastLaunchPath`, `lastLaunchStatus`, `lastReflectId`, `lastReflectPath`를 기록할 수 있습니다.
 
