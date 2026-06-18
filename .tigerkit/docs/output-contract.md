@@ -42,13 +42,13 @@ v8 MVP는 `/tk:spec` command를 공개하지 않습니다. 기존 `.claude/tiger
 
 ```text
 GAP_READY: <WF-ID>
-Branch Scope: <branch-key>
-Workflow: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
-Workflow Hash: <sha256>
-Tasks: <count>
-Verification Gates: <count>
-Autopilot Allowed: false
-Commit Policy: preflight_decision_required
+브랜치 범위: <branch-key>
+워크플로: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
+워크플로 해시: <sha256>
+작업: <count>
+검증 게이트: <count>
+자동 실행 허용: false
+커밋 정책: preflight_decision_required
 다음 행동: /tk:launch
 ```
 
@@ -56,11 +56,11 @@ Commit Policy: preflight_decision_required
 
 ```text
 GAP_BLOCKED: <GAP-ID>
-Branch Scope: <branch-key>
-Blocked Reasons: <count>
-Human Decisions: <count>
-Missing Sources: <count>
-Report: .claude/tigerkit/branches/<branch-key>/gap/<GAP-ID>.md
+브랜치 범위: <branch-key>
+차단 사유: <count>
+사용자 결정 필요: <count>
+누락 근거: <count>
+보고서: .claude/tigerkit/branches/<branch-key>/gap/<GAP-ID>.md
 다음 행동: <Q1 확인 후 /tk:gap 재실행|source 제공 필요>
 ```
 
@@ -180,18 +180,18 @@ reflect_policy:
 
 ```text
 Gap Review 완료: <GAP-ID>
-Branch Scope: <branch-key>
-결과: P0 <count> / P1 <count> / P2 <count> / Source Conflicts <count> / Clarification Needed <count>
-Report: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md
-Run JSON: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/run.json
+브랜치 범위: <branch-key>
+결과: P0 <count> / P1 <count> / P2 <count> / 근거 충돌 <count> / 확인 필요 <count>
+보고서: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md
+실행 JSON: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/run.json
 다음 행동: <G1 먼저 수정|Q1 확인 필요|없음>
 
-Actionable Findings:
-| Ref | Sev | 요약 | Required change |
+조치 필요 항목:
+| Ref | Sev | 요약 | 필요한 변경 |
 | --- | --- | --- | --- |
 | G1 | P1 | <final finding 1줄 요약> | <수정 방향 1줄> |
 
-Clarification Needed:
+확인 필요:
 | Ref | 질문 | 추천 |
 | --- | --- | --- |
 | Q1 | <확인 질문 1줄> | <추천 1줄> |
@@ -242,35 +242,35 @@ nextAction
 기본 `report.md` H2:
 
 ```md
-# Tiger Kit Gap Report: <GAP-ID>
+# Tiger Kit Gap 보고서: <GAP-ID>
 
-## Summary
+## 요약
 
-## Sources Used
+## 사용한 근거
 
-## Actionable Findings
+## 조치 필요 항목
 
-## Clarification Needed
+## 확인 필요
 
-## Not Accepted Summary
+## 미채택 요약
 
-## Next Action Graph
+## 다음 행동 그래프
 
-## Next Action
+## 다음 행동
 ```
 
-`## Sources Used`에는 source별 `source_type`, access status, lock status, raw reference, derived Contract 상태를 구분해 둡니다. 대량 source는 source 단위 lock 시점을 남기고, visual capture가 numeric design value의 단독 근거인지 여부를 표시합니다.
+`## 사용한 근거`에는 source별 `source_type`, access status, lock status, raw reference, derived Contract 상태를 구분해 둡니다. 대량 source는 source 단위 lock 시점을 남기고, visual capture가 numeric design value의 단독 근거인지 여부를 표시합니다.
 
-`## Actionable Findings`에는 accepted P0/P1/P2 final finding만 둡니다.
+`## 조치 필요 항목`에는 accepted P0/P1/P2 final finding만 둡니다.
 
-`## Clarification Needed`는 implementation-blocking과 reference-only를 구분합니다. 질문은 option/evidence/impact/recommendation/status를 표로 제시합니다.
+`## 확인 필요`는 implementation-blocking과 reference-only를 구분합니다. 질문은 option/evidence/impact/recommendation/status를 표로 제시합니다.
 
-`## Next Action Graph`는 full runner가 아니라 run-local Ref 기반 graph-lite 순서 안내입니다. clarification dependency, finding 선후관계, re-check, re-run 순서만 짧게 표현합니다.
+`## 다음 행동 그래프`는 full runner가 아니라 run-local Ref 기반 graph-lite 순서 안내입니다. clarification dependency, finding 선후관계, re-check, re-run 순서만 짧게 표현합니다.
 
-Clarification table shape:
+확인 질문 표 형식:
 
 ```md
-| Ref | Category | Question | Options | Evidence | Impact | Recommendation | Status |
+| Ref | 분류 | 질문 | 선택지 | 근거 | 영향 | 추천 | 상태 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Q1 | implementation-blocking | <질문> | A / B | <근거> | <영향> | <추천> | blocked_pending_user |
 ```
@@ -291,7 +291,7 @@ Option B
 └────────────────────┘
 ```
 
-Accepted finding uses:
+채택된 finding은 아래를 사용합니다:
 
 - canonical ID: `FND-YYYYMMDD-HHmmss-RAND-NN`
 - user-facing displayRef: `G<N>`
@@ -415,21 +415,21 @@ SUCCESS stdout:
 
 ```text
 ✅ Launch 완료: <LCH-ID>
-Branch Scope: <branch-key>
-Workflow: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
-Workflow Hash: <sha256>
+브랜치 범위: <branch-key>
+워크플로: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
+워크플로 해시: <sha256>
 결과: SUCCESS
 
-Runtime Harness: tk-runner / model=sonnet / status=<active|fallback_inline|unavailable>
-Worktree Context: <none|proposal:<count>|approval_required>
-Tasks: <done>/<total>
-Verification Gates: <passed>/<total>
-Commit: <created|skipped_preflight_required|skipped_not_requested|skipped_not_git_repo|skipped_no_github_remote|skipped_readonly_workspace|skipped_commit_policy_skip>
+실행 하네스: tk-runner / model=sonnet / status=<active|fallback_inline|unavailable>
+워크트리 컨텍스트: <none|proposal:<count>|approval_required>
+작업: <done>/<total>
+검증 게이트: <passed>/<total>
+커밋: <created|skipped_preflight_required|skipped_not_requested|skipped_not_git_repo|skipped_no_github_remote|skipped_readonly_workspace|skipped_commit_policy_skip>
 
-Report: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
-Current: .claude/tigerkit/branches/<branch-key>/launch/current.md
-Reflect: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
-Reflect Current: .claude/tigerkit/branches/<branch-key>/reflect/current.md
+보고서: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
+최신본: .claude/tigerkit/branches/<branch-key>/launch/current.md
+Reflect 보고서: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
+Reflect 최신본: .claude/tigerkit/branches/<branch-key>/reflect/current.md
 
 다음 행동: <없음|reflect 제안 검토|commit 승인 필요>
 ```
@@ -438,24 +438,24 @@ ABORTED stdout:
 
 ```text
 🛑 Launch 중단: <LCH-ID>
-Branch Scope: <branch-key>
-Workflow: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
-Workflow Hash: <sha256|unknown>
+브랜치 범위: <branch-key>
+워크플로: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
+워크플로 해시: <sha256|unknown>
 결과: ABORTED
-Abort Code: <CODE>
+중단 코드: <CODE>
 원인: <한글 1줄>
 
-Runtime Harness: tk-runner / model=sonnet / status=<active|fallback_inline|unavailable>
-Worktree Context: <none|proposal:<count>|approval_required>
-Completed Tasks: <done>/<total>
-Failed Gate: <VG-ID|없음>
+실행 하네스: tk-runner / model=sonnet / status=<active|fallback_inline|unavailable>
+워크트리 컨텍스트: <none|proposal:<count>|approval_required>
+완료 작업: <done>/<total>
+실패 게이트: <VG-ID|없음>
 
-Report: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
-Current: .claude/tigerkit/branches/<branch-key>/launch/current.md
-Reflect: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
-Reflect Current: .claude/tigerkit/branches/<branch-key>/reflect/current.md
+보고서: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
+최신본: .claude/tigerkit/branches/<branch-key>/launch/current.md
+Reflect 보고서: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
+Reflect 최신본: .claude/tigerkit/branches/<branch-key>/reflect/current.md
 
-다음 행동: <human decision|workflow 재생성|scope 조정|검증 실패 수정>
+다음 행동: <사용자 결정 필요|workflow 재생성|scope 조정|검증 실패 수정>
 ```
 
 상태 기호는 첫 줄에만 씁니다. Logical group 사이에는 빈 줄을 두어 receipt를 읽기 쉽게 만듭니다.
@@ -524,18 +524,18 @@ next_action: <one sentence or 없음>
 
 ```text
 ✅ Next 완료: <NXT-ID>
-Branch Scope: <branch-key>
+브랜치 범위: <branch-key>
 결과: NEXT_DONE | NEXT_PARTIAL | NEXT_BLOCKED | NEXT_SKIPPED
-Selected Action: <한글 한 문장>
+선택한 작업: <한글 한 문장>
 
-Executed: <count>
-Changed Files: <count>
-Verification: <passed>/<total> | not_run:<reason>
-Approval: <not_required|present:<source>|missing:<needed_action>>
+실행: <count>
+변경 파일: <count>
+검증: <passed>/<total> | not_run:<reason>
+승인: <not_required|present:<source>|missing:<needed_action>>
 
-Report: .claude/tigerkit/branches/<branch-key>/next/<NXT-ID>.md
-Current: .claude/tigerkit/branches/<branch-key>/next/current.md
-Blocked By: <none | human decision | missing source | approval required | sealed workflow required | dirty workspace | verification failure | worktree context approval required | capability unavailable | other>
+보고서: .claude/tigerkit/branches/<branch-key>/next/<NXT-ID>.md
+최신본: .claude/tigerkit/branches/<branch-key>/next/current.md
+차단 사유: <none | 사용자 결정 필요 | 누락 근거 | 승인 필요 | sealed workflow 필요 | dirty workspace | 검증 실패 | worktree context 승인 필요 | capability 사용 불가 | 기타>
 
 다음 행동: <없음|한글 한 문장>
 ```
@@ -586,86 +586,86 @@ user_memory_candidates: []
 
 ```text
 Reflect 완료
-Apply: true
+적용: true
 적용 대상:
 - CLAUDE.md
 - .claude/rules/<path>.md
 
 적용 결과:
-- <added> added
-- <updated> updated
-- <skipped> skipped as duplicate
+- <added>건 추가
+- <updated>건 갱신
+- <skipped>건 중복으로 건너뜀
 
 요약:
 - <한글 insight summary>
 
-Needs more evidence:
+추가 근거 필요:
 - <확인 필요 항목 또는 None>
 
-User-level Memory Candidates:
+사용자 메모리 후보:
 - <candidate or None>
-  Auto-applied: false
+  자동 적용: false
 
-Meta Feedback:
-- submitted
+메타 피드백:
+- 제출됨
 ```
 
 Dry-run stdout:
 
 ```text
 Reflect 완료
-Apply: false
+적용: false
 예상 대상:
 - CLAUDE.md
 - .claude/rules/<path>.md
 
 미리보기 결과:
-- <added> would add
-- <updated> would update
-- <skipped> skipped as duplicate
+- <added>건 추가 예정
+- <updated>건 갱신 예정
+- <skipped>건 중복으로 건너뜀
 
 요약:
 - <한글 preview summary>
 
-Needs more evidence:
+추가 근거 필요:
 - <확인 필요 항목 또는 None>
 
-User-level Memory Candidates:
+사용자 메모리 후보:
 - <candidate or None>
-  Auto-applied: false
+  자동 적용: false
 
-Meta Feedback:
-- submitted
+메타 피드백:
+- 제출됨
 ```
 
-`--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 `Meta Feedback: skipped by opt-out`으로 출력합니다.
+`--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 `메타 피드백: 사용자가 생략함`으로 출력합니다.
 
 Reflect no-op success:
 
 ```text
 Reflect 완료
-Apply: true
+적용: true
 적용 대상:
 - 없음
 
 적용 결과:
-- 0 added
-- 0 updated
-- <skipped> skipped as duplicate
-- <no_action> no action
+- 0건 추가
+- 0건 갱신
+- <skipped>건 중복으로 건너뜀
+- <no_action>건 조치 없음
 
 요약:
-- No durable insight promoted.
+- 영구 반영할 insight 없음.
 
-Needs more evidence:
+추가 근거 필요:
 - <확인 필요 항목 또는 None>
 
-User-level Memory Candidates:
+사용자 메모리 후보:
 - <candidate or None>
-  Auto-applied: false
+  자동 적용: false
 
-Meta Feedback:
-- submitted
+메타 피드백:
+- 제출됨
 ```
 
 Reflect excludes:
@@ -696,10 +696,10 @@ Reflect excludes:
 ```text
 handoff 작성했습니다.
 - 기록: .claude/tigerkit/branches/<branch-key>/handoffs/current.md
-- index pointer: .claude/tigerkit/global-index.json 갱신
-- archive: 없음
-- pointer: 없음
-- next action: .claude/tigerkit/global-index.json의 latestHandoffPath를 확인하고 Next Actions부터 이어가.
+- 인덱스 포인터: .claude/tigerkit/global-index.json 갱신
+- 아카이브: 없음
+- 포인터: 없음
+- 다음 행동: .claude/tigerkit/global-index.json의 latestHandoffPath를 확인하고 `Next Actions`부터 이어가.
 ```
 
 필수 section:
@@ -719,7 +719,7 @@ handoff 작성했습니다.
 ## Known Risks / Unknowns
 ## Failed Attempts / Do Not Repeat
 ## Validation
-## Next Actions
+## 다음 행동s
 ## Resume Prompt
 ```
 
@@ -740,29 +740,29 @@ handoff 작성했습니다.
 필수 section:
 
 ```md
-## Meta Feedback Summary
-- Target: <skill-or-command>
-- Feedback class: <ux|output-format|taxonomy|safety|dispatch|docs|performance|false-positive>
-- Privacy status: generalized
+## 메타 피드백 요약
+- 대상: <skill-or-command>
+- 피드백 분류: <ux|output-format|taxonomy|safety|dispatch|docs|performance|false-positive>
+- 개인정보 처리 상태: generalized
 
-## Generalized Friction
-- Situation: <generic situation>
-- Problem: <generic problem>
-- Impact: <generic impact>
+## 일반화된 마찰
+- 상황: <generic situation>
+- 문제: <generic problem>
+- 영향: <generic impact>
 
-## Proposed Improvement
-- Change: <generic skill/command improvement>
-- Why: <reason without project-specific evidence>
+## 개선 제안
+- 변경: <generic skill/command improvement>
+- 이유: <reason without project-specific evidence>
 
-## Redaction Receipt
-- Removed: <repo names|paths|URLs|domain labels|quoted user text>
-- Kept: <abstract pattern only>
-- Generalization gate: passed
-- Restate test: passed
-- Unsafe details included: none
+## 비식별화 기록
+- 제거: <repo names|paths|URLs|domain labels|quoted user text>
+- 유지: <abstract pattern only>
+- 일반화 게이트: passed
+- 재진술 테스트: passed
+- 포함된 위험 상세: none
 ```
 
-안전하게 일반화할 수 없거나 Restate test를 통과하지 못하면 `Privacy status: cannot_generalize_safely`, `Change: none`, `Why: privacy gate failed` 또는 `Why: generalization gate failed`를 사용합니다.
+안전하게 일반화할 수 없거나 Restate test를 통과하지 못하면 `개인정보 처리 상태: cannot_generalize_safely`, `변경: none`, `이유: privacy gate failed` 또는 `이유: generalization gate failed`를 사용합니다.
 
 ## Evidence Rule
 

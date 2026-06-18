@@ -97,7 +97,7 @@ Fallback defaults:
 - GitHub repo with durable rules: existing durable apply policy may run.
 - git repo without GitHub: durable apply is allowed only when rule files exist and policy permits.
 - non-git workspace with rule files: cautious apply only with preapproval; otherwise proposal-only.
-- non-git workspace without durable rule files: write generated reflect report and include `User-level Memory Candidates`; do not create durable rule files by default.
+- non-git workspace without durable rule files: write generated reflect report and include `사용자 메모리 후보`; do not create durable rule files by default.
 - read-only workspace: stdout receipt only unless receipt persistence was required.
 
 User-level memory candidates are proposals by default. Host adapters such as Hermes may map them to a safe memory-review flow, but `/tk:reflect` must not auto-write host-global memory without explicit adapter support and user approval.
@@ -165,70 +165,70 @@ normalized insight title + target file + source evidence class
 
 ```text
 Reflect 완료
-Apply: true
+적용: true
 적용 대상:
 - CLAUDE.md
 - .claude/rules/<path>.md
 
 적용 결과:
-- <added> added
-- <updated> updated
-- <skipped> skipped as duplicate
-- <no_action> no action
+- <added>건 추가
+- <updated>건 갱신
+- <skipped>건 중복으로 건너뜀
+- <no_action>건 조치 없음
 
 요약:
 - <한글 insight summary>
 
-Needs more evidence:
+추가 근거 필요:
 - <확인 필요 항목 또는 None>
 
-Meta Feedback:
-- submitted
+메타 피드백:
+- 제출됨
 ```
 
 반영할 durable insight가 없을 때:
 
 ```text
 Reflect 완료
-Apply: true
+적용: true
 적용 대상:
 - 없음
 
 적용 결과:
-- 0 added
-- 0 updated
-- <skipped> skipped as duplicate
-- <no_action> no action
+- 0건 추가
+- 0건 갱신
+- <skipped>건 중복으로 건너뜀
+- <no_action>건 조치 없음
 
 요약:
-- No durable insight promoted.
+- 영구 반영할 insight 없음.
 
-Needs more evidence:
+추가 근거 필요:
 - <확인 필요 항목 또는 None>
 
-Meta Feedback:
-- submitted
+메타 피드백:
+- 제출됨
 ```
 
 `--dry-run` 또는 `--apply=false`일 때:
 
 ```text
 Reflect 완료
-Apply: false
+적용: false
 예상 대상:
 - CLAUDE.md
 - .claude/rules/<path>.md
 
 미리보기 결과:
-- <added> would add
-- <updated> would update
-- <skipped> skipped as duplicate
+- <added>건 추가 예정
+- <updated>건 갱신 예정
+- <skipped>건 중복으로 건너뜀
 
 요약:
 - <한글 preview summary>
 
-Meta Feedback:
-- submitted
+메타 피드백:
+- 제출됨
 ```
 
 ## Procedure
@@ -252,7 +252,7 @@ Meta Feedback:
 17. `--no-meta-feedback` 또는 `--meta-feedback=false`가 없으면 `/tk:meta-feedback`을 proposal-only로 제출
 18. reflect summary, Needs more evidence, meta-feedback 제출 상태를 출력
 
-`--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 `Meta Feedback: skipped by opt-out`으로 출력합니다.
+`--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 `메타 피드백: 사용자가 생략함`으로 출력합니다.
 
 ## Conflict handling
 

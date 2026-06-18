@@ -34,7 +34,7 @@ Canonical 위치는 current branch scope 아래입니다.
 최신 branch-local TigerKit artifact가 관측되면 handoff에 참조할 수 있습니다.
 
 - legacy Spec Patch가 있으면 source material 참조로만 기록: `.claude/tigerkit/branches/<branch-key>/specs/SP-*.md`
-- 최신 Gap Workflow: `.claude/tigerkit/branches/<branch-key>/gap/current.md`
+- 최신 Gap 워크플로: `.claude/tigerkit/branches/<branch-key>/gap/current.md`
 - 최신 Gap Review: `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md`
 - branch state: `.claude/tigerkit/branches/<branch-key>/branch-state.json`
 
@@ -153,10 +153,10 @@ Risk = possible failure mode
 ```text
 handoff 작성했습니다.
 - 기록: `.claude/tigerkit/branches/<branch-key>/handoffs/current.md`
-- index pointer: `.claude/tigerkit/global-index.json` 갱신
-- archive: 없음
-- pointer: 없음
-- next action: `.claude/tigerkit/global-index.json`의 latestHandoffPath를 확인하고 Next Actions부터 이어가.
+- 인덱스 포인터: `.claude/tigerkit/global-index.json` 갱신
+- 아카이브: 없음
+- 포인터: 없음
+- 다음 행동: `.claude/tigerkit/global-index.json`의 latestHandoffPath를 확인하고 Next Actions부터 이어가.
 ```
 
 `archive=true`가 사용된 경우:
@@ -164,8 +164,8 @@ handoff 작성했습니다.
 ```text
 handoff 작성했습니다.
 - 기록: `.claude/tigerkit/branches/<branch-key>/handoffs/current.md`
-- index pointer: `.claude/tigerkit/global-index.json` 갱신
-- archive: `.claude/tigerkit/branches/<branch-key>/handoffs/YYYY-MM-DD-task-name.md`
-- pointer: `.claude/handoffs/current.md` optional
-- next action: `.claude/tigerkit/global-index.json`의 latestHandoffPath를 확인하고 Next Actions부터 이어가.
+- 인덱스 포인터: `.claude/tigerkit/global-index.json` 갱신
+- 아카이브: `.claude/tigerkit/branches/<branch-key>/handoffs/YYYY-MM-DD-task-name.md`
+- 포인터: `.claude/handoffs/current.md` optional
+- 다음 행동: `.claude/tigerkit/global-index.json`의 latestHandoffPath를 확인하고 Next Actions부터 이어가.
 ```

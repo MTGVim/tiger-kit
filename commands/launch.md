@@ -185,7 +185,7 @@ diff_scope:
 | `GITHUB_REQUIRED_UNAVAILABLE` | workflow가 PR/GitHub 작업을 요구하지만 GitHub capability가 없음 | 실행 전 abort |
 | `VERIFICATION_UNAVAILABLE` | required verification을 수행할 방법이 없음 | 실행 전 abort |
 
-## Execution rules
+## 실행 rules
 
 - workflow의 task graph 순서만 따릅니다.
 - 가능한 경우 `tk-runner` subagent를 dispatch해 task execution을 격리합니다.
@@ -199,7 +199,7 @@ diff_scope:
 - commit은 `commit_policy.mode=commit_on_success`만으로 수행하지 않습니다. commit unavailable 상태라도 commit이 required가 아니면 skip reason을 기록하고 success가 가능합니다. preflight receipt에 `user_preapproved_commit=true`와 `approval_source_ref`가 있어야 합니다.
 - worktree context proposal은 자동 적용하지 않습니다. 적용이 필요하면 preflight approval 또는 별도 `/tk:next` action evidence가 필요합니다.
 
-## Verification gates
+## 검증 gates
 
 각 verification gate는 아래 field를 가져야 합니다.
 
@@ -222,7 +222,7 @@ SUCCESS 또는 ABORTED 후 `/tk:launch`는 generated launch report를 남기고 
 
 Reflect postflight는 durable apply나 commit을 자동 수행하지 않습니다. preflight에서 승인되지 않은 durable rule 변경은 proposal 또는 generated report에만 남깁니다.
 
-## Output
+## 출력
 
 기본 stdout은 compact receipt입니다. 첫 줄에 상태 기호를 두고, logical group 사이에 빈 줄을 둡니다.
 
@@ -238,21 +238,21 @@ SUCCESS stdout:
 
 ```text
 ✅ Launch 완료: <LCH-ID>
-Branch Scope: <branch-key>
-Workflow: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
-Workflow Hash: <sha256>
+브랜치 범위: <branch-key>
+워크플로: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
+워크플로 해시: <sha256>
 결과: SUCCESS
 
-Runtime Harness: tk-runner / model=sonnet / status=<active|fallback_inline|unavailable>
-Worktree Context: <none|proposal:<count>|approval_required>
-Tasks: <done>/<total>
-Verification Gates: <passed>/<total>
-Commit: <created|skipped_preflight_required|skipped_not_requested|skipped_not_git_repo|skipped_no_github_remote|skipped_readonly_workspace|skipped_commit_policy_skip>
+실행 하네스: tk-runner / model=sonnet / status=<active|fallback_inline|unavailable>
+워크트리 컨텍스트: <none|proposal:<count>|approval_required>
+작업: <done>/<total>
+검증 게이트: <passed>/<total>
+커밋: <created|skipped_preflight_required|skipped_not_requested|skipped_not_git_repo|skipped_no_github_remote|skipped_readonly_workspace|skipped_commit_policy_skip>
 
-Report: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
-Current: .claude/tigerkit/branches/<branch-key>/launch/current.md
-Reflect: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
-Reflect Current: .claude/tigerkit/branches/<branch-key>/reflect/current.md
+보고서: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
+최신본: .claude/tigerkit/branches/<branch-key>/launch/current.md
+Reflect 보고서: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
+Reflect 최신본: .claude/tigerkit/branches/<branch-key>/reflect/current.md
 
 다음 행동: <없음|worktree context 제안 검토|reflect 제안 검토|commit 승인 필요>
 ```
@@ -261,24 +261,24 @@ ABORTED stdout:
 
 ```text
 🛑 Launch 중단: <LCH-ID>
-Branch Scope: <branch-key>
-Workflow: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
-Workflow Hash: <sha256|unknown>
+브랜치 범위: <branch-key>
+워크플로: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
+워크플로 해시: <sha256|unknown>
 결과: ABORTED
-Abort Code: <CODE>
+중단 코드: <CODE>
 원인: <한글 1줄>
 
-Runtime Harness: tk-runner / model=sonnet / status=<active|fallback_inline|unavailable>
-Worktree Context: <none|proposal:<count>|approval_required>
-Completed Tasks: <done>/<total>
-Failed Gate: <VG-ID|없음>
+실행 하네스: tk-runner / model=sonnet / status=<active|fallback_inline|unavailable>
+워크트리 컨텍스트: <none|proposal:<count>|approval_required>
+완료 작업: <done>/<total>
+실패 게이트: <VG-ID|없음>
 
-Report: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
-Current: .claude/tigerkit/branches/<branch-key>/launch/current.md
-Reflect: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
-Reflect Current: .claude/tigerkit/branches/<branch-key>/reflect/current.md
+보고서: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
+최신본: .claude/tigerkit/branches/<branch-key>/launch/current.md
+Reflect 보고서: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
+Reflect 최신본: .claude/tigerkit/branches/<branch-key>/reflect/current.md
 
-다음 행동: <human decision|workflow 재생성|scope 조정|검증 실패 수정|worktree context 승인>
+다음 행동: <사용자 결정 필요|workflow 재생성|scope 조정|검증 실패 수정|worktree context 승인>
 ```
 
 ## 금지

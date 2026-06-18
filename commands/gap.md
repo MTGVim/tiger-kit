@@ -128,7 +128,7 @@ shell_command | file_exists | file_contains | artifact_written | link_checked | 
 - finding이 안 나올 때까지 반복하지 않습니다.
 - CriticalRedTeamAgent pass는 targeted verification으로 최대 1회입니다.
 - full execution graph나 runner를 소유하지 않습니다.
-- report에는 clarification, finding, re-check 순서를 이해시키는 graph-lite `Next Action Graph`를 포함할 수 있습니다.
+- report에는 clarification, finding, re-check 순서를 이해시키는 graph-lite `다음 행동 그래프`를 포함할 수 있습니다.
 - stdout은 run 결과, finding/clarification count, report path, run.json path, next action만 기본 출력합니다.
 - 유저향 stdout/report table은 run-local short Ref(`G1`, `R1`, `C1`, `Q1`)를 우선 표시하고 긴 canonical ID는 `run.json` 또는 maintainer proof artifact에 보관합니다.
 - Hook guard는 repo 유지보수 sync/lint가 아니라 플러그인 사용자가 보는 receipt, artifact path, finding Ref 안전장치일 때만 사용합니다. 그런 user-facing guard 표면이 없으면 hook을 추가하지 않습니다.
@@ -152,8 +152,8 @@ shell_command | file_exists | file_contains | artifact_written | link_checked | 
 - Design System Spec
 - Spec Patch
 - Contract-based Gap Review
-- Actionable Finding
-- Clarification Needed
+- 조치 필요 항목
+- 확인 필요
 
 금지 표현:
 
@@ -180,7 +180,7 @@ Design source는 trust axis를 분리합니다.
 | `structural_context` | frame/node 구조, text layer, token/metadata, component hierarchy, variant 관계 확인 | 접근 불가하거나 불완전하면 missing evidence로 표시 |
 | `visual_capture` | layout, 구성, hierarchy, state 비교의 보조 근거 | 색, 간격, 치수 같은 수치 값을 단독 확정하지 않음 |
 
-색·간격·치수 같은 numeric design value는 구조/메타 자료, design token, 또는 명시된 confirmed source가 필요합니다. 기존 구현은 대조·추론 보조로만 쓰며 단독 design SOT가 아닙니다. visual capture만 있거나 배율/렌더링 왜곡 가능성이 남으면 수치 단정 대신 `Clarification Needed` 또는 rejected `unverifiable`로 기록합니다.
+색·간격·치수 같은 numeric design value는 구조/메타 자료, design token, 또는 명시된 confirmed source가 필요합니다. 기존 구현은 대조·추론 보조로만 쓰며 단독 design SOT가 아닙니다. visual capture만 있거나 배율/렌더링 왜곡 가능성이 남으면 수치 단정 대신 `확인 필요` 또는 rejected `unverifiable`로 기록합니다.
 
 ## Branch-local storage
 
@@ -297,7 +297,7 @@ source/plan 부재 시 불필요한 agent를 실행하지 않습니다.
 - Current Implementation이 식별되지 않으면 ImplementationComplianceAgent를 skip하고 관련 observation은 `unverifiable` 또는 `missing_evidence`로만 기록합니다.
 - CriticalRedTeamAgent는 would-be accepted 또는 high-risk gated candidate가 있을 때 targeted verification으로 최대 1회 실행합니다.
 - JudgeMergerAgent는 final judge queue에 대해 1회 실행해 accepted/rejected/source conflict/blocked clarification을 확정합니다.
-- 기본 경로에서는 skip 상세 dump를 출력하지 않습니다. skip 때문에 사용자가 알아야 할 결론 제한이 있으면 `Clarification Needed`, `rejectedSummary`, 또는 `report.md`의 짧은 확인 범위 문장으로만 표현합니다.
+- 기본 경로에서는 skip 상세 dump를 출력하지 않습니다. skip 때문에 사용자가 알아야 할 결론 제한이 있으면 `확인 필요`, `rejectedSummary`, 또는 `report.md`의 짧은 확인 범위 문장으로만 표현합니다.
 - `--maintainer-proof`에서는 dispatch proof와 credited skip metadata를 `maintainer-proof/` artifact에 기록할 수 있습니다.
 
 ### ProductContractAgent
@@ -416,7 +416,7 @@ Producer-absence claim에는 API contract, schema, serializer, endpoint response
 
 Consumer-side UI shape, fallback/default branch, empty state, mock, fixture, mapper, missing consumer usage는 충분하지 않습니다. available producer surface 확인 후에도 producer-side evidence가 없으면 `missing_producer_evidence`, `missing_evidence`, `unverifiable`로 reject/downgrade합니다. consumer-only evidence로 `SourceConflict`를 만들지 않습니다.
 
-`missing_producer_evidence`가 gap 결정에 영향을 주면 `Clarification Needed`의 `Q<N>`으로 사용자 또는 owner 확인을 요청합니다. stdout에서는 질문만 짧게 보여주고, 어떤 producer evidence가 확인됐고 무엇이 missing인지 상세는 `report.md`에 둡니다.
+`missing_producer_evidence`가 gap 결정에 영향을 주면 `확인 필요`의 `Q<N>`으로 사용자 또는 owner 확인을 요청합니다. stdout에서는 질문만 짧게 보여주고, 어떤 producer evidence가 확인됐고 무엇이 missing인지 상세는 `report.md`에 둡니다.
 
 ### RequirementTraceabilityGate
 
@@ -628,7 +628,7 @@ Higher-is-better metrics use `currentScore / baselineScore`. Speed uses `baselin
 
 Maintainer proof mode에서만 TargetSurfaceCoverageGate, DispatchCompletenessGate, SourcePresenceManifest, ActiveSpecPatchCoverage, TargetHintExtraction, CriticalRedTeamAgent missed-P0/P1 search를 `heuristicProof.falseNegative`로 수치화합니다.
 
-기본 사용자 경로에서는 이 proof를 기록하지 않습니다. 대신 확인 못 한 표면이 사용자의 판단을 막으면 `Clarification Needed` 또는 rejected `missing_evidence`/`unverifiable` 요약으로만 표현합니다.
+기본 사용자 경로에서는 이 proof를 기록하지 않습니다. 대신 확인 못 한 표면이 사용자의 판단을 막으면 `확인 필요` 또는 rejected `missing_evidence`/`unverifiable` 요약으로만 표현합니다.
 
 ### Performance measurement contract
 
@@ -703,17 +703,17 @@ Implementation 개선 작업에서는 `redesign -> analysis -> review -> feedbac
 10. Run Candidate Intake Gate for all candidates.
 11. Run CriticalRedTeamAgent once only when would-be accepted or high-risk gated candidate needs targeted verification.
 12. Run Candidate Intake Gate for red-team candidates.
-13. Run JudgeMergerAgent once on final judge queue.
-14. Materialize Actionable Findings, Source Conflicts, Clarification Needed, and rejected summary.
-15. If `--maintainer-proof` is present, compute maintainer proof metadata and write `maintainer-proof/` artifacts.
-16. Acquire branch lock, write `runs/gap/<GAP-ID>/report.md`, `runs/gap/<GAP-ID>/run.json`, update branch/global index, release lock.
-17. Emit final stdout receipt and compact tables.
+13. final judge queue에 대해 JudgeMergerAgent를 한 번 실행합니다.
+14. 조치 필요 항목, 근거 충돌, 확인 필요, 미채택 요약을 materialize합니다.
+15. `--maintainer-proof`가 있으면 maintainer proof metadata를 계산하고 `maintainer-proof/` artifact를 작성합니다.
+16. branch lock을 잡고 `runs/gap/<GAP-ID>/report.md`, `runs/gap/<GAP-ID>/run.json`을 작성한 뒤 branch/global index를 갱신하고 lock을 해제합니다.
+17. 최종 stdout receipt와 compact table을 출력합니다.
 
-## Output
+## 출력
 
 기본 stdout은 launch 가능 여부를 판단할 수 있는 receipt만 출력합니다.
 
-Interface 요약:
+인터페이스 요약:
 
 - `GAP_READY` 또는 `GAP_BLOCKED`, branch scope, artifact path, 다음 행동을 출력합니다.
 - `GAP_READY`는 workflow path, workflow hash, task count, verification gate count, autopilot allowed, commit policy를 출력합니다.
@@ -725,67 +725,67 @@ Interface 요약:
 
 Authoritative stdout contract는 `.tigerkit/docs/output-contract.md`의 `/tk:gap default stdout` 섹션입니다. artifact boundary는 `.tigerkit/docs/artifact-layout.md`를 기준으로 합니다.
 
-## Default GAP artifact shape
+## 기본 GAP artifact 형식
 
 `GAP_READY` archive와 `gap/current.md` copy는 아래 H2를 사용합니다.
 
 ```md
-# TigerKit GAP Workflow: <WF-ID>
+# TigerKit GAP 워크플로: <WF-ID>
 
-## Status
+## 상태
 
-## Grounded Sources
+## 근거화한 소스
 
-## Normalized Requirements
+## 정규화한 요구사항
 
-## Ambiguity Attack
+## 모호성 검토
 
-## YAGNI Trim
+## YAGNI 정리
 
-## Produced Launch Workflow
+## 생성된 Launch 워크플로
 
-## Human Decisions
+## 사용자 결정 필요
 
-## Not Ready Reasons
+## 준비되지 않은 사유
 ```
 
-`## Produced Launch Workflow`에는 정확히 하나의 `tigerkit-launch-workflow` fenced block을 둡니다. `workflow_sha256`은 이 block 안이 아니라 `tigerkit-gap-status`와 branch state에만 외부 seal로 둡니다.
+`## 생성된 Launch 워크플로`에는 정확히 하나의 `tigerkit-launch-workflow` fenced block을 둡니다. `workflow_sha256`은 이 block 안이 아니라 `tigerkit-gap-status`와 branch state에만 외부 seal로 둡니다.
 
-`GAP_BLOCKED` report는 같은 H2를 사용할 수 있지만 `## Produced Launch Workflow`에 workflow block을 쓰지 않고, `## Not Ready Reasons`와 `## Human Decisions`를 launch 차단 사유 중심으로 채웁니다.
+`GAP_BLOCKED` report는 같은 H2를 사용할 수 있지만 `## 생성된 Launch 워크플로`에 workflow block을 쓰지 않고, `## 준비되지 않은 사유`와 `## 사용자 결정 필요`를 launch 차단 사유 중심으로 채웁니다.
 
 ## `/tk:gap --review` report shape
 
 Compatibility `report.md`는 아래 H2를 사용합니다.
 
 ```md
-# Tiger Kit Gap Report: <GAP-ID>
+# Tiger Kit Gap 보고서: <GAP-ID>
 
-## Summary
+## 요약
 
-## Sources Used
+## 사용한 근거
 
-## Actionable Findings
+## 조치 필요 항목
 
-## Clarification Needed
+## 확인 필요
 
-## Not Accepted Summary
+## 미채택 요약
 
-## Next Action Graph
+## 다음 행동 그래프
 
-## Next Action
+## 다음 행동
 ```
 
-`## Summary`에는 run 결과, branch scope, finding count, clarification count, report/run path만 둡니다.
+`## 요약`에는 run 결과, branch scope, finding count, clarification count, report/run path만 둡니다.
 
-`## Sources Used`에는 비교에 실제로 사용한 source refs와 access status를 짧게 둡니다. target coverage proof나 dispatch proof dump를 두지 않습니다.
+`## 사용한 근거`에는 비교에 실제로 사용한 source refs와 access status를 짧게 둡니다. target coverage proof나 dispatch proof dump를 두지 않습니다.
 
-`## Actionable Findings`에는 `G<N>` heading 또는 첫 field를 사용합니다. accepted P0/P1/P2 finding만 포함합니다.
+`## 조치 필요 항목`에는 `G<N>` heading 또는 첫 field를 사용합니다. accepted P0/P1/P2 finding만 포함합니다.
 
-`## Clarification Needed`는 implementation-blocking과 reference-only를 구분합니다. 질문은 option/evidence/impact/recommendation/status를 표로 제시합니다. UI 판단이 필요한 경우 오른쪽 border가 정렬된 TUI/ASCII prototype을 함께 둡니다.
+`## 확인 필요`는 implementation-blocking과 reference-only를 구분합니다. 질문은 option/evidence/impact/recommendation/status를 표로 제시합니다. UI 판단이 필요한 경우 오른쪽 border가 정렬된 TUI/ASCII prototype을 함께 둡니다.
 
-`## Not Accepted Summary`는 rejected/downgraded 상세 목록이 아니라 reason별 count와 사용자에게 의미 있는 짧은 요약만 둡니다. 상세 proof나 candidate dump는 `--maintainer-proof`에서만 허용합니다.
+`## 미채택 요약`는 rejected/downgraded 상세 목록이 아니라 reason별 count와 사용자에게 의미 있는 짧은 요약만 둡니다. 상세 proof나 candidate dump는 `--maintainer-proof`에서만 허용합니다.
 
-`## Next Action Graph`는 구현 runner가 아닙니다. 사용자가 clarification, fixing, re-check, re-run 순서를 이해하도록 run-local Ref로만 가벼운 순서를 적습니다. 예: `Q1 확인 -> G1 수정 -> G2 재확인 -> /tk:gap --review 재실행`.
+`## 다음 행동 그래프`는 구현 runner가 아닙니다. 사용자가 clarification, fixing, re-check, re-run 순서를 이해하도록 run-local Ref로만 가벼운 순서를 적습니다. 예: `Q1 확인 -> G1 수정 -> G2 재확인 -> /tk:gap --review 재실행`.
 
 ## 금지
 
