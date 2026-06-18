@@ -83,7 +83,7 @@ Safe next action examples:
 
 한 번에 여러 후보가 있으면 가장 작고 검증 가능한 항목 하나를 고릅니다. `--max-actions N`이 있어도 각 항목은 앞 항목의 결과를 본 뒤 순차 처리합니다.
 
-## Execution policy
+## 실행 policy
 
 `/tk:next`는 선택한 항목의 성격에 따라 아래 중 하나를 수행할 수 있습니다.
 
@@ -122,7 +122,7 @@ Safe next action examples:
 - repo rule이 허용하고 현재 task contract가 명시한 검증 명령을 실행합니다.
 - `--dry-run`/`--no-write`에서는 mutation 없이 selected action과 blocker만 출력합니다.
 
-## Approval and side-effect policy
+## 승인 and side-effect policy
 
 아래는 명시 승인 없이는 수행하지 않습니다.
 
@@ -172,7 +172,7 @@ NEXT_SKIPPED
 .claude/tigerkit/branches/<branch-key>/next/current.md
 ```
 
-Plain workspace fallback도 같은 `branches/<scope-key>/next/` layout을 사용하고 receipt에 `Scope Kind: workspace`를 표시합니다.
+Plain workspace fallback도 같은 `branches/<scope-key>/next/` layout을 사용하고 receipt에 `범위 종류: workspace`를 표시합니다.
 
 Next receipt는 generated branch-local working memory입니다. durable repo rule이나 source of truth가 아닙니다.
 
@@ -183,23 +183,23 @@ Next receipt는 generated branch-local working memory입니다. durable repo rul
 ````md
 # Next Receipt: <NXT-ID>
 
-## Summary
+## 요약
 
-## Inputs Inspected
+## 확인한 입력
 
-## Selected Action
+## 선택한 작업
 
-## Execution
+## 실행
 
-## Changed Files
+## 변경 파일
 
-## Verification
+## 검증
 
-## Approval
+## 승인
 
-## Blockers
+## 차단 사유
 
-## Follow-up
+## 후속 작업
 
 ```tigerkit-next-receipt
 version: 1
@@ -242,23 +242,23 @@ next_action: <one sentence or 없음>
 
 ```text
 ✅ Next 완료: <NXT-ID>
-Branch Scope: <branch-key>
+브랜치 범위: <branch-key>
 결과: NEXT_DONE | NEXT_PARTIAL | NEXT_BLOCKED | NEXT_SKIPPED
-Selected Action: <한글 한 문장>
+선택한 작업: <한글 한 문장>
 
-Executed: <count>
-Changed Files: <count>
-Verification: <passed>/<total> | not_run:<reason>
-Approval: <not_required|present:<source>|missing:<needed_action>>
+실행: <count>
+변경 파일: <count>
+검증: <passed>/<total> | not_run:<reason>
+승인: <not_required|present:<source>|missing:<needed_action>>
 
-Report: .claude/tigerkit/branches/<branch-key>/next/<NXT-ID>.md
-Current: .claude/tigerkit/branches/<branch-key>/next/current.md
-Blocked By: <none | human decision | missing source | approval required | sealed workflow required | dirty workspace | verification failure | worktree context approval required | capability unavailable | other>
+보고서: .claude/tigerkit/branches/<branch-key>/next/<NXT-ID>.md
+최신본: .claude/tigerkit/branches/<branch-key>/next/current.md
+차단 사유: <none | 사용자 결정 필요 | 누락 근거 | 승인 필요 | sealed workflow 필요 | dirty workspace | 검증 실패 | worktree context 승인 필요 | capability 사용 불가 | 기타>
 
 다음 행동: <없음|한글 한 문장>
 ```
 
-`NEXT_BLOCKED`여도 가능한 한 receipt를 씁니다. artifact root가 쓸 수 없으면 stdout에 `Report: unavailable`과 이유를 적습니다.
+`NEXT_BLOCKED`여도 가능한 한 receipt를 씁니다. artifact root가 쓸 수 없으면 stdout에 `보고서: unavailable`과 이유를 적습니다.
 
 ## Examples
 
@@ -266,18 +266,18 @@ Handoff next action을 바로 처리한 경우:
 
 ```text
 ✅ Next 완료: NXT-20260617-143012-A7F3
-Branch Scope: main--c0ffee
+브랜치 범위: main--c0ffee
 결과: NEXT_DONE
-Selected Action: handoff의 P1 문서 누락 항목을 usage 문서에 반영
+선택한 작업: handoff의 P1 문서 누락 항목을 usage 문서에 반영
 
-Executed: 2
-Changed Files: 1
-Verification: 3/3
-Approval: not_required
+실행: 2
+변경 파일: 1
+검증: 3/3
+승인: not_required
 
-Report: .claude/tigerkit/branches/main--c0ffee/next/NXT-20260617-143012-A7F3.md
-Current: .claude/tigerkit/branches/main--c0ffee/next/current.md
-Blocked By: none
+보고서: .claude/tigerkit/branches/main--c0ffee/next/NXT-20260617-143012-A7F3.md
+최신본: .claude/tigerkit/branches/main--c0ffee/next/current.md
+차단 사유: none
 
 다음 행동: 없음
 ```
@@ -286,18 +286,18 @@ GAP_READY지만 launch approval이 필요한 경우:
 
 ```text
 🛑 Next 완료: NXT-20260617-143012-A7F3
-Branch Scope: main--c0ffee
+브랜치 범위: main--c0ffee
 결과: NEXT_BLOCKED
-Selected Action: sealed workflow WF-20260617-141000-BEEF 실행
+선택한 작업: sealed workflow WF-20260617-141000-BEEF 실행
 
-Executed: 0
-Changed Files: 0
-Verification: not_run: approval required before launch preflight side effects
-Approval: missing: /tk:launch 실행 승인 필요
+실행: 0
+변경 파일: 0
+검증: not_run: launch preflight side effect 전 승인 필요
+승인: missing: /tk:launch 실행 승인 필요
 
-Report: .claude/tigerkit/branches/main--c0ffee/next/NXT-20260617-143012-A7F3.md
-Current: .claude/tigerkit/branches/main--c0ffee/next/current.md
-Blocked By: approval required
+보고서: .claude/tigerkit/branches/main--c0ffee/next/NXT-20260617-143012-A7F3.md
+최신본: .claude/tigerkit/branches/main--c0ffee/next/current.md
+차단 사유: 승인 필요
 
 다음 행동: /tk:launch 승인 후 다시 /tk:next 실행
 ```
@@ -306,18 +306,18 @@ Worktree context 후보가 있는 경우:
 
 ```text
 ⚠️ Next 완료: NXT-20260617-143012-A7F3
-Branch Scope: feature-x--c0ffee
+브랜치 범위: feature-x--c0ffee
 결과: NEXT_PARTIAL
-Selected Action: worktree context 후보를 proposal로 정리
+선택한 작업: worktree context 후보를 proposal로 정리
 
-Executed: 1
-Changed Files: 1
-Verification: not_run: proposal-only
-Approval: missing: context symlink/copy 적용 승인 필요
+실행: 1
+변경 파일: 1
+검증: not_run: 제안만 작성
+승인: missing: context symlink/copy 적용 승인 필요
 
-Report: .claude/tigerkit/branches/feature-x--c0ffee/next/NXT-20260617-143012-A7F3.md
-Current: .claude/tigerkit/branches/feature-x--c0ffee/next/current.md
-Blocked By: worktree context approval required
+보고서: .claude/tigerkit/branches/feature-x--c0ffee/next/NXT-20260617-143012-A7F3.md
+최신본: .claude/tigerkit/branches/feature-x--c0ffee/next/current.md
+차단 사유: worktree context 승인 필요
 
 다음 행동: AGENTS.md, CLAUDE.local.md, .claude/ 후보 중 적용할 항목 승인
 ```
@@ -326,18 +326,18 @@ Dry run:
 
 ```text
 ⏭️ Next 완료: NXT-20260617-143012-A7F3
-Branch Scope: main--c0ffee
+브랜치 범위: main--c0ffee
 결과: NEXT_SKIPPED
-Selected Action: launch abort의 VG-2 검증 실패 원인 확인
+선택한 작업: launch abort의 VG-2 검증 실패 원인 확인
 
-Executed: 0
-Changed Files: 0
-Verification: not_run: dry-run
-Approval: not_required
+실행: 0
+변경 파일: 0
+검증: not_run: dry-run
+승인: not_required
 
-Report: .claude/tigerkit/branches/main--c0ffee/next/NXT-20260617-143012-A7F3.md
-Current: .claude/tigerkit/branches/main--c0ffee/next/current.md
-Blocked By: none
+보고서: .claude/tigerkit/branches/main--c0ffee/next/NXT-20260617-143012-A7F3.md
+최신본: .claude/tigerkit/branches/main--c0ffee/next/current.md
+차단 사유: none
 
 다음 행동: dry-run 해제 후 선택된 작업 실행
 ```

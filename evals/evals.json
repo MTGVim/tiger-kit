@@ -79,7 +79,7 @@
       "id": 1,
       "name": "gap-ready-produces-sealed-workflow",
       "prompt": "Evaluate default /tk:gap when enough source exists to create a launch workflow. Do not write files.",
-      "expected_output": "Should end with GAP_READY, include a sealed tigerkit-launch-workflow block, include workflow path, workflow hash, task count, verification gate count, task assumed_preconditions, readonly_preflight status, autopilot allowed false, commit policy preflight_decision_required, and next action /tk:launch. GAP_READY cannot be claimed without a launch workflow or without checking static/read-only preflight predicates.",
+      "expected_output": "Should end with GAP_READY, include a sealed tigerkit-launch-workflow block, include workflow path, workflow hash, task count, verification gate count, task assumed_preconditions, readonly_preflight status, autopilot allowed false, commit policy preflight_decision_required, and next action /tk:launch. GAP_READY cannot be claimed without a launch workflow or without checking static/read-only preflight predicates. User-facing stdout labels should be Korean, e.g. 브랜치 범위, 워크플로, 검증 게이트, 자동 실행 허용, 커밋 정책, 다음 행동.",
       "files": [
         "commands/gap.md",
         ".tigerkit/docs/output-contract.md",
@@ -95,7 +95,10 @@
         "Includes task assumed_preconditions",
         "Includes readonly_preflight status",
         "Autopilot allowed false in Phase 1",
-        "Next action is /tk:launch"
+        "Next action is /tk:launch",
+        "Uses Korean stdout label 브랜치 범위",
+        "Uses Korean stdout label 워크플로",
+        "Uses Korean stdout label 다음 행동"
       ]
     },
     {
@@ -357,7 +360,7 @@
       "id": 15,
       "name": "workspace-launch-success-skips-commit",
       "prompt": "Evaluate /tk:launch for a GAP_READY workflow in a non-git workspace where verification passes and commit is not required. Do not write files.",
-      "expected_output": "Should execute the sealed workflow, pass verification, report SUCCESS, and record Commit: skipped_not_git_repo. Missing git/GitHub must not abort unless commit or PR is required by the workflow.",
+      "expected_output": "Should execute the sealed workflow, pass verification, report SUCCESS, and record 커밋: skipped_not_git_repo. Missing git/GitHub must not abort unless commit or PR is required by the workflow.",
       "files": [
         "commands/launch.md",
         ".tigerkit/docs/output-contract.md",
@@ -365,7 +368,7 @@
       ],
       "expectations": [
         "SUCCESS allowed without git",
-        "Commit skipped_not_git_repo",
+        "커밋 skipped_not_git_repo",
         "Missing GitHub is not blocker",
         "Commit required unavailable has explicit abort",
         "PR required unavailable has explicit abort"
@@ -375,7 +378,7 @@
       "id": 16,
       "name": "reflect-fallback-user-memory-proposal",
       "prompt": "Evaluate /tk:reflect in a non-git workspace without CLAUDE.md or .claude/rules. Do not write files.",
-      "expected_output": "Should not create repo durable rule files by default. Should produce generated reflect report when possible and include User-level Memory Candidates or explicitly say none. Candidates are proposal-only and Auto-applied false unless a host adapter and user approval support memory writes.",
+      "expected_output": "Should not create repo durable rule files by default. Should produce generated reflect report when possible and include 사용자 메모리 후보 or explicitly say none. Candidates are proposal-only and 자동 적용 false unless a host adapter and user approval support memory writes.",
       "files": [
         "commands/reflect.md",
         ".tigerkit/docs/output-contract.md",
@@ -384,8 +387,8 @@
       "expectations": [
         "No durable rule creation by default",
         "Generated reflect report when writable",
-        "Includes user-level memory candidates",
-        "Auto-applied false",
+        "Includes 사용자 메모리 후보",
+        "자동 적용 false",
         "Proposal-only fallback"
       ]
     },
@@ -450,7 +453,7 @@
       "id": 20,
       "name": "meta-feedback-generalization-gate",
       "prompt": "Evaluate /tk:meta-feedback when session feedback contains command friction mixed with repo-specific or domain-specific terms. Do not write files.",
-      "expected_output": "Should run a pre-emit Domain-term guard, rewrite or reject proposals that contain host-specific nouns such as project/framework names, paths, symbols, domain entities, tickets, branches, PRs, commits, or URLs, and apply a Restate test asking whether the proposal still works in another repo and domain. Should route repo/domain insight to /tk:reflect, basis-target comparison to /tk:gap, follow-up storage to /tk:handoff, and only command or skill contract friction to /tk:meta-feedback. Output should use only the target command or skill contract vocabulary and feedback taxonomy, and the Redaction Receipt should report generalization gate and Restate test status.",
+      "expected_output": "Should run a pre-emit Domain-term guard, rewrite or reject proposals that contain host-specific nouns such as project/framework names, paths, symbols, domain entities, tickets, branches, PRs, commits, or URLs, and apply a Restate test asking whether the proposal still works in another repo and domain. Should route repo/domain insight to /tk:reflect, basis-target comparison to /tk:gap, follow-up storage to /tk:handoff, and only command or skill contract friction to /tk:meta-feedback. Output should use only the target command or skill contract vocabulary and feedback taxonomy, and the 비식별화 기록 should report 일반화 게이트 and 재진술 테스트 status.",
       "files": [
         "commands/meta-feedback.md",
         ".tigerkit/docs/usage.md",
@@ -463,8 +466,35 @@
         "Routes repo or domain insight to /tk:reflect",
         "Routes command or skill friction to /tk:meta-feedback",
         "Uses command contract vocabulary only",
-        "Redaction Receipt includes generalization gate status",
-        "Redaction Receipt includes Restate test status"
+        "비식별화 기록 includes 일반화 게이트 status",
+        "비식별화 기록 includes 재진술 테스트 status"
+      ]
+    },
+    {
+      "id": 21,
+      "name": "user-facing-output-labels-are-korean",
+      "prompt": "Evaluate TigerKit user-facing stdout/report templates. Do not write files.",
+      "expected_output": "Should keep machine-readable status codes and contract field names intact, while rendering user-facing labels in Korean across /tk:gap, /tk:launch, /tk:next, /tk:reflect, /tk:handoff, /tk:meta-feedback, and tk-runner receipts. Examples include 브랜치 범위, 워크플로, 검증 게이트, 실행 하네스, 선택한 작업, 변경 파일, 승인, 차단 사유, 추가 근거 필요, 사용자 메모리 후보, 메타 피드백, 비식별화 기록, 일반화 게이트, and 다음 행동.",
+      "files": [
+        "commands/gap.md",
+        "commands/launch.md",
+        "commands/next.md",
+        "commands/reflect.md",
+        "commands/handoff.md",
+        "commands/meta-feedback.md",
+        "agents/tk-runner.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "Keeps status codes such as GAP_READY and NEXT_DONE intact",
+        "Keeps machine-readable field names intact",
+        "Uses Korean stdout label 브랜치 범위",
+        "Uses Korean stdout label 검증 게이트",
+        "Uses Korean stdout label 실행 하네스",
+        "Uses Korean stdout label 선택한 작업",
+        "Uses Korean stdout label 추가 근거 필요",
+        "Uses Korean meta-feedback section 비식별화 기록",
+        "Uses Korean next action label 다음 행동"
       ]
     }
   ]
