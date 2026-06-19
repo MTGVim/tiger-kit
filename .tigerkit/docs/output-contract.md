@@ -107,6 +107,8 @@ tasks:
     goal: <task goal>
     files: []
     depends_on: []
+    parallel_group: <group id|null>
+    join_after: []
     allowed_changes: []
     forbidden_changes: []
     assumed_preconditions:
@@ -142,6 +144,24 @@ reflect_policy:
   mode: generated_report_only
   durable_apply_requires_preflight_approval: true
 ```
+
+### Planning-time parallelism
+
+`depends_on`은 task ordering list가 아니라 dependency edge surface입니다. `/tk:gap`은 독립 작업에 불필요한 edge를 추가하지 않고, 안전하면 별도 task와 `parallel_group`으로 분리해 DAG-shaped workflow를 봉인합니다. later verification, artifact merge, receipt synthesis처럼 fan-in이 필요한 지점은 `join_after`나 명시 verification task로 표현합니다.
+
+Phase 1 `/tk:launch` runtime은 task를 순차 실행할 수 있습니다. 순차 실행은 runtime 제약이며 sealed workflow의 planning-time parallel intent를 제거하지 않습니다.
+
+### Model routing policy
+
+Core contract는 concrete provider model name 대신 model tier를 기록합니다. Host adapter artifact는 Claude Code agent frontmatter나 receipt처럼 관측 가능한 surface에서 `sonnet` 같은 concrete alias를 기록할 수 있습니다.
+
+| Tier | 허용 범위 | 금지 범위 |
+| --- | --- | --- |
+| cheap scout / session-default / Haiku-class | source inventory, link/doc/file candidate collection, lightweight grounding pre-pass, source grouping, source-by-source intake scaffolding, non-binding draft summary | confirmed requirement normalization, ambiguity attack final decision, producer-evidence-sensitive judgment, `GAP_READY` vs `GAP_BLOCKED` freeze decision, acceptance review verdict |
+| Sonnet-class | final gap freeze/judge, launch execution, verification synthesis, review verdict, durable guidance에 영향을 주는 reflect decision | 없음 |
+| Opus-class escalation | high-risk 또는 semver-major ambiguity, cross-cutting design/adapter/contract arbitration, repeated `REVIEW_BLOCKED`/`REVIEW_PARTIAL` non-convergence, release-gate/high-risk acceptance review | routine source scouting 대체 용도 |
+
+Cheap scout output은 non-binding intake evidence로만 쓰며, evidence precision, producer evidence, ambiguity, JudgeMerger gate를 낮추지 않습니다.
 
 ### `tigerkit-launch-workflow` seal
 

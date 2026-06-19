@@ -439,6 +439,30 @@
       ]
     },
     {
+      "id": 26,
+      "name": "gap-model-routing-and-parallel-aware-workflow",
+      "prompt": "Evaluate default /tk:gap model routing and sealed workflow planning contract. Do not write files.",
+      "expected_output": "Should define cheap scout / Sonnet-class / Opus-class model tiers, limit cheap scout work to source inventory, lightweight grounding, source grouping, source-by-source intake scaffolding, and non-binding summaries, keep GAP_READY/GAP_BLOCKED freeze and acceptance review verdicts on a stronger judgment path, and state that cheaper scouting does not weaken evidence precision, producer evidence, ambiguity, or JudgeMerger gates. Sealed workflows should minimize unnecessary depends_on edges, split independent work into parallelizable tasks when safe, preserve DAG-shaped planning intent, and distinguish planning-time parallelism from Phase 1 sequential launch execution.",
+      "files": [
+        "README.md",
+        "commands/gap.md",
+        ".tigerkit/docs/output-contract.md",
+        "evals/evals.json"
+      ],
+      "expectations": [
+        "Defines cheap scout tier",
+        "Defines Sonnet-class default path",
+        "Defines Opus-class escalation",
+        "Cheap scout is non-binding intake only",
+        "GAP_READY and GAP_BLOCKED freeze use stronger judgment path",
+        "Quality gates remain invariant",
+        "Minimizes unnecessary depends_on edges",
+        "Splits independent work into parallelizable tasks",
+        "Preserves DAG-shaped workflow intent",
+        "Phase 1 launch may remain sequential"
+      ]
+    },
+    {
       "id": 19,
       "name": "gap-preflights-launch-preconditions-before-sealing",
       "prompt": "Evaluate default /tk:gap for a workflow whose task depends on a static target relation or verification tool assumption that can be checked read-only before mutation. Do not write files.",
