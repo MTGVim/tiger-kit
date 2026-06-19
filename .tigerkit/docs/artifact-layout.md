@@ -24,6 +24,9 @@ TigerKit은 branch-local working memory와 durable insight를 분리합니다.
         launch/
           LCH-YYYYMMDD-HHmmss-RAND.md
           current.md
+        review/
+          RVW-YYYYMMDD-HHmmss-RAND.md
+          current.md
         reflect/
           RFL-YYYYMMDD-HHmmss-RAND.md
           current.md
@@ -81,6 +84,8 @@ MVP에서는 path compatibility를 위해 `branches/` 아래에 저장하지만 
 | `.claude/tigerkit/branches/<branch-key>/gap/<GAP-ID>.md` | `/tk:gap`이 `GAP_BLOCKED`일 때 만드는 blocked report입니다. workflow block을 포함하지 않습니다. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md` | `/tk:launch` 실행 또는 abort report입니다. | branch-local execution |
 | `.claude/tigerkit/branches/<branch-key>/launch/current.md` | launch status, task/gate 결과, abort code, commit decision을 보존하는 최소 run record입니다. | branch-local execution |
+| `.claude/tigerkit/branches/<branch-key>/review/<RVW-ID>.md` | `/tk:review`가 frozen target 대비 구현 결과를 검증해 verdict, closed gaps, remaining gaps, drift/risk, next recommendation을 기록하는 report입니다. | branch-local review |
+| `.claude/tigerkit/branches/<branch-key>/review/current.md` | 최신 review report copy입니다. | branch-local pointer |
 | `.claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md` | `/tk:reflect` generated report archive입니다. `tigerkit-reflect-report` block을 포함합니다. durable apply가 아닙니다. | branch-local generated |
 | `.claude/tigerkit/branches/<branch-key>/reflect/current.md` | 최신 reflect report copy입니다. | branch-local pointer |
 | `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md` | `/tk:gap --review` 사용자가 읽는 compatibility gap report 본문입니다. Actionable Findings, Clarification Needed, next action 중심입니다. | branch-local |
@@ -148,6 +153,21 @@ proof.json
 - artifact inventory dump
 
 확인하지 못한 target/producer/plan surface가 사용자 결정을 막으면 proof dump가 아니라 `Clarification Needed` 또는 `Not Accepted Summary`로 표현합니다.
+
+
+## `/tk:review` artifact policy
+
+`/tk:review`는 post-launch verification run마다 generated report를 남깁니다. 기본 위치는 아래와 같습니다.
+
+```text
+.claude/tigerkit/branches/<branch-key>/review/
+  RVW-YYYYMMDD-HHmmss-RAND.md
+  current.md
+```
+
+Plain workspace fallback도 `branches/<scope-key>/review/` layout을 사용하고 receipt에 `Scope Kind: workspace`를 표시합니다. review report는 branch/workspace-local generated working memory이며 durable repo rule이나 source of truth가 아닙니다.
+
+`/tk:gap --review` compatibility run은 계속 `runs/gap/<GAP-ID>/report.md`와 `run.json`을 사용합니다. `/tk:review`는 이 compatibility artifact를 덮어쓰지 않습니다.
 
 ## `/tk:next` artifact policy
 

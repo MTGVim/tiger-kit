@@ -1,10 +1,11 @@
 {
-  "skill_name": "tiger-kit-v8-sealed-gap-launch-reflect",
+  "skill_name": "tiger-kit-vNext-sealed-gap-launch-review-reflect",
   "command_surface": {
-    "surface_model": "TigerKit v8.0 MVP exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts without separate repo-local skill or non-Claude adapter files.",
+    "surface_model": "TigerKit vNext exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts without separate repo-local skill or non-Claude adapter files.",
     "core_commands": [
       "/tk:gap",
       "/tk:launch",
+      "/tk:review",
       "/tk:reflect"
     ],
     "compatibility_commands": [
@@ -44,7 +45,7 @@
     ],
     "plugin_version_policy": "Authoritative version is .claude-plugin/plugin.json; evals must not hard-code a concrete version literal.",
     "utility_commands": [],
-    "workspace_fallback": "GitHub, git, and commit are capabilities, not prerequisites; plain workspace scope uses workspace-<slug>--<hash>.",
+    "workspace_fallback": "GitHub, git, and commit are capabilities, not prerequisites; plain workspace scope uses workspace-<slug>--<hash>; /tk:review can verify from generated artifacts or explicit user targets.",
     "continuation_commands": [
       "/tk:next"
     ]
@@ -52,18 +53,20 @@
   "evals": [
     {
       "id": 0,
-      "name": "command-surface-v8-gap-launch-reflect-next-without-spec",
-      "prompt": "Evaluate TigerKit v8 active command surface. Do not write files.",
-      "expected_output": "Should list /tk:gap, /tk:launch, and /tk:reflect as the primary v8 flow. Should list /tk:next as a steering replacement continuation command that can attempt the next safe work item and write a receipt, while preserving /tk:gap --review, /tk:handoff, and /tk:meta-feedback as compatibility or secondary commands. Should explain that /tk:spec is not exposed in the v8 MVP command surface because source intake is owned by /tk:gap. Should explain that commands/*.md plus .claude-plugin/plugin.json own the /tk:* contracts and that Hermes/Codex/npx-skills command adapters are out of MVP scope with no adapter files shipped.",
+      "name": "command-surface-vNext-gap-launch-review-reflect-next-without-spec",
+      "prompt": "Evaluate TigerKit active command surface. Do not write files.",
+      "expected_output": "Should list /tk:gap, /tk:launch, /tk:review, and /tk:reflect as the primary TigerKit flow. Should list /tk:next as a steering replacement continuation command that can attempt the next safe work item and write a receipt, while preserving /tk:gap --review, /tk:handoff, and /tk:meta-feedback as compatibility or secondary commands. Should explain that /tk:review is post-launch frozen-target verification and /tk:gap --review is v7 Contract-based Gap Review compatibility. Should explain that /tk:spec is not exposed in the active command surface because source intake is owned by /tk:gap. Should explain that commands/*.md plus .claude-plugin/plugin.json own the /tk:* contracts and that Hermes/Codex/npx-skills command adapters are out of MVP scope with no adapter files shipped.",
       "files": [
         ".claude-plugin/plugin.json",
         "README.md",
-        ".tigerkit/docs/usage.md"
+        ".tigerkit/docs/usage.md",
+        "commands/review.md"
       ],
       "expectations": [
         "Lists /tk:gap",
         "Lists /tk:launch",
         "Lists /tk:reflect",
+        "Lists /tk:review",
         "Does not expose /tk:spec",
         "Preserves /tk:handoff",
         "Preserves /tk:meta-feedback",
@@ -72,7 +75,8 @@
         "States Hermes adapter is out of MVP scope",
         "States Codex adapter is out of MVP scope",
         "Ships no non-Claude adapter files",
-        "Lists /tk:next as steering replacement continuation command"
+        "Lists /tk:next as steering replacement continuation command",
+        "Distinguishes /tk:review from /tk:gap --review compatibility"
       ]
     },
     {
@@ -288,12 +292,13 @@
     },
     {
       "id": 12,
-      "name": "plugin-version-and-command-manifest-v8",
-      "prompt": "Evaluate marketplace plugin metadata for TigerKit v8. Do not write files.",
-      "expected_output": "Should treat .claude-plugin/plugin.json as the authoritative version source, verify its version is valid semver without hard-coding a concrete version literal in eval expectations, and provide a bump script that defaults to origin/main:.claude-plugin/plugin.json as the baseline so stale local branches do not reuse old versions. Should include ./commands/launch.md and ./commands/next.md, preserve /tk:gap, /tk:reflect, /tk:handoff, and /tk:meta-feedback command entries, and not include ./commands/spec.md because v8 source intake is owned by /tk:gap.",
+      "name": "plugin-version-and-command-manifest-vNext",
+      "prompt": "Evaluate marketplace plugin metadata for TigerKit current command surface. Do not write files.",
+      "expected_output": "Should treat .claude-plugin/plugin.json as the authoritative version source, verify its version is valid semver without hard-coding a concrete version literal in eval expectations, and provide a bump script that defaults to origin/main:.claude-plugin/plugin.json as the baseline so stale local branches do not reuse old versions. Should include ./commands/launch.md, ./commands/review.md, and ./commands/next.md, preserve /tk:gap, /tk:reflect, /tk:handoff, and /tk:meta-feedback command entries, and not include ./commands/spec.md because current source intake is owned by /tk:gap.",
       "files": [
         ".claude-plugin/plugin.json",
         "commands/launch.md",
+        "commands/review.md",
         "commands/next.md",
         "scripts/check-plugin-version.py",
         "scripts/bump-plugin-version.py"
@@ -303,6 +308,7 @@
         "No concrete version literal in eval expectations",
         "Includes ./commands/launch.md",
         "Includes ./commands/next.md",
+        "Includes ./commands/review.md",
         "Does not include ./commands/spec.md",
         "Preserves gap command",
         "Preserves reflect command",
@@ -474,10 +480,11 @@
       "id": 21,
       "name": "user-facing-output-labels-are-korean",
       "prompt": "Evaluate TigerKit user-facing stdout/report templates. Do not write files.",
-      "expected_output": "Should keep machine-readable status codes and contract field names intact, while rendering user-facing labels in Korean across /tk:gap, /tk:launch, /tk:next, /tk:reflect, /tk:handoff, /tk:meta-feedback, and tk-runner receipts. Examples include 브랜치 범위, 워크플로, 검증 게이트, 실행 하네스, 선택한 작업, 변경 파일, 승인, 차단 사유, 추가 근거 필요, 사용자 메모리 후보, 메타 피드백, 비식별화 기록, 일반화 게이트, and 다음 행동.",
+      "expected_output": "Should keep machine-readable status codes and contract field names intact, while rendering user-facing labels in Korean across /tk:gap, /tk:launch, /tk:review, /tk:next, /tk:reflect, /tk:handoff, /tk:meta-feedback, and tk-runner receipts. Examples include 브랜치 범위, 워크플로, 검증 게이트, 실행 하네스, 선택한 작업, 변경 파일, 승인, 차단 사유, 추가 근거 필요, 사용자 메모리 후보, 메타 피드백, 비식별화 기록, 일반화 게이트, and 다음 행동.",
       "files": [
         "commands/gap.md",
         "commands/launch.md",
+        "commands/review.md",
         "commands/next.md",
         "commands/reflect.md",
         "commands/handoff.md",
@@ -494,7 +501,37 @@
         "Uses Korean stdout label 선택한 작업",
         "Uses Korean stdout label 추가 근거 필요",
         "Uses Korean meta-feedback section 비식별화 기록",
-        "Uses Korean next action label 다음 행동"
+        "Uses Korean next action label 다음 행동",
+        "Uses Korean stdout label 닫힌 gap",
+        "Uses Korean stdout label 남은 gap"
+      ]
+    },
+    {
+      "id": 22,
+      "name": "review-verifies-frozen-target-after-launch",
+      "prompt": "Evaluate /tk:review after a launch has produced implementation evidence. Do not write source files.",
+      "expected_output": "Should resolve a frozen review target from explicit --against, latest launch workflow, latest GAP, handoff, or user-provided goal/spec; compare confirmed requirements and verification evidence against current implementation; report closed gaps, remaining gaps, drift/risk, and exactly one verdict: REVIEW_PASS, REVIEW_PARTIAL, REVIEW_FAIL, or REVIEW_BLOCKED. Should not modify implementation, execute /tk:launch, create commits, create PRs, or confuse /tk:review with /tk:gap --review compatibility.",
+      "files": [
+        "commands/review.md",
+        ".claude-plugin/plugin.json",
+        "README.md",
+        ".tigerkit/docs/usage.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/artifact-layout.md"
+      ],
+      "expectations": [
+        "Plugin manifest includes ./commands/review.md",
+        "Resolves explicit and latest review targets",
+        "Checks confirmed requirements",
+        "Checks verification evidence",
+        "Reports closed gaps",
+        "Reports remaining gaps",
+        "Reports drift/risk",
+        "Uses REVIEW_PASS REVIEW_PARTIAL REVIEW_FAIL REVIEW_BLOCKED",
+        "Does not mutate implementation",
+        "Does not execute launch",
+        "Does not commit or open PR",
+        "Distinguishes /tk:review from /tk:gap --review"
       ]
     }
   ]

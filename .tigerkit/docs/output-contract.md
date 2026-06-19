@@ -478,6 +478,86 @@ Abort code 목록:
 - `GITHUB_REQUIRED_UNAVAILABLE`
 - `VERIFICATION_UNAVAILABLE`
 
+
+## `/tk:review` Output Contract
+
+- 목적: frozen goal/spec 또는 sealed workflow 대비 launch 결과와 현재 구현을 검증하고 verdict를 남깁니다.
+- `/tk:gap --review`는 v7 Contract-based Gap Review compatibility mode이며, `/tk:review`는 post-launch verification command입니다.
+- 기본 target은 latest launch receipt가 참조하는 workflow이고, 없으면 latest GAP, handoff, 명시 path, 사용자 goal/spec 순서로 찾습니다.
+- 구현 수정, launch 실행, commit, push, PR, merge, release, deploy, GitHub issue write는 수행하지 않습니다.
+- verification 없이 `REVIEW_PASS`를 선언하지 않습니다.
+
+기본 receipt 위치:
+
+```text
+.claude/tigerkit/branches/<branch-key>/review/RVW-YYYYMMDD-HHmmss-RAND.md
+.claude/tigerkit/branches/<branch-key>/review/current.md
+```
+
+Machine-readable block:
+
+```tigerkit-review-report
+version: 1
+review_id: RVW-YYYYMMDD-HHmmss-RAND
+scope_kind: git_branch | git_detached | git_no_remote | workspace
+scope_key: <branch-key-or-workspace-key>
+status: REVIEW_PASS | REVIEW_PARTIAL | REVIEW_FAIL | REVIEW_BLOCKED
+verdict: Pass | Partial | Fail | Blocked
+target:
+  source: workflow | launch | handoff | user | path | none
+  ref: <path#section or none>
+requirements_checked: []
+verification:
+  passed: []
+  failed: []
+  blocked: []
+closed_gaps: []
+remaining_gaps: []
+drift_risks: []
+next_action: <one sentence or 없음>
+```
+
+기본 stdout:
+
+```text
+✅ Review 완료: <RVW-ID>
+브랜치 범위: <branch-key>
+결과: REVIEW_PASS | REVIEW_PARTIAL | REVIEW_FAIL | REVIEW_BLOCKED
+Verdict: Pass | Partial | Fail | Blocked
+대상: <workflow|launch|handoff|user|path|none>:<ref>
+
+검증: <passed>/<total> 통과, <failed> 실패, <blocked> 차단
+닫힌 gap: <count>
+남은 gap: <count>
+Drift/Risk: <none|count>
+
+보고서: .claude/tigerkit/branches/<branch-key>/review/<RVW-ID>.md
+최신본: .claude/tigerkit/branches/<branch-key>/review/current.md
+
+다음 행동: <없음|/tk:gap 재실행|/tk:launch 재실행|human decision 필요|/tk:handoff>
+```
+
+상태 기호:
+
+- `✅` = `REVIEW_PASS`
+- `⚠️` = `REVIEW_PARTIAL`
+- `🛑` = `REVIEW_FAIL` 또는 `REVIEW_BLOCKED`
+
+`/tk:review` report 필수 H2:
+
+```md
+# Review Report: <RVW-ID>
+
+## 요약
+## Review Target
+## Verification Evidence
+## Closed Gaps
+## Remaining Gaps
+## Drift / Risk
+## Verdict
+## Next Recommendation
+```
+
 ## `/tk:next` Output Contract
 
 - 목적: 현재 TigerKit artifact와 workspace/repo context를 읽고 다음 안전 실행 항목 하나를 실제로 이어서 시도합니다.
