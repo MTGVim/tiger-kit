@@ -9,6 +9,7 @@
     ],
     "compatibility_commands": [
       "/tk:gap --review",
+      "/tk:review",
       "/tk:handoff",
       "/tk:meta-feedback"
     ],
@@ -54,7 +55,7 @@
       "id": 0,
       "name": "command-surface-v8-gap-launch-reflect-next-without-spec",
       "prompt": "Evaluate TigerKit v8 active command surface. Do not write files.",
-      "expected_output": "Should list /tk:gap, /tk:launch, and /tk:reflect as the primary v8 flow. Should list /tk:next as a steering replacement continuation command that can attempt the next safe work item and write a receipt, while preserving /tk:gap --review, /tk:handoff, and /tk:meta-feedback as compatibility or secondary commands. Should explain that /tk:spec is not exposed in the v8 MVP command surface because source intake is owned by /tk:gap. Should explain that commands/*.md plus .claude-plugin/plugin.json own the /tk:* contracts and that Hermes/Codex/npx-skills command adapters are out of MVP scope with no adapter files shipped.",
+      "expected_output": "Should list /tk:gap, /tk:launch, and /tk:reflect as the primary v8 flow. Should list /tk:review as the goal/spec review entrypoint and /tk:next as a steering replacement continuation command that can attempt the next safe work item and write a receipt, while preserving /tk:gap --review, /tk:handoff, and /tk:meta-feedback as compatibility or secondary commands. Should explain that /tk:spec is not exposed in the v8 MVP command surface because source intake is owned by /tk:gap. Should explain that commands/*.md plus .claude-plugin/plugin.json own the /tk:* contracts and that Hermes/Codex/npx-skills command adapters are out of MVP scope with no adapter files shipped.",
       "files": [
         ".claude-plugin/plugin.json",
         "README.md",
@@ -65,6 +66,7 @@
         "Lists /tk:launch",
         "Lists /tk:reflect",
         "Does not expose /tk:spec",
+        "Preserves /tk:review",
         "Preserves /tk:handoff",
         "Preserves /tk:meta-feedback",
         "Mentions /tk:gap --review compatibility",
@@ -127,6 +129,7 @@
       "expected_output": "Should preserve v7 Contract-based Gap Review behavior: compare Product/Design Spec, implementation plan, and current implementation; emit report.md and run.json; use JudgeMergerAgent for final findings; keep P0/P1/P2 accepted findings only; keep default stdout compact. Should not describe --review as a stronger quality mode.",
       "files": [
         "commands/gap.md",
+        "commands/review.md",
         ".claude/rules/review/gap-analysis.md",
         ".tigerkit/docs/output-contract.md"
       ],
@@ -141,6 +144,32 @@
     },
     {
       "id": 4,
+      "name": "review-verifies-implementation-against-goal-spec",
+      "prompt": "Evaluate /tk:review behavior. Do not write files.",
+      "expected_output": "Should verify implementation against a frozen goal/spec, check whether claimed gaps are closed, detect regressions and scope drift, produce a Pass/Partial/Fail verdict, and recommend accept, run another gap loop, escalate to human, or abort/re-scope. Should use the same Contract-based review engine and branch-local report.md/run.json layout as /tk:gap --review. Should not expose freeze or launch as standalone commands.",
+      "files": [
+        "commands/review.md",
+        "commands/gap.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/usage.md",
+        "README.md"
+      ],
+      "expectations": [
+        "Uses /tk:review command",
+        "Verifies implementation against frozen goal/spec",
+        "Checks closed gaps",
+        "Detects regressions",
+        "Detects scope drift",
+        "Produces Pass Partial Fail verdict",
+        "Recommends accept run another gap loop escalate to human abort or re-scope",
+        "Uses report.md and run.json layout",
+        "Reuses /tk:gap --review engine",
+        "Does not expose /tk:freeze",
+        "Does not expose /tk:launch as new concept beyond existing command"
+      ]
+    },
+    {
+      "id": 5,
       "name": "launch-missing-workflow-aborts",
       "prompt": "Evaluate /tk:launch when no workflow path or current workflow exists. Do not write files.",
       "expected_output": "Should abort before execution with WORKFLOW_NOT_FOUND. Should not invent a workflow, ask mid-flight questions, or run tasks. Should emit an aborted launch receipt with report and reflect trace paths when possible.",
@@ -157,7 +186,7 @@
       ]
     },
     {
-      "id": 5,
+      "id": 6,
       "name": "launch-multiple-workflow-blocks-aborts",
       "prompt": "Evaluate /tk:launch when the workflow file contains two tigerkit-launch-workflow blocks. Do not write files.",
       "expected_output": "Should abort before execution with MULTIPLE_WORKFLOW_BLOCKS. Should require exactly one launch workflow block and should not pick one silently.",
@@ -172,7 +201,7 @@
       ]
     },
     {
-      "id": 6,
+      "id": 7,
       "name": "launch-hash-mismatch-aborts",
       "prompt": "Evaluate /tk:launch when workflow_sha256 does not match the fenced block body. Do not write files.",
       "expected_output": "Should calculate SHA-256 from the raw UTF-8 bytes inside the single tigerkit-launch-workflow fenced block after LF normalization and exactly one final LF, excluding fence lines and without YAML sorting. Should abort with WORKFLOW_HASH_MISMATCH when the calculated hash differs.",
@@ -190,7 +219,7 @@
       ]
     },
     {
-      "id": 7,
+      "id": 8,
       "name": "launch-human-decision-required-no-question",
       "prompt": "Evaluate /tk:launch when execution reveals a new product or API decision is required. Do not write files.",
       "expected_output": "Should not ask the user a mid-flight question. Should abort with HUMAN_DECISION_REQUIRED, preserve completed task count, failed precondition, failed gate or reason, and next action for human decision or workflow regeneration. The launch trace should structure the abort fact as reusable gap input.",
@@ -208,7 +237,7 @@
       ]
     },
     {
-      "id": 8,
+      "id": 9,
       "name": "launch-autopilot-disabled-in-phase1",
       "prompt": "Evaluate /tk:launch --autopilot in Phase 1. Do not write files.",
       "expected_output": "Should not perform bounded recovery in Phase 1. If workflow autopilot_policy.enabled is false, abort with AUTOPILOT_DISABLED. If recovery is requested by the command surface but unavailable in Phase 1, abort with AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1. Should not change requirements or expand scope.",
@@ -224,7 +253,7 @@
       ]
     },
     {
-      "id": 9,
+      "id": 10,
       "name": "launch-out-of-scope-diff-aborts",
       "prompt": "Evaluate /tk:launch when completing a task would require files or behavior outside the sealed workflow scope. Do not write files.",
       "expected_output": "Should abort with OUT_OF_SCOPE_DIFF rather than broadening scope. Should not commit out-of-scope changes and should report the blocked reason in the launch receipt.",
@@ -240,7 +269,7 @@
       ]
     },
     {
-      "id": 10,
+      "id": 11,
       "name": "reflect-after-launch-no-durable-apply-without-approval",
       "prompt": "Evaluate reflect behavior after /tk:launch completes or aborts. Do not write files.",
       "expected_output": "Should allow /tk:launch to write generated reflect trace artifacts at reflect/<RFL-ID>.md and reflect/current.md for /tk:reflect. Should not apply durable CLAUDE.md or .claude/rules changes or create commits unless preflight approval recorded that action. Should classify repo durable insight, skill proposal, TigerKit meta-feedback, verification gap, workflow weakness, and unresolved follow-up separately.",
@@ -258,7 +287,7 @@
       ]
     },
     {
-      "id": 11,
+      "id": 12,
       "name": "session-start-worktree-context-proposal-read-only",
       "prompt": "Evaluate SessionStart worktree context proposal when a base worktree has root Markdown files and .claude/ that are missing in the current linked worktree. Do not write source files.",
       "expected_output": "Should register a SessionStart read-only hook that injects TIGERKIT_SESSION_START additional context with candidate signature, source/base worktree, base-only root-level Markdown candidates, base-only .claude/ candidate, safety contract, and decline marker path. It must not create symlinks, copy files, overwrite regular files, mutate source_worktree, or hydrate context automatically. /tk:gap should consume this context during source grounding. /tk:launch and /tk:next should consume the session context or matching decline marker instead of re-asking per command.",
@@ -287,13 +316,14 @@
       ]
     },
     {
-      "id": 12,
+      "id": 13,
       "name": "plugin-version-and-command-manifest-v8",
       "prompt": "Evaluate marketplace plugin metadata for TigerKit v8. Do not write files.",
       "expected_output": "Should treat .claude-plugin/plugin.json as the authoritative version source, verify its version is valid semver without hard-coding a concrete version literal in eval expectations, and provide a bump script that defaults to origin/main:.claude-plugin/plugin.json as the baseline so stale local branches do not reuse old versions. Should include ./commands/launch.md and ./commands/next.md, preserve /tk:gap, /tk:reflect, /tk:handoff, and /tk:meta-feedback command entries, and not include ./commands/spec.md because v8 source intake is owned by /tk:gap.",
       "files": [
         ".claude-plugin/plugin.json",
         "commands/launch.md",
+        "commands/review.md",
         "commands/next.md",
         "scripts/check-plugin-version.py",
         "scripts/bump-plugin-version.py"
@@ -302,6 +332,7 @@
         "Plugin version is valid semver",
         "No concrete version literal in eval expectations",
         "Includes ./commands/launch.md",
+        "Includes ./commands/review.md",
         "Includes ./commands/next.md",
         "Does not include ./commands/spec.md",
         "Preserves gap command",
@@ -314,7 +345,7 @@
       ]
     },
     {
-      "id": 13,
+      "id": 14,
       "name": "next-command-attempts-continuation-with-approval-gates",
       "prompt": "Evaluate /tk:next when latest handoff or launch/reflect trace contains a safe next work item. Do not create commits or PRs.",
       "expected_output": "Should inspect current TigerKit artifacts and any TIGERKIT_SESSION_START worktree context proposal, select one safe executable next item, attempt it within existing command contracts, and write a NEXT_DONE, NEXT_PARTIAL, NEXT_BLOCKED, or NEXT_SKIPPED receipt. Should not be stdout-only or recommendation-only. Should not execute /tk:launch, commit, PR, merge, release, deploy, GitHub issue writes, re-ask the same worktree candidate signature, or apply worktree context symlink/copy without explicit approval.",
@@ -338,7 +369,7 @@
       ]
     },
     {
-      "id": 14,
+      "id": 15,
       "name": "workspace-gap-ready-without-git",
       "prompt": "Evaluate /tk:gap in a plain folder with no .git when enough source exists. Do not write files.",
       "expected_output": "Should not fail merely because git rev-parse fails. Should use scope_kind=workspace, compute a stable workspace scope_key, write under .claude/tigerkit/branches/<scope-key>/ when writable, and produce GAP_READY with workspace_context when launchable. If artifacts are not writable, should block with ARTIFACT_ROOT_UNWRITABLE rather than pretending success.",
@@ -357,7 +388,7 @@
       ]
     },
     {
-      "id": 15,
+      "id": 16,
       "name": "workspace-launch-success-skips-commit",
       "prompt": "Evaluate /tk:launch for a GAP_READY workflow in a non-git workspace where verification passes and commit is not required. Do not write files.",
       "expected_output": "Should execute the sealed workflow, pass verification, report SUCCESS, and record 커밋: skipped_not_git_repo. Missing git/GitHub must not abort unless commit or PR is required by the workflow.",
@@ -375,7 +406,7 @@
       ]
     },
     {
-      "id": 16,
+      "id": 17,
       "name": "reflect-fallback-user-memory-proposal",
       "prompt": "Evaluate /tk:reflect in a non-git workspace without CLAUDE.md or .claude/rules. Do not write files.",
       "expected_output": "Should not create repo durable rule files by default. Should produce generated reflect report when possible and include 사용자 메모리 후보 or explicitly say none. Candidates are proposal-only and 자동 적용 false unless a host adapter and user approval support memory writes.",
@@ -393,7 +424,7 @@
       ]
     },
     {
-      "id": 17,
+      "id": 18,
       "name": "non-code-workflow-task-and-verification-types",
       "prompt": "Evaluate sealed workflow schema for non-code work such as docs/research/runbook generation. Do not write files.",
       "expected_output": "Should allow task_type values such as docs_change, research, file_generation, data_cleanup, ops_runbook, communication_draft, analysis, and manual_receipt. Verification gates may use file_exists, file_contains, artifact_written, link_checked, schema_valid, manual_review_required, or receipt_only; code tests are not mandatory.",
@@ -409,7 +440,7 @@
       ]
     },
     {
-      "id": 18,
+      "id": 19,
       "name": "launch-runtime-harness-uses-tk-runner-sonnet",
       "prompt": "Evaluate /tk:launch runtime harness before executing a sealed workflow. Do not write source files.",
       "expected_output": "Should dispatch execution through the tk-runner Claude Code agent when subagents are available, record expected_model sonnet, model_tier balanced, effort_tier medium, and runtime_harness status in the launch receipt. If required subagent/model harness is unavailable and inline fallback is not explicitly allowed, launch must abort before task execution with MODEL_HARNESS_UNAVAILABLE rather than silently running on the wrong model.",
@@ -429,7 +460,7 @@
       ]
     },
     {
-      "id": 19,
+      "id": 20,
       "name": "gap-preflights-launch-preconditions-before-sealing",
       "prompt": "Evaluate default /tk:gap for a workflow whose task depends on a static target relation or verification tool assumption that can be checked read-only before mutation. Do not write files.",
       "expected_output": "Should record task-level assumed_preconditions as checkable predicates, run static/read-only preflight before sealing, and only emit GAP_READY when required predicates pass. If a predicate fails or is unverifiable, should emit GAP_BLOCKED without tigerkit-launch-workflow. If a prior /tk:launch trace aborted with HUMAN_DECISION_REQUIRED or VERIFICATION_FAILED, should treat the structured abort fact as gap input so the same fact is not rediscovered during launch.",
@@ -450,7 +481,7 @@
       ]
     },
     {
-      "id": 20,
+      "id": 21,
       "name": "meta-feedback-generalization-gate",
       "prompt": "Evaluate /tk:meta-feedback when session feedback contains command friction mixed with repo-specific or domain-specific terms. Do not write files.",
       "expected_output": "Should run a pre-emit Domain-term guard, rewrite or reject proposals that contain host-specific nouns such as project/framework names, paths, symbols, domain entities, tickets, branches, PRs, commits, or URLs, and apply a Restate test asking whether the proposal still works in another repo and domain. Should route repo/domain insight to /tk:reflect, basis-target comparison to /tk:gap, follow-up storage to /tk:handoff, and only command or skill contract friction to /tk:meta-feedback. Output should use only the target command or skill contract vocabulary and feedback taxonomy, and the 비식별화 기록 should report 일반화 게이트 and 재진술 테스트 status.",
@@ -471,7 +502,7 @@
       ]
     },
     {
-      "id": 21,
+      "id": 22,
       "name": "user-facing-output-labels-are-korean",
       "prompt": "Evaluate TigerKit user-facing stdout/report templates. Do not write files.",
       "expected_output": "Should keep machine-readable status codes and contract field names intact, while rendering user-facing labels in Korean across /tk:gap, /tk:launch, /tk:next, /tk:reflect, /tk:handoff, /tk:meta-feedback, and tk-runner receipts. Examples include 브랜치 범위, 워크플로, 검증 게이트, 실행 하네스, 선택한 작업, 변경 파일, 승인, 차단 사유, 추가 근거 필요, 사용자 메모리 후보, 메타 피드백, 비식별화 기록, 일반화 게이트, and 다음 행동.",

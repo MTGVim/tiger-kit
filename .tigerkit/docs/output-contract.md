@@ -314,7 +314,58 @@ Rejected finding uses one of:
 - `missing_producer_evidence`
 - `superseded_source`
 
-### `/tk:gap --maintainer-proof` Output Contract
+### `/tk:review` Output Contract
+
+이 section은 `/tk:review` stdout의 authoritative contract입니다. `/tk:review`는 `/tk:gap --review`와 같은 Contract-based review engine과 branch-local review layout을 사용하되, frozen goal/spec 대비 implementation 검증을 사용자-facing command로 제공합니다.
+
+- 목적: implementation이 frozen goal/spec를 만족하는지, claimed gap이 닫혔는지, regression이나 scope drift가 있는지 검증합니다.
+- 기본 저장 위치: `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/`
+- 기본 산출물은 `report.md`와 `run.json`입니다.
+- verdict는 `Pass`, `Partial`, `Fail` 중 하나입니다.
+- next recommendation은 `accept`, `run another gap loop`, `escalate to human`, `abort or re-scope` 중 하나입니다.
+- sealed launch workflow는 생성하지 않습니다.
+- `freeze`와 `launch`는 internal workflow concept이며 별도 `/tk:freeze` command는 노출하지 않습니다.
+- final finding, source conflict, clarification, rejected summary 규칙은 `/tk:gap --review`와 같습니다.
+
+### `/tk:review default stdout`
+
+```text
+Review 완료: <GAP-ID>
+브랜치 범위: <branch-key>
+Verdict: <Pass|Partial|Fail>
+결과: P0 <count> / P1 <count> / P2 <count> / 근거 충돌 <count> / 확인 필요 <count>
+보고서: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md
+실행 JSON: .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/run.json
+다음 행동: <accept|run another gap loop|escalate to human|abort or re-scope>
+```
+
+### `/tk:review report.md` H2
+
+```md
+# Review: <GAP-ID>
+
+## Verdict
+
+## 사용한 근거
+
+## What Changed
+
+## Closed Gaps
+
+## Remaining Gaps
+
+## Drift / Risk
+
+## 조치 필요 항목
+
+## 확인 필요
+
+## 미채택 요약
+
+## Next Recommendation
+```
+
+## `/tk:gap --maintainer-proof` Output Contract
 
 `--maintainer-proof`를 명시한 경우에만 self-eval/performance proof와 내부 gate/debug metadata를 생성하거나 claim할 수 있습니다.
 

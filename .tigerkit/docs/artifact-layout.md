@@ -83,8 +83,8 @@ MVP에서는 path compatibility를 위해 `branches/` 아래에 저장하지만 
 | `.claude/tigerkit/branches/<branch-key>/launch/current.md` | launch status, task/gate 결과, abort code, commit decision을 보존하는 최소 run record입니다. | branch-local execution |
 | `.claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md` | `/tk:reflect` generated report archive입니다. `tigerkit-reflect-report` block을 포함합니다. durable apply가 아닙니다. | branch-local generated |
 | `.claude/tigerkit/branches/<branch-key>/reflect/current.md` | 최신 reflect report copy입니다. | branch-local pointer |
-| `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md` | `/tk:gap --review` 사용자가 읽는 compatibility gap report 본문입니다. Actionable Findings, Clarification Needed, next action 중심입니다. | branch-local |
-| `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/run.json` | `/tk:gap --review` 후속 대화와 기계 처리를 위한 최소 run record입니다. user-facing short Ref와 canonical ID mapping을 보존합니다. | branch-local |
+| `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md` | `/tk:gap --review`와 `/tk:review` 사용자가 읽는 review report 본문입니다. Actionable Findings, Clarification Needed, verdict, next action 중심입니다. | branch-local |
+| `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/run.json` | `/tk:gap --review`와 `/tk:review` 후속 대화와 기계 처리를 위한 최소 run record입니다. user-facing short Ref와 canonical ID mapping을 보존합니다. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/maintainer-proof/` | `--maintainer-proof`가 명시된 경우에만 생성하는 self-eval/performance proof, gate/debug metadata, baseline snapshot 영역입니다. | branch-local maintainer-only |
 | `.claude/tigerkit/branches/<branch-key>/handoffs/current.md` | `/tk:handoff`가 생성하는 canonical continuation 문서. 최신 경로는 `global-index.json`과 `branch-state.json`에 pointer로 기록합니다. 현재 작업을 방해하면 안 되는 follow-up은 `Pending Backlog` 섹션에 source/evidence/priority/blocked-by/next action과 함께 보관할 수 있습니다. | branch-local continuation |
 | `.claude/tigerkit/branches/<branch-key>/handoffs/YYYY-MM-DD-task-name.md` | `archive=true` 또는 명시적 archive 요청 때만 생성하는 branch-local continuation archive. | branch-local continuation |
@@ -108,7 +108,7 @@ MVP에서는 path compatibility를 위해 `branches/` 아래에 저장하지만 
 
 `GAP_READY` archive는 사람용 report와 정확히 하나의 `tigerkit-gap-status` block, 정확히 하나의 `tigerkit-launch-workflow` block을 포함합니다. `GAP_BLOCKED` report는 `tigerkit-gap-status` block만 포함하고 `tigerkit-launch-workflow` block을 포함하지 않습니다.
 
-`/tk:gap --review` compatibility mode만 v7 review layout을 씁니다.
+`/tk:gap --review` compatibility mode와 `/tk:review`는 같은 branch-local review layout을 씁니다.
 
 ```text
 .claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/

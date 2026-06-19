@@ -11,7 +11,7 @@
 ## 핵심 모델
 
 ```text
-TigerKit = branch-scoped source intake + sealed gap workflow + human-approved launch + steering replacement next + durable reflection + continuation handoff + generalized meta-feedback
+TigerKit = branch-scoped source intake + sealed gap workflow + human-approved launch + goal/spec review + steering replacement next + durable reflection + continuation handoff + generalized meta-feedback
 ```
 
 TigerKit은 branch/workspace-local working memory와 durable repo insight를 분리합니다.
@@ -26,7 +26,7 @@ TigerKit은 branch/workspace-local working memory와 durable repo insight를 분
 
 ## Workspace fallback mode
 
-TigerKit은 GitHub repo 전용 도구가 아닙니다. 아래 context에서도 `/tk:gap`, `/tk:launch`, `/tk:reflect`가 동작해야 합니다.
+TigerKit은 GitHub repo 전용 도구가 아닙니다. 아래 context에서도 `/tk:gap`, `/tk:launch`, `/tk:review`, `/tk:reflect`가 동작해야 합니다.
 
 - GitHub remote가 없는 git repo
 - git 자체가 없는 plain workspace
@@ -52,6 +52,7 @@ Hermes Agent, Codex CLI, `npx skills` 기반 command-skill adapter는 v8 MVP에 
 | --- | --- | --- |
 | `/tk:gap` | 사용자 입력, 문서, 스크린샷, 회의 메모, 기존 branch-local Spec Patch를 source material로 intake하고, source grounding, ambiguity attack, sealed launch workflow 생성을 수행한 뒤 `GAP_READY` 또는 `GAP_BLOCKED`로 끝납니다. | branch-local |
 | `/tk:gap --review` | v7 Contract-based Gap Review compatibility mode로 사용자가 고칠 finding과 답할 clarification을 남깁니다. | branch-local |
+| `/tk:review` | frozen goal/spec 대비 implementation을 검증해 closed gaps, remaining gaps, drift/risk, Pass/Partial/Fail verdict, next recommendation을 남깁니다. `/tk:gap --review`와 같은 review engine을 사용합니다. | branch-local |
 | `/tk:launch` | sealed workflow만 `tk-runner` subagent로 실행하고 verification, abort receipt, runtime harness, reflect trace를 남깁니다. git/GitHub/commit은 capability로 기록하고 필요 없으면 skip reason으로 성공할 수 있습니다. | branch/workspace-local execution |
 | `/tk:reflect` | gap+launch trace와 branch-local 산출물에서 repo에 남길 insight만 추출하고 반영합니다. | durable insight |
 | `/tk:next` | current state와 TigerKit artifact를 읽어 다음 안전 실행 항목 하나를 실제로 이어서 시도하며 receipt를 남깁니다. | branch/workspace-local continuation execution |
@@ -70,6 +71,7 @@ Hermes Agent, Codex CLI, `npx skills` 기반 command-skill adapter는 v8 MVP에 
 /tk:launch
 /tk:launch --no-worktree
 /tk:launch --autopilot
+/tk:review
 /tk:reflect
 /tk:reflect --dry-run
 /tk:reflect --no-meta-feedback
@@ -130,6 +132,18 @@ Report: .claude/tigerkit/branches/main--c0ffee/gap/GAP-20260617-143012-A7F3.md
 - P3/nit/duplicate/unverifiable/source_conflict는 final finding이 아닙니다.
 - `/tk:gap --review` run artifact는 `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/` 아래에 저장합니다. 기본 `/tk:gap` sealed workflow는 `.claude/tigerkit/branches/<branch-key>/gap/` 아래에 저장합니다.
 - 유저향 compact table은 run-local short Ref(`G1`, `R1`, `C1`, `Q1`)를 우선 표시합니다.
+
+### `/tk:review`
+
+`/tk:review`는 `/tk:gap --review`와 같은 Contract-based review engine을 사용하는 직관적 진입점입니다.
+
+- frozen goal/spec, implementation plan, current implementation을 비교합니다.
+- claimed gap이 실제로 닫혔는지 확인합니다.
+- regression과 scope drift를 감지합니다.
+- `Pass`, `Partial`, `Fail` 중 하나의 verdict를 냅니다.
+- 다음 추천을 `accept`, `run another gap loop`, `escalate to human`, `abort or re-scope` 중 하나로 정리합니다.
+- 기본 산출물은 `/tk:gap --review`와 같은 `report.md`와 `run.json`입니다.
+- `freeze`와 `launch`를 새 user-facing command로 노출하지 않고, internal workflow concept로만 다룹니다.
 
 ### `/tk:launch`
 

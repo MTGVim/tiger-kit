@@ -1,6 +1,6 @@
 # TigerKit
 
-TigerKit(`tk`, plugin namespace `/tk:*`)은 sealed GAP → Launch → Reflect 흐름과 steering replacement `/tk:next`, continuation handoff, generalized meta-feedback으로 AI-induced source loss를 줄입니다. GitHub PR/commit은 선택 capability이며, plain workspace에서도 workflow 작성·실행·회고가 가능해야 합니다.
+TigerKit(`tk`, plugin namespace `/tk:*`)은 GAP → internal freeze → Launch → Review → Reflect 흐름과 steering replacement `/tk:next`, continuation handoff, generalized meta-feedback으로 AI-induced source loss를 줄입니다. GitHub PR/commit은 선택 capability이며, plain workspace에서도 workflow 작성·실행·검토·회고가 가능해야 합니다.
 
 공개 실행 표면은 Claude Code plugin command입니다. 별도 repo-local skill 파일 없이 `commands/*.md`와 `.claude-plugin/plugin.json`이 `/tk:*` contract를 소유합니다.
 
@@ -30,7 +30,7 @@ claude plugin details tk
 claude plugin install tk@tiger-kit --scope project
 ```
 
-설치 후 Claude Code를 다시 시작하고 `/tk:gap`, `/tk:launch`, `/tk:reflect`, `/tk:next`, `/tk:handoff`, `/tk:meta-feedback` 명령을 사용합니다. v8 MVP에서 source intake와 spec normalization은 `/tk:gap`이 담당하므로 `/tk:spec`은 공개 command surface에서 제거되었습니다.
+설치 후 Claude Code를 다시 시작하고 `/tk:gap`, `/tk:launch`, `/tk:review`, `/tk:reflect`, `/tk:next`, `/tk:handoff`, `/tk:meta-feedback` 명령을 사용합니다. v8 MVP에서 source intake와 spec normalization은 `/tk:gap`이 담당하므로 `/tk:spec`은 공개 command surface에서 제거되었습니다.
 
 ## Command Surface
 
@@ -38,6 +38,7 @@ claude plugin install tk@tiger-kit --scope project
 | --- | --- | --- |
 | `/tk:gap` | 즉석 지시, 브레인스토밍, 회의 메모, URL, ticket, 기존 branch-local Spec Patch를 source material로 intake하고, source를 ground하고 ambiguity를 attack한 뒤 launch 가능한 sealed workflow를 만들거나 `GAP_BLOCKED`로 중단합니다. | branch-local |
 | `/tk:gap --review` | v7 Contract-based Gap Review compatibility mode로 조치 필요 항목과 확인 필요 항목를 `report.md`와 `run.json`에 남깁니다. | branch-local |
+| `/tk:review` | frozen goal/spec 대비 implementation을 검증해 closed gaps, remaining gaps, drift/risk, verdict, next recommendation을 남깁니다. `/tk:gap --review`와 같은 review engine을 사용합니다. | branch-local |
 | `/tk:launch` | sealed workflow만 `tk-runner` subagent로 실행하고 검증, 중단 receipt, runtime harness, reflect trace를 남깁니다. | branch-local execution |
 | `/tk:reflect` | gap+launch trace와 branch-local working memory에서 repo에 영구 보존할 insight만 rubric으로 선별하고 durable target에 반영한 뒤 기본적으로 meta-feedback을 함께 제출합니다. | durable insight |
 | `/tk:next` | 현재 TigerKit 상태와 workspace/repo context를 읽고 다음 안전 실행 항목 하나를 실제로 이어서 시도하며 receipt를 남깁니다. | branch/workspace-local continuation execution |
@@ -48,8 +49,10 @@ claude plugin install tk@tiger-kit --scope project
 
 ```text
 gap = source intake + source grounding + ambiguity attack + sealed launch workflow 생성
+internal freeze = GAP_READY workflow와 hash로 목표/spec를 봉인
 launch = sealed workflow 실행 + verification + abort/reflect receipt
-reflect = gap+launch trace와 branch-local working memory에서 repo에 영구 보존할 insight만 추출/반영
+review = frozen goal/spec 대비 구현 검증 + closed/remaining gaps + drift/risk verdict
+reflect = gap+launch+review trace와 branch-local working memory에서 repo에 영구 보존할 insight만 추출/반영
 next = continuation state를 읽고 다음 안전 작업을 실제로 이어서 시도
 handoff = 다음 세션/작업자용 continuation context
 meta-feedback = 세션 내 TigerKit 개선 피드백 일반화
@@ -57,7 +60,7 @@ meta-feedback = 세션 내 TigerKit 개선 피드백 일반화
 
 `gap`과 canonical `handoff` 산출물은 `.claude/tigerkit/branches/<branch-key>/` 아래의 branch-local generated working memory입니다. 기존 branch-local Spec Patch가 있으면 `/tk:gap`의 source material로 읽을 수 있지만, v8 MVP는 `/tk:spec` command를 노출하지 않습니다. `/tk:handoff`는 경로 미지정 resume을 위해 `.claude/tigerkit/global-index.json`에 최신 handoff pointer도 기록합니다. repo-wide durable knowledge가 아닙니다.
 
-`/tk:gap` 기본 실행은 git/GitHub가 없는 workspace에서도 `GAP_READY` 또는 `GAP_BLOCKED`로 끝날 수 있습니다. `GAP_READY`에는 task별 `assumed_preconditions`, 봉인 전 `readonly_preflight` 결과, sealed `tigerkit-launch-workflow`가 포함되어야 하고, `GAP_BLOCKED`에는 unresolved decision/conflict/missing source/preflight failure 때문에 workflow block을 포함하지 않습니다. v7 review behavior는 `/tk:gap --review`에서 유지합니다.
+`/tk:gap` 기본 실행은 git/GitHub가 없는 workspace에서도 `GAP_READY` 또는 `GAP_BLOCKED`로 끝날 수 있습니다. `GAP_READY`에는 task별 `assumed_preconditions`, 봉인 전 `readonly_preflight` 결과, sealed `tigerkit-launch-workflow`가 포함되어야 하고, `GAP_BLOCKED`에는 unresolved decision/conflict/missing source/preflight failure 때문에 workflow block을 포함하지 않습니다. v7 review behavior는 `/tk:gap --review`에서 유지하며, `/tk:review`는 같은 review engine을 frozen goal/spec 검증용 직관적 진입점으로 제공합니다.
 
 GitHub remote, git branch, commit 가능 여부는 launch preflight capability로 기록하며 prerequisite가 아닙니다. commit/PR이 불가능해도 workflow가 commit/PR을 요구하지 않으면 `/tk:launch`는 `Commit: skipped_not_git_repo` 같은 명시 skip reason으로 성공할 수 있습니다. Git worktree context는 Superpowers-style `SessionStart` read-only hook이 세션 시작 시 한 번 점검하고, base/source worktree에만 있는 root-level Markdown과 `.claude/` 후보를 `additionalContext`로 proposal-only 제안합니다. `/tk:gap`은 이 context를 source grounding에 포함하고, `/tk:launch`와 `/tk:next`는 command마다 같은 후보를 다시 묻지 않습니다. 사용자가 거절한 동일 candidate signature는 `.claude/tigerkit/local/session-start/worktree-context-declines.json`로 suppress합니다.
 
