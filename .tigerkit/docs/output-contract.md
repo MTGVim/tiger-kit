@@ -30,8 +30,9 @@ v8 MVP는 `/tk:spec` command를 공개하지 않습니다. 기존 `.claude/tiger
 이 section은 v8.0 기본 `/tk:gap` stdout의 authoritative contract입니다. `/tk:gap --review` compatibility stdout은 아래 `/tk:gap --review` section을 따릅니다.
 
 - 목적: source를 ground하고 ambiguity를 attack한 뒤 launch 가능한 sealed workflow를 만들거나 launch 금지 사유를 기록합니다.
-- `/tk:gap`은 반드시 `GAP_READY` 또는 `GAP_BLOCKED` 중 하나로 끝납니다.
-- `GAP_READY`는 정확히 하나의 `tigerkit-launch-workflow` block을 포함해야 합니다.
+- `/tk:gap`은 반드시 `GAP_READY`, `GAP_AUTO_LAUNCHED`, 또는 `GAP_BLOCKED` 중 하나로 끝납니다.
+- `GAP_READY`는 정확히 하나의 `tigerkit-launch-workflow` block을 포함하고 실행은 `/tk:launch`로 분리해야 합니다.
+- `GAP_AUTO_LAUNCHED`는 같은 `/tk:gap` 호출 안에서 sealed workflow 생성 뒤 정식 `/tk:launch` 루틴까지 완료 또는 중단한 경우에만 사용합니다.
 - `GAP_BLOCKED`는 `tigerkit-launch-workflow` block을 포함하면 안 됩니다.
 - 기본 workflow archive 위치: `.claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md`
 - 최신 workflow pointer copy: `.claude/tigerkit/branches/<branch-key>/gap/current.md`
@@ -52,6 +53,20 @@ GAP_READY: <WF-ID>
 다음 행동: /tk:launch
 ```
 
+`GAP_AUTO_LAUNCHED` stdout:
+
+```text
+GAP_AUTO_LAUNCHED: <WF-ID>
+브랜치 범위: <branch-key>
+워크플로: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
+워크플로 해시: <sha256>
+Launch 결과: SUCCESS | PARTIAL | ABORTED
+Launch 보고서: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
+검증: <passed>/<total> 통과, <failed> 실패, <blocked> 차단
+커밋: <created|skipped_preflight_required|skipped_not_requested|skipped_not_git_repo|skipped_no_github_remote|skipped_readonly_workspace|skipped_commit_policy_skip>
+다음 행동: <없음|사용자 결정 필요|검증 실패 수정|review finding 반영|commit 승인 필요>
+```
+
 `GAP_BLOCKED` stdout:
 
 ```text
@@ -67,10 +82,12 @@ GAP_BLOCKED: <GAP-ID>
 ### `tigerkit-gap-status` block
 
 ```tigerkit-gap-status
-status: GAP_READY | GAP_BLOCKED
+status: GAP_READY | GAP_AUTO_LAUNCHED | GAP_BLOCKED
 workflow_id: WF-YYYYMMDD-HHmmss-RAND | null
 workflow_path: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md | null
 workflow_sha256: <sha256> | null
+launch_receipt_path: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md | null
+launch_status: SUCCESS | PARTIAL | ABORTED | null
 blocked_reasons: []
 human_decisions: []
 missing_sources: []
