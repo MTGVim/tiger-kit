@@ -133,12 +133,20 @@ commit_policy:
   allowed: false
   commit_available: true | false
   skip_reason: null | not_git_repo | no_commit_requested | github_unavailable | readonly_workspace
+review_policy:
+  mode: required | optional | skip
+  reason: <one sentence>
+  reviewer: tk-reviewer
+  duplicate_review: forbid_unless_new_diff
 reflect_policy:
   mode: generated_report_only
   durable_apply_requires_preflight_approval: true
 ```
 
 ### `tigerkit-launch-workflow` seal
+
+`manual_review_required`는 verification gate type이며 embedded acceptance review의 대체가 아닙니다. sealed workflow의 acceptance review 실행 여부는 `review_policy`가 결정합니다.
+
 
 `workflow_sha256`은 단일 `tigerkit-launch-workflow` fenced block body의 SHA-256이며, `tigerkit-gap-status`와 `branch-state.json`에 기록하는 외부 seal입니다. `tigerkit-launch-workflow` block 내부에 자기참조 field로 넣지 않습니다.
 
@@ -350,7 +358,7 @@ Concrete maintainer proof runs must recompute actual run proof from metadata bef
 
 ## `/tk:launch` Output Contract
 
-- 목적: sealed launch workflow를 `tk-runner` subagent로 실행하고 verification gate 결과, runtime harness, abort reason, reflect trace를 branch-local artifact로 남깁니다.
+- 목적: sealed launch workflow를 `tk-runner` subagent로 실행하고 verification gate 결과, runtime harness, acceptance review verdict, abort reason, reflect trace를 branch-local artifact로 남깁니다.
 - 기본 입력은 `.claude/tigerkit/branches/<branch-key>/gap/current.md` 또는 명시 workflow path입니다.
 - `tigerkit-launch-workflow` block은 정확히 하나여야 합니다.
 - hash mismatch, missing workflow, multiple blocks, blocked workflow는 실행 전 abort합니다.
@@ -362,6 +370,8 @@ Concrete maintainer proof runs must recompute actual run proof from metadata bef
 - 자동 symlink/copy는 하지 않습니다.
 - workflow가 worktree context 적용을 required precondition으로 두었는데 승인/evidence가 없으면 `WORKTREE_CONTEXT_APPROVAL_REQUIRED`로 task 실행 전 abort합니다.
 - required `tk-runner`/model harness가 unavailable이면 `MODEL_HARNESS_UNAVAILABLE`로 abort합니다.
+- `review_policy.mode == required`이면 verification 뒤에 read-only `tk-reviewer` acceptance review를 실행합니다. `optional`은 not-run reason을 receipt에 남기고, `skip`은 명시 skip으로 기록합니다.
+- execution success는 acceptance review pass를 자동 의미하지 않습니다. reviewer fail/block이면 overall status는 plain success가 아닙니다.
 
 ### `tigerkit-launch-receipt` block
 
@@ -398,6 +408,21 @@ worktree_context:
 preconditions:
   checked: []
   failed: []
+execution:
+  status: SUCCESS | ABORTED | FAILED_PREFLIGHT
+  tasks_completed: <done>/<total>
+verification:
+  passed: []
+  failed: []
+  blocked: []
+acceptance_review:
+  required: true | false
+  policy_mode: required | optional | skip
+  reviewer: tk-reviewer | none
+  status: REVIEW_PASS | REVIEW_PARTIAL | REVIEW_FAIL | REVIEW_BLOCKED | NOT_RUN_OPTIONAL | SKIPPED
+  reason: <text|null>
+  review_report_path: .claude/tigerkit/branches/<branch-key>/review/<RVW-ID>.md | null
+overall_status: SUCCESS | PARTIAL | ABORTED
 abort_feedback:
   reusable_gap_input: true | false
   failed_task: <T-ID|null>
@@ -418,20 +443,33 @@ SUCCESS stdout:
 브랜치 범위: <branch-key>
 워크플로: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
 워크플로 해시: <sha256>
-결과: SUCCESS
+결과: SUCCESS | PARTIAL
 
 실행 하네스: tk-runner / model=sonnet / status=<active|fallback_inline|unavailable>
 워크트리 컨텍스트: <none|proposal:<count>|approval_required>
-작업: <done>/<total>
-검증 게이트: <passed>/<total>
-커밋: <created|skipped_preflight_required|skipped_not_requested|skipped_not_git_repo|skipped_no_github_remote|skipped_readonly_workspace|skipped_commit_policy_skip>
+실행:
+- 상태: SUCCESS
+- 작업: <done>/<total>
 
+검증:
+- 통과: <passed>/<total>
+- 실패: <failed>
+- 차단: <blocked>
+
+수용 검토:
+- 상태: <REVIEW_PASS|REVIEW_PARTIAL|REVIEW_FAIL|REVIEW_BLOCKED|NOT_RUN_OPTIONAL|SKIPPED>
+- Reviewer: <tk-reviewer|none>
+
+종합:
+- 상태: <SUCCESS|PARTIAL>
+
+커밋: <created|skipped_preflight_required|skipped_not_requested|skipped_not_git_repo|skipped_no_github_remote|skipped_readonly_workspace|skipped_commit_policy_skip>
 보고서: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
 최신본: .claude/tigerkit/branches/<branch-key>/launch/current.md
 Reflect 보고서: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
 Reflect 최신본: .claude/tigerkit/branches/<branch-key>/reflect/current.md
 
-다음 행동: <없음|reflect 제안 검토|commit 승인 필요>
+다음 행동: <없음|reflect 제안 검토|review finding 반영|commit 승인 필요>
 ```
 
 ABORTED stdout:
@@ -441,21 +479,34 @@ ABORTED stdout:
 브랜치 범위: <branch-key>
 워크플로: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
 워크플로 해시: <sha256|unknown>
-결과: ABORTED
-중단 코드: <CODE>
+결과: ABORTED | PARTIAL
+중단 코드: <CODE|없음>
 원인: <한글 1줄>
 
 실행 하네스: tk-runner / model=sonnet / status=<active|fallback_inline|unavailable>
 워크트리 컨텍스트: <none|proposal:<count>|approval_required>
-완료 작업: <done>/<total>
-실패 게이트: <VG-ID|없음>
+실행:
+- 상태: <ABORTED|FAILED_PREFLIGHT>
+- 완료 작업: <done>/<total>
+
+검증:
+- 통과: <passed>/<total>
+- 실패: <failed>
+- 차단: <blocked>
+
+수용 검토:
+- 상태: <REVIEW_FAIL|REVIEW_BLOCKED|NOT_RUN_OPTIONAL|SKIPPED|없음>
+- Reviewer: <tk-reviewer|none>
+
+종합:
+- 상태: <ABORTED|PARTIAL>
 
 보고서: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
 최신본: .claude/tigerkit/branches/<branch-key>/launch/current.md
 Reflect 보고서: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
 Reflect 최신본: .claude/tigerkit/branches/<branch-key>/reflect/current.md
 
-다음 행동: <사용자 결정 필요|workflow 재생성|scope 조정|검증 실패 수정>
+다음 행동: <사용자 결정 필요|workflow 재생성|scope 조정|검증 실패 수정|review finding 반영>
 ```
 
 상태 기호는 첫 줄에만 씁니다. Logical group 사이에는 빈 줄을 두어 receipt를 읽기 쉽게 만듭니다.
@@ -478,14 +529,15 @@ Abort code 목록:
 - `GITHUB_REQUIRED_UNAVAILABLE`
 - `VERIFICATION_UNAVAILABLE`
 
-
 ## `/tk:review` Output Contract
 
 - 목적: frozen goal/spec 또는 sealed workflow 대비 launch 결과와 현재 구현을 검증하고 verdict를 남깁니다.
 - `/tk:gap --review`는 v7 Contract-based Gap Review compatibility mode이며, `/tk:review`는 post-launch verification command입니다.
-- 기본 target은 latest launch receipt가 참조하는 workflow이고, 없으면 latest GAP, handoff, 명시 path, 사용자 goal/spec 순서로 찾습니다.
+- standalone target 우선순위는 explicit target, current diff, branch diff, latest launch receipt, current PR context, blocked입니다.
 - 구현 수정, launch 실행, commit, push, PR, merge, release, deploy, GitHub issue write는 수행하지 않습니다.
 - verification 없이 `REVIEW_PASS`를 선언하지 않습니다.
+- review는 `Review Target`을 먼저 pin하고 Spec / Standards / Evidence 축을 분리합니다.
+- latest embedded review가 같은 target을 이미 커버하고 new diff가 없으면 duplicate review를 반복하지 않습니다.
 
 기본 receipt 위치:
 
@@ -502,15 +554,23 @@ review_id: RVW-YYYYMMDD-HHmmss-RAND
 scope_kind: git_branch | git_detached | git_no_remote | workspace
 scope_key: <branch-key-or-workspace-key>
 status: REVIEW_PASS | REVIEW_PARTIAL | REVIEW_FAIL | REVIEW_BLOCKED
-verdict: Pass | Partial | Fail | Blocked
 target:
-  source: workflow | launch | handoff | user | path | none
-  ref: <path#section or none>
+  mode: current_diff | branch_diff | pr | artifact | claim | latest_launch | blocked
+  basis: <why selected>
+  ref: <path#section or target ref>
+  alternatives_skipped: []
+axes:
+  spec: PASS | PARTIAL | FAIL | BLOCKED | NO_SPEC
+  standards: PASS | PARTIAL | FAIL | BLOCKED
+  evidence: VERIFIED | PARTIAL | FAILED | BLOCKED | ASSUMED
 requirements_checked: []
 verification:
   passed: []
   failed: []
   blocked: []
+duplicate_review:
+  matched_latest_embedded_review: true | false
+  no_new_diff: true | false
 closed_gaps: []
 remaining_gaps: []
 drift_risks: []
@@ -523,8 +583,12 @@ next_action: <one sentence or 없음>
 ✅ Review 완료: <RVW-ID>
 브랜치 범위: <branch-key>
 결과: REVIEW_PASS | REVIEW_PARTIAL | REVIEW_FAIL | REVIEW_BLOCKED
-Verdict: Pass | Partial | Fail | Blocked
-대상: <workflow|launch|handoff|user|path|none>:<ref>
+대상: <current_diff|branch_diff|pr|artifact|claim|latest_launch|blocked>:<ref>
+
+축 판정:
+- Spec: <PASS|PARTIAL|FAIL|BLOCKED|NO_SPEC>
+- Standards: <PASS|PARTIAL|FAIL|BLOCKED>
+- Evidence: <VERIFIED|PARTIAL|FAILED|BLOCKED|ASSUMED>
 
 검증: <passed>/<total> 통과, <failed> 실패, <blocked> 차단
 닫힌 gap: <count>
@@ -550,7 +614,9 @@ Drift/Risk: <none|count>
 
 ## 요약
 ## Review Target
-## Verification Evidence
+## Spec Axis
+## Standards Axis
+## Evidence Axis
 ## Closed Gaps
 ## Remaining Gaps
 ## Drift / Risk
@@ -642,9 +708,8 @@ next_action: <one sentence or 없음>
 - 같은 insight를 중복 반영하지 않습니다.
 - 기존 durable guidance inventory 후 Frequency, Cost, Risk, Stability, Coverage rubric으로 후보를 평가합니다.
 - 근거가 부족한 후보는 `Needs more evidence`로 남기고 durable rule로 승격하지 않습니다.
-- reflect 처리 직후 `/tk:meta-feedback`을 proposal-only로 함께 제출합니다.
-- `--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 meta-feedback 제출을 생략합니다.
-
+- meta-feedback는 기본적으로 emit하지 않습니다. current run이 TigerKit-level friction을 드러낼 때만 proposal-only로 첨부하며, 그렇지 않으면 `Meta-feedback: NONE`을 출력합니다.
+- `--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 meta-feedback 판단 자체를 생략합니다.
 
 ### `tigerkit-reflect-report` block
 
@@ -659,7 +724,9 @@ mode: generated_report_only | durable_apply
 applied: []
 skipped: []
 proposal_only: []
+user_routine_skill_review: []
 user_memory_candidates: []
+meta_feedback: NONE | PRESENT | SKIPPED_BY_USER
 ```
 
 기본 stdout:
@@ -676,18 +743,19 @@ Reflect 완료
 - <updated>건 갱신
 - <skipped>건 중복으로 건너뜀
 
-요약:
-- <한글 insight summary>
+## Repo Insight
+- <한글 insight summary 또는 NONE>
+
+## 사용자 루틴 스킬 검토
+- Decision: NONE | SNIPPET | USER_SKILL_CANDIDATE | REPO_RULE | HOOK_OR_SCRIPT | COMMAND
+- Reason:
+  - <한글 reason 또는 없음>
+
+## Meta-feedback
+Meta-feedback: NONE | PRESENT
 
 추가 근거 필요:
 - <확인 필요 항목 또는 None>
-
-사용자 메모리 후보:
-- <candidate or None>
-  자동 적용: false
-
-메타 피드백:
-- 제출됨
 ```
 
 Dry-run stdout:
@@ -704,21 +772,22 @@ Reflect 완료
 - <updated>건 갱신 예정
 - <skipped>건 중복으로 건너뜀
 
-요약:
-- <한글 preview summary>
+## Repo Insight
+- <한글 preview summary 또는 NONE>
+
+## 사용자 루틴 스킬 검토
+- Decision: NONE | SNIPPET | USER_SKILL_CANDIDATE | REPO_RULE | HOOK_OR_SCRIPT | COMMAND
+- Reason:
+  - <한글 reason 또는 없음>
+
+## Meta-feedback
+Meta-feedback: NONE | PRESENT
 
 추가 근거 필요:
 - <확인 필요 항목 또는 None>
-
-사용자 메모리 후보:
-- <candidate or None>
-  자동 적용: false
-
-메타 피드백:
-- 제출됨
 ```
 
-`--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 `메타 피드백: 사용자가 생략함`으로 출력합니다.
+`--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 `Meta-feedback: SKIPPED_BY_USER`로 출력합니다.
 
 Reflect no-op success:
 
@@ -734,18 +803,19 @@ Reflect 완료
 - <skipped>건 중복으로 건너뜀
 - <no_action>건 조치 없음
 
-요약:
+## Repo Insight
 - 영구 반영할 insight 없음.
+
+## 사용자 루틴 스킬 검토
+- Decision: NONE
+- Reason:
+  - 없음
+
+## Meta-feedback
+Meta-feedback: NONE
 
 추가 근거 필요:
 - <확인 필요 항목 또는 None>
-
-사용자 메모리 후보:
-- <candidate or None>
-  자동 적용: false
-
-메타 피드백:
-- 제출됨
 ```
 
 Reflect excludes:
@@ -757,82 +827,43 @@ Reflect excludes:
 - rejected finding
 - low-confidence observation
 - unresolved source conflict
-- 별도 `tigerkit-reflections.md` sidecar 생성
-
-## `/tk:handoff` Output Contract
-
-- 목적: 다음 세션이나 다른 작업자가 이어받을 continuation 문서를 작성합니다.
-- canonical 기록 위치: `.claude/tigerkit/branches/<branch-key>/handoffs/current.md`
-- 최신 handoff path는 `.claude/tigerkit/global-index.json`의 current branch entry에 `latestHandoffPath`로 함께 기록합니다.
-- 경로를 지정하지 않은 resume 지시는 `.claude/tigerkit/global-index.json`의 `latestHandoffPath`를 1순위로 조회합니다.
-- 현재 작업을 방해하면 안 되는 follow-up은 `Pending Backlog`에 source/evidence/priority/blocked-by/next action과 함께 저장할 수 있습니다.
-- `archive=true` 또는 사용자 명시 archive 요청이 있을 때만 branch-local dated archive를 추가로 만듭니다.
-- `.claude/handoffs/current.md`는 optional convenience pointer이며 canonical handoff를 대체하지 않습니다.
-- v8.0에서는 최신 branch-local Spec Patch, Gap workflow, Launch Run path를 Relevant Files 또는 Validation에 포함할 수 있습니다.
-- handoff는 durable rule 저장소가 아닙니다.
-
-채팅 receipt:
-
-```text
-handoff 작성했습니다.
-- 기록: .claude/tigerkit/branches/<branch-key>/handoffs/current.md
-- 인덱스 포인터: .claude/tigerkit/global-index.json 갱신
-- 아카이브: 없음
-- 포인터: 없음
-- 다음 행동: .claude/tigerkit/global-index.json의 latestHandoffPath를 확인하고 `Next Actions`부터 이어가.
-```
-
-필수 section:
-
-```md
-# Handoff: <task title>
-
-## Reader Guide
-## Mission
-## Current State
-## Key Decisions
-## Relevant Files
-## Basis / References
-## Completed Work
-## Pending Work
-## Pending Backlog
-## Known Risks / Unknowns
-## Failed Attempts / Do Not Repeat
-## Validation
-## 다음 행동s
-## Resume Prompt
-```
 
 ## `/tk:meta-feedback` Output Contract
 
 - 목적: 현재 세션에서 관측된 TigerKit command/skill 개선점을 프로젝트 자산 유출 없이 일반화합니다.
 - 세션 내역 전체에서 friction, 사용자 교정, 반복 실수, output UX 문제, latency 문제, false-positive pattern을 찾습니다.
 - 기본값은 proposal-only입니다.
+- emit 대상은 TigerKit 자체가 야기한 workflow/tooling friction뿐입니다. ordinary task learning, repo/domain insight, user routine pattern, next-step follow-up은 emit하지 않고 각각 `/tk:reflect`, `/tk:handoff`, `/tk:next`로 route합니다.
 - `--out <path>`가 있을 때만 current worktree root 내부 지정 경로에 파일을 작성할 수 있습니다.
 - worktree root 밖 경로, user home, `/tmp`, hidden control file path에는 쓰지 않습니다.
 - raw session evidence, 사용자 원문 quote, repo 이름, product 이름, 도메인 고유명, 내부 path, URL, ticket, branch, PR 번호, commit hash를 출력하지 않습니다.
 - emit 전에 Domain-term guard를 실행해 project/framework/product 이름, path fragment, 파일 확장자, CamelCase/code identifier, domain entity, URL/reference 형태가 남은 proposal을 rewrite 또는 reject합니다.
 - 각 proposal은 “다른 repo·다른 도메인에서도 그대로 말이 되는가?”라는 Restate test를 통과해야 합니다.
-- repo rule patch와 repo/도메인 insight는 `/tk:reflect`, basis-target 비교는 `/tk:gap`, follow-up 보관은 `/tk:handoff`, command·skill 계약 friction은 `/tk:meta-feedback` 대상으로 분리합니다.
+- repo rule patch와 repo/도메인 insight는 `/tk:reflect`, basis-target 비교는 `/tk:gap`, follow-up 보관은 `/tk:handoff` 또는 `/tk:next`, command·skill 계약 friction은 `/tk:meta-feedback` 대상으로 분리합니다.
 - 산출물은 대상 command/skill의 자체 계약 어휘와 feedback taxonomy만 사용합니다.
 - agent runtime/config, MCP permission, custom agent 추천은 TigerKit 본체 범위 밖으로 둡니다.
 
 필수 section:
 
 ```md
-## 메타 피드백 요약
-- 대상: <skill-or-command>
-- 피드백 분류: <ux|output-format|taxonomy|safety|dispatch|docs|performance|false-positive>
-- 개인정보 처리 상태: generalized
+## TigerKit Meta-feedback
+Affected command or doc:
+- <skill-or-command>
 
-## 일반화된 마찰
-- 상황: <generic situation>
-- 문제: <generic problem>
-- 영향: <generic impact>
+Feedback class:
+- <ux|output-format|taxonomy|safety|dispatch|docs|performance|false-positive>
 
-## 개선 제안
-- 변경: <generic skill/command improvement>
-- 이유: <reason without project-specific evidence>
+Observed issue:
+- <generic issue>
+
+Evidence from current run:
+- <source_type=...>
+
+Why this is TigerKit-level:
+- <generic reason>
+
+Minimal proposed fix:
+- <generic command/skill improvement>
 
 ## 비식별화 기록
 - 제거: <repo names|paths|URLs|domain labels|quoted user text>
@@ -842,7 +873,21 @@ handoff 작성했습니다.
 - 포함된 위험 상세: none
 ```
 
-안전하게 일반화할 수 없거나 Restate test를 통과하지 못하면 `개인정보 처리 상태: cannot_generalize_safely`, `변경: none`, `이유: privacy gate failed` 또는 `이유: generalization gate failed`를 사용합니다.
+유효한 TigerKit-level issue가 없으면 아래 형식으로 끝냅니다.
+
+```md
+## TigerKit Meta-feedback
+Meta-feedback: NONE
+
+## 비식별화 기록
+- 제거: none
+- 유지: none
+- 일반화 게이트: not_applicable
+- 재진술 테스트: not_applicable
+- 포함된 위험 상세: none
+```
+
+안전하게 일반화할 수 없거나 Restate test를 통과하지 못하면 `Minimal proposed fix: none`, `이유: privacy gate failed` 또는 `이유: generalization gate failed`에 해당하는 상태로 중단합니다.
 
 ## Evidence Rule
 

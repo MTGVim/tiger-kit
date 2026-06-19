@@ -7,10 +7,10 @@ argument-hint: "[workflow path|--latest] [--autopilot] [--worktree|--no-worktree
 
 사용자에게는 한글로 답합니다. 코드, path, URL, ticket, commit, hash, identifier, error, contract field name은 원문 그대로 둘 수 있습니다.
 
-목표: `/tk:launch`는 `/tk:gap`이 만든 sealed launch workflow만 실행하고, workflow 밖 scope 확장이나 mid-flight 질문 없이 성공 또는 abort receipt를 남깁니다. 실행은 가능한 경우 `tk-runner` subagent가 담당하며, model/runtime harness 상태를 preflight와 receipt에 기록합니다.
+목표: `/tk:launch`는 `/tk:gap`이 만든 sealed launch workflow만 실행하고, workflow 밖 scope 확장이나 mid-flight 질문 없이 성공 또는 abort receipt를 남깁니다. 실행은 가능한 경우 `tk-runner` subagent가 담당하며, verification gate 이후 workflow의 `review_policy`가 `required`이면 read-only `tk-reviewer` acceptance review를 실행합니다. model/runtime harness 상태와 execution·verification·acceptance review·overall status는 preflight와 receipt에 기록합니다.
 
 ```text
-launch = preflight + tk-runner sealed workflow execution + verify gates + abort safely + reflect trace
+launch = preflight + tk-runner sealed workflow execution + verify gates + optional embedded acceptance review + abort safely + reflect trace
 ```
 
 ## Command surface
@@ -18,6 +18,7 @@ launch = preflight + tk-runner sealed workflow execution + verify gates + abort 
 - plugin slash invocation은 `/tk:launch`입니다.
 - `/tk:launch`는 `agents/tk-runner.md` subagent를 기본 실행 harness로 사용합니다.
 - `tk-runner` Claude Code agent는 `model: sonnet`으로 배포됩니다. 휴대 가능한 canonical contract에는 concrete model name을 쓰지 않지만, Claude Code adapter 산출물인 agent frontmatter에는 host-specific model alias를 둘 수 있습니다.
+- workflow의 `review_policy.mode == required`이면 verification gate 이후 read-only `tk-reviewer` acceptance review를 실행합니다. `optional`이면 reviewer를 실행하지 않아도 되지만 receipt에 not-run 이유를 남기고, `skip`이면 명시 skip으로 기록합니다.
 - `/tk:launch --autopilot`은 Phase 1에서 recovery를 수행하지 않고 `AUTOPILOT_DISABLED` 또는 `AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1`로 abort합니다.
 - `/tk:launch --worktree`와 `/tk:launch --no-worktree`는 preflight 선택지를 문서화합니다. Worktree context는 자동 symlink하지 않고, launch preflight에서 후보를 감지해 proposal로 기록합니다.
 
@@ -130,7 +131,7 @@ runtime_harness:
 4. block body를 LF로 정규화하고 final LF를 하나 보장한 뒤 SHA-256을 계산합니다.
 5. `tigerkit-gap-status`와 `branch-state.json`에 기록된 외부 `workflow_sha256`과 계산값을 비교합니다. `tigerkit-launch-workflow` 내부 자기참조 hash는 사용하지 않습니다.
 6. `status`가 `GAP_READY`인지 확인합니다.
-7. `source_refs`, `requirements`, `tasks`, `verification_gates`, `abort_policy`, `commit_policy`를 확인합니다.
+7. `source_refs`, `requirements`, `tasks`, `verification_gates`, `abort_policy`, `commit_policy`, `review_policy`를 확인합니다.
 8. `TIGERKIT_SESSION_START` worktree context proposal 또는 matching decline marker를 확인하고 receipt에 기록합니다. Command마다 같은 후보를 다시 스캔하거나 다시 묻지 않습니다.
 9. workflow가 worktree context를 required precondition으로 명시했으면 approval/apply evidence가 있는지 확인합니다.
 10. runtime harness를 확인합니다. `tk-runner` subagent를 사용할 수 있는지, fallback 허용 여부, model binding 관측 가능성을 기록합니다.
@@ -196,6 +197,8 @@ diff_scope:
 - mid-flight 질문을 하지 않습니다. 결정이 필요하면 `HUMAN_DECISION_REQUIRED`로 abort합니다.
 - out-of-scope diff를 만들지 않습니다. 발견하면 `OUT_OF_SCOPE_DIFF`로 abort합니다.
 - verification 없이 success를 선언하지 않습니다.
+- verification gate가 끝나면 `review_policy`를 평가합니다. `required`이면 read-only `tk-reviewer` acceptance review를 실행하고, `optional`이면 not-run reason을 receipt에 기록하며, `skip`이면 명시 skip을 남깁니다. reviewer self-report는 evidence가 아니며 현재 diff, artifacts, launch evidence, docs/claim surface의 read-back으로만 판단합니다.
+- reviewer가 fail/block verdict를 내리면 execution이 성공했더라도 overall status는 plain success가 아닙니다. review finding은 다음 `/tk:gap` 또는 `/tk:next`가 소비할 수 있는 structured follow-up으로 남깁니다.
 - commit은 `commit_policy.mode=commit_on_success`만으로 수행하지 않습니다. commit unavailable 상태라도 commit이 required가 아니면 skip reason을 기록하고 success가 가능합니다. preflight receipt에 `user_preapproved_commit=true`와 `approval_source_ref`가 있어야 합니다.
 - worktree context proposal은 자동 적용하지 않습니다. 적용이 필요하면 preflight approval 또는 별도 `/tk:next` action evidence가 필요합니다.
 
@@ -218,7 +221,7 @@ failure_abort_code: VERIFICATION_FAILED
 
 SUCCESS 또는 ABORTED 후 `/tk:launch`는 generated launch report를 남기고 `/tk:reflect`가 읽을 수 있는 trace를 branch-local artifact로 기록합니다.
 
-`HUMAN_DECISION_REQUIRED` 또는 `VERIFICATION_FAILED` abort는 다음 `/tk:gap`이 source input으로 소비할 수 있게 failed task, failed precondition/gate, observed evidence, required decision 또는 failed tool assumption을 구조화해 기록합니다.
+`HUMAN_DECISION_REQUIRED` 또는 `VERIFICATION_FAILED` abort는 다음 `/tk:gap`이 source input으로 소비할 수 있게 failed task, failed precondition/gate, observed evidence, required decision 또는 failed tool assumption을 구조화해 기록합니다. review verdict가 `REVIEW_FAIL` 또는 `REVIEW_BLOCKED`인 경우에도 reviewer finding을 다음 `/tk:gap` 또는 `/tk:next`가 재사용할 수 있게 구조화해 기록합니다.
 
 Reflect postflight는 durable apply나 commit을 자동 수행하지 않습니다. preflight에서 승인되지 않은 durable rule 변경은 proposal 또는 generated report에만 남깁니다.
 
@@ -241,20 +244,33 @@ SUCCESS stdout:
 브랜치 범위: <branch-key>
 워크플로: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
 워크플로 해시: <sha256>
-결과: SUCCESS
+결과: SUCCESS | PARTIAL
 
 실행 하네스: tk-runner / model=sonnet / status=<active|fallback_inline|unavailable>
 워크트리 컨텍스트: <none|proposal:<count>|approval_required>
-작업: <done>/<total>
-검증 게이트: <passed>/<total>
-커밋: <created|skipped_preflight_required|skipped_not_requested|skipped_not_git_repo|skipped_no_github_remote|skipped_readonly_workspace|skipped_commit_policy_skip>
+실행:
+- 상태: SUCCESS
+- 작업: <done>/<total>
 
+검증:
+- 통과: <passed>/<total>
+- 실패: <failed>
+- 차단: <blocked>
+
+수용 검토:
+- 상태: <REVIEW_PASS|REVIEW_PARTIAL|REVIEW_FAIL|REVIEW_BLOCKED|NOT_RUN_OPTIONAL|SKIPPED>
+- Reviewer: <tk-reviewer|none>
+
+종합:
+- 상태: <SUCCESS|PARTIAL>
+
+커밋: <created|skipped_preflight_required|skipped_not_requested|skipped_not_git_repo|skipped_no_github_remote|skipped_readonly_workspace|skipped_commit_policy_skip>
 보고서: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
 최신본: .claude/tigerkit/branches/<branch-key>/launch/current.md
 Reflect 보고서: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
 Reflect 최신본: .claude/tigerkit/branches/<branch-key>/reflect/current.md
 
-다음 행동: <없음|worktree context 제안 검토|reflect 제안 검토|commit 승인 필요>
+다음 행동: <없음|reflect 제안 검토|review finding 반영|commit 승인 필요>
 ```
 
 ABORTED stdout:
@@ -264,21 +280,34 @@ ABORTED stdout:
 브랜치 범위: <branch-key>
 워크플로: .claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md
 워크플로 해시: <sha256|unknown>
-결과: ABORTED
-중단 코드: <CODE>
+결과: ABORTED | PARTIAL
+중단 코드: <CODE|없음>
 원인: <한글 1줄>
 
 실행 하네스: tk-runner / model=sonnet / status=<active|fallback_inline|unavailable>
 워크트리 컨텍스트: <none|proposal:<count>|approval_required>
-완료 작업: <done>/<total>
-실패 게이트: <VG-ID|없음>
+실행:
+- 상태: <ABORTED|FAILED_PREFLIGHT>
+- 완료 작업: <done>/<total>
+
+검증:
+- 통과: <passed>/<total>
+- 실패: <failed>
+- 차단: <blocked>
+
+수용 검토:
+- 상태: <REVIEW_FAIL|REVIEW_BLOCKED|NOT_RUN_OPTIONAL|SKIPPED|없음>
+- Reviewer: <tk-reviewer|none>
+
+종합:
+- 상태: <ABORTED|PARTIAL>
 
 보고서: .claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md
 최신본: .claude/tigerkit/branches/<branch-key>/launch/current.md
 Reflect 보고서: .claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md
 Reflect 최신본: .claude/tigerkit/branches/<branch-key>/reflect/current.md
 
-다음 행동: <사용자 결정 필요|workflow 재생성|scope 조정|검증 실패 수정|worktree context 승인>
+다음 행동: <사용자 결정 필요|workflow 재생성|scope 조정|검증 실패 수정|review finding 반영>
 ```
 
 ## 금지
@@ -287,6 +316,7 @@ Reflect 최신본: .claude/tigerkit/branches/<branch-key>/reflect/current.md
 - missing requirement 임의 해석
 - public API / DB / product behavior 재정의
 - verification 없이 success 선언
+- reviewer self-report를 evidence로 취급
 - out-of-scope diff commit
 - mid-flight 사용자 질문
 - Phase 1 autopilot recovery 수행
