@@ -7,10 +7,10 @@ argument-hint: "[review target|--latest] [--against <workflow|spec|handoff|path>
 
 사용자에게는 한글로 답합니다. 코드, path, URL, ticket, commit, hash, identifier, error, contract field name은 원문 그대로 둘 수 있습니다.
 
-목표: `/tk:review`는 구현이 frozen goal/spec 또는 latest sealed workflow의 requirements와 verification gate를 실제로 만족했는지 확인하고, 남은 gap·drift·risk를 분리한 뒤 다음 결정을 제안합니다.
+목표: `/tk:review`는 구현이 frozen goal/spec 또는 latest sealed workflow의 requirements와 verification gate를 실제로 만족했는지 확인하고, target을 먼저 pin한 뒤 Spec / Standards / Evidence 축으로 검증하며, 남은 gap·drift·risk를 분리한 뒤 다음 결정을 제안합니다.
 
 ```text
-review = compare frozen target + observed implementation + verification evidence -> Pass | Partial | Fail
+review = pin target + compare frozen target + observed implementation + verification evidence -> Pass | Partial | Fail
 ```
 
 ## Command surface
@@ -42,13 +42,35 @@ Missing artifacts are not fatal by themselves. Treat them as review scope eviden
 
 우선순위:
 
-1. 명시 `--against <path>` 또는 command argument의 repo-local path
-2. latest launch receipt가 참조하는 `workflow_path`
-3. latest GAP `gap/current.md`의 sealed `tigerkit-launch-workflow`
-4. latest handoff의 `Mission`, `Key Decisions`, `Pending Work`, `Validation`
-5. 사용자 메시지의 explicit goal/spec
+1. 명시 `--against <path|claim|PR URL>` 또는 command argument의 explicit target
+2. current working tree diff
+3. current branch diff
+4. latest launch receipt
+5. current PR context, if readable
+6. 그렇지 않으면 `REVIEW_BLOCKED`
 
-위 항목이 모두 없으면 `REVIEW_BLOCKED`로 끝내고 필요한 source를 짧게 적습니다.
+지원 대상은 아래 mode로 pin합니다.
+
+```text
+current_diff | branch_diff | pr | artifact | claim | latest_launch | blocked
+```
+
+모든 standalone review는 finding 전에 아래를 먼저 고정합니다.
+
+```md
+## Review Target
+
+Mode: current_diff | branch_diff | pr | artifact | claim | latest_launch | blocked
+
+Basis:
+- why this target was selected
+- what alternatives were skipped
+
+Target:
+- exact files, diff range, PR URL, artifact, claim, or launch receipt
+```
+
+위 target을 current evidence로 고정할 수 없으면 `REVIEW_BLOCKED`로 끝내고 필요한 source를 짧게 적습니다.
 
 ## Comparison policy
 
@@ -64,11 +86,47 @@ Suggestion = proposed, not confirmed
 검증 절차:
 
 1. frozen target의 confirmed requirements, non-goals, verification gates를 추출합니다.
-2. latest launch receipt가 있으면 task 결과, failed gate, abort code, commit status, reflect trace를 읽습니다.
+2. latest launch receipt가 있으면 execution status, verification 결과, acceptance review verdict, abort code, reflect trace를 읽습니다.
 3. current implementation은 파일, diff, rendered output, command output 등 관측 가능한 evidence로만 평가합니다.
 4. claimed closed gap은 해당 requirement와 verification evidence를 모두 대조합니다.
 5. scope drift는 workflow/goal 밖 변경, non-goal 침범, 새로운 user-facing surface를 기준으로 분리합니다.
 6. 새 source decision이 필요하면 추측하지 않고 `REVIEW_BLOCKED` 또는 `REVIEW_PARTIAL`로 남깁니다.
+
+Review는 최소 세 축을 분리합니다.
+
+### 1. Spec axis
+
+- originating requirement를 충족하는지 봅니다.
+- source는 sealed workflow, launch receipt, issue, RFC, PRD, README claim, release note, PR description, explicit user claim일 수 있습니다.
+- spec source가 없으면 `Spec Source: NO_SPEC`로 남기고 요구사항을 발명하지 않습니다.
+
+### 2. Standards axis
+
+- repo/project standards를 따르는지 봅니다.
+- source는 existing nearby code, tests, README, CONTRIBUTING, `CLAUDE.md`, `.claude/rules/**/*.md`, package scripts일 수 있습니다.
+
+### 3. Evidence axis
+
+- claim이 current evidence로 증명됐는지 봅니다.
+- verdict와 별도로 `verified`, `not verified`, `not run`, `blocked`, `assumed`를 구분합니다.
+- self-report, README 문구, release note, stale previous run은 단독 증거가 아닙니다.
+
+## Duplicate review guard
+
+latest embedded review가 같은 target을 이미 커버하고 있고 new diff가 없으면 같은 review를 맹목적으로 반복하지 않습니다.
+
+이 경우에는 아래 사실을 먼저 보고합니다.
+
+```text
+Latest embedded review already covers this target.
+No new diff detected.
+```
+
+그 뒤에는 아래 중 하나만 수행합니다.
+
+- latest review receipt를 재표시
+- 새 target 요청을 안내
+- 사용자가 명시적으로 rerun을 요청했을 때만 재실행
 
 ## Verdict rules
 
@@ -133,7 +191,9 @@ Review report는 generated branch-local working memory입니다. durable repo ru
 
 ## 요약
 ## Review Target
-## Verification Evidence
+## Spec Axis
+## Standards Axis
+## Evidence Axis
 ## Closed Gaps
 ## Remaining Gaps
 ## Drift / Risk
@@ -146,15 +206,23 @@ review_id: RVW-YYYYMMDD-HHmmss-RAND
 scope_kind: git_branch | git_detached | git_no_remote | workspace
 scope_key: <branch-key-or-workspace-key>
 status: REVIEW_PASS | REVIEW_PARTIAL | REVIEW_FAIL | REVIEW_BLOCKED
-verdict: Pass | Partial | Fail | Blocked
 target:
-  source: workflow | launch | handoff | user | path | none
-  ref: <path#section or none>
+  mode: current_diff | branch_diff | pr | artifact | claim | latest_launch | blocked
+  basis: <why selected>
+  ref: <path#section or target ref>
+  alternatives_skipped: []
+axes:
+  spec: PASS | PARTIAL | FAIL | BLOCKED | NO_SPEC
+  standards: PASS | PARTIAL | FAIL | BLOCKED
+  evidence: VERIFIED | PARTIAL | FAILED | BLOCKED | ASSUMED
 requirements_checked: []
 verification:
   passed: []
   failed: []
   blocked: []
+duplicate_review:
+  matched_latest_embedded_review: true | false
+  no_new_diff: true | false
 closed_gaps: []
 remaining_gaps: []
 drift_risks: []
@@ -168,8 +236,12 @@ next_action: <one sentence or 없음>
 ✅ Review 완료: <RVW-ID>
 브랜치 범위: <branch-key>
 결과: REVIEW_PASS | REVIEW_PARTIAL | REVIEW_FAIL | REVIEW_BLOCKED
-Verdict: Pass | Partial | Fail | Blocked
-대상: <workflow|launch|handoff|user|path|none>:<ref>
+대상: <current_diff|branch_diff|pr|artifact|claim|latest_launch|blocked>:<ref>
+
+축 판정:
+- Spec: <PASS|PARTIAL|FAIL|BLOCKED|NO_SPEC>
+- Standards: <PASS|PARTIAL|FAIL|BLOCKED>
+- Evidence: <VERIFIED|PARTIAL|FAILED|BLOCKED|ASSUMED>
 
 검증: <passed>/<total> 통과, <failed> 실패, <blocked> 차단
 닫힌 gap: <count>

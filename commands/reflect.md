@@ -31,8 +31,9 @@ reflect = branch/workspace-local gap+launch working memory -> safest available d
 - 같은 insight를 중복 반영하지 않습니다.
 - 후보 평가 전 기존 `CLAUDE.md`와 `.claude/rules/**/*.md`를 inventory해 이미 커버되는 guidance를 찾습니다.
 - 적용 결과 diff/summary를 출력합니다.
-- 기본적으로 reflect 처리 직후 같은 세션에서 `/tk:meta-feedback`을 proposal-only로 함께 제출합니다.
-- `--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 meta-feedback 제출을 생략합니다.
+- meta-feedback는 기본적으로 발행하지 않습니다. TigerKit 자체가 friction, ambiguity, wrong behavior, 또는 avoidable failure를 만들었다는 current-run evidence가 있을 때만 proposal-only meta-feedback을 함께 제출할 수 있습니다.
+- TigerKit-level issue가 없으면 정확히 `Meta-feedback: NONE`을 출력합니다.
+- `--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 meta-feedback 판단 자체를 생략합니다.
 
 ## Apply behavior
 
@@ -40,9 +41,9 @@ reflect = branch/workspace-local gap+launch working memory -> safest available d
 | --- | --- |
 | `/tk:reflect` | `apply=true` |
 | `/tk:reflect --apply=true` | 기본값과 동일 |
-| `/tk:reflect --dry-run` | `apply=false`, meta-feedback 기본 제출 |
-| `/tk:reflect --apply=false` | dry-run alias, meta-feedback 기본 제출 |
-| `/tk:reflect --no-meta-feedback` | reflect만 실행하고 meta-feedback 제출 생략 |
+| `/tk:reflect --dry-run` | `apply=false`, meta-feedback는 같은 conditional policy를 따름 |
+| `/tk:reflect --apply=false` | dry-run alias, meta-feedback는 같은 conditional policy를 따름 |
+| `/tk:reflect --no-meta-feedback` | reflect만 실행하고 meta-feedback 판단 생략 |
 | `/tk:reflect --meta-feedback=false` | `--no-meta-feedback` alias |
 
 v8.0에서는 `--apply=true`가 redundant여도 warning을 내지 않습니다.
@@ -176,14 +177,19 @@ Reflect 완료
 - <skipped>건 중복으로 건너뜀
 - <no_action>건 조치 없음
 
-요약:
-- <한글 insight summary>
+## Repo Insight
+- <한글 insight summary 또는 NONE>
+
+## 사용자 루틴 스킬 검토
+- Decision: NONE | SNIPPET | USER_SKILL_CANDIDATE | REPO_RULE | HOOK_OR_SCRIPT | COMMAND
+- Reason:
+  - <한글 reason 또는 없음>
+
+## Meta-feedback
+Meta-feedback: NONE | PRESENT
 
 추가 근거 필요:
 - <확인 필요 항목 또는 None>
-
-메타 피드백:
-- 제출됨
 ```
 
 반영할 durable insight가 없을 때:
@@ -200,14 +206,19 @@ Reflect 완료
 - <skipped>건 중복으로 건너뜀
 - <no_action>건 조치 없음
 
-요약:
+## Repo Insight
 - 영구 반영할 insight 없음.
+
+## 사용자 루틴 스킬 검토
+- Decision: NONE
+- Reason:
+  - 없음
+
+## Meta-feedback
+Meta-feedback: NONE
 
 추가 근거 필요:
 - <확인 필요 항목 또는 None>
-
-메타 피드백:
-- 제출됨
 ```
 
 `--dry-run` 또는 `--apply=false`일 때:
@@ -224,12 +235,22 @@ Reflect 완료
 - <updated>건 갱신 예정
 - <skipped>건 중복으로 건너뜀
 
-요약:
-- <한글 preview summary>
+## Repo Insight
+- <한글 preview summary 또는 NONE>
 
-메타 피드백:
-- 제출됨
+## 사용자 루틴 스킬 검토
+- Decision: NONE | SNIPPET | USER_SKILL_CANDIDATE | REPO_RULE | HOOK_OR_SCRIPT | COMMAND
+- Reason:
+  - <한글 reason 또는 없음>
+
+## Meta-feedback
+Meta-feedback: NONE | PRESENT
+
+추가 근거 필요:
+- <확인 필요 항목 또는 None>
 ```
+
+`--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 `Meta-feedback: SKIPPED_BY_USER`로 출력합니다.
 
 ## Procedure
 
@@ -249,21 +270,10 @@ Reflect 완료
 14. apply=true이지만 적용 대상이 없으면 파일을 수정하지 않고 정상 완료합니다.
 15. apply=false이면 preview만 출력하고 저장 없이 종료
 16. branch lock 해제
-17. `--no-meta-feedback` 또는 `--meta-feedback=false`가 없으면 `/tk:meta-feedback`을 proposal-only로 제출
-18. reflect summary, Needs more evidence, meta-feedback 제출 상태를 출력
-
-`--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 `메타 피드백: 사용자가 생략함`으로 출력합니다.
+17. `--no-meta-feedback` 또는 `--meta-feedback=false`가 없으면 current run에 TigerKit-level issue가 있는지 판단합니다.
+18. TigerKit-level issue가 없으면 `Meta-feedback: NONE`을 출력하고, 있으면 proposal-only `/tk:meta-feedback`을 첨부합니다.
+19. reflect summary, Needs more evidence, user routine skill review, meta-feedback 상태를 출력
 
 ## Conflict handling
 
 충돌 또는 unresolved source conflict가 있으면 해당 candidate는 적용하지 않습니다. summary에 skipped reason을 적습니다.
-
-## 금지
-
-- source code 수정
-- `.claude/tigerkit/` 아래 durable insight 저장
-- branch-local Spec Patch 내용을 repo-wide rule처럼 그대로 복사
-- P3/nit, rejected finding, low-confidence observation 반영
-- unresolved source conflict를 확정 insight처럼 반영
-- duplicate insight 중복 append
-- `apply=true`인데도 별도 `tigerkit-reflections.md` sidecar를 만드는 것

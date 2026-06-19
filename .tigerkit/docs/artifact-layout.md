@@ -82,10 +82,10 @@ MVP에서는 path compatibility를 위해 `branches/` 아래에 저장하지만 
 | `.claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md` | `/tk:gap`이 `GAP_READY`일 때 만드는 sealed launch workflow archive입니다. | branch-local |
 | `.claude/tigerkit/branches/<branch-key>/gap/current.md` | 최신 sealed launch workflow copy입니다. hash seal의 authoritative source는 archive workflow 파일입니다. | branch-local pointer |
 | `.claude/tigerkit/branches/<branch-key>/gap/<GAP-ID>.md` | `/tk:gap`이 `GAP_BLOCKED`일 때 만드는 blocked report입니다. workflow block을 포함하지 않습니다. | branch-local |
-| `.claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md` | `/tk:launch` 실행 또는 abort report입니다. | branch-local execution |
-| `.claude/tigerkit/branches/<branch-key>/launch/current.md` | launch status, task/gate 결과, abort code, commit decision을 보존하는 최소 run record입니다. | branch-local execution |
-| `.claude/tigerkit/branches/<branch-key>/review/<RVW-ID>.md` | `/tk:review`가 frozen target 대비 구현 결과를 검증해 verdict, closed gaps, remaining gaps, drift/risk, next recommendation을 기록하는 report입니다. | branch-local review |
-| `.claude/tigerkit/branches/<branch-key>/review/current.md` | 최신 review report copy입니다. | branch-local pointer |
+| `.claude/tigerkit/branches/<branch-key>/launch/<LCH-ID>.md` | `/tk:launch` 실행 또는 abort report입니다. execution status, verification 결과, acceptance review verdict, overall status를 함께 보존합니다. | branch-local execution |
+| `.claude/tigerkit/branches/<branch-key>/launch/current.md` | launch status, task/gate 결과, abort code, commit decision, embedded review 결과를 보존하는 최소 run record입니다. | branch-local execution |
+| `.claude/tigerkit/branches/<branch-key>/review/<RVW-ID>.md` | `/tk:review`가 frozen target 대비 구현 결과를 검증해 pinned target, Spec / Standards / Evidence 축, verdict, closed gaps, remaining gaps, drift/risk, next recommendation을 기록하는 report입니다. | branch-local review |
+| `.claude/tigerkit/branches/<branch-key>/review/current.md` | 최신 review report copy입니다. latest embedded review reuse 판단의 pointer로도 쓸 수 있습니다. | branch-local pointer |
 | `.claude/tigerkit/branches/<branch-key>/reflect/<RFL-ID>.md` | `/tk:reflect` generated report archive입니다. `tigerkit-reflect-report` block을 포함합니다. durable apply가 아닙니다. | branch-local generated |
 | `.claude/tigerkit/branches/<branch-key>/reflect/current.md` | 최신 reflect report copy입니다. | branch-local pointer |
 | `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/report.md` | `/tk:gap --review` 사용자가 읽는 compatibility gap report 본문입니다. Actionable Findings, Clarification Needed, next action 중심입니다. | branch-local |
@@ -111,7 +111,7 @@ MVP에서는 path compatibility를 위해 `branches/` 아래에 저장하지만 
 .claude/tigerkit/branches/<branch-key>/gap/<GAP-ID>.md      # GAP_BLOCKED report
 ```
 
-`GAP_READY` archive는 사람용 report와 정확히 하나의 `tigerkit-gap-status` block, 정확히 하나의 `tigerkit-launch-workflow` block을 포함합니다. `GAP_BLOCKED` report는 `tigerkit-gap-status` block만 포함하고 `tigerkit-launch-workflow` block을 포함하지 않습니다.
+`GAP_READY` archive는 사람용 report와 정확히 하나의 `tigerkit-gap-status` block, 정확히 하나의 `tigerkit-launch-workflow` block을 포함합니다. `tigerkit-launch-workflow` block에는 embedded acceptance review 여부를 결정하는 `review_policy`가 포함됩니다. `GAP_BLOCKED` report는 `tigerkit-gap-status` block만 포함하고 `tigerkit-launch-workflow` block을 포함하지 않습니다.
 
 `/tk:gap --review` compatibility mode만 v7 review layout을 씁니다.
 
@@ -165,7 +165,7 @@ proof.json
   current.md
 ```
 
-Plain workspace fallback도 `branches/<scope-key>/review/` layout을 사용하고 receipt에 `Scope Kind: workspace`를 표시합니다. review report는 branch/workspace-local generated working memory이며 durable repo rule이나 source of truth가 아닙니다.
+Plain workspace fallback도 `branches/<scope-key>/review/` layout을 사용하고 receipt에 `Scope Kind: workspace`를 표시합니다. review report는 branch/workspace-local generated working memory이며 durable repo rule이나 source of truth가 아닙니다. review receipt는 pinned target, Spec / Standards / Evidence 축, duplicate-review guard 상태를 보존해야 합니다.
 
 `/tk:gap --review` compatibility run은 계속 `runs/gap/<GAP-ID>/report.md`와 `run.json`을 사용합니다. `/tk:review`는 이 compatibility artifact를 덮어쓰지 않습니다.
 

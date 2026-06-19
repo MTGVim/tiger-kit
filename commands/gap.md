@@ -48,7 +48,7 @@ TigerKit 자체 성능 개선, baseline, heuristic proof, performance proof, fal
 3. confirmed requirement, assumption, rejected assumption, non-goal을 정규화합니다.
 4. bounded ambiguity attack으로 contradiction, missing decision, hidden dependency, edge case, failure mode, verification gap을 탐지합니다.
 5. YAGNI trim으로 workflow 밖 future extensibility를 제거합니다.
-6. task graph, task별 `assumed_preconditions`, success/failure condition, verification gate, abort policy, commit policy를 작성합니다.
+6. task graph, task별 `assumed_preconditions`, success/failure condition, verification gate, abort policy, commit policy, review_policy를 작성합니다.
 7. verification gate 중 static/read-only로 확인 가능한 항목을 봉인 전 preflight로 1회 확인하고, 도구 가정 불일치나 unmet precondition을 launch-blocking item으로 승격합니다.
 8. 이전 `/tk:launch` abort trace가 있으면 구조화된 gap input으로 반영해 같은 `HUMAN_DECISION_REQUIRED`/`VERIFICATION_FAILED` 사실을 재발견하지 않습니다.
 9. launch 가능하면 `GAP_READY`와 sealed `tigerkit-launch-workflow`를 저장합니다.
@@ -107,6 +107,8 @@ Verification gates may be shell-based or artifact-based:
 ```text
 shell_command | file_exists | file_contains | artifact_written | link_checked | schema_valid | manual_review_required | receipt_only
 ```
+
+`manual_review_required`는 verification gate type입니다. `/tk:launch` 이후 acceptance review를 강제하는 embedded review는 별도 `review_policy`로 다루며, verification gate를 reviewer judgment로 대체하지 않습니다.
 
 ## `/tk:gap --review` 핵심 원칙
 
@@ -749,7 +751,7 @@ Authoritative stdout contract는 `.tigerkit/docs/output-contract.md`의 `/tk:gap
 ## 준비되지 않은 사유
 ```
 
-`## 생성된 Launch 워크플로`에는 정확히 하나의 `tigerkit-launch-workflow` fenced block을 둡니다. `workflow_sha256`은 이 block 안이 아니라 `tigerkit-gap-status`와 branch state에만 외부 seal로 둡니다.
+`## 생성된 Launch 워크플로`에는 정확히 하나의 `tigerkit-launch-workflow` fenced block을 둡니다. `workflow_sha256`은 이 block 안이 아니라 `tigerkit-gap-status`와 branch state에만 외부 seal로 둡니다. 이 workflow block은 `review_policy`를 포함해야 하며, `/tk:launch`는 이 policy에 따라 embedded acceptance review 실행 여부를 판단합니다.
 
 `GAP_BLOCKED` report는 같은 H2를 사용할 수 있지만 `## 생성된 Launch 워크플로`에 workflow block을 쓰지 않고, `## 준비되지 않은 사유`와 `## 사용자 결정 필요`를 launch 차단 사유 중심으로 채웁니다.
 
