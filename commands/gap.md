@@ -49,14 +49,32 @@ TigerKit 자체 성능 개선, baseline, heuristic proof, performance proof, fal
 3. confirmed requirement, assumption, rejected assumption, non-goal을 정규화합니다.
 4. bounded ambiguity attack으로 contradiction, missing decision, hidden dependency, edge case, failure mode, verification gap을 탐지합니다.
 5. YAGNI trim으로 workflow 밖 future extensibility를 제거합니다.
-6. task graph, task별 `assumed_preconditions`, success/failure condition, verification gate, abort policy, commit policy, review_policy를 작성합니다.
-7. verification gate 중 static/read-only로 확인 가능한 항목을 봉인 전 preflight로 1회 확인하고, 도구 가정 불일치나 unmet precondition을 launch-blocking item으로 승격합니다.
-8. 이전 `/tk:launch` abort trace가 있으면 구조화된 gap input으로 반영해 같은 `HUMAN_DECISION_REQUIRED`/`VERIFICATION_FAILED` 사실을 재발견하지 않습니다.
-9. launch 가능하면 sealed `tigerkit-launch-workflow`를 저장하고, 실행을 분리하면 `GAP_READY`를 보고합니다.
-10. 같은 호출 안에서 정식 launch 루틴까지 수행하는 host 자동화가 명시적으로 활성화되어 있으면 `/tk:launch` contract를 그대로 적용하고 `GAP_AUTO_LAUNCHED`로 보고합니다.
-11. launch 금지 사유가 남으면 `GAP_BLOCKED`와 blocked report를 저장합니다.
+6. model routing policy에 따라 cheap scout output을 non-binding intake evidence로만 쓰고, final freeze/judge 판단은 stronger judgment path에서 수행합니다.
+7. task graph, task별 `assumed_preconditions`, success/failure condition, verification gate, abort policy, commit policy, review_policy를 작성합니다.
+8. 독립 작업은 불필요한 `depends_on` edge를 만들지 않고 별도 task로 분리해 DAG-shaped workflow로 봉인하며, later verification 또는 merge가 필요한 지점은 명시 join point로 기록합니다.
+9. verification gate 중 static/read-only로 확인 가능한 항목을 봉인 전 preflight로 1회 확인하고, 도구 가정 불일치나 unmet precondition을 launch-blocking item으로 승격합니다.
+10. 이전 `/tk:launch` abort trace가 있으면 구조화된 gap input으로 반영해 같은 `HUMAN_DECISION_REQUIRED`/`VERIFICATION_FAILED` 사실을 재발견하지 않습니다.
+11. launch 가능하면 sealed `tigerkit-launch-workflow`를 저장하고, 실행을 분리하면 `GAP_READY`를 보고합니다.
+12. 같은 호출 안에서 정식 launch 루틴까지 수행하는 host 자동화가 명시적으로 활성화되어 있으면 `/tk:launch` contract를 그대로 적용하고 `GAP_AUTO_LAUNCHED`로 보고합니다.
+13. launch 금지 사유가 남으면 `GAP_BLOCKED`와 blocked report를 저장합니다.
 
 Workflow hash는 fenced block body raw UTF-8 bytes를 LF로 정규화하고 final LF를 하나 보장한 뒤 SHA-256으로 계산합니다. opening/closing fence line은 hash에서 제외하고 YAML key sort나 normalize를 하지 않습니다.
+
+## Model routing policy
+
+TigerKit은 host별 concrete model name을 core contract에 고정하지 않고 아래 model tier를 사용합니다. Claude Code adapter 같은 host-specific artifact는 frontmatter나 receipt에 `sonnet` 같은 concrete alias를 기록할 수 있습니다.
+
+| Tier | 허용 범위 | 금지 범위 |
+| --- | --- | --- |
+| cheap scout / session-default / Haiku-class | source inventory, link/doc/file candidate collection, lightweight grounding pre-pass, source grouping, source-by-source intake scaffolding, non-binding draft summary | confirmed requirement normalization, ambiguity attack final decision, producer-evidence-sensitive judgment, `GAP_READY` vs `GAP_BLOCKED` freeze decision, acceptance review verdict |
+| Sonnet-class | final gap freeze/judge, launch execution, verification synthesis, review verdict, durable guidance에 영향을 주는 reflect decision | 없음 |
+| Opus-class escalation | high-risk 또는 semver-major ambiguity, cross-cutting design/adapter/contract arbitration, repeated `REVIEW_BLOCKED`/`REVIEW_PARTIAL` non-convergence, release-gate/high-risk acceptance review | routine source scouting 대체 용도 |
+
+Quality gate invariant:
+
+- cheap scout output은 confirmed source contract가 아니라 non-binding intake/grounding evidence입니다.
+- `analysis-depth`는 source discovery depth만 바꾸며 evidence precision, producer evidence, ambiguity, JudgeMerger gate를 낮추지 않습니다.
+- `GAP_READY`/`GAP_BLOCKED` freeze는 cheap scout 단독 결과로 결정하지 않습니다.
 
 ## Workspace context and fallback mode
 
