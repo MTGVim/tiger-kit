@@ -1,17 +1,16 @@
 {
   "name": "tk",
-  "description": "sealed GAP workflow, human-approved launch, review verdict, durable reflection, steering replacement continuation, meta-feedback, and handoff를 통해 AI-induced source loss를 줄이는 repo-local TigerKit Claude Code 플러그인입니다.",
-  "version": "12.0.0",
+  "description": "gap, grill, afk, reflect, config 중심의 작은 TigerKit Claude Code 플러그인입니다. SoT와 구현의 차이를 분석하고, 설계와 계획을 압박 검증하며, 사용자 결정을 Patron에게 위임하고, 세션 학습과 설정을 관리합니다.",
+  "version": "13.0.0",
   "author": {
     "name": "MTGVim"
   },
   "commands": [
     "./commands/gap.md",
-    "./commands/launch.md",
-    "./commands/review.md",
+    "./commands/grill.md",
+    "./commands/afk.md",
     "./commands/reflect.md",
-    "./commands/next.md",
-    "./commands/meta-feedback.md",
-    "./commands/handoff.md"
+    "./commands/config.md",
+    "./commands/setup.md"
   ]
 }

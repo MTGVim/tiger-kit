@@ -1,630 +1,231 @@
 {
-  "skill_name": "tiger-kit-vNext-sealed-gap-launch-review-reflect",
+  "skill_name": "tiger-kit-slim-gap-grill-afk-reflect-config",
   "command_surface": {
-    "surface_model": "TigerKit vNext exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts without separate repo-local skill or non-Claude adapter files.",
+    "surface_model": "TigerKit Slim exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts.",
     "core_commands": [
       "/tk:gap",
-      "/tk:launch",
-      "/tk:review",
+      "/tk:afk",
       "/tk:reflect"
     ],
-    "compatibility_commands": [
-      "/tk:gap --review",
+    "management_commands": [
+      "/tk:config",
+      "/tk:setup"
+    ],
+    "optional_commands": [
+      "/tk:grill"
+    ],
+    "deprecated_commands": [
+      "/tk:launch",
+      "/tk:review",
+      "/tk:next",
       "/tk:handoff",
       "/tk:meta-feedback"
     ],
-    "gap_terminal_statuses": [
-      "GAP_READY",
-      "GAP_AUTO_LAUNCHED",
-      "GAP_BLOCKED"
-    ],
-    "launch_abort_codes": [
-      "WORKFLOW_NOT_FOUND",
-      "MULTIPLE_WORKFLOW_BLOCKS",
-      "WORKFLOW_HASH_MISMATCH",
-      "GAP_BLOCKED",
-      "HUMAN_DECISION_REQUIRED",
-      "MODEL_HARNESS_UNAVAILABLE",
-      "AUTOPILOT_DISABLED",
-      "AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1",
-      "OUT_OF_SCOPE_DIFF",
-      "WORKTREE_CONTEXT_APPROVAL_REQUIRED",
-      "VERIFICATION_FAILED",
-      "ARTIFACT_ROOT_UNWRITABLE",
-      "COMMIT_REQUIRED_UNAVAILABLE",
-      "GITHUB_REQUIRED_UNAVAILABLE",
-      "VERIFICATION_UNAVAILABLE"
-    ],
-    "phase_1_boundaries": [
-      "Claude Code command-contract runner only",
-      "no adapter implementation files",
-      "no Hermes plugin command adapter in MVP",
-      "no Codex CLI adapter in MVP",
-      "autopilot recovery disabled",
-      "worktree context handling is read-only SessionStart proposal with no automatic symlink/copy side effects",
-      "launch uses tk-runner Claude Code agent with sonnet binding when subagents are available"
-    ],
-    "plugin_version_policy": "Authoritative version is .claude-plugin/plugin.json; evals must not hard-code a concrete version literal.",
-    "utility_commands": [],
-    "workspace_fallback": "GitHub, git, and commit are capabilities, not prerequisites; plain workspace scope uses workspace-<slug>--<hash>; /tk:review can verify from generated artifacts or explicit user targets.",
-    "continuation_commands": [
-      "/tk:next"
-    ]
+    "plugin_version_policy": "Authoritative version is .claude-plugin/plugin.json; evals must not hard-code a concrete version literal."
   },
   "evals": [
     {
       "id": 0,
-      "name": "command-surface-vNext-gap-launch-review-reflect-next-without-spec",
-      "prompt": "Evaluate TigerKit active command surface. Do not write files.",
-      "expected_output": "Should list /tk:gap, /tk:launch, /tk:review, and /tk:reflect as the primary TigerKit flow. Should list /tk:next as a steering replacement continuation command that can attempt the next safe work item and write a receipt, while preserving /tk:gap --review, /tk:handoff, and /tk:meta-feedback as compatibility or secondary commands. Should explain that /tk:review is post-launch frozen-target verification and /tk:gap --review is v7 Contract-based Gap Review compatibility. Should explain that /tk:spec is not exposed in the active command surface because source intake is owned by /tk:gap. Should explain that commands/*.md plus .claude-plugin/plugin.json own the /tk:* contracts and that Hermes/Codex/npx-skills command adapters are out of MVP scope with no adapter files shipped.",
+      "name": "plugin-version-and-command-manifest-slim",
+      "prompt": "Evaluate TigerKit Slim active command surface. Do not write files.",
+      "expected_output": "Should list /tk:gap, /tk:afk, and /tk:reflect as core commands. Should list /tk:grill as an optional command included in the active manifest. Should list /tk:config and /tk:setup as management commands, with /tk:setup described as /tk:config init alias. Should state /tk:launch, /tk:review, /tk:next, /tk:handoff, and /tk:meta-feedback are deprecated launch-era commands and not active manifest entries.",
       "files": [
         ".claude-plugin/plugin.json",
         "README.md",
-        ".tigerkit/docs/usage.md",
-        "commands/review.md"
+        "commands/grill.md",
+        ".tigerkit/docs/usage.md"
       ],
       "expectations": [
         "Lists /tk:gap",
-        "Lists /tk:launch",
+        "Lists /tk:afk",
         "Lists /tk:reflect",
-        "Lists /tk:review",
-        "Does not expose /tk:spec",
-        "Preserves /tk:handoff",
-        "Preserves /tk:meta-feedback",
-        "Mentions /tk:gap --review compatibility",
-        "Treats /tk:* as command-owned plugin contracts",
-        "States Hermes adapter is out of MVP scope",
-        "States Codex adapter is out of MVP scope",
-        "Ships no non-Claude adapter files",
-        "Lists /tk:next as steering replacement continuation command",
-        "Distinguishes /tk:review from /tk:gap --review compatibility"
+        "Lists /tk:config",
+        "Lists /tk:setup alias",
+        "Includes /tk:grill in active manifest",
+        "Does not include /tk:launch in active manifest",
+        "Does not include /tk:next in active manifest",
+        "Does not include /tk:handoff in active manifest",
+        "Documents /tk:grill as optional active command"
       ]
     },
     {
       "id": 1,
-      "name": "gap-ready-produces-sealed-workflow",
-      "prompt": "Evaluate default /tk:gap when enough source exists to create a launch workflow. Do not write files.",
-      "expected_output": "Should end with GAP_READY, save a sealed tigerkit-launch-workflow block in the branch-local artifact, include workflow path, workflow hash, task count, verification gate count, task assumed_preconditions, readonly_preflight status, autopilot allowed false, commit policy preflight_decision_required, review_policy mode, and next action /tk:launch. User-facing stdout must not dump the tigerkit-launch-workflow block or JSON/YAML workflow body; it should show only a compact receipt plus a readable task DAG/summary. GAP_READY cannot be claimed without saving a launch workflow artifact or without checking static/read-only preflight predicates, and cannot be used when the same /tk:gap call continues into launch execution; that integrated path must report GAP_AUTO_LAUNCHED with workflow and launch receipt evidence. User-facing stdout labels should be Korean, e.g. 브랜치 범위, 워크플로, 검증 게이트, 작업 흐름, 자동 실행 허용, 커밋 정책, 다음 행동.",
+      "name": "gap-is-one-shot-analysis-lens",
+      "prompt": "Evaluate /tk:gap Slim behavior. Do not write files.",
+      "expected_output": "Should compare SoT and Current Implementation, classify missing, mismatch, overbuilt, and ambiguous gaps, and report evidence, impact, priority, and suggested fixes. Should not generate a sealed workflow, workflow hash, launch state, autopilot policy, advisor, or runner.",
       "files": [
         "commands/gap.md",
-        ".tigerkit/docs/output-contract.md",
-        ".tigerkit/docs/artifact-layout.md"
+        ".tigerkit/docs/output-contract.md"
       ],
       "expectations": [
-        "Ends with GAP_READY",
-        "Includes workflow path",
-        "Includes workflow hash",
-        "Includes task count",
-        "Includes verification gate count",
-        "Includes task assumed_preconditions",
-        "Includes readonly_preflight status",
-        "Includes review_policy mode",
-        "Autopilot allowed false in Phase 1",
-        "Next action is /tk:launch",
-        "Uses Korean stdout label 브랜치 범위",
-        "Uses Korean stdout label 워크플로",
-        "Uses Korean stdout label 다음 행동",
-        "Saves tigerkit-launch-workflow in artifact only",
-        "Does not print tigerkit-launch-workflow block to stdout",
-        "Does not expose JSON/YAML workflow body to user-facing output",
-        "Shows readable task DAG or summary in stdout",
-        "Uses Korean stdout label 작업 흐름"
+        "Uses Gap Summary table",
+        "Includes SoT column",
+        "Includes Current column",
+        "Includes Gap column",
+        "Includes Impact column",
+        "Includes Priority column",
+        "Includes Suggested fix",
+        "Does not generate workflow",
+        "Does not freeze workflow",
+        "Does not mention GAP_READY as active output"
       ]
     },
     {
       "id": 2,
-      "name": "gap-blocked-never-emits-workflow",
-      "prompt": "Evaluate default /tk:gap when an unresolved API decision, missing source, or failed static/read-only preflight predicate blocks execution. Do not write files.",
-      "expected_output": "Should end with GAP_BLOCKED, record blocked reasons, human decisions, missing sources, or failed preflight predicates, and next action for clarification or source supply. Should not include a tigerkit-launch-workflow block because launch is forbidden until the blocking issue is resolved.",
+      "name": "grill-pressure-test-question-lens",
+      "prompt": "Evaluate /tk:grill behavior. Do not write files.",
+      "expected_output": "Should define /tk:grill as an optional active micro command that pressure-tests proposals, plans, changes, and reviewer judgments through evidence-backed questions. Should close questions answerable from code/docs first, leave only owner-decision or missing-evidence questions open, support Patron candidate recommendation, and avoid treating grill output as confirmed defects.",
       "files": [
-        "commands/gap.md",
-        ".tigerkit/docs/output-contract.md"
+        "commands/grill.md",
+        "README.md",
+        ".tigerkit/docs/output-contract.md",
+        ".claude/rules/review/pr-review.md"
       ],
       "expectations": [
-        "Ends with GAP_BLOCKED",
-        "Records blocked reasons",
-        "Records human decisions when needed",
-        "Records missing sources when needed",
-        "Records failed preflight predicates",
-        "Does not include tigerkit-launch-workflow",
-        "Does not silently guess decisions"
+        "Optional active command",
+        "Pressure-tests proposals",
+        "Pressure-tests reviewer judgments",
+        "Checks code/docs before asking",
+        "Separates Closed Questions",
+        "Separates Open Questions",
+        "Supports Patron candidate",
+        "Does not treat output as confirmed defect"
       ]
     },
     {
       "id": 3,
-      "name": "gap-review-preserves-v7-contract-review",
-      "prompt": "Evaluate /tk:gap --review behavior. Do not write files.",
-      "expected_output": "Should preserve v7 Contract-based Gap Review behavior: compare Product/Design Spec, implementation plan, and current implementation; emit report.md and run.json; use JudgeMergerAgent for final findings; keep P0/P1/P2 accepted findings only; keep default stdout compact. Should not describe --review as a stronger quality mode.",
+      "name": "afk-patron-decision-delegation",
+      "prompt": "Evaluate /tk:afk behavior. Do not write files.",
+      "expected_output": "Should define AFK as current-session user decision delegation using temporary Patrons, not background async work. Should keep Driver responsible for merge, use one primary Patron per decision by default, forbid Patron-to-Patron calls and always-on council debate, and record a structured decision ledger.",
       "files": [
-        "commands/gap.md",
-        ".claude/rules/review/gap-analysis.md",
-        ".tigerkit/docs/output-contract.md"
+        "commands/afk.md",
+        "docs/patron-catalog.md",
+        "docs/patron-lifecycle.md",
+        "docs/patron-decision-ledger.md"
       ],
       "expectations": [
-        "Uses /tk:gap --review for v7 review",
-        "Default artifacts are report.md and run.json",
-        "JudgeMergerAgent remains final authority",
-        "Final findings are P0/P1/P2 only",
-        "Compact stdout remains",
-        "No quality mode wording"
+        "AFK is not background async",
+        "Driver continues working",
+        "Temporary Patron per decision point",
+        "Decision ledger exists",
+        "Patron-to-Patron call forbidden",
+        "Driver merges Patron output",
+        "Fan-out only for independent risk axes"
       ]
     },
     {
       "id": 4,
-      "name": "launch-missing-workflow-aborts",
-      "prompt": "Evaluate /tk:launch when no workflow path or current workflow exists. Do not write files.",
-      "expected_output": "Should abort before execution with WORKFLOW_NOT_FOUND. Should not invent a workflow, ask mid-flight questions, or run tasks. Should emit an aborted launch receipt with report and reflect trace paths when possible.",
+      "name": "patron-catalog-required-ids",
+      "prompt": "Evaluate Patron catalog. Do not write files.",
+      "expected_output": "Should define reviewer, tester, security, webperf, steward, simplifier, and cartographer with schema fields id, display_name, summary, source, status, use_when, avoid_when, decision_style, default_outputs, and ledger_policy.",
       "files": [
-        "commands/launch.md",
-        ".tigerkit/docs/output-contract.md"
+        "docs/patron-catalog.md"
       ],
       "expectations": [
-        "Abort code WORKFLOW_NOT_FOUND",
-        "No invented workflow",
-        "No task execution",
-        "No mid-flight question",
-        "Aborted receipt shape"
+        "Defines reviewer",
+        "Defines tester",
+        "Defines security",
+        "Defines webperf",
+        "Defines steward",
+        "Defines simplifier",
+        "Defines cartographer",
+        "Includes decision_style",
+        "Includes ledger_policy"
       ]
     },
     {
       "id": 5,
-      "name": "launch-multiple-workflow-blocks-aborts",
-      "prompt": "Evaluate /tk:launch when the workflow file contains two tigerkit-launch-workflow blocks. Do not write files.",
-      "expected_output": "Should abort before execution with MULTIPLE_WORKFLOW_BLOCKS. Should require exactly one launch workflow block and should not pick one silently.",
+      "name": "config-afk-default-and-vowline-opt-in",
+      "prompt": "Evaluate /tk:config behavior. Do not write files.",
+      "expected_output": "Should provide tk:config init/show/vowline on/off/patrons list/install/enable/disable/afk default on/off/status/reflect show/reset and tk:setup alias. AFK default should be off after install; config state should be source of truth; user CLAUDE.md bridge should be activation aid; Vowline should be opt-in and not a TigerKit core dependency. If the external vowline skill is missing, /tk:config vowline on should show install guidance pointing to the upstream INSTALL.md, require installation verification, and avoid finalizing the bridge until availability is confirmed.",
       "files": [
-        "commands/launch.md",
-        ".tigerkit/docs/output-contract.md"
+        "commands/config.md",
+        "commands/setup.md",
+        "docs/afk-default.md",
+        "docs/vowline-integration.md",
+        "docs/config-state.md"
       ],
       "expectations": [
-        "Abort code MULTIPLE_WORKFLOW_BLOCKS",
-        "Requires exactly one workflow block",
-        "Does not choose silently"
+        "AFK default off",
+        "Config state source of truth",
+        "Supports afk default on",
+        "Supports afk default off",
+        "Supports afk status",
+        "Vowline opt-in",
+        "Vowline not core dependency",
+        "Missing vowline shows install guidance",
+        "Uses upstream INSTALL.md",
+        "Requires verify installation",
+        "Does not finalize bridge before availability confirmation",
+        "tk:setup alias"
       ]
     },
     {
       "id": 6,
-      "name": "launch-hash-mismatch-aborts",
-      "prompt": "Evaluate /tk:launch when workflow_sha256 does not match the fenced block body. Do not write files.",
-      "expected_output": "Should calculate SHA-256 from the raw UTF-8 bytes inside the single tigerkit-launch-workflow fenced block after LF normalization and exactly one final LF, excluding fence lines and without YAML sorting. Should abort with WORKFLOW_HASH_MISMATCH when the calculated hash differs.",
+      "name": "reflect-file-policy-slim",
+      "prompt": "Evaluate /tk:reflect file policy. Do not write files.",
+      "expected_output": "Should auto-apply repo-local changes only to CLAUDE.local.md, keep repo CLAUDE.md suggest-only, allow user-level improvements to auto apply, distinguish candidate/confirmed/session-local/deprecated, and allow Patron candidate/profile improvements.",
       "files": [
-        "commands/launch.md",
-        ".tigerkit/docs/output-contract.md"
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md"
       ],
       "expectations": [
-        "Calculates hash from block body",
-        "Excludes fence lines",
-        "Normalizes line endings to LF",
-        "Ensures one final LF",
-        "Does not YAML-normalize",
-        "Abort code WORKFLOW_HASH_MISMATCH"
+        "repo CLAUDE.local.md auto apply",
+        "repo CLAUDE.md suggest only",
+        "user PROFILE.md auto apply",
+        "user CLAUDE.md auto apply",
+        "user skills auto apply",
+        "Patron profile candidates",
+        "candidate status",
+        "confirmed status",
+        "session-local status",
+        "deprecated status"
       ]
     },
     {
       "id": 7,
-      "name": "launch-human-decision-required-no-question",
-      "prompt": "Evaluate /tk:launch when execution reveals a new product or API decision is required. Do not write files.",
-      "expected_output": "Should not ask the user a mid-flight question. Should abort with HUMAN_DECISION_REQUIRED, preserve completed task count, failed precondition, failed gate or reason, and next action for human decision or workflow regeneration. The launch trace should structure the abort fact as reusable gap input.",
+      "name": "recommended-tools-are-recommendation-only",
+      "prompt": "Evaluate recommended tools policy. Do not write files.",
+      "expected_output": "Should list Context Mode, RTK, and Superpowers as recommendation-only tools. Should not install them by default and should show them only when the user selects the optional recommended tools menu in /tk:config. When upstream GitHub install docs are known, TigerKit should present those links and ask the user to verify installation before treating the tool as available.",
       "files": [
-        "commands/launch.md",
-        ".tigerkit/docs/output-contract.md"
+        "commands/config.md",
+        "docs/recommended-tools.md",
+        "README.md"
       ],
       "expectations": [
-        "No mid-flight question",
-        "Abort code HUMAN_DECISION_REQUIRED",
-        "Preserves completed task count",
-        "Records failed precondition when applicable",
-        "Records reusable gap input",
-        "Provides next action"
+        "Context Mode recommendation-only",
+        "RTK recommendation-only",
+        "Superpowers recommendation-only",
+        "Default does not install tools",
+        "Shown only from optional menu",
+        "Requires approval before installation",
+        "Provides GitHub install guidance when available",
+        "Requests verify installation"
       ]
     },
     {
       "id": 8,
-      "name": "launch-autopilot-disabled-in-phase1",
-      "prompt": "Evaluate /tk:launch --autopilot in Phase 1. Do not write files.",
-      "expected_output": "Should not perform bounded recovery in Phase 1. If workflow autopilot_policy.enabled is false, abort with AUTOPILOT_DISABLED. If recovery is requested by the command surface but unavailable in Phase 1, abort with AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1. Should not change requirements or expand scope.",
-      "files": [
-        "commands/launch.md",
-        ".tigerkit/docs/usage.md"
-      ],
-      "expectations": [
-        "No recovery in Phase 1",
-        "Abort code AUTOPILOT_DISABLED when policy disabled",
-        "Abort code AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1 when implementation unavailable",
-        "No scope expansion"
-      ]
-    },
-    {
-      "id": 9,
-      "name": "launch-out-of-scope-diff-aborts",
-      "prompt": "Evaluate /tk:launch when completing a task would require files or behavior outside the sealed workflow scope. Do not write files.",
-      "expected_output": "Should abort with OUT_OF_SCOPE_DIFF rather than broadening scope. Should not commit out-of-scope changes and should report the blocked reason in the launch receipt.",
-      "files": [
-        "commands/launch.md",
-        ".tigerkit/docs/output-contract.md"
-      ],
-      "expectations": [
-        "Abort code OUT_OF_SCOPE_DIFF",
-        "No scope broadening",
-        "No out-of-scope commit",
-        "Reports blocked reason"
-      ]
-    },
-    {
-      "id": 10,
-      "name": "reflect-after-launch-no-durable-apply-without-approval",
-      "prompt": "Evaluate reflect behavior after /tk:launch completes or aborts. Do not write files.",
-      "expected_output": "Should allow /tk:launch to write generated reflect trace artifacts at reflect/<RFL-ID>.md and reflect/current.md for /tk:reflect. Should not apply durable CLAUDE.md or .claude/rules changes or create commits unless preflight approval recorded that action. Reflect output should separate repo insight, user routine skill review, TigerKit meta-feedback, verification gap, workflow weakness, and unresolved follow-up. Meta-feedback must default to NONE unless the current run reveals a TigerKit-level issue.",
-      "files": [
-        "commands/launch.md",
-        "commands/reflect.md",
-        ".tigerkit/docs/output-contract.md"
-      ],
-      "expectations": [
-        "Launch writes generated reflect report",
-        "No durable apply without approval",
-        "No commit without approval",
-        "Reflect reads launch trace",
-        "Separates repo insight, user routine skill review, and meta-feedback",
-        "Defaults to Meta-feedback: NONE when no TigerKit-level issue exists"
-      ]
-    },
-    {
-      "id": 11,
-      "name": "session-start-worktree-context-proposal-read-only",
-      "prompt": "Evaluate SessionStart worktree context proposal when a base worktree has root Markdown files and .claude/ that are missing in the current linked worktree. Do not write source files.",
-      "expected_output": "Should register a SessionStart read-only hook that injects TIGERKIT_SESSION_START additional context with candidate signature, source/base worktree, base-only root-level Markdown candidates, base-only .claude/ candidate, safety contract, and decline marker path. It must not create symlinks, copy files, overwrite regular files, mutate source_worktree, or hydrate context automatically. /tk:gap should consume this context during source grounding. /tk:launch and /tk:next should consume the session context or matching decline marker instead of re-asking per command.",
-      "files": [
-        "hooks/hooks.json",
-        "hooks/session-start",
-        "hooks/run-hook.cmd",
-        "commands/gap.md",
-        "commands/launch.md",
-        "commands/next.md",
-        ".tigerkit/docs/artifact-layout.md",
-        ".tigerkit/docs/branch-local-contract.md"
-      ],
-      "expectations": [
-        "SessionStart read-only hook exists",
-        "Injects TIGERKIT_SESSION_START additional context",
-        "Includes candidate signature",
-        "Includes decline marker path",
-        "Detects base-only root Markdown candidates",
-        "Detects missing .claude candidate",
-        "Does not mutate source_worktree",
-        "Does not overwrite regular files",
-        "Does not symlink or copy files automatically",
-        "/tk:gap consumes session context during source grounding",
-        "/tk:launch and /tk:next do not re-ask per command"
-      ]
-    },
-    {
-      "id": 12,
-      "name": "plugin-version-and-command-manifest-vNext",
-      "prompt": "Evaluate marketplace plugin metadata for TigerKit current command surface. Do not write files.",
-      "expected_output": "Should treat .claude-plugin/plugin.json as the authoritative version source, verify its version is valid semver without hard-coding a concrete version literal in eval expectations, and provide a bump script that defaults to origin/main:.claude-plugin/plugin.json as the baseline so stale local branches do not reuse old versions. Should include ./commands/launch.md, ./commands/review.md, and ./commands/next.md, preserve /tk:gap, /tk:reflect, /tk:handoff, and /tk:meta-feedback command entries, and not include ./commands/spec.md because current source intake is owned by /tk:gap.",
+      "name": "launch-era-features-deprecated",
+      "prompt": "Evaluate launch-era cleanup. Do not write files.",
+      "expected_output": "Should document that gap autonomous workflow, /tk:launch, workflow freezing, mandatory advisor/runner, /tk:next, /tk:handoff, /tk:meta-feedback, and external tool embedding are ended or deprecated. Active plugin manifest should not register launch-era commands.",
       "files": [
         ".claude-plugin/plugin.json",
+        "docs/migration-from-launch.md",
         "commands/launch.md",
-        "commands/review.md",
         "commands/next.md",
-        "scripts/check-plugin-version.py",
-        "scripts/bump-plugin-version.py"
-      ],
-      "expectations": [
-        "Plugin version is valid semver",
-        "No concrete version literal in eval expectations",
-        "Includes ./commands/launch.md",
-        "Includes ./commands/next.md",
-        "Includes ./commands/review.md",
-        "Does not include ./commands/spec.md",
-        "Preserves gap command",
-        "Preserves reflect command",
-        "Preserves handoff command",
-        "Preserves meta-feedback command",
-        "Version bump script exists",
-        "Version check script exists",
-        "Bump script defaults to origin/main baseline"
-      ]
-    },
-    {
-      "id": 13,
-      "name": "next-command-attempts-continuation-with-approval-gates",
-      "prompt": "Evaluate /tk:next when latest handoff or launch/reflect trace contains a safe next work item. Do not create commits or PRs.",
-      "expected_output": "Should inspect current TigerKit artifacts and any TIGERKIT_SESSION_START worktree context proposal, select one safe executable next item, attempt it within existing command contracts, and write a NEXT_DONE, NEXT_PARTIAL, NEXT_BLOCKED, or NEXT_SKIPPED receipt. Should not be stdout-only or recommendation-only. Should not execute /tk:launch, commit, PR, merge, release, deploy, GitHub issue writes, re-ask the same worktree candidate signature, or apply worktree context symlink/copy without explicit approval.",
-      "files": [
-        "commands/next.md",
-        ".tigerkit/docs/output-contract.md",
-        ".tigerkit/docs/artifact-layout.md",
-        "README.md",
-        ".tigerkit/docs/usage.md"
-      ],
-      "expectations": [
-        "Inspects handoff/gap/launch/reflect artifacts",
-        "Consumes TIGERKIT_SESSION_START worktree context when present",
-        "Selects one safe executable item",
-        "Attempts safe continuation work",
-        "Writes next receipt",
-        "Uses NEXT_DONE NEXT_PARTIAL NEXT_BLOCKED NEXT_SKIPPED",
-        "Not stdout-only",
-        "No launch/commit/PR without approval",
-        "Uses side-effect-minimized git status inspection"
-      ]
-    },
-    {
-      "id": 14,
-      "name": "workspace-gap-ready-without-git",
-      "prompt": "Evaluate /tk:gap in a plain folder with no .git when enough source exists. Do not write files.",
-      "expected_output": "Should not fail merely because git rev-parse fails. Should use scope_kind=workspace, compute a stable workspace scope_key, write under .claude/tigerkit/branches/<scope-key>/ when writable, and produce GAP_READY with workspace_context when launchable. If artifacts are not writable, should block with ARTIFACT_ROOT_UNWRITABLE rather than pretending success.",
-      "files": [
-        "commands/gap.md",
-        ".tigerkit/docs/branch-local-contract.md",
-        ".tigerkit/docs/output-contract.md"
-      ],
-      "expectations": [
-        "Allows non-git workspace",
-        "Uses scope_kind workspace",
-        "Computes workspace scope_key",
-        "GAP_READY can be valid without git",
-        "Writable artifact root required",
-        "Does not require GitHub"
-      ]
-    },
-    {
-      "id": 15,
-      "name": "workspace-launch-success-skips-commit",
-      "prompt": "Evaluate /tk:launch for a GAP_READY workflow in a non-git workspace where verification passes and commit is not required. Do not write files.",
-      "expected_output": "Should execute the sealed workflow, pass verification, report SUCCESS, and record 커밋: skipped_not_git_repo. Missing git/GitHub must not abort unless commit or PR is required by the workflow.",
-      "files": [
-        "commands/launch.md",
-        ".tigerkit/docs/output-contract.md",
-        ".tigerkit/docs/usage.md"
-      ],
-      "expectations": [
-        "SUCCESS allowed without git",
-        "커밋 skipped_not_git_repo",
-        "Missing GitHub is not blocker",
-        "Commit required unavailable has explicit abort",
-        "PR required unavailable has explicit abort"
-      ]
-    },
-    {
-      "id": 16,
-      "name": "reflect-fallback-user-memory-proposal",
-      "prompt": "Evaluate /tk:reflect in a non-git workspace without CLAUDE.md or .claude/rules. Do not write files.",
-      "expected_output": "Should not create repo durable rule files by default. Should produce generated reflect report when possible and include 사용자 루틴 스킬 검토 plus 사용자 메모리 후보 or explicitly say none. Candidates are proposal-only and 자동 적용 false unless a host adapter and user approval support memory writes. If no TigerKit-level issue exists, reflect output should include Meta-feedback: NONE.",
-      "files": [
-        "commands/reflect.md",
-        ".tigerkit/docs/output-contract.md",
-        ".tigerkit/docs/usage.md"
-      ],
-      "expectations": [
-        "No durable rule creation by default",
-        "Generated reflect report when writable",
-        "Includes 사용자 루틴 스킬 검토",
-        "Includes 사용자 메모리 후보",
-        "자동 적용 false",
-        "Proposal-only fallback",
-        "Uses Meta-feedback: NONE by default"
-      ]
-    },
-    {
-      "id": 17,
-      "name": "non-code-workflow-task-and-verification-types",
-      "prompt": "Evaluate sealed workflow schema for non-code work such as docs/research/runbook generation. Do not write files.",
-      "expected_output": "Should allow task_type values such as docs_change, research, file_generation, data_cleanup, ops_runbook, communication_draft, analysis, and manual_receipt. Verification gates may use file_exists, file_contains, artifact_written, link_checked, schema_valid, manual_review_required, or receipt_only; code tests are not mandatory.",
-      "files": [
-        "commands/gap.md",
-        ".tigerkit/docs/output-contract.md"
-      ],
-      "expectations": [
-        "Allows non-code task types",
-        "Allows artifact verification gates",
-        "Does not require code tests",
-        "Manual review gate supported"
-      ]
-    },
-    {
-      "id": 18,
-      "name": "launch-runtime-harness-uses-tk-runner-sonnet",
-      "prompt": "Evaluate /tk:launch runtime harness before executing a sealed workflow. Do not write source files.",
-      "expected_output": "Should dispatch execution through the tk-runner Claude Code agent when subagents are available, record expected_model sonnet, model_tier balanced, effort_tier medium, and runtime_harness status in the launch receipt. If required subagent/model harness is unavailable and inline fallback is not explicitly allowed, launch must abort before task execution with MODEL_HARNESS_UNAVAILABLE rather than silently running on the wrong model.",
-      "files": [
-        "agents/tk-runner.md",
-        "commands/launch.md",
-        ".tigerkit/docs/output-contract.md",
-        "evals/evals.json"
-      ],
-      "expectations": [
-        "tk-runner agent exists",
-        "tk-runner uses model sonnet",
-        "Launch records runtime_harness",
-        "Records fallback/unavailable status",
-        "Abort code MODEL_HARNESS_UNAVAILABLE",
-        "Does not silently run wrong model"
-      ]
-    },
-    {
-      "id": 26,
-      "name": "gap-model-routing-and-parallel-aware-workflow",
-      "prompt": "Evaluate default /tk:gap model routing and sealed workflow planning contract. Do not write files.",
-      "expected_output": "Should define cheap scout / Sonnet-class / Opus-class model tiers, limit cheap scout work to source inventory, lightweight grounding, source grouping, source-by-source intake scaffolding, and non-binding summaries, keep GAP_READY/GAP_BLOCKED freeze and acceptance review verdicts on a stronger judgment path, and state that cheaper scouting does not weaken evidence precision, producer evidence, ambiguity, or JudgeMerger gates. Sealed workflows should minimize unnecessary depends_on edges, split independent work into parallelizable tasks when safe, preserve DAG-shaped planning intent, and distinguish planning-time parallelism from Phase 1 sequential launch execution.",
-      "files": [
-        "README.md",
-        "commands/gap.md",
-        ".tigerkit/docs/output-contract.md",
-        "evals/evals.json"
-      ],
-      "expectations": [
-        "Defines cheap scout tier",
-        "Defines Sonnet-class default path",
-        "Defines Opus-class escalation",
-        "Cheap scout is non-binding intake only",
-        "GAP_READY and GAP_BLOCKED freeze use stronger judgment path",
-        "Quality gates remain invariant",
-        "Minimizes unnecessary depends_on edges",
-        "Splits independent work into parallelizable tasks",
-        "Preserves DAG-shaped workflow intent",
-        "Phase 1 launch may remain sequential"
-      ]
-    },
-    {
-      "id": 19,
-      "name": "gap-preflights-launch-preconditions-before-sealing",
-      "prompt": "Evaluate default /tk:gap for a workflow whose task depends on a static target relation or verification tool assumption that can be checked read-only before mutation. Do not write files.",
-      "expected_output": "Should record task-level assumed_preconditions as checkable predicates, run static/read-only preflight before sealing, and only emit GAP_READY when required predicates pass. If a predicate fails or is unverifiable, should emit GAP_BLOCKED without tigerkit-launch-workflow. If a prior /tk:launch trace aborted with HUMAN_DECISION_REQUIRED or VERIFICATION_FAILED, should treat the structured abort fact as gap input so the same fact is not rediscovered during launch.",
-      "files": [
-        "commands/gap.md",
-        "commands/launch.md",
-        "agents/tk-runner.md",
-        ".tigerkit/docs/output-contract.md",
-        ".tigerkit/docs/usage.md"
-      ],
-      "expectations": [
-        "Tasks include assumed_preconditions",
-        "Static/read-only preflight runs before sealing",
-        "Failed preflight produces GAP_BLOCKED",
-        "GAP_BLOCKED has no tigerkit-launch-workflow",
-        "Launch checks preconditions before mutation",
-        "Launch abort feedback is reusable gap input"
-      ]
-    },
-    {
-      "id": 20,
-      "name": "meta-feedback-generalization-gate",
-      "prompt": "Evaluate /tk:meta-feedback when session feedback contains command friction mixed with repo-specific or domain-specific terms. Do not write files.",
-      "expected_output": "Should run a pre-emit Domain-term guard, rewrite or reject proposals that contain host-specific nouns such as project/framework names, paths, symbols, domain entities, tickets, branches, PRs, commits, or URLs, and apply a Restate test asking whether the proposal still works in another repo and domain. Should route repo/domain insight to /tk:reflect, user routine patterns to reflect-level user routine skill review, follow-up storage to /tk:handoff or /tk:next, and only TigerKit-level command or skill contract friction to /tk:meta-feedback. Output should use only the target command or skill contract vocabulary and feedback taxonomy, require Affected command or doc / Observed issue / Evidence from current run / Why this is TigerKit-level / Minimal proposed fix, and the 비식별화 기록 should report 일반화 게이트 and 재진술 테스트 status.",
-      "files": [
-        "commands/meta-feedback.md",
-        ".tigerkit/docs/usage.md",
-        ".tigerkit/docs/output-contract.md"
-      ],
-      "expectations": [
-        "Runs Domain-term guard before emit",
-        "Rejects or rewrites host-specific nouns",
-        "Runs Restate test per proposal",
-        "Routes repo or domain insight to /tk:reflect",
-        "Routes user routine patterns to reflect-level user routine skill review",
-        "Routes command or skill friction to /tk:meta-feedback",
-        "Uses command contract vocabulary only",
-        "Requires Affected command or doc field",
-        "Requires Why this is TigerKit-level field",
-        "Requires Minimal proposed fix field",
-        "비식별화 기록 includes 일반화 게이트 status",
-        "비식별화 기록 includes 재진술 테스트 status"
-      ]
-    },
-    {
-      "id": 21,
-      "name": "user-facing-output-labels-are-korean",
-      "prompt": "Evaluate TigerKit user-facing stdout/report templates. Do not write files.",
-      "expected_output": "Should keep machine-readable status codes and contract field names intact, while rendering user-facing labels in Korean across /tk:gap, /tk:launch, /tk:review, /tk:next, /tk:reflect, /tk:handoff, /tk:meta-feedback, and tk-runner receipts. Examples include 브랜치 범위, 워크플로, 작업 흐름, 검증 게이트, 실행 하네스, 선택한 작업, 변경 파일, 승인, 차단 사유, 추가 근거 필요, 사용자 루틴 스킬 검토, 사용자 메모리 후보, 메타 피드백, 비식별화 기록, 일반화 게이트, and 다음 행동.",
-      "files": [
-        "commands/gap.md",
-        "commands/launch.md",
-        "commands/review.md",
-        "commands/next.md",
-        "commands/reflect.md",
         "commands/handoff.md",
         "commands/meta-feedback.md",
-        "agents/tk-runner.md",
-        ".tigerkit/docs/output-contract.md"
+        "commands/review.md"
       ],
       "expectations": [
-        "Keeps status codes such as GAP_READY and NEXT_DONE intact",
-        "Keeps machine-readable field names intact",
-        "Uses Korean stdout label 브랜치 범위",
-        "Uses Korean stdout label 검증 게이트",
-        "Uses Korean stdout label 실행 하네스",
-        "Uses Korean stdout label 선택한 작업",
-        "Uses Korean stdout label 추가 근거 필요",
-        "Uses Korean stdout label 사용자 루틴 스킬 검토",
-        "Uses Korean meta-feedback section 비식별화 기록",
-        "Uses Korean next action label 다음 행동",
-        "Uses Korean stdout label 닫힌 gap",
-        "Uses Korean stdout label 남은 gap",
-        "Uses Korean stdout label 작업 흐름"
-      ]
-    },
-    {
-      "id": 22,
-      "name": "review-verifies-frozen-target-after-launch",
-      "prompt": "Evaluate /tk:review after a launch has produced implementation evidence. Do not write source files.",
-      "expected_output": "Should resolve a frozen review target from explicit target, current working tree diff, branch diff, latest launch receipt, or current PR context; pin Mode/Basis/Target before findings; compare confirmed requirements and verification evidence against current implementation; separate Spec / Standards / Evidence axes; avoid duplicate review when the latest embedded review already covers the same diff with no new changes; report closed gaps, remaining gaps, drift/risk, and exactly one verdict: REVIEW_PASS, REVIEW_PARTIAL, REVIEW_FAIL, or REVIEW_BLOCKED. Should not modify implementation, execute /tk:launch, create commits, create PRs, or confuse /tk:review with /tk:gap --review compatibility.",
-      "files": [
-        "commands/review.md",
-        ".claude-plugin/plugin.json",
-        "README.md",
-        ".tigerkit/docs/usage.md",
-        ".tigerkit/docs/output-contract.md",
-        ".tigerkit/docs/artifact-layout.md"
-      ],
-      "expectations": [
-        "Plugin manifest includes ./commands/review.md",
-        "Resolves explicit and latest review targets",
-        "Pins review target with Mode Basis Target",
-        "Checks confirmed requirements",
-        "Checks verification evidence",
-        "Separates Spec Standards Evidence axes",
-        "Reports closed gaps",
-        "Reports remaining gaps",
-        "Reports drift/risk",
-        "Avoids duplicate review when no new diff exists",
-        "Uses REVIEW_PASS REVIEW_PARTIAL REVIEW_FAIL REVIEW_BLOCKED",
-        "Does not mutate implementation",
-        "Does not execute launch",
-        "Does not commit or open PR",
-        "Distinguishes /tk:review from /tk:gap --review"
-      ]
-    },
-    {
-      "id": 23,
-      "name": "launch-runs-embedded-review-when-review-policy-required",
-      "prompt": "Evaluate /tk:launch when the sealed workflow sets review_policy.mode to required. Do not write source files.",
-      "expected_output": "Should execute verification gates first, then run a read-only tk-reviewer acceptance review, and record execution status, verification result, acceptance review verdict, and overall status separately in the launch receipt. Execution success must not automatically imply review pass.",
-      "files": [
-        "commands/gap.md",
-        "commands/launch.md",
-        "agents/tk-reviewer.md",
-        ".tigerkit/docs/output-contract.md",
-        ".tigerkit/docs/artifact-layout.md"
-      ],
-      "expectations": [
-        "Workflow schema includes review_policy",
-        "tk-reviewer agent exists",
-        "Launch runs tk-reviewer when review_policy required",
-        "Launch separates execution verification acceptance review overall status",
-        "Execution success does not imply review pass"
-      ]
-    },
-    {
-      "id": 24,
-      "name": "launch-records-optional-or-skipped-review-policy",
-      "prompt": "Evaluate /tk:launch when review_policy.mode is optional or skip. Do not write source files.",
-      "expected_output": "Should not force an acceptance review when the workflow marks it optional or skip. Instead it should record NOT_RUN_OPTIONAL or SKIPPED style status in the launch receipt and keep the distinction between verification and acceptance review.",
-      "files": [
-        "commands/launch.md",
-        ".tigerkit/docs/output-contract.md"
-      ],
-      "expectations": [
-        "Optional review can be not run with explicit reason",
-        "Skip review is recorded explicitly",
-        "Verification and acceptance review remain distinct"
-      ]
-    },
-    {
-      "id": 25,
-      "name": "review-duplicate-guard-reuses-latest-embedded-review",
-      "prompt": "Evaluate /tk:review when the latest embedded review already covers the same target and no new diff exists. Do not write source files.",
-      "expected_output": "Should report that the latest embedded review already covers the target and that no new diff was detected. It may reuse the latest review receipt or wait for an explicit rerun request, but should not blindly repeat the same review.",
-      "files": [
-        "commands/review.md",
-        ".tigerkit/docs/output-contract.md",
-        ".tigerkit/docs/artifact-layout.md"
-      ],
-      "expectations": [
-        "Reports latest embedded review already covers this target",
-        "Reports no new diff detected",
-        "Does not blindly repeat duplicate review"
+        "Documents gap autonomous workflow ended",
+        "Documents /tk:launch deprecated",
+        "Documents workflow freezing ended",
+        "Documents mandatory advisor runner ended",
+        "Documents /tk:next deprecated",
+        "Documents /tk:handoff deprecated",
+        "Documents /tk:meta-feedback deprecated",
+        "Active manifest excludes launch-era commands"
       ]
     }
   ]

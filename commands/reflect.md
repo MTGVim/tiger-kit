@@ -1,164 +1,75 @@
 ---
-description: branch-local TigerKit memory에서 repo에 보존할 insight만 추출·반영합니다.
-argument-hint: "[scope] [--dry-run] [--apply=true|false] [--target <CLAUDE.md|.claude/rules/...>] [--no-meta-feedback|--meta-feedback=false]"
+description: 세션 학습과 변경 결과에서 재사용 가능한 개선 후보를 추출하고 안전한 대상에 반영합니다.
+argument-hint: "[scope] [--dry-run] [--apply=true|false] [--target <repo|user|patron>]"
 ---
 
-이 명령은 TigerKit v8.0 reflect contract를 따릅니다.
+이 명령은 TigerKit Slim `/tk:reflect` contract를 따릅니다.
 
-사용자에게는 한글로 답합니다. 코드, path, URL, ticket, commit, hash, identifier, error는 원문 그대로 둘 수 있습니다.
+사용자에게는 한글로 답합니다. 코드, path, URL, ticket, commit, hash, identifier, error, contract field name은 원문 그대로 둘 수 있습니다.
 
-목표: `/tk:reflect`는 Gap workflow, Launch trace, Gap이 already-grounded source로 채택한 legacy Spec Patch reference에서 repo-wide 가치가 있는 durable insight만 추출해 적절한 durable surface에 직접 반영합니다.
+목표: `/tk:reflect`는 세션 내용, 실제 변경 결과, 성공/실패, 사용자 피드백, AFK Patron decision ledger에서 재사용 가능한 learning과 improvement를 추출합니다.
 
 ```text
-reflect = branch/workspace-local gap+launch working memory -> safest available durable/proposal target
+reflect = session result + feedback + optional Patron ledger -> safe improvement candidates/apply
 ```
-
-## Command surface
-
-- plugin slash invocation은 `/tk:reflect`입니다.
-- `tiger-kit reflect` CLI 표현은 이 plugin command의 사용자 관점 alias로 취급합니다.
-
-## 핵심 원칙
-
-- gap/launch/verify 산출물과 legacy Spec Patch 자체는 repo-wide durable knowledge가 아닙니다.
-- repo에 영구적으로 남길 insight는 reflect를 통해서만 추출합니다.
-- `/tk:reflect` 기본 동작은 repo durable target이 안전하게 존재할 때 `apply=true`입니다. non-git/plain workspace에서는 proposal-only fallback이 기본입니다.
-- 반영할 durable insight가 없으면 아무 파일도 수정하지 않는 것이 정상 성공입니다.
-- source code는 수정하지 않습니다.
-- apply mode의 content write는 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에만 적용합니다. 해당 target이 없거나 workflow가 preapprove하지 않은 plain workspace에서는 생성하지 않습니다.
-- branch recency bookkeeping으로 `global-index.json`의 branch entry를 생성하거나 `lastUsedAt`을 갱신할 수 있습니다.
-- branch-local specs/gap 산출물이 없다는 사실만으로 세션 관측 패턴을 durable insight 후보로 승격하지 않습니다.
-- 같은 insight를 중복 반영하지 않습니다.
-- 후보 평가 전 기존 `CLAUDE.md`와 `.claude/rules/**/*.md`를 inventory해 이미 커버되는 guidance를 찾습니다.
-- 적용 결과 diff/summary를 출력합니다.
-- meta-feedback는 기본적으로 발행하지 않습니다. TigerKit 자체가 friction, ambiguity, wrong behavior, 또는 avoidable failure를 만들었다는 current-run evidence가 있을 때만 proposal-only meta-feedback을 함께 제출할 수 있습니다.
-- TigerKit-level issue가 없으면 정확히 `Meta-feedback: NONE`을 출력합니다.
-- `--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 meta-feedback 판단 자체를 생략합니다.
-
-## Apply behavior
-
-| Command | 동작 |
-| --- | --- |
-| `/tk:reflect` | `apply=true` |
-| `/tk:reflect --apply=true` | 기본값과 동일 |
-| `/tk:reflect --dry-run` | `apply=false`, meta-feedback는 같은 conditional policy를 따름 |
-| `/tk:reflect --apply=false` | dry-run alias, meta-feedback는 같은 conditional policy를 따름 |
-| `/tk:reflect --no-meta-feedback` | reflect만 실행하고 meta-feedback 판단 생략 |
-| `/tk:reflect --meta-feedback=false` | `--no-meta-feedback` alias |
-
-v8.0에서는 `--apply=true`가 redundant여도 warning을 내지 않습니다.
 
 ## Inputs
 
-Reflect는 current branch scope의 branch-local working memory를 읽습니다.
+Normal session input:
 
-```text
-.claude/tigerkit/branches/<branch-key>/gap/
-.claude/tigerkit/branches/<branch-key>/launch/
-.claude/tigerkit/branches/<branch-key>/runs/gap/
-.claude/tigerkit/branches/<branch-key>/branch-state.json
-```
+- 세션 내용
+- 실제 변경 결과
+- 성공/실패 및 시행착오
+- 사용자 피드백
 
-Legacy `.claude/tigerkit/branches/<branch-key>/specs/`는 `/tk:gap`이 source material로 채택해 gap artifact에 trace한 경우에만 간접 evidence로 참고합니다. Reflect가 legacy Spec Patch를 repo-wide rule로 직접 승격하지 않습니다.
+AFK session input:
 
-읽을 수 있는 evidence class:
+- 세션 내용
+- 실제 변경 결과
+- 성공/실패 및 시행착오
+- 사용자 피드백
+- Patron decision ledger
 
-- gap artifact에 trace된 legacy Spec Patch reference와 accepted/rejected treatment
-- accepted gap finding pattern
-- rejected/downgraded observation reason
-- source conflict와 resolution 상태
-- 사용자 대화에서 명시적으로 확인된 TigerKit 운영 규칙
-- current code/worktree context needed to classify repo-wide value
+## Apply policy
 
-branch-local gap 산출물이 없으면 산출물 기반 후보는 없는 것으로 처리합니다. 이 경우에도 사용자 대화에서 명시적으로 확인된 TigerKit 운영 규칙은 후보가 될 수 있지만, legacy Spec Patch나 실행자 해석만으로 repo-wide durable insight를 만들지 않습니다.
+| Target | Policy |
+|---|---|
+| repo `CLAUDE.local.md` | auto apply |
+| repo `CLAUDE.md` | suggest only |
+| user `PROFILE.md` | auto apply |
+| user `CLAUDE.md` | auto apply |
+| user skills | auto apply |
+| Patron profiles | auto apply candidates or improvements |
 
-## Fallback reflect targets
+중요:
 
-Reflect target tiers:
+- 리포 내부 자동 생성/수정은 `CLAUDE.local.md`만 허용합니다.
+- 리포 공용 `CLAUDE.md`는 자동 수정하지 않습니다.
+- `CLAUDE.md` 승격 후보는 diff 형식으로 제안만 합니다.
+- source code는 수정하지 않습니다.
+- 민감하거나 불필요한 사용자 정보는 저장하지 않습니다.
+- 중복 규칙은 병합합니다.
+- 충돌 규칙은 적용 조건을 분리합니다.
 
-```yaml
-reflect_targets:
-  repo_durable_rules:
-    available: true | false
-    paths:
-      - CLAUDE.md
-      - .claude/rules/**/*.md
-  workspace_generated_report:
-    available: true | false
-    path: .claude/tigerkit/branches/<scope-key>/reflect/current.md
-  user_memory_proposal:
-    available: host_specific
-    apply_default: false
-  meta_feedback:
-    available: true | false
-```
+## Candidate status
 
-Fallback defaults:
+Reflect는 후보 상태를 구분합니다.
 
-- GitHub repo with durable rules: existing durable apply policy may run.
-- git repo without GitHub: durable apply is allowed only when rule files exist and policy permits.
-- non-git workspace with rule files: cautious apply only with preapproval; otherwise proposal-only.
-- non-git workspace without durable rule files: write generated reflect report and include `사용자 메모리 후보`; do not create durable rule files by default.
-- read-only workspace: stdout receipt only unless receipt persistence was required.
+- `candidate`: 근거는 있으나 아직 적용하지 않음.
+- `confirmed`: 사용자 또는 source evidence로 확정됨.
+- `session-local`: 이번 세션에만 유효함.
+- `deprecated`: 더 이상 맞지 않거나 대체됨.
 
-User-level memory candidates are proposals by default. Host adapters such as Hermes may map them to a safe memory-review flow, but `/tk:reflect` must not auto-write host-global memory without explicit adapter support and user approval.
+## Patron improvements
 
-## Durable target classification
+AFK decision ledger가 있으면 아래를 검토합니다.
 
-각 insight candidate는 아래 중 하나로 분류합니다.
+- Patron 선택이 decision question type에 맞았는지
+- decision style 또는 default_outputs 개선이 필요한지
+- ledger_policy가 reflect 재사용에 충분했는지
+- 새 Patron 후보가 필요한지
 
-| Target | 사용 조건 |
-| --- | --- |
-| `CLAUDE.md` | 저장소 전반에 항상 적용돼야 하는 상위 작업 규칙, evidence rule, approval gate, language/output 규칙일 때 |
-| `.claude/rules/**/*.md` | 특정 review/workflow/domain/path에만 적용되는 scoped rule일 때 |
-| `no action` | one-off, duplicate, unresolved, low-confidence, superseded일 때 |
-
-기본 apply는 위 target에 직접 적용합니다. `--target`이 있으면 명시 target을 우선 사용하되 `CLAUDE.md` 또는 `.claude/rules/**/*.md`만 허용합니다. proposal-only preview는 dry-run에서 출력합니다.
-
-## Durable insight 후보
-
-reflect는 아래만 durable insight 후보로 삼습니다.
-
-- 반복적으로 등장한 accepted finding pattern
-- branch에서 확정된 product/design decision 중 repo-wide 가치가 있는 것
-- design-system 또는 component convention으로 승격할 만한 내용
-- source conflict에서 확정된 resolution
-- 사용자 대화에 명시적으로 확인된 TigerKit 운영 규칙
-
-후보는 durable target classification 전에 아래 rubric을 모두 통과해야 합니다.
-
-| 기준 | 통과 조건 |
-| --- | --- |
-| Frequency | 반복됐거나 반복될 가능성이 높음 |
-| Cost | 매번 다시 발견하거나 설명하는 비용이 큼 |
-| Risk | 누락 시 source loss, decision loss, bug, regression, 오판 가능성이 있음 |
-| Stability | 현재 branch에만 묶이지 않고 앞으로도 유지될 규칙임 |
-| Coverage | 기존 `CLAUDE.md` 또는 `.claude/rules/**/*.md`가 이미 커버하지 않음 |
-
-통과하지 못한 후보는 `no action`으로 분류합니다. 근거가 부족하지만 후속 확인 가치가 있으면 `Needs more evidence`에 남깁니다.
-
-reflect는 아래를 durable insight로 만들지 않습니다.
-
-- branch-specific one-off decision
-- 임시 Spec Patch 자체
-- superseded된 결정
-- P3/nit
-- rejected finding
-- low-confidence observation
-- source conflict가 unresolved인 내용
-- implementation detail that only applies to this branch
-
-## Dedupe
-
-동일 insight를 중복 반영하지 않습니다.
-
-Dedupe key는 아래를 조합합니다.
-
-```text
-normalized insight title + target file + source evidence class
-```
-
-이미 target에 같은 insight가 있으면 `중복으로 건너뜀`으로 집계합니다.
+Patron 개선은 user-level 또는 Patron profile 후보로만 적용합니다. repo shared `CLAUDE.md`에 자동 적용하지 않습니다.
 
 ## Output
 
@@ -166,114 +77,37 @@ normalized insight title + target file + source evidence class
 
 ```text
 Reflect 완료
-적용: true
 적용 대상:
-- CLAUDE.md
-- .claude/rules/<path>.md
+- repo CLAUDE.local.md: <applied|not_applicable>
+- repo CLAUDE.md: suggest_only:<count>
+- user PROFILE.md: <applied|not_applicable>
+- user CLAUDE.md: <applied|not_applicable>
+- user skills: <applied|not_applicable>
+- Patron profiles: <candidate_count>
 
-적용 결과:
-- <added>건 추가
-- <updated>건 갱신
-- <skipped>건 중복으로 건너뜀
-- <no_action>건 조치 없음
+## Repo 후보
+n. <candidate or NONE>
 
-## Repo Insight
-- <한글 insight summary 또는 NONE>
+## User 후보
+n. <candidate or NONE>
 
-## 사용자 루틴 스킬 검토
-- Decision: NONE | SNIPPET | USER_SKILL_CANDIDATE | REPO_RULE | HOOK_OR_SCRIPT | COMMAND
-- Reason:
-  - <한글 reason 또는 없음>
+## Patron 후보
+n. <candidate or NONE>
 
-## Meta-feedback
-Meta-feedback: NONE | PRESENT
+## 충돌 / 적용 조건
+- <condition or none>
 
-추가 근거 필요:
-- <확인 필요 항목 또는 None>
+## 다음 행동
+- <next step or 없음>
 ```
 
-반영할 durable insight가 없을 때:
+`--dry-run` 또는 `--apply=false`는 preview만 출력하고 파일을 수정하지 않습니다.
 
-```text
-Reflect 완료
-적용: true
-적용 대상:
-- 없음
+## 금지
 
-적용 결과:
-- 0건 추가
-- 0건 갱신
-- <skipped>건 중복으로 건너뜀
-- <no_action>건 조치 없음
-
-## Repo Insight
-- 영구 반영할 insight 없음.
-
-## 사용자 루틴 스킬 검토
-- Decision: NONE
-- Reason:
-  - 없음
-
-## Meta-feedback
-Meta-feedback: NONE
-
-추가 근거 필요:
-- <확인 필요 항목 또는 None>
-```
-
-`--dry-run` 또는 `--apply=false`일 때:
-
-```text
-Reflect 완료
-적용: false
-예상 대상:
-- CLAUDE.md
-- .claude/rules/<path>.md
-
-미리보기 결과:
-- <added>건 추가 예정
-- <updated>건 갱신 예정
-- <skipped>건 중복으로 건너뜀
-
-## Repo Insight
-- <한글 preview summary 또는 NONE>
-
-## 사용자 루틴 스킬 검토
-- Decision: NONE | SNIPPET | USER_SKILL_CANDIDATE | REPO_RULE | HOOK_OR_SCRIPT | COMMAND
-- Reason:
-  - <한글 reason 또는 없음>
-
-## Meta-feedback
-Meta-feedback: NONE | PRESENT
-
-추가 근거 필요:
-- <확인 필요 항목 또는 None>
-```
-
-`--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 `Meta-feedback: SKIPPED_BY_USER`로 출력합니다.
-
-## Procedure
-
-1. current worktree root 계산
-2. current branch-key 계산
-3. branch scope 초기화
-4. branch lock 획득
-5. apply mode 계산: `apply = dryRun ? false : apply !== false`
-6. branch-local memory 로드
-7. 기존 durable guidance inventory로 `CLAUDE.md`와 `.claude/rules/**/*.md`의 coverage 확인
-8. durable insight 후보 추출
-9. Frequency, Cost, Risk, Stability, Coverage rubric으로 후보 평가
-10. 각 후보를 `CLAUDE.md`, `.claude/rules/**/*.md`, `no action`, `needs more evidence`로 분류
-11. one-off, superseded, P3/nit, rejected, low-confidence 후보 제거
-12. duplicate 제거
-13. apply=true이고 적용 대상이 있으면 target rule file 또는 `CLAUDE.md`를 직접 수정하고 `global-index.json`에 branch entry가 없으면 생성한 뒤 `lastUsedAt` 갱신
-14. apply=true이지만 적용 대상이 없으면 파일을 수정하지 않고 정상 완료합니다.
-15. apply=false이면 preview만 출력하고 저장 없이 종료
-16. branch lock 해제
-17. `--no-meta-feedback` 또는 `--meta-feedback=false`가 없으면 current run에 TigerKit-level issue가 있는지 판단합니다.
-18. TigerKit-level issue가 없으면 `Meta-feedback: NONE`을 출력하고, 있으면 proposal-only `/tk:meta-feedback`을 첨부합니다.
-19. reflect summary, Needs more evidence, user routine skill review, meta-feedback 상태를 출력
-
-## Conflict handling
-
-충돌 또는 unresolved source conflict가 있으면 해당 candidate는 적용하지 않습니다. summary에 skipped reason을 적습니다.
+- repo shared `CLAUDE.md` 직접 수정
+- source code 수정
+- branch-specific one-off를 durable rule로 승격
+- rejected/low-confidence/민감 정보 저장
+- Patron decision ledger 전문을 그대로 durable memory로 복사
+- TigerKit command friction을 repo rule로 오분류

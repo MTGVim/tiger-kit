@@ -1,261 +1,116 @@
 # TigerKit 운영 사용법
 
-이 문서는 TigerKit 현재 command surface 사용 가이드입니다. 산출물 위치는 `.tigerkit/docs/artifact-layout.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
+이 문서는 TigerKit Slim command surface 사용 가이드입니다. 산출물 위치는 `.tigerkit/docs/artifact-layout.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
 
 ## 언어
 
 명령은 사용자에게 한글로 답하고 작업 산출물도 한글로 작성합니다. URL, 코드, 명령어, 경로, 식별자, commit hash, contract field name은 원문 그대로 유지할 수 있습니다.
 
-사용자 대화에 보이는 안내, 추천, 요약, next action은 계약용어와 변수명을 제외하고 한글로 씁니다.
-
 ## 핵심 모델
 
 ```text
-TigerKit = branch-scoped source intake + sealed gap workflow + human-approved launch + review verdict + steering replacement next + durable reflection + continuation handoff + conditional meta-feedback
+TigerKit Slim = gap + grill + afk + reflect + config
 ```
 
-TigerKit은 branch/workspace-local working memory와 durable repo insight를 분리합니다.
+- `gap`: SoT와 Current Implementation의 차이를 한 번 분석합니다.
+- `grill`: 설계, 계획, 변경안, reviewer 판단을 질문 렌즈로 압박 검증합니다.
+- `afk`: 사용자에게 물어볼 decision point를 temporary Patron에게 위임합니다.
+- `reflect`: 세션 learning과 개선 후보를 추출합니다.
+- `config`: setup, preferences, Patron, Vowline, recommended tools를 관리합니다.
 
-- 사용자 입력, 문서, 스크린샷, 회의 메모, 이전 계획은 source material이며 그 자체로 authority가 아닙니다.
-- `gap` 산출물은 현재 branch 또는 plain workspace scope의 working memory입니다.
-- 기존 branch-local Spec Patch가 있으면 `/tk:gap`이 source material로 읽을 수 있지만, 현재 command surface는 `/tk:spec` command를 노출하지 않습니다.
-- 해당 산출물은 repo-wide durable knowledge가 아닙니다.
-- repo에 영구적으로 남길 insight는 `reflect`만 추출하고 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에 반영합니다.
-- 다음 세션을 위한 사람이 읽는 continuation과 pending follow-up queue는 `handoff`가 담당합니다.
-- TigerKit command/skill 자체 개선 피드백은 `meta-feedback`이 담당합니다.
-
-## Workspace fallback mode
-
-TigerKit은 GitHub repo 전용 도구가 아닙니다. 아래 context에서도 `/tk:gap`, `/tk:launch`, `/tk:review`, `/tk:reflect`가 동작해야 합니다.
-
-- GitHub remote가 없는 git repo
-- git 자체가 없는 plain workspace
-- notes/docs/operations runbook folder
-- commit이나 PR을 원하지 않는 작업
-- 코드 수정이 아닌 문서 생성, research, checklist, data cleanup 작업
-
-원칙:
-
-- git/GitHub 부재는 기본적으로 launch blocker가 아닙니다.
-- commit/PR은 workflow가 명시적으로 요구할 때만 필요합니다.
-- non-git workspace에서는 `scope_kind=workspace`와 안정적인 `scope_key`를 기록합니다.
-- 검증은 test command뿐 아니라 `file_exists`, `file_contains`, `artifact_written`, `schema_valid`, `manual_review_required`, `receipt_only` 같은 non-code gate도 허용합니다.
-- reflect는 repo durable target이 없으면 generated report와 user-level memory candidate/proposal 중심으로 fallback합니다.
+Launch/workflow freezing/autopilot/mandatory runner 실험은 종료되었습니다.
 
 ## Command Surface
 
-Plugin namespace는 `/tk:*`입니다. TigerKit 현재 공개 실행 표면은 Claude Code plugin command이며, 별도 repo-local skill 파일 없이 `commands/*.md`와 `.claude-plugin/plugin.json`이 `/tk:*` contract를 소유합니다. 해당 workflow를 명시한 자연어 요청은 대응하는 `/tk:*` command contract로 처리합니다.
-
-Hermes Agent, Codex CLI, `npx skills` 기반 command-skill adapter는 현재 release artifact에 포함하지 않습니다. Hermes에서 native `/gap`, `/launch`, `/review`, `/reflect` command를 제공하려면 Hermes plugin(`.hermes/plugins/<name>/plugin.yaml`, `ctx.register_command`)이 필요하므로, 사전조사 후 별도 adapter 작업으로 다룹니다.
-
 | Command | 역할 | 저장 성격 |
-| --- | --- | --- |
-| `/tk:gap` | 사용자 입력, 문서, 스크린샷, 회의 메모, 기존 branch-local Spec Patch를 source material로 intake하고, source grounding, ambiguity attack, sealed launch workflow 생성을 수행한 뒤 `GAP_READY` 또는 `GAP_BLOCKED`로 끝납니다. | branch-local |
-| `/tk:gap --review` | v7 Contract-based Gap Review compatibility mode로 사용자가 고칠 finding과 답할 clarification을 남깁니다. | branch-local |
-| `/tk:launch` | sealed workflow만 `tk-runner` subagent로 실행하고 verification, abort receipt, runtime harness, reflect trace를 남깁니다. workflow의 `review_policy`가 `required`이면 verification 뒤에 read-only `tk-reviewer` 수용 검토를 추가하고 execution·verification·acceptance review·overall status를 분리합니다. git/GitHub/commit은 capability로 기록하고 필요 없으면 skip reason으로 성공할 수 있습니다. | branch/workspace-local execution |
-| `/tk:review` | frozen goal/spec 또는 sealed workflow 대비 launch 결과와 현재 구현을 검증하고 `REVIEW_PASS`, `REVIEW_PARTIAL`, `REVIEW_FAIL`, `REVIEW_BLOCKED` verdict를 남깁니다. standalone review는 current diff, branch diff, PR, file/artifact, claim, latest launch receipt를 target으로 pin할 수 있습니다. | branch/workspace-local review |
-| `/tk:reflect` | gap+launch trace와 branch-local 산출물에서 repo에 남길 insight만 추출하고 반영합니다. 결과는 `Repo Insight`, `사용자 루틴 스킬 검토`, `Meta-feedback`를 분리하며, TigerKit-level issue가 없으면 `Meta-feedback: NONE`을 출력합니다. | durable insight |
-| `/tk:next` | current state와 TigerKit artifact를 읽어 다음 안전 실행 항목 하나를 실제로 이어서 시도하며 receipt를 남깁니다. | branch/workspace-local continuation execution |
-| `/tk:handoff` | 다음 세션이나 다음 작업자가 이어받을 수 있도록 continuation 문서를 작성합니다. | continuation |
-| `/tk:meta-feedback` | 현재 세션에서 드러난 TigerKit-level workflow/tooling friction만 프로젝트 자산 유출 없이 일반화합니다. | generalized feedback |
+|---|---|---|
+| `/tk:gap` | SoT와 Current를 비교해 missing, mismatch, overbuilt, ambiguous를 보고합니다. | optional generated report |
+| `/tk:grill` | proposal/review context와 evidence를 비교해 닫힌 질문과 열린 질문을 분리합니다. | optional generated report |
+| `/tk:afk` | temporary Patron에게 scoped decision을 위임하고 ledger를 남깁니다. | decision ledger |
+| `/tk:reflect` | session result와 feedback에서 개선 후보를 추출합니다. | user/repo/Patron candidates |
+| `/tk:config` | setup, AFK default, Patrons, Vowline, recommended tools를 관리합니다. | user config |
+| `/tk:setup` | `/tk:config init` alias입니다. | user config |
 
 ## 사용 예시
 
 ```text
-/tk:gap "방금 정해졌는데 모바일에서는 CTA를 하단 sticky로 해야 된대. 데스크톱은 기존처럼 우상단 유지."
-/tk:gap --review
-/tk:gap --analysis-depth bounded
-/tk:gap --analysis-depth expanded
-/tk:gap --spec SP-20260602-143012-A7F3
-/tk:gap --maintainer-proof
-/tk:launch
-/tk:launch --no-worktree
-/tk:launch --autopilot
-/tk:review
-/tk:review --latest
-/tk:reflect
+/tk:gap "PRD와 현재 구현 차이 봐줘" --target commands/gap.md
+/tk:grill "이 계획 구멍 찾아줘" --target commands/grill.md
+/tk:afk "검증 범위 결정 필요" --patron tester
 /tk:reflect --dry-run
-/tk:reflect --no-meta-feedback
-/tk:next
-/tk:next "이 브랜치에서 다음 뭐 하지?"
-/tk:handoff 현재 작업 이어받을 수 있게 남겨줘
-/tk:meta-feedback gap 결과가 느리고 BE 오탐이 난 패턴을 일반화해줘
+/tk:config init
+/tk:config afk status
+/tk:config patrons list
+/tk:setup
 ```
 
 ## `/tk:gap`
 
-- 기본 `/tk:gap`은 v8.0에서 source intake, Ground / Attack / Produce workflow command입니다.
-- 사용자 의도, URL, ticket, notes, screenshots, repo context, prior specs, conversation decisions, `SessionStart`의 `TIGERKIT_SESSION_START` worktree context proposal을 source material 후보로 intake합니다.
-- source material과 authority를 분리하고 confirmed requirement, assumption, rejected assumption, non-goal을 정규화합니다.
-- legacy branch-local Spec Patch가 있으면 active confirmed item만 source material 후보로 읽을 수 있습니다.
-- ambiguity attack으로 contradiction, missing decision, hidden dependency, task precondition, edge case, failure mode, verification gap을 찾습니다.
-- 각 task의 `assumed_preconditions`를 checkable predicate로 기록하고, verification gate 중 static/read-only 부분은 봉인 전 preflight로 1회 확인합니다.
-- 이전 `/tk:launch`가 `HUMAN_DECISION_REQUIRED` 또는 `VERIFICATION_FAILED`로 멈춘 trace가 있으면 다음 `/tk:gap` 입력으로 구조화해 같은 사실을 재발견하지 않습니다.
-- launch 가능한 sealed workflow가 있으면 기본적으로 `GAP_READY`로 끝내고 내부 artifact에 `tigerkit-launch-workflow` block을 생성합니다. 사용자-facing 출력에는 block 본문 대신 workflow path/hash/count와 간단한 DAG/다음 행동만 보여줍니다.
-- 같은 `/tk:gap` 호출 안에서 host 자동화가 정식 `/tk:launch` 루틴까지 이어서 수행한 경우에는 `GAP_READY`가 아니라 `GAP_AUTO_LAUNCHED`로 끝내고 workflow와 launch receipt를 함께 기록합니다.
-- unresolved decision/conflict/missing source 때문에 launch하면 안 되면 `GAP_BLOCKED`로 끝내고 workflow block을 생성하지 않습니다.
-- `/tk:gap --review`는 v7 Contract-based Gap Review compatibility mode입니다.
-- `--analysis-depth <direct|bounded|expanded|exhaustive-capped>`는 source discovery depth만 명시하며 품질 gate를 낮추지 않습니다.
-- `--maintainer-proof`는 maintainer/self-eval 전용입니다.
+`/tk:gap`은 workflow generator가 아닙니다.
 
-### `/tk:gap` 기본 출력 예시
+절차:
 
-```text
-GAP_READY: WF-20260617-143012-A7F3
-Branch Scope: main--c0ffee
-Workflow: .claude/tigerkit/branches/main--c0ffee/gap/WF-20260617-143012-A7F3.md
-Workflow Hash: <sha256>
-Tasks: 4
-Verification Gates: 4
-Workflow DAG: T1 → T2 → T3 → T4
-Autopilot Allowed: false
-Commit Policy: preflight_decision_required
-다음 행동: /tk:launch
-```
+1. SoT refs와 access status를 고정합니다.
+2. Current Implementation evidence를 확인합니다.
+3. missing, mismatch, overbuilt, ambiguous를 분류합니다.
+4. P0/P1/P2 finding만 Findings에 둡니다.
+5. P3, duplicate, unverifiable, source conflict, missing evidence는 Ambiguities 또는 Not accepted summary에 둡니다.
+6. Recommended Next Steps를 짧게 제시합니다.
 
-```text
-GAP_BLOCKED: GAP-20260617-143012-A7F3
-Branch Scope: main--c0ffee
-Blocked Reasons: 2
-Human Decisions: 1
-Missing Sources: 1
-Report: .claude/tigerkit/branches/main--c0ffee/gap/GAP-20260617-143012-A7F3.md
-다음 행동: Q1 확인 후 /tk:gap 재실행
-```
+## `/tk:grill`
 
-### `/tk:gap --review`
+`/tk:grill`은 workflow generator가 아닙니다.
 
-`/tk:gap --review`는 기존 v7 review behavior를 유지합니다.
+절차:
 
-- Product/Design Spec, implementation plan, current implementation을 Contract로 normalize해 비교합니다.
-- 기본 산출물은 `report.md`와 `run.json`입니다.
-- 기본 stdout은 run 결과, finding/clarification count, report path, run.json path, next action만 출력합니다.
-- subagent는 candidate만 생성하고 JudgeMergerAgent만 final finding을 확정합니다.
-- final finding은 P0/P1/P2만 포함합니다.
-- P3/nit/duplicate/unverifiable/source_conflict는 final finding이 아닙니다.
-- `/tk:gap --review` run artifact는 `.claude/tigerkit/branches/<branch-key>/runs/gap/<GAP-ID>/` 아래에 저장합니다. 기본 `/tk:gap` sealed workflow는 `.claude/tigerkit/branches/<branch-key>/gap/` 아래에 저장합니다.
-- 유저향 compact table은 run-local short Ref(`G1`, `R1`, `C1`, `Q1`)를 우선 표시합니다.
+1. Proposal과 target surface를 고정합니다.
+2. repo rule, docs, current implementation evidence를 먼저 확인합니다.
+3. 코드나 문서에서 답할 수 있는 질문은 Closed Questions에 둡니다.
+4. owner decision이 필요한 질문은 Open Questions에 둡니다.
+5. 필요한 경우 Patron candidate를 추천합니다.
+6. reviewer loop에서 나온 질문은 confirmed defect가 아니라 review prompt로 취급합니다.
 
-### `/tk:launch`
+## `/tk:afk`
 
-- `/tk:launch`는 sealed workflow만 `tk-runner` subagent로 실행합니다.
-- workflow의 `review_policy.mode == required`이면 verification 뒤에 read-only `tk-reviewer` acceptance review를 실행합니다. `optional`은 not-run reason을 receipt에 기록하고, `skip`은 명시 skip입니다.
-- execution 성공이 acceptance review pass를 자동 의미하지는 않습니다. reviewer fail/block이면 overall status는 plain success가 아닙니다.
-- missing git/GitHub는 workflow가 commit/PR을 요구하지 않는 한 abort 사유가 아닙니다.
-- non-git workspace 성공 시 commit은 `skipped_not_git_repo`로 기록할 수 있습니다.
-- git diff가 없으면 file manifest snapshot 또는 receipt-only diff scope를 workflow policy에 따라 사용합니다.
-- workflow 밖 scope 확장, missing requirement 임의 해석, public API/DB/product behavior 재정의, verification 없는 success 선언, out-of-scope diff commit을 금지합니다.
-- mutation 전에 required `assumed_preconditions`를 read-only로 확인합니다.
-- mid-flight 질문을 하지 않습니다. 새 사용자 결정이 필요하면 `HUMAN_DECISION_REQUIRED`로 abort합니다.
-- `/tk:launch --autopilot`은 Phase 1에서 recovery를 수행하지 않고 `AUTOPILOT_DISABLED` 또는 `AUTOPILOT_NOT_IMPLEMENTED_IN_PHASE1`로 abort합니다.
-- `/tk:launch`는 `SessionStart`가 주입한 `TIGERKIT_SESSION_START` worktree context proposal을 preflight capability로 기록합니다. 자동 symlink/copy는 하지 않으며, 같은 candidate signature를 command마다 다시 묻지 않습니다.
-- workflow가 worktree context 적용을 required precondition으로 두었는데 승인/evidence가 없으면 `WORKTREE_CONTEXT_APPROVAL_REQUIRED`로 task 실행 전 abort합니다.
-- `/tk:launch`는 `tk-runner` runtime harness를 receipt에 기록합니다. Claude Code 배포 agent는 `model: sonnet`이며, unavailable/fallback 상태를 숨기지 않습니다.
-- commit은 preflight receipt에 `user_preapproved_commit=true`와 `approval_source_ref`가 있을 때만 가능합니다.
+AFK는 current session decision delegation입니다.
 
-
-### `/tk:review`
-
-- `/tk:review`는 GAP → Launch 이후 frozen goal/spec 또는 sealed workflow에 맞게 구현 결과를 검증합니다.
-- `/tk:gap --review`는 v7 Contract-based Gap Review compatibility mode이며, `/tk:review`는 post-launch verification command입니다.
-- standalone target 우선순위는 explicit target → current diff → branch diff → latest launch receipt → current PR context → blocked입니다.
-- review는 항상 `Review Target`을 먼저 pin하고, Spec / Standards / Evidence 축을 분리합니다.
-- latest embedded review가 같은 target을 이미 커버하고 new diff가 없으면 duplicate review를 반복하지 않습니다.
-- 구현을 수정하거나 launch를 대신 실행하지 않습니다. read-only 검증과 generated review report 작성만 수행합니다.
-- 결과는 `REVIEW_PASS`, `REVIEW_PARTIAL`, `REVIEW_FAIL`, `REVIEW_BLOCKED` 중 하나입니다.
-- report는 `.claude/tigerkit/branches/<branch-key>/review/` 아래에 저장하고 closed gaps, remaining gaps, drift/risk, next recommendation을 분리합니다.
-- `REVIEW_PASS`는 diff 존재나 launch 성공 문자열만으로 선언하지 않고, frozen target의 required requirement와 verification evidence를 현재 관측값으로 확인해야 합니다.
-
-### Maintainer only: `--maintainer-proof`
-
-`--maintainer-proof`는 TigerKit maintainer가 자체 성능개선, regression 검증, proof artifact 확인을 할 때만 씁니다. 일반 사용자가 gap 결과를 더 좋게 만들기 위해 선택하는 품질 모드가 아닙니다.
-
-이 옵션을 명시한 경우에만 아래가 허용됩니다.
-
-- `maintainer-proof/` artifact 생성
-- `input-manifest.json`, `contracts.json`, `candidates.json`, `judge-result.json`, `baseline-snapshot.json`, `proof.json`
-- `heuristicProof`, `performance`, baseline/current score
-- false-positive/false-negative/speed/analysis-depth improvement claim
-- target coverage proof와 dispatch completeness proof
-- ClaimFreshnessGate와 BaselineAutoRefreshGate
-
-기본 `/tk:gap`은 성능개선이나 false-positive/false-negative 개선 claim을 하지 않습니다. 사용자에게 중요한 정보는 Actionable Findings, Clarification Needed, next action입니다.
+- 기본 default는 off입니다.
+- `/tk:afk` 명시 호출 시에만 켜집니다.
+- Patron 선택은 phase가 아니라 question type 기준입니다.
+- Patron output은 Driver가 merge합니다.
+- Patron decision ledger는 reflect input이 됩니다.
 
 ## `/tk:reflect`
 
-- branch-local specs/gap memory에서 durable insight 후보만 추출합니다.
-- 기본 동작은 `apply=true`입니다.
-- 반영할 durable insight가 없으면 아무 파일도 수정하지 않고 성공할 수 있습니다.
-- `--dry-run`과 `--apply=false`는 preview-only입니다.
-- 기본 apply target은 `CLAUDE.md` 또는 `.claude/rules/**/*.md`입니다.
-- `.claude/tigerkit/` 아래에는 durable insight를 저장하지 않습니다.
-- source code는 수정하지 않습니다.
-- 후보는 Frequency, Cost, Risk, Stability, Coverage를 모두 통과해야 합니다.
-- 기존 `CLAUDE.md`와 `.claude/rules/**/*.md`를 먼저 inventory해 중복 durable guidance를 피합니다.
-- 근거가 부족한 후보는 `Needs more evidence`로 남기고 durable rule로 승격하지 않습니다.
-- branch-specific one-off decision, 임시 Spec Patch, superseded 결정, P3/nit, rejected finding, low-confidence observation은 durable insight로 만들지 않습니다.
-- branch-local specs/gap 산출물이 없으면 산출물 기반 후보는 없는 것으로 처리합니다. 사용자 대화에서 명시적으로 확인된 TigerKit 운영 규칙은 후보가 될 수 있지만, 반복 관측 패턴이나 실행자 해석만으로 durable insight를 만들지 않습니다.
-- apply가 저장을 수행하면 `global-index.json`에 current branch entry가 없을 때 새 entry를 만들 수 있습니다.
-- reflect 결과는 `Repo Insight`, `사용자 루틴 스킬 검토`, `Meta-feedback`를 분리합니다.
-- TigerKit-level issue가 없으면 `Meta-feedback: NONE`을 출력합니다. issue가 있을 때만 proposal-only meta-feedback을 첨부합니다.
-- `--no-meta-feedback` 또는 `--meta-feedback=false`가 있으면 meta-feedback 판단 자체를 생략합니다.
+Reflect target policy:
 
-## `/tk:next`
+| Target | Policy |
+|---|---|
+| repo `CLAUDE.local.md` | auto apply |
+| repo `CLAUDE.md` | suggest only |
+| user `PROFILE.md` | auto apply |
+| user `CLAUDE.md` | auto apply |
+| user skills | auto apply |
+| Patron profiles | auto apply candidates or improvements |
 
-- `/tk:next`는 GAP → Launch → Reflect pipeline 밖의 steering replacement continuation command입니다.
-- current workspace/repo state, latest GAP workflow/status, latest launch receipt, latest reflect report, latest handoff, `SessionStart` worktree context proposal을 읽고 다음 안전 실행 항목 하나를 선택합니다.
-- 안전하게 할 수 있는 작업이 있으면 시도하고, 할 수 없으면 `NEXT_BLOCKED`, `NEXT_PARTIAL`, `NEXT_SKIPPED` 중 하나로 멈춘 이유를 남깁니다.
-- 사용자 승인 또는 artifact상의 명시 approval 없이 commit, PR, GitHub issue write, worktree context symlink/copy를 수행하지 않습니다.
-- 같은 worktree context candidate signature가 이미 거절되었으면 다시 묻지 않습니다.
+## `/tk:config`
 
-## `/tk:handoff`
+`/tk:config`는 askUserQuestion 기반 단계형 wizard입니다.
 
-- 기존 continuation command입니다. v8.0에서도 active compatibility command로 유지합니다.
-- canonical 출력 대상은 `.claude/tigerkit/branches/<branch-key>/handoffs/current.md`입니다.
-- `/tk:handoff`는 `.claude/tigerkit/global-index.json`의 current branch entry에 `latestHandoffPath`를 함께 기록합니다.
-- 경로를 지정하지 않은 resume 지시는 `global-index.json`의 `latestHandoffPath`를 1순위로 확인합니다.
-- 최신 branch-local Spec Patch와 Gap Run이 있으면 handoff의 relevant files나 validation에 참조할 수 있습니다.
-- 현재 작업을 방해하면 안 되는 follow-up은 `Pending Backlog`에 source/evidence/priority/blocked-by/next action과 함께 남길 수 있습니다.
-- `archive=true` 또는 명시적 archive 요청이 있을 때만 branch-local dated copy를 만듭니다.
-- `.claude/handoffs/current.md`는 optional convenience pointer이며 canonical handoff를 대체하지 않습니다.
-- `Reader Guide`와 `Resume Prompt`를 포함합니다.
+First-use config suggestion은 non-blocking이며 기본 선택은 “이번엔 그냥 진행”입니다.
 
-## `/tk:meta-feedback`
+Recommended tools는 기타 메뉴에서 사용자가 선택한 경우에만 보여줍니다.
 
-- 기존 TigerKit improvement command입니다. v8.0에서도 active compatibility command로 유지합니다.
-- 현재 세션 내역에서 TigerKit command/skill 사용 friction과 반복 피드백을 찾습니다.
-- emit 대상은 TigerKit-level workflow/tooling friction뿐입니다. ordinary task learning, repo insight, user routine pattern, next-step follow-up은 `/tk:reflect`, `/tk:handoff`, `/tk:next`로 분리합니다.
-- emit 전에 Domain-term guard를 실행해 repo 이름, product 이름, framework 이름, domain entity, 내부 path, symbol, URL, ticket, branch, PR 번호, commit hash, 사용자 원문 quote가 남은 proposal을 rewrite 또는 reject합니다.
-- 각 proposal은 “다른 repo·다른 도메인에서도 그대로 말이 되는가?”라는 Restate test를 통과해야 합니다.
-- repo/도메인 insight는 `/tk:reflect`, basis-target 비교는 `/tk:gap`, follow-up 보관은 `/tk:handoff` 또는 `/tk:next`, command·skill 계약 friction은 `/tk:meta-feedback`으로 분리합니다.
-- `/tk:meta-feedback` 산출물은 대상 command/skill의 자체 계약 어휘와 feedback taxonomy만 사용하고, `Affected command or doc`, `Observed issue`, `Evidence from current run`, `Why this is TigerKit-level`, `Minimal proposed fix`를 포함해야 합니다.
-- agent runtime/config, MCP permission, custom agent 추천은 TigerKit 본체 범위 밖으로 둡니다.
+## Deprecated commands
 
-## Worktree context proposal
+아래 command는 launch-era surface로 deprecated 처리되었고 active manifest에 포함되지 않습니다.
 
-TigerKit은 Git worktree context를 Claude Code `SessionStart` hook으로 세션 시작 시 한 번 read-only 점검합니다. Hook은 base/source worktree에만 있는 root-level Markdown(`AGENTS.md`, `CLAUDE.local.md`, `DESIGN.md` 등)과 `.claude/` 후보를 `TIGERKIT_SESSION_START` additional context로 제안합니다. `/tk:gap`은 이를 source grounding에 포함하고, `/tk:launch`와 `/tk:next`는 command마다 다시 묻지 않습니다.
-
-안전 정책:
-
-- 자동 symlink/copy 금지
-- tracked file symlink 금지
-- regular file overwrite 금지
-- `.claude/` 전체 symlink 금지
-- `node_modules` symlink 금지
-- `DESIGN.md`는 branch-specific 가능성이 있어 copy/skip 검토 권장
-- 같은 candidate signature를 거절하면 `.claude/tigerkit/local/session-start/worktree-context-declines.json`에 기록해 다시 묻지 않음
+- `/tk:launch`
+- `/tk:review`
+- `/tk:next`
+- `/tk:handoff`
+- `/tk:meta-feedback`
 
 ## Generated state
 
-`.claude/tigerkit/`은 generated branch-local working memory입니다. git ignore 대상입니다.
-
-주의:
-
-- `.claude/` 전체를 ignore하지 않습니다.
-- `.claude/tigerkit/`만 ignore합니다.
-- current worktree root 아래에 저장합니다.
-- `$GIT_COMMON_DIR`, `.git/worktrees/*`, user home, `/tmp`에 저장하지 않습니다.
-
-## 운영 범위 메모
-
-세부 정책, 우선순위 규칙, 검증 원칙은 `CLAUDE.md`와 `.claude/rules/**/*.md`를 기준으로 봅니다.
+`.claude/tigerkit/`은 generated branch/workspace-local memory입니다. durable repo knowledge가 아닙니다.

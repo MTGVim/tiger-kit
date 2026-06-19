@@ -188,9 +188,9 @@ Safety contract:
 - If the user declines this proposal, record the candidate signature in the decline marker and do not ask again for the same signature.
 
 Command behavior:
-- /tk:gap should consider this proposal during source grounding and sealed workflow creation.
-- /tk:launch should consume this session context during preflight instead of re-prompting per command.
-- /tk:next should not re-ask about the same proposal when this session context or a matching decline marker exists.
+- /tk:gap should consider this proposal during source grounding only.
+- /tk:grill may use this proposal as surrounding repo context when pressure-testing plans, changes, or reviewer questions.
+- Deprecated launch-era commands must not treat this hook as authority to recreate sealed workflow, launch preflight, or continuation state.
 </TIGERKIT_SESSION_START>"
 
 emit_context "$context"
