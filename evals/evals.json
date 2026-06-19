@@ -15,6 +15,7 @@
     ],
     "gap_terminal_statuses": [
       "GAP_READY",
+      "GAP_AUTO_LAUNCHED",
       "GAP_BLOCKED"
     ],
     "launch_abort_codes": [
@@ -83,7 +84,7 @@
       "id": 1,
       "name": "gap-ready-produces-sealed-workflow",
       "prompt": "Evaluate default /tk:gap when enough source exists to create a launch workflow. Do not write files.",
-      "expected_output": "Should end with GAP_READY, include a sealed tigerkit-launch-workflow block, include workflow path, workflow hash, task count, verification gate count, task assumed_preconditions, readonly_preflight status, autopilot allowed false, commit policy preflight_decision_required, review_policy mode, and next action /tk:launch. GAP_READY cannot be claimed without a launch workflow or without checking static/read-only preflight predicates. User-facing stdout labels should be Korean, e.g. 브랜치 범위, 워크플로, 검증 게이트, 자동 실행 허용, 커밋 정책, 다음 행동.",
+      "expected_output": "Should end with GAP_READY, include a sealed tigerkit-launch-workflow block, include workflow path, workflow hash, task count, verification gate count, task assumed_preconditions, readonly_preflight status, autopilot allowed false, commit policy preflight_decision_required, review_policy mode, and next action /tk:launch. GAP_READY cannot be claimed without a launch workflow or without checking static/read-only preflight predicates, and cannot be used when the same /tk:gap call continues into launch execution; that integrated path must report GAP_AUTO_LAUNCHED with workflow and launch receipt evidence. User-facing stdout labels should be Korean, e.g. 브랜치 범위, 워크플로, 검증 게이트, 자동 실행 허용, 커밋 정책, 다음 행동.",
       "files": [
         "commands/gap.md",
         ".tigerkit/docs/output-contract.md",
