@@ -1,4 +1,4 @@
-# CLAUDE.md
+# TigerKit Slim Repo Rules
 
 ## 언어 및 산출물 규칙
 
@@ -18,16 +18,15 @@
 ## 핵심 정책
 
 - TigerKit의 목적은 AI-induced source loss를 줄이는 것이다.
-- v8.0 핵심 command flow는 `/tk:gap`, `/tk:launch`, `/tk:reflect`이며 utility/compatibility/secondary command는 `/tk:next`, `/tk:gap --review`, `/tk:handoff`, `/tk:meta-feedback`다.
-- 공개 command surface 변경은 compatibility와 docs/evals 동기화를 함께 검토한다. v8 MVP에서 `/tk:spec`은 공개 command로 노출하지 않는다.
+- TigerKit Slim 핵심 command surface는 `/tk:gap`, `/tk:afk`, `/tk:reflect`이며 optional active micro command는 `/tk:grill`, management command는 `/tk:config`, `/tk:setup`이다.
+- 공개 command surface 변경은 plugin manifest, README, docs, evals 동기화를 함께 검토한다. `/tk:launch`, `/tk:review`, `/tk:next`, `/tk:handoff`, `/tk:meta-feedback`는 launch-era deprecated command이며 active manifest에 등록하지 않는다.
 - Claude Code plugin command는 namespace를 사용하므로 slash invocation은 `/tk:*` 형태다. 자연어 요청은 같은 프로토콜을 따른다.
-- 기본 `/tk:gap`은 사용자 지시, 브레인스토밍, 회의 메모, 결정사항, URL/ticket/docs, legacy branch-local Spec Patch를 source material로 intake하고, source grounding, ambiguity attack, sealed launch workflow 생성을 수행한 뒤 `GAP_READY` 또는 `GAP_BLOCKED`로 끝난다. v7 Contract-based Gap Review는 `/tk:gap --review` compatibility mode로 유지한다.
-- `/tk:launch`는 `GAP_READY` sealed workflow만 `tk-runner` subagent로 실행하며, workflow 밖 scope 확장, missing requirement 임의 해석, verification 없는 success 선언, preflight 승인 없는 commit을 금지한다. git/GitHub 부재는 workflow가 commit/PR을 요구하지 않는 한 abort 사유가 아니며 명시 skip reason으로 기록한다. `tk-runner` runtime harness와 model binding은 receipt에 기록해야 하며, required harness unavailable 상태를 숨기지 않는다.
-- `/tk:reflect`는 branch/workspace-local working memory에서 repo에 영구 보존할 insight만 추출한다. 기본 동작은 `apply=true`이며, source code는 수정하지 않고 `CLAUDE.md` 또는 `.claude/rules/**/*.md`에 직접 반영한다.
-- `/tk:next`는 현재 TigerKit artifact와 workspace/repo 상태를 읽어 handoff/trace의 다음 안전 작업을 실제로 이어서 시도하는 steering replacement continuation command다. sealed workflow가 필요한 구현은 `/tk:gap → /tk:launch`를 우회하지 않으며, commit/push/PR/merge/release/deploy 같은 외부 side effect는 사용자 승인 또는 artifact상의 명시 approval 없이는 수행하지 않는다.
-- `/tk:handoff`는 다음 세션이나 다음 작업자가 이어받을 continuation 문서를 작성한다.
-- `/tk:meta-feedback`은 현재 세션 내역에서 TigerKit command/skill 개선안을 일반화해 추출한다.
-- Git worktree context 처리는 Superpowers-style `SessionStart` read-only context check로 세션 시작 시 한 번 감지한다. base/source worktree에만 있는 root-level Markdown과 `.claude/` 후보를 `additionalContext`로 제안하되 자동 symlink/hydration은 금지한다. `/tk:gap`은 이 context를 source grounding에 반영하고, `/tk:launch`와 `/tk:next`는 command마다 재질문하지 말고 session context 또는 decline marker를 소비한다. 사용자가 같은 candidate signature를 거절하면 `.claude/tigerkit/local/session-start/worktree-context-declines.json`에 기록해 다시 묻지 않는다. tracked file symlink, regular file overwrite, `.claude/` 전체 symlink, `node_modules` symlink, source_worktree mutation은 금지한다.
+- 기본 `/tk:gap`은 SoT와 Current Implementation을 한 번 비교해 missing, mismatch, overbuilt, ambiguous를 분류하고 evidence, impact, priority, suggested fix를 보고한다. workflow를 생성하거나 freeze하지 않는다.
+- `/tk:afk`는 현재 세션에서 사용자에게 물어볼 중대하거나 불확실한 decision point를 temporary Patron에게 위임한다. Patron은 worker가 아니라 decision policy이며 Driver가 Patron output을 merge하고 decision ledger를 기록한다.
+- `/tk:reflect`는 세션 내용, 실제 변경 결과, 사용자 피드백, Patron decision ledger에서 재사용 가능한 learning을 추출한다. repo auto-write는 `CLAUDE.local.md`로 제한하고 repo shared `CLAUDE.md`는 suggest-only로 다룬다.
+- `/tk:config`는 TigerKit setup, AFK default, Patron catalog, Vowline opt-in, recommended tools를 관리한다. config state가 source of truth이고 user `CLAUDE.md` bridge는 activation aid다.
+- Vowline은 TigerKit 필수 의존성이 아니며 `/tk:config`에서 opt-in으로 연결한다.
+- Recommended tools는 recommendation-only이며 기본 설치하지 않는다. 설치 전 변경 범위와 설치 방식을 설명하고 사용자 승인을 받는다.
 - repo convention은 `.claude/rules/**/*.md`를 우선 확인한다.
 - UI copy는 basis 또는 confirmed contract와 exact match여야 한다. 의미상 유사함은 충분하지 않다.
 - 외부 근거는 URL, path, ticket, Figma, PRD, issue, API docs, source code path, commit hash 같은 reference와 access status로 관리한다.

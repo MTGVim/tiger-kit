@@ -7,4 +7,7 @@
 !.tigerkit/docs/*.md
 !.tigerkit/docs/gap-baselines.json
 .worktrees/
+!docs/
+docs/*
+!docs/*.md
 docs/superpowers/
