@@ -62,7 +62,7 @@ meta-feedback = TigerKit-level workflow/tooling friction만 조건부 일반화
 
 `/tk:review`는 review/correction loop를 TigerKit 용어로 흡수한 post-launch 검증 command입니다. 별도 브랜드나 별도 command surface를 추가하지 않고, frozen target 대비 닫힌 gap, 남은 gap, drift/risk, 다음 loop 결정을 기록합니다.
 
-`/tk:gap` 기본 실행은 git/GitHub가 없는 workspace에서도 `GAP_READY` 또는 `GAP_BLOCKED`로 끝날 수 있습니다. `GAP_READY`에는 task별 `assumed_preconditions`, 봉인 전 `readonly_preflight` 결과, sealed `tigerkit-launch-workflow`가 포함되어야 하고, `GAP_BLOCKED`에는 unresolved decision/conflict/missing source/preflight failure 때문에 workflow block을 포함하지 않습니다. v7 review behavior는 `/tk:gap --review`에서 유지합니다.
+`/tk:gap` 기본 실행은 git/GitHub가 없는 workspace에서도 `GAP_READY`, `GAP_AUTO_LAUNCHED`, 또는 `GAP_BLOCKED`로 끝날 수 있습니다. `GAP_READY`에는 task별 `assumed_preconditions`, 봉인 전 `readonly_preflight` 결과, sealed `tigerkit-launch-workflow`가 포함되어야 하고 실행은 `/tk:launch`로 분리됩니다. 같은 `/tk:gap` 호출 안에서 정식 launch 루틴까지 수행한 경우에는 `GAP_AUTO_LAUNCHED`로 workflow와 launch receipt를 함께 보고해야 합니다. `GAP_BLOCKED`에는 unresolved decision/conflict/missing source/preflight failure 때문에 workflow block을 포함하지 않습니다. v7 review behavior는 `/tk:gap --review`에서 유지합니다.
 
 Model routing은 cheap scout / Sonnet-class / Opus-class tier로 구분합니다. Cheap scout는 source inventory, lightweight grounding pre-pass, source grouping, non-binding draft summary에만 쓰고, confirmed requirement normalization, ambiguity final decision, producer-evidence-sensitive judgment, `GAP_READY`/`GAP_BLOCKED` freeze, acceptance review verdict에는 쓰지 않습니다. 기본 final gap freeze/judge, launch execution, verification synthesis, review verdict는 Sonnet-class 경로이고, Opus-class는 high-risk arbitration이나 repeated review non-convergence 같은 escalation에 둡니다.
 

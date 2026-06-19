@@ -91,7 +91,8 @@ Hermes Agent, Codex CLI, `npx skills` 기반 command-skill adapter는 현재 rel
 - ambiguity attack으로 contradiction, missing decision, hidden dependency, task precondition, edge case, failure mode, verification gap을 찾습니다.
 - 각 task의 `assumed_preconditions`를 checkable predicate로 기록하고, verification gate 중 static/read-only 부분은 봉인 전 preflight로 1회 확인합니다.
 - 이전 `/tk:launch`가 `HUMAN_DECISION_REQUIRED` 또는 `VERIFICATION_FAILED`로 멈춘 trace가 있으면 다음 `/tk:gap` 입력으로 구조화해 같은 사실을 재발견하지 않습니다.
-- launch 가능한 sealed workflow가 있으면 `GAP_READY`로 끝내고 `tigerkit-launch-workflow` block을 생성합니다.
+- launch 가능한 sealed workflow가 있으면 기본적으로 `GAP_READY`로 끝내고 `tigerkit-launch-workflow` block을 생성한 뒤 다음 행동을 `/tk:launch`로 둡니다.
+- 같은 `/tk:gap` 호출 안에서 host 자동화가 정식 `/tk:launch` 루틴까지 이어서 수행한 경우에는 `GAP_READY`가 아니라 `GAP_AUTO_LAUNCHED`로 끝내고 workflow와 launch receipt를 함께 기록합니다.
 - unresolved decision/conflict/missing source 때문에 launch하면 안 되면 `GAP_BLOCKED`로 끝내고 workflow block을 생성하지 않습니다.
 - `/tk:gap --review`는 v7 Contract-based Gap Review compatibility mode입니다.
 - `--analysis-depth <direct|bounded|expanded|exhaustive-capped>`는 source discovery depth만 명시하며 품질 gate를 낮추지 않습니다.

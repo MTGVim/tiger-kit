@@ -31,8 +31,9 @@ TigerKit 자체 성능 개선, baseline, heuristic proof, performance proof, fal
 - plugin slash invocation은 `/tk:gap`입니다.
 - `tiger-kit gap` CLI 표현은 이 plugin command의 사용자 관점 alias로 취급합니다.
 - `/tk:gap`은 하나의 실행으로 동작합니다.
-- 기본 `/tk:gap`은 `GAP_READY` 또는 `GAP_BLOCKED` 중 하나로 끝납니다.
-- `GAP_READY`는 정확히 하나의 `tigerkit-launch-workflow` block과 workflow hash를 포함합니다.
+- 기본 `/tk:gap`은 `GAP_READY`, `GAP_BLOCKED`, 또는 `GAP_AUTO_LAUNCHED` 중 하나로 끝납니다.
+- `GAP_READY`는 정확히 하나의 `tigerkit-launch-workflow` block과 workflow hash를 포함하고, 실행은 `/tk:launch`로 넘깁니다.
+- `GAP_AUTO_LAUNCHED`는 같은 `/tk:gap` 호출 안에서 sealed workflow 생성 뒤 정식 `/tk:launch` 루틴까지 이어서 수행한 경우에만 사용합니다. 이 경우 `GAP_READY`로 보고하지 않고 workflow와 launch receipt를 함께 기록합니다.
 - `GAP_BLOCKED`는 unresolved decision/conflict/missing source를 기록하고 `tigerkit-launch-workflow` block을 포함하지 않습니다.
 - `/tk:gap --review`는 v7 Contract-based Gap Review compatibility mode입니다.
 - `--maintainer-proof`는 maintainer/self-eval 전용입니다. 일반 사용자 품질 모드가 아니며 기본 gap 결과를 더 강하게 만드는 옵션처럼 설명하지 않습니다.
@@ -53,8 +54,9 @@ TigerKit 자체 성능 개선, baseline, heuristic proof, performance proof, fal
 8. 독립 작업은 불필요한 `depends_on` edge를 만들지 않고 별도 task로 분리해 DAG-shaped workflow로 봉인하며, later verification 또는 merge가 필요한 지점은 명시 join point로 기록합니다.
 9. verification gate 중 static/read-only로 확인 가능한 항목을 봉인 전 preflight로 1회 확인하고, 도구 가정 불일치나 unmet precondition을 launch-blocking item으로 승격합니다.
 10. 이전 `/tk:launch` abort trace가 있으면 구조화된 gap input으로 반영해 같은 `HUMAN_DECISION_REQUIRED`/`VERIFICATION_FAILED` 사실을 재발견하지 않습니다.
-11. launch 가능하면 `GAP_READY`와 sealed `tigerkit-launch-workflow`를 저장합니다.
-12. launch 금지 사유가 남으면 `GAP_BLOCKED`와 blocked report를 저장합니다.
+11. launch 가능하면 sealed `tigerkit-launch-workflow`를 저장하고, 실행을 분리하면 `GAP_READY`를 보고합니다.
+12. 같은 호출 안에서 정식 launch 루틴까지 수행하는 host 자동화가 명시적으로 활성화되어 있으면 `/tk:launch` contract를 그대로 적용하고 `GAP_AUTO_LAUNCHED`로 보고합니다.
+13. launch 금지 사유가 남으면 `GAP_BLOCKED`와 blocked report를 저장합니다.
 
 Workflow hash는 fenced block body raw UTF-8 bytes를 LF로 정규화하고 final LF를 하나 보장한 뒤 SHA-256으로 계산합니다. opening/closing fence line은 hash에서 제외하고 YAML key sort나 normalize를 하지 않습니다.
 
@@ -735,8 +737,9 @@ Implementation 개선 작업에서는 `redesign -> analysis -> review -> feedbac
 
 인터페이스 요약:
 
-- `GAP_READY` 또는 `GAP_BLOCKED`, branch scope, artifact path, 다음 행동을 출력합니다.
+- `GAP_READY`, `GAP_AUTO_LAUNCHED`, 또는 `GAP_BLOCKED`, branch scope, artifact path, 다음 행동을 출력합니다.
 - `GAP_READY`는 workflow path, workflow hash, task count, verification gate count, autopilot allowed, commit policy를 출력합니다.
+- `GAP_AUTO_LAUNCHED`는 workflow path/hash와 launch receipt path, launch result, verification summary를 함께 출력합니다.
 - `GAP_BLOCKED`는 blocked reason count, human decision count, missing source count, blocked report path를 출력합니다.
 - `GAP_READY` artifact는 정확히 하나의 `tigerkit-gap-status` block과 정확히 하나의 `tigerkit-launch-workflow` block을 포함합니다.
 - `GAP_BLOCKED` artifact는 `tigerkit-launch-workflow` block을 포함하지 않습니다.
