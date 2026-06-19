@@ -91,7 +91,7 @@ Hermes Agent, Codex CLI, `npx skills` 기반 command-skill adapter는 현재 rel
 - ambiguity attack으로 contradiction, missing decision, hidden dependency, task precondition, edge case, failure mode, verification gap을 찾습니다.
 - 각 task의 `assumed_preconditions`를 checkable predicate로 기록하고, verification gate 중 static/read-only 부분은 봉인 전 preflight로 1회 확인합니다.
 - 이전 `/tk:launch`가 `HUMAN_DECISION_REQUIRED` 또는 `VERIFICATION_FAILED`로 멈춘 trace가 있으면 다음 `/tk:gap` 입력으로 구조화해 같은 사실을 재발견하지 않습니다.
-- launch 가능한 sealed workflow가 있으면 기본적으로 `GAP_READY`로 끝내고 `tigerkit-launch-workflow` block을 생성한 뒤 다음 행동을 `/tk:launch`로 둡니다.
+- launch 가능한 sealed workflow가 있으면 기본적으로 `GAP_READY`로 끝내고 내부 artifact에 `tigerkit-launch-workflow` block을 생성합니다. 사용자-facing 출력에는 block 본문 대신 workflow path/hash/count와 간단한 DAG/다음 행동만 보여줍니다.
 - 같은 `/tk:gap` 호출 안에서 host 자동화가 정식 `/tk:launch` 루틴까지 이어서 수행한 경우에는 `GAP_READY`가 아니라 `GAP_AUTO_LAUNCHED`로 끝내고 workflow와 launch receipt를 함께 기록합니다.
 - unresolved decision/conflict/missing source 때문에 launch하면 안 되면 `GAP_BLOCKED`로 끝내고 workflow block을 생성하지 않습니다.
 - `/tk:gap --review`는 v7 Contract-based Gap Review compatibility mode입니다.
@@ -107,6 +107,7 @@ Workflow: .claude/tigerkit/branches/main--c0ffee/gap/WF-20260617-143012-A7F3.md
 Workflow Hash: <sha256>
 Tasks: 4
 Verification Gates: 4
+Workflow DAG: T1 → T2 → T3 → T4
 Autopilot Allowed: false
 Commit Policy: preflight_decision_required
 다음 행동: /tk:launch

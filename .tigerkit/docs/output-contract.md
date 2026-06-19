@@ -15,7 +15,7 @@ stdout is a receipt. Full gap bodies are saved as branch-local artifacts unless 
 3. artifact paths when files are written
 4. counts, risks, capability/skip reason, next action
 
-상세 본문은 파일에 저장하고, 각 command가 지원하는 explicit print option을 지정한 경우에만 stdout에 함께 출력합니다. v8 MVP 공개 command surface에서는 `/tk:gap`의 `--print-report`가 이에 해당합니다.
+상세 본문은 파일에 저장하고, 각 command가 지원하는 explicit print option을 지정한 경우에만 stdout에 함께 출력합니다. v8 MVP 공개 command surface에서는 `/tk:gap`의 `--print-report`가 이에 해당합니다. 단, 내부 실행용 `tigerkit-launch-workflow` fenced block은 사용자-facing stdout에 출력하지 않습니다. `--print-report`도 사람용 요약과 다음 행동만 출력하고 내부 workflow block은 경로와 해시로만 참조합니다.
 
 사용자 대화에 보이는 안내, 추천, 요약, next action은 계약용어, path, identifier, field name을 제외하고 한글로 씁니다.
 
@@ -31,7 +31,7 @@ v8 MVP는 `/tk:spec` command를 공개하지 않습니다. 기존 `.claude/tiger
 
 - 목적: source를 ground하고 ambiguity를 attack한 뒤 launch 가능한 sealed workflow를 만들거나 launch 금지 사유를 기록합니다.
 - `/tk:gap`은 반드시 `GAP_READY`, `GAP_AUTO_LAUNCHED`, 또는 `GAP_BLOCKED` 중 하나로 끝납니다.
-- `GAP_READY`는 정확히 하나의 `tigerkit-launch-workflow` block을 포함하고 실행은 `/tk:launch`로 분리해야 합니다.
+- `GAP_READY`는 내부 artifact에 정확히 하나의 `tigerkit-launch-workflow` block을 저장하고 실행은 `/tk:launch`로 분리해야 합니다. 사용자-facing stdout에는 이 block을 직접 출력하지 않습니다.
 - `GAP_AUTO_LAUNCHED`는 같은 `/tk:gap` 호출 안에서 sealed workflow 생성 뒤 정식 `/tk:launch` 루틴까지 완료 또는 중단한 경우에만 사용합니다.
 - `GAP_BLOCKED`는 `tigerkit-launch-workflow` block을 포함하면 안 됩니다.
 - 기본 workflow archive 위치: `.claude/tigerkit/branches/<branch-key>/gap/<WF-ID>.md`
@@ -95,7 +95,7 @@ missing_sources: []
 
 ### `tigerkit-launch-workflow` block
 
-`GAP_READY` artifact는 정확히 하나의 named fenced block을 포함합니다. 이 block은 `/tk:launch`가 소비하는 sealed workflow contract입니다. `workflow_sha256`은 이 block 안에 넣지 않습니다.
+`GAP_READY` artifact는 정확히 하나의 named fenced block을 포함합니다. 이 block은 `/tk:launch`가 소비하는 내부 sealed workflow contract입니다. `workflow_sha256`은 이 block 안에 넣지 않습니다. 이 block은 사용자-facing stdout 또는 compact report에 덤프하지 않습니다. 사용자가 보는 표면에는 workflow path, hash, task count, verification gate count, 그리고 간단한 DAG/다음 행동 요약만 표시합니다.
 
 ```tigerkit-launch-workflow
 version: 1
@@ -244,7 +244,7 @@ Gap Review 완료: <GAP-ID>
 
 `Actionable Findings`는 accepted finding이 있을 때만 출력합니다. `Clarification Needed`는 확인 질문이 있을 때만 출력합니다. 둘 다 없으면 table 대신 `다음 행동: 없음`만 출력합니다.
 
-`--print-report`가 있을 때만 저장된 `report.md` 본문을 stdout에 추가 출력합니다. `--maintainer-proof`가 있어도 기본 stdout은 위 receipt와 compact table 경계를 유지하고, maintainer proof artifact list나 proof metadata를 dump하지 않습니다.
+`--print-report`가 있을 때만 저장된 사람용 `report.md` 본문을 stdout에 추가 출력합니다. 내부 실행용 workflow block, `run.json`, maintainer proof artifact list, proof metadata는 stdout에 dump하지 않습니다. `--maintainer-proof`가 있어도 기본 stdout은 위 receipt와 compact table 경계를 유지합니다.
 
 Default stdout에 아래 항목을 직접 출력하지 않습니다. 기본 `report.md`와 `run.json`에도 proof/self-eval metadata를 필수로 요구하지 않습니다.
 

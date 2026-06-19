@@ -111,7 +111,7 @@ MVP에서는 path compatibility를 위해 `branches/` 아래에 저장하지만 
 .claude/tigerkit/branches/<branch-key>/gap/<GAP-ID>.md      # GAP_BLOCKED report
 ```
 
-`GAP_READY` archive는 사람용 report와 정확히 하나의 `tigerkit-gap-status` block, 정확히 하나의 `tigerkit-launch-workflow` block을 포함합니다. `tigerkit-launch-workflow` block에는 embedded acceptance review 여부를 결정하는 `review_policy`가 포함됩니다. `GAP_BLOCKED` report는 `tigerkit-gap-status` block만 포함하고 `tigerkit-launch-workflow` block을 포함하지 않습니다.
+`GAP_READY` archive는 사람용 report, 정확히 하나의 `tigerkit-gap-status` block, 정확히 하나의 내부 실행용 `tigerkit-launch-workflow` block을 포함합니다. `tigerkit-launch-workflow` block에는 embedded acceptance review 여부를 결정하는 `review_policy`가 포함됩니다. 이 내부 block은 `/tk:launch` 소비용이며 사용자-facing stdout 또는 `--print-report`에 그대로 덤프하지 않습니다. 사용자가 보는 표면에는 workflow path/hash/count와 간단한 DAG/다음 행동만 표시합니다. `GAP_BLOCKED` report는 `tigerkit-gap-status` block만 포함하고 `tigerkit-launch-workflow` block을 포함하지 않습니다.
 
 `/tk:gap --review` compatibility mode만 v7 review layout을 씁니다.
 

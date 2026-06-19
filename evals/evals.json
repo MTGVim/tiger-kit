@@ -84,7 +84,7 @@
       "id": 1,
       "name": "gap-ready-produces-sealed-workflow",
       "prompt": "Evaluate default /tk:gap when enough source exists to create a launch workflow. Do not write files.",
-      "expected_output": "Should end with GAP_READY, include a sealed tigerkit-launch-workflow block, include workflow path, workflow hash, task count, verification gate count, task assumed_preconditions, readonly_preflight status, autopilot allowed false, commit policy preflight_decision_required, review_policy mode, and next action /tk:launch. GAP_READY cannot be claimed without a launch workflow or without checking static/read-only preflight predicates, and cannot be used when the same /tk:gap call continues into launch execution; that integrated path must report GAP_AUTO_LAUNCHED with workflow and launch receipt evidence. User-facing stdout labels should be Korean, e.g. 브랜치 범위, 워크플로, 검증 게이트, 자동 실행 허용, 커밋 정책, 다음 행동.",
+      "expected_output": "Should end with GAP_READY, save a sealed tigerkit-launch-workflow block in the branch-local artifact, include workflow path, workflow hash, task count, verification gate count, task assumed_preconditions, readonly_preflight status, autopilot allowed false, commit policy preflight_decision_required, review_policy mode, and next action /tk:launch. User-facing stdout must not dump the tigerkit-launch-workflow block or JSON/YAML workflow body; it should show only a compact receipt plus a readable task DAG/summary. GAP_READY cannot be claimed without saving a launch workflow artifact or without checking static/read-only preflight predicates, and cannot be used when the same /tk:gap call continues into launch execution; that integrated path must report GAP_AUTO_LAUNCHED with workflow and launch receipt evidence. User-facing stdout labels should be Korean, e.g. 브랜치 범위, 워크플로, 검증 게이트, 작업 흐름, 자동 실행 허용, 커밋 정책, 다음 행동.",
       "files": [
         "commands/gap.md",
         ".tigerkit/docs/output-contract.md",
@@ -92,7 +92,6 @@
       ],
       "expectations": [
         "Ends with GAP_READY",
-        "Includes tigerkit-launch-workflow",
         "Includes workflow path",
         "Includes workflow hash",
         "Includes task count",
@@ -104,7 +103,12 @@
         "Next action is /tk:launch",
         "Uses Korean stdout label 브랜치 범위",
         "Uses Korean stdout label 워크플로",
-        "Uses Korean stdout label 다음 행동"
+        "Uses Korean stdout label 다음 행동",
+        "Saves tigerkit-launch-workflow in artifact only",
+        "Does not print tigerkit-launch-workflow block to stdout",
+        "Does not expose JSON/YAML workflow body to user-facing output",
+        "Shows readable task DAG or summary in stdout",
+        "Uses Korean stdout label 작업 흐름"
       ]
     },
     {
@@ -513,7 +517,7 @@
       "id": 21,
       "name": "user-facing-output-labels-are-korean",
       "prompt": "Evaluate TigerKit user-facing stdout/report templates. Do not write files.",
-      "expected_output": "Should keep machine-readable status codes and contract field names intact, while rendering user-facing labels in Korean across /tk:gap, /tk:launch, /tk:review, /tk:next, /tk:reflect, /tk:handoff, /tk:meta-feedback, and tk-runner receipts. Examples include 브랜치 범위, 워크플로, 검증 게이트, 실행 하네스, 선택한 작업, 변경 파일, 승인, 차단 사유, 추가 근거 필요, 사용자 루틴 스킬 검토, 사용자 메모리 후보, 메타 피드백, 비식별화 기록, 일반화 게이트, and 다음 행동.",
+      "expected_output": "Should keep machine-readable status codes and contract field names intact, while rendering user-facing labels in Korean across /tk:gap, /tk:launch, /tk:review, /tk:next, /tk:reflect, /tk:handoff, /tk:meta-feedback, and tk-runner receipts. Examples include 브랜치 범위, 워크플로, 작업 흐름, 검증 게이트, 실행 하네스, 선택한 작업, 변경 파일, 승인, 차단 사유, 추가 근거 필요, 사용자 루틴 스킬 검토, 사용자 메모리 후보, 메타 피드백, 비식별화 기록, 일반화 게이트, and 다음 행동.",
       "files": [
         "commands/gap.md",
         "commands/launch.md",
@@ -537,7 +541,8 @@
         "Uses Korean meta-feedback section 비식별화 기록",
         "Uses Korean next action label 다음 행동",
         "Uses Korean stdout label 닫힌 gap",
-        "Uses Korean stdout label 남은 gap"
+        "Uses Korean stdout label 남은 gap",
+        "Uses Korean stdout label 작업 흐름"
       ]
     },
     {
