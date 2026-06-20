@@ -1,19 +1,15 @@
 {
-  "skill_name": "tiger-kit-slim-gap-grill-afk-reflect-setup",
+  "skill_name": "tiger-kit-gap-reflect-core",
   "command_surface": {
-    "surface_model": "TigerKit Slim exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts.",
+    "surface_model": "TigerKit exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts.",
     "core_commands": [
       "/tk:gap",
-      "/tk:afk",
       "/tk:reflect"
     ],
-    "management_commands": [
-      "/tk:setup"
-    ],
-    "optional_commands": [
-      "/tk:grill"
-    ],
-    "deprecated_commands": [
+    "deprecated_or_removed_commands": [
+      "/tk:grill",
+      "/tk:afk",
+      "/tk:setup",
       "/tk:config",
       "/tk:launch",
       "/tk:review",
@@ -26,148 +22,69 @@
   "evals": [
     {
       "id": 0,
-      "name": "plugin-version-and-command-manifest-slim",
-      "prompt": "Evaluate TigerKit Slim active command surface. Do not write files.",
-      "expected_output": "Should list /tk:gap, /tk:afk, and /tk:reflect as core commands. Should list /tk:grill as an optional command included in the active manifest. Should list /tk:setup as the only management command. Should state /tk:config, /tk:launch, /tk:review, /tk:next, /tk:handoff, and /tk:meta-feedback are deprecated commands and not active manifest entries.",
+      "name": "plugin-version-and-command-manifest-gap-reflect",
+      "prompt": "Evaluate TigerKit active command surface. Do not write files.",
+      "expected_output": "Should list /tk:gap and /tk:reflect as the only active commands. Should state /tk:grill, /tk:afk, /tk:setup, and the launch-era commands are not active manifest entries.",
       "files": [
         ".claude-plugin/plugin.json",
+        ".claude-plugin/marketplace.json",
         "README.md",
-        "commands/grill.md",
         ".tigerkit/docs/usage.md"
       ],
       "expectations": [
         "Lists /tk:gap",
-        "Lists /tk:afk",
         "Lists /tk:reflect",
-        "Lists /tk:setup as only management command",
-        "Documents /tk:config as deprecated",
-        "Includes /tk:grill in active manifest",
-        "Does not include /tk:launch in active manifest",
-        "Does not include /tk:next in active manifest",
-        "Does not include /tk:handoff in active manifest",
-        "Documents /tk:grill as optional active command"
+        "Does not list /tk:grill as active",
+        "Does not list /tk:afk as active",
+        "Does not list /tk:setup as active",
+        "Documents launch-era commands as not active"
       ]
     },
     {
       "id": 1,
-      "name": "gap-is-one-shot-analysis-lens",
-      "prompt": "Evaluate /tk:gap Slim behavior. Do not write files.",
-      "expected_output": "Should compare SoT and Current Implementation, classify missing, mismatch, overbuilt, and ambiguous gaps, and report evidence, impact, priority, and suggested fixes. Should not generate a sealed workflow, workflow hash, launch state, autopilot policy, advisor, or runner.",
+      "name": "gap-is-sot-first-one-shot-analysis",
+      "prompt": "Evaluate /tk:gap behavior. Do not write files.",
+      "expected_output": "Should treat /tk:gap as a one-shot comparison between source of truth and current implementation. Should say that if SoT exists, gap should be considered before implementation. If SoT does not exist, it should suggest providing one. If the user explicitly wants direct execution, it may proceed without gap while keeping assumptions explicit. It should classify missing, mismatch, overbuilt, and ambiguous findings.",
+      "files": [
+        "commands/gap.md",
+        "README.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "SoT-first guidance",
+        "Suggests providing SoT when missing",
+        "Allows direct execution when user explicitly wants it",
+        "Uses missing classification",
+        "Uses mismatch classification",
+        "Uses overbuilt classification",
+        "Uses ambiguous classification"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "gap-does-not-generate-workflow",
+      "prompt": "Evaluate /tk:gap non-goals. Do not write files.",
+      "expected_output": "Should not generate a sealed workflow, workflow hash, launch state, autopilot policy, runner/advisor flow, or external side-effect receipt.",
       "files": [
         "commands/gap.md",
         ".tigerkit/docs/output-contract.md"
       ],
       "expectations": [
-        "Uses Gap Summary table",
-        "Includes SoT column",
-        "Includes Current column",
-        "Includes Gap column",
-        "Includes Impact column",
-        "Includes Priority column",
-        "Includes Suggested fix",
         "Does not generate workflow",
         "Does not freeze workflow",
-        "Does not mention GAP_READY as active output"
-      ]
-    },
-    {
-      "id": 2,
-      "name": "grill-pressure-test-question-lens",
-      "prompt": "Evaluate /tk:grill behavior. Do not write files.",
-      "expected_output": "Should define /tk:grill as an optional active micro command that pressure-tests proposals, plans, changes, and reviewer judgments through evidence-backed questions. Should close questions answerable from code/docs first, leave only owner-decision or missing-evidence questions open, support Patron candidate recommendation, and avoid treating grill output as confirmed defects.",
-      "files": [
-        "commands/grill.md",
-        "README.md",
-        ".tigerkit/docs/output-contract.md",
-        ".claude/rules/review/pr-review.md"
-      ],
-      "expectations": [
-        "Optional active command",
-        "Pressure-tests proposals",
-        "Pressure-tests reviewer judgments",
-        "Checks code/docs before asking",
-        "Separates Closed Questions",
-        "Separates Open Questions",
-        "Supports Patron candidate",
-        "Does not treat output as confirmed defect"
+        "Does not mention advisor runner as active",
+        "Does not create launch receipt"
       ]
     },
     {
       "id": 3,
-      "name": "afk-patron-decision-delegation",
-      "prompt": "Evaluate /tk:afk behavior. Do not write files.",
-      "expected_output": "Should define AFK as current-session user decision delegation using temporary Patrons, not background async work. Should keep Driver responsible for merge, use one primary Patron per decision by default, forbid Patron-to-Patron calls and always-on council debate, and record a structured decision ledger.",
-      "files": [
-        "commands/afk.md",
-        "docs/patron-catalog.md",
-        "docs/patron-lifecycle.md",
-        "docs/patron-decision-ledger.md"
-      ],
-      "expectations": [
-        "AFK is not background async",
-        "Driver continues working",
-        "Temporary Patron per decision point",
-        "Decision ledger exists",
-        "Patron-to-Patron call forbidden",
-        "Driver merges Patron output",
-        "Fan-out only for independent risk axes"
-      ]
-    },
-    {
-      "id": 4,
-      "name": "patron-catalog-required-ids",
-      "prompt": "Evaluate Patron catalog. Do not write files.",
-      "expected_output": "Should define reviewer, tester, security, webperf, steward, simplifier, and cartographer with schema fields id, display_name, summary, source, status, use_when, avoid_when, decision_style, default_outputs, and ledger_policy.",
-      "files": [
-        "docs/patron-catalog.md"
-      ],
-      "expectations": [
-        "Defines reviewer",
-        "Defines tester",
-        "Defines security",
-        "Defines webperf",
-        "Defines steward",
-        "Defines simplifier",
-        "Defines cartographer",
-        "Includes decision_style",
-        "Includes ledger_policy"
-      ]
-    },
-    {
-      "id": 5,
-      "name": "setup-afk-default-and-vowline-opt-in",
-      "prompt": "Evaluate /tk:setup behavior. Do not write files.",
-      "expected_output": "Should provide /tk:setup show/vowline on/vowline off/patrons list/install/enable/disable/afk default on/off/status/reflect show/reset as the only active management command surface. AFK default should be off after install; config state should be source of truth; user CLAUDE.md bridge should be activation aid; Vowline should be opt-in and not a TigerKit core dependency. If the external vowline skill is missing, /tk:setup vowline on should show install guidance pointing to the upstream INSTALL.md, require installation verification, and avoid finalizing the bridge until availability is confirmed.",
-      "files": [
-        "commands/config.md",
-        "commands/setup.md",
-        "docs/afk-default.md",
-        "docs/vowline-integration.md",
-        "docs/config-state.md"
-      ],
-      "expectations": [
-        "AFK default off",
-        "Config state source of truth",
-        "Supports afk default on",
-        "Supports afk default off",
-        "Supports afk status",
-        "Vowline opt-in",
-        "Vowline not core dependency",
-        "Missing vowline shows install guidance",
-        "Uses upstream INSTALL.md",
-        "Requires verify installation",
-        "Does not finalize bridge before availability confirmation",
-        "tk:setup only management surface"
-      ]
-    },
-    {
-      "id": 6,
-      "name": "reflect-file-policy-slim",
-      "prompt": "Evaluate /tk:reflect file policy. Do not write files.",
-      "expected_output": "Should auto-apply repo-local changes only to CLAUDE.local.md, keep repo CLAUDE.md suggest-only, allow user-level improvements to auto apply, distinguish candidate/confirmed/session-local/deprecated, and allow Patron candidate/profile improvements.",
+      "name": "reflect-extracts-reusable-learning",
+      "prompt": "Evaluate /tk:reflect behavior. Do not write files.",
+      "expected_output": "Should extract reusable learning from session result and feedback. It should support repo CLAUDE.local.md auto-apply, keep repo CLAUDE.md suggest-only, allow user-level improvements, and distinguish candidate, confirmed, session-local, and deprecated states.",
       "files": [
         "commands/reflect.md",
-        "docs/reflect-file-policy.md"
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md"
       ],
       "expectations": [
         "repo CLAUDE.local.md auto apply",
@@ -175,57 +92,10 @@
         "user PROFILE.md auto apply",
         "user CLAUDE.md auto apply",
         "user skills auto apply",
-        "Patron profile candidates",
         "candidate status",
         "confirmed status",
         "session-local status",
         "deprecated status"
-      ]
-    },
-    {
-      "id": 7,
-      "name": "recommended-tools-are-recommendation-only",
-      "prompt": "Evaluate recommended tools policy. Do not write files.",
-      "expected_output": "Should list Context Mode, RTK, and Superpowers as recommendation-only tools. Should not install them by default and should show them only when the user selects the optional recommended tools menu in /tk:setup. When upstream GitHub install docs are known, TigerKit should present those links and ask the user to verify installation before treating the tool as available.",
-      "files": [
-        "commands/config.md",
-        "docs/recommended-tools.md",
-        "README.md"
-      ],
-      "expectations": [
-        "Context Mode recommendation-only",
-        "RTK recommendation-only",
-        "Superpowers recommendation-only",
-        "Default does not install tools",
-        "Shown only from optional menu",
-        "Requires approval before installation",
-        "Provides GitHub install guidance when available",
-        "Requests verify installation"
-      ]
-    },
-    {
-      "id": 8,
-      "name": "launch-era-features-deprecated",
-      "prompt": "Evaluate launch-era cleanup. Do not write files.",
-      "expected_output": "Should document that gap autonomous workflow, /tk:launch, workflow freezing, mandatory advisor/runner, /tk:next, /tk:handoff, /tk:meta-feedback, and external tool embedding are ended or deprecated. Active plugin manifest should not register launch-era commands.",
-      "files": [
-        ".claude-plugin/plugin.json",
-        "docs/migration-from-launch.md",
-        "commands/launch.md",
-        "commands/next.md",
-        "commands/handoff.md",
-        "commands/meta-feedback.md",
-        "commands/review.md"
-      ],
-      "expectations": [
-        "Documents gap autonomous workflow ended",
-        "Documents /tk:launch deprecated",
-        "Documents workflow freezing ended",
-        "Documents mandatory advisor runner ended",
-        "Documents /tk:next deprecated",
-        "Documents /tk:handoff deprecated",
-        "Documents /tk:meta-feedback deprecated",
-        "Active manifest excludes launch-era commands"
       ]
     }
   ]

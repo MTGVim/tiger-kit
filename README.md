@@ -1,8 +1,10 @@
 # TigerKit
 
-![TigerKit Slim cover](assets/tigerkit-slim-cover.png)
+![TigerKit gap/reflect cover](assets/tigerkit-gap-reflect-cover.png)
 
-TigerKit(`tk`, plugin namespace `/tk:*`)은 AI-induced source loss를 줄이기 위한 작은 Claude Code 메타 스킬 키트입니다. 기존 sealed GAP → Launch → Review 흐름은 종료되었고, TigerKit Slim은 `gap`, `grill`, `afk`, `reflect`, `setup` 중심으로 동작합니다.
+TigerKit(`tk`, plugin namespace `/tk:*`)은 SoT(Source of Truth)와 현재 구현 사이의 차이를 먼저 확인하고, 의미 있는 작업 뒤에는 재사용 가능한 learning을 정리하기 위한 경량 Claude Code plugin입니다.
+
+TigerKit은 workflow runner, subagent orchestrator, setup wizard를 제공하지 않습니다. 대신 `gap`과 `reflect` 두 명령으로 source loss를 줄이고 작업 습관을 가볍게 보조합니다.
 
 공개 실행 표면은 Claude Code plugin command입니다. 별도 repo-local skill 파일 없이 `commands/*.md`와 `.claude-plugin/plugin.json`이 `/tk:*` contract를 소유합니다.
 
@@ -28,166 +30,47 @@ claude plugin details tk
 claude plugin install tk@tiger-kit --scope project
 ```
 
-설치 후 Claude Code를 다시 시작하고 `/tk:gap`, `/tk:grill`, `/tk:afk`, `/tk:reflect`, `/tk:setup` 명령을 사용합니다.
+설치 후 Claude Code를 다시 시작하고 `/tk:gap`, `/tk:reflect` 명령을 사용합니다.
 
-## TigerKit Slim
+## Core guidance
 
-```text
-Core:
-  tk:gap
-  tk:afk
-  tk:reflect
-
-Optional active:
-  tk:grill
-
-Management:
-  tk:setup
-```
-
-`/tk:grill`은 이번 release의 active manifest에 포함된 optional micro command입니다. 설계, 계획, 변경안, reviewer 판단을 작은 질문 렌즈로 압박 검증합니다.
+- SoT가 있으면 구현 전에 `/tk:gap`을 먼저 고려합니다.
+- SoT가 없으면 먼저 SoT 제공을 제안합니다.
+- 사용자가 바로 진행을 원하면 `/tk:gap` 없이 진행할 수 있습니다.
+- SoT 없이 진행할 때는 가정과 불확실성을 명시합니다.
+- 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 정리합니다.
 
 ## Command Surface
 
 | Command | 역할 | 저장 성격 |
 | --- | --- | --- |
-| `/tk:gap` | SoT와 Current Implementation을 한 번 비교해 누락, 불일치, 과잉 구현, 모호성을 보고합니다. Evidence, impact, priority, suggested fix를 포함하며 workflow를 만들지 않습니다. | optional branch/workspace-local report |
-| `/tk:grill` | 설계, 계획, 변경안, reviewer 판단을 작은 질문 렌즈로 압박 검증합니다. 코드와 문서에서 답할 수 있는 질문은 먼저 닫고, owner decision이 필요한 질문만 남깁니다. | optional branch/workspace-local report |
-| `/tk:afk` | 현재 세션에서 사용자에게 물어볼 중대하거나 불확실한 decision point를 temporary Patron에게 위임합니다. Driver는 계속 작업하고 Patron decision은 ledger에 기록합니다. | branch/workspace-local decision ledger |
-| `/tk:reflect` | 세션 내용, 실제 변경 결과, 사용자 피드백, Patron ledger에서 재사용 가능한 learning을 추출합니다. Repo shared `CLAUDE.md`는 suggest-only이고 repo auto-write는 `CLAUDE.local.md`로 제한합니다. | user/repo improvement candidates |
-| `/tk:setup` | TigerKit setup, AFK default, Patron catalog, Vowline opt-in, recommended tools를 단계형 wizard와 subcommands로 관리합니다. | user-level config |
+| `/tk:gap` | SoT와 Current Implementation의 차이를 한 번 확인하고 missing, mismatch, overbuilt, ambiguous를 정리합니다. | optional branch/workspace-local report |
+| `/tk:reflect` | 세션 결과와 사용자 피드백에서 재사용 가능한 learning과 개선 후보를 추출합니다. | user/repo improvement candidates |
 
-## Core Model
+## 사용 예시
 
 ```text
-gap = SoT ↔ Current one-shot gap analysis
-grill = proposal/review context ↔ evidence ↔ sharp questions
-afk = current-session decision delegation with temporary Patrons
-reflect = session learning and improvement extraction
-setup = setup, preferences, Vowline, Patrons, recommended tools
+/tk:gap "PRD와 현재 구현 차이 봐줘" --target src/auth
+/tk:reflect --dry-run
 ```
 
-`/tk:gap`은 더 이상 sealed workflow를 생성하지 않습니다. `/tk:launch`, workflow freezing, mandatory advisor/runner, autopilot, `/tk:next`, `/tk:handoff`, `/tk:meta-feedback` command surface는 launch-era 실험으로 deprecated 처리되었습니다.
+## What TigerKit does not do
 
-## `/tk:gap`
+TigerKit은 아래를 active surface로 제공하지 않습니다.
 
-`/tk:gap`은 Product Spec, Design Spec, Engineering Constraint, QA note, API docs, issue, screenshot/export, pasted notes, legacy branch-local Spec Patch 같은 SoT 후보와 current implementation을 비교합니다.
-
-기본 출력:
-
-```md
-## Gap Summary
-
-| Area | SoT | Current | Gap | Impact | Priority |
-|---|---|---|---|---|---|
-
-## Findings
-
-### 1. ...
-- SoT:
-- Current:
-- Evidence:
-- Impact:
-- Priority:
-- Suggested fix:
-
-## Recommended Next Steps
-1. ...
-```
-
-분류:
-
-- `missing`: SoT 요구가 Current에 없음.
-- `mismatch`: SoT와 Current가 다름.
-- `overbuilt`: SoT 밖 구현이 위험이나 유지보수 비용을 만듦.
-- `ambiguous`: source conflict, missing owner decision, inaccessible source, producer evidence 부족.
-
-## `/tk:afk`와 Patrons
-
-AFK는 background async 작업이 아닙니다. 현재 세션의 decision point를 Patron에게 위임하는 mode입니다.
-
-기본 Patrons:
-
-| Patron | 용도 |
-|---|---|
-| reviewer | code quality / merge readiness |
-| tester | verification / test scope |
-| security | security boundary / permissions |
-| webperf | web runtime performance |
-| steward | repo convention / reuse |
-| simplifier | simplification / scope reduction |
-| cartographer | visual explanation / structure map |
-
-AFK guardrails:
-
-- 배포, 삭제, 비용 발생, 권한 변경, secrets 변경, destructive action은 사용자 승인 없이는 금지합니다.
-- repo shared `CLAUDE.md`는 직접 수정하지 않습니다.
-- Security Patron이 Critical/High risk를 판단하면 사용자 승인 gate로 되돌립니다.
-
-## `/tk:reflect`
-
-Reflect는 세션 learning을 안전한 target에만 반영합니다.
-
-| Target | Policy |
-|---|---|
-| repo `CLAUDE.local.md` | auto apply |
-| repo `CLAUDE.md` | suggest only |
-| user `PROFILE.md` | auto apply |
-| user `CLAUDE.md` | auto apply |
-| user skills | auto apply |
-| Patron profiles | auto apply candidates or improvements |
-
-Reflect는 `candidate`, `confirmed`, `session-local`, `deprecated` 상태를 구분하고 중복 규칙은 병합합니다.
-
-## `/tk:setup`
-
-지원 명령:
-
-```text
-/tk:setup
-/tk:setup show
-/tk:setup vowline on
-/tk:setup vowline off
-/tk:setup patrons list
-/tk:setup patrons install <id>
-/tk:setup patrons enable <id>
-/tk:setup patrons disable <id>
-/tk:setup afk default on
-/tk:setup afk default off
-/tk:setup afk status
-/tk:setup reflect show
-/tk:setup reset
-```
-
-First-use setup suggestion은 non-blocking입니다. 기본 선택은 “이번엔 그냥 진행”입니다.
-
-Vowline은 필수 의존성이 아니며 `/tk:setup`에서 opt-in으로 연결합니다. TigerKit은 Vowline skill을 자동 설치하지 않습니다.
-
-`vowline` skill이 아직 없으면 `/tk:setup vowline on`은 bridge를 확정하지 않고 설치 안내만 제공합니다.
-
-```text
-Install Vowline for yourself by following:
-https://github.com/chojondocho/vowline/blob/main/INSTALL.md
-
-Verify installation, then run `/tk:setup vowline on` again.
-```
-
-Recommended tools는 optional이며 기본 설치하지 않습니다. `Context Mode`, `RTK`, `Superpowers`는 `/tk:setup`의 기타 추천 도구 메뉴에서 사용자가 선택한 경우에만 안내합니다. 설치 방법이 upstream GitHub 문서에 있으면 그 링크를 먼저 보여주고, 설치 후 verify installation을 요청합니다.
-
-`/tk:config`는 deprecated command입니다. 기존 `/tk:config ...` 호출은 같은 동작의 `/tk:setup ...`으로 옮겨 사용합니다.
+- `grill`
+- `afk`
+- `setup`
+- launch / review / next / handoff workflow
+- mandatory runner or autopilot
+- Patron / subagent delegation
 
 ## Operational Docs
 
 - [Usage](.tigerkit/docs/usage.md)
-- [Artifact layout](.tigerkit/docs/artifact-layout.md)
 - [출력 계약](.tigerkit/docs/output-contract.md)
-- [Launch migration](docs/migration-from-launch.md)
-- [Patron catalog](docs/patron-catalog.md)
-- [Patron lifecycle](docs/patron-lifecycle.md)
 - [Reflect file policy](docs/reflect-file-policy.md)
-- [AFK default](docs/afk-default.md)
-- [Vowline integration](docs/vowline-integration.md)
-- [Recommended tools](docs/recommended-tools.md)
+- [RFC: gap/reflect core simplification](docs/rfcs/2026-06-gap-reflect-core-slim.md)
 
 ## Generated State
 
