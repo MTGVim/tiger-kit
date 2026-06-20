@@ -189,8 +189,8 @@ Safety contract:
 
 Command behavior:
 - /tk:gap should consider this proposal during source grounding only.
-- /tk:grill may use this proposal as surrounding repo context when pressure-testing plans, changes, or reviewer questions.
-- Deprecated launch-era commands must not treat this hook as authority to recreate sealed workflow, launch preflight, or continuation state.
+- /tk:reflect may reuse confirmed context from this proposal only after meaningful work produces reusable learning.
+- Deprecated or removed commands must not treat this hook as authority to recreate workflow, launch preflight, decision delegation, setup state, or continuation state.
 </TIGERKIT_SESSION_START>"
 
 emit_context "$context"

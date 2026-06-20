@@ -11,7 +11,6 @@
 | user `PROFILE.md` | auto apply | user-level preference/profile |
 | user `CLAUDE.md` | auto apply | user-level guidance |
 | user skills | auto apply | reusable routine skill 후보 |
-| Patron profiles | auto apply candidates or improvements | Patron decision policy 개선 |
 
 ## Repo shared rule boundary
 
@@ -31,16 +30,11 @@
 - branch-specific one-off는 durable rule로 승격하지 않는다.
 - 민감하거나 불필요한 사용자 정보는 저장하지 않는다.
 
-## AFK ledger input
-
-AFK session에서는 Patron decision ledger를 input으로 추가한다. Reflect는 decision result, rationale summary, confidence, follow-up만 재사용하고 Patron 내부 사고 전문을 저장하지 않는다.
-
 ## Output requirement
 
 Reflect receipt는 아래를 분리한다.
 
 - repo 후보
 - user 후보
-- Patron 후보
 - 충돌 / 적용 조건
 - 다음 행동

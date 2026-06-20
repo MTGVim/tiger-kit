@@ -16,7 +16,7 @@
 - Label proposed next steps as Suggestion.
 - Keep raw source text and derived comparison text separate.
 
-## GAP-003: Use TigerKit Slim `/tk:gap` shape
+## GAP-003: Use TigerKit `/tk:gap` shape
 
 - `/tk:gap` is one-shot SoT ↔ Current Implementation analysis.
 - `/tk:gap` must not produce sealed workflows, workflow hashes, launch receipts, runner plans, advisor dispatch, or autopilot policies.
@@ -50,6 +50,10 @@ Default `/tk:gap` output uses this shape:
 
 | Ref | Question | Evidence checked | Impact | Recommendation |
 |---|---|---|---|---|
+
+## Not accepted summary
+
+- <optional low-priority or rejected note>
 
 ## Recommended Next Steps
 
