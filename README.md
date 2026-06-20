@@ -1,12 +1,21 @@
 # TigerKit
 
-![TigerKit gap/reflect cover](assets/tigerkit-gap-reflect-cover.png)
+<p align="center">
+  <img src="assets/tigerkit-cute-cover.png" width="960" alt="TigerKit cute gap/reflect cover">
+</p>
 
-TigerKit(`tk`, plugin namespace `/tk:*`)은 SoT(Source of Truth)와 현재 구현 사이의 차이를 먼저 확인하고, 의미 있는 작업 뒤에는 재사용 가능한 learning을 정리하기 위한 경량 Claude Code plugin입니다.
+<p align="center">
+  <em>먼저 gap을 보고, 끝나면 reflect로 남긴다.</em>
+</p>
 
-TigerKit은 workflow runner, subagent orchestrator, setup wizard를 제공하지 않습니다. 대신 `gap`과 `reflect` 두 명령으로 source loss를 줄이고 작업 습관을 가볍게 보조합니다.
+TigerKit(`tk`, plugin namespace `/tk:*`)은 Claude Code용 경량 plugin입니다.
+SoT(Source of Truth)가 있으면 `/tk:gap`으로 현재 구현과의 차이를 먼저 확인하고, 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 정리합니다.
 
-공개 실행 표면은 Claude Code plugin command입니다. 별도 repo-local skill 파일 없이 `commands/*.md`와 `.claude-plugin/plugin.json`이 `/tk:*` contract를 소유합니다.
+```text
+Check the gap first. Keep the learning.
+```
+
+공개 실행 표면은 `/tk:gap`, `/tk:reflect` 두 명령입니다. TigerKit은 workflow runner, subagent orchestrator, setup wizard를 제공하지 않으며, `commands/*.md`와 `.claude-plugin/plugin.json`이 `/tk:*` contract를 소유합니다.
 
 ## Installation
 
@@ -45,7 +54,7 @@ claude plugin install tk@tiger-kit --scope project
 | Command | 역할 | 저장 성격 |
 | --- | --- | --- |
 | `/tk:gap` | SoT와 Current Implementation의 차이를 한 번 확인하고 missing, mismatch, overbuilt, ambiguous를 정리합니다. | optional branch/workspace-local report |
-| `/tk:reflect` | 세션 결과와 사용자 피드백에서 재사용 가능한 learning과 개선 후보를 추출합니다. | user/repo improvement candidates |
+| `/tk:reflect` | 세션 결과와 사용자 피드백에서 재사용 가능한 learning을 분류하고 hook / hookify, command, agent proposal을 분리해 제안합니다. 파일을 쓰면 changed path를 출력합니다. | user/repo improvement candidates |
 
 ## 사용 예시
 
@@ -69,12 +78,14 @@ TigerKit은 아래를 active surface로 제공하지 않습니다.
 
 - [Usage](.tigerkit/docs/usage.md)
 - [출력 계약](.tigerkit/docs/output-contract.md)
+- [Storage boundary](.tigerkit/docs/storage-boundary.md)
 - [Reflect file policy](docs/reflect-file-policy.md)
+- [Reflect promotion helper guide](.tigerkit/docs/reflect-promotion-helpers.md) (optional)
 - [RFC: gap/reflect core simplification](docs/rfcs/2026-06-gap-reflect-core-slim.md)
 
 ## Generated State
 
-`.claude/tigerkit/`은 branch/workspace-local generated state이므로 git ignore 대상입니다. `.claude/` 전체를 ignore하지 않습니다.
+`.claude/tigerkit/`은 branch/workspace-local generated state이므로 git ignore 대상입니다. 현재 문서화된 active generated layout은 gap report와 branch pointer만 포함합니다. `.claude/` 전체를 ignore하지 않습니다.
 
 ## Contributors
 

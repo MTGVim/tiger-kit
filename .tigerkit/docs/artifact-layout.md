@@ -1,8 +1,8 @@
 # TigerKit 운영 산출물 구조
 
-이 문서는 현재 TigerKit 산출물 배치와 책임을 설명합니다.
+이 문서는 현재 TigerKit 산출물 배치와 책임을 설명합니다. `.claude/tigerkit/`에 무엇을 두고 무엇을 두지 않는지는 `.tigerkit/docs/storage-boundary.md`를 기준으로 봅니다.
 
-## 기본 구조
+## 현재 generated 구조
 
 ```text
 .claude/
@@ -12,15 +12,10 @@
         gap/
           GAP-YYYYMMDD-HHmmss-RAND.md
           current.md
-        reflect/
-          RFL-YYYYMMDD-HHmmss-RAND.md
-          current.md
         branch-state.json
-
-docs/
-  reflect-file-policy.md
-  rfcs/
 ```
+
+Reflect/README/RFC 같은 tracked docs는 generated 구조가 아니라 repo 문서 surface다.
 
 ## Scope key
 
@@ -36,11 +31,15 @@ workspace-<basename-slug>--<sha256(absWorkspaceRoot).slice(0, 8)>
 |---|---|---|
 | `.claude/tigerkit/branches/<scope-key>/gap/<GAP-ID>.md` | `/tk:gap` one-shot report archive | generated working memory |
 | `.claude/tigerkit/branches/<scope-key>/gap/current.md` | 최신 gap report copy | generated pointer |
-| `.claude/tigerkit/branches/<scope-key>/reflect/<RFL-ID>.md` | reflect generated report archive | generated working memory |
-| `.claude/tigerkit/branches/<scope-key>/reflect/current.md` | 최신 reflect report copy | generated pointer |
-| `.claude/tigerkit/branches/<scope-key>/branch-state.json` | latest generated artifact pointers | generated index |
+| `.claude/tigerkit/branches/<scope-key>/branch-state.json` | latest generated artifact pointer | generated index |
 | repo `CLAUDE.local.md` | reflect repo-local auto apply target | local guidance |
 | repo `CLAUDE.md` | reflect suggest-only target | shared repo guidance |
+
+`/tk:reflect`는 현재 active generated artifact layout을 문서화하지 않습니다. Reflect command가 파일을 쓰는 경우에는 receipt에 changed path를 출력해야 합니다.
+
+## Optional helper docs
+
+`.tigerkit/docs/reflect-promotion-helpers.md`는 선택형 참고 문서입니다. Runtime behavior, installer, generator, generated artifact layout을 소유하지 않습니다.
 
 ## Deprecated layout
 

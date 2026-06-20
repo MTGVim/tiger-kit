@@ -8,7 +8,7 @@
 - 코드, path, URL, identifier, status code, field name은 원문을 유지할 수 있습니다.
 - Evidence, Interpretation, Decision, Suggestion을 구분합니다.
 - 검증하지 않은 success를 선언하지 않습니다.
-- command가 파일을 쓰면 path를 출력합니다.
+- command가 파일을 쓰면 changed path를 출력합니다.
 
 ## `/tk:gap` Output Contract
 
@@ -62,20 +62,51 @@ Findings에는 P0/P1/P2만 둡니다. P3, duplicate, unverifiable, source confli
 
 ## `/tk:reflect` Output Contract
 
+`/tk:reflect`는 promotion router로서 세션 learning을 안전한 promotion surface로 분류합니다. Shared repo `CLAUDE.md`, hook / hookify, command, agent는 suggest-only입니다. source code는 수정하지 않습니다. branch-specific one-off는 durable rule로 승격하지 않고 `discard`로 분류합니다. Proposal 후보는 hook / hookify, command, agent section으로 분리하고, 설치됨/활성화됨/자동 적용으로 표현하지 않습니다. User skills auto apply는 user skill surface가 canonical source를 소유할 때만 적용하며 `.claude/tigerkit/`에 skill source를 생성하거나 복제하지 않습니다.
+
 ```text
 Reflect 완료
-적용 대상:
-- repo CLAUDE.local.md: <applied|not_applicable>
-- repo CLAUDE.md: suggest_only:<count>
-- user PROFILE.md: <applied|not_applicable>
-- user CLAUDE.md: <applied|not_applicable>
-- user skills: <applied|not_applicable>
+Promotion 결과:
+- repo CLAUDE.local.md: <applied|preview_only|not_applicable>
+- repo CLAUDE.md proposal: suggest_only:<count>
+- user PROFILE.md: <applied|preview_only|not_applicable>
+- user CLAUDE.md: <applied|preview_only|not_applicable>
+- user skills: <applied|preview_only|not_applicable>
+- hook / hookify proposal: suggest_only:<count>
+- command proposal: suggest_only:<count>
+- agent proposal: suggest_only:<count>
+- discard: <count>
+
+## Changed paths
+- <path written by this command, or NONE>
 
 ## Repo 후보
 n. <candidate or NONE>
 
 ## User 후보
 n. <candidate or NONE>
+
+## Hook / Hookify proposal 후보
+n. <candidate or NONE>
+- rationale: <why this automation/check helps>
+- trigger: <when it would run>
+- action: <what it would do>
+- why suggest-only: <why user review is required before install/activation>
+
+## Command proposal 후보
+n. <candidate or NONE>
+- intent: <user-facing outcome>
+- arguments: <args/options/input shape>
+- when better than skill: <why slash command surface fits better>
+
+## Agent proposal 후보
+n. <candidate or NONE>
+- role boundary: <owned and excluded scope>
+- responsibility: <inputs, outputs, verification responsibility>
+- when better than command: <why independent agent role fits better>
+
+## Discard
+n. <discarded item and reason or NONE>
 
 ## 충돌 / 적용 조건
 - <condition or none>
@@ -84,7 +115,21 @@ n. <candidate or NONE>
 - <next step or 없음>
 ```
 
-`--dry-run` 또는 `--apply=false`이면 preview만 출력하고 파일을 수정하지 않습니다.
+Promotion targets:
+
+- repo `CLAUDE.local.md`: auto apply
+- repo `CLAUDE.md` proposal: suggest only
+- user `PROFILE.md`: auto apply
+- user `CLAUDE.md`: auto apply
+- user skills: auto apply, canonical source owned by user skill surface outside `.claude/tigerkit/`
+- hook / hookify proposal: suggest only
+- command proposal: suggest only
+- agent proposal: suggest only
+- discard: never store
+
+`--dry-run` 또는 `--apply=false`이면 preview만 출력하고 파일을 수정하지 않습니다. 이 경우 auto-apply 대상 상태값은 `applied` 대신 `preview_only`를 사용합니다.
+
+파일을 쓰는 경우 `Changed paths`에 실제 수정한 path를 모두 출력합니다. 파일을 쓰지 않으면 `NONE`을 출력합니다.
 
 ## Deprecated output surfaces
 
