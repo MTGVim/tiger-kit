@@ -15,4 +15,4 @@ argument-hint: ""
 
 ## Migration
 
-세션 인계가 필요하면 일반 작업 요약을 요청하세요. TigerKit core는 `/tk:gap`, `/tk:afk`, `/tk:reflect`, `/tk:config`에 집중합니다.
+세션 인계가 필요하면 일반 작업 요약을 요청하세요. TigerKit core는 `/tk:gap`, `/tk:afk`, `/tk:reflect`, `/tk:setup`에 집중합니다.

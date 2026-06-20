@@ -1,5 +1,5 @@
 {
-  "skill_name": "tiger-kit-slim-gap-grill-afk-reflect-config",
+  "skill_name": "tiger-kit-slim-gap-grill-afk-reflect-setup",
   "command_surface": {
     "surface_model": "TigerKit Slim exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts.",
     "core_commands": [
@@ -8,13 +8,13 @@
       "/tk:reflect"
     ],
     "management_commands": [
-      "/tk:config",
       "/tk:setup"
     ],
     "optional_commands": [
       "/tk:grill"
     ],
     "deprecated_commands": [
+      "/tk:config",
       "/tk:launch",
       "/tk:review",
       "/tk:next",
@@ -28,7 +28,7 @@
       "id": 0,
       "name": "plugin-version-and-command-manifest-slim",
       "prompt": "Evaluate TigerKit Slim active command surface. Do not write files.",
-      "expected_output": "Should list /tk:gap, /tk:afk, and /tk:reflect as core commands. Should list /tk:grill as an optional command included in the active manifest. Should list /tk:config and /tk:setup as management commands, with /tk:setup described as /tk:config init alias. Should state /tk:launch, /tk:review, /tk:next, /tk:handoff, and /tk:meta-feedback are deprecated launch-era commands and not active manifest entries.",
+      "expected_output": "Should list /tk:gap, /tk:afk, and /tk:reflect as core commands. Should list /tk:grill as an optional command included in the active manifest. Should list /tk:setup as the only management command. Should state /tk:config, /tk:launch, /tk:review, /tk:next, /tk:handoff, and /tk:meta-feedback are deprecated commands and not active manifest entries.",
       "files": [
         ".claude-plugin/plugin.json",
         "README.md",
@@ -39,8 +39,8 @@
         "Lists /tk:gap",
         "Lists /tk:afk",
         "Lists /tk:reflect",
-        "Lists /tk:config",
-        "Lists /tk:setup alias",
+        "Lists /tk:setup as only management command",
+        "Documents /tk:config as deprecated",
         "Includes /tk:grill in active manifest",
         "Does not include /tk:launch in active manifest",
         "Does not include /tk:next in active manifest",
@@ -135,9 +135,9 @@
     },
     {
       "id": 5,
-      "name": "config-afk-default-and-vowline-opt-in",
-      "prompt": "Evaluate /tk:config behavior. Do not write files.",
-      "expected_output": "Should provide tk:config init/show/vowline on/off/patrons list/install/enable/disable/afk default on/off/status/reflect show/reset and tk:setup alias. AFK default should be off after install; config state should be source of truth; user CLAUDE.md bridge should be activation aid; Vowline should be opt-in and not a TigerKit core dependency. If the external vowline skill is missing, /tk:config vowline on should show install guidance pointing to the upstream INSTALL.md, require installation verification, and avoid finalizing the bridge until availability is confirmed.",
+      "name": "setup-afk-default-and-vowline-opt-in",
+      "prompt": "Evaluate /tk:setup behavior. Do not write files.",
+      "expected_output": "Should provide /tk:setup show/vowline on/vowline off/patrons list/install/enable/disable/afk default on/off/status/reflect show/reset as the only active management command surface. AFK default should be off after install; config state should be source of truth; user CLAUDE.md bridge should be activation aid; Vowline should be opt-in and not a TigerKit core dependency. If the external vowline skill is missing, /tk:setup vowline on should show install guidance pointing to the upstream INSTALL.md, require installation verification, and avoid finalizing the bridge until availability is confirmed.",
       "files": [
         "commands/config.md",
         "commands/setup.md",
@@ -157,7 +157,7 @@
         "Uses upstream INSTALL.md",
         "Requires verify installation",
         "Does not finalize bridge before availability confirmation",
-        "tk:setup alias"
+        "tk:setup only management surface"
       ]
     },
     {
@@ -186,7 +186,7 @@
       "id": 7,
       "name": "recommended-tools-are-recommendation-only",
       "prompt": "Evaluate recommended tools policy. Do not write files.",
-      "expected_output": "Should list Context Mode, RTK, and Superpowers as recommendation-only tools. Should not install them by default and should show them only when the user selects the optional recommended tools menu in /tk:config. When upstream GitHub install docs are known, TigerKit should present those links and ask the user to verify installation before treating the tool as available.",
+      "expected_output": "Should list Context Mode, RTK, and Superpowers as recommendation-only tools. Should not install them by default and should show them only when the user selects the optional recommended tools menu in /tk:setup. When upstream GitHub install docs are known, TigerKit should present those links and ask the user to verify installation before treating the tool as available.",
       "files": [
         "commands/config.md",
         "docs/recommended-tools.md",

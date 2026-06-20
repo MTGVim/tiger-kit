@@ -2,7 +2,7 @@
 
 ![TigerKit Slim cover](assets/tigerkit-slim-cover.png)
 
-TigerKit(`tk`, plugin namespace `/tk:*`)은 AI-induced source loss를 줄이기 위한 작은 Claude Code 메타 스킬 키트입니다. 기존 sealed GAP → Launch → Review 흐름은 종료되었고, TigerKit Slim은 `gap`, `grill`, `afk`, `reflect`, `config` 중심으로 동작합니다.
+TigerKit(`tk`, plugin namespace `/tk:*`)은 AI-induced source loss를 줄이기 위한 작은 Claude Code 메타 스킬 키트입니다. 기존 sealed GAP → Launch → Review 흐름은 종료되었고, TigerKit Slim은 `gap`, `grill`, `afk`, `reflect`, `setup` 중심으로 동작합니다.
 
 공개 실행 표면은 Claude Code plugin command입니다. 별도 repo-local skill 파일 없이 `commands/*.md`와 `.claude-plugin/plugin.json`이 `/tk:*` contract를 소유합니다.
 
@@ -28,7 +28,7 @@ claude plugin details tk
 claude plugin install tk@tiger-kit --scope project
 ```
 
-설치 후 Claude Code를 다시 시작하고 `/tk:gap`, `/tk:grill`, `/tk:afk`, `/tk:reflect`, `/tk:config`, `/tk:setup` 명령을 사용합니다.
+설치 후 Claude Code를 다시 시작하고 `/tk:gap`, `/tk:grill`, `/tk:afk`, `/tk:reflect`, `/tk:setup` 명령을 사용합니다.
 
 ## TigerKit Slim
 
@@ -42,8 +42,7 @@ Optional active:
   tk:grill
 
 Management:
-  tk:config
-  tk:setup -> tk:config init
+  tk:setup
 ```
 
 `/tk:grill`은 이번 release의 active manifest에 포함된 optional micro command입니다. 설계, 계획, 변경안, reviewer 판단을 작은 질문 렌즈로 압박 검증합니다.
@@ -56,8 +55,7 @@ Management:
 | `/tk:grill` | 설계, 계획, 변경안, reviewer 판단을 작은 질문 렌즈로 압박 검증합니다. 코드와 문서에서 답할 수 있는 질문은 먼저 닫고, owner decision이 필요한 질문만 남깁니다. | optional branch/workspace-local report |
 | `/tk:afk` | 현재 세션에서 사용자에게 물어볼 중대하거나 불확실한 decision point를 temporary Patron에게 위임합니다. Driver는 계속 작업하고 Patron decision은 ledger에 기록합니다. | branch/workspace-local decision ledger |
 | `/tk:reflect` | 세션 내용, 실제 변경 결과, 사용자 피드백, Patron ledger에서 재사용 가능한 learning을 추출합니다. Repo shared `CLAUDE.md`는 suggest-only이고 repo auto-write는 `CLAUDE.local.md`로 제한합니다. | user/repo improvement candidates |
-| `/tk:config` | TigerKit setup, AFK default, Patron catalog, Vowline opt-in, recommended tools를 단계형 wizard와 subcommands로 관리합니다. | user-level config |
-| `/tk:setup` | `/tk:config init` alias입니다. | user-level config |
+| `/tk:setup` | TigerKit setup, AFK default, Patron catalog, Vowline opt-in, recommended tools를 단계형 wizard와 subcommands로 관리합니다. | user-level config |
 
 ## Core Model
 
@@ -66,7 +64,7 @@ gap = SoT ↔ Current one-shot gap analysis
 grill = proposal/review context ↔ evidence ↔ sharp questions
 afk = current-session decision delegation with temporary Patrons
 reflect = session learning and improvement extraction
-config = setup, preferences, Vowline, Patrons, recommended tools
+setup = setup, preferences, Vowline, Patrons, recommended tools
 ```
 
 `/tk:gap`은 더 이상 sealed workflow를 생성하지 않습니다. `/tk:launch`, workflow freezing, mandatory advisor/runner, autopilot, `/tk:next`, `/tk:handoff`, `/tk:meta-feedback` command surface는 launch-era 실험으로 deprecated 처리되었습니다.
@@ -141,42 +139,42 @@ Reflect는 세션 learning을 안전한 target에만 반영합니다.
 
 Reflect는 `candidate`, `confirmed`, `session-local`, `deprecated` 상태를 구분하고 중복 규칙은 병합합니다.
 
-## `/tk:config`
+## `/tk:setup`
 
 지원 명령:
 
 ```text
-/tk:config
-/tk:config init
-/tk:config show
-/tk:config vowline on
-/tk:config vowline off
-/tk:config patrons list
-/tk:config patrons install <id>
-/tk:config patrons enable <id>
-/tk:config patrons disable <id>
-/tk:config afk default on
-/tk:config afk default off
-/tk:config afk status
-/tk:config reflect show
-/tk:config reset
 /tk:setup
+/tk:setup show
+/tk:setup vowline on
+/tk:setup vowline off
+/tk:setup patrons list
+/tk:setup patrons install <id>
+/tk:setup patrons enable <id>
+/tk:setup patrons disable <id>
+/tk:setup afk default on
+/tk:setup afk default off
+/tk:setup afk status
+/tk:setup reflect show
+/tk:setup reset
 ```
 
-First-use config suggestion은 non-blocking입니다. 기본 선택은 “이번엔 그냥 진행”입니다.
+First-use setup suggestion은 non-blocking입니다. 기본 선택은 “이번엔 그냥 진행”입니다.
 
-Vowline은 필수 의존성이 아니며 `/tk:config`에서 opt-in으로 연결합니다. TigerKit은 Vowline skill을 자동 설치하지 않습니다.
+Vowline은 필수 의존성이 아니며 `/tk:setup`에서 opt-in으로 연결합니다. TigerKit은 Vowline skill을 자동 설치하지 않습니다.
 
-`vowline` skill이 아직 없으면 `/tk:config vowline on`은 bridge를 확정하지 않고 설치 안내만 제공합니다.
+`vowline` skill이 아직 없으면 `/tk:setup vowline on`은 bridge를 확정하지 않고 설치 안내만 제공합니다.
 
 ```text
 Install Vowline for yourself by following:
 https://github.com/chojondocho/vowline/blob/main/INSTALL.md
 
-Verify installation, then run `/tk:config vowline on` again.
+Verify installation, then run `/tk:setup vowline on` again.
 ```
 
-Recommended tools는 optional이며 기본 설치하지 않습니다. `Context Mode`, `RTK`, `Superpowers`는 `/tk:config`의 기타 추천 도구 메뉴에서 사용자가 선택한 경우에만 안내합니다. 설치 방법이 upstream GitHub 문서에 있으면 그 링크를 먼저 보여주고, 설치 후 verify installation을 요청합니다.
+Recommended tools는 optional이며 기본 설치하지 않습니다. `Context Mode`, `RTK`, `Superpowers`는 `/tk:setup`의 기타 추천 도구 메뉴에서 사용자가 선택한 경우에만 안내합니다. 설치 방법이 upstream GitHub 문서에 있으면 그 링크를 먼저 보여주고, 설치 후 verify installation을 요청합니다.
+
+`/tk:config`는 deprecated command입니다. 기존 `/tk:config ...` 호출은 같은 동작의 `/tk:setup ...`으로 옮겨 사용합니다.
 
 ## Operational Docs
 

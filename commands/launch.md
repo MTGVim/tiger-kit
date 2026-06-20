@@ -11,8 +11,7 @@ argument-hint: ""
 /tk:gap      # SoT ↔ Current one-shot gap analysis
 /tk:afk      # temporary Patron decision delegation
 /tk:reflect  # session learning extraction
-/tk:config   # setup and preferences
-/tk:setup    # /tk:config init alias
+/tk:setup    # setup and preferences
 ```
 
 ## Deprecated behavior

@@ -4,13 +4,13 @@
     "name": "MTGVim"
   },
   "metadata": {
-    "description": "gap, grill, afk, reflect, config 중심의 작은 TigerKit Claude Code 플러그인입니다. SoT와 구현의 차이를 분석하고, 설계와 계획을 압박 검증하며, 사용자 결정을 Patron에게 위임하고, 세션 학습과 설정을 관리합니다."
+    "description": "gap, grill, afk, reflect, setup 중심의 작은 TigerKit Claude Code 플러그인입니다. SoT와 구현의 차이를 분석하고, 설계와 계획을 압박 검증하며, 사용자 결정을 Patron에게 위임하고, 세션 학습과 설정을 관리합니다."
   },
   "plugins": [
     {
       "name": "tk",
       "source": "./",
-      "description": "gap, grill, afk, reflect, config 중심의 작은 TigerKit Claude Code 플러그인입니다. SoT와 구현의 차이를 분석하고, 설계와 계획을 압박 검증하며, 사용자 결정을 Patron에게 위임하고, 세션 학습과 설정을 관리합니다."
+      "description": "gap, grill, afk, reflect, setup 중심의 작은 TigerKit Claude Code 플러그인입니다. SoT와 구현의 차이를 분석하고, 설계와 계획을 압박 검증하며, 사용자 결정을 Patron에게 위임하고, 세션 학습과 설정을 관리합니다."
     }
   ]
 }

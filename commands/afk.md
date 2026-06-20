@@ -17,7 +17,7 @@ afk = driver keeps working + temporary Patron decides scoped decision point + de
 
 - 설치 직후 AFK default는 off입니다.
 - `/tk:afk` 명시 호출 시에만 켜집니다.
-- `/tk:config afk default on|off|status`가 default 상태를 관리합니다.
+- `/tk:setup afk default on|off|status`가 default 상태를 관리합니다.
 - config state가 source of truth입니다. user `CLAUDE.md` bridge는 activation aid입니다.
 - 명시적 사용자 지시가 AFK default보다 항상 우선합니다.
 

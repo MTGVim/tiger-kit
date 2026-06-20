@@ -18,14 +18,14 @@
 ## 핵심 정책
 
 - TigerKit의 목적은 AI-induced source loss를 줄이는 것이다.
-- TigerKit Slim 핵심 command surface는 `/tk:gap`, `/tk:afk`, `/tk:reflect`이며 optional active micro command는 `/tk:grill`, management command는 `/tk:config`, `/tk:setup`이다.
+- TigerKit Slim 핵심 command surface는 `/tk:gap`, `/tk:afk`, `/tk:reflect`이며 optional active micro command는 `/tk:grill`, management command는 `/tk:setup`이다.
 - 공개 command surface 변경은 plugin manifest, README, docs, evals 동기화를 함께 검토한다. `/tk:launch`, `/tk:review`, `/tk:next`, `/tk:handoff`, `/tk:meta-feedback`는 launch-era deprecated command이며 active manifest에 등록하지 않는다.
 - Claude Code plugin command는 namespace를 사용하므로 slash invocation은 `/tk:*` 형태다. 자연어 요청은 같은 프로토콜을 따른다.
 - 기본 `/tk:gap`은 SoT와 Current Implementation을 한 번 비교해 missing, mismatch, overbuilt, ambiguous를 분류하고 evidence, impact, priority, suggested fix를 보고한다. workflow를 생성하거나 freeze하지 않는다.
 - `/tk:afk`는 현재 세션에서 사용자에게 물어볼 중대하거나 불확실한 decision point를 temporary Patron에게 위임한다. Patron은 worker가 아니라 decision policy이며 Driver가 Patron output을 merge하고 decision ledger를 기록한다.
 - `/tk:reflect`는 세션 내용, 실제 변경 결과, 사용자 피드백, Patron decision ledger에서 재사용 가능한 learning을 추출한다. repo auto-write는 `CLAUDE.local.md`로 제한하고 repo shared `CLAUDE.md`는 suggest-only로 다룬다.
-- `/tk:config`는 TigerKit setup, AFK default, Patron catalog, Vowline opt-in, recommended tools를 관리한다. config state가 source of truth이고 user `CLAUDE.md` bridge는 activation aid다.
-- Vowline은 TigerKit 필수 의존성이 아니며 `/tk:config`에서 opt-in으로 연결한다.
+- `/tk:setup`은 TigerKit setup, AFK default, Patron catalog, Vowline opt-in, recommended tools를 관리하는 유일한 active management command다. config state가 source of truth이고 user `CLAUDE.md` bridge는 activation aid다.
+- Vowline은 TigerKit 필수 의존성이 아니며 `/tk:setup`에서 opt-in으로 연결한다.
 - Recommended tools는 recommendation-only이며 기본 설치하지 않는다. 설치 전 변경 범위와 설치 방식을 설명하고 사용자 승인을 받는다.
 - repo convention은 `.claude/rules/**/*.md`를 우선 확인한다.
 - UI copy는 basis 또는 confirmed contract와 exact match여야 한다. 의미상 유사함은 충분하지 않다.

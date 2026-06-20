@@ -9,14 +9,14 @@
 ## 핵심 모델
 
 ```text
-TigerKit Slim = gap + grill + afk + reflect + config
+TigerKit Slim = gap + grill + afk + reflect + setup
 ```
 
 - `gap`: SoT와 Current Implementation의 차이를 한 번 분석합니다.
 - `grill`: 설계, 계획, 변경안, reviewer 판단을 질문 렌즈로 압박 검증합니다.
 - `afk`: 사용자에게 물어볼 decision point를 temporary Patron에게 위임합니다.
 - `reflect`: 세션 learning과 개선 후보를 추출합니다.
-- `config`: setup, preferences, Patron, Vowline, recommended tools를 관리합니다.
+- `setup`: setup, preferences, Patron, Vowline, recommended tools를 관리합니다.
 
 Launch/workflow freezing/autopilot/mandatory runner 실험은 종료되었습니다.
 
@@ -28,8 +28,7 @@ Launch/workflow freezing/autopilot/mandatory runner 실험은 종료되었습니
 | `/tk:grill` | proposal/review context와 evidence를 비교해 닫힌 질문과 열린 질문을 분리합니다. | optional generated report |
 | `/tk:afk` | temporary Patron에게 scoped decision을 위임하고 ledger를 남깁니다. | decision ledger |
 | `/tk:reflect` | session result와 feedback에서 개선 후보를 추출합니다. | user/repo/Patron candidates |
-| `/tk:config` | setup, AFK default, Patrons, Vowline, recommended tools를 관리합니다. | user config |
-| `/tk:setup` | `/tk:config init` alias입니다. | user config |
+| `/tk:setup` | setup, AFK default, Patrons, Vowline, recommended tools를 관리합니다. | user config |
 
 ## 사용 예시
 
@@ -38,10 +37,9 @@ Launch/workflow freezing/autopilot/mandatory runner 실험은 종료되었습니
 /tk:grill "이 계획 구멍 찾아줘" --target commands/grill.md
 /tk:afk "검증 범위 결정 필요" --patron tester
 /tk:reflect --dry-run
-/tk:config init
-/tk:config afk status
-/tk:config patrons list
 /tk:setup
+/tk:setup afk status
+/tk:setup patrons list
 ```
 
 ## `/tk:gap`
@@ -93,11 +91,11 @@ Reflect target policy:
 | user skills | auto apply |
 | Patron profiles | auto apply candidates or improvements |
 
-## `/tk:config`
+## `/tk:setup`
 
-`/tk:config`는 askUserQuestion 기반 단계형 wizard입니다.
+`/tk:setup`은 askUserQuestion 기반 단계형 wizard와 management subcommands를 제공합니다.
 
-First-use config suggestion은 non-blocking이며 기본 선택은 “이번엔 그냥 진행”입니다.
+First-use setup suggestion은 non-blocking이며 기본 선택은 “이번엔 그냥 진행”입니다.
 
 Recommended tools는 기타 메뉴에서 사용자가 선택한 경우에만 보여줍니다.
 
@@ -105,6 +103,7 @@ Recommended tools는 기타 메뉴에서 사용자가 선택한 경우에만 보
 
 아래 command는 launch-era surface로 deprecated 처리되었고 active manifest에 포함되지 않습니다.
 
+- `/tk:config`
 - `/tk:launch`
 - `/tk:review`
 - `/tk:next`
