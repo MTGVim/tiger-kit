@@ -167,14 +167,14 @@ n. <candidate or NONE>
 
 `--dry-run` 또는 `--apply=false`이면 preview만 출력하고 파일을 수정하지 않습니다.
 
-## `/tk:config` Output Contract
+## `/tk:setup` Output Contract
 
-`/tk:config`는 단계형 wizard 또는 subcommand receipt를 출력합니다.
+`/tk:setup`은 단계형 wizard 또는 management subcommand receipt를 출력합니다.
 
 Subcommand receipt:
 
 ```text
-Config 완료
+Setup 완료
 명령: <subcommand>
 Config state: ~/.claude/tigerkit/config.json
 변경: <changed|unchanged>
@@ -182,7 +182,7 @@ Bridge: <updated|not_changed|approval_required|not_applicable>
 다음 행동: <next step or 없음>
 ```
 
-First-use suggestion은 non-blocking입니다.
+First-use setup suggestion은 non-blocking입니다.
 
 선택지:
 

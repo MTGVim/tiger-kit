@@ -6,7 +6,7 @@ AFK는 background async 작업이 아니다. 현재 세션에서 사용자에게
 
 - 설치 직후 기본은 off다.
 - `/tk:afk` 명시 호출 시에만 켜진다.
-- `/tk:config afk default on|off|status`가 default 상태를 관리한다.
+- `/tk:setup afk default on|off|status`가 default 상태를 관리한다.
 - config state가 source of truth다.
 - user `CLAUDE.md` bridge는 activation aid다.
 - 명시적 사용자 지시가 AFK default보다 우선한다.

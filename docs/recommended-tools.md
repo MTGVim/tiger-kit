@@ -6,7 +6,7 @@ Recommended tools는 optional이다. TigerKit core 기능에 필요하지 않다
 
 - 기본 설치하지 않는다.
 - 설치하지 않아도 TigerKit core 기능에 영향이 없어야 한다.
-- README 확인, 설치, 설정은 사용자가 `/tk:config`의 기타 추천 도구 메뉴에서 고른 경우에만 진행한다.
+- README 확인, 설치, 설정은 사용자가 `/tk:setup`의 기타 추천 도구 메뉴에서 고른 경우에만 진행한다.
 - 설치 전 변경 범위와 설치 방식을 설명하고 승인받는다.
 - 외부 도구를 TigerKit core에 직접 내장하지 않는다.
 - TigerKit은 추천 외부 도구를 자동 설치하지 않는다.
@@ -50,7 +50,7 @@ recommended_tools:
 
 ## UI placement
 
-`/tk:config` 마지막에 “기타 추천 도구” 메뉴를 둔다. 기본 설정 단계에서는 바로 노출하지 않는다.
+`/tk:setup` 마지막에 “기타 추천 도구” 메뉴를 둔다. 기본 설정 단계에서는 바로 노출하지 않는다.
 
 ## Response policy
 

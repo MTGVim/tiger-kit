@@ -18,7 +18,7 @@ gap     = SoT ↔ Current one-shot gap analysis
 grill   = 설계/계획/변경안 압박 검증용 optional active micro command
 afk     = Patron 기반 사용자 의사결정 위임
 reflect = 세션 학습과 개선 추출
-config  = TigerKit 설정, Patron, Vowline, 추천 도구 관리
+setup   = TigerKit 설정, Patron, Vowline, 추천 도구 관리
 ```
 
 ## Command migration
@@ -52,4 +52,4 @@ config  = TigerKit 설정, Patron, Vowline, 추천 도구 관리
 
 ## Migration 결과 기준
 
-Slim manifest에는 active command로 `/tk:gap`, `/tk:afk`, `/tk:reflect`, `/tk:config`, `/tk:setup`과 optional active micro command `/tk:grill`을 포함한다. Deprecated command 파일은 기록과 migration 안내를 위해 남길 수 있지만 active plugin surface가 아니다.
+Slim manifest에는 active command로 `/tk:gap`, `/tk:afk`, `/tk:reflect`, `/tk:setup`과 optional active micro command `/tk:grill`을 포함한다. Deprecated command 파일은 기록과 migration 안내를 위해 남길 수 있지만 active plugin surface가 아니다.
