@@ -97,16 +97,72 @@ Findings에는 P0/P1/P2만 넣습니다. P3, duplicate, unverifiable, source con
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/branch-state.json
 ```
 
-실제 저장이 필요할 때는 최종 markdown report를 만든 뒤 **설치된 plugin root 기준 helper**를 사용합니다. 현재 작업 repo의 `scripts/`를 찾지 말고 Claude plugin runtime이 제공하는 `CLAUDE_PLUGIN_ROOT`를 사용해야 합니다.
+실제 저장이 필요할 때는 최종 markdown report를 만든 뒤 **설치된 TigerKit plugin cache에서 helper를 발견한 다음** 사용합니다. 현재 작업 repo의 `scripts/` 상대경로를 가정하면 안 되고, `CLAUDE_PLUGIN_ROOT`가 비어 있거나 marketplace mirror를 가리키는 경우도 있으므로 installPath/cache를 직접 확인합니다.
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT:?CLAUDE_PLUGIN_ROOT is not set}/scripts/tigerkit_state.py" write-gap --repo-root "$PWD" --report-file /absolute/path/to/final-gap-report.md
+TIGERKIT_STATE_SCRIPT="$({
+python3 - <<'PY'
+import json, subprocess
+from pathlib import Path
+
+def version_key(path: Path):
+    try:
+        return tuple(int(part) for part in path.parent.parent.name.split('.'))
+    except Exception:
+        return (0,)
+
+candidates = []
+try:
+    plugins = json.loads(subprocess.check_output(["claude", "plugin", "list", "--json"], text=True))
+except Exception:
+    plugins = []
+for item in plugins:
+    if item.get("id") == "tk@tiger-kit" and item.get("enabled"):
+        path = Path(item.get("installPath", "")) / "scripts" / "tigerkit_state.py"
+        if path.is_file():
+            candidates.append(path)
+if not candidates:
+    candidates.extend(Path.home().glob('.claude/plugins/cache/tiger-kit/tk/*/scripts/tigerkit_state.py'))
+if not candidates:
+    raise SystemExit('TigerKit helper not found in installed plugin cache. Run `claude plugin marketplace update tiger-kit` and reinstall/update `tk@tiger-kit`.')
+print(max(candidates, key=version_key))
+PY
+})"
+python3 "$TIGERKIT_STATE_SCRIPT" write-gap --repo-root "$PWD" --report-file /absolute/path/to/final-gap-report.md
 ```
 
 stdin으로 직접 넘길 수도 있습니다.
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT:?CLAUDE_PLUGIN_ROOT is not set}/scripts/tigerkit_state.py" write-gap --repo-root "$PWD" <<'EOF'
+TIGERKIT_STATE_SCRIPT="$({
+python3 - <<'PY'
+import json, subprocess
+from pathlib import Path
+
+def version_key(path: Path):
+    try:
+        return tuple(int(part) for part in path.parent.parent.name.split('.'))
+    except Exception:
+        return (0,)
+
+candidates = []
+try:
+    plugins = json.loads(subprocess.check_output(["claude", "plugin", "list", "--json"], text=True))
+except Exception:
+    plugins = []
+for item in plugins:
+    if item.get("id") == "tk@tiger-kit" and item.get("enabled"):
+        path = Path(item.get("installPath", "")) / "scripts" / "tigerkit_state.py"
+        if path.is_file():
+            candidates.append(path)
+if not candidates:
+    candidates.extend(Path.home().glob('.claude/plugins/cache/tiger-kit/tk/*/scripts/tigerkit_state.py'))
+if not candidates:
+    raise SystemExit('TigerKit helper not found in installed plugin cache. Run `claude plugin marketplace update tiger-kit` and reinstall/update `tk@tiger-kit`.')
+print(max(candidates, key=version_key))
+PY
+})"
+python3 "$TIGERKIT_STATE_SCRIPT" write-gap --repo-root "$PWD" <<'EOF'
 <final gap markdown>
 EOF
 ```

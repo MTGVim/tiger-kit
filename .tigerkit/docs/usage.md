@@ -83,10 +83,38 @@ Apply는 current invocation apply plan, exact apply set, base/result sha256, pla
 
 Active TigerKit generated state는 project repository 밖 `~/.tigerkit` 아래의 file-only state입니다. `.claude/tigerkit`는 legacy/migration context로만 남기고 새 runtime write path로 사용하지 않습니다.
 
-실제 active write helper는 현재 작업 repo 상대경로가 아니라 **설치된 plugin root**를 기준으로 호출합니다.
+실제 active write helper는 현재 작업 repo 상대경로를 쓰지 않습니다. `CLAUDE_PLUGIN_ROOT`가 비어 있거나 marketplace mirror를 가리킬 수 있으므로, **설치된 TigerKit plugin cache/installPath에서 helper를 발견한 뒤** 호출합니다.
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT:?CLAUDE_PLUGIN_ROOT is not set}/scripts/tigerkit_state.py" write-gap --repo-root "$PWD" --report-file /absolute/path/to/final-gap-report.md
+TIGERKIT_STATE_SCRIPT="$({
+python3 - <<'PY'
+import json, subprocess
+from pathlib import Path
+
+def version_key(path: Path):
+    try:
+        return tuple(int(part) for part in path.parent.parent.name.split('.'))
+    except Exception:
+        return (0,)
+
+candidates = []
+try:
+    plugins = json.loads(subprocess.check_output(["claude", "plugin", "list", "--json"], text=True))
+except Exception:
+    plugins = []
+for item in plugins:
+    if item.get("id") == "tk@tiger-kit" and item.get("enabled"):
+        path = Path(item.get("installPath", "")) / "scripts" / "tigerkit_state.py"
+        if path.is_file():
+            candidates.append(path)
+if not candidates:
+    candidates.extend(Path.home().glob('.claude/plugins/cache/tiger-kit/tk/*/scripts/tigerkit_state.py'))
+if not candidates:
+    raise SystemExit('TigerKit helper not found in installed plugin cache. Run `claude plugin marketplace update tiger-kit` and reinstall/update `tk@tiger-kit`.')
+print(max(candidates, key=version_key))
+PY
+})"
+python3 "$TIGERKIT_STATE_SCRIPT" write-gap --repo-root "$PWD" --report-file /absolute/path/to/final-gap-report.md
 ```
 
 주요 active path:

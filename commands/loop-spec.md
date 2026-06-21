@@ -44,13 +44,41 @@ MVP 범위 밖: `list`, `show`, `export`, `--from`, `--issue`, public JSON outpu
 
 ## Execution instruction
 
-When this command is invoked, run the helper from the **installed plugin root**, not from the current working repository.
+When this command is invoked, resolve the helper from the **installed TigerKit plugin cache**, not from the current working repository.
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT:?CLAUDE_PLUGIN_ROOT is not set}/scripts/tigerkit_state.py" loop-spec $ARGUMENTS
+TIGERKIT_STATE_SCRIPT="$({
+python3 - <<'PY'
+import json, subprocess
+from pathlib import Path
+
+def version_key(path: Path):
+    try:
+        return tuple(int(part) for part in path.parent.parent.name.split('.'))
+    except Exception:
+        return (0,)
+
+candidates = []
+try:
+    plugins = json.loads(subprocess.check_output(["claude", "plugin", "list", "--json"], text=True))
+except Exception:
+    plugins = []
+for item in plugins:
+    if item.get("id") == "tk@tiger-kit" and item.get("enabled"):
+        path = Path(item.get("installPath", "")) / "scripts" / "tigerkit_state.py"
+        if path.is_file():
+            candidates.append(path)
+if not candidates:
+    candidates.extend(Path.home().glob('.claude/plugins/cache/tiger-kit/tk/*/scripts/tigerkit_state.py'))
+if not candidates:
+    raise SystemExit('TigerKit helper not found in installed plugin cache. Run `claude plugin marketplace update tiger-kit` and reinstall/update `tk@tiger-kit`.')
+print(max(candidates, key=version_key))
+PY
+})"
+python3 "$TIGERKIT_STATE_SCRIPT" loop-spec $ARGUMENTS
 ```
 
-`/Users/.../<current-repo>/scripts/tigerkit_state.py` 같은 현재 repo 상대경로를 가정하면 안 됩니다. If the plugin-root helper is unavailable, report the blocker instead of inventing a LoopSpec.
+`/Users/.../<current-repo>/scripts/tigerkit_state.py` 같은 현재 repo 상대경로를 가정하면 안 됩니다. `CLAUDE_PLUGIN_ROOT`가 비어 있거나 versioned install cache가 아닐 수도 있으므로, helper를 찾지 못하면 blocker를 보고하고 LoopSpec을 invent하지 않습니다.
 
 ## Output contract
 
