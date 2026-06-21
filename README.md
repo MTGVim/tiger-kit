@@ -76,7 +76,7 @@ TigerKit은 아래를 active surface로 제공하지 않습니다.
 ## Operational Docs
 
 - [Usage](.tigerkit/docs/usage.md)
-- [출력 계약](.tigerkit/docs/output-contract.md)
+- [Output Contract](.tigerkit/docs/output-contract.md)
 - [Storage boundary](.tigerkit/docs/storage-boundary.md)
 - [Reflect file policy](docs/reflect-file-policy.md)
 - [Reflect promotion helper guide](.tigerkit/docs/reflect-promotion-helpers.md) (optional)
