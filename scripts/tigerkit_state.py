@@ -544,17 +544,33 @@ def update_loop_branch_state(repo_root: Path, spec: dict[str, Any], path: Path) 
     atomic_write_json(branch_state_path, branch_state)
 
 
+def render_loop_spec_usage() -> str:
+    return "\n".join([
+        "사용법: /tk:loop-spec \"<task>\"",
+        "또는: /tk:loop-spec validate <spec-id-or-path>",
+        "",
+        "예:",
+        '  /tk:loop-spec "Fix payment modal scroll bug"',
+        "  /tk:loop-spec validate <spec-id-or-path>",
+    ])
+
+
 def cmd_loop_spec(args: argparse.Namespace) -> int:
     repo_root = resolve_repo_root(args.repo_root)
     task_args = list(args.task or [])
+    if not task_args:
+        print(render_loop_spec_usage())
+        return 0
     if task_args and task_args[0] == "validate":
         if len(task_args) != 2:
-            raise SystemExit("Usage: loop-spec validate <spec-id-or-path>")
+            print(render_loop_spec_usage())
+            return 0
         args.spec = task_args[1]
         return cmd_loop_spec_validate(args, repo_root)
     task = " ".join(task_args).strip()
     if not task:
-        raise SystemExit("/tk:loop-spec generate requires a task. Usage: loop-spec '<task>'")
+        print(render_loop_spec_usage())
+        return 0
     spec, path = build_loop_spec(repo_root, task, args)
     if path:
         atomic_write(path, dump_yaml(spec) + "\n")
