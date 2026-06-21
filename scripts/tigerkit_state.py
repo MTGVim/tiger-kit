@@ -147,32 +147,6 @@ def cmd_write_gap(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_record_decline(args: argparse.Namespace) -> int:
-    root = state_root()
-    marker = root / "local" / "session-start" / "worktree-context-declines.json"
-    data = load_json(marker, {"declines": []})
-    declines = data.get("declines") if isinstance(data, dict) else None
-    if not isinstance(declines, list):
-        declines = []
-        data = {"declines": declines}
-    existed = any(isinstance(item, dict) and item.get("signature") == args.signature for item in declines)
-    if not existed:
-        declines.append({
-            "signature": args.signature,
-            "currentRoot": args.current_root,
-            "sourceRoot": args.source_root,
-            "createdAt": now_iso(),
-        })
-        atomic_write_json(marker, data)
-    print(json.dumps({
-        "stateRoot": str(root),
-        "markerPath": str(marker),
-        "signature": args.signature,
-        "alreadyPresent": existed,
-    }, ensure_ascii=False, indent=2))
-    return 0
-
-
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="TigerKit generated state helpers")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -186,12 +160,6 @@ def build_parser() -> argparse.ArgumentParser:
     p_write.add_argument("--gap-id", help="Explicit GAP id", default=None)
     p_write.add_argument("--report-file", help="Read report content from file instead of stdin", default=None)
     p_write.set_defaults(func=cmd_write_gap)
-
-    p_decline = sub.add_parser("record-session-start-decline", help="Persist a declined session-start signature")
-    p_decline.add_argument("--signature", required=True)
-    p_decline.add_argument("--current-root", default="")
-    p_decline.add_argument("--source-root", default="")
-    p_decline.set_defaults(func=cmd_record_decline)
     return parser
 
 

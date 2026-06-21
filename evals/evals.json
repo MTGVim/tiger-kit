@@ -1,7 +1,7 @@
 {
   "skill_name": "tiger-kit-gap-reflect-core",
   "command_surface": {
-    "surface_model": "TigerKit exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts.",
+    "surface_model": "TigerKit exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts. Core tk plugin is hook-free.",
     "core_commands": [
       "/tk:gap",
       "/tk:reflect"
@@ -22,12 +22,14 @@
   "evals": [
     {
       "id": 0,
-      "name": "plugin-version-and-command-manifest-gap-reflect",
-      "prompt": "Evaluate TigerKit active command surface. Do not write files.",
-      "expected_output": "Should list /tk:gap and /tk:reflect as the only active commands. Should state /tk:grill, /tk:afk, /tk:setup, and the launch-era commands are not active manifest entries.",
+      "name": "plugin-version-and-command-manifest-gap-reflect-hook-free",
+      "prompt": "Evaluate TigerKit active command surface and plugin packaging. Do not write files.",
+      "expected_output": "Should list /tk:gap and /tk:reflect as the only active commands. Should state core tk plugin is hook-free and has no active SessionStart hook packaging or helper runtime. Should state /tk:grill, /tk:afk, /tk:setup, and the launch-era commands are not active manifest entries.",
       "files": [
         ".claude-plugin/plugin.json",
         ".claude-plugin/marketplace.json",
+        "hooks/hooks.json",
+        "scripts/tigerkit_state.py",
         "README.md",
         ".tigerkit/docs/usage.md"
       ],
@@ -37,7 +39,11 @@
         "Does not list /tk:grill as active",
         "Does not list /tk:afk as active",
         "Does not list /tk:setup as active",
-        "Documents launch-era commands as not active"
+        "Documents launch-era commands as not active",
+        "States core tk plugin is hook-free",
+        "Does not package an active SessionStart hook",
+        "Does not ship active hooks/session-start runtime",
+        "Does not ship active hooks/run-hook.cmd helper"
       ]
     },
     {
@@ -81,49 +87,449 @@
     },
     {
       "id": 3,
-      "name": "reflect-is-promotion-router",
+      "name": "reflect-preview-first-canonical-targets",
       "prompt": "Evaluate /tk:reflect promotion router behavior. Do not write files.",
-      "expected_output": "Should define /tk:reflect as a safe durable promotion router that extracts reusable learning from session result and feedback, classifies it into the right promotion surface, and preserves safety boundaries. It should support repo CLAUDE.local.md auto-apply, keep repo CLAUDE.md proposal suggest-only, allow user PROFILE.md and user CLAUDE.md auto-apply, allow user skills auto-apply only when the canonical user skill surface owns the source outside TigerKit generated state, keep hook / hookify proposal, command proposal, and agent proposal suggest-only, and classify discard as never store. It should forbid source code edits, forbid auto-applying hook / command / agent changes, preserve branch-specific one-off discard rules, and print changed paths whenever files are written. Proposal receipt quality should separate hook / hookify proposal 후보, command proposal 후보, and agent proposal 후보 instead of using one generic proposal bucket. Hook proposals should include rationale, trigger, action, and why suggest-only. Command proposals should include intent, arguments, and when better than skill. Agent proposals should include role boundary, responsibility, and when better than command. When `--dry-run` or `--apply=false` is in effect, auto-apply targets should use `preview_only` instead of `applied`. Candidate-state metadata may still use `candidate`, `confirmed`, `session-local`, `deprecated`, and `discard`, but these are distinct from the promotion result status values.",
+      "expected_output": "Should define /tk:reflect as a safe durable promotion router that extracts reusable learning from session result and feedback, classifies it into canonical targets, and defaults to preview-only. Canonical target enum must be exactly repo-local, repo-shared, user-global, skill, hook, command, agent, discard. PROFILE.md, automation, hookify, and hook / hookify must not be target names. repo-local is the only target that can be written, and only with --apply=true plus eligibility checks. repo-shared, user-global, skill, hook, command, and agent remain suggest-only. discard implies action discard with no path or write. TigerKit must not write, mirror, or back up Claude Code auto memory.",
       "files": [
         "commands/reflect.md",
         "docs/reflect-file-policy.md",
         ".tigerkit/docs/output-contract.md",
         ".tigerkit/docs/storage-boundary.md",
-        ".tigerkit/docs/reflect-promotion-helpers.md"
+        ".tigerkit/docs/reflect-promotion-helpers.md",
+        "README.md"
       ],
       "expectations": [
         "Defines reflect as promotion router",
-        "repo CLAUDE.local.md auto apply",
-        "repo CLAUDE.md proposal suggest only",
-        "user PROFILE.md auto apply",
-        "user CLAUDE.md auto apply",
-        "user skills auto apply only when canonical user skill surface owns source outside TigerKit generated state",
-        "hook / hookify proposal suggest only",
-        "command proposal suggest only",
-        "agent proposal suggest only",
-        "discard never store",
+        "Default reflect behavior is preview-only",
+        "Canonical target enum exactly repo-local repo-shared user-global skill hook command agent discard",
+        "PROFILE.md is not a promotion target",
+        "automation is not a target name",
+        "hookify is not a target name",
+        "repo-local is the only writable target",
+        "repo-local write target is <git-root>/CLAUDE.local.md",
+        "repo-shared is suggest-only",
+        "user-global is suggest-only",
+        "skill is suggest-only",
+        "hook is suggest-only",
+        "command is suggest-only",
+        "agent is suggest-only",
+        "discard has action discard and no path or write",
         "source code edits forbidden",
         "hook command agent changes not auto applied",
         "branch-specific one-off discarded",
         "changed paths printed when files are written",
-        "candidate-state metadata available and distinct from promotion result status values",
-        "separates hook hookify proposal section",
-        "separates command proposal section",
-        "separates agent proposal section",
-        "hook proposal includes rationale trigger action why suggest-only",
-        "command proposal includes intent arguments when better than skill",
-        "agent proposal includes role boundary responsibility when better than command",
-        "does not use one generic proposal bucket",
-        "dry-run uses preview_only instead of applied"
+        "TigerKit does not write mirror or back up Claude Code auto memory"
       ]
     },
     {
       "id": 4,
-      "name": "storage-state-is-externalized-to-home",
-      "prompt": "Evaluate TigerKit storage boundary, hook marker path, and reflect helper docs. Do not write files.",
-      "expected_output": "Should state that active TigerKit generated state lives outside the project repository under ~/.tigerkit. Should document ~/.tigerkit/local/session-start/worktree-context-declines.json as the active SessionStart decline marker and should keep .claude/tigerkit/local/session-start/worktree-context-declines.json only as legacy read fallback or migration context. Current documented active generated layout should include gap report archive/current plus branch-state pointer under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/. It should not document future runs/<kind>/<id> payload structures as active or required layout. It should not document active reflect artifact writes before a reflect write path exists. Reflect helper docs should be optional, non-runtime, non-authoritative, and should not imply hook installation, settings updates, command generation, agent generation, user skill generation under TigerKit generated state, or plugin manifest changes.",
+      "name": "reflect-legacy-selectors-preview-only",
+      "prompt": "Evaluate /tk:reflect legacy selector compatibility in preview mode. Do not write files.",
+      "expected_output": "Should state --target repo expands to repo-local and repo-shared with a deprecation warning, and --target user expands to user-global with a deprecation warning. With no --apply=true, legacy selectors remain preview-only and write no files. Receipt should show requested target, effective targets, deprecation line, candidate table, Changed paths: NONE, and Apply plan: NONE.",
       "files": [
-        "hooks/session-start",
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "--target repo expands to repo-local and repo-shared",
+        "--target user expands to user-global",
+        "prints deprecation warning for repo selector",
+        "prints deprecation warning for user selector",
+        "preview mode writes no files",
+        "Changed paths NONE in preview mode",
+        "Apply plan NONE in preview mode"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "reflect-legacy-selectors-apply-scope",
+      "prompt": "Evaluate /tk:reflect legacy selector compatibility with --apply=true. Do not write files.",
+      "expected_output": "Should state --target repo --apply=true and --target all --apply=true may only write eligible repo-local candidates. repo-shared, user-global, skill, hook, command, agent, and discard remain suggest_only, preview_only, or discard. The command must not auto-apply shared/user/skill/hook/command/agent proposals.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "--target repo --apply=true only writes eligible repo-local candidates",
+        "--target all --apply=true only writes eligible repo-local candidates",
+        "repo-shared remains suggest-only",
+        "user-global remains suggest-only",
+        "skill remains suggest-only",
+        "hook remains suggest-only",
+        "command remains suggest-only",
+        "agent remains suggest-only"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "reflect-repo-local-default-preview-no-write",
+      "prompt": "Evaluate /tk:reflect default behavior for a repo-local candidate. Do not write files.",
+      "expected_output": "Should produce a repo-local candidate as preview_only when --apply=true is absent or --apply=false. It should show target repo-local, path <git-root>/CLAUDE.local.md, Changed paths: NONE, Apply plan: NONE, and must not claim Applied. If a candidate is outside eligibility in apply mode, it should use candidate_not_eligible; if no candidates are eligible, it should use no_eligible_candidates.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "Default reflect behavior is preview-only",
+        "repo-local candidate can be preview_only",
+        "Changed paths NONE without --apply=true",
+        "Apply plan NONE without --apply=true",
+        "Does not claim Applied in preview mode",
+        "uses candidate_not_eligible for ineligible apply candidate",
+        "uses no_eligible_candidates when no candidate can be applied"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "reflect-eligible-repo-local-apply",
+      "prompt": "Evaluate /tk:reflect --apply=true for an eligible repo-local candidate. Do not write files.",
+      "expected_output": "Should allow writing only <git-root>/CLAUDE.local.md when the repo-local candidate is eligible. It should discover the git root from invocation_cwd, use root-relative operand CLAUDE.local.md, verify untracked and ignored status, reject symlinks and paths outside repo, produce exact apply_plan with base/result hashes and planned result bytes hash, write via same-directory temp file and atomic replace, verify result bytes, and report the changed path.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "write target only <git-root>/CLAUDE.local.md",
+        "path operand root-relative literal CLAUDE.local.md",
+        "uses invocation_cwd for root discovery",
+        "checks tracked status before write",
+        "checks ignored status before write",
+        "lstat symlink check before write",
+        "normalized path remains inside git root",
+        "apply plan includes exact apply set",
+        "apply plan includes base_state base_sha256 result_sha256 planned result bytes hash",
+        "apply plan includes exact unified diff",
+        "writes using same-directory temp file and atomic replace",
+        "verifies post-write bytes",
+        "Changed paths includes <git-root>/CLAUDE.local.md"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "reflect-tracked-claude-local-rejection",
+      "prompt": "Evaluate /tk:reflect --apply=true when <git-root>/CLAUDE.local.md is tracked. Do not write files.",
+      "expected_output": "Should run git -C <git-root> ls-files --error-unmatch -- CLAUDE.local.md. Exit 0 means the file is tracked and must be rejected with reason_code tracked_local_file. Exit 1 means untracked and may continue. Other status must be tracked_check_error. A tracked CLAUDE.local.md candidate must not be applied.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "git -C <git-root> ls-files --error-unmatch -- CLAUDE.local.md",
+        "exit 0 tracked reject",
+        "exit 1 untracked continue",
+        "other exit tracked_check_error",
+        "reason_code tracked_local_file",
+        "does not apply tracked CLAUDE.local.md"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "reflect-not-ignored-local-file-rejection",
+      "prompt": "Evaluate /tk:reflect --apply=true when CLAUDE.local.md is not ignored. Do not write files.",
+      "expected_output": "Should run git -C <git-root> check-ignore -q --no-index -- CLAUDE.local.md. Exit 0 means ignored and may continue. Exit 1 means not_ignored and must reject. Exit 128 or other status must be ignore_check_error. not_ignored may propose an ignore entry but must not edit .gitignore, .git/info/exclude, or global exclude.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "git -C <git-root> check-ignore -q --no-index -- CLAUDE.local.md",
+        "exit 0 ignored continue",
+        "exit 1 not_ignored reject",
+        "exit 128 or other ignore_check_error",
+        "not_ignored may propose ignore entry",
+        "does not edit .gitignore",
+        "does not edit .git/info/exclude",
+        "does not edit global exclude"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "reflect-non-git-rejection",
+      "prompt": "Evaluate /tk:reflect --apply=true outside a Git worktree. Do not write files.",
+      "expected_output": "Should run git -C <invocation_cwd> rev-parse --is-inside-work-tree. If exit status is not 0, repo-local apply must be rejected with reason_code not_git_worktree. It should produce no apply plan, write no files, and must not fall back to workspace-root writes.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "git -C <invocation_cwd> rev-parse --is-inside-work-tree",
+        "non-zero exit means not_git_worktree",
+        "no workspace-root fallback write",
+        "Changed paths NONE",
+        "no eligible candidate applied"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "reflect-git-root-resolution-and-path-safety",
+      "prompt": "Evaluate /tk:reflect git root resolution, nested cwd, paths with spaces, symlink, and path normalization. Do not write files.",
+      "expected_output": "Should run git -C <invocation_cwd> rev-parse --show-toplevel to get git root, including nested cwd and paths with spaces. Command invocation must use argument vector, not shell string concatenation. Normalized <git-root>/CLAUDE.local.md must remain inside the git root. lstat symlink check must reject symlink_target before following a target. Root resolution failure should use reason_code git_root_resolution_error and path escape should use path_outside_repo.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "git -C <invocation_cwd> rev-parse --show-toplevel",
+        "nested cwd supported via git -C",
+        "paths with spaces supported by argument vector",
+        "no shell string concatenation",
+        "normalized path must remain inside git root",
+        "lstat symlink check",
+        "reason_code git_root_resolution_error",
+        "reason_code path_outside_repo",
+        "reason_code symlink_target"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "reflect-user-global-apply-remains-suggest-only",
+      "prompt": "Evaluate /tk:reflect --target user-global --apply=true. Do not write files.",
+      "expected_output": "Should keep user-global candidates suggest-only even when --apply=true. It must not edit user CLAUDE.md, auto memory, profile files, or generated state as a substitute. Changed paths should be NONE unless an eligible repo-local candidate is also in scope, which user-global alone is not.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/storage-boundary.md"
+      ],
+      "expectations": [
+        "user-global is suggest-only",
+        "--apply=true does not write user-global guidance",
+        "does not edit user CLAUDE.md",
+        "does not write Claude Code auto memory",
+        "does not create PROFILE.md",
+        "Changed paths NONE for user-global only"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "reflect-simple-role-fact-discard-no-profile",
+      "prompt": "Evaluate /tk:reflect on a simple transient role fact such as 'I was acting as release helper in this session'. Do not write files.",
+      "expected_output": "Should discard a simple role fact when it is not reusable durable guidance. It must not create or propose PROFILE.md as a promotion target. Discard candidate should use target discard, action discard, path NONE, and no write.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "simple role fact can be discarded",
+        "target discard",
+        "action discard",
+        "path NONE",
+        "no write",
+        "PROFILE.md is not a promotion target",
+        "does not create PROFILE.md"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "reflect-repo-canonical-source-suggest-only",
+      "prompt": "Evaluate /tk:reflect when a learning belongs in a repo canonical shared source. Do not write files.",
+      "expected_output": "Should classify repo-wide durable team guidance as repo-shared and suggest-only. It may recommend a specific repo shared surface for human review, but it must not edit CLAUDE.md or shared docs automatically.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/storage-boundary.md"
+      ],
+      "expectations": [
+        "repo-shared for repo canonical source",
+        "repo-shared is suggest-only",
+        "does not edit CLAUDE.md",
+        "does not edit shared docs automatically",
+        "human review required before shared source change"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "reflect-branch-specific-workaround-discard-session-local",
+      "prompt": "Evaluate /tk:reflect on a branch-specific workaround discovered during a one-off implementation. Do not write files.",
+      "expected_output": "Should discard branch-specific one-off or workaround guidance instead of promoting it to durable repo/user guidance. Candidate should use target discard, action discard, path NONE, and reason_code session_local. It must not use session-local status.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/reflect-promotion-helpers.md"
+      ],
+      "expectations": [
+        "branch-specific one-off discarded",
+        "target discard",
+        "action discard",
+        "path NONE",
+        "reason_code session_local",
+        "does not use status session-local"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "reflect-target-specific-skill-hook-command-agent-proposals",
+      "prompt": "Evaluate /tk:reflect classification for target-specific procedural proposals. Do not write files.",
+      "expected_output": "Should keep skill, hook, command, and agent proposals separate. Skill candidates are suggest-only reusable procedures. Hook candidates include rationale, trigger, action, and why suggest-only. Command candidates include intent, arguments, and when better than skill. Agent candidates include role boundary, responsibility, and when better than command. None of these are installed, generated, dispatched, or activated by reflect.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/reflect-promotion-helpers.md"
+      ],
+      "expectations": [
+        "skill proposal suggest-only",
+        "hook proposal includes rationale trigger action why suggest-only",
+        "command proposal includes intent arguments when better than skill",
+        "agent proposal includes role boundary responsibility when better than command",
+        "does not install hook",
+        "does not generate command source",
+        "does not generate agent source",
+        "does not activate proposal automatically"
+      ]
+    },
+    {
+      "id": 17,
+      "name": "reflect-discard-invariant",
+      "prompt": "Evaluate discard invariants in /tk:reflect output. Do not write files.",
+      "expected_output": "Every discard item must remain target discard with action discard, path NONE, and no write. Discard items must not appear in apply_set and must not become preview_only or suggest_only. Low-confidence, sensitive, duplicate, already documented, or branch-specific items should be discarded rather than promoted.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "discard target implies action discard",
+        "discard target has path NONE",
+        "discard target has no write",
+        "discard not in apply_set",
+        "low-confidence discarded",
+        "sensitive information discarded",
+        "duplicate discarded when confirmed",
+        "branch-specific one-off discarded"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "reflect-multi-candidate-all-or-nothing-patch",
+      "prompt": "Evaluate /tk:reflect --apply=true with multiple eligible repo-local candidates. Do not write files.",
+      "expected_output": "Should combine all eligible repo-local candidates into one planned CLAUDE.local.md result bytes and exact unified diff. The apply_set must be exact and immutable. Apply must be all-or-nothing; partial candidate application is forbidden. If any included candidate or target fails eligibility/recheck/verification, no candidate may be reported Applied.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "multiple eligible candidates combine into one planned result bytes",
+        "exact immutable apply_set",
+        "exact unified diff",
+        "all-or-nothing apply",
+        "partial candidate application forbidden",
+        "no candidate reported Applied after failure"
+      ]
+    },
+    {
+      "id": 19,
+      "name": "reflect-stale-apply-plan",
+      "prompt": "Evaluate stale apply plan handling in /tk:reflect --apply=true. Do not write files.",
+      "expected_output": "Should treat apply plans as current invocation only. Before writing, it must recheck base_state and base_sha256. If target bytes/state changed after planning or the plan came from a prior invocation, apply must abort with reason_code stale_apply_plan, write no files, and report no candidates Applied.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "apply plan current invocation only",
+        "prior invocation plan is stale_apply_plan",
+        "write-before base state recheck",
+        "write-before base hash recheck",
+        "reason_code stale_apply_plan",
+        "write no files on stale plan",
+        "Applied candidates NONE on stale plan"
+      ]
+    },
+    {
+      "id": 20,
+      "name": "reflect-post-write-verification-rollback-success",
+      "prompt": "Evaluate /tk:reflect post-write verification failure with successful rollback. Do not write files.",
+      "expected_output": "If post-write target bytes do not match result_sha256, reflect should report reason_code apply_verification_failed, capture failed result bytes/hash, report Applied candidates: NONE, rollback safely to original bytes or original absence, and if rollback succeeds output rollback: succeeded and Changed paths: NONE.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "reason_code apply_verification_failed",
+        "failed result bytes captured",
+        "Applied candidates NONE",
+        "rollback restores original bytes or original absence",
+        "rollback succeeded",
+        "Changed paths NONE after rollback success"
+      ]
+    },
+    {
+      "id": 21,
+      "name": "reflect-post-write-verification-rollback-failure",
+      "prompt": "Evaluate /tk:reflect post-write verification failure with rollback failure or external change. Do not write files.",
+      "expected_output": "If verification fails and rollback precheck detects an external change, or rollback cannot restore original bytes/absence safely, reflect should report reason_code rollback_failed, Applied candidates: NONE, rollback: failed, changed path <git-root>/CLAUDE.local.md, and required manual inspection before rerun.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "rollback precheck for external change",
+        "reason_code rollback_failed",
+        "Applied candidates NONE",
+        "rollback failed",
+        "Changed paths includes <git-root>/CLAUDE.local.md",
+        "manual inspection required before rerun"
+      ]
+    },
+    {
+      "id": 22,
+      "name": "reflect-visible-auto-memory-duplicate",
+      "prompt": "Evaluate /tk:reflect when visible Claude Code auto memory already contains the same reusable guidance. Do not write files.",
+      "expected_output": "If direct visible evidence shows an existing auto memory duplicate, reflect should set duplicate_status confirmed and normally discard or avoid re-promoting the same content. TigerKit must not write, mirror, or back up Claude Code auto memory.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/reflect-promotion-helpers.md"
+      ],
+      "expectations": [
+        "visible duplicate evidence sets duplicate_status confirmed",
+        "duplicate can be discarded or not re-promoted",
+        "TigerKit does not write Claude Code auto memory",
+        "TigerKit does not mirror Claude Code auto memory",
+        "TigerKit does not back up Claude Code auto memory"
+      ]
+    },
+    {
+      "id": 23,
+      "name": "reflect-unobserved-auto-memory-duplicate-status-unknown",
+      "prompt": "Evaluate /tk:reflect when auto memory duplicate evidence was not observed. Do not write files.",
+      "expected_output": "If auto memory was not inspected or visible evidence is absent, reflect should set duplicate_status unknown, not duplicate_status not_observed. It must not claim a duplicate was absent merely because it did not inspect auto memory.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/reflect-promotion-helpers.md"
+      ],
+      "expectations": [
+        "unobserved duplicate_status is unknown",
+        "does not use duplicate_status not_observed",
+        "does not infer absence from lack of inspection"
+      ]
+    },
+    {
+      "id": 24,
+      "name": "storage-state-externalized-and-sessionstart-legacy-only",
+      "prompt": "Evaluate TigerKit storage boundary, hook marker path, and reflect helper docs. Do not write files.",
+      "expected_output": "Should state that active TigerKit generated state lives outside the project repository under ~/.tigerkit. Core tk plugin should be hook-free and should not include an active SessionStart hook. Existing SessionStart decline markers under ~/.tigerkit/local/session-start/worktree-context-declines.json and .claude/tigerkit/local/session-start/worktree-context-declines.json should be preserved as inactive legacy state and not deleted, migrated, read, or written by core command/runtime. Current documented active generated layout should include gap report archive/current plus branch-state pointer under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/. It should not document future runs/<kind>/<id> payload structures as active or required layout. It should not document active reflect artifact writes. Reflect helper docs should be optional, non-runtime, non-authoritative, and should not imply hook installation, settings updates, command generation, agent generation, user skill generation under TigerKit generated state, plugin manifest changes, or Claude Code auto memory writes.",
+      "files": [
+        "hooks/hooks.json",
         "commands/gap.md",
         "scripts/tigerkit_state.py",
         ".tigerkit/docs/storage-boundary.md",
@@ -134,17 +540,23 @@
       ],
       "expectations": [
         "active generated state under ~/.tigerkit outside project repository",
-        "active SessionStart decline marker under ~/.tigerkit/local/session-start/worktree-context-declines.json",
-        "active helper script writes gap report/current/branch-state under ~/.tigerkit",
+        "core tk plugin hook-free",
+        "no active SessionStart hook packaging",
+        "no active hooks/session-start runtime",
+        "no active hooks/run-hook.cmd helper",
+        "scripts/tigerkit_state.py has no record-session-start-decline command",
+        "legacy SessionStart decline markers preserved as inactive legacy state",
+        "core command runtime does not read legacy decline markers",
+        "core command runtime does not write legacy decline markers",
         ".claude/tigerkit legacy migration context only",
-        "legacy decline marker read fallback allowed",
-        "new writes go to external state",
+        "new gap writes go to external state",
         "active layout includes gap archive current and branch-state pointer under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>",
         "does not make runs kind id payload active layout",
-        "does not document active reflect artifact writes without write path",
+        "does not document active reflect artifact writes",
         "helper docs optional and non-runtime",
         "helper docs do not imply install or generation",
-        "user skill source not generated under TigerKit generated state"
+        "user skill source not generated under TigerKit generated state",
+        "Claude Code auto memory is not written mirrored or backed up"
       ]
     }
   ]
