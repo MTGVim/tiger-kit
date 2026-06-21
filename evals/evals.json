@@ -125,6 +125,7 @@
       "files": [
         "hooks/session-start",
         "commands/gap.md",
+        "scripts/tigerkit_state.py",
         ".tigerkit/docs/storage-boundary.md",
         ".tigerkit/docs/artifact-layout.md",
         ".tigerkit/docs/reflect-promotion-helpers.md",
@@ -134,6 +135,7 @@
       "expectations": [
         "active generated state under ~/.tigerkit outside project repository",
         "active SessionStart decline marker under ~/.tigerkit/local/session-start/worktree-context-declines.json",
+        "active helper script writes gap report/current/branch-state under ~/.tigerkit",
         ".claude/tigerkit legacy migration context only",
         "legacy decline marker read fallback allowed",
         "new writes go to external state",

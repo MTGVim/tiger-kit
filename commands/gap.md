@@ -94,7 +94,24 @@ Findings에는 P0/P1/P2만 넣습니다. P3, duplicate, unverifiable, source con
 ```text
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/GAP-YYYYMMDD-HHmmss-RAND.md
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/current.md
+~/.tigerkit/repos/<repo-key>/branches/<scope-key>/branch-state.json
 ```
+
+실제 저장이 필요할 때는 최종 markdown report를 만든 뒤 아래 helper를 사용합니다.
+
+```bash
+python3 scripts/tigerkit_state.py write-gap --repo-root "$PWD" --report-file /absolute/path/to/final-gap-report.md
+```
+
+stdin으로 직접 넘길 수도 있습니다.
+
+```bash
+python3 scripts/tigerkit_state.py write-gap --repo-root "$PWD" <<'EOF'
+<final gap markdown>
+EOF
+```
+
+helper는 report archive, `current.md`, `branch-state.json`을 함께 갱신합니다.
 
 기존 `.claude/tigerkit/branches/<scope-key>/gap/` report는 migration context로 읽을 수 있지만 새 report write path로 사용하지 않습니다.
 

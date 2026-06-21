@@ -49,6 +49,7 @@ workspace-<basename-slug>--<sha256(absWorkspaceRoot).slice(0, 8)>
 | `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/<GAP-ID>.md` | `/tk:gap` one-shot report archive | generated working memory |
 | `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/current.md` | 최신 gap report copy | generated pointer |
 | `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/branch-state.json` | latest generated artifact pointer | generated index |
+| `scripts/tigerkit_state.py` | active generated state helper (`write-gap`, `record-session-start-decline`, path calculation) | shipped helper |
 | repo `CLAUDE.local.md` | reflect repo-local auto apply target | local guidance |
 | repo `CLAUDE.md` | reflect suggest-only target | shared repo guidance |
 
