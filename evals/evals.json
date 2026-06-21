@@ -1,10 +1,11 @@
 {
-  "skill_name": "tiger-kit-gap-reflect-core",
+  "skill_name": "tiger-kit-gap-reflect-loop-spec-core",
   "command_surface": {
-    "surface_model": "TigerKit exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts. Core tk plugin is hook-free.",
+    "surface_model": "TigerKit exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts. Core tk plugin is hook-free and exposes /tk:gap, /tk:reflect, and /tk:loop-spec.",
     "core_commands": [
       "/tk:gap",
-      "/tk:reflect"
+      "/tk:reflect",
+      "/tk:loop-spec"
     ],
     "deprecated_or_removed_commands": [
       "/tk:grill",
@@ -22,16 +23,17 @@
   "evals": [
     {
       "id": 0,
-      "name": "plugin-version-and-command-manifest-gap-reflect-hook-free",
+      "name": "plugin-version-and-command-manifest-gap-reflect-loop-spec-hook-free",
       "prompt": "Evaluate TigerKit active command surface and plugin packaging. Do not write files.",
-      "expected_output": "Should list /tk:gap and /tk:reflect as the only active commands. Should state core tk plugin is hook-free and has no active SessionStart hook packaging or helper runtime. Should state /tk:grill, /tk:afk, /tk:setup, and the launch-era commands are not active manifest entries.",
+      "expected_output": "Should list /tk:gap, /tk:reflect, and /tk:loop-spec as the active commands. Should state core tk plugin is hook-free and has no active SessionStart hook packaging or helper runtime. Should state /tk:grill, /tk:afk, /tk:setup, and the launch-era commands are not active manifest entries. Should state /tk:loop-spec is a read-only recommender/compiler, not a runner/autopilot.",
       "files": [
         ".claude-plugin/plugin.json",
         ".claude-plugin/marketplace.json",
         "hooks/hooks.json",
         "scripts/tigerkit_state.py",
         "README.md",
-        ".tigerkit/docs/usage.md"
+        ".tigerkit/docs/usage.md",
+        "commands/loop-spec.md"
       ],
       "expectations": [
         "Lists /tk:gap",
@@ -43,7 +45,9 @@
         "States core tk plugin is hook-free",
         "Does not package an active SessionStart hook",
         "Does not ship active hooks/session-start runtime",
-        "Does not ship active hooks/run-hook.cmd helper"
+        "Does not ship active hooks/run-hook.cmd helper",
+        "Lists /tk:loop-spec",
+        "States /tk:loop-spec is not a runner or autopilot"
       ]
     },
     {
@@ -557,6 +561,31 @@
         "helper docs do not imply install or generation",
         "user skill source not generated under TigerKit generated state",
         "Claude Code auto memory is not written mirrored or backed up"
+      ]
+    },
+    {
+      "id": 25,
+      "name": "loop-spec-read-only-recommendation-contract",
+      "prompt": "Evaluate /tk:loop-spec behavior. Do not write files.",
+      "expected_output": "Should treat /tk:loop-spec as an explicit-trigger read-only recommender/compiler that generates or validates LoopSpec artifacts under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/loop-specs/<spec-id>/spec.yaml. It must not run package scripts, tests, builds, network, runner/autopilot, approval lifecycle, or mutate source tree/.claude/tigerkit. It should separate command discovery from execution status and avoid storing raw diff or secret content.",
+      "files": [
+        "commands/loop-spec.md",
+        "scripts/tigerkit_state.py",
+        "README.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/storage-boundary.md"
+      ],
+      "expectations": [
+        "Explicit /tk:loop-spec trigger only",
+        "Generates LoopSpec under ~/.tigerkit loop-specs path",
+        "Validate reports schema and context freshness",
+        "Does not mutate source tree",
+        "Does not write .claude/tigerkit",
+        "Does not run package scripts",
+        "No runner autopilot approval lifecycle",
+        "Separates command discovery and execution metadata",
+        "Does not store raw diff content",
+        "Does not store secret content"
       ]
     }
   ]

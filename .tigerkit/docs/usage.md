@@ -9,13 +9,14 @@
 ## 핵심 모델
 
 ```text
-TigerKit = gap + reflect
+TigerKit = gap + reflect + loop-spec
 ```
 
 - `gap`: SoT와 Current Implementation의 차이를 한 번 분석합니다. evidence-first로 읽고, source conflict나 근거 부족은 `ambiguous`로 남깁니다.
 - `reflect`: 세션 result와 feedback에서 재사용 가능한 learning을 preview-first promotion result로 분류합니다.
+- `loop-spec`: 명시적 task를 read-only worktree scan 기반의 실행 없는 LoopSpec recommendation으로 컴파일하거나 검증합니다.
 
-Core `tk` plugin은 hook-free입니다. Active command surface는 `/tk:gap`, `/tk:reflect`뿐입니다.
+Core `tk` plugin은 hook-free입니다. Active command surface는 `/tk:gap`, `/tk:reflect`, `/tk:loop-spec`입니다.
 
 ## Core guidance
 
@@ -31,6 +32,7 @@ Core `tk` plugin은 hook-free입니다. Active command surface는 `/tk:gap`, `/t
 |---|---|---|
 | `/tk:gap` | SoT와 Current를 비교해 missing, mismatch, overbuilt, ambiguous를 보고합니다. | optional external generated report |
 | `/tk:reflect` | session result와 feedback에서 개선 후보를 canonical target으로 분류합니다. | promotion candidates |
+| `/tk:loop-spec` | 명시적 task와 현재 worktree capability를 읽기 전용으로 분석해 LoopSpec recommendation을 생성하거나 검증합니다. | worktree-scoped generated spec |
 
 ## 사용 예시
 
@@ -38,6 +40,8 @@ Core `tk` plugin은 hook-free입니다. Active command surface는 `/tk:gap`, `/t
 /tk:gap "PRD와 현재 구현 차이 봐줘" --target src/auth
 /tk:reflect --target repo --apply=false
 /tk:reflect --target repo-local --apply=true
+/tk:loop-spec "결제 모달 scroll 복구 버그 수정"
+/tk:loop-spec validate <spec-id-or-path>
 ```
 
 ## Reflect target model
@@ -91,6 +95,7 @@ python3 scripts/tigerkit_state.py write-gap --repo-root "$PWD" --report-file /ab
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/<GAP-ID>.md
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/current.md
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/branch-state.json
+~/.tigerkit/repos/<repo-key>/branches/<scope-key>/loop-specs/<spec-id>/spec.yaml
 ```
 
 ## Legacy state

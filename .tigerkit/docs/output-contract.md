@@ -9,7 +9,7 @@
 - Evidence, Interpretation, Decision, Suggestion을 구분합니다.
 - 검증하지 않은 success를 선언하지 않습니다.
 - command가 파일을 쓰면 changed path를 출력합니다.
-- Core `tk` plugin은 hook-free이며 active command surface는 `/tk:gap`, `/tk:reflect`뿐입니다.
+- Core `tk` plugin은 hook-free이며 active command surface는 `/tk:gap`, `/tk:reflect`, `/tk:loop-spec`입니다.
 
 ## `/tk:gap` Output Contract
 
@@ -241,6 +241,46 @@ Changed paths:
 Applied candidates: NONE
 Required action: inspect target manually before rerun
 ```
+
+
+## `/tk:loop-spec` Output Contract
+
+`/tk:loop-spec`은 명시적 task를 실행 없는 LoopSpec recommendation으로 컴파일하거나 기존 spec의 schema/context freshness를 검증합니다.
+
+```text
+Loop strategy: <motif or not-recommended>
+Applicability: recommended | conditional | not-recommended
+Readiness: complete | incomplete | manual
+Fit score: <0..100>/100
+Confidence: high | medium | low
+Worktree: <branch or workspace>
+
+Why
+  - <reason and provenance>
+
+Blockers
+  - <blocker or NONE>
+
+Guards
+  - <guard>
+
+Saved
+  <~/.tigerkit/.../loop-specs/<spec-id>/spec.yaml or NONE>
+
+Write receipt
+  changed: <path or NONE>
+  source tree changed: no
+```
+
+Validation output:
+
+```text
+LoopSpec: <id or path>
+Schema: valid | invalid
+Context: current | stale | unknown
+```
+
+`not-recommended`와 stale context는 정상 domain result입니다. Raw diff content와 secret content는 spec 또는 scanner artifact에 저장하지 않습니다.
 
 ## Deprecated output surfaces
 

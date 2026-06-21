@@ -19,6 +19,7 @@ Core `tk` plugin은 hook-free다. Active generated state는 project repository �
 ```text
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/<GAP-ID>.md
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/current.md
+~/.tigerkit/repos/<repo-key>/branches/<scope-key>/loop-specs/<spec-id>/spec.yaml
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/branch-state.json
 ```
 
@@ -26,6 +27,7 @@ Core `tk` plugin은 hook-free다. Active generated state는 project repository �
 
 - `/tk:gap` one-shot report archive
 - latest gap report pointer
+- `/tk:loop-spec` worktree-scoped recommendation spec
 - branch/workspace-local generated index
 
 `repo-key`는 repo root를 기준으로 만든 stable key다. 권장 형식:

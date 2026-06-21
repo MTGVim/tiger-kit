@@ -15,6 +15,9 @@
           gap/
             GAP-YYYYMMDD-HHmmss-RAND.md
             current.md
+          loop-specs/
+            <spec-id>/
+              spec.yaml
           branch-state.json
 ```
 
@@ -45,6 +48,7 @@ workspace-<basename-slug>--<sha256(absWorkspaceRoot).slice(0, 8)>
 | `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/<GAP-ID>.md` | `/tk:gap` one-shot report archive | generated working memory |
 | `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/current.md` | 최신 gap report copy | generated pointer |
 | `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/branch-state.json` | latest generated artifact pointer | generated index |
+| `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/loop-specs/<spec-id>/spec.yaml` | `/tk:loop-spec` recommendation contract | worktree-scoped generated spec |
 | `scripts/tigerkit_state.py` | active generated state helper (`write-gap`, path calculation) | shipped helper |
 | repo `CLAUDE.local.md` | reflect eligible repo-local apply target | local guidance |
 | repo `CLAUDE.md` | reflect suggest-only target | shared repo guidance |
