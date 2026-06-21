@@ -1,12 +1,13 @@
 {
   "name": "tk",
-  "description": "SoT가 있으면 gap을 먼저 고려하고, 작업 후 reflect로 학습을 preview-first로 남기는 hook-free TigerKit Claude Code 플러그인입니다.",
-  "version": "15.0.0",
+  "description": "SoT가 있으면 gap을 먼저 고려하고, 작업 후 reflect로 학습을 남기며, 명시적 task는 loop-spec으로 추천 계약을 생성하는 hook-free TigerKit Claude Code 플러그인입니다.",
+  "version": "16.0.0",
   "author": {
     "name": "MTGVim"
   },
   "commands": [
     "./commands/gap.md",
-    "./commands/reflect.md"
+    "./commands/reflect.md",
+    "./commands/loop-spec.md"
   ]
 }

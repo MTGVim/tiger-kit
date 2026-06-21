@@ -9,13 +9,13 @@
 </p>
 
 TigerKit(`tk`, plugin namespace `/tk:*`)은 Claude Code용 경량 plugin입니다.
-SoT(Source of Truth)가 있으면 `/tk:gap`으로 현재 구현과의 차이를 먼저 확인하고, 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 preview-first로 정리합니다. `gap`은 evidence-first로 읽고, source conflict나 근거 부족은 `ambiguous`로 남깁니다.
+SoT(Source of Truth)가 있으면 `/tk:gap`으로 현재 구현과의 차이를 먼저 확인하고, 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 preview-first로 정리합니다. 명시적 task는 `/tk:loop-spec`으로 실행 없는 loop recommendation 계약을 생성할 수 있습니다. `gap`은 evidence-first로 읽고, source conflict나 근거 부족은 `ambiguous`로 남깁니다.
 
 ```text
 Check the gap first. Keep the learning.
 ```
 
-공개 실행 표면은 `/tk:gap`, `/tk:reflect` 두 명령입니다. Core `tk` plugin은 hook-free이며 workflow runner, subagent orchestrator, setup wizard를 제공하지 않습니다. `commands/*.md`와 `.claude-plugin/plugin.json`이 `/tk:*` contract를 소유합니다.
+공개 실행 표면은 `/tk:gap`, `/tk:reflect`, `/tk:loop-spec` 세 명령입니다. Core `tk` plugin은 hook-free이며 workflow runner, subagent orchestrator, setup wizard, autopilot을 제공하지 않습니다. `commands/*.md`와 `.claude-plugin/plugin.json`이 `/tk:*` contract를 소유합니다.
 
 ## Installation
 
@@ -39,7 +39,7 @@ claude plugin details tk
 claude plugin install tk@tiger-kit --scope project
 ```
 
-설치 후 Claude Code를 다시 시작하고 `/tk:gap`, `/tk:reflect` 명령을 사용합니다.
+설치 후 Claude Code를 다시 시작하고 `/tk:gap`, `/tk:reflect`, `/tk:loop-spec` 명령을 사용합니다.
 
 ## Core guidance
 
@@ -55,6 +55,7 @@ claude plugin install tk@tiger-kit --scope project
 | --- | --- | --- |
 | `/tk:gap` | SoT와 Current Implementation의 차이를 한 번 확인하고 missing, mismatch, overbuilt, ambiguous를 정리합니다. evidence-first로 읽고 source conflict는 `ambiguous`로 남깁니다. | optional external generated report |
 | `/tk:reflect` | 세션 결과와 사용자 피드백에서 재사용 가능한 learning을 canonical target(`repo-local`, `repo-shared`, `user-global`, `skill`, `hook`, `command`, `agent`, `discard`)으로 분류합니다. 기본값은 preview-only입니다. | promotion candidates |
+| `/tk:loop-spec` | 명시적 task와 현재 worktree capability를 읽기 전용으로 분석해 loop recommendation `LoopSpec`을 생성하거나 검증합니다. 실행기/approval/autopilot은 포함하지 않습니다. | worktree-scoped generated spec |
 
 ## 사용 예시
 
@@ -62,6 +63,8 @@ claude plugin install tk@tiger-kit --scope project
 /tk:gap "PRD와 현재 구현 차이 봐줘" --target src/auth
 /tk:reflect --target repo --apply=false
 /tk:reflect --target repo-local --apply=true
+/tk:loop-spec "결제 모달 scroll 복구 버그 수정"
+/tk:loop-spec validate <spec-id-or-path>
 ```
 
 ## Reflect write boundary
@@ -87,6 +90,7 @@ TigerKit은 아래를 active surface로 제공하지 않습니다.
 - `setup`
 - launch / review / next / handoff workflow
 - mandatory runner or autopilot
+- `/tk:loop-spec` 기반 자동 실행 또는 approval lifecycle
 - Patron / subagent delegation
 - active `SessionStart` hook
 - hook settings, command source, agent source 자동 생성
@@ -101,7 +105,7 @@ TigerKit은 아래를 active surface로 제공하지 않습니다.
 
 ## Generated State
 
-Active generated state는 project repository 밖 `~/.tigerkit/` 아래의 file-only state입니다. `/tk:gap` report와 branch pointer는 `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/...` 아래에 둡니다. Core `tk` plugin은 active `SessionStart` hook을 제공하지 않으며, 기존 SessionStart decline marker는 legacy/inactive state로만 보존되고 core command/runtime이 읽거나 쓰지 않습니다. `.claude/tigerkit/`는 legacy/migration context로만 남기며 `.claude/` 전체를 ignore하지 않습니다.
+Active generated state는 project repository 밖 `~/.tigerkit/` 아래의 file-only state입니다. `/tk:gap` report, branch pointer, `/tk:loop-spec` spec은 `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/...` 아래에 둡니다. Core `tk` plugin은 active `SessionStart` hook을 제공하지 않으며, 기존 SessionStart decline marker는 legacy/inactive state로만 보존되고 core command/runtime이 읽거나 쓰지 않습니다. `.claude/tigerkit/`는 legacy/migration context로만 남기며 `.claude/` 전체를 ignore하지 않습니다.
 
 ## Contributors
 

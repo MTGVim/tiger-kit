@@ -16,7 +16,7 @@ reflect = session result + feedback -> classify learning -> preview promotion re
 ## Core boundary
 
 - Core `tk` plugin은 hook-free입니다.
-- Core active command surface는 `/tk:gap`, `/tk:reflect`뿐입니다.
+- Core active command surface는 `/tk:gap`, `/tk:reflect`, `/tk:loop-spec`입니다.
 - `/tk:reflect`는 Claude Code auto memory를 쓰거나, mirror하거나, backup하지 않습니다.
 - `/tk:reflect`는 source code, hook settings, command source, agent source, skill source, plugin manifest를 수정하지 않습니다.
 - 기존 `SessionStart` decline marker와 `PROFILE.md`는 legacy/inactive state로만 취급하고 자동 삭제하거나 자동 이관하지 않습니다.
