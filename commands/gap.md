@@ -97,16 +97,16 @@ Findings에는 P0/P1/P2만 넣습니다. P3, duplicate, unverifiable, source con
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/branch-state.json
 ```
 
-실제 저장이 필요할 때는 최종 markdown report를 만든 뒤 아래 helper를 사용합니다.
+실제 저장이 필요할 때는 최종 markdown report를 만든 뒤 **설치된 plugin root 기준 helper**를 사용합니다. 현재 작업 repo의 `scripts/`를 찾지 말고 Claude plugin runtime이 제공하는 `CLAUDE_PLUGIN_ROOT`를 사용해야 합니다.
 
 ```bash
-python3 scripts/tigerkit_state.py write-gap --repo-root "$PWD" --report-file /absolute/path/to/final-gap-report.md
+python3 "${CLAUDE_PLUGIN_ROOT:?CLAUDE_PLUGIN_ROOT is not set}/scripts/tigerkit_state.py" write-gap --repo-root "$PWD" --report-file /absolute/path/to/final-gap-report.md
 ```
 
 stdin으로 직접 넘길 수도 있습니다.
 
 ```bash
-python3 scripts/tigerkit_state.py write-gap --repo-root "$PWD" <<'EOF'
+python3 "${CLAUDE_PLUGIN_ROOT:?CLAUDE_PLUGIN_ROOT is not set}/scripts/tigerkit_state.py" write-gap --repo-root "$PWD" <<'EOF'
 <final gap markdown>
 EOF
 ```

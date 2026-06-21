@@ -44,13 +44,13 @@ MVP 범위 밖: `list`, `show`, `export`, `--from`, `--issue`, public JSON outpu
 
 ## Execution instruction
 
-When this command is invoked, run the helper from the repository root:
+When this command is invoked, run the helper from the **installed plugin root**, not from the current working repository.
 
 ```bash
-python3 scripts/tigerkit_state.py loop-spec $ARGUMENTS
+python3 "${CLAUDE_PLUGIN_ROOT:?CLAUDE_PLUGIN_ROOT is not set}/scripts/tigerkit_state.py" loop-spec $ARGUMENTS
 ```
 
-If the helper is unavailable, report the blocker instead of inventing a LoopSpec.
+`/Users/.../<current-repo>/scripts/tigerkit_state.py` 같은 현재 repo 상대경로를 가정하면 안 됩니다. If the plugin-root helper is unavailable, report the blocker instead of inventing a LoopSpec.
 
 ## Output contract
 
