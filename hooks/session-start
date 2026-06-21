@@ -204,6 +204,7 @@ Safety contract:
 - Never symlink .claude/ as a whole directory.
 - Never symlink node_modules by default.
 - If the user declines this proposal, record the candidate signature in the external decline marker and do not ask again for the same signature.
+- Record the decline with: `python3 scripts/tigerkit_state.py record-session-start-decline --signature "${signature}" --current-root "${current_root}" --source-root "${source_worktree}"`
 - Read legacy repo-local decline markers only as migration fallback; new decline writes go to the external marker.
 
 Command behavior:

@@ -38,7 +38,19 @@ TigerKit = gap + reflect
 
 ## Generated state
 
-Active TigerKit generated state는 project repository 밖 `~/.tigerkit/` 아래의 file-only state입니다. `.claude/tigerkit/`는 legacy/migration context로만 남기고 새 runtime write path로 사용하지 않습니다.
+Active TigerKit generated state는 project repository 밖 `~/.tigerkit` 아래의 file-only state입니다. `.claude/tigerkit`는 legacy/migration context로만 남기고 새 runtime write path로 사용하지 않습니다.
+
+실제 write helper:
+
+```bash
+python3 scripts/tigerkit_state.py write-gap --repo-root "$PWD" --report-file /absolute/path/to/final-gap-report.md
+```
+
+SessionStart decline marker 기록 helper:
+
+```bash
+python3 scripts/tigerkit_state.py record-session-start-decline --signature <sig> --current-root <path> --source-root <path>
+```
 
 주요 active path:
 
