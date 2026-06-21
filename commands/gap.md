@@ -102,30 +102,52 @@ Findings에는 P0/P1/P2만 넣습니다. P3, duplicate, unverifiable, source con
 ```bash
 TIGERKIT_STATE_SCRIPT="$({
 python3 - <<'PY'
-import json, subprocess
+import json, re, subprocess
 from pathlib import Path
 
-def version_key(path: Path):
+def version_key_text(text: str):
     try:
-        return tuple(int(part) for part in path.parent.parent.name.split('.'))
+        return tuple(int(part) for part in text.split('.'))
     except Exception:
         return (0,)
 
+def version_key_path(path: Path):
+    return version_key_text(path.parent.parent.name)
+
+def cache_path_for_version(version: str):
+    path = Path.home() / '.claude/plugins/cache/tiger-kit/tk' / version / 'scripts' / 'tigerkit_state.py'
+    return path if path.is_file() else None
+
 candidates = []
+seen = set()
 try:
-    plugins = json.loads(subprocess.check_output(["claude", "plugin", "list", "--json"], text=True))
+    details = subprocess.check_output(['claude', 'plugin', 'details', 'tk'], text=True)
+    first = details.splitlines()[0].strip()
+    match = re.match(r'^tk\s+(\d+(?:\.\d+)*)$', first)
+    if match:
+        path = cache_path_for_version(match.group(1))
+        if path:
+            candidates.append(path)
+            seen.add(str(path))
+except Exception:
+    pass
+try:
+    plugins = json.loads(subprocess.check_output(['claude', 'plugin', 'list', '--json'], text=True))
 except Exception:
     plugins = []
 for item in plugins:
-    if item.get("id") == "tk@tiger-kit" and item.get("enabled"):
-        path = Path(item.get("installPath", "")) / "scripts" / "tigerkit_state.py"
-        if path.is_file():
+    if item.get('id') == 'tk@tiger-kit' and item.get('enabled'):
+        path = Path(item.get('installPath', '')) / 'scripts' / 'tigerkit_state.py'
+        if path.is_file() and str(path) not in seen:
             candidates.append(path)
-if not candidates:
-    candidates.extend(Path.home().glob('.claude/plugins/cache/tiger-kit/tk/*/scripts/tigerkit_state.py'))
+            seen.add(str(path))
+for path in sorted(Path.home().glob('.claude/plugins/cache/tiger-kit/tk/*/scripts/tigerkit_state.py'), key=version_key_path, reverse=True):
+    if str(path) not in seen:
+        candidates.append(path)
+        seen.add(str(path))
 if not candidates:
     raise SystemExit('TigerKit helper not found in installed plugin cache. Run `claude plugin marketplace update tiger-kit` and reinstall/update `tk@tiger-kit`.')
-print(max(candidates, key=version_key))
+print(candidates[0])
 PY
 })"
 python3 "$TIGERKIT_STATE_SCRIPT" write-gap --repo-root "$PWD" --report-file /absolute/path/to/final-gap-report.md
@@ -136,30 +158,52 @@ stdin으로 직접 넘길 수도 있습니다.
 ```bash
 TIGERKIT_STATE_SCRIPT="$({
 python3 - <<'PY'
-import json, subprocess
+import json, re, subprocess
 from pathlib import Path
 
-def version_key(path: Path):
+def version_key_text(text: str):
     try:
-        return tuple(int(part) for part in path.parent.parent.name.split('.'))
+        return tuple(int(part) for part in text.split('.'))
     except Exception:
         return (0,)
 
+def version_key_path(path: Path):
+    return version_key_text(path.parent.parent.name)
+
+def cache_path_for_version(version: str):
+    path = Path.home() / '.claude/plugins/cache/tiger-kit/tk' / version / 'scripts' / 'tigerkit_state.py'
+    return path if path.is_file() else None
+
 candidates = []
+seen = set()
 try:
-    plugins = json.loads(subprocess.check_output(["claude", "plugin", "list", "--json"], text=True))
+    details = subprocess.check_output(['claude', 'plugin', 'details', 'tk'], text=True)
+    first = details.splitlines()[0].strip()
+    match = re.match(r'^tk\s+(\d+(?:\.\d+)*)$', first)
+    if match:
+        path = cache_path_for_version(match.group(1))
+        if path:
+            candidates.append(path)
+            seen.add(str(path))
+except Exception:
+    pass
+try:
+    plugins = json.loads(subprocess.check_output(['claude', 'plugin', 'list', '--json'], text=True))
 except Exception:
     plugins = []
 for item in plugins:
-    if item.get("id") == "tk@tiger-kit" and item.get("enabled"):
-        path = Path(item.get("installPath", "")) / "scripts" / "tigerkit_state.py"
-        if path.is_file():
+    if item.get('id') == 'tk@tiger-kit' and item.get('enabled'):
+        path = Path(item.get('installPath', '')) / 'scripts' / 'tigerkit_state.py'
+        if path.is_file() and str(path) not in seen:
             candidates.append(path)
-if not candidates:
-    candidates.extend(Path.home().glob('.claude/plugins/cache/tiger-kit/tk/*/scripts/tigerkit_state.py'))
+            seen.add(str(path))
+for path in sorted(Path.home().glob('.claude/plugins/cache/tiger-kit/tk/*/scripts/tigerkit_state.py'), key=version_key_path, reverse=True):
+    if str(path) not in seen:
+        candidates.append(path)
+        seen.add(str(path))
 if not candidates:
     raise SystemExit('TigerKit helper not found in installed plugin cache. Run `claude plugin marketplace update tiger-kit` and reinstall/update `tk@tiger-kit`.')
-print(max(candidates, key=version_key))
+print(candidates[0])
 PY
 })"
 python3 "$TIGERKIT_STATE_SCRIPT" write-gap --repo-root "$PWD" <<'EOF'
