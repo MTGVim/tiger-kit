@@ -89,12 +89,14 @@ Findings에는 P0/P1/P2만 넣습니다. P3, duplicate, unverifiable, source con
 
 ## Artifact policy
 
-사용자가 저장을 명시하거나 command contract가 저장을 요구할 때만 branch/workspace-local generated report를 씁니다.
+사용자가 저장을 명시하거나 command contract가 저장을 요구할 때만 external generated report를 씁니다. 새 write path는 project repository 밖 `~/.tigerkit/`입니다.
 
 ```text
-.claude/tigerkit/branches/<scope-key>/gap/GAP-YYYYMMDD-HHmmss-RAND.md
-.claude/tigerkit/branches/<scope-key>/gap/current.md
+~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/GAP-YYYYMMDD-HHmmss-RAND.md
+~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/current.md
 ```
+
+기존 `.claude/tigerkit/branches/<scope-key>/gap/` report는 migration context로 읽을 수 있지만 새 report write path로 사용하지 않습니다.
 
 ## 금지
 

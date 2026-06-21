@@ -67,7 +67,7 @@ source 간 우선순위가 확인되지 않으면 조용히 병합하지 않고 
 
 ## `/tk:reflect` Output Contract
 
-`/tk:reflect`는 promotion router로서 세션 learning을 안전한 promotion surface로 분류합니다. Shared repo `CLAUDE.md`, hook / hookify, command, agent는 suggest-only입니다. source code는 수정하지 않습니다. branch-specific one-off는 durable rule로 승격하지 않고 `discard`로 분류합니다. Proposal 후보는 hook / hookify, command, agent section으로 분리하고, 설치됨/활성화됨/자동 적용으로 표현하지 않습니다. User skills auto apply는 user skill surface가 canonical source를 소유할 때만 적용하며 `.claude/tigerkit/`에 skill source를 생성하거나 복제하지 않습니다.
+`/tk:reflect`는 promotion router로서 세션 learning을 안전한 promotion surface로 분류합니다. Shared repo `CLAUDE.md`, hook / hookify, command, agent는 suggest-only입니다. source code는 수정하지 않습니다. branch-specific one-off는 durable rule로 승격하지 않고 `discard`로 분류합니다. Proposal 후보는 hook / hookify, command, agent section으로 분리하고, 설치됨/활성화됨/자동 적용으로 표현하지 않습니다. User skills auto apply는 user skill surface가 canonical source를 소유할 때만 적용하며 TigerKit generated state에 skill source를 생성하거나 복제하지 않습니다.
 
 ```text
 Reflect 완료
@@ -126,7 +126,7 @@ Promotion targets:
 - repo `CLAUDE.md` proposal: suggest only
 - user `PROFILE.md`: auto apply
 - user `CLAUDE.md`: auto apply
-- user skills: auto apply, canonical source owned by user skill surface outside `.claude/tigerkit/`
+- user skills: auto apply, canonical source owned by user skill surface outside TigerKit generated state
 - hook / hookify proposal: suggest only
 - command proposal: suggest only
 - agent proposal: suggest only

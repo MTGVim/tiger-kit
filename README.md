@@ -52,7 +52,7 @@ claude plugin install tk@tiger-kit --scope project
 
 | Command | 역할 | 저장 성격 |
 | --- | --- | --- |
-| `/tk:gap` | SoT와 Current Implementation의 차이를 한 번 확인하고 missing, mismatch, overbuilt, ambiguous를 정리합니다. evidence-first로 읽고 source conflict는 `ambiguous`로 남깁니다. | optional branch/workspace-local report |
+| `/tk:gap` | SoT와 Current Implementation의 차이를 한 번 확인하고 missing, mismatch, overbuilt, ambiguous를 정리합니다. evidence-first로 읽고 source conflict는 `ambiguous`로 남깁니다. | optional external generated report |
 | `/tk:reflect` | 세션 결과와 사용자 피드백에서 재사용 가능한 learning을 분류하고 hook / hookify, command, agent proposal을 분리해 제안합니다. 파일을 쓰면 changed path를 출력합니다. | user/repo improvement candidates |
 
 ## 사용 예시
@@ -84,7 +84,7 @@ TigerKit은 아래를 active surface로 제공하지 않습니다.
 
 ## Generated State
 
-현재 문서화된 repo-inside generated state는 `.claude/tigerkit/` 아래의 branch/workspace-local gap report와 branch pointer뿐입니다. 이 layout은 current/legacy 상태이며 git ignore 대상입니다. 계획된 external-state 방향은 project repository 밖의 `~/.tigerkit/` 아래에 TigerKit state를 두는 것입니다. 이 저장소에는 아직 `~/.tigerkit/` runtime write path 구현이 없으므로 `.claude/` 전체를 ignore하지 않습니다.
+Active generated state는 project repository 밖 `~/.tigerkit/` 아래의 file-only state입니다. `/tk:gap` report와 branch pointer는 `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/...` 아래에 두고, SessionStart decline marker는 `~/.tigerkit/local/session-start/worktree-context-declines.json`을 사용합니다. `.claude/tigerkit/`는 legacy/migration context로만 남기며 `.claude/` 전체를 ignore하지 않습니다.
 
 ## Contributors
 

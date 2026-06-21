@@ -49,6 +49,16 @@ hash_text() {
   fi
 }
 
+tigerkit_state_root() {
+  if [ -n "${TIGERKIT_STATE_ROOT:-}" ]; then
+    printf '%s' "$TIGERKIT_STATE_ROOT"
+  elif [ -n "${HOME:-}" ]; then
+    printf '%s/.tigerkit' "$HOME"
+  else
+    return 1
+  fi
+}
+
 extract_cwd_from_stdin() {
   local payload="$1"
   if command -v python3 >/dev/null 2>&1 && [ -n "$payload" ]; then
@@ -161,8 +171,15 @@ signature_payload="current=${current_root}
 source=${source_worktree}
 ${candidates}"
 signature="$(hash_text "$signature_payload")"
-decline_marker="${current_root}/.claude/tigerkit/local/session-start/worktree-context-declines.json"
-if is_declined "$decline_marker" "$signature"; then
+state_root="$(tigerkit_state_root 2>/dev/null || true)"
+decline_marker=""
+[ -n "$state_root" ] && decline_marker="${state_root}/local/session-start/worktree-context-declines.json"
+legacy_decline_marker="${current_root}/.claude/tigerkit/local/session-start/worktree-context-declines.json"
+if [ -n "$decline_marker" ] && is_declined "$decline_marker" "$signature"; then
+  emit_empty
+  exit 0
+fi
+if is_declined "$legacy_decline_marker" "$signature"; then
   emit_empty
   exit 0
 fi
@@ -174,7 +191,8 @@ Status: WORKTREE_CONTEXT_PROPOSAL
 Current root: ${current_root}
 Source/base worktree: ${source_worktree}
 Candidate signature: ${signature}
-Decline marker: .claude/tigerkit/local/session-start/worktree-context-declines.json
+Decline marker: ~/.tigerkit/local/session-start/worktree-context-declines.json
+Legacy decline fallback: .claude/tigerkit/local/session-start/worktree-context-declines.json
 
 Detected missing context candidates:
 ${candidates}
@@ -185,7 +203,8 @@ Safety contract:
 - Never overwrite regular files.
 - Never symlink .claude/ as a whole directory.
 - Never symlink node_modules by default.
-- If the user declines this proposal, record the candidate signature in the decline marker and do not ask again for the same signature.
+- If the user declines this proposal, record the candidate signature in the external decline marker and do not ask again for the same signature.
+- Read legacy repo-local decline markers only as migration fallback; new decline writes go to the external marker.
 
 Command behavior:
 - /tk:gap should consider this proposal during source grounding only.
