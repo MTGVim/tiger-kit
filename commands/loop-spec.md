@@ -102,6 +102,8 @@ python3 "$TIGERKIT_STATE_SCRIPT" loop-spec $ARGUMENTS
 
 `/Users/.../<current-repo>/scripts/tigerkit_state.py` 같은 현재 repo 상대경로를 가정하면 안 됩니다. `CLAUDE_PLUGIN_ROOT`가 비어 있거나 versioned install cache가 아닐 수도 있으므로, helper를 찾지 못하면 blocker를 보고하고 LoopSpec을 invent하지 않습니다.
 
+If the user invokes `/tk:loop-spec` with no task, or types bare `validate` without `<spec-id-or-path>`, return concise usage/help text and examples instead of surfacing a raw shell error.
+
 ## Output contract
 
 기본 출력은 아래 정보를 포함해야 합니다.
