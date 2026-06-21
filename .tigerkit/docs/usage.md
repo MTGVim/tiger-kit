@@ -83,10 +83,10 @@ Apply는 current invocation apply plan, exact apply set, base/result sha256, pla
 
 Active TigerKit generated state는 project repository 밖 `~/.tigerkit` 아래의 file-only state입니다. `.claude/tigerkit`는 legacy/migration context로만 남기고 새 runtime write path로 사용하지 않습니다.
 
-실제 active write helper:
+실제 active write helper는 현재 작업 repo 상대경로가 아니라 **설치된 plugin root**를 기준으로 호출합니다.
 
 ```bash
-python3 scripts/tigerkit_state.py write-gap --repo-root "$PWD" --report-file /absolute/path/to/final-gap-report.md
+python3 "${CLAUDE_PLUGIN_ROOT:?CLAUDE_PLUGIN_ROOT is not set}/scripts/tigerkit_state.py" write-gap --repo-root "$PWD" --report-file /absolute/path/to/final-gap-report.md
 ```
 
 주요 active path:
