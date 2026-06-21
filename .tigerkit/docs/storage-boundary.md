@@ -1,18 +1,22 @@
-# TigerKit `.claude/tigerkit` storage boundary
+# TigerKit storage boundary
 
-이 문서는 `.claude/tigerkit/`에 둘 수 있는 generated state와 두면 안 되는 durable surface를 구분한다.
+이 문서는 TigerKit generated state의 현재 repo-inside layout과 계획된 external-state 방향을 구분한다.
 
 ## Core rule
 
 ```text
-.claude/tigerkit/ = branch/workspace-local generated state only
+current/legacy repo-inside state = .claude/tigerkit/ branch/workspace-local generated state only
 ```
 
 `.claude/tigerkit/`는 durable repo guidance, shared team rule, user-global guidance, user skill source의 canonical home이 아니다.
 
-## Active generated contents
+## Planned direction (not active contract)
 
-현재 문서화된 active generated layout은 gap report와 branch pointer만 포함한다.
+RFC 방향으로는 TigerKit runtime state를 project repository 밖 `~/.tigerkit/` 아래로 외부화할 수 있다. 다만 현재 저장소에는 해당 runtime write path 구현이 없으므로, 이 문서는 그 external-state sublayout이나 scoping rule을 활성 contract로 정의하지 않는다.
+
+## Current/legacy generated contents
+
+현재 문서화된 repo-inside generated layout은 gap report와 branch pointer만 포함한다. 이 layout은 기존 호환을 위한 current/legacy 상태이며, 향후 external-state 방향은 project repository 밖의 `~/.tigerkit/` 아래에 TigerKit state를 두는 것이다.
 
 ```text
 .claude/tigerkit/branches/<scope-key>/gap/<GAP-ID>.md
@@ -73,13 +77,13 @@ Receipt가 proposal을 포함해도 아래를 뜻하지 않는다.
 
 ## Git policy
 
-`.claude/tigerkit/`는 generated state이므로 git ignore 대상이다.
+현재/legacy `.claude/tigerkit/` repo-inside state는 generated state이므로 git ignore 대상이다.
 
 ```gitignore
 .claude/tigerkit/
 ```
 
-`.claude/` 전체를 ignore 대상으로 확대하지 않는다.
+`.claude/` 전체를 ignore 대상으로 확대하지 않는다. 계획된 `~/.tigerkit/` external state는 project repository 밖에 있으므로 repo `.gitignore` 대상이 아니다.
 
 ## Review checklist
 
@@ -93,4 +97,4 @@ Receipt가 proposal을 포함해도 아래를 뜻하지 않는다.
 
 ## Bottom line
 
-`.claude/tigerkit/`는 branch/workspace-local generated state 영역이다. Durable guidance와 user skill source의 canonical storage로 확장하지 않는다.
+`.claude/tigerkit/`는 현재/legacy branch/workspace-local generated state 영역이다. Durable guidance와 user skill source의 canonical storage로 확장하지 않는다. 향후 external-state 방향은 repo 밖 `~/.tigerkit/`로 이동하는 것이지만, 이 저장소의 현재 runtime write path는 아직 그 구현을 제공하지 않는다.

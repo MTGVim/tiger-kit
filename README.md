@@ -84,7 +84,7 @@ TigerKit은 아래를 active surface로 제공하지 않습니다.
 
 ## Generated State
 
-`.claude/tigerkit/`은 branch/workspace-local generated state이므로 git ignore 대상입니다. 현재 문서화된 active generated layout은 gap report와 branch pointer만 포함합니다. `.claude/` 전체를 ignore하지 않습니다.
+현재 문서화된 repo-inside generated state는 `.claude/tigerkit/` 아래의 branch/workspace-local gap report와 branch pointer뿐입니다. 이 layout은 current/legacy 상태이며 git ignore 대상입니다. 계획된 external-state 방향은 project repository 밖의 `~/.tigerkit/` 아래에 TigerKit state를 두는 것입니다. 이 저장소에는 아직 `~/.tigerkit/` runtime write path 구현이 없으므로 `.claude/` 전체를 ignore하지 않습니다.
 
 ## Contributors
 
