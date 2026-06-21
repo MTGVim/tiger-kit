@@ -26,7 +26,7 @@ TigerKit = gap + reflect
 
 | Command | 역할 | 저장 성격 |
 |---|---|---|
-| `/tk:gap` | SoT와 Current를 비교해 missing, mismatch, overbuilt, ambiguous를 보고합니다. | optional generated report |
+| `/tk:gap` | SoT와 Current를 비교해 missing, mismatch, overbuilt, ambiguous를 보고합니다. | optional external generated report |
 | `/tk:reflect` | session result와 feedback에서 개선 후보를 추출합니다. | user/repo candidates |
 
 ## 사용 예시
@@ -38,4 +38,13 @@ TigerKit = gap + reflect
 
 ## Generated state
 
-현재 문서화된 repo-inside state는 `.claude/tigerkit/` 아래의 current/legacy branch/workspace-local memory입니다. durable repo knowledge가 아닙니다. 계획된 external-state 방향은 project repository 밖의 `~/.tigerkit/` 아래에 TigerKit state를 두는 것이지만, 이 저장소에는 아직 해당 runtime write path 구현이 없습니다.
+Active TigerKit generated state는 project repository 밖 `~/.tigerkit/` 아래의 file-only state입니다. `.claude/tigerkit/`는 legacy/migration context로만 남기고 새 runtime write path로 사용하지 않습니다.
+
+주요 active path:
+
+```text
+~/.tigerkit/local/session-start/worktree-context-declines.json
+~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/<GAP-ID>.md
+~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/current.md
+~/.tigerkit/repos/<repo-key>/branches/<scope-key>/branch-state.json
+```

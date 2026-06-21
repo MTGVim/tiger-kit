@@ -10,7 +10,7 @@
 | repo `CLAUDE.md` proposal | suggest only | shared repo rule 후보이므로 자동 수정 금지 |
 | user `PROFILE.md` | auto apply | user role, preference, collaboration profile |
 | user `CLAUDE.md` | auto apply | user-level guidance |
-| user skills | auto apply | canonical source는 `.claude/tigerkit/`가 아닌 user skill surface가 소유 |
+| user skills | auto apply | canonical source는 TigerKit generated state가 아닌 user skill surface가 소유 |
 | hook / hookify proposal | suggest only | 자동화/검사 후보, 제안만 |
 | command proposal | suggest only | slash command 후보, 제안만 |
 | agent proposal | suggest only | sub-agent 후보, 제안만 |
@@ -25,7 +25,7 @@
 - `/tk:reflect`는 source code를 수정하지 않는다.
 - hook / hookify, command, agent 변경은 suggest-only다.
 - hook / hookify, command, agent proposal은 설치됨/활성화됨으로 표현하지 않는다.
-- user skill source를 `.claude/tigerkit/`에 생성하거나 복제하지 않는다.
+- user skill source를 TigerKit generated state에 생성하거나 복제하지 않는다.
 - hook 설치, command 생성, agent 생성, plugin manifest 수정, runtime generation을 수행하지 않는다.
 
 ## Optional helper docs

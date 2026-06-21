@@ -27,7 +27,7 @@ reflect = session result + feedback -> classify learning -> promote to the right
 | repo `CLAUDE.md` proposal | suggest only | 팀 공유 repo rule 후보 |
 | user `PROFILE.md` | auto apply | 사용자 역할, 선호, 협업 방식 |
 | user `CLAUDE.md` | auto apply | 모든 repo에 걸친 사용자 guidance |
-| user skills | auto apply | 반복 가능한 procedural routine. canonical source는 `.claude/tigerkit/`가 아닌 user skill surface가 소유 |
+| user skills | auto apply | 반복 가능한 procedural routine. canonical source는 TigerKit generated state가 아닌 user skill surface가 소유 |
 | hook / hookify proposal | suggest only | 반복 실수를 자동으로 막거나 검사할 수 있는 후보 |
 | command proposal | suggest only | 새 slash command가 더 나은 사용자-facing workflow 후보 |
 | agent proposal | suggest only | 독립 역할/전문성이 필요한 sub-agent 후보 |
@@ -42,7 +42,7 @@ reflect = session result + feedback -> classify learning -> promote to the right
 - `CLAUDE.md` 승격 후보는 diff 형식으로 제안만 합니다.
 - source code는 수정하지 않습니다.
 - hook / hookify, command, agent 변경은 제안만 합니다.
-- user skills auto apply는 user skill surface가 canonical source를 소유할 때만 적용합니다. `.claude/tigerkit/`에 skill source를 생성하거나 복제하지 않습니다.
+- user skills auto apply는 user skill surface가 canonical source를 소유할 때만 적용합니다. TigerKit generated state에 skill source를 생성하거나 복제하지 않습니다.
 - 제안은 설치됨/활성화됨으로 표현하지 않습니다.
 - branch-specific one-off는 durable rule로 승격하지 않고 `discard`로 분류합니다.
 - 민감하거나 불필요한 사용자 정보는 저장하지 않습니다.

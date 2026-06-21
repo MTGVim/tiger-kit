@@ -1,4 +1,4 @@
-# Tiger Kit branch-local working memory
+# Legacy TigerKit repo-local generated state. Active state lives outside the repo under ~/.tigerkit/.
 .claude/tigerkit/
 
 .tigerkit/*

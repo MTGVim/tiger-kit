@@ -48,7 +48,7 @@
 - observed diff
 - explicit user confirmation
 - gap record
-- branch-local TigerKit artifact clearly marked as generated working memory
+- TigerKit generated artifact clearly marked as generated working memory
 - derived artifact clearly marked as derived
 
 항상 구분한다.
@@ -63,4 +63,4 @@ Suggestion = proposed, not confirmed
 ## 작업 시 주의사항
 
 - command 변경 후에는 `.claude-plugin/plugin.json`의 command 목록과 README/docs의 명령 목록이 서로 맞는지 확인한다.
-- `.claude/tigerkit/`은 generated branch-local working memory이므로 git ignore 대상이다. `.claude/` 전체를 ignore하지 않는다.
+- TigerKit active generated state는 repo 밖 `~/.tigerkit/`에 둔다. `.claude/tigerkit/`는 legacy/migration context로만 남기며 git ignore 대상이다. `.claude/` 전체를 ignore하지 않는다.

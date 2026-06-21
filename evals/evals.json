@@ -83,7 +83,7 @@
       "id": 3,
       "name": "reflect-is-promotion-router",
       "prompt": "Evaluate /tk:reflect promotion router behavior. Do not write files.",
-      "expected_output": "Should define /tk:reflect as a safe durable promotion router that extracts reusable learning from session result and feedback, classifies it into the right promotion surface, and preserves safety boundaries. It should support repo CLAUDE.local.md auto-apply, keep repo CLAUDE.md proposal suggest-only, allow user PROFILE.md and user CLAUDE.md auto-apply, allow user skills auto-apply only when the canonical user skill surface owns the source outside .claude/tigerkit, keep hook / hookify proposal, command proposal, and agent proposal suggest-only, and classify discard as never store. It should forbid source code edits, forbid auto-applying hook / command / agent changes, preserve branch-specific one-off discard rules, and print changed paths whenever files are written. Proposal receipt quality should separate hook / hookify proposal 후보, command proposal 후보, and agent proposal 후보 instead of using one generic proposal bucket. Hook proposals should include rationale, trigger, action, and why suggest-only. Command proposals should include intent, arguments, and when better than skill. Agent proposals should include role boundary, responsibility, and when better than command. When `--dry-run` or `--apply=false` is in effect, auto-apply targets should use `preview_only` instead of `applied`. Candidate-state metadata may still use `candidate`, `confirmed`, `session-local`, `deprecated`, and `discard`, but these are distinct from the promotion result status values.",
+      "expected_output": "Should define /tk:reflect as a safe durable promotion router that extracts reusable learning from session result and feedback, classifies it into the right promotion surface, and preserves safety boundaries. It should support repo CLAUDE.local.md auto-apply, keep repo CLAUDE.md proposal suggest-only, allow user PROFILE.md and user CLAUDE.md auto-apply, allow user skills auto-apply only when the canonical user skill surface owns the source outside TigerKit generated state, keep hook / hookify proposal, command proposal, and agent proposal suggest-only, and classify discard as never store. It should forbid source code edits, forbid auto-applying hook / command / agent changes, preserve branch-specific one-off discard rules, and print changed paths whenever files are written. Proposal receipt quality should separate hook / hookify proposal 후보, command proposal 후보, and agent proposal 후보 instead of using one generic proposal bucket. Hook proposals should include rationale, trigger, action, and why suggest-only. Command proposals should include intent, arguments, and when better than skill. Agent proposals should include role boundary, responsibility, and when better than command. When `--dry-run` or `--apply=false` is in effect, auto-apply targets should use `preview_only` instead of `applied`. Candidate-state metadata may still use `candidate`, `confirmed`, `session-local`, `deprecated`, and `discard`, but these are distinct from the promotion result status values.",
       "files": [
         "commands/reflect.md",
         "docs/reflect-file-policy.md",
@@ -97,7 +97,7 @@
         "repo CLAUDE.md proposal suggest only",
         "user PROFILE.md auto apply",
         "user CLAUDE.md auto apply",
-        "user skills auto apply only when canonical user skill surface owns source outside .claude/tigerkit",
+        "user skills auto apply only when canonical user skill surface owns source outside TigerKit generated state",
         "hook / hookify proposal suggest only",
         "command proposal suggest only",
         "agent proposal suggest only",
@@ -119,23 +119,30 @@
     },
     {
       "id": 4,
-      "name": "storage-and-helper-docs-do-not-overclaim-runtime-layout",
-      "prompt": "Evaluate TigerKit storage boundary and reflect helper docs. Do not write files.",
-      "expected_output": "Should state that .claude/tigerkit is branch/workspace-local generated state only. Current documented active generated layout should be minimal and include gap report archive/current plus branch-state pointer only. It should not document future runs/<kind>/<id> payload structures as active or required layout. It should not document active reflect artifact writes before a reflect write path exists. Reflect helper docs should be optional, non-runtime, non-authoritative, and should not imply hook installation, settings updates, command generation, agent generation, user skill generation under .claude/tigerkit, or plugin manifest changes.",
+      "name": "storage-state-is-externalized-to-home",
+      "prompt": "Evaluate TigerKit storage boundary, hook marker path, and reflect helper docs. Do not write files.",
+      "expected_output": "Should state that active TigerKit generated state lives outside the project repository under ~/.tigerkit. Should document ~/.tigerkit/local/session-start/worktree-context-declines.json as the active SessionStart decline marker and should keep .claude/tigerkit/local/session-start/worktree-context-declines.json only as legacy read fallback or migration context. Current documented active generated layout should include gap report archive/current plus branch-state pointer under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/. It should not document future runs/<kind>/<id> payload structures as active or required layout. It should not document active reflect artifact writes before a reflect write path exists. Reflect helper docs should be optional, non-runtime, non-authoritative, and should not imply hook installation, settings updates, command generation, agent generation, user skill generation under TigerKit generated state, or plugin manifest changes.",
       "files": [
+        "hooks/session-start",
+        "commands/gap.md",
         ".tigerkit/docs/storage-boundary.md",
         ".tigerkit/docs/artifact-layout.md",
         ".tigerkit/docs/reflect-promotion-helpers.md",
-        "README.md"
+        "README.md",
+        ".gitignore"
       ],
       "expectations": [
-        ".claude/tigerkit branch workspace local generated state only",
-        "active layout includes gap archive current and branch-state pointer",
+        "active generated state under ~/.tigerkit outside project repository",
+        "active SessionStart decline marker under ~/.tigerkit/local/session-start/worktree-context-declines.json",
+        ".claude/tigerkit legacy migration context only",
+        "legacy decline marker read fallback allowed",
+        "new writes go to external state",
+        "active layout includes gap archive current and branch-state pointer under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>",
         "does not make runs kind id payload active layout",
         "does not document active reflect artifact writes without write path",
         "helper docs optional and non-runtime",
         "helper docs do not imply install or generation",
-        "user skill source not generated under .claude/tigerkit"
+        "user skill source not generated under TigerKit generated state"
       ]
     }
   ]
