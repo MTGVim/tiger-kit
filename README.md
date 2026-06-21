@@ -9,13 +9,13 @@
 </p>
 
 TigerKit(`tk`, plugin namespace `/tk:*`)은 Claude Code용 경량 plugin입니다.
-SoT(Source of Truth)가 있으면 `/tk:gap`으로 현재 구현과의 차이를 먼저 확인하고, 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 정리합니다. `gap`은 evidence-first로 읽고, source conflict나 근거 부족은 `ambiguous`로 남깁니다.
+SoT(Source of Truth)가 있으면 `/tk:gap`으로 현재 구현과의 차이를 먼저 확인하고, 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 preview-first로 정리합니다. `gap`은 evidence-first로 읽고, source conflict나 근거 부족은 `ambiguous`로 남깁니다.
 
 ```text
 Check the gap first. Keep the learning.
 ```
 
-공개 실행 표면은 `/tk:gap`, `/tk:reflect` 두 명령입니다. TigerKit은 workflow runner, subagent orchestrator, setup wizard를 제공하지 않으며, `commands/*.md`와 `.claude-plugin/plugin.json`이 `/tk:*` contract를 소유합니다.
+공개 실행 표면은 `/tk:gap`, `/tk:reflect` 두 명령입니다. Core `tk` plugin은 hook-free이며 workflow runner, subagent orchestrator, setup wizard를 제공하지 않습니다. `commands/*.md`와 `.claude-plugin/plugin.json`이 `/tk:*` contract를 소유합니다.
 
 ## Installation
 
@@ -47,20 +47,36 @@ claude plugin install tk@tiger-kit --scope project
 - SoT가 없으면 먼저 SoT 제공을 제안합니다.
 - 사용자가 바로 진행을 원하면 `/tk:gap` 없이 진행할 수 있지만, 그 경우 가정과 불확실성을 명시합니다.
 - 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 정리합니다.
+- `/tk:reflect` 기본값은 preview-only이며, `--apply=true`도 eligible `repo-local` 후보만 `<git-root>/CLAUDE.local.md`에 쓸 수 있습니다.
 
 ## Command Surface
 
 | Command | 역할 | 저장 성격 |
 | --- | --- | --- |
 | `/tk:gap` | SoT와 Current Implementation의 차이를 한 번 확인하고 missing, mismatch, overbuilt, ambiguous를 정리합니다. evidence-first로 읽고 source conflict는 `ambiguous`로 남깁니다. | optional external generated report |
-| `/tk:reflect` | 세션 결과와 사용자 피드백에서 재사용 가능한 learning을 분류하고 hook / hookify, command, agent proposal을 분리해 제안합니다. 파일을 쓰면 changed path를 출력합니다. | user/repo improvement candidates |
+| `/tk:reflect` | 세션 결과와 사용자 피드백에서 재사용 가능한 learning을 canonical target(`repo-local`, `repo-shared`, `user-global`, `skill`, `hook`, `command`, `agent`, `discard`)으로 분류합니다. 기본값은 preview-only입니다. | promotion candidates |
 
 ## 사용 예시
 
 ```text
 /tk:gap "PRD와 현재 구현 차이 봐줘" --target src/auth
-/tk:reflect --dry-run
+/tk:reflect --target repo --apply=false
+/tk:reflect --target repo-local --apply=true
 ```
+
+## Reflect write boundary
+
+`/tk:reflect --apply=true`가 파일을 쓸 수 있는 유일한 대상은 eligibility를 통과한 `<git-root>/CLAUDE.local.md`입니다.
+
+- repo shared `CLAUDE.md`: suggest-only
+- user-global guidance: suggest-only
+- skill: suggest-only
+- hook: suggest-only
+- command: suggest-only
+- agent: suggest-only
+- discard: no write
+
+`PROFILE.md`, `automation`, `hookify`는 promotion target 이름이 아닙니다. Claude Code auto memory는 TigerKit이 쓰거나, mirror하거나, backup하지 않습니다.
 
 ## What TigerKit does not do
 
@@ -72,6 +88,8 @@ TigerKit은 아래를 active surface로 제공하지 않습니다.
 - launch / review / next / handoff workflow
 - mandatory runner or autopilot
 - Patron / subagent delegation
+- active `SessionStart` hook
+- hook settings, command source, agent source 자동 생성
 
 ## Operational Docs
 
@@ -84,7 +102,7 @@ TigerKit은 아래를 active surface로 제공하지 않습니다.
 
 ## Generated State
 
-Active generated state는 project repository 밖 `~/.tigerkit/` 아래의 file-only state입니다. `/tk:gap` report와 branch pointer는 `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/...` 아래에 두고, SessionStart decline marker는 `~/.tigerkit/local/session-start/worktree-context-declines.json`을 사용합니다. `.claude/tigerkit/`는 legacy/migration context로만 남기며 `.claude/` 전체를 ignore하지 않습니다.
+Active generated state는 project repository 밖 `~/.tigerkit/` 아래의 file-only state입니다. `/tk:gap` report와 branch pointer는 `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/...` 아래에 둡니다. Core `tk` plugin은 active `SessionStart` hook을 제공하지 않으며, 기존 SessionStart decline marker는 legacy/inactive state로만 보존되고 core command/runtime이 읽거나 쓰지 않습니다. `.claude/tigerkit/`는 legacy/migration context로만 남기며 `.claude/` 전체를 ignore하지 않습니다.
 
 ## Contributors
 

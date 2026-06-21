@@ -1,44 +1,135 @@
 # Reflect File Policy
 
-`/tk:reflect`는 promotion router로서 세션 learning을 안전한 promotion surface로 분류하고 허용된 대상에만 반영한다.
+`/tk:reflect`는 promotion router로서 세션 learning을 preview-first로 분류하고, 명시적 `--apply=true`가 있으며 eligibility를 통과한 repo-local 후보만 `<git-root>/CLAUDE.local.md`에 반영할 수 있다.
 
-## Promotion taxonomy
+## Default policy
 
-| Target | Policy | Notes |
+- 기본 동작은 preview-only다.
+- `--dry-run`, option 없음, `--apply=false`는 파일을 쓰지 않는다.
+- `--apply=true`도 eligible `repo-local` apply plan이 있을 때만 파일을 쓸 수 있다.
+- source code, repo shared `CLAUDE.md`, user-global guidance, skill source, hook settings, command source, agent source, plugin manifest는 수정하지 않는다.
+
+## Canonical promotion targets
+
+Canonical target enum은 정확히 아래 8개다.
+
+```text
+repo-local, repo-shared, user-global, skill, hook, command, agent, discard
+```
+
+| Target | Write policy | Notes |
 |---|---|---|
-| repo `CLAUDE.local.md` | auto apply | repo-local private guidance |
-| repo `CLAUDE.md` proposal | suggest only | shared repo rule 후보이므로 자동 수정 금지 |
-| user `PROFILE.md` | auto apply | user role, preference, collaboration profile |
-| user `CLAUDE.md` | auto apply | user-level guidance |
-| user skills | auto apply | canonical source는 TigerKit generated state가 아닌 user skill surface가 소유 |
-| hook / hookify proposal | suggest only | 자동화/검사 후보, 제안만 |
-| command proposal | suggest only | slash command 후보, 제안만 |
-| agent proposal | suggest only | sub-agent 후보, 제안만 |
-| discard | never store | branch-specific one-off, 저신뢰, 민감 정보, 중복 |
+| `repo-local` | eligible `--apply=true`일 때만 `<git-root>/CLAUDE.local.md` write 가능 | repo-local private guidance |
+| `repo-shared` | suggest-only | shared repo rule 후보 |
+| `user-global` | suggest-only | 모든 repo에 영향을 주는 user-global instruction 또는 rule 후보 |
+| `skill` | suggest-only | user skill 후보. TigerKit generated state에 source 생성/복제 금지 |
+| `hook` | suggest-only | lifecycle 자동화 또는 검사 후보 |
+| `command` | suggest-only | slash command 후보 |
+| `agent` | suggest-only | sub-agent 후보 |
+| `discard` | no write | 저장하지 않음 |
 
-## Repo shared rule boundary
+`PROFILE.md`, `automation`, `hookify`, `hook / hookify`는 target 이름이 아니다. 기존 `PROFILE.md`는 legacy/inactive state로만 보고 자동 삭제하거나 자동 이관하지 않는다.
 
-리포 내부 자동 생성/수정은 `CLAUDE.local.md`만 허용한다. Shared `CLAUDE.md`는 항상 diff proposal로만 제시한다.
+## Legacy selector semantics
 
-## Source and automation boundary
+| Legacy selector | Canonical expansion | 처리 |
+|---|---|---|
+| `repo` | `repo-local`, `repo-shared` | deprecation warning 출력 |
+| `user` | `user-global` | deprecation warning 출력 |
+| `all` | 전체 canonical target | warning 없음 |
 
-- `/tk:reflect`는 source code를 수정하지 않는다.
-- hook / hookify, command, agent 변경은 suggest-only다.
-- hook / hookify, command, agent proposal은 설치됨/활성화됨으로 표현하지 않는다.
-- user skill source를 TigerKit generated state에 생성하거나 복제하지 않는다.
-- hook 설치, command 생성, agent 생성, plugin manifest 수정, runtime generation을 수행하지 않는다.
+`--target repo --apply=true`와 `--target all --apply=true`는 eligible `repo-local` 후보만 write set에 넣을 수 있다. 나머지 target은 `suggest_only`, `preview_only`, 또는 `discard`다.
 
-## Optional helper docs
+## Repo-local write target
 
-선택형 promotion helper guidance는 `.tigerkit/docs/reflect-promotion-helpers.md`에 둔다. 이 문서는 hook / hookify, command, agent proposal을 더 일관되게 쓰기 위한 참고 자료이며 `/tk:reflect` runtime behavior, auto-apply policy, 또는 plugin command surface의 권위 source가 아니다.
+유일한 repo-local write target:
 
-문서에 hookify 예시나 promotion receipt 예시가 있어도 hook 설치, settings 수정, command 생성, agent 생성, runtime generation이 발생한 것으로 표현하지 않는다.
+```text
+<git-root>/CLAUDE.local.md
+```
+
+path operand는 root-relative literal `CLAUDE.local.md`만 허용한다. 다른 파일명, absolute operand, path traversal, symlink target, repo 밖 resolve path는 reject한다.
+
+## Repo-local eligibility checks
+
+Apply 전 아래를 모두 확인한다.
+
+Reason vocabulary:
+
+```text
+not_git_worktree
+git_root_resolution_error
+path_outside_repo
+symlink_target
+tracked_local_file
+tracked_check_error
+not_ignored
+ignore_check_error
+candidate_not_eligible
+stale_apply_plan
+apply_verification_failed
+rollback_failed
+no_eligible_candidates
+```
+
+1. fixed invocation cwd를 `invocation_cwd`로 기록한다.
+2. `git -C <invocation_cwd> rev-parse --is-inside-work-tree`를 argument vector로 실행한다. exit 0이 아니면 `not_git_worktree`다.
+3. `git -C <invocation_cwd> rev-parse --show-toplevel`을 argument vector로 실행한다. 실패하면 `git_root_resolution_error`다.
+4. 이후 모든 Git 검사는 `git -C <git-root>`로 실행한다.
+5. path operand는 root-relative literal `CLAUDE.local.md`만 허용한다.
+6. `<git-root>/CLAUDE.local.md`를 normalized absolute path로 계산하고, 그 결과가 `<git-root>` 안에 남아 있지 않으면 `path_outside_repo`다.
+7. target path는 `lstat`으로 검사한다. symlink이면 symlink target을 따라가지 않고 `symlink_target`으로 reject한다.
+8. `git -C <git-root> ls-files --error-unmatch -- CLAUDE.local.md`를 실행한다. exit 0은 `tracked_local_file` reject다. exit 1은 untracked이므로 계속한다. 다른 exit status는 `tracked_check_error`다.
+9. `git -C <git-root> check-ignore -q --no-index -- CLAUDE.local.md`를 실행한다. exit 0은 ignored이므로 계속한다. exit 1은 `not_ignored`다. exit 128 또는 그 외 status는 `ignore_check_error`다.
+10. executable code가 command를 실행할 때 shell string concatenation을 쓰지 않고 argument vector를 사용한다.
+
+Reject는 silent skip이 아니다. Receipt에 `reason_code`를 남기고 write하지 않는다. `not_ignored`는 ignore entry 제안을 출력할 수 있지만 `.gitignore`, `.git/info/exclude`, global exclude를 자동 수정하지 않는다. Eligible 후보가 없으면 `no_eligible_candidates`를 출력하고 어떤 candidate도 `Applied`로 보고하지 않는다.
+
+## Candidate states and actions
+
+각 candidate는 아래 contract를 따른다.
+
+- `candidate_id`: current invocation 안에서 유일한 ID
+- `status`: `candidate | confirmed | deprecated`
+- `duplicate_status`: `confirmed | unknown`
+- `action`: `preview_only | apply | suggest_only | discard`
+- `target`: canonical target enum 중 하나
+- `path`: write path 또는 `NONE`
+
+`status: confirmed`는 routing evidence sufficiency이며 durable write approval이 아니다. Claude Code auto memory를 관찰하지 못한 경우 `duplicate_status: unknown`으로 둔다. Branch-specific one-off 또는 workaround discard는 `reason_code: session_local`을 쓸 수 있지만 `session-local` status은 쓰지 않는다. TigerKit은 auto memory를 쓰거나, mirror하거나, backup하지 않는다.
+
+## Apply plan
+
+`--apply=true` write는 current invocation apply plan 없이 수행하지 않는다.
+
+Apply plan은 아래를 포함한다.
+
+- exact apply set
+- `base_state`
+- `base_sha256`
+- `result_sha256`
+- planned result bytes
+- `planned_result_bytes_sha256`
+- exact unified diff
+- target path와 root-relative `CLAUDE.local.md` operand
+
+Generic edit, broad rewrite, unscoped append/rewrite는 금지한다. Plan 이후 target 상태가 바뀌면 `stale_apply_plan`으로 전체 apply를 중단한다. 이전 invocation에서 만든 apply plan은 항상 stale이다.
+
+## All-or-nothing and rollback
+
+여러 eligible repo-local 후보는 하나의 planned result bytes로 합치고 all-or-nothing으로 적용한다. 일부 후보만 조용히 적용하지 않는다.
+
+Write 직전 base state/hash를 다시 확인한다. 계획과 다르면 `stale_apply_plan`으로 중단하고 write하지 않는다. Write는 target과 같은 directory에 temporary file을 만들고 fsync 후 atomic replace로 수행한다.
+
+Write 후에는 target bytes와 `result_sha256`을 검증한다. Verification 실패는 `apply_verification_failed`로 보고하고 failed result bytes/hash를 capture한다. 이 경우 no candidate may be reported Applied after verification failure.
+
+rollback precheck로 target이 verification 실패 직후 bytes와 같은지 확인한다. 외부 변경이 있으면 rollback하지 않고 `rollback_failed`를 보고한다. 안전하면 원래 bytes 또는 original absence만 복구한다. Rollback succeeded이면 `Changed paths: NONE`과 `Applied candidates: NONE`이다. Rollback failed 또는 외부 변경이면 `reason_code: rollback_failed`, `Applied candidates: NONE`, changed path를 출력한다.
 
 ## Proposal quality requirement
 
-Proposal 후보는 hook / hookify, command, agent section으로 분리한다. Generic proposal bucket에 섞지 않는다.
+Proposal 후보는 `hook`, `command`, `agent` section으로 분리한다. Generic `automation` bucket이나 `hookify` bucket에 섞지 않는다.
 
-### Hook / hookify proposal
+### Hook proposal
 
 각 후보는 아래 필드를 가진다.
 
@@ -69,31 +160,17 @@ Negative boundary: command 파일 생성, plugin manifest 수정, runtime genera
 
 Negative boundary: agent 파일 생성, 자동 dispatch 설정, orchestration runtime 생성, command로 충분한 작업을 agent로 과대 승격 금지.
 
-## Candidate states
-
-- `candidate`: 근거는 있으나 적용 전.
-- `confirmed`: 사용자 또는 source evidence로 확정.
-- `session-local`: 이번 세션에만 유효.
-- `deprecated`: 더 이상 적용하지 않음.
-- `discard`: 저장하지 않음.
-
-## Merge and conflict
-
-- 중복 규칙은 병합한다.
-- 충돌 규칙은 적용 조건을 분리한다.
-- branch-specific one-off는 durable rule로 승격하지 않고 `discard`로 분류한다.
-- 민감하거나 불필요한 사용자 정보는 저장하지 않는다.
-
 ## Output requirement
 
 Reflect receipt는 아래를 분리한다.
 
-- repo 후보
-- user 후보
-- hook / hookify proposal 후보: rationale, trigger, action, why suggest-only 포함
-- command proposal 후보: intent, arguments, when better than skill 포함
-- agent proposal 후보: role boundary, responsibility, when better than command 포함
-- discard와 이유
+- requested target
+- effective targets
+- deprecation line where relevant
+- candidate table with `candidate_id`, `status`, `duplicate_status`, `target`, `action`, `path`, `reason`
+- changed path 전체. 파일을 쓰지 않은 경우 `NONE`
+- apply plan 또는 `NONE`
+- repo-local, repo-shared, user-global, skill, hook, command, agent, discard section
+- rollback success/failure when verification fails
 - 충돌 / 적용 조건
 - 다음 행동
-- 파일을 쓴 경우 changed path 전체. 파일을 쓰지 않은 경우 `NONE`

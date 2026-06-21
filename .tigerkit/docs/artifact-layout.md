@@ -2,15 +2,12 @@
 
 이 문서는 현재 TigerKit 산출물 배치와 책임을 설명합니다. active state와 legacy state의 경계는 `.tigerkit/docs/storage-boundary.md`를 기준으로 봅니다.
 
-현재 active generated layout은 project repository 밖 `~/.tigerkit/` 아래의 file-only state입니다. `.claude/tigerkit/`는 legacy/migration context로만 남습니다. 이 저장소의 실제 구현 표면은 SessionStart hook read path와 command-generated state contract입니다.
+현재 active generated layout은 project repository 밖 `~/.tigerkit/` 아래의 file-only state입니다. `.claude/tigerkit/`는 legacy/migration context로만 남습니다. Core `tk` plugin은 hook-free이며 active implementation surface는 explicit command contract와 command-generated gap state입니다.
 
 ## Active generated 구조
 
 ```text
 ~/.tigerkit/
-  local/
-    session-start/
-      worktree-context-declines.json
   repos/
     <repo-key>/
       branches/
@@ -45,15 +42,25 @@ workspace-<basename-slug>--<sha256(absWorkspaceRoot).slice(0, 8)>
 
 | 파일 | 역할 | 저장 성격 |
 |---|---|---|
-| `~/.tigerkit/local/session-start/worktree-context-declines.json` | SessionStart worktree context proposal decline marker | user-local generated marker |
 | `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/<GAP-ID>.md` | `/tk:gap` one-shot report archive | generated working memory |
 | `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/current.md` | 최신 gap report copy | generated pointer |
 | `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/branch-state.json` | latest generated artifact pointer | generated index |
-| `scripts/tigerkit_state.py` | active generated state helper (`write-gap`, `record-session-start-decline`, path calculation) | shipped helper |
-| repo `CLAUDE.local.md` | reflect repo-local auto apply target | local guidance |
+| `scripts/tigerkit_state.py` | active generated state helper (`write-gap`, path calculation) | shipped helper |
+| repo `CLAUDE.local.md` | reflect eligible repo-local apply target | local guidance |
 | repo `CLAUDE.md` | reflect suggest-only target | shared repo guidance |
 
-`/tk:reflect`는 현재 active generated artifact layout을 문서화하지 않습니다. Reflect command가 파일을 쓰는 경우에는 receipt에 changed path를 출력해야 합니다.
+`/tk:reflect`는 active generated artifact layout을 문서화하지 않습니다. Reflect command가 파일을 쓰는 경우에는 receipt에 changed path와 apply plan을 출력해야 합니다.
+
+## Legacy SessionStart state
+
+Core `tk` plugin은 active `SessionStart` hook을 제공하지 않습니다. 기존 decline marker는 inactive legacy state로만 보존하며 core command/runtime이 읽거나 쓰지 않습니다.
+
+```text
+~/.tigerkit/local/session-start/worktree-context-declines.json
+.claude/tigerkit/local/session-start/worktree-context-declines.json
+```
+
+이 legacy marker는 자동 삭제하거나 자동 이관하지 않으며 core command/runtime이 읽거나 쓰지 않습니다.
 
 ## Optional helper docs
 
@@ -61,7 +68,7 @@ workspace-<basename-slug>--<sha256(absWorkspaceRoot).slice(0, 8)>
 
 ## Legacy layout
 
-아래 repo-inside areas는 새 TigerKit active flow가 쓰지 않습니다. 기존 파일이 있으면 migration context 또는 legacy fallback으로 읽을 수 있지만 새 source of truth로 취급하지 않습니다.
+아래 repo-inside areas는 새 TigerKit active flow가 쓰지 않습니다. 기존 파일이 있으면 migration context로 언급할 수 있지만 새 source of truth로 취급하지 않습니다.
 
 - `.claude/tigerkit/local/session-start/worktree-context-declines.json`
 - `.claude/tigerkit/branches/<scope-key>/gap/`
