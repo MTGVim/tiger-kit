@@ -9,7 +9,7 @@
 </p>
 
 TigerKit(`tk`, plugin namespace `/tk:*`)은 Claude Code용 경량 plugin입니다.
-SoT(Source of Truth)가 있으면 `/tk:gap`으로 현재 구현과의 차이를 먼저 확인하고, 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 정리합니다.
+SoT(Source of Truth)가 있으면 `/tk:gap`으로 현재 구현과의 차이를 먼저 확인하고, 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 정리합니다. `gap`은 evidence-first로 읽고, source conflict나 근거 부족은 `ambiguous`로 남깁니다.
 
 ```text
 Check the gap first. Keep the learning.
@@ -45,15 +45,14 @@ claude plugin install tk@tiger-kit --scope project
 
 - SoT가 있으면 구현 전에 `/tk:gap`을 먼저 고려합니다.
 - SoT가 없으면 먼저 SoT 제공을 제안합니다.
-- 사용자가 바로 진행을 원하면 `/tk:gap` 없이 진행할 수 있습니다.
-- SoT 없이 진행할 때는 가정과 불확실성을 명시합니다.
+- 사용자가 바로 진행을 원하면 `/tk:gap` 없이 진행할 수 있지만, 그 경우 가정과 불확실성을 명시합니다.
 - 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 정리합니다.
 
 ## Command Surface
 
 | Command | 역할 | 저장 성격 |
 | --- | --- | --- |
-| `/tk:gap` | SoT와 Current Implementation의 차이를 한 번 확인하고 missing, mismatch, overbuilt, ambiguous를 정리합니다. | optional branch/workspace-local report |
+| `/tk:gap` | SoT와 Current Implementation의 차이를 한 번 확인하고 missing, mismatch, overbuilt, ambiguous를 정리합니다. evidence-first로 읽고 source conflict는 `ambiguous`로 남깁니다. | optional branch/workspace-local report |
 | `/tk:reflect` | 세션 결과와 사용자 피드백에서 재사용 가능한 learning을 분류하고 hook / hookify, command, agent proposal을 분리해 제안합니다. 파일을 쓰면 changed path를 출력합니다. | user/repo improvement candidates |
 
 ## 사용 예시

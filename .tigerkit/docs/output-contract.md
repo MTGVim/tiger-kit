@@ -26,6 +26,7 @@
 - SoT:
 - Current:
 - Evidence:
+- Evidence type:
 - Impact:
 - Priority:
 - Suggested fix:
@@ -59,6 +60,10 @@ Priority values:
 - `P3`
 
 Findings에는 P0/P1/P2만 둡니다. P3, duplicate, unverifiable, source conflict, missing evidence는 Ambiguities 또는 Not accepted summary에 둡니다.
+
+`Current` evidence는 동일 강도가 아닙니다. 읽은 파일, 실행 결과, rendered output, diff, generated artifact, implementation plan을 구분해서 기록합니다. plan이나 generated artifact만으로 구현 완료를 단정하지 않습니다.
+
+source 간 우선순위가 확인되지 않으면 조용히 병합하지 않고 `ambiguous`로 남깁니다.
 
 ## `/tk:reflect` Output Contract
 

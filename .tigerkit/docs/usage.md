@@ -12,15 +12,14 @@
 TigerKit = gap + reflect
 ```
 
-- `gap`: SoT와 Current Implementation의 차이를 한 번 분석합니다.
+- `gap`: SoT와 Current Implementation의 차이를 한 번 분석합니다. evidence-first로 읽고, source conflict나 근거 부족은 `ambiguous`로 남깁니다.
 - `reflect`: 세션 result와 feedback에서 재사용 가능한 learning을 추출합니다.
 
 ## Core guidance
 
 - SoT가 있으면 구현 전에 `/tk:gap`을 먼저 고려합니다.
 - SoT가 없으면 먼저 SoT 제공을 제안합니다.
-- 사용자가 바로 진행을 원하면 `/tk:gap` 없이 진행할 수 있습니다.
-- SoT 없이 진행할 때는 가정과 불확실성을 명시합니다.
+- 사용자가 바로 진행을 원하면 `/tk:gap` 없이 진행할 수 있지만, 그 경우 가정과 불확실성을 명시합니다.
 - 의미 있는 작업이 끝나면 `/tk:reflect`를 고려합니다.
 
 ## Command Surface

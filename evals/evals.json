@@ -44,7 +44,7 @@
       "id": 1,
       "name": "gap-is-sot-first-one-shot-analysis",
       "prompt": "Evaluate /tk:gap behavior. Do not write files.",
-      "expected_output": "Should treat /tk:gap as a one-shot comparison between source of truth and current implementation. Should say that if SoT exists, gap should be considered before implementation. If SoT does not exist, it should suggest providing one. If the user explicitly wants direct execution, it may proceed without gap while keeping assumptions explicit. It should classify missing, mismatch, overbuilt, and ambiguous findings.",
+      "expected_output": "Should treat /tk:gap as a one-shot comparison between source of truth and current implementation. Should say that if SoT exists, gap should be considered before implementation. If SoT does not exist, it should suggest providing one. If the user explicitly wants direct execution, it may proceed without gap while keeping assumptions explicit. It should classify missing, mismatch, overbuilt, and ambiguous findings. It should keep source conflicts ambiguous when precedence is not confirmed and should distinguish current-evidence strength instead of treating plans as implementation proof.",
       "files": [
         "commands/gap.md",
         "README.md",
@@ -57,14 +57,17 @@
         "Uses missing classification",
         "Uses mismatch classification",
         "Uses overbuilt classification",
-        "Uses ambiguous classification"
+        "Uses ambiguous classification",
+        "Keeps source precedence conflicts ambiguous when not confirmed",
+        "Distinguishes current evidence type or strength",
+        "Does not treat plan-only evidence as implementation proof"
       ]
     },
     {
       "id": 2,
       "name": "gap-does-not-generate-workflow",
       "prompt": "Evaluate /tk:gap non-goals. Do not write files.",
-      "expected_output": "Should not generate a sealed workflow, workflow hash, launch state, autopilot policy, runner/advisor flow, or external side-effect receipt.",
+      "expected_output": "Should not generate a sealed workflow, workflow hash, launch state, autopilot policy, runner/advisor flow, or external side-effect receipt. It may compare current implementation evidence, but it should not expand into a supervisory workflow.",
       "files": [
         "commands/gap.md",
         ".tigerkit/docs/output-contract.md"
