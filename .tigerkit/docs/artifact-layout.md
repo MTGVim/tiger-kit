@@ -2,7 +2,9 @@
 
 이 문서는 현재 TigerKit 산출물 배치와 책임을 설명합니다. `.claude/tigerkit/`에 무엇을 두고 무엇을 두지 않는지는 `.tigerkit/docs/storage-boundary.md`를 기준으로 봅니다.
 
-## 현재 generated 구조
+현재 문서화된 repo-inside layout은 current/legacy generated state입니다. 계획된 external-state 방향은 project repository 밖의 `~/.tigerkit/` 아래에 TigerKit state를 두는 것이지만, 이 저장소에는 아직 해당 runtime write path 구현이 없습니다.
+
+## 현재/legacy generated 구조
 
 ```text
 .claude/
@@ -56,10 +58,10 @@ workspace-<basename-slug>--<sha256(absWorkspaceRoot).slice(0, 8)>
 
 ## Git ignore
 
-권장 `.gitignore`:
+현재/legacy repo-inside state에 대한 권장 `.gitignore`:
 
 ```gitignore
 .claude/tigerkit/
 ```
 
-`.claude/` 전체를 ignore하지 않습니다.
+`.claude/` 전체를 ignore하지 않습니다. 계획된 `~/.tigerkit/` external state는 project repository 밖에 있으므로 repo `.gitignore` 대상이 아닙니다.

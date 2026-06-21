@@ -38,4 +38,4 @@ TigerKit = gap + reflect
 
 ## Generated state
 
-`.claude/tigerkit/`은 generated branch/workspace-local memory입니다. durable repo knowledge가 아닙니다.
+현재 문서화된 repo-inside state는 `.claude/tigerkit/` 아래의 current/legacy branch/workspace-local memory입니다. durable repo knowledge가 아닙니다. 계획된 external-state 방향은 project repository 밖의 `~/.tigerkit/` 아래에 TigerKit state를 두는 것이지만, 이 저장소에는 아직 해당 runtime write path 구현이 없습니다.
