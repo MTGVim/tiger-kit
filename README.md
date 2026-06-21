@@ -79,8 +79,7 @@ TigerKit은 아래를 active surface로 제공하지 않습니다.
 - [Output Contract](.tigerkit/docs/output-contract.md)
 - [Storage boundary](.tigerkit/docs/storage-boundary.md)
 - [Reflect file policy](docs/reflect-file-policy.md)
-- [Reflect promotion helper guide](.tigerkit/docs/reflect-promotion-helpers.md) (optional)
-- [RFC: gap/reflect core simplification](docs/rfcs/2026-06-gap-reflect-core-slim.md)
+- [Reflect promotion helper guide](.tigerkit/docs/reflect-promotion-helpers.md)
 
 ## Generated State
 
