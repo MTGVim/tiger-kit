@@ -40,7 +40,11 @@
         "exitCode": {"type": ["integer", "null"]},
         "reasonCode": {"enum": ["process_start_error", "environment_error", "harness_error", "timeout_exceeded", "not_attempted_due_to_escalation", "not_attempted_due_to_prior_failure", "not_attempted_due_to_budget", "not_attempted_due_to_unavailable_tool", "not_attempted_due_to_invalid_final_state"]},
         "message": {"type": "string", "minLength": 1}
-      }
+      },
+      "allOf": [
+        {"if": {"properties": {"status": {"enum": ["passed", "failed"]}}, "required": ["status"]}, "then": {"not": {"required": ["reasonCode"]}}},
+        {"if": {"properties": {"status": {"enum": ["error", "timed_out", "not_run"]}}, "required": ["status"]}, "then": {"required": ["reasonCode"]}}
+      ]
     }
   }
 }
