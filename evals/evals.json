@@ -596,7 +596,7 @@
       "id": 26,
       "name": "execute-user-only-dispatcher-hard-proof-gate",
       "prompt": "Evaluate /tk:execute command and helper runtime. Do not write files.",
-      "expected_output": "Should expose /tk:execute as a user-only dispatcher that accepts one spec ID/path, rejects legacy/stale/blocked/invalid specs, requires tigerkit.loop-spec/v2, refuses public stable execution without matching support matrix public entry and packaged CAP-01-CAP-10 proof, captures baseline for delegated executions, delegates to exactly one executor only after hard-boundary proof, validates claimed-result, observes create/modify/delete diff independently, reruns required verifiers, classifies claimedObservedMismatch as escalated, writes immutable receipts under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/executions/, and keeps rejected receipts closed with empty observed fields and no baseline.",
+      "expected_output": "Should expose /tk:execute as a user-only dispatcher that accepts one spec ID/path, rejects legacy/stale/blocked/invalid specs, requires tigerkit.loop-spec/v2, rejects malformed complete LoopSpec artifacts as invalid_loop_spec before later execute gates, refuses public stable execution without matching support matrix public entry and packaged CAP-01-CAP-10 proof, captures baseline for delegated executions, delegates to exactly one executor only after hard-boundary proof, validates claimed-result, observes create/modify/delete diff independently, reruns required verifiers, classifies claimedObservedMismatch as escalated, writes immutable receipts under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/executions/, and keeps rejected receipts closed with empty observed fields and no baseline.",
       "files": [
         "commands/execute.md",
         "scripts/tigerkit_state.py",
@@ -611,6 +611,7 @@
         "Rejects unsupported_loop_spec_schema",
         "Rejects blocked_loop_spec",
         "Rejects stale_base_revision",
+        "Rejects malformed complete LoopSpec as invalid_loop_spec before later execute gates",
         "Rejects hard_enforcement_unavailable when proof missing",
         "Validates support matrix and capability proof before delegation",
         "Validates executor claimed-result envelope",
@@ -629,7 +630,7 @@
       "id": 27,
       "name": "executor-claimed-result-and-receipt-closed-world",
       "prompt": "Evaluate executor claimed-result and receipt schemas. Do not write files.",
-      "expected_output": "Should define tigerkit.executor-claimed-result/v1 and tigerkit.execution-receipt/v1 as closed-world schemas. Claimed and postflight verifier result objects should share status vocabulary and reason rules. ReasonDetail allows only code, optional message, optional verifierId. Unknown fields and unknown enums are rejected. claimedObservedMismatch should force escalated rather than completed or failed.",
+      "expected_output": "Should define tigerkit.executor-claimed-result/v1 and tigerkit.execution-receipt/v1 as closed-world schemas. Claimed and postflight verifier result objects should share status vocabulary and reason rules. ReasonDetail allows only code, optional message, optional verifierId. Unknown fields, unknown enums, and malformed claimed-result envelopes are rejected. Malformed claimed-result envelopes must not be treated as valid completed receipts. claimedObservedMismatch should force escalated rather than completed or failed.",
       "files": [
         "schemas/executor-claimed-result.schema.json",
         "schemas/execution-receipt.schema.json",
@@ -642,6 +643,7 @@
         "execution receipt schemaVersion tigerkit.execution-receipt/v1",
         "additionalProperties false",
         "ReasonDetail fields code message verifierId only",
+        "Malformed claimed-result envelope rejected and not treated as valid completed receipt",
         "Verifier status passed failed error timed_out not_run",
         "claimedObservedMismatch escalates",
         "Executors return claimed-result envelope",
