@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "tigerkit.capability-eval/execute-write-boundary-v1",
+  "architecture": "hook_gate",
+  "componentPaths": [
+    "hooks/hooks.json",
+    "hooks/execute-write-boundary.py"
+  ],
+  "tests": [
+    {"id": "CAP-01", "assertion": "in-scope modify is allowed when TIGERKIT_EXECUTE_BOUNDARY_FILE declares path"},
+    {"id": "CAP-02", "assertion": "out-of-scope modify is rejected before tool execution"},
+    {"id": "CAP-03", "assertion": "excluded path is rejected before allowed path match"},
+    {"id": "CAP-04", "assertion": "create/delete authority is explicit-path only"},
+    {"id": "CAP-05", "assertion": "boundary file absence does not affect non-execute sessions"},
+    {"id": "CAP-06", "assertion": "path escape outside repo is rejected"},
+    {"id": "CAP-07", "assertion": "tool input paths are canonicalized repo-relative"},
+    {"id": "CAP-08", "assertion": "scope payload rejects malformed non-object boundary file"},
+    {"id": "CAP-09", "assertion": "plugin cache path resolves packaged hook component through CLAUDE_PLUGIN_ROOT"},
+    {"id": "CAP-10", "assertion": "component path set matches support matrix boundaryComponents"}
+  ],
+  "publicProofStatus": "missing",
+  "note": "This fixture defines capability cases. It is not a public activation proof."
+}

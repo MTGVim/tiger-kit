@@ -15,8 +15,8 @@ reflect = session result + feedback -> classify learning -> preview promotion re
 
 ## Core boundary
 
-- Core `tk` plugin은 hook-free입니다.
-- Core active command surface는 `/tk:gap`, `/tk:reflect`, `/tk:loop-spec`입니다.
+- Active command surface는 `/tk:gap`, `/tk:loop-spec`, `/tk:execute`, `/tk:reflect`입니다.
+- `/tk:reflect`는 execution ID 또는 receipt path가 있으면 persisted execution receipt를 transcript보다 우선 소비합니다.
 - `/tk:reflect`는 Claude Code auto memory를 쓰거나, mirror하거나, backup하지 않습니다.
 - `/tk:reflect`는 source code, hook settings, command source, agent source, skill source, plugin manifest를 수정하지 않습니다.
 - 기존 `SessionStart` decline marker와 `PROFILE.md`는 legacy/inactive state로만 취급하고 자동 삭제하거나 자동 이관하지 않습니다.
@@ -24,8 +24,11 @@ reflect = session result + feedback -> classify learning -> preview promotion re
 ## When to use
 
 - 의미 있는 작업이 끝났을 때
+- `/tk:execute` execution ID 또는 receipt path를 회고할 때
 - 시행착오에서 다음 세션에도 유효한 규칙이 생겼을 때
 - repo/user guidance, skill, hook, command, agent, discard 중 어디에 둘지 분류할 가치가 있을 때
+
+모든 candidate가 no-op이면 기본 출력은 `Reflect: 반영할 변경 없음.` 한 줄입니다.
 
 ## Canonical target enum
 

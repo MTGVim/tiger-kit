@@ -92,7 +92,7 @@ target: repo-local | repo-shared | user-global | skill | hook | command | agent 
 
 ## Promotion receipt and TigerKit generated state
 
-Active TigerKit generated state는 `~/.tigerkit/` 아래에 있다. `.claude/tigerkit/`와 SessionStart decline marker는 legacy/migration context로만 남는다. Core `tk` plugin은 hook-free다. 현재 helper guide는 reflect artifact write path를 선언하지 않는다.
+Active TigerKit generated state는 `~/.tigerkit/` 아래에 있다. `.claude/tigerkit/`와 SessionStart decline marker는 legacy/migration context로만 남는다. Execute boundary packaging은 preview/runtime validation 표면으로 존재할 수 있지만 stable public execution은 support matrix와 packaged capability proof를 통과할 때만 활성화된다. 현재 helper guide는 reflect artifact write path를 선언하지 않는다.
 
 Receipt가 기록할 수 있는 것:
 

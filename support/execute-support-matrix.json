@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "tigerkit.execute-support-matrix/v1",
+  "pluginVersion": "16.1.0",
+  "generatedAt": "2026-06-22T00:00:00Z",
+  "environments": [
+    {
+      "environmentKey": "claude-code/linux/local/default",
+      "status": "preview",
+      "boundaryArchitecture": "hook_gate",
+      "boundaryComponents": [
+        "hooks/hooks.json",
+        "hooks/execute-write-boundary.py"
+      ],
+      "proofRequired": true,
+      "proofStatus": "missing",
+      "reason": "Developer preview entry. Public execution remains rejected until CAP-01-CAP-10 packaged proof is generated for this exact plugin version and runtime binding."
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "tigerkit.environment-identity/v1",
+  "cases": [
+    {
+      "raw": {
+        "client": "claude-code",
+        "platform": "linux",
+        "runtime": "local",
+        "permissionMode": "default"
+      },
+      "canonicalEnvironmentKey": "claude-code/linux/local/default",
+      "runtimeBinding": {
+        "platform": "linux",
+        "permissionMode": "default",
+        "isolationMode": "none"
+      }
+    }
+  ],
+  "invalidAliases": [
+    "Claude Code/Linux/Local/Default",
+    "claude/linux/local/default"
+  ]
+}

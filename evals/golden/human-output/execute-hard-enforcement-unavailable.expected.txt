@@ -1,0 +1,8 @@
+Execute: rejected
+Spec: spec-123
+Executor: NONE
+Receipt: ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/executions/exec-preview-blocked.yaml
+Changed paths: 0
+Verifiers: 0/0 passed
+Primary reason: hard_enforcement_unavailable
+Required action: refresh_capability_proof

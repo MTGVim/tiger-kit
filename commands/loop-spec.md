@@ -7,7 +7,7 @@ argument-hint: '"<task>" [--explain] [--type bugfix|refactor|flaky-test] [--moti
 
 사용자에게는 한글로 답합니다. 코드, path, URL, identifier, command, YAML/JSON field name은 원문 그대로 둘 수 있습니다.
 
-목표: `/tk:loop-spec`은 사용자가 명시적으로 입력한 개발 task와 현재 worktree의 read-only capability를 분석해, 실행하지 않는 loop recommendation인 `LoopSpec`을 생성하거나 기존 spec을 검증합니다.
+목표: `/tk:loop-spec`은 사용자가 명시적으로 입력한 개발 task와 현재 worktree의 read-only capability를 분석해, 실행하지 않는 `tigerkit.loop-spec/v2` 계약을 생성하거나 기존 spec을 검증합니다.
 
 ```text
 loop-spec = explicit task + read-only worktree scan -> recommendation + LoopSpec
@@ -19,7 +19,7 @@ loop-spec = explicit task + read-only worktree scan -> recommendation + LoopSpec
 - `/tk:gap`은 `/tk:loop-spec`을 자동 호출하거나 자동 제안하지 않습니다.
 - 이 command는 source tree, `.claude/tigerkit/`, Git branch/index/stash/commit을 변경하지 않습니다.
 - package-manager script, build, test, lint, typecheck, network request를 실행하지 않습니다.
-- 실행기, runner, approval, autopilot, orchestration은 이 command의 범위가 아닙니다.
+- 실행은 이 command의 범위가 아닙니다. 실행은 사용자가 별도로 `/tk:execute <spec-id-or-path>`를 호출할 때만 시작됩니다.
 
 ## MVP surface
 
@@ -109,18 +109,13 @@ If the user invokes `/tk:loop-spec` with no task, or types bare `validate` witho
 기본 출력은 아래 정보를 포함해야 합니다.
 
 ```text
-Loop strategy: <motif or not-recommended>
-Applicability: recommended | conditional | not-recommended
-Readiness: complete | incomplete | manual
-Fit score: <0..100>/100
-Confidence: high | medium | low
+LoopSpec: <spec-id>
+Readiness: complete | blocked
+Executor: fast | reasoning | NONE
 Worktree: <branch or workspace>
 
-Why
-  - <reason and provenance>
-
 Blockers
-  - <blocker or NONE>
+  - <blocker id>: <reason>
 
 Guards
   - <guard>
@@ -131,6 +126,9 @@ Saved
 Write receipt
   changed: <path or NONE>
   source tree changed: no
+
+Next
+  /tk:execute <spec-id-or-path>
 ```
 
 ## Storage
@@ -147,5 +145,8 @@ Write receipt
 
 - Raw diff content와 secret content는 spec 또는 scanner artifact에 저장하지 않습니다.
 - Fingerprint에는 normalized metadata와 safe content hash만 기록합니다.
-- runnable, approval, agent/run lifecycle field는 schema에 포함하지 않습니다.
-- Command-level `execution` probe metadata는 discovery와 실제 command success를 구분하기 위해서만 사용합니다.
+- `readiness`는 `complete | blocked`만 사용합니다.
+- complete spec에만 `execution.executorRecommendation: fast | reasoning`을 저장합니다.
+- blocked spec에는 executor recommendation을 저장하지 않습니다.
+- model 또는 agent 이름을 portable schema에 저장하지 않습니다.
+- Command-level verifier discovery와 실제 execution success를 구분합니다.

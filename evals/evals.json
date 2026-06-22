@@ -1,11 +1,12 @@
 {
   "skill_name": "tiger-kit-gap-reflect-loop-spec-core",
   "command_surface": {
-    "surface_model": "TigerKit exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts. Core tk plugin is hook-free and exposes /tk:gap, /tk:reflect, and /tk:loop-spec.",
+    "surface_model": "TigerKit exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts. Active command surface is /tk:gap, /tk:reflect, /tk:loop-spec, /tk:execute. Execute boundary packaging is active for preview/runtime validation, while stable public execution remains gated by support/execute-support-matrix.json and packaged capability proof.",
     "core_commands": [
       "/tk:gap",
       "/tk:reflect",
-      "/tk:loop-spec"
+      "/tk:loop-spec",
+      "/tk:execute"
     ],
     "deprecated_or_removed_commands": [
       "/tk:grill",
@@ -23,9 +24,9 @@
   "evals": [
     {
       "id": 0,
-      "name": "plugin-version-and-command-manifest-gap-reflect-loop-spec-hook-free",
+      "name": "plugin-version-and-command-manifest-gap-reflect-loop-spec-execute-preview",
       "prompt": "Evaluate TigerKit active command surface and plugin packaging. Do not write files.",
-      "expected_output": "Should list /tk:gap, /tk:reflect, and /tk:loop-spec as the active commands. Should state core tk plugin is hook-free and has no active SessionStart hook packaging or helper runtime. Should state /tk:grill, /tk:afk, /tk:setup, and the launch-era commands are not active manifest entries. Should state /tk:loop-spec is a read-only recommender/compiler, not a runner/autopilot.",
+      "expected_output": "Should list /tk:gap, /tk:reflect, /tk:loop-spec, and /tk:execute as the active commands. Should state execute is a user-only bounded execute preview surface. Should state stable public execution remains gated by support matrix public environments and packaged hard-boundary proof. Should state /tk:grill, /tk:afk, /tk:setup, and the launch-era commands are not active manifest entries. Should state /tk:loop-spec is a read-only recommender/compiler, not a runner/autopilot.",
       "files": [
         ".claude-plugin/plugin.json",
         ".claude-plugin/marketplace.json",
@@ -38,14 +39,14 @@
       "expectations": [
         "Lists /tk:gap",
         "Lists /tk:reflect",
+        "Lists /tk:loop-spec",
+        "Lists /tk:execute",
         "Does not list /tk:grill as active",
         "Does not list /tk:afk as active",
         "Does not list /tk:setup as active",
         "Documents launch-era commands as not active",
-        "States core tk plugin is hook-free",
-        "Does not package an active SessionStart hook",
-        "Does not ship active hooks/session-start runtime",
-        "Does not ship active hooks/run-hook.cmd helper",
+        "States execute is preview-gated",
+        "States stable public execution requires packaged proof",
         "Lists /tk:loop-spec",
         "States /tk:loop-spec is not a runner or autopilot"
       ]
@@ -531,7 +532,7 @@
       "id": 24,
       "name": "storage-state-externalized-and-sessionstart-legacy-only",
       "prompt": "Evaluate TigerKit storage boundary, hook marker path, and reflect helper docs. Do not write files.",
-      "expected_output": "Should state that active TigerKit generated state lives outside the project repository under ~/.tigerkit. Core tk plugin should be hook-free and should not include an active SessionStart hook. Existing SessionStart decline markers under ~/.tigerkit/local/session-start/worktree-context-declines.json and .claude/tigerkit/local/session-start/worktree-context-declines.json should be preserved as inactive legacy state and not deleted, migrated, read, or written by core command/runtime. Current documented active generated layout should include gap report archive/current plus branch-state pointer under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/. It should not document future runs/<kind>/<id> payload structures as active or required layout. It should not document active reflect artifact writes. Reflect helper docs should be optional, non-runtime, non-authoritative, and should not imply hook installation, settings updates, command generation, agent generation, user skill generation under TigerKit generated state, plugin manifest changes, or Claude Code auto memory writes.",
+      "expected_output": "Should state that active TigerKit generated state lives outside the project repository under ~/.tigerkit. Execute boundary packaging may be present for preview/runtime validation, but stable public execution must remain gated by support matrix public environments and packaged hard-boundary proof. Existing SessionStart decline markers under ~/.tigerkit/local/session-start/worktree-context-declines.json and .claude/tigerkit/local/session-start/worktree-context-declines.json should be preserved as inactive legacy state and not deleted, migrated, read, or written by core command/runtime. Current documented active generated layout should include gap report archive/current plus branch-state pointer under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/. It should not document future runs/<kind>/<id> payload structures as active or required layout. It should not document active reflect artifact writes. Reflect helper docs should be optional, non-runtime, non-authoritative, and should not imply hook installation, settings updates, command generation, agent generation, user skill generation under TigerKit generated state, plugin manifest changes, or Claude Code auto memory writes.",
       "files": [
         "hooks/hooks.json",
         "commands/gap.md",
@@ -544,10 +545,8 @@
       ],
       "expectations": [
         "active generated state under ~/.tigerkit outside project repository",
-        "core tk plugin hook-free",
-        "no active SessionStart hook packaging",
-        "no active hooks/session-start runtime",
-        "no active hooks/run-hook.cmd helper",
+        "execute boundary packaging may exist for preview/runtime validation",
+        "stable public execution remains proof-gated",
         "scripts/tigerkit_state.py has no record-session-start-decline command",
         "legacy SessionStart decline markers preserved as inactive legacy state",
         "core command runtime does not read legacy decline markers",
@@ -566,11 +565,12 @@
     },
     {
       "id": 25,
-      "name": "loop-spec-read-only-recommendation-contract",
+      "name": "loop-spec-v2-read-only-contract",
       "prompt": "Evaluate /tk:loop-spec behavior. Do not write files.",
-      "expected_output": "Should treat /tk:loop-spec as an explicit-trigger read-only recommender/compiler that generates or validates LoopSpec artifacts under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/loop-specs/<spec-id>/spec.yaml. It must not run package scripts, tests, builds, network, runner/autopilot, approval lifecycle, or mutate source tree/.claude/tigerkit. It should separate command discovery from execution status and avoid storing raw diff or secret content.",
+      "expected_output": "Should treat /tk:loop-spec as an explicit-trigger read-only compiler that generates or validates tigerkit.loop-spec/v2 artifacts under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/loop-specs/<spec-id>/spec.yaml. It must not run package scripts, tests, builds, network, execute runtime, runner/autopilot, approval lifecycle, or mutate source tree/.claude/tigerkit. Complete specs may contain executorRecommendation fast or reasoning; blocked specs must not contain executorRecommendation.",
       "files": [
         "commands/loop-spec.md",
+        "schemas/loop-spec.schema.json",
         "scripts/tigerkit_state.py",
         "README.md",
         ".tigerkit/docs/output-contract.md",
@@ -580,16 +580,119 @@
         "Explicit /tk:loop-spec trigger only",
         "No-task invocation returns usage/help instead of raw shell error",
         "Bare validate without spec id returns usage/help instead of raw shell error",
-        "Generates LoopSpec under ~/.tigerkit loop-specs path",
-        "Validate reports schema and context freshness",
+        "Generates tigerkit.loop-spec/v2 under ~/.tigerkit loop-specs path",
+        "Readiness is complete or blocked",
+        "Complete spec has fast or reasoning executorRecommendation",
+        "Blocked spec has no executorRecommendation",
         "Does not mutate source tree",
         "Does not write .claude/tigerkit",
-        "Resolves helper from active TigerKit plugin version or installPath/cache instead of current repo relative scripts/tigerkit_state.py",
         "Does not run package scripts",
-        "No runner autopilot approval lifecycle",
-        "Separates command discovery and execution metadata",
+        "No execute runtime in loop-spec command",
         "Does not store raw diff content",
         "Does not store secret content"
+      ]
+    },
+    {
+      "id": 26,
+      "name": "execute-user-only-dispatcher-hard-proof-gate",
+      "prompt": "Evaluate /tk:execute command and helper runtime. Do not write files.",
+      "expected_output": "Should expose /tk:execute as a user-only dispatcher that accepts one spec ID/path, rejects legacy/stale/blocked/invalid specs, requires tigerkit.loop-spec/v2, refuses public stable execution without matching support matrix public entry and packaged CAP-01-CAP-10 proof, captures baseline for delegated executions, delegates to exactly one executor only after hard-boundary proof, validates claimed-result, observes create/modify/delete diff independently, reruns required verifiers, classifies claimedObservedMismatch as escalated, writes immutable receipts under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/executions/, and keeps rejected receipts closed with empty observed fields and no baseline.",
+      "files": [
+        "commands/execute.md",
+        "scripts/tigerkit_state.py",
+        "support/execute-support-matrix.json",
+        "schemas/execution-receipt.schema.json",
+        "schemas/capability-proof.schema.json",
+        "schemas/execute-support-matrix.schema.json"
+      ],
+      "expectations": [
+        "User-only /tk:execute trigger",
+        "Accepts one spec ID or path",
+        "Rejects unsupported_loop_spec_schema",
+        "Rejects blocked_loop_spec",
+        "Rejects stale_base_revision",
+        "Rejects hard_enforcement_unavailable when proof missing",
+        "Validates support matrix and capability proof before delegation",
+        "Validates executor claimed-result envelope",
+        "Observes create modify delete diff independently",
+        "Reruns required verifiers after executor",
+        "Rejected receipt has empty observed fields and no baseline",
+        "No automatic fallback",
+        "No automatic rollback",
+        "Exactly one executor",
+        "Dispatcher does not directly modify product source",
+        "Receipt path under ~/.tigerkit executions",
+        "Receipt schemaVersion tigerkit.execution-receipt/v1"
+      ]
+    },
+    {
+      "id": 27,
+      "name": "executor-claimed-result-and-receipt-closed-world",
+      "prompt": "Evaluate executor claimed-result and receipt schemas. Do not write files.",
+      "expected_output": "Should define tigerkit.executor-claimed-result/v1 and tigerkit.execution-receipt/v1 as closed-world schemas. Claimed and postflight verifier result objects should share status vocabulary and reason rules. ReasonDetail allows only code, optional message, optional verifierId. Unknown fields and unknown enums are rejected. claimedObservedMismatch should force escalated rather than completed or failed.",
+      "files": [
+        "schemas/executor-claimed-result.schema.json",
+        "schemas/execution-receipt.schema.json",
+        "agents/tk-executor-fast.md",
+        "agents/tk-executor-reasoning.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "executor claimed-result schemaVersion tigerkit.executor-claimed-result/v1",
+        "execution receipt schemaVersion tigerkit.execution-receipt/v1",
+        "additionalProperties false",
+        "ReasonDetail fields code message verifierId only",
+        "Verifier status passed failed error timed_out not_run",
+        "claimedObservedMismatch escalates",
+        "Executors return claimed-result envelope",
+        "Executors do not own final receipt"
+      ]
+    },
+    {
+      "id": 28,
+      "name": "support-matrix-and-boundary-runtime-packaging",
+      "prompt": "Evaluate execute support matrix and boundary runtime packaging. Do not write files.",
+      "expected_output": "Should define support/execute-support-matrix.json as canonical support owner with pluginVersion matching plugin manifest. It should declare preview hook_gate components hooks/hooks.json and hooks/execute-write-boundary.py. Public stable execution should not be claimed without proofStatus passed on a public environment. check-plugin-version should validate plugin/support matrix version match.",
+      "files": [
+        "support/execute-support-matrix.json",
+        "hooks/hooks.json",
+        "hooks/execute-write-boundary.py",
+        "scripts/check-plugin-version.py",
+        ".claude-plugin/plugin.json",
+        ".claude-plugin/marketplace.json"
+      ],
+      "expectations": [
+        "support matrix schemaVersion tigerkit.execute-support-matrix/v1",
+        "support matrix pluginVersion matches manifest",
+        "hook_gate architecture declared",
+        "boundaryComponents include hooks/hooks.json",
+        "boundaryComponents include hooks/execute-write-boundary.py",
+        "preview is not stable public proof",
+        "check-plugin-version validates support matrix version",
+        "marketplace does not say 3-command",
+        "marketplace does not say non-execution"
+      ]
+    },
+    {
+      "id": 29,
+      "name": "human-output-golden-fixtures-and-reflect-receipt-mode",
+      "prompt": "Evaluate golden output and reflect receipt consumer mode. Do not write files.",
+      "expected_output": "Should define evals/golden/human-output as canonical projection fixture owner. Execute rejected hard_enforcement_unavailable fixture should render compact output without empty sections. Reflect should accept execution ID or receipt path, prefer persisted receipt over transcript, consume minimum receipt fields, and output exactly 'Reflect: 반영할 변경 없음.' when every candidate is no-op.",
+      "files": [
+        "evals/golden/human-output/execute-hard-enforcement-unavailable.input.json",
+        "evals/golden/human-output/execute-hard-enforcement-unavailable.expected.txt",
+        "evals/golden/human-output/reflect-no-op.expected.txt",
+        "commands/reflect.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "Golden output fixtures exist",
+        "Execute compact projection includes primary reason",
+        "Execute compact projection includes required action",
+        "Empty sections omitted",
+        "Reflect consumes execution ID or receipt path",
+        "Reflect persisted receipt before transcript",
+        "Reflect no-op one-line output"
       ]
     }
   ]

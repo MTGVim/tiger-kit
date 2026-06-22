@@ -18,7 +18,7 @@
 ## 핵심 정책
 
 - TigerKit의 목적은 AI-induced source loss를 줄이는 것이다.
-- TigerKit active command surface는 `/tk:gap`과 `/tk:reflect`다.
+- TigerKit active command surface는 `/tk:gap`, `/tk:reflect`, `/tk:loop-spec`, `/tk:execute`다.
 - 공개 command surface 변경은 plugin manifest, README, docs, evals 동기화를 함께 검토한다.
 - Claude Code plugin command는 namespace를 사용하므로 slash invocation은 `/tk:*` 형태다. 자연어 요청은 같은 프로토콜을 따른다.
 - `/tk:gap`은 SoT와 Current Implementation을 한 번 비교해 missing, mismatch, overbuilt, ambiguous를 분류하고 evidence, impact, priority, suggested fix를 보고한다. workflow를 생성하거나 freeze하지 않는다.
