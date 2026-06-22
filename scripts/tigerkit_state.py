@@ -157,6 +157,11 @@ LOOP_MOTIFS = {
 }
 VALID_LOOP_TYPES = {"bugfix", "refactor", "flaky-test", "unknown"}
 VALID_MOTIFS = set(LOOP_MOTIFS.values())
+LOOP_SPEC_REQUIRED_TOP_LEVEL_KEYS = {"schemaVersion", "specId", "task", "context", "readiness", "scope", "guards", "steps", "verifiers"}
+LOOP_SPEC_TOP_LEVEL_KEYS = LOOP_SPEC_REQUIRED_TOP_LEVEL_KEYS | {"blockers", "execution"}
+LOOP_SPEC_SCOPE_KEYS = {"modify", "create", "delete", "exclude", "globSemantics", "fingerprintAlgorithm"}
+LOOP_SPEC_EXECUTION_KEYS = {"executorRecommendation", "budget", "successConditions", "stopConditions", "escalationConditions"}
+LOOP_SPEC_BUDGET_KEYS = {"maxIterations", "maxMinutes"}
 SECRET_NAME_RE = re.compile(r"(^|[._/-])(env|secret|secrets|credential|credentials|token|tokens|key|keys|passwd|password)([._/-]|$)", re.I)
 MAX_HASH_BYTES = 256_000
 SECRET_VALUE_RE = re.compile(r"(?i)\b(api[_-]?key|token|secret|password|passwd)\s*[:=]\s*([^\s]+)")
@@ -607,16 +612,16 @@ def extract_yaml_string(text: str, key: str) -> str | None:
 def cmd_loop_spec_validate(args: argparse.Namespace, repo_root: Path) -> int:
     path = resolve_loop_spec_path(repo_root, args.spec)
     text = read_yamlish_text(path)
-    required_tokens = ["schemaVersion: tigerkit.loop-spec/v2", "specId:", "task:", "context:", "readiness:", "scope:", "guards:", "steps:", "verifiers:"]
-    missing = [tok for tok in required_tokens if tok not in text]
-    schema = "invalid" if missing else "valid"
+    errors = loop_spec_structure_errors(text)
+    schema_version = extract_yaml_string(text, "schemaVersion")
+    if schema_version != "tigerkit.loop-spec/v2":
+        errors.append("schemaVersion must be tigerkit.loop-spec/v2")
     readiness = extract_yaml_string(text, "readiness")
-    if readiness == "complete" and "execution:" not in text:
-        missing.append("execution:")
-        schema = "invalid"
+    if readiness == "complete" and not has_top_level_key(text, "execution"):
+        errors.append("missing top-level key: execution")
     if readiness == "blocked" and "executorRecommendation:" in text:
-        schema = "invalid"
-        missing.append("blocked spec must not include executorRecommendation")
+        errors.append("blocked spec must not include executorRecommendation")
+    schema = "invalid" if errors else "valid"
     stored_head = extract_yaml_string(text, "headSha")
     current_head = git("rev-parse", "HEAD", cwd=repo_root)
     context = "unknown"
@@ -625,9 +630,9 @@ def cmd_loop_spec_validate(args: argparse.Namespace, repo_root: Path) -> int:
     print(f"LoopSpec: {path}")
     print(f"Schema: {schema}")
     print(f"Context: {context}")
-    if missing:
-        print("Missing")
-        for item in missing:
+    if errors:
+        print("Invalid")
+        for item in errors:
             print(f"  - {item}")
     if context == "stale":
         print("Recommendation")
@@ -739,6 +744,59 @@ def yaml_section(text: str, key: str) -> list[str]:
     return out
 
 
+def has_top_level_key(text: str, key: str) -> bool:
+    return bool(re.search(rf"^{re.escape(key)}:\s*", text, re.M))
+
+
+def top_level_keys(text: str) -> set[str]:
+    return set(re.findall(r"^([A-Za-z0-9_.-]+):\s*", text, re.M))
+
+
+def direct_section_keys(lines: list[str]) -> set[str]:
+    found: list[tuple[int, str]] = []
+    for line in lines:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("-"):
+            continue
+        m = re.match(r"^([A-Za-z0-9_.-]+):\s*(?:.*)$", stripped)
+        if m:
+            found.append((len(line) - len(line.lstrip(" ")), m.group(1)))
+    if not found:
+        return set()
+    base = min(indent for indent, _ in found)
+    return {key for indent, key in found if indent == base}
+
+
+def section_has_key(lines: list[str], key: str) -> bool:
+    return any(re.match(rf"^{re.escape(key)}:\s*(?:.*)$", line.strip()) for line in lines)
+
+
+def parse_yaml_scalar(raw: str) -> Any:
+    raw = raw.strip()
+    if raw in {"true", "false"}:
+        return raw == "true"
+    if raw == "null":
+        return None
+    if raw.startswith('"') and raw.endswith('"'):
+        try:
+            return json.loads(raw)
+        except Exception:
+            return raw.strip('"')
+    if raw.startswith("'") and raw.endswith("'"):
+        return raw.strip("'")
+    if re.fullmatch(r"-?[0-9]+", raw):
+        return int(raw)
+    return raw
+
+
+def scalar_from_section(lines: list[str], key: str) -> Any:
+    for line in lines:
+        m = re.match(rf"^{re.escape(key)}:\s*(.+?)\s*$", line.strip())
+        if m:
+            return parse_yaml_scalar(m.group(1))
+    return None
+
+
 def scalar_list_from_section(lines: list[str], key: str) -> list[str]:
     result: list[str] = []
     active_indent: int | None = None
@@ -795,6 +853,41 @@ def object_list_from_section(lines: list[str]) -> list[dict[str, Any]]:
     return items
 
 
+def valid_object_list(lines: list[str], required_keys: set[str]) -> bool:
+    items = object_list_from_section(lines)
+    return bool(items) and all(set(item) == required_keys and all(isinstance(item.get(key), str) and item.get(key) for key in required_keys) for item in items)
+
+
+def loop_spec_structure_errors(text: str) -> list[str]:
+    errors: list[str] = []
+    present = top_level_keys(text)
+    for key in sorted(present - LOOP_SPEC_TOP_LEVEL_KEYS):
+        errors.append(f"unknown top-level key: {key}")
+    for key in sorted(LOOP_SPEC_REQUIRED_TOP_LEVEL_KEYS - present):
+        errors.append(f"missing top-level key: {key}")
+    scope_lines = yaml_section(text, "scope")
+    scope_keys = direct_section_keys(scope_lines)
+    for key in sorted(scope_keys - LOOP_SPEC_SCOPE_KEYS):
+        errors.append(f"unknown scope key: {key}")
+    if "scope" in present:
+        for key in ("modify", "create", "delete", "exclude"):
+            if key not in scope_keys:
+                errors.append(f"missing scope key: {key}")
+    if "execution" in present:
+        execution_lines = yaml_section(text, "execution")
+        execution_keys = direct_section_keys(execution_lines)
+        for key in sorted(execution_keys - LOOP_SPEC_EXECUTION_KEYS):
+            errors.append(f"unknown execution key: {key}")
+        budget_lines = yaml_section("\n".join(execution_lines), "budget")
+        for key in sorted(direct_section_keys(budget_lines) - LOOP_SPEC_BUDGET_KEYS):
+            errors.append(f"unknown budget key: {key}")
+    if "guards" in present and not valid_object_list(yaml_section(text, "guards"), {"id", "rule"}):
+        errors.append("invalid guards")
+    if "steps" in present and not valid_object_list(yaml_section(text, "steps"), {"id", "summary"}):
+        errors.append("invalid steps")
+    return errors
+
+
 def has_glob(value: str) -> bool:
     return any(ch in value for ch in "*?[")
 
@@ -813,6 +906,8 @@ def validate_scope(scope: dict[str, list[str]]) -> None:
 
 def parse_loop_spec_for_execute(path: Path, repo_root: Path) -> dict[str, Any]:
     text = read_yamlish_text(path)
+    if loop_spec_structure_errors(text):
+        raise ValueError("invalid_loop_spec")
 
     def req(key: str) -> str:
         value = extract_yaml_string(text, key)
@@ -826,11 +921,24 @@ def parse_loop_spec_for_execute(path: Path, repo_root: Path) -> dict[str, Any]:
     readiness = req("readiness")
     if readiness == "blocked":
         raise ValueError("blocked_loop_spec")
-    if readiness != "complete":
+    if readiness != "complete" or not has_top_level_key(text, "execution"):
         raise ValueError("invalid_loop_spec")
-    executor = req("executorRecommendation")
-    if executor not in {"fast", "reasoning"}:
+    execution_lines = yaml_section(text, "execution")
+    if not section_has_key(execution_lines, "executorRecommendation"):
         raise ValueError("missing_executor_recommendation")
+    executor = scalar_from_section(execution_lines, "executorRecommendation")
+    if executor not in {"fast", "reasoning"}:
+        raise ValueError("invalid_loop_spec")
+    for key in ("budget", "successConditions", "stopConditions", "escalationConditions"):
+        if not section_has_key(execution_lines, key):
+            raise ValueError("invalid_loop_spec")
+    budget: dict[str, Any] = {}
+    for key in ("maxIterations", "maxMinutes"):
+        value = scalar_from_section(yaml_section("\n".join(execution_lines), "budget"), key)
+        if value is not None:
+            if not isinstance(value, int) or isinstance(value, bool) or value < 1:
+                raise ValueError("invalid_loop_spec")
+            budget[key] = value
     parsed = {
         "path": path,
         "text": text,
@@ -842,13 +950,24 @@ def parse_loop_spec_for_execute(path: Path, repo_root: Path) -> dict[str, Any]:
         "fingerprint": req("fingerprint"),
         "scope": {"modify": [], "create": [], "delete": [], "exclude": []},
         "verifiers": [],
+        "execution": {
+            "budget": budget,
+            "successConditions": scalar_list_from_section(execution_lines, "successConditions"),
+            "stopConditions": scalar_list_from_section(execution_lines, "stopConditions"),
+            "escalationConditions": scalar_list_from_section(execution_lines, "escalationConditions"),
+        },
     }
     scope_lines = yaml_section(text, "scope")
+    if not all(section_has_key(scope_lines, key) for key in ("modify", "create", "delete", "exclude")):
+        raise ValueError("invalid_loop_spec")
     parsed["scope"] = {key: scalar_list_from_section(scope_lines, key) for key in ("modify", "create", "delete", "exclude")}
     validate_scope(parsed["scope"])
     parsed["verifiers"] = object_list_from_section(yaml_section(text, "verifiers"))
     if not parsed["verifiers"]:
         raise ValueError("invalid_loop_spec")
+    for verifier in parsed["verifiers"]:
+        if set(verifier) != {"id", "command", "required"} or not isinstance(verifier.get("id"), str) or not verifier.get("id") or not isinstance(verifier.get("command"), str) or not verifier.get("command") or not isinstance(verifier.get("required"), bool):
+            raise ValueError("invalid_loop_spec")
     if parsed["repoKey"] != repo_key(repo_root):
         raise ValueError("repository_identity_mismatch")
     if parsed["scopeKey"] != scope_key(repo_root):
@@ -935,7 +1054,7 @@ def verifier_reason(status: str, exit_code: int | None, reason_code: str | None)
     if reason_code == "not_attempted_due_to_budget":
         return "budget_exhausted"
     if reason_code == "not_attempted_due_to_unavailable_tool" or exit_code == 127:
-        return "required_tool_unavailable"
+        return "required_verifier_unavailable"
     if status == "error":
         return "verifier_error"
     return "verifier_failed"
@@ -956,13 +1075,51 @@ def run_verifier(repo_root: Path, verifier: dict[str, Any], timeout_seconds: int
         result.update({"status": "error", "reasonCode": "process_start_error", "message": str(exc)})
         return result
     result["exitCode"] = proc.returncode
-    result["status"] = "passed" if proc.returncode == 0 else "failed"
     if proc.returncode == 127:
-        result["reasonCode"] = "not_attempted_due_to_unavailable_tool"
+        result.update({"status": "not_run", "reasonCode": "not_attempted_due_to_unavailable_tool"})
+    else:
+        result["status"] = "passed" if proc.returncode == 0 else "failed"
     return result
 
 
-def claimed_schema_error(claimed: dict[str, Any], expected_execution_id: str, expected_spec_id: str, expected_executor: str) -> str | None:
+CLAIMED_REASON_CODES = {"plan_deviation_required", "scope_expansion_required", "executor_capability_mismatch", "scope_violation", "excluded_path_modified", "unapproved_path_created", "unapproved_path_deleted", "claimed_observed_mismatch", "executor_error", "required_tool_unavailable", "verifier_failed", "verifier_error", "verifier_timed_out", "budget_exhausted", "success_condition_not_met", "transient_runtime_failure"}
+CLAIMED_VERIFIER_REASON_CODES = {"process_start_error", "environment_error", "harness_error", "timeout_exceeded", "not_attempted_due_to_escalation", "not_attempted_due_to_prior_failure", "not_attempted_due_to_budget", "not_attempted_due_to_unavailable_tool", "not_attempted_due_to_invalid_final_state"}
+
+
+def is_unique_string_list(value: Any, allowed_values: set[str] | None = None) -> bool:
+    return isinstance(value, list) and all(isinstance(item, str) and (allowed_values is None or item in allowed_values) for item in value) and len(value) == len(set(value))
+
+
+def valid_claimed_verifier(item: Any) -> bool:
+    if not isinstance(item, dict) or not {"id", "status", "exitCode"} <= set(item) or set(item) - {"id", "status", "exitCode", "reasonCode", "message"}:
+        return False
+    status = item.get("status")
+    if not isinstance(item.get("id"), str) or not item.get("id") or status not in {"passed", "failed", "error", "timed_out", "not_run"}:
+        return False
+    if item.get("exitCode") is not None and (not isinstance(item.get("exitCode"), int) or isinstance(item.get("exitCode"), bool)):
+        return False
+    if status in {"passed", "failed"} and "reasonCode" in item:
+        return False
+    if status in {"error", "timed_out", "not_run"} and item.get("reasonCode") not in CLAIMED_VERIFIER_REASON_CODES:
+        return False
+    if "message" in item and (not isinstance(item.get("message"), str) or not item.get("message")):
+        return False
+    return True
+
+
+def valid_reason_detail(item: Any) -> bool:
+    if not isinstance(item, dict) or "code" not in item or set(item) - {"code", "message", "verifierId"}:
+        return False
+    if item.get("code") not in CLAIMED_REASON_CODES:
+        return False
+    if "message" in item and (not isinstance(item.get("message"), str) or not item.get("message")):
+        return False
+    if "verifierId" in item and (not isinstance(item.get("verifierId"), str) or not item.get("verifierId")):
+        return False
+    return True
+
+
+def claimed_schema_error(claimed: dict[str, Any], expected_execution_id: str, expected_spec_id: str, expected_executor: str, declared_verifier_ids: set[str] | None = None) -> str | None:
     allowed = {"schemaVersion", "executionId", "specId", "executor", "outcome", "changedPaths", "verifierResults", "reasonCodes", "reasonDetails", "safeToRetry", "cleanupRequired"}
     if set(claimed) - allowed:
         return "unknown field"
@@ -973,15 +1130,25 @@ def claimed_schema_error(claimed: dict[str, Any], expected_execution_id: str, ex
         return "identity mismatch"
     if claimed.get("outcome") not in {"completed", "escalated", "failed"}:
         return "invalid outcome"
-    for key in ("changedPaths", "verifierResults", "reasonCodes", "reasonDetails"):
-        if not isinstance(claimed.get(key), list):
-            return f"invalid {key}"
+    if not is_unique_string_list(claimed.get("changedPaths")):
+        return "invalid changedPaths"
+    if not isinstance(claimed.get("verifierResults"), list) or not all(valid_claimed_verifier(item) for item in claimed.get("verifierResults")):
+        return "invalid verifierResults"
+    verifier_ids = [item["id"] for item in claimed.get("verifierResults")]
+    if len(verifier_ids) != len(set(verifier_ids)):
+        return "invalid verifierResults"
+    if declared_verifier_ids is not None and any(verifier_id not in declared_verifier_ids for verifier_id in verifier_ids):
+        return "invalid verifierResults"
+    if not is_unique_string_list(claimed.get("reasonCodes"), CLAIMED_REASON_CODES):
+        return "invalid reasonCodes"
+    if not isinstance(claimed.get("reasonDetails"), list) or not all(valid_reason_detail(item) for item in claimed.get("reasonDetails")):
+        return "invalid reasonDetails"
     if not isinstance(claimed.get("safeToRetry"), bool) or not isinstance(claimed.get("cleanupRequired"), bool):
         return "invalid retry cleanup flags"
     return None
 
 
-def parse_claimed_result(text: str, execution_id: str, spec_id: str, executor: str) -> tuple[dict[str, Any] | None, str | None]:
+def parse_claimed_result(text: str, execution_id: str, spec_id: str, executor: str, declared_verifier_ids: set[str] | None = None) -> tuple[dict[str, Any] | None, str | None]:
     candidates: list[str] = []
     stripped = text.strip()
     if stripped.startswith("{"):
@@ -995,7 +1162,7 @@ def parse_claimed_result(text: str, execution_id: str, spec_id: str, executor: s
         except Exception:
             continue
         if isinstance(value, dict):
-            error = claimed_schema_error(value, execution_id, spec_id, executor)
+            error = claimed_schema_error(value, execution_id, spec_id, executor, declared_verifier_ids)
             return (value, None) if error is None else (None, error)
     return None, "missing or malformed claimed-result envelope"
 
@@ -1035,8 +1202,9 @@ def classify_claimed_observed_mismatch(claimed: dict[str, Any] | None, changed_p
 def unique_reason_details(codes: list[str], existing: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
     details: list[dict[str, Any]] = []
     seen: set[tuple[str, str | None]] = set()
+    code_set = set(codes)
     for detail in existing or []:
-        if not isinstance(detail, dict) or not isinstance(detail.get("code"), str):
+        if not isinstance(detail, dict) or detail.get("code") not in code_set:
             continue
         key = (detail["code"], detail.get("verifierId"))
         if key not in seen:
@@ -1050,7 +1218,7 @@ def unique_reason_details(codes: list[str], existing: list[dict[str, Any]] | Non
     return details
 
 
-def recommended_actions(result: str, reasons: list[str]) -> list[str]:
+def recommended_actions(result: str, reasons: list[str], safe_to_retry: bool, cleanup_required: bool, changed_paths: list[str]) -> list[str]:
     mapping = {
         "hard_enforcement_unavailable": "refresh_capability_proof",
         "scope_violation": "inspect_scope_violation",
@@ -1060,6 +1228,7 @@ def recommended_actions(result: str, reasons: list[str]) -> list[str]:
         "claimed_observed_mismatch": "review_partial_changes",
         "baseline_dirty_path_modified": "review_partial_changes",
         "executor_error": "retry_execute",
+        "required_verifier_unavailable": "restore_required_tool",
         "required_tool_unavailable": "restore_required_tool",
         "verifier_failed": "review_partial_changes",
         "verifier_error": "retry_execute",
@@ -1071,6 +1240,8 @@ def recommended_actions(result: str, reasons: list[str]) -> list[str]:
         action = mapping.get(reason)
         if action and action not in actions:
             actions.append(action)
+    if not safe_to_retry or cleanup_required or changed_paths:
+        actions = [action for action in actions if action != "retry_execute"]
     if not actions and result != "completed":
         actions.append("review_partial_changes")
     return actions
@@ -1112,6 +1283,9 @@ def final_receipt(repo_root: Path, parsed: dict[str, Any], execution_id: str, ba
     else:
         result = "completed"
         reasons = []
+    observed_cleanup_required = bool(violations or changed_paths)
+    cleanup_required = observed_cleanup_required or bool(claimed.get("cleanupRequired")) if claimed else observed_cleanup_required
+    safe_to_retry = (bool(claimed.get("safeToRetry")) if claimed else result != "completed") and not observed_cleanup_required
     receipt: dict[str, Any] = {
         "schemaVersion": "tigerkit.execution-receipt/v1",
         "executionId": execution_id,
@@ -1124,9 +1298,9 @@ def final_receipt(repo_root: Path, parsed: dict[str, Any], execution_id: str, ba
         "baseline": baseline,
         "observed": {"changedPaths": changed_paths, "scopeViolations": violations, "baselineDirtyPathsModified": baseline_dirty_modified, "claimedObservedMismatch": mismatch},
         "postflightVerifiers": postflight,
-        "safeToRetry": bool(claimed.get("safeToRetry")) if claimed else result != "completed",
-        "cleanupRequired": bool(violations or changed_paths) if not claimed else bool(claimed.get("cleanupRequired")),
-        "recommendedActions": recommended_actions(result, reasons),
+        "safeToRetry": safe_to_retry,
+        "cleanupRequired": cleanup_required,
+        "recommendedActions": recommended_actions(result, reasons, safe_to_retry, cleanup_required, changed_paths),
     }
     if claimed:
         receipt["claimed"] = {"outcome": claimed["outcome"], "changedPaths": claimed["changedPaths"], "verifierResults": claimed["verifierResults"], "reasonCodes": claimed["reasonCodes"], "reasonDetails": claimed["reasonDetails"]}
@@ -1214,7 +1388,8 @@ def run_executor(repo_root: Path, parsed: dict[str, Any], execution_id: str) -> 
             pass
     if proc.returncode != 0:
         return None, "executor process failed"
-    return parse_claimed_result(proc.stdout, execution_id, parsed["specId"], parsed["executor"])
+    declared_verifier_ids = {str(verifier["id"]) for verifier in parsed["verifiers"]}
+    return parse_claimed_result(proc.stdout, execution_id, parsed["specId"], parsed["executor"], declared_verifier_ids)
 
 
 def cmd_execute(args: argparse.Namespace) -> int:
@@ -1249,6 +1424,13 @@ def cmd_execute(args: argparse.Namespace) -> int:
             path = persist_receipt(repo_root, receipt)
             print(render_execute_receipt(receipt, path, executor))
             return 1
+    except SystemExit as exc:
+        if not str(exc).startswith("cannot read LoopSpec:"):
+            raise
+        receipt = rejected_receipt(spec_id, execution_id, "spec_not_found", f"LoopSpec not found or unreadable: {spec_path}")
+        path = persist_receipt(repo_root, receipt)
+        print(render_execute_receipt(receipt, path, executor))
+        return 1
     except FileNotFoundError:
         receipt = rejected_receipt(spec_id, execution_id, "spec_not_found", f"LoopSpec not found: {spec_path}")
         path = persist_receipt(repo_root, receipt)
