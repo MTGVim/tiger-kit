@@ -43,7 +43,9 @@ gap = source of truth ↔ current implementation one-shot comparison
    - `overbuilt`: SoT 밖 구현이 surface 확장, 사용자 혼란, 유지보수 비용, 숨은 자동화 기대를 만듦.
    - `ambiguous`: source conflict, missing owner decision, inaccessible source, producer evidence 부족.
 6. 각 finding은 최소한 SoT, Current, Evidence, Impact, Priority, Suggested fix를 포함합니다.
-7. 모호한 source를 조용히 병합하지 않습니다.
+7. actionable finding에는 `direct | loop-spec | decision` route를 제안하고 route 이유를 evidence identifier와 연결합니다.
+8. non-actionable finding에는 route를 강제하지 않습니다.
+9. 모호한 source를 조용히 병합하지 않습니다.
 
 ## Priority
 
@@ -70,6 +72,8 @@ gap = source of truth ↔ current implementation one-shot comparison
 - Impact:
 - Priority:
 - Suggested fix:
+- Route: direct | loop-spec | decision
+- Route evidence:
 
 ## Ambiguities / Missing Evidence
 

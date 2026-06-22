@@ -1,6 +1,6 @@
 # TigerKit 운영 사용법
 
-이 문서는 TigerKit command surface 사용 가이드입니다. 산출물 위치는 `.tigerkit/docs/artifact-layout.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
+이 문서는 TigerKit command surface 사용 가이드입니다. 산출물 위치는 `.tigerkit/docs/artifact-layout.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`, 실행 support set은 `support/execute-support-matrix.json`을 기준으로 봅니다.
 
 ## 언어
 
@@ -9,21 +9,24 @@
 ## 핵심 모델
 
 ```text
-TigerKit = gap + reflect + loop-spec
+TigerKit = gap + loop-spec + execute + reflect
 ```
 
-- `gap`: SoT와 Current Implementation의 차이를 한 번 분석합니다. evidence-first로 읽고, source conflict나 근거 부족은 `ambiguous`로 남깁니다.
-- `reflect`: 세션 result와 feedback에서 재사용 가능한 learning을 preview-first promotion result로 분류합니다.
-- `loop-spec`: 명시적 task를 read-only worktree scan 기반의 실행 없는 LoopSpec recommendation으로 컴파일하거나 검증합니다.
+- `gap`: SoT와 Current Implementation의 차이를 한 번 분석합니다. evidence-first로 읽고 source conflict나 근거 부족은 `ambiguous`로 남깁니다.
+- `loop-spec`: 명시적 task를 read-only worktree scan 기반 `tigerkit.loop-spec/v2` 실행 계약으로 컴파일하거나 검증합니다.
+- `execute`: 사용자가 직접 호출한 LoopSpec v2 하나를 bounded execution dispatcher로 검증하고 execution receipt를 저장합니다.
+- `reflect`: 세션 result와 persisted execution receipt에서 재사용 가능한 learning을 preview-first promotion result로 분류합니다.
 
-Core `tk` plugin은 hook-free입니다. Active command surface는 `/tk:gap`, `/tk:reflect`, `/tk:loop-spec`입니다.
+TigerKit은 bounded execution surface를 제공하지만 general autopilot 또는 workflow engine이 아닙니다.
 
 ## Core guidance
 
 - SoT가 있으면 구현 전에 `/tk:gap`을 먼저 고려합니다.
 - SoT가 없으면 먼저 SoT 제공을 제안합니다.
 - 사용자가 바로 진행을 원하면 `/tk:gap` 없이 진행할 수 있지만, 그 경우 가정과 불확실성을 명시합니다.
-- 의미 있는 작업이 끝나면 `/tk:reflect`를 고려합니다.
+- `/tk:loop-spec`은 source를 수정하지 않습니다.
+- `/tk:execute`는 user-only write boundary입니다.
+- Legacy LoopSpec은 자동 변환하지 않고 regenerate해야 합니다.
 - `/tk:reflect` 기본값은 preview-only입니다.
 
 ## Command Surface
@@ -31,18 +34,37 @@ Core `tk` plugin은 hook-free입니다. Active command surface는 `/tk:gap`, `/t
 | Command | 역할 | 저장 성격 |
 |---|---|---|
 | `/tk:gap` | SoT와 Current를 비교해 missing, mismatch, overbuilt, ambiguous를 보고합니다. | optional external generated report |
-| `/tk:reflect` | session result와 feedback에서 개선 후보를 canonical target으로 분류합니다. | promotion candidates |
-| `/tk:loop-spec` | 명시적 task와 현재 worktree capability를 읽기 전용으로 분석해 LoopSpec recommendation을 생성하거나 검증합니다. | worktree-scoped generated spec |
+| `/tk:loop-spec` | 명시적 task와 현재 worktree capability를 읽기 전용으로 분석해 LoopSpec v2를 생성하거나 검증합니다. | worktree-scoped generated spec |
+| `/tk:execute` | LoopSpec v2 하나를 user-only bounded execution dispatcher로 검증하고 receipt를 저장합니다. | immutable execution receipt |
+| `/tk:reflect` | session result, feedback, execution receipt에서 개선 후보를 canonical target으로 분류합니다. | promotion candidates |
 
 ## 사용 예시
 
 ```text
 /tk:gap "PRD와 현재 구현 차이 봐줘" --target src/auth
-/tk:reflect --target repo --apply=false
-/tk:reflect --target repo-local --apply=true
 /tk:loop-spec "결제 모달 scroll 복구 버그 수정"
 /tk:loop-spec validate <spec-id-or-path>
+/tk:execute <spec-id-or-path>
+/tk:reflect --target repo --apply=false
+/tk:reflect --target repo-local --apply=true
 ```
+
+## Execute model
+
+`/tk:execute`는 아래 순서를 따릅니다.
+
+1. spec ID/path 하나를 resolve합니다.
+2. `tigerkit.loop-spec/v2`만 허용합니다.
+3. `readiness: complete`와 `executorRecommendation: fast | reasoning`을 요구합니다.
+4. stale, legacy, blocked, invalid spec을 reject합니다.
+5. current environment key와 runtime binding을 helper가 canonicalize합니다.
+6. `support/execute-support-matrix.json`의 matching public entry와 packaged proof를 확인합니다.
+7. hard-boundary proof가 없으면 `hard_enforcement_unavailable`로 reject합니다.
+8. proof가 있으면 정확히 하나의 executor에 위임합니다.
+9. dispatcher가 required verifier를 postflight로 재실행합니다.
+10. receipt를 `~/.tigerkit/.../executions/<execution-id>.yaml`에 atomic write합니다.
+
+현재 package는 `hook_gate` boundary component를 포함하지만 public stable execution proof는 support matrix에서 `preview`로 표시됩니다.
 
 ## Reflect target model
 
@@ -64,80 +86,11 @@ Legacy selector:
 
 `/tk:reflect --apply=true`가 파일을 쓸 수 있는 유일한 target은 eligibility를 통과한 `<git-root>/CLAUDE.local.md`입니다.
 
-Write eligibility는 아래를 요구합니다.
-
-- fixed invocation cwd
-- discovered git root
-- all Git checks via `git -C <git-root>`
-- root-relative literal path operand `CLAUDE.local.md`
-- reject non-git workspace
-- reject tracked local file
-- reject not ignored local file
-- reject symlink
-- reject path outside repo
-- reject Git command errors
-
 Apply는 current invocation apply plan, exact apply set, base/result sha256, planned result bytes, exact unified diff, all-or-nothing, stale plan rejection, post-write verification, rollback receipt를 요구합니다.
 
 ## Generated state
 
 Active TigerKit generated state는 project repository 밖 `~/.tigerkit` 아래의 file-only state입니다. `.claude/tigerkit`는 legacy/migration context로만 남기고 새 runtime write path로 사용하지 않습니다.
-
-실제 active write helper는 현재 작업 repo 상대경로를 쓰지 않습니다. `CLAUDE_PLUGIN_ROOT`가 비어 있거나 marketplace mirror를 가리킬 수 있으므로, **설치된 TigerKit plugin cache/installPath에서 helper를 발견한 뒤** 호출합니다.
-
-```bash
-TIGERKIT_STATE_SCRIPT="$({
-python3 - <<'PY'
-import json, re, subprocess
-from pathlib import Path
-
-def version_key_text(text: str):
-    try:
-        return tuple(int(part) for part in text.split('.'))
-    except Exception:
-        return (0,)
-
-def version_key_path(path: Path):
-    return version_key_text(path.parent.parent.name)
-
-def cache_path_for_version(version: str):
-    path = Path.home() / '.claude/plugins/cache/tiger-kit/tk' / version / 'scripts' / 'tigerkit_state.py'
-    return path if path.is_file() else None
-
-candidates = []
-seen = set()
-try:
-    details = subprocess.check_output(['claude', 'plugin', 'details', 'tk'], text=True)
-    first = details.splitlines()[0].strip()
-    match = re.match(r'^tk\s+(\d+(?:\.\d+)*)$', first)
-    if match:
-        path = cache_path_for_version(match.group(1))
-        if path:
-            candidates.append(path)
-            seen.add(str(path))
-except Exception:
-    pass
-try:
-    plugins = json.loads(subprocess.check_output(['claude', 'plugin', 'list', '--json'], text=True))
-except Exception:
-    plugins = []
-for item in plugins:
-    if item.get('id') == 'tk@tiger-kit' and item.get('enabled'):
-        path = Path(item.get('installPath', '')) / 'scripts' / 'tigerkit_state.py'
-        if path.is_file() and str(path) not in seen:
-            candidates.append(path)
-            seen.add(str(path))
-for path in sorted(Path.home().glob('.claude/plugins/cache/tiger-kit/tk/*/scripts/tigerkit_state.py'), key=version_key_path, reverse=True):
-    if str(path) not in seen:
-        candidates.append(path)
-        seen.add(str(path))
-if not candidates:
-    raise SystemExit('TigerKit helper not found in installed plugin cache. Run `claude plugin marketplace update tiger-kit` and reinstall/update `tk@tiger-kit`.')
-print(candidates[0])
-PY
-})"
-python3 "$TIGERKIT_STATE_SCRIPT" write-gap --repo-root "$PWD" --report-file /absolute/path/to/final-gap-report.md
-```
 
 주요 active path:
 
@@ -146,15 +99,15 @@ python3 "$TIGERKIT_STATE_SCRIPT" write-gap --repo-root "$PWD" --report-file /abs
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/current.md
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/branch-state.json
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/loop-specs/<spec-id>/spec.yaml
+~/.tigerkit/repos/<repo-key>/branches/<scope-key>/executions/<execution-id>.yaml
+~/.tigerkit/capabilities/execute-write-boundary/<plugin-version>/<environment-key>/proof.yaml
 ```
 
 ## Legacy state
 
-Core `tk` plugin은 active `SessionStart` hook을 제공하지 않습니다. 기존 decline marker는 inactive legacy state로만 보존하며 core command/runtime이 읽거나 쓰지 않습니다.
+기존 decline marker는 inactive legacy state로만 보존하며 core command/runtime이 읽거나 쓰지 않습니다.
 
 ```text
 ~/.tigerkit/local/session-start/worktree-context-declines.json
 .claude/tigerkit/local/session-start/worktree-context-declines.json
 ```
-
-이 legacy marker는 자동 삭제하거나 자동 이관하지 않으며 core command/runtime이 읽거나 쓰지 않습니다.

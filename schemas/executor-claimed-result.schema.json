@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tigerkit.executor-claimed-result/v1",
+  "title": "TigerKit executor claimed result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "executionId", "specId", "executor", "outcome", "changedPaths", "verifierResults", "reasonCodes", "reasonDetails", "safeToRetry", "cleanupRequired"],
+  "properties": {
+    "schemaVersion": {"const": "tigerkit.executor-claimed-result/v1"},
+    "executionId": {"type": "string", "minLength": 1},
+    "specId": {"type": "string", "minLength": 1},
+    "executor": {"enum": ["fast", "reasoning"]},
+    "outcome": {"enum": ["completed", "escalated", "failed"]},
+    "changedPaths": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "verifierResults": {"type": "array", "items": {"$ref": "#/$defs/claimedVerifier"}},
+    "reasonCodes": {"type": "array", "items": {"$ref": "#/$defs/reasonCode"}, "uniqueItems": true},
+    "reasonDetails": {"type": "array", "items": {"$ref": "#/$defs/reasonDetail"}},
+    "safeToRetry": {"type": "boolean"},
+    "cleanupRequired": {"type": "boolean"}
+  },
+  "$defs": {
+    "reasonCode": {"enum": ["plan_deviation_required", "scope_expansion_required", "executor_capability_mismatch", "scope_violation", "excluded_path_modified", "unapproved_path_created", "unapproved_path_deleted", "claimed_observed_mismatch", "executor_error", "required_tool_unavailable", "verifier_failed", "verifier_error", "verifier_timed_out", "budget_exhausted", "success_condition_not_met", "transient_runtime_failure"]},
+    "reasonDetail": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code"],
+      "properties": {
+        "code": {"$ref": "#/$defs/reasonCode"},
+        "message": {"type": "string", "minLength": 1},
+        "verifierId": {"type": "string", "minLength": 1}
+      }
+    },
+    "claimedVerifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "exitCode"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "status": {"enum": ["passed", "failed", "error", "timed_out", "not_run"]},
+        "exitCode": {"type": ["integer", "null"]},
+        "reasonCode": {"enum": ["process_start_error", "environment_error", "harness_error", "timeout_exceeded", "not_attempted_due_to_escalation", "not_attempted_due_to_prior_failure", "not_attempted_due_to_budget", "not_attempted_due_to_unavailable_tool", "not_attempted_due_to_invalid_final_state"]},
+        "message": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

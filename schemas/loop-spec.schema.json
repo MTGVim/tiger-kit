@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tigerkit.loop-spec/v2",
+  "title": "TigerKit LoopSpec v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "specId", "task", "context", "readiness", "scope", "guards", "steps", "verifiers"],
+  "properties": {
+    "schemaVersion": {"const": "tigerkit.loop-spec/v2"},
+    "specId": {"type": "string", "minLength": 1},
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "type"],
+      "properties": {
+        "title": {"type": "string", "minLength": 1},
+        "type": {"enum": ["bugfix", "refactor", "flaky-test", "unknown"]},
+        "description": {"type": "string"}
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repoKey", "scopeKey", "headSha", "fingerprint"],
+      "properties": {
+        "repoKey": {"type": "string", "minLength": 1},
+        "scopeKey": {"type": "string", "minLength": 1},
+        "branch": {"type": "string"},
+        "headSha": {"type": "string", "minLength": 1},
+        "fingerprint": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    },
+    "readiness": {"enum": ["complete", "blocked"]},
+    "blockers": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/blocker"}
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["modify", "create", "delete", "exclude"],
+      "properties": {
+        "modify": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "create": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "delete": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "exclude": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "globSemantics": {"const": "tigerkit-glob/v1"},
+        "fingerprintAlgorithm": {"const": "sha256-path-content-v1"}
+      }
+    },
+    "guards": {"type": "array", "items": {"$ref": "#/$defs/guard"}},
+    "steps": {"type": "array", "items": {"$ref": "#/$defs/step"}, "minItems": 1},
+    "verifiers": {"type": "array", "items": {"$ref": "#/$defs/verifier"}},
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["executorRecommendation", "budget", "successConditions", "stopConditions", "escalationConditions"],
+      "properties": {
+        "executorRecommendation": {"enum": ["fast", "reasoning"]},
+        "budget": {"type": "object", "additionalProperties": false, "properties": {"maxIterations": {"type": "integer", "minimum": 1}, "maxMinutes": {"type": "integer", "minimum": 1}}},
+        "successConditions": {"type": "array", "items": {"type": "string"}},
+        "stopConditions": {"type": "array", "items": {"type": "string"}},
+        "escalationConditions": {"type": "array", "items": {"type": "string"}}
+      },
+      "allOf": [
+        {"if": {"properties": {"executorRecommendation": false}}, "then": false}
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"readiness": {"const": "complete"}}},
+      "then": {"required": ["execution"]}
+    },
+    {
+      "if": {"properties": {"readiness": {"const": "blocked"}}},
+      "then": {"not": {"required": ["execution"]}}
+    }
+  ],
+  "$defs": {
+    "blocker": {"type": "object", "additionalProperties": false, "required": ["id", "reason"], "properties": {"id": {"type": "string", "minLength": 1}, "reason": {"type": "string", "minLength": 1}}},
+    "guard": {"type": "object", "additionalProperties": false, "required": ["id", "rule"], "properties": {"id": {"type": "string", "minLength": 1}, "rule": {"type": "string", "minLength": 1}}},
+    "step": {"type": "object", "additionalProperties": false, "required": ["id", "summary"], "properties": {"id": {"type": "string", "minLength": 1}, "summary": {"type": "string", "minLength": 1}}},
+    "verifier": {"type": "object", "additionalProperties": false, "required": ["id", "command", "required"], "properties": {"id": {"type": "string", "minLength": 1}, "command": {"type": "string", "minLength": 1}, "required": {"type": "boolean"}}}
+  }
+}

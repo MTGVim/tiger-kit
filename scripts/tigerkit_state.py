@@ -2,12 +2,14 @@
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import hashlib
 import json
 import os
 import re
 import subprocess
 import sys
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from tempfile import NamedTemporaryFile
@@ -456,78 +458,67 @@ def build_loop_spec(repo_root: Path, task: str, args: argparse.Namespace) -> tup
     if args.motif and task_type != "unknown" and args.motif != LOOP_MOTIFS.get(task_type):
         raise SystemExit("--type and --motif are incompatible")
     scan = scan_capabilities(repo_root, task)
-    motif, applicability, readiness, blockers, fit, confidence = select_recommendation(task_type, scan, args.motif)
+    motif, applicability, readiness_value, blockers, fit, confidence = select_recommendation(task_type, scan, args.motif)
+    readiness = "complete" if readiness_value == "complete" else "blocked"
     spec_id = next_loop_spec_id(args.name)
     context = context_fingerprint(repo_root, scan)
-    context_policy, budget, params, forbids = motif_defaults(motif)
+    _, budget, _, forbids = motif_defaults(motif)
     command_ref, command_resolution = targeted_command_ref(task_type, scan)
+    verifier_command = scan.get("commands", {}).get(command_ref.rsplit(".", 1)[-1], {}).get("run") or "python3 -m json.tool evals/evals.json >/dev/null"
     repo_key_value = repo_key(repo_root)
     scope_key_value = scope_key(repo_root)
-    reasons = [
-        {"value": f"task-type-{task_type}", "provenance": "declared" if args.type else "assumed", "source": "--type" if args.type else "task-classifier"},
-        {"value": f"package-manager-{scan['packageManager']}", "provenance": "verified", "source": "package.json-or-lockfile"},
-    ]
-    if scan.get("relatedTests"):
-        reasons.append({"value": "test-directories-detected", "provenance": "verified", "source": ",".join(scan["relatedTests"])})
-    spec = {
-        "apiVersion": "tigerkit.dev/v1alpha1",
-        "kind": "LoopSpec",
-        "metadata": {
-            "id": spec_id,
-            "name": args.name or spec_id,
-            "generatedAt": now_iso(),
-            "tigerkitVersion": "0.x",
-            "schemaVersion": "v1alpha1",
-            "motifCatalogVersion": "v1",
-        },
-        "source": {"task": task, "origin": "slash-command"},
-        "worktree": {"repositoryId": repo_key_value, "scopeId": scope_key_value, "branch": git("branch", "--show-current", cwd=repo_root) or "detached-or-workspace"},
-        "context": context,
-        "task": {"type": task_type, "risk": "medium", "properties": {"reproducibility": "medium", "oracleStrength": "high" if scan.get("commands", {}).get("unit", {}).get("run") else "unresolved", "expectedScope": "local", "humanJudgmentDependency": "low"}},
-        "recommendation": {"motif": motif, "applicability": applicability, "fitScore": fit, "confidence": confidence, "reasons": reasons, "alternatives": []},
-        "readiness": {"status": readiness, "blockers": blockers},
-        "repository": {"packageManager": scan["packageManager"], "framework": scan["framework"], "capabilities": scan["capabilities"], "commands": scan["commands"]},
-        "loop": {"contextPolicy": context_policy, "parameters": params, "steps": [
-            {"id": "reproduce" if motif != "inventory-batch-transform-verify" else "inventory", "type": "agent", "objective": "Confirm the working set or failing reproduction."},
-            {"id": "patch" if motif != "inventory-batch-transform-verify" else "transform", "type": "agent", "objective": "Apply the smallest safe change for the selected batch or hypothesis."},
-            {"id": "targeted-verification", "type": "command", "commandRef": command_ref, "required": True, "resolution": command_resolution},
-            {"id": "regression-verification", "type": "command", "commandRefs": ["repository.commands.typecheck", "repository.commands.unit"]},
-            {"id": "review", "type": "manual-checkpoint", "checks": ["no-test-weakening", "no-unrelated-changes", "root-cause-addressed"]},
-        ]},
-        "guards": {"maxChangedFiles": 5, "forbid": forbids},
-        "budget": budget,
-        "success": {"all": ["targeted-verification-passed", "regression-verification-passed", "diff-review-passed"]},
-        "escalate": {"any": ["reproduction-not-obtained", "public-api-change-required", "same-failure-limit-reached", "required-verifier-unresolved"]},
-        "evidence": {"required": ["root-cause", "before-after-proof", "changed-files", "verification-log"]},
+    branch = git("branch", "--show-current", cwd=repo_root) or "detached-or-workspace"
+    spec: dict[str, Any] = {
+        "schemaVersion": "tigerkit.loop-spec/v2",
+        "specId": spec_id,
+        "task": {"title": task, "type": task_type, "description": task},
+        "context": {"repoKey": repo_key_value, "scopeKey": scope_key_value, "branch": branch, "headSha": context["headSha"], "fingerprint": context["fingerprint"]["value"]},
+        "readiness": readiness,
+        "blockers": [{"id": item, "reason": item} for item in blockers],
+        "scope": {"modify": ["**"], "create": [], "delete": [], "exclude": [".git/**", ".env", "**/*.pem", "**/*.key"], "globSemantics": "tigerkit-glob/v1", "fingerprintAlgorithm": "sha256-path-content-v1"},
+        "guards": [{"id": f"guard-{i+1}", "rule": f"No {item}"} for i, item in enumerate(forbids)],
+        "steps": [
+            {"id": "inspect", "summary": "Inspect the current public surface and choose the smallest safe change."},
+            {"id": "patch", "summary": "Edit only declared scope paths."},
+            {"id": "verify", "summary": "Run required verifier commands and preserve exact result."}
+        ],
+        "verifiers": [{"id": "required-validation", "command": verifier_command, "required": True}],
     }
+    if readiness == "complete":
+        spec["execution"] = {
+            "executorRecommendation": "reasoning" if task_type in {"refactor", "flaky-test"} else "fast",
+            "budget": {"maxIterations": int(budget.get("maxIterations", 4)), "maxMinutes": 30},
+            "successConditions": ["required-verifiers-passed", "scope-clean"],
+            "stopConditions": ["same-failure-limit-reached", "budget-exhausted"],
+            "escalationConditions": ["scope-expansion-required", "plan-deviation-required", "required-verifier-unresolved", command_resolution],
+        }
     path = None if args.no_write else loop_spec_dir(repo_root, spec_id) / "spec.yaml"
     return spec, path
 
 
 def render_loop_spec_summary(spec: dict[str, Any], path: Path | None) -> str:
-    rec = spec["recommendation"]
+    execution = spec.get("execution") or {}
+    executor = execution.get("executorRecommendation", "NONE")
     readiness = spec["readiness"]
     lines = [
-        f"Loop strategy: {rec['motif']}",
-        f"Applicability: {rec['applicability']}",
-        f"Readiness: {readiness['status']}",
-        f"Fit score: {rec['fitScore']}/100",
-        f"Confidence: {rec['confidence']}",
-        f"Worktree: {spec['worktree']['branch']}",
-        "",
-        "Why",
+        f"LoopSpec: {spec['specId']}",
+        f"Readiness: {readiness}",
+        f"Executor: {executor}",
+        f"Worktree: {spec['context'].get('branch', 'workspace')}",
     ]
-    for reason in rec.get("reasons", []):
-        lines.append(f"  - {reason['value']} ({reason['provenance']})")
-    lines += ["", "Blockers"]
-    for blocker in readiness.get("blockers") or ["NONE"]:
-        lines.append(f"  - {blocker}")
+    if spec.get("blockers"):
+        lines += ["", "Blockers"]
+        for blocker in spec["blockers"]:
+            lines.append(f"  - {blocker['id']}: {blocker['reason']}")
     lines += ["", "Guards"]
-    for guard in spec["guards"]["forbid"]:
-        lines.append(f"  - No {guard}")
+    for guard in spec["guards"]:
+        lines.append(f"  - {guard['rule']}")
     lines += ["", "Saved"]
     lines.append(f"  {path if path else 'NONE (--no-write)'}")
     lines += ["", "Write receipt", f"  changed: {path if path else 'NONE'}", "  source tree changed: no"]
+    if readiness == "complete":
+        lines += ["", "Next"]
+        lines.append(f"  /tk:execute {path if path else spec['specId']}")
     return "\n".join(lines)
 
 
@@ -537,7 +528,7 @@ def update_loop_branch_state(repo_root: Path, spec: dict[str, Any], path: Path) 
     branch_state.update({
         "repoKey": repo_key(repo_root),
         "scopeKey": scope_key(repo_root),
-        "lastLoopSpecId": spec["metadata"]["id"],
+        "lastLoopSpecId": spec["specId"],
         "lastLoopSpecPath": str(path),
         "updatedAt": now_iso(),
     })
@@ -608,15 +599,24 @@ def extract_yaml_string(text: str, key: str) -> str | None:
             return json.loads(raw)
         except Exception:
             return raw.strip('"')
+    if raw.startswith("'") and raw.endswith("'"):
+        return raw.strip("'")
     return None if raw == "null" else raw
 
 
 def cmd_loop_spec_validate(args: argparse.Namespace, repo_root: Path) -> int:
     path = resolve_loop_spec_path(repo_root, args.spec)
     text = read_yamlish_text(path)
-    required_tokens = ["apiVersion:", "kind: LoopSpec", "metadata:", "recommendation:", "readiness:", "context:", "fingerprint:"]
+    required_tokens = ["schemaVersion: tigerkit.loop-spec/v2", "specId:", "task:", "context:", "readiness:", "scope:", "guards:", "steps:", "verifiers:"]
     missing = [tok for tok in required_tokens if tok not in text]
     schema = "invalid" if missing else "valid"
+    readiness = extract_yaml_string(text, "readiness")
+    if readiness == "complete" and "execution:" not in text:
+        missing.append("execution:")
+        schema = "invalid"
+    if readiness == "blocked" and "executorRecommendation:" in text:
+        schema = "invalid"
+        missing.append("blocked spec must not include executorRecommendation")
     stored_head = extract_yaml_string(text, "headSha")
     current_head = git("rev-parse", "HEAD", cwd=repo_root)
     context = "unknown"
@@ -633,6 +633,646 @@ def cmd_loop_spec_validate(args: argparse.Namespace, repo_root: Path) -> int:
         print("Recommendation")
         print("  Regenerate with /tk:loop-spec <task>")
     return 0
+
+
+def execution_dir(repo_root: Path) -> Path:
+    return state_root() / "repos" / repo_key(repo_root) / "branches" / scope_key(repo_root) / "executions"
+
+
+def next_execution_id() -> str:
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    return f"exec-{stamp}-{uuid.uuid4().hex[:8]}"
+
+
+def plugin_root() -> Path:
+    return Path(__file__).resolve().parents[1]
+
+
+def platform_key() -> str:
+    if sys.platform.startswith("linux"):
+        return "linux"
+    if sys.platform == "darwin":
+        return "darwin"
+    if sys.platform.startswith("win"):
+        return "windows"
+    return "unknown"
+
+
+def current_environment_key() -> str:
+    return f"claude-code/{platform_key()}/local/{os.environ.get('CLAUDE_PERMISSION_MODE', 'default')}"
+
+
+def runtime_binding() -> dict[str, Any]:
+    return {"platform": platform_key(), "permissionMode": os.environ.get("CLAUDE_PERMISSION_MODE", "default"), "isolationMode": os.environ.get("TIGERKIT_ISOLATION_MODE", "none")}
+
+
+def support_matrix_path() -> Path:
+    return plugin_root() / "support" / "execute-support-matrix.json"
+
+
+def support_matrix() -> dict[str, Any]:
+    return load_json(support_matrix_path(), {})
+
+
+def sha256_file(path: Path) -> str:
+    return sha256_bytes(path.read_bytes())
+
+
+def capability_proof_path() -> Path:
+    custom = os.environ.get("TIGERKIT_EXECUTE_CAPABILITY_PROOF")
+    if custom:
+        return Path(custom).expanduser()
+    return plugin_root() / "support" / "execute-capability-proof.json"
+
+
+def proof_digest_value(item: dict[str, Any]) -> str | None:
+    value = item.get("sha256") or item.get("digest")
+    return value if isinstance(value, str) else None
+
+
+def validate_support_and_proof() -> tuple[bool, str | None, str | None]:
+    matrix = support_matrix()
+    env_key = current_environment_key()
+    matches = [item for item in matrix.get("environments", []) if item.get("environmentKey") == env_key and item.get("status") == "public"]
+    if len(matches) != 1 or matches[0].get("proofStatus") != "passed":
+        return False, "hard_enforcement_unavailable", "No exactly-one public support matrix entry with passed proof matches current environment."
+    env = matches[0]
+    proof_path = capability_proof_path()
+    proof = load_json(proof_path, None)
+    if not isinstance(proof, dict):
+        return False, "hard_enforcement_unavailable", f"Capability proof is missing or unreadable: {proof_path}"
+    expected_tests = [f"CAP-{i:02d}" for i in range(1, 11)]
+    tests = proof.get("tests") if isinstance(proof.get("tests"), list) else []
+    actual_tests = [item.get("id") for item in tests if isinstance(item, dict) and item.get("status") == "passed"]
+    if proof.get("schemaVersion") != "tigerkit.capability-proof/execute-write-boundary-v1" or actual_tests != expected_tests:
+        return False, "hard_enforcement_unavailable", "Capability proof does not contain passed CAP-01-CAP-10 in canonical order."
+    if proof.get("environmentKey") != env_key or proof.get("runtimeBinding") != runtime_binding():
+        return False, "hard_enforcement_unavailable", "Capability proof runtime binding does not match current environment."
+    if proof.get("pluginVersion") != matrix.get("pluginVersion"):
+        return False, "hard_enforcement_unavailable", "Capability proof pluginVersion does not match support matrix."
+    if proof.get("supportMatrixDigest") != sha256_file(support_matrix_path()):
+        return False, "hard_enforcement_unavailable", "Capability proof supportMatrixDigest is stale."
+    expected_components = sorted(str(x) for x in env.get("boundaryComponents") or [])
+    component_items = proof.get("componentDigests") if isinstance(proof.get("componentDigests"), list) else []
+    actual_components = sorted(str(item.get("path")) for item in component_items if isinstance(item, dict) and isinstance(item.get("path"), str))
+    if actual_components != expected_components:
+        return False, "hard_enforcement_unavailable", "Capability proof component path set does not match support matrix boundaryComponents."
+    digests = {str(item.get("path")): proof_digest_value(item) for item in component_items if isinstance(item, dict)}
+    for rel in expected_components:
+        component_path = plugin_root() / rel
+        if not component_path.is_file() or digests.get(rel) != sha256_file(component_path):
+            return False, "hard_enforcement_unavailable", f"Capability proof digest is stale for {rel}."
+    return True, None, None
+
+
+def yaml_section(text: str, key: str) -> list[str]:
+    m = re.search(rf"^(?P<indent>\s*){re.escape(key)}:\s*$", text, re.M)
+    if not m:
+        return []
+    indent = len(m.group("indent"))
+    lines = text[m.end():].splitlines()
+    out: list[str] = []
+    for line in lines:
+        if line.strip() and len(line) - len(line.lstrip(" ")) <= indent:
+            break
+        out.append(line)
+    return out
+
+
+def scalar_list_from_section(lines: list[str], key: str) -> list[str]:
+    result: list[str] = []
+    active_indent: int | None = None
+    for line in lines:
+        stripped = line.strip()
+        indent = len(line) - len(line.lstrip(" "))
+        if re.match(rf"^{re.escape(key)}:\s*$", stripped):
+            active_indent = indent
+            continue
+        if active_indent is None:
+            continue
+        if stripped and indent <= active_indent:
+            break
+        item = re.match(r"^-\s+(.+?)\s*$", stripped)
+        if item:
+            raw = item.group(1)
+            try:
+                result.append(str(json.loads(raw)) if raw.startswith('"') else raw)
+            except Exception:
+                result.append(raw.strip("'\""))
+    return sorted(set(result))
+
+
+def object_list_from_section(lines: list[str]) -> list[dict[str, Any]]:
+    items: list[dict[str, Any]] = []
+    current: dict[str, Any] | None = None
+    for line in lines:
+        stripped = line.strip()
+        if stripped == "-":
+            if current is not None:
+                items.append(current)
+            current = {}
+            continue
+        if current is None:
+            continue
+        m = re.match(r"^([A-Za-z0-9_.-]+):\s*(.+?)\s*$", stripped)
+        if not m:
+            continue
+        key, raw = m.group(1), m.group(2)
+        if raw in {"true", "false"}:
+            value: Any = raw == "true"
+        elif raw == "null":
+            value = None
+        elif raw.startswith('"') and raw.endswith('"'):
+            try:
+                value = json.loads(raw)
+            except Exception:
+                value = raw.strip('"')
+        else:
+            value = raw.strip("'")
+        current[key] = value
+    if current is not None:
+        items.append(current)
+    return items
+
+
+def has_glob(value: str) -> bool:
+    return any(ch in value for ch in "*?[")
+
+
+def path_matches(path: str, patterns: list[str]) -> bool:
+    return any(path == pattern or fnmatch.fnmatch(path, pattern) for pattern in patterns)
+
+
+def validate_scope(scope: dict[str, list[str]]) -> None:
+    for rel in scope["create"] + scope["delete"]:
+        if has_glob(rel):
+            raise ValueError("invalid_scope_pattern")
+        if path_matches(rel, scope["exclude"]):
+            raise ValueError("invalid_create_delete_state")
+
+
+def parse_loop_spec_for_execute(path: Path, repo_root: Path) -> dict[str, Any]:
+    text = read_yamlish_text(path)
+
+    def req(key: str) -> str:
+        value = extract_yaml_string(text, key)
+        if value is None:
+            raise ValueError("invalid_loop_spec")
+        return value
+
+    schema = req("schemaVersion")
+    if schema != "tigerkit.loop-spec/v2":
+        raise ValueError("unsupported_loop_spec_schema")
+    readiness = req("readiness")
+    if readiness == "blocked":
+        raise ValueError("blocked_loop_spec")
+    if readiness != "complete":
+        raise ValueError("invalid_loop_spec")
+    executor = req("executorRecommendation")
+    if executor not in {"fast", "reasoning"}:
+        raise ValueError("missing_executor_recommendation")
+    parsed = {
+        "path": path,
+        "text": text,
+        "specId": req("specId"),
+        "executor": executor,
+        "repoKey": req("repoKey"),
+        "scopeKey": req("scopeKey"),
+        "headSha": req("headSha"),
+        "fingerprint": req("fingerprint"),
+        "scope": {"modify": [], "create": [], "delete": [], "exclude": []},
+        "verifiers": [],
+    }
+    scope_lines = yaml_section(text, "scope")
+    parsed["scope"] = {key: scalar_list_from_section(scope_lines, key) for key in ("modify", "create", "delete", "exclude")}
+    validate_scope(parsed["scope"])
+    parsed["verifiers"] = object_list_from_section(yaml_section(text, "verifiers"))
+    if not parsed["verifiers"]:
+        raise ValueError("invalid_loop_spec")
+    if parsed["repoKey"] != repo_key(repo_root):
+        raise ValueError("repository_identity_mismatch")
+    if parsed["scopeKey"] != scope_key(repo_root):
+        raise ValueError("worktree_identity_mismatch")
+    return parsed
+
+
+def sorted_dirty_paths(repo_root: Path) -> list[str]:
+    out = git("status", "--porcelain", cwd=repo_root)
+    if not out:
+        return []
+    paths = []
+    for line in out.splitlines():
+        if len(line) > 3:
+            path = line[3:]
+            if " -> " in path:
+                path = path.split(" -> ", 1)[1]
+            paths.append(path)
+    return sorted(set(paths))
+
+
+def file_signature(path: Path) -> dict[str, Any]:
+    try:
+        if path.is_symlink():
+            return {"kind": "symlink", "target": os.readlink(path)}
+        if path.is_file():
+            st = path.stat()
+            return {"kind": "file", "mode": oct(st.st_mode & 0o777), "sha256": sha256_file(path)}
+    except Exception:
+        return {"kind": "unreadable"}
+    return {"kind": "absent"}
+
+
+def repo_file_state(repo_root: Path) -> dict[str, dict[str, Any]]:
+    paths = set(git_lines_z("ls-files", "-z", cwd=repo_root))
+    paths.update(git_lines_z("ls-files", "--others", "--exclude-standard", "-z", cwd=repo_root))
+    return {rel: file_signature(repo_root / rel) for rel in sorted(paths)}
+
+
+def changed_since_baseline(before: dict[str, dict[str, Any]], after: dict[str, dict[str, Any]]) -> tuple[list[str], dict[str, str]]:
+    changed: list[str] = []
+    operations: dict[str, str] = {}
+    for rel in sorted(set(before) | set(after)):
+        old = before.get(rel, {"kind": "absent"})
+        new = after.get(rel, {"kind": "absent"})
+        if old == new:
+            continue
+        changed.append(rel)
+        if old.get("kind") == "absent" and new.get("kind") != "absent":
+            operations[rel] = "create"
+        elif old.get("kind") != "absent" and new.get("kind") == "absent":
+            operations[rel] = "delete"
+        else:
+            operations[rel] = "modify"
+    return changed, operations
+
+
+def scope_violations(paths: list[str], operations: dict[str, str], scope: dict[str, list[str]]) -> list[dict[str, str]]:
+    order = {"create": 0, "modify": 1, "delete": 2}
+    violations: list[dict[str, str]] = []
+    for rel in paths:
+        op = operations[rel]
+        violation = None
+        if path_matches(rel, scope["exclude"]):
+            violation = "excluded"
+        elif op == "modify" and not path_matches(rel, scope["modify"]):
+            violation = "outside_modify_scope"
+        elif op == "create" and rel not in scope["create"]:
+            violation = "undeclared_create"
+        elif op == "delete" and rel not in scope["delete"]:
+            violation = "undeclared_delete"
+        if violation:
+            violations.append({"path": rel, "operation": op, "violation": violation})
+    return sorted(violations, key=lambda item: (item["path"].encode("utf-8"), order[item["operation"]]))
+
+
+def baseline_capture(repo_root: Path) -> dict[str, Any]:
+    return {"headSha": git("rev-parse", "HEAD", cwd=repo_root) or "unknown", "dirtyPaths": sorted_dirty_paths(repo_root)}
+
+
+def verifier_reason(status: str, exit_code: int | None, reason_code: str | None) -> str:
+    if reason_code == "timeout_exceeded" or status == "timed_out":
+        return "verifier_timed_out"
+    if reason_code == "not_attempted_due_to_budget":
+        return "budget_exhausted"
+    if reason_code == "not_attempted_due_to_unavailable_tool" or exit_code == 127:
+        return "required_tool_unavailable"
+    if status == "error":
+        return "verifier_error"
+    return "verifier_failed"
+
+
+def run_verifier(repo_root: Path, verifier: dict[str, Any], timeout_seconds: int) -> dict[str, Any]:
+    command = str(verifier.get("command") or "")
+    result = {"id": str(verifier.get("id") or "verifier"), "command": command, "status": "not_run", "exitCode": None}
+    if not command:
+        result.update({"reasonCode": "not_attempted_due_to_unavailable_tool", "message": "Verifier command is empty."})
+        return result
+    try:
+        proc = subprocess.run(command, cwd=str(repo_root), shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout_seconds, check=False)
+    except subprocess.TimeoutExpired:
+        result.update({"status": "timed_out", "reasonCode": "timeout_exceeded", "message": "Verifier timed out."})
+        return result
+    except Exception as exc:
+        result.update({"status": "error", "reasonCode": "process_start_error", "message": str(exc)})
+        return result
+    result["exitCode"] = proc.returncode
+    result["status"] = "passed" if proc.returncode == 0 else "failed"
+    if proc.returncode == 127:
+        result["reasonCode"] = "not_attempted_due_to_unavailable_tool"
+    return result
+
+
+def claimed_schema_error(claimed: dict[str, Any], expected_execution_id: str, expected_spec_id: str, expected_executor: str) -> str | None:
+    allowed = {"schemaVersion", "executionId", "specId", "executor", "outcome", "changedPaths", "verifierResults", "reasonCodes", "reasonDetails", "safeToRetry", "cleanupRequired"}
+    if set(claimed) - allowed:
+        return "unknown field"
+    required = allowed
+    if not required <= set(claimed):
+        return "missing field"
+    if claimed.get("schemaVersion") != "tigerkit.executor-claimed-result/v1" or claimed.get("executionId") != expected_execution_id or claimed.get("specId") != expected_spec_id or claimed.get("executor") != expected_executor:
+        return "identity mismatch"
+    if claimed.get("outcome") not in {"completed", "escalated", "failed"}:
+        return "invalid outcome"
+    for key in ("changedPaths", "verifierResults", "reasonCodes", "reasonDetails"):
+        if not isinstance(claimed.get(key), list):
+            return f"invalid {key}"
+    if not isinstance(claimed.get("safeToRetry"), bool) or not isinstance(claimed.get("cleanupRequired"), bool):
+        return "invalid retry cleanup flags"
+    return None
+
+
+def parse_claimed_result(text: str, execution_id: str, spec_id: str, executor: str) -> tuple[dict[str, Any] | None, str | None]:
+    candidates: list[str] = []
+    stripped = text.strip()
+    if stripped.startswith("{"):
+        candidates.append(stripped)
+    match = re.search(r"\{.*\}", stripped, re.S)
+    if match:
+        candidates.append(match.group(0))
+    for candidate in candidates:
+        try:
+            value = json.loads(candidate)
+        except Exception:
+            continue
+        if isinstance(value, dict):
+            error = claimed_schema_error(value, execution_id, spec_id, executor)
+            return (value, None) if error is None else (None, error)
+    return None, "missing or malformed claimed-result envelope"
+
+
+def claimed_verifier_map(claimed: dict[str, Any] | None) -> dict[str, dict[str, Any]]:
+    if not claimed:
+        return {}
+    result = {}
+    for item in claimed.get("verifierResults") or []:
+        if isinstance(item, dict) and isinstance(item.get("id"), str):
+            result[item["id"]] = item
+    return result
+
+
+def classify_claimed_observed_mismatch(claimed: dict[str, Any] | None, changed_paths: list[str], postflight: list[dict[str, Any]]) -> bool:
+    if not claimed:
+        return False
+    if sorted(set(str(x) for x in claimed.get("changedPaths") or [])) != changed_paths:
+        return True
+    nonpassed = [v for v in postflight if v.get("status") != "passed"]
+    if claimed.get("outcome") == "completed" and nonpassed:
+        return True
+    if claimed.get("outcome") in {"failed", "escalated"} and not nonpassed:
+        return True
+    claimed_by_id = claimed_verifier_map(claimed)
+    for observed in postflight:
+        claimed_v = claimed_by_id.get(observed.get("id"))
+        if not claimed_v:
+            continue
+        claimed_passed = claimed_v.get("status") == "passed"
+        observed_passed = observed.get("status") == "passed"
+        if claimed_passed != observed_passed:
+            return True
+    return False
+
+
+def unique_reason_details(codes: list[str], existing: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
+    details: list[dict[str, Any]] = []
+    seen: set[tuple[str, str | None]] = set()
+    for detail in existing or []:
+        if not isinstance(detail, dict) or not isinstance(detail.get("code"), str):
+            continue
+        key = (detail["code"], detail.get("verifierId"))
+        if key not in seen:
+            seen.add(key)
+            details.append({k: v for k, v in detail.items() if k in {"code", "message", "verifierId"}})
+    for code in codes:
+        key = (code, None)
+        if key not in seen:
+            seen.add(key)
+            details.append({"code": code})
+    return details
+
+
+def recommended_actions(result: str, reasons: list[str]) -> list[str]:
+    mapping = {
+        "hard_enforcement_unavailable": "refresh_capability_proof",
+        "scope_violation": "inspect_scope_violation",
+        "excluded_path_modified": "inspect_scope_violation",
+        "unapproved_path_created": "inspect_scope_violation",
+        "unapproved_path_deleted": "inspect_scope_violation",
+        "claimed_observed_mismatch": "review_partial_changes",
+        "baseline_dirty_path_modified": "review_partial_changes",
+        "executor_error": "retry_execute",
+        "required_tool_unavailable": "restore_required_tool",
+        "verifier_failed": "review_partial_changes",
+        "verifier_error": "retry_execute",
+        "verifier_timed_out": "retry_execute",
+        "budget_exhausted": "retry_execute",
+    }
+    actions = []
+    for reason in reasons:
+        action = mapping.get(reason)
+        if action and action not in actions:
+            actions.append(action)
+    if not actions and result != "completed":
+        actions.append("review_partial_changes")
+    return actions
+
+
+def final_receipt(repo_root: Path, parsed: dict[str, Any], execution_id: str, baseline: dict[str, Any], claimed: dict[str, Any] | None, claim_error: str | None, changed_paths: list[str], violations: list[dict[str, str]], baseline_dirty_modified: list[str], postflight: list[dict[str, Any]]) -> dict[str, Any]:
+    safety_reasons = []
+    violation_reason = {"excluded": "excluded_path_modified", "outside_modify_scope": "scope_violation", "undeclared_create": "unapproved_path_created", "undeclared_delete": "unapproved_path_deleted"}
+    for item in violations:
+        reason = violation_reason[item["violation"]]
+        if reason not in safety_reasons:
+            safety_reasons.append(reason)
+    if baseline_dirty_modified:
+        safety_reasons.append("baseline_dirty_path_modified")
+    if claimed:
+        for reason in claimed.get("reasonCodes") or []:
+            if reason in {"plan_deviation_required", "scope_expansion_required", "executor_capability_mismatch"} and reason not in safety_reasons:
+                safety_reasons.append(reason)
+    mismatch = classify_claimed_observed_mismatch(claimed, changed_paths, postflight)
+    technical_reasons = []
+    if claim_error:
+        technical_reasons.append("executor_error")
+    for verifier in postflight:
+        if verifier.get("status") != "passed":
+            reason = verifier_reason(str(verifier.get("status")), verifier.get("exitCode"), verifier.get("reasonCode"))
+            if reason not in technical_reasons:
+                technical_reasons.append(reason)
+    if safety_reasons or mismatch:
+        result = "escalated"
+        reasons = list(safety_reasons)
+        if mismatch and "claimed_observed_mismatch" not in reasons:
+            reasons.append("claimed_observed_mismatch")
+        for reason in technical_reasons:
+            if reason not in reasons:
+                reasons.append(reason)
+    elif technical_reasons:
+        result = "failed"
+        reasons = technical_reasons
+    else:
+        result = "completed"
+        reasons = []
+    receipt: dict[str, Any] = {
+        "schemaVersion": "tigerkit.execution-receipt/v1",
+        "executionId": execution_id,
+        "specId": parsed["specId"],
+        "executor": parsed["executor"],
+        "result": result,
+        "boundaryEnforcement": "hard",
+        "reasonCodes": reasons,
+        "reasonDetails": unique_reason_details(reasons, claimed.get("reasonDetails") if claimed else None),
+        "baseline": baseline,
+        "observed": {"changedPaths": changed_paths, "scopeViolations": violations, "baselineDirtyPathsModified": baseline_dirty_modified, "claimedObservedMismatch": mismatch},
+        "postflightVerifiers": postflight,
+        "safeToRetry": bool(claimed.get("safeToRetry")) if claimed else result != "completed",
+        "cleanupRequired": bool(violations or changed_paths) if not claimed else bool(claimed.get("cleanupRequired")),
+        "recommendedActions": recommended_actions(result, reasons),
+    }
+    if claimed:
+        receipt["claimed"] = {"outcome": claimed["outcome"], "changedPaths": claimed["changedPaths"], "verifierResults": claimed["verifierResults"], "reasonCodes": claimed["reasonCodes"], "reasonDetails": claimed["reasonDetails"]}
+    return receipt
+
+
+def persist_receipt(repo_root: Path, receipt: dict[str, Any]) -> Path:
+    path = execution_dir(repo_root) / f"{receipt['executionId']}.yaml"
+    if path.exists():
+        raise SystemExit(f"receipt already exists: {path}")
+    atomic_write(path, dump_yaml(receipt) + "\n")
+    return path
+
+
+def rejected_receipt(spec_id: str, execution_id: str, reason: str, message: str) -> dict[str, Any]:
+    return {
+        "schemaVersion": "tigerkit.execution-receipt/v1",
+        "executionId": execution_id,
+        "specId": spec_id,
+        "result": "rejected",
+        "boundaryEnforcement": "detection_only",
+        "reasonCodes": [reason],
+        "reasonDetails": [{"code": reason, "message": message}],
+        "observed": {
+            "changedPaths": [],
+            "scopeViolations": [],
+            "baselineDirtyPathsModified": [],
+            "claimedObservedMismatch": False,
+        },
+        "postflightVerifiers": [],
+        "safeToRetry": False,
+        "cleanupRequired": False,
+        "recommendedActions": ["refresh_capability_proof", "inspect_enforcement_failure"] if reason == "hard_enforcement_unavailable" else ["inspect_loop_spec"],
+    }
+
+def render_execute_usage() -> str:
+    return "\n".join(["사용법: /tk:execute <spec-id-or-path>", "예: /tk:execute fix-payment-modal-scroll-20260622-120000-ABCD"])
+
+
+def render_execute_receipt(receipt: dict[str, Any], path: Path | None, executor: str | None = None) -> str:
+    total = len(receipt.get("postflightVerifiers") or [])
+    passed = len([v for v in receipt.get("postflightVerifiers") or [] if v.get("status") == "passed"])
+    lines = [
+        f"Execute: {receipt['result']}",
+        f"Spec: {receipt['specId']}",
+        f"Executor: {executor or receipt.get('executor', 'NONE')}",
+        f"Receipt: {path if path else 'NONE'}",
+        f"Changed paths: {len(receipt.get('observed', {}).get('changedPaths') or [])}",
+        f"Verifiers: {passed}/{total} passed",
+    ]
+    if receipt.get("reasonCodes"):
+        lines.append(f"Primary reason: {receipt['reasonCodes'][0]}")
+    if receipt.get("recommendedActions"):
+        lines.append(f"Required action: {receipt['recommendedActions'][0]}")
+    return "\n".join(lines)
+
+
+def run_executor(repo_root: Path, parsed: dict[str, Any], execution_id: str) -> tuple[dict[str, Any] | None, str | None]:
+    schema_path = plugin_root() / "schemas" / "executor-claimed-result.schema.json"
+    prompt = "\n".join([
+        "TigerKit /tk:execute dispatcher assigned exactly one LoopSpec.",
+        f"executionId: {execution_id}",
+        f"specId: {parsed['specId']}",
+        f"executor: {parsed['executor']}",
+        "Return only valid JSON matching tigerkit.executor-claimed-result/v1.",
+        "LoopSpec:",
+        parsed["text"],
+    ])
+    boundary_payload = {"repoRoot": str(repo_root), **parsed["scope"]}
+    with NamedTemporaryFile("w", encoding="utf-8", delete=False, prefix="tigerkit-execute-boundary-", suffix=".json") as tmp:
+        json.dump(boundary_payload, tmp, ensure_ascii=False)
+        boundary_path = tmp.name
+    env = os.environ.copy()
+    env["TIGERKIT_EXECUTE_BOUNDARY_FILE"] = boundary_path
+    try:
+        proc = subprocess.run([
+            "claude", "-p", "--agent", f"tk-executor-{parsed['executor']}", "--json-schema", schema_path.read_text(encoding="utf-8"), prompt
+        ], cwd=str(repo_root), env=env, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+    except Exception as exc:
+        return None, str(exc)
+    finally:
+        try:
+            Path(boundary_path).unlink()
+        except Exception:
+            pass
+    if proc.returncode != 0:
+        return None, "executor process failed"
+    return parse_claimed_result(proc.stdout, execution_id, parsed["specId"], parsed["executor"])
+
+
+def cmd_execute(args: argparse.Namespace) -> int:
+    repo_root = resolve_repo_root(args.repo_root)
+    spec_args = list(args.spec or [])
+    if len(spec_args) != 1:
+        print(render_execute_usage())
+        return 0
+    execution_id = next_execution_id()
+    spec_path = resolve_loop_spec_path(repo_root, spec_args[0])
+    spec_id = spec_args[0]
+    executor = None
+    try:
+        parsed = parse_loop_spec_for_execute(spec_path, repo_root)
+        spec_id = parsed["specId"]
+        executor = parsed["executor"]
+        current_head = git("rev-parse", "HEAD", cwd=repo_root)
+        if current_head and current_head != parsed["headSha"]:
+            receipt = rejected_receipt(spec_id, execution_id, "stale_base_revision", "Current HEAD differs from LoopSpec context headSha.")
+            path = persist_receipt(repo_root, receipt)
+            print(render_execute_receipt(receipt, path, executor))
+            return 1
+        current_context = context_fingerprint(repo_root, scan_capabilities(repo_root))
+        if current_context["fingerprint"]["value"] != parsed["fingerprint"]:
+            receipt = rejected_receipt(spec_id, execution_id, "stale_fingerprint", "Current repository fingerprint differs from LoopSpec context fingerprint.")
+            path = persist_receipt(repo_root, receipt)
+            print(render_execute_receipt(receipt, path, executor))
+            return 1
+        proof_ok, reason, message = validate_support_and_proof()
+        if not proof_ok:
+            receipt = rejected_receipt(spec_id, execution_id, reason or "hard_enforcement_unavailable", message or "Hard boundary proof is unavailable.")
+            path = persist_receipt(repo_root, receipt)
+            print(render_execute_receipt(receipt, path, executor))
+            return 1
+    except FileNotFoundError:
+        receipt = rejected_receipt(spec_id, execution_id, "spec_not_found", f"LoopSpec not found: {spec_path}")
+        path = persist_receipt(repo_root, receipt)
+        print(render_execute_receipt(receipt, path, executor))
+        return 1
+    except ValueError as exc:
+        reason = str(exc)
+        receipt = rejected_receipt(spec_id, execution_id, reason, f"LoopSpec rejected: {reason}")
+        path = persist_receipt(repo_root, receipt)
+        print(render_execute_receipt(receipt, path, executor))
+        return 1
+    baseline = baseline_capture(repo_root)
+    before = repo_file_state(repo_root)
+    claimed, claim_error = run_executor(repo_root, parsed, execution_id)
+    after = repo_file_state(repo_root)
+    changed_paths, operations = changed_since_baseline(before, after)
+    violations = scope_violations(changed_paths, operations, parsed["scope"])
+    timeout = int(((parsed.get("execution") or {}).get("budget") or {}).get("maxMinutes") or 30) * 60
+    postflight = [run_verifier(repo_root, verifier, timeout) for verifier in parsed["verifiers"] if verifier.get("required") is True]
+    baseline_dirty_modified = sorted(set(baseline["dirtyPaths"]) & set(changed_paths))
+    receipt = final_receipt(repo_root, parsed, execution_id, baseline, claimed, claim_error, changed_paths, violations, baseline_dirty_modified, postflight)
+    path = persist_receipt(repo_root, receipt)
+    print(render_execute_receipt(receipt, path, executor))
+    return 0 if receipt["result"] == "completed" else 1
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -658,6 +1298,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_loop.add_argument("--no-write", action="store_true", help="Render recommendation without writing an artifact")
     p_loop.add_argument("task", nargs="*", help="Task description, or: validate <spec-id-or-path>")
     p_loop.set_defaults(func=cmd_loop_spec)
+
+    p_execute = sub.add_parser("execute", help="Validate and execute a LoopSpec v2 through TigerKit dispatcher")
+    p_execute.add_argument("--repo-root", help="Repo root or working directory", default=None)
+    p_execute.add_argument("spec", nargs="*", help="Spec id or path")
+    p_execute.set_defaults(func=cmd_execute)
     return parser
 
 

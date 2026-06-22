@@ -1,0 +1,20 @@
+{
+  "command": "/tk:execute",
+  "case": "hard_enforcement_unavailable",
+  "receipt": {
+    "schemaVersion": "tigerkit.execution-receipt/v1",
+    "executionId": "exec-preview-blocked",
+    "specId": "spec-123",
+    "result": "rejected",
+    "boundaryEnforcement": "detection_only",
+    "reasonCodes": ["hard_enforcement_unavailable"],
+    "reasonDetails": [
+      {"code": "hard_enforcement_unavailable", "message": "Current environment has preview support only."}
+    ],
+    "observed": {"changedPaths": [], "scopeViolations": [], "baselineDirtyPathsModified": [], "claimedObservedMismatch": false},
+    "postflightVerifiers": [],
+    "safeToRetry": false,
+    "cleanupRequired": false,
+    "recommendedActions": ["refresh_capability_proof", "inspect_enforcement_failure"]
+  }
+}
