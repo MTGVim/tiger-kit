@@ -10,7 +10,7 @@ argument-hint: "<spec-id-or-path>"
 목표: `/tk:execute`는 사용자가 명시적으로 지정한 `tigerkit.loop-spec/v2` 하나를 실행 대상으로 받아 preflight, executor routing, postflight verifier, receipt 저장을 수행하는 dispatcher surface입니다.
 
 ```text
-execute = LoopSpec v2 + current context + hard boundary proof -> one executor delegation -> postflight receipt
+execute = LoopSpec v2 + current context + support-matrix environment gate -> one executor delegation -> postflight receipt
 ```
 
 ## Core boundary
@@ -21,8 +21,10 @@ execute = LoopSpec v2 + current context + hard boundary proof -> one executor de
 - dispatcher는 product source를 직접 수정하지 않습니다.
 - dispatcher는 정확히 하나의 executor만 선택합니다.
 - 자동 fallback, 자동 rollback, executor 간 자동 위임은 없습니다.
-- public stable execution은 support matrix의 public environment와 packaged CAP-01–CAP-10 hard-boundary proof가 current package와 byte-exact match할 때만 가능합니다.
-- proof가 없거나 current environment가 public entry와 일치하지 않으면 `hard_enforcement_unavailable`로 reject합니다.
+- current environment는 `support/execute-support-matrix.json`에 정확히 한 번 등록되어 있어야 합니다.
+- matching environment의 `status`가 `preview` 또는 `public`이면 실행을 계속합니다.
+- matching environment의 `status`가 `unsupported`이거나 entry가 없으면 `hard_enforcement_unavailable`로 reject합니다.
+- environment key는 `claude-code/<platform>/local/<permissionMode>` 형식이며 `isolationMode`는 별도 gate로 보지 않습니다.
 
 ## Execution instruction
 
@@ -91,10 +93,10 @@ If the user invokes `/tk:execute` with no spec ID/path or too many arguments, re
 3. Validate readiness is `complete`, not `blocked`.
 4. Validate executor recommendation is exactly `fast` or `reasoning`.
 5. Validate current repository identity, worktree/scope identity, head/fingerprint freshness, scope declarations, guards, and required verifiers.
-6. Capture preflight baseline.
-7. Validate current environment against `support/execute-support-matrix.json` and current capability proof.
-8. If hard boundary is unavailable, reject and persist a receipt only when repository/scope identity is fully resolved.
-9. If boundary is available, delegate to exactly one executor agent matching recommendation.
+6. Validate current environment against `support/execute-support-matrix.json`.
+7. If environment support is unavailable, reject and persist a receipt only when repository/scope identity is fully resolved.
+8. Capture preflight baseline for delegated executions.
+9. Delegate to exactly one executor agent matching recommendation.
 10. Validate executor response as `tigerkit.executor-claimed-result/v1`.
 11. Observe actual create/modify/delete diff independently.
 12. Re-run all required verifiers in declaration order.
@@ -127,4 +129,4 @@ Omit empty/default sections. Do not print `NONE` sections except fields where ab
 - 자동 rollback
 - partial changes 숨김
 - executor self-report를 completion proof로 단독 신뢰
-- hard proof 없는 public stable execution 성공 표시
+- support matrix에 없는 environment에서 실행 성공 표시

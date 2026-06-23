@@ -683,50 +683,19 @@ def sha256_file(path: Path) -> str:
     return sha256_bytes(path.read_bytes())
 
 
-def capability_proof_path() -> Path:
-    custom = os.environ.get("TIGERKIT_EXECUTE_CAPABILITY_PROOF")
-    if custom:
-        return Path(custom).expanduser()
-    return plugin_root() / "support" / "execute-capability-proof.json"
-
-
-def proof_digest_value(item: dict[str, Any]) -> str | None:
-    value = item.get("sha256") or item.get("digest")
-    return value if isinstance(value, str) else None
-
-
-def validate_support_and_proof() -> tuple[bool, str | None, str | None]:
+def validate_environment_support() -> tuple[bool, str | None, str | None]:
     matrix = support_matrix()
     env_key = current_environment_key()
-    matches = [item for item in matrix.get("environments", []) if item.get("environmentKey") == env_key and item.get("status") == "public"]
-    if len(matches) != 1 or matches[0].get("proofStatus") != "passed":
-        return False, "hard_enforcement_unavailable", "No exactly-one public support matrix entry with passed proof matches current environment."
+    matches = [item for item in matrix.get("environments", []) if item.get("environmentKey") == env_key]
+    if len(matches) != 1:
+        return False, "hard_enforcement_unavailable", "No support matrix entry matches current environment."
     env = matches[0]
-    proof_path = capability_proof_path()
-    proof = load_json(proof_path, None)
-    if not isinstance(proof, dict):
-        return False, "hard_enforcement_unavailable", f"Capability proof is missing or unreadable: {proof_path}"
-    expected_tests = [f"CAP-{i:02d}" for i in range(1, 11)]
-    tests = proof.get("tests") if isinstance(proof.get("tests"), list) else []
-    actual_tests = [item.get("id") for item in tests if isinstance(item, dict) and item.get("status") == "passed"]
-    if proof.get("schemaVersion") != "tigerkit.capability-proof/execute-write-boundary-v1" or actual_tests != expected_tests:
-        return False, "hard_enforcement_unavailable", "Capability proof does not contain passed CAP-01-CAP-10 in canonical order."
-    if proof.get("environmentKey") != env_key or proof.get("runtimeBinding") != runtime_binding():
-        return False, "hard_enforcement_unavailable", "Capability proof runtime binding does not match current environment."
-    if proof.get("pluginVersion") != matrix.get("pluginVersion"):
-        return False, "hard_enforcement_unavailable", "Capability proof pluginVersion does not match support matrix."
-    if proof.get("supportMatrixDigest") != sha256_file(support_matrix_path()):
-        return False, "hard_enforcement_unavailable", "Capability proof supportMatrixDigest is stale."
-    expected_components = sorted(str(x) for x in env.get("boundaryComponents") or [])
-    component_items = proof.get("componentDigests") if isinstance(proof.get("componentDigests"), list) else []
-    actual_components = sorted(str(item.get("path")) for item in component_items if isinstance(item, dict) and isinstance(item.get("path"), str))
-    if actual_components != expected_components:
-        return False, "hard_enforcement_unavailable", "Capability proof component path set does not match support matrix boundaryComponents."
-    digests = {str(item.get("path")): proof_digest_value(item) for item in component_items if isinstance(item, dict)}
-    for rel in expected_components:
-        component_path = plugin_root() / rel
-        if not component_path.is_file() or digests.get(rel) != sha256_file(component_path):
-            return False, "hard_enforcement_unavailable", f"Capability proof digest is stale for {rel}."
+    status = str(env.get("status") or "")
+    if status == "unsupported":
+        detail = str(env.get("reason") or "Current environment is unsupported.")
+        return False, "hard_enforcement_unavailable", f"Current environment is unsupported: {detail}"
+    if status not in {"preview", "public"}:
+        return False, "hard_enforcement_unavailable", f"Unsupported support-matrix status for current environment: {status or 'unknown'}"
     return True, None, None
 
 
@@ -1220,7 +1189,7 @@ def unique_reason_details(codes: list[str], existing: list[dict[str, Any]] | Non
 
 def recommended_actions(result: str, reasons: list[str], safe_to_retry: bool, cleanup_required: bool, changed_paths: list[str]) -> list[str]:
     mapping = {
-        "hard_enforcement_unavailable": "refresh_capability_proof",
+        "hard_enforcement_unavailable": "inspect_enforcement_failure",
         "scope_violation": "inspect_scope_violation",
         "excluded_path_modified": "inspect_scope_violation",
         "unapproved_path_created": "inspect_scope_violation",
@@ -1333,7 +1302,7 @@ def rejected_receipt(spec_id: str, execution_id: str, reason: str, message: str)
         "postflightVerifiers": [],
         "safeToRetry": False,
         "cleanupRequired": False,
-        "recommendedActions": ["refresh_capability_proof", "inspect_enforcement_failure"] if reason == "hard_enforcement_unavailable" else ["inspect_loop_spec"],
+        "recommendedActions": ["inspect_enforcement_failure"] if reason == "hard_enforcement_unavailable" else ["inspect_loop_spec"],
     }
 
 def render_execute_usage() -> str:
@@ -1418,9 +1387,9 @@ def cmd_execute(args: argparse.Namespace) -> int:
             path = persist_receipt(repo_root, receipt)
             print(render_execute_receipt(receipt, path, executor))
             return 1
-        proof_ok, reason, message = validate_support_and_proof()
-        if not proof_ok:
-            receipt = rejected_receipt(spec_id, execution_id, reason or "hard_enforcement_unavailable", message or "Hard boundary proof is unavailable.")
+        support_ok, reason, message = validate_environment_support()
+        if not support_ok:
+            receipt = rejected_receipt(spec_id, execution_id, reason or "hard_enforcement_unavailable", message or "Current environment is not enabled for execute.")
             path = persist_receipt(repo_root, receipt)
             print(render_execute_receipt(receipt, path, executor))
             return 1

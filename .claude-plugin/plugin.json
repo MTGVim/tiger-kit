@@ -1,6 +1,6 @@
 {
   "name": "tk",
-  "description": "SoT gap, reflect, LoopSpec v2, user-only bounded execute preview를 제공하는 TigerKit Claude Code 플러그인입니다.",
+  "description": "SoT gap, reflect, LoopSpec v2, user-only bounded execute를 제공하는 TigerKit Claude Code 플러그인입니다.",
   "version": "16.2.0",
   "author": {
     "name": "MTGVim"

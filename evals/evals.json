@@ -1,7 +1,7 @@
 {
   "skill_name": "tiger-kit-gap-reflect-loop-spec-core",
   "command_surface": {
-    "surface_model": "TigerKit exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts. Active command surface is /tk:gap, /tk:reflect, /tk:loop-spec, /tk:execute. Execute boundary packaging is active for preview/runtime validation, while stable public execution remains gated by support/execute-support-matrix.json and packaged capability proof.",
+    "surface_model": "TigerKit exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts. Active command surface is /tk:gap, /tk:reflect, /tk:loop-spec, /tk:execute. Execute availability is owned by support/execute-support-matrix.json, and matching preview/public environments are runnable while missing/unsupported environments are rejected.",
     "core_commands": [
       "/tk:gap",
       "/tk:reflect",
@@ -26,7 +26,7 @@
       "id": 0,
       "name": "plugin-version-and-command-manifest-gap-reflect-loop-spec-execute-preview",
       "prompt": "Evaluate TigerKit active command surface and plugin packaging. Do not write files.",
-      "expected_output": "Should list /tk:gap, /tk:reflect, /tk:loop-spec, and /tk:execute as the active commands. Should state execute is a user-only bounded execute preview surface. Should state stable public execution remains gated by support matrix public environments and packaged hard-boundary proof. Should state /tk:grill, /tk:afk, /tk:setup, and the launch-era commands are not active manifest entries. Should state /tk:loop-spec is a read-only recommender/compiler, not a runner/autopilot.",
+      "expected_output": "Should list /tk:gap, /tk:reflect, /tk:loop-spec, and /tk:execute as the active commands. Should state execute is a user-only bounded execute surface. Should state execute availability is controlled by support-matrix environment entries and that preview/public environments can run while missing/unsupported ones are rejected. Should state /tk:grill, /tk:afk, /tk:setup, and the launch-era commands are not active manifest entries. Should state /tk:loop-spec is a read-only recommender/compiler, not a runner/autopilot.",
       "files": [
         ".claude-plugin/plugin.json",
         ".claude-plugin/marketplace.json",
@@ -45,8 +45,8 @@
         "Does not list /tk:afk as active",
         "Does not list /tk:setup as active",
         "Documents launch-era commands as not active",
-        "States execute is preview-gated",
-        "States stable public execution requires packaged proof",
+        "States execute is support-matrix gated",
+        "States preview/public environments are runnable while missing/unsupported ones are rejected",
         "Lists /tk:loop-spec",
         "States /tk:loop-spec is not a runner or autopilot"
       ]
@@ -532,7 +532,7 @@
       "id": 24,
       "name": "storage-state-externalized-and-sessionstart-legacy-only",
       "prompt": "Evaluate TigerKit storage boundary, hook marker path, and reflect helper docs. Do not write files.",
-      "expected_output": "Should state that active TigerKit generated state lives outside the project repository under ~/.tigerkit. Execute boundary packaging may be present for preview/runtime validation, but stable public execution must remain gated by support matrix public environments and packaged hard-boundary proof. Existing SessionStart decline markers under ~/.tigerkit/local/session-start/worktree-context-declines.json and .claude/tigerkit/local/session-start/worktree-context-declines.json should be preserved as inactive legacy state and not deleted, migrated, read, or written by core command/runtime. Current documented active generated layout should include gap report archive/current plus branch-state pointer under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/. It should not document future runs/<kind>/<id> payload structures as active or required layout. It should not document active reflect artifact writes. Reflect helper docs should be optional, non-runtime, non-authoritative, and should not imply hook installation, settings updates, command generation, agent generation, user skill generation under TigerKit generated state, plugin manifest changes, or Claude Code auto memory writes.",
+      "expected_output": "Should state that active TigerKit generated state lives outside the project repository under ~/.tigerkit. Execute boundary packaging may be present for preview/runtime validation, and execute availability is controlled by support-matrix environment entries. Existing SessionStart decline markers under ~/.tigerkit/local/session-start/worktree-context-declines.json and .claude/tigerkit/local/session-start/worktree-context-declines.json should be preserved as inactive legacy state and not deleted, migrated, read, or written by core command/runtime. Current documented active generated layout should include gap report archive/current plus branch-state pointer under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/. It should not document future runs/<kind>/<id> payload structures as active or required layout. It should not document active reflect artifact writes. Reflect helper docs should be optional, non-runtime, non-authoritative, and should not imply hook installation, settings updates, command generation, agent generation, user skill generation under TigerKit generated state, plugin manifest changes, or Claude Code auto memory writes.",
       "files": [
         "hooks/hooks.json",
         "commands/gap.md",
@@ -546,7 +546,7 @@
       "expectations": [
         "active generated state under ~/.tigerkit outside project repository",
         "execute boundary packaging may exist for preview/runtime validation",
-        "stable public execution remains proof-gated",
+        "execute availability is support-matrix gated",
         "scripts/tigerkit_state.py has no record-session-start-decline command",
         "legacy SessionStart decline markers preserved as inactive legacy state",
         "core command runtime does not read legacy decline markers",
@@ -594,9 +594,9 @@
     },
     {
       "id": 26,
-      "name": "execute-user-only-dispatcher-hard-proof-gate",
+      "name": "execute-user-only-dispatcher-environment-gate",
       "prompt": "Evaluate /tk:execute command and helper runtime. Do not write files.",
-      "expected_output": "Should expose /tk:execute as a user-only dispatcher that accepts one spec ID/path, rejects legacy/stale/blocked/invalid specs, requires tigerkit.loop-spec/v2, rejects malformed complete LoopSpec artifacts as invalid_loop_spec before later execute gates, refuses public stable execution without matching support matrix public entry and packaged CAP-01-CAP-10 proof, captures baseline for delegated executions, delegates to exactly one executor only after hard-boundary proof, validates claimed-result, observes create/modify/delete diff independently, reruns required verifiers, classifies claimedObservedMismatch as escalated, writes immutable receipts under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/executions/, and keeps rejected receipts closed with empty observed fields and no baseline.",
+      "expected_output": "Should expose /tk:execute as a user-only dispatcher that accepts one spec ID/path, rejects legacy/stale/blocked/invalid specs, requires tigerkit.loop-spec/v2, rejects malformed complete LoopSpec artifacts as invalid_loop_spec before later execute gates, requires exactly one matching support-matrix environment entry, allows preview/public environments, rejects missing/unsupported environments as hard_enforcement_unavailable, captures baseline for delegated executions, delegates to exactly one executor only after the environment gate passes, validates claimed-result, observes create/modify/delete diff independently, reruns required verifiers, classifies claimedObservedMismatch as escalated, writes immutable receipts under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/executions/, and keeps rejected receipts closed with empty observed fields and no baseline.",
       "files": [
         "commands/execute.md",
         "scripts/tigerkit_state.py",
@@ -612,8 +612,8 @@
         "Rejects blocked_loop_spec",
         "Rejects stale_base_revision",
         "Rejects malformed complete LoopSpec as invalid_loop_spec before later execute gates",
-        "Rejects hard_enforcement_unavailable when proof missing",
-        "Validates support matrix and capability proof before delegation",
+        "Rejects hard_enforcement_unavailable when support-matrix entry is missing or unsupported",
+        "Validates support matrix environment before delegation",
         "Validates executor claimed-result envelope",
         "Observes create modify delete diff independently",
         "Reruns required verifiers after executor",
@@ -654,7 +654,7 @@
       "id": 28,
       "name": "support-matrix-and-boundary-runtime-packaging",
       "prompt": "Evaluate execute support matrix and boundary runtime packaging. Do not write files.",
-      "expected_output": "Should define support/execute-support-matrix.json as canonical support owner with pluginVersion matching plugin manifest. It should declare preview hook_gate components hooks/hooks.json and hooks/execute-write-boundary.py. Public stable execution should not be claimed without proofStatus passed on a public environment. check-plugin-version should validate plugin/support matrix version match.",
+      "expected_output": "Should define support/execute-support-matrix.json as canonical support owner with pluginVersion matching plugin manifest. It should declare preview hook_gate components hooks/hooks.json and hooks/execute-write-boundary.py. Environment status should remain the execution allow/deny source, and check-plugin-version should validate plugin/support matrix version match.",
       "files": [
         "support/execute-support-matrix.json",
         "hooks/hooks.json",
@@ -669,7 +669,7 @@
         "hook_gate architecture declared",
         "boundaryComponents include hooks/hooks.json",
         "boundaryComponents include hooks/execute-write-boundary.py",
-        "preview is not stable public proof",
+        "preview/public status is the execution gate",
         "check-plugin-version validates support matrix version",
         "marketplace does not say 3-command",
         "marketplace does not say non-execution"

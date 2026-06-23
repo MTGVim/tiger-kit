@@ -11,9 +11,7 @@
         "hooks/hooks.json",
         "hooks/execute-write-boundary.py"
       ],
-      "proofRequired": true,
-      "proofStatus": "missing",
-      "reason": "Developer preview entry. Public execution remains rejected until CAP-01-CAP-10 packaged proof is generated for this exact plugin version and runtime binding."
+      "reason": "Developer preview entry. Execute is allowed when this environmentKey matches; missing or unsupported environment entries are rejected. isolationMode is not separately gated."
     }
   ]
 }

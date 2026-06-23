@@ -21,8 +21,6 @@
         "status": {"enum": ["public", "preview", "unsupported"]},
         "boundaryArchitecture": {"enum": ["hook_gate", "read_only_view", "isolated_patch_apply", "privileged_helper", "trusted_tool_identity"]},
         "boundaryComponents": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
-        "proofRequired": {"type": "boolean"},
-        "proofStatus": {"enum": ["passed", "missing", "stale"]},
         "reason": {"type": "string", "minLength": 1}
       },
       "allOf": [
