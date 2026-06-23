@@ -663,40 +663,8 @@ def platform_key() -> str:
     return "unknown"
 
 
-def current_environment_key() -> str:
-    return f"claude-code/{platform_key()}/local/{os.environ.get('CLAUDE_PERMISSION_MODE', 'default')}"
-
-
-def runtime_binding() -> dict[str, Any]:
-    return {"platform": platform_key(), "permissionMode": os.environ.get("CLAUDE_PERMISSION_MODE", "default"), "isolationMode": os.environ.get("TIGERKIT_ISOLATION_MODE", "none")}
-
-
-def support_matrix_path() -> Path:
-    return plugin_root() / "support" / "execute-support-matrix.json"
-
-
-def support_matrix() -> dict[str, Any]:
-    return load_json(support_matrix_path(), {})
-
-
 def sha256_file(path: Path) -> str:
     return sha256_bytes(path.read_bytes())
-
-
-def validate_environment_support() -> tuple[bool, str | None, str | None]:
-    matrix = support_matrix()
-    env_key = current_environment_key()
-    matches = [item for item in matrix.get("environments", []) if item.get("environmentKey") == env_key]
-    if len(matches) != 1:
-        return False, "hard_enforcement_unavailable", "No support matrix entry matches current environment."
-    env = matches[0]
-    status = str(env.get("status") or "")
-    if status == "unsupported":
-        detail = str(env.get("reason") or "Current environment is unsupported.")
-        return False, "hard_enforcement_unavailable", f"Current environment is unsupported: {detail}"
-    if status not in {"preview", "public"}:
-        return False, "hard_enforcement_unavailable", f"Unsupported support-matrix status for current environment: {status or 'unknown'}"
-    return True, None, None
 
 
 def yaml_section(text: str, key: str) -> list[str]:
@@ -1384,12 +1352,6 @@ def cmd_execute(args: argparse.Namespace) -> int:
         current_context = context_fingerprint(repo_root, scan_capabilities(repo_root))
         if current_context["fingerprint"]["value"] != parsed["fingerprint"]:
             receipt = rejected_receipt(spec_id, execution_id, "stale_fingerprint", "Current repository fingerprint differs from LoopSpec context fingerprint.")
-            path = persist_receipt(repo_root, receipt)
-            print(render_execute_receipt(receipt, path, executor))
-            return 1
-        support_ok, reason, message = validate_environment_support()
-        if not support_ok:
-            receipt = rejected_receipt(spec_id, execution_id, reason or "hard_enforcement_unavailable", message or "Current environment is not enabled for execute.")
             path = persist_receipt(repo_root, receipt)
             print(render_execute_receipt(receipt, path, executor))
             return 1

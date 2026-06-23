@@ -9,7 +9,7 @@
 </p>
 
 TigerKit(`tk`, plugin namespace `/tk:*`)은 Claude Code용 경량 plugin입니다.
-SoT(Source of Truth)가 있으면 `/tk:gap`으로 현재 구현과의 차이를 먼저 확인하고, 명시적 task는 `/tk:loop-spec`으로 `tigerkit.loop-spec/v2` 실행 계약을 생성할 수 있습니다. 사용자가 직접 `/tk:execute <spec>`를 호출하면 bounded execution dispatcher가 spec과 현재 context, support-matrix environment gate를 검증한 뒤 실행 receipt를 남깁니다. 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 preview-first로 정리합니다.
+SoT(Source of Truth)가 있으면 `/tk:gap`으로 현재 구현과의 차이를 먼저 확인하고, 명시적 task는 `/tk:loop-spec`으로 `tigerkit.loop-spec/v2` 실행 계약을 생성할 수 있습니다. 사용자가 직접 `/tk:execute <spec>`를 호출하면 bounded execution dispatcher가 spec과 현재 context를 검증한 뒤 실행 receipt를 남깁니다. 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 preview-first로 정리합니다.
 
 ```text
 Check the gap. Write the spec. Execute only by request. Keep the learning.
@@ -40,7 +40,7 @@ claude plugin details tk
 - 사용자가 바로 진행을 원하면 `/tk:gap` 없이 진행할 수 있지만, 그 경우 가정과 불확실성을 명시합니다.
 - `/tk:loop-spec`은 source를 수정하지 않고 LoopSpec v2 계약만 생성하거나 검증합니다.
 - `/tk:execute`는 사용자만 명시적으로 호출할 수 있는 write boundary입니다.
-- Execute support set은 `support/execute-support-matrix.json`이 소유합니다. 현재 package는 matching environment entry가 `preview` 또는 `public`이면 execute를 허용하고, 미등록 또는 `unsupported` environment만 거부합니다.
+- Execute packaging metadata는 `support/execute-support-matrix.json`에 남기지만 runtime gate로 쓰지 않습니다.
 - 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 정리합니다.
 - `/tk:reflect` 기본값은 preview-only이며, `--apply=true`도 eligible `repo-local` 후보만 `<git-root>/CLAUDE.local.md`에 쓸 수 있습니다.
 
@@ -72,10 +72,7 @@ claude plugin details tk
 - `readiness: complete`
 - `execution.executorRecommendation: fast | reasoning`
 - stale/legacy/blocked/invalid spec rejection
-- current environment identity와 runtime binding helper capture
-- `support/execute-support-matrix.json`의 matching environment entry
-- matching environment `status: preview | public`
-- environment key는 `claude-code/<platform>/local/<permissionMode>` 형식이며 `isolationMode`는 별도 gate로 보지 않음
+- current environment entry 검사는 하지 않습니다. 어떤 environment route에서도 execute를 막지 않습니다.
 - dispatcher postflight verifier 재실행과 immutable receipt 저장
 
 현재 repository package는 hook_gate boundary runtime component를 포함합니다.
@@ -85,7 +82,7 @@ hooks/hooks.json
 hooks/execute-write-boundary.py
 ```
 
-matching environment entry가 없거나 `status: unsupported`이면 `/tk:execute`는 `hard_enforcement_unavailable`로 reject하고 가능한 경우 `~/.tigerkit/.../executions/<execution-id>.yaml` receipt를 저장합니다.
+environment route 자체는 `/tk:execute` reject 사유가 아닙니다. reject는 stale/blocked/invalid LoopSpec, scope violation, verifier failure 같은 실행 계약 위반에서만 발생합니다.
 
 ## Reflect write boundary
 

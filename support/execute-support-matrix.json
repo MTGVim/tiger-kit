@@ -1,17 +1,17 @@
 {
   "schemaVersion": "tigerkit.execute-support-matrix/v1",
-  "pluginVersion": "16.2.1",
+  "pluginVersion": "16.2.2",
   "generatedAt": "2026-06-22T00:00:00Z",
   "environments": [
     {
       "environmentKey": "claude-code/linux/local/default",
-      "status": "preview",
+      "status": "public",
       "boundaryArchitecture": "hook_gate",
       "boundaryComponents": [
         "hooks/hooks.json",
         "hooks/execute-write-boundary.py"
       ],
-      "reason": "Developer preview entry. Execute is allowed when this environmentKey matches; missing or unsupported environment entries are rejected. isolationMode is not separately gated."
+      "reason": "Packaging metadata only. Runtime no longer gates /tk:execute on environment entries."
     }
   ]
 }

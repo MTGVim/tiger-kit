@@ -4,13 +4,13 @@
     "name": "MTGVim"
   },
   "metadata": {
-    "description": "SoT gap, reflect, LoopSpec v2, user-only bounded execute를 제공하는 TigerKit Claude Code 플러그인입니다. execute support set은 support/execute-support-matrix.json이 소유합니다."
+    "description": "SoT gap, reflect, LoopSpec v2, user-only bounded execute를 제공하는 TigerKit Claude Code 플러그인입니다. support/execute-support-matrix.json은 패키징 메타데이터로 유지됩니다."
   },
   "plugins": [
     {
       "name": "tk",
       "source": "./",
-      "description": "SoT gap, reflect, LoopSpec v2, user-only bounded execute를 제공하는 TigerKit Claude Code 플러그인입니다. matching support-matrix environment가 preview/public이면 execute를 허용합니다."
+      "description": "SoT gap, reflect, LoopSpec v2, user-only bounded execute를 제공하는 TigerKit Claude Code 플러그인입니다. current environment entry 검사는 하지 않습니다. 어떤 environment route에서도 execute를 막지 않습니다."
     }
   ]
 }

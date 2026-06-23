@@ -9,7 +9,7 @@
     "boundaryEnforcement": "detection_only",
     "reasonCodes": ["hard_enforcement_unavailable"],
     "reasonDetails": [
-      {"code": "hard_enforcement_unavailable", "message": "Current environment is unsupported: not supported here"}
+      {"code": "hard_enforcement_unavailable", "message": "Legacy environment-gate rejection fixture."}
     ],
     "observed": {"changedPaths": [], "scopeViolations": [], "baselineDirtyPathsModified": [], "claimedObservedMismatch": false},
     "postflightVerifiers": [],

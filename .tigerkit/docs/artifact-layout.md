@@ -2,7 +2,7 @@
 
 이 문서는 현재 TigerKit 산출물 배치와 책임을 설명합니다. active state와 legacy state의 경계는 `.tigerkit/docs/storage-boundary.md`를 기준으로 봅니다.
 
-현재 active generated layout은 project repository 밖 `~/.tigerkit/` 아래의 file-only state입니다. `.claude/tigerkit/`는 legacy/migration context로만 남습니다. Active implementation surface는 `/tk:gap`, `/tk:reflect`, `/tk:loop-spec`, `/tk:execute` explicit command contract와 command-generated state입니다. Execute boundary packaging은 preview/runtime validation에 사용될 수 있으며 execute availability는 support matrix environment gate가 소유합니다.
+현재 active generated layout은 project repository 밖 `~/.tigerkit/` 아래의 file-only state입니다. `.claude/tigerkit/`는 legacy/migration context로만 남습니다. Active implementation surface는 `/tk:gap`, `/tk:reflect`, `/tk:loop-spec`, `/tk:execute` explicit command contract와 command-generated state입니다. Execute boundary packaging은 preview/runtime validation 메타데이터로 남을 수 있지만 runtime은 environment entry로 `/tk:execute`를 차단하지 않습니다.
 
 ## Active generated 구조
 
