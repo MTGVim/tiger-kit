@@ -1,5 +1,12 @@
 # Legacy TigerKit repo-local generated state. Active state lives outside the repo under ~/.tigerkit/.
 .claude/tigerkit/
+.claude/handoffs/
+.claude/scheduled_tasks.lock
+.claude/settings.local.json
+.claude/telltale/
+.claude/worktrees/
+.codegraph/
+RFC-tk-execute-executor-routing-v10-feedback.md
 
 .tigerkit/*
 !.tigerkit/docs/

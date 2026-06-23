@@ -3,14 +3,16 @@ from unittest.mock import patch
 
 import scripts.tigerkit_state as tigerkit_state
 
+PLUGIN_VERSION = "16.2.1"
 
-class ValidateSupportAndProofTests(unittest.TestCase):
+
+class ValidateEnvironmentSupportTests(unittest.TestCase):
     def test_preview_environment_is_allowed_without_capability_proof(self):
         with patch.object(
             tigerkit_state,
             "support_matrix",
             return_value={
-                "pluginVersion": "16.2.0",
+                "pluginVersion": PLUGIN_VERSION,
                 "environments": [
                     {
                         "environmentKey": "claude-code/linux/local/default",
@@ -36,7 +38,7 @@ class ValidateSupportAndProofTests(unittest.TestCase):
             tigerkit_state,
             "support_matrix",
             return_value={
-                "pluginVersion": "16.2.0",
+                "pluginVersion": PLUGIN_VERSION,
                 "environments": [
                     {
                         "environmentKey": "claude-code/linux/local/default",
@@ -62,7 +64,7 @@ class ValidateSupportAndProofTests(unittest.TestCase):
         with patch.object(
             tigerkit_state,
             "support_matrix",
-            return_value={"pluginVersion": "16.2.0", "environments": []},
+            return_value={"pluginVersion": PLUGIN_VERSION, "environments": []},
         ), patch.object(
             tigerkit_state,
             "current_environment_key",
