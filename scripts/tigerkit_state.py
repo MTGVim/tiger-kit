@@ -523,7 +523,7 @@ def render_loop_spec_summary(spec: dict[str, Any], path: Path | None) -> str:
     lines += ["", "Write receipt", f"  changed: {path if path else 'NONE'}", "  source tree changed: no"]
     if readiness == "complete":
         lines += ["", "Next"]
-        lines.append(f"  /tk:execute {path if path else spec['specId']}")
+        lines.append(f"  legacy execute helper: execute {path if path else spec['specId']}")
     return "\n".join(lines)
 
 
@@ -542,12 +542,12 @@ def update_loop_branch_state(repo_root: Path, spec: dict[str, Any], path: Path) 
 
 def render_loop_spec_usage() -> str:
     return "\n".join([
-        "사용법: /tk:loop-spec \"<task>\"",
-        "또는: /tk:loop-spec validate <spec-id-or-path>",
+        "사용법: loop-spec <task>  # legacy helper, active /tk command 아님",
+        "또는: loop-spec validate <spec-id-or-path>",
         "",
         "예:",
-        '  /tk:loop-spec "Fix payment modal scroll bug"',
-        "  /tk:loop-spec validate <spec-id-or-path>",
+        '  loop-spec "Fix payment modal scroll bug"',
+        "  loop-spec validate <spec-id-or-path>",
     ])
 
 
@@ -636,7 +636,7 @@ def cmd_loop_spec_validate(args: argparse.Namespace, repo_root: Path) -> int:
             print(f"  - {item}")
     if context == "stale":
         print("Recommendation")
-        print("  Regenerate with /tk:loop-spec <task>")
+        print("  Re-prepare the spec with a legacy helper or external producer.")
     return 0
 
 
@@ -1274,7 +1274,7 @@ def rejected_receipt(spec_id: str, execution_id: str, reason: str, message: str)
     }
 
 def render_execute_usage() -> str:
-    return "\n".join(["사용법: /tk:execute <spec-id-or-path>", "예: /tk:execute fix-payment-modal-scroll-20260622-120000-ABCD"])
+    return "\n".join(["사용법: execute <spec-id-or-path>  # legacy helper, active /tk command 아님", "예: execute fix-payment-modal-scroll-20260622-120000-ABCD"])
 
 
 def render_execute_receipt(receipt: dict[str, Any], path: Path | None, executor: str | None = None) -> str:
@@ -1298,7 +1298,7 @@ def render_execute_receipt(receipt: dict[str, Any], path: Path | None, executor:
 def run_executor(repo_root: Path, parsed: dict[str, Any], execution_id: str) -> tuple[dict[str, Any] | None, str | None]:
     schema_path = plugin_root() / "schemas" / "executor-claimed-result.schema.json"
     prompt = "\n".join([
-        "TigerKit /tk:execute dispatcher assigned exactly one LoopSpec.",
+        "TigerKit legacy execute helper assigned exactly one LoopSpec.",
         f"executionId: {execution_id}",
         f"specId: {parsed['specId']}",
         f"executor: {parsed['executor']}",
@@ -1402,7 +1402,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_write.add_argument("--report-file", help="Read report content from file instead of stdin", default=None)
     p_write.set_defaults(func=cmd_write_gap)
 
-    p_loop = sub.add_parser("loop-spec", help="Generate or validate a worktree-scoped LoopSpec")
+    p_loop = sub.add_parser("loop-spec", help="Legacy helper: generate or validate a worktree-scoped LoopSpec")
     p_loop.add_argument("--repo-root", help="Repo root or working directory", default=None)
     p_loop.add_argument("--explain", action="store_true", help="Include expanded explanation in command output")
     p_loop.add_argument("--type", choices=["bugfix", "refactor", "flaky-test"], default=None, help="Override deterministic task classifier")
@@ -1412,7 +1412,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_loop.add_argument("task", nargs="*", help="Task description, or: validate <spec-id-or-path>")
     p_loop.set_defaults(func=cmd_loop_spec)
 
-    p_execute = sub.add_parser("execute", help="Validate and execute a LoopSpec v2 through TigerKit dispatcher")
+    p_execute = sub.add_parser("execute", help="Legacy helper: validate and execute a LoopSpec v2")
     p_execute.add_argument("--repo-root", help="Repo root or working directory", default=None)
     p_execute.add_argument("spec", nargs="*", help="Spec id or path")
     p_execute.set_defaults(func=cmd_execute)

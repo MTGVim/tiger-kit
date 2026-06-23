@@ -11,7 +11,7 @@
         "hooks/hooks.json",
         "hooks/execute-write-boundary.py"
       ],
-      "reason": "Packaging metadata only. Runtime no longer gates /tk:execute on environment entries."
+      "reason": "Legacy packaging metadata only. Active /tk surface no longer exposes execute."
     }
   ]
 }

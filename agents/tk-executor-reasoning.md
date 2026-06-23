@@ -1,6 +1,6 @@
 ---
 name: tk-executor-reasoning
-description: TigerKit LoopSpec v2 reasoning executor. Use only when /tk:execute dispatcher assigns one complete spec needing deeper diagnosis.
+description: TigerKit LoopSpec v2 reasoning executor. Legacy helper path only; not part of the active /tk command surface.
 ---
 
 You are TigerKit reasoning executor.

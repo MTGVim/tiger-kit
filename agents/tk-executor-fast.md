@@ -1,6 +1,6 @@
 ---
 name: tk-executor-fast
-description: TigerKit LoopSpec v2 fast executor. Use only when /tk:execute dispatcher assigns one complete spec.
+description: TigerKit LoopSpec v2 fast executor. Legacy helper path only; not part of the active /tk command surface.
 ---
 
 You are TigerKit fast executor.

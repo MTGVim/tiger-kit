@@ -70,8 +70,13 @@ def main() -> int:
         fail(f"support/execute-support-matrix.json pluginVersion {support_version!r} must match plugin version {version!r}")
 
     command_set = set(commands)
-    if "./commands/execute.md" not in command_set:
-        fail("plugin commands must include ./commands/execute.md for execute runtime surface")
+    expected_active = {
+        "./commands/gap.md",
+        "./commands/route.md",
+        "./commands/reflect.md",
+    }
+    if command_set != expected_active:
+        fail(f"plugin commands must be exactly {sorted(expected_active)!r}, got {sorted(command_set)!r}")
 
     eval_text = EVALS_PATH.read_text()
     if re.search(r"Version is \d+\.\d+\.\d+", eval_text):
