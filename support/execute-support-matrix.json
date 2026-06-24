@@ -1,6 +1,6 @@
 {
   "schemaVersion": "tigerkit.execute-support-matrix/v1",
-  "pluginVersion": "16.2.3",
+  "pluginVersion": "16.2.4",
   "generatedAt": "2026-06-22T00:00:00Z",
   "environments": [
     {
