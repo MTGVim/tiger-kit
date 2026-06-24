@@ -178,61 +178,71 @@ Rules:
 
 ## Output
 
+기본 projection은 compact합니다.
+
+- 모든 candidate가 no-op이면 출력은 정확히 `Reflect: 반영할 변경 없음.` 한 줄입니다.
+- empty target section, default empty list, standalone `NONE` line은 의미 보존에 필요할 때만 출력합니다.
+- `Deprecation:` line은 legacy selector를 실제로 썼을 때만 출력합니다.
+- `Changed paths`는 실제 write가 있었을 때 출력합니다. 다만 apply reject/failure, rollback success/failure처럼 write 결과를 명확히 보여야 하는 receipt에서는 `NONE` 또는 changed path를 명시적으로 출력할 수 있습니다.
+- `Apply plan` section은 current invocation에서 exact apply plan이 생성됐을 때만 출력합니다.
+- `Repo-local`, `Repo-shared`, `User-global`, `Skill`, `Hook`, `Command`, `Agent`, `Discard` section은 해당 target candidate가 있을 때만 출력합니다.
+- `충돌 / 적용 조건`, `다음 행동`은 비어 있지 않을 때만 출력합니다.
+
 ```text
 Reflect 완료
 Requested target: <raw requested target or default>
 Effective targets: <canonical target list>
-Deprecation: <deprecation line or NONE>
+[Deprecation: <deprecation line when legacy selector used>]
 
 ## Promotion 결과
 | candidate_id | status | duplicate_status | target | action | path | reason |
 |---|---|---|---|---|---|---|
 
-## Changed paths
-- <path written by this command, or NONE>
+[## Changed paths
+- <path written by this command, or NONE when an apply/rollback receipt must show explicit no-change>]
 
-## Apply plan
-<apply_plan or NONE>
+[## Apply plan
+<apply_plan>]
 
-## Repo-local 후보
-n. <candidate or NONE>
+[## Repo-local 후보
+n. <candidate>]
 
-## Repo-shared 후보
-n. <candidate or NONE>
+[## Repo-shared 후보
+n. <candidate>]
 
-## User-global 후보
-n. <candidate or NONE>
+[## User-global 후보
+n. <candidate>]
 
-## Skill 후보
-n. <candidate or NONE>
+[## Skill 후보
+n. <candidate>]
 
-## Hook 후보
-n. <candidate or NONE>
+[## Hook 후보
+n. <candidate>
 - rationale: <why this check helps>
 - trigger: <when it would run>
 - action: <what it would do>
-- why suggest-only: <why user review is required before install/activation>
+- why suggest-only: <why user review is required before install/activation>]
 
-## Command 후보
-n. <candidate or NONE>
+[## Command 후보
+n. <candidate>
 - intent: <user-facing outcome>
 - arguments: <args/options/input shape>
-- when better than skill: <why slash command surface fits better>
+- when better than skill: <why slash command surface fits better>]
 
-## Agent 후보
-n. <candidate or NONE>
+[## Agent 후보
+n. <candidate>
 - role boundary: <owned and excluded scope>
 - responsibility: <inputs, outputs, verification responsibility>
-- when better than command: <why independent agent role fits better>
+- when better than command: <why independent agent role fits better>]
 
-## Discard
-n. <discarded item and reason or NONE>
+[## Discard
+n. <discarded item and reason>]
 
-## 충돌 / 적용 조건
-- <condition or none>
+[## 충돌 / 적용 조건
+- <condition>]
 
-## 다음 행동
-- <next step or 없음>
+[## 다음 행동
+- <next step>]
 ```
 
 ### Rollback receipt examples

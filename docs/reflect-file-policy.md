@@ -162,15 +162,17 @@ Negative boundary: agent 파일 생성, 자동 dispatch 설정, orchestration ru
 
 ## Output requirement
 
-Reflect receipt는 아래를 분리한다.
+Reflect receipt는 compact projection을 기본으로 하면서 아래 의미를 분리한다.
 
 - requested target
 - effective targets
 - deprecation line where relevant
 - candidate table with `candidate_id`, `status`, `duplicate_status`, `target`, `action`, `path`, `reason`
-- changed path 전체. 파일을 쓰지 않은 경우 `NONE`
-- apply plan 또는 `NONE`
-- repo-local, repo-shared, user-global, skill, hook, command, agent, discard section
+- changed path 전체. 실제 write가 없으면 기본적으로 section을 생략하지만, apply reject/failure 또는 rollback receipt처럼 no-change 증명이 필요한 경우 `Changed paths: NONE`을 명시할 수 있다.
+- exact apply plan. plan이 없으면 기본적으로 section을 생략한다.
+- repo-local, repo-shared, user-global, skill, hook, command, agent, discard section. 해당 target candidate가 있을 때만 출력한다.
 - rollback success/failure when verification fails
 - 충돌 / 적용 조건
 - 다음 행동
+
+Empty target section, default empty list, standalone `NONE` line은 의미 보존에 필요할 때만 출력한다. 모든 candidate가 no-op이면 출력은 정확히 `Reflect: 반영할 변경 없음.` 한 줄이다.

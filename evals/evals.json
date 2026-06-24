@@ -581,7 +581,7 @@
       "id": 29,
       "name": "human-output-golden-fixtures-and-reflect-receipt-mode",
       "prompt": "Evaluate golden output and reflect receipt consumer mode. Do not write files.",
-      "expected_output": "Should define evals/golden/human-output as canonical projection fixture owner. Legacy rejected receipt fixtures should render compact output without empty sections. Reflect should accept execution ID or receipt path, prefer persisted receipt over transcript, consume minimum receipt fields, and output exactly 'Reflect: 반영할 변경 없음.' when every candidate is no-op.",
+      "expected_output": "Should define evals/golden/human-output as canonical projection fixture owner. Legacy rejected receipt fixtures should render compact output without empty sections. Reflect should accept execution ID or receipt path, prefer persisted receipt over transcript, consume minimum receipt fields, omit empty target sections and standalone NONE lines unless they carry safety/state meaning, and output exactly 'Reflect: 반영할 변경 없음.' when every candidate is no-op.",
       "files": [
         "evals/golden/human-output/execute-hard-enforcement-unavailable.input.json",
         "evals/golden/human-output/execute-hard-enforcement-unavailable.expected.txt",
