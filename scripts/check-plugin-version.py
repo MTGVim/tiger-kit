@@ -74,6 +74,8 @@ def main() -> int:
         "./commands/gap.md",
         "./commands/route.md",
         "./commands/reflect.md",
+        "./commands/forge.md",
+        "./commands/ui-diff.md",
     }
     if command_set != expected_active:
         fail(f"plugin commands must be exactly {sorted(expected_active)!r}, got {sorted(command_set)!r}")

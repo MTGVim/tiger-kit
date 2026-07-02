@@ -1,7 +1,7 @@
 {
   "schemaVersion": "tigerkit.execute-support-matrix/v1",
-  "pluginVersion": "16.2.4",
-  "generatedAt": "2026-06-22T00:00:00Z",
+  "pluginVersion": "16.3.0",
+  "generatedAt": "2026-07-02T00:00:00Z",
   "environments": [
     {
       "environmentKey": "claude-code/linux/local/default",

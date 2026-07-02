@@ -5,6 +5,7 @@
 .claude/settings.local.json
 .claude/telltale/
 .claude/worktrees/
+.claude/ui-diff/login.local.md
 .codegraph/
 RFC-tk-execute-executor-routing-v10-feedback.md
 

@@ -4,13 +4,13 @@
     "name": "MTGVim"
   },
   "metadata": {
-    "description": "SoT gap, implementation route brainstorming, reflect를 제공하는 TigerKit Claude Code 플러그인입니다. support/execute-support-matrix.json은 legacy 패키징 메타데이터로만 유지됩니다."
+    "description": "SoT gap, implementation route brainstorming, reflect, forge, ui-diff를 제공하는 TigerKit Claude Code 플러그인입니다. support/execute-support-matrix.json은 legacy 패키징 메타데이터로만 유지됩니다."
   },
   "plugins": [
     {
       "name": "tk",
       "source": "./",
-      "description": "SoT gap, implementation route brainstorming, reflect를 제공하는 TigerKit Claude Code 플러그인입니다. active command surface는 /tk:gap, /tk:route, /tk:reflect 입니다."
+      "description": "SoT gap, implementation route brainstorming, reflect, forge, ui-diff를 제공하는 TigerKit Claude Code 플러그인입니다. active command surface는 /tk:gap, /tk:route, /tk:reflect, /tk:forge, /tk:ui-diff 입니다."
     }
   ]
 }
