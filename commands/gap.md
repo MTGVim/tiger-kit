@@ -11,6 +11,12 @@ argument-hint: "[SoT refs or pasted source] [--target <path|area>] [--print-repo
 
 이 명령은 workflow를 생성하거나 고정하지 않습니다.
 
+canonical skill:
+
+```text
+skills/gap/SKILL.md
+```
+
 ```text
 gap = source of truth ↔ current implementation one-shot comparison
 ```

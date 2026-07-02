@@ -2,7 +2,7 @@
 
 이 문서는 현재 TigerKit 산출물 배치와 책임을 설명합니다. active state와 legacy state의 경계는 `.tigerkit/docs/storage-boundary.md`를 기준으로 봅니다.
 
-현재 active generated layout은 project repository 밖 `~/.tigerkit/` 아래의 file-only state입니다. `.claude/tigerkit/`는 legacy/migration context로만 남습니다. Active implementation surface는 `/tk:gap`, `/tk:reflect`, `/tk:loop-spec`, `/tk:execute` explicit command contract와 command-generated state입니다. Execute boundary packaging은 preview/runtime validation 메타데이터로 남을 수 있지만 runtime은 environment entry로 `/tk:execute`를 차단하지 않습니다.
+현재 active generated layout은 project repository 밖 `~/.tigerkit/` 아래의 file-only state입니다. `.claude/tigerkit/`는 legacy/migration context로만 남습니다. Active implementation surface는 `/tk:gap`, `/tk:route`, `/tk:reflect`, `/tk:ui-diff`, `/tk:grill`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues`입니다. Execute boundary packaging은 legacy preview/runtime validation 메타데이터로 남을 수 있지만 현재 active public command surface를 정의하지 않습니다.
 
 ## Active generated 구조
 
@@ -15,9 +15,9 @@
           gap/
             GAP-YYYYMMDD-HHmmss-RAND.md
             current.md
-          loop-specs/
-            <spec-id>/
-              spec.yaml
+          reflect/
+            REFLECT-YYYYMMDD-HHmmss-RAND.yaml
+            current.yaml
           branch-state.json
 ```
 
@@ -47,13 +47,14 @@ workspace-<basename-slug>--<sha256(absWorkspaceRoot).slice(0, 8)>
 |---|---|---|
 | `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/<GAP-ID>.md` | `/tk:gap` one-shot report archive | generated working memory |
 | `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/current.md` | 최신 gap report copy | generated pointer |
+| `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/reflect/REFLECT-YYYYMMDD-HHmmss-RAND.yaml` | `/tk:reflect` ledger archive | generated working memory |
+| `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/reflect/current.yaml` | 최신 reflect ledger copy | generated pointer |
 | `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/branch-state.json` | latest generated artifact pointer | generated index |
-| `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/loop-specs/<spec-id>/spec.yaml` | `/tk:loop-spec` recommendation contract | worktree-scoped generated spec |
 | `scripts/tigerkit_state.py` | active generated state helper (`write-gap`, path calculation) | shipped helper |
 | repo `CLAUDE.local.md` | reflect eligible repo-local apply target | local guidance |
 | repo `CLAUDE.md` | reflect suggest-only target | shared repo guidance |
 
-`/tk:reflect`는 active generated artifact layout을 문서화하지 않습니다. Reflect command가 파일을 쓰는 경우에는 receipt에 changed path와 apply plan을 출력해야 합니다.
+`/tk:reflect`는 active generated artifact layout으로 ledger path를 문서화합니다. direct write가 발생하는 경우에는 changed path를 출력하고, exact apply_plan은 ledger를 source of truth로 삼아야 합니다.
 
 ## Legacy SessionStart state
 

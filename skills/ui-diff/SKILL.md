@@ -1,23 +1,20 @@
 ---
 name: ui-diff
-description: >
-  UI Diff. QA 배포본과 로컬, 또는 design spec과 로컬을 비교할 때
-  computed style과 bounding rect를 evidence-first로 읽고 시각 회귀를 검증합니다.
-  제품별 URL, 로그인, 화면 카탈로그는 현재 repo의 `.claude/ui-diff/` profile에서 로드합니다.
+description: computed style과 bounding rect 중심으로 visual regression을 검증합니다. 현재 repo의 `.claude/ui-diff/` profile을 읽습니다.
 ---
 
 # UI Diff
 
 시각 회귀(모달, 레이아웃, spacing, color, overlay)를 눈대중이 아니라 computed style / bounding rect 중심으로 검증합니다.
 
-## Profile lookup (먼저)
+## Profile lookup
 
-엔진은 제품 특이값을 hard-code하지 않습니다. 실행 시 아래 순서로 profile을 찾습니다.
+제품 특이값은 hard-code하지 않습니다. 실행 시 아래 순서로 profile을 찾습니다.
 
 1. `<root>/.claude/ui-diff/`
 2. 없으면 profile missing으로 중단하고 필요한 파일 경로를 안내합니다.
 
-이 엔진은 현재 repo profile만 읽고, provisioning/install flow를 직접 수행하지 않습니다.
+이 엔진은 현재 repo profile만 읽고 provisioning/install flow를 직접 수행하지 않습니다.
 
 ## Mode overview
 

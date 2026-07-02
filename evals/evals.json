@@ -1,21 +1,27 @@
 {
-  "skill_name": "tiger-kit-gap-route-reflect-core",
+  "skill_name": "tiger-kit-gap-route-reflect-ui-diff-grill-prototype-arch-review-merge-conflict-handoff-to-prd-to-issues-core",
   "command_surface": {
-    "surface_model": "TigerKit exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts. Active command surface is /tk:gap, /tk:route, and /tk:reflect. /tk:loop-spec and /tk:execute are no longer active commands. Legacy helpers or runtime artifacts may remain only for compatibility and must not be presented as the default path.",
+    "surface_model": "TigerKit exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts. Active command surface is /tk:gap, /tk:route, /tk:reflect, /tk:ui-diff, /tk:grill, /tk:prototype, /tk:arch-review, /tk:merge-conflict, /tk:handoff, /tk:to-prd, and /tk:to-issues. /tk:loop-spec and /tk:execute are no longer active commands. Legacy helpers or runtime artifacts may remain only for compatibility and must not be presented as the default path.",
     "core_commands": [
       "/tk:gap",
       "/tk:route",
-      "/tk:reflect"
+      "/tk:reflect",
+      "/tk:ui-diff",
+      "/tk:grill",
+      "/tk:prototype",
+      "/tk:arch-review",
+      "/tk:merge-conflict",
+      "/tk:handoff",
+      "/tk:to-prd",
+      "/tk:to-issues"
     ],
     "deprecated_or_removed_commands": [
-      "/tk:grill",
       "/tk:afk",
       "/tk:setup",
       "/tk:config",
       "/tk:launch",
       "/tk:review",
       "/tk:next",
-      "/tk:handoff",
       "/tk:meta-feedback",
       "/tk:loop-spec",
       "/tk:execute"
@@ -25,9 +31,9 @@
   "evals": [
     {
       "id": 0,
-      "name": "plugin-version-and-command-manifest-gap-route-reflect-forge-ui-diff",
+      "name": "plugin-version-and-command-manifest-gap-route-reflect-ui-diff-plus-phase1-and-conditional",
       "prompt": "Evaluate TigerKit active command surface and plugin packaging. Do not write files.",
-      "expected_output": "Should list /tk:gap, /tk:route, /tk:reflect, /tk:forge, and /tk:ui-diff as the active commands. Should state /tk:loop-spec and /tk:execute are not active manifest entries. Should state /tk:route is a decision/brainstorming surface, not a runner or autopilot. Should state /tk:forge is a skill-materialization surface and /tk:ui-diff is a direct QA surface. Should treat any remaining LoopSpec/execute machinery as legacy or compatibility-only, not as the default path.",
+      "expected_output": "Should list /tk:gap, /tk:route, /tk:reflect, /tk:ui-diff, /tk:grill, /tk:prototype, /tk:arch-review, /tk:merge-conflict, /tk:handoff, /tk:to-prd, and /tk:to-issues as the active commands. Should state /tk:loop-spec and /tk:execute are not active manifest entries. Should state /tk:route is a decision/brainstorming surface, not a runner or autopilot. Should state /tk:reflect is the durable promotion router with repo-local/user-global default apply and explicit skill materialize mode, /tk:grill is a questioning surface, /tk:prototype is a throwaway validation surface, /tk:arch-review is a report-only architecture review surface, /tk:merge-conflict is a conflict-resolution surface, /tk:handoff is a repo-local handoff surface, /tk:to-prd is a draft-only PRD surface, and /tk:to-issues is a draft-only vertical-slice issue surface. Should treat any remaining LoopSpec/execute machinery as legacy or compatibility-only, not as the default path.",
       "files": [
         ".claude-plugin/plugin.json",
         "README.md",
@@ -39,12 +45,26 @@
         "Lists /tk:gap",
         "Lists /tk:route",
         "Lists /tk:reflect",
-        "Lists /tk:forge",
         "Lists /tk:ui-diff",
+        "Lists /tk:grill",
+        "Lists /tk:prototype",
+        "Lists /tk:arch-review",
+        "Lists /tk:merge-conflict",
+        "Lists /tk:handoff",
+        "Lists /tk:to-prd",
+        "Lists /tk:to-issues",
         "Does not list /tk:loop-spec as active",
         "Does not list /tk:execute as active",
         "States /tk:route is decision/brainstorming only",
-        "States /tk:forge is skill-materialization surface",
+        "States /tk:reflect is durable promotion router",
+        "States /tk:reflect has explicit skill materialize mode",
+        "States /tk:grill is questioning surface",
+        "States /tk:prototype is throwaway validation surface",
+        "States /tk:arch-review is report-only architecture review surface",
+        "States /tk:merge-conflict is conflict-resolution surface",
+        "States /tk:handoff is repo-local handoff surface",
+        "States /tk:to-prd is draft-only PRD surface",
+        "States /tk:to-issues is draft-only vertical-slice issue surface",
         "States /tk:ui-diff is direct QA surface",
         "Treats legacy LoopSpec/execute runtime as compatibility-only"
       ]
@@ -91,8 +111,8 @@
     {
       "id": 3,
       "name": "reflect-default-apply-canonical-targets",
-      "prompt": "Evaluate /tk:reflect promotion router behavior. Do not write files.",
-      "expected_output": "Should define /tk:reflect as a safe durable promotion router that extracts reusable learning from session result and feedback, classifies it into canonical targets, and defaults repo-local guidance to apply-enabled with --apply=false as preview-only opt-out. Canonical target enum must be exactly repo-local, repo-shared, user-global, skill, hook, command, agent, discard. PROFILE.md, automation, hookify, and hook / hookify must not be target names. repo-local is the only target that can be written. repo-shared, user-global, skill, hook, command, and agent remain suggest-only from reflect. discard implies action discard with no path or write. TigerKit must not write, mirror, or back up Claude Code auto memory.",
+        "prompt": "Evaluate /tk:reflect promotion router behavior. Do not write files.",
+      "expected_output": "Should define /tk:reflect as a safe durable promotion router that extracts reusable learning from session result and feedback, classifies it into canonical targets, and defaults repo-local guidance to apply-enabled with --apply=false as preview-only opt-out. Canonical target enum must be exactly repo-local, repo-shared, user-global, skill, hook, command, agent, discard. PROFILE.md, automation, hookify, and hook / hookify must not be target names. repo-local and user-global are the default-apply targets. skill is not default apply; it becomes writable only with explicit target skill plus explicit apply. repo-shared, hook, command, and agent remain suggest-only from reflect. discard implies action discard with no path or write. TigerKit must not write, mirror, or back up Claude Code auto memory.",
       "files": [
         "commands/reflect.md",
         "docs/reflect-file-policy.md",
@@ -109,11 +129,11 @@
         "PROFILE.md is not a promotion target",
         "automation is not a target name",
         "hookify is not a target name",
-        "repo-local is the only writable target",
+        "repo-local and user-global are the default-apply targets",
         "repo-local write target is <git-root>/CLAUDE.local.md",
         "repo-shared is suggest-only",
-        "user-global is suggest-only",
-        "skill is suggest-only from reflect",
+        "user-global can be direct-apply on supported hosts",
+        "skill requires explicit apply to write",
         "hook is suggest-only",
         "command is suggest-only",
         "agent is suggest-only",
@@ -129,7 +149,7 @@
       "id": 4,
       "name": "reflect-legacy-selectors-preview-opt-out",
       "prompt": "Evaluate /tk:reflect legacy selector compatibility in preview mode. Do not write files.",
-      "expected_output": "Should state --target repo expands to repo-local and repo-shared with a deprecation warning, and --target user expands to user-global with a deprecation warning. With --apply=false, legacy selectors remain preview-only and write no files. Compact output may omit Changed paths and Apply plan sections, but it should still expose requested target, effective targets, deprecation line, summary, and ledger path when relevant.",
+      "expected_output": "Should state --target repo expands to repo-local and repo-shared with a deprecation warning, and --target user expands to user-global with a deprecation warning. With --apply=false, legacy selectors remain preview-only and write no files. Compact output may omit Changed paths when no file is written, but it should still expose requested target, effective targets, deprecation line, summary, and ledger path when relevant. Exact apply_plan remains ledger-only.",
       "files": [
         "commands/reflect.md",
         "docs/reflect-file-policy.md",
@@ -142,14 +162,14 @@
         "prints deprecation warning for user selector",
         "preview opt-out writes no files",
         "compact output may omit Changed paths when no file is written",
-        "compact output may omit Apply plan section in preview mode"
+        "exact apply_plan stays ledger-only in preview mode"
       ]
     },
     {
       "id": 5,
       "name": "reflect-legacy-selectors-apply-scope",
       "prompt": "Evaluate /tk:reflect legacy selector compatibility with --apply=true. Do not write files.",
-      "expected_output": "Should state --target repo --apply=true and --target all --apply=true may only write eligible repo-local candidates. repo-shared, user-global, skill, hook, command, agent, and discard remain suggest_only, preview_only, or discard. The command must not auto-apply shared/user/skill/hook/command/agent proposals.",
+      "expected_output": "Should state --target repo --apply=true may write eligible repo-local candidates, and --target user --apply=true may write eligible user-global candidates on supported hosts. --target all --apply=true may write eligible repo-local and eligible user-global candidates. repo-shared, skill, hook, command, agent, and discard remain suggest_only, preview_only, or discard unless another contract explicitly says otherwise.",
       "files": [
         "commands/reflect.md",
         "docs/reflect-file-policy.md",
@@ -157,10 +177,10 @@
       ],
       "expectations": [
         "--target repo --apply=true only writes eligible repo-local candidates",
-        "--target all --apply=true only writes eligible repo-local candidates",
+        "--target user --apply=true can write eligible user-global candidates",
+        "--target all --apply=true writes eligible repo-local and eligible user-global candidates",
         "repo-shared remains suggest-only",
-        "user-global remains suggest-only",
-        "skill remains suggest-only",
+        "skill requires explicit apply to write",
         "hook remains suggest-only",
         "command remains suggest-only",
         "agent remains suggest-only"
@@ -293,9 +313,9 @@
     },
     {
       "id": 12,
-      "name": "reflect-user-global-apply-remains-suggest-only",
+      "name": "reflect-user-global-apply-on-supported-hosts",
       "prompt": "Evaluate /tk:reflect --target user-global --apply=true. Do not write files.",
-      "expected_output": "Should keep user-global candidates suggest-only even when --apply=true. It must not edit user CLAUDE.md, auto memory, profile files, or generated state as a substitute. Changed paths should be NONE unless an eligible repo-local candidate is also in scope, which user-global alone is not.",
+      "expected_output": "Should allow user-global candidates to write on hosts with a writable user-global guidance surface. For Claude Code style hosts this can be ~/.claude/CLAUDE.md or ~/.claude/rules/<rule-name>/CLAUDE.md. For agents that do not use CLAUDE.md, it should resolve to a host-native user-global guidance surface when available; otherwise the candidate should remain suggest_only with a precise reason. It must not substitute auto memory or generated state for the writable target.",
       "files": [
         "commands/reflect.md",
         "docs/reflect-file-policy.md",
@@ -303,12 +323,12 @@
         ".tigerkit/docs/storage-boundary.md"
       ],
       "expectations": [
-        "user-global is suggest-only",
-        "--apply=true does not write user-global guidance",
-        "does not edit user CLAUDE.md",
-        "does not write Claude Code auto memory",
-        "does not create PROFILE.md",
-        "Changed paths NONE for user-global only"
+        "user-global can write on supported hosts",
+        "Claude Code host can target ~/.claude/CLAUDE.md",
+        "Claude Code host can target ~/.claude/rules/<rule-name>/CLAUDE.md",
+        "non-CLAUDE host may use host-native user-global surface",
+        "does not substitute auto memory for target",
+        "does not use generated state as target"
       ]
     },
     {
@@ -510,7 +530,7 @@
       ]
     },
     {
-      "id": 23,
+      "id": 31,
       "name": "reflect-unobserved-auto-memory-duplicate-status-unknown",
       "prompt": "Evaluate /tk:reflect when auto memory duplicate evidence was not observed. Do not write files.",
       "expected_output": "If auto memory was not inspected or visible evidence is absent, reflect should set duplicate_status unknown, not duplicate_status not_observed. It must not claim a duplicate was absent merely because it did not inspect auto memory.",
@@ -530,7 +550,7 @@
       "id": 24,
       "name": "storage-state-externalized-and-sessionstart-legacy-only",
       "prompt": "Evaluate TigerKit storage boundary, hook marker path, and reflect helper docs. Do not write files.",
-      "expected_output": "Should state that active TigerKit generated state lives outside the project repository under ~/.tigerkit. Execute boundary packaging may be present for preview/runtime validation metadata, but runtime must not block execute on environment entries. Existing SessionStart decline markers under ~/.tigerkit/local/session-start/worktree-context-declines.json and .claude/tigerkit/local/session-start/worktree-context-declines.json should be preserved as inactive legacy state and not deleted, migrated, read, or written by core command/runtime. Current documented active generated layout should include gap report archive/current plus branch-state pointer under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/. It should not document future runs/<kind>/<id> payload structures as active or required layout. It should not document active reflect artifact writes. Reflect helper docs should be optional, non-runtime, non-authoritative, and should not imply hook installation, settings updates, command generation, agent generation, user skill generation under TigerKit generated state, plugin manifest changes, or Claude Code auto memory writes.",
+      "expected_output": "Should state that active TigerKit generated state lives outside the project repository under ~/.tigerkit. Existing SessionStart decline markers under ~/.tigerkit/local/session-start/worktree-context-declines.json and .claude/tigerkit/local/session-start/worktree-context-declines.json should be preserved as inactive legacy state and not deleted, migrated, read, or written by core command/runtime. Current documented active generated layout should include gap report archive/current, reflect ledger archive/current, and branch-state pointer under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/. It should not document /tk:loop-spec or /tk:execute receipts as active command/runtime layout. Execute boundary packaging may remain only as legacy preview/runtime validation metadata, not as an active public command surface. Reflect helper docs should be optional, non-runtime, non-authoritative, and should not imply hook installation, settings updates, command generation, agent generation, user skill generation under TigerKit generated state, plugin manifest changes, or Claude Code auto memory writes.",
       "files": [
         "hooks/hooks.json",
         "commands/gap.md",
@@ -543,8 +563,7 @@
       ],
       "expectations": [
         "active generated state under ~/.tigerkit outside project repository",
-        "execute boundary packaging may exist for preview/runtime validation",
-        "execute runtime is not environment gated",
+        "execute boundary packaging may exist as legacy preview/runtime validation metadata",
         "scripts/tigerkit_state.py has no record-session-start-decline command",
         "legacy SessionStart decline markers preserved as inactive legacy state",
         "core command runtime does not read legacy decline markers",
@@ -552,9 +571,10 @@
         ".claude/tigerkit legacy migration context only",
         "new gap writes go to external state",
         "gap helper path resolves active plugin version first via `claude plugin details tk`, then installPath/cache fallback, not current repo scripts directory or blind CLAUDE_PLUGIN_ROOT use",
-        "active layout includes gap archive current and branch-state pointer under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>",
-        "does not make runs kind id payload active layout",
-        "does not document active reflect artifact writes",
+        "active layout includes gap archive current reflect archive current and branch-state pointer under ~/.tigerkit/repos/<repo-key>/branches/<scope-key>",
+        "does not document loop-spec receipts as active layout",
+        "does not document execute receipts as active public command layout",
+        "does document active reflect artifact writes",
         "helper docs optional and non-runtime",
         "helper docs do not imply install or generation",
         "user skill source not generated under TigerKit generated state",
@@ -579,6 +599,48 @@
         "No source tree writes",
         "No execute runtime in route command",
         "No approval bypass or wording hack guidance"
+      ]
+    },
+    {
+      "id": 23,
+      "name": "reflect-skill-materialize-explicit-only",
+      "prompt": "Evaluate /tk:reflect skill materialization mode. Do not write files.",
+      "expected_output": "Should state that skill source generation is handled inside /tk:reflect only when the user explicitly targets skill and explicitly applies. It should use same-session same-ledger candidate_id or explicit description, require name confirmation before write, write to the agent-supported user skill surface (Claude Code example: ~/.claude/skills/<name>/SKILL.md), and must not treat skill as a default-apply target.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md",
+        "README.md"
+      ],
+      "expectations": [
+        "skill materialization handled by reflect",
+        "requires --target skill",
+        "requires --apply=true",
+        "uses same-session same-ledger candidate_id or explicit description",
+        "requires name confirmation before write",
+        "writes to agent-supported user skill surface",
+        "skill is not default apply"
+      ]
+    },
+    {
+      "id": 30,
+      "name": "arch-review-is-report-only-architecture-surface",
+      "prompt": "Evaluate /tk:arch-review behavior. Do not write files.",
+      "expected_output": "Should treat /tk:arch-review as an evidence-first, report-only architecture review surface. It should look for boundary leaks, ownership confusion, coupling hotspots, and repeated pain without claiming an auto-refactor happened. It must not mutate source, auto-generate docs as completion proof, or present architecture polish as implemented work. It should end with the smallest concrete next step rather than a vague rewrite slogan.",
+      "files": [
+        "commands/arch-review.md",
+        "skills/arch-review/SKILL.md",
+        "README.md",
+        ".tigerkit/docs/usage.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "Arch-review is report-only",
+        "Evidence-first architecture review",
+        "Looks for boundary ownership coupling repeated pain",
+        "No source mutation",
+        "No auto-docs completion claim",
+        "Ends with one concrete next step"
       ]
     },
     {

@@ -1,24 +1,31 @@
 ---
-description: 세션 결과에서 재사용 가능한 learning을 분류하고 repo-local guidance에 기본 반영할 수 있습니다.
-argument-hint: "[scope] [--apply=false|true] [--target <repo-local|repo-shared|user-global|skill|hook|command|agent|discard|repo|user|all>]"
+description: 세션 결과에서 재사용 가능한 learning을 분류하고 repo-local/user-global guidance 기본 반영 또는 명시적 skill materialize를 수행할 수 있습니다.
+argument-hint: '"[candidate_id|scope]" [--apply=false|true] [--target <repo-local|repo-shared|user-global|skill|hook|command|agent|discard|repo|user|all>] [--desc "<freeform description>"] [--dry-run]'
 ---
 
 이 명령은 TigerKit `/tk:reflect` contract를 따릅니다.
 
 사용자에게는 한글로 답합니다. 코드, path, URL, ticket, commit, hash, identifier, error, contract field name은 원문 그대로 둘 수 있습니다.
 
-목표: `/tk:reflect`는 세션 내용, 실제 변경 결과, 성공/실패, 사용자 피드백에서 재사용 가능한 learning과 improvement를 추출하고, 안전한 promotion router로서 가장 적절한 durable promotion surface로 분류합니다. `repo-local` guidance는 기본 apply(opt-out)로 반영할 수 있고, `skill/hook/command/agent` 후보는 forge/후속 설계 surface로 제안합니다.
+목표: `/tk:reflect`는 세션 내용, 실제 변경 결과, 성공/실패, 사용자 피드백에서 재사용 가능한 learning과 improvement를 추출하고, 안전한 promotion router로서 가장 적절한 durable promotion surface로 분류합니다. `repo-local`과 `user-global` guidance는 기본 apply(opt-out)로 반영할 수 있고, `skill` target은 명시적 apply일 때 실제 skill artifact로 materialize할 수 있습니다. `hook/command/agent`는 계속 제안-only 입니다.
+
+canonical skill:
 
 ```text
-reflect = session result + feedback -> classify learning -> default repo-local apply or proposal -> emit compact summary + ledger
+skills/reflect/SKILL.md
+```
+
+```text
+reflect = session result + feedback -> classify learning -> default repo-local/user-global apply or proposal -> emit compact summary + ledger
 ```
 
 ## Core boundary
 
-- Active command surface는 `/tk:gap`, `/tk:route`, `/tk:reflect`, `/tk:forge`, `/tk:ui-diff`입니다.
+- Active command surface는 `/tk:gap`, `/tk:route`, `/tk:reflect`, `/tk:grill`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues`, `/tk:ui-diff`입니다.
 - `/tk:reflect`는 Claude Code auto memory를 쓰거나, mirror하거나, backup하지 않습니다.
-- `/tk:reflect`는 source code, hook settings, command source, agent source, skill source, plugin manifest를 수정하지 않습니다.
-- `skill/hook/command/agent` source materialization은 `/tk:forge` 또는 후속 수동 작업이 맡습니다.
+- `/tk:reflect`는 source code, repo-shared guidance, hook settings, command source, agent source, plugin manifest를 수정하지 않습니다.
+- `skill` source materialization은 `--target skill --apply=true`일 때만 허용됩니다.
+- `hook/command/agent` source materialization은 후속 수동 작업이 맡습니다.
 - 기존 `SessionStart` decline marker와 `PROFILE.md`는 legacy/inactive state로만 취급하고 자동 삭제하거나 자동 이관하지 않습니다.
 
 ## When to use
@@ -42,8 +49,8 @@ repo-local, repo-shared, user-global, skill, hook, command, agent, discard
 |---|---|---|
 | `repo-local` | default apply 또는 explicit apply일 때 eligibility를 통과한 `<git-root>/CLAUDE.local.md`만 write 가능 | 현재 repo에서 한 사용자에게만 필요한 private/local guidance |
 | `repo-shared` | suggest-only | 팀 공유 repo rule 후보 |
-| `user-global` | suggest-only | 모든 repo에 걸친 사용자 guidance 후보 |
-| `skill` | suggest-only from reflect | 반복 가능한 procedural routine 후보. 실제 source 생성은 forge-owned |
+| `user-global` | default apply 또는 explicit apply일 때 host-native user-global guidance surface에 write 가능 | 모든 repo에 걸친 사용자 guidance 후보 |
+| `skill` | explicit apply일 때만 source 생성 가능 | 반복 가능한 procedural routine 후보 |
 | `hook` | suggest-only | lifecycle 자동화 또는 검사 후보 |
 | `command` | suggest-only | 사용자가 직접 호출하는 slash workflow 후보 |
 | `agent` | suggest-only | 독립 역할/전문성이 필요한 sub-agent 후보 |
@@ -68,18 +75,46 @@ repo-local, repo-shared, user-global, skill, hook, command, agent, discard
 | `user` | `user-global` | `Deprecated target selector: user expands to user-global.` |
 | `all` | `repo-local`, `repo-shared`, `user-global`, `skill`, `hook`, `command`, `agent`, `discard` | 없음 |
 
-`--target repo`와 `--target all`도 direct write는 eligible `repo-local` 후보만 할 수 있습니다. 다른 effective target은 모두 `suggest_only`, `preview_only`, 또는 `discard`로 남깁니다.
+`--target repo`는 eligible `repo-local` 후보만 direct write할 수 있습니다. `--target user`는 eligible `user-global` 후보만 direct write할 수 있습니다. `--target all`은 eligible `repo-local`과 eligible `user-global` 후보만 direct write할 수 있습니다. 다른 effective target은 모두 `suggest_only`, `preview_only`, 또는 `discard`로 남깁니다.
 
 ## Apply policy
 
-기본 동작은 repo-local apply enabled 입니다.
+기본 동작은 repo-local + user-global apply enabled 입니다.
 
-- option 없음: repo-local candidate가 있고 eligibility를 통과하면 apply를 시도합니다.
+- option 없음: repo-local 또는 user-global candidate가 있고 eligibility를 통과하면 apply를 시도합니다.
 - `--apply=false`: 파일을 쓰지 않고 preview만 출력합니다.
-- `--apply=true`: 명시적 apply 표기용이며 기본 동작을 바꾸지 않습니다.
-- write target은 `<git-root>/CLAUDE.local.md` 하나뿐입니다.
-- repo shared `CLAUDE.md`, user-global guidance, skill, hook, command, agent는 direct source write 하지 않습니다.
+- `--apply=true`: 명시적 apply 표기용입니다.
+- `repo-local`과 `user-global`만 기본 apply 대상입니다.
+- `skill`은 `--target skill --apply=true`일 때만 source write 후보가 됩니다.
+- `repo-shared`, `hook`, `command`, `agent`는 direct source write 하지 않습니다.
 - target `discard`는 action `discard`이고 path/write가 없습니다.
+
+## User-global write targets
+
+Claude Code 계열처럼 `CLAUDE.md` user/global surface를 가진 host에서는 아래를 user-global direct write target으로 볼 수 있습니다.
+
+```text
+~/.claude/CLAUDE.md
+~/.claude/rules/<rule-name>/CLAUDE.md
+```
+
+선택 원칙:
+
+1. 여러 repo에 공통으로 적용되는 일반 규칙이면 `~/.claude/CLAUDE.md`
+2. 특정 주제/경로/작업군으로 분리하는 편이 낫다면 `~/.claude/rules/<rule-name>/CLAUDE.md`
+3. host가 `CLAUDE.md` 계열 파일을 직접 다루지 않으면 host-native user-global guidance surface로 해석합니다.
+4. host-native writable surface를 확인할 수 없으면 그 candidate는 `suggest_only`로 남기고 이유를 출력합니다.
+
+## User-global write contract
+
+`user-global` apply는 host가 writable guidance surface를 정확히 resolve할 수 있을 때만 수행합니다.
+
+1. host-native writable target path 또는 equivalent handle을 먼저 확정합니다.
+2. exact target을 확정하지 못하면 `suggest_only` 또는 `candidate_not_eligible`입니다.
+3. exact `apply_plan`은 repo-local과 같은 수준으로 current invocation 기준 `target_path`, `base_state`, `base_sha256`, `result_sha256`, `planned_result_bytes_sha256`, `unified_diff`를 기록합니다.
+4. host가 일반 filesystem path를 제공하면 same-directory temp file + atomic replace를 우선합니다.
+5. host가 path 대신 native write primitive를 제공하면 그 primitive로 쓰되, post-write readback 또는 equivalent verification을 수행해야 합니다.
+6. verification 실패는 `apply_verification_failed`, 복구 실패는 `rollback_failed`로 보고합니다.
 
 ## Reason code vocabulary
 
@@ -155,7 +190,7 @@ ledger는 최소한 아래를 포함합니다.
 schemaVersion: tigerkit.reflect-ledger/v1
 invocation_id: <id>
 requested_target: <raw target>
-effective_targets: [repo-local, skill]
+effective_targets: [repo-local, user-global, skill]
 ledger_path: <absolute path>
 summary:
   - <compact bullet>
@@ -173,13 +208,13 @@ apply_plan: <optional exact plan object>
 
 ## Apply plan contract
 
-repo-local write는 exact apply plan 없이 수행하지 않습니다. exact `apply_plan`은 **ledger에만** 기록합니다.
+repo-local 또는 user-global write는 exact apply plan 없이 수행하지 않습니다. exact `apply_plan`은 **ledger에만** 기록합니다.
 
 ```yaml
 apply_plan:
   invocation_id: <current invocation id>
-  target_path: <git-root>/CLAUDE.local.md
-  path_operand: CLAUDE.local.md
+  target_path: <resolved writable target path>
+  path_operand: <repo-local이면 CLAUDE.local.md, 아니면 host-native operand or NONE>
   candidate_ids: [R1]
   apply_set: [R1]
   base_state: present | absent
@@ -187,8 +222,8 @@ apply_plan:
   result_sha256: <sha256>
   planned_result_bytes_sha256: <sha256>
   unified_diff: |
-    --- a/CLAUDE.local.md
-    +++ b/CLAUDE.local.md
+    --- a/<target>
+    +++ b/<target>
     ...
 ```
 
@@ -196,7 +231,7 @@ Rules:
 
 - apply plan은 current invocation에만 유효합니다.
 - apply set은 정확하고 immutable입니다.
-- 여러 eligible 후보는 하나의 `CLAUDE.local.md` result bytes로 합치고 all-or-nothing으로 처리합니다.
+- 여러 eligible 후보는 exact target별 planned result bytes로 합치고 all-or-nothing으로 처리합니다.
 - write 직전 base state와 base hash를 다시 확인합니다.
 - write 후 실제 bytes를 읽어 `result_sha256`과 비교합니다.
 - verification 실패는 `apply_verification_failed`로 보고하고 rollback을 시도합니다.
@@ -224,19 +259,21 @@ Ledger: <absolute ledger path>
 - <next step>]
 ```
 
-## Forge relationship
+## Skill materialize mode
 
 - `reflect`는 `skill/hook/command/agent` 후보를 제안할 수 있습니다.
-- `reflect`는 그 source를 직접 생성하지 않습니다.
-- `/tk:forge`는 직전 same-session ledger의 `candidate_id`를 받아 실제 artifact를 생성합니다.
-- 1차 forge 범위는 `skill only`입니다.
+- `skill`만 explicit apply로 source 생성 가능합니다.
+- `candidate_id`는 same-session + same-ledger에서만 유효합니다.
+- write target은 agent가 지원하는 user skill surface입니다. Claude Code 계열이면 `~/.claude/skills/<name>/SKILL.md`가 예시입니다.
+- 이름 확정 전 write 금지
+- `hook|command|agent`는 여전히 제안-only 입니다.
 
 ## 금지
 
 - repo shared `CLAUDE.md` 직접 수정
-- user-global guidance 직접 수정
+- host-native writable surface를 확인하지 못한 `user-global` direct write
 - `PROFILE.md` 생성/수정/promotion output
-- skill source 생성/수정/복제
+- explicit apply 없는 skill source 생성/수정/복제
 - hook settings, command source, agent source, plugin manifest 자동 수정
 - `automation`, `hookify`, `hook / hookify`를 target 이름으로 사용
 - source code 수정

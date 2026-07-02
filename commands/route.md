@@ -9,6 +9,12 @@ argument-hint: '"<task>" [--context <note>] [--target <path|area>] [--print-chec
 
 목표: `/tk:route`는 지금 작업을 어떤 방식으로 구현할지 얇게 정리하는 decision / brainstorming surface입니다. direct, subagent-driven, goal-driven 같은 route를 비교하고, 가장 무난한 1안과 바로 시작할 첫 스텝을 제안합니다.
 
+canonical skill:
+
+```text
+skills/route/SKILL.md
+```
+
 ```text
 route = explicit task + current constraints -> compare implementation routes -> choose next move
 ```

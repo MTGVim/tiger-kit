@@ -9,6 +9,12 @@ argument-hint: '"<screen or diff task>" [--mode <env-diff|figma-diff>] [--print-
 
 목표: `/tk:ui-diff`는 프로비저닝 command가 아니라 direct QA surface입니다. 번들된 ui-diff 엔진 skill 지식을 사용하고, 현재 repo의 `.claude/ui-diff/` profile을 읽어 visual QA / env diff / layout regression 검증을 수행합니다.
 
+canonical skill:
+
+```text
+skills/ui-diff/SKILL.md
+```
+
 ```text
 ui-diff = bundled engine skill + current repo profile -> run visual QA workflow
 ```
@@ -43,14 +49,14 @@ lookup 순서:
 
 ## Engine source
 
-이 command는 repo의 `templates/ui-diff/` 정본을 engine knowledge source로 사용합니다.
+이 command는 repo의 `skills/ui-diff/` 정본을 engine knowledge source로 사용합니다.
 
 필수 source:
 
-- `templates/ui-diff/SKILL.md`
-- `templates/ui-diff/references/modes/env-diff.md`
-- `templates/ui-diff/references/modes/figma-diff.md`
-- `templates/ui-diff/references/screens/README.md`
+- `skills/ui-diff/SKILL.md`
+- `skills/ui-diff/references/modes/env-diff.md`
+- `skills/ui-diff/references/modes/figma-diff.md`
+- `skills/ui-diff/references/screens/README.md`
 
 ## Supported modes
 
@@ -67,7 +73,7 @@ Mode: env-diff | figma-diff
 Profile path:
 - <path or NONE>
 Engine skill:
-- templates/ui-diff/SKILL.md
+- skills/ui-diff/SKILL.md
 다음 행동:
 - <run diff / inspect missing profile / provide selectors>
 ```
