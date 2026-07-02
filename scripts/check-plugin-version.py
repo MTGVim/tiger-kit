@@ -74,6 +74,14 @@ def main() -> int:
         "./commands/gap.md",
         "./commands/route.md",
         "./commands/reflect.md",
+        "./commands/ui-diff.md",
+        "./commands/grill.md",
+        "./commands/prototype.md",
+        "./commands/arch-review.md",
+        "./commands/merge-conflict.md",
+        "./commands/handoff.md",
+        "./commands/to-prd.md",
+        "./commands/to-issues.md",
     }
     if command_set != expected_active:
         fail(f"plugin commands must be exactly {sorted(expected_active)!r}, got {sorted(command_set)!r}")

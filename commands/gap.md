@@ -11,6 +11,12 @@ argument-hint: "[SoT refs or pasted source] [--target <path|area>] [--print-repo
 
 이 명령은 workflow를 생성하거나 고정하지 않습니다.
 
+canonical skill:
+
+```text
+skills/gap/SKILL.md
+```
+
 ```text
 gap = source of truth ↔ current implementation one-shot comparison
 ```
@@ -55,6 +61,12 @@ gap = source of truth ↔ current implementation one-shot comparison
 - `P3`: minor polish. 기본 finding에는 넣지 않고 필요하면 Not accepted summary에만 둡니다.
 
 ## Output
+
+기본 stdout projection은 compact합니다.
+
+- 기본 응답은 핵심 표, findings, 다음 행동 중심으로 요약합니다.
+- detailed markdown report는 `--print-report`이 있거나 사용자가 저장/출력을 명시했을 때만 전체 형태로 출력하거나 external report로 저장합니다.
+- path-heavy artifact detail은 필요할 때만 노출합니다.
 
 ```md
 ## Gap Summary

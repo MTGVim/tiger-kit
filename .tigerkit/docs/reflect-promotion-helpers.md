@@ -26,8 +26,8 @@
 |---|---|---|
 | `repo-local` | 이 repo에만 필요한 local/private guidance | eligible `--apply=true`일 때 `<git-root>/CLAUDE.local.md`만 write 가능 |
 | `repo-shared` | 팀이 공유할 repo-wide rule 후보 | suggest-only, 직접 수정 금지 |
-| `user-global` | 여러 repo에 적용되는 user-global instruction 또는 rule 후보 | suggest-only, TigerKit이 user memory를 쓰지 않음 |
-| `skill` | 반복 가능한 multi-step routine 후보 | suggest-only, TigerKit generated state에 source 생성/복제 금지 |
+| `user-global` | 여러 repo에 적용되는 user-global instruction 또는 rule 후보 | 지원 host에서는 default/explicit apply 가능 |
+| `skill` | 반복 가능한 multi-step routine 후보 | explicit apply일 때만 source 생성 |
 | `hook` | lifecycle event 기반 warning/check/block 후보 | suggest-only, settings 수정 금지 |
 | `command` | 사용자가 명시적으로 호출할 slash workflow 후보 | command 파일 또는 manifest 생성 금지 |
 | `agent` | 독립 역할, 병렬 조사, 전문 판단이 필요한 후보 | 자동 dispatch 또는 orchestration runtime 생성 금지 |
@@ -92,7 +92,7 @@ target: repo-local | repo-shared | user-global | skill | hook | command | agent 
 
 ## Promotion receipt and TigerKit generated state
 
-Active TigerKit generated state는 `~/.tigerkit/` 아래에 있다. `.claude/tigerkit/`와 SessionStart decline marker는 legacy/migration context로만 남는다. Execute boundary packaging은 preview/runtime validation 메타데이터로 존재할 수 있지만 runtime은 environment entry로 `/tk:execute`를 차단하지 않는다. 현재 helper guide는 reflect artifact write path를 선언하지 않는다.
+Active TigerKit generated state는 `~/.tigerkit/` 아래에 있다. `.claude/tigerkit`와 SessionStart decline marker는 legacy/migration context로만 남는다. Execute boundary packaging은 legacy preview/runtime validation 메타데이터로 존재할 수 있지만 현재 active public command surface를 정의하지 않는다. reflect artifact write path는 authoritative contract docs에서 선언한다.
 
 Receipt가 기록할 수 있는 것:
 
@@ -138,20 +138,21 @@ Repo-local apply receipt를 검토할 때는 아래 표면을 확인한다.
 Reflect promotion 결과를 볼 때는 아래를 확인한다.
 
 1. 후보가 정확히 하나의 canonical target으로 분류됐는가?
-2. default가 preview-only인가?
-3. `--apply=true` write set이 eligible `repo-local` 후보로만 제한됐는가?
-4. shared repo rule, user-global, skill, hook, command, agent 후보가 suggest-only로 남았는가?
-5. `PROFILE.md`, `automation`, `hookify`를 target으로 쓰지 않았는가?
-6. user skill 후보가 TigerKit generated state source처럼 표현되지 않았는가?
-7. hook, command, agent 후보가 설치됨/활성화됨으로 표현되지 않았는가?
-8. 파일을 쓴 경우 changed path와 apply plan이 출력됐는가?
-9. TigerKit generated state receipt가 canonical durable target처럼 설명되지 않았는가?
-10. branch-specific one-off, 저신뢰, 민감 정보, 중복 후보가 discard됐는가?
-11. auto memory duplicate evidence를 관찰하지 못한 후보가 `duplicate_status: unknown`으로 남았는가?
-12. apply reject/failure가 `not_git_worktree`, `git_root_resolution_error`, `path_outside_repo`, `symlink_target`, `tracked_local_file`, `tracked_check_error`, `not_ignored`, `ignore_check_error`, `candidate_not_eligible`, `stale_apply_plan`, `apply_verification_failed`, `rollback_failed`, `no_eligible_candidates` 중 하나의 `reason_code`를 쓰는가?
-13. `not_ignored`가 ignore entry 제안만 하고 `.gitignore`, `.git/info/exclude`, global exclude를 자동 수정하지 않았는가?
-14. rollback success가 `Changed paths: NONE`과 `Applied candidates: NONE`을 출력하는가?
-15. rollback failure 또는 external change가 `reason_code: rollback_failed`와 changed path를 출력하는가?
+2. default가 `repo-local + user-global apply enabled`이고 `--apply=false`가 preview-only opt-out인가?
+3. `--apply=true` write set이 eligible `repo-local` 또는 eligible `user-global` 후보로만 제한됐는가?
+4. shared repo rule, hook, command, agent 후보가 suggest-only로 남았는가?
+5. `user-global`은 지원 host에서만 apply되고, 그렇지 않으면 suggest-only로 남는가?
+6. `PROFILE.md`, `automation`, `hookify`를 target으로 쓰지 않았는가?
+7. user skill 후보가 TigerKit generated state source처럼 표현되지 않았는가?
+8. hook, command, agent 후보가 설치됨/활성화됨으로 표현되지 않았는가?
+9. 파일을 쓴 경우 changed path가 출력됐고 exact apply_plan은 ledger에 기록됐는가?
+10. TigerKit generated state receipt가 canonical durable target처럼 설명되지 않았는가?
+11. branch-specific one-off, 저신뢰, 민감 정보, 중복 후보가 discard됐는가?
+12. auto memory duplicate evidence를 관찰하지 못한 후보가 `duplicate_status: unknown`으로 남았는가?
+13. apply reject/failure가 `not_git_worktree`, `git_root_resolution_error`, `path_outside_repo`, `symlink_target`, `tracked_local_file`, `tracked_check_error`, `not_ignored`, `ignore_check_error`, `candidate_not_eligible`, `stale_apply_plan`, `apply_verification_failed`, `rollback_failed`, `no_eligible_candidates` 중 하나의 `reason_code`를 쓰는가?
+14. `not_ignored`가 ignore entry 제안만 하고 `.gitignore`, `.git/info/exclude`, global exclude를 자동 수정하지 않았는가?
+15. rollback success가 `Changed paths: NONE`과 `Applied candidates: NONE`을 출력하는가?
+16. rollback failure 또는 external change가 `reason_code: rollback_failed`와 changed path를 출력하는가?
 
 ## Bottom line
 

@@ -1,13 +1,21 @@
 {
   "name": "tk",
-  "description": "SoT gap, implementation route brainstorming, reflect를 제공하는 TigerKit Claude Code 플러그인입니다.",
-  "version": "16.2.4",
+  "description": "SoT gap, route, reflect, ui-diff와 grill/prototype/merge-conflict/handoff/to-prd/to-issues/arch-review를 제공하는 TigerKit Claude Code 플러그인입니다.",
+  "version": "16.4.0",
   "author": {
     "name": "MTGVim"
   },
   "commands": [
     "./commands/gap.md",
     "./commands/route.md",
-    "./commands/reflect.md"
+    "./commands/reflect.md",
+    "./commands/ui-diff.md",
+    "./commands/grill.md",
+    "./commands/prototype.md",
+    "./commands/merge-conflict.md",
+    "./commands/handoff.md",
+    "./commands/to-prd.md",
+    "./commands/to-issues.md",
+    "./commands/arch-review.md"
   ]
 }
