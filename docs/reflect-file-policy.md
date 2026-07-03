@@ -30,7 +30,7 @@ repo-local, repo-shared, user-global, skill, hook, command, agent, discard
 | `agent` | suggest-only | sub-agent 후보 |
 | `discard` | no write | 저장하지 않음 |
 
-`PROFILE.md`, `automation`, `hookify`, `hook / hookify`는 target 이름이 아닙니다. 기존 `PROFILE.md`는 legacy/inactive state로만 보고 자동 삭제하거나 자동 이관하지 않습니다.
+`PROFILE.md`, `automation`, `hookify`, `hook / hookify`는 target 이름이 아닙니다. `PROFILE.md`는 reflect target이 아니며 자동 생성하거나 자동 이관하지 않습니다.
 
 ## User-global write contract
 
@@ -85,6 +85,17 @@ no_eligible_candidates
 10. shell string concatenation 대신 argument vector를 사용합니다.
 
 Reject는 silent skip이 아닙니다. Receipt/ledger에 `reason_code`를 남기고 write하지 않습니다.
+
+## Compact receipt expectation
+
+stdout receipt는 compact하지만 아래 의미를 숨기면 안 됩니다.
+
+- `repo-local`, `user-global` = direct-apply candidate
+- `skill` = explicit materialize only
+- `repo-shared`, `hook`, `command`, `agent` = suggest-only
+- reject/failure = `reason_code` 또는 동등한 reject 이유 노출
+- write failure = `Applied candidates: NONE`
+- rollback = `succeeded | failed | not_needed`
 
 ## Ledger contract
 

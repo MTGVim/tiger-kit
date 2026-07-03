@@ -4,7 +4,7 @@
     "name": "MTGVim"
   },
   "metadata": {
-    "description": "SoT gap, route, reflect, ui-diff와 grill/prototype/merge-conflict/handoff/to-prd/to-issues/arch-review를 제공하는 TigerKit Claude Code 플러그인입니다. support/execute-support-matrix.json은 legacy 패키징 메타데이터로만 유지됩니다."
+    "description": "SoT gap, route, reflect, ui-diff와 grill/prototype/merge-conflict/handoff/to-prd/to-issues/arch-review를 제공하는 TigerKit Claude Code 플러그인입니다."
   },
   "plugins": [
     {

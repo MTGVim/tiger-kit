@@ -92,14 +92,29 @@ First step
 Reflect 완료
 Requested target: <raw requested target or default>
 Effective targets: <canonical target list>
+[Target modes:
+- repo-local, user-global: direct-apply candidate
+- skill: explicit materialize only
+- repo-shared, hook, command, agent: suggest-only]
 Summary:
 - <what changed or what was proposed>
 Ledger: <absolute ledger path or NONE>
+[Applied candidates:
+- <candidate ids or NONE>]
+[Reason code:
+- <reason_code or NONE>]
 [Changed paths:
 - <path>]
+[Rollback:
+- <succeeded | failed | not_needed>]
 [다음 행동
 - <next step>]
 ```
+
+Notes:
+- receipt는 target boundary를 compact하게 드러내야 합니다.
+- reject/failure는 silent skip이 아니라 `reason_code` 또는 동등한 reject 이유를 노출해야 합니다.
+- verification failure와 rollback failure는 서로 다른 상태로 보여야 합니다.
 
 ### Ledger contract
 

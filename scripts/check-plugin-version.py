@@ -15,7 +15,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN_PATH = ROOT / ".claude-plugin" / "plugin.json"
 MARKETPLACE_PATH = ROOT / ".claude-plugin" / "marketplace.json"
-SUPPORT_MATRIX_PATH = ROOT / "support" / "execute-support-matrix.json"
 EVALS_PATH = ROOT / "evals" / "evals.json"
 SEMVER_RE = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:[-+][0-9A-Za-z.-]+)?$")
 
@@ -23,7 +22,7 @@ SEMVER_RE = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:[-+][0-9A-Z
 def load_json(path: Path) -> dict:
     try:
         return json.loads(path.read_text())
-    except Exception as exc:  # pragma: no cover - CLI diagnostic
+    except Exception as exc:
         raise SystemExit(f"Invalid JSON: {path}: {exc}") from exc
 
 
@@ -34,8 +33,6 @@ def fail(message: str) -> None:
 def main() -> int:
     plugin = load_json(PLUGIN_PATH)
     marketplace = load_json(MARKETPLACE_PATH)
-    support_matrix = load_json(SUPPORT_MATRIX_PATH)
-    evals = load_json(EVALS_PATH)
 
     version = plugin.get("version")
     if not isinstance(version, str) or not SEMVER_RE.match(version):
@@ -64,10 +61,6 @@ def main() -> int:
         fail("marketplace plugins must be a non-empty list")
     if not any(item.get("name") == plugin_name and item.get("source") == "./" for item in marketplace_plugins if isinstance(item, dict)):
         fail(f"marketplace.json must expose plugin {plugin_name!r} with source './'")
-
-    support_version = support_matrix.get("pluginVersion")
-    if support_version != version:
-        fail(f"support/execute-support-matrix.json pluginVersion {support_version!r} must match plugin version {version!r}")
 
     command_set = set(commands)
     expected_active = {

@@ -1,0 +1,31 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Claude Code
+        uses: anthropics/claude-code-action@beta
+        with:
+          use_oauth: false
+
+      - name: Setup Yarn
+        run: corepack enable
+
+      - name: Validate plugin surface
+        run: yarn validate
+
+      - name: Compile Python helpers
+        run: python3 -m py_compile scripts/*.py hooks/*.py

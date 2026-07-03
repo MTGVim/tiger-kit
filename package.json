@@ -4,8 +4,9 @@
     "type-check": "claude plugin validate .claude-plugin/plugin.json",
     "lint": "claude plugin validate .",
     "format:check": "git diff --check",
-    "test": "python3 -m json.tool evals/evals.json >/dev/null && python3 -m json.tool .claude-plugin/plugin.json >/dev/null && python3 -m json.tool .claude-plugin/marketplace.json >/dev/null && python3 scripts/check-plugin-version.py",
+    "check:command-surface": "python3 scripts/check-command-surface-drift.py",
+    "test": "python3 -m json.tool evals/evals.json >/dev/null && python3 -m json.tool .claude-plugin/plugin.json >/dev/null && python3 -m json.tool .claude-plugin/marketplace.json >/dev/null && python3 scripts/check-plugin-version.py && python3 scripts/check-command-surface-drift.py",
     "bump:plugin": "python3 scripts/bump-plugin-version.py",
-    "validate": "claude plugin validate .claude-plugin/plugin.json && claude plugin validate . && git diff --check && python3 -m json.tool evals/evals.json >/dev/null && python3 -m json.tool .claude-plugin/plugin.json >/dev/null && python3 -m json.tool .claude-plugin/marketplace.json >/dev/null && python3 scripts/check-plugin-version.py"
+    "validate": "claude plugin validate .claude-plugin/plugin.json && claude plugin validate . && git diff --check && python3 -m json.tool evals/evals.json >/dev/null && python3 -m json.tool .claude-plugin/plugin.json >/dev/null && python3 -m json.tool .claude-plugin/marketplace.json >/dev/null && python3 scripts/check-plugin-version.py && python3 scripts/check-command-surface-drift.py"
   }
 }

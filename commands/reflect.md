@@ -1,6 +1,6 @@
 ---
 description: 세션 결과에서 재사용 가능한 learning을 분류하고 repo-local/user-global guidance 기본 반영 또는 명시적 skill materialize를 수행할 수 있습니다.
-argument-hint: '"[candidate_id|scope]" [--apply=false|true] [--target <repo-local|repo-shared|user-global|skill|hook|command|agent|discard|repo|user|all>] [--desc "<freeform description>"] [--dry-run]'
+argument-hint: '"[candidate_id|scope]" [--apply=false|true] [--target <repo-local|repo-shared|user-global|skill|hook|command|agent|discard>] [--desc "<freeform description>"] [--dry-run]'
 ---
 
 이 명령은 TigerKit `/tk:reflect` contract를 따릅니다.
@@ -26,7 +26,7 @@ reflect = session result + feedback -> classify learning -> default repo-local/u
 - `/tk:reflect`는 source code, repo-shared guidance, hook settings, command source, agent source, plugin manifest를 수정하지 않습니다.
 - `skill` source materialization은 `--target skill --apply=true`일 때만 허용됩니다.
 - `hook/command/agent` source materialization은 후속 수동 작업이 맡습니다.
-- 기존 `SessionStart` decline marker와 `PROFILE.md`는 legacy/inactive state로만 취급하고 자동 삭제하거나 자동 이관하지 않습니다.
+- `PROFILE.md`는 reflect target이 아니며 자동 생성하거나 자동 이관하지 않습니다.
 
 ## When to use
 
@@ -64,19 +64,6 @@ repo-local, repo-shared, user-global, skill, hook, command, agent, discard
 - `hook / hookify`
 
 관련 후보는 의도에 따라 `hook`, `command`, `agent` 중 하나로 분류합니다.
-
-## Legacy selector semantics
-
-`--target`의 legacy selector는 deprecation line을 출력하고 canonical target으로 확장합니다.
-
-| Legacy selector | Effective targets | Deprecation line |
-|---|---|---|
-| `repo` | `repo-local`, `repo-shared` | `Deprecated target selector: repo expands to repo-local, repo-shared.` |
-| `user` | `user-global` | `Deprecated target selector: user expands to user-global.` |
-| `all` | `repo-local`, `repo-shared`, `user-global`, `skill`, `hook`, `command`, `agent`, `discard` | 없음 |
-
-`--target repo`는 eligible `repo-local` 후보만 direct write할 수 있습니다. `--target user`는 eligible `user-global` 후보만 direct write할 수 있습니다. `--target all`은 eligible `repo-local`과 eligible `user-global` 후보만 direct write할 수 있습니다. 다른 effective target은 모두 `suggest_only`, `preview_only`, 또는 `discard`로 남깁니다.
-
 ## Apply policy
 
 기본 동작은 repo-local + user-global apply enabled 입니다.
@@ -241,6 +228,11 @@ Rules:
 기본 projection은 compact합니다.
 
 - stdout은 `요약 + ledger path + 다음 행동` 구조를 따릅니다.
+- stdout은 가능하면 target boundary를 짧게 드러냅니다.
+- `repo-local`, `user-global`은 direct-apply candidate, `skill`은 explicit materialize only, `repo-shared|hook|command|agent`는 suggest-only로 보이게 유지합니다.
+- reject/failure는 silent skip이 아니라 compact receipt에 `reason_code` 또는 동등한 reject 이유를 남깁니다.
+- write 성공 시 changed path 또는 ledger path를 보여주고, 실패 시 Applied candidates가 `NONE`인지 드러나야 합니다.
+- rollback이 발생하면 `succeeded | failed | not_needed` 중 하나로 요약합니다.
 - exact `apply_plan`, full candidate detail, diff raw는 ledger를 source of truth로 삼습니다.
 - empty target section, default empty list, standalone `NONE` line은 의미 보존에 필요할 때만 출력합니다.
 - 모든 candidate가 no-op이면 출력은 정확히 `Reflect: 반영할 변경 없음.` 한 줄입니다.
@@ -249,12 +241,21 @@ Rules:
 Reflect 완료
 Requested target: <raw requested target or default>
 Effective targets: <canonical target list>
-[Deprecation: <deprecation line when legacy selector used>]
+[Target modes:
+- repo-local, user-global: direct-apply candidate
+- skill: explicit materialize only
+- repo-shared, hook, command, agent: suggest-only]
 Summary:
 - <what changed or what was proposed>
 Ledger: <absolute ledger path>
+[Applied candidates:
+- <candidate ids or NONE>]
+[Reason code:
+- <reason_code or NONE>]
 [Changed paths:
 - <path>]
+[Rollback:
+- <succeeded | failed | not_needed>]
 [## 다음 행동
 - <next step>]
 ```
