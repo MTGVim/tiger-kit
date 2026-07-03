@@ -311,18 +311,21 @@ Next step:
 `/tk:ui-diff`는 provisioning command가 아니라 direct QA surface입니다.
 
 ```text
-UI Diff 준비 완료 | UI Diff 중단
+UI Diff 준비 완료 | UI Diff 프로필 생성 완료 | UI Diff 프로필 템플릿 출력
 Mode: env-diff | figma-diff
 Profile path:
+- <path or NONE>
+Created files:
 - <path or NONE>
 Engine skill:
 - skills/ui-diff/SKILL.md
 다음 행동:
-- <run diff / inspect missing profile / provide selectors>
+- <run diff / fill env-login-screen values / rerun ui-diff>
 ```
 
 Rules:
-- current repo의 `<root>/.claude/ui-diff/` profile만 읽습니다.
-- profile이 없으면 필요한 파일 경로를 안내하고 중단합니다.
+- current repo의 `<root>/.claude/ui-diff/` profile만 읽고, 누락 시 같은 경로에 missing 파일만 생성합니다.
+- bundled template source는 `skills/ui-diff/templates/`입니다.
+- `--print-profile-template`가 있으면 템플릿 내용을 preview만 하고 write는 하지 않습니다.
 - `login.local.md`는 gitignored local override입니다.
-- provisioning artifact나 install/update mode는 없습니다.
+- engine install/update나 user-global provisioning mode는 없습니다.
