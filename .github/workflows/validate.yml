@@ -4,10 +4,6 @@ on:
   push:
   pull_request:
 
-permissions:
-  contents: read
-  id-token: write
-
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -20,10 +16,8 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Setup Claude Code
-        uses: anthropics/claude-code-action@beta
-        with:
-          github_token: ${{ github.token }}
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
 
       - name: Setup Yarn
         run: corepack enable
