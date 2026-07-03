@@ -15,6 +15,19 @@ SoT(Source of Truth)가 있으면 `/tk:gap`으로 현재 구현과의 차이를 
 Check the gap. Pick the route. Keep the learning. Materialize durable skills from reflect when needed.
 ```
 
+## Start here
+
+처음에는 아래 3개만 알면 됩니다.
+
+1. `/tk:gap` — SoT와 현재 구현의 차이를 먼저 봅니다.
+2. `/tk:route` — direct / subagent-driven / goal-driven 중 어떤 구현 경로가 맞는지 고릅니다.
+3. `/tk:reflect` — 끝난 뒤 재사용 가능한 learning을 남깁니다.
+
+이후에는 필요할 때만 나머지 surface를 꺼내 쓰면 됩니다.
+
+- Practical: `/tk:grill`, `/tk:prototype`, `/tk:ui-diff`, `/tk:arch-review`, `/tk:merge-conflict`
+- Output: `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues`
+
 ## Installation
 
 Claude Code에서 TigerKit marketplace를 등록한 뒤 `tk` plugin을 설치합니다.
@@ -51,19 +64,31 @@ claude plugin details tk
 
 ## Command Surface
 
+### Core
+
 | Command | 역할 | 저장 성격 |
 | --- | --- | --- |
 | `/tk:gap` | SoT와 Current Implementation의 차이를 한 번 확인하고 missing, mismatch, overbuilt, ambiguous를 정리합니다. | optional external generated report |
 | `/tk:route` | 지금 이 task를 direct, subagent-driven, goal-driven 중 어떤 구현 route로 가져갈지 얇게 비교하고 첫 스텝을 정리합니다. | no persisted artifact by default |
 | `/tk:reflect` | 세션 결과와 사용자 피드백에서 재사용 가능한 learning을 canonical target으로 분류하고, repo-local/user-global guidance 기본 apply와 명시적 skill materialize를 처리합니다. | machine-readable reflect ledger + compact summary |
+
+### Practical
+
+| Command | 역할 | 저장 성격 |
+| --- | --- | --- |
 | `/tk:grill` | 계획, 설계, RFC, 개선안을 수렴형 질문으로 압박 검증합니다. | inline questioning + compact summary |
 | `/tk:prototype` | UI 또는 logic/state 가설을 throwaway prototype으로 빠르게 검증합니다. | prototype files + compact summary |
 | `/tk:arch-review` | 경계, ownership, coupling, 반복 마찰을 evidence-first로 검토하는 report-only 구조 리뷰입니다. | inline architecture review |
 | `/tk:merge-conflict` | merge/rebase conflict를 상태 확인 → intent 추적 → 검증 순서로 해결합니다. | conflict resolution summary |
+| `/tk:ui-diff` | 번들된 ui-diff 엔진 skill을 현재 repo의 `.claude/ui-diff/` profile과 함께 사용하는 direct QA surface입니다. | direct QA summary |
+
+### Output
+
+| Command | 역할 | 저장 성격 |
+| --- | --- | --- |
 | `/tk:handoff` | 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 handoff를 만듭니다. | repo-local handoff artifact |
 | `/tk:to-prd` | 현재 대화나 요구사항을 draft-only PRD로 정리합니다. | repo-local PRD draft |
 | `/tk:to-issues` | plan/PRD를 independently grabbable vertical-slice issue draft로 분해합니다. | repo-local issue draft set |
-| `/tk:ui-diff` | 번들된 ui-diff 엔진 skill을 현재 repo의 `.claude/ui-diff/` profile과 함께 사용하는 direct QA surface입니다. | direct QA summary |
 
 ## 사용 예시
 
@@ -120,7 +145,6 @@ claude plugin details tk
 - profile은 현재 repo의 `<root>/.claude/ui-diff/`만 읽습니다.
 - profile이 없으면 bundled template 기준으로 `.claude/ui-diff/` 신규 생성 절차로 들어가고 missing 파일만 만듭니다.
 - `login.local.md`는 gitignored local override입니다.
-
 ## Operational Docs
 
 - [Usage](.tigerkit/docs/usage.md)
@@ -141,7 +165,7 @@ Active generated state는 project repository 밖 `~/.tigerkit/` 아래의 file-o
 - `/tk:route`는 기본적으로 persisted artifact를 만들지 않습니다.
 - `/tk:ui-diff`는 별도 provisioning artifact를 만들지 않습니다.
 
-`.claude/tigerkit/`는 legacy/migration context로만 남기며 `.claude/` 전체를 ignore하지 않습니다.
+`.claude/tigerkit/` 아래에는 `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues`의 repo-local draft artifact가 기록됩니다. `.claude/` 전체를 ignore하지 않습니다.
 
 ## Contributors
 

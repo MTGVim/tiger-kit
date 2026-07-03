@@ -1,6 +1,6 @@
 # TigerKit 운영 사용법
 
-이 문서는 TigerKit command surface 사용 가이드입니다. 산출물 위치는 `.tigerkit/docs/artifact-layout.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`, 패키징 메타데이터는 `support/execute-support-matrix.json`을 기준으로 봅니다.
+이 문서는 TigerKit command surface 사용 가이드입니다. 산출물 위치는 `.tigerkit/docs/artifact-layout.md`, 출력 규칙은 `.tigerkit/docs/output-contract.md`를 기준으로 봅니다.
 
 ## 언어
 
@@ -86,12 +86,6 @@ Canonical target enum:
 repo-local, repo-shared, user-global, skill, hook, command, agent, discard
 ```
 
-Legacy selector:
-
-- `--target repo`는 `repo-local`, `repo-shared`로 확장하고 deprecation warning을 출력합니다.
-- `--target user`는 `user-global`로 확장하고 deprecation warning을 출력합니다.
-- `--target all`은 전체 canonical target을 가리키고, direct write는 eligible `repo-local`과 eligible `user-global`만 가능합니다.
-
 `PROFILE.md`, `automation`, `hookify`는 target 이름이 아닙니다.
 
 ## Reflect write model
@@ -164,7 +158,7 @@ Legacy selector:
 
 ## Generated state
 
-Active TigerKit generated state는 project repository 밖 `~/.tigerkit` 아래의 file-only state입니다. `.claude/tigerkit`는 legacy/migration context로만 남기고 새 runtime write path로 사용하지 않습니다.
+Active TigerKit runtime generated state는 project repository 밖 `~/.tigerkit` 아래의 file-only state입니다. repo-local draft artifact는 `.claude/tigerkit/` 아래의 handoff / prd / issues 경로를 사용합니다.
 
 주요 active path:
 
