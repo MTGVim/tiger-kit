@@ -118,7 +118,7 @@ claude plugin details tk
 
 - engine은 repo에 번들된 `skills/ui-diff/` 기준 지식을 사용합니다.
 - profile은 현재 repo의 `<root>/.claude/ui-diff/`만 읽습니다.
-- profile이 없으면 필요한 파일 경로를 안내하고 중단합니다.
+- profile이 없으면 bundled template 기준으로 `.claude/ui-diff/` 신규 생성 절차로 들어가고 missing 파일만 만듭니다.
 - `login.local.md`는 gitignored local override입니다.
 
 ## Operational Docs

@@ -159,7 +159,7 @@ Legacy selector:
 
 - engine source: repo에 번들된 `skills/ui-diff/`
 - profile source: 현재 repo의 `<root>/.claude/ui-diff/`
-- profile이 없으면 `tk:ui-diff`가 필요한 파일 경로를 안내하고 중단합니다.
+- profile이 없으면 `tk:ui-diff`가 bundled template 기준으로 `.claude/ui-diff/` 신규 생성 절차로 들어가고 missing 파일만 만듭니다.
 - `login.local.md`는 gitignored local override입니다.
 
 ## Generated state

@@ -664,6 +664,32 @@
         "Reflect persisted receipt before transcript",
         "Reflect no-op one-line output"
       ]
+    },
+    {
+      "id": 32,
+      "name": "ui-diff-bootstrap-missing-profile-instead-of-stop",
+      "prompt": "Evaluate /tk:ui-diff missing-profile behavior. Do not write files.",
+      "expected_output": "Should treat /tk:ui-diff as a direct QA surface that reads the current repo's `.claude/ui-diff/` profile. If the profile is missing, it should bootstrap repo-local missing files from bundled templates instead of stopping immediately. It should create only missing files, support a preview-only `--print-profile-template` mode, keep `login.local.md` as a gitignored local override, and avoid claiming engine install/update or user-global provisioning.",
+      "files": [
+        "commands/ui-diff.md",
+        "skills/ui-diff/SKILL.md",
+        "skills/ui-diff/templates/env.md",
+        "skills/ui-diff/templates/login.md",
+        "skills/ui-diff/templates/login.local.md",
+        "skills/ui-diff/templates/screens/README.md",
+        "README.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/usage.md"
+      ],
+      "expectations": [
+        "Ui-diff bootstraps missing repo-local profile",
+        "Uses bundled templates as bootstrap source",
+        "Creates only missing files",
+        "Supports print-profile-template preview mode",
+        "Keeps login.local.md gitignored local override",
+        "Does not claim engine install/update",
+        "Does not claim user-global provisioning"
+      ]
     }
   ]
 }

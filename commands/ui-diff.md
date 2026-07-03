@@ -21,10 +21,11 @@ ui-diff = bundled engine skill + current repo profile -> run visual QA workflow
 
 ## Core boundary
 
-- 이 command는 user-level / repo-internal provisioning mode를 만들지 않습니다.
+- 이 command는 user-global provisioning mode를 만들지 않습니다.
 - engine install/update를 수행하지 않습니다.
-- current repo의 profile만 읽습니다.
-- profile이 없으면 필요한 파일 경로를 안내하고 중단합니다.
+- current repo의 profile만 읽고, 없으면 같은 repo 경로에 missing profile 파일만 신규 생성합니다.
+- `--print-profile-template`가 있으면 write 없이 템플릿과 경로만 출력합니다.
+- 기존 profile 파일을 강제로 overwrite하지 않습니다.
 - `login.local.md`는 gitignored local override입니다.
 
 ## Profile contract
@@ -45,7 +46,21 @@ lookup 순서:
 3. `login.local.md` (있으면 override)
 4. `screens/README.md` 및 `screens/*.md`
 
-없으면 profile missing으로 중단하고 필요한 파일 경로를 출력합니다.
+누락 파일이 있으면 bundled template를 source로 삼아 신규 생성 절차로 들어갑니다.
+
+```text
+skills/ui-diff/templates/env.md -> <root>/.claude/ui-diff/env.md
+skills/ui-diff/templates/login.md -> <root>/.claude/ui-diff/login.md
+skills/ui-diff/templates/login.local.md -> <root>/.claude/ui-diff/login.local.md
+skills/ui-diff/templates/screens/README.md -> <root>/.claude/ui-diff/screens/README.md
+```
+
+규칙:
+
+- 디렉토리가 없으면 `.claude/ui-diff/`와 `screens/`를 먼저 만듭니다.
+- missing 파일만 생성하고 기존 파일은 덮어쓰지 않습니다.
+- `--print-profile-template`가 있으면 위 템플릿 내용을 preview만 하고 write는 하지 않습니다.
+- 생성 직후에는 env/login/screens에 채워야 할 항목과 다음 실행 순서를 같이 안내합니다.
 
 ## Engine source
 
@@ -68,14 +83,16 @@ lookup 순서:
 ## Output contract
 
 ```text
-UI Diff 준비 완료 | UI Diff 중단
+UI Diff 준비 완료 | UI Diff 프로필 생성 완료 | UI Diff 프로필 템플릿 출력
 Mode: env-diff | figma-diff
 Profile path:
+- <path or NONE>
+Created files:
 - <path or NONE>
 Engine skill:
 - skills/ui-diff/SKILL.md
 다음 행동:
-- <run diff / inspect missing profile / provide selectors>
+- <run diff / fill env-login-screen values / rerun ui-diff>
 ```
 
 ## Examples
@@ -89,6 +106,6 @@ Engine skill:
 ## Non-goals
 
 - engine provisioning
-- user-level profile provisioning
-- repo-internal install/update workflow
+- user-global profile provisioning
+- full install/update workflow
 - forced overwrite / merge of profile assets
