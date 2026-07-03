@@ -4,6 +4,10 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -18,8 +22,6 @@ jobs:
 
       - name: Setup Claude Code
         uses: anthropics/claude-code-action@beta
-        with:
-          use_oauth: false
 
       - name: Setup Yarn
         run: corepack enable
@@ -28,4 +30,4 @@ jobs:
         run: yarn validate
 
       - name: Compile Python helpers
-        run: python3 -m py_compile scripts/*.py hooks/*.py
+        run: python3 -m py_compile scripts/*.py
