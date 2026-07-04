@@ -229,6 +229,7 @@ Rules:
 
 - `candidate_id`는 same-session + same-ledger만 유효합니다.
 - `/tk:learn`은 reflect ledger를 source of truth로 읽습니다.
+- helper surface가 있으면 `/tk:learn`은 `read-reflect-candidate`로 current ledger candidate를 읽을 수 있습니다.
 - 이름은 `/tk:learn` 단계에서 제안/확정합니다.
 - write boundary는 계속 `skill only`입니다.
 

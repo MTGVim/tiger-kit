@@ -51,6 +51,8 @@
 
 Artifact path가 필요하면 repo 밖 `~/.tigerkit/.../gap/` 아래에 둡니다.
 
+같은 gap run의 machine-readable handoff가 필요하면 `current.packet.json`을 함께 둘 수 있습니다. schema는 `tigerkit.gap-packet/v1`이며, `source_refs`, `precedence`, `findings`, `unresolved_questions`를 담아 `/tk:route`가 same repo/scope `gap packet`을 재사용할 수 있게 합니다.
+
 ## `/tk:route` Output Contract
 
 `/tk:route`는 inline-only decision / brainstorming surface입니다.
@@ -74,6 +76,8 @@ First step
 ```
 
 `goal-driven`이 선택되고 host가 `/goal` surface를 지원할 때만 `Goal command` 줄을 추가할 수 있습니다. 이 줄은 recommendation이며, 특정 host command 존재의 증거를 대신하지 않습니다.
+
+same repo/scope `gap packet`이 있으면 `/tk:route`는 그 packet의 source set, precedence, ambiguity, evidence type을 먼저 읽고 route 판단 근거로 재사용할 수 있습니다. packet이 없거나 stale하면 기존 read-only route 판단으로 fallback 합니다.
 
 기본적으로 persisted artifact를 만들지 않습니다.
 
@@ -105,6 +109,7 @@ Notes:
 - `--apply=true`일 때만 user skill surface write를 허용합니다.
 - `--from-reflect <candidate_id>`는 same-session + same-ledger candidate만 읽습니다.
 - reflect candidate를 읽을 때는 ledger를 source of truth로 삼습니다.
+- helper surface가 있으면 `read-reflect-candidate`로 current ledger candidate를 읽을 수 있지만, same-session + same-ledger boundary는 계속 유지됩니다.
 - `/tk:learn`은 `repo-local`, `user-global`, `hook`, `command`, `agent` direct write를 하지 않습니다.
 
 ## `/tk:reflect` Output Contract
@@ -208,6 +213,7 @@ Rules:
 - `candidate_id`는 same-session + same-ledger만 유효합니다.
 - skill source 생성은 explicit apply일 때만 허용합니다.
 - reflect candidate는 `/tk:learn`이 ledger를 source of truth로 읽어 마무리합니다.
+- helper surface가 있으면 `/tk:learn`은 `read-reflect-candidate`로 current ledger candidate를 읽을 수 있습니다.
 - 생성 target은 agent가 지원하는 user skill surface입니다. Claude Code 계열이면 `~/.claude/skills/<name>/SKILL.md`가 예시입니다.
 - 이름 확정 전 write 금지
 - `--dry-run`은 preview only입니다.

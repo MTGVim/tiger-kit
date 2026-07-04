@@ -24,6 +24,7 @@ route = explicit task + current constraints -> compare implementation routes -> 
 - 이 command는 source tree, `.claude/tigerkit/`, Git branch/index/stash/commit을 변경하지 않습니다.
 - package-manager script, build, test, lint, typecheck, network request를 실행하지 않습니다.
 - sealed workflow, spec artifact, approval receipt를 만들지 않습니다.
+- same repo/scope `gap packet`이 있으면 재사용할 수 있지만, packet이 없다고 route를 막지는 않습니다.
 - 사용자가 이미 바로 구현하라고 했으면 route brainstorming을 강요하지 않습니다.
 - SoT가 없어서 판단 근거가 약하면 route를 억지로 확정하지 않고 `need-sot` 또는 `decision`으로 남길 수 있습니다.
 
@@ -76,7 +77,10 @@ First step
 2. 병렬 탐색, 독립 검증, reviewer/implementer 분리가 유리하면 `subagent-driven`을 우선 검토합니다.
 3. 한 번의 patch보다 goal decomposition, status tracking, multi-step orchestration이 더 중요하면 `goal-driven`을 우선 검토합니다.
 4. Source of Truth가 없거나 owner decision이 없어서 route보다 전제 정리가 중요하면 `need-sot` 또는 `decision`을 선택합니다.
+5. same repo/scope `gap packet`이 있으면 source set, precedence, ambiguity, evidence type을 먼저 읽고 route 판단 근거로 재사용합니다. packet이 없거나 stale하면 기존 read-only evidence gather로 fallback 합니다.
 5. reject를 피하려고 command 밖 우회 문구를 시도하라고 유도하지 않습니다. 안 맞는 surface면 안 맞는다고 말하고 다른 route를 제안합니다.
+
+repo-local helper surface가 보이면 `read-gap-packet`으로 same repo/scope packet을 읽고, 없으면 packet 없이 판단합니다.
 
 ## Examples
 

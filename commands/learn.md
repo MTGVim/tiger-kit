@@ -28,6 +28,7 @@ learn = explicit source or reflect candidate -> gather evidence -> draft skill -
 - `--apply=false` 또는 `--dry-run`은 preview-only 입니다.
 - `--from-reflect <candidate_id>`를 쓰면 same-session + same-ledger candidate만 읽습니다.
 - reflect candidate를 읽을 때는 chat prose가 아니라 reflect ledger를 source of truth로 삼습니다.
+- helper surface가 있으면 `read-reflect-candidate --candidate-id <id>`로 current ledger candidate를 읽을 수 있습니다. helper가 없더라도 source of truth는 계속 reflect ledger입니다.
 
 ## When to use
 
@@ -41,6 +42,12 @@ learn = explicit source or reflect candidate -> gather evidence -> draft skill -
 
 - `direct`: path, directory, URL, 현재 대화, notes 같은 source를 직접 읽습니다.
 - `reflect-candidate`: `/tk:reflect` ledger의 `candidate_id`를 source로 읽고, 필요하면 추가 source를 gather합니다.
+
+reflect candidate helper 예시:
+
+```bash
+python3 "$TIGERKIT_STATE_SCRIPT" read-reflect-candidate --repo-root "$PWD" --candidate-id R1
+```
 
 ## Default target
 

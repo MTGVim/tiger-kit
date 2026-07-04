@@ -69,7 +69,7 @@ claude plugin details tk
 
 | Command | 역할 | 저장 성격 |
 | --- | --- | --- |
-| `/tk:gap` | SoT와 Current Implementation의 차이를 한 번 확인하고 missing, mismatch, overbuilt, ambiguous를 정리합니다. | optional external generated report |
+| `/tk:gap` | SoT와 Current Implementation의 차이를 한 번 확인하고 missing, mismatch, overbuilt, ambiguous를 정리합니다. | optional external generated report + gap packet |
 | `/tk:route` | 지금 이 task를 direct, subagent-driven, goal-driven 중 어떤 구현 route로 가져갈지 얇게 비교하고 첫 스텝을 정리합니다. | no persisted artifact by default |
 | `/tk:reflect` | 세션 결과와 사용자 피드백에서 재사용 가능한 learning을 canonical target으로 분류하고, repo-local/user-global guidance 기본 apply와 명시적 skill materialize를 처리합니다. | machine-readable reflect ledger + compact summary |
 | `/tk:learn` | path, URL, 현재 대화, notes, 또는 reflect candidate에서 reusable skill을 직접 만듭니다. | skill draft / user skill source |
@@ -164,6 +164,10 @@ claude plugin details tk
 - [Usage](.tigerkit/docs/usage.md)
 - [Output Contract](.tigerkit/docs/output-contract.md)
 - [Storage boundary](.tigerkit/docs/storage-boundary.md)
+- [FULL eval pilots](.tigerkit/docs/full-eval-pilots.md)
+- [Gap→Route evidence packets](.tigerkit/docs/gap-route-evidence-packets.md)
+- [Reflect→Learn evidence handoff](.tigerkit/docs/reflect-learn-evidence-handoff.md)
+- [Promotion statuses](.tigerkit/docs/promotion-statuses.md)
 - [Reflect file policy](docs/reflect-file-policy.md)
 - [Reflect promotion helper guide](.tigerkit/docs/reflect-promotion-helpers.md)
 
@@ -173,6 +177,7 @@ Active generated state는 project repository 밖 `~/.tigerkit/` 아래의 file-o
 
 - `/tk:gap` report:
   - `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/...`
+  - `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/current.packet.json`
 - `/tk:reflect` ledger:
   - `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/reflect/REFLECT-YYYYMMDD-HHmmss-RAND.yaml`
   - `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/reflect/current.yaml`
