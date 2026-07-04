@@ -6,10 +6,10 @@
 
 ```text
 runtime generated state = ~/.tigerkit/ file-only state outside the project repository
-repo-local draft artifacts = .claude/tigerkit/ for handoff / PRD / issue drafts
+repo-local draft artifacts = .claude/tigerkit/worktrees/<worktree-key>/ current-first draft state
 ```
 
-TigerKit는 active runtime generated state를 project repository 밖 `~/.tigerkit/` 아래에 둡니다. repo 안에서는 `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues` 같은 repo-local draft artifacts만 `.claude/tigerkit/` 아래에 둡니다.
+TigerKit는 active runtime generated state를 project repository 밖 `~/.tigerkit/` 아래에 둡니다. repo 안에서는 `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues` 같은 repo-local draft artifacts만 `.claude/tigerkit/worktrees/<worktree-key>/` 아래에 둡니다.
 
 ## Active runtime state
 
@@ -31,12 +31,12 @@ TigerKit는 active runtime generated state를 project repository 밖 `~/.tigerki
 ## Repo-local draft artifacts
 
 ```text
-<git-root>/.claude/tigerkit/handoffs/HANDOFF-YYYYMMDD-HHmmss.md
-<git-root>/.claude/tigerkit/prd/PRD-YYYYMMDD-HHmmss.md
-<git-root>/.claude/tigerkit/issues/ISSUES-YYYYMMDD-HHmmss.md
+<git-root>/.claude/tigerkit/worktrees/<worktree-key>/handoffs/current.md
+<git-root>/.claude/tigerkit/worktrees/<worktree-key>/prd/current.md
+<git-root>/.claude/tigerkit/worktrees/<worktree-key>/issues/current.md
 ```
 
-이 경로들은 tracked product source가 아니라 repo-local draft artifact 경로입니다.
+이 경로들은 tracked product source가 아니라 repo-local draft artifact 경로입니다. 선택적으로 archive를 남길 수는 있지만 기본은 current-first 입니다. `worktree-key`는 현재 worktree를 구분하는 canonicalized directory key로 보고, 서로 다른 worktree draft가 섞이지 않게 합니다.
 
 ## Not stored here
 

@@ -9,7 +9,7 @@
 - Evidence, Interpretation, Decision, Suggestion을 구분합니다.
 - 검증하지 않은 success를 선언하지 않습니다.
 - command가 파일을 쓰면 changed path 또는 ledger path를 출력합니다.
-- Active command surface는 `/tk:gap`, `/tk:route`, `/tk:reflect`, `/tk:grill`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues`, `/tk:ui-diff`입니다.
+- Active command surface는 `/tk:gap`, `/tk:route`, `/tk:reflect`, `/tk:learn`, `/tk:grill`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues`, `/tk:ui-diff`입니다.
 - 기본 projection은 compact합니다. empty section, default empty list, `NONE` line은 의미 보존에 필요할 때만 출력합니다.
 
 ## `/tk:gap` Output Contract
@@ -69,9 +69,43 @@ Needs first
 
 First step
   - <one concrete next step>
+[Goal command]
+  - </goal <recommended goal> or NONE>
 ```
 
+`goal-driven`이 선택되고 host가 `/goal` surface를 지원할 때만 `Goal command` 줄을 추가할 수 있습니다. 이 줄은 recommendation이며, 특정 host command 존재의 증거를 대신하지 않습니다.
+
 기본적으로 persisted artifact를 만들지 않습니다.
+
+## `/tk:learn` Output Contract
+
+`/tk:learn`은 direct source 또는 reflect candidate에서 reusable skill을 직접 만듭니다.
+
+```text
+Learn 완료 | Learn 미리보기 | Learn 중단
+Input:
+- <source or candidate_id>
+Source mode:
+- direct | reflect-candidate
+Apply:
+- preview | explicit
+Name:
+- suggested: <slug>
+- confirmed: <slug or NONE>
+Target:
+- user skill surface only
+Created:
+- <path or NONE>
+Next step:
+- <review skill | confirm name | apply explicitly | patch source>
+```
+
+Notes:
+- 기본은 preview-only 입니다.
+- `--apply=true`일 때만 user skill surface write를 허용합니다.
+- `--from-reflect <candidate_id>`는 same-session + same-ledger candidate만 읽습니다.
+- reflect candidate를 읽을 때는 ledger를 source of truth로 삼습니다.
+- `/tk:learn`은 `repo-local`, `user-global`, `hook`, `command`, `agent` direct write를 하지 않습니다.
 
 ## `/tk:reflect` Output Contract
 
@@ -153,7 +187,7 @@ exact `apply_plan`은 stdout이 아니라 ledger에 둡니다. `repo-local`과 `
 
 ### skill materialize mode
 
-`/tk:reflect --target skill --apply=true`는 reflect가 제안한 candidate를 실제 artifact로 생성합니다. 1차 범위는 `skill only`입니다.
+`/tk:reflect --target skill --apply=true`는 reflect가 제안한 candidate를 `/tk:learn` authoring pipeline으로 넘겨 실제 artifact를 생성합니다. 1차 범위는 `skill only`입니다.
 
 ```text
 Reflect 완료 | Reflect 미리보기 | Reflect 중단
@@ -173,6 +207,7 @@ Created:
 Rules:
 - `candidate_id`는 same-session + same-ledger만 유효합니다.
 - skill source 생성은 explicit apply일 때만 허용합니다.
+- reflect candidate는 `/tk:learn`이 ledger를 source of truth로 읽어 마무리합니다.
 - 생성 target은 agent가 지원하는 user skill surface입니다. Claude Code 계열이면 `~/.claude/skills/<name>/SKILL.md`가 예시입니다.
 - 이름 확정 전 write 금지
 - `--dry-run`은 preview only입니다.

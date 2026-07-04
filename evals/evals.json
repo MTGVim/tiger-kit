@@ -1,11 +1,12 @@
 {
-  "skill_name": "tiger-kit-gap-route-reflect-ui-diff-grill-prototype-arch-review-merge-conflict-handoff-to-prd-to-issues-core",
+  "skill_name": "tiger-kit-gap-route-reflect-learn-ui-diff-grill-prototype-arch-review-merge-conflict-handoff-to-prd-to-issues-core",
   "command_surface": {
-    "surface_model": "TigerKit exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts. Active command surface is /tk:gap, /tk:route, /tk:reflect, /tk:ui-diff, /tk:grill, /tk:prototype, /tk:arch-review, /tk:merge-conflict, /tk:handoff, /tk:to-prd, and /tk:to-issues.",
+    "surface_model": "TigerKit exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts. Active command surface is /tk:gap, /tk:route, /tk:reflect, /tk:learn, /tk:ui-diff, /tk:grill, /tk:prototype, /tk:arch-review, /tk:merge-conflict, /tk:handoff, /tk:to-prd, and /tk:to-issues.",
     "core_commands": [
       "/tk:gap",
       "/tk:route",
       "/tk:reflect",
+      "/tk:learn",
       "/tk:ui-diff",
       "/tk:grill",
       "/tk:prototype",
@@ -30,7 +31,7 @@
       "id": 0,
       "name": "plugin-version-and-command-manifest-gap-route-reflect-ui-diff-plus-phase1-and-conditional",
       "prompt": "Evaluate TigerKit active command surface and plugin packaging. Do not write files.",
-      "expected_output": "Should list /tk:gap, /tk:route, /tk:reflect, /tk:ui-diff, /tk:grill, /tk:prototype, /tk:arch-review, /tk:merge-conflict, /tk:handoff, /tk:to-prd, and /tk:to-issues as the active commands. Should state /tk:route is a decision/brainstorming surface, not a runner or autopilot. Should state /tk:reflect is the durable promotion router with repo-local/user-global default apply and explicit skill materialize mode, /tk:grill is a questioning surface, /tk:prototype is a throwaway validation surface, /tk:arch-review is a report-only architecture review surface, /tk:merge-conflict is a conflict-resolution surface, /tk:handoff is a repo-local handoff surface, /tk:to-prd is a draft-only PRD surface, and /tk:to-issues is a draft-only vertical-slice issue surface.",
+      "expected_output": "Should list /tk:gap, /tk:route, /tk:reflect, /tk:learn, /tk:ui-diff, /tk:grill, /tk:prototype, /tk:arch-review, /tk:merge-conflict, /tk:handoff, /tk:to-prd, and /tk:to-issues as the active commands. Should state /tk:learn is a source-to-skill surface with preview-default and skill-only write boundary. Should state /tk:route is a decision/brainstorming surface, not a runner or autopilot. Should state /tk:reflect is the durable promotion router with repo-local/user-global default apply and explicit skill materialize mode, /tk:grill is a questioning surface, /tk:prototype is a throwaway validation surface, /tk:arch-review is a report-only architecture review surface, /tk:merge-conflict is a conflict-resolution surface, /tk:handoff is a repo-local handoff surface, /tk:to-prd is a draft-only PRD surface, and /tk:to-issues is a draft-only vertical-slice issue surface.",
       "files": [
         ".claude-plugin/plugin.json",
         "README.md",
@@ -42,6 +43,7 @@
         "Lists /tk:gap",
         "Lists /tk:route",
         "Lists /tk:reflect",
+        "Lists /tk:learn",
         "Lists /tk:ui-diff",
         "Lists /tk:grill",
         "Lists /tk:prototype",
@@ -60,7 +62,8 @@
         "States /tk:handoff is repo-local handoff surface",
         "States /tk:to-prd is draft-only PRD surface",
         "States /tk:to-issues is draft-only vertical-slice issue surface",
-        "States /tk:ui-diff is direct QA surface"
+        "States /tk:ui-diff is direct QA surface",
+        "States /tk:learn is source-to-skill surface"
       ]
     },
     {
@@ -507,7 +510,7 @@
       "id": 25,
       "name": "route-is-decision-brainstorming-surface",
       "prompt": "Evaluate /tk:route behavior. Do not write files.",
-      "expected_output": "Should treat /tk:route as an explicit-trigger decision/brainstorming surface that compares implementation routes such as direct, subagent-driven, and goal-driven. It must not run package scripts, tests, builds, network, runtime execute, runner/autopilot, approval lifecycle, or mutate source tree/.claude/tigerkit. It should be willing to stop at need-sot or decision when route choice is premature, and it must not suggest off-contract wording hacks to sneak around rejections.",
+      "expected_output": "Should treat /tk:route as an explicit-trigger decision/brainstorming surface that compares implementation routes such as direct, subagent-driven, and goal-driven. It must not run package scripts, tests, builds, network, runtime execute, runner/autopilot, approval lifecycle, or mutate source tree/.claude/tigerkit. It should be willing to stop at need-sot or decision when route choice is premature. When goal-driven is chosen and the host supports /goal, it may include a ready-to-run /goal recommendation. It must not suggest off-contract wording hacks to sneak around rejections.",
       "files": [
         "commands/route.md",
         "README.md",
@@ -520,7 +523,8 @@
         "No persisted spec artifact by default",
         "No source tree writes",
         "No execute runtime in route command",
-        "No approval bypass or wording hack guidance"
+        "No approval bypass or wording hack guidance",
+        "May include /goal recommendation when host supports it"
       ]
     },
     {
@@ -589,6 +593,28 @@
         "Keeps login.local.md gitignored local override",
         "Does not claim engine install/update",
         "Does not claim user-global provisioning"
+      ]
+    },
+    {
+      "id": 33,
+      "name": "learn-is-skill-only-source-to-skill-surface",
+      "prompt": "Evaluate /tk:learn behavior. Do not write files.",
+      "expected_output": "Should treat /tk:learn as a source-to-skill surface for path, directory, URL, current conversation, notes, or reflect candidate inputs. It should default to preview-only, require explicit apply before writing a skill source, keep a skill-only write boundary, avoid repo-local or user-global guidance writes, and use reflect ledger candidate data as the source of truth when invoked from reflect.",
+      "files": [
+        "commands/learn.md",
+        "skills/learn/SKILL.md",
+        ".tigerkit/docs/output-contract.md",
+        "README.md"
+      ],
+      "expectations": [
+        "Defines /tk:learn as source-to-skill surface",
+        "Supports direct source mode",
+        "Supports reflect candidate mode",
+        "Defaults to preview-only",
+        "Requires explicit apply for write",
+        "Uses skill-only write boundary",
+        "Does not route repo-local or user-global writes",
+        "Reads reflect ledger as source of truth"
       ]
     }
   ]

@@ -26,7 +26,7 @@ skills/to-prd/SKILL.md
 ## Default output target
 
 ```text
-<git-root>/.claude/tigerkit/prd/PRD-YYYYMMDD-HHmmss.md
+<git-root>/.claude/tigerkit/worktrees/<worktree-key>/prd/current.md
 ```
 
 ## Output contract
