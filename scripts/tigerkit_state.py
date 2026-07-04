@@ -91,6 +91,19 @@ def next_gap_id() -> str:
     return f"GAP-{stamp}-{rand}"
 
 
+def load_gap_packet_content(packet_file: str | None) -> dict[str, Any]:
+    raw = Path(packet_file).read_text(encoding="utf-8") if packet_file else sys.stdin.read()
+    if not raw.strip():
+        raise SystemExit("write-gap-packet requires non-empty packet content")
+    try:
+        payload = json.loads(raw)
+    except Exception as exc:
+        raise SystemExit(f"write-gap-packet requires valid json packet content: {exc}") from exc
+    if not isinstance(payload, dict):
+        raise SystemExit("write-gap-packet requires a top-level json object")
+    return payload
+
+
 def cmd_gap_paths(args: argparse.Namespace) -> int:
     repo_root = resolve_repo_root(args.repo_root)
     repo_key_value = repo_key(repo_root)
@@ -104,9 +117,109 @@ def cmd_gap_paths(args: argparse.Namespace) -> int:
         "scopeKey": scope_key_value,
         "gapDir": str(gap_dir),
         "currentPath": str(gap_dir / "current.md"),
+        "currentPacketPath": str(gap_dir / "current.packet.json"),
         "branchStatePath": str(root / "repos" / repo_key_value / "branches" / scope_key_value / "branch-state.json"),
     }
     print(json.dumps(payload, ensure_ascii=False, indent=2))
+    return 0
+
+
+def cmd_gap_packet_paths(args: argparse.Namespace) -> int:
+    repo_root = resolve_repo_root(args.repo_root)
+    repo_key_value = repo_key(repo_root)
+    scope_key_value = scope_key(repo_root)
+    root = state_root()
+    gap_dir = root / "repos" / repo_key_value / "branches" / scope_key_value / "gap"
+    payload = {
+        "stateRoot": str(root),
+        "repoRoot": str(repo_root),
+        "repoKey": repo_key_value,
+        "scopeKey": scope_key_value,
+        "gapDir": str(gap_dir),
+        "currentPacketPath": str(gap_dir / "current.packet.json"),
+        "branchStatePath": str(root / "repos" / repo_key_value / "branches" / scope_key_value / "branch-state.json"),
+    }
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
+    return 0
+
+
+def cmd_read_gap_packet(args: argparse.Namespace) -> int:
+    repo_root = resolve_repo_root(args.repo_root)
+    repo_key_value = repo_key(repo_root)
+    scope_key_value = scope_key(repo_root)
+    root = state_root()
+    gap_dir = root / "repos" / repo_key_value / "branches" / scope_key_value / "gap"
+    current_packet_path = gap_dir / "current.packet.json"
+    if not current_packet_path.is_file():
+        print(json.dumps({
+            "found": False,
+            "repoRoot": str(repo_root),
+            "repoKey": repo_key_value,
+            "scopeKey": scope_key_value,
+            "currentPacketPath": str(current_packet_path),
+        }, ensure_ascii=False, indent=2))
+        return 0
+
+    packet = load_json(current_packet_path, None)
+    if not isinstance(packet, dict):
+        raise SystemExit(f"read-gap-packet found invalid json at {current_packet_path}")
+
+    print(json.dumps({
+        "found": True,
+        "repoRoot": str(repo_root),
+        "repoKey": repo_key_value,
+        "scopeKey": scope_key_value,
+        "currentPacketPath": str(current_packet_path),
+        "packet": packet,
+    }, ensure_ascii=False, indent=2))
+    return 0
+
+
+def cmd_read_reflect_candidate(args: argparse.Namespace) -> int:
+    repo_root = resolve_repo_root(args.repo_root)
+    repo_key_value = repo_key(repo_root)
+    scope_key_value = scope_key(repo_root)
+    root = state_root()
+    current_ledger_path = root / "repos" / repo_key_value / "branches" / scope_key_value / "reflect" / "current.yaml"
+    if not current_ledger_path.is_file():
+        print(json.dumps({
+            "found": False,
+            "repoRoot": str(repo_root),
+            "repoKey": repo_key_value,
+            "scopeKey": scope_key_value,
+            "ledgerPath": str(current_ledger_path),
+            "candidateId": args.candidate_id,
+            "same_session_required": True,
+            "same_ledger_required": True,
+            "source_of_truth": "reflect-ledger",
+        }, ensure_ascii=False, indent=2))
+        return 0
+
+    ledger = load_json(current_ledger_path, None)
+    if not isinstance(ledger, dict):
+        raise SystemExit(f"read-reflect-candidate found invalid ledger json at {current_ledger_path}")
+    candidates = ledger.get("candidates")
+    if not isinstance(candidates, list):
+        raise SystemExit(f"read-reflect-candidate expected candidates[] in {current_ledger_path}")
+
+    matched = None
+    for item in candidates:
+        if isinstance(item, dict) and item.get("candidate_id") == args.candidate_id:
+            matched = item
+            break
+
+    print(json.dumps({
+        "found": matched is not None,
+        "repoRoot": str(repo_root),
+        "repoKey": repo_key_value,
+        "scopeKey": scope_key_value,
+        "ledgerPath": str(current_ledger_path),
+        "candidateId": args.candidate_id,
+        "same_session_required": True,
+        "same_ledger_required": True,
+        "source_of_truth": "reflect-ledger",
+        "candidate": matched,
+    }, ensure_ascii=False, indent=2))
     return 0
 
 
@@ -147,6 +260,48 @@ def cmd_write_gap(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_write_gap_packet(args: argparse.Namespace) -> int:
+    repo_root = resolve_repo_root(args.repo_root)
+    repo_key_value = repo_key(repo_root)
+    scope_key_value = scope_key(repo_root)
+    root = state_root()
+    packet = load_gap_packet_content(args.packet_file)
+    gap_id = str(packet.get("gap_id") or args.gap_id or next_gap_id())
+    packet.setdefault("gap_id", gap_id)
+    packet.setdefault("repo_root", str(repo_root))
+    packet.setdefault("repo_key", repo_key_value)
+    packet.setdefault("scope_key", scope_key_value)
+    packet.setdefault("created_at", now_iso())
+    gap_dir = root / "repos" / repo_key_value / "branches" / scope_key_value / "gap"
+    packet_path = gap_dir / f"{gap_id}.packet.json"
+    current_packet_path = gap_dir / "current.packet.json"
+    branch_state_path = root / "repos" / repo_key_value / "branches" / scope_key_value / "branch-state.json"
+    normalized = json.dumps(packet, ensure_ascii=False, indent=2) + "\n"
+    atomic_write(packet_path, normalized)
+    atomic_write(current_packet_path, normalized)
+    branch_state = load_json(branch_state_path, {})
+    branch_state.update({
+        "repoKey": repo_key_value,
+        "scopeKey": scope_key_value,
+        "lastGapPacketId": gap_id,
+        "lastGapPacketPath": str(packet_path),
+        "updatedAt": now_iso(),
+    })
+    atomic_write_json(branch_state_path, branch_state)
+    print(json.dumps({
+        "stateRoot": str(root),
+        "repoRoot": str(repo_root),
+        "repoKey": repo_key_value,
+        "scopeKey": scope_key_value,
+        "gapId": gap_id,
+        "packetPath": str(packet_path),
+        "currentPacketPath": str(current_packet_path),
+        "branchStatePath": str(branch_state_path),
+        "contentSha256": hashlib.sha256(normalized.encode("utf-8")).hexdigest(),
+    }, ensure_ascii=False, indent=2))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="TigerKit active generated-state helpers")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -155,11 +310,30 @@ def build_parser() -> argparse.ArgumentParser:
     p_paths.add_argument("--repo-root", help="Repo root or working directory", default=None)
     p_paths.set_defaults(func=cmd_gap_paths)
 
+    p_packet_paths = sub.add_parser("gap-packet-paths", help="Print active gap packet state paths")
+    p_packet_paths.add_argument("--repo-root", help="Repo root or working directory", default=None)
+    p_packet_paths.set_defaults(func=cmd_gap_packet_paths)
+
+    p_read_packet = sub.add_parser("read-gap-packet", help="Read current gap packet for the repo/scope")
+    p_read_packet.add_argument("--repo-root", help="Repo root or working directory", default=None)
+    p_read_packet.set_defaults(func=cmd_read_gap_packet)
+
+    p_read_reflect = sub.add_parser("read-reflect-candidate", help="Read one candidate from the current reflect ledger")
+    p_read_reflect.add_argument("--repo-root", help="Repo root or working directory", default=None)
+    p_read_reflect.add_argument("--candidate-id", help="Candidate id to read from current.yaml", required=True)
+    p_read_reflect.set_defaults(func=cmd_read_reflect_candidate)
+
     p_write = sub.add_parser("write-gap", help="Write a gap report into ~/.tigerkit")
     p_write.add_argument("--repo-root", help="Repo root or working directory", default=None)
     p_write.add_argument("--gap-id", help="Explicit GAP id", default=None)
     p_write.add_argument("--report-file", help="Read report content from file instead of stdin", default=None)
     p_write.set_defaults(func=cmd_write_gap)
+
+    p_write_packet = sub.add_parser("write-gap-packet", help="Write a gap packet into ~/.tigerkit")
+    p_write_packet.add_argument("--repo-root", help="Repo root or working directory", default=None)
+    p_write_packet.add_argument("--gap-id", help="Explicit GAP id", default=None)
+    p_write_packet.add_argument("--packet-file", help="Read packet json from file instead of stdin", default=None)
+    p_write_packet.set_defaults(func=cmd_write_gap_packet)
     return parser
 
 
