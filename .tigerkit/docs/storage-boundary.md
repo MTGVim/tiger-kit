@@ -16,6 +16,8 @@ TigerKit는 active runtime generated state를 project repository 밖 `~/.tigerki
 ```text
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/<GAP-ID>.md
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/current.md
+~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/<GAP-ID>.packet.json
+~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/current.packet.json
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/reflect/REFLECT-YYYYMMDD-HHmmss-RAND.yaml
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/reflect/current.yaml
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/branch-state.json
@@ -23,6 +25,7 @@ TigerKit는 active runtime generated state를 project repository 밖 `~/.tigerki
 
 역할:
 - `/tk:gap` report archive/current
+- `/tk:gap` packet archive/current
 - `/tk:reflect` ledger archive/current
 - branch-local generated pointer
 

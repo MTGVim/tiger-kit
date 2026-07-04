@@ -110,8 +110,33 @@ Findings에는 P0/P1/P2만 넣습니다. P3, duplicate, unverifiable, source con
 ```text
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/GAP-YYYYMMDD-HHmmss-RAND.md
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/current.md
+~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/GAP-YYYYMMDD-HHmmss-RAND.packet.json
+~/.tigerkit/repos/<repo-key>/branches/<scope-key>/gap/current.packet.json
 ~/.tigerkit/repos/<repo-key>/branches/<scope-key>/branch-state.json
 ```
+
+gap이 남기는 markdown report와 별도로 route handoff용 machine-readable `gap packet`을 둘 수 있습니다.
+
+```text
+schemaVersion: tigerkit.gap-packet/v1
+```
+
+packet은 최소한 아래를 담아야 합니다.
+
+- `schemaVersion`
+- `invocation_id`
+- `gap_id`
+- `repo_root`
+- `repo_key`
+- `scope_key`
+- `source_refs`
+- `precedence`
+- `findings`
+- `unresolved_questions`
+- `report_path`
+- `created_at`
+
+`precedence.status`는 `resolved | unresolved`를 구분해야 하며, unresolved source conflict는 packet에서도 조용히 병합하지 않습니다. `Current`가 plan이나 generated artifact뿐이면 packet의 evidence type도 그대로 남겨, route나 후속 surface가 그것을 implementation proof로 착각하지 않게 합니다.
 
 실제 저장이 필요할 때는 최종 markdown report를 만든 뒤 **설치된 TigerKit plugin cache에서 helper를 발견한 다음** 사용합니다. 현재 작업 repo의 `scripts/` 상대경로를 가정하면 안 되고, `CLAUDE_PLUGIN_ROOT`가 비어 있거나 marketplace mirror를 가리키는 경우도 있으므로 installPath/cache를 직접 확인합니다.
 
@@ -167,6 +192,24 @@ print(candidates[0])
 PY
 })"
 python3 "$TIGERKIT_STATE_SCRIPT" write-gap --repo-root "$PWD" --report-file /absolute/path/to/final-gap-report.md
+```
+
+packet path만 확인하려면:
+
+```bash
+python3 "$TIGERKIT_STATE_SCRIPT" gap-packet-paths --repo-root "$PWD"
+```
+
+현재 same repo/scope packet을 읽으려면:
+
+```bash
+python3 "$TIGERKIT_STATE_SCRIPT" read-gap-packet --repo-root "$PWD"
+```
+
+packet json을 저장하려면:
+
+```bash
+python3 "$TIGERKIT_STATE_SCRIPT" write-gap-packet --repo-root "$PWD" --packet-file /absolute/path/to/final-gap-packet.json
 ```
 
 stdin으로 직접 넘길 수도 있습니다.
@@ -227,7 +270,7 @@ python3 "$TIGERKIT_STATE_SCRIPT" write-gap --repo-root "$PWD" <<'EOF'
 EOF
 ```
 
-helper는 report archive, `current.md`, `branch-state.json`을 함께 갱신합니다.
+helper는 report archive, `current.md`, `current.packet.json`, `branch-state.json`을 함께 갱신할 수 있습니다.
 
 기존 `.claude/tigerkit/branches/<scope-key>/gap/` report는 migration context로 읽을 수 있지만 새 report write path로 사용하지 않습니다.
 

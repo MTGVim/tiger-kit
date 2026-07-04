@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "tigerkit.full-eval-pilot/v1",
+  "pilot_id": "gap-stale-sot-precedence",
+  "kind": "full-real-agent-pilot",
+  "surface": "/tk:gap",
+  "focus": "stale-sot-and-source-precedence",
+  "requires_real_agent": true,
+  "goal": "Prove that /tk:gap keeps stale SoT and source-precedence conflicts honest in a real coding-agent session: it should preserve ambiguous conflicts when precedence is unresolved and never treat plan-only Current evidence as implementation proof.",
+  "source_contracts": [
+    "commands/gap.md",
+    "skills/gap/SKILL.md",
+    ".tigerkit/docs/output-contract.md"
+  ],
+  "classifications_covered": [
+    "ambiguous",
+    "missing"
+  ],
+  "evidence_principles_covered": [
+    "unresolved_source_precedence_stays_ambiguous",
+    "plan_only_current_is_not_implementation_proof"
+  ],
+  "operator_notes": "Run these scenarios with a real coding agent, not a wording-only eval. Capture the final gap summary plus the evidence distinctions the agent uses. The point is not just whether it says 'ambiguous' somewhere, but whether it preserves source conflicts honestly, records evidence type, and refuses to upgrade plan/generated-artifact Current evidence into implementation proof.",
+  "scenarios": [
+    {
+      "id": "stale-plan-vs-live-surface-conflict",
+      "title": "Historical plan conflicts with current live surface and stays honest about the conflict",
+      "why": "A stale plan can look authoritative if the agent over-trusts prose. This scenario checks that live repo evidence and historical planning prose are not silently merged into a fake single truth.",
+      "setup": [
+        "Prepare a repo with current command manifest / README evidence that exposes the live public surface.",
+        "Add a historical or superseded planning artifact that still claims an older surface or behavior.",
+        "Do not provide an owner-approved precedence rule that resolves the conflict for the agent."
+      ],
+      "task_prompt": "Run /tk:gap on the stale planning artifact versus the current repo surface. Keep the comparison read-only and report the conflict honestly.",
+      "expected": {
+        "primary_gap": "ambiguous",
+        "must_observe": [
+          "Evidence type distinguishes live file/manfest/README evidence from stale planning prose",
+          "The conflict is preserved as ambiguous instead of silently merged",
+          "Recommended next step asks for precedence confirmation or SoT clarification rather than declaring implementation proof from the stale plan"
+        ]
+      }
+    },
+    {
+      "id": "unresolved-source-precedence-stays-ambiguous",
+      "title": "Conflicting SoT refs without owner precedence stay ambiguous",
+      "why": "Gap should not invent source priority when two SoT refs conflict and no owner decision is available.",
+      "setup": [
+        "Provide two SoT refs that disagree on a requirement or active surface.",
+        "Ensure both refs are accessible and neither one is explicitly marked higher priority by the user or repo contract.",
+        "Provide enough Current evidence to show the disagreement matters."
+      ],
+      "task_prompt": "Run /tk:gap on conflicting SoT refs with no confirmed precedence. Report the gap without forcing a merged interpretation.",
+      "expected": {
+        "primary_gap": "ambiguous",
+        "must_observe": [
+          "The report uses ambiguous for the unresolved source-precedence conflict",
+          "Evidence type or source list shows both refs were checked",
+          "Recommended next step asks for owner/source-priority confirmation instead of pretending one SoT won automatically"
+        ]
+      }
+    },
+    {
+      "id": "plan-only-current-is-not-implementation-proof",
+      "title": "Current evidence that is only a plan or generated artifact is not treated as implemented behavior",
+      "why": "A recurring failure mode is treating an implementation plan or generated artifact as if the feature already exists in code. Gap must not overclaim Current evidence.",
+      "setup": [
+        "Provide a SoT requirement for a concrete behavior or public surface.",
+        "For Current evidence, provide only a plan, handoff, or generated artifact that describes the implementation without the actual code or verified output.",
+        "Ensure there is no direct file/runtime evidence showing the behavior exists."
+      ],
+      "task_prompt": "Run /tk:gap where Current evidence consists only of a plan or generated artifact. Do not execute implementation or invent missing code evidence.",
+      "expected": {
+        "primary_gap": "missing",
+        "must_observe": [
+          "Evidence type explicitly marks the Current evidence as plan/generated-artifact level",
+          "The report does not call the feature implemented or complete from that evidence alone",
+          "The resulting finding stays missing (or equivalent not-implemented conclusion) rather than implementation proof"
+        ]
+      }
+    }
+  ]
+}

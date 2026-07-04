@@ -528,6 +528,26 @@
       ]
     },
     {
+      "id": 34,
+      "name": "route-reuses-gap-packet-when-available",
+      "prompt": "Evaluate /tk:route when a same repo/scope gap packet is available. Do not write files.",
+      "expected_output": "Should state that /tk:route can reuse same repo/scope gap packet evidence from /tk:gap when available, reading source set, precedence, ambiguity, and evidence type before comparing routes. It should not let the packet force the route result, and it must fall back to ordinary read-only route judgment when the packet is missing or stale. If a helper surface is available, it may read the packet through that helper instead of reconstructing the gap evidence by hand.",
+      "files": [
+        "commands/route.md",
+        "skills/route/SKILL.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/gap-route-evidence-packets.md",
+        "scripts/tigerkit_state.py"
+      ],
+      "expectations": [
+        "States /tk:route can reuse same repo/scope gap packet",
+        "Reads source set precedence ambiguity evidence type from packet",
+        "Packet does not force the route result",
+        "States /tk:route falls back when packet missing or stale",
+        "May use helper surface to read the current packet"
+      ]
+    },
+    {
       "id": 23,
       "name": "reflect-skill-materialize-explicit-only",
       "prompt": "Evaluate /tk:reflect skill materialization mode. Do not write files.",
@@ -615,6 +635,47 @@
         "Uses skill-only write boundary",
         "Does not route repo-local or user-global writes",
         "Reads reflect ledger as source of truth"
+      ]
+    },
+    {
+      "id": 35,
+      "name": "learn-uses-reflect-ledger-candidate-source-of-truth",
+      "prompt": "Evaluate /tk:learn when invoked from a reflect candidate. Do not write files.",
+      "expected_output": "Should state that /tk:learn reads a same-session same-ledger reflect candidate as source of truth instead of reconstructing the source from chat prose. It may use a helper surface such as read-reflect-candidate to read the current ledger candidate when available, but that helper must not relax the same-session same-ledger boundary. It should keep the skill-only write boundary, require explicit apply before write, and keep name confirmation before creating the skill source.",
+      "files": [
+        "commands/learn.md",
+        "commands/reflect.md",
+        "skills/learn/SKILL.md",
+        "skills/reflect/SKILL.md",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/reflect-learn-evidence-handoff.md",
+        "scripts/tigerkit_state.py"
+      ],
+      "expectations": [
+        "States /tk:learn reads reflect ledger candidate as source of truth",
+        "States same-session same-ledger boundary remains in force",
+        "May use helper surface to read the current ledger candidate",
+        "Keeps skill-only write boundary",
+        "Requires explicit apply and name confirmation before write"
+      ]
+    },
+    {
+      "id": 36,
+      "name": "promotion-status-distinguishes-draft-micro-full-and-shipped",
+      "prompt": "Evaluate TigerKit promotion-status guidance. Do not write files.",
+      "expected_output": "Should distinguish the promotion vocabulary draft, micro-validated, full-validated, and shipped. It should state that contract eval and full behavior eval are different evidence tiers, and it should warn that draft wording must not jump straight to shipped without intermediate evidence. It should also make clear that a FULL pilot can support full-validated status without automatically meaning the wording is shipped in the public command surface.",
+      "files": [
+        ".tigerkit/docs/promotion-statuses.md",
+        ".tigerkit/docs/full-eval-pilots.md",
+        "evals/contracts/promotion-status-registry.example.json",
+        "README.md"
+      ],
+      "expectations": [
+        "States promotion status vocabulary draft micro-validated full-validated shipped",
+        "States contract eval and full behavior eval are different evidence tiers",
+        "Warns draft must not jump straight to shipped",
+        "States FULL pilot does not automatically mean shipped",
+        "Includes at least one command surface example in the sample registry"
       ]
     }
   ]
