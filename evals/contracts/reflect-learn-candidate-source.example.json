@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "tigerkit.reflect-learn-source/v1",
+  "source_mode": "reflect-candidate",
+  "ledger_path": "~/.tigerkit/repos/tiger-kit--abcd1234/branches/main/reflect/current.yaml",
+  "candidate_id": "R1",
+  "same_session_required": true,
+  "same_ledger_required": true,
+  "source_of_truth": "reflect-ledger",
+  "candidate": {
+    "candidate_id": "R1",
+    "target": "skill",
+    "action": "suggest_only",
+    "reason": "repeatable CDP verification routine",
+    "evidence": "Observed across this session's successful validation loop"
+  },
+  "created_at": "2026-07-04T22:40:00Z"
+}
