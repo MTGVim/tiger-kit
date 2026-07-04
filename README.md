@@ -9,7 +9,7 @@
 </p>
 
 TigerKit(`tk`, plugin namespace `/tk:*`)은 Claude Code용 경량 plugin입니다.
-SoT(Source of Truth)가 있으면 `/tk:gap`으로 현재 구현과의 차이를 먼저 확인합니다. 다음 구현 route가 애매하면 `/tk:route`로 direct, subagent-driven, goal-driven 중 어떤 방식이 맞는지 얇게 정리합니다. 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 분류하고 repo-local/user-global guidance에 반영할 수 있습니다. skill로 굳힐 가치가 있으면 `/tk:reflect` 안에서 바로 agent-supported skill surface로 materialize할 수 있습니다. 또 구현 전 압박 검증은 `/tk:grill`, throwaway 검증은 `/tk:prototype`, 구조 리뷰는 `/tk:arch-review`, 충돌 해결은 `/tk:merge-conflict`, 세션 인계는 `/tk:handoff`, draft 요구 문서화는 `/tk:to-prd`, draft issue 분해는 `/tk:to-issues`로 다룹니다. UI diff 엔진은 번들 skill로 유지하고, `/tk:ui-diff`는 현재 repo의 `.claude/ui-diff/` profile을 읽는 direct surface입니다.
+SoT(Source of Truth)가 있으면 `/tk:gap`으로 현재 구현의 차이를 먼저 확인합니다. 다음 구현 route가 애매하면 `/tk:route`로 direct, subagent-driven, goal-driven 중 어떤 방식이 맞는지 얇게 정리합니다. 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 분류하고 repo-local/user-global guidance에 반영할 수 있습니다. path, URL, 현재 대화, notes, 또는 reflect candidate에서 skill을 바로 만들고 싶으면 `/tk:learn`을 씁니다. 또 구현 전 압박 검증은 `/tk:grill`, throwaway 검증은 `/tk:prototype`, 구조 리뷰는 `/tk:arch-review`, 충돌 해결은 `/tk:merge-conflict`, 세션 인계는 `/tk:handoff`, draft 요구 문서화는 `/tk:to-prd`, draft issue 분해는 `/tk:to-issues`로 다룹니다. UI diff 엔진은 번들 skill로 유지하고, `/tk:ui-diff`는 현재 repo의 `.claude/ui-diff/` profile을 읽는 direct surface입니다.
 
 ```text
 Check the gap. Pick the route. Keep the learning. Materialize durable skills from reflect when needed.
@@ -44,7 +44,7 @@ claude plugin list --available --json
 claude plugin details tk
 ```
 
-설치 후 Claude Code를 다시 시작하고 `/tk:gap`, `/tk:route`, `/tk:reflect`, `/tk:ui-diff`, `/tk:grill`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues` 명령을 사용합니다.
+설치 후 Claude Code를 다시 시작하고 `/tk:gap`, `/tk:route`, `/tk:reflect`, `/tk:learn`, `/tk:ui-diff`, `/tk:grill`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues` 명령을 사용합니다.
 
 ## Core guidance
 
@@ -52,7 +52,8 @@ claude plugin details tk
 - SoT가 없으면 먼저 SoT 제공을 제안합니다.
 - 사용자가 바로 진행을 원하면 `/tk:gap` 없이 진행할 수 있지만, 그 경우 가정과 불확실성을 명시합니다.
 - `/tk:route`는 source를 수정하지 않고 direct, subagent-driven, goal-driven 같은 구현 경로를 비교합니다.
-- `/tk:reflect`는 교훈을 canonical target으로 분류합니다. `repo-local`과 `user-global`은 기본 apply(opt-out)로 반영할 수 있고, 명시적 skill materialize도 처리합니다.
+- `/tk:reflect`는 교훈을 canonical target으로 분류합니다. `repo-local`과 `user-global`은 기본 apply(opt-out)로 반영할 수 있고, 명시적 skill materialize는 `/tk:learn` authoring pipeline으로 위임합니다.
+- `/tk:learn`은 path, URL, 현재 대화, notes, 또는 reflect candidate를 source로 받아 reusable skill을 직접 만들고, `skill only` 경계로 user skill surface에만 씁니다.
 - `/tk:grill`은 계획/설계/RFC를 수렴형 질문으로 압박 검증합니다.
 - `/tk:prototype`은 UI 또는 logic/state 가설을 throwaway prototype으로 빨리 검증합니다.
 - `/tk:arch-review`는 반복 마찰, 경계 붕괴, ownership 혼선 같은 구조 문제를 report-only로 검토합니다.
@@ -71,6 +72,7 @@ claude plugin details tk
 | `/tk:gap` | SoT와 Current Implementation의 차이를 한 번 확인하고 missing, mismatch, overbuilt, ambiguous를 정리합니다. | optional external generated report |
 | `/tk:route` | 지금 이 task를 direct, subagent-driven, goal-driven 중 어떤 구현 route로 가져갈지 얇게 비교하고 첫 스텝을 정리합니다. | no persisted artifact by default |
 | `/tk:reflect` | 세션 결과와 사용자 피드백에서 재사용 가능한 learning을 canonical target으로 분류하고, repo-local/user-global guidance 기본 apply와 명시적 skill materialize를 처리합니다. | machine-readable reflect ledger + compact summary |
+| `/tk:learn` | path, URL, 현재 대화, notes, 또는 reflect candidate에서 reusable skill을 직접 만듭니다. | skill draft / user skill source |
 
 ### Practical
 
@@ -96,6 +98,7 @@ claude plugin details tk
 /tk:gap "PRD와 현재 구현 차이 봐줘" --target src/auth
 /tk:route "결제 모달 scroll 복구 버그 수정"
 /tk:reflect --target repo-local
+/tk:learn "what we just did"
 /tk:reflect --target repo-local --apply=false
 /tk:reflect R3 --target skill --apply=true
 /tk:grill "이 RFC 허점 짚어줘"
@@ -120,7 +123,7 @@ claude plugin details tk
 
 - repo shared `CLAUDE.md`: suggest-only
 - user-global guidance: supported host에서는 기본 apply(opt-out)
-- skill: suggest-only from reflect, explicit materialize는 reflect가 담당
+- skill: suggest-only from reflect, explicit materialize는 `/tk:learn` pipeline으로 처리
 - hook: suggest-only
 - command: suggest-only
 - agent: suggest-only
@@ -130,12 +133,23 @@ claude plugin details tk
 
 ## Reflect skill-materialize scope
 
-`/tk:reflect --target skill --apply=true`는 1차에서 `skill only`를 실제 생성합니다.
+`/tk:reflect --target skill --apply=true`는 1차에서 `skill only`를 실제 생성하며, skill authoring은 `/tk:learn` pipeline으로 위임합니다.
 
 - same-session + same-ledger `candidate_id`만 읽습니다.
+- reflect candidate는 chat prose가 아니라 ledger를 source of truth로 읽습니다.
 - 이름은 제안할 수 있지만 생성 전 사용자 확정이 필요합니다.
 - 생성 target은 agent가 지원하는 user skill surface입니다. Claude Code 계열이면 `~/.claude/skills/<name>/SKILL.md`가 예시입니다.
 - `hook|command|agent`는 아직 reflect 제안 target으로만 남고 source를 직접 생성하지 않습니다.
+
+## Learn surface
+
+`/tk:learn`은 source-to-skill surface입니다.
+
+- direct source: path / directory / URL / 현재 대화 / notes
+- reflect source: same-session + same-ledger `candidate_id`
+- 기본은 preview-only 입니다.
+- explicit apply일 때만 user skill surface에 write합니다.
+- `repo-local`, `user-global`, `hook`, `command`, `agent`로 라우팅하지 않습니다.
 
 ## UI Diff surface
 
@@ -165,7 +179,7 @@ Active generated state는 project repository 밖 `~/.tigerkit/` 아래의 file-o
 - `/tk:route`는 기본적으로 persisted artifact를 만들지 않습니다.
 - `/tk:ui-diff`는 별도 provisioning artifact를 만들지 않습니다.
 
-`.claude/tigerkit/` 아래에는 `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues`의 repo-local draft artifact가 기록됩니다. `.claude/` 전체를 ignore하지 않습니다.
+`.claude/tigerkit/` 아래에는 `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues`의 repo-local draft artifact가 worktree-scoped current-first 구조로 기록됩니다. `.claude/` 전체를 ignore하지 않습니다.
 
 ## Contributors
 

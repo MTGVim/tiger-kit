@@ -67,6 +67,7 @@ def main() -> int:
         "./commands/gap.md",
         "./commands/route.md",
         "./commands/reflect.md",
+        "./commands/learn.md",
         "./commands/ui-diff.md",
         "./commands/grill.md",
         "./commands/prototype.md",

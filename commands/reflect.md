@@ -7,7 +7,7 @@ argument-hint: '"[candidate_id|scope]" [--apply=false|true] [--target <repo-loca
 
 사용자에게는 한글로 답합니다. 코드, path, URL, ticket, commit, hash, identifier, error, contract field name은 원문 그대로 둘 수 있습니다.
 
-목표: `/tk:reflect`는 세션 내용, 실제 변경 결과, 성공/실패, 사용자 피드백에서 재사용 가능한 learning과 improvement를 추출하고, 안전한 promotion router로서 가장 적절한 durable promotion surface로 분류합니다. `repo-local`과 `user-global` guidance는 기본 apply(opt-out)로 반영할 수 있고, `skill` target은 명시적 apply일 때 실제 skill artifact로 materialize할 수 있습니다. `hook/command/agent`는 계속 제안-only 입니다.
+목표: `/tk:reflect`는 세션 내용, 실제 변경 결과, 성공/실패, 사용자 피드백에서 재사용 가능한 learning과 improvement를 추출하고, 안전한 promotion router로서 가장 적절한 durable promotion surface로 분류합니다. `repo-local`과 `user-global` guidance는 기본 apply(opt-out)로 반영할 수 있고, `skill` target은 명시적 apply일 때 `/tk:learn` pipeline을 통해 실제 skill artifact로 materialize할 수 있습니다. `hook/command/agent`는 계속 제안-only 입니다.
 
 canonical skill:
 
@@ -21,10 +21,10 @@ reflect = session result + feedback -> classify learning -> default repo-local/u
 
 ## Core boundary
 
-- Active command surface는 `/tk:gap`, `/tk:route`, `/tk:reflect`, `/tk:grill`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues`, `/tk:ui-diff`입니다.
+- Active command surface는 `/tk:gap`, `/tk:route`, `/tk:reflect`, `/tk:learn`, `/tk:grill`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues`, `/tk:ui-diff`입니다.
 - `/tk:reflect`는 Claude Code auto memory를 쓰거나, mirror하거나, backup하지 않습니다.
 - `/tk:reflect`는 source code, repo-shared guidance, hook settings, command source, agent source, plugin manifest를 수정하지 않습니다.
-- `skill` source materialization은 `--target skill --apply=true`일 때만 허용됩니다.
+- `skill` source materialization은 `--target skill --apply=true`일 때만 허용되며, skill authoring은 `/tk:learn` pipeline으로 위임합니다.
 - `hook/command/agent` source materialization은 후속 수동 작업이 맡습니다.
 - `PROFILE.md`는 reflect target이 아니며 자동 생성하거나 자동 이관하지 않습니다.
 
@@ -72,7 +72,7 @@ repo-local, repo-shared, user-global, skill, hook, command, agent, discard
 - `--apply=false`: 파일을 쓰지 않고 preview만 출력합니다.
 - `--apply=true`: 명시적 apply 표기용입니다.
 - `repo-local`과 `user-global`만 기본 apply 대상입니다.
-- `skill`은 `--target skill --apply=true`일 때만 source write 후보가 됩니다.
+- `skill`은 `--target skill --apply=true`일 때만 source write 후보가 되며, explicit skill materialize는 `/tk:learn` pipeline으로 위임됩니다.
 - `repo-shared`, `hook`, `command`, `agent`는 direct source write 하지 않습니다.
 - target `discard`는 action `discard`이고 path/write가 없습니다.
 
@@ -162,7 +162,7 @@ reason: <routing reason>
 
 ## Ledger contract
 
-`/tk:reflect`는 compact human summary와 별도로 machine-readable ledger를 남깁니다.
+`/tk:reflect`는 compact human summary와 별도로 machine-readable ledger를 남깁니다. skill materialize를 `/tk:learn`에 넘길 때도 이 ledger가 source of truth입니다.
 
 권장 path:
 
@@ -222,6 +222,15 @@ Rules:
 - write 직전 base state와 base hash를 다시 확인합니다.
 - write 후 실제 bytes를 읽어 `result_sha256`과 비교합니다.
 - verification 실패는 `apply_verification_failed`로 보고하고 rollback을 시도합니다.
+
+## Learn handoff
+
+`/tk:reflect`는 skill candidate를 직접 authoring 하지 않고 `/tk:learn`에 넘길 수 있습니다.
+
+- `candidate_id`는 same-session + same-ledger만 유효합니다.
+- `/tk:learn`은 reflect ledger를 source of truth로 읽습니다.
+- 이름은 `/tk:learn` 단계에서 제안/확정합니다.
+- write boundary는 계속 `skill only`입니다.
 
 ## Output
 

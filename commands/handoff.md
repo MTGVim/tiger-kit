@@ -41,7 +41,7 @@ skills/handoff/SKILL.md
 ## Default write target
 
 ```text
-<git-root>/.claude/tigerkit/handoffs/HANDOFF-YYYYMMDD-HHmmss.md
+<git-root>/.claude/tigerkit/worktrees/<worktree-key>/handoffs/current.md
 ```
 
 ## Output contract

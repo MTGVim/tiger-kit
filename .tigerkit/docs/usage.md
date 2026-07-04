@@ -9,12 +9,13 @@
 ## 핵심 모델
 
 ```text
-TigerKit = gap + route + reflect + grill + prototype + arch-review + merge-conflict + handoff + to-prd + to-issues + ui-diff
+TigerKit = gap + route + reflect + learn + grill + prototype + arch-review + merge-conflict + handoff + to-prd + to-issues + ui-diff
 ```
 
 - `gap`: SoT와 Current Implementation의 차이를 한 번 분석합니다. evidence-first로 읽고 source conflict나 근거 부족은 `ambiguous`로 남깁니다.
 - `route`: 지금 task를 direct, subagent-driven, goal-driven 중 어떤 route로 가져갈지 얇게 비교하고 첫 스텝을 정리합니다.
 - `reflect`: 세션 result와 사용자 피드백에서 재사용 가능한 learning을 canonical target으로 분류하고, repo-local/user-global 기본 apply와 명시적 skill materialize를 처리합니다.
+- `learn`: path, URL, 현재 대화, notes, 또는 reflect candidate를 source로 받아 reusable skill을 직접 만듭니다.
 - `grill`: 계획, 설계, RFC, 개선안을 수렴형 질문으로 압박 검증합니다.
 - `prototype`: UI 또는 logic/state 가설을 throwaway prototype으로 빠르게 검증합니다.
 - `arch-review`: boundary, ownership, coupling, 반복 마찰을 evidence-first로 검토하는 report-only architecture review입니다.
@@ -24,7 +25,7 @@ TigerKit = gap + route + reflect + grill + prototype + arch-review + merge-confl
 - `to-issues`: plan/PRD를 independently grabbable vertical-slice issue draft로 분해합니다.
 - `ui-diff`: 번들된 ui-diff 엔진 skill을 현재 repo의 `.claude/ui-diff/` profile과 함께 사용하는 direct QA surface입니다.
 
-TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 gap, route, reflect, grill, prototype, arch-review, merge-conflict, handoff, to-prd, to-issues, ui-diff 중심의 가벼운 surface를 제공합니다.
+TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 gap, route, reflect, learn, grill, prototype, arch-review, merge-conflict, handoff, to-prd, to-issues, ui-diff 중심의 가벼운 surface를 제공합니다.
 
 ## Core guidance
 
@@ -33,6 +34,7 @@ TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 gap, rou
 - 사용자가 바로 진행을 원하면 `/tk:gap` 없이 진행할 수 있지만, 그 경우 가정과 불확실성을 명시합니다.
 - `/tk:route`는 source를 수정하지 않고 route만 정합니다.
 - `/tk:reflect`는 repo-local guidance 기본 apply, user-global apply, skill materialize를 모두 처리합니다.
+- `/tk:learn`은 source-to-skill surface이며 `skill only` 경계로 user skill surface에만 씁니다.
 - `/tk:grill`은 질문 루프로 전제를 압박 검증하는 surface입니다.
 - `/tk:prototype`은 throwaway 검증용 surface입니다.
 - `/tk:arch-review`는 evidence-first 구조 리뷰 surface입니다.
@@ -49,6 +51,7 @@ TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 gap, rou
 | `/tk:gap` | SoT와 Current를 비교해 missing, mismatch, overbuilt, ambiguous를 보고합니다. | optional external generated report |
 | `/tk:route` | 지금 이 task를 어떤 구현 route로 가져갈지 얇게 비교하고 첫 스텝을 정리합니다. | no persisted artifact by default |
 | `/tk:reflect` | session result와 feedback에서 개선 후보를 canonical target으로 분류하고 repo-local/user-global 기본 apply와 explicit skill materialize를 처리합니다. | reflect ledger + compact summary |
+| `/tk:learn` | path, URL, 현재 대화, notes, 또는 reflect candidate에서 reusable skill을 직접 만듭니다. | skill draft / user skill source |
 | `/tk:grill` | 계획, 설계, RFC, 개선안을 수렴형 질문으로 압박 검증합니다. | inline questioning + compact summary |
 | `/tk:prototype` | UI 또는 logic/state 가설을 throwaway prototype으로 검증합니다. | prototype files + compact summary |
 | `/tk:arch-review` | boundary, ownership, coupling, 반복 마찰을 evidence-first로 검토하는 report-only architecture review입니다. | inline architecture review |
@@ -64,6 +67,7 @@ TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 gap, rou
 /tk:gap "PRD와 현재 구현 차이 봐줘" --target src/auth
 /tk:route "결제 모달 scroll 복구 버그 수정"
 /tk:reflect --target repo-local
+/tk:learn "what we just did"
 /tk:reflect --target repo-local --apply=false
 /tk:reflect R3 --target skill --apply=true
 /tk:grill "이 설계 전제 허점 짚어줘"
@@ -101,10 +105,19 @@ repo-local, repo-shared, user-global, skill, hook, command, agent, discard
 ## Reflect skill-materialize model
 
 - same-session + same-ledger candidate만 읽습니다.
+- reflect candidate는 ledger를 source of truth로 읽습니다.
 - 1차 범위는 `skill only`입니다.
 - 이름은 생성 전 사용자 확정이 필요합니다.
 - 생성 target은 agent가 지원하는 user skill surface입니다. Claude Code 계열이면 `~/.claude/skills/<name>/SKILL.md`가 예시입니다.
 - `hook|command|agent`는 reflect 후보 target으로만 남습니다.
+
+## Learn model
+
+- source mode는 `direct` 또는 `reflect-candidate`입니다.
+- direct source는 path / directory / URL / 현재 대화 / notes 입니다.
+- 기본은 preview-only 입니다.
+- explicit apply일 때만 user skill surface에 씁니다.
+- `repo-local`, `user-global`, `hook`, `command`, `agent`는 이 surface가 직접 쓰지 않습니다.
 
 ## Arch-review model
 
@@ -158,7 +171,7 @@ repo-local, repo-shared, user-global, skill, hook, command, agent, discard
 
 ## Generated state
 
-Active TigerKit runtime generated state는 project repository 밖 `~/.tigerkit` 아래의 file-only state입니다. repo-local draft artifact는 `.claude/tigerkit/` 아래의 handoff / prd / issues 경로를 사용합니다.
+Active TigerKit runtime generated state는 project repository 밖 `~/.tigerkit` 아래의 file-only state입니다. repo-local draft artifact는 `.claude/tigerkit/worktrees/<worktree-key>/` 아래의 handoff / prd / issues current 경로를 사용합니다.
 
 주요 active path:
 

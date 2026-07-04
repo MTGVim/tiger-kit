@@ -62,7 +62,11 @@ Needs first
 
 First step
   - <one concrete next step>
+[Goal command]
+  - </goal <recommended goal> or NONE>
 ```
+
+`goal-driven`이 선택되고 host가 `/goal` surface를 지원할 때만 `Goal command` 줄을 추가할 수 있습니다. 이 줄은 ready-to-run recommendation이며, 특정 host command 존재 자체를 증명하지는 않습니다.
 
 가능하면 `direct`, `subagent-driven`, `goal-driven` 세 route를 모두 짧게 비교하되, 억지 균형을 맞추지는 않습니다. 분명히 안 맞는 route는 한 줄로 빨리 제외해도 됩니다.
 
