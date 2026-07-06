@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 repo-local handoff를 만듭니다.
+description: 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 handoff를 만듭니다.
 ---
 
 # Handoff
@@ -39,9 +39,17 @@ description: 다음 세션이나 다른 에이전트가 바로 이어받을 수 
 6. 남은 작업은 다음 실행자가 바로 시작할 순서로 적습니다.
 7. 이미 있는 PRD/ADR/issue/diff는 경로 또는 링크로 참조합니다.
 
+## Default artifact target
+
+```text
+~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/handoffs/current.md
+```
+
+`repo-key`와 `worktree-key`는 `scripts/tigerkit_state.py` helper가 계산합니다.
+
 ## Boundaries
 
-- repo-local write 기본
+- repo-scoped `~/.tigerkit` root 아래 worktree-scoped current-first write 기본
 - 대화 전문 복붙 금지
 - 감상문 금지
 - 이미 문서화된 내용을 중복 장문 서술 금지

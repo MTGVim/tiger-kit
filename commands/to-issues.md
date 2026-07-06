@@ -26,8 +26,10 @@ skills/to-issues/SKILL.md
 ## Default output target
 
 ```text
-<git-root>/.claude/tigerkit/worktrees/<worktree-key>/issues/current.md
+~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/issues/current.md
 ```
+
+`repo-key`와 `worktree-key`는 `scripts/tigerkit_state.py` helper가 계산합니다.
 
 ## Output contract
 

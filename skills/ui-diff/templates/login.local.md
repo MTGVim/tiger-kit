@@ -1,6 +1,6 @@
 # login.local.md
 
-로컬 credential override를 적는 gitignored 템플릿입니다.
+로컬 credential override를 적는 host-local 템플릿입니다.
 
 ## credentials
 
@@ -12,4 +12,4 @@
 - local_url_override: <optional>
 - notes: <machine-specific login hint>
 
-`login.local.md`는 tracked repo에 커밋하지 않습니다.
+`login.local.md`는 tracked repo 안이 아니라 `~/.tigerkit/repos/<repo-key>/ui-diff/` 아래에 둡니다.

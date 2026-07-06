@@ -53,7 +53,22 @@ def resolve_repo_root(start: str | None) -> Path:
     return abs_dir(repo) if repo else cwd
 
 
+def common_git_dir(repo_root: Path) -> Path:
+    raw = git("rev-parse", "--git-common-dir", cwd=repo_root)
+    if not raw:
+        return abs_dir(repo_root / ".git")
+    path = Path(raw)
+    if not path.is_absolute():
+        path = repo_root / path
+    return abs_dir(path)
+
+
 def repo_key(repo_root: Path) -> str:
+    common_dir = common_git_dir(repo_root)
+    return f"{slugify(common_dir.parent.name)}--{sha8(str(common_dir))}"
+
+
+def worktree_key(repo_root: Path) -> str:
     return f"{slugify(repo_root.name)}--{sha8(str(repo_root))}"
 
 
@@ -62,6 +77,16 @@ def scope_key(repo_root: Path) -> str:
     if branch:
         return slugify(branch)
     return f"workspace-{slugify(repo_root.name)}--{sha8(str(repo_root))}"
+
+
+def draft_dir(repo_root: Path, kind: str) -> Path:
+    root = state_root()
+    return root / "repos" / repo_key(repo_root) / "worktrees" / worktree_key(repo_root) / kind
+
+
+def ui_diff_dir(repo_root: Path) -> Path:
+    root = state_root()
+    return root / "repos" / repo_key(repo_root) / "ui-diff"
 
 
 def atomic_write(path: Path, text: str) -> None:
@@ -108,12 +133,16 @@ def cmd_gap_paths(args: argparse.Namespace) -> int:
     repo_root = resolve_repo_root(args.repo_root)
     repo_key_value = repo_key(repo_root)
     scope_key_value = scope_key(repo_root)
+    worktree_key_value = worktree_key(repo_root)
+    common_git_dir_value = common_git_dir(repo_root)
     root = state_root()
     gap_dir = root / "repos" / repo_key_value / "branches" / scope_key_value / "gap"
     payload = {
         "stateRoot": str(root),
         "repoRoot": str(repo_root),
+        "commonGitDir": str(common_git_dir_value),
         "repoKey": repo_key_value,
+        "worktreeKey": worktree_key_value,
         "scopeKey": scope_key_value,
         "gapDir": str(gap_dir),
         "currentPath": str(gap_dir / "current.md"),
@@ -128,12 +157,16 @@ def cmd_gap_packet_paths(args: argparse.Namespace) -> int:
     repo_root = resolve_repo_root(args.repo_root)
     repo_key_value = repo_key(repo_root)
     scope_key_value = scope_key(repo_root)
+    worktree_key_value = worktree_key(repo_root)
+    common_git_dir_value = common_git_dir(repo_root)
     root = state_root()
     gap_dir = root / "repos" / repo_key_value / "branches" / scope_key_value / "gap"
     payload = {
         "stateRoot": str(root),
         "repoRoot": str(repo_root),
+        "commonGitDir": str(common_git_dir_value),
         "repoKey": repo_key_value,
+        "worktreeKey": worktree_key_value,
         "scopeKey": scope_key_value,
         "gapDir": str(gap_dir),
         "currentPacketPath": str(gap_dir / "current.packet.json"),
@@ -147,6 +180,8 @@ def cmd_read_gap_packet(args: argparse.Namespace) -> int:
     repo_root = resolve_repo_root(args.repo_root)
     repo_key_value = repo_key(repo_root)
     scope_key_value = scope_key(repo_root)
+    worktree_key_value = worktree_key(repo_root)
+    common_git_dir_value = common_git_dir(repo_root)
     root = state_root()
     gap_dir = root / "repos" / repo_key_value / "branches" / scope_key_value / "gap"
     current_packet_path = gap_dir / "current.packet.json"
@@ -154,7 +189,9 @@ def cmd_read_gap_packet(args: argparse.Namespace) -> int:
         print(json.dumps({
             "found": False,
             "repoRoot": str(repo_root),
+            "commonGitDir": str(common_git_dir_value),
             "repoKey": repo_key_value,
+            "worktreeKey": worktree_key_value,
             "scopeKey": scope_key_value,
             "currentPacketPath": str(current_packet_path),
         }, ensure_ascii=False, indent=2))
@@ -167,7 +204,9 @@ def cmd_read_gap_packet(args: argparse.Namespace) -> int:
     print(json.dumps({
         "found": True,
         "repoRoot": str(repo_root),
+        "commonGitDir": str(common_git_dir_value),
         "repoKey": repo_key_value,
+        "worktreeKey": worktree_key_value,
         "scopeKey": scope_key_value,
         "currentPacketPath": str(current_packet_path),
         "packet": packet,
@@ -179,13 +218,17 @@ def cmd_read_reflect_candidate(args: argparse.Namespace) -> int:
     repo_root = resolve_repo_root(args.repo_root)
     repo_key_value = repo_key(repo_root)
     scope_key_value = scope_key(repo_root)
+    worktree_key_value = worktree_key(repo_root)
+    common_git_dir_value = common_git_dir(repo_root)
     root = state_root()
     current_ledger_path = root / "repos" / repo_key_value / "branches" / scope_key_value / "reflect" / "current.yaml"
     if not current_ledger_path.is_file():
         print(json.dumps({
             "found": False,
             "repoRoot": str(repo_root),
+            "commonGitDir": str(common_git_dir_value),
             "repoKey": repo_key_value,
+            "worktreeKey": worktree_key_value,
             "scopeKey": scope_key_value,
             "ledgerPath": str(current_ledger_path),
             "candidateId": args.candidate_id,
@@ -211,7 +254,9 @@ def cmd_read_reflect_candidate(args: argparse.Namespace) -> int:
     print(json.dumps({
         "found": matched is not None,
         "repoRoot": str(repo_root),
+        "commonGitDir": str(common_git_dir_value),
         "repoKey": repo_key_value,
+        "worktreeKey": worktree_key_value,
         "scopeKey": scope_key_value,
         "ledgerPath": str(current_ledger_path),
         "candidateId": args.candidate_id,
@@ -223,10 +268,62 @@ def cmd_read_reflect_candidate(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_draft_paths(args: argparse.Namespace) -> int:
+    repo_root = resolve_repo_root(args.repo_root)
+    repo_key_value = repo_key(repo_root)
+    scope_key_value = scope_key(repo_root)
+    worktree_key_value = worktree_key(repo_root)
+    common_git_dir_value = common_git_dir(repo_root)
+    root = state_root()
+    draft_root = root / "repos" / repo_key_value / "worktrees" / worktree_key_value
+    draft_path = draft_root / args.kind / "current.md"
+    payload = {
+        "stateRoot": str(root),
+        "repoRoot": str(repo_root),
+        "commonGitDir": str(common_git_dir_value),
+        "repoKey": repo_key_value,
+        "scopeKey": scope_key_value,
+        "worktreeKey": worktree_key_value,
+        "kind": args.kind,
+        "draftRoot": str(draft_root),
+        "currentPath": str(draft_path),
+    }
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
+    return 0
+
+
+def cmd_ui_diff_paths(args: argparse.Namespace) -> int:
+    repo_root = resolve_repo_root(args.repo_root)
+    repo_key_value = repo_key(repo_root)
+    scope_key_value = scope_key(repo_root)
+    worktree_key_value = worktree_key(repo_root)
+    common_git_dir_value = common_git_dir(repo_root)
+    root = state_root()
+    profile_dir = ui_diff_dir(repo_root)
+    payload = {
+        "stateRoot": str(root),
+        "repoRoot": str(repo_root),
+        "commonGitDir": str(common_git_dir_value),
+        "repoKey": repo_key_value,
+        "scopeKey": scope_key_value,
+        "worktreeKey": worktree_key_value,
+        "profileDir": str(profile_dir),
+        "envPath": str(profile_dir / "env.md"),
+        "loginPath": str(profile_dir / "login.md"),
+        "loginLocalPath": str(profile_dir / "login.local.md"),
+        "screensDir": str(profile_dir / "screens"),
+        "screensReadmePath": str(profile_dir / "screens" / "README.md"),
+    }
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
+    return 0
+
+
 def cmd_write_gap(args: argparse.Namespace) -> int:
     repo_root = resolve_repo_root(args.repo_root)
     repo_key_value = repo_key(repo_root)
     scope_key_value = scope_key(repo_root)
+    worktree_key_value = worktree_key(repo_root)
+    common_git_dir_value = common_git_dir(repo_root)
     root = state_root()
     content = Path(args.report_file).read_text(encoding="utf-8") if args.report_file else sys.stdin.read()
     if not content.strip():
@@ -250,7 +347,9 @@ def cmd_write_gap(args: argparse.Namespace) -> int:
     print(json.dumps({
         "stateRoot": str(root),
         "repoRoot": str(repo_root),
+        "commonGitDir": str(common_git_dir_value),
         "repoKey": repo_key_value,
+        "worktreeKey": worktree_key_value,
         "scopeKey": scope_key_value,
         "gapId": gap_id,
         "reportPath": str(report_path),
@@ -264,6 +363,8 @@ def cmd_write_gap_packet(args: argparse.Namespace) -> int:
     repo_root = resolve_repo_root(args.repo_root)
     repo_key_value = repo_key(repo_root)
     scope_key_value = scope_key(repo_root)
+    worktree_key_value = worktree_key(repo_root)
+    common_git_dir_value = common_git_dir(repo_root)
     root = state_root()
     packet = load_gap_packet_content(args.packet_file)
     gap_id = str(packet.get("gap_id") or args.gap_id or next_gap_id())
@@ -291,7 +392,9 @@ def cmd_write_gap_packet(args: argparse.Namespace) -> int:
     print(json.dumps({
         "stateRoot": str(root),
         "repoRoot": str(repo_root),
+        "commonGitDir": str(common_git_dir_value),
         "repoKey": repo_key_value,
+        "worktreeKey": worktree_key_value,
         "scopeKey": scope_key_value,
         "gapId": gap_id,
         "packetPath": str(packet_path),
@@ -322,6 +425,15 @@ def build_parser() -> argparse.ArgumentParser:
     p_read_reflect.add_argument("--repo-root", help="Repo root or working directory", default=None)
     p_read_reflect.add_argument("--candidate-id", help="Candidate id to read from current.yaml", required=True)
     p_read_reflect.set_defaults(func=cmd_read_reflect_candidate)
+
+    p_draft_paths = sub.add_parser("draft-paths", help="Print current-first draft artifact paths under ~/.tigerkit")
+    p_draft_paths.add_argument("--repo-root", help="Repo root or working directory", default=None)
+    p_draft_paths.add_argument("--kind", choices=["handoffs", "prd", "issues"], required=True)
+    p_draft_paths.set_defaults(func=cmd_draft_paths)
+
+    p_ui_diff_paths = sub.add_parser("ui-diff-paths", help="Print repo-scoped ui-diff profile paths under ~/.tigerkit")
+    p_ui_diff_paths.add_argument("--repo-root", help="Repo root or working directory", default=None)
+    p_ui_diff_paths.set_defaults(func=cmd_ui_diff_paths)
 
     p_write = sub.add_parser("write-gap", help="Write a gap report into ~/.tigerkit")
     p_write.add_argument("--repo-root", help="Repo root or working directory", default=None)

@@ -23,7 +23,7 @@ TigerKit = gap + route + reflect + learn + grill + prototype + arch-review + mer
 - `handoff`: 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 handoff를 만듭니다.
 - `to-prd`: 현재 대화나 요구사항을 draft-only PRD로 정리합니다.
 - `to-issues`: plan/PRD를 independently grabbable vertical-slice issue draft로 분해합니다.
-- `ui-diff`: 번들된 ui-diff 엔진 skill을 현재 repo의 `.claude/ui-diff/` profile과 함께 사용하는 direct QA surface입니다.
+- `ui-diff`: 번들된 ui-diff 엔진 skill을 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/ui-diff/` profile과 함께 사용하는 direct QA surface입니다.
 
 TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 gap, route, reflect, learn, grill, prototype, arch-review, merge-conflict, handoff, to-prd, to-issues, ui-diff 중심의 가벼운 surface를 제공합니다.
 
@@ -39,10 +39,10 @@ TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 gap, rou
 - `/tk:prototype`은 throwaway 검증용 surface입니다.
 - `/tk:arch-review`는 evidence-first 구조 리뷰 surface입니다.
 - `/tk:merge-conflict`는 conflict 해결 전용 surface입니다.
-- `/tk:handoff`는 repo-local handoff 생성 surface입니다.
+- `/tk:handoff`는 repo-scoped `~/.tigerkit` root 아래 worktree-scoped current-first handoff 생성 surface입니다.
 - `/tk:to-prd`는 draft-only PRD 생성 surface입니다.
 - `/tk:to-issues`는 vertical-slice issue draft 생성 surface입니다.
-- `/tk:ui-diff`는 번들된 ui-diff 엔진 skill을 현재 repo의 `.claude/ui-diff/` profile과 함께 사용하는 direct QA surface입니다.
+- `/tk:ui-diff`는 번들된 ui-diff 엔진 skill을 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/ui-diff/` profile과 함께 사용하는 direct QA surface입니다.
 
 ## Command Surface
 
@@ -56,10 +56,10 @@ TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 gap, rou
 | `/tk:prototype` | UI 또는 logic/state 가설을 throwaway prototype으로 검증합니다. | prototype files + compact summary |
 | `/tk:arch-review` | boundary, ownership, coupling, 반복 마찰을 evidence-first로 검토하는 report-only architecture review입니다. | inline architecture review |
 | `/tk:merge-conflict` | merge/rebase conflict를 상태 확인 → intent 추적 → 검증 순서로 해결합니다. | conflict resolution summary |
-| `/tk:handoff` | 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 handoff를 만듭니다. | repo-local handoff artifact |
-| `/tk:to-prd` | 현재 대화나 요구사항을 draft-only PRD로 정리합니다. | repo-local PRD draft |
-| `/tk:to-issues` | plan/PRD를 independently grabbable vertical-slice issue draft로 분해합니다. | repo-local issue draft set |
-| `/tk:ui-diff` | ui-diff 엔진 skill을 현재 repo의 `.claude/ui-diff/` profile과 함께 사용하는 direct QA surface입니다. | direct QA summary |
+| `/tk:handoff` | 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 handoff를 만듭니다. | worktree-scoped handoff artifact under repo-scoped `~/.tigerkit` root |
+| `/tk:to-prd` | 현재 대화나 요구사항을 draft-only PRD로 정리합니다. | worktree-scoped PRD draft under repo-scoped `~/.tigerkit` root |
+| `/tk:to-issues` | plan/PRD를 independently grabbable vertical-slice issue draft로 분해합니다. | worktree-scoped issue draft set under repo-scoped `~/.tigerkit` root |
+| `/tk:ui-diff` | ui-diff 엔진 skill을 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/ui-diff/` profile과 함께 사용하는 direct QA surface입니다. | direct QA summary |
 
 ## 사용 예시
 
@@ -145,7 +145,7 @@ repo-local, repo-shared, user-global, skill, hook, command, agent, discard
 
 ## Handoff model
 
-- 기본은 repo-local write입니다.
+- 기본은 repo-scoped `~/.tigerkit` root 아래 worktree-scoped current-first write입니다.
 - Goal / Current state / Decisions / Changed files / Commands / Verification / Remaining tasks / Open questions / Risks / Suggested next skills / Do-not-repeat context를 포함합니다.
 
 ## To-PRD model
@@ -165,13 +165,13 @@ repo-local, repo-shared, user-global, skill, hook, command, agent, discard
 `/tk:ui-diff`는 provisioning command가 아니라 direct QA surface입니다.
 
 - engine source: repo에 번들된 `skills/ui-diff/`
-- profile source: 현재 repo의 `<root>/.claude/ui-diff/`
-- profile이 없으면 `tk:ui-diff`가 bundled template 기준으로 `.claude/ui-diff/` 신규 생성 절차로 들어가고 missing 파일만 만듭니다.
-- `login.local.md`는 gitignored local override입니다.
+- profile source: 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/ui-diff/`
+- profile이 없으면 `tk:ui-diff`가 bundled template 기준으로 `~/.tigerkit/repos/<repo-key>/ui-diff/` 신규 생성 절차로 들어가고 missing 파일만 만듭니다.
+- `login.local.md`는 tracked repo 밖 `~/.tigerkit` 아래에 두는 local override입니다.
 
 ## Generated state
 
-Active TigerKit runtime generated state는 project repository 밖 `~/.tigerkit` 아래의 file-only state입니다. repo-local draft artifact는 `.claude/tigerkit/worktrees/<worktree-key>/` 아래의 handoff / prd / issues current 경로를 사용합니다.
+Active TigerKit runtime generated state는 project repository 밖 `~/.tigerkit` 아래의 file-only state입니다. repo-scoped draft artifact는 `~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/` 아래의 handoff / prd / issues current 경로를 사용하고, `/tk:ui-diff` profile은 `~/.tigerkit/repos/<repo-key>/ui-diff/`를 사용합니다.
 
 주요 active path:
 

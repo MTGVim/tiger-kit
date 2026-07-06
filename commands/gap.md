@@ -272,8 +272,6 @@ EOF
 
 helper는 report archive, `current.md`, `current.packet.json`, `branch-state.json`을 함께 갱신할 수 있습니다.
 
-기존 `.claude/tigerkit/branches/<scope-key>/gap/` report는 migration context로 읽을 수 있지만 새 report write path로 사용하지 않습니다.
-
 ## 금지
 
 - workflow 생성

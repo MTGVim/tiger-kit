@@ -1,10 +1,11 @@
-# Legacy TigerKit repo-local generated state. Active state lives outside the repo under ~/.tigerkit/.
+# Legacy TigerKit repo-local leftovers may remain ignored, but canonical active state and ui-diff profiles live outside the repo under ~/.tigerkit.
 .claude/tigerkit/
 .claude/handoffs/
 .claude/scheduled_tasks.lock
 .claude/settings.local.json
 .claude/telltale/
 .claude/worktrees/
+# Legacy ui-diff local override leftover.
 .claude/ui-diff/login.local.md
 .codegraph/
 RFC-tk-execute-executor-routing-v10-feedback.md

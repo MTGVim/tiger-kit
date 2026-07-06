@@ -1,6 +1,6 @@
 ---
-description: 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 repo-local handoff를 만듭니다.
-argument-hint: '"<goal or scope>" [--output <repo-local path>] [--print-only]'
+description: 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 handoff를 만듭니다.
+argument-hint: '"<goal or scope>" [--output <artifact path>] [--print-only]'
 ---
 
 이 문서는 TigerKit `/tk:handoff` command contract를 정의합니다.
@@ -17,7 +17,7 @@ skills/handoff/SKILL.md
 
 ## Core boundary
 
-- 기본은 repo-local write
+- 기본은 repo-scoped `~/.tigerkit` root 아래 worktree-scoped current-first write
 - 대화 전문 복붙 금지
 - 이미 있는 PRD/ADR/issue/diff는 경로/링크 참조 우선
 - unverifed success를 handoff에 넣지 않음
@@ -41,8 +41,10 @@ skills/handoff/SKILL.md
 ## Default write target
 
 ```text
-<git-root>/.claude/tigerkit/worktrees/<worktree-key>/handoffs/current.md
+~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/handoffs/current.md
 ```
+
+`repo-key`와 `worktree-key`는 `scripts/tigerkit_state.py` helper가 계산합니다.
 
 ## Output contract
 
