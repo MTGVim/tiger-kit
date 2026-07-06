@@ -21,7 +21,7 @@ route = explicit task + current constraints -> compare implementation routes -> 
 
 ## Core boundary
 
-- 이 command는 source tree, `.claude/tigerkit/`, Git branch/index/stash/commit을 변경하지 않습니다.
+- 이 command는 source tree, `~/.tigerkit` artifact state, Git branch/index/stash/commit을 변경하지 않습니다.
 - package-manager script, build, test, lint, typecheck, network request를 실행하지 않습니다.
 - sealed workflow, spec artifact, approval receipt를 만들지 않습니다.
 - same repo/scope `gap packet`이 있으면 재사용할 수 있지만, packet이 없다고 route를 막지는 않습니다.

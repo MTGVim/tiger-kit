@@ -304,7 +304,7 @@ Next step:
 
 ## `/tk:handoff` Output Contract
 
-`/tk:handoff`는 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 repo-local handoff를 만듭니다.
+`/tk:handoff`는 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 worktree-scoped current-first handoff를 repo-scoped `~/.tigerkit` root 아래에 만듭니다.
 
 ```text
 Handoff 완료 | Handoff 미리보기 | Handoff 중단
@@ -380,8 +380,8 @@ Engine skill:
 ```
 
 Rules:
-- current repo의 `<root>/.claude/ui-diff/` profile만 읽고, 누락 시 같은 경로에 missing 파일만 생성합니다.
+- current repo에 대응하는 `~/.tigerkit/repos/<repo-key>/ui-diff/` profile만 읽고, 누락 시 같은 repo-scoped 경로에 missing 파일만 생성합니다.
 - bundled template source는 `skills/ui-diff/templates/`입니다.
 - `--print-profile-template`가 있으면 템플릿 내용을 preview만 하고 write는 하지 않습니다.
-- `login.local.md`는 gitignored local override입니다.
+- `login.local.md`는 tracked repo 밖 `~/.tigerkit` 아래에 두는 local override입니다.
 - engine install/update나 user-global provisioning mode는 없습니다.

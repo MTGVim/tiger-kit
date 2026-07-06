@@ -17,14 +17,28 @@
             REFLECT-YYYYMMDD-HHmmss-RAND.yaml
             current.yaml
           branch-state.json
+      worktrees/
+        <worktree-key>/
+          handoffs/
+            current.md
+          prd/
+            current.md
+          issues/
+            current.md
+      ui-diff/
+        env.md
+        login.md
+        login.local.md
+        screens/
+          README.md
 ```
 
-## Repo-local draft artifacts
+## Worktree-scoped draft artifacts under a repo-scoped root
 
 ```text
-<git-root>/.claude/tigerkit/handoffs/HANDOFF-YYYYMMDD-HHmmss.md
-<git-root>/.claude/tigerkit/prd/PRD-YYYYMMDD-HHmmss.md
-<git-root>/.claude/tigerkit/issues/ISSUES-YYYYMMDD-HHmmss.md
+~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/handoffs/current.md
+~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/prd/current.md
+~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/issues/current.md
 ```
 
 ## 파일 책임
@@ -36,10 +50,14 @@
 | `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/reflect/REFLECT-YYYYMMDD-HHmmss-RAND.yaml` | `/tk:reflect` ledger archive | generated working memory |
 | `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/reflect/current.yaml` | 최신 reflect ledger copy | generated pointer |
 | `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/branch-state.json` | latest generated artifact pointer | generated index |
-| `scripts/tigerkit_state.py` | active generated state helper (`write-gap`, path calculation) | shipped helper |
-| `<git-root>/.claude/tigerkit/handoffs/HANDOFF-YYYYMMDD-HHmmss.md` | `/tk:handoff` repo-local draft | repo-local draft artifact |
-| `<git-root>/.claude/tigerkit/prd/PRD-YYYYMMDD-HHmmss.md` | `/tk:to-prd` repo-local draft | repo-local draft artifact |
-| `<git-root>/.claude/tigerkit/issues/ISSUES-YYYYMMDD-HHmmss.md` | `/tk:to-issues` repo-local draft | repo-local draft artifact |
+| `scripts/tigerkit_state.py` | active generated state helper (`write-gap`, `draft-paths`, `ui-diff-paths`, key/path calculation) | shipped helper |
+| `~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/handoffs/current.md` | `/tk:handoff` current-first handoff draft | worktree-scoped draft artifact under repo-scoped root |
+| `~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/prd/current.md` | `/tk:to-prd` current-first PRD draft | worktree-scoped draft artifact under repo-scoped root |
+| `~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/issues/current.md` | `/tk:to-issues` current-first issue draft set | worktree-scoped draft artifact under repo-scoped root |
+| `~/.tigerkit/repos/<repo-key>/ui-diff/env.md` | `/tk:ui-diff` env profile | repo-scoped profile |
+| `~/.tigerkit/repos/<repo-key>/ui-diff/login.md` | `/tk:ui-diff` tracked login/context profile | repo-scoped profile |
+| `~/.tigerkit/repos/<repo-key>/ui-diff/login.local.md` | `/tk:ui-diff` local override profile | repo-scoped profile |
+| `~/.tigerkit/repos/<repo-key>/ui-diff/screens/README.md` | `/tk:ui-diff` screen catalog root | repo-scoped profile |
 | repo `CLAUDE.local.md` | reflect eligible repo-local apply target | local guidance |
 | repo `CLAUDE.md` | reflect suggest-only target | shared repo guidance |
 
