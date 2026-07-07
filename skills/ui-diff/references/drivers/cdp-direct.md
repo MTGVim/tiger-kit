@@ -10,6 +10,15 @@ MCP driver가 없을 때(예: 세션에서 MCP가 로드 안 됨)의 폴백. 크
 - 기타 JS 런타임
 스크린샷은 **파일 쓰기가 되는 러너**(예: node) 필요. sandbox 러너는 host 파일 저장이 안 될 수 있다.
 
+## Safety boundary
+
+- `skills/ui-diff/SKILL.md`가 canonical policy이고, 이 문서는 fallback 실행 레시피입니다. fallback이라는 이유로 상호작용 safety rule을 완화하지 않습니다.
+- 클릭 / 활성화 / submit 계열 상호작용은 driver가 제공하는 trusted 입력 surface로 실행합니다. CDP-direct에선 `Input.dispatchMouseEvent`, 필요할 때 `Input.dispatchKeyEvent`를 사용합니다. 이 규칙은 아래 native setter 입력 주입 예시와 별개로, 텍스트 입력 자체보다 클릭 / 활성화 / submit 계열 상호작용에 적용합니다.
+- `element.click()`, `dispatchEvent(new MouseEvent(...))`, `form.submit()` 같은 합성 상호작용은 실행용 수단으로 사용하지 않습니다.
+- `Runtime.evaluate`는 selector 조회, 상태 read, `scrollIntoView`, rect / 좌표 계산 같은 비파괴적 관측·계산·준비 단계에만 사용합니다. 클릭 / 활성화 / submit 실행용 surface로 사용하지 않습니다.
+- 저장 / 삭제 / 제출처럼 write 가능성이 있는 흐름은 DOM alert, modal close, toggle state change만으로 성공 판정하지 않습니다. 실제 PUT / POST / PATCH / DELETE 요청 발생 여부와 결과를 ground-truth로 확인합니다.
+- destructive side-effect 가능성이 있으므로 이런 검증은 비프로덕션 환경이나 테스트 데이터 기준으로 수행합니다.
+
 ## 크롬 기동 (OS별 실행 경로)
 
 ```
@@ -45,6 +54,17 @@ const set=(el,v)=>{const s=Object.getOwnPropertyDescriptor(HTMLInputElement.prot
 const el=await ev(w,`(()=>{const e=document.querySelector('<sel>');if(!e)return null;e.scrollIntoView({block:'center'});const r=e.getBoundingClientRect();return JSON.stringify({x:Math.round(r.x+r.width/2),y:Math.round(r.y+r.height/2)});})()`);
 const {x,y}=JSON.parse(el); await sleep(500); await clickXY(w,x,y);
 ```
+
+위 패턴에서 `ev(...)`는 스크롤과 좌표 계산을 위한 비파괴적 준비 단계이고, 실제 상호작용 실행은 마지막 `clickXY(...)` trusted 입력으로 끝냅니다.
+
+## 쓰기 가능 흐름 검증
+
+- 저장 / 삭제 / 제출처럼 write가 날 수 있는 흐름은 DOM만 보고 성공 판정하지 않습니다.
+- alert 표시, modal 닫힘, toggle 변화는 보조 신호일 뿐입니다.
+- 최소한 아래 중 하나로 ground-truth를 확인합니다.
+  - CDP `Network` domain으로 PUT / POST / PATCH / DELETE 요청 발생 여부와 결과 확인
+  - 서버 로그 / API 로그 / 테스트 백엔드에서 실제 write 여부 확인
+- 합성 상호작용이 phantom success를 만들 수 있으므로, write-capable flow에서는 “UI가 바뀌었다”보다 “실제 write가 있었는지”를 먼저 확인합니다.
 
 ## 측정 (예시 heuristic — 대상에 맞게 셀렉터 조정)
 

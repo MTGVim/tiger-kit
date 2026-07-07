@@ -55,6 +55,26 @@ PILOT_SPECS: dict[str, dict[str, Any]] = {
             "plan-only-current-is-not-implementation-proof": {"primary_gap": "missing"},
         },
     },
+    "ui-diff-synthetic-vs-trusted-divergence.json": {
+        "surface": "/tk:ui-diff",
+        "focus": "synthetic-vs-trusted-click-divergence",
+        "source_contracts": {
+            "commands/ui-diff.md",
+            "skills/ui-diff/SKILL.md",
+            "skills/ui-diff/references/drivers/cdp-direct.md",
+            ".tigerkit/docs/output-contract.md",
+        },
+        "safety_principles_covered": {
+            "synthetic_click_can_create_phantom_submit_write",
+            "trusted_click_is_control_for_click_activation_submit_verification",
+            "dom_only_success_is_not_ground_truth_for_write_flows",
+        },
+        "required_scenarios": {
+            "synthetic-element-click-phantom-write": {"interaction_mode": "synthetic", "write_observed": True},
+            "trusted-click-no-write-control": {"interaction_mode": "trusted", "write_observed": False},
+            "dom-success-signal-needs-ground-truth": {"interaction_mode": "synthetic", "write_observed": True},
+        },
+    },
 }
 
 
@@ -255,6 +275,68 @@ def validate_gap_pilot(path: Path, pilot: dict[str, Any], spec: dict[str, Any]) 
             )
 
 
+def validate_ui_diff_pilot(path: Path, pilot: dict[str, Any], spec: dict[str, Any]) -> None:
+    path_label = str(path.relative_to(ROOT))
+    validate_common_fields(
+        pilot,
+        path_label=path_label,
+        surface=cast(str, spec["surface"]),
+        focus=cast(str, spec["focus"]),
+        source_contracts=cast(set[str], spec["source_contracts"]),
+    )
+
+    actual_principles = set(
+        require_string_list(
+            pilot.get("safety_principles_covered"),
+            f"{path_label}.safety_principles_covered",
+        )
+    )
+    required_principles = cast(set[str], spec["safety_principles_covered"])
+    if not required_principles.issubset(actual_principles):
+        fail(
+            f"{path_label}: safety_principles_covered must include {sorted(required_principles)!r}, "
+            f"got {sorted(actual_principles)!r}"
+        )
+
+    scenario_map = require_scenarios(pilot, path_label=path_label)
+    required_scenarios = cast(dict[str, dict[str, Any]], spec["required_scenarios"])
+    missing_ids = required_scenarios.keys() - scenario_map.keys()
+    if missing_ids:
+        fail(f"{path_label}: missing required scenarios {sorted(missing_ids)!r}")
+
+    required_fragments: dict[str, tuple[str, ...]] = {
+        "synthetic-element-click-phantom-write": ("button", "element.click()", "write"),
+        "trusted-click-no-write-control": ("Input.dispatchMouseEvent", "UI toggle", "no write request"),
+        "dom-success-signal-needs-ground-truth": ("DOM success", "network or backend", "ground-truth"),
+    }
+
+    for scenario_id, invariants in required_scenarios.items():
+        expected = cast(dict[str, Any], scenario_map[scenario_id]["expected"])
+        interaction_mode = expected.get("interaction_mode")
+        if not isinstance(interaction_mode, str):
+            fail(f"{path_label}: scenario {scenario_id} interaction_mode must be a string")
+        if interaction_mode != invariants["interaction_mode"]:
+            fail(
+                f"{path_label}: scenario {scenario_id} interaction_mode must be {invariants['interaction_mode']!r}, got {interaction_mode!r}"
+            )
+
+        write_observed = expected.get("write_observed")
+        if not isinstance(write_observed, bool):
+            fail(f"{path_label}: scenario {scenario_id} write_observed must be a boolean")
+        if write_observed is not invariants["write_observed"]:
+            fail(
+                f"{path_label}: scenario {scenario_id} write_observed must be {invariants['write_observed']!r}, got {write_observed!r}"
+            )
+
+        must_observe = cast(list[str], expected["must_observe"])
+        joined = " ".join(must_observe)
+        for fragment in required_fragments[scenario_id]:
+            if fragment not in joined:
+                fail(
+                    f"{path_label}: scenario {scenario_id} must_observe must mention fragment {fragment!r}"
+                )
+
+
 def main() -> int:
     for filename, spec in PILOT_SPECS.items():
         path = PILOTS_DIR / filename
@@ -264,6 +346,8 @@ def main() -> int:
             validate_reflect_pilot(path, pilot, spec)
         elif surface == "/tk:gap":
             validate_gap_pilot(path, pilot, spec)
+        elif surface == "/tk:ui-diff":
+            validate_ui_diff_pilot(path, pilot, spec)
         else:
             fail(f"unsupported pilot surface in validator config: {surface!r}")
 
