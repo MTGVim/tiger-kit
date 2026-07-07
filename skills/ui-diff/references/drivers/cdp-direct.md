@@ -16,6 +16,9 @@ MCP driver가 없을 때(예: 세션에서 MCP가 로드 안 됨)의 폴백. 크
 - 클릭 / 활성화 / submit 계열 상호작용은 driver가 제공하는 trusted 입력 surface로 실행합니다. CDP-direct에선 `Input.dispatchMouseEvent`, 필요할 때 `Input.dispatchKeyEvent`를 사용합니다. 이 규칙은 아래 native setter 입력 주입 예시와 별개로, 텍스트 입력 자체보다 클릭 / 활성화 / submit 계열 상호작용에 적용합니다.
 - `element.click()`, `dispatchEvent(new MouseEvent(...))`, `form.submit()` 같은 합성 상호작용은 실행용 수단으로 사용하지 않습니다.
 - `Runtime.evaluate`는 selector 조회, 상태 read, `scrollIntoView`, rect / 좌표 계산 같은 비파괴적 관측·계산·준비 단계에만 사용합니다. 클릭 / 활성화 / submit 실행용 surface로 사용하지 않습니다.
+- trusted 클릭 / 활성화 / submit 전에 native dialog 대응을 먼저 준비합니다. 대상은 `alert`, `confirm`, `beforeunload`입니다.
+- native dialog와 DOM overlay / custom modal은 별도 경우로 다룹니다. overlay를 확인했다고 native dialog 대응이 끝난 것으로 간주하지 않습니다.
+- dialog가 열리면 가능한 한 즉시 `accept` 또는 `dismiss`로 해제하고, `dialog opened` 상태로 오래 방치하지 않습니다.
 - 저장 / 삭제 / 제출처럼 write 가능성이 있는 흐름은 DOM alert, modal close, toggle state change만으로 성공 판정하지 않습니다. 실제 PUT / POST / PATCH / DELETE 요청 발생 여부와 결과를 ground-truth로 확인합니다.
 - destructive side-effect 가능성이 있으므로 이런 검증은 비프로덕션 환경이나 테스트 데이터 기준으로 수행합니다.
 
@@ -67,6 +70,11 @@ const {x,y}=JSON.parse(el); await sleep(500); await clickXY(w,x,y);
 - 합성 상호작용이 phantom success를 만들 수 있으므로, write-capable flow에서는 “UI가 바뀌었다”보다 “실제 write가 있었는지”를 먼저 확인합니다.
 
 ## 측정 (예시 heuristic — 대상에 맞게 셀렉터 조정)
+
+- baseline 측정은 실제 baseline runtime에서 렌더된 요소를 직접 재는 것을 우선합니다.
+- class 주입 probe로 baseline을 흉내 내야 할 때는 `variant` class만 따로 넣지 말고 소비처의 전체 `className`을 그대로 사용합니다.
+- 이런 probe는 inline style, cascade, parent context, consumer override를 완전히 담지 못하므로 low-trust 측정으로 취급합니다.
+- baseline 타입이나 원래 스타일 출처는 commit message나 라벨보다 pre-change source, 예: `git show <base>:<file>`와 그 렌더 근거를 우선합니다.
 
 ```javascript
 const measure=`(()=>{const vw=innerWidth,vh=innerHeight;

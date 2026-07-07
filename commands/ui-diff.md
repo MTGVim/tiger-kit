@@ -73,6 +73,7 @@ skills/ui-diff/templates/screens/README.md -> ~/.tigerkit/repos/<repo-key>/ui-di
 - `skills/ui-diff/SKILL.md`
 - `skills/ui-diff/references/modes/env-diff.md`
 - `skills/ui-diff/references/modes/figma-diff.md`
+- `skills/ui-diff/references/drivers/cdp-direct.md`
 - `skills/ui-diff/references/screens/README.md`
 
 ## Supported modes
