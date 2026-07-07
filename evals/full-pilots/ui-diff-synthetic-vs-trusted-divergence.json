@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "tigerkit.full-eval-pilot/v1",
+  "pilot_id": "ui-diff-synthetic-vs-trusted-divergence",
+  "kind": "full-real-agent-pilot",
+  "surface": "/tk:ui-diff",
+  "focus": "synthetic-vs-trusted-click-divergence",
+  "requires_real_agent": true,
+  "goal": "Prove in a real UI-diff verification session that synthetic click paths can fabricate submit/write side-effects that do not occur under the trusted-click control path, and that write-capable flows must be judged from network/backend ground-truth rather than DOM-only success signals.",
+  "source_contracts": [
+    "commands/ui-diff.md",
+    "skills/ui-diff/SKILL.md",
+    "skills/ui-diff/references/drivers/cdp-direct.md",
+    ".tigerkit/docs/output-contract.md"
+  ],
+  "safety_principles_covered": [
+    "synthetic_click_can_create_phantom_submit_write",
+    "trusted_click_is_control_for_click_activation_submit_verification",
+    "dom_only_success_is_not_ground_truth_for_write_flows"
+  ],
+  "operator_notes": "Run these scenarios with a real coding agent and a real browser verification path, not a prose-only contract check. The control is behavior: whether synthetic element.click() can trigger submit/write side-effects that the trusted click path does not, and whether the operator records network/backend ground-truth instead of stopping at DOM success-looking signals.",
+  "scenarios": [
+    {
+      "id": "synthetic-element-click-phantom-write",
+      "title": "Synthetic element.click() fabricates submit/write behavior on a form-internal button",
+      "why": "Issue #148 is not just about false-negative click handling. The dangerous case is the opposite: a synthetic click can create a submit/write side-effect that does not happen under a real trusted click.",
+      "setup": [
+        "Prepare a target where a native button lives inside a form and has no explicit type attribute.",
+        "Ensure the button's intended onClick behavior is only a UI toggle or local state change.",
+        "Instrument network/backend observation so write requests and success UI signals can both be captured."
+      ],
+      "task_prompt": "Run a real UI-diff verification session that compares a synthetic element.click() path against the trusted click control path for the same button. Do not hand-wave from DOM state alone; capture network or backend write evidence.",
+      "expected": {
+        "interaction_mode": "synthetic",
+        "write_observed": true,
+        "must_observe": [
+          "The target control is a form-internal native button without an explicit type",
+          "Synthetic `element.click()` produces submit or write behavior not present in the trusted control path",
+          "A DOM success signal such as alert, modal close, or toggle state is not accepted as sufficient proof without network or backend ground-truth"
+        ]
+      }
+    },
+    {
+      "id": "trusted-click-no-write-control",
+      "title": "Trusted click acts as the no-write control for the same interaction",
+      "why": "The safety rule needs a control path, not just a failure story. This scenario proves the trusted interaction path does the intended UI work without the unexpected submit/write side-effect.",
+      "setup": [
+        "Use the same target button and surrounding form conditions as the synthetic-click scenario.",
+        "Trigger the interaction through trusted input such as CDP `Input.dispatchMouseEvent`.",
+        "Observe both UI change and network/backend write signals for the trusted path."
+      ],
+      "task_prompt": "Run the same interaction through a trusted click path and record whether the intended UI toggle happens without the unexpected submit/write side-effect.",
+      "expected": {
+        "interaction_mode": "trusted",
+        "write_observed": false,
+        "must_observe": [
+          "Trusted click uses `Input.dispatchMouseEvent` or an equivalent trusted input surface",
+          "The intended UI toggle occurs without the unexpected submit/write side-effect",
+          "Ground-truth confirms no write request was emitted for the trusted control path"
+        ]
+      }
+    },
+    {
+      "id": "dom-success-signal-needs-ground-truth",
+      "title": "DOM success-looking state is not enough for write-capable verification",
+      "why": "The operator failure mode here is stopping at the UI signal. This scenario checks that the verification discipline records ground-truth before declaring success in a write-capable flow.",
+      "setup": [
+        "Use a write-capable interaction where DOM feedback such as alert, modal close, or state toggle can appear quickly.",
+        "Make network/backend write evidence observable in the session.",
+        "Keep the focus on verification behavior rather than app implementation changes."
+      ],
+      "task_prompt": "Run a UI-diff verification path on a write-capable interaction and show that the conclusion is based on network/backend ground-truth rather than DOM-only success-looking state.",
+      "expected": {
+        "interaction_mode": "synthetic",
+        "write_observed": true,
+        "must_observe": [
+          "The synthetic path can still show alert, modal close, or other DOM success-looking state",
+          "The operator records actual network or backend evidence instead of stopping at the DOM signal",
+          "The final conclusion is based on write ground-truth rather than visual success alone"
+        ]
+      }
+    }
+  ]
+}

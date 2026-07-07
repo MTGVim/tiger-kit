@@ -52,7 +52,10 @@ tracked repo에는 credential을 직접 커밋하지 않습니다.
 ## Driver-agnostic techniques
 
 - 입력 주입(React 등): controlled input은 `el.value` 직접 대입이 안 먹을 수 있으므로 native value setter로 값을 넣고 `input`/`change` 이벤트를 dispatch합니다.
-- 클릭: programmatic `element.click()`만으로는 프레임워크 핸들러를 신뢰성 있게 깨우지 못할 수 있으므로 실제 마우스 이벤트(press + release 좌표 클릭)를 우선합니다.
+- 상호작용 실행 경계: 클릭 / 활성화 / submit 계열 상호작용은 driver가 제공하는 trusted 입력 surface로 실행합니다. 예를 들어 CDP에선 `Input.dispatchMouseEvent`, 필요할 때 `Input.dispatchKeyEvent`를 사용합니다. 이 규칙은 위 입력 주입 bullet과 별개로, 텍스트 입력 자체보다 클릭·제출 계열 상호작용에 적용합니다.
+- 클릭 금지 경로: `element.click()`, `dispatchEvent(new MouseEvent(...))`, `form.submit()` 같은 합성 상호작용은 실행용 수단으로 사용하지 않습니다. 이런 경로는 실제 사용자 클릭에는 없는 submit / side-effect / write를 날조할 수 있으므로 허용하지 않습니다.
+- `Runtime.evaluate` 역할: `Runtime.evaluate`는 computed style / bounding rect / 상태 read / 좌표 계산 같은 관측·계산 전용입니다. 클릭 / 활성화 / submit 계열 상호작용 실행용 surface로 사용하지 않습니다.
+- 클릭: 실제 클릭은 press + release 좌표 클릭 같은 trusted 마우스 입력으로 수행합니다.
 - 뷰포트 밖 요소: 음수 y 또는 y > viewport height면 좌표 클릭이 무효가 될 수 있으므로 `scrollIntoView({block:'center'})` 후 rect를 다시 구합니다.
 - 클릭 가로챔: 클릭이 안 먹으면 `document.elementFromPoint(x,y)`로 위에 겹친 요소(sticky, 캐러셀 등)를 확인합니다.
 - 오버레이 종류 구분: 라이브러리 모달(예: Radix Dialog)은 `[role=dialog]`를 가질 수 있지만 커스텀 `div` 오버레이는 없을 수 있으므로 특정 프레임워크를 가정하지 않고 존재 여부로 판별합니다.
