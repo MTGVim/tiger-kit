@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 from typing import cast
@@ -59,6 +60,60 @@ CHECKED_PUBLIC_FILES = [
     OUTPUT_CONTRACT_PATH,
 ]
 
+COMMAND_OUTPUT_PATHS = {
+    "gap": ROOT / "commands" / "gap.md",
+    "route": ROOT / "commands" / "route.md",
+    "reflect": ROOT / "commands" / "reflect.md",
+    "learn": ROOT / "commands" / "learn.md",
+    "grill": ROOT / "commands" / "grill.md",
+    "prototype": ROOT / "commands" / "prototype.md",
+    "arch-review": ROOT / "commands" / "arch-review.md",
+    "merge-conflict": ROOT / "commands" / "merge-conflict.md",
+    "handoff": ROOT / "commands" / "handoff.md",
+    "to-prd": ROOT / "commands" / "to-prd.md",
+    "to-issues": ROOT / "commands" / "to-issues.md",
+    "ui-diff": ROOT / "commands" / "ui-diff.md",
+}
+
+OUTPUT_SYNC_TARGETS = {
+    "gap": "## `/tk:gap` Output Contract",
+    "route": "## `/tk:route` Output Contract",
+    "reflect": "## `/tk:reflect` Output Contract",
+    "learn": "## `/tk:learn` Output Contract",
+    "grill": "## `/tk:grill` Output Contract",
+    "prototype": "## `/tk:prototype` Output Contract",
+    "arch-review": "## `/tk:arch-review` Output Contract",
+    "merge-conflict": "## `/tk:merge-conflict` Output Contract",
+    "handoff": "## `/tk:handoff` Output Contract",
+    "to-prd": "## `/tk:to-prd` Output Contract",
+    "to-issues": "## `/tk:to-issues` Output Contract",
+    "ui-diff": "## `/tk:ui-diff` Output Contract",
+}
+
+TEXT_OUTPUT_COMMANDS_NO_NONE = {
+    "route",
+    "learn",
+    "grill",
+    "prototype",
+    "arch-review",
+    "merge-conflict",
+    "handoff",
+    "to-prd",
+    "to-issues",
+    "ui-diff",
+}
+
+LEGACY_LABELS_WITHOUT_COLON = {
+    "Why",
+    "Tradeoffs",
+    "Needs first",
+    "First step",
+    "Goal command",
+    "다음 행동",
+}
+
+SECTION_LABEL_RE = re.compile(r"^\[?[A-Za-z가-힣][A-Za-z가-힣0-9 /-]*:\s*$")
+
 
 def fail(message: str) -> None:
     raise SystemExit(f"command surface drift check failed: {message}")
@@ -103,10 +158,95 @@ def check_banned_tokens() -> None:
                 fail(f"public surface file {path.relative_to(ROOT)} still exposes banned token {token!r}")
 
 
+def extract_first_fenced_block_after_heading(text: str, heading: str) -> str:
+    lines = text.splitlines()
+    try:
+        start_index = next(index for index, line in enumerate(lines) if line.strip() == heading)
+    except StopIteration as exc:
+        fail(f"missing heading {heading!r} in output contract helper")
+        raise AssertionError from exc
+
+    fence_start = None
+    for index in range(start_index + 1, len(lines)):
+        if lines[index].strip().startswith("```"):
+            fence_start = index
+            break
+    if fence_start is None:
+        fail(f"missing fenced code block after heading {heading!r}")
+        raise AssertionError
+
+    fence_start_index = fence_start
+    block_lines: list[str] = []
+    for index in range(fence_start_index + 1, len(lines)):
+        if lines[index].strip().startswith("```"):
+            return "\n".join(block_lines).strip()
+        block_lines.append(lines[index].rstrip())
+    fail(f"unterminated fenced code block after heading {heading!r}")
+    raise AssertionError
+
+
+def extract_command_output_block(path: Path) -> str:
+    text = path.read_text()
+    lines = text.splitlines()
+    for heading in ("## Output contract", "## Output"):
+        for index, line in enumerate(lines):
+            if line.strip() != heading:
+                continue
+            for fence_index in range(index + 1, len(lines)):
+                if lines[fence_index].strip().startswith("```"):
+                    block_lines: list[str] = []
+                    for end_index in range(fence_index + 1, len(lines)):
+                        if lines[end_index].strip().startswith("```"):
+                            return "\n".join(block_lines).strip()
+                        block_lines.append(lines[end_index].rstrip())
+                    fail(f"unterminated fenced output block in {path.relative_to(ROOT)}")
+
+    fail(f"missing output block in {path.relative_to(ROOT)}")
+    raise AssertionError
+
+
+def normalize_block(text: str) -> str:
+    return "\n".join(line.rstrip() for line in text.strip().splitlines())
+
+
+def check_command_output_block_shape() -> None:
+    for command_name, path in COMMAND_OUTPUT_PATHS.items():
+        block = extract_command_output_block(path)
+        if "다음 행동" in block:
+            fail(f"{path.relative_to(ROOT)} output block still uses legacy label '다음 행동'")
+        if command_name in TEXT_OUTPUT_COMMANDS_NO_NONE and "NONE" in block:
+            fail(f"{path.relative_to(ROOT)} output block must omit NONE placeholders outside reflect receipts")
+
+        lines = block.splitlines()
+        for index, raw_line in enumerate(lines[:-1]):
+            stripped = raw_line.strip()
+            if stripped in LEGACY_LABELS_WITHOUT_COLON:
+                fail(f"{path.relative_to(ROOT)} output block has legacy label without colon: {stripped!r}")
+            if SECTION_LABEL_RE.match(stripped):
+                if lines[index + 1].strip() == "":
+                    fail(
+                        f"{path.relative_to(ROOT)} output block leaves a blank line after section label {stripped!r}"
+                    )
+
+
+def check_output_contract_helper_sync() -> None:
+    helper_text = OUTPUT_CONTRACT_PATH.read_text()
+    for command_name, heading in OUTPUT_SYNC_TARGETS.items():
+        helper_block = extract_first_fenced_block_after_heading(helper_text, heading)
+        command_block = extract_command_output_block(COMMAND_OUTPUT_PATHS[command_name])
+        if normalize_block(helper_block) != normalize_block(command_block):
+            fail(
+                f"output contract helper drift for {command_name}: "
+                f"{OUTPUT_CONTRACT_PATH.relative_to(ROOT)} does not match {COMMAND_OUTPUT_PATHS[command_name].relative_to(ROOT)}"
+            )
+
+
 def main() -> int:
     check_plugin_manifest()
     check_readme_commands()
     check_banned_tokens()
+    check_command_output_block_shape()
+    check_output_contract_helper_sync()
     print("command surface drift ok")
     return 0
 

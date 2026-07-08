@@ -28,18 +28,21 @@ skills/merge-conflict/SKILL.md
 
 ## Output contract
 
+- section label은 항상 `라벨:` 한 줄 뒤 바로 다음 줄에 내용을 둡니다. 라벨 뒤 빈 줄을 두지 않습니다.
+- optional section은 비어 있으면 통째로 생략합니다. 의미 보존이 필요한 receipt가 아니면 `NONE`을 출력하지 않습니다.
+
 ```text
 Merge conflict 분석 | Merge conflict 해결 | Merge conflict 중단
 State:
-- <merge|rebase|none>
+- <merge|rebase|no-active-merge-state>
 Conflict files:
-- <file list or NONE>
+- <file list>
 Hunks:
 - <summary>
 Resolution:
 - <how each intent was reconciled>
 Verification:
-- <commands run and result or NONE>
+- <commands run and result>
 Next step:
 - <continue merge/rebase | manual follow-up>
 ```

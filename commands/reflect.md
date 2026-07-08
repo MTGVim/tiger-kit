@@ -238,6 +238,7 @@ Rules:
 기본 projection은 compact합니다.
 
 - stdout은 `요약 + ledger path + 다음 행동` 구조를 따릅니다.
+- section label은 항상 `라벨:` 한 줄 뒤 바로 다음 줄에 내용을 둡니다. 라벨 뒤 빈 줄을 두지 않습니다.
 - stdout은 가능하면 target boundary를 짧게 드러냅니다.
 - `repo-local`, `user-global`은 direct-apply candidate, `skill`은 explicit materialize only, `repo-shared|hook|command|agent`는 suggest-only로 보이게 유지합니다.
 - reject/failure는 silent skip이 아니라 compact receipt에 `reason_code` 또는 동등한 reject 이유를 남깁니다.
@@ -249,15 +250,18 @@ Rules:
 
 ```text
 Reflect 완료
-Requested target: <raw requested target or default>
-Effective targets: <canonical target list>
+Requested target:
+- <raw requested target or default>
+Effective targets:
+- <canonical target list>
 [Target modes:
 - repo-local, user-global: direct-apply candidate
 - skill: explicit materialize only
 - repo-shared, hook, command, agent: suggest-only]
 Summary:
 - <what changed or what was proposed>
-Ledger: <absolute ledger path>
+Ledger:
+- <absolute ledger path>
 [Applied candidates:
 - <candidate ids or NONE>]
 [Reason code:
@@ -266,7 +270,7 @@ Ledger: <absolute ledger path>
 - <path>]
 [Rollback:
 - <succeeded | failed | not_needed>]
-[## 다음 행동
+[Next step:
 - <next step>]
 ```
 

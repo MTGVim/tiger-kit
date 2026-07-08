@@ -49,25 +49,28 @@ route = explicit task + current constraints -> compare implementation routes -> 
 
 기본 출력은 아래 정보를 포함해야 합니다.
 
+- section label은 항상 `라벨:` 한 줄 뒤 바로 다음 줄에 내용을 둡니다. 라벨 뒤 빈 줄을 두지 않습니다.
+- optional section은 비어 있으면 통째로 생략합니다. 의미 보존이 필요한 receipt가 아니면 `NONE`을 출력하지 않습니다.
+
 ```text
 Route: <direct|subagent-driven|goal-driven|decision|need-sot>
 Confidence: high | medium | low
-Why
-  - <reason>
+Why:
+- <reason>
 
-Tradeoffs
-  - <route>: <pros / cons>
+Tradeoffs:
+- <route>: <pros / cons>
 
-Needs first
-  - <missing info or NONE>
+Needs first:
+- <missing info>
 
-First step
-  - <one concrete next step>
-[Goal command]
-  - </goal <recommended goal> or NONE>
+First step:
+- <one concrete next step>
+[Goal command:
+- </goal <recommended goal>>]
 ```
 
-`goal-driven`이 선택되고 host가 `/goal` surface를 지원할 때만 `Goal command` 줄을 추가할 수 있습니다. 이 줄은 ready-to-run recommendation이며, 특정 host command 존재 자체를 증명하지는 않습니다.
+missing info가 없으면 `Needs first` section은 생략합니다. `goal-driven`이 선택되고 host가 `/goal` surface를 지원할 때만 `Goal command` section을 추가할 수 있습니다. 이 section은 ready-to-run recommendation이며, 특정 host command 존재 자체를 증명하지는 않습니다.
 
 가능하면 `direct`, `subagent-driven`, `goal-driven` 세 route를 모두 짧게 비교하되, 억지 균형을 맞추지는 않습니다. 분명히 안 맞는 route는 한 줄로 빨리 제외해도 됩니다.
 

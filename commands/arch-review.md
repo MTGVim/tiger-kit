@@ -35,6 +35,9 @@ skills/arch-review/SKILL.md
 
 ## Output contract
 
+- section label은 항상 `라벨:` 한 줄 뒤 바로 다음 줄에 내용을 둡니다. 라벨 뒤 빈 줄을 두지 않습니다.
+- optional section은 비어 있으면 통째로 생략합니다. 의미 보존이 필요한 receipt가 아니면 `NONE`을 출력하지 않습니다.
+
 ```text
 Arch Review 완료 | Arch Review 중단
 Scope:
