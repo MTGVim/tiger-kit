@@ -55,13 +55,13 @@ PILOT_SPECS: dict[str, dict[str, Any]] = {
             "plan-only-current-is-not-implementation-proof": {"primary_gap": "missing"},
         },
     },
-    "ui-diff-synthetic-vs-trusted-divergence.json": {
-        "surface": "/tk:ui-diff",
+    "browser-verify-synthetic-vs-trusted-divergence.json": {
+        "surface": "/tk:browser-verify",
         "focus": "synthetic-vs-trusted-click-divergence",
         "source_contracts": {
-            "commands/ui-diff.md",
-            "skills/ui-diff/SKILL.md",
-            "skills/ui-diff/references/drivers/cdp-direct.md",
+            "commands/browser-verify.md",
+            "skills/browser-verify/SKILL.md",
+            "skills/browser-verify/references/drivers/cdp-direct.md",
             ".tigerkit/docs/output-contract.md",
         },
         "safety_principles_covered": {
@@ -346,7 +346,7 @@ def main() -> int:
             validate_reflect_pilot(path, pilot, spec)
         elif surface == "/tk:gap":
             validate_gap_pilot(path, pilot, spec)
-        elif surface == "/tk:ui-diff":
+        elif surface == "/tk:browser-verify":
             validate_ui_diff_pilot(path, pilot, spec)
         else:
             fail(f"unsupported pilot surface in validator config: {surface!r}")

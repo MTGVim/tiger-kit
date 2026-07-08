@@ -84,7 +84,12 @@ def draft_dir(repo_root: Path, kind: str) -> Path:
     return root / "repos" / repo_key(repo_root) / "worktrees" / worktree_key(repo_root) / kind
 
 
-def ui_diff_dir(repo_root: Path) -> Path:
+def browser_verify_dir(repo_root: Path) -> Path:
+    root = state_root()
+    return root / "repos" / repo_key(repo_root) / "browser-verify"
+
+
+def legacy_ui_diff_dir(repo_root: Path) -> Path:
     root = state_root()
     return root / "repos" / repo_key(repo_root) / "ui-diff"
 
@@ -292,14 +297,15 @@ def cmd_draft_paths(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_ui_diff_paths(args: argparse.Namespace) -> int:
+def cmd_browser_verify_paths(args: argparse.Namespace) -> int:
     repo_root = resolve_repo_root(args.repo_root)
     repo_key_value = repo_key(repo_root)
     scope_key_value = scope_key(repo_root)
     worktree_key_value = worktree_key(repo_root)
     common_git_dir_value = common_git_dir(repo_root)
     root = state_root()
-    profile_dir = ui_diff_dir(repo_root)
+    profile_dir = browser_verify_dir(repo_root)
+    legacy_profile_dir = legacy_ui_diff_dir(repo_root)
     payload = {
         "stateRoot": str(root),
         "repoRoot": str(repo_root),
@@ -308,6 +314,8 @@ def cmd_ui_diff_paths(args: argparse.Namespace) -> int:
         "scopeKey": scope_key_value,
         "worktreeKey": worktree_key_value,
         "profileDir": str(profile_dir),
+        "legacyProfileDir": str(legacy_profile_dir),
+        "legacyDetected": legacy_profile_dir.exists(),
         "envPath": str(profile_dir / "env.md"),
         "loginPath": str(profile_dir / "login.md"),
         "loginLocalPath": str(profile_dir / "login.local.md"),
@@ -431,9 +439,9 @@ def build_parser() -> argparse.ArgumentParser:
     p_draft_paths.add_argument("--kind", choices=["handoffs", "prd", "issues"], required=True)
     p_draft_paths.set_defaults(func=cmd_draft_paths)
 
-    p_ui_diff_paths = sub.add_parser("ui-diff-paths", help="Print repo-scoped ui-diff profile paths under ~/.tigerkit")
-    p_ui_diff_paths.add_argument("--repo-root", help="Repo root or working directory", default=None)
-    p_ui_diff_paths.set_defaults(func=cmd_ui_diff_paths)
+    p_browser_verify_paths = sub.add_parser("browser-verify-paths", help="Print repo-scoped browser-verify profile paths under ~/.tigerkit")
+    p_browser_verify_paths.add_argument("--repo-root", help="Repo root or working directory", default=None)
+    p_browser_verify_paths.set_defaults(func=cmd_browser_verify_paths)
 
     p_write = sub.add_parser("write-gap", help="Write a gap report into ~/.tigerkit")
     p_write.add_argument("--repo-root", help="Repo root or working directory", default=None)

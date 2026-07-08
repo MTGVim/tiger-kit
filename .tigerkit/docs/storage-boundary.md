@@ -9,7 +9,7 @@ runtime generated state + repo-scoped root with worktree-scoped draft artifacts 
 reflect direct-write targets = repo CLAUDE.local.md or host-native user-global guidance surface
 ```
 
-TigerKit는 active runtime generated state와 `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues` 같은 repo-scoped draft artifacts, 그리고 `/tk:ui-diff` repo profile을 project repository 밖 `~/.tigerkit/` 아래에 둡니다. reflect direct-write target인 repo `CLAUDE.local.md`와 host-native user-global guidance surface는 이 artifact store와 별개의 target입니다.
+TigerKit는 active runtime generated state와 `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues` 같은 repo-scoped draft artifacts, 그리고 `/tk:browser-verify` repo profile을 project repository 밖 `~/.tigerkit/` 아래에 둡니다. reflect direct-write target인 repo `CLAUDE.local.md`와 host-native user-global guidance surface는 이 artifact store와 별개의 target입니다.
 
 ## Active runtime state
 
@@ -41,16 +41,16 @@ TigerKit는 active runtime generated state와 `/tk:handoff`, `/tk:to-prd`, `/tk:
 
 이 경로들은 tracked product source가 아니라 repo-scoped `~/.tigerkit` root 아래의 worktree-scoped generated draft artifact 경로입니다. 선택적으로 archive를 남길 수는 있지만 기본은 current-first 입니다. `repo-key`와 `worktree-key` 계산은 `scripts/tigerkit_state.py` helper가 수행합니다. `worktree-key`는 현재 worktree를 구분하는 canonicalized directory key로 보고, 서로 다른 worktree draft가 섞이지 않게 합니다.
 
-## Repo-scoped ui-diff profile
+## Repo-scoped browser-verify profile
 
 ```text
-~/.tigerkit/repos/<repo-key>/ui-diff/env.md
-~/.tigerkit/repos/<repo-key>/ui-diff/login.md
-~/.tigerkit/repos/<repo-key>/ui-diff/login.local.md
-~/.tigerkit/repos/<repo-key>/ui-diff/screens/README.md
+~/.tigerkit/repos/<repo-key>/browser-verify/env.md
+~/.tigerkit/repos/<repo-key>/browser-verify/login.md
+~/.tigerkit/repos/<repo-key>/browser-verify/login.local.md
+~/.tigerkit/repos/<repo-key>/browser-verify/screens/README.md
 ```
 
-이 경로들은 `/tk:ui-diff`가 읽는 repo-scoped profile 경로입니다. missing-file bootstrap은 이 경로들에만 수행하고, 기존 파일은 덮어쓰지 않습니다. `repo-key` 계산은 `scripts/tigerkit_state.py ui-diff-paths` helper가 수행합니다.
+이 경로들은 `/tk:browser-verify`가 읽는 repo-scoped profile 경로입니다. legacy `ui-diff` profile이 남아 있으면 migration guide를 우선하고, 둘 다 없을 때만 missing-file bootstrap을 수행합니다. 기존 파일은 덮어쓰지 않습니다. `repo-key` 계산은 `scripts/tigerkit_state.py browser-verify-paths` helper가 수행합니다.
 
 ## Not stored here
 

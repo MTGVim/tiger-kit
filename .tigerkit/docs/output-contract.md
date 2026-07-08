@@ -10,7 +10,7 @@
 - Evidence, Interpretation, Decision, Suggestion을 구분합니다.
 - 검증하지 않은 success를 선언하지 않습니다.
 - command가 파일을 쓰면 changed path 또는 ledger path를 출력합니다.
-- Active command surface는 `/tk:gap`, `/tk:route`, `/tk:reflect`, `/tk:learn`, `/tk:grill`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues`, `/tk:ui-diff`입니다.
+- Active command surface는 `/tk:gap`, `/tk:route`, `/tk:reflect`, `/tk:learn`, `/tk:grill`, `/tk:grooming`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues`, `/tk:browser-verify`입니다.
 - 기본 projection은 compact합니다. empty section, default empty list, `NONE` line은 의미 보존에 필요할 때만 출력합니다.
 - section label은 항상 `라벨:` 한 줄 뒤 바로 다음 줄에 내용을 둡니다. 라벨 뒤 빈 줄을 두지 않습니다.
 
@@ -236,12 +236,14 @@ Rules:
 
 ## `/tk:grill` Output Contract
 
-`/tk:grill`은 계획, 설계, RFC, 개선안을 수렴형 질문으로 압박 검증합니다.
+`/tk:grill`은 계획, 설계, RFC, 개선안을 수렴형 질문으로 압박 검증하고, 사용자가 답을 모른다고 직접 말할 때만 후보를 최대 3개까지 제안할 수 있습니다.
 
 ```text
 Grill 진행중 | Grill 중단 | Grill 요약
 Question:
 - <one sharp question>
+[Candidate suggestions:
+- <up to 3 candidate answers when the user says they do not know>]
 Why:
 - <why this matters>
 Confirmed facts:
@@ -254,6 +256,32 @@ Risks:
 - <remaining risks>
 Next step:
 - <continue questioning | proceed with assumptions | stop>
+```
+
+## `/tk:grooming` Output Contract
+
+`/tk:grooming`은 guidance 파일을 report-only로 평가하고, 승인된 user-global 변경만 direct apply하며 나머지는 suggestion-only로 남깁니다.
+
+```text
+Grooming 리포트 | Grooming 적용 완료 | Grooming 중단
+Scope:
+- user | repo | all
+Mode:
+- report-only | preview-only mixed-scope | user-global direct-apply | suggestion-only
+Findings:
+- <confirmed drift summary>
+[Direct apply target:
+- <user-global path>]
+[Applied changes:
+- <what changed>]
+[Suggested changes:
+- <repo/user suggestions kept as suggestion-only>]
+[Protected exclusions:
+- <reported-only exclusions>]
+Verification:
+- <readback / re-grep / preview reason>
+Next step:
+- <approve apply | review suggestions | rerun with narrower scope>
 ```
 
 ## `/tk:prototype` Output Contract
@@ -383,28 +411,34 @@ Next step:
 - <review drafts | revise slicing | publish explicitly>
 ```
 
-## `/tk:ui-diff` Output Contract
+## `/tk:browser-verify` Output Contract
 
-`/tk:ui-diff`는 provisioning command가 아니라 direct QA surface입니다.
+`/tk:browser-verify`는 provisioning command가 아니라 direct QA / behavior verification surface입니다.
 
 ```text
-UI Diff 준비 완료 | UI Diff 프로필 생성 완료 | UI Diff 프로필 템플릿 출력
-Mode: env-diff | figma-diff
+Browser Verify 준비 완료 | Browser Verify 프로필 생성 완료 | Browser Verify 프로필 템플릿 출력 | Browser Verify migration guide
+Mode: env-diff | figma-diff | behavior-verify
 [Profile path:
+- <path>]
+[Legacy profile path:
 - <path>]
 [Created files:
 - <path>]
 [Write result:
-- existing profile reused | profile files created | template only]
+- existing profile reused | profile files created | template only | blocked by legacy profile]
+[Migration guide:
+- <move legacy ui-diff profile to browser-verify path and rerun>]
 Engine skill:
-- skills/ui-diff/SKILL.md
+- skills/browser-verify/SKILL.md
 Next step:
-- <run diff / fill env-login-screen values / rerun ui-diff>
+- <run verify / fill env-login-screen values / migrate profile and rerun>
 ```
 
 Rules:
-- current repo에 대응하는 `~/.tigerkit/repos/<repo-key>/ui-diff/` profile만 읽고, 누락 시 같은 repo-scoped 경로에 missing 파일만 생성합니다.
-- bundled template source는 `skills/ui-diff/templates/`입니다.
+- current repo에 대응하는 `~/.tigerkit/repos/<repo-key>/browser-verify/` profile만 읽습니다.
+- 신 profile이 없고 legacy `~/.tigerkit/repos/<repo-key>/ui-diff/`가 있으면 migration guide를 출력하고 멈춥니다.
+- 둘 다 없을 때만 같은 repo-scoped 경로에 missing 파일을 생성합니다.
+- bundled template source는 `skills/browser-verify/templates/`입니다.
 - `--print-profile-template`가 있으면 템플릿 내용을 preview만 하고 write는 하지 않습니다.
 - `login.local.md`는 tracked repo 밖 `~/.tigerkit` 아래에 두는 local override입니다.
 - engine install/update나 user-global provisioning mode는 없습니다.

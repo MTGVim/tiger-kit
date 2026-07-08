@@ -4,13 +4,13 @@
     "name": "MTGVim"
   },
   "metadata": {
-    "description": "SoT gap, route, reflect, learn, ui-diff와 grill/prototype/merge-conflict/handoff/to-prd/to-issues/arch-review를 제공하는 TigerKit Claude Code 플러그인입니다."
+    "description": "SoT gap, route, reflect, learn, browser-verify와 grill/prototype/merge-conflict/handoff/to-prd/to-issues/arch-review를 제공하는 TigerKit Claude Code 플러그인입니다."
   },
   "plugins": [
     {
       "name": "tk",
       "source": "./",
-      "description": "SoT gap, route, reflect, learn, ui-diff와 grill/prototype/merge-conflict/handoff/to-prd/to-issues/arch-review를 제공하는 TigerKit Claude Code 플러그인입니다. active command surface는 /tk:gap, /tk:route, /tk:reflect, /tk:learn, /tk:ui-diff, /tk:grill, /tk:prototype, /tk:arch-review, /tk:merge-conflict, /tk:handoff, /tk:to-prd, /tk:to-issues 입니다."
+      "description": "SoT gap, route, reflect, learn, browser-verify와 grill/grooming/prototype/merge-conflict/handoff/to-prd/to-issues/arch-review를 제공하는 TigerKit Claude Code 플러그인입니다. active command surface는 /tk:gap, /tk:route, /tk:reflect, /tk:learn, /tk:browser-verify, /tk:grill, /tk:grooming, /tk:prototype, /tk:arch-review, /tk:merge-conflict, /tk:handoff, /tk:to-prd, /tk:to-issues 입니다."
     }
   ]
 }

@@ -12,7 +12,7 @@ MCP driver가 없을 때(예: 세션에서 MCP가 로드 안 됨)의 폴백. 크
 
 ## Safety boundary
 
-- `skills/ui-diff/SKILL.md`가 canonical policy이고, 이 문서는 fallback 실행 레시피입니다. fallback이라는 이유로 상호작용 safety rule을 완화하지 않습니다.
+- `skills/browser-verify/SKILL.md`가 canonical policy이고, 이 문서는 fallback 실행 레시피입니다. fallback이라는 이유로 상호작용 safety rule을 완화하지 않습니다.
 - 클릭 / 활성화 / submit 계열 상호작용은 driver가 제공하는 trusted 입력 surface로 실행합니다. CDP-direct에선 `Input.dispatchMouseEvent`, 필요할 때 `Input.dispatchKeyEvent`를 사용합니다. 이 규칙은 아래 native setter 입력 주입 예시와 별개로, 텍스트 입력 자체보다 클릭 / 활성화 / submit 계열 상호작용에 적용합니다.
 - `element.click()`, `dispatchEvent(new MouseEvent(...))`, `form.submit()` 같은 합성 상호작용은 실행용 수단으로 사용하지 않습니다.
 - `Runtime.evaluate`는 selector 조회, 상태 read, `scrollIntoView`, rect / 좌표 계산 같은 비파괴적 관측·계산·준비 단계에만 사용합니다. 클릭 / 활성화 / submit 실행용 surface로 사용하지 않습니다.
