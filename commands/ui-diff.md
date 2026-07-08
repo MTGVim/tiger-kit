@@ -85,16 +85,21 @@ skills/ui-diff/templates/screens/README.md -> ~/.tigerkit/repos/<repo-key>/ui-di
 
 ## Output contract
 
+- section label은 항상 `라벨:` 한 줄 뒤 바로 다음 줄에 내용을 둡니다. 라벨 뒤 빈 줄을 두지 않습니다.
+- optional section은 비어 있으면 통째로 생략합니다. 의미 보존이 필요한 receipt가 아니면 `NONE`을 출력하지 않습니다.
+
 ```text
 UI Diff 준비 완료 | UI Diff 프로필 생성 완료 | UI Diff 프로필 템플릿 출력
 Mode: env-diff | figma-diff
-Profile path:
-- <path or NONE>
-Created files:
-- <path or NONE>
+[Profile path:
+- <path>]
+[Created files:
+- <path>]
+[Write result:
+- existing profile reused | profile files created | template only]
 Engine skill:
 - skills/ui-diff/SKILL.md
-다음 행동:
+Next step:
 - <run diff / fill env-login-screen values / rerun ui-diff>
 ```
 

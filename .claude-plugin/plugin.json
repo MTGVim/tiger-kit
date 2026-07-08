@@ -1,7 +1,7 @@
 {
   "name": "tk",
   "description": "SoT gap, route, reflect, learn, ui-diff와 grill/prototype/merge-conflict/handoff/to-prd/to-issues/arch-review를 제공하는 TigerKit Claude Code 플러그인입니다.",
-  "version": "16.5.5",
+  "version": "16.5.6",
   "author": {
     "name": "MTGVim"
   },

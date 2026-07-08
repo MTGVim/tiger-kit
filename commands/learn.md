@@ -59,6 +59,9 @@ host가 다른 user skill surface를 지원하면 equivalent host-native user sk
 
 ## Output contract
 
+- section label은 항상 `라벨:` 한 줄 뒤 바로 다음 줄에 내용을 둡니다. 라벨 뒤 빈 줄을 두지 않습니다.
+- optional section은 비어 있으면 통째로 생략합니다. 의미 보존이 필요한 receipt가 아니면 `NONE`을 출력하지 않습니다.
+
 ```text
 Learn 완료 | Learn 미리보기 | Learn 중단
 Input:
@@ -67,13 +70,16 @@ Source mode:
 - direct | reflect-candidate
 Apply:
 - preview | explicit
-Name:
-- suggested: <slug>
-- confirmed: <slug or NONE>
+Suggested name:
+- <slug>
+[Confirmed name:
+- <slug>]
 Target:
 - user skill surface only
-Created:
-- <path or NONE>
+[Created path:
+- <path>]
+[Write result:
+- preview only | name confirmation needed]
 Next step:
 - <review skill | confirm name | apply explicitly | patch source>
 ```
@@ -85,7 +91,7 @@ Next step:
 - `--apply=true`: explicit apply
 - `--dry-run`: preview-only
 - `--name <slug>`: suggested/confirmed 이름 입력
-- 이름이 확정되지 않았으면 `Created: NONE`으로 남깁니다.
+- 이름이 확정되지 않았거나 preview-only면 `Confirmed name`/`Created path` section을 생략하고 `Write result`에 짧게 이유만 남깁니다.
 
 ## Non-goals
 

@@ -48,12 +48,17 @@ skills/handoff/SKILL.md
 
 ## Output contract
 
+- section label은 항상 `라벨:` 한 줄 뒤 바로 다음 줄에 내용을 둡니다. 라벨 뒤 빈 줄을 두지 않습니다.
+- optional section은 비어 있으면 통째로 생략합니다. 의미 보존이 필요한 receipt가 아니면 `NONE`을 출력하지 않습니다.
+
 ```text
 Handoff 완료 | Handoff 미리보기 | Handoff 중단
 Goal:
 - <one-line goal>
-Output:
-- <path or NONE>
+Output mode:
+- draft file | inline preview
+[Output path:
+- <path>]
 Includes:
 - Goal / Current state / Decisions / Changed files / Commands / Verification / Remaining tasks / Open questions / Risks / Suggested next skills / Do-not-repeat context
 Verification:
