@@ -100,7 +100,7 @@ claude plugin details tk
 /tk:gap "PRD와 현재 구현 차이 봐줘" --target src/auth
 /tk:route "결제 모달 scroll 복구 버그 수정"
 /tk:reflect --target repo-local
-/tk:learn "what we just did"
+/tk:learn "우리가 방금 한 작업"
 /tk:reflect --target repo-local --apply=false
 /tk:reflect R3 --target skill --apply=true
 /tk:grill "이 RFC 허점 짚어줘"
