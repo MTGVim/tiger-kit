@@ -9,6 +9,8 @@ argument-hint: '"<plan|RFC|idea>" [--target <path|area>] [--print-checklist]'
 
 목표: `/tk:grill`은 계획, 설계, RFC, 개선안을 바로 구현으로 밀지 않고 수렴형 질문으로 압박 검증하는 surface입니다.
 
+사용자가 질문의 답을 모른다고 직접 말하면, 질문 자체는 유지하되 막힘을 줄이기 위해 브레인스토밍 기반 후보를 최대 3개까지 제안할 수 있습니다.
+
 canonical skill:
 
 ```text
@@ -30,8 +32,12 @@ skills/grill/SKILL.md
 1. 관련 repo evidence를 먼저 읽습니다.
 2. 직접 확인으로 풀 수 없는 전제만 질문합니다.
 3. 질문은 한 번에 하나씩 던집니다.
-4. 5회 이상 길어지면 hint를 노출하고 진행 방식을 제안합니다.
-5. 종료 시 아래 세 묶음을 요약합니다.
+4. 사용자가 답을 모른다고 하면, 질문을 없애지 말고 선택·수정 가능한 후보를 최대 3개까지 제안할 수 있습니다.
+   - 후보는 확정 답이 아니라 가설/선택지로 둡니다.
+   - 각 후보에는 짧은 근거나 어떤 상황에서 맞는지 붙입니다.
+   - 보안, 계약, 삭제 같은 high-risk owner decision은 후보 제안만으로 확정하지 않습니다.
+5. 5회 이상 길어지면 hint를 노출하고 진행 방식을 제안합니다.
+6. 종료 시 아래 세 묶음을 요약합니다.
    - 결정사항
    - 가정
    - 남은 리스크
@@ -45,6 +51,8 @@ skills/grill/SKILL.md
 Grill 진행중 | Grill 중단 | Grill 요약
 Question:
 - <one sharp question>
+[Candidate suggestions:
+- <up to 3 candidate answers when the user says they do not know>]
 Why:
 - <why this matters>
 Confirmed facts:

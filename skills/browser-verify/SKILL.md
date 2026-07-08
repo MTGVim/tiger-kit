@@ -1,27 +1,29 @@
 ---
-name: ui-diff
-description: computed style과 bounding rect 중심으로 visual regression을 검증합니다. `~/.tigerkit` repo profile을 읽습니다.
+name: browser-verify
+description: 실제 브라우저 runtime에서 computed style / bounding rect / 상호작용 결과를 근거로 시각 회귀와 SoT 대비 동작을 검증합니다. `~/.tigerkit` repo profile을 읽습니다.
 ---
 
-# UI Diff
+# Browser Verify
 
-시각 회귀(모달, 레이아웃, spacing, color, overlay)를 눈대중이 아니라 computed style / bounding rect 중심으로 검증합니다.
+시각 회귀(모달, 레이아웃, spacing, color, overlay)와 동작(상호작용 결과)을 눈대중이 아니라 computed style / bounding rect / network 관측 중심으로 검증합니다.
 
 ## Profile lookup
 
 제품 특이값은 hard-code하지 않습니다. 실행 시 아래 순서로 profile을 찾습니다.
 
-1. `~/.tigerkit/repos/<repo-key>/ui-diff/`
-2. 없으면 bundled template(`skills/ui-diff/templates/`)를 source로 삼아 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/ui-diff/` 신규 생성 절차로 들어갑니다.
+1. `~/.tigerkit/repos/<repo-key>/browser-verify/`
+2. 신경로가 없고 legacy `~/.tigerkit/repos/<repo-key>/ui-diff/`가 있으면 **자동 이동하지 않고 migration guide로 멈춥니다.**
+3. 둘 다 없으면 bundled template(`skills/browser-verify/templates/`)를 source로 삼아 현재 repo에 대응하는 신규 생성 절차로 들어갑니다.
 
 이 엔진은 user-global provisioning/install flow를 직접 수행하지 않습니다. 다만 현재 repo profile이 비어 있으면 repo-scoped missing 파일만 생성하는 bootstrap은 허용합니다.
 
 ## Mode overview
 
-| Mode | Baseline | Target | Status |
-|---|---|---|---|
-| env-diff | QA/live runtime | local runtime | primary |
-| figma-diff | design node/spec | local runtime | secondary |
+| Mode | Baseline | Target | 비교물 | Status |
+|---|---|---|---|---|
+| env-diff | QA/live runtime | local runtime | computed style / rect | primary |
+| figma-diff | design node/spec | local runtime | computed style / rect | secondary |
+| behavior-verify | SoT(티켓/PRD/스펙/요청 서술) | local runtime | 상호작용 결과 | primary |
 
 상세는 `references/modes/`를 봅니다.
 
@@ -78,6 +80,43 @@ tracked repo에는 credential을 직접 커밋하지 않습니다.
 - HMR: dev 서버가 Fast Refresh를 지원하면 컴포넌트/모달 상태가 유지될 수 있으므로 고친 뒤 재오픈 없이 재측정할 수 있습니다. 닫혔으면 다시 엽니다.
 - Driver: MCP driver(playwright/chrome-devtools 등)가 있으면 사용하고, 없으면 CDP-direct로 폴백합니다. 특정 driver를 필수로 가정하지 않습니다.
 
+## Behavior 판정 규칙
+
+behavior-verify mode뿐 아니라, 어떤 mode에서든 상호작용 결과를 근거로 결론을 내릴 때 적용합니다.
+
+- verdict는 검증 항목 단위로 `pass` / `fail` / `unverifiable`을 사용합니다.
+- mutation ground-truth: 저장 / 삭제 / 발송 같은 mutation 발생 판정은 DOM 상태(토스트, 알럿, 모달)만으로 내리지 않습니다. network 요청 관측(method / endpoint)을 필수 증거로 요구합니다.
+- 합성 이벤트 증거 불인정: 합성 경로(`element.click()`, `dispatchEvent`, `form.submit()`)로 관측된 동작은 실제 사용자 입력에서는 일어나지 않는 phantom side-effect일 수 있으므로 pass / fail 증거로 인정하지 않습니다. trusted 입력으로 재현된 관측만 증거입니다.
+- 관측 3축: UI 상태 전이, network 요청, 응답 후 결과 상태를 구분해 기록합니다. 어느 축을 확인했고 어느 축을 확인하지 못했는지 결과에 남깁니다.
+
+## Mutation 안전
+
+- 테스트 컨텍스트 봉인: mutation을 유발할 수 있는 상호작용은 profile `env.md`의 test mutation context에 명시된 계정 / 데이터 범위 안에서만 실제 실행합니다.
+- 컨텍스트 미지정 시 차단: test mutation context가 비어 있으면 mutation 유발 상호작용을 실행하지 않고, 해당 검증 항목을 `unverifiable`(사유: 테스트 컨텍스트 부재)로 보고합니다.
+- 비가역 side-effect: 외부 발송(SMS / 메일 / 푸시), 결제, 취소 불가 삭제는 테스트 컨텍스트 안이라도 실제 실행하지 않습니다. mock으로 상태에 도달하거나 사용자 확인을 받습니다.
+- gated 상태 도달 mock: 특정 상태에서만 렌더되는 UI는 initScript로 `window.fetch` / `XMLHttpRequest`를 패치해 대상 endpoint 응답을 조작해 도달할 수 있습니다.
+  - mock 응답 envelope는 앱이 실제로 파싱하는 구조와 일치시킵니다. 응답 매핑은 앱 소스에서 먼저 확인합니다.
+  - mock은 상태 도달용입니다. 판정 대상 mutation 자체를 mock으로 대체해 `pass`를 내리지 않습니다.
+
+## Evidence artifacts
+
+핵심 결론의 근거는 computed evidence지만, 스크린샷 산출물의 생성과 제출은 모든 mode에서 필수입니다.
+
+- 모든 실행은 run 산출물 디렉토리를 만듭니다: `~/.tigerkit/repos/<repo-key>/browser-verify/runs/<run-id>/`
+- 판정에 쓰인 화면은 검증 항목 / finding 단위로 스크린샷을 저장합니다. 파일명은 의미 기반으로 짓습니다(`<screen>-<item>-<env>.png` 등).
+- 최종 보고에는 run 디렉토리 경로와 스크린샷 파일 목록을 포함해 사용자에게 증거로 제출합니다. 스크린샷 없이 computed 수치만으로 보고를 끝내지 않습니다.
+- 일부 MCP screenshot 도구는 저장 경로가 자체 workspace root 목록으로 제한되어 `~/.tigerkit` 절대경로를 거부할 수 있습니다. 이 경우 repo 하위 임시 경로에 저장한 뒤 run 디렉토리로 이동하고, repo tree에 잔재를 남기지 않습니다. cdp-direct는 `Page.captureScreenshot`(base64)로 임의 경로에 저장할 수 있습니다.
+
+## Auth session reuse
+
+2FA(OTP / SSO)가 걸린 환경은 로그인 자동화가 매 실행 뚫을 수 없습니다. "1회 수동 로그인 후 세션 재사용"을 기본 기법으로 안내합니다.
+
+- 격리 프로필 재사용(권장): 브라우저를 repo-scoped 고정 `--user-data-dir`(예: `~/.tigerkit/repos/<repo-key>/browser-verify/browser-profile/`)로 기동합니다. 최초 1회는 사용자가 직접 로그인하고, 이후 실행은 같은 디렉토리를 재사용해 세션 만료 전까지 로그인 절차를 생략합니다.
+- storage state export/import: driver가 cookies + localStorage 저장/복원을 지원하면 사용할 수 있습니다.
+- 사용자의 실제 브라우저 프로필은 절대 재사용하지 않습니다. 검증 전용 격리 프로필만 사용합니다.
+- 세션 프로필 디렉토리는 credential급 민감물로 취급합니다. `~/.tigerkit` 아래에만 두고 tracked repo에 커밋하지 않습니다.
+- 세션 만료 신호(profile `login.md`의 expiry_signal)가 관측되면 자동 재시도하지 않고, 사용자에게 수동 로그인 1회를 요청한 뒤 이어갑니다.
+
 ## Feedback loop
 
 실행 중 배운 내용은 아래 surface로 되먹임합니다.
@@ -85,5 +124,6 @@ tracked repo에는 credential을 직접 커밋하지 않습니다.
 - screen-specific knowledge -> `screens/*.md`
 - login/context 변화 -> `login.md`, `login.local.md`, `env.md`
 - product-agnostic engine lesson -> engine `SKILL.md` 또는 `references/modes/*`
+- 동작 검증 중 발견한 판정/안전 lesson -> `references/modes/behavior-verify.md`
 
 원칙: 한 번 겪은 마찰은 다음 실행에서 그대로 반복되지 않게 합니다.

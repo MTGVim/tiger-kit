@@ -25,7 +25,7 @@
             current.md
           issues/
             current.md
-      ui-diff/
+      browser-verify/
         env.md
         login.md
         login.local.md
@@ -50,14 +50,14 @@
 | `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/reflect/REFLECT-YYYYMMDD-HHmmss-RAND.yaml` | `/tk:reflect` ledger archive | generated working memory |
 | `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/reflect/current.yaml` | 최신 reflect ledger copy | generated pointer |
 | `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/branch-state.json` | latest generated artifact pointer | generated index |
-| `scripts/tigerkit_state.py` | active generated state helper (`write-gap`, `draft-paths`, `ui-diff-paths`, key/path calculation) | shipped helper |
+| `scripts/tigerkit_state.py` | active generated state helper (`write-gap`, `draft-paths`, `browser-verify-paths`, key/path calculation) | shipped helper |
 | `~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/handoffs/current.md` | `/tk:handoff` current-first handoff draft | worktree-scoped draft artifact under repo-scoped root |
 | `~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/prd/current.md` | `/tk:to-prd` current-first PRD draft | worktree-scoped draft artifact under repo-scoped root |
 | `~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/issues/current.md` | `/tk:to-issues` current-first issue draft set | worktree-scoped draft artifact under repo-scoped root |
-| `~/.tigerkit/repos/<repo-key>/ui-diff/env.md` | `/tk:ui-diff` env profile | repo-scoped profile |
-| `~/.tigerkit/repos/<repo-key>/ui-diff/login.md` | `/tk:ui-diff` tracked login/context profile | repo-scoped profile |
-| `~/.tigerkit/repos/<repo-key>/ui-diff/login.local.md` | `/tk:ui-diff` local override profile | repo-scoped profile |
-| `~/.tigerkit/repos/<repo-key>/ui-diff/screens/README.md` | `/tk:ui-diff` screen catalog root | repo-scoped profile |
+| `~/.tigerkit/repos/<repo-key>/browser-verify/env.md` | `/tk:browser-verify` env profile | repo-scoped profile |
+| `~/.tigerkit/repos/<repo-key>/browser-verify/login.md` | `/tk:browser-verify` tracked login/context profile | repo-scoped profile |
+| `~/.tigerkit/repos/<repo-key>/browser-verify/login.local.md` | `/tk:browser-verify` local override profile | repo-scoped profile |
+| `~/.tigerkit/repos/<repo-key>/browser-verify/screens/README.md` | `/tk:browser-verify` screen catalog root | repo-scoped profile |
 | repo `CLAUDE.local.md` | reflect eligible repo-local apply target | local guidance |
 | repo `CLAUDE.md` | reflect suggest-only target | shared repo guidance |
 

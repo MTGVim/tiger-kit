@@ -1,15 +1,15 @@
 {
   "schemaVersion": "tigerkit.full-eval-pilot/v1",
-  "pilot_id": "ui-diff-synthetic-vs-trusted-divergence",
+  "pilot_id": "browser-verify-synthetic-vs-trusted-divergence",
   "kind": "full-real-agent-pilot",
-  "surface": "/tk:ui-diff",
+  "surface": "/tk:browser-verify",
   "focus": "synthetic-vs-trusted-click-divergence",
   "requires_real_agent": true,
-  "goal": "Prove in a real UI-diff verification session that synthetic click paths can fabricate submit/write side-effects that do not occur under the trusted-click control path, and that write-capable flows must be judged from network/backend ground-truth rather than DOM-only success signals.",
+  "goal": "Prove in a real browser-verify session that synthetic click paths can fabricate submit/write side-effects that do not occur under the trusted-click control path, and that write-capable flows must be judged from network/backend ground-truth rather than DOM-only success signals.",
   "source_contracts": [
-    "commands/ui-diff.md",
-    "skills/ui-diff/SKILL.md",
-    "skills/ui-diff/references/drivers/cdp-direct.md",
+    "commands/browser-verify.md",
+    "skills/browser-verify/SKILL.md",
+    "skills/browser-verify/references/drivers/cdp-direct.md",
     ".tigerkit/docs/output-contract.md"
   ],
   "safety_principles_covered": [
@@ -17,7 +17,7 @@
     "trusted_click_is_control_for_click_activation_submit_verification",
     "dom_only_success_is_not_ground_truth_for_write_flows"
   ],
-  "operator_notes": "Run these scenarios with a real coding agent and a real browser verification path, not a prose-only contract check. The control is behavior: whether synthetic element.click() can trigger submit/write side-effects that the trusted click path does not, and whether the operator records network/backend ground-truth instead of stopping at DOM success-looking signals.",
+  "operator_notes": "Run these scenarios with a real coding agent and a real browser-verify path, not a prose-only contract check. The control is behavior: whether synthetic element.click() can trigger submit/write side-effects that the trusted click path does not, and whether the operator records network/backend ground-truth instead of stopping at DOM success-looking signals.",
   "scenarios": [
     {
       "id": "synthetic-element-click-phantom-write",
@@ -28,7 +28,7 @@
         "Ensure the button's intended onClick behavior is only a UI toggle or local state change.",
         "Instrument network/backend observation so write requests and success UI signals can both be captured."
       ],
-      "task_prompt": "Run a real UI-diff verification session that compares a synthetic element.click() path against the trusted click control path for the same button. Do not hand-wave from DOM state alone; capture network or backend write evidence.",
+      "task_prompt": "Run a real browser-verify session that compares a synthetic element.click() path against the trusted click control path for the same button. Do not hand-wave from DOM state alone; capture network or backend write evidence.",
       "expected": {
         "interaction_mode": "synthetic",
         "write_observed": true,
@@ -68,7 +68,7 @@
         "Make network/backend write evidence observable in the session.",
         "Keep the focus on verification behavior rather than app implementation changes."
       ],
-      "task_prompt": "Run a UI-diff verification path on a write-capable interaction and show that the conclusion is based on network/backend ground-truth rather than DOM-only success-looking state.",
+      "task_prompt": "Run a browser-verify path on a write-capable interaction and show that the conclusion is based on network/backend ground-truth rather than DOM-only success-looking state.",
       "expected": {
         "interaction_mode": "synthetic",
         "write_observed": true,
