@@ -35,26 +35,27 @@ skills/arch-review/SKILL.md
 
 ## Output contract
 
-- section label은 항상 `라벨:` 한 줄 뒤 바로 다음 줄에 내용을 둡니다. 라벨 뒤 빈 줄을 두지 않습니다.
+- section label은 항상 `🎯 Goal:`처럼 leading emoji를 붙인 `라벨:` 한 줄 뒤 바로 다음 줄에 내용을 둡니다. 라벨 뒤 빈 줄을 두지 않습니다.
+- 같은 역할의 label은 가능하면 같은 emoji를 재사용합니다.
 - compact는 유지하되 section 사이에는 한 줄 여백을 두어 읽힘을 확보합니다.
 - 긴 설명은 가능하면 bullet을 쪼개서 한 줄에 한 뜻만 남깁니다.
 - optional section은 비어 있으면 통째로 생략합니다. 의미 보존이 필요한 receipt가 아니면 `NONE`을 출력하지 않습니다.
 
 ```text
 Arch Review 완료 | Arch Review 중단
-Scope:
+📍 Scope:
 - <target area>
-Strengths:
+💪 Strengths:
 - <what is already clean>
-Hotspots:
+🔥 Hotspots:
 - <confirmed architectural hotspots>
-Boundary risks:
+⚠️ Boundary risks:
 - <where ownership/coupling leaks>
-Evidence:
+🔎 Evidence:
 - <file / behavior / repeated pain evidence>
-Suggested direction:
+🧭 Suggested direction:
 - <smallest safe architectural direction>
-First step:
+▶️ First step:
 - <one concrete next step>
 ```
 
