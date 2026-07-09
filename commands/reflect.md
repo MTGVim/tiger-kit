@@ -238,7 +238,8 @@ Rules:
 기본 projection은 compact합니다.
 
 - stdout은 `요약 + ledger path + 다음 행동` 구조를 따릅니다.
-- section label은 항상 `라벨:` 한 줄 뒤 바로 다음 줄에 내용을 둡니다. 라벨 뒤 빈 줄을 두지 않습니다.
+- section label은 항상 `🎯 Goal:`처럼 leading emoji를 붙인 `라벨:` 한 줄 뒤 바로 다음 줄에 내용을 둡니다. 라벨 뒤 빈 줄을 두지 않습니다.
+- 같은 역할의 label은 가능하면 같은 emoji를 재사용합니다.
 - compact는 유지하되 section 사이에는 한 줄 여백을 두어 읽힘을 확보합니다.
 - 긴 설명은 가능하면 bullet을 쪼개서 한 줄에 한 뜻만 남깁니다.
 - stdout은 가능하면 target boundary를 짧게 드러냅니다.
@@ -252,27 +253,27 @@ Rules:
 
 ```text
 Reflect 완료
-Requested target:
+🧾 Requested target:
 - <raw requested target or default>
-Effective targets:
+🎯 Effective targets:
 - <canonical target list>
-[Target modes:
+[🧭 Target modes:
 - repo-local, user-global: direct-apply candidate
 - skill: explicit materialize only
 - repo-shared, hook, command, agent: suggest-only]
-Summary:
+📝 Summary:
 - <what changed or what was proposed>
-Ledger:
+🗂️ Ledger:
 - <absolute ledger path>
-[Applied candidates:
+[✅ Applied candidates:
 - <candidate ids or NONE>]
-[Reason code:
+[🧩 Reason code:
 - <reason_code or NONE>]
-[Changed paths:
+[📁 Changed paths:
 - <path>]
-[Rollback:
+[↩️ Rollback:
 - <succeeded | failed | not_needed>]
-[Next step:
+[▶️ Next step:
 - <next step>]
 ```
 
