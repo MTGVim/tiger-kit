@@ -68,36 +68,31 @@ gap = source of truth ↔ current implementation one-shot comparison
 - detailed markdown report는 `--print-report`이 있거나 사용자가 저장/출력을 명시했을 때만 전체 형태로 출력하거나 external report로 저장합니다.
 - path-heavy artifact detail은 필요할 때만 노출합니다.
 
-```md
-## 📊 Gap Summary
-
+```text
+📊 Gap summary:
 | Area | SoT | Current | Gap | Impact | Priority |
 |---|---|---|---|---|---|
 
-## 🔎 Findings
-
+📝 Findings:
 ### 1. <finding title>
 - SoT:
 - Current:
-- 🔎 Evidence:
-- 🧪 Evidence type:
-- 📉 Impact:
-- 🚦 Priority:
-- 🛠️ Suggested fix:
-- 🧭 Route: direct | brainstorm | decision
-- 🔎 Route evidence:
+- Evidence:
+- Evidence type:
+- Impact:
+- Priority:
+- Suggested fix:
+- Route: direct | brainstorm | decision
+- Route evidence:
 
-## ❓ Ambiguities / Missing Evidence
-
+⚠️ Ambiguities / Missing Evidence:
 | Ref | Question | Evidence checked | Impact | Recommendation |
 |---|---|---|---|---|
 
-## 🧹 Not accepted summary
-
+📝 Not accepted summary:
 - <optional low-priority or rejected note>
 
-## ▶️ Recommended Next Steps
-
+▶️ Recommended next steps:
 1. <next step>
 ```
 
