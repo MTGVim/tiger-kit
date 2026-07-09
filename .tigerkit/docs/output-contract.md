@@ -21,36 +21,31 @@
 
 `/tk:gap`은 SoT와 Current Implementation의 one-shot gap analysis입니다.
 
-```md
-## 📊 Gap Summary
-
+```text
+📊 Gap summary:
 | Area | SoT | Current | Gap | Impact | Priority |
 |---|---|---|---|---|---|
 
-## 🔎 Findings
-
+📝 Findings:
 ### 1. <finding title>
 - SoT:
 - Current:
-- 🔎 Evidence:
-- 🧪 Evidence type:
-- 📉 Impact:
-- 🚦 Priority:
-- 🛠️ Suggested fix:
-- 🧭 Route: direct | brainstorm | decision
-- 🔎 Route evidence:
+- Evidence:
+- Evidence type:
+- Impact:
+- Priority:
+- Suggested fix:
+- Route: direct | brainstorm | decision
+- Route evidence:
 
-## ❓ Ambiguities / Missing Evidence
-
+⚠️ Ambiguities / Missing Evidence:
 | Ref | Question | Evidence checked | Impact | Recommendation |
 |---|---|---|---|---|
 
-## 🧹 Not accepted summary
-
+📝 Not accepted summary:
 - <optional low-priority or rejected note>
 
-## ▶️ Recommended Next Steps
-
+▶️ Recommended next steps:
 1. <next step>
 ```
 
@@ -68,19 +63,19 @@ Artifact path가 필요하면 repo 밖 `~/.tigerkit/.../gap/` 아래에 둡니�
 📝 Why:
 - <reason>
 
-⚖️ Tradeoffs:
+📝 Tradeoffs:
 - <route>: <pros / cons>
 
-🧩 Needs first:
+⚠️ Needs first:
 - <missing info>
 
 ▶️ First step:
 - <one concrete next step>
 [👥 Delegation plan:
-- 🧱 Architect: <goal / constraints / files / acceptance criteria / risks>
-- 🛠️ Implementor context: <narrow implementation brief only; no redesign or scope expansion>
-- 🧪 Reviewer context: <diff + acceptance criteria only; assume the patch is wrong>
-- ✅ Verification: <smallest relevant checks>]
+- Architect: <goal / constraints / files / acceptance criteria / risks>
+- Implementor context: <narrow implementation brief only; no redesign or scope expansion>
+- Reviewer context: <diff + acceptance criteria only; assume the patch is wrong>
+- Verification: <smallest relevant checks>]
 [🚀 Goal command:
 - </goal <recommended goal>>]
 ```
@@ -97,9 +92,9 @@ same repo/scope `gap packet`이 있으면 `/tk:route`는 그 packet의 source se
 
 ```text
 Learn 완료 | Learn 미리보기 | Learn 중단
-🧾 Input:
+📝 Input:
 - <source or candidate_id>
-🧭 Source mode:
+📝 Source mode:
 - direct | reflect-candidate
 🛠️ Apply:
 - preview | explicit
@@ -111,7 +106,7 @@ Learn 완료 | Learn 미리보기 | Learn 중단
 - user skill surface only
 [📁 Created path:
 - <path>]
-[✍️ Write result:
+[📝 Write result:
 - preview only | name confirmation needed]
 ▶️ Next step:
 - <review skill | confirm name | apply explicitly | patch source>
@@ -142,7 +137,7 @@ Notes:
 
 ```text
 Reflect 완료
-🧾 Requested target:
+📝 Requested target:
 - <raw requested target or default>
 🎯 Effective targets:
 - <canonical target list>
@@ -152,15 +147,15 @@ Reflect 완료
 - repo-shared, hook, command, agent: suggest-only]
 📝 Summary:
 - <what changed or what was proposed>
-🗂️ Ledger:
+📁 Ledger:
 - <absolute ledger path>
 [✅ Applied candidates:
 - <candidate ids or NONE>]
-[🧩 Reason code:
+[📝 Reason code:
 - <reason_code or NONE>]
 [📁 Changed paths:
 - <path>]
-[↩️ Rollback:
+[⚠️ Rollback:
 - <succeeded | failed | not_needed>]
 [▶️ Next step:
 - <next step>]
@@ -212,21 +207,21 @@ exact `apply_plan`은 stdout이 아니라 ledger에 둡니다. `repo-local`과 `
 
 ```text
 Reflect 완료 | Reflect 미리보기 | Reflect 중단
-🧾 Requested target:
+📝 Requested target:
 - skill
 🛠️ Apply:
 - explicit
-🧾 Input:
+📝 Input:
 - <candidate_id or --desc>
 🏷️ Suggested name:
 - <slug>
 [✅ Confirmed name:
 - <slug>]
-🗂️ Ledger:
+📁 Ledger:
 - <reflect ledger path>
 [📁 Created path:
 - <path>]
-[✍️ Write result:
+[📝 Write result:
 - preview only | name confirmation needed]
 [▶️ Next step:
 - <rename/remove/follow-up>]
@@ -248,17 +243,17 @@ Rules:
 
 ```text
 Grill 진행중 | Grill 중단 | Grill 요약
-❓ Question:
+📝 Question:
 - <one sharp question>
-[💡 Candidate suggestions:
+[📝 Candidate suggestions:
 - <up to 3 candidate answers when the user says they do not know>]
 📝 Why:
 - <why this matters>
-📌 Confirmed facts:
+📝 Confirmed facts:
 - <confirmed facts>
-🧠 Decision summary:
+📝 Decision summary:
 - <decisions>
-📎 Assumptions:
+📝 Assumptions:
 - <assumptions>
 ⚠️ Risks:
 - <remaining risks>
@@ -272,19 +267,19 @@ Grill 진행중 | Grill 중단 | Grill 요약
 
 ```text
 Grooming 리포트 | Grooming 적용 완료 | Grooming 중단
-📍 Scope:
+🧭 Scope:
 - user | repo | all
 🧭 Mode:
 - report-only | preview-only mixed-scope | user-global direct-apply | suggestion-only
-🔎 Findings:
+📝 Findings:
 - <confirmed drift summary>
 [🎯 Direct apply target:
 - <user-global path>]
 [✅ Applied changes:
 - <what changed>]
-[💡 Suggested changes:
+[📝 Suggested changes:
 - <repo/user suggestions kept as suggestion-only>]
-[🛡️ Protected exclusions:
+[⚠️ Protected exclusions:
 - <reported-only exclusions>]
 ✅ Verification:
 - <readback / re-grep / preview reason>
@@ -305,7 +300,7 @@ Prototype 준비 | Prototype 완료 | Prototype 중단
 - <prototype files>]
 ✅ Confirmed:
 - <what the prototype proved>
-🎭 Still fake:
+⚠️ Still fake:
 - <what is mocked or assumed>
 ▶️ Next production step:
 - <what to port, delete, or refine>
@@ -317,17 +312,17 @@ Prototype 준비 | Prototype 완료 | Prototype 중단
 
 ```text
 Arch Review 완료 | Arch Review 중단
-📍 Scope:
+🧭 Scope:
 - <target area>
-💪 Strengths:
+📝 Strengths:
 - <what is already clean>
-🔥 Hotspots:
+⚠️ Hotspots:
 - <confirmed architectural hotspots>
 ⚠️ Boundary risks:
 - <where ownership/coupling leaks>
-🔎 Evidence:
+📝 Evidence:
 - <file / behavior / repeated pain evidence>
-🧭 Suggested direction:
+📝 Suggested direction:
 - <smallest safe architectural direction>
 ▶️ First step:
 - <one concrete next step>
@@ -339,9 +334,9 @@ Arch Review 완료 | Arch Review 중단
 
 ```text
 Merge conflict 분석 | Merge conflict 해결 | Merge conflict 중단
-📍 State:
+🧭 State:
 - <merge|rebase|no-active-merge-state>
-📄 Conflict files:
+📁 Conflict files:
 - <file list>
 🧩 Hunks:
 - <summary>
@@ -361,11 +356,11 @@ Merge conflict 분석 | Merge conflict 해결 | Merge conflict 중단
 Handoff 완료 | Handoff 미리보기 | Handoff 중단
 🎯 Goal:
 - <one-line goal>
-📤 Output mode:
+🧭 Output mode:
 - draft file | inline preview
 [📁 Output path:
 - <path>]
-📦 Includes:
+📝 Includes:
 - Goal / Current state / Decisions / Changed files / Commands / Verification / Remaining tasks / Open questions / Risks / Suggested next skills / Do-not-repeat context
 ✅ Verification:
 - <verified / partially verified / unverified>
@@ -381,13 +376,13 @@ Handoff 완료 | Handoff 미리보기 | Handoff 중단
 To-PRD 완료 | To-PRD 미리보기 | To-PRD 중단
 🎯 Goal:
 - <what the PRD covers>
-📤 Output mode:
+🧭 Output mode:
 - draft file | inline preview
 [📁 Output path:
 - <path>]
-📦 Includes:
+📝 Includes:
 - problem / goal / user value / non-goals / requirements / acceptance criteria / risks / open questions
-📣 Publish:
+📝 Publish:
 - disabled by default
 ▶️ Next step:
 - <review draft | convert to issues | revise scope>
@@ -399,21 +394,21 @@ To-PRD 완료 | To-PRD 미리보기 | To-PRD 중단
 
 ```text
 To-Issues 완료 | To-Issues 미리보기 | To-Issues 중단
-📌 Source:
+📝 Source:
 - <plan|prd|scope>
-📤 Output mode:
+🧭 Output mode:
 - draft file | inline preview
 [📁 Output path:
 - <path>]
-🔢 Issue count:
+📝 Issue count:
 - <N>
-📏 Rules applied:
+📝 Rules applied:
 - vertical slice only
 - no layer slicing
 - draft-only by default
-⛓️ Dependencies:
+⚠️ Dependencies:
 - <blocked-by summary>
-📣 Publish:
+📝 Publish:
 - disabled by default
 ▶️ Next step:
 - <review drafts | revise slicing | publish explicitly>
@@ -428,15 +423,15 @@ Browser Verify 준비 완료 | Browser Verify 프로필 생성 완료 | Browser 
 🧭 Mode: env-diff | figma-diff | behavior-verify
 [📁 Profile path:
 - <path>]
-[🗃️ Legacy profile path:
+[📁 Legacy profile path:
 - <path>]
 [📁 Created files:
 - <path>]
-[✍️ Write result:
+[📝 Write result:
 - existing profile reused | profile files created | template only | blocked by legacy profile]
 [🧭 Migration guide:
 - <move legacy ui-diff profile to browser-verify path and rerun>]
-🧠 Engine skill:
+📝 Engine skill:
 - skills/browser-verify/SKILL.md
 ▶️ Next step:
 - <run verify / fill env-login-screen values / migrate profile and rerun>
