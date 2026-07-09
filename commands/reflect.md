@@ -239,6 +239,8 @@ Rules:
 
 - stdout은 `요약 + ledger path + 다음 행동` 구조를 따릅니다.
 - section label은 항상 `라벨:` 한 줄 뒤 바로 다음 줄에 내용을 둡니다. 라벨 뒤 빈 줄을 두지 않습니다.
+- compact는 유지하되 section 사이에는 한 줄 여백을 두어 읽힘을 확보합니다.
+- 긴 설명은 가능하면 bullet을 쪼개서 한 줄에 한 뜻만 남깁니다.
 - stdout은 가능하면 target boundary를 짧게 드러냅니다.
 - `repo-local`, `user-global`은 direct-apply candidate, `skill`은 explicit materialize only, `repo-shared|hook|command|agent`는 suggest-only로 보이게 유지합니다.
 - reject/failure는 silent skip이 아니라 compact receipt에 `reason_code` 또는 동등한 reject 이유를 남깁니다.
