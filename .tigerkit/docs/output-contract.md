@@ -73,11 +73,16 @@ Needs first:
 
 First step:
 - <one concrete next step>
+[Delegation plan:
+- Architect: <goal / constraints / files / acceptance criteria / risks>
+- Implementor context: <narrow implementation brief only; no redesign or scope expansion>
+- Reviewer context: <diff + acceptance criteria only; assume the patch is wrong>
+- Verification: <smallest relevant checks>]
 [Goal command:
 - </goal <recommended goal>>]
 ```
 
-missing info가 없으면 `Needs first` section은 생략합니다. `goal-driven`이 선택되고 host가 `/goal` surface를 지원할 때만 `Goal command` section을 추가할 수 있습니다. 이 section은 recommendation이며, 특정 host command 존재의 증거를 대신하지 않습니다.
+missing info가 없으면 `Needs first` section은 생략합니다. `subagent-driven`이 역할/문맥 분리 때문에 선택된 경우에는 `Delegation plan` section을 추가할 수 있습니다. 이 section은 추천된 역할 분리를 설명하는 것이지, command 자체를 workflow executor로 바꾸지는 않습니다. `goal-driven`이 선택되고 host가 `/goal` surface를 지원할 때만 `Goal command` section을 추가할 수 있습니다. 이 section은 ready-to-run recommendation이며, 특정 host command 존재 자체를 증명하지는 않습니다.
 
 same repo/scope `gap packet`이 있으면 `/tk:route`는 그 packet의 source set, precedence, ambiguity, evidence type을 먼저 읽고 route 판단 근거로 재사용할 수 있습니다. packet이 없거나 stale하면 기존 read-only route 판단으로 fallback 합니다.
 

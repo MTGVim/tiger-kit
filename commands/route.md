@@ -38,7 +38,7 @@ route = explicit task + current constraints -> compare implementation routes -> 
 ## Canonical routes
 
 - `direct`: 현재 세션/에이전트가 바로 구현합니다.
-- `subagent-driven`: 역할을 나눠 subagent나 외부 coding agent에 위임하는 편이 낫습니다.
+- `subagent-driven`: 역할을 나눠 subagent나 외부 coding agent에 위임하는 편이 낫습니다. 특히 clean implementor context나 independent diff-only review가 중요할 때 유리합니다.
 - `goal-driven`: host가 지원하는 goal/task orchestration surface로 푸는 편이 낫습니다. 예: `/goal`.
 - `decision`: owner 확인이나 제품 판단이 먼저라서 구현 route를 지금 고정하면 안 됩니다.
 - `need-sot`: Source of Truth가 부족해서 route 판단보다 SoT 보강이 먼저입니다.
@@ -66,22 +66,33 @@ Needs first:
 
 First step:
 - <one concrete next step>
+[Delegation plan:
+- Architect: <goal / constraints / files / acceptance criteria / risks>
+- Implementor context: <narrow implementation brief only; no redesign or scope expansion>
+- Reviewer context: <diff + acceptance criteria only; assume the patch is wrong>
+- Verification: <smallest relevant checks>]
 [Goal command:
 - </goal <recommended goal>>]
 ```
 
-missing info가 없으면 `Needs first` section은 생략합니다. `goal-driven`이 선택되고 host가 `/goal` surface를 지원할 때만 `Goal command` section을 추가할 수 있습니다. 이 section은 ready-to-run recommendation이며, 특정 host command 존재 자체를 증명하지는 않습니다.
+missing info가 없으면 `Needs first` section은 생략합니다. `subagent-driven`이 역할/문맥 분리 때문에 선택된 경우에는 `Delegation plan` section을 추가할 수 있습니다. 이 section은 추천된 역할 분리를 설명하는 것이지, command 자체를 workflow executor로 바꾸지는 않습니다. `goal-driven`이 선택되고 host가 `/goal` surface를 지원할 때만 `Goal command` section을 추가할 수 있습니다. 이 section은 ready-to-run recommendation이며, 특정 host command 존재 자체를 증명하지는 않습니다.
 
 가능하면 `direct`, `subagent-driven`, `goal-driven` 세 route를 모두 짧게 비교하되, 억지 균형을 맞추지는 않습니다. 분명히 안 맞는 route는 한 줄로 빨리 제외해도 됩니다.
 
 ## Decision policy
 
-1. task의 범위가 작고 file-local이며 명확하면 `direct`를 우선 검토합니다.
-2. 병렬 탐색, 독립 검증, reviewer/implementer 분리가 유리하면 `subagent-driven`을 우선 검토합니다.
+1. `direct`는 task가 순수 기계적 변경이고, file-local이며, 낮은 리스크이고, 의미 있는 설계 판단이 거의 없을 때만 우선 검토합니다.
+2. diff가 작더라도 아래 조건이면 `subagent-driven`을 우선 검토합니다.
+   - 메인 세션이 이미 긴 planning/design을 거쳤고 구현은 깨끗한 brief에서 다시 시작하는 편이 나을 때
+   - reviewer/implementer 분리가 self-review bias나 sunk-cost bias를 줄이는 데 도움이 될 때
+   - behavior, data flow, auth, permissions, billing, migrations, caching, concurrency, error handling 같은 리스크 경로를 건드릴 때
+   - 테스트가 약하거나 없어서 cold review가 route 품질을 높여줄 때
+   - 더 강한 모델은 설계, 더 빠른 모델은 구현처럼 역할 분리가 비용이나 품질 면에서 이득일 때
 3. 한 번의 patch보다 goal decomposition, status tracking, multi-step orchestration이 더 중요하면 `goal-driven`을 우선 검토합니다.
-4. Source of Truth가 없거나 owner decision이 없어서 route보다 전제 정리가 중요하면 `need-sot` 또는 `decision`을 선택합니다.
-5. same repo/scope `gap packet`이 있으면 source set, precedence, ambiguity, evidence type을 먼저 읽고 route 판단 근거로 재사용합니다. packet이 없거나 stale하면 기존 read-only evidence gather로 fallback 합니다.
-5. reject를 피하려고 command 밖 우회 문구를 시도하라고 유도하지 않습니다. 안 맞는 surface면 안 맞는다고 말하고 다른 route를 제안합니다.
+4. owner 확인이나 제품 판단이 먼저라서 구현 route를 지금 고정하면 안 되면 `decision`을 선택합니다.
+5. Source of Truth가 부족해서 route 판단보다 전제 보강이 먼저면 `need-sot`을 선택합니다.
+6. same repo/scope `gap packet`이 있으면 source set, precedence, ambiguity, evidence type을 먼저 읽고 route 판단 근거로 재사용합니다. packet이 없거나 stale하면 기존 read-only evidence gather로 fallback 합니다.
+7. reject를 피하려고 command 밖 우회 문구를 시도하라고 유도하지 않습니다. 안 맞는 surface면 안 맞는다고 말하고 다른 route를 제안합니다.
 
 repo-local helper surface가 보이면 `read-gap-packet`으로 same repo/scope packet을 읽고, 없으면 packet 없이 판단합니다.
 
