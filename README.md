@@ -9,7 +9,7 @@
 </p>
 
 TigerKit(`tk`, plugin namespace `/tk:*`)은 Claude Code용 경량 plugin입니다.
-SoT(Source of Truth)가 있으면 `/tk:gap`으로 현재 구현의 차이를 먼저 확인합니다. entrypoint가 헷갈리면 `/tk:help`, 다음 command 하나만 고르고 싶으면 `/tk:next`, 구현 route가 애매하면 `/tk:route`로 direct, subagent-driven, goal-driven 중 어떤 방식이 맞는지 얇게 정리합니다. 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 분류하고 repo-local/user-global guidance에 반영할 수 있습니다. path, URL, 현재 대화, notes, 또는 reflect candidate에서 skill을 바로 만들고 싶으면 `/tk:learn`을 씁니다. 또 구현 전 압박 검증은 `/tk:grill`(사용자가 답을 모른다고 **직접 말할 때만** 후보 최대 3개 제안 가능), guidance 감사/정비는 `/tk:grooming`, throwaway 검증은 `/tk:prototype`, 구조 리뷰는 `/tk:arch-review`, 충돌 해결은 `/tk:merge-conflict`, 세션 인계는 `/tk:handoff`, 저장된 handoff 재호출은 `/tk:handon`, draft 요구 문서화는 `/tk:to-prd`, draft issue 분해는 `/tk:to-issues`, merge 전 이해도 게이트는 `/tk:quiz`로 다룹니다. browser-verify 엔진은 번들 skill로 유지하고, `/tk:browser-verify`는 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/browser-verify/` profile을 읽는 direct QA / behavior verification surface입니다.
+SoT(Source of Truth)가 있으면 `/tk:gap`으로 현재 구현의 차이를 먼저 확인합니다. entrypoint가 헷갈리면 `/tk:help`, 다음 command 하나만 고르고 싶으면 `/tk:next`, 구현 route가 애매하면 `/tk:route`로 direct, subagent-driven, goal-driven 중 어떤 방식이 맞는지 얇게 정리합니다. 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 분류하고 repo-local/user-global guidance에 반영할 수 있습니다. path, URL, 현재 대화, notes, 또는 reflect candidate에서 skill을 바로 만들고 싶으면 `/tk:learn`을 씁니다. 또 구현 전 압박 검증은 `/tk:grill`(사용자가 답을 모른다고 **직접 말할 때만** 후보 최대 3개 제안 가능), guidance 감사/정비는 `/tk:grooming`, throwaway 검증은 `/tk:prototype`, 긴 작업 지도는 `/tk:wayfinder`, 구조 리뷰는 `/tk:arch-review`, 충돌 해결은 `/tk:merge-conflict`, 세션 인계는 `/tk:handoff`, 저장된 handoff 재호출은 `/tk:handon`, draft 요구 문서화는 `/tk:to-prd`, draft issue 분해는 `/tk:to-issues`, merge 전 이해도 게이트는 `/tk:quiz`로 다룹니다. browser-verify 엔진은 번들 skill로 유지하고, `/tk:browser-verify`는 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/browser-verify/` profile을 읽는 direct QA / behavior verification surface입니다.
 
 ```text
 Check the gap. Pick the route. Keep the learning. Materialize durable skills from reflect when needed.
@@ -26,7 +26,7 @@ Check the gap. Pick the route. Keep the learning. Materialize durable skills fro
 
 이후에는 필요할 때만 나머지 surface를 꺼내 쓰면 됩니다.
 
-- Practical: `/tk:grill`, `/tk:grooming`, `/tk:prototype`, `/tk:browser-verify`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:quiz`
+- Practical: `/tk:grill`, `/tk:grooming`, `/tk:prototype`, `/tk:browser-verify`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:quiz`, `/tk:wayfinder`
 - Output / navigation: `/tk:handoff`, `/tk:handon`, `/tk:to-prd`, `/tk:to-issues`, `/tk:next`
 
 ## Installation
@@ -45,7 +45,7 @@ claude plugin list --available --json
 claude plugin details tk
 ```
 
-설치 후 Claude Code를 다시 시작하고 `/tk:help`, `/tk:gap`, `/tk:route`, `/tk:next`, `/tk:quiz`, `/tk:reflect`, `/tk:learn`, `/tk:browser-verify`, `/tk:grill`, `/tk:grooming`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:handon`, `/tk:to-prd`, `/tk:to-issues` 명령을 사용합니다.
+설치 후 Claude Code를 다시 시작하고 `/tk:help`, `/tk:gap`, `/tk:route`, `/tk:next`, `/tk:quiz`, `/tk:reflect`, `/tk:learn`, `/tk:browser-verify`, `/tk:grill`, `/tk:grooming`, `/tk:prototype`, `/tk:wayfinder`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:handon`, `/tk:to-prd`, `/tk:to-issues` 명령을 사용합니다.
 
 ## Core guidance
 
@@ -58,6 +58,7 @@ claude plugin details tk
 - `/tk:grill`은 계획/설계/RFC를 수렴형 질문으로 압박 검증하고, 사용자가 답을 모른다고 **직접 말할 때만** 후보를 최대 3개까지 제안할 수 있습니다.
 - `/tk:grooming`은 guidance 파일을 report-only로 평가하고, 승인된 user-global 변경만 직접 반영하며 나머지는 suggestion-only로 남깁니다. `guidanceBudgetBytes`와 raw byte footprint를 같이 보고, archive/demotion은 승인 전까지 suggestion-only 입니다.
 - `/tk:prototype`은 UI 또는 logic/state 가설을 throwaway prototype으로 빨리 검증합니다.
+- `/tk:wayfinder`는 긴 작업의 shared map과 재개 힌트를 worktree-scoped file-only state로 남깁니다. compaction 직전 자동 handoff가 필요하면 `scripts/install-precompact-hook.sh`로 opt-in hook을 설치합니다.
 - `/tk:arch-review`는 반복 마찰, 경계 붕괴, ownership 혼선 같은 구조 문제를 report-only로 검토합니다.
 - `/tk:merge-conflict`는 merge/rebase conflict를 ours/theirs intent 기준으로 해결합니다.
 - `/tk:handoff`는 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 handoff를 만듭니다.
@@ -84,6 +85,7 @@ claude plugin details tk
 | `/tk:grill` | 계획, 설계, RFC, 개선안을 수렴형 질문으로 압박 검증하고, 사용자가 답을 모른다고 **직접 말할 때만** 후보를 최대 3개까지 제안할 수 있습니다. | inline questioning + compact summary |
 | `/tk:grooming` | guidance 파일을 report-only로 평가하고, 승인된 user-global 변경만 직접 반영하며 나머지는 suggestion-only로 남깁니다. | guidance audit + compact summary |
 | `/tk:prototype` | UI 또는 logic/state 가설을 throwaway prototype으로 빠르게 검증합니다. | prototype files + compact summary |
+| `/tk:wayfinder` | 긴 작업의 shared map과 reopen hint를 current-first artifact로 정리합니다. | worktree-scoped wayfinder map under repo-scoped `~/.tigerkit` root |
 | `/tk:arch-review` | 경계, ownership, coupling, 반복 마찰을 evidence-first로 검토하는 report-only 구조 리뷰입니다. | inline architecture review |
 | `/tk:merge-conflict` | merge/rebase conflict를 상태 확인 → intent 추적 → 검증 순서로 해결합니다. | conflict resolution summary |
 | `/tk:browser-verify` | 번들된 browser-verify 엔진 skill을 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/browser-verify/` profile과 함께 사용하는 direct QA / behavior verification surface입니다. | direct QA summary |
@@ -102,6 +104,8 @@ claude plugin details tk
 ```text
 /tk:gap "PRD와 현재 구현 차이 봐줘" --target src/auth
 /tk:route "결제 모달 scroll 복구 버그 수정"
+/tk:next "이제 뭐부터 해야 하는지 1개만 골라줘"
+/tk:wayfinder "issue 164 긴 작업 지도 갱신해줘"
 /tk:reflect --target repo-local
 /tk:learn "우리가 방금 한 작업"
 /tk:reflect --target repo-local --apply=false
@@ -109,6 +113,7 @@ claude plugin details tk
 /tk:grill "이 RFC 허점 짚어줘"
 /tk:grooming --scope all
 /tk:prototype "이 모달 상태 전이를 빠르게 검증해줘" --logic
+/tk:quiz "머지 전 이해도 점검해줘"
 /tk:arch-review "이 모듈 경계가 왜 자꾸 새는지 검토해줘"
 /tk:merge-conflict
 /tk:handoff "issue 138 skill-first rollout 상태 넘겨줘"
@@ -169,6 +174,8 @@ claude plugin details tk
 - `login.local.md`는 tracked repo 밖 `~/.tigerkit` 아래에 두는 local override입니다.
 ## Operational Docs
 
+- [Workflow matrix](docs/workflow-matrix.md)
+- [Operator follow-ons](docs/operator-environment-followons.md)
 - [Usage](.tigerkit/docs/usage.md)
 - [Output Contract](.tigerkit/docs/output-contract.md)
 - [Storage boundary](.tigerkit/docs/storage-boundary.md)
@@ -198,6 +205,12 @@ Active generated state는 project repository 밖 `~/.tigerkit/` 아래의 file-o
   - `~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/prd/current.md`
 - `/tk:to-issues` draft:
   - `~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/issues/current.md`
+- decision ledger draft:
+  - `~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/ledger/current.md`
+- `/tk:quiz` draft:
+  - `~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/quiz/current.md`
+- `/tk:wayfinder` map:
+  - `~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/wayfinder/current.md`
 - `/tk:browser-verify` profile:
   - `~/.tigerkit/repos/<repo-key>/browser-verify/env.md`
   - `~/.tigerkit/repos/<repo-key>/browser-verify/login.md`

@@ -161,6 +161,17 @@
         "/tk:route",
         "/tk:next"
       ]
+    },
+    {
+      "command": "/tk:wayfinder",
+      "path": "commands/wayfinder.md",
+      "description": "shared map을 정리합니다.",
+      "argument_hint": "\"[goal or map update]\" [--print-only]",
+      "flow": [
+        "/tk:route",
+        "/tk:next",
+        "/tk:handoff"
+      ]
     }
   ]
 }

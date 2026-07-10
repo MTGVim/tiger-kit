@@ -1,7 +1,7 @@
 {
-  "skill_name": "tiger-kit-help-gap-route-next-quiz-reflect-learn-browser-verify-grill-grooming-prototype-arch-review-merge-conflict-handoff-handon-to-prd-to-issues-core",
+  "skill_name": "tiger-kit-help-gap-route-next-quiz-reflect-learn-browser-verify-grill-grooming-prototype-wayfinder-arch-review-merge-conflict-handoff-handon-to-prd-to-issues-core",
   "command_surface": {
-    "surface_model": "TigerKit exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts. Active command surface is /tk:help, /tk:gap, /tk:route, /tk:next, /tk:quiz, /tk:reflect, /tk:learn, /tk:browser-verify, /tk:grill, /tk:grooming, /tk:prototype, /tk:arch-review, /tk:merge-conflict, /tk:handoff, /tk:handon, /tk:to-prd, and /tk:to-issues.",
+    "surface_model": "TigerKit exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts. Active command surface is /tk:help, /tk:gap, /tk:route, /tk:next, /tk:quiz, /tk:reflect, /tk:learn, /tk:browser-verify, /tk:grill, /tk:grooming, /tk:prototype, /tk:wayfinder, /tk:arch-review, /tk:merge-conflict, /tk:handoff, /tk:handon, /tk:to-prd, and /tk:to-issues.",
     "core_commands": [
       "/tk:help",
       "/tk:gap",
@@ -14,6 +14,7 @@
       "/tk:grill",
       "/tk:grooming",
       "/tk:prototype",
+      "/tk:wayfinder",
       "/tk:arch-review",
       "/tk:merge-conflict",
       "/tk:handoff",
@@ -33,9 +34,9 @@
   "evals": [
     {
       "id": 0,
-      "name": "plugin-version-and-command-manifest-help-gap-route-next-quiz-reflect-browser-verify-plus-phase1-and-conditional",
+      "name": "plugin-version-and-command-manifest-help-gap-route-next-quiz-reflect-browser-verify-wayfinder-plus-phase1-and-conditional",
       "prompt": "Evaluate TigerKit active command surface and plugin packaging. Do not write files.",
-      "expected_output": "Should list /tk:help, /tk:gap, /tk:route, /tk:next, /tk:quiz, /tk:reflect, /tk:learn, /tk:browser-verify, /tk:grill, /tk:grooming, /tk:prototype, /tk:arch-review, /tk:merge-conflict, /tk:handoff, /tk:handon, /tk:to-prd, and /tk:to-issues as the active commands. Should state /tk:help is a generated help-map navigation surface, /tk:next is a one-command conductor surface, /tk:quiz is a merge-prep comprehension gate, /tk:learn is a source-to-skill surface with preview-default and skill-only write boundary. Should state /tk:route is a decision/brainstorming surface, not a runner or autopilot, and may emit a copyable execution contract with ledger path. Should state /tk:reflect is the durable promotion router with repo-local/user-global default apply and explicit skill materialize mode, /tk:grooming is a report-first guidance audit surface with user-global-only direct apply, /tk:prototype is a throwaway validation surface, /tk:arch-review is a report-only architecture review surface, /tk:merge-conflict is a conflict-resolution surface, /tk:handoff is a worktree-scoped current-first handoff surface under repo-scoped ~/.tigerkit, /tk:handon is a read-only current-first handoff reopen surface under repo-scoped ~/.tigerkit, /tk:to-prd is a worktree-scoped current-first draft-only PRD surface under repo-scoped ~/.tigerkit, /tk:to-issues is a worktree-scoped current-first vertical-slice issue draft surface under repo-scoped ~/.tigerkit, and /tk:browser-verify is a direct QA / behavior verification surface.",
+      "expected_output": "Should list /tk:help, /tk:gap, /tk:route, /tk:next, /tk:quiz, /tk:reflect, /tk:learn, /tk:browser-verify, /tk:grill, /tk:wayfinder, /tk:grooming, /tk:prototype, /tk:arch-review, /tk:merge-conflict, /tk:handoff, /tk:handon, /tk:to-prd, and /tk:to-issues as the active commands. Should state /tk:help is a generated help-map navigation surface, /tk:next is a one-command conductor surface, /tk:quiz is a merge-prep comprehension gate, /tk:learn is a source-to-skill surface with preview-default and skill-only write boundary. Should state /tk:route is a decision/brainstorming surface, not a runner or autopilot, and may emit a copyable execution contract with ledger path. Should state /tk:reflect is the durable promotion router with repo-local/user-global default apply and explicit skill materialize mode, /tk:grooming is a report-first guidance audit surface with user-global-only direct apply, /tk:prototype is a throwaway validation surface, /tk:arch-review is a report-only architecture review surface, /tk:merge-conflict is a conflict-resolution surface, /tk:handoff is a worktree-scoped current-first handoff surface under repo-scoped ~/.tigerkit, /tk:handon is a read-only current-first handoff reopen surface under repo-scoped ~/.tigerkit, /tk:to-prd is a worktree-scoped current-first draft-only PRD surface under repo-scoped ~/.tigerkit, /tk:to-issues is a worktree-scoped current-first vertical-slice issue draft surface under repo-scoped ~/.tigerkit, and /tk:browser-verify is a direct QA / behavior verification surface. Should state /tk:wayfinder is a current-first shared-map surface for long-running work recovery.",
       "files": [
         ".claude-plugin/plugin.json",
         "README.md",
@@ -45,7 +46,8 @@
         "commands/route.md",
         "commands/next.md",
         "commands/quiz.md",
-        "commands/reflect.md"
+        "commands/reflect.md",
+        "commands/wayfinder.md"
       ],
       "expectations": [
         "Lists /tk:help",
@@ -56,6 +58,7 @@
         "Lists /tk:reflect",
         "Lists /tk:learn",
         "Lists /tk:browser-verify",
+        "Lists /tk:wayfinder",
         "Lists /tk:grill",
         "Lists /tk:grooming",
         "Lists /tk:prototype",
@@ -81,7 +84,8 @@
         "States /tk:to-prd is worktree-scoped current-first draft-only PRD surface under repo-scoped ~/.tigerkit",
         "States /tk:to-issues is worktree-scoped current-first vertical-slice issue draft surface under repo-scoped ~/.tigerkit",
         "States /tk:browser-verify is direct QA / behavior verification surface",
-        "States /tk:learn is source-to-skill surface"
+        "States /tk:learn is source-to-skill surface",
+        "States /tk:wayfinder is current-first shared-map surface"
       ]
     },
     {
@@ -858,6 +862,65 @@
         "Keeps publish or merge side effects out of scope"
       ],
       "id": 44
+    },
+    {
+      "name": "wayfinder-persists-current-first-work-map",
+      "prompt": "Evaluate /tk:wayfinder behavior. Do not write files.",
+      "expected_output": "Should define /tk:wayfinder as a long-running work map surface that writes a current-first artifact under ~/.tigerkit for the current worktree. It should capture the current goal, current slice, blocked-by or blocking edges, recent decisions, next concrete step, and reopen hints without pretending the map is implementation proof or an external tracker item.",
+      "files": [
+        "commands/wayfinder.md",
+        "skills/wayfinder/SKILL.md",
+        "scripts/tigerkit_state.py",
+        ".tigerkit/docs/output-contract.md",
+        "README.md",
+        ".tigerkit/docs/usage.md"
+      ],
+      "expectations": [
+        "Defines /tk:wayfinder as long-running work map",
+        "Uses current-first artifact under ~/.tigerkit",
+        "Captures current goal and current slice",
+        "Captures blocked-by or blocking edges",
+        "Captures next concrete step and reopen hints",
+        "Does not pretend map is implementation proof"
+      ],
+      "id": 45
+    },
+    {
+      "name": "to-prd-interview-reference-slot-and-to-issues-blocking-edges",
+      "prompt": "Evaluate TigerKit planning-surface upgrades. Do not write files.",
+      "expected_output": "Should state that /tk:to-prd supports opt-in interview mode with one question at a time and an optional reference slot, while remaining draft-only by default. It should also state that /tk:to-issues may record both blocked-by and blocking-edge relationships rather than flattening dependency notes into one vague bucket.",
+      "files": [
+        "commands/to-prd.md",
+        "commands/to-issues.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "States /tk:to-prd interview mode is opt-in",
+        "States /tk:to-prd asks one question at a time",
+        "States /tk:to-prd has optional reference slot",
+        "States /tk:to-issues supports blocked-by",
+        "States /tk:to-issues supports blocking-edge"
+      ],
+      "id": 46
+    },
+    {
+      "name": "prototype-wayfinder-and-precompact-opt-in-boundary",
+      "prompt": "Evaluate TigerKit prototype and precompact recovery surfaces. Do not write files.",
+      "expected_output": "Should describe /tk:prototype UI guidance as radically different variants with a floating switcher and logic guidance as portable pure logic isolation. It should also treat the precompact hook as opt-in via an install script rather than silently auto-installing hooks.",
+      "files": [
+        "commands/prototype.md",
+        "scripts/install-precompact-hook.sh",
+        "hooks/precompact-handoff.py",
+        "README.md"
+      ],
+      "expectations": [
+        "States prototype UI uses radically different variants",
+        "States prototype UI may use floating switcher",
+        "States prototype logic isolates portable pure logic module",
+        "States precompact hook is opt-in",
+        "Uses install script rather than silent auto-install"
+      ],
+      "id": 47
     }
   ]
 }

@@ -9,7 +9,7 @@
 ## 핵심 모델
 
 ```text
-TigerKit = help + gap + route + next + quiz + reflect + learn + grill + grooming + prototype + arch-review + merge-conflict + handoff + handon + to-prd + to-issues + browser-verify
+TigerKit = help + gap + route + next + quiz + reflect + learn + grill + grooming + prototype + wayfinder + arch-review + merge-conflict + handoff + handon + to-prd + to-issues + browser-verify
 ```
 
 - `help`: 지금 어떤 command를 먼저 열어야 하는지 정리하는 navigation surface입니다.
@@ -22,6 +22,7 @@ TigerKit = help + gap + route + next + quiz + reflect + learn + grill + grooming
 - `grill`: 계획, 설계, RFC, 개선안을 수렴형 질문으로 압박 검증하고, 사용자가 답을 모른다고 **직접 말할 때만** 후보를 최대 3개까지 제안할 수 있습니다.
 - `grooming`: guidance 파일을 report-only로 평가하고, 승인된 user-global 변경만 직접 반영하며 나머지는 suggestion-only로 남깁니다. `guidanceBudgetBytes` budget, footprint, archive/demotion 제안을 함께 다룹니다.
 - `prototype`: UI 또는 logic/state 가설을 throwaway prototype으로 빠르게 검증합니다.
+- `wayfinder`: 긴 작업의 shared map과 reopen hint를 worktree-scoped current-first artifact로 남깁니다.
 - `arch-review`: boundary, ownership, coupling, 반복 마찰을 evidence-first로 검토하는 report-only architecture review입니다.
 - `merge-conflict`: merge/rebase conflict를 ours/theirs intent 기준으로 해결합니다.
 - `handoff`: 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 handoff를 만듭니다.
@@ -30,7 +31,7 @@ TigerKit = help + gap + route + next + quiz + reflect + learn + grill + grooming
 - `to-issues`: plan/PRD를 independently grabbable vertical-slice issue draft로 분해합니다.
 - `browser-verify`: 번들된 browser-verify 엔진 skill을 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/browser-verify/` profile과 함께 사용하는 direct QA / behavior verification surface입니다.
 
-TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 help, gap, route, next, quiz, reflect, learn, grill, grooming, prototype, arch-review, merge-conflict, handoff, handon, to-prd, to-issues, browser-verify 중심의 가벼운 surface를 제공합니다.
+TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 help, gap, route, next, quiz, reflect, learn, grill, grooming, prototype, wayfinder, arch-review, merge-conflict, handoff, handon, to-prd, to-issues, browser-verify 중심의 가벼운 surface를 제공합니다.
 
 ## Core guidance
 
@@ -45,6 +46,7 @@ TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 help, ga
 - `/tk:grill`은 질문 루프로 전제를 압박 검증하는 surface이고, 사용자가 답을 모른다고 **직접 말할 때만** 후보를 최대 3개까지 제안할 수 있습니다.
 - `/tk:grooming`은 guidance 파일을 report-only로 평가하고, 승인된 user-global 변경만 direct apply하며 나머지는 suggestion-only로 남깁니다.
 - `/tk:prototype`은 throwaway 검증용 surface입니다.
+- `/tk:wayfinder`는 긴 작업의 shared map과 reopen hint를 current-first artifact로 남깁니다.
 - `/tk:arch-review`는 evidence-first 구조 리뷰 surface입니다.
 - `/tk:merge-conflict`는 conflict 해결 전용 surface입니다.
 - `/tk:handoff`는 repo-scoped `~/.tigerkit` root 아래 worktree-scoped current-first handoff 생성 surface입니다.
@@ -78,6 +80,7 @@ TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 help, ga
 | `/tk:grill` | 계획, 설계, RFC, 개선안을 수렴형 질문으로 압박 검증하고, 사용자가 답을 모른다고 **직접 말할 때만** 후보를 최대 3개까지 제안할 수 있습니다. | inline questioning + compact summary |
 | `/tk:grooming` | guidance 파일을 report-only로 평가하고, 승인된 user-global 변경만 direct apply하며 나머지는 suggestion-only로 남깁니다. | guidance audit + compact summary |
 | `/tk:prototype` | UI 또는 logic/state 가설을 throwaway prototype으로 검증합니다. | prototype files + compact summary |
+| `/tk:wayfinder` | 긴 작업의 shared map과 reopen hint를 current-first artifact로 정리합니다. | worktree-scoped wayfinder map under repo-scoped `~/.tigerkit` root |
 | `/tk:arch-review` | boundary, ownership, coupling, 반복 마찰을 evidence-first로 검토하는 report-only architecture review입니다. | inline architecture review |
 | `/tk:merge-conflict` | merge/rebase conflict를 상태 확인 → intent 추적 → 검증 순서로 해결합니다. | conflict resolution summary |
 | `/tk:handoff` | 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 handoff를 만듭니다. | worktree-scoped handoff artifact under repo-scoped `~/.tigerkit` root |

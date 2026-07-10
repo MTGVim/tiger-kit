@@ -334,7 +334,7 @@ def cmd_usage_summary(args: argparse.Namespace) -> int:
     common_git_dir_value = common_git_dir(repo_root)
     root = state_root()
     draft_root = root / "repos" / repo_key_value / "worktrees" / worktree_key_value
-    kinds = ["handoffs", "prd", "issues", "ledger", "quiz"]
+    kinds = ["handoffs", "prd", "issues", "ledger", "quiz", "wayfinder"]
     summary: dict[str, Any] = {}
     for kind in kinds:
         current_path = draft_root / kind / "current.md"
@@ -472,7 +472,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_draft_paths = sub.add_parser("draft-paths", help="Print current-first draft artifact paths under ~/.tigerkit")
     p_draft_paths.add_argument("--repo-root", help="Repo root or working directory", default=None)
-    p_draft_paths.add_argument("--kind", choices=["handoffs", "prd", "issues", "ledger", "quiz"], required=True)
+    p_draft_paths.add_argument("--kind", choices=["handoffs", "prd", "issues", "ledger", "quiz", "wayfinder"], required=True)
     p_draft_paths.set_defaults(func=cmd_draft_paths)
 
     p_usage_summary = sub.add_parser("usage-summary", help="Print worktree-scoped current artifact usage summary")

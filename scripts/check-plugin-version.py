@@ -75,6 +75,7 @@ def main() -> int:
         "./commands/grill.md",
         "./commands/grooming.md",
         "./commands/prototype.md",
+        "./commands/wayfinder.md",
         "./commands/arch-review.md",
         "./commands/merge-conflict.md",
         "./commands/handoff.md",
