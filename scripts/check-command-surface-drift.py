@@ -125,6 +125,24 @@ REHOMED_BOUNDARY_GUARDS = {
     ROOT / "commands" / "grooming.md": ["신규 guidance를 임의 추가하지 않음", "reflect/learn 역할 대체 금지"],
 }
 
+WRAPPER_SKILL_COMMAND_OWNERS = {
+    ROOT / "skills" / "arch-review" / "SKILL.md": "commands/arch-review.md",
+    ROOT / "skills" / "gap" / "SKILL.md": "commands/gap.md",
+    ROOT / "skills" / "grill" / "SKILL.md": "commands/grill.md",
+    ROOT / "skills" / "grooming" / "SKILL.md": "commands/grooming.md",
+    ROOT / "skills" / "handoff" / "SKILL.md": "commands/handoff.md",
+    ROOT / "skills" / "handon" / "SKILL.md": "commands/handon.md",
+    ROOT / "skills" / "learn" / "SKILL.md": "commands/learn.md",
+    ROOT / "skills" / "merge-conflict" / "SKILL.md": "commands/merge-conflict.md",
+    ROOT / "skills" / "prototype" / "SKILL.md": "commands/prototype.md",
+    ROOT / "skills" / "reflect" / "SKILL.md": "commands/reflect.md",
+    ROOT / "skills" / "route" / "SKILL.md": "commands/route.md",
+    ROOT / "skills" / "to-issues" / "SKILL.md": "commands/to-issues.md",
+    ROOT / "skills" / "to-prd" / "SKILL.md": "commands/to-prd.md",
+}
+
+WRAPPER_SKILL_TOTAL_BUDGET = 11000
+
 OUTPUT_SYNC_TARGETS = {
     "gap": "## `/tk:gap` Output Contract",
     "route": "## `/tk:route` Output Contract",
@@ -265,6 +283,21 @@ def check_shared_boundary_reference() -> None:
                 fail(f"{path.relative_to(ROOT)} missing re-homed command-specific boundary: {line!r}")
 
 
+def check_wrapper_skill_thinness() -> None:
+    total_bytes = 0
+    for path, command_owner in WRAPPER_SKILL_COMMAND_OWNERS.items():
+        text = path.read_text()
+        total_bytes += len(text.encode("utf-8"))
+        if command_owner not in text:
+            fail(f"{path.relative_to(ROOT)} missing canonical command owner reference {command_owner!r}")
+        if "얇은 wrapper" not in text:
+            fail(f"{path.relative_to(ROOT)} missing thin-wrapper marker")
+    if total_bytes > WRAPPER_SKILL_TOTAL_BUDGET:
+        fail(
+            f"wrapper skill byte budget exceeded: {total_bytes} > {WRAPPER_SKILL_TOTAL_BUDGET}"
+        )
+
+
 def extract_first_fenced_block_after_heading(text: str, heading: str) -> str:
     lines = text.splitlines()
     try:
@@ -356,6 +389,7 @@ def main() -> int:
     check_no_inline_state_bootstrap()
     check_helper_examples_are_repo_independent()
     check_shared_boundary_reference()
+    check_wrapper_skill_thinness()
     check_command_output_block_shape()
     check_output_contract_helper_sync()
     print("command surface drift ok")

@@ -5,45 +5,15 @@ description: grill 질문 트리거입니다.
 
 # Grill
 
-애매한 계획이나 설계를 바로 구현으로 밀지 않고, 빠진 전제와 리스크를 드러내는 skill입니다.
+`/tk:grill` wrapper skill입니다. 상세 계약, output contract, helper/path semantics의 source of truth는 `commands/grill.md`입니다.
 
-## Goal
+## Use when
 
-- open question을 줄입니다.
-- 이미 정한 내용은 다시 묻지 않습니다.
-- 코드베이스에서 바로 확인 가능한 것은 직접 확인합니다.
-- 구현 전에 `결정사항 / 가정 / 남은 리스크`를 남깁니다.
-- 사용자가 답을 모른다고 할 때는 막히지 않도록 후보를 최대 3개까지 제안할 수 있습니다.
+- 계획, 설계, RFC를 바로 구현으로 밀기 전에 한 번 압박 검증해야 할 때
+- 질문은 유지하되, 사용자가 모른다고 말했을 때만 후보를 좁혀야 할 때
 
-## Process
+## Wrapper rules
 
-1. 먼저 현재 repo와 관련 파일에서 직접 확인 가능한 사실을 읽습니다.
-2. 아직 확인되지 않은 전제만 질문합니다.
-3. 질문은 한 번에 하나씩, 짧고 날카롭게 던집니다.
-4. 사용자가 답을 모른다고 직접 말하면, 질문은 유지하되 브레인스토밍으로 후보를 최대 3개까지 제안할 수 있습니다.
-   - 후보는 확정 답이 아니라 선택지/가설로 표현합니다.
-   - 각 후보에는 짧은 근거나 적용 상황을 붙입니다.
-   - high-risk owner decision은 후보 제안만으로 확정하지 않습니다.
-5. 이미 답한 내용은 반복 질문하지 않습니다.
-6. 5회 이상 길어지면 hint를 주고, 가정하고 진행할지 멈출지 제안합니다.
-7. 사용자가 `멈춰`, `그만`, `가정하고 가`, `그냥 진행`이라고 하면 즉시 중단합니다.
-8. 끝날 때는 아래 세 묶음으로 요약합니다.
-   - 결정사항
-   - 가정
-   - 남은 리스크
-
-## Boundaries
-
-- preview-only
-- source 수정 금지
-- 자동 문서 수정 금지
-- hard cap 5문항 금지
-- 생각나는 걸 다 묻는 interview mode 금지
-- 후보 제안은 사용자가 모른다고 할 때만 허용하고, 질문 surface를 추측 surface로 바꾸지 않습니다.
-
-## Good use cases
-
-- RFC 검토 전
-- 구현 범위가 흐릿할 때
-- plan/PRD가 과하게 낙관적일 때
-- route를 정하기 전 전제 검증이 필요할 때
+- 이 skill은 `commands/grill.md`를 대체하지 않고, command intent를 빠르게 잡는 얇은 wrapper입니다.
+- artifact path / apply boundary / helper invocation / receipt shape는 `commands/grill.md`를 그대로 따릅니다.
+- command contract에 이미 있는 절차와 경계를 다시 장문으로 복제하지 않습니다.
