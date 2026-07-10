@@ -1,7 +1,7 @@
 {
   "name": "tk",
   "description": "TigerKit `/tk:*` command plugin입니다.",
-  "version": "16.5.13",
+  "version": "16.5.14",
   "author": {
     "name": "MTGVim"
   },
