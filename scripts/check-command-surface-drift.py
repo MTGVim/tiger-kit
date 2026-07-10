@@ -27,6 +27,7 @@ EXPECTED_ACTIVE_COMMANDS = {
     "./commands/arch-review.md",
     "./commands/merge-conflict.md",
     "./commands/handoff.md",
+    "./commands/handon.md",
     "./commands/to-prd.md",
     "./commands/to-issues.md",
 }
@@ -43,6 +44,7 @@ README_COMMANDS = {
     "/tk:arch-review",
     "/tk:merge-conflict",
     "/tk:handoff",
+    "/tk:handon",
     "/tk:to-prd",
     "/tk:to-issues",
 }
@@ -74,6 +76,7 @@ COMMAND_OUTPUT_PATHS = {
     "arch-review": ROOT / "commands" / "arch-review.md",
     "merge-conflict": ROOT / "commands" / "merge-conflict.md",
     "handoff": ROOT / "commands" / "handoff.md",
+    "handon": ROOT / "commands" / "handon.md",
     "to-prd": ROOT / "commands" / "to-prd.md",
     "to-issues": ROOT / "commands" / "to-issues.md",
 }
@@ -90,6 +93,7 @@ OUTPUT_SYNC_TARGETS = {
     "arch-review": "## `/tk:arch-review` Output Contract",
     "merge-conflict": "## `/tk:merge-conflict` Output Contract",
     "handoff": "## `/tk:handoff` Output Contract",
+    "handon": "## `/tk:handon` Output Contract",
     "to-prd": "## `/tk:to-prd` Output Contract",
     "to-issues": "## `/tk:to-issues` Output Contract",
 }
@@ -104,6 +108,7 @@ TEXT_OUTPUT_COMMANDS_NO_NONE = {
     "arch-review",
     "merge-conflict",
     "handoff",
+    "handon",
     "to-prd",
     "to-issues",
     "browser-verify",

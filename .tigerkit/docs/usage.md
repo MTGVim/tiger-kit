@@ -9,7 +9,7 @@
 ## 핵심 모델
 
 ```text
-TigerKit = gap + route + reflect + learn + grill + grooming + prototype + arch-review + merge-conflict + handoff + to-prd + to-issues + browser-verify
+TigerKit = gap + route + reflect + learn + grill + grooming + prototype + arch-review + merge-conflict + handoff + handon + to-prd + to-issues + browser-verify
 ```
 
 - `gap`: SoT와 Current Implementation의 차이를 한 번 분석합니다. evidence-first로 읽고 source conflict나 근거 부족은 `ambiguous`로 남깁니다.
@@ -22,11 +22,12 @@ TigerKit = gap + route + reflect + learn + grill + grooming + prototype + arch-r
 - `arch-review`: boundary, ownership, coupling, 반복 마찰을 evidence-first로 검토하는 report-only architecture review입니다.
 - `merge-conflict`: merge/rebase conflict를 ours/theirs intent 기준으로 해결합니다.
 - `handoff`: 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 handoff를 만듭니다.
+- `handon`: 현재 repo/worktree의 저장된 handoff를 다시 읽습니다.
 - `to-prd`: 현재 대화나 요구사항을 draft-only PRD로 정리합니다.
 - `to-issues`: plan/PRD를 independently grabbable vertical-slice issue draft로 분해합니다.
 - `browser-verify`: 번들된 browser-verify 엔진 skill을 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/browser-verify/` profile과 함께 사용하는 direct QA / behavior verification surface입니다.
 
-TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 gap, route, reflect, learn, grill, grooming, prototype, arch-review, merge-conflict, handoff, to-prd, to-issues, browser-verify 중심의 가벼운 surface를 제공합니다.
+TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 gap, route, reflect, learn, grill, grooming, prototype, arch-review, merge-conflict, handoff, handon, to-prd, to-issues, browser-verify 중심의 가벼운 surface를 제공합니다.
 
 ## Core guidance
 
@@ -42,6 +43,7 @@ TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 gap, rou
 - `/tk:arch-review`는 evidence-first 구조 리뷰 surface입니다.
 - `/tk:merge-conflict`는 conflict 해결 전용 surface입니다.
 - `/tk:handoff`는 repo-scoped `~/.tigerkit` root 아래 worktree-scoped current-first handoff 생성 surface입니다.
+- `/tk:handon`은 repo-scoped `~/.tigerkit` root 아래 worktree-scoped current-first handoff read surface입니다.
 - `/tk:to-prd`는 draft-only PRD 생성 surface입니다.
 - `/tk:to-issues`는 vertical-slice issue draft 생성 surface입니다.
 - `/tk:browser-verify`는 번들된 browser-verify 엔진 skill을 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/browser-verify/` profile과 함께 사용하는 direct QA / behavior verification surface입니다.
@@ -60,6 +62,7 @@ TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 gap, rou
 | `/tk:arch-review` | boundary, ownership, coupling, 반복 마찰을 evidence-first로 검토하는 report-only architecture review입니다. | inline architecture review |
 | `/tk:merge-conflict` | merge/rebase conflict를 상태 확인 → intent 추적 → 검증 순서로 해결합니다. | conflict resolution summary |
 | `/tk:handoff` | 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 handoff를 만듭니다. | worktree-scoped handoff artifact under repo-scoped `~/.tigerkit` root |
+| `/tk:handon` | 현재 repo/worktree의 최신 handoff draft를 다시 읽습니다. | read-only current handoff reopen under repo-scoped `~/.tigerkit` root |
 | `/tk:to-prd` | 현재 대화나 요구사항을 draft-only PRD로 정리합니다. | worktree-scoped PRD draft under repo-scoped `~/.tigerkit` root |
 | `/tk:to-issues` | plan/PRD를 independently grabbable vertical-slice issue draft로 분해합니다. | worktree-scoped issue draft set under repo-scoped `~/.tigerkit` root |
 | `/tk:browser-verify` | browser-verify 엔진 skill을 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/browser-verify/` profile과 함께 사용하는 direct QA / behavior verification surface입니다. | direct QA summary |
@@ -79,6 +82,7 @@ TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 gap, rou
 /tk:arch-review "이 모듈 경계가 왜 자꾸 새는지 검토해줘"
 /tk:merge-conflict
 /tk:handoff "다음 세션용 handoff 만들어줘"
+/tk:handon "남은 작업만 짧게"
 /tk:to-prd "이 요구를 PRD로 정리해줘"
 /tk:to-issues "이 PRD를 issue draft로 쪼개줘"
 /tk:reflect --target skill --apply=true --desc "이 CDP 검증 루틴을 skill로 굳혀줘"
@@ -152,6 +156,12 @@ repo-local, repo-shared, user-global, skill, hook, command, agent, discard
 - 기본은 repo-scoped `~/.tigerkit` root 아래 worktree-scoped current-first write입니다.
 - Goal / Current state / Decisions / Changed files / Commands / Verification / Remaining tasks / Open questions / Risks / Suggested next skills / Do-not-repeat context를 포함합니다.
 
+## Handon model
+
+- 기본은 repo-scoped `~/.tigerkit` root 아래 worktree-scoped current-first read입니다.
+- source of truth는 `handoffs/current.md` 저장본입니다.
+- handoff가 없으면 missing path를 숨기지 않습니다.
+
 ## To-PRD model
 
 - 기본은 draft-only 입니다.
@@ -177,7 +187,7 @@ repo-local, repo-shared, user-global, skill, hook, command, agent, discard
 
 ## Generated state
 
-Active TigerKit runtime generated state는 project repository 밖 `~/.tigerkit` 아래의 file-only state입니다. repo-scoped draft artifact는 `~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/` 아래의 handoff / prd / issues current 경로를 사용하고, `/tk:browser-verify` profile은 `~/.tigerkit/repos/<repo-key>/browser-verify/`를 사용합니다.
+Active TigerKit runtime generated state는 project repository 밖 `~/.tigerkit` 아래의 file-only state입니다. repo-scoped draft artifact는 `~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/` 아래의 handoff / prd / issues current 경로를 사용하고, `/tk:handon`은 그 handoff current 경로를 읽습니다. `/tk:browser-verify` profile은 `~/.tigerkit/repos/<repo-key>/browser-verify/`를 사용합니다.
 
 주요 active path:
 

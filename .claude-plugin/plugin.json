@@ -1,7 +1,7 @@
 {
   "name": "tk",
-  "description": "SoT gap, route, reflect, learn, browser-verify와 grill/grooming/prototype/merge-conflict/handoff/to-prd/to-issues/arch-review를 제공하는 TigerKit Claude Code 플러그인입니다.",
-  "version": "16.5.12",
+  "description": "SoT gap, route, reflect, learn, browser-verify와 grill/grooming/prototype/merge-conflict/handoff/handon/to-prd/to-issues/arch-review를 제공하는 TigerKit Claude Code 플러그인입니다.",
+  "version": "16.5.13",
   "author": {
     "name": "MTGVim"
   },
@@ -16,6 +16,7 @@
     "./commands/prototype.md",
     "./commands/merge-conflict.md",
     "./commands/handoff.md",
+    "./commands/handon.md",
     "./commands/to-prd.md",
     "./commands/to-issues.md",
     "./commands/arch-review.md"

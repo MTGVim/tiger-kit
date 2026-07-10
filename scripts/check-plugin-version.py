@@ -75,6 +75,7 @@ def main() -> int:
         "./commands/arch-review.md",
         "./commands/merge-conflict.md",
         "./commands/handoff.md",
+        "./commands/handon.md",
         "./commands/to-prd.md",
         "./commands/to-issues.md",
     }

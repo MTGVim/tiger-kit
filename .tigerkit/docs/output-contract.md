@@ -10,7 +10,7 @@
 - Evidence, Interpretation, Decision, Suggestion을 구분합니다.
 - 검증하지 않은 success를 선언하지 않습니다.
 - command가 파일을 쓰면 changed path 또는 ledger path를 출력합니다.
-- Active command surface는 `/tk:gap`, `/tk:route`, `/tk:reflect`, `/tk:learn`, `/tk:grill`, `/tk:grooming`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues`, `/tk:browser-verify`입니다.
+- Active command surface는 `/tk:gap`, `/tk:route`, `/tk:reflect`, `/tk:learn`, `/tk:grill`, `/tk:grooming`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:handon`, `/tk:to-prd`, `/tk:to-issues`, `/tk:browser-verify`입니다.
 - 기본 projection은 compact합니다. empty section, default empty list, `NONE` line은 의미 보존에 필요할 때만 출력합니다.
 - section label은 항상 `🎯 Goal:`처럼 leading emoji를 붙인 `라벨:` 한 줄 뒤 바로 다음 줄에 내용을 둡니다. 라벨 뒤 빈 줄을 두지 않습니다.
 - 같은 역할의 label은 가능하면 같은 emoji를 재사용합니다.
@@ -366,6 +366,26 @@ Handoff 완료 | Handoff 미리보기 | Handoff 중단
 - <verified / partially verified / unverified>
 ▶️ Next step:
 - <what the next agent should do first>
+```
+
+## `/tk:handon` Output Contract
+
+`/tk:handon`은 현재 repo/worktree의 저장된 current-first handoff를 repo-scoped `~/.tigerkit` root 아래에서 다시 읽는 read-only surface입니다.
+
+```text
+Handon 읽기 완료 | Handon 경로 확인 | Handon 없음
+📁 Handoff path:
+- <path>
+[📝 Focus:
+- <focus or question>]
+📝 Source:
+- current repo/worktree handoff artifact
+[📝 Summary:
+- <compact summary from saved handoff>]
+[⚠️ Missing:
+- no current handoff draft found]
+▶️ Next step:
+- <resume from remaining tasks | create a new handoff with /tk:handoff>
 ```
 
 ## `/tk:to-prd` Output Contract

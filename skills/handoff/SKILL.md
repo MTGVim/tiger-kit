@@ -47,6 +47,8 @@ description: 다음 세션이나 다른 에이전트가 바로 이어받을 수 
 
 `repo-key`와 `worktree-key`는 `scripts/tigerkit_state.py` helper가 계산합니다.
 
+같은 current handoff를 다시 열 때는 `/tk:handon`을 사용합니다.
+
 ## Boundaries
 
 - repo-scoped `~/.tigerkit` root 아래 worktree-scoped current-first write 기본

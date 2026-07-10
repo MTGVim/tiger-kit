@@ -21,7 +21,7 @@ reflect = session result + feedback -> classify learning -> default repo-local/u
 
 ## Core boundary
 
-- Active command surface는 `/tk:gap`, `/tk:route`, `/tk:reflect`, `/tk:learn`, `/tk:grill`, `/tk:grooming`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues`, `/tk:browser-verify`입니다.
+- Active command surface는 `/tk:gap`, `/tk:route`, `/tk:reflect`, `/tk:learn`, `/tk:grill`, `/tk:grooming`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:handon`, `/tk:to-prd`, `/tk:to-issues`, `/tk:browser-verify`입니다.
 - `/tk:reflect`는 Claude Code auto memory를 쓰거나, mirror하거나, backup하지 않습니다.
 - `/tk:reflect`는 source code, repo-shared guidance, hook settings, command source, agent source, plugin manifest를 수정하지 않습니다.
 - `skill` source materialization은 `--target skill --apply=true`일 때만 허용되며, skill authoring은 `/tk:learn` pipeline으로 위임합니다.
