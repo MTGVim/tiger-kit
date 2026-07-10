@@ -1,5 +1,5 @@
 ---
-description: UI 또는 logic/state 질문에 대해 throwaway prototype을 빠르게 만들어 검증합니다.
+description: throwaway prototype으로 검증합니다.
 argument-hint: '"<idea>" [--ui|--logic] [--target <path|area>] [--print-plan]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '"<idea>" [--ui|--logic] [--target <path|area>] [--print-plan]'
 
 목표: `/tk:prototype`은 UI 또는 logic/state 가설을 production finish 전에 throwaway prototype으로 빠르게 검증하는 surface입니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/prototype/SKILL.md
@@ -17,7 +17,9 @@ skills/prototype/SKILL.md
 
 ## Core boundary
 
+- 공통 command boundary는 `.tigerkit/docs/usage.md`의 `Shared command boundaries`를 따릅니다.
 - 기본 mode는 no-commit
+- commit/push/merge 금지
 - prototype은 throwaway 전제를 명시
 - production 추상화/에러처리/범용화 과투자 금지
 - prototype 성공을 merge-ready로 보고하지 않음
@@ -52,9 +54,3 @@ Prototype 준비 | Prototype 완료 | Prototype 중단
 ▶️ Next production step:
 - <what to port, delete, or refine>
 ```
-
-## Non-goals
-
-- production-ready finish claim
-- no-op 문서화만 하고 prototype 미생성
-- commit/push/merge

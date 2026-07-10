@@ -1,5 +1,5 @@
 ---
-description: 현재 대화나 요구사항을 draft-only PRD로 정리합니다.
+description: PRD draft로 정리합니다.
 argument-hint: '"<goal|scope>" [--output <path>] [--print-only] [--publish]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '"<goal|scope>" [--output <path>] [--print-only] [--publish]'
 
 목표: `/tk:to-prd`는 현재 대화나 요구사항을 implementation 전에 읽기 쉬운 PRD draft로 정리하는 surface입니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/to-prd/SKILL.md
@@ -17,6 +17,7 @@ skills/to-prd/SKILL.md
 
 ## Core boundary
 
+- 공통 command boundary는 `.tigerkit/docs/usage.md`의 `Shared command boundaries`를 따릅니다.
 - default draft-only
 - no-publish 기본
 - approval 전 외부 tracker/doc system 반영 금지
@@ -55,9 +56,3 @@ To-PRD 완료 | To-PRD 미리보기 | To-PRD 중단
 ▶️ Next step:
 - <review draft | convert to issues | revise scope>
 ```
-
-## Non-goals
-
-- publish 기본값
-- 구현 완료 보고
-- acceptance criteria 없는 vague spec

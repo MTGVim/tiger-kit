@@ -1,5 +1,5 @@
 ---
-description: 구현 route를 direct, subagent-driven, goal-driven 중에서 정리합니다.
+description: 구현 route를 고릅니다.
 argument-hint: '"<task>" [--context <note>] [--target <path|area>] [--print-checklist]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '"<task>" [--context <note>] [--target <path|area>] [--print-chec
 
 목표: `/tk:route`는 지금 작업을 어떤 방식으로 구현할지 얇게 정리하는 decision / brainstorming surface입니다. direct, subagent-driven, goal-driven 같은 route를 비교하고, 가장 무난한 1안과 바로 시작할 첫 스텝을 제안합니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/route/SKILL.md
@@ -21,6 +21,7 @@ route = explicit task + current constraints -> compare implementation routes -> 
 
 ## Core boundary
 
+- 공통 command boundary는 `.tigerkit/docs/usage.md`의 `Shared command boundaries`를 따릅니다.
 - 이 command는 source tree, `~/.tigerkit` artifact state, Git branch/index/stash/commit을 변경하지 않습니다.
 - package-manager script, build, test, lint, typecheck, network request를 실행하지 않습니다.
 - sealed workflow, spec artifact, approval receipt를 만들지 않습니다.
@@ -107,11 +108,3 @@ repo-local helper surface가 보이면 `read-gap-packet`으로 same repo/scope p
 /tk:route "이거 direct로 할지 subagent-driven으로 할지 정리해줘"
 /tk:route "멀티파일 리팩터인데 /goal로 푸는 게 나은지 봐줘"
 ```
-
-## Non-goals
-
-- source 수정
-- spec 생성
-- runtime execute
-- 승인 우회 조언
-- command 밖에서만 통과할 수도 있다는 식의 편법 유도

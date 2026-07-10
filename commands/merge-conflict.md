@@ -1,5 +1,5 @@
 ---
-description: merge 또는 rebase conflict를 ours/theirs 의도 기준으로 해결합니다.
+description: merge/rebase conflict를 정리합니다.
 argument-hint: '[--target <file|path>] [--print-plan]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '[--target <file|path>] [--print-plan]'
 
 목표: `/tk:merge-conflict`는 merge/rebase conflict를 단순 ours/theirs 선택이 아니라 양쪽 intent 기준으로 정리하는 surface입니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/merge-conflict/SKILL.md
@@ -17,10 +17,13 @@ skills/merge-conflict/SKILL.md
 
 ## Core boundary
 
+- 공통 command boundary는 `.tigerkit/docs/usage.md`의 `Shared command boundaries`를 따릅니다.
 - 현재 merge/rebase 상태 확인 필수
 - 충돌 파일과 hunk 목록화 필수
 - ours/theirs 의도 추적 필수
 - 가능한 검증 명령 실행 필수
+- unrelated refactor 금지
+- formatting-only churn 금지
 - `git reset --hard` 금지
 - `git clean` 금지
 - force push 금지
@@ -50,9 +53,3 @@ Merge conflict 분석 | Merge conflict 해결 | Merge conflict 중단
 ▶️ Next step:
 - <continue merge/rebase | manual follow-up>
 ```
-
-## Non-goals
-
-- unrelated refactor
-- formatting-only churn
-- conflict 상태를 숨기고 success 선언

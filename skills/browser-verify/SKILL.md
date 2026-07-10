@@ -1,6 +1,6 @@
 ---
 name: browser-verify
-description: 실제 브라우저 runtime에서 computed style / bounding rect / 상호작용 결과를 근거로 시각 회귀와 SoT 대비 동작을 검증합니다. `~/.tigerkit` repo profile을 읽습니다.
+description: browser-verify 엔진 트리거입니다.
 ---
 
 # Browser Verify

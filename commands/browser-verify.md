@@ -1,5 +1,5 @@
 ---
-description: 번들된 browser-verify 엔진 skill을 `~/.tigerkit` repo profile과 함께 사용하는 direct QA / behavior verification surface입니다.
+description: browser-verify QA를 실행합니다.
 argument-hint: '"<screen or verify task>" [--mode <env-diff|figma-diff|behavior-verify>] [--print-profile-template]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '"<screen or verify task>" [--mode <env-diff|figma-diff|behavior-
 
 목표: `/tk:browser-verify`는 프로비저닝 command가 아니라 direct QA surface입니다. 번들된 browser-verify 엔진 skill 지식을 사용하고, 현재 repo에 대응하는 `~/.tigerkit` repo-scoped profile을 읽어 visual QA / env diff / layout regression / SoT 대비 runtime behavior 검증을 수행합니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/browser-verify/SKILL.md
@@ -21,6 +21,7 @@ browser-verify = bundled engine skill + repo-scoped profile -> run browser verif
 
 ## Core boundary
 
+- 공통 command boundary는 `.tigerkit/docs/usage.md`의 `Shared command boundaries`를 따릅니다.
 - 이 command는 user-global provisioning mode를 만들지 않습니다.
 - engine install/update를 수행하지 않습니다.
 - current repo에 대응하는 `~/.tigerkit` profile만 읽고, profile이 없을 때만 같은 repo-scoped 경로에 missing profile 파일을 신규 생성합니다.
@@ -135,11 +136,3 @@ Browser Verify 준비 완료 | Browser Verify 프로필 생성 완료 | Browser 
 /tk:browser-verify "figma랑 이 화면 맞는지 봐줘" --mode figma-diff
 /tk:browser-verify "이 티켓 기준으로 저장 플로우가 실제로 동작하는지 검증" --mode behavior-verify
 ```
-
-## Non-goals
-
-- engine provisioning
-- user-global profile provisioning
-- full install/update workflow
-- forced overwrite / merge of profile assets
-- legacy profile auto-migration

@@ -1,5 +1,5 @@
 ---
-description: 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 handoff를 만듭니다.
+description: current-first handoff를 만듭니다.
 argument-hint: '"<goal or scope>" [--output <artifact path>] [--print-only]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '"<goal or scope>" [--output <artifact path>] [--print-only]'
 
 목표: `/tk:handoff`는 다음 세션이나 다른 에이전트가 바로 이어서 실행할 수 있는 handoff artifact를 만드는 surface입니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/handoff/SKILL.md
@@ -17,6 +17,7 @@ skills/handoff/SKILL.md
 
 ## Core boundary
 
+- 공통 command boundary는 `.tigerkit/docs/usage.md`의 `Shared command boundaries`를 따릅니다.
 - 기본은 repo-scoped `~/.tigerkit` root 아래 worktree-scoped current-first write
 - 대화 전문 복붙 금지
 - 이미 있는 PRD/ADR/issue/diff는 경로/링크 참조 우선
@@ -72,9 +73,3 @@ Handoff 완료 | Handoff 미리보기 | Handoff 중단
 ▶️ Next step:
 - <what the next agent should do first>
 ```
-
-## Non-goals
-
-- chat log dump
-- vague diary text
-- 이미 artifact에 있는 내용을 장문 복붙

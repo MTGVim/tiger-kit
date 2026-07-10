@@ -1,5 +1,5 @@
 ---
-description: plan이나 PRD를 independently grabbable vertical-slice issue draft로 분해합니다.
+description: issue draft로 쪼갭니다.
 argument-hint: '"<plan|prd>" [--output <path>] [--print-only] [--publish]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '"<plan|prd>" [--output <path>] [--print-only] [--publish]'
 
 목표: `/tk:to-issues`는 plan/PRD를 independently grabbable vertical-slice issue draft로 분해하는 surface입니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/to-issues/SKILL.md
@@ -17,6 +17,7 @@ skills/to-issues/SKILL.md
 
 ## Core boundary
 
+- 공통 command boundary는 `.tigerkit/docs/usage.md`의 `Shared command boundaries`를 따릅니다.
 - default draft-only
 - no-publish 기본
 - vertical slice only
@@ -61,9 +62,3 @@ To-Issues 완료 | To-Issues 미리보기 | To-Issues 중단
 ▶️ Next step:
 - <review drafts | revise slicing | publish explicitly>
 ```
-
-## Non-goals
-
-- publish 기본값
-- layer별 ticket 폭증
-- 독립 실행 불가능한 issue 쪼개기

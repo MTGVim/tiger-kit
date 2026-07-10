@@ -1,5 +1,5 @@
 ---
-description: 경로, 문서, 대화, reflect candidate에서 reusable skill을 직접 만듭니다.
+description: reusable skill을 만듭니다.
 argument-hint: '"<source or request>" [--name <slug>] [--apply=false|true] [--from-reflect <candidate_id>] [--dry-run]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '"<source or request>" [--name <slug>] [--apply=false|true] [--fr
 
 목표: `/tk:learn`은 path, directory, URL, 현재 대화, pasted notes, 또는 `/tk:reflect`가 남긴 `candidate_id`를 source로 받아 reusable skill을 직접 만드는 source-to-skill surface입니다. write boundary는 `skill only`이며, repo-local guidance, user-global guidance, hook, command, agent source를 라우팅하지 않습니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/learn/SKILL.md
@@ -21,6 +21,7 @@ learn = explicit source or reflect candidate -> gather evidence -> draft skill -
 
 ## Core boundary
 
+- 공통 command boundary는 `.tigerkit/docs/usage.md`의 `Shared command boundaries`를 따릅니다.
 - `/tk:learn`은 `skill only` surface입니다.
 - `repo-local`, `repo-shared`, `user-global`, `hook`, `command`, `agent` direct write를 하지 않습니다.
 - source code, plugin manifest, command source를 수정하지 않습니다.
@@ -45,8 +46,16 @@ learn = explicit source or reflect candidate -> gather evidence -> draft skill -
 
 reflect candidate helper 예시:
 
+enabled `tk@tiger-kit` install이 오래되어 `read-reflect-candidate`가 `invalid choice`로 실패하면 먼저 marketplace/plugin을 업데이트하거나, matching checkout/install root를 `CLAUDE_PLUGIN_ROOT`로 지정합니다.
+
 ```bash
-python3 "$TIGERKIT_STATE_SCRIPT" read-reflect-candidate --repo-root "$PWD" --candidate-id R1
+claude plugin marketplace update tiger-kit
+claude plugin install tk@tiger-kit --scope user
+```
+
+```bash
+TIGERKIT_PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$({ claude plugin list --json | python3 -c 'import json,sys; print(next(item["installPath"] for item in json.load(sys.stdin) if item.get("id") == "tk@tiger-kit" and item.get("enabled")))'; })}"
+python3 "$TIGERKIT_PLUGIN_ROOT/scripts/tigerkit_state.py" read-reflect-candidate --repo-root "$PWD" --candidate-id R1
 ```
 
 ## Default target
@@ -96,11 +105,3 @@ Learn 완료 | Learn 미리보기 | Learn 중단
 - `--dry-run`: preview-only
 - `--name <slug>`: suggested/confirmed 이름 입력
 - 이름이 확정되지 않았거나 preview-only면 `Confirmed name`/`Created path` section을 생략하고 `Write result`에 짧게 이유만 남깁니다.
-
-## Non-goals
-
-- repo-local guidance 반영
-- user-global guidance 반영
-- hook/command/agent 생성
-- source code 수정
-- publish/merge/release

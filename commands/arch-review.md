@@ -1,5 +1,5 @@
 ---
-description: boundary, ownership, coupling, 반복 마찰을 evidence-first로 검토하는 report-only 구조 리뷰입니다.
+description: 구조 마찰을 검토합니다.
 argument-hint: '"<scope|goal|area>" [--target <path|area>] [--print-checklist]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '"<scope|goal|area>" [--target <path|area>] [--print-checklist]'
 
 목표: `/tk:arch-review`는 코드베이스의 구조적 문제를 바로 리팩터링으로 밀지 않고, boundary, ownership, coupling, 반복 마찰을 evidence-first로 검토하는 report-only surface입니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/arch-review/SKILL.md
@@ -17,6 +17,7 @@ skills/arch-review/SKILL.md
 
 ## Core boundary
 
+- 공통 command boundary는 `.tigerkit/docs/usage.md`의 `Shared command boundaries`를 따릅니다.
 - report-only
 - source 수정 금지
 - auto refactor 금지
@@ -59,10 +60,3 @@ Arch Review 완료 | Arch Review 중단
 ▶️ First step:
 - <one concrete next step>
 ```
-
-## Non-goals
-
-- 구현 완료 보고
-- 근거 없는 대수술 제안
-- source write 없는 척하면서 사실상 리팩터링 강행
-- README/RFC 작성만으로 구조 문제가 해결됐다고 주장
