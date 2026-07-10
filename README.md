@@ -9,7 +9,7 @@
 </p>
 
 TigerKit(`tk`, plugin namespace `/tk:*`)은 Claude Code용 경량 plugin입니다.
-SoT(Source of Truth)가 있으면 `/tk:gap`으로 현재 구현의 차이를 먼저 확인합니다. 다음 구현 route가 애매하면 `/tk:route`로 direct, subagent-driven, goal-driven 중 어떤 방식이 맞는지 얇게 정리합니다. 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 분류하고 repo-local/user-global guidance에 반영할 수 있습니다. path, URL, 현재 대화, notes, 또는 reflect candidate에서 skill을 바로 만들고 싶으면 `/tk:learn`을 씁니다. 또 구현 전 압박 검증은 `/tk:grill`(사용자가 답을 모른다고 **직접 말할 때만** 후보 최대 3개 제안 가능), guidance 감사/정비는 `/tk:grooming`, throwaway 검증은 `/tk:prototype`, 구조 리뷰는 `/tk:arch-review`, 충돌 해결은 `/tk:merge-conflict`, 세션 인계는 `/tk:handoff`, draft 요구 문서화는 `/tk:to-prd`, draft issue 분해는 `/tk:to-issues`로 다룹니다. browser-verify 엔진은 번들 skill로 유지하고, `/tk:browser-verify`는 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/browser-verify/` profile을 읽는 direct QA / behavior verification surface입니다.
+SoT(Source of Truth)가 있으면 `/tk:gap`으로 현재 구현의 차이를 먼저 확인합니다. 다음 구현 route가 애매하면 `/tk:route`로 direct, subagent-driven, goal-driven 중 어떤 방식이 맞는지 얇게 정리합니다. 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 분류하고 repo-local/user-global guidance에 반영할 수 있습니다. path, URL, 현재 대화, notes, 또는 reflect candidate에서 skill을 바로 만들고 싶으면 `/tk:learn`을 씁니다. 또 구현 전 압박 검증은 `/tk:grill`(사용자가 답을 모른다고 **직접 말할 때만** 후보 최대 3개 제안 가능), guidance 감사/정비는 `/tk:grooming`, throwaway 검증은 `/tk:prototype`, 구조 리뷰는 `/tk:arch-review`, 충돌 해결은 `/tk:merge-conflict`, 세션 인계는 `/tk:handoff`, 저장된 handoff 재호출은 `/tk:handon`, draft 요구 문서화는 `/tk:to-prd`, draft issue 분해는 `/tk:to-issues`로 다룹니다. browser-verify 엔진은 번들 skill로 유지하고, `/tk:browser-verify`는 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/browser-verify/` profile을 읽는 direct QA / behavior verification surface입니다.
 
 ```text
 Check the gap. Pick the route. Keep the learning. Materialize durable skills from reflect when needed.
@@ -26,7 +26,7 @@ Check the gap. Pick the route. Keep the learning. Materialize durable skills fro
 이후에는 필요할 때만 나머지 surface를 꺼내 쓰면 됩니다.
 
 - Practical: `/tk:grill`, `/tk:grooming`, `/tk:prototype`, `/tk:browser-verify`, `/tk:arch-review`, `/tk:merge-conflict`
-- Output: `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues`
+- Output: `/tk:handoff`, `/tk:handon`, `/tk:to-prd`, `/tk:to-issues`
 
 ## Installation
 
@@ -44,7 +44,7 @@ claude plugin list --available --json
 claude plugin details tk
 ```
 
-설치 후 Claude Code를 다시 시작하고 `/tk:gap`, `/tk:route`, `/tk:reflect`, `/tk:learn`, `/tk:browser-verify`, `/tk:grill`, `/tk:grooming`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues` 명령을 사용합니다.
+설치 후 Claude Code를 다시 시작하고 `/tk:gap`, `/tk:route`, `/tk:reflect`, `/tk:learn`, `/tk:browser-verify`, `/tk:grill`, `/tk:grooming`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:handon`, `/tk:to-prd`, `/tk:to-issues` 명령을 사용합니다.
 
 ## Core guidance
 
@@ -60,6 +60,7 @@ claude plugin details tk
 - `/tk:arch-review`는 반복 마찰, 경계 붕괴, ownership 혼선 같은 구조 문제를 report-only로 검토합니다.
 - `/tk:merge-conflict`는 merge/rebase conflict를 ours/theirs intent 기준으로 해결합니다.
 - `/tk:handoff`는 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 handoff를 만듭니다.
+- `/tk:handon`은 현재 repo/worktree의 저장된 handoff를 다시 읽습니다.
 - `/tk:to-prd`는 현재 대화나 요구사항을 draft-only PRD로 정리합니다.
 - `/tk:to-issues`는 plan/PRD를 vertical-slice issue draft로 분해합니다.
 - `/tk:browser-verify`는 번들된 browser-verify 엔진 skill을 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/browser-verify/` profile과 함께 사용하는 direct QA / behavior verification surface입니다.
@@ -91,6 +92,7 @@ claude plugin details tk
 | Command | 역할 | 저장 성격 |
 | --- | --- | --- |
 | `/tk:handoff` | 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 handoff를 만듭니다. | worktree-scoped handoff artifact under repo-scoped `~/.tigerkit` root |
+| `/tk:handon` | 현재 repo/worktree의 최신 handoff draft를 다시 읽습니다. | read-only current handoff reopen under repo-scoped `~/.tigerkit` root |
 | `/tk:to-prd` | 현재 대화나 요구사항을 draft-only PRD로 정리합니다. | worktree-scoped PRD draft under repo-scoped `~/.tigerkit` root |
 | `/tk:to-issues` | plan/PRD를 independently grabbable vertical-slice issue draft로 분해합니다. | worktree-scoped issue draft set under repo-scoped `~/.tigerkit` root |
 
@@ -109,6 +111,7 @@ claude plugin details tk
 /tk:arch-review "이 모듈 경계가 왜 자꾸 새는지 검토해줘"
 /tk:merge-conflict
 /tk:handoff "issue 138 skill-first rollout 상태 넘겨줘"
+/tk:handon "남은 작업만 짧게"
 /tk:to-prd "이 요구를 PRD draft로 정리해줘"
 /tk:to-issues "이 PRD를 issue draft로 쪼개줘"
 /tk:reflect --target skill --apply=true --desc "이 CDP 검증 루틴을 skill로 굳혀줘"
@@ -188,6 +191,8 @@ Active generated state는 project repository 밖 `~/.tigerkit/` 아래의 file-o
   - `~/.tigerkit/repos/<repo-key>/branches/<scope-key>/reflect/current.yaml`
 - `/tk:handoff` draft:
   - `~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/handoffs/current.md`
+- `/tk:handon` read target:
+  - `~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/handoffs/current.md`
 - `/tk:to-prd` draft:
   - `~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/prd/current.md`
 - `/tk:to-issues` draft:
@@ -200,7 +205,7 @@ Active generated state는 project repository 밖 `~/.tigerkit/` 아래의 file-o
 - `/tk:route`는 기본적으로 persisted artifact를 만들지 않습니다.
 - `/tk:browser-verify`는 repo-scoped profile을 `~/.tigerkit` 아래에서 읽고, legacy profile이 있으면 migration guide를 출력하며, 둘 다 없을 때만 missing 파일을 bootstrap할 수 있습니다.
 
-`/tk:handoff`, `/tk:to-prd`, `/tk:to-issues`의 canonical draft artifact는 repo 내부 `.claude/tigerkit/`가 아니라 `~/.tigerkit` 아래 worktree-scoped current-first 구조로 기록됩니다. `.claude/` 전체를 ignore하지 않습니다.
+`/tk:handoff`, `/tk:handon`, `/tk:to-prd`, `/tk:to-issues`는 repo 내부 `.claude/tigerkit/`가 아니라 `~/.tigerkit` 아래 worktree-scoped current-first draft 구조를 사용합니다. `/tk:handoff`는 그 경로에 기록하고, `/tk:handon`은 같은 current handoff를 다시 읽습니다. `.claude/` 전체를 ignore하지 않습니다.
 
 ## Contributors
 
