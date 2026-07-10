@@ -102,6 +102,29 @@ INSTALLED_HELPER_DOC_TARGETS = [
 
 INSTALLED_HELPER_UPDATE_GUARD = "claude plugin marketplace update tiger-kit"
 
+NO_NON_GOALS_COMMANDS = [
+    ROOT / "commands" / "arch-review.md",
+    ROOT / "commands" / "browser-verify.md",
+    ROOT / "commands" / "grill.md",
+    ROOT / "commands" / "grooming.md",
+    ROOT / "commands" / "handoff.md",
+    ROOT / "commands" / "handon.md",
+    ROOT / "commands" / "learn.md",
+    ROOT / "commands" / "merge-conflict.md",
+    ROOT / "commands" / "prototype.md",
+    ROOT / "commands" / "route.md",
+    ROOT / "commands" / "to-issues.md",
+    ROOT / "commands" / "to-prd.md",
+]
+
+SHARED_BOUNDARY_MARKER = "Shared command boundaries"
+
+REHOMED_BOUNDARY_GUARDS = {
+    ROOT / "commands" / "prototype.md": ["commit/push/merge 금지"],
+    ROOT / "commands" / "merge-conflict.md": ["unrelated refactor 금지", "formatting-only churn 금지"],
+    ROOT / "commands" / "grooming.md": ["신규 guidance를 임의 추가하지 않음", "reflect/learn 역할 대체 금지"],
+}
+
 OUTPUT_SYNC_TARGETS = {
     "gap": "## `/tk:gap` Output Contract",
     "route": "## `/tk:route` Output Contract",
@@ -225,6 +248,23 @@ def check_helper_examples_are_repo_independent() -> None:
             fail(f"{path.relative_to(ROOT)} missing stale-installed-plugin update guard")
 
 
+def check_shared_boundary_reference() -> None:
+    usage_text = USAGE_PATH.read_text()
+    if SHARED_BOUNDARY_MARKER not in usage_text:
+        fail(f"{USAGE_PATH.relative_to(ROOT)} missing shared command boundary reference section")
+    for path in NO_NON_GOALS_COMMANDS:
+        text = path.read_text()
+        if "## Non-goals" in text:
+            fail(f"{path.relative_to(ROOT)} still exposes a Non-goals section after boundary consolidation")
+        if SHARED_BOUNDARY_MARKER not in text:
+            fail(f"{path.relative_to(ROOT)} missing shared command boundary reference")
+    for path, required_lines in REHOMED_BOUNDARY_GUARDS.items():
+        text = path.read_text()
+        for line in required_lines:
+            if line not in text:
+                fail(f"{path.relative_to(ROOT)} missing re-homed command-specific boundary: {line!r}")
+
+
 def extract_first_fenced_block_after_heading(text: str, heading: str) -> str:
     lines = text.splitlines()
     try:
@@ -315,6 +355,7 @@ def main() -> int:
     check_description_budget()
     check_no_inline_state_bootstrap()
     check_helper_examples_are_repo_independent()
+    check_shared_boundary_reference()
     check_command_output_block_shape()
     check_output_contract_helper_sync()
     print("command surface drift ok")

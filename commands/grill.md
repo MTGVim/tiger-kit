@@ -19,6 +19,7 @@ skills/grill/SKILL.md
 
 ## Core boundary
 
+- 공통 command boundary는 `.tigerkit/docs/usage.md`의 `Shared command boundaries`를 따릅니다.
 - preview-only
 - source 수정 금지
 - 자동 문서 수정 금지
@@ -70,10 +71,3 @@ Grill 진행중 | Grill 중단 | Grill 요약
 ▶️ Next step:
 - <continue questioning | proceed with assumptions | stop>
 ```
-
-## Non-goals
-
-- interview for its own sake
-- source write
-- approval을 가장한 강압적 endless questioning
-- 이미 코드베이스에서 확인 가능한 사실 재질문

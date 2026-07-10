@@ -48,6 +48,17 @@ TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 gap, rou
 - `/tk:to-issues`는 vertical-slice issue draft 생성 surface입니다.
 - `/tk:browser-verify`는 번들된 browser-verify 엔진 skill을 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/browser-verify/` profile과 함께 사용하는 direct QA / behavior verification surface입니다.
 
+## Shared command boundaries
+
+아래 경계는 여러 TigerKit command가 공통으로 따릅니다.
+
+- command가 직접 소유한 artifact surface가 아니면 source tree, plugin manifest, command source를 임의 수정하지 않습니다.
+- preview-only / report-only / draft-only surface는 그 경계를 유지하고 구현 완료처럼 포장하지 않습니다.
+- 승인 우회, silent publish, chat dump, endless questioning, fake success 같은 운영 노이즈를 만들지 않습니다.
+- 이미 코드나 artifact에서 직접 확인 가능한 사실은 다시 묻거나 장문 복붙으로 반복하지 않습니다.
+
+개별 command 문서는 이 공통 경계를 반복 나열하는 대신, command-specific guidance와 output contract에 집중합니다.
+
 ## Command Surface
 
 | Command | 역할 | 저장 성격 |

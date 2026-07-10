@@ -17,6 +17,7 @@ skills/grooming/SKILL.md
 
 ## Core boundary
 
+- 공통 command boundary는 `.tigerkit/docs/usage.md`의 `Shared command boundaries`를 따릅니다.
 - default report-only
 - no-publish 기본
 - 승인 전 write 금지
@@ -24,6 +25,8 @@ skills/grooming/SKILL.md
 - repo shared / repo local guidance는 suggestion-only
 - user-global direct apply와 repo suggestion-only가 한 변경 안에 섞이면 전체를 preview-only로 남김
 - 원본 파일을 직접 읽고, 세션 주입 사본을 source of truth로 쓰지 않음
+- 신규 guidance를 임의 추가하지 않음
+- reflect/learn 역할 대체 금지
 
 ## Scope contract
 
@@ -98,11 +101,3 @@ Grooming 리포트 | Grooming 적용 완료 | Grooming 중단
 ▶️ Next step:
 - <approve apply | review suggestions | rerun with narrower scope>
 ```
-
-## Non-goals
-
-- repo source code 수정
-- repo guidance direct apply
-- 신규 guidance를 임의 추가하는 것
-- reflect/learn 역할 대체
-- 승인 없는 광범위 rewrite

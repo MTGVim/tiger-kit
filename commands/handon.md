@@ -21,6 +21,7 @@ handon = current repo/worktree handoff current.md -> read saved artifact -> resu
 
 ## Core boundary
 
+- 공통 command boundary는 `.tigerkit/docs/usage.md`의 `Shared command boundaries`를 따릅니다.
 - read-only 입니다.
 - 기본은 현재 repo/worktree의 `handoffs/current.md`만 읽습니다.
 - source of truth는 저장된 handoff artifact이며, chat memory나 추측으로 빈칸을 메우지 않습니다.
@@ -81,10 +82,3 @@ Handon 읽기 완료 | Handon 경로 확인 | Handon 없음
 /tk:handon "남은 작업만 짧게"
 /tk:handon --path-only
 ```
-
-## Non-goals
-
-- 새 handoff 생성
-- 기존 handoff 수정
-- current handoff가 없을 때 예전 draft를 임의 선택
-- chat log를 source of truth로 대체

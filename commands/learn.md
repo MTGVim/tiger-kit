@@ -21,6 +21,7 @@ learn = explicit source or reflect candidate -> gather evidence -> draft skill -
 
 ## Core boundary
 
+- 공통 command boundary는 `.tigerkit/docs/usage.md`의 `Shared command boundaries`를 따릅니다.
 - `/tk:learn`은 `skill only` surface입니다.
 - `repo-local`, `repo-shared`, `user-global`, `hook`, `command`, `agent` direct write를 하지 않습니다.
 - source code, plugin manifest, command source를 수정하지 않습니다.
@@ -104,11 +105,3 @@ Learn 완료 | Learn 미리보기 | Learn 중단
 - `--dry-run`: preview-only
 - `--name <slug>`: suggested/confirmed 이름 입력
 - 이름이 확정되지 않았거나 preview-only면 `Confirmed name`/`Created path` section을 생략하고 `Write result`에 짧게 이유만 남깁니다.
-
-## Non-goals
-
-- repo-local guidance 반영
-- user-global guidance 반영
-- hook/command/agent 생성
-- source code 수정
-- publish/merge/release
