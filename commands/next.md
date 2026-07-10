@@ -34,7 +34,7 @@ next = current task or current artifacts -> choose exactly one next TigerKit com
 - SoT가 없다 → `gap` blindspot 우선 검토
 - 현재 repo/대상경로에 최근 user-authored commit이 없다 → discovery 성격 강화
 - draft `prd/current.md`만 있고 `issues/current.md`가 없다 → `to-issues`
-- route가 이미 정리됐고 ledger/quiz gate가 남았다 → `quiz`
+- route가 이미 정리됐고 ledger/quiz gate가 남았다 → `/tk:quiz`
 - 작업 종료 직전 요약/재개성이 더 중요하다 → `handoff`
 
 ## Output contract
