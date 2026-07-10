@@ -1,6 +1,7 @@
 ---
 name: handoff
-description: handoff 생성 트리거입니다.
+description: handoff 작성 트리거입니다.
+disable-model-invocation: true
 ---
 
 # Handoff

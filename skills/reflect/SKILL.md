@@ -1,6 +1,7 @@
 ---
 name: reflect
 description: reflect 분류 트리거입니다.
+disable-model-invocation: true
 ---
 
 # Reflect

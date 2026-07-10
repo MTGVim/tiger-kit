@@ -1,6 +1,7 @@
 ---
 name: gap
 description: SoT gap 분석 트리거입니다.
+disable-model-invocation: true
 ---
 
 # Gap

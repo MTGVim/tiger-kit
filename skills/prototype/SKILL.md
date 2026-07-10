@@ -1,6 +1,7 @@
 ---
 name: prototype
-description: prototype 검증 트리거입니다.
+description: throwaway 검증 트리거입니다.
+disable-model-invocation: true
 ---
 
 # Prototype

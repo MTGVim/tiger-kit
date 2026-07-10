@@ -1,6 +1,7 @@
 ---
 name: to-issues
 description: issue 분해 트리거입니다.
+disable-model-invocation: true
 ---
 
 # To Issues

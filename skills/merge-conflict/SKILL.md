@@ -1,6 +1,7 @@
 ---
 name: merge-conflict
-description: conflict 해결 트리거입니다.
+description: 충돌 해결 트리거입니다.
+disable-model-invocation: true
 ---
 
 # Merge Conflict

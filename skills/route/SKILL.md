@@ -1,6 +1,7 @@
 ---
 name: route
 description: route 판단 트리거입니다.
+disable-model-invocation: true
 ---
 
 # Route

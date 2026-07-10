@@ -142,6 +142,9 @@ WRAPPER_SKILL_COMMAND_OWNERS = {
 }
 
 WRAPPER_SKILL_TOTAL_BUDGET = 11000
+WRAPPER_DISABLE_MODEL_INVOCATION_LINE = "disable-model-invocation: true"
+BROWSER_VERIFY_ENTRY_SKILL_PATH = ROOT / "skills" / "browser-verify" / "SKILL.md"
+BROWSER_VERIFY_ENTRY_BUDGET = 2048
 
 OUTPUT_SYNC_TARGETS = {
     "gap": "## `/tk:gap` Output Contract",
@@ -288,6 +291,10 @@ def check_wrapper_skill_thinness() -> None:
     for path, command_owner in WRAPPER_SKILL_COMMAND_OWNERS.items():
         text = path.read_text()
         total_bytes += len(text.encode("utf-8"))
+        if WRAPPER_DISABLE_MODEL_INVOCATION_LINE not in text:
+            fail(
+                f"{path.relative_to(ROOT)} missing wrapper disable-model-invocation frontmatter line"
+            )
         if command_owner not in text:
             fail(f"{path.relative_to(ROOT)} missing canonical command owner reference {command_owner!r}")
         if "얇은 wrapper" not in text:
@@ -296,6 +303,21 @@ def check_wrapper_skill_thinness() -> None:
         fail(
             f"wrapper skill byte budget exceeded: {total_bytes} > {WRAPPER_SKILL_TOTAL_BUDGET}"
         )
+
+
+def check_browser_verify_entry_skill_size() -> None:
+    text = BROWSER_VERIFY_ENTRY_SKILL_PATH.read_text()
+    size = len(text.encode("utf-8"))
+    if size > BROWSER_VERIFY_ENTRY_BUDGET:
+        fail(
+            f"browser-verify entry skill byte budget exceeded: {size} > {BROWSER_VERIFY_ENTRY_BUDGET}"
+        )
+    if "commands/browser-verify.md" not in text:
+        fail("skills/browser-verify/SKILL.md missing canonical command owner reference 'commands/browser-verify.md'")
+    if "references/modes/env-diff.md" not in text:
+        fail("skills/browser-verify/SKILL.md missing env-diff reference handoff")
+    if "red-loop-first" not in text:
+        fail("skills/browser-verify/SKILL.md missing red-loop-first boundary")
 
 
 def extract_first_fenced_block_after_heading(text: str, heading: str) -> str:
@@ -390,6 +412,7 @@ def main() -> int:
     check_helper_examples_are_repo_independent()
     check_shared_boundary_reference()
     check_wrapper_skill_thinness()
+    check_browser_verify_entry_skill_size()
     check_command_output_block_shape()
     check_output_contract_helper_sync()
     print("command surface drift ok")
