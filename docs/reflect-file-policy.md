@@ -116,6 +116,9 @@ ledger는 최소한 아래를 담아야 합니다.
 - `effective_targets`
 - `ledger_path`
 - `candidates[]`
+- candidate `failure_type`
+- candidate `reason` (2~3줄 compact) + `evidence_pointer`
+- optional `hit: YYYY-MM-DD`
 - optional `apply_plan`
 - write result / rollback result when relevant
 

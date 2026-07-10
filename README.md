@@ -52,10 +52,10 @@ claude plugin details tk
 - SoT가 없으면 먼저 SoT 제공을 제안합니다.
 - 사용자가 바로 진행을 원하면 `/tk:gap` 없이 진행할 수 있지만, 그 경우 가정과 불확실성을 명시합니다.
 - `/tk:route`는 source를 수정하지 않고 direct, subagent-driven, goal-driven 같은 구현 경로를 비교합니다.
-- `/tk:reflect`는 교훈을 canonical target으로 분류합니다. `repo-local`과 `user-global`은 기본 apply(opt-out)로 반영할 수 있고, 명시적 skill materialize는 `/tk:learn` authoring pipeline으로 위임합니다.
-- `/tk:learn`은 path, URL, 현재 대화, notes, 또는 reflect candidate를 source로 받아 reusable skill을 직접 만들고, `skill only` 경계로 user skill surface에만 씁니다.
+- `/tk:reflect`는 교훈을 canonical target으로 분류합니다. `repo-local`과 `user-global`은 기본 apply(opt-out)로 반영할 수 있고, 명시적 skill materialize는 `/tk:learn` authoring pipeline으로 위임합니다. 실패 유형을 먼저 `discipline_failure | wrong_shaped_output | missing_evidence | source_ambiguity`로 분류하고, stdout Reason은 2~3줄 compact evidence pointer만 남깁니다.
+- `/tk:learn`은 path, URL, 현재 대화, notes, 또는 reflect candidate를 source로 받아 reusable skill을 직접 만들고, `skill only` 경계로 user skill surface에만 씁니다. skill 완료 판정은 `RED → GREEN → REFACTOR` evidence와 `pos3 / neg2 / owner` eval coverage를 함께 요구합니다.
 - `/tk:grill`은 계획/설계/RFC를 수렴형 질문으로 압박 검증하고, 사용자가 답을 모른다고 **직접 말할 때만** 후보를 최대 3개까지 제안할 수 있습니다.
-- `/tk:grooming`은 guidance 파일을 report-only로 평가하고, 승인된 user-global 변경만 직접 반영하며 나머지는 suggestion-only로 남깁니다.
+- `/tk:grooming`은 guidance 파일을 report-only로 평가하고, 승인된 user-global 변경만 직접 반영하며 나머지는 suggestion-only로 남깁니다. `guidanceBudgetBytes`와 raw byte footprint를 같이 보고, archive/demotion은 승인 전까지 suggestion-only 입니다.
 - `/tk:prototype`은 UI 또는 logic/state 가설을 throwaway prototype으로 빨리 검증합니다.
 - `/tk:arch-review`는 반복 마찰, 경계 붕괴, ownership 혼선 같은 구조 문제를 report-only로 검토합니다.
 - `/tk:merge-conflict`는 merge/rebase conflict를 ours/theirs intent 기준으로 해결합니다.

@@ -53,7 +53,25 @@ user | repo | all
 4. 실효성 없는 룰
 5. 사실 부정확
 6. 방어적 반복
-7. 추가 제안 후보
+7. footprint 초과
+8. negation-heavy guidance
+9. 추가 제안 후보
+
+## Budget contract
+
+기본 budget은 `~/.tigerkit/config.json`의 optional `guidanceBudgetBytes`로 override할 수 있습니다. 미설정 기본값은 `32768` bytes 입니다.
+
+- report는 가능하면 현재 guidance 총량 실측과 budget 대비 초과분을 같이 보여줍니다.
+- budget이 없거나 host가 exact 주입량을 직접 계산할 수 없으면, 최소한 raw byte footprint라도 남깁니다.
+- budget 초과는 즉시 삭제 허가가 아니라 압축/강등 후보 탐지 신호입니다.
+
+## Archive / demotion policy
+
+- 긴 Reason 서사 원문은 `~/.claude/rules-archive/` 같은 non-loaded archive 경로로 이동 후보를 제안할 수 있습니다.
+- hit가 없는 task-scoped rule은 `/tk:learn`으로 skill materialize 후 강등/삭제 후보로 제안할 수 있습니다.
+- command류 실효성은 rule hit만이 아니라 `usage-summary` 같은 artifact 사용 흔적으로도 따로 봅니다.
+- 사용자 승인 없이 강등/삭제를 실행하지 않습니다.
+- repo suggestion과 user-global direct apply가 섞인 경우는 계속 preview-only로 남깁니다.
 
 ## Apply semantics
 
@@ -62,6 +80,7 @@ user | repo | all
 - direct apply는 user-global exact target이 분명할 때만 가능
 - repo 파일 변경은 항상 suggestion-only
 - user-global direct apply와 repo suggestion-only가 한 묶음에 섞이면 `preview-only mixed-scope`로 보고하고 쓰지 않음
+- archive, demotion, delete 제안은 사용자 승인 전까지 suggestion-only 입니다.
 
 ## Protected exclusions
 
@@ -86,12 +105,16 @@ Grooming 리포트 | Grooming 적용 완료 | Grooming 중단
 - user | repo | all
 🧭 Mode:
 - report-only | preview-only mixed-scope | user-global direct-apply | suggestion-only
+[📏 Budget:
+- <measured bytes> / <guidanceBudgetBytes or default 32768>]
 📝 Findings:
 - <confirmed drift summary>
 [🎯 Direct apply target:
 - <user-global path>]
 [✅ Applied changes:
 - <what changed>]
+[🗄️ Archive / demotion:
+- <rules-archive candidate | /tk:learn handoff | approval required>]
 [📝 Suggested changes:
 - <repo/user suggestions kept as suggestion-only>]
 [⚠️ Protected exclusions:

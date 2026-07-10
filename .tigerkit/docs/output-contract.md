@@ -104,6 +104,10 @@ Learn 완료 | Learn 미리보기 | Learn 중단
 - <slug>]
 🎯 Target:
 - user skill surface only
+[✅ Verification loop:
+- RED | GREEN | REFACTOR evidence summary]
+[🧪 Eval coverage:
+- pos3 / neg2 / owner registered | pending]
 [📁 Created path:
 - <path>]
 [📝 Write result:
@@ -119,6 +123,7 @@ Notes:
 - reflect candidate를 읽을 때는 ledger를 source of truth로 삼습니다.
 - helper surface가 있으면 `read-reflect-candidate`로 current ledger candidate를 읽을 수 있지만, same-session + same-ledger boundary는 계속 유지됩니다.
 - `/tk:learn`은 `repo-local`, `user-global`, `hook`, `command`, `agent` direct write를 하지 않습니다.
+- apply까지 간 skill은 가능하면 `RED → GREEN → REFACTOR` evidence summary와 `pos3 / neg2 / owner` eval coverage 상태를 같이 남깁니다.
 
 ## `/tk:reflect` Output Contract
 
@@ -141,6 +146,8 @@ Reflect 완료
 - <raw requested target or default>
 🎯 Effective targets:
 - <canonical target list>
+[🧪 Failure type:
+- discipline_failure | wrong_shaped_output | missing_evidence | source_ambiguity]
 [🧭 Target modes:
 - repo-local, user-global: direct-apply candidate
 - skill: explicit materialize only
@@ -191,11 +198,14 @@ candidates:
   - candidate_id: R1
     status: candidate | confirmed | deprecated
     duplicate_status: confirmed | unknown
+    failure_type: discipline_failure | wrong_shaped_output | missing_evidence | source_ambiguity
     action: apply | preview_only | suggest_only | discard
     target: repo-local | repo-shared | user-global | skill | hook | command | agent | discard
     path: <path or NONE>
     evidence: <direct observed evidence>
-    reason: <routing reason>
+    reason: <2-3 line compact routing reason>
+    evidence_pointer: <date|repo|issue|file|command anchor>
+    hit: <YYYY-MM-DD or omit>
 apply_plan: <optional exact plan object>
 ```
 
@@ -271,12 +281,16 @@ Grooming 리포트 | Grooming 적용 완료 | Grooming 중단
 - user | repo | all
 🧭 Mode:
 - report-only | preview-only mixed-scope | user-global direct-apply | suggestion-only
+[📏 Budget:
+- <measured bytes> / <guidanceBudgetBytes or default 32768>]
 📝 Findings:
 - <confirmed drift summary>
 [🎯 Direct apply target:
 - <user-global path>]
 [✅ Applied changes:
 - <what changed>]
+[🗄️ Archive / demotion:
+- <rules-archive candidate | /tk:learn handoff | approval required>]
 [📝 Suggested changes:
 - <repo/user suggestions kept as suggestion-only>]
 [⚠️ Protected exclusions:

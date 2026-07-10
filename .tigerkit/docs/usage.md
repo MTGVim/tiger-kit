@@ -14,10 +14,10 @@ TigerKit = gap + route + reflect + learn + grill + grooming + prototype + arch-r
 
 - `gap`: SoT와 Current Implementation의 차이를 한 번 분석합니다. evidence-first로 읽고 source conflict나 근거 부족은 `ambiguous`로 남깁니다.
 - `route`: 지금 task를 direct, subagent-driven, goal-driven 중 어떤 route로 가져갈지 얇게 비교하고 첫 스텝을 정리합니다.
-- `reflect`: 세션 result와 사용자 피드백에서 재사용 가능한 learning을 canonical target으로 분류하고, repo-local/user-global 기본 apply와 명시적 skill materialize를 처리합니다.
-- `learn`: path, URL, 현재 대화, notes, 또는 reflect candidate를 source로 받아 reusable skill을 직접 만듭니다.
+- `reflect`: 세션 result와 사용자 피드백에서 재사용 가능한 learning을 canonical target으로 분류하고, repo-local/user-global 기본 apply와 명시적 skill materialize를 처리합니다. 실패 유형을 먼저 분류하고 stdout에는 compact evidence pointer를 남깁니다.
+- `learn`: path, URL, 현재 대화, notes, 또는 reflect candidate를 source로 받아 reusable skill을 직접 만듭니다. 완료 판정은 `RED → GREEN → REFACTOR` evidence와 `pos3 / neg2 / owner` eval coverage를 같이 요구합니다.
 - `grill`: 계획, 설계, RFC, 개선안을 수렴형 질문으로 압박 검증하고, 사용자가 답을 모른다고 **직접 말할 때만** 후보를 최대 3개까지 제안할 수 있습니다.
-- `grooming`: guidance 파일을 report-only로 평가하고, 승인된 user-global 변경만 직접 반영하며 나머지는 suggestion-only로 남깁니다.
+- `grooming`: guidance 파일을 report-only로 평가하고, 승인된 user-global 변경만 직접 반영하며 나머지는 suggestion-only로 남깁니다. `guidanceBudgetBytes` budget, footprint, archive/demotion 제안을 함께 다룹니다.
 - `prototype`: UI 또는 logic/state 가설을 throwaway prototype으로 빠르게 검증합니다.
 - `arch-review`: boundary, ownership, coupling, 반복 마찰을 evidence-first로 검토하는 report-only architecture review입니다.
 - `merge-conflict`: merge/rebase conflict를 ours/theirs intent 기준으로 해결합니다.

@@ -706,6 +706,83 @@
         "Supports focused re-read or path-only style",
         "Reports missing path honestly when current handoff is absent"
       ]
+    },
+    {
+      "name": "learn-skill-tdd-red-green-refactor-loop",
+      "prompt": "Evaluate /tk:learn verification discipline. Do not write files.",
+      "expected_output": "Should require a RED → GREEN → REFACTOR verification loop before treating a new skill as complete. RED proves the task still fails or produces the wrong shape without the skill, GREEN proves the task succeeds after the skill draft/apply, and REFACTOR tightens wording or evals to close loopholes. It should not treat a plausible self-report alone as completion proof.",
+      "files": [
+        "commands/learn.md",
+        ".tigerkit/docs/output-contract.md",
+        "README.md",
+        ".tigerkit/docs/usage.md"
+      ],
+      "expectations": [
+        "Mentions RED → GREEN → REFACTOR loop",
+        "RED proves baseline failure or wrong shape",
+        "GREEN proves post-skill success",
+        "REFACTOR closes loopholes",
+        "Does not accept self-report alone as completion proof"
+      ],
+      "id": 38
+    },
+    {
+      "name": "learn-generates-pos3-neg2-owner-eval-coverage",
+      "prompt": "Evaluate /tk:learn eval generation expectations. Do not write files.",
+      "expected_output": "Should say that a newly materialized reusable skill carries eval coverage planning with at least positive 3 / negative 2 / owner cases, registered in evals/evals.json. Negative coverage should guard against owner mismatch, description collision, or scope overreach rather than merely repeating the positive cases.",
+      "files": [
+        "commands/learn.md",
+        ".tigerkit/docs/output-contract.md",
+        "README.md",
+        ".tigerkit/docs/usage.md",
+        "evals/evals.json"
+      ],
+      "expectations": [
+        "Requires positive 3 / negative 2 / owner baseline",
+        "Registers coverage in evals/evals.json",
+        "Negative cases guard against owner mismatch",
+        "Negative cases guard against description collision or scope overreach"
+      ],
+      "id": 39
+    },
+    {
+      "name": "reflect-classifies-failure-type-and-keeps-reason-compact",
+      "prompt": "Evaluate /tk:reflect learning classification discipline. Do not write files.",
+      "expected_output": "Should classify candidates with a failure_type before proposing the learning shape. The documented vocabulary is discipline_failure, wrong_shaped_output, missing_evidence, and source_ambiguity. It should keep candidate reason compact (2–3 lines), push long narrative into the ledger, include an evidence_pointer anchor, and optionally add a compact hit: YYYY-MM-DD line rather than a long anecdote.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md",
+        "README.md"
+      ],
+      "expectations": [
+        "Uses failure_type classification before learning shape",
+        "Lists discipline_failure wrong_shaped_output missing_evidence source_ambiguity",
+        "Keeps reason compact",
+        "Uses evidence_pointer anchor",
+        "Uses optional hit: YYYY-MM-DD line"
+      ],
+      "id": 40
+    },
+    {
+      "name": "grooming-guidance-budget-and-approval-gates",
+      "prompt": "Evaluate /tk:grooming budget and demotion discipline. Do not write files.",
+      "expected_output": "Should treat grooming as report-first and approval-gated. It should mention the optional ~/.tigerkit/config.json guidanceBudgetBytes override, the default 32768-byte budget, raw footprint measurement, ~/.claude/rules-archive/ as a non-loaded archive candidate path, usage-summary or equivalent artifact usage evidence for command-like rules, and that archive/demotion/delete proposals stay suggestion-only until the user approves them.",
+      "files": [
+        "commands/grooming.md",
+        ".tigerkit/docs/output-contract.md",
+        "README.md",
+        ".tigerkit/docs/usage.md"
+      ],
+      "expectations": [
+        "Mentions guidanceBudgetBytes override",
+        "Mentions default 32768-byte budget",
+        "Reports raw footprint measurement",
+        "Mentions ~/.claude/rules-archive/",
+        "Uses usage-summary or artifact usage evidence for command-like rules",
+        "Keeps archive demotion delete proposals approval-gated"
+      ],
+      "id": 41
     }
   ]
 }
