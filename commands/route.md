@@ -1,6 +1,7 @@
 ---
 description: 구현 route를 고릅니다.
 argument-hint: '"<task>" [--context <note>] [--target <path|area>] [--print-checklist]'
+flow: [next, quiz, handoff]
 ---
 
 이 문서는 TigerKit `/tk:route` command contract를 정의합니다.
@@ -44,7 +45,30 @@ route = explicit task + current constraints -> compare implementation routes -> 
 - `decision`: owner 확인이나 제품 판단이 먼저라서 구현 route를 지금 고정하면 안 됩니다.
 - `need-sot`: Source of Truth가 부족해서 route 판단보다 SoT 보강이 먼저입니다.
 
+superpowers mapping:
+
+- `direct` → superpowers direct execution flow
+- `subagent-driven` → superpowers subagent-driven-development flow
+- `goal-driven` → superpowers goal-driven orchestration flow
+
+model-tier guidance:
+
+- 탐색/triage = 저가 티어 가능
+- route 판단/리스크 판단 = 최고 티어 우선
+- 구현/반복 수정 = 중간 티어 가능
+
 `goal-driven`은 host-neutral한 route 이름입니다. 특정 host가 `/goal`을 지원하면 그 표면을 예시로 들 수 있지만, command contract 자체는 특정 구현에 종속되지 않습니다.
+
+## Execution contract handoff
+
+route는 여전히 제안-only surface지만, 실행자가 복사해 갈 계약 블록은 남길 수 있습니다.
+
+```text
+실행 시 계약:
+- 지시에 없는 판단은 보수적인 쪽을 택해 계속 진행합니다.
+- 무엇을 왜 결정했는지 ledger에 기록합니다.
+- ledger path는 draft-paths --kind ledger helper로 계산합니다.
+```
 
 ## Output contract
 
@@ -69,6 +93,10 @@ route = explicit task + current constraints -> compare implementation routes -> 
 ⚠️ Needs first:
 - <missing info>
 
+[📁 Ledger path:
+- <draft-paths --kind ledger result>]
+[📝 Execution contract:
+- <copyable decision-ledger contract block>]
 ▶️ First step:
 - <one concrete next step>
 [👥 Delegation plan:

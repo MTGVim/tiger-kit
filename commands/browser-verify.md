@@ -100,6 +100,35 @@ skills/browser-verify/templates/screens/README.md -> ~/.tigerkit/repos/<repo-key
 
 명시하지 않으면 task wording과 profile context를 기준으로 적절한 mode를 고릅니다.
 
+## Driver policy
+
+- driver는 MCP 또는 `cdp-direct` 중 가용한 것을 사용합니다.
+- 클릭 / 활성화 / submit 계열 상호작용은 trusted 입력 surface로 실행합니다.
+- `element.click()`, `dispatchEvent(new MouseEvent(...))`, `form.submit()` 같은 합성 상호작용은 실행용 수단으로 사용하지 않습니다.
+- `Runtime.evaluate`는 selector 조회, 상태 read, `scrollIntoView`, rect / 좌표 계산 같은 비파괴적 관측·계산에만 사용합니다.
+- native dialog 대응은 trusted 클릭 / 활성화 / submit 전에 먼저 준비합니다.
+
+## Driver-agnostic rules
+
+- 로그인 입력은 driver 종류와 무관하게 profile `login.md` / `login.local.md`를 source of truth로 읽습니다.
+- controlled input이면 native value setter + `input` / `change` dispatch를 사용합니다.
+- overlay/modal 판별과 native dialog 대응은 별도 경우로 다룹니다.
+- baseline/target 탭, viewport, screen context는 같은 기준으로 맞춥니다.
+
+## Behavior 판정 규칙
+
+- verdict는 항목 단위로 `pass` / `fail` / `unverifiable`을 사용합니다.
+- mutation 발생 판정은 DOM 상태만으로 내리지 않고 network 요청 관측을 필수 증거로 요구합니다.
+- 합성 이벤트 경로에서만 관측된 동작은 pass/fail 근거로 인정하지 않습니다.
+- UI 상태 전이 / network 요청 / 응답 후 상태를 3축으로 나눠 기록합니다.
+
+## Mutation 안전
+
+- mutation 유발 상호작용은 profile `env.md`의 test mutation context 안에서만 실제 실행합니다.
+- test mutation context가 비어 있으면 해당 항목은 `unverifiable`로 보고합니다.
+- 외부 발송, 결제, 취소 불가 삭제 같은 비가역 side-effect는 실제 실행하지 않습니다.
+- mock은 gated 상태 도달용으로만 쓰고, mutation 자체의 pass 증거로 대체하지 않습니다.
+
 ## Output contract
 
 - section label은 항상 `🎯 Goal:`처럼 leading emoji를 붙인 `라벨:` 한 줄 뒤 바로 다음 줄에 내용을 둡니다. 라벨 뒤 빈 줄을 두지 않습니다.

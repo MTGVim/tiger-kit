@@ -1,6 +1,7 @@
 ---
 description: current-first handoff를 다시 읽습니다.
 argument-hint: '["<focus or question>"] [--path-only]'
+flow: [next, route]
 ---
 
 이 문서는 TigerKit `/tk:handon` command contract를 정의합니다.

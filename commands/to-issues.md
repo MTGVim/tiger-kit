@@ -1,6 +1,7 @@
 ---
-description: issue draft로 쪼갭니다.
-argument-hint: '"<plan|prd>" [--output <path>] [--print-only] [--publish]'
+description: vertical-slice issue draft를 만듭니다.
+argument-hint: '"<plan or prd>" [--output <path>] [--print-only]'
+flow: [route, next, handoff]
 ---
 
 이 문서는 TigerKit `/tk:to-issues` command contract를 정의합니다.

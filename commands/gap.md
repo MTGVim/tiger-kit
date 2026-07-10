@@ -1,6 +1,7 @@
 ---
 description: SoT gap을 분석합니다.
 argument-hint: "[SoT refs or pasted source] [--target <path|area>] [--print-report]"
+flow: [route, next]
 ---
 
 이 문서는 TigerKit `/tk:gap` 명령 계약을 정의합니다.
@@ -24,8 +25,14 @@ gap = source of truth ↔ current implementation one-shot comparison
 ## Core guidance
 
 - SoT가 있으면 구현 전에 `/tk:gap`을 먼저 고려합니다.
-- SoT가 없으면 추측 대신 먼저 SoT 제공을 제안합니다.
+- SoT가 없다고 바로 중단하지는 않습니다. blindspot pass가 더 맞는 경우에는 unknown unknowns를 질문 목록으로 바꿔 discovery를 돕습니다.
 - 사용자가 바로 진행을 원하면 `/tk:gap` 없이 진행할 수 있지만, 그 경우 가정과 불확실성을 명시합니다.
+
+## Modes
+
+- `SoT-present`: 기존 one-shot gap 분석입니다.
+- `SoT-absent / blindspot`: 현재 코드베이스와 task wording만으로 unknown unknowns를 스캔하고, 사용자 프롬프트를 개선할 질문 목록을 만듭니다.
+- blindspot mode도 workflow executor는 아니고, report + follow-up question surface에 머뭅니다.
 
 ## Inputs
 

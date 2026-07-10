@@ -1,6 +1,7 @@
 ---
-description: PRD draft로 정리합니다.
-argument-hint: '"<goal|scope>" [--output <path>] [--print-only] [--publish]'
+description: draft PRD를 작성합니다.
+argument-hint: '"<goal or requirement>" [--output <path>] [--print-only]'
+flow: [to-issues, route, next]
 ---
 
 이 문서는 TigerKit `/tk:to-prd` command contract를 정의합니다.

@@ -64,8 +64,11 @@ def main() -> int:
 
     command_set = set(commands)
     expected_active = {
+        "./commands/help.md",
         "./commands/gap.md",
         "./commands/route.md",
+        "./commands/next.md",
+        "./commands/quiz.md",
         "./commands/reflect.md",
         "./commands/learn.md",
         "./commands/browser-verify.md",

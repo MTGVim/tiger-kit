@@ -17,7 +17,10 @@ OUTPUT_CONTRACT_PATH = ROOT / ".tigerkit" / "docs" / "output-contract.md"
 
 EXPECTED_ACTIVE_COMMANDS = {
     "./commands/gap.md",
+    "./commands/help.md",
     "./commands/route.md",
+    "./commands/next.md",
+    "./commands/quiz.md",
     "./commands/reflect.md",
     "./commands/learn.md",
     "./commands/browser-verify.md",
@@ -33,8 +36,11 @@ EXPECTED_ACTIVE_COMMANDS = {
 }
 
 README_COMMANDS = {
+    "/tk:help",
     "/tk:gap",
     "/tk:route",
+    "/tk:next",
+    "/tk:quiz",
     "/tk:reflect",
     "/tk:learn",
     "/tk:browser-verify",
@@ -65,10 +71,13 @@ CHECKED_PUBLIC_FILES = [
 ]
 
 COMMAND_OUTPUT_PATHS = {
+    "help": ROOT / "commands" / "help.md",
     "gap": ROOT / "commands" / "gap.md",
     "route": ROOT / "commands" / "route.md",
+    "next": ROOT / "commands" / "next.md",
     "reflect": ROOT / "commands" / "reflect.md",
     "learn": ROOT / "commands" / "learn.md",
+    "quiz": ROOT / "commands" / "quiz.md",
     "browser-verify": ROOT / "commands" / "browser-verify.md",
     "grill": ROOT / "commands" / "grill.md",
     "grooming": ROOT / "commands" / "grooming.md",
@@ -145,12 +154,31 @@ WRAPPER_SKILL_TOTAL_BUDGET = 11000
 WRAPPER_DISABLE_MODEL_INVOCATION_LINE = "disable-model-invocation: true"
 BROWSER_VERIFY_ENTRY_SKILL_PATH = ROOT / "skills" / "browser-verify" / "SKILL.md"
 BROWSER_VERIFY_ENTRY_BUDGET = 2048
+BROWSER_VERIFY_CANONICAL_POLICY_PATH = ROOT / "commands" / "browser-verify.md"
+BROWSER_VERIFY_REFERENCE_OWNERS = {
+    ROOT / "skills" / "browser-verify" / "references" / "modes" / "env-diff.md": [
+        "commands/browser-verify.md",
+        "driver-agnostic 규칙",
+    ],
+    ROOT / "skills" / "browser-verify" / "references" / "modes" / "behavior-verify.md": [
+        "commands/browser-verify.md",
+        "Behavior 판정 규칙",
+        "Mutation 안전",
+    ],
+    ROOT / "skills" / "browser-verify" / "references" / "drivers" / "cdp-direct.md": [
+        "commands/browser-verify.md",
+        "canonical policy",
+    ],
+}
 
 OUTPUT_SYNC_TARGETS = {
+    "help": "## `/tk:help` Output Contract",
     "gap": "## `/tk:gap` Output Contract",
     "route": "## `/tk:route` Output Contract",
+    "next": "## `/tk:next` Output Contract",
     "reflect": "## `/tk:reflect` Output Contract",
     "learn": "## `/tk:learn` Output Contract",
+    "quiz": "## `/tk:quiz` Output Contract",
     "browser-verify": "## `/tk:browser-verify` Output Contract",
     "grill": "## `/tk:grill` Output Contract",
     "grooming": "## `/tk:grooming` Output Contract",
@@ -164,8 +192,11 @@ OUTPUT_SYNC_TARGETS = {
 }
 
 TEXT_OUTPUT_COMMANDS_NO_NONE = {
+    "help",
     "route",
+    "next",
     "learn",
+    "quiz",
     "browser-verify",
     "grill",
     "grooming",
@@ -176,7 +207,6 @@ TEXT_OUTPUT_COMMANDS_NO_NONE = {
     "handon",
     "to-prd",
     "to-issues",
-    "browser-verify",
 }
 
 LEGACY_LABELS_WITHOUT_COLON = {
@@ -320,6 +350,20 @@ def check_browser_verify_entry_skill_size() -> None:
         fail("skills/browser-verify/SKILL.md missing red-loop-first boundary")
 
 
+def check_browser_verify_reference_owners() -> None:
+    policy_text = BROWSER_VERIFY_CANONICAL_POLICY_PATH.read_text()
+    for required_heading in ("## Driver policy", "## Behavior 판정 규칙", "## Mutation 안전"):
+        if required_heading not in policy_text:
+            fail(f"commands/browser-verify.md missing canonical policy heading {required_heading!r}")
+    for path, needles in BROWSER_VERIFY_REFERENCE_OWNERS.items():
+        text = path.read_text()
+        for needle in needles:
+            if needle not in text:
+                fail(f"{path.relative_to(ROOT)} missing browser-verify owner needle {needle!r}")
+        if "skills/browser-verify/SKILL.md" in text and "commands/browser-verify.md" not in text:
+            fail(f"{path.relative_to(ROOT)} still points canonical browser-verify policy at skills/browser-verify/SKILL.md")
+
+
 def extract_first_fenced_block_after_heading(text: str, heading: str) -> str:
     lines = text.splitlines()
     try:
@@ -413,6 +457,7 @@ def main() -> int:
     check_shared_boundary_reference()
     check_wrapper_skill_thinness()
     check_browser_verify_entry_skill_size()
+    check_browser_verify_reference_owners()
     check_command_output_block_shape()
     check_output_contract_helper_sync()
     print("command surface drift ok")

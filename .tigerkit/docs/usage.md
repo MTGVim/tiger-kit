@@ -9,11 +9,14 @@
 ## 핵심 모델
 
 ```text
-TigerKit = gap + route + reflect + learn + grill + grooming + prototype + arch-review + merge-conflict + handoff + handon + to-prd + to-issues + browser-verify
+TigerKit = help + gap + route + next + quiz + reflect + learn + grill + grooming + prototype + arch-review + merge-conflict + handoff + handon + to-prd + to-issues + browser-verify
 ```
 
-- `gap`: SoT와 Current Implementation의 차이를 한 번 분석합니다. evidence-first로 읽고 source conflict나 근거 부족은 `ambiguous`로 남깁니다.
-- `route`: 지금 task를 direct, subagent-driven, goal-driven 중 어떤 route로 가져갈지 얇게 비교하고 첫 스텝을 정리합니다.
+- `help`: 지금 어떤 command를 먼저 열어야 하는지 정리하는 navigation surface입니다.
+- `gap`: SoT와 Current Implementation의 차이를 한 번 분석합니다. evidence-first로 읽고 source conflict나 근거 부족은 `ambiguous`로 남깁니다. SoT가 없으면 blindspot 질문 목록으로 discovery를 시작할 수도 있습니다.
+- `route`: 지금 task를 direct, subagent-driven, goal-driven 중 어떤 route로 가져갈지 얇게 비교하고 첫 스텝을 정리합니다. 실행 시 계약 블록과 ledger path를 복사 가능한 형태로 제안할 수 있습니다.
+- `next`: 현재 task나 current artifact 상태를 보고 다음 command 1개만 고르는 conductor surface입니다.
+- `quiz`: merge 전 diff + ledger 기반 이해도 게이트를 여는 surface입니다.
 - `reflect`: 세션 result와 사용자 피드백에서 재사용 가능한 learning을 canonical target으로 분류하고, repo-local/user-global 기본 apply와 명시적 skill materialize를 처리합니다. 실패 유형을 먼저 분류하고 stdout에는 compact evidence pointer를 남깁니다.
 - `learn`: path, URL, 현재 대화, notes, 또는 reflect candidate를 source로 받아 reusable skill을 직접 만듭니다. 완료 판정은 `RED → GREEN → REFACTOR` evidence와 `pos3 / neg2 / owner` eval coverage를 같이 요구합니다.
 - `grill`: 계획, 설계, RFC, 개선안을 수렴형 질문으로 압박 검증하고, 사용자가 답을 모른다고 **직접 말할 때만** 후보를 최대 3개까지 제안할 수 있습니다.
@@ -27,12 +30,14 @@ TigerKit = gap + route + reflect + learn + grill + grooming + prototype + arch-r
 - `to-issues`: plan/PRD를 independently grabbable vertical-slice issue draft로 분해합니다.
 - `browser-verify`: 번들된 browser-verify 엔진 skill을 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/browser-verify/` profile과 함께 사용하는 direct QA / behavior verification surface입니다.
 
-TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 gap, route, reflect, learn, grill, grooming, prototype, arch-review, merge-conflict, handoff, handon, to-prd, to-issues, browser-verify 중심의 가벼운 surface를 제공합니다.
+TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 help, gap, route, next, quiz, reflect, learn, grill, grooming, prototype, arch-review, merge-conflict, handoff, handon, to-prd, to-issues, browser-verify 중심의 가벼운 surface를 제공합니다.
 
 ## Core guidance
 
 - SoT가 있으면 구현 전에 `/tk:gap`을 먼저 고려합니다.
-- SoT가 없으면 먼저 SoT 제공을 제안합니다.
+- entrypoint가 막연하면 `/tk:help`로 먼저 navigation을 잡습니다.
+- `/tk:next`는 다음 command 1개만 고르는 conductor이고, 자동 연쇄 실행은 하지 않습니다.
+- `/tk:quiz`는 merge 전 diff + ledger 기반 이해도 게이트입니다.
 - 사용자가 바로 진행을 원하면 `/tk:gap` 없이 진행할 수 있지만, 그 경우 가정과 불확실성을 명시합니다.
 - `/tk:route`는 source를 수정하지 않고 route만 정합니다.
 - `/tk:reflect`는 repo-local guidance 기본 apply, user-global apply, skill materialize를 모두 처리합니다.
@@ -63,8 +68,11 @@ TigerKit은 일반 autopilot 또는 sealed workflow engine이 아니라 gap, rou
 
 | Command | 역할 | 저장 성격 |
 |---|---|---|
+| `/tk:help` | 지금 어떤 command를 먼저 열어야 하는지와 다음 연결 후보를 정리합니다. | generated help-map summary |
 | `/tk:gap` | SoT와 Current를 비교해 missing, mismatch, overbuilt, ambiguous를 보고합니다. | optional external generated report |
 | `/tk:route` | 지금 이 task를 어떤 구현 route로 가져갈지 얇게 비교하고 첫 스텝을 정리합니다. | no persisted artifact by default |
+| `/tk:next` | 현재 task나 current artifact 상태를 바탕으로 다음 command 1개만 추천합니다. | no persisted artifact by default |
+| `/tk:quiz` | merge 전 diff + ledger 기반 이해도 게이트를 실행합니다. | worktree-scoped quiz report under repo-scoped `~/.tigerkit` root |
 | `/tk:reflect` | session result와 feedback에서 개선 후보를 canonical target으로 분류하고 repo-local/user-global 기본 apply와 explicit skill materialize를 처리합니다. | reflect ledger + compact summary |
 | `/tk:learn` | path, URL, 현재 대화, notes, 또는 reflect candidate에서 reusable skill을 직접 만듭니다. | skill draft / user skill source |
 | `/tk:grill` | 계획, 설계, RFC, 개선안을 수렴형 질문으로 압박 검증하고, 사용자가 답을 모른다고 **직접 말할 때만** 후보를 최대 3개까지 제안할 수 있습니다. | inline questioning + compact summary |

@@ -9,7 +9,7 @@
 </p>
 
 TigerKit(`tk`, plugin namespace `/tk:*`)은 Claude Code용 경량 plugin입니다.
-SoT(Source of Truth)가 있으면 `/tk:gap`으로 현재 구현의 차이를 먼저 확인합니다. 다음 구현 route가 애매하면 `/tk:route`로 direct, subagent-driven, goal-driven 중 어떤 방식이 맞는지 얇게 정리합니다. 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 분류하고 repo-local/user-global guidance에 반영할 수 있습니다. path, URL, 현재 대화, notes, 또는 reflect candidate에서 skill을 바로 만들고 싶으면 `/tk:learn`을 씁니다. 또 구현 전 압박 검증은 `/tk:grill`(사용자가 답을 모른다고 **직접 말할 때만** 후보 최대 3개 제안 가능), guidance 감사/정비는 `/tk:grooming`, throwaway 검증은 `/tk:prototype`, 구조 리뷰는 `/tk:arch-review`, 충돌 해결은 `/tk:merge-conflict`, 세션 인계는 `/tk:handoff`, 저장된 handoff 재호출은 `/tk:handon`, draft 요구 문서화는 `/tk:to-prd`, draft issue 분해는 `/tk:to-issues`로 다룹니다. browser-verify 엔진은 번들 skill로 유지하고, `/tk:browser-verify`는 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/browser-verify/` profile을 읽는 direct QA / behavior verification surface입니다.
+SoT(Source of Truth)가 있으면 `/tk:gap`으로 현재 구현의 차이를 먼저 확인합니다. entrypoint가 헷갈리면 `/tk:help`, 다음 command 하나만 고르고 싶으면 `/tk:next`, 구현 route가 애매하면 `/tk:route`로 direct, subagent-driven, goal-driven 중 어떤 방식이 맞는지 얇게 정리합니다. 의미 있는 작업이 끝나면 `/tk:reflect`로 재사용 가능한 learning을 분류하고 repo-local/user-global guidance에 반영할 수 있습니다. path, URL, 현재 대화, notes, 또는 reflect candidate에서 skill을 바로 만들고 싶으면 `/tk:learn`을 씁니다. 또 구현 전 압박 검증은 `/tk:grill`(사용자가 답을 모른다고 **직접 말할 때만** 후보 최대 3개 제안 가능), guidance 감사/정비는 `/tk:grooming`, throwaway 검증은 `/tk:prototype`, 구조 리뷰는 `/tk:arch-review`, 충돌 해결은 `/tk:merge-conflict`, 세션 인계는 `/tk:handoff`, 저장된 handoff 재호출은 `/tk:handon`, draft 요구 문서화는 `/tk:to-prd`, draft issue 분해는 `/tk:to-issues`, merge 전 이해도 게이트는 `/tk:quiz`로 다룹니다. browser-verify 엔진은 번들 skill로 유지하고, `/tk:browser-verify`는 현재 repo에 대응하는 `~/.tigerkit/repos/<repo-key>/browser-verify/` profile을 읽는 direct QA / behavior verification surface입니다.
 
 ```text
 Check the gap. Pick the route. Keep the learning. Materialize durable skills from reflect when needed.
@@ -17,16 +17,17 @@ Check the gap. Pick the route. Keep the learning. Materialize durable skills fro
 
 ## Start here
 
-처음에는 아래 3개만 알면 됩니다.
+처음에는 아래 4개만 알면 됩니다.
 
-1. `/tk:gap` — SoT와 현재 구현의 차이를 먼저 봅니다.
-2. `/tk:route` — direct / subagent-driven / goal-driven 중 어떤 구현 경로가 맞는지 고릅니다.
-3. `/tk:reflect` — 끝난 뒤 재사용 가능한 learning을 남깁니다.
+1. `/tk:help` — 지금 어떤 command부터 열어야 할지 찾습니다.
+2. `/tk:gap` — SoT와 현재 구현의 차이를 먼저 봅니다.
+3. `/tk:route` — direct / subagent-driven / goal-driven 중 어떤 구현 경로가 맞는지 고릅니다.
+4. `/tk:reflect` — 끝난 뒤 재사용 가능한 learning을 남깁니다.
 
 이후에는 필요할 때만 나머지 surface를 꺼내 쓰면 됩니다.
 
-- Practical: `/tk:grill`, `/tk:grooming`, `/tk:prototype`, `/tk:browser-verify`, `/tk:arch-review`, `/tk:merge-conflict`
-- Output: `/tk:handoff`, `/tk:handon`, `/tk:to-prd`, `/tk:to-issues`
+- Practical: `/tk:grill`, `/tk:grooming`, `/tk:prototype`, `/tk:browser-verify`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:quiz`
+- Output / navigation: `/tk:handoff`, `/tk:handon`, `/tk:to-prd`, `/tk:to-issues`, `/tk:next`
 
 ## Installation
 
@@ -44,7 +45,7 @@ claude plugin list --available --json
 claude plugin details tk
 ```
 
-설치 후 Claude Code를 다시 시작하고 `/tk:gap`, `/tk:route`, `/tk:reflect`, `/tk:learn`, `/tk:browser-verify`, `/tk:grill`, `/tk:grooming`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:handon`, `/tk:to-prd`, `/tk:to-issues` 명령을 사용합니다.
+설치 후 Claude Code를 다시 시작하고 `/tk:help`, `/tk:gap`, `/tk:route`, `/tk:next`, `/tk:quiz`, `/tk:reflect`, `/tk:learn`, `/tk:browser-verify`, `/tk:grill`, `/tk:grooming`, `/tk:prototype`, `/tk:arch-review`, `/tk:merge-conflict`, `/tk:handoff`, `/tk:handon`, `/tk:to-prd`, `/tk:to-issues` 명령을 사용합니다.
 
 ## Core guidance
 
