@@ -50,7 +50,7 @@ claude plugin details tk
 ## Core guidance
 
 - SoT가 있으면 구현 전에 `/tk:gap`을 먼저 고려합니다.
-- SoT가 없으면 먼저 SoT 제공을 제안합니다.
+- SoT가 없다고 바로 중단하지는 않습니다. blindspot pass가 더 맞는 경우에는 unknown unknowns를 질문 목록으로 바꿔 discovery를 돕습니다.
 - 사용자가 바로 진행을 원하면 `/tk:gap` 없이 진행할 수 있지만, 그 경우 가정과 불확실성을 명시합니다.
 - `/tk:route`는 source를 수정하지 않고 direct, subagent-driven, goal-driven 같은 구현 경로를 비교합니다.
 - `/tk:reflect`는 교훈을 canonical target으로 분류합니다. `repo-local`과 `user-global`은 기본 apply(opt-out)로 반영할 수 있고, 명시적 skill materialize는 `/tk:learn` authoring pipeline으로 위임합니다. 실패 유형을 먼저 `discipline_failure | wrong_shaped_output | missing_evidence | source_ambiguity`로 분류하고, stdout Reason은 2~3줄 compact evidence pointer만 남깁니다.
