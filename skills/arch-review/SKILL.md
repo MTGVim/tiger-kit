@@ -1,6 +1,7 @@
 ---
 name: arch-review
 description: 구조 리뷰 트리거입니다.
+disable-model-invocation: true
 ---
 
 # Arch Review

@@ -1,6 +1,7 @@
 ---
-description: issue draft로 쪼갭니다.
-argument-hint: '"<plan|prd>" [--output <path>] [--print-only] [--publish]'
+description: vertical-slice issue draft를 만듭니다.
+argument-hint: '"<plan or prd>" [--output <path>] [--print-only]'
+flow: [route, next, handoff]
 ---
 
 이 문서는 TigerKit `/tk:to-issues` command contract를 정의합니다.
@@ -23,6 +24,16 @@ skills/to-issues/SKILL.md
 - vertical slice only
 - no layer slicing
 - blocked-by / order dependency 명시
+- slice별 blocking-edge를 적을 수 있습니다.
+
+## Dependency edge rule
+
+각 issue draft는 가능하면 아래 둘을 분리합니다.
+
+- `blocked-by`: 이 issue가 시작되기 전에 필요한 선행 slice
+- `blocking-edge`: 이 issue가 끝나야 자연스럽게 열리는 다음 slice
+
+둘 다 없으면 생략할 수 있지만, dependency sludge를 숨기려고 비워두지는 않습니다.
 
 ## Default output target
 
@@ -57,6 +68,8 @@ To-Issues 완료 | To-Issues 미리보기 | To-Issues 중단
 - draft-only by default
 ⚠️ Dependencies:
 - <blocked-by summary>
+[⚠️ Blocking edges:
+- <slice -> next slice edge>]
 📝 Publish:
 - disabled by default
 ▶️ Next step:

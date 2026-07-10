@@ -9,7 +9,7 @@ runtime generated state + repo-scoped root with worktree-scoped draft artifacts 
 reflect direct-write targets = repo CLAUDE.local.md or host-native user-global guidance surface
 ```
 
-TigerKit는 active runtime generated state와 `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues` 같은 repo-scoped draft artifacts, 그리고 `/tk:browser-verify` repo profile을 project repository 밖 `~/.tigerkit/` 아래에 둡니다. reflect direct-write target인 repo `CLAUDE.local.md`와 host-native user-global guidance surface는 이 artifact store와 별개의 target입니다.
+TigerKit는 active runtime generated state와 `/tk:handoff`, `/tk:to-prd`, `/tk:to-issues`, `/tk:quiz`, `/tk:wayfinder` 같은 repo-scoped draft artifacts, 그리고 `/tk:browser-verify` repo profile을 project repository 밖 `~/.tigerkit/` 아래에 둡니다. reflect direct-write target인 repo `CLAUDE.local.md`와 host-native user-global guidance surface는 이 artifact store와 별개의 target입니다.
 
 ## Active runtime state
 
@@ -37,6 +37,9 @@ TigerKit는 active runtime generated state와 `/tk:handoff`, `/tk:to-prd`, `/tk:
 ~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/handoffs/current.md
 ~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/prd/current.md
 ~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/issues/current.md
+~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/ledger/current.md
+~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/quiz/current.md
+~/.tigerkit/repos/<repo-key>/worktrees/<worktree-key>/wayfinder/current.md
 ```
 
 이 경로들은 tracked product source가 아니라 repo-scoped `~/.tigerkit` root 아래의 worktree-scoped generated draft artifact 경로입니다. 선택적으로 archive를 남길 수는 있지만 기본은 current-first 입니다. `repo-key`와 `worktree-key` 계산은 `scripts/tigerkit_state.py` helper가 수행합니다. `worktree-key`는 현재 worktree를 구분하는 canonicalized directory key로 보고, 서로 다른 worktree draft가 섞이지 않게 합니다.

@@ -66,6 +66,25 @@ python3 "$TIGERKIT_PLUGIN_ROOT/scripts/tigerkit_state.py" read-reflect-candidate
 
 host가 다른 user skill surface를 지원하면 equivalent host-native user skill target을 쓸 수 있지만, 이 command의 write boundary는 계속 `skill only`입니다.
 
+## Verification loop
+
+새 skill을 끝났다고 보기 전에 최소한 아래 3단계를 남깁니다.
+
+1. `RED`: skill 없이 같은 task가 실패하거나 원하는 shape를 만들지 못함을 확인합니다.
+2. `GREEN`: draft/apply 뒤 같은 task가 기대 shape로 통과함을 확인합니다.
+3. `REFACTOR`: wording loophole, 과도한 scope, owner 모호성을 줄이도록 skill과 eval을 다듬습니다.
+
+검증 없는 success 주장이나 "좋아 보인다" 수준의 self-report만으로는 learn 완료로 보지 않습니다.
+
+## Eval generation contract
+
+새 reusable skill을 실제로 만들거나 materialize할 때는 eval coverage를 같이 설계합니다.
+
+- 최소 baseline: `positive 3 / negative 2 / owner` case
+- register target: `evals/evals.json`
+- negative는 owner mismatch, description collision, scope overreach 같은 잘못된 라우팅을 막는 방향을 우선합니다.
+- reflect candidate source였다면 same-session + same-ledger boundary를 흐리지 않는 케이스를 포함합니다.
+
 ## Output contract
 
 - section label은 항상 `🎯 Goal:`처럼 leading emoji를 붙인 `라벨:` 한 줄 뒤 바로 다음 줄에 내용을 둡니다. 라벨 뒤 빈 줄을 두지 않습니다.
@@ -89,6 +108,10 @@ Learn 완료 | Learn 미리보기 | Learn 중단
 - <slug>]
 🎯 Target:
 - user skill surface only
+[✅ Verification loop:
+- RED | GREEN | REFACTOR evidence summary]
+[🧪 Eval coverage:
+- pos3 / neg2 / owner registered | pending]
 [📁 Created path:
 - <path>]
 [📝 Write result:
@@ -105,3 +128,4 @@ Learn 완료 | Learn 미리보기 | Learn 중단
 - `--dry-run`: preview-only
 - `--name <slug>`: suggested/confirmed 이름 입력
 - 이름이 확정되지 않았거나 preview-only면 `Confirmed name`/`Created path` section을 생략하고 `Write result`에 짧게 이유만 남깁니다.
+- apply까지 간 skill은 가능하면 `RED → GREEN → REFACTOR` evidence summary와 `pos3 / neg2 / owner` eval coverage 상태를 같이 남깁니다.

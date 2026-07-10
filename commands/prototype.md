@@ -31,6 +31,18 @@ skills/prototype/SKILL.md
 - `--logic`: state, reducer, parser, branching, adapter shape 검증
 - mode를 명시하지 않으면 질문 의도상 더 가까운 쪽을 고르고 이유를 짧게 밝힘
 
+## UI prototype guidance
+
+- UI prototype은 가능한 한 **radically different** variant를 2개 이상 비교합니다.
+- variant 사이를 빠르게 비교할 수 있는 floating switcher나 동등한 토글 affordance를 두는 편을 우선합니다.
+- cosmetic tweak만 여러 개 만들기보다 정보 구조나 interaction shape가 다른 안을 우선합니다.
+
+## Logic prototype guidance
+
+- logic prototype은 portable pure logic module을 먼저 떼어냅니다.
+- UI나 framework 상태와 엮인 코드는 얇은 adapter로 남기고, 승격 후보는 pure module 쪽에 모읍니다.
+- prototype에서 검증한 pure logic은 이후 production code로 포팅하기 쉬운 경계를 유지합니다.
+
 ## Output contract
 
 - section label은 항상 `🎯 Goal:`처럼 leading emoji를 붙인 `라벨:` 한 줄 뒤 바로 다음 줄에 내용을 둡니다. 라벨 뒤 빈 줄을 두지 않습니다.

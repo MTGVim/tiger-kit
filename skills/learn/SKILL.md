@@ -1,6 +1,7 @@
 ---
 name: learn
 description: skill 작성 트리거입니다.
+disable-model-invocation: true
 ---
 
 # Learn

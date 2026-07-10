@@ -1,6 +1,7 @@
 ---
 name: to-prd
-description: PRD 정리 트리거입니다.
+description: PRD 초안화 트리거입니다.
+disable-model-invocation: true
 ---
 
 # To PRD

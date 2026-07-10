@@ -1,6 +1,7 @@
 ---
-description: current-first handoff를 만듭니다.
-argument-hint: '"<goal or scope>" [--output <artifact path>] [--print-only]'
+description: 세션 handoff를 만듭니다.
+argument-hint: '"[goal or audience]" [--output <path>] [--print-only]'
+flow: [handon, next]
 ---
 
 이 문서는 TigerKit `/tk:handoff` command contract를 정의합니다.

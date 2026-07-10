@@ -1,6 +1,7 @@
 ---
 name: grooming
-description: guidance 정비 트리거입니다.
+description: guidance 감사 트리거입니다.
+disable-model-invocation: true
 ---
 
 # Grooming

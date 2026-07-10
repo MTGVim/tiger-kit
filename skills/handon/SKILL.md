@@ -1,6 +1,7 @@
 ---
 name: handon
-description: handoff 재열기 트리거입니다.
+description: handoff 재개 트리거입니다.
+disable-model-invocation: true
 ---
 
 # Handon

@@ -1,16 +1,20 @@
 {
-  "skill_name": "tiger-kit-gap-route-reflect-learn-browser-verify-grill-grooming-prototype-arch-review-merge-conflict-handoff-handon-to-prd-to-issues-core",
+  "skill_name": "tiger-kit-help-gap-route-next-quiz-reflect-learn-browser-verify-grill-grooming-prototype-wayfinder-arch-review-merge-conflict-handoff-handon-to-prd-to-issues-core",
   "command_surface": {
-    "surface_model": "TigerKit exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts. Active command surface is /tk:gap, /tk:route, /tk:reflect, /tk:learn, /tk:browser-verify, /tk:grill, /tk:grooming, /tk:prototype, /tk:arch-review, /tk:merge-conflict, /tk:handoff, /tk:handon, /tk:to-prd, and /tk:to-issues.",
+    "surface_model": "TigerKit exposes Claude Code plugin commands only; commands/*.md and .claude-plugin/plugin.json own /tk:* contracts. Active command surface is /tk:help, /tk:gap, /tk:route, /tk:next, /tk:quiz, /tk:reflect, /tk:learn, /tk:browser-verify, /tk:grill, /tk:grooming, /tk:prototype, /tk:wayfinder, /tk:arch-review, /tk:merge-conflict, /tk:handoff, /tk:handon, /tk:to-prd, and /tk:to-issues.",
     "core_commands": [
+      "/tk:help",
       "/tk:gap",
       "/tk:route",
+      "/tk:next",
+      "/tk:quiz",
       "/tk:reflect",
       "/tk:learn",
       "/tk:browser-verify",
       "/tk:grill",
       "/tk:grooming",
       "/tk:prototype",
+      "/tk:wayfinder",
       "/tk:arch-review",
       "/tk:merge-conflict",
       "/tk:handoff",
@@ -23,7 +27,6 @@
       "/tk:setup",
       "/tk:config",
       "/tk:review",
-      "/tk:next",
       "/tk:meta-feedback"
     ],
     "plugin_version_policy": "Authoritative version is .claude-plugin/plugin.json; evals must not hard-code a concrete version literal."
@@ -31,23 +34,31 @@
   "evals": [
     {
       "id": 0,
-      "name": "plugin-version-and-command-manifest-gap-route-reflect-browser-verify-plus-phase1-and-conditional",
+      "name": "plugin-version-and-command-manifest-help-gap-route-next-quiz-reflect-browser-verify-wayfinder-plus-phase1-and-conditional",
       "prompt": "Evaluate TigerKit active command surface and plugin packaging. Do not write files.",
-      "expected_output": "Should list /tk:gap, /tk:route, /tk:reflect, /tk:learn, /tk:browser-verify, /tk:grill, /tk:grooming, /tk:prototype, /tk:arch-review, /tk:merge-conflict, /tk:handoff, /tk:handon, /tk:to-prd, and /tk:to-issues as the active commands. Should state /tk:learn is a source-to-skill surface with preview-default and skill-only write boundary. Should state /tk:route is a decision/brainstorming surface, not a runner or autopilot. Should state /tk:reflect is the durable promotion router with repo-local/user-global default apply and explicit skill materialize mode, /tk:grill is a questioning surface, /tk:grooming is a report-first guidance audit surface with user-global-only direct apply, /tk:prototype is a throwaway validation surface, /tk:arch-review is a report-only architecture review surface, /tk:merge-conflict is a conflict-resolution surface, /tk:handoff is a worktree-scoped current-first handoff surface under repo-scoped ~/.tigerkit, /tk:handon is a read-only current-first handoff reopen surface under repo-scoped ~/.tigerkit, /tk:to-prd is a worktree-scoped current-first draft-only PRD surface under repo-scoped ~/.tigerkit, /tk:to-issues is a worktree-scoped current-first vertical-slice issue draft surface under repo-scoped ~/.tigerkit, and /tk:browser-verify is a direct QA / behavior verification surface.",
+      "expected_output": "Should list /tk:help, /tk:gap, /tk:route, /tk:next, /tk:quiz, /tk:reflect, /tk:learn, /tk:browser-verify, /tk:grill, /tk:wayfinder, /tk:grooming, /tk:prototype, /tk:arch-review, /tk:merge-conflict, /tk:handoff, /tk:handon, /tk:to-prd, and /tk:to-issues as the active commands. Should state /tk:help is a generated help-map navigation surface, /tk:next is a one-command conductor surface, /tk:quiz is a merge-prep comprehension gate, /tk:learn is a source-to-skill surface with preview-default and skill-only write boundary. Should state /tk:route is a decision/brainstorming surface, not a runner or autopilot, and may emit a copyable execution contract with ledger path. Should state /tk:reflect is the durable promotion router with repo-local/user-global default apply and explicit skill materialize mode, /tk:grooming is a report-first guidance audit surface with user-global-only direct apply, /tk:prototype is a throwaway validation surface, /tk:arch-review is a report-only architecture review surface, /tk:merge-conflict is a conflict-resolution surface, /tk:handoff is a worktree-scoped current-first handoff surface under repo-scoped ~/.tigerkit, /tk:handon is a read-only current-first handoff reopen surface under repo-scoped ~/.tigerkit, /tk:to-prd is a worktree-scoped current-first draft-only PRD surface under repo-scoped ~/.tigerkit, /tk:to-issues is a worktree-scoped current-first vertical-slice issue draft surface under repo-scoped ~/.tigerkit, and /tk:browser-verify is a direct QA / behavior verification surface. Should state /tk:wayfinder is a current-first shared-map surface for long-running work recovery.",
       "files": [
         ".claude-plugin/plugin.json",
         "README.md",
         ".tigerkit/docs/usage.md",
-        "commands/handon.md",
+        ".tigerkit/docs/output-contract.md",
+        "commands/help.md",
         "commands/route.md",
-        "commands/reflect.md"
+        "commands/next.md",
+        "commands/quiz.md",
+        "commands/reflect.md",
+        "commands/wayfinder.md"
       ],
       "expectations": [
+        "Lists /tk:help",
         "Lists /tk:gap",
         "Lists /tk:route",
+        "Lists /tk:next",
+        "Lists /tk:quiz",
         "Lists /tk:reflect",
         "Lists /tk:learn",
         "Lists /tk:browser-verify",
+        "Lists /tk:wayfinder",
         "Lists /tk:grill",
         "Lists /tk:grooming",
         "Lists /tk:prototype",
@@ -57,10 +68,13 @@
         "Lists /tk:handon",
         "Lists /tk:to-prd",
         "Lists /tk:to-issues",
+        "States /tk:help is generated help-map navigation surface",
+        "States /tk:next is one-command conductor surface",
+        "States /tk:quiz is merge-prep comprehension gate",
         "States /tk:route is decision/brainstorming only",
+        "States /tk:route may emit execution contract with ledger path",
         "States /tk:reflect is durable promotion router",
         "States /tk:reflect has explicit skill materialize mode",
-        "States /tk:grill is questioning surface",
         "States /tk:grooming is report-first guidance audit surface",
         "States /tk:prototype is throwaway validation surface",
         "States /tk:arch-review is report-only architecture review surface",
@@ -70,7 +84,8 @@
         "States /tk:to-prd is worktree-scoped current-first draft-only PRD surface under repo-scoped ~/.tigerkit",
         "States /tk:to-issues is worktree-scoped current-first vertical-slice issue draft surface under repo-scoped ~/.tigerkit",
         "States /tk:browser-verify is direct QA / behavior verification surface",
-        "States /tk:learn is source-to-skill surface"
+        "States /tk:learn is source-to-skill surface",
+        "States /tk:wayfinder is current-first shared-map surface"
       ]
     },
     {
@@ -706,6 +721,206 @@
         "Supports focused re-read or path-only style",
         "Reports missing path honestly when current handoff is absent"
       ]
+    },
+    {
+      "name": "learn-skill-tdd-red-green-refactor-loop",
+      "prompt": "Evaluate /tk:learn verification discipline. Do not write files.",
+      "expected_output": "Should require a RED → GREEN → REFACTOR verification loop before treating a new skill as complete. RED proves the task still fails or produces the wrong shape without the skill, GREEN proves the task succeeds after the skill draft/apply, and REFACTOR tightens wording or evals to close loopholes. It should not treat a plausible self-report alone as completion proof.",
+      "files": [
+        "commands/learn.md",
+        ".tigerkit/docs/output-contract.md",
+        "README.md",
+        ".tigerkit/docs/usage.md"
+      ],
+      "expectations": [
+        "Mentions RED → GREEN → REFACTOR loop",
+        "RED proves baseline failure or wrong shape",
+        "GREEN proves post-skill success",
+        "REFACTOR closes loopholes",
+        "Does not accept self-report alone as completion proof"
+      ],
+      "id": 38
+    },
+    {
+      "name": "learn-generates-pos3-neg2-owner-eval-coverage",
+      "prompt": "Evaluate /tk:learn eval generation expectations. Do not write files.",
+      "expected_output": "Should say that a newly materialized reusable skill carries eval coverage planning with at least positive 3 / negative 2 / owner cases, registered in evals/evals.json. Negative coverage should guard against owner mismatch, description collision, or scope overreach rather than merely repeating the positive cases.",
+      "files": [
+        "commands/learn.md",
+        ".tigerkit/docs/output-contract.md",
+        "README.md",
+        ".tigerkit/docs/usage.md",
+        "evals/evals.json"
+      ],
+      "expectations": [
+        "Requires positive 3 / negative 2 / owner baseline",
+        "Registers coverage in evals/evals.json",
+        "Negative cases guard against owner mismatch",
+        "Negative cases guard against description collision or scope overreach"
+      ],
+      "id": 39
+    },
+    {
+      "name": "reflect-classifies-failure-type-and-keeps-reason-compact",
+      "prompt": "Evaluate /tk:reflect learning classification discipline. Do not write files.",
+      "expected_output": "Should classify candidates with a failure_type before proposing the learning shape. The documented vocabulary is discipline_failure, wrong_shaped_output, missing_evidence, and source_ambiguity. It should keep candidate reason compact (2–3 lines), push long narrative into the ledger, include an evidence_pointer anchor, and optionally add a compact hit: YYYY-MM-DD line rather than a long anecdote.",
+      "files": [
+        "commands/reflect.md",
+        "docs/reflect-file-policy.md",
+        ".tigerkit/docs/output-contract.md",
+        "README.md"
+      ],
+      "expectations": [
+        "Uses failure_type classification before learning shape",
+        "Lists discipline_failure wrong_shaped_output missing_evidence source_ambiguity",
+        "Keeps reason compact",
+        "Uses evidence_pointer anchor",
+        "Uses optional hit: YYYY-MM-DD line"
+      ],
+      "id": 40
+    },
+    {
+      "name": "grooming-guidance-budget-and-approval-gates",
+      "prompt": "Evaluate /tk:grooming budget and demotion discipline. Do not write files.",
+      "expected_output": "Should treat grooming as report-first and approval-gated. It should mention the optional ~/.tigerkit/config.json guidanceBudgetBytes override, the default 32768-byte budget, raw footprint measurement, ~/.claude/rules-archive/ as a non-loaded archive candidate path, usage-summary or equivalent artifact usage evidence for command-like rules, and that archive/demotion/delete proposals stay suggestion-only until the user approves them.",
+      "files": [
+        "commands/grooming.md",
+        ".tigerkit/docs/output-contract.md",
+        "README.md",
+        ".tigerkit/docs/usage.md"
+      ],
+      "expectations": [
+        "Mentions guidanceBudgetBytes override",
+        "Mentions default 32768-byte budget",
+        "Reports raw footprint measurement",
+        "Mentions ~/.claude/rules-archive/",
+        "Uses usage-summary or artifact usage evidence for command-like rules",
+        "Keeps archive demotion delete proposals approval-gated"
+      ],
+      "id": 41
+    },
+    {
+      "name": "help-uses-generated-help-map-navigation-surface",
+      "prompt": "Evaluate /tk:help behavior. Do not write files.",
+      "expected_output": "Should define /tk:help as a navigation surface backed by docs/help-map.json generated from commands/*.md frontmatter. It should distinguish help as navigation from /tk:route as strategy and /tk:next as one-command conduction. It may show an entrypoint and next candidates, but it should not claim to execute a multi-step workflow itself.",
+      "files": [
+        "commands/help.md",
+        "docs/help-map.json",
+        "docs/workflow-matrix.md",
+        "README.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "Defines /tk:help as navigation surface",
+        "Uses docs/help-map.json as source of truth",
+        "States map is generated from commands frontmatter",
+        "Distinguishes help from route strategy",
+        "Distinguishes help from next conductor",
+        "Does not claim multi-step workflow execution"
+      ],
+      "id": 42
+    },
+    {
+      "name": "next-picks-exactly-one-command-from-usage-summary-or-task",
+      "prompt": "Evaluate /tk:next behavior. Do not write files.",
+      "expected_output": "Should define /tk:next as a conductor that recommends exactly one next TigerKit command. It should use task text when present, or usage-summary when no task is given. It may route to gap for SoT-absent discovery, to-issues for PRD-only draft state, quiz for ledger-backed merge-prep comprehension, or handoff near the end of a task. It must stop at one command rather than chaining several commands automatically.",
+      "files": [
+        "commands/next.md",
+        "scripts/tigerkit_state.py",
+        "docs/help-map.json",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/usage.md"
+      ],
+      "expectations": [
+        "Defines /tk:next as one-command conductor",
+        "Uses task text when present",
+        "Uses usage-summary when no task is given",
+        "Can route to gap for SoT-absent discovery",
+        "Can route to to-issues for PRD-only state",
+        "Can route to quiz for ledger-backed merge prep",
+        "Stops at one command rather than chaining"
+      ],
+      "id": 43
+    },
+    {
+      "name": "quiz-uses-diff-and-ledger-for-comprehension-gate",
+      "prompt": "Evaluate /tk:quiz behavior. Do not write files.",
+      "expected_output": "Should define /tk:quiz as a merge-prep comprehension gate that uses merge-base diff plus same-worktree ledger/current.md as source of truth. It should reject clean diffs with a receipt, generate 3 to 5 multiple-choice questions, save a current-first quiz report under ~/.tigerkit, and keep publish or merge side effects out of scope.",
+      "files": [
+        "commands/quiz.md",
+        "scripts/tigerkit_state.py",
+        ".tigerkit/docs/output-contract.md",
+        ".tigerkit/docs/usage.md"
+      ],
+      "expectations": [
+        "Defines /tk:quiz as merge-prep comprehension gate",
+        "Uses merge-base diff as source of truth",
+        "Uses same-worktree ledger/current.md as source of truth",
+        "Rejects clean diffs with receipt",
+        "Generates 3 to 5 multiple-choice questions",
+        "Saves current-first quiz report under ~/.tigerkit",
+        "Keeps publish or merge side effects out of scope"
+      ],
+      "id": 44
+    },
+    {
+      "name": "wayfinder-persists-current-first-work-map",
+      "prompt": "Evaluate /tk:wayfinder behavior. Do not write files.",
+      "expected_output": "Should define /tk:wayfinder as a long-running work map surface that writes a current-first artifact under ~/.tigerkit for the current worktree. It should capture the current goal, current slice, blocked-by or blocking edges, recent decisions, next concrete step, and reopen hints without pretending the map is implementation proof or an external tracker item.",
+      "files": [
+        "commands/wayfinder.md",
+        "skills/wayfinder/SKILL.md",
+        "scripts/tigerkit_state.py",
+        ".tigerkit/docs/output-contract.md",
+        "README.md",
+        ".tigerkit/docs/usage.md"
+      ],
+      "expectations": [
+        "Defines /tk:wayfinder as long-running work map",
+        "Uses current-first artifact under ~/.tigerkit",
+        "Captures current goal and current slice",
+        "Captures blocked-by or blocking edges",
+        "Captures next concrete step and reopen hints",
+        "Does not pretend map is implementation proof"
+      ],
+      "id": 45
+    },
+    {
+      "name": "to-prd-interview-reference-slot-and-to-issues-blocking-edges",
+      "prompt": "Evaluate TigerKit planning-surface upgrades. Do not write files.",
+      "expected_output": "Should state that /tk:to-prd supports opt-in interview mode with one question at a time and an optional reference slot, while remaining draft-only by default. It should also state that /tk:to-issues may record both blocked-by and blocking-edge relationships rather than flattening dependency notes into one vague bucket.",
+      "files": [
+        "commands/to-prd.md",
+        "commands/to-issues.md",
+        ".tigerkit/docs/output-contract.md"
+      ],
+      "expectations": [
+        "States /tk:to-prd interview mode is opt-in",
+        "States /tk:to-prd asks one question at a time",
+        "States /tk:to-prd has optional reference slot",
+        "States /tk:to-issues supports blocked-by",
+        "States /tk:to-issues supports blocking-edge"
+      ],
+      "id": 46
+    },
+    {
+      "name": "prototype-wayfinder-and-precompact-opt-in-boundary",
+      "prompt": "Evaluate TigerKit prototype and precompact recovery surfaces. Do not write files.",
+      "expected_output": "Should describe /tk:prototype UI guidance as radically different variants with a floating switcher and logic guidance as portable pure logic isolation. It should also treat the precompact hook as opt-in via an install script rather than silently auto-installing hooks.",
+      "files": [
+        "commands/prototype.md",
+        "scripts/install-precompact-hook.sh",
+        "hooks/precompact-handoff.py",
+        "README.md"
+      ],
+      "expectations": [
+        "States prototype UI uses radically different variants",
+        "States prototype UI may use floating switcher",
+        "States prototype logic isolates portable pure logic module",
+        "States precompact hook is opt-in",
+        "Uses install script rather than silent auto-install"
+      ],
+      "id": 47
     }
   ]
 }

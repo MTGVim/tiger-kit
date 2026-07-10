@@ -1,19 +1,23 @@
 {
   "name": "tk",
   "description": "TigerKit `/tk:*` command plugin입니다.",
-  "version": "16.5.14",
+  "version": "16.5.15",
   "author": {
     "name": "MTGVim"
   },
   "commands": [
     "./commands/gap.md",
+    "./commands/help.md",
     "./commands/route.md",
+    "./commands/next.md",
+    "./commands/quiz.md",
     "./commands/reflect.md",
     "./commands/learn.md",
     "./commands/browser-verify.md",
     "./commands/grill.md",
     "./commands/grooming.md",
     "./commands/prototype.md",
+    "./commands/wayfinder.md",
     "./commands/merge-conflict.md",
     "./commands/handoff.md",
     "./commands/handon.md",

@@ -1,6 +1,7 @@
 ---
 name: grill
-description: grill 질문 트리거입니다.
+description: 압박 검증 트리거입니다.
+disable-model-invocation: true
 ---
 
 # Grill

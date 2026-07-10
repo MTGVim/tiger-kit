@@ -1,6 +1,7 @@
 ---
-description: PRD draft로 정리합니다.
-argument-hint: '"<goal|scope>" [--output <path>] [--print-only] [--publish]'
+description: draft PRD를 작성합니다.
+argument-hint: '"<goal or requirement>" [--output <path>] [--print-only]'
+flow: [to-issues, route, next]
 ---
 
 이 문서는 TigerKit `/tk:to-prd` command contract를 정의합니다.
@@ -23,6 +24,23 @@ skills/to-prd/SKILL.md
 - approval 전 외부 tracker/doc system 반영 금지
 - no interview by default
 - acceptance criteria 포함 필수
+
+## Interview mode
+
+- `--interview`는 opt-in 입니다.
+- 한 번에 한 질문만 던집니다.
+- 아키텍처를 바꿀 질문, 경계/owner를 가르는 질문을 우선합니다.
+- `grill`처럼 기존 계획을 압박 검증하는 surface가 아니라, 아직 비어 있는 요구를 수집하는 surface입니다.
+
+## Reference slot
+
+PRD에는 optional reference slot을 둘 수 있습니다.
+
+- reference implementation
+- mockup / screenshot / URL
+- similar code / prior artifact
+
+장문 요구보다 reference가 더 강한 guide면 그것을 먼저 적고, reference가 어디까지 binding인지 같이 남깁니다.
 
 ## Default output target
 
@@ -47,10 +65,14 @@ To-PRD 완료 | To-PRD 미리보기 | To-PRD 중단
 - <what the PRD covers>
 🧭 Output mode:
 - draft file | inline preview
+[🧪 Interview mode:
+- off | on]
 [📁 Output path:
 - <path>]
 📝 Includes:
 - problem / goal / user value / non-goals / requirements / acceptance criteria / risks / open questions
+[📝 References:
+- <reference implementation | mockup | URL | prior artifact>]
 📝 Publish:
 - disabled by default
 ▶️ Next step:

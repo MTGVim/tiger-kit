@@ -326,6 +326,42 @@ def cmd_browser_verify_paths(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_usage_summary(args: argparse.Namespace) -> int:
+    repo_root = resolve_repo_root(args.repo_root)
+    repo_key_value = repo_key(repo_root)
+    scope_key_value = scope_key(repo_root)
+    worktree_key_value = worktree_key(repo_root)
+    common_git_dir_value = common_git_dir(repo_root)
+    root = state_root()
+    draft_root = root / "repos" / repo_key_value / "worktrees" / worktree_key_value
+    kinds = ["handoffs", "prd", "issues", "ledger", "quiz", "wayfinder"]
+    summary: dict[str, Any] = {}
+    for kind in kinds:
+        current_path = draft_root / kind / "current.md"
+        summary[kind] = {
+            "currentPath": str(current_path),
+            "exists": current_path.is_file(),
+            "mtime": current_path.stat().st_mtime if current_path.is_file() else None,
+        }
+    profile_dir = browser_verify_dir(repo_root)
+    summary["browser-verify-profile"] = {
+        "profileDir": str(profile_dir),
+        "exists": profile_dir.exists(),
+        "envPath": str(profile_dir / "env.md"),
+    }
+    payload = {
+        "stateRoot": str(root),
+        "repoRoot": str(repo_root),
+        "commonGitDir": str(common_git_dir_value),
+        "repoKey": repo_key_value,
+        "scopeKey": scope_key_value,
+        "worktreeKey": worktree_key_value,
+        "summary": summary,
+    }
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
+    return 0
+
+
 def cmd_write_gap(args: argparse.Namespace) -> int:
     repo_root = resolve_repo_root(args.repo_root)
     repo_key_value = repo_key(repo_root)
@@ -436,8 +472,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_draft_paths = sub.add_parser("draft-paths", help="Print current-first draft artifact paths under ~/.tigerkit")
     p_draft_paths.add_argument("--repo-root", help="Repo root or working directory", default=None)
-    p_draft_paths.add_argument("--kind", choices=["handoffs", "prd", "issues"], required=True)
+    p_draft_paths.add_argument("--kind", choices=["handoffs", "prd", "issues", "ledger", "quiz", "wayfinder"], required=True)
     p_draft_paths.set_defaults(func=cmd_draft_paths)
+
+    p_usage_summary = sub.add_parser("usage-summary", help="Print worktree-scoped current artifact usage summary")
+    p_usage_summary.add_argument("--repo-root", help="Repo root or working directory", default=None)
+    p_usage_summary.set_defaults(func=cmd_usage_summary)
 
     p_browser_verify_paths = sub.add_parser("browser-verify-paths", help="Print repo-scoped browser-verify profile paths under ~/.tigerkit")
     p_browser_verify_paths.add_argument("--repo-root", help="Repo root or working directory", default=None)
