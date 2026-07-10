@@ -1,6 +1,6 @@
 ---
 name: reflect
-description: 세션 결과와 피드백에서 재사용 가능한 learning을 뽑아 canonical target으로 분류합니다.
+description: reflect 분류 트리거입니다.
 ---
 
 # Reflect

@@ -1,6 +1,6 @@
 ---
 name: grooming
-description: guidance 파일을 평가하고, 승인된 user-global 변경만 직접 반영하며 나머지는 suggestion-only로 남깁니다.
+description: guidance 정비 트리거입니다.
 ---
 
 # Grooming

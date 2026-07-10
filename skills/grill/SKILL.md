@@ -1,6 +1,6 @@
 ---
 name: grill
-description: 계획, 설계, RFC, 개선안을 수렴형 질문으로 압박 검증합니다.
+description: grill 질문 트리거입니다.
 ---
 
 # Grill

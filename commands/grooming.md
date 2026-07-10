@@ -1,5 +1,5 @@
 ---
-description: guidance 파일을 평가하고, 승인된 user-global 변경만 직접 반영하며 나머지는 suggestion-only로 남깁니다.
+description: guidance 정비안을 점검합니다.
 argument-hint: '"[scope]" [--scope <user|repo|all>] [--apply=true]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '"[scope]" [--scope <user|repo|all>] [--apply=true]'
 
 목표: `/tk:grooming`은 guidance 파일을 바로 정리했다고 주장하지 않고, 먼저 report-only로 평가한 뒤 승인된 범위의 user-global guidance만 직접 apply하고 나머지는 suggestion-only로 남기는 정비 surface입니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/grooming/SKILL.md

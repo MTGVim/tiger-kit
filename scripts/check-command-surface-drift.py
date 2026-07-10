@@ -81,6 +81,27 @@ COMMAND_OUTPUT_PATHS = {
     "to-issues": ROOT / "commands" / "to-issues.md",
 }
 
+DESCRIPTION_BUDGET = 932
+
+INLINE_BOOTSTRAP_TOKENS = [
+    "python3 - <<'PY'",
+    ".claude/plugins/cache/tiger-kit/tk",
+    'TIGERKIT_STATE_SCRIPT="$({',
+]
+
+RELATIVE_HELPER_EXAMPLES = [
+    "python3 scripts/resolve_tigerkit_state.py",
+    "python3 scripts/tigerkit_state.py",
+]
+
+INSTALLED_HELPER_DOC_TARGETS = [
+    ROOT / "commands" / "gap.md",
+    ROOT / "commands" / "handon.md",
+    ROOT / "commands" / "learn.md",
+]
+
+INSTALLED_HELPER_UPDATE_GUARD = "claude plugin marketplace update tiger-kit"
+
 OUTPUT_SYNC_TARGETS = {
     "gap": "## `/tk:gap` Output Contract",
     "route": "## `/tk:route` Output Contract",
@@ -137,6 +158,11 @@ def load_json(path: Path) -> dict:
         raise SystemExit(f"invalid json: {path}: {exc}") from exc
 
 
+def extract_frontmatter_description(path: Path) -> str:
+    match = re.search(r"^description:\s*(.*)$", path.read_text(), re.M)
+    return match.group(1).strip() if match else ""
+
+
 def check_plugin_manifest() -> None:
     plugin = load_json(PLUGIN_PATH)
     raw_commands_obj: object = plugin.get("commands")
@@ -167,6 +193,36 @@ def check_banned_tokens() -> None:
         for token in STRICT_BANNED_TOKENS:
             if token in text:
                 fail(f"public surface file {path.relative_to(ROOT)} still exposes banned token {token!r}")
+
+
+def check_description_budget() -> None:
+    total = 0
+    for path in sorted((ROOT / "commands").glob("*.md")):
+        total += len(extract_frontmatter_description(path))
+    for path in sorted((ROOT / "skills").glob("*/SKILL.md")):
+        total += len(extract_frontmatter_description(path))
+    if total > DESCRIPTION_BUDGET:
+        fail(f"command+skill description budget exceeded: {total} > {DESCRIPTION_BUDGET}")
+
+
+def check_no_inline_state_bootstrap() -> None:
+    for path in sorted((ROOT / "commands").glob("*.md")):
+        text = path.read_text()
+        for token in INLINE_BOOTSTRAP_TOKENS:
+            if token in text:
+                fail(f"{path.relative_to(ROOT)} still embeds inline TigerKit state bootstrap token {token!r}")
+
+
+def check_helper_examples_are_repo_independent() -> None:
+    for path in INSTALLED_HELPER_DOC_TARGETS:
+        text = path.read_text()
+        for token in RELATIVE_HELPER_EXAMPLES:
+            if token in text:
+                fail(f"{path.relative_to(ROOT)} still documents repo-local TigerKit helper invocation: {token!r}")
+        if "claude plugin list --json" not in text:
+            fail(f"{path.relative_to(ROOT)} missing installed-plugin helper resolution flow")
+        if INSTALLED_HELPER_UPDATE_GUARD not in text:
+            fail(f"{path.relative_to(ROOT)} missing stale-installed-plugin update guard")
 
 
 def extract_first_fenced_block_after_heading(text: str, heading: str) -> str:
@@ -256,6 +312,9 @@ def main() -> int:
     check_plugin_manifest()
     check_readme_commands()
     check_banned_tokens()
+    check_description_budget()
+    check_no_inline_state_bootstrap()
+    check_helper_examples_are_repo_independent()
     check_command_output_block_shape()
     check_output_contract_helper_sync()
     print("command surface drift ok")

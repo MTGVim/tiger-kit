@@ -1,5 +1,5 @@
 ---
-description: 현재 대화나 요구사항을 draft-only PRD로 정리합니다.
+description: PRD draft로 정리합니다.
 argument-hint: '"<goal|scope>" [--output <path>] [--print-only] [--publish]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '"<goal|scope>" [--output <path>] [--print-only] [--publish]'
 
 목표: `/tk:to-prd`는 현재 대화나 요구사항을 implementation 전에 읽기 쉬운 PRD draft로 정리하는 surface입니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/to-prd/SKILL.md

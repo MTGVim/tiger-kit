@@ -1,6 +1,6 @@
 ---
 name: route
-description: 지금 작업을 direct, subagent-driven, goal-driven 중 어떤 경로로 가져갈지 얇게 정리합니다.
+description: route 판단 트리거입니다.
 ---
 
 # Route

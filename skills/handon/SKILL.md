@@ -1,6 +1,6 @@
 ---
 name: handon
-description: 현재 repo/worktree의 최신 handoff draft를 다시 읽습니다.
+description: handoff 재열기 트리거입니다.
 ---
 
 # Handon

@@ -1,5 +1,5 @@
 ---
-description: 번들된 browser-verify 엔진 skill을 `~/.tigerkit` repo profile과 함께 사용하는 direct QA / behavior verification surface입니다.
+description: browser-verify QA를 실행합니다.
 argument-hint: '"<screen or verify task>" [--mode <env-diff|figma-diff|behavior-verify>] [--print-profile-template]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '"<screen or verify task>" [--mode <env-diff|figma-diff|behavior-
 
 목표: `/tk:browser-verify`는 프로비저닝 command가 아니라 direct QA surface입니다. 번들된 browser-verify 엔진 skill 지식을 사용하고, 현재 repo에 대응하는 `~/.tigerkit` repo-scoped profile을 읽어 visual QA / env diff / layout regression / SoT 대비 runtime behavior 검증을 수행합니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/browser-verify/SKILL.md

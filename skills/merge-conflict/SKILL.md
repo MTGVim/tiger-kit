@@ -1,6 +1,6 @@
 ---
 name: merge-conflict
-description: merge 또는 rebase conflict를 ours/theirs 의도 기준으로 해결합니다.
+description: conflict 해결 트리거입니다.
 ---
 
 # Merge Conflict

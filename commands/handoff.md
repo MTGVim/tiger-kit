@@ -1,5 +1,5 @@
 ---
-description: 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 handoff를 만듭니다.
+description: current-first handoff를 만듭니다.
 argument-hint: '"<goal or scope>" [--output <artifact path>] [--print-only]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '"<goal or scope>" [--output <artifact path>] [--print-only]'
 
 목표: `/tk:handoff`는 다음 세션이나 다른 에이전트가 바로 이어서 실행할 수 있는 handoff artifact를 만드는 surface입니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/handoff/SKILL.md

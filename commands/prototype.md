@@ -1,5 +1,5 @@
 ---
-description: UI 또는 logic/state 질문에 대해 throwaway prototype을 빠르게 만들어 검증합니다.
+description: throwaway prototype으로 검증합니다.
 argument-hint: '"<idea>" [--ui|--logic] [--target <path|area>] [--print-plan]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '"<idea>" [--ui|--logic] [--target <path|area>] [--print-plan]'
 
 목표: `/tk:prototype`은 UI 또는 logic/state 가설을 production finish 전에 throwaway prototype으로 빠르게 검증하는 surface입니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/prototype/SKILL.md

@@ -1,5 +1,5 @@
 ---
-description: 현재 worktree의 최신 handoff draft를 다시 읽습니다.
+description: current-first handoff를 다시 읽습니다.
 argument-hint: '["<focus or question>"] [--path-only]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '["<focus or question>"] [--path-only]'
 
 목표: `/tk:handon`은 `/tk:handoff`가 남긴 current-first handoff artifact를 현재 repo/worktree 기준으로 다시 여는 read-only surface입니다. 저장된 handoff 파일을 source of truth로 읽고, 필요하면 focus에 맞춰 짧게 요약하거나 경로만 확인해줍니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/handon/SKILL.md
@@ -37,8 +37,16 @@ handon = current repo/worktree handoff current.md -> read saved artifact -> resu
 
 helper 예시:
 
+enabled `tk@tiger-kit` install이 오래되어 `draft-paths`가 `invalid choice`로 실패하면 먼저 marketplace/plugin을 업데이트하거나, matching checkout/install root를 `CLAUDE_PLUGIN_ROOT`로 지정합니다.
+
 ```bash
-python3 "$TIGERKIT_STATE_SCRIPT" draft-paths --repo-root "$PWD" --kind handoffs
+claude plugin marketplace update tiger-kit
+claude plugin install tk@tiger-kit --scope user
+```
+
+```bash
+TIGERKIT_PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$({ claude plugin list --json | python3 -c 'import json,sys; print(next(item["installPath"] for item in json.load(sys.stdin) if item.get("id") == "tk@tiger-kit" and item.get("enabled")))'; })}"
+python3 "$TIGERKIT_PLUGIN_ROOT/scripts/tigerkit_state.py" draft-paths --repo-root "$PWD" --kind handoffs
 ```
 
 ## Output contract

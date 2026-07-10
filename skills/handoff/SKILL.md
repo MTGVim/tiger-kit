@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: 다음 세션이나 다른 에이전트가 바로 이어받을 수 있는 handoff를 만듭니다.
+description: handoff 생성 트리거입니다.
 ---
 
 # Handoff

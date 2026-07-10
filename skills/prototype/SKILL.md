@@ -1,6 +1,6 @@
 ---
 name: prototype
-description: UI 또는 logic/state 질문에 대해 throwaway prototype을 빠르게 만들어 검증합니다.
+description: prototype 검증 트리거입니다.
 ---
 
 # Prototype

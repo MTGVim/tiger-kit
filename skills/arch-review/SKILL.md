@@ -1,6 +1,6 @@
 ---
 name: arch-review
-description: boundary, ownership, coupling, 반복 마찰을 evidence-first로 검토하는 report-only 구조 리뷰입니다.
+description: 구조 리뷰 트리거입니다.
 ---
 
 # Arch Review

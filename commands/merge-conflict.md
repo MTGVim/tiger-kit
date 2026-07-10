@@ -1,5 +1,5 @@
 ---
-description: merge 또는 rebase conflict를 ours/theirs 의도 기준으로 해결합니다.
+description: merge/rebase conflict를 정리합니다.
 argument-hint: '[--target <file|path>] [--print-plan]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '[--target <file|path>] [--print-plan]'
 
 목표: `/tk:merge-conflict`는 merge/rebase conflict를 단순 ours/theirs 선택이 아니라 양쪽 intent 기준으로 정리하는 surface입니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/merge-conflict/SKILL.md

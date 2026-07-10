@@ -1,6 +1,6 @@
 ---
 name: to-issues
-description: plan이나 PRD를 independently grabbable vertical-slice issue draft로 분해합니다.
+description: issue 분해 트리거입니다.
 ---
 
 # To Issues

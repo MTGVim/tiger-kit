@@ -1,5 +1,5 @@
 ---
-description: 계획, 설계, RFC, 개선안을 수렴형 질문으로 압박 검증합니다.
+description: 계획 허점을 압박 검증합니다.
 argument-hint: '"<plan|RFC|idea>" [--target <path|area>] [--print-checklist]'
 ---
 
@@ -11,7 +11,7 @@ argument-hint: '"<plan|RFC|idea>" [--target <path|area>] [--print-checklist]'
 
 사용자가 질문의 답을 모른다고 직접 말하면, 질문 자체는 유지하되 막힘을 줄이기 위해 브레인스토밍 기반 후보를 최대 3개까지 제안할 수 있습니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/grill/SKILL.md

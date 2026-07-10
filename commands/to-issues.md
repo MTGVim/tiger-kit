@@ -1,5 +1,5 @@
 ---
-description: plan이나 PRD를 independently grabbable vertical-slice issue draft로 분해합니다.
+description: issue draft로 쪼갭니다.
 argument-hint: '"<plan|prd>" [--output <path>] [--print-only] [--publish]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '"<plan|prd>" [--output <path>] [--print-only] [--publish]'
 
 목표: `/tk:to-issues`는 plan/PRD를 independently grabbable vertical-slice issue draft로 분해하는 surface입니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/to-issues/SKILL.md

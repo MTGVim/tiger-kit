@@ -1,5 +1,5 @@
 ---
-description: 세션 결과에서 재사용 가능한 learning을 분류하고 repo-local/user-global guidance 기본 반영 또는 명시적 skill materialize를 수행할 수 있습니다.
+description: learning을 분류합니다.
 argument-hint: '"[candidate_id|scope]" [--apply=false|true] [--target <repo-local|repo-shared|user-global|skill|hook|command|agent|discard>] [--desc "<freeform description>"] [--dry-run]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '"[candidate_id|scope]" [--apply=false|true] [--target <repo-loca
 
 목표: `/tk:reflect`는 세션 내용, 실제 변경 결과, 성공/실패, 사용자 피드백에서 재사용 가능한 learning과 improvement를 추출하고, 안전한 promotion router로서 가장 적절한 durable promotion surface로 분류합니다. `repo-local`과 `user-global` guidance는 기본 apply(opt-out)로 반영할 수 있고, `skill` target은 명시적 apply일 때 `/tk:learn` pipeline을 통해 실제 skill artifact로 materialize할 수 있습니다. `hook/command/agent`는 계속 제안-only 입니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/reflect/SKILL.md

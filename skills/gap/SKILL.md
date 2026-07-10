@@ -1,6 +1,6 @@
 ---
 name: gap
-description: SoT와 현재 구현의 차이를 evidence-first로 한 번 분석합니다.
+description: SoT gap 분석 트리거입니다.
 ---
 
 # Gap

@@ -1,5 +1,5 @@
 ---
-description: boundary, ownership, coupling, 반복 마찰을 evidence-first로 검토하는 report-only 구조 리뷰입니다.
+description: 구조 마찰을 검토합니다.
 argument-hint: '"<scope|goal|area>" [--target <path|area>] [--print-checklist]'
 ---
 
@@ -9,7 +9,7 @@ argument-hint: '"<scope|goal|area>" [--target <path|area>] [--print-checklist]'
 
 목표: `/tk:arch-review`는 코드베이스의 구조적 문제를 바로 리팩터링으로 밀지 않고, boundary, ownership, coupling, 반복 마찰을 evidence-first로 검토하는 report-only surface입니다.
 
-canonical skill:
+related wrapper skill:
 
 ```text
 skills/arch-review/SKILL.md

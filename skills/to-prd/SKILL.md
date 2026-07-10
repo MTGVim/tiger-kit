@@ -1,6 +1,6 @@
 ---
 name: to-prd
-description: 현재 대화나 요구사항을 draft-only PRD로 정리합니다.
+description: PRD 정리 트리거입니다.
 ---
 
 # To PRD

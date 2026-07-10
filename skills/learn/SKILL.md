@@ -1,6 +1,6 @@
 ---
 name: learn
-description: source나 reflect candidate에서 reusable skill을 직접 만듭니다.
+description: skill 작성 트리거입니다.
 ---
 
 # Learn
