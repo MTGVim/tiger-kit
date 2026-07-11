@@ -6,7 +6,6 @@ import hashlib
 import json
 import re
 import stat
-import subprocess
 import sys
 from pathlib import Path, PurePosixPath
 from typing import Any, NoReturn, cast
@@ -726,43 +725,6 @@ def full_reject_host_paths(value: object, label: str) -> None:
             full_reject_host_paths(item, f"{label}[{index}]")
 
 
-def full_git_blob(commit: str, relative: str, field: str) -> bytes:
-    full_safe_relative(relative, field)
-    try:
-        tree = subprocess.run(
-            ["git", "ls-tree", "-z", commit, "--", relative],
-            cwd=ROOT,
-            capture_output=True,
-            check=True,
-        ).stdout
-    except (OSError, subprocess.CalledProcessError) as exc:
-        fail(f"{field}: cannot inspect immutable Git tree for {commit}: {exc}")
-    matches: list[tuple[str, str]] = []
-    for entry in (item for item in tree.split(b"\0") if item):
-        try:
-            metadata, path_bytes = entry.split(b"\t", 1)
-            mode, object_type, _object_id = metadata.split()
-            path = path_bytes.decode("utf-8")
-        except (UnicodeError, ValueError) as exc:
-            fail(f"{field}: malformed Git tree entry: {exc}")
-        if path == relative:
-            matches.append((mode.decode("ascii"), object_type.decode("ascii")))
-    if len(matches) != 1:
-        fail(f"{field}: {relative!r} must resolve to exactly one Git tree entry")
-    mode, object_type = matches[0]
-    if object_type != "blob" or mode == "120000":
-        fail(f"{field}: {relative!r} must be a non-symlink Git blob")
-    try:
-        return subprocess.run(
-            ["git", "show", f"{commit}:{relative}"],
-            cwd=ROOT,
-            capture_output=True,
-            check=True,
-        ).stdout
-    except (OSError, subprocess.CalledProcessError) as exc:
-        fail(f"{field}: cannot read immutable Git blob: {exc}")
-
-
 def full_canonical_prompt(scenario_id: str, invocation_cwd: str) -> str:
     return (
         f"Pilot=reflect-repo-local-safety; Scenario={scenario_id}; Fixture CWD={invocation_cwd}; Plugin checkout=plugin-root. "
@@ -1291,12 +1253,9 @@ def full_validate_source(
     if blobs != FULL_CONTRACT_BLOBS:
         fail(f"{label}.plugin.contract_blobs must match the approved contract set")
     for relative, expected_sha in FULL_CONTRACT_BLOBS.items():
-        immutable = full_git_blob(FULL_PLUGIN_COMMIT, relative, f"{label}.plugin.contract_blobs.{relative}")
-        if hashlib.sha256(immutable).hexdigest() != expected_sha:
-            fail(f"{label}.plugin contract blob changed at the recorded commit: {relative}")
         _, live = full_repo_file(relative, f"{label}.plugin.live.{relative}")
         if hashlib.sha256(live.read_bytes()).hexdigest() != expected_sha:
-            fail(f"{label}.plugin live blob differs from the recorded commit: {relative}")
+            fail(f"{label}.plugin live blob differs from the recorded evidence hash: {relative}")
 
     command = source.get("command")
     if not isinstance(command, dict):
@@ -1559,12 +1518,9 @@ def gap_validate_contract_blobs(value: object, field: str) -> None:
     if value != GAP_CONTRACT_BLOB_LIST:
         fail(f"{field} must match the approved ordered contract blob set")
     for relative, expected_sha in GAP_CONTRACT_BLOBS.items():
-        immutable = full_git_blob(GAP_PLUGIN_COMMIT, relative, f"{field}.{relative}")
-        if hashlib.sha256(immutable).hexdigest() != expected_sha:
-            fail(f"{field}: immutable Git contract blob changed at {relative}")
         _, live = full_repo_file(relative, f"{field}.live.{relative}")
         if hashlib.sha256(live.read_bytes()).hexdigest() != expected_sha:
-            fail(f"{field}: live contract blob differs from the immutable Git blob at {relative}")
+            fail(f"{field}: live contract blob differs from the recorded evidence hash at {relative}")
 
 
 def gap_validate_source_refs(

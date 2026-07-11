@@ -583,7 +583,7 @@ GAP_CASES: list[tuple[str, Mutation, str | None]] = [
     ("GAP Git status mutation", gap_git_status_mutation, "git_before.status_porcelain must be an empty list for the read-only run"),
     ("GAP packet/write injection", gap_packet_write_injection, "fixture.fallback_writes must be empty"),
     ("GAP source path traversal", gap_source_path_traversal, "source_path must be a normalized POSIX path relative to the checkout"),
-    ("GAP live contract blob mismatch", gap_live_contract_blob_mismatch, "live contract blob differs from the immutable Git blob"),
+    ("GAP live contract blob mismatch", gap_live_contract_blob_mismatch, "live contract blob differs from the recorded evidence hash"),
     ("GAP malformed source ref", gap_malformed_source_ref, "gap_observation.source_refs[0] has malformed fields"),
     ("GAP unrecorded runtime-home delta", gap_runtime_home_unrecorded_delta, "runtime_home.changed_paths must match the complete before/after delta"),
     ("GAP false write-free claim", gap_false_write_free_claim, "session.write_free must be false when runtime_home.changed_paths is non-empty"),
