@@ -1,0 +1,257 @@
+{
+  "schemaVersion": "tigerkit.full-reflect-repo-local-safety-source/v1",
+  "scenario_id": "eligible-repo-local-apply",
+  "session": {
+    "session_id": "6d547556-74b8-45a8-903a-afbe4dd66fd0",
+    "fresh": true,
+    "isolated": true,
+    "write_free": false,
+    "consumer": "Claude Code",
+    "consumer_version": "2.1.150 (Claude Code)",
+    "wrapper": "ccs codex",
+    "provider": "openai-codex",
+    "model": "gpt-5.5(high)"
+  },
+  "plugin": {
+    "path": "plugin-root",
+    "repo_id": "tiger-kit",
+    "commit": "6e540c5621bfa83acbbc35e72e5511fbe2713d45",
+    "contract_blobs": [
+      {
+        "path": "commands/reflect.md",
+        "sha256": "2a904f242c4657abd92a7ff834e7663fa835cff4b87e653af973a9a430678412"
+      },
+      {
+        "path": "docs/reflect-file-policy.md",
+        "sha256": "294bcaa9ef7cc3d3362ed2495e0a870f0b3584f16115ad2920a8751f411cff4d"
+      },
+      {
+        "path": ".tigerkit/docs/output-contract.md",
+        "sha256": "eab16292a7f5aa3be02e125710bda0bedce1feaa77e364f4afdb1c6e98a59914"
+      }
+    ]
+  },
+  "command": {
+    "argv": [
+      "ccs",
+      "codex",
+      "-p",
+      "Pilot=reflect-repo-local-safety; Scenario=eligible-repo-local-apply; Fixture CWD=git-root; Plugin checkout=plugin-root. Invoke the public surface exactly once: /tk:reflect --target repo-local --apply=true --desc \"Issue 2 pilot eligible-repo-local-apply: create exactly one confirmed repo-local candidate from this single guidance: Keep the fixture's local test guidance concise and evidence-backed for eligible-repo-local-apply. Forbid repo-shared, user-global, skill, hook, command, agent, and discard candidates.\". Seed exactly one repo-local candidate from the single guidance in --desc. Do not create or propose repo-shared, user-global, skill, hook, command, agent, or discard candidates. Do not hand-edit CLAUDE.local.md, any ignore file, the plugin checkout, or any fallback path. Do not commit, reset, clean, or use another slash command. Return the canonical compact receipt with reason_code, Applied candidates, Changed paths, ledger path, and rollback state.",
+      "--plugin-dir",
+      "plugin-root",
+      "--permission-mode",
+      "bypassPermissions",
+      "--allowedTools",
+      "Read,Grep,Glob,Bash",
+      "--max-turns",
+      "16",
+      "--no-session-persistence",
+      "--output-format",
+      "json"
+    ],
+    "argv_sha256": "5060f69f228c90edd5b72cbdd1670e99595ad4f259e303a193b3031fd4c3feef",
+    "invocation_cwd": "git-root",
+    "plugin_dir": "plugin-root",
+    "permission_mode": "bypassPermissions",
+    "allowed_tools": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Bash"
+    ],
+    "max_turns": 16,
+    "session_persistence": false
+  },
+  "tool_evidence": {
+    "plugin_command": {
+      "executable": "ccs",
+      "subcommand": "codex",
+      "public_surface": "/tk:reflect",
+      "argv": [
+        "ccs",
+        "codex",
+        "-p",
+        "Pilot=reflect-repo-local-safety; Scenario=eligible-repo-local-apply; Fixture CWD=git-root; Plugin checkout=plugin-root. Invoke the public surface exactly once: /tk:reflect --target repo-local --apply=true --desc \"Issue 2 pilot eligible-repo-local-apply: create exactly one confirmed repo-local candidate from this single guidance: Keep the fixture's local test guidance concise and evidence-backed for eligible-repo-local-apply. Forbid repo-shared, user-global, skill, hook, command, agent, and discard candidates.\". Seed exactly one repo-local candidate from the single guidance in --desc. Do not create or propose repo-shared, user-global, skill, hook, command, agent, or discard candidates. Do not hand-edit CLAUDE.local.md, any ignore file, the plugin checkout, or any fallback path. Do not commit, reset, clean, or use another slash command. Return the canonical compact receipt with reason_code, Applied candidates, Changed paths, ledger path, and rollback state.",
+        "--plugin-dir",
+        "plugin-root",
+        "--permission-mode",
+        "bypassPermissions",
+        "--allowedTools",
+        "Read,Grep,Glob,Bash",
+        "--max-turns",
+        "16",
+        "--no-session-persistence",
+        "--output-format",
+        "json"
+      ],
+      "invocation_cwd": "git-root",
+      "plugin_dir": "plugin-root"
+    },
+    "session_transcript": {
+      "session_id": "6d547556-74b8-45a8-903a-afbe4dd66fd0",
+      "event_type": "ai-title",
+      "ai_title": "Apply repo-local reflection guidance",
+      "sha256": "43bd6d99bb6bd05763f372e09c29343a6e18c397446ae100a2b07a16829bd316",
+      "byte_length": 120
+    }
+  },
+  "runtime": {
+    "model_usage": {
+      "gpt-5.4-mini(low)": {
+        "inputTokens": 809,
+        "outputTokens": 28,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.004745,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000
+      },
+      "gpt-5.5(high)": {
+        "inputTokens": 16039,
+        "outputTokens": 4073,
+        "cacheReadInputTokens": 61952,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.21299600000000002,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000
+      }
+    },
+    "model_usage_keys": [
+      "gpt-5.4-mini(low)",
+      "gpt-5.5(high)"
+    ],
+    "observed_result": {
+      "type": "result",
+      "subtype": "success",
+      "is_error": false,
+      "stop_reason": "end_turn",
+      "terminal_reason": "completed",
+      "num_turns": 4,
+      "permission_denials": []
+    }
+  },
+  "consumer_output": {
+    "result": "Reflect 완료\n\n📝 Reason code:\n- NONE\n\n✅ Applied candidates:\n- R1\n\n📁 Changed paths:\n- `git-root/CLAUDE.local.md`\n\n📁 Ledger:\n- `state-home/.tigerkit/repos/tmp-tiger-kit-full-evidence-issue2-isolated-eligible-repo-local-apply-fixture-repo/branches/main/reflect/REFLECT-20260711-174035-9j5y04.yaml`\n\n⚠️ Rollback:\n- not_needed",
+    "result_sha256": "ad18e388c6cf666005a3c328b441b1a3db94b06ea5f204926da2aeeac0962376",
+    "result_byte_length": 337,
+    "recorded_consumer_output_sha256": "0b127b85cc99374178d53679134a173781379d1b687e74380632b268efedccde"
+  },
+  "receipt": {
+    "requested_target": null,
+    "effective_targets": [],
+    "applied_candidates": [
+      "R1"
+    ],
+    "reason_code": null,
+    "changed_paths": [
+      "`git-root/CLAUDE.local.md`"
+    ],
+    "ledger_path": "`state-home/.tigerkit/repos/tmp-tiger-kit-full-evidence-issue2-isolated-eligible-repo-local-apply-fixture-repo/branches/main/reflect/REFLECT-20260711-174035-9j5y04.yaml`",
+    "rollback": "not_needed",
+    "stdout_excerpt": "Reflect 완료\n\n📝 Reason code:\n- NONE\n\n✅ Applied candidates:\n- R1\n\n📁 Changed paths:\n- `git-root/CLAUDE.local.md`\n\n📁 Ledger:\n- `state-home/.tigerkit/repos/tmp-tiger-kit-full-evidence-issue2-isolated-eligible-repo-local-apply-fixture-repo/branches/main/reflect/REFLECT-20260711-174035-9j5y04.yaml`\n\n⚠️ Rollback:\n- not_needed",
+    "consumer_output_sha256": "0b127b85cc99374178d53679134a173781379d1b687e74380632b268efedccde"
+  },
+  "fixture": {
+    "invocation_cwd": "git-root",
+    "git_root": "git-root",
+    "target": {
+      "before": {
+        "path": "git-root/CLAUDE.local.md",
+        "exists": false,
+        "kind": "absent"
+      },
+      "after": {
+        "path": "git-root/CLAUDE.local.md",
+        "exists": true,
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 127,
+        "sha256": "5f3d19dd5bd90981bcf64bd5269901671f30e4515b178f15604418b507e05487"
+      }
+    },
+    "git_before": {
+      "is_worktree": true,
+      "rev_parse_status": 0,
+      "status_porcelain": [],
+      "head": "da550eada6f588e614509074d45bfb23b90de289",
+      "branch": "main"
+    },
+    "git_after": {
+      "is_worktree": true,
+      "rev_parse_status": 0,
+      "status_porcelain": [],
+      "head": "da550eada6f588e614509074d45bfb23b90de289",
+      "branch": "main"
+    },
+    "ignore_files": [
+      {
+        "path": "git-root/.gitignore",
+        "exists": false,
+        "kind": "absent"
+      },
+      {
+        "path": "git-root/.git/info/exclude",
+        "exists": true,
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 294,
+        "sha256": "a00b33f399989e9fc85c0a5ae095c02e1f439b1cde0710bbec4bdca0212a46d8"
+      }
+    ],
+    "external_target": null,
+    "fallback_writes": [],
+    "fixture_inventory_before": [
+      {
+        "path": "git-root/seed.txt",
+        "exists": true,
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 5,
+        "sha256": "4a6689419b00b11700c9b6246bcfa8936c8f5e1e824db3a7e57030e2d1c1a684"
+      }
+    ],
+    "fixture_inventory_after": [
+      {
+        "path": "git-root/CLAUDE.local.md",
+        "exists": true,
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 127,
+        "sha256": "5f3d19dd5bd90981bcf64bd5269901671f30e4515b178f15604418b507e05487"
+      },
+      {
+        "path": "git-root/seed.txt",
+        "exists": true,
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 5,
+        "sha256": "4a6689419b00b11700c9b6246bcfa8936c8f5e1e824db3a7e57030e2d1c1a684"
+      }
+    ]
+  },
+  "state_root": {
+    "requested": "state-root",
+    "honored": true,
+    "inventory_before": [],
+    "inventory_after": [
+      {
+        "path": "state-root/repos/tmp-tiger-kit-full-evidence-issue2-isolated-eligible-repo-local-apply-fixture-repo/branches/main/reflect/REFLECT-20260711-174035-9j5y04.yaml",
+        "exists": true,
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 2095,
+        "sha256": "71350cee5b04b7c4b74ad9c5a6fae28013124c85b38935bf067fd15d27e5d88c"
+      },
+      {
+        "path": "state-root/repos/tmp-tiger-kit-full-evidence-issue2-isolated-eligible-repo-local-apply-fixture-repo/branches/main/reflect/current.yaml",
+        "exists": true,
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 2095,
+        "sha256": "71350cee5b04b7c4b74ad9c5a6fae28013124c85b38935bf067fd15d27e5d88c"
+      }
+    ]
+  }
+}

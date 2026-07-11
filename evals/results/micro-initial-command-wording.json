@@ -1,0 +1,252 @@
+{
+  "schemaVersion": "tigerkit.micro-wording-pilot/v1",
+  "pilot_id": "initial-command-wording",
+  "kind": "micro-wording-results",
+  "status": "micro-validated",
+  "evidence_tier": "micro-real-agent",
+  "runtime": {
+    "agent": "Hermes Agent",
+    "agent_version": "Hermes Agent v0.18.2 (2026.7.7.2)",
+    "model": "gpt-5.6-luna",
+    "provider": "openai-codex"
+  },
+  "invocation": {
+    "executable": "hermes",
+    "subcommand": "chat",
+    "command_shape": "hermes chat -Q --provider <provider> -m <model> -q <isolated prompt>",
+    "provider": "openai-codex",
+    "model": "gpt-5.6-luna",
+    "quiet": true,
+    "query_mode": "single-query",
+    "isolation": "one fresh Hermes chat session per declared variant",
+    "session_reuse": false,
+    "working_directory": "repo-root",
+    "context": "current-checkout canonical skill read; no-write preview-only evaluation"
+  },
+  "checkout": {
+    "git_commit": "58feb98f97c98b83a0d283a396ba2f58a625f56b",
+    "canonical_skills": {
+      "/tk:route": {
+        "path": "skills/route/SKILL.md",
+        "sha256": "7c25a0c2608fd676f57c763d08584fb3924d3d576ff2a8676d09110e6d2237d2"
+      },
+      "/tk:reflect": {
+        "path": "skills/reflect/SKILL.md",
+        "sha256": "5674d26473ea89de383209bb4d06c411d633747b50e00456ab325511ca539634"
+      },
+      "/tk:learn": {
+        "path": "skills/learn/SKILL.md",
+        "sha256": "4906704956d6db76fd40820fe3e4e1663584b67e5f769cb8f16fead8bdc4fb62"
+      }
+    },
+    "repo_id": "tiger-kit"
+  },
+  "records": [
+    {
+      "surface": "/tk:route",
+      "question_id": "route-small-doc-fix",
+      "variant_id": "route-a-minimal",
+      "sample_index": 1,
+      "session_id": "20260711_142028_734018",
+      "declared_prompt": "/tk:route \"README의 링크 설명 한 줄을 더 명확하게 고치는 작업\"",
+      "canonical_skill_path": "skills/route/SKILL.md",
+      "succeeded": true,
+      "output_sha256": "2cb1bbe292683cef3123f4b77199f332e4721a52d3eb3fbee7a0128d23c4a84a",
+      "output_byte_length": 465,
+      "output_excerpt": "🧭 Route: direct  \n📶 Confidence: medium\n\n📝 Why:\n- README 링크 설명 한 줄의 국소적 문구 수정이라 범위와 리스크가 작습니다.\n- `subagent-driven`이나 `goal-driven`은 과합니다.\n\n⚠️ Needs first:\n- 대상 README 파일과 수정할 링크를 특정해야 합니다.\n\n▶️ First step:\n- 관련 README에서 링크 설명 한 줄과 링크 대상 문맥을 읽고, 의미를 바꾸지 않는 최소 수정안을 정합니다.\n",
+      "observation": {
+        "rubric": {
+          "intent_alignment": "pass",
+          "boundary_fidelity": "pass",
+          "output_clarity": "partial"
+        },
+        "notes": "The agent chose direct and gave a concrete first step without claiming a write. The target file remains unspecified, and the route comparison is less explicit than variant B."
+      },
+      "selected_variant": false,
+      "selection_rationale": "Not selected: truthful and bounded, but less explicit about the comparison and lower-confidence than route-b-explicit.",
+      "status": "micro-validated",
+      "evidence_tier": "micro-real-agent",
+      "source_path": "evals/results/raw/micro-initial-command-wording/route-a-minimal.json",
+      "source_sha256": "967cb762ea1fa5ff5f1923ee8bc2c98ef62bff5a3a793b99b9e219838dabb2ab",
+      "request_sha256": "461f7d0398c318a326b42d0e182f525db76f757c727db938a36ab6461d3909d7",
+      "eval_user_request_sha256": "8dcec598292590074f61875d7c39d180fc83b0abd500da2cab77902c45b2873d"
+    },
+    {
+      "surface": "/tk:route",
+      "question_id": "route-small-doc-fix",
+      "variant_id": "route-b-explicit",
+      "sample_index": 1,
+      "session_id": "20260711_142131_cc6e8d",
+      "declared_prompt": "/tk:route \"README의 링크 설명 한 줄을 더 명확하게 고치는 작업이야. route를 비교하고 하나를 고른 뒤 첫 스텝까지 알려줘.\"",
+      "canonical_skill_path": "skills/route/SKILL.md",
+      "succeeded": true,
+      "output_sha256": "0462e545960ceea5521b78b80828c1a90770c6b94e21360debf859fc92a1c81c",
+      "output_byte_length": 520,
+      "output_excerpt": "🎯 Goal:\nREADME의 링크 설명 한 줄을 더 명확하게 다듬습니다.\n\n🧭 Route: direct  \n📶 Confidence: high\n\n📝 Why:\n- file-local·저위험 문구 수정이라 바로 처리하는 편이 가장 적합합니다.\n- `subagent-driven`은 리뷰 분리 비용이 크고, `goal-driven`은 다단계 작업에 과합니다.\n\n▶️ First step:\n- README에서 대상 링크 한 줄과 앞뒤 문맥을 확인해, 링크 대상과 독자가 얻을 정보를 드러내는 대체 문구 1안을 제시합니다.\n",
+      "observation": {
+        "rubric": {
+          "intent_alignment": "pass",
+          "boundary_fidelity": "pass",
+          "output_clarity": "pass"
+        },
+        "notes": "The agent chose direct with high confidence, ruled out overpowered alternatives, and gave one concrete README inspection step without claiming a write."
+      },
+      "selected_variant": true,
+      "selection_rationale": "Selected: the explicit comparison cue yielded the clearest bounded route, high confidence, and a concrete first step.",
+      "status": "micro-validated",
+      "evidence_tier": "micro-real-agent",
+      "source_path": "evals/results/raw/micro-initial-command-wording/route-b-explicit.json",
+      "source_sha256": "0ee342e0e727d0eff5f59c2317f333caf7a592ef1636a6320d7ff9e7c5f412b7",
+      "request_sha256": "c6532cf4bad7f67d34415ccaaf500b3eabbd75b2ea690e09f0114ae92c56714a",
+      "eval_user_request_sha256": "c650515ac1afa996afc358107692a2bf47da5ac0b24b7070b3b6d64a9e4e58e1"
+    },
+    {
+      "surface": "/tk:reflect",
+      "question_id": "reflect-preview-learning",
+      "variant_id": "reflect-a-minimal",
+      "sample_index": 1,
+      "session_id": "20260711_142157_3cfad4",
+      "declared_prompt": "/tk:reflect \"테스트를 먼저 실패시켜야 validator가 실제로 연결됐는지 알 수 있었다\" --apply=false",
+      "canonical_skill_path": "skills/reflect/SKILL.md",
+      "succeeded": true,
+      "output_sha256": "401fbbe2bf7be9819fc318bf5fbd7649deb7479055f16770eec468c82265bee2",
+      "output_byte_length": 686,
+      "output_excerpt": "Reflect preview\n\n🎯 Likely durable target:\n- `skill`\n- action: `preview_only`\n- path: `NONE`\n\n🧪 Failure type:\n- `discipline_failure` — validator 연결 검증 전에 성공 경로만 확인한 순서 문제\n\n📝 Evidence:\n- 제공된 learning: 실패를 먼저 유도해야 `validator`가 실제로 연결됐는지 확인할 수 있었음\n- 실제 테스트 명령·파일은 제공되지 않아 추가 실행 증거는 없음\n\n▶️ Next action:\n- 재사용 가능한 “validator wiring은 RED 테스트로 먼저 증명” 절차로 검토\n- materialize하려면 후속 `/tk:learn`에서 명시적으로 apply\n- 파일과 ledger는 preview-only이므로 작성하지 않음\n",
+      "observation": {
+        "rubric": {
+          "intent_alignment": "pass",
+          "boundary_fidelity": "pass",
+          "output_clarity": "partial"
+        },
+        "notes": "The agent gave a truthful preview-only skill classification, cited the supplied learning, and left the ledger untouched. The classification is less explicit about the durable-learning decision than variant B."
+      },
+      "selected_variant": false,
+      "selection_rationale": "Not selected: it preserves preview-only boundaries, but the explicit classification and reason are less complete than reflect-b-explicit.",
+      "status": "micro-validated",
+      "evidence_tier": "micro-real-agent",
+      "source_path": "evals/results/raw/micro-initial-command-wording/reflect-a-minimal.json",
+      "source_sha256": "4102317fc9583c27c496628b5c543328c4b32351179db1776604b04fb96a4352",
+      "request_sha256": "03f054d8f3219854f55712be060f8bab8c681d2a23baf29b4aa79cc4d6418b07",
+      "eval_user_request_sha256": "5e98409cb137bd9542a88508ed56f034b422c1a7947cd95632978904d37f19a2"
+    },
+    {
+      "surface": "/tk:reflect",
+      "question_id": "reflect-preview-learning",
+      "variant_id": "reflect-b-explicit",
+      "sample_index": 1,
+      "session_id": "20260711_142248_a60164",
+      "declared_prompt": "/tk:reflect \"테스트를 먼저 실패시켜야 validator가 실제로 연결됐는지 알 수 있었다\" --apply=false --desc \"durable learning인지 분류하되 파일은 쓰지 말고 근거와 다음 행동만 간결히 보여줘\"",
+      "canonical_skill_path": "skills/reflect/SKILL.md",
+      "succeeded": true,
+      "output_sha256": "6d62ece3733b78cd25f04b96aacc3288c723851f336733106057a7516258bf07",
+      "output_byte_length": 682,
+      "output_excerpt": "Reflect preview\n\n🎯 Goal:\n- durable learning 여부 분류\n\n🧪 Failure type:\n- `missing_evidence`\n\n📝 Classification:\n- likely target: `skill`\n- action: `preview_only`\n- path: `NONE`\n- evidence: validator 연결 여부를 확인하려면 의도적인 실패 테스트가 필요했음\n- reason: 특정 작업의 일회성 우회가 아니라, validator 검증에 재사용 가능한 테스트 절차입니다. `duplicate_status`는 `unknown`입니다.\n\n📁 Ledger:\n- `NONE` — `--apply=false`이므로 파일을 쓰지 않았습니다.\n\n▶️ Next step:\n- 반복 적용할 규칙로 확정되면 `/tk:learn`에서 `skill` 후보로 명시적 materialize를 검토하세요.\n",
+      "observation": {
+        "rubric": {
+          "intent_alignment": "pass",
+          "boundary_fidelity": "pass",
+          "output_clarity": "pass"
+        },
+        "notes": "The agent explicitly classified durable-learning status, identified skill as the likely target, explained the reusable procedure, and stated that --apply=false wrote no file."
+      },
+      "selected_variant": true,
+      "selection_rationale": "Selected: explicit classification and preview-boundary cues produced the most complete concise explanation with no write claim.",
+      "status": "micro-validated",
+      "evidence_tier": "micro-real-agent",
+      "source_path": "evals/results/raw/micro-initial-command-wording/reflect-b-explicit.json",
+      "source_sha256": "439434bfa4a223d0979e9e415eb3def070dbf140c66a74da7aa3177dc495fdcc",
+      "request_sha256": "47485ce4d242dd2c1e784385ed06df157b8994a1bdfa09304eecb32481eca5b4",
+      "eval_user_request_sha256": "3079ad46d0249c5249a9f02d20367ea7b429fa5da93ddf4d7c27a3932a5053e2"
+    },
+    {
+      "surface": "/tk:learn",
+      "question_id": "learn-preview-notes",
+      "variant_id": "learn-a-minimal",
+      "sample_index": 1,
+      "session_id": "20260711_142325_130eb4",
+      "declared_prompt": "/tk:learn \"반복 가능한 JSON evidence validator 작성 절차: schema 검사, 실제 output hash, concise excerpt, 최종 test\" --apply=false",
+      "canonical_skill_path": "skills/learn/SKILL.md",
+      "succeeded": true,
+      "output_sha256": "720e7e5f144b7ed06f1911acef4b4fedd3b632cb8765d75b8880037e88281aa1",
+      "output_byte_length": 729,
+      "output_excerpt": "Learn 미리보기\n\n📝 Input:\n- `/tk:learn \"반복 가능한 JSON evidence validator 작성 절차: schema 검사, 실제 output hash, concise excerpt, 최종 test\" --apply=false`\n\n📝 Source mode:\n- direct\n\n🛠️ Apply:\n- preview\n\n🏷️ Suggested name:\n- `json-evidence-validator`\n\n🎯 Target:\n- user skill surface only\n\n📋 Draft scope:\n- JSON schema 검사\n- 실제 output hash 기록\n- concise excerpt 생성\n- 최종 test 실행 및 결과 확인\n\n✅ Verification loop:\n- RED | GREEN | REFACTOR evidence pending\n\n🧪 Eval coverage:\n- pos3 / neg2 / owner pending\n\n📝 Write result:\n- preview only; no skill or file was written\n\n▶️ Next step:\n- 이름을 확정한 뒤 `--apply=true`로 명시적으로 적용\n",
+      "observation": {
+        "rubric": {
+          "intent_alignment": "pass",
+          "boundary_fidelity": "pass",
+          "output_clarity": "partial"
+        },
+        "notes": "The agent proposed a bounded user-skill preview, named the target, and honestly marked verification pending. The compact verification and coverage labels are less explicit than variant B."
+      },
+      "selected_variant": false,
+      "selection_rationale": "Not selected: honest and bounded, but the pending verification and eval-coverage details are less explicit than learn-b-explicit.",
+      "status": "micro-validated",
+      "evidence_tier": "micro-real-agent",
+      "source_path": "evals/results/raw/micro-initial-command-wording/learn-a-minimal.json",
+      "source_sha256": "fcaaed7e76b173facdbe5452b0184582e9fbc440c9e56e116909eaf5dd7f8e53",
+      "request_sha256": "02f65e40f403468499b2af4d3202a5826bd3b7382ff89021c614cfe4e1bceec7",
+      "eval_user_request_sha256": "15b29f586b3d7520077d2cfceeea03929782f06b70d33a3e9e0b2910bcf89939"
+    },
+    {
+      "surface": "/tk:learn",
+      "question_id": "learn-preview-notes",
+      "variant_id": "learn-b-explicit",
+      "sample_index": 1,
+      "session_id": "20260711_142349_6b4ba5",
+      "declared_prompt": "/tk:learn \"반복 가능한 JSON evidence validator 작성 절차: schema 검사, 실제 output hash, concise excerpt, 최종 test\" --apply=false. skill-only preview로 제안하고 RED/GREEN/REFACTOR와 eval coverage는 실제 증거가 없으면 pending으로 표시해줘.",
+      "canonical_skill_path": "skills/learn/SKILL.md",
+      "succeeded": true,
+      "output_sha256": "d6ddcd750f90b4f48621097985a0c28b944cbdca916536e9585244eb6ec1693d",
+      "output_byte_length": 978,
+      "output_excerpt": "Learn 미리보기\n\n📝 Input:\n- `/tk:learn \"반복 가능한 JSON evidence validator 작성 절차: schema 검사, 실제 output hash, concise excerpt, 최종 test\" --apply=false`\n\n📝 Source mode:\n- direct\n\n🛠️ Apply:\n- preview\n\n🏷️ Suggested name:\n- `json-evidence-validator`\n\n🧩 Proposed skill:\n- JSON schema 검사\n- 실제 output bytes의 hash 기록\n- secret redaction을 포함한 concise excerpt 생성\n- 최종 test 실행 및 결과 기록\n- schema/hash/excerpt 불일치 시 실패 처리\n\n🎯 Target:\n- user skill surface only\n\n✅ Verification loop:\n- RED: pending — 실제 실패 증거 없음\n- GREEN: pending — 적용 후 실행 증거 없음\n- REFACTOR: pending — 반복 검수 증거 없음\n\n🧪 Eval coverage:\n- pending — `positive 3 / negative 2 / owner` 미등록\n\n📝 Write result:\n- preview only; skill이나 파일은 생성하지 않음\n\n▶️ Next step:\n- 제안 검토 후 이름 확정 및 `--apply=true`로 명시적 적용\n",
+      "observation": {
+        "rubric": {
+          "intent_alignment": "pass",
+          "boundary_fidelity": "pass",
+          "output_clarity": "pass"
+        },
+        "notes": "The agent gave a skill-only preview, preserved the no-write boundary, and separately marked RED, GREEN, REFACTOR, and eval coverage as pending instead of inventing evidence."
+      },
+      "selected_variant": true,
+      "selection_rationale": "Selected: the explicit pending-evidence cue produced the clearest honest preview and preserved the skill-only/no-write boundary.",
+      "status": "micro-validated",
+      "evidence_tier": "micro-real-agent",
+      "source_path": "evals/results/raw/micro-initial-command-wording/learn-b-explicit.json",
+      "source_sha256": "33e74cf4755d5cae1dd907114decd92d53f2607457ff4f38bfc710b9b991888b",
+      "request_sha256": "c31b0944c3a738c79a2e3d010f444d3135d10fd06ee76f6f3db70f3d594d209c",
+      "eval_user_request_sha256": "05f2c44f4810ce1bd07b4c68668460280f7ef5fec8d783f4a7bd6f29f337badd"
+    }
+  ],
+  "surface_results": [
+    {
+      "surface": "/tk:route",
+      "status": "micro-validated",
+      "evidence_tier": "micro-real-agent",
+      "decision": {
+        "selected_variant": "route-b-explicit",
+        "rationale": "Both variants produced a bounded direct route and concrete first step without a write claim. The explicit comparison cue was clearer and raised confidence, so route-b-explicit is selected for MICRO wording evidence only.",
+        "public_wording_change": false
+      }
+    },
+    {
+      "surface": "/tk:reflect",
+      "status": "micro-validated",
+      "evidence_tier": "micro-real-agent",
+      "decision": {
+        "selected_variant": "reflect-b-explicit",
+        "rationale": "Both variants preserved preview-only behavior and identified a skill target. The explicit classification cue made the durable-learning decision and no-write result clearer, so reflect-b-explicit is selected for MICRO wording evidence only.",
+        "public_wording_change": false
+      }
+    },
+    {
+      "surface": "/tk:learn",
+      "status": "micro-validated",
+      "evidence_tier": "micro-real-agent",
+      "decision": {
+        "selected_variant": "learn-b-explicit",
+        "rationale": "Both variants produced a bounded skill-only preview and did not claim a write. The explicit cue separately exposed pending RED/GREEN/REFACTOR and eval coverage evidence, so learn-b-explicit is selected for MICRO wording evidence only.",
+        "public_wording_change": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,287 @@
+{
+  "schemaVersion": "tigerkit.full-reflect-repo-local-safety-source/v1",
+  "scenario_id": "symlink-claude-local-reject",
+  "session": {
+    "session_id": "a45715b2-005e-4740-9e10-ffc9de72eaa2",
+    "fresh": true,
+    "isolated": true,
+    "write_free": false,
+    "consumer": "Claude Code",
+    "consumer_version": "2.1.150 (Claude Code)",
+    "wrapper": "ccs codex",
+    "provider": "openai-codex",
+    "model": "gpt-5.5(high)"
+  },
+  "plugin": {
+    "path": "plugin-root",
+    "repo_id": "tiger-kit",
+    "commit": "6e540c5621bfa83acbbc35e72e5511fbe2713d45",
+    "contract_blobs": [
+      {
+        "path": "commands/reflect.md",
+        "sha256": "2a904f242c4657abd92a7ff834e7663fa835cff4b87e653af973a9a430678412"
+      },
+      {
+        "path": "docs/reflect-file-policy.md",
+        "sha256": "294bcaa9ef7cc3d3362ed2495e0a870f0b3584f16115ad2920a8751f411cff4d"
+      },
+      {
+        "path": ".tigerkit/docs/output-contract.md",
+        "sha256": "eab16292a7f5aa3be02e125710bda0bedce1feaa77e364f4afdb1c6e98a59914"
+      }
+    ]
+  },
+  "command": {
+    "argv": [
+      "ccs",
+      "codex",
+      "-p",
+      "Pilot=reflect-repo-local-safety; Scenario=symlink-claude-local-reject; Fixture CWD=git-root; Plugin checkout=plugin-root. Invoke the public surface exactly once: /tk:reflect --target repo-local --apply=true --desc \"Issue 2 pilot symlink-claude-local-reject: create exactly one confirmed repo-local candidate from this single guidance: Keep the fixture's local test guidance concise and evidence-backed for symlink-claude-local-reject. Forbid repo-shared, user-global, skill, hook, command, agent, and discard candidates.\". Seed exactly one repo-local candidate from the single guidance in --desc. Do not create or propose repo-shared, user-global, skill, hook, command, agent, or discard candidates. Do not hand-edit CLAUDE.local.md, any ignore file, the plugin checkout, or any fallback path. Do not commit, reset, clean, or use another slash command. Return the canonical compact receipt with reason_code, Applied candidates, Changed paths, ledger path, and rollback state.",
+      "--plugin-dir",
+      "plugin-root",
+      "--permission-mode",
+      "bypassPermissions",
+      "--allowedTools",
+      "Read,Grep,Glob,Bash",
+      "--max-turns",
+      "16",
+      "--no-session-persistence",
+      "--output-format",
+      "json"
+    ],
+    "argv_sha256": "a05856c844d94a29ed6ee242606cb7dce95cf301f26d1e43fd9fa2640e9f3080",
+    "invocation_cwd": "git-root",
+    "plugin_dir": "plugin-root",
+    "permission_mode": "bypassPermissions",
+    "allowed_tools": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Bash"
+    ],
+    "max_turns": 16,
+    "session_persistence": false
+  },
+  "tool_evidence": {
+    "plugin_command": {
+      "executable": "ccs",
+      "subcommand": "codex",
+      "public_surface": "/tk:reflect",
+      "argv": [
+        "ccs",
+        "codex",
+        "-p",
+        "Pilot=reflect-repo-local-safety; Scenario=symlink-claude-local-reject; Fixture CWD=git-root; Plugin checkout=plugin-root. Invoke the public surface exactly once: /tk:reflect --target repo-local --apply=true --desc \"Issue 2 pilot symlink-claude-local-reject: create exactly one confirmed repo-local candidate from this single guidance: Keep the fixture's local test guidance concise and evidence-backed for symlink-claude-local-reject. Forbid repo-shared, user-global, skill, hook, command, agent, and discard candidates.\". Seed exactly one repo-local candidate from the single guidance in --desc. Do not create or propose repo-shared, user-global, skill, hook, command, agent, or discard candidates. Do not hand-edit CLAUDE.local.md, any ignore file, the plugin checkout, or any fallback path. Do not commit, reset, clean, or use another slash command. Return the canonical compact receipt with reason_code, Applied candidates, Changed paths, ledger path, and rollback state.",
+        "--plugin-dir",
+        "plugin-root",
+        "--permission-mode",
+        "bypassPermissions",
+        "--allowedTools",
+        "Read,Grep,Glob,Bash",
+        "--max-turns",
+        "16",
+        "--no-session-persistence",
+        "--output-format",
+        "json"
+      ],
+      "invocation_cwd": "git-root",
+      "plugin_dir": "plugin-root"
+    },
+    "session_transcript": {
+      "session_id": "a45715b2-005e-4740-9e10-ffc9de72eaa2",
+      "event_type": "ai-title",
+      "ai_title": "Review repo-local symlink guidance",
+      "sha256": "2e50a8d17014f9533b43cd53426148016f1ea83d26249c70c5a25964d3fec187",
+      "byte_length": 118
+    }
+  },
+  "runtime": {
+    "model_usage": {
+      "gpt-5.4-mini(low)": {
+        "inputTokens": 817,
+        "outputTokens": 48,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.005285,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000
+      },
+      "gpt-5.5(high)": {
+        "inputTokens": 16031,
+        "outputTokens": 4274,
+        "cacheReadInputTokens": 90624,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.23231700000000002,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000
+      }
+    },
+    "model_usage_keys": [
+      "gpt-5.4-mini(low)",
+      "gpt-5.5(high)"
+    ],
+    "observed_result": {
+      "type": "result",
+      "subtype": "success",
+      "is_error": false,
+      "stop_reason": "end_turn",
+      "terminal_reason": "completed",
+      "num_turns": 5,
+      "permission_denials": []
+    }
+  },
+  "consumer_output": {
+    "result": "Reflect 완료\n\n📝 Requested target:\n- repo-local\n\n🎯 Effective targets:\n- repo-local\n\n🧪 Failure type:\n- discipline_failure\n\n📝 Summary:\n- R1: `repo-local` confirmed candidate 1개만 생성했습니다.\n- `CLAUDE.local.md`가 symlink라서 `repo-local` apply eligibility에서 reject했고, guidance file은 수정하지 않았습니다.\n\n📁 Ledger:\n- `state-home/.tigerkit/repos/tmp-tiger-kit-full-evidence-issue2-isolated-symlink-claude-local-reject-fixture-repo/branches/main/reflect/REFLECT-20260711-174444-a21d38.yaml`\n\n✅ Applied candidates:\n- NONE\n\n📝 Reason code:\n- `symlink_target`\n\n📁 Changed paths:\n- NONE\n\n⚠️ Rollback:\n- `not_needed`",
+    "result_sha256": "39e816da2b899e454672e9b131f01b87d01d977058cdb36e356cbf996a9d9ca8",
+    "result_byte_length": 666,
+    "recorded_consumer_output_sha256": "423c403906e7746196df9c75e7f6bdd9cf64e7c9f585561d79c562398d9cf24a"
+  },
+  "receipt": {
+    "requested_target": "repo-local",
+    "effective_targets": [
+      "repo-local"
+    ],
+    "applied_candidates": [
+      "NONE"
+    ],
+    "reason_code": "`symlink_target`",
+    "changed_paths": [],
+    "ledger_path": "`state-home/.tigerkit/repos/tmp-tiger-kit-full-evidence-issue2-isolated-symlink-claude-local-reject-fixture-repo/branches/main/reflect/REFLECT-20260711-174444-a21d38.yaml`",
+    "rollback": "`not_needed`",
+    "stdout_excerpt": "Reflect 완료\n\n📝 Requested target:\n- repo-local\n\n🎯 Effective targets:\n- repo-local\n\n🧪 Failure type:\n- discipline_failure\n\n📝 Summary:\n- R1: `repo-local` confirmed candidate 1개만 생성했습니다.\n- `CLAUDE.local.md`가 symlink라서 `repo-local` apply eligibility에서 reject했고, guidance file은 수정하지 않았습니다.\n\n📁 Ledger:\n- `state-home/.tigerkit/repos/tmp-tiger-kit-full-evidence-issue2-isolated-symlink-claude-local-reject-fixture-repo/branches/main/reflect/REFLECT-20260711-174444-a21d38.yaml`\n\n✅ Applied candidates:\n- NONE\n\n📝 Reason code:\n- `symlink_target`\n\n📁 Changed paths:\n- NONE\n\n⚠️ Rollback:\n- `not_needed`",
+    "consumer_output_sha256": "423c403906e7746196df9c75e7f6bdd9cf64e7c9f585561d79c562398d9cf24a"
+  },
+  "fixture": {
+    "invocation_cwd": "git-root",
+    "git_root": "git-root",
+    "target": {
+      "before": {
+        "path": "git-root/CLAUDE.local.md",
+        "exists": true,
+        "kind": "symlink",
+        "mode": "0o777",
+        "link_text": "../external-target/sentinel.txt"
+      },
+      "after": {
+        "path": "git-root/CLAUDE.local.md",
+        "exists": true,
+        "kind": "symlink",
+        "mode": "0o777",
+        "link_text": "../external-target/sentinel.txt"
+      }
+    },
+    "git_before": {
+      "is_worktree": true,
+      "rev_parse_status": 0,
+      "status_porcelain": [],
+      "head": "79e1dac3881a2376830f995319b82aa118a4b7ca",
+      "branch": "main"
+    },
+    "git_after": {
+      "is_worktree": true,
+      "rev_parse_status": 0,
+      "status_porcelain": [],
+      "head": "79e1dac3881a2376830f995319b82aa118a4b7ca",
+      "branch": "main"
+    },
+    "ignore_files": [
+      {
+        "path": "git-root/.gitignore",
+        "exists": false,
+        "kind": "absent"
+      },
+      {
+        "path": "git-root/.git/info/exclude",
+        "exists": true,
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 293,
+        "sha256": "a3c0d37c83307354ddcc2fb8251bd2b23901ff4fa693f6cc83f38c9c83c1d677"
+      }
+    ],
+    "external_target": {
+      "path": "external-target/sentinel.txt",
+      "exists": true,
+      "kind": "regular",
+      "mode": "0o664",
+      "size": 18,
+      "sha256": "9ed3c5f3c3c2a0fd138bd760df8ca3a0ea5785f58220c70fe6e8283594ee71e3"
+    },
+    "fallback_writes": [],
+    "fixture_inventory_before": [
+      {
+        "path": "external-target/sentinel.txt",
+        "exists": true,
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 18,
+        "sha256": "9ed3c5f3c3c2a0fd138bd760df8ca3a0ea5785f58220c70fe6e8283594ee71e3"
+      },
+      {
+        "path": "git-root/CLAUDE.local.md",
+        "exists": true,
+        "kind": "symlink",
+        "mode": "0o777",
+        "link_text": "../external-target/sentinel.txt"
+      },
+      {
+        "path": "git-root/seed.txt",
+        "exists": true,
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 5,
+        "sha256": "4a6689419b00b11700c9b6246bcfa8936c8f5e1e824db3a7e57030e2d1c1a684"
+      }
+    ],
+    "fixture_inventory_after": [
+      {
+        "path": "external-target/sentinel.txt",
+        "exists": true,
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 18,
+        "sha256": "9ed3c5f3c3c2a0fd138bd760df8ca3a0ea5785f58220c70fe6e8283594ee71e3"
+      },
+      {
+        "path": "git-root/CLAUDE.local.md",
+        "exists": true,
+        "kind": "symlink",
+        "mode": "0o777",
+        "link_text": "../external-target/sentinel.txt"
+      },
+      {
+        "path": "git-root/seed.txt",
+        "exists": true,
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 5,
+        "sha256": "4a6689419b00b11700c9b6246bcfa8936c8f5e1e824db3a7e57030e2d1c1a684"
+      }
+    ]
+  },
+  "state_root": {
+    "requested": "state-root",
+    "honored": true,
+    "inventory_before": [],
+    "inventory_after": [
+      {
+        "path": "state-root/repos/tmp-tiger-kit-full-evidence-issue2-isolated-symlink-claude-local-reject-fixture-repo/branches/main/reflect/REFLECT-20260711-174444-a21d38.yaml",
+        "exists": true,
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 1555,
+        "sha256": "d78f4c5bc09bc18108d2bdb5bcb9eccb340b4462c54d487b40fa98d1e0c930be"
+      },
+      {
+        "path": "state-root/repos/tmp-tiger-kit-full-evidence-issue2-isolated-symlink-claude-local-reject-fixture-repo/branches/main/reflect/current.yaml",
+        "exists": true,
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 1555,
+        "sha256": "d78f4c5bc09bc18108d2bdb5bcb9eccb340b4462c54d487b40fa98d1e0c930be"
+      }
+    ]
+  }
+}

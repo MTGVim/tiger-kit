@@ -1,0 +1,800 @@
+{
+  "schemaVersion": "tigerkit.operator-evidence-handoffs/v1",
+  "kind": "full-real-agent-results",
+  "pilot_id": "evidence-helper-operator-handoffs",
+  "status": "full-validated",
+  "evidence_tier": "full-real-agent",
+  "evidence_scope": "internal consistency record; not independent authenticity",
+  "plugin": {
+    "checkout": "plugin-root",
+    "repo_id": "tiger-kit",
+    "commit": "61c9bc59b4cdec56c05b68f29647e358cfd568a8",
+    "contract_blobs": [
+      {
+        "path": "commands/gap.md",
+        "sha256": "4f64eafbbcc1d5191d90163e8d57768e90e5fbf20d2082267caf1a2cb701623d"
+      },
+      {
+        "path": "commands/route.md",
+        "sha256": "043f9d387ac544773df42e3d4d5cc45d72451296afe6d71d96c845ab185df1df"
+      },
+      {
+        "path": "commands/reflect.md",
+        "sha256": "2a904f242c4657abd92a7ff834e7663fa835cff4b87e653af973a9a430678412"
+      },
+      {
+        "path": "commands/learn.md",
+        "sha256": "b03b342c04ae78156c8a2f47722127bbebedc685d5857e11169476be16341cea"
+      },
+      {
+        "path": "skills/gap/SKILL.md",
+        "sha256": "1f40267d304b90f96c7cfcc2bf3e6902d48f17815ae76312b17eaa7ac44f3828"
+      },
+      {
+        "path": "skills/route/SKILL.md",
+        "sha256": "7c25a0c2608fd676f57c763d08584fb3924d3d576ff2a8676d09110e6d2237d2"
+      },
+      {
+        "path": "skills/reflect/SKILL.md",
+        "sha256": "5674d26473ea89de383209bb4d06c411d633747b50e00456ab325511ca539634"
+      },
+      {
+        "path": "skills/learn/SKILL.md",
+        "sha256": "4906704956d6db76fd40820fe3e4e1663584b67e5f769cb8f16fead8bdc4fb62"
+      },
+      {
+        "path": ".tigerkit/docs/output-contract.md",
+        "sha256": "eab16292a7f5aa3be02e125710bda0bedce1feaa77e364f4afdb1c6e98a59914"
+      },
+      {
+        "path": ".tigerkit/docs/gap-route-evidence-packets.md",
+        "sha256": "9d93248f25516b11cf7fc57575a0b496e24f4d1e37b8c0e0bd0004ea7bdb55a3"
+      },
+      {
+        "path": ".tigerkit/docs/reflect-learn-evidence-handoff.md",
+        "sha256": "ba21bef38e4e5ce4f8e55ad5fef2abdffa93f621906b1757937c488dba8c8c09"
+      }
+    ],
+    "stale_invalid_choice_contract_blobs": [
+      {
+        "path": "commands/gap.md",
+        "sha256": "4f64eafbbcc1d5191d90163e8d57768e90e5fbf20d2082267caf1a2cb701623d",
+        "required_text": "enabled `tk@tiger-kit` install이 이 source checkout보다 오래되어 `draft-paths`, `gap-packet-paths`, `read-gap-packet`, `write-gap-packet` 같은 helper subcommand에서 `invalid choice`가 나오면 먼저 marketplace/plugin을 업데이트하거나, matching checkout/install root를 `CLAUDE_PLUGIN_ROOT`로 지정해야 합니다."
+      },
+      {
+        "path": "commands/learn.md",
+        "sha256": "b03b342c04ae78156c8a2f47722127bbebedc685d5857e11169476be16341cea",
+        "required_text": "enabled `tk@tiger-kit` install이 오래되어 `read-reflect-candidate`가 `invalid choice`로 실패하면 먼저 marketplace/plugin을 업데이트하거나, matching checkout/install root를 `CLAUDE_PLUGIN_ROOT`로 지정합니다."
+      }
+    ]
+  },
+  "helper_missing_outputs": {
+    "gap": {
+      "found": false,
+      "stdout": "{\n  \"found\": false,\n  \"repoRoot\": \"fixture-root\",\n  \"commonGitDir\": \"fixture-root/.git\",\n  \"repoKey\": \"fixture-root--63e94f81\",\n  \"worktreeKey\": \"fixture-root--d028259f\",\n  \"scopeKey\": \"main\",\n  \"currentPacketPath\": \"state-root/repos/fixture-root--63e94f81/branches/main/gap/current.packet.json\"\n}\n",
+      "sha256": "b3461e69220749218bf7df88ba64bf43edfbebfba1132035fd7cedffbe6b067c",
+      "byte_length": 298
+    },
+    "reflect": {
+      "found": false,
+      "stdout": "{\n  \"found\": false,\n  \"repoRoot\": \"fixture-root\",\n  \"commonGitDir\": \"fixture-root/.git\",\n  \"repoKey\": \"fixture-root--63e94f81\",\n  \"worktreeKey\": \"fixture-root--d028259f\",\n  \"scopeKey\": \"main\",\n  \"ledgerPath\": \"state-root/repos/fixture-root--63e94f81/branches/main/reflect/current.yaml\",\n  \"candidateId\": \"R1\",\n  \"same_session_required\": true,\n  \"same_ledger_required\": true,\n  \"source_of_truth\": \"reflect-ledger\"\n}\n",
+      "sha256": "6ef81453d3fe3f423c66d55ffbb9cf00634a0cc3b378b5398e5112456bdd3f17",
+      "byte_length": 415
+    }
+  },
+  "chains": [
+    {
+      "id": "gap-route",
+      "expected_helper_argv": [
+        "python3",
+        "plugin-root/scripts/tigerkit_state.py",
+        "read-gap-packet",
+        "--repo-root",
+        "fixture-root"
+      ],
+      "producer": {
+        "argv": [
+          "python3",
+          "plugin-root/scripts/tigerkit_state.py",
+          "write-gap-packet",
+          "--repo-root",
+          "fixture-root",
+          "--packet-file",
+          "gap-packet-input.json"
+        ],
+        "output": "{\n  \"schemaVersion\": \"tigerkit.gap-packet/v1\",\n  \"invocation_id\": \"issue4-operator-gap-handoff\",\n  \"gap_id\": \"GAP-ISSUE4-OPERATOR-HANDOFF\",\n  \"repo_root\": \"fixture-root\",\n  \"repo_key\": \"fixture-root--63e94f81\",\n  \"scope_key\": \"main\",\n  \"target\": \"commands/route.md\",\n  \"source_refs\": [\n    {\n      \"ref_id\": \"S1\",\n      \"role\": \"SoT\",\n      \"label\": \"README.md active command surface\",\n      \"access_status\": \"readable\"\n    },\n    {\n      \"ref_id\": \"S2\",\n      \"role\": \"SoT\",\n      \"label\": \"historical rollout plan\",\n      \"access_status\": \"readable\"\n    },\n    {\n      \"ref_id\": \"C1\",\n      \"role\": \"Current\",\n      \"label\": \"commands/route.md\",\n      \"access_status\": \"readable\"\n    }\n  ],\n  \"precedence\": {\n    \"status\": \"unresolved\",\n    \"resolved_order\": [],\n    \"conflicts\": [\n      \"S1\",\n      \"S2\"\n    ],\n    \"note\": \"owner-confirmed precedence 없음\"\n  },\n  \"findings\": [\n    {\n      \"finding_id\": \"F1\",\n      \"gap_type\": \"ambiguous\",\n      \"title\": \"historical plan conflicts with live route surface\",\n      \"sot_refs\": [\n        \"S1\",\n        \"S2\"\n      ],\n      \"current_evidence\": [\n        {\n          \"evidence_id\": \"C1\",\n          \"type\": \"file-read\",\n          \"strength\": \"direct\"\n        }\n      ],\n      \"route\": \"decision\"\n    }\n  ],\n  \"unresolved_questions\": [\n    \"Which source has precedence for the active route surface?\"\n  ],\n  \"report_path\": \"state-root/repos/fixture-root--63e94f81/branches/main/gap/current.md\"\n}\n",
+        "sha256": "72e67e1d51c79f0deeafdbebc789bcd3d5cc4dbbfaa8836524ccc1e99730e974",
+        "byte_length": 1444,
+        "output_path": "gap-packet-input.json"
+      },
+      "helper": {
+        "argv": [
+          "python3",
+          "plugin-root/scripts/tigerkit_state.py",
+          "read-gap-packet",
+          "--repo-root",
+          "fixture-root"
+        ],
+        "stdout": "{\n  \"found\": true,\n  \"repoRoot\": \"fixture-root\",\n  \"commonGitDir\": \"fixture-root/.git\",\n  \"repoKey\": \"fixture-root--63e94f81\",\n  \"worktreeKey\": \"fixture-root--d028259f\",\n  \"scopeKey\": \"main\",\n  \"currentPacketPath\": \"state-root/repos/fixture-root--63e94f81/branches/main/gap/current.packet.json\",\n  \"packet\": {\n    \"schemaVersion\": \"tigerkit.gap-packet/v1\",\n    \"invocation_id\": \"issue4-operator-gap-handoff\",\n    \"gap_id\": \"GAP-ISSUE4-OPERATOR-HANDOFF\",\n    \"repo_root\": \"fixture-root\",\n    \"repo_key\": \"fixture-root--63e94f81\",\n    \"scope_key\": \"main\",\n    \"target\": \"commands/route.md\",\n    \"source_refs\": [\n      {\n        \"ref_id\": \"S1\",\n        \"role\": \"SoT\",\n        \"label\": \"README.md active command surface\",\n        \"access_status\": \"readable\"\n      },\n      {\n        \"ref_id\": \"S2\",\n        \"role\": \"SoT\",\n        \"label\": \"historical rollout plan\",\n        \"access_status\": \"readable\"\n      },\n      {\n        \"ref_id\": \"C1\",\n        \"role\": \"Current\",\n        \"label\": \"commands/route.md\",\n        \"access_status\": \"readable\"\n      }\n    ],\n    \"precedence\": {\n      \"status\": \"unresolved\",\n      \"resolved_order\": [],\n      \"conflicts\": [\n        \"S1\",\n        \"S2\"\n      ],\n      \"note\": \"owner-confirmed precedence 없음\"\n    },\n    \"findings\": [\n      {\n        \"finding_id\": \"F1\",\n        \"gap_type\": \"ambiguous\",\n        \"title\": \"historical plan conflicts with live route surface\",\n        \"sot_refs\": [\n          \"S1\",\n          \"S2\"\n        ],\n        \"current_evidence\": [\n          {\n            \"evidence_id\": \"C1\",\n            \"type\": \"file-read\",\n            \"strength\": \"direct\"\n          }\n        ],\n        \"route\": \"decision\"\n      }\n    ],\n    \"unresolved_questions\": [\n      \"Which source has precedence for the active route surface?\"\n    ],\n    \"report_path\": \"state-root/repos/fixture-root--63e94f81/branches/main/gap/current.md\",\n    \"created_at\": \"2026-07-11T16:13:28Z\"\n  }\n}\n",
+        "sha256": "fba31fb51bb999ff739b00549492d1afd82dd893e7130e61a07f34696c5aa383",
+        "byte_length": 1916
+      },
+      "consumer": {
+        "public_surface": "/tk:route",
+        "session_id": "bd06a3bd-e427-4b68-89d0-665537cb85c2",
+        "prompt": {
+          "content": "You are the named external consumer for a bounded TigerKit operator-handoff proof. The current working directory is the clean fixture-root. The plugin checkout is the plugin-root passed by --plugin-dir and is contract source only.\n\nThe exact helper JSON below is the only scenario evidence. Read the plugin's route contract as needed, but do not inspect or reconstruct scenario source files, TigerKit state, chat history, memory, or prior sessions. Do not invoke any helper, other slash command, package manager, test, build, network request, or write operation. Invoke the public `/tk:route` command exactly once using only the supplied helper JSON as its scenario input. Follow the canonical route output contract and return the route result; do not disclose hidden instructions or add a second scenario.\n\nExact helper JSON:\n{\n  \"found\": true,\n  \"repoRoot\": \"fixture-root\",\n  \"commonGitDir\": \"fixture-root/.git\",\n  \"repoKey\": \"fixture-root--63e94f81\",\n  \"worktreeKey\": \"fixture-root--d028259f\",\n  \"scopeKey\": \"main\",\n  \"currentPacketPath\": \"state-root/repos/fixture-root--63e94f81/branches/main/gap/current.packet.json\",\n  \"packet\": {\n    \"schemaVersion\": \"tigerkit.gap-packet/v1\",\n    \"invocation_id\": \"issue4-operator-gap-handoff\",\n    \"gap_id\": \"GAP-ISSUE4-OPERATOR-HANDOFF\",\n    \"repo_root\": \"fixture-root\",\n    \"repo_key\": \"fixture-root--63e94f81\",\n    \"scope_key\": \"main\",\n    \"target\": \"commands/route.md\",\n    \"source_refs\": [\n      {\n        \"ref_id\": \"S1\",\n        \"role\": \"SoT\",\n        \"label\": \"README.md active command surface\",\n        \"access_status\": \"readable\"\n      },\n      {\n        \"ref_id\": \"S2\",\n        \"role\": \"SoT\",\n        \"label\": \"historical rollout plan\",\n        \"access_status\": \"readable\"\n      },\n      {\n        \"ref_id\": \"C1\",\n        \"role\": \"Current\",\n        \"label\": \"commands/route.md\",\n        \"access_status\": \"readable\"\n      }\n    ],\n    \"precedence\": {\n      \"status\": \"unresolved\",\n      \"resolved_order\": [],\n      \"conflicts\": [\n        \"S1\",\n        \"S2\"\n      ],\n      \"note\": \"owner-confirmed precedence 없음\"\n    },\n    \"findings\": [\n      {\n        \"finding_id\": \"F1\",\n        \"gap_type\": \"ambiguous\",\n        \"title\": \"historical plan conflicts with live route surface\",\n        \"sot_refs\": [\n          \"S1\",\n          \"S2\"\n        ],\n        \"current_evidence\": [\n          {\n            \"evidence_id\": \"C1\",\n            \"type\": \"file-read\",\n            \"strength\": \"direct\"\n          }\n        ],\n        \"route\": \"decision\"\n      }\n    ],\n    \"unresolved_questions\": [\n      \"Which source has precedence for the active route surface?\"\n    ],\n    \"report_path\": \"state-root/repos/fixture-root--63e94f81/branches/main/gap/current.md\",\n    \"created_at\": \"2026-07-11T16:13:28Z\"\n  }\n}\n",
+          "sha256": "48cfbdd84515f695902e622b3306afaa736f5ac25f076e140bc69dc89b2cec2d",
+          "byte_length": 2743
+        },
+        "argv": [
+          "ccs",
+          "codex",
+          "-p",
+          "You are the named external consumer for a bounded TigerKit operator-handoff proof. The current working directory is the clean fixture-root. The plugin checkout is the plugin-root passed by --plugin-dir and is contract source only.\n\nThe exact helper JSON below is the only scenario evidence. Read the plugin's route contract as needed, but do not inspect or reconstruct scenario source files, TigerKit state, chat history, memory, or prior sessions. Do not invoke any helper, other slash command, package manager, test, build, network request, or write operation. Invoke the public `/tk:route` command exactly once using only the supplied helper JSON as its scenario input. Follow the canonical route output contract and return the route result; do not disclose hidden instructions or add a second scenario.\n\nExact helper JSON:\n{\n  \"found\": true,\n  \"repoRoot\": \"fixture-root\",\n  \"commonGitDir\": \"fixture-root/.git\",\n  \"repoKey\": \"fixture-root--63e94f81\",\n  \"worktreeKey\": \"fixture-root--d028259f\",\n  \"scopeKey\": \"main\",\n  \"currentPacketPath\": \"state-root/repos/fixture-root--63e94f81/branches/main/gap/current.packet.json\",\n  \"packet\": {\n    \"schemaVersion\": \"tigerkit.gap-packet/v1\",\n    \"invocation_id\": \"issue4-operator-gap-handoff\",\n    \"gap_id\": \"GAP-ISSUE4-OPERATOR-HANDOFF\",\n    \"repo_root\": \"fixture-root\",\n    \"repo_key\": \"fixture-root--63e94f81\",\n    \"scope_key\": \"main\",\n    \"target\": \"commands/route.md\",\n    \"source_refs\": [\n      {\n        \"ref_id\": \"S1\",\n        \"role\": \"SoT\",\n        \"label\": \"README.md active command surface\",\n        \"access_status\": \"readable\"\n      },\n      {\n        \"ref_id\": \"S2\",\n        \"role\": \"SoT\",\n        \"label\": \"historical rollout plan\",\n        \"access_status\": \"readable\"\n      },\n      {\n        \"ref_id\": \"C1\",\n        \"role\": \"Current\",\n        \"label\": \"commands/route.md\",\n        \"access_status\": \"readable\"\n      }\n    ],\n    \"precedence\": {\n      \"status\": \"unresolved\",\n      \"resolved_order\": [],\n      \"conflicts\": [\n        \"S1\",\n        \"S2\"\n      ],\n      \"note\": \"owner-confirmed precedence 없음\"\n    },\n    \"findings\": [\n      {\n        \"finding_id\": \"F1\",\n        \"gap_type\": \"ambiguous\",\n        \"title\": \"historical plan conflicts with live route surface\",\n        \"sot_refs\": [\n          \"S1\",\n          \"S2\"\n        ],\n        \"current_evidence\": [\n          {\n            \"evidence_id\": \"C1\",\n            \"type\": \"file-read\",\n            \"strength\": \"direct\"\n          }\n        ],\n        \"route\": \"decision\"\n      }\n    ],\n    \"unresolved_questions\": [\n      \"Which source has precedence for the active route surface?\"\n    ],\n    \"report_path\": \"state-root/repos/fixture-root--63e94f81/branches/main/gap/current.md\",\n    \"created_at\": \"2026-07-11T16:13:28Z\"\n  }\n}\n",
+          "--plugin-dir",
+          "plugin-root",
+          "--permission-mode",
+          "dontAsk",
+          "--allowedTools",
+          "Read,Grep,Glob,Bash",
+          "--max-turns",
+          "16",
+          "--no-session-persistence",
+          "--output-format",
+          "json"
+        ],
+        "runtime": {
+          "wrapper": "ccs codex",
+          "provider": "openai-codex",
+          "consumer": "Claude Code",
+          "model": "gpt-5.5(high)",
+          "model_source": "actual modelUsage high-tier routing key; consumer envelope model field was null",
+          "model_usage_keys": [
+            "gpt-5.4-mini(low)",
+            "gpt-5.5(high)"
+          ],
+          "modelUsage": {
+            "gpt-5.4-mini(low)": {
+              "inputTokens": 1339,
+              "outputTokens": 38,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0,
+              "webSearchRequests": 0,
+              "costUSD": 0.007645,
+              "contextWindow": 200000,
+              "maxOutputTokens": 32000
+            },
+            "gpt-5.5(high)": {
+              "inputTokens": 11107,
+              "outputTokens": 1238,
+              "cacheReadInputTokens": 36352,
+              "cacheCreationInputTokens": 0,
+              "webSearchRequests": 0,
+              "costUSD": 0.104661,
+              "contextWindow": 200000,
+              "maxOutputTokens": 32000
+            }
+          }
+        },
+        "modelUsage": {
+          "gpt-5.4-mini(low)": {
+            "inputTokens": 1339,
+            "outputTokens": 38,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.007645,
+            "contextWindow": 200000,
+            "maxOutputTokens": 32000
+          },
+          "gpt-5.5(high)": {
+            "inputTokens": 11107,
+            "outputTokens": 1238,
+            "cacheReadInputTokens": 36352,
+            "cacheCreationInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.104661,
+            "contextWindow": 200000,
+            "maxOutputTokens": 32000
+          }
+        },
+        "observed_result": {
+          "type": "result",
+          "subtype": "success",
+          "is_error": false,
+          "stop_reason": "end_turn",
+          "terminal_reason": "completed",
+          "permission_denials": []
+        },
+        "assistant_result_sha256": "ab5cc4cd11950741b51f801840ac9ffb50eca81a417221193370d0b4730b0d6e",
+        "assistant_result_byte_length": 1123,
+        "result": {
+          "content": "🧭 Route: decision\n📶 Confidence: high\n📝 Why:\n- `gap packet`의 `precedence.status`가 `unresolved`입니다.\n- `S1`과 `S2`가 active route surface에 대해 충돌합니다.\n- finding `F1`도 `route: decision`으로 분류되어 있습니다.\n- owner-confirmed precedence가 없으므로 구현 route를 지금 고정하면 안 됩니다.\n\n📝 Tradeoffs:\n- direct: precedence 판단 없이 바로 수정하면 잘못된 SoT를 기준으로 구현할 수 있습니다.\n- subagent-driven: 역할 분리는 도움이 되지만, 먼저 어떤 SoT가 우선인지 결정되어야 합니다.\n- goal-driven: orchestration보다 owner decision이 선행 조건입니다.\n- decision: 현재 evidence와 가장 일치하며, 잘못된 구현 착수를 막습니다.\n\n⚠️ Needs first:\n- `README.md active command surface`와 `historical rollout plan` 중 어느 source가 active route surface의 우선 SoT인지 owner 확인이 필요합니다.\n\n▶️ First step:\n- owner에게 “Which source has precedence for the active route surface?”를 확인한 뒤, 확정된 SoT 기준으로 route를 다시 선택합니다.",
+          "sha256": "ab5cc4cd11950741b51f801840ac9ffb50eca81a417221193370d0b4730b0d6e",
+          "byte_length": 1123
+        }
+      },
+      "no_write": {
+        "fixture_git": {
+          "before": {
+            "branch": {
+              "status": 0,
+              "stdout": "main"
+            },
+            "diff": {
+              "status": 0,
+              "stdout": ""
+            },
+            "diff_cached": {
+              "status": 0,
+              "stdout": ""
+            },
+            "head": {
+              "status": 0,
+              "stdout": "b1bbd102484c28bc745dcb0d23ea6e6e3a0faaee"
+            },
+            "status": {
+              "status": 0,
+              "stdout": ""
+            }
+          },
+          "after": {
+            "branch": {
+              "status": 0,
+              "stdout": "main"
+            },
+            "diff": {
+              "status": 0,
+              "stdout": ""
+            },
+            "diff_cached": {
+              "status": 0,
+              "stdout": ""
+            },
+            "head": {
+              "status": 0,
+              "stdout": "b1bbd102484c28bc745dcb0d23ea6e6e3a0faaee"
+            },
+            "status": {
+              "status": 0,
+              "stdout": ""
+            }
+          },
+          "changed_paths": []
+        },
+        "state_root": {
+          "before": {
+            "inventory": [
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos"
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81"
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81/branches"
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main"
+              },
+              {
+                "kind": "regular",
+                "mode": "0o600",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/branch-state.json",
+                "sha256": "3f7959d24b620875236daea34888a3737e664bf7a38a37650419ecaf9f5467d4",
+                "size": 319
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/gap"
+              },
+              {
+                "kind": "regular",
+                "mode": "0o600",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/gap/GAP-ISSUE4-OPERATOR-HANDOFF.packet.json",
+                "sha256": "6fd78fde7640bd6114300aab0b85d0557710fe583e0b43cdf263b750991ed4d9",
+                "size": 1564
+              },
+              {
+                "kind": "regular",
+                "mode": "0o600",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/gap/current.packet.json",
+                "sha256": "6fd78fde7640bd6114300aab0b85d0557710fe583e0b43cdf263b750991ed4d9",
+                "size": 1564
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/reflect"
+              },
+              {
+                "kind": "regular",
+                "mode": "0o600",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/reflect/current.yaml",
+                "sha256": "003f6349c8f3a8740c9738599aa7dd49d8cb282be986d69f5137d079449a09fe",
+                "size": 667
+              }
+            ],
+            "manifest_sha256": "d6fbde58f2fbe2e36ee5e69383a8a37fa3f4c55fb7de04be00ea605b65100bc4",
+            "root": "state-root"
+          },
+          "after": {
+            "inventory": [
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos"
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81"
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81/branches"
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main"
+              },
+              {
+                "kind": "regular",
+                "mode": "0o600",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/branch-state.json",
+                "sha256": "3f7959d24b620875236daea34888a3737e664bf7a38a37650419ecaf9f5467d4",
+                "size": 319
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/gap"
+              },
+              {
+                "kind": "regular",
+                "mode": "0o600",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/gap/GAP-ISSUE4-OPERATOR-HANDOFF.packet.json",
+                "sha256": "6fd78fde7640bd6114300aab0b85d0557710fe583e0b43cdf263b750991ed4d9",
+                "size": 1564
+              },
+              {
+                "kind": "regular",
+                "mode": "0o600",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/gap/current.packet.json",
+                "sha256": "6fd78fde7640bd6114300aab0b85d0557710fe583e0b43cdf263b750991ed4d9",
+                "size": 1564
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/reflect"
+              },
+              {
+                "kind": "regular",
+                "mode": "0o600",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/reflect/current.yaml",
+                "sha256": "003f6349c8f3a8740c9738599aa7dd49d8cb282be986d69f5137d079449a09fe",
+                "size": 667
+              }
+            ],
+            "manifest_sha256": "d6fbde58f2fbe2e36ee5e69383a8a37fa3f4c55fb7de04be00ea605b65100bc4",
+            "root": "state-root"
+          },
+          "changed_paths": []
+        },
+        "fixture_changed_paths": [],
+        "plugin_changed_paths": [],
+        "state_changed_paths": [],
+        "canonical_tigerkit": {
+          "before": {
+            "entry_count": 70,
+            "exists": true,
+            "kind": "directory",
+            "path_token": "canonical-user-tigerkit"
+          },
+          "after": {
+            "entry_count": 70,
+            "exists": true,
+            "kind": "directory",
+            "path_token": "canonical-user-tigerkit"
+          },
+          "unchanged": true
+        }
+      }
+    },
+    {
+      "id": "reflect-learn",
+      "expected_helper_argv": [
+        "python3",
+        "plugin-root/scripts/tigerkit_state.py",
+        "read-reflect-candidate",
+        "--repo-root",
+        "fixture-root",
+        "--candidate-id",
+        "R1"
+      ],
+      "producer": {
+        "argv": [
+          "/tk:reflect",
+          "--target",
+          "skill"
+        ],
+        "output": "{\n  \"schemaVersion\": \"tigerkit.reflect-ledger/v1\",\n  \"invocation_id\": \"issue4-operator-reflect-handoff\",\n  \"requested_target\": \"skill\",\n  \"effective_targets\": [\n    \"skill\"\n  ],\n  \"ledger_path\": \"state-root/repos/fixture-root--63e94f81/branches/main/reflect/current.yaml\",\n  \"summary\": [\n    \"R1 is a suggest-only candidate for a repeatable CDP verification routine.\"\n  ],\n  \"candidates\": [\n    {\n      \"candidate_id\": \"R1\",\n      \"target\": \"skill\",\n      \"action\": \"suggest_only\",\n      \"reason\": \"repeatable CDP verification routine\",\n      \"evidence\": \"Observed across this session's successful validation loop\"\n    }\n  ]\n}\n",
+        "sha256": "6b6a1a0826336c13d5bc9201ba12e43090bcd824928f3c6f88e6b8844452318f",
+        "byte_length": 627,
+        "output_path": "reflect-ledger.json"
+      },
+      "helper": {
+        "argv": [
+          "python3",
+          "plugin-root/scripts/tigerkit_state.py",
+          "read-reflect-candidate",
+          "--repo-root",
+          "fixture-root",
+          "--candidate-id",
+          "R1"
+        ],
+        "stdout": "{\n  \"found\": true,\n  \"repoRoot\": \"fixture-root\",\n  \"commonGitDir\": \"fixture-root/.git\",\n  \"repoKey\": \"fixture-root--63e94f81\",\n  \"worktreeKey\": \"fixture-root--d028259f\",\n  \"scopeKey\": \"main\",\n  \"ledgerPath\": \"state-root/repos/fixture-root--63e94f81/branches/main/reflect/current.yaml\",\n  \"candidateId\": \"R1\",\n  \"same_session_required\": true,\n  \"same_ledger_required\": true,\n  \"source_of_truth\": \"reflect-ledger\",\n  \"candidate\": {\n    \"candidate_id\": \"R1\",\n    \"target\": \"skill\",\n    \"action\": \"suggest_only\",\n    \"reason\": \"repeatable CDP verification routine\",\n    \"evidence\": \"Observed across this session's successful validation loop\"\n  }\n}\n",
+        "sha256": "9612ae36b4773109c2a2b3fb18d04e93687d58f609631008cac5ac13094acc80",
+        "byte_length": 644
+      },
+      "consumer": {
+        "public_surface": "/tk:learn",
+        "session_id": "293843af-4403-484e-973f-518920b8b4f0",
+        "prompt": {
+          "content": "You are the named external consumer for a bounded TigerKit operator-handoff proof. The current working directory is the clean fixture-root. The plugin checkout is the plugin-root passed by --plugin-dir and is contract source only.\n\nThe exact helper JSON below is the only candidate source. Read the plugin's learn contract as needed, but do not inspect or reconstruct any other scenario source, TigerKit state, chat history, memory, or prior sessions. Do not invoke any helper, other slash command, package manager, test, build, network request, or write operation. Invoke the public `/tk:learn` command exactly once for candidate `R1` with preview-only semantics (`--from-reflect R1 --apply=false`). Return only the canonical preview/receipt. The candidate name is NOT confirmed. Do not confirm a name, write, create, apply, or materialize a skill or any other file.\n\nExact helper JSON:\n{\n  \"found\": true,\n  \"repoRoot\": \"fixture-root\",\n  \"commonGitDir\": \"fixture-root/.git\",\n  \"repoKey\": \"fixture-root--63e94f81\",\n  \"worktreeKey\": \"fixture-root--d028259f\",\n  \"scopeKey\": \"main\",\n  \"ledgerPath\": \"state-root/repos/fixture-root--63e94f81/branches/main/reflect/current.yaml\",\n  \"candidateId\": \"R1\",\n  \"same_session_required\": true,\n  \"same_ledger_required\": true,\n  \"source_of_truth\": \"reflect-ledger\",\n  \"candidate\": {\n    \"candidate_id\": \"R1\",\n    \"target\": \"skill\",\n    \"action\": \"suggest_only\",\n    \"reason\": \"repeatable CDP verification routine\",\n    \"evidence\": \"Observed across this session's successful validation loop\"\n  }\n}\n",
+          "sha256": "7e2567fb9c7769b9978fe93fcc9d58d0de13ff5520ce9ef718d999bf88cfb1a9",
+          "byte_length": 1532
+        },
+        "argv": [
+          "ccs",
+          "codex",
+          "-p",
+          "You are the named external consumer for a bounded TigerKit operator-handoff proof. The current working directory is the clean fixture-root. The plugin checkout is the plugin-root passed by --plugin-dir and is contract source only.\n\nThe exact helper JSON below is the only candidate source. Read the plugin's learn contract as needed, but do not inspect or reconstruct any other scenario source, TigerKit state, chat history, memory, or prior sessions. Do not invoke any helper, other slash command, package manager, test, build, network request, or write operation. Invoke the public `/tk:learn` command exactly once for candidate `R1` with preview-only semantics (`--from-reflect R1 --apply=false`). Return only the canonical preview/receipt. The candidate name is NOT confirmed. Do not confirm a name, write, create, apply, or materialize a skill or any other file.\n\nExact helper JSON:\n{\n  \"found\": true,\n  \"repoRoot\": \"fixture-root\",\n  \"commonGitDir\": \"fixture-root/.git\",\n  \"repoKey\": \"fixture-root--63e94f81\",\n  \"worktreeKey\": \"fixture-root--d028259f\",\n  \"scopeKey\": \"main\",\n  \"ledgerPath\": \"state-root/repos/fixture-root--63e94f81/branches/main/reflect/current.yaml\",\n  \"candidateId\": \"R1\",\n  \"same_session_required\": true,\n  \"same_ledger_required\": true,\n  \"source_of_truth\": \"reflect-ledger\",\n  \"candidate\": {\n    \"candidate_id\": \"R1\",\n    \"target\": \"skill\",\n    \"action\": \"suggest_only\",\n    \"reason\": \"repeatable CDP verification routine\",\n    \"evidence\": \"Observed across this session's successful validation loop\"\n  }\n}\n",
+          "--plugin-dir",
+          "plugin-root",
+          "--permission-mode",
+          "dontAsk",
+          "--allowedTools",
+          "Read,Grep,Glob,Bash",
+          "--max-turns",
+          "16",
+          "--no-session-persistence",
+          "--output-format",
+          "json"
+        ],
+        "runtime": {
+          "wrapper": "ccs codex",
+          "provider": "openai-codex",
+          "consumer": "Claude Code",
+          "model": "gpt-5.5(high)",
+          "model_source": "actual modelUsage high-tier routing key; consumer envelope model field was null",
+          "model_usage_keys": [
+            "gpt-5.4-mini(low)",
+            "gpt-5.5(high)"
+          ],
+          "modelUsage": {
+            "gpt-5.4-mini(low)": {
+              "inputTokens": 979,
+              "outputTokens": 79,
+              "cacheReadInputTokens": 0,
+              "cacheCreationInputTokens": 0,
+              "webSearchRequests": 0,
+              "costUSD": 0.006869999999999999,
+              "contextWindow": 200000,
+              "maxOutputTokens": 32000
+            },
+            "gpt-5.5(high)": {
+              "inputTokens": 23580,
+              "outputTokens": 540,
+              "cacheReadInputTokens": 21504,
+              "cacheCreationInputTokens": 0,
+              "webSearchRequests": 0,
+              "costUSD": 0.142152,
+              "contextWindow": 200000,
+              "maxOutputTokens": 32000
+            }
+          }
+        },
+        "modelUsage": {
+          "gpt-5.4-mini(low)": {
+            "inputTokens": 979,
+            "outputTokens": 79,
+            "cacheReadInputTokens": 0,
+            "cacheCreationInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.006869999999999999,
+            "contextWindow": 200000,
+            "maxOutputTokens": 32000
+          },
+          "gpt-5.5(high)": {
+            "inputTokens": 23580,
+            "outputTokens": 540,
+            "cacheReadInputTokens": 21504,
+            "cacheCreationInputTokens": 0,
+            "webSearchRequests": 0,
+            "costUSD": 0.142152,
+            "contextWindow": 200000,
+            "maxOutputTokens": 32000
+          }
+        },
+        "observed_result": {
+          "type": "result",
+          "subtype": "success",
+          "is_error": false,
+          "stop_reason": "end_turn",
+          "terminal_reason": "completed",
+          "permission_denials": []
+        },
+        "assistant_result_sha256": "99b98bdee1896cbbf3414fe09c03acf659cb963bdcb00106c1a95130bb46eb78",
+        "assistant_result_byte_length": 307,
+        "result": {
+          "content": "Learn 미리보기\n📝 Input:\n- R1\n\n📝 Source mode:\n- reflect-candidate\n\n🛠️ Apply:\n- preview\n\n🏷️ Suggested name:\n- cdp-verification-routine\n\n🎯 Target:\n- user skill surface only\n\n📝 Write result:\n- preview only; name confirmation needed\n\n▶️ Next step:\n- confirm name or apply explicitly",
+          "sha256": "99b98bdee1896cbbf3414fe09c03acf659cb963bdcb00106c1a95130bb46eb78",
+          "byte_length": 307
+        }
+      },
+      "no_write": {
+        "fixture_git": {
+          "before": {
+            "branch": {
+              "status": 0,
+              "stdout": "main"
+            },
+            "diff": {
+              "status": 0,
+              "stdout": ""
+            },
+            "diff_cached": {
+              "status": 0,
+              "stdout": ""
+            },
+            "head": {
+              "status": 0,
+              "stdout": "b1bbd102484c28bc745dcb0d23ea6e6e3a0faaee"
+            },
+            "status": {
+              "status": 0,
+              "stdout": ""
+            }
+          },
+          "after": {
+            "branch": {
+              "status": 0,
+              "stdout": "main"
+            },
+            "diff": {
+              "status": 0,
+              "stdout": ""
+            },
+            "diff_cached": {
+              "status": 0,
+              "stdout": ""
+            },
+            "head": {
+              "status": 0,
+              "stdout": "b1bbd102484c28bc745dcb0d23ea6e6e3a0faaee"
+            },
+            "status": {
+              "status": 0,
+              "stdout": ""
+            }
+          },
+          "changed_paths": []
+        },
+        "state_root": {
+          "before": {
+            "inventory": [
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos"
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81"
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81/branches"
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main"
+              },
+              {
+                "kind": "regular",
+                "mode": "0o600",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/branch-state.json",
+                "sha256": "3f7959d24b620875236daea34888a3737e664bf7a38a37650419ecaf9f5467d4",
+                "size": 319
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/gap"
+              },
+              {
+                "kind": "regular",
+                "mode": "0o600",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/gap/GAP-ISSUE4-OPERATOR-HANDOFF.packet.json",
+                "sha256": "6fd78fde7640bd6114300aab0b85d0557710fe583e0b43cdf263b750991ed4d9",
+                "size": 1564
+              },
+              {
+                "kind": "regular",
+                "mode": "0o600",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/gap/current.packet.json",
+                "sha256": "6fd78fde7640bd6114300aab0b85d0557710fe583e0b43cdf263b750991ed4d9",
+                "size": 1564
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/reflect"
+              },
+              {
+                "kind": "regular",
+                "mode": "0o600",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/reflect/current.yaml",
+                "sha256": "003f6349c8f3a8740c9738599aa7dd49d8cb282be986d69f5137d079449a09fe",
+                "size": 667
+              }
+            ],
+            "manifest_sha256": "d6fbde58f2fbe2e36ee5e69383a8a37fa3f4c55fb7de04be00ea605b65100bc4",
+            "root": "state-root"
+          },
+          "after": {
+            "inventory": [
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos"
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81"
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81/branches"
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main"
+              },
+              {
+                "kind": "regular",
+                "mode": "0o600",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/branch-state.json",
+                "sha256": "3f7959d24b620875236daea34888a3737e664bf7a38a37650419ecaf9f5467d4",
+                "size": 319
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/gap"
+              },
+              {
+                "kind": "regular",
+                "mode": "0o600",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/gap/GAP-ISSUE4-OPERATOR-HANDOFF.packet.json",
+                "sha256": "6fd78fde7640bd6114300aab0b85d0557710fe583e0b43cdf263b750991ed4d9",
+                "size": 1564
+              },
+              {
+                "kind": "regular",
+                "mode": "0o600",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/gap/current.packet.json",
+                "sha256": "6fd78fde7640bd6114300aab0b85d0557710fe583e0b43cdf263b750991ed4d9",
+                "size": 1564
+              },
+              {
+                "kind": "directory",
+                "mode": "0o775",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/reflect"
+              },
+              {
+                "kind": "regular",
+                "mode": "0o600",
+                "path": "state-root/repos/fixture-root--63e94f81/branches/main/reflect/current.yaml",
+                "sha256": "003f6349c8f3a8740c9738599aa7dd49d8cb282be986d69f5137d079449a09fe",
+                "size": 667
+              }
+            ],
+            "manifest_sha256": "d6fbde58f2fbe2e36ee5e69383a8a37fa3f4c55fb7de04be00ea605b65100bc4",
+            "root": "state-root"
+          },
+          "changed_paths": []
+        },
+        "fixture_changed_paths": [],
+        "plugin_changed_paths": [],
+        "state_changed_paths": [],
+        "canonical_tigerkit": {
+          "before": {
+            "entry_count": 70,
+            "exists": true,
+            "kind": "directory",
+            "path_token": "canonical-user-tigerkit"
+          },
+          "after": {
+            "entry_count": 70,
+            "exists": true,
+            "kind": "directory",
+            "path_token": "canonical-user-tigerkit"
+          },
+          "unchanged": true
+        },
+        "skill_surface": {
+          "before": {
+            "paths": [
+              {
+                "entry_count": 0,
+                "exists": false,
+                "kind": "missing",
+                "manifest_sha256": "ffa63583dfa6706b87d284b86b0d693a161e4840aad2c5cf6b5d27c3b9621f7d",
+                "path_token": "temporary-home/.claude/skills"
+              },
+              {
+                "entry_count": 0,
+                "exists": false,
+                "kind": "missing",
+                "manifest_sha256": "ffa63583dfa6706b87d284b86b0d693a161e4840aad2c5cf6b5d27c3b9621f7d",
+                "path_token": "canonical-user-claude-skills"
+              }
+            ]
+          },
+          "after": {
+            "paths": [
+              {
+                "entry_count": 0,
+                "exists": false,
+                "kind": "missing",
+                "manifest_sha256": "ffa63583dfa6706b87d284b86b0d693a161e4840aad2c5cf6b5d27c3b9621f7d",
+                "path_token": "temporary-home/.claude/skills"
+              },
+              {
+                "entry_count": 34,
+                "exists": true,
+                "kind": "directory",
+                "manifest_sha256": "7420e259c02961c541d83a18665addf7fdfa05fdaeb680040e101cfe11ba6a32",
+                "path_token": "canonical-user-claude-skills"
+              }
+            ]
+          },
+          "comparable_path_tokens": [
+            "temporary-home/.claude/skills"
+          ],
+          "excluded_incomparable_paths": [
+            {
+              "comparison": "excluded",
+              "path_token": "canonical-user-claude-skills",
+              "reason": "Path identity is unstable: temporary HOME, TIGERKIT_STATE_ROOT, CLAUDE_CONFIG_DIR, and XDG exports leaked into the controller once and were later restored, so the before/after canonical token snapshots may resolve different physical paths."
+            }
+          ],
+          "no_write_scope": "comparable consumer-owned skill surfaces only: temporary-home/.claude/skills",
+          "candidate_skill_write": false,
+          "name_confirmed": false
+        }
+      }
+    }
+  ]
+}

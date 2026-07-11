@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "tigerkit.micro-wording-pilot/v1",
+  "pilot_id": "initial-command-wording",
+  "kind": "micro-wording-comparison",
+  "goal": "Compare low-cost invocation wording for route, reflect, and learn without treating MICRO evidence as behavior proof.",
+  "sample_policy": {
+    "samples_per_variant": 1,
+    "extra_samples_per_tied_variant": 1,
+    "max_total_samples": 9,
+    "tie_sets": []
+  },
+  "observation_rubric": [
+    {
+      "id": "intent_alignment",
+      "question": "Does the response directly satisfy the requested command intent without inventing missing facts?"
+    },
+    {
+      "id": "boundary_fidelity",
+      "question": "Does the response preserve the command's no-write, preview, or routing boundary?"
+    },
+    {
+      "id": "output_clarity",
+      "question": "Is the decision or next step compact and unambiguous?"
+    }
+  ],
+  "surfaces": [
+    {
+      "surface": "/tk:route",
+      "status": "micro-validated",
+      "evidence_tier": "micro-real-agent",
+      "decision": {
+        "selected_variant": "route-b-explicit",
+        "rationale": "Both variants produced a bounded direct route and concrete first step without a write claim. The explicit comparison cue was clearer and raised confidence, so route-b-explicit is selected for MICRO wording evidence only.",
+        "public_wording_change": false
+      },
+      "questions": [
+        {
+          "id": "route-small-doc-fix",
+          "question": "Which invocation wording yields a bounded route choice and concrete first step for a tiny documentation fix?",
+          "variants": [
+            {
+              "id": "route-a-minimal",
+              "wording_under_test": "Minimal natural-language task cue.",
+              "prompt": "/tk:route \"README의 링크 설명 한 줄을 더 명확하게 고치는 작업\""
+            },
+            {
+              "id": "route-b-explicit",
+              "wording_under_test": "Explicit comparison and first-step cue.",
+              "prompt": "/tk:route \"README의 링크 설명 한 줄을 더 명확하게 고치는 작업이야. route를 비교하고 하나를 고른 뒤 첫 스텝까지 알려줘.\""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "surface": "/tk:reflect",
+      "status": "micro-validated",
+      "evidence_tier": "micro-real-agent",
+      "decision": {
+        "selected_variant": "reflect-b-explicit",
+        "rationale": "Both variants preserved preview-only behavior and identified a skill target. The explicit classification cue made the durable-learning decision and no-write result clearer, so reflect-b-explicit is selected for MICRO wording evidence only.",
+        "public_wording_change": false
+      },
+      "questions": [
+        {
+          "id": "reflect-preview-learning",
+          "question": "Which invocation wording yields a truthful preview-only classification of a session learning?",
+          "variants": [
+            {
+              "id": "reflect-a-minimal",
+              "wording_under_test": "Minimal learning cue with explicit no-apply flag.",
+              "prompt": "/tk:reflect \"테스트를 먼저 실패시켜야 validator가 실제로 연결됐는지 알 수 있었다\" --apply=false"
+            },
+            {
+              "id": "reflect-b-explicit",
+              "wording_under_test": "Explicit classification and preview-boundary cue.",
+              "prompt": "/tk:reflect \"테스트를 먼저 실패시켜야 validator가 실제로 연결됐는지 알 수 있었다\" --apply=false --desc \"durable learning인지 분류하되 파일은 쓰지 말고 근거와 다음 행동만 간결히 보여줘\""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "surface": "/tk:learn",
+      "status": "micro-validated",
+      "evidence_tier": "micro-real-agent",
+      "decision": {
+        "selected_variant": "learn-b-explicit",
+        "rationale": "Both variants produced a bounded skill-only preview and did not claim a write. The explicit cue separately exposed pending RED/GREEN/REFACTOR and eval coverage evidence, so learn-b-explicit is selected for MICRO wording evidence only.",
+        "public_wording_change": false
+      },
+      "questions": [
+        {
+          "id": "learn-preview-notes",
+          "question": "Which invocation wording yields a bounded skill preview with honest pending verification?",
+          "variants": [
+            {
+              "id": "learn-a-minimal",
+              "wording_under_test": "Minimal notes-to-skill cue with preview flag.",
+              "prompt": "/tk:learn \"반복 가능한 JSON evidence validator 작성 절차: schema 검사, 실제 output hash, concise excerpt, 최종 test\" --apply=false"
+            },
+            {
+              "id": "learn-b-explicit",
+              "wording_under_test": "Explicit skill-only preview and pending-evidence cue.",
+              "prompt": "/tk:learn \"반복 가능한 JSON evidence validator 작성 절차: schema 검사, 실제 output hash, concise excerpt, 최종 test\" --apply=false. skill-only preview로 제안하고 RED/GREEN/REFACTOR와 eval coverage는 실제 증거가 없으면 pending으로 표시해줘."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

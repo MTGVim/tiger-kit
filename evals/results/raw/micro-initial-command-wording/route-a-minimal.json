@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "tigerkit.micro-session-source/v1",
+  "session_id": "20260711_142028_734018",
+  "surface": "/tk:route",
+  "question_id": "route-small-doc-fix",
+  "variant_id": "route-a-minimal",
+  "eval_user_request": "This is one isolated, no-write, preview-only TigerKit MICRO evaluation. Work from the current checkout root repo-root. Before answering, use the file-reading tool to read and follow the exact canonical skill file at skills/route/SKILL.md from this checkout; do not use any globally installed or stale copy. Do not write, modify, or create files. Treat this declared variant prompt as the user request: /tk:route \"README의 링크 설명 한 줄을 더 명확하게 고치는 작업\". Answer the route request with a bounded route choice and concrete first step, without inventing missing facts. Return only the concise user-facing answer.",
+  "eval_user_request_sha256": "8dcec598292590074f61875d7c39d180fc83b0abd500da2cab77902c45b2873d",
+  "declared_prompt": "/tk:route \"README의 링크 설명 한 줄을 더 명확하게 고치는 작업\"",
+  "request_sha256": "461f7d0398c318a326b42d0e182f525db76f757c727db938a36ab6461d3909d7",
+  "assistant_response": "🧭 Route: direct  \n📶 Confidence: medium\n\n📝 Why:\n- README 링크 설명 한 줄의 국소적 문구 수정이라 범위와 리스크가 작습니다.\n- `subagent-driven`이나 `goal-driven`은 과합니다.\n\n⚠️ Needs first:\n- 대상 README 파일과 수정할 링크를 특정해야 합니다.\n\n▶️ First step:\n- 관련 README에서 링크 설명 한 줄과 링크 대상 문맥을 읽고, 의미를 바꾸지 않는 최소 수정안을 정합니다.\n",
+  "response_sha256": "2cb1bbe292683cef3123f4b77199f332e4721a52d3eb3fbee7a0128d23c4a84a",
+  "response_byte_length": 465,
+  "canonical_skill_path": "skills/route/SKILL.md",
+  "canonical_skill_sha256": "7c25a0c2608fd676f57c763d08584fb3924d3d576ff2a8676d09110e6d2237d2",
+  "session": {
+    "source": "tui",
+    "model": "gpt-5.6-luna",
+    "fresh": true,
+    "isolated": true,
+    "write_free": true
+  },
+  "tool_evidence": {
+    "canonical_skill_read": {
+      "tool": "read_file",
+      "path": "skills/route/SKILL.md",
+      "sha256": "7c25a0c2608fd676f57c763d08584fb3924d3d576ff2a8676d09110e6d2237d2"
+    },
+    "observed_tools": [
+      "read_file",
+      "skill_view"
+    ],
+    "write_tools": []
+  }
+}

@@ -91,10 +91,16 @@ Do not promote from `draft` to `shipped` with no intermediate evidence.
 4. public command contract, README, operator docs까지 정리되면 `shipped`를 검토합니다.
 5. shipped 이후에도 regressions가 보이면 다시 하향 조정할 수 있습니다.
 
-## Example registry
+## Canonical registry owner
 
-sample registry는 아래 example file을 봅니다.
+현재 promotion status의 canonical owner는 아래 maintained registry 하나입니다.
 
-- `evals/contracts/promotion-status-registry.example.json`
+- `evals/contracts/promotion-status-registry.json`
 
-이 sample은 vocabulary와 기록 shape를 설명하기 위한 것이지, 자동으로 현재 repo의 authoritative release ledger를 대신하지 않습니다.
+이 registry는 실행된 Issue 1–4 result artifact만 가리키며, 각 entry는 정확히 하나의 repo-relative result artifact를 가집니다. `draft`, `micro-validated`, `full-validated`, `shipped` vocabulary 자체와 현재 registry에 실제로 기록된 상태는 구분합니다.
+
+## Update rule
+
+result artifact가 새로 추가되거나 내용이 바뀌었을 때만 canonical registry를 함께 갱신합니다. registry의 `id`, `status`, `evidence_tier`는 대응 result의 `pilot_id`, `status`, `evidence_tier`와 일치해야 하며, FULL pilot evidence만으로 `shipped`를 기록하거나 추론하지 않습니다. public command contract와 operator docs까지 반영된 뒤에만 `shipped`를 별도로 검토합니다.
+
+`FULL pilot by itself does not mean shipped`입니다. 이전 example registry나 임시/placeholder entry는 canonical owner가 아닙니다.

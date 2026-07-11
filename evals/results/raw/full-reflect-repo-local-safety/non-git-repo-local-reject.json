@@ -1,0 +1,209 @@
+{
+  "schemaVersion": "tigerkit.full-reflect-repo-local-safety-source/v1",
+  "scenario_id": "non-git-repo-local-reject",
+  "session": {
+    "session_id": "427db30e-6ad7-4a2f-af49-bda06011b0a0",
+    "fresh": true,
+    "isolated": true,
+    "write_free": false,
+    "consumer": "Claude Code",
+    "consumer_version": "2.1.150 (Claude Code)",
+    "wrapper": "ccs codex",
+    "provider": "openai-codex",
+    "model": "gpt-5.5(high)"
+  },
+  "plugin": {
+    "path": "plugin-root",
+    "repo_id": "tiger-kit",
+    "commit": "6e540c5621bfa83acbbc35e72e5511fbe2713d45",
+    "contract_blobs": [
+      {
+        "path": "commands/reflect.md",
+        "sha256": "2a904f242c4657abd92a7ff834e7663fa835cff4b87e653af973a9a430678412"
+      },
+      {
+        "path": "docs/reflect-file-policy.md",
+        "sha256": "294bcaa9ef7cc3d3362ed2495e0a870f0b3584f16115ad2920a8751f411cff4d"
+      },
+      {
+        "path": ".tigerkit/docs/output-contract.md",
+        "sha256": "eab16292a7f5aa3be02e125710bda0bedce1feaa77e364f4afdb1c6e98a59914"
+      }
+    ]
+  },
+  "command": {
+    "argv": [
+      "ccs",
+      "codex",
+      "-p",
+      "Pilot=reflect-repo-local-safety; Scenario=non-git-repo-local-reject; Fixture CWD=fixture-root/workdir; Plugin checkout=plugin-root. Invoke the public surface exactly once: /tk:reflect --target repo-local --apply=true --desc \"Issue 2 pilot non-git-repo-local-reject: create exactly one confirmed repo-local candidate from this single guidance: Keep the fixture's local test guidance concise and evidence-backed for non-git-repo-local-reject. Forbid repo-shared, user-global, skill, hook, command, agent, and discard candidates.\". Seed exactly one repo-local candidate from the single guidance in --desc. Do not create or propose repo-shared, user-global, skill, hook, command, agent, or discard candidates. Do not hand-edit CLAUDE.local.md, any ignore file, the plugin checkout, or any fallback path. Do not commit, reset, clean, or use another slash command. Return the canonical compact receipt with reason_code, Applied candidates, Changed paths, ledger path, and rollback state.",
+      "--plugin-dir",
+      "plugin-root",
+      "--permission-mode",
+      "bypassPermissions",
+      "--allowedTools",
+      "Read,Grep,Glob,Bash",
+      "--max-turns",
+      "16",
+      "--no-session-persistence",
+      "--output-format",
+      "json"
+    ],
+    "argv_sha256": "b4a7914a6fc3e0208f2a763775560347397f8133a8e080e2d4eebbbc968aabb2",
+    "invocation_cwd": "fixture-root/workdir",
+    "plugin_dir": "plugin-root",
+    "permission_mode": "bypassPermissions",
+    "allowed_tools": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Bash"
+    ],
+    "max_turns": 16,
+    "session_persistence": false
+  },
+  "tool_evidence": {
+    "plugin_command": {
+      "executable": "ccs",
+      "subcommand": "codex",
+      "public_surface": "/tk:reflect",
+      "argv": [
+        "ccs",
+        "codex",
+        "-p",
+        "Pilot=reflect-repo-local-safety; Scenario=non-git-repo-local-reject; Fixture CWD=fixture-root/workdir; Plugin checkout=plugin-root. Invoke the public surface exactly once: /tk:reflect --target repo-local --apply=true --desc \"Issue 2 pilot non-git-repo-local-reject: create exactly one confirmed repo-local candidate from this single guidance: Keep the fixture's local test guidance concise and evidence-backed for non-git-repo-local-reject. Forbid repo-shared, user-global, skill, hook, command, agent, and discard candidates.\". Seed exactly one repo-local candidate from the single guidance in --desc. Do not create or propose repo-shared, user-global, skill, hook, command, agent, or discard candidates. Do not hand-edit CLAUDE.local.md, any ignore file, the plugin checkout, or any fallback path. Do not commit, reset, clean, or use another slash command. Return the canonical compact receipt with reason_code, Applied candidates, Changed paths, ledger path, and rollback state.",
+        "--plugin-dir",
+        "plugin-root",
+        "--permission-mode",
+        "bypassPermissions",
+        "--allowedTools",
+        "Read,Grep,Glob,Bash",
+        "--max-turns",
+        "16",
+        "--no-session-persistence",
+        "--output-format",
+        "json"
+      ],
+      "invocation_cwd": "fixture-root/workdir",
+      "plugin_dir": "plugin-root"
+    },
+    "session_transcript": {
+      "session_id": "427db30e-6ad7-4a2f-af49-bda06011b0a0",
+      "event_type": "ai-title",
+      "ai_title": "Run repo-local reflect pilot",
+      "sha256": "34c153f9df2c4f257d60c010df968f22e5e6420406c0f83a2ed22ac25d85787c",
+      "byte_length": 112
+    }
+  },
+  "runtime": {
+    "model_usage": {
+      "gpt-5.4-mini(low)": {
+        "inputTokens": 816,
+        "outputTokens": 30,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.00483,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000
+      },
+      "gpt-5.5(high)": {
+        "inputTokens": 15520,
+        "outputTokens": 3112,
+        "cacheReadInputTokens": 142848,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.22682399999999997,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000
+      }
+    },
+    "model_usage_keys": [
+      "gpt-5.4-mini(low)",
+      "gpt-5.5(high)"
+    ],
+    "observed_result": {
+      "type": "result",
+      "subtype": "success",
+      "is_error": false,
+      "stop_reason": "end_turn",
+      "terminal_reason": "completed",
+      "num_turns": 8,
+      "permission_denials": []
+    }
+  },
+  "consumer_output": {
+    "result": "Reflect 완료\n\n📝 Requested target:\n- repo-local\n\n🎯 Effective targets:\n- repo-local\n\n🧪 Failure type:\n- missing_evidence\n\n📝 Summary:\n- 단일 `repo-local` 후보 `R1`만 confirmed로 생성했습니다.\n- fixture cwd가 git worktree가 아니어서 `CLAUDE.local.md` apply는 거부했습니다.\n- `repo-shared`, `user-global`, `skill`, `hook`, `command`, `agent`, `discard` 후보는 생성하지 않았습니다.\n\n📁 Ledger:\n- `state-home/.tigerkit/repos/non-git-repo-local-reject/branches/local/reflect/REFLECT-20260711-174319-R1.yaml`\n\n✅ Applied candidates:\n- NONE\n\n📝 Reason code:\n- `not_git_worktree`\n\n📁 Changed paths:\n- `state-home/.tigerkit/repos/non-git-repo-local-reject/branches/local/reflect/REFLECT-20260711-174319-R1.yaml`\n- repo-local guidance target: NONE\n\n⚠️ Rollback:\n- not_needed",
+    "result_sha256": "12c02cc94329ce8b01cb23e2157e090cd7f22e00350904fb88bdc2198849f2ea",
+    "result_byte_length": 822,
+    "recorded_consumer_output_sha256": "996ea1e5630e2adef9c0d904ab640053dc1225b934bc692649fd27e502cd061a"
+  },
+  "receipt": {
+    "requested_target": "repo-local",
+    "effective_targets": [
+      "repo-local"
+    ],
+    "applied_candidates": [
+      "NONE"
+    ],
+    "reason_code": "`not_git_worktree`",
+    "changed_paths": [
+      "`state-home/.tigerkit/repos/non-git-repo-local-reject/branches/local/reflect/REFLECT-20260711-174319-R1.yaml`",
+      "repo-local guidance target: NONE"
+    ],
+    "ledger_path": "`state-home/.tigerkit/repos/non-git-repo-local-reject/branches/local/reflect/REFLECT-20260711-174319-R1.yaml`",
+    "rollback": "not_needed",
+    "stdout_excerpt": "Reflect 완료\n\n📝 Requested target:\n- repo-local\n\n🎯 Effective targets:\n- repo-local\n\n🧪 Failure type:\n- missing_evidence\n\n📝 Summary:\n- 단일 `repo-local` 후보 `R1`만 confirmed로 생성했습니다.\n- fixture cwd가 git worktree가 아니어서 `CLAUDE.local.md` apply는 거부했습니다.\n- `repo-shared`, `user-global`, `skill`, `hook`, `command`, `agent`, `discard` 후보는 생성하지 않았습니다.\n\n📁 Ledger:\n- `state-home/.tigerkit/repos/non-git-repo-local-reject/branches/local/reflect/REFLECT-20260711-174319-R1.yaml`\n\n✅ Applied candidates:\n- NONE\n\n📝 Reason code:\n- `not_git_worktree`\n\n📁 Changed paths:\n- `state-home/.tigerkit/repos/non-git-repo-local-reject/branches/local/reflect/REFLECT-20260711-174319-R1.yaml`\n- repo-local guidance target: NONE\n\n⚠️ Rollback:\n- not_needed",
+    "consumer_output_sha256": "996ea1e5630e2adef9c0d904ab640053dc1225b934bc692649fd27e502cd061a"
+  },
+  "fixture": {
+    "invocation_cwd": "fixture-root/workdir",
+    "git_root": null,
+    "target": {
+      "before": {
+        "path": "fixture-root/workdir/CLAUDE.local.md",
+        "exists": false,
+        "kind": "absent"
+      },
+      "after": {
+        "path": "fixture-root/workdir/CLAUDE.local.md",
+        "exists": false,
+        "kind": "absent"
+      }
+    },
+    "git_before": {
+      "is_worktree": false,
+      "rev_parse_status": 128,
+      "status_porcelain": [],
+      "head": null,
+      "branch": null
+    },
+    "git_after": {
+      "is_worktree": false,
+      "rev_parse_status": 128,
+      "status_porcelain": [],
+      "head": null,
+      "branch": null
+    },
+    "ignore_files": [],
+    "external_target": null,
+    "fallback_writes": [],
+    "fixture_inventory_before": [],
+    "fixture_inventory_after": []
+  },
+  "state_root": {
+    "requested": "state-root",
+    "honored": true,
+    "inventory_before": [],
+    "inventory_after": [
+      {
+        "path": "state-root/repos/non-git-repo-local-reject/branches/local/reflect/REFLECT-20260711-174319-R1.yaml",
+        "exists": true,
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 2117,
+        "sha256": "2f834ec5bca14595b3b167f1ce76fa713a3f21b1f1748d12b9e325fc83fb064d"
+      }
+    ]
+  }
+}

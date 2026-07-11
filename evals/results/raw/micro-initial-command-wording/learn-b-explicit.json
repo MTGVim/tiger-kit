@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "tigerkit.micro-session-source/v1",
+  "session_id": "20260711_142349_6b4ba5",
+  "surface": "/tk:learn",
+  "question_id": "learn-preview-notes",
+  "variant_id": "learn-b-explicit",
+  "eval_user_request": "This is one isolated, no-write, preview-only TigerKit MICRO evaluation. Work from the current checkout root repo-root. Before answering, use the file-reading tool to read and follow the exact canonical skill file at skills/learn/SKILL.md from this checkout; do not use any globally installed or stale copy. Do not write, modify, or create files. Treat this declared variant prompt as the user request: /tk:learn \"반복 가능한 JSON evidence validator 작성 절차: schema 검사, 실제 output hash, concise excerpt, 최종 test\" --apply=false. skill-only preview로 제안하고 RED/GREEN/REFACTOR와 eval coverage는 실제 증거가 없으면 pending으로 표시해줘. Provide a bounded skill-only preview with honest pending verification; do not claim a skill or file was written. Return only the concise user-facing answer.",
+  "eval_user_request_sha256": "05f2c44f4810ce1bd07b4c68668460280f7ef5fec8d783f4a7bd6f29f337badd",
+  "declared_prompt": "/tk:learn \"반복 가능한 JSON evidence validator 작성 절차: schema 검사, 실제 output hash, concise excerpt, 최종 test\" --apply=false. skill-only preview로 제안하고 RED/GREEN/REFACTOR와 eval coverage는 실제 증거가 없으면 pending으로 표시해줘.",
+  "request_sha256": "c31b0944c3a738c79a2e3d010f444d3135d10fd06ee76f6f3db70f3d594d209c",
+  "assistant_response": "Learn 미리보기\n\n📝 Input:\n- `/tk:learn \"반복 가능한 JSON evidence validator 작성 절차: schema 검사, 실제 output hash, concise excerpt, 최종 test\" --apply=false`\n\n📝 Source mode:\n- direct\n\n🛠️ Apply:\n- preview\n\n🏷️ Suggested name:\n- `json-evidence-validator`\n\n🧩 Proposed skill:\n- JSON schema 검사\n- 실제 output bytes의 hash 기록\n- secret redaction을 포함한 concise excerpt 생성\n- 최종 test 실행 및 결과 기록\n- schema/hash/excerpt 불일치 시 실패 처리\n\n🎯 Target:\n- user skill surface only\n\n✅ Verification loop:\n- RED: pending — 실제 실패 증거 없음\n- GREEN: pending — 적용 후 실행 증거 없음\n- REFACTOR: pending — 반복 검수 증거 없음\n\n🧪 Eval coverage:\n- pending — `positive 3 / negative 2 / owner` 미등록\n\n📝 Write result:\n- preview only; skill이나 파일은 생성하지 않음\n\n▶️ Next step:\n- 제안 검토 후 이름 확정 및 `--apply=true`로 명시적 적용\n",
+  "response_sha256": "d6ddcd750f90b4f48621097985a0c28b944cbdca916536e9585244eb6ec1693d",
+  "response_byte_length": 978,
+  "canonical_skill_path": "skills/learn/SKILL.md",
+  "canonical_skill_sha256": "4906704956d6db76fd40820fe3e4e1663584b67e5f769cb8f16fead8bdc4fb62",
+  "session": {
+    "source": "tui",
+    "model": "gpt-5.6-luna",
+    "fresh": true,
+    "isolated": true,
+    "write_free": true
+  },
+  "tool_evidence": {
+    "canonical_skill_read": {
+      "tool": "read_file",
+      "path": "skills/learn/SKILL.md",
+      "sha256": "4906704956d6db76fd40820fe3e4e1663584b67e5f769cb8f16fead8bdc4fb62"
+    },
+    "observed_tools": [
+      "read_file"
+    ],
+    "write_tools": []
+  }
+}

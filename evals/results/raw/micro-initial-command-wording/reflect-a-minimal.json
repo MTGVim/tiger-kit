@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "tigerkit.micro-session-source/v1",
+  "session_id": "20260711_142157_3cfad4",
+  "surface": "/tk:reflect",
+  "question_id": "reflect-preview-learning",
+  "variant_id": "reflect-a-minimal",
+  "eval_user_request": "This is one isolated, no-write, preview-only TigerKit MICRO evaluation. Work from the current checkout root repo-root. Before answering, use the file-reading tool to read and follow the exact canonical skill file at skills/reflect/SKILL.md from this checkout; do not use any globally installed or stale copy. Do not write, modify, or create files. Treat this declared variant prompt as the user request: /tk:reflect \"테스트를 먼저 실패시켜야 validator가 실제로 연결됐는지 알 수 있었다\" --apply=false. Provide a truthful preview-only classification of the learning, showing the likely durable target, evidence, and next action without claiming any file was changed. Return only the concise user-facing answer.",
+  "eval_user_request_sha256": "5e98409cb137bd9542a88508ed56f034b422c1a7947cd95632978904d37f19a2",
+  "declared_prompt": "/tk:reflect \"테스트를 먼저 실패시켜야 validator가 실제로 연결됐는지 알 수 있었다\" --apply=false",
+  "request_sha256": "03f054d8f3219854f55712be060f8bab8c681d2a23baf29b4aa79cc4d6418b07",
+  "assistant_response": "Reflect preview\n\n🎯 Likely durable target:\n- `skill`\n- action: `preview_only`\n- path: `NONE`\n\n🧪 Failure type:\n- `discipline_failure` — validator 연결 검증 전에 성공 경로만 확인한 순서 문제\n\n📝 Evidence:\n- 제공된 learning: 실패를 먼저 유도해야 `validator`가 실제로 연결됐는지 확인할 수 있었음\n- 실제 테스트 명령·파일은 제공되지 않아 추가 실행 증거는 없음\n\n▶️ Next action:\n- 재사용 가능한 “validator wiring은 RED 테스트로 먼저 증명” 절차로 검토\n- materialize하려면 후속 `/tk:learn`에서 명시적으로 apply\n- 파일과 ledger는 preview-only이므로 작성하지 않음\n",
+  "response_sha256": "401fbbe2bf7be9819fc318bf5fbd7649deb7479055f16770eec468c82265bee2",
+  "response_byte_length": 686,
+  "canonical_skill_path": "skills/reflect/SKILL.md",
+  "canonical_skill_sha256": "5674d26473ea89de383209bb4d06c411d633747b50e00456ab325511ca539634",
+  "session": {
+    "source": "tui",
+    "model": "gpt-5.6-luna",
+    "fresh": true,
+    "isolated": true,
+    "write_free": true
+  },
+  "tool_evidence": {
+    "canonical_skill_read": {
+      "tool": "read_file",
+      "path": "skills/reflect/SKILL.md",
+      "sha256": "5674d26473ea89de383209bb4d06c411d633747b50e00456ab325511ca539634"
+    },
+    "observed_tools": [
+      "read_file",
+      "skill_view"
+    ],
+    "write_tools": []
+  }
+}
