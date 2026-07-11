@@ -210,6 +210,7 @@ def validate_inventory() -> None:
         RESULT_PATH.name,
         FULL_RESULT_PATH.name,
         "full-gap-stale-sot-precedence.json",
+        "operator-evidence-handoffs.json",
     }:
         fail(f"{RESULTS_DIR.relative_to(ROOT)} contains unexpected result files: {sorted(result_files)!r}")
     result_dirs = {entry.name for entry in result_entries if entry.is_dir()}

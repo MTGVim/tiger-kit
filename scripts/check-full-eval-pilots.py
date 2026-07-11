@@ -2423,6 +2423,7 @@ def full_validate_inventory() -> None:
         "micro-initial-command-wording.json",
         FULL_RESULT_PATH.name,
         GAP_RESULT_PATH.name,
+        "operator-evidence-handoffs.json",
     }:
         fail(f"{RESULTS_DIR.relative_to(ROOT)} contains unexpected result files: {sorted(result_files)!r}")
     result_dirs = {entry.name for entry in result_entries if entry.is_dir()}
