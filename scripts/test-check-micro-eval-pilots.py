@@ -110,6 +110,26 @@ def pilot_result_decision_mismatch(result: dict[str, Any], _checkout: Path) -> N
     result["surface_results"][0]["decision"]["rationale"] = "mismatched decision rationale"
 
 
+def runtime_model_divergence(result: dict[str, Any], _checkout: Path) -> None:
+    result["runtime"]["model"] = "other-model"
+    result["invocation"]["model"] = "other-model"
+
+
+def root_host_path(result: dict[str, Any], _checkout: Path) -> None:
+    result["runtime"]["agent_version"] = "/root/private"
+
+
+def windows_user_host_path(result: dict[str, Any], _checkout: Path) -> None:
+    result["runtime"]["agent_version"] = r"D:\Users\name\private"
+
+
+def unhashable_pilot_surface(_result: dict[str, Any], checkout: Path) -> None:
+    pilot_path = checkout / "evals" / "micro-pilots" / "initial-command-wording.json"
+    pilot = json.loads(pilot_path.read_text(encoding="utf-8"))
+    pilot["surfaces"][0]["surface"] = {"not": "a string"}
+    pilot_path.write_text(json.dumps(pilot, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
 def unpaired_tie_extra(result: dict[str, Any], _checkout: Path) -> None:
     extra = copy.deepcopy(result["records"][0])
     extra["sample_index"] = 2
@@ -256,6 +276,10 @@ CASES: list[tuple[str, Mutation]] = [
     ("fabricated prompt", fabricated_prompt),
     ("reused session ID", reused_session_id),
     ("pilot/result decision mismatch", pilot_result_decision_mismatch),
+    ("runtime model divergence", runtime_model_divergence),
+    ("root host path", root_host_path),
+    ("Windows user host path", windows_user_host_path),
+    ("unhashable pilot surface", unhashable_pilot_surface),
     ("unpaired tie extra", unpaired_tie_extra),
     ("recorded commit/blob mismatch", recorded_commit_blob_mismatch),
     ("no-git archive", no_git_archive),
@@ -363,6 +387,12 @@ def main() -> int:
             if completed.returncode == 0:
                 failures.append(f"{name}: mutation was accepted")
             else:
+                if name == "unhashable pilot surface":
+                    output = completed.stdout + completed.stderr
+                    if "Traceback" in output or "micro eval pilot check failed:" not in output:
+                        failures.append(
+                            f"{name}: rejection was not reported as a controlled validator failure"
+                        )
                 print(f"rejects {name}: exit={completed.returncode}")
 
         relocated = prepare_checkout(temp_root / "relocated-valid")

@@ -41,7 +41,9 @@ SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 GIT_SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 SESSION_ID_RE = re.compile(r"^[0-9]{8}_[0-9]{6}_[0-9a-f]{6}$")
 ALLOWED_EVIDENCE_TOOLS = {"read_file", "skill_view"}
-FORBIDDEN_HOST_MARKERS = ("/home/", "/Users/", "/tmp/", "C:\\Users\\")
+FORBIDDEN_HOST_MARKERS = ("/home/", "/Users/", "/tmp/", "/root/")
+WINDOWS_USER_PATH_RE = re.compile(r"(?i)(?:^|[^A-Za-z0-9])[A-Z]:[\\/](?:Users|home|root|tmp)(?:[\\/]|$)")
+EXPECTED_SESSION_MODEL = "gpt-5.6-luna"
 EVAL_REQUEST_INSTRUCTIONS = {
     "/tk:route": "Answer the route request with a bounded route choice and concrete first step, without inventing missing facts.",
     "/tk:reflect": "Provide a truthful preview-only classification of the learning, showing the likely durable target, evidence, and next action without claiming any file was changed.",
@@ -144,7 +146,7 @@ def repo_file(value: object, field: str) -> tuple[str, Path]:
 
 def reject_host_paths(value: object, label: str) -> None:
     if isinstance(value, str):
-        if any(marker in value for marker in FORBIDDEN_HOST_MARKERS):
+        if any(marker in value for marker in FORBIDDEN_HOST_MARKERS) or WINDOWS_USER_PATH_RE.search(value):
             fail(f"{label} must not disclose host-specific absolute paths")
     elif isinstance(value, dict):
         for key, item in value.items():
@@ -285,7 +287,11 @@ def validate_pilot(
     expected: dict[tuple[str, str], set[str]] = {}
     pilot_by_surface: dict[str, dict[str, Any]] = {}
     surfaces = object_list(pilot.get("surfaces"), f"{label}.surfaces")
-    actual_surfaces = {item.get("surface") for item in surfaces}
+    surface_values = [
+        nonempty(item.get("surface"), f"{label}.surfaces[{index}].surface")
+        for index, item in enumerate(surfaces)
+    ]
+    actual_surfaces = set(surface_values)
     if actual_surfaces != SURFACES or len(surfaces) != len(SURFACES):
         fail(f"{label}: surfaces must be exactly {sorted(SURFACES)!r}")
 
@@ -457,16 +463,17 @@ def validate_tool_evidence(
     label: str,
     skill_path: str,
     skill_sha: str,
-) -> None:
+) -> str:
     session = source.get("session")
     if not isinstance(session, dict):
         fail(f"{label}.session must be an object")
     if session.get("source") != "tui":
         fail(f"{label}.session.source must be 'tui'")
-    if session.get("model") != "gpt-5.6-luna":
-        fail(f"{label}.session.model must be 'gpt-5.6-luna'")
+    session_model = nonempty(session.get("model"), f"{label}.session.model")
+    if session_model != EXPECTED_SESSION_MODEL:
+        fail(f"{label}.session.model must be {EXPECTED_SESSION_MODEL!r}")
     if session.get("fresh") is not True or session.get("isolated") is not True:
-        fail(f"{label}.session must prove one fresh isolated session")
+        fail(f"{label}.session must record fresh=true and isolated=true")
     if session.get("write_free") is not True:
         fail(f"{label}.session.write_free must be true")
 
@@ -492,6 +499,7 @@ def validate_tool_evidence(
     write_tools = evidence.get("write_tools")
     if write_tools != []:
         fail(f"{label}.tool_evidence.write_tools must be empty")
+    return session_model
 
 
 def validate_source(
@@ -627,6 +635,7 @@ def validate_results(
     counts: dict[tuple[str, str, str], int] = {}
     session_ids: set[str] = set()
     source_paths: set[str] = set()
+    raw_session_models: set[str] = set()
     records_by_surface: dict[str, list[dict[str, Any]]] = {surface: [] for surface in SURFACES}
     for index, record in enumerate(records):
         prefix = f"{label}.records[{index}]"
@@ -705,7 +714,9 @@ def validate_results(
         )
         if source.get("canonical_skill_path") != SKILL_PATHS[surface]:
             fail(f"{prefix}.source canonical skill path must match the result surface")
-        validate_tool_evidence(source, source_relative, SKILL_PATHS[surface], skill_hashes[surface])
+        raw_session_models.add(
+            validate_tool_evidence(source, source_relative, SKILL_PATHS[surface], skill_hashes[surface])
+        )
         if output_sha != response_sha or output_length != response_length:
             fail(f"{prefix}: output hash/length must match the durable assistant response")
         if not response.startswith(excerpt):
@@ -742,6 +753,14 @@ def validate_results(
             fail(f"{prefix}.evidence_tier must be {REAL_AGENT_TIER!r}")
         records_by_surface[surface].append(record)
 
+    if len(raw_session_models) != 1:
+        fail(f"{label}: raw source session models must agree across all records")
+    raw_session_model = next(iter(raw_session_models))
+    if runtime["model"] != raw_session_model:
+        fail(f"{label}.runtime.model must match the raw source session model")
+    if invocation["model"] != raw_session_model:
+        fail(f"{label}.invocation.model must match the raw source session model")
+
     for (surface, question_id), variant_ids in expected.items():
         for variant_id in variant_ids:
             count = counts.get((surface, question_id, variant_id), 0)
@@ -753,7 +772,11 @@ def validate_results(
                 )
 
     summaries = object_list(results.get("surface_results"), f"{label}.surface_results")
-    if {item.get("surface") for item in summaries} != SURFACES or len(summaries) != len(SURFACES):
+    summary_surface_values = [
+        nonempty(item.get("surface"), f"{label}.surface_results[{index}].surface")
+        for index, item in enumerate(summaries)
+    ]
+    if set(summary_surface_values) != SURFACES or len(summaries) != len(SURFACES):
         fail(f"{label}.surface_results must cover exactly {sorted(SURFACES)!r}")
     summary_by_surface: dict[str, dict[str, Any]] = {}
     for summary in summaries:
