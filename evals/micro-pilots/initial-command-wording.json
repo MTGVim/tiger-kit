@@ -6,7 +6,8 @@
   "sample_policy": {
     "samples_per_variant": 1,
     "extra_samples_per_tied_variant": 1,
-    "max_total_samples": 9
+    "max_total_samples": 9,
+    "tie_sets": []
   },
   "observation_rubric": [
     {

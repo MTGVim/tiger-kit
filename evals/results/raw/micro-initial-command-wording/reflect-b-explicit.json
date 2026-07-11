@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "tigerkit.micro-session-source/v1",
+  "session_id": "20260711_142248_a60164",
+  "surface": "/tk:reflect",
+  "question_id": "reflect-preview-learning",
+  "variant_id": "reflect-b-explicit",
+  "eval_user_request": "This is one isolated, no-write, preview-only TigerKit MICRO evaluation. Work from the current checkout root repo-root. Before answering, use the file-reading tool to read and follow the exact canonical skill file at skills/reflect/SKILL.md from this checkout; do not use any globally installed or stale copy. Do not write, modify, or create files. Treat this declared variant prompt as the user request: /tk:reflect \"테스트를 먼저 실패시켜야 validator가 실제로 연결됐는지 알 수 있었다\" --apply=false --desc \"durable learning인지 분류하되 파일은 쓰지 말고 근거와 다음 행동만 간결히 보여줘\". Provide a truthful preview-only classification of the learning, showing the likely durable target, evidence, and next action without claiming any file was changed. Return only the concise user-facing answer.",
+  "eval_user_request_sha256": "3079ad46d0249c5249a9f02d20367ea7b429fa5da93ddf4d7c27a3932a5053e2",
+  "declared_prompt": "/tk:reflect \"테스트를 먼저 실패시켜야 validator가 실제로 연결됐는지 알 수 있었다\" --apply=false --desc \"durable learning인지 분류하되 파일은 쓰지 말고 근거와 다음 행동만 간결히 보여줘\"",
+  "request_sha256": "47485ce4d242dd2c1e784385ed06df157b8994a1bdfa09304eecb32481eca5b4",
+  "assistant_response": "Reflect preview\n\n🎯 Goal:\n- durable learning 여부 분류\n\n🧪 Failure type:\n- `missing_evidence`\n\n📝 Classification:\n- likely target: `skill`\n- action: `preview_only`\n- path: `NONE`\n- evidence: validator 연결 여부를 확인하려면 의도적인 실패 테스트가 필요했음\n- reason: 특정 작업의 일회성 우회가 아니라, validator 검증에 재사용 가능한 테스트 절차입니다. `duplicate_status`는 `unknown`입니다.\n\n📁 Ledger:\n- `NONE` — `--apply=false`이므로 파일을 쓰지 않았습니다.\n\n▶️ Next step:\n- 반복 적용할 규칙로 확정되면 `/tk:learn`에서 `skill` 후보로 명시적 materialize를 검토하세요.\n",
+  "response_sha256": "6d62ece3733b78cd25f04b96aacc3288c723851f336733106057a7516258bf07",
+  "response_byte_length": 682,
+  "canonical_skill_path": "skills/reflect/SKILL.md",
+  "canonical_skill_sha256": "5674d26473ea89de383209bb4d06c411d633747b50e00456ab325511ca539634",
+  "session": {
+    "source": "tui",
+    "model": "gpt-5.6-luna",
+    "fresh": true,
+    "isolated": true,
+    "write_free": true
+  },
+  "tool_evidence": {
+    "canonical_skill_read": {
+      "tool": "read_file",
+      "path": "skills/reflect/SKILL.md",
+      "sha256": "5674d26473ea89de383209bb4d06c411d633747b50e00456ab325511ca539634"
+    },
+    "observed_tools": [
+      "read_file"
+    ],
+    "write_tools": []
+  }
+}

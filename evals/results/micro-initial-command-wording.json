@@ -8,7 +8,6 @@
     "agent": "Hermes Agent",
     "agent_version": "Hermes Agent v0.18.2 (2026.7.7.2)",
     "model": "gpt-5.6-luna",
-    "host": "Linux 6.8.0-124-generic x86_64 GNU/Linux",
     "provider": "openai-codex"
   },
   "invocation": {
@@ -21,11 +20,10 @@
     "query_mode": "single-query",
     "isolation": "one fresh Hermes chat session per declared variant",
     "session_reuse": false,
-    "working_directory": "/home/tigeryoo/workspace/tiger-kit",
+    "working_directory": "repo-root",
     "context": "current-checkout canonical skill read; no-write preview-only evaluation"
   },
   "checkout": {
-    "root": "/home/tigeryoo/workspace/tiger-kit",
     "git_commit": "58feb98f97c98b83a0d283a396ba2f58a625f56b",
     "canonical_skills": {
       "/tk:route": {
@@ -40,7 +38,8 @@
         "path": "skills/learn/SKILL.md",
         "sha256": "4906704956d6db76fd40820fe3e4e1663584b67e5f769cb8f16fead8bdc4fb62"
       }
-    }
+    },
+    "repo_id": "tiger-kit"
   },
   "records": [
     {
@@ -66,7 +65,11 @@
       "selected_variant": false,
       "selection_rationale": "Not selected: truthful and bounded, but less explicit about the comparison and lower-confidence than route-b-explicit.",
       "status": "micro-validated",
-      "evidence_tier": "micro-real-agent"
+      "evidence_tier": "micro-real-agent",
+      "source_path": "evals/results/raw/micro-initial-command-wording/route-a-minimal.json",
+      "source_sha256": "967cb762ea1fa5ff5f1923ee8bc2c98ef62bff5a3a793b99b9e219838dabb2ab",
+      "request_sha256": "461f7d0398c318a326b42d0e182f525db76f757c727db938a36ab6461d3909d7",
+      "eval_user_request_sha256": "8dcec598292590074f61875d7c39d180fc83b0abd500da2cab77902c45b2873d"
     },
     {
       "surface": "/tk:route",
@@ -91,7 +94,11 @@
       "selected_variant": true,
       "selection_rationale": "Selected: the explicit comparison cue yielded the clearest bounded route, high confidence, and a concrete first step.",
       "status": "micro-validated",
-      "evidence_tier": "micro-real-agent"
+      "evidence_tier": "micro-real-agent",
+      "source_path": "evals/results/raw/micro-initial-command-wording/route-b-explicit.json",
+      "source_sha256": "0ee342e0e727d0eff5f59c2317f333caf7a592ef1636a6320d7ff9e7c5f412b7",
+      "request_sha256": "c6532cf4bad7f67d34415ccaaf500b3eabbd75b2ea690e09f0114ae92c56714a",
+      "eval_user_request_sha256": "c650515ac1afa996afc358107692a2bf47da5ac0b24b7070b3b6d64a9e4e58e1"
     },
     {
       "surface": "/tk:reflect",
@@ -116,7 +123,11 @@
       "selected_variant": false,
       "selection_rationale": "Not selected: it preserves preview-only boundaries, but the explicit classification and reason are less complete than reflect-b-explicit.",
       "status": "micro-validated",
-      "evidence_tier": "micro-real-agent"
+      "evidence_tier": "micro-real-agent",
+      "source_path": "evals/results/raw/micro-initial-command-wording/reflect-a-minimal.json",
+      "source_sha256": "4102317fc9583c27c496628b5c543328c4b32351179db1776604b04fb96a4352",
+      "request_sha256": "03f054d8f3219854f55712be060f8bab8c681d2a23baf29b4aa79cc4d6418b07",
+      "eval_user_request_sha256": "5e98409cb137bd9542a88508ed56f034b422c1a7947cd95632978904d37f19a2"
     },
     {
       "surface": "/tk:reflect",
@@ -141,7 +152,11 @@
       "selected_variant": true,
       "selection_rationale": "Selected: explicit classification and preview-boundary cues produced the most complete concise explanation with no write claim.",
       "status": "micro-validated",
-      "evidence_tier": "micro-real-agent"
+      "evidence_tier": "micro-real-agent",
+      "source_path": "evals/results/raw/micro-initial-command-wording/reflect-b-explicit.json",
+      "source_sha256": "439434bfa4a223d0979e9e415eb3def070dbf140c66a74da7aa3177dc495fdcc",
+      "request_sha256": "47485ce4d242dd2c1e784385ed06df157b8994a1bdfa09304eecb32481eca5b4",
+      "eval_user_request_sha256": "3079ad46d0249c5249a9f02d20367ea7b429fa5da93ddf4d7c27a3932a5053e2"
     },
     {
       "surface": "/tk:learn",
@@ -166,7 +181,11 @@
       "selected_variant": false,
       "selection_rationale": "Not selected: honest and bounded, but the pending verification and eval-coverage details are less explicit than learn-b-explicit.",
       "status": "micro-validated",
-      "evidence_tier": "micro-real-agent"
+      "evidence_tier": "micro-real-agent",
+      "source_path": "evals/results/raw/micro-initial-command-wording/learn-a-minimal.json",
+      "source_sha256": "fcaaed7e76b173facdbe5452b0184582e9fbc440c9e56e116909eaf5dd7f8e53",
+      "request_sha256": "02f65e40f403468499b2af4d3202a5826bd3b7382ff89021c614cfe4e1bceec7",
+      "eval_user_request_sha256": "15b29f586b3d7520077d2cfceeea03929782f06b70d33a3e9e0b2910bcf89939"
     },
     {
       "surface": "/tk:learn",
@@ -191,7 +210,11 @@
       "selected_variant": true,
       "selection_rationale": "Selected: the explicit pending-evidence cue produced the clearest honest preview and preserved the skill-only/no-write boundary.",
       "status": "micro-validated",
-      "evidence_tier": "micro-real-agent"
+      "evidence_tier": "micro-real-agent",
+      "source_path": "evals/results/raw/micro-initial-command-wording/learn-b-explicit.json",
+      "source_sha256": "33e74cf4755d5cae1dd907114decd92d53f2607457ff4f38bfc710b9b991888b",
+      "request_sha256": "c31b0944c3a738c79a2e3d010f444d3135d10fd06ee76f6f3db70f3d594d209c",
+      "eval_user_request_sha256": "05f2c44f4810ce1bd07b4c68668460280f7ef5fec8d783f4a7bd6f29f337badd"
     }
   ],
   "surface_results": [
