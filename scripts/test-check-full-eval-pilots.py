@@ -147,7 +147,18 @@ def ignore_mutation(result: dict[str, Any], checkout: Path) -> None:
         checkout,
         result,
         "not-ignored-claude-local-reject",
-        lambda source: source["fixture"]["ignore_files"][0].update({"sha256": "e" * 64}),
+        lambda source: source["fixture"]["ignore_files"][0]["after"].update({"sha256": "e" * 64}),
+    )
+
+
+def ignore_second_mutation(result: dict[str, Any], checkout: Path) -> None:
+    rewrite_source(
+        checkout,
+        result,
+        "not-ignored-claude-local-reject",
+        lambda source: source["fixture"]["ignore_files"][1]["after"].update(
+            {"mode": "0o600", "sha256": "f" * 64}
+        ),
     )
 
 
@@ -255,6 +266,7 @@ CASES: list[tuple[str, Mutation]] = [
     ("tracked target mutation", tracked_target_mutation),
     ("not-ignored target mutation", not_ignored_target_mutation),
     ("ignore mutation", ignore_mutation),
+    ("second ignore mutation", ignore_second_mutation),
     ("symlink target mutation", symlink_target_mutation),
     ("symlink link mutation", symlink_link_mutation),
     ("non-git fallback write", non_git_fallback_write),
@@ -289,8 +301,27 @@ def test_missing_reflect_result_is_rejected() -> None:
         assert "full eval pilot check failed:" in output, output
 
 
+def test_not_ignored_requires_explicit_ignore_file_states() -> None:
+    with tempfile.TemporaryDirectory(prefix="tiger-kit-full-validator-") as temp_dir:
+        checkout = prepare_checkout(Path(temp_dir))
+        result = load_result(checkout)
+        index = scenario_index(result, "not-ignored-claude-local-reject")
+        source_path = checkout / Path(result["scenarios"][index]["source_path"])
+        source = json.loads(source_path.read_text(encoding="utf-8"))
+        ignore_files = source["fixture"]["ignore_files"]
+        assert len(ignore_files) == 2, ignore_files
+        second = ignore_files[1]
+        assert "before" in second and "after" in second, (
+            "second ignore file lacks explicit before/after snapshots"
+        )
+        completed = run_validator(checkout)
+        output = completed.stdout + completed.stderr
+        assert completed.returncode == 0, output
+
+
 def main() -> int:
     test_missing_reflect_result_is_rejected()
+    test_not_ignored_requires_explicit_ignore_file_states()
     failures: list[str] = []
     skipped = 0
     with tempfile.TemporaryDirectory(prefix="tiger-kit-full-validator-") as temp_dir:

@@ -40,14 +40,14 @@ FULL_CONTRACT_BLOBS = {
 FULL_SOURCE_HASHES = {
     "eligible-repo-local-apply": "0f93caf8ab940e2ecf64ce25f1812e059aba8f0bcce86a52ebe530ff63e9a55e",
     "tracked-claude-local-reject": "ac9a875f41ff0e62879c89b854e10772833b5d91244d1598cad3bd391bbb05ff",
-    "not-ignored-claude-local-reject": "fa84a3e187c5e9484ea641c2cae7deacef9e4526a81f8d79dfaf6fa5cacf9f74",
+    "not-ignored-claude-local-reject": "b499448a830fc83e6af13d8d3212a54d59f8916ce7d2a905da7ba7e12092f536",
     "non-git-repo-local-reject": "af8ed2408d7a541ecc017ef679bb0a51ee46d7af780ead391b63d7ade71c8b46",
     "symlink-claude-local-reject": "cf6cf1fcc35feb4e78f9218f4231e2018f2834848e3b74b2e05a7fe51aa4e038",
 }
 FULL_RESULT_HASHES = {
     "eligible-repo-local-apply": ("ad18e388c6cf666005a3c328b441b1a3db94b06ea5f204926da2aeeac0962376", 337),
     "tracked-claude-local-reject": ("309980a38f435ac92ca7ecd6f1cf2af4ba31534e719a627d67f33b357aa261b6", 629),
-    "not-ignored-claude-local-reject": ("da80c53599f30015827622d807ba7b6ff40796883f7096b4387df91b8806af3d", 752),
+    "not-ignored-claude-local-reject": ("0ffa4039ad8b5d148dae668fb6ab54426ed8ea2aae97bf1d1a481e8c818e5c2a", 553),
     "non-git-repo-local-reject": ("12c02cc94329ce8b01cb23e2157e090cd7f22e00350904fb88bdc2198849f2ea", 822),
     "symlink-claude-local-reject": ("39e816da2b899e454672e9b131f01b87d01d977058cdb36e356cbf996a9d9ca8", 666),
 }
@@ -68,14 +68,14 @@ FULL_ARGV_HASHES = {
 FULL_MODEL_USAGE_HASHES = {
     "eligible-repo-local-apply": "0c765f88f711a6d526409fd0857497b28c9714de75ff90d0dee0eb80335edf5b",
     "tracked-claude-local-reject": "f3a0817167493f74c69d7e96a20638cd40b795f99fcb000bba83d515b8fbad82",
-    "not-ignored-claude-local-reject": "076c0a4b1671ea3f8722ae077232f3cf29c8ac71a1915bfad37f1608ff851521",
+    "not-ignored-claude-local-reject": "0566bb40b451630f9032b1d885bfd44ec49464f33f9c89e0e3c3385a86a2cea6",
     "non-git-repo-local-reject": "72d65e3bd18a8359386f017474182fc492aa90df5ae733d4b5f9370e59f6aef4",
     "symlink-claude-local-reject": "0539c71053b5925cdfd7c6d98c9a50709012fdfa81a35920c13427f729443ca5",
 }
 FULL_SESSION_IDS = {
     "eligible-repo-local-apply": "6d547556-74b8-45a8-903a-afbe4dd66fd0",
     "tracked-claude-local-reject": "5a87d29a-5d71-4c3c-8d69-38468447e290",
-    "not-ignored-claude-local-reject": "e2ec5ecd-748c-4320-a5fa-f3aea67817ec",
+    "not-ignored-claude-local-reject": "5620494a-5c88-4d10-a222-5dd359079778",
     "non-git-repo-local-reject": "427db30e-6ad7-4a2f-af49-bda06011b0a0",
     "symlink-claude-local-reject": "a45715b2-005e-4740-9e10-ffc9de72eaa2",
 }
@@ -100,10 +100,7 @@ FULL_APPLIED = {
 FULL_CHANGED_PATHS = {
     "eligible-repo-local-apply": ["`git-root/CLAUDE.local.md`"],
     "tracked-claude-local-reject": [],
-    "not-ignored-claude-local-reject": [
-        "ledger only: `REFLECT-20260711-174235-3971.yaml`",
-        "ledger pointer: `current.yaml`",
-    ],
+    "not-ignored-claude-local-reject": [],
     "non-git-repo-local-reject": [
         "`state-home/.tigerkit/repos/non-git-repo-local-reject/branches/local/reflect/REFLECT-20260711-174319-R1.yaml`",
         "repo-local guidance target: NONE",
@@ -606,6 +603,74 @@ def full_require_inventory_map(value: object, field: str) -> dict[str, dict[str,
     return result
 
 
+def full_validate_lstat_snapshot(value: object, field: str, expected_path: str) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        fail(f"{field} must be an object")
+    snapshot = cast(dict[str, Any], value)
+    if snapshot.get("path") != expected_path:
+        fail(f"{field}.path must be {expected_path!r}")
+    exists = snapshot.get("exists")
+    kind = snapshot.get("kind")
+    if exists is False:
+        if kind != "absent":
+            fail(f"{field} absent state must use kind 'absent'")
+        return snapshot
+    if exists is not True:
+        fail(f"{field}.exists must be a boolean")
+    if kind not in {"regular", "symlink", "directory", "special"}:
+        fail(f"{field}.kind must describe an lstat entry")
+    mode = snapshot.get("mode")
+    if not isinstance(mode, str) or not mode.startswith("0o"):
+        fail(f"{field}.mode must preserve the lstat mode")
+    size = snapshot.get("size")
+    if not isinstance(size, int) or size < 0:
+        fail(f"{field}.size must be a non-negative integer")
+    if kind == "regular":
+        full_hash(snapshot.get("sha256"), f"{field}.sha256")
+    elif kind == "symlink":
+        require_nonempty_string(snapshot.get("link_text"), f"{field}.link_text")
+    return snapshot
+
+
+def full_validate_ignore_files(
+    value: object,
+    label: str,
+    before_inventory: dict[str, dict[str, Any]],
+    after_inventory: dict[str, dict[str, Any]],
+) -> None:
+    if not isinstance(value, list):
+        fail(f"{label}.fixture.ignore_files must be a list")
+    ignore_files = cast(list[Any], value)
+    expected_paths = ["git-root/.gitignore", "git-root/.git/info/exclude"]
+    actual_paths: list[str] = []
+    for index, item in enumerate(ignore_files):
+        if not isinstance(item, dict):
+            fail(f"{label}.fixture.ignore_files[{index}] must be an object")
+        path = require_nonempty_string(item.get("path"), f"{label}.fixture.ignore_files[{index}].path")
+        actual_paths.append(path)
+        before = full_validate_lstat_snapshot(
+            item.get("before"),
+            f"{label}.fixture.ignore_files[{index}].before",
+            path,
+        )
+        after = full_validate_lstat_snapshot(
+            item.get("after"),
+            f"{label}.fixture.ignore_files[{index}].after",
+            path,
+        )
+        if before != after:
+            fail(f"{label}: ignore file {path!r} changed between explicit before/after snapshots")
+        if path in before_inventory and before_inventory[path] != before:
+            fail(f"{label}: ignore file {path!r} before snapshot disagrees with fixture inventory")
+        if path in after_inventory and after_inventory[path] != after:
+            fail(f"{label}: ignore file {path!r} after snapshot disagrees with fixture inventory")
+    if actual_paths != expected_paths:
+        fail(
+            f"{label}.fixture.ignore_files must contain exactly the ordered snapshots for "
+            f"{expected_paths!r}"
+        )
+
+
 def full_validate_fixture(source: dict[str, Any], scenario_id: str, label: str) -> None:
     fixture = source.get("fixture")
     if not isinstance(fixture, dict):
@@ -659,18 +724,21 @@ def full_validate_fixture(source: dict[str, Any], scenario_id: str, label: str) 
             fail(f"{label}: rejected fixture inventory changed")
 
     ignore_files = fixture.get("ignore_files")
-    if not isinstance(ignore_files, list):
-        fail(f"{label}.fixture.ignore_files must be a list")
-    ignore_paths = {
-        item.get("path")
-        for item in cast(list[Any], ignore_files)
-        if isinstance(item, dict)
-    }
-    for path in ignore_paths:
-        if not isinstance(path, str):
-            fail(f"{label}.fixture.ignore_files contains an invalid path")
-        if path in before_inventory and after_inventory.get(path) != before_inventory[path]:
-            fail(f"{label}: ignore file {path!r} changed")
+    if scenario_id == "not-ignored-claude-local-reject":
+        full_validate_ignore_files(ignore_files, label, before_inventory, after_inventory)
+    else:
+        if not isinstance(ignore_files, list):
+            fail(f"{label}.fixture.ignore_files must be a list")
+        ignore_paths = {
+            item.get("path")
+            for item in cast(list[Any], ignore_files)
+            if isinstance(item, dict)
+        }
+        for path in ignore_paths:
+            if not isinstance(path, str):
+                fail(f"{label}.fixture.ignore_files contains an invalid path")
+            if path in before_inventory and after_inventory.get(path) != before_inventory[path]:
+                fail(f"{label}: ignore file {path!r} changed")
 
     external = fixture.get("external_target")
     if scenario_id == "symlink-claude-local-reject":

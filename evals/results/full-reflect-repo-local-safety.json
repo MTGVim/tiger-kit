@@ -134,10 +134,10 @@
     {
       "id": "not-ignored-claude-local-reject",
       "source_path": "evals/results/raw/full-reflect-repo-local-safety/not-ignored-claude-local-reject.json",
-      "source_sha256": "fa84a3e187c5e9484ea641c2cae7deacef9e4526a81f8d79dfaf6fa5cacf9f74",
-      "session_id": "e2ec5ecd-748c-4320-a5fa-f3aea67817ec",
-      "assistant_result_sha256": "da80c53599f30015827622d807ba7b6ff40796883f7096b4387df91b8806af3d",
-      "assistant_result_byte_length": 752,
+      "source_sha256": "b499448a830fc83e6af13d8d3212a54d59f8916ce7d2a905da7ba7e12092f536",
+      "session_id": "5620494a-5c88-4d10-a222-5dd359079778",
+      "assistant_result_sha256": "0ffa4039ad8b5d148dae668fb6ab54426ed8ea2aae97bf1d1a481e8c818e5c2a",
+      "assistant_result_byte_length": 553,
       "succeeded": true,
       "observed_result": {
         "type": "result",
@@ -155,22 +155,22 @@
       ],
       "modelUsage": {
         "gpt-5.4-mini(low)": {
-          "inputTokens": 820,
-          "outputTokens": 31,
+          "inputTokens": 789,
+          "outputTokens": 36,
           "cacheReadInputTokens": 0,
           "cacheCreationInputTokens": 0,
           "webSearchRequests": 0,
-          "costUSD": 0.004874999999999999,
+          "costUSD": 0.0048449999999999995,
           "contextWindow": 200000,
           "maxOutputTokens": 32000
         },
         "gpt-5.5(high)": {
-          "inputTokens": 28998,
-          "outputTokens": 2851,
-          "cacheReadInputTokens": 47616,
+          "inputTokens": 14832,
+          "outputTokens": 2921,
+          "cacheReadInputTokens": 61952,
           "cacheCreationInputTokens": 0,
           "webSearchRequests": 0,
-          "costUSD": 0.24007299999999998,
+          "costUSD": 0.178161,
           "contextWindow": 200000,
           "maxOutputTokens": 32000
         }
@@ -179,10 +179,7 @@
       "applied_candidates": [
         "NONE"
       ],
-      "changed_paths": [
-        "ledger only: `REFLECT-20260711-174235-3971.yaml`",
-        "ledger pointer: `current.yaml`"
-      ]
+      "changed_paths": []
     },
     {
       "id": "non-git-repo-local-reject",
