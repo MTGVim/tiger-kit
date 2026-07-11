@@ -686,11 +686,11 @@
       "id": 36,
       "name": "promotion-status-distinguishes-draft-micro-full-and-shipped",
       "prompt": "Evaluate TigerKit promotion-status guidance. Do not write files.",
-      "expected_output": "Should distinguish the promotion vocabulary draft, micro-validated, full-validated, and shipped. It should state that contract eval and full behavior eval are different evidence tiers, and it should warn that draft wording must not jump straight to shipped without intermediate evidence. It should also make clear that a FULL pilot can support full-validated status without automatically meaning the wording is shipped in the public command surface.",
+      "expected_output": "Should distinguish the promotion vocabulary draft, micro-validated, full-validated, and shipped. It should state that contract eval and full behavior eval are different evidence tiers, and it should warn that draft wording must not jump straight to shipped without intermediate evidence. It should also make clear that a FULL pilot can support full-validated status without automatically meaning the wording is shipped in the public command surface. It should identify evals/contracts/promotion-status-registry.json as the maintained canonical registry, with exactly four current evidence entries and one result artifact per entry.",
       "files": [
         ".tigerkit/docs/promotion-statuses.md",
         ".tigerkit/docs/full-eval-pilots.md",
-        "evals/contracts/promotion-status-registry.example.json",
+        "evals/contracts/promotion-status-registry.json",
         "README.md"
       ],
       "expectations": [
@@ -698,7 +698,7 @@
         "States contract eval and full behavior eval are different evidence tiers",
         "Warns draft must not jump straight to shipped",
         "States FULL pilot does not automatically mean shipped",
-        "Includes at least one command surface example in the sample registry"
+        "Identifies maintained canonical registry with exactly four evidence entries"
       ]
     },
     {

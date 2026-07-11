@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "tigerkit.promotion-status-registry/v1",
+  "entries": [
+    {
+      "id": "initial-command-wording",
+      "subject": "/tk:route, /tk:reflect, and /tk:learn initial command wording",
+      "status": "micro-validated",
+      "evidence_tier": "micro-real-agent",
+      "artifacts": [
+        "evals/results/micro-initial-command-wording.json"
+      ],
+      "note": "Maintained MICRO wording evidence; it does not imply shipped public wording."
+    },
+    {
+      "id": "reflect-repo-local-safety",
+      "subject": "/tk:reflect repo-local safety",
+      "status": "full-validated",
+      "evidence_tier": "full-real-agent",
+      "artifacts": [
+        "evals/results/full-reflect-repo-local-safety.json"
+      ],
+      "note": "Maintained FULL behavior evidence; FULL validation alone does not mean shipped."
+    },
+    {
+      "id": "gap-stale-sot-precedence",
+      "subject": "/tk:gap stale SoT and source precedence",
+      "status": "full-validated",
+      "evidence_tier": "full-real-agent",
+      "artifacts": [
+        "evals/results/full-gap-stale-sot-precedence.json"
+      ],
+      "note": "Maintained FULL behavior evidence for honest ambiguity and evidence precedence."
+    },
+    {
+      "id": "evidence-helper-operator-handoffs",
+      "subject": "operator evidence helper handoffs",
+      "status": "full-validated",
+      "evidence_tier": "full-real-agent",
+      "artifacts": [
+        "evals/results/operator-evidence-handoffs.json"
+      ],
+      "note": "Maintained FULL operator-handoff evidence; no public shipping status is inferred."
+    }
+  ]
+}
