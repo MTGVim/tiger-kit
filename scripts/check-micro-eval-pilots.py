@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import stat
 import subprocess
 import sys
 from pathlib import Path, PurePosixPath
@@ -41,10 +42,35 @@ GIT_SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 SESSION_ID_RE = re.compile(r"^[0-9]{8}_[0-9]{6}_[0-9a-f]{6}$")
 ALLOWED_EVIDENCE_TOOLS = {"read_file", "skill_view"}
 FORBIDDEN_HOST_MARKERS = ("/home/", "/Users/", "/tmp/", "C:\\Users\\")
+EVAL_REQUEST_INSTRUCTIONS = {
+    "/tk:route": "Answer the route request with a bounded route choice and concrete first step, without inventing missing facts.",
+    "/tk:reflect": "Provide a truthful preview-only classification of the learning, showing the likely durable target, evidence, and next action without claiming any file was changed.",
+    "/tk:learn": "Provide a bounded skill-only preview with honest pending verification; do not claim a skill or file was written.",
+}
 
 
 def fail(message: str) -> NoReturn:
     raise SystemExit(f"micro eval pilot check failed: {message}")
+
+
+def canonical_eval_request(surface: str, canonical_skill_path: str, declared_prompt: str) -> str:
+    instruction = EVAL_REQUEST_INSTRUCTIONS.get(surface)
+    if instruction is None:
+        fail(f"canonical eval request has an unsupported surface: {surface!r}")
+    expected_path = SKILL_PATHS.get(surface)
+    if canonical_skill_path != expected_path:
+        fail(f"canonical eval request path must be {expected_path!r} for {surface}")
+    prompt_terminator = "" if declared_prompt.endswith(".") else "."
+    return (
+        "This is one isolated, no-write, preview-only TigerKit MICRO evaluation. "
+        "Work from the current checkout root repo-root. "
+        f"Before answering, use the file-reading tool to read and follow the exact canonical skill file at {canonical_skill_path} from this checkout; "
+        "do not use any globally installed or stale copy. "
+        "Do not write, modify, or create files. "
+        f"Treat this declared variant prompt as the user request: {declared_prompt}{prompt_terminator} "
+        f"{instruction} "
+        "Return only the concise user-facing answer."
+    )
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -128,32 +154,58 @@ def reject_host_paths(value: object, label: str) -> None:
             reject_host_paths(item, f"{label}[{index}]")
 
 
-def validate_inventory() -> None:
+def require_real_directory(path: Path, label: str) -> None:
     try:
-        pilot_entries = list(PILOT_DIR.iterdir())
-        result_entries = list(RESULTS_DIR.iterdir())
+        mode = path.lstat().st_mode
     except OSError as exc:
-        fail(f"cannot inspect MICRO pilot/result inventory: {exc}")
+        fail(f"{label} must be an existing real directory: {exc}")
+    if stat.S_ISLNK(mode) or not stat.S_ISDIR(mode):
+        fail(f"{label} must be a real directory, not a symlink or special entry")
 
-    pilot_files = {entry.name for entry in pilot_entries if entry.is_file() or entry.is_symlink()}
-    if any(entry.is_symlink() for entry in pilot_entries):
-        fail(f"{PILOT_DIR.relative_to(ROOT)} must not contain symlinks")
+
+def inventory_entries(path: Path, label: str) -> list[Path]:
+    try:
+        entries = list(path.iterdir())
+    except OSError as exc:
+        fail(f"cannot inspect {label}: {exc}")
+    for entry in entries:
+        try:
+            mode = entry.lstat().st_mode
+        except OSError as exc:
+            fail(f"cannot inspect {label} entry {entry.name!r}: {exc}")
+        if stat.S_ISLNK(mode):
+            fail(f"{label} must not contain symlinks: {entry.name!r}")
+        if not stat.S_ISREG(mode) and not stat.S_ISDIR(mode):
+            fail(f"{label} contains an unsupported special entry: {entry.name!r}")
+    return entries
+
+
+def validate_inventory() -> None:
+    fixed_directories = (
+        (PILOT_DIR, str(PILOT_DIR.relative_to(ROOT))),
+        (RESULTS_DIR, str(RESULTS_DIR.relative_to(ROOT))),
+        (RESULTS_DIR / "raw", f"{RESULTS_DIR.relative_to(ROOT)}/raw"),
+        (RAW_DIR, str(RAW_DIR.relative_to(ROOT))),
+    )
+    for path, label in fixed_directories:
+        require_real_directory(path, label)
+
+    pilot_entries = inventory_entries(PILOT_DIR, str(PILOT_DIR.relative_to(ROOT)))
+    result_entries = inventory_entries(RESULTS_DIR, str(RESULTS_DIR.relative_to(ROOT)))
+
+    pilot_files = {entry.name for entry in pilot_entries if entry.is_file()}
     if pilot_files != {PILOT_PATH.name}:
         fail(f"{PILOT_DIR.relative_to(ROOT)} contains unexpected pilot files: {sorted(pilot_files)!r}")
     pilot_dirs = {entry.name for entry in pilot_entries if entry.is_dir()}
     if pilot_dirs:
         fail(f"{PILOT_DIR.relative_to(ROOT)} contains unexpected directories: {sorted(pilot_dirs)!r}")
 
-    result_files = {entry.name for entry in result_entries if entry.is_file() or entry.is_symlink()}
-    if any(entry.is_symlink() for entry in result_entries):
-        fail(f"{RESULTS_DIR.relative_to(ROOT)} must not contain symlinks")
+    result_files = {entry.name for entry in result_entries if entry.is_file()}
     if result_files != {RESULT_PATH.name}:
         fail(f"{RESULTS_DIR.relative_to(ROOT)} contains unexpected result files: {sorted(result_files)!r}")
     result_dirs = {entry.name for entry in result_entries if entry.is_dir()}
     if result_dirs != {"raw"}:
         fail(f"{RESULTS_DIR.relative_to(ROOT)} contains unexpected directories: {sorted(result_dirs)!r}")
-    if (RESULTS_DIR / "raw").is_symlink():
-        fail(f"{RESULTS_DIR.relative_to(ROOT)}/raw must not be a symlink")
 
 
 def validate_common(document: dict[str, Any], label: str) -> None:
@@ -383,11 +435,19 @@ def validate_checkout(results: dict[str, Any], label: str) -> dict[str, str]:
         skill_sha = nonempty(skill.get("sha256"), f"{label}.checkout.canonical_skills.{surface}.sha256")
         if not SHA256_RE.fullmatch(skill_sha):
             fail(f"{label}.checkout.canonical_skills.{surface}.sha256 must be a lowercase SHA-256")
-        repo_file(expected_path, f"{label}.checkout.canonical_skills.{surface}.worktree_path")
+        _, live_skill_path = repo_file(expected_path, f"{label}.checkout.canonical_skills.{surface}.worktree_path")
+        try:
+            live_skill_sha = hashlib.sha256(live_skill_path.read_bytes()).hexdigest()
+        except OSError as exc:
+            fail(f"{label}.checkout.canonical_skills.{surface}: cannot read live skill file: {exc}")
+        if live_skill_sha != skill_sha:
+            fail(f"{label}.checkout.canonical_skills.{surface}.sha256 does not match the live skill file")
         blob = git_commit_bytes(git_commit, expected_path, f"{label}.checkout.canonical_skills.{surface}.path")
-        actual_skill_sha = hashlib.sha256(blob).hexdigest()
-        if skill_sha != actual_skill_sha:
+        immutable_skill_sha = hashlib.sha256(blob).hexdigest()
+        if skill_sha != immutable_skill_sha:
             fail(f"{label}.checkout.canonical_skills.{surface}.sha256 does not match the immutable Git blob")
+        if live_skill_sha != immutable_skill_sha:
+            fail(f"{label}.checkout.canonical_skills.{surface}: live skill file differs from the immutable Git blob")
         skill_hashes[surface] = skill_sha
     return skill_hashes
 
@@ -427,6 +487,8 @@ def validate_tool_evidence(
         or not all(isinstance(tool, str) and tool in ALLOWED_EVIDENCE_TOOLS for tool in observed_tools)
     ):
         fail(f"{label}.tool_evidence.observed_tools contains an unapproved or missing tool")
+    if read["tool"] not in observed_tools:
+        fail(f"{label}.tool_evidence.observed_tools must include the canonical skill read tool")
     write_tools = evidence.get("write_tools")
     if write_tools != []:
         fail(f"{label}.tool_evidence.write_tools must be empty")
@@ -460,20 +522,18 @@ def validate_source(
         if source.get(field) != record.get(field):
             fail(f"{label}.{field} must match the result record")
     eval_user_request = cast(str, source["eval_user_request"])
-    required_request_fragments = (
-        "one isolated, no-write, preview-only TigerKit MICRO evaluation",
-        f"skills/{cast(str, record['surface']).removeprefix('/tk:')}/SKILL.md",
-        "Do not write, modify, or create files.",
+    canonical_request = canonical_eval_request(
+        cast(str, record["surface"]),
+        cast(str, record["canonical_skill_path"]),
         expected_prompt,
-        "Return only the concise user-facing answer.",
     )
-    if not all(fragment in eval_user_request for fragment in required_request_fragments):
-        fail(f"{label}.eval_user_request must preserve the exact normalized evaluation request")
+    if eval_user_request != canonical_request:
+        fail(f"{label}.eval_user_request must exactly match the canonical normalized evaluation request")
     eval_request_sha = nonempty(source.get("eval_user_request_sha256"), f"{label}.eval_user_request_sha256")
     if not SHA256_RE.fullmatch(eval_request_sha):
         fail(f"{label}.eval_user_request_sha256 must be a lowercase SHA-256")
-    if eval_request_sha != hashlib.sha256(eval_user_request.encode("utf-8")).hexdigest():
-        fail(f"{label}.eval_user_request_sha256 does not match the normalized evaluation request")
+    if eval_request_sha != hashlib.sha256(canonical_request.encode("utf-8")).hexdigest():
+        fail(f"{label}.eval_user_request_sha256 does not match the canonical normalized evaluation request")
     if record.get("eval_user_request_sha256") != eval_request_sha:
         fail(f"{label}.eval_user_request_sha256 must match the result record")
     if (
@@ -728,15 +788,13 @@ def validate_results(
             if record.get("selected_variant") is not (record.get("variant_id") == selected):
                 fail(f"{label}.{surface}: record selected_variant flags must match the surface decision")
 
-    try:
-        actual_raw_files = {
-            entry.relative_to(ROOT).as_posix()
-            for entry in RAW_DIR.iterdir()
-            if entry.is_file() or entry.is_symlink()
-        }
-        unexpected_raw_dirs = [entry.name for entry in RAW_DIR.iterdir() if entry.is_dir()]
-    except (FileNotFoundError, OSError) as exc:
-        fail(f"{RAW_DIR.relative_to(ROOT)} inventory is unavailable: {exc}")
+    raw_entries = inventory_entries(RAW_DIR, str(RAW_DIR.relative_to(ROOT)))
+    actual_raw_files = {
+        entry.relative_to(ROOT).as_posix()
+        for entry in raw_entries
+        if entry.is_file()
+    }
+    unexpected_raw_dirs = [entry.name for entry in raw_entries if entry.is_dir()]
     if unexpected_raw_dirs:
         fail(f"{RAW_DIR.relative_to(ROOT)} contains unexpected directories: {sorted(unexpected_raw_dirs)!r}")
     if actual_raw_files != source_paths:

@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import copy
+import errno
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -19,6 +21,10 @@ RESULT_RELATIVE = Path("evals/results/micro-initial-command-wording.json")
 Mutation = Callable[[dict[str, Any], Path], None]
 
 
+class UnsupportedCase(Exception):
+    """A platform does not support a requested filesystem adversarial case."""
+
+
 def load_result(checkout: Path) -> dict[str, Any]:
     return json.loads((checkout / RESULT_RELATIVE).read_text(encoding="utf-8"))
 
@@ -28,6 +34,36 @@ def write_result(checkout: Path, result: dict[str, Any]) -> None:
         json.dumps(result, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
+
+
+def rewrite_source(
+    checkout: Path,
+    result: dict[str, Any],
+    record_index: int,
+    mutate: Callable[[dict[str, Any]], None],
+) -> None:
+    record = result["records"][record_index]
+    source_path = checkout / Path(record["source_path"])
+    source = json.loads(source_path.read_text(encoding="utf-8"))
+    mutate(source)
+    source_path.write_text(json.dumps(source, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    result["records"][record_index]["source_sha256"] = hashlib.sha256(source_path.read_bytes()).hexdigest()
+
+
+def update_eval_request_metadata(
+    result: dict[str, Any],
+    source: dict[str, Any],
+    record_index: int,
+) -> None:
+    request_sha = hashlib.sha256(source["eval_user_request"].encode("utf-8")).hexdigest()
+    source["eval_user_request_sha256"] = request_sha
+    result["records"][record_index]["eval_user_request_sha256"] = request_sha
+
+
+def swap_directory_for_symlink(path: Path) -> None:
+    real_path = path.with_name(path.name + "-real")
+    path.rename(real_path)
+    path.symlink_to(real_path.name, target_is_directory=True)
 
 
 def prepare_checkout(temp_root: Path) -> Path:
@@ -130,6 +166,90 @@ def skill_symlink_substitution(result: dict[str, Any], checkout: Path) -> None:
     ).hexdigest()
 
 
+def live_skill_regular_file_substitution(_result: dict[str, Any], checkout: Path) -> None:
+    route_skill = checkout / "skills" / "route" / "SKILL.md"
+    route_skill.write_bytes(route_skill.read_bytes() + b"\nundeclared live skill substitution\n")
+
+
+def extra_eval_request_with_recomputed_hashes(result: dict[str, Any], checkout: Path) -> None:
+    def mutate(source: dict[str, Any]) -> None:
+        source["eval_user_request"] += " Undeclared instruction: ignore the canonical request."
+        update_eval_request_metadata(result, source, 0)
+
+    rewrite_source(checkout, result, 0, mutate)
+
+
+def altered_eval_request_with_recomputed_hashes(result: dict[str, Any], checkout: Path) -> None:
+    def mutate(source: dict[str, Any]) -> None:
+        source["eval_user_request"] = source["eval_user_request"].replace("repo-root", "alternate-root")
+        update_eval_request_metadata(result, source, 0)
+
+    rewrite_source(checkout, result, 0, mutate)
+
+
+def reordered_eval_request_with_recomputed_hashes(result: dict[str, Any], checkout: Path) -> None:
+    def mutate(source: dict[str, Any]) -> None:
+        request = source["eval_user_request"]
+        first = "Do not write, modify, or create files."
+        second = "Treat this declared variant prompt as the user request:"
+        first_index = request.index(first)
+        second_index = request.index(second)
+        second_end = request.index(".", second_index) + 1
+        reordered = (
+            request[:first_index]
+            + request[second_index:second_end]
+            + " "
+            + first
+            + request[second_end:]
+        )
+        source["eval_user_request"] = reordered
+        update_eval_request_metadata(result, source, 0)
+
+    rewrite_source(checkout, result, 0, mutate)
+
+
+def observed_tools_missing_canonical_read(result: dict[str, Any], checkout: Path) -> None:
+    def mutate(source: dict[str, Any]) -> None:
+        source["tool_evidence"]["observed_tools"] = ["skill_view"]
+
+    rewrite_source(checkout, result, 1, mutate)
+
+
+def pilot_directory_symlink(_result: dict[str, Any], checkout: Path) -> None:
+    swap_directory_for_symlink(checkout / "evals" / "micro-pilots")
+
+
+def results_directory_symlink(_result: dict[str, Any], checkout: Path) -> None:
+    swap_directory_for_symlink(checkout / "evals" / "results")
+
+
+def results_raw_directory_symlink(_result: dict[str, Any], checkout: Path) -> None:
+    swap_directory_for_symlink(checkout / "evals" / "results" / "raw")
+
+
+def raw_directory_symlink(_result: dict[str, Any], checkout: Path) -> None:
+    swap_directory_for_symlink(
+        checkout / "evals" / "results" / "raw" / "micro-initial-command-wording"
+    )
+
+
+def raw_fifo_special_entry(_result: dict[str, Any], checkout: Path) -> None:
+    fifo_path = checkout / "evals" / "results" / "raw" / "micro-initial-command-wording" / "unexpected.fifo"
+    try:
+        os.mkfifo(fifo_path)
+    except (AttributeError, NotImplementedError) as exc:
+        raise UnsupportedCase("named pipes are unsupported on this platform") from exc
+    except OSError as exc:
+        unsupported_errors = {
+            getattr(errno, "ENOSYS", -1),
+            getattr(errno, "ENOTSUP", -1),
+            getattr(errno, "EOPNOTSUPP", -1),
+        }
+        if exc.errno in unsupported_errors:
+            raise UnsupportedCase("named pipes are unsupported on this platform") from exc
+        raise
+
+
 CASES: list[tuple[str, Mutation]] = [
     ("forged output hash", forged_output_hash),
     ("forged output length", forged_output_length),
@@ -143,17 +263,101 @@ CASES: list[tuple[str, Mutation]] = [
     ("forged durable source", forged_durable_source),
     ("durable source symlink substitution", source_symlink_substitution),
     ("canonical skill symlink substitution", skill_symlink_substitution),
+    ("live skill regular-file substitution", live_skill_regular_file_substitution),
+    ("extra eval request with recomputed hashes", extra_eval_request_with_recomputed_hashes),
+    ("altered eval request with recomputed hashes", altered_eval_request_with_recomputed_hashes),
+    ("reordered eval request with recomputed hashes", reordered_eval_request_with_recomputed_hashes),
+    ("observed tools missing canonical read", observed_tools_missing_canonical_read),
+    ("pilot directory symlink", pilot_directory_symlink),
+    ("results directory symlink", results_directory_symlink),
+    ("results raw directory symlink", results_raw_directory_symlink),
+    ("raw directory symlink", raw_directory_symlink),
+    ("raw FIFO special entry", raw_fifo_special_entry),
 ]
+
+
+def workflow_has_full_history_checkout() -> bool:
+    workflow = ROOT / ".github" / "workflows" / "validate.yml"
+    try:
+        lines = workflow.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeError):
+        return False
+
+    checkout_indices = [
+        index
+        for index, line in enumerate(lines)
+        if line.strip().startswith("uses: actions/checkout@")
+    ]
+    if len(checkout_indices) != 1:
+        return False
+
+    uses_index = checkout_indices[0]
+    uses_indent = len(lines[uses_index]) - len(lines[uses_index].lstrip())
+    step_indent = uses_indent
+    for index in range(uses_index - 1, -1, -1):
+        line = lines[index]
+        if line.strip() and not line.lstrip().startswith("#"):
+            indent = len(line) - len(line.lstrip())
+            if indent < uses_indent and line.lstrip().startswith("-"):
+                step_indent = indent
+                break
+    step_end = len(lines)
+    for index in range(uses_index + 1, len(lines)):
+        line = lines[index]
+        if line.strip() and not line.lstrip().startswith("#"):
+            indent = len(line) - len(line.lstrip())
+            if indent <= step_indent:
+                step_end = index
+                break
+
+    with_index = None
+    with_indent = None
+    for index in range(uses_index + 1, step_end):
+        line = lines[index]
+        if line.strip() == "with:":
+            with_index = index
+            with_indent = len(line) - len(line.lstrip())
+            break
+    if with_index is None or with_indent is None:
+        return False
+
+    with_end = step_end
+    for index in range(with_index + 1, step_end):
+        line = lines[index]
+        if line.strip() and not line.lstrip().startswith("#"):
+            indent = len(line) - len(line.lstrip())
+            if indent <= with_indent:
+                with_end = index
+                break
+
+    for line in lines[with_index + 1 : with_end]:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        key, separator, value = stripped.partition(":")
+        if key == "fetch-depth" and separator and value.split("#", 1)[0].strip().strip("'\"") == "0":
+            return True
+    return False
 
 
 def main() -> int:
     failures: list[str] = []
+    skipped = 0
+    if workflow_has_full_history_checkout():
+        print("requires full CI checkout history")
+    else:
+        failures.append("CI workflow checkout must configure fetch-depth: 0 for the MICRO validator")
     with tempfile.TemporaryDirectory(prefix="tiger-kit-micro-validator-") as temp_dir:
         temp_root = Path(temp_dir)
         for name, mutate in CASES:
             checkout = prepare_checkout(temp_root / name.replace(" ", "-"))
             result = load_result(checkout)
-            mutate(result, checkout)
+            try:
+                mutate(result, checkout)
+            except UnsupportedCase as exc:
+                skipped += 1
+                print(f"skips {name}: {exc}")
+                continue
             write_result(checkout, result)
             completed = run_validator(checkout)
             if completed.returncode == 0:
@@ -176,7 +380,10 @@ def main() -> int:
         for failure in failures:
             print(f"- {failure}", file=sys.stderr)
         return 1
-    print(f"micro validator adversarial tests ok: {len(CASES)} rejection cases + relocation")
+    print(
+        f"micro validator adversarial tests ok: {len(CASES) - skipped} rejection cases"
+        f" + relocation ({skipped} skipped)"
+    )
     return 0
 
 
