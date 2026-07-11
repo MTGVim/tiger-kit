@@ -55,7 +55,16 @@ gap = source of truth ↔ current implementation one-shot comparison
    - `mismatch`: SoT와 Current가 다름.
    - `overbuilt`: SoT 밖 구현이 surface 확장, 사용자 혼란, 유지보수 비용, 숨은 자동화 기대를 만듦.
    - `ambiguous`: source conflict, missing owner decision, inaccessible source, producer evidence 부족.
-6. 각 finding은 최소한 SoT, Current, Evidence, Impact, Priority, Suggested fix를 포함합니다.
+
+### Plan/generated Current classification rule
+
+When the SoT requirement is accessible, clear, and non-conflicting, and the explicitly scoped/inspected Current set contains only implementation plans and/or generated artifacts, and there is no direct implementation/runtime/command/rendered/diff evidence, classify the requested behavior as `missing` in Current, not `ambiguous`.
+
+- Any uncertainty that uninspected implementation might exist belongs in `⚠️ Ambiguities / Missing Evidence:`, but does not replace the primary `missing` classification for this scoped comparison.
+- Do not overclaim global repository absence: this rule applies only to the explicitly scoped/inspected Current set.
+- Preserve `ambiguous` for source conflict, unresolved owner/source priority, inaccessible required sources, or a genuinely indeterminate requirement.
+
+6. 각 finding은 최소한 SoT, Current, Evidence, Impact, Priority, Suggested fix을 포함합니다.
 7. actionable finding에는 `direct | brainstorm | decision` route를 제안하고 route 이유를 evidence identifier와 연결합니다. `brainstorm`은 구현 전에 `/tk:route`로 direct, subagent-driven, goal-driven 중 어느 길이 맞는지 먼저 정리해야 한다는 뜻입니다.
 8. non-actionable finding에는 route를 강제하지 않습니다.
 9. 모호한 source를 조용히 병합하지 않습니다.
