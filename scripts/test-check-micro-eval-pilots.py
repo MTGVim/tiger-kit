@@ -17,6 +17,7 @@ from typing import Any, Callable
 ROOT = Path(__file__).resolve().parents[1]
 VALIDATOR = ROOT / "scripts" / "check-micro-eval-pilots.py"
 RESULT_RELATIVE = Path("evals/results/micro-initial-command-wording.json")
+FULL_RAW_RELATIVE = Path("evals/results/raw/full-reflect-repo-local-safety")
 
 Mutation = Callable[[dict[str, Any], Path], None]
 
@@ -253,6 +254,14 @@ def raw_directory_symlink(_result: dict[str, Any], checkout: Path) -> None:
     )
 
 
+def full_raw_directory_symlink(_result: dict[str, Any], checkout: Path) -> None:
+    swap_directory_for_symlink(checkout / FULL_RAW_RELATIVE)
+
+
+def unexpected_root_result_file(_result: dict[str, Any], checkout: Path) -> None:
+    (checkout / "evals" / "results" / "unexpected.json").write_text("{}\n", encoding="utf-8")
+
+
 def raw_fifo_special_entry(_result: dict[str, Any], checkout: Path) -> None:
     fifo_path = checkout / "evals" / "results" / "raw" / "micro-initial-command-wording" / "unexpected.fifo"
     try:
@@ -296,6 +305,8 @@ CASES: list[tuple[str, Mutation]] = [
     ("results directory symlink", results_directory_symlink),
     ("results raw directory symlink", results_raw_directory_symlink),
     ("raw directory symlink", raw_directory_symlink),
+    ("approved FULL raw directory symlink", full_raw_directory_symlink),
+    ("unexpected root result file", unexpected_root_result_file),
     ("raw FIFO special entry", raw_fifo_special_entry),
 ]
 

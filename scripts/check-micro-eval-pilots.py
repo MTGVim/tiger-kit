@@ -16,7 +16,9 @@ PILOT_DIR = ROOT / "evals" / "micro-pilots"
 PILOT_PATH = PILOT_DIR / "initial-command-wording.json"
 RESULTS_DIR = ROOT / "evals" / "results"
 RESULT_PATH = RESULTS_DIR / "micro-initial-command-wording.json"
+FULL_RESULT_PATH = RESULTS_DIR / "full-reflect-repo-local-safety.json"
 RAW_DIR = RESULTS_DIR / "raw" / "micro-initial-command-wording"
+FULL_RAW_DIR = RESULTS_DIR / "raw" / "full-reflect-repo-local-safety"
 SCHEMA = "tigerkit.micro-wording-pilot/v1"
 SOURCE_SCHEMA = "tigerkit.micro-session-source/v1"
 SURFACES = {"/tk:route", "/tk:reflect", "/tk:learn"}
@@ -188,6 +190,7 @@ def validate_inventory() -> None:
         (RESULTS_DIR, str(RESULTS_DIR.relative_to(ROOT))),
         (RESULTS_DIR / "raw", f"{RESULTS_DIR.relative_to(ROOT)}/raw"),
         (RAW_DIR, str(RAW_DIR.relative_to(ROOT))),
+        (FULL_RAW_DIR, str(FULL_RAW_DIR.relative_to(ROOT))),
     )
     for path, label in fixed_directories:
         require_real_directory(path, label)
@@ -203,11 +206,20 @@ def validate_inventory() -> None:
         fail(f"{PILOT_DIR.relative_to(ROOT)} contains unexpected directories: {sorted(pilot_dirs)!r}")
 
     result_files = {entry.name for entry in result_entries if entry.is_file()}
-    if result_files != {RESULT_PATH.name}:
+    if result_files != {RESULT_PATH.name, FULL_RESULT_PATH.name}:
         fail(f"{RESULTS_DIR.relative_to(ROOT)} contains unexpected result files: {sorted(result_files)!r}")
     result_dirs = {entry.name for entry in result_entries if entry.is_dir()}
     if result_dirs != {"raw"}:
         fail(f"{RESULTS_DIR.relative_to(ROOT)} contains unexpected directories: {sorted(result_dirs)!r}")
+
+    raw_parent = RESULTS_DIR / "raw"
+    raw_entries = inventory_entries(raw_parent, str(raw_parent.relative_to(ROOT)))
+    raw_files = {entry.name for entry in raw_entries if entry.is_file()}
+    if raw_files:
+        fail(f"{raw_parent.relative_to(ROOT)} contains unexpected files: {sorted(raw_files)!r}")
+    raw_dirs = {entry.name for entry in raw_entries if entry.is_dir()}
+    if raw_dirs != {RAW_DIR.name, FULL_RAW_DIR.name}:
+        fail(f"{raw_parent.relative_to(ROOT)} contains unexpected directories: {sorted(raw_dirs)!r}")
 
 
 def validate_common(document: dict[str, Any], label: str) -> None:
