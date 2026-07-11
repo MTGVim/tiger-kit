@@ -1,0 +1,347 @@
+{
+  "schemaVersion": "tigerkit.full-gap-stale-sot-precedence-source/v1",
+  "scenario_id": "unresolved-source-precedence-stays-ambiguous",
+  "session": {
+    "session_id": "fdaf2062-aa68-4ce1-9985-47a89aed4d46",
+    "fresh": true,
+    "isolated": true,
+    "write_free": true,
+    "consumer": "Claude Code",
+    "consumer_version": "2.1.150 (Claude Code)",
+    "wrapper": "ccs codex",
+    "wrapper_version": "CCS (Claude Code Switch) v8.6.1",
+    "provider": "openai-codex",
+    "model": "gpt-5.5(high)",
+    "model_source": "actual modelUsage high-tier routing key; consumer envelope model field was null"
+  },
+  "plugin": {
+    "path": "plugin-root",
+    "repo_id": "tiger-kit",
+    "commit": "731c8ea9d8b47011d808020df6ccae6f54d1ca99",
+    "contract_blobs": [
+      {
+        "path": "commands/gap.md",
+        "sha256": "2d985b65acb65b10a811b136d6c705e0dd6c99fba449cb897a4f414dabcedd1d"
+      },
+      {
+        "path": "skills/gap/SKILL.md",
+        "sha256": "1f40267d304b90f96c7cfcc2bf3e6902d48f17815ae76312b17eaa7ac44f3828"
+      },
+      {
+        "path": ".tigerkit/docs/output-contract.md",
+        "sha256": "eab16292a7f5aa3be02e125710bda0bedce1feaa77e364f4afdb1c6e98a59914"
+      }
+    ]
+  },
+  "command": {
+    "argv": [
+      "ccs",
+      "codex",
+      "-p",
+      "Pilot=gap-stale-sot-precedence; Scenario=unresolved-source-precedence-stays-ambiguous; Fixture CWD=fixture-root; Plugin checkout=plugin-root. The plugin checkout is contract source only; the fixture is the scenario Current/SoT repository. Source inventory (use only these refs; IDs/roles/types/paths): S1 | role=SoT | type=specification | path=specs/bundle-auth.md; S2 | role=SoT | type=specification | path=specs/bundle-launch.md; C1 | role=Current | type=file-read | path=README.md; C2 | role=Current | type=file-read | path=commands/bundle.md. Read the exact contract sources from plugin checkout only as needed to follow the command: commands/gap.md, skills/gap/SKILL.md, .tigerkit/docs/output-contract.md. Invoke the public `/tk:gap` command exactly once on the listed refs. Do not read pilot.expected or pilot.must_observe. Do not edit the fixture, plugin checkout, or any other repository. Do not write a gap report, packet, state artifact, cache, settings, memory, or any file. Do not implement anything. Do not commit, reset, stash, checkout, resume, continue, or use prior sessions, memory, MCP, or another slash command. Return only the canonical gap report with source/evidence distinction, final gap classification, and one recommended next step.",
+      "--plugin-dir",
+      "plugin-root",
+      "--permission-mode",
+      "dontAsk",
+      "--allowedTools",
+      "Read,Grep,Glob,Bash",
+      "--max-turns",
+      "16",
+      "--no-session-persistence",
+      "--output-format",
+      "json"
+    ],
+    "argv_sha256": "352bb8c440a0e437e9824b47e8910df248b2ef26f3659cfa9328333ec410705f",
+    "invocation_cwd": "fixture-root",
+    "plugin_dir": "plugin-root",
+    "permission_mode": "dontAsk",
+    "allowed_tools": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Bash"
+    ],
+    "max_turns": 16,
+    "session_persistence": false,
+    "prompt_sha256": "27ea7f8803b539af6e124011a8af992bca16704a6cff2c3d4cded7ad10501474",
+    "prompt_byte_length": 1259
+  },
+  "tool_evidence": {
+    "plugin_command": {
+      "executable": "ccs",
+      "subcommand": "codex",
+      "public_surface": "/tk:gap",
+      "argv": [
+        "ccs",
+        "codex",
+        "-p",
+        "Pilot=gap-stale-sot-precedence; Scenario=unresolved-source-precedence-stays-ambiguous; Fixture CWD=fixture-root; Plugin checkout=plugin-root. The plugin checkout is contract source only; the fixture is the scenario Current/SoT repository. Source inventory (use only these refs; IDs/roles/types/paths): S1 | role=SoT | type=specification | path=specs/bundle-auth.md; S2 | role=SoT | type=specification | path=specs/bundle-launch.md; C1 | role=Current | type=file-read | path=README.md; C2 | role=Current | type=file-read | path=commands/bundle.md. Read the exact contract sources from plugin checkout only as needed to follow the command: commands/gap.md, skills/gap/SKILL.md, .tigerkit/docs/output-contract.md. Invoke the public `/tk:gap` command exactly once on the listed refs. Do not read pilot.expected or pilot.must_observe. Do not edit the fixture, plugin checkout, or any other repository. Do not write a gap report, packet, state artifact, cache, settings, memory, or any file. Do not implement anything. Do not commit, reset, stash, checkout, resume, continue, or use prior sessions, memory, MCP, or another slash command. Return only the canonical gap report with source/evidence distinction, final gap classification, and one recommended next step.",
+        "--plugin-dir",
+        "plugin-root",
+        "--permission-mode",
+        "dontAsk",
+        "--allowedTools",
+        "Read,Grep,Glob,Bash",
+        "--max-turns",
+        "16",
+        "--no-session-persistence",
+        "--output-format",
+        "json"
+      ],
+      "invocation_cwd": "fixture-root",
+      "plugin_dir": "plugin-root"
+    },
+    "consumer_envelope": {
+      "session_id": "fdaf2062-aa68-4ce1-9985-47a89aed4d46",
+      "type": "result",
+      "subtype": "success",
+      "is_error": false,
+      "stop_reason": "end_turn",
+      "terminal_reason": "completed",
+      "num_turns": 10,
+      "permission_denials": []
+    }
+  },
+  "runtime": {
+    "model_usage": {
+      "gpt-5.4-mini(low)": {
+        "inputTokens": 898,
+        "outputTokens": 32,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.0052899999999999996,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000
+      },
+      "gpt-5.5(high)": {
+        "inputTokens": 20849,
+        "outputTokens": 2138,
+        "cacheReadInputTokens": 92672,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.20403100000000002,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000
+      }
+    },
+    "model_usage_keys": [
+      "gpt-5.4-mini(low)",
+      "gpt-5.5(high)"
+    ],
+    "observed_result": {
+      "type": "result",
+      "subtype": "success",
+      "is_error": false,
+      "stop_reason": "end_turn",
+      "terminal_reason": "completed",
+      "num_turns": 10,
+      "permission_denials": []
+    }
+  },
+  "consumer_output": {
+    "result": "📊 Gap summary:\n| Area | SoT | Current | Gap | Impact | Priority |\n|---|---|---|---|---|---|\n| `/bundle` authentication vs launch access | S1: `/bundle` requires an authenticated operator. S2: during launch window, `/bundle` is available without an authenticated session. | C1/C2 only show public command surface: `/bundle`, `/bundle --mode launch`. No authenticated/unauthenticated behavior evidence was checked beyond file reads. | `ambiguous` | S1 and S2 create unresolved source precedence: default auth requirement and launch-window unauthenticated availability may conflict or require an explicit override rule. Current evidence does not prove either behavior. | P1 |\n\n📝 Findings:\n- 확인된 actionable `missing` / `mismatch` / `overbuilt` finding 없음. 핵심 결과는 unresolved source precedence와 producer behavior evidence 부족으로 인한 `ambiguous`입니다.\n\n⚠️ Ambiguities / Missing Evidence:\n| Ref | Question | Evidence checked | Impact | Recommendation |\n|---|---|---|---|---|\n| S1/S2 | S1의 authenticated operator requirement와 S2의 launch-window unauthenticated availability 중 어느 source가 우선인가, 또는 S2가 S1의 scoped exception인가? | S1 `specs/bundle-auth.md`; S2 `specs/bundle-launch.md` | `/bundle` 접근 제어 rule을 구현/검증할 수 없음. 잘못 병합하면 launch flow 또는 auth policy가 깨질 수 있음. | owner decision으로 precedence를 명시해야 함. |\n| C1/C2 | Current가 실제로 auth requirement 또는 launch-window exception을 구현했는가? | C1 `README.md`; C2 `commands/bundle.md`; 둘 다 `file-read` evidence only | 현재 evidence는 command surface만 보여주며 behavior proof가 아님. | precedence 결정 후 실제 producer/implementation evidence를 확인해야 함. |\n\n📝 Not accepted summary:\n- C1/C2의 `/bundle --mode launch` 표기는 surface evidence일 뿐, S2의 unauthenticated launch-window behavior 구현 증거로 채택하지 않음.\n- S1/S2를 임의 병합해 “launch mode는 auth 없이 허용”이라고 단정하지 않음.\n\n▶️ Recommended next steps:\n1. S1/S2의 source precedence를 결정해 “S2가 S1의 launch-window scoped exception인지”를 명시한 뒤, 그 결정에 맞춰 Current implementation evidence를 다시 확인합니다.",
+    "result_sha256": "7d7a5f66593b86cc5dc386998616c452e948bc519a4f97473ce8bada3b990831",
+    "result_byte_length": 2291,
+    "raw_result_sha256": "7d7a5f66593b86cc5dc386998616c452e948bc519a4f97473ce8bada3b990831"
+  },
+  "gap_observation": {
+    "source_refs": [
+      {
+        "ref_id": "S1",
+        "role": "SoT",
+        "type": "specification",
+        "path": "specs/bundle-auth.md",
+        "access_status": "readable",
+        "sha256": "c8d9caf8809c190b89b950c05378a71b028a5db480b92c54cc07ca947ae461ec",
+        "byte_length": 103
+      },
+      {
+        "ref_id": "S2",
+        "role": "SoT",
+        "type": "specification",
+        "path": "specs/bundle-launch.md",
+        "access_status": "readable",
+        "sha256": "a35e4a9e11bc7f9b9b1d3a60ee98036b0395945bc64436eedc0f053fc89d0143",
+        "byte_length": 132
+      },
+      {
+        "ref_id": "C1",
+        "role": "Current",
+        "type": "file-read",
+        "path": "README.md",
+        "access_status": "readable",
+        "sha256": "8cef467ed3cd0cb602d1151e72775abd6705950bdb0f49eab1f894b2d1bbabc4",
+        "byte_length": 93
+      },
+      {
+        "ref_id": "C2",
+        "role": "Current",
+        "type": "file-read",
+        "path": "commands/bundle.md",
+        "access_status": "readable",
+        "sha256": "aefc93c12daa3cf93f4522aaeddf032410693a7d9816eeec88dd489ac9cf218b",
+        "byte_length": 83
+      }
+    ],
+    "source_manifest_sha256": "d21c95f5106f7ba63883fd25e2ce0e39eb00760e8b79497e44402091bc03d2e7",
+    "current_evidence": [
+      {
+        "evidence_id": "C1",
+        "type": "file-read",
+        "strength": "direct"
+      },
+      {
+        "evidence_id": "C2",
+        "type": "file-read",
+        "strength": "direct"
+      }
+    ],
+    "precedence": {
+      "status": "unresolved",
+      "resolved_order": [],
+      "conflicts": [
+        "S1",
+        "S2"
+      ],
+      "note": "Both accessible SoT refs conflict and neither has priority, supersession, or approval metadata."
+    },
+    "final_classification": "ambiguous",
+    "recommendation": "1. S1/S2의 source precedence를 결정해 “S2가 S1의 launch-window scoped exception인지”를 명시한 뒤, 그 결정에 맞춰 Current implementation evidence를 다시 확인합니다.",
+    "direct_implementation_evidence": [],
+    "direct_runtime_evidence": [],
+    "direct_command_output_evidence": [],
+    "direct_rendered_output_evidence": [],
+    "direct_diff_evidence": []
+  },
+  "fixture": {
+    "invocation_cwd": "fixture-root",
+    "git_root": "fixture-root",
+    "git_before": {
+      "rev_parse_status": 0,
+      "branch_status": 0,
+      "status_command_status": 0,
+      "staged_command_status": 0,
+      "unstaged_command_status": 0,
+      "head": "9a0ca8925aa3dfe9d8c09fc024ed096d632d3d0c",
+      "branch": "main",
+      "status_porcelain": [],
+      "staged_paths": [],
+      "unstaged_paths": []
+    },
+    "git_after": {
+      "rev_parse_status": 0,
+      "branch_status": 0,
+      "status_command_status": 0,
+      "staged_command_status": 0,
+      "unstaged_command_status": 0,
+      "head": "9a0ca8925aa3dfe9d8c09fc024ed096d632d3d0c",
+      "branch": "main",
+      "status_porcelain": [],
+      "staged_paths": [],
+      "unstaged_paths": []
+    },
+    "fixture_inventory_before": [
+      {
+        "path": "fixture-root/README.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 93,
+        "sha256": "8cef467ed3cd0cb602d1151e72775abd6705950bdb0f49eab1f894b2d1bbabc4"
+      },
+      {
+        "path": "fixture-root/commands",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "fixture-root/commands/bundle.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 83,
+        "sha256": "aefc93c12daa3cf93f4522aaeddf032410693a7d9816eeec88dd489ac9cf218b"
+      },
+      {
+        "path": "fixture-root/specs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "fixture-root/specs/bundle-auth.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 103,
+        "sha256": "c8d9caf8809c190b89b950c05378a71b028a5db480b92c54cc07ca947ae461ec"
+      },
+      {
+        "path": "fixture-root/specs/bundle-launch.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 132,
+        "sha256": "a35e4a9e11bc7f9b9b1d3a60ee98036b0395945bc64436eedc0f053fc89d0143"
+      }
+    ],
+    "fixture_inventory_after": [
+      {
+        "path": "fixture-root/README.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 93,
+        "sha256": "8cef467ed3cd0cb602d1151e72775abd6705950bdb0f49eab1f894b2d1bbabc4"
+      },
+      {
+        "path": "fixture-root/commands",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "fixture-root/commands/bundle.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 83,
+        "sha256": "aefc93c12daa3cf93f4522aaeddf032410693a7d9816eeec88dd489ac9cf218b"
+      },
+      {
+        "path": "fixture-root/specs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "fixture-root/specs/bundle-auth.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 103,
+        "sha256": "c8d9caf8809c190b89b950c05378a71b028a5db480b92c54cc07ca947ae461ec"
+      },
+      {
+        "path": "fixture-root/specs/bundle-launch.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 132,
+        "sha256": "a35e4a9e11bc7f9b9b1d3a60ee98036b0395945bc64436eedc0f053fc89d0143"
+      }
+    ],
+    "changed_paths": [],
+    "fallback_writes": []
+  },
+  "state_root": {
+    "requested": "state-root",
+    "observed_root": "state-root",
+    "honored": true,
+    "inventory_before": [],
+    "inventory_after": []
+  },
+  "temporary_home_tigerkit": {
+    "root": "temporary-home/.tigerkit",
+    "inventory_before": [],
+    "inventory_after": []
+  },
+  "privacy": {
+    "normalized_paths": [
+      "fixture-root",
+      "plugin-root",
+      "state-root",
+      "temporary-home"
+    ]
+  }
+}

@@ -1,0 +1,333 @@
+{
+  "schemaVersion": "tigerkit.full-gap-stale-sot-precedence-source/v1",
+  "scenario_id": "plan-only-current-is-not-implementation-proof",
+  "session": {
+    "session_id": "6897964a-b2ed-4407-ade2-16b054d470d0",
+    "fresh": true,
+    "isolated": true,
+    "write_free": true,
+    "consumer": "Claude Code",
+    "consumer_version": "2.1.150 (Claude Code)",
+    "wrapper": "ccs codex",
+    "wrapper_version": "CCS (Claude Code Switch) v8.6.1",
+    "provider": "openai-codex",
+    "model": "gpt-5.5(high)",
+    "model_source": "actual modelUsage high-tier routing key; consumer envelope model field was null"
+  },
+  "plugin": {
+    "path": "plugin-root",
+    "repo_id": "tiger-kit",
+    "commit": "731c8ea9d8b47011d808020df6ccae6f54d1ca99",
+    "contract_blobs": [
+      {
+        "path": "commands/gap.md",
+        "sha256": "2d985b65acb65b10a811b136d6c705e0dd6c99fba449cb897a4f414dabcedd1d"
+      },
+      {
+        "path": "skills/gap/SKILL.md",
+        "sha256": "1f40267d304b90f96c7cfcc2bf3e6902d48f17815ae76312b17eaa7ac44f3828"
+      },
+      {
+        "path": ".tigerkit/docs/output-contract.md",
+        "sha256": "eab16292a7f5aa3be02e125710bda0bedce1feaa77e364f4afdb1c6e98a59914"
+      }
+    ]
+  },
+  "command": {
+    "argv": [
+      "ccs",
+      "codex",
+      "-p",
+      "Pilot=gap-stale-sot-precedence; Scenario=plan-only-current-is-not-implementation-proof; Fixture CWD=fixture-root; Plugin checkout=plugin-root. The plugin checkout is contract source only; the fixture is the scenario Current/SoT repository. Source inventory (use only these refs; IDs/roles/types/paths): S1 | role=SoT | type=specification | path=specs/alert-bundle.md; C1 | role=Current | type=implementation-plan | path=plans/alert-bundle-implementation.md; C2 | role=Current | type=generated-artifact | path=generated/alert-bundle-index.json. Read the exact contract sources from plugin checkout only as needed to follow the command: commands/gap.md, skills/gap/SKILL.md, .tigerkit/docs/output-contract.md. Invoke the public `/tk:gap` command exactly once on the listed refs. Do not read pilot.expected or pilot.must_observe. Do not edit the fixture, plugin checkout, or any other repository. Do not write a gap report, packet, state artifact, cache, settings, memory, or any file. Do not implement anything. A plan or generated artifact describes intent or derived metadata only; it is not direct implementation, runtime, command-output, rendered-output, or diff evidence. Do not infer the presence of the required behavior from planned text, and keep the absence of direct Current evidence explicit. Do not commit, reset, stash, checkout, resume, continue, or use prior sessions, memory, MCP, or another slash command. Return only the canonical gap report with source/evidence distinction, final gap classification, and one recommended next step.",
+      "--plugin-dir",
+      "plugin-root",
+      "--permission-mode",
+      "dontAsk",
+      "--allowedTools",
+      "Read,Grep,Glob,Bash",
+      "--max-turns",
+      "16",
+      "--no-session-persistence",
+      "--output-format",
+      "json"
+    ],
+    "argv_sha256": "b3cfee4d86136a641f110867f4dd48b4b2df95e0418ffd2a6ef671c436cb10fa",
+    "invocation_cwd": "fixture-root",
+    "plugin_dir": "plugin-root",
+    "permission_mode": "dontAsk",
+    "allowed_tools": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Bash"
+    ],
+    "max_turns": 16,
+    "session_persistence": false,
+    "prompt_sha256": "37054f44ca45921450dd1a14c098e315ce8489b9f16c61200ff63865b42ac852",
+    "prompt_byte_length": 1549
+  },
+  "tool_evidence": {
+    "plugin_command": {
+      "executable": "ccs",
+      "subcommand": "codex",
+      "public_surface": "/tk:gap",
+      "argv": [
+        "ccs",
+        "codex",
+        "-p",
+        "Pilot=gap-stale-sot-precedence; Scenario=plan-only-current-is-not-implementation-proof; Fixture CWD=fixture-root; Plugin checkout=plugin-root. The plugin checkout is contract source only; the fixture is the scenario Current/SoT repository. Source inventory (use only these refs; IDs/roles/types/paths): S1 | role=SoT | type=specification | path=specs/alert-bundle.md; C1 | role=Current | type=implementation-plan | path=plans/alert-bundle-implementation.md; C2 | role=Current | type=generated-artifact | path=generated/alert-bundle-index.json. Read the exact contract sources from plugin checkout only as needed to follow the command: commands/gap.md, skills/gap/SKILL.md, .tigerkit/docs/output-contract.md. Invoke the public `/tk:gap` command exactly once on the listed refs. Do not read pilot.expected or pilot.must_observe. Do not edit the fixture, plugin checkout, or any other repository. Do not write a gap report, packet, state artifact, cache, settings, memory, or any file. Do not implement anything. A plan or generated artifact describes intent or derived metadata only; it is not direct implementation, runtime, command-output, rendered-output, or diff evidence. Do not infer the presence of the required behavior from planned text, and keep the absence of direct Current evidence explicit. Do not commit, reset, stash, checkout, resume, continue, or use prior sessions, memory, MCP, or another slash command. Return only the canonical gap report with source/evidence distinction, final gap classification, and one recommended next step.",
+        "--plugin-dir",
+        "plugin-root",
+        "--permission-mode",
+        "dontAsk",
+        "--allowedTools",
+        "Read,Grep,Glob,Bash",
+        "--max-turns",
+        "16",
+        "--no-session-persistence",
+        "--output-format",
+        "json"
+      ],
+      "invocation_cwd": "fixture-root",
+      "plugin_dir": "plugin-root"
+    },
+    "consumer_envelope": {
+      "session_id": "6897964a-b2ed-4407-ade2-16b054d470d0",
+      "type": "result",
+      "subtype": "success",
+      "is_error": false,
+      "stop_reason": "end_turn",
+      "terminal_reason": "completed",
+      "num_turns": 6,
+      "permission_denials": []
+    }
+  },
+  "runtime": {
+    "model_usage": {
+      "gpt-5.4-mini(low)": {
+        "inputTokens": 939,
+        "outputTokens": 60,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.006194999999999999,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000
+      },
+      "gpt-5.5(high)": {
+        "inputTokens": 11232,
+        "outputTokens": 1732,
+        "cacheReadInputTokens": 60416,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.129668,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000
+      }
+    },
+    "model_usage_keys": [
+      "gpt-5.4-mini(low)",
+      "gpt-5.5(high)"
+    ],
+    "observed_result": {
+      "type": "result",
+      "subtype": "success",
+      "is_error": false,
+      "stop_reason": "end_turn",
+      "terminal_reason": "completed",
+      "num_turns": 6,
+      "permission_denials": []
+    }
+  },
+  "consumer_output": {
+    "result": "📊 Gap summary:\n| Area | SoT | Current | Gap | Impact | Priority |\n|---|---|---|---|---|---|\n| `/alert-bundle --severity <level>` public behavior | `specs/alert-bundle.md` requires JSON response including requested severity | `plans/alert-bundle-implementation.md` and `generated/alert-bundle-index.json` only describe planned intent/metadata | missing | Required behavior is not proven by direct implementation, runtime, command-output, rendered-output, or diff evidence | P1 |\n\n📝 Findings:\n### 1. Required `/alert-bundle` JSON behavior has no direct Current implementation evidence\n- SoT: `specs/alert-bundle.md:3-5` requires public surface `/alert-bundle --severity <level>` and a JSON response that includes the requested severity.\n- Current: `plans/alert-bundle-implementation.md:3-9` is an implementation plan; `generated/alert-bundle-index.json:2-12` is a generated artifact derived from that plan. Neither is direct implementation proof.\n- Evidence: C1 says intended files and behavior are planned; C2 records `planned_command` and `planned_response`.\n- Evidence type: Current evidence is `implementation-plan` and `generated-artifact` only; no direct implementation, runtime output, command output, rendered output, or diff evidence was provided.\n- Impact: The SoT behavior may still be unimplemented even though planned artifacts mention it.\n- Priority: P1\n- Suggested fix: Provide or create direct Current evidence for `/alert-bundle --severity <level>` returning JSON that includes the requested severity.\n- Route: direct\n- Route evidence: S1 is explicit and non-conflicting; C1/C2 are explicitly plan/generated evidence only.\n\n⚠️ Ambiguities / Missing Evidence:\n| Ref | Question | Evidence checked | Impact | Recommendation |\n|---|---|---|---|---|\n| C1/C2 | Is there actual implementation or runtime behavior matching S1? | Only `plans/alert-bundle-implementation.md` and `generated/alert-bundle-index.json` | Plan/generated text could be mistaken for implementation proof | Check direct implementation/runtime evidence next |\n\n📝 Not accepted summary:\n- Planned files in C1/C2 were not accepted as implementation evidence.\n\n▶️ Recommended next steps:\n1. Inspect or produce direct implementation/runtime evidence for `/alert-bundle --severity <level>` returning JSON with the requested severity.",
+    "result_sha256": "61cee17bfdaf26ff56c5826a0cfc867c5dad971e10d40df985fbe4d92e28b82e",
+    "result_byte_length": 2323,
+    "raw_result_sha256": "61cee17bfdaf26ff56c5826a0cfc867c5dad971e10d40df985fbe4d92e28b82e"
+  },
+  "gap_observation": {
+    "source_refs": [
+      {
+        "ref_id": "S1",
+        "role": "SoT",
+        "type": "specification",
+        "path": "specs/alert-bundle.md",
+        "access_status": "readable",
+        "sha256": "2e31cb4bc45aa0ff7606481d7cb8e3124d2b92770d831132eb3f6fb517a21660",
+        "byte_length": 149
+      },
+      {
+        "ref_id": "C1",
+        "role": "Current",
+        "type": "implementation-plan",
+        "path": "plans/alert-bundle-implementation.md",
+        "access_status": "readable",
+        "sha256": "c989c0d5dc37c1ea0922b78f6a8d10205bf425452106d128e80035897363efc3",
+        "byte_length": 248
+      },
+      {
+        "ref_id": "C2",
+        "role": "Current",
+        "type": "generated-artifact",
+        "path": "generated/alert-bundle-index.json",
+        "access_status": "readable",
+        "sha256": "15ed79d766057a4ba4c9c51d76874f428c23eb1223c7f42ddae11bdad2f2588d",
+        "byte_length": 313
+      }
+    ],
+    "source_manifest_sha256": "547311efc19e33cb460a0e7cb943a1dc35185a071951414a2fffd5069097a94e",
+    "current_evidence": [
+      {
+        "evidence_id": "C1",
+        "type": "implementation-plan",
+        "strength": "weak"
+      },
+      {
+        "evidence_id": "C2",
+        "type": "generated-artifact",
+        "strength": "derived"
+      }
+    ],
+    "precedence": {
+      "status": "resolved",
+      "resolved_order": [
+        "S1"
+      ],
+      "conflicts": [],
+      "note": "S1 is the only SoT ref; Current plan/generated refs do not establish source priority."
+    },
+    "final_classification": "missing",
+    "recommendation": "1. Inspect or produce direct implementation/runtime evidence for `/alert-bundle --severity <level>` returning JSON with the requested severity.",
+    "direct_implementation_evidence": [],
+    "direct_runtime_evidence": [],
+    "direct_command_output_evidence": [],
+    "direct_rendered_output_evidence": [],
+    "direct_diff_evidence": []
+  },
+  "fixture": {
+    "invocation_cwd": "fixture-root",
+    "git_root": "fixture-root",
+    "git_before": {
+      "rev_parse_status": 0,
+      "branch_status": 0,
+      "status_command_status": 0,
+      "staged_command_status": 0,
+      "unstaged_command_status": 0,
+      "head": "c3683f26e871efadefc5dbe960aa3f5e54705726",
+      "branch": "main",
+      "status_porcelain": [],
+      "staged_paths": [],
+      "unstaged_paths": []
+    },
+    "git_after": {
+      "rev_parse_status": 0,
+      "branch_status": 0,
+      "status_command_status": 0,
+      "staged_command_status": 0,
+      "unstaged_command_status": 0,
+      "head": "c3683f26e871efadefc5dbe960aa3f5e54705726",
+      "branch": "main",
+      "status_porcelain": [],
+      "staged_paths": [],
+      "unstaged_paths": []
+    },
+    "fixture_inventory_before": [
+      {
+        "path": "fixture-root/generated",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "fixture-root/generated/alert-bundle-index.json",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 313,
+        "sha256": "15ed79d766057a4ba4c9c51d76874f428c23eb1223c7f42ddae11bdad2f2588d"
+      },
+      {
+        "path": "fixture-root/plans",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "fixture-root/plans/alert-bundle-implementation.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 248,
+        "sha256": "c989c0d5dc37c1ea0922b78f6a8d10205bf425452106d128e80035897363efc3"
+      },
+      {
+        "path": "fixture-root/specs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "fixture-root/specs/alert-bundle.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 149,
+        "sha256": "2e31cb4bc45aa0ff7606481d7cb8e3124d2b92770d831132eb3f6fb517a21660"
+      }
+    ],
+    "fixture_inventory_after": [
+      {
+        "path": "fixture-root/generated",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "fixture-root/generated/alert-bundle-index.json",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 313,
+        "sha256": "15ed79d766057a4ba4c9c51d76874f428c23eb1223c7f42ddae11bdad2f2588d"
+      },
+      {
+        "path": "fixture-root/plans",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "fixture-root/plans/alert-bundle-implementation.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 248,
+        "sha256": "c989c0d5dc37c1ea0922b78f6a8d10205bf425452106d128e80035897363efc3"
+      },
+      {
+        "path": "fixture-root/specs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "fixture-root/specs/alert-bundle.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 149,
+        "sha256": "2e31cb4bc45aa0ff7606481d7cb8e3124d2b92770d831132eb3f6fb517a21660"
+      }
+    ],
+    "changed_paths": [],
+    "fallback_writes": []
+  },
+  "state_root": {
+    "requested": "state-root",
+    "observed_root": "state-root",
+    "honored": true,
+    "inventory_before": [],
+    "inventory_after": []
+  },
+  "temporary_home_tigerkit": {
+    "root": "temporary-home/.tigerkit",
+    "inventory_before": [],
+    "inventory_after": []
+  },
+  "privacy": {
+    "normalized_paths": [
+      "fixture-root",
+      "plugin-root",
+      "state-root",
+      "temporary-home"
+    ]
+  }
+}

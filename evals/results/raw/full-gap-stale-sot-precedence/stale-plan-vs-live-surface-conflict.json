@@ -1,0 +1,325 @@
+{
+  "schemaVersion": "tigerkit.full-gap-stale-sot-precedence-source/v1",
+  "scenario_id": "stale-plan-vs-live-surface-conflict",
+  "session": {
+    "session_id": "4c5e0b90-ff30-4acf-9268-c4b0784896dd",
+    "fresh": true,
+    "isolated": true,
+    "write_free": true,
+    "consumer": "Claude Code",
+    "consumer_version": "2.1.150 (Claude Code)",
+    "wrapper": "ccs codex",
+    "wrapper_version": "CCS (Claude Code Switch) v8.6.1",
+    "provider": "openai-codex",
+    "model": "gpt-5.5(high)",
+    "model_source": "actual modelUsage high-tier routing key; consumer envelope model field was null"
+  },
+  "plugin": {
+    "path": "plugin-root",
+    "repo_id": "tiger-kit",
+    "commit": "731c8ea9d8b47011d808020df6ccae6f54d1ca99",
+    "contract_blobs": [
+      {
+        "path": "commands/gap.md",
+        "sha256": "2d985b65acb65b10a811b136d6c705e0dd6c99fba449cb897a4f414dabcedd1d"
+      },
+      {
+        "path": "skills/gap/SKILL.md",
+        "sha256": "1f40267d304b90f96c7cfcc2bf3e6902d48f17815ae76312b17eaa7ac44f3828"
+      },
+      {
+        "path": ".tigerkit/docs/output-contract.md",
+        "sha256": "eab16292a7f5aa3be02e125710bda0bedce1feaa77e364f4afdb1c6e98a59914"
+      }
+    ]
+  },
+  "command": {
+    "argv": [
+      "ccs",
+      "codex",
+      "-p",
+      "Pilot=gap-stale-sot-precedence; Scenario=stale-plan-vs-live-surface-conflict; Fixture CWD=fixture-root; Plugin checkout=plugin-root. The plugin checkout is contract source only; the fixture is the scenario Current/SoT repository. Source inventory (use only these refs; IDs/roles/types/paths): S1 | role=SoT | type=historical-plan | path=plans/bundle-rollout.md; C1 | role=Current | type=file-read | path=README.md; C2 | role=Current | type=file-read | path=commands/bundle.md. Read the exact contract sources from plugin checkout only as needed to follow the command: commands/gap.md, skills/gap/SKILL.md, .tigerkit/docs/output-contract.md. Invoke the public `/tk:gap` command exactly once on the listed refs. Do not read pilot.expected or pilot.must_observe. Do not edit the fixture, plugin checkout, or any other repository. Do not write a gap report, packet, state artifact, cache, settings, memory, or any file. Do not implement anything. Do not commit, reset, stash, checkout, resume, continue, or use prior sessions, memory, MCP, or another slash command. Return only the canonical gap report with source/evidence distinction, final gap classification, and one recommended next step.",
+      "--plugin-dir",
+      "plugin-root",
+      "--permission-mode",
+      "dontAsk",
+      "--allowedTools",
+      "Read,Grep,Glob,Bash",
+      "--max-turns",
+      "16",
+      "--no-session-persistence",
+      "--output-format",
+      "json"
+    ],
+    "argv_sha256": "ce00bf5c01904ad3c01b92b5ea33d0409494420daec7c677ab32e54c3b0fe874",
+    "invocation_cwd": "fixture-root",
+    "plugin_dir": "plugin-root",
+    "permission_mode": "dontAsk",
+    "allowed_tools": [
+      "Read",
+      "Grep",
+      "Glob",
+      "Bash"
+    ],
+    "max_turns": 16,
+    "session_persistence": false,
+    "prompt_sha256": "a40be46dded56ec3463d62facd35c05b8aaa6f8a7e8b0bba23110198e16480fb",
+    "prompt_byte_length": 1189
+  },
+  "tool_evidence": {
+    "plugin_command": {
+      "executable": "ccs",
+      "subcommand": "codex",
+      "public_surface": "/tk:gap",
+      "argv": [
+        "ccs",
+        "codex",
+        "-p",
+        "Pilot=gap-stale-sot-precedence; Scenario=stale-plan-vs-live-surface-conflict; Fixture CWD=fixture-root; Plugin checkout=plugin-root. The plugin checkout is contract source only; the fixture is the scenario Current/SoT repository. Source inventory (use only these refs; IDs/roles/types/paths): S1 | role=SoT | type=historical-plan | path=plans/bundle-rollout.md; C1 | role=Current | type=file-read | path=README.md; C2 | role=Current | type=file-read | path=commands/bundle.md. Read the exact contract sources from plugin checkout only as needed to follow the command: commands/gap.md, skills/gap/SKILL.md, .tigerkit/docs/output-contract.md. Invoke the public `/tk:gap` command exactly once on the listed refs. Do not read pilot.expected or pilot.must_observe. Do not edit the fixture, plugin checkout, or any other repository. Do not write a gap report, packet, state artifact, cache, settings, memory, or any file. Do not implement anything. Do not commit, reset, stash, checkout, resume, continue, or use prior sessions, memory, MCP, or another slash command. Return only the canonical gap report with source/evidence distinction, final gap classification, and one recommended next step.",
+        "--plugin-dir",
+        "plugin-root",
+        "--permission-mode",
+        "dontAsk",
+        "--allowedTools",
+        "Read,Grep,Glob,Bash",
+        "--max-turns",
+        "16",
+        "--no-session-persistence",
+        "--output-format",
+        "json"
+      ],
+      "invocation_cwd": "fixture-root",
+      "plugin_dir": "plugin-root"
+    },
+    "consumer_envelope": {
+      "session_id": "4c5e0b90-ff30-4acf-9268-c4b0784896dd",
+      "type": "result",
+      "subtype": "success",
+      "is_error": false,
+      "stop_reason": "end_turn",
+      "terminal_reason": "completed",
+      "num_turns": 9,
+      "permission_denials": []
+    }
+  },
+  "runtime": {
+    "model_usage": {
+      "gpt-5.4-mini(low)": {
+        "inputTokens": 877,
+        "outputTokens": 30,
+        "cacheReadInputTokens": 0,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.005135,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000
+      },
+      "gpt-5.5(high)": {
+        "inputTokens": 35429,
+        "outputTokens": 2210,
+        "cacheReadInputTokens": 46080,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.25543499999999997,
+        "contextWindow": 200000,
+        "maxOutputTokens": 32000
+      }
+    },
+    "model_usage_keys": [
+      "gpt-5.4-mini(low)",
+      "gpt-5.5(high)"
+    ],
+    "observed_result": {
+      "type": "result",
+      "subtype": "success",
+      "is_error": false,
+      "stop_reason": "end_turn",
+      "terminal_reason": "completed",
+      "num_turns": 9,
+      "permission_denials": []
+    }
+  },
+  "consumer_output": {
+    "result": "📊 Gap summary:\n| Area | SoT | Current | Gap | Impact | Priority |\n|---|---|---|---|---|---|\n| `/bundle` public surface | `S1` says `plans/bundle-rollout.md` is “historical and superseded planning proposal”, while also stating `/bundle --format table` and “does not include JSON output” | `C1` and `C2` both state the live/current command is `/bundle --format json` and returns JSON containing `items` | `ambiguous` source conflict / stale SoT precedence risk | A historical superseded plan conflicts with current live docs; changing implementation to match `S1` would likely regress the current public surface without an owner precedence decision | P1 |\n\n📝 Findings:\n### 1. Stale historical plan conflicts with live `/bundle --format json` surface\n- SoT: `S1` (`plans/bundle-rollout.md`) is marked “Status: historical and superseded planning proposal” but says first release should expose `/bundle --format table` and exclude JSON output.\n- Current: `C1` (`README.md`) says “The live public command is `/bundle --format json`” and returns a JSON object with `items`; `C2` (`commands/bundle.md`) says the current direct command reference is `/bundle --format json` and returns JSON containing `items`.\n- Evidence: `S1` lines 3, 5-7; `C1` lines 3, 5-7; `C2` lines 3-9.\n- Evidence type: `file-read` for all listed refs.\n- Impact: The apparent SoT requirement is internally stale/superseded and contradicts current live/reference docs, so the safe conclusion is not “Current is wrong” but “source precedence is unresolved.”\n- Priority: P1\n- Suggested fix: Resolve whether `S1` is allowed to override current live docs; if not, keep `/bundle --format json` as canonical and retire or relabel `S1` as non-authoritative evidence.\n- Route: decision\n- Route evidence: `S1` line 3 explicitly says historical/superseded, while `C1` line 5 and `C2` lines 3-7 identify the live/current command.\n\n⚠️ Ambiguities / Missing Evidence:\n| Ref | Question | Evidence checked | Impact | Recommendation |\n|---|---|---|---|---|\n| `S1` vs `C1`/`C2` | Does the source inventory role `SoT` override `S1`’s own “historical and superseded” status? | `S1` lines 3, 5-7; `C1` lines 3, 5-7; `C2` lines 3-9 | Final classification remains `ambiguous`, not `mismatch`, because the named SoT appears stale by its own content | Get owner/source-precedence decision before implementation |\n\n📝 Not accepted summary:\n- `missing` rejected: Current does contain a documented public `/bundle` surface.\n- `mismatch` rejected as final classification: the only conflicting SoT ref marks itself historical/superseded.\n- `overbuilt` rejected: no evidence that JSON output is outside the active live surface; `C1`/`C2` present it as current.\n\n▶️ Recommended next steps:\n1. Decide source precedence: either demote `S1` as stale historical planning evidence, or explicitly re-authorize it as active SoT before changing `/bundle --format json`.",
+    "result_sha256": "3bce331b67445f45ca553e8b8865d044e12a49cf5eeb9a4359c873ca117d6539",
+    "result_byte_length": 2939,
+    "raw_result_sha256": "3bce331b67445f45ca553e8b8865d044e12a49cf5eeb9a4359c873ca117d6539"
+  },
+  "gap_observation": {
+    "source_refs": [
+      {
+        "ref_id": "S1",
+        "role": "SoT",
+        "type": "historical-plan",
+        "path": "plans/bundle-rollout.md",
+        "access_status": "readable",
+        "sha256": "0fe98e176826832dc8b89e64c157b8ced3f56c3e21c97cc3c9f56efde505648f",
+        "byte_length": 237
+      },
+      {
+        "ref_id": "C1",
+        "role": "Current",
+        "type": "file-read",
+        "path": "README.md",
+        "access_status": "readable",
+        "sha256": "86aa158768cee919c45a74959a41cce1eb9ee0cdfdfb9946011885bb694d873f",
+        "byte_length": 159
+      },
+      {
+        "ref_id": "C2",
+        "role": "Current",
+        "type": "file-read",
+        "path": "commands/bundle.md",
+        "access_status": "readable",
+        "sha256": "6c6e73200aa0b94e7405c604cfa6604bd047d45d38182742b30127d680da3a2a",
+        "byte_length": 144
+      }
+    ],
+    "source_manifest_sha256": "d2ddac14afe0af52d3fb77f85dabe10d966ce1b48c768922041b2a2cf76af0fd",
+    "current_evidence": [
+      {
+        "evidence_id": "C1",
+        "type": "file-read",
+        "strength": "direct"
+      },
+      {
+        "evidence_id": "C2",
+        "type": "file-read",
+        "strength": "direct"
+      }
+    ],
+    "precedence": {
+      "status": "unresolved",
+      "resolved_order": [],
+      "conflicts": [
+        "S1",
+        "C1",
+        "C2"
+      ],
+      "note": "Historical planning prose and live surface evidence have no owner-confirmed priority."
+    },
+    "final_classification": "ambiguous",
+    "recommendation": "1. Decide source precedence: either demote `S1` as stale historical planning evidence, or explicitly re-authorize it as active SoT before changing `/bundle --format json`.",
+    "direct_implementation_evidence": [],
+    "direct_runtime_evidence": [],
+    "direct_command_output_evidence": [],
+    "direct_rendered_output_evidence": [],
+    "direct_diff_evidence": []
+  },
+  "fixture": {
+    "invocation_cwd": "fixture-root",
+    "git_root": "fixture-root",
+    "git_before": {
+      "rev_parse_status": 0,
+      "branch_status": 0,
+      "status_command_status": 0,
+      "staged_command_status": 0,
+      "unstaged_command_status": 0,
+      "head": "33bc8c2cb1724342e66e8c192b8c25a36224f516",
+      "branch": "main",
+      "status_porcelain": [],
+      "staged_paths": [],
+      "unstaged_paths": []
+    },
+    "git_after": {
+      "rev_parse_status": 0,
+      "branch_status": 0,
+      "status_command_status": 0,
+      "staged_command_status": 0,
+      "unstaged_command_status": 0,
+      "head": "33bc8c2cb1724342e66e8c192b8c25a36224f516",
+      "branch": "main",
+      "status_porcelain": [],
+      "staged_paths": [],
+      "unstaged_paths": []
+    },
+    "fixture_inventory_before": [
+      {
+        "path": "fixture-root/README.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 159,
+        "sha256": "86aa158768cee919c45a74959a41cce1eb9ee0cdfdfb9946011885bb694d873f"
+      },
+      {
+        "path": "fixture-root/commands",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "fixture-root/commands/bundle.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 144,
+        "sha256": "6c6e73200aa0b94e7405c604cfa6604bd047d45d38182742b30127d680da3a2a"
+      },
+      {
+        "path": "fixture-root/plans",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "fixture-root/plans/bundle-rollout.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 237,
+        "sha256": "0fe98e176826832dc8b89e64c157b8ced3f56c3e21c97cc3c9f56efde505648f"
+      }
+    ],
+    "fixture_inventory_after": [
+      {
+        "path": "fixture-root/README.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 159,
+        "sha256": "86aa158768cee919c45a74959a41cce1eb9ee0cdfdfb9946011885bb694d873f"
+      },
+      {
+        "path": "fixture-root/commands",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "fixture-root/commands/bundle.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 144,
+        "sha256": "6c6e73200aa0b94e7405c604cfa6604bd047d45d38182742b30127d680da3a2a"
+      },
+      {
+        "path": "fixture-root/plans",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "fixture-root/plans/bundle-rollout.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 237,
+        "sha256": "0fe98e176826832dc8b89e64c157b8ced3f56c3e21c97cc3c9f56efde505648f"
+      }
+    ],
+    "changed_paths": [],
+    "fallback_writes": []
+  },
+  "state_root": {
+    "requested": "state-root",
+    "observed_root": "state-root",
+    "honored": true,
+    "inventory_before": [],
+    "inventory_after": []
+  },
+  "temporary_home_tigerkit": {
+    "root": "temporary-home/.tigerkit",
+    "inventory_before": [],
+    "inventory_after": []
+  },
+  "privacy": {
+    "normalized_paths": [
+      "fixture-root",
+      "plugin-root",
+      "state-root",
+      "temporary-home"
+    ]
+  }
+}

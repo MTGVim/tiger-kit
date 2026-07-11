@@ -1,0 +1,201 @@
+{
+  "schemaVersion": "tigerkit.full-gap-stale-sot-precedence-results/v1",
+  "pilot_id": "gap-stale-sot-precedence",
+  "kind": "full-real-agent-results",
+  "status": "full-validated",
+  "evidence_tier": "full-real-agent",
+  "evidence_scope": "internal consistency record; not independent authenticity",
+  "runtime": {
+    "wrapper": "ccs codex",
+    "wrapper_version": "CCS (Claude Code Switch) v8.6.1",
+    "provider": "openai-codex",
+    "consumer": "Claude Code",
+    "consumer_version": "2.1.150 (Claude Code)",
+    "model": "gpt-5.5(high)",
+    "plugin_commit": "731c8ea9d8b47011d808020df6ccae6f54d1ca99",
+    "invocation": {
+      "executable": "ccs",
+      "subcommand": "codex",
+      "permission_mode": "dontAsk",
+      "allowed_tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash"
+      ],
+      "max_turns": 16,
+      "session_persistence": false,
+      "output_format": "json",
+      "paths": "per-scenario logical fixture/plugin/state/home tokens are recorded in each raw source"
+    }
+  },
+  "contract_blobs": [
+    {
+      "path": "commands/gap.md",
+      "sha256": "2d985b65acb65b10a811b136d6c705e0dd6c99fba449cb897a4f414dabcedd1d"
+    },
+    {
+      "path": "skills/gap/SKILL.md",
+      "sha256": "1f40267d304b90f96c7cfcc2bf3e6902d48f17815ae76312b17eaa7ac44f3828"
+    },
+    {
+      "path": ".tigerkit/docs/output-contract.md",
+      "sha256": "eab16292a7f5aa3be02e125710bda0bedce1feaa77e364f4afdb1c6e98a59914"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "stale-plan-vs-live-surface-conflict",
+      "source_path": "evals/results/raw/full-gap-stale-sot-precedence/stale-plan-vs-live-surface-conflict.json",
+      "source_sha256": "f4936e9105a8f71fc6e7a975b650154208aaceed8a9e246f4381dc8018021c9b",
+      "session_id": "4c5e0b90-ff30-4acf-9268-c4b0784896dd",
+      "prompt_sha256": "a40be46dded56ec3463d62facd35c05b8aaa6f8a7e8b0bba23110198e16480fb",
+      "prompt_byte_length": 1189,
+      "assistant_result_sha256": "3bce331b67445f45ca553e8b8865d044e12a49cf5eeb9a4359c873ca117d6539",
+      "assistant_result_byte_length": 2939,
+      "succeeded": true,
+      "observed_result": {
+        "type": "result",
+        "subtype": "success",
+        "is_error": false,
+        "stop_reason": "end_turn",
+        "terminal_reason": "completed",
+        "num_turns": 9,
+        "permission_denials": []
+      },
+      "model": "gpt-5.5(high)",
+      "model_usage_keys": [
+        "gpt-5.4-mini(low)",
+        "gpt-5.5(high)"
+      ],
+      "modelUsage": {
+        "gpt-5.4-mini(low)": {
+          "inputTokens": 877,
+          "outputTokens": 30,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 0,
+          "costUSD": 0.005135,
+          "contextWindow": 200000,
+          "maxOutputTokens": 32000
+        },
+        "gpt-5.5(high)": {
+          "inputTokens": 35429,
+          "outputTokens": 2210,
+          "cacheReadInputTokens": 46080,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 0,
+          "costUSD": 0.25543499999999997,
+          "contextWindow": 200000,
+          "maxOutputTokens": 32000
+        }
+      },
+      "source_manifest_sha256": "d2ddac14afe0af52d3fb77f85dabe10d966ce1b48c768922041b2a2cf76af0fd",
+      "final_classification": "ambiguous",
+      "recommendation": "1. Decide source precedence: either demote `S1` as stale historical planning evidence, or explicitly re-authorize it as active SoT before changing `/bundle --format json`.",
+      "result_contains_prompt_refs": true
+    },
+    {
+      "id": "unresolved-source-precedence-stays-ambiguous",
+      "source_path": "evals/results/raw/full-gap-stale-sot-precedence/unresolved-source-precedence-stays-ambiguous.json",
+      "source_sha256": "88d106139317e811f70120536dfb87e3a07e744e8f94893f40af88c0e36183f6",
+      "session_id": "fdaf2062-aa68-4ce1-9985-47a89aed4d46",
+      "prompt_sha256": "27ea7f8803b539af6e124011a8af992bca16704a6cff2c3d4cded7ad10501474",
+      "prompt_byte_length": 1259,
+      "assistant_result_sha256": "7d7a5f66593b86cc5dc386998616c452e948bc519a4f97473ce8bada3b990831",
+      "assistant_result_byte_length": 2291,
+      "succeeded": true,
+      "observed_result": {
+        "type": "result",
+        "subtype": "success",
+        "is_error": false,
+        "stop_reason": "end_turn",
+        "terminal_reason": "completed",
+        "num_turns": 10,
+        "permission_denials": []
+      },
+      "model": "gpt-5.5(high)",
+      "model_usage_keys": [
+        "gpt-5.4-mini(low)",
+        "gpt-5.5(high)"
+      ],
+      "modelUsage": {
+        "gpt-5.4-mini(low)": {
+          "inputTokens": 898,
+          "outputTokens": 32,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 0,
+          "costUSD": 0.0052899999999999996,
+          "contextWindow": 200000,
+          "maxOutputTokens": 32000
+        },
+        "gpt-5.5(high)": {
+          "inputTokens": 20849,
+          "outputTokens": 2138,
+          "cacheReadInputTokens": 92672,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 0,
+          "costUSD": 0.20403100000000002,
+          "contextWindow": 200000,
+          "maxOutputTokens": 32000
+        }
+      },
+      "source_manifest_sha256": "d21c95f5106f7ba63883fd25e2ce0e39eb00760e8b79497e44402091bc03d2e7",
+      "final_classification": "ambiguous",
+      "recommendation": "1. S1/S2의 source precedence를 결정해 “S2가 S1의 launch-window scoped exception인지”를 명시한 뒤, 그 결정에 맞춰 Current implementation evidence를 다시 확인합니다.",
+      "result_contains_prompt_refs": true
+    },
+    {
+      "id": "plan-only-current-is-not-implementation-proof",
+      "source_path": "evals/results/raw/full-gap-stale-sot-precedence/plan-only-current-is-not-implementation-proof.json",
+      "source_sha256": "5aa23f83747e7ce3652b9d3b4bc65de50bf5619b55bbf84790e034732473d567",
+      "session_id": "6897964a-b2ed-4407-ade2-16b054d470d0",
+      "prompt_sha256": "37054f44ca45921450dd1a14c098e315ce8489b9f16c61200ff63865b42ac852",
+      "prompt_byte_length": 1549,
+      "assistant_result_sha256": "61cee17bfdaf26ff56c5826a0cfc867c5dad971e10d40df985fbe4d92e28b82e",
+      "assistant_result_byte_length": 2323,
+      "succeeded": true,
+      "observed_result": {
+        "type": "result",
+        "subtype": "success",
+        "is_error": false,
+        "stop_reason": "end_turn",
+        "terminal_reason": "completed",
+        "num_turns": 6,
+        "permission_denials": []
+      },
+      "model": "gpt-5.5(high)",
+      "model_usage_keys": [
+        "gpt-5.4-mini(low)",
+        "gpt-5.5(high)"
+      ],
+      "modelUsage": {
+        "gpt-5.4-mini(low)": {
+          "inputTokens": 939,
+          "outputTokens": 60,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 0,
+          "costUSD": 0.006194999999999999,
+          "contextWindow": 200000,
+          "maxOutputTokens": 32000
+        },
+        "gpt-5.5(high)": {
+          "inputTokens": 11232,
+          "outputTokens": 1732,
+          "cacheReadInputTokens": 60416,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 0,
+          "costUSD": 0.129668,
+          "contextWindow": 200000,
+          "maxOutputTokens": 32000
+        }
+      },
+      "source_manifest_sha256": "547311efc19e33cb460a0e7cb943a1dc35185a071951414a2fffd5069097a94e",
+      "final_classification": "missing",
+      "recommendation": "1. Inspect or produce direct implementation/runtime evidence for `/alert-bundle --severity <level>` returning JSON with the requested severity.",
+      "result_contains_prompt_refs": true
+    }
+  ]
+}

@@ -206,7 +206,11 @@ def validate_inventory() -> None:
         fail(f"{PILOT_DIR.relative_to(ROOT)} contains unexpected directories: {sorted(pilot_dirs)!r}")
 
     result_files = {entry.name for entry in result_entries if entry.is_file()}
-    if result_files != {RESULT_PATH.name, FULL_RESULT_PATH.name}:
+    if result_files != {
+        RESULT_PATH.name,
+        FULL_RESULT_PATH.name,
+        "full-gap-stale-sot-precedence.json",
+    }:
         fail(f"{RESULTS_DIR.relative_to(ROOT)} contains unexpected result files: {sorted(result_files)!r}")
     result_dirs = {entry.name for entry in result_entries if entry.is_dir()}
     if result_dirs != {"raw"}:
@@ -218,7 +222,11 @@ def validate_inventory() -> None:
     if raw_files:
         fail(f"{raw_parent.relative_to(ROOT)} contains unexpected files: {sorted(raw_files)!r}")
     raw_dirs = {entry.name for entry in raw_entries if entry.is_dir()}
-    if raw_dirs != {RAW_DIR.name, FULL_RAW_DIR.name}:
+    if raw_dirs != {
+        RAW_DIR.name,
+        FULL_RAW_DIR.name,
+        "full-gap-stale-sot-precedence",
+    }:
         fail(f"{raw_parent.relative_to(ROOT)} contains unexpected directories: {sorted(raw_dirs)!r}")
 
 
