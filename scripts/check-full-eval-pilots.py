@@ -164,12 +164,12 @@ GAP_CONTRACT_BLOB_LIST = [
 ]
 GAP_SOURCE_HASHES = {
     "stale-plan-vs-live-surface-conflict": "5a3f67558eb97c0eaf67fa1205333840c909603ea3cbf9c930ee1020a702bf38",
-    "unresolved-source-precedence-stays-ambiguous": "08f402fac5055d788f4f8fe5c3330e164c33042aa9ecbced6026793191bc3653",
+    "unresolved-source-precedence-stays-ambiguous": "aebeff84b809e271d3c45f397b158043ea6b6db0b28be1b22ed13e62de9f02ee",
     "plan-only-current-is-not-implementation-proof": "90cb5ab9f95ab16d4ce0d510eb62ce8444e48684fafd875fc16c0f917749eb57",
 }
 GAP_RESULT_HASHES = {
     "stale-plan-vs-live-surface-conflict": ("2e5bc64a965aab186fe6df8523325e470e328865bb8ecd1a789703026e4bc409", 1986),
-    "unresolved-source-precedence-stays-ambiguous": ("522c67b1f0edc0947ca9a7b72b00410a4cee6669e0c34f01ced9fcf9df3224f9", 2136),
+    "unresolved-source-precedence-stays-ambiguous": ("6944fe8cec08ff42268455d811dd60966cbe6a1301bb0c513077e94db736628a", 2413),
     "plan-only-current-is-not-implementation-proof": ("0744fbcebd7bf9755d01c4383bb0bfb071ead0ef7b6a06ef2c6538d697524ef3", 2418),
 }
 GAP_PROMPT_HASHES = {
@@ -189,7 +189,7 @@ GAP_ARGV_HASHES = {
 }
 GAP_MODEL_USAGE_HASHES = {
     "stale-plan-vs-live-surface-conflict": "88c2e51a202b3c0efac9da92db98ea42f82ab4102faf96ca33e731ea095d65c5",
-    "unresolved-source-precedence-stays-ambiguous": "db8b443111000327186c72469b4a2664cc807cfbbee757b36eac6f8cf068a934",
+    "unresolved-source-precedence-stays-ambiguous": "5b0b580543999e4ebfde5ea8bb7f56fb9f88fd690b270c4d36f563478407e956",
     "plan-only-current-is-not-implementation-proof": "e8ee06b252c767b3196bc38ad561d4c282bdc9f4c7b42938ad5b0afb5e559d8d",
 }
 GAP_SOURCE_MANIFEST_HASHES = {
@@ -199,17 +199,17 @@ GAP_SOURCE_MANIFEST_HASHES = {
 }
 GAP_SESSION_IDS = {
     "stale-plan-vs-live-surface-conflict": "4ee18f5e-a32e-4ba9-9ea8-7855ab87b9ac",
-    "unresolved-source-precedence-stays-ambiguous": "9cfd540a-0a0a-4b82-9cd0-2fc385b99b4a",
+    "unresolved-source-precedence-stays-ambiguous": "cf3b0a35-3322-4eba-8ae0-35ce44a09621",
     "plan-only-current-is-not-implementation-proof": "da456140-839e-4bd1-97f5-601bde118d58",
 }
 GAP_TURNS = {
     "stale-plan-vs-live-surface-conflict": 12,
-    "unresolved-source-precedence-stays-ambiguous": 9,
+    "unresolved-source-precedence-stays-ambiguous": 12,
     "plan-only-current-is-not-implementation-proof": 6,
 }
 GAP_FIXTURE_HEADS = {
     "stale-plan-vs-live-surface-conflict": "38908ed41ed98c46ec7cc166ac34a8e2b00e3540",
-    "unresolved-source-precedence-stays-ambiguous": "acb6378a0698a79c2cf840d2f8ac386d99678308",
+    "unresolved-source-precedence-stays-ambiguous": "109630b6a923533d4fb3b0457359dd275aa3e8bb",
     "plan-only-current-is-not-implementation-proof": "ea8a954975b7be08c60cac25f6e0941cb01d7ba6",
 }
 GAP_FIXTURE_INVENTORY_HASHES = {
@@ -224,7 +224,7 @@ GAP_FINAL_CLASSIFICATIONS = {
 }
 GAP_RECOMMENDATIONS = {
     "stale-plan-vs-live-surface-conflict": "1. S1 `plans/bundle-rollout.md`를 현재 SoT에서 제외하거나 최신 contract로 갱신할지 owner가 결정한 뒤, `/bundle` canonical surface를 하나로 고정합니다.",
-    "unresolved-source-precedence-stays-ambiguous": "1. Decide whether S1’s launch-window unauthenticated access takes precedence over C2’s authenticated-operator rule, then update the losing source/current surface accordingly.",
+    "unresolved-source-precedence-stays-ambiguous": "1. `decision`: source owner가 S1과 S2의 precedence를 결정해 `/bundle` launch-window unauthenticated access가 intended exception인지 명시합니다.",
     "plan-only-current-is-not-implementation-proof": "1. Inspect the actual implementation or run `/alert-bundle --severity <level>` to obtain direct evidence, then compare that evidence against S1.",
 }
 GAP_SOURCE_REFS = {
@@ -2160,6 +2160,14 @@ def full_validate_gap_source(path: Path, record: dict[str, Any], scenario_id: st
     for ref in GAP_SOURCE_REFS[scenario_id]:
         if ref["ref_id"] not in assistant_result:
             fail(f"{label}.consumer_output.result must visibly preserve source ref {ref['ref_id']!r}")
+    if scenario_id == "unresolved-source-precedence-stays-ambiguous":
+        required_claims = (
+            "S1 requires authenticated operator; S2 says launch window allows unauthenticated access",
+            "C1 lists `/bundle` and `/bundle --mode launch`; C2 lists `/bundle --mode launch`",
+            "| S1 vs S2 |",
+        )
+        if any(claim not in assistant_result for claim in required_claims):
+            fail(f"{label}.consumer_output.result must bind scenario2 claims to S1/S2 and C1/C2 roles")
 
     observation = gap_exact_object(
         source.get("gap_observation"),
@@ -2197,6 +2205,13 @@ def full_validate_gap_source(path: Path, record: dict[str, Any], scenario_id: st
     if observation.get("final_classification") != GAP_FINAL_CLASSIFICATIONS[scenario_id]:
         fail(f"{label}.gap_observation.final_classification must preserve the approved pilot classification")
     recommendation = require_nonempty_string(observation.get("recommendation"), f"{label}.gap_observation.recommendation")
+    if scenario_id == "unresolved-source-precedence-stays-ambiguous" and (
+        "S1" not in recommendation
+        or "S2" not in recommendation
+        or "C1" in recommendation
+        or "C2" in recommendation
+    ):
+        fail(f"{label}.gap_observation.recommendation must keep the source-precedence decision between S1 and S2")
     if recommendation != GAP_RECOMMENDATIONS[scenario_id]:
         fail(f"{label}.gap_observation.recommendation must preserve the approved next step")
     for field in (

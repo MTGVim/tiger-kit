@@ -2,7 +2,7 @@
   "schemaVersion": "tigerkit.full-gap-stale-sot-precedence-source/v1",
   "scenario_id": "unresolved-source-precedence-stays-ambiguous",
   "session": {
-    "session_id": "9cfd540a-0a0a-4b82-9cd0-2fc385b99b4a",
+    "session_id": "cf3b0a35-3322-4eba-8ae0-35ce44a09621",
     "fresh": true,
     "isolated": true,
     "write_free": false,
@@ -92,13 +92,13 @@
       "plugin_dir": "plugin-root"
     },
     "consumer_envelope": {
-      "session_id": "9cfd540a-0a0a-4b82-9cd0-2fc385b99b4a",
+      "session_id": "cf3b0a35-3322-4eba-8ae0-35ce44a09621",
       "type": "result",
       "subtype": "success",
       "is_error": false,
       "stop_reason": "end_turn",
       "terminal_reason": "completed",
-      "num_turns": 9,
+      "num_turns": 12,
       "permission_denials": []
     }
   },
@@ -106,21 +106,21 @@
     "model_usage": {
       "gpt-5.4-mini(low)": {
         "inputTokens": 864,
-        "outputTokens": 44,
+        "outputTokens": 66,
         "cacheReadInputTokens": 0,
         "cacheCreationInputTokens": 0,
         "webSearchRequests": 0,
-        "costUSD": 0.00542,
+        "costUSD": 0.0059700000000000005,
         "contextWindow": 200000,
         "maxOutputTokens": 32000
       },
       "gpt-5.5(high)": {
-        "inputTokens": 12526,
-        "outputTokens": 5860,
-        "cacheReadInputTokens": 110592,
+        "inputTokens": 27041,
+        "outputTokens": 2637,
+        "cacheReadInputTokens": 71168,
         "cacheCreationInputTokens": 0,
         "webSearchRequests": 0,
-        "costUSD": 0.264426,
+        "costUSD": 0.236714,
         "contextWindow": 200000,
         "maxOutputTokens": 32000
       }
@@ -135,15 +135,15 @@
       "is_error": false,
       "stop_reason": "end_turn",
       "terminal_reason": "completed",
-      "num_turns": 9,
+      "num_turns": 12,
       "permission_denials": []
     }
   },
   "consumer_output": {
-    "result": "📊 Gap summary:\n\n| Area | SoT | Current | Gap | Impact | Priority |\n|---|---|---|---|---|---|\n| `/bundle` launch-window authentication | S1 says during launch window `/bundle` is available without an authenticated session | C2 says `/bundle` requires an authenticated operator | `ambiguous` | Launch access rule cannot be safely implemented or documented until auth precedence is decided | P1 |\n| `/bundle --mode launch` command surface | S2 says current command surface includes `/bundle --mode launch` | C1 says public command surface includes `/bundle` and `/bundle --mode launch` | none observed in scoped file-read evidence | No command-surface gap found in listed refs | - |\n\n📝 Findings:\n\n없음. S1과 C2의 authentication rule conflict는 source/owner precedence가 확인되지 않아 actionable `missing`/`mismatch` finding으로 병합하지 않습니다.\n\n⚠️ Ambiguities / Missing Evidence:\n\n| Ref | Question | Evidence checked | Impact | Recommendation |\n|---|---|---|---|---|\n| S1 ↔ C2 | During launch window, does S1’s unauthenticated `/bundle` access override C2’s authenticated-operator requirement? | S1 `specs/bundle-auth.md:3`; C2 `commands/bundle.md:3`; evidence type: SoT specification file-read vs Current file-read | Wrong choice could either block intended launch access or weaken required operator auth | Get an owner/source-precedence decision before changing implementation or docs |\n| C1/C2 runtime evidence | Do the docs reflect actual runtime behavior? | C1 `README.md:3`; C2 `commands/bundle.md:3`; no command output, rendered output, diff, or runtime evidence inspected | File-read evidence alone cannot prove actual command behavior | After precedence is decided, verify against implementation/runtime evidence |\n\n📝 Not accepted summary:\n\n- Potential P1 `mismatch` between S1 and C2 was not accepted as a finding because unresolved source precedence must stay `ambiguous`.\n\n▶️ Recommended next steps:\n\n1. Decide whether S1’s launch-window unauthenticated access takes precedence over C2’s authenticated-operator rule, then update the losing source/current surface accordingly.",
-    "result_sha256": "522c67b1f0edc0947ca9a7b72b00410a4cee6669e0c34f01ced9fcf9df3224f9",
-    "result_byte_length": 2136,
-    "raw_result_sha256": "522c67b1f0edc0947ca9a7b72b00410a4cee6669e0c34f01ced9fcf9df3224f9"
+    "result": "📊 Gap summary:\n| Area | SoT | Current | Gap | Impact | Priority |\n|---|---|---|---|---|---|\n| `/bundle` authentication during launch | S1 requires authenticated operator; S2 says launch window allows unauthenticated access | C1 lists `/bundle` and `/bundle --mode launch`; C2 lists `/bundle --mode launch`; no runtime/auth behavior evidence | ambiguous | Cannot decide whether unauthenticated launch access is intended exception or violation | P1 |\n\n📝 Findings:\n없음. S1/S2 source precedence가 unresolved라서 actionable `missing`/`mismatch`로 분류하지 않습니다.\n\n⚠️ Ambiguities / Missing Evidence:\n| Ref | Question | Evidence checked | Impact | Recommendation |\n|---|---|---|---|---|\n| S1 vs S2 | `specs/bundle-auth.md`의 “`/bundle` requires an authenticated operator”가 `specs/bundle-launch.md`의 “During the launch window, `/bundle` is available without an authenticated session”보다 우선인지, 아니면 launch-window exception인지 불명확합니다. | S1 `specs/bundle-auth.md:3`; S2 `specs/bundle-launch.md:3` | Auth requirement를 구현/검증할 수 없고, unauthenticated launch access를 bug로 볼지 intended behavior로 볼지 결정 불가 | Source owner가 precedence를 결정해야 합니다. |\n| C1 vs C2 | Current command surface가 `/bundle` 전체를 포함하는지, launch mode만 포함하는지 불명확합니다. | C1 `README.md:3`; C2 `commands/bundle.md:3`; evidence type=file-read | Current surface 해석이 auth gap 판정에 영향을 줄 수 있습니다. | Source precedence 결정 후 Current surface도 같은 기준으로 정리합니다. |\n| Runtime auth behavior | 실제 `/bundle` 또는 `/bundle --mode launch` 실행 시 인증 요구 여부가 확인되지 않았습니다. | Current evidence는 file-read뿐이며 command/runtime/rendered evidence 없음 | 파일 문서만으로 구현 동작을 단정할 수 없습니다. | 필요 시 후속 단계에서 runtime/command evidence를 별도로 확인합니다. |\n\n📝 Not accepted summary:\n- S1/S2를 조용히 병합해 “launch exception”으로 확정하지 않았습니다.\n- Current 문서만으로 auth behavior 구현 완료 또는 부재를 단정하지 않았습니다.\n\n▶️ Recommended next steps:\n1. `decision`: source owner가 S1과 S2의 precedence를 결정해 `/bundle` launch-window unauthenticated access가 intended exception인지 명시합니다.",
+    "result_sha256": "6944fe8cec08ff42268455d811dd60966cbe6a1301bb0c513077e94db736628a",
+    "result_byte_length": 2413,
+    "raw_result_sha256": "6944fe8cec08ff42268455d811dd60966cbe6a1301bb0c513077e94db736628a"
   },
   "gap_observation": {
     "source_refs": [
@@ -207,7 +207,7 @@
       "note": "Both accessible SoT refs conflict and neither has priority, supersession, or approval metadata."
     },
     "final_classification": "ambiguous",
-    "recommendation": "1. Decide whether S1’s launch-window unauthenticated access takes precedence over C2’s authenticated-operator rule, then update the losing source/current surface accordingly.",
+    "recommendation": "1. `decision`: source owner가 S1과 S2의 precedence를 결정해 `/bundle` launch-window unauthenticated access가 intended exception인지 명시합니다.",
     "direct_implementation_evidence": [],
     "direct_runtime_evidence": [],
     "direct_command_output_evidence": [],
@@ -224,7 +224,7 @@
       "status_command_status": 0,
       "staged_command_status": 0,
       "unstaged_command_status": 0,
-      "head": "acb6378a0698a79c2cf840d2f8ac386d99678308",
+      "head": "109630b6a923533d4fb3b0457359dd275aa3e8bb",
       "branch": "main",
       "status_porcelain": [],
       "staged_paths": [],
@@ -236,7 +236,7 @@
       "status_command_status": 0,
       "staged_command_status": 0,
       "unstaged_command_status": 0,
-      "head": "acb6378a0698a79c2cf840d2f8ac386d99678308",
+      "head": "109630b6a923533d4fb3b0457359dd275aa3e8bb",
       "branch": "main",
       "status_porcelain": [],
       "staged_paths": [],
@@ -387,7 +387,7 @@
         "kind": "regular",
         "mode": "0o600",
         "size": 258,
-        "sha256": "c9fc4fed6f41c682b8fbd5152ef46406aba28159a1f31e0b939be6766f48a5d1"
+        "sha256": "aac03f22b88a20b014781c4be3c0ee39de5d809ec1f45d7f1fe99d753f731547"
       },
       {
         "path": "temporary-home/.claude/backups",
@@ -412,19 +412,19 @@
         "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
       },
       {
-        "path": "temporary-home/.claude/backups/.claude.json.backup.1783779026865",
+        "path": "temporary-home/.claude/backups/.claude.json.backup.1783783938692",
         "kind": "regular",
         "mode": "0o600",
         "size": 50,
-        "sha256": "5735edd619658d923cefdc95efdf372aa148a499d11e492005d2c5e9ccad30cd"
+        "sha256": "5398092869b1a8ac2cab71a58c1d8ba731de1e030e97033ca086625f9dc31d28"
       },
       {
-        "path": "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root",
+        "path": "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-r5-unresolved-source-precedence-stays-ambiguous-fixture-root",
         "kind": "directory",
         "mode": "0o775"
       },
       {
-        "path": "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root/memory",
+        "path": "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-r5-unresolved-source-precedence-stays-ambiguous-fixture-root/memory",
         "kind": "directory",
         "mode": "0o775"
       },
@@ -484,14 +484,14 @@
         "kind": "regular",
         "mode": "0o600",
         "size": 360,
-        "sha256": "2feb4a02c79b8fae6f3af5f9c3ea3beb0b23d966ef305ad4f8283404b9f8e0e1"
+        "sha256": "17d0b88fe609025aa720151a3eff2792bbd53fdd862e7c5e555dfd2ee59ac4c8"
       },
       {
         "path": "temporary-home/.claude/.last-cleanup",
         "kind": "regular",
         "mode": "0o664",
         "size": 24,
-        "sha256": "7bcf20d46c82e76209c232a870a06f2bb3f6a8bd7214bd579ea6d560cad07316"
+        "sha256": "69043db6f0bf37aad8cdec97279eeb42bc2b002b8a9a806d6366678e448d5d74"
       },
       {
         "path": "temporary-home/.claude/backups",
@@ -516,23 +516,23 @@
         "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
       },
       {
-        "path": "temporary-home/.claude/backups/.claude.json.backup.1783779026865",
+        "path": "temporary-home/.claude/backups/.claude.json.backup.1783783938692",
         "kind": "regular",
         "mode": "0o600",
         "size": 50,
-        "sha256": "5735edd619658d923cefdc95efdf372aa148a499d11e492005d2c5e9ccad30cd"
+        "sha256": "5398092869b1a8ac2cab71a58c1d8ba731de1e030e97033ca086625f9dc31d28"
       },
       {
-        "path": "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root",
+        "path": "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-r5-unresolved-source-precedence-stays-ambiguous-fixture-root",
         "kind": "directory",
         "mode": "0o775"
       },
       {
-        "path": "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root/9cfd540a-0a0a-4b82-9cd0-2fc385b99b4a.jsonl",
+        "path": "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-r5-unresolved-source-precedence-stays-ambiguous-fixture-root/cf3b0a35-3322-4eba-8ae0-35ce44a09621.jsonl",
         "kind": "regular",
         "mode": "0o600",
         "size": 117,
-        "sha256": "18980f8e0670a9563a78fe6f542bf5bd151ebf40c37a6dacfe432fcc4f842f84"
+        "sha256": "1198e449189aa71750db9b69b3a92d2ff04738c98c427c89a0dfd8fa849aba1e"
       },
       {
         "path": "temporary-home/.local/share",
@@ -548,8 +548,8 @@
     "changed_paths": [
       "temporary-home/.claude/.claude.json",
       "temporary-home/.claude/.last-cleanup",
-      "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root/9cfd540a-0a0a-4b82-9cd0-2fc385b99b4a.jsonl",
-      "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root/memory"
+      "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-r5-unresolved-source-precedence-stays-ambiguous-fixture-root/cf3b0a35-3322-4eba-8ae0-35ce44a09621.jsonl",
+      "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-r5-unresolved-source-precedence-stays-ambiguous-fixture-root/memory"
     ],
     "housekeeping": {
       "classification": "consumer_runtime_housekeeping",
@@ -557,8 +557,8 @@
       "paths": [
         "temporary-home/.claude/.claude.json",
         "temporary-home/.claude/.last-cleanup",
-        "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root/9cfd540a-0a0a-4b82-9cd0-2fc385b99b4a.jsonl",
-        "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root/memory"
+        "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-r5-unresolved-source-precedence-stays-ambiguous-fixture-root/cf3b0a35-3322-4eba-8ae0-35ce44a09621.jsonl",
+        "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-r5-unresolved-source-precedence-stays-ambiguous-fixture-root/memory"
       ]
     }
   },
@@ -800,7 +800,7 @@
         "kind": "regular",
         "mode": "0o600",
         "size": 463,
-        "sha256": "1b39e2c11e101ead19931b2810f6b398da596ff01dc9b9719759099f0ea48673"
+        "sha256": "20be13f0bdc456dc39fe1e10d7f0dc0cb15756bf12aeaac9ad7e0a89050dc09b"
       },
       {
         "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/issues/current.md",
@@ -1200,7 +1200,7 @@
         "kind": "regular",
         "mode": "0o600",
         "size": 463,
-        "sha256": "1b39e2c11e101ead19931b2810f6b398da596ff01dc9b9719759099f0ea48673"
+        "sha256": "20be13f0bdc456dc39fe1e10d7f0dc0cb15756bf12aeaac9ad7e0a89050dc09b"
       },
       {
         "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/issues/current.md",
@@ -1382,8 +1382,8 @@
     "runtime_home_changed_paths": [
       "temporary-home/.claude/.claude.json",
       "temporary-home/.claude/.last-cleanup",
-      "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root/9cfd540a-0a0a-4b82-9cd0-2fc385b99b4a.jsonl",
-      "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root/memory"
+      "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-r5-unresolved-source-precedence-stays-ambiguous-fixture-root/cf3b0a35-3322-4eba-8ae0-35ce44a09621.jsonl",
+      "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-r5-unresolved-source-precedence-stays-ambiguous-fixture-root/memory"
     ]
   },
   "privacy": {

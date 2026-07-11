@@ -98,12 +98,12 @@
     {
       "id": "unresolved-source-precedence-stays-ambiguous",
       "source_path": "evals/results/raw/full-gap-stale-sot-precedence/unresolved-source-precedence-stays-ambiguous.json",
-      "source_sha256": "08f402fac5055d788f4f8fe5c3330e164c33042aa9ecbced6026793191bc3653",
-      "session_id": "9cfd540a-0a0a-4b82-9cd0-2fc385b99b4a",
+      "source_sha256": "aebeff84b809e271d3c45f397b158043ea6b6db0b28be1b22ed13e62de9f02ee",
+      "session_id": "cf3b0a35-3322-4eba-8ae0-35ce44a09621",
       "prompt_sha256": "bca1e2facb9c83f0620f9edad9b88a62d2c20f68ce1837750c89474699ccaaca",
       "prompt_byte_length": 1221,
-      "assistant_result_sha256": "522c67b1f0edc0947ca9a7b72b00410a4cee6669e0c34f01ced9fcf9df3224f9",
-      "assistant_result_byte_length": 2136,
+      "assistant_result_sha256": "6944fe8cec08ff42268455d811dd60966cbe6a1301bb0c513077e94db736628a",
+      "assistant_result_byte_length": 2413,
       "succeeded": true,
       "observed_result": {
         "type": "result",
@@ -111,7 +111,7 @@
         "is_error": false,
         "stop_reason": "end_turn",
         "terminal_reason": "completed",
-        "num_turns": 9,
+        "num_turns": 12,
         "permission_denials": []
       },
       "model": "gpt-5.5(high)",
@@ -122,28 +122,28 @@
       "modelUsage": {
         "gpt-5.4-mini(low)": {
           "inputTokens": 864,
-          "outputTokens": 44,
+          "outputTokens": 66,
           "cacheReadInputTokens": 0,
           "cacheCreationInputTokens": 0,
           "webSearchRequests": 0,
-          "costUSD": 0.00542,
+          "costUSD": 0.0059700000000000005,
           "contextWindow": 200000,
           "maxOutputTokens": 32000
         },
         "gpt-5.5(high)": {
-          "inputTokens": 12526,
-          "outputTokens": 5860,
-          "cacheReadInputTokens": 110592,
+          "inputTokens": 27041,
+          "outputTokens": 2637,
+          "cacheReadInputTokens": 71168,
           "cacheCreationInputTokens": 0,
           "webSearchRequests": 0,
-          "costUSD": 0.264426,
+          "costUSD": 0.236714,
           "contextWindow": 200000,
           "maxOutputTokens": 32000
         }
       },
       "source_manifest_sha256": "5a371b302696dfd62db5cb5fd1ccbacf4bf6b512d22f533a174c91eaf290cfc3",
       "final_classification": "ambiguous",
-      "recommendation": "1. Decide whether S1’s launch-window unauthenticated access takes precedence over C2’s authenticated-operator rule, then update the losing source/current surface accordingly.",
+      "recommendation": "1. `decision`: source owner가 S1과 S2의 precedence를 결정해 `/bundle` launch-window unauthenticated access가 intended exception인지 명시합니다.",
       "result_contains_prompt_refs": true
     },
     {
