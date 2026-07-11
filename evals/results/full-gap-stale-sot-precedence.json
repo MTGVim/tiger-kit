@@ -12,7 +12,7 @@
     "consumer": "Claude Code",
     "consumer_version": "2.1.150 (Claude Code)",
     "model": "gpt-5.5(high)",
-    "plugin_commit": "731c8ea9d8b47011d808020df6ccae6f54d1ca99",
+    "plugin_commit": "09d58e90ec7fc4274ea371a4e8a5b9d012855534",
     "invocation": {
       "executable": "ccs",
       "subcommand": "codex",
@@ -32,7 +32,7 @@
   "contract_blobs": [
     {
       "path": "commands/gap.md",
-      "sha256": "2d985b65acb65b10a811b136d6c705e0dd6c99fba449cb897a4f414dabcedd1d"
+      "sha256": "4f64eafbbcc1d5191d90163e8d57768e90e5fbf20d2082267caf1a2cb701623d"
     },
     {
       "path": "skills/gap/SKILL.md",
@@ -47,12 +47,63 @@
     {
       "id": "stale-plan-vs-live-surface-conflict",
       "source_path": "evals/results/raw/full-gap-stale-sot-precedence/stale-plan-vs-live-surface-conflict.json",
-      "source_sha256": "f4936e9105a8f71fc6e7a975b650154208aaceed8a9e246f4381dc8018021c9b",
-      "session_id": "4c5e0b90-ff30-4acf-9268-c4b0784896dd",
-      "prompt_sha256": "a40be46dded56ec3463d62facd35c05b8aaa6f8a7e8b0bba23110198e16480fb",
-      "prompt_byte_length": 1189,
-      "assistant_result_sha256": "3bce331b67445f45ca553e8b8865d044e12a49cf5eeb9a4359c873ca117d6539",
-      "assistant_result_byte_length": 2939,
+      "source_sha256": "5a3f67558eb97c0eaf67fa1205333840c909603ea3cbf9c930ee1020a702bf38",
+      "session_id": "4ee18f5e-a32e-4ba9-9ea8-7855ab87b9ac",
+      "prompt_sha256": "aa374f7be8a77512e8f3868a14d4ccc963ddb52933b4dbcdb0b7ceaad0720da1",
+      "prompt_byte_length": 1151,
+      "assistant_result_sha256": "2e5bc64a965aab186fe6df8523325e470e328865bb8ecd1a789703026e4bc409",
+      "assistant_result_byte_length": 1986,
+      "succeeded": true,
+      "observed_result": {
+        "type": "result",
+        "subtype": "success",
+        "is_error": false,
+        "stop_reason": "end_turn",
+        "terminal_reason": "completed",
+        "num_turns": 12,
+        "permission_denials": []
+      },
+      "model": "gpt-5.5(high)",
+      "model_usage_keys": [
+        "gpt-5.4-mini(low)",
+        "gpt-5.5(high)"
+      ],
+      "modelUsage": {
+        "gpt-5.4-mini(low)": {
+          "inputTokens": 843,
+          "outputTokens": 30,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 0,
+          "costUSD": 0.004965,
+          "contextWindow": 200000,
+          "maxOutputTokens": 32000
+        },
+        "gpt-5.5(high)": {
+          "inputTokens": 13104,
+          "outputTokens": 3584,
+          "cacheReadInputTokens": 84992,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 0,
+          "costUSD": 0.19761599999999996,
+          "contextWindow": 200000,
+          "maxOutputTokens": 32000
+        }
+      },
+      "source_manifest_sha256": "f47d6689b5d14b6a1c5c1eba991977be4a320e4a4e6de9bc901fcd08a43d49a5",
+      "final_classification": "ambiguous",
+      "recommendation": "1. S1 `plans/bundle-rollout.md`를 현재 SoT에서 제외하거나 최신 contract로 갱신할지 owner가 결정한 뒤, `/bundle` canonical surface를 하나로 고정합니다.",
+      "result_contains_prompt_refs": true
+    },
+    {
+      "id": "unresolved-source-precedence-stays-ambiguous",
+      "source_path": "evals/results/raw/full-gap-stale-sot-precedence/unresolved-source-precedence-stays-ambiguous.json",
+      "source_sha256": "08f402fac5055d788f4f8fe5c3330e164c33042aa9ecbced6026793191bc3653",
+      "session_id": "9cfd540a-0a0a-4b82-9cd0-2fc385b99b4a",
+      "prompt_sha256": "bca1e2facb9c83f0620f9edad9b88a62d2c20f68ce1837750c89474699ccaaca",
+      "prompt_byte_length": 1221,
+      "assistant_result_sha256": "522c67b1f0edc0947ca9a7b72b00410a4cee6669e0c34f01ced9fcf9df3224f9",
+      "assistant_result_byte_length": 2136,
       "succeeded": true,
       "observed_result": {
         "type": "result",
@@ -70,91 +121,40 @@
       ],
       "modelUsage": {
         "gpt-5.4-mini(low)": {
-          "inputTokens": 877,
-          "outputTokens": 30,
+          "inputTokens": 864,
+          "outputTokens": 44,
           "cacheReadInputTokens": 0,
           "cacheCreationInputTokens": 0,
           "webSearchRequests": 0,
-          "costUSD": 0.005135,
+          "costUSD": 0.00542,
           "contextWindow": 200000,
           "maxOutputTokens": 32000
         },
         "gpt-5.5(high)": {
-          "inputTokens": 35429,
-          "outputTokens": 2210,
-          "cacheReadInputTokens": 46080,
+          "inputTokens": 12526,
+          "outputTokens": 5860,
+          "cacheReadInputTokens": 110592,
           "cacheCreationInputTokens": 0,
           "webSearchRequests": 0,
-          "costUSD": 0.25543499999999997,
+          "costUSD": 0.264426,
           "contextWindow": 200000,
           "maxOutputTokens": 32000
         }
       },
-      "source_manifest_sha256": "d2ddac14afe0af52d3fb77f85dabe10d966ce1b48c768922041b2a2cf76af0fd",
+      "source_manifest_sha256": "5a371b302696dfd62db5cb5fd1ccbacf4bf6b512d22f533a174c91eaf290cfc3",
       "final_classification": "ambiguous",
-      "recommendation": "1. Decide source precedence: either demote `S1` as stale historical planning evidence, or explicitly re-authorize it as active SoT before changing `/bundle --format json`.",
-      "result_contains_prompt_refs": true
-    },
-    {
-      "id": "unresolved-source-precedence-stays-ambiguous",
-      "source_path": "evals/results/raw/full-gap-stale-sot-precedence/unresolved-source-precedence-stays-ambiguous.json",
-      "source_sha256": "88d106139317e811f70120536dfb87e3a07e744e8f94893f40af88c0e36183f6",
-      "session_id": "fdaf2062-aa68-4ce1-9985-47a89aed4d46",
-      "prompt_sha256": "27ea7f8803b539af6e124011a8af992bca16704a6cff2c3d4cded7ad10501474",
-      "prompt_byte_length": 1259,
-      "assistant_result_sha256": "7d7a5f66593b86cc5dc386998616c452e948bc519a4f97473ce8bada3b990831",
-      "assistant_result_byte_length": 2291,
-      "succeeded": true,
-      "observed_result": {
-        "type": "result",
-        "subtype": "success",
-        "is_error": false,
-        "stop_reason": "end_turn",
-        "terminal_reason": "completed",
-        "num_turns": 10,
-        "permission_denials": []
-      },
-      "model": "gpt-5.5(high)",
-      "model_usage_keys": [
-        "gpt-5.4-mini(low)",
-        "gpt-5.5(high)"
-      ],
-      "modelUsage": {
-        "gpt-5.4-mini(low)": {
-          "inputTokens": 898,
-          "outputTokens": 32,
-          "cacheReadInputTokens": 0,
-          "cacheCreationInputTokens": 0,
-          "webSearchRequests": 0,
-          "costUSD": 0.0052899999999999996,
-          "contextWindow": 200000,
-          "maxOutputTokens": 32000
-        },
-        "gpt-5.5(high)": {
-          "inputTokens": 20849,
-          "outputTokens": 2138,
-          "cacheReadInputTokens": 92672,
-          "cacheCreationInputTokens": 0,
-          "webSearchRequests": 0,
-          "costUSD": 0.20403100000000002,
-          "contextWindow": 200000,
-          "maxOutputTokens": 32000
-        }
-      },
-      "source_manifest_sha256": "d21c95f5106f7ba63883fd25e2ce0e39eb00760e8b79497e44402091bc03d2e7",
-      "final_classification": "ambiguous",
-      "recommendation": "1. S1/S2의 source precedence를 결정해 “S2가 S1의 launch-window scoped exception인지”를 명시한 뒤, 그 결정에 맞춰 Current implementation evidence를 다시 확인합니다.",
+      "recommendation": "1. Decide whether S1’s launch-window unauthenticated access takes precedence over C2’s authenticated-operator rule, then update the losing source/current surface accordingly.",
       "result_contains_prompt_refs": true
     },
     {
       "id": "plan-only-current-is-not-implementation-proof",
       "source_path": "evals/results/raw/full-gap-stale-sot-precedence/plan-only-current-is-not-implementation-proof.json",
-      "source_sha256": "5aa23f83747e7ce3652b9d3b4bc65de50bf5619b55bbf84790e034732473d567",
-      "session_id": "6897964a-b2ed-4407-ade2-16b054d470d0",
-      "prompt_sha256": "37054f44ca45921450dd1a14c098e315ce8489b9f16c61200ff63865b42ac852",
-      "prompt_byte_length": 1549,
-      "assistant_result_sha256": "61cee17bfdaf26ff56c5826a0cfc867c5dad971e10d40df985fbe4d92e28b82e",
-      "assistant_result_byte_length": 2323,
+      "source_sha256": "90cb5ab9f95ab16d4ce0d510eb62ce8444e48684fafd875fc16c0f917749eb57",
+      "session_id": "da456140-839e-4bd1-97f5-601bde118d58",
+      "prompt_sha256": "67ed109b3ed22ba4c495abce49e1ddd5fce686b7006d568b23b7ce9b30ecd277",
+      "prompt_byte_length": 1218,
+      "assistant_result_sha256": "0744fbcebd7bf9755d01c4383bb0bfb071ead0ef7b6a06ef2c6538d697524ef3",
+      "assistant_result_byte_length": 2418,
       "succeeded": true,
       "observed_result": {
         "type": "result",
@@ -172,29 +172,29 @@
       ],
       "modelUsage": {
         "gpt-5.4-mini(low)": {
-          "inputTokens": 939,
-          "outputTokens": 60,
+          "inputTokens": 853,
+          "outputTokens": 33,
           "cacheReadInputTokens": 0,
           "cacheCreationInputTokens": 0,
           "webSearchRequests": 0,
-          "costUSD": 0.006194999999999999,
+          "costUSD": 0.00509,
           "contextWindow": 200000,
           "maxOutputTokens": 32000
         },
         "gpt-5.5(high)": {
-          "inputTokens": 11232,
-          "outputTokens": 1732,
+          "inputTokens": 11384,
+          "outputTokens": 1820,
           "cacheReadInputTokens": 60416,
           "cacheCreationInputTokens": 0,
           "webSearchRequests": 0,
-          "costUSD": 0.129668,
+          "costUSD": 0.132628,
           "contextWindow": 200000,
           "maxOutputTokens": 32000
         }
       },
-      "source_manifest_sha256": "547311efc19e33cb460a0e7cb943a1dc35185a071951414a2fffd5069097a94e",
+      "source_manifest_sha256": "1a45f1e3f778c036c31362224c3646fb77531f9c06a0556b0f3a734fd31a4362",
       "final_classification": "missing",
-      "recommendation": "1. Inspect or produce direct implementation/runtime evidence for `/alert-bundle --severity <level>` returning JSON with the requested severity.",
+      "recommendation": "1. Inspect the actual implementation or run `/alert-bundle --severity <level>` to obtain direct evidence, then compare that evidence against S1.",
       "result_contains_prompt_refs": true
     }
   ]

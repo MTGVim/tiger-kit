@@ -2,10 +2,10 @@
   "schemaVersion": "tigerkit.full-gap-stale-sot-precedence-source/v1",
   "scenario_id": "unresolved-source-precedence-stays-ambiguous",
   "session": {
-    "session_id": "fdaf2062-aa68-4ce1-9985-47a89aed4d46",
+    "session_id": "9cfd540a-0a0a-4b82-9cd0-2fc385b99b4a",
     "fresh": true,
     "isolated": true,
-    "write_free": true,
+    "write_free": false,
     "consumer": "Claude Code",
     "consumer_version": "2.1.150 (Claude Code)",
     "wrapper": "ccs codex",
@@ -17,11 +17,11 @@
   "plugin": {
     "path": "plugin-root",
     "repo_id": "tiger-kit",
-    "commit": "731c8ea9d8b47011d808020df6ccae6f54d1ca99",
+    "commit": "09d58e90ec7fc4274ea371a4e8a5b9d012855534",
     "contract_blobs": [
       {
         "path": "commands/gap.md",
-        "sha256": "2d985b65acb65b10a811b136d6c705e0dd6c99fba449cb897a4f414dabcedd1d"
+        "sha256": "4f64eafbbcc1d5191d90163e8d57768e90e5fbf20d2082267caf1a2cb701623d"
       },
       {
         "path": "skills/gap/SKILL.md",
@@ -38,7 +38,7 @@
       "ccs",
       "codex",
       "-p",
-      "Pilot=gap-stale-sot-precedence; Scenario=unresolved-source-precedence-stays-ambiguous; Fixture CWD=fixture-root; Plugin checkout=plugin-root. The plugin checkout is contract source only; the fixture is the scenario Current/SoT repository. Source inventory (use only these refs; IDs/roles/types/paths): S1 | role=SoT | type=specification | path=specs/bundle-auth.md; S2 | role=SoT | type=specification | path=specs/bundle-launch.md; C1 | role=Current | type=file-read | path=README.md; C2 | role=Current | type=file-read | path=commands/bundle.md. Read the exact contract sources from plugin checkout only as needed to follow the command: commands/gap.md, skills/gap/SKILL.md, .tigerkit/docs/output-contract.md. Invoke the public `/tk:gap` command exactly once on the listed refs. Do not read pilot.expected or pilot.must_observe. Do not edit the fixture, plugin checkout, or any other repository. Do not write a gap report, packet, state artifact, cache, settings, memory, or any file. Do not implement anything. Do not commit, reset, stash, checkout, resume, continue, or use prior sessions, memory, MCP, or another slash command. Return only the canonical gap report with source/evidence distinction, final gap classification, and one recommended next step.",
+      "Pilot=gap-stale-sot-precedence; Scenario=unresolved-source-precedence-stays-ambiguous; Fixture CWD=fixture-root; Plugin checkout=plugin-root. The plugin checkout is contract source only; the fixture is the scenario Current/SoT repository. Source inventory (use only these refs; IDs/roles/types/paths): S1 | role=SoT | type=specification | path=specs/bundle-auth.md; S2 | role=SoT | type=specification | path=specs/bundle-launch.md; C1 | role=Current | type=file-read | path=README.md; C2 | role=Current | type=file-read | path=commands/bundle.md. Read the exact contract sources from plugin checkout only as needed to follow the command: commands/gap.md, skills/gap/SKILL.md, .tigerkit/docs/output-contract.md. Invoke the public `/tk:gap` command exactly once on the listed refs. Do not edit the fixture, plugin checkout, TigerKit state, or any other repository. Do not implement anything. Do not write a gap report, packet, state artifact, cache, settings, memory, or any file. Do not commit, reset, stash, checkout, resume, continue, or use prior sessions, memory, MCP, or another slash command. Return only the canonical gap report with source/evidence distinction, final classification, and one recommended next step.",
       "--plugin-dir",
       "plugin-root",
       "--permission-mode",
@@ -51,7 +51,7 @@
       "--output-format",
       "json"
     ],
-    "argv_sha256": "352bb8c440a0e437e9824b47e8910df248b2ef26f3659cfa9328333ec410705f",
+    "argv_sha256": "34496bdf4edfcc6f080f680b495182db4e7593aa85500ea36f54e91af5cef6fe",
     "invocation_cwd": "fixture-root",
     "plugin_dir": "plugin-root",
     "permission_mode": "dontAsk",
@@ -63,8 +63,8 @@
     ],
     "max_turns": 16,
     "session_persistence": false,
-    "prompt_sha256": "27ea7f8803b539af6e124011a8af992bca16704a6cff2c3d4cded7ad10501474",
-    "prompt_byte_length": 1259
+    "prompt_sha256": "bca1e2facb9c83f0620f9edad9b88a62d2c20f68ce1837750c89474699ccaaca",
+    "prompt_byte_length": 1221
   },
   "tool_evidence": {
     "plugin_command": {
@@ -75,7 +75,7 @@
         "ccs",
         "codex",
         "-p",
-        "Pilot=gap-stale-sot-precedence; Scenario=unresolved-source-precedence-stays-ambiguous; Fixture CWD=fixture-root; Plugin checkout=plugin-root. The plugin checkout is contract source only; the fixture is the scenario Current/SoT repository. Source inventory (use only these refs; IDs/roles/types/paths): S1 | role=SoT | type=specification | path=specs/bundle-auth.md; S2 | role=SoT | type=specification | path=specs/bundle-launch.md; C1 | role=Current | type=file-read | path=README.md; C2 | role=Current | type=file-read | path=commands/bundle.md. Read the exact contract sources from plugin checkout only as needed to follow the command: commands/gap.md, skills/gap/SKILL.md, .tigerkit/docs/output-contract.md. Invoke the public `/tk:gap` command exactly once on the listed refs. Do not read pilot.expected or pilot.must_observe. Do not edit the fixture, plugin checkout, or any other repository. Do not write a gap report, packet, state artifact, cache, settings, memory, or any file. Do not implement anything. Do not commit, reset, stash, checkout, resume, continue, or use prior sessions, memory, MCP, or another slash command. Return only the canonical gap report with source/evidence distinction, final gap classification, and one recommended next step.",
+        "Pilot=gap-stale-sot-precedence; Scenario=unresolved-source-precedence-stays-ambiguous; Fixture CWD=fixture-root; Plugin checkout=plugin-root. The plugin checkout is contract source only; the fixture is the scenario Current/SoT repository. Source inventory (use only these refs; IDs/roles/types/paths): S1 | role=SoT | type=specification | path=specs/bundle-auth.md; S2 | role=SoT | type=specification | path=specs/bundle-launch.md; C1 | role=Current | type=file-read | path=README.md; C2 | role=Current | type=file-read | path=commands/bundle.md. Read the exact contract sources from plugin checkout only as needed to follow the command: commands/gap.md, skills/gap/SKILL.md, .tigerkit/docs/output-contract.md. Invoke the public `/tk:gap` command exactly once on the listed refs. Do not edit the fixture, plugin checkout, TigerKit state, or any other repository. Do not implement anything. Do not write a gap report, packet, state artifact, cache, settings, memory, or any file. Do not commit, reset, stash, checkout, resume, continue, or use prior sessions, memory, MCP, or another slash command. Return only the canonical gap report with source/evidence distinction, final classification, and one recommended next step.",
         "--plugin-dir",
         "plugin-root",
         "--permission-mode",
@@ -92,35 +92,35 @@
       "plugin_dir": "plugin-root"
     },
     "consumer_envelope": {
-      "session_id": "fdaf2062-aa68-4ce1-9985-47a89aed4d46",
+      "session_id": "9cfd540a-0a0a-4b82-9cd0-2fc385b99b4a",
       "type": "result",
       "subtype": "success",
       "is_error": false,
       "stop_reason": "end_turn",
       "terminal_reason": "completed",
-      "num_turns": 10,
+      "num_turns": 9,
       "permission_denials": []
     }
   },
   "runtime": {
     "model_usage": {
       "gpt-5.4-mini(low)": {
-        "inputTokens": 898,
-        "outputTokens": 32,
+        "inputTokens": 864,
+        "outputTokens": 44,
         "cacheReadInputTokens": 0,
         "cacheCreationInputTokens": 0,
         "webSearchRequests": 0,
-        "costUSD": 0.0052899999999999996,
+        "costUSD": 0.00542,
         "contextWindow": 200000,
         "maxOutputTokens": 32000
       },
       "gpt-5.5(high)": {
-        "inputTokens": 20849,
-        "outputTokens": 2138,
-        "cacheReadInputTokens": 92672,
+        "inputTokens": 12526,
+        "outputTokens": 5860,
+        "cacheReadInputTokens": 110592,
         "cacheCreationInputTokens": 0,
         "webSearchRequests": 0,
-        "costUSD": 0.20403100000000002,
+        "costUSD": 0.264426,
         "contextWindow": 200000,
         "maxOutputTokens": 32000
       }
@@ -135,15 +135,15 @@
       "is_error": false,
       "stop_reason": "end_turn",
       "terminal_reason": "completed",
-      "num_turns": 10,
+      "num_turns": 9,
       "permission_denials": []
     }
   },
   "consumer_output": {
-    "result": "📊 Gap summary:\n| Area | SoT | Current | Gap | Impact | Priority |\n|---|---|---|---|---|---|\n| `/bundle` authentication vs launch access | S1: `/bundle` requires an authenticated operator. S2: during launch window, `/bundle` is available without an authenticated session. | C1/C2 only show public command surface: `/bundle`, `/bundle --mode launch`. No authenticated/unauthenticated behavior evidence was checked beyond file reads. | `ambiguous` | S1 and S2 create unresolved source precedence: default auth requirement and launch-window unauthenticated availability may conflict or require an explicit override rule. Current evidence does not prove either behavior. | P1 |\n\n📝 Findings:\n- 확인된 actionable `missing` / `mismatch` / `overbuilt` finding 없음. 핵심 결과는 unresolved source precedence와 producer behavior evidence 부족으로 인한 `ambiguous`입니다.\n\n⚠️ Ambiguities / Missing Evidence:\n| Ref | Question | Evidence checked | Impact | Recommendation |\n|---|---|---|---|---|\n| S1/S2 | S1의 authenticated operator requirement와 S2의 launch-window unauthenticated availability 중 어느 source가 우선인가, 또는 S2가 S1의 scoped exception인가? | S1 `specs/bundle-auth.md`; S2 `specs/bundle-launch.md` | `/bundle` 접근 제어 rule을 구현/검증할 수 없음. 잘못 병합하면 launch flow 또는 auth policy가 깨질 수 있음. | owner decision으로 precedence를 명시해야 함. |\n| C1/C2 | Current가 실제로 auth requirement 또는 launch-window exception을 구현했는가? | C1 `README.md`; C2 `commands/bundle.md`; 둘 다 `file-read` evidence only | 현재 evidence는 command surface만 보여주며 behavior proof가 아님. | precedence 결정 후 실제 producer/implementation evidence를 확인해야 함. |\n\n📝 Not accepted summary:\n- C1/C2의 `/bundle --mode launch` 표기는 surface evidence일 뿐, S2의 unauthenticated launch-window behavior 구현 증거로 채택하지 않음.\n- S1/S2를 임의 병합해 “launch mode는 auth 없이 허용”이라고 단정하지 않음.\n\n▶️ Recommended next steps:\n1. S1/S2의 source precedence를 결정해 “S2가 S1의 launch-window scoped exception인지”를 명시한 뒤, 그 결정에 맞춰 Current implementation evidence를 다시 확인합니다.",
-    "result_sha256": "7d7a5f66593b86cc5dc386998616c452e948bc519a4f97473ce8bada3b990831",
-    "result_byte_length": 2291,
-    "raw_result_sha256": "7d7a5f66593b86cc5dc386998616c452e948bc519a4f97473ce8bada3b990831"
+    "result": "📊 Gap summary:\n\n| Area | SoT | Current | Gap | Impact | Priority |\n|---|---|---|---|---|---|\n| `/bundle` launch-window authentication | S1 says during launch window `/bundle` is available without an authenticated session | C2 says `/bundle` requires an authenticated operator | `ambiguous` | Launch access rule cannot be safely implemented or documented until auth precedence is decided | P1 |\n| `/bundle --mode launch` command surface | S2 says current command surface includes `/bundle --mode launch` | C1 says public command surface includes `/bundle` and `/bundle --mode launch` | none observed in scoped file-read evidence | No command-surface gap found in listed refs | - |\n\n📝 Findings:\n\n없음. S1과 C2의 authentication rule conflict는 source/owner precedence가 확인되지 않아 actionable `missing`/`mismatch` finding으로 병합하지 않습니다.\n\n⚠️ Ambiguities / Missing Evidence:\n\n| Ref | Question | Evidence checked | Impact | Recommendation |\n|---|---|---|---|---|\n| S1 ↔ C2 | During launch window, does S1’s unauthenticated `/bundle` access override C2’s authenticated-operator requirement? | S1 `specs/bundle-auth.md:3`; C2 `commands/bundle.md:3`; evidence type: SoT specification file-read vs Current file-read | Wrong choice could either block intended launch access or weaken required operator auth | Get an owner/source-precedence decision before changing implementation or docs |\n| C1/C2 runtime evidence | Do the docs reflect actual runtime behavior? | C1 `README.md:3`; C2 `commands/bundle.md:3`; no command output, rendered output, diff, or runtime evidence inspected | File-read evidence alone cannot prove actual command behavior | After precedence is decided, verify against implementation/runtime evidence |\n\n📝 Not accepted summary:\n\n- Potential P1 `mismatch` between S1 and C2 was not accepted as a finding because unresolved source precedence must stay `ambiguous`.\n\n▶️ Recommended next steps:\n\n1. Decide whether S1’s launch-window unauthenticated access takes precedence over C2’s authenticated-operator rule, then update the losing source/current surface accordingly.",
+    "result_sha256": "522c67b1f0edc0947ca9a7b72b00410a4cee6669e0c34f01ced9fcf9df3224f9",
+    "result_byte_length": 2136,
+    "raw_result_sha256": "522c67b1f0edc0947ca9a7b72b00410a4cee6669e0c34f01ced9fcf9df3224f9"
   },
   "gap_observation": {
     "source_refs": [
@@ -153,8 +153,8 @@
         "type": "specification",
         "path": "specs/bundle-auth.md",
         "access_status": "readable",
-        "sha256": "c8d9caf8809c190b89b950c05378a71b028a5db480b92c54cc07ca947ae461ec",
-        "byte_length": 103
+        "sha256": "126fd5b2682d9bd54eb169fac8c80d27d0d9d76f2b56dc43bac11b85260b8e1a",
+        "byte_length": 71
       },
       {
         "ref_id": "S2",
@@ -162,8 +162,8 @@
         "type": "specification",
         "path": "specs/bundle-launch.md",
         "access_status": "readable",
-        "sha256": "a35e4a9e11bc7f9b9b1d3a60ee98036b0395945bc64436eedc0f053fc89d0143",
-        "byte_length": 132
+        "sha256": "8139112a124c621b67dcba21ae79c6570da00b1200f4cc6712452613278bb5fe",
+        "byte_length": 107
       },
       {
         "ref_id": "C1",
@@ -171,8 +171,8 @@
         "type": "file-read",
         "path": "README.md",
         "access_status": "readable",
-        "sha256": "8cef467ed3cd0cb602d1151e72775abd6705950bdb0f49eab1f894b2d1bbabc4",
-        "byte_length": 93
+        "sha256": "48ca2c4a0db4e19865e7e9baa1417d31af985a16b4127c6523ab08534e380885",
+        "byte_length": 85
       },
       {
         "ref_id": "C2",
@@ -180,11 +180,11 @@
         "type": "file-read",
         "path": "commands/bundle.md",
         "access_status": "readable",
-        "sha256": "aefc93c12daa3cf93f4522aaeddf032410693a7d9816eeec88dd489ac9cf218b",
-        "byte_length": 83
+        "sha256": "a4431748a8e18554f7ee3407bf71cd3ead63cd6bbe64b86b8e7e3f7d76774595",
+        "byte_length": 73
       }
     ],
-    "source_manifest_sha256": "d21c95f5106f7ba63883fd25e2ce0e39eb00760e8b79497e44402091bc03d2e7",
+    "source_manifest_sha256": "5a371b302696dfd62db5cb5fd1ccbacf4bf6b512d22f533a174c91eaf290cfc3",
     "current_evidence": [
       {
         "evidence_id": "C1",
@@ -207,7 +207,7 @@
       "note": "Both accessible SoT refs conflict and neither has priority, supersession, or approval metadata."
     },
     "final_classification": "ambiguous",
-    "recommendation": "1. S1/S2의 source precedence를 결정해 “S2가 S1의 launch-window scoped exception인지”를 명시한 뒤, 그 결정에 맞춰 Current implementation evidence를 다시 확인합니다.",
+    "recommendation": "1. Decide whether S1’s launch-window unauthenticated access takes precedence over C2’s authenticated-operator rule, then update the losing source/current surface accordingly.",
     "direct_implementation_evidence": [],
     "direct_runtime_evidence": [],
     "direct_command_output_evidence": [],
@@ -215,6 +215,7 @@
     "direct_diff_evidence": []
   },
   "fixture": {
+    "inventory_scope": "fixture tree excluding .git; Git metadata is captured by git_before/git_after",
     "invocation_cwd": "fixture-root",
     "git_root": "fixture-root",
     "git_before": {
@@ -223,7 +224,7 @@
       "status_command_status": 0,
       "staged_command_status": 0,
       "unstaged_command_status": 0,
-      "head": "9a0ca8925aa3dfe9d8c09fc024ed096d632d3d0c",
+      "head": "acb6378a0698a79c2cf840d2f8ac386d99678308",
       "branch": "main",
       "status_porcelain": [],
       "staged_paths": [],
@@ -235,7 +236,7 @@
       "status_command_status": 0,
       "staged_command_status": 0,
       "unstaged_command_status": 0,
-      "head": "9a0ca8925aa3dfe9d8c09fc024ed096d632d3d0c",
+      "head": "acb6378a0698a79c2cf840d2f8ac386d99678308",
       "branch": "main",
       "status_porcelain": [],
       "staged_paths": [],
@@ -246,8 +247,8 @@
         "path": "fixture-root/README.md",
         "kind": "regular",
         "mode": "0o600",
-        "size": 93,
-        "sha256": "8cef467ed3cd0cb602d1151e72775abd6705950bdb0f49eab1f894b2d1bbabc4"
+        "size": 85,
+        "sha256": "48ca2c4a0db4e19865e7e9baa1417d31af985a16b4127c6523ab08534e380885"
       },
       {
         "path": "fixture-root/commands",
@@ -255,30 +256,30 @@
         "mode": "0o775"
       },
       {
-        "path": "fixture-root/commands/bundle.md",
-        "kind": "regular",
-        "mode": "0o600",
-        "size": 83,
-        "sha256": "aefc93c12daa3cf93f4522aaeddf032410693a7d9816eeec88dd489ac9cf218b"
-      },
-      {
         "path": "fixture-root/specs",
         "kind": "directory",
         "mode": "0o775"
       },
       {
+        "path": "fixture-root/commands/bundle.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 73,
+        "sha256": "a4431748a8e18554f7ee3407bf71cd3ead63cd6bbe64b86b8e7e3f7d76774595"
+      },
+      {
         "path": "fixture-root/specs/bundle-auth.md",
         "kind": "regular",
         "mode": "0o600",
-        "size": 103,
-        "sha256": "c8d9caf8809c190b89b950c05378a71b028a5db480b92c54cc07ca947ae461ec"
+        "size": 71,
+        "sha256": "126fd5b2682d9bd54eb169fac8c80d27d0d9d76f2b56dc43bac11b85260b8e1a"
       },
       {
         "path": "fixture-root/specs/bundle-launch.md",
         "kind": "regular",
         "mode": "0o600",
-        "size": 132,
-        "sha256": "a35e4a9e11bc7f9b9b1d3a60ee98036b0395945bc64436eedc0f053fc89d0143"
+        "size": 107,
+        "sha256": "8139112a124c621b67dcba21ae79c6570da00b1200f4cc6712452613278bb5fe"
       }
     ],
     "fixture_inventory_after": [
@@ -286,8 +287,8 @@
         "path": "fixture-root/README.md",
         "kind": "regular",
         "mode": "0o600",
-        "size": 93,
-        "sha256": "8cef467ed3cd0cb602d1151e72775abd6705950bdb0f49eab1f894b2d1bbabc4"
+        "size": 85,
+        "sha256": "48ca2c4a0db4e19865e7e9baa1417d31af985a16b4127c6523ab08534e380885"
       },
       {
         "path": "fixture-root/commands",
@@ -295,30 +296,30 @@
         "mode": "0o775"
       },
       {
-        "path": "fixture-root/commands/bundle.md",
-        "kind": "regular",
-        "mode": "0o600",
-        "size": 83,
-        "sha256": "aefc93c12daa3cf93f4522aaeddf032410693a7d9816eeec88dd489ac9cf218b"
-      },
-      {
         "path": "fixture-root/specs",
         "kind": "directory",
         "mode": "0o775"
       },
       {
+        "path": "fixture-root/commands/bundle.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 73,
+        "sha256": "a4431748a8e18554f7ee3407bf71cd3ead63cd6bbe64b86b8e7e3f7d76774595"
+      },
+      {
         "path": "fixture-root/specs/bundle-auth.md",
         "kind": "regular",
         "mode": "0o600",
-        "size": 103,
-        "sha256": "c8d9caf8809c190b89b950c05378a71b028a5db480b92c54cc07ca947ae461ec"
+        "size": 71,
+        "sha256": "126fd5b2682d9bd54eb169fac8c80d27d0d9d76f2b56dc43bac11b85260b8e1a"
       },
       {
         "path": "fixture-root/specs/bundle-launch.md",
         "kind": "regular",
         "mode": "0o600",
-        "size": 132,
-        "sha256": "a35e4a9e11bc7f9b9b1d3a60ee98036b0395945bc64436eedc0f053fc89d0143"
+        "size": 107,
+        "sha256": "8139112a124c621b67dcba21ae79c6570da00b1200f4cc6712452613278bb5fe"
       }
     ],
     "changed_paths": [],
@@ -326,22 +327,1072 @@
   },
   "state_root": {
     "requested": "state-root",
-    "observed_root": "state-root",
-    "honored": true,
+    "observed_root": null,
+    "honor_status": "not_observable_no_writes",
+    "observation_basis": "post-run inventory capture; no generated state marker or packet was produced by read-only /tk:gap",
     "inventory_before": [],
-    "inventory_after": []
+    "inventory_after": [],
+    "packet_paths_before": [],
+    "packet_paths_after": []
   },
   "temporary_home_tigerkit": {
     "root": "temporary-home/.tigerkit",
     "inventory_before": [],
     "inventory_after": []
   },
+  "runtime_home": {
+    "root": "temporary-home",
+    "inventory_before": [
+      {
+        "path": "temporary-home/.cache",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude.json",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 391,
+        "sha256": "b7a6948b652bd653eb8ed4c339265ad96056073c50d1fbeda1bbca71b177c29e"
+      },
+      {
+        "path": "temporary-home/.claude.json.ccs-lock",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "temporary-home/.config",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.local",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.tigerkit",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude/.claude.json",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 258,
+        "sha256": "c9fc4fed6f41c682b8fbd5152ef46406aba28159a1f31e0b939be6766f48a5d1"
+      },
+      {
+        "path": "temporary-home/.claude/backups",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude/projects",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude/sessions",
+        "kind": "directory",
+        "mode": "0o700"
+      },
+      {
+        "path": "temporary-home/.claude/settings.json",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 3,
+        "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+      },
+      {
+        "path": "temporary-home/.claude/backups/.claude.json.backup.1783779026865",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 50,
+        "sha256": "5735edd619658d923cefdc95efdf372aa148a499d11e492005d2c5e9ccad30cd"
+      },
+      {
+        "path": "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root/memory",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.local/share",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.local/state",
+        "kind": "directory",
+        "mode": "0o775"
+      }
+    ],
+    "inventory_after": [
+      {
+        "path": "temporary-home/.cache",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude.json",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 391,
+        "sha256": "b7a6948b652bd653eb8ed4c339265ad96056073c50d1fbeda1bbca71b177c29e"
+      },
+      {
+        "path": "temporary-home/.claude.json.ccs-lock",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "temporary-home/.config",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.local",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.tigerkit",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude/.claude.json",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 360,
+        "sha256": "2feb4a02c79b8fae6f3af5f9c3ea3beb0b23d966ef305ad4f8283404b9f8e0e1"
+      },
+      {
+        "path": "temporary-home/.claude/.last-cleanup",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 24,
+        "sha256": "7bcf20d46c82e76209c232a870a06f2bb3f6a8bd7214bd579ea6d560cad07316"
+      },
+      {
+        "path": "temporary-home/.claude/backups",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude/projects",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude/sessions",
+        "kind": "directory",
+        "mode": "0o700"
+      },
+      {
+        "path": "temporary-home/.claude/settings.json",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 3,
+        "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+      },
+      {
+        "path": "temporary-home/.claude/backups/.claude.json.backup.1783779026865",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 50,
+        "sha256": "5735edd619658d923cefdc95efdf372aa148a499d11e492005d2c5e9ccad30cd"
+      },
+      {
+        "path": "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root/9cfd540a-0a0a-4b82-9cd0-2fc385b99b4a.jsonl",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 117,
+        "sha256": "18980f8e0670a9563a78fe6f542bf5bd151ebf40c37a6dacfe432fcc4f842f84"
+      },
+      {
+        "path": "temporary-home/.local/share",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.local/state",
+        "kind": "directory",
+        "mode": "0o775"
+      }
+    ],
+    "changed_paths": [
+      "temporary-home/.claude/.claude.json",
+      "temporary-home/.claude/.last-cleanup",
+      "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root/9cfd540a-0a0a-4b82-9cd0-2fc385b99b4a.jsonl",
+      "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root/memory"
+    ],
+    "housekeeping": {
+      "classification": "consumer_runtime_housekeeping",
+      "out_of_scope": true,
+      "paths": [
+        "temporary-home/.claude/.claude.json",
+        "temporary-home/.claude/.last-cleanup",
+        "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root/9cfd540a-0a0a-4b82-9cd0-2fc385b99b4a.jsonl",
+        "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root/memory"
+      ]
+    }
+  },
+  "product_surface": {
+    "fixture_changed_paths": [],
+    "plugin_changed_paths": [],
+    "tigerkit_state_changed_paths": [],
+    "gap_packet_paths_before": [],
+    "gap_packet_paths_after": [],
+    "gap_packet_changed_paths": [],
+    "changed_paths": []
+  },
+  "canonical_tigerkit": {
+    "root": "canonical-user-tigerkit",
+    "inventory_before": [
+      {
+        "path": "canonical-user-tigerkit/local",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/local/session-start",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 430,
+        "sha256": "4129c0cab36243f909e9110488c9a27e7208b6f2079862a7519676dd19b0607c"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "64320ad2fe425b77a9ef728b9306c8d811099df1b5941c6aaf109d8fac7bfdf3"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 430,
+        "sha256": "92da375fdcc68063e3d58a1d7e9c24ae65d517fda1b25ec1cd3f0e1305f9c6f9"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "bfb65cc3a13f2dcc6bc26eeb3e8e4d571c177afc4cd579bc32773521b17b5f72"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 430,
+        "sha256": "996b2b6ab768225b377444364515eecb63ef8fe7bdbd5a6c84c9c44031d3bc50"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "d0755c1b7dbd9b2f0849ecd781281af269756f2f8ac18401f46fc4e615625807"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 430,
+        "sha256": "a18e64f9825bd8373c3cc7f7b42a0117354a54507b8906aa1af57e83c614860e"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "954eaca0414b7ce9d4eac00d3e11e19a5b00f91b9d241160df2b55549c7b4f0b"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/issues",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/plans",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/prd",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 463,
+        "sha256": "1b39e2c11e101ead19931b2810f6b398da596ff01dc9b9719759099f0ea48673"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/issues/current.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 12092,
+        "sha256": "e03d41893ba5bb46862204fb6a63c4492caf14c470639a21602a4d917f0e1665"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/issues/github-ready.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 7463,
+        "sha256": "ff63f2b045c8e54a5a3e77347eb2dd657fb9e9b2667fd18e4a1462b3594baffb"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/issues/tk-to-issues-output-format-review-20260708.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 2939,
+        "sha256": "7f234b7db91d4c00bb4362ac5faa9071f76f80f661ad1047cc0674f4755ac5d7"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/plans/eval-loop-evidence-master.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 9400,
+        "sha256": "96039ae80f5d9088b87562da634c90d9b11209b25571eef5ff5294bc499e91ab"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/prd/current.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 23822,
+        "sha256": "e80606e036a1744e3165003d12acae4f90d8d4d7fe9098d7a763accd3988ff4e"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "9dc39d20e5433181f34f9c9411bb64665cb8c1dc891bd6d1f49eda5f672a06b1"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/feat-externalize-tigerkit-writer",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/main",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/feat-externalize-tigerkit-writer/gap",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/feat-externalize-tigerkit-writer/gap/current.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 310,
+        "sha256": "77de4e2eb0d25a0f2d91e3651da6a64d4943ecf3198e8dfd95eaac29eb58418a"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/main/gap",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/branch-state.json",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 402,
+        "sha256": "b74ee113143b8a5ea7acab3c40c9a6bb17b284a2a83a76f862bdd298cfaf9668"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/executions",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/executions/exec-20260622-220033-fadd27b1.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1315,
+        "sha256": "090a2015913ad0fa467791dc2826fe827bc026069f7a46e54bbae6bfccb34c2e"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/executions/exec-20260622-223145-3e85dd79.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 598,
+        "sha256": "eb12f8107072baaec47206a8a7a699182657126b5bec9213837eb4c3c66bd79e"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/executions/exec-20260622-223251-eab7b6fe.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 685,
+        "sha256": "44d12c7365b1c56f1df0810f74bbcf49876a60a7a937ca92c524076cfd5b9f0f"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/execute-smoke-current-20260622-223235-D515",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/execute-smoke-current-20260622-223251-06D1",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/loop-spec-20260622-220012-D3A2",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/loop-spec-20260622-220033-5748",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/execute-smoke-current-20260622-223235-D515/spec.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1780,
+        "sha256": "a7cd9c7668ac2d532d63dc342e3a8b488a9ad43529d9a2963ede1749837bfbf6"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/execute-smoke-current-20260622-223251-06D1/spec.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1780,
+        "sha256": "9e17d3cb7e0ec431d0e27f4d423afb7963e72faddadb1d39b9be3345cd22e3ca"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/loop-spec-20260622-220012-D3A2/spec.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1770,
+        "sha256": "fdee963349b8a60219f3dca3518e777365f6a8351ebdfba8d99e6edf26d28e55"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/loop-spec-20260622-220033-5748/spec.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1770,
+        "sha256": "dfb2444c03b1bb6024dcb74ed9639bd7a387032ff845c75ad92035fd62c39879"
+      }
+    ],
+    "inventory_after": [
+      {
+        "path": "canonical-user-tigerkit/local",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/local/session-start",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 430,
+        "sha256": "4129c0cab36243f909e9110488c9a27e7208b6f2079862a7519676dd19b0607c"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "64320ad2fe425b77a9ef728b9306c8d811099df1b5941c6aaf109d8fac7bfdf3"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 430,
+        "sha256": "92da375fdcc68063e3d58a1d7e9c24ae65d517fda1b25ec1cd3f0e1305f9c6f9"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "bfb65cc3a13f2dcc6bc26eeb3e8e4d571c177afc4cd579bc32773521b17b5f72"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 430,
+        "sha256": "996b2b6ab768225b377444364515eecb63ef8fe7bdbd5a6c84c9c44031d3bc50"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "d0755c1b7dbd9b2f0849ecd781281af269756f2f8ac18401f46fc4e615625807"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 430,
+        "sha256": "a18e64f9825bd8373c3cc7f7b42a0117354a54507b8906aa1af57e83c614860e"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "954eaca0414b7ce9d4eac00d3e11e19a5b00f91b9d241160df2b55549c7b4f0b"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/issues",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/plans",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/prd",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 463,
+        "sha256": "1b39e2c11e101ead19931b2810f6b398da596ff01dc9b9719759099f0ea48673"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/issues/current.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 12092,
+        "sha256": "e03d41893ba5bb46862204fb6a63c4492caf14c470639a21602a4d917f0e1665"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/issues/github-ready.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 7463,
+        "sha256": "ff63f2b045c8e54a5a3e77347eb2dd657fb9e9b2667fd18e4a1462b3594baffb"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/issues/tk-to-issues-output-format-review-20260708.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 2939,
+        "sha256": "7f234b7db91d4c00bb4362ac5faa9071f76f80f661ad1047cc0674f4755ac5d7"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/plans/eval-loop-evidence-master.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 9400,
+        "sha256": "96039ae80f5d9088b87562da634c90d9b11209b25571eef5ff5294bc499e91ab"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/prd/current.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 23822,
+        "sha256": "e80606e036a1744e3165003d12acae4f90d8d4d7fe9098d7a763accd3988ff4e"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "9dc39d20e5433181f34f9c9411bb64665cb8c1dc891bd6d1f49eda5f672a06b1"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/feat-externalize-tigerkit-writer",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/main",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/feat-externalize-tigerkit-writer/gap",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/feat-externalize-tigerkit-writer/gap/current.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 310,
+        "sha256": "77de4e2eb0d25a0f2d91e3651da6a64d4943ecf3198e8dfd95eaac29eb58418a"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/main/gap",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/branch-state.json",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 402,
+        "sha256": "b74ee113143b8a5ea7acab3c40c9a6bb17b284a2a83a76f862bdd298cfaf9668"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/executions",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/executions/exec-20260622-220033-fadd27b1.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1315,
+        "sha256": "090a2015913ad0fa467791dc2826fe827bc026069f7a46e54bbae6bfccb34c2e"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/executions/exec-20260622-223145-3e85dd79.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 598,
+        "sha256": "eb12f8107072baaec47206a8a7a699182657126b5bec9213837eb4c3c66bd79e"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/executions/exec-20260622-223251-eab7b6fe.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 685,
+        "sha256": "44d12c7365b1c56f1df0810f74bbcf49876a60a7a937ca92c524076cfd5b9f0f"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/execute-smoke-current-20260622-223235-D515",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/execute-smoke-current-20260622-223251-06D1",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/loop-spec-20260622-220012-D3A2",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/loop-spec-20260622-220033-5748",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/execute-smoke-current-20260622-223235-D515/spec.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1780,
+        "sha256": "a7cd9c7668ac2d532d63dc342e3a8b488a9ad43529d9a2963ede1749837bfbf6"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/execute-smoke-current-20260622-223251-06D1/spec.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1780,
+        "sha256": "9e17d3cb7e0ec431d0e27f4d423afb7963e72faddadb1d39b9be3345cd22e3ca"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/loop-spec-20260622-220012-D3A2/spec.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1770,
+        "sha256": "fdee963349b8a60219f3dca3518e777365f6a8351ebdfba8d99e6edf26d28e55"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/loop-spec-20260622-220033-5748/spec.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1770,
+        "sha256": "dfb2444c03b1bb6024dcb74ed9639bd7a387032ff845c75ad92035fd62c39879"
+      }
+    ],
+    "unchanged": true
+  },
+  "write_boundary": {
+    "product_surface_write_free": true,
+    "product_surface_changed_paths": [],
+    "runtime_home_housekeeping_only": true,
+    "runtime_home_changed_paths": [
+      "temporary-home/.claude/.claude.json",
+      "temporary-home/.claude/.last-cleanup",
+      "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root/9cfd540a-0a0a-4b82-9cd0-2fc385b99b4a.jsonl",
+      "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-unresolved-source-precedence-stays-ambiguous-fixture-root/memory"
+    ]
+  },
   "privacy": {
     "normalized_paths": [
       "fixture-root",
       "plugin-root",
       "state-root",
-      "temporary-home"
+      "temporary-home",
+      "canonical-user-tigerkit"
     ]
   }
 }

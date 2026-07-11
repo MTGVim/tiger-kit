@@ -143,7 +143,7 @@ GAP_SCENARIO_IDS = (
     "unresolved-source-precedence-stays-ambiguous",
     "plan-only-current-is-not-implementation-proof",
 )
-GAP_PLUGIN_COMMIT = "731c8ea9d8b47011d808020df6ccae6f54d1ca99"
+GAP_PLUGIN_COMMIT = "09d58e90ec7fc4274ea371a4e8a5b9d012855534"
 GAP_WRAPPER = "ccs codex"
 GAP_WRAPPER_VERSION = "CCS (Claude Code Switch) v8.6.1"
 GAP_PROVIDER = "openai-codex"
@@ -154,7 +154,7 @@ GAP_MODEL_SOURCE = "actual modelUsage high-tier routing key; consumer envelope m
 GAP_ALLOWED_TOOLS = ["Read", "Grep", "Glob", "Bash"]
 GAP_MODEL_USAGE_KEYS = ["gpt-5.4-mini(low)", "gpt-5.5(high)"]
 GAP_CONTRACT_BLOBS = {
-    "commands/gap.md": "2d985b65acb65b10a811b136d6c705e0dd6c99fba449cb897a4f414dabcedd1d",
+    "commands/gap.md": "4f64eafbbcc1d5191d90163e8d57768e90e5fbf20d2082267caf1a2cb701623d",
     "skills/gap/SKILL.md": "1f40267d304b90f96c7cfcc2bf3e6902d48f17815ae76312b17eaa7ac44f3828",
     ".tigerkit/docs/output-contract.md": "eab16292a7f5aa3be02e125710bda0bedce1feaa77e364f4afdb1c6e98a59914",
 }
@@ -163,59 +163,59 @@ GAP_CONTRACT_BLOB_LIST = [
     for relative, digest in GAP_CONTRACT_BLOBS.items()
 ]
 GAP_SOURCE_HASHES = {
-    "stale-plan-vs-live-surface-conflict": "f4936e9105a8f71fc6e7a975b650154208aaceed8a9e246f4381dc8018021c9b",
-    "unresolved-source-precedence-stays-ambiguous": "88d106139317e811f70120536dfb87e3a07e744e8f94893f40af88c0e36183f6",
-    "plan-only-current-is-not-implementation-proof": "5aa23f83747e7ce3652b9d3b4bc65de50bf5619b55bbf84790e034732473d567",
+    "stale-plan-vs-live-surface-conflict": "5a3f67558eb97c0eaf67fa1205333840c909603ea3cbf9c930ee1020a702bf38",
+    "unresolved-source-precedence-stays-ambiguous": "08f402fac5055d788f4f8fe5c3330e164c33042aa9ecbced6026793191bc3653",
+    "plan-only-current-is-not-implementation-proof": "90cb5ab9f95ab16d4ce0d510eb62ce8444e48684fafd875fc16c0f917749eb57",
 }
 GAP_RESULT_HASHES = {
-    "stale-plan-vs-live-surface-conflict": ("3bce331b67445f45ca553e8b8865d044e12a49cf5eeb9a4359c873ca117d6539", 2939),
-    "unresolved-source-precedence-stays-ambiguous": ("7d7a5f66593b86cc5dc386998616c452e948bc519a4f97473ce8bada3b990831", 2291),
-    "plan-only-current-is-not-implementation-proof": ("61cee17bfdaf26ff56c5826a0cfc867c5dad971e10d40df985fbe4d92e28b82e", 2323),
+    "stale-plan-vs-live-surface-conflict": ("2e5bc64a965aab186fe6df8523325e470e328865bb8ecd1a789703026e4bc409", 1986),
+    "unresolved-source-precedence-stays-ambiguous": ("522c67b1f0edc0947ca9a7b72b00410a4cee6669e0c34f01ced9fcf9df3224f9", 2136),
+    "plan-only-current-is-not-implementation-proof": ("0744fbcebd7bf9755d01c4383bb0bfb071ead0ef7b6a06ef2c6538d697524ef3", 2418),
 }
 GAP_PROMPT_HASHES = {
-    "stale-plan-vs-live-surface-conflict": "a40be46dded56ec3463d62facd35c05b8aaa6f8a7e8b0bba23110198e16480fb",
-    "unresolved-source-precedence-stays-ambiguous": "27ea7f8803b539af6e124011a8af992bca16704a6cff2c3d4cded7ad10501474",
-    "plan-only-current-is-not-implementation-proof": "37054f44ca45921450dd1a14c098e315ce8489b9f16c61200ff63865b42ac852",
+    "stale-plan-vs-live-surface-conflict": "aa374f7be8a77512e8f3868a14d4ccc963ddb52933b4dbcdb0b7ceaad0720da1",
+    "unresolved-source-precedence-stays-ambiguous": "bca1e2facb9c83f0620f9edad9b88a62d2c20f68ce1837750c89474699ccaaca",
+    "plan-only-current-is-not-implementation-proof": "67ed109b3ed22ba4c495abce49e1ddd5fce686b7006d568b23b7ce9b30ecd277",
 }
 GAP_PROMPT_LENGTHS = {
-    "stale-plan-vs-live-surface-conflict": 1189,
-    "unresolved-source-precedence-stays-ambiguous": 1259,
-    "plan-only-current-is-not-implementation-proof": 1549,
+    "stale-plan-vs-live-surface-conflict": 1151,
+    "unresolved-source-precedence-stays-ambiguous": 1221,
+    "plan-only-current-is-not-implementation-proof": 1218,
 }
 GAP_ARGV_HASHES = {
-    "stale-plan-vs-live-surface-conflict": "ce00bf5c01904ad3c01b92b5ea33d0409494420daec7c677ab32e54c3b0fe874",
-    "unresolved-source-precedence-stays-ambiguous": "352bb8c440a0e437e9824b47e8910df248b2ef26f3659cfa9328333ec410705f",
-    "plan-only-current-is-not-implementation-proof": "b3cfee4d86136a641f110867f4dd48b4b2df95e0418ffd2a6ef671c436cb10fa",
+    "stale-plan-vs-live-surface-conflict": "c0d15c4f9a5ae2bf2320e64b1014df2993a7e266469034de6e13e2d96ec6da6d",
+    "unresolved-source-precedence-stays-ambiguous": "34496bdf4edfcc6f080f680b495182db4e7593aa85500ea36f54e91af5cef6fe",
+    "plan-only-current-is-not-implementation-proof": "920cd391672faa0e1b88559f117cc62ece148aef51cd2fba1e64890b259afc40",
 }
 GAP_MODEL_USAGE_HASHES = {
-    "stale-plan-vs-live-surface-conflict": "a2b6fcce09744af17a186fdc49ce5c0ada070924714b511aafd90d1fcdda0667",
-    "unresolved-source-precedence-stays-ambiguous": "91c7c92827bf1034774fbf9651bd7a2180dc60c3c6b0620ec4e3396d6d0ec856",
-    "plan-only-current-is-not-implementation-proof": "325b6affc8ef1f39f80adac49f515e3f8dc0a2b7b3adce3f06e31727ad764e53",
+    "stale-plan-vs-live-surface-conflict": "88c2e51a202b3c0efac9da92db98ea42f82ab4102faf96ca33e731ea095d65c5",
+    "unresolved-source-precedence-stays-ambiguous": "db8b443111000327186c72469b4a2664cc807cfbbee757b36eac6f8cf068a934",
+    "plan-only-current-is-not-implementation-proof": "e8ee06b252c767b3196bc38ad561d4c282bdc9f4c7b42938ad5b0afb5e559d8d",
 }
 GAP_SOURCE_MANIFEST_HASHES = {
-    "stale-plan-vs-live-surface-conflict": "d2ddac14afe0af52d3fb77f85dabe10d966ce1b48c768922041b2a2cf76af0fd",
-    "unresolved-source-precedence-stays-ambiguous": "d21c95f5106f7ba63883fd25e2ce0e39eb00760e8b79497e44402091bc03d2e7",
-    "plan-only-current-is-not-implementation-proof": "547311efc19e33cb460a0e7cb943a1dc35185a071951414a2fffd5069097a94e",
+    "stale-plan-vs-live-surface-conflict": "f47d6689b5d14b6a1c5c1eba991977be4a320e4a4e6de9bc901fcd08a43d49a5",
+    "unresolved-source-precedence-stays-ambiguous": "5a371b302696dfd62db5cb5fd1ccbacf4bf6b512d22f533a174c91eaf290cfc3",
+    "plan-only-current-is-not-implementation-proof": "1a45f1e3f778c036c31362224c3646fb77531f9c06a0556b0f3a734fd31a4362",
 }
 GAP_SESSION_IDS = {
-    "stale-plan-vs-live-surface-conflict": "4c5e0b90-ff30-4acf-9268-c4b0784896dd",
-    "unresolved-source-precedence-stays-ambiguous": "fdaf2062-aa68-4ce1-9985-47a89aed4d46",
-    "plan-only-current-is-not-implementation-proof": "6897964a-b2ed-4407-ade2-16b054d470d0",
+    "stale-plan-vs-live-surface-conflict": "4ee18f5e-a32e-4ba9-9ea8-7855ab87b9ac",
+    "unresolved-source-precedence-stays-ambiguous": "9cfd540a-0a0a-4b82-9cd0-2fc385b99b4a",
+    "plan-only-current-is-not-implementation-proof": "da456140-839e-4bd1-97f5-601bde118d58",
 }
 GAP_TURNS = {
-    "stale-plan-vs-live-surface-conflict": 9,
-    "unresolved-source-precedence-stays-ambiguous": 10,
+    "stale-plan-vs-live-surface-conflict": 12,
+    "unresolved-source-precedence-stays-ambiguous": 9,
     "plan-only-current-is-not-implementation-proof": 6,
 }
 GAP_FIXTURE_HEADS = {
-    "stale-plan-vs-live-surface-conflict": "33bc8c2cb1724342e66e8c192b8c25a36224f516",
-    "unresolved-source-precedence-stays-ambiguous": "9a0ca8925aa3dfe9d8c09fc024ed096d632d3d0c",
-    "plan-only-current-is-not-implementation-proof": "c3683f26e871efadefc5dbe960aa3f5e54705726",
+    "stale-plan-vs-live-surface-conflict": "38908ed41ed98c46ec7cc166ac34a8e2b00e3540",
+    "unresolved-source-precedence-stays-ambiguous": "acb6378a0698a79c2cf840d2f8ac386d99678308",
+    "plan-only-current-is-not-implementation-proof": "ea8a954975b7be08c60cac25f6e0941cb01d7ba6",
 }
 GAP_FIXTURE_INVENTORY_HASHES = {
-    "stale-plan-vs-live-surface-conflict": "8067e5fb77c51d97d49633d19ae96cb033507714a931cd3da4e11b5e37d9d841",
-    "unresolved-source-precedence-stays-ambiguous": "e3ded81009a50a8f07658d5757b452a8f62a1e3eec5104d20a4514fcfacabff2",
-    "plan-only-current-is-not-implementation-proof": "09aa9750e6e121724d08e8082295d05af0bc97a8f0c7f0dec04c68e825ad029f",
+    "stale-plan-vs-live-surface-conflict": "5fc72e0c6d3afb70e397a9d11542ca60d30678fd31448e0b2a9d378d5363b19d",
+    "unresolved-source-precedence-stays-ambiguous": "01e38d568bcd98e355d3c709545334f4ac6ba41accc4e8eb3b9890cfce873beb",
+    "plan-only-current-is-not-implementation-proof": "00794666223a7251fce7ce546b75b553e8a1c1d663a6e0eae8c3d54ba50f6522",
 }
 GAP_FINAL_CLASSIFICATIONS = {
     "stale-plan-vs-live-surface-conflict": "ambiguous",
@@ -223,26 +223,26 @@ GAP_FINAL_CLASSIFICATIONS = {
     "plan-only-current-is-not-implementation-proof": "missing",
 }
 GAP_RECOMMENDATIONS = {
-    "stale-plan-vs-live-surface-conflict": "1. Decide source precedence: either demote `S1` as stale historical planning evidence, or explicitly re-authorize it as active SoT before changing `/bundle --format json`.",
-    "unresolved-source-precedence-stays-ambiguous": "1. S1/S2의 source precedence를 결정해 “S2가 S1의 launch-window scoped exception인지”를 명시한 뒤, 그 결정에 맞춰 Current implementation evidence를 다시 확인합니다.",
-    "plan-only-current-is-not-implementation-proof": "1. Inspect or produce direct implementation/runtime evidence for `/alert-bundle --severity <level>` returning JSON with the requested severity.",
+    "stale-plan-vs-live-surface-conflict": "1. S1 `plans/bundle-rollout.md`를 현재 SoT에서 제외하거나 최신 contract로 갱신할지 owner가 결정한 뒤, `/bundle` canonical surface를 하나로 고정합니다.",
+    "unresolved-source-precedence-stays-ambiguous": "1. Decide whether S1’s launch-window unauthenticated access takes precedence over C2’s authenticated-operator rule, then update the losing source/current surface accordingly.",
+    "plan-only-current-is-not-implementation-proof": "1. Inspect the actual implementation or run `/alert-bundle --severity <level>` to obtain direct evidence, then compare that evidence against S1.",
 }
 GAP_SOURCE_REFS = {
     "stale-plan-vs-live-surface-conflict": [
-        {"ref_id": "S1", "role": "SoT", "type": "historical-plan", "path": "plans/bundle-rollout.md", "access_status": "readable", "sha256": "0fe98e176826832dc8b89e64c157b8ced3f56c3e21c97cc3c9f56efde505648f", "byte_length": 237},
-        {"ref_id": "C1", "role": "Current", "type": "file-read", "path": "README.md", "access_status": "readable", "sha256": "86aa158768cee919c45a74959a41cce1eb9ee0cdfdfb9946011885bb694d873f", "byte_length": 159},
-        {"ref_id": "C2", "role": "Current", "type": "file-read", "path": "commands/bundle.md", "access_status": "readable", "sha256": "6c6e73200aa0b94e7405c604cfa6604bd047d45d38182742b30127d680da3a2a", "byte_length": 144},
+        {"ref_id": "S1", "role": "SoT", "type": "historical-plan", "path": "plans/bundle-rollout.md", "access_status": "readable", "sha256": "9d9f1fb312d45b3a9f1136237818a57468cde24769496ed93bc02cae0cbb087a", "byte_length": 162},
+        {"ref_id": "C1", "role": "Current", "type": "file-read", "path": "README.md", "access_status": "readable", "sha256": "1801ca412188035106e931bb51f29d367bf7e8b520b8827813d3590e2f9ab9f2", "byte_length": 101},
+        {"ref_id": "C2", "role": "Current", "type": "file-read", "path": "commands/bundle.md", "access_status": "readable", "sha256": "c42118473276c31d4ca0de0da02577952603d39f286ac9a983f39a00348d0bae", "byte_length": 112},
     ],
     "unresolved-source-precedence-stays-ambiguous": [
-        {"ref_id": "S1", "role": "SoT", "type": "specification", "path": "specs/bundle-auth.md", "access_status": "readable", "sha256": "c8d9caf8809c190b89b950c05378a71b028a5db480b92c54cc07ca947ae461ec", "byte_length": 103},
-        {"ref_id": "S2", "role": "SoT", "type": "specification", "path": "specs/bundle-launch.md", "access_status": "readable", "sha256": "a35e4a9e11bc7f9b9b1d3a60ee98036b0395945bc64436eedc0f053fc89d0143", "byte_length": 132},
-        {"ref_id": "C1", "role": "Current", "type": "file-read", "path": "README.md", "access_status": "readable", "sha256": "8cef467ed3cd0cb602d1151e72775abd6705950bdb0f49eab1f894b2d1bbabc4", "byte_length": 93},
-        {"ref_id": "C2", "role": "Current", "type": "file-read", "path": "commands/bundle.md", "access_status": "readable", "sha256": "aefc93c12daa3cf93f4522aaeddf032410693a7d9816eeec88dd489ac9cf218b", "byte_length": 83},
+        {"ref_id": "S1", "role": "SoT", "type": "specification", "path": "specs/bundle-auth.md", "access_status": "readable", "sha256": "126fd5b2682d9bd54eb169fac8c80d27d0d9d76f2b56dc43bac11b85260b8e1a", "byte_length": 71},
+        {"ref_id": "S2", "role": "SoT", "type": "specification", "path": "specs/bundle-launch.md", "access_status": "readable", "sha256": "8139112a124c621b67dcba21ae79c6570da00b1200f4cc6712452613278bb5fe", "byte_length": 107},
+        {"ref_id": "C1", "role": "Current", "type": "file-read", "path": "README.md", "access_status": "readable", "sha256": "48ca2c4a0db4e19865e7e9baa1417d31af985a16b4127c6523ab08534e380885", "byte_length": 85},
+        {"ref_id": "C2", "role": "Current", "type": "file-read", "path": "commands/bundle.md", "access_status": "readable", "sha256": "a4431748a8e18554f7ee3407bf71cd3ead63cd6bbe64b86b8e7e3f7d76774595", "byte_length": 73},
     ],
     "plan-only-current-is-not-implementation-proof": [
-        {"ref_id": "S1", "role": "SoT", "type": "specification", "path": "specs/alert-bundle.md", "access_status": "readable", "sha256": "2e31cb4bc45aa0ff7606481d7cb8e3124d2b92770d831132eb3f6fb517a21660", "byte_length": 149},
-        {"ref_id": "C1", "role": "Current", "type": "implementation-plan", "path": "plans/alert-bundle-implementation.md", "access_status": "readable", "sha256": "c989c0d5dc37c1ea0922b78f6a8d10205bf425452106d128e80035897363efc3", "byte_length": 248},
-        {"ref_id": "C2", "role": "Current", "type": "generated-artifact", "path": "generated/alert-bundle-index.json", "access_status": "readable", "sha256": "15ed79d766057a4ba4c9c51d76874f428c23eb1223c7f42ddae11bdad2f2588d", "byte_length": 313},
+        {"ref_id": "S1", "role": "SoT", "type": "specification", "path": "specs/alert-bundle.md", "access_status": "readable", "sha256": "39245bbbb7ddfb3f324d7f07475cc5862e8315194e07960ee77cf83e070ea739", "byte_length": 116},
+        {"ref_id": "C1", "role": "Current", "type": "implementation-plan", "path": "plans/alert-bundle-implementation.md", "access_status": "readable", "sha256": "399451e5eac87ae27eeed5c3acdea493056df13515f3dc9b3c844b1b80ad7ac0", "byte_length": 170},
+        {"ref_id": "C2", "role": "Current", "type": "generated-artifact", "path": "generated/alert-bundle-index.json", "access_status": "readable", "sha256": "ef9ad8b16c48091199f41526f1f7fb768761b8c8111dc9cb509e7c27b0b48227", "byte_length": 127},
     ],
 }
 GAP_CURRENT_EVIDENCE = {
@@ -284,6 +284,30 @@ GAP_OUTPUT_LABELS = (
     "📝 Findings:",
     "⚠️ Ambiguities / Missing Evidence:",
     "▶️ Recommended next steps:",
+)
+GAP_RUNTIME_HOME_CLASSIFICATION = "consumer_runtime_housekeeping"
+GAP_STATE_HONOR_STATUS = "not_observable_no_writes"
+GAP_STATE_OBSERVATION_BASIS = (
+    "post-run inventory capture; no generated state marker or packet was produced by read-only /tk:gap"
+)
+GAP_RUNTIME_HOME_ROOT = "temporary-home"
+GAP_CANONICAL_TIGERKIT_ROOT = "canonical-user-tigerkit"
+GAP_PROMPT_LEAKAGE_MARKERS = (
+    "pilot.expected",
+    "pilot.must_observe",
+    "must_observe",
+    "expected classification",
+    "expected gap",
+    "expected treatment",
+    "a plan or generated artifact",
+    "not direct implementation",
+    "keep the absence",
+    "absence of direct current evidence",
+    "do not infer the presence",
+    "must remain ambiguous",
+    "must be ambiguous",
+    "must be missing",
+    "scenario treatment",
 )
 
 PILOT_SPECS: dict[str, dict[str, Any]] = {
@@ -1405,6 +1429,132 @@ def gap_reject_host_paths(value: object, label: str) -> None:
             gap_reject_host_paths(item, f"{label}[{index}]")
 
 
+def gap_validate_prompt_neutrality(prompt: str, label: str) -> None:
+    lowered = prompt.lower()
+    for marker in GAP_PROMPT_LEAKAGE_MARKERS:
+        if marker in lowered:
+            fail(f"{label} contains scenario-treatment leakage marker {marker!r}")
+    if re.search(r"\bmust[ _]observe\b", lowered):
+        fail(f"{label} contains scenario-treatment leakage marker 'must observe'")
+    if re.search(r"\bexpected\s*[:=]", lowered):
+        fail(f"{label} contains scenario-treatment leakage marker 'expected:'")
+
+
+def gap_validate_lstat_inventory(
+    value: object,
+    label: str,
+    *,
+    root: str,
+    require_nonempty: bool = True,
+) -> dict[str, dict[str, Any]]:
+    if not isinstance(value, list):
+        fail(f"{label} must be a list")
+    records = cast(list[Any], value)
+    if require_nonempty and not records:
+        fail(f"{label} must not be empty")
+    inventory: dict[str, dict[str, Any]] = {}
+    for index, item in enumerate(records):
+        item_label = f"{label}[{index}]"
+        if not isinstance(item, dict):
+            fail(f"{item_label} must be an object")
+        record = cast(dict[str, Any], item)
+        path = full_allowed_relative(record.get("path"), f"{item_label}.path", {root})
+        if path in inventory:
+            fail(f"{label} contains duplicate path {path!r}")
+        mode = record.get("mode")
+        if not isinstance(mode, str) or re.fullmatch(r"0o[0-7]{3,4}", mode) is None:
+            fail(f"{item_label}.mode must be an octal lstat mode string")
+        kind = record.get("kind")
+        if kind == "directory":
+            if set(record) != {"path", "kind", "mode"}:
+                fail(f"{item_label} directory record has malformed lstat fields")
+        elif kind == "regular":
+            if set(record) != {"path", "kind", "mode", "size", "sha256"}:
+                fail(f"{item_label} regular record has malformed lstat fields")
+            size = record.get("size")
+            if isinstance(size, bool) or not isinstance(size, int) or size < 0:
+                fail(f"{item_label}.size must be a non-negative integer")
+            full_hash(record.get("sha256"), f"{item_label}.sha256")
+        elif kind == "symlink":
+            fail(f"{label} contains a forbidden symlink entry at {path!r}")
+        else:
+            fail(f"{label} contains an unsupported special entry at {path!r}")
+        inventory[path] = record
+    return inventory
+
+
+def gap_validate_changed_paths(
+    value: object,
+    label: str,
+    *,
+    root: str,
+    expected: list[str],
+) -> list[str]:
+    if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
+        fail(f"{label} must be a list of path strings")
+    paths = cast(list[str], value)
+    for index, path in enumerate(paths):
+        full_allowed_relative(path, f"{label}[{index}]", {root})
+    if len(paths) != len(set(paths)) or paths != sorted(paths):
+        fail(f"{label} must be a sorted unique path set")
+    if paths != expected:
+        fail(f"{label} must match the complete before/after delta")
+    return paths
+
+
+def gap_inventory_delta(
+    before: dict[str, dict[str, Any]],
+    after: dict[str, dict[str, Any]],
+) -> list[str]:
+    return sorted(path for path in set(before) | set(after) if before.get(path) != after.get(path))
+
+
+def gap_validate_runtime_home(source: dict[str, Any], label: str) -> list[str]:
+    runtime_home = gap_exact_object(
+        source.get("runtime_home"),
+        {"root", "inventory_before", "inventory_after", "changed_paths", "housekeeping"},
+        f"{label}.runtime_home",
+    )
+    if runtime_home.get("root") != GAP_RUNTIME_HOME_ROOT:
+        fail(f"{label}.runtime_home.root must be 'temporary-home'")
+    before = gap_validate_lstat_inventory(
+        runtime_home.get("inventory_before"),
+        f"{label}.runtime_home.inventory_before",
+        root=GAP_RUNTIME_HOME_ROOT,
+    )
+    after = gap_validate_lstat_inventory(
+        runtime_home.get("inventory_after"),
+        f"{label}.runtime_home.inventory_after",
+        root=GAP_RUNTIME_HOME_ROOT,
+    )
+    changed = gap_inventory_delta(before, after)
+    gap_validate_changed_paths(
+        runtime_home.get("changed_paths"),
+        f"{label}.runtime_home.changed_paths",
+        root=GAP_RUNTIME_HOME_ROOT,
+        expected=changed,
+    )
+    housekeeping = gap_exact_object(
+        runtime_home.get("housekeeping"),
+        {"classification", "out_of_scope", "paths"},
+        f"{label}.runtime_home.housekeeping",
+    )
+    if housekeeping.get("classification") != GAP_RUNTIME_HOME_CLASSIFICATION:
+        fail(
+            f"{label}.runtime_home.housekeeping.classification must be "
+            f"{GAP_RUNTIME_HOME_CLASSIFICATION!r}"
+        )
+    if housekeeping.get("out_of_scope") is not True:
+        fail(f"{label}.runtime_home.housekeeping.out_of_scope must be true")
+    gap_validate_changed_paths(
+        housekeeping.get("paths"),
+        f"{label}.runtime_home.housekeeping.paths",
+        root=GAP_RUNTIME_HOME_ROOT,
+        expected=changed,
+    )
+    return changed
+
+
 def gap_validate_contract_blobs(value: object, field: str) -> None:
     if value != GAP_CONTRACT_BLOB_LIST:
         fail(f"{field} must match the approved ordered contract blob set")
@@ -1579,6 +1729,7 @@ def gap_validate_fixture(source: dict[str, Any], scenario_id: str, label: str) -
     fixture = gap_exact_object(
         source.get("fixture"),
         {
+            "inventory_scope",
             "invocation_cwd",
             "git_root",
             "git_before",
@@ -1590,6 +1741,8 @@ def gap_validate_fixture(source: dict[str, Any], scenario_id: str, label: str) -
         },
         f"{label}.fixture",
     )
+    if fixture.get("inventory_scope") != "fixture tree excluding .git; Git metadata is captured by git_before/git_after":
+        fail(f"{label}.fixture.inventory_scope must describe the complete fixture tree excluding .git")
     if fixture.get("invocation_cwd") != "fixture-root" or fixture.get("git_root") != "fixture-root":
         fail(f"{label}.fixture must preserve the logical fixture root")
     gap_validate_git_snapshot(fixture.get("git_before"), scenario_id, f"{label}.fixture.git_before")
@@ -1614,6 +1767,129 @@ def gap_validate_fixture(source: dict[str, Any], scenario_id: str, label: str) -
         fail(f"{label}.fixture.fallback_writes must be empty")
 
 
+def gap_validate_canonical_tigerkit(source: dict[str, Any], label: str) -> bool:
+    canonical = gap_exact_object(
+        source.get("canonical_tigerkit"),
+        {"root", "inventory_before", "inventory_after", "unchanged"},
+        f"{label}.canonical_tigerkit",
+    )
+    if canonical.get("root") != GAP_CANONICAL_TIGERKIT_ROOT:
+        fail(f"{label}.canonical_tigerkit.root must be 'canonical-user-tigerkit'")
+    before = gap_validate_lstat_inventory(
+        canonical.get("inventory_before"),
+        f"{label}.canonical_tigerkit.inventory_before",
+        root=GAP_CANONICAL_TIGERKIT_ROOT,
+    )
+    after = gap_validate_lstat_inventory(
+        canonical.get("inventory_after"),
+        f"{label}.canonical_tigerkit.inventory_after",
+        root=GAP_CANONICAL_TIGERKIT_ROOT,
+    )
+    if before != after:
+        fail(f"{label}.canonical_tigerkit inventories must be exactly equal")
+    if canonical.get("unchanged") is not True:
+        fail(f"{label}.canonical_tigerkit.unchanged must be true")
+    return True
+
+
+def gap_validate_path_list(value: object, label: str, roots: set[str]) -> list[str]:
+    if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
+        fail(f"{label} must be a list of path strings")
+    paths = cast(list[str], value)
+    for index, path in enumerate(paths):
+        full_allowed_relative(path, f"{label}[{index}]", roots)
+    if len(paths) != len(set(paths)) or paths != sorted(paths):
+        fail(f"{label} must be a sorted unique path set")
+    return paths
+
+
+def gap_validate_product_surface(source: dict[str, Any], label: str, *, canonical_unchanged: bool) -> bool:
+    product = gap_exact_object(
+        source.get("product_surface"),
+        {
+            "fixture_changed_paths",
+            "plugin_changed_paths",
+            "tigerkit_state_changed_paths",
+            "gap_packet_paths_before",
+            "gap_packet_paths_after",
+            "gap_packet_changed_paths",
+            "changed_paths",
+        },
+        f"{label}.product_surface",
+    )
+    fixture_changed = gap_validate_path_list(
+        product.get("fixture_changed_paths"),
+        f"{label}.product_surface.fixture_changed_paths",
+        {"fixture-root"},
+    )
+    plugin_changed = gap_validate_path_list(
+        product.get("plugin_changed_paths"),
+        f"{label}.product_surface.plugin_changed_paths",
+        {"plugin-root"},
+    )
+    tigerkit_changed = gap_validate_path_list(
+        product.get("tigerkit_state_changed_paths"),
+        f"{label}.product_surface.tigerkit_state_changed_paths",
+        {"state-root"},
+    )
+    packet_before = gap_validate_path_list(
+        product.get("gap_packet_paths_before"),
+        f"{label}.product_surface.gap_packet_paths_before",
+        {"state-root"},
+    )
+    packet_after = gap_validate_path_list(
+        product.get("gap_packet_paths_after"),
+        f"{label}.product_surface.gap_packet_paths_after",
+        {"state-root"},
+    )
+    packet_changed = gap_inventory_delta(
+        {path: {"path": path} for path in packet_before},
+        {path: {"path": path} for path in packet_after},
+    )
+    if product.get("gap_packet_changed_paths") != packet_changed:
+        fail(f"{label}.product_surface.gap_packet_changed_paths must match packet before/after delta")
+    for field, paths in (
+        ("fixture_changed_paths", fixture_changed),
+        ("plugin_changed_paths", plugin_changed),
+        ("tigerkit_state_changed_paths", tigerkit_changed),
+    ):
+        if paths != []:
+            fail(f"{label}.product_surface.{field} must be empty")
+    product_changed = sorted(set(fixture_changed + plugin_changed + tigerkit_changed + packet_changed))
+    if product.get("changed_paths") != product_changed:
+        fail(f"{label}.product_surface.changed_paths must match the derived product-surface delta")
+    if product_changed != []:
+        fail(f"{label}.product_surface.changed_paths must be empty")
+    return not product_changed and canonical_unchanged
+
+
+def gap_validate_write_boundary(
+    source: dict[str, Any],
+    label: str,
+    *,
+    product_surface_write_free: bool,
+    runtime_home_changed: list[str],
+) -> None:
+    boundary = gap_exact_object(
+        source.get("write_boundary"),
+        {
+            "product_surface_write_free",
+            "product_surface_changed_paths",
+            "runtime_home_housekeeping_only",
+            "runtime_home_changed_paths",
+        },
+        f"{label}.write_boundary",
+    )
+    if boundary.get("product_surface_changed_paths") != []:
+        fail(f"{label}.write_boundary.product_surface_changed_paths must be empty")
+    if boundary.get("product_surface_write_free") is not product_surface_write_free:
+        fail(f"{label}.write_boundary.product_surface_write_free must match the derived product-surface state")
+    if boundary.get("runtime_home_changed_paths") != runtime_home_changed:
+        fail(f"{label}.write_boundary.runtime_home_changed_paths must match runtime_home delta")
+    if boundary.get("runtime_home_housekeeping_only") is not True:
+        fail(f"{label}.write_boundary.runtime_home_housekeeping_only must be true")
+
+
 def gap_validate_empty_inventory(value: object, label: str) -> None:
     if not isinstance(value, list):
         fail(f"{label} must be a list")
@@ -1622,17 +1898,37 @@ def gap_validate_empty_inventory(value: object, label: str) -> None:
 
 
 def gap_validate_state(source: dict[str, Any], label: str) -> None:
+    raw_state = source.get("state_root")
+    if isinstance(raw_state, dict) and any(
+        field in raw_state for field in ("honored", "requested_root_honored")
+    ):
+        fail(f"{label}.state_root must not contain a boolean honored claim when no state write is observable")
     state_root = gap_exact_object(
-        source.get("state_root"),
-        {"requested", "observed_root", "honored", "inventory_before", "inventory_after"},
+        raw_state,
+        {
+            "requested",
+            "observed_root",
+            "honor_status",
+            "observation_basis",
+            "inventory_before",
+            "inventory_after",
+            "packet_paths_before",
+            "packet_paths_after",
+        },
         f"{label}.state_root",
     )
-    if state_root.get("requested") != "state-root" or state_root.get("observed_root") != "state-root":
-        fail(f"{label}.state_root requested/observed roots must be 'state-root'")
-    if state_root.get("honored") is not True:
-        fail(f"{label}.state_root.honored must be true for the captured run")
+    if state_root.get("requested") != "state-root":
+        fail(f"{label}.state_root.requested must be 'state-root'")
+    if state_root.get("honor_status") != GAP_STATE_HONOR_STATUS:
+        fail(f"{label}.state_root.honor_status must be 'not_observable_no_writes'")
+    if state_root.get("observed_root") is not None:
+        fail(f"{label}.state_root.observed_root must be null when honor_status is not_observable_no_writes")
+    if state_root.get("observation_basis") != GAP_STATE_OBSERVATION_BASIS:
+        fail(f"{label}.state_root.observation_basis must state that no state marker or packet was observed")
     gap_validate_empty_inventory(state_root.get("inventory_before"), f"{label}.state_root.inventory_before")
     gap_validate_empty_inventory(state_root.get("inventory_after"), f"{label}.state_root.inventory_after")
+    gap_validate_empty_inventory(state_root.get("packet_paths_before"), f"{label}.state_root.packet_paths_before")
+    gap_validate_empty_inventory(state_root.get("packet_paths_after"), f"{label}.state_root.packet_paths_after")
 
     temporary = gap_exact_object(
         source.get("temporary_home_tigerkit"),
@@ -1653,7 +1949,13 @@ def gap_validate_state(source: dict[str, Any], label: str) -> None:
         fail(f"{label}.temporary_home_tigerkit inventories must be exactly equal")
 
     privacy = gap_exact_object(source.get("privacy"), {"normalized_paths"}, f"{label}.privacy")
-    if privacy.get("normalized_paths") != ["fixture-root", "plugin-root", "state-root", "temporary-home"]:
+    if privacy.get("normalized_paths") != [
+        "fixture-root",
+        "plugin-root",
+        "state-root",
+        "temporary-home",
+        "canonical-user-tigerkit",
+    ]:
         fail(f"{label}.privacy.normalized_paths must preserve the approved logical path tokens")
 
 
@@ -1675,6 +1977,10 @@ def full_validate_gap_source(path: Path, record: dict[str, Any], scenario_id: st
             "fixture",
             "state_root",
             "temporary_home_tigerkit",
+            "runtime_home",
+            "product_surface",
+            "canonical_tigerkit",
+            "write_boundary",
             "privacy",
         },
         label,
@@ -1684,6 +1990,7 @@ def full_validate_gap_source(path: Path, record: dict[str, Any], scenario_id: st
     if source.get("scenario_id") != scenario_id:
         fail(f"{label}.scenario_id must match the result scenario")
     gap_reject_host_paths(source, label)
+    runtime_home_changed = gap_validate_runtime_home(source, label)
 
     session = gap_exact_object(
         source.get("session"),
@@ -1706,7 +2013,7 @@ def full_validate_gap_source(path: Path, record: dict[str, Any], scenario_id: st
         "session_id": GAP_SESSION_IDS[scenario_id],
         "fresh": True,
         "isolated": True,
-        "write_free": True,
+        "write_free": not bool(runtime_home_changed),
         "consumer": GAP_CONSUMER,
         "consumer_version": GAP_CONSUMER_VERSION,
         "wrapper": GAP_WRAPPER,
@@ -1715,6 +2022,13 @@ def full_validate_gap_source(path: Path, record: dict[str, Any], scenario_id: st
         "model": GAP_MODEL,
         "model_source": GAP_MODEL_SOURCE,
     }
+    if session.get("write_free") is not (not bool(runtime_home_changed)):
+        expected_write_free = not bool(runtime_home_changed)
+        fail(
+            f"{label}.session.write_free must be "
+            f"{str(expected_write_free).lower()} when runtime_home.changed_paths is "
+            f"{'non-empty' if runtime_home_changed else 'empty'}"
+        )
     if session != expected_session or session.get("session_id") != record.get("session_id"):
         fail(f"{label}.session must preserve the actual isolated runtime and derived model truth")
 
@@ -1748,6 +2062,7 @@ def full_validate_gap_source(path: Path, record: dict[str, Any], scenario_id: st
         fail(f"{label}.command.argv must preserve the 15-argument wrapper invocation")
     prompt = argv[3] if isinstance(argv, list) and len(argv) > 3 else None
     prompt = require_nonempty_string(prompt, f"{label}.command.argv[3]")
+    gap_validate_prompt_neutrality(prompt, f"{label}.command.argv[3]")
     if hashlib.sha256(prompt.encode("utf-8")).hexdigest() != GAP_PROMPT_HASHES[scenario_id]:
         fail(f"{label}.command prompt does not match the approved exact request")
     if len(prompt.encode("utf-8")) != GAP_PROMPT_LENGTHS[scenario_id]:
@@ -1903,6 +2218,18 @@ def full_validate_gap_source(path: Path, record: dict[str, Any], scenario_id: st
 
     gap_validate_fixture(source, scenario_id, label)
     gap_validate_state(source, label)
+    canonical_unchanged = gap_validate_canonical_tigerkit(source, label)
+    product_surface_write_free = gap_validate_product_surface(
+        source,
+        label,
+        canonical_unchanged=canonical_unchanged,
+    )
+    gap_validate_write_boundary(
+        source,
+        label,
+        product_surface_write_free=product_surface_write_free,
+        runtime_home_changed=runtime_home_changed,
+    )
     return source
 
 

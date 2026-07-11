@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import errno
 import hashlib
+import importlib.util
 import json
 import os
 import shutil
@@ -34,6 +35,12 @@ def load_result(checkout: Path) -> dict[str, Any]:
 
 def load_gap_result(checkout: Path) -> dict[str, Any]:
     return json.loads((checkout / GAP_RESULT).read_text(encoding="utf-8"))
+
+
+def load_gap_source(checkout: Path, scenario_id: str) -> dict[str, Any]:
+    return json.loads(
+        (checkout / GAP_RAW_DIR / f"{scenario_id}.json").read_text(encoding="utf-8")
+    )
 
 
 def write_result(checkout: Path, result: dict[str, Any]) -> None:
@@ -859,6 +866,132 @@ def gap_malformed_state_record(result: dict[str, Any], checkout: Path) -> None:
     )
 
 
+def gap_runtime_home_unrecorded_delta(result: dict[str, Any], checkout: Path) -> None:
+    def mutate(source: dict[str, Any]) -> None:
+        source["runtime_home"]["inventory_after"].append(
+            {
+                "path": "temporary-home/.claude/unrecorded.json",
+                "kind": "regular",
+                "mode": "0o600",
+                "size": 0,
+                "sha256": "0" * 64,
+            }
+        )
+
+    rewrite_gap_source(checkout, result, "stale-plan-vs-live-surface-conflict", mutate)
+
+
+def gap_false_write_free_claim(result: dict[str, Any], checkout: Path) -> None:
+    rewrite_gap_source(
+        checkout,
+        result,
+        "stale-plan-vs-live-surface-conflict",
+        lambda source: source["session"].update({"write_free": True}),
+    )
+
+
+def gap_runtime_home_malformed_record(result: dict[str, Any], checkout: Path) -> None:
+    rewrite_gap_source(
+        checkout,
+        result,
+        "stale-plan-vs-live-surface-conflict",
+        lambda source: source["runtime_home"]["inventory_after"][0].pop("mode"),
+    )
+
+
+def gap_runtime_home_symlink_entry(result: dict[str, Any], checkout: Path) -> None:
+    rewrite_gap_source(
+        checkout,
+        result,
+        "stale-plan-vs-live-surface-conflict",
+        lambda source: source["runtime_home"]["inventory_after"].append(
+            {
+                "path": "temporary-home/.claude/runtime-link",
+                "kind": "symlink",
+                "mode": "0o777",
+                "link_text": "../outside",
+            }
+        ),
+    )
+
+
+def gap_runtime_home_special_entry(result: dict[str, Any], checkout: Path) -> None:
+    rewrite_gap_source(
+        checkout,
+        result,
+        "stale-plan-vs-live-surface-conflict",
+        lambda source: source["runtime_home"]["inventory_after"].append(
+            {
+                "path": "temporary-home/.claude/runtime-socket",
+                "kind": "socket",
+                "mode": "0o600",
+            }
+        ),
+    )
+
+
+def gap_runtime_home_path_traversal(result: dict[str, Any], checkout: Path) -> None:
+    rewrite_gap_source(
+        checkout,
+        result,
+        "stale-plan-vs-live-surface-conflict",
+        lambda source: source["runtime_home"]["inventory_after"].append(
+            {
+                "path": "temporary-home/../escape",
+                "kind": "directory",
+                "mode": "0o775",
+            }
+        ),
+    )
+
+
+def gap_product_surface_write_free_false(result: dict[str, Any], checkout: Path) -> None:
+    rewrite_gap_source(
+        checkout,
+        result,
+        "stale-plan-vs-live-surface-conflict",
+        lambda source: source["write_boundary"].update({"product_surface_write_free": False}),
+    )
+
+
+def gap_product_surface_plugin_write(result: dict[str, Any], checkout: Path) -> None:
+    rewrite_gap_source(
+        checkout,
+        result,
+        "stale-plan-vs-live-surface-conflict",
+        lambda source: source["product_surface"].update(
+            {"plugin_changed_paths": ["plugin-root/commands/gap.md"]}
+        ),
+    )
+
+
+def gap_state_honor_status_mutation(result: dict[str, Any], checkout: Path) -> None:
+    rewrite_gap_source(
+        checkout,
+        result,
+        "stale-plan-vs-live-surface-conflict",
+        lambda source: source["state_root"].update({"honor_status": "honored"}),
+    )
+
+
+def gap_state_honored_boolean_claim(result: dict[str, Any], checkout: Path) -> None:
+    rewrite_gap_source(
+        checkout,
+        result,
+        "stale-plan-vs-live-surface-conflict",
+        lambda source: source["state_root"].update({"honored": True}),
+    )
+
+
+def gap_state_observed_root_claim(result: dict[str, Any], checkout: Path) -> None:
+    rewrite_gap_source(
+        checkout,
+        result,
+        "stale-plan-vs-live-surface-conflict",
+        lambda source: source["state_root"].update({"observed_root": "state-root"}),
+    )
+
+
 CASES: list[tuple[str, Mutation, str | None]] = [
     ("missing scenario", missing_scenario, None),
     ("duplicate scenario", duplicate_scenario, None),
@@ -935,7 +1068,7 @@ GAP_CASES: list[tuple[str, Mutation, str | None]] = [
     ("GAP Git status mutation", gap_git_status_mutation, "git_before.status_porcelain must be an empty list for the read-only run"),
     ("GAP Git staged mutation", gap_git_staged_mutation, "git_before.staged_paths must be an empty list for the read-only run"),
     ("GAP Git unstaged mutation", gap_git_unstaged_mutation, "git_before.unstaged_paths must be an empty list for the read-only run"),
-    ("GAP requested state-root mutation", gap_requested_state_root_mutation, "state_root requested/observed roots must be 'state-root'"),
+    ("GAP requested state-root mutation", gap_requested_state_root_mutation, "state_root.requested must be 'state-root'"),
     ("GAP temp-home inventory mutation", gap_temp_home_inventory_mutation, "temporary_home_tigerkit.inventory_after must be empty"),
     ("GAP packet/write injection", gap_packet_write_injection, "fixture.fallback_writes must be empty"),
     ("GAP source path traversal", gap_source_path_traversal, "source_path must be a normalized POSIX path relative to the checkout"),
@@ -947,6 +1080,17 @@ GAP_CASES: list[tuple[str, Mutation, str | None]] = [
     ("GAP malformed source ref", gap_malformed_source_ref, "gap_observation.source_refs[0] has malformed fields"),
     ("GAP malformed Git record", gap_malformed_git_record, "fixture.git_before has malformed fields"),
     ("GAP malformed state record", gap_malformed_state_record, "state_root.inventory_before must be a list"),
+    ("GAP unrecorded runtime-home delta", gap_runtime_home_unrecorded_delta, "runtime_home.changed_paths must match the complete before/after delta"),
+    ("GAP false write-free claim", gap_false_write_free_claim, "session.write_free must be false when runtime_home.changed_paths is non-empty"),
+    ("GAP malformed runtime-home record", gap_runtime_home_malformed_record, "runtime_home.inventory_after[0].mode"),
+    ("GAP runtime-home symlink entry", gap_runtime_home_symlink_entry, "runtime_home.inventory_after contains a forbidden symlink entry"),
+    ("GAP runtime-home special entry", gap_runtime_home_special_entry, "runtime_home.inventory_after contains an unsupported special entry"),
+    ("GAP runtime-home path traversal", gap_runtime_home_path_traversal, "runtime_home.inventory_after[18].path must be a normalized POSIX path"),
+    ("GAP product write-free false claim", gap_product_surface_write_free_false, "product_surface_write_free must match the derived product-surface state"),
+    ("GAP product plugin write", gap_product_surface_plugin_write, "product_surface.plugin_changed_paths must be empty"),
+    ("GAP state honor status mutation", gap_state_honor_status_mutation, "state_root.honor_status must be 'not_observable_no_writes'"),
+    ("GAP state honored boolean claim", gap_state_honored_boolean_claim, "state_root must not contain a boolean honored claim when no state write is observable"),
+    ("GAP state observed-root claim", gap_state_observed_root_claim, "state_root.observed_root must be null when honor_status is not_observable_no_writes"),
     ("GAP wrong classification", gap_wrong_classification, "final_classification"),
 ]
 
@@ -965,6 +1109,179 @@ def assert_controlled_rejection(
             f"{name}: rejection did not reach the intended semantic diagnostic "
             f"{expected_fragment!r}: {output}"
         )
+
+
+def test_gap_scenario3_prompt_is_neutral() -> None:
+    leakage_markers = (
+        "pilot.expected",
+        "pilot.must_observe",
+        "must_observe",
+        "expected classification",
+        "expected gap",
+        "expected treatment",
+        "a plan or generated artifact",
+        "not direct implementation",
+        "keep the absence",
+        "absence of direct current evidence",
+        "do not infer the presence",
+        "must remain ambiguous",
+        "must be missing",
+    )
+    for scenario_id in (
+        "stale-plan-vs-live-surface-conflict",
+        "unresolved-source-precedence-stays-ambiguous",
+        "plan-only-current-is-not-implementation-proof",
+    ):
+        source = load_gap_source(ROOT, scenario_id)
+        prompt = source["command"]["argv"][3]
+        assert isinstance(prompt, str)
+        found = [marker for marker in leakage_markers if marker in prompt.lower()]
+        assert not found, f"{scenario_id} prompt leaks expected evidence treatment: {found!r}"
+
+
+def load_validator_module() -> Any:
+    spec = importlib.util.spec_from_file_location("check_full_eval_pilots", VALIDATOR)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_gap_prompt_neutrality_validator_rejects_treatment_markers() -> None:
+    validator = load_validator_module()
+    for prompt in (
+        "Return the expected classification: ambiguous.",
+        "The pilot.must_observe field must be present.",
+        "Keep the absence of direct current evidence and classify as missing.",
+    ):
+        try:
+            validator.gap_validate_prompt_neutrality(prompt, "test.prompt")
+        except SystemExit as exc:
+            assert "leakage" in str(exc)
+        else:
+            raise AssertionError(f"prompt treatment marker was accepted: {prompt!r}")
+
+    validator.gap_validate_prompt_neutrality(
+        "Source type=implementation-plan and type=generated-artifact; return the canonical final classification.",
+        "test.prompt",
+    )
+
+
+def test_gap_scenarios_record_complete_runtime_home_inventories() -> None:
+    for scenario_id in (
+        "stale-plan-vs-live-surface-conflict",
+        "unresolved-source-precedence-stays-ambiguous",
+        "plan-only-current-is-not-implementation-proof",
+    ):
+        source = load_gap_source(ROOT, scenario_id)
+        runtime_home = source.get("runtime_home")
+        assert isinstance(runtime_home, dict), f"{scenario_id}: runtime_home is missing"
+        assert set(runtime_home) == {
+            "root",
+            "inventory_before",
+            "inventory_after",
+            "changed_paths",
+            "housekeeping",
+        }
+        assert runtime_home["root"] == "temporary-home"
+        assert isinstance(runtime_home["inventory_before"], list)
+        assert isinstance(runtime_home["inventory_after"], list)
+        assert isinstance(runtime_home["changed_paths"], list)
+        housekeeping = runtime_home["housekeeping"]
+        assert isinstance(housekeeping, dict)
+        assert set(housekeeping) == {"classification", "out_of_scope", "paths"}
+        assert housekeeping["classification"] == "consumer_runtime_housekeeping"
+        assert housekeeping["out_of_scope"] is True
+        assert isinstance(housekeeping["paths"], list)
+        before = {item["path"]: item for item in runtime_home["inventory_before"]}
+        after = {item["path"]: item for item in runtime_home["inventory_after"]}
+        assert len(before) == len(runtime_home["inventory_before"])
+        assert len(after) == len(runtime_home["inventory_after"])
+        for inventory in (runtime_home["inventory_before"], runtime_home["inventory_after"]):
+            for item in inventory:
+                assert item["kind"] in {"directory", "regular"}
+                if item["kind"] == "directory":
+                    assert set(item) == {"path", "kind", "mode"}
+                else:
+                    assert set(item) == {"path", "kind", "mode", "size", "sha256"}
+        calculated = sorted(
+            path
+            for path in set(before) | set(after)
+            if before.get(path) != after.get(path)
+        )
+        assert calculated
+        assert runtime_home["changed_paths"] == calculated
+        assert housekeeping["paths"] == calculated
+
+        write_boundary = source.get("write_boundary")
+        assert isinstance(write_boundary, dict), f"{scenario_id}: write_boundary is missing"
+        assert set(write_boundary) == {
+            "product_surface_write_free",
+            "product_surface_changed_paths",
+            "runtime_home_housekeeping_only",
+            "runtime_home_changed_paths",
+        }
+        assert isinstance(write_boundary["product_surface_write_free"], bool)
+        assert write_boundary["product_surface_changed_paths"] == []
+        assert write_boundary["runtime_home_changed_paths"] == calculated
+        assert write_boundary["runtime_home_housekeeping_only"] is True
+
+        session = source.get("session")
+        assert isinstance(session, dict)
+        assert session["write_free"] is False
+
+        state_root = source.get("state_root")
+        assert isinstance(state_root, dict)
+        assert set(state_root) == {
+            "requested",
+            "observed_root",
+            "honor_status",
+            "observation_basis",
+            "inventory_before",
+            "inventory_after",
+            "packet_paths_before",
+            "packet_paths_after",
+        }
+        assert state_root["requested"] == "state-root"
+        assert state_root["observed_root"] is None
+        assert state_root["honor_status"] == "not_observable_no_writes"
+        assert state_root["observation_basis"] == (
+            "post-run inventory capture; no generated state marker or packet was produced by read-only /tk:gap"
+        )
+        assert state_root["inventory_before"] == []
+        assert state_root["inventory_after"] == []
+        assert isinstance(state_root["packet_paths_before"], list)
+        assert isinstance(state_root["packet_paths_after"], list)
+        assert state_root["packet_paths_before"] == []
+        assert state_root["packet_paths_after"] == []
+
+        product_surface = source.get("product_surface")
+        assert isinstance(product_surface, dict)
+        assert set(product_surface) == {
+            "fixture_changed_paths",
+            "plugin_changed_paths",
+            "tigerkit_state_changed_paths",
+            "gap_packet_paths_before",
+            "gap_packet_paths_after",
+            "gap_packet_changed_paths",
+            "changed_paths",
+        }
+        assert product_surface["changed_paths"] == []
+        assert product_surface["fixture_changed_paths"] == []
+        assert product_surface["plugin_changed_paths"] == []
+        assert product_surface["tigerkit_state_changed_paths"] == []
+        assert product_surface["gap_packet_paths_before"] == []
+        assert product_surface["gap_packet_paths_after"] == []
+        assert product_surface["gap_packet_changed_paths"] == []
+
+        canonical = source.get("canonical_tigerkit")
+        assert isinstance(canonical, dict)
+        assert canonical["root"] == "canonical-user-tigerkit"
+        assert canonical["inventory_before"]
+        assert canonical["inventory_after"]
+        assert canonical["inventory_before"] == canonical["inventory_after"]
+        assert canonical["unchanged"] is True
+        assert source["write_boundary"]["product_surface_write_free"] is True
 
 
 def test_missing_reflect_result_is_rejected() -> None:
@@ -1013,6 +1330,8 @@ def test_not_ignored_requires_explicit_ignore_file_states() -> None:
 
 
 def main() -> int:
+    test_gap_scenario3_prompt_is_neutral()
+    test_gap_scenarios_record_complete_runtime_home_inventories()
     test_missing_reflect_result_is_rejected()
     test_missing_gap_result_is_rejected()
     test_not_ignored_requires_explicit_ignore_file_states()

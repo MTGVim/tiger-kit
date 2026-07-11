@@ -2,10 +2,10 @@
   "schemaVersion": "tigerkit.full-gap-stale-sot-precedence-source/v1",
   "scenario_id": "plan-only-current-is-not-implementation-proof",
   "session": {
-    "session_id": "6897964a-b2ed-4407-ade2-16b054d470d0",
+    "session_id": "da456140-839e-4bd1-97f5-601bde118d58",
     "fresh": true,
     "isolated": true,
-    "write_free": true,
+    "write_free": false,
     "consumer": "Claude Code",
     "consumer_version": "2.1.150 (Claude Code)",
     "wrapper": "ccs codex",
@@ -17,11 +17,11 @@
   "plugin": {
     "path": "plugin-root",
     "repo_id": "tiger-kit",
-    "commit": "731c8ea9d8b47011d808020df6ccae6f54d1ca99",
+    "commit": "09d58e90ec7fc4274ea371a4e8a5b9d012855534",
     "contract_blobs": [
       {
         "path": "commands/gap.md",
-        "sha256": "2d985b65acb65b10a811b136d6c705e0dd6c99fba449cb897a4f414dabcedd1d"
+        "sha256": "4f64eafbbcc1d5191d90163e8d57768e90e5fbf20d2082267caf1a2cb701623d"
       },
       {
         "path": "skills/gap/SKILL.md",
@@ -38,7 +38,7 @@
       "ccs",
       "codex",
       "-p",
-      "Pilot=gap-stale-sot-precedence; Scenario=plan-only-current-is-not-implementation-proof; Fixture CWD=fixture-root; Plugin checkout=plugin-root. The plugin checkout is contract source only; the fixture is the scenario Current/SoT repository. Source inventory (use only these refs; IDs/roles/types/paths): S1 | role=SoT | type=specification | path=specs/alert-bundle.md; C1 | role=Current | type=implementation-plan | path=plans/alert-bundle-implementation.md; C2 | role=Current | type=generated-artifact | path=generated/alert-bundle-index.json. Read the exact contract sources from plugin checkout only as needed to follow the command: commands/gap.md, skills/gap/SKILL.md, .tigerkit/docs/output-contract.md. Invoke the public `/tk:gap` command exactly once on the listed refs. Do not read pilot.expected or pilot.must_observe. Do not edit the fixture, plugin checkout, or any other repository. Do not write a gap report, packet, state artifact, cache, settings, memory, or any file. Do not implement anything. A plan or generated artifact describes intent or derived metadata only; it is not direct implementation, runtime, command-output, rendered-output, or diff evidence. Do not infer the presence of the required behavior from planned text, and keep the absence of direct Current evidence explicit. Do not commit, reset, stash, checkout, resume, continue, or use prior sessions, memory, MCP, or another slash command. Return only the canonical gap report with source/evidence distinction, final gap classification, and one recommended next step.",
+      "Pilot=gap-stale-sot-precedence; Scenario=plan-only-current-is-not-implementation-proof; Fixture CWD=fixture-root; Plugin checkout=plugin-root. The plugin checkout is contract source only; the fixture is the scenario Current/SoT repository. Source inventory (use only these refs; IDs/roles/types/paths): S1 | role=SoT | type=specification | path=specs/alert-bundle.md; C1 | role=Current | type=implementation-plan | path=plans/alert-bundle-implementation.md; C2 | role=Current | type=generated-artifact | path=generated/alert-bundle-index.json. Read the exact contract sources from plugin checkout only as needed to follow the command: commands/gap.md, skills/gap/SKILL.md, .tigerkit/docs/output-contract.md. Invoke the public `/tk:gap` command exactly once on the listed refs. Do not edit the fixture, plugin checkout, TigerKit state, or any other repository. Do not implement anything. Do not write a gap report, packet, state artifact, cache, settings, memory, or any file. Do not commit, reset, stash, checkout, resume, continue, or use prior sessions, memory, MCP, or another slash command. Return only the canonical gap report with source/evidence distinction, final classification, and one recommended next step.",
       "--plugin-dir",
       "plugin-root",
       "--permission-mode",
@@ -51,7 +51,7 @@
       "--output-format",
       "json"
     ],
-    "argv_sha256": "b3cfee4d86136a641f110867f4dd48b4b2df95e0418ffd2a6ef671c436cb10fa",
+    "argv_sha256": "920cd391672faa0e1b88559f117cc62ece148aef51cd2fba1e64890b259afc40",
     "invocation_cwd": "fixture-root",
     "plugin_dir": "plugin-root",
     "permission_mode": "dontAsk",
@@ -63,8 +63,8 @@
     ],
     "max_turns": 16,
     "session_persistence": false,
-    "prompt_sha256": "37054f44ca45921450dd1a14c098e315ce8489b9f16c61200ff63865b42ac852",
-    "prompt_byte_length": 1549
+    "prompt_sha256": "67ed109b3ed22ba4c495abce49e1ddd5fce686b7006d568b23b7ce9b30ecd277",
+    "prompt_byte_length": 1218
   },
   "tool_evidence": {
     "plugin_command": {
@@ -75,7 +75,7 @@
         "ccs",
         "codex",
         "-p",
-        "Pilot=gap-stale-sot-precedence; Scenario=plan-only-current-is-not-implementation-proof; Fixture CWD=fixture-root; Plugin checkout=plugin-root. The plugin checkout is contract source only; the fixture is the scenario Current/SoT repository. Source inventory (use only these refs; IDs/roles/types/paths): S1 | role=SoT | type=specification | path=specs/alert-bundle.md; C1 | role=Current | type=implementation-plan | path=plans/alert-bundle-implementation.md; C2 | role=Current | type=generated-artifact | path=generated/alert-bundle-index.json. Read the exact contract sources from plugin checkout only as needed to follow the command: commands/gap.md, skills/gap/SKILL.md, .tigerkit/docs/output-contract.md. Invoke the public `/tk:gap` command exactly once on the listed refs. Do not read pilot.expected or pilot.must_observe. Do not edit the fixture, plugin checkout, or any other repository. Do not write a gap report, packet, state artifact, cache, settings, memory, or any file. Do not implement anything. A plan or generated artifact describes intent or derived metadata only; it is not direct implementation, runtime, command-output, rendered-output, or diff evidence. Do not infer the presence of the required behavior from planned text, and keep the absence of direct Current evidence explicit. Do not commit, reset, stash, checkout, resume, continue, or use prior sessions, memory, MCP, or another slash command. Return only the canonical gap report with source/evidence distinction, final gap classification, and one recommended next step.",
+        "Pilot=gap-stale-sot-precedence; Scenario=plan-only-current-is-not-implementation-proof; Fixture CWD=fixture-root; Plugin checkout=plugin-root. The plugin checkout is contract source only; the fixture is the scenario Current/SoT repository. Source inventory (use only these refs; IDs/roles/types/paths): S1 | role=SoT | type=specification | path=specs/alert-bundle.md; C1 | role=Current | type=implementation-plan | path=plans/alert-bundle-implementation.md; C2 | role=Current | type=generated-artifact | path=generated/alert-bundle-index.json. Read the exact contract sources from plugin checkout only as needed to follow the command: commands/gap.md, skills/gap/SKILL.md, .tigerkit/docs/output-contract.md. Invoke the public `/tk:gap` command exactly once on the listed refs. Do not edit the fixture, plugin checkout, TigerKit state, or any other repository. Do not implement anything. Do not write a gap report, packet, state artifact, cache, settings, memory, or any file. Do not commit, reset, stash, checkout, resume, continue, or use prior sessions, memory, MCP, or another slash command. Return only the canonical gap report with source/evidence distinction, final classification, and one recommended next step.",
         "--plugin-dir",
         "plugin-root",
         "--permission-mode",
@@ -92,7 +92,7 @@
       "plugin_dir": "plugin-root"
     },
     "consumer_envelope": {
-      "session_id": "6897964a-b2ed-4407-ade2-16b054d470d0",
+      "session_id": "da456140-839e-4bd1-97f5-601bde118d58",
       "type": "result",
       "subtype": "success",
       "is_error": false,
@@ -105,22 +105,22 @@
   "runtime": {
     "model_usage": {
       "gpt-5.4-mini(low)": {
-        "inputTokens": 939,
-        "outputTokens": 60,
+        "inputTokens": 853,
+        "outputTokens": 33,
         "cacheReadInputTokens": 0,
         "cacheCreationInputTokens": 0,
         "webSearchRequests": 0,
-        "costUSD": 0.006194999999999999,
+        "costUSD": 0.00509,
         "contextWindow": 200000,
         "maxOutputTokens": 32000
       },
       "gpt-5.5(high)": {
-        "inputTokens": 11232,
-        "outputTokens": 1732,
+        "inputTokens": 11384,
+        "outputTokens": 1820,
         "cacheReadInputTokens": 60416,
         "cacheCreationInputTokens": 0,
         "webSearchRequests": 0,
-        "costUSD": 0.129668,
+        "costUSD": 0.132628,
         "contextWindow": 200000,
         "maxOutputTokens": 32000
       }
@@ -140,10 +140,10 @@
     }
   },
   "consumer_output": {
-    "result": "📊 Gap summary:\n| Area | SoT | Current | Gap | Impact | Priority |\n|---|---|---|---|---|---|\n| `/alert-bundle --severity <level>` public behavior | `specs/alert-bundle.md` requires JSON response including requested severity | `plans/alert-bundle-implementation.md` and `generated/alert-bundle-index.json` only describe planned intent/metadata | missing | Required behavior is not proven by direct implementation, runtime, command-output, rendered-output, or diff evidence | P1 |\n\n📝 Findings:\n### 1. Required `/alert-bundle` JSON behavior has no direct Current implementation evidence\n- SoT: `specs/alert-bundle.md:3-5` requires public surface `/alert-bundle --severity <level>` and a JSON response that includes the requested severity.\n- Current: `plans/alert-bundle-implementation.md:3-9` is an implementation plan; `generated/alert-bundle-index.json:2-12` is a generated artifact derived from that plan. Neither is direct implementation proof.\n- Evidence: C1 says intended files and behavior are planned; C2 records `planned_command` and `planned_response`.\n- Evidence type: Current evidence is `implementation-plan` and `generated-artifact` only; no direct implementation, runtime output, command output, rendered output, or diff evidence was provided.\n- Impact: The SoT behavior may still be unimplemented even though planned artifacts mention it.\n- Priority: P1\n- Suggested fix: Provide or create direct Current evidence for `/alert-bundle --severity <level>` returning JSON that includes the requested severity.\n- Route: direct\n- Route evidence: S1 is explicit and non-conflicting; C1/C2 are explicitly plan/generated evidence only.\n\n⚠️ Ambiguities / Missing Evidence:\n| Ref | Question | Evidence checked | Impact | Recommendation |\n|---|---|---|---|---|\n| C1/C2 | Is there actual implementation or runtime behavior matching S1? | Only `plans/alert-bundle-implementation.md` and `generated/alert-bundle-index.json` | Plan/generated text could be mistaken for implementation proof | Check direct implementation/runtime evidence next |\n\n📝 Not accepted summary:\n- Planned files in C1/C2 were not accepted as implementation evidence.\n\n▶️ Recommended next steps:\n1. Inspect or produce direct implementation/runtime evidence for `/alert-bundle --severity <level>` returning JSON with the requested severity.",
-    "result_sha256": "61cee17bfdaf26ff56c5826a0cfc867c5dad971e10d40df985fbe4d92e28b82e",
-    "result_byte_length": 2323,
-    "raw_result_sha256": "61cee17bfdaf26ff56c5826a0cfc867c5dad971e10d40df985fbe4d92e28b82e"
+    "result": "📊 Gap summary:\n| Area | SoT | Current | Gap | Impact | Priority |\n|---|---|---|---|---|---|\n| `/alert-bundle --severity <level>` behavior | S1 `specs/alert-bundle.md`: command must return JSON including requested severity | C1 is an implementation plan; C2 is a generated artifact sourced from the plan; no direct implementation/runtime/diff evidence in scoped Current refs | `missing` | Required behavior is not proven implemented by the scoped Current evidence | P1 |\n\n📝 Findings:\n### 1. Scoped Current evidence does not prove `/alert-bundle --severity <level>` implementation\n- SoT: S1 `specs/alert-bundle.md:3` requires ``/alert-bundle --severity <level>`` to return JSON including the requested severity.\n- Current: C1 `plans/alert-bundle-implementation.md:3-4` only says to implement the command; C2 `generated/alert-bundle-index.json:2-4` only records planned command/response with `\"source\": \"plan\"`.\n- Evidence: S1 is accessible specification evidence. C1 is plan evidence. C2 is generated-artifact evidence derived from plan.\n- Evidence type: SoT=`specification`; Current=`implementation-plan`, `generated-artifact`.\n- Impact: Because the explicitly scoped Current set contains only plan/generated evidence and no direct implementation/runtime/command/rendered/diff evidence, the requested behavior is classified as `missing` for this scoped comparison.\n- Priority: P1\n- Suggested fix: Provide or inspect direct implementation/runtime evidence for `/alert-bundle --severity <level>`, then implement the missing behavior if it is still absent.\n- Route: direct\n- Route evidence: S1 has a clear non-conflicting requirement; C1/C2 are not implementation proof.\n\n⚠️ Ambiguities / Missing Evidence:\n| Ref | Question | Evidence checked | Impact | Recommendation |\n|---|---|---|---|---|\n| Current implementation outside C1/C2 | Does an actual implementation or runtime output exist elsewhere in the repository? | Only listed Current refs C1 and C2 were inspected per scope | Cannot claim global repository absence, only scoped Current `missing` | Inspect direct implementation/runtime evidence next if the goal is implementation verification |\n\n📝 Not accepted summary:\n- No P3, duplicate, or source-conflict findings included.\n\n▶️ Recommended next steps:\n1. Inspect the actual implementation or run `/alert-bundle --severity <level>` to obtain direct evidence, then compare that evidence against S1.",
+    "result_sha256": "0744fbcebd7bf9755d01c4383bb0bfb071ead0ef7b6a06ef2c6538d697524ef3",
+    "result_byte_length": 2418,
+    "raw_result_sha256": "0744fbcebd7bf9755d01c4383bb0bfb071ead0ef7b6a06ef2c6538d697524ef3"
   },
   "gap_observation": {
     "source_refs": [
@@ -153,8 +153,8 @@
         "type": "specification",
         "path": "specs/alert-bundle.md",
         "access_status": "readable",
-        "sha256": "2e31cb4bc45aa0ff7606481d7cb8e3124d2b92770d831132eb3f6fb517a21660",
-        "byte_length": 149
+        "sha256": "39245bbbb7ddfb3f324d7f07475cc5862e8315194e07960ee77cf83e070ea739",
+        "byte_length": 116
       },
       {
         "ref_id": "C1",
@@ -162,8 +162,8 @@
         "type": "implementation-plan",
         "path": "plans/alert-bundle-implementation.md",
         "access_status": "readable",
-        "sha256": "c989c0d5dc37c1ea0922b78f6a8d10205bf425452106d128e80035897363efc3",
-        "byte_length": 248
+        "sha256": "399451e5eac87ae27eeed5c3acdea493056df13515f3dc9b3c844b1b80ad7ac0",
+        "byte_length": 170
       },
       {
         "ref_id": "C2",
@@ -171,11 +171,11 @@
         "type": "generated-artifact",
         "path": "generated/alert-bundle-index.json",
         "access_status": "readable",
-        "sha256": "15ed79d766057a4ba4c9c51d76874f428c23eb1223c7f42ddae11bdad2f2588d",
-        "byte_length": 313
+        "sha256": "ef9ad8b16c48091199f41526f1f7fb768761b8c8111dc9cb509e7c27b0b48227",
+        "byte_length": 127
       }
     ],
-    "source_manifest_sha256": "547311efc19e33cb460a0e7cb943a1dc35185a071951414a2fffd5069097a94e",
+    "source_manifest_sha256": "1a45f1e3f778c036c31362224c3646fb77531f9c06a0556b0f3a734fd31a4362",
     "current_evidence": [
       {
         "evidence_id": "C1",
@@ -197,7 +197,7 @@
       "note": "S1 is the only SoT ref; Current plan/generated refs do not establish source priority."
     },
     "final_classification": "missing",
-    "recommendation": "1. Inspect or produce direct implementation/runtime evidence for `/alert-bundle --severity <level>` returning JSON with the requested severity.",
+    "recommendation": "1. Inspect the actual implementation or run `/alert-bundle --severity <level>` to obtain direct evidence, then compare that evidence against S1.",
     "direct_implementation_evidence": [],
     "direct_runtime_evidence": [],
     "direct_command_output_evidence": [],
@@ -205,6 +205,7 @@
     "direct_diff_evidence": []
   },
   "fixture": {
+    "inventory_scope": "fixture tree excluding .git; Git metadata is captured by git_before/git_after",
     "invocation_cwd": "fixture-root",
     "git_root": "fixture-root",
     "git_before": {
@@ -213,7 +214,7 @@
       "status_command_status": 0,
       "staged_command_status": 0,
       "unstaged_command_status": 0,
-      "head": "c3683f26e871efadefc5dbe960aa3f5e54705726",
+      "head": "ea8a954975b7be08c60cac25f6e0941cb01d7ba6",
       "branch": "main",
       "status_porcelain": [],
       "staged_paths": [],
@@ -225,7 +226,7 @@
       "status_command_status": 0,
       "staged_command_status": 0,
       "unstaged_command_status": 0,
-      "head": "c3683f26e871efadefc5dbe960aa3f5e54705726",
+      "head": "ea8a954975b7be08c60cac25f6e0941cb01d7ba6",
       "branch": "main",
       "status_porcelain": [],
       "staged_paths": [],
@@ -238,23 +239,9 @@
         "mode": "0o775"
       },
       {
-        "path": "fixture-root/generated/alert-bundle-index.json",
-        "kind": "regular",
-        "mode": "0o600",
-        "size": 313,
-        "sha256": "15ed79d766057a4ba4c9c51d76874f428c23eb1223c7f42ddae11bdad2f2588d"
-      },
-      {
         "path": "fixture-root/plans",
         "kind": "directory",
         "mode": "0o775"
-      },
-      {
-        "path": "fixture-root/plans/alert-bundle-implementation.md",
-        "kind": "regular",
-        "mode": "0o600",
-        "size": 248,
-        "sha256": "c989c0d5dc37c1ea0922b78f6a8d10205bf425452106d128e80035897363efc3"
       },
       {
         "path": "fixture-root/specs",
@@ -262,11 +249,25 @@
         "mode": "0o775"
       },
       {
+        "path": "fixture-root/generated/alert-bundle-index.json",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 127,
+        "sha256": "ef9ad8b16c48091199f41526f1f7fb768761b8c8111dc9cb509e7c27b0b48227"
+      },
+      {
+        "path": "fixture-root/plans/alert-bundle-implementation.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 170,
+        "sha256": "399451e5eac87ae27eeed5c3acdea493056df13515f3dc9b3c844b1b80ad7ac0"
+      },
+      {
         "path": "fixture-root/specs/alert-bundle.md",
         "kind": "regular",
         "mode": "0o600",
-        "size": 149,
-        "sha256": "2e31cb4bc45aa0ff7606481d7cb8e3124d2b92770d831132eb3f6fb517a21660"
+        "size": 116,
+        "sha256": "39245bbbb7ddfb3f324d7f07475cc5862e8315194e07960ee77cf83e070ea739"
       }
     ],
     "fixture_inventory_after": [
@@ -276,23 +277,9 @@
         "mode": "0o775"
       },
       {
-        "path": "fixture-root/generated/alert-bundle-index.json",
-        "kind": "regular",
-        "mode": "0o600",
-        "size": 313,
-        "sha256": "15ed79d766057a4ba4c9c51d76874f428c23eb1223c7f42ddae11bdad2f2588d"
-      },
-      {
         "path": "fixture-root/plans",
         "kind": "directory",
         "mode": "0o775"
-      },
-      {
-        "path": "fixture-root/plans/alert-bundle-implementation.md",
-        "kind": "regular",
-        "mode": "0o600",
-        "size": 248,
-        "sha256": "c989c0d5dc37c1ea0922b78f6a8d10205bf425452106d128e80035897363efc3"
       },
       {
         "path": "fixture-root/specs",
@@ -300,11 +287,25 @@
         "mode": "0o775"
       },
       {
+        "path": "fixture-root/generated/alert-bundle-index.json",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 127,
+        "sha256": "ef9ad8b16c48091199f41526f1f7fb768761b8c8111dc9cb509e7c27b0b48227"
+      },
+      {
+        "path": "fixture-root/plans/alert-bundle-implementation.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 170,
+        "sha256": "399451e5eac87ae27eeed5c3acdea493056df13515f3dc9b3c844b1b80ad7ac0"
+      },
+      {
         "path": "fixture-root/specs/alert-bundle.md",
         "kind": "regular",
         "mode": "0o600",
-        "size": 149,
-        "sha256": "2e31cb4bc45aa0ff7606481d7cb8e3124d2b92770d831132eb3f6fb517a21660"
+        "size": 116,
+        "sha256": "39245bbbb7ddfb3f324d7f07475cc5862e8315194e07960ee77cf83e070ea739"
       }
     ],
     "changed_paths": [],
@@ -312,22 +313,1072 @@
   },
   "state_root": {
     "requested": "state-root",
-    "observed_root": "state-root",
-    "honored": true,
+    "observed_root": null,
+    "honor_status": "not_observable_no_writes",
+    "observation_basis": "post-run inventory capture; no generated state marker or packet was produced by read-only /tk:gap",
     "inventory_before": [],
-    "inventory_after": []
+    "inventory_after": [],
+    "packet_paths_before": [],
+    "packet_paths_after": []
   },
   "temporary_home_tigerkit": {
     "root": "temporary-home/.tigerkit",
     "inventory_before": [],
     "inventory_after": []
   },
+  "runtime_home": {
+    "root": "temporary-home",
+    "inventory_before": [
+      {
+        "path": "temporary-home/.cache",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude.json",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 391,
+        "sha256": "b7a6948b652bd653eb8ed4c339265ad96056073c50d1fbeda1bbca71b177c29e"
+      },
+      {
+        "path": "temporary-home/.claude.json.ccs-lock",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "temporary-home/.config",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.local",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.tigerkit",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude/.claude.json",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 258,
+        "sha256": "e1f287fe07eaaeeb38389fbca6e5af41a310684e966931f4f003d012572091ae"
+      },
+      {
+        "path": "temporary-home/.claude/backups",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude/projects",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude/sessions",
+        "kind": "directory",
+        "mode": "0o700"
+      },
+      {
+        "path": "temporary-home/.claude/settings.json",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 3,
+        "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+      },
+      {
+        "path": "temporary-home/.claude/backups/.claude.json.backup.1783779152186",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 50,
+        "sha256": "3998bc9d8f2655748d8ea01ea965562890fbf92248667e2900c74179dea5708f"
+      },
+      {
+        "path": "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-plan-only-current-is-not-implementation-proof-fixture-root",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-plan-only-current-is-not-implementation-proof-fixture-root/memory",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.local/share",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.local/state",
+        "kind": "directory",
+        "mode": "0o775"
+      }
+    ],
+    "inventory_after": [
+      {
+        "path": "temporary-home/.cache",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude.json",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 391,
+        "sha256": "b7a6948b652bd653eb8ed4c339265ad96056073c50d1fbeda1bbca71b177c29e"
+      },
+      {
+        "path": "temporary-home/.claude.json.ccs-lock",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "temporary-home/.config",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.local",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.tigerkit",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude/.claude.json",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 360,
+        "sha256": "430a9157bc5fc52d1852532f6f76fe5190a0b7548e6cb07ab3dfa580085a07aa"
+      },
+      {
+        "path": "temporary-home/.claude/.last-cleanup",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 24,
+        "sha256": "00d940196b5fa5d1d3ecf69f3986f6557751a2df73d74c0f42a9d96b7ad2a9bf"
+      },
+      {
+        "path": "temporary-home/.claude/backups",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude/projects",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude/sessions",
+        "kind": "directory",
+        "mode": "0o700"
+      },
+      {
+        "path": "temporary-home/.claude/settings.json",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 3,
+        "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+      },
+      {
+        "path": "temporary-home/.claude/backups/.claude.json.backup.1783779152186",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 50,
+        "sha256": "3998bc9d8f2655748d8ea01ea965562890fbf92248667e2900c74179dea5708f"
+      },
+      {
+        "path": "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-plan-only-current-is-not-implementation-proof-fixture-root",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-plan-only-current-is-not-implementation-proof-fixture-root/da456140-839e-4bd1-97f5-601bde118d58.jsonl",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 116,
+        "sha256": "c01b1b22fbd012f33e5f08f2765c978d6e61d809c6cd339fe7692ab2794d4e16"
+      },
+      {
+        "path": "temporary-home/.local/share",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "temporary-home/.local/state",
+        "kind": "directory",
+        "mode": "0o775"
+      }
+    ],
+    "changed_paths": [
+      "temporary-home/.claude/.claude.json",
+      "temporary-home/.claude/.last-cleanup",
+      "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-plan-only-current-is-not-implementation-proof-fixture-root/da456140-839e-4bd1-97f5-601bde118d58.jsonl",
+      "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-plan-only-current-is-not-implementation-proof-fixture-root/memory"
+    ],
+    "housekeeping": {
+      "classification": "consumer_runtime_housekeeping",
+      "out_of_scope": true,
+      "paths": [
+        "temporary-home/.claude/.claude.json",
+        "temporary-home/.claude/.last-cleanup",
+        "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-plan-only-current-is-not-implementation-proof-fixture-root/da456140-839e-4bd1-97f5-601bde118d58.jsonl",
+        "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-plan-only-current-is-not-implementation-proof-fixture-root/memory"
+      ]
+    }
+  },
+  "product_surface": {
+    "fixture_changed_paths": [],
+    "plugin_changed_paths": [],
+    "tigerkit_state_changed_paths": [],
+    "gap_packet_paths_before": [],
+    "gap_packet_paths_after": [],
+    "gap_packet_changed_paths": [],
+    "changed_paths": []
+  },
+  "canonical_tigerkit": {
+    "root": "canonical-user-tigerkit",
+    "inventory_before": [
+      {
+        "path": "canonical-user-tigerkit/local",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/local/session-start",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 430,
+        "sha256": "4129c0cab36243f909e9110488c9a27e7208b6f2079862a7519676dd19b0607c"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "64320ad2fe425b77a9ef728b9306c8d811099df1b5941c6aaf109d8fac7bfdf3"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 430,
+        "sha256": "92da375fdcc68063e3d58a1d7e9c24ae65d517fda1b25ec1cd3f0e1305f9c6f9"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "bfb65cc3a13f2dcc6bc26eeb3e8e4d571c177afc4cd579bc32773521b17b5f72"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 430,
+        "sha256": "996b2b6ab768225b377444364515eecb63ef8fe7bdbd5a6c84c9c44031d3bc50"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "d0755c1b7dbd9b2f0849ecd781281af269756f2f8ac18401f46fc4e615625807"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 430,
+        "sha256": "a18e64f9825bd8373c3cc7f7b42a0117354a54507b8906aa1af57e83c614860e"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "954eaca0414b7ce9d4eac00d3e11e19a5b00f91b9d241160df2b55549c7b4f0b"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/issues",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/plans",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/prd",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 463,
+        "sha256": "1b39e2c11e101ead19931b2810f6b398da596ff01dc9b9719759099f0ea48673"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/issues/current.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 12092,
+        "sha256": "e03d41893ba5bb46862204fb6a63c4492caf14c470639a21602a4d917f0e1665"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/issues/github-ready.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 7463,
+        "sha256": "ff63f2b045c8e54a5a3e77347eb2dd657fb9e9b2667fd18e4a1462b3594baffb"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/issues/tk-to-issues-output-format-review-20260708.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 2939,
+        "sha256": "7f234b7db91d4c00bb4362ac5faa9071f76f80f661ad1047cc0674f4755ac5d7"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/plans/eval-loop-evidence-master.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 9400,
+        "sha256": "96039ae80f5d9088b87562da634c90d9b11209b25571eef5ff5294bc499e91ab"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/prd/current.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 23822,
+        "sha256": "e80606e036a1744e3165003d12acae4f90d8d4d7fe9098d7a763accd3988ff4e"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "9dc39d20e5433181f34f9c9411bb64665cb8c1dc891bd6d1f49eda5f672a06b1"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/feat-externalize-tigerkit-writer",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/main",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/feat-externalize-tigerkit-writer/gap",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/feat-externalize-tigerkit-writer/gap/current.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 310,
+        "sha256": "77de4e2eb0d25a0f2d91e3651da6a64d4943ecf3198e8dfd95eaac29eb58418a"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/main/gap",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/branch-state.json",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 402,
+        "sha256": "b74ee113143b8a5ea7acab3c40c9a6bb17b284a2a83a76f862bdd298cfaf9668"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/executions",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/executions/exec-20260622-220033-fadd27b1.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1315,
+        "sha256": "090a2015913ad0fa467791dc2826fe827bc026069f7a46e54bbae6bfccb34c2e"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/executions/exec-20260622-223145-3e85dd79.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 598,
+        "sha256": "eb12f8107072baaec47206a8a7a699182657126b5bec9213837eb4c3c66bd79e"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/executions/exec-20260622-223251-eab7b6fe.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 685,
+        "sha256": "44d12c7365b1c56f1df0810f74bbcf49876a60a7a937ca92c524076cfd5b9f0f"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/execute-smoke-current-20260622-223235-D515",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/execute-smoke-current-20260622-223251-06D1",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/loop-spec-20260622-220012-D3A2",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/loop-spec-20260622-220033-5748",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/execute-smoke-current-20260622-223235-D515/spec.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1780,
+        "sha256": "a7cd9c7668ac2d532d63dc342e3a8b488a9ad43529d9a2963ede1749837bfbf6"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/execute-smoke-current-20260622-223251-06D1/spec.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1780,
+        "sha256": "9e17d3cb7e0ec431d0e27f4d423afb7963e72faddadb1d39b9be3345cd22e3ca"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/loop-spec-20260622-220012-D3A2/spec.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1770,
+        "sha256": "fdee963349b8a60219f3dca3518e777365f6a8351ebdfba8d99e6edf26d28e55"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/loop-spec-20260622-220033-5748/spec.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1770,
+        "sha256": "dfb2444c03b1bb6024dcb74ed9639bd7a387032ff845c75ad92035fd62c39879"
+      }
+    ],
+    "inventory_after": [
+      {
+        "path": "canonical-user-tigerkit/local",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/local/session-start",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 430,
+        "sha256": "4129c0cab36243f909e9110488c9a27e7208b6f2079862a7519676dd19b0607c"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--59e4659d/worktrees/repo--0eb15037/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "64320ad2fe425b77a9ef728b9306c8d811099df1b5941c6aaf109d8fac7bfdf3"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 430,
+        "sha256": "92da375fdcc68063e3d58a1d7e9c24ae65d517fda1b25ec1cd3f0e1305f9c6f9"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--761bdcab/worktrees/repo--dc0a07cd/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "bfb65cc3a13f2dcc6bc26eeb3e8e4d571c177afc4cd579bc32773521b17b5f72"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 430,
+        "sha256": "996b2b6ab768225b377444364515eecb63ef8fe7bdbd5a6c84c9c44031d3bc50"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/repo--9d7c2121/worktrees/repo--38655759/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "d0755c1b7dbd9b2f0849ecd781281af269756f2f8ac18401f46fc4e615625807"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 430,
+        "sha256": "a18e64f9825bd8373c3cc7f7b42a0117354a54507b8906aa1af57e83c614860e"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/target--a61eaa27/worktrees/target--c5e7a114/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "954eaca0414b7ce9d4eac00d3e11e19a5b00f91b9d241160df2b55549c7b4f0b"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/handoffs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/issues",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/plans",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/prd",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/wayfinder",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/handoffs/current.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 463,
+        "sha256": "1b39e2c11e101ead19931b2810f6b398da596ff01dc9b9719759099f0ea48673"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/issues/current.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 12092,
+        "sha256": "e03d41893ba5bb46862204fb6a63c4492caf14c470639a21602a4d917f0e1665"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/issues/github-ready.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 7463,
+        "sha256": "ff63f2b045c8e54a5a3e77347eb2dd657fb9e9b2667fd18e4a1462b3594baffb"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/issues/tk-to-issues-output-format-review-20260708.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 2939,
+        "sha256": "7f234b7db91d4c00bb4362ac5faa9071f76f80f661ad1047cc0674f4755ac5d7"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/plans/eval-loop-evidence-master.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 9400,
+        "sha256": "96039ae80f5d9088b87562da634c90d9b11209b25571eef5ff5294bc499e91ab"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/prd/current.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 23822,
+        "sha256": "e80606e036a1744e3165003d12acae4f90d8d4d7fe9098d7a763accd3988ff4e"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--1bcc63ed/worktrees/tiger-kit--db4f0901/wayfinder/current.md",
+        "kind": "regular",
+        "mode": "0o664",
+        "size": 178,
+        "sha256": "9dc39d20e5433181f34f9c9411bb64665cb8c1dc891bd6d1f49eda5f672a06b1"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/feat-externalize-tigerkit-writer",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/main",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/feat-externalize-tigerkit-writer/gap",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/feat-externalize-tigerkit-writer/gap/current.md",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 310,
+        "sha256": "77de4e2eb0d25a0f2d91e3651da6a64d4943ecf3198e8dfd95eaac29eb58418a"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit--db4f0901/branches/main/gap",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/branch-state.json",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 402,
+        "sha256": "b74ee113143b8a5ea7acab3c40c9a6bb17b284a2a83a76f862bdd298cfaf9668"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/executions",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/executions/exec-20260622-220033-fadd27b1.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1315,
+        "sha256": "090a2015913ad0fa467791dc2826fe827bc026069f7a46e54bbae6bfccb34c2e"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/executions/exec-20260622-223145-3e85dd79.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 598,
+        "sha256": "eb12f8107072baaec47206a8a7a699182657126b5bec9213837eb4c3c66bd79e"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/executions/exec-20260622-223251-eab7b6fe.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 685,
+        "sha256": "44d12c7365b1c56f1df0810f74bbcf49876a60a7a937ca92c524076cfd5b9f0f"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/execute-smoke-current-20260622-223235-D515",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/execute-smoke-current-20260622-223251-06D1",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/loop-spec-20260622-220012-D3A2",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/loop-spec-20260622-220033-5748",
+        "kind": "directory",
+        "mode": "0o775"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/execute-smoke-current-20260622-223235-D515/spec.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1780,
+        "sha256": "a7cd9c7668ac2d532d63dc342e3a8b488a9ad43529d9a2963ede1749837bfbf6"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/execute-smoke-current-20260622-223251-06D1/spec.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1780,
+        "sha256": "9e17d3cb7e0ec431d0e27f4d423afb7963e72faddadb1d39b9be3345cd22e3ca"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/loop-spec-20260622-220012-D3A2/spec.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1770,
+        "sha256": "fdee963349b8a60219f3dca3518e777365f6a8351ebdfba8d99e6edf26d28e55"
+      },
+      {
+        "path": "canonical-user-tigerkit/repos/tiger-kit-execute-runtime-v1--7ec88218/branches/feat-tk-execute-runtime-v1/loop-specs/loop-spec-20260622-220033-5748/spec.yaml",
+        "kind": "regular",
+        "mode": "0o600",
+        "size": 1770,
+        "sha256": "dfb2444c03b1bb6024dcb74ed9639bd7a387032ff845c75ad92035fd62c39879"
+      }
+    ],
+    "unchanged": true
+  },
+  "write_boundary": {
+    "product_surface_write_free": true,
+    "product_surface_changed_paths": [],
+    "runtime_home_housekeeping_only": true,
+    "runtime_home_changed_paths": [
+      "temporary-home/.claude/.claude.json",
+      "temporary-home/.claude/.last-cleanup",
+      "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-plan-only-current-is-not-implementation-proof-fixture-root/da456140-839e-4bd1-97f5-601bde118d58.jsonl",
+      "temporary-home/.claude/projects/-tmp-tiger-kit-full-evidence-issue3-postfix-final-all-three-r4-plan-only-current-is-not-implementation-proof-fixture-root/memory"
+    ]
+  },
   "privacy": {
     "normalized_paths": [
       "fixture-root",
       "plugin-root",
       "state-root",
-      "temporary-home"
+      "temporary-home",
+      "canonical-user-tigerkit"
     ]
   }
 }
