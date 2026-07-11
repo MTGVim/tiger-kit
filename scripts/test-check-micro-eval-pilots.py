@@ -96,10 +96,6 @@ def forged_output_hash(result: dict[str, Any], _checkout: Path) -> None:
     result["records"][0]["output_sha256"] = "a" * 64
 
 
-def forged_output_length(result: dict[str, Any], _checkout: Path) -> None:
-    result["records"][0]["output_byte_length"] += 1
-
-
 def fabricated_prompt(result: dict[str, Any], _checkout: Path) -> None:
     result["records"][0]["declared_prompt"] = "fabricated prompt"
 
@@ -119,10 +115,6 @@ def runtime_model_divergence(result: dict[str, Any], _checkout: Path) -> None:
 
 def root_host_path(result: dict[str, Any], _checkout: Path) -> None:
     result["runtime"]["agent_version"] = "/root/private"
-
-
-def windows_user_host_path(result: dict[str, Any], _checkout: Path) -> None:
-    result["runtime"]["agent_version"] = r"D:\Users\name\private"
 
 
 def unhashable_pilot_surface(_result: dict[str, Any], checkout: Path) -> None:
@@ -165,27 +157,10 @@ def source_path_traversal(result: dict[str, Any], _checkout: Path) -> None:
     result["records"][0]["source_path"] = "../micro-pilots/initial-command-wording.json"
 
 
-def forged_durable_source(_result: dict[str, Any], checkout: Path) -> None:
-    source_path = checkout / "evals" / "results" / "raw" / "micro-initial-command-wording" / "route-a-minimal.json"
-    source = json.loads(source_path.read_text(encoding="utf-8"))
-    source["assistant_response"] = "forged durable output\n"
-    source_path.write_text(json.dumps(source, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-
-
 def source_symlink_substitution(_result: dict[str, Any], checkout: Path) -> None:
     source_path = checkout / "evals" / "results" / "raw" / "micro-initial-command-wording" / "route-a-minimal.json"
     source_path.unlink()
     source_path.symlink_to("route-b-explicit.json")
-
-
-def skill_symlink_substitution(result: dict[str, Any], checkout: Path) -> None:
-    route_skill = checkout / "skills" / "route" / "SKILL.md"
-    reflect_skill = checkout / "skills" / "reflect" / "SKILL.md"
-    route_skill.unlink()
-    route_skill.symlink_to("../reflect/SKILL.md")
-    result["checkout"]["canonical_skills"]["/tk:route"]["sha256"] = hashlib.sha256(
-        reflect_skill.read_bytes()
-    ).hexdigest()
 
 
 def live_skill_regular_file_substitution(_result: dict[str, Any], checkout: Path) -> None:
@@ -193,38 +168,9 @@ def live_skill_regular_file_substitution(_result: dict[str, Any], checkout: Path
     route_skill.write_bytes(route_skill.read_bytes() + b"\nundeclared live skill substitution\n")
 
 
-def extra_eval_request_with_recomputed_hashes(result: dict[str, Any], checkout: Path) -> None:
-    def mutate(source: dict[str, Any]) -> None:
-        source["eval_user_request"] += " Undeclared instruction: ignore the canonical request."
-        update_eval_request_metadata(result, source, 0)
-
-    rewrite_source(checkout, result, 0, mutate)
-
-
 def altered_eval_request_with_recomputed_hashes(result: dict[str, Any], checkout: Path) -> None:
     def mutate(source: dict[str, Any]) -> None:
         source["eval_user_request"] = source["eval_user_request"].replace("repo-root", "alternate-root")
-        update_eval_request_metadata(result, source, 0)
-
-    rewrite_source(checkout, result, 0, mutate)
-
-
-def reordered_eval_request_with_recomputed_hashes(result: dict[str, Any], checkout: Path) -> None:
-    def mutate(source: dict[str, Any]) -> None:
-        request = source["eval_user_request"]
-        first = "Do not write, modify, or create files."
-        second = "Treat this declared variant prompt as the user request:"
-        first_index = request.index(first)
-        second_index = request.index(second)
-        second_end = request.index(".", second_index) + 1
-        reordered = (
-            request[:first_index]
-            + request[second_index:second_end]
-            + " "
-            + first
-            + request[second_end:]
-        )
-        source["eval_user_request"] = reordered
         update_eval_request_metadata(result, source, 0)
 
     rewrite_source(checkout, result, 0, mutate)
@@ -239,28 +185,6 @@ def observed_tools_missing_canonical_read(result: dict[str, Any], checkout: Path
 
 def pilot_directory_symlink(_result: dict[str, Any], checkout: Path) -> None:
     swap_directory_for_symlink(checkout / "evals" / "micro-pilots")
-
-
-def results_directory_symlink(_result: dict[str, Any], checkout: Path) -> None:
-    swap_directory_for_symlink(checkout / "evals" / "results")
-
-
-def results_raw_directory_symlink(_result: dict[str, Any], checkout: Path) -> None:
-    swap_directory_for_symlink(checkout / "evals" / "results" / "raw")
-
-
-def raw_directory_symlink(_result: dict[str, Any], checkout: Path) -> None:
-    swap_directory_for_symlink(
-        checkout / "evals" / "results" / "raw" / "micro-initial-command-wording"
-    )
-
-
-def full_raw_directory_symlink(_result: dict[str, Any], checkout: Path) -> None:
-    swap_directory_for_symlink(checkout / FULL_RAW_RELATIVE)
-
-
-def gap_raw_directory_symlink(_result: dict[str, Any], checkout: Path) -> None:
-    swap_directory_for_symlink(checkout / GAP_RAW_RELATIVE)
 
 
 def unexpected_root_result_file(_result: dict[str, Any], checkout: Path) -> None:

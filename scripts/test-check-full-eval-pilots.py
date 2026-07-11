@@ -165,12 +165,6 @@ def refresh_gap_source_anchor(checkout: Path, scenario_id: str, source_sha256: s
     )
 
 
-def swap_directory_for_symlink(path: Path) -> None:
-    real_path = path.with_name(path.name + "-real")
-    path.rename(real_path)
-    path.symlink_to(real_path.name, target_is_directory=True)
-
-
 def prepare_checkout(temp_root: Path) -> Path:
     checkout = temp_root / "relocated-tiger-kit"
     shutil.copytree(ROOT, checkout, symlinks=True)
@@ -191,22 +185,8 @@ def missing_scenario(result: dict[str, Any], _checkout: Path) -> None:
     result["scenarios"].pop()
 
 
-def duplicate_scenario(result: dict[str, Any], _checkout: Path) -> None:
-    result["scenarios"].append(copy.deepcopy(result["scenarios"][0]))
-
-
-def extra_scenario(result: dict[str, Any], _checkout: Path) -> None:
-    extra = copy.deepcopy(result["scenarios"][0])
-    extra["id"] = "unexpected-scenario"
-    result["scenarios"].append(extra)
-
-
 def forged_source_hash(result: dict[str, Any], _checkout: Path) -> None:
     result["scenarios"][0]["source_sha256"] = "a" * 64
-
-
-def forged_result_hash(result: dict[str, Any], _checkout: Path) -> None:
-    result["scenarios"][0]["assistant_result_sha256"] = "b" * 64
 
 
 def wrong_reason(result: dict[str, Any], checkout: Path) -> None:
@@ -254,26 +234,6 @@ def ignore_mutation(result: dict[str, Any], checkout: Path) -> None:
     )
 
 
-def ignore_second_mutation(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_source(
-        checkout,
-        result,
-        "not-ignored-claude-local-reject",
-        lambda source: source["fixture"]["ignore_files"][1]["after"].update(
-            {"mode": "0o600", "sha256": "f" * 64}
-        ),
-    )
-
-
-def symlink_target_mutation(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_source(
-        checkout,
-        result,
-        "symlink-claude-local-reject",
-        lambda source: source["fixture"]["external_target"].update({"sha256": "f" * 64}),
-    )
-
-
 def target_inventory_mismatch(result: dict[str, Any], checkout: Path) -> None:
     def mutate(source: dict[str, Any]) -> None:
         target = source["fixture"]["target"]
@@ -281,15 +241,6 @@ def target_inventory_mismatch(result: dict[str, Any], checkout: Path) -> None:
         target["after"]["sha256"] = "c" * 64
 
     rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
-
-
-def external_target_inventory_mismatch(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_source(
-        checkout,
-        result,
-        "symlink-claude-local-reject",
-        lambda source: source["fixture"]["external_target"].update({"sha256": "f" * 64}),
-    )
 
 
 def fixture_inventory_bad_type(result: dict[str, Any], checkout: Path) -> None:
@@ -301,30 +252,6 @@ def fixture_inventory_bad_type(result: dict[str, Any], checkout: Path) -> None:
     )
 
 
-def fixture_inventory_missing_field(result: dict[str, Any], checkout: Path) -> None:
-    def mutate(source: dict[str, Any]) -> None:
-        for inventory_name in ("fixture_inventory_before", "fixture_inventory_after"):
-            source["fixture"][inventory_name][1].pop("size")
-
-    rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
-
-
-def fixture_inventory_duplicate_path(result: dict[str, Any], checkout: Path) -> None:
-    def mutate(source: dict[str, Any]) -> None:
-        inventory = source["fixture"]["fixture_inventory_before"]
-        inventory.append(copy.deepcopy(inventory[0]))
-
-    rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
-
-
-def fixture_inventory_unknown_kind(result: dict[str, Any], checkout: Path) -> None:
-    def mutate(source: dict[str, Any]) -> None:
-        for inventory_name in ("fixture_inventory_before", "fixture_inventory_after"):
-            source["fixture"][inventory_name][0]["kind"] = "directory"
-
-    rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
-
-
 def state_inventory_bad_type(result: dict[str, Any], checkout: Path) -> None:
     rewrite_source(
         checkout,
@@ -334,65 +261,12 @@ def state_inventory_bad_type(result: dict[str, Any], checkout: Path) -> None:
     )
 
 
-def state_inventory_missing_field(result: dict[str, Any], checkout: Path) -> None:
-    def mutate(source: dict[str, Any]) -> None:
-        source["state_root"]["inventory_after"][0].pop("size")
-
-    rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
-
-
-def state_inventory_duplicate_path(result: dict[str, Any], checkout: Path) -> None:
-    def mutate(source: dict[str, Any]) -> None:
-        inventory = source["state_root"]["inventory_after"]
-        inventory.append(copy.deepcopy(inventory[0]))
-
-    rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
-
-
-def state_inventory_unknown_kind(result: dict[str, Any], checkout: Path) -> None:
-    def mutate(source: dict[str, Any]) -> None:
-        for item in source["state_root"]["inventory_after"]:
-            item["kind"] = "directory"
-
-    rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
-
-
-def git_snapshot_missing_head(result: dict[str, Any], checkout: Path) -> None:
-    def mutate(source: dict[str, Any]) -> None:
-        for snapshot_name in ("git_before", "git_after"):
-            source["fixture"][snapshot_name].pop("head")
-
-    rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
-
-
-def git_snapshot_boolean_status(result: dict[str, Any], checkout: Path) -> None:
-    def mutate(source: dict[str, Any]) -> None:
-        for snapshot_name in ("git_before", "git_after"):
-            source["fixture"][snapshot_name]["rev_parse_status"] = True
-
-    rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
-
-
 def git_snapshot_bad_status_porcelain(result: dict[str, Any], checkout: Path) -> None:
     def mutate(source: dict[str, Any]) -> None:
         for snapshot_name in ("git_before", "git_after"):
             source["fixture"][snapshot_name]["status_porcelain"] = ""
 
     rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
-
-
-def git_snapshot_bad_non_git_head(result: dict[str, Any], checkout: Path) -> None:
-    def mutate(source: dict[str, Any]) -> None:
-        for snapshot_name in ("git_before", "git_after"):
-            source["fixture"][snapshot_name] = {
-                **source["fixture"][snapshot_name],
-                "is_worktree": False,
-                "rev_parse_status": 128,
-                "head": "not-a-sha",
-                "branch": None,
-            }
-
-    rewrite_source(checkout, result, "non-git-repo-local-reject", mutate)
 
 
 def symlink_link_mutation(result: dict[str, Any], checkout: Path) -> None:
@@ -410,17 +284,6 @@ def honored_observed_root_mismatch(result: dict[str, Any], checkout: Path) -> No
         result,
         "not-ignored-claude-local-reject",
         lambda source: source["state_root"].update({"honored": True}),
-    )
-
-
-def inventory_observed_root_mismatch(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_source(
-        checkout,
-        result,
-        "not-ignored-claude-local-reject",
-        lambda source: source["state_root"]["inventory_after"][0].update(
-            {"path": "state-root/repos/git-root/branches/main/reflect/REFLECT-20260711-183816-e257.yaml"}
-        ),
     )
 
 
@@ -450,22 +313,6 @@ def wrapper_consumer_mismatch(result: dict[str, Any], checkout: Path) -> None:
     )
 
 
-def model_usage_mismatch(result: dict[str, Any], checkout: Path) -> None:
-    def mutate(source: dict[str, Any]) -> None:
-        source["runtime"]["model_usage"]["gpt-5.5(high)"]["outputTokens"] += 1
-
-    rewrite_source(checkout, result, "eligible-repo-local-apply", mutate)
-
-
-def plugin_commit_mismatch(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_source(
-        checkout,
-        result,
-        "eligible-repo-local-apply",
-        lambda source: source["plugin"].update({"commit": "0" * 40}),
-    )
-
-
 def live_plugin_blob_mismatch(_result: dict[str, Any], checkout: Path) -> None:
     contract = checkout / "commands" / "reflect.md"
     contract.write_bytes(contract.read_bytes() + b"\nundeclared live plugin mutation\n")
@@ -473,37 +320,6 @@ def live_plugin_blob_mismatch(_result: dict[str, Any], checkout: Path) -> None:
 
 def source_path_traversal(result: dict[str, Any], _checkout: Path) -> None:
     result["scenarios"][0]["source_path"] = "../full-pilots/reflect-repo-local-safety.json"
-
-
-def source_symlink_substitution(result: dict[str, Any], checkout: Path) -> None:
-    source_path = checkout / Path(result["scenarios"][0]["source_path"])
-    alternate = checkout / Path(result["scenarios"][1]["source_path"])
-    source_path.unlink()
-    source_path.symlink_to(alternate)
-
-
-def make_fifo(path: Path) -> None:
-    try:
-        os.mkfifo(path)
-    except (AttributeError, NotImplementedError) as exc:
-        raise UnsupportedCase("named pipes are unsupported on this platform") from exc
-    except OSError as exc:
-        unsupported_errors = {
-            getattr(errno, "ENOSYS", -1),
-            getattr(errno, "ENOTSUP", -1),
-            getattr(errno, "EOPNOTSUPP", -1),
-        }
-        if exc.errno in unsupported_errors:
-            raise UnsupportedCase("named pipes are unsupported on this platform") from exc
-        raise
-
-
-def raw_special_entry(_result: dict[str, Any], checkout: Path) -> None:
-    make_fifo(checkout / FULL_RAW_DIR / "unexpected.fifo")
-
-
-def gap_raw_directory_symlink(_result: dict[str, Any], checkout: Path) -> None:
-    swap_directory_for_symlink(checkout / GAP_RAW_DIR)
 
 
 def unexpected_root_result_file(_result: dict[str, Any], checkout: Path) -> None:
@@ -518,29 +334,12 @@ def gap_missing_scenario(result: dict[str, Any], _checkout: Path) -> None:
     result["scenarios"].pop()
 
 
-def gap_duplicate_scenario(result: dict[str, Any], _checkout: Path) -> None:
-    result["scenarios"][1]["id"] = result["scenarios"][0]["id"]
-
-
-def gap_extra_scenario(result: dict[str, Any], _checkout: Path) -> None:
-    result["scenarios"][2]["id"] = "unexpected-gap-scenario"
-
-
 def gap_missing_source_ref(result: dict[str, Any], checkout: Path) -> None:
     rewrite_gap_source(
         checkout,
         result,
         "stale-plan-vs-live-surface-conflict",
         lambda source: source["gap_observation"]["source_refs"].pop(),
-    )
-
-
-def gap_missing_manifest_entry(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "unresolved-source-precedence-stays-ambiguous",
-        lambda source: source["gap_observation"]["source_refs"].pop(1),
     )
 
 
@@ -593,17 +392,6 @@ def gap_direct_implementation_evidence(result: dict[str, Any], checkout: Path) -
     )
 
 
-def gap_direct_runtime_evidence(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "plan-only-current-is-not-implementation-proof",
-        lambda source: source["gap_observation"].update(
-            {"direct_runtime_evidence": [{"evidence_id": "C2", "type": "runtime", "strength": "direct"}]}
-        ),
-    )
-
-
 def gap_empty_recommendation(result: dict[str, Any], checkout: Path) -> None:
     rewrite_gap_source(
         checkout,
@@ -622,23 +410,6 @@ def gap_prompt_hash_mutation(result: dict[str, Any], checkout: Path) -> None:
     )
 
 
-def gap_prompt_length_mutation(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["command"].update({"prompt_byte_length": source["command"]["prompt_byte_length"] + 1}),
-    )
-
-
-def gap_result_prompt_hash_mutation(result: dict[str, Any], _checkout: Path) -> None:
-    result["scenarios"][0]["prompt_sha256"] = "0" * 64
-
-
-def gap_result_prompt_length_mutation(result: dict[str, Any], _checkout: Path) -> None:
-    result["scenarios"][0]["prompt_byte_length"] += 1
-
-
 def gap_assistant_result_hash_mutation(result: dict[str, Any], checkout: Path) -> None:
     rewrite_gap_source(
         checkout,
@@ -648,25 +419,6 @@ def gap_assistant_result_hash_mutation(result: dict[str, Any], checkout: Path) -
             {"result_sha256": "0" * 64, "raw_result_sha256": "0" * 64}
         ),
     )
-
-
-def gap_assistant_result_length_mutation(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["consumer_output"].update(
-            {"result_byte_length": source["consumer_output"]["result_byte_length"] + 1}
-        ),
-    )
-
-
-def gap_result_assistant_result_hash_mutation(result: dict[str, Any], _checkout: Path) -> None:
-    result["scenarios"][0]["assistant_result_sha256"] = "0" * 64
-
-
-def gap_result_assistant_result_length_mutation(result: dict[str, Any], _checkout: Path) -> None:
-    result["scenarios"][0]["assistant_result_byte_length"] += 1
 
 
 def gap_source_hash_anchor_mismatch(result: dict[str, Any], checkout: Path) -> None:
@@ -701,42 +453,11 @@ def gap_wrapper_mismatch(result: dict[str, Any], checkout: Path) -> None:
     )
 
 
-def gap_consumer_mismatch(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["session"].update({"consumer": "Other Consumer"}),
-    )
-
-
-def gap_provider_mismatch(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["session"].update({"provider": "other-provider"}),
-    )
-
-
 def gap_model_usage_mismatch(result: dict[str, Any], checkout: Path) -> None:
     def mutate(source: dict[str, Any]) -> None:
         source["runtime"]["model_usage"]["gpt-5.5(high)"]["outputTokens"] += 1
 
     rewrite_gap_source(checkout, result, "stale-plan-vs-live-surface-conflict", mutate)
-
-
-def gap_derived_model_mismatch(result: dict[str, Any], _checkout: Path) -> None:
-    result["scenarios"][0]["model"] = "configured-default"
-
-
-def gap_git_head_mutation(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["fixture"]["git_before"].update({"head": "0" * 40}),
-    )
 
 
 def gap_git_status_mutation(result: dict[str, Any], checkout: Path) -> None:
@@ -745,50 +466,6 @@ def gap_git_status_mutation(result: dict[str, Any], checkout: Path) -> None:
         result,
         "stale-plan-vs-live-surface-conflict",
         lambda source: source["fixture"]["git_before"].update({"status_porcelain": [" M README.md"]}),
-    )
-
-
-def gap_git_staged_mutation(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["fixture"]["git_before"].update({"staged_paths": ["README.md"]}),
-    )
-
-
-def gap_git_unstaged_mutation(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["fixture"]["git_before"].update({"unstaged_paths": ["README.md"]}),
-    )
-
-
-def gap_requested_state_root_mutation(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["state_root"].update({"requested": "alternate-state-root"}),
-    )
-
-
-def gap_temp_home_inventory_mutation(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["temporary_home_tigerkit"]["inventory_after"].append(
-            {
-                "path": "temporary-home/.tigerkit/injected.json",
-                "kind": "regular",
-                "mode": "0o600",
-                "size": 0,
-                "sha256": "0" * 64,
-            }
-        ),
     )
 
 
@@ -807,38 +484,9 @@ def gap_source_path_traversal(result: dict[str, Any], _checkout: Path) -> None:
     result["scenarios"][0]["source_path"] = "../full-pilots/gap-stale-sot-precedence.json"
 
 
-def gap_source_symlink_substitution(result: dict[str, Any], checkout: Path) -> None:
-    source_path = checkout / Path(result["scenarios"][0]["source_path"])
-    alternate = checkout / Path(result["scenarios"][1]["source_path"])
-    source_path.unlink()
-    source_path.symlink_to(alternate)
-
-
-def gap_raw_special_entry(_result: dict[str, Any], checkout: Path) -> None:
-    make_fifo(checkout / GAP_RAW_DIR / "unexpected.fifo")
-
-
-def gap_plugin_commit_mismatch(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["plugin"].update({"commit": "0" * 40}),
-    )
-
-
 def gap_live_contract_blob_mismatch(_result: dict[str, Any], checkout: Path) -> None:
     contract = checkout / "commands" / "gap.md"
     contract.write_bytes(contract.read_bytes() + b"\nundeclared GAP live contract mutation\n")
-
-
-def gap_malformed_source_manifest(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["gap_observation"].update({"source_manifest_sha256": "not-a-hash"}),
-    )
 
 
 def gap_malformed_source_ref(result: dict[str, Any], checkout: Path) -> None:
@@ -847,24 +495,6 @@ def gap_malformed_source_ref(result: dict[str, Any], checkout: Path) -> None:
         result,
         "stale-plan-vs-live-surface-conflict",
         lambda source: source["gap_observation"]["source_refs"][0].pop("byte_length"),
-    )
-
-
-def gap_malformed_git_record(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["fixture"]["git_before"].pop("head"),
-    )
-
-
-def gap_malformed_state_record(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["state_root"].update({"inventory_before": {"unexpected": "record"}}),
     )
 
 
@@ -892,70 +522,6 @@ def gap_false_write_free_claim(result: dict[str, Any], checkout: Path) -> None:
     )
 
 
-def gap_runtime_home_malformed_record(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["runtime_home"]["inventory_after"][0].pop("mode"),
-    )
-
-
-def gap_runtime_home_symlink_entry(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["runtime_home"]["inventory_after"].append(
-            {
-                "path": "temporary-home/.claude/runtime-link",
-                "kind": "symlink",
-                "mode": "0o777",
-                "link_text": "../outside",
-            }
-        ),
-    )
-
-
-def gap_runtime_home_special_entry(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["runtime_home"]["inventory_after"].append(
-            {
-                "path": "temporary-home/.claude/runtime-socket",
-                "kind": "socket",
-                "mode": "0o600",
-            }
-        ),
-    )
-
-
-def gap_runtime_home_path_traversal(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["runtime_home"]["inventory_after"].append(
-            {
-                "path": "temporary-home/../escape",
-                "kind": "directory",
-                "mode": "0o775",
-            }
-        ),
-    )
-
-
-def gap_product_surface_write_free_false(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["write_boundary"].update({"product_surface_write_free": False}),
-    )
-
-
 def gap_product_surface_plugin_write(result: dict[str, Any], checkout: Path) -> None:
     rewrite_gap_source(
         checkout,
@@ -973,24 +539,6 @@ def gap_state_honor_status_mutation(result: dict[str, Any], checkout: Path) -> N
         result,
         "stale-plan-vs-live-surface-conflict",
         lambda source: source["state_root"].update({"honor_status": "honored"}),
-    )
-
-
-def gap_state_honored_boolean_claim(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["state_root"].update({"honored": True}),
-    )
-
-
-def gap_state_observed_root_claim(result: dict[str, Any], checkout: Path) -> None:
-    rewrite_gap_source(
-        checkout,
-        result,
-        "stale-plan-vs-live-surface-conflict",
-        lambda source: source["state_root"].update({"observed_root": "state-root"}),
     )
 
 
@@ -1087,34 +635,6 @@ def test_gap_scenario3_prompt_is_neutral() -> None:
         assert isinstance(prompt, str)
         found = [marker for marker in leakage_markers if marker in prompt.lower()]
         assert not found, f"{scenario_id} prompt leaks expected evidence treatment: {found!r}"
-
-
-def load_validator_module() -> Any:
-    spec = importlib.util.spec_from_file_location("check_full_eval_pilots", VALIDATOR)
-    assert spec is not None and spec.loader is not None
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
-def test_gap_prompt_neutrality_validator_rejects_treatment_markers() -> None:
-    validator = load_validator_module()
-    for prompt in (
-        "Return the expected classification: ambiguous.",
-        "The pilot.must_observe field must be present.",
-        "Keep the absence of direct current evidence and classify as missing.",
-    ):
-        try:
-            validator.gap_validate_prompt_neutrality(prompt, "test.prompt")
-        except SystemExit as exc:
-            assert "leakage" in str(exc)
-        else:
-            raise AssertionError(f"prompt treatment marker was accepted: {prompt!r}")
-
-    validator.gap_validate_prompt_neutrality(
-        "Source type=implementation-plan and type=generated-artifact; return the canonical final classification.",
-        "test.prompt",
-    )
 
 
 def test_gap_scenarios_record_complete_runtime_home_inventories() -> None:
@@ -1258,7 +778,6 @@ def test_missing_gap_result_is_rejected() -> None:
         assert completed.returncode != 0, "missing GAP result was accepted"
         assert "missing required result file: evals/results/full-gap-stale-sot-precedence.json" in output, output
         assert "full eval pilot check failed:" in output, output
-
 
 
 def test_not_ignored_requires_explicit_ignore_file_states() -> None:
