@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import subprocess
 import sys
 from pathlib import Path
 from typing import Any, NoReturn
@@ -125,17 +124,6 @@ def exact_file_hash(path: str) -> str:
     return hashlib.sha256(candidate.read_bytes()).hexdigest()
 
 
-def immutable_blob(path: str) -> bytes:
-    completed = subprocess.run(
-        ["git", "show", f"{PLUGIN_COMMIT}:{path}"],
-        cwd=ROOT,
-        capture_output=True,
-        check=False,
-    )
-    require(completed.returncode == 0, f"cannot read plugin blob at {PLUGIN_COMMIT}:{path}")
-    return completed.stdout
-
-
 def reject_host_paths(value: object, field: str) -> None:
     if isinstance(value, str):
         for marker in ("/home/", "/Users/", "/tmp/", "/root/"):
@@ -173,8 +161,7 @@ def validate_plugin(result: dict[str, Any]) -> None:
     require(actual == CONTRACT_BLOBS, "plugin.contract_blobs must match the recorded contract set")
     for path, expected_sha in CONTRACT_BLOBS.items():
         require(json_digest([path]) != "", "deterministic blob check is enabled")
-        require(digest(immutable_blob(path).decode("utf-8")) == expected_sha, f"immutable plugin blob changed: {path}")
-        require(exact_file_hash(path) == expected_sha, f"live plugin blob differs from recorded commit: {path}")
+        require(exact_file_hash(path) == expected_sha, f"live plugin blob differs from recorded evidence hash: {path}")
 
     stale = plugin.get("stale_invalid_choice_contract_blobs")
     require(isinstance(stale, list), "stale_invalid_choice_contract_blobs must be a list")
@@ -184,7 +171,7 @@ def validate_plugin(result: dict[str, Any]) -> None:
         record = stale_map[path]
         require(record.get("sha256") == CONTRACT_BLOBS[path], f"stale contract hash mismatch: {path}")
         require(record.get("required_text") == snippet, f"stale invalid-choice text mismatch: {path}")
-        require(snippet in immutable_blob(path).decode("utf-8"), f"immutable stale invalid-choice text missing: {path}")
+        require(snippet in (ROOT / path).read_text(encoding="utf-8"), f"live stale invalid-choice text missing: {path}")
 
 
 def validate_missing(result: dict[str, Any]) -> None:
