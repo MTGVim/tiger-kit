@@ -289,12 +289,12 @@
   },
   "state_root": {
     "requested": "state-root",
-    "honored": true,
+    "honored": false,
     "observed_root": "temporary-home/.tigerkit",
     "inventory_before": [],
     "inventory_after": [
       {
-        "path": "state-root/repos/git-root/branches/main/reflect/REFLECT-20260711-183816-e257.yaml",
+        "path": "temporary-home/.tigerkit/repos/git-root/branches/main/reflect/REFLECT-20260711-183816-e257.yaml",
         "exists": true,
         "mode": "0o664",
         "size": 1377,
@@ -302,7 +302,7 @@
         "sha256": "fa42c6af5f68ce700a223aeae32bea7ce7890e3da4c98aaad0c953fc2edbb5ae"
       },
       {
-        "path": "state-root/repos/git-root/branches/main/reflect/current.yaml",
+        "path": "temporary-home/.tigerkit/repos/git-root/branches/main/reflect/current.yaml",
         "exists": true,
         "mode": "0o664",
         "size": 1377,

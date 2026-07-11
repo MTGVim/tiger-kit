@@ -134,7 +134,7 @@
     {
       "id": "not-ignored-claude-local-reject",
       "source_path": "evals/results/raw/full-reflect-repo-local-safety/not-ignored-claude-local-reject.json",
-      "source_sha256": "b499448a830fc83e6af13d8d3212a54d59f8916ce7d2a905da7ba7e12092f536",
+      "source_sha256": "2708cf31c6ebebcd188580192143e1dec382d3e4fb1984918b3a586bac2df2e5",
       "session_id": "5620494a-5c88-4d10-a222-5dd359079778",
       "assistant_result_sha256": "0ffa4039ad8b5d148dae668fb6ab54426ed8ea2aae97bf1d1a481e8c818e5c2a",
       "assistant_result_byte_length": 553,

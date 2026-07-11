@@ -40,7 +40,7 @@ FULL_CONTRACT_BLOBS = {
 FULL_SOURCE_HASHES = {
     "eligible-repo-local-apply": "0f93caf8ab940e2ecf64ce25f1812e059aba8f0bcce86a52ebe530ff63e9a55e",
     "tracked-claude-local-reject": "ac9a875f41ff0e62879c89b854e10772833b5d91244d1598cad3bd391bbb05ff",
-    "not-ignored-claude-local-reject": "b499448a830fc83e6af13d8d3212a54d59f8916ce7d2a905da7ba7e12092f536",
+    "not-ignored-claude-local-reject": "2708cf31c6ebebcd188580192143e1dec382d3e4fb1984918b3a586bac2df2e5",
     "non-git-repo-local-reject": "af8ed2408d7a541ecc017ef679bb0a51ee46d7af780ead391b63d7ade71c8b46",
     "symlink-claude-local-reject": "cf6cf1fcc35feb4e78f9218f4231e2018f2834848e3b74b2e05a7fe51aa4e038",
 }
@@ -671,6 +671,56 @@ def full_validate_ignore_files(
         )
 
 
+def full_validate_state_root(source: dict[str, Any], label: str) -> None:
+    state_root = source.get("state_root")
+    if not isinstance(state_root, dict):
+        fail(f"{label}.state_root must be an object")
+
+    requested = state_root.get("requested")
+    if requested != "state-root":
+        fail(f"{label}.state_root.requested must be 'state-root'")
+    honored = state_root.get("honored")
+    if not isinstance(honored, bool):
+        fail(f"{label}.state_root.honored must be a boolean")
+
+    observed_value = state_root.get("observed_root")
+    if observed_value is None:
+        if honored is not True:
+            fail(f"{label}.state_root.observed_root is required when the requested root was not honored")
+        # Older honored records use the requested logical root as their observed root.
+        observed_root = requested
+    else:
+        observed_root = full_safe_relative(observed_value, f"{label}.state_root.observed_root")
+
+    if honored and observed_root != requested:
+        fail(f"{label}.state_root.honored cannot be true when observed_root differs from requested")
+    if not honored and observed_root == requested:
+        fail(f"{label}.state_root.honored false must record an observed_root different from requested")
+
+    inventory_before = full_require_inventory_map(
+        state_root.get("inventory_before"), f"{label}.state_root.inventory_before"
+    )
+    if inventory_before:
+        fail(f"{label}.state_root.inventory_before must be empty")
+    inventory_after = full_require_inventory_map(
+        state_root.get("inventory_after"), f"{label}.state_root.inventory_after"
+    )
+    if not inventory_after:
+        fail(f"{label}.state_root.inventory_after must not be empty")
+
+    root_prefix = f"{observed_root}/"
+    for inventory_name, inventory in (
+        ("inventory_before", inventory_before),
+        ("inventory_after", inventory_after),
+    ):
+        for path in inventory:
+            full_safe_relative(path, f"{label}.state_root.{inventory_name}.{path}")
+            if not path.startswith(root_prefix):
+                fail(
+                    f"{label}.state_root.{inventory_name} path {path!r} must be under observed_root {observed_root!r}"
+                )
+
+
 def full_validate_fixture(source: dict[str, Any], scenario_id: str, label: str) -> None:
     fixture = source.get("fixture")
     if not isinstance(fixture, dict):
@@ -754,16 +804,7 @@ def full_validate_fixture(source: dict[str, Any], scenario_id: str, label: str) 
     elif external is not None:
         fail(f"{label}: non-symlink scenario must not record an external target")
 
-    state_root = source.get("state_root")
-    if not isinstance(state_root, dict):
-        fail(f"{label}.state_root must be an object")
-    if state_root.get("requested") != "state-root" or state_root.get("honored") is not True:
-        fail(f"{label}.state_root must record the honored logical state root")
-    if state_root.get("inventory_before") != []:
-        fail(f"{label}.state_root.inventory_before must be empty")
-    state_after = full_require_inventory_map(state_root.get("inventory_after"), f"{label}.state_root.inventory_after")
-    if not state_after or any(not path.startswith("state-root/") for path in state_after):
-        fail(f"{label}.state_root.inventory_after must contain only logical state-root paths")
+    full_validate_state_root(source, label)
 
 
 def full_validate_source(

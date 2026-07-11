@@ -180,6 +180,26 @@ def symlink_link_mutation(result: dict[str, Any], checkout: Path) -> None:
     )
 
 
+def honored_observed_root_mismatch(result: dict[str, Any], checkout: Path) -> None:
+    rewrite_source(
+        checkout,
+        result,
+        "not-ignored-claude-local-reject",
+        lambda source: source["state_root"].update({"honored": True}),
+    )
+
+
+def inventory_observed_root_mismatch(result: dict[str, Any], checkout: Path) -> None:
+    rewrite_source(
+        checkout,
+        result,
+        "not-ignored-claude-local-reject",
+        lambda source: source["state_root"]["inventory_after"][0].update(
+            {"path": "state-root/repos/git-root/branches/main/reflect/REFLECT-20260711-183816-e257.yaml"}
+        ),
+    )
+
+
 def non_git_fallback_write(result: dict[str, Any], checkout: Path) -> None:
     rewrite_source(
         checkout,
@@ -269,6 +289,8 @@ CASES: list[tuple[str, Mutation]] = [
     ("second ignore mutation", ignore_second_mutation),
     ("symlink target mutation", symlink_target_mutation),
     ("symlink link mutation", symlink_link_mutation),
+    ("honored/observed state-root mismatch", honored_observed_root_mismatch),
+    ("inventory/observed state-root mismatch", inventory_observed_root_mismatch),
     ("non-git fallback write", non_git_fallback_write),
     ("reused session ID", reused_session_id),
     ("wrapper/consumer mismatch", wrapper_consumer_mismatch),
