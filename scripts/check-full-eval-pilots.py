@@ -114,6 +114,13 @@ FULL_TARGET_PATHS = {
     "non-git-repo-local-reject": "fixture-root/workdir/CLAUDE.local.md",
     "symlink-claude-local-reject": "git-root/CLAUDE.local.md",
 }
+FULL_FIXTURE_ROOTS_BY_SCENARIO = {
+    "eligible-repo-local-apply": {"git-root"},
+    "tracked-claude-local-reject": {"git-root"},
+    "not-ignored-claude-local-reject": {"git-root"},
+    "non-git-repo-local-reject": {"fixture-root"},
+    "symlink-claude-local-reject": {"git-root", "external-target"},
+}
 FULL_TURNS = {
     "eligible-repo-local-apply": 4,
     "tracked-claude-local-reject": 4,
@@ -122,6 +129,11 @@ FULL_TURNS = {
     "symlink-claude-local-reject": 5,
 }
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+GIT_SHA_RE = re.compile(r"^[0-9a-f]{40}$")
+FULL_GIT_FIXTURE_ROOTS = {"git-root"}
+FULL_EXTERNAL_TARGET_ROOTS = {"external-target"}
+FULL_LSTAT_FIELDS = {"path", "exists", "kind", "mode", "size", "sha256", "link_text"}
+FULL_GIT_SNAPSHOT_FIELDS = {"is_worktree", "rev_parse_status", "status_porcelain", "head", "branch"}
 
 PILOT_SPECS: dict[str, dict[str, Any]] = {
     "reflect-repo-local-safety.json": {
@@ -589,46 +601,164 @@ def full_canonical_prompt(scenario_id: str, invocation_cwd: str) -> str:
     )
 
 
-def full_require_inventory_map(value: object, field: str) -> dict[str, dict[str, Any]]:
+def full_allowed_relative(
+    value: object,
+    field: str,
+    allowed_roots: set[str],
+    *,
+    required_prefix: str | None = None,
+) -> str:
+    relative = full_safe_relative(value, field)
+    if required_prefix is not None and not relative.startswith(f"{required_prefix}/"):
+        fail(f"{field} must be under observed_root {required_prefix!r}")
+    first_part = PurePosixPath(relative).parts[0]
+    if first_part not in allowed_roots:
+        fail(f"{field} must be under an allowed logical root")
+    return relative
+
+
+def full_require_inventory_map(
+    value: object,
+    field: str,
+    *,
+    allowed_roots: set[str],
+    required_prefix: str | None = None,
+    require_exists: bool = True,
+) -> dict[str, dict[str, Any]]:
     if not isinstance(value, list):
         fail(f"{field} must be a list")
     result: dict[str, dict[str, Any]] = {}
     for index, item in enumerate(cast(list[Any], value)):
+        item_field = f"{field}[{index}]"
         if not isinstance(item, dict):
-            fail(f"{field}[{index}] must be an object")
-        path = require_nonempty_string(item.get("path"), f"{field}[{index}].path")
+            fail(f"{item_field} must be an object")
+        raw_item = cast(dict[str, Any], item)
+        path = full_allowed_relative(
+            raw_item.get("path"),
+            f"{item_field}.path",
+            allowed_roots,
+            required_prefix=required_prefix,
+        )
         if path in result:
             fail(f"{field} contains duplicate path {path!r}")
-        result[path] = cast(dict[str, Any], item)
+        snapshot = full_validate_lstat_snapshot(
+            raw_item,
+            item_field,
+            path,
+            allowed_roots=allowed_roots,
+            required_prefix=required_prefix,
+            require_exists=require_exists,
+        )
+        result[path] = snapshot
     return result
 
 
-def full_validate_lstat_snapshot(value: object, field: str, expected_path: str) -> dict[str, Any]:
+def full_validate_lstat_snapshot(
+    value: object,
+    field: str,
+    expected_path: str,
+    *,
+    allowed_roots: set[str],
+    required_prefix: str | None = None,
+    require_exists: bool = False,
+) -> dict[str, Any]:
     if not isinstance(value, dict):
         fail(f"{field} must be an object")
     snapshot = cast(dict[str, Any], value)
-    if snapshot.get("path") != expected_path:
+    unknown_fields = set(snapshot) - FULL_LSTAT_FIELDS
+    if unknown_fields:
+        fail(f"{field} contains unknown fields {sorted(unknown_fields)!r}")
+    path = full_allowed_relative(
+        snapshot.get("path"),
+        f"{field}.path",
+        allowed_roots,
+        required_prefix=required_prefix,
+    )
+    if path != expected_path:
         fail(f"{field}.path must be {expected_path!r}")
     exists = snapshot.get("exists")
     kind = snapshot.get("kind")
+    if not isinstance(exists, bool):
+        fail(f"{field}.exists must be a boolean")
     if exists is False:
+        if require_exists:
+            fail(f"{field} inventory records must describe existing entries")
         if kind != "absent":
             fail(f"{field} absent state must use kind 'absent'")
+        if set(snapshot) != {"path", "exists", "kind"}:
+            fail(f"{field} absent state must not include mode, size, sha256, or link_text")
         return snapshot
-    if exists is not True:
-        fail(f"{field}.exists must be a boolean")
-    if kind not in {"regular", "symlink", "directory", "special"}:
-        fail(f"{field}.kind must describe an lstat entry")
+    if kind not in {"regular", "symlink"}:
+        fail(f"{field}.kind must be 'regular' or 'symlink' for an existing entry")
     mode = snapshot.get("mode")
-    if not isinstance(mode, str) or not mode.startswith("0o"):
-        fail(f"{field}.mode must preserve the lstat mode")
-    size = snapshot.get("size")
-    if not isinstance(size, int) or size < 0:
-        fail(f"{field}.size must be a non-negative integer")
+    if not isinstance(mode, str) or re.fullmatch(r"0o[0-7]{3,4}", mode) is None:
+        fail(f"{field}.mode must be an octal lstat mode string")
     if kind == "regular":
+        size = snapshot.get("size")
+        if isinstance(size, bool) or not isinstance(size, int) or size < 0:
+            fail(f"{field}.size must be a non-negative integer")
         full_hash(snapshot.get("sha256"), f"{field}.sha256")
-    elif kind == "symlink":
-        require_nonempty_string(snapshot.get("link_text"), f"{field}.link_text")
+        if "link_text" in snapshot:
+            fail(f"{field}.regular records must not contain link_text")
+        required_fields = {"path", "exists", "kind", "mode", "size", "sha256"}
+    else:
+        link_text = snapshot.get("link_text")
+        if not isinstance(link_text, str) or not link_text or "\x00" in link_text:
+            fail(f"{field}.link_text must be a non-empty symlink target")
+        if "size" in snapshot or "sha256" in snapshot:
+            fail(f"{field}.symlink records must not contain size or sha256")
+        required_fields = {"path", "exists", "kind", "mode", "link_text"}
+    if set(snapshot) != required_fields:
+        missing = sorted(required_fields - set(snapshot))
+        forbidden = sorted(set(snapshot) - required_fields)
+        fail(f"{field} has malformed fields: missing={missing!r}, forbidden={forbidden!r}")
+    return snapshot
+
+
+def full_validate_git_snapshot(
+    value: object,
+    field: str,
+    *,
+    expected_worktree: bool,
+) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        fail(f"{field} must be an object")
+    snapshot = cast(dict[str, Any], value)
+    if set(snapshot) != FULL_GIT_SNAPSHOT_FIELDS:
+        missing = sorted(FULL_GIT_SNAPSHOT_FIELDS - set(snapshot))
+        unknown = sorted(set(snapshot) - FULL_GIT_SNAPSHOT_FIELDS)
+        fail(f"{field} has malformed fields: missing={missing!r}, unknown={unknown!r}")
+
+    is_worktree = snapshot.get("is_worktree")
+    if not isinstance(is_worktree, bool):
+        fail(f"{field}.is_worktree must be a boolean")
+    if is_worktree is not expected_worktree:
+        fail(f"{field}.is_worktree must be {expected_worktree!r} for this scenario")
+
+    rev_parse_status = snapshot.get("rev_parse_status")
+    if isinstance(rev_parse_status, bool) or not isinstance(rev_parse_status, int):
+        fail(f"{field}.rev_parse_status must be an integer, not a boolean")
+    status_porcelain = snapshot.get("status_porcelain")
+    if not isinstance(status_porcelain, list) or not all(isinstance(item, str) for item in status_porcelain):
+        fail(f"{field}.status_porcelain must be a list of strings")
+
+    head = snapshot.get("head")
+    branch = snapshot.get("branch")
+    if expected_worktree:
+        if rev_parse_status != 0:
+            fail(f"{field}.rev_parse_status must be 0 for a Git worktree")
+        if not isinstance(head, str) or GIT_SHA_RE.fullmatch(head) is None:
+            fail(f"{field}.head must be a lowercase 40-character Git SHA")
+        require_nonempty_string(branch, f"{field}.branch")
+    else:
+        if rev_parse_status != 128:
+            fail(f"{field}.rev_parse_status must be 128 for a non-Git fixture")
+        if status_porcelain != []:
+            fail(f"{field}.status_porcelain must be empty for a non-Git fixture")
+        if head is not None:
+            fail(f"{field}.head must be null for a non-Git fixture")
+        if branch is not None:
+            fail(f"{field}.branch must be null for a non-Git fixture")
     return snapshot
 
 
@@ -646,17 +776,23 @@ def full_validate_ignore_files(
     for index, item in enumerate(ignore_files):
         if not isinstance(item, dict):
             fail(f"{label}.fixture.ignore_files[{index}] must be an object")
-        path = require_nonempty_string(item.get("path"), f"{label}.fixture.ignore_files[{index}].path")
+        path = full_allowed_relative(
+            item.get("path"),
+            f"{label}.fixture.ignore_files[{index}].path",
+            FULL_GIT_FIXTURE_ROOTS,
+        )
         actual_paths.append(path)
         before = full_validate_lstat_snapshot(
             item.get("before"),
             f"{label}.fixture.ignore_files[{index}].before",
             path,
+            allowed_roots=FULL_GIT_FIXTURE_ROOTS,
         )
         after = full_validate_lstat_snapshot(
             item.get("after"),
             f"{label}.fixture.ignore_files[{index}].after",
             path,
+            allowed_roots=FULL_GIT_FIXTURE_ROOTS,
         )
         if before != after:
             fail(f"{label}: ignore file {path!r} changed between explicit before/after snapshots")
@@ -669,6 +805,54 @@ def full_validate_ignore_files(
             f"{label}.fixture.ignore_files must contain exactly the ordered snapshots for "
             f"{expected_paths!r}"
         )
+
+
+def full_validate_flat_ignore_files(
+    value: object,
+    label: str,
+    before_inventory: dict[str, dict[str, Any]],
+    after_inventory: dict[str, dict[str, Any]],
+    *,
+    expected_paths: list[str],
+) -> None:
+    if not isinstance(value, list):
+        fail(f"{label}.fixture.ignore_files must be a list")
+    actual_paths: list[str] = []
+    for index, item in enumerate(cast(list[Any], value)):
+        item_field = f"{label}.fixture.ignore_files[{index}]"
+        if not isinstance(item, dict):
+            fail(f"{item_field} must be an object")
+        path = full_allowed_relative(item.get("path"), f"{item_field}.path", FULL_GIT_FIXTURE_ROOTS)
+        actual_paths.append(path)
+        snapshot = full_validate_lstat_snapshot(
+            item,
+            item_field,
+            path,
+            allowed_roots=FULL_GIT_FIXTURE_ROOTS,
+        )
+        if path in before_inventory and before_inventory[path] != snapshot:
+            fail(f"{label}: ignore file {path!r} snapshot disagrees with fixture inventory before state")
+        if path in after_inventory and after_inventory[path] != snapshot:
+            fail(f"{label}: ignore file {path!r} snapshot disagrees with fixture inventory after state")
+    if len(actual_paths) != len(set(actual_paths)) or actual_paths != expected_paths:
+        fail(
+            f"{label}.fixture.ignore_files must contain exactly the ordered snapshots for "
+            f"{expected_paths!r}"
+        )
+
+
+def full_bind_target_to_inventory(
+    snapshot: dict[str, Any],
+    inventory: dict[str, dict[str, Any]],
+    field: str,
+) -> bool:
+    path = cast(str, snapshot["path"])
+    inventory_snapshot = inventory.get(path)
+    if snapshot["exists"] is True and inventory_snapshot is None:
+        fail(f"{field} existing target must have a matching fixture inventory record")
+    if inventory_snapshot is not None and inventory_snapshot != snapshot:
+        fail(f"{field} disagrees with the matching fixture inventory record")
+    return inventory_snapshot is not None
 
 
 def full_validate_state_root(source: dict[str, Any], label: str) -> None:
@@ -697,13 +881,21 @@ def full_validate_state_root(source: dict[str, Any], label: str) -> None:
     if not honored and observed_root == requested:
         fail(f"{label}.state_root.honored false must record an observed_root different from requested")
 
+    observed_root_first_part = PurePosixPath(observed_root).parts[0]
+    state_allowed_roots = {observed_root_first_part}
     inventory_before = full_require_inventory_map(
-        state_root.get("inventory_before"), f"{label}.state_root.inventory_before"
+        state_root.get("inventory_before"),
+        f"{label}.state_root.inventory_before",
+        allowed_roots=state_allowed_roots,
+        required_prefix=observed_root,
     )
     if inventory_before:
         fail(f"{label}.state_root.inventory_before must be empty")
     inventory_after = full_require_inventory_map(
-        state_root.get("inventory_after"), f"{label}.state_root.inventory_after"
+        state_root.get("inventory_after"),
+        f"{label}.state_root.inventory_after",
+        allowed_roots=state_allowed_roots,
+        required_prefix=observed_root,
     )
     if not inventory_after:
         fail(f"{label}.state_root.inventory_after must not be empty")
@@ -733,35 +925,79 @@ def full_validate_fixture(source: dict[str, Any], scenario_id: str, label: str) 
     if not isinstance(before, dict) or not isinstance(after, dict):
         fail(f"{label}.fixture.target before/after must be objects")
     expected_target_path = FULL_TARGET_PATHS[scenario_id]
-    if before.get("path") != expected_target_path or after.get("path") != expected_target_path:
-        fail(f"{label}.fixture.target path must be {expected_target_path!r}")
+    target_allowed_roots = {"fixture-root"} if scenario_id == "non-git-repo-local-reject" else FULL_GIT_FIXTURE_ROOTS
+    before = full_validate_lstat_snapshot(
+        before,
+        f"{label}.fixture.target.before",
+        expected_target_path,
+        allowed_roots=target_allowed_roots,
+    )
+    after = full_validate_lstat_snapshot(
+        after,
+        f"{label}.fixture.target.after",
+        expected_target_path,
+        allowed_roots=target_allowed_roots,
+    )
 
-    git_before = fixture.get("git_before")
-    git_after = fixture.get("git_after")
-    if not isinstance(git_before, dict) or not isinstance(git_after, dict):
-        fail(f"{label}.fixture.git_before/after must be objects")
+    expected_worktree = scenario_id != "non-git-repo-local-reject"
+    expected_invocation_cwd = "fixture-root/workdir" if not expected_worktree else "git-root"
+    if fixture.get("invocation_cwd") != expected_invocation_cwd:
+        fail(f"{label}.fixture.invocation_cwd must be {expected_invocation_cwd!r}")
+    expected_git_root = "git-root" if expected_worktree else None
+    if fixture.get("git_root") != expected_git_root:
+        fail(f"{label}.fixture.git_root must be {expected_git_root!r}")
+
+    git_before = full_validate_git_snapshot(
+        fixture.get("git_before"),
+        f"{label}.fixture.git_before",
+        expected_worktree=expected_worktree,
+    )
+    git_after = full_validate_git_snapshot(
+        fixture.get("git_after"),
+        f"{label}.fixture.git_after",
+        expected_worktree=expected_worktree,
+    )
     if git_before != git_after:
         fail(f"{label}.fixture Git state changed during the scenario")
-    expected_worktree = scenario_id != "non-git-repo-local-reject"
-    if git_before.get("is_worktree") is not expected_worktree:
-        fail(f"{label}.fixture Git worktree state is inconsistent with the scenario")
 
     fallback_writes = fixture.get("fallback_writes")
     if fallback_writes != []:
         fail(f"{label}.fixture.fallback_writes must be empty")
 
+    fixture_allowed_roots = FULL_FIXTURE_ROOTS_BY_SCENARIO[scenario_id]
     before_inventory = full_require_inventory_map(
-        fixture.get("fixture_inventory_before"), f"{label}.fixture.fixture_inventory_before"
+        fixture.get("fixture_inventory_before"),
+        f"{label}.fixture.fixture_inventory_before",
+        allowed_roots=fixture_allowed_roots,
+        require_exists=False,
     )
     after_inventory = full_require_inventory_map(
-        fixture.get("fixture_inventory_after"), f"{label}.fixture.fixture_inventory_after"
+        fixture.get("fixture_inventory_after"),
+        f"{label}.fixture.fixture_inventory_after",
+        allowed_roots=fixture_allowed_roots,
+        require_exists=False,
     )
+    if scenario_id == "symlink-claude-local-reject" and before["link_text"] != after["link_text"]:
+        fail(f"{label}: symlink link text changed")
     if scenario_id == "eligible-repo-local-apply":
+        before_inventory_has_target = full_bind_target_to_inventory(
+            before,
+            before_inventory,
+            f"{label}.fixture.target.before",
+        )
+        after_inventory_has_target = full_bind_target_to_inventory(
+            after,
+            after_inventory,
+            f"{label}.fixture.target.after",
+        )
         if before.get("exists") is not False or before.get("kind") != "absent":
             fail(f"{label}: eligible target must be absent before the run")
         if after.get("exists") is not True or after.get("kind") != "regular":
             fail(f"{label}: eligible target must be a regular file after the run")
-        if expected_target_path in before_inventory:
+        if (
+            expected_target_path in before_inventory
+            and before_inventory[expected_target_path]["exists"] is True
+        ):
             fail(f"{label}: eligible target was already present before the run")
         expected_after = dict(before_inventory)
         expected_after[expected_target_path] = after
@@ -772,35 +1008,58 @@ def full_validate_fixture(source: dict[str, Any], scenario_id: str, label: str) 
             fail(f"{label}: rejected target state changed")
         if before_inventory != after_inventory:
             fail(f"{label}: rejected fixture inventory changed")
+        before_inventory_has_target = full_bind_target_to_inventory(
+            before,
+            before_inventory,
+            f"{label}.fixture.target.before",
+        )
+        after_inventory_has_target = full_bind_target_to_inventory(
+            after,
+            after_inventory,
+            f"{label}.fixture.target.after",
+        )
+        if not before["exists"] and not after["exists"] and before_inventory_has_target != after_inventory_has_target:
+            fail(f"{label}: absent target inventory representation must be consistent before and after")
 
     ignore_files = fixture.get("ignore_files")
     if scenario_id == "not-ignored-claude-local-reject":
         full_validate_ignore_files(ignore_files, label, before_inventory, after_inventory)
     else:
-        if not isinstance(ignore_files, list):
-            fail(f"{label}.fixture.ignore_files must be a list")
-        ignore_paths = {
-            item.get("path")
-            for item in cast(list[Any], ignore_files)
-            if isinstance(item, dict)
-        }
-        for path in ignore_paths:
-            if not isinstance(path, str):
-                fail(f"{label}.fixture.ignore_files contains an invalid path")
-            if path in before_inventory and after_inventory.get(path) != before_inventory[path]:
-                fail(f"{label}: ignore file {path!r} changed")
+        full_validate_flat_ignore_files(
+            ignore_files,
+            label,
+            before_inventory,
+            after_inventory,
+            expected_paths=[] if not expected_worktree else [
+                "git-root/.gitignore",
+                "git-root/.git/info/exclude",
+            ],
+        )
 
     external = fixture.get("external_target")
     if scenario_id == "symlink-claude-local-reject":
         if not isinstance(external, dict):
             fail(f"{label}: symlink scenario must record an external target")
-        external_path = require_nonempty_string(external.get("path"), f"{label}.fixture.external_target.path")
+        external = full_validate_lstat_snapshot(
+            external,
+            f"{label}.fixture.external_target",
+            "external-target/sentinel.txt",
+            allowed_roots=FULL_EXTERNAL_TARGET_ROOTS,
+            require_exists=True,
+        )
+        if external["kind"] != "regular":
+            fail(f"{label}.fixture.external_target must describe a regular file")
         if before.get("kind") != "symlink" or after.get("kind") != "symlink":
             fail(f"{label}: symlink scenario target must remain a symlink")
         if before.get("link_text") != after.get("link_text"):
             fail(f"{label}: symlink link text changed")
-        if before_inventory.get(external_path) != after_inventory.get(external_path):
-            fail(f"{label}: symlink external target changed")
+        if before.get("link_text") != "../external-target/sentinel.txt":
+            fail(f"{label}: symlink link text must resolve to the recorded external target")
+        external_path = cast(str, external["path"])
+        if before_inventory.get(external_path) != external:
+            fail(f"{label}: symlink external target disagrees with fixture inventory before state")
+        if after_inventory.get(external_path) != external:
+            fail(f"{label}: symlink external target disagrees with fixture inventory after state")
     elif external is not None:
         fail(f"{label}: non-symlink scenario must not record an external target")
 

@@ -59,7 +59,40 @@ def rewrite_source(
         json.dumps(source, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
-    record["source_sha256"] = hashlib.sha256(source_path.read_bytes()).hexdigest()
+    source_sha256 = hashlib.sha256(source_path.read_bytes()).hexdigest()
+    record["source_sha256"] = source_sha256
+    refresh_source_anchor(checkout, scenario_id, source_sha256)
+
+
+def refresh_source_anchor(checkout: Path, scenario_id: str, source_sha256: str) -> None:
+    """Refresh only the disposable validator's source anchor for a source mutation."""
+    validator_path = checkout / "scripts" / "check-full-eval-pilots.py"
+    validator = validator_path.read_text(encoding="utf-8")
+    block_start = validator.index("FULL_SOURCE_HASHES = {")
+    block_end = validator.index("\n}", block_start) + 2
+    block = validator[block_start:block_end]
+    key_prefix = f'"{scenario_id}": '
+    matches = [
+        line_index
+        for line_index, line in enumerate(block.splitlines(keepends=True))
+        if line.lstrip().startswith(key_prefix)
+    ]
+    assert len(matches) == 1, f"disposable validator source anchor not found for {scenario_id}"
+    lines = block.splitlines(keepends=True)
+    line_index = matches[0]
+    line = lines[line_index]
+    newline = "\n" if line.endswith("\n") else ""
+    content = line[:-1] if newline else line
+    prefix_start = line.index(key_prefix)
+    lines[line_index] = (
+        content[: prefix_start + len(key_prefix)]
+        + f'"{source_sha256}",'
+        + newline
+    )
+    validator_path.write_text(
+        validator[:block_start] + "".join(lines) + validator[block_end:],
+        encoding="utf-8",
+    )
 
 
 def swap_directory_for_symlink(path: Path) -> None:
@@ -171,6 +204,127 @@ def symlink_target_mutation(result: dict[str, Any], checkout: Path) -> None:
     )
 
 
+def target_inventory_mismatch(result: dict[str, Any], checkout: Path) -> None:
+    def mutate(source: dict[str, Any]) -> None:
+        target = source["fixture"]["target"]
+        target["before"]["sha256"] = "c" * 64
+        target["after"]["sha256"] = "c" * 64
+
+    rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
+
+
+def external_target_inventory_mismatch(result: dict[str, Any], checkout: Path) -> None:
+    rewrite_source(
+        checkout,
+        result,
+        "symlink-claude-local-reject",
+        lambda source: source["fixture"]["external_target"].update({"sha256": "f" * 64}),
+    )
+
+
+def fixture_inventory_bad_type(result: dict[str, Any], checkout: Path) -> None:
+    rewrite_source(
+        checkout,
+        result,
+        "tracked-claude-local-reject",
+        lambda source: source["fixture"].update({"fixture_inventory_before": ["not-an-inventory-record"]}),
+    )
+
+
+def fixture_inventory_missing_field(result: dict[str, Any], checkout: Path) -> None:
+    def mutate(source: dict[str, Any]) -> None:
+        for inventory_name in ("fixture_inventory_before", "fixture_inventory_after"):
+            source["fixture"][inventory_name][1].pop("size")
+
+    rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
+
+
+def fixture_inventory_duplicate_path(result: dict[str, Any], checkout: Path) -> None:
+    def mutate(source: dict[str, Any]) -> None:
+        inventory = source["fixture"]["fixture_inventory_before"]
+        inventory.append(copy.deepcopy(inventory[0]))
+
+    rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
+
+
+def fixture_inventory_unknown_kind(result: dict[str, Any], checkout: Path) -> None:
+    def mutate(source: dict[str, Any]) -> None:
+        for inventory_name in ("fixture_inventory_before", "fixture_inventory_after"):
+            source["fixture"][inventory_name][0]["kind"] = "directory"
+
+    rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
+
+
+def state_inventory_bad_type(result: dict[str, Any], checkout: Path) -> None:
+    rewrite_source(
+        checkout,
+        result,
+        "tracked-claude-local-reject",
+        lambda source: source["state_root"].update({"inventory_after": ["not-an-inventory-record"]}),
+    )
+
+
+def state_inventory_missing_field(result: dict[str, Any], checkout: Path) -> None:
+    def mutate(source: dict[str, Any]) -> None:
+        source["state_root"]["inventory_after"][0].pop("size")
+
+    rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
+
+
+def state_inventory_duplicate_path(result: dict[str, Any], checkout: Path) -> None:
+    def mutate(source: dict[str, Any]) -> None:
+        inventory = source["state_root"]["inventory_after"]
+        inventory.append(copy.deepcopy(inventory[0]))
+
+    rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
+
+
+def state_inventory_unknown_kind(result: dict[str, Any], checkout: Path) -> None:
+    def mutate(source: dict[str, Any]) -> None:
+        for item in source["state_root"]["inventory_after"]:
+            item["kind"] = "directory"
+
+    rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
+
+
+def git_snapshot_missing_head(result: dict[str, Any], checkout: Path) -> None:
+    def mutate(source: dict[str, Any]) -> None:
+        for snapshot_name in ("git_before", "git_after"):
+            source["fixture"][snapshot_name].pop("head")
+
+    rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
+
+
+def git_snapshot_boolean_status(result: dict[str, Any], checkout: Path) -> None:
+    def mutate(source: dict[str, Any]) -> None:
+        for snapshot_name in ("git_before", "git_after"):
+            source["fixture"][snapshot_name]["rev_parse_status"] = True
+
+    rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
+
+
+def git_snapshot_bad_status_porcelain(result: dict[str, Any], checkout: Path) -> None:
+    def mutate(source: dict[str, Any]) -> None:
+        for snapshot_name in ("git_before", "git_after"):
+            source["fixture"][snapshot_name]["status_porcelain"] = ""
+
+    rewrite_source(checkout, result, "tracked-claude-local-reject", mutate)
+
+
+def git_snapshot_bad_non_git_head(result: dict[str, Any], checkout: Path) -> None:
+    def mutate(source: dict[str, Any]) -> None:
+        for snapshot_name in ("git_before", "git_after"):
+            source["fixture"][snapshot_name] = {
+                **source["fixture"][snapshot_name],
+                "is_worktree": False,
+                "rev_parse_status": 128,
+                "head": "not-a-sha",
+                "branch": None,
+            }
+
+    rewrite_source(checkout, result, "non-git-repo-local-reject", mutate)
+
+
 def symlink_link_mutation(result: dict[str, Any], checkout: Path) -> None:
     rewrite_source(
         checkout,
@@ -275,39 +429,62 @@ def raw_special_entry(_result: dict[str, Any], checkout: Path) -> None:
         raise
 
 
-CASES: list[tuple[str, Mutation]] = [
-    ("missing scenario", missing_scenario),
-    ("duplicate scenario", duplicate_scenario),
-    ("extra scenario", extra_scenario),
-    ("forged source hash", forged_source_hash),
-    ("forged assistant result hash", forged_result_hash),
-    ("wrong reason", wrong_reason),
-    ("eligible extra changed path", eligible_extra_changed_path),
-    ("tracked target mutation", tracked_target_mutation),
-    ("not-ignored target mutation", not_ignored_target_mutation),
-    ("ignore mutation", ignore_mutation),
-    ("second ignore mutation", ignore_second_mutation),
-    ("symlink target mutation", symlink_target_mutation),
-    ("symlink link mutation", symlink_link_mutation),
-    ("honored/observed state-root mismatch", honored_observed_root_mismatch),
-    ("inventory/observed state-root mismatch", inventory_observed_root_mismatch),
-    ("non-git fallback write", non_git_fallback_write),
-    ("reused session ID", reused_session_id),
-    ("wrapper/consumer mismatch", wrapper_consumer_mismatch),
-    ("modelUsage mismatch", model_usage_mismatch),
-    ("plugin commit mismatch", plugin_commit_mismatch),
-    ("plugin live blob mismatch", live_plugin_blob_mismatch),
-    ("source traversal", source_path_traversal),
-    ("source symlink substitution", source_symlink_substitution),
-    ("source special entry", raw_special_entry),
+CASES: list[tuple[str, Mutation, str | None]] = [
+    ("missing scenario", missing_scenario, None),
+    ("duplicate scenario", duplicate_scenario, None),
+    ("extra scenario", extra_scenario, None),
+    ("forged source hash", forged_source_hash, "source_sha256 does not match"),
+    ("forged assistant result hash", forged_result_hash, None),
+    ("wrong reason", wrong_reason, "receipt.reason_code does not match"),
+    ("eligible extra changed path", eligible_extra_changed_path, "receipt.changed_paths does not match"),
+    ("tracked target mutation", tracked_target_mutation, "rejected target state changed"),
+    ("not-ignored target mutation", not_ignored_target_mutation, "rejected target state changed"),
+    ("ignore mutation", ignore_mutation, "ignore file"),
+    ("second ignore mutation", ignore_second_mutation, "ignore file"),
+    ("symlink target mutation", symlink_target_mutation, "external target"),
+    ("symlink link mutation", symlink_link_mutation, "link text changed"),
+    ("target/inventory mismatch", target_inventory_mismatch, "target"),
+    ("external target/inventory mismatch", external_target_inventory_mismatch, "external target"),
+    ("fixture inventory bad type", fixture_inventory_bad_type, "must be an object"),
+    ("fixture inventory missing field", fixture_inventory_missing_field, "size"),
+    ("fixture inventory duplicate path", fixture_inventory_duplicate_path, "duplicate path"),
+    ("fixture inventory unknown kind", fixture_inventory_unknown_kind, "kind"),
+    ("state inventory bad type", state_inventory_bad_type, "must be an object"),
+    ("state inventory missing field", state_inventory_missing_field, "size"),
+    ("state inventory duplicate path", state_inventory_duplicate_path, "duplicate path"),
+    ("state inventory unknown kind", state_inventory_unknown_kind, "kind"),
+    ("Git snapshot missing head", git_snapshot_missing_head, "head"),
+    ("Git snapshot boolean status", git_snapshot_boolean_status, "rev_parse_status"),
+    ("Git snapshot bad status porcelain", git_snapshot_bad_status_porcelain, "status_porcelain"),
+    ("non-Git snapshot bad head", git_snapshot_bad_non_git_head, "head"),
+    ("honored/observed state-root mismatch", honored_observed_root_mismatch, "honored"),
+    ("inventory/observed state-root mismatch", inventory_observed_root_mismatch, "observed_root"),
+    ("non-git fallback write", non_git_fallback_write, None),
+    ("reused session ID", reused_session_id, None),
+    ("wrapper/consumer mismatch", wrapper_consumer_mismatch, None),
+    ("modelUsage mismatch", model_usage_mismatch, None),
+    ("plugin commit mismatch", plugin_commit_mismatch, None),
+    ("plugin live blob mismatch", live_plugin_blob_mismatch, None),
+    ("source traversal", source_path_traversal, None),
+    ("source symlink substitution", source_symlink_substitution, None),
+    ("source special entry", raw_special_entry, None),
 ]
 
 
-def assert_controlled_rejection(name: str, completed: subprocess.CompletedProcess[str]) -> None:
+def assert_controlled_rejection(
+    name: str,
+    completed: subprocess.CompletedProcess[str],
+    expected_fragment: str | None = None,
+) -> None:
     output = completed.stdout + completed.stderr
     assert completed.returncode != 0, f"{name}: mutation was accepted"
     assert "Traceback" not in output, f"{name}: validator raised an uncontrolled traceback: {output}"
     assert "full eval pilot check failed:" in output, output
+    if expected_fragment is not None:
+        assert expected_fragment in output, (
+            f"{name}: rejection did not reach the intended semantic diagnostic "
+            f"{expected_fragment!r}: {output}"
+        )
 
 
 def test_missing_reflect_result_is_rejected() -> None:
@@ -348,7 +525,7 @@ def main() -> int:
     skipped = 0
     with tempfile.TemporaryDirectory(prefix="tiger-kit-full-validator-") as temp_dir:
         temp_root = Path(temp_dir)
-        for name, mutate in CASES:
+        for name, mutate, expected_fragment in CASES:
             checkout = prepare_checkout(temp_root / name.replace(" ", "-"))
             result = load_result(checkout)
             try:
@@ -360,7 +537,7 @@ def main() -> int:
             write_result(checkout, result)
             completed = run_validator(checkout)
             try:
-                assert_controlled_rejection(name, completed)
+                assert_controlled_rejection(name, completed, expected_fragment)
             except AssertionError as exc:
                 failures.append(str(exc))
             else:
