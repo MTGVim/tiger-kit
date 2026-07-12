@@ -1,5 +1,11 @@
 # Changelog
 
+## 18.0.1 — README Invocation Guide
+
+- Distinguished user-invoked, model-invoked, and hybrid skills throughout the README catalog.
+- Restored the cute TigerKit cover image and displayed it at the top of the README.
+- Updated the immutable installation example to `v18.0.1`.
+
 ## 18.0.0 — Agent Skills Reboot
 
 TigerKit 18 is a breaking distribution and runtime reboot.

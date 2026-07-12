@@ -1,5 +1,9 @@
 # TigerKit 18
 
+<p align="center">
+  <img src="assets/tigerkit-cover.png" width="960" alt="TigerKit Agent Skills cover">
+</p>
+
 TigerKit is a collection of small engineering Agent Skills for Claude Code, Codex, and Hermes Agent. Version 18.0.0 uses the Agent Skills format and no longer ships a Claude Code plugin runtime.
 
 ## Install
@@ -27,10 +31,10 @@ npx skills add MTGVim/tiger-kit \
   --skill tk-browser-verify
 ```
 
-Install the immutable 18.0.0 snapshot:
+Install the immutable 18.0.1 snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v18.0.0" \
+npx skills add "MTGVim/tiger-kit#v18.0.1" \
   --global \
   --agent claude-code \
   --agent codex \
@@ -41,53 +45,57 @@ Claude Code and Hermes Agent expose installed skills as slash commands such as `
 
 ## Skill catalog
 
+- **User-invoked**: the user explicitly selects the skill, such as `/tk-implement` or `$tk-implement`.
+- **Model-invoked**: the model routes to the skill when its discipline is relevant.
+- **Hybrid**: either explicit user selection or model routing is supported.
+
 ### Shape
 
-| Skill | Purpose |
-| --- | --- |
-| `tk-grill-me` | Pressure-test consequential decisions one question at a time. |
-| `tk-grill-with-docs` | Grill decisions while recording settled terms and qualifying ADRs. |
-| `tk-grilling` | Model discipline for one-question-at-a-time decision convergence. |
-| `tk-domain-modeling` | Sharpen domain language and concept boundaries. |
-| `tk-prototype` | Build a throwaway UI or logic proof. |
-| `tk-codebase-design` | Propose the smallest evidence-backed structural improvement. |
+| Skill | Invocation | Purpose |
+| --- | --- | --- |
+| `tk-grill-me` | User-invoked | Pressure-test consequential decisions one question at a time. |
+| `tk-grill-with-docs` | User-invoked | Grill decisions while recording settled terms and qualifying ADRs. |
+| `tk-grilling` | Model-invoked | Model discipline for one-question-at-a-time decision convergence. |
+| `tk-domain-modeling` | Model-invoked | Sharpen domain language and concept boundaries. |
+| `tk-prototype` | User-invoked | Build a throwaway UI or logic proof. |
+| `tk-codebase-design` | Model-invoked | Propose the smallest evidence-backed structural improvement. |
 
 ### Document
 
-| Skill | Purpose |
-| --- | --- |
-| `tk-to-spec` | Synthesize evidence and decisions into a spec. |
-| `tk-to-tickets` | Create independently verifiable vertical tickets. |
+| Skill | Invocation | Purpose |
+| --- | --- | --- |
+| `tk-to-spec` | User-invoked | Synthesize evidence and decisions into a spec. |
+| `tk-to-tickets` | User-invoked | Create independently verifiable vertical tickets. |
 
 ### Build
 
-| Skill | Purpose |
-| --- | --- |
-| `tk-implement` | Implement and verify a requested change. |
-| `tk-browser-verify` | Verify real browser UI, behavior, environments, and design fidelity. |
+| Skill | Invocation | Purpose |
+| --- | --- | --- |
+| `tk-implement` | User-invoked | Implement and verify a requested change. |
+| `tk-browser-verify` | Hybrid | Verify real browser UI, behavior, environments, and design fidelity. |
 
 ### Learn
 
-| Skill | Purpose |
-| --- | --- |
-| `tk-reflect` | Propose reusable repo/user rule or skill candidates. |
-| `tk-learn` | Turn evidence into a reusable repo or user skill. |
-| `tk-grooming` | Audit and optionally repair existing rules and skills. |
+| Skill | Invocation | Purpose |
+| --- | --- | --- |
+| `tk-reflect` | User-invoked | Propose reusable repo/user rule or skill candidates. |
+| `tk-learn` | User-invoked | Turn evidence into a reusable repo or user skill. |
+| `tk-grooming` | User-invoked | Audit and optionally repair existing rules and skills. |
 
 ### Continue
 
-| Skill | Purpose |
-| --- | --- |
-| `tk-handoff` | Write or resume verified work state. |
+| Skill | Invocation | Purpose |
+| --- | --- | --- |
+| `tk-handoff` | User-invoked | Write or resume verified work state. |
 
 ### Disciplines
 
-| Skill | Purpose |
-| --- | --- |
-| `tk-tdd` | Apply red-green-refactor at a valuable behavior seam. |
-| `tk-diagnosing-bugs` | Reproduce, minimize, diagnose, fix, and regress difficult bugs. |
-| `tk-code-review` | Review a fixed diff without editing it. |
-| `tk-merge-conflict` | Resolve active conflicts while preserving both intents. |
+| Skill | Invocation | Purpose |
+| --- | --- | --- |
+| `tk-tdd` | Model-invoked | Apply red-green-refactor at a valuable behavior seam. |
+| `tk-diagnosing-bugs` | Model-invoked | Reproduce, minimize, diagnose, fix, and regress difficult bugs. |
+| `tk-code-review` | Model-invoked | Review a fixed diff without editing it. |
+| `tk-merge-conflict` | Model-invoked | Resolve active conflicts while preserving both intents. |
 
 ## How skills compose
 
