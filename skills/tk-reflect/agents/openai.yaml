@@ -1,0 +1,6 @@
+interface:
+  display_name: "TigerKit: Reflect"
+  short_description: "Propose durable rule or skill candidates from evidence."
+
+policy:
+  allow_implicit_invocation: false

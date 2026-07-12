@@ -1,0 +1,6 @@
+interface:
+  display_name: "TigerKit: Handoff"
+  short_description: "Write or resume a verified work handoff."
+
+policy:
+  allow_implicit_invocation: false
