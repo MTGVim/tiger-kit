@@ -150,7 +150,11 @@ def recorded_commit_blob_mismatch(result: dict[str, Any], checkout: Path) -> Non
 
 
 def no_git_archive(_result: dict[str, Any], checkout: Path) -> None:
-    shutil.rmtree(checkout / ".git")
+    git_metadata = checkout / ".git"
+    if git_metadata.is_dir():
+        shutil.rmtree(git_metadata)
+    else:
+        git_metadata.unlink()
 
 
 def source_path_traversal(result: dict[str, Any], _checkout: Path) -> None:
