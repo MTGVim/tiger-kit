@@ -1,6 +1,6 @@
 ---
 name: tk-browser-verify
-description: "Verify browser UI, behavior, environment differences, and design fidelity with runtime evidence."
+description: "[user/auto] Verify browser UI, behavior, environment differences, and design fidelity with runtime evidence."
 metadata:
   tigerkit:
     kind: hybrid

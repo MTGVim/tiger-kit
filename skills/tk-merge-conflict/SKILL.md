@@ -1,6 +1,6 @@
 ---
 name: tk-merge-conflict
-description: "Resolve active merge or rebase conflicts while preserving both sides intent and verifying the result."
+description: "[auto] Resolve active merge or rebase conflicts while preserving both sides intent and verifying the result."
 user-invocable: false
 metadata:
   tigerkit:

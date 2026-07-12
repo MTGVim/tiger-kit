@@ -1,6 +1,6 @@
 ---
 name: tk-grilling
-description: "Ask one consequential design question at a time with a recommendation and evidence."
+description: "[auto] Ask one consequential design question at a time with a recommendation and evidence."
 user-invocable: false
 metadata:
   tigerkit:

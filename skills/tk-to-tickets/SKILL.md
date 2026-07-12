@@ -1,6 +1,6 @@
 ---
 name: tk-to-tickets
-description: "Split a request or specification into independently verifiable vertical tickets. Use only when explicitly invoked by the user."
+description: "[user] Split a request or specification into independently verifiable vertical tickets. Use only when explicitly invoked by the user."
 disable-model-invocation: true
 argument-hint: "<spec, plan, or request> [--output <path>]"
 metadata:

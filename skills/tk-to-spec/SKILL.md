@@ -1,6 +1,6 @@
 ---
 name: tk-to-spec
-description: "Synthesize current decisions and evidence into an implementation specification. Use only when explicitly invoked by the user."
+description: "[user] Synthesize current decisions and evidence into an implementation specification. Use only when explicitly invoked by the user."
 disable-model-invocation: true
 argument-hint: "<conversation, source, or request> [--output <path>|--print-only]"
 metadata:

@@ -1,6 +1,6 @@
 ---
 name: tk-grill-me
-description: "Pressure-test an idea, plan, design, ticket, or RFC. Use only when explicitly invoked by the user."
+description: "[user] Pressure-test an idea, plan, design, ticket, or RFC. Use only when explicitly invoked by the user."
 disable-model-invocation: true
 argument-hint: "<idea, plan, design, ticket, RFC, or path>"
 metadata:

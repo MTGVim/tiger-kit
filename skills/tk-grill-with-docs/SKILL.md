@@ -1,6 +1,6 @@
 ---
 name: tk-grill-with-docs
-description: "Pressure-test decisions and record settled domain terms or consequential ADRs. Use only when explicitly invoked by the user."
+description: "[user] Pressure-test decisions and record settled domain terms or consequential ADRs. Use only when explicitly invoked by the user."
 disable-model-invocation: true
 argument-hint: "<idea, plan, design, ticket, RFC, or path>"
 metadata:

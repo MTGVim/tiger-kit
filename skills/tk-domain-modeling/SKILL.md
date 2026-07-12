@@ -1,6 +1,6 @@
 ---
 name: tk-domain-modeling
-description: "Sharpen domain language, test concept boundaries, and record only durable terms or consequential decisions."
+description: "[auto] Sharpen domain language, test concept boundaries, and record only durable terms or consequential decisions."
 user-invocable: false
 metadata:
   tigerkit:

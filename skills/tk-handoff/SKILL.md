@@ -1,6 +1,6 @@
 ---
 name: tk-handoff
-description: "Write or resume a verified work handoff. Use only when explicitly invoked by the user."
+description: "[user] Write or resume a verified work handoff. Use only when explicitly invoked by the user."
 disable-model-invocation: true
 argument-hint: "[goal or audience] [--output <path>|--resume]"
 metadata:

@@ -1,5 +1,11 @@
 # Changelog
 
+## 18.0.2 — Invocation Labels
+
+- Prefixed skill descriptions with `[user]`, `[auto]`, or `[user/auto]` so picker entries communicate their intended invocation.
+- Mirrored `[user]` in Codex interface descriptions for explicitly invoked skills.
+- Enforced invocation labels in repository validation without renaming skills or changing invocation kinds.
+
 ## 18.0.1 — README Invocation Guide
 
 - Distinguished user-invoked, model-invoked, and hybrid skills throughout the README catalog.

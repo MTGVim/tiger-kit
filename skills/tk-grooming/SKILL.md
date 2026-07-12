@@ -1,6 +1,6 @@
 ---
 name: tk-grooming
-description: "Audit and optionally repair existing repo and user rules or skills. Use only when explicitly invoked by the user."
+description: "[user] Audit and optionally repair existing repo and user rules or skills. Use only when explicitly invoked by the user."
 disable-model-invocation: true
 argument-hint: "[scope] [--apply]"
 metadata:

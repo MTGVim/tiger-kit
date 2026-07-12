@@ -1,6 +1,6 @@
 ---
 name: tk-implement
-description: "Implement and verify a requested code change. Use only when explicitly invoked by the user."
+description: "[user] Implement and verify a requested code change. Use only when explicitly invoked by the user."
 disable-model-invocation: true
 argument-hint: "<request, ticket, or spec>"
 metadata:
