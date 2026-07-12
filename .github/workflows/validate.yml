@@ -1,31 +1,38 @@
 name: validate
 
 on:
-  push:
   pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          fetch-depth: 0
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-
-      - name: Install Claude Code CLI
-        run: npm install -g @anthropic-ai/claude-code
-
-      - name: Setup Yarn
-        run: corepack enable
-
-      - name: Validate plugin surface
-        run: yarn validate
-
-      - name: Compile Python helpers
-        run: python3 -m py_compile scripts/*.py
+          node-version: '22'
+      - name: Validate Agent Skills
+        run: python scripts/validate_skills.py
+      - name: Validate Markdown relative links
+        run: python scripts/validate_skills.py --links-only
+      - name: Discover skills
+        run: npx --yes skills add . --list
+      - name: Smoke install supported targets
+        run: |
+          export HOME="$(mktemp -d)"
+          export CLAUDE_CONFIG_DIR="$HOME/.claude"
+          export CODEX_HOME="$HOME/.codex"
+          export HERMES_HOME="$HOME/.hermes"
+          npx --yes skills add . --global --agent claude-code --agent codex --agent hermes-agent --skill '*' --copy --yes
+          test "$(find "$CLAUDE_CONFIG_DIR/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 18
+          test "$(find "$HOME/.agents/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 18
+          test "$(find "$HERMES_HOME/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 18
+          test -f "$CLAUDE_CONFIG_DIR/skills/tk-browser-verify/references/safety.md"
+          test -f "$HOME/.agents/skills/tk-implement/references/delegation.md"
+          test -f "$HERMES_HOME/skills/tk-grill-me/agents/openai.yaml"

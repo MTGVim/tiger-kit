@@ -1,0 +1,6 @@
+interface:
+  display_name: "TigerKit: Grooming"
+  short_description: "Audit and optionally repair rules and skills."
+
+policy:
+  allow_implicit_invocation: false

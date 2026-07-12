@@ -1,0 +1,6 @@
+interface:
+  display_name: "TigerKit: To Tickets"
+  short_description: "Create independently verifiable vertical tickets."
+
+policy:
+  allow_implicit_invocation: false

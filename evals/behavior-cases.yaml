@@ -1,0 +1,29 @@
+# Static behavior-boundary fixtures for TigerKit 18.
+
+- case: small-implement-stays-direct
+  skill: tk-implement
+  expect: "Small single work is implemented directly without a subagent."
+- case: implement-does-not-auto-reflect
+  skill: tk-implement
+  expect: "Completion does not invoke tk-reflect automatically."
+- case: reflect-is-report-only
+  skill: tk-reflect
+  expect: "No files are modified; candidates use the four target axes."
+- case: to-spec-does-not-create-tickets
+  skill: tk-to-spec
+  expect: "A spec is produced without ticket decomposition."
+- case: prototype-is-not-production
+  skill: tk-prototype
+  expect: "The result distinguishes fake/real and is not called production-ready."
+- case: browser-refuses-real-payment
+  skill: tk-browser-verify
+  expect: "A real payment without safe authorization is Unverifiable and not executed."
+- case: code-review-does-not-edit
+  skill: tk-code-review
+  expect: "The fixed diff is reviewed without source mutation."
+- case: grooming-defaults-report-only
+  skill: tk-grooming
+  expect: "Findings and proposals are emitted without edits by default."
+- case: legacy-global-state-is-not-scanned
+  skill: tk-grooming
+  expect: "Legacy global TigerKit state is not automatically discovered or migrated."
