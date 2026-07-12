@@ -9,6 +9,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / "skills"
 KINDS = {"user-invoked", "model-invoked", "hybrid"}
+INVOCATION_LABELS = {
+    "user-invoked": "[user]",
+    "model-invoked": "[auto]",
+    "hybrid": "[user/auto]",
+}
 RELATIONSHIPS = {"copied", "adapted", "inspired-by", "forked", "native"}
 EXPECTED_SKILLS = {
     "tk-grill-me", "tk-grill-with-docs", "tk-grilling", "tk-domain-modeling",
@@ -102,8 +107,12 @@ def validate_skill(path: Path) -> tuple[list[str], list[str]]:
         errors.append(f"{label}: SKILL.md field name: use tk- prefixed kebab-case")
     if not isinstance(description, str) or not description.strip():
         errors.append(f"{label}: SKILL.md field description: add a non-empty description")
-    if kind not in KINDS:
+    if not isinstance(kind, str) or kind not in KINDS:
         errors.append(f"{label}: metadata.tigerkit.kind: use one of {sorted(KINDS)}")
+    elif isinstance(description, str) and not description.startswith(f"{INVOCATION_LABELS[kind]} "):
+        errors.append(
+            f"{label}: SKILL.md field description: prefix with {INVOCATION_LABELS[kind]!r}"
+        )
     if relationship not in RELATIONSHIPS:
         errors.append(f"{label}: metadata.tigerkit.relationship: use one of {sorted(RELATIONSHIPS)}")
     if origin != "tigerkit" and not nested(data, "metadata", "tigerkit", "upstream-skill"):
@@ -125,6 +134,8 @@ def validate_skill(path: Path) -> tuple[list[str], list[str]]:
             for needle in ("interface:", "display_name:", "short_description:", "policy:", "allow_implicit_invocation: false"):
                 if needle not in openai_text:
                     errors.append(f"{label}: agents/openai.yaml: add {needle}")
+            if 'short_description: "[user] ' not in openai_text:
+                errors.append(f"{label}: agents/openai.yaml: prefix short_description with '[user]'")
     elif kind in {"model-invoked", "hybrid"}:
         if disabled:
             errors.append(f"{label}: disable-model-invocation: remove implicit-invocation block")

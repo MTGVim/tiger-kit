@@ -1,6 +1,6 @@
 interface:
   display_name: "TigerKit: Grill With Docs"
-  short_description: "Converge decisions and record durable context."
+  short_description: "[user] Converge decisions and record durable context."
 
 policy:
   allow_implicit_invocation: false

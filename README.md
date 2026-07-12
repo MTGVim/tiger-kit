@@ -31,10 +31,10 @@ npx skills add MTGVim/tiger-kit \
   --skill tk-browser-verify
 ```
 
-Install the immutable 18.0.1 snapshot:
+Install the immutable 18.0.2 snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v18.0.1" \
+npx skills add "MTGVim/tiger-kit#v18.0.2" \
   --global \
   --agent claude-code \
   --agent codex \
@@ -45,9 +45,9 @@ Claude Code and Hermes Agent expose installed skills as slash commands such as `
 
 ## Skill catalog
 
-- **User-invoked**: the user explicitly selects the skill, such as `/tk-implement` or `$tk-implement`.
-- **Model-invoked**: the model routes to the skill when its discipline is relevant.
-- **Hybrid**: either explicit user selection or model routing is supported.
+- **`[user]` User-invoked**: the user explicitly selects the skill, such as `/tk-implement` or `$tk-implement`.
+- **`[auto]` Model-invoked**: the model routes to the skill when its discipline is relevant.
+- **`[user/auto]` Hybrid**: either explicit user selection or model routing is supported.
 
 ### Shape
 

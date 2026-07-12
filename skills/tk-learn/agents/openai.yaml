@@ -1,6 +1,6 @@
 interface:
   display_name: "TigerKit: Learn"
-  short_description: "Turn evidence into a reusable repo or user skill."
+  short_description: "[user] Turn evidence into a reusable repo or user skill."
 
 policy:
   allow_implicit_invocation: false

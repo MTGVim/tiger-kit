@@ -1,6 +1,6 @@
 ---
 name: tk-codebase-design
-description: "Identify evidence-backed structural pain and propose the smallest effective codebase design improvement."
+description: "[auto] Identify evidence-backed structural pain and propose the smallest effective codebase design improvement."
 user-invocable: false
 metadata:
   tigerkit:

@@ -1,6 +1,6 @@
 ---
 name: tk-code-review
-description: "Review a fixed diff for specification compliance and code quality without editing it."
+description: "[auto] Review a fixed diff for specification compliance and code quality without editing it."
 user-invocable: false
 metadata:
   tigerkit:

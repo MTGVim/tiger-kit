@@ -1,6 +1,6 @@
 ---
 name: tk-tdd
-description: "Use test-driven development at a valuable behavior seam when red-green-refactor improves confidence."
+description: "[auto] Use test-driven development at a valuable behavior seam when red-green-refactor improves confidence."
 user-invocable: false
 metadata:
   tigerkit:

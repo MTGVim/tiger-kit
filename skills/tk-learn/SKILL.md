@@ -1,6 +1,6 @@
 ---
 name: tk-learn
-description: "Create a reusable repo or user skill from supplied experience or material. Use only when explicitly invoked by the user."
+description: "[user] Create a reusable repo or user skill from supplied experience or material. Use only when explicitly invoked by the user."
 disable-model-invocation: true
 argument-hint: "<conversation, notes, path, URL, workflow, or reflect candidate>"
 metadata:

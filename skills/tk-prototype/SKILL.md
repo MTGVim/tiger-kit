@@ -1,6 +1,6 @@
 ---
 name: tk-prototype
-description: "Build a throwaway UI or logic prototype to test a hypothesis. Use only when explicitly invoked by the user."
+description: "[user] Build a throwaway UI or logic prototype to test a hypothesis. Use only when explicitly invoked by the user."
 disable-model-invocation: true
 argument-hint: "<idea, screenshot, spec, ticket, code, or design reference>"
 metadata:

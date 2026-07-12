@@ -1,6 +1,6 @@
 interface:
   display_name: "TigerKit: Prototype"
-  short_description: "Build a throwaway UI or logic prototype."
+  short_description: "[user] Build a throwaway UI or logic prototype."
 
 policy:
   allow_implicit_invocation: false

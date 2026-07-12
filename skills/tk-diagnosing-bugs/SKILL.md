@@ -1,6 +1,6 @@
 ---
 name: tk-diagnosing-bugs
-description: "Diagnose difficult bugs by reproducing, minimizing, testing hypotheses, and verifying a regression fix."
+description: "[auto] Diagnose difficult bugs by reproducing, minimizing, testing hypotheses, and verifying a regression fix."
 user-invocable: false
 metadata:
   tigerkit:

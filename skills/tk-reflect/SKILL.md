@@ -1,6 +1,6 @@
 ---
 name: tk-reflect
-description: "Extract reusable rule or skill candidates from evidence. Use only when explicitly invoked by the user."
+description: "[user] Extract reusable rule or skill candidates from evidence. Use only when explicitly invoked by the user."
 disable-model-invocation: true
 argument-hint: "<conversation, correction, diff, result, or source>"
 metadata:
