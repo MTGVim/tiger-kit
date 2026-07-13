@@ -25,13 +25,16 @@ EXPECTED_SKILLS = {
 KEBAB = re.compile(r"^tk-[a-z0-9]+(?:-[a-z0-9]+)*$")
 LINK = re.compile(r"\[[^]]*]\(([^)]+)\)")
 EXPECTED_BEHAVIOR_CASES = {
-    "small-implement-stays-direct", "implement-does-not-auto-reflect",
+    "small-implement-stays-direct", "implement-proposes-strategy-before-editing",
+    "implement-respects-explicit-strategy", "implement-non-agent-tools-are-not-delegation",
+    "implement-delegation-is-single-level", "implement-tdd-follows-user-decision",
+    "implement-commits-after-verification", "implement-does-not-commit-failing-change",
+    "implement-does-not-push", "implement-does-not-auto-reflect",
     "reflect-is-report-only", "to-spec-does-not-create-tickets",
     "prototype-is-not-production", "browser-refuses-real-payment",
     "browser-owned-session-cleans-up", "browser-attached-session-is-preserved",
     "browser-first-tool-call-owns-lazy-session", "code-review-does-not-edit",
-    "grooming-defaults-report-only",
-    "legacy-global-state-is-not-scanned",
+    "grooming-defaults-report-only", "legacy-global-state-is-not-scanned",
 }
 
 

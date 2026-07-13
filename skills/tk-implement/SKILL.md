@@ -1,8 +1,8 @@
 ---
 name: tk-implement
-description: "[user] 요청받은 코드 변경을 구현하고 검증합니다. 사용자가 명시적으로 호출했을 때만 사용하세요."
+description: "[user] 요청받은 코드 변경을 구현하고 검증한 뒤 현재 브랜치에 커밋합니다. 사용자가 명시적으로 호출했을 때만 사용하세요."
 disable-model-invocation: true
-argument-hint: "<요청, 티켓 또는 명세>"
+argument-hint: "<요청, 티켓 또는 명세> [direct|delegated] [tdd|no-tdd]"
 metadata:
   tigerkit:
     kind: user-invoked
@@ -15,10 +15,44 @@ metadata:
 
 사용자가 이 스킬을 명시적으로 호출했을 때만 사용하세요. 자동으로 활성화하지 마세요.
 
-`understand → inspect → implement → verify → report` 순서를 따르세요. 정보 출처의 우선순위는 현재 요청, 대화에서 확인된 결정, 관련 `.tigerkit/tickets.md`, 관련 `.tigerkit/spec.md`, 저장소 지침, 코드/테스트 순입니다. 기존 파일이라고 해서 자동으로 관련 있는 것은 아닙니다.
+`understand → inspect → propose strategy → user approval → implement → verify incrementally → final verification → bounded review when warranted → commit → report` 순서를 따르세요. 정보 출처의 우선순위는 현재 요청, 대화에서 확인된 결정, 관련 `.tigerkit/tickets.md`, 관련 `.tigerkit/spec.md`, 저장소 지침, 코드/테스트 순입니다. 기존 파일이라고 해서 자동으로 관련 있는 것은 아닙니다.
 
-기본적으로 직접 구현하세요. 명확히 격리할 수 있거나 실제로 독립적인 병렬 작업일 때만 위임하세요. 위임을 중첩하거나 하위 에이전트가 사용자 호출형 TigerKit 스킬을 호출하게 해서는 안 됩니다. 유용한 경우 설치된 규율을 적용하되, 없다고 작업을 막지는 마세요. [위임](references/delegation.md)과 [리뷰 경계](references/review-boundary.md)를 참고하세요.
+## 전략 승인
 
-변경에 맞는 검증을 선택하세요. 실패를 변경 관련, 기존 문제, 환경 문제 또는 검증 불가로 분류하세요. 다른 사용자 호출형 스킬을 자동으로 실행하거나 커밋, 푸시, PR 생성 또는 병합을 하지 마세요.
+수정 전에 관련 코드, 테스트, 스크립트, 상태를 비파괴적으로 조사하세요. 이 단계에서는 파일을 만들거나 수정 또는 삭제하지 말고, 구현 에이전트를 실행하거나 커밋하지 마세요. context-mode, MCP, 검색, 브라우저, 샌드박스 같은 비에이전트 도구는 위임이 아니며 조사와 양쪽 실행 모드에서 사용할 수 있습니다.
 
-`## Changed`, `## Verification`, 비어 있지 않은 `## Remaining risks`를 보고하고, 파일 목록만이 아니라 동작을 설명하세요.
+조사 후 실행 모드와 TDD 여부를 판단해 이유와 함께 한 번에 제안하고 승인을 기다리세요. 작은 변경, 공유 파일, 긴밀한 구현-검증 반복에는 `direct`를 우선하고, 독립 범위와 완료 조건이 명확하며 격리 가치가 큰 작업에만 `delegated`를 고려하세요. 공개 동작 경계, 테스트 인프라, 회귀 위험이 명확하면 TDD를 권장하고, 문구·설정·기계적 변경이나 유용한 테스트 경계가 없으면 non-TDD를 권장하세요.
+
+사용자가 이미 정한 항목은 다시 묻지 말고, 일부만 정했다면 나머지만 물으세요. 승인 후 별도 장황한 계획 승인을 요구하지 마세요. 권장 형식:
+
+```text
+구현 전략을 제안합니다.
+
+- 실행: direct|delegated
+  - 이유: ...
+- TDD: 사용|미사용
+  - 이유: ...
+- 완료: 관련 검증 후 현재 브랜치에 commit
+
+이 전략으로 진행할까요?
+```
+
+상세 판단과 위임 계약은 [위임](references/delegation.md)을 참고하세요.
+
+## 구현과 검증
+
+Direct에서는 현재 에이전트가 가장 작은 일관된 단위로 구현하고 focused verification을 반복하세요. Delegated에서는 implementor 한 명에게만 범위와 완료 조건을 전달하고 현재 에이전트가 diff와 검증을 확인하세요. 위임을 중첩하거나 하위 에이전트가 사용자 호출형 TigerKit 스킬을 호출하게 해서는 안 됩니다.
+
+TDD가 승인되면 공개 동작을 검증하는 focused test의 실패를 먼저 확인하고, 최소 구현 후 같은 테스트의 성공을 확인하세요. 구현 후 테스트를 추가해 TDD라고 보고하지 마세요. Non-TDD에서도 검증을 생략하지 마세요.
+
+구현 중 focused test, 관련 정적 검사, build 또는 필요한 브라우저·통합 검증을 적절한 간격으로 반복하세요. 완료 후 비용과 환경이 허용하는 가장 넓은 관련 검증을 한 번 실행하세요. 실패를 `change-related`, `pre-existing`, `environment`, `unverifiable`로 분류하고, 변경 관련 실패가 남으면 커밋하지 마세요.
+
+고위험 변경에만 독립 reviewer 한 명을 고려하세요. 최대 범위는 review 1회, fix 1회, regression verification 1회입니다. [리뷰 경계](references/review-boundary.md)를 참고하세요.
+
+## 커밋과 보고
+
+승인 범위가 완료되고 변경 관련 검증이 성공했으며 작업 diff를 기존 사용자 변경과 안전하게 분리할 수 있으면 현재 브랜치에 커밋하세요. 사용자가 커밋을 금지했거나 구현이 불완전하거나 변경 관련 검증이 실패했으면 커밋하지 마세요. Implementor는 커밋하지 않으며 현재 에이전트가 staged diff를 확인하고 커밋합니다.
+
+별도 요청 없이는 push, PR 생성, merge, tag, release 또는 publish를 하지 마세요. 다른 사용자 호출형 스킬도 자동 실행하지 마세요.
+
+`## Strategy`, `## Changed`, `## Verification`, `## Commit`, 비어 있지 않은 `## Remaining risks`를 보고하세요. 파일 목록만이 아니라 동작을 설명하고, 검증 명령과 결과, 실패 분류, 커밋 메시지 또는 미커밋 이유를 포함하세요.
