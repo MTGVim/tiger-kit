@@ -1,8 +1,8 @@
 ---
 name: tk-grill-me
-description: "[user] Pressure-test an idea, plan, design, ticket, or RFC. Use only when explicitly invoked by the user."
+description: "[user] 아이디어, 계획, 설계, 티켓 또는 RFC를 철저히 검증합니다. 사용자가 명시적으로 호출한 경우에만 사용합니다."
 disable-model-invocation: true
-argument-hint: "<idea, plan, design, ticket, RFC, or path>"
+argument-hint: "<아이디어, 계획, 설계, 티켓, RFC 또는 경로>"
 metadata:
   tigerkit:
     kind: user-invoked
@@ -11,15 +11,15 @@ metadata:
     relationship: adapted
 ---
 
-# Grill Me
+# 집중 검증
 
-Use only when the user explicitly invokes this skill. Do not activate it automatically.
+사용자가 이 스킬을 명시적으로 호출한 경우에만 사용하세요. 자동으로 활성화하지 마세요.
 
-1. Read the request and supplied material; inspect code for answerable facts.
-2. Identify unresolved decisions only the user can make.
-3. Ask the highest-impact question, with a recommendation and short reason.
-4. Apply the answer and repeat one question at a time until decisions converge.
+1. 요청과 제공된 자료를 읽고, 코드에서 확인 가능한 사실을 조사하세요.
+2. 사용자만 결정할 수 있는 미해결 사항을 식별하세요.
+3. 가장 영향이 큰 질문을 권고와 짧은 이유와 함께 하세요.
+4. 답변을 반영하고 결정이 수렴할 때까지 한 번에 하나씩 질문을 반복하세요.
 
-Do not modify source, create specs/tickets, write documents, or repeat answered questions.
+소스를 수정하거나, 명세/티켓을 생성하거나, 문서를 작성하거나, 이미 답한 질문을 반복하지 마세요.
 
-Finish with non-empty sections only: `## Decisions`, `## Assumptions`, `## Remaining risks`.
+내용이 있는 섹션만 사용해 마무리하세요: `## Decisions`, `## Assumptions`, `## Remaining risks`.

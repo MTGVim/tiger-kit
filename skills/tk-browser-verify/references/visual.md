@@ -1,3 +1,3 @@
-# Visual verification
+# 시각 검증
 
-Inspect layout, spacing, responsive behavior, overlays, clipping, z-index, typography, and visible regressions at relevant viewports. Capture screenshots only when they support a finding.
+관련 뷰포트에서 레이아웃, 간격, 반응형 동작, 오버레이, 잘림, z-index, 타이포그래피, 눈에 보이는 회귀를 검사하세요. 발견 사항을 뒷받침하는 경우에만 스크린샷을 캡처하세요.

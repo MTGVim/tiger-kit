@@ -1,6 +1,6 @@
 interface:
-  display_name: "TigerKit: Reflect"
-  short_description: "[user] Propose durable rule or skill candidates from evidence."
+  display_name: "TigerKit: 회고"
+  short_description: "[user] 증거에서 지속 가능한 규칙 또는 스킬 후보를 제안합니다."
 
 policy:
   allow_implicit_invocation: false

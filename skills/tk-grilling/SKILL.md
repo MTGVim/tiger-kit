@@ -1,6 +1,6 @@
 ---
 name: tk-grilling
-description: "[auto] Ask one consequential design question at a time with a recommendation and evidence."
+description: "[auto] 근거와 권고를 제시하며 중대한 설계 질문을 한 번에 하나씩 합니다."
 user-invocable: false
 metadata:
   tigerkit:
@@ -10,13 +10,13 @@ metadata:
     relationship: adapted
 ---
 
-# Grilling discipline
+# 집중 검증 원칙
 
-Use when a design or plan needs decisions before implementation.
+설계나 계획을 구현하기 전에 결정이 필요할 때 사용합니다.
 
-- Inspect code for discoverable facts instead of asking the user.
-- Ask only questions that require user judgment, one at a time.
-- Include a recommendation and brief reason with every question.
-- Do not repeat answered questions or implement before agreement.
+- 사용자에게 묻는 대신 코드에서 확인 가능한 사실을 조사하세요.
+- 사용자의 판단이 필요한 질문만 한 번에 하나씩 하세요.
+- 모든 질문에 권고와 짧은 이유를 포함하세요.
+- 이미 답한 질문을 반복하거나 합의 전에 구현하지 마세요.
 
-Output: question, recommendation, reason. Complete when no consequential user decision remains or the user stops.
+출력: 질문, 권고, 이유. 중대한 사용자 결정이 남지 않았거나 사용자가 중단하면 완료합니다.

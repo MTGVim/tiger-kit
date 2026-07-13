@@ -1,3 +1,3 @@
-# Browser safety
+# 브라우저 안전
 
-Without a safe test environment or explicit permission, do not trigger real payment, external communication, irreversible deletion, production-data mutation, account changes, permission changes, or comparable side effects. Report them as unverifiable. Never store or print credentials.
+안전한 테스트 환경이나 명시적 권한이 없으면 실제 결제, 외부 커뮤니케이션, 되돌릴 수 없는 삭제, 프로덕션 데이터 변경, 계정 변경, 권한 변경 또는 이에 준하는 부작용을 유발하지 마세요. Unverifiable로 보고하세요. 자격 증명을 절대 저장하거나 출력하지 마세요.

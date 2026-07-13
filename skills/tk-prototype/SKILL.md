@@ -1,8 +1,8 @@
 ---
 name: tk-prototype
-description: "[user] Build a throwaway UI or logic prototype to test a hypothesis. Use only when explicitly invoked by the user."
+description: "[user] 가설을 검증하기 위한 일회용 UI 또는 로직 프로토타입을 만듭니다. 사용자가 명시적으로 호출했을 때만 사용하세요."
 disable-model-invocation: true
-argument-hint: "<idea, screenshot, spec, ticket, code, or design reference>"
+argument-hint: "<아이디어, 스크린샷, 명세, 티켓, 코드 또는 디자인 참고 자료>"
 metadata:
   tigerkit:
     kind: user-invoked
@@ -10,14 +10,14 @@ metadata:
     relationship: native
 ---
 
-# Prototype
+# 프로토타입
 
-Use only when the user explicitly invokes this skill. Do not activate it automatically.
+사용자가 이 스킬을 명시적으로 호출했을 때만 사용하세요. 자동으로 활성화하지 마세요.
 
-Accept a prompt, idea, screenshot, spec, ticket, code, or design reference. Save under `.tigerkit/prototypes/<slug>/` unless an executable temporary route or harness is more useful. Create scratch parents lazily, use atomic replacement when practical, do not archive automatically or edit `.gitignore`, and warn when generated scratch is not ignored.
+프롬프트, 아이디어, 스크린샷, 명세, 티켓, 코드 또는 디자인 참고 자료를 입력으로 받으세요. 실행 가능한 임시 라우트 또는 하네스가 더 유용하지 않다면 `.tigerkit/prototypes/<slug>/` 아래에 저장하세요. 임시 작업용 상위 디렉터리는 필요할 때만 만들고, 가능하면 원자적으로 교체하며, 자동으로 보관하거나 `.gitignore`를 편집하지 마세요. 생성된 임시 작업물이 버전 관리에서 제외되지 않으면 경고하세요.
 
-For open UI design or requested comparison, build 2–3 materially different rendered variants with a switch. Vary information architecture, flow, hierarchy, navigation, or feedback—not only color. For logic, prefer a small pure harness with real example inputs/outputs and minimal adapters.
+정답이 정해지지 않은 UI 디자인이나 비교 요청에는 실질적으로 다른 렌더링 변형안 2–3개와 전환 수단을 만드세요. 색상만 바꾸지 말고 정보 구조, 흐름, 계층, 탐색 또는 피드백을 달리하세요. 로직에는 실제 예시 입력/출력과 최소한의 어댑터를 갖춘 작은 순수 하네스를 우선하세요.
 
-Default no-commit. Separate fake data/integration from real connections. Avoid production abstractions and error-handling investment; never call the result production-ready or automatically promote it or invoke another user skill.
+기본적으로 커밋하지 마세요. 가짜 데이터와 가짜 연동을 실제 연결과 분리하세요. 프로덕션용 추상화와 오류 처리에는 투자하지 마세요. 결과물이 프로덕션에 사용할 준비가 되었다고 절대 부르지 말고, 자동으로 승격하거나 다른 사용자 스킬을 호출하지도 마세요.
 
-Report `## Tested`, `## Variants or harness`, `## Confirmed`, `## Still fake`, and `## Production implication`.
+`## Tested`, `## Variants or harness`, `## Confirmed`, `## Still fake`, `## Production implication`을 보고하세요.

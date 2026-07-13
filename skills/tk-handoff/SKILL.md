@@ -1,8 +1,8 @@
 ---
 name: tk-handoff
-description: "[user] Write or resume a verified work handoff. Use only when explicitly invoked by the user."
+description: "[user] 검증된 작업 인수인계를 작성하거나 재개합니다. 사용자가 명시적으로 호출할 때만 사용합니다."
 disable-model-invocation: true
-argument-hint: "[goal or audience] [--output <path>|--resume]"
+argument-hint: "[목표 또는 대상] [--output <경로>|--resume]"
 metadata:
   tigerkit:
     kind: user-invoked
@@ -10,12 +10,12 @@ metadata:
     relationship: native
 ---
 
-# Handoff
+# 인수인계
 
-Use only when the user explicitly invokes this skill. Do not activate it automatically.
+사용자가 이 스킬을 명시적으로 호출할 때만 사용합니다. 자동으로 활성화하지 마세요.
 
-Default write target: `.tigerkit/handoff.md`. Record Goal, Current state, Decisions, Changed files, Commands run, Verification, Remaining work, Open questions, Risks, Next action, and Do not repeat. Omit empty sections, reference existing spec/ticket/diff paths instead of copying them, and never claim unverified success. Create scratch parents lazily, use temporary-file-plus-rename when possible, do not create archives/current pointers or edit `.gitignore`, and warn if scratch is not ignored.
+새 인수인계의 기본 작성 대상은 `.tigerkit/handoff.md`입니다. 목표, 현재 상태, 결정 사항, 변경한 파일, 실행한 명령, 검증, 남은 작업, 열린 질문, 위험, 다음 작업, 반복하지 말아야 할 내용을 기록하세요. 빈 섹션은 생략하고, 기존 spec/ticket/diff 경로는 복사하지 말고 참조하며, 검증되지 않은 성공을 절대 주장하지 마세요. 상위 스크래치 디렉터리는 필요할 때 만들고, 가능하면 임시 파일 작성 후 이름을 바꾸며, 보관본/현재 포인터를 만들거나 `.gitignore`를 편집하지 말고, 스크래치가 무시되지 않으면 경고하세요.
 
-On resume/continue intent, read the handoff, inspect current Git and file state, show drift, restore the current goal/next action, and continue only within the user's request. For long work, maintain `.tigerkit/work-map.md` with overall goal, current/completed slices, blockers/edges, recent decisions, next concrete action, and resume hints.
+재개/계속 의도일 때 인수인계를 읽고, 현재 Git 및 파일 상태를 검사하고, 드리프트를 보여 주고, 현재 목표/다음 작업을 복원하며, 사용자의 요청 범위 안에서만 계속하세요. 장기 작업에는 전체 목표, 현재/완료된 작업 조각, 차단 요소/경계, 최근 결정, 다음 구체적 작업, 재개 힌트를 담은 `.tigerkit/work-map.md`를 유지하세요.
 
-Do not copy transcripts, create archives/current pointers, commit, or publish automatically.
+대화 기록을 복사하거나, 보관본/현재 포인터를 만들거나, 자동으로 커밋하거나 게시하지 마세요.

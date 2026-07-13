@@ -1,3 +1,3 @@
-# Environment comparison
+# 환경 비교
 
-Compare only specified environments, viewports, or feature flags. Record exact targets and separate product differences from access, data, or infrastructure differences.
+지정된 환경, 뷰포트 또는 기능 플래그만 비교하세요. 정확한 대상을 기록하고 제품 차이와 접근 권한, 데이터 또는 인프라 차이를 구분하세요.

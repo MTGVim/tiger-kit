@@ -1,9 +1,9 @@
-# Context format
+# 컨텍스트 형식
 
-## Term
+## 용어
 
-**Canonical name:** <name>
+**표준 이름:** <이름>
 
-**Meaning:** <domain meaning>
+**의미:** <도메인 의미>
 
-**Not the same as:** <nearby concepts>
+**같지 않은 개념:** <인접한 개념>

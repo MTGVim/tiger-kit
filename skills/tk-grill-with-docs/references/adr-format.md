@@ -1,3 +1,3 @@
-# ADR format
+# ADR 형식
 
-Use the repo convention. With no convention, use `docs/adr/NNNN-<slug>.md`, next numeric ID, and sections: Status, Context, Decision, Alternatives considered, Consequences. Create only for hard-to-reverse, surprising, real trade-offs.
+저장소 규칙을 따르세요. 규칙이 없으면 `docs/adr/NNNN-<slug>.md`, 다음 숫자 ID, 그리고 상태, 맥락, 결정, 검토한 대안, 결과 섹션을 사용하세요. 되돌리기 어렵고, 의외이며, 실질적인 절충이 있는 경우에만 생성하세요.

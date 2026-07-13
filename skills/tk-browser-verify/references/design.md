@@ -1,3 +1,3 @@
-# Design fidelity
+# 디자인 충실도
 
-Compare against the supplied Figma, screenshot, prior production, or specification. Distinguish objective mismatch from an unresolved design decision.
+제공된 Figma, 스크린샷, 이전 프로덕션 또는 명세와 비교하세요. 객관적인 불일치와 해결되지 않은 디자인 결정을 구분하세요.

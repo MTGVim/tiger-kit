@@ -1,6 +1,6 @@
 interface:
-  display_name: "TigerKit: Implement"
-  short_description: "[user] Implement and verify a requested code change."
+  display_name: "TigerKit: 구현"
+  short_description: "[user] 요청받은 코드 변경을 구현하고 검증합니다."
 
 policy:
   allow_implicit_invocation: false

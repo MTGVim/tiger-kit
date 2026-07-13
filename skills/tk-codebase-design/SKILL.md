@@ -1,6 +1,6 @@
 ---
 name: tk-codebase-design
-description: "[auto] Identify evidence-backed structural pain and propose the smallest effective codebase design improvement."
+description: "[auto] 증거로 뒷받침되는 구조적 문제를 식별하고 가장 작고 효과적인 코드베이스 설계 개선안을 제안합니다."
 user-invocable: false
 metadata:
   tigerkit:
@@ -9,10 +9,10 @@ metadata:
     relationship: native
 ---
 
-# Codebase Design discipline
+# 코드베이스 설계 규율
 
-Use when changes repeatedly scatter across files, ownership is unclear, test seams are absent, similar bugs/conflicts recur, or feature cost keeps rising.
+변경 사항이 여러 파일에 반복해서 흩어지거나, 소유권이 불분명하거나, 테스트 경계가 없거나, 비슷한 버그/충돌이 반복되거나, 기능 비용이 계속 증가할 때 사용하세요.
 
-Inspect boundary leaks, ownership confusion, coupling hotspots, repeated pain, and incremental migration shape. Cite concrete evidence and propose the smallest effective structural improvement. Do not recommend vague rewrites or implement automatically.
+경계 누출, 소유권 혼란, 결합도 집중 지점, 반복되는 문제, 점진적 마이그레이션 형태를 검사하세요. 구체적인 증거를 인용하고 가장 작고 효과적인 구조 개선안을 제안하세요. 모호한 전면 재작성을 권하거나 자동으로 구현하지 마세요.
 
-Complete with evidence-backed hotspots, impact, and smallest safe direction.
+증거로 뒷받침되는 집중 지점, 영향, 가장 작고 안전한 방향으로 마무리하세요.

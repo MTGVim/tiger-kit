@@ -1,5 +1,5 @@
-# Terms and ADRs
+# 용어와 ADR
 
-A glossary entry records canonical name, meaning, and explicitly different concepts.
+용어집 항목에는 표준 이름, 의미, 명시적으로 구별되는 개념을 기록합니다.
 
-An ADR records status, context, decision, alternatives, and consequences. Create one only when reversal cost, missing-context surprise, and real trade-offs are all present.
+ADR에는 상태, 맥락, 결정, 대안, 결과를 기록합니다. 되돌리는 비용, 맥락이 없을 때의 의외성, 실질적인 절충이 모두 존재할 때만 생성하세요.

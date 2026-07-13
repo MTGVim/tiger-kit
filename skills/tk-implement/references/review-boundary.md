@@ -1,3 +1,3 @@
-# Review boundary
+# 리뷰 경계
 
-Review is optional. Consider one reviewer for auth, payments, privacy, migrations, data loss, concurrency, public APIs, large structural changes, or high-risk untested code. Maximum: implementation → one review → one fix → verify existing findings/regressions → stop.
+리뷰는 선택 사항입니다. 인증, 결제, 개인정보, 마이그레이션, 데이터 손실, 동시성, 공개 API, 대규모 구조 변경 또는 테스트하지 않은 고위험 코드에는 리뷰어 한 명을 고려하세요. 최대 범위는 구현 → 리뷰 1회 → 수정 1회 → 기존 발견 사항/회귀 검증 → 중단입니다.

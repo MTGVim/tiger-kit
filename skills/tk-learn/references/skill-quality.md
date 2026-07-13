@@ -1,3 +1,3 @@
-# Skill quality
+# 스킬 품질
 
-Require a clear name, narrow description, inputs, core behavior, boundaries, completion criterion, and minimal output shape. Keep the directory self-contained. Prefer thin instructions; add detail only for repeated omissions, expensive ordering mistakes, mutation safety, objective completion proof, specialist procedures, or bounded delegation/review.
+명확한 이름, 범위가 좁고 명확한 설명, 입력, 핵심 동작, 경계, 완료 기준, 최소 출력 형식을 요구하세요. 디렉터리를 자체 완결적으로 유지하세요. 간결한 지침을 우선하고, 반복되는 누락, 비용이 큰 순서 오류, 변경 안전성, 객관적인 완료 증명, 전문 절차 또는 제한된 위임/검토를 위해서만 세부 내용을 추가하세요.

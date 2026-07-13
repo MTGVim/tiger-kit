@@ -1,3 +1,3 @@
-# Behavior verification
+# 동작 검증
 
-Exercise real click, input, keyboard, focus, submit, and dialog paths. Observe state transitions and, for mutations, correlate request, response, and final UI state.
+실제 클릭, 입력, 키보드, 포커스, 제출, 대화 상자 경로를 실행하세요. 상태 전환을 관찰하고, 변경 작업의 경우 요청, 응답, 최종 UI 상태를 연관 지으세요.

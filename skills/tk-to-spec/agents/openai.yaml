@@ -1,6 +1,6 @@
 interface:
-  display_name: "TigerKit: To Spec"
-  short_description: "[user] Synthesize evidence into an implementation spec."
+  display_name: "TigerKit: 명세 작성"
+  short_description: "[user] 근거를 종합해 구현 명세를 작성합니다."
 
 policy:
   allow_implicit_invocation: false

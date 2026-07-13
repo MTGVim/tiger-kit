@@ -1,6 +1,6 @@
 interface:
-  display_name: "TigerKit: To Tickets"
-  short_description: "[user] Create independently verifiable vertical tickets."
+  display_name: "TigerKit: 티켓 작성"
+  short_description: "[user] 독립적으로 검증 가능한 수직 티켓을 작성합니다."
 
 policy:
   allow_implicit_invocation: false

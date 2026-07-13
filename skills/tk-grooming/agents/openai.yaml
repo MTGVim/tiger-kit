@@ -1,6 +1,6 @@
 interface:
-  display_name: "TigerKit: Grooming"
-  short_description: "[user] Audit and optionally repair rules and skills."
+  display_name: "TigerKit: 정리"
+  short_description: "[user] 규칙과 스킬을 감사하고 선택적으로 수정합니다."
 
 policy:
   allow_implicit_invocation: false

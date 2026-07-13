@@ -1,6 +1,6 @@
 interface:
-  display_name: "TigerKit: Grill With Docs"
-  short_description: "[user] Converge decisions and record durable context."
+  display_name: "TigerKit: 문서와 함께 집중 검증"
+  short_description: "[user] 결정을 수렴하고 오래 유지할 컨텍스트를 기록합니다."
 
 policy:
   allow_implicit_invocation: false

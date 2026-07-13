@@ -1,6 +1,6 @@
 interface:
-  display_name: "TigerKit: Grill Me"
-  short_description: "[user] Pressure-test a plan one decision at a time."
+  display_name: "TigerKit: 집중 검증"
+  short_description: "[user] 결정을 한 번에 하나씩 확인하며 계획을 철저히 검증합니다."
 
 policy:
   allow_implicit_invocation: false

@@ -1,3 +1,3 @@
-# Delegation
+# 위임
 
-Direct work wins for small fixes, mechanical changes, or shared-file edits. Delegate only independent work with real parallel/context-isolation value. No nested delegation, user-invoked skill calls by subagents, or unlimited retries.
+작은 수정, 기계적인 변경 또는 공유 파일 편집은 직접 처리하는 편이 낫습니다. 실제 병렬 처리 또는 컨텍스트 격리 가치가 있는 독립 작업만 위임하세요. 위임 중첩, 하위 에이전트의 사용자 호출형 스킬 호출 또는 무제한 재시도는 금지합니다.
