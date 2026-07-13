@@ -1,10 +1,9 @@
 ---
 name: tk-diagnosing-bugs
-description: "[auto] 어려운 버그를 재현하고 최소화하며 가설을 검증하고 회귀 수정 사항을 확인하여 진단합니다."
-user-invocable: false
+description: "[user/auto] 재현 가능한 feedback loop를 만든 뒤 버그를 최소화하고 가설을 검증합니다. 원인이 불분명한 실패, 간헐 오류 또는 성능 회귀에 사용하고, 원인과 수정 방법이 확정된 단순 변경에는 사용하지 않습니다."
 metadata:
   tigerkit:
-    kind: model-invoked
+    kind: hybrid
     origin: mattpocock/skills
     upstream-skill: diagnosing-bugs
     relationship: adapted
@@ -12,8 +11,61 @@ metadata:
 
 # 버그 진단
 
-어렵거나 원인이 불분명한 실패에 사용하세요. [조사 루프](references/investigation.md)를 따르세요.
+증상은 있으나 원인을 모르거나, 간헐적·환경별 실패, 성능 회귀, 반복 재발, 재현·최소화·가설 검증이 필요한 경우 사용하세요. 조건문 반전, 누락된 prop, 명확한 빠진 분기처럼 원인과 수정 방법이 이미 확정된 변경에는 사용하지 마세요.
 
-보고된 증상을 재현하기 전에 패치하지 마세요. 반증 가능한 가설을 여러 개로 구분하고 관찰 결과로 가설을 제거하며, 근본 원인과 증상을 분리하세요. 공통 원인을 수정하고, 유용하다면 올바른 경계에 회귀 검사를 추가한 다음 원래 재현 절차를 다시 실행하세요.
+기본 loop:
 
-재현, 근본 원인, 수정 사항, 회귀 증거를 보고하세요.
+```text
+feedback loop
+→ reproduce
+→ minimize
+→ ranked hypotheses
+→ instrument
+→ fix
+→ regression verification
+→ cleanup
+```
+
+## Feedback loop gate
+
+가설을 세우기 전에 사용자 증상을 잡을 red-capable feedback loop를 만드세요. failing test, curl/HTTP script, CLI fixture, browser script, trace replay, throwaway harness, 반복 재현 loop, differential comparison, deterministic performance measurement를 사용할 수 있습니다.
+
+Feedback loop는 다음을 모두 만족해야 합니다.
+
+1. 사용자의 실제 증상을 잡습니다.
+2. agent가 다시 실행할 수 있습니다.
+3. 최소 한 번 실제 실행합니다.
+4. red/green 판정이 가능합니다.
+5. 가능한 한 빠르고 반복 가능합니다.
+
+재현할 수 없으면 시도한 방법, 부족한 환경 또는 artifact, 필요한 로그/HAR/fixture/trace/권한을 보고하세요. 추측으로 patch하거나 가설을 확정 사실처럼 표현하지 마세요.
+
+## 가설과 수정
+
+우선순위 가설 3~5개를 세우고 각 가설에 반증 가능한 예측을 붙이세요. 한 번에 변수 하나만 바꾸고 관찰 결과로 가설을 제거하세요. 증상과 근본 원인을 분리하고 공통 원인을 수정하세요.
+
+올바른 regression seam이 있으면 최소 재현을 failing regression test로 바꾸고 red를 관찰한 뒤 fix, green, 원래 reproduction 재실행 순서로 검증하세요.
+
+올바른 seam이 없으면 얕은 false-confidence test를 만들지 마세요. 실제 bug pattern을 재현할 public boundary 부재, 현재 구조가 regression 잠금을 방해한다는 점, 구조 개선은 bug fix 이후 별도 후속 작업이라는 점을 finding으로 기록하세요. 진단 중 architecture refactor를 먼저 시작하지 마세요.
+
+임시 instrumentation과 throwaway debug artifact를 정리하세요. 상세 절차는 [조사 루프](references/investigation.md)를 참고하세요.
+
+## Commit 경계
+
+사용자가 `tk-diagnosing-bugs`를 명시적으로 standalone 호출했고 실제 코드를 수정했다면 다음 조건을 모두 만족할 때 current branch에 commit하세요.
+
+- 근본 원인 수정 완료
+- 원래 reproduction green
+- regression verification 성공
+- 임시 instrumentation 제거
+- 작업 diff를 기존 사용자 변경과 분리 가능
+
+아직 `tk-implement` 작업이 진행 중이면 별도 commit하지 말고 진단 결과와 수정 사항을 현재 구현에 반환하세요. `tk-implement`가 최종 검증과 commit을 담당합니다.
+
+일반 대화에서 자동으로 진단 규율을 적용한 것만으로 standalone commit 권한을 얻지 않습니다. 기존 작업의 commit 계약을 따르고, 독립 commit이 필요하면 명시 요청을 받으세요.
+
+별도 요청 없이는 push, PR, merge, tag, release 또는 publish를 하지 마세요.
+
+## 완료 보고
+
+원래 증상, 근본 원인, fix, regression 증거, seam 부재 여부, cleanup, commit 또는 미commit 이유를 보고하세요.

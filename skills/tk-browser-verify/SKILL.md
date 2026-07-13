@@ -1,6 +1,6 @@
 ---
 name: tk-browser-verify
-description: "[user/auto] 런타임 증거로 브라우저 UI, 동작, 환경 차이, 디자인 충실도를 검증합니다."
+description: "[user/auto] 브라우저 UI, network, final state를 런타임 증거로 검증합니다. 실제 browser 동작 확인에 사용하고, 코드 구현이나 browser 없이 가능한 review에는 사용하지 않습니다. Pass, Fail 또는 Unverifiable로 판정합니다."
 metadata:
   tigerkit:
     kind: hybrid

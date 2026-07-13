@@ -1,5 +1,38 @@
 # Changelog
 
+## 19.0.0 — Skill Consolidation and Follow-up Boundaries
+
+TigerKit 19 is a major release that reduces the canonical catalog from 18 skills to 13 while preserving the `v18.0.4` implementation and browser contracts.
+
+### Removed
+
+- Removed redundant micro-skills `tk-grill-with-docs`, `tk-grilling`, `tk-domain-modeling`, `tk-tdd`, and `tk-codebase-design`.
+- Removed the model-only invocation category.
+- Removed automatic feature-branch `CONTEXT.md`, domain document, glossary, and ADR mutation contracts.
+
+### Merged
+
+- Merged fact-first, one-question-at-a-time grilling discipline into `tk-grill-me`.
+- Merged public-behavior `red → green` TDD into the `tk-implement` TDD branch.
+- Merged diff-grounded structure checks into `tk-code-review` Standards review.
+- Merged regression-seam assessment into `tk-diagnosing-bugs`.
+
+### Changed
+
+- Changed `tk-code-review`, `tk-diagnosing-bugs`, and `tk-merge-conflict` from model-only to hybrid.
+- Added fixed-point validation and separate Standards/Spec axes to `tk-code-review`.
+- Added a red-capable feedback-loop gate, regression seam reporting, cleanup, and explicit standalone/embedded commit boundaries to `tk-diagnosing-bugs`.
+- Extended `tk-merge-conflict` through staging, continue/merge commit, repeated conflicts, verification, and operation completion.
+- Made ordinary follow-up feedback continue in the current conversation; separate implementation, diagnosis, review, and learning boundaries escalate to their respective skills.
+- Restricted ADR creation to explicit requests for long-lived repository constraints.
+- Added README use scenarios and maintainer-only skill-existence criteria in `AGENTS.md`.
+
+### Validation
+
+- Validate exactly 13 canonical skills: 9 user-invoked and 4 hybrid.
+- Split user-invoked `examples` fixtures from hybrid `positive`/`negative` fixtures.
+- Validate behavior cases as a required subset with duplicate, required-field, and unknown-skill checks.
+
 ## 18.0.4 — Implementation and Browser Contracts
 
 - Added explicit `direct`/`delegated` and TDD strategy approval before `tk-implement` modifies files.

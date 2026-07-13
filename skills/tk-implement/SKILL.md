@@ -43,7 +43,7 @@ metadata:
 
 Direct에서는 현재 에이전트가 가장 작은 일관된 단위로 구현하고 focused verification을 반복하세요. Delegated에서는 implementor 한 명에게만 범위와 완료 조건을 전달하고 현재 에이전트가 diff와 검증을 확인하세요. 위임을 중첩하거나 하위 에이전트가 사용자 호출형 TigerKit 스킬을 호출하게 해서는 안 됩니다.
 
-TDD가 승인되면 공개 동작을 검증하는 focused test의 실패를 먼저 확인하고, 최소 구현 후 같은 테스트의 성공을 확인하세요. 구현 후 테스트를 추가해 TDD라고 보고하지 마세요. Non-TDD에서도 검증을 생략하지 마세요.
+TDD가 승인되면 의미 있는 공개 동작 경계를 선택하고 수직 slice 하나의 focused test를 작성하세요. 테스트를 실제 실행해 red를 관찰한 뒤 최소 구현으로 green을 만들고, 같은 테스트와 관련 검증을 다시 실행하세요. 다음 slice가 있으면 반복하세요. 핵심 loop는 `red → green`이며 refactor를 매 cycle의 필수 단계로 강제하지 않습니다. 구현 후 테스트를 추가해 TDD라고 보고하거나, 이미 성공하는 테스트를 red로 표현하거나, 내부 구현 세부사항을 테스트하거나, 테스트를 위해 production API를 왜곡하지 마세요. 유용한 seam이 없으면 TDD를 강제하지 마세요. Non-TDD에서도 검증을 생략하지 마세요.
 
 구현 중 focused test, 관련 정적 검사, build 또는 필요한 브라우저·통합 검증을 적절한 간격으로 반복하세요. 완료 후 비용과 환경이 허용하는 가장 넓은 관련 검증을 한 번 실행하세요. 실패를 `change-related`, `pre-existing`, `environment`, `unverifiable`로 분류하고, 변경 관련 실패가 남으면 커밋하지 마세요.
 

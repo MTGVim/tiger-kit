@@ -8,33 +8,83 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / "skills"
-KINDS = {"user-invoked", "model-invoked", "hybrid"}
+KINDS = {"user-invoked", "hybrid"}
 INVOCATION_LABELS = {
     "user-invoked": "[user]",
-    "model-invoked": "[auto]",
     "hybrid": "[user/auto]",
 }
 RELATIONSHIPS = {"copied", "adapted", "inspired-by", "forked", "native"}
 EXPECTED_SKILLS = {
-    "tk-grill-me", "tk-grill-with-docs", "tk-grilling", "tk-domain-modeling",
-    "tk-to-spec", "tk-to-tickets", "tk-implement", "tk-prototype",
-    "tk-reflect", "tk-learn", "tk-grooming", "tk-handoff", "tk-browser-verify",
-    "tk-tdd", "tk-diagnosing-bugs", "tk-code-review", "tk-merge-conflict",
-    "tk-codebase-design",
+    "tk-grill-me",
+    "tk-to-spec",
+    "tk-to-tickets",
+    "tk-implement",
+    "tk-prototype",
+    "tk-reflect",
+    "tk-learn",
+    "tk-grooming",
+    "tk-handoff",
+    "tk-browser-verify",
+    "tk-diagnosing-bugs",
+    "tk-code-review",
+    "tk-merge-conflict",
 }
+USER_INVOKED_SKILLS = {
+    "tk-grill-me",
+    "tk-to-spec",
+    "tk-to-tickets",
+    "tk-implement",
+    "tk-prototype",
+    "tk-reflect",
+    "tk-learn",
+    "tk-grooming",
+    "tk-handoff",
+}
+HYBRID_SKILLS = EXPECTED_SKILLS - USER_INVOKED_SKILLS
 KEBAB = re.compile(r"^tk-[a-z0-9]+(?:-[a-z0-9]+)*$")
 LINK = re.compile(r"\[[^]]*]\(([^)]+)\)")
-EXPECTED_BEHAVIOR_CASES = {
-    "small-implement-stays-direct", "implement-proposes-strategy-before-editing",
-    "implement-respects-explicit-strategy", "implement-non-agent-tools-are-not-delegation",
-    "implement-delegation-is-single-level", "implement-tdd-follows-user-decision",
-    "implement-commits-after-verification", "implement-does-not-commit-failing-change",
-    "implement-does-not-push", "implement-does-not-auto-reflect",
-    "reflect-is-report-only", "to-spec-does-not-create-tickets",
-    "prototype-is-not-production", "browser-refuses-real-payment",
-    "browser-owned-session-cleans-up", "browser-attached-session-is-preserved",
-    "browser-first-tool-call-owns-lazy-session", "code-review-does-not-edit",
-    "grooming-defaults-report-only", "legacy-global-state-is-not-scanned",
+REQUIRED_BEHAVIOR_CASES = {
+    "implement-proposes-strategy-before-editing",
+    "implement-respects-explicit-strategy",
+    "implement-non-agent-tools-are-not-delegation",
+    "implement-delegation-is-single-level",
+    "implement-tdd-follows-user-decision",
+    "implement-commits-after-verification",
+    "implement-does-not-commit-failing-change",
+    "implement-does-not-push",
+    "browser-owned-session-cleans-up",
+    "browser-attached-session-is-preserved",
+    "browser-first-tool-call-owns-lazy-session",
+    "browser-refuses-real-payment",
+    "grill-me-keeps-one-question-at-a-time",
+    "grill-me-researches-facts-before-asking",
+    "grill-me-does-not-write-domain-docs",
+    "grill-me-does-not-create-adrs",
+    "implement-tdd-requires-observed-red",
+    "implement-tdd-uses-public-behavior",
+    "implement-non-tdd-still-verifies",
+    "code-review-pins-fixed-point",
+    "code-review-rejects-invalid-ref",
+    "code-review-rejects-empty-diff",
+    "code-review-separates-standards-and-spec",
+    "code-review-does-not-edit",
+    "code-review-bounds-reviewers",
+    "diagnosing-bugs-requires-red-capable-loop",
+    "diagnosing-bugs-does-not-patch-without-reproduction",
+    "diagnosing-bugs-reruns-original-reproduction",
+    "diagnosing-bugs-cleans-instrumentation",
+    "diagnosing-bugs-reports-missing-seam",
+    "diagnosing-bugs-standalone-commit-requires-explicit-invocation",
+    "diagnosing-bugs-inside-implement-does-not-commit",
+    "merge-conflict-requires-active-operation",
+    "merge-conflict-finishes-operation",
+    "merge-conflict-does-not-abort",
+    "merge-conflict-does-not-force-push",
+    "reflect-is-report-only",
+    "to-spec-does-not-create-tickets",
+    "prototype-is-not-production",
+    "grooming-defaults-report-only",
+    "legacy-global-state-is-not-scanned",
 }
 
 
@@ -118,6 +168,10 @@ def validate_skill(path: Path) -> tuple[list[str], list[str]]:
         errors.append(
             f"{label}: SKILL.md field description: prefix with {INVOCATION_LABELS[kind]!r}"
         )
+    if label in USER_INVOKED_SKILLS and kind != "user-invoked":
+        errors.append(f"{label}: metadata.tigerkit.kind: expected user-invoked")
+    if label in HYBRID_SKILLS and kind != "hybrid":
+        errors.append(f"{label}: metadata.tigerkit.kind: expected hybrid")
     if relationship not in RELATIONSHIPS:
         errors.append(f"{label}: metadata.tigerkit.relationship: use one of {sorted(RELATIONSHIPS)}")
     if origin != "tigerkit" and not nested(data, "metadata", "tigerkit", "upstream-skill"):
@@ -136,12 +190,18 @@ def validate_skill(path: Path) -> tuple[list[str], list[str]]:
         if not openai.is_file():
             errors.append(f"{label}: agents/openai.yaml: add Codex interface policy")
         else:
-            for needle in ("interface:", "display_name:", "short_description:", "policy:", "allow_implicit_invocation: false"):
+            for needle in (
+                "interface:",
+                "display_name:",
+                "short_description:",
+                "policy:",
+                "allow_implicit_invocation: false",
+            ):
                 if needle not in openai_text:
                     errors.append(f"{label}: agents/openai.yaml: add {needle}")
             if 'short_description: "[user] ' not in openai_text:
                 errors.append(f"{label}: agents/openai.yaml: prefix short_description with '[user]'")
-    elif kind in {"model-invoked", "hybrid"}:
+    elif kind == "hybrid":
         if disabled:
             errors.append(f"{label}: disable-model-invocation: remove implicit-invocation block")
         if implicit_blocked:
@@ -171,31 +231,60 @@ def validate_skill(path: Path) -> tuple[list[str], list[str]]:
     non_empty = sum(bool(line.strip()) for line in text.splitlines())
     limit = 250 if kind == "hybrid" else 120
     if non_empty > limit:
-        warnings.append(f"{label}: SKILL.md: {non_empty} non-empty lines; move detail into references/ (warning limit {limit})")
+        warnings.append(
+            f"{label}: SKILL.md: {non_empty} non-empty lines; move detail into references/ "
+            f"(warning limit {limit})"
+        )
     return errors, warnings
 
 
 def validate_repository_contract() -> list[str]:
     errors: list[str] = []
     required_files = (
-        "README.md", "MIGRATION.md", "CHANGELOG.md", "NOTICE.md", "LICENSE",
-        ".gitignore", ".github/workflows/validate.yml",
-        "scripts/validate_skills.py", "evals/trigger-cases.yaml", "evals/behavior-cases.yaml",
+        "README.md",
+        "MIGRATION.md",
+        "CHANGELOG.md",
+        "NOTICE.md",
+        "LICENSE",
+        ".gitignore",
+        ".github/workflows/validate.yml",
+        "scripts/validate_skills.py",
+        "evals/trigger-cases.yaml",
+        "evals/behavior-cases.yaml",
     )
     for relative in required_files:
         if not (ROOT / relative).is_file():
-            errors.append(f"{relative}: required TigerKit 18 repository file is missing")
-    for relative in (".claude-plugin", "commands", "hooks", ".tigerkit", "docs/tigerkit", "package.json"):
+            errors.append(f"{relative}: required TigerKit 19 repository file is missing")
+    for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
-            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 18")
+            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 19")
     ignored = (ROOT / ".gitignore").read_text(encoding="utf-8") if (ROOT / ".gitignore").is_file() else ""
     if ".tigerkit/" not in ignored.splitlines():
         errors.append(".gitignore: document TigerKit repo-local scratch with .tigerkit/")
     required_text = {
-        "README.md": ("Agent Skills", "Claude Code", "Codex", "Hermes Agent", "npx skills add", "18.0.0", "docs/tigerkit"),
-        "MIGRATION.md": ("Claude Code plugin", "npx skills add", "not migrated", "credential", "/tk-implement"),
-        "CHANGELOG.md": ("18.0.0", "Agent Skills", "Claude Code", "Codex", "Hermes Agent", "v18.0.0"),
-        "NOTICE.md": ("mattpocock/skills", "relationship: adapted", "MIT License"),
+        "README.md": (
+            "TigerKit 19",
+            "13",
+            "Claude Code",
+            "Codex",
+            "Hermes Agent",
+            "npx skills add",
+            "사용 시나리오",
+        ),
+        "MIGRATION.md": (
+            "TigerKit 19",
+            "Removed Skills",
+            "model-only",
+            "hybrid",
+            "CONTEXT.md",
+        ),
+        "CHANGELOG.md": ("19.0.0", "13", "hybrid", "v18.0.4"),
+        "NOTICE.md": (
+            "mattpocock/skills",
+            "relationship: adapted",
+            "Behavior merged from removed adapted skills",
+            "MIT License",
+        ),
     }
     for relative, needles in required_text.items():
         path = ROOT / relative
@@ -214,7 +303,7 @@ def validate_repository_contract() -> list[str]:
 def validate_repo_links() -> list[str]:
     errors: list[str] = []
     for path in sorted(ROOT.rglob("*.md")):
-        if ".git" in path.parts:
+        if ".git" in path.parts or ".tigerkit" in path.parts:
             continue
         text = path.read_text(encoding="utf-8")
         for target in LINK.findall(text):
@@ -225,9 +314,51 @@ def validate_repo_links() -> list[str]:
             if not resolved.exists():
                 errors.append(f"{path.relative_to(ROOT)}: broken relative link {target!r}")
     for path in ROOT.rglob("*"):
-        if ".git" not in path.parts and path.is_symlink() and not path.exists():
+        if ".git" not in path.parts and ".tigerkit" not in path.parts and path.is_symlink() and not path.exists():
             errors.append(f"{path.relative_to(ROOT)}: broken symlink")
     return errors
+
+
+def parse_trigger_cases(path: Path) -> tuple[dict[str, dict[str, int]], list[str]]:
+    entries: dict[str, dict[str, int]] = {}
+    duplicates: list[str] = []
+    current: str | None = None
+    mode: str | None = None
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("- skill: "):
+            current = line.removeprefix("- skill: ").strip()
+            if current in entries:
+                duplicates.append(current)
+            entries[current] = {"examples": 0, "nearby": 0, "positive": 0, "negative": 0}
+            mode = None
+        elif line.strip() in {"examples:", "nearby:", "positive:", "negative:"}:
+            mode = line.strip()[:-1]
+        elif line.startswith("    - ") and current and mode:
+            entries[current][mode] += 1
+    return entries, duplicates
+
+
+def parse_behavior_cases(path: Path) -> tuple[list[dict[str, str]], list[str]]:
+    entries: list[dict[str, str]] = []
+    current: dict[str, str] | None = None
+    duplicates: list[str] = []
+    seen: set[str] = set()
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("- case: "):
+            if current is not None:
+                entries.append(current)
+            current = {"case": line.removeprefix("- case: ").strip()}
+            case = current["case"]
+            if case in seen:
+                duplicates.append(case)
+            seen.add(case)
+        elif current is not None and line.startswith("  skill: "):
+            current["skill"] = line.removeprefix("  skill: ").strip()
+        elif current is not None and line.startswith("  expect: "):
+            current["expect"] = line.removeprefix("  expect: ").strip()
+    if current is not None:
+        entries.append(current)
+    return entries, duplicates
 
 
 def validate_eval_fixtures() -> list[str]:
@@ -237,33 +368,47 @@ def validate_eval_fixtures() -> list[str]:
     if not trigger_path.is_file():
         errors.append("evals/trigger-cases.yaml: add trigger fixtures")
     else:
-        counts: dict[str, dict[str, int]] = {}
-        current: str | None = None
-        mode: str | None = None
-        for line in trigger_path.read_text(encoding="utf-8").splitlines():
-            if line.startswith("- skill: "):
-                current = line.removeprefix("- skill: ").strip()
-                counts[current] = {"positive": 0, "negative": 0}
-                mode = None
-            elif line.strip() in {"positive:", "negative:"}:
-                mode = line.strip()[:-1]
-            elif line.startswith("    - ") and current and mode:
-                counts[current][mode] += 1
-        if set(counts) != EXPECTED_SKILLS:
-            errors.append("evals/trigger-cases.yaml: cover exactly the 18 canonical skills")
-        for skill, values in sorted(counts.items()):
-            if values != {"positive": 3, "negative": 2}:
-                errors.append(f"evals/trigger-cases.yaml: {skill} needs positive 3 and negative 2")
+        trigger_text = trigger_path.read_text(encoding="utf-8")
+        if "Static contract fixtures." not in trigger_text or "do not execute models" not in trigger_text:
+            errors.append("evals/trigger-cases.yaml: describe static non-model fixtures")
+        entries, duplicates = parse_trigger_cases(trigger_path)
+        if duplicates:
+            errors.append(f"evals/trigger-cases.yaml: duplicate skills: {', '.join(sorted(set(duplicates)))}")
+        if set(entries) != EXPECTED_SKILLS:
+            errors.append("evals/trigger-cases.yaml: cover exactly the 13 canonical skills")
+        for skill, values in sorted(entries.items()):
+            if skill in USER_INVOKED_SKILLS:
+                if values["examples"] < 2:
+                    errors.append(f"evals/trigger-cases.yaml: {skill} needs at least 2 examples")
+                if values["positive"] or values["negative"]:
+                    errors.append(f"evals/trigger-cases.yaml: {skill} user-invoked entry must not use positive/negative")
+            elif skill in HYBRID_SKILLS:
+                if values["positive"] < 3 or values["negative"] < 3:
+                    errors.append(f"evals/trigger-cases.yaml: {skill} needs positive and negative counts of at least 3")
+                if values["examples"] or values["nearby"]:
+                    errors.append(f"evals/trigger-cases.yaml: {skill} hybrid entry must use positive/negative")
     if not behavior_path.is_file():
         errors.append("evals/behavior-cases.yaml: add behavior-boundary fixtures")
     else:
-        cases = {
-            line.removeprefix("- case: ").strip()
-            for line in behavior_path.read_text(encoding="utf-8").splitlines()
-            if line.startswith("- case: ")
-        }
-        if cases != EXPECTED_BEHAVIOR_CASES:
-            errors.append("evals/behavior-cases.yaml: cover the required boundary cases exactly")
+        behavior_text = behavior_path.read_text(encoding="utf-8")
+        if "Static contract fixtures." not in behavior_text or "do not execute models" not in behavior_text:
+            errors.append("evals/behavior-cases.yaml: describe static non-model fixtures")
+        entries, duplicates = parse_behavior_cases(behavior_path)
+        if duplicates:
+            errors.append(f"evals/behavior-cases.yaml: duplicate cases: {', '.join(sorted(set(duplicates)))}")
+        cases = {entry.get("case", "") for entry in entries}
+        missing = sorted(REQUIRED_BEHAVIOR_CASES - cases)
+        if missing:
+            errors.append(f"evals/behavior-cases.yaml: missing required cases: {', '.join(missing)}")
+        for index, entry in enumerate(entries, 1):
+            missing_fields = [field for field in ("case", "skill", "expect") if not entry.get(field)]
+            if missing_fields:
+                errors.append(
+                    f"evals/behavior-cases.yaml: entry {index} missing fields: {', '.join(missing_fields)}"
+                )
+            skill = entry.get("skill")
+            if skill and skill not in EXPECTED_SKILLS:
+                errors.append(f"evals/behavior-cases.yaml: {entry.get('case', index)} references unknown skill {skill}")
     return errors
 
 
