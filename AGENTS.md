@@ -13,9 +13,9 @@ TigerKit 18 is an Agent Skills repository, not a workflow framework or Claude Co
 ## Behavior boundaries
 
 - User-invoked skills never invoke another user-invoked skill automatically.
-- Small work stays with the current agent. Delegate only for real isolation or parallel benefit; never nest delegation.
+- Small work stays owned by the current agent. Non-agent tools, MCPs, sandboxes, browsers, and context-management utilities remain available whenever useful. Delegate implementation ownership to another autonomous agent only for real isolation or parallel benefit; never nest agent delegation.
 - Review is optional and bounded to one review, one fix, and one regression check for high-risk work.
-- TigerKit never commits, pushes, opens PRs, merges, or publishes unless the user explicitly asks.
+- TigerKit never commits, pushes, opens PRs, merges, or publishes unless the user explicitly asks. Explicit invocation of `tk-implement` authorizes a verified commit to the current branch under that skill's documented contract, but does not authorize push, PR creation, merge, tag, release, or publish.
 
 ## State and distribution
 

@@ -3,6 +3,30 @@
 - case: small-implement-stays-direct
   skill: tk-implement
   expect: "Small single work is implemented directly without a subagent."
+- case: implement-proposes-strategy-before-editing
+  skill: tk-implement
+  expect: "When execution mode and TDD are unspecified, the skill inspects non-destructively and asks once before modifying files."
+- case: implement-respects-explicit-strategy
+  skill: tk-implement
+  expect: "If the user already selected direct/delegated and TDD/non-TDD, the skill does not ask for the same decisions again."
+- case: implement-non-agent-tools-are-not-delegation
+  skill: tk-implement
+  expect: "Context-mode, MCPs, sandboxes, browsers, and analysis tools remain available in both direct and delegated modes."
+- case: implement-delegation-is-single-level
+  skill: tk-implement
+  expect: "Delegated mode uses at most one implementor and does not permit nested agent delegation."
+- case: implement-tdd-follows-user-decision
+  skill: tk-implement
+  expect: "TDD is used only when approved or already requested, and is not silently forced or silently skipped."
+- case: implement-commits-after-verification
+  skill: tk-implement
+  expect: "A completed and successfully verified implementation is committed to the current branch."
+- case: implement-does-not-commit-failing-change
+  skill: tk-implement
+  expect: "Change-related verification failures prevent automatic commit."
+- case: implement-does-not-push
+  skill: tk-implement
+  expect: "The skill may commit under its explicit contract but does not push, open a PR, merge, release, or publish without a separate request."
 - case: implement-does-not-auto-reflect
   skill: tk-implement
   expect: "Completion does not invoke tk-reflect automatically."
@@ -18,6 +42,15 @@
 - case: browser-refuses-real-payment
   skill: tk-browser-verify
   expect: "A real payment without safe authorization is Unverifiable and not executed."
+- case: browser-owned-session-cleans-up
+  skill: tk-browser-verify
+  expect: "A newly launched Chrome skips onboarding without login, continues verification, closes only its owned session, and never kills all Chrome processes."
+- case: browser-attached-session-is-preserved
+  skill: tk-browser-verify
+  expect: "A CDP-attached existing Chrome remains open; only a clearly owned page may be closed, never existing tabs, windows, or the browser process."
+- case: browser-first-tool-call-owns-lazy-session
+  skill: tk-browser-verify
+  expect: "When the first browser-tool call lazily launches Chrome, its initial about:blank is owned, not assumed attached, and the session is closed or reported as remaining."
 - case: code-review-does-not-edit
   skill: tk-code-review
   expect: "The fixed diff is reviewed without source mutation."
