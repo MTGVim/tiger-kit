@@ -30,9 +30,9 @@ jobs:
           export CODEX_HOME="$HOME/.codex"
           export HERMES_HOME="$HOME/.hermes"
           npx --yes skills add . --global --agent claude-code --agent codex --agent hermes-agent --skill '*' --copy --yes
-          test "$(find "$CLAUDE_CONFIG_DIR/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 18
-          test "$(find "$HOME/.agents/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 18
-          test "$(find "$HERMES_HOME/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 18
+          test "$(find "$CLAUDE_CONFIG_DIR/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 13
+          test "$(find "$HOME/.agents/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 13
+          test "$(find "$HERMES_HOME/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 13
           test -f "$CLAUDE_CONFIG_DIR/skills/tk-browser-verify/references/safety.md"
           test -f "$HOME/.agents/skills/tk-implement/references/delegation.md"
           test -f "$HERMES_HOME/skills/tk-grill-me/agents/openai.yaml"
