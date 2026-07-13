@@ -28,7 +28,9 @@ EXPECTED_BEHAVIOR_CASES = {
     "small-implement-stays-direct", "implement-does-not-auto-reflect",
     "reflect-is-report-only", "to-spec-does-not-create-tickets",
     "prototype-is-not-production", "browser-refuses-real-payment",
-    "code-review-does-not-edit", "grooming-defaults-report-only",
+    "browser-owned-session-cleans-up", "browser-attached-session-is-preserved",
+    "browser-first-tool-call-owns-lazy-session", "code-review-does-not-edit",
+    "grooming-defaults-report-only",
     "legacy-global-state-is-not-scanned",
 }
 
