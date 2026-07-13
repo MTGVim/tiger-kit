@@ -31,10 +31,10 @@ npx skills add MTGVim/tiger-kit \
   --skill tk-browser-verify
 ```
 
-변경되지 않는 18.0.2 스냅샷을 설치합니다.
+변경되지 않는 18.0.4 스냅샷을 설치합니다.
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v18.0.2" \
+npx skills add "MTGVim/tiger-kit#v18.0.4" \
   --global \
   --agent claude-code \
   --agent codex \

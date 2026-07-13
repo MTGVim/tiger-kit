@@ -1,5 +1,17 @@
 # Changelog
 
+## 18.0.4 — Implementation and Browser Contracts
+
+- Added explicit `direct`/`delegated` and TDD strategy approval before `tk-implement` modifies files.
+- Restored incremental verification, bounded review, and verified current-branch commit behavior while keeping push and release actions separately authorized.
+- Defined single-level implementation delegation and kept MCPs, sandboxes, browsers, and context-management tools available in either execution mode.
+- Documented ownership and cleanup rules for browser sessions launched or attached by `tk-browser-verify`.
+- Extended static behavior fixtures and repository validation for these contracts.
+
+## 18.0.3 — Korean Skill Documentation
+
+- Localized skill instructions and the README for Korean users while preserving canonical skill names and invocation labels.
+
 ## 18.0.2 — Invocation Labels
 
 - Prefixed skill descriptions with `[user]`, `[auto]`, or `[user/auto]` so picker entries communicate their intended invocation.
