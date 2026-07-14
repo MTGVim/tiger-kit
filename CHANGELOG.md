@@ -1,5 +1,13 @@
 # Changelog
 
+## 19.0.2 — Browser Design Intent Gate
+
+- Added a required design-intent preflight before browser execution when Figma, screenshots, or design specifications are provided.
+- Decomposed visible spacing into nested frame, container, component, and child layers instead of treating the total offset as one padding value.
+- Blocked conflicting or unclear user and design expectations until the user explicitly selects a concrete final UI; silence cannot approve a deviation.
+- Separated pre-browser `Blocked` decisions from runtime `Unverifiable` evidence failures while retaining screenshot capture and actual image inspection for runtime terminal states.
+- Required an `Alignment` receipt with design basis, spacing stack, relation, expected implementation, user decision, and status.
+
 ## 19.0.1 — Procedural Contracts and Release Safety
 
 - Strengthened all 13 canonical skills with explicit preconditions, required sequences, completion gates, failure states, forbidden shortcuts, and evidence receipts.

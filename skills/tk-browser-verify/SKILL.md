@@ -1,6 +1,6 @@
 ---
 name: tk-browser-verify
-description: "[user/auto] 브라우저 UI, network, final state를 런타임 증거로 검증합니다. 실제 browser 동작 확인에 사용하고, 코드 구현이나 browser 없이 가능한 review에는 사용하지 않습니다. Pass, Fail 또는 Unverifiable로 판정합니다."
+description: "[user/auto] 브라우저 UI, network, final state를 런타임 증거로 검증합니다. 실제 browser 동작 확인에 사용하고, 코드 구현이나 browser 없이 가능한 review에는 사용하지 않습니다. Pass, Fail, Blocked 또는 Unverifiable로 판정합니다."
 metadata:
   tigerkit:
     kind: hybrid
@@ -20,12 +20,14 @@ metadata:
 
 검증 전에 대상 URL, 실행 환경, 성공 조건, 안전한 상호작용 범위를 확인하세요. 기본은 headless이며 OTP, passkey, CAPTCHA, device approval처럼 사용자 상호작용이 필요한 인증에서만 headed로 전환하고 사용자에게 로그인을 요청하세요. 인증 profile은 repo 밖 사용자 로컬 경로에서 재사용하고 credential, cookie, token, profile 내용을 출력·복사·commit하지 마세요.
 
-`환경 확인 → 탐색 → 상호작용 → UI 전환 관찰 → network 확인 → final state 확인 → screenshot capture → 실제 image 검사 → 판정` 순서를 지키세요. DOM, accessibility tree, network 성공, 예상 유사성은 screenshot과 실제 시각 검사를 대체하지 않습니다.
+Figma, screenshot 또는 디자인 명세가 기준으로 주어지면 탐색이나 상위 구현을 진행하기 전에 [디자인](references/design.md)의 intent preflight를 수행하세요. 보이는 inset이나 간격을 한 요소의 padding으로 단정하지 말고 frame, container, component, child의 중첩 spacing 결과로 분해하세요. 사용자 지시를 해석한 예상 결과와 디자인 기준이 다르거나 불명확하면 양쪽 선택의 구체적 최종 UI, 충족·위반하는 기준, 근거를 제시하고 하나를 명시적으로 선택하도록 요청하세요. 답을 받을 때까지 구현과 browser 실행을 시작하지 않고 `Blocked`로 반환합니다. 침묵은 동의가 아니며 확인되지 않은 차이를 `documented deviation`으로 만들지 마세요.
 
-성공·실패·차단 terminal state 모두 screenshot 증거가 필요합니다. 필요한 viewport와 breakpoint 경계를 검사하지 못했거나 screenshot을 캡처·분석하지 못하면 `Pass`가 아니라 `Unverifiable`입니다. 관찰된 요구사항 위반은 `Fail`, 안전한 실행 권한이나 환경이 없어 증거를 만들 수 없으면 `Unverifiable`입니다.
+`design intent preflight → 필요 시 사용자 확인 → 환경 확인 → 탐색 → 상호작용 → UI 전환 관찰 → network 확인 → final state 확인 → screenshot capture → 실제 image 검사 → 판정` 순서를 지키세요. intent가 `same`이면 불필요한 재확인 없이 runtime 검증으로 진행하세요. DOM, accessibility tree, network 성공, 예상 유사성은 screenshot과 실제 시각 검사를 대체하지 않습니다.
+
+Intent preflight의 미결정 `Blocked`는 browser session 전 의사결정 상태입니다. browser를 시작하지 않았으므로 screenshot을 요구하거나 screenshot 부재를 이유로 `Unverifiable`로 바꾸지 말고 `## Alignment` decision receipt를 남기세요. browser session이 시작된 뒤의 성공·실패·runtime 차단 terminal state에는 screenshot capture와 실제 image 검사가 모두 필요합니다. 필요한 viewport와 breakpoint 경계를 검사하지 못했거나 runtime screenshot을 캡처·분석하지 못하면 `Pass`가 아니라 `Unverifiable`입니다. 관찰된 요구사항 위반은 `Fail`, preflight에 필요한 사용자 결정이 없으면 `Blocked`, 안전한 실행 권한이나 환경이 없어 runtime 증거를 만들 수 없으면 `Unverifiable`입니다.
 
 변경 작업에는 UI 전환, 네트워크 요청/응답, 최종 UI 상태가 모두 필요합니다. 토스트나 국소적인 DOM 변경만으로는 충분하지 않습니다. 위험하고 되돌릴 수 없는 작업에 안전한 환경이나 명시적 권한이 없으면 `Unverifiable`을 반환하세요.
 
 유용한 증거만 `.tigerkit/browser-verify/runs/<run-id>/` 아래에 저장하고, 빈 파일은 만들지 마세요. 가능하면 `YYYYMMDD-HHmmss-<short-slug>`를 사용하세요. 확인된 민감하지 않은 사실은 필요할 때 `.tigerkit/browser-verify/env.md` 또는 `.tigerkit/browser-verify/screens/<screen>.md`에 기록하세요. 상위 스크래치 디렉터리는 필요할 때 만들고, 가능하면 원자적으로 교체하며, `.gitignore`를 절대 편집하지 말고, 스크래치가 무시되지 않으면 경고하세요. `login.local.md`를 자동으로 만들지 마세요. 사용자가 명시적으로 요청하면 내용을 출력하지 말고 가능하면 모드 `0600`을 사용하세요. 레거시 전역 TigerKit 상태를 검사하거나 마이그레이션하지 마세요.
 
-프로덕션 코드를 편집하거나 증거를 규칙/스킬로 승격하지 마세요. `## Verdict` (`Pass | Fail | Unverifiable`), `## Verified`, `## Findings`, `## Evidence`, `## Unverified`를 출력하고 빈 섹션은 생략하세요.
+프로덕션 코드를 편집하거나 증거를 규칙/스킬로 승격하지 마세요. 디자인 기준이 있으면 `## Alignment`를 생략하지 말고 `Instruction`, `Design basis`, `Spacing stack`, `Relation` (`same | different | unclear`), `Expected implementation`, `User decision`, `Status`를 기록하세요. `different` 또는 `unclear`이면 각 선택의 최종 UI 결과를 별도로 적고 명시적 선택 질문으로 끝내세요. `same`이면 이후 screenshot capture와 실제 image 검사 계획을 기록하세요. `## Verdict` (`Pass | Fail | Blocked | Unverifiable`), `## Verified`, `## Findings`, `## Evidence`, `## Unverified`를 출력하고 빈 섹션은 생략하세요.
