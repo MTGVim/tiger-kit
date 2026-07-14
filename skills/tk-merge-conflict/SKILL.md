@@ -12,6 +12,12 @@ metadata:
 
 merge, rebase, cherry-pick 또는 revert가 실제로 진행 중이고 active conflict가 있을 때만 사용하세요. 일반 파일 수정이나 아직 시작하지 않은 operation에는 사용하지 마세요.
 
+## 계약
+
+편집 전에 operation 상태, `git status`, index의 unmerged 항목, 모든 conflict marker, 양쪽 primary source를 확인하세요. 양쪽 의도를 결정할 근거가 없거나 요구가 양립할 수 없으면 임의로 해결하지 말고 `Blocked`로 중단하세요. 필수 상태나 근거를 읽을 수 없으면 `Unverifiable`입니다.
+
+`Pass`는 모든 marker 제거, unmerged 항목 해소, stage, 관련 검증 실행, operation 완료가 확인된 경우에만 사용하세요. 검증하지 않은 상태나 conflict 파일만 수정한 상태를 완료로 보고하지 마세요.
+
 ## 절차
 
 1. 현재 operation 상태를 확인하세요.
@@ -40,4 +46,4 @@ Primary source는 commit message, 관련 issue/PR, spec/ticket, 주변 test, 각
 
 ## 완료 보고
 
-operation 종류와 상태, conflict 파일, 조사한 의도, resolution, stage/continue 결과, 검증, operation 종료 여부, 남은 후속 작업을 보고하세요. Push는 별도 요청이 필요합니다.
+operation 종류와 상태, conflict 파일, 조사한 의도, resolution, stage/continue 결과, 검증, operation 종료 여부, 남은 후속 작업을 보고하세요. 수행 단계, 핵심 근거, 미검증 항목, 상태(`Pass | Fail | Blocked | Unverifiable`)를 receipt에 포함하세요. Push는 별도 요청이 필요합니다.

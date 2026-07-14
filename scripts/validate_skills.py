@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -238,6 +239,28 @@ def validate_skill(path: Path) -> tuple[list[str], list[str]]:
     return errors, warnings
 
 
+def validate_runtime_scratch(root: Path) -> list[str]:
+    scratch = root / ".tigerkit"
+    try:
+        tracked = subprocess.run(
+            ["git", "ls-files", "--", ".tigerkit"],
+            cwd=root,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+    except OSError:
+        tracked = None
+
+    if tracked is not None and tracked.returncode == 0:
+        if tracked.stdout.strip():
+            return [".tigerkit: remove tracked TigerKit runtime scratch"]
+        return []
+    if scratch.exists():
+        return [".tigerkit: remove TigerKit runtime scratch from packaged repository"]
+    return []
+
+
 def validate_repository_contract() -> list[str]:
     errors: list[str] = []
     required_files = (
@@ -258,12 +281,14 @@ def validate_repository_contract() -> list[str]:
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
             errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 19")
+    errors.extend(validate_runtime_scratch(ROOT))
     ignored = (ROOT / ".gitignore").read_text(encoding="utf-8") if (ROOT / ".gitignore").is_file() else ""
     if ".tigerkit/" not in ignored.splitlines():
         errors.append(".gitignore: document TigerKit repo-local scratch with .tigerkit/")
     required_text = {
         "README.md": (
             "TigerKit 19",
+            "v19.0.1",
             "13",
             "Claude Code",
             "Codex",
@@ -278,7 +303,7 @@ def validate_repository_contract() -> list[str]:
             "hybrid",
             "CONTEXT.md",
         ),
-        "CHANGELOG.md": ("19.0.0", "13", "hybrid", "v18.0.4"),
+        "CHANGELOG.md": ("19.0.1", "13", "hybrid", "v18.0.4"),
         "NOTICE.md": (
             "mattpocock/skills",
             "relationship: adapted",

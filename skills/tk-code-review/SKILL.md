@@ -13,6 +13,12 @@ metadata:
 
 사용자가 branch, PR, 특정 commit 이후 변경, spec 준수 또는 구현 결과의 독립 검토를 요청했거나 현재 변경에 수정과 분리된 review가 필요할 때 사용하세요. 코드 수정, 원인 불명 결함 진단 또는 전면 architecture 재설계 요청에는 사용하지 마세요.
 
+## 계약
+
+코드를 편집하거나 자동 재review하지 말고 `fixed point 확정 → diff 전체 확인 → Standards 근거 확인 → Spec 근거 확인 → 축별 finding → verdict` 순서를 지키세요. fixed point, diff 또는 필수 근거에 접근할 수 없으면 `Unverifiable`, 사용자 결정이나 권한이 없어 진행할 수 없으면 `Blocked`, 실제 위반이 있으면 `Changes requested`입니다.
+
+모든 finding에는 severity, 제목, `file:line` evidence, basis, impact가 필요합니다. 일부 파일이나 축만 읽고 전체 review를 통과로 보고하지 마세요. `Pass`는 고정한 diff 전체와 적용 가능한 축을 검사했고 미검증 범위가 없을 때만 사용하세요.
+
 ## Fixed point
 
 검토 전에 commit, branch, tag, `main`, merge-base 표현 또는 `HEAD~N` 형태의 fixed point를 확정하세요. 사용자가 기준점을 제공하지 않았다면 물으세요.
@@ -71,4 +77,4 @@ Impact
 ## Verdict
 ```
 
-Verdict는 `Pass` 또는 `Changes requested`입니다.
+Verdict는 `Pass | Changes requested | Blocked | Unverifiable` 중 하나입니다. 수행한 축과 범위, 핵심 evidence, 미검증 항목, verdict를 receipt로 남기세요.

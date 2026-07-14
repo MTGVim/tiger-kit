@@ -15,6 +15,12 @@ metadata:
 
 사용자가 이 스킬을 명시적으로 호출했을 때만 사용하세요. 자동으로 활성화하지 마세요.
 
+## 계약
+
+승인된 전략 없이 파일을 수정하지 말고, `understand → inspect → strategy approval → implement → incremental verification → final verification → bounded review when warranted → commit → report` 순서를 지키세요. 실제로 읽지 않은 요구사항 출처나 실행하지 않은 검증을 확인·통과했다고 보고하지 마세요.
+
+변경 관련 실패가 남으면 `Fail`, 필요한 입력·권한·결정이 없어 진행할 수 없으면 `Blocked`, 검증을 시도했지만 증거를 확보할 수 없으면 `Unverifiable`입니다. 이 상태에서는 완료로 보고하거나 commit하지 마세요. 위임 중첩, 자동 사용자 호출형 skill 실행, hook 우회, 검증 전 commit을 금지합니다.
+
 `understand → inspect → propose strategy → user approval → implement → verify incrementally → final verification → bounded review when warranted → commit → report` 순서를 따르세요. 정보 출처의 우선순위는 현재 요청, 대화에서 확인된 결정, 관련 `.tigerkit/tickets.md`, 관련 `.tigerkit/spec.md`, 저장소 지침, 코드/테스트 순입니다. 기존 파일이라고 해서 자동으로 관련 있는 것은 아닙니다.
 
 ## 전략 승인
@@ -55,4 +61,4 @@ TDD가 승인되면 의미 있는 공개 동작 경계를 선택하고 수직 sl
 
 별도 요청 없이는 push, PR 생성, merge, tag, release 또는 publish를 하지 마세요. 다른 사용자 호출형 스킬도 자동 실행하지 마세요.
 
-`## Strategy`, `## Changed`, `## Verification`, `## Commit`, 비어 있지 않은 `## Remaining risks`를 보고하세요. 파일 목록만이 아니라 동작을 설명하고, 검증 명령과 결과, 실패 분류, 커밋 메시지 또는 미커밋 이유를 포함하세요.
+`## Strategy`, `## Changed`, `## Verification`, `## Commit`, 비어 있지 않은 `## Remaining risks`, `## Receipt`를 보고하세요. 파일 목록만이 아니라 동작을 설명하고, 검증 명령과 결과, 실패 분류, 커밋 메시지 또는 미커밋 이유를 포함하세요. Receipt에는 수행 단계, 핵심 증거, 미검증 항목, 상태(`Pass | Fail | Blocked | Unverifiable`)를 기록하세요.

@@ -1,5 +1,13 @@
 # Changelog
 
+## 19.0.1 — Procedural Contracts and Release Safety
+
+- Strengthened all 13 canonical skills with explicit preconditions, required sequences, completion gates, failure states, forbidden shortcuts, and evidence receipts.
+- Made browser verification headless by default, limited headed mode to interactive authentication, and required inspected terminal-state screenshots for successful visual verdicts.
+- Added responsive width and breakpoint-edge checks plus evidence-based Figma deviation classification.
+- Allowed ignored repo-local `.tigerkit/` scratch while rejecting tracked or packaged scratch, with regression tests for all three cases.
+- Added the repository-local `tigerkit-release` maintainer skill without changing the 13-skill distribution catalog.
+
 ## 19.0.0 — Skill Consolidation and Follow-up Boundaries
 
 TigerKit 19 is a major release that reduces the canonical catalog from 18 skills to 13 while preserving the `v18.0.4` implementation and browser contracts.

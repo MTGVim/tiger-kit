@@ -13,6 +13,12 @@ metadata:
 
 증상은 있으나 원인을 모르거나, 간헐적·환경별 실패, 성능 회귀, 반복 재발, 재현·최소화·가설 검증이 필요한 경우 사용하세요. 조건문 반전, 누락된 prop, 명확한 빠진 분기처럼 원인과 수정 방법이 이미 확정된 변경에는 사용하지 마세요.
 
+## 계약
+
+`feedback loop → reproduce → minimize → ranked hypotheses → instrument → fix → regression verification → cleanup` 순서를 지키고 각 단계의 관찰 증거를 기록하세요. 재현 전에 patch하거나, 반증하지 않은 가설을 원인으로 확정하거나, 임시 계측을 남기지 마세요.
+
+필요한 입력·환경·권한이 없어 다음 단계로 진행할 수 없으면 `Blocked`, 실행했지만 재현 또는 회귀 증거를 확보하지 못하면 `Unverifiable`, 근본 원인이나 수정이 실패했음이 확인되면 `Fail`입니다. 어느 상태도 해결 완료로 보고하지 마세요.
+
 기본 loop:
 
 ```text
@@ -68,4 +74,4 @@ Feedback loop는 다음을 모두 만족해야 합니다.
 
 ## 완료 보고
 
-원래 증상, 근본 원인, fix, regression 증거, seam 부재 여부, cleanup, commit 또는 미commit 이유를 보고하세요.
+원래 증상, 근본 원인, fix, regression 증거, seam 부재 여부, cleanup, commit 또는 미commit 이유를 보고하세요. 수행 단계, 핵심 증거, 미검증 항목, 상태(`Pass | Fail | Blocked | Unverifiable`)를 receipt에 포함하세요.
