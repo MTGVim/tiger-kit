@@ -1,7 +1,8 @@
 # Changelog
 
-## 19.0.2 — Browser Design Intent Gate
+## 19.0.3 — Browser Design Intent Gate
 
+- Fixed the distribution smoke install to exercise standard discovery without explicitly selecting internal maintainer skills.
 - Added a required design-intent preflight before browser execution when Figma, screenshots, or design specifications are provided.
 - Decomposed visible spacing into nested frame, container, component, and child layers instead of treating the total offset as one padding value.
 - Blocked conflicting or unclear user and design expectations until the user explicitly selects a concrete final UI; silence cannot approve a deviation.

@@ -29,7 +29,7 @@ jobs:
           export CLAUDE_CONFIG_DIR="$HOME/.claude"
           export CODEX_HOME="$HOME/.codex"
           export HERMES_HOME="$HOME/.hermes"
-          npx --yes skills add . --global --agent claude-code --agent codex --agent hermes-agent --skill '*' --copy --yes
+          npx --yes skills add . --global --agent claude-code --agent codex --agent hermes-agent --copy --yes
           test "$(find "$CLAUDE_CONFIG_DIR/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 13
           test "$(find "$HOME/.agents/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 13
           test "$(find "$HERMES_HOME/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 13
