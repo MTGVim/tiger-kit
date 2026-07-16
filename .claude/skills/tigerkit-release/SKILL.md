@@ -2,6 +2,7 @@
 name: tigerkit-release
 description: TigerKit 저장소의 버전 갱신, 검증, commit, push, tag, GitHub Release를 안전한 순서로 수행합니다. 사용자가 /tigerkit-release를 명시적으로 호출한 경우에만 사용하세요.
 disable-model-invocation: true
+allow_implicit_invocation: false
 argument-hint: "[patch|minor|major]"
 metadata:
   internal: true

@@ -1,5 +1,12 @@
 # Changelog
 
+## 19.0.7 — Checkpoints and Anti-Patterns
+
+- Added explicit CHECKPOINT / STOP gates to canonical skills so missing evidence, unresolved decisions, and unsafe execution boundaries end in a truthful blocked or unverifiable state.
+- Added DO NOT / ANTI-PATTERNS guidance for mutation safety, review scope, verification evidence, delegation, and release boundaries.
+- Tightened workflow receipts and decision-field requirements across grooming, handoff, learning, prototyping, specification, ticketing, and conflict resolution.
+- Disabled implicit invocation for the maintainer-only `tigerkit-release` skill.
+
 ## 19.0.6 — Guarded Browser Verification Modes
 
 - Added lightweight Guard mode for temporary HTML, prototypes, and exploratory UI checks without forcing responsive matrices or formal verdicts.

@@ -295,7 +295,7 @@ def validate_repository_contract() -> list[str]:
     required_text = {
         "README.md": (
             "TigerKit 19",
-            "v19.0.6",
+            "v19.0.7",
             "13",
             "Claude Code",
             "Codex",
@@ -310,7 +310,7 @@ def validate_repository_contract() -> list[str]:
             "hybrid",
             "CONTEXT.md",
         ),
-        "CHANGELOG.md": ("19.0.6", "13", "hybrid", "v18.0.4"),
+        "CHANGELOG.md": ("19.0.7", "13", "hybrid", "v18.0.4"),
         "NOTICE.md": (
             "mattpocock/skills",
             "relationship: adapted",
