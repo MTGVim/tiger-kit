@@ -1,5 +1,12 @@
 # Changelog
 
+## 19.0.4 — Safe Browser Launch and Autonomous Implementation
+
+- Prevented browser verification from auto-launching until headless execution and a temporary isolated profile are confirmed; otherwise it returns `Unverifiable`.
+- Made explicit user scope, method, prohibitions, execution mode, TDD, verification, and commit decisions binding in `tk-implement`.
+- Made unspecified execution mode and TDD choices resolve automatically after inspection without a strategy approval round trip.
+- Updated static behavior fixtures and canonical validation for both contracts.
+
 ## 19.0.3 — Browser Design Intent Gate
 
 - Fixed the distribution smoke install to exercise standard discovery without explicitly selecting internal maintainer skills.
