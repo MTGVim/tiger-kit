@@ -1,5 +1,12 @@
 # Changelog
 
+## 19.0.6 — Guarded Browser Verification Modes
+
+- Added lightweight Guard mode for temporary HTML, prototypes, and exploratory UI checks without forcing responsive matrices or formal verdicts.
+- Preserved the full Verdict mode evidence contract for persistent user-visible source changes, explicit invocation, and formal verification requests.
+- Added a compact P1–P10 router for trusted input, CDP ownership, visual baselines, API-gated states, screenshot paths, responsive checks, cleanup, motion timelines, field clearing, and server auto-open behavior.
+- Clarified automatic trigger exclusions versus explicit invocation and expanded static trigger, behavior, and validation coverage.
+
 ## 19.0.5 — Automatic Browser Verification Routing
 
 - Routed user-visible UI and browser behavior changes from `tk-implement` through hybrid `tk-browser-verify` without another approval request.
