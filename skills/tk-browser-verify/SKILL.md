@@ -1,6 +1,6 @@
 ---
 name: tk-browser-verify
-description: "[user/auto] 브라우저 UI, network, final state를 런타임 증거로 검증합니다. 실제 browser 동작 확인에 사용하고, 코드 구현이나 browser 없이 가능한 review에는 사용하지 않습니다. Pass, Fail, Blocked 또는 Unverifiable로 판정합니다."
+description: "[user/auto] 브라우저에서 확인 가능한 UI, interaction, responsive layout, network, final state를 런타임 증거로 검증합니다. 프런트엔드 구현이나 수정으로 사용자에게 보이는 동작이 달라지면 구현 과정의 검증 단계에도 자동 적용하세요. Source mutation을 소유하거나 browser 없이 충분한 정적 검증을 대체하지 않습니다. Pass, Fail, Blocked 또는 Unverifiable로 판정합니다."
 metadata:
   tigerkit:
     kind: hybrid

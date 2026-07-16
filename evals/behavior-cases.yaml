@@ -10,6 +10,12 @@
 - case: implement-respects-explicit-strategy
   skill: tk-implement
   expect: "Explicit scope, method, prohibitions, direct/delegated, TDD, verification, and commit decisions are binding and are not re-asked or overridden by defaults."
+- case: implement-routes-visible-ui-through-browser-verify
+  skill: tk-implement
+  expect: "A visible UI or browser behavior change automatically applies hybrid tk-browser-verify during final verification without another approval request."
+- case: implement-runs-design-preflight-before-ui-edit
+  skill: tk-implement
+  expect: "When Figma, screenshots, or a design specification define the expected UI, tk-browser-verify design intent preflight runs before source mutation and runtime verification runs after implementation."
 - case: implement-non-agent-tools-are-not-delegation
   skill: tk-implement
   expect: "Context-mode, MCPs, sandboxes, browsers, and analysis tools remain available in both direct and delegated modes."

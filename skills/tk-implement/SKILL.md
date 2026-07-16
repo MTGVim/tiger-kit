@@ -1,6 +1,6 @@
 ---
 name: tk-implement
-description: "[user] 요청받은 코드 변경을 구현하고 검증한 뒤 현재 브랜치에 커밋합니다. 사용자가 명시적으로 호출했을 때만 사용하세요."
+description: "[user] 요청받은 코드 변경을 구현하고 검증한 뒤 현재 브랜치에 커밋합니다. 사용자에게 보이는 UI 또는 browser behavior가 바뀌면 tk-browser-verify를 검증 단계에 적용합니다. 사용자가 명시적으로 호출했을 때만 사용하세요."
 disable-model-invocation: true
 argument-hint: "<요청, 티켓 또는 명세> [direct|delegated] [tdd|no-tdd]"
 metadata:
@@ -39,11 +39,15 @@ metadata:
 
 상세 판단과 위임 계약은 [위임](references/delegation.md)을 참고하세요.
 
+Figma, screenshot 또는 디자인 명세가 예상 UI의 기준이면 source mutation 전에 hybrid `tk-browser-verify`의 design intent preflight를 적용하세요. 기준과 요청이 충돌하거나 불명확하면 해당 skill의 `Blocked` 경계를 따르고, 정렬된 뒤에만 구현하세요.
+
 ## 구현과 검증
 
-Direct에서는 현재 에이전트가 가장 작은 일관된 단위로 구현하고 focused verification을 반복하세요. Delegated에서는 implementor 한 명에게만 범위와 완료 조건을 전달하고 현재 에이전트가 diff와 검증을 확인하세요. 위임을 중첩하거나 하위 에이전트가 사용자 호출형 TigerKit 스킬을 호출하게 해서는 안 됩니다.
+Direct에서는 현재 에이전트가 가장 작은 일관된 단위로 구현하고 focused verification을 반복하세요. Delegated에서는 implementor 한 명에게만 범위와 완료 조건을 전달하고 현재 에이전트가 diff와 검증을 확인하세요. 위임을 중첩하거나 하위 에이전트가 사용자 호출형 TigerKit 스킬을 호출하게 해서는 안 됩니다. Implementor가 focused browser check를 수행했더라도 최종 browser 검증은 현재 에이전트가 소유합니다.
 
 TDD로 결정되면 의미 있는 공개 동작 경계를 선택하고 수직 slice 하나의 focused test를 작성하세요. 테스트를 실제 실행해 red를 관찰한 뒤 최소 구현으로 green을 만들고, 같은 테스트와 관련 검증을 다시 실행하세요. 다음 slice가 있으면 반복하세요. 핵심 loop는 `red → green`이며 refactor를 매 cycle의 필수 단계로 강제하지 않습니다. 구현 후 테스트를 추가해 TDD라고 보고하거나, 이미 성공하는 테스트를 red로 표현하거나, 내부 구현 세부사항을 테스트하거나, 테스트를 위해 production API를 왜곡하지 마세요. 사용자가 TDD를 명시했는데 유용한 seam이 없으면 자동으로 non-TDD로 바꾸지 말고 seam 부재와 가능한 대안을 제시해 결정받으세요. 자동 판단에서는 유용한 seam이 없으면 TDD를 선택하지 마세요. Non-TDD에서도 검증을 생략하지 마세요.
+
+사용자에게 보이는 UI, layout, styling, responsive behavior, interaction, navigation, form submission 또는 browser network/final state가 변경되면, 사용자가 browser 검증을 명시적으로 금지하지 않은 한 hybrid `tk-browser-verify`를 별도 승인 없이 최종 검증 단계에 자동 적용하세요. DOM, accessibility tree, unit test 또는 build 성공만으로 대체하지 말고 해당 skill의 runtime screenshot과 실제 image 검사 계약을 따르세요. 안전한 실행 환경이나 필수 증거가 없으면 `Unverifiable`이며 완료로 보고하거나 commit하지 마세요.
 
 구현 중 focused test, 관련 정적 검사, build 또는 필요한 브라우저·통합 검증을 적절한 간격으로 반복하세요. 완료 후 비용과 환경이 허용하는 가장 넓은 관련 검증을 한 번 실행하세요. 실패를 `change-related`, `pre-existing`, `environment`, `unverifiable`로 분류하고, 변경 관련 실패가 남으면 커밋하지 마세요.
 

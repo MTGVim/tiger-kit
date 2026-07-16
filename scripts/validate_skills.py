@@ -47,6 +47,8 @@ LINK = re.compile(r"\[[^]]*]\(([^)]+)\)")
 REQUIRED_BEHAVIOR_CASES = {
     "implement-auto-decides-unspecified-strategy",
     "implement-respects-explicit-strategy",
+    "implement-routes-visible-ui-through-browser-verify",
+    "implement-runs-design-preflight-before-ui-edit",
     "implement-non-agent-tools-are-not-delegation",
     "implement-delegation-is-single-level",
     "implement-tdd-follows-user-decision",
@@ -288,7 +290,7 @@ def validate_repository_contract() -> list[str]:
     required_text = {
         "README.md": (
             "TigerKit 19",
-            "v19.0.4",
+            "v19.0.5",
             "13",
             "Claude Code",
             "Codex",
@@ -303,7 +305,7 @@ def validate_repository_contract() -> list[str]:
             "hybrid",
             "CONTEXT.md",
         ),
-        "CHANGELOG.md": ("19.0.4", "13", "hybrid", "v18.0.4"),
+        "CHANGELOG.md": ("19.0.5", "13", "hybrid", "v18.0.4"),
         "NOTICE.md": (
             "mattpocock/skills",
             "relationship: adapted",

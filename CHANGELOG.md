@@ -1,5 +1,12 @@
 # Changelog
 
+## 19.0.5 — Automatic Browser Verification Routing
+
+- Routed user-visible UI and browser behavior changes from `tk-implement` through hybrid `tk-browser-verify` without another approval request.
+- Required design intent preflight before source mutation when Figma, screenshots, or design specifications define the expected UI.
+- Required runtime screenshot capture and actual image inspection after implementation, with commit blocked unless browser verification passes.
+- Updated skill descriptions, documentation, trigger fixtures, behavior fixtures, and canonical validation for the routing contract.
+
 ## 19.0.4 — Safe Browser Launch and Autonomous Implementation
 
 - Prevented browser verification from auto-launching until headless execution and a temporary isolated profile are confirmed; otherwise it returns `Unverifiable`.

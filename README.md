@@ -31,10 +31,10 @@ npx skills add MTGVim/tiger-kit \
   --skill tk-browser-verify
 ```
 
-변경되지 않는 `v19.0.4` snapshot:
+변경되지 않는 `v19.0.5` snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v19.0.4" \
+npx skills add "MTGVim/tiger-kit#v19.0.5" \
   --global \
   --agent claude-code \
   --agent codex \
@@ -79,6 +79,18 @@ tk-grill-me
 ```
 
 결정이 끝났거나 변경이 작다면 바로 `tk-implement`를 사용할 수 있습니다.
+
+### 브라우저 검증이 필요한 구현
+
+`tk-implement`가 사용자에게 보이는 UI나 browser behavior를 변경하면 hybrid `tk-browser-verify`를 최종 검증 단계에 자동 적용합니다. Figma, screenshot 또는 디자인 명세가 기준이면 구현 전 intent preflight와 구현 후 runtime screenshot 검증을 모두 수행합니다.
+
+```text
+tk-implement
+→ UI 또는 browser behavior 변경
+→ tk-browser-verify 자동 적용
+→ runtime screenshot 실제 검사
+→ Pass일 때 commit
+```
 
 ### 구현 후 추가 피드백
 
