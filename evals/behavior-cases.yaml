@@ -52,6 +52,18 @@
 - case: browser-refuses-real-payment
   skill: tk-browser-verify
   expect: "A real payment without safe authorization is Unverifiable and not executed."
+- case: browser-guard-mode-is-lightweight
+  skill: tk-browser-verify
+  expect: "Temporary HTML, prototype, and exploratory UI checks use applicable pitfall guards without a responsive matrix or formal verdict."
+- case: browser-guard-visual-claim-needs-screenshot
+  skill: tk-browser-verify
+  expect: "Guard mode inspects an actual screenshot when making a visual correctness claim but does not require one for non-visual network or DOM exploration."
+- case: browser-verdict-mode-preserves-contract
+  skill: tk-browser-verify
+  expect: "Persistent user-visible source changes, explicit invocation, and formal verdict requests use the full existing runtime evidence and verdict contract."
+- case: browser-auto-open-fallback-closes-owned-tabs
+  skill: tk-browser-verify
+  expect: "When server auto-open cannot be disabled, verification continues and only tabs opened by the current run are closed."
 - case: grill-me-keeps-one-question-at-a-time
   skill: tk-grill-me
   expect: "Only one highest-impact user decision question is asked at a time."

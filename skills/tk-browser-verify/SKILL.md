@@ -1,6 +1,6 @@
 ---
 name: tk-browser-verify
-description: "[user/auto] 브라우저에서 확인 가능한 UI, interaction, responsive layout, network, final state를 런타임 증거로 검증합니다. 프런트엔드 구현이나 수정으로 사용자에게 보이는 동작이 달라지면 구현 과정의 검증 단계에도 자동 적용하세요. Source mutation을 소유하거나 browser 없이 충분한 정적 검증을 대체하지 않습니다. Pass, Fail, Blocked 또는 Unverifiable로 판정합니다."
+description: "[user/auto] 실제 페이지의 UI 정확성이나 interaction을 브라우저로 확인할 때 사용합니다. 임시 HTML·prototype·layout·hover·form 탐색은 Guard mode로 함정을 선제 방지하고, 사용자에게 보이는 source 변경·명시적 호출·공식 판정 요청은 Verdict mode로 runtime evidence를 검증합니다. Passive web research, 문서 읽기, URL 내용 추출, 단순 screenshot 저장에는 적용하지 않습니다. Source mutation을 소유하거나 browser 없이 충분한 정적 검증을 대체하지 않습니다."
 metadata:
   tigerkit:
     kind: hybrid
@@ -10,17 +10,28 @@ metadata:
 
 # 브라우저 검증
 
-직접 사용하거나 관련 구현 중에 사용하세요. 별도 설정 없이 작업하세요. 요청을 이해하고, 실행 가능한 환경을 찾고, 사용 가능한 네이티브 브라우저, Playwright 호환 드라이버, MCP 또는 CDP 드라이버를 선택하고, 탐색하고, 상호작용하고, 관찰하세요. 기본 검증은 임시·격리 profile을 사용하며, 인증 profile 재사용은 아래 interactive auth 예외에서만 선택 사항입니다.
+실제 페이지의 UI 정확성이나 interaction을 browser로 판단할 때 직접 사용하거나 관련 구현 중에 사용하세요. Passive web research, 문서 읽기, URL 내용 추출, 단순 screenshot 저장에는 사용하지 마세요.
 
-브라우저 도구를 처음 호출하기 전에 auto-launch 여부와 실제 launch configuration을 확인하세요. 자동 실행 도구는 headless와 임시·격리 profile이 configuration에서 명시적으로 확인될 때만 호출하세요. 스킬 지침, 도구 이름 또는 일반적인 provider 기본값만으로 이를 추정하지 마세요. 조건을 충족하는 대체 수단이 없으면 브라우저를 시작하지 말고 `Unverifiable`로 반환하세요.
+## 모드 선택
 
-새 브라우저를 시작하면 [세션 수명주기](references/session-lifecycle.md)를 따르세요. 브라우저 자체의 최초 실행·로그인·동기화 안내는 가능한 실행 옵션으로 억제하고, 남아 있으면 로그인하지 말고 안전하게 건너뛰거나 닫으세요. 검증 종료 시 이번 실행이 직접 만든 브라우저·컨텍스트·창만 정리하고 기존 사용자 세션은 건드리지 마세요.
+Browser 도구를 호출하거나 검증용 server를 실행하기 전에 다음 중 하나를 선택하고 [선제 UI Verification](references/ui-verification.md)에서 현재 작업에 해당하는 항목만 적용하세요.
 
-관련 관점을 선택하세요. [시각](references/visual.md), [동작](references/behavior.md), [환경](references/environment.md) 또는 [디자인](references/design.md)을 사용하고 [안전](references/safety.md)을 따르세요. 합성 이벤트보다 신뢰할 수 있는 포인터/키보드 상호작용을 우선하세요.
+- **Guard mode**: 임시 HTML, prototype, 탐색처럼 지속되는 사용자 노출 source 변경이나 공식 판정이 없는 UI 확인입니다. Responsive matrix나 공식 verdict를 만들지 않고, 시각적 성공을 주장할 때만 screenshot을 실제 검사하세요.
+- **Verdict mode**: 지속되는 사용자 노출 UI source 변경, 명시적 호출 또는 공식 판정 요청입니다. 아래 전체 계약을 따르세요.
 
-## 계약
+Guard mode를 Verdict mode 완료 gate의 우회로 사용하지 마세요. Guard mode에서는 적용하지 않은 항목의 N/A receipt를 만들지 말고 요청한 결과와 필요한 증거만 보고하세요.
 
-검증 전에 대상 URL, 실행 환경, 성공 조건, 안전한 상호작용 범위를 확인하세요. 기본은 headless이며 OTP, passkey, CAPTCHA, device approval처럼 사용자 상호작용이 필요한 인증에서만 headed로 전환하고 사용자에게 로그인을 요청하세요. 인증 profile은 repo 밖 사용자 로컬 경로에서 재사용하고 credential, cookie, token, profile 내용을 출력·복사·commit하지 마세요.
+요청을 이해하고 실행 가능한 환경을 찾은 뒤 네이티브 브라우저, Playwright 호환 드라이버, MCP 또는 CDP 드라이버 중 가장 단순한 수단을 선택하세요. 기본 검증은 임시·격리 profile을 사용하며 인증 profile 재사용은 아래 interactive auth 예외에서만 선택 사항입니다.
+
+브라우저 도구를 처음 호출하기 전에 auto-launch 여부와 실제 launch configuration을 확인하세요. 자동 실행 도구는 headless와 임시·격리 profile이 configuration에서 명시적으로 확인될 때만 호출하세요. 스킬 지침, 도구 이름 또는 일반적인 provider 기본값만으로 이를 추정하지 마세요. 조건을 충족하는 대체 수단이 없으면 Verdict mode는 `Unverifiable`로 반환하고 Guard mode는 진행할 수 없는 이유를 보고하세요.
+
+새 브라우저를 시작하면 [세션 수명주기](references/session-lifecycle.md)를 따르세요. 브라우저 자체의 최초 실행·로그인·동기화 안내는 가능한 실행 옵션으로 억제하고, 남아 있으면 로그인하지 말고 안전하게 건너뛰거나 닫으세요. 종료 시 이번 실행이 직접 만든 브라우저·컨텍스트·창만 정리하고 기존 사용자 세션은 건드리지 마세요.
+
+현재 작업에 관련된 관점만 선택하세요. [시각](references/visual.md), [동작](references/behavior.md), [환경](references/environment.md) 또는 [디자인](references/design.md)을 사용하고 [안전](references/safety.md)을 따르세요.
+
+## Verdict mode 계약
+
+아래 계약은 Verdict mode에만 적용합니다. 검증 전에 대상 URL, 실행 환경, 성공 조건, 안전한 상호작용 범위를 확인하세요. 기본은 headless이며 OTP, passkey, CAPTCHA, device approval처럼 사용자 상호작용이 필요한 인증에서만 headed로 전환하고 사용자에게 로그인을 요청하세요. 인증 profile은 repo 밖 사용자 로컬 경로에서 재사용하고 credential, cookie, token, profile 내용을 출력·복사·commit하지 마세요.
 
 Figma, screenshot 또는 디자인 명세가 기준으로 주어지면 탐색이나 상위 구현을 진행하기 전에 [디자인](references/design.md)의 intent preflight를 수행하세요. 보이는 inset이나 간격을 한 요소의 padding으로 단정하지 말고 frame, container, component, child의 중첩 spacing 결과로 분해하세요. 사용자 지시를 해석한 예상 결과와 디자인 기준이 다르거나 불명확하면 양쪽 선택의 구체적 최종 UI, 충족·위반하는 기준, 근거를 제시하고 하나를 명시적으로 선택하도록 요청하세요. 답을 받을 때까지 구현과 browser 실행을 시작하지 않고 `Blocked`로 반환합니다. 침묵은 동의가 아니며 확인되지 않은 차이를 `documented deviation`으로 만들지 마세요.
 

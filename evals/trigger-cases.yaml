@@ -70,10 +70,15 @@
     - "QA와 로컬 화면 차이를 runtime 증거로 검증해줘"
     - "Figma와 현재 구현이 맞는지 브라우저에서 확인해줘"
     - "tk-implement로 반응형 저장 모달을 구현해줘"
+    - "임시 HTML을 브라우저로 열어서 hover와 form 동작이 맞는지 봐줘"
+    - "Prototype을 실제로 눌러보며 UI 상태 전이를 확인해줘"
   negative:
     - "서버 내부 로그 문구만 수정해줘"
     - "모달 설계 아이디어를 세 개 만들어줘"
     - "브라우저를 열지 않고 코드만 리뷰해줘"
+    - "Chrome에서 React 문서를 읽고 핵심만 요약해줘"
+    - "이 URL의 screenshot을 저장만 해줘"
+    - "웹페이지 본문 text만 추출해줘"
 - skill: tk-diagnosing-bugs
   positive:
     - "가끔 저장이 안 되는데 원인을 모르겠어"
