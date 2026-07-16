@@ -61,6 +61,9 @@
 - case: browser-verdict-mode-preserves-contract
   skill: tk-browser-verify
   expect: "Persistent user-visible source changes, explicit invocation, and formal verdict requests use the full existing runtime evidence and verdict contract."
+- case: browser-explicit-invocation-uses-verdict
+  skill: tk-browser-verify
+  expect: "Explicit invocation selects Verdict mode; automatic trigger exclusions apply only when the skill was not explicitly requested."
 - case: browser-auto-open-fallback-closes-owned-tabs
   skill: tk-browser-verify
   expect: "When server auto-open cannot be disabled, verification continues and only tabs opened by the current run are closed."

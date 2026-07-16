@@ -1,6 +1,6 @@
 ---
 name: tk-browser-verify
-description: "[user/auto] 실제 페이지의 UI 정확성이나 interaction을 브라우저로 확인할 때 사용합니다. 임시 HTML·prototype·layout·hover·form 탐색은 Guard mode로 함정을 선제 방지하고, 사용자에게 보이는 source 변경·명시적 호출·공식 판정 요청은 Verdict mode로 runtime evidence를 검증합니다. Passive web research, 문서 읽기, URL 내용 추출, 단순 screenshot 저장에는 적용하지 않습니다. Source mutation을 소유하거나 browser 없이 충분한 정적 검증을 대체하지 않습니다."
+description: "[user/auto] 실제 페이지의 UI 정확성이나 interaction을 브라우저로 확인할 때 사용합니다. 임시 HTML·prototype·layout·hover·form 탐색은 Guard mode로 함정을 선제 방지하고, 사용자에게 보이는 source 변경·명시적 호출·공식 판정 요청은 Verdict mode로 runtime evidence를 검증합니다. Passive web research, 문서 읽기, URL 내용 추출, 단순 screenshot 저장에는 자동 적용하지 않습니다. Source mutation을 소유하거나 browser 없이 충분한 정적 검증을 대체하지 않습니다."
 metadata:
   tigerkit:
     kind: hybrid
@@ -10,7 +10,7 @@ metadata:
 
 # 브라우저 검증
 
-실제 페이지의 UI 정확성이나 interaction을 browser로 판단할 때 직접 사용하거나 관련 구현 중에 사용하세요. Passive web research, 문서 읽기, URL 내용 추출, 단순 screenshot 저장에는 사용하지 마세요.
+실제 페이지의 UI 정확성이나 interaction을 browser로 판단할 때 직접 사용하거나 관련 구현 중에 사용하세요. Passive web research, 문서 읽기, URL 내용 추출, 단순 screenshot 저장에는 자동 적용하지 마세요. 사용자가 skill을 명시적으로 호출하면 작업 종류와 관계없이 Verdict mode를 선택하세요.
 
 ## 모드 선택
 

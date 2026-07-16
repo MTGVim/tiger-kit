@@ -62,6 +62,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "browser-guard-mode-is-lightweight",
     "browser-guard-visual-claim-needs-screenshot",
     "browser-verdict-mode-preserves-contract",
+    "browser-explicit-invocation-uses-verdict",
     "browser-auto-open-fallback-closes-owned-tabs",
     "grill-me-keeps-one-question-at-a-time",
     "grill-me-researches-facts-before-asking",

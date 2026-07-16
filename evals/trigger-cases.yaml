@@ -1,5 +1,6 @@
 # Static contract fixtures.
 # These files do not execute models or measure invocation accuracy.
+# Hybrid positive/negative cases cover automatic invocation; explicit invocation is a behavior contract.
 
 - skill: tk-grill-me
   examples:
