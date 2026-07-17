@@ -18,10 +18,6 @@ metadata:
 
 새 인수인계의 기본 작성 대상은 `.tigerkit/handoff.md`입니다. 다음 필수 schema를 사용하세요.
 
-## 🔴 CHECKPOINT · 🛑 STOP 작성·재개 경계
-
-작성하거나 재개하기 전에 현재 브랜치, 파일, 목표, 결정, 검증 증거를 대조하세요. drift 또는 conflict가 있으면 해결된 것으로 간주하지 말고 `pending` 또는 `Blocked` receipt에서 멈추세요.
-
 - `Goal`: 목표와 범위
 - `Status`: `pending | in_progress | completed | aborted | Blocked`
 - `Decisions`: 사용자 답변/승인과 연결된 결정만 `confirmed`로, 나머지는 `pending`
