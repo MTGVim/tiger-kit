@@ -19,10 +19,6 @@ metadata:
 
 사용자가 지정한 경로 또는 `.tigerkit/tickets.md`에 `# <Feature> Tickets` 형식으로 작성하세요. `.tigerkit/`에 출력할 때는 필요할 때만 상위 디렉터리를 만들고, 가능하면 임시 파일에 쓴 뒤 이름을 바꾸며, 절대 타임스탬프 아카이브를 생성하거나 `.gitignore`를 수정하지 말고, 임시 경로가 무시되지 않으면 경고하세요. 구현하거나 원격 트래커에 게시하지 마세요.
 
-## 🔴 CHECKPOINT · 🛑 STOP 분할·작성 경계
-
-티켓을 쓰기 전에 각 요구사항의 source traceability, 독립적인 수직 동작 근거, 인수 기준, 검증을 확인하세요. 하나라도 없거나 분할 근거가 충돌하면 티켓을 만들지 말고 `Unresolved split report`, `Blocked` 또는 `Unverifiable`로 멈추세요.
-
 ## 계약
 
 요구사항별 source traceability를 남기고 각 티켓을 독립적인 목표, 범위, 인수 기준, 검증을 가진 수직 동작 단위로 구성하세요. 동작의 테스트는 해당 티켓에 포함하며 수평적인 type/API/UI/test-only 티켓을 만들지 마세요. 독립된 동작으로 분할할 근거가 부족하면 억지로 만들지 말고 `Unresolved split report`를 반환하며, 근거 없는 요구사항이나 미해결 충돌은 `Blocked` 또는 `Unverifiable`로 구분하세요. receipt에는 경로, 상태, 티켓 수, 요구사항별 traceability, 의존성, `증거`, `미검증`, 미해결 분할 문제를 포함하세요.
