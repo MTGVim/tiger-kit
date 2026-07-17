@@ -20,6 +20,10 @@ metadata:
 
 다음 gate를 순서대로 통과시키세요.
 
+## 🔴 CHECKPOINT · 🛑 STOP 승인 전 적용 경계
+
+1–4번 결과를 제안한 뒤 사용자에게 대상, 이름, 초안, 적용 범위를 명시적으로 확인받기 전에는 실제 skill 경로에 쓰지 마세요. 승인되지 않았거나 evidence threshold를 통과하지 못하면 `pending` 또는 `no-op`으로 멈추세요.
+
 1. 반복 가능한 증거를 수집하세요. 동일한 동작이 서로 독립된 두 사례에서 나타났는지, 또는 재사용을 입증하는 명시적 워크플로와 corroborating artifact가 있는지 적고, 출처와 `verified | unverified`를 연결하세요. 일회성 사례나 원시 자격 증명·로그·screenshot은 승격 근거로 쓰지 마세요.
 2. 기존 repo/user skill과 중복을 검색하고, 기본 모델 기능이나 짧은 standing rule로 충분한지 검사하세요. 동등한 skill이 있으면 새 skill 대신 `merge` 또는 `no-op`을 제안하세요.
 3. 대상(`repo skill` 또는 `user skill`), 이름, invocation kind, positive/negative trigger를 제안하세요. trigger가 명시되지 않으면 생성하지 마세요.
