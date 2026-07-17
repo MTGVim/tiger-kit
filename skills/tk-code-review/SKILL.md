@@ -30,6 +30,14 @@ metadata:
 
 각 단계의 출력이 없거나 diff가 비어 있으면 다음 단계로 진행하지 마세요. Spec source가 없을 때는 Spec 축을 생략했다는 사실을 receipt에 남기고, 해당 축을 통과했다고 표현하지 마세요.
 
+## Failure paths
+
+- If fixed point가 유효하지 않으면 review를 시작하지 말고 `Unverifiable`로 종료합니다.
+- If diff가 비어 있거나 일부만 읽히면 전체 `Pass`를 보고하지 말고 범위와 함께 `Unverifiable`로 종료합니다.
+- If 적용 가능한 Spec source가 없으면 Spec 축을 생략하고 Standards와 합친 통과로 표현하지 않습니다.
+- If finding 근거가 부족하면 추측을 추가하지 말고 미검증 항목을 receipt에 남깁니다.
+- If 사용자가 수정을 요청하면 review에서 직접 편집하지 말고 `tk-implement` 같은 별도 구현 경로를 요청합니다.
+
 ## 🔴 CHECKPOINT · 🛑 STOP review 시작 경계
 
 fixed point, 전체 diff, 적용 가능한 Standards/Spec 근거를 확인하기 전에는 review를 시작하거나 finding·verdict를 작성하지 마세요. fixed point나 diff에 접근할 수 없거나 사용자에게 기준점·결정이 필요하면 `Unverifiable` 또는 `Blocked` receipt에서 review를 멈추세요.
