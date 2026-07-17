@@ -73,6 +73,24 @@
 - case: grill-me-researches-facts-before-asking
   skill: tk-grill-me
   expect: "Facts available in code or environment are researched before asking the user."
+- case: grill-me-keeps-ambiguity-ledger
+  skill: tk-grill-me
+  expect: "The conversation tracks Scope, Constraints, Outputs, and Verification separately and does not let one subtopic hide unresolved tracks."
+- case: grill-me-separates-facts-from-judgment
+  skill: tk-grill-me
+  expect: "Exact descriptive code facts may be confirmed from evidence, while inferred facts and all new behavior decisions remain user decisions."
+- case: grill-me-preserves-answer-boundaries
+  skill: tk-grill-me
+  expect: "User reasoning, constraints, outputs, and out-of-scope boundaries are preserved; unspoken content remains an assumption rather than a confirmed decision."
+- case: grill-me-reconfirms-meaning-changing-summary
+  skill: tk-grill-me
+  expect: "The skill asks one targeted confirmation before proceeding when its summary changes scope, constraints, exclusions, or conflicts with an existing decision."
+- case: grill-me-closes-with-goal-approval
+  skill: tk-grill-me
+  expect: "After all four ledger tracks are resolved, the skill restates a one-sentence goal and completes only after explicit user approval."
+- case: grill-me-ledger-stays-in-conversation
+  skill: tk-grill-me
+  expect: "The ambiguity ledger stays in the conversation and receipt without automatically creating .tigerkit files, specs, tickets, or domain documents."
 - case: grill-me-does-not-write-domain-docs
   skill: tk-grill-me
   expect: "The skill does not mutate CONTEXT, glossary, or domain documents."
