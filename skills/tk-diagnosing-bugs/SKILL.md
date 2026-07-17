@@ -13,9 +13,16 @@ metadata:
 
 증상은 있으나 원인을 모르거나, 간헐적·환경별 실패, 성능 회귀, 반복 재발, 재현·최소화·가설 검증이 필요한 경우 사용하세요. 조건문 반전, 누락된 prop, 명확한 빠진 분기처럼 원인과 수정 방법이 이미 확정된 변경에는 사용하지 마세요.
 
-## 계약
+## Workflow
 
-`feedback loop → reproduce → minimize → ranked hypotheses → instrument → fix → regression verification → cleanup` 순서를 지키고 각 단계의 관찰 증거를 기록하세요. 재현 전에 patch하거나, 반증하지 않은 가설을 원인으로 확정하거나, 임시 계측을 남기지 마세요.
+1. `feedback loop`: 입력은 사용자 증상·환경·권한이고, 출력은 재실행 가능한 red-capable artifact입니다.
+2. `reproduce`: 입력은 loop artifact이고, 출력은 실제 실행 결과와 `red | not reproduced` 판정입니다.
+3. `minimize`: 입력은 재현 결과이고, 출력은 증상을 보존하는 최소 입력·환경·실행 명령입니다.
+4. `ranked hypotheses`: 입력은 최소 재현의 관찰 증거이고, 출력은 3–5개 가설과 각 반증 가능한 예측입니다.
+5. `instrument`: 입력은 우선순위 가설과 최소 재현이고, 출력은 한 변수씩 구분 가능한 관측 증거입니다.
+6. `fix`: 입력은 반증 결과와 확인된 원인이고, 출력은 최소 범위의 수정 또는 seam 부재 finding입니다.
+7. `regression verification`: 입력은 수정과 원래 reproduction이고, 출력은 원래 증상·regression seam의 `green | failed` 결과입니다.
+8. `cleanup/receipt`: 입력은 검증 결과와 임시 artifact 목록이고, 출력은 정리 결과와 상태·근본 원인·fix·미검증을 연결한 receipt입니다.
 
 필요한 입력·환경·권한이 없어 다음 단계로 진행할 수 없으면 `Blocked`, 실행했지만 재현 또는 회귀 증거를 확보하지 못하면 `Unverifiable`, 근본 원인이나 수정이 실패했음이 확인되면 `Fail`입니다. 어느 상태도 해결 완료로 보고하지 마세요.
 
