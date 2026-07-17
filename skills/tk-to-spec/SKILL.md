@@ -32,6 +32,14 @@ metadata:
 
 사용한 소스와 주장을 연결한 `source map`을 만들고 사실, 결정, 가정, 미해결 충돌을 분리하세요. `Ready`는 문제, 목표, 범위(포함/제외), 요구사항, 인수 기준, 검증, source traceability, verifiability가 있고 미해결 충돌이 없을 때만 사용하세요. 하나라도 없으면 `Draft`, `Blocked` 또는 `Unverifiable`로 남기세요. receipt에는 경로, 상태, `증거/source map`, `미검증`, `미해결 충돌`, `검증`을 포함하세요.
 
+## Failure paths
+
+- If 필수 source를 읽을 수 없으면 주장을 채우지 말고 `Unverifiable`로 종료합니다.
+- If source 간 결정·코드가 충돌하면 임의로 선택하지 말고 충돌을 남긴 `Blocked`로 종료합니다.
+- If Ready 필수 요소가 빠졌으면 저장하지 말고 `Draft`와 누락 목록을 보고합니다.
+- If write 또는 검증이 실패하면 `Ready`·완료로 보고하지 말고 `Fail | Unverifiable`와 경로를 보고합니다.
+- If `--print-only`이면 파일 write·티켓·구현을 하지 않고 출력 receipt만 남깁니다.
+
 ## CHECKPOINT / STOP
 
 파일에 쓰기 전 필수 요소와 미해결 충돌을 확인하세요. 누락·미확정 가정이면 `Draft`, 사용자 결정이 필요한 source 충돌이면 `Blocked`, 필수 source에 접근할 수 없으면 `Unverifiable`로 남기고 `Ready`로 저장하지 마세요.
