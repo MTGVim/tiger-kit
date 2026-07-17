@@ -19,6 +19,10 @@ Browser 도구를 호출하거나 검증용 server를 실행하기 전에 다음
 - **Guard mode**: 임시 HTML, prototype, 탐색처럼 지속되는 사용자 노출 source 변경이나 공식 판정이 없는 UI 확인입니다. Responsive matrix나 공식 verdict를 만들지 않고, 시각적 성공을 주장할 때만 screenshot을 실제 검사하세요.
 - **Verdict mode**: 지속되는 사용자 노출 UI source 변경, 명시적 호출 또는 공식 판정 요청입니다. 아래 전체 계약을 따르세요.
 
+## 🔴 CHECKPOINT · 🛑 STOP browser launch 경계
+
+browser 또는 검증용 server를 호출하기 전에 mode, 대상 URL, 성공 조건, launch configuration, 안전한 상호작용 범위와 필요한 design intent 결정을 확인하세요. 하나라도 미확정이면 호출하지 말고 `Blocked` 또는 `Unverifiable` receipt에서 멈추세요.
+
 Guard mode를 Verdict mode 완료 gate의 우회로 사용하지 마세요. Guard mode에서는 적용하지 않은 항목의 N/A receipt를 만들지 말고 요청한 결과와 필요한 증거만 보고하세요.
 
 요청을 이해하고 실행 가능한 환경을 찾은 뒤 네이티브 브라우저, Playwright 호환 드라이버, MCP 또는 CDP 드라이버 중 가장 단순한 수단을 선택하세요. 기본 검증은 임시·격리 profile을 사용하며 인증 profile 재사용은 아래 interactive auth 예외에서만 선택 사항입니다.
