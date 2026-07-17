@@ -37,6 +37,8 @@ metadata:
 - If a delete/move target still has references → do not delete or move it; change the proposal to `keep` or `tighten` and cite the references.
 - If post-apply validation fails → stop, do not claim `Complete`, and report the failed check and affected files.
 
+각 감사 영역의 evidence는 항상 `path → observation → verified | unverified → classification → reference` 순서로 연결하세요.
+
 ## 계약
 
 각 영역의 실제 경로와 내용을 증거로 남기고 필수 증거가 없으면 해당 영역을 `Unverifiable`로 표시하세요. 하나라도 차단되면 전체를 완료로 보고하지 말고 `Complete | Partial/Blocked | Unverifiable`로 구분하세요. 적용 후 링크, 중복, frontmatter와 같은 네 영역을 재검증하세요. receipt에는 `증거(영역별)`, `미검증`, `미해결 항목`, `제안 작업`, `적용 내용`, `적용 후 재검증`을 포함하며, 기존 `발견 사항`, `제안 작업`, `적용 내용`, `검증` 섹션에 연결하세요.
