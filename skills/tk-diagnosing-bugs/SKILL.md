@@ -19,6 +19,10 @@ metadata:
 
 필요한 입력·환경·권한이 없어 다음 단계로 진행할 수 없으면 `Blocked`, 실행했지만 재현 또는 회귀 증거를 확보하지 못하면 `Unverifiable`, 근본 원인이나 수정이 실패했음이 확인되면 `Fail`입니다. 어느 상태도 해결 완료로 보고하지 마세요.
 
+## CHECKPOINT / STOP
+
+red-capable feedback loop를 실제로 한 번 실행해 증상을 잡기 전에는 가설을 원인으로 확정하거나 patch하지 마세요. loop를 만들 수 없으면 필요한 artifact와 함께 `Blocked` 또는 `Unverifiable`로 멈추세요.
+
 기본 loop:
 
 ```text
@@ -45,6 +49,10 @@ Feedback loop는 다음을 모두 만족해야 합니다.
 5. 가능한 한 빠르고 반복 가능합니다.
 
 재현할 수 없으면 시도한 방법, 부족한 환경 또는 artifact, 필요한 로그/HAR/fixture/trace/권한을 보고하세요. 추측으로 patch하거나 가설을 확정 사실처럼 표현하지 마세요.
+
+## 🔴 CHECKPOINT · 🛑 STOP 가설·patch 경계
+
+feedback loop의 다섯 조건을 실제 실행으로 확인하기 전에는 가설을 확정하거나 patch하지 마세요. 조건을 충족하지 못하면 필요한 증거와 함께 `Blocked` 또는 `Unverifiable`로 멈추세요.
 
 ## 가설과 수정
 
@@ -75,3 +83,9 @@ Feedback loop는 다음을 모두 만족해야 합니다.
 ## 완료 보고
 
 원래 증상, 근본 원인, fix, regression 증거, seam 부재 여부, cleanup, commit 또는 미commit 이유를 보고하세요. 수행 단계, 핵심 증거, 미검증 항목, 상태(`Pass | Fail | Blocked | Unverifiable`)를 receipt에 포함하세요.
+
+## DO NOT / ANTI-PATTERNS
+
+- 재현 전 추측 patch, 반증하지 않은 원인 확정, false-confidence test를 만들지 마세요.
+- 임시 instrumentation이나 throwaway debug artifact를 남기지 마세요.
+- `tk-implement` 작업 안에서 별도 commit하거나 push하지 마세요.
