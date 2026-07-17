@@ -29,6 +29,14 @@ metadata:
 
 증거 threshold를 충족하지 못하거나 중복·기본 기능·불명확한 trigger이면 skill을 만들지 말고 `no-op` 이유를 보고하세요. 대상/적용 의도가 불분명하면 `.tigerkit/skill-drafts/<skill-name>/` 아래 초안도 사용자 승인 전에는 `pending`으로만 두세요. 초안의 경우 상위 디렉터리는 필요할 때 만들고, 가능하면 원자적으로 교체하며, 자동으로 보관하거나 `.gitignore`를 편집하지 말고, 스크래치가 무시되지 않으면 경고하세요.
 
+## Failure paths
+
+- If 사례가 2개 미만이거나 artifact가 없으면 threshold 미달 근거를 보고하고 `no-op`으로 종료합니다.
+- If 필수 출처가 없거나 핵심 사실이 `unverified`면 draft에 넣지 말고 `Unverifiable` 또는 `Blocked`로 종료합니다.
+- If 기존 skill 목록을 읽을 수 없으면 dedupe하지 않고 `Unverifiable`로 종료하며, 중복·기본 rule이면 `merge | no-op`으로 종료합니다.
+- If positive/negative trigger가 구별되지 않거나 승인이 없으면 draft/write하지 않고 `no-op | pending`으로 종료합니다.
+- If write 또는 후속 검증이 실패하면 `applied`로 보고하지 말고 실제 경로·미검증 항목과 함께 `Fail | Blocked`를 보고합니다.
+
 ## CHECKPOINT / STOP
 
 증거 threshold, 중복 검색, 대상·이름·trigger를 receipt로 제시한 뒤 사용자의 명시적 승인 전에는 어떤 skill 경로에도 쓰지 마세요. 승인이나 필수 증거가 없으면 `pending`, `no-op` 또는 `Blocked`로 멈추세요.
