@@ -19,7 +19,19 @@ metadata:
 
 사용자의 명시적 지시는 기본값이나 권장안보다 우선하는 실행 계약입니다. 범위, 방법, 금지 사항, `direct|delegated`, `tdd|no-tdd`, 검증, commit 지시를 임의로 완화·확장·대체하거나 다시 승인받지 마세요. 지시가 서로 충돌하거나 안전하게 실행할 수 없을 때만 구체적 충돌을 설명하고 필요한 결정 하나를 요청하세요.
 
-`understand → inspect → resolve strategy → implement → incremental verification → final verification → bounded review when warranted → commit → report` 순서를 지키세요. 실제로 읽지 않은 요구사항 출처나 실행하지 않은 검증을 확인·통과했다고 보고하지 마세요.
+## Workflow
+
+1. `understand`: 입력은 사용자 요청과 확인된 결정이고, 출력은 범위·acceptance criteria·필수 제약입니다.
+2. `inspect`: 입력은 범위와 저장소 상태·관련 source/test이고, 출력은 영향 파일·검증 seam·기존 변경 분리 가능성입니다.
+3. `resolve strategy`: 입력은 조사 결과와 사용자 지정 옵션이고, 출력은 `direct|delegated`, `tdd|no-tdd`, 구현 순서와 중단 조건입니다.
+4. `implement`: 입력은 확정된 전략과 범위이고, 출력은 최소 변경 diff입니다.
+5. `incremental verification`: 입력은 각 구현 slice와 acceptance criteria이고, 출력은 focused 검증 결과와 실패 분류입니다.
+6. `final verification`: 입력은 전체 diff와 관련 검증 목록이고, 출력은 가장 넓은 실행 가능한 검증 결과와 UI 변경 시 browser evidence입니다.
+7. `bounded review`: 입력은 고위험 diff와 review 필요성이고, 출력은 최대 1회의 reviewer finding 또는 review 생략 근거입니다.
+8. `commit`: 입력은 성공한 검증과 분리 가능한 diff이고, 출력은 현재 branch의 의도적 commit 또는 미커밋 사유입니다.
+9. `report`: 입력은 변경·검증·commit 결과이고, 출력은 요구된 보고 형식과 상태 receipt입니다.
+
+각 단계의 출력이 없거나 변경 관련 실패가 남으면 다음 단계로 진행하지 마세요. 실제로 읽지 않은 요구사항 출처나 실행하지 않은 검증을 확인·통과했다고 보고하지 마세요.
 
 변경 관련 실패가 남으면 `Fail`, 필요한 입력·권한·결정이 없어 진행할 수 없으면 `Blocked`, 검증을 시도했지만 증거를 확보할 수 없으면 `Unverifiable`입니다. 이 상태에서는 완료로 보고하거나 commit하지 마세요. 위임 중첩, 자동 사용자 호출형 skill 실행, hook 우회, 검증 전 commit을 금지합니다.
 
