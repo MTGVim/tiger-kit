@@ -91,6 +91,8 @@ feedback loop의 다섯 조건을 실제 실행으로 확인하기 전에는 가
 
 원래 증상, 근본 원인, fix, regression 증거, seam 부재 여부, cleanup, commit 또는 미commit 이유를 보고하세요. 수행 단계, 핵심 증거, 미검증 항목, 상태(`Pass | Fail | Blocked | Unverifiable`)를 receipt에 포함하세요.
 
+최소 receipt는 다음을 실제 경로·명령과 연결하세요: `Status`, `Loop`(red 결과), `Minimal reproduction`, `Hypotheses`와 반증, `Fix`, `Regression`, `Cleanup`, `Commit` 또는 미커밋 이유. 실행하지 않은 명령·관찰하지 않은 결과는 `unverified`로 표시하세요.
+
 ## DO NOT / ANTI-PATTERNS
 
 - 재현 전 추측 patch, 반증하지 않은 원인 확정, false-confidence test를 만들지 마세요.
