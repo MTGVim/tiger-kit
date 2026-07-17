@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.0.10 — Release Promotion and Resume Safety
+
+- Added an explicit promotion flow for named remote release branches with merge-tree preview and no-ff merge.
+- Added partial-success resume rules that preserve existing tags and GitHub Releases without overwriting them.
+- Added dry-run boundaries and maintainer release behavior fixtures.
+
 ## 19.0.9 — Structured Grilling and Decision Closure
 
 - Added a conversation-only `Scope`, `Constraints`, `Outputs`, and `Verification` ambiguity ledger to `tk-grill-me`.
