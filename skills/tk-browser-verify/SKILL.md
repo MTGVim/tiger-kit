@@ -25,6 +25,15 @@ Guard mode를 Verdict mode 완료 gate의 우회로 사용하지 마세요. Guar
 
 브라우저 도구를 처음 호출하기 전에 auto-launch 여부와 실제 launch configuration을 확인하세요. 자동 실행 도구는 headless와 임시·격리 profile이 configuration에서 명시적으로 확인될 때만 호출하세요. 스킬 지침, 도구 이름 또는 일반적인 provider 기본값만으로 이를 추정하지 마세요. 조건을 충족하는 대체 수단이 없으면 Verdict mode는 `Unverifiable`로 반환하고 Guard mode는 진행할 수 없는 이유를 보고하세요.
 
+## Workflow
+
+1. `mode/scope`: 입력은 요청 종류·대상·성공 조건이고, 출력은 Guard/Verdict mode와 안전한 상호작용 범위입니다.
+2. `preflight`: 입력은 mode와 디자인 기준·intent이고, 출력은 필요한 사용자 결정, 적용할 reference 축, `same | different | unclear` 상태입니다.
+3. `environment`: 입력은 실행 환경과 launch configuration이고, 출력은 사용 가능한 브라우저 수단·headless·격리 profile 확인입니다.
+4. `run/evidence`: 입력은 확인된 환경과 범위이고, 출력은 탐색·상호작용·network·최종 상태·screenshot·실제 image 검사 증거입니다.
+5. `verdict`: 입력은 runtime evidence와 성공 조건이고, 출력은 `Pass | Fail | Blocked | Unverifiable` 및 미검증 항목입니다.
+6. `receipt/cleanup`: 입력은 판정과 생성한 세션·증거이고, 출력은 필요한 receipt와 이번 실행이 만든 browser/context/window만 정리한 결과입니다.
+
 새 브라우저를 시작하면 [세션 수명주기](references/session-lifecycle.md)를 따르세요. 브라우저 자체의 최초 실행·로그인·동기화 안내는 가능한 실행 옵션으로 억제하고, 남아 있으면 로그인하지 말고 안전하게 건너뛰거나 닫으세요. 종료 시 이번 실행이 직접 만든 브라우저·컨텍스트·창만 정리하고 기존 사용자 세션은 건드리지 마세요.
 
 현재 작업에 관련된 관점만 선택하세요. [시각](references/visual.md), [동작](references/behavior.md), [환경](references/environment.md) 또는 [디자인](references/design.md)을 사용하고 [안전](references/safety.md)을 따르세요.
