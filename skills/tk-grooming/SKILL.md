@@ -14,7 +14,15 @@ metadata:
 
 사용자가 이 스킬을 명시적으로 호출할 때만 사용합니다. 자동으로 활성화하지 마세요.
 
-Workflow: `범위 확정 → discovery → 영역별 evidence → 분류/제안 → 선택적 apply → 링크·중복·frontmatter 재검증 → receipt`.
+## Workflow
+
+1. `범위 확정`: 입력은 요청 범위와 `--apply` 여부, 출력은 대상 경로와 허용 변경 범위입니다.
+2. `discovery`: 실제 존재하는 native 경로만 읽고, 출력은 네 영역의 후보 경로 목록입니다.
+3. `evidence`: 각 후보를 읽어 영역별 관찰 사실·경로·검증 상태를 출력합니다.
+4. `분류/제안`: 입력 evidence를 `keep | tighten | merge | split | move | convert | deprecate | delete | fix` 중 하나로 분류합니다.
+5. `🔴 CHECKPOINT · 🛑 STOP`: 범위·evidence·제안·허용 apply를 receipt로 요약하고 확인 전에는 변경하지 않습니다.
+6. `apply/report`: report-only면 제안과 receipt만 출력하고, apply면 확인된 범위만 수정합니다.
+7. `재검증`: apply 후 링크·중복·frontmatter를 다시 검사하고 결과·미검증·미해결 항목을 receipt로 출력합니다.
 
 기존의 네 영역, 즉 저장소 규칙, 저장소 스킬, 사용자 규칙, 사용자 스킬을 검사하세요. 실제로 존재하는 호스트 네이티브 경로를 사용하세요. [탐색](references/discovery.md)에 후보가 나열되어 있습니다. 누락된 파일을 만들거나 레거시 전역 TigerKit 상태를 검사/마이그레이션하지 마세요.
 
