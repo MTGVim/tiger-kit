@@ -16,6 +16,14 @@ metadata:
 
 현재 대화, 수정 사항, diff, 구현/테스트/검토 결과, 관련 `.tigerkit/` 산출물, 사용자가 지정한 소스를 읽으세요. 정확히 네 축, 즉 `repo rule`, `repo skill`, `user rule`, `user skill`로 분류하고 `propose | update | merge | no-op | discard` 중 하나를 선택하세요.
 
+## Workflow
+
+1. `evidence`: 입력은 대화·diff·결과·소스이고, 출력은 네 축으로 분류된 경로/명령 기반 `verified | unverified` 사실입니다.
+2. `interpretation`: 입력은 evidence이고, 출력은 사실과 분리된 재사용 가설입니다.
+3. `confidence`: 입력은 evidence와 가설이고, 출력은 `high | medium | low` 및 근거입니다.
+4. `action`: 입력은 후보와 기존 reuse map이고, 출력은 `propose | update | merge | no-op | discard` 중 하나와 초안입니다.
+5. `receipt`: 입력은 후보·승인 상태·적용 결과이고, 출력은 경로와 evidence가 연결된 `reported | applied | pending` 상태입니다.
+
 각 후보를 다음처럼 분리해 작성하세요.
 
 - `Evidence`: 실제로 관찰한 diff·결과·반복 사례와 경로/명령을 적고 `verified | unverified`를 표시하세요.
