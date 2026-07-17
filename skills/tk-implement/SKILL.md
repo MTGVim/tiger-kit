@@ -25,6 +25,10 @@ metadata:
 
 정보 출처의 우선순위는 현재 요청, 대화에서 확인된 결정, 관련 `.tigerkit/tickets.md`, 관련 `.tigerkit/spec.md`, 저장소 지침, 코드/테스트 순입니다. 기존 파일이라고 해서 자동으로 관련 있는 것은 아닙니다.
 
+## CHECKPOINT / STOP
+
+source mutation 전 조사와 전략을 확정하세요. 요구사항 충돌, 위험한 권한, UI intent 불일치 또는 필수 결정이 남으면 구현하지 말고 해당 근거와 함께 `Blocked`로 멈추세요.
+
 ## 전략 결정
 
 수정 전에 관련 코드, 테스트, 스크립트, 상태를 비파괴적으로 조사하세요. 이 단계에서는 파일을 만들거나 수정 또는 삭제하지 말고, 구현 에이전트를 실행하거나 커밋하지 마세요. context-mode, MCP, 검색, 브라우저, 샌드박스 같은 비에이전트 도구는 위임이 아니며 조사와 양쪽 실행 모드에서 사용할 수 있습니다.
@@ -60,3 +64,9 @@ TDD로 결정되면 의미 있는 공개 동작 경계를 선택하고 수직 sl
 별도 요청 없이는 push, PR 생성, merge, tag, release 또는 publish를 하지 마세요. 다른 사용자 호출형 스킬도 자동 실행하지 마세요.
 
 `## Strategy`, `## Changed`, `## Verification`, `## Commit`, 비어 있지 않은 `## Remaining risks`, `## Receipt`를 보고하세요. 파일 목록만이 아니라 동작을 설명하고, 검증 명령과 결과, 실패 분류, 커밋 메시지 또는 미커밋 이유를 포함하세요. Receipt에는 수행 단계, 핵심 증거, 미검증 항목, 상태(`Pass | Fail | Blocked | Unverifiable`)를 기록하세요.
+
+## DO NOT / ANTI-PATTERNS
+
+- 검증 전 commit, 실패가 남은 변경의 commit, push 또는 PR 생성을 하지 마세요.
+- 위임을 중첩하거나 하위 agent가 사용자 호출형 skill을 실행하게 하지 마세요.
+- UI 변경에서 browser runtime evidence를 DOM·unit test·build 성공으로 대체하지 마세요.

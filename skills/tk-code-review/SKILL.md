@@ -21,7 +21,7 @@ metadata:
 
 ## 🔴 CHECKPOINT · 🛑 STOP review 시작 경계
 
-fixed point, 전체 diff, 적용 가능한 Standards/Spec 근거를 확인하기 전에는 finding이나 verdict를 작성하지 마세요. 하나라도 확정할 수 없으면 `Unverifiable` 또는 `Blocked` receipt에서 review를 멈추세요.
+fixed point, 전체 diff, 적용 가능한 Standards/Spec 근거를 확인하기 전에는 review를 시작하거나 finding·verdict를 작성하지 마세요. fixed point나 diff에 접근할 수 없거나 사용자에게 기준점·결정이 필요하면 `Unverifiable` 또는 `Blocked` receipt에서 review를 멈추세요.
 
 ## Fixed point
 
@@ -82,3 +82,9 @@ Impact
 ```
 
 Verdict는 `Pass | Changes requested | Blocked | Unverifiable` 중 하나입니다. 수행한 축과 범위, 핵심 evidence, 미검증 항목, verdict를 receipt로 남기세요.
+
+## DO NOT / ANTI-PATTERNS
+
+- 기준점을 추정하거나 빈 diff·부분 diff를 전체 review로 통과시키지 마세요.
+- review 대상 코드를 직접 수정하거나 자동 재review하지 마세요.
+- 근거 없는 architecture 재작성과 요청 범위 밖 변경을 finding처럼 추가하지 마세요.
