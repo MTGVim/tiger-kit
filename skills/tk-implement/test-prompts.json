@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "/tk-implement 작은 설정 문구를 고쳐 주세요. 실행 모드와 TDD 여부는 정하지 않았으니 조사 후 이유를 밝히고 구현·검증·커밋까지 진행해 주세요.",
+    "expected": "source mutation 전에 조사하고 direct/no-TDD 같은 전략을 자동 결정한 뒤 변경 관련 검증이 성공할 때만 커밋하며 push하지 않는다."
+  },
+  {
+    "id": 2,
+    "prompt": "/tk-implement 사용자가 보는 반응형 폼의 제출 interaction을 수정해 주세요. 디자인 기준은 없지만 실제 browser 동작과 최종 UI를 검증해 주세요.",
+    "expected": "UI 변경으로 hybrid browser verification을 최종 단계에 적용하고 runtime screenshot·실제 이미지 검사 없이는 Complete/commit하지 않는다."
+  }
+]
