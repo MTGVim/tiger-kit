@@ -37,6 +37,10 @@ metadata:
 구현 전략: direct, TDD 미사용 — 문구 변경이며 유용한 공개 테스트 경계가 없습니다. 구현과 검증을 진행합니다.
 ```
 
+## 🔴 CHECKPOINT · 🛑 STOP 구현·commit 경계
+
+수정 시작 전에 범위, 실행 전략, TDD 여부, 검증 범위, commit 허용 여부를 확정하세요. 하나라도 미결정이면 `Blocked`로 멈추고, 최종 검증이 성공하기 전에는 commit하지 마세요.
+
 상세 판단과 위임 계약은 [위임](references/delegation.md)을 참고하세요.
 
 Figma, screenshot 또는 디자인 명세가 예상 UI의 기준이면 source mutation 전에 hybrid `tk-browser-verify`의 design intent preflight를 적용하세요. 기준과 요청이 충돌하거나 불명확하면 해당 skill의 `Blocked` 경계를 따르고, 정렬된 뒤에만 구현하세요.
