@@ -1,5 +1,10 @@
 # Changelog
 
+## 19.0.8 — Evidence Checkpoint Refinements
+
+- Tightened explicit stop boundaries for prototype execution, user decisions, review start, bug hypotheses and patches, and conflict resolution continuation.
+- Preserved truthful `Blocked`, `Unverifiable`, `Fail`, and `pending` outcomes when required evidence or user decisions are missing.
+
 ## 19.0.7 — Checkpoints and Anti-Patterns
 
 - Added explicit CHECKPOINT / STOP gates to canonical skills so missing evidence, unresolved decisions, and unsafe execution boundaries end in a truthful blocked or unverifiable state.
