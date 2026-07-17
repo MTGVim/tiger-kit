@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.0.9 — Structured Grilling and Decision Closure
+
+- Added a conversation-only `Scope`, `Constraints`, `Outputs`, and `Verification` ambiguity ledger to `tk-grill-me`.
+- Separated exact code facts from user judgment, preserved decision boundaries, and added explicit one-sentence goal approval before closure.
+- Expanded static behavior coverage for fact routing, boundary preservation, targeted reconfirmation, and closure behavior.
+
 ## 19.0.8 — Evidence Checkpoint Refinements
 
 - Tightened explicit stop boundaries for prototype execution, user decisions, review start, bug hypotheses and patches, and conflict resolution continuation.
