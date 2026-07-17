@@ -102,6 +102,7 @@ REQUIRED_RELEASE_BEHAVIOR_CASES = {
     "promote-conflict-is-blocked",
     "promote-resumes-normal-release",
     "resume-preserves-existing-artifacts",
+    "release-returns-to-main",
     "resume-blocks-on-artifact-mismatch",
     "dry-run-never-queries-or-mutates",
 }
