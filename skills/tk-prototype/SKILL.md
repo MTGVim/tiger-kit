@@ -20,6 +20,10 @@ metadata:
 
 기본적으로 커밋하지 마세요. 프로덕션용 추상화와 오류 처리에는 투자하지 마세요. 결과물이 프로덕션에 사용할 준비가 되었다고 절대 부르지 말고, 자동으로 승격하거나 다른 사용자 스킬을 호출하지도 마세요.
 
+## 🔴 CHECKPOINT · 🛑 STOP 실행 후 판정
+
+실행 결과를 보고하기 전에 명령, 실제 출력 또는 screenshot, 가짜/실제 경계, 미검증 항목을 대조하세요. 이 네 항목 중 하나라도 없거나 실행이 실패하면 `Complete`로 진행하지 말고 `Fail`, `Blocked` 또는 `Unverifiable`로 멈추세요.
+
 ## 계약
 
 프로토타입을 실제 실행하고 명령과 결과를 기록하세요. 실패하거나 확인할 수 없으면 성공으로 보고하지 말고 `Fail`, `Blocked` 또는 `Unverifiable`로 구분하며, 가짜 데이터/연동과 실제 연결을 분리하세요. receipt에는 `상태: Complete | Fail | Blocked | Unverifiable`, 실행 명령/결과, `증거`, `미검증`, `미해결 항목`, `가짜/실제 구분`, 변형 또는 하네스, `폐기/반복/후속 판단`을 포함하고 `## Tested`, `## Variants or harness`, `## Confirmed`, `## Still fake`, `## Production implication`에 매핑하세요.
