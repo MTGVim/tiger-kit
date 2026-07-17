@@ -19,6 +19,10 @@ metadata:
 
 모든 finding에는 severity, 제목, `file:line` evidence, basis, impact가 필요합니다. 일부 파일이나 축만 읽고 전체 review를 통과로 보고하지 마세요. `Pass`는 고정한 diff 전체와 적용 가능한 축을 검사했고 미검증 범위가 없을 때만 사용하세요.
 
+## 🔴 CHECKPOINT · 🛑 STOP review 시작 경계
+
+fixed point, 전체 diff, 적용 가능한 Standards/Spec 근거를 확인하기 전에는 finding이나 verdict를 작성하지 마세요. 하나라도 확정할 수 없으면 `Unverifiable` 또는 `Blocked` receipt에서 review를 멈추세요.
+
 ## Fixed point
 
 검토 전에 commit, branch, tag, `main`, merge-base 표현 또는 `HEAD~N` 형태의 fixed point를 확정하세요. 사용자가 기준점을 제공하지 않았다면 물으세요.
