@@ -35,6 +35,13 @@ metadata:
 6. `반복·종료`: 입력은 갱신된 ledger이고, 이미 답한 질문은 반복하지 않으며, 출력은 다음 단일 질문 또는 네 축이 확정된 합의 문장입니다.
 7. `합의 전 보호`: 입력은 합의 상태이고, 출력은 구현·문서 수정 없이 유지되는 `pending | aborted | Blocked` receipt입니다.
 
+## Failure paths
+
+- If 필수 source를 읽을 수 없으면 사실을 추정하지 말고 `Blocked` 또는 `Unverifiable`로 종료합니다.
+- If source 간 사실이 충돌하면 한쪽을 임의로 채택하지 말고 충돌을 표시한 단일 확인 질문으로 멈춥니다.
+- If 조사 결과가 없거나 질문에 답이 없으면 다음 질문·결정 반영 없이 `pending`으로 남깁니다.
+- If 네 축 중 하나라도 미해결이면 closure로 진행하지 말고 영향이 가장 큰 항목 하나만 질문합니다.
+
 ## 질문과 ambiguity ledger
 
 매 실행에서 대화 안에만 다음 네 축의 ledger를 유지하세요. `.tigerkit/`, spec, ticket 또는 별도 문서에 자동 기록하지 마세요.
