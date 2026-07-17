@@ -45,6 +45,13 @@ metadata:
 
 `verified`는 현재 실행에서 확인한 증거가 있을 때만 사용하세요. 이전 handoff의 주장, 계획, 모델 추론, 실행하지 않은 명령은 `unverified`로 유지하고 성공했다고 표현하지 마세요. receipt에는 무엇이 `reported`되었는지, 사용자의 명시적 승인을 받아 무엇이 `applied`되었는지, 무엇이 `pending`인지와 각 증거/미검증 항목을 구분해 적으세요. 빈 섹션은 생략하고, 기존 spec/ticket/diff 경로는 복사하지 말고 참조하세요.
 
+## Failure paths
+
+- If handoff나 현재 Git/file state를 읽을 수 없으면 쓰거나 resume하지 말고 `Unverifiable`로 종료합니다.
+- If 필수 schema 또는 사용자 결정이 없으면 `pending`으로 남기고 `confirmed`·`applied`로 표시하지 않습니다.
+- If write가 실패하면 성공 경로를 보고하지 말고 실제 경로와 함께 `Fail`을 보고합니다.
+- If 재검증에서 drift/conflict가 발견되면 `applied`로 확정하지 말고 `Blocked`로 종료합니다.
+
 ## CHECKPOINT / STOP
 
 `--resume`에서는 drift와 conflict를 대조한 뒤 사용자의 재개 확인을 받으세요. 확인 전에는 작업을 계속하거나 상태를 해결된 것으로 표시하지 말고 `pending` 또는 `Blocked`로 멈추세요.
