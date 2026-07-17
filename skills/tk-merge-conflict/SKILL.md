@@ -36,6 +36,8 @@ operation 상태, 모든 conflict hunk, 양쪽 primary source, resolution 근거
 
 각 단계에서 필수 출력이 없으면 다음 단계로 진행하지 마세요. 추가 conflict가 생기면 `conflict inventory`부터 반복하세요.
 
+최소 state receipt에는 `git status --short`, `git diff --name-only --diff-filter=U`, conflict-marker 검사, staged diff 검사, 관련 검증 명령과 결과를 실제 실행 여부와 함께 연결하세요. 이 목록은 확인할 항목이며 자동 실행을 뜻하지 않습니다.
+
 ## 실패 경로
 
 - `operation state`에서 active operation이 없으면 이 skill을 적용하지 말고 `Not applicable`로 보고하세요.
