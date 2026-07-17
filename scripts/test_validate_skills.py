@@ -4,7 +4,7 @@ import subprocess
 import tempfile
 import unittest
 
-from validate_skills import validate_runtime_scratch
+from validate_skills import validate_release_behavior_fixtures, validate_runtime_scratch
 
 
 class RuntimeScratchTest(unittest.TestCase):
@@ -48,6 +48,11 @@ class RuntimeScratchTest(unittest.TestCase):
                 validate_runtime_scratch(root),
                 [".tigerkit: remove TigerKit runtime scratch from packaged repository"],
             )
+
+
+class ReleaseFixtureTest(unittest.TestCase):
+    def test_maintainer_release_behavior_fixtures_validate(self) -> None:
+        self.assertEqual(validate_release_behavior_fixtures(), [])
 
 
 if __name__ == "__main__":

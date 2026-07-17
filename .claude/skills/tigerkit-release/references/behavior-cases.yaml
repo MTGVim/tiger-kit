@@ -1,0 +1,27 @@
+# Static contract fixtures.
+# These cases do not execute git, gh, network, or model calls.
+
+- case: normal-release-blocks-on-unresolved-release-base
+  skill: tigerkit-release
+  expect: "Normal release blocks when the latest stable tag is not an ancestor of origin/main and does not auto-select or merge another branch."
+- case: promote-requires-explicit-remote-branch
+  skill: tigerkit-release
+  expect: "Promote requires an exact remote branch argument and never discovers or guesses a candidate branch."
+- case: promote-previews-before-no-ff-merge
+  skill: tigerkit-release
+  expect: "Promote previews the branch diff and merge-tree result before using git merge --no-ff; rebase, cherry-pick, and automatic conflict resolution are not used."
+- case: promote-conflict-is-blocked
+  skill: tigerkit-release
+  expect: "A promote merge conflict stops before source mutation and reports Blocked with the conflict state."
+- case: promote-resumes-normal-release
+  skill: tigerkit-release
+  expect: "After a verified promote merge, full verification runs again and the normal version, commit, push, tag, and Release flow resumes in the same run."
+- case: resume-preserves-existing-artifacts
+  skill: tigerkit-release
+  expect: "An existing correct tag or Release is treated as a completed checkpoint and is never recreated, moved, deleted, or overwritten."
+- case: resume-blocks-on-artifact-mismatch
+  skill: tigerkit-release
+  expect: "A tag or Release pointing to a different version or commit blocks without destructive repair."
+- case: dry-run-never-queries-or-mutates
+  skill: tigerkit-release
+  expect: "Dry-run evaluates only the supplied scenario, performs no repository or remote query or mutation, and reports the planned steps and stop conditions."

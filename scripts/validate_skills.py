@@ -94,6 +94,17 @@ REQUIRED_BEHAVIOR_CASES = {
     "grooming-defaults-report-only",
     "legacy-global-state-is-not-scanned",
 }
+RELEASE_BEHAVIOR_FIXTURE = ROOT / ".claude" / "skills" / "tigerkit-release" / "references" / "behavior-cases.yaml"
+REQUIRED_RELEASE_BEHAVIOR_CASES = {
+    "normal-release-blocks-on-unresolved-release-base",
+    "promote-requires-explicit-remote-branch",
+    "promote-previews-before-no-ff-merge",
+    "promote-conflict-is-blocked",
+    "promote-resumes-normal-release",
+    "resume-preserves-existing-artifacts",
+    "resume-blocks-on-artifact-mismatch",
+    "dry-run-never-queries-or-mutates",
+}
 
 
 def scalar(value: str) -> object:
@@ -444,6 +455,30 @@ def validate_eval_fixtures() -> list[str]:
     return errors
 
 
+def validate_release_behavior_fixtures() -> list[str]:
+    errors: list[str] = []
+    path = RELEASE_BEHAVIOR_FIXTURE
+    if not path.is_file():
+        return [f"{path.relative_to(ROOT)}: add maintainer release behavior fixtures"]
+    text = path.read_text(encoding="utf-8")
+    if "Static contract fixtures." not in text or "do not execute git" not in text:
+        errors.append(f"{path.relative_to(ROOT)}: describe static non-executing fixtures")
+    entries, duplicates = parse_behavior_cases(path)
+    if duplicates:
+        errors.append(f"{path.relative_to(ROOT)}: duplicate cases: {', '.join(sorted(set(duplicates)))}")
+    cases = {entry.get("case", "") for entry in entries}
+    missing = sorted(REQUIRED_RELEASE_BEHAVIOR_CASES - cases)
+    if missing:
+        errors.append(f"{path.relative_to(ROOT)}: missing required cases: {', '.join(missing)}")
+    for index, entry in enumerate(entries, 1):
+        missing_fields = [field for field in ("case", "skill", "expect") if not entry.get(field)]
+        if missing_fields:
+            errors.append(f"{path.relative_to(ROOT)}: entry {index} missing fields: {', '.join(missing_fields)}")
+        if entry.get("skill") != "tigerkit-release":
+            errors.append(f"{path.relative_to(ROOT)}: {entry.get('case', index)} must use skill tigerkit-release")
+    return errors
+
+
 def main() -> int:
     if len(sys.argv) > 1 and sys.argv[1] == "--links-only":
         link_errors = validate_repo_links()
@@ -468,6 +503,7 @@ def main() -> int:
     errors.extend(validate_repository_contract())
     errors.extend(validate_repo_links())
     errors.extend(validate_eval_fixtures())
+    errors.extend(validate_release_behavior_fixtures())
     for path in paths:
         skill_errors, skill_warnings = validate_skill(path)
         errors.extend(skill_errors)
