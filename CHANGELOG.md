@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.0.11 — Canonical Skill Workflow Optimization
+
+- Improved all 13 canonical skills with clearer workflow inputs, outputs, checkpoints, failure states, and verification receipts.
+- Added Darwin evaluation prompt fixtures for each canonical skill to support repeatable quality checks.
+- Preserved explicit invocation boundaries, mutation safety, and no-repeat decision guards while tightening implementation and conflict-resolution verification.
+
 ## 19.0.10 — Release Promotion and Resume Safety
 
 - Added an explicit promotion flow for named remote release branches with merge-tree preview and no-ff merge.
