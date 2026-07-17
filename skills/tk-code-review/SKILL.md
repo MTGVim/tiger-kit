@@ -30,14 +30,6 @@ metadata:
 
 각 단계의 출력이 없거나 diff가 비어 있으면 다음 단계로 진행하지 마세요. Spec source가 없을 때는 Spec 축을 생략했다는 사실을 receipt에 남기고, 해당 축을 통과했다고 표현하지 마세요.
 
-## 실패 경로
-
-- fixed point가 resolve되지 않으면 ref를 추정하거나 review를 시작하지 말고, 사용자가 준 범위에서 다시 확인할 수 있는 ref와 실패한 명령을 `Unverifiable`로 보고하세요.
-- fixed point가 유효하지만 diff가 비어 있으면 branch·`HEAD`·log를 재확인한 뒤에도 비어 있는 경우 `review할 변경 없음`으로 종료하세요. 빈 diff를 `Pass`로 바꾸지 마세요.
-- Standards 또는 Spec 근거를 읽을 수 없으면 확인한 source와 누락된 source를 분리해 기록하고, 그 축의 verdict를 `Unverifiable` 또는 `spec 없음`으로 남기세요.
-- finding의 line이 stale이거나 evidence·basis·impact 중 하나가 없으면 해당 finding을 확정하지 말고 현재 diff에서 line과 근거를 다시 맞추세요.
-- 위 재확인 뒤에도 필수 출력이 없으면 자동으로 범위를 줄이거나 verdict를 `Pass`로 완화하지 말고 receipt에 미검증 범위를 남기세요.
-
 ## 🔴 CHECKPOINT · 🛑 STOP review 시작 경계
 
 fixed point, 전체 diff, 적용 가능한 Standards/Spec 근거를 확인하기 전에는 review를 시작하거나 finding·verdict를 작성하지 마세요. fixed point나 diff에 접근할 수 없거나 사용자에게 기준점·결정이 필요하면 `Unverifiable` 또는 `Blocked` receipt에서 review를 멈추세요.
