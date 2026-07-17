@@ -17,7 +17,14 @@ metadata:
 
 소스 우선순위: 사용자가 지정한 소스, 현재 대화, `.tigerkit/spec.md`, 요청, 관련 코드 순입니다.
 
-Workflow: `source 요구사항 추출 → vertical slice → 인수 기준·검증 → traceability·의존성 → write/report receipt`.
+## Workflow
+
+1. `source 요구사항 추출`: 입력은 우선순위가 정해진 소스이고, 출력은 요구사항별 원문 위치와 `confirmed | unverified | conflict` 상태입니다.
+2. `vertical slice`: 입력은 확인된 요구사항이고, 출력은 독립 목표·범위·동작·테스트를 함께 가진 티켓 후보입니다.
+3. `인수 기준·검증`: 입력은 티켓 후보이고, 출력은 관찰 가능한 인수 기준과 실행할 검증 명령 또는 증거입니다.
+4. `traceability·의존성`: 입력은 티켓과 source map이고, 출력은 요구사항 연결, 선행 티켓, 미해결 분할 문제입니다.
+5. `checkpoint`: 입력은 분할 근거·traceability·충돌 목록이고, 출력은 쓰기 가능 여부 또는 `Unresolved split report | Blocked | Unverifiable`입니다.
+6. `write/report receipt`: 입력은 checkpoint를 통과한 티켓과 경로이고, 출력은 작성된 경로 또는 report-only receipt입니다.
 
 사용자가 지정한 경로 또는 `.tigerkit/tickets.md`에 `# <Feature> Tickets` 형식으로 작성하세요. `.tigerkit/`에 출력할 때는 필요할 때만 상위 디렉터리를 만들고, 가능하면 임시 파일에 쓴 뒤 이름을 바꾸며, 절대 타임스탬프 아카이브를 생성하거나 `.gitignore`를 수정하지 말고, 임시 경로가 무시되지 않으면 경고하세요. 구현하거나 원격 트래커에 게시하지 마세요.
 
