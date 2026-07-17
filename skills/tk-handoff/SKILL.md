@@ -14,6 +14,21 @@ metadata:
 
 사용자가 이 스킬을 명시적으로 호출할 때만 사용합니다. 자동으로 활성화하거나 다른 사용자 호출형 스킬을 호출하지 마세요.
 
+## Workflow
+
+새 작성은 다음 순서로 진행하세요.
+
+1. `evidence`: 입력은 현재 브랜치·파일·명령 결과이고, 출력은 경로가 붙은 확인 사실과 `verified | unverified` 목록입니다.
+2. `schema`: 입력은 확인 사실과 사용자의 승인이고, 출력은 필수 섹션별 초안과 `confirmed | pending` 결정 목록입니다.
+3. `write`: 입력은 승인된 초안과 출력 경로이고, 출력은 실제로 작성된 파일 경로입니다.
+4. `receipt`: 입력은 작성 결과와 재검증 결과이고, 출력은 `reported | applied | pending` 및 증거 위치가 구분된 인수인계입니다.
+
+재개는 다음 순서로 진행하세요.
+
+1. `state check`: 입력은 기존 인수인계와 현재 Git·파일 상태이고, 출력은 일치 항목과 `drift | conflict` 목록입니다.
+2. `checkpoint`: 입력은 drift/conflict 목록이고, 출력은 사용자에게 필요한 재개 확인 또는 `pending | Blocked` 상태입니다.
+3. `continue or stop`: 입력은 명시적 확인이고, 출력은 계속할 작업 또는 중단 사유입니다.
+
 ## 계약
 
 작성: `evidence → schema → write → receipt`. 재개: `현재 상태 대조 → drift/conflict 표시 → 명시적 확인 → 계속 또는 중단`.
