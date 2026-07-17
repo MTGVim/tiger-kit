@@ -53,9 +53,9 @@ TDD로 결정되면 의미 있는 공개 동작 경계를 선택하고 수직 sl
 
 사용자에게 보이는 UI, layout, styling, responsive behavior, interaction, navigation, form submission 또는 browser network/final state가 변경되면, 사용자가 browser 검증을 명시적으로 금지하지 않은 한 hybrid `tk-browser-verify`를 별도 승인 없이 최종 검증 단계에 자동 적용하세요. DOM, accessibility tree, unit test 또는 build 성공만으로 대체하지 말고 해당 skill의 runtime screenshot과 실제 image 검사 계약을 따르세요. 안전한 실행 환경이나 필수 증거가 없으면 `Unverifiable`이며 완료로 보고하거나 commit하지 마세요.
 
-구현 중 focused test, 관련 정적 검사, build 또는 필요한 브라우저·통합 검증을 적절한 간격으로 반복하세요. 완료 후 비용과 환경이 허용하는 가장 넓은 관련 검증을 한 번 실행하세요. 실패를 `change-related`, `pre-existing`, `environment`, `unverifiable`로 분류하고, 변경 관련 실패가 남으면 커밋하지 마세요.
+각 구현 slice 직후 focused test와 관련 정적 검사·build·필요한 브라우저/통합 검증을 실행하고, 다음 slice로 넘어가기 전에 결과를 확인하세요. 모든 slice가 끝나면 실행 가능한 가장 넓은 관련 검증을 한 번 실행하세요. 실패를 `change-related`, `pre-existing`, `environment`, `unverifiable`로 분류하고, 변경 관련 실패가 남으면 커밋하지 마세요.
 
-고위험 변경에만 독립 reviewer 한 명을 고려하세요. 최대 범위는 review 1회, fix 1회, regression verification 1회입니다. [리뷰 경계](references/review-boundary.md)를 참고하세요.
+인증·결제·개인정보·권한·마이그레이션·데이터 손실·동시성·공개 API·대규모 구조 변경 또는 테스트하지 않은 고위험 변경이면 독립 reviewer 한 명을 실행하세요. 그 밖의 변경은 review를 생략하고 이유를 report에 기록하세요. 최대 범위는 review 1회, fix 1회, regression verification 1회입니다. [리뷰 경계](references/review-boundary.md)를 참고하세요.
 
 ## 커밋과 보고
 

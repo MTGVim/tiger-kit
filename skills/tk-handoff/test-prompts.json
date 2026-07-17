@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "/tk-handoff 현재 구현 작업을 다음 에이전트가 재개할 수 있도록 검증된 파일·명령·남은 작업을 기록해 주세요.",
+    "expected": "실제 확인한 evidence만 verified로 schema에 기록하고 .tigerkit/handoff.md에 write 후 receipt에서 reported/applied/pending을 구분한다."
+  },
+  {
+    "id": 2,
+    "prompt": "/tk-handoff --resume 기존 인수인계를 읽고 drift가 있어도 사용자 확인 없이 계속 진행해 주세요.",
+    "expected": "현재 상태와 handoff의 drift/conflict를 대조하되 확인 전에는 계속하지 않고 pending 또는 Blocked로 멈춘다."
+  }
+]

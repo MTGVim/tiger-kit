@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "/tk-to-spec 현재 대화와 관련 코드로 구현 명세를 작성해 주세요. 한 요구사항의 사용자 결정과 코드 동작이 충돌하므로 충돌을 숨기지 마세요.",
+    "expected": "source map을 만들고 사실·결정·가정·충돌을 분리하며 충돌이 남으면 Ready로 저장하지 않고 Draft/Blocked receipt를 낸다."
+  },
+  {
+    "id": 2,
+    "prompt": "/tk-to-spec --print-only 확정된 목표·범위·인수 기준·검증이 있는 입력으로 명세를 출력해 주세요. 티켓이나 코드는 만들지 마세요.",
+    "expected": "필수 요소와 traceability를 확인한 뒤 print-only 결과와 receipt를 내고 인터뷰·티켓 생성·구현·게시를 섞지 않는다."
+  }
+]

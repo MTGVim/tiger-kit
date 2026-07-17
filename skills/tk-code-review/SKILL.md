@@ -19,6 +19,17 @@ metadata:
 
 모든 finding에는 severity, 제목, `file:line` evidence, basis, impact가 필요합니다. 일부 파일이나 축만 읽고 전체 review를 통과로 보고하지 마세요. `Pass`는 고정한 diff 전체와 적용 가능한 축을 검사했고 미검증 범위가 없을 때만 사용하세요.
 
+## Workflow
+
+1. `fixed point`: 입력은 사용자의 review 범위와 저장소 ref이고, 출력은 검증된 기준 commit입니다.
+2. `diff inventory`: 입력은 기준 commit과 `HEAD`이고, 출력은 전체 diff·변경 파일·범위 log입니다.
+3. `standards evidence`: 입력은 전체 diff와 저장소 지침이고, 출력은 적용 가능한 Standards 근거와 축별 findings입니다.
+4. `spec evidence`: 입력은 전체 diff와 우선순위에 따른 spec/ticket source이고, 출력은 적용 가능한 Spec 근거·누락·위반 findings 또는 `spec 없음` 판정입니다.
+5. `axis verdict`: 입력은 Standards와 Spec 결과이고, 출력은 두 축을 합치지 않은 상태별 verdict입니다.
+6. `receipt`: 입력은 fixed point, 검사 범위, findings, 미검증 항목이고, 출력은 `Fixed point / Standards / Spec / Verdict` 보고서입니다.
+
+각 단계의 출력이 없거나 diff가 비어 있으면 다음 단계로 진행하지 마세요. Spec source가 없을 때는 Spec 축을 생략했다는 사실을 receipt에 남기고, 해당 축을 통과했다고 표현하지 마세요.
+
 ## 🔴 CHECKPOINT · 🛑 STOP review 시작 경계
 
 fixed point, 전체 diff, 적용 가능한 Standards/Spec 근거를 확인하기 전에는 review를 시작하거나 finding·verdict를 작성하지 마세요. fixed point나 diff에 접근할 수 없거나 사용자에게 기준점·결정이 필요하면 `Unverifiable` 또는 `Blocked` receipt에서 review를 멈추세요.

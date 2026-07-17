@@ -31,10 +31,10 @@ npx skills add MTGVim/tiger-kit \
   --skill tk-browser-verify
 ```
 
-변경되지 않는 `v19.0.10` snapshot:
+변경되지 않는 `v19.0.11` snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v19.0.10" \
+npx skills add "MTGVim/tiger-kit#v19.0.11" \
   --global \
   --agent claude-code \
   --agent codex \

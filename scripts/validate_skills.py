@@ -102,6 +102,7 @@ REQUIRED_RELEASE_BEHAVIOR_CASES = {
     "promote-conflict-is-blocked",
     "promote-resumes-normal-release",
     "resume-preserves-existing-artifacts",
+    "release-returns-to-main",
     "resume-blocks-on-artifact-mismatch",
     "dry-run-never-queries-or-mutates",
 }
@@ -306,7 +307,7 @@ def validate_repository_contract() -> list[str]:
     required_text = {
         "README.md": (
             "TigerKit 19",
-            "v19.0.10",
+            "v19.0.11",
             "13",
             "Claude Code",
             "Codex",
@@ -321,7 +322,7 @@ def validate_repository_contract() -> list[str]:
             "hybrid",
             "CONTEXT.md",
         ),
-        "CHANGELOG.md": ("19.0.10", "13", "hybrid", "v18.0.4"),
+        "CHANGELOG.md": ("19.0.11", "13", "hybrid", "v18.0.4"),
         "NOTICE.md": (
             "mattpocock/skills",
             "relationship: adapted",

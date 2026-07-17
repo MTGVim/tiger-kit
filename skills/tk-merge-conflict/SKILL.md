@@ -22,19 +22,27 @@ merge, rebase, cherry-pick 또는 revert가 실제로 진행 중이고 active co
 
 operation 상태, 모든 conflict hunk, 양쪽 primary source, resolution 근거를 확인하기 전에는 파일을 확정하거나 stage·continue·abort하지 마세요. 근거가 부족하고 operation 목표·primary source로도 선택할 수 없으면 `Blocked`로 멈추세요. 요구가 양립하지 않더라도 근거로 선택할 수 있으면 trade-off를 기록하고 절차를 계속하세요.
 
-## 절차
+## Workflow
 
-1. 현재 operation 상태를 확인하세요.
-2. conflict 파일과 hunk를 나열하세요.
-3. 양쪽 primary source를 조사하세요.
-4. 각 side의 의도를 파악하세요.
-5. 근거에 따라 hunk를 해결하세요.
-6. 관련 없는 변경을 제거하세요.
-7. 해결 파일을 stage하세요.
-8. 관련 검사를 실행하세요.
-9. merge commit 또는 현재 operation의 continue를 수행하세요.
-10. 추가 conflict가 생기면 반복하세요.
-11. operation 종료와 unmerged path 부재를 확인하세요.
+각 단계의 출력이 다음 단계의 입력이 되도록 진행하세요.
+
+1. `operation state`: 입력은 현재 저장소와 사용자의 conflict 요청이고, 출력은 진행 중인 operation 종류와 상태입니다.
+2. `conflict inventory`: 입력은 operation 상태이고, 출력은 conflict 파일·hunk·index의 unmerged 항목 목록입니다.
+3. `intent evidence`: 입력은 각 conflict hunk와 양쪽 primary source이고, 출력은 양쪽 의도와 resolution 근거입니다.
+4. `resolution`: 입력은 hunk별 근거와 operation 목표이고, 출력은 관련 없는 변경 없이 수정된 conflict 파일입니다.
+5. `stage and verify`: 입력은 수정된 파일과 관련 검증 기준이고, 출력은 marker 제거·unmerged 항목 해소·stage 및 검증 결과입니다.
+6. `continue`: 입력은 검증된 index와 현재 operation이고, 출력은 merge commit 또는 operation의 continue 결과입니다.
+7. `receipt`: 입력은 최종 operation 상태와 검증 결과이고, 출력은 종료 여부·남은 conflict·후속 작업을 포함한 상태 보고입니다.
+
+각 단계에서 필수 출력이 없으면 다음 단계로 진행하지 마세요. 추가 conflict가 생기면 `conflict inventory`부터 반복하세요.
+
+## 실패 경로
+
+- `operation state`에서 active operation이 없으면 이 skill을 적용하지 말고 `Not applicable`로 보고하세요.
+- `conflict inventory` 또는 `intent evidence`를 완성할 수 없으면 파일을 stage하거나 수정하지 말고, 빠진 상태·hunk·primary source를 `Unverifiable` 또는 `Blocked`로 보고하세요.
+- resolution이 끝난 뒤에도 marker 또는 unmerged 항목이 남거나 stage가 실패하면 continue하지 마세요. `git status`와 index를 다시 확인하고 실패한 명령·남은 경로·검증 결과를 `Fail`로 보고하세요.
+- 관련 검증을 실행할 수 없으면 검증을 통과로 표시하지 말고 필요한 명령·권한·환경을 `Unverifiable`로 남기세요.
+- continue가 실패하거나 새 conflict를 만들면 operation 종료를 주장하지 말고 실패 출력과 새 inventory를 수집한 뒤 `conflict inventory`부터 반복하세요.
 
 Primary source는 commit message, 관련 issue/PR, spec/ticket, 주변 test, 각 branch의 기존 동작입니다. 가능한 경우 양쪽 의도를 모두 보존하세요. 양립할 수 없으면 현재 operation 목표와 근거에 따라 선택하고 trade-off를 보고하세요. 새로운 동작을 임의로 만들지 마세요.
 

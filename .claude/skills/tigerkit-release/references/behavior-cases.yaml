@@ -19,6 +19,9 @@
 - case: resume-preserves-existing-artifacts
   skill: tigerkit-release
   expect: "An existing correct tag or Release is treated as a completed checkpoint and is never recreated, moved, deleted, or overwritten."
+- case: release-returns-to-main
+  skill: tigerkit-release
+  expect: "Only after commit push, remote tag, GitHub Release, and final verification succeed, a clean worktree switches to local main; dirty worktrees or switch failures are preserved and reported Partial without destructive cleanup."
 - case: resume-blocks-on-artifact-mismatch
   skill: tigerkit-release
   expect: "A tag or Release pointing to a different version or commit blocks without destructive repair."

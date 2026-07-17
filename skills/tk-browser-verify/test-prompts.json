@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "로컬 앱에서 사용자가 보는 결제 전 확인 화면의 버튼 문구를 바꿨습니다. 데스크톱과 모바일에서 레이아웃·상호작용·최종 상태를 확인하고 판정 receipt를 만들어 주세요. 실제 결제나 외부 발송은 하지 마세요.",
+    "expected": "지속적인 사용자 노출 UI 변경으로 Verdict mode를 선택하고, launch configuration과 안전 범위를 확인한 뒤 runtime screenshot 및 실제 이미지 검사를 포함한 Pass/Fail/Unverifiable receipt를 낸다."
+  },
+  {
+    "id": 2,
+    "prompt": "커밋하지 않을 임시 HTML form에서 hover와 focus 상태만 탐색해 보고 싶습니다. 앱 source는 바꾸지 않고 브라우저 환경이 안전한지 확인해 주세요.",
+    "expected": "Guard mode를 선택하고 필요한 최소 검증만 수행하며, 공식 verdict·responsive matrix·지속 source 변경을 불필요하게 만들지 않는다."
+  }
+]

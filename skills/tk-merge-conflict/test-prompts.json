@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "현재 rebase 중 두 파일에 conflict가 있습니다. 양쪽 source와 관련 테스트를 읽어 의도를 비교하고, 근거가 충분한 hunk만 해결한 뒤 검증·continue까지 해 주세요.",
+    "expected": "active operation, unmerged 목록, 모든 marker, 양쪽 primary source를 확인한 뒤 근거를 기록하고 stage·검증·continue·종료 상태까지 확인한다."
+  },
+  {
+    "id": 2,
+    "prompt": "conflict는 없지만 두 파일의 일반 수정이 필요합니다. tk-merge-conflict로 처리해 주세요.",
+    "expected": "active conflict가 없으므로 skill을 적용하지 않고 일반 수정 경로를 사용하라고 안내한다."
+  }
+]
