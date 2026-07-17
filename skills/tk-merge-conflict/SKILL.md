@@ -36,6 +36,14 @@ operation 상태, 모든 conflict hunk, 양쪽 primary source, resolution 근거
 
 각 단계에서 필수 출력이 없으면 다음 단계로 진행하지 마세요. 추가 conflict가 생기면 `conflict inventory`부터 반복하세요.
 
+## 실패 경로
+
+- `operation state`에서 active operation이 없으면 이 skill을 적용하지 말고 `Not applicable`로 보고하세요.
+- `conflict inventory` 또는 `intent evidence`를 완성할 수 없으면 파일을 stage하거나 수정하지 말고, 빠진 상태·hunk·primary source를 `Unverifiable` 또는 `Blocked`로 보고하세요.
+- resolution이 끝난 뒤에도 marker 또는 unmerged 항목이 남거나 stage가 실패하면 continue하지 마세요. `git status`와 index를 다시 확인하고 실패한 명령·남은 경로·검증 결과를 `Fail`로 보고하세요.
+- 관련 검증을 실행할 수 없으면 검증을 통과로 표시하지 말고 필요한 명령·권한·환경을 `Unverifiable`로 남기세요.
+- continue가 실패하거나 새 conflict를 만들면 operation 종료를 주장하지 말고 실패 출력과 새 inventory를 수집한 뒤 `conflict inventory`부터 반복하세요.
+
 Primary source는 commit message, 관련 issue/PR, spec/ticket, 주변 test, 각 branch의 기존 동작입니다. 가능한 경우 양쪽 의도를 모두 보존하세요. 양립할 수 없으면 현재 operation 목표와 근거에 따라 선택하고 trade-off를 보고하세요. 새로운 동작을 임의로 만들지 마세요.
 
 사용자의 명시적 conflict 해결 요청은 현재 operation 완료까지 허용한 것으로 봅니다. 단, 다음은 자동 실행하지 마세요.
