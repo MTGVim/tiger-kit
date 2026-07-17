@@ -29,6 +29,10 @@ metadata:
 
 receipt는 `reported | applied | pending`을 구분하세요. 승인 전 후보와 적용은 `pending`, 보고만 한 결과는 `reported`, 명시적 승인 후 실제 파일에 반영한 결과만 `applied`로 기록하고 경로와 evidence를 남기세요. 사용자가 중단하면 `aborted`, 충돌 또는 적용 범위가 불명확하면 `Blocked`로 보고하세요.
 
+## 🔴 CHECKPOINT · 🛑 STOP 적용 경계
+
+후보를 DESIGN, reuse map, rule 또는 skill에 기록하거나 실제 파일에 적용하기 전에 사용자의 별도 승인을 확인하세요. 승인이 없으면 후보는 `reported` 또는 `pending`으로만 남기고 파일을 쓰지 마세요.
+
 기본적으로 파일을 수정하거나 원장/ID를 만들지 말고, 레거시 전역 상태를 탐색하거나 일회성 우회책을 일반화하지 마세요. 별도 명시적 동의가 있더라도 원시 자격 증명/로그/스크린샷을 규칙이나 스킬 후보로 그대로 승격하지 마세요.
 
 비어 있지 않은 각 후보에 대해 대상, 작업, 학습 내용, `Evidence`, `Interpretation`, confidence, 이 대상인 이유, action, 초안, receipt를 보고하세요.
