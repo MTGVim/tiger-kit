@@ -32,7 +32,7 @@ metadata:
 3. `미해결 식별`: 입력은 사실과 네 축 ledger이고, 출력은 사용자가 결정해야 할 Scope·Constraints·Outputs·Verification 항목입니다.
 4. `질문`: 입력은 미해결 항목이고, 출력은 가장 영향이 큰 단일 `권고 / 근거 / 질문`입니다.
 5. `답변 반영`: 입력은 사용자의 답변이고, 출력은 보존된 Decision/Constraints/Out of scope/Outputs/Verification과 갱신된 ledger입니다.
-6. `반복·종료`: 입력은 갱신된 ledger이고, 출력은 다음 단일 질문 또는 네 축이 확정된 합의 문장입니다.
+6. `반복·종료`: 입력은 갱신된 ledger이고, 이미 답한 질문은 반복하지 않으며, 출력은 다음 단일 질문 또는 네 축이 확정된 합의 문장입니다.
 7. `합의 전 보호`: 입력은 합의 상태이고, 출력은 구현·문서 수정 없이 유지되는 `pending | aborted | Blocked` receipt입니다.
 
 ## 질문과 ambiguity ledger
