@@ -23,6 +23,16 @@ metadata:
 
 변경 관련 실패가 남으면 `Fail`, 필요한 입력·권한·결정이 없어 진행할 수 없으면 `Blocked`, 검증을 시도했지만 증거를 확보할 수 없으면 `Unverifiable`입니다. 이 상태에서는 완료로 보고하거나 commit하지 마세요. 위임 중첩, 자동 사용자 호출형 skill 실행, hook 우회, 검증 전 commit을 금지합니다.
 
+## Workflow I/O map
+
+| Stage | Input → output |
+|---|---|
+| `understand / inspect` | 요청·source·상태 → 범위, 영향 경로, 확인된 제약 |
+| `resolve strategy` | 범위·제약 → `direct | delegated`, `tdd | no-tdd`와 선택 근거 |
+| `implement` | 전략·작업 slice → 변경 파일과 slice별 동작 |
+| `incremental / final verification` | 변경 slice → 명령·결과·실패 분류 |
+| `review / commit / report` | 위험도·검증 diff → reviewer 결과, commit 또는 미커밋 receipt |
+
 정보 출처의 우선순위는 현재 요청, 대화에서 확인된 결정, 관련 `.tigerkit/tickets.md`, 관련 `.tigerkit/spec.md`, 저장소 지침, 코드/테스트 순입니다. 기존 파일이라고 해서 자동으로 관련 있는 것은 아닙니다.
 
 ## CHECKPOINT / STOP
