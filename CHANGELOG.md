@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.0.12 — Release Checkpoint and Validation Hardening
+
+- Added explicit STOP checkpoints before remote changes, Promote integration, release mutations, and post-release main cleanup.
+- Hardened the maintainer release fixtures and validator contract for promotion, resume, dry-run, and post-release branch reconciliation.
+- Preserved the 13 canonical skill distribution and runtime-neutral release workflow.
+
 ## 19.0.11 — Canonical Skill Workflow Optimization
 
 - Improved all 13 canonical skills with clearer workflow inputs, outputs, checkpoints, failure states, and verification receipts.
