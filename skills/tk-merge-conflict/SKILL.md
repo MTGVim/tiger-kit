@@ -18,6 +18,10 @@ merge, rebase, cherry-pick 또는 revert가 실제로 진행 중이고 active co
 
 `Pass`는 모든 marker 제거, unmerged 항목 해소, stage, 관련 검증 실행, operation 완료가 확인된 경우에만 사용하세요. 검증하지 않은 상태나 conflict 파일만 수정한 상태를 완료로 보고하지 마세요.
 
+## 🔴 CHECKPOINT · 🛑 STOP resolution·continue 경계
+
+operation 상태, 모든 conflict hunk, 양쪽 primary source, resolution 근거를 확인하기 전에는 파일을 확정하거나 stage·continue·abort하지 마세요. 근거가 부족하거나 의도가 충돌하면 `Blocked`로 멈추고 필요한 결정을 보고하세요.
+
 ## 절차
 
 1. 현재 operation 상태를 확인하세요.
