@@ -23,10 +23,12 @@ metadata:
 2. `source map`: 입력은 소스와 주장이고, 출력은 각 주장의 출처 위치와 `verified | unverified` 상태입니다.
 3. `분리·ID`: 입력은 source map이고, 출력은 사실·결정·가정·미해결 충돌 목록과 안정적인 requirement/acceptance ID입니다.
 4. `Ready gate`: 입력은 목록과 필수 요소이고, 출력은 `Ready | Draft | Blocked | Unverifiable` 판정 및 누락 근거입니다.
-5. `write/print`: 입력은 gate를 통과한 명세와 출력 모드이고, 출력은 실제 경로 또는 print-only 결과입니다.
+5. `write/print·verify`: 입력은 gate 판정과 출력 모드이고, 출력은 실제 경로 또는 print-only 결과와 재검증된 필수 요소·source map·ID입니다.
 6. `receipt`: 입력은 작성/출력 및 검증 결과이고, 출력은 경로·상태·source map·미검증·충돌·검증을 연결한 receipt입니다.
 
 사용자가 지정한 경로에 쓰거나, 출력 전용이면 결과만 출력하고, 그 외에는 `.tigerkit/spec.md`에 작성하세요. 기존 명세가 같은 작업을 다룬다면 유효한 결정을 유지하고, 그렇지 않으면 아카이브 없이 교체하세요. `.tigerkit/`에 출력할 때는 필요할 때만 상위 디렉터리를 만들고, 가능하면 같은 디렉터리의 임시 파일에 쓴 뒤 이름을 바꾸며, 절대 `.gitignore`를 수정하지 말고, 임시 경로가 무시되지 않으면 짧게 경고하세요.
+
+파일 출력 전 기존 대상 상태를 보존하고, write/rename 후 다시 읽어 gate 판정·source map·requirement/acceptance ID가 작성안과 일치하는지 확인하세요. write 또는 재검증이 실패하면 `Ready`·완료로 보고하지 말고 손상되지 않은 기존 대상을 유지하세요. 이번 실행의 변경만 정확히 복원·재검증할 수 없으면 추가 쓰기를 중단하고 `Fail | Unverifiable`와 실패 경로를 receipt에 남기세요.
 
 ## 계약
 
