@@ -30,7 +30,7 @@ Guard mode를 Verdict mode 완료 gate의 우회로 사용하지 마세요. Guar
 1. `mode/scope`: 입력은 요청 종류·대상·성공 조건이고, 출력은 Guard/Verdict mode와 안전한 상호작용 범위입니다.
 2. `preflight`: 입력은 mode와 디자인 기준·intent이고, 출력은 필요한 사용자 결정, 적용할 reference 축, `same | different | unclear` 상태입니다.
 3. `environment`: 입력은 실행 환경과 launch configuration이고, 출력은 사용 가능한 브라우저 수단·headless·격리 profile 확인입니다.
-4. `run/evidence`: 입력은 확인된 환경과 범위이고, 출력은 탐색·상호작용·network·최종 상태·screenshot·실제 image 검사 및 조건부 keyboard/focus/semantic 증거입니다.
+4. `run/evidence`: 입력은 확인된 환경과 범위이고, 출력은 대상 identity·안전한 사전 상태와 탐색·상호작용·network·최종 상태·screenshot·실제 image 검사 및 조건부 keyboard/focus/semantic 증거입니다.
 5. `verdict`: 입력은 runtime evidence와 성공 조건이고, 출력은 `Pass | Fail | Blocked | Unverifiable` 및 미검증 항목입니다.
 6. `receipt/cleanup`: 입력은 판정과 생성한 세션·증거이고, 출력은 필요한 receipt와 이번 실행이 만든 browser/context/window만 정리한 결과입니다.
 
@@ -59,6 +59,8 @@ Figma, screenshot 또는 디자인 명세가 기준으로 주어지면 탐색이
 `design intent preflight → 필요 시 사용자 확인 → 환경 확인 → 탐색 → 상호작용 → UI 전환 관찰 → network 확인 → final state 확인 → screenshot capture → 실제 image 검사 → 판정` 순서를 지키세요. intent가 `same`이면 불필요한 재확인 없이 runtime 검증으로 진행하세요. DOM, accessibility tree, network 성공, 예상 유사성은 screenshot과 실제 시각 검사를 대체하지 않습니다.
 
 Intent preflight의 미결정 `Blocked`는 browser session 전 의사결정 상태입니다. browser를 시작하지 않았으므로 screenshot을 요구하거나 screenshot 부재를 이유로 `Unverifiable`로 바꾸지 말고 `## Alignment` decision receipt를 남기세요. browser session이 시작된 뒤의 성공·실패·runtime 차단 terminal state에는 screenshot capture와 실제 image 검사가 모두 필요합니다. 필요한 viewport와 breakpoint 경계를 검사하지 못했거나 runtime screenshot을 캡처·분석하지 못하면 `Pass`가 아니라 `Unverifiable`입니다. 관찰된 요구사항 위반은 `Fail`, preflight에 필요한 사용자 결정이 없으면 `Blocked`, 안전한 실행 권한이나 환경이 없어 runtime 증거를 만들 수 없으면 `Unverifiable`입니다.
+
+Browser 연결 중단, page crash, navigation timeout 또는 성공 조건에 없는 route/tab 변경으로 흐름이 끊기면 그 실행의 부분 증거를 판정에 합치지 마세요. 같은 대상·환경·안전한 사전 상태를 다시 확인할 수 있을 때만 새 흐름으로 한 번 재시도하고, 그렇지 않으면 Verdict mode는 `Unverifiable`, Guard mode는 진행하지 못한 범위를 보고하세요. 중단 여부와 관계없이 owned resource cleanup은 시도하고 결과를 receipt에 남기세요.
 
 변경 작업에는 UI 전환, 네트워크 요청/응답, 최종 UI 상태가 모두 필요합니다. 토스트나 국소적인 DOM 변경만으로는 충분하지 않습니다. 위험하고 되돌릴 수 없는 작업에 안전한 환경이나 명시적 권한이 없으면 `Unverifiable`을 반환하세요.
 
