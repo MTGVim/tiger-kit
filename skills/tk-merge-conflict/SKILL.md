@@ -36,7 +36,11 @@ operation 상태, 모든 conflict hunk, 양쪽 primary source, resolution 근거
 
 각 단계에서 필수 출력이 없으면 다음 단계로 진행하지 마세요. 추가 conflict가 생기면 `conflict inventory`부터 반복하세요.
 
-최소 state receipt에는 `git status --short`, `git diff --name-only --diff-filter=U`, conflict-marker 검사, staged diff 검사, 관련 검증 명령과 결과를 실제 실행 여부와 함께 연결하세요. 이 목록은 확인할 항목이며 자동 실행을 뜻하지 않습니다.
+### Operation freshness gate
+
+첫 inventory에서 operation 종류, 현재 `HEAD`, Git이 제공하는 현재 step·target, unmerged path와 기존 staged path를 fixed point로 기록하세요. resolution 근거에 포함된 path만 stage하고, 새 path가 필요하면 이유와 의도 근거를 inventory에 추가하세요.
+
+검증 직전과 continue 직전에 operation metadata, `HEAD`, `git status`, index를 다시 읽어 fixed point와 비교하세요. operation이 사라지거나 종류·step·`HEAD`가 바뀌었거나, 검토하지 않은 unmerged/staged path 또는 staged content가 생기면 이전 resolution과 검증은 stale입니다. continue하지 말고 실제 상태에서 inventory·intent evidence·검증을 다시 만드세요. drift를 설명하거나 새 상태를 검증할 수 없으면 `Unverifiable`로 멈추고, 사라진 operation을 자신이 완료했다고 보고하지 마세요.
 
 ## 실패 경로
 
