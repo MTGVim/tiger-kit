@@ -36,7 +36,10 @@
   expect: "Release creates or reuses exactly one base-main candidate PR and blocks when an existing PR has a different head ref, head SHA, version, or included diff."
 - case: release-waits-for-pr-head-ci
   skill: tigerkit-release
-  expect: "The exact PR head SHA must pass blocking validate, baseline skill-evals, and any required packaging evidence before merge."
+  expect: "The exact PR head must pass blocking validate, packaging evidence, and either configured baseline skill-evals or a bootstrap-only tree-bound fallback backed by matching independent skill eval receipts."
+- case: release-bounds-bootstrap-eval-fallback
+  skill: tigerkit-release
+  expect: "Eval fallback is allowed only when workflow or secrets are not yet available, every changed skill body matches passing independent evidence, and all deterministic checks pass on the exact candidate tree."
 - case: release-rechecks-main-before-pr-merge
   skill: tigerkit-release
   expect: "Release fetches again before merge and restarts reconciliation and exact-SHA validation when origin/main or the PR head advanced."
@@ -45,7 +48,7 @@
   expect: "Release uses a merge commit or exact-head merge queue, verifies candidate ancestry and tree on origin/main, and never tags the unmerged PR head."
 - case: release-waits-for-final-main-ci
   skill: tigerkit-release
-  expect: "After PR merge, the exact final origin/main SHA must pass blocking validate and a fresh baseline skill-evals dispatch before tag creation."
+  expect: "After PR merge, exact final origin/main must pass validate and either fresh configured skill-evals or tree-equality transfer of the bounded PR-head eval evidence before tag creation."
 - case: resume-preserves-existing-artifacts
   skill: tigerkit-release
   expect: "An existing exact candidate ref, PR, tag, or Release is treated as a completed checkpoint and is never recreated, moved, deleted, or overwritten."

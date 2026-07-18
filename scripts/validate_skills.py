@@ -132,6 +132,7 @@ REQUIRED_RELEASE_BEHAVIOR_CASES = {
     "release-never-pushes-directly-to-main",
     "release-creates-or-reuses-exact-pr",
     "release-waits-for-pr-head-ci",
+    "release-bounds-bootstrap-eval-fallback",
     "release-rechecks-main-before-pr-merge",
     "release-merges-pr-before-tag",
     "release-waits-for-final-main-ci",
