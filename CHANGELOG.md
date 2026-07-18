@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.0.13 — Canonical Skill Boundary Refinements
+
+- Added explicit failure outcomes across the canonical skills for missing evidence, unresolved decisions, unsafe runtime conditions, and incomplete verification.
+- Added compact workflow input/output, evidence, receipt, and state-check guidance without expanding the 13-skill catalog.
+- Preserved runtime-neutral distribution, invocation boundaries, and mutation safety.
+
 ## 19.0.12 — Release Checkpoint and Validation Hardening
 
 - Added explicit STOP checkpoints before remote changes, Promote integration, release mutations, and post-release main cleanup.
