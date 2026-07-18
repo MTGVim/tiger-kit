@@ -34,14 +34,6 @@ metadata:
 
 요구사항별 source traceability를 남기고 각 티켓을 독립적인 목표, 범위, 인수 기준, 검증을 가진 수직 동작 단위로 구성하세요. Source에 requirement/acceptance ID가 있으면 티켓마다 그대로 보존하고 coverage table에서 각 ID가 어느 티켓에 연결되는지 보여주세요. Source에 ID가 없으면 원문 위치를 인용하되 source ID를 발명하지 마세요. 동작의 테스트는 해당 티켓에 포함하며 수평적인 type/API/UI/test-only 티켓을 만들지 마세요. 독립된 동작으로 분할할 근거가 부족하면 억지로 만들지 말고 `Unresolved split report`를 반환하며, 근거 없는 요구사항이나 미해결 충돌은 `Blocked` 또는 `Unverifiable`로 구분하세요. receipt에는 경로, 상태, 티켓 수, source ID별 traceability, 의존성, `증거`, `미검증`, 미해결 분할 문제를 포함하세요.
 
-## Failure paths
-
-- If 필수 source를 읽을 수 없으면 traceability를 채우지 말고 `Unverifiable`로 종료합니다.
-- If 요구사항이 미확정이거나 충돌하면 티켓에 고정하지 말고 `Blocked`로 종료합니다.
-- If 독립 vertical slice 근거가 부족하면 수평 티켓을 만들지 말고 `Unresolved split report`를 반환합니다.
-- If type/API/UI/test-only 분할만 남으면 동작 단위로 억지로 나누지 말고 `Unresolved split report`를 반환합니다.
-- If write 또는 후속 검증이 실패하면 `applied`로 보고하지 말고 `Fail`과 경로·미검증 항목을 보고합니다.
-
 ## CHECKPOINT / STOP
 
 티켓 파일에 쓰기 전 독립 분할 근거, source traceability, 미해결 충돌을 확인하세요. 근거가 부족하면 티켓을 만들거나 덮어쓰지 말고 `Unresolved split report`, `Blocked` 또는 `Unverifiable`로 멈추세요.

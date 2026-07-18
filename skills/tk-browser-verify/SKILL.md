@@ -34,14 +34,6 @@ Guard mode를 Verdict mode 완료 gate의 우회로 사용하지 마세요. Guar
 5. `verdict`: 입력은 runtime evidence와 성공 조건이고, 출력은 `Pass | Fail | Blocked | Unverifiable` 및 미검증 항목입니다.
 6. `receipt/cleanup`: 입력은 판정과 생성한 세션·증거이고, 출력은 필요한 receipt와 이번 실행이 만든 browser/context/window만 정리한 결과입니다.
 
-## Failure paths
-
-- If auto-launch/headless/격리 profile 설정을 확인할 수 없으면 browser를 호출하지 말고 `Unverifiable`로 종료합니다.
-- If design intent가 `different | unclear`이면 사용자 선택 전 구현·browser 실행을 하지 말고 `Blocked`로 종료합니다.
-- If runtime screenshot 또는 실제 image 검사를 확보할 수 없으면 `Pass`가 아니라 `Unverifiable`로 종료합니다.
-- If irreversible action에 안전한 환경·명시적 권한이 없으면 실행하지 말고 `Unverifiable`로 종료합니다.
-- If 이번 실행이 만든 세션 소유권을 확인할 수 없으면 기존 사용자 세션을 닫지 말고 cleanup 미검증을 보고합니다.
-
 새 브라우저를 시작하면 [세션 수명주기](references/session-lifecycle.md)를 따르세요. 브라우저 자체의 최초 실행·로그인·동기화 안내는 가능한 실행 옵션으로 억제하고, 남아 있으면 로그인하지 말고 안전하게 건너뛰거나 닫으세요. 종료 시 이번 실행이 직접 만든 브라우저·컨텍스트·창만 정리하고 기존 사용자 세션은 건드리지 마세요.
 
 현재 작업에 관련된 관점만 선택하세요. [시각](references/visual.md), [동작](references/behavior.md), [환경](references/environment.md), [디자인](references/design.md) 또는 [접근성](references/accessibility.md)을 사용하고 [안전](references/safety.md)을 따르세요.
