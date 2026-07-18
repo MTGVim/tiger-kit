@@ -21,7 +21,7 @@ metadata:
 
 ## Workflow
 
-1. `fixed point`: 입력은 사용자의 review 범위와 저장소 ref이고, 출력은 검증된 기준 commit입니다.
+1. `fixed point`: 입력은 사용자의 review 범위와 저장소 ref이고, 출력은 검증된 기준 commit과 review-head commit입니다.
 2. `diff inventory`: 입력은 기준 commit과 `HEAD`이고, 출력은 전체 diff·변경 파일·범위 log입니다.
 3. `standards evidence`: 입력은 전체 diff와 저장소 지침이고, 출력은 적용 가능한 Standards 근거, 조건부 high-risk signal과 축별 findings입니다.
 4. `spec evidence`: 입력은 전체 diff와 우선순위에 따른 spec/ticket source이고, 출력은 적용 가능한 Spec ID별 상태·누락·위반 findings 또는 `spec 없음` 판정입니다.
@@ -53,6 +53,8 @@ git log <fixed-point>..HEAD --oneline
 ```
 
 ref가 유효하지 않거나 diff가 비었거나 범위를 결정할 근거가 없으면 review를 시작하지 말고 이유를 보고하세요.
+
+Review 시작 시 `HEAD` SHA를 review-head로 고정하고 verdict 직전에 다시 확인하세요. Review-head가 달라졌으면 이전 diff의 line evidence나 finding을 새 상태와 합치거나 `Pass`로 확정하지 말고, 이전·현재 SHA와 stale 범위를 `Blocked | Unverifiable` receipt에 기록하세요. 새 범위의 review는 자동으로 시작하지 않습니다.
 
 ## 근거
 
