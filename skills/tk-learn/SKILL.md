@@ -25,9 +25,11 @@ metadata:
 3. `trigger proposal`: 입력은 중복 검토 결과이고, 출력은 대상, 이름, invocation kind, positive/negative trigger입니다.
 4. `draft`: 입력은 승인 전 제안과 [스킬 품질](references/skill-quality.md) 기준이고, 출력은 최소 SKILL.md, trigger train/validation, success/boundary assertion, baseline 계획, portable-core/host-extension 판정입니다.
 5. `approval checkpoint`: 입력은 evidence threshold, 중복 판정, 대상·이름·eval·compatibility 초안이고, 출력은 사용자의 명시적 승인 또는 `pending | no-op | Blocked`입니다.
-6. `write/report`: 입력은 승인된 적용 범위이고, 출력은 실제 생성 경로 또는 `reported | applied | pending` receipt입니다.
+6. `write/verify/report`: 입력은 승인된 적용 범위와 대상의 write 전 존재 여부·내용이고, 출력은 원자적으로 쓴 실제 경로, target-host validation 결과, `reported | applied | pending` receipt입니다.
 
 증거 threshold를 충족하지 못하거나 중복·기본 기능·불명확한 trigger, success/boundary assertion, baseline 비교 또는 target-host compatibility이면 skill을 만들지 말고 `no-op` 이유를 보고하세요. 대상/적용 의도가 불분명하면 `.tigerkit/skill-drafts/<skill-name>/` 아래 초안도 사용자 승인 전에는 `pending`으로만 두세요. 초안의 경우 상위 디렉터리는 필요할 때 만들고, 가능하면 원자적으로 교체하며, 자동으로 보관하거나 `.gitignore`를 편집하지 말고, 스크래치가 무시되지 않으면 경고하세요.
+
+쓰기 실패 시 기존 대상을 그대로 보존하고 이번 실행이 만든 임시 파일만 정리한 뒤 `pending`으로 보고하세요. 작성 후 frontmatter·link·eval·target-host validation이 실패하면 `applied`로 표시하지 마세요. Write 직전 상태를 정확히 복원하고 재검증할 수 있을 때만 이번 실행의 변경을 되돌리고, 복원 또는 재검증이 불가능하면 실제 경로와 실패 증거를 남긴 채 `Fail | Blocked | Unverifiable`로 멈추세요.
 
 ## CHECKPOINT / STOP
 
