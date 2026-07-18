@@ -1,39 +1,63 @@
 # Static contract fixtures.
 # These cases do not execute git, gh, network, or model calls.
 
-- case: normal-release-blocks-on-unresolved-release-base
+- case: normal-captures-current-candidate
   skill: tigerkit-release
-  expect: "Normal release blocks when the latest stable tag is not an ancestor of origin/main and does not auto-select or merge another branch."
+  expect: "Normal release treats the invocation HEAD and tree as the to-be candidate; main or detached candidates are isolated on the target release branch before history mutation."
+- case: release-blocks-on-ambiguous-lineage
+  skill: tigerkit-release
+  expect: "When latest tag and origin/main diverge and the candidate does not contain both, release blocks instead of discarding or guessing a history."
+- case: release-rebases-onto-linear-release-base
+  skill: tigerkit-release
+  expect: "When latest tag and origin/main are linearly related, candidate-only commits are rebased onto the descendant release base before any remote mutation."
+- case: release-rebase-preserves-candidate-intent
+  skill: tigerkit-release
+  expect: "Intent reconciliation preserves candidate-owned behavior while retaining release metadata and untouched remote-main changes, then verifies range-diff, full diff, owned paths, and tests."
+- case: release-conflict-needs-intent-evidence
+  skill: tigerkit-release
+  expect: "Release resolves rebase conflicts hunk by hunk from actual base and replayed content, aborting and blocking when intent or verification is ambiguous rather than using blanket strategy options."
 - case: promote-requires-explicit-remote-branch
   skill: tigerkit-release
   expect: "Promote requires an exact remote branch argument and never discovers or guesses a candidate branch."
-- case: promote-previews-before-no-ff-merge
+- case: promote-enters-shared-pr-release-pipeline
   skill: tigerkit-release
-  expect: "Promote previews the branch diff and merge-tree result before using git merge --no-ff; rebase, cherry-pick, and automatic conflict resolution are not used."
-- case: promote-conflict-is-blocked
+  expect: "Promote attaches the exact fetched remote tip and then uses the same reconciliation, candidate push, exact PR, merge, tag, and Release pipeline as Normal."
+- case: release-creates-or-updates-candidate-ref
   skill: tigerkit-release
-  expect: "A promote merge conflict stops before source mutation and reports Blocked with the conflict state."
-- case: promote-resumes-normal-release
+  expect: "Release creates a missing candidate remote ref, fast-forwards an ancestor ref, or stops on unseen remote candidate commits."
+- case: release-force-with-lease-is-candidate-only
   skill: tigerkit-release
-  expect: "After a verified promote merge, full verification runs again and the normal version, commit, push, tag, and Release flow resumes in the same run."
+  expect: "A release-owned rebase may update only its non-main candidate ref with an explicit recorded-SHA force-with-lease; main, tags, other refs, and unbounded force remain forbidden."
+- case: release-never-pushes-directly-to-main
+  skill: tigerkit-release
+  expect: "Every stable release reaches main through an exact candidate PR; release preparation commits are never pushed directly to main."
+- case: release-creates-or-reuses-exact-pr
+  skill: tigerkit-release
+  expect: "Release creates or reuses exactly one base-main candidate PR and blocks when an existing PR has a different head ref, head SHA, version, or included diff."
+- case: release-waits-for-pr-head-ci
+  skill: tigerkit-release
+  expect: "The exact PR head SHA must pass blocking validate, baseline skill-evals, and any required packaging evidence before merge."
+- case: release-rechecks-main-before-pr-merge
+  skill: tigerkit-release
+  expect: "Release fetches again before merge and restarts reconciliation and exact-SHA validation when origin/main or the PR head advanced."
+- case: release-merges-pr-before-tag
+  skill: tigerkit-release
+  expect: "Release uses a merge commit or exact-head merge queue, verifies candidate ancestry and tree on origin/main, and never tags the unmerged PR head."
+- case: release-waits-for-final-main-ci
+  skill: tigerkit-release
+  expect: "After PR merge, the exact final origin/main SHA must pass blocking validate and a fresh baseline skill-evals dispatch before tag creation."
 - case: resume-preserves-existing-artifacts
   skill: tigerkit-release
-  expect: "An existing correct tag or Release is treated as a completed checkpoint and is never recreated, moved, deleted, or overwritten."
-- case: release-returns-to-main
-  skill: tigerkit-release
-  expect: "Only after commit push, remote tag, GitHub Release, and final verification succeed, a clean worktree switches to local main; dirty worktrees or switch failures are preserved and reported Partial without destructive cleanup."
+  expect: "An existing exact candidate ref, PR, tag, or Release is treated as a completed checkpoint and is never recreated, moved, deleted, or overwritten."
 - case: resume-blocks-on-artifact-mismatch
   skill: tigerkit-release
-  expect: "A tag or Release pointing to a different version or commit blocks without destructive repair."
+  expect: "A candidate ref, PR, tag, or Release pointing to a different version, ref, diff, or commit blocks without destructive repair."
+- case: release-returns-to-main
+  skill: tigerkit-release
+  expect: "Only after final equality succeeds, a clean worktree switches to local main and fast-forwards; unique local history or cleanup failure is preserved and reported Partial."
 - case: dry-run-never-queries-or-mutates
   skill: tigerkit-release
   expect: "Dry-run evaluates only the supplied scenario, performs no repository or remote query or mutation, and reports the planned steps and stop conditions."
-- case: normal-release-requires-origin-main-candidate
-  skill: tigerkit-release
-  expect: "A stable normal release proceeds only on local main based on origin/main; work from another branch is integrated through explicit Promote before version mutation."
-- case: release-waits-for-candidate-ci
-  skill: tigerkit-release
-  expect: "After the release commit is pushed to origin/main, the exact candidate SHA must pass the blocking validation workflow before a stable tag is created."
 - case: release-verifies-main-tag-release-sha
   skill: tigerkit-release
-  expect: "Released requires origin/main, the annotated tag's peeled commit, the GitHub Release tag target, and the successful CI SHA to resolve to the same commit."
+  expect: "Released requires origin/main, the annotated tag's peeled commit, the GitHub Release tag target, and the successful final-main CI SHA to resolve to the same commit."

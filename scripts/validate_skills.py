@@ -120,17 +120,25 @@ REQUIRED_BEHAVIOR_CASES = {
 }
 RELEASE_BEHAVIOR_FIXTURE = ROOT / ".claude" / "skills" / "tigerkit-release" / "references" / "behavior-cases.yaml"
 REQUIRED_RELEASE_BEHAVIOR_CASES = {
-    "normal-release-blocks-on-unresolved-release-base",
+    "normal-captures-current-candidate",
+    "release-blocks-on-ambiguous-lineage",
+    "release-rebases-onto-linear-release-base",
+    "release-rebase-preserves-candidate-intent",
+    "release-conflict-needs-intent-evidence",
     "promote-requires-explicit-remote-branch",
-    "promote-previews-before-no-ff-merge",
-    "promote-conflict-is-blocked",
-    "promote-resumes-normal-release",
+    "promote-enters-shared-pr-release-pipeline",
+    "release-creates-or-updates-candidate-ref",
+    "release-force-with-lease-is-candidate-only",
+    "release-never-pushes-directly-to-main",
+    "release-creates-or-reuses-exact-pr",
+    "release-waits-for-pr-head-ci",
+    "release-rechecks-main-before-pr-merge",
+    "release-merges-pr-before-tag",
+    "release-waits-for-final-main-ci",
     "resume-preserves-existing-artifacts",
-    "release-returns-to-main",
     "resume-blocks-on-artifact-mismatch",
+    "release-returns-to-main",
     "dry-run-never-queries-or-mutates",
-    "normal-release-requires-origin-main-candidate",
-    "release-waits-for-candidate-ci",
     "release-verifies-main-tag-release-sha",
 }
 
