@@ -1,11 +1,13 @@
 # Changelog
 
-## Unreleased — Existing Structure Hardening
+## 19.0.14 — Existing Structure Hardening
 
 - Required stable releases to originate from validated `origin/main` and verify main, peeled tag, GitHub Release, and CI provenance before completion.
 - Added reproducible pinned-CLI validation, a latest-CLI canary, Python regression tests in CI, and an explicit portable-core/host-extension compatibility profile.
 - Made executable trigger and structured behavior eval contracts canonical for all 13 skills, retained generated Darwin prompt projections, and added an isolated baseline comparison runner with scheduled/manual evidence workflow.
 - Strengthened existing handoff, traceability, conditional high-risk review, browser accessibility, and skill-learning contracts without adding canonical skills.
+- Hardened all 13 canonical skill contracts with verified recovery, freshness, and post-write evidence gates while preserving their names and invocation kinds.
+- Reworked the maintainer release flow around intent-aware candidate reconciliation, exact PR and final-main CI evidence, PR merge, tag, and GitHub Release checkpoints.
 
 ## 19.0.13 — Canonical Skill Boundary Refinements
 
