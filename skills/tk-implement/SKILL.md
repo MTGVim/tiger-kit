@@ -67,6 +67,8 @@ TDD로 결정되면 의미 있는 공개 동작 경계를 선택하고 수직 sl
 
 각 구현 slice 직후 focused test와 관련 정적 검사·build·필요한 브라우저/통합 검증을 실행하고, 다음 slice로 넘어가기 전에 결과를 확인하세요. 모든 slice가 끝나면 실행 가능한 가장 넓은 관련 검증을 한 번 실행하세요. 실패를 `change-related`, `pre-existing`, `environment`, `unverifiable`로 분류하고, 변경 관련 실패가 남으면 커밋하지 마세요.
 
+Final verification에는 당시 branch·`HEAD`와 검증한 diff/path 범위를 함께 기록하세요. 커밋 직전에 현재 branch·`HEAD`·staged diff가 그 범위와 같은지 다시 확인하고, 예상하지 않은 drift나 검증하지 않은 staged 변경이 있으면 커밋하지 말고 사용자 변경을 건드리지 않은 채 영향받은 검증을 다시 실행하거나 `Blocked`로 보고하세요. Commit 자체가 실패하면 broad staging이나 우회 옵션으로 재시도하지 말고 실제 `HEAD`와 미커밋 상태를 `Fail` receipt에 남기세요.
+
 인증·결제·개인정보·권한·마이그레이션·데이터 손실·동시성·공개 API·대규모 구조 변경 또는 테스트하지 않은 고위험 변경이면 독립 reviewer 한 명을 실행하세요. 그 밖의 변경은 review를 생략하고 이유를 report에 기록하세요. 최대 범위는 review 1회, fix 1회, regression verification 1회입니다. [리뷰 경계](references/review-boundary.md)를 참고하세요.
 
 ## 커밋과 보고
