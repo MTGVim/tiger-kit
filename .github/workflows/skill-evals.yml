@@ -1,0 +1,93 @@
+name: skill-evals
+
+on:
+  workflow_dispatch:
+    inputs:
+      baseline:
+        description: Stable tag or commit used as the comparison baseline
+        required: true
+      candidate:
+        description: Candidate commit to evaluate
+        required: true
+        default: HEAD
+      host:
+        description: Host adapter label
+        required: true
+        default: codex
+      runs:
+        description: Repetitions per eval case
+        required: true
+        default: '2'
+      resource_regression_reason:
+        description: Approved reason for a candidate token/time increase
+        required: false
+  schedule:
+    - cron: "41 4 * * 3"
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    env:
+      CANDIDATE: ${{ inputs.candidate || github.sha }}
+      HOST: ${{ inputs.host || 'codex' }}
+      RUNS: ${{ inputs.runs || '2' }}
+      RESOURCE_REGRESSION_REASON: ${{ inputs.resource_regression_reason }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.candidate || github.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate eval contracts
+        run: |
+          python scripts/validate_skills.py
+          cd scripts && python -m unittest
+      - name: Resolve exact comparison refs
+        id: refs
+        env:
+          REQUESTED_BASELINE: ${{ inputs.baseline }}
+        run: |
+          candidate_sha="$(git rev-parse "${CANDIDATE}^{commit}")"
+          if [ -n "$REQUESTED_BASELINE" ]; then
+            baseline_sha="$(git rev-parse "${REQUESTED_BASELINE}^{commit}")"
+          else
+            baseline_tag="$(git describe --tags --abbrev=0 --match 'v[0-9]*' "${candidate_sha}^")"
+            baseline_sha="$(git rev-parse "${baseline_tag}^{commit}")"
+          fi
+          printf 'baseline=%s\ncandidate=%s\n' "$baseline_sha" "$candidate_sha" >> "$GITHUB_OUTPUT"
+      - name: Preview exact comparison
+        run: |
+          python scripts/run_skill_evals.py \
+            --dry-run \
+            --baseline "${{ steps.refs.outputs.baseline }}" \
+            --candidate "${{ steps.refs.outputs.candidate }}" \
+            --host "$HOST" \
+            --runs "$RUNS"
+      - name: Run baseline comparison
+        env:
+          ADAPTER_COMMAND: ${{ secrets.TK_EVAL_ADAPTER_COMMAND }}
+          GRADER_COMMAND: ${{ secrets.TK_EVAL_GRADER_COMMAND }}
+        run: |
+          resource_args=()
+          if [ -n "$RESOURCE_REGRESSION_REASON" ]; then
+            resource_args=(--resource-regression-reason "$RESOURCE_REGRESSION_REASON")
+          fi
+          python scripts/run_skill_evals.py \
+            --baseline "${{ steps.refs.outputs.baseline }}" \
+            --candidate "${{ steps.refs.outputs.candidate }}" \
+            --host "$HOST" \
+            --runs "$RUNS" \
+            --adapter-command "$ADAPTER_COMMAND" \
+            --grader-command "$GRADER_COMMAND" \
+            --output "$RUNNER_TEMP/tigerkit-skill-evals" \
+            "${resource_args[@]}"
+      - name: Upload eval evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tigerkit-skill-evals-${{ github.sha }}
+          path: ${{ runner.temp }}/tigerkit-skill-evals
+          if-no-files-found: warn
+          retention-days: 14

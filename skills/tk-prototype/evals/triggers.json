@@ -1,0 +1,30 @@
+{
+  "skill": "tk-prototype",
+  "kind": "user-invoked",
+  "queries": [
+    {
+      "id": "train-explicit",
+      "split": "train",
+      "query": "/tk-prototype 현재 요청을 스킬 계약대로 처리해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-explicit",
+      "split": "validation",
+      "query": "$tk-prototype 제공된 자료로 결과와 receipt를 만들어줘",
+      "should_trigger": true
+    },
+    {
+      "id": "train-implicit-block",
+      "split": "train",
+      "query": "프로토타입 아이디어를 말로만 제안해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-nearby-block",
+      "split": "validation",
+      "query": "이 production UI 변경을 구현하고 커밋해줘",
+      "should_trigger": false
+    }
+  ]
+}

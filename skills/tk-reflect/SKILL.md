@@ -18,11 +18,11 @@ metadata:
 
 ## Workflow
 
-1. `evidence`: 입력은 대화·diff·결과·소스이고, 출력은 네 축으로 분류된 경로/명령 기반 `verified | unverified` 사실입니다.
+1. `evidence`: 입력은 대화·diff·결과·소스이고, 출력은 접근 실패를 포함해 네 축으로 분류된 경로/명령 기반 `verified | unverified` 사실입니다.
 2. `interpretation`: 입력은 evidence이고, 출력은 사실과 분리된 재사용 가설입니다.
 3. `confidence`: 입력은 evidence와 가설이고, 출력은 `high | medium | low` 및 근거입니다.
 4. `action`: 입력은 후보와 기존 reuse map이고, 출력은 `propose | update | merge | no-op | discard` 중 하나와 초안입니다.
-5. `receipt`: 입력은 후보·승인 상태·적용 결과이고, 출력은 경로와 evidence가 연결된 `reported | applied | pending` 상태입니다.
+5. `apply/receipt`: 입력은 후보·별도 승인·적용 전 대상 상태이고, 출력은 재검증한 경로와 evidence가 연결된 `reported | applied | pending` 상태입니다.
 
 각 후보를 다음처럼 분리해 작성하세요.
 
@@ -38,6 +38,8 @@ metadata:
 receipt는 `reported | applied | pending`을 구분하세요. 승인 전 후보와 적용은 `pending`, 보고만 한 결과는 `reported`, 명시적 승인 후 실제 파일에 반영한 결과만 `applied`로 기록하고 경로와 evidence를 남기세요. 사용자가 중단하면 `aborted`, 충돌 또는 적용 범위가 불명확하면 `Blocked`로 보고하세요.
 
 기본적으로 파일을 수정하거나 원장/ID를 만들지 말고, 레거시 전역 상태를 탐색하거나 일회성 우회책을 일반화하지 마세요. 별도 명시적 동의가 있더라도 원시 자격 증명/로그/스크린샷을 규칙이나 스킬 후보로 그대로 승격하지 마세요.
+
+필수 source를 읽을 수 없으면 경로와 오류를 `unverified`로 기록하고 해당 내용을 해석하거나 후보 근거로 사용하지 마세요. Verified evidence가 하나도 남지 않으면 `Unverifiable`로 멈춥니다. 별도 승인 후 적용·재검증이 실패하면 `applied`로 표시하지 말고 기존 대상을 보존하세요. 이번 실행의 변경을 정확히 복원하고 재검증할 수 없으면 추가 수정을 중단하고 실패 경로와 증거를 `Fail | Blocked | Unverifiable`로 보고하세요.
 
 ## CHECKPOINT / STOP
 

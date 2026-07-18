@@ -172,3 +172,21 @@
 - case: legacy-global-state-is-not-scanned
   skill: tk-grooming
   expect: "Legacy global TigerKit state is not automatically discovered or migrated."
+- case: handoff-resume-no-drift-continues
+  skill: tk-handoff
+  expect: "An explicit resume invocation continues without another approval when current state matches the handoff or only non-material drift is observed."
+- case: handoff-resume-material-drift-blocks
+  skill: tk-handoff
+  expect: "Scope, branch intent, confirmed-decision, ownership, or verification-result drift stops for one explicit user decision before continuation."
+- case: traceability-preserves-requirement-ids
+  skill: tk-to-spec
+  expect: "Stable requirement and acceptance IDs are preserved from spec through tickets, implementation receipts, and the code-review Spec axis when those IDs exist."
+- case: code-review-high-risk-is-conditional
+  skill: tk-code-review
+  expect: "High-risk checks load only for diff signals such as auth, privacy, payment, migration, data loss, concurrency, dependency, or public API changes."
+- case: browser-accessibility-is-conditional
+  skill: tk-browser-verify
+  expect: "Keyboard, focus, accessible-name, and error-association evidence is gathered for relevant form, dialog, navigation, or focus flows without claiming a full WCAG audit."
+- case: learn-requires-eval-and-compatibility
+  skill: tk-learn
+  expect: "A skill candidate includes trigger validation, success and boundary assertions, a baseline plan, and a portable-core versus host-extension compatibility decision before approval."

@@ -21,7 +21,7 @@ metadata:
 3. `evidence`: 각 후보를 읽어 영역별 관찰 사실·경로·검증 상태를 출력합니다.
 4. `분류/제안`: 입력 evidence를 `keep | tighten | merge | split | move | convert | deprecate | delete | fix` 중 하나로 분류합니다.
 5. `🔴 CHECKPOINT · 🛑 STOP`: 범위·evidence·제안·허용 apply를 receipt로 요약하고 확인 전에는 변경하지 않습니다.
-6. `apply/report`: report-only면 제안과 receipt만 출력하고, apply면 확인된 범위만 수정합니다.
+6. `apply/report`: report-only면 제안과 receipt만 출력하고, apply면 승인된 receipt와 다시 읽은 원본 상태를 입력으로 확인된 범위만 수정합니다.
 7. `재검증`: apply 후 링크·중복·frontmatter를 다시 검사하고 결과·미검증·미해결 항목을 receipt로 출력합니다.
 
 기존의 네 영역, 즉 저장소 규칙, 저장소 스킬, 사용자 규칙, 사용자 스킬을 검사하세요. 실제로 존재하는 호스트 네이티브 경로를 사용하세요. [탐색](references/discovery.md)에 후보가 나열되어 있습니다. 누락된 파일을 만들거나 레거시 전역 TigerKit 상태를 검사/마이그레이션하지 마세요.
@@ -35,7 +35,8 @@ metadata:
 - If a required path is missing or unreadable → mark only that area `Unverifiable`, keep unrelated areas read-only, and report the path and required access.
 - If scope or apply permission conflicts → make no change and return `Partial/Blocked` with the single decision needed.
 - If a delete/move target still has references → do not delete or move it; change the proposal to `keep` or `tighten` and cite the references.
-- If post-apply validation fails → stop, do not claim `Complete`, and report the failed check and affected files.
+- If an apply target differs from its checkpoint evidence → do not change it; return `Partial/Blocked` with the new evidence and require a fresh proposal.
+- If post-apply validation fails → stop and do not claim `Complete`; restore and revalidate only when this run's changes can be reversed exactly, otherwise stop further mutation and report the failed check, affected files, and observed state.
 
 ## 계약
 

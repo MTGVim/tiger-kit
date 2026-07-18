@@ -1,0 +1,132 @@
+{
+  "skill": "tk-browser-verify",
+  "kind": "hybrid",
+  "queries": [
+    {
+      "id": "train-positive",
+      "split": "train",
+      "query": "이 모달이 실제로 저장되는지 브라우저에서 확인해줘 (연습 표현)",
+      "should_trigger": true
+    },
+    {
+      "id": "train-negative",
+      "split": "train",
+      "query": "서버 내부 로그 문구만 수정해줘 (연습 표현)",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-positive-1",
+      "split": "validation",
+      "query": "이 모달이 실제로 저장되는지 브라우저에서 확인해줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-2",
+      "split": "validation",
+      "query": "QA와 로컬 화면 차이를 runtime 증거로 검증해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-3",
+      "split": "validation",
+      "query": "Figma와 current UI가 맞는지 브라우저에서 확인해줘",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-4",
+      "split": "validation",
+      "query": "반응형 저장 폼을 제출하고 interaction과 최종 상태를 실제 페이지에서 확인해줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-5",
+      "split": "validation",
+      "query": "임시 HTML hover와 focus가 맞는지 브라우저로 확ㅇ니해줘",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-positive-6",
+      "split": "validation",
+      "query": "prototype 클릭 검증",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-positive-7",
+      "split": "validation",
+      "query": "mobile breakpoint에서 메뉴가 안 잘리는지 screenshot으로 검증해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-positive-8",
+      "split": "validation",
+      "query": "form submit 뒤 network와 final state를 실제 UI에서 확인해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-negative-1",
+      "split": "validation",
+      "query": "서버 내부 로그 문구만 수정해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-2",
+      "split": "validation",
+      "query": "모달 설계 아이디어를 세 개 만들어줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-3",
+      "split": "validation",
+      "query": "브라우저를 열지 않고 코드만 리뷰해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-4",
+      "split": "validation",
+      "query": "Chrome에서 React 문서를 읽고 핵심만 요약해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-5",
+      "split": "validation",
+      "query": "이 URL의 screenshot을 저장만 해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-6",
+      "split": "validation",
+      "query": "웹페이지 본문 text만 추출해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-7",
+      "split": "validation",
+      "query": "API 응답 JSON만 curl로 확인해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-8",
+      "split": "validation",
+      "query": "CSS 변경 없이 접근성 원칙을 설명해줘",
+      "should_trigger": false
+    }
+  ]
+}

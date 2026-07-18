@@ -1,0 +1,30 @@
+name: skills-cli-canary
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 3 * * 1"
+
+jobs:
+  latest-cli:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Discover with latest skills CLI
+        run: npx --yes skills add . --list
+      - name: Smoke install supported targets with latest CLI
+        run: |
+          export HOME="$(mktemp -d)"
+          export CLAUDE_CONFIG_DIR="$HOME/.claude"
+          export CODEX_HOME="$HOME/.codex"
+          export HERMES_HOME="$HOME/.hermes"
+          npx --yes skills add . --global --agent claude-code --agent codex --agent hermes-agent --copy --yes
+          test "$(find "$CLAUDE_CONFIG_DIR/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 13
+          test "$(find "$HOME/.agents/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 13
+          test "$(find "$HERMES_HOME/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 13
+          test -f "$CLAUDE_CONFIG_DIR/skills/tk-browser-verify/references/safety.md"
+          test -f "$HOME/.agents/skills/tk-implement/references/delegation.md"
+          test -f "$HERMES_HOME/skills/tk-grill-me/agents/openai.yaml"

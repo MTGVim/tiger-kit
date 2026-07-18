@@ -71,6 +71,12 @@ feedback loop의 다섯 조건을 실제 실행으로 확인하기 전에는 가
 
 임시 instrumentation과 throwaway debug artifact를 정리하세요. 상세 절차는 [조사 루프](references/investigation.md)를 참고하세요.
 
+### Clean verification gate
+
+instrumentation이 남은 상태에서 얻은 green은 최종 증거가 아닙니다. red를 만든 원래 reproduction의 명령·입력·fixture·seed/반복 횟수·판정에 필요한 환경을 기록하고, 임시 artifact를 제거한 뒤 작업 diff에 instrumentation이 남지 않았는지 확인하세요. 이어서 같은 전제로 원래 reproduction과 regression seam을 다시 실행하고 이 clean-state 결과만 완료와 commit의 근거로 사용하세요.
+
+cleanup 전후에 reproduction 전제나 대상 source가 달라졌거나 cleanup 뒤 실패·간헐성이 돌아오면 이전 green을 폐기하세요. 원래 red와 비교 가능한 loop를 다시 만들 수 없으면 `Unverifiable`, clean-state 검증이 실패하면 `Fail`로 멈추고 commit하지 마세요.
+
 ## Commit 경계
 
 사용자가 `tk-diagnosing-bugs`를 명시적으로 standalone 호출했고 실제 코드를 수정했다면 다음 조건을 모두 만족할 때 current branch에 commit하세요.
@@ -78,7 +84,7 @@ feedback loop의 다섯 조건을 실제 실행으로 확인하기 전에는 가
 - 근본 원인 수정 완료
 - 원래 reproduction green
 - regression verification 성공
-- 임시 instrumentation 제거
+- 임시 instrumentation 제거 후 clean-state verification 성공
 - 작업 diff를 기존 사용자 변경과 분리 가능
 
 아직 `tk-implement` 작업이 진행 중이면 별도 commit하지 말고 진단 결과와 수정 사항을 현재 구현에 반환하세요. `tk-implement`가 최종 검증과 commit을 담당합니다.

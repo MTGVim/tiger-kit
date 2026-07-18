@@ -1,0 +1,30 @@
+{
+  "skill": "tk-implement",
+  "kind": "user-invoked",
+  "queries": [
+    {
+      "id": "train-explicit",
+      "split": "train",
+      "query": "/tk-implement 현재 요청을 스킬 계약대로 처리해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-explicit",
+      "split": "validation",
+      "query": "$tk-implement 제공된 자료로 결과와 receipt를 만들어줘",
+      "should_trigger": true
+    },
+    {
+      "id": "train-implicit-block",
+      "split": "train",
+      "query": "이 코드가 어떻게 동작하는지 설명해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-nearby-block",
+      "split": "validation",
+      "query": "이 아이디어를 폐기 가능한 UI로 비교해줘",
+      "should_trigger": false
+    }
+  ]
+}

@@ -6,6 +6,8 @@
 
 - 최소 두 개의 독립된 반복 사례 또는 재사용 가능한 워크플로와 이를 뒷받침하는 artifact가 있어야 합니다. 출처 없는 주장과 단일 일회성 사례는 threshold 미달입니다.
 - 기존 skill과의 중복, 기본 모델 기능으로 대체 가능한지, 짧은 rule로 충분한지를 먼저 검사합니다. 중복이면 새 디렉터리보다 `merge` 또는 `no-op`을 우선합니다.
-- positive trigger와 negative trigger를 각각 하나 이상, 실제로 구별되는 문장으로 제시합니다. trigger가 불명확하면 생성하지 않습니다.
-- 최소 하나의 example 또는 eval을 포함하되, 원시 secret·credential·로그·screenshot을 그대로 저장하지 않습니다.
+- Positive와 negative trigger를 실제로 구별되는 문장으로 제시하고 description 개선용 train과 회귀 판정용 validation을 분리합니다. Trigger가 불명확하면 생성하지 않습니다.
+- 최소 하나의 success와 하나의 boundary/failure behavior eval에 observable assertion을 포함하되, 원시 secret·credential·로그·screenshot을 그대로 저장하지 않습니다.
+- 이전 skill, no-skill 또는 명시된 baseline과 비교할 방법을 적습니다. 단일 prose 점수만으로 승격하지 않습니다.
+- Agent Skills portable core field와 target host에 필요한 extension을 구분하고, host별 body copy를 만들지 않습니다. Target host에서 invocation 경계를 검증할 수 없으면 `pending`으로 둡니다.
 - 사용자 승인 전 후보는 `reported` 또는 `pending`이며 파일 적용은 하지 않습니다. 승인 후에만 `applied`로 receipt를 남깁니다.
