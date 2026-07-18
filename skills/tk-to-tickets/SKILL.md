@@ -19,10 +19,10 @@ metadata:
 
 ## Workflow
 
-1. `source 요구사항 추출`: 입력은 우선순위가 정해진 소스이고, 출력은 요구사항별 원문 위치와 `confirmed | unverified | conflict` 상태입니다.
+1. `source 요구사항 추출`: 입력은 우선순위가 정해진 소스이고, 출력은 요구사항·인수 기준 ID, 원문 위치와 `confirmed | unverified | conflict` 상태입니다.
 2. `vertical slice`: 입력은 확인된 요구사항이고, 출력은 독립 목표·범위·동작·테스트를 함께 가진 티켓 후보입니다.
 3. `인수 기준·검증`: 입력은 티켓 후보이고, 출력은 관찰 가능한 인수 기준과 실행할 검증 명령 또는 증거입니다.
-4. `traceability·의존성`: 입력은 티켓과 source map이고, 출력은 요구사항 연결, 선행 티켓, 미해결 분할 문제입니다.
+4. `traceability·의존성`: 입력은 티켓과 source map이고, 출력은 source ID별 coverage, 선행 티켓, 미해결 분할 문제입니다.
 5. `checkpoint`: 입력은 분할 근거·traceability·충돌 목록이고, 출력은 쓰기 가능 여부 또는 `Unresolved split report | Blocked | Unverifiable`입니다.
 6. `write/report receipt`: 입력은 checkpoint를 통과한 티켓과 경로이고, 출력은 작성된 경로 또는 report-only receipt입니다.
 
@@ -30,7 +30,7 @@ metadata:
 
 ## 계약
 
-요구사항별 source traceability를 남기고 각 티켓을 독립적인 목표, 범위, 인수 기준, 검증을 가진 수직 동작 단위로 구성하세요. 동작의 테스트는 해당 티켓에 포함하며 수평적인 type/API/UI/test-only 티켓을 만들지 마세요. 독립된 동작으로 분할할 근거가 부족하면 억지로 만들지 말고 `Unresolved split report`를 반환하며, 근거 없는 요구사항이나 미해결 충돌은 `Blocked` 또는 `Unverifiable`로 구분하세요. receipt에는 경로, 상태, 티켓 수, 요구사항별 traceability, 의존성, `증거`, `미검증`, 미해결 분할 문제를 포함하세요.
+요구사항별 source traceability를 남기고 각 티켓을 독립적인 목표, 범위, 인수 기준, 검증을 가진 수직 동작 단위로 구성하세요. Source에 requirement/acceptance ID가 있으면 티켓마다 그대로 보존하고 coverage table에서 각 ID가 어느 티켓에 연결되는지 보여주세요. Source에 ID가 없으면 원문 위치를 인용하되 source ID를 발명하지 마세요. 동작의 테스트는 해당 티켓에 포함하며 수평적인 type/API/UI/test-only 티켓을 만들지 마세요. 독립된 동작으로 분할할 근거가 부족하면 억지로 만들지 말고 `Unresolved split report`를 반환하며, 근거 없는 요구사항이나 미해결 충돌은 `Blocked` 또는 `Unverifiable`로 구분하세요. receipt에는 경로, 상태, 티켓 수, source ID별 traceability, 의존성, `증거`, `미검증`, 미해결 분할 문제를 포함하세요.
 
 ## Failure paths
 

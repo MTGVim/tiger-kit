@@ -21,7 +21,7 @@ metadata:
 
 1. `소스 수집`: 입력은 우선순위가 정해진 소스와 기존 명세이고, 출력은 읽은 경로·주장·접근 상태입니다.
 2. `source map`: 입력은 소스와 주장이고, 출력은 각 주장의 출처 위치와 `verified | unverified` 상태입니다.
-3. `분리`: 입력은 source map이고, 출력은 사실·결정·가정·미해결 충돌 목록입니다.
+3. `분리·ID`: 입력은 source map이고, 출력은 사실·결정·가정·미해결 충돌 목록과 안정적인 requirement/acceptance ID입니다.
 4. `Ready gate`: 입력은 목록과 필수 요소이고, 출력은 `Ready | Draft | Blocked | Unverifiable` 판정 및 누락 근거입니다.
 5. `write/print`: 입력은 gate를 통과한 명세와 출력 모드이고, 출력은 실제 경로 또는 print-only 결과입니다.
 6. `receipt`: 입력은 작성/출력 및 검증 결과이고, 출력은 경로·상태·source map·미검증·충돌·검증을 연결한 receipt입니다.
@@ -30,7 +30,9 @@ metadata:
 
 ## 계약
 
-사용한 소스와 주장을 연결한 `source map`을 만들고 사실, 결정, 가정, 미해결 충돌을 분리하세요. `Ready`는 문제, 목표, 범위(포함/제외), 요구사항, 인수 기준, 검증, source traceability, verifiability가 있고 미해결 충돌이 없을 때만 사용하세요. 하나라도 없으면 `Draft`, `Blocked` 또는 `Unverifiable`로 남기세요. receipt에는 경로, 상태, `증거/source map`, `미검증`, `미해결 충돌`, `검증`을 포함하세요.
+사용한 소스와 주장을 연결한 `source map`을 만들고 사실, 결정, 가정, 미해결 충돌을 분리하세요. 요구사항에는 `R1`, `R2`처럼 문서 내 고유한 ID를, 인수 기준에는 `AC1`, `AC2`처럼 고유한 ID를 부여하세요. 같은 작업의 기존 명세를 갱신할 때 의미가 유지된 항목의 ID를 재번호하지 말고, 사용자 source에 ID가 있으면 그대로 보존하세요. 삭제된 ID를 다른 의미에 재사용하지 마세요.
+
+`Ready`는 문제, 목표, 범위(포함/제외), 요구사항, 인수 기준, 검증, source traceability, verifiability가 있고 미해결 충돌이 없을 때만 사용하세요. 하나라도 없으면 `Draft`, `Blocked` 또는 `Unverifiable`로 남기세요. receipt에는 경로, 상태, `증거/source map`, requirement/acceptance ID, `미검증`, `미해결 충돌`, `검증`을 포함하세요.
 
 ## Failure paths
 
@@ -47,5 +49,6 @@ metadata:
 ## DO NOT / ANTI-PATTERNS
 
 - source map 없이 사실·결정·가정을 섞거나 미해결 충돌을 임의로 선택하지 마세요.
+- 기존 requirement/acceptance ID를 이유 없이 재번호하거나 삭제된 ID를 다른 의미로 재사용하지 마세요.
 - 필수 요소가 빠진 문서를 `Ready`로 표시하거나 구현 완료로 표현하지 마세요.
 - 인터뷰, 티켓 생성, 구현, 원격 게시를 이 스킬의 출력에 섞지 마세요.

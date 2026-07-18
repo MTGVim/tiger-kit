@@ -1,0 +1,106 @@
+{
+  "skill_name": "tk-code-review",
+  "evals": [
+    {
+      "id": "legacy-1",
+      "path": "success",
+      "prompt": "main 이후 현재 브랜치의 구현 변경을 Standards와 Spec 두 축으로 독립 검토해 주세요. 전체 diff와 관련 spec이 있으면 finding과 최종 verdict를 남겨 주세요.",
+      "expected_output": "fixed point를 확정하고 전체 diff와 근거를 읽은 뒤 두 축을 분리해 severity·file:line·basis·impact가 있는 finding과 verdict를 낸다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "fixed point를 확정하고 전체 diff와 근거를 읽은 뒤 두 축을 분리해 severity·file:line·basis·impact가 있는 finding과 verdict를 낸다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Ready",
+            "reported",
+            "applied",
+            "pending"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "darwin": true
+    },
+    {
+      "id": "legacy-2",
+      "path": "boundary",
+      "prompt": "기준 branch를 지정하지 않은 상태에서 현재 코드를 전체 리뷰하고 Pass인지 알려 주세요.",
+      "expected_output": "fixed point 또는 전체 diff가 없으면 리뷰를 시작하거나 Pass로 보고하지 않고 Unverifiable/Blocked receipt에서 필요한 기준을 요청한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "fixed point 또는 전체 diff가 없으면 리뷰를 시작하거나 Pass로 보고하지 않고 Unverifiable/Blocked receipt에서 필요한 기준을 요청한다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Blocked",
+            "Unverifiable"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true,
+      "darwin": true
+    },
+    {
+      "id": "conditional-high-risk-review",
+      "path": "success",
+      "prompt": "main 이후 authorization과 data migration diff를 Standards와 Spec으로 리뷰해 주세요.",
+      "expected_output": "High-risk signal이 있는 lane만 읽어 permission, rollback, data-loss evidence를 file:line 근거로 검토한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "High-risk signal이 있는 lane만 읽어 permission, rollback, data-loss evidence를 file:line 근거로 검토한다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Ready",
+            "reported",
+            "applied",
+            "pending"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "ordinary-diff-skips-risk-lane",
+      "path": "success",
+      "prompt": "main 이후 문구 한 줄 변경을 리뷰해 주세요.",
+      "expected_output": "High-risk signal이 없으면 risk reference와 N/A checklist를 생략하고 기존 Standards/Spec 축만 검토한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "High-risk signal이 없으면 risk reference와 N/A checklist를 생략하고 기존 Standards/Spec 축만 검토한다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Ready",
+            "reported",
+            "applied",
+            "pending"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    }
+  ]
+}

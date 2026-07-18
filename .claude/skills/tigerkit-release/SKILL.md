@@ -30,7 +30,7 @@ metadata:
 
 ## 계약
 
-릴리스 기준은 로컬 추측이 아니라 fetch 후 확인한 원격 `main`, semantic version tag, GitHub Release입니다. 현재 요청이 commit, push, tag, release를 명시적으로 승인했다면 같은 범위를 다시 묻지 마세요. 목표 버전, 포함 diff, 원격 상태가 불명확하면 원격 변경 전에 `Blocked`로 중단하고 사용자 결정을 받으세요. 원격 Release와 최종 검증까지 성공한 뒤에는 로컬 `main`으로 복귀해야 합니다.
+릴리스 기준은 로컬 추측이 아니라 fetch 후 확인한 원격 `main`, semantic version tag, GitHub Release입니다. Stable release candidate는 로컬 `main`에서 준비하고, release commit을 `origin/main`에 push한 뒤 정확한 candidate SHA의 blocking CI가 성공한 경우에만 tag와 GitHub Release를 만드세요. 현재 요청이 commit, push, tag, release를 명시적으로 승인했다면 같은 범위를 다시 묻지 마세요. 목표 버전, 포함 diff, 원격 상태가 불명확하면 원격 변경 전에 `Blocked`로 중단하고 사용자 결정을 받으세요. 원격 Release와 최종 검증까지 성공한 뒤에는 로컬 `main`으로 복귀해야 합니다.
 
 사용자 변경을 버리거나 force, rebase, hard reset, clean으로 동기화하지 마세요. 기존 tag를 이동·삭제·재사용하지 마세요.
 
@@ -42,9 +42,10 @@ Normal release와 Promote 모두에서 preflight 증거·목표 버전·포함 d
 
 1. `git status`, branch, upstream, remote, 최근 commit과 tag, GitHub Release를 확인하세요.
 2. `git fetch --prune origin` 후 현재 branch와 `origin/main`의 차이를 확인하세요.
-3. 최신 안정 semantic version tag와 GitHub Release를 확인하고 요청한 bump를 계산하세요.
-4. 최신 안정 tag가 `origin/main`의 조상이 아니거나 `origin/main`이 preflight 이후 진전했으면 자동 merge하지 말고 `Blocked`로 중단하세요. 발견한 release tag, candidate branch, commit SHA와 필요한 다음 명령을 보고하고 `promote <remote-branch>`를 제안하세요.
-5. 포함할 변경 전체를 읽고 unrelated 파일, secret, credential, `.tigerkit/` runtime scratch가 tracked 또는 staged되지 않았는지 확인하세요.
+3. 현재 branch가 `main`이고 mutation 전 `HEAD`가 `origin/main`과 같은지 확인하세요. 다른 branch의 변경을 release하려면 normal flow를 중단하고 정확한 remote branch를 지정한 `promote <remote-branch>`를 제안하세요.
+4. 최신 안정 semantic version tag와 GitHub Release를 확인하고 요청한 bump를 계산하세요.
+5. 최신 안정 tag가 `origin/main`의 조상이 아니거나 `origin/main`이 preflight 이후 진전했으면 자동 merge하지 말고 `Blocked`로 중단하세요. 발견한 release tag, candidate branch, commit SHA와 필요한 다음 명령을 보고하고 `promote <remote-branch>`를 제안하세요.
+6. 포함할 변경 전체를 읽고 unrelated 파일, secret, credential, `.tigerkit/` runtime scratch가 tracked 또는 staged되지 않았는지 확인하세요.
 
 Normal release는 다른 branch를 자동 탐색하거나 merge하지 않습니다. 기존 release branch를 사용하려면 Promote 모드를 명시적으로 호출해야 합니다.
 
@@ -92,11 +93,12 @@ version/changelog 변경, 전체 검증, staged diff, secret 검사, 현재 remo
 2. 저장소 지침의 전체 검증, 회귀 테스트, `git diff --check`를 실행하세요. 실패를 우회하거나 hook을 건너뛰지 마세요.
 3. 특정 파일만 stage하고 staged diff와 `.tigerkit`·secret·credential 포함 여부를 다시 확인하세요.
 4. 새 commit을 만드세요. 기존 commit을 amend하지 마세요.
-5. commit을 remote branch에 push하고 remote commit SHA를 확인하세요.
-6. remote commit 확인 후 기존 저장소 형식으로 tag를 만들고 push하세요. tag가 이미 있으면 대상 commit을 검증하고 이동하지 마세요.
-7. tag가 remote에 존재하는지 확인한 뒤 `gh release create`로 GitHub Release를 만드세요. Release가 이미 있으면 내용을 덮어쓰지 말고 현재 URL과 상태를 보고하세요.
-8. 마지막으로 remote `main`, tag, Release URL, worktree와 전체 검증 결과를 확인하세요.
-9. 8번의 모든 검증과 artifact 확인이 성공한 뒤에만 post-release 정리를 수행하세요.
+5. release commit을 `origin/main`에 push하고 remote commit SHA를 확인하세요. 다른 remote branch push는 stable release candidate로 인정하지 마세요.
+6. blocking validation workflow와 baseline 비교 `skill-evals` workflow가 정확한 remote candidate SHA에서 성공했는지 확인하세요. Pending, skipped, failed, `Unverifiable`, 다른 SHA의 성공은 tag 권한이 아니며 `Partial` 또는 `Blocked`로 멈추세요.
+7. remote main과 CI SHA가 같은 것을 확인한 뒤 기존 저장소 형식으로 annotated tag를 만들고 push하세요. tag가 이미 있으면 peeled commit을 검증하고 이동하지 마세요.
+8. tag가 remote에 존재하는지 확인한 뒤 `gh release create`로 GitHub Release를 만드세요. Release가 이미 있으면 내용을 덮어쓰지 말고 현재 URL과 상태를 보고하세요.
+9. 마지막으로 `origin/main`, annotated tag의 peeled commit, GitHub Release의 tag target, 성공한 CI SHA가 모두 같은지 확인하고 Release URL, worktree와 전체 검증 결과를 확인하세요.
+10. 9번의 모든 검증과 artifact 확인이 성공한 뒤에만 post-release 정리를 수행하세요.
 
 ## 릴리즈 후 `main` 복귀
 
@@ -126,14 +128,14 @@ post-release `main` 복귀까지 성공해야 최종 상태를 `Released`로 보
 
 ## 완료 gate와 receipt
 
-`Released`는 commit push, remote tag, GitHub Release URL, 전체 검증 증거, post-release 로컬 `main` 복귀가 모두 확인됐을 때만 사용하세요. 다음을 보고하세요.
+`Released`는 `origin/main`, peeled tag commit, GitHub Release tag target, 성공한 CI SHA가 같고, remote tag, GitHub Release URL, 전체 검증 증거, post-release 로컬 `main` 복귀가 모두 확인됐을 때만 사용하세요. 다음을 보고하세요.
 
 - **Mode:** normal 또는 `promote <remote-branch>`
 - **Reconciliation:** merge한 branch, 기존 tag/Release, resume 지점
 - **버전:** 이전 버전과 새 버전
 - **포함 변경:** 주요 동작과 staged 파일
 - **검증:** 실행 명령과 결과
-- **Git:** commit SHA, branch push, tag
+- **Git:** origin/main commit SHA, peeled tag commit SHA, CI SHA
 - **Branch:** 릴리즈 직전 branch와 최종 branch (`main`)
 - **Release:** URL
 - **미완료:** 실패하거나 실행하지 못한 단계

@@ -1,0 +1,132 @@
+{
+  "skill": "tk-code-review",
+  "kind": "hybrid",
+  "queries": [
+    {
+      "id": "train-positive",
+      "split": "train",
+      "query": "main 기준으로 현재 branch를 리뷰해줘 (연습 표현)",
+      "should_trigger": true
+    },
+    {
+      "id": "train-negative",
+      "split": "train",
+      "query": "리뷰 finding을 직접 수정해줘 (연습 표현)",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-positive-1",
+      "split": "validation",
+      "query": "main 기준으로 현재 branch를 리뷰해줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-2",
+      "split": "validation",
+      "query": "이 diff가 specification을 충족하는지 검토해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-3",
+      "split": "validation",
+      "query": "PR 전체 변경을 읽고 source는 수정하지 않은 채 finding을 보고해줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-4",
+      "split": "validation",
+      "query": "HEAD~2 이후 changes를 Standards와 Spec으로 나눠 review해줘",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-5",
+      "split": "validation",
+      "query": "이 commit range에서 regresion finding만 알려줘",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-positive-6",
+      "split": "validation",
+      "query": "diff 독립 리뷰",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-positive-7",
+      "split": "validation",
+      "query": "이 PR의 auth 변경을 file:line 근거로 review해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-positive-8",
+      "split": "validation",
+      "query": "티켓 acceptance criteria가 모두 구현됐는지 diff를 확인해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-negative-1",
+      "split": "validation",
+      "query": "리뷰 finding을 직접 수정해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-2",
+      "split": "validation",
+      "query": "원인 불명의 버그를 진단해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-3",
+      "split": "validation",
+      "query": "전체 저장소를 새 구조로 구현해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-4",
+      "split": "validation",
+      "query": "active rebase conflict를 해결해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-5",
+      "split": "validation",
+      "query": "이 아이디어를 질문으로 검증해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-6",
+      "split": "validation",
+      "query": "코드 formatting을 적용하고 commit해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-7",
+      "split": "validation",
+      "query": "브라우저에서 UI가 맞는지 screenshot으로 확인해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-8",
+      "split": "validation",
+      "query": "기준점 없이 현재 코드 전체가 좋다고 말해줘",
+      "should_trigger": false
+    }
+  ]
+}

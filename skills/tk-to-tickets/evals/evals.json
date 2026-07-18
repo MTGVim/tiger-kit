@@ -1,0 +1,73 @@
+{
+  "skill_name": "tk-to-tickets",
+  "evals": [
+    {
+      "id": "legacy-1",
+      "path": "success",
+      "prompt": "/tk-to-tickets 확정된 명세를 독립적으로 검증 가능한 두 개의 수직 동작 티켓으로 나누고 요구사항 traceability·인수 기준·검증·의존성을 포함해 주세요.",
+      "expected_output": "source 요구사항을 추출하고 vertical slice 단위로 분할하며 각 티켓에 독립 목표·범위·인수 기준·검증과 traceability를 남긴다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "source 요구사항을 추출하고 vertical slice 단위로 분할하며 각 티켓에 독립 목표·범위·인수 기준·검증과 traceability를 남긴다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Ready",
+            "reported",
+            "applied",
+            "pending"
+          ]
+        }
+      ],
+      "darwin": true
+    },
+    {
+      "id": "legacy-2",
+      "path": "boundary",
+      "prompt": "/tk-to-tickets 이 작업을 API 티켓, UI 티켓, 테스트 티켓으로 수평 분할해 주세요. 요구사항 간 독립성은 확인되지 않았습니다.",
+      "expected_output": "수평 분할을 만들지 않고 독립 분할 근거가 부족하다는 Unresolved split report 또는 Blocked receipt를 낸다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "수평 분할을 만들지 않고 독립 분할 근거가 부족하다는 Unresolved split report 또는 Blocked receipt를 낸다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Blocked"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true,
+      "darwin": true
+    },
+    {
+      "id": "preserve-source-ids",
+      "path": "success",
+      "prompt": "/tk-to-tickets R1, R2와 AC1, AC2가 있는 명세를 수직 티켓으로 나눠 주세요.",
+      "expected_output": "각 티켓과 coverage table이 source ID를 그대로 보존하고 누락·의존성을 보고한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "각 티켓과 coverage table이 source ID를 그대로 보존하고 누락·의존성을 보고한다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Ready",
+            "reported",
+            "applied",
+            "pending"
+          ]
+        }
+      ]
+    }
+  ]
+}

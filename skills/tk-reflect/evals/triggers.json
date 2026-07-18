@@ -1,0 +1,30 @@
+{
+  "skill": "tk-reflect",
+  "kind": "user-invoked",
+  "queries": [
+    {
+      "id": "train-explicit",
+      "split": "train",
+      "query": "/tk-reflect 현재 요청을 스킬 계약대로 처리해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-explicit",
+      "split": "validation",
+      "query": "$tk-reflect 제공된 자료로 결과와 receipt를 만들어줘",
+      "should_trigger": true
+    },
+    {
+      "id": "train-implicit-block",
+      "split": "train",
+      "query": "이번 작업 소감을 한 문단으로 정리해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-nearby-block",
+      "split": "validation",
+      "query": "확인된 후보를 실제 skill로 작성해줘",
+      "should_trigger": false
+    }
+  ]
+}

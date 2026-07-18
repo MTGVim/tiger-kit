@@ -1,0 +1,132 @@
+{
+  "skill": "tk-diagnosing-bugs",
+  "kind": "hybrid",
+  "queries": [
+    {
+      "id": "train-positive",
+      "split": "train",
+      "query": "가끔 저장이 안 되는데 원인을 모르겠어 (연습 표현)",
+      "should_trigger": true
+    },
+    {
+      "id": "train-negative",
+      "split": "train",
+      "query": "조건문이 반대로 됐으니 바로 고쳐줘 (연습 표현)",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-positive-1",
+      "split": "validation",
+      "query": "가끔 저장이 안 되는데 원인을 모르겠어",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-2",
+      "split": "validation",
+      "query": "이 간헐 오류를 재현하고 가설을 검증해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-3",
+      "split": "validation",
+      "query": "배포 후 latency regression을 deterministic measurement로 찾아줘",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-4",
+      "split": "validation",
+      "query": "CI flaky test를 최소 재현하고 원래 suite까지 다시 검증해줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-5",
+      "split": "validation",
+      "query": "환경마다 다른 crash를 instrumetation으로 좁혀줘",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-positive-6",
+      "split": "validation",
+      "query": "flaky 원인?",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-positive-7",
+      "split": "validation",
+      "query": "왜 timeout 나는지 모르겠어, 재현부터 해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-positive-8",
+      "split": "validation",
+      "query": "성능 regression을 baseline 비교로 진단해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-negative-1",
+      "split": "validation",
+      "query": "조건문이 반대로 됐으니 바로 고쳐줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-2",
+      "split": "validation",
+      "query": "누락된 prop을 전달해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-3",
+      "split": "validation",
+      "query": "현재 branch diff를 수정 없이 리뷰해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-4",
+      "split": "validation",
+      "query": "컴파일 에러가 난 파일명과 줄을 이미 알았으니 수정해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-5",
+      "split": "validation",
+      "query": "이 failing test의 기대값 오타를 고쳐줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-6",
+      "split": "validation",
+      "query": "merge conflict를 stage하고 rebase를 계속해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-7",
+      "split": "validation",
+      "query": "버그 보고서를 티켓으로 정리해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-8",
+      "split": "validation",
+      "query": "로그를 읽고 한 문단으로 요약만 해줘",
+      "should_trigger": false
+    }
+  ]
+}

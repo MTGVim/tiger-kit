@@ -6,7 +6,7 @@
   },
   {
     "id": 2,
-    "prompt": "/tk-handoff --resume 기존 인수인계를 읽고 drift가 있어도 사용자 확인 없이 계속 진행해 주세요.",
-    "expected": "현재 상태와 handoff의 drift/conflict를 대조하되 확인 전에는 계속하지 않고 pending 또는 Blocked로 멈춘다."
+    "prompt": "/tk-handoff --resume 기존 인수인계와 현재 branch 목표·confirmed decision이 충돌해도 확인 없이 계속해 주세요.",
+    "expected": "Material drift/conflict를 구체적으로 보고하고 사용자 결정 전 pending 또는 Blocked로 멈춘다."
   }
 ]

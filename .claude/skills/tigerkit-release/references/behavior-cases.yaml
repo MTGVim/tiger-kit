@@ -28,3 +28,12 @@
 - case: dry-run-never-queries-or-mutates
   skill: tigerkit-release
   expect: "Dry-run evaluates only the supplied scenario, performs no repository or remote query or mutation, and reports the planned steps and stop conditions."
+- case: normal-release-requires-origin-main-candidate
+  skill: tigerkit-release
+  expect: "A stable normal release proceeds only on local main based on origin/main; work from another branch is integrated through explicit Promote before version mutation."
+- case: release-waits-for-candidate-ci
+  skill: tigerkit-release
+  expect: "After the release commit is pushed to origin/main, the exact candidate SHA must pass the blocking validation workflow before a stable tag is created."
+- case: release-verifies-main-tag-release-sha
+  skill: tigerkit-release
+  expect: "Released requires origin/main, the annotated tag's peeled commit, the GitHub Release tag target, and the successful CI SHA to resolve to the same commit."

@@ -1,0 +1,30 @@
+{
+  "skill": "tk-to-tickets",
+  "kind": "user-invoked",
+  "queries": [
+    {
+      "id": "train-explicit",
+      "split": "train",
+      "query": "/tk-to-tickets 현재 요청을 스킬 계약대로 처리해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-explicit",
+      "split": "validation",
+      "query": "$tk-to-tickets 제공된 자료로 결과와 receipt를 만들어줘",
+      "should_trigger": true
+    },
+    {
+      "id": "train-implicit-block",
+      "split": "train",
+      "query": "이 계획에서 할 일을 몇 개 나열해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-nearby-block",
+      "split": "validation",
+      "query": "이 티켓을 바로 구현해줘",
+      "should_trigger": false
+    }
+  ]
+}

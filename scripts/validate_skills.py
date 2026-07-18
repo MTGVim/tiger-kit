@@ -2,6 +2,7 @@
 """Validate TigerKit Agent Skills using only the Python standard library."""
 from __future__ import annotations
 
+import json
 import re
 import subprocess
 import sys
@@ -15,6 +16,23 @@ INVOCATION_LABELS = {
     "hybrid": "[user/auto]",
 }
 RELATIONSHIPS = {"copied", "adapted", "inspired-by", "forked", "native"}
+CORE_FRONTMATTER_FIELDS = {
+    "name",
+    "description",
+    "license",
+    "compatibility",
+    "metadata",
+    "allowed-tools",
+}
+HOST_EXTENSION_FIELDS = {"argument-hint", "disable-model-invocation"}
+MECHANICAL_ASSERTION_TYPES = {
+    "terminal_status",
+    "path_exists",
+    "path_absent",
+    "git_head_changed",
+    "git_head_unchanged",
+}
+HYBRID_TRIGGER_FACETS = {"formal", "casual", "typo", "ko-en", "short", "compound"}
 EXPECTED_SKILLS = {
     "tk-grill-me",
     "tk-to-spec",
@@ -93,6 +111,12 @@ REQUIRED_BEHAVIOR_CASES = {
     "prototype-is-not-production",
     "grooming-defaults-report-only",
     "legacy-global-state-is-not-scanned",
+    "handoff-resume-no-drift-continues",
+    "handoff-resume-material-drift-blocks",
+    "traceability-preserves-requirement-ids",
+    "code-review-high-risk-is-conditional",
+    "browser-accessibility-is-conditional",
+    "learn-requires-eval-and-compatibility",
 }
 RELEASE_BEHAVIOR_FIXTURE = ROOT / ".claude" / "skills" / "tigerkit-release" / "references" / "behavior-cases.yaml"
 REQUIRED_RELEASE_BEHAVIOR_CASES = {
@@ -105,6 +129,9 @@ REQUIRED_RELEASE_BEHAVIOR_CASES = {
     "release-returns-to-main",
     "resume-blocks-on-artifact-mismatch",
     "dry-run-never-queries-or-mutates",
+    "normal-release-requires-origin-main-candidate",
+    "release-waits-for-candidate-ci",
+    "release-verifies-main-tag-release-sha",
 }
 
 
@@ -158,6 +185,35 @@ def nested(data: dict[str, object], *keys: str) -> object | None:
     return value
 
 
+def parse_latest_changelog_version(text: str) -> str | None:
+    match = re.search(r"(?m)^## (\d+\.\d+\.\d+)(?:\s|$)", text)
+    return match.group(1) if match else None
+
+
+def validate_release_version_contract(root: Path) -> list[str]:
+    changelog = root / "CHANGELOG.md"
+    readme = root / "README.md"
+    if not changelog.is_file() or not readme.is_file():
+        return []
+    version = parse_latest_changelog_version(changelog.read_text(encoding="utf-8"))
+    if version is None:
+        return ["CHANGELOG.md: add a leading semantic version release heading"]
+    if f"`v{version}`" not in readme.read_text(encoding="utf-8"):
+        return [f"README.md: immutable snapshot must reference latest changelog release v{version}"]
+    return []
+
+
+def validate_release_alignment(
+    main_sha: str,
+    peeled_tag_sha: str,
+    release_sha: str,
+    ci_sha: str,
+) -> list[str]:
+    if len({main_sha, peeled_tag_sha, release_sha, ci_sha}) != 1:
+        return ["release provenance: origin/main, peeled tag, GitHub Release, and CI SHA must match"]
+    return []
+
+
 def validate_skill(path: Path) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -174,14 +230,22 @@ def validate_skill(path: Path) -> tuple[list[str], list[str]]:
     origin = nested(data, "metadata", "tigerkit", "origin")
     relationship = nested(data, "metadata", "tigerkit", "relationship")
 
+    unknown_fields = sorted(set(data) - CORE_FRONTMATTER_FIELDS - HOST_EXTENSION_FIELDS)
+    if unknown_fields:
+        errors.append(f"{label}: SKILL.md frontmatter: unknown top-level fields: {', '.join(unknown_fields)}")
+
     if not isinstance(name, str) or not name:
         errors.append(f"{label}: SKILL.md field name: add a non-empty name")
     elif name != label:
         errors.append(f"{label}: SKILL.md field name: use directory name {label!r}")
     if isinstance(name, str) and (not name.startswith("tk-") or not KEBAB.fullmatch(name)):
         errors.append(f"{label}: SKILL.md field name: use tk- prefixed kebab-case")
+    if isinstance(name, str) and len(name) > 64:
+        errors.append(f"{label}: SKILL.md field name: keep within 64 characters")
     if not isinstance(description, str) or not description.strip():
         errors.append(f"{label}: SKILL.md field description: add a non-empty description")
+    elif len(description) > 1024:
+        errors.append(f"{label}: SKILL.md field description: keep within 1024 characters")
     if not isinstance(kind, str) or kind not in KINDS:
         errors.append(f"{label}: metadata.tigerkit.kind: use one of {sorted(KINDS)}")
     elif isinstance(description, str) and not description.startswith(f"{INVOCATION_LABELS[kind]} "):
@@ -290,7 +354,11 @@ def validate_repository_contract() -> list[str]:
         "LICENSE",
         ".gitignore",
         ".github/workflows/validate.yml",
+        ".github/workflows/skills-canary.yml",
+        ".github/workflows/skill-evals.yml",
         "scripts/validate_skills.py",
+        "scripts/run_skill_evals.py",
+        "scripts/sync_eval_compat.py",
         "evals/trigger-cases.yaml",
         "evals/behavior-cases.yaml",
     )
@@ -307,7 +375,6 @@ def validate_repository_contract() -> list[str]:
     required_text = {
         "README.md": (
             "TigerKit 19",
-            "v19.0.13",
             "13",
             "Claude Code",
             "Codex",
@@ -322,7 +389,7 @@ def validate_repository_contract() -> list[str]:
             "hybrid",
             "CONTEXT.md",
         ),
-        "CHANGELOG.md": ("19.0.13", "13", "hybrid", "v18.0.4"),
+        "CHANGELOG.md": ("13", "hybrid", "v18.0.4"),
         "NOTICE.md": (
             "mattpocock/skills",
             "relationship: adapted",
@@ -341,6 +408,7 @@ def validate_repository_contract() -> list[str]:
     for directory in SKILLS.glob("*/**"):
         if directory.is_dir() and directory.name in {"references", "scripts", "agents"} and not any(directory.iterdir()):
             errors.append(f"{directory.relative_to(ROOT)}: remove empty optional directory")
+    errors.extend(validate_release_version_contract(ROOT))
     return errors
 
 
@@ -405,6 +473,238 @@ def parse_behavior_cases(path: Path) -> tuple[list[dict[str, str]], list[str]]:
     return entries, duplicates
 
 
+def load_json_object(path: Path, errors: list[str]) -> dict[str, object] | None:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        errors.append(f"{path}: invalid JSON: {exc}")
+        return None
+    if not isinstance(value, dict):
+        errors.append(f"{path}: top-level value must be an object")
+        return None
+    return value
+
+
+def darwin_test_prompt_projection(behavior_data: dict[str, object]) -> list[dict[str, object]]:
+    evals = behavior_data.get("evals", [])
+    if not isinstance(evals, list):
+        return []
+    selected = [case for case in evals if isinstance(case, dict) and case.get("darwin") is True]
+    return [
+        {
+            "id": index,
+            "prompt": case.get("prompt"),
+            "expected": case.get("expected_output"),
+        }
+        for index, case in enumerate(selected, 1)
+    ]
+
+
+def validate_skill_eval_files(skill_dir: Path, kind: str) -> list[str]:
+    errors: list[str] = []
+    label = skill_dir.name
+    trigger_path = skill_dir / "evals" / "triggers.json"
+    behavior_path = skill_dir / "evals" / "evals.json"
+    for path in (trigger_path, behavior_path):
+        if not path.is_file():
+            errors.append(f"{label}: {path.relative_to(skill_dir)}: add executable eval contract")
+    if errors:
+        return errors
+
+    trigger_data = load_json_object(trigger_path, errors)
+    if trigger_data is not None:
+        if trigger_data.get("skill") != label:
+            errors.append(f"{label}: evals/triggers.json: skill must match directory name")
+        if trigger_data.get("kind") != kind:
+            errors.append(f"{label}: evals/triggers.json: kind must be {kind}")
+        queries = trigger_data.get("queries")
+        if not isinstance(queries, list) or not queries:
+            errors.append(f"{label}: evals/triggers.json: queries must be a non-empty list")
+        else:
+            ids: list[str] = []
+            splits: set[str] = set()
+            split_queries: dict[str, set[str]] = {"train": set(), "validation": set()}
+            validation_positive = 0
+            validation_negative = 0
+            validation_facets: set[str] = set()
+            any_positive = False
+            any_negative = False
+            for index, query in enumerate(queries, 1):
+                if not isinstance(query, dict):
+                    errors.append(f"{label}: evals/triggers.json: query {index} must be an object")
+                    continue
+                query_id = query.get("id")
+                split = query.get("split")
+                text = query.get("query")
+                should_trigger = query.get("should_trigger")
+                facets = query.get("facets", [])
+                if not isinstance(query_id, str) or not query_id:
+                    errors.append(f"{label}: evals/triggers.json: query {index} needs id")
+                else:
+                    ids.append(query_id)
+                if split not in {"train", "validation"}:
+                    errors.append(f"{label}: evals/triggers.json: query {index} split must be train or validation")
+                else:
+                    splits.add(split)
+                if not isinstance(text, str) or not text.strip():
+                    errors.append(f"{label}: evals/triggers.json: query {index} needs query text")
+                elif split in split_queries:
+                    split_queries[split].add(" ".join(text.casefold().split()))
+                if not isinstance(should_trigger, bool):
+                    errors.append(f"{label}: evals/triggers.json: query {index} should_trigger must be boolean")
+                elif should_trigger:
+                    any_positive = True
+                    if split == "validation":
+                        validation_positive += 1
+                else:
+                    any_negative = True
+                    if split == "validation":
+                        validation_negative += 1
+                if not isinstance(facets, list) or not all(
+                    isinstance(facet, str) and facet in HYBRID_TRIGGER_FACETS for facet in facets
+                ):
+                    errors.append(
+                        f"{label}: evals/triggers.json: query {index} facets must use "
+                        f"{sorted(HYBRID_TRIGGER_FACETS)}"
+                    )
+                elif split == "validation":
+                    validation_facets.update(facets)
+            duplicates = sorted({value for value in ids if ids.count(value) > 1})
+            if duplicates:
+                errors.append(f"{label}: evals/triggers.json: duplicate query ids: {', '.join(duplicates)}")
+            if splits != {"train", "validation"}:
+                errors.append(f"{label}: evals/triggers.json: include both train and validation splits")
+            overlap = sorted(split_queries["train"] & split_queries["validation"])
+            if overlap:
+                errors.append(f"{label}: evals/triggers.json: train/validation query overlap")
+            if not any_positive or not any_negative:
+                errors.append(f"{label}: evals/triggers.json: include trigger and non-trigger queries")
+            if kind == "hybrid" and (validation_positive < 8 or validation_negative < 8):
+                errors.append(
+                    f"{label}: evals/triggers.json: hybrid validation needs at least 8 positive and 8 negative queries"
+                )
+            if kind == "hybrid" and validation_facets != HYBRID_TRIGGER_FACETS:
+                missing_facets = ", ".join(sorted(HYBRID_TRIGGER_FACETS - validation_facets))
+                errors.append(
+                    f"{label}: evals/triggers.json: hybrid validation is missing query facets: "
+                    f"{missing_facets or 'none'}"
+                )
+
+    behavior_data = load_json_object(behavior_path, errors)
+    if behavior_data is not None:
+        if behavior_data.get("skill_name") != label:
+            errors.append(f"{label}: evals/evals.json: skill_name must match directory name")
+        evals = behavior_data.get("evals")
+        if not isinstance(evals, list) or not evals:
+            errors.append(f"{label}: evals/evals.json: evals must be a non-empty list")
+        else:
+            ids: list[str] = []
+            paths: set[str] = set()
+            for index, case in enumerate(evals, 1):
+                if not isinstance(case, dict):
+                    errors.append(f"{label}: evals/evals.json: case {index} must be an object")
+                    continue
+                case_id = case.get("id")
+                path_type = case.get("path")
+                if not isinstance(case_id, str) or not case_id:
+                    errors.append(f"{label}: evals/evals.json: case {index} needs id")
+                else:
+                    ids.append(case_id)
+                if path_type not in {"success", "boundary"}:
+                    errors.append(f"{label}: evals/evals.json: case {index} path must be success or boundary")
+                else:
+                    paths.add(path_type)
+                for field in ("prompt", "expected_output"):
+                    if not isinstance(case.get(field), str) or not str(case.get(field)).strip():
+                        errors.append(f"{label}: evals/evals.json: case {index} needs {field}")
+                assertions = case.get("assertions")
+                if not isinstance(assertions, list) or not assertions:
+                    errors.append(f"{label}: evals/evals.json: case {index} needs non-empty assertions")
+                else:
+                    has_mechanical = False
+                    for assertion_index, assertion in enumerate(assertions, 1):
+                        if not isinstance(assertion, dict):
+                            errors.append(
+                                f"{label}: evals/evals.json: case {index} assertion "
+                                f"{assertion_index} must be an object"
+                            )
+                            continue
+                        assertion_type = assertion.get("type")
+                        if assertion_type == "judge":
+                            if not isinstance(assertion.get("criterion"), str) or not str(
+                                assertion.get("criterion")
+                            ).strip():
+                                errors.append(
+                                    f"{label}: evals/evals.json: case {index} judge assertion "
+                                    f"{assertion_index} needs criterion"
+                                )
+                            continue
+                        if assertion_type not in MECHANICAL_ASSERTION_TYPES:
+                            errors.append(
+                                f"{label}: evals/evals.json: case {index} assertion "
+                                f"{assertion_index} has unknown type {assertion_type!r}"
+                            )
+                            continue
+                        has_mechanical = True
+                        if assertion_type == "terminal_status":
+                            allowed = assertion.get("allowed")
+                            if not isinstance(allowed, list) or not allowed or not all(
+                                isinstance(value, str) and value.strip() for value in allowed
+                            ):
+                                errors.append(
+                                    f"{label}: evals/evals.json: case {index} terminal_status "
+                                    "assertion needs non-empty allowed values"
+                                )
+                        elif assertion_type in {"path_exists", "path_absent"}:
+                            relative = assertion.get("path")
+                            if (
+                                not isinstance(relative, str)
+                                or not relative
+                                or Path(relative).is_absolute()
+                                or ".." in Path(relative).parts
+                            ):
+                                errors.append(
+                                    f"{label}: evals/evals.json: case {index} path assertion "
+                                    "needs a safe relative path"
+                                )
+                    if not has_mechanical:
+                        errors.append(
+                            f"{label}: evals/evals.json: case {index} needs at least one "
+                            "mechanical assertion; judge-only prose is not release evidence"
+                        )
+                if "safety" in case and not isinstance(case.get("safety"), bool):
+                    errors.append(f"{label}: evals/evals.json: case {index} safety must be boolean")
+                if "darwin" in case and not isinstance(case.get("darwin"), bool):
+                    errors.append(f"{label}: evals/evals.json: case {index} darwin must be boolean")
+                files = case.get("files", [])
+                if not isinstance(files, list):
+                    errors.append(f"{label}: evals/evals.json: case {index} files must be a list")
+                else:
+                    for relative in files:
+                        if not isinstance(relative, str) or not (skill_dir / relative).is_file():
+                            errors.append(f"{label}: evals/evals.json: case {index} missing input file {relative!r}")
+            duplicates = sorted({value for value in ids if ids.count(value) > 1})
+            if duplicates:
+                errors.append(f"{label}: evals/evals.json: duplicate case ids: {', '.join(duplicates)}")
+            if paths != {"success", "boundary"}:
+                errors.append(f"{label}: evals/evals.json: include success and boundary paths")
+        projection = darwin_test_prompt_projection(behavior_data)
+        compatibility_path = skill_dir / "test-prompts.json"
+        if label in EXPECTED_SKILLS and len(projection) != 2:
+            errors.append(f"{label}: evals/evals.json: select exactly 2 Darwin compatibility prompts")
+        if compatibility_path.is_file():
+            try:
+                compatibility = json.loads(compatibility_path.read_text(encoding="utf-8"))
+            except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+                errors.append(f"{label}: test-prompts.json: invalid JSON: {exc}")
+            else:
+                if compatibility != projection:
+                    errors.append(f"{label}: test-prompts.json: regenerate from evals/evals.json Darwin cases")
+        elif label in EXPECTED_SKILLS:
+            errors.append(f"{label}: test-prompts.json: add Darwin compatibility projection")
+    return errors
+
+
 def validate_eval_fixtures() -> list[str]:
     errors: list[str] = []
     trigger_path = ROOT / "evals" / "trigger-cases.yaml"
@@ -453,6 +753,9 @@ def validate_eval_fixtures() -> list[str]:
             skill = entry.get("skill")
             if skill and skill not in EXPECTED_SKILLS:
                 errors.append(f"evals/behavior-cases.yaml: {entry.get('case', index)} references unknown skill {skill}")
+    for skill in sorted(EXPECTED_SKILLS):
+        kind = "user-invoked" if skill in USER_INVOKED_SKILLS else "hybrid"
+        errors.extend(validate_skill_eval_files(SKILLS / skill, kind))
     return errors
 
 
@@ -516,6 +819,11 @@ def main() -> int:
             print(f"ERROR: {error}")
         print(f"Validation failed with {len(errors)} errors.")
         return 1
+    print(f"Validated Agent Skills portable core fields for {len(paths)} skills.")
+    print(
+        f"Validated TigerKit host extension profiles: "
+        f"{len(USER_INVOKED_SKILLS)} user-invoked, {len(HYBRID_SKILLS)} hybrid."
+    )
     print(f"Validated {len(paths)} skills with 0 errors.")
     return 0
 

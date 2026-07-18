@@ -1,0 +1,132 @@
+{
+  "skill": "tk-merge-conflict",
+  "kind": "hybrid",
+  "queries": [
+    {
+      "id": "train-positive",
+      "split": "train",
+      "query": "현재 rebase conflict를 완료해줘 (연습 표현)",
+      "should_trigger": true
+    },
+    {
+      "id": "train-negative",
+      "split": "train",
+      "query": "active conflict 없이 파일을 정리해줘 (연습 표현)",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-positive-1",
+      "split": "validation",
+      "query": "현재 rebase conflict를 완료해줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-2",
+      "split": "validation",
+      "query": "진행 중인 cherry-pick conflict를 의도 기준으로 해결해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-3",
+      "split": "validation",
+      "query": "merge conflict를 해결하고 stage한 뒤 operation 종료까지 처리해줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-4",
+      "split": "validation",
+      "query": "revert 중 unmerged paths의 ours/theirs intent를 비교해줘",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-5",
+      "split": "validation",
+      "query": "confict marker를 근거로 해소하고 rebase --continue 해줘",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-positive-6",
+      "split": "validation",
+      "query": "merge 끝내줘",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-positive-7",
+      "split": "validation",
+      "query": "index에 unmerged path가 있는데 테스트 후 operation을 계속해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-positive-8",
+      "split": "validation",
+      "query": "양 branch 테스트를 읽고 충돌 hunk를 해결해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-negative-1",
+      "split": "validation",
+      "query": "active conflict 없이 파일을 정리해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-2",
+      "split": "validation",
+      "query": "rebase를 abort해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-3",
+      "split": "validation",
+      "query": "force push로 충돌을 없애줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-4",
+      "split": "validation",
+      "query": "일반 merge 전략을 설명만 해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-5",
+      "split": "validation",
+      "query": "두 파일의 formatting을 맞춰줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-6",
+      "split": "validation",
+      "query": "main 이후 diff를 코드 리뷰해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-7",
+      "split": "validation",
+      "query": "원인 불명의 테스트 실패를 재현해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-8",
+      "split": "validation",
+      "query": "git reset --hard로 작업을 버려줘",
+      "should_trigger": false
+    }
+  ]
+}
