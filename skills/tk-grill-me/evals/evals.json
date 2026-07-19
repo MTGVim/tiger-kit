@@ -13,7 +13,7 @@
         },
         {
           "type": "judge",
-          "criterion": "결정 본문은 Decisions만 소유하고 Receipt에는 상태·근거 위치·적용 여부와 Decisions 참조만 남겨 결정을 반복하지 않는다."
+          "criterion": "결정이 생기면 Decisions의 Scope·Constraints·Outputs·Verification이 각 의미를 한 번만 소유하고 이를 합친 별도 목표 문장을 만들지 않으며, Receipt에는 상태·근거 위치·적용 여부와 Decisions 참조만 남긴다. 질문 단계라 결정이 없으면 pending ledger만 보고한다."
         },
         {
           "type": "terminal_status",

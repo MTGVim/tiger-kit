@@ -13,7 +13,7 @@
         },
         {
           "type": "judge",
-          "criterion": "Alignment Status와 runtime Verdict를 구분하고 Verified·Findings·Evidence·Unverified가 각 사실을 한 번만 소유하며 다른 섹션에서는 참조한다."
+          "criterion": "Alignment Status와 runtime Verdict를 구분하고 내용이 있는 Verified·Findings·Evidence·Unverified·Cleanup이 각 사실을 한 번만 소유하며, 이 섹션들이 receipt 전체이므로 별도 Receipt에서 Verdict나 본문을 반복하지 않는다."
         },
         {
           "type": "terminal_status",

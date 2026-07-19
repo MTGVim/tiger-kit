@@ -64,7 +64,7 @@ Primary source는 commit message, 관련 issue/PR, spec/ticket, 주변 test, 각
 
 ## 완료 보고
 
-operation 종류와 상태, conflict 파일, 조사한 의도, resolution, stage/continue 결과, 검증, operation 종료 여부, 남은 후속 작업을 각각 한 번만 보고하세요. Receipt에는 상태(`Pass | Fail | Blocked | Unverifiable`), 미검증 항목과 앞선 보고 항목의 참조만 기록하고 수행 단계·근거·후속 작업 본문을 반복하지 마세요. Push는 별도 요청이 필요합니다.
+`Operation`이 operation 종류·현재 상태·종료 여부를, conflict 파일·조사한 의도·resolution·검증·남은 후속 작업이 각 해당 섹션을, `Stage/continue`가 실행한 stage/continue 명령과 그 직접 결과만 소유하도록 각각 한 번만 보고하세요. Stage/continue에서 operation 종료 상태를 다시 판정하지 말고 Operation을 참조하세요. Receipt에는 상태(`Pass | Fail | Blocked | Unverifiable`), 미검증 항목과 앞선 보고 항목의 참조만 기록하고 수행 단계·근거·후속 작업 본문을 반복하지 마세요. Push는 별도 요청이 필요합니다.
 
 ## DO NOT / ANTI-PATTERNS
 

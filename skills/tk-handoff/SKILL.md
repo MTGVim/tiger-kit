@@ -40,15 +40,15 @@ metadata:
 - `Status`: 작업 진행 상태인 `pending | in_progress | completed | aborted | Blocked`
 - `Decisions`: 사용자 답변/승인과 연결된 결정만 `confirmed`로, 나머지는 `pending`
 - `Changed files`: 실제로 확인한 경로만
-- `Commands`: 실제로 실행한 명령과 결과
-- `Verification`: 항목별 `verified | unverified`와 증거 위치
+- `Commands`: 실제로 실행한 명령 문자열만
+- `Verification`: Commands를 포함한 검증 항목별 결과, `verified | unverified`와 증거 위치
 - `Remaining work`: 아직 끝나지 않은 전체 작업
 - `Open questions`: 진행 전에 답이 필요한 결정
 - `Risks`: 질문과 별개로 남은 실패·회귀 가능성
 - `Next step`: Remaining work에서 선택한 즉시 실행할 한 단계
 - `Resume hints`: Next step을 반복하지 말고 재개에만 필요한 환경·순서·명령
 
-`verified`는 현재 실행에서 확인한 증거가 있을 때만 사용하세요. 이전 handoff의 주장, 계획, 모델 추론, 실행하지 않은 명령은 `unverified`로 유지하고 성공했다고 표현하지 마세요. Receipt의 `reported | applied | pending`은 handoff 작성·적용 상태이며 작업 진행 `Status`와 섞지 마세요. Receipt에는 작성·적용 상태와 내용이 있는 섹션의 증거 위치만 참조하고 `Commands`, `Verification` 또는 미래 작업 본문을 복사하지 마세요. 빈 섹션은 생략하고, 기존 spec/ticket/diff 경로는 복사하지 말고 참조하세요.
+`verified`는 현재 실행에서 확인한 증거가 있을 때만 사용하세요. 이전 handoff의 주장, 계획, 모델 추론, 실행하지 않은 명령은 `unverified`로 유지하고 성공했다고 표현하지 마세요. 실행 성공·실패는 Verification만 소유하고 Commands에 결과를 덧붙이지 마세요. Receipt의 `reported | applied | pending`은 handoff 작성·적용 상태이며 작업 진행 `Status`와 섞지 마세요. Receipt에는 작성·적용 상태와 내용이 있는 섹션의 증거 위치만 참조하고 `Commands`, `Verification` 또는 미래 작업 본문을 복사하지 마세요. 빈 섹션은 생략하고, 기존 spec/ticket/diff 경로는 복사하지 말고 참조하세요.
 
 ## CHECKPOINT / STOP
 
