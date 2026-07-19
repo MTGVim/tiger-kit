@@ -12,6 +12,10 @@
           "criterion": "실제 확인한 evidence만 verified로 schema에 기록하고 .tigerkit/handoff.md에 write 후 receipt에서 reported/applied/pending을 구분한다."
         },
         {
+          "type": "judge",
+          "criterion": "Remaining work·Next step·Resume hints의 고유 의미를 지키고 Receipt에는 handoff 작성 상태와 섹션 참조만 남겨 Commands·Verification·미래 작업을 반복하지 않는다."
+        },
+        {
           "type": "terminal_status",
           "allowed": [
             "pending",

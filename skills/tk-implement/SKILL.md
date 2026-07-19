@@ -67,7 +67,7 @@ Final verification에는 당시 branch·`HEAD`와 검증한 diff/path 범위를 
 
 별도 요청 없이는 push, PR 생성, merge, tag, release 또는 publish를 하지 마세요. 다른 사용자 호출형 스킬도 자동 실행하지 마세요.
 
-`## Strategy`, `## Changed`, `## Verification`, `## Commit`, 비어 있지 않은 `## Remaining risks`, `## Receipt`를 보고하세요. 파일 목록만이 아니라 동작을 설명하고, 검증 명령과 결과, 실패 분류, 커밋 메시지 또는 미커밋 이유를 포함하세요. Receipt에는 수행 단계, 적용한 requirement/acceptance ID별 변경과 검증 evidence, 핵심 증거, 미검증 항목, 상태(`Pass | Fail | Blocked | Unverifiable`)를 기록하세요.
+`## Strategy`, `## Changed`, `## Verification`, `## Commit`, 비어 있지 않은 `## Remaining risks`, `## Receipt`를 보고하세요. 파일 목록만이 아니라 동작을 설명하고, 검증 명령과 결과, 실패 분류, 커밋 메시지 또는 미커밋 이유를 포함하세요. 변경 설명은 `## Changed`, 검증 본문은 `## Verification`만 소유합니다. Receipt에는 상태(`Pass | Fail | Blocked | Unverifiable`), 미검증 항목과 requirement/acceptance ID별 `Changed`·`Verification` 참조만 기록하고 본문을 반복하지 마세요.
 
 ## DO NOT / ANTI-PATTERNS
 

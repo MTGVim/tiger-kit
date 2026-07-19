@@ -12,6 +12,10 @@
           "criterion": "범위를 확정하고 실제 경로를 조사한 뒤 네 영역 evidence와 분류를 보고-only receipt로 남기며 apply하지 않는다."
         },
         {
+          "type": "judge",
+          "criterion": "발견 사항·제안 작업·적용 내용·검증은 각 본문 섹션이 한 번만 소유하고 Receipt에는 전체 상태와 섹션 참조만 남긴다."
+        },
+        {
           "type": "terminal_status",
           "allowed": [
             "Pass",

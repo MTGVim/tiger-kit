@@ -23,7 +23,7 @@ metadata:
 3. `variants/harness`: 입력은 경계와 비교할 대상이고, 출력은 2–3개 변형안 또는 실제 예시 입출력을 가진 하네스입니다.
 4. `실행`: 입력은 선택한 변형·하네스와 명령이고, 출력은 실제 출력 또는 screenshot과 실행 결과입니다.
 5. `비교`: 입력은 실행 증거와 성공 기준이고, 출력은 확인된 차이·미검증 항목·후속 판단입니다.
-6. `receipt`: 입력은 전체 실행 기록이고, 출력은 상태와 `## Tested`, `## Variants or harness`, `## Confirmed`, `## Still fake`, `## Production implication`에 매핑된 인수인계입니다.
+6. `receipt`: 입력은 전체 실행 기록이고, 출력은 상태와 `## Tested`, `## Variants or harness`, `## Confirmed`, `## Still fake`, `## Production implication`입니다. 이 섹션들이 receipt 전체이며 별도 Receipt를 만들지 않습니다.
 
 정답이 정해지지 않은 UI 디자인이나 비교 요청에는 실질적으로 다른 렌더링 변형안 2–3개와 전환 수단을 만드세요. 색상만 바꾸지 말고 정보 구조, 흐름, 계층, 탐색 또는 피드백을 달리하세요. 로직에는 실제 예시 입력/출력과 최소한의 어댑터를 갖춘 작은 순수 하네스를 우선하세요.
 
@@ -39,7 +39,7 @@ Artifact를 만들기 전에 기존 임시 경로와 이번 실행이 생성할 
 
 ## 계약
 
-프로토타입을 실제 실행하고 명령과 결과를 기록하세요. 실패하거나 확인할 수 없으면 성공으로 보고하지 말고 `Fail`, `Blocked` 또는 `Unverifiable`로 구분하며, 가짜 데이터/연동과 실제 연결을 분리하세요. receipt에는 `상태: Complete | Fail | Blocked | Unverifiable`, 실행 명령/결과, `증거`, `미검증`, `미해결 항목`, `가짜/실제 구분`, 변형 또는 하네스, `폐기/반복/후속 판단`을 포함하고 `## Tested`, `## Variants or harness`, `## Confirmed`, `## Still fake`, `## Production implication`에 매핑하세요.
+프로토타입을 실제 실행하고 명령과 결과를 기록하세요. 실패하거나 확인할 수 없으면 성공으로 보고하지 말고 `Fail`, `Blocked` 또는 `Unverifiable`로 구분하며, 가짜 데이터/연동과 실제 연결을 분리하세요. 상태는 한 번만 기록하고, `## Tested`는 실행 명령·결과·증거, `## Variants or harness`는 비교안 또는 하네스, `## Confirmed`는 증거가 확인한 결론, `## Still fake`는 가짜/실제 경계·미검증·미해결 항목, `## Production implication`은 폐기·반복·후속 판단만 소유합니다. 같은 내용을 다른 섹션이나 별도 Receipt에 반복하지 마세요.
 
 ## DO NOT / ANTI-PATTERNS
 

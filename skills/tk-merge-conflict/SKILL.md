@@ -32,7 +32,7 @@ operation 상태, 모든 conflict hunk, 양쪽 primary source, resolution 근거
 4. `resolution`: 입력은 hunk별 근거와 operation 목표이고, 출력은 관련 없는 변경 없이 수정된 conflict 파일입니다.
 5. `stage and verify`: 입력은 수정된 파일과 관련 검증 기준이고, 출력은 marker 제거·unmerged 항목 해소·stage 및 검증 결과입니다.
 6. `continue`: 입력은 검증된 index와 현재 operation이고, 출력은 merge commit 또는 operation의 continue 결과입니다.
-7. `receipt`: 입력은 최종 operation 상태와 검증 결과이고, 출력은 종료 여부·남은 conflict·후속 작업을 포함한 상태 보고입니다.
+7. `receipt`: 입력은 최종 operation 상태와 검증 결과이고, 출력은 `Pass | Fail | Blocked | Unverifiable`, 미검증 항목 및 operation·검증·후속 작업 출력의 참조입니다. 앞선 본문을 복사하지 마세요.
 
 각 단계에서 필수 출력이 없으면 다음 단계로 진행하지 마세요. 추가 conflict가 생기면 `conflict inventory`부터 반복하세요.
 
@@ -64,7 +64,7 @@ Primary source는 commit message, 관련 issue/PR, spec/ticket, 주변 test, 각
 
 ## 완료 보고
 
-operation 종류와 상태, conflict 파일, 조사한 의도, resolution, stage/continue 결과, 검증, operation 종료 여부, 남은 후속 작업을 보고하세요. 수행 단계, 핵심 근거, 미검증 항목, 상태(`Pass | Fail | Blocked | Unverifiable`)를 receipt에 포함하세요. Push는 별도 요청이 필요합니다.
+operation 종류와 상태, conflict 파일, 조사한 의도, resolution, stage/continue 결과, 검증, operation 종료 여부, 남은 후속 작업을 각각 한 번만 보고하세요. Receipt에는 상태(`Pass | Fail | Blocked | Unverifiable`), 미검증 항목과 앞선 보고 항목의 참조만 기록하고 수행 단계·근거·후속 작업 본문을 반복하지 마세요. Push는 별도 요청이 필요합니다.
 
 ## DO NOT / ANTI-PATTERNS
 

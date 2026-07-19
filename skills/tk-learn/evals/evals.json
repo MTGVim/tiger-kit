@@ -12,6 +12,10 @@
           "criterion": "반복 evidence와 중복 검색을 확인한 뒤 대상·이름·trigger·초안을 pending으로 제안하고 명시적 승인 전에는 canonical 경로에 쓰지 않는다."
         },
         {
+          "type": "judge",
+          "criterion": "이름·종류·대상·생성 경로·검증·남은 우려 사항은 최종 보고가 한 번만 소유하고 Receipt에는 적용 상태와 필드 참조만 남긴다."
+        },
+        {
           "type": "terminal_status",
           "allowed": [
             "pending"

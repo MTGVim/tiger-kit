@@ -22,7 +22,7 @@ metadata:
 5. `instrument`: 입력은 우선순위 가설과 최소 재현이고, 출력은 한 변수씩 구분 가능한 관측 증거입니다.
 6. `fix`: 입력은 반증 결과와 확인된 원인이고, 출력은 최소 범위의 수정 또는 seam 부재 finding입니다.
 7. `regression verification`: 입력은 수정과 원래 reproduction이고, 출력은 원래 증상·regression seam의 `green | failed` 결과입니다.
-8. `cleanup/receipt`: 입력은 검증 결과와 임시 artifact 목록이고, 출력은 정리 결과와 상태·근본 원인·fix·미검증을 연결한 receipt입니다.
+8. `cleanup/receipt`: 입력은 검증 결과와 임시 artifact 목록이고, 출력은 정리 결과·상태·미검증 및 앞선 근본 원인·fix·regression 출력의 참조를 연결한 receipt입니다. 앞선 본문을 복사하지 마세요.
 
 필요한 입력·환경·권한이 없어 다음 단계로 진행할 수 없으면 `Blocked`, 실행했지만 재현 또는 회귀 증거를 확보하지 못하면 `Unverifiable`, 근본 원인이나 수정이 실패했음이 확인되면 `Fail`입니다. 어느 상태도 해결 완료로 보고하지 마세요.
 
@@ -95,7 +95,7 @@ cleanup 전후에 reproduction 전제나 대상 source가 달라졌거나 cleanu
 
 ## 완료 보고
 
-원래 증상, 근본 원인, fix, regression 증거, seam 부재 여부, cleanup, commit 또는 미commit 이유를 보고하세요. 수행 단계, 핵심 증거, 미검증 항목, 상태(`Pass | Fail | Blocked | Unverifiable`)를 receipt에 포함하세요.
+원래 증상, 근본 원인, fix, regression 증거, seam 부재 여부, cleanup, commit 또는 미commit 이유를 각각 한 번만 보고하세요. Receipt에는 상태(`Pass | Fail | Blocked | Unverifiable`), 미검증 항목과 해당 보고 항목의 참조만 기록하고 근본 원인·fix·증거 본문을 반복하지 마세요.
 
 ## DO NOT / ANTI-PATTERNS
 

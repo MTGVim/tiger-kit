@@ -12,6 +12,10 @@
           "criterion": "active operation, unmerged 목록, 모든 marker, 양쪽 primary source를 확인한 뒤 근거를 기록하고 stage·검증·continue·종료 상태까지 확인한다."
         },
         {
+          "type": "judge",
+          "criterion": "operation 상태·종료 여부·후속 작업은 완료 보고에서 한 번만 쓰고 Receipt에는 terminal status·미검증·보고 항목 참조만 남긴다."
+        },
+        {
           "type": "terminal_status",
           "allowed": [
             "Pass",

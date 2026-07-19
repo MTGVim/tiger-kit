@@ -76,7 +76,7 @@ metadata:
 
 같은 domain 용어가 서로 다른 의미로 쓰이거나 인접 개념을 구분해야 결정할 수 있다면 그 의미를 질문하세요. 확정된 용어는 이후 `tk-to-spec` 결과에 포함할 수 있지만, 이 스킬은 `CONTEXT.md`, glossary, domain 문서 또는 ADR을 자동으로 만들거나 수정하지 않습니다.
 
-내용이 있는 섹션만 사용해 마무리하세요: `## Decisions`, `## Assumptions`, `## Remaining risks`, `## Receipt`. Receipt에는 결정, `confirmed | pending | aborted | Blocked`, 사용자 답변 또는 근거 위치, 적용 여부를 기록하세요.
+내용이 있는 섹션만 사용해 마무리하세요: `## Decisions`, `## Assumptions`, `## Remaining risks`, `## Receipt`. 결정 본문은 `## Decisions`만 소유합니다. Receipt에는 `confirmed | pending | aborted | Blocked`, 결정의 사용자 답변 또는 근거 위치, 적용 여부와 `## Decisions` 참조만 기록하고 결정을 다시 쓰지 마세요.
 
 ## DO NOT / ANTI-PATTERNS
 

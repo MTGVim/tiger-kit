@@ -12,6 +12,10 @@
           "criterion": "확인 가능한 사실을 먼저 조사하고 Scope·Constraints·Outputs·Verification을 갱신하며 권고·근거·질문 세 필드의 한 질문만 제시한다."
         },
         {
+          "type": "judge",
+          "criterion": "결정 본문은 Decisions만 소유하고 Receipt에는 상태·근거 위치·적용 여부와 Decisions 참조만 남겨 결정을 반복하지 않는다."
+        },
+        {
           "type": "terminal_status",
           "allowed": [
             "Pass",

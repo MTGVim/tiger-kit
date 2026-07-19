@@ -12,6 +12,10 @@
           "criterion": "repo rule·repo skill·user rule·user skill로 분류하고 evidence·interpretation·confidence·action을 분리한 report-only pending receipt를 낸다."
         },
         {
+          "type": "judge",
+          "criterion": "각 후보의 사실은 의미가 정의된 한 필드만 소유하고 Receipt에는 상태와 필드 참조만 남겨 작업·학습 내용·본문을 반복하지 않는다."
+        },
+        {
           "type": "terminal_status",
           "allowed": [
             "pending"
