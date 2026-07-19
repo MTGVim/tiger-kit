@@ -28,7 +28,7 @@ metadata:
 
 - `Evidence`: 실제로 관찰한 diff·결과·반복 사례와 경로/명령을 적고 `verified | unverified`를 표시하세요.
 - `Interpretation`: evidence에서 도출한 재사용 가설을 적으세요. 가설을 관찰 사실처럼 쓰지 마세요.
-- `Confidence`: `high | medium | low`와 증거의 독립성·범위·불확실성만 적고 관찰 내용을 다시 서술하지 마세요. 근거 사실은 Evidence ID를 참조하세요. 증거가 부족하면 `low`로 두고 승격하지 마세요.
+- `Confidence`: `high | medium | low`와 Evidence ID별 독립성·범위·불확실성 판정만 적고, source 종류·사례 수·관찰 내용을 다시 서술하지 마세요. 근거 사실은 Evidence ID로만 참조하세요. 증거가 부족하면 `low`로 두고 승격하지 마세요.
 - `Action`: 중복이면 새로 만들지 말고 `merge` 또는 `no-op`을 우선하세요. 규칙은 짧은 상시 지침, 스킬은 트리거·반복 단계·입출력·독립적 가치를 가져야 합니다.
 
 ## 계약

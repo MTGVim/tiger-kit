@@ -48,7 +48,7 @@ metadata:
 - `Next step`: Remaining work에서 선택한 즉시 실행할 한 단계
 - `Resume hints`: Next step을 반복하지 말고 재개에만 필요한 환경·순서·명령
 
-`verified`는 현재 실행에서 확인한 증거가 있을 때만 사용하세요. 이전 handoff의 주장, 계획, 모델 추론, 실행하지 않은 명령은 `unverified`로 유지하고 성공했다고 표현하지 마세요. 실행 성공·실패는 Verification만 소유하고 Commands에 결과를 덧붙이지 마세요. Receipt의 `reported | applied | pending`은 handoff 작성·적용 상태이며 작업 진행 `Status`와 섞지 마세요. Receipt에는 작성·적용 상태와 내용이 있는 섹션의 증거 위치만 참조하고 `Commands`, `Verification` 또는 미래 작업 본문을 복사하지 마세요. 빈 섹션은 생략하고, 기존 spec/ticket/diff 경로는 복사하지 말고 참조하세요.
+`verified`는 현재 실행에서 확인한 증거가 있을 때만 사용하세요. 이전 handoff의 주장, 계획, 모델 추론, 실행하지 않은 명령은 `unverified`로 유지하고 성공했다고 표현하지 마세요. Commands는 과거에 실제 실행한 명령만 소유하며 Next step·Resume hints의 미래 명령을 미리 복사하지 않습니다. 실행 성공·실패는 Verification만 소유하고 Commands에 결과를 덧붙이지 마세요. Verification의 handoff 내용·schema 재확인과 Receipt의 handoff 작성 상태는 서로 다른 상태이므로 각각 한 번만 기록하고 다른 쪽에서는 참조하세요. Receipt의 `reported | applied | pending`은 handoff 작성·적용 상태이며 작업 진행 `Status`와 섞지 마세요. Receipt에는 작성·적용 상태와 내용이 있는 섹션의 증거 위치만 참조하고 `Commands`, `Verification` 또는 미래 작업 본문을 복사하지 마세요. 빈 섹션은 생략하고, 기존 spec/ticket/diff 경로는 복사하지 말고 참조하세요.
 
 ## CHECKPOINT / STOP
 

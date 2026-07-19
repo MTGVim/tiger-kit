@@ -13,7 +13,7 @@
         },
         {
           "type": "judge",
-          "criterion": "각 후보의 사실은 대상·ID가 붙은 Evidence·Interpretation·Confidence·Action·필요한 실제 초안 중 의미가 정의된 한 필드만 소유하고, Interpretation·Confidence는 Evidence ID를 참조하며 관찰을 반복하지 않고, 별도 이 대상인 이유·작업·학습 내용 필드를 만들지 않으며, Receipt에는 상태와 필드 참조만 남긴다."
+          "criterion": "각 후보의 사실은 대상·ID가 붙은 Evidence·Interpretation·Confidence·Action·필요한 실제 초안 중 의미가 정의된 한 필드만 소유하고, Interpretation·Confidence는 Evidence ID로만 근거를 참조하며 source 종류·사례 수·관찰을 반복하지 않고, 별도 이 대상인 이유·작업·학습 내용 필드를 만들지 않으며, Receipt에는 상태와 필드 참조만 남긴다."
         },
         {
           "type": "terminal_status",

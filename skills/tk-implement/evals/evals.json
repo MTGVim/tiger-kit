@@ -13,7 +13,7 @@
         },
         {
           "type": "judge",
-          "criterion": "Strategy는 실행 방식과 이유, Changed는 변경 동작, Verification은 검증 본문을 각각 한 번만 소유하고, Receipt에는 상태·미검증·requirement/acceptance ID별 섹션 참조만 남긴다."
+          "criterion": "Strategy는 실행 방식·TDD·review와 이유만, Changed는 변경 동작, Verification은 검증 명령·결과·실패 분류를 각각 한 번만 소유하고, Receipt에는 상태·미검증·requirement/acceptance ID별 섹션 참조만 남긴다."
         },
         {
           "type": "terminal_status",

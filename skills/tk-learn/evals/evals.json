@@ -13,7 +13,7 @@
         },
         {
           "type": "judge",
-          "criterion": "Evidence가 threshold·출처, Created path가 생성 여부·경로, Verification이 target-host 결과를 포함해 이름·종류·대상·남은 우려 사항과 함께 각각 한 번만 소유하고, Receipt에는 적용 상태·미검증과 필드 참조만 남긴다."
+          "criterion": "Evidence가 threshold·출처, Created path가 생성 여부·경로, Verification이 실행하지 못한 target-host 항목의 unverified를 포함한 결과를 각각 한 번만 소유하고, 이름·종류·대상·남은 우려 사항도 단일 필드에 두며, Receipt에는 적용 상태·미검증 필드 참조만 남긴다."
         },
         {
           "type": "terminal_status",
