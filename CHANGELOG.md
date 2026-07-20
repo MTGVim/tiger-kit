@@ -5,6 +5,7 @@
 - Assigned each substantive result to one named output section across ten canonical skills instead of restating it under overlapping labels.
 - Limited receipts to terminal or disposition status, unresolved items, and references while preserving skill-specific evidence and verification fields.
 - Added primary eval assertions that reject semantically duplicated output across the affected skill contracts.
+- Moved the maintainer-only `tigerkit-release` helper to user scope and removed its repository-tracked skill and fixture surfaces from consumer discovery.
 
 ## 19.0.14 — Existing Structure Hardening
 
