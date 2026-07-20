@@ -27,8 +27,8 @@ metadata:
 각 후보를 다음처럼 분리해 작성하세요.
 
 - `Evidence`: 실제로 관찰한 diff·결과·반복 사례와 경로/명령을 적고 `verified | unverified`를 표시하세요.
-- `Interpretation`: evidence에서 도출한 재사용 가설을 적으세요. 가설을 관찰 사실처럼 쓰지 마세요.
-- `Confidence`: `high | medium | low`와 Evidence ID별 독립성·범위·불확실성 판정만 적고, source 종류·사례 수·관찰 내용을 다시 서술하지 마세요. 근거 사실은 Evidence ID로만 참조하세요. 증거가 부족하면 `low`로 두고 승격하지 마세요.
+- `Interpretation`: Evidence ID에서 도출한 재사용 범위·경계 가설만 적고, 적용할 규칙 문안이나 `~해야 한다` 처방은 쓰지 마세요. 실제 처방은 초안만 소유합니다. 가설을 관찰 사실처럼 쓰지 마세요.
+- `Confidence`: `high | medium | low`, `Basis: <Evidence IDs>`, 필요한 경우 `Uncertainty: ...`만 적으세요. source 종류·사례 수·관찰·가설을 다시 서술하지 마세요. 증거가 부족하면 `low`로 두고 승격하지 마세요.
 - `Action`: 중복이면 새로 만들지 말고 `merge` 또는 `no-op`을 우선하세요. 규칙은 짧은 상시 지침, 스킬은 트리거·반복 단계·입출력·독립적 가치를 가져야 합니다.
 
 ## 계약
@@ -45,7 +45,7 @@ receipt는 `reported | applied | pending`을 구분하세요. 승인 전 `propos
 
 후보의 대상, evidence, confidence, action을 제시한 뒤 별도의 명시적 적용 동의를 받으세요. 동의 전에는 파일을 수정하거나 후보를 승격하지 말고 `pending` 또는 `reported`로 멈추세요.
 
-비어 있지 않은 각 후보에 대해 `대상`, ID가 붙은 `Evidence`, `Interpretation`, `Confidence`, `Action`, 필요할 때만 `초안`, `Receipt`를 한 번씩만 보고하세요. Interpretation과 Confidence는 Evidence ID를 참조하고 관찰 문장을 바꾸어 반복하지 않습니다. 대상 선택의 재사용 근거는 `Interpretation`이 이미 소유하므로 `이 대상인 이유` 같은 별도 근거 필드를 만들지 마세요. `초안`은 적용 가능한 실제 규칙·스킬 문안만 소유하며 Evidence·Interpretation·Confidence·Action의 설명을 되풀이하지 않습니다. `Interpretation`이 학습 내용을, `Action`이 수행할 작업을 소유하므로 별도 `작업`·`학습 내용` 필드를 만들지 마세요. Receipt는 상태와 앞선 필드의 참조만 기록하고 내용을 반복하지 않습니다.
+비어 있지 않은 각 후보에 대해 `대상`, ID가 붙은 `Evidence`, `Interpretation`, `Confidence`, `Action`, 필요할 때만 `초안`, `Receipt`를 한 번씩만 보고하세요. Interpretation은 재사용 범위·경계만, Confidence는 등급·Evidence ID·불확실성만, 초안은 적용 가능한 실제 규칙·스킬 문안만 소유합니다. 대상 선택의 재사용 근거는 `Interpretation`이 이미 소유하므로 `이 대상인 이유` 같은 별도 근거 필드를 만들지 마세요. `Interpretation`이 학습 내용을, `Action`이 수행할 작업을 소유하므로 별도 `작업`·`학습 내용` 필드를 만들지 마세요. Receipt는 상태와 앞선 필드의 참조만 기록하고 내용을 반복하지 않습니다.
 
 ## DO NOT / ANTI-PATTERNS
 

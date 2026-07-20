@@ -35,7 +35,7 @@ metadata:
 
 증거 threshold, 중복 검색, 대상·이름·trigger validation, behavior assertions, baseline 계획, compatibility 판정을 approval summary로 제시한 뒤 사용자의 명시적 승인 전에는 어떤 skill 경로에도 쓰지 마세요. 승인이나 필수 증거가 없으면 `pending`, `no-op` 또는 `Blocked`로 멈추세요.
 
-Evidence는 독립 사례·threshold 판정·출처를, Created path는 실제 생성 경로 또는 미생성 상태를, Verification은 target-host 검증 결과를 각각 소유합니다. 아직 쓰지 않아 target-host 검증을 실행할 수 없으면 Verification에 해당 항목을 `unverified`로 남기고, Receipt의 미검증은 Verification 참조만 기록하세요. Receipt에는 `reported | applied | pending`, 미검증 항목과 이 최종 보고 필드의 참조만 기록하고 threshold·출처·경로·검증 내용을 다시 쓰지 마세요. `applied`는 명시적 승인 후 실제로 쓴 경우에만 사용하세요. 사용자 중단은 `aborted`, 필수 증거/대상 충돌은 `Blocked`입니다.
+Evidence는 독립 사례·threshold 판정·출처를, Created path는 계획한 정확한 target path와 `created | not created` 상태를, Verification은 target-host 검증 결과를 각각 소유합니다. 아직 쓰지 않았어도 Created path에서 계획 경로를 생략하지 말고 `not created`로 구분하세요. 아직 쓰지 않아 target-host 검증을 실행할 수 없으면 Verification에 해당 항목을 `unverified`로 남기고, Receipt의 미검증은 Verification 참조만 기록하세요. Receipt에는 `reported | applied | pending`, 미검증 항목과 이 최종 보고 필드의 참조만 기록하고 threshold·출처·경로·검증 내용을 다시 쓰지 마세요. `applied`는 명시적 승인 후 실제로 쓴 경우에만 사용하세요. 사용자 중단은 `aborted`, 필수 증거/대상 충돌은 `Blocked`입니다.
 
 스킬 이름/종류/대상, 생성한 경로, 검증, 남은 우려 사항을 각각 한 번만 보고하고 Receipt는 이 필드들을 참조만 하세요.
 

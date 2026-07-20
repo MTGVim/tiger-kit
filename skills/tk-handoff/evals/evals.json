@@ -13,7 +13,7 @@
         },
         {
           "type": "judge",
-          "criterion": "내용이 있는 Remaining work·Next step·Resume hints의 고유 의미를 지키고 Commands는 과거 실행 명령 문자열, Verification은 그 결과와 handoff 내용 재확인만 소유하며, Receipt의 작성 상태는 Verification과 구분하고 섹션 참조만 남겨 검증·미래 작업을 반복하지 않는다."
+          "criterion": "Repository state는 branch·HEAD, Handoff path는 handoff 경로, Commands는 과거 실행 명령, Verification은 그 결과와 handoff 내용 재확인, Remaining work·Next step·Resume hints는 각 미래 의미를 한 번만 소유하며, Receipt의 작성 상태는 이 섹션 참조만 남긴다."
         },
         {
           "type": "terminal_status",
