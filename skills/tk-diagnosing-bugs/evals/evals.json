@@ -12,6 +12,10 @@
           "criterion": "red-capable loop를 실제 실행하기 전 patch하거나 원인을 확정하지 않고, evidence를 기록하며 loop를 만들 수 없으면 Blocked/Unverifiable로 멈춘다."
         },
         {
+          "type": "judge",
+          "criterion": "완료 보고의 증상·근본 원인·fix·regression·cleanup은 한 번만 쓰고 Receipt에는 상태·미검증·해당 항목 참조만 남긴다."
+        },
+        {
           "type": "terminal_status",
           "allowed": [
             "Blocked",

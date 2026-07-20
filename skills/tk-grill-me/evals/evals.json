@@ -12,6 +12,10 @@
           "criterion": "확인 가능한 사실을 먼저 조사하고 Scope·Constraints·Outputs·Verification을 갱신하며 권고·근거·질문 세 필드의 한 질문만 제시한다."
         },
         {
+          "type": "judge",
+          "criterion": "결정이 생기면 Decisions의 Scope·Constraints·Outputs·Verification이 각 의미를 한 번만 소유하고 이를 합친 별도 목표 문장을 만들지 않으며, Receipt에는 상태·근거 위치·적용 여부와 Decisions 참조만 남긴다. 질문 단계라 결정이 없으면 pending ledger만 보고한다."
+        },
+        {
           "type": "terminal_status",
           "allowed": [
             "Pass",

@@ -12,6 +12,10 @@
           "criterion": "반복 evidence와 중복 검색을 확인한 뒤 대상·이름·trigger·초안을 pending으로 제안하고 명시적 승인 전에는 canonical 경로에 쓰지 않는다."
         },
         {
+          "type": "judge",
+          "criterion": "Evidence가 threshold·출처, Created path가 계획한 정확한 경로와 created/not created, Verification이 실행하지 못한 target-host 항목의 unverified를 각각 한 번만 소유하고, 이름·종류·대상·남은 우려 사항도 단일 필드에 두며, Receipt에는 적용 상태·미검증 필드 참조만 남긴다."
+        },
+        {
           "type": "terminal_status",
           "allowed": [
             "pending"

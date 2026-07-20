@@ -12,6 +12,10 @@
           "criterion": "active operation, unmerged 목록, 모든 marker, 양쪽 primary source를 확인한 뒤 근거를 기록하고 stage·검증·continue·종료 상태까지 확인한다."
         },
         {
+          "type": "judge",
+          "criterion": "Operation은 operation 종류·상태·종료 여부, Stage/continue는 stage/continue 명령과 직접 결과, Verification은 관련 테스트 등 나머지 검증, Follow-up은 완료된 비행동 경계가 아닌 남은 작업만 한 번씩 소유하고 Receipt에는 terminal status·미검증·보고 항목 참조만 남긴다."
+        },
+        {
           "type": "terminal_status",
           "allowed": [
             "Pass",

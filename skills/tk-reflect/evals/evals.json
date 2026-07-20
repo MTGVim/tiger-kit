@@ -12,6 +12,10 @@
           "criterion": "repo rule·repo skill·user rule·user skill로 분류하고 evidence·interpretation·confidence·action을 분리한 report-only pending receipt를 낸다."
         },
         {
+          "type": "judge",
+          "criterion": "각 후보에서 Evidence는 관찰, Interpretation은 재사용 범위·경계 가설, Confidence는 등급·Basis Evidence ID·불확실성, 초안은 실제 처방만 소유하고 서로의 내용을 반복하지 않으며, 별도 이 대상인 이유·작업·학습 내용 필드 없이 Receipt에는 상태와 필드 참조만 남긴다."
+        },
+        {
           "type": "terminal_status",
           "allowed": [
             "pending"

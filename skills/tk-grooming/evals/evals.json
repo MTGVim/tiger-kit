@@ -12,6 +12,10 @@
           "criterion": "범위를 확정하고 실제 경로를 조사한 뒤 네 영역 evidence와 분류를 보고-only receipt로 남기며 apply하지 않는다."
         },
         {
+          "type": "judge",
+          "criterion": "내용이 있는 발견 사항·제안 작업·적용 내용·검증은 관찰·분류/제안·실제 변경·적용 후 재검증을 각각 한 번만 소유하고, report-only에서는 초기 읽기·링크 확인을 발견 사항에 두고 빈 적용 내용·검증을 생략하며, Receipt에는 전체 상태·모드와 섹션 참조만 남긴다."
+        },
+        {
           "type": "terminal_status",
           "allowed": [
             "Pass",

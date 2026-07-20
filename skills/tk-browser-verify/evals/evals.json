@@ -12,6 +12,10 @@
           "criterion": "지속적인 사용자 노출 UI 변경으로 Verdict mode를 선택하고, launch configuration과 안전 범위를 확인한 뒤 runtime screenshot 및 실제 이미지 검사를 포함한 Pass/Fail/Unverifiable receipt를 낸다."
         },
         {
+          "type": "judge",
+          "criterion": "Alignment Status와 runtime Verdict를 구분하고 내용이 있는 Verified·Findings·Evidence·Unverified·Cleanup이 각 사실을 한 번만 소유하며, 비어 있는 Findings·Unverified·Cleanup은 생략할 수 있고, 이 섹션들이 receipt 전체이므로 별도 Receipt에서 Verdict나 본문을 반복하지 않는다."
+        },
+        {
           "type": "terminal_status",
           "allowed": [
             "Pass",
