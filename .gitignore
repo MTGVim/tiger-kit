@@ -1,2 +1,5 @@
 # TigerKit worktree-local scratch.
 .tigerkit/
+
+# Maintainer-only release skill; install it at user scope instead.
+.claude/skills/tigerkit-release/
