@@ -26,6 +26,8 @@ metadata:
 5. `checkpoint`: 입력은 분할 근거·traceability·충돌 목록이고, 출력은 쓰기 가능 여부 또는 `Unresolved split report | Blocked | Unverifiable`입니다.
 6. `write/verify/receipt`: 입력은 checkpoint를 통과한 티켓과 경로이고, 출력은 작성된 경로와 재검증된 source ID coverage·의존성 또는 report-only receipt입니다.
 
+Checkpoint에서 독립 분할 근거 부족은 `Unresolved split report`, 확인된 source 간 충돌이나 사용자 결정 부재는 `Blocked`, 필수 source 접근 실패로 traceability를 만들 수 없으면 `Unverifiable`입니다. 이 상태들을 서로 대신 사용하지 마세요.
+
 사용자가 지정한 경로 또는 `.tigerkit/tickets.md`에 `# <Feature> Tickets` 형식으로 작성하세요. `.tigerkit/`에 출력할 때는 필요할 때만 상위 디렉터리를 만들고, 가능하면 임시 파일에 쓴 뒤 이름을 바꾸며, 절대 타임스탬프 아카이브를 생성하거나 `.gitignore`를 수정하지 말고, 임시 경로가 무시되지 않으면 경고하세요. 구현하거나 원격 트래커에 게시하지 마세요.
 
 쓰기 직전에 source ID·상태와 기존 대상 상태를 다시 확인하세요. Checkpoint 이후 source가 달라졌으면 덮어쓰지 말고 새 evidence와 함께 `Blocked`로 멈춥니다. Write/rename 후 파일을 다시 읽어 모든 confirmed source ID가 coverage table과 실제 티켓에 연결되고 의존성이 작성안과 일치하는지 확인하세요. 쓰기 또는 재검증이 실패하면 완료로 보고하지 말고 손상되지 않은 기존 대상을 유지하며, 이번 실행의 변경만 정확히 복원·재검증할 수 없으면 추가 쓰기를 중단하고 실패 경로와 실제 상태를 receipt에 남기세요.
