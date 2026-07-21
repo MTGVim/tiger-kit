@@ -19,13 +19,22 @@ metadata:
 
 사용자의 명시적 지시는 기본값이나 권장안보다 우선하는 실행 계약입니다. 범위, 방법, 금지 사항, `direct|delegated`, `tdd|no-tdd`, 검증, commit 지시를 임의로 완화·확장·대체하거나 다시 승인받지 마세요. 지시가 서로 충돌하거나 안전하게 실행할 수 없을 때만 구체적 충돌을 설명하고 필요한 결정 하나를 요청하세요.
 
-`understand → inspect → resolve strategy → implement → incremental verification → final verification → bounded review when warranted → commit → report` 순서를 지키세요. 실제로 읽지 않은 요구사항 출처나 실행하지 않은 검증을 확인·통과했다고 보고하지 마세요.
+실제로 읽지 않은 요구사항 출처나 실행하지 않은 검증을 확인·통과했다고 보고하지 마세요.
 
 변경 관련 실패가 남으면 `Fail`, 필요한 입력·권한·결정이 없어 진행할 수 없으면 `Blocked`, 검증을 시도했지만 증거를 확보할 수 없으면 `Unverifiable`입니다. 이 상태에서는 완료로 보고하거나 commit하지 마세요. 위임 중첩, 자동 사용자 호출형 skill 실행, hook 우회, 검증 전 commit을 금지합니다.
 
 정보 출처의 우선순위는 현재 요청, 대화에서 확인된 결정, 관련 `.tigerkit/tickets.md`, 관련 `.tigerkit/spec.md`, 저장소 지침, 코드/테스트 순입니다. 기존 파일이라고 해서 자동으로 관련 있는 것은 아닙니다.
 
 관련 spec/ticket에 requirement 또는 acceptance ID가 있으면 구현 범위를 시작할 때 ID 목록을 확정하고, 완료 receipt에서 각 ID를 변경 동작과 검증 evidence에 연결하세요. Source에 ID가 없으면 임의로 만들지 말고 사용한 source 위치를 기록하세요.
+
+## Workflow
+
+1. `understand/inspect`: 입력은 요청·관련 source·저장소 상태이고, 출력은 확인된 범위·제약·requirement/acceptance ID와 미결정 사항입니다.
+2. `resolve strategy`: 입력은 확인된 범위와 코드·테스트 evidence이고, 출력은 `direct | delegated`, `tdd | no-tdd`, review 필요 여부와 이유입니다.
+3. `implement/incremental verification`: 입력은 확정 전략이고, 출력은 최소 구현 slice와 slice별 focused verification입니다.
+4. `final verification`: 입력은 전체 구현 diff와 성공 조건이고, 출력은 당시 branch·`HEAD`·검증 범위에 묶인 최종 evidence와 실패 분류입니다.
+5. `review/commit`: 입력은 검증된 diff와 위험도이고, 출력은 필요 시 bounded review 및 drift가 없는 staged commit 또는 중단 상태입니다.
+6. `report`: 입력은 최종 branch·`HEAD`·commit·검증 evidence이고, 출력은 중복 없는 완료 섹션과 ID별 receipt입니다.
 
 ## CHECKPOINT / STOP
 
