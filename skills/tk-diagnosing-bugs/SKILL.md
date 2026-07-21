@@ -26,10 +26,6 @@ metadata:
 
 필요한 입력·환경·권한이 없어 다음 단계로 진행할 수 없으면 `Blocked`, 실행했지만 재현 또는 회귀 증거를 확보하지 못하면 `Unverifiable`, 근본 원인이나 수정이 실패했음이 확인되면 `Fail`입니다. 어느 상태도 해결 완료로 보고하지 마세요.
 
-## CHECKPOINT / STOP
-
-red-capable feedback loop를 실제로 한 번 실행해 증상을 잡기 전에는 가설을 원인으로 확정하거나 patch하지 마세요. loop를 만들 수 없으면 필요한 artifact와 함께 `Blocked` 또는 `Unverifiable`로 멈추세요.
-
 기본 loop:
 
 ```text
