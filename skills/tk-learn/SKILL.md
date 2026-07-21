@@ -27,7 +27,7 @@ metadata:
 5. `approval checkpoint`: 입력은 evidence threshold, 중복 판정, 대상·이름·eval·compatibility 초안이고, 출력은 사용자의 명시적 승인 또는 `pending | no-op | Blocked`입니다.
 6. `write/verify/report`: 입력은 승인된 적용 범위와 대상의 write 전 존재 여부·내용이고, 출력은 이름·종류·대상, 실제 경로, target-host validation, 남은 우려 사항과 이를 참조하는 `reported | applied | pending` receipt입니다.
 
-증거 threshold를 충족하지 못하거나 중복·기본 기능·불명확한 trigger, success/boundary assertion, baseline 비교 또는 target-host compatibility이면 skill을 만들지 말고 `no-op` 이유를 보고하세요. 대상/적용 의도가 불분명하면 `.tigerkit/skill-drafts/<skill-name>/` 아래 초안도 사용자 승인 전에는 `pending`으로만 두세요. 초안의 경우 상위 디렉터리는 필요할 때 만들고, 가능하면 원자적으로 교체하며, 자동으로 보관하거나 `.gitignore`를 편집하지 말고, 스크래치가 무시되지 않으면 경고하세요.
+독립 증거가 threshold 미달이거나 중복·기본 기능이면 skill을 만들지 말고 `no-op` 이유를 보고하세요. Trigger, success/boundary assertion, baseline 비교, target-host compatibility 또는 대상/적용 의도가 아직 결정 가능하지만 미확정이면 쓰지 않고 `pending`; 필수 evidence를 읽거나 검증할 수 없으면 `Unverifiable`; evidence나 대상이 충돌해 사용자 결정이 필요하면 `Blocked`입니다. `.tigerkit/skill-drafts/<skill-name>/` 초안도 승인 전에는 `pending`으로만 두고, 상위 디렉터리는 필요할 때 만들며, 가능하면 원자적으로 교체하고, 자동 보관이나 `.gitignore` 편집을 하지 말고, 스크래치가 무시되지 않으면 경고하세요.
 
 쓰기 실패 시 기존 대상을 그대로 보존하고 이번 실행이 만든 임시 파일만 정리한 뒤 `pending`으로 보고하세요. 작성 후 frontmatter·link·eval·target-host validation이 실패하면 `applied`로 표시하지 마세요. Write 직전 상태를 정확히 복원하고 재검증할 수 있을 때만 이번 실행의 변경을 되돌리고, 복원 또는 재검증이 불가능하면 실제 경로와 실패 증거를 남긴 채 `Fail | Blocked | Unverifiable`로 멈추세요.
 
