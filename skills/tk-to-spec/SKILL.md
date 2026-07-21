@@ -36,7 +36,7 @@ metadata:
 
 `Ready`는 문제, 목표, 범위(포함/제외), 요구사항, 인수 기준, 검증, source traceability, verifiability가 있고 미해결 충돌이 없을 때만 사용하세요. 하나라도 없으면 `Draft`, `Blocked` 또는 `Unverifiable`로 남기세요. receipt에는 경로, 상태, `증거/source map`, requirement/acceptance ID, `미검증`, `미해결 충돌`, `검증`을 포함하세요.
 
-## CHECKPOINT / STOP
+## 🔴 CHECKPOINT · 🛑 STOP Ready 판정 경계
 
 파일에 쓰기 전 필수 요소와 미해결 충돌을 확인하세요. 누락·미확정 가정이면 `Draft`, 사용자 결정이 필요한 source 충돌이면 `Blocked`, 필수 source에 접근할 수 없으면 `Unverifiable`로 남기고 `Ready`로 저장하지 마세요.
 
