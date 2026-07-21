@@ -31,6 +31,8 @@ metadata:
 - `Confidence`: `high | medium | low`, `Basis: <Evidence IDs>`, 필요한 경우 `Uncertainty: ...`만 적으세요. source 종류·사례 수·관찰·가설을 다시 서술하지 마세요. 증거가 부족하면 `low`로 두고 승격하지 마세요.
 - `Action`: 중복이면 새로 만들지 말고 `merge` 또는 `no-op`을 우선하세요. 규칙은 짧은 상시 지침, 스킬은 트리거·반복 단계·입출력·독립적 가치를 가져야 합니다.
 
+Confidence는 다음 기준으로만 올리세요. `high`는 서로 다른 occurrence 또는 source type의 독립적인 verified Evidence ID가 2개 이상이고 미해결 conflict·counterexample이 없는 경우입니다. `medium`은 verified Evidence ID가 1개 이상이지만 반복성·독립성·적용 경계 중 하나가 아직 확인되지 않은 경우입니다. Verified evidence가 없거나 conflict·counterexample이 미해결이면 `low`이며 `propose | update | merge`로 승격하지 마세요.
+
 ## 계약
 
 저장소 대상은 코드베이스/도메인/도구/팀에 특화되고, 사용자 대상은 여러 저장소에서 반복됩니다. 기본은 `report-only`입니다. 후보를 DESIGN, reuse map, rule 또는 skill에 기록·수정·적용하려면 대상과 범위를 밝힌 별도의 명시적 사용자 동의를 먼저 받으세요. 침묵, 진행, 과거 유사 답변, reflect 호출 자체는 적용 동의가 아닙니다.
