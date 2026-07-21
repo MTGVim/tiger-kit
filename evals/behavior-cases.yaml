@@ -127,6 +127,9 @@
 - case: code-review-bounds-reviewers
   skill: tk-code-review
   expect: "At most one Standards reviewer and one Spec reviewer are used without fan-out."
+- case: code-review-bounds-large-diff-context
+  skill: tk-code-review
+  expect: "Large or size-unknown diffs are inventoried before content, avoid unbounded raw output, and cannot Pass without full file and hunk coverage."
 - case: diagnosing-bugs-requires-red-capable-loop
   skill: tk-diagnosing-bugs
   expect: "A runnable red/green feedback loop is established and executed before hypotheses."

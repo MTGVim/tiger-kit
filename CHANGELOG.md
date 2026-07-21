@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.0.17 — Bounded Large-Diff Review
+
+- Added stat/numstat preflight and deterministic file/line thresholds before `tk-code-review` reads diff content.
+- Routed large or size-unknown diffs through bounded inspection while preserving complete file/hunk coverage before `Pass`.
+- Added static and executable regression coverage for large-diff context safety and source immutability.
+
 ## 19.0.16 — Enforced Browser Routing and Skill Ratchets
 
 - Made `tk-implement` activate `tk-browser-verify` before any browser tool or verification server, prohibited direct Chrome MCP/Playwright/CDP/native selection, and invalidated browser evidence created before the gate.

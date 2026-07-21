@@ -96,6 +96,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "code-review-separates-standards-and-spec",
     "code-review-does-not-edit",
     "code-review-bounds-reviewers",
+    "code-review-bounds-large-diff-context",
     "diagnosing-bugs-requires-red-capable-loop",
     "diagnosing-bugs-does-not-patch-without-reproduction",
     "diagnosing-bugs-reruns-original-reproduction",
