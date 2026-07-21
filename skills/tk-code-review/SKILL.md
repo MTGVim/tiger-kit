@@ -28,7 +28,7 @@ metadata:
 5. `axis verdict`: 입력은 Standards와 Spec 결과이고, 출력은 두 축을 합치지 않은 상태별 verdict입니다.
 6. `receipt`: 입력은 fixed point, 검사 범위, findings, 미검증 항목이고, 출력은 `Fixed point / Standards / Spec / Verdict` 보고서입니다.
 
-각 단계의 출력이 없거나 diff가 비어 있으면 다음 단계로 진행하지 마세요. Spec source가 없을 때는 Spec 축을 생략했다는 사실을 receipt에 남기고, 해당 축을 통과했다고 표현하지 마세요.
+ref가 resolve되지 않거나 diff가 비었거나 diff·적용 가능한 Standards source 전체를 읽지 못하면 `Unverifiable`로 중단하세요. 기준점 결정이나 권한이 필요하면 `Blocked`이고, Spec source 자체가 없으면 Spec 축만 `spec 없음`으로 생략하되 해당 축을 통과했다고 표현하지 마세요.
 
 ## 🔴 CHECKPOINT · 🛑 STOP review 시작 경계
 
@@ -43,8 +43,6 @@ git rev-parse <fixed-point>
 git diff <fixed-point>...HEAD
 git log <fixed-point>..HEAD --oneline
 ```
-
-ref가 유효하지 않거나 diff가 비었거나 범위를 결정할 근거가 없으면 review를 시작하지 말고 이유를 보고하세요.
 
 Review 시작 시 `HEAD` SHA를 review-head로 고정하고 verdict 직전에 다시 확인하세요. Review-head가 달라졌으면 이전 diff의 line evidence나 finding을 새 상태와 합치거나 `Pass`로 확정하지 말고, 이전·현재 SHA와 stale 범위를 `Blocked | Unverifiable` receipt에 기록하세요. 새 범위의 review는 자동으로 시작하지 않습니다.
 
