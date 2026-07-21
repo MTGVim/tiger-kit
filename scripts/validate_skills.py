@@ -66,6 +66,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "implement-auto-decides-unspecified-strategy",
     "implement-respects-explicit-strategy",
     "implement-routes-visible-ui-through-browser-verify",
+    "implement-browser-tool-requires-browser-verify",
     "implement-runs-design-preflight-before-ui-edit",
     "implement-non-agent-tools-are-not-delegation",
     "implement-delegation-is-single-level",

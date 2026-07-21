@@ -12,7 +12,10 @@
   expect: "Explicit scope, method, prohibitions, direct/delegated, TDD, verification, and commit decisions are binding and are not re-asked or overridden by defaults."
 - case: implement-routes-visible-ui-through-browser-verify
   skill: tk-implement
-  expect: "A visible UI or browser behavior change automatically applies hybrid tk-browser-verify during final verification without another approval request."
+  expect: "A visible UI or browser behavior scope activates hybrid tk-browser-verify before the first browser tool call and allows browser drivers only inside that contract."
+- case: implement-browser-tool-requires-browser-verify
+  skill: tk-implement
+  expect: "tk-implement never bypasses tk-browser-verify by calling Chrome MCP, Playwright, CDP, or a native browser directly; an early call invalidates its evidence and fails without commit, while an unavailable skill makes browser verification Unverifiable."
 - case: implement-runs-design-preflight-before-ui-edit
   skill: tk-implement
   expect: "When Figma, screenshots, or a design specification define the expected UI, tk-browser-verify design intent preflight runs before source mutation and runtime verification runs after implementation."
