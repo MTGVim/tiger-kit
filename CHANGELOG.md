@@ -1,5 +1,11 @@
 # Changelog
 
+## 19.0.16 — Enforced Browser Routing and Skill Ratchets
+
+- Made `tk-implement` activate `tk-browser-verify` before any browser tool or verification server, prohibited direct Chrome MCP/Playwright/CDP/native selection, and invalidated browser evidence created before the gate.
+- Ratcheted all 13 canonical skills with clearer workflow ownership, failure-state routing, confidence evidence, checkpoint visibility, and section structure while reverting an attempted safety regression.
+- Added browser-routing behavior/eval fixtures and static validation so bypasses fail deterministic repository checks.
+
 ## 19.0.15 — Output Contract Deduplication
 
 - Assigned each substantive result to one named output section across ten canonical skills instead of restating it under overlapping labels.
