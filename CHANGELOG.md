@@ -7,6 +7,7 @@
 - Converted planning, prototype, reflection, learning, grooming, and handoff artifact skills to narrowly triggered hybrid contracts.
 - Folded unknown-cause investigation and fixed-point Standards/Spec review into `tk-implement`, then removed their standalone skill surfaces.
 - Added deterministic root/nested rule versus repo-skill placement and disposable wide/narrow web A/B/C prototype guidance.
+- Made skill eval automation API-free and opt-in by removing the unconfigured scheduled live comparison while retaining manual dry-run previews.
 
 ## 19.0.17 — Bounded Large-Diff Review
 
