@@ -29,17 +29,21 @@ jobs:
         run: npx --yes skills@1.5.9 add . --list
       - name: Smoke install supported targets
         run: |
-          export HOME="$(mktemp -d)"
-          export CLAUDE_CONFIG_DIR="$HOME/.claude"
-          export CODEX_HOME="$HOME/.codex"
-          export HERMES_HOME="$HOME/.hermes"
-          npx --yes skills@1.5.9 add . --global --agent claude-code --agent codex --agent hermes-agent --copy --yes
-          test "$(find "$CLAUDE_CONFIG_DIR/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 13
-          test "$(find "$HOME/.agents/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 13
-          test "$(find "$HERMES_HOME/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 13
-          test -f "$CLAUDE_CONFIG_DIR/skills/tk-browser-verify/references/accessibility.md"
-          test -f "$HOME/.agents/skills/tk-code-review/references/risk-checks.md"
-          test -f "$HERMES_HOME/skills/tk-grill-me/agents/openai.yaml"
-          test -f "$CLAUDE_CONFIG_DIR/skills/tk-browser-verify/references/safety.md"
-          test -f "$HOME/.agents/skills/tk-implement/references/delegation.md"
-          test -f "$HERMES_HOME/skills/tk-grill-me/agents/openai.yaml"
+          smoke_root="$(mktemp -d)"
+          cleanup_smoke() {
+            find "$smoke_root" -type f -delete
+            find "$smoke_root" -depth -type l -delete
+            find "$smoke_root" -depth -type d -empty -delete
+          }
+          trap cleanup_smoke EXIT
+          cd "$smoke_root"
+          npx --yes skills@1.5.9 add "$GITHUB_WORKSPACE" --agent claude-code --agent codex --agent hermes-agent --copy --yes
+          test "$(find "$smoke_root/.claude/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 12
+          test "$(find "$smoke_root/.agents/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 12
+          test "$(find "$smoke_root/.hermes/skills" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 12
+          test -f "$smoke_root/.claude/skills/tk-browser-verify/references/accessibility.md"
+          test -f "$smoke_root/.agents/skills/tk-implement/references/review-boundary.md"
+          test -f "$smoke_root/.agents/skills/tk-drive/references/phases.md"
+          test -f "$smoke_root/.hermes/skills/tk-grill-me/agents/openai.yaml"
+          test -f "$smoke_root/.claude/skills/tk-browser-verify/references/safety.md"
+          test -f "$smoke_root/.agents/skills/tk-implement/references/delegation.md"

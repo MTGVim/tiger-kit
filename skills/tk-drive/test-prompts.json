@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "이 기능을 구현하고 커밋해줘",
+    "expected": "명시적 $tk-drive가 아니므로 workflow나 commit authority를 시작하지 않는다."
+  },
+  {
+    "id": 2,
+    "prompt": "[active tk-drive pending question: A or B?] A로 진행해",
+    "expected": "같은 대화의 pending decision을 spec traceability에 반영하고 blocker가 없으면 다음 phase로 자동 계속한다."
+  }
+]

@@ -1,18 +1,17 @@
 ---
 name: tk-learn
-description: "[user] 제공된 경험이나 자료로 재사용 가능한 저장소 또는 사용자 스킬을 만듭니다. 사용자가 명시적으로 호출할 때만 사용합니다."
-disable-model-invocation: true
+description: "[user/auto] 제공된 경험이나 자료로 재사용 가능한 repository 또는 user skill을 설계할 때 사용합니다. 명확한 skill 작성 의도에서 draft와 approval checkpoint까지만 자동 진행하며 승인 전에는 쓰지 않습니다."
 argument-hint: "<대화, 메모, 경로, URL, 워크플로 또는 reflect 후보>"
 metadata:
   tigerkit:
-    kind: user-invoked
+    kind: hybrid
     origin: tigerkit
     relationship: native
 ---
 
 # 학습
 
-사용자가 이 스킬을 명시적으로 호출할 때만 사용합니다. 자동으로 활성화하거나 다른 사용자 호출형 스킬을 호출하지 마세요.
+명시 호출 또는 재사용 가능한 skill 작성 의도가 명확한 요청에 사용합니다. implicit mode는 draft와 approval checkpoint까지만 진행하고 별도 승인 전에는 쓰지 않으며, 다른 스킬을 호출하지 마세요.
 
 현재 대화 내용, 메모, 파일/디렉터리, URL, 워크플로 또는 reflect 후보를 받습니다. `repo skill` 또는 `user skill`을 만드세요. 규칙 생성은 범위 밖입니다.
 
@@ -24,7 +23,7 @@ metadata:
 2. `dedupe`: 입력은 증거와 기존 repo/user skill 목록이고, 출력은 중복·기본 기능 여부와 `merge | no-op | continue` 판정입니다.
 3. `trigger proposal`: 입력은 중복 검토 결과이고, 출력은 대상, 이름, invocation kind, positive/negative trigger입니다.
 4. `draft`: 입력은 승인 전 제안과 [스킬 품질](references/skill-quality.md) 기준이고, 출력은 최소 SKILL.md, trigger train/validation, success/boundary assertion, baseline 계획, portable-core/host-extension 판정입니다.
-5. `approval checkpoint`: 입력은 evidence threshold, 중복 판정, 대상·이름·eval·compatibility 초안이고, 출력은 사용자의 명시적 승인 또는 `pending | no-op | Blocked`입니다.
+5. `approval checkpoint`: 입력은 evidence threshold, 중복 판정, 대상·이름·eval·compatibility 초안이고, 출력은 checkpoint 뒤 현재 turn의 명시적 승인 또는 `pending | no-op | Blocked`입니다.
 6. `write/verify/report`: 입력은 승인된 적용 범위와 대상의 write 전 존재 여부·내용이고, 출력은 이름·종류·대상, 실제 경로, target-host validation, 남은 우려 사항과 이를 참조하는 `reported | applied | pending` receipt입니다.
 
 독립 증거가 threshold 미달이거나 중복·기본 기능이면 skill을 만들지 말고 `no-op` 이유를 보고하세요. Trigger, success/boundary assertion, baseline 비교, target-host compatibility 또는 대상/적용 의도가 아직 결정 가능하지만 미확정이면 쓰지 않고 `pending`; 필수 evidence를 읽거나 검증할 수 없으면 `Unverifiable`; evidence나 대상이 충돌해 사용자 결정이 필요하면 `Blocked`입니다. `.tigerkit/skill-drafts/<skill-name>/` 초안도 승인 전에는 `pending`으로만 두고, 상위 디렉터리는 필요할 때 만들며, 가능하면 원자적으로 교체하고, 자동 보관이나 `.gitignore` 편집을 하지 말고, 스크래치가 무시되지 않으면 경고하세요.
@@ -33,7 +32,7 @@ metadata:
 
 ## CHECKPOINT / STOP
 
-증거 threshold, 중복 검색, 대상·이름·trigger validation, behavior assertions, baseline 계획, compatibility 판정을 approval summary로 제시한 뒤 사용자의 명시적 승인 전에는 어떤 skill 경로에도 쓰지 마세요. 승인이나 필수 증거가 없으면 `pending`, `no-op` 또는 `Blocked`로 멈추세요.
+증거 threshold, 중복 검색, 대상·이름·trigger validation, behavior assertions, baseline 계획, compatibility 판정을 approval summary로 제시한 뒤 현재 turn의 명시적 승인 전에는 어떤 skill 경로에도 쓰지 마세요. 과거 승인, 일반적인 진행 응답 또는 implicit invocation 자체는 write 승인이 아닙니다. 승인이나 필수 증거가 없으면 `pending`, `no-op` 또는 `Blocked`로 멈추세요.
 
 Evidence는 독립 사례·threshold 판정·출처를, Created path는 계획한 정확한 target path와 `created | not created` 상태를, Verification은 target-host 검증 결과를 각각 소유합니다. 아직 쓰지 않았어도 Created path에서 계획 경로를 생략하지 말고 `not created`로 구분하세요. 아직 쓰지 않아 target-host 검증을 실행할 수 없으면 Verification에 해당 항목을 `unverified`로 남기고, Receipt의 미검증은 Verification 참조만 기록하세요. Receipt에는 `reported | applied | pending`, 미검증 항목과 이 최종 보고 필드의 참조만 기록하고 threshold·출처·경로·검증 내용을 다시 쓰지 마세요. `applied`는 명시적 승인 후 실제로 쓴 경우에만 사용하세요. 사용자 중단은 `aborted`, 필수 증거/대상 충돌은 `Blocked`입니다.
 

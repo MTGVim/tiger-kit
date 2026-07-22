@@ -1,30 +1,162 @@
 {
   "skill": "tk-to-tickets",
-  "kind": "user-invoked",
+  "kind": "hybrid",
   "queries": [
     {
-      "id": "train-explicit",
+      "id": "train-positive",
       "split": "train",
-      "query": "/tk-to-tickets 현재 요청을 스킬 계약대로 처리해줘",
+      "query": "$tk-to-tickets 이 명세를 수직 티켓으로 쪼개줘",
       "should_trigger": true
     },
     {
-      "id": "validation-explicit",
-      "split": "validation",
-      "query": "$tk-to-tickets 제공된 자료로 결과와 receipt를 만들어줘",
-      "should_trigger": true
-    },
-    {
-      "id": "train-implicit-block",
+      "id": "train-negative",
       "split": "train",
-      "query": "이 계획에서 할 일을 몇 개 나열해줘",
+      "query": "이 요청을 구현해줘",
       "should_trigger": false
     },
     {
-      "id": "validation-nearby-block",
+      "id": "validation-positive-1",
       "split": "validation",
-      "query": "이 티켓을 바로 구현해줘",
-      "should_trigger": false
+      "query": "이 Ready 명세를 독립 검증 가능한 수직 티켓으로 나눠 주세요",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-2",
+      "split": "validation",
+      "query": ".tigerkit/tickets.md로 decomposition 해줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-3",
+      "split": "validation",
+      "query": "티켓들로 쪼개줘",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-positive-4",
+      "split": "validation",
+      "query": "수직 티켓 작썽해줘",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-5",
+      "split": "validation",
+      "query": "Break this spec into vertical implementation tickets",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-positive-6",
+      "split": "validation",
+      "query": "티켓 분해",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-7",
+      "split": "validation",
+      "query": "이 버그 수정 전체를 하나의 vertical ticket으로 만들고 status는 pending으로 둬",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-8",
+      "split": "validation",
+      "query": "$tk-to-tickets R/AC coverage가 있는 티켓을 작성해줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-1",
+      "split": "validation",
+      "query": "이 결정으로 구현 명세를 작성해 주세요",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-2",
+      "split": "validation",
+      "query": "GitHub에 이슈를 실제로 등록해줘",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-3",
+      "split": "validation",
+      "query": "첫 티켓부터 구현하고 커밋해줘",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-negative-4",
+      "split": "validation",
+      "query": "해야 할 일을 간단한 TODO로 적어줘",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-negative-5",
+      "split": "validation",
+      "query": "명세를 리뷰해줘",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-negative-6",
+      "split": "validation",
+      "query": "요구사항을 인터뷰해줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-7",
+      "split": "validation",
+      "query": "active tk-drive가 ticket 여부를 판단 중이야",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-8",
+      "split": "validation",
+      "query": "Draft spec인데 일단 티켓부터 만들어줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
     }
   ]
 }

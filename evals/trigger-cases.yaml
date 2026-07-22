@@ -10,19 +10,23 @@
     - tk-to-spec
     - tk-prototype
 - skill: tk-to-spec
-  examples:
-    - "tk-to-spec으로 현재 결정을 구현 명세로 정리해줘"
-    - "이 대화를 .tigerkit/spec.md에 써줘"
-  nearby:
-    - tk-grill-me
-    - tk-to-tickets
+  positive:
+    - "확정된 결정으로 구현 명세를 작성해줘"
+    - "이 대화를 .tigerkit/spec.md로 정리해줘"
+    - "이 버그 evidence를 R/AC가 있는 spec으로 만들어줘"
+  negative:
+    - "이 명세를 수직 티켓으로 나눠줘"
+    - "GitHub issue를 만들어줘"
+    - "active tk-drive가 spec phase를 진행 중이야"
 - skill: tk-to-tickets
-  examples:
-    - "tk-to-tickets로 이 spec을 수직 ticket으로 나눠줘"
-    - "이 계획을 독립 검증 가능한 ticket으로 정리해줘"
-  nearby:
-    - tk-to-spec
-    - tk-implement
+  positive:
+    - "이 Ready spec을 독립 검증 가능한 수직 티켓으로 나눠줘"
+    - "R/AC coverage가 있는 tickets.md를 작성해줘"
+    - "이 버그 수정을 하나의 vertical ticket으로 만들어줘"
+  negative:
+    - "이 결정으로 구현 명세를 작성해줘"
+    - "이슈를 원격 tracker에 등록해줘"
+    - "active tk-drive가 ticket 여부를 판단 중이야"
 - skill: tk-implement
   examples:
     - "tk-implement로 이 ticket을 구현해줘"
@@ -31,40 +35,50 @@
     - tk-prototype
     - tk-to-spec
 - skill: tk-prototype
-  examples:
-    - "tk-prototype으로 이 모달 flow를 비교해줘"
+  positive:
+    - "같은 데이터로 A/B/C UI prototype을 실제 실행해줘"
+    - "버릴 수 있는 html css js로 레이아웃 두 안을 비교해줘"
     - "이 상태 전이를 throwaway harness로 검증해줘"
-  nearby:
-    - tk-implement
-    - tk-browser-verify
+  negative:
+    - "프로덕션 모달을 구현해줘"
+    - "화면 아이디어만 브레인스토밍해줘"
+    - "repository evidence로 선택된 안을 그대로 적용해줘"
 - skill: tk-reflect
-  examples:
-    - "tk-reflect로 이번 작업의 repo rule 후보를 뽑아줘"
-    - "이 correction에서 재사용 가능한 교훈을 분류해줘"
-  nearby:
-    - tk-learn
-    - tk-grooming
+  positive:
+    - "이번 diff의 증거에서 재사용 rule/skill 후보를 보고해줘"
+    - "이 반복 실패를 repo rule 후보로 회고해줘"
+    - "이 correction에서 재사용 가능한 교훈을 네 축으로 분류해줘"
+  negative:
+    - "방금 변경을 짧게 요약해줘"
+    - "후보를 바로 규칙 파일에 적용해줘"
+    - "active tk-drive가 구현 중이야"
 - skill: tk-learn
-  examples:
-    - "tk-learn으로 이 workflow를 reusable skill로 만들어줘"
-    - "이 reflect 후보를 repo skill로 작성해줘"
-  nearby:
-    - tk-reflect
-    - tk-grooming
+  positive:
+    - "이 workflow를 reusable repo skill로 설계해줘"
+    - "이 reflect 후보로 user skill 초안을 만들어줘"
+    - "trigger와 boundary eval이 있는 skill을 제안해줘"
+  negative:
+    - "이 팁을 현재 파일에 한 번 적용해줘"
+    - "재사용 후보만 report-only로 알려줘"
+    - "active tk-drive가 다음 phase를 진행 중이야"
 - skill: tk-grooming
-  examples:
-    - "tk-grooming으로 repo와 user skill 중복을 점검해줘"
+  positive:
+    - "repo와 user skill 중복·배치를 감사해줘"
     - "깨진 skill reference를 report-only로 찾아줘"
-  nearby:
-    - tk-reflect
-    - tk-learn
+    - "기존 rule을 keep/move/convert 중 무엇인지 제안해줘"
+  negative:
+    - "코드 포맷을 정리해줘"
+    - "이번 diff에서 재사용 후보를 찾아줘"
+    - "active tk-drive가 tickets를 구현 중이야"
 - skill: tk-handoff
-  examples:
-    - "tk-handoff로 현재 작업 상태를 저장해줘"
-    - "다음 session에서 이어갈 수 있게 handoff를 작성해줘"
-  nearby:
-    - tk-implement
-    - tk-reflect
+  positive:
+    - "현재 evidence로 handoff 문서를 작성해줘"
+    - "다음 session에서 이어갈 수 있게 인수인계를 남겨줘"
+    - "기존 handoff를 drift 확인 후 resume해줘"
+  negative:
+    - "현재 상태를 요약해줘"
+    - "그대로 계속 진행해"
+    - "active tk-drive가 pending answer 뒤 계속할 차례야"
 - skill: tk-browser-verify
   positive:
     - "이 모달이 실제로 저장되는지 브라우저에서 확인해줘"
@@ -80,24 +94,15 @@
     - "Chrome에서 React 문서를 읽고 핵심만 요약해줘"
     - "이 URL의 screenshot을 저장만 해줘"
     - "웹페이지 본문 text만 추출해줘"
-- skill: tk-diagnosing-bugs
+- skill: tk-drive
   positive:
-    - "가끔 저장이 안 되는데 원인을 모르겠어"
-    - "이 간헐 오류를 재현하고 가설을 검증해줘"
-    - "배포 후 느려진 원인을 deterministic measurement로 찾아줘"
+    - "$tk-drive 이 source를 spec부터 verified commit까지 진행해줘"
+    - "$tk-drive 이 Ready spec을 끝까지 처리해줘"
+    - "active tk-drive가 A/B를 물었고 사용자가 A라고 답했다"
   negative:
-    - "조건문이 반대로 됐으니 바로 고쳐줘"
-    - "누락된 prop을 전달해줘"
-    - "현재 branch diff를 수정 없이 리뷰해줘"
-- skill: tk-code-review
-  positive:
-    - "main 기준으로 현재 branch를 리뷰해줘"
-    - "이 diff가 spec을 충족하는지 검토해줘"
-    - "PR 변경사항을 수정하지 말고 리뷰해줘"
-  negative:
-    - "리뷰 finding을 직접 수정해줘"
-    - "원인 불명의 버그를 진단해줘"
-    - "전체 저장소를 새 구조로 구현해줘"
+    - "이 함수를 구현해줘"
+    - "계속 진행해"
+    - ".tigerkit/spec.md가 있으니 자동으로 시작해"
 - skill: tk-merge-conflict
   positive:
     - "tk-merge-conflict로 현재 rebase를 완료해줘"

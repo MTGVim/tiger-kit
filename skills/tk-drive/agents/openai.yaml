@@ -1,0 +1,4 @@
+interface:
+  display_name: "TigerKit: 드라이브"
+  short_description: "[user/auto] 명시적으로 시작한 작업을 끝까지 진행합니다."
+  default_prompt: "Use $tk-drive to carry this source through planning, implementation, verification, and one final commit."

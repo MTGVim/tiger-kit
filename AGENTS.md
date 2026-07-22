@@ -2,9 +2,9 @@
 
 ## Product boundary
 
-TigerKit 19 is an Agent Skills repository, not a workflow framework or Claude Code plugin.
+TigerKit 20 is an Agent Skills repository, not a workflow framework or Claude Code plugin.
 
-- Keep exactly 13 canonical skills under `skills/tk-*/`: 9 user-invoked and 4 hybrid. Do not add model-only skills.
+- Keep exactly 12 canonical skills under `skills/tk-*/`: 2 user-invoked and 10 hybrid. Do not add model-only skills.
 - Each skill's `SKILL.md` is its behavior source of truth.
 - Keep each skill self-contained; skill-specific detail and code stay in its own `references/` and `scripts/`.
 - Prefer thin instructions. Add detail only for repeated failures, costly ordering mistakes, mutation safety, objective verification, specialist procedures, or bounded delegation/review.
@@ -33,9 +33,9 @@ If the answers are weak, choose `inline`, `merge`, `convert to reference`, `make
 - Small work and ordinary follow-up feedback stay owned by the current agent without requiring a new skill.
 - Non-agent tools, MCPs, sandboxes, browsers, and context-management utilities remain available whenever useful.
 - Delegate implementation ownership only for real isolation or parallel benefit; never nest agent delegation.
-- Review is optional and bounded. `tk-implement` permits at most one reviewer. Standalone `tk-code-review` permits at most one Standards reviewer and one Spec reviewer, without same-axis fan-out.
+- Every `tk-implement` and `tk-drive` implementation phase runs current-agent Standards/Spec review. Large or high-risk work permits at most one independent reviewer, without fan-out, editing, re-delegation, or automatic re-review.
 - TigerKit never commits, pushes, opens PRs, merges, tags, releases, or publishes unless explicitly authorized by a skill contract or user request.
-- Explicit `tk-implement` invocation authorizes a verified current-branch commit under that skill's contract. Explicit standalone `tk-diagnosing-bugs` invocation authorizes a verified current-branch commit under its contract. Neither authorizes push or later release actions.
+- Explicit `tk-implement` invocation and explicit `$tk-drive` start authorize a verified current-branch commit under their contracts. Neither authorizes push or later release actions; implicit drive resume inherits only the active same-conversation scope.
 
 ## Repository documentation
 

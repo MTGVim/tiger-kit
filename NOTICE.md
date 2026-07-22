@@ -8,20 +8,20 @@ Current adapted skills:
 - `to-spec`
 - `to-tickets`
 - `implement`
-- `diagnosing-bugs`
-- `code-review`
 
 Behavior merged from removed adapted skills:
 
 - `grilling` → `grill-me`
 - `tdd` → `implement`
+- `diagnosing-bugs` → `implement` investigation and planning bug contracts
+- `code-review` → `implement` built-in review
 
 Removed historical adapted workflows:
 
 - `grill-with-docs`
 - `domain-modeling`
 
-Relationship metadata for current adapted skills: `relationship: adapted`. TigerKit preserves upstream skill names with a `tk-` prefix where the skill remains deployed and rewrites behavior to the TigerKit 19 specification.
+Relationship metadata for current adapted skills: `relationship: adapted`. TigerKit preserves upstream skill names with a `tk-` prefix where the skill remains deployed and rewrites behavior to the TigerKit 20 specification.
 
 `tk-merge-conflict` remains TigerKit-native (`origin: tigerkit`, `relationship: native`). No verified source metadata establishes it as an adaptation of `mattpocock/skills` `resolving-merge-conflicts`.
 

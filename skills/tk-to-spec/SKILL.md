@@ -1,11 +1,10 @@
 ---
 name: tk-to-spec
-description: "[user] 현재 결정과 근거를 종합해 구현 명세를 작성합니다. 사용자가 명시적으로 호출한 경우에만 사용합니다."
-disable-model-invocation: true
+description: "[user/auto] 확인된 결정과 근거를 독립 구현 명세로 작성할 때 사용합니다. 명확한 spec artifact 요청에 적용하고, 티켓 분해·인터뷰·원격 issue·구현 요청에는 적용하지 않습니다."
 argument-hint: "<대화, 소스 또는 요청> [--output <경로>|--print-only]"
 metadata:
   tigerkit:
-    kind: user-invoked
+    kind: hybrid
     origin: mattpocock/skills
     upstream-skill: to-spec
     relationship: adapted
@@ -13,7 +12,7 @@ metadata:
 
 # 명세 작성
 
-사용자가 이 스킬을 명시적으로 호출한 경우에만 사용하세요. 자동으로 활성화하지 마세요.
+명시 호출 또는 구현 명세 artifact를 요구하는 명확한 자연어 요청에 사용하세요. 티켓 분해, 인터뷰, 원격 issue 생성, 구현 요청 또는 active `tk-drive` phase에는 자동으로 활성화하지 마세요.
 
 소스 우선순위: 사용자가 지정한 소스, 현재 결정, 티켓/문서, 관련 코드, 기존 `.tigerkit/spec.md` 순입니다. 인터뷰를 시작하거나, 티켓을 생성하거나, 게시하거나, 구현하지 마세요.
 
@@ -34,6 +33,8 @@ metadata:
 
 사용한 소스와 주장을 연결한 `source map`을 만들고 사실, 결정, 가정, 미해결 충돌을 분리하세요. 요구사항에는 `R1`, `R2`처럼 문서 내 고유한 ID를, 인수 기준에는 `AC1`, `AC2`처럼 고유한 ID를 부여하세요. 같은 작업의 기존 명세를 갱신할 때 의미가 유지된 항목의 ID를 재번호하지 말고, 사용자 source에 ID가 있으면 그대로 보존하세요. 삭제된 ID를 다른 의미에 재사용하지 마세요.
 
+버그 source는 `symptom`, `current behavior`, `expected behavior`, `reproduction`, 관찰 evidence, 환경과 regression seam의 존재 여부를 분리하세요. 재현되지 않은 원인이나 해결책을 결정으로 쓰지 말고 `unverified` 가설로 남기며, 재현 명령·fixture 또는 seam이 없으면 그 부재를 검증 계획에 명시하세요.
+
 `Ready`는 문제, 목표, 범위(포함/제외), 요구사항, 인수 기준, 검증, source traceability, verifiability가 있고 미해결 충돌이 없을 때만 사용하세요. 하나라도 없으면 `Draft`, `Blocked` 또는 `Unverifiable`로 남기세요. receipt에는 경로, 상태, `증거/source map`, requirement/acceptance ID, `미검증`, `미해결 충돌`, `검증`을 포함하세요.
 
 ## 🔴 CHECKPOINT · 🛑 STOP Ready 판정 경계
@@ -45,4 +46,4 @@ metadata:
 - source map 없이 사실·결정·가정을 섞거나 미해결 충돌을 임의로 선택하지 마세요.
 - 기존 requirement/acceptance ID를 이유 없이 재번호하거나 삭제된 ID를 다른 의미로 재사용하지 마세요.
 - 필수 요소가 빠진 문서를 `Ready`로 표시하거나 구현 완료로 표현하지 마세요.
-- 인터뷰, 티켓 생성, 구현, 원격 게시를 이 스킬의 출력에 섞지 마세요.
+- 인터뷰, 티켓 생성, 구현, 원격 게시를 이 스킬의 출력에 섞지 마세요. 명세와 티켓을 함께 요청받았더라도 이 명세가 `Ready`가 아니면 downstream 티켓 작성으로 진행하지 마세요.

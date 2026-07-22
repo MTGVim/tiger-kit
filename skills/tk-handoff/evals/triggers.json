@@ -1,30 +1,162 @@
 {
   "skill": "tk-handoff",
-  "kind": "user-invoked",
+  "kind": "hybrid",
   "queries": [
     {
-      "id": "train-explicit",
+      "id": "train-positive",
       "split": "train",
-      "query": "/tk-handoff 현재 요청을 스킬 계약대로 처리해줘",
+      "query": "$tk-handoff 현재 작업 인수인계를 작성해줘",
       "should_trigger": true
     },
     {
-      "id": "validation-explicit",
-      "split": "validation",
-      "query": "$tk-handoff 제공된 자료로 결과와 receipt를 만들어줘",
-      "should_trigger": true
-    },
-    {
-      "id": "train-implicit-block",
+      "id": "train-negative",
       "split": "train",
-      "query": "현재 상태를 대화에서 한 줄로 요약해줘",
+      "query": "계속 진행해",
       "should_trigger": false
     },
     {
-      "id": "validation-nearby-block",
+      "id": "validation-positive-1",
       "split": "validation",
-      "query": "현재 branch의 변경을 독립 리뷰해줘",
-      "should_trigger": false
+      "query": "현재 Git evidence로 검증된 handoff 문서를 작성해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-2",
+      "split": "validation",
+      "query": ".tigerkit/handoff.md에 다음 작업자를 위한 인수인계를 남겨줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-3",
+      "split": "validation",
+      "query": "기존 handoff를 재개해줘",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-positive-4",
+      "split": "validation",
+      "query": "인수인계 작썽해줘",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-5",
+      "split": "validation",
+      "query": "Resume the work from the existing handoff and check drift",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-positive-6",
+      "split": "validation",
+      "query": "handoff resume",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-7",
+      "split": "validation",
+      "query": "branch와 verification을 확인해서 handoff를 쓰고 open question도 남겨줘",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-8",
+      "split": "validation",
+      "query": "$tk-handoff --resume material drift가 없으면 바로 계속해줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-1",
+      "split": "validation",
+      "query": "현재 상태를 한 문단으로 요약해 주세요",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-2",
+      "split": "validation",
+      "query": "그대로 계속 진행해",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-3",
+      "split": "validation",
+      "query": "다음 단계가 뭐야",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-negative-4",
+      "split": "validation",
+      "query": "새 구현 작업을 시작해줘",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-negative-5",
+      "split": "validation",
+      "query": "대화 내용을 복사해 문서로 저장해줘",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-negative-6",
+      "split": "validation",
+      "query": "상태 알려줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-7",
+      "split": "validation",
+      "query": "active tk-drive가 pending answer 뒤 자동 계속할 차례야",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-8",
+      "split": "validation",
+      "query": "완료된 변경을 커밋해줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
     }
   ]
 }

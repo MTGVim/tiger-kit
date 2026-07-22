@@ -5,14 +5,67 @@ import subprocess
 import tempfile
 import unittest
 
-from validate_skills import (
-    parse_latest_changelog_version,
-    validate_release_alignment,
-    validate_release_version_contract,
-    validate_runtime_scratch,
-    validate_skill,
-    validate_skill_eval_files,
-)
+if __package__:
+    from scripts.validate_skills import (
+        EXPECTED_SKILLS,
+        REQUIRED_BEHAVIOR_CASES,
+        USER_INVOKED_SKILLS,
+        parse_latest_changelog_version,
+        validate_release_alignment,
+        validate_release_version_contract,
+        validate_runtime_scratch,
+        validate_skill,
+        validate_skill_eval_files,
+    )
+else:
+    from validate_skills import (
+        EXPECTED_SKILLS,
+        REQUIRED_BEHAVIOR_CASES,
+        USER_INVOKED_SKILLS,
+        parse_latest_changelog_version,
+        validate_release_alignment,
+        validate_release_version_contract,
+        validate_runtime_scratch,
+        validate_skill,
+        validate_skill_eval_files,
+    )
+
+
+class CanonicalSkillContractTest(unittest.TestCase):
+    def test_v20_skill_distribution_and_absorbed_behaviors(self) -> None:
+        self.assertEqual(
+            EXPECTED_SKILLS,
+            {
+                "tk-browser-verify",
+                "tk-drive",
+                "tk-grill-me",
+                "tk-grooming",
+                "tk-handoff",
+                "tk-implement",
+                "tk-learn",
+                "tk-merge-conflict",
+                "tk-prototype",
+                "tk-reflect",
+                "tk-to-spec",
+                "tk-to-tickets",
+            },
+        )
+        self.assertEqual(USER_INVOKED_SKILLS, {"tk-grill-me", "tk-implement"})
+        self.assertTrue(
+            {
+                "drive-requires-explicit-start",
+                "drive-resumes-pending-answer",
+                "drive-does-not-auto-reflect",
+                "implement-reviews-every-standalone-run",
+                "implement-diagnoses-unknown-cause-failure",
+            }.issubset(REQUIRED_BEHAVIOR_CASES)
+        )
+        self.assertFalse(
+            any(
+                case.startswith(("code-review-", "diagnosing-bugs-"))
+                for case in REQUIRED_BEHAVIOR_CASES
+            )
+        )
 
 
 class RuntimeScratchTest(unittest.TestCase):

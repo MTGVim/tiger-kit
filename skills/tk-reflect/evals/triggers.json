@@ -1,30 +1,162 @@
 {
   "skill": "tk-reflect",
-  "kind": "user-invoked",
+  "kind": "hybrid",
   "queries": [
     {
-      "id": "train-explicit",
+      "id": "train-positive",
       "split": "train",
-      "query": "/tk-reflect 현재 요청을 스킬 계약대로 처리해줘",
+      "query": "$tk-reflect 이 작업에서 재사용 후보를 찾아줘",
       "should_trigger": true
     },
     {
-      "id": "validation-explicit",
-      "split": "validation",
-      "query": "$tk-reflect 제공된 자료로 결과와 receipt를 만들어줘",
-      "should_trigger": true
-    },
-    {
-      "id": "train-implicit-block",
+      "id": "train-negative",
       "split": "train",
-      "query": "이번 작업 소감을 한 문단으로 정리해줘",
+      "query": "방금 구현 결과를 요약해줘",
       "should_trigger": false
     },
     {
-      "id": "validation-nearby-block",
+      "id": "validation-positive-1",
       "split": "validation",
-      "query": "확인된 후보를 실제 skill로 작성해줘",
-      "should_trigger": false
+      "query": "이번 diff의 증거에서 재사용 가능한 rule이나 skill 후보를 보고해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-2",
+      "split": "validation",
+      "query": "이 반복 실패를 repo rule 후보로 회고해줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-3",
+      "split": "validation",
+      "query": "배운 점 중 재사용할 것만 뽑아줘",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-positive-4",
+      "split": "validation",
+      "query": "리유저블 후보 찻아줘",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-5",
+      "split": "validation",
+      "query": "Reflect on the evidence and classify reusable candidates",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-positive-6",
+      "split": "validation",
+      "query": "재사용 후보",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-7",
+      "split": "validation",
+      "query": "이 결과를 repo/user rule/skill 네 축으로 분류하되 적용은 하지 마",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-8",
+      "split": "validation",
+      "query": "$tk-reflect 배치 rubric까지 적용해 후보를 제안해줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-1",
+      "split": "validation",
+      "query": "방금 변경 사항을 짧게 요약해 주세요",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-2",
+      "split": "validation",
+      "query": "구현이 끝났으니 다음 티켓으로 가자",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-3",
+      "split": "validation",
+      "query": "후보를 묻지 말고 규칙 파일에 바로 적용해줘",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-negative-4",
+      "split": "validation",
+      "query": "새 스킬을 실제로 만들어줘",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-negative-5",
+      "split": "validation",
+      "query": "로그에서 secret을 추출해 규칙에 넣어줘",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-negative-6",
+      "split": "validation",
+      "query": "회고록 써줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-7",
+      "split": "validation",
+      "query": "active tk-drive가 구현을 계속하고 있어",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-8",
+      "split": "validation",
+      "query": "코드 리뷰 결과를 고쳐줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
     }
   ]
 }

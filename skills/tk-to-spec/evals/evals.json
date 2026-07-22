@@ -88,6 +88,53 @@
           ]
         }
       ]
+    },
+    {
+      "id": "to-spec-structures-bug-evidence",
+      "path": "success",
+      "prompt": "로그인 실패 버그의 현재/기대 동작, 재현, evidence와 missing seam을 구현 명세로 작성해줘",
+      "expected_output": "symptom/current/expected/reproduction/evidence/environment/seam을 분리하고 원인을 unverified로 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "symptom/current/expected/reproduction/evidence/environment/seam을 분리하고 원인을 unverified로 유지한다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Ready",
+            "reported",
+            "applied",
+            "pending"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "to-spec-compound-stops-before-tickets",
+      "path": "boundary",
+      "prompt": "명세와 티켓을 모두 만들어줘. 필수 API 결정은 아직 없어",
+      "expected_output": "spec을 Draft 또는 Blocked로 두고 tickets artifact를 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "spec을 Draft 또는 Blocked로 두고 tickets artifact를 만들지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Blocked",
+            "Fail",
+            "Unverifiable",
+            "pending"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true
     }
   ]
 }

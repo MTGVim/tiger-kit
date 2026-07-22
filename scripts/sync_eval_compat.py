@@ -30,7 +30,7 @@ def main() -> int:
         print("Out-of-date Darwin projections: " + ", ".join(changed))
         return 1
     action = "Updated" if args.write else "Validated"
-    print(f"{action} Darwin eval projections for 13 skills.")
+    print(f"{action} Darwin eval projections for 12 skills.")
     return 0
 
 

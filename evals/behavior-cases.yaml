@@ -109,48 +109,54 @@
 - case: implement-non-tdd-still-verifies
   skill: tk-implement
   expect: "Non-TDD implementation still runs focused and final verification."
-- case: code-review-pins-fixed-point
-  skill: tk-code-review
-  expect: "Review resolves and reports a fixed point before inspecting the diff."
-- case: code-review-rejects-invalid-ref
-  skill: tk-code-review
-  expect: "An invalid fixed-point ref stops the review."
-- case: code-review-rejects-empty-diff
-  skill: tk-code-review
-  expect: "An empty fixed-point diff stops the review."
-- case: code-review-separates-standards-and-spec
-  skill: tk-code-review
-  expect: "Standards and Spec findings remain separate review axes."
-- case: code-review-does-not-edit
-  skill: tk-code-review
-  expect: "The fixed diff is reviewed without source mutation."
-- case: code-review-bounds-reviewers
-  skill: tk-code-review
-  expect: "At most one Standards reviewer and one Spec reviewer are used without fan-out."
-- case: code-review-bounds-large-diff-context
-  skill: tk-code-review
-  expect: "Large or size-unknown diffs are inventoried before content, avoid unbounded raw output, and cannot Pass without full file and hunk coverage."
-- case: diagnosing-bugs-requires-red-capable-loop
-  skill: tk-diagnosing-bugs
-  expect: "A runnable red/green feedback loop is established and executed before hypotheses."
-- case: diagnosing-bugs-does-not-patch-without-reproduction
-  skill: tk-diagnosing-bugs
-  expect: "Failure to reproduce results in a report and request for evidence, not a speculative patch."
-- case: diagnosing-bugs-reruns-original-reproduction
-  skill: tk-diagnosing-bugs
-  expect: "The original reproduction is rerun after the fix."
-- case: diagnosing-bugs-cleans-instrumentation
-  skill: tk-diagnosing-bugs
-  expect: "Temporary instrumentation and debug artifacts are removed."
-- case: diagnosing-bugs-reports-missing-seam
-  skill: tk-diagnosing-bugs
-  expect: "Missing public regression seam is reported instead of replaced by a shallow test."
-- case: diagnosing-bugs-standalone-commit-requires-explicit-invocation
-  skill: tk-diagnosing-bugs
-  expect: "Standalone commit authority requires explicit skill invocation and successful verification."
-- case: diagnosing-bugs-inside-implement-does-not-commit
-  skill: tk-diagnosing-bugs
-  expect: "Diagnosis inside an active tk-implement run returns changes without a separate commit."
+- case: implement-reviews-every-standalone-run
+  skill: tk-implement
+  expect: "Every standalone implementation runs current-agent Standards and Spec review before commit, including small low-risk changes."
+- case: implement-review-pins-fixed-point
+  skill: tk-implement
+  expect: "Preflight records initial HEAD, branch, pre-existing dirty paths, and candidate/staged inventories before findings."
+- case: implement-review-rejects-drift
+  skill: tk-implement
+  expect: "Review-head or staged drift invalidates stale evidence and prevents commit until affected coverage is rerun."
+- case: implement-review-separates-standards-and-spec
+  skill: tk-implement
+  expect: "Standards and Spec remain separate verdict axes with R/AC evidence when IDs exist."
+- case: implement-review-bounds-independent-reviewer
+  skill: tk-implement
+  expect: "Only large or high-risk work may use one independent reviewer, without editing, fan-out, re-delegation, or automatic re-review."
+- case: implement-review-bounds-large-diff-context
+  skill: tk-implement
+  expect: "Only diffs at or below 15 files and 800 changed lines are small; large or unknown diffs use bounded inspection with full coverage."
+- case: implement-diagnoses-unknown-cause-failure
+  skill: tk-implement
+  expect: "Unknown-cause, intermittent, and performance failures enter the conditional investigation loop before mutation."
+- case: implement-diagnosis-requires-red-capable-loop
+  skill: tk-implement
+  expect: "A repeatable red-capable feedback loop runs before hypotheses or a patch."
+- case: implement-diagnosis-does-not-patch-without-reproduction
+  skill: tk-implement
+  expect: "Failure to reproduce produces Unverifiable evidence, not a speculative patch or commit."
+- case: implement-diagnosis-reruns-original-reproduction
+  skill: tk-implement
+  expect: "The original reproduction reruns after the regression seam is green."
+- case: implement-diagnosis-cleans-instrumentation
+  skill: tk-implement
+  expect: "Temporary instrumentation and throwaway artifacts are removed before clean verification."
+- case: implement-diagnosis-reports-missing-seam
+  skill: tk-implement
+  expect: "A missing public regression seam is reported instead of replaced by a shallow test."
+- case: standalone-diagnose-only-is-read-only
+  skill: tk-implement
+  expect: "An ordinary diagnose-only request gathers evidence without source mutation, commit authority, or a removed-skill trigger."
+- case: standalone-review-only-is-read-only
+  skill: tk-implement
+  expect: "An ordinary fixed-diff review request remains read-only and does not gain implementation commit authority."
+- case: implement-review-15-files-800-lines-is-small
+  skill: tk-implement
+  expect: "A trustworthy inventory with exactly 15 files and 800 additions plus deletions is small; exceeding either boundary is large."
+- case: implement-review-size-unknown-is-bounded
+  skill: tk-implement
+  expect: "Binary, rename, or incomplete inventory is size_unknown and uses bounded inspection without raw full-diff output or an uncovered Pass."
 - case: merge-conflict-requires-active-operation
   skill: tk-merge-conflict
   expect: "Conflict handling starts only during an active merge, rebase, cherry-pick, or revert."
@@ -166,15 +172,39 @@
 - case: reflect-is-report-only
   skill: tk-reflect
   expect: "No files are modified; candidates use the documented target axes."
+- case: reflect-classifies-repo-placement
+  skill: tk-reflect
+  expect: "The closed safety set, verified paths, immediate parent, tracked regular siblings, and threshold deterministically select root rule, nested rule, or repo skill."
 - case: to-spec-does-not-create-tickets
   skill: tk-to-spec
   expect: "A spec is produced without ticket decomposition."
+- case: to-spec-structures-bug-evidence
+  skill: tk-to-spec
+  expect: "Bug specs separate symptom, current and expected behavior, reproduction, evidence, environment, and missing regression seam."
+- case: to-tickets-does-not-create-spec
+  skill: tk-to-tickets
+  expect: "Ticket decomposition does not create or modify a spec."
+- case: to-tickets-initial-status-is-pending
+  skill: tk-to-tickets
+  expect: "Standalone ticket creation initializes every ticket as pending."
+- case: to-tickets-keeps-one-vertical-bug-slice
+  skill: tk-to-tickets
+  expect: "One bug fix keeps reproduction, diagnosis, fix, regression, original rerun, and cleanup in one vertical slice."
 - case: prototype-is-not-production
   skill: tk-prototype
   expect: "The result distinguishes fake and real behavior and is not called production-ready."
+- case: prototype-web-uses-disposable-variants
+  skill: tk-prototype
+  expect: "Web comparison reuses the repo stack or static HTML/CSS/JS fallback without dependencies, compares 2-3 meaningful concepts, and verifies wide/narrow interaction evidence."
+- case: prototype-web-toggle-preserves-legibility
+  skill: tk-prototype
+  expect: "Wide columns and narrow stacks remain simultaneous unless they harm the concept or minimum legibility, in which case an explicit A/B or A/B/C toggle is allowed."
 - case: grooming-defaults-report-only
   skill: tk-grooming
   expect: "Findings and proposals are emitted without edits by default."
+- case: grooming-classifies-repo-placement
+  skill: tk-grooming
+  expect: "The same placement rubric maps kind changes to convert, root/nested changes to move, mixed units to split, and correct placement to keep."
 - case: legacy-global-state-is-not-scanned
   skill: tk-grooming
   expect: "Legacy global TigerKit state is not automatically discovered or migrated."
@@ -186,9 +216,9 @@
   expect: "Scope, branch intent, confirmed-decision, ownership, or verification-result drift stops for one explicit user decision before continuation."
 - case: traceability-preserves-requirement-ids
   skill: tk-to-spec
-  expect: "Stable requirement and acceptance IDs are preserved from spec through tickets, implementation receipts, and the code-review Spec axis when those IDs exist."
-- case: code-review-high-risk-is-conditional
-  skill: tk-code-review
+  expect: "Stable requirement and acceptance IDs are preserved from spec through tickets, implementation receipts, and the implementation Spec review axis when those IDs exist."
+- case: implement-review-high-risk-is-conditional
+  skill: tk-implement
   expect: "High-risk checks load only for diff signals such as auth, privacy, payment, migration, data loss, concurrency, dependency, or public API changes."
 - case: browser-accessibility-is-conditional
   skill: tk-browser-verify
@@ -196,3 +226,36 @@
 - case: learn-requires-eval-and-compatibility
   skill: tk-learn
   expect: "A skill candidate includes trigger validation, success and boundary assertions, a baseline plan, and a portable-core versus host-extension compatibility decision before approval."
+- case: learn-implicit-write-awaits-approval
+  skill: tk-learn
+  expect: "Implicit invocation stops at draft and checkpoint until current-turn explicit approval authorizes a target write."
+- case: handoff-ignores-generic-continue
+  skill: tk-handoff
+  expect: "Generic continue, summary, and status prompts do not trigger handoff write or resume."
+- case: drive-requires-explicit-start
+  skill: tk-drive
+  expect: "Only explicit $tk-drive starts a workflow; ordinary implementation, generic continue, artifacts, and unrelated answers do not."
+- case: drive-resumes-pending-answer
+  skill: tk-drive
+  expect: "A direct same-conversation answer to the active pending decision resumes the next phase without another invocation."
+- case: drive-does-not-auto-reflect
+  skill: tk-drive
+  expect: "Completion reports only whether a reusable candidate exists and never invokes reflection automatically."
+- case: drive-skips-unneeded-tickets
+  skill: tk-drive
+  expect: "A single short vertical slice moves from Ready spec directly to implementation without a ticket artifact."
+- case: drive-keeps-ticket-ledger
+  skill: tk-drive
+  expect: "Multi-slice or long-resume work tracks pending, in_progress, verified, or blocked with evidence and revalidates on resume."
+- case: drive-bounds-nested-skills
+  skill: tk-drive
+  expect: "Automatic nested skills are limited to prototype, browser verification, and merge conflict handling."
+- case: drive-commits-once
+  skill: tk-drive
+  expect: "The whole verified drive creates one final current-branch commit rather than per-phase commits."
+- case: drive-preserves-valid-diff-on-partial-failure
+  skill: tk-drive
+  expect: "Partial failure leaves valid source changes uncommitted and removes only owned temporary artifacts."
+- case: drive-review-parity
+  skill: tk-drive
+  expect: "Drive uses the same fixed-point, inventory, Standards/Spec, bounded reviewer, finding, and drift gates as standalone implementation."

@@ -1,18 +1,17 @@
 ---
 name: tk-reflect
-description: "[user] 증거에서 재사용 가능한 규칙 또는 스킬 후보를 추출합니다. 사용자가 명시적으로 호출할 때만 사용합니다."
-disable-model-invocation: true
+description: "[user/auto] 대화·diff·결과의 증거에서 재사용 가능한 rule 또는 skill 후보를 분류해 보고할 때 사용합니다. implicit mode는 report-only이며 단순 요약·구현 완료·자동 적용에는 사용하지 않습니다."
 argument-hint: "<대화, 수정, diff, 결과 또는 소스>"
 metadata:
   tigerkit:
-    kind: user-invoked
+    kind: hybrid
     origin: tigerkit
     relationship: native
 ---
 
 # 회고
 
-사용자가 이 스킬을 명시적으로 호출할 때만 사용합니다. 자동으로 활성화하거나 다른 사용자 호출형 스킬을 호출하지 마세요.
+명시 호출 또는 증거에서 재사용 후보를 추출해 달라는 명확한 요청에 사용합니다. 단순 요약·구현 완료에는 자동으로 활성화하지 말고, 다른 스킬을 호출하지 마세요. implicit mode는 항상 report-only입니다.
 
 현재 대화, 수정 사항, diff, 구현/테스트/검토 결과, 관련 `.tigerkit/` 산출물, 사용자가 지정한 소스를 읽으세요. 정확히 네 축, 즉 `repo rule`, `repo skill`, `user rule`, `user skill`로 분류하고 `propose | update | merge | no-op | discard` 중 하나를 선택하세요.
 
@@ -21,7 +20,7 @@ metadata:
 1. `evidence`: 입력은 대화·diff·결과·소스이고, 출력은 접근 실패를 포함해 네 축으로 분류된 경로/명령 기반 `verified | unverified` 사실입니다.
 2. `interpretation`: 입력은 evidence이고, 출력은 사실과 분리된 재사용 가설입니다.
 3. `confidence`: 입력은 evidence와 가설이고, 출력은 `high | medium | low` 및 근거입니다.
-4. `action`: 입력은 후보와 기존 reuse map이고, 출력은 `propose | update | merge | no-op | discard` 중 하나입니다. 실제 문안은 별도 `초안`이 소유합니다.
+4. `action`: 입력은 후보와 기존 reuse map이고, 출력은 repository candidate에 [배치 rubric](references/repository-placement.md)을 적용한 target 위치와 `propose | update | merge | no-op | discard` 중 하나입니다. 실제 문안은 별도 `초안`이 소유합니다.
 5. `apply/receipt`: 입력은 후보·별도 승인·적용 전 대상 상태이고, 출력은 `reported | applied | pending` 상태와 해당 후보·evidence·재검증 경로의 참조입니다. 적용을 기다리는 `propose | update | merge` 후보는 `pending`, 더 적용할 내용이 없는 `no-op | discard` 보고는 `reported`, 승인 후 실제 반영·재검증된 결과만 `applied`입니다. 후보 본문을 receipt에 복사하지 마세요.
 
 각 후보를 다음처럼 분리해 작성하세요.
@@ -30,6 +29,8 @@ metadata:
 - `Interpretation`: Evidence ID에서 도출한 재사용 범위·경계 가설만 적고, 적용할 규칙 문안이나 `~해야 한다` 처방은 쓰지 마세요. 실제 처방은 초안만 소유합니다. 가설을 관찰 사실처럼 쓰지 마세요.
 - `Confidence`: `high | medium | low`, `Basis: <Evidence IDs>`, 필요한 경우 `Uncertainty: ...`만 적으세요. source 종류·사례 수·관찰·가설을 다시 서술하지 마세요. 증거가 부족하면 `low`로 두고 승격하지 마세요.
 - `Action`: 중복이면 새로 만들지 말고 `merge` 또는 `no-op`을 우선하세요. 규칙은 짧은 상시 지침, 스킬은 트리거·반복 단계·입출력·독립적 가치를 가져야 합니다.
+
+`repo rule | repo skill` 후보에는 배치 rubric의 정규화된 raw 입력을 Evidence에, 재사용 범위와 root/nested/skill 경계 해석을 Interpretation에, 수행 선택을 Action에 기록하세요. 별도 배치 근거 필드를 만들지 마세요. Evidence를 읽을 수 없거나 threshold가 충돌하면 confidence를 `low`로 두고 후보를 승격하지 마세요.
 
 Confidence는 다음 기준으로만 올리세요. `high`는 서로 다른 occurrence 또는 source type의 독립적인 verified Evidence ID가 2개 이상이고 미해결 conflict·counterexample이 없는 경우입니다. `medium`은 verified Evidence ID가 1개 이상이지만 반복성·독립성·적용 경계 중 하나가 아직 확인되지 않은 경우입니다. Verified evidence가 없거나 conflict·counterexample이 미해결이면 `low`이며 `propose | update | merge`로 승격하지 마세요.
 

@@ -29,11 +29,11 @@ metadata:
 
 ## Workflow
 
-1. `understand/inspect`: 입력은 요청·관련 source·저장소 상태이고, 출력은 확인된 범위·제약·requirement/acceptance ID와 미결정 사항입니다.
-2. `resolve strategy`: 입력은 확인된 범위와 코드·테스트 evidence이고, 출력은 `direct | delegated`, `tdd | no-tdd`, review 필요 여부와 이유입니다.
+1. `understand/inspect`: 입력은 요청·관련 source·저장소 상태이고, 출력은 확인된 범위·제약·requirement/acceptance ID, initial `HEAD`·branch·pre-existing dirty inventory와 미결정 사항입니다.
+2. `resolve strategy`: 입력은 확인된 범위와 코드·테스트 evidence이고, 출력은 `direct | delegated`, `tdd | no-tdd`, 조건부 bug investigation과 independent reviewer 필요 여부입니다.
 3. `implement/incremental verification`: 입력은 확정 전략이고, 출력은 최소 구현 slice와 slice별 focused verification입니다.
 4. `final verification`: 입력은 전체 구현 diff와 성공 조건이고, 출력은 당시 branch·`HEAD`·검증 범위에 묶인 최종 evidence와 실패 분류입니다.
-5. `review/commit`: 입력은 검증된 diff와 위험도이고, 출력은 필요 시 bounded review 및 drift가 없는 staged commit 또는 중단 상태입니다.
+5. `review/commit`: 입력은 검증된 candidate/staged diff snapshot이고, 출력은 모든 실행의 current-agent Standards/Spec verdict, 필요 시 independent reviewer 1명 및 drift가 없는 staged commit 또는 중단 상태입니다.
 6. `report`: 입력은 최종 branch·`HEAD`·commit·검증 evidence이고, 출력은 중복 없는 완료 섹션과 ID별 receipt입니다.
 
 ## CHECKPOINT / STOP
@@ -60,6 +60,8 @@ Figma, screenshot 또는 디자인 명세가 예상 UI의 기준이면 source mu
 
 Direct에서는 현재 에이전트가 가장 작은 일관된 단위로 구현하고 focused verification을 반복하세요. Delegated에서는 implementor 한 명에게만 범위와 완료 조건을 전달하고 현재 에이전트가 diff와 검증을 확인하세요. 위임을 중첩하거나 하위 에이전트가 사용자 호출형 TigerKit 스킬을 호출하게 해서는 안 됩니다. Implementor에게 브라우저 도구 호출을 맡기지 말고 최종 browser 검증은 현재 에이전트가 소유하세요.
 
+입력이 원인 미확정 bug, 간헐 실패 또는 성능 회귀이면 source mutation 전에 [조사 루프](references/investigation.md)를 적용하세요. 재현 가능한 red signal 없이 추측 patch를 만들지 말고, 원인이 이미 확정된 단순 수정에는 불필요한 가설 절차를 강제하지 마세요. 일반 대화의 diagnose-only 요청은 read-only이며 이 스킬의 commit 권한을 얻지 않습니다.
+
 TDD로 결정되면 의미 있는 공개 동작 경계를 선택하고 수직 slice 하나의 focused test를 작성하세요. 테스트를 실제 실행해 red를 관찰한 뒤 최소 구현으로 green을 만들고, 같은 테스트와 관련 검증을 다시 실행하세요. 다음 slice가 있으면 반복하세요. 핵심 loop는 `red → green`이며 refactor를 매 cycle의 필수 단계로 강제하지 않습니다. 구현 후 테스트를 추가해 TDD라고 보고하거나, 이미 성공하는 테스트를 red로 표현하거나, 내부 구현 세부사항을 테스트하거나, 테스트를 위해 production API를 왜곡하지 마세요. 사용자가 TDD를 명시했는데 유용한 seam이 없으면 자동으로 non-TDD로 바꾸지 말고 seam 부재와 가능한 대안을 제시해 결정받으세요. 자동 판단에서는 유용한 seam이 없으면 TDD를 선택하지 마세요. Non-TDD에서도 검증을 생략하지 마세요.
 
 ### 🔴 HARD GATE · browser 도구
@@ -72,11 +74,13 @@ TDD로 결정되면 의미 있는 공개 동작 경계를 선택하고 수직 sl
 
 Final verification에는 당시 branch·`HEAD`와 검증한 diff/path 범위를 함께 기록하세요. 커밋 직전에 현재 branch·`HEAD`·staged diff가 그 범위와 같은지 다시 확인하고, 예상하지 않은 drift나 검증하지 않은 staged 변경이 있으면 커밋하지 말고 사용자 변경을 건드리지 않은 채 영향받은 검증을 다시 실행하거나 `Blocked`로 보고하세요. Commit 자체가 실패하면 broad staging이나 우회 옵션으로 재시도하지 말고 실제 `HEAD`와 미커밋 상태를 `Fail` receipt에 남기세요.
 
-인증·결제·개인정보·권한·마이그레이션·데이터 손실·동시성·공개 API·대규모 구조 변경 또는 테스트하지 않은 고위험 변경이면 독립 reviewer 한 명을 실행하세요. 그 밖의 변경은 review를 생략하고 이유를 report에 기록하세요. 최대 범위는 review 1회, fix 1회, regression verification 1회입니다. [리뷰 경계](references/review-boundary.md)를 참고하세요.
+모든 구현은 risk와 크기에 관계없이 현재 에이전트가 [내장 리뷰](references/review-boundary.md)의 fixed point, candidate/staged inventory, Standards와 Spec 축을 실행하세요. `large` 또는 인증·결제·개인정보·권한·dependency·migration/data loss·동시성·public API 고위험 변경에서만 독립 reviewer 한 명을 허용합니다. 전체 최대 범위는 review 1회, fix 1회, regression verification 1회입니다. 중요한 finding, drift 또는 미검증 범위가 남으면 commit하지 마세요.
 
 ## 커밋과 보고
 
 요청 범위가 완료되고 변경 관련 검증이 성공했으며 작업 diff를 기존 사용자 변경과 안전하게 분리할 수 있으면 현재 브랜치에 커밋하세요. 사용자가 커밋을 금지했거나 구현이 불완전하거나 변경 관련 검증이 실패했으면 커밋하지 마세요. Implementor는 커밋하지 않으며 현재 에이전트가 staged diff를 확인하고 커밋합니다.
+
+일반 review-only 요청은 read-only 일반 agent 작업으로 처리하며 source mutation이나 commit 권한을 부여하지 않습니다. 이 스킬 안의 review는 explicit implementation 범위와 candidate diff만 소유합니다.
 
 별도 요청 없이는 push, PR 생성, merge, tag, release 또는 publish를 하지 마세요. 다른 사용자 호출형 스킬도 자동 실행하지 마세요.
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased — TigerKit 20 Candidate
+
+- Changed the canonical surface to 12 self-contained skills: 2 user-invoked and 10 hybrid, without creating a tag, release, or publish action.
+- Added explicit-start, same-conversation-resumable `tk-drive` with inline one-question ambiguity handling, optional ticket ledger, bounded nested skills, built-in review parity, one final commit, and partial-failure preservation.
+- Converted planning, prototype, reflection, learning, grooming, and handoff artifact skills to narrowly triggered hybrid contracts.
+- Folded unknown-cause investigation and fixed-point Standards/Spec review into `tk-implement`, then removed their standalone skill surfaces.
+- Added deterministic root/nested rule versus repo-skill placement and disposable wide/narrow web A/B/C prototype guidance.
+
 ## 19.0.17 — Bounded Large-Diff Review
 
 - Added stat/numstat preflight and deterministic file/line thresholds before `tk-code-review` reads diff content.

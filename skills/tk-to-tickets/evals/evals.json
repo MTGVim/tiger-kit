@@ -68,6 +68,97 @@
           ]
         }
       ]
+    },
+    {
+      "id": "to-tickets-does-not-create-spec",
+      "path": "success",
+      "prompt": "이 Ready spec을 수직 티켓으로 분해해줘",
+      "expected_output": "tickets만 작성하고 spec을 생성·수정하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "tickets만 작성하고 spec을 생성·수정하지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Ready",
+            "reported",
+            "applied",
+            "pending"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "to-tickets-initial-status-is-pending",
+      "path": "success",
+      "prompt": "세 개 vertical ticket을 작성해줘",
+      "expected_output": "standalone tickets의 초기 status를 모두 pending으로 기록한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "standalone tickets의 초기 status를 모두 pending으로 기록한다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Ready",
+            "reported",
+            "applied",
+            "pending"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "to-tickets-keeps-one-vertical-bug-slice",
+      "path": "success",
+      "prompt": "이 버그 수정 계획을 티켓으로 만들어줘",
+      "expected_output": "reproduction, root-cause fix, regression, original rerun과 cleanup을 하나의 vertical bug-fix slice로 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "reproduction, root-cause fix, regression, original rerun과 cleanup을 하나의 vertical bug-fix slice로 유지한다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Ready",
+            "reported",
+            "applied",
+            "pending"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "to-tickets-rejects-non-ready-spec",
+      "path": "boundary",
+      "prompt": "Draft spec이지만 티켓을 먼저 만들어줘",
+      "expected_output": "티켓 파일을 쓰지 않고 Blocked 또는 Unverifiable로 멈춘다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "티켓 파일을 쓰지 않고 Blocked 또는 Unverifiable로 멈춘다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Blocked",
+            "Fail",
+            "Unverifiable",
+            "pending"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true
     }
   ]
 }
