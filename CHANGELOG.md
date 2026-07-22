@@ -1,8 +1,8 @@
 # Changelog
 
-## Unreleased — TigerKit 20 Candidate
+## 20.0.0 — Drive-Centered Skill Surface
 
-- Changed the canonical surface to 12 self-contained skills: 2 user-invoked and 10 hybrid, without creating a tag, release, or publish action.
+- Changed the canonical surface to 12 self-contained skills: 2 user-invoked and 10 hybrid.
 - Added explicit-start, same-conversation-resumable `tk-drive` with inline one-question ambiguity handling, optional ticket ledger, bounded nested skills, built-in review parity, one final commit, and partial-failure preservation.
 - Converted planning, prototype, reflection, learning, grooming, and handoff artifact skills to narrowly triggered hybrid contracts.
 - Folded unknown-cause investigation and fixed-point Standards/Spec review into `tk-implement`, then removed their standalone skill surfaces.

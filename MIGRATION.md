@@ -1,6 +1,6 @@
 # Migrating to TigerKit 20
 
-TigerKit 20 keeps Agent Skills distribution for Claude Code, Codex, and Hermes Agent while changing the next-major source from 13 skills (9 user/4 hybrid) to 12 skills (2 user/10 hybrid). The `model-only` kind remains removed.
+TigerKit 20 keeps Agent Skills distribution for Claude Code, Codex, and Hermes Agent while changing the canonical source from 13 skills (9 user/4 hybrid) to 12 skills (2 user/10 hybrid). The `model-only` kind remains removed.
 
 ## Install
 

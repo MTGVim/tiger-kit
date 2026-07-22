@@ -4,7 +4,7 @@
   <img src="assets/tigerkit-cover.png" width="960" alt="TigerKit Agent Skills 표지">
 </p>
 
-TigerKit은 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent Skills 모음입니다. 중앙 workflow runtime 없이 12개 self-contained skill을 `npx skills`로 배포합니다. 현재 `main`은 다음 major source이며, 아래 immutable tag는 최신 released snapshot입니다.
+TigerKit은 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent Skills 모음입니다. 중앙 workflow runtime 없이 12개 self-contained skill을 `npx skills`로 배포합니다. 현재 `main`은 최신 release source이며, 아래 immutable tag로 동일한 released snapshot을 설치할 수 있습니다.
 
 ## 설치
 
@@ -31,10 +31,10 @@ npx skills add MTGVim/tiger-kit \
   --skill tk-browser-verify
 ```
 
-변경되지 않는 `v19.0.17` snapshot:
+변경되지 않는 `v20.0.0` snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v19.0.17" \
+npx skills add "MTGVim/tiger-kit#v20.0.0" \
   --global \
   --agent claude-code \
   --agent codex \
