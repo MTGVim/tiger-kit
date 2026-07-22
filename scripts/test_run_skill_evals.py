@@ -4,13 +4,22 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from run_skill_evals import (
-    build_verdict,
-    evaluate_checkout,
-    summarize_trigger_outcomes,
-    validate_adapter_result,
-    validate_case_filter,
-)
+if __package__:
+    from scripts.run_skill_evals import (
+        build_verdict,
+        evaluate_checkout,
+        summarize_trigger_outcomes,
+        validate_adapter_result,
+        validate_case_filter,
+    )
+else:
+    from run_skill_evals import (
+        build_verdict,
+        evaluate_checkout,
+        summarize_trigger_outcomes,
+        validate_adapter_result,
+        validate_case_filter,
+    )
 
 
 class AdapterResultTest(unittest.TestCase):

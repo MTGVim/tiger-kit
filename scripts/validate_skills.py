@@ -34,30 +34,22 @@ MECHANICAL_ASSERTION_TYPES = {
 }
 HYBRID_TRIGGER_FACETS = {"formal", "casual", "typo", "ko-en", "short", "compound"}
 EXPECTED_SKILLS = {
+    "tk-browser-verify",
+    "tk-drive",
     "tk-grill-me",
-    "tk-to-spec",
-    "tk-to-tickets",
-    "tk-implement",
-    "tk-prototype",
-    "tk-reflect",
-    "tk-learn",
     "tk-grooming",
     "tk-handoff",
-    "tk-browser-verify",
-    "tk-diagnosing-bugs",
-    "tk-code-review",
+    "tk-implement",
+    "tk-learn",
     "tk-merge-conflict",
+    "tk-prototype",
+    "tk-reflect",
+    "tk-to-spec",
+    "tk-to-tickets",
 }
 USER_INVOKED_SKILLS = {
     "tk-grill-me",
-    "tk-to-spec",
-    "tk-to-tickets",
     "tk-implement",
-    "tk-prototype",
-    "tk-reflect",
-    "tk-learn",
-    "tk-grooming",
-    "tk-handoff",
 }
 HYBRID_SKILLS = EXPECTED_SKILLS - USER_INVOKED_SKILLS
 KEBAB = re.compile(r"^tk-[a-z0-9]+(?:-[a-z0-9]+)*$")
@@ -90,35 +82,56 @@ REQUIRED_BEHAVIOR_CASES = {
     "implement-tdd-requires-observed-red",
     "implement-tdd-uses-public-behavior",
     "implement-non-tdd-still-verifies",
-    "code-review-pins-fixed-point",
-    "code-review-rejects-invalid-ref",
-    "code-review-rejects-empty-diff",
-    "code-review-separates-standards-and-spec",
-    "code-review-does-not-edit",
-    "code-review-bounds-reviewers",
-    "code-review-bounds-large-diff-context",
-    "diagnosing-bugs-requires-red-capable-loop",
-    "diagnosing-bugs-does-not-patch-without-reproduction",
-    "diagnosing-bugs-reruns-original-reproduction",
-    "diagnosing-bugs-cleans-instrumentation",
-    "diagnosing-bugs-reports-missing-seam",
-    "diagnosing-bugs-standalone-commit-requires-explicit-invocation",
-    "diagnosing-bugs-inside-implement-does-not-commit",
+    "implement-reviews-every-standalone-run",
+    "implement-review-pins-fixed-point",
+    "implement-review-rejects-drift",
+    "implement-review-separates-standards-and-spec",
+    "implement-review-bounds-independent-reviewer",
+    "implement-review-bounds-large-diff-context",
+    "implement-diagnoses-unknown-cause-failure",
+    "implement-diagnosis-requires-red-capable-loop",
+    "implement-diagnosis-does-not-patch-without-reproduction",
+    "implement-diagnosis-reruns-original-reproduction",
+    "implement-diagnosis-cleans-instrumentation",
+    "implement-diagnosis-reports-missing-seam",
+    "standalone-diagnose-only-is-read-only",
+    "standalone-review-only-is-read-only",
+    "implement-review-15-files-800-lines-is-small",
+    "implement-review-size-unknown-is-bounded",
     "merge-conflict-requires-active-operation",
     "merge-conflict-finishes-operation",
     "merge-conflict-does-not-abort",
     "merge-conflict-does-not-force-push",
     "reflect-is-report-only",
+    "reflect-classifies-repo-placement",
     "to-spec-does-not-create-tickets",
+    "to-spec-structures-bug-evidence",
+    "to-tickets-does-not-create-spec",
+    "to-tickets-initial-status-is-pending",
+    "to-tickets-keeps-one-vertical-bug-slice",
     "prototype-is-not-production",
+    "prototype-web-uses-disposable-variants",
+    "prototype-web-toggle-preserves-legibility",
     "grooming-defaults-report-only",
+    "grooming-classifies-repo-placement",
     "legacy-global-state-is-not-scanned",
     "handoff-resume-no-drift-continues",
     "handoff-resume-material-drift-blocks",
     "traceability-preserves-requirement-ids",
-    "code-review-high-risk-is-conditional",
+    "implement-review-high-risk-is-conditional",
     "browser-accessibility-is-conditional",
     "learn-requires-eval-and-compatibility",
+    "learn-implicit-write-awaits-approval",
+    "handoff-ignores-generic-continue",
+    "drive-requires-explicit-start",
+    "drive-resumes-pending-answer",
+    "drive-does-not-auto-reflect",
+    "drive-skips-unneeded-tickets",
+    "drive-keeps-ticket-ledger",
+    "drive-bounds-nested-skills",
+    "drive-commits-once",
+    "drive-preserves-valid-diff-on-partial-failure",
+    "drive-review-parity",
 }
 
 
@@ -351,18 +364,18 @@ def validate_repository_contract() -> list[str]:
     )
     for relative in required_files:
         if not (ROOT / relative).is_file():
-            errors.append(f"{relative}: required TigerKit 19 repository file is missing")
+            errors.append(f"{relative}: required TigerKit 20 repository file is missing")
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
-            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 19")
+            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 20")
     errors.extend(validate_runtime_scratch(ROOT))
     ignored = (ROOT / ".gitignore").read_text(encoding="utf-8") if (ROOT / ".gitignore").is_file() else ""
     if ".tigerkit/" not in ignored.splitlines():
         errors.append(".gitignore: document TigerKit repo-local scratch with .tigerkit/")
     required_text = {
         "README.md": (
-            "TigerKit 19",
-            "13",
+            "TigerKit 20",
+            "12",
             "Claude Code",
             "Codex",
             "Hermes Agent",
@@ -370,13 +383,13 @@ def validate_repository_contract() -> list[str]:
             "사용 시나리오",
         ),
         "MIGRATION.md": (
-            "TigerKit 19",
+            "TigerKit 20",
             "Removed Skills",
             "model-only",
             "hybrid",
             "CONTEXT.md",
         ),
-        "CHANGELOG.md": ("13", "hybrid", "v18.0.4"),
+        "CHANGELOG.md": ("12", "hybrid", "v18.0.4"),
         "NOTICE.md": (
             "mattpocock/skills",
             "relationship: adapted",
@@ -706,7 +719,7 @@ def validate_eval_fixtures() -> list[str]:
         if duplicates:
             errors.append(f"evals/trigger-cases.yaml: duplicate skills: {', '.join(sorted(set(duplicates)))}")
         if set(entries) != EXPECTED_SKILLS:
-            errors.append("evals/trigger-cases.yaml: cover exactly the 13 canonical skills")
+            errors.append("evals/trigger-cases.yaml: cover exactly the 12 canonical skills")
         for skill, values in sorted(entries.items()):
             if skill in USER_INVOKED_SKILLS:
                 if values["examples"] < 2:

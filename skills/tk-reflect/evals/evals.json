@@ -49,6 +49,295 @@
       ],
       "safety": true,
       "darwin": true
+    },
+    {
+      "id": "reflect-classifies-repo-placement",
+      "path": "success",
+      "prompt": "Git-tracked sibling 15개가 있는 한 parent의 non-safety rule 후보 배치를 report-only로 판정해줘",
+      "expected_output": "기본 threshold 15와 normalized evidence를 기록하고 nearest nested repo rule을 결정하며 HEAD를 바꾸지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "기본 threshold 15와 normalized evidence를 기록하고 nearest nested repo rule을 결정하며 HEAD를 바꾸지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Ready",
+            "reported",
+            "applied",
+            "pending"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "reflect-placement-safety-root",
+      "path": "success",
+      "prompt": "API key 유출 방지 후보가 src/auth 한 파일에만 관련돼 보여. 배치를 판정해줘",
+      "expected_output": "closed safety token이 local path보다 우선해 root/always-loaded repo rule로 판정한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "closed safety token이 local path보다 우선해 root/always-loaded repo rule로 판정한다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Ready",
+            "reported",
+            "applied",
+            "pending"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "reflect-placement-threshold-16",
+      "path": "success",
+      "prompt": "한 parent의 다른 tracked sibling이 16개인 non-safety 후보를 판정해줘",
+      "expected_output": "16 > 기본 threshold 15이므로 repo skill로 판정한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "16 > 기본 threshold 15이므로 repo skill로 판정한다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Ready",
+            "reported",
+            "applied",
+            "pending"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "reflect-placement-evidence-missing",
+      "path": "boundary",
+      "prompt": "읽을 수 없는 path의 sibling 수를 추정해서 후보를 승격해줘",
+      "expected_output": "path/Git evidence를 추정하지 않고 confidence low와 Unverifiable로 멈춘다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "path/Git evidence를 추정하지 않고 confidence low와 Unverifiable로 멈춘다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Blocked",
+            "Fail",
+            "Unverifiable",
+            "pending"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true
+    },
+    {
+      "id": "placement-no-concrete-path",
+      "path": "success",
+      "prompt": "repository-specific non-safety candidate지만 확인된 source path가 없어",
+      "expected_output": "구체적 path가 없으므로 repo skill로 판정하고 report-only를 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "구체적 path가 없으므로 repo skill로 판정하고 report-only를 유지한다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "reported",
+            "pending"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "placement-multiple-parents",
+      "path": "success",
+      "prompt": "non-safety candidate가 src/a와 tests/b의 검증된 파일에 적용돼",
+      "expected_output": "여러 immediate parent에는 단일 nested 배치가 불가능하므로 repo skill로 판정한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "여러 immediate parent에는 단일 nested 배치가 불가능하므로 repo skill로 판정한다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "reported",
+            "pending"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "placement-explicit-override-precedence",
+      "path": "success",
+      "prompt": "repo threshold 12가 있지만 현재 요청에서 16으로 명시했고 sibling_count는 16이야",
+      "expected_output": "현재 요청의 positive integer 16이 우선하며 local boundary이므로 nested repo rule로 판정한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "현재 요청의 positive integer 16이 우선하며 local boundary이므로 nested repo rule로 판정한다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "reported",
+            "pending"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "placement-invalid-override",
+      "path": "boundary",
+      "prompt": "threshold를 0으로 override하고 배치를 확정해",
+      "expected_output": "non-positive override를 선택하지 않고 low 또는 Blocked/Unverifiable로 멈춘다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "non-positive override를 선택하지 않고 low 또는 Blocked/Unverifiable로 멈춘다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Blocked",
+            "Unverifiable",
+            "pending"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "placement-generic-must-is-not-safety",
+      "path": "success",
+      "prompt": "must라는 단어만 있는 non-safety rule이고 한 parent sibling은 4개야",
+      "expected_output": "generic must를 safety로 보지 않고 nearest nested repo rule로 판정하며 HEAD를 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "generic must를 safety로 보지 않고 nearest nested repo rule로 판정하며 HEAD를 유지한다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Ready",
+            "reported",
+            "pending"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "placement-repository-threshold-20",
+      "path": "success",
+      "prompt": "repository guidance의 tigerkit.repo_rule_sibling_threshold: 20이고 sibling은 16개야",
+      "expected_output": "정확한 repository key의 positive override 20을 사용해 nested repo rule로 판정한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "정확한 repository key의 positive override 20을 사용해 nested repo rule로 판정한다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Ready",
+            "reported",
+            "pending"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "placement-same-priority-threshold-conflict",
+      "path": "boundary",
+      "prompt": "같은 repository guidance 우선순위에 threshold 12와 20이 있어",
+      "expected_output": "동일 우선순위 충돌을 임의 선택하지 않고 low 또는 Blocked/Unverifiable로 멈춘다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "동일 우선순위 충돌을 임의 선택하지 않고 low 또는 Blocked/Unverifiable로 멈춘다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Blocked",
+            "Fail",
+            "Unverifiable",
+            "pending"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true
+    },
+    {
+      "id": "placement-scoped-and-recursive-excluded",
+      "path": "success",
+      "prompt": "판정 source 2개와 재귀 하위 20개를 빼면 direct tracked sibling이 15개야",
+      "expected_output": "판정 path와 recursive descendants를 count에서 제외해 sibling 15 local boundary로 nested repo rule을 선택한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "판정 path와 recursive descendants를 count에서 제외해 sibling 15 local boundary로 nested repo rule을 선택한다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Ready",
+            "reported",
+            "pending"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

@@ -1,6 +1,6 @@
-# Migrating to TigerKit 19
+# Migrating to TigerKit 20
 
-TigerKit 19 keeps Agent Skills distribution for Claude Code, Codex, and Hermes Agent while reducing canonical skills from 18 to 13. Invocation kinds are now user-invoked and hybrid only; model-only is removed.
+TigerKit 20 keeps Agent Skills distribution for Claude Code, Codex, and Hermes Agent while changing the canonical source from 13 skills (9 user/4 hybrid) to 12 skills (2 user/10 hybrid). The `model-only` kind remains removed.
 
 ## Install
 
@@ -23,6 +23,8 @@ tk-grilling
 tk-domain-modeling
 tk-tdd
 tk-codebase-design
+tk-code-review
+tk-diagnosing-bugs
 ```
 
 Replacement mapping:
@@ -45,29 +47,38 @@ tk-tdd
 → tk-implement ... tdd
 
 tk-codebase-design
-→ diff 구조 검토: tk-code-review
-→ regression seam 문제: tk-diagnosing-bugs
+→ diff 구조 검토: tk-implement built-in review
+→ regression seam 문제: tk-to-spec bug contract + tk-implement investigation
+
+tk-code-review
+→ implementation diff: tk-implement built-in Standards/Spec review
+→ review-only: 일반 read-only review
+
+tk-diagnosing-bugs
+→ bug source: tk-to-spec 또는 tk-to-tickets
+→ 원인 불명 구현: tk-implement conditional investigation
 ```
 
 ## Invocation Changes
 
 ```text
-tk-code-review: model-only → hybrid
-tk-diagnosing-bugs: model-only → hybrid
-tk-merge-conflict: model-only → hybrid
+user-invoked 유지: tk-grill-me, tk-implement
+hybrid 전환: tk-to-spec, tk-to-tickets, tk-prototype, tk-reflect, tk-learn, tk-grooming, tk-handoff
+hybrid 추가: tk-drive
+hybrid 유지: tk-browser-verify, tk-merge-conflict
 ```
 
-Hybrid skills can be selected directly and can be applied implicitly only in their documented trigger boundary. User-invoked skills still require explicit selection.
+Hybrid skills can be selected directly and can be applied implicitly only in their documented trigger boundary. `tk-drive` is hybrid for same-conversation pending-answer resume, but a new workflow still requires explicit `$tk-drive`. User-invoked skills still require explicit selection.
 
 ## Follow-up Work
 
-TigerKit 19 does not require a new skill for every follow-up.
+TigerKit 20 does not require a new skill for every follow-up.
 
 ```text
 small or obvious feedback → continue current conversation
 separate strategy, verification, commit → tk-implement
-unknown-cause failure → tk-diagnosing-bugs
-independent fixed-diff review → tk-code-review
+unknown-cause implementation → tk-implement investigation loop
+independent review-only request → ordinary read-only review
 reusable lesson → tk-reflect, then optionally tk-learn
 ```
 

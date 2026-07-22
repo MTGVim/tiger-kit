@@ -1,30 +1,162 @@
 {
   "skill": "tk-learn",
-  "kind": "user-invoked",
+  "kind": "hybrid",
   "queries": [
     {
-      "id": "train-explicit",
+      "id": "train-positive",
       "split": "train",
-      "query": "/tk-learn 현재 요청을 스킬 계약대로 처리해줘",
+      "query": "$tk-learn 이 워크플로를 재사용 스킬로 만들어줘",
       "should_trigger": true
     },
     {
-      "id": "validation-explicit",
-      "split": "validation",
-      "query": "$tk-learn 제공된 자료로 결과와 receipt를 만들어줘",
-      "should_trigger": true
-    },
-    {
-      "id": "train-implicit-block",
+      "id": "train-negative",
       "split": "train",
-      "query": "이 경험에서 배운 점을 설명해줘",
+      "query": "이 팁을 한 번만 적용해줘",
       "should_trigger": false
     },
     {
-      "id": "validation-nearby-block",
+      "id": "validation-positive-1",
       "split": "validation",
-      "query": "기존 skill의 중복과 끊어진 링크를 감사해줘",
-      "should_trigger": false
+      "query": "이 반복 워크플로를 재사용 가능한 repository skill로 설계해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-2",
+      "split": "validation",
+      "query": "이 자료로 user skill 초안과 approval checkpoint를 만들어줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-3",
+      "split": "validation",
+      "query": "새 스킬로 학습해줘",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-positive-4",
+      "split": "validation",
+      "query": "리유저블 스킬 만드러줘",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-5",
+      "split": "validation",
+      "query": "Turn these examples into a reusable Codex skill draft",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-positive-6",
+      "split": "validation",
+      "query": "스킬 만들기",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-7",
+      "split": "validation",
+      "query": "trigger와 boundary eval을 포함한 repo skill을 제안하되 승인 전 쓰지 마",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-8",
+      "split": "validation",
+      "query": "$tk-learn 이 reflect 후보를 dedupe하고 portable skill로 만들어줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-1",
+      "split": "validation",
+      "query": "이 팁을 현재 파일에 한 번만 적용해 주세요",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-2",
+      "split": "validation",
+      "query": "재사용 후보만 보고하고 파일은 만들지 마",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-3",
+      "split": "validation",
+      "query": "기존 production 코드를 리팩터링해줘",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-negative-4",
+      "split": "validation",
+      "query": "승인 없이 user skill 경로에 바로 써줘",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-negative-5",
+      "split": "validation",
+      "query": "원시 로그와 credential을 스킬에 보관해줘",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-negative-6",
+      "split": "validation",
+      "query": "학습 내용 요약",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-7",
+      "split": "validation",
+      "query": "active tk-drive가 다음 구현 phase를 진행 중이야",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-8",
+      "split": "validation",
+      "query": "기존 스킬들의 중복을 감사해줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
     }
   ]
 }

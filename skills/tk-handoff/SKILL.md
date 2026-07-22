@@ -1,18 +1,17 @@
 ---
 name: tk-handoff
-description: "[user] 검증된 작업 인수인계를 작성하거나 재개합니다. 사용자가 명시적으로 호출할 때만 사용합니다."
-disable-model-invocation: true
+description: "[user/auto] 검증된 handoff artifact를 작성하거나 기존 handoff를 명확히 재개할 때 사용합니다. 일반 요약·상태 질문·generic continue에는 적용하지 않습니다."
 argument-hint: "[목표 또는 대상] [--output <경로>|--resume]"
 metadata:
   tigerkit:
-    kind: user-invoked
+    kind: hybrid
     origin: tigerkit
     relationship: native
 ---
 
 # 인수인계
 
-사용자가 이 스킬을 명시적으로 호출할 때만 사용합니다. 자동으로 활성화하거나 다른 사용자 호출형 스킬을 호출하지 마세요.
+명시 호출 또는 handoff 작성·resume 의도가 명확한 요청에 사용합니다. 일반 요약·상태 질문·generic continue에는 자동으로 활성화하지 말고, 다른 스킬을 호출하지 마세요.
 
 ## Workflow
 

@@ -1,30 +1,162 @@
 {
   "skill": "tk-grooming",
-  "kind": "user-invoked",
+  "kind": "hybrid",
   "queries": [
     {
-      "id": "train-explicit",
+      "id": "train-positive",
       "split": "train",
-      "query": "/tk-grooming 현재 요청을 스킬 계약대로 처리해줘",
+      "query": "$tk-grooming 기존 규칙과 스킬을 감사해줘",
       "should_trigger": true
     },
     {
-      "id": "validation-explicit",
-      "split": "validation",
-      "query": "$tk-grooming 제공된 자료로 결과와 receipt를 만들어줘",
-      "should_trigger": true
-    },
-    {
-      "id": "train-implicit-block",
+      "id": "train-negative",
       "split": "train",
-      "query": "현재 skill 목록만 보여줘",
+      "query": "코드 포맷을 정리해줘",
       "should_trigger": false
     },
     {
-      "id": "validation-nearby-block",
+      "id": "validation-positive-1",
       "split": "validation",
-      "query": "이번 diff에서 재사용할 교훈 후보를 뽑아줘",
-      "should_trigger": false
+      "query": "저장소 rule과 skill의 중복·범위·배치를 감사해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-2",
+      "split": "validation",
+      "query": "기존 사용자 스킬 트리거를 report-only로 점검해줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-3",
+      "split": "validation",
+      "query": "스킬들 정리 제안해줘",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-positive-4",
+      "split": "validation",
+      "query": "룰/스킬 그루밍 해줘",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-5",
+      "split": "validation",
+      "query": "Audit the existing repo and user skills for overlap and placement",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-positive-6",
+      "split": "validation",
+      "query": "스킬 감사",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-7",
+      "split": "validation",
+      "query": "참조를 확인해 keep/move/convert/delete를 제안하되 수정은 하지 마",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-8",
+      "split": "validation",
+      "query": "$tk-grooming --apply 앞서 승인한 두 파일만 정리해줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-1",
+      "split": "validation",
+      "query": "소스 코드 포맷을 정리해 주세요",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-2",
+      "split": "validation",
+      "query": "이 오래된 파일들을 바로 삭제해줘",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-3",
+      "split": "validation",
+      "query": "새 기능을 구현하고 커밋해줘",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-negative-4",
+      "split": "validation",
+      "query": "이번 diff에서 재사용 후보를 찾아줘",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-negative-5",
+      "split": "validation",
+      "query": "설치된 npm 패키지를 목록으로 보여줘",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-negative-6",
+      "split": "validation",
+      "query": "정리해줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-7",
+      "split": "validation",
+      "query": "active tk-drive가 tickets를 구현 중이야",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-8",
+      "split": "validation",
+      "query": "새 repository skill을 처음부터 만들어줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
     }
   ]
 }

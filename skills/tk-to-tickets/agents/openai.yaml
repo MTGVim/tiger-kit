@@ -1,6 +1,3 @@
 interface:
   display_name: "TigerKit: 티켓 작성"
-  short_description: "[user] 독립적으로 검증 가능한 수직 티켓을 작성합니다."
-
-policy:
-  allow_implicit_invocation: false
+  short_description: "[user/auto] 독립 검증 가능한 수직 티켓을 작성합니다."

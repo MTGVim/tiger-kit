@@ -1,31 +1,36 @@
 ---
 name: tk-prototype
-description: "[user] 가설을 검증하기 위한 일회용 UI 또는 로직 프로토타입을 만듭니다. 사용자가 명시적으로 호출했을 때만 사용하세요."
-disable-model-invocation: true
+description: "[user/auto] 비교로 불확실성을 줄이기 위한 폐기 가능한 UI 또는 logic prototype을 실제로 만들고 실행할 때 사용합니다. production 구현이나 말뿐인 아이디어 탐색에는 적용하지 않습니다."
 argument-hint: "<아이디어, 스크린샷, 명세, 티켓, 코드 또는 디자인 참고 자료>"
 metadata:
   tigerkit:
-    kind: user-invoked
+    kind: hybrid
     origin: tigerkit
     relationship: native
 ---
 
 # 프로토타입
 
-사용자가 이 스킬을 명시적으로 호출했을 때만 사용하세요. 자동으로 활성화하지 마세요.
+명시 호출 또는 실행 가능한 disposable comparison/harness 요청에 사용하세요. production 구현이나 말뿐인 아이디어 탐색에는 자동으로 활성화하지 마세요.
 
 프롬프트, 아이디어, 스크린샷, 명세, 티켓, 코드 또는 디자인 참고 자료를 입력으로 받으세요. 실행 가능한 임시 라우트 또는 하네스가 더 유용하지 않다면 `.tigerkit/prototypes/<slug>/` 아래에 저장하세요. 임시 작업용 상위 디렉터리는 필요할 때만 만들고, 가능하면 원자적으로 교체하며, 자동으로 보관하거나 `.gitignore`를 편집하지 마세요. 생성된 임시 작업물이 버전 관리에서 제외되지 않으면 경고하세요.
 
 ## Workflow
 
 1. `가설·성공 기준`: 입력은 아이디어·참고 자료와 검증 질문이고, 출력은 측정 가능한 성공 기준입니다.
-2. `임시 경로와 경계`: 입력은 성공 기준과 실행 환경이고, 출력은 임시 경로, 기존/이번 실행 artifact 소유권 및 `fake | real` 연동 경계입니다.
+2. `임시 경로와 경계`: 입력은 성공 기준과 repository preflight이고, 출력은 사용할 기존 toolchain/UI stack/component/token, 임시 경로, 기존/이번 실행 artifact 소유권 및 `fake | real` 연동 경계입니다.
 3. `variants/harness`: 입력은 경계와 비교할 대상이고, 출력은 2–3개 변형안 또는 실제 예시 입출력을 가진 하네스입니다.
 4. `실행`: 입력은 선택한 변형·하네스와 명령이고, 출력은 실제 출력 또는 screenshot과 실행 결과입니다.
 5. `비교`: 입력은 실행 증거와 성공 기준이고, 출력은 확인된 차이·미검증 항목·후속 판단입니다.
 6. `receipt`: 입력은 전체 실행 기록이고, 출력은 상태와 `## Tested`, `## Variants or harness`, `## Confirmed`, `## Still fake`, `## Production implication`입니다. 이 섹션들이 receipt 전체이며 별도 Receipt를 만들지 않습니다.
 
 정답이 정해지지 않은 UI 디자인이나 비교 요청에는 실질적으로 다른 렌더링 변형안 2–3개와 전환 수단을 만드세요. 색상만 바꾸지 말고 정보 구조, 흐름, 계층, 탐색 또는 피드백을 달리하세요. 로직에는 실제 예시 입력/출력과 최소한의 어댑터를 갖춘 작은 순수 하네스를 우선하세요.
+
+웹 prototype은 먼저 repository의 실행 명령, 설치된 UI stack, 기존 component와 design token을 확인하세요. 안전한 isolated route/harness가 있으면 그것을 재사용하되 새 dependency를 설치하거나 manifest·lockfile을 바꾸지 마세요. 적절한 repo path가 없으면 `.tigerkit/prototypes/<slug>/index.html`, `styles.css`, `app.js`의 작은 static 조합을 사용하세요.
+
+같은 content, data와 interaction state를 유지한 채 판단 가치가 있는 핵심 concept 2–3개만 A/B 또는 A/B/C로 비교하세요. Wide viewport에서는 나란한 2–3열, narrow viewport에서는 위아래 stack을 기본으로 하세요. 동시 표시가 핵심 concept 또는 최소 legibility를 훼손할 때만 명시적 A/B 또는 A/B/C toggle을 사용하세요. 세 번째 안이 독립적인 판단 가치를 더하지 않으면 A/B에서 멈추고, repository evidence만으로 결정 가능하면 prototype을 만들지 마세요.
+
+웹 결과는 `tk-browser-verify` Guard mode로 실제 interaction, wide/narrow screenshot과 실행 URL 또는 명령을 확인하세요. 종료 시 이번 실행이 소유한 tracked harness와 임시 server만 정리하고, 기존 route·dependency·production source는 보존하세요.
 
 기본적으로 커밋하지 마세요. 프로덕션용 추상화와 오류 처리에는 투자하지 마세요. 결과물이 프로덕션에 사용할 준비가 되었다고 절대 부르지 말고, 자동으로 승격하거나 다른 사용자 스킬을 호출하지도 마세요.
 
@@ -45,4 +50,4 @@ Artifact를 만들기 전에 기존 임시 경로와 이번 실행이 생성할 
 
 - prototype을 production-ready라고 부르거나 자동 승격·commit하지 마세요.
 - 가짜 연동을 실제 연결로 보고하거나 실행 증거 없이 성공을 주장하지 마세요.
-- 색상만 바꾼 변형, 불필요한 production abstraction, 다른 user-invoked skill 호출을 추가하지 마세요.
+- 색상만 바꾼 변형, 새 dependency/manifest/lockfile 변경, 불필요한 production abstraction, 가치 없는 세 번째 안을 추가하지 마세요.

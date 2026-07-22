@@ -1,17 +1,33 @@
-# 리뷰 경계
+# Built-in implementation review
 
-Review는 direct/delegated 선택과 별도인 선택적 품질 단계입니다. Implementor와 reviewer는 다른 역할이며 implementor를 독립 reviewer로 계산하지 마세요.
+Every standalone implementation and drive implementation phase runs this current-agent gate after final verification and before commit. Review is separate from direct/delegated implementation; an implementor never counts as an independent reviewer.
 
-인증, 결제, 개인정보, 권한, 마이그레이션, 데이터 손실 가능성, 동시성, 공개 API, 대규모 구조 변경 또는 테스트하지 않은 고위험 코드에만 reviewer 한 명을 고려하세요.
+## Fixed point and inventory
 
-최대 흐름:
+At preflight, resolve and record the initial `HEAD`, branch, and pre-existing dirty paths. Before reading diff content, snapshot candidate and staged inventories against that fixed point with `git diff --stat`, `git diff --numstat`, `git diff --cached --stat`, `git diff --cached --numstat`, and the changed-file list. Exclude pre-existing user changes from ownership and staging.
 
-```text
-implementation
-→ review once
-→ fix once
-→ regression verification
-→ stop
-```
+A candidate is `small` only when it has at most 15 changed files and at most 800 additions plus deletions. More than either threshold is `large`; binary/rename ambiguity or incomplete inventory is `size_unknown`. For `large | size_unknown`, do not print a raw full diff into the current context. Use context-indexed summarization, redirected and paged file/hunk inspection, or one bounded independent reviewer while tracking coverage of every changed file and hunk. Missing coverage makes the verdict `Unverifiable`.
 
-Reviewer fan-out, reviewer의 재위임, 자동 재리뷰, 발견 사항이 없을 때 추가 reviewer 실행, review 결과를 이유로 한 전체 구현 재위임을 금지합니다. 수정이 필요하면 한 번 반영하고 기존 발견 사항과 관련 회귀를 검증한 뒤 종료하세요.
+Pin the review-head SHA and candidate/staged snapshot before findings. Recheck `HEAD`, branch and staged inventory immediately before verdict and commit. Do not combine stale line evidence with a changed review head; rerun affected inspection or stop `Blocked | Unverifiable`.
+
+## Review axes
+
+Run both axes in the current agent even for small, low-risk work. Keep verdicts separate.
+
+- **Standards:** repository instructions, correctness, duplication, scope creep, ownership, unnecessary pass-throughs, public/private boundary leaks, testability, side-effect/error boundaries, speculative abstraction and shotgun changes. Stay within the current diff.
+- **Spec:** missing, partial, extra or incorrect behavior; acceptance and verification gaps; scope violations. When the source has R/AC IDs, mark each `implemented | missing | partial | unverified | not-applicable` with file/line and verification evidence. If there is no spec source, record `spec 없음`; do not call that axis passed.
+
+Load the high-risk lanes below only when the inventory shows an applicable signal. Record the selected lane and evidence, not an all-N/A checklist.
+
+| Diff signal | Focused evidence |
+| --- | --- |
+| 인증·권한 | protected entry points, deny-by-default, tenant/object ownership, privilege boundary |
+| 개인정보·결제 | collection/exposure, log leakage, consent/retention, external side effects and idempotency |
+| Dependency | source/lockfile change, execution path, permission/network expansion, compatibility evidence |
+| Migration·data loss | forward/backward compatibility, rollback, partial failure, old/new reader-writer coexistence |
+| Concurrency | atomicity, ordering, retry/idempotency, race and cancellation boundaries |
+| Public API | compatibility, validation/error contract, consumer migration and version boundary |
+
+Each finding needs severity, fixed-diff `file:line` evidence, applicable repository/spec basis, and concrete impact. An independent reviewer is allowed only for `large` or high-risk work, at most one total; it may not edit, re-delegate, fan out or automatically re-review.
+
+The bounded flow is `review once → fix once → regression verification once → stop`. If an important finding, drift, or unverified coverage remains, do not commit.
