@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.0.1 — Local-Only Verification
+
+- Removed the GitHub Actions validator, eval preview, and latest-CLI canary workflows so repository verification runs only on maintainers' local machines.
+- Documented the complete local validation sequence and kept three-host packaging smoke installation as a release requirement.
+- Updated repository and release contracts to reject CI validation workflows and bind release evidence to exact locally validated trees without requiring CI provenance.
+
 ## 20.0.0 — Drive-Centered Skill Surface
 
 - Changed the canonical surface to 12 self-contained skills: 2 user-invoked and 10 hybrid.
