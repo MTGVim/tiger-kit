@@ -25,8 +25,6 @@ metadata:
 
 기존의 네 영역, 즉 저장소 규칙, 저장소 스킬, 사용자 규칙, 사용자 스킬을 검사하세요. 실제로 존재하는 호스트 네이티브 경로를 사용하세요. [탐색](references/discovery.md)에 후보가 나열되어 있습니다. 누락된 파일을 만들거나 레거시 전역 TigerKit 상태를 검사/마이그레이션하지 마세요.
 
-중복, 모순, 구식, 끊어진 참조, no-op, 과도하게 긴 내용, 잘못된 범위/종류, 트리거 충돌, 죽은 스킬, 오래된 예시 또는 누락된 출처로 분류하세요. `keep | tighten | merge | split | move | convert | deprecate | delete | fix` 중 하나를 제안하세요.
-
 Repository rule/skill은 파일 전체가 아니라 독립적인 normative instruction/workflow 단위로 판정하세요. 기대 kind가 달라지면 `convert`, 둘 다 rule이지만 root와 nested 위치가 다르면 `move`, 한 artifact가 서로 다른 결과 단위를 섞으면 먼저 `split`, 위치와 kind가 맞고 다른 결함이 없으면 `keep`입니다. 필요한 path/count/threshold evidence가 없거나 충돌하면 추정하지 말고 해당 영역을 `Partial/Blocked | Unverifiable`로 두세요.
 
 기본은 보고만 수행합니다. 최초 요청의 literal `--apply` 또는 checkpoint 뒤 현재 turn의 명시적 승인에서 정확한 범위가 정해졌을 때만 적용하세요. 과거 승인이나 일반적인 진행 응답은 apply 권한이 아닙니다. 적용 시 원본을 다시 읽고, 삭제 전에 참조를 검색하고, 관리되거나 자동 생성된 콘텐츠의 소유권 표기를 보존하며, 광범위한 저장소/사용자 변경을 조용히 섞지 마세요. 지식을 지어내거나 회고/학습을 대신하지 마세요.

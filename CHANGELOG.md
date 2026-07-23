@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.0.2 — Verbatim Fidelity and Capture Ledger
+
+- Hardened `tk-implement`, `tk-to-spec`, and `tk-to-tickets` to preserve source-provided UI labels, buttons, guidance, column names, and related writing as exact literals through implementation artifacts and verification.
+- Made `tk-browser-verify` move run-owned captures from tool or user scratch into a repo-local TigerKit run ledger, preserve user-owned inputs, and block verdicts without custody and residue evidence.
+- Improved all 12 canonical skills with stricter draft/apply boundaries, executable conflict evidence, deduplicated output contracts, aligned receipts, and regression coverage while preserving the 2 user-invoked / 10 hybrid surface.
+
 ## 20.0.1 — Local-Only Verification
 
 - Removed the GitHub Actions validator, eval preview, and latest-CLI canary workflows so repository verification runs only on maintainers' local machines.

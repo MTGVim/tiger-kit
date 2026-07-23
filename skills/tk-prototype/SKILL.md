@@ -44,7 +44,7 @@ Artifact를 만들기 전에 기존 임시 경로와 이번 실행이 생성할 
 
 ## 계약
 
-프로토타입을 실제 실행하고 명령과 결과를 기록하세요. 실패하거나 확인할 수 없으면 성공으로 보고하지 말고 `Fail`, `Blocked` 또는 `Unverifiable`로 구분하며, 가짜 데이터/연동과 실제 연결을 분리하세요. 상태는 한 번만 기록하고, `## Tested`는 실행 명령·결과·증거, `## Variants or harness`는 비교안 또는 하네스, `## Confirmed`는 증거가 확인한 결론, `## Still fake`는 가짜/실제 경계·미검증·미해결 항목, `## Production implication`은 폐기·반복·후속 판단만 소유합니다. 같은 내용을 다른 섹션이나 별도 Receipt에 반복하지 마세요.
+상태는 receipt에 한 번만 기록하세요. `## Tested`는 실행 명령·결과·증거, `## Variants or harness`는 비교안 또는 하네스, `## Confirmed`는 증거가 확인한 결론, `## Still fake`는 가짜/실제 경계·미검증·미해결 항목, `## Production implication`은 폐기·반복·후속 판단만 소유합니다. 같은 내용을 다른 섹션이나 별도 Receipt에 반복하지 마세요.
 
 ## DO NOT / ANTI-PATTERNS
 

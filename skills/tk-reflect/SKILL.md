@@ -38,7 +38,7 @@ Confidence는 다음 기준으로만 올리세요. `high`는 서로 다른 occur
 
 저장소 대상은 코드베이스/도메인/도구/팀에 특화되고, 사용자 대상은 여러 저장소에서 반복됩니다. 기본은 `report-only`입니다. 후보를 DESIGN, reuse map, rule 또는 skill에 기록·수정·적용하려면 대상과 범위를 밝힌 별도의 명시적 사용자 동의를 먼저 받으세요. 침묵, 진행, 과거 유사 답변, reflect 호출 자체는 적용 동의가 아닙니다.
 
-receipt는 `reported | applied | pending`을 구분하세요. 승인 전 `propose | update | merge` 후보는 report-only 실행에서도 `pending`, 더 적용할 후보가 없는 `no-op | discard` 결과만 `reported`, 명시적 승인 후 실제 파일에 반영하고 재검증한 결과만 `applied`로 기록하고 경로와 evidence를 남기세요. 사용자가 중단하면 `aborted`, 충돌 또는 적용 범위가 불명확하면 `Blocked`로 보고하세요.
+사용자가 중단하면 `aborted`, 충돌 또는 적용 범위가 불명확하면 `Blocked`로 보고하세요.
 
 기본적으로 파일을 수정하거나 원장/ID를 만들지 말고, 레거시 전역 상태를 탐색하거나 일회성 우회책을 일반화하지 마세요. 별도 명시적 동의가 있더라도 원시 자격 증명/로그/스크린샷을 규칙이나 스킬 후보로 그대로 승격하지 마세요.
 

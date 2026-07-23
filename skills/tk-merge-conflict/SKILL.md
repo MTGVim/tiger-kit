@@ -36,6 +36,15 @@ operation 상태, 모든 conflict hunk, 양쪽 primary source, resolution 근거
 
 각 단계에서 필수 출력이 없으면 다음 단계로 진행하지 마세요. 추가 conflict가 생기면 `conflict inventory`부터 반복하세요.
 
+### Command evidence
+
+| Evidence | Command contract |
+|---|---|
+| operation·index 상태 | `git status --short --branch`, `git diff --name-only --diff-filter=U`, `git ls-files -u`를 함께 확인 |
+| conflict marker | tracked conflict path 전체에서 `^(<<<<<<<|=======|>>>>>>>)`를 검색하고 0건을 검증 |
+| stage | resolution 근거에 기록된 path만 `git add -- <path...>`로 stage한 뒤 staged diff와 unmerged index를 다시 확인 |
+| continue | active operation과 일치하는 `git merge --continue`, `git rebase --continue`, `git cherry-pick --continue`, `git revert --continue` 중 하나만 실행 |
+
 ### Operation freshness gate
 
 첫 inventory에서 operation 종류, 현재 `HEAD`, Git이 제공하는 현재 step·target, unmerged path와 기존 staged path를 fixed point로 기록하세요. resolution 근거에 포함된 path만 stage하고, 새 path가 필요하면 이유와 의도 근거를 inventory에 추가하세요.

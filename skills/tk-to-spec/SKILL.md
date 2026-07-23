@@ -37,13 +37,22 @@ metadata:
 
 `Ready`는 문제, 목표, 범위(포함/제외), 요구사항, 인수 기준, 검증, source traceability, verifiability가 있고 미해결 충돌이 없을 때만 사용하세요. 하나라도 없으면 `Draft`, `Blocked` 또는 `Unverifiable`로 남기세요. receipt에는 경로, 상태, `증거/source map`, requirement/acceptance ID, `미검증`, `미해결 충돌`, `검증`을 포함하세요.
 
+### 🔴 HARD GATE · source UI writing
+
+사용자가 제공한 source에 UI writing이 있으면 `source map`에서 별도 inventory로 고정하세요. Label, button name, heading, guide/help copy, table·column name, placeholder, validation/error, status text마다 source 위치와 명세의 destination requirement/acceptance ID를 연결하고 원문을 exact literal로 기록하세요.
+
+사용자가 해당 문구의 변경을 명시적으로 결정하지 않은 한 spelling, 대소문자, 띄어쓰기, 문장부호, 기호, 숫자, 의미 있는 줄바꿈을 그대로 유지하세요. 번역, 의역, 축약, 교정, typo 수정, normalization을 요구사항으로 만들지 마세요. 이미지·스크린샷의 문구를 정확히 판독할 수 없거나 source끼리 literal이 충돌하면 추정하지 말고 `Blocked` 또는 `Unverifiable`로 남기세요.
+
+write/print 후 inventory와 명세의 모든 UI literal을 다시 exact 대조하세요. 승인되지 않은 drift 또는 대조 evidence 부재가 하나라도 있으면 `Ready`로 판정하지 말고 수정·재검증 전에는 downstream 티켓이나 구현 입력으로 넘기지 마세요. 명시적으로 승인된 문구 변경만 source map에 `authorized change`로 표시하세요.
+
 ## 🔴 CHECKPOINT · 🛑 STOP Ready 판정 경계
 
-파일에 쓰기 전 필수 요소와 미해결 충돌을 확인하세요. 누락·미확정 가정이면 `Draft`, 사용자 결정이 필요한 source 충돌이면 `Blocked`, 필수 source에 접근할 수 없으면 `Unverifiable`로 남기고 `Ready`로 저장하지 마세요.
+파일에 쓰기 전 필수 요소, 미해결 충돌, UI writing inventory를 확인하세요. 누락·미확정 가정이면 `Draft`, 사용자 결정이 필요한 source 충돌이면 `Blocked`, 필수 source에 접근할 수 없거나 UI literal을 exact 대조할 수 없으면 `Unverifiable`로 남기고 `Ready`로 저장하지 마세요.
 
 ## DO NOT / ANTI-PATTERNS
 
 - source map 없이 사실·결정·가정을 섞거나 미해결 충돌을 임의로 선택하지 마세요.
+- 제공된 source의 UI writing을 승인 없이 번역·의역·교정·normalization하거나 exact 대조 없이 `Ready`로 만들지 마세요.
 - 기존 requirement/acceptance ID를 이유 없이 재번호하거나 삭제된 ID를 다른 의미로 재사용하지 마세요.
 - 필수 요소가 빠진 문서를 `Ready`로 표시하거나 구현 완료로 표현하지 마세요.
 - 인터뷰, 티켓 생성, 구현, 원격 게시를 이 스킬의 출력에 섞지 마세요. 명세와 티켓을 함께 요청받았더라도 이 명세가 `Ready`가 아니면 downstream 티켓 작성으로 진행하지 마세요.
