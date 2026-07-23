@@ -76,6 +76,8 @@ REQUIRED_BEHAVIOR_CASES = {
     "browser-verdict-mode-preserves-contract",
     "browser-explicit-invocation-uses-verdict",
     "browser-auto-open-fallback-closes-owned-tabs",
+    "browser-chrome-headless-new-first-launch",
+    "browser-interactive-auth-only-headed-exception",
     "browser-captures-move-to-tigerkit-ledger",
     "grill-me-keeps-one-question-at-a-time",
     "grill-me-researches-facts-before-asking",
@@ -408,6 +410,21 @@ def validate_repository_contract() -> list[str]:
             "relationship: adapted",
             "Behavior merged from removed adapted skills",
             "MIT License",
+        ),
+        "skills/tk-browser-verify/SKILL.md": (
+            "## 🔴 HARD GATE · Chrome `--headless=new`",
+            "실제 launch arguments에 정확한 token `--headless=new`",
+            "headed browser를 열지 말고",
+            "headless launch 실패",
+            "사용자가 직접 로그인을 완료해야 하는 interactive auth가 실제로 필요한 경우에만",
+            "동일한 `user-data-dir`을 사용해 Chrome을 `--headless=new`로 다시 시작",
+        ),
+        "skills/tk-browser-verify/references/environment.md": (
+            "effective process arguments에 정확한 `--headless=new`",
+            "첫 browser call",
+            "headed session에 fallback",
+            "단순 visible/headed 요청",
+            "동일한 persistent profile의 lock 해제",
         ),
     }
     for relative, needles in required_text.items():

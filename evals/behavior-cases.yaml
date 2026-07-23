@@ -70,6 +70,12 @@
 - case: browser-auto-open-fallback-closes-owned-tabs
   skill: tk-browser-verify
   expect: "When server auto-open cannot be disabled, verification continues and only tabs opened by the current run are closed."
+- case: browser-chrome-headless-new-first-launch
+  skill: tk-browser-verify
+  expect: "Before any browser call, Chrome/Chromium proves the exact --headless=new process argument; unverifiable auto-launch providers and headed-first or headed fallback paths are rejected."
+- case: browser-interactive-auth-only-headed-exception
+  skill: tk-browser-verify
+  expect: "Headed mode is used only for user-completed interactive login; after authentication the owned headed browser closes and verification resumes under exact --headless=new with the same repo-external persistent profile."
 - case: grill-me-keeps-one-question-at-a-time
   skill: tk-grill-me
   expect: "Only one highest-impact user decision question is asked at a time."
