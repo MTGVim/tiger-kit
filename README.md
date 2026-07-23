@@ -166,11 +166,20 @@ branch 한정 결정 → spec / ticket / commit / PR
 
 `main`은 지속 갱신되는 최신 source이며 stable release tag와 GitHub Release는 검증된 `origin/main` commit에서만 생성합니다. Git tag는 immutable snapshot입니다. Skill 이름 삭제, invocation kind 변경, 호환되지 않는 scratch 또는 배포 변경은 major release입니다.
 
-## 검증 체계
+## 로컬 검증
 
-PR에서는 Python validator와 unit test, Markdown link, 고정된 `skills` CLI를 사용한 Claude Code·Codex·Hermes Agent 설치를 재현합니다. 최신 CLI 호환성은 별도 canary에서 확인합니다.
+TigerKit은 GitHub Actions에서 validator, eval, packaging smoke test, CLI canary를 실행하지 않습니다. 유지보수자는 변경과 release 전에 다음 검증을 로컬에서 실행합니다.
 
-Root `evals/*.yaml`은 빠른 정적 계약이며 각 skill의 `evals/`는 trigger train/validation과 success/boundary behavior assertion을 소유합니다. 실제 모델 평가는 candidate를 이전 stable baseline과 clean context에서 비교하고 결과를 CI artifact로만 보관합니다. User-invoked skill의 `argument-hint`, `disable-model-invocation`과 Codex `agents/openai.yaml`은 portable Agent Skills core 위의 명시적인 host extension입니다.
+```sh
+python3 scripts/validate_skills.py
+python3 scripts/validate_skills.py --links-only
+(cd scripts && python3 -m unittest)
+python3 scripts/sync_eval_compat.py
+npx --yes skills@1.5.9 add . --list
+npx --yes skills add . --list
+```
+
+Packaging 변경은 임시 home에서 Claude Code·Codex·Hermes Agent를 smoke-install합니다. Root `evals/*.yaml`은 빠른 정적 계약이며 각 skill의 `evals/`는 trigger train/validation과 success/boundary behavior assertion을 소유합니다. 실제 모델 평가는 candidate를 이전 stable baseline과 clean context에서 로컬 비교하고 결과를 repository 밖의 임시 경로에 보관합니다. User-invoked skill의 `argument-hint`, `disable-model-invocation`과 Codex `agents/openai.yaml`은 portable Agent Skills core 위의 명시적인 host extension입니다.
 
 Live eval adapter는 격리된 실행마다 `skill_loaded`, `output`, `terminal_status`, `total_tokens`, `duration_ms`를 JSON으로 반환합니다. Python harness가 terminal/file/Git assertion을 직접 검증하고 의미 품질만 별도 grader에 전달하며, token/time이 없거나 credential이 없으면 `Pass` 대신 `Unverifiable`로 남깁니다.
 

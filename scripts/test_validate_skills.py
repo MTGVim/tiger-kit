@@ -11,6 +11,7 @@ if __package__:
         REQUIRED_BEHAVIOR_CASES,
         USER_INVOKED_SKILLS,
         parse_latest_changelog_version,
+        validate_local_only_workflows,
         validate_release_alignment,
         validate_release_version_contract,
         validate_runtime_scratch,
@@ -23,6 +24,7 @@ else:
         REQUIRED_BEHAVIOR_CASES,
         USER_INVOKED_SKILLS,
         parse_latest_changelog_version,
+        validate_local_only_workflows,
         validate_release_alignment,
         validate_release_version_contract,
         validate_runtime_scratch,
@@ -132,14 +134,29 @@ class ReleaseContractTest(unittest.TestCase):
                 ["README.md: immutable snapshot must reference latest changelog release v19.2.3"],
             )
 
-    def test_release_alignment_requires_main_tag_release_and_ci_sha(self) -> None:
+    def test_release_alignment_requires_main_tag_and_release_sha(self) -> None:
         self.assertEqual(
-            validate_release_alignment("aaa", "aaa", "aaa", "aaa"), []
+            validate_release_alignment("aaa", "aaa", "aaa"), []
         )
         self.assertEqual(
-            validate_release_alignment("aaa", "bbb", "aaa", "aaa"),
-            ["release provenance: origin/main, peeled tag, GitHub Release, and CI SHA must match"],
+            validate_release_alignment("aaa", "bbb", "aaa"),
+            ["release provenance: origin/main, peeled tag, and GitHub Release must match"],
         )
+
+    def test_rejects_ci_validation_workflows(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            workflow = root / ".github/workflows/validate.yml"
+            workflow.parent.mkdir(parents=True)
+            workflow.write_text("name: validate\n", encoding="utf-8")
+
+            self.assertEqual(
+                validate_local_only_workflows(root),
+                [
+                    ".github/workflows/validate.yml: remove CI validation; "
+                    "run verification locally"
+                ],
+            )
 
     def test_accepts_matching_readme_snapshot(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

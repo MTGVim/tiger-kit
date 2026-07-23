@@ -565,7 +565,7 @@ def main() -> int:
     if args.output:
         output = Path(args.output).resolve()
         if output == ROOT or ROOT in output.parents:
-            raise SystemExit("--output must be outside the repository; use a CI artifact or temporary directory")
+            raise SystemExit("--output must be outside the repository; use a temporary directory")
     elif not args.dry_run:
         raise SystemExit("live eval requires --output outside the repository")
     try:

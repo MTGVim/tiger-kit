@@ -56,5 +56,6 @@ If the answers are weak, choose `inline`, `merge`, `convert to reference`, `make
 
 - Preserve canonical names, invocation kinds, and upstream attribution.
 - Reuse existing skill-local files before adding new surfaces; prefer deletion and the Python standard library.
+- Keep validation local-only. Do not add GitHub Actions workflows for validators, evals, packaging smoke tests, or CLI canaries.
 - Run `python3 scripts/validate_skills.py`, `python3 scripts/validate_skills.py --links-only`, and `npx --yes skills add . --list` for relevant changes.
 - For packaging changes, smoke-install Claude Code, Codex, and Hermes Agent in temporary homes.
