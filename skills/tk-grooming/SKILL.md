@@ -41,6 +41,18 @@ Repository rule/skill은 파일 전체가 아니라 독립적인 normative instr
 
 각 영역의 실제 경로와 내용을 증거로 남기고 필수 증거가 없으면 해당 영역을 `Unverifiable`로 표시하세요. 하나라도 차단되면 전체를 완료로 보고하지 말고 `Complete | Partial/Blocked | Unverifiable`로 구분하세요. 적용 후 링크, 중복, frontmatter와 같은 네 영역을 재검증하세요. 출력의 단일 소유자는 `발견 사항`(영역별 관찰 증거·미검증·미해결 항목만), `제안 작업`(분류와 제안), `적용 내용`(실제로 바꾼 내용만), `검증`(적용 후 재검증)입니다. `keep | tighten | ... | fix` 분류와 제안 표현을 발견 사항에 섞지 마세요. report-only에서는 빈 적용 내용과 적용 후 검증을 생략할 수 있습니다. Receipt에는 전체 상태, `report-only | applied` 모드와 내용이 있는 섹션의 참조만 기록하고 해당 본문을 반복하지 마세요.
 
+## Output contract
+
+독립적인 normative instruction/workflow 항목을 처음 식별한 순서대로 `GR-01`, `GR-02`, …를 한 번 부여하세요. `발견 사항`, `제안 작업`, 내용이 있을 때의 `적용 내용`·`검증`, Receipt의 섹션 참조와 마지막 Summary는 모두 같은 `GR-##`를 사용합니다. 섹션마다 다시 번호 매기거나 ID 없는 발견·제안·적용·검증 항목을 출력하지 마세요.
+
+응답의 마지막 섹션은 항상 아래 고정 형식의 `## Summary`입니다. 항목마다 정확히 한 행을 두고, `Rule`에는 짧은 이름과 `keep | tighten | merge | split | move | convert | deprecate | delete | fix` 분류를, `한 줄 요약`에는 새 evidence를 추가하지 않는 한 문장을, `적용 타깃`에는 구체적인 경로/skill/user 범위 또는 `미확정 (<이유>)`를 적으세요. 발견·제안·변경·검증 본문을 표에 복사하지 마세요.
+
+| No. | Rule | 한 줄 요약 | 적용 타깃 |
+| --- | --- | --- | --- |
+| GR-01 | `<짧은 이름> (<분류>)` | `<한 문장>` | `<구체적 타깃 또는 미확정 (이유)>` |
+
+항목이 없거나 전체가 `Unverifiable`이어도 Summary를 생략하지 말고 `| — | 없음 | 감사 항목 없음 | 적용 없음 |` 한 행을 출력하세요.
+
 ## CHECKPOINT / STOP
 
 감사 결과와 허용 범위를 receipt로 요약하기 전에는 `--apply` 변경을 시작하지 마세요. 범위가 불명확하거나 삭제·이동의 참조 근거가 없으면 적용하지 말고 `Partial/Blocked` 또는 `Unverifiable`로 멈추세요.
@@ -50,3 +62,4 @@ Repository rule/skill은 파일 전체가 아니라 독립적인 normative instr
 - `--apply` 없이 파일을 수정하거나, 삭제·이동 전에 참조를 확인하지 마세요.
 - 사용자가 지정하지 않은 저장소·사용자 파일을 조용히 섞어 바꾸지 마세요.
 - 레거시 전역 TigerKit 상태를 탐색하거나 마이그레이션하지 마세요.
+- 항목 ID를 생략·재사용·재번호화하거나 Summary를 생략하지 마세요.

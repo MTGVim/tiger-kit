@@ -8,11 +8,20 @@
 
 **Attached session**은 현재 실행 전에 존재했다고 독립적으로 확인되었고 검증이 연결만 한 브라우저 또는 세션입니다. 사용자가 시작한 Chrome, 기존 Chrome에 연결한 CDP 세션, 외부 도구가 관리하는 공유 브라우저가 해당합니다. 전체 브라우저, 기존 창·탭 또는 프로세스를 종료하지 마세요. 현재 실행이 만든 페이지가 명확히 식별될 때만 해당 페이지를 닫을 수 있습니다. 소유권이 불명확하면 닫지 마세요.
 
+## Chrome headless-new launch
+
+새 Chrome/Chromium owned session은 실제 process arguments에 정확한 token `--headless=new`를 포함해야 합니다. 첫 browser 관련 도구 호출 전에 binary, effective arguments, PID 또는 provider-owned process 식별자, 격리된 `user-data-dir`을 기록하세요. `headless: true`나 provider 기본값만으로 argument 적용을 추정하지 마세요.
+
+Auto-launch provider가 exact argument를 주입·확인하지 못하면 호출하지 말고, 직접 시작한 `--headless=new` Chrome의 확인된 CDP endpoint에 연결하세요. Headless 시작이 실패하면 headed로 retry하지 말고 실행 불가 상태를 보고하세요. Credential 직접 입력, OTP, 2FA/2-step verification, passkey, CAPTCHA 또는 device approval처럼 사용자가 직접 로그인을 완료해야 하는 interactive auth가 실제로 필요한 경우만 launch 전 승인된 headed 예외를 사용하세요.
+
+Interactive login은 repo 밖 user-local persistent profile에서만 수행하세요. 사용자가 인증을 마치면 headed owned browser를 정상 종료하고 process 종료와 profile lock 해제를 확인하세요. 같은 binary와 동일한 `user-data-dir`로 `--headless=new` Chrome을 새로 시작하고 effective arguments와 인증된 target state를 확인한 뒤 검증을 이어가세요. Headed browser의 로그인 이후 화면을 제품 검증 evidence로 사용하지 말고, headless 재개가 불가능하면 `Unverifiable`로 멈추세요. Persistent auth profile은 사용자가 보존을 요청한 local state이므로 종료 cleanup에서 삭제하지 마세요.
+
 ## 최초 실행 UI 억제
 
 새 브라우저를 시작하고 실행 인자를 제어할 수 있으면 브라우저와 도구에서 지원 여부가 확인된 네이티브 옵션을 사용하세요. Chrome/Chromium 계열의 대표 예시는 다음과 같습니다.
 
 ```text
+--headless=new
 --no-first-run
 --no-default-browser-check
 ```

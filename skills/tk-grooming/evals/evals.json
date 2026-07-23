@@ -363,6 +363,56 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "numbered-summary-target-table",
+      "path": "success",
+      "prompt": "/tk-grooming 기존 rule과 skill에서 독립적인 감사 항목 2개를 report-only로 정리해 주세요. 모든 본문 항목과 맨 아래 요약에 번호와 적용 타깃을 표시하세요.",
+      "expected_output": "항목에 GR-01과 GR-02를 한 번 부여해 발견·제안·Receipt에서 유지하고, 마지막 Summary 고정 표에 ID별 한 줄 요약과 구체적인 적용 타깃을 정확히 한 행씩 출력한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "모든 감사 항목이 식별 순서의 GR-01, GR-02 ID를 가지며 발견 사항·제안 작업·적용 내용과 검증(있는 경우)·Receipt에서 동일 ID를 유지하고, ID 없는 항목이나 섹션별 재번호화가 없다."
+        },
+        {
+          "type": "judge",
+          "criterion": "응답의 마지막 섹션이 정확히 No. | Rule | 한 줄 요약 | 적용 타깃 열의 Summary 표이며 각 GR ID가 정확히 한 행에 나오고, 구체적인 적용 타깃을 밝히며 상세 발견·제안·변경·검증을 반복하거나 새 evidence를 추가하지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "reported",
+            "pending",
+            "Pass",
+            "Ready"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "empty-summary-is-not-omitted",
+      "path": "boundary",
+      "prompt": "/tk-grooming 지정 범위를 검토했지만 독립적인 감사 항목이 없습니다. report-only 결과를 출력해 주세요.",
+      "expected_output": "항목이 없어도 마지막 Summary 고정 표를 출력하고 없음·감사 항목 없음·적용 없음을 한 행으로 명시한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "항목이 없다는 이유로 Summary를 생략하지 않고, 마지막 고정 표에 | — | 없음 | 감사 항목 없음 | 적용 없음 | 의미의 한 행을 출력한다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "reported",
+            "Unverifiable"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

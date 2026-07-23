@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.0.3 — Headless Verification and Numbered Reports
+
+- Made `tk-browser-verify` launch Chrome with the exact `--headless=new` argument by default, permit headed mode only for user-completed interactive authentication, and resume verification headlessly with the same persistent profile.
+- Made design alignment conditional on an available design basis and shortened pre-session stops without weakening launch, authentication, or TigerKit capture-ledger evidence.
+- Standardized `tk-reflect` and `tk-grooming` outputs with stable per-item IDs, mandatory final summary tables, one-line rule summaries, explicit application targets, and empty-result rows.
+
 ## 20.0.2 — Verbatim Fidelity and Capture Ledger
 
 - Hardened `tk-implement`, `tk-to-spec`, and `tk-to-tickets` to preserve source-provided UI labels, buttons, guidance, column names, and related writing as exact literals through implementation artifacts and verification.
