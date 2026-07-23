@@ -35,8 +35,6 @@ metadata:
 
 ## 계약
 
-작성: `evidence → schema → write → receipt`. 재개: `현재 상태 대조 → drift/conflict와 materiality 표시 → 일치하면 계속, material이면 명시적 확인 → 계속 또는 중단`.
-
 새 인수인계의 기본 작성 대상은 `.tigerkit/handoff.md`입니다. 다음 필수 schema를 사용하세요.
 
 - `Goal`: 목표와 범위
