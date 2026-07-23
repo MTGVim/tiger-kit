@@ -181,6 +181,9 @@
 - case: to-spec-structures-bug-evidence
   skill: tk-to-spec
   expect: "Bug specs separate symptom, current and expected behavior, reproduction, evidence, environment, and missing regression seam."
+- case: to-spec-preserves-source-ui-writing-verbatim
+  skill: tk-to-spec
+  expect: "Provided labels, button names, guide copy, column names, and other UI writing remain exact literals unless the user explicitly authorizes a change; drift prevents Ready."
 - case: to-tickets-does-not-create-spec
   skill: tk-to-tickets
   expect: "Ticket decomposition does not create or modify a spec."
@@ -190,6 +193,9 @@
 - case: to-tickets-keeps-one-vertical-bug-slice
   skill: tk-to-tickets
   expect: "One bug fix keeps reproduction, diagnosis, fix, regression, original rerun, and cleanup in one vertical slice."
+- case: to-tickets-preserves-source-ui-writing-verbatim
+  skill: tk-to-tickets
+  expect: "Provided UI writing remains exact in the source inventory, coverage, and owning tickets unless an explicit source decision authorizes a change."
 - case: prototype-is-not-production
   skill: tk-prototype
   expect: "The result distinguishes fake and real behavior and is not called production-ready."
@@ -220,9 +226,15 @@
 - case: implement-review-high-risk-is-conditional
   skill: tk-implement
   expect: "High-risk checks load only for diff signals such as auth, privacy, payment, migration, data loss, concurrency, dependency, or public API changes."
+- case: implement-preserves-source-ui-writing-verbatim
+  skill: tk-implement
+  expect: "Provided UI writing is frozen before mutation and exactly rechecked in the implementation and staged candidate; unauthorized drift prevents commit."
 - case: browser-accessibility-is-conditional
   skill: tk-browser-verify
   expect: "Keyboard, focus, accessible-name, and error-association evidence is gathered for relevant form, dialog, navigation, or focus flows without claiming a full WCAG audit."
+- case: browser-captures-move-to-tigerkit-ledger
+  skill: tk-browser-verify
+  expect: "Run-owned screenshots, traces, videos, network dumps, and console captures are moved from tool or user scratch into the repo-local TigerKit run ledger before verdict; user-owned inputs are preserved."
 - case: learn-requires-eval-and-compatibility
   skill: tk-learn
   expect: "A skill candidate includes trigger validation, success and boundary assertions, a baseline plan, and a portable-core versus host-extension compatibility decision before approval."
