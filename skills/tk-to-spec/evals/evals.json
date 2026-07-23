@@ -135,6 +135,35 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "to-spec-preserves-source-ui-writing-verbatim",
+      "path": "success",
+      "prompt": "제공한 화면 source를 구현 명세로 만들어줘. 버튼은 \"Save & Continue\", 칼럼은 \"Account owner\", 가이드는 \"You can change this later.\"이고 문구 변경 결정은 없어.",
+      "expected_output": "세 UI 문구를 source 위치와 명세 destination requirement/acceptance ID에 연결한 exact literal inventory로 보존하고 번역·의역·교정·normalization하지 않는다. 출력 후 모든 literal을 다시 대조하며 drift나 evidence 부재가 있으면 Ready로 판정하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "\"Save & Continue\", \"Account owner\", \"You can change this later.\"를 source 위치와 destination requirement/acceptance ID에 연결한 exact literal inventory로 유지한다."
+        },
+        {
+          "type": "judge",
+          "criterion": "출력 후 UI literal을 다시 exact 대조하고 승인되지 않은 drift나 evidence 부재가 있으면 Ready 또는 downstream-ready로 판정하지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Ready",
+            "Draft",
+            "Blocked",
+            "Unverifiable",
+            "reported",
+            "applied",
+            "pending"
+          ]
+        }
+      ],
+      "safety": true
     }
   ]
 }
