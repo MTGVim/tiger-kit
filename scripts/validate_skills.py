@@ -207,11 +207,22 @@ def validate_release_alignment(
     main_sha: str,
     peeled_tag_sha: str,
     release_sha: str,
-    ci_sha: str,
 ) -> list[str]:
-    if len({main_sha, peeled_tag_sha, release_sha, ci_sha}) != 1:
-        return ["release provenance: origin/main, peeled tag, GitHub Release, and CI SHA must match"]
+    if len({main_sha, peeled_tag_sha, release_sha}) != 1:
+        return ["release provenance: origin/main, peeled tag, and GitHub Release must match"]
     return []
+
+
+def validate_local_only_workflows(root: Path) -> list[str]:
+    errors: list[str] = []
+    for relative in (
+        ".github/workflows/validate.yml",
+        ".github/workflows/skills-canary.yml",
+        ".github/workflows/skill-evals.yml",
+    ):
+        if (root / relative).exists():
+            errors.append(f"{relative}: remove CI validation; run verification locally")
+    return errors
 
 
 def validate_skill(path: Path) -> tuple[list[str], list[str]]:
@@ -353,9 +364,6 @@ def validate_repository_contract() -> list[str]:
         "NOTICE.md",
         "LICENSE",
         ".gitignore",
-        ".github/workflows/validate.yml",
-        ".github/workflows/skills-canary.yml",
-        ".github/workflows/skill-evals.yml",
         "scripts/validate_skills.py",
         "scripts/run_skill_evals.py",
         "scripts/sync_eval_compat.py",
@@ -365,6 +373,7 @@ def validate_repository_contract() -> list[str]:
     for relative in required_files:
         if not (ROOT / relative).is_file():
             errors.append(f"{relative}: required TigerKit 20 repository file is missing")
+    errors.extend(validate_local_only_workflows(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
             errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 20")
