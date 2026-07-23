@@ -181,6 +181,9 @@
 - case: reflect-classifies-repo-placement
   skill: tk-reflect
   expect: "The closed safety set, verified paths, immediate parent, tracked regular siblings, and threshold deterministically select root rule, nested rule, or repo skill."
+- case: reflect-numbered-summary-target-table
+  skill: tk-reflect
+  expect: "Every candidate keeps one stable RF-## ID through the body and receipt, and the final fixed Summary table gives exactly one one-line rule summary and concrete application target per ID."
 - case: to-spec-does-not-create-tickets
   skill: tk-to-spec
   expect: "A spec is produced without ticket decomposition."
@@ -217,6 +220,9 @@
 - case: grooming-classifies-repo-placement
   skill: tk-grooming
   expect: "The same placement rubric maps kind changes to convert, root/nested changes to move, mixed units to split, and correct placement to keep."
+- case: grooming-numbered-summary-target-table
+  skill: tk-grooming
+  expect: "Every audit item keeps one stable GR-## ID through findings, proposals, apply, validation, and receipt, and the final fixed Summary table gives exactly one one-line rule summary and concrete application target per ID."
 - case: legacy-global-state-is-not-scanned
   skill: tk-grooming
   expect: "Legacy global TigerKit state is not automatically discovered or migrated."

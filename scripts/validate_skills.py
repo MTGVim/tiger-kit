@@ -108,6 +108,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "merge-conflict-does-not-force-push",
     "reflect-is-report-only",
     "reflect-classifies-repo-placement",
+    "reflect-numbered-summary-target-table",
     "to-spec-does-not-create-tickets",
     "to-spec-structures-bug-evidence",
     "to-spec-preserves-source-ui-writing-verbatim",
@@ -120,6 +121,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "prototype-web-toggle-preserves-legibility",
     "grooming-defaults-report-only",
     "grooming-classifies-repo-placement",
+    "grooming-numbered-summary-target-table",
     "legacy-global-state-is-not-scanned",
     "handoff-resume-no-drift-continues",
     "handoff-resume-material-drift-blocks",
@@ -425,6 +427,20 @@ def validate_repository_contract() -> list[str]:
             "headed session에 fallback",
             "단순 visible/headed 요청",
             "동일한 persistent profile의 lock 해제",
+        ),
+        "skills/tk-reflect/SKILL.md": (
+            "첫 후보부터 발견 순서대로 `RF-01`, `RF-02`, …를 한 번 부여",
+            "ID 없는 후보·rule 항목을 출력하지 마세요",
+            "응답의 마지막 섹션은 항상 아래 고정 형식의 `## Summary`",
+            "| No. | Rule | 한 줄 요약 | 적용 타깃 |",
+            "| — | 없음 | 재사용 가능한 rule/skill 후보 없음 | 적용 없음 |",
+        ),
+        "skills/tk-grooming/SKILL.md": (
+            "처음 식별한 순서대로 `GR-01`, `GR-02`, …를 한 번 부여",
+            "ID 없는 발견·제안·적용·검증 항목을 출력하지 마세요",
+            "응답의 마지막 섹션은 항상 아래 고정 형식의 `## Summary`",
+            "| No. | Rule | 한 줄 요약 | 적용 타깃 |",
+            "| — | 없음 | 감사 항목 없음 | 적용 없음 |",
         ),
     }
     for relative, needles in required_text.items():
