@@ -504,7 +504,7 @@
       "assertions": [
         {
           "type": "judge",
-          "criterion": "source mutation 전에 \"Save & Continue\", \"Account owner\", \"You can change this later.\"를 exact literal inventory로 고정하고 구현 destination에 연결하며, 번역·의역·교정·normalization하지 않는다."
+          "criterion": "\"Save & Continue\", \"Account owner\", \"You can change this later.\"를 exact literal inventory로 고정하고 destination 미제공 상태를 표시하며, 번역·의역·교정·normalization하지 않는다."
         },
         {
           "type": "judge",
