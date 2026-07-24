@@ -20,16 +20,23 @@ metadata:
 3. `evidence`: 각 후보를 읽어 영역별 관찰 사실·경로·검증 상태를 출력합니다.
 4. `분류/제안`: repository candidate에는 [배치 rubric](references/repository-placement.md)을 적용하고, 입력 evidence를 `keep | tighten | merge | split | move | convert | deprecate | delete | fix` 중 하나로 분류합니다.
 5. `🔴 CHECKPOINT · 🛑 STOP`: 범위·evidence·제안·허용 apply를 receipt로 요약하고 확인 전에는 변경하지 않습니다.
-6. `apply/report`: report-only면 제안과 receipt만 출력하고, apply면 승인된 receipt와 다시 읽은 원본 상태를 입력으로 확인된 범위만 수정합니다.
+6. `apply/report`: 입력은 checkpoint receipt와 다시 읽은 원본 상태이고, 출력은 아래 mode 전이표가 허용한 제안 또는 수정입니다.
 7. `재검증`: apply 후 링크·중복·frontmatter를 다시 검사하고 결과·미검증·미해결 항목을 receipt로 출력합니다.
+
+### Mode 전이
+
+| Mode | Trigger | Allowed mutation | Output |
+|---|---|---|---|
+| `report-only` | implicit mode, `--apply` 없음, 과거 승인 또는 일반 진행 응답 | 없음 | evidence·분류·제안·receipt |
+| `applied` | 최초 요청의 literal `--apply` 또는 checkpoint 뒤 현재 turn의 정확한 범위 승인 | `tighten`, exact target의 기계적 `move`, 참조 없는 `delete`, frontmatter/link `fix`만 | 실제 적용 내용과 재검증 |
+| `pending` | Rule→skill `convert`, workflow `split`, semantic skill rewrite | 없음 | exact candidate/target 제안; `tk-learn` 입력 가능, 자동 호출 금지 |
+| `Partial/Blocked` | scope/apply 권한 충돌 또는 target이 checkpoint evidence와 달라짐 | 없음 | 새 evidence와 필요한 결정 하나; fresh proposal 필요 |
 
 기존의 네 영역, 즉 저장소 규칙, 저장소 스킬, 사용자 규칙, 사용자 스킬을 검사하세요. 실제로 존재하는 호스트 네이티브 경로를 사용하세요. [탐색](references/discovery.md)에 후보가 나열되어 있습니다. 누락된 파일을 만들거나 레거시 전역 TigerKit 상태를 검사/마이그레이션하지 마세요.
 
 Repository rule/skill은 파일 전체가 아니라 독립적인 normative instruction/workflow 단위로 판정하세요. 기대 kind가 달라지면 `convert`, 둘 다 rule이지만 root와 nested 위치가 다르면 `move`, 한 artifact가 서로 다른 결과 단위를 섞으면 먼저 `split`, 위치와 kind가 맞고 다른 결함이 없으면 `keep`입니다. 필요한 path/count/threshold evidence가 없거나 충돌하면 추정하지 말고 해당 영역을 `Partial/Blocked | Unverifiable`로 두세요.
 
-Apply가 승인되어도 이 skill이 직접 소유하는 mutation은 `tighten`, exact target이 명확한 기계적 `move`, 참조가 없는 `delete`, frontmatter/link `fix`뿐입니다. Rule→skill `convert`, workflow `split`, semantic skill rewrite는 exact candidate/target을 제안하고 `pending`으로 남기며 직접 쓰지 않습니다. 이 proposal은 `tk-learn` 입력으로 사용할 수 있지만 이 skill이 자동 호출하지 않습니다.
-
-기본은 보고만 수행합니다. 최초 요청의 literal `--apply` 또는 checkpoint 뒤 현재 turn의 명시적 승인에서 정확한 범위가 정해졌을 때만 적용하세요. 과거 승인이나 일반적인 진행 응답은 apply 권한이 아닙니다. 적용 시 원본을 다시 읽고, 삭제 전에 참조를 검색하고, 관리되거나 자동 생성된 콘텐츠의 소유권 표기를 보존하며, 광범위한 저장소/사용자 변경을 조용히 섞지 마세요. 지식을 지어내거나 회고/학습을 대신하지 마세요.
+적용 시 원본을 다시 읽고, 삭제 전에 참조를 검색하고, 관리되거나 자동 생성된 콘텐츠의 소유권 표기를 보존하며, 광범위한 저장소/사용자 변경을 조용히 섞지 마세요. 지식을 지어내거나 회고/학습을 대신하지 마세요.
 
 ## Failure paths
 
