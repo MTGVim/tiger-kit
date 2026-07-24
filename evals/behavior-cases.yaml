@@ -297,7 +297,16 @@
   expect: "Drive freezes exact source UI literals before spec mutation and rechecks them through spec, tickets, implementation, candidate/staged diff, and rendered UI."
 - case: drive-blocks-unreadable-ui-literal
   skill: tk-drive
-  expect: "Unreadable or conflicting source UI literals are never guessed and prevent commit as Blocked or Unverifiable."
+  expect: "Unreadable source UI literals are never guessed and prevent commit as Unverifiable."
+- case: drive-blocks-conflicting-ui-literals
+  skill: tk-drive
+  expect: "Conflicting source UI literals are preserved as evidence and require one user decision before work can continue from Blocked."
+- case: drive-commit-command-failure-is-fail
+  skill: tk-drive
+  expect: "A failed final commit command preserves its output and actual Git state and terminates as Fail without claiming commit success."
+- case: drive-precommit-drift-is-blocked
+  skill: tk-drive
+  expect: "HEAD or staged-snapshot drift after verification blocks commit and requires a new fixed-point verification."
 - case: drive-carries-authorized-ui-writing-change
   skill: tk-drive
   expect: "Only the explicitly approved UI writing change is marked authorized while every other literal remains frozen."

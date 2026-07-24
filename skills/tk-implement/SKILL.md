@@ -85,13 +85,13 @@ TDD로 결정되면 의미 있는 공개 동작 경계를 선택하고 수직 sl
 
 사용자에게 보이는 UI, layout, styling, responsive behavior, interaction, navigation, form submission 또는 browser network/final state가 범위에 있으면, **브라우저 도구나 검증용 server를 처음 호출하기 전에** hybrid `tk-browser-verify`를 현재 작업의 active verification contract로 적용하고 해당 `SKILL.md`의 mode 선택·launch configuration·안전 범위 checkpoint를 먼저 실행하세요. 단순히 skill 이름을 언급하거나 나중에 결과를 그 형식으로 포장하는 것은 적용이 아닙니다.
 
-`tk-implement`가 Chrome MCP, Playwright, CDP 또는 native browser를 직접 선택·호출하는 것은 금지합니다. 이 수단들은 선행 gate를 통과한 `tk-browser-verify` 안에서만 선택할 수 있습니다. Gate 전에 현재 실행의 browser 호출이 이미 발생했다면 그 evidence는 무효이며, 나중에 skill 형식으로 포장해 복구하지 말고 `Fail`로 멈추며 commit하지 마세요. 사용자가 browser 검증을 금지하거나 skill을 로드·적용할 수 없으면 직접 도구 호출로 대체하지 말고 `Unverifiable`로 멈추며 완료로 보고하거나 commit하지 마세요. DOM, accessibility tree, unit test 또는 build 성공도 runtime screenshot과 실제 image 검사 계약을 대체하지 않습니다.
+`tk-implement`가 Chrome MCP, Playwright, CDP 또는 native browser를 직접 선택·호출하는 것은 금지합니다. 이 수단들은 선행 gate를 통과한 `tk-browser-verify` 안에서만 선택할 수 있습니다. Gate 전에 현재 실행의 browser 호출이 이미 발생했다면 그 evidence는 무효이며, 나중에 skill 형식으로 포장하지 말고 terminal-state contract의 `Fail`을 적용하세요. 사용자가 browser 검증을 금지하거나 skill을 로드·적용할 수 없으면 직접 도구 호출로 대체하지 말고 `Unverifiable`을 적용하세요. DOM, accessibility tree, unit test 또는 build 성공도 runtime screenshot과 실제 image 검사 계약을 대체하지 않습니다.
 
 각 구현 slice 직후 focused test와 관련 정적 검사·build·필요한 브라우저/통합 검증을 실행하고, 다음 slice로 넘어가기 전에 결과를 확인하세요. 모든 slice가 끝나면 실행 가능한 가장 넓은 관련 검증을 한 번 실행하세요. 실패를 `change-related`, `pre-existing`, `environment`, `unverifiable`로 분류하고 terminal-state contract로 최종 상태를 정하세요.
 
 Final verification에는 당시 branch·`HEAD`와 검증한 diff/path 범위를 함께 기록하세요. 커밋 직전에 현재 branch·`HEAD`·staged diff가 그 범위와 같은지 다시 확인하고, 예상하지 않은 drift나 검증하지 않은 staged 변경이 있으면 커밋하지 말고 사용자 변경을 건드리지 않은 채 영향받은 검증을 다시 실행하거나 `Blocked`로 보고하세요. Commit 자체가 실패하면 broad staging이나 우회 옵션으로 재시도하지 말고 실제 `HEAD`와 미커밋 상태를 `Fail` receipt에 남기세요.
 
-모든 구현은 risk와 크기에 관계없이 현재 에이전트가 [내장 리뷰](references/review-boundary.md)의 fixed point, candidate/staged inventory, Standards와 Spec 축을 실행하세요. `large` 또는 인증·결제·개인정보·권한·dependency·migration/data loss·동시성·public API 고위험 변경에서만 독립 reviewer 한 명을 허용합니다. 전체 최대 범위는 review 1회, fix 1회, regression verification 1회입니다. 중요한 finding, drift 또는 미검증 범위가 남으면 commit하지 마세요.
+모든 구현은 risk와 크기에 관계없이 현재 에이전트가 [내장 리뷰](references/review-boundary.md)의 fixed point, candidate/staged inventory, Standards와 Spec 축을 실행하세요. `large` 또는 인증·결제·개인정보·권한·dependency·migration/data loss·동시성·public API 고위험 변경에서만 독립 reviewer 한 명을 허용합니다. 전체 최대 범위는 review 1회, fix 1회, regression verification 1회입니다. 중요한 finding, drift 또는 미검증 범위에는 terminal-state contract의 `Blocked` 또는 `Unverifiable`을 적용하세요.
 
 ## 커밋과 보고
 

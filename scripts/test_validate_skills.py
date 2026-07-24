@@ -218,7 +218,9 @@ class CatalogRoutingContractTest(unittest.TestCase):
             errors = validate_catalog_routing(root)
 
             self.assertTrue(any("critical_hosts" in error for error in errors))
-            self.assertTrue(any("all six routing boundaries" in error for error in errors))
+            self.assertTrue(
+                any("all required routing boundaries" in error for error in errors)
+            )
 
 
 class SkillCompatibilityTest(unittest.TestCase):
