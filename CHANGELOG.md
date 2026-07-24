@@ -1,5 +1,11 @@
 # Changelog
 
+## 20.1.1 — Explicit Recovery and Freshness Contracts
+
+- Refined all 12 canonical skill contracts with explicit terminal-state, failure-recovery, freshness, and command-evidence tables while preserving their names, invocation kinds, and ownership boundaries.
+- Tightened decision, resume, apply, prototype, handoff, browser-verdict, and conflict-resolution paths so drift and incomplete evidence stop at one well-defined checkpoint without discarding valid partial work.
+- Reduced duplicated status guidance by assigning each outcome and receipt to one owning section, keeping the 2 user-invoked / 10 hybrid distribution surface unchanged.
+
 ## 20.1.0 — Cross-Host Parity and Eval Evidence
 
 - Made `tk-drive` explicit start host-neutral across slash commands, Codex `$` invocation, and skill pickers, and carried exact source UI writing through spec, tickets, implementation, staged diff, and rendered evidence.
