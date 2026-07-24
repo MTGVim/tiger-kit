@@ -16,7 +16,7 @@ merge, rebase, cherry-pick 또는 revert가 실제로 진행 중이고 active co
 
 편집 전에 operation 상태, `git status`, index의 unmerged 항목, 모든 conflict marker, 양쪽 primary source를 확인하세요. 양쪽 의도를 결정할 근거가 없고 operation 목표·primary source로도 선택할 수 없으면 임의로 해결하지 말고 `Blocked`로 중단하세요. 필수 상태나 근거를 읽을 수 없으면 `Unverifiable`입니다.
 
-`Pass`는 모든 marker 제거, unmerged 항목 해소, stage, 관련 검증 실행, operation 완료가 확인된 경우에만 사용하세요. 검증하지 않은 상태나 conflict 파일만 수정한 상태를 완료로 보고하지 마세요.
+`Pass`는 아래 Command evidence 표의 모든 completion signal이 확인된 경우에만 사용하세요. 검증하지 않은 상태나 conflict 파일만 수정한 상태를 완료로 보고하지 마세요.
 
 ## 🔴 CHECKPOINT · 🛑 STOP resolution·continue 경계
 
@@ -38,12 +38,13 @@ operation 상태, 모든 conflict hunk, 양쪽 primary source, resolution 근거
 
 ### Command evidence
 
-| Evidence | Command contract |
-|---|---|
-| operation·index 상태 | `git status --short --branch`, `git diff --name-only --diff-filter=U`, `git ls-files -u`를 함께 확인 |
-| conflict marker | tracked conflict path 전체에서 `^(<<<<<<<|=======|>>>>>>>)`를 검색하고 0건을 검증 |
-| stage | resolution 근거에 기록된 path만 `git add -- <path...>`로 stage한 뒤 staged diff와 unmerged index를 다시 확인 |
-| continue | active operation과 일치하는 `git merge --continue`, `git rebase --continue`, `git cherry-pick --continue`, `git revert --continue` 중 하나만 실행 |
+| Evidence | Command contract | Completion signal | Failure route |
+|---|---|---|---|
+| operation·index 상태 | `git status --short --branch`, `git diff --name-only --diff-filter=U`, `git ls-files -u`를 함께 확인 | operation 종류·step·`HEAD`가 freshness fixed point와 일치하고 unreviewed path가 없음 | stale이면 inventory부터 재작성; 설명 불가면 `Unverifiable` |
+| conflict marker | tracked conflict path 전체에서 `^(<<<<<<<|=======|>>>>>>>)` 검색 | marker 0건 | 남은 path와 hunk를 `Fail`; continue 금지 |
+| stage | resolution 근거에 기록된 path만 `git add -- <path...>` 후 staged diff·unmerged index 재확인 | 근거 있는 path만 staged, unmerged index 0건 | stage 실패·잔여 unmerged path를 `Fail`; continue 금지 |
+| verification | conflict와 관련된 test·build·정적 검사를 실제 실행 | 실행 결과와 범위가 기록되고 변경 관련 실패 없음 | 실행 불가면 `Unverifiable`, 실패면 `Fail` |
+| continue | active operation과 일치하는 `git merge --continue`, `git rebase --continue`, `git cherry-pick --continue`, `git revert --continue` 중 하나만 실행 | operation이 의도대로 종료되고 새 conflict 없음 | 실패 출력과 새 inventory를 수집해 conflict inventory부터 반복 |
 
 ### Operation freshness gate
 
