@@ -74,6 +74,8 @@ metadata:
 4. 사용자가 그 문장을 명시적으로 승인한 뒤에만 완료하고 `tk-to-spec`을 다음 단계로 제안하세요.
 5. 사용자가 문구 수정이나 누락 범위를 말하면 새 결정으로 ledger에 반영하고 closure gate를 다시 실행하세요.
 
+3단계의 한 문장은 승인을 받기 위한 일시적 checkpoint prompt입니다. 승인 후 최종 응답에는 그 문장을 다시 복사하지 말고 확정 내용을 `Decisions`의 `Scope`, `Constraints`, `Outputs`, `Verification`에 한 번씩만 기록하세요.
+
 같은 domain 용어가 서로 다른 의미로 쓰이거나 인접 개념을 구분해야 결정할 수 있다면 그 의미를 질문하세요. 확정된 용어는 이후 `tk-to-spec` 결과에 포함할 수 있지만, 이 스킬은 `CONTEXT.md`, glossary, domain 문서 또는 ADR을 자동으로 만들거나 수정하지 않습니다.
 
 내용이 있는 섹션만 사용해 마무리하세요: `## Decisions`, `## Assumptions`, `## Remaining risks`, `## Receipt`. 결정 본문은 `## Decisions`만 소유합니다. Decisions 안에서도 `Scope`, `Constraints`, `Outputs`, `Verification`은 각각 경계·제약·산출물·성공 증거만 한 번 기록하고, 이 네 항목을 다시 합친 `합의된 목표`나 요약 문장을 추가하지 마세요. 한 문장 goal 승인은 사용자 답변의 근거 위치로만 참조합니다. Receipt에는 `confirmed | pending | aborted | Blocked`, 결정의 사용자 답변 또는 근거 위치, 적용 여부와 `## Decisions` 참조만 기록하고 결정을 다시 쓰지 마세요. 결정이 아직 없는 질문 단계에서는 Decisions 참조를 만들지 말고 `pending`과 미결정 ledger만 보고하세요.
