@@ -29,9 +29,19 @@ metadata:
 재개는 다음 순서로 진행하세요.
 
 1. `state check`: 입력은 기존 인수인계와 현재 Git·파일 상태이고, 출력은 일치 항목과 `drift | conflict` 목록입니다.
-2. `materiality`: 입력은 drift/conflict 목록이고, 출력은 `none | non-material | material` 분류와 근거입니다.
-3. `continue or checkpoint`: `none | non-material`이면 명시적 resume 호출을 계속 승인으로 보고 진행하고, `material`이면 사용자에게 필요한 결정 하나와 `pending | Blocked` 상태를 출력합니다.
+2. `materiality`: 입력은 drift/conflict 목록이고, 출력은 아래 resume 판정표의 분류와 근거입니다.
+3. `continue or checkpoint`: 입력은 분류이고, 출력은 판정표의 계속 또는 중단 상태입니다.
 4. `continue or stop`: 입력은 no-drift 승인 또는 material drift에 대한 명시적 확인이고, 출력은 계속할 작업 또는 중단 사유입니다.
+
+### Resume 판정표
+
+| Classification | Evidence | Action |
+|---|---|---|
+| `none` | branch·목표·결정·ownership·verification이 현재 증거와 일치 | `--resume`을 계속 승인으로 보고 추가 질문 없이 진행 |
+| `non-material` | timestamp·출력 순서처럼 결과를 바꾸지 않는 차이 | 차이를 기록하고 추가 질문 없이 진행 |
+| `material drift` | branch/목표 scope, confirmed decision, changed-file ownership 또는 verification 결과가 달라짐 | 필요한 결정 하나와 `pending | Blocked`; 답변 전 중단 |
+| `conflict` | handoff와 현재 source가 서로 다른 의도나 결과를 요구 | 양쪽 evidence와 선택지를 제시하고 `Blocked`; 자동 해결 금지 |
+| `unverified` | 필수 Git·파일 상태를 현재 확인할 수 없음 | 추정하지 않고 `Unverifiable` |
 
 ## 계약
 
@@ -57,11 +67,11 @@ metadata:
 
 ## CHECKPOINT / STOP
 
-`--resume` 자체는 현재 handoff를 재개하라는 명시적 승인입니다. 현재 상태가 일치하거나 결과를 바꾸지 않는 non-material drift만 있으면 추가 승인 질문 없이 계속하세요. Branch/목표 scope, confirmed decision, changed-file ownership 또는 verification 결과를 바꾸는 material drift/conflict가 있으면 차이와 선택지를 제시하고 사용자의 결정 전에는 `pending` 또는 `Blocked`로 멈추세요.
+`--resume` 자체는 현재 handoff를 재개하라는 명시적 승인입니다. 계속·중단 여부는 Resume 판정표만 따르세요.
 
 상위 스크래치 디렉터리는 필요할 때 만들고, 가능하면 임시 파일 작성 후 이름을 바꾸며, 보관본/현재 포인터를 만들거나 `.gitignore`를 편집하지 말고, 스크래치가 무시되지 않으면 경고하세요. 인수인계 파일 작성 자체가 요청된 출력이라도 미확정 결정을 `confirmed`로 바꾸지는 않습니다.
 
-재개/계속 의도일 때 인수인계를 읽고 현재 Git 및 파일 상태를 검사하세요. 기존 handoff와 현재 상태의 파일, 브랜치, 목표, 결정, 검증 결과 차이를 `drift`로 표시하고 서로 다른 의도나 결과는 `conflict`로 표시하세요. Timestamp, 출력 순서처럼 결과를 바꾸지 않는 차이는 non-material로 보고 계속할 수 있습니다. Branch/목표 scope, confirmed decision, changed-file ownership, verification 결과를 바꾸는 material drift/conflict는 자동 해결하지 말고 사용자 결정을 받으세요. 재개 후에도 현재 확인한 증거가 없는 항목은 `unverified`로 유지하세요.
+재개/계속 의도일 때 인수인계를 읽고 현재 Git 및 파일 상태를 검사한 뒤 Resume 판정표로 분류하세요. 재개 후에도 현재 확인한 증거가 없는 항목은 `unverified`로 유지하세요.
 
 ## 실패 복구
 
