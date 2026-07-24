@@ -14,7 +14,7 @@ These are minimal orchestration gates. They do not invoke sibling phase skills.
 
 A Ready spec has problem, goal, included/excluded scope, confirmed decisions, stable R/AC IDs, verification, source traceability and no unresolved conflict. Missing information is `Draft`; a required decision is `Blocked`; inaccessible essential evidence is `Unverifiable`. Do not proceed to tickets or implementation until Ready.
 
-When source includes UI writing, inventory every label, button, heading, guide/help copy, table/column name, placeholder, validation/error and status literal before spec mutation. Link source location → R/AC → optional ticket → implementation destination. Preserve exact spelling, case, whitespace, punctuation, symbols, numbers and meaningful line breaks unless the user authorizes a change; mark only that change `authorized change`. Unreadable or conflicting literals are `Blocked | Unverifiable`.
+When source includes UI writing, inventory every label, button, heading, guide/help copy, table/column name, placeholder, validation/error and status literal before spec mutation. Link source location → R/AC → optional ticket → implementation destination. Preserve exact spelling, case, whitespace, punctuation, symbols, numbers and meaningful line breaks unless the user authorizes a change; mark only that change `authorized change`. An unreadable literal is `Unverifiable`; conflicting literals that require a user decision are `Blocked`.
 
 ## Tickets
 

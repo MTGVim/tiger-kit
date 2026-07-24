@@ -51,9 +51,11 @@ SUPPORTED_EVAL_HOSTS = {"claude-code", "codex", "hermes-agent"}
 CATALOG_ROUTING_BOUNDARIES = {
     "tk-to-spec vs tk-to-tickets",
     "tk-reflect vs tk-grooming",
+    "tk-learn vs tk-reflect/tk-grooming",
     "tk-implement vs tk-drive",
     "tk-prototype vs tk-browser-verify",
     "tk-handoff vs generic summary/continue",
+    "tk-drive vs tk-handoff/generic continue",
     "tk-merge-conflict vs ordinary conflict-marker edit",
 }
 HYBRID_TRIGGER_FACETS = {"formal", "casual", "typo", "ko-en", "short", "compound"}
@@ -162,6 +164,9 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-keeps-ticket-ledger",
     "drive-preserves-source-ui-writing-verbatim",
     "drive-blocks-unreadable-ui-literal",
+    "drive-blocks-conflicting-ui-literals",
+    "drive-commit-command-failure-is-fail",
+    "drive-precommit-drift-is-blocked",
     "drive-carries-authorized-ui-writing-change",
     "browser-redacts-sensitive-captures",
     "handoff-uses-single-snapshot",
@@ -956,10 +961,12 @@ def validate_catalog_routing(root: Path) -> list[str]:
             "evals/catalog-routing.json: duplicate case ids: " + ", ".join(duplicates)
         )
     if boundaries != CATALOG_ROUTING_BOUNDARIES:
-        errors.append("evals/catalog-routing.json: cover all six routing boundaries")
+        errors.append(
+            "evals/catalog-routing.json: cover all required routing boundaries"
+        )
     if critical_boundaries != CATALOG_ROUTING_BOUNDARIES:
         errors.append(
-            "evals/catalog-routing.json: critical subset must cover all six routing boundaries"
+            "evals/catalog-routing.json: critical subset must cover all required routing boundaries"
         )
     return errors
 

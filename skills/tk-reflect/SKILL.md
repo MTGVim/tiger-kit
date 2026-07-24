@@ -61,7 +61,7 @@ Confidence는 다음 기준으로만 올리세요. `high`는 서로 다른 occur
 
 후보의 대상, evidence, confidence, action을 제시한 뒤 별도의 명시적 적용 동의를 받으세요. 동의 전에는 후보 상태 전이표의 `pending | reported` 경계에서 멈추세요.
 
-비어 있지 않은 각 후보에 대해 `대상`, ID가 붙은 `Evidence`, `Interpretation`, `Confidence`, `Action`, 필요할 때만 `초안`, `Receipt`를 한 번씩만 보고하세요. Interpretation은 재사용 범위·경계만, Confidence는 등급·Evidence ID·불확실성만, 초안은 적용 가능한 실제 규칙·스킬 문안만 소유합니다. 대상 선택의 재사용 근거는 `Interpretation`이 이미 소유하므로 `이 대상인 이유` 같은 별도 근거 필드를 만들지 마세요. `Interpretation`이 학습 내용을, `Action`이 수행할 작업을 소유하므로 별도 `작업`·`학습 내용` 필드를 만들지 마세요. Receipt는 상태와 앞선 필드의 참조만 기록하고 내용을 반복하지 않습니다.
+비어 있지 않은 각 후보는 위 필드 계약에 따라 `대상`, ID가 붙은 `Evidence`, `Interpretation`, `Confidence`, `Action`, 필요할 때만 `초안`, `Receipt`를 한 번씩만 보고하세요. `이 대상인 이유`·`작업`·`학습 내용` 같은 중복 필드를 만들지 말고 Receipt에는 상태와 앞선 필드 참조만 기록하세요.
 
 ## Output contract
 

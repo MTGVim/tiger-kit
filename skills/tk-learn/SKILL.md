@@ -28,8 +28,8 @@ Draft와 apply는 서로 다른 gate입니다.
 2. **Promotion과 dedupe** — [스킬 품질](references/skill-quality.md)의 승격 gate를 적용하고 기존 repo/user skill, 기본 모델 기능, 짧은 rule과 비교해 `merge | no-op | continue | pending`을 판정합니다. 목록을 읽을 수 없으면 `pending`으로 표시하되 draft는 계속합니다.
 3. **Candidate proposal** — target, working name, invocation kind, positive/negative trigger를 제시합니다. 사용자가 준 도메인·workflow 표현으로 reversible working name과 trigger 예시를 만들고 `proposed`로 표시하세요. 근거가 없는 동작은 발명하지 말고 해당 값만 `TBD`로 남깁니다.
 4. **Minimum draft** — 입력, 핵심 workflow, 명시적 실패 분기, approval boundary, 완료 기준, 출력 계약, DO NOT 목록을 포함한 최소 SKILL.md를 보여줍니다. 이어 train/validation trigger, success/boundary assertion, no-skill 또는 이전 skill baseline, portable-core/host-extension 판정을 제시합니다.
-5. **Approval summary** — apply gate checklist의 항목별 상태와 계획 경로를 한 번씩 요약하고 `pending | no-op | Blocked | Unverifiable`로 멈춥니다.
-6. **Write, verify, report** — 현재 turn에 사용자가 정확한 후보와 target path 적용을 명시 승인한 뒤에만 write 전 내용을 보존하고 적용합니다. frontmatter, links, evals, target-host invocation을 검증한 뒤에만 `applied`로 보고합니다.
+5. **Approval summary** — apply gate checklist의 항목별 상태와 계획 경로를 한 번씩 요약하고 checklist가 정한 상태로 멈춥니다.
+6. **Write, verify, report** — checklist의 Apply authority가 통과한 뒤 write 전 내용을 보존하고 적용합니다. frontmatter, links, evals, target-host invocation을 검증한 뒤에만 `applied`로 보고합니다.
 
 ### Apply gate checklist
 
@@ -51,7 +51,7 @@ Target은 실제 경로나 host discovery evidence로 식별된 현재 host의 n
 | 두 사례·workflow 주장은 있으나 artifact를 읽을 수 없음 | 각 주장을 `unverified`로 기록하고 requested candidate를 `pending` draft로 제시 | 필요한 artifact와 검증 항목을 정확히 요청하고 write하지 않음 |
 | 단일 일회성 사례 또는 raw log뿐임 | threshold 미달과 privacy 경계를 기록하고 `no-op` | 후보·경로를 만들지 않음 |
 | 기존 skill 또는 기본 기능과 중복 | `merge` 또는 `no-op`과 근거를 보고 | 새 디렉터리를 만들지 않음 |
-| target·name·trigger 일부가 미확정 | 근거 있는 값은 `proposed`, 나머지는 `TBD`로 둔 draft를 제시 | `pending`으로 멈추고 write하지 않음 |
+| target·name·trigger 일부가 미확정 | 근거 있는 값은 `proposed`, 나머지는 `TBD`로 둔 draft를 제시 | Candidate identity를 `pending`으로 두고 write하지 않음 |
 | 증거·대상·승인이 충돌 | 충돌과 필요한 결정을 한 번만 제시 | `Blocked`로 멈춤 |
 | write 또는 post-write validation 실패 | 기존 대상을 보존하고 이번 실행의 임시 파일만 정리 | 정확히 복원·재검증 가능할 때만 되돌리고, 아니면 실제 경로와 `Fail | Blocked | Unverifiable` 증거를 보고 |
 

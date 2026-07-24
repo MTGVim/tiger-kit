@@ -39,6 +39,30 @@
       "critical": false
     },
     {
+      "id": "learn-vs-reflect-grooming-learn",
+      "boundary": "tk-learn vs tk-reflect/tk-grooming",
+      "prompt": "이 반복 경험을 재사용 가능한 새 repository skill로 설계해 주세요.",
+      "focus_skill": "tk-learn",
+      "expected_selected_skill": "tk-learn",
+      "critical": true
+    },
+    {
+      "id": "learn-vs-reflect-grooming-reflect",
+      "boundary": "tk-learn vs tk-reflect/tk-grooming",
+      "prompt": "이번 diff와 결과에서 재사용 가능한 rule 또는 skill 후보만 분류해 보고해 주세요.",
+      "focus_skill": "tk-reflect",
+      "expected_selected_skill": "tk-reflect",
+      "critical": true
+    },
+    {
+      "id": "learn-vs-reflect-grooming-grooming",
+      "boundary": "tk-learn vs tk-reflect/tk-grooming",
+      "prompt": "이미 존재하는 repository rule과 skill의 중복·범위·트리거를 감사해 주세요.",
+      "focus_skill": "tk-grooming",
+      "expected_selected_skill": "tk-grooming",
+      "critical": true
+    },
+    {
       "id": "implement-vs-drive-implement",
       "boundary": "tk-implement vs tk-drive",
       "prompt": "/tk-implement 이 변경을 구현하고 검증된 commit을 만들어 주세요.",
@@ -85,6 +109,30 @@
       "focus_skill": "tk-handoff",
       "expected_selected_skill": null,
       "critical": false
+    },
+    {
+      "id": "drive-vs-handoff-resume-drive",
+      "boundary": "tk-drive vs tk-handoff/generic continue",
+      "prompt": "직전 tk-drive의 pending decision에 답합니다. 권고한 작은 vertical slice로 진행해 주세요.",
+      "focus_skill": "tk-drive",
+      "expected_selected_skill": "tk-drive",
+      "critical": true
+    },
+    {
+      "id": "drive-vs-handoff-resume-handoff",
+      "boundary": "tk-drive vs tk-handoff/generic continue",
+      "prompt": "/tk-handoff --resume 검증된 handoff snapshot에서 작업을 재개해 주세요.",
+      "focus_skill": "tk-handoff",
+      "expected_selected_skill": "tk-handoff",
+      "critical": true
+    },
+    {
+      "id": "drive-vs-handoff-resume-generic",
+      "boundary": "tk-drive vs tk-handoff/generic continue",
+      "prompt": "그냥 계속해 주세요.",
+      "focus_skill": "tk-drive",
+      "expected_selected_skill": null,
+      "critical": true
     },
     {
       "id": "merge-conflict-vs-marker-active",
