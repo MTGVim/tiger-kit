@@ -51,7 +51,7 @@ Target은 실제 경로나 host discovery evidence로 식별된 현재 host의 n
 | 두 사례·workflow 주장은 있으나 artifact를 읽을 수 없음 | 각 주장을 `unverified`로 기록하고 requested candidate를 `pending` draft로 제시 | 필요한 artifact와 검증 항목을 정확히 요청하고 write하지 않음 |
 | 단일 일회성 사례 또는 raw log뿐임 | threshold 미달과 privacy 경계를 기록하고 `no-op` | 후보·경로를 만들지 않음 |
 | 기존 skill 또는 기본 기능과 중복 | `merge` 또는 `no-op`과 근거를 보고 | 새 디렉터리를 만들지 않음 |
-| target·name·trigger 일부가 미확정 | 근거 있는 값은 `proposed`, 나머지는 `TBD`로 둔 draft를 제시 | Candidate identity 미통과 상태로 멈춤 |
+| target·name·trigger 일부가 미확정 | 근거 있는 값은 `proposed`, 나머지는 `TBD`로 둔 draft를 제시 | Candidate identity를 `pending`으로 두고 write하지 않음 |
 | 증거·대상·승인이 충돌 | 충돌과 필요한 결정을 한 번만 제시 | `Blocked`로 멈춤 |
 | write 또는 post-write validation 실패 | 기존 대상을 보존하고 이번 실행의 임시 파일만 정리 | 정확히 복원·재검증 가능할 때만 되돌리고, 아니면 실제 경로와 `Fail | Blocked | Unverifiable` 증거를 보고 |
 
