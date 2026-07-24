@@ -27,7 +27,19 @@ metadata:
 
 사용자가 지정한 경로에 쓰거나, 출력 전용이면 결과만 출력하고, 그 외에는 `.tigerkit/spec.md`에 작성하세요. 기존 명세가 같은 작업을 다룬다면 유효한 결정을 유지하고, 그렇지 않으면 아카이브 없이 교체하세요. `.tigerkit/`에 출력할 때는 필요할 때만 상위 디렉터리를 만들고, 가능하면 같은 디렉터리의 임시 파일에 쓴 뒤 이름을 바꾸며, 절대 `.gitignore`를 수정하지 말고, 임시 경로가 무시되지 않으면 짧게 경고하세요.
 
-파일 출력 전 기존 대상 상태를 보존하고, write/rename 후 다시 읽어 gate 판정·source map·requirement/acceptance ID가 작성안과 일치하는지 확인하세요. write 또는 재검증이 실패하면 `Ready`·완료로 보고하지 말고 손상되지 않은 기존 대상을 유지하세요. 이번 실행의 변경만 정확히 복원·재검증할 수 없으면 추가 쓰기를 중단하고 `Fail | Unverifiable`와 실패 경로를 receipt에 남기세요.
+## Failure paths
+
+파일 출력 전 기존 대상 상태를 보존하세요.
+
+| Trigger | Gate/status | Recovery |
+|---|---|---|
+| 필수 요소 누락 또는 미확정 가정 | `Draft` | 확인된 내용과 누락 항목을 분리하고 `Ready`로 쓰지 않음 |
+| confirmed source 간 충돌 또는 사용자 결정 필요 | `Blocked` | 충돌 source 위치와 필요한 결정 하나를 기록하고 write하지 않음 |
+| 필수 source 접근 실패 또는 UI literal exact 대조 불가 | `Unverifiable` | 읽지 못한 경로·오류·영향 R/AC를 기록하고 write하지 않음 |
+| write/rename 실패 | `Fail` | 손상되지 않은 기존 대상을 유지하고 이번 실행의 변경만 정확히 복원·재검증 |
+| post-write gate·source map·R/AC ID 불일치 | `Fail | Unverifiable` | `Ready`·완료로 보고하지 않고 추가 write를 중단해 실패 경로와 실제 상태를 receipt에 기록 |
+
+Write/rename 후 파일을 다시 읽어 gate 판정·source map·requirement/acceptance ID가 작성안과 일치하는지 확인하세요.
 
 ## 계약
 
