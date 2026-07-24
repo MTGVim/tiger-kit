@@ -34,7 +34,18 @@ metadata:
 
 기본적으로 커밋하지 마세요. 프로덕션용 추상화와 오류 처리에는 투자하지 마세요. 결과물이 프로덕션에 사용할 준비가 되었다고 절대 부르지 말고, 자동으로 승격하거나 다른 사용자 스킬을 호출하지도 마세요.
 
-Artifact를 만들기 전에 기존 임시 경로와 이번 실행이 생성할 파일을 구분해 기록하세요. Write가 중단되면 소유권이 확인된 이번 실행의 불완전 artifact만 정리하고 `Fail`; 실행됐지만 결과 증거를 확보할 수 없으면 `Unverifiable`; 기존 artifact와 소유권·상태가 충돌하면 건드리지 말고 `Blocked`로 멈추세요. 안전하게 정리할 수 없는 부분 경로·실행 결과·재시작 조건은 receipt에 남기고 어느 경우도 `Complete`로 보고하지 마세요.
+## Failure paths
+
+Artifact를 만들기 전에 기존 임시 경로와 이번 실행이 생성할 파일을 구분해 기록하세요.
+
+| Trigger | First action | Still fails |
+|---|---|---|
+| write가 중단되거나 일부 파일만 생성됨 | 소유권이 확인된 이번 실행의 불완전 artifact만 정리 | `Fail`; 안전하게 정리할 수 없는 경로와 재시작 조건을 receipt에 기록 |
+| server·harness 실행 실패 | 명령·exit 상태·실제 출력과 fake/real 경계를 보존 | `Fail`; production route나 dependency로 우회하지 않음 |
+| 실행됐지만 출력·screenshot 증거를 확보할 수 없음 | 같은 경계에서 evidence capture를 한 번 재시도 | `Unverifiable`; 실행 성공이나 `Complete`를 주장하지 않음 |
+| 기존 artifact와 소유권·상태가 충돌 | 기존 경로를 변경·삭제하지 않고 충돌 evidence를 기록 | `Blocked`; 별도 임시 경로 결정 전 write하지 않음 |
+| cleanup 실패 | 이번 실행 소유 resource만 다시 식별하고 정리 결과를 기록 | `Fail | Unverifiable`; 기존 route·process는 건드리지 않음 |
+| 범위가 production mutation·승격·commit으로 확장됨 | prototype 작업을 중단하고 별도 구현 요청으로 분리 | `Blocked`; 자동 승격하지 않음 |
 
 ## 🔴 CHECKPOINT · 🛑 STOP 실행 전·후 판정 경계
 
