@@ -1,5 +1,12 @@
 # Changelog
 
+## 20.1.2 — Deterministic Routing and Failure Contracts
+
+- Added critical routing coverage for `tk-learn` versus reflection/grooming and `tk-drive` versus handoff/generic continuation, with repository validation that requires both boundaries.
+- Promoted merge-conflict and interview safety paths to executable evals, and split unreadable UI text, conflicting UI text, commit-command failure, and pre-commit drift into deterministic `tk-drive` terminal states.
+- Reduced repeated terminal, approval, and output-field guidance in `tk-implement`, `tk-learn`, and `tk-reflect`, then used a two-judge Darwin ratchet and canonical full tests to keep `tk-learn`'s unresolved identity branch explicitly `pending` and write-safe.
+- Preserved all 12 canonical skill names, the 2 user-invoked / 10 hybrid distribution, self-contained resources, and local-only verification boundary.
+
 ## 20.1.1 — Explicit Recovery and Freshness Contracts
 
 - Refined all 12 canonical skill contracts with explicit terminal-state, failure-recovery, freshness, and command-evidence tables while preserving their names, invocation kinds, and ownership boundaries.
