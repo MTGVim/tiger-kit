@@ -21,7 +21,18 @@ metadata:
 2. `interpretation`: 입력은 evidence이고, 출력은 사실과 분리된 재사용 가설입니다.
 3. `confidence`: 입력은 evidence와 가설이고, 출력은 `high | medium | low` 및 근거입니다.
 4. `action`: 입력은 후보와 기존 reuse map이고, 출력은 repository candidate에 [배치 rubric](references/repository-placement.md)을 적용한 target 위치와 `propose | update | merge | no-op | discard` 중 하나입니다. 실제 문안은 별도 `초안`이 소유합니다.
-5. `apply/receipt`: 입력은 후보·별도 승인·적용 전 대상 상태이고, 출력은 `reported | applied | pending` 상태와 해당 후보·evidence·재검증 경로의 참조입니다. Rule 후보는 적용을 기다리는 `propose | update | merge`이면 `pending`, 더 적용할 내용이 없는 `no-op | discard`이면 `reported`, 승인 후 실제 반영·재검증된 결과만 `applied`입니다. Skill 후보는 evidence, exact target, working draft와 `pending`까지만 소유하고 이 skill에서 생성·semantic update·merge하지 않습니다. 후보 본문을 receipt에 복사하지 마세요.
+5. `apply/receipt`: 입력은 후보·별도 승인·적용 전 대상 상태이고, 출력은 아래 상태 전이표의 상태와 후보·evidence·재검증 경로 참조입니다. 후보 본문을 receipt에 복사하지 마세요.
+
+### 후보 상태 전이
+
+| Candidate | Condition | Status | Mutation |
+|---|---|---|---|
+| Rule `propose | update | merge` | 별도 적용 승인 전 | `pending` | 없음 |
+| Rule `no-op | discard` | 적용할 내용 없음 | `reported` | 없음 |
+| Rule `propose | update | merge` | 별도 승인 후 정확한 target에 반영·재검증 성공 | `applied` | 승인 범위만 |
+| Rule | 승인 후 적용·재검증 실패 | `Fail | Blocked | Unverifiable` | 기존 대상 보존, 추가 mutation 중단 |
+| Skill 후보 | evidence·exact target·working draft 제시 | `pending` | 생성·semantic update·merge 없음 |
+| 모든 후보 | verified evidence가 하나도 없음 | `Unverifiable` | 없음 |
 
 각 후보를 다음처럼 분리해 작성하세요.
 
@@ -40,15 +51,15 @@ Confidence는 다음 기준으로만 올리세요. `high`는 서로 다른 occur
 
 신규 skill 생성과 기존 skill의 semantic update/merge는 `tk-learn`만 소유합니다. 이 skill은 skill 후보의 evidence, current-host native exact target, working draft와 `pending`까지만 보고하고, `tk-learn`을 자동 호출하거나 skill path를 직접 쓰지 않습니다.
 
-사용자가 중단하면 `aborted`, 충돌 또는 적용 범위가 불명확하면 `Blocked`로 보고하세요.
+사용자가 중단하면 `aborted`, 충돌 또는 적용 범위가 불명확하면 `Blocked`로 보고하세요. 후보별 `reported | pending | applied`와 실행 전체의 terminal status를 섞지 마세요.
 
 기본적으로 파일을 수정하거나 영속 원장/식별자를 만들지 말고, 레거시 전역 상태를 탐색하거나 일회성 우회책을 일반화하지 마세요. 아래 `RF-##`는 이번 응답 안에서만 쓰는 출력용 후보 ID이며 원장 상태가 아닙니다. 별도 명시적 동의가 있더라도 원시 자격 증명/로그/스크린샷을 규칙이나 스킬 후보로 그대로 승격하지 마세요.
 
-필수 source를 읽을 수 없으면 경로와 오류를 `unverified`로 기록하고 해당 내용을 해석하거나 후보 근거로 사용하지 마세요. Verified evidence가 하나도 남지 않으면 `Unverifiable`로 멈춥니다. 별도 승인 후 적용·재검증이 실패하면 `applied`로 표시하지 말고 기존 대상을 보존하세요. 이번 실행의 변경을 정확히 복원하고 재검증할 수 없으면 추가 수정을 중단하고 실패 경로와 증거를 `Fail | Blocked | Unverifiable`로 보고하세요.
+필수 source를 읽을 수 없으면 경로와 오류를 `unverified`로 기록하고 해당 내용을 해석하거나 후보 근거로 사용하지 마세요. 적용·재검증 실패와 verified evidence 부재는 후보 상태 전이표를 따르세요.
 
 ## CHECKPOINT / STOP
 
-후보의 대상, evidence, confidence, action을 제시한 뒤 별도의 명시적 적용 동의를 받으세요. 동의 전에는 파일을 수정하거나 후보를 승격하지 말고 `pending` 또는 `reported`로 멈추세요.
+후보의 대상, evidence, confidence, action을 제시한 뒤 별도의 명시적 적용 동의를 받으세요. 동의 전에는 후보 상태 전이표의 `pending | reported` 경계에서 멈추세요.
 
 비어 있지 않은 각 후보에 대해 `대상`, ID가 붙은 `Evidence`, `Interpretation`, `Confidence`, `Action`, 필요할 때만 `초안`, `Receipt`를 한 번씩만 보고하세요. Interpretation은 재사용 범위·경계만, Confidence는 등급·Evidence ID·불확실성만, 초안은 적용 가능한 실제 규칙·스킬 문안만 소유합니다. 대상 선택의 재사용 근거는 `Interpretation`이 이미 소유하므로 `이 대상인 이유` 같은 별도 근거 필드를 만들지 마세요. `Interpretation`이 학습 내용을, `Action`이 수행할 작업을 소유하므로 별도 `작업`·`학습 내용` 필드를 만들지 마세요. Receipt는 상태와 앞선 필드의 참조만 기록하고 내용을 반복하지 않습니다.
 

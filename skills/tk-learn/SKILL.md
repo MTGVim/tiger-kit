@@ -18,7 +18,7 @@ metadata:
 Draft와 apply는 서로 다른 gate입니다.
 
 - `draft gate`: 확인된 증거와 아직 확인하지 못한 사용자 진술을 구분해 `pending` 후보를 설계합니다. 증거가 `unverified`여도 명확한 skill 설계 요청이면 초안을 생략하지 않습니다.
-- `apply gate`: 검증된 승격 threshold, dedupe, trigger/eval/compatibility와 현재 turn의 명시적 승인이 모두 있어야 skill 경로에 쓸 수 있습니다.
+- `apply gate`: 아래 checklist의 모든 항목이 통과해야 skill 경로에 쓸 수 있습니다.
 
 ## Workflow
 
@@ -28,8 +28,19 @@ Draft와 apply는 서로 다른 gate입니다.
 2. **Promotion과 dedupe** — [스킬 품질](references/skill-quality.md)의 승격 gate를 적용하고 기존 repo/user skill, 기본 모델 기능, 짧은 rule과 비교해 `merge | no-op | continue | pending`을 판정합니다. 목록을 읽을 수 없으면 `pending`으로 표시하되 draft는 계속합니다.
 3. **Candidate proposal** — target, working name, invocation kind, positive/negative trigger를 제시합니다. 사용자가 준 도메인·workflow 표현으로 reversible working name과 trigger 예시를 만들고 `proposed`로 표시하세요. 근거가 없는 동작은 발명하지 말고 해당 값만 `TBD`로 남깁니다.
 4. **Minimum draft** — 입력, 핵심 workflow, 명시적 실패 분기, approval boundary, 완료 기준, 출력 계약, DO NOT 목록을 포함한 최소 SKILL.md를 보여줍니다. 이어 train/validation trigger, success/boundary assertion, no-skill 또는 이전 skill baseline, portable-core/host-extension 판정을 제시합니다.
-5. **Approval summary** — evidence threshold, dedupe, target/name/kind, trigger validation, behavior assertions, baseline, compatibility, 계획 경로를 한 번씩 요약하고 `pending | no-op | Blocked | Unverifiable`로 멈춥니다.
+5. **Approval summary** — apply gate checklist의 항목별 상태와 계획 경로를 한 번씩 요약하고 `pending | no-op | Blocked | Unverifiable`로 멈춥니다.
 6. **Write, verify, report** — 현재 turn에 사용자가 정확한 후보와 target path 적용을 명시 승인한 뒤에만 write 전 내용을 보존하고 적용합니다. frontmatter, links, evals, target-host invocation을 검증한 뒤에만 `applied`로 보고합니다.
+
+### Apply gate checklist
+
+| Check | Pass evidence | Not passed |
+|---|---|---|
+| Promotion threshold | 독립 사례와 공통 workflow가 승격 기준 충족 | `no-op | pending` |
+| Dedupe | 기존 skill·기본 기능·짧은 rule과의 차이 및 `merge | continue` 근거 | `no-op | pending` |
+| Candidate identity | native target, name, invocation kind, positive/negative trigger 확정 | `pending | Unverifiable` |
+| Behavior validation | train/validation trigger와 success/boundary assertion 통과 | `pending | Blocked` |
+| Baseline·compatibility | no-skill/이전 skill baseline과 portable-core/host-extension 판정 확인 | `pending | Unverifiable` |
+| Apply authority | 현재 turn에 정확한 후보와 target path를 명시 승인 | `pending`; write 금지 |
 
 Target은 실제 경로나 host discovery evidence로 식별된 현재 host의 native repo/user skill 위치만 사용하세요. Current host를 식별할 수 없으면 경로를 발명하지 말고 `Unverifiable`로 멈춥니다. 한 host 전용 위치를 다른 host에 강제하거나 cross-host fan-out/sync하지 말고, `.tigerkit/`을 영구 skill registry나 global state로 사용하지 마세요.
 
@@ -48,7 +59,7 @@ Target은 실제 경로나 host discovery evidence로 식별된 현재 host의 n
 
 현재 turn의 명시적 apply 승인 전에는 canonical path와 `.tigerkit/skill-drafts/<skill-name>/` 어디에도 쓰지 마세요. 과거 승인, implicit invocation, “계속” 같은 일반 응답은 승인이 아닙니다. 승인 전 candidate는 항상 `pending`이며 Created path는 계획한 정확한 경로와 `not created`를 표시합니다.
 
-승인 후에도 evidence threshold, dedupe, trigger validation, success/boundary assertions, baseline, target-host compatibility 중 하나가 검증되지 않으면 `applied`로 표시하지 마세요.
+승인 후에도 apply gate checklist의 항목이 하나라도 통과하지 않으면 `applied`로 표시하지 마세요.
 
 ## Output contract
 
