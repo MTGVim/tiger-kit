@@ -157,6 +157,24 @@
       "facets": [
         "compound"
       ]
+    },
+    {
+      "id": "validation-positive-slash-host",
+      "split": "validation",
+      "query": "/tk-drive 이 source를 검증된 commit까지 진행해줘",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-picker-host",
+      "split": "validation",
+      "query": "skill picker에서 tk-drive를 직접 선택했습니다. 이 작업을 시작하세요.",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
     }
   ]
 }

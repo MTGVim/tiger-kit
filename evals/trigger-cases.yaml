@@ -97,6 +97,8 @@
 - skill: tk-drive
   positive:
     - "$tk-drive 이 source를 spec부터 verified commit까지 진행해줘"
+    - "/tk-drive 이 source를 spec부터 verified commit까지 진행해줘"
+    - "skill picker에서 tk-drive를 직접 선택해 이 source를 끝까지 진행해줘"
     - "$tk-drive 이 Ready spec을 끝까지 처리해줘"
     - "active tk-drive가 A/B를 물었고 사용자가 A라고 답했다"
   negative:

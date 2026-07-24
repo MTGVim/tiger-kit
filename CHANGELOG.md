@@ -1,5 +1,13 @@
 # Changelog
 
+## 20.1.0 — Cross-Host Parity and Eval Evidence
+
+- Made `tk-drive` explicit start host-neutral across slash commands, Codex `$` invocation, and skill pickers, and carried exact source UI writing through spec, tickets, implementation, staged diff, and rendered evidence.
+- Made `tk-learn` the sole semantic skill writer, limited reflect/grooming to proposal-only semantic changes, resolved only current-host native targets, and simplified handoff state to one `.tigerkit/handoff.md` snapshot.
+- Added browser capture sensitivity, redaction, and residue gates that keep unverified sensitive evidence out of repo-local scratch.
+- Strengthened evals with exact terminal states, content/path/diff assertions, independent baseline/candidate contracts, deletion/weakening drift checks, catalog selection metadata, and a Claude Code/Codex/Hermes Agent critical routing matrix.
+- Locked the deterministic repository placement rubric from #182 with mechanical safety-token, sibling-threshold, override, fallback, and missing-evidence regression coverage while preserving all 12 canonical skill names and invocation kinds.
+
 ## 20.0.3 — Headless Verification and Numbered Reports
 
 - Made `tk-browser-verify` launch Chrome with the exact `--headless=new` argument by default, permit headed mode only for user-completed interactive authentication, and resume verification headlessly with the same persistent profile.

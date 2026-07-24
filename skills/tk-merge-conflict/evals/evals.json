@@ -17,13 +17,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ],
       "darwin": true
@@ -40,14 +34,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Blocked",
-            "Unverifiable",
-            "Partial",
-            "pending",
-            "no-op"
-          ]
+          "expected": "Blocked"
         },
         {
           "type": "git_head_unchanged"

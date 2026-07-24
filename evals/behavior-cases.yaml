@@ -247,18 +247,27 @@
 - case: browser-captures-move-to-tigerkit-ledger
   skill: tk-browser-verify
   expect: "Run-owned screenshots, traces, videos, network dumps, and console captures are moved from tool or user scratch into the repo-local TigerKit run ledger before verdict; user-owned inputs are preserved."
+- case: browser-redacts-sensitive-captures
+  skill: tk-browser-verify
+  expect: "Sensitive network, HAR, and console captures are used only after redaction and residue checks; unignored repo scratch never retains unverified sensitive evidence."
 - case: learn-requires-eval-and-compatibility
   skill: tk-learn
   expect: "A skill candidate includes trigger validation, success and boundary assertions, a baseline plan, and a portable-core versus host-extension compatibility decision before approval."
 - case: learn-implicit-write-awaits-approval
   skill: tk-learn
   expect: "Implicit invocation stops at draft and checkpoint until current-turn explicit approval authorizes a target write."
+- case: learn-is-sole-semantic-skill-writer
+  skill: tk-learn
+  expect: "Only tk-learn creates or semantically updates and merges skills after its evidence, eval, compatibility, target, and approval gates."
 - case: handoff-ignores-generic-continue
   skill: tk-handoff
   expect: "Generic continue, summary, and status prompts do not trigger handoff write or resume."
+- case: handoff-uses-single-snapshot
+  skill: tk-handoff
+  expect: "Handoff uses only .tigerkit/handoff.md as the resume snapshot, references spec/ticket IDs, and never creates or migrates work-map.md."
 - case: drive-requires-explicit-start
   skill: tk-drive
-  expect: "Only explicit $tk-drive starts a workflow; ordinary implementation, generic continue, artifacts, and unrelated answers do not."
+  expect: "Only host-native explicit tk-drive selection starts a workflow; /tk-drive, $tk-drive, and picker selection are positive while ordinary implementation, generic continue, artifacts, and unrelated answers are not."
 - case: drive-resumes-pending-answer
   skill: tk-drive
   expect: "A direct same-conversation answer to the active pending decision resumes the next phase without another invocation."
@@ -283,3 +292,24 @@
 - case: drive-review-parity
   skill: tk-drive
   expect: "Drive uses the same fixed-point, inventory, Standards/Spec, bounded reviewer, finding, and drift gates as standalone implementation."
+- case: drive-preserves-source-ui-writing-verbatim
+  skill: tk-drive
+  expect: "Drive freezes exact source UI literals before spec mutation and rechecks them through spec, tickets, implementation, candidate/staged diff, and rendered UI."
+- case: drive-blocks-unreadable-ui-literal
+  skill: tk-drive
+  expect: "Unreadable or conflicting source UI literals are never guessed and prevent commit as Blocked or Unverifiable."
+- case: drive-carries-authorized-ui-writing-change
+  skill: tk-drive
+  expect: "Only the explicitly approved UI writing change is marked authorized while every other literal remains frozen."
+- case: reflect-placement-regression-matrix
+  skill: tk-reflect
+  expect: "Closed safety tokens, sibling thresholds, no-path, multiple-parent, overrides, and missing-host evidence route deterministically."
+- case: grooming-placement-regression-matrix
+  skill: tk-grooming
+  expect: "Grooming applies the same deterministic placement matrix and maps the result to report-only move or convert proposals."
+- case: reflect-skill-candidate-stays-pending
+  skill: tk-reflect
+  expect: "Reflect reports a skill candidate's evidence, current-host target, working draft, and pending status without semantic mutation."
+- case: grooming-semantic-convert-is-proposal-only
+  skill: tk-grooming
+  expect: "Rule-to-skill conversion, workflow split, and semantic skill rewrites remain proposals even in apply mode."

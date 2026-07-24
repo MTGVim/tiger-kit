@@ -21,7 +21,7 @@ metadata:
 2. `interpretation`: 입력은 evidence이고, 출력은 사실과 분리된 재사용 가설입니다.
 3. `confidence`: 입력은 evidence와 가설이고, 출력은 `high | medium | low` 및 근거입니다.
 4. `action`: 입력은 후보와 기존 reuse map이고, 출력은 repository candidate에 [배치 rubric](references/repository-placement.md)을 적용한 target 위치와 `propose | update | merge | no-op | discard` 중 하나입니다. 실제 문안은 별도 `초안`이 소유합니다.
-5. `apply/receipt`: 입력은 후보·별도 승인·적용 전 대상 상태이고, 출력은 `reported | applied | pending` 상태와 해당 후보·evidence·재검증 경로의 참조입니다. 적용을 기다리는 `propose | update | merge` 후보는 `pending`, 더 적용할 내용이 없는 `no-op | discard` 보고는 `reported`, 승인 후 실제 반영·재검증된 결과만 `applied`입니다. 후보 본문을 receipt에 복사하지 마세요.
+5. `apply/receipt`: 입력은 후보·별도 승인·적용 전 대상 상태이고, 출력은 `reported | applied | pending` 상태와 해당 후보·evidence·재검증 경로의 참조입니다. Rule 후보는 적용을 기다리는 `propose | update | merge`이면 `pending`, 더 적용할 내용이 없는 `no-op | discard`이면 `reported`, 승인 후 실제 반영·재검증된 결과만 `applied`입니다. Skill 후보는 evidence, exact target, working draft와 `pending`까지만 소유하고 이 skill에서 생성·semantic update·merge하지 않습니다. 후보 본문을 receipt에 복사하지 마세요.
 
 각 후보를 다음처럼 분리해 작성하세요.
 
@@ -36,7 +36,9 @@ Confidence는 다음 기준으로만 올리세요. `high`는 서로 다른 occur
 
 ## 계약
 
-저장소 대상은 코드베이스/도메인/도구/팀에 특화되고, 사용자 대상은 여러 저장소에서 반복됩니다. 기본은 `report-only`입니다. 후보를 DESIGN, reuse map, rule 또는 skill에 기록·수정·적용하려면 대상과 범위를 밝힌 별도의 명시적 사용자 동의를 먼저 받으세요. 침묵, 진행, 과거 유사 답변, reflect 호출 자체는 적용 동의가 아닙니다.
+저장소 대상은 코드베이스/도메인/도구/팀에 특화되고, 사용자 대상은 여러 저장소에서 반복됩니다. 기본은 `report-only`입니다. Rule 후보를 DESIGN, reuse map 또는 rule에 기록·수정·적용하려면 대상과 범위를 밝힌 별도의 명시적 사용자 동의를 먼저 받으세요. 침묵, 진행, 과거 유사 답변, reflect 호출 자체는 적용 동의가 아닙니다.
+
+신규 skill 생성과 기존 skill의 semantic update/merge는 `tk-learn`만 소유합니다. 이 skill은 skill 후보의 evidence, current-host native exact target, working draft와 `pending`까지만 보고하고, `tk-learn`을 자동 호출하거나 skill path를 직접 쓰지 않습니다.
 
 사용자가 중단하면 `aborted`, 충돌 또는 적용 범위가 불명확하면 `Blocked`로 보고하세요.
 

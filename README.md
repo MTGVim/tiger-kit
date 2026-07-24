@@ -31,10 +31,10 @@ npx skills add MTGVim/tiger-kit \
   --skill tk-browser-verify
 ```
 
-변경되지 않는 `v20.0.3` snapshot:
+변경되지 않는 `v20.1.0` snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v20.0.3" \
+npx skills add "MTGVim/tiger-kit#v20.1.0" \
   --global \
   --agent claude-code \
   --agent codex \
@@ -79,10 +79,10 @@ tk-grill-me
 
 결정이 끝났거나 변경이 작다면 바로 `tk-implement`를 사용할 수 있습니다.
 
-반복해서 같은 전체 흐름을 쓴다면 `$tk-drive`로 명시 시작할 수 있습니다. Blocking ambiguity가 있을 때만 질문 하나를 남기고, 같은 대화의 답변 뒤 자동으로 이어갑니다. 작은 single-slice에는 ticket을 만들지 않고, 여러 vertical slice 또는 장기 재개 가치가 있을 때만 상태 ledger를 둡니다.
+반복해서 같은 전체 흐름을 쓴다면 현재 host에서 `tk-drive`를 명시적으로 선택해 시작할 수 있습니다. Claude Code·Hermes Agent의 `/tk-drive`, Codex의 `$tk-drive`, host skill picker의 직접 선택이 같은 explicit start입니다. Blocking ambiguity가 있을 때만 질문 하나를 남기고, 같은 대화의 답변 뒤 자동으로 이어갑니다. 작은 single-slice에는 ticket을 만들지 않고, 여러 vertical slice 또는 장기 재개 가치가 있을 때만 상태 ledger를 둡니다.
 
 ```text
-$tk-drive <source>
+<host-native explicit tk-drive> <source>
 → Ready spec
 → 필요할 때만 tickets 또는 disposable prototype
 → implementation + built-in review

@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "critical_hosts": [
+    "claude-code",
+    "codex",
+    "hermes-agent"
+  ],
+  "cases": [
+    {
+      "id": "spec-vs-tickets-spec",
+      "boundary": "tk-to-spec vs tk-to-tickets",
+      "prompt": "확정된 결정을 독립 구현 명세로 작성해 주세요.",
+      "focus_skill": "tk-to-spec",
+      "expected_selected_skill": "tk-to-spec",
+      "critical": true
+    },
+    {
+      "id": "spec-vs-tickets-tickets",
+      "boundary": "tk-to-spec vs tk-to-tickets",
+      "prompt": "이 Ready 명세를 독립 검증 가능한 vertical ticket으로 나눠 주세요.",
+      "focus_skill": "tk-to-tickets",
+      "expected_selected_skill": "tk-to-tickets",
+      "critical": false
+    },
+    {
+      "id": "reflect-vs-grooming-reflect",
+      "boundary": "tk-reflect vs tk-grooming",
+      "prompt": "이번 diff에서 새 재사용 rule/skill 후보를 찾아 주세요.",
+      "focus_skill": "tk-reflect",
+      "expected_selected_skill": "tk-reflect",
+      "critical": true
+    },
+    {
+      "id": "reflect-vs-grooming-grooming",
+      "boundary": "tk-reflect vs tk-grooming",
+      "prompt": "기존 repo rule과 skill의 중복·범위·배치를 감사해 주세요.",
+      "focus_skill": "tk-grooming",
+      "expected_selected_skill": "tk-grooming",
+      "critical": false
+    },
+    {
+      "id": "implement-vs-drive-implement",
+      "boundary": "tk-implement vs tk-drive",
+      "prompt": "/tk-implement 이 변경을 구현하고 검증된 commit을 만들어 주세요.",
+      "focus_skill": "tk-implement",
+      "expected_selected_skill": "tk-implement",
+      "critical": false
+    },
+    {
+      "id": "implement-vs-drive-drive",
+      "boundary": "tk-implement vs tk-drive",
+      "prompt": "$tk-drive 이 source를 spec부터 검증된 commit까지 진행해 주세요.",
+      "focus_skill": "tk-drive",
+      "expected_selected_skill": "tk-drive",
+      "critical": true
+    },
+    {
+      "id": "prototype-vs-browser-prototype",
+      "boundary": "tk-prototype vs tk-browser-verify",
+      "prompt": "UI 불확실성을 줄이도록 폐기 가능한 3개 layout variant를 만들어 비교해 주세요.",
+      "focus_skill": "tk-prototype",
+      "expected_selected_skill": "tk-prototype",
+      "critical": false
+    },
+    {
+      "id": "prototype-vs-browser-browser",
+      "boundary": "tk-prototype vs tk-browser-verify",
+      "prompt": "실제 페이지의 form interaction과 최종 UI를 browser evidence로 판정해 주세요.",
+      "focus_skill": "tk-browser-verify",
+      "expected_selected_skill": "tk-browser-verify",
+      "critical": true
+    },
+    {
+      "id": "handoff-vs-summary-handoff",
+      "boundary": "tk-handoff vs generic summary/continue",
+      "prompt": "/tk-handoff 현재 작업을 다음 에이전트가 재개할 snapshot으로 작성해 주세요.",
+      "focus_skill": "tk-handoff",
+      "expected_selected_skill": "tk-handoff",
+      "critical": true
+    },
+    {
+      "id": "handoff-vs-summary-generic",
+      "boundary": "tk-handoff vs generic summary/continue",
+      "prompt": "현재 상태만 짧게 요약해 주세요.",
+      "focus_skill": "tk-handoff",
+      "expected_selected_skill": null,
+      "critical": false
+    },
+    {
+      "id": "merge-conflict-vs-marker-active",
+      "boundary": "tk-merge-conflict vs ordinary conflict-marker edit",
+      "prompt": "진행 중인 rebase conflict를 의도에 맞게 해결하고 rebase를 완료해 주세요.",
+      "focus_skill": "tk-merge-conflict",
+      "expected_selected_skill": "tk-merge-conflict",
+      "critical": true
+    },
+    {
+      "id": "merge-conflict-vs-marker-ordinary",
+      "boundary": "tk-merge-conflict vs ordinary conflict-marker edit",
+      "prompt": "활성 merge/rebase는 없습니다. fixture의 <<<<<<< 문자열만 일반 텍스트로 수정해 주세요.",
+      "focus_skill": "tk-merge-conflict",
+      "expected_selected_skill": null,
+      "critical": false
+    }
+  ]
+}

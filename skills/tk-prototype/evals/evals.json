@@ -17,13 +17,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ],
       "darwin": true
@@ -40,14 +34,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Blocked",
-            "Unverifiable",
-            "Partial",
-            "pending",
-            "no-op"
-          ]
+          "expected": "Blocked"
         },
         {
           "type": "git_head_unchanged"
@@ -68,13 +55,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ]
     },
@@ -90,13 +71,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ]
     },
@@ -112,13 +87,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ]
     },
@@ -134,12 +103,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Blocked",
-            "Fail",
-            "Unverifiable",
-            "pending"
-          ]
+          "expected": "Blocked"
         },
         {
           "type": "git_head_unchanged"
@@ -159,12 +123,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ]
     }

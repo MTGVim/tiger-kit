@@ -17,13 +17,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         },
         {
           "type": "git_head_unchanged"
@@ -43,9 +37,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "pending"
-          ]
+          "expected": "Pending"
         },
         {
           "type": "git_head_unchanged"

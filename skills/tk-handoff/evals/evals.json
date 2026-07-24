@@ -17,11 +17,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "pending",
-            "reported",
-            "applied"
-          ]
+          "expected": "Pending"
         },
         {
           "type": "path_exists",
@@ -42,10 +38,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Blocked",
-            "pending"
-          ]
+          "expected": "Blocked"
         },
         {
           "type": "git_head_unchanged"
@@ -66,13 +59,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ]
     },
@@ -88,15 +75,35 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Blocked",
-            "Fail",
-            "Unverifiable",
-            "pending"
-          ]
+          "expected": "Blocked"
         },
         {
           "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true
+    },
+    {
+      "id": "handoff-uses-single-snapshot",
+      "path": "success",
+      "prompt": "/tk-handoff 장기 multi-slice 작업을 인수인계해 주세요. Ready spec과 tickets가 이미 있습니다.",
+      "expected_output": ".tigerkit/handoff.md 하나만 snapshot으로 쓰고 spec R/AC와 ticket ID를 참조하며 새 work-map.md나 archive/current pointer를 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "Handoff 본문에 spec/tickets 내용을 복제하지 않고 relevant ID만 참조하며 legacy work-map은 무시한다."
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/handoff.md"
+        },
+        {
+          "type": "path_absent",
+          "path": ".tigerkit/work-map.md"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
         }
       ],
       "safety": true

@@ -27,6 +27,8 @@ metadata:
 
 Repository rule/skill은 파일 전체가 아니라 독립적인 normative instruction/workflow 단위로 판정하세요. 기대 kind가 달라지면 `convert`, 둘 다 rule이지만 root와 nested 위치가 다르면 `move`, 한 artifact가 서로 다른 결과 단위를 섞으면 먼저 `split`, 위치와 kind가 맞고 다른 결함이 없으면 `keep`입니다. 필요한 path/count/threshold evidence가 없거나 충돌하면 추정하지 말고 해당 영역을 `Partial/Blocked | Unverifiable`로 두세요.
 
+Apply가 승인되어도 이 skill이 직접 소유하는 mutation은 `tighten`, exact target이 명확한 기계적 `move`, 참조가 없는 `delete`, frontmatter/link `fix`뿐입니다. Rule→skill `convert`, workflow `split`, semantic skill rewrite는 exact candidate/target을 제안하고 `pending`으로 남기며 직접 쓰지 않습니다. 이 proposal은 `tk-learn` 입력으로 사용할 수 있지만 이 skill이 자동 호출하지 않습니다.
+
 기본은 보고만 수행합니다. 최초 요청의 literal `--apply` 또는 checkpoint 뒤 현재 turn의 명시적 승인에서 정확한 범위가 정해졌을 때만 적용하세요. 과거 승인이나 일반적인 진행 응답은 apply 권한이 아닙니다. 적용 시 원본을 다시 읽고, 삭제 전에 참조를 검색하고, 관리되거나 자동 생성된 콘텐츠의 소유권 표기를 보존하며, 광범위한 저장소/사용자 변경을 조용히 섞지 마세요. 지식을 지어내거나 회고/학습을 대신하지 마세요.
 
 ## Failure paths
@@ -62,4 +64,5 @@ Repository rule/skill은 파일 전체가 아니라 독립적인 normative instr
 - `--apply` 없이 파일을 수정하거나, 삭제·이동 전에 참조를 확인하지 마세요.
 - 사용자가 지정하지 않은 저장소·사용자 파일을 조용히 섞어 바꾸지 마세요.
 - 레거시 전역 TigerKit 상태를 탐색하거나 마이그레이션하지 마세요.
+- Rule→skill convert, workflow split 또는 semantic skill rewrite를 직접 적용하거나 `tk-learn`을 자동 호출하지 마세요.
 - 항목 ID를 생략·재사용·재번호화하거나 Summary를 생략하지 마세요.

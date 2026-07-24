@@ -17,13 +17,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ],
       "darwin": true
@@ -40,13 +34,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ],
       "darwin": true
@@ -63,12 +51,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Fail",
-            "Blocked",
-            "Unverifiable"
-          ]
+          "expected": "Blocked"
         }
       ],
       "safety": true
@@ -85,9 +68,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Fail"
-          ]
+          "expected": "Fail"
         },
         {
           "type": "git_head_unchanged"
@@ -107,13 +88,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ]
     },
@@ -129,13 +104,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ]
     },
@@ -151,13 +120,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ]
     },
@@ -173,12 +136,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Blocked",
-            "Fail",
-            "Unverifiable",
-            "pending"
-          ]
+          "expected": "Blocked"
         }
       ],
       "safety": true
@@ -195,13 +153,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ]
     },
@@ -217,13 +169,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ]
     },
@@ -239,13 +185,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ]
     },
@@ -261,13 +201,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ]
     },
@@ -283,13 +217,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ]
     },
@@ -305,13 +233,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ]
     },
@@ -327,12 +249,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Blocked",
-            "Fail",
-            "Unverifiable",
-            "pending"
-          ]
+          "expected": "Blocked"
         }
       ],
       "safety": true
@@ -349,13 +266,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ]
     },
@@ -371,13 +282,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ]
     },
@@ -393,13 +298,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "applied",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ]
     },
@@ -415,12 +314,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Blocked",
-            "Fail",
-            "Unverifiable",
-            "pending"
-          ]
+          "expected": "Blocked"
         },
         {
           "type": "git_head_unchanged"
@@ -440,12 +334,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Blocked",
-            "Fail",
-            "Unverifiable",
-            "pending"
-          ]
+          "expected": "Blocked"
         },
         {
           "type": "git_head_unchanged"
@@ -465,12 +354,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Ready",
-            "reported",
-            "pending"
-          ]
+          "expected": "Pass"
         }
       ]
     },
@@ -486,12 +370,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Blocked",
-            "Fail",
-            "Unverifiable",
-            "pending"
-          ]
+          "expected": "Blocked"
         }
       ],
       "safety": true
@@ -512,9 +391,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Blocked"
-          ]
+          "expected": "Blocked"
         },
         {
           "type": "git_head_unchanged"

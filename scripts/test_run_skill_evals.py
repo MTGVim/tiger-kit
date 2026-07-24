@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -7,18 +8,24 @@ from pathlib import Path
 if __package__:
     from scripts.run_skill_evals import (
         build_verdict,
+        compare_catalog_contracts,
+        compare_eval_contracts,
         evaluate_checkout,
         summarize_trigger_outcomes,
         validate_adapter_result,
         validate_case_filter,
+        verify_mechanical_assertion,
     )
 else:
     from run_skill_evals import (
         build_verdict,
+        compare_catalog_contracts,
+        compare_eval_contracts,
         evaluate_checkout,
         summarize_trigger_outcomes,
         validate_adapter_result,
         validate_case_filter,
+        verify_mechanical_assertion,
     )
 
 
@@ -33,10 +40,35 @@ class AdapterResultTest(unittest.TestCase):
         self.assertEqual(
             validate_adapter_result({"output": "ok"}),
             [
-                "adapter result requires boolean skill_loaded",
-                "adapter result requires non-empty string terminal_status",
+                "adapter result requires boolean skill_loaded or string-list loaded_skills",
+                "adapter result terminal_status must be one of Blocked, Fail, "
+                "NotApplicable, Pass, Pending, Unverifiable",
             ],
         )
+
+    def test_accepts_catalog_selection_metadata(self) -> None:
+        self.assertEqual(
+            validate_adapter_result(
+                {
+                    "loaded_skills": ["tk-drive"],
+                    "selected_skill": "tk-drive",
+                    "output": "ok",
+                    "terminal_status": "Pass",
+                }
+            ),
+            [],
+        )
+
+    def test_rejects_artifact_disposition_as_terminal_status(self) -> None:
+        errors = validate_adapter_result(
+            {
+                "skill_loaded": True,
+                "output": "ok",
+                "terminal_status": "applied",
+            }
+        )
+
+        self.assertTrue(any("terminal_status must be one of" in error for error in errors))
 
 
 class VerdictTest(unittest.TestCase):
@@ -195,6 +227,207 @@ class TriggerMetricTest(unittest.TestCase):
 
 
 class RunnerContractTest(unittest.TestCase):
+    def behavior(self, case_id: str, terminal: dict[str, object]) -> dict[str, object]:
+        return {
+            "id": case_id,
+            "assertions": [
+                terminal,
+                {"type": "git_head_unchanged"},
+            ],
+        }
+
+    def contract(
+        self, cases: list[dict[str, object]], *, safety: bool = False
+    ) -> dict[str, dict[str, object]]:
+        if safety:
+            cases[0]["safety"] = True
+        return {
+            "tk-sample": {
+                "triggers": {
+                    "queries": [
+                        {"id": "trigger", "should_trigger": True},
+                    ]
+                },
+                "behavior": {"evals": cases},
+            }
+        }
+
+    def test_contract_drift_rejects_deleted_or_weakened_cases(self) -> None:
+        baseline = self.contract(
+            [
+                self.behavior(
+                    "safe",
+                    {"type": "terminal_status", "allowed": ["Pass", "Blocked"]},
+                )
+            ],
+            safety=True,
+        )
+        candidate = self.contract(
+            [
+                self.behavior(
+                    "other",
+                    {"type": "terminal_status", "expected": "Pass"},
+                )
+            ]
+        )
+
+        errors = compare_eval_contracts(baseline, candidate)
+
+        self.assertTrue(any("deleted" in error for error in errors))
+
+    def test_contract_drift_accepts_stronger_terminal_and_new_cases(self) -> None:
+        baseline = self.contract(
+            [
+                self.behavior(
+                    "safe",
+                    {"type": "terminal_status", "allowed": ["Pass", "Blocked"]},
+                )
+            ]
+        )
+        candidate = self.contract(
+            [
+                self.behavior(
+                    "safe",
+                    {"type": "terminal_status", "expected": "Pass"},
+                ),
+                self.behavior(
+                    "new",
+                    {"type": "terminal_status", "expected": "Blocked"},
+                ),
+            ]
+        )
+
+        self.assertEqual(compare_eval_contracts(baseline, candidate), [])
+
+    def test_catalog_contract_drift_rejects_deleted_critical_case(self) -> None:
+        baseline = {
+            "critical_hosts": ["claude-code", "codex", "hermes-agent"],
+            "cases": [
+                {
+                    "id": "critical",
+                    "expected_selected_skill": "tk-drive",
+                    "critical": True,
+                }
+            ],
+        }
+        candidate = {
+            "critical_hosts": ["codex", "hermes-agent"],
+            "cases": [],
+        }
+
+        errors = compare_catalog_contracts(baseline, candidate)
+
+        self.assertTrue(any("deleted case" in error for error in errors))
+        self.assertTrue(any("critical host" in error for error in errors))
+
+    def test_content_path_and_diff_assertions_are_mechanical(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            checkout = Path(directory)
+            subprocess.run(["git", "init", "-q"], cwd=checkout, check=True)
+            subprocess.run(
+                ["git", "config", "user.email", "test@example.com"],
+                cwd=checkout,
+                check=True,
+            )
+            subprocess.run(
+                ["git", "config", "user.name", "Test"],
+                cwd=checkout,
+                check=True,
+            )
+            target = checkout / "message.txt"
+            target.write_text("before\n", encoding="utf-8")
+            subprocess.run(["git", "add", "message.txt"], cwd=checkout, check=True)
+            subprocess.run(["git", "commit", "-qm", "initial"], cwd=checkout, check=True)
+            initial_head = subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                cwd=checkout,
+                text=True,
+                capture_output=True,
+                check=True,
+            ).stdout.strip()
+            target.write_text("authorized change\n", encoding="utf-8")
+
+            rows = [
+                verify_mechanical_assertion(
+                    {"type": "output_contains", "text": "literal"},
+                    adapter_result={"output": "exact literal", "terminal_status": "Pass"},
+                    checkout=checkout,
+                    initial_head=initial_head,
+                ),
+                verify_mechanical_assertion(
+                    {
+                        "type": "path_text_contains",
+                        "path": "message.txt",
+                        "text": "authorized change",
+                    },
+                    adapter_result={"output": "", "terminal_status": "Pass"},
+                    checkout=checkout,
+                    initial_head=initial_head,
+                ),
+                verify_mechanical_assertion(
+                    {"type": "changed_paths_equal", "paths": ["message.txt"]},
+                    adapter_result={"output": "", "terminal_status": "Pass"},
+                    checkout=checkout,
+                    initial_head=initial_head,
+                ),
+                verify_mechanical_assertion(
+                    {"type": "git_diff_contains", "text": "authorized change"},
+                    adapter_result={"output": "", "terminal_status": "Pass"},
+                    checkout=checkout,
+                    initial_head=initial_head,
+                ),
+            ]
+
+            self.assertTrue(all(row["passed"] for row in rows))
+
+    def test_catalog_routing_uses_selected_skill_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            checkout = root / "checkout"
+            (checkout / "skills" / "tk-drive").mkdir(parents=True)
+            adapter = root / "adapter.py"
+            adapter.write_text(
+                "import json, os\n"
+                "selected = None if 'summary' in os.environ['TK_EVAL_PROMPT'] "
+                "else os.environ['TK_EVAL_SKILL']\n"
+                "loaded = [] if selected is None else [selected]\n"
+                "print(json.dumps({'loaded_skills': loaded, 'selected_skill': selected, "
+                "'output': 'catalog', 'terminal_status': 'Pass', 'total_tokens': 1}))\n",
+                encoding="utf-8",
+            )
+            catalog = {
+                "cases": [
+                    {
+                        "id": "explicit",
+                        "prompt": "explicit drive",
+                        "focus_skill": "tk-drive",
+                        "expected_selected_skill": "tk-drive",
+                        "critical": True,
+                    },
+                    {
+                        "id": "generic",
+                        "prompt": "summary only",
+                        "focus_skill": "tk-drive",
+                        "expected_selected_skill": None,
+                        "critical": True,
+                    },
+                ]
+            }
+
+            summary, records = evaluate_checkout(
+                checkout,
+                {},
+                adapter_command=f"python3 {adapter}",
+                grader_command="unused",
+                host="codex",
+                runs=1,
+                case_filter=None,
+                catalog_contract=catalog,
+            )
+
+            self.assertEqual(summary["routing_pass_rate"], 1.0)
+            self.assertTrue(all(record["passed"] for record in records))
+
     def test_rejects_unknown_case_filter(self) -> None:
         contracts = {
             "tk-sample": {

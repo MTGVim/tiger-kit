@@ -19,4 +19,4 @@ Stop at the first match:
 3. No safety token and there is no concrete path, there are multiple parents, or `sibling_count > threshold`: `repo skill`.
 4. Required path, count, Git, or threshold evidence is inaccessible or conflicting: defer classification through the caller's `low`, `Blocked`, or `Unverifiable` path.
 
-Use only host-native paths already present or allowed by repository discovery. A nested rule remains a placement of the `repo rule` target, not a fifth target kind.
+Use only current-host native paths already present or allowed by current-host discovery. Identify the current host from evidence; if it cannot be identified, do not invent a target and defer through the caller-specific `low`, `Partial/Blocked`, or `Unverifiable` path. Never copy one host's path convention to another host, fan out to multiple hosts, synchronize targets, or create TigerKit global state. A shared repository rule is eligible only when the user names it or a tracked shared instruction file is discovered. A nested rule remains a placement of the `repo rule` target, not a fifth target kind.

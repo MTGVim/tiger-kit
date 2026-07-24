@@ -31,6 +31,30 @@ MECHANICAL_ASSERTION_TYPES = {
     "path_absent",
     "git_head_changed",
     "git_head_unchanged",
+    "output_contains",
+    "output_absent",
+    "path_text_contains",
+    "path_text_absent",
+    "changed_paths_equal",
+    "git_diff_contains",
+    "git_diff_absent",
+}
+TERMINAL_STATUSES = {
+    "Pass",
+    "Fail",
+    "Blocked",
+    "Unverifiable",
+    "Pending",
+    "NotApplicable",
+}
+SUPPORTED_EVAL_HOSTS = {"claude-code", "codex", "hermes-agent"}
+CATALOG_ROUTING_BOUNDARIES = {
+    "tk-to-spec vs tk-to-tickets",
+    "tk-reflect vs tk-grooming",
+    "tk-implement vs tk-drive",
+    "tk-prototype vs tk-browser-verify",
+    "tk-handoff vs generic summary/continue",
+    "tk-merge-conflict vs ordinary conflict-marker edit",
 }
 HYBRID_TRIGGER_FACETS = {"formal", "casual", "typo", "ko-en", "short", "compound"}
 EXPECTED_SKILLS = {
@@ -136,6 +160,16 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-does-not-auto-reflect",
     "drive-skips-unneeded-tickets",
     "drive-keeps-ticket-ledger",
+    "drive-preserves-source-ui-writing-verbatim",
+    "drive-blocks-unreadable-ui-literal",
+    "drive-carries-authorized-ui-writing-change",
+    "browser-redacts-sensitive-captures",
+    "handoff-uses-single-snapshot",
+    "reflect-placement-regression-matrix",
+    "grooming-placement-regression-matrix",
+    "reflect-skill-candidate-stays-pending",
+    "grooming-semantic-convert-is-proposal-only",
+    "learn-is-sole-semantic-skill-writer",
     "drive-bounds-nested-skills",
     "drive-commits-once",
     "drive-preserves-valid-diff-on-partial-failure",
@@ -377,6 +411,7 @@ def validate_repository_contract() -> list[str]:
         "scripts/sync_eval_compat.py",
         "evals/trigger-cases.yaml",
         "evals/behavior-cases.yaml",
+        "evals/catalog-routing.json",
     )
     for relative in required_files:
         if not (ROOT / relative).is_file():
@@ -420,6 +455,9 @@ def validate_repository_contract() -> list[str]:
             "headless launch 실패",
             "사용자가 직접 로그인을 완료해야 하는 interactive auth가 실제로 필요한 경우에만",
             "동일한 `user-data-dir`을 사용해 Chrome을 `--headless=new`로 다시 시작",
+            "`Sensitivity: normal | sensitive`",
+            "`Redaction: N/A | verified | failed | unverifiable`",
+            "`Residue check: verified | unverifiable`",
         ),
         "skills/tk-browser-verify/references/environment.md": (
             "effective process arguments에 정확한 `--headless=new`",
@@ -434,6 +472,7 @@ def validate_repository_contract() -> list[str]:
             "응답의 마지막 섹션은 항상 아래 고정 형식의 `## Summary`",
             "| No. | Rule | 한 줄 요약 | 적용 타깃 |",
             "| — | 없음 | 재사용 가능한 rule/skill 후보 없음 | 적용 없음 |",
+            "신규 skill 생성과 기존 skill의 semantic update/merge는 `tk-learn`만 소유",
         ),
         "skills/tk-grooming/SKILL.md": (
             "처음 식별한 순서대로 `GR-01`, `GR-02`, …를 한 번 부여",
@@ -441,6 +480,32 @@ def validate_repository_contract() -> list[str]:
             "응답의 마지막 섹션은 항상 아래 고정 형식의 `## Summary`",
             "| No. | Rule | 한 줄 요약 | 적용 타깃 |",
             "| — | 없음 | 감사 항목 없음 | 적용 없음 |",
+            "Rule→skill `convert`, workflow `split`, semantic skill rewrite",
+        ),
+        "skills/tk-learn/SKILL.md": (
+            "유일한 TigerKit writer",
+            "현재 host의 native repo/user skill 위치",
+            "cross-host fan-out/sync",
+        ),
+        "skills/tk-drive/SKILL.md": (
+            "`/tk-drive`, `$tk-drive`, host skill picker의 직접 선택",
+            "### 🔴 HARD GATE · source UI writing",
+            "`authorized change`",
+        ),
+        "skills/tk-handoff/SKILL.md": (
+            "재개용 단일 snapshot",
+            "새 `.tigerkit/work-map.md`",
+            "legacy scratch로 무시",
+        ),
+        "skills/tk-reflect/references/repository-placement.md": (
+            "closed safety token set",
+            "default sibling threshold is `15`",
+            "current-host native paths",
+        ),
+        "skills/tk-grooming/references/repository-placement.md": (
+            "closed safety token set",
+            "default sibling threshold is `15`",
+            "current-host native paths",
         ),
     }
     for relative, needles in required_text.items():
@@ -451,6 +516,17 @@ def validate_repository_contract() -> list[str]:
         for needle in needles:
             if needle not in text:
                 errors.append(f"{relative}: document required release contract {needle!r}")
+    placement_refs = (
+        ROOT / "skills/tk-reflect/references/repository-placement.md",
+        ROOT / "skills/tk-grooming/references/repository-placement.md",
+    )
+    if all(path.is_file() for path in placement_refs) and (
+        placement_refs[0].read_text(encoding="utf-8")
+        != placement_refs[1].read_text(encoding="utf-8")
+    ):
+        errors.append(
+            "repository placement rubric: keep tk-reflect and tk-grooming references identical"
+        )
     for directory in SKILLS.glob("*/**"):
         if directory.is_dir() and directory.name in {"references", "scripts", "agents"} and not any(directory.iterdir()):
             errors.append(f"{directory.relative_to(ROOT)}: remove empty optional directory")
@@ -694,14 +770,41 @@ def validate_skill_eval_files(skill_dir: Path, kind: str) -> list[str]:
                         has_mechanical = True
                         if assertion_type == "terminal_status":
                             allowed = assertion.get("allowed")
-                            if not isinstance(allowed, list) or not allowed or not all(
-                                isinstance(value, str) and value.strip() for value in allowed
+                            expected = assertion.get("expected")
+                            forbidden = assertion.get("forbidden", [])
+                            if (allowed is None) == (expected is None):
+                                errors.append(
+                                    f"{label}: evals/evals.json: case {index} terminal_status "
+                                    "assertion needs exactly one of expected or allowed"
+                                )
+                            values = [expected] if expected is not None else allowed
+                            if not isinstance(values, list) or not values or not all(
+                                isinstance(value, str) and value in TERMINAL_STATUSES
+                                for value in values
                             ):
                                 errors.append(
                                     f"{label}: evals/evals.json: case {index} terminal_status "
-                                    "assertion needs non-empty allowed values"
+                                    "values must use the terminal enum"
                                 )
-                        elif assertion_type in {"path_exists", "path_absent"}:
+                            if not isinstance(forbidden, list) or not all(
+                                isinstance(value, str) and value in TERMINAL_STATUSES
+                                for value in forbidden
+                            ):
+                                errors.append(
+                                    f"{label}: evals/evals.json: case {index} terminal_status "
+                                    "forbidden values must use the terminal enum"
+                                )
+                            elif isinstance(values, list) and set(values) & set(forbidden):
+                                errors.append(
+                                    f"{label}: evals/evals.json: case {index} terminal_status "
+                                    "expected/allowed and forbidden values must not overlap"
+                                )
+                        elif assertion_type in {
+                            "path_exists",
+                            "path_absent",
+                            "path_text_contains",
+                            "path_text_absent",
+                        }:
                             relative = assertion.get("path")
                             if (
                                 not isinstance(relative, str)
@@ -712,6 +815,40 @@ def validate_skill_eval_files(skill_dir: Path, kind: str) -> list[str]:
                                 errors.append(
                                     f"{label}: evals/evals.json: case {index} path assertion "
                                     "needs a safe relative path"
+                                )
+                            if assertion_type.startswith("path_text_") and not (
+                                isinstance(assertion.get("text"), str)
+                                and str(assertion.get("text")).strip()
+                            ):
+                                errors.append(
+                                    f"{label}: evals/evals.json: case {index} path text "
+                                    "assertion needs text"
+                                )
+                        elif assertion_type in {
+                            "output_contains",
+                            "output_absent",
+                            "git_diff_contains",
+                            "git_diff_absent",
+                        }:
+                            if not isinstance(assertion.get("text"), str) or not str(
+                                assertion.get("text")
+                            ).strip():
+                                errors.append(
+                                    f"{label}: evals/evals.json: case {index} "
+                                    f"{assertion_type} assertion needs text"
+                                )
+                        elif assertion_type == "changed_paths_equal":
+                            paths_value = assertion.get("paths")
+                            if not isinstance(paths_value, list) or not all(
+                                isinstance(relative, str)
+                                and relative
+                                and not Path(relative).is_absolute()
+                                and ".." not in Path(relative).parts
+                                for relative in paths_value
+                            ):
+                                errors.append(
+                                    f"{label}: evals/evals.json: case {index} "
+                                    "changed_paths_equal needs safe relative paths"
                                 )
                     if not has_mechanical:
                         errors.append(
@@ -748,6 +885,82 @@ def validate_skill_eval_files(skill_dir: Path, kind: str) -> list[str]:
                     errors.append(f"{label}: test-prompts.json: regenerate from evals/evals.json Darwin cases")
         elif label in EXPECTED_SKILLS:
             errors.append(f"{label}: test-prompts.json: add Darwin compatibility projection")
+    return errors
+
+
+def validate_catalog_routing(root: Path) -> list[str]:
+    path = root / "evals" / "catalog-routing.json"
+    errors: list[str] = []
+    data = load_json_object(path, errors) if path.is_file() else None
+    if data is None:
+        if not path.is_file():
+            errors.append("evals/catalog-routing.json: add catalog-level routing cases")
+        return errors
+    if data.get("version") != 1:
+        errors.append("evals/catalog-routing.json: version must be 1")
+    hosts = data.get("critical_hosts")
+    if (
+        not isinstance(hosts, list)
+        or not all(isinstance(host, str) for host in hosts)
+        or set(hosts) != SUPPORTED_EVAL_HOSTS
+    ):
+        errors.append(
+            "evals/catalog-routing.json: critical_hosts must cover claude-code, codex, and hermes-agent"
+        )
+    cases = data.get("cases")
+    if not isinstance(cases, list) or not cases:
+        errors.append("evals/catalog-routing.json: cases must be a non-empty list")
+        return errors
+    ids: list[str] = []
+    boundaries: set[str] = set()
+    critical_boundaries: set[str] = set()
+    for index, case in enumerate(cases, 1):
+        if not isinstance(case, dict):
+            errors.append(f"evals/catalog-routing.json: case {index} must be an object")
+            continue
+        case_id = case.get("id")
+        boundary = case.get("boundary")
+        prompt = case.get("prompt")
+        focus_skill = case.get("focus_skill")
+        selected_skill = case.get("expected_selected_skill")
+        critical = case.get("critical")
+        if not isinstance(case_id, str) or not case_id:
+            errors.append(f"evals/catalog-routing.json: case {index} needs id")
+        else:
+            ids.append(case_id)
+        if boundary not in CATALOG_ROUTING_BOUNDARIES:
+            errors.append(
+                f"evals/catalog-routing.json: case {case_id or index} has unknown boundary"
+            )
+        else:
+            boundaries.add(str(boundary))
+            if critical is True:
+                critical_boundaries.add(str(boundary))
+        if not isinstance(prompt, str) or not prompt.strip():
+            errors.append(f"evals/catalog-routing.json: case {case_id or index} needs prompt")
+        if focus_skill not in EXPECTED_SKILLS:
+            errors.append(
+                f"evals/catalog-routing.json: case {case_id or index} has unknown focus_skill"
+            )
+        if selected_skill is not None and selected_skill not in EXPECTED_SKILLS:
+            errors.append(
+                f"evals/catalog-routing.json: case {case_id or index} has unknown expected_selected_skill"
+            )
+        if not isinstance(critical, bool):
+            errors.append(
+                f"evals/catalog-routing.json: case {case_id or index} critical must be boolean"
+            )
+    duplicates = sorted({value for value in ids if ids.count(value) > 1})
+    if duplicates:
+        errors.append(
+            "evals/catalog-routing.json: duplicate case ids: " + ", ".join(duplicates)
+        )
+    if boundaries != CATALOG_ROUTING_BOUNDARIES:
+        errors.append("evals/catalog-routing.json: cover all six routing boundaries")
+    if critical_boundaries != CATALOG_ROUTING_BOUNDARIES:
+        errors.append(
+            "evals/catalog-routing.json: critical subset must cover all six routing boundaries"
+        )
     return errors
 
 
@@ -802,6 +1015,7 @@ def validate_eval_fixtures() -> list[str]:
     for skill in sorted(EXPECTED_SKILLS):
         kind = "user-invoked" if skill in USER_INVOKED_SKILLS else "hybrid"
         errors.extend(validate_skill_eval_files(SKILLS / skill, kind))
+    errors.extend(validate_catalog_routing(ROOT))
     return errors
 
 

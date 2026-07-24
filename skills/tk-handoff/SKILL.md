@@ -53,6 +53,8 @@ metadata:
 
 `verified`는 현재 실행에서 확인한 증거가 있을 때만 사용하세요. 이전 handoff의 주장, 계획, 모델 추론, 실행하지 않은 명령은 `unverified`로 유지하고 성공했다고 표현하지 마세요. Branch·HEAD는 Repository state, handoff 파일 경로는 Handoff path만 소유합니다. Commands는 과거에 실제 실행한 명령만 소유하며 Next step·Resume hints의 미래 명령을 미리 복사하지 않습니다. 실행 성공·실패는 Verification만 소유하고 Commands에 결과를 덧붙이지 마세요. Verification의 handoff 내용·schema 재확인과 Receipt의 handoff 작성 상태는 서로 다른 상태이므로 각각 한 번만 기록하고 다른 쪽에서는 참조하세요. Receipt의 `reported | applied | pending`은 handoff 작성·적용 상태이며 작업 진행 `Status`와 섞지 마세요. Receipt에는 작성·적용 상태와 내용이 있는 Repository state·Handoff path·Verification 등 섹션 참조만 남기고 raw 경로, branch·HEAD, `Commands`, 검증 결과 또는 미래 작업 본문을 복사하지 마세요. 빈 섹션은 생략하고, 기존 spec/ticket/diff 경로는 복사하지 말고 참조하세요.
 
+`.tigerkit/handoff.md`는 재개용 단일 snapshot입니다. 장기 요구사항·결정은 `.tigerkit/spec.md`의 relevant R/AC를, 실제 multi-slice ledger는 `.tigerkit/tickets.md`의 ticket ID를 참조하고 본문을 복제하지 마세요. 새 `.tigerkit/work-map.md`, archive, current pointer 또는 global state를 만들지 않습니다. 기존 `work-map.md`가 있어도 legacy scratch로 무시하고 자동 수정·이관·삭제하지 마세요.
+
 ## CHECKPOINT / STOP
 
 `--resume` 자체는 현재 handoff를 재개하라는 명시적 승인입니다. 현재 상태가 일치하거나 결과를 바꾸지 않는 non-material drift만 있으면 추가 승인 질문 없이 계속하세요. Branch/목표 scope, confirmed decision, changed-file ownership 또는 verification 결과를 바꾸는 material drift/conflict가 있으면 차이와 선택지를 제시하고 사용자의 결정 전에는 `pending` 또는 `Blocked`로 멈추세요.
@@ -61,8 +63,6 @@ metadata:
 
 재개/계속 의도일 때 인수인계를 읽고 현재 Git 및 파일 상태를 검사하세요. 기존 handoff와 현재 상태의 파일, 브랜치, 목표, 결정, 검증 결과 차이를 `drift`로 표시하고 서로 다른 의도나 결과는 `conflict`로 표시하세요. Timestamp, 출력 순서처럼 결과를 바꾸지 않는 차이는 non-material로 보고 계속할 수 있습니다. Branch/목표 scope, confirmed decision, changed-file ownership, verification 결과를 바꾸는 material drift/conflict는 자동 해결하지 말고 사용자 결정을 받으세요. 재개 후에도 현재 확인한 증거가 없는 항목은 `unverified`로 유지하세요.
 
-장기 작업에는 전체 목표, 현재/완료된 작업 조각, 차단 요소/경계, 최근 결정, 다음 구체적 작업, 재개 힌트를 담은 `.tigerkit/work-map.md`를 유지하세요.
-
 ## 실패 복구
 
 | 트리거 | 1차 처리 | 계속 실패하면 |
@@ -70,7 +70,7 @@ metadata:
 | 기존 handoff가 없거나 읽을 수 없음 | 경로와 접근 실패를 보고하고 새 작성과 재개를 구분합니다. | 재개에 필요한 상태를 복원할 증거가 없으면 `Unverifiable`로 멈추고 내용을 추정하지 않습니다. |
 | 임시 파일 작성·교체 실패 | 기존 handoff를 그대로 보존하고 이번 실행이 만든 임시 파일만 정리하며 `pending`으로 보고합니다. | 기존 파일 보존 여부를 확인할 수 없으면 추가 쓰기를 중단하고 `Blocked`로 남깁니다. |
 | 작성 후 재검증이 schema·실제 상태와 불일치 | `applied`로 표시하지 않고 불일치 항목을 `unverified`로 되돌립니다. | 안전하게 다시 읽어 대조할 수 없으면 `Unverifiable`로 종료합니다. |
-| handoff와 work-map이 branch·scope·결정에서 충돌 | material conflict로 표시하고 어느 상태를 기준으로 할지 한 가지 결정을 요청합니다. | 사용자 결정 전에는 어느 파일도 자동 수정하거나 작업을 계속하지 않습니다. |
+| legacy work-map이 존재함 | handoff source로 채택하지 않고 legacy scratch로 무시합니다. | 자동 수정·이관·삭제하지 않고 현재 handoff와 spec/tickets evidence만 사용합니다. |
 
 대화 기록을 복사하거나, 보관본/현재 포인터를 만들거나, 자동으로 커밋하거나 게시하지 마세요.
 

@@ -13,6 +13,8 @@ metadata:
 
 명시 호출 또는 재사용 가능한 skill 작성 의도가 분명한 요청에 사용합니다. 현재 대화, 메모, 경로, URL, 반복 workflow 또는 reflect 후보를 `repo skill`이나 `user skill` 후보로 바꾸세요. 규칙 생성, 일회성 팁 적용, 일반 구현은 범위 밖이며 다른 user-invoked skill을 호출하지 마세요.
 
+신규 skill 생성과 기존 skill의 semantic update/merge를 실제로 쓰는 유일한 TigerKit writer입니다. 다른 skill이 제안한 candidate/target도 이 skill의 evidence, dedupe, eval, compatibility와 apply gate를 다시 통과해야 합니다.
+
 Draft와 apply는 서로 다른 gate입니다.
 
 - `draft gate`: 확인된 증거와 아직 확인하지 못한 사용자 진술을 구분해 `pending` 후보를 설계합니다. 증거가 `unverified`여도 명확한 skill 설계 요청이면 초안을 생략하지 않습니다.
@@ -28,6 +30,8 @@ Draft와 apply는 서로 다른 gate입니다.
 4. **Minimum draft** — 입력, 핵심 workflow, 명시적 실패 분기, approval boundary, 완료 기준, 출력 계약, DO NOT 목록을 포함한 최소 SKILL.md를 보여줍니다. 이어 train/validation trigger, success/boundary assertion, no-skill 또는 이전 skill baseline, portable-core/host-extension 판정을 제시합니다.
 5. **Approval summary** — evidence threshold, dedupe, target/name/kind, trigger validation, behavior assertions, baseline, compatibility, 계획 경로를 한 번씩 요약하고 `pending | no-op | Blocked | Unverifiable`로 멈춥니다.
 6. **Write, verify, report** — 현재 turn에 사용자가 정확한 후보와 target path 적용을 명시 승인한 뒤에만 write 전 내용을 보존하고 적용합니다. frontmatter, links, evals, target-host invocation을 검증한 뒤에만 `applied`로 보고합니다.
+
+Target은 실제 경로나 host discovery evidence로 식별된 현재 host의 native repo/user skill 위치만 사용하세요. Current host를 식별할 수 없으면 경로를 발명하지 말고 `Unverifiable`로 멈춥니다. 한 host 전용 위치를 다른 host에 강제하거나 cross-host fan-out/sync하지 말고, `.tigerkit/`을 영구 skill registry나 global state로 사용하지 마세요.
 
 ## Failure paths
 

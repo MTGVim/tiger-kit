@@ -12,6 +12,7 @@ if __package__:
         USER_INVOKED_SKILLS,
         parse_latest_changelog_version,
         validate_local_only_workflows,
+        validate_catalog_routing,
         validate_release_alignment,
         validate_release_version_contract,
         validate_runtime_scratch,
@@ -25,6 +26,7 @@ else:
         USER_INVOKED_SKILLS,
         parse_latest_changelog_version,
         validate_local_only_workflows,
+        validate_catalog_routing,
         validate_release_alignment,
         validate_release_version_contract,
         validate_runtime_scratch,
@@ -68,6 +70,17 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 for case in REQUIRED_BEHAVIOR_CASES
             )
         )
+
+    def test_reflect_and_grooming_share_exact_placement_rubric(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        reflect = (
+            root / "skills/tk-reflect/references/repository-placement.md"
+        ).read_text(encoding="utf-8")
+        grooming = (
+            root / "skills/tk-grooming/references/repository-placement.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertEqual(reflect, grooming)
 
 
 class RuntimeScratchTest(unittest.TestCase):
@@ -169,6 +182,43 @@ class ReleaseContractTest(unittest.TestCase):
             )
 
             self.assertEqual(validate_release_version_contract(root), [])
+
+
+class CatalogRoutingContractTest(unittest.TestCase):
+    def test_repository_catalog_matrix_covers_hosts_and_boundaries(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+
+        self.assertEqual(validate_catalog_routing(root), [])
+
+    def test_rejects_incomplete_catalog_matrix(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "evals" / "catalog-routing.json"
+            path.parent.mkdir(parents=True)
+            path.write_text(
+                json.dumps(
+                    {
+                        "version": 1,
+                        "critical_hosts": ["codex"],
+                        "cases": [
+                            {
+                                "id": "only",
+                                "boundary": "tk-implement vs tk-drive",
+                                "prompt": "run",
+                                "focus_skill": "tk-drive",
+                                "expected_selected_skill": "tk-drive",
+                                "critical": True,
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            errors = validate_catalog_routing(root)
+
+            self.assertTrue(any("critical_hosts" in error for error in errors))
+            self.assertTrue(any("all six routing boundaries" in error for error in errors))
 
 
 class SkillCompatibilityTest(unittest.TestCase):
