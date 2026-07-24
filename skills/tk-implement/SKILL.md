@@ -21,7 +21,16 @@ metadata:
 
 실제로 읽지 않은 요구사항 출처나 실행하지 않은 검증을 확인·통과했다고 보고하지 마세요.
 
-변경 관련 실패가 남으면 `Fail`, 필요한 입력·권한·결정이 없어 진행할 수 없으면 `Blocked`, 검증을 시도했지만 증거를 확보할 수 없으면 `Unverifiable`입니다. 이 상태에서는 완료로 보고하거나 commit하지 마세요. 위임 중첩, 자동 사용자 호출형 skill 실행, hook 우회, 검증 전 commit을 금지합니다.
+### Terminal-state contract
+
+| Status | Trigger | Required action | Commit |
+|---|---|---|---|
+| `Pass` | 요청 범위가 완료되고 변경 관련 검증·review evidence가 candidate/staged snapshot과 일치 | ID별 변경·검증 참조와 남은 위험을 보고 | 작업 diff를 기존 사용자 변경과 안전하게 분리할 수 있을 때만 허용 |
+| `Fail` | 변경 관련 실패, 무효 browser evidence, 승인되지 않은 UI writing drift 또는 commit 자체 실패 | 실패한 명령·관찰·실제 `HEAD`와 미커밋 상태를 보존 | 금지 |
+| `Blocked` | 필요한 입력·권한·사용자 결정 부재, 안전 경계 충돌 또는 검증 snapshot 이후 drift | 추가 mutation을 중단하고 필요한 결정이나 재검증 범위를 특정 | 금지 |
+| `Unverifiable` | 검증을 시도했지만 환경·도구·evidence 제약으로 판정할 수 없음 | 실행한 범위와 확보하지 못한 evidence를 구분 | 금지 |
+
+위임 중첩, 자동 사용자 호출형 skill 실행, hook 우회, 검증 전 commit을 금지합니다.
 
 정보 출처의 우선순위는 현재 요청, 대화에서 확인된 결정, 관련 `.tigerkit/tickets.md`, 관련 `.tigerkit/spec.md`, 저장소 지침, 코드/테스트 순입니다. 기존 파일이라고 해서 자동으로 관련 있는 것은 아닙니다.
 
@@ -70,7 +79,7 @@ TDD로 결정되면 의미 있는 공개 동작 경계를 선택하고 수직 sl
 
 사용자가 해당 문구의 변경을 명시적으로 요청하지 않은 한 spelling, 대소문자, 띄어쓰기, 문장부호, 기호, 숫자, 의미 있는 줄바꿈을 그대로 보존하세요. 번역, 의역, 축약, 자연스러운 표현으로의 교정, typo 수정, repository 관례에 맞춘 normalization도 금지합니다. 이미지·스크린샷처럼 원문을 정확히 판독할 수 없는 source이거나 source끼리 문구가 충돌하면 추정하지 말고 정확한 문구 한 가지를 확인받을 때까지 `Blocked`로 멈추세요.
 
-구현 후 inventory의 모든 literal을 rendered UI 또는 해당 source path에서 다시 대조하고, candidate/staged diff review에도 이 대조 결과를 포함하세요. 승인되지 않은 한 글자라도 달라졌거나 exact 대조 evidence가 없으면 `Fail` 또는 `Unverifiable`이며 수정·재검증 전에는 commit하지 마세요. 명시적으로 변경 승인된 문구만 inventory에서 `authorized change`로 표시하고 나머지는 frozen 상태를 유지하세요.
+구현 후 inventory의 모든 literal을 rendered UI 또는 해당 source path에서 다시 대조하고, candidate/staged diff review에도 이 대조 결과를 포함하세요. 승인되지 않은 한 글자라도 달라졌으면 terminal-state contract의 `Fail`, exact 대조 evidence가 없으면 `Unverifiable`을 적용하세요. 명시적으로 변경 승인된 문구만 inventory에서 `authorized change`로 표시하고 나머지는 frozen 상태를 유지하세요.
 
 ### 🔴 HARD GATE · browser 도구
 
@@ -78,7 +87,7 @@ TDD로 결정되면 의미 있는 공개 동작 경계를 선택하고 수직 sl
 
 `tk-implement`가 Chrome MCP, Playwright, CDP 또는 native browser를 직접 선택·호출하는 것은 금지합니다. 이 수단들은 선행 gate를 통과한 `tk-browser-verify` 안에서만 선택할 수 있습니다. Gate 전에 현재 실행의 browser 호출이 이미 발생했다면 그 evidence는 무효이며, 나중에 skill 형식으로 포장해 복구하지 말고 `Fail`로 멈추며 commit하지 마세요. 사용자가 browser 검증을 금지하거나 skill을 로드·적용할 수 없으면 직접 도구 호출로 대체하지 말고 `Unverifiable`로 멈추며 완료로 보고하거나 commit하지 마세요. DOM, accessibility tree, unit test 또는 build 성공도 runtime screenshot과 실제 image 검사 계약을 대체하지 않습니다.
 
-각 구현 slice 직후 focused test와 관련 정적 검사·build·필요한 브라우저/통합 검증을 실행하고, 다음 slice로 넘어가기 전에 결과를 확인하세요. 모든 slice가 끝나면 실행 가능한 가장 넓은 관련 검증을 한 번 실행하세요. 실패를 `change-related`, `pre-existing`, `environment`, `unverifiable`로 분류하고, 변경 관련 실패가 남으면 커밋하지 마세요.
+각 구현 slice 직후 focused test와 관련 정적 검사·build·필요한 브라우저/통합 검증을 실행하고, 다음 slice로 넘어가기 전에 결과를 확인하세요. 모든 slice가 끝나면 실행 가능한 가장 넓은 관련 검증을 한 번 실행하세요. 실패를 `change-related`, `pre-existing`, `environment`, `unverifiable`로 분류하고 terminal-state contract로 최종 상태를 정하세요.
 
 Final verification에는 당시 branch·`HEAD`와 검증한 diff/path 범위를 함께 기록하세요. 커밋 직전에 현재 branch·`HEAD`·staged diff가 그 범위와 같은지 다시 확인하고, 예상하지 않은 drift나 검증하지 않은 staged 변경이 있으면 커밋하지 말고 사용자 변경을 건드리지 않은 채 영향받은 검증을 다시 실행하거나 `Blocked`로 보고하세요. Commit 자체가 실패하면 broad staging이나 우회 옵션으로 재시도하지 말고 실제 `HEAD`와 미커밋 상태를 `Fail` receipt에 남기세요.
 
@@ -86,7 +95,7 @@ Final verification에는 당시 branch·`HEAD`와 검증한 diff/path 범위를 
 
 ## 커밋과 보고
 
-요청 범위가 완료되고 변경 관련 검증이 성공했으며 작업 diff를 기존 사용자 변경과 안전하게 분리할 수 있으면 현재 브랜치에 커밋하세요. 사용자가 커밋을 금지했거나 구현이 불완전하거나 변경 관련 검증이 실패했으면 커밋하지 마세요. Implementor는 커밋하지 않으며 현재 에이전트가 staged diff를 확인하고 커밋합니다.
+Terminal-state contract의 `Pass`이고 사용자가 커밋을 금지하지 않았을 때만 현재 브랜치에 커밋하세요. Implementor는 커밋하지 않으며 현재 에이전트가 staged diff를 확인하고 커밋합니다.
 
 일반 review-only 요청은 read-only 일반 agent 작업으로 처리하며 source mutation이나 commit 권한을 부여하지 않습니다. 이 스킬 안의 review는 explicit implementation 범위와 candidate diff만 소유합니다.
 
