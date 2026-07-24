@@ -49,7 +49,13 @@ Spec, ticket, implementation, candidate/staged diff와 rendered UI 각각에서 
 
 ## 실패와 완료
 
-변경 관련 실패는 `Fail`, 필요한 입력·권한·결정 부재는 `Blocked`, 실행했지만 evidence를 확보하지 못하면 `Unverifiable`입니다. 이 상태에서는 commit하지 마세요. Partial failure에서는 유효한 source diff를 rollback하지 않고 uncommitted로 보존하며, 이번 실행이 소유한 temporary artifact만 정리합니다.
+| Trigger | Immediate action | Still unresolved |
+|---|---|---|
+| preflight에서 필수 source·권한·결정이 없음 | downstream mutation 전에 멈추고 필요한 항목 하나를 특정 | `Blocked`; commit하지 않음 |
+| candidate/staged diff가 승인 범위·source inventory·검증 snapshot과 달라짐 | stage를 중단하고 drift 경로와 증거를 다시 대조 | `Blocked`; valid source diff는 uncommitted로 보존 |
+| 변경 관련 검증 실패 | 실패한 명령·관찰·영향 slice를 기록하고 추가 mutation을 중단 | `Fail`; valid source diff는 rollback하지 않음 |
+| 검증을 실행했지만 결과 evidence를 확보하지 못함 | 재현 가능한 evidence 획득을 한 번 시도 | `Unverifiable`; commit하지 않음 |
+| commit 실패 또는 commit 직전 `HEAD`·staged snapshot이 달라짐 | commit을 중단하고 실제 branch·`HEAD`·index를 다시 읽음 | `Fail | Blocked`; 이번 실행이 소유한 temporary artifact만 정리 |
 
 Final receipt는 `Status`, `Source`, `Phases`, `Tickets`, `Verification`, `Review`, `Commit`, `Remaining risks`, `Reusable candidate`를 소유합니다. `Reusable candidate`는 존재 여부만 알리고 `tk-reflect`를 자동 실행하지 않습니다. 같은 evidence를 여러 섹션에 복사하지 마세요.
 
