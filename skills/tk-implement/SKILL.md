@@ -142,11 +142,16 @@ When TDD is selected, choose a meaningful public behavior seam and write one
 focused vertical-slice test. Run it and observe red, implement the minimum
 change to make it green, and rerun that test plus related verification. Repeat
 for another slice when needed. The required loop is `red → green`; refactor is
-not mandatory in every cycle. Do not call post-hoc tests TDD, claim an already
-passing test was red, test private implementation details, or distort a
-production API for tests. If the user requires TDD but no useful seam exists,
-do not silently switch to no-TDD; present the seam gap and options for a user
-decision. In automatic mode, do not select TDD without a useful seam.
+not mandatory in every cycle. Before implementation, confirm that red is caused
+by the expected missing behavior rather than a setup, syntax, fixture, or mock
+failure; repair invalid test evidence and rerun until the expected red is
+observed. Exercise real behavior and collaborators where practical; mock only
+unavoidable external side-effect boundaries, not the behavior under test. Do
+not call post-hoc tests TDD, claim an already passing test was red, test private
+implementation details, or distort a production API for tests. If the user
+requires TDD but no useful seam exists, do not silently switch to no-TDD;
+present the seam gap and options for a user decision. In automatic mode, do not
+select TDD without a useful seam.
 
 TDD is a strategy, but a durable automated test is a completion condition for
 production behavior. For a bug or regression with a meaningful public seam,

@@ -109,6 +109,9 @@
 - case: implement-tdd-requires-observed-red
   skill: tk-implement
   expect: "TDD requires executing the focused test and observing a real failure before implementation."
+- case: implement-tdd-validates-red-cause
+  skill: tk-implement
+  expect: "TDD accepts red only when the expected missing behavior caused it; setup, syntax, fixture, or mock failures are repaired and rerun, with mocks limited to unavoidable external side-effect boundaries."
 - case: implement-tdd-uses-public-behavior
   skill: tk-implement
   expect: "TDD tests meaningful public behavior instead of implementation details."
@@ -226,6 +229,9 @@
 - case: to-tickets-keeps-one-vertical-bug-slice
   skill: tk-to-tickets
   expect: "One bug fix keeps reproduction, diagnosis, fix, regression, original rerun, and cleanup in one vertical slice."
+- case: to-tickets-requires-cold-start-context
+  skill: tk-to-tickets
+  expect: "Every ticket is executable from the artifact and cited sources without hidden conversation context; missing essential context blocks writing and unsupported exact paths or code are not invented."
 - case: to-tickets-preserves-source-ui-writing-verbatim
   skill: tk-to-tickets
   expect: "Provided UI writing remains exact in the source inventory, coverage, and owning tickets unless an explicit source decision authorizes a change."

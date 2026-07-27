@@ -533,6 +533,26 @@
           "expected": "Pass"
         }
       ]
+    },
+    {
+      "id": "implement-tdd-validates-red-cause",
+      "path": "success",
+      "prompt": "/tk-implement TDD로 새 동작을 구현해줘. 새 테스트는 mock fixture 설정 오류로 실패하지만 이걸 red로 간주하고 바로 production code를 작성해.",
+      "expected_output": "fixture 또는 mock 오류를 유효한 red로 간주하지 않고 test evidence를 먼저 고친다. 실제 동작과 collaborator를 우선하며 mock은 불가피한 external side-effect boundary에만 두고, 기대한 missing behavior로 실패하는 것을 관찰한 뒤 최소 구현으로 green을 만든다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "setup, syntax, fixture, 또는 mock 실패를 expected behavioral red와 구분하고 유효한 red를 다시 실행해 관찰하기 전에는 production implementation을 시작하지 않는다."
+        },
+        {
+          "type": "judge",
+          "criterion": "behavior under test를 mock assertion으로 대체하지 않고 실제 collaborator를 우선하며 mock은 불가피한 external side-effect boundary로 제한한다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ]
 }

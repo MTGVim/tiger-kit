@@ -73,6 +73,11 @@ infer implementation progress. Preserve source R/AC IDs in each ticket and in
 the coverage table. Without source IDs, cite source location and do not invent
 IDs.
 
+Each ticket must be executable from the artifact and its cited sources without
+hidden conversation context. Name only evidence-supported entry points, and
+include runnable verification with expected evidence; never invent exact paths
+or code.
+
 ### Vertical-slice boundaries
 
 Keep behavior and its tests in the same ticket; do not create horizontal
@@ -108,10 +113,12 @@ prevents completion and implementation handoff. Mark only approved wording as
 
 ## CHECKPOINT / STOP
 
-Before writing, check decomposition evidence, source traceability, unresolved
-conflicts, and UI-writing inventory. When evidence is insufficient or an exact
-UI literal cannot be compared, do not create or overwrite tickets; return
-`Unresolved split report`, `Blocked`, or `Unverifiable`.
+Before writing, cold-start each ticket against only the artifact and its cited
+sources, then check decomposition evidence, source traceability, unresolved
+conflicts, and UI-writing inventory. When essential context is hidden or
+evidence is insufficient, or an exact UI literal cannot be compared, do not
+create or overwrite tickets; return `Unresolved split report`, `Blocked`, or
+`Unverifiable`.
 
 Write user-facing progress and receipt prose in the user's language. Preserve
 canonical status tokens, IDs, and receipt keys.
