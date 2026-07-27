@@ -48,6 +48,10 @@ decisions; otherwise replace it without an archive. Under `.tigerkit/`, create
 the parent only when needed, prefer a same-directory temporary file plus
 rename, never modify `.gitignore`, and warn briefly if scratch is not ignored.
 
+For `--print-only`, create no parent, temporary, or output file. Emit the spec
+once, then a compact receipt with `Path: print-only`; reference its R/AC,
+source-map, and verification sections instead of repeating their content.
+
 ## Failure paths
 
 Preserve the existing target state before output.
