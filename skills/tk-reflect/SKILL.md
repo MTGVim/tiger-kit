@@ -41,6 +41,8 @@ metadata:
 - `Confidence`: `high | medium | low`, `Basis: <Evidence IDs>`, 필요한 경우 `Uncertainty: ...`만 적으세요. source 종류·사례 수·관찰·가설을 다시 서술하지 마세요. 증거가 부족하면 `low`로 두고 승격하지 마세요.
 - `Action`: 중복이면 새로 만들지 말고 `merge` 또는 `no-op`을 우선하세요. 규칙은 짧은 상시 지침, 스킬은 트리거·반복 단계·입출력·독립적 가치를 가져야 합니다.
 
+Action은 다음 순서로 고르세요. 기존 target이 evidence의 재사용 동작을 모두 소유하면 `no-op`, 같은 target이 소유하지만 verified 경계가 빠졌으면 `update`, 여러 기존 후보의 겹치는 범위를 한 target으로 합쳐야 하면 `merge`, 적합한 target이 없고 rule/skill 기준을 충족하면 `propose`, 일회성이거나 unverified/conflict만 남으면 `discard`입니다. 이 선택은 적용 승인이 아니며 skill 후보는 항상 `pending`입니다.
+
 `repo rule | repo skill` 후보에는 배치 rubric의 정규화된 raw 입력을 Evidence에, 재사용 범위와 root/nested/skill 경계 해석을 Interpretation에, 수행 선택을 Action에 기록하세요. 별도 배치 근거 필드를 만들지 마세요. Evidence를 읽을 수 없거나 threshold가 충돌하면 confidence를 `low`로 두고 후보를 승격하지 마세요.
 
 Confidence는 다음 기준으로만 올리세요. `high`는 서로 다른 occurrence 또는 source type의 독립적인 verified Evidence ID가 2개 이상이고 미해결 conflict·counterexample이 없는 경우입니다. `medium`은 verified Evidence ID가 1개 이상이지만 반복성·독립성·적용 경계 중 하나가 아직 확인되지 않은 경우입니다. Verified evidence가 없거나 conflict·counterexample이 미해결이면 `low`이며 `propose | update | merge`로 승격하지 마세요.
