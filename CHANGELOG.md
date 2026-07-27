@@ -1,5 +1,28 @@
 # Changelog
 
+## 21.0.0 — Phase-Owner Orchestration
+
+- Made `tk-drive` a thin orchestrator that explicitly hands spec creation to
+  `tk-to-spec`, conditional vertical decomposition to `tk-to-tickets`, and each
+  implementation unit to `tk-implement`, with strict receipt propagation and
+  no inline phase fallback.
+- Converted `tk-implement` to narrowly triggered hybrid invocation while
+  preserving direct selection, and changed drive execution from one final
+  commit to one verified commit per ticket or no-ticket single slice.
+- Required durable automated tests for production behavior, observed red
+  regression tests when a meaningful bug seam exists, existing repository
+  coverage gates when available, and explicit named exceptions before any
+  testless production-behavior commit.
+- Split ticket-level Standards/Spec review from drive-wide ancestry, R/AC,
+  cross-ticket, and broad verification; bounded final correction to one
+  additive corrective ticket and commit without history rewriting.
+- Standardized the four phase-owner operational contracts and references in
+  English while keeping user-facing progress and final receipt prose in the
+  user's language.
+- Preserved all 12 canonical skill names, changed the distribution to
+  1 user-invoked / 11 hybrid, and added static and executable cross-host
+  routing, phase handoff, failure, test, coverage, and commit regressions.
+
 ## 20.1.2 — Deterministic Routing and Failure Contracts
 
 - Added critical routing coverage for `tk-learn` versus reflection/grooming and `tk-drive` versus handoff/generic continuation, with repository validation that requires both boundaries.

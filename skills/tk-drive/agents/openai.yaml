@@ -1,4 +1,4 @@
 interface:
-  display_name: "TigerKit: 드라이브"
-  short_description: "[user/auto] 명시적으로 시작한 작업을 끝까지 진행합니다."
-  default_prompt: "Select tk-drive explicitly on the current host and carry this source through planning, implementation, verification, and one final commit."
+  display_name: "TigerKit: Drive"
+  short_description: "[user/auto] Orchestrate explicit work to verified ticket commits."
+  default_prompt: "Select tk-drive explicitly on the current host and orchestrate this source through canonical spec, ticket, and implementation phase owners to verified ticket-level commits and final aggregate verification."

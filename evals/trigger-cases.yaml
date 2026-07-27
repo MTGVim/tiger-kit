@@ -14,6 +14,7 @@
     - "확정된 결정으로 구현 명세를 작성해줘"
     - "이 대화를 .tigerkit/spec.md로 정리해줘"
     - "이 버그 evidence를 R/AC가 있는 spec으로 만들어줘"
+    - "[active tk-drive spec handoff] confirmed source로 Ready spec과 Phase receipt를 만들어줘"
   negative:
     - "이 명세를 수직 티켓으로 나눠줘"
     - "GitHub issue를 만들어줘"
@@ -23,17 +24,20 @@
     - "이 Ready spec을 독립 검증 가능한 수직 티켓으로 나눠줘"
     - "R/AC coverage가 있는 tickets.md를 작성해줘"
     - "이 버그 수정을 하나의 vertical ticket으로 만들어줘"
+    - "[active tk-drive ticket handoff] Ready spec을 vertical ledger로 작성해줘"
   negative:
     - "이 결정으로 구현 명세를 작성해줘"
     - "이슈를 원격 tracker에 등록해줘"
     - "active tk-drive가 ticket 여부를 판단 중이야"
 - skill: tk-implement
-  examples:
-    - "tk-implement로 이 ticket을 구현해줘"
-    - "direct, no-tdd로 이 변경을 완료해줘"
-  nearby:
-    - tk-prototype
-    - tk-to-spec
+  positive:
+    - "/tk-implement로 이 ticket 하나를 구현해줘"
+    - "$tk-implement direct, no-tdd로 이 unit을 완료해줘"
+    - "[active tk-drive implementation handoff] TK-2와 R3/AC4를 구현하고 commit receipt를 반환해줘"
+  negative:
+    - "이 버그를 고쳐줘"
+    - "active tk-drive니까 알아서 구현해"
+    - "현재 diff를 수정 없이 review해줘"
 - skill: tk-prototype
   positive:
     - "같은 데이터로 A/B/C UI prototype을 실제 실행해줘"

@@ -59,6 +59,8 @@ CATALOG_ROUTING_BOUNDARIES = {
     "tk-merge-conflict vs ordinary conflict-marker edit",
 }
 HYBRID_TRIGGER_FACETS = {"formal", "casual", "typo", "ko-en", "short", "compound"}
+PHASE_OWNER_SKILLS = {"tk-drive", "tk-implement", "tk-to-spec", "tk-to-tickets"}
+HANGUL_SYLLABLE = re.compile(r"[가-힣]")
 EXPECTED_SKILLS = {
     "tk-browser-verify",
     "tk-drive",
@@ -75,7 +77,6 @@ EXPECTED_SKILLS = {
 }
 USER_INVOKED_SKILLS = {
     "tk-grill-me",
-    "tk-implement",
 }
 HYBRID_SKILLS = EXPECTED_SKILLS - USER_INVOKED_SKILLS
 KEBAB = re.compile(r"^tk-[a-z0-9]+(?:-[a-z0-9]+)*$")
@@ -123,7 +124,14 @@ REQUIRED_BEHAVIOR_CASES = {
     "implement-diagnosis-does-not-patch-without-reproduction",
     "implement-diagnosis-reruns-original-reproduction",
     "implement-diagnosis-cleans-instrumentation",
-    "implement-diagnosis-reports-missing-seam",
+    "implement-diagnosis-blocks-missing-seam",
+    "implement-active-drive-handoff-triggers",
+    "implement-ordinary-request-does-not-trigger",
+    "implement-blocks-standalone-multi-ticket",
+    "implement-production-behavior-requires-durable-test",
+    "implement-runs-existing-coverage-gate",
+    "implement-blocks-testless-production-without-exception",
+    "implement-one-ticket-one-commit",
     "standalone-diagnose-only-is-read-only",
     "standalone-review-only-is-read-only",
     "implement-review-15-files-800-lines-is-small",
@@ -138,10 +146,12 @@ REQUIRED_BEHAVIOR_CASES = {
     "to-spec-does-not-create-tickets",
     "to-spec-structures-bug-evidence",
     "to-spec-preserves-source-ui-writing-verbatim",
+    "to-spec-active-drive-handoff",
     "to-tickets-does-not-create-spec",
     "to-tickets-initial-status-is-pending",
     "to-tickets-keeps-one-vertical-bug-slice",
     "to-tickets-preserves-source-ui-writing-verbatim",
+    "to-tickets-active-drive-handoff",
     "prototype-is-not-production",
     "prototype-web-uses-disposable-variants",
     "prototype-web-toggle-preserves-legibility",
@@ -176,9 +186,13 @@ REQUIRED_BEHAVIOR_CASES = {
     "grooming-semantic-convert-is-proposal-only",
     "learn-is-sole-semantic-skill-writer",
     "drive-bounds-nested-skills",
-    "drive-commits-once",
+    "drive-invokes-phase-owners",
+    "drive-commits-per-ticket",
+    "drive-runs-final-aggregate-verification",
+    "drive-propagates-phase-failure",
+    "drive-bounds-corrective-cycle",
     "drive-preserves-valid-diff-on-partial-failure",
-    "drive-review-parity",
+    "drive-aggregate-review-boundary",
 }
 
 
@@ -420,18 +434,19 @@ def validate_repository_contract() -> list[str]:
     )
     for relative in required_files:
         if not (ROOT / relative).is_file():
-            errors.append(f"{relative}: required TigerKit 20 repository file is missing")
+            errors.append(f"{relative}: required TigerKit 21 repository file is missing")
     errors.extend(validate_local_only_workflows(ROOT))
+    errors.extend(validate_phase_owner_language(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
-            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 20")
+            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 21")
     errors.extend(validate_runtime_scratch(ROOT))
     ignored = (ROOT / ".gitignore").read_text(encoding="utf-8") if (ROOT / ".gitignore").is_file() else ""
     if ".tigerkit/" not in ignored.splitlines():
         errors.append(".gitignore: document TigerKit repo-local scratch with .tigerkit/")
     required_text = {
         "README.md": (
-            "TigerKit 20",
+            "TigerKit 21",
             "12",
             "Claude Code",
             "Codex",
@@ -440,11 +455,13 @@ def validate_repository_contract() -> list[str]:
             "사용 시나리오",
         ),
         "MIGRATION.md": (
-            "TigerKit 20",
+            "TigerKit 21",
             "Removed Skills",
             "model-only",
             "hybrid",
             "CONTEXT.md",
+            "Phase ownership",
+            "one ticket",
         ),
         "CHANGELOG.md": ("12", "hybrid", "v18.0.4"),
         "NOTICE.md": (
@@ -493,7 +510,7 @@ def validate_repository_contract() -> list[str]:
             "cross-host fan-out/sync",
         ),
         "skills/tk-drive/SKILL.md": (
-            "`/tk-drive`, `$tk-drive`, host skill picker의 직접 선택",
+            "`/tk-drive`, `$tk-drive`, and direct selection in a host skill",
             "### 🔴 HARD GATE · source UI writing",
             "`authorized change`",
         ),
@@ -536,6 +553,30 @@ def validate_repository_contract() -> list[str]:
         if directory.is_dir() and directory.name in {"references", "scripts", "agents"} and not any(directory.iterdir()):
             errors.append(f"{directory.relative_to(ROOT)}: remove empty optional directory")
     errors.extend(validate_release_version_contract(ROOT))
+    return errors
+
+
+def validate_phase_owner_language(root: Path) -> list[str]:
+    errors: list[str] = []
+    for skill in sorted(PHASE_OWNER_SKILLS):
+        skill_dir = root / "skills" / skill
+        skill_path = skill_dir / "SKILL.md"
+        paths = [skill_path, *sorted((skill_dir / "references").glob("*.md"))]
+        for path in paths:
+            if not path.is_file():
+                continue
+            for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+                if HANGUL_SYLLABLE.search(line):
+                    relative = path.relative_to(root)
+                    errors.append(
+                        f"{relative}:{number}: phase-owner operational prose must be English"
+                    )
+        if skill_path.is_file() and "user's language" not in skill_path.read_text(
+            encoding="utf-8"
+        ):
+            errors.append(
+                f"{skill_path.relative_to(root)}: preserve user-language output style"
+            )
     return errors
 
 

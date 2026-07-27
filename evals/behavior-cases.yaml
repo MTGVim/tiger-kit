@@ -148,9 +148,30 @@
 - case: implement-diagnosis-cleans-instrumentation
   skill: tk-implement
   expect: "Temporary instrumentation and throwaway artifacts are removed before clean verification."
-- case: implement-diagnosis-reports-missing-seam
+- case: implement-diagnosis-blocks-missing-seam
   skill: tk-implement
-  expect: "A missing public regression seam is reported instead of replaced by a shallow test."
+  expect: "A missing public regression seam is reported with a seam option and deterministic alternative verification, then commit remains blocked until an explicit named exception."
+- case: implement-active-drive-handoff-triggers
+  skill: tk-implement
+  expect: "An explicit active-drive implementation handoff carrying one unit/ticket and R/AC activates the same unit contract as standalone invocation."
+- case: implement-ordinary-request-does-not-trigger
+  skill: tk-implement
+  expect: "An ordinary implementation request does not auto-activate the hybrid skill or its commit authority."
+- case: implement-blocks-standalone-multi-ticket
+  skill: tk-implement
+  expect: "Standalone input containing multiple tickets stops before mutation and requests one selected ticket or recommends tk-drive."
+- case: implement-production-behavior-requires-durable-test
+  skill: tk-implement
+  expect: "New production behavior has a durable public-behavior test before commit even when TDD was not selected."
+- case: implement-runs-existing-coverage-gate
+  skill: tk-implement
+  expect: "Existing repository coverage commands and thresholds run as-is; regressions and threshold misses are change-related failures."
+- case: implement-blocks-testless-production-without-exception
+  skill: tk-implement
+  expect: "Production behavior without a meaningful seam cannot pass or commit until the user explicitly approves a named exception and deterministic alternative verification."
+- case: implement-one-ticket-one-commit
+  skill: tk-implement
+  expect: "One selected ticket is one implementation invocation and exactly one verified current-branch commit."
 - case: standalone-diagnose-only-is-read-only
   skill: tk-implement
   expect: "An ordinary diagnose-only request gathers evidence without source mutation, commit authority, or a removed-skill trigger."
@@ -193,6 +214,9 @@
 - case: to-spec-preserves-source-ui-writing-verbatim
   skill: tk-to-spec
   expect: "Provided labels, button names, guide copy, column names, and other UI writing remain exact literals unless the user explicitly authorizes a change; drift prevents Ready."
+- case: to-spec-active-drive-handoff
+  skill: tk-to-spec
+  expect: "An explicit active-drive spec handoff uses the standalone Ready contract and returns a drive-consumable phase receipt without taking downstream ownership."
 - case: to-tickets-does-not-create-spec
   skill: tk-to-tickets
   expect: "Ticket decomposition does not create or modify a spec."
@@ -205,6 +229,9 @@
 - case: to-tickets-preserves-source-ui-writing-verbatim
   skill: tk-to-tickets
   expect: "Provided UI writing remains exact in the source inventory, coverage, and owning tickets unless an explicit source decision authorizes a change."
+- case: to-tickets-active-drive-handoff
+  skill: tk-to-tickets
+  expect: "An explicit active-drive ticket handoff uses the standalone vertical-slice contract and returns a drive-consumable ledger receipt without implementing."
 - case: prototype-is-not-production
   skill: tk-prototype
   expect: "The result distinguishes fake and real behavior and is not called production-ready."
@@ -282,16 +309,28 @@
   expect: "Multi-slice or long-resume work tracks pending, in_progress, verified, or blocked with evidence and revalidates on resume."
 - case: drive-bounds-nested-skills
   skill: tk-drive
-  expect: "Automatic nested skills are limited to prototype, browser verification, and merge conflict handling."
-- case: drive-commits-once
+  expect: "Phase-owner invocation is limited to tk-to-spec, tk-to-tickets, and tk-implement; support invocation is limited to prototype, browser verification, and merge conflict handling."
+- case: drive-commits-per-ticket
   skill: tk-drive
-  expect: "The whole verified drive creates one final current-branch commit rather than per-phase commits."
+  expect: "Each independently verifiable ticket is handed to tk-implement for one commit, and drive creates no separate final commit."
 - case: drive-preserves-valid-diff-on-partial-failure
   skill: tk-drive
-  expect: "Partial failure leaves valid source changes uncommitted and removes only owned temporary artifacts."
-- case: drive-review-parity
+  expect: "A later ticket failure preserves earlier verified ticket commits without rollback or history rewriting."
+- case: drive-aggregate-review-boundary
   skill: tk-drive
-  expect: "Drive uses the same fixed-point, inventory, Standards/Spec, bounded reviewer, finding, and drift gates as standalone implementation."
+  expect: "tk-implement owns ticket-level Standards/Spec review while drive owns aggregate R/AC coverage, ancestry, and cross-ticket interaction without repeating line-level review."
+- case: drive-invokes-phase-owners
+  skill: tk-drive
+  expect: "Drive explicitly invokes tk-to-spec, conditionally tk-to-tickets, and tk-implement per unit, consuming their receipts without recreating phase semantics inline."
+- case: drive-runs-final-aggregate-verification
+  skill: tk-drive
+  expect: "After all unit commits, drive reconciles ordered ancestry and all R/AC, checks cross-ticket effects, and runs the broadest executable relevant verification once."
+- case: drive-propagates-phase-failure
+  skill: tk-drive
+  expect: "Unavailable or unsuccessful phase owners stop the workflow at that phase with the evidence-supported terminal state and no inline fallback."
+- case: drive-bounds-corrective-cycle
+  skill: tk-drive
+  expect: "One isolated final change-related regression may create one corrective ticket and commit; repeated failure stops without amend, squash, rollback, or another cycle."
 - case: drive-preserves-source-ui-writing-verbatim
   skill: tk-drive
   expect: "Drive freezes exact source UI literals before spec mutation and rechecks them through spec, tickets, implementation, candidate/staged diff, and rendered UI."

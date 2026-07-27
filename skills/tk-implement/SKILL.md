@@ -1,112 +1,271 @@
 ---
 name: tk-implement
-description: "[user] 요청받은 코드 변경을 구현하고 검증한 뒤 현재 브랜치에 커밋합니다. 사용자에게 보이는 UI 또는 browser behavior가 범위에 있으면 browser 도구보다 먼저 tk-browser-verify를 활성화하고 그 계약 안에서만 호출합니다. 사용자가 명시적으로 호출했을 때만 사용하세요."
-disable-model-invocation: true
-argument-hint: "<요청, 티켓 또는 명세> [direct|delegated] [tdd|no-tdd]"
+description: "[user/auto] Implement, test, review, and create one current-branch commit for one independently verifiable unit. Apply only on explicit standalone selection or an explicit implementation handoff from an active tk-drive; never auto-trigger from an ordinary implementation request."
+argument-hint: "<request, ticket, or spec> [direct|delegated] [tdd|no-tdd]"
 metadata:
   tigerkit:
-    kind: user-invoked
+    kind: hybrid
     origin: mattpocock/skills
     upstream-skill: implement
     relationship: adapted
 ---
 
-# 구현
+# Implement
 
-사용자가 이 스킬을 명시적으로 호출했을 때만 사용하세요. 자동으로 활성화하지 마세요.
+Use only for explicit `/tk-implement`, `$tk-implement`, host-picker selection,
+or an explicit implementation handoff in which an active `tk-drive` provides
+one ticket or no-ticket unit and its R/AC. Do not auto-activate from an ordinary
+implementation request, generic continuation, artifact presence, or merely
+because drive is active.
 
-## 계약
+## Contract
 
-사용자의 명시적 지시는 기본값이나 권장안보다 우선하는 실행 계약입니다. 범위, 방법, 금지 사항, `direct|delegated`, `tdd|no-tdd`, 검증, commit 지시를 임의로 완화·확장·대체하거나 다시 승인받지 마세요. 지시가 서로 충돌하거나 안전하게 실행할 수 없을 때만 구체적 충돌을 설명하고 필요한 결정 하나를 요청하세요.
+The user's explicit instructions outrank defaults and recommendations. Do not
+weaken, expand, replace, or reconfirm scope, method, prohibitions,
+`direct|delegated`, `tdd|no-tdd`, verification, or commit instructions. Ask for
+one decision only when instructions conflict or cannot be executed safely.
 
-실제로 읽지 않은 요구사항 출처나 실행하지 않은 검증을 확인·통과했다고 보고하지 마세요.
+Never report a source as read or a verification as passed unless it was
+actually read or executed.
+
+One invocation owns one independently verifiable implementation unit and
+creates one commit after review. With tickets:
+`one ticket = one unit = one commit`. Without tickets, the complete explicit
+single-slice request or Ready spec is one unit. If standalone input contains
+multiple tickets, stop before mutation and ask the user to select one or use
+`$tk-drive`. Do not recreate drive orchestration with a batch loop or by
+creating tickets.
+
+Standalone execution and drive handoff use the same implementation, test,
+review, and commit contract. For a drive handoff, preserve task identity,
+ticket/R/AC, initial `HEAD`, and ownership; return phase, unit/ticket ID,
+commit SHA, and verification/review evidence. Do not take ownership of
+drive-wide cross-ticket verification or its final receipt.
 
 ### Terminal-state contract
 
 | Status | Trigger | Required action | Commit |
 |---|---|---|---|
-| `Pass` | 요청 범위가 완료되고 변경 관련 검증·review evidence가 candidate/staged snapshot과 일치 | ID별 변경·검증 참조와 남은 위험을 보고 | 작업 diff를 기존 사용자 변경과 안전하게 분리할 수 있을 때만 허용 |
-| `Fail` | 변경 관련 실패, 무효 browser evidence, 승인되지 않은 UI writing drift 또는 commit 자체 실패 | 실패한 명령·관찰·실제 `HEAD`와 미커밋 상태를 보존 | 금지 |
-| `Blocked` | 필요한 입력·권한·사용자 결정 부재, 안전 경계 충돌 또는 검증 snapshot 이후 drift | 추가 mutation을 중단하고 필요한 결정이나 재검증 범위를 특정 | 금지 |
-| `Unverifiable` | 검증을 시도했지만 환경·도구·evidence 제약으로 판정할 수 없음 | 실행한 범위와 확보하지 못한 evidence를 구분 | 금지 |
+| `Pass` | Unit scope is complete and test/coverage gates plus change-related verification/review evidence match the candidate/staged snapshot | Report ID-mapped change and verification references plus remaining risk | Allow exactly one commit when the unit diff can be safely separated from pre-existing user changes |
+| `Fail` | Change-related failure, invalid browser evidence, unauthorized UI-writing drift, or commit failure | Preserve failed command/observation, actual `HEAD`, and uncommitted state | Prohibited |
+| `Blocked` | Required input, authority, or user decision is missing; safety boundaries conflict; or drift follows the verified snapshot | Stop further mutation and identify the decision or re-verification scope | Prohibited |
+| `Unverifiable` | Verification was attempted but environment, tooling, or evidence limitations prevent a verdict | Separate executed scope from unavailable evidence | Prohibited |
 
-위임 중첩, 자동 사용자 호출형 skill 실행, hook 우회, 검증 전 commit을 금지합니다.
+Prohibit nested delegation, automatic invocation of user-invoked skills, hook
+bypass, and commit before verification.
 
-정보 출처의 우선순위는 현재 요청, 대화에서 확인된 결정, 관련 `.tigerkit/tickets.md`, 관련 `.tigerkit/spec.md`, 저장소 지침, 코드/테스트 순입니다. 기존 파일이라고 해서 자동으로 관련 있는 것은 아닙니다.
+Source precedence is: current request, confirmed conversation decisions,
+relevant `.tigerkit/tickets.md`, relevant `.tigerkit/spec.md`, repository
+instructions, code/tests. Existing files are not automatically relevant.
 
-관련 spec/ticket에 requirement 또는 acceptance ID가 있으면 구현 범위를 시작할 때 ID 목록을 확정하고, 완료 receipt에서 각 ID를 변경 동작과 검증 evidence에 연결하세요. Source에 ID가 없으면 임의로 만들지 말고 사용한 source 위치를 기록하세요.
+At scope start, freeze all requirement or acceptance IDs from the relevant
+spec/ticket. In the final receipt, map each ID to changed behavior and
+verification evidence. If the source has no IDs, do not invent them; record the
+source location used.
 
 ## Workflow
 
-1. `understand/inspect`: 입력은 요청·관련 source·저장소 상태이고, 출력은 확인된 범위·제약·requirement/acceptance ID, initial `HEAD`·branch·pre-existing dirty inventory와 미결정 사항입니다.
-2. `resolve strategy`: 입력은 확인된 범위와 코드·테스트 evidence이고, 출력은 `direct | delegated`, `tdd | no-tdd`, 조건부 bug investigation과 independent reviewer 필요 여부입니다.
-3. `implement/incremental verification`: 입력은 확정 전략이고, 출력은 최소 구현 slice와 slice별 focused verification입니다.
-4. `final verification`: 입력은 전체 구현 diff와 성공 조건이고, 출력은 당시 branch·`HEAD`·검증 범위에 묶인 최종 evidence와 실패 분류입니다.
-5. `review/commit`: 입력은 검증된 candidate/staged diff snapshot이고, 출력은 모든 실행의 current-agent Standards/Spec verdict, 필요 시 independent reviewer 1명 및 drift가 없는 staged commit 또는 중단 상태입니다.
-6. `report`: 입력은 최종 branch·`HEAD`·commit·검증 evidence이고, 출력은 중복 없는 완료 섹션과 ID별 receipt입니다.
+1. `understand/inspect`: resolve the standalone request or drive handoff,
+   related source, unit/ticket ID, scope, constraints, R/AC, initial `HEAD`,
+   branch, pre-existing dirty inventory, and unresolved decisions.
+2. `resolve strategy`: from code/test evidence, choose `direct | delegated`,
+   `tdd | no-tdd`, conditional bug investigation, and whether one independent
+   reviewer is permitted.
+3. `implement/incremental verification`: implement the smallest coherent
+   vertical slice and run focused verification after each slice.
+4. `final unit verification`: bind final evidence and failure classification
+   to the current branch, `HEAD`, and verified diff/path scope.
+5. `review/commit`: run current-agent Standards/Spec review against the
+   candidate/staged snapshot, optionally use one bounded independent reviewer,
+   confirm no drift, and create one unit commit or stop.
+6. `report`: return non-duplicated output sections and an ID-mapped receipt
+   tied to the final branch, `HEAD`, commit, and verification evidence.
 
 ## CHECKPOINT / STOP
 
-source mutation 전 조사와 전략을 확정하세요. 요구사항 충돌, 위험한 권한, UI intent 불일치 또는 필수 결정이 남으면 구현하지 말고 해당 근거와 함께 `Blocked`로 멈추세요.
+Complete investigation and strategy before source mutation. If requirements
+conflict, authority is unsafe, UI intent conflicts, or a required decision
+remains, do not implement; stop as `Blocked` with the evidence.
 
-## 전략 결정
+## Strategy
 
-수정 전에 관련 코드, 테스트, 스크립트, 상태를 비파괴적으로 조사하세요. 이 단계에서는 파일을 만들거나 수정 또는 삭제하지 말고, 구현 에이전트를 실행하거나 커밋하지 마세요. context-mode, MCP, 검색, 샌드박스 같은 비에이전트 도구는 위임이 아니며 조사와 양쪽 실행 모드에서 사용할 수 있습니다. 브라우저 도구는 비에이전트 도구여도 아래 `tk-browser-verify` 선행 gate를 우회할 수 없습니다.
+Before editing, inspect relevant code, tests, scripts, and state
+non-destructively. Do not create, edit, or delete files, run an implementor, or
+commit during this inspection. Non-agent tools such as context-mode, MCP,
+search, sandboxes, and test runners are not delegation. Browser tools still
+cannot bypass the `tk-browser-verify` precondition below.
 
-조사 후 사용자가 정하지 않은 실행 모드와 TDD 여부를 스스로 결정하고 이유를 짧게 알린 뒤 승인 질문 없이 즉시 구현하세요. 작은 변경, 공유 파일, 긴밀한 구현-검증 반복에는 `direct`를 선택하고, 독립 범위와 완료 조건이 명확하며 격리 가치가 큰 작업에만 `delegated`를 선택하세요. 공개 동작 경계, 테스트 인프라, 회귀 위험이 명확하면 TDD를 선택하고, 문구·설정·기계적 변경이나 유용한 테스트 경계가 없으면 non-TDD를 선택하세요.
+After inspection, choose any unspecified execution mode and TDD mode, briefly
+state the reason, and implement without an approval question. Prefer `direct`
+for small changes, shared files, or tight implementation-verification loops.
+Use `delegated` only when scope and completion criteria are independently
+transferable and isolation adds material value. Choose TDD when a public
+behavior seam, test infrastructure, and regression risk are clear. Choose
+no-TDD for copy, configuration, mechanical changes, or when no useful test seam
+exists.
 
-사용자가 이미 정한 항목은 그대로 따르고, 일부만 정했다면 나머지만 자동 판단하세요. 요구사항 의미가 여러 최종 동작으로 갈리거나 위험하고 되돌릴 수 없는 권한이 필요한 경우에만 사용자 결정을 요청하세요. 구현 전략 자체를 승인 질문으로 막지 마세요. 권장 형식:
+Honor user-selected modes and decide only missing modes. Ask only when meaning
+branches into materially different outcomes or requires risky irreversible
+authority. Do not turn strategy choice into an approval gate. Example:
 
 ```text
-구현 전략: direct, TDD 미사용 — 문구 변경이며 유용한 공개 테스트 경계가 없습니다. 구현과 검증을 진행합니다.
+Implementation strategy: direct, no TDD — this is a copy-only change with no
+useful public test seam. Proceeding with implementation and verification.
 ```
 
-상세 판단과 위임 계약은 [위임](references/delegation.md)을 참고하세요.
+See [delegation](references/delegation.md) for the bounded delegation contract.
 
-Figma, screenshot 또는 디자인 명세가 예상 UI의 기준이면 source mutation이나 브라우저 도구 호출 전에 hybrid `tk-browser-verify`의 design intent preflight를 적용하세요. 기준과 요청이 충돌하거나 불명확하면 해당 skill의 `Blocked` 경계를 따르고, 정렬된 뒤에만 구현하세요.
+When Figma, a screenshot, or a design specification defines expected UI, apply
+hybrid `tk-browser-verify` design-intent preflight before source mutation or any
+browser-tool call. Follow its `Blocked` boundary on conflict or ambiguity.
 
-## 구현과 검증
+## Implementation and verification
 
-Direct에서는 현재 에이전트가 가장 작은 일관된 단위로 구현하고 focused verification을 반복하세요. Delegated에서는 implementor 한 명에게만 범위와 완료 조건을 전달하고 현재 에이전트가 diff와 검증을 확인하세요. 위임을 중첩하거나 하위 에이전트가 사용자 호출형 TigerKit 스킬을 호출하게 해서는 안 됩니다. Implementor에게 브라우저 도구 호출을 맡기지 말고 최종 browser 검증은 현재 에이전트가 소유하세요.
+In `direct`, the current agent implements the smallest coherent slices and
+repeats focused verification. In `delegated`, give one implementor the scope
+and completion criteria, then have the current agent inspect the diff and
+evidence. Never nest delegation or let a subagent invoke a user-invoked
+TigerKit skill. The implementor does not call browser tools; final browser
+verification belongs to the current agent.
 
-입력이 원인 미확정 bug, 간헐 실패 또는 성능 회귀이면 source mutation 전에 [조사 루프](references/investigation.md)를 적용하세요. 재현 가능한 red signal 없이 추측 patch를 만들지 말고, 원인이 이미 확정된 단순 수정에는 불필요한 가설 절차를 강제하지 마세요. 일반 대화의 diagnose-only 요청은 read-only이며 이 스킬의 commit 권한을 얻지 않습니다.
+For an unknown-cause bug, intermittent failure, or performance regression,
+apply the [investigation loop](references/investigation.md) before mutation. Do
+not guess-patch without a reproducible red-capable signal. Do not impose the
+full hypothesis procedure when the cause is already established. An ordinary
+diagnose-only request remains read-only and receives no commit authority.
 
-TDD로 결정되면 의미 있는 공개 동작 경계를 선택하고 수직 slice 하나의 focused test를 작성하세요. 테스트를 실제 실행해 red를 관찰한 뒤 최소 구현으로 green을 만들고, 같은 테스트와 관련 검증을 다시 실행하세요. 다음 slice가 있으면 반복하세요. 핵심 loop는 `red → green`이며 refactor를 매 cycle의 필수 단계로 강제하지 않습니다. 구현 후 테스트를 추가해 TDD라고 보고하거나, 이미 성공하는 테스트를 red로 표현하거나, 내부 구현 세부사항을 테스트하거나, 테스트를 위해 production API를 왜곡하지 마세요. 사용자가 TDD를 명시했는데 유용한 seam이 없으면 자동으로 non-TDD로 바꾸지 말고 seam 부재와 가능한 대안을 제시해 결정받으세요. 자동 판단에서는 유용한 seam이 없으면 TDD를 선택하지 마세요. Non-TDD에서도 검증을 생략하지 마세요.
+When TDD is selected, choose a meaningful public behavior seam and write one
+focused vertical-slice test. Run it and observe red, implement the minimum
+change to make it green, and rerun that test plus related verification. Repeat
+for another slice when needed. The required loop is `red → green`; refactor is
+not mandatory in every cycle. Do not call post-hoc tests TDD, claim an already
+passing test was red, test private implementation details, or distort a
+production API for tests. If the user requires TDD but no useful seam exists,
+do not silently switch to no-TDD; present the seam gap and options for a user
+decision. In automatic mode, do not select TDD without a useful seam.
+
+TDD is a strategy, but a durable automated test is a completion condition for
+production behavior. For a bug or regression with a meaningful public seam,
+run a failing regression test and observe red before the fix, then green after
+it. Protect new production behavior with a new or updated public-behavior test
+before commit even when TDD was not selected. Only non-runtime changes such as
+copy, documentation, pure configuration, or mechanical edits may omit a new
+test with a recorded reason; always run relevant verification.
+
+Run existing repository coverage commands and thresholds as-is. Treat a
+change-related regression or threshold miss as failure. If coverage tooling
+does not exist, do not install or invent a dependency, instrumentation, or
+percentage; report `coverage: unavailable`. Missing coverage numbers neither
+replace nor fail the durable public-behavior test requirement.
+
+### 🔴 CHECKPOINT · 🛑 STOP · testless production behavior
+
+When production behavior has no meaningful test seam, never grant a silent
+testless `Pass`. Present a seam-addition option and deterministic alternative
+verification, then stop before commit for the user's decision. Only an
+explicitly approved, named exception permits the alternative verification.
+After success, record the exception basis, unverified scope, and residual risk
+in the receipt. Silence, schedule pressure, and an existing no-TDD choice are
+not exception approval.
 
 ### 🔴 HARD GATE · source UI writing
 
-사용자가 제공한 source에 사용자에게 보이는 문구가 있으면 source mutation 전에 UI writing inventory를 고정하세요. Label, button name, heading, guide/help copy, table·column name, placeholder, validation/error, status text를 source 위치와 구현 destination에 1:1로 연결하고 원문을 exact literal로 기록하세요.
+If user-provided source contains visible UI copy, freeze a UI-writing inventory
+before mutation. Map each label, button, heading, guide/help copy, table or
+column name, placeholder, validation/error, and status text from its source
+location to its implementation destination, preserving the exact literal.
 
-사용자가 해당 문구의 변경을 명시적으로 요청하지 않은 한 spelling, 대소문자, 띄어쓰기, 문장부호, 기호, 숫자, 의미 있는 줄바꿈을 그대로 보존하세요. 번역, 의역, 축약, 자연스러운 표현으로의 교정, typo 수정, repository 관례에 맞춘 normalization도 금지합니다. 이미지·스크린샷처럼 원문을 정확히 판독할 수 없는 source이거나 source끼리 문구가 충돌하면 추정하지 말고 정확한 문구 한 가지를 확인받을 때까지 `Blocked`로 멈추세요.
+Unless the user explicitly requests a wording change, preserve spelling, case,
+spacing, punctuation, symbols, numbers, and meaningful line breaks. Prohibit
+translation, paraphrase, shortening, correction, typo fixes, and repository
+normalization. If source text is unreadable or sources conflict, do not guess;
+stop as `Blocked` until one exact literal is confirmed.
 
-구현 후 inventory의 모든 literal을 rendered UI 또는 해당 source path에서 다시 대조하고, candidate/staged diff review에도 이 대조 결과를 포함하세요. 승인되지 않은 한 글자라도 달라졌으면 terminal-state contract의 `Fail`, exact 대조 evidence가 없으면 `Unverifiable`을 적용하세요. 명시적으로 변경 승인된 문구만 inventory에서 `authorized change`로 표시하고 나머지는 frozen 상태를 유지하세요.
+After implementation, compare every literal in rendered UI or its source path
+and include the comparison in candidate/staged review. Any unauthorized
+character drift is `Fail`; missing exact-comparison evidence is
+`Unverifiable`. Mark only explicitly approved wording as `authorized change`.
 
-### 🔴 HARD GATE · browser 도구
+### 🔴 HARD GATE · browser tools
 
-사용자에게 보이는 UI, layout, styling, responsive behavior, interaction, navigation, form submission 또는 browser network/final state가 범위에 있으면, **브라우저 도구나 검증용 server를 처음 호출하기 전에** hybrid `tk-browser-verify`를 현재 작업의 active verification contract로 적용하고 해당 `SKILL.md`의 mode 선택·launch configuration·안전 범위 checkpoint를 먼저 실행하세요. 단순히 skill 이름을 언급하거나 나중에 결과를 그 형식으로 포장하는 것은 적용이 아닙니다.
+When scope includes visible UI, layout, styling, responsive behavior,
+interaction, navigation, form submission, or browser network/final state,
+apply hybrid `tk-browser-verify` as the active verification contract **before
+the first browser-tool or verification-server call**. Execute its mode
+selection, launch configuration, and safety checkpoint first. Mentioning the
+skill or wrapping later evidence in its format is not application.
 
-`tk-implement`가 Chrome MCP, Playwright, CDP 또는 native browser를 직접 선택·호출하는 것은 금지합니다. 이 수단들은 선행 gate를 통과한 `tk-browser-verify` 안에서만 선택할 수 있습니다. Gate 전에 현재 실행의 browser 호출이 이미 발생했다면 그 evidence는 무효이며, 나중에 skill 형식으로 포장하지 말고 terminal-state contract의 `Fail`을 적용하세요. 사용자가 browser 검증을 금지하거나 skill을 로드·적용할 수 없으면 직접 도구 호출로 대체하지 말고 `Unverifiable`을 적용하세요. DOM, accessibility tree, unit test 또는 build 성공도 runtime screenshot과 실제 image 검사 계약을 대체하지 않습니다.
+`tk-implement` must not directly select or call Chrome MCP, Playwright, CDP, or
+a native browser. Those tools are available only inside a
+`tk-browser-verify` contract that passed the precondition. A browser call made
+before the gate is invalid evidence and causes `Fail`. If browser verification
+is prohibited or the skill cannot be applied, do not substitute direct tools;
+use `Unverifiable`. DOM, accessibility tree, unit tests, or build success do
+not replace runtime screenshots and actual image inspection.
 
-각 구현 slice 직후 focused test와 관련 정적 검사·build·필요한 브라우저/통합 검증을 실행하고, 다음 slice로 넘어가기 전에 결과를 확인하세요. 모든 slice가 끝나면 실행 가능한 가장 넓은 관련 검증을 한 번 실행하세요. 실패를 `change-related`, `pre-existing`, `environment`, `unverifiable`로 분류하고 terminal-state contract로 최종 상태를 정하세요.
+After each slice, run focused tests plus affected static checks, build, and
+required browser/integration verification. After the unit is complete, run the
+broadest relevant verification affected by that unit on the cumulative branch.
+Drive owns the final cross-ticket broad verification after collecting all unit
+receipts. Classify failures as `change-related`, `pre-existing`, `environment`,
+or `unverifiable`, then apply the terminal-state contract.
 
-Final verification에는 당시 branch·`HEAD`와 검증한 diff/path 범위를 함께 기록하세요. 커밋 직전에 현재 branch·`HEAD`·staged diff가 그 범위와 같은지 다시 확인하고, 예상하지 않은 drift나 검증하지 않은 staged 변경이 있으면 커밋하지 말고 사용자 변경을 건드리지 않은 채 영향받은 검증을 다시 실행하거나 `Blocked`로 보고하세요. Commit 자체가 실패하면 broad staging이나 우회 옵션으로 재시도하지 말고 실제 `HEAD`와 미커밋 상태를 `Fail` receipt에 남기세요.
+Record final verification with the branch, `HEAD`, and verified diff/path
+scope. Immediately before commit, confirm current branch, `HEAD`, and staged
+diff still match. On unexpected drift or unverified staged changes, do not
+commit; preserve user changes and rerun affected verification or report
+`Blocked`. If commit itself fails, do not retry with broad staging or a bypass;
+record actual `HEAD` and uncommitted state in a `Fail` receipt.
 
-모든 구현은 risk와 크기에 관계없이 현재 에이전트가 [내장 리뷰](references/review-boundary.md)의 fixed point, candidate/staged inventory, Standards와 Spec 축을 실행하세요. `large` 또는 인증·결제·개인정보·권한·dependency·migration/data loss·동시성·public API 고위험 변경에서만 독립 reviewer 한 명을 허용합니다. 전체 최대 범위는 review 1회, fix 1회, regression verification 1회입니다. 중요한 finding, drift 또는 미검증 범위에는 terminal-state contract의 `Blocked` 또는 `Unverifiable`을 적용하세요.
+Every unit runs the current agent's [built-in review](references/review-boundary.md)
+regardless of size or risk. Review owns the current unit/ticket diff and R/AC;
+it does not repeat drive's aggregate traceability review. Permit one independent
+reviewer only for `large` work or high-risk authentication, payment, privacy,
+authorization, dependency, migration/data-loss, concurrency, or public API
+changes. Bound the flow to one review, one fix, and one regression verification.
+An important finding, drift, or unverified coverage prevents commit.
 
-## 커밋과 보고
+## Commit and report
 
-Terminal-state contract의 `Pass`이고 사용자가 커밋을 금지하지 않았을 때만 현재 브랜치에 커밋하세요. Implementor는 커밋하지 않으며 현재 에이전트가 staged diff를 확인하고 커밋합니다.
+Create exactly one current-branch unit commit only when status is `Pass` and
+the user did not prohibit commit. An implementor never commits; the current
+agent verifies the staged diff and commits. For a drive handoff, return commit
+SHA and unit/ticket ID so drive does not create another commit.
 
-일반 review-only 요청은 read-only 일반 agent 작업으로 처리하며 source mutation이나 commit 권한을 부여하지 않습니다. 이 스킬 안의 review는 explicit implementation 범위와 candidate diff만 소유합니다.
+An ordinary review-only request is a read-only agent task and grants no source
+mutation or commit authority. Review inside this skill owns only the explicit
+implementation scope and candidate diff.
 
-별도 요청 없이는 push, PR 생성, merge, tag, release 또는 publish를 하지 마세요. 다른 사용자 호출형 스킬도 자동 실행하지 마세요.
+Without a separate request, do not push, create a PR, merge, tag, release, or
+publish. Do not automatically invoke another user-invoked skill.
 
-`## Strategy`, `## Changed`, `## Verification`, `## Commit`, 비어 있지 않은 `## Remaining risks`, `## Receipt`를 보고하세요. 파일 목록만이 아니라 동작을 설명하고, 검증 명령과 결과, 실패 분류, 커밋 메시지 또는 미커밋 이유를 포함하세요. Strategy는 선택한 실행 방식·TDD·review와 그 선택 이유만 소유하고 변경 동작이나 검증 명령·결과를 예고·요약하지 않습니다. 변경 설명은 `## Changed`, 검증 명령·결과·실패 분류는 `## Verification`만 소유합니다. Receipt에는 상태(`Pass | Fail | Blocked | Unverifiable`), 미검증 항목과 requirement/acceptance ID별 `Changed`·`Verification` 참조만 기록하고 본문을 반복하지 마세요.
+Report `## Strategy`, `## Changed`, `## Verification`, `## Commit`, a
+non-empty `## Remaining risks`, and `## Receipt`. Describe unit/ticket behavior,
+not only files. Include commands and results, coverage state, failure
+classification, commit SHA/message, or why no commit exists. `Strategy` owns
+only execution mode, TDD, review choice, and reasons. `Changed` owns behavior.
+`Verification` owns commands, results, and classification. `Receipt` owns
+phase, unit/ticket ID, status (`Pass | Fail | Blocked | Unverifiable`), commit
+SHA, unverified items, and R/AC-to-`Changed`/`Verification` references without
+repeating the body.
+
+Write user-facing progress and report prose in the user's language. Preserve
+the canonical headings, status tokens, IDs, and receipt keys above.
 
 ## DO NOT / ANTI-PATTERNS
 
-- 검증 전 commit, 실패가 남은 변경의 commit, push 또는 PR 생성을 하지 마세요.
-- 위임을 중첩하거나 하위 agent가 사용자 호출형 skill을 실행하게 하지 마세요.
-- 제공된 source의 UI writing을 승인 없이 번역·의역·교정·normalization하거나 exact 대조 없이 commit하지 마세요.
-- `tk-browser-verify`를 먼저 적용하지 않은 채 Chrome MCP·Playwright·CDP·native browser를 직접 호출하지 마세요.
-- UI 변경에서 browser runtime evidence를 DOM·unit test·build 성공으로 대체하지 마세요.
+- Do not commit before verification, commit a failing change, push, or create
+  a PR.
+- Do not batch standalone multi-ticket input or create tickets.
+- Do not auto-apply this hybrid skill from an ordinary implementation request
+  or merely because drive is active.
+- Do not commit production behavior without a durable test or an approved
+  named exception.
+- Do not invent coverage dependencies or percentages when tooling is absent.
+- Do not nest delegation or let a subagent invoke a user-invoked skill.
+- Do not alter source UI writing without approval or commit without exact
+  comparison.
+- Do not directly call Chrome MCP, Playwright, CDP, or a native browser before
+  applying `tk-browser-verify`.
+- Do not replace browser runtime evidence with DOM, unit-test, or build
+  success.

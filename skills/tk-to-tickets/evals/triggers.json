@@ -157,6 +157,16 @@
       "facets": [
         "compound"
       ]
+    },
+    {
+      "id": "validation-positive-drive-handoff",
+      "split": "validation",
+      "query": "[active tk-drive ticket handoff] Ready spec과 ticket-decision evidence로 vertical ledger를 작성해",
+      "should_trigger": true,
+      "facets": [
+        "ko-en",
+        "compound"
+      ]
     }
   ]
 }

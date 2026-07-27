@@ -1,43 +1,43 @@
-# 위임
+# Delegation
 
-## 정의
+## Definitions
 
-`direct`는 현재 에이전트가 구현 책임을 직접 소유하는 방식입니다. context-mode, MCP, 검색, 정적 분석, 브라우저, 샌드박스, subprocess, 테스트 러너, formatter, linter, typechecker 같은 비에이전트 도구 사용은 direct와 양립하며 delegation이 아닙니다.
+`direct` means the current agent owns implementation. Non-agent tools such as
+context-mode, MCP, search, static analysis, browser tooling inside the required
+browser contract, sandboxes, subprocesses, test runners, formatters, linters,
+and type checkers are compatible with direct work and are not delegation.
 
-`delegated`는 독립적인 자율 implementor 에이전트 한 명에게 구현 책임을 전달하는 방식입니다. 도구 사용이나 단순 subprocess 실행을 delegated로 분류하지 마세요.
+`delegated` means transferring implementation ownership to one autonomous
+implementor agent. A tool or subprocess does not make work delegated.
 
-## 판단
+## Decision
 
-Direct를 우선하세요.
+Prefer direct when the change is small or mechanical, concentrated in one or a
+few files, touches shared or tightly coupled code, fits current context,
+requires tight implementation-verification loops, or costs more to isolate
+than to implement.
 
-- 변경이 작거나 기계적입니다.
-- 하나 또는 소수 파일에 집중됩니다.
-- 공유 파일 또는 강하게 결합된 코드를 수정합니다.
-- 현재 컨텍스트가 충분합니다.
-- 구현과 검증을 긴밀하게 반복해야 합니다.
-- 분리 비용이 구현 비용보다 큽니다.
+Consider delegated only when scope and completion criteria transfer
+independently, relevant files and decisions are clear, shared-file conflicts
+are unlikely, context preservation or isolation has material value, and the
+main task is implementation rather than design. Size alone is not sufficient.
 
-다음 조건에서는 delegated를 고려할 수 있습니다.
+## Implementor contract
 
-- 구현 범위와 완료 조건을 독립적으로 전달할 수 있습니다.
-- 관련 파일과 결정이 충분히 명확합니다.
-- 공유 파일 충돌 가능성이 낮습니다.
-- 메인 컨텍스트 보존 또는 작업 격리 가치가 큽니다.
-- 설계보다 독립 구현 수행이 주 작업입니다.
+Give one implementor:
 
-작업이 크다는 이유만으로 delegated를 선택하지 마세요.
+- goal, included scope, and excluded scope;
+- relevant files or entry points;
+- confirmed decisions and TDD mode;
+- verification commands or expectations;
+- prohibited actions;
+- required diff, verification results, and remaining-risk return.
 
-## Implementor 계약
+The implementor does not create another agent, re-delegate, invoke a
+user-invoked TigerKit skill, expand scope, mix unrelated refactors, commit,
+push, create a PR, merge, tag, release, or publish.
 
-Implementor 한 명에게 다음을 전달하세요.
-
-- 목표, 포함 범위, 제외 범위
-- 관련 파일 또는 진입점
-- 확정된 결정과 승인된 TDD 여부
-- 검증 명령 또는 기대치
-- 금지 행동
-- 반환할 diff, 검증 결과, 남은 위험
-
-Implementor는 다른 에이전트를 만들거나 재위임하지 않고, 사용자 호출형 TigerKit 스킬을 실행하지 않으며, 범위를 확대하거나 관련 없는 리팩터링을 섞지 않습니다. commit, push, PR 생성, merge, tag, release, publish도 하지 않습니다.
-
-현재 에이전트가 실제 diff, 요청 준수, 검증 증거를 확인합니다. 필요하면 명확한 수정 지시를 한 번 내리고 회귀 검증하세요. 검토 없이 결과를 수용하지 마세요. 최종 검증과 커밋 책임은 현재 에이전트에 있습니다.
+The current agent inspects the actual diff, request compliance, and
+verification evidence. It may give one concrete fix request and run regression
+verification. Never accept delegated output without review. Final verification
+and commit remain with the current agent.

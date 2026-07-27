@@ -143,6 +143,22 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "to-tickets-active-drive-handoff",
+      "path": "success",
+      "prompt": "[active tk-drive ticket handoff] The Ready spec has three independent vertical slices and drive decided a ledger is justified. Write and verify the ticket ledger and return Phase: tickets.",
+      "expected_output": "standalone과 같은 vertical-slice contract로 ticket IDs, source R/AC coverage, dependencies와 terminal state를 반환하고 implementation으로 진행하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "explicit active-drive ticket handoff를 positive로 처리하되 ticket 필요성 판단을 다시 소유하거나 구현하지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ]
 }

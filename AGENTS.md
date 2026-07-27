@@ -2,9 +2,9 @@
 
 ## Product boundary
 
-TigerKit 20 is an Agent Skills repository, not a workflow framework or Claude Code plugin.
+TigerKit 21 is an Agent Skills repository, not a workflow framework or Claude Code plugin.
 
-- Keep exactly 12 canonical skills under `skills/tk-*/`: 2 user-invoked and 10 hybrid. Do not add model-only skills.
+- Keep exactly 12 canonical skills under `skills/tk-*/`: 1 user-invoked and 11 hybrid. Do not add model-only skills.
 - Each skill's `SKILL.md` is its behavior source of truth.
 - Keep each skill self-contained; skill-specific detail and code stay in its own `references/` and `scripts/`.
 - Prefer thin instructions. Add detail only for repeated failures, costly ordering mistakes, mutation safety, objective verification, specialist procedures, or bounded delegation/review.
@@ -33,9 +33,10 @@ If the answers are weak, choose `inline`, `merge`, `convert to reference`, `make
 - Small work and ordinary follow-up feedback stay owned by the current agent without requiring a new skill.
 - Non-agent tools, MCPs, sandboxes, browsers, and context-management utilities remain available whenever useful.
 - Delegate implementation ownership only for real isolation or parallel benefit; never nest agent delegation.
-- Every `tk-implement` and `tk-drive` implementation phase runs current-agent Standards/Spec review. Large or high-risk work permits at most one independent reviewer, without fan-out, editing, re-delegation, or automatic re-review.
+- Every `tk-implement` unit runs current-agent Standards/Spec review. Large or high-risk work permits at most one independent reviewer, without fan-out, editing, re-delegation, or automatic re-review. `tk-drive` owns only aggregate R/AC, ancestry, cross-ticket, and broad verification after consuming those unit receipts.
 - TigerKit never commits, pushes, opens PRs, merges, tags, releases, or publishes unless explicitly authorized by a skill contract or user request.
-- Explicit `tk-implement` invocation and explicit `$tk-drive` start authorize a verified current-branch commit under their contracts. Neither authorizes push or later release actions; implicit drive resume inherits only the active same-conversation scope.
+- Explicit `tk-implement` invocation authorizes one verified current-branch unit commit. Explicit `$tk-drive` start authorizes `tk-implement` to create one such commit per selected ticket or no-ticket single slice. Neither authorizes push or later release actions; implicit drive resume inherits only the active same-conversation scope.
+- Operational bodies and references for `tk-drive`, `tk-to-spec`, `tk-to-tickets`, and `tk-implement` use English. User-facing progress and final receipt prose follows the user's language while canonical fields and status tokens remain unchanged.
 
 ## Repository documentation
 
@@ -54,7 +55,7 @@ If the answers are weak, choose `inline`, `merge`, `convert to reference`, `make
 
 ## Change discipline
 
-- Preserve canonical names, invocation kinds, and upstream attribution.
+- Preserve canonical names, documented invocation boundaries, and upstream attribution.
 - Reuse existing skill-local files before adding new surfaces; prefer deletion and the Python standard library.
 - Keep validation local-only. Do not add GitHub Actions workflows for validators, evals, packaging smoke tests, or CLI canaries.
 - Run `python3 scripts/validate_skills.py`, `python3 scripts/validate_skills.py --links-only`, and `npx --yes skills add . --list` for relevant changes.
