@@ -121,6 +121,8 @@ browser-tool call. Follow its `Blocked` boundary on conflict or ambiguity.
 
 ## Implementation and verification
 
+### Execution ownership and investigation
+
 In `direct`, the current agent implements the smallest coherent slices and
 repeats focused verification. In `delegated`, give one implementor the scope
 and completion criteria, then have the current agent inspect the diff and
@@ -133,6 +135,8 @@ apply the [investigation loop](references/investigation.md) before mutation. Do
 not guess-patch without a reproducible red-capable signal. Do not impose the
 full hypothesis procedure when the cause is already established. An ordinary
 diagnose-only request remains read-only and receives no commit authority.
+
+### Test and coverage
 
 When TDD is selected, choose a meaningful public behavior seam and write one
 focused vertical-slice test. Run it and observe red, implement the minimum
@@ -202,6 +206,8 @@ before the gate is invalid evidence and causes `Fail`. If browser verification
 is prohibited or the skill cannot be applied, do not substitute direct tools;
 use `Unverifiable`. DOM, accessibility tree, unit tests, or build success do
 not replace runtime screenshots and actual image inspection.
+
+### Final verification and review
 
 After each slice, run focused tests plus affected static checks, build, and
 required browser/integration verification. After the unit is complete, run the
