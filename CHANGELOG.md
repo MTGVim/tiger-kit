@@ -1,6 +1,6 @@
 # Changelog
 
-## 21.0.0 — Phase-Owner Orchestration
+## 20.1.3 — Phase-Owner Improvements
 
 - Made `tk-drive` a thin orchestrator that explicitly hands spec creation to
   `tk-to-spec`, conditional vertical decomposition to `tk-to-tickets`, and each
@@ -19,6 +19,12 @@
 - Standardized the four phase-owner operational contracts and references in
   English while keeping user-facing progress and final receipt prose in the
   user's language.
+- Refined all 12 skill contracts with bounded evidence, mutation, approval,
+  placement, recovery, and resumability guidance while retaining their
+  existing names and explicit invocation paths.
+- Required TDD red evidence to fail for the expected missing behavior, bounded
+  mocks to unavoidable external side-effect boundaries, and made vertical
+  tickets executable from cited sources without hidden conversation context.
 - Preserved all 12 canonical skill names, changed the distribution to
   1 user-invoked / 11 hybrid, and added static and executable cross-host
   routing, phase handoff, failure, test, coverage, and commit regressions.

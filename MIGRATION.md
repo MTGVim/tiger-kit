@@ -1,9 +1,11 @@
-# Migrating to TigerKit 21
+# TigerKit 20.1.3 Behavior Updates
 
-TigerKit 21 preserves the 12 canonical skill names and Agent Skills
-distribution for Claude Code, Codex, and Hermes Agent. It changes the
-invocation mix from 2 user-invoked / 10 hybrid to 1 user-invoked / 11 hybrid
-and introduces a breaking phase-owner boundary.
+TigerKit 20.1.3 preserves the 12 canonical skill names, explicit invocation
+paths, and Agent Skills distribution for Claude Code, Codex, and Hermes Agent.
+It refines the invocation mix from 2 user-invoked / 10 hybrid to 1 user-invoked
+/ 11 hybrid while keeping direct `tk-implement` selection valid, and composes
+the existing workflow through explicit phase owners without requiring users to
+change installation or explicit commands.
 
 ## Install
 
@@ -38,7 +40,7 @@ drive is active is not a handoff.
 
 ## Phase ownership
 
-TigerKit 21 assigns one semantic owner per phase:
+TigerKit 20.1.3 assigns one semantic owner per phase:
 
 ```text
 spec creation and Ready gate          → tk-to-spec
@@ -56,7 +58,8 @@ a spec, decompose tickets, or implement one selected unit.
 
 ## Commit changes
 
-TigerKit 20 drive created one final commit. TigerKit 21 uses:
+Earlier TigerKit 20 drive implementations created one final commit. TigerKit
+20.1.3 uses:
 
 ```text
 one ticket = one tk-implement invocation = one commit
@@ -102,12 +105,13 @@ and verification terms remain stable across hosts. User-facing progress and
 final receipt prose follows the user's language; canonical status tokens,
 IDs, headings, and receipt keys remain unchanged.
 
-## Compatibility boundary
+## Compatibility
 
-TigerKit 21 does not install a compatibility shim or automatically migrate old
-scratch, work maps, ledgers, global state, browser profiles, credentials, or
-evidence. Revalidate current `.tigerkit/spec.md` and `.tigerkit/tickets.md`
-against the new phase contracts. Keep only current, non-sensitive facts.
+No compatibility shim is needed for canonical skill names or explicit
+invocation paths. TigerKit 20.1.3 does not automatically migrate local scratch,
+work maps, ledgers, global state, browser profiles, credentials, or evidence.
+Revalidate current `.tigerkit/spec.md` and `.tigerkit/tickets.md` against the
+refined phase contracts. Keep only current, non-sensitive facts.
 
 Current scratch remains repository/worktree-local `.tigerkit/`. TigerKit does
 not modify consumer `.gitignore` files. It does not recreate `CONTEXT.md`,
@@ -116,5 +120,5 @@ domain documents, glossaries, or ADRs automatically.
 ## Removed Skills remain removed
 
 The skills removed before TigerKit 20 remain historical only. Their replacement
-mapping is documented in TigerKit 20 changelog and release notes; TigerKit 21
-does not restore those surfaces or the `model-only` invocation kind.
+mapping is documented in TigerKit 20 changelog and release notes; TigerKit
+20.1.3 does not restore those surfaces or the `model-only` invocation kind.

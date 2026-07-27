@@ -1,4 +1,4 @@
-# TigerKit 21
+# TigerKit 20.1.3
 
 <p align="center">
   <img src="assets/tigerkit-cover.png" width="960" alt="TigerKit Agent Skills 표지">
@@ -6,7 +6,7 @@
 
 TigerKit은 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent Skills
 모음입니다. 중앙 workflow runtime 없이 12개 self-contained skill을
-`npx skills`로 배포합니다. TigerKit 21은 spec, ticket, implementation을 각각
+`npx skills`로 배포합니다. TigerKit 20.1.3은 spec, ticket, implementation을 각각
 하나의 canonical phase skill이 소유하고 `tk-drive`가 그 결과를
 오케스트레이션합니다. 현재 `main`은 최신 release source이며, 아래 immutable
 tag로 동일한 released snapshot을 설치할 수 있습니다.
@@ -36,10 +36,10 @@ npx skills add MTGVim/tiger-kit \
   --skill tk-browser-verify
 ```
 
-변경되지 않는 `v21.0.0` snapshot:
+변경되지 않는 `v20.1.3` snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v21.0.0" \
+npx skills add "MTGVim/tiger-kit#v20.1.3" \
   --global \
   --agent claude-code \
   --agent codex \
@@ -192,7 +192,7 @@ branch 한정 결정 → spec / ticket / commit / PR
 
 ## 버전 관리
 
-`main`은 지속 갱신되는 최신 source이며 stable release tag와 GitHub Release는 검증된 `origin/main` commit에서만 생성합니다. Git tag는 immutable snapshot입니다. Skill 이름 삭제, invocation kind 변경, 호환되지 않는 scratch 또는 배포 변경은 major release입니다.
+`main`은 지속 갱신되는 최신 source이며 stable release tag와 GitHub Release는 검증된 `origin/main` commit에서만 생성합니다. Git tag는 immutable snapshot입니다. Skill 이름이나 기존 explicit invocation 경로 삭제, 호환되지 않는 scratch 또는 배포 변경은 major release입니다.
 
 ## 로컬 검증
 
@@ -222,4 +222,4 @@ Live eval adapter는 격리된 실행마다 `skill_loaded`, `output`, `terminal_
 
 현재 배포 skill과 제거·병합된 upstream-derived behavior attribution은 `NOTICE.md`에 구분해 보존합니다. TigerKit은 adapted skill에 `tk-` prefix와 `relationship: adapted` metadata를 사용합니다.
 
-TigerKit 20.x 또는 이전 버전에서 이전한다면 `MIGRATION.md`를 읽으세요.
+TigerKit 20.1.2 또는 이전 버전에서 갱신한다면 `MIGRATION.md`를 읽으세요.

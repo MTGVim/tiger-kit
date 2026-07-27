@@ -38,7 +38,7 @@ else:
 
 
 class CanonicalSkillContractTest(unittest.TestCase):
-    def test_v21_skill_distribution_and_phase_owner_behaviors(self) -> None:
+    def test_v20_1_3_skill_distribution_and_phase_owner_behaviors(self) -> None:
         self.assertEqual(
             EXPECTED_SKILLS,
             {

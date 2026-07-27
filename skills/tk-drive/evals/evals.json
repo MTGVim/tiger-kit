@@ -4,12 +4,12 @@
     {
       "from": "drive-commits-once",
       "to": "drive-commits-per-ticket",
-      "reason": "TigerKit 21 replaces the drive-wide final commit with one verified commit per implementation unit."
+      "reason": "TigerKit 20.1.3 replaces the drive-wide final commit with one verified commit per implementation unit."
     },
     {
       "from": "drive-review-parity",
       "to": "drive-aggregate-review-boundary",
-      "reason": "TigerKit 21 moves ticket-level Standards/Spec review to tk-implement and keeps aggregate integration review in drive."
+      "reason": "TigerKit 20.1.3 moves ticket-level Standards/Spec review to tk-implement and keeps aggregate integration review in drive."
     }
   ],
   "evals": [

@@ -2,7 +2,7 @@
 
 ## Product boundary
 
-TigerKit 21 is an Agent Skills repository, not a workflow framework or Claude Code plugin.
+TigerKit 20.1.3 is an Agent Skills repository, not a workflow framework or Claude Code plugin.
 
 - Keep exactly 12 canonical skills under `skills/tk-*/`: 1 user-invoked and 11 hybrid. Do not add model-only skills.
 - Each skill's `SKILL.md` is its behavior source of truth.
