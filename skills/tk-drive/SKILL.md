@@ -19,8 +19,11 @@ blocker remains.
 
 An ordinary code request, generic `continue`, an existing `.tigerkit/`
 artifact, an answer to another question, a new session, or a broken
-conversation is not an implicit start or resume. In a new session, require a
-new explicit `$tk-drive` start and reconstruct phases from repository evidence.
+conversation is not an implicit start or resume. For an ordinary implementation
+request, leave ownership with the current agent's normal implementation path,
+including any commit authority the user granted directly; do not invoke or
+simulate this workflow. In a new session, require a new explicit `$tk-drive`
+start and reconstruct phases from repository evidence.
 
 ## Contract
 
