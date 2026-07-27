@@ -64,6 +64,8 @@ Do not substitute terminal states for one another.
 
 ## Contract
 
+### Ticket shape and traceability
+
 Preserve source traceability per requirement. Each ticket begins
 `Status: pending` and is a vertical behavior unit with an independent goal,
 scope, acceptance criteria, and verification. Standalone execution does not
@@ -71,12 +73,19 @@ infer implementation progress. Preserve source R/AC IDs in each ticket and in
 the coverage table. Without source IDs, cite source location and do not invent
 IDs.
 
+### Vertical-slice boundaries
+
 Keep behavior and its tests in the same ticket; do not create horizontal
 type/API/UI/test-only tickets. If evidence cannot support independent slices,
 return `Unresolved split report`. Classify unsupported requirements or
 unresolved conflicts as `Blocked` or `Unverifiable`. The receipt includes path,
 status, ticket count, source-ID traceability, dependencies, evidence,
 unverified items, and unresolved split problems.
+
+Keep one bug as one vertical slice from reproduction through root-cause fix,
+regression seam, original reproduction, and cleanup. Do not split it into
+UI/API/test or diagnose/fix/verify layers. From a Ready spec, cover every R/AC.
+Do not write from `Draft | Blocked | Unverifiable`.
 
 ### 🔴 HARD GATE · source UI writing
 
@@ -96,11 +105,6 @@ After write, compare every literal against coverage and actual ticket
 acceptance/verification. Unauthorized drift or missing comparison evidence
 prevents completion and implementation handoff. Mark only approved wording as
 `authorized change`.
-
-Keep one bug as one vertical slice from reproduction through root-cause fix,
-regression seam, original reproduction, and cleanup. Do not split it into
-UI/API/test or diagnose/fix/verify layers. From a Ready spec, cover every R/AC.
-Do not write from `Draft | Blocked | Unverifiable`.
 
 ## CHECKPOINT / STOP
 
