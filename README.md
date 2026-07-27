@@ -1,10 +1,15 @@
-# TigerKit 20
+# TigerKit 20.1.3
 
 <p align="center">
   <img src="assets/tigerkit-cover.png" width="960" alt="TigerKit Agent Skills 표지">
 </p>
 
-TigerKit은 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent Skills 모음입니다. 중앙 workflow runtime 없이 12개 self-contained skill을 `npx skills`로 배포합니다. 현재 `main`은 최신 release source이며, 아래 immutable tag로 동일한 released snapshot을 설치할 수 있습니다.
+TigerKit은 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent Skills
+모음입니다. 중앙 workflow runtime 없이 12개 self-contained skill을
+`npx skills`로 배포합니다. TigerKit 20.1.3은 spec, ticket, implementation을 각각
+하나의 canonical phase skill이 소유하고 `tk-drive`가 그 결과를
+오케스트레이션합니다. 현재 `main`은 최신 release source이며, 아래 immutable
+tag로 동일한 released snapshot을 설치할 수 있습니다.
 
 ## 설치
 
@@ -31,10 +36,10 @@ npx skills add MTGVim/tiger-kit \
   --skill tk-browser-verify
 ```
 
-변경되지 않는 `v20.1.2` snapshot:
+변경되지 않는 `v20.1.3` snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v20.1.2" \
+npx skills add "MTGVim/tiger-kit#v20.1.3" \
   --global \
   --agent claude-code \
   --agent codex \
@@ -45,17 +50,17 @@ Claude Code와 Hermes Agent에서는 `/tk-implement` 같은 slash command로 표
 
 ## Skill 목록
 
-- **`[user]` user-invoked 2개**: 사용자가 명시적으로 선택하며 implicit invocation이 차단됩니다.
-- **`[user/auto]` hybrid 10개**: 사용자 선택과 description의 좁은 positive trigger를 모두 지원합니다.
+- **`[user]` user-invoked 1개**: 사용자가 명시적으로 선택하며 implicit invocation이 차단됩니다.
+- **`[user/auto]` hybrid 11개**: 사용자 선택과 description의 좁은 positive trigger를 모두 지원합니다.
 - model-only skill은 없습니다.
 
 | Skill | 호출 | 목적 |
 | --- | --- | --- |
 | `tk-grill-me` | user | 사실을 조사한 뒤 중요한 결정을 한 번에 한 질문씩 검증합니다. |
-| `tk-to-spec` | hybrid | 명확한 artifact 요청에서 확인된 사실과 결정을 구현 명세로 작성합니다. |
-| `tk-to-tickets` | hybrid | 명확한 decomposition 요청에서 source를 수직 ticket으로 나눕니다. |
-| `tk-implement` | user | 전략 결정 후 구현, 검증, built-in review와 current-branch commit을 수행합니다. |
-| `tk-drive` | hybrid | 명시적으로 시작한 source를 planning부터 verified commit 하나까지 진행하고 pending 답변에서 재개합니다. |
+| `tk-to-spec` | hybrid | 독립 요청 또는 drive handoff에서 Ready spec을 작성·검증합니다. |
+| `tk-to-tickets` | hybrid | 독립 요청 또는 drive handoff에서 source를 수직 ticket으로 나눕니다. |
+| `tk-implement` | hybrid | 명시 선택 또는 drive의 implementation handoff에서 unit 하나를 테스트·review하고 commit 하나로 만듭니다. |
+| `tk-drive` | hybrid | 명시적으로 시작한 source를 canonical phase owner와 ticket별 commit, 최종 aggregate verification까지 진행합니다. |
 | `tk-prototype` | hybrid | 폐기 가능한 UI 또는 logic 비교 검증물을 실제 실행합니다. |
 | `tk-reflect` | hybrid | 명확한 회고 요청에서 재사용 가능한 rule/skill 후보를 report-only로 분류합니다. |
 | `tk-learn` | hybrid | 명확한 skill 작성 요청을 draft/checkpoint까지 진행하고 승인 후에만 씁니다. |
@@ -77,17 +82,23 @@ tk-grill-me
 → tk-implement
 ```
 
-결정이 끝났거나 변경이 작다면 바로 `tk-implement`를 사용할 수 있습니다.
+결정이 끝났거나 변경이 작다면 `tk-implement`를 명시적으로 선택해 바로 사용할
+수 있습니다. 일반 구현 요청은 이 hybrid skill을 자동 호출하지 않습니다.
 
 반복해서 같은 전체 흐름을 쓴다면 현재 host에서 `tk-drive`를 명시적으로 선택해 시작할 수 있습니다. Claude Code·Hermes Agent의 `/tk-drive`, Codex의 `$tk-drive`, host skill picker의 직접 선택이 같은 explicit start입니다. Blocking ambiguity가 있을 때만 질문 하나를 남기고, 같은 대화의 답변 뒤 자동으로 이어갑니다. 작은 single-slice에는 ticket을 만들지 않고, 여러 vertical slice 또는 장기 재개 가치가 있을 때만 상태 ledger를 둡니다.
 
 ```text
 <host-native explicit tk-drive> <source>
-→ Ready spec
-→ 필요할 때만 tickets 또는 disposable prototype
-→ implementation + built-in review
-→ verified commit 하나
+→ tk-to-spec: Ready spec
+→ 필요할 때만 tk-to-tickets: vertical ticket ledger
+→ ticket마다 tk-implement: test + review + verified commit 하나
+→ tk-drive: aggregate traceability + broad verification 한 번
 ```
+
+Phase skill이 실패하거나 없으면 `tk-drive`가 같은 절차를 inline으로 복제하지
+않고 해당 상태를 전파합니다. 최종 change-related regression은 corrective
+ticket·commit cycle을 한 번만 허용하며 기존 commit을 amend·squash하지
+않습니다.
 
 ### 브라우저 검증이 필요한 구현
 
@@ -124,7 +135,24 @@ tk-implement
 
 ### 구현 Review
 
-모든 `tk-implement`와 `tk-drive` 구현 phase는 commit 전에 current-agent Standards/Spec review를 실행합니다. Large 또는 high-risk 변경만 독립 reviewer 한 명을 사용할 수 있습니다. 일반 review-only 요청은 source를 수정하지 않는 일반 agent 작업으로 처리합니다.
+모든 `tk-implement` unit은 commit 전에 current-agent Standards/Spec review를
+실행합니다. Large 또는 high-risk 변경만 독립 reviewer 한 명을 사용할 수
+있습니다. `tk-drive`는 이 ticket-level review를 반복하지 않고 전체 R/AC,
+commit ancestry, cross-ticket interaction을 aggregate review합니다. 일반
+review-only 요청은 source를 수정하지 않는 일반 agent 작업으로 처리합니다.
+
+### 테스트와 커버리지
+
+TDD는 공개 동작 seam과 회귀 위험에 따라 선택하는 구현 전략입니다. 그러나 새
+production behavior의 durable automated test는 완료 조건입니다. 버그·회귀에
+의미 있는 public seam이 있으면 수정 전 red와 수정 후 green을 실제로
+관찰합니다.
+
+Repository에 coverage command나 threshold가 있으면 그대로 실행합니다. 도구가
+없으면 dependency나 임의 percentage를 만들지 않고
+`coverage: unavailable`로 보고합니다. Production behavior에 의미 있는 test
+seam이 없으면 named exception과 deterministic alternative verification을
+사용자가 명시적으로 승인하기 전에는 commit하지 않습니다.
 
 ### 재사용 가능한 학습
 
@@ -164,7 +192,7 @@ branch 한정 결정 → spec / ticket / commit / PR
 
 ## 버전 관리
 
-`main`은 지속 갱신되는 최신 source이며 stable release tag와 GitHub Release는 검증된 `origin/main` commit에서만 생성합니다. Git tag는 immutable snapshot입니다. Skill 이름 삭제, invocation kind 변경, 호환되지 않는 scratch 또는 배포 변경은 major release입니다.
+`main`은 지속 갱신되는 최신 source이며 stable release tag와 GitHub Release는 검증된 `origin/main` commit에서만 생성합니다. Git tag는 immutable snapshot입니다. Skill 이름이나 기존 explicit invocation 경로 삭제, 호환되지 않는 scratch 또는 배포 변경은 major release입니다.
 
 ## 로컬 검증
 
@@ -179,7 +207,14 @@ npx --yes skills@1.5.9 add . --list
 npx --yes skills add . --list
 ```
 
-Packaging 변경은 임시 home에서 Claude Code·Codex·Hermes Agent를 smoke-install합니다. Root `evals/*.yaml`은 빠른 정적 계약이며 각 skill의 `evals/`는 trigger train/validation과 success/boundary behavior assertion을 소유합니다. 실제 모델 평가는 candidate를 이전 stable baseline과 clean context에서 로컬 비교하고 결과를 repository 밖의 임시 경로에 보관합니다. User-invoked skill의 `argument-hint`, `disable-model-invocation`과 Codex `agents/openai.yaml`은 portable Agent Skills core 위의 명시적인 host extension입니다.
+Packaging 변경은 임시 home에서 Claude Code·Codex·Hermes Agent를
+smoke-install합니다. Root `evals/*.yaml`은 빠른 정적 계약이며 각 skill의
+`evals/`는 trigger train/validation과 success/boundary behavior assertion을
+소유합니다. 실제 모델 평가는 candidate를 이전 stable baseline과 clean
+context에서 로컬 비교하고 결과를 repository 밖의 임시 경로에 보관합니다.
+User-invoked skill의 `argument-hint`, `disable-model-invocation`, hybrid skill의
+좁은 trigger eval, Codex `agents/openai.yaml`은 portable Agent Skills core
+위의 명시적인 host extension입니다.
 
 Live eval adapter는 격리된 실행마다 `skill_loaded`, `output`, `terminal_status`, `total_tokens`, `duration_ms`를 JSON으로 반환합니다. Python harness가 terminal/file/Git assertion을 직접 검증하고 의미 품질만 별도 grader에 전달하며, token/time이 없거나 credential이 없으면 `Pass` 대신 `Unverifiable`로 남깁니다.
 
@@ -187,4 +222,4 @@ Live eval adapter는 격리된 실행마다 `skill_loaded`, `output`, `terminal_
 
 현재 배포 skill과 제거·병합된 upstream-derived behavior attribution은 `NOTICE.md`에 구분해 보존합니다. TigerKit은 adapted skill에 `tk-` prefix와 `relationship: adapted` metadata를 사용합니다.
 
-TigerKit 16.x 또는 18.x에서 이전한다면 `MIGRATION.md`를 읽으세요.
+TigerKit 20.1.2 또는 이전 버전에서 갱신한다면 `MIGRATION.md`를 읽으세요.

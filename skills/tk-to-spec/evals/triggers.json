@@ -157,6 +157,16 @@
       "facets": [
         "compound"
       ]
+    },
+    {
+      "id": "validation-positive-drive-handoff",
+      "split": "validation",
+      "query": "[active tk-drive spec handoff] confirmed source와 decisions로 Ready spec을 작성하고 Phase: spec receipt를 반환해",
+      "should_trigger": true,
+      "facets": [
+        "ko-en",
+        "compound"
+      ]
     }
   ]
 }

@@ -1,3 +1,3 @@
 interface:
-  display_name: "TigerKit: 명세 작성"
-  short_description: "[user/auto] 근거를 종합해 구현 명세를 작성합니다."
+  display_name: "TigerKit: Write Spec"
+  short_description: "[user/auto] Turn confirmed evidence into a Ready spec."

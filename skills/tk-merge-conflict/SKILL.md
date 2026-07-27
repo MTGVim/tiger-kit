@@ -36,6 +36,8 @@ operation 상태, 모든 conflict hunk, 양쪽 primary source, resolution 근거
 
 각 단계에서 필수 출력이 없으면 다음 단계로 진행하지 마세요. 추가 conflict가 생기면 `conflict inventory`부터 반복하세요.
 
+`intent evidence` 전에 index stage 1/2/3을 실제 base·현재 commit·operation target/replayed commit에 매핑하고 commit ID와 path를 기록하세요. 특히 rebase·cherry-pick·revert에서는 `ours`/`theirs` 이름만으로 사용자 branch나 원하는 동작을 추정하지 말고, operation metadata와 실제 commit 내용을 근거로 양쪽 의도를 판정하세요.
+
 ### Command evidence
 
 | Evidence | Command contract | Completion signal | Failure route |

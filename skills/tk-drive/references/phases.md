@@ -1,49 +1,121 @@
 # Phase invariants
 
-These are minimal orchestration gates. They do not invoke sibling phase skills.
+These are orchestration gates. Semantic phase behavior belongs to
+`tk-to-spec`, `tk-to-tickets`, and `tk-implement`; drive consumes their
+receipts and never recreates a failed or unavailable phase inline.
 
 ## Preflight and source
 
-- Resolve branch, initial `HEAD`, pre-existing dirty paths and ownership before mutation.
-- Source precedence is: latest explicit drive input, confirmed same-conversation decisions, relevant current spec, relevant current tickets, repository instructions, code/tests.
-- Adopt existing artifacts only when task identity and current evidence match. Revalidate completed phases and skip them when valid.
-- When a new decision invalidates downstream tickets, replace or remove the stale artifact without archives. Ask only when task identity or a decision reversal cannot be established.
-- Treat `/tk-drive`, `$tk-drive`, and picker-equivalent direct selection as host-native explicit starts. Do not bind explicit start to one host's literal syntax.
+- Resolve branch, initial `HEAD`, pre-existing dirty paths, and ownership
+  before mutation.
+- Source precedence is: latest explicit drive input, confirmed
+  same-conversation decisions, relevant current spec, relevant current
+  tickets, repository instructions, code/tests.
+- Adopt existing artifacts only when task identity and current evidence match.
+  Revalidate completed phases and skip them only when their owner skill's
+  current contract still passes.
+- When a new decision invalidates downstream tickets, replace or remove the
+  stale artifact without archives. Ask only when task identity or decision
+  reversal cannot be established.
+- Treat `/tk-drive`, `$tk-drive`, and picker-equivalent direct selection as
+  host-native explicit starts. Do not bind explicit start to one host syntax.
 
-## Spec
+## Phase handoff envelope
 
-A Ready spec has problem, goal, included/excluded scope, confirmed decisions, stable R/AC IDs, verification, source traceability and no unresolved conflict. Missing information is `Draft`; a required decision is `Blocked`; inaccessible essential evidence is `Unverifiable`. Do not proceed to tickets or implementation until Ready.
+Every handoff records phase, task identity, source/artifact paths, stable R/AC
+or ticket IDs, branch, initial/current `HEAD`, ownership, and the success state
+needed to continue. Each owner keeps its native receipt; drive maps only the
+minimal continuation state and does not create a shared runtime contract.
 
-When source includes UI writing, inventory every label, button, heading, guide/help copy, table/column name, placeholder, validation/error and status literal before spec mutation. Link source location → R/AC → optional ticket → implementation destination. Preserve exact spelling, case, whitespace, punctuation, symbols, numbers and meaningful line breaks unless the user authorizes a change; mark only that change `authorized change`. An unreadable literal is `Unverifiable`; conflicting literals that require a user decision are `Blocked`.
+- Spec continues only from `tk-to-spec` `Ready`.
+- Tickets continue only from a successfully written and revalidated
+  `tk-to-tickets` ledger.
+- Implementation continues only from a `tk-implement` `Pass` receipt with the
+  expected unit/ticket ID and commit SHA.
+- `Draft`, `Pending`, `Blocked`, `Fail`, `Unverifiable`, unavailable skills,
+  stale evidence, or mismatched IDs stop drive at that phase.
 
-## Tickets
+The user's answer to the directly corresponding pending decision updates the
+source and resumes that phase. No other response inherits drive authority.
 
-Create tickets only for at least two independently verifiable vertical slices or when a long-running/resumable task materially benefits from a ledger. Otherwise implement directly from the Ready spec.
+## Spec owner
 
-Every adopted ticket has one of `pending | in_progress | verified | blocked`, source R/AC coverage and current evidence references. Keep at most one `in_progress`. Revalidate status from current diff and tests on resume; status text alone is not evidence.
+Apply `tk-to-spec` with the confirmed source and decisions. It alone owns the
+source map, stable R/AC IDs, Ready gate, spec write/print behavior, and UI
+writing inventory. Drive records its receipt and does not repair a non-Ready
+spec inline.
 
-If a source UI-writing inventory exists, each affected ticket references the same literal IDs and exact destination. A ticket must not translate, paraphrase, abbreviate, correct or normalize them.
+## Ticket decision and owner
+
+Drive decides whether tickets are justified: use them only for at least two
+independently verifiable vertical slices or when a long-running/resumable task
+materially benefits from a ledger. Otherwise pass the Ready spec to
+implementation as one unit.
+
+When tickets are justified, apply `tk-to-tickets`. It alone owns vertical
+decomposition, ticket IDs, source coverage, dependencies, corrective-ticket
+shape, and ledger writes. Keep at most one ticket `in_progress`. Status text is
+not evidence; only a matching implementation receipt can make a ticket
+`verified`.
 
 ## Prototype
 
-Use a disposable web branch only when unresolved visual choices affect behavior or structure and side-by-side evidence will reduce the pending decision. Keep the same content/data/state across 2–3 meaningful alternatives. Do not make a third option without distinct decision value or prototype a choice repository evidence already resolves.
+Use a disposable web branch only when unresolved visual choices affect behavior
+or structure and side-by-side evidence will reduce the pending decision. Keep
+the same content, data, and state across 2–3 meaningful alternatives. Do not
+add an option without distinct decision value or prototype a choice that
+repository evidence already resolves.
 
-## Implementation and diagnosis
+## Implementation owner
 
-Implement the smallest vertical slice and run focused verification. For unknown-cause bugs, first establish a red-capable loop, minimize, rank falsifiable hypotheses, isolate one variable, patch the evidenced cause, verify a public regression seam when available, rerun the original reproduction and remove instrumentation.
+Apply `tk-implement` once per selected ticket, or once for a no-ticket
+single-slice spec. It alone owns direct/delegated strategy, TDD/no-TDD,
+production-behavior tests, existing coverage gates, testless exceptions,
+focused and affected verification, ticket-level Standards/Spec review,
+staging, and one current-branch commit.
 
-For visible UI, layout, responsive behavior, interaction, navigation, forms, or browser final state, activate `tk-browser-verify` before the first browser tool or verification server. When a design reference defines intent, run its preflight before source mutation; after implementation require runtime interaction and screenshot evidence. A forbidden or unavailable browser contract makes the phase `Unverifiable` and prevents commit.
+Before the next handoff, confirm the receipt's unit/ticket ID, commit SHA,
+branch, ancestry, R/AC evidence, and unchanged ownership boundary. Never ask
+`tk-implement` to batch tickets, and never create a separate drive commit.
 
-Recheck every inventoried UI literal in implementation source and rendered UI. Missing exact-comparison evidence is `Unverifiable`; unauthorized drift is `Fail`. Neither may proceed to commit.
+For visible UI or browser behavior, `tk-implement` owns the required
+`tk-browser-verify` gate. Drive aggregates returned literal/rendered evidence
+without selecting browser tools itself.
 
-## Built-in review parity
+## Aggregate verification and review
 
-Before commit, pin the initial fixed point and candidate/staged diff inventory. `small` means no more than 15 files and no more than 800 additions plus deletions; otherwise use bounded large/unknown inspection without putting a raw full diff in current context.
+After all units are committed:
 
-The current agent always reviews Standards and Spec. Standards covers repository rules, correctness, ownership, scope, interfaces, testability and side effects. Spec maps every source R/AC ID to implementation and verification evidence. High-risk or large work may use one independent reviewer total, without editing, fan-out, re-delegation or automatic re-review. Findings require severity, file/line evidence, basis and impact. Allow one fix and one regression verification, then stop. Important findings, drift or uncovered scope prevent commit.
+- verify every R/AC ID is covered by a unit receipt and commit;
+- verify commit ancestry and current `HEAD` match the ordered unit receipts;
+- inspect cross-ticket interfaces, cumulative side effects, and uncovered
+  scope without repeating each ticket's line-level code review;
+- run the broadest executable relevant tests, build, integration, and browser
+  verification once;
+- classify failure as `change-related`, `pre-existing`, `environment`, or
+  `unverifiable`.
 
-The Spec review also maps every source UI-writing literal to spec, optional ticket, implementation, candidate/staged diff and rendered evidence. Any missing mapping or unauthorized text change is an important finding.
+High-risk cumulative effects may require broader verification before an
+individual unit commit through `tk-implement`; the final aggregate gate still
+runs once.
 
-## Commit
+## Corrective cycle
 
-Immediately before commit, recheck branch, `HEAD`, ownership, staged inventory and all R/AC evidence. Stage only owned changes. Create exactly one current-branch commit after the whole drive is verified. Never push or publish. On partial failure, keep valid work uncommitted and clean only owned temporary artifacts.
+On a final change-related failure, isolate the affected R/AC and root cause. If
+it forms one independently verifiable unit, apply `tk-to-tickets` to append one
+corrective ticket, then apply `tk-implement` once and rerun aggregate
+verification once.
+
+Do not create a corrective ticket for pre-existing, environment, or
+unverifiable failures. Do not amend, squash, force-push, or silently rewrite
+verified commits. A repeated failure, unisolated cause, or second requested
+cycle ends in the one concrete terminal state supported by current evidence.
+
+## Final receipt
+
+Report source identity, phase receipts, ticket states, ordered
+ticket/unit-to-commit mapping, broad verification, integration review, actual
+branch and `HEAD`, remaining risks, and reusable-candidate existence. Do not
+repeat child evidence or automatically invoke reflection, handoff, release, or
+publish actions. User-facing prose follows the user's language; canonical
+fields and status tokens remain unchanged.

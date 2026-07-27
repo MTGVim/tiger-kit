@@ -79,6 +79,22 @@
       "critical": true
     },
     {
+      "id": "implement-vs-drive-active-handoff",
+      "boundary": "tk-implement vs tk-drive",
+      "prompt": "[active tk-drive implementation handoff] Implement ticket TK-2 with R3/AC4 as one unit and return its verified commit receipt.",
+      "focus_skill": "tk-implement",
+      "expected_selected_skill": "tk-implement",
+      "critical": true
+    },
+    {
+      "id": "implement-vs-drive-ordinary-request",
+      "boundary": "tk-implement vs tk-drive",
+      "prompt": "이 함수의 버그를 고쳐 주세요.",
+      "focus_skill": "tk-implement",
+      "expected_selected_skill": null,
+      "critical": true
+    },
+    {
       "id": "prototype-vs-browser-prototype",
       "boundary": "tk-prototype vs tk-browser-verify",
       "prompt": "UI 불확실성을 줄이도록 폐기 가능한 3개 layout variant를 만들어 비교해 주세요.",

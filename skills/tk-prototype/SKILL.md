@@ -57,6 +57,8 @@ Artifact를 만들기 전에 기존 임시 경로와 이번 실행이 생성할 
 
 상태는 receipt에 한 번만 기록하세요. `## Tested`는 실행 명령·결과·증거, `## Variants or harness`는 비교안 또는 하네스, `## Confirmed`는 증거가 확인한 결론, `## Still fake`는 가짜/실제 경계·미검증·미해결 항목, `## Production implication`은 폐기·반복·후속 판단만 소유합니다. 같은 내용을 다른 섹션이나 별도 Receipt에 반복하지 마세요.
 
+`## Confirmed`에서는 성공 기준마다 동일한 content/data/interaction state를 사용했는지 확인하고, `criterion | A | B [| C] | conclusion | Tested evidence reference` 비교를 한 번만 기록하세요. 관찰되지 않은 차이는 `not observed`, 증거를 확보하지 못한 항목은 `unverifiable`로 구분하고, 실행 증거 없는 미감 선호를 확인된 결론으로 올리지 마세요.
+
 ## DO NOT / ANTI-PATTERNS
 
 - prototype을 production-ready라고 부르거나 자동 승격·commit하지 마세요.
