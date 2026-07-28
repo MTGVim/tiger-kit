@@ -1,4 +1,4 @@
-# Unreleased decision-phase orchestration
+# TigerKit 20.1.4 decision-phase orchestration
 
 The next release keeps all 12 canonical names and the 1 user-invoked /
 11 hybrid distribution, but swaps the top-level invocation owner:

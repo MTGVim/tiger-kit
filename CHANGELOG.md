@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased — Conditional Decision Orchestration
+## 20.1.4 — Conditional Decision Orchestration and Skill Refinement
 
 - Made `tk-drive` the single user-invoked workflow entry point and converted
   `tk-grill-me` to a narrowly triggered hybrid decision phase owner.
@@ -14,6 +14,15 @@
 - Kept phase owners from invoking siblings, preserved standalone grill/spec/
   ticket/implementation use, retained 12 canonical skills, and did not add
   `tk-prep`.
+- Refined every canonical skill with one conservative, independently paired
+  improvement: cheaper negative conflict exits, precise browser blockers,
+  direct no-ticket handoffs, deterministic decision ranking, canonical receipt
+  ownership, and reduced duplicated safety wording.
+- Tightened grooming classification, candidate naming, bounded evidence retry,
+  atomic handoff replacement, and hypothesis-scoped prototype viewport
+  evidence without changing skill names, invocation kinds, or distribution.
+- Refreshed decision-flow evals for drive resume, Ready-source grill skipping,
+  active-drive decision handoffs, and spec/ticket decision returns.
 
 ## 20.1.3 — Phase-Owner Improvements
 
