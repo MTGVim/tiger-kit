@@ -17,6 +17,9 @@ current host. `/tk-drive`, `$tk-drive`, and direct selection in a host skill
 picker are equivalent explicit starts. Once started, keep ownership while a
 child phase waits for and incorporates the directly corresponding answer; when
 that phase returns a continuation receipt, resume without another invocation.
+A continuation receipt is an internal transition, not a terminal response:
+when it carries no stop state, advance to the next required phase in the same
+turn instead of ending after the child receipt.
 
 An ordinary code request, generic `continue`, an existing `.tigerkit/`
 artifact, an answer outside an active child phase, a new session, or a broken
