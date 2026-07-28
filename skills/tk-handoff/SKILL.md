@@ -77,6 +77,10 @@ ownership is strict: Repository state owns branch/HEAD; Handoff path owns the
 path; Commands owns executed command strings only; Verification owns outcomes;
 Next step/Resume hints own future commands. Receipt's
 `reported | applied | pending` is artifact disposition, not work Status.
+Use `applied` only after the atomic write and reread agree with current
+repository state. Use `reported` only for a verified no-drift resume/report
+that required no artifact write. Otherwise use `pending` or the applicable
+recovery-table stop state.
 Receipt contains disposition and section references, not duplicated paths,
 Git state, commands, results, or future work. Omit empty sections and reference
 existing spec/ticket/diff content instead of copying it.
