@@ -63,3 +63,31 @@ out, or automatically re-review.
 The bounded flow is
 `review once → fix once → regression verification once → stop`. Do not commit
 while an important finding, drift, or unverified coverage remains.
+
+## Post-commit hook drift
+
+Freeze the reviewed candidate/staged diff before invoking commit. Immediately
+after a successful commit command, compare the actual committed diff with that
+snapshot. For moves, separate expected import/path rewrites before classifying
+the remaining delta.
+
+Classify hook-created delta as:
+
+- `none`: committed diff matches the reviewed snapshot;
+- `format-only`: only layout such as line wrapping, parentheses, or trailing
+  commas changed; record the exact files/lines in Verification;
+- `reverted-semantic`: an autofix changed meaning, such as a dependency array.
+  Restore the reviewed intent in the working tree, add the narrowest supported
+  suppression with a reason, and rerun affected verification.
+
+Never call an unclassified or semantic-drift commit verified. Do not amend,
+reset, or hide actual history, and do not create a second unit commit in the
+same invocation. Report the actual commit SHA and restored working state as
+`Fail` or `Blocked`; a later explicit unit must commit the correction.
+
+Hook bypass is allowed only when byte preservation is itself the spec for a
+vendor/generated tree, or a demonstrated hook configuration defect prevents
+the target file from being committed. Run every safe applicable check, limit
+the bypass to that commit, preserve the required bytes, and include the exact
+reason in the commit body. Convenience, speed, or ordinary hook failure is not
+an exception.

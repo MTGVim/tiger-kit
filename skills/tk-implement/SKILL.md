@@ -245,6 +245,10 @@ the user did not prohibit commit. An implementor never commits; the current
 agent verifies the staged diff and commits. For a drive handoff, return commit
 SHA and unit/ticket ID so drive does not create another commit.
 
+Immediately after commit, audit the committed diff against the frozen reviewed
+candidate using [post-commit drift rules](references/review-boundary.md).
+Unclassified or semantic hook drift means the commit is not a verified `Pass`.
+
 An ordinary review-only request is a read-only agent task and grants no source
 mutation or commit authority. Review inside this skill owns only the explicit
 implementation scope and candidate diff.
@@ -257,7 +261,8 @@ non-empty `## Remaining risks`, and `## Receipt`. Describe unit/ticket behavior,
 not only files. Include commands and results, coverage state, failure
 classification, commit SHA/message, or why no commit exists. `Strategy` owns
 only execution mode, TDD, review choice, and reasons. `Changed` owns behavior.
-`Verification` owns commands, results, and classification. `Receipt` owns
+`Verification` owns commands, results, classification, and
+`hook drift: none | format-only | reverted-semantic`. `Receipt` owns
 phase, unit/ticket ID, status (`Pass | Fail | Blocked | Unverifiable`), commit
 SHA, unverified items, and R/AC-to-`Changed`/`Verification` references without
 repeating the body.
@@ -267,8 +272,9 @@ the canonical headings, status tokens, IDs, and receipt keys above.
 
 ## DO NOT / ANTI-PATTERNS
 
-- Do not bypass hooks, commit before verification, commit a failing change,
-  push, or create a PR.
+- Do not bypass hooks outside the bounded byte-preservation or hook-config
+  exceptions, commit before verification, commit a failing change, push, or
+  create a PR.
 - Do not batch standalone multi-ticket input or create tickets.
 - Do not auto-apply this hybrid skill from an ordinary implementation request
   or merely because drive is active.

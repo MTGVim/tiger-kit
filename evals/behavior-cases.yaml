@@ -133,6 +133,15 @@
 - case: implement-review-rejects-drift
   skill: tk-implement
   expect: "Review-head or staged drift invalidates stale evidence and prevents commit until affected coverage is rerun."
+- case: implement-audits-postcommit-hook-drift
+  skill: tk-implement
+  expect: "Immediately after commit, the actual committed diff is compared with the frozen reviewed candidate and hook drift is classified in Verification."
+- case: implement-blocks-semantic-hook-drift
+  skill: tk-implement
+  expect: "Semantic hook drift invalidates Pass, restores reviewed intent in the working tree, reruns affected verification, and ends Fail or Blocked without rewriting history or creating a second unit commit."
+- case: implement-allows-bounded-hook-bypass
+  skill: tk-implement
+  expect: "Hook bypass is limited to required byte preservation or a demonstrated hook configuration defect, runs every safe check, and records the exact reason in the commit body."
 - case: implement-review-separates-standards-and-spec
   skill: tk-implement
   expect: "Standards and Spec remain separate verdict axes with R/AC evidence when IDs exist."
