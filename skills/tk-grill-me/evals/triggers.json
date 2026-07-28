@@ -5,12 +5,12 @@
     {
       "from": "validation-explicit",
       "to": "validation-explicit-dollar",
-      "reason": "TigerKit 20.1.4 splits explicit grill invocation by host and routing facet."
+      "reason": "TigerKit 20.1.5 splits explicit grill invocation by host and routing facet."
     },
     {
       "from": "validation-nearby-block",
       "to": "validation-spec-request",
-      "reason": "TigerKit 20.1.4 names the neighboring spec-request non-trigger boundary directly."
+      "reason": "TigerKit 20.1.5 names the neighboring spec-request non-trigger boundary directly."
     }
   ],
   "queries": [
