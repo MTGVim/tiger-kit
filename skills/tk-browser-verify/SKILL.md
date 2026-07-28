@@ -59,7 +59,13 @@ Interactive login에는 repo 밖 user-local persistent profile을 사용하세�
 
 ### Browser 시작 전 종료 출력
 
-Browser session을 만들기 전에 멈추면 실행 예정 checklist 전체나 빈 evidence section을 나열하지 마세요. 디자인 결정이 원인이면 `## Alignment`와 한 개의 선택 질문만, 그 밖의 경우에는 terminal status·한 줄 원인·재개에 필요한 입력만 보고하세요. 재개 조건에는 정확한 `--headless=new` launch proof와 첫 capture 전 TigerKit ledger 지정을 한 줄로 명시하세요. 생성한 resource가 없으면 cleanup은 한 문장으로 끝내세요.
+Browser session을 만들기 전에 멈추면 실행 예정 checklist 전체나 빈 evidence
+section을 나열하지 마세요. 디자인 결정이 원인이면 `## Alignment`와 한 개의
+선택 질문만, 그 밖의 경우에는 terminal status·한 줄 원인·재개에 필요한
+입력만 보고하세요. 재개 조건은 실제 blocker만 기록하세요. Launch가
+blocker면 정확한 `--headless=new` proof를, capture가 blocker면 첫 capture
+전 ledger 지정을 요구하고 아직 도달하지 않은 gate는 미리 나열하지 마세요.
+생성한 resource가 없으면 cleanup은 한 문장으로 끝내세요.
 
 ## 🔴 HARD GATE · capture ledger
 
