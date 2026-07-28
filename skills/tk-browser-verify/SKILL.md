@@ -1,6 +1,6 @@
 ---
 name: tk-browser-verify
-description: "[user/auto] Verify real-page UI accuracy or interaction in a browser. Use Guard mode for disposable HTML, prototypes, layout, hover, and form exploration; use Verdict mode for persistent user-visible source changes, explicit invocation, or an official runtime verdict. Do not auto-apply to passive web research, document reading, URL extraction, or simple screenshot saving. This skill does not own source mutation or replace sufficient non-browser static verification."
+description: "[user/auto] Verify real-page UI accuracy or interaction in a browser. Use Guard mode for disposable HTML, prototypes, layout, hover, and form exploration unless explicitly invoked; explicit invocation overrides Guard and selects Verdict, as do persistent user-visible source changes and official runtime verdict requests. Do not auto-apply to passive web research, document reading, URL extraction, or simple screenshot saving. This skill does not own source mutation or replace sufficient non-browser static verification."
 metadata:
   tigerkit:
     kind: hybrid
