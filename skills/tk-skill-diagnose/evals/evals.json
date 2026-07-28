@@ -4,12 +4,12 @@
     {
       "id": "skill-diagnose-reproduces-overtrigger-selection",
       "path": "success",
-      "prompt": "/tk-skill-diagnose ordinary button-color prompt에서 tk-learn이 2/2 자동 선택된 incident와 정상 skill-creation control을 비교해 주세요.",
-      "expected_output": "과잉 호출을 selection plane으로 재현하고 incident와 positive control의 routing evidence를 분리한다.",
+      "prompt": "/tk-skill-diagnose incident envelope: exact target=skills/tk-learn/SKILL.md, host/ref=Codex CLI at TigerKit 0490e2e, invocation=natural-language auto-trigger, same model/tools/repository state. Incident prompt `버튼 색상을 파란색으로 바꿔 줘` selected tk-learn in fresh routing traces I1 and I2 (2/2); positive control `반복되는 마이그레이션 실패를 위한 재사용 skill을 만들어 줘` selected tk-learn in C1 and C2 (2/2). Token/duration metrics are unavailable. Reproduce and compare the incident with the control without mutating the canonical target.",
+      "expected_output": "정확한 target·host/ref·invocation·fresh trial traces와 unavailable metrics를 보존하고, 과잉 호출을 selection plane으로 재현해 incident와 positive control의 routing evidence를 분리한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "Observed target/prompt, two fresh trials, selected-skill evidence, nearby positive control을 제시하고 selection plane으로 분류한다."
+          "criterion": "정확한 target·host/ref·invocation, 두 fresh incident/control trial, selected-skill evidence, unavailable metrics를 보존하고 selection plane으로 분류한다."
         },
         {
           "type": "output_contains",
@@ -204,6 +204,10 @@
       "prompt": "/tk-skill-diagnose 원인이 확인됐으니 canonical skills/tk-learn/SKILL.md를 바로 고치고 commit해 주세요.",
       "expected_output": "canonical mutation/commit을 거부하고 isolated minimal candidate evidence와 tk-learn handoff proposal만 반환한다.",
       "assertions": [
+        {
+          "type": "judge",
+          "criterion": "canonical mutation과 commit을 거부하고, run-owned isolated candidate의 근거·fresh regression 결과·정확한 tk-learn handoff를 반환하며 canonical path와 HEAD를 보존한다."
+        },
         {
           "type": "output_contains",
           "text": "tk-learn"
