@@ -16,14 +16,16 @@ from evidence. Do not auto-apply to an ordinary summary or implementation
 completion, and do not invoke another skill. Implicit mode is report-only.
 
 Read current conversation, changes, diff, implementation/test/review outcomes,
-relevant `.tigerkit/` artifacts, and user-named sources. Classify across exactly
-four axes—`repo rule | repo skill | user rule | user skill`—and choose
-`propose | update | merge | no-op | discard`.
+relevant `.tigerkit/` artifacts, the current host's discoverable file-based
+persistent memory, and user-named sources. Classify across exactly five
+axes—`repo rule | repo skill | user rule | user skill | persistent memory`—and
+choose `propose | update | merge | no-op | discard`.
 
 ## Workflow
 
 1. `evidence`: produce path/command-cited `verified | unverified` facts,
-   including access failures, classified across the four axes.
+   including access failures and prior-art results, classified across the five
+   axes.
 2. `interpretation`: derive a reuse hypothesis separate from facts.
 3. `confidence`: return `high | medium | low` and basis.
 4. `action`: apply the
@@ -62,6 +64,15 @@ is `propose`; one-off or unresolved unverified/conflicting evidence is
 `discard`. Action is not apply authority, and every skill candidate stays
 `pending`.
 
+Treat discoverable file-based persistent memory as prior art, not as an
+automatic write target. When memory completely owns the same behavior and
+scope, choose `no-op`. When memory and a candidate share facts but own different
+behavioral axes, record the separation in Interpretation and Action, keep the
+targets distinct, and propose reciprocal cross-references only when both exact
+targets are known. Cross-reference or memory mutation remains `pending` until
+separately approved. If the host memory path is unavailable or unreadable,
+record it as `unverified`; do not claim that memory contains no prior art.
+
 For `repo rule | repo skill`, Evidence owns normalized raw placement input,
 Interpretation owns root/nested/skill boundary, and Action owns the choice.
 Create no duplicate placement field. Missing/conflicting threshold evidence
@@ -77,10 +88,11 @@ unresolved conflict/counterexample is `low` and cannot promote
 ## Contract
 
 Repository targets are codebase/domain/tool/team-specific; user targets repeat
-across repositories. Default is report-only. Writing a rule into DESIGN,
-reuse-map, or rule files requires separate explicit approval naming target and
-scope. Silence, continuation, past analogous answers, or reflect invocation is
-not approval.
+across repositories. Persistent memory is a current-host file-based target whose
+native path must be demonstrated. Default is report-only. Writing a rule into
+DESIGN, reuse-map, rule, or persistent-memory files requires separate explicit
+approval naming target and scope. Silence, continuation, past analogous
+answers, or reflect invocation is not approval.
 
 Only `tk-learn` creates a new skill or semantically updates/merges one. This
 skill reports skill evidence, current-host native exact target, working draft,
@@ -123,9 +135,16 @@ The response's final section is always:
 | RF-01 | `<short name> (<axis>)` | `<one sentence>` | `<concrete target or unresolved (reason)>` |
 
 One row per candidate. Summary adds no evidence; Target is a concrete
-file/skill/user scope or `unresolved (<reason>)`. Do not copy evidence, draft,
-or actions into the table. With no candidate or an `Unverifiable` run, emit
+file/skill/user/memory scope or `unresolved (<reason>)`. Keep `Summary` near 40
+display characters and `Target` near 50 when an unambiguous compact path or
+label is available. Do not copy evidence, draft, actions, or working text into
+the table, and do not truncate a target into ambiguity. With no candidate or an
+`Unverifiable` run, emit
 `| — | None | No reusable rule/skill candidate | No application |`.
+
+If the user asks to reprint a table that wrapped or broke, shorten the cells and
+emit the same table with the same IDs and order. Do not rediscover, renumber, or
+add evidence during a formatting-only reprint.
 
 User-facing progress and receipt prose follows the user's language while
 canonical headings, IDs, fields, and status tokens remain unchanged.
@@ -134,5 +153,7 @@ canonical headings, IDs, fields, and status tokens remain unchanged.
 
 - Do not present interpretation as fact or inflate confidence.
 - Do not duplicate an existing skill or mutate without apply approval.
+- Do not omit discoverable persistent memory from prior-art checks or invent an
+  undiscovered host memory path.
 - Do not promote raw credentials/logs/screenshots or one-off workarounds.
 - Do not omit, reuse, or renumber candidate IDs, or omit Summary.

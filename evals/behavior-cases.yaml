@@ -217,6 +217,15 @@
 - case: reflect-is-report-only
   skill: tk-reflect
   expect: "No files are modified; candidates use the documented target axes."
+- case: reflect-checks-persistent-memory-prior-art
+  skill: tk-reflect
+  expect: "Evidence checks the current host's discoverable file-based persistent memory as a fifth target axis and routes a complete duplicate to no-op."
+- case: reflect-separates-adjacent-memory-scope
+  skill: tk-reflect
+  expect: "When persistent memory and a candidate share facts but own different behavioral axes, Interpretation records the separation and any reciprocal cross-reference remains pending."
+- case: reflect-bounds-summary-cell-length
+  skill: tk-reflect
+  expect: "Summary and Target stay near 40 and 50 display characters respectively, omit evidence and drafts, and a width-fix reprint preserves IDs and order."
 - case: reflect-classifies-repo-placement
   skill: tk-reflect
   expect: "The closed safety set, verified paths, immediate parent, tracked regular siblings, and threshold deterministically select root rule, nested rule, or repo skill."
