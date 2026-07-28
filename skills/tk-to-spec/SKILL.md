@@ -91,8 +91,9 @@ seam exists, state that gap in verification planning.
 Use `Ready` only when the spec includes problem, goal, included/excluded scope,
 requirements, acceptance criteria, verification, source traceability, and
 verifiability with no unresolved conflict. Otherwise use `Draft`, `Blocked`,
-or `Unverifiable`. The receipt includes path, status, evidence/source map,
-R/AC IDs, unverified items, unresolved conflicts, and verification.
+or `Unverifiable`. The receipt records phase, path, status, and R/AC IDs, then
+references the source-map, unverified, conflict, and verification sections
+instead of restating their content.
 
 ### 🔴 HARD GATE · source UI writing
 
