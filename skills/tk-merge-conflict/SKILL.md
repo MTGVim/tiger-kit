@@ -60,6 +60,7 @@ for rebase/cherry-pick/revert, never infer user branch or desired behavior from
 
 | Evidence | Command contract | Completion signal | Failure route |
 |---|---|---|---|
+| operation state | resolve `MERGE_HEAD`, `rebase-merge`, `rebase-apply`, `CHERRY_PICK_HEAD`, and `REVERT_HEAD` with `git rev-parse --git-path`, then inspect only the resolved paths | one active operation kind and its step agree with status/worktree metadata | conflicting or unreadable markers are `Unverifiable`; do not infer from `.git/` paths |
 | operation/index | inspect `git status --short --branch`, `git diff --name-only --diff-filter=U`, and `git ls-files -u` together | kind, step, and HEAD match freshness fixed point; no unreviewed path | rebuild inventory; unexplained state is `Unverifiable` |
 | markers | search every tracked conflict path for `^(<<<<<<<|=======|>>>>>>>)` | zero markers | remaining path/hunk is `Fail`; no continue |
 | stage | `git add -- <supported-path...>` then recheck staged diff/unmerged index | only evidence-backed paths staged; zero unmerged entries | stage failure or residual entry is `Fail`; no continue |
