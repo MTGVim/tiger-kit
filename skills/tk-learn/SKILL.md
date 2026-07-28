@@ -51,7 +51,8 @@ Draft and apply are separate:
 5. **Approval summary:** summarize each apply check and planned path once, then
    stop in the checklist-defined state.
 6. **Write, verify, report:** only after Apply authority passes, preserve
-   before-write content, write, and verify frontmatter, links, evals, and
+   before-write content, write through a same-directory temporary target and
+   atomic rename, then reread and verify frontmatter, links, evals, and
    target-host invocation before reporting `applied`.
 
 ### Apply gate checklist
@@ -79,7 +80,7 @@ permanent skill registry/global state.
 | duplicate of skill/default capability | report `merge | no-op` and basis | create no new directory |
 | target/name/trigger partly unknown | draft supported values as `proposed`, others `TBD` | keep Candidate identity `pending`; do not write |
 | evidence/target/approval conflict | present conflict and one decision | stop `Blocked` |
-| write/post-write check fails | preserve existing target and clean run temp | restore only when exact/reverifiable; otherwise report actual path and `Fail | Blocked | Unverifiable` |
+| write/post-write check fails | preserve existing target and clean run temp; remove a partial new target only when proven run-owned | restore only when exact/reverifiable; ownership or preservation uncertainty is `Blocked | Unverifiable`, otherwise report actual path and `Fail` |
 
 ## 🔴 CHECKPOINT · 🛑 STOP
 
