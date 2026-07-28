@@ -56,10 +56,17 @@ CATALOG_ROUTING_BOUNDARIES = {
     "tk-prototype vs tk-browser-verify",
     "tk-handoff vs generic summary/continue",
     "tk-drive vs tk-handoff/generic continue",
+    "tk-drive vs tk-grill-me",
     "tk-merge-conflict vs ordinary conflict-marker edit",
 }
 HYBRID_TRIGGER_FACETS = {"formal", "casual", "typo", "ko-en", "short", "compound"}
-PHASE_OWNER_SKILLS = {"tk-drive", "tk-implement", "tk-to-spec", "tk-to-tickets"}
+PHASE_OWNER_SKILLS = {
+    "tk-drive",
+    "tk-grill-me",
+    "tk-implement",
+    "tk-to-spec",
+    "tk-to-tickets",
+}
 HANGUL_SYLLABLE = re.compile(r"[가-힣]")
 EXPECTED_SKILLS = {
     "tk-browser-verify",
@@ -76,7 +83,7 @@ EXPECTED_SKILLS = {
     "tk-to-tickets",
 }
 USER_INVOKED_SKILLS = {
-    "tk-grill-me",
+    "tk-drive",
 }
 HYBRID_SKILLS = EXPECTED_SKILLS - USER_INVOKED_SKILLS
 KEBAB = re.compile(r"^tk-[a-z0-9]+(?:-[a-z0-9]+)*$")
@@ -147,11 +154,13 @@ REQUIRED_BEHAVIOR_CASES = {
     "to-spec-structures-bug-evidence",
     "to-spec-preserves-source-ui-writing-verbatim",
     "to-spec-active-drive-handoff",
+    "to-spec-returns-decision-blocker-to-drive",
     "to-tickets-does-not-create-spec",
     "to-tickets-initial-status-is-pending",
     "to-tickets-keeps-one-vertical-bug-slice",
     "to-tickets-preserves-source-ui-writing-verbatim",
     "to-tickets-active-drive-handoff",
+    "to-tickets-returns-decision-blocker-to-drive",
     "prototype-is-not-production",
     "prototype-web-uses-disposable-variants",
     "prototype-web-toggle-preserves-legibility",
@@ -187,12 +196,18 @@ REQUIRED_BEHAVIOR_CASES = {
     "learn-is-sole-semantic-skill-writer",
     "drive-bounds-nested-skills",
     "drive-invokes-phase-owners",
+    "drive-invokes-grill-on-unresolved-decision",
+    "drive-skips-grill-for-ready-source",
+    "drive-reruns-spec-after-grill",
+    "drive-blocks-repeated-decision-return",
     "drive-commits-per-ticket",
     "drive-runs-final-aggregate-verification",
     "drive-propagates-phase-failure",
     "drive-bounds-corrective-cycle",
     "drive-preserves-valid-diff-on-partial-failure",
     "drive-aggregate-review-boundary",
+    "grill-accepts-active-drive-handoff",
+    "grill-returns-control-to-drive",
 }
 
 

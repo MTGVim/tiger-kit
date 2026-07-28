@@ -1,17 +1,11 @@
 {
   "skill": "tk-grill-me",
-  "kind": "user-invoked",
+  "kind": "hybrid",
   "queries": [
     {
       "id": "train-explicit",
       "split": "train",
       "query": "/tk-grill-me 현재 요청을 스킬 계약대로 처리해줘",
-      "should_trigger": true
-    },
-    {
-      "id": "validation-explicit",
-      "split": "validation",
-      "query": "$tk-grill-me 제공된 자료로 결과와 receipt를 만들어줘",
       "should_trigger": true
     },
     {
@@ -21,10 +15,148 @@
       "should_trigger": false
     },
     {
-      "id": "validation-nearby-block",
+      "id": "validation-explicit-dollar",
+      "split": "validation",
+      "query": "$tk-grill-me 제공된 자료로 결정 receipt를 만들어 주세요",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-explicit-slash",
+      "split": "validation",
+      "query": "/tk-grill-me 이 아이디어 좀 빡세게 물어봐",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-drive-handoff-formal",
+      "split": "validation",
+      "query": "[active tk-drive decision handoff] source와 evidence를 바탕으로 unresolved user-owned decision을 닫아 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-drive-handoff-short",
+      "split": "validation",
+      "query": "[active drive → tk-grill-me] decision phase",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-pending-answer",
+      "split": "validation",
+      "query": "[tk-grill-me pending: 호환성을 유지할까요?] 네, 유지해요.",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-drive-pending-answer",
+      "split": "validation",
+      "query": "[active drive / grill pending question] 추천한 A안으로 진행해",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-explicit-typo",
+      "split": "validation",
+      "query": "$tk-grill-me 이 RFC 결저을 검증해조",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-explicit-ko-en",
+      "split": "validation",
+      "query": "$tk-grill-me 이 plan의 Scope랑 Verification 확인해줘",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-ordinary-ambiguity",
+      "split": "validation",
+      "query": "이 요구가 좀 애매한데 질문해줘",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-spec-request",
       "split": "validation",
       "query": "이 결정으로 구현 명세를 작성해줘",
-      "should_trigger": false
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-drive-active-only",
+      "split": "validation",
+      "query": "tk-drive가 활성 상태니까 알아서 인터뷰도 시작해",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-generic-continue",
+      "split": "validation",
+      "query": "계속",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-other-answer",
+      "split": "validation",
+      "query": "아까 다른 질문에는 B라고 답할게",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-artifact-presence",
+      "split": "validation",
+      "query": "RFC 파일이 있으니 grill을 자동으로 시작해",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-standalone-blocked-receipt",
+      "split": "validation",
+      "query": "tk-to-spec이 Blocked를 반환했어",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-implementation-request",
+      "split": "validation",
+      "query": "결제 기능을 구현하고 테스트해 주세요",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
     }
   ]
 }

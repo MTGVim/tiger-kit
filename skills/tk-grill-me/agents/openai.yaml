@@ -1,6 +1,4 @@
 interface:
-  display_name: "TigerKit: 집중 검증"
-  short_description: "[user] 결정을 한 번에 하나씩 확인하며 계획을 철저히 검증합니다."
-
-policy:
-  allow_implicit_invocation: false
+  display_name: "TigerKit: Grill Me"
+  short_description: "[user/auto] Close user-owned decisions one question at a time."
+  default_prompt: "Investigate the provided source, close Scope, Constraints, Outputs, and Verification one question at a time, and return a decision receipt without mutating artifacts."

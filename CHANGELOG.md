@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased — Conditional Decision Orchestration
+
+- Made `tk-drive` the single user-invoked workflow entry point and converted
+  `tk-grill-me` to a narrowly triggered hybrid decision phase owner.
+- Replaced drive's one-question inline gate with conditional `tk-grill-me`
+  handoff, while skipping grill entirely for source that already supports a
+  Ready spec.
+- Routed decision-related spec or ticket failures back through drive and grill,
+  using an explicit `User decision` receipt signal, then required Ready-spec
+  revalidation before downstream ticket rederivation and blocked repeated
+  equivalent decision loops.
+- Kept phase owners from invoking siblings, preserved standalone grill/spec/
+  ticket/implementation use, retained 12 canonical skills, and did not add
+  `tk-prep`.
+
 ## 20.1.3 — Phase-Owner Improvements
 
 - Made `tk-drive` a thin orchestrator that explicitly hands spec creation to

@@ -6,10 +6,10 @@
 
 TigerKit은 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent Skills
 모음입니다. 중앙 workflow runtime 없이 12개 self-contained skill을
-`npx skills`로 배포합니다. TigerKit 20.1.3은 spec, ticket, implementation을 각각
-하나의 canonical phase skill이 소유하고 `tk-drive`가 그 결과를
-오케스트레이션합니다. 현재 `main`은 최신 release source이며, 아래 immutable
-tag로 동일한 released snapshot을 설치할 수 있습니다.
+`npx skills`로 배포합니다. Decision closure, spec, ticket, implementation은
+각각 하나의 canonical phase skill이 소유하고 `tk-drive`가 그 결과를
+단방향으로 오케스트레이션합니다. 최신 immutable release는 `v20.1.3`이며,
+현재 `main`에는 다음 release를 위한 orchestration 변경이 포함될 수 있습니다.
 
 ## 설치
 
@@ -56,11 +56,11 @@ Claude Code와 Hermes Agent에서는 `/tk-implement` 같은 slash command로 표
 
 | Skill | 호출 | 목적 |
 | --- | --- | --- |
-| `tk-grill-me` | user | 사실을 조사한 뒤 중요한 결정을 한 번에 한 질문씩 검증합니다. |
+| `tk-drive` | user | 명시적으로 시작한 source를 조건부 decision closure, canonical phase owner, ticket별 commit과 최종 aggregate verification까지 진행합니다. |
+| `tk-grill-me` | hybrid | 명시 선택 또는 drive decision handoff에서 사실을 조사하고 중요한 결정을 한 번에 한 질문씩 닫습니다. |
 | `tk-to-spec` | hybrid | 독립 요청 또는 drive handoff에서 Ready spec을 작성·검증합니다. |
 | `tk-to-tickets` | hybrid | 독립 요청 또는 drive handoff에서 source를 수직 ticket으로 나눕니다. |
 | `tk-implement` | hybrid | 명시 선택 또는 drive의 implementation handoff에서 unit 하나를 테스트·review하고 commit 하나로 만듭니다. |
-| `tk-drive` | hybrid | 명시적으로 시작한 source를 canonical phase owner와 ticket별 commit, 최종 aggregate verification까지 진행합니다. |
 | `tk-prototype` | hybrid | 폐기 가능한 UI 또는 logic 비교 검증물을 실제 실행합니다. |
 | `tk-reflect` | hybrid | 명확한 회고 요청에서 재사용 가능한 rule/skill 후보를 report-only로 분류합니다. |
 | `tk-learn` | hybrid | 명확한 skill 작성 요청을 draft/checkpoint까지 진행하고 승인 후에만 씁니다. |
@@ -82,23 +82,32 @@ tk-grill-me
 → tk-implement
 ```
 
-결정이 끝났거나 변경이 작다면 `tk-implement`를 명시적으로 선택해 바로 사용할
-수 있습니다. 일반 구현 요청은 이 hybrid skill을 자동 호출하지 않습니다.
+Standalone decision discovery에는 `tk-grill-me`를 명시적으로 선택할 수
+있습니다. 결정이 끝났거나 변경이 작다면 `tk-implement`를 명시적으로 선택해
+바로 사용할 수 있습니다. 일반 구현 요청은 이 hybrid skill을 자동 호출하지
+않습니다.
 
-반복해서 같은 전체 흐름을 쓴다면 현재 host에서 `tk-drive`를 명시적으로 선택해 시작할 수 있습니다. Claude Code·Hermes Agent의 `/tk-drive`, Codex의 `$tk-drive`, host skill picker의 직접 선택이 같은 explicit start입니다. Blocking ambiguity가 있을 때만 질문 하나를 남기고, 같은 대화의 답변 뒤 자동으로 이어갑니다. 작은 single-slice에는 ticket을 만들지 않고, 여러 vertical slice 또는 장기 재개 가치가 있을 때만 상태 ledger를 둡니다.
+전체 흐름은 현재 host에서 user-invoked `tk-drive`를 명시적으로 선택해
+시작합니다. Claude Code·Hermes Agent의 `/tk-drive`, Codex의 `$tk-drive`,
+host skill picker의 직접 선택이 같은 explicit start입니다. Unresolved
+user-owned decision이 있으면 drive가 `tk-grill-me`에 decision closure를
+위임하고, `confirmed` receipt 뒤 spec gate부터 자동으로 이어갑니다. 이미
+명확한 source에는 grill을 호출하지 않습니다.
 
 ```text
 <host-native explicit tk-drive> <source>
+→ 필요할 때만 tk-grill-me: confirmed Decisions receipt
 → tk-to-spec: Ready spec
 → 필요할 때만 tk-to-tickets: vertical ticket ledger
 → ticket마다 tk-implement: test + review + verified commit 하나
 → tk-drive: aggregate traceability + broad verification 한 번
 ```
 
-Phase skill이 실패하거나 없으면 `tk-drive`가 같은 절차를 inline으로 복제하지
-않고 해당 상태를 전파합니다. 최종 change-related regression은 corrective
-ticket·commit cycle을 한 번만 허용하며 기존 commit을 amend·squash하지
-않습니다.
+Spec 또는 tickets 단계가 새 사용자 결정을 요구하면 해당 phase는
+`User decision: required`와 근거를 native non-success receipt로 drive에
+반환합니다. Drive는 grill로 결정을 닫고 Ready spec을 다시 검증한 뒤
+downstream tickets를 재도출합니다. 같은 blocker가 재발하면 다시 순환하지
+않고 `Blocked`로 멈춥니다. Phase owner끼리는 서로 호출하지 않습니다.
 
 ### 브라우저 검증이 필요한 구현
 

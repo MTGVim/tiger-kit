@@ -6,7 +6,7 @@
   },
   {
     "id": 2,
-    "prompt": "[active tk-drive pending question: A or B?] A로 진행해",
-    "expected": "같은 대화의 pending decision을 spec traceability에 반영하고 blocker가 없으면 다음 phase로 자동 계속한다."
+    "prompt": "[active tk-drive → tk-grill-me pending question: A or B?] A로 진행해",
+    "expected": "tk-grill-me가 답변을 반영해 confirmed receipt를 반환하면 drive가 decision source traceability를 갱신하고 spec gate부터 자동 계속한다."
   }
 ]

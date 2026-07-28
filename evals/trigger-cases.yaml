@@ -3,12 +3,14 @@
 # Hybrid positive/negative cases cover automatic invocation; explicit invocation is a behavior contract.
 
 - skill: tk-grill-me
-  examples:
-    - "tk-grill-me로 이 설계를 질문으로 검토해줘"
-    - "이 RFC를 한 번에 한 질문씩 압박 검증해줘"
-  nearby:
-    - tk-to-spec
-    - tk-prototype
+  positive:
+    - "$tk-grill-me로 이 설계를 질문으로 검토해줘"
+    - "[active tk-drive decision handoff] 이 unresolved user-owned decision을 닫아줘"
+    - "[tk-grill-me pending question] 추천한 A안으로 진행해"
+  negative:
+    - "이 RFC가 애매하니 알아서 인터뷰를 시작해"
+    - "active tk-drive가 진행 중이야"
+    - "이 결정으로 spec을 작성해줘"
 - skill: tk-to-spec
   positive:
     - "확정된 결정으로 구현 명세를 작성해줘"
@@ -82,7 +84,7 @@
   negative:
     - "현재 상태를 요약해줘"
     - "그대로 계속 진행해"
-    - "active tk-drive가 pending answer 뒤 계속할 차례야"
+    - "active tk-grill-me가 pending answer를 기다리고 있어"
 - skill: tk-browser-verify
   positive:
     - "이 모달이 실제로 저장되는지 브라우저에서 확인해줘"
@@ -99,16 +101,14 @@
     - "이 URL의 screenshot을 저장만 해줘"
     - "웹페이지 본문 text만 추출해줘"
 - skill: tk-drive
-  positive:
+  examples:
     - "$tk-drive 이 source를 spec부터 verified commit까지 진행해줘"
     - "/tk-drive 이 source를 spec부터 verified commit까지 진행해줘"
     - "skill picker에서 tk-drive를 직접 선택해 이 source를 끝까지 진행해줘"
-    - "$tk-drive 이 Ready spec을 끝까지 처리해줘"
-    - "active tk-drive가 A/B를 물었고 사용자가 A라고 답했다"
-  negative:
-    - "이 함수를 구현해줘"
-    - "계속 진행해"
-    - ".tigerkit/spec.md가 있으니 자동으로 시작해"
+  nearby:
+    - tk-implement
+    - tk-grill-me
+    - tk-handoff
 - skill: tk-merge-conflict
   positive:
     - "tk-merge-conflict로 현재 rebase를 완료해줘"

@@ -1,3 +1,29 @@
+# Unreleased decision-phase orchestration
+
+The next release keeps all 12 canonical names and the 1 user-invoked /
+11 hybrid distribution, but swaps the top-level invocation owner:
+
+```text
+user-invoked: tk-drive
+hybrid:       the other 11 canonical skills
+```
+
+Explicit standalone `tk-grill-me` remains valid. Its automatic positives are
+limited to an explicit active-drive decision handoff and the direct answer to
+its own pending question. Ordinary ambiguity, artifact presence, generic
+continuation, or merely having an active drive does not activate it.
+
+Drive conditionally invokes grill only when a user-owned decision prevents a
+Ready spec. A decision-related spec or ticket receipt returns
+`User decision: required` to drive; after grill confirms new Decisions, drive
+re-runs `tk-to-spec` to Ready before rederiving tickets. The same blocker after
+confirmation stops `Blocked`. Spec, tickets, and implementation never invoke
+grill or one another.
+
+No `tk-prep` skill, shared runtime contract, migration shim, or new scratch
+artifact is added. Existing explicit skill names remain valid; automation that
+inspects invocation metadata must update for the swapped user/hybrid kinds.
+
 # TigerKit 20.1.3 Behavior Updates
 
 TigerKit 20.1.3 preserves the 12 canonical skill names, explicit invocation

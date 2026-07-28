@@ -1,89 +1,159 @@
 ---
 name: tk-grill-me
-description: "[user] 아이디어, 계획, 설계, 티켓 또는 RFC를 사실 조사 후 한 번에 한 질문씩 검증합니다. 사용자가 명시적으로 호출한 경우에만 사용합니다."
-disable-model-invocation: true
-argument-hint: "<아이디어, 계획, 설계, 티켓, RFC 또는 경로>"
+description: "[user/auto] Validate an idea, plan, design, ticket, or RFC through evidence-first, one-question-at-a-time decision closure. Use on explicit invocation, an explicit decision handoff from active tk-drive, or the answer to this skill's pending question; do not auto-start from ordinary ambiguity."
+argument-hint: "<idea, plan, design, ticket, RFC, source, or active-drive handoff>"
 metadata:
   tigerkit:
-    kind: user-invoked
+    kind: hybrid
     origin: mattpocock/skills
     upstream-skill: grill-me
     relationship: adapted
 ---
 
-# 집중 검증
+# Grill Me
 
-사용자가 이 스킬을 명시적으로 호출한 경우에만 사용하세요. 자동으로 활성화하지 마세요.
+Use for explicit invocation, an explicit decision handoff from active
+`tk-drive`, or the user's answer to this skill's pending question in the same
+conversation. Do not auto-activate from an ordinary ambiguous request,
+artifact presence, generic continuation, or merely because drive is active.
 
-## 계약
+Standalone and drive handoff use the same closure contract. A drive handoff
+includes task identity, current source and evidence, confirmed decisions, and
+unresolved user-owned decisions. This skill owns only decision closure. It
+never writes source, spec, tickets, ADRs, or commits and never invokes
+downstream phase owners.
 
-사용자의 명시적 답변 또는 확인 가능한 근거 없이 사용자 결정을 확정하거나 적용하지 마세요. 침묵, 다음 질문으로의 진행, 과거의 유사한 답변은 동의가 아닙니다. 사실 근거는 사용자를 대신해 선택을 승인하지 않습니다.
+## Contract
 
-사용자가 멈추면 완료로 보고하지 말고 `pending`(답변 대기), `aborted`(사용자 중단), `Blocked`(충돌 또는 필수 근거 부족) 중 하나로 보고하세요. 소스를 수정하거나 문서·티켓·ADR을 만들지 마세요.
+Do not confirm or apply a user decision without an explicit answer or
+verifiable evidence. Silence, moving to another question, and a similar past
+answer are not consent. Factual evidence does not approve a choice for the
+user.
 
-## 🔴 CHECKPOINT · 🛑 STOP 사용자 결정 경계
+If the user stops, return `pending` while awaiting an answer, `aborted` for an
+explicit stop, `Blocked` for a decision conflict, or `Unverifiable` when
+required evidence cannot be obtained. Continue only after the answer directly
+corresponds to this skill's pending question.
 
-권고 질문 하나를 제시한 뒤 사용자 답변을 받기 전에는 다음 질문, 결정 반영, 문서 수정을 진행하지 마세요. 답변이 없으면 `pending`, 답변과 근거가 충돌하면 `Blocked`로 멈추세요.
+## 🔴 CHECKPOINT · 🛑 STOP · user decision boundary
+
+After presenting one recommended question, do not ask another question,
+incorporate the decision, or mutate artifacts before the user's answer. Return
+`pending` without an answer and `Blocked` when the answer conflicts with
+confirmed evidence.
 
 ## Workflow
 
-1. `요청·자료 읽기`: 입력은 사용자의 요청과 제공된 자료이고, 출력은 검토 범위와 현재 근거 목록입니다.
-2. `사실 조사`: 입력은 범위와 코드·환경이고, 출력은 경로가 붙은 `verified | inferred | unavailable` 사실과 사용자 확인이 필요한 추론입니다.
-3. `미해결 식별`: 입력은 사실과 네 축 ledger이고, 출력은 사용자가 결정해야 할 Scope·Constraints·Outputs·Verification 항목입니다.
-4. `질문`: 입력은 미해결 항목이고, 출력은 가장 영향이 큰 단일 `권고 / 근거 / 질문`입니다.
-5. `답변 반영`: 입력은 사용자의 답변이고, 출력은 보존된 Decision/Constraints/Out of scope/Outputs/Verification과 갱신된 ledger입니다.
-6. `반복·종료`: 입력은 갱신된 ledger이고, 이미 답한 질문은 반복하지 않으며, 출력은 다음 단일 질문 또는 네 축이 확정된 합의 문장입니다.
-7. `receipt`: 입력은 closure gate 결과이고, 출력은 구현·문서 수정 없이 `confirmed | pending | aborted | Blocked` 상태와 내용이 있는 `Decisions` 참조입니다.
+1. `read input`: establish task identity, review scope, caller, current source,
+   and evidence.
+2. `investigate facts`: produce source-located
+   `verified | inferred | unavailable` facts and identify inference that needs
+   confirmation.
+3. `identify gaps`: compare facts and confirmed decisions against the
+   Scope, Constraints, Outputs, and Verification ledger.
+4. `ask`: select the highest-impact unresolved user-owned decision and present
+   exactly one `Recommendation`, `Evidence`, and `Question`.
+5. `incorporate answer`: preserve the answer as the corresponding Decision,
+   Constraint, Out of scope, Output, or Verification entry.
+6. `repeat or close`: do not repeat answered questions; ask the next one or
+   present the one-sentence closure statement when all four axes are settled.
+7. `return receipt`: without mutation, return
+   `confirmed | pending | aborted | Blocked | Unverifiable`, a non-duplicated
+   Decisions reference when one exists, assumptions, remaining risks, and the
+   caller to resume.
 
-## 질문과 ambiguity ledger
+## Ambiguity ledger
 
-매 실행에서 대화 안에만 다음 네 축의 ledger를 유지하세요. `.tigerkit/`, spec, ticket 또는 별도 문서에 자동 기록하지 마세요.
+Keep this ledger only in the conversation. Do not automatically record it in
+`.tigerkit/`, a spec, tickets, or another document.
 
-- `Scope`: 포함할 것과 제외할 것
-- `Constraints`: 기술·운영·비즈니스 제약 또는 명시적으로 없음
-- `Outputs`: 만들어야 할 동작·산출물·결과
-- `Verification`: 완료를 판정할 인수 기준과 검증 방법
+- `Scope`: included and excluded behavior
+- `Constraints`: technical, operational, and business constraints, or
+  explicitly none
+- `Outputs`: required behavior, artifacts, and results
+- `Verification`: acceptance criteria and completion evidence
 
-각 축의 미해결 항목, 사용자 확정 결정, 확인되지 않은 가정을 구분하세요. 한 주제만 깊게 파고들어 다른 축을 잊지 말고, 다음 질문은 남은 항목 중 영향이 가장 큰 하나만 선택하세요.
+Separate unresolved items, confirmed user decisions, and unverified
+assumptions on every axis. Choose only the highest-impact unresolved item for
+the next question while continuing to evaluate all four axes.
 
-이 ledger는 매 turn 전체를 덤프하는 출력 템플릿이 아닙니다. 질문 turn에는 새로 확인되거나 바뀐 evidence, 현재 선택한 미해결 항목 하나, 단일 `권고 / 근거 / 질문`, `pending`만 보고하고, 바뀌지 않은 축은 conflict 설명이나 closure 점검에 필요할 때만 다시 표시하세요. 출력이 간결해도 다음 질문 선택과 closure gate에서는 네 축 전체를 계속 점검해야 합니다.
+The ledger is not a per-turn dump template. On a question turn, report only
+new or changed evidence, the selected unresolved item, one Recommendation,
+Evidence, and Question, and `pending`. Repeat unchanged axes only when needed
+to explain a conflict or evaluate closure.
 
-## 사실과 사용자 판단
+## Facts and user judgment
 
-질문을 다음처럼 분류하세요.
+- Auto-confirm only a single current fact supported by exact code, manifest,
+  configuration, or equivalent evidence, and cite its path.
+- Present facts inferred from code patterns and ask the user to confirm the
+  inference.
+- Investigate code first when a question mixes current facts with judgment
+  about new behavior, but treat the choice as a user decision.
+- Always ask about goals, scope, priorities, business rules, success criteria,
+  and new behavior.
+- Ask rather than guess when fact and judgment cannot be separated.
 
-- manifest, config 또는 기타 정확한 코드 근거에서 확인되는 단일한 현재 사실만 자동 확인하고 근거 경로를 알리세요.
-- 코드 패턴에서 추론한 사실은 발견 내용을 제시한 뒤 사용자에게 확인받으세요.
-- 코드 사실과 새 동작에 대한 판단이 섞이면 코드를 먼저 조사하되 전체 질문을 사용자 결정으로 다루세요.
-- 목표, 범위, 우선순위, 비즈니스 규칙, 성공 기준, 새 동작은 항상 사용자에게 질문하세요.
-- 사실과 판단을 구분하기 어렵다면 추측하지 말고 사용자에게 질문하세요.
+When required source cannot be read, record its path and failure as
+`unavailable`. Do not infer the fact or ask the user to guess repository state.
+Continue with one independent user decision only when its impact can be stated
+without that fact; otherwise return `Unverifiable`. When confirmed sources
+conflict, preserve both sources and ask one decision question rather than
+silently selecting either.
 
-필수 source를 읽지 못하면 경로와 실패 이유를 `unavailable`로 남기고 그 사실을 추정하거나 사용자에게 저장소 사실을 대신 맞히게 하지 마세요. 그 사실 없이도 독립적인 사용자 결정을 물을 수 있으면 사실 주장을 제외한 가장 영향 큰 질문 하나만 계속하고, 결정 영향이나 질문 자체를 정할 수 없으면 `Blocked | Unverifiable`로 멈추세요. 확인된 source들이 충돌하면 어느 한쪽을 채택하지 말고 양쪽 근거와 결정 영향을 제시한 단일 확인 질문만 하세요.
+## Answer preservation and closure
 
-## 답변 보존과 재확인
+Preserve the meaning of free-form answers in `Decision`, `Constraints`,
+`Out of scope`, `Outputs`, or `Verification`. Leave anything the user did not
+say as an `Assumption`. Do not force a confirmation question after every
+answer, but ask one when a summary changes meaning, conflicts with an existing
+decision, or makes intent ambiguous.
 
-사용자의 자유 답변은 의미를 보존해 `Decision`, `Constraints`, `Out of scope`, `Outputs`, `Verification` 중 해당 항목에 기록하세요. 사용자가 말하지 않은 내용을 결정으로 채우지 말고 `Assumption`으로 남기세요.
+Saying `done` or model confidence does not close the ledger:
 
-답변마다 별도의 확인 질문을 강제하지는 마세요. 다만 답변을 요약하면서 범위·제약·제외 항목의 의미가 바뀌거나, 기존 결정과 충돌하거나, 사용자의 의도가 애매해지면 다음 단계로 진행하지 말고 그 차이를 확인하는 질문 하나를 먼저 하세요.
+1. Check all four axes.
+2. Ask the highest-impact remaining question while any axis is unresolved.
+3. When all axes are confirmed or explicitly none, restate the agreed goal in
+   one sentence.
+4. Return `confirmed` only after the user explicitly approves that sentence.
+5. Incorporate wording corrections as new decisions and repeat the closure
+   gate.
 
-## Closure gate
+The one-sentence statement is a temporary approval prompt. After approval, do
+not copy it into the final response. Record confirmed content once under
+`## Decisions` as `Scope`, `Constraints`, `Outputs`, and `Verification`.
 
-사용자가 `done`이라고 말했거나 모델이 충분하다고 느끼는 것만으로 완료하지 마세요.
+Ask about domain terminology only when different meanings affect a decision.
+Confirmed terms may later enter a spec, but this skill does not create or edit
+`CONTEXT.md`, glossaries, domain documents, or ADRs.
 
-1. `Scope`, `Constraints`, `Outputs`, `Verification`을 모두 점검하세요.
-2. 미해결 항목이 있으면 완료하지 말고 가장 영향이 큰 항목 하나를 질문하세요.
-3. 네 축이 확정되었거나 명시적으로 없음으로 정리되면 합의된 목표를 한 문장으로 재진술하세요.
-4. 사용자가 그 문장을 명시적으로 승인한 뒤에만 완료하고 `tk-to-spec`을 다음 단계로 제안하세요.
-5. 사용자가 문구 수정이나 누락 범위를 말하면 새 결정으로 ledger에 반영하고 closure gate를 다시 실행하세요.
+Use only non-empty final sections: `## Decisions`, `## Assumptions`,
+`## Remaining risks`, and `## Receipt`. `## Decisions` alone owns decision
+content. Do not add a second combined-goal summary. In `## Receipt`, record
+`Phase: decision`, `Status`, source or user-answer evidence, whether decisions
+were applied, the `## Decisions` reference when it exists, and `Return to`.
+Do not duplicate decisions in the receipt. On a question turn with no decision,
+omit the Decisions reference and return the unresolved ledger item with
+`pending`.
 
-3단계의 한 문장은 승인을 받기 위한 일시적 checkpoint prompt입니다. 승인 후 최종 응답에는 그 문장을 다시 복사하지 말고 확정 내용을 `Decisions`의 `Scope`, `Constraints`, `Outputs`, `Verification`에 한 번씩만 기록하세요.
+Native `Status` uses `confirmed | pending | aborted | Blocked | Unverifiable`.
+For an orchestrator terminal result, map these respectively to
+`Pass | Pending | Blocked | Blocked | Unverifiable`.
 
-같은 domain 용어가 서로 다른 의미로 쓰이거나 인접 개념을 구분해야 결정할 수 있다면 그 의미를 질문하세요. 확정된 용어는 이후 `tk-to-spec` 결과에 포함할 수 있지만, 이 스킬은 `CONTEXT.md`, glossary, domain 문서 또는 ADR을 자동으로 만들거나 수정하지 않습니다.
+For a standalone call, `Return to` is the user and the final response may
+suggest explicit `tk-to-spec` use without invoking it. For an active-drive
+handoff, `Return to` is `tk-drive`; only `confirmed` permits drive to resume at
+the spec gate.
 
-내용이 있는 섹션만 사용해 마무리하세요: `## Decisions`, `## Assumptions`, `## Remaining risks`, `## Receipt`. 결정 본문은 `## Decisions`만 소유합니다. Decisions 안에서도 `Scope`, `Constraints`, `Outputs`, `Verification`은 각각 경계·제약·산출물·성공 증거만 한 번 기록하고, 이 네 항목을 다시 합친 `합의된 목표`나 요약 문장을 추가하지 마세요. 한 문장 goal 승인은 사용자 답변의 근거 위치로만 참조합니다. Receipt에는 `confirmed | pending | aborted | Blocked`, 결정의 사용자 답변 또는 근거 위치, 적용 여부와 `## Decisions` 참조만 기록하고 결정을 다시 쓰지 마세요. 결정이 아직 없는 질문 단계에서는 Decisions 참조를 만들지 말고 `pending`과 미결정 ledger만 보고하세요.
+Write user-facing questions and receipts in the user's language while
+preserving canonical fields and status tokens.
 
 ## DO NOT / ANTI-PATTERNS
 
-- 사용자의 결정을 대신 확정하거나 한 번에 여러 결정을 질문하지 마세요.
-- 사실 조사만으로 승인이나 침묵을 동의로 해석하지 마세요.
-- 합의 전에 spec, ticket, ADR 또는 소스를 수정하지 마세요.
+- Do not decide for the user or bundle multiple independent decisions into one
+  question.
+- Do not interpret investigation, silence, or forward motion as approval.
+- Do not mutate artifacts or call `tk-to-spec`, `tk-to-tickets`,
+  `tk-implement`, or another sibling phase owner.
+- Do not auto-start from ordinary ambiguity or an active drive without an
+  explicit decision handoff.

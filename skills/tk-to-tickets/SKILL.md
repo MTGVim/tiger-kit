@@ -23,8 +23,14 @@ Source precedence is: user-designated source, current conversation,
 
 Standalone and drive handoff use the same vertical-slice contract. Drive
 decides whether tickets are needed; this skill does not re-own that decision or
-proceed to implementation. Return `Phase: tickets`, path, terminal state,
-ticket IDs, and source R/AC coverage.
+proceed to implementation. Return `Phase: tickets`, path, `Status: Pass` after
+successful write/revalidation, ticket IDs, and source R/AC coverage.
+
+When an active-drive handoff exposes a missing user decision, return the native
+non-success receipt to drive. Do not invoke `tk-grill-me` or edit the Ready
+spec; drive alone routes decision closure and requires a revalidated Ready spec
+before retrying tickets. Include `User decision: required | none`; `required`
+cites the new decision and source evidence.
 
 ## Workflow
 

@@ -22,6 +22,13 @@ Source precedence is: user-designated source, current decisions,
 tickets/documents, relevant code, existing `.tigerkit/spec.md`. Do not start an
 interview, create tickets, publish, or implement.
 
+When an active-drive handoff still needs a user decision, return the native
+`Draft | Blocked | Unverifiable` receipt to drive. Do not invoke
+`tk-grill-me`; drive alone decides whether to route that evidence through its
+decision phase and retry the spec gate. Include
+`User decision: required | none`; `required` cites the new decision and source
+evidence.
+
 Standalone and drive handoff use the same Ready contract. In a drive handoff,
 preserve task identity and source traceability; return `Phase: spec`, status,
 artifact path, and R/AC IDs. If status is not `Ready`, do not create a substitute
