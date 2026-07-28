@@ -341,6 +341,23 @@
       ]
     },
     {
+      "id": "drive-continues-after-ready-spec",
+      "path": "success",
+      "prompt": "[active tk-drive] tk-to-spec이 Ready receipt를 반환했습니다. 추가 사용자 결정은 없고 source는 하나의 작은 vertical slice입니다. 여기서 상태만 보고하고 멈추지 말고 완료해 주세요.",
+      "expected_output": "Ready receipt를 response boundary로 삼지 않고 같은 active turn에서 no-ticket 결정을 거쳐 tk-implement, aggregate verification, 명시적 terminal receipt까지 진행한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "Ready spec을 소비한 뒤 사용자 재호출을 기다리지 않고 다음 eligible phase로 즉시 전이하며 최종 Pass 또는 근거가 있는 명시적 non-success terminal receipt로 끝낸다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": true
+    },
+    {
       "id": "drive-runs-final-aggregate-verification",
       "path": "success",
       "prompt": "$tk-drive 세 티켓의 commit receipt가 모두 Pass야. 전체 검증까지 마무리해줘",

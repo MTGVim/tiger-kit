@@ -63,6 +63,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "drive-resumes-pending-answer",
                 "drive-does-not-auto-reflect",
                 "drive-invokes-phase-owners",
+                "drive-continues-after-ready-spec",
                 "drive-invokes-grill-on-unresolved-decision",
                 "drive-skips-grill-for-ready-source",
                 "drive-reruns-spec-after-grill",

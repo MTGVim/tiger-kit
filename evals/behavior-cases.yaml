@@ -340,6 +340,9 @@
 - case: drive-invokes-phase-owners
   skill: tk-drive
   expect: "Drive conditionally invokes tk-grill-me, then explicitly invokes tk-to-spec, conditionally tk-to-tickets, and tk-implement per unit, consuming their receipts without recreating phase semantics inline."
+- case: drive-continues-after-ready-spec
+  skill: tk-drive
+  expect: "A consumed Ready spec is never a response boundary: drive makes the ticket decision and continues through implementation and aggregate verification in the same active turn, or returns an explicit evidence-supported terminal receipt."
 - case: drive-skips-grill-for-ready-source
   skill: tk-drive
   expect: "Drive skips tk-grill-me when confirmed source and evidence already support a Ready spec without a user-owned decision."
