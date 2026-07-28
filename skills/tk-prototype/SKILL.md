@@ -89,7 +89,8 @@ boundary, and unverified scope. Any missing item or failed execution prevents
 ## Contract
 
 Record status once. `## Tested` owns commands, results, and evidence;
-`## Variants or harness` the alternatives; `## Confirmed` evidence-backed
+`## Variants or harness` owns the alternatives, exact prototype path or run
+URL, and final `kept | removed` state; `## Confirmed` evidence-backed
 conclusions; `## Still fake` fake/real and unverified/unresolved scope;
 `## Production implication` discard/iterate/next decision.
 
