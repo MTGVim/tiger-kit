@@ -16,6 +16,10 @@ merge, rebase, cherry-pick 또는 revert가 실제로 진행 중이고 active co
 
 편집 전에 operation 상태, `git status`, index의 unmerged 항목, 모든 conflict marker, 양쪽 primary source를 확인하세요. 양쪽 의도를 결정할 근거가 없고 operation 목표·primary source로도 선택할 수 없으면 임의로 해결하지 말고 `Blocked`로 중단하세요. 필수 상태나 근거를 읽을 수 없으면 `Unverifiable`입니다.
 
+먼저 active operation marker와 unmerged index 존재 여부만 확인하세요. 둘 다
+없으면 primary source·marker·test 조사를 시작하지 말고 `Not applicable`을
+한 번 보고 종료하세요.
+
 `Pass`는 아래 Command evidence 표의 모든 completion signal이 확인된 경우에만 사용하세요. 검증하지 않은 상태나 conflict 파일만 수정한 상태를 완료로 보고하지 마세요.
 
 ## 🔴 CHECKPOINT · 🛑 STOP resolution·continue 경계
@@ -56,7 +60,6 @@ operation 상태, 모든 conflict hunk, 양쪽 primary source, resolution 근거
 
 ## 실패 경로
 
-- `operation state`에서 active operation이 없으면 이 skill을 적용하지 말고 `Not applicable`로 보고하세요.
 - `conflict inventory` 또는 `intent evidence`를 완성할 수 없으면 파일을 stage하거나 수정하지 말고, 빠진 상태·hunk·primary source를 `Unverifiable` 또는 `Blocked`로 보고하세요.
 - resolution이 끝난 뒤에도 marker 또는 unmerged 항목이 남거나 stage가 실패하면 continue하지 마세요. `git status`와 index를 다시 확인하고 실패한 명령·남은 경로·검증 결과를 `Fail`로 보고하세요.
 - 관련 검증을 실행할 수 없으면 검증을 통과로 표시하지 말고 필요한 명령·권한·환경을 `Unverifiable`로 남기세요.
