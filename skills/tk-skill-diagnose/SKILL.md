@@ -106,6 +106,12 @@ Never semantically mutate the canonical source skill. Keep experiments in an
 isolated temporary path, and do not silently change consumer production/code
 files. Do not push, publish, release, rewrite history, or start another skill.
 
+If fresh evidence is missing or a candidate regresses a frozen scenario,
+discard the candidate, preserve the attempted evidence, and clean only
+run-owned isolation. A deterministic regression is `Fail`; unavailable
+required capability is `Blocked`; unverifiable evidence, ownership, or cleanup
+state is `Unverifiable`. Never recover by editing the canonical target.
+
 A validated semantic candidate reports this handoff only:
 
 ```text
