@@ -277,6 +277,15 @@
 - case: grooming-defaults-report-only
   skill: tk-grooming
   expect: "Findings and proposals are emitted without edits by default."
+- case: grooming-vendor-artifact-remains-report-only
+  skill: tk-grooming
+  expect: "Resolved package-manager, updater, symlink, and history evidence routes a vendor artifact to keep (vendor) and prevents mutation even with --apply."
+- case: grooming-unknown-ownership-asks-before-proposal
+  skill: tk-grooming
+  expect: "Unknown ownership stops before an edit proposal or mutation and asks one user-managed-versus-external question."
+- case: grooming-honors-declared-exclusions
+  skill: tk-grooming
+  expect: "Explicit exclusions from the active conversation or a durable governing source remain excluded without reconfirmation and without hidden TigerKit state."
 - case: grooming-classifies-repo-placement
   skill: tk-grooming
   expect: "The same placement rubric maps kind changes to convert, root/nested changes to move, mixed units to split, and correct placement to keep."

@@ -18,14 +18,17 @@ is report-only.
 ## Workflow
 
 1. `scope`: resolve requested scope, literal `--apply`, target paths, and
-   allowed mutation.
+   allowed mutation. Carry forward explicit exclusions from the active
+   conversation or a durable governing source without reconfirmation.
 2. `discovery`: read only existing native paths and inventory candidates in the
    four target areas.
-3. `evidence`: record area-specific observations, paths, and verification state.
+3. `evidence`: record area-specific observations, paths, verification state,
+   and ownership evidence for every candidate.
 4. `classification/proposal`: apply the
    [placement rubric](references/repository-placement.md) to repository
    candidates and classify each as
-   `keep | tighten | merge | split | move | convert | deprecate | delete | fix`.
+   `keep | keep (vendor) | tighten | merge | split | move | convert | deprecate
+   | delete | fix`.
 5. `🔴 CHECKPOINT · 🛑 STOP`: summarize scope, evidence, proposal, and allowed
    apply in a receipt. A literal initial `--apply` pre-approves only the exact
    passing receipt scope; otherwise stop for explicit current-turn approval.
@@ -47,18 +50,33 @@ owner, kind, scope, or meaning. Otherwise use `keep`. Missing or conflicting
 path/count/threshold evidence makes only that area
 `Partial/Blocked | Unverifiable`.
 
+Determine ownership from resolved paths and link targets, package-manager
+installation locations, updater/version artifacts, and available author
+history. Names and naming conventions are never ownership evidence. A confirmed
+vendor-managed candidate is always `keep (vendor)`: report the quality finding,
+but do not propose or perform an edit. If ownership is uncertain, stop before
+an edit proposal and ask whether the artifact is user-managed or externally
+installed.
+
 Classification is not mutation authority. Even after apply approval, this
 skill directly owns only meaning-preserving `tighten`, mechanical `move` with
 an exact target, unreferenced `delete`, and frontmatter/link `fix`. Semantic
 `merge`, `deprecate`, rule-to-skill `convert`, workflow `split`, and semantic
 skill rewrite remain exact proposals with `pending`; they may feed `tk-learn`,
-but this skill never invokes it.
+but this skill never invokes it. Vendor-managed candidates remain report-only
+under every apply mode.
 
 Apply only after literal initial `--apply` or explicit current-turn approval
 names an exact scope. Past approval or generic continuation is insufficient.
 Before mutation reread source, search references before deletion, preserve
 managed/generated ownership markings, and never mix broad repo/user edits.
 This skill does not invent knowledge or replace reflection/learning.
+
+An exclusion explicitly declared in the active conversation remains excluded
+for later grooming runs in that conversation. An exclusion recorded in a
+governing repository/user rule or another requested durable source remains
+excluded across sessions. Do not create hidden global state or use
+`.tigerkit/` to persist exclusions.
 
 Literal `--apply` does not skip the checkpoint. It pre-approves a matching
 evidence/target receipt in the same run. Scope, evidence, or target drift stops
@@ -68,6 +86,10 @@ evidence/target receipt in the same run. Scope, evidence, or target drift stops
 
 - Missing/unreadable path: mark only that area `Unverifiable`, preserve other
   areas read-only, and report required access.
+- Unknown ownership: make no edit proposal or mutation; return
+  `Partial/Blocked` with one ownership question.
+- Vendor ownership discovered after classification: replace any edit action
+  with `keep (vendor)`, preserve the artifact, and report the evidence.
 - Conflicting scope/apply authority: make no change and return
   `Partial/Blocked` with one required decision.
 - Referenced delete/move target: do not mutate; change proposal to
@@ -106,7 +128,9 @@ the final Summary. Never renumber per section or emit an un-IDed item.
 The final section is always this fixed `## Summary` table. Each item gets one
 row. `Rule` holds a short name plus classification, `Summary` one sentence with
 no new evidence, and `Target` a concrete path/skill/user scope or
-`unresolved (<reason>)`. Do not copy body evidence/proposals/changes/tests.
+`unresolved (<reason>)`. A vendor row uses `keep (vendor)` and identifies the
+resolved vendor-owned target in `Target`. Do not copy body
+evidence/proposals/changes/tests.
 
 | No. | Rule | Summary | Target |
 | --- | --- | --- | --- |
@@ -129,6 +153,8 @@ delete/move stops `Partial/Blocked | Unverifiable`.
 - Do not mutate without apply authority or skip reference checks for
   delete/move.
 - Do not silently mix unrequested repository/user files.
+- Do not infer ownership from a name, propose edits for unknown ownership, or
+  mutate vendor-managed artifacts even with `--apply`.
 - Do not inspect or migrate legacy/global TigerKit state.
 - Do not apply semantic convert/split/rewrite or invoke `tk-learn`.
 - Do not omit, reuse, or renumber item IDs, or omit Summary.
