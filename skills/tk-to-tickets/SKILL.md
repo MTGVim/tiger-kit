@@ -23,8 +23,14 @@ Source precedence is: user-designated source, current conversation,
 
 Standalone and drive handoff use the same vertical-slice contract. Drive
 decides whether tickets are needed; this skill does not re-own that decision or
-proceed to implementation. Return `Phase: tickets`, path, terminal state,
-ticket IDs, and source R/AC coverage.
+proceed to implementation. Return `Phase: tickets`, path, `Status: Pass` after
+successful write/revalidation, ticket IDs, and source R/AC coverage.
+
+When an active-drive handoff exposes a missing user decision, return the native
+non-success receipt to drive. Do not invoke `tk-grill-me` or edit the Ready
+spec; drive alone routes decision closure and requires a revalidated Ready spec
+before retrying tickets. Include `User decision: required | none`; `required`
+cites the new decision and source evidence.
 
 ## Workflow
 
@@ -83,9 +89,10 @@ or code.
 Keep behavior and its tests in the same ticket; do not create horizontal
 type/API/UI/test-only tickets. If evidence cannot support independent slices,
 return `Unresolved split report`. Classify unsupported requirements or
-unresolved conflicts as `Blocked` or `Unverifiable`. The receipt includes path,
-status, ticket count, source-ID traceability, dependencies, evidence,
-unverified items, and unresolved split problems.
+unresolved conflicts as `Blocked` or `Unverifiable`. The receipt records phase,
+path, status, ticket IDs/count, then references coverage, dependencies,
+evidence, unverified items, and unresolved split sections without restating
+their content.
 
 Keep one bug as one vertical slice from reproduction through root-cause fix,
 regression seam, original reproduction, and cleanup. Do not split it into

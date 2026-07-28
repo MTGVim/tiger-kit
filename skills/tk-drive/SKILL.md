@@ -1,29 +1,28 @@
 ---
 name: tk-drive
-description: "[user/auto] Orchestrate an explicitly started source through the canonical spec, ticket, and implementation phase owners to verified ticket-level commits, or resume immediately after the user answers this drive's pending decision in the same conversation. Do not start from an ordinary implementation request, generic continuation, or artifact presence."
+description: "[user] Orchestrate an explicitly started source through conditional decision closure and the canonical spec, ticket, and implementation phase owners to verified ticket-level commits. Use only when selected explicitly; an active invocation may continue after its child phase returns."
+disable-model-invocation: true
+argument-hint: "<source, request, issue, spec, or tickets>"
 metadata:
   tigerkit:
-    kind: hybrid
+    kind: user-invoked
     origin: tigerkit
     relationship: native
 ---
 
 # Drive
 
-Start a new workflow only when the user explicitly selects `tk-drive` in the
+Start a workflow only when the user explicitly selects `tk-drive` in the
 current host. `/tk-drive`, `$tk-drive`, and direct selection in a host skill
-picker are equivalent explicit starts. The only implicit positive is the
-user's answer to the one pending decision left by this active drive in the same
-conversation; apply the answer and continue without another invocation when no
-blocker remains.
+picker are equivalent explicit starts. Once started, keep ownership while a
+child phase waits for and incorporates the directly corresponding answer; when
+that phase returns a continuation receipt, resume without another invocation.
 
 An ordinary code request, generic `continue`, an existing `.tigerkit/`
-artifact, an answer to another question, a new session, or a broken
-conversation is not an implicit start or resume. For an ordinary implementation
-request, leave ownership with the current agent's normal implementation path,
-including any commit authority the user granted directly; do not invoke or
-simulate this workflow. In a new session, require a new explicit `$tk-drive`
-start and reconstruct phases from repository evidence.
+artifact, an answer outside an active child phase, a new session, or a broken
+conversation is not a start or resume. Leave ordinary implementation with the
+current agent. In a new session, require a new explicit `$tk-drive` start and
+reconstruct phases from repository evidence.
 
 ## Contract
 
@@ -38,16 +37,14 @@ evidence. Ask only when task identity or decision reversal cannot be resolved.
 Do not create drive-only state, current pointers, archives, global state, or
 automatic migration.
 
-Follow [phase invariants](references/phases.md). Drive owns orchestration, not
-phase semantics:
-
-- `tk-to-spec` owns the spec;
-- `tk-to-tickets` owns ticket decomposition;
-- `tk-implement` owns one implementation unit's tests, review, and commit.
+Follow [phase invariants](references/phases.md). Drive owns orchestration;
+`tk-grill-me`, `tk-to-spec`, `tk-to-tickets`, and `tk-implement` respectively
+own decision closure, spec, ticket decomposition, and one implementation unit.
 
 The phase-owner allowlist is
-`tk-to-spec | tk-to-tickets | tk-implement`. The conditional support allowlist
-is `tk-prototype | tk-browser-verify | tk-merge-conflict`. Do not invoke other
+`tk-grill-me | tk-to-spec | tk-to-tickets | tk-implement`. The conditional
+support allowlist is
+`tk-prototype | tk-browser-verify | tk-merge-conflict`. Do not invoke other
 planning, learning, reflection, or handoff skills, and do not create a shared
 runtime contract.
 
@@ -78,14 +75,15 @@ drift or exact-comparison evidence gap remains.
 1. `preflight`: resolve source, relevant spec/tickets, repository instructions,
    branch, initial `HEAD`, dirty ownership, drift, task identity, completed
    phases, and unresolved decisions.
-2. `inline grill gate`: only for blocking ambiguity, report one `Evidence`,
-   `Recommendation`, and `Question`, then stop as `pending` before downstream
-   mutation.
+2. `decision phase`: when any unresolved user-owned decision prevents a Ready
+   spec, explicitly hand current source, evidence, confirmed decisions, and
+   open decisions to `tk-grill-me`. Skip this phase when the source is already
+   sufficient. Continue only from its `confirmed` receipt.
 3. `spec phase`: explicitly hand current source, confirmed decisions, and
    traceability to `tk-to-spec`; accept only a `Ready` receipt.
-4. `ticket decision`: hand the Ready spec to `tk-to-tickets` only when there
-   are at least two independently verifiable vertical slices or a ledger adds
-   material long-resume value. Otherwise use one no-ticket implementation unit.
+4. `ticket decision`: use `tk-to-tickets` only for at least two independent
+   vertical slices or material ledger value. Otherwise create no ticket/ledger
+   and carry task identity plus Ready R/AC as one no-ticket unit.
 5. `prototype branch`: only when unresolved web visual ambiguity affects
    behavior or structure and 2–3 disposable alternatives materially narrow
    one decision.
@@ -101,38 +99,35 @@ drift or exact-comparison evidence gap remains.
    `tk-implement` once, and rerun broad verification once. Otherwise stop
    mutating and produce the final receipt.
 
-## 🔴 CHECKPOINT · 🛑 STOP · pending decision and resume
+At any downstream phase, only a native receipt with
+`User decision: required` and a newly identified user-owned decision returns
+control to drive. Hand it to `tk-grill-me`; after `confirmed`, re-run
+`tk-to-spec` to `Ready` before tickets. A repeated or equivalent blocker after
+that confirmation is `Blocked`, not another automatic loop.
 
-A question covers one blocking ambiguity and reports `Evidence`,
-`Recommendation`, and `Question` exactly once. Do not start an exhaustive
-interview or invoke `tk-grill-me`. Do not mutate source or downstream spec
-before the answer.
+## 🔴 CHECKPOINT · 🛑 STOP · decision handoff and resume
 
-When the answer directly resolves the pending decision, update the decision and
-source traceability, then continue automatically. If it adds scope or does not
-correspond to the pending decision, do not inherit commit authority; report the
-drift or require a new explicit `$tk-drive` start.
+Drive does not ask or reproduce grill questions. A `tk-grill-me`
+`pending | aborted | Blocked | Unverifiable` receipt stops downstream handoffs
+and preserves the active phase evidence. When grill returns `confirmed`, merge
+only its cited Decisions into source traceability and resume at the spec gate.
+If the user's answer adds unrelated scope or does not correspond to the active
+grill decision, do not inherit commit authority; report the drift or require a
+new explicit `$tk-drive` start.
 
 ## Failure and completion
 
-| Trigger | Immediate action | Terminal handling |
-|---|---|---|
-| Required source, authority, or decision is missing at preflight | Stop before downstream mutation and identify the one needed item | `Blocked`; no commit |
-| Phase skill is unavailable or lacks its success receipt | Preserve phase, state, and evidence without inline fallback | End in the one evidence-supported state: `Blocked`, `Fail`, or `Unverifiable` |
-| Unit candidate/staged diff differs from handoff scope, source inventory, or verified snapshot | Propagate `tk-implement` state and reconcile drift | `Blocked`; preserve valid diff and commits |
-| Ticket/unit verification fails | Record command, observation, and affected unit; stop the next handoff | `Fail`; preserve earlier verified commits |
-| Final broad verification has a change-related failure | Isolate the cause and run at most one corrective ticket/commit cycle | `Fail` if isolation or re-verification fails; never rewrite history |
-| Final broad verification has a pre-existing failure | Separate prior evidence from current commits; do not mutate | `Fail`; no corrective ticket |
-| Final broad verification has an environment failure | Separate environment evidence and attempt one reproducible check | `Unverifiable`; no corrective ticket |
-| Verification ran but its result evidence cannot be obtained | Attempt one reproducible evidence capture | `Unverifiable`; no commit |
-| `tk-implement` commit command fails | Stop handoffs and preserve output, branch, `HEAD`, and index | `Fail`; clean only temporary artifacts owned by this run |
-| Receipt `HEAD` or ancestry differs from the expected handoff | Stop handoffs and reread branch, `HEAD`, and index | `Blocked`; preserve valid commits and identify re-verification scope |
+Missing source/authority, receipt drift, or a decision that cannot be routed is
+`Blocked`. A child verification or commit failure is `Fail`; inaccessible
+evidence is `Unverifiable`. Preserve valid diffs and verified commits, stop the
+next handoff, and never rewrite history. Only an isolated final
+change-related regression permits the one corrective cycle defined in the
+phase invariants.
 
 The final receipt owns `Status`, `Source`, `Phases`, `Tickets`,
 `Verification`, `Integration review`, `Commits`, `Remaining risks`, and
-`Reusable candidate`. `Commits` maps unit/ticket IDs to commit SHAs and marks a
-corrective commit. Report only whether a reusable candidate exists; do not
-automatically invoke `tk-reflect`. Do not duplicate child evidence.
+`Reusable candidate`. Use `Status: Pass` only after every completion gate. Do
+not duplicate child evidence or invoke `tk-reflect`.
 
 Write user-facing progress updates and the final receipt in the user's language,
 while preserving canonical status and receipt field names.
@@ -140,12 +135,10 @@ while preserving canonical status and receipt field names.
 ## DO NOT / ANTI-PATTERNS
 
 - Do not start from an ordinary request, artifact, or generic continuation.
-- Do not extend commit authority from an unrelated answer.
-- Do not force tickets for a small single slice or trust stale ticket status.
-- Do not duplicate phase-owner semantics or bypass a phase failure inline.
-- Do not let drive stage/commit source or repeat `tk-implement`'s ticket-level
-  code review.
-- Do not amend, squash, roll back, or otherwise rewrite verified unit commits,
-  and do not run a second corrective cycle.
-- Do not invoke skills outside the allowlists, nest delegation, or
-  automatically reflect, hand off, or learn.
+- Do not extend commit authority from an unrelated answer, force tickets for a
+  small slice, or trust stale ticket status.
+- Do not duplicate or bypass phase-owner semantics.
+- Do not ask grill questions inline, let spec or tickets invoke grill, or resume
+  downstream artifacts without revalidating the Ready spec.
+- Do not stage/commit source, repeat ticket-level review, rewrite verified
+  commits, run a second corrective cycle, or invoke skills outside allowlists.

@@ -38,7 +38,7 @@ else:
 
 
 class CanonicalSkillContractTest(unittest.TestCase):
-    def test_v20_1_3_skill_distribution_and_phase_owner_behaviors(self) -> None:
+    def test_canonical_skill_distribution_and_phase_owner_behaviors(self) -> None:
         self.assertEqual(
             EXPECTED_SKILLS,
             {
@@ -56,14 +56,22 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "tk-to-tickets",
             },
         )
-        self.assertEqual(USER_INVOKED_SKILLS, {"tk-grill-me"})
+        self.assertEqual(USER_INVOKED_SKILLS, {"tk-drive"})
         self.assertTrue(
             {
                 "drive-requires-explicit-start",
                 "drive-resumes-pending-answer",
                 "drive-does-not-auto-reflect",
                 "drive-invokes-phase-owners",
+                "drive-invokes-grill-on-unresolved-decision",
+                "drive-skips-grill-for-ready-source",
+                "drive-reruns-spec-after-grill",
+                "drive-blocks-repeated-decision-return",
                 "drive-commits-per-ticket",
+                "grill-accepts-active-drive-handoff",
+                "grill-returns-control-to-drive",
+                "to-spec-returns-decision-blocker-to-drive",
+                "to-tickets-returns-decision-blocker-to-drive",
                 "implement-reviews-every-standalone-run",
                 "implement-diagnoses-unknown-cause-failure",
                 "implement-active-drive-handoff-triggers",
@@ -102,6 +110,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
             root = Path(directory)
             for skill in (
                 "tk-drive",
+                "tk-grill-me",
                 "tk-implement",
                 "tk-to-spec",
                 "tk-to-tickets",

@@ -2,7 +2,7 @@
 
 ## Product boundary
 
-TigerKit 20.1.3 is an Agent Skills repository, not a workflow framework or Claude Code plugin.
+TigerKit is an Agent Skills repository, not a workflow framework or Claude Code plugin.
 
 - Keep exactly 12 canonical skills under `skills/tk-*/`: 1 user-invoked and 11 hybrid. Do not add model-only skills.
 - Each skill's `SKILL.md` is its behavior source of truth.
@@ -29,14 +29,15 @@ If the answers are weak, choose `inline`, `merge`, `convert to reference`, `make
 
 ## Behavior boundaries
 
-- User-invoked skills never invoke another user-invoked skill automatically.
+- `tk-drive` is the user-invoked orchestrator. It may invoke only the documented
+  hybrid phase owners; phase owners never invoke sibling phase owners.
 - Small work and ordinary follow-up feedback stay owned by the current agent without requiring a new skill.
 - Non-agent tools, MCPs, sandboxes, browsers, and context-management utilities remain available whenever useful.
 - Delegate implementation ownership only for real isolation or parallel benefit; never nest agent delegation.
 - Every `tk-implement` unit runs current-agent Standards/Spec review. Large or high-risk work permits at most one independent reviewer, without fan-out, editing, re-delegation, or automatic re-review. `tk-drive` owns only aggregate R/AC, ancestry, cross-ticket, and broad verification after consuming those unit receipts.
 - TigerKit never commits, pushes, opens PRs, merges, tags, releases, or publishes unless explicitly authorized by a skill contract or user request.
 - Explicit `tk-implement` invocation authorizes one verified current-branch unit commit. Explicit `$tk-drive` start authorizes `tk-implement` to create one such commit per selected ticket or no-ticket single slice. Neither authorizes push or later release actions; implicit drive resume inherits only the active same-conversation scope.
-- Operational bodies and references for `tk-drive`, `tk-to-spec`, `tk-to-tickets`, and `tk-implement` use English. User-facing progress and final receipt prose follows the user's language while canonical fields and status tokens remain unchanged.
+- Operational bodies and references for `tk-drive`, `tk-grill-me`, `tk-to-spec`, `tk-to-tickets`, and `tk-implement` use English. User-facing progress and final receipt prose follows the user's language while canonical fields and status tokens remain unchanged.
 
 ## Repository documentation
 

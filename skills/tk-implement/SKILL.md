@@ -51,9 +51,6 @@ drive-wide cross-ticket verification or its final receipt.
 | `Blocked` | Required input, authority, or user decision is missing; safety boundaries conflict; or drift follows the verified snapshot | Stop further mutation and identify the decision or re-verification scope | Prohibited |
 | `Unverifiable` | Verification was attempted but environment, tooling, or evidence limitations prevent a verdict | Separate executed scope from unavailable evidence | Prohibited |
 
-Prohibit nested delegation, automatic invocation of user-invoked skills, hook
-bypass, and commit before verification.
-
 Source precedence is: current request, confirmed conversation decisions,
 relevant `.tigerkit/tickets.md`, relevant `.tigerkit/spec.md`, repository
 instructions, code/tests. Existing files are not automatically relevant.
@@ -265,8 +262,8 @@ the canonical headings, status tokens, IDs, and receipt keys above.
 
 ## DO NOT / ANTI-PATTERNS
 
-- Do not commit before verification, commit a failing change, push, or create
-  a PR.
+- Do not bypass hooks, commit before verification, commit a failing change,
+  push, or create a PR.
 - Do not batch standalone multi-ticket input or create tickets.
 - Do not auto-apply this hybrid skill from an ordinary implementation request
   or merely because drive is active.

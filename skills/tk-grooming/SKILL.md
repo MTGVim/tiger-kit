@@ -25,7 +25,7 @@ metadata:
 
 기존의 네 영역, 즉 저장소 규칙, 저장소 스킬, 사용자 규칙, 사용자 스킬을 검사하세요. 실제로 존재하는 호스트 네이티브 경로를 사용하세요. [탐색](references/discovery.md)에 후보가 나열되어 있습니다. 누락된 파일을 만들거나 레거시 전역 TigerKit 상태를 검사/마이그레이션하지 마세요.
 
-Repository rule/skill은 파일 전체가 아니라 독립적인 normative instruction/workflow 단위로 판정하세요. 기대 kind가 달라지면 `convert`, 둘 다 rule이지만 root와 nested 위치가 다르면 `move`, 한 artifact가 서로 다른 결과 단위를 섞으면 먼저 `split`, 위치와 kind가 맞고 다른 결함이 없으면 `keep`입니다. 필요한 path/count/threshold evidence가 없거나 충돌하면 추정하지 말고 해당 영역을 `Partial/Blocked | Unverifiable`로 두세요.
+Repository rule/skill은 파일 전체가 아니라 독립적인 normative instruction/workflow 단위로 판정하세요. 기대 kind가 달라지면 `convert`, 둘 다 rule이지만 root와 nested 위치가 다르면 `move`, 한 artifact가 서로 다른 결과 단위를 섞으면 먼저 `split`입니다. `tighten`은 owner·kind·scope를 유지한 채 중복·모호성만 줄이고 의미를 바꾸지 않는 경우, 다른 결함이 없으면 `keep`입니다. 필요한 path/count/threshold evidence가 없거나 충돌하면 추정하지 말고 해당 영역을 `Partial/Blocked | Unverifiable`로 두세요.
 
 분류는 mutation 권한이 아닙니다. Apply가 승인되어도 이 skill이 직접 소유하는 mutation은 `tighten`, exact target이 명확한 기계적 `move`, 참조가 없는 `delete`, frontmatter/link `fix`뿐입니다. Semantic `merge`, `deprecate`, Rule→skill `convert`, workflow `split`, semantic skill rewrite는 exact candidate/target을 제안하고 `pending`으로 남기며 직접 쓰지 않습니다. 이 proposal은 `tk-learn` 입력으로 사용할 수 있지만 이 skill이 자동 호출하지 않습니다.
 

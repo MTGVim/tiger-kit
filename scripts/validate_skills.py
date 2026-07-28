@@ -56,10 +56,17 @@ CATALOG_ROUTING_BOUNDARIES = {
     "tk-prototype vs tk-browser-verify",
     "tk-handoff vs generic summary/continue",
     "tk-drive vs tk-handoff/generic continue",
+    "tk-drive vs tk-grill-me",
     "tk-merge-conflict vs ordinary conflict-marker edit",
 }
 HYBRID_TRIGGER_FACETS = {"formal", "casual", "typo", "ko-en", "short", "compound"}
-PHASE_OWNER_SKILLS = {"tk-drive", "tk-implement", "tk-to-spec", "tk-to-tickets"}
+PHASE_OWNER_SKILLS = {
+    "tk-drive",
+    "tk-grill-me",
+    "tk-implement",
+    "tk-to-spec",
+    "tk-to-tickets",
+}
 HANGUL_SYLLABLE = re.compile(r"[가-힣]")
 EXPECTED_SKILLS = {
     "tk-browser-verify",
@@ -76,7 +83,7 @@ EXPECTED_SKILLS = {
     "tk-to-tickets",
 }
 USER_INVOKED_SKILLS = {
-    "tk-grill-me",
+    "tk-drive",
 }
 HYBRID_SKILLS = EXPECTED_SKILLS - USER_INVOKED_SKILLS
 KEBAB = re.compile(r"^tk-[a-z0-9]+(?:-[a-z0-9]+)*$")
@@ -147,11 +154,13 @@ REQUIRED_BEHAVIOR_CASES = {
     "to-spec-structures-bug-evidence",
     "to-spec-preserves-source-ui-writing-verbatim",
     "to-spec-active-drive-handoff",
+    "to-spec-returns-decision-blocker-to-drive",
     "to-tickets-does-not-create-spec",
     "to-tickets-initial-status-is-pending",
     "to-tickets-keeps-one-vertical-bug-slice",
     "to-tickets-preserves-source-ui-writing-verbatim",
     "to-tickets-active-drive-handoff",
+    "to-tickets-returns-decision-blocker-to-drive",
     "prototype-is-not-production",
     "prototype-web-uses-disposable-variants",
     "prototype-web-toggle-preserves-legibility",
@@ -174,7 +183,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-keeps-ticket-ledger",
     "drive-preserves-source-ui-writing-verbatim",
     "drive-blocks-unreadable-ui-literal",
-    "drive-blocks-conflicting-ui-literals",
+    "drive-routes-conflicting-ui-literals-to-decision",
     "drive-commit-command-failure-is-fail",
     "drive-precommit-drift-is-blocked",
     "drive-carries-authorized-ui-writing-change",
@@ -187,12 +196,18 @@ REQUIRED_BEHAVIOR_CASES = {
     "learn-is-sole-semantic-skill-writer",
     "drive-bounds-nested-skills",
     "drive-invokes-phase-owners",
+    "drive-invokes-grill-on-unresolved-decision",
+    "drive-skips-grill-for-ready-source",
+    "drive-reruns-spec-after-grill",
+    "drive-blocks-repeated-decision-return",
     "drive-commits-per-ticket",
     "drive-runs-final-aggregate-verification",
     "drive-propagates-phase-failure",
     "drive-bounds-corrective-cycle",
     "drive-preserves-valid-diff-on-partial-failure",
     "drive-aggregate-review-boundary",
+    "grill-accepts-active-drive-handoff",
+    "grill-returns-control-to-drive",
 }
 
 
@@ -434,19 +449,19 @@ def validate_repository_contract() -> list[str]:
     )
     for relative in required_files:
         if not (ROOT / relative).is_file():
-            errors.append(f"{relative}: required TigerKit 20.1.3 repository file is missing")
+            errors.append(f"{relative}: required TigerKit 20.1.4 repository file is missing")
     errors.extend(validate_local_only_workflows(ROOT))
     errors.extend(validate_phase_owner_language(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
-            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 20.1.3")
+            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 20.1.4")
     errors.extend(validate_runtime_scratch(ROOT))
     ignored = (ROOT / ".gitignore").read_text(encoding="utf-8") if (ROOT / ".gitignore").is_file() else ""
     if ".tigerkit/" not in ignored.splitlines():
         errors.append(".gitignore: document TigerKit repo-local scratch with .tigerkit/")
     required_text = {
         "README.md": (
-            "TigerKit 20.1.3",
+            "TigerKit 20.1.4",
             "12",
             "Claude Code",
             "Codex",
@@ -455,7 +470,7 @@ def validate_repository_contract() -> list[str]:
             "사용 시나리오",
         ),
         "MIGRATION.md": (
-            "TigerKit 20.1.3",
+            "TigerKit 20.1.4",
             "Removed Skills",
             "model-only",
             "hybrid",

@@ -106,6 +106,12 @@
 - case: grill-me-does-not-create-adrs
   skill: tk-grill-me
   expect: "The skill does not create ADRs automatically."
+- case: grill-accepts-active-drive-handoff
+  skill: tk-grill-me
+  expect: "An explicit active-drive decision handoff is a valid entry; grill owns only decision closure and returns a typed receipt without mutation."
+- case: grill-returns-control-to-drive
+  skill: tk-grill-me
+  expect: "A confirmed drive handoff returns Decisions, assumptions, risks, and control to tk-drive without invoking spec, tickets, or implementation."
 - case: implement-tdd-requires-observed-red
   skill: tk-implement
   expect: "TDD requires executing the focused test and observing a real failure before implementation."
@@ -220,6 +226,9 @@
 - case: to-spec-active-drive-handoff
   skill: tk-to-spec
   expect: "An explicit active-drive spec handoff uses the standalone Ready contract and returns a drive-consumable phase receipt without taking downstream ownership."
+- case: to-spec-returns-decision-blocker-to-drive
+  skill: tk-to-spec
+  expect: "A user-decision blocker returns `User decision: required`, the new decision, and evidence in a native non-Ready receipt to drive without invoking grill or writing a substitute Ready spec."
 - case: to-tickets-does-not-create-spec
   skill: tk-to-tickets
   expect: "Ticket decomposition does not create or modify a spec."
@@ -238,6 +247,9 @@
 - case: to-tickets-active-drive-handoff
   skill: tk-to-tickets
   expect: "An explicit active-drive ticket handoff uses the standalone vertical-slice contract and returns a drive-consumable ledger receipt without implementing."
+- case: to-tickets-returns-decision-blocker-to-drive
+  skill: tk-to-tickets
+  expect: "A user-decision blocker returns `User decision: required`, the new decision, and evidence in a native ticket receipt to drive without invoking grill or editing the Ready spec."
 - case: prototype-is-not-production
   skill: tk-prototype
   expect: "The result distinguishes fake and real behavior and is not called production-ready."
@@ -303,7 +315,7 @@
   expect: "Only host-native explicit tk-drive selection starts a workflow; /tk-drive, $tk-drive, and picker selection are positive while ordinary implementation, generic continue, artifacts, and unrelated answers are not."
 - case: drive-resumes-pending-answer
   skill: tk-drive
-  expect: "A direct same-conversation answer to the active pending decision resumes the next phase without another invocation."
+  expect: "tk-grill-me owns a direct same-conversation answer to its active pending decision; after its confirmed receipt, drive resumes at the spec gate without another invocation."
 - case: drive-does-not-auto-reflect
   skill: tk-drive
   expect: "Completion reports only whether a reusable candidate exists and never invokes reflection automatically."
@@ -315,7 +327,7 @@
   expect: "Multi-slice or long-resume work tracks pending, in_progress, verified, or blocked with evidence and revalidates on resume."
 - case: drive-bounds-nested-skills
   skill: tk-drive
-  expect: "Phase-owner invocation is limited to tk-to-spec, tk-to-tickets, and tk-implement; support invocation is limited to prototype, browser verification, and merge conflict handling."
+  expect: "Phase-owner invocation is limited to tk-grill-me, tk-to-spec, tk-to-tickets, and tk-implement; support invocation is limited to prototype, browser verification, and merge conflict handling."
 - case: drive-commits-per-ticket
   skill: tk-drive
   expect: "Each independently verifiable ticket is handed to tk-implement for one commit, and drive creates no separate final commit."
@@ -327,7 +339,19 @@
   expect: "tk-implement owns ticket-level Standards/Spec review while drive owns aggregate R/AC coverage, ancestry, and cross-ticket interaction without repeating line-level review."
 - case: drive-invokes-phase-owners
   skill: tk-drive
-  expect: "Drive explicitly invokes tk-to-spec, conditionally tk-to-tickets, and tk-implement per unit, consuming their receipts without recreating phase semantics inline."
+  expect: "Drive conditionally invokes tk-grill-me, then explicitly invokes tk-to-spec, conditionally tk-to-tickets, and tk-implement per unit, consuming their receipts without recreating phase semantics inline."
+- case: drive-skips-grill-for-ready-source
+  skill: tk-drive
+  expect: "Drive skips tk-grill-me when confirmed source and evidence already support a Ready spec without a user-owned decision."
+- case: drive-invokes-grill-on-unresolved-decision
+  skill: tk-drive
+  expect: "Drive hands source, evidence, confirmed decisions, and unresolved user-owned decisions to tk-grill-me instead of asking an inline question."
+- case: drive-reruns-spec-after-grill
+  skill: tk-drive
+  expect: "After new confirmed Decisions, drive re-runs tk-to-spec to Ready before rederiving or resuming tickets."
+- case: drive-blocks-repeated-decision-return
+  skill: tk-drive
+  expect: "The same or equivalent decision blocker after confirmation stops Blocked instead of entering another automatic grill loop."
 - case: drive-runs-final-aggregate-verification
   skill: tk-drive
   expect: "After all unit commits, drive reconciles ordered ancestry and all R/AC, checks cross-ticket effects, and runs the broadest executable relevant verification once."
@@ -343,9 +367,9 @@
 - case: drive-blocks-unreadable-ui-literal
   skill: tk-drive
   expect: "Unreadable source UI literals are never guessed and prevent commit as Unverifiable."
-- case: drive-blocks-conflicting-ui-literals
+- case: drive-routes-conflicting-ui-literals-to-decision
   skill: tk-drive
-  expect: "Conflicting source UI literals are preserved as evidence and require one user decision before work can continue from Blocked."
+  expect: "Conflicting source UI literals are preserved as evidence, handed to the grill decision phase, and return Pending without changing Git."
 - case: drive-commit-command-failure-is-fail
   skill: tk-drive
   expect: "A failed final commit command preserves its output and actual Git state and terminates as Fail without claiming commit success."

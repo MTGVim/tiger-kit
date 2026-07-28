@@ -7,6 +7,30 @@
   ],
   "cases": [
     {
+      "id": "drive-vs-grill-drive",
+      "boundary": "tk-drive vs tk-grill-me",
+      "prompt": "$tk-drive 이 source를 decision closure부터 verified commits까지 진행해 주세요.",
+      "focus_skill": "tk-drive",
+      "expected_selected_skill": "tk-drive",
+      "critical": true
+    },
+    {
+      "id": "drive-vs-grill-standalone-grill",
+      "boundary": "tk-drive vs tk-grill-me",
+      "prompt": "$tk-grill-me 이 RFC의 결정을 한 번에 하나씩 검증해 주세요.",
+      "focus_skill": "tk-grill-me",
+      "expected_selected_skill": "tk-grill-me",
+      "critical": true
+    },
+    {
+      "id": "drive-vs-grill-active-handoff",
+      "boundary": "tk-drive vs tk-grill-me",
+      "prompt": "[active tk-drive decision handoff] Close this unresolved user-owned decision and return the receipt to drive.",
+      "focus_skill": "tk-grill-me",
+      "expected_selected_skill": "tk-grill-me",
+      "critical": true
+    },
+    {
       "id": "spec-vs-tickets-spec",
       "boundary": "tk-to-spec vs tk-to-tickets",
       "prompt": "확정된 결정을 독립 구현 명세로 작성해 주세요.",
@@ -129,7 +153,7 @@
     {
       "id": "drive-vs-handoff-resume-drive",
       "boundary": "tk-drive vs tk-handoff/generic continue",
-      "prompt": "직전 tk-drive의 pending decision에 답합니다. 권고한 작은 vertical slice로 진행해 주세요.",
+      "prompt": "$tk-drive 현재 source를 spec부터 verified commits까지 진행해 주세요.",
       "focus_skill": "tk-drive",
       "expected_selected_skill": "tk-drive",
       "critical": true
