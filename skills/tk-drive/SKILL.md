@@ -81,9 +81,9 @@ drift or exact-comparison evidence gap remains.
    sufficient. Continue only from its `confirmed` receipt.
 3. `spec phase`: explicitly hand current source, confirmed decisions, and
    traceability to `tk-to-spec`; accept only a `Ready` receipt.
-4. `ticket decision`: hand the Ready spec to `tk-to-tickets` only when there
-   are at least two independently verifiable vertical slices or a ledger adds
-   material long-resume value. Otherwise use one no-ticket implementation unit.
+4. `ticket decision`: use `tk-to-tickets` only for at least two independent
+   vertical slices or material ledger value. Otherwise create no ticket/ledger
+   and carry task identity plus Ready R/AC as one no-ticket unit.
 5. `prototype branch`: only when unresolved web visual ambiguity affects
    behavior or structure and 2–3 disposable alternatives materially narrow
    one decision.
