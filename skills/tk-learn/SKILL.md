@@ -26,7 +26,7 @@ Draft와 apply는 서로 다른 gate입니다.
 
 1. **Evidence ledger** — 각 사례·workflow에 ID, 주장, 출처, `verified | unverified`를 붙입니다. 사용자가 서로 다른 두 사례와 공통 workflow가 있다고 명시했지만 artifact를 읽을 수 없으면 그 진술을 별도 `unverified` 항목으로 보존하고 draft를 계속하세요. Promotion threshold를 통과하는 증거는 `verified`인 독립 반복 사례 2개 이상 또는 artifact가 뒷받침하는 재사용 workflow입니다. `unverified` 항목은 draft 근거일 뿐 apply gate pass 증거가 아닙니다. 한 번 발생한 개인 실수, 원시 log 또는 출처 없는 단일 주장은 threshold 미달 `no-op`으로 끝냅니다.
 2. **Promotion과 dedupe** — [스킬 품질](references/skill-quality.md)의 승격 gate를 적용하고 기존 repo/user skill, 기본 모델 기능, 짧은 rule과 비교해 `merge | no-op | continue | pending`을 판정합니다. 목록을 읽을 수 없으면 `pending`으로 표시하되 draft는 계속합니다.
-3. **Candidate proposal** — target, working name, invocation kind, positive/negative trigger를 제시합니다. 사용자가 준 도메인·workflow 표현으로 reversible working name과 trigger 예시를 만들고 `proposed`로 표시하세요. 근거가 없는 동작은 발명하지 말고 해당 값만 `TBD`로 남깁니다.
+3. **Candidate proposal** — target, working name, invocation kind, positive/negative trigger를 제시합니다. 사용자가 준 도메인·workflow 표현으로 64자 미만의 lowercase hyphen-case, verb-led working name을 만들고 기존 이름과 충돌하지 않는지 확인한 뒤 `proposed`로 표시하세요. 근거가 없는 동작은 발명하지 말고 해당 값만 `TBD`로 남깁니다.
 4. **Minimum draft** — 입력, 핵심 workflow, 명시적 실패 분기, approval boundary, 완료 기준, 출력 계약, DO NOT 목록을 포함한 최소 SKILL.md를 보여줍니다. 이어 train/validation trigger, success/boundary assertion, no-skill 또는 이전 skill baseline, portable-core/host-extension 판정을 제시합니다.
 5. **Approval summary** — apply gate checklist의 항목별 상태와 계획 경로를 한 번씩 요약하고 checklist가 정한 상태로 멈춥니다.
 6. **Write, verify, report** — checklist의 Apply authority가 통과한 뒤 write 전 내용을 보존하고 적용합니다. frontmatter, links, evals, target-host invocation을 검증한 뒤에만 `applied`로 보고합니다.
