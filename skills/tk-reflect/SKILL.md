@@ -128,8 +128,12 @@ Only `tk-learn` creates a new skill or semantically updates/merges one. This
 skill reports skill evidence, current-host native exact target, working draft,
 and `pending` only; it never invokes tk-learn or writes a skill path.
 
-Use `aborted` for user stop and `Blocked` for conflict/unclear apply scope.
-Never mix per-candidate `reported | pending | applied` with run terminal status.
+Run terminal status is `Pass | Fail | Blocked | Unverifiable | aborted`. `Pass`
+means the evidence/classification workflow completed and every approved
+mutation was revalidated; candidates may intentionally remain `pending`.
+Use `Fail` for a violated deterministic claim or apply gate, `aborted` for user
+stop, and `Blocked` for conflict/unclear apply scope. Never mix per-candidate
+`reported | pending | applied` with run terminal status.
 
 By default, mutate no file and create no persistent ledger/identifier. Do not
 inspect legacy global state or generalize a one-off workaround. `RF-##` is
