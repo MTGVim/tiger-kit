@@ -75,7 +75,9 @@ Keep this ledger only in the conversation. Do not automatically record it in
 
 Separate unresolved items, confirmed user decisions, and unverified
 assumptions on every axis. Choose only the highest-impact unresolved item for
-the next question while continuing to evaluate all four axes.
+the next question while continuing to evaluate all four axes. Rank items by
+safe-progress blocker, scope or irreversible-effect change, verification
+blocker, then downstream rework; break any remaining tie in ledger order.
 
 The ledger is not a per-turn dump template. On a question turn, report only
 new or changed evidence, the selected unresolved item, one Recommendation,
