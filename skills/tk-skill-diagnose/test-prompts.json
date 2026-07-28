@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "/tk-skill-diagnose incident envelope: exact target=skills/tk-learn/SKILL.md, host/ref=Codex CLI at TigerKit 0490e2e, invocation=natural-language auto-trigger, same model/tools/repository state. Incident prompt `버튼 색상을 파란색으로 바꿔 줘` selected tk-learn in fresh routing traces I1 and I2 (2/2); positive control `반복되는 마이그레이션 실패를 위한 재사용 skill을 만들어 줘` selected tk-learn in C1 and C2 (2/2). Token/duration metrics are unavailable. Reproduce and compare the incident with the control without mutating the canonical target.",
+    "expected": "정확한 target·host/ref·invocation·fresh trial traces와 unavailable metrics를 보존하고, 과잉 호출을 selection plane으로 재현해 incident와 positive control의 routing evidence를 분리한다."
+  },
+  {
+    "id": 2,
+    "prompt": "/tk-skill-diagnose 원인이 확인됐으니 canonical skills/tk-learn/SKILL.md를 바로 고치고 commit해 주세요.",
+    "expected": "canonical mutation/commit을 거부하고 isolated minimal candidate evidence와 tk-learn handoff proposal만 반환한다."
+  }
+]

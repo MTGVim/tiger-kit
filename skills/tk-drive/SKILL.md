@@ -17,6 +17,9 @@ current host. `/tk-drive`, `$tk-drive`, and direct selection in a host skill
 picker are equivalent explicit starts. Once started, keep ownership while a
 child phase waits for and incorporates the directly corresponding answer; when
 that phase returns a continuation receipt, resume without another invocation.
+A continuation receipt is an internal transition, not a terminal response:
+when it carries no stop state, advance to the next required phase in the same
+turn instead of ending after the child receipt.
 
 An ordinary code request, generic `continue`, an existing `.tigerkit/`
 artifact, an answer outside an active child phase, a new session, or a broken
@@ -31,56 +34,53 @@ verification, review, and verified current-branch unit commits within the
 current source scope. It does not authorize push, PR, merge, tag, release,
 publish, automatic reflection, history rewriting, or out-of-scope mutation.
 
-The latest explicit source outranks scratch artifacts. Ignore unrelated
-artifacts and revalidate stale spec or ticket artifacts against current
-evidence. Ask only when task identity or decision reversal cannot be resolved.
-Do not create drive-only state, current pointers, archives, global state, or
-automatic migration.
+Prefer the latest explicit source and revalidate artifacts as defined by the
+phase invariants. Do not create drive-only or global state.
 
 Follow [phase invariants](references/phases.md). Drive owns orchestration;
 `tk-grill-me`, `tk-to-spec`, `tk-to-tickets`, and `tk-implement` respectively
 own decision closure, spec, ticket decomposition, and one implementation unit.
 
-The phase-owner allowlist is
-`tk-grill-me | tk-to-spec | tk-to-tickets | tk-implement`. The conditional
-support allowlist is
-`tk-prototype | tk-browser-verify | tk-merge-conflict`. Do not invoke other
-planning, learning, reflection, or handoff skills, and do not create a shared
-runtime contract.
+Invoke only the phase and support owners allowed by the phase invariants; do
+not create a shared runtime contract.
 
-If a phase skill is unavailable or does not return its required success
-receipt, propagate that state and stop at the phase. Never recreate its
-semantics inline. Do not intercept a standalone phase request, and do not let a
-phase owner take over drive-wide orchestration, aggregate verification, or the
-final receipt.
+If a phase skill is unavailable or unsuccessful, propagate that state and stop
+at the phase; never recreate its semantics inline.
+
+Every consumed phase receipt must cause one same-turn transition defined in the
+phase invariants. A child success receipt is never a response boundary.
 
 ### 🔴 HARD GATE · source UI writing
 
-If user-provided source contains a label, button, heading, guide/help copy,
-table or column name, placeholder, validation/error, or status text, freeze an
-inventory before spec mutation. Map source location, exact literal, spec R/AC,
-optional ticket, and implementation destination.
+For every string literal rendered in UI, freeze an inventory before spec
+mutation; labels, copy, numbers, units, currency, suffixes, and separators are
+examples, not an upper bound. Map source location, non-empty source literal,
+current rendered/source-path literal, target literal, spec R/AC, optional
+ticket, and implementation destination.
 
-Unless the user explicitly approves a wording change, prohibit translation,
-paraphrase, shortening, correction, typo fixes, and normalization. Mark only
-approved changes as `authorized change`. An unreadable literal is
-`Unverifiable`; conflicting literals that require a user choice are `Blocked`.
+Missing source/current evidence is `Unverifiable`. Any source↔current mismatch
+makes every row a conflict candidate and prevents `Ready`, `Pass`, or commit without
+a user decision. A typo requires rechecking all same-kind tokens; never generalize
+source unreliability to adopt current code silently.
 
-Compare the same inventory exactly in the spec, tickets, implementation,
-candidate/staged diff, and rendered UI. Do not commit when any unauthorized
-drift or exact-comparison evidence gap remains.
+Approval covers only the asked axis; option premises remain unconfirmed. Only exact
+separately approved wording is an `authorized change`; prohibit all other drift.
+
+Compare the inventory exactly through spec, tickets, implementation,
+candidate/staged diff, and rendered UI; drift or evidence gaps block commit.
 
 ## Workflow
 
-1. `preflight`: resolve source, relevant spec/tickets, repository instructions,
-   branch, initial `HEAD`, dirty ownership, drift, task identity, completed
+1. `preflight`: resolve the complete source per phase invariants, relevant
+   artifacts/instructions, Git and dirty ownership, task identity, completed
    phases, and unresolved decisions.
 2. `decision phase`: when any unresolved user-owned decision prevents a Ready
    spec, explicitly hand current source, evidence, confirmed decisions, and
    open decisions to `tk-grill-me`. Skip this phase when the source is already
    sufficient. Continue only from its `confirmed` receipt.
 3. `spec phase`: explicitly hand current source, confirmed decisions, and
-   traceability to `tk-to-spec`; accept only a `Ready` receipt.
+   traceability to `tk-to-spec`; accept only a `Ready` receipt, then make the
+   ticket decision in the same active turn.
 4. `ticket decision`: use `tk-to-tickets` only for at least two independent
    vertical slices or material ledger value. Otherwise create no ticket/ledger
    and carry task identity plus Ready R/AC as one no-ticket unit.
@@ -89,7 +89,8 @@ drift or exact-comparison evidence gap remains.
    one decision.
 6. `implementation commits`: keep at most one ticket `in_progress`; hand one
    ticket and its R/AC, or the one no-ticket unit, to `tk-implement`. Mark it
-   `verified` only from the matching verified commit receipt, then continue.
+   `verified` only from the matching verified commit receipt, then hand off the
+   next unit or enter aggregate verification.
 7. `aggregate verification`: reconcile all unit receipts, commit ancestry,
    R/AC coverage, and cross-ticket interaction; run the broadest executable
    relevant verification once. Do not repeat each ticket's line-level
@@ -129,6 +130,9 @@ The final receipt owns `Status`, `Source`, `Phases`, `Tickets`,
 `Reusable candidate`. Use `Status: Pass` only after every completion gate. Do
 not duplicate child evidence or invoke `tk-reflect`.
 
+Return control only with that final receipt or an explicit phase-stop receipt;
+first assert that every consumed success receipt has its next transition.
+
 Write user-facing progress updates and the final receipt in the user's language,
 while preserving canonical status and receipt field names.
 
@@ -142,3 +146,5 @@ while preserving canonical status and receipt field names.
   downstream artifacts without revalidating the Ready spec.
 - Do not stage/commit source, repeat ticket-level review, rewrite verified
   commits, run a second corrective cycle, or invoke skills outside allowlists.
+- Do not stop after a child success receipt; continue or emit an explicit
+  terminal reason in the same turn.

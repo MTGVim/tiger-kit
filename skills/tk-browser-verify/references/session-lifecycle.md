@@ -1,24 +1,42 @@
-# 브라우저 세션 수명주기
+# Browser session lifecycle
 
-브라우저를 조작하기 전에 세션 소유권을 구분하고, 검증 결과와 관계없이 현재 실행이 소유한 리소스만 정리하세요. 이 원칙은 네이티브 브라우저, Playwright 호환 드라이버, MCP, CDP 등 모든 실행 경로에 적용됩니다.
+Classify session ownership before browser interaction and clean up only
+run-owned resources regardless of verdict. This applies to native browsers,
+Playwright-compatible drivers, MCP, and CDP.
 
-## 세션 소유권
+## Session ownership
 
-**Owned session**은 현재 검증 실행이 직접 생성한 브라우저, 컨텍스트, 창, 탭, 페이지 또는 프로세스입니다. 예를 들어 현재 실행이 시작한 브라우저 인스턴스, 임시·격리 프로필로 시작한 Chrome, 현재 실행을 위해 새로 만든 MCP/CDP 세션이 해당합니다. 현재 실행이 정리 책임을 가집니다. 브라우저 도구가 첫 호출 시 브라우저를 지연 시작한다면 `list`, `snapshot`, `navigate` 같은 조회 호출도 세션 생성으로 간주하세요. 호출 전에 존재가 확인되지 않은 초기 `about:blank`만 보고 attached session으로 추정하지 마세요.
+An **owned session** is a browser, context, window, tab, page, or process
+created by this verification run. A provider that lazily launches on its first
+`list`, `snapshot`, or `navigate` call makes that resource owned. An initial
+`about:blank` that was not proven to pre-exist does not make it attached.
 
-**Attached session**은 현재 실행 전에 존재했다고 독립적으로 확인되었고 검증이 연결만 한 브라우저 또는 세션입니다. 사용자가 시작한 Chrome, 기존 Chrome에 연결한 CDP 세션, 외부 도구가 관리하는 공유 브라우저가 해당합니다. 전체 브라우저, 기존 창·탭 또는 프로세스를 종료하지 마세요. 현재 실행이 만든 페이지가 명확히 식별될 때만 해당 페이지를 닫을 수 있습니다. 소유권이 불명확하면 닫지 마세요.
+An **attached session** was independently proven to exist before this run and
+was only attached for verification. Never close its browser, pre-existing
+windows/tabs, or process. Close only pages clearly created by this run. Unknown
+ownership means do not close.
 
 ## Chrome headless-new launch
 
-새 Chrome/Chromium owned session은 실제 process arguments에 정확한 token `--headless=new`를 포함해야 합니다. 첫 browser 관련 도구 호출 전에 binary, effective arguments, PID 또는 provider-owned process 식별자, 격리된 `user-data-dir`을 기록하세요. `headless: true`나 provider 기본값만으로 argument 적용을 추정하지 마세요.
+Every new owned Chrome/Chromium process includes exact `--headless=new`.
+Before the first browser call, record binary, effective arguments, PID or
+provider process ID, and isolated `user-data-dir`. Provider defaults are not
+proof.
 
-Auto-launch provider가 exact argument를 주입·확인하지 못하면 호출하지 말고, 직접 시작한 `--headless=new` Chrome의 확인된 CDP endpoint에 연결하세요. Headless 시작이 실패하면 headed로 retry하지 말고 실행 불가 상태를 보고하세요. Credential 직접 입력, OTP, 2FA/2-step verification, passkey, CAPTCHA 또는 device approval처럼 사용자가 직접 로그인을 완료해야 하는 interactive auth가 실제로 필요한 경우만 launch 전 승인된 headed 예외를 사용하세요.
+If auto-launch cannot inject and prove the argument, attach to a directly
+started verified Chrome endpoint. Never retry headed after headless failure.
+Use a pre-approved headed exception only for user-completed interactive auth.
 
-Interactive login은 repo 밖 user-local persistent profile에서만 수행하세요. 사용자가 인증을 마치면 headed owned browser를 정상 종료하고 process 종료와 profile lock 해제를 확인하세요. 같은 binary와 동일한 `user-data-dir`로 `--headless=new` Chrome을 새로 시작하고 effective arguments와 인증된 target state를 확인한 뒤 검증을 이어가세요. Headed browser의 로그인 이후 화면을 제품 검증 evidence로 사용하지 말고, headless 재개가 불가능하면 `Unverifiable`로 멈추세요. Persistent auth profile은 사용자가 보존을 요청한 local state이므로 종료 cleanup에서 삭제하지 마세요.
+Perform interactive login only in a user-local profile outside the repository.
+After auth, close the headed browser, prove process exit and profile-lock
+release, and restart the same binary/profile with `--headless=new`. Verify
+arguments and authenticated target state before product evidence. A failed
+handoff is `Unverifiable`. Preserve the user's persistent auth profile at
+cleanup.
 
-## 최초 실행 UI 억제
+## First-run UI suppression
 
-새 브라우저를 시작하고 실행 인자를 제어할 수 있으면 브라우저와 도구에서 지원 여부가 확인된 네이티브 옵션을 사용하세요. Chrome/Chromium 계열의 대표 예시는 다음과 같습니다.
+When supported, prefer native options such as:
 
 ```text
 --headless=new
@@ -26,38 +44,41 @@ Interactive login은 repo 밖 user-local persistent profile에서만 수행하�
 --no-default-browser-check
 ```
 
-도구가 동등한 네이티브 설정을 제공하면 해당 설정을 우선하세요. 브라우저 종류를 확인하지 않고 Chrome 전용 옵션을 전달하거나 attached session에 옵션을 소급 적용하지 마세요. 옵션 적용 실패만으로 검증을 중단하지 말고, 검증 대상 애플리케이션 동작을 바꾸는 옵션도 추가하지 마세요.
+Do not pass Chrome flags to an unknown browser or retroactively to an attached
+session. An unsupported suppression flag alone does not stop verification, and
+no flag may alter target-application behavior.
 
-## 남은 온보딩 처리
+## Remaining onboarding
 
-검증 전에 브라우저 자체 로그인, 동기화 또는 프로필 설정 UI가 남았는지 확인하세요. 다음처럼 의미가 명확한 동작만 허용됩니다.
+Before verification, inspect browser-owned login, sync, or setup UI. Only
+unambiguous skip/later/continue-without-login actions and closing run-owned
+onboarding tabs/windows are safe. Never sign into a browser account, enable
+sync, change default-browser settings, register a persistent profile, request
+credentials, or guess an ambiguous consent action.
 
-- `건너뛰기`, `나중에`, `로그인하지 않고 계속` 선택
-- 현재 실행이 만든 온보딩 탭 또는 창 닫기
-- 현재 실행이 만든 온보딩 전용 창 종료
+If browser UI cannot be distinguished from the target or safely dismissed,
+return `Unverifiable`.
 
-다음 행동은 금지됩니다.
+## Cleanup
 
-- Google 또는 브라우저 계정 로그인
-- 저장된 계정 선택 또는 동기화 활성화
-- 기본 브라우저 설정 변경
-- 영구 사용자 프로필 임의 등록
-- 자격 증명 요청, 입력, 저장 또는 출력
-- 의미가 불분명한 동의 버튼 추측 클릭
+On success, failure, interruption, or exception, attempt cleanup in order:
 
-브라우저 자체 UI인지 검증 대상 애플리케이션 UI인지 확실하지 않으면 조작하지 마세요. 온보딩이 대상 페이지 접근을 막고 안전하게 해소할 방법이 없으면 `Unverifiable`로 판정하고 원인을 보고하세요.
+1. run-created pages/tabs;
+2. run-created contexts;
+3. run-started browser instances;
+4. only when normal shutdown failed, the exact proven owned process.
 
-## 종료
+Record PID and exact `user-data-dir` at launch. Before forced termination,
+match both against process arguments; a shared port is not ownership. If server
+auto-open could not be suppressed, close only tabs created by this run.
 
-성공, `Fail`, `Unverifiable`, 예외 또는 중단 여부와 관계없이 종료 단계에서 다음 순서로 owned resource 정리를 시도하세요.
+Never use `killall`, `pkill chrome`, broad `pkill -f`, or task-name bulk kills.
+Do not close unknown PIDs, user windows/tabs/processes, shared MCP/CDP
+browsers, other verification runs, or delete user profiles.
 
-1. 현재 실행이 생성한 페이지 또는 탭
-2. 현재 실행이 생성한 브라우저 컨텍스트
-3. 현재 실행이 시작한 브라우저 인스턴스
-4. 정상 종료되지 않았을 때만 소유권이 확인된 해당 브라우저 프로세스
+Closing the last page is not proof that a provider-owned browser exited. If no
+explicit close method or process identifier exists, do not guess-kill; report
+the remaining owned session under `Unverified`. Cleanup failure does not change
+the application verdict; `Unverified` is a result section, not another verdict.
 
-Browser를 직접 시작했다면 launch 시 PID와 정확한 `user-data-dir`을 기록하세요. 강제 종료 전에 process argument 또는 동등한 수단으로 PID와 profile이 기록값과 일치하는지 대조하고, port가 같다는 이유만으로 소유권을 인정하지 마세요. Server auto-open을 막지 못했다면 이번 실행이 새로 만든 tab만 닫으세요.
-
-`killall`, `pkill chrome`, 넓은 `pkill -f` pattern, 작업 이름 기반 일괄 종료처럼 여러 Chrome 프로세스를 대상으로 하는 행동은 하지 마세요. 소유권을 확인하지 않은 PID, 기존 사용자 창·탭·프로세스, 공유 MCP/CDP 브라우저, 다른 검증 실행의 브라우저를 종료하지 마세요. 기존 사용자 프로필도 삭제하지 마세요.
-
-공급자가 브라우저 전체 종료 기능을 제공하지 않으면 마지막 페이지를 닫았다는 이유로 브라우저가 종료됐다고 보고하지 마세요. 명시적 종료 수단이나 공급자가 반환한 프로세스 식별자로 소유권을 확인할 수 없으면 추측성 프로세스 종료를 하지 말고, 남은 owned session을 `Unverified` 또는 보고 본문에 기록하세요. 정리 실패만으로 애플리케이션 검증 판정은 바꾸지 않습니다. `Unverified`는 결과 섹션이며 새로운 verdict가 아닙니다.
+User-facing progress and receipt prose follows the user's language.

@@ -14,7 +14,8 @@ def main() -> int:
     parser.add_argument("--write", action="store_true", help="write projections instead of checking")
     args = parser.parse_args()
     changed: list[str] = []
-    for skill_dir in sorted((ROOT / "skills").glob("tk-*")):
+    skill_dirs = sorted((ROOT / "skills").glob("tk-*"))
+    for skill_dir in skill_dirs:
         source = skill_dir / "evals" / "evals.json"
         target = skill_dir / "test-prompts.json"
         behavior = json.loads(source.read_text(encoding="utf-8"))
@@ -30,7 +31,7 @@ def main() -> int:
         print("Out-of-date Darwin projections: " + ", ".join(changed))
         return 1
     action = "Updated" if args.write else "Validated"
-    print(f"{action} Darwin eval projections for 12 skills.")
+    print(f"{action} Darwin eval projections for {len(skill_dirs)} skills.")
     return 0
 
 

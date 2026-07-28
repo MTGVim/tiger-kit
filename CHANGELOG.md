@@ -1,5 +1,33 @@
 # Changelog
 
+## 20.1.5 — Empirical Agent Skill Diagnosis and Catalog Reliability
+
+- Expanded the catalog from 12 to 13 canonical skills while retaining one
+  user-invoked skill and moving to 12 hybrid skills.
+- Added adapted `tk-skill-diagnose` for observed correctness, stability,
+  compatibility, evaluation, and efficiency incidents with clean reproduction,
+  failure-plane isolation, one-theme temporary candidates, and holdout gates.
+- Added the single conditional `tk-reflect → tk-skill-diagnose` handoff and
+  blocked reverse calls, repeated equivalent blockers, and sibling loops.
+- Added an opt-in empirical diagnostic pass to `run_skill_evals.py` with
+  answer-free prompt composition, marker-delimited structured traces, separate
+  metrics/records/ledger, and unchanged normal behavior when disabled.
+- Added external consumer provenance, anonymization, and upstream issue-draft
+  contracts without issue creation or canonical skill mutation.
+- Strengthened `tk-drive` same-turn phase continuation and source-UI literal
+  routing, and required more precise browser runtime evidence.
+- Standardized canonical skill bodies and operational references in English
+  while preserving user-language progress and receipts, and added persistent
+  memory as the fifth `tk-reflect` classification axis.
+- Refined all 13 skills through independent paired ratchets: deterministic
+  failure terminals, delegation fallback, atomic writes, worktree-safe Git
+  state discovery, artifact ownership, and executable spec/ticket evals.
+- Audited post-commit hook drift in isolated eval runs and kept vendor-owned
+  artifacts report-only instead of treating them as candidate mutations.
+- Preserved every existing explicit invocation name and the Agent Skills-only
+  distribution; this patch adds no workflow runtime, plugin surface, or
+  release-time live-eval requirement.
+
 ## 20.1.4 — Conditional Decision Orchestration and Skill Refinement
 
 - Made `tk-drive` the single user-invoked workflow entry point and converted

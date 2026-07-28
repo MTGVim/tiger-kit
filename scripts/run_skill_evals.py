@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import tempfile
 import time
+from collections import Counter
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Iterator, Mapping
@@ -27,9 +28,15 @@ TERMINAL_STATUSES = {
     "NotApplicable",
 }
 SUPPORTED_HOSTS = ("claude-code", "codex", "hermes-agent")
+DIAGNOSTIC_MARKER_START = "<!-- TIGERKIT_DIAGNOSTIC_START -->"
+DIAGNOSTIC_MARKER_END = "<!-- TIGERKIT_DIAGNOSTIC_END -->"
+DIAGNOSTIC_PHASES = ("understanding", "planning", "execution", "formatting")
+DIAGNOSTIC_PHASE_STATES = {"ok", "stuck", "skipped"}
 
 
-def validate_adapter_result(result: dict[str, object]) -> list[str]:
+def validate_adapter_result(
+    result: dict[str, object], *, diagnostic: bool = False
+) -> list[str]:
     errors: list[str] = []
     skill_loaded = result.get("skill_loaded")
     loaded_skills = result.get("loaded_skills")
@@ -53,9 +60,21 @@ def validate_adapter_result(result: dict[str, object]) -> list[str]:
         errors.append("adapter result selected_skill must appear in loaded_skills")
     if not isinstance(result.get("output"), str):
         errors.append("adapter result requires string output")
-    for field in ("total_tokens", "duration_ms"):
+    metric_fields = (
+        ("total_tokens", "duration_ms", "tool_uses", "nested_calls")
+        if diagnostic
+        else ("total_tokens", "duration_ms")
+    )
+    for field in metric_fields:
         value = result.get(field)
-        if value is not None and not isinstance(value, (int, float)):
+        invalid = (
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or value < 0
+            if diagnostic
+            else not isinstance(value, (int, float))
+        )
+        if value is not None and invalid:
             errors.append(f"adapter result {field} must be numeric or null")
     terminal_status = result.get("terminal_status")
     if terminal_status not in TERMINAL_STATUSES:
@@ -554,7 +573,7 @@ def run_adapter(
             }
         )
         result = run_json_command(command, env, cwd=checkout)
-        errors = validate_adapter_result(result)
+        errors = validate_adapter_result(result, diagnostic=mode == "diagnostic")
         if errors:
             raise RuntimeError("; ".join(errors))
         loaded_skills = result.get("loaded_skills")
@@ -831,6 +850,553 @@ def grade_behavior(
     return results
 
 
+def compose_diagnostic_prompt(prompt: str, suffix: str) -> str:
+    """Append the diagnostic contract without exposing case expectations."""
+    return f"{prompt.rstrip()}\n\n{suffix.strip()}\n"
+
+
+def _strip_json_fence(value: str) -> str:
+    lines = value.strip().splitlines()
+    if len(lines) >= 2 and lines[0].strip().startswith("```") and lines[-1].strip() == "```":
+        return "\n".join(lines[1:-1]).strip()
+    return value.strip()
+
+
+def validate_diagnostic_payload(payload: object) -> list[str]:
+    errors: list[str] = []
+    if not isinstance(payload, dict):
+        return ["diagnostic payload must be an object"]
+    expected_fields = {
+        "trace",
+        "unclear_points",
+        "discretionary_fill_ins",
+        "retries",
+    }
+    if set(payload) != expected_fields:
+        errors.append("diagnostic payload must contain exactly the canonical fields")
+    trace = payload.get("trace")
+    if not isinstance(trace, dict):
+        errors.append("diagnostic trace must be an object")
+    else:
+        if set(trace) != set(DIAGNOSTIC_PHASES):
+            errors.append("diagnostic trace must contain exactly the four canonical phases")
+        for phase in DIAGNOSTIC_PHASES:
+            if trace.get(phase) not in DIAGNOSTIC_PHASE_STATES:
+                errors.append(f"diagnostic trace {phase} must be ok, stuck, or skipped")
+    unclear_points = payload.get("unclear_points")
+    if not isinstance(unclear_points, list):
+        errors.append("diagnostic unclear_points must be a list")
+    else:
+        for index, point in enumerate(unclear_points, 1):
+            if not isinstance(point, dict):
+                errors.append(f"diagnostic unclear point {index} must be an object")
+                continue
+            for field in ("issue", "cause", "general_fix_rule"):
+                if not isinstance(point.get(field), str) or not str(point.get(field)).strip():
+                    errors.append(f"diagnostic unclear point {index} needs {field}")
+    fill_ins = payload.get("discretionary_fill_ins")
+    if not isinstance(fill_ins, list) or not all(
+        isinstance(value, str) and value.strip() for value in fill_ins
+    ):
+        errors.append("diagnostic discretionary_fill_ins must be a string list")
+    retries = payload.get("retries")
+    if isinstance(retries, bool) or not isinstance(retries, int) or retries < 0:
+        errors.append("diagnostic retries must be a non-negative integer")
+    return errors
+
+
+def parse_diagnostic_output(
+    output: str,
+) -> tuple[str, dict[str, object] | None, str | None]:
+    """Split the normal deliverable from one marker-delimited diagnostic JSON record."""
+    deliverable = (
+        output.split(DIAGNOSTIC_MARKER_START, 1)[0].rstrip()
+        if DIAGNOSTIC_MARKER_START in output
+        else output.rstrip()
+    )
+    if output.count(DIAGNOSTIC_MARKER_START) != 1 or output.count(DIAGNOSTIC_MARKER_END) != 1:
+        return deliverable, None, "missing or repeated diagnostic markers"
+    start = output.index(DIAGNOSTIC_MARKER_START)
+    end = output.index(DIAGNOSTIC_MARKER_END)
+    if end < start:
+        return deliverable, None, "diagnostic end marker precedes start marker"
+    trailing = output[end + len(DIAGNOSTIC_MARKER_END) :].strip()
+    if trailing:
+        return output[:start].rstrip(), None, "diagnostic marker must be the final output block"
+    raw = _strip_json_fence(
+        output[start + len(DIAGNOSTIC_MARKER_START) : end]
+    )
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        return output[:start].rstrip(), None, f"malformed diagnostic JSON: {exc}"
+    errors = validate_diagnostic_payload(payload)
+    if errors:
+        return output[:start].rstrip(), None, "; ".join(errors)
+    return output[:start].rstrip(), payload, None
+
+
+def _diagnostic_point_fingerprint(point: Mapping[str, object]) -> str:
+    return " | ".join(
+        " ".join(str(point.get(field, "")).casefold().split())
+        for field in ("issue", "cause", "general_fix_rule")
+    )
+
+
+def _diagnostic_resource_metrics(
+    records: list[Mapping[str, object]],
+) -> dict[str, int | float | None]:
+    result: dict[str, int | float | None] = {}
+    for field in ("total_tokens", "duration_ms", "tool_uses", "nested_calls"):
+        values = [record.get(field) for record in records]
+        result[field] = (
+            sum(float(value) for value in values if isinstance(value, (int, float)))
+            if values
+            and all(
+                not isinstance(value, bool) and isinstance(value, (int, float))
+                for value in values
+            )
+            else None
+        )
+    return result
+
+
+def summarize_diagnostic_records(
+    records: list[dict[str, object]],
+) -> dict[str, object]:
+    valid = [record for record in records if isinstance(record.get("diagnostic"), dict)]
+    scenario_trials: Counter[tuple[str, str]] = Counter()
+    valid_scenario_trials: Counter[tuple[str, str]] = Counter()
+    point_counts: Counter[str] = Counter()
+    point_values: dict[str, dict[str, object]] = {}
+    phase_counts: Counter[tuple[str, str]] = Counter()
+    retry_counts: Counter[str] = Counter()
+    normal_failure_counts: Counter[str] = Counter()
+    safety_failures: set[str] = set()
+    holdout_failures: set[str] = set()
+    fill_in_count = 0
+    for record in records:
+        case_id = str(record.get("case", ""))
+        role = str(record.get("scenario_role", ""))
+        scenario_trials[(case_id, role)] += 1
+        if record.get("normal_passed") is False:
+            normal_failure_counts[case_id] += 1
+            if record.get("safety") is True:
+                safety_failures.add(case_id)
+            if record.get("scenario_role") == "holdout":
+                holdout_failures.add(case_id)
+        payload = record.get("diagnostic")
+        if not isinstance(payload, dict):
+            continue
+        valid_scenario_trials[(case_id, role)] += 1
+        trace = payload.get("trace", {})
+        if isinstance(trace, dict):
+            for phase in DIAGNOSTIC_PHASES:
+                if trace.get(phase) in {"stuck", "skipped"}:
+                    phase_counts[(case_id, phase)] += 1
+        points = payload.get("unclear_points", [])
+        if isinstance(points, list):
+            for point in points:
+                if not isinstance(point, dict):
+                    continue
+                fingerprint = _diagnostic_point_fingerprint(point)
+                point_counts[fingerprint] += 1
+                point_values.setdefault(fingerprint, point)
+        fill_ins = payload.get("discretionary_fill_ins", [])
+        if isinstance(fill_ins, list):
+            fill_in_count += len(fill_ins)
+        retries = payload.get("retries", 0)
+        if isinstance(retries, int) and not isinstance(retries, bool) and retries > 0:
+            retry_counts[case_id] += 1
+    repeated_phases = [
+        {"case": case_id, "phase": phase, "count": count}
+        for (case_id, phase), count in sorted(phase_counts.items())
+        if count >= 2
+    ]
+    phase_events = [
+        {"case": case_id, "phase": phase, "count": count}
+        for (case_id, phase), count in sorted(phase_counts.items())
+    ]
+    repeated_retries = [
+        {"case": case_id, "count": count}
+        for case_id, count in sorted(retry_counts.items())
+        if count >= 2
+    ]
+    retry_events = [
+        {"case": case_id, "count": count}
+        for case_id, count in sorted(retry_counts.items())
+    ]
+    normal_failures = [
+        {"case": case_id, "count": count}
+        for case_id, count in sorted(normal_failure_counts.items())
+    ]
+    parse_failures = sum(bool(record.get("parse_error")) for record in records)
+    minimum_trials_met = bool(scenario_trials) and all(
+        count >= 2 and valid_scenario_trials[key] >= 2
+        for key, count in scenario_trials.items()
+    )
+    scenario_roles = {role for _, role in scenario_trials}
+    if not records or not valid:
+        status = "Unverifiable"
+    elif (
+        safety_failures
+        or holdout_failures
+        or any(row["count"] >= 2 for row in normal_failures)
+        or repeated_phases
+    ):
+        status = "Fail"
+    elif (
+        parse_failures
+        or point_counts
+        or phase_counts
+        or fill_in_count
+        or retry_counts
+        or normal_failures
+    ):
+        status = "Concern"
+    else:
+        status = "Pass"
+    return {
+        "status": status,
+        "scenario_runs": len(records),
+        "valid_diagnostic_runs": len(valid),
+        "parse_failures": parse_failures,
+        "scenario_trials": [
+            {
+                "case": case_id,
+                "role": role,
+                "runs": count,
+                "valid_diagnostic_runs": valid_scenario_trials[(case_id, role)],
+            }
+            for (case_id, role), count in sorted(scenario_trials.items())
+        ],
+        "scenario_coverage": {
+            "incident": "incident" in scenario_roles,
+            "nearby-control": "nearby-control" in scenario_roles,
+            "holdout": "holdout" in scenario_roles,
+        },
+        "minimum_trials_met": minimum_trials_met,
+        "new_unclear_points": [
+            {**point_values[fingerprint], "fingerprint": fingerprint, "count": count}
+            for fingerprint, count in sorted(point_counts.items())
+        ],
+        "repeated_unclear_points": [
+            {**point_values[fingerprint], "fingerprint": fingerprint, "count": count}
+            for fingerprint, count in sorted(point_counts.items())
+            if count >= 2
+        ],
+        "phase_regressions": repeated_phases,
+        "phase_events": phase_events,
+        "retry_regressions": repeated_retries,
+        "retry_events": retry_events,
+        "normal_failures": normal_failures,
+        "safety_failures": sorted(safety_failures),
+        "holdout_failures": sorted(holdout_failures),
+        "discretionary_fill_ins": fill_in_count,
+        "resource_metrics": _diagnostic_resource_metrics(records),
+    }
+
+
+def evaluate_diagnostic_checkout(
+    checkout: Path,
+    contracts: dict[str, dict[str, object]],
+    *,
+    adapter_command: str,
+    grader_command: str,
+    host: str,
+    runs: int,
+    case_filter: set[str] | None,
+    scenario_limit: int,
+    suffix: str,
+) -> tuple[dict[str, object], list[dict[str, object]]]:
+    eligible_cases: list[tuple[str, Mapping[str, object]]] = []
+    for skill, contract in contracts.items():
+        behavior = contract["behavior"]["evals"]  # type: ignore[index]
+        for case in behavior:
+            case_id = f"{skill}:behavior:{case['id']}"
+            if case_filter and case_id not in case_filter:
+                continue
+            eligible_cases.append((skill, case))
+    named_holdouts = [
+        item for item in eligible_cases if "holdout" in str(item[1]["id"]).casefold()
+    ]
+    non_holdouts = [item for item in eligible_cases if item not in named_holdouts]
+    selected = non_holdouts[:scenario_limit]
+    if not selected and named_holdouts:
+        selected = named_holdouts[:scenario_limit]
+    elif scenario_limit >= 3 and named_holdouts:
+        if len(selected) >= scenario_limit:
+            selected[-1] = named_holdouts[0]
+        else:
+            selected.append(named_holdouts[0])
+    selected_cases: list[tuple[str, Mapping[str, object], str]] = []
+    for index, (skill, case) in enumerate(selected):
+        is_named_holdout = "holdout" in str(case["id"]).casefold()
+        role = (
+            "holdout"
+            if is_named_holdout or (len(selected) >= 3 and index == len(selected) - 1)
+            else "incident"
+            if index == 0
+            else "nearby-control"
+        )
+        selected_cases.append((skill, case, role))
+    records: list[dict[str, object]] = []
+    for skill, case, role in selected_cases:
+        case_id = f"{skill}:behavior:{case['id']}"
+        for run_number in range(1, runs + 1):
+            with isolated_checkout(checkout) as run_checkout:
+                initial_head = git_head(run_checkout)
+                result = run_adapter(
+                    adapter_command,
+                    checkout=run_checkout,
+                    skill=skill,
+                    prompt=compose_diagnostic_prompt(str(case["prompt"]), suffix),
+                    mode="diagnostic",
+                    host=host,
+                )
+                deliverable, diagnostic, parse_error = parse_diagnostic_output(
+                    str(result["output"])
+                )
+                normal_result = dict(result)
+                normal_result["output"] = deliverable
+                assertion_results = grade_behavior(
+                    grader_command,
+                    normal_result,
+                    case["assertions"],
+                    checkout=run_checkout,
+                    initial_head=initial_head,
+                )
+            records.append(
+                {
+                    "case": case_id,
+                    "host": host,
+                    "scenario_role": role,
+                    "run": run_number,
+                    "normal_passed": all(row["passed"] for row in assertion_results),
+                    "safety": case.get("safety") is True,
+                    "assertion_results": assertion_results,
+                    "diagnostic": diagnostic,
+                    "parse_error": parse_error,
+                    "terminal_status": result.get("terminal_status"),
+                    "duration_ms": result.get("duration_ms"),
+                    "total_tokens": result.get("total_tokens"),
+                    "tool_uses": result.get("tool_uses"),
+                    "nested_calls": result.get("nested_calls"),
+                }
+            )
+    return summarize_diagnostic_records(records), records
+
+
+def _diagnostic_point_map(summary: Mapping[str, object]) -> dict[str, Mapping[str, object]]:
+    points = summary.get("new_unclear_points", [])
+    if not isinstance(points, list):
+        return {}
+    return {
+        str(point["fingerprint"]): point
+        for point in points
+        if isinstance(point, dict) and isinstance(point.get("fingerprint"), str)
+    }
+
+
+def compare_diagnostics(
+    baseline: Mapping[str, object],
+    candidate: Mapping[str, object],
+    *,
+    resource_regression_reason: str | None = None,
+) -> dict[str, object]:
+    baseline_points = _diagnostic_point_map(baseline)
+    candidate_points = _diagnostic_point_map(candidate)
+    new_points = [
+        point
+        for fingerprint, point in candidate_points.items()
+        if fingerprint not in baseline_points
+    ]
+    repeated_points = [
+        point
+        for point in new_points
+        if isinstance(point.get("count"), int) and int(point["count"]) >= 2
+    ]
+
+    def keyed_rows(summary: Mapping[str, object], field: str) -> dict[tuple[str, str], object]:
+        rows = summary.get(field, [])
+        if not isinstance(rows, list):
+            return {}
+        result: dict[tuple[str, str], object] = {}
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            result[(str(row.get("case", "")), str(row.get("phase", "")))] = row
+        return result
+
+    baseline_phases = keyed_rows(baseline, "phase_regressions")
+    candidate_phases = keyed_rows(candidate, "phase_regressions")
+    phase_regressions = [
+        row for key, row in candidate_phases.items() if key not in baseline_phases
+    ]
+    baseline_retries = keyed_rows(baseline, "retry_regressions")
+    candidate_retries = keyed_rows(candidate, "retry_regressions")
+    retry_regressions = [
+        row for key, row in candidate_retries.items() if key not in baseline_retries
+    ]
+    baseline_phase_events = keyed_rows(baseline, "phase_events")
+    candidate_phase_events = keyed_rows(candidate, "phase_events")
+    one_off_phase_events = [
+        row
+        for key, row in candidate_phase_events.items()
+        if key not in baseline_phase_events
+        and isinstance(row.get("count"), int)
+        and int(row["count"]) < 2
+    ]
+    baseline_retry_events = keyed_rows(baseline, "retry_events")
+    candidate_retry_events = keyed_rows(candidate, "retry_events")
+    one_off_retry_events = [
+        row
+        for key, row in candidate_retry_events.items()
+        if key not in baseline_retry_events
+        and isinstance(row.get("count"), int)
+        and int(row["count"]) < 2
+    ]
+    normal_failures = candidate.get("normal_failures", [])
+    safety_failures = candidate.get("safety_failures", [])
+    holdout_failures = candidate.get("holdout_failures", [])
+    reasons: list[str] = []
+    concerns: list[str] = []
+    unverifiable: list[str] = []
+    if candidate.get("status") == "Unverifiable":
+        unverifiable.append("candidate diagnostics could not be parsed or executed")
+    if isinstance(safety_failures, list) and safety_failures:
+        reasons.append("candidate diagnostic deliverable has safety assertion failures")
+    if isinstance(holdout_failures, list) and holdout_failures:
+        reasons.append("candidate diagnostic deliverable regresses a holdout")
+    if isinstance(normal_failures, list) and any(
+        isinstance(row, dict) and int(row.get("count", 0)) >= 2
+        for row in normal_failures
+    ):
+        reasons.append("candidate diagnostic deliverable repeatedly fails normal assertions")
+    if phase_regressions:
+        reasons.append("candidate has repeated new stuck or skipped phases")
+    if retry_regressions:
+        reasons.append("candidate has repeated retry regression from baseline")
+    if one_off_phase_events:
+        concerns.append("candidate has a one-off new stuck or skipped phase")
+    if one_off_retry_events:
+        concerns.append("candidate has a one-off retry event")
+    if int(candidate.get("parse_failures", 0)) > int(
+        baseline.get("parse_failures", 0)
+    ):
+        concerns.append("candidate increased malformed or missing diagnostic records")
+    if isinstance(normal_failures, list) and any(
+        isinstance(row, dict) and int(row.get("count", 0)) == 1
+        for row in normal_failures
+    ):
+        concerns.append("candidate diagnostic deliverable has a one-off normal assertion failure")
+    if new_points and not reasons:
+        concerns.append("candidate surfaced new unclear points")
+    if int(candidate.get("discretionary_fill_ins", 0)) > int(
+        baseline.get("discretionary_fill_ins", 0)
+    ):
+        concerns.append("candidate increased discretionary fill-ins")
+    baseline_metrics = baseline.get("resource_metrics", {})
+    candidate_metrics = candidate.get("resource_metrics", {})
+    baseline_scenarios = baseline.get("scenario_trials", [])
+    candidate_scenarios = candidate.get("scenario_trials", [])
+    resource_comparison_status = (
+        "verified"
+        if baseline.get("minimum_trials_met") is True
+        and candidate.get("minimum_trials_met") is True
+        and baseline_scenarios == candidate_scenarios
+        else "Unverifiable"
+    )
+    unavailable_resource_metrics: list[str] = []
+    approved_resource_increases: list[str] = []
+    if (
+        resource_comparison_status == "verified"
+        and isinstance(baseline_metrics, dict)
+        and isinstance(candidate_metrics, dict)
+    ):
+        for field, ratio in (
+            ("total_tokens", TOKEN_REGRESSION_RATIO),
+            ("duration_ms", DURATION_REGRESSION_RATIO),
+            ("tool_uses", TOKEN_REGRESSION_RATIO),
+            ("nested_calls", TOKEN_REGRESSION_RATIO),
+        ):
+            before = baseline_metrics.get(field)
+            after = candidate_metrics.get(field)
+            if not (
+                isinstance(before, (int, float))
+                and not isinstance(before, bool)
+                and isinstance(after, (int, float))
+                and not isinstance(after, bool)
+            ):
+                unavailable_resource_metrics.append(field)
+                continue
+            regressed = after > 0 if before == 0 else after > before * ratio
+            if regressed:
+                message = f"candidate diagnostic {field} exceeds matched baseline"
+                if resource_regression_reason:
+                    approved_resource_increases.append(message)
+                else:
+                    concerns.append(message)
+    status = (
+        "Fail"
+        if reasons
+        else "Unverifiable"
+        if unverifiable
+        else "Concern"
+        if concerns
+        else "Pass"
+    )
+    return {
+        "status": status,
+        "scenario_runs": candidate.get("scenario_runs", 0),
+        "new_unclear_points": new_points,
+        "repeated_unclear_points": repeated_points,
+        "phase_regressions": phase_regressions,
+        "retry_regressions": retry_regressions,
+        "resource_metrics": candidate.get("resource_metrics", {}),
+        "resource_comparison_status": resource_comparison_status,
+        "unavailable_resource_metrics": unavailable_resource_metrics,
+        "approved_resource_increases": approved_resource_increases,
+        "resource_regression_reason": resource_regression_reason,
+        "reasons": reasons,
+        "concerns": concerns,
+        "unverifiable": unverifiable,
+    }
+
+
+def build_diagnostic_ledger(
+    records: list[Mapping[str, object]],
+) -> dict[str, object]:
+    entries: dict[str, dict[str, object]] = {}
+    for record in records:
+        payload = record.get("diagnostic")
+        if not isinstance(payload, dict):
+            continue
+        points = payload.get("unclear_points", [])
+        if not isinstance(points, list):
+            continue
+        for point in points:
+            if not isinstance(point, dict):
+                continue
+            fingerprint = _diagnostic_point_fingerprint(point)
+            entry = entries.setdefault(
+                fingerprint,
+                {
+                    "fingerprint": fingerprint,
+                    "issue": point.get("issue"),
+                    "cause": point.get("cause"),
+                    "general_fix_rule": point.get("general_fix_rule"),
+                    "baseline_seen": 0,
+                    "candidate_seen": 0,
+                },
+            )
+            side = str(record.get("ref", ""))
+            key = f"{side}_seen"
+            if key in entry:
+                entry[key] = int(entry[key]) + 1
+    return {"version": 1, "entries": [entries[key] for key in sorted(entries)]}
+
+
 def evaluate_checkout(
     checkout: Path,
     contracts: dict[str, dict[str, object]],
@@ -1039,6 +1605,23 @@ def parse_args() -> argparse.Namespace:
         "--resource-regression-reason",
         help="record the approved reason for a candidate token/time increase",
     )
+    parser.add_argument(
+        "--diagnose",
+        action="store_true",
+        help="run the separate empirical diagnostic pass",
+    )
+    parser.add_argument(
+        "--diagnostic-scenario-limit",
+        type=int,
+        default=2,
+        help="maximum behavior scenarios per baseline/candidate diagnostic pass",
+    )
+    parser.add_argument(
+        "--diagnostic-max-iterations",
+        type=int,
+        default=2,
+        help="maximum fresh diagnostic trials per selected scenario",
+    )
     parser.add_argument("--dry-run", action="store_true")
     return parser.parse_args()
 
@@ -1055,6 +1638,10 @@ def main() -> int:
     args = parse_args()
     if args.runs < 1:
         raise SystemExit("--runs must be positive")
+    if args.diagnostic_scenario_limit < 1:
+        raise SystemExit("--diagnostic-scenario-limit must be positive")
+    if args.diagnostic_max_iterations < 1:
+        raise SystemExit("--diagnostic-max-iterations must be positive")
     output: Path | None = None
     if args.output:
         output = Path(args.output).resolve()
@@ -1133,6 +1720,14 @@ def main() -> int:
         "contract_drift": contract_errors,
         "output": str(output) if output else "not-written-in-dry-run",
     }
+    if args.diagnose:
+        plan["diagnostics"] = {
+            "enabled": True,
+            "scenario_limit": args.diagnostic_scenario_limit,
+            "max_iterations": args.diagnostic_max_iterations,
+            "runs": args.diagnostic_max_iterations,
+            "prompt": "evals/prompts/skill-diagnostic.md",
+        }
     if args.dry_run:
         status = "Fail" if contract_errors else "Dry-run"
         print(json.dumps({"status": status, "plan": plan}, ensure_ascii=False, indent=2))
@@ -1154,12 +1749,30 @@ def main() -> int:
         }
         write_result(output, result)  # type: ignore[arg-type]
         return 2
+    diagnostic_suffix: str | None = None
+    if args.diagnose:
+        try:
+            diagnostic_suffix = (
+                ROOT / "evals" / "prompts" / "skill-diagnostic.md"
+            ).read_text(encoding="utf-8")
+        except (OSError, UnicodeError) as exc:
+            result = {
+                "status": "Unverifiable",
+                "error": f"cannot load diagnostic prompt: {exc}",
+                "plan": plan,
+            }
+            write_result(output, result)  # type: ignore[arg-type]
+            return 2
     output.mkdir(parents=True, exist_ok=True)  # type: ignore[union-attr]
     baseline_by_host: dict[str, dict[str, object]] = {}
     candidate_by_host: dict[str, dict[str, object]] = {}
     verdict_by_host: dict[str, dict[str, object]] = {}
     baseline_records: list[dict[str, object]] = []
     candidate_records: list[dict[str, object]] = []
+    baseline_diagnostic_by_host: dict[str, dict[str, object]] = {}
+    candidate_diagnostic_by_host: dict[str, dict[str, object]] = {}
+    diagnostic_verdict_by_host: dict[str, dict[str, object]] = {}
+    diagnostic_records: list[dict[str, object]] = []
     try:
         with detached_worktree(args.baseline) as baseline_root, detached_worktree(args.candidate) as candidate_root:
             for host in hosts:
@@ -1192,6 +1805,49 @@ def main() -> int:
                     candidate_summary,
                     resource_regression_reason=args.resource_regression_reason,
                 )
+                if args.diagnose and diagnostic_suffix is not None:
+                    diagnostic_runs = args.diagnostic_max_iterations
+                    baseline_diagnostic, host_baseline_diagnostic_records = (
+                        evaluate_diagnostic_checkout(
+                            baseline_root,
+                            baseline_contracts,
+                            adapter_command=args.adapter_command,
+                            grader_command=args.grader_command,
+                            host=host,
+                            runs=diagnostic_runs,
+                            case_filter=case_filter,
+                            scenario_limit=args.diagnostic_scenario_limit,
+                            suffix=diagnostic_suffix,
+                        )
+                    )
+                    candidate_diagnostic, host_candidate_diagnostic_records = (
+                        evaluate_diagnostic_checkout(
+                            candidate_root,
+                            candidate_contracts,
+                            adapter_command=args.adapter_command,
+                            grader_command=args.grader_command,
+                            host=host,
+                            runs=diagnostic_runs,
+                            case_filter=case_filter,
+                            scenario_limit=args.diagnostic_scenario_limit,
+                            suffix=diagnostic_suffix,
+                        )
+                    )
+                    baseline_diagnostic_by_host[host] = baseline_diagnostic
+                    candidate_diagnostic_by_host[host] = candidate_diagnostic
+                    diagnostic_verdict_by_host[host] = compare_diagnostics(
+                        baseline_diagnostic,
+                        candidate_diagnostic,
+                        resource_regression_reason=args.resource_regression_reason,
+                    )
+                    diagnostic_records.extend(
+                        {"ref": "baseline", **record}
+                        for record in host_baseline_diagnostic_records
+                    )
+                    diagnostic_records.extend(
+                        {"ref": "candidate", **record}
+                        for record in host_candidate_diagnostic_records
+                    )
     except (OSError, subprocess.SubprocessError, RuntimeError, ValueError) as exc:
         result = {"status": "Unverifiable", "error": str(exc), "plan": plan}
         write_result(output, result)  # type: ignore[arg-type]
@@ -1214,6 +1870,80 @@ def main() -> int:
         for host, verdict in verdict_by_host.items()
         for reason in verdict["unverifiable"]  # type: ignore[union-attr]
     ]
+    diagnostics_result: dict[str, object] | None = None
+    if args.diagnose:
+        diagnostic_statuses = {
+            str(value["status"]) for value in diagnostic_verdict_by_host.values()
+        }
+        diagnostic_status = (
+            "Fail"
+            if "Fail" in diagnostic_statuses
+            else "Unverifiable"
+            if "Unverifiable" in diagnostic_statuses
+            else "Concern"
+            if "Concern" in diagnostic_statuses
+            else "Pass"
+        )
+        if diagnostic_status == "Fail":
+            overall_status = "Fail"
+        elif diagnostic_status == "Unverifiable" and overall_status == "Pass":
+            overall_status = "Unverifiable"
+        reasons.extend(
+            f"[diagnostic][{host}] {reason}"
+            for host, verdict in diagnostic_verdict_by_host.items()
+            for reason in verdict["reasons"]  # type: ignore[union-attr]
+        )
+        unverifiable.extend(
+            f"[diagnostic][{host}] {reason}"
+            for host, verdict in diagnostic_verdict_by_host.items()
+            for reason in verdict["unverifiable"]  # type: ignore[union-attr]
+        )
+        aggregate_metrics: dict[str, int | float | None] = {}
+        for field in ("total_tokens", "duration_ms", "tool_uses", "nested_calls"):
+            values = [
+                summary.get("resource_metrics", {}).get(field)  # type: ignore[union-attr]
+                for summary in candidate_diagnostic_by_host.values()
+            ]
+            aggregate_metrics[field] = (
+                sum(float(value) for value in values if isinstance(value, (int, float)))
+                if values
+                and all(
+                    not isinstance(value, bool) and isinstance(value, (int, float))
+                    for value in values
+                )
+                else None
+            )
+        diagnostics_result = {
+            "status": diagnostic_status,
+            "scenario_runs": sum(
+                int(summary.get("scenario_runs", 0))
+                for summary in candidate_diagnostic_by_host.values()
+            ),
+            "new_unclear_points": [
+                point
+                for verdict in diagnostic_verdict_by_host.values()
+                for point in verdict["new_unclear_points"]  # type: ignore[union-attr]
+            ],
+            "repeated_unclear_points": [
+                point
+                for verdict in diagnostic_verdict_by_host.values()
+                for point in verdict["repeated_unclear_points"]  # type: ignore[union-attr]
+            ],
+            "phase_regressions": [
+                row
+                for verdict in diagnostic_verdict_by_host.values()
+                for row in verdict["phase_regressions"]  # type: ignore[union-attr]
+            ],
+            "retry_regressions": [
+                row
+                for verdict in diagnostic_verdict_by_host.values()
+                for row in verdict["retry_regressions"]  # type: ignore[union-attr]
+            ],
+            "resource_metrics": aggregate_metrics,
+            "baseline": baseline_diagnostic_by_host,
+            "candidate": candidate_diagnostic_by_host,
+            "host_verdicts": diagnostic_verdict_by_host,
+        }
     result = {
         "status": overall_status,
         "reasons": reasons,
@@ -1224,12 +1954,36 @@ def main() -> int:
         "host_verdicts": verdict_by_host,
         "resource_regression_reason": args.resource_regression_reason,
     }
+    if diagnostics_result is not None:
+        result["diagnostics"] = diagnostics_result
     (output / "baseline-records.json").write_text(
         json.dumps(baseline_records, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     (output / "candidate-records.json").write_text(
         json.dumps(candidate_records, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
+    if args.diagnose:
+        normal_records = [
+            *({"ref": "baseline", **record} for record in baseline_records),
+            *({"ref": "candidate", **record} for record in candidate_records),
+        ]
+        (output / "normal-records.json").write_text(
+            json.dumps(normal_records, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        (output / "diagnostic-records.json").write_text(
+            json.dumps(diagnostic_records, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        (output / "diagnostic-ledger.json").write_text(
+            json.dumps(
+                build_diagnostic_ledger(diagnostic_records),
+                ensure_ascii=False,
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
     write_result(output, result)  # type: ignore[arg-type]
     return 0 if overall_status == "Pass" else 2 if overall_status == "Unverifiable" else 1
 

@@ -25,7 +25,24 @@ Relationship metadata for current adapted skills: `relationship: adapted`. Tiger
 
 `tk-merge-conflict` remains TigerKit-native (`origin: tigerkit`, `relationship: native`). No verified source metadata establishes it as an adaptation of `mattpocock/skills` `resolving-merge-conflicts`.
 
-Upstream license:
+`tk-skill-diagnose` adapts empirical Agent Skill evaluation methodology from
+`mizchi/skills`, source snapshot
+`7a0d72866a0bb3e9ac3e2768c328b09ba2bc40c4`:
+
+- `meta/empirical-prompt-tuning/SKILL.md`
+- `meta/waxa-eval/`
+
+TigerKit distilled Iteration 0 description/body consistency, frozen
+median/control/holdout scenarios, fresh executors, two-sided phase traces,
+structured `Issue / Cause / General Fix Rule` feedback, one-theme candidate
+experiments, convergence, and run-local failure ledgers. The adaptation adds
+TigerKit-specific failure planes, host/provenance gates, writer ownership,
+local-only diagnostic output, resource/correctness precedence, and anonymized
+upstream issue drafts. It does not copy upstream presentation prose or replace
+Darwin-style broad optimization. Relationship metadata:
+`relationship: adapted`.
+
+`mattpocock/skills` upstream license:
 
 ```text
 MIT License

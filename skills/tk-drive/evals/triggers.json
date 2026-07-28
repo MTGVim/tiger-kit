@@ -5,102 +5,102 @@
     {
       "from": "train-positive",
       "to": "train-explicit",
-      "reason": "TigerKit 20.1.4 renames explicit-start training coverage."
+      "reason": "TigerKit 20.1.5 renames explicit-start training coverage."
     },
     {
       "from": "train-negative",
       "to": "train-implicit-block",
-      "reason": "TigerKit 20.1.4 renames the ordinary-request non-trigger training boundary."
+      "reason": "TigerKit 20.1.5 renames the ordinary-request non-trigger training boundary."
     },
     {
       "from": "validation-positive-1",
       "to": "validation-dollar",
-      "reason": "TigerKit 20.1.4 groups explicit dollar invocation under host-specific validation."
+      "reason": "TigerKit 20.1.5 groups explicit dollar invocation under host-specific validation."
     },
     {
       "from": "validation-positive-2",
       "to": "validation-dollar",
-      "reason": "TigerKit 20.1.4 consolidates explicit dollar invocation coverage."
+      "reason": "TigerKit 20.1.5 consolidates explicit dollar invocation coverage."
     },
     {
       "from": "validation-positive-3",
       "to": "validation-typo",
-      "reason": "TigerKit 20.1.4 reorganizes explicit invocation coverage by routing facet."
+      "reason": "TigerKit 20.1.5 reorganizes explicit invocation coverage by routing facet."
     },
     {
       "from": "validation-positive-4",
       "to": "validation-ko-en",
-      "reason": "TigerKit 20.1.4 reorganizes mixed-language explicit invocation coverage."
+      "reason": "TigerKit 20.1.5 reorganizes mixed-language explicit invocation coverage."
     },
     {
       "from": "validation-positive-5",
       "to": "validation-child-pending-answer",
-      "reason": "TigerKit 20.1.4 routes an active grill pending answer to tk-grill-me before drive resumes from the child receipt."
+      "reason": "TigerKit 20.1.5 routes an active grill pending answer to tk-grill-me before drive resumes from the child receipt."
     },
     {
       "from": "validation-positive-6",
       "to": "validation-child-pending-answer",
-      "reason": "TigerKit 20.1.4 routes an active grill pending answer to tk-grill-me before drive resumes from the child receipt."
+      "reason": "TigerKit 20.1.5 routes an active grill pending answer to tk-grill-me before drive resumes from the child receipt."
     },
     {
       "from": "validation-positive-7",
       "to": "validation-child-pending-answer",
-      "reason": "TigerKit 20.1.4 routes an active grill pending answer to tk-grill-me before drive resumes from the child receipt."
+      "reason": "TigerKit 20.1.5 routes an active grill pending answer to tk-grill-me before drive resumes from the child receipt."
     },
     {
       "from": "validation-positive-8",
       "to": "validation-dollar",
-      "reason": "TigerKit 20.1.4 consolidates explicit Ready-source resume coverage under direct invocation."
+      "reason": "TigerKit 20.1.5 consolidates explicit Ready-source resume coverage under direct invocation."
     },
     {
       "from": "validation-negative-1",
       "to": "validation-ordinary-request",
-      "reason": "TigerKit 20.1.4 consolidates ordinary implementation requests under the explicit-start boundary."
+      "reason": "TigerKit 20.1.5 consolidates ordinary implementation requests under the explicit-start boundary."
     },
     {
       "from": "validation-negative-2",
       "to": "validation-generic-continue",
-      "reason": "TigerKit 20.1.4 gives generic continuation a stable non-trigger case."
+      "reason": "TigerKit 20.1.5 gives generic continuation a stable non-trigger case."
     },
     {
       "from": "validation-negative-3",
       "to": "validation-artifact-presence",
-      "reason": "TigerKit 20.1.4 gives artifact presence a stable non-trigger case."
+      "reason": "TigerKit 20.1.5 gives artifact presence a stable non-trigger case."
     },
     {
       "from": "validation-negative-4",
       "to": "validation-unrelated-answer",
-      "reason": "TigerKit 20.1.4 gives unrelated answers a stable non-trigger case."
+      "reason": "TigerKit 20.1.5 gives unrelated answers a stable non-trigger case."
     },
     {
       "from": "validation-negative-5",
       "to": "validation-ordinary-request",
-      "reason": "TigerKit 20.1.4 consolidates non-drive task requests under the explicit-start boundary."
+      "reason": "TigerKit 20.1.5 consolidates non-drive task requests under the explicit-start boundary."
     },
     {
       "from": "validation-negative-6",
       "to": "validation-ordinary-request",
-      "reason": "TigerKit 20.1.4 consolidates status-only requests under the explicit-start boundary."
+      "reason": "TigerKit 20.1.5 consolidates status-only requests under the explicit-start boundary."
     },
     {
       "from": "validation-negative-7",
       "to": "validation-ordinary-request",
-      "reason": "TigerKit 20.1.4 consolidates unrelated follow-up requests under the explicit-start boundary."
+      "reason": "TigerKit 20.1.5 consolidates unrelated follow-up requests under the explicit-start boundary."
     },
     {
       "from": "validation-negative-8",
       "to": "validation-new-session-resume",
-      "reason": "TigerKit 20.1.4 gives cross-session implicit resume a stable non-trigger case."
+      "reason": "TigerKit 20.1.5 gives cross-session implicit resume a stable non-trigger case."
     },
     {
       "from": "validation-positive-slash-host",
       "to": "validation-slash",
-      "reason": "TigerKit 20.1.4 shortens the slash-host case identifier."
+      "reason": "TigerKit 20.1.5 shortens the slash-host case identifier."
     },
     {
       "from": "validation-positive-picker-host",
       "to": "validation-picker",
-      "reason": "TigerKit 20.1.4 shortens the picker-host case identifier."
+      "reason": "TigerKit 20.1.5 shortens the picker-host case identifier."
     }
   ],
   "queries": [

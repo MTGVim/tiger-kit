@@ -1,14 +1,14 @@
-# TigerKit 20.1.4
+# TigerKit 20.1.5
 
 <p align="center">
   <img src="assets/tigerkit-cover.png" width="960" alt="TigerKit Agent Skills 표지">
 </p>
 
 TigerKit은 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent Skills
-모음입니다. 중앙 workflow runtime 없이 12개 self-contained skill을
+모음입니다. 중앙 workflow runtime 없이 13개 self-contained skill을
 `npx skills`로 배포합니다. Decision closure, spec, ticket, implementation은
 각각 하나의 canonical phase skill이 소유하고 `tk-drive`가 그 결과를
-단방향으로 오케스트레이션합니다. 최신 immutable release는 `v20.1.4`이며,
+단방향으로 오케스트레이션합니다. 최신 immutable release는 `v20.1.5`이며,
 현재 `main`에는 다음 release를 위한 orchestration 변경이 포함될 수 있습니다.
 
 ## 설치
@@ -36,10 +36,10 @@ npx skills add MTGVim/tiger-kit \
   --skill tk-browser-verify
 ```
 
-변경되지 않는 `v20.1.4` snapshot:
+변경되지 않는 `v20.1.5` snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v20.1.4" \
+npx skills add "MTGVim/tiger-kit#v20.1.5" \
   --global \
   --agent claude-code \
   --agent codex \
@@ -51,7 +51,7 @@ Claude Code와 Hermes Agent에서는 `/tk-implement` 같은 slash command로 표
 ## Skill 목록
 
 - **`[user]` user-invoked 1개**: 사용자가 명시적으로 선택하며 implicit invocation이 차단됩니다.
-- **`[user/auto]` hybrid 11개**: 사용자 선택과 description의 좁은 positive trigger를 모두 지원합니다.
+- **`[user/auto]` hybrid 12개**: 사용자 선택과 description의 좁은 positive trigger를 모두 지원합니다.
 - model-only skill은 없습니다.
 
 | Skill | 호출 | 목적 |
@@ -63,6 +63,7 @@ Claude Code와 Hermes Agent에서는 `/tk-implement` 같은 slash command로 표
 | `tk-implement` | hybrid | 명시 선택 또는 drive의 implementation handoff에서 unit 하나를 테스트·review하고 commit 하나로 만듭니다. |
 | `tk-prototype` | hybrid | 폐기 가능한 UI 또는 logic 비교 검증물을 실제 실행합니다. |
 | `tk-reflect` | hybrid | 명확한 회고 요청에서 재사용 가능한 rule/skill 후보를 report-only로 분류합니다. |
+| `tk-skill-diagnose` | hybrid | 관찰되거나 측정된 Agent Skill 이상을 fresh execution으로 재현하고 failure plane·효율 원인을 격리합니다. |
 | `tk-learn` | hybrid | 명확한 skill 작성 요청을 draft/checkpoint까지 진행하고 승인 후에만 씁니다. |
 | `tk-grooming` | hybrid | 기존 rule/skill을 기본 report-only로 감사합니다. |
 | `tk-handoff` | hybrid | 명확한 handoff artifact 작성 또는 resume 요청을 처리합니다. |
@@ -171,6 +172,18 @@ seam이 없으면 named exception과 deterministic alternative verification을
 → 필요하면 tk-learn
 ```
 
+### Agent Skill 이상 진단
+
+```text
+특정 tk-* skill의 관찰된 호출·계약·host·eval·효율 이상
+→ tk-skill-diagnose
+→ fresh reproduction + failure-plane isolation
+→ semantic candidate면 tk-learn handoff 제안
+```
+
+증상 없는 전체 catalog 최적화는 Darwin 같은 외부 optimizer가 담당하고,
+기존 rule/skill의 정적 구조 감사는 `tk-grooming`이 담당합니다.
+
 ### 장기 저장소 결정
 
 기능 branch의 일반 구현 결정은 spec, ticket, commit, PR, code, test에 남기세요. Branch마다 ADR이나 domain 문서를 자동 생성하지 않습니다.
@@ -191,6 +204,7 @@ branch 한정 결정 → spec / ticket / commit / PR
 | TDD | `tk-implement`의 TDD option |
 | diff 구조 review | `tk-implement`의 built-in Standards/Spec review |
 | regression seam 문제 | `tk-to-spec` bug contract와 `tk-implement` investigation loop |
+| Agent Skill incident 원인 | `tk-skill-diagnose` |
 | 장기 학습 | `tk-reflect`, 필요하면 `tk-learn` |
 
 `CONTEXT.md`, glossary, domain 문서, ADR은 feature branch 작업 중 자동 mutation하지 않습니다.

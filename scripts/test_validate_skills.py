@@ -16,7 +16,7 @@ if __package__:
         validate_release_alignment,
         validate_release_version_contract,
         validate_runtime_scratch,
-        validate_phase_owner_language,
+        validate_skill_language,
         validate_skill,
         validate_skill_eval_files,
     )
@@ -31,7 +31,7 @@ else:
         validate_release_alignment,
         validate_release_version_contract,
         validate_runtime_scratch,
-        validate_phase_owner_language,
+        validate_skill_language,
         validate_skill,
         validate_skill_eval_files,
     )
@@ -52,6 +52,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "tk-merge-conflict",
                 "tk-prototype",
                 "tk-reflect",
+                "tk-skill-diagnose",
                 "tk-to-spec",
                 "tk-to-tickets",
             },
@@ -63,19 +64,56 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "drive-resumes-pending-answer",
                 "drive-does-not-auto-reflect",
                 "drive-invokes-phase-owners",
+                "drive-continues-after-ready-spec",
                 "drive-invokes-grill-on-unresolved-decision",
                 "drive-skips-grill-for-ready-source",
                 "drive-reruns-spec-after-grill",
                 "drive-blocks-repeated-decision-return",
                 "drive-commits-per-ticket",
+                "drive-blocks-source-current-ui-mismatch",
+                "drive-scopes-approval-to-asked-axis",
+                "drive-reads-complete-remote-source",
                 "grill-accepts-active-drive-handoff",
                 "grill-returns-control-to-drive",
                 "to-spec-returns-decision-blocker-to-drive",
+                "to-spec-blocks-source-current-ui-mismatch",
                 "to-tickets-returns-decision-blocker-to-drive",
+                "to-tickets-blocks-source-current-ui-mismatch",
                 "implement-reviews-every-standalone-run",
+                "implement-audits-postcommit-hook-drift",
+                "implement-blocks-semantic-hook-drift",
+                "implement-allows-bounded-hook-bypass",
                 "implement-diagnoses-unknown-cause-failure",
                 "implement-active-drive-handoff-triggers",
+                "implement-blocks-source-current-ui-mismatch",
                 "implement-production-behavior-requires-durable-test",
+                "grooming-vendor-artifact-remains-report-only",
+                "grooming-unknown-ownership-asks-before-proposal",
+                "grooming-honors-declared-exclusions",
+                "reflect-checks-persistent-memory-prior-art",
+                "reflect-separates-adjacent-memory-scope",
+                "reflect-bounds-summary-cell-length",
+                "skill-diagnose-reproduces-overtrigger-selection",
+                "skill-diagnose-isolates-approval-bypass",
+                "skill-diagnose-separates-grader-false-negative",
+                "skill-diagnose-classifies-host-loading-difference",
+                "skill-diagnose-verifies-efficiency-regression",
+                "skill-diagnose-requires-resource-anchor",
+                "skill-diagnose-rejects-cheaper-incorrect-candidate",
+                "skill-diagnose-does-not-patch-unreproduced-incident",
+                "skill-diagnose-bounds-one-theme-and-holdout",
+                "skill-diagnose-never-mutates-canonical-path",
+                "skill-diagnose-drafts-anonymized-upstream-issue",
+                "skill-diagnose-keeps-consumer-drift-local",
+                "skill-diagnose-redacts-private-upstream-evidence",
+                "reflect-hands-off-qualified-skill-incident-once",
+                "reflect-skips-diagnosis-without-four-gate",
+                "reflect-blocks-repeated-diagnosis-handoff",
+                "browser-bounds-instrumented-evidence",
+                "browser-instrumentation-residue-failure-is-unverifiable",
+                "browser-proves-current-serving-source",
+                "browser-classifies-failure-origin",
+                "browser-causal-fix-requires-negative-control",
             }.issubset(REQUIRED_BEHAVIOR_CASES)
         )
         self.assertFalse(
@@ -96,25 +134,19 @@ class CanonicalSkillContractTest(unittest.TestCase):
 
         self.assertEqual(reflect, grooming)
 
-    def test_phase_owner_contracts_use_english_and_preserve_user_output_language(
+    def test_canonical_skill_contracts_use_english_and_preserve_user_output_language(
         self,
     ) -> None:
         root = Path(__file__).resolve().parents[1]
 
-        self.assertEqual(validate_phase_owner_language(root), [])
+        self.assertEqual(validate_skill_language(root), [])
 
-    def test_phase_owner_language_validator_rejects_mixed_operational_prose(
+    def test_skill_language_validator_rejects_mixed_operational_prose(
         self,
     ) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            for skill in (
-                "tk-drive",
-                "tk-grill-me",
-                "tk-implement",
-                "tk-to-spec",
-                "tk-to-tickets",
-            ):
+            for skill in EXPECTED_SKILLS:
                 skill_dir = root / "skills" / skill
                 references = skill_dir / "references"
                 references.mkdir(parents=True)
@@ -122,13 +154,13 @@ class CanonicalSkillContractTest(unittest.TestCase):
                     "Operational contract. User-facing prose follows the user's language.\n",
                     encoding="utf-8",
                 )
-            mixed = root / "skills" / "tk-drive" / "references" / "phase.md"
+            mixed = root / "skills" / "tk-browser-verify" / "references" / "phase.md"
             mixed.write_text("Do not mix 운영 문장.\n", encoding="utf-8")
 
-            errors = validate_phase_owner_language(root)
+            errors = validate_skill_language(root)
 
             self.assertEqual(len(errors), 1)
-            self.assertIn("phase-owner operational prose must be English", errors[0])
+            self.assertIn("canonical skill operational prose must be English", errors[0])
 
 
 class RuntimeScratchTest(unittest.TestCase):

@@ -1,7 +1,7 @@
 ---
 name: tk-grooming
-description: "[user/auto] 기존 repository/user rule 또는 skill의 중복·범위·배치·트리거를 감사할 때 사용합니다. 기본은 report-only이며 literal --apply 또는 현재-turn 승인 전에는 수정하지 않습니다."
-argument-hint: "[범위] [--apply]"
+description: "[user/auto] Audit duplication, scope, placement, and triggers in existing repository/user rules or skills. Default to report-only and never mutate before a literal --apply or current-turn approval."
+argument-hint: "[scope] [--apply]"
 metadata:
   tigerkit:
     kind: hybrid
@@ -9,62 +9,153 @@ metadata:
     relationship: native
 ---
 
-# 정리
+# Grooming
 
-명시 호출 또는 기존 rule/skill을 감사해 달라는 명확한 요청에 사용합니다. 일반 정리나 구현 요청에는 자동으로 활성화하지 마세요. implicit mode는 report-only입니다.
+Apply on explicit invocation or a clear audit request for existing rules or
+skills. Do not auto-apply to ordinary cleanup or implementation. Implicit mode
+is report-only.
 
 ## Workflow
 
-1. `범위 확정`: 입력은 요청 범위와 `--apply` 여부, 출력은 대상 경로와 허용 변경 범위입니다.
-2. `discovery`: 실제 존재하는 native 경로만 읽고, 출력은 네 영역의 후보 경로 목록입니다.
-3. `evidence`: 각 후보를 읽어 영역별 관찰 사실·경로·검증 상태를 출력합니다.
-4. `분류/제안`: repository candidate에는 [배치 rubric](references/repository-placement.md)을 적용하고, 입력 evidence를 `keep | tighten | merge | split | move | convert | deprecate | delete | fix` 중 하나로 분류합니다.
-5. `🔴 CHECKPOINT · 🛑 STOP`: 범위·evidence·제안·허용 apply를 receipt로 요약합니다. 최초 요청에 literal `--apply`가 있으면 이 gate를 통과한 exact receipt 범위에 한해 추가 승인 없이 계속하고, 없으면 현재 turn의 명시적 승인을 기다리며 멈춥니다.
-6. `apply/report`: report-only면 제안과 receipt만 출력하고, apply 권한이 있으면 승인된 receipt와 다시 읽은 원본 상태를 입력으로 확인된 범위만 수정합니다.
-7. `재검증`: apply 후 링크·중복·frontmatter를 다시 검사하고 결과·미검증·미해결 항목을 receipt로 출력합니다.
+1. `scope`: resolve requested scope, literal `--apply`, target paths, and
+   allowed mutation. Carry forward explicit exclusions from the active
+   conversation or a durable governing source without reconfirmation.
+2. `discovery`: read only existing native paths and inventory candidates in the
+   four target areas.
+3. `evidence`: record area-specific observations, paths, verification state,
+   and ownership evidence for every candidate.
+4. `classification/proposal`: apply the
+   [placement rubric](references/repository-placement.md) to repository
+   candidates and classify each as
+   `keep | keep (vendor) | tighten | merge | split | move | convert | deprecate
+   | delete | fix`.
+5. `🔴 CHECKPOINT · 🛑 STOP`: summarize scope, evidence, proposal, and allowed
+   apply in a receipt. A literal initial `--apply` pre-approves only the exact
+   passing receipt scope; otherwise stop for explicit current-turn approval.
+6. `apply/report`: report-only emits proposals/receipt. With authority, reread
+   source and mutate only the approved receipt scope.
+7. `revalidate`: recheck links, duplication, and frontmatter; report results,
+   unverified scope, and unresolved items.
 
-기존의 네 영역, 즉 저장소 규칙, 저장소 스킬, 사용자 규칙, 사용자 스킬을 검사하세요. 실제로 존재하는 호스트 네이티브 경로를 사용하세요. [탐색](references/discovery.md)에 후보가 나열되어 있습니다. 누락된 파일을 만들거나 레거시 전역 TigerKit 상태를 검사/마이그레이션하지 마세요.
+Inspect the four existing areas: repository rules, repository skills, user
+rules, and user skills. Use actual host-native paths from
+[discovery](references/discovery.md). Do not create missing files or inspect,
+migrate, or create legacy/global TigerKit state.
 
-Repository rule/skill은 파일 전체가 아니라 독립적인 normative instruction/workflow 단위로 판정하세요. 기대 kind가 달라지면 `convert`, 둘 다 rule이지만 root와 nested 위치가 다르면 `move`, 한 artifact가 서로 다른 결과 단위를 섞으면 먼저 `split`입니다. `tighten`은 owner·kind·scope를 유지한 채 중복·모호성만 줄이고 의미를 바꾸지 않는 경우, 다른 결함이 없으면 `keep`입니다. 필요한 path/count/threshold evidence가 없거나 충돌하면 추정하지 말고 해당 영역을 `Partial/Blocked | Unverifiable`로 두세요.
+Judge repository rules/skills by independently normative instruction/workflow,
+not whole file. Use `convert` when kind changes, `move` when root versus nested
+rule placement changes, and `split` when one artifact mixes independent
+outcomes. Use `tighten` only to remove duplication/ambiguity without changing
+owner, kind, scope, or meaning. Otherwise use `keep`. Missing or conflicting
+path/count/threshold evidence makes only that area
+`Partial/Blocked | Unverifiable`.
 
-분류는 mutation 권한이 아닙니다. Apply가 승인되어도 이 skill이 직접 소유하는 mutation은 `tighten`, exact target이 명확한 기계적 `move`, 참조가 없는 `delete`, frontmatter/link `fix`뿐입니다. Semantic `merge`, `deprecate`, Rule→skill `convert`, workflow `split`, semantic skill rewrite는 exact candidate/target을 제안하고 `pending`으로 남기며 직접 쓰지 않습니다. 이 proposal은 `tk-learn` 입력으로 사용할 수 있지만 이 skill이 자동 호출하지 않습니다.
+Determine ownership from resolved paths and link targets, package-manager
+installation locations, updater/version artifacts, and available author
+history. Names and naming conventions are never ownership evidence. A confirmed
+vendor-managed candidate is always `keep (vendor)`: report the quality finding,
+but do not propose or perform an edit. If ownership is uncertain, stop before
+an edit proposal and ask whether the artifact is user-managed or externally
+installed.
 
-기본은 보고만 수행합니다. 최초 요청의 literal `--apply` 또는 checkpoint 뒤 현재 turn의 명시적 승인에서 정확한 범위가 정해졌을 때만 적용하세요. 과거 승인이나 일반적인 진행 응답은 apply 권한이 아닙니다. 적용 시 원본을 다시 읽고, 삭제 전에 참조를 검색하고, 관리되거나 자동 생성된 콘텐츠의 소유권 표기를 보존하며, 광범위한 저장소/사용자 변경을 조용히 섞지 마세요. 지식을 지어내거나 회고/학습을 대신하지 마세요.
+Classification is not mutation authority. Even after apply approval, this
+skill directly owns only meaning-preserving `tighten`, mechanical `move` with
+an exact target, unreferenced `delete`, and frontmatter/link `fix`. Semantic
+`merge`, `deprecate`, rule-to-skill `convert`, workflow `split`, and semantic
+skill rewrite remain exact proposals with `pending`; they may feed `tk-learn`,
+but this skill never invokes it. Vendor-managed candidates remain report-only
+under every apply mode.
 
-Literal `--apply`는 checkpoint 생략 권한이 아니라, checkpoint에서 evidence와 exact target이 일치할 때 그 receipt 범위를 적용하는 선승인입니다. 따라서 gate가 통과하면 같은 실행에서 추가 승인 질문 없이 적용하고, 범위·evidence·target이 불명확하거나 달라지면 `Partial/Blocked`로 멈춰 새 결정을 요청하세요.
+Apply only after literal initial `--apply` or explicit current-turn approval
+names an exact scope. Past approval or generic continuation is insufficient.
+Before mutation reread source, search references before deletion, preserve
+managed/generated ownership markings, and never mix broad repo/user edits.
+This skill does not invent knowledge or replace reflection/learning.
+
+An exclusion explicitly declared in the active conversation remains excluded
+for later grooming runs in that conversation. An exclusion recorded in a
+governing repository/user rule or another requested durable source remains
+excluded across sessions. Do not create hidden global state or use
+`.tigerkit/` to persist exclusions.
+
+Literal `--apply` does not skip the checkpoint. It pre-approves a matching
+evidence/target receipt in the same run. Scope, evidence, or target drift stops
+`Partial/Blocked` for a new decision.
 
 ## Failure paths
 
-- If a required path is missing or unreadable → mark only that area `Unverifiable`, keep unrelated areas read-only, and report the path and required access.
-- If scope or apply permission conflicts → make no change and return `Partial/Blocked` with the single decision needed.
-- If a delete/move target still has references → do not delete or move it; change the proposal to `keep` or `tighten` and cite the references.
-- If an apply target differs from its checkpoint evidence → do not change it; return `Partial/Blocked` with the new evidence and require a fresh proposal.
-- If post-apply validation fails → stop and do not claim `Complete`; restore and revalidate only when this run's changes can be reversed exactly, otherwise stop further mutation and report the failed check, affected files, and observed state.
+- Missing/unreadable path: mark only that area `Unverifiable`, preserve other
+  areas read-only, and report required access.
+- Unknown ownership: make no edit proposal or mutation; return
+  `Partial/Blocked` with one ownership question.
+- Vendor ownership discovered after classification: replace any edit action
+  with `keep (vendor)`, preserve the artifact, and report the evidence.
+- Conflicting scope/apply authority: make no change and return
+  `Partial/Blocked` with one required decision.
+- Referenced delete/move target: do not mutate; change proposal to
+  `keep | tighten` and cite references.
+- Target drift after checkpoint: do not mutate; return `Partial/Blocked` with
+  fresh evidence and require a new proposal.
+- Failed post-apply validation: never claim `Complete`. Restore/revalidate only
+  when this run's delta is exactly reversible, then return `Fail` with the
+  revalidation evidence. If preservation or restoration is uncertain, stop
+  mutation as `Unverifiable` and report the check, paths, and observed state.
 
-## 계약
+## Contract
 
-각 영역의 실제 경로와 내용을 증거로 남기고 필수 증거가 없으면 해당 영역을 `Unverifiable`로 표시하세요. 하나라도 차단되면 전체를 완료로 보고하지 말고 `Complete | Partial/Blocked | Unverifiable`로 구분하세요. 적용 후 링크, 중복, frontmatter와 같은 네 영역을 재검증하세요. 출력의 단일 소유자는 `발견 사항`(영역별 관찰 증거·미검증·미해결 항목만), `제안 작업`(분류와 제안), `적용 내용`(실제로 바꾼 내용만), `검증`(적용 후 재검증)입니다. `keep | tighten | ... | fix` 분류와 제안 표현을 발견 사항에 섞지 마세요. report-only에서는 빈 적용 내용과 적용 후 검증을 생략할 수 있습니다. Receipt에는 전체 상태, `report-only | applied` 모드와 내용이 있는 섹션의 참조만 기록하고 해당 본문을 반복하지 마세요.
+Evidence records actual path/content for each area; missing required evidence
+makes that area `Unverifiable`. Any blocked area prevents an overall completed
+claim; use `Complete | Fail | Partial/Blocked | Unverifiable`.
+
+Single owners are:
+
+- `## Findings`: area observations, evidence, unverified/unresolved items;
+- `## Proposed actions`: classification and proposal;
+- `## Applied`: actual mutations only;
+- `## Verification`: post-apply revalidation.
+
+Do not mix classification into Findings. Report-only may omit empty Applied and
+post-apply Verification. Receipt records overall status,
+`report-only | applied`, and references to nonempty sections without repeating
+their content.
 
 ## Output contract
 
-독립적인 normative instruction/workflow 항목을 처음 식별한 순서대로 `GR-01`, `GR-02`, …를 한 번 부여하세요. `발견 사항`, `제안 작업`, 내용이 있을 때의 `적용 내용`·`검증`, Receipt의 섹션 참조와 마지막 Summary는 모두 같은 `GR-##`를 사용합니다. 섹션마다 다시 번호 매기거나 ID 없는 발견·제안·적용·검증 항목을 출력하지 마세요.
+Assign `GR-01`, `GR-02`, ... once in first-identification order to each
+independent normative instruction/workflow. Use the same ID in Findings,
+Proposed actions, Applied/Verification when present, Receipt references, and
+the final Summary. Never renumber per section or emit an un-IDed item.
 
-응답의 마지막 섹션은 항상 아래 고정 형식의 `## Summary`입니다. 항목마다 정확히 한 행을 두고, `Rule`에는 짧은 이름과 `keep | tighten | merge | split | move | convert | deprecate | delete | fix` 분류를, `한 줄 요약`에는 새 evidence를 추가하지 않는 한 문장을, `적용 타깃`에는 구체적인 경로/skill/user 범위 또는 `미확정 (<이유>)`를 적으세요. 발견·제안·변경·검증 본문을 표에 복사하지 마세요.
+The final section is always this fixed `## Summary` table. Each item gets one
+row. `Rule` holds a short name plus classification, `Summary` one sentence with
+no new evidence, and `Target` a concrete path/skill/user scope or
+`unresolved (<reason>)`. A vendor row uses `keep (vendor)` and identifies the
+resolved vendor-owned target in `Target`. Do not copy body
+evidence/proposals/changes/tests.
 
-| No. | Rule | 한 줄 요약 | 적용 타깃 |
+| No. | Rule | Summary | Target |
 | --- | --- | --- | --- |
-| GR-01 | `<짧은 이름> (<분류>)` | `<한 문장>` | `<구체적 타깃 또는 미확정 (이유)>` |
+| GR-01 | `<short name> (<classification>)` | `<one sentence>` | `<concrete target or unresolved (reason)>` |
 
-항목이 없거나 전체가 `Unverifiable`이어도 Summary를 생략하지 말고 `| — | 없음 | 감사 항목 없음 | 적용 없음 |` 한 행을 출력하세요.
+With no item or an entirely `Unverifiable` audit, still emit:
+`| — | None | No audit item | No application |`.
+
+User-facing progress and receipt prose follows the user's language while
+canonical headings, IDs, classifications, and status tokens remain unchanged.
 
 ## CHECKPOINT / STOP
 
-감사 결과와 허용 범위를 receipt로 요약하기 전에는 `--apply` 변경을 시작하지 마세요. 범위가 불명확하거나 삭제·이동의 참조 근거가 없으면 적용하지 말고 `Partial/Blocked` 또는 `Unverifiable`로 멈추세요.
+Do not start `--apply` mutation before the audit receipt identifies evidence
+and allowed scope. Ambiguous scope or missing reference evidence for
+delete/move stops `Partial/Blocked | Unverifiable`.
 
 ## DO NOT / ANTI-PATTERNS
 
-- `--apply` 없이 파일을 수정하거나, 삭제·이동 전에 참조를 확인하지 마세요.
-- 사용자가 지정하지 않은 저장소·사용자 파일을 조용히 섞어 바꾸지 마세요.
-- 레거시 전역 TigerKit 상태를 탐색하거나 마이그레이션하지 마세요.
-- Rule→skill convert, workflow split 또는 semantic skill rewrite를 직접 적용하거나 `tk-learn`을 자동 호출하지 마세요.
-- 항목 ID를 생략·재사용·재번호화하거나 Summary를 생략하지 마세요.
+- Do not mutate without apply authority or skip reference checks for
+  delete/move.
+- Do not silently mix unrequested repository/user files.
+- Do not infer ownership from a name, propose edits for unknown ownership, or
+  mutate vendor-managed artifacts even with `--apply`.
+- Do not inspect or migrate legacy/global TigerKit state.
+- Do not apply semantic convert/split/rewrite or invoke `tk-learn`.
+- Do not omit, reuse, or renumber item IDs, or omit Summary.

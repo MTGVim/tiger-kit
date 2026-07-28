@@ -5,10 +5,22 @@ These are orchestration gates. Semantic phase behavior belongs to
 consumes their receipts and never recreates a failed or unavailable phase
 inline.
 
+The phase-owner allowlist is
+`tk-grill-me | tk-to-spec | tk-to-tickets | tk-implement`. The conditional
+support allowlist is
+`tk-prototype | tk-browser-verify | tk-merge-conflict`. Do not invoke other
+planning, learning, reflection, or handoff skills.
+Do not intercept standalone phase requests or let a phase owner take over
+drive-wide orchestration, aggregate verification, or the final receipt.
+
 ## Preflight and source
 
 - Resolve branch, initial `HEAD`, pre-existing dirty paths, and ownership
   before mutation.
+- For a remote source, retrieve the complete body, all comments and thread
+  updates, and every referenced attachment before freezing scope. An
+  inaccessible required item is `Unverifiable`; a later scope amendment is
+  source, not optional context.
 - Source precedence is: latest explicit drive input, confirmed
   same-conversation decisions, relevant current spec, relevant current
   tickets, repository instructions, code/tests.
@@ -21,6 +33,8 @@ inline.
   cannot be established.
 - Treat `/tk-drive`, `$tk-drive`, and picker-equivalent direct selection as
   host-native explicit starts. Do not bind explicit start to one host syntax.
+- Do not create current pointers, archives, automatic migration, or other
+  drive-only or global state.
 
 ## Phase handoff envelope
 
@@ -49,6 +63,29 @@ owned by `tk-grill-me`. Its `confirmed` receipt updates source traceability and
 returns control to drive at the spec gate. No other response inherits drive
 authority.
 
+## Receipt liveness
+
+Consuming a native receipt creates a transition obligation; it is not itself
+completion. In the same active turn, drive must map the receipt to exactly one
+of:
+
+1. the next eligible phase handoff;
+2. the bounded corrective cycle;
+3. `tk-grill-me` for a newly evidenced user-owned decision; or
+4. an explicit drive terminal receipt with the supported
+   `Pass | Pending | Blocked | Fail | Unverifiable` status and reason.
+
+Spec `Ready` transitions to the ticket decision. A valid ticket ledger
+transitions to its first or next pending unit. A matching implementation
+`Pass` transitions to the next unit or aggregate verification. Aggregate
+success transitions to the final `Pass` receipt. Progress commentary and child
+receipt summaries do not discharge this obligation.
+
+Before returning control, verify that every consumed receipt has one recorded
+outgoing transition. A receipt with no transition is an orchestration failure:
+do not silently return or ask the user to invoke drive again; emit the
+evidence-supported non-success terminal receipt if no valid transition exists.
+
 ## Decision owner
 
 Skip decision closure when confirmed source and evidence already support a
@@ -62,6 +99,10 @@ Drive does not ask the question inline. A
 `pending | aborted | Blocked | Unverifiable` receipt stops downstream
 handoffs. A `confirmed` receipt returns cited decisions to drive without
 writing an artifact or invoking another phase.
+
+Approval is granular to the exact axis asked. A premise embedded in an option
+explanation is not confirmed by selecting that option; label it unconfirmed or
+route it as a separate decision.
 
 When spec or ticket work discovers a new user-owned decision, the phase owner
 returns `User decision: required` in its native non-success receipt to drive.

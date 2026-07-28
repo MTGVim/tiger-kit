@@ -97,20 +97,25 @@ instead of restating their content.
 
 ### 🔴 HARD GATE · source UI writing
 
-When user-provided source contains UI writing, freeze a separate inventory in
-the source map. For every label, button, heading, guide/help copy, table or
-column name, placeholder, validation/error, and status text, map source
-location to destination R/AC and preserve the exact literal.
+For every string literal rendered in UI, freeze a separate source-map
+inventory. Labels, copy, numbers, units, currency, suffixes, and separators are
+examples, not an upper bound. Each row maps source location, non-empty source
+literal, current rendered/source-path literal, target literal, and destination
+R/AC.
+
+Missing source/current evidence is `Unverifiable`. Any source↔current mismatch
+makes every row a conflict candidate and prevents `Ready` without a user
+decision. A typo requires rechecking all same-kind tokens; never generalize
+source unreliability to adopt current code silently.
 
 Unless the user explicitly decides to change wording, preserve spelling, case,
 spacing, punctuation, symbols, numbers, and meaningful line breaks. Do not
-translate, paraphrase, shorten, correct, fix typos, or normalize. If an image
-literal is unreadable or sources conflict, do not guess; use `Blocked` or
-`Unverifiable`.
+translate, paraphrase, shorten, correct, fix typos, or normalize.
 
-After write/print, compare every inventory literal exactly. Any unauthorized
-drift or missing comparison evidence prevents `Ready` and downstream use.
-Mark only explicitly approved wording as `authorized change`.
+After write/print, compare all three literal columns exactly. A code
+before/after table cannot replace the source column. Any unauthorized drift or
+missing comparison evidence prevents `Ready` and downstream use. Mark only
+explicitly approved wording as `authorized change`.
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Ready boundary
 

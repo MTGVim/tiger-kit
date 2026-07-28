@@ -1,7 +1,7 @@
 ---
 name: tk-prototype
-description: "[user/auto] 비교로 불확실성을 줄이기 위한 폐기 가능한 UI 또는 logic prototype을 실제로 만들고 실행할 때 사용합니다. production 구현이나 말뿐인 아이디어 탐색에는 적용하지 않습니다."
-argument-hint: "<아이디어, 스크린샷, 명세, 티켓, 코드 또는 디자인 참고 자료>"
+description: "[user/auto] Build and run a disposable UI or logic prototype when comparison can reduce uncertainty. Do not apply to production implementation or conversational idea exploration."
+argument-hint: "<idea, screenshot, spec, ticket, code, or design reference>"
 metadata:
   tigerkit:
     kind: hybrid
@@ -9,58 +9,103 @@ metadata:
     relationship: native
 ---
 
-# 프로토타입
+# Prototype
 
-명시 호출 또는 실행 가능한 disposable comparison/harness 요청에 사용하세요. production 구현이나 말뿐인 아이디어 탐색에는 자동으로 활성화하지 마세요.
+Apply on explicit invocation or a request for an executable disposable
+comparison/harness. Do not auto-apply to production implementation or
+conversation-only exploration.
 
-프롬프트, 아이디어, 스크린샷, 명세, 티켓, 코드 또는 디자인 참고 자료를 입력으로 받으세요. 실행 가능한 임시 라우트 또는 하네스가 더 유용하지 않다면 `.tigerkit/prototypes/<slug>/` 아래에 저장하세요. 임시 작업용 상위 디렉터리는 필요할 때만 만들고, 가능하면 원자적으로 교체하며, 자동으로 보관하거나 `.gitignore`를 편집하지 마세요. 생성된 임시 작업물이 버전 관리에서 제외되지 않으면 경고하세요.
+Accept a prompt, idea, screenshot, spec, ticket, code, or design reference.
+Unless a temporary route/harness is more useful, write under
+`.tigerkit/prototypes/<slug>/`. Create parents lazily, replace atomically when
+possible, never archive automatically or edit `.gitignore`, and warn when
+scratch is tracked.
 
 ## Workflow
 
-1. `가설·성공 기준`: 입력은 아이디어·참고 자료와 검증 질문이고, 출력은 측정 가능한 성공 기준입니다.
-2. `임시 경로와 경계`: 입력은 성공 기준과 repository preflight이고, 출력은 사용할 기존 toolchain/UI stack/component/token, 임시 경로, 기존/이번 실행 artifact 소유권 및 `fake | real` 연동 경계입니다.
-3. `variants/harness`: 입력은 경계와 비교할 대상이고, 출력은 2–3개 변형안 또는 실제 예시 입출력을 가진 하네스입니다.
-4. `실행`: 입력은 선택한 변형·하네스와 명령이고, 출력은 실제 출력 또는 screenshot과 실행 결과입니다.
-5. `비교`: 입력은 실행 증거와 성공 기준이고, 출력은 확인된 차이·미검증 항목·후속 판단입니다.
-6. `receipt`: 입력은 전체 실행 기록이고, 출력은 상태와 `## Tested`, `## Variants or harness`, `## Confirmed`, `## Still fake`, `## Production implication`입니다. 이 섹션들이 receipt 전체이며 별도 Receipt를 만들지 않습니다.
+1. `hypothesis/success criteria`: produce measurable criteria from the idea,
+   references, and verification question.
+2. `temporary path/boundary`: inspect repository preflight; choose existing
+   toolchain/UI stack/components/tokens, temp path, artifact ownership, and
+   `fake | real` integration boundary.
+3. `variants/harness`: build 2–3 variants or a harness with real example I/O.
+4. `run`: execute selected variants/harness and capture actual output or
+   screenshots plus command result.
+5. `compare`: map evidence to criteria, verified differences, unverified items,
+   and next decision.
+6. `receipt`: return status plus `## Tested`, `## Variants or harness`,
+   `## Confirmed`, `## Still fake`, and `## Production implication`. These
+   sections are the receipt; do not add another Receipt.
 
-정답이 정해지지 않은 UI 디자인이나 비교 요청에는 실질적으로 다른 렌더링 변형안 2–3개와 전환 수단을 만드세요. 색상만 바꾸지 말고 정보 구조, 흐름, 계층, 탐색 또는 피드백을 달리하세요. 로직에는 실제 예시 입력/출력과 최소한의 어댑터를 갖춘 작은 순수 하네스를 우선하세요.
+For unresolved UI comparison, build 2–3 materially different rendered
+alternatives with a switch. Vary information architecture, flow, hierarchy,
+navigation, or feedback, not color alone. For logic, prefer a small pure
+harness with example inputs/outputs and minimal adapter.
 
-웹 prototype은 먼저 repository의 실행 명령, 설치된 UI stack, 기존 component와 design token을 확인하세요. 안전한 isolated route/harness가 있으면 그것을 재사용하되 새 dependency를 설치하거나 manifest·lockfile을 바꾸지 마세요. 적절한 repo path가 없으면 `.tigerkit/prototypes/<slug>/index.html`, `styles.css`, `app.js`의 작은 static 조합을 사용하세요.
+For web prototypes, inspect repository run commands, installed UI stack,
+components, and design tokens. Reuse a safe isolated route/harness without new
+dependencies or manifest/lockfile changes. If none exists, use a small
+`.tigerkit/prototypes/<slug>/index.html`, `styles.css`, and `app.js`.
 
-같은 content, data와 interaction state를 유지한 채 판단 가치가 있는 핵심 concept 2–3개만 A/B 또는 A/B/C로 비교하세요. Wide viewport에서는 나란한 2–3열, narrow viewport에서는 위아래 stack을 기본으로 하세요. 동시 표시가 핵심 concept 또는 최소 legibility를 훼손할 때만 명시적 A/B 또는 A/B/C toggle을 사용하세요. 세 번째 안이 독립적인 판단 가치를 더하지 않으면 A/B에서 멈추고, repository evidence만으로 결정 가능하면 prototype을 만들지 마세요.
+Hold content, data, and interaction state constant while comparing only 2–3
+decision-relevant concepts. Default to side-by-side 2–3 columns wide and stacked
+narrow. Use an explicit A/B or A/B/C toggle only when simultaneous rendering
+harms the concept or minimum legibility. Stop at A/B if a third adds no
+independent value; create no prototype when repository evidence resolves the
+decision.
 
-웹 결과는 `tk-browser-verify` Guard mode로 실제 interaction, 실행 URL 또는 명령과 성공 기준에 포함된 viewport screenshot을 확인하세요. Responsive/layout 차이가 가설에 있을 때만 wide/narrow를 모두 검사하고, 그렇지 않으면 viewport matrix를 추가하지 마세요. 종료 시 이번 실행이 소유한 tracked harness와 임시 server만 정리하고, 기존 route·dependency·production source는 보존하세요.
+Verify web output through `tk-browser-verify` Guard mode, including actual
+interaction, run URL/command, and success-criteria screenshots. Check both wide
+and narrow only when the hypothesis concerns responsiveness/layout. Clean only
+run-owned tracked harnesses and temporary servers; preserve existing routes,
+dependencies, and production source.
 
-기본적으로 커밋하지 마세요. 프로덕션용 추상화와 오류 처리에는 투자하지 마세요. 결과물이 프로덕션에 사용할 준비가 되었다고 절대 부르지 말고, 자동으로 승격하거나 다른 사용자 스킬을 호출하지도 마세요.
+Do not commit by default. Do not invest in production abstractions/error
+handling, call output production-ready, auto-promote it, or invoke another user
+skill.
 
 ## Failure paths
 
-Artifact를 만들기 전에 기존 임시 경로와 이번 실행이 생성할 파일을 구분해 기록하세요.
+Record pre-existing temp paths and run-created files before writing.
 
-| Trigger | First action | Still fails |
+| Trigger | First action | Still failing |
 |---|---|---|
-| write가 중단되거나 일부 파일만 생성됨 | 소유권이 확인된 이번 실행의 불완전 artifact만 정리 | `Fail`; 안전하게 정리할 수 없는 경로와 재시작 조건을 receipt에 기록 |
-| server·harness 실행 실패 | 명령·exit 상태·실제 출력과 fake/real 경계를 보존 | `Fail`; production route나 dependency로 우회하지 않음 |
-| 실행됐지만 출력·screenshot 증거를 확보할 수 없음 | 같은 경계에서 evidence capture를 한 번 재시도 | `Unverifiable`; 실행 성공이나 `Complete`를 주장하지 않음 |
-| 기존 artifact와 소유권·상태가 충돌 | 기존 경로를 변경·삭제하지 않고 충돌 evidence를 기록 | `Blocked`; 별도 임시 경로 결정 전 write하지 않음 |
-| cleanup 실패 | 이번 실행 소유 resource만 다시 식별하고 정리 결과를 기록 | `Fail | Unverifiable`; 기존 route·process는 건드리지 않음 |
-| 범위가 production mutation·승격·commit으로 확장됨 | prototype 작업을 중단하고 별도 구현 요청으로 분리 | `Blocked`; 자동 승격하지 않음 |
+| interrupted/partial write | clean only proven run-owned incomplete artifacts | `Fail`; report unsafe cleanup path and restart condition |
+| server/harness failure | preserve command, exit state, output, and fake/real boundary | `Fail`; do not escape into production/dependencies |
+| run succeeds but output/screenshot evidence is unavailable | retry capture once inside same boundary | `Unverifiable`; do not claim success/Complete |
+| ownership/state conflict with existing artifact | preserve existing path and record evidence | `Blocked`; choose another path before writing |
+| cleanup failure | re-identify only run-owned resources and report outcome | `Fail | Unverifiable`; preserve existing route/process |
+| scope expands into production/promotion/commit | stop prototype and split a separate implementation request | `Blocked`; do not auto-promote |
 
-## 🔴 CHECKPOINT · 🛑 STOP 실행 전·후 판정 경계
+## 🔴 CHECKPOINT · 🛑 STOP · execution boundaries
 
-실행 전에 임시 경로, 가짜 데이터 또는 실제 연동, 검증할 질문을 확정하세요. 실행 환경이 없거나 범위가 프로덕션 변경으로 번지면 만들거나 승격하지 말고 `Blocked` 또는 `Unverifiable`로 멈추세요.
+Before execution, confirm temp path, fake/real data, and verification question.
+No environment or production-scope expansion stops `Blocked | Unverifiable`.
 
-실행 결과를 보고하기 전에 명령, 실제 출력 또는 screenshot, 가짜/실제 경계, 미검증 항목을 대조하세요. 이 네 항목 중 하나라도 없거나 실행이 실패하면 `Complete`로 진행하지 말고 `Fail`, `Blocked` 또는 `Unverifiable`로 멈추세요.
+Before reporting, reconcile command, actual output/screenshot, fake/real
+boundary, and unverified scope. Any missing item or failed execution prevents
+`Complete`; use `Fail | Blocked | Unverifiable`.
 
-## 계약
+## Contract
 
-상태는 receipt에 한 번만 기록하세요. `## Tested`는 실행 명령·결과·증거, `## Variants or harness`는 비교안 또는 하네스, `## Confirmed`는 증거가 확인한 결론, `## Still fake`는 가짜/실제 경계·미검증·미해결 항목, `## Production implication`은 폐기·반복·후속 판단만 소유합니다. 같은 내용을 다른 섹션이나 별도 Receipt에 반복하지 마세요.
+Record status once. `## Tested` owns commands, results, and evidence;
+`## Variants or harness` owns the alternatives, exact prototype path or run
+URL, and final `kept | removed` state; `## Confirmed` evidence-backed
+conclusions; `## Still fake` fake/real and unverified/unresolved scope;
+`## Production implication` discard/iterate/next decision.
 
-`## Confirmed`에서는 성공 기준마다 동일한 content/data/interaction state를 사용했는지 확인하고, `criterion | A | B [| C] | conclusion | Tested evidence reference` 비교를 한 번만 기록하세요. 관찰되지 않은 차이는 `not observed`, 증거를 확보하지 못한 항목은 `unverifiable`로 구분하고, 실행 증거 없는 미감 선호를 확인된 결론으로 올리지 마세요.
+For every criterion, `## Confirmed` records one
+`criterion | A | B [| C] | conclusion | Tested evidence reference` comparison
+and whether content/data/state stayed equal. Use `not observed` for unseen
+differences and `unverifiable` for missing evidence. Do not promote unaudited
+aesthetic preference into a conclusion.
+
+User-facing progress and receipt prose follows the user's language while
+canonical headings and status tokens remain unchanged.
 
 ## DO NOT / ANTI-PATTERNS
 
-- prototype을 production-ready라고 부르거나 자동 승격·commit하지 마세요.
-- 가짜 연동을 실제 연결로 보고하거나 실행 증거 없이 성공을 주장하지 마세요.
-- 색상만 바꾼 변형, 새 dependency/manifest/lockfile 변경, 불필요한 production abstraction, 가치 없는 세 번째 안을 추가하지 마세요.
+- Do not call a prototype production-ready or auto-promote/commit it.
+- Do not report fake integration as real or claim success without run evidence.
+- Do not add color-only variants, dependencies, manifest/lockfile edits,
+  unnecessary production abstraction, or a valueless third option.

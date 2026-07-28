@@ -1,0 +1,4 @@
+interface:
+  display_name: "TigerKit: Skill Diagnose"
+  short_description: "[user/auto] Agent Skill 동작·안정성·효율 이상을 실증 진단합니다."
+  default_prompt: "Use $tk-skill-diagnose to reproduce and isolate this observed Agent Skill anomaly."

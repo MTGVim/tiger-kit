@@ -103,7 +103,15 @@ exists.
 
 Honor user-selected modes and decide only missing modes. Ask only when meaning
 branches into materially different outcomes or requires risky irreversible
-authority. Do not turn strategy choice into an approval gate. Example:
+authority. Do not turn strategy choice into an approval gate.
+
+`delegated` also requires a current-host capability for exactly one bounded
+autonomous implementor. If delegation was inferred and that capability is
+unavailable, fall back to `direct` and record the reason. If the user explicitly
+requires delegation and the capability is unavailable, stop `Blocked` before
+any edit.
+
+Example:
 
 ```text
 Implementation strategy: direct, no TDD — this is a copy-only change with no
@@ -176,20 +184,25 @@ not exception approval.
 
 ### 🔴 HARD GATE · source UI writing
 
-If user-provided source contains visible UI copy, freeze a UI-writing inventory
-before mutation. Map each label, button, heading, guide/help copy, table or
-column name, placeholder, validation/error, and status text from its source
-location to its implementation destination, preserving the exact literal.
+For every string literal rendered in UI, freeze a UI-writing inventory before
+mutation. Labels, copy, numbers, units, currency, suffixes, and separators are
+examples, not an upper bound. Each row maps source location, non-empty source
+literal, current rendered/source-path literal, target literal, and
+implementation destination.
+
+Missing source/current evidence is `Unverifiable`. Any source↔current mismatch
+makes every row a conflict candidate and prevents `Pass` or commit without a
+user decision. A typo requires rechecking all same-kind tokens; never
+generalize source unreliability to adopt current code silently.
 
 Unless the user explicitly requests a wording change, preserve spelling, case,
 spacing, punctuation, symbols, numbers, and meaningful line breaks. Prohibit
 translation, paraphrase, shortening, correction, typo fixes, and repository
-normalization. If source text is unreadable or sources conflict, do not guess;
-stop as `Blocked` until one exact literal is confirmed.
+normalization.
 
-After implementation, compare every literal in rendered UI or its source path
-and include the comparison in candidate/staged review. Any unauthorized
-character drift is `Fail`; missing exact-comparison evidence is
+After implementation, compare all three literal columns and include them in
+candidate/staged review; a code before/after table cannot replace the source
+column. Unauthorized drift is `Fail`; missing exact-comparison evidence is
 `Unverifiable`. Mark only explicitly approved wording as `authorized change`.
 
 ### 🔴 HARD GATE · browser tools
@@ -240,6 +253,10 @@ the user did not prohibit commit. An implementor never commits; the current
 agent verifies the staged diff and commits. For a drive handoff, return commit
 SHA and unit/ticket ID so drive does not create another commit.
 
+Immediately after commit, audit the committed diff against the frozen reviewed
+candidate using [post-commit drift rules](references/review-boundary.md).
+Unclassified or semantic hook drift means the commit is not a verified `Pass`.
+
 An ordinary review-only request is a read-only agent task and grants no source
 mutation or commit authority. Review inside this skill owns only the explicit
 implementation scope and candidate diff.
@@ -252,7 +269,8 @@ non-empty `## Remaining risks`, and `## Receipt`. Describe unit/ticket behavior,
 not only files. Include commands and results, coverage state, failure
 classification, commit SHA/message, or why no commit exists. `Strategy` owns
 only execution mode, TDD, review choice, and reasons. `Changed` owns behavior.
-`Verification` owns commands, results, and classification. `Receipt` owns
+`Verification` owns commands, results, classification, and
+`hook drift: none | format-only | reverted-semantic`. `Receipt` owns
 phase, unit/ticket ID, status (`Pass | Fail | Blocked | Unverifiable`), commit
 SHA, unverified items, and R/AC-to-`Changed`/`Verification` references without
 repeating the body.
@@ -262,8 +280,9 @@ the canonical headings, status tokens, IDs, and receipt keys above.
 
 ## DO NOT / ANTI-PATTERNS
 
-- Do not bypass hooks, commit before verification, commit a failing change,
-  push, or create a PR.
+- Do not bypass hooks outside the bounded byte-preservation or hook-config
+  exceptions, commit before verification, commit a failing change, push, or
+  create a PR.
 - Do not batch standalone multi-ticket input or create tickets.
 - Do not auto-apply this hybrid skill from an ordinary implementation request
   or merely because drive is active.

@@ -157,6 +157,25 @@
       "facets": [
         "compound"
       ]
+    },
+    {
+      "id": "validation-positive-diagnosis-dependent",
+      "split": "validation",
+      "query": "tk-drive의 반복 blocker incident를 회고하고 원인이 맞을 때만 재사용 rule 후보로 분류해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal",
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-direct-diagnosis",
+      "split": "validation",
+      "query": "tk-drive token 회귀의 원인을 fresh executor로 재현하고 failure plane을 진단해 주세요.",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
     }
   ]
 }

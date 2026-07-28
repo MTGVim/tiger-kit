@@ -58,15 +58,14 @@ CATALOG_ROUTING_BOUNDARIES = {
     "tk-drive vs tk-handoff/generic continue",
     "tk-drive vs tk-grill-me",
     "tk-merge-conflict vs ordinary conflict-marker edit",
+    "tk-skill-diagnose vs ordinary application/code debugging",
+    "tk-skill-diagnose vs tk-grooming",
+    "tk-skill-diagnose vs tk-learn",
+    "tk-skill-diagnose vs tk-reflect",
+    "tk-skill-diagnose vs Darwin/general optimization",
+    "tk-reflect conditional handoff vs generic reflection",
 }
 HYBRID_TRIGGER_FACETS = {"formal", "casual", "typo", "ko-en", "short", "compound"}
-PHASE_OWNER_SKILLS = {
-    "tk-drive",
-    "tk-grill-me",
-    "tk-implement",
-    "tk-to-spec",
-    "tk-to-tickets",
-}
 HANGUL_SYLLABLE = re.compile(r"[가-힣]")
 EXPECTED_SKILLS = {
     "tk-browser-verify",
@@ -79,6 +78,7 @@ EXPECTED_SKILLS = {
     "tk-merge-conflict",
     "tk-prototype",
     "tk-reflect",
+    "tk-skill-diagnose",
     "tk-to-spec",
     "tk-to-tickets",
 }
@@ -101,6 +101,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "implement-does-not-commit-failing-change",
     "implement-does-not-push",
     "implement-preserves-source-ui-writing-verbatim",
+    "implement-blocks-source-current-ui-mismatch",
     "browser-owned-session-cleans-up",
     "browser-attached-session-is-preserved",
     "browser-first-tool-call-owns-lazy-session",
@@ -123,6 +124,9 @@ REQUIRED_BEHAVIOR_CASES = {
     "implement-reviews-every-standalone-run",
     "implement-review-pins-fixed-point",
     "implement-review-rejects-drift",
+    "implement-audits-postcommit-hook-drift",
+    "implement-blocks-semantic-hook-drift",
+    "implement-allows-bounded-hook-bypass",
     "implement-review-separates-standards-and-spec",
     "implement-review-bounds-independent-reviewer",
     "implement-review-bounds-large-diff-context",
@@ -148,23 +152,31 @@ REQUIRED_BEHAVIOR_CASES = {
     "merge-conflict-does-not-abort",
     "merge-conflict-does-not-force-push",
     "reflect-is-report-only",
+    "reflect-checks-persistent-memory-prior-art",
+    "reflect-separates-adjacent-memory-scope",
+    "reflect-bounds-summary-cell-length",
     "reflect-classifies-repo-placement",
     "reflect-numbered-summary-target-table",
     "to-spec-does-not-create-tickets",
     "to-spec-structures-bug-evidence",
     "to-spec-preserves-source-ui-writing-verbatim",
+    "to-spec-blocks-source-current-ui-mismatch",
     "to-spec-active-drive-handoff",
     "to-spec-returns-decision-blocker-to-drive",
     "to-tickets-does-not-create-spec",
     "to-tickets-initial-status-is-pending",
     "to-tickets-keeps-one-vertical-bug-slice",
     "to-tickets-preserves-source-ui-writing-verbatim",
+    "to-tickets-blocks-source-current-ui-mismatch",
     "to-tickets-active-drive-handoff",
     "to-tickets-returns-decision-blocker-to-drive",
     "prototype-is-not-production",
     "prototype-web-uses-disposable-variants",
     "prototype-web-toggle-preserves-legibility",
     "grooming-defaults-report-only",
+    "grooming-vendor-artifact-remains-report-only",
+    "grooming-unknown-ownership-asks-before-proposal",
+    "grooming-honors-declared-exclusions",
     "grooming-classifies-repo-placement",
     "grooming-numbered-summary-target-table",
     "legacy-global-state-is-not-scanned",
@@ -182,12 +194,21 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-skips-unneeded-tickets",
     "drive-keeps-ticket-ledger",
     "drive-preserves-source-ui-writing-verbatim",
+    "drive-blocks-source-current-ui-mismatch",
+    "drive-scopes-approval-to-asked-axis",
+    "drive-reads-complete-remote-source",
     "drive-blocks-unreadable-ui-literal",
     "drive-routes-conflicting-ui-literals-to-decision",
     "drive-commit-command-failure-is-fail",
     "drive-precommit-drift-is-blocked",
     "drive-carries-authorized-ui-writing-change",
     "browser-redacts-sensitive-captures",
+    "browser-bounds-instrumented-evidence",
+    "browser-instrumentation-residue-failure-is-unverifiable",
+    "browser-labels-user-observed-evidence",
+    "browser-proves-current-serving-source",
+    "browser-classifies-failure-origin",
+    "browser-causal-fix-requires-negative-control",
     "handoff-uses-single-snapshot",
     "reflect-placement-regression-matrix",
     "grooming-placement-regression-matrix",
@@ -196,6 +217,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "learn-is-sole-semantic-skill-writer",
     "drive-bounds-nested-skills",
     "drive-invokes-phase-owners",
+    "drive-continues-after-ready-spec",
     "drive-invokes-grill-on-unresolved-decision",
     "drive-skips-grill-for-ready-source",
     "drive-reruns-spec-after-grill",
@@ -208,6 +230,22 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-aggregate-review-boundary",
     "grill-accepts-active-drive-handoff",
     "grill-returns-control-to-drive",
+    "skill-diagnose-reproduces-overtrigger-selection",
+    "skill-diagnose-isolates-approval-bypass",
+    "skill-diagnose-separates-grader-false-negative",
+    "skill-diagnose-classifies-host-loading-difference",
+    "skill-diagnose-verifies-efficiency-regression",
+    "skill-diagnose-requires-resource-anchor",
+    "skill-diagnose-rejects-cheaper-incorrect-candidate",
+    "skill-diagnose-does-not-patch-unreproduced-incident",
+    "skill-diagnose-bounds-one-theme-and-holdout",
+    "skill-diagnose-never-mutates-canonical-path",
+    "skill-diagnose-drafts-anonymized-upstream-issue",
+    "skill-diagnose-keeps-consumer-drift-local",
+    "skill-diagnose-redacts-private-upstream-evidence",
+    "reflect-hands-off-qualified-skill-incident-once",
+    "reflect-skips-diagnosis-without-four-gate",
+    "reflect-blocks-repeated-diagnosis-handoff",
 }
 
 
@@ -446,23 +484,24 @@ def validate_repository_contract() -> list[str]:
         "evals/trigger-cases.yaml",
         "evals/behavior-cases.yaml",
         "evals/catalog-routing.json",
+        "evals/prompts/skill-diagnostic.md",
     )
     for relative in required_files:
         if not (ROOT / relative).is_file():
-            errors.append(f"{relative}: required TigerKit 20.1.4 repository file is missing")
+            errors.append(f"{relative}: required TigerKit 20.1.5 repository file is missing")
     errors.extend(validate_local_only_workflows(ROOT))
-    errors.extend(validate_phase_owner_language(ROOT))
+    errors.extend(validate_skill_language(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
-            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 20.1.4")
+            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 20.1.5")
     errors.extend(validate_runtime_scratch(ROOT))
     ignored = (ROOT / ".gitignore").read_text(encoding="utf-8") if (ROOT / ".gitignore").is_file() else ""
     if ".tigerkit/" not in ignored.splitlines():
         errors.append(".gitignore: document TigerKit repo-local scratch with .tigerkit/")
     required_text = {
         "README.md": (
-            "TigerKit 20.1.4",
-            "12",
+            "TigerKit 20.1.5",
+            "13",
             "Claude Code",
             "Codex",
             "Hermes Agent",
@@ -470,7 +509,7 @@ def validate_repository_contract() -> list[str]:
             "사용 시나리오",
         ),
         "MIGRATION.md": (
-            "TigerKit 20.1.4",
+            "TigerKit 20.1.5",
             "Removed Skills",
             "model-only",
             "hybrid",
@@ -478,51 +517,75 @@ def validate_repository_contract() -> list[str]:
             "Phase ownership",
             "one ticket",
         ),
-        "CHANGELOG.md": ("12", "hybrid", "v18.0.4"),
+        "CHANGELOG.md": ("13", "hybrid", "v18.0.4"),
         "NOTICE.md": (
             "mattpocock/skills",
+            "mizchi/skills",
+            "empirical-prompt-tuning",
             "relationship: adapted",
             "Behavior merged from removed adapted skills",
             "MIT License",
         ),
         "skills/tk-browser-verify/SKILL.md": (
             "## 🔴 HARD GATE · Chrome `--headless=new`",
-            "실제 launch arguments에 정확한 token `--headless=new`",
-            "headed browser를 열지 말고",
-            "headless launch 실패",
-            "사용자가 직접 로그인을 완료해야 하는 interactive auth가 실제로 필요한 경우에만",
-            "동일한 `user-data-dir`을 사용해 Chrome을 `--headless=new`로 다시 시작",
+            "contain the exact token `--headless=new`",
+            "do not open a headed browser",
+            "headless launch failure",
+            "user must directly complete",
+            "restart the same binary and `user-data-dir`",
             "`Sensitivity: normal | sensitive`",
             "`Redaction: N/A | verified | failed | unverifiable`",
             "`Residue check: verified | unverifiable`",
         ),
         "skills/tk-browser-verify/references/environment.md": (
-            "effective process arguments에 정확한 `--headless=new`",
-            "첫 browser call",
-            "headed session에 fallback",
-            "단순 visible/headed 요청",
-            "동일한 persistent profile의 lock 해제",
+            "process arguments prove exact `--headless=new`",
+            "Before a CDP provider",
+            "do not fall back headed",
+            "Visible requests, headless failure",
+            "prove lock release",
         ),
         "skills/tk-reflect/SKILL.md": (
-            "첫 후보부터 발견 순서대로 `RF-01`, `RF-02`, …를 한 번 부여",
-            "ID 없는 후보·rule 항목을 출력하지 마세요",
-            "응답의 마지막 섹션은 항상 아래 고정 형식의 `## Summary`",
-            "| No. | Rule | 한 줄 요약 | 적용 타깃 |",
-            "| — | 없음 | 재사용 가능한 rule/skill 후보 없음 | 적용 없음 |",
-            "신규 skill 생성과 기존 skill의 semantic update/merge는 `tk-learn`만 소유",
+            "Assign `RF-01`, `RF-02`, ... once in discovery order",
+            "renumber per section or emit an un-IDed candidate/rule",
+            "The response's final section is always:",
+            "| No. | Rule | Summary | Target |",
+            "| — | None | No reusable rule/skill candidate | No application |",
+            "Only `tk-learn` creates a new skill or semantically updates/merges one",
+            "### Conditional Agent Skill diagnosis",
+        ),
+        "skills/tk-skill-diagnose/SKILL.md": (
+            "## Intake gate",
+            "Reproduced | Not reproduced |",
+            "## Efficiency gate",
+            "Never semantically mutate the canonical source skill",
+            "upstream-draft-ready",
+            "user's language",
+        ),
+        "scripts/run_skill_evals.py": (
+            '"--diagnose"',
+            '"--diagnostic-scenario-limit"',
+            '"--diagnostic-max-iterations"',
+            '"normal-records.json"',
+            '"diagnostic-records.json"',
+            '"diagnostic-ledger.json"',
+        ),
+        "evals/prompts/skill-diagnostic.md": (
+            "TIGERKIT_DIAGNOSTIC_START",
+            "TIGERKIT_DIAGNOSTIC_END",
+            "Do not guess an expected answer",
         ),
         "skills/tk-grooming/SKILL.md": (
-            "처음 식별한 순서대로 `GR-01`, `GR-02`, …를 한 번 부여",
-            "ID 없는 발견·제안·적용·검증 항목을 출력하지 마세요",
-            "응답의 마지막 섹션은 항상 아래 고정 형식의 `## Summary`",
-            "| No. | Rule | 한 줄 요약 | 적용 타깃 |",
-            "| — | 없음 | 감사 항목 없음 | 적용 없음 |",
-            "Rule→skill `convert`, workflow `split`, semantic skill rewrite",
+            "Assign `GR-01`, `GR-02`, ... once in first-identification order",
+            "Never renumber per section or emit an un-IDed item",
+            "The final section is always this fixed `## Summary` table",
+            "| No. | Rule | Summary | Target |",
+            "| — | None | No audit item | No application |",
+            "rule-to-skill `convert`, workflow `split`, and semantic",
         ),
         "skills/tk-learn/SKILL.md": (
-            "유일한 TigerKit writer",
-            "현재 host의 native repo/user skill 위치",
-            "cross-host fan-out/sync",
+            "sole TigerKit writer",
+            "current-host native repo/user skill paths",
+            "fan out/sync across hosts",
         ),
         "skills/tk-drive/SKILL.md": (
             "`/tk-drive`, `$tk-drive`, and direct selection in a host skill",
@@ -530,9 +593,9 @@ def validate_repository_contract() -> list[str]:
             "`authorized change`",
         ),
         "skills/tk-handoff/SKILL.md": (
-            "재개용 단일 snapshot",
-            "새 `.tigerkit/work-map.md`",
-            "legacy scratch로 무시",
+            "only resume snapshot",
+            "Never create `.tigerkit/work-map.md`",
+            "Treat an existing work-map as legacy scratch",
         ),
         "skills/tk-reflect/references/repository-placement.md": (
             "closed safety token set",
@@ -571,20 +634,25 @@ def validate_repository_contract() -> list[str]:
     return errors
 
 
-def validate_phase_owner_language(root: Path) -> list[str]:
+def validate_skill_language(root: Path) -> list[str]:
     errors: list[str] = []
-    for skill in sorted(PHASE_OWNER_SKILLS):
+    for skill in sorted(EXPECTED_SKILLS):
         skill_dir = root / "skills" / skill
         skill_path = skill_dir / "SKILL.md"
         paths = [skill_path, *sorted((skill_dir / "references").glob("*.md"))]
         for path in paths:
             if not path.is_file():
                 continue
+            in_fence = False
             for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
-                if HANGUL_SYLLABLE.search(line):
+                if line.lstrip().startswith("```"):
+                    in_fence = not in_fence
+                    continue
+                prose = "" if in_fence else re.sub(r"`[^`]*`", "", line)
+                if HANGUL_SYLLABLE.search(prose):
                     relative = path.relative_to(root)
                     errors.append(
-                        f"{relative}:{number}: phase-owner operational prose must be English"
+                        f"{relative}:{number}: canonical skill operational prose must be English"
                     )
         if skill_path.is_file() and "user's language" not in skill_path.read_text(
             encoding="utf-8"
@@ -1041,7 +1109,7 @@ def validate_eval_fixtures() -> list[str]:
         if duplicates:
             errors.append(f"evals/trigger-cases.yaml: duplicate skills: {', '.join(sorted(set(duplicates)))}")
         if set(entries) != EXPECTED_SKILLS:
-            errors.append("evals/trigger-cases.yaml: cover exactly the 12 canonical skills")
+            errors.append("evals/trigger-cases.yaml: cover exactly the 13 canonical skills")
         for skill, values in sorted(entries.items()):
             if skill in USER_INVOKED_SKILLS:
                 if values["examples"] < 2:

@@ -4,12 +4,12 @@
     {
       "id": "legacy-1",
       "path": "success",
-      "prompt": "/tk-reflect 이번 diff에서 반복적으로 확인된 검증 규칙 후보를 네 축으로 분류해 보고해 주세요. 적용은 하지 마세요.",
-      "expected_output": "repo rule·repo skill·user rule·user skill로 분류하고 evidence·interpretation·confidence·action을 분리한 report-only pending receipt를 낸다.",
+      "prompt": "/tk-reflect 이번 diff에서 반복적으로 확인된 검증 규칙 후보를 repo rule·repo skill·user rule·user skill·persistent memory의 다섯 축으로 분류해 보고해 주세요. 적용은 하지 마세요.",
+      "expected_output": "repo rule·repo skill·user rule·user skill·persistent memory로 분류하고 evidence·interpretation·confidence·action을 분리한 report-only pending receipt를 낸다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "repo rule·repo skill·user rule·user skill로 분류하고 evidence·interpretation·confidence·action을 분리한 report-only pending receipt를 낸다."
+          "criterion": "repo rule·repo skill·user rule·user skill·persistent memory로 분류하고 evidence·interpretation·confidence·action을 분리한 report-only pending receipt를 낸다."
         },
         {
           "type": "judge",
@@ -371,6 +371,144 @@
         {
           "type": "terminal_status",
           "expected": "Pending"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true
+    },
+    {
+      "id": "reflect-checks-persistent-memory-prior-art",
+      "path": "success",
+      "prompt": "/tk-reflect 현재 host의 발견 가능한 file-based persistent memory에 후보와 같은 범위·동작이 이미 기록되어 있는지 포함해 report-only로 검토해 주세요.",
+      "expected_output": "persistent memory를 다섯 번째 target axis의 prior art로 확인하고 완전 중복이면 no-op으로 보고하며 파일을 변경하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "실제 host memory path evidence를 사용하고 unreadable이면 unverified로 남기며 memory가 없다고 추정하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "persistent memory"
+        },
+        {
+          "type": "output_contains",
+          "text": "no-op"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true
+    },
+    {
+      "id": "reflect-separates-adjacent-memory-scope",
+      "path": "boundary",
+      "prompt": "/tk-reflect persistent memory는 신규 코드 선택 원칙을, repo rule 후보는 migration 원값 대조 절차를 소유합니다. 같은 사실을 쓰니 하나를 지우지 말고 판정해 주세요.",
+      "expected_output": "공유 사실과 서로 다른 behavioral axis를 분리해 Interpretation과 Action에 근거를 남기고 exact targets 간 cross-reference는 pending proposal로만 둔다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "완전 중복 no-op과 인접 범위의 분리·상호참조를 구분하고 memory 또는 repo rule을 자동 변경하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "pending"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pending"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true
+    },
+    {
+      "id": "reflect-bounds-summary-cell-length",
+      "path": "success",
+      "prompt": "/tk-reflect 직전 Summary 표가 터미널에서 깨졌어요. evidence를 빼고 같은 표를 짧게 다시 출력해 주세요.",
+      "expected_output": "기존 RF IDs와 순서를 유지하고 Summary 약 40자, Target 약 50자의 간결한 셀로 같은 표만 재출력한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "formatting-only reprint가 후보를 재탐색·재번호화하지 않고 evidence, draft, action을 표에 넣지 않으며 target을 모호하게 자르지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "reflect-hands-off-qualified-skill-incident-once",
+      "path": "boundary",
+      "prompt": "/tk-reflect exact tk-drive path, observed repeated blocker, matched token anchor가 있고 root cause가 미확정이며 rule 후보가 그 원인에 의존합니다. 진단 evidence를 확보해 후보를 판정해 주세요.",
+      "expected_output": "네 gate를 확인하고 exact incident payload로 tk-skill-diagnose에 한 번만 handoff한 뒤 Reproduced+verified cause만 후보 evidence로 사용한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "Target, Incident, Unresolved cause, Dependency 네 조건과 explicit retrospective scope를 확인하고 diagnosis handoff를 정확히 한 번만 수행한다."
+        },
+        {
+          "type": "output_contains",
+          "text": "tk-skill-diagnose"
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Pending"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true
+    },
+    {
+      "id": "reflect-skips-diagnosis-without-four-gate",
+      "path": "boundary",
+      "prompt": "/tk-reflect 과거 대화에 tk-drive와 token 숫자가 있었지만 이번 후보는 no-op입니다. 재사용 후보만 판정해 주세요.",
+      "expected_output": "특정 unresolved incident와 dependency가 없고 no-op이므로 tk-skill-diagnose를 호출하지 않는다.",
+      "assertions": [
+        {
+          "type": "output_absent",
+          "text": "Diagnosis required"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true
+    },
+    {
+      "id": "reflect-blocks-repeated-diagnosis-handoff",
+      "path": "boundary",
+      "prompt": "/tk-reflect 같은 Incident ID, target, blocker로 diagnosis가 이미 한 번 Unverifiable을 반환했습니다. 다시 diagnose를 호출해 주세요.",
+      "expected_output": "동일 blocker fingerprint를 다시 순환하지 않고 Blocked로 멈추며 diagnose나 reflect 역호출을 반복하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "한 reflect run의 diagnose handoff 최대 1회와 equivalent blocker recurrence 금지를 지킨다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Blocked"
         },
         {
           "type": "git_head_unchanged"

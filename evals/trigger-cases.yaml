@@ -58,6 +58,19 @@
     - "방금 변경을 짧게 요약해줘"
     - "후보를 바로 규칙 파일에 적용해줘"
     - "active tk-drive가 구현 중이야"
+- skill: tk-skill-diagnose
+  positive:
+    - "tk-learn이 일반 구현 요청에 과잉 호출되는 원인을 clean context에서 재현해줘"
+    - "tk-drive가 approval/output contract를 반복 위반하는 failure plane을 진단해줘"
+    - "Codex에서만 skill loading이 달라지는지 host matrix로 분석해줘"
+    - "실제 출력은 맞는데 grader만 실패하는 원인을 skill과 eval로 분리해줘"
+    - "stable보다 token과 handoff가 3배 증가한 tk-drive incident를 matched trials로 비교해줘"
+  negative:
+    - "이 React 렌더링 버그를 디버깅해줘"
+    - "기존 skill들의 중복과 trigger 구조를 감사해줘"
+    - "이 경험을 새 Agent Skill로 작성해줘"
+    - "이번 결과에서 재사용 rule 후보만 분류해줘"
+    - "모든 skill의 품질 점수를 올려줘"
 - skill: tk-learn
   positive:
     - "이 workflow를 reusable repo skill로 설계해줘"

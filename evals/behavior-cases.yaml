@@ -133,6 +133,15 @@
 - case: implement-review-rejects-drift
   skill: tk-implement
   expect: "Review-head or staged drift invalidates stale evidence and prevents commit until affected coverage is rerun."
+- case: implement-audits-postcommit-hook-drift
+  skill: tk-implement
+  expect: "Immediately after commit, the actual committed diff is compared with the frozen reviewed candidate and hook drift is classified in Verification."
+- case: implement-blocks-semantic-hook-drift
+  skill: tk-implement
+  expect: "Semantic hook drift invalidates Pass, restores reviewed intent in the working tree, reruns affected verification, and ends Fail or Blocked without rewriting history or creating a second unit commit."
+- case: implement-allows-bounded-hook-bypass
+  skill: tk-implement
+  expect: "Hook bypass is limited to required byte preservation or a demonstrated hook configuration defect, runs every safe check, and records the exact reason in the commit body."
 - case: implement-review-separates-standards-and-spec
   skill: tk-implement
   expect: "Standards and Spec remain separate verdict axes with R/AC evidence when IDs exist."
@@ -208,6 +217,15 @@
 - case: reflect-is-report-only
   skill: tk-reflect
   expect: "No files are modified; candidates use the documented target axes."
+- case: reflect-checks-persistent-memory-prior-art
+  skill: tk-reflect
+  expect: "Evidence checks the current host's discoverable file-based persistent memory as a fifth target axis and routes a complete duplicate to no-op."
+- case: reflect-separates-adjacent-memory-scope
+  skill: tk-reflect
+  expect: "When persistent memory and a candidate share facts but own different behavioral axes, Interpretation records the separation and any reciprocal cross-reference remains pending."
+- case: reflect-bounds-summary-cell-length
+  skill: tk-reflect
+  expect: "Summary and Target stay near 40 and 50 display characters respectively, omit evidence and drafts, and a width-fix reprint preserves IDs and order."
 - case: reflect-classifies-repo-placement
   skill: tk-reflect
   expect: "The closed safety set, verified paths, immediate parent, tracked regular siblings, and threshold deterministically select root rule, nested rule, or repo skill."
@@ -223,6 +241,9 @@
 - case: to-spec-preserves-source-ui-writing-verbatim
   skill: tk-to-spec
   expect: "Provided labels, button names, guide copy, column names, and other UI writing remain exact literals unless the user explicitly authorizes a change; drift prevents Ready."
+- case: to-spec-blocks-source-current-ui-mismatch
+  skill: tk-to-spec
+  expect: "The UI inventory contains source, current rendered/source-path, and target literal columns; a missing source column is Unverifiable, and any source-current mismatch makes all rows conflict candidates that prevent Ready without a user decision."
 - case: to-spec-active-drive-handoff
   skill: tk-to-spec
   expect: "An explicit active-drive spec handoff uses the standalone Ready contract and returns a drive-consumable phase receipt without taking downstream ownership."
@@ -244,6 +265,9 @@
 - case: to-tickets-preserves-source-ui-writing-verbatim
   skill: tk-to-tickets
   expect: "Provided UI writing remains exact in the source inventory, coverage, and owning tickets unless an explicit source decision authorizes a change."
+- case: to-tickets-blocks-source-current-ui-mismatch
+  skill: tk-to-tickets
+  expect: "Ticket decomposition preserves the three-column UI inventory and stops when the source column is absent or a source-current conflict escaped the Ready spec."
 - case: to-tickets-active-drive-handoff
   skill: tk-to-tickets
   expect: "An explicit active-drive ticket handoff uses the standalone vertical-slice contract and returns a drive-consumable ledger receipt without implementing."
@@ -262,6 +286,15 @@
 - case: grooming-defaults-report-only
   skill: tk-grooming
   expect: "Findings and proposals are emitted without edits by default."
+- case: grooming-vendor-artifact-remains-report-only
+  skill: tk-grooming
+  expect: "Resolved package-manager, updater, symlink, and history evidence routes a vendor artifact to keep (vendor) and prevents mutation even with --apply."
+- case: grooming-unknown-ownership-asks-before-proposal
+  skill: tk-grooming
+  expect: "Unknown ownership stops before an edit proposal or mutation and asks one user-managed-versus-external question."
+- case: grooming-honors-declared-exclusions
+  skill: tk-grooming
+  expect: "Explicit exclusions from the active conversation or a durable governing source remain excluded without reconfirmation and without hidden TigerKit state."
 - case: grooming-classifies-repo-placement
   skill: tk-grooming
   expect: "The same placement rubric maps kind changes to convert, root/nested changes to move, mixed units to split, and correct placement to keep."
@@ -286,6 +319,9 @@
 - case: implement-preserves-source-ui-writing-verbatim
   skill: tk-implement
   expect: "Provided UI writing is frozen before mutation and exactly rechecked in the implementation and staged candidate; unauthorized drift prevents commit."
+- case: implement-blocks-source-current-ui-mismatch
+  skill: tk-implement
+  expect: "Implementation requires source, current rendered/source-path, and target UI literals; missing source evidence is Unverifiable and source-current conflict prevents Pass and commit without a user decision."
 - case: browser-accessibility-is-conditional
   skill: tk-browser-verify
   expect: "Keyboard, focus, accessible-name, and error-association evidence is gathered for relevant form, dialog, navigation, or focus flows without claiming a full WCAG audit."
@@ -295,6 +331,24 @@
 - case: browser-redacts-sensitive-captures
   skill: tk-browser-verify
   expect: "Sensitive network, HAR, and console captures are used only after redaction and residue checks; unignored repo scratch never retains unverified sensitive evidence."
+- case: browser-bounds-instrumented-evidence
+  skill: tk-browser-verify
+  expect: "Guard and Verdict permit instrumented evidence only for bounded auth/unstable-driver or short-timer states, after no-source and DOM-injection options fail, with a hold variant and measured source-residue cleanup."
+- case: browser-instrumentation-residue-failure-is-unverifiable
+  skill: tk-browser-verify
+  expect: "Instrumented verification is Unverifiable unless the target diff returns to its pre-instrumentation state, the TEMP marker count is zero, and no instrumentation delta entered a commit."
+- case: browser-labels-user-observed-evidence
+  skill: tk-browser-verify
+  expect: "A nondeterministic driver may justify user-observed evidence, but it is labeled with computed state not recorded and is never reported as agent-measured computed evidence."
+- case: browser-proves-current-serving-source
+  skill: tk-browser-verify
+  expect: "An existing server is reused only with exact worktree cwd, composite asset-watch evidence, and a serving-version measurement; cwd alone never proves current source."
+- case: browser-classifies-failure-origin
+  skill: tk-browser-verify
+  expect: "Every Fail is classified change-related, pre-existing, or environment; pre-existing requires the same failure reproduced on a baseline environment."
+- case: browser-causal-fix-requires-negative-control
+  skill: tk-browser-verify
+  expect: "Computed-vs-declared diagnosis identifies the winning stylesheet rule, and a causal-fix Verdict requires positive and negative controls plus instrumentation cleanup."
 - case: learn-requires-eval-and-compatibility
   skill: tk-learn
   expect: "A skill candidate includes trigger validation, success and boundary assertions, a baseline plan, and a portable-core versus host-extension compatibility decision before approval."
@@ -340,6 +394,9 @@
 - case: drive-invokes-phase-owners
   skill: tk-drive
   expect: "Drive conditionally invokes tk-grill-me, then explicitly invokes tk-to-spec, conditionally tk-to-tickets, and tk-implement per unit, consuming their receipts without recreating phase semantics inline."
+- case: drive-continues-after-ready-spec
+  skill: tk-drive
+  expect: "A consumed Ready spec is never a response boundary: drive makes the ticket decision and continues through implementation and aggregate verification in the same active turn, or returns an explicit evidence-supported terminal receipt."
 - case: drive-skips-grill-for-ready-source
   skill: tk-drive
   expect: "Drive skips tk-grill-me when confirmed source and evidence already support a Ready spec without a user-owned decision."
@@ -364,6 +421,15 @@
 - case: drive-preserves-source-ui-writing-verbatim
   skill: tk-drive
   expect: "Drive freezes exact source UI literals before spec mutation and rechecks them through spec, tickets, implementation, candidate/staged diff, and rendered UI."
+- case: drive-blocks-source-current-ui-mismatch
+  skill: tk-drive
+  expect: "Drive inventories every rendered string literal, including numeric, unit, currency, suffix, and separator tokens, and routes any source-current mismatch to a user decision before Ready, Pass, or commit."
+- case: drive-scopes-approval-to-asked-axis
+  skill: tk-drive
+  expect: "A decision approval covers only the axis explicitly asked; ancillary premises in an option explanation stay unconfirmed and cannot authorize UI writing changes."
+- case: drive-reads-complete-remote-source
+  skill: tk-drive
+  expect: "Remote preflight reads the complete body, all comments and thread updates, and referenced attachments before scope is frozen."
 - case: drive-blocks-unreadable-ui-literal
   skill: tk-drive
   expect: "Unreadable source UI literals are never guessed and prevent commit as Unverifiable."
@@ -391,3 +457,51 @@
 - case: grooming-semantic-convert-is-proposal-only
   skill: tk-grooming
   expect: "Rule-to-skill conversion, workflow split, and semantic skill rewrites remain proposals even in apply mode."
+- case: skill-diagnose-reproduces-overtrigger-selection
+  skill: tk-skill-diagnose
+  expect: "A repeated over-trigger incident is reproduced in fresh runs, separated from a nearby positive control, and classified as selection."
+- case: skill-diagnose-isolates-approval-bypass
+  skill: tk-skill-diagnose
+  expect: "Normal selection/loading is separated from an approval bypass in planning or execution without canonical mutation."
+- case: skill-diagnose-separates-grader-false-negative
+  skill: tk-skill-diagnose
+  expect: "A correct deliverable misclassified by a grader routes to the evaluation owner instead of inflating the skill body."
+- case: skill-diagnose-classifies-host-loading-difference
+  skill: tk-skill-diagnose
+  expect: "Matched selected/loaded evidence across supported hosts isolates a compatibility or loading difference."
+- case: skill-diagnose-verifies-efficiency-regression
+  skill: tk-skill-diagnose
+  expect: "Matched prompt, host, configuration, tools, repository state, and two trials support an efficiency regression claim."
+- case: skill-diagnose-requires-resource-anchor
+  skill: tk-skill-diagnose
+  expect: "A resource profile without a stable, no-skill, historical, threshold, or candidate anchor remains Profile only and Unverifiable."
+- case: skill-diagnose-rejects-cheaper-incorrect-candidate
+  skill: tk-skill-diagnose
+  expect: "Correctness, safety, routing, mutation, control, or holdout regression rejects a candidate regardless of resource savings."
+- case: skill-diagnose-does-not-patch-unreproduced-incident
+  skill: tk-skill-diagnose
+  expect: "A 0/2 clean reproduction is Not reproduced and does not produce a canonical wording patch from intuition."
+- case: skill-diagnose-bounds-one-theme-and-holdout
+  skill: tk-skill-diagnose
+  expect: "A temporary one-theme candidate names its frozen requirement and General Fix Rule, then preserves nearby control and unused holdout."
+- case: skill-diagnose-never-mutates-canonical-path
+  skill: tk-skill-diagnose
+  expect: "Diagnosis experiments stay isolated and semantic canonical changes become tk-learn handoff proposals without commit."
+- case: skill-diagnose-drafts-anonymized-upstream-issue
+  skill: tk-skill-diagnose
+  expect: "Verified reproduction against unmodified TigerKit source may produce an anonymized upstream issue title/body draft without remote mutation."
+- case: skill-diagnose-keeps-consumer-drift-local
+  skill: tk-skill-diagnose
+  expect: "An incident reproduced only in a consumer-local override is local-only and produces no upstream issue draft."
+- case: skill-diagnose-redacts-private-upstream-evidence
+  skill: tk-skill-diagnose
+  expect: "Private identifiers, paths, URLs, literals, and secrets are removed and residue-checked before any upstream-draft-ready disposition."
+- case: reflect-hands-off-qualified-skill-incident-once
+  skill: tk-reflect
+  expect: "Reflect hands off exactly once only when Target, Incident, Unresolved cause, and Dependency gates all hold."
+- case: reflect-skips-diagnosis-without-four-gate
+  skill: tk-reflect
+  expect: "Historical mentions, an existing valid receipt, no-op, discard, or generic reflection do not invoke Agent Skill diagnosis."
+- case: reflect-blocks-repeated-diagnosis-handoff
+  skill: tk-reflect
+  expect: "An equivalent Incident ID, target, and blocker recurrence ends Blocked without another handoff or reflect-diagnose cycle."

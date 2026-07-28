@@ -1,7 +1,7 @@
 ---
 name: tk-reflect
-description: "[user/auto] 대화·diff·결과의 증거에서 재사용 가능한 rule 또는 skill 후보를 분류해 보고할 때 사용합니다. implicit mode는 report-only이며 단순 요약·구현 완료·자동 적용에는 사용하지 않습니다."
-argument-hint: "<대화, 수정, diff, 결과 또는 소스>"
+description: "[user/auto] Classify and report reusable rule or skill candidates from conversation, diff, and outcome evidence. Implicit mode is report-only; do not apply to ordinary summaries/completion or mutate automatically."
+argument-hint: "<conversation, change, diff, outcome, or source>"
 metadata:
   tigerkit:
     kind: hybrid
@@ -9,77 +9,187 @@ metadata:
     relationship: native
 ---
 
-# 회고
+# Reflect
 
-명시 호출 또는 증거에서 재사용 후보를 추출해 달라는 명확한 요청에 사용합니다. 단순 요약·구현 완료에는 자동으로 활성화하지 말고, 다른 스킬을 호출하지 마세요. implicit mode는 항상 report-only입니다.
+Apply on explicit invocation or a clear request to extract reusable candidates
+from evidence. Do not auto-apply to an ordinary summary or implementation
+completion. Implicit mode is report-only. Do not invoke another skill except
+for the single bounded diagnosis handoff below.
 
-현재 대화, 수정 사항, diff, 구현/테스트/검토 결과, 관련 `.tigerkit/` 산출물, 사용자가 지정한 소스를 읽으세요. 정확히 네 축, 즉 `repo rule`, `repo skill`, `user rule`, `user skill`로 분류하고 `propose | update | merge | no-op | discard` 중 하나를 선택하세요.
+Read current conversation, changes, diff, implementation/test/review outcomes,
+relevant `.tigerkit/` artifacts, the current host's discoverable file-based
+persistent memory, and user-named sources. Classify across exactly five
+axes—`repo rule | repo skill | user rule | user skill | persistent memory`—and
+choose `propose | update | merge | no-op | discard`.
 
 ## Workflow
 
-1. `evidence`: 입력은 대화·diff·결과·소스이고, 출력은 접근 실패를 포함해 네 축으로 분류된 경로/명령 기반 `verified | unverified` 사실입니다.
-2. `interpretation`: 입력은 evidence이고, 출력은 사실과 분리된 재사용 가설입니다.
-3. `confidence`: 입력은 evidence와 가설이고, 출력은 `high | medium | low` 및 근거입니다.
-4. `action`: 입력은 후보와 기존 reuse map이고, 출력은 repository candidate에 [배치 rubric](references/repository-placement.md)을 적용한 target 위치와 `propose | update | merge | no-op | discard` 중 하나입니다. 실제 문안은 별도 `초안`이 소유합니다.
-5. `apply/receipt`: 입력은 후보·별도 승인·적용 전 대상 상태이고, 출력은 아래 상태 전이표의 상태와 후보·evidence·재검증 경로 참조입니다. 후보 본문을 receipt에 복사하지 마세요.
+1. `evidence`: produce path/command-cited `verified | unverified` facts,
+   including access failures and prior-art results, classified across the five
+   axes.
+2. `interpretation`: derive a reuse hypothesis separate from facts.
+3. `confidence`: return `high | medium | low` and basis.
+4. `action`: apply the
+   [placement rubric](references/repository-placement.md) to repository
+   candidates; choose target and action. A separate Draft owns wording.
+5. `apply/receipt`: combine candidate, separate approval, and fresh target state
+   into the transition-table result and references; do not copy candidate body.
 
-### 후보 상태 전이
+### Conditional Agent Skill diagnosis
+
+Before promoting a root-cause-dependent `propose | update | merge`, hand off to
+`tk-skill-diagnose` exactly once only when all four conditions are verified:
+
+1. a specific Agent Skill name or exact `SKILL.md` path;
+2. an observable expected/observed mismatch or measured resource anomaly;
+3. root cause is not already verified;
+4. the candidate action depends on that cause being true.
+
+The request must explicitly concern a skill incident, its retrospective, or
+reuse of that incident evidence. Do not hand off for historical mentions,
+existing valid diagnosis receipts, `no-op | discard`, or generic reflection.
+If host-native sibling handoff is unavailable, return a `Diagnosis required`
+payload and `Unverifiable`; never imitate fresh empirical diagnosis inline.
+
+Send the exact incident ID, target/path, host/invocation, observed prompt,
+expected behavior or resource anchor, observed behavior/metrics, evidence
+paths/commands, candidate/baseline refs, and `Caller: tk-reflect`. Mark unknowns
+`unverified`.
+
+After return, use only `Reproduced` plus verified root cause as evidence.
+`Not reproduced` does not verify the original causal claim.
+`Inconclusive | Blocked | Unverifiable` keeps confidence `low` and prevents a
+root-cause-dependent promotion. Efficiency evidence also requires preserved
+correctness. Never call diagnosis twice for one run, call it again for the same
+`Incident ID + target + blocker`, or allow diagnosis to call back into reflect.
+End equivalent recurrence as `Blocked`.
+
+### Candidate transition table
 
 | Candidate | Condition | Status | Mutation |
 |---|---|---|---|
-| Rule `propose | update | merge` | 별도 적용 승인 전 | `pending` | 없음 |
-| Rule `no-op | discard` | 적용할 내용 없음 | `reported` | 없음 |
-| Rule `propose | update | merge` | 별도 승인 후 정확한 target에 반영·재검증 성공 | `applied` | 승인 범위만 |
-| Rule | 승인 후 적용·재검증 실패 | `Fail | Blocked | Unverifiable` | 기존 대상 보존, 추가 mutation 중단 |
-| Skill 후보 | evidence·exact target·working draft 제시 | `pending` | 생성·semantic update·merge 없음 |
-| 모든 후보 | verified evidence가 하나도 없음 | `Unverifiable` | 없음 |
+| Rule `propose | update | merge` | before separate apply approval | `pending` | none |
+| Rule `no-op | discard` | nothing to apply | `reported` | none |
+| Rule `propose | update | merge` | exact target applied/reverified after approval | `applied` | approved scope only |
+| Rule | apply/revalidation failure | `Fail | Blocked | Unverifiable` | preserve existing target; stop mutation |
+| Skill candidate | evidence, exact target, working draft shown | `pending` | no creation/semantic mutation |
+| All candidates | no verified evidence | `Unverifiable` | none |
 
-각 후보를 다음처럼 분리해 작성하세요.
+Each candidate has:
 
-- `Evidence`: 실제로 관찰한 diff·결과·반복 사례와 경로/명령을 적고 `verified | unverified`를 표시하세요.
-- `Interpretation`: Evidence ID에서 도출한 재사용 범위·경계 가설만 적고, 적용할 규칙 문안이나 `~해야 한다` 처방은 쓰지 마세요. 실제 처방은 초안만 소유합니다. 가설을 관찰 사실처럼 쓰지 마세요.
-- `Confidence`: `high | medium | low`, `Basis: <Evidence IDs>`, 필요한 경우 `Uncertainty: ...`만 적으세요. source 종류·사례 수·관찰·가설을 다시 서술하지 마세요. 증거가 부족하면 `low`로 두고 승격하지 마세요.
-- `Action`: 중복이면 새로 만들지 말고 `merge` 또는 `no-op`을 우선하세요. 규칙은 짧은 상시 지침, 스킬은 트리거·반복 단계·입출력·독립적 가치를 가져야 합니다.
+- `Evidence`: observed diff/outcomes/repetitions with path/command and
+  `verified | unverified`.
+- `Interpretation`: reuse scope/boundary hypothesis derived only from Evidence
+  IDs; no prescriptive wording or fact-like hypothesis.
+- `Confidence`: `high | medium | low`, `Basis: <Evidence IDs>`, and only when
+  needed `Uncertainty`.
+- `Action`: prefer `merge | no-op` for duplication. A rule is a short standing
+  instruction; a skill needs trigger, repeated steps, I/O, and independent
+  value.
 
-Action은 다음 순서로 고르세요. 기존 target이 evidence의 재사용 동작을 모두 소유하면 `no-op`, 같은 target이 소유하지만 verified 경계가 빠졌으면 `update`, 여러 기존 후보의 겹치는 범위를 한 target으로 합쳐야 하면 `merge`, 적합한 target이 없고 rule/skill 기준을 충족하면 `propose`, 일회성이거나 unverified/conflict만 남으면 `discard`입니다. 이 선택은 적용 승인이 아니며 skill 후보는 항상 `pending`입니다.
+Choose Action in order: complete ownership by an existing target is `no-op`;
+missing verified boundary in the same target is `update`; consolidating
+overlapping targets is `merge`; no suitable target plus rule/skill qualification
+is `propose`; one-off or unresolved unverified/conflicting evidence is
+`discard`. Action is not apply authority, and every skill candidate stays
+`pending`.
 
-`repo rule | repo skill` 후보에는 배치 rubric의 정규화된 raw 입력을 Evidence에, 재사용 범위와 root/nested/skill 경계 해석을 Interpretation에, 수행 선택을 Action에 기록하세요. 별도 배치 근거 필드를 만들지 마세요. Evidence를 읽을 수 없거나 threshold가 충돌하면 confidence를 `low`로 두고 후보를 승격하지 마세요.
+Treat discoverable file-based persistent memory as prior art, not as an
+automatic write target. When memory completely owns the same behavior and
+scope, choose `no-op`. When memory and a candidate share facts but own different
+behavioral axes, record the separation in Interpretation and Action, keep the
+targets distinct, and propose reciprocal cross-references only when both exact
+targets are known. Cross-reference or memory mutation remains `pending` until
+separately approved. If the host memory path is unavailable or unreadable,
+record it as `unverified`; do not claim that memory contains no prior art.
 
-Confidence는 다음 기준으로만 올리세요. `high`는 서로 다른 occurrence 또는 source type의 독립적인 verified Evidence ID가 2개 이상이고 미해결 conflict·counterexample이 없는 경우입니다. `medium`은 verified Evidence ID가 1개 이상이지만 반복성·독립성·적용 경계 중 하나가 아직 확인되지 않은 경우입니다. Verified evidence가 없거나 conflict·counterexample이 미해결이면 `low`이며 `propose | update | merge`로 승격하지 마세요.
+For `repo rule | repo skill`, Evidence owns normalized raw placement input,
+Interpretation owns root/nested/skill boundary, and Action owns the choice.
+Create no duplicate placement field. Missing/conflicting threshold evidence
+keeps confidence `low` and prevents promotion.
 
-## 계약
+Confidence rises only as follows: `high` requires at least two independently
+verified Evidence IDs from different occurrences/source types and no unresolved
+conflict/counterexample; `medium` requires at least one verified ID but lacks
+one of repetition, independence, or boundary; no verified evidence or
+unresolved conflict/counterexample is `low` and cannot promote
+`propose | update | merge`.
 
-저장소 대상은 코드베이스/도메인/도구/팀에 특화되고, 사용자 대상은 여러 저장소에서 반복됩니다. 기본은 `report-only`입니다. Rule 후보를 DESIGN, reuse map 또는 rule에 기록·수정·적용하려면 대상과 범위를 밝힌 별도의 명시적 사용자 동의를 먼저 받으세요. 침묵, 진행, 과거 유사 답변, reflect 호출 자체는 적용 동의가 아닙니다.
+## Contract
 
-신규 skill 생성과 기존 skill의 semantic update/merge는 `tk-learn`만 소유합니다. 이 skill은 skill 후보의 evidence, current-host native exact target, working draft와 `pending`까지만 보고하고, `tk-learn`을 자동 호출하거나 skill path를 직접 쓰지 않습니다.
+Repository targets are codebase/domain/tool/team-specific; user targets repeat
+across repositories. Persistent memory is a current-host file-based target whose
+native path must be demonstrated. Default is report-only. Writing a rule into
+DESIGN, reuse-map, rule, or persistent-memory files requires separate explicit
+approval naming target and scope. Silence, continuation, past analogous
+answers, or reflect invocation is not approval.
 
-사용자가 중단하면 `aborted`, 충돌 또는 적용 범위가 불명확하면 `Blocked`로 보고하세요. 후보별 `reported | pending | applied`와 실행 전체의 terminal status를 섞지 마세요.
+Only `tk-learn` creates a new skill or semantically updates/merges one. This
+skill reports skill evidence, current-host native exact target, working draft,
+and `pending` only; it never invokes tk-learn or writes a skill path.
 
-기본적으로 파일을 수정하거나 영속 원장/식별자를 만들지 말고, 레거시 전역 상태를 탐색하거나 일회성 우회책을 일반화하지 마세요. 아래 `RF-##`는 이번 응답 안에서만 쓰는 출력용 후보 ID이며 원장 상태가 아닙니다. 별도 명시적 동의가 있더라도 원시 자격 증명/로그/스크린샷을 규칙이나 스킬 후보로 그대로 승격하지 마세요.
+Run terminal status is `Pass | Fail | Blocked | Unverifiable | aborted`. `Pass`
+means the evidence/classification workflow completed and every approved
+mutation was revalidated; candidates may intentionally remain `pending`.
+Use `Fail` for a violated deterministic claim or apply gate, `aborted` for user
+stop, and `Blocked` for conflict/unclear apply scope. Never mix per-candidate
+`reported | pending | applied` with run terminal status.
 
-필수 source를 읽을 수 없으면 경로와 오류를 `unverified`로 기록하고 해당 내용을 해석하거나 후보 근거로 사용하지 마세요. 정확한 권한·경로·명령이 새로 확보되면 한 번만 다시 읽고, 계속 실패하면 `Unverifiable`로 고정하세요. 적용·재검증 실패와 verified evidence 부재는 후보 상태 전이표를 따르세요.
+By default, mutate no file and create no persistent ledger/identifier. Do not
+inspect legacy global state or generalize a one-off workaround. `RF-##` is
+response-local, not ledger state. Never promote raw credentials, logs, or
+screenshots verbatim even after approval.
+
+Unreadable required source is `unverified` with path/error and cannot support
+interpretation. Retry once only after exact access/path/command appears;
+otherwise fix `Unverifiable`. Apply/revalidation failures follow the transition
+table.
 
 ## CHECKPOINT / STOP
 
-후보의 대상, evidence, confidence, action을 제시한 뒤 별도의 명시적 적용 동의를 받으세요. 동의 전에는 후보 상태 전이표의 `pending | reported` 경계에서 멈추세요.
+After target, evidence, confidence, and action, require separate explicit apply
+approval. Before it, stop at `pending | reported`.
 
-비어 있지 않은 각 후보는 위 필드 계약에 따라 `대상`, ID가 붙은 `Evidence`, `Interpretation`, `Confidence`, `Action`, 필요할 때만 `초안`, `Receipt`를 한 번씩만 보고하세요. `이 대상인 이유`·`작업`·`학습 내용` 같은 중복 필드를 만들지 말고 Receipt에는 상태와 앞선 필드 참조만 기록하세요.
+Each nonempty candidate reports exactly once: `Target`, IDed `Evidence`,
+`Interpretation`, `Confidence`, `Action`, optional `Draft`, and `Receipt`.
+Create no duplicate reason/work/learning fields; Receipt holds status and
+references only.
 
 ## Output contract
 
-첫 후보부터 발견 순서대로 `RF-01`, `RF-02`, …를 한 번 부여하고 본문 제목을 `### RF-01 · <짧은 이름>`으로 쓰세요. 같은 후보의 `대상`, Evidence, Interpretation, Confidence, Action, 초안, Receipt와 마지막 Summary는 모두 동일한 `RF-##`를 사용합니다. 후보를 섹션마다 다시 번호 매기거나 ID 없는 후보·rule 항목을 출력하지 마세요.
+Assign `RF-01`, `RF-02`, ... once in discovery order. Title each
+`### RF-01 · <short name>` and reuse that ID across Target, Evidence,
+Interpretation, Confidence, Action, Draft, Receipt, and final Summary. Never
+renumber per section or emit an un-IDed candidate/rule.
 
-응답의 마지막 섹션은 항상 아래 고정 형식의 `## Summary`입니다. 후보마다 정확히 한 행을 두고, `Rule`에는 후보의 짧은 이름과 `repo rule | repo skill | user rule | user skill` 축을, `한 줄 요약`에는 새 evidence를 추가하지 않는 한 문장을, `적용 타깃`에는 구체적인 파일/skill/user 범위 또는 `미확정 (<이유>)`를 적으세요. 상세 evidence·초안·작업을 표에 복사하지 마세요.
+The response's final section is always:
 
-| No. | Rule | 한 줄 요약 | 적용 타깃 |
+| No. | Rule | Summary | Target |
 | --- | --- | --- | --- |
-| RF-01 | `<짧은 이름> (<축>)` | `<한 문장>` | `<구체적 타깃 또는 미확정 (이유)>` |
+| RF-01 | `<short name> (<axis>)` | `<one sentence>` | `<concrete target or unresolved (reason)>` |
 
-후보가 없거나 `Unverifiable`이어도 Summary를 생략하지 말고 `| — | 없음 | 재사용 가능한 rule/skill 후보 없음 | 적용 없음 |` 한 행을 출력하세요.
+One row per candidate. Summary adds no evidence; Target is a concrete
+file/skill/user/memory scope or `unresolved (<reason>)`. Keep `Summary` near 40
+display characters and `Target` near 50 when an unambiguous compact path or
+label is available. Do not copy evidence, draft, actions, or working text into
+the table, and do not truncate a target into ambiguity. With no candidate or an
+`Unverifiable` run, emit
+`| — | None | No reusable rule/skill candidate | No application |`.
+
+If the user asks to reprint a table that wrapped or broke, shorten the cells and
+emit the same table with the same IDs and order. Do not rediscover, renumber, or
+add evidence during a formatting-only reprint.
+
+User-facing progress and receipt prose follows the user's language while
+canonical headings, IDs, fields, and status tokens remain unchanged.
 
 ## DO NOT / ANTI-PATTERNS
 
-- 해석이나 가설을 관찰 사실처럼 쓰거나 confidence를 근거 없이 높이지 마세요.
-- 기존 후보와 중복되는 skill을 새로 만들거나 적용 동의 없이 파일을 수정하지 마세요.
-- 원시 credential·log·screenshot과 일회성 우회책을 재사용 규칙으로 승격하지 마세요.
-- 후보 ID를 생략·재사용·재번호화하거나 Summary를 생략하지 마세요.
+- Do not present interpretation as fact or inflate confidence.
+- Do not duplicate an existing skill or mutate without apply approval.
+- Do not omit discoverable persistent memory from prior-art checks or invent an
+  undiscovered host memory path.
+- Do not diagnose inline, repeat a diagnosis handoff, or create a
+  reflect/diagnose cycle.
+- Do not promote raw credentials/logs/screenshots or one-off workarounds.
+- Do not omit, reuse, or renumber candidate IDs, or omit Summary.

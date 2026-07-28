@@ -1,3 +1,21 @@
+# TigerKit 20.1.5 empirical diagnosis and catalog refinement
+
+This release expands the catalog from 12 to 13 canonical skills:
+1 user-invoked and 12 hybrid. The added `tk-skill-diagnose` hybrid owns
+empirical reproduction and failure-plane isolation for observed Agent Skill
+incidents. It does not replace `tk-grooming`, `tk-reflect`, `tk-learn`, or
+Darwin-style broad optimization, and it never writes canonical skills.
+
+Eval consumers may opt into the separate diagnostic pass with `--diagnose`.
+Without that flag, normal eval prompts, metrics, summary fields, and records
+remain unchanged. Diagnostic records are written only to the existing required
+output directory outside the repository.
+
+No existing skill name or explicit invocation path is removed. Canonical skill
+bodies and operational references are English; progress and receipts continue
+to follow the user's language. Consumers only need to refresh the installed
+skill package to receive the new catalog and eval contracts.
+
 # TigerKit 20.1.4 decision-phase orchestration
 
 The next release keeps all 12 canonical names and the 1 user-invoked /
