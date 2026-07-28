@@ -97,14 +97,15 @@ evidence/target receipt in the same run. Scope, evidence, or target drift stops
 - Target drift after checkpoint: do not mutate; return `Partial/Blocked` with
   fresh evidence and require a new proposal.
 - Failed post-apply validation: never claim `Complete`. Restore/revalidate only
-  when this run's delta is exactly reversible; otherwise stop mutation and
-  report the check, paths, and observed state.
+  when this run's delta is exactly reversible, then return `Fail` with the
+  revalidation evidence. If preservation or restoration is uncertain, stop
+  mutation as `Unverifiable` and report the check, paths, and observed state.
 
 ## Contract
 
 Evidence records actual path/content for each area; missing required evidence
 makes that area `Unverifiable`. Any blocked area prevents an overall completed
-claim; use `Complete | Partial/Blocked | Unverifiable`.
+claim; use `Complete | Fail | Partial/Blocked | Unverifiable`.
 
 Single owners are:
 
