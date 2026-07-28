@@ -44,8 +44,8 @@ Interactive login에는 repo 밖 user-local persistent profile을 사용하세�
 
 1. `mode/scope`: 입력은 요청 종류·대상·성공 조건이고, 출력은 Guard/Verdict mode와 안전한 상호작용 범위입니다.
 2. `preflight`: 입력은 mode·intent와 선택적 디자인 기준이고, 출력은 필요한 사용자 결정·적용할 reference 축 및 디자인 기준이 있을 때만 `same | different | unclear`, 없으면 `N/A`입니다.
-3. `environment`: 입력은 실행 환경과 launch configuration이고, 출력은 browser binary·effective arguments의 정확한 `--headless=new`·격리 profile·headed 예외 부재 또는 승인 확인입니다.
-4. `run/evidence`: 입력은 확인된 환경과 범위이고, 출력은 대상 identity·안전한 사전 상태와 탐색·상호작용·network·최종 상태·screenshot·실제 image 검사 및 조건부 keyboard/focus/semantic 증거입니다.
+3. `environment`: 입력은 실행 환경과 launch configuration이고, 출력은 browser binary·effective arguments의 정확한 `--headless=new`·격리 profile·headed 예외 부재 또는 승인·현재 워킹트리 source가 서빙된다는 실측입니다.
+4. `run/evidence`: 입력은 확인된 환경과 범위이고, 출력은 대상 identity·안전한 사전 상태와 탐색·상호작용·network·최종 상태·screenshot·실제 image 검사 및 조건부 keyboard/focus/semantic·instrumented 증거입니다.
 5. `verdict`: 입력은 runtime evidence와 성공 조건이고, 출력은 `Pass | Fail | Blocked | Unverifiable` 및 미검증 항목입니다.
 6. `receipt/cleanup`: 입력은 판정과 생성한 세션·증거이고, 출력은 필요한 receipt와 이번 실행이 만든 browser/context/window만 정리한 결과입니다.
 
@@ -106,7 +106,7 @@ Figma, screenshot 또는 디자인 명세가 기준으로 주어지면 탐색이
 | Status | Trigger | Required receipt |
 |---|---|---|
 | `Pass` | 성공 조건·필요 viewport/breakpoint·runtime screenshot·실제 image 검사가 모두 확인됨 | 성공 조건별 `Verified`와 ledger evidence |
-| `Fail` | runtime에서 요구사항 위반이 관찰됨 | 위반 상태의 screenshot·관찰·재현 경로 |
+| `Fail` | runtime에서 요구사항 위반이 관찰됨 | screenshot·재현 경로·`change-related \| pre-existing \| environment` 분류와 근거 |
 | `Blocked` | browser session 전 intent preflight에 필요한 사용자 결정이 없음 | screenshot을 요구하지 않는 `## Alignment` decision receipt |
 | `Unverifiable` | 안전한 실행 권한·환경이 없거나 session 시작 뒤 필수 runtime screenshot·image 검사·breakpoint evidence를 확보하지 못함 | 실행한 범위, 확보하지 못한 evidence, cleanup |
 
@@ -118,7 +118,7 @@ Browser 연결 중단, page crash, navigation timeout 또는 성공 조건에 �
 
 유용한 증거만 capture ledger 아래에 보관하고 빈 파일은 만들지 마세요. Run ID는 가능하면 `YYYYMMDD-HHmmss-<short-slug>`를 사용하세요. 확인된 민감하지 않은 사실은 필요할 때 `.tigerkit/browser-verify/env.md` 또는 `.tigerkit/browser-verify/screens/<screen>.md`에 기록하세요. 상위 디렉터리는 필요할 때 만들고 가능하면 원자적으로 교체하세요. `login.local.md`를 자동으로 만들지 마세요. 사용자가 명시적으로 요청하면 내용을 출력하지 말고 가능하면 모드 `0600`을 사용하세요. 레거시 전역 TigerKit 상태를 검사하거나 마이그레이션하지 마세요.
 
-프로덕션 코드를 편집하거나 증거를 규칙/스킬로 승격하지 마세요. 디자인 기준이 있으면 `## Alignment`를 생략하지 말고 `Instruction`, `Design basis`, `Spacing stack`, `Relation` (`same | different | unclear`), `Expected implementation`, `User decision`, `Status`를 기록하세요. Alignment의 `Status`는 사용자 정렬 상태인 `confirmed | pending | Blocked`이며 runtime `Verdict`가 아닙니다. `different` 또는 `unclear`이면 각 선택의 최종 UI 결과를 별도로 적고 명시적 선택 질문으로 끝내세요. `same`이면 이후 screenshot capture와 실제 image 검사 계획을 기록하세요. `## Verdict`는 전체 판정, `## Verified`는 성공 조건별 확인 결과, `## Findings`는 편차·실패, `## Evidence`는 이를 뒷받침하는 경로·관찰·capture, `## Unverified`는 검사하지 못한 범위, `## Cleanup`은 owned resource 정리 결과만 소유합니다. 이 내용이 있는 섹션들이 receipt 전체이므로 별도 `## Receipt`를 만들거나 Verdict를 다시 쓰지 마세요. 각 사실은 가장 구체적인 한 섹션에만 쓰고 다른 섹션에서는 참조하며, 비어 있는 Findings·Unverified·Cleanup은 생략하세요.
+프로덕션 코드를 편집하거나 증거를 규칙/스킬로 승격하지 마세요. 단, [시각](references/visual.md)의 bounded `instrumented` evidence class는 관찰 뒤 원상복구와 잔재 실측을 조건으로 Guard/Verdict에서 허용합니다. 디자인 기준이 있으면 `## Alignment`를 생략하지 말고 `Instruction`, `Design basis`, `Spacing stack`, `Relation` (`same | different | unclear`), `Expected implementation`, `User decision`, `Status`를 기록하세요. Alignment의 `Status`는 사용자 정렬 상태인 `confirmed | pending | Blocked`이며 runtime `Verdict`가 아닙니다. `different` 또는 `unclear`이면 각 선택의 최종 UI 결과를 별도로 적고 명시적 선택 질문으로 끝내세요. `same`이면 이후 screenshot capture와 실제 image 검사 계획을 기록하세요. `## Verdict`는 전체 판정, `## Verified`는 성공 조건별 확인 결과, `## Findings`는 편차·실패, `## Evidence`는 이를 뒷받침하는 경로·관찰·capture, `## Unverified`는 검사하지 못한 범위, `## Cleanup`은 owned resource 정리 결과만 소유합니다. 이 내용이 있는 섹션들이 receipt 전체이므로 별도 `## Receipt`를 만들거나 Verdict를 다시 쓰지 마세요. 각 사실은 가장 구체적인 한 섹션에만 쓰고 다른 섹션에서는 참조하며, 비어 있는 Findings·Unverified·Cleanup은 생략하세요.
 
 ## DO NOT / ANTI-PATTERNS
 
@@ -130,6 +130,9 @@ Browser 연결 중단, page crash, navigation timeout 또는 성공 조건에 �
 - 이번 실행이 생성한 capture를 tool temp·기본 download·사용자 scratch에 남기거나 ledger 밖 경로를 최종 evidence로 보고하지 마세요.
 - Sensitive capture를 redaction과 residue 검증 없이 repo-local ledger로 옮기거나 evidence로 사용하지 마세요.
 - 사용자 제공 screenshot·fixture 또는 소유권이 불명확한 artifact를 ledger로 이동하지 마세요.
+- 현재 워킹트리·asset pipeline·serving version 증명 없이 기존 server를 재사용하거나 stale 관측을 코드 결함으로 분류하지 마세요.
+- `instrumented` 우회를 값싼 직접 관측 대신 사용하거나 잔재 실측 없이 검증 완료로 보고하지 마세요.
+- `pre-existing`을 baseline 재현 없이 주장하거나 causal fix를 negative control 없이 `Pass`로 판정하지 마세요.
 - DOM, accessibility tree 또는 network 성공을 screenshot 실제 검사 대신 사용하지 마세요.
 - 실제 결제·삭제·외부 발송처럼 되돌릴 수 없는 동작을 안전한 환경과 명시적 권한 없이 실행하지 마세요.
 - Keyboard/focus/semantic evidence를 screenshot으로 대체하거나 제한된 flow 검사로 전체 WCAG 준수를 주장하지 마세요.

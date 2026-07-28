@@ -83,6 +83,11 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "implement-active-drive-handoff-triggers",
                 "implement-blocks-source-current-ui-mismatch",
                 "implement-production-behavior-requires-durable-test",
+                "browser-bounds-instrumented-evidence",
+                "browser-instrumentation-residue-failure-is-unverifiable",
+                "browser-proves-current-serving-source",
+                "browser-classifies-failure-origin",
+                "browser-causal-fix-requires-negative-control",
             }.issubset(REQUIRED_BEHAVIOR_CASES)
         )
         self.assertFalse(

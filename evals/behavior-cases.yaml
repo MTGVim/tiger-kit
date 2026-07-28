@@ -304,6 +304,24 @@
 - case: browser-redacts-sensitive-captures
   skill: tk-browser-verify
   expect: "Sensitive network, HAR, and console captures are used only after redaction and residue checks; unignored repo scratch never retains unverified sensitive evidence."
+- case: browser-bounds-instrumented-evidence
+  skill: tk-browser-verify
+  expect: "Guard and Verdict permit instrumented evidence only for bounded auth/unstable-driver or short-timer states, after no-source and DOM-injection options fail, with a hold variant and measured source-residue cleanup."
+- case: browser-instrumentation-residue-failure-is-unverifiable
+  skill: tk-browser-verify
+  expect: "Instrumented verification is Unverifiable unless the target diff returns to its pre-instrumentation state, the TEMP marker count is zero, and no instrumentation delta entered a commit."
+- case: browser-labels-user-observed-evidence
+  skill: tk-browser-verify
+  expect: "A nondeterministic driver may justify user-observed evidence, but it is labeled with computed state not recorded and is never reported as agent-measured computed evidence."
+- case: browser-proves-current-serving-source
+  skill: tk-browser-verify
+  expect: "An existing server is reused only with exact worktree cwd, composite asset-watch evidence, and a serving-version measurement; cwd alone never proves current source."
+- case: browser-classifies-failure-origin
+  skill: tk-browser-verify
+  expect: "Every Fail is classified change-related, pre-existing, or environment; pre-existing requires the same failure reproduced on a baseline environment."
+- case: browser-causal-fix-requires-negative-control
+  skill: tk-browser-verify
+  expect: "Computed-vs-declared diagnosis identifies the winning stylesheet rule, and a causal-fix Verdict requires positive and negative controls plus instrumentation cleanup."
 - case: learn-requires-eval-and-compatibility
   skill: tk-learn
   expect: "A skill candidate includes trigger validation, success and boundary assertions, a baseline plan, and a portable-core versus host-extension compatibility decision before approval."

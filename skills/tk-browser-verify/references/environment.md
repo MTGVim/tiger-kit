@@ -22,6 +22,22 @@ BROWSER=none yarn start
 
 `BROWSER=none && yarn start`는 child process에 환경 변수를 전달하는 예시로 사용하지 마세요. Runner가 `BROWSER=none`을 지원하지 않으면 확인된 flag나 configuration을 사용하세요. 비활성화 방법이 없으면 server 실행을 막지 말고 이번 실행이 새로 연 owned tab만 닫고 그 사실을 보고하세요.
 
+## 검증 대상 최신성
+
+이미 server가 LISTEN 중이면 먼저 process cwd, 명령, 소유권, auto-open 억제, asset watcher를 확인하세요. Auto-open을 억제하지 않은 server는 이번 실행 소유이거나 사용자가 종료를 승인한 경우에만 PID를 확인해 종료·재기동하고 이미 열린 tab을 알리세요. 다른 실행이나 사용자의 process는 건드리지 마세요.
+
+기존 server 재사용은 다음을 모두 만족할 때만 허용합니다.
+
+1. process cwd가 현재 검증 대상 worktree와 정확히 같습니다. 다른 worktree의 process는 그대로 두고 별도 port를 사용하거나 대기하세요.
+2. 사전 빌드 asset을 쓰면 server와 asset watch를 함께 실행한 composite 명령이라는 process evidence가 있습니다.
+3. 현재 worktree에만 있는 문자열이 response/bundle에 존재하거나 해당 변경의 렌더 결과가 나타난다는 serving-version 실측이 있습니다. Marker가 필요하면 [시각](visual.md)의 `instrumented` 및 residue gate를 따르세요.
+
+셋 중 하나라도 확인할 수 없으면 기존 server를 재사용하지 마세요. 안전하게 별도 port에서 auto-open 억제와 asset watch를 포함한 composite 명령으로 시작하고, 새 tab 가능성을 미리 알리세요.
+
+사전 빌드 CSS나 asset을 import하는 저장소에서는 마지막 source 편집 이후 재생성/watch evidence를 확인하세요. 새 style이 무시되거나 상속값으로 보이면 component 결함으로 단정하기 전에 asset 재생성, hard reload, serving-version을 재검증하세요.
+
+Verdict `## Evidence`에는 `Working tree`, `Server process/cwd`, `Asset pipeline`, `Serving version proof`를 기록하세요. cwd 일치만으로 현재 source를 봤다고 주장하지 마세요.
+
 ## Interactive auth
 
 Credential 직접 입력, OTP, 2FA/2-step verification, passkey, CAPTCHA, 기기 승인처럼 사용자가 직접 완료해야 하고 headless에서 진행할 수 없는 interactive auth에서만 사용자 승인 후 headed로 전환하세요. Repo 밖 user-local persistent profile에서 사용자에게 직접 로그인하도록 요청하세요. 인증 입력 화면을 screenshot·trace·video로 capture하지 말고 profile 경로, cookie, token, secret도 출력·복사·commit하지 마세요.
