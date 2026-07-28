@@ -13,7 +13,8 @@ metadata:
 
 Apply on explicit invocation or a clear request to extract reusable candidates
 from evidence. Do not auto-apply to an ordinary summary or implementation
-completion, and do not invoke another skill. Implicit mode is report-only.
+completion. Implicit mode is report-only. Do not invoke another skill except
+for the single bounded diagnosis handoff below.
 
 Read current conversation, changes, diff, implementation/test/review outcomes,
 relevant `.tigerkit/` artifacts, the current host's discoverable file-based
@@ -33,6 +34,35 @@ choose `propose | update | merge | no-op | discard`.
    candidates; choose target and action. A separate Draft owns wording.
 5. `apply/receipt`: combine candidate, separate approval, and fresh target state
    into the transition-table result and references; do not copy candidate body.
+
+### Conditional Agent Skill diagnosis
+
+Before promoting a root-cause-dependent `propose | update | merge`, hand off to
+`tk-skill-diagnose` exactly once only when all four conditions are verified:
+
+1. a specific Agent Skill name or exact `SKILL.md` path;
+2. an observable expected/observed mismatch or measured resource anomaly;
+3. root cause is not already verified;
+4. the candidate action depends on that cause being true.
+
+The request must explicitly concern a skill incident, its retrospective, or
+reuse of that incident evidence. Do not hand off for historical mentions,
+existing valid diagnosis receipts, `no-op | discard`, or generic reflection.
+If host-native sibling handoff is unavailable, return a `Diagnosis required`
+payload and `Unverifiable`; never imitate fresh empirical diagnosis inline.
+
+Send the exact incident ID, target/path, host/invocation, observed prompt,
+expected behavior or resource anchor, observed behavior/metrics, evidence
+paths/commands, candidate/baseline refs, and `Caller: tk-reflect`. Mark unknowns
+`unverified`.
+
+After return, use only `Reproduced` plus verified root cause as evidence.
+`Not reproduced` does not verify the original causal claim.
+`Inconclusive | Blocked | Unverifiable` keeps confidence `low` and prevents a
+root-cause-dependent promotion. Efficiency evidence also requires preserved
+correctness. Never call diagnosis twice for one run, call it again for the same
+`Incident ID + target + blocker`, or allow diagnosis to call back into reflect.
+End equivalent recurrence as `Blocked`.
 
 ### Candidate transition table
 
@@ -155,5 +185,7 @@ canonical headings, IDs, fields, and status tokens remain unchanged.
 - Do not duplicate an existing skill or mutate without apply approval.
 - Do not omit discoverable persistent memory from prior-art checks or invent an
   undiscovered host memory path.
+- Do not diagnose inline, repeat a diagnosis handoff, or create a
+  reflect/diagnose cycle.
 - Do not promote raw credentials/logs/screenshots or one-off workarounds.
 - Do not omit, reuse, or renumber candidate IDs, or omit Summary.

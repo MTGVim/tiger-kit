@@ -1,0 +1,201 @@
+{
+  "skill": "tk-skill-diagnose",
+  "kind": "hybrid",
+  "queries": [
+    {
+      "id": "train-positive-incident",
+      "split": "train",
+      "query": "tk-learn이 일반 구현 요청에 과잉 호출되는 원인을 clean context에서 재현해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "train-negative-code-bug",
+      "split": "train",
+      "query": "이 React 렌더링 버그를 디버깅해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-positive-malfunction",
+      "split": "validation",
+      "query": "특정 Agent Skill이 approval gate를 반복해서 건너뛰는 원인을 clean run으로 재현하고 분석해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-overtrigger",
+      "split": "validation",
+      "query": "왜 tk-learn이 버튼 색 변경 요청에도 자동 호출되는지 진단해줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-output-contract",
+      "split": "validation",
+      "query": "tk-drive가 terminal receipt 없이 멈추는 instruction/output contract 위반을 재현해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal",
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-host-compatibility",
+      "split": "validation",
+      "query": "Claude Code에서는 load되는데 Codex에서 tk-reflect가 안 불리는 host compatibility 차이를 diagnose해줘",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-eval-false-negative",
+      "split": "validation",
+      "query": "실제 tk-implement 출력과 Git state는 맞는데 grader만 실패하는지 skill과 eval 원인을 분리해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-loop",
+      "split": "validation",
+      "query": "tk-drive가 같은 blocker와 handoff를 네 번 반복하는 이유 좀 봐줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-resource",
+      "split": "validation",
+      "query": "tk-drive token 3배 회귀 진단",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-positive-darwin",
+      "split": "validation",
+      "query": "Stable과 Darwin candidate 중 어느 tk-browser-verify가 이 incident에서 퇴행했는지 matched trials로 비교해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "compound",
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-typo",
+      "split": "validation",
+      "query": "tk-learn 과잉트리거 원인 재현해주새요",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-positive-stability",
+      "split": "validation",
+      "query": "같은 prompt에서 tk-to-spec 결과와 terminal state가 매번 흔들리는 이유를 진단해줘",
+      "should_trigger": true,
+      "facets": [
+        "casual",
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-react",
+      "split": "validation",
+      "query": "이 React component의 hydration bug를 고쳐 주세요.",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-code-performance",
+      "split": "validation",
+      "query": "이 API를 빠르게 최적화해줘",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-grooming",
+      "split": "validation",
+      "query": "기존 repository skill들의 중복과 trigger 범위를 정적으로 감사해 주세요.",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-learn",
+      "split": "validation",
+      "query": "이 반복 workflow를 새 Agent Skill로 작성해 주세요.",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-reflect",
+      "split": "validation",
+      "query": "이번 diff에서 재사용 가능한 rule 후보만 분류해 주세요.",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-darwin",
+      "split": "validation",
+      "query": "모든 tk-* skill의 품질 점수를 올리고 catalog-wide optimization을 해 주세요.",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-typo",
+      "split": "validation",
+      "query": "SKILL.md 오탈자 한 줄만 고처줘",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-negative-word-only",
+      "split": "validation",
+      "query": "skill 문서",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-negative-tool-mention",
+      "split": "validation",
+      "query": "Use this skill tool while implementing the login page",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-negative-summary",
+      "split": "validation",
+      "query": "방금 skill 작업 결과를 짧게 요약해줘",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    }
+  ]
+}

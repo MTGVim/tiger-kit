@@ -58,6 +58,12 @@ CATALOG_ROUTING_BOUNDARIES = {
     "tk-drive vs tk-handoff/generic continue",
     "tk-drive vs tk-grill-me",
     "tk-merge-conflict vs ordinary conflict-marker edit",
+    "tk-skill-diagnose vs ordinary application/code debugging",
+    "tk-skill-diagnose vs tk-grooming",
+    "tk-skill-diagnose vs tk-learn",
+    "tk-skill-diagnose vs tk-reflect",
+    "tk-skill-diagnose vs Darwin/general optimization",
+    "tk-reflect conditional handoff vs generic reflection",
 }
 HYBRID_TRIGGER_FACETS = {"formal", "casual", "typo", "ko-en", "short", "compound"}
 HANGUL_SYLLABLE = re.compile(r"[가-힣]")
@@ -72,6 +78,7 @@ EXPECTED_SKILLS = {
     "tk-merge-conflict",
     "tk-prototype",
     "tk-reflect",
+    "tk-skill-diagnose",
     "tk-to-spec",
     "tk-to-tickets",
 }
@@ -223,6 +230,22 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-aggregate-review-boundary",
     "grill-accepts-active-drive-handoff",
     "grill-returns-control-to-drive",
+    "skill-diagnose-reproduces-overtrigger-selection",
+    "skill-diagnose-isolates-approval-bypass",
+    "skill-diagnose-separates-grader-false-negative",
+    "skill-diagnose-classifies-host-loading-difference",
+    "skill-diagnose-verifies-efficiency-regression",
+    "skill-diagnose-requires-resource-anchor",
+    "skill-diagnose-rejects-cheaper-incorrect-candidate",
+    "skill-diagnose-does-not-patch-unreproduced-incident",
+    "skill-diagnose-bounds-one-theme-and-holdout",
+    "skill-diagnose-never-mutates-canonical-path",
+    "skill-diagnose-drafts-anonymized-upstream-issue",
+    "skill-diagnose-keeps-consumer-drift-local",
+    "skill-diagnose-redacts-private-upstream-evidence",
+    "reflect-hands-off-qualified-skill-incident-once",
+    "reflect-skips-diagnosis-without-four-gate",
+    "reflect-blocks-repeated-diagnosis-handoff",
 }
 
 
@@ -461,6 +484,7 @@ def validate_repository_contract() -> list[str]:
         "evals/trigger-cases.yaml",
         "evals/behavior-cases.yaml",
         "evals/catalog-routing.json",
+        "evals/prompts/skill-diagnostic.md",
     )
     for relative in required_files:
         if not (ROOT / relative).is_file():
@@ -477,7 +501,7 @@ def validate_repository_contract() -> list[str]:
     required_text = {
         "README.md": (
             "TigerKit 20.1.4",
-            "12",
+            "13",
             "Claude Code",
             "Codex",
             "Hermes Agent",
@@ -493,9 +517,11 @@ def validate_repository_contract() -> list[str]:
             "Phase ownership",
             "one ticket",
         ),
-        "CHANGELOG.md": ("12", "hybrid", "v18.0.4"),
+        "CHANGELOG.md": ("13", "hybrid", "v18.0.4"),
         "NOTICE.md": (
             "mattpocock/skills",
+            "mizchi/skills",
+            "empirical-prompt-tuning",
             "relationship: adapted",
             "Behavior merged from removed adapted skills",
             "MIT License",
@@ -525,6 +551,28 @@ def validate_repository_contract() -> list[str]:
             "| No. | Rule | Summary | Target |",
             "| — | None | No reusable rule/skill candidate | No application |",
             "Only `tk-learn` creates a new skill or semantically updates/merges one",
+            "### Conditional Agent Skill diagnosis",
+        ),
+        "skills/tk-skill-diagnose/SKILL.md": (
+            "## Intake gate",
+            "Reproduced | Not reproduced |",
+            "## Efficiency gate",
+            "Never semantically mutate the canonical source skill",
+            "upstream-draft-ready",
+            "user's language",
+        ),
+        "scripts/run_skill_evals.py": (
+            '"--diagnose"',
+            '"--diagnostic-scenario-limit"',
+            '"--diagnostic-max-iterations"',
+            '"normal-records.json"',
+            '"diagnostic-records.json"',
+            '"diagnostic-ledger.json"',
+        ),
+        "evals/prompts/skill-diagnostic.md": (
+            "TIGERKIT_DIAGNOSTIC_START",
+            "TIGERKIT_DIAGNOSTIC_END",
+            "Do not guess an expected answer",
         ),
         "skills/tk-grooming/SKILL.md": (
             "Assign `GR-01`, `GR-02`, ... once in first-identification order",
@@ -1061,7 +1109,7 @@ def validate_eval_fixtures() -> list[str]:
         if duplicates:
             errors.append(f"evals/trigger-cases.yaml: duplicate skills: {', '.join(sorted(set(duplicates)))}")
         if set(entries) != EXPECTED_SKILLS:
-            errors.append("evals/trigger-cases.yaml: cover exactly the 12 canonical skills")
+            errors.append("evals/trigger-cases.yaml: cover exactly the 13 canonical skills")
         for skill, values in sorted(entries.items()):
             if skill in USER_INVOKED_SKILLS:
                 if values["examples"] < 2:

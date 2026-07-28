@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased — Empirical Agent Skill Diagnosis
+
+- Expanded the catalog from 12 to 13 canonical skills while retaining one
+  user-invoked skill and moving to 12 hybrid skills.
+- Added adapted `tk-skill-diagnose` for observed correctness, stability,
+  compatibility, evaluation, and efficiency incidents with clean reproduction,
+  failure-plane isolation, one-theme temporary candidates, and holdout gates.
+- Added the single conditional `tk-reflect → tk-skill-diagnose` handoff and
+  blocked reverse calls, repeated equivalent blockers, and sibling loops.
+- Added an opt-in empirical diagnostic pass to `run_skill_evals.py` with
+  answer-free prompt composition, marker-delimited structured traces, separate
+  metrics/records/ledger, and unchanged normal behavior when disabled.
+- Added external consumer provenance, anonymization, and upstream issue-draft
+  contracts without issue creation or canonical skill mutation.
+
 ## 20.1.4 — Conditional Decision Orchestration and Skill Refinement
 
 - Made `tk-drive` the single user-invoked workflow entry point and converted

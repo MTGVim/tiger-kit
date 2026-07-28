@@ -189,6 +189,54 @@
       "focus_skill": "tk-merge-conflict",
       "expected_selected_skill": null,
       "critical": false
+    },
+    {
+      "id": "skill-diagnose-vs-code-debugging",
+      "boundary": "tk-skill-diagnose vs ordinary application/code debugging",
+      "prompt": "이 React component의 렌더링 버그를 디버깅하고 고쳐 주세요.",
+      "focus_skill": "tk-skill-diagnose",
+      "expected_selected_skill": null,
+      "critical": true
+    },
+    {
+      "id": "skill-diagnose-vs-grooming",
+      "boundary": "tk-skill-diagnose vs tk-grooming",
+      "prompt": "기존 repository skill의 중복, 구조, 배치, trigger를 정적으로 감사해 주세요.",
+      "focus_skill": "tk-grooming",
+      "expected_selected_skill": "tk-grooming",
+      "critical": true
+    },
+    {
+      "id": "skill-diagnose-vs-learn",
+      "boundary": "tk-skill-diagnose vs tk-learn",
+      "prompt": "이 반복 workflow를 trigger와 eval이 있는 새 Agent Skill로 작성해 주세요.",
+      "focus_skill": "tk-learn",
+      "expected_selected_skill": "tk-learn",
+      "critical": true
+    },
+    {
+      "id": "skill-diagnose-vs-reflect",
+      "boundary": "tk-skill-diagnose vs tk-reflect",
+      "prompt": "이번 diff와 결과에서 재사용 가능한 rule 또는 skill 후보만 분류해 주세요.",
+      "focus_skill": "tk-reflect",
+      "expected_selected_skill": "tk-reflect",
+      "critical": true
+    },
+    {
+      "id": "skill-diagnose-vs-darwin",
+      "boundary": "tk-skill-diagnose vs Darwin/general optimization",
+      "prompt": "관찰된 incident 없이 모든 TigerKit skill의 점수를 catalog-wide로 최적화해 주세요.",
+      "focus_skill": "tk-skill-diagnose",
+      "expected_selected_skill": null,
+      "critical": true
+    },
+    {
+      "id": "reflect-conditional-diagnosis-handoff",
+      "boundary": "tk-reflect conditional handoff vs generic reflection",
+      "prompt": "특정 tk-drive incident의 미확정 원인에 의존하는 재사용 rule 후보를 회고하고 판정해 주세요.",
+      "focus_skill": "tk-reflect",
+      "expected_selected_skill": "tk-reflect",
+      "critical": true
     }
   ]
 }

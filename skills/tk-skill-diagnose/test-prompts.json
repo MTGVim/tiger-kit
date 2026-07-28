@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "/tk-skill-diagnose ordinary button-color prompt에서 tk-learn이 2/2 자동 선택된 incident와 정상 skill-creation control을 비교해 주세요.",
+    "expected": "과잉 호출을 selection plane으로 재현하고 incident와 positive control의 routing evidence를 분리한다."
+  },
+  {
+    "id": 2,
+    "prompt": "/tk-skill-diagnose 원인이 확인됐으니 canonical skills/tk-learn/SKILL.md를 바로 고치고 commit해 주세요.",
+    "expected": "canonical mutation/commit을 거부하고 isolated minimal candidate evidence와 tk-learn handoff proposal만 반환한다."
+  }
+]

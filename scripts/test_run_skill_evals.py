@@ -7,10 +7,18 @@ from pathlib import Path
 
 if __package__:
     from scripts.run_skill_evals import (
+        DIAGNOSTIC_MARKER_END,
+        DIAGNOSTIC_MARKER_START,
         build_verdict,
+        build_diagnostic_ledger,
         compare_catalog_contracts,
+        compare_diagnostics,
         compare_eval_contracts,
+        compose_diagnostic_prompt,
+        evaluate_diagnostic_checkout,
         evaluate_checkout,
+        parse_diagnostic_output,
+        summarize_diagnostic_records,
         summarize_trigger_outcomes,
         validate_adapter_result,
         validate_case_filter,
@@ -18,10 +26,18 @@ if __package__:
     )
 else:
     from run_skill_evals import (
+        DIAGNOSTIC_MARKER_END,
+        DIAGNOSTIC_MARKER_START,
         build_verdict,
+        build_diagnostic_ledger,
         compare_catalog_contracts,
+        compare_diagnostics,
         compare_eval_contracts,
+        compose_diagnostic_prompt,
+        evaluate_diagnostic_checkout,
         evaluate_checkout,
+        parse_diagnostic_output,
+        summarize_diagnostic_records,
         summarize_trigger_outcomes,
         validate_adapter_result,
         validate_case_filter,
@@ -57,6 +73,20 @@ class AdapterResultTest(unittest.TestCase):
                 }
             ),
             [],
+        )
+
+    def test_diagnostic_only_metrics_do_not_change_normal_adapter_contract(self) -> None:
+        result = {
+            "skill_loaded": True,
+            "output": "ok",
+            "terminal_status": "Pass",
+            "tool_uses": "legacy-extra-field",
+        }
+
+        self.assertEqual(validate_adapter_result(result), [])
+        self.assertIn(
+            "adapter result tool_uses must be numeric or null",
+            validate_adapter_result(result, diagnostic=True),
         )
 
     def test_rejects_artifact_disposition_as_terminal_status(self) -> None:
@@ -224,6 +254,465 @@ class TriggerMetricTest(unittest.TestCase):
         self.assertEqual(metrics["user-invoked"]["validation"]["recall"], 1.0)
         positive = next(row for row in case_metrics if row["case"].endswith("positive"))
         self.assertEqual(positive["run_variance"], 0.25)
+
+
+class DiagnosticRunnerTest(unittest.TestCase):
+    def payload(
+        self,
+        *,
+        phase: str = "ok",
+        points: list[dict[str, str]] | None = None,
+        fill_ins: list[str] | None = None,
+        retries: int = 0,
+    ) -> dict[str, object]:
+        return {
+            "trace": {
+                "understanding": phase,
+                "planning": "ok",
+                "execution": "ok",
+                "formatting": "ok",
+            },
+            "unclear_points": points or [],
+            "discretionary_fill_ins": fill_ins or [],
+            "retries": retries,
+        }
+
+    def marked(self, payload: dict[str, object], deliverable: str = "deliverable") -> str:
+        return (
+            deliverable
+            + "\n"
+            + DIAGNOSTIC_MARKER_START
+            + "\n```json\n"
+            + json.dumps(payload)
+            + "\n```\n"
+            + DIAGNOSTIC_MARKER_END
+        )
+
+    def record(
+        self,
+        payload: dict[str, object] | None,
+        *,
+        case: str = "tk-sample:behavior:incident",
+        normal_passed: bool = True,
+        safety: bool = False,
+        role: str = "incident",
+        parse_error: str | None = None,
+        tokens: int = 10,
+    ) -> dict[str, object]:
+        return {
+            "case": case,
+            "host": "codex",
+            "scenario_role": role,
+            "normal_passed": normal_passed,
+            "safety": safety,
+            "diagnostic": payload,
+            "parse_error": parse_error,
+            "total_tokens": tokens,
+            "duration_ms": 10,
+            "tool_uses": 1,
+            "nested_calls": 0,
+        }
+
+    def test_parses_marker_json_and_keeps_deliverable_separate(self) -> None:
+        deliverable, payload, error = parse_diagnostic_output(
+            self.marked(self.payload(), "normal result")
+        )
+
+        self.assertEqual(deliverable, "normal result")
+        self.assertEqual(payload, self.payload())
+        self.assertIsNone(error)
+
+    def test_missing_and_malformed_diagnostics_are_parse_errors(self) -> None:
+        _, missing, missing_error = parse_diagnostic_output("normal result")
+        malformed = (
+            "normal\n"
+            + DIAGNOSTIC_MARKER_START
+            + "\n{bad json}\n"
+            + DIAGNOSTIC_MARKER_END
+        )
+        _, invalid, invalid_error = parse_diagnostic_output(malformed)
+
+        self.assertIsNone(missing)
+        self.assertIn("markers", str(missing_error))
+        self.assertIsNone(invalid)
+        self.assertIn("malformed", str(invalid_error))
+
+    def test_repeated_diagnostic_markers_do_not_pollute_deliverable(self) -> None:
+        output = (
+            "normal result\n"
+            + DIAGNOSTIC_MARKER_START
+            + "\n{}\n"
+            + DIAGNOSTIC_MARKER_START
+            + "\n{}\n"
+            + DIAGNOSTIC_MARKER_END
+        )
+
+        deliverable, payload, error = parse_diagnostic_output(output)
+
+        self.assertEqual(deliverable, "normal result")
+        self.assertIsNone(payload)
+        self.assertIn("repeated", str(error))
+
+    def test_rejects_noncanonical_diagnostic_fields(self) -> None:
+        payload = self.payload()
+        payload["unexpected"] = "value"
+
+        _, parsed, error = parse_diagnostic_output(self.marked(payload))
+
+        self.assertIsNone(parsed)
+        self.assertIn("canonical fields", str(error))
+
+    def test_prompt_composition_does_not_add_case_expectations(self) -> None:
+        prompt = compose_diagnostic_prompt("incident prompt", "diagnostic suffix")
+
+        self.assertIn("incident prompt", prompt)
+        self.assertIn("diagnostic suffix", prompt)
+        self.assertNotIn("SECRET_EXPECTED_OUTPUT", prompt)
+        self.assertNotIn("SECRET_ASSERTION_ANSWER", prompt)
+
+    def test_repeated_and_one_off_unclear_points_are_separate(self) -> None:
+        repeated = {
+            "issue": "loop",
+            "cause": "missing blocker key",
+            "general_fix_rule": "fingerprint blockers",
+        }
+        one_off = {
+            "issue": "wording",
+            "cause": "rare alias",
+            "general_fix_rule": "name the alias",
+        }
+        records = [
+            self.record(self.payload(points=[repeated, one_off])),
+            self.record(self.payload(points=[repeated])),
+        ]
+
+        summary = summarize_diagnostic_records(records)
+
+        self.assertEqual(len(summary["new_unclear_points"]), 2)
+        self.assertEqual(len(summary["repeated_unclear_points"]), 1)
+        self.assertEqual(summary["status"], "Concern")
+
+    def test_critical_and_holdout_regressions_beat_resource_savings(self) -> None:
+        baseline = summarize_diagnostic_records(
+            [self.record(self.payload(), tokens=100), self.record(self.payload(), tokens=100)]
+        )
+        candidate = summarize_diagnostic_records(
+            [
+                self.record(
+                    self.payload(),
+                    case="tk-sample:behavior:holdout",
+                    normal_passed=False,
+                    role="holdout",
+                    tokens=10,
+                )
+            ]
+        )
+
+        verdict = compare_diagnostics(baseline, candidate)
+
+        self.assertEqual(verdict["status"], "Fail")
+        self.assertTrue(any("holdout" in reason for reason in verdict["reasons"]))
+
+    def test_repeated_new_phase_and_retry_regression_fail(self) -> None:
+        baseline = summarize_diagnostic_records(
+            [self.record(self.payload()), self.record(self.payload())]
+        )
+        candidate = summarize_diagnostic_records(
+            [
+                self.record(self.payload(phase="stuck", retries=1)),
+                self.record(self.payload(phase="stuck", retries=1)),
+            ]
+        )
+
+        verdict = compare_diagnostics(baseline, candidate)
+
+        self.assertEqual(verdict["status"], "Fail")
+        self.assertTrue(verdict["phase_regressions"])
+        self.assertTrue(verdict["retry_regressions"])
+
+    def test_one_off_phase_retry_and_parse_regressions_are_concerns(self) -> None:
+        baseline = summarize_diagnostic_records(
+            [self.record(self.payload()), self.record(self.payload())]
+        )
+        candidate = summarize_diagnostic_records(
+            [
+                self.record(self.payload(phase="stuck", retries=1)),
+                self.record(None, parse_error="missing diagnostic markers"),
+            ]
+        )
+
+        verdict = compare_diagnostics(baseline, candidate)
+
+        self.assertEqual(verdict["status"], "Concern")
+        self.assertTrue(any("one-off new" in item for item in verdict["concerns"]))
+        self.assertTrue(any("one-off retry" in item for item in verdict["concerns"]))
+        self.assertTrue(any("malformed" in item for item in verdict["concerns"]))
+
+    def test_evaluate_diagnostics_keeps_metrics_out_of_normal_summary(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            checkout = root / "checkout"
+            (checkout / "skills" / "tk-sample").mkdir(parents=True)
+            adapter = root / "adapter.py"
+            payload = json.dumps(self.payload())
+            adapter.write_text(
+                "import json\n"
+                f"marker = {self.marked(self.payload(), 'normal').__repr__()}\n"
+                "print(json.dumps({'skill_loaded': True, 'output': marker, "
+                "'terminal_status': 'Pass', 'total_tokens': 7, "
+                "'tool_uses': 2, 'nested_calls': 0}))\n",
+                encoding="utf-8",
+            )
+            contracts = {
+                "tk-sample": {
+                    "triggers": {"kind": "hybrid", "queries": []},
+                    "behavior": {
+                        "evals": [
+                            {
+                                "id": "incident",
+                                "prompt": "run incident",
+                                "assertions": [
+                                    {"type": "terminal_status", "expected": "Pass"}
+                                ],
+                            }
+                        ]
+                    },
+                }
+            }
+
+            diagnostic, records = evaluate_diagnostic_checkout(
+                checkout,
+                contracts,
+                adapter_command=f"python3 {adapter}",
+                grader_command="unused",
+                host="codex",
+                runs=2,
+                case_filter=None,
+                scenario_limit=1,
+                suffix="diagnostic suffix",
+            )
+
+            self.assertEqual(diagnostic["status"], "Pass")
+            self.assertEqual(diagnostic["resource_metrics"]["total_tokens"], 14.0)
+            self.assertTrue(diagnostic["minimum_trials_met"])
+            self.assertEqual(len(records), 2)
+
+    def test_resource_comparison_requires_two_matched_trials(self) -> None:
+        baseline = summarize_diagnostic_records([self.record(self.payload())])
+        candidate = summarize_diagnostic_records([self.record(self.payload(), tokens=1)])
+
+        verdict = compare_diagnostics(baseline, candidate)
+
+        self.assertEqual(verdict["resource_comparison_status"], "Unverifiable")
+        self.assertFalse(
+            any("total_tokens" in concern for concern in verdict["concerns"])
+        )
+
+    def test_available_tool_regression_is_reported_after_matched_trials(self) -> None:
+        baseline_records = [
+            self.record(self.payload()),
+            self.record(self.payload()),
+        ]
+        candidate_records = [
+            self.record(self.payload()),
+            self.record(self.payload()),
+        ]
+        for record in baseline_records:
+            record["tool_uses"] = 0
+        for record in candidate_records:
+            record["tool_uses"] = 2
+
+        verdict = compare_diagnostics(
+            summarize_diagnostic_records(baseline_records),
+            summarize_diagnostic_records(candidate_records),
+        )
+
+        self.assertEqual(verdict["resource_comparison_status"], "verified")
+        self.assertTrue(
+            any("tool_uses" in concern for concern in verdict["concerns"])
+        )
+
+    def test_diagnostic_ledger_separates_baseline_and_candidate_counts(self) -> None:
+        point = {
+            "issue": "loop",
+            "cause": "missing key",
+            "general_fix_rule": "fingerprint blockers",
+        }
+        records = [
+            {"ref": "baseline", "diagnostic": self.payload(points=[point])},
+            {"ref": "candidate", "diagnostic": self.payload(points=[point])},
+            {"ref": "candidate", "diagnostic": self.payload(points=[point])},
+        ]
+
+        ledger = build_diagnostic_ledger(records)
+        entry = ledger["entries"][0]
+
+        self.assertEqual(entry["baseline_seen"], 1)
+        self.assertEqual(entry["candidate_seen"], 2)
+
+    def test_dry_run_schema_changes_only_when_diagnose_is_enabled(self) -> None:
+        script = Path(__file__).resolve().parent / "run_skill_evals.py"
+        root = script.parent.parent
+        base = [
+            "python3",
+            str(script),
+            "--baseline",
+            "HEAD",
+            "--candidate",
+            "HEAD",
+            "--host",
+            "codex",
+            "--dry-run",
+        ]
+        normal = json.loads(
+            subprocess.run(
+                base,
+                cwd=root,
+                text=True,
+                capture_output=True,
+                check=True,
+            ).stdout
+        )
+        diagnostic = json.loads(
+            subprocess.run(
+                [*base, "--runs", "1", "--diagnose"],
+                cwd=root,
+                text=True,
+                capture_output=True,
+                check=True,
+            ).stdout
+        )
+
+        self.assertNotIn("diagnostics", normal["plan"])
+        self.assertEqual(diagnostic["plan"]["diagnostics"]["enabled"], True)
+        self.assertEqual(diagnostic["plan"]["diagnostics"]["runs"], 2)
+
+    def test_live_diagnostic_run_writes_separate_record_files(self) -> None:
+        script = Path(__file__).resolve().parent / "run_skill_evals.py"
+        repository = script.parent.parent
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            adapter = root / "adapter.py"
+            grader = root / "grader.py"
+            output = root / "output"
+            diagnostic_payload = json.dumps(self.payload())
+            adapter.write_text(
+                "import json, os\n"
+                "mode = os.environ['TK_EVAL_MODE']\n"
+                "output = 'normal deliverable'\n"
+                "if mode == 'diagnostic':\n"
+                f"    output += '\\n{DIAGNOSTIC_MARKER_START}\\n'\n"
+                f"    output += {diagnostic_payload!r}\n"
+                f"    output += '\\n{DIAGNOSTIC_MARKER_END}'\n"
+                "print(json.dumps({\n"
+                "    'skill_loaded': True,\n"
+                "    'output': output,\n"
+                "    'terminal_status': 'Pending',\n"
+                "    'total_tokens': 7 if mode == 'diagnostic' else 3,\n"
+                "    'duration_ms': 11 if mode == 'diagnostic' else 5,\n"
+                "    'tool_uses': 1,\n"
+                "    'nested_calls': 0,\n"
+                "}))\n",
+                encoding="utf-8",
+            )
+            grader.write_text(
+                "import json, os\n"
+                "assertions = json.loads(os.environ['TK_EVAL_ASSERTIONS'])\n"
+                "print(json.dumps({'assertion_results': [\n"
+                "    {'passed': True, 'evidence': 'integration fixture'}\n"
+                "    for _ in assertions\n"
+                "]}))\n",
+                encoding="utf-8",
+            )
+            completed = subprocess.run(
+                [
+                    "python3",
+                    str(script),
+                    "--baseline",
+                    "HEAD",
+                    "--candidate",
+                    "HEAD",
+                    "--host",
+                    "codex",
+                    "--runs",
+                    "2",
+                    "--skill",
+                    "tk-reflect",
+                    "--case",
+                    "tk-reflect:behavior:legacy-1",
+                    "--adapter-command",
+                    f"python3 {adapter}",
+                    "--grader-command",
+                    f"python3 {grader}",
+                    "--diagnose",
+                    "--diagnostic-scenario-limit",
+                    "1",
+                    "--output",
+                    str(output),
+                ],
+                cwd=repository,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+
+            self.assertEqual(completed.returncode, 0, completed.stderr + completed.stdout)
+            expected_files = {
+                "baseline-records.json",
+                "candidate-records.json",
+                "normal-records.json",
+                "diagnostic-records.json",
+                "diagnostic-ledger.json",
+                "summary.json",
+            }
+            self.assertEqual(
+                {path.name for path in output.iterdir()},
+                expected_files,
+            )
+            summary = json.loads((output / "summary.json").read_text(encoding="utf-8"))
+            normal = json.loads(
+                (output / "normal-records.json").read_text(encoding="utf-8")
+            )
+            diagnostic = json.loads(
+                (output / "diagnostic-records.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(summary["diagnostics"]["status"], "Pass")
+            self.assertEqual({record["total_tokens"] for record in normal}, {3})
+            self.assertEqual({record["total_tokens"] for record in diagnostic}, {7})
+            self.assertEqual({record["duration_ms"] for record in normal}, {5})
+            self.assertEqual({record["duration_ms"] for record in diagnostic}, {11})
+            self.assertEqual(
+                {record["ref"] for record in diagnostic},
+                {"baseline", "candidate"},
+            )
+
+    def test_output_directory_inside_repository_remains_rejected(self) -> None:
+        script = Path(__file__).resolve().parent / "run_skill_evals.py"
+        repository = script.parent.parent
+
+        completed = subprocess.run(
+            [
+                "python3",
+                str(script),
+                "--baseline",
+                "HEAD",
+                "--candidate",
+                "HEAD",
+                "--host",
+                "codex",
+                "--dry-run",
+                "--diagnose",
+                "--output",
+                str(repository / "forbidden-eval-output"),
+            ],
+            cwd=repository,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertIn("--output must be outside the repository", completed.stderr)
 
 
 class RunnerContractTest(unittest.TestCase):
