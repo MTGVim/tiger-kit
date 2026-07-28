@@ -103,7 +103,15 @@ exists.
 
 Honor user-selected modes and decide only missing modes. Ask only when meaning
 branches into materially different outcomes or requires risky irreversible
-authority. Do not turn strategy choice into an approval gate. Example:
+authority. Do not turn strategy choice into an approval gate.
+
+`delegated` also requires a current-host capability for exactly one bounded
+autonomous implementor. If delegation was inferred and that capability is
+unavailable, fall back to `direct` and record the reason. If the user explicitly
+requires delegation and the capability is unavailable, stop `Blocked` before
+any edit.
+
+Example:
 
 ```text
 Implementation strategy: direct, no TDD — this is a copy-only change with no
