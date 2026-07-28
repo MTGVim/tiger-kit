@@ -30,7 +30,7 @@ metadata:
 
 같은 content, data와 interaction state를 유지한 채 판단 가치가 있는 핵심 concept 2–3개만 A/B 또는 A/B/C로 비교하세요. Wide viewport에서는 나란한 2–3열, narrow viewport에서는 위아래 stack을 기본으로 하세요. 동시 표시가 핵심 concept 또는 최소 legibility를 훼손할 때만 명시적 A/B 또는 A/B/C toggle을 사용하세요. 세 번째 안이 독립적인 판단 가치를 더하지 않으면 A/B에서 멈추고, repository evidence만으로 결정 가능하면 prototype을 만들지 마세요.
 
-웹 결과는 `tk-browser-verify` Guard mode로 실제 interaction, wide/narrow screenshot과 실행 URL 또는 명령을 확인하세요. 종료 시 이번 실행이 소유한 tracked harness와 임시 server만 정리하고, 기존 route·dependency·production source는 보존하세요.
+웹 결과는 `tk-browser-verify` Guard mode로 실제 interaction, 실행 URL 또는 명령과 성공 기준에 포함된 viewport screenshot을 확인하세요. Responsive/layout 차이가 가설에 있을 때만 wide/narrow를 모두 검사하고, 그렇지 않으면 viewport matrix를 추가하지 마세요. 종료 시 이번 실행이 소유한 tracked harness와 임시 server만 정리하고, 기존 route·dependency·production source는 보존하세요.
 
 기본적으로 커밋하지 마세요. 프로덕션용 추상화와 오류 처리에는 투자하지 마세요. 결과물이 프로덕션에 사용할 준비가 되었다고 절대 부르지 말고, 자동으로 승격하거나 다른 사용자 스킬을 호출하지도 마세요.
 
