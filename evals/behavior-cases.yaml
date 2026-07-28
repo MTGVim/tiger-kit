@@ -223,6 +223,9 @@
 - case: to-spec-preserves-source-ui-writing-verbatim
   skill: tk-to-spec
   expect: "Provided labels, button names, guide copy, column names, and other UI writing remain exact literals unless the user explicitly authorizes a change; drift prevents Ready."
+- case: to-spec-blocks-source-current-ui-mismatch
+  skill: tk-to-spec
+  expect: "The UI inventory contains source, current rendered/source-path, and target literal columns; a missing source column is Unverifiable, and any source-current mismatch makes all rows conflict candidates that prevent Ready without a user decision."
 - case: to-spec-active-drive-handoff
   skill: tk-to-spec
   expect: "An explicit active-drive spec handoff uses the standalone Ready contract and returns a drive-consumable phase receipt without taking downstream ownership."
@@ -244,6 +247,9 @@
 - case: to-tickets-preserves-source-ui-writing-verbatim
   skill: tk-to-tickets
   expect: "Provided UI writing remains exact in the source inventory, coverage, and owning tickets unless an explicit source decision authorizes a change."
+- case: to-tickets-blocks-source-current-ui-mismatch
+  skill: tk-to-tickets
+  expect: "Ticket decomposition preserves the three-column UI inventory and stops when the source column is absent or a source-current conflict escaped the Ready spec."
 - case: to-tickets-active-drive-handoff
   skill: tk-to-tickets
   expect: "An explicit active-drive ticket handoff uses the standalone vertical-slice contract and returns a drive-consumable ledger receipt without implementing."
@@ -286,6 +292,9 @@
 - case: implement-preserves-source-ui-writing-verbatim
   skill: tk-implement
   expect: "Provided UI writing is frozen before mutation and exactly rechecked in the implementation and staged candidate; unauthorized drift prevents commit."
+- case: implement-blocks-source-current-ui-mismatch
+  skill: tk-implement
+  expect: "Implementation requires source, current rendered/source-path, and target UI literals; missing source evidence is Unverifiable and source-current conflict prevents Pass and commit without a user decision."
 - case: browser-accessibility-is-conditional
   skill: tk-browser-verify
   expect: "Keyboard, focus, accessible-name, and error-association evidence is gathered for relevant form, dialog, navigation, or focus flows without claiming a full WCAG audit."
@@ -367,6 +376,15 @@
 - case: drive-preserves-source-ui-writing-verbatim
   skill: tk-drive
   expect: "Drive freezes exact source UI literals before spec mutation and rechecks them through spec, tickets, implementation, candidate/staged diff, and rendered UI."
+- case: drive-blocks-source-current-ui-mismatch
+  skill: tk-drive
+  expect: "Drive inventories every rendered string literal, including numeric, unit, currency, suffix, and separator tokens, and routes any source-current mismatch to a user decision before Ready, Pass, or commit."
+- case: drive-scopes-approval-to-asked-axis
+  skill: tk-drive
+  expect: "A decision approval covers only the axis explicitly asked; ancillary premises in an option explanation stay unconfirmed and cannot authorize UI writing changes."
+- case: drive-reads-complete-remote-source
+  skill: tk-drive
+  expect: "Remote preflight reads the complete body, all comments and thread updates, and referenced attachments before scope is frozen."
 - case: drive-blocks-unreadable-ui-literal
   skill: tk-drive
   expect: "Unreadable source UI literals are never guessed and prevent commit as Unverifiable."

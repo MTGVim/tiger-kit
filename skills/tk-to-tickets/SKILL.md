@@ -101,22 +101,25 @@ Do not write from `Draft | Blocked | Unverifiable`.
 
 ### 🔴 HARD GATE · source UI writing
 
-When user-provided source or the Ready spec contains UI writing, freeze a
-separate inventory before decomposition. Map every label, button, heading,
-guide/help copy, table or column name, placeholder, validation/error, and
-status text from source location and existing R/AC to its owning ticket,
-preserving the exact literal.
+For every string literal rendered in UI by user source or the Ready spec,
+freeze a separate inventory before decomposition. Labels, copy, numbers,
+units, currency, suffixes, and separators are examples, not an upper bound.
+Each row maps source location, non-empty source literal, current
+rendered/source-path literal, target literal, existing R/AC, and owning ticket.
+
+Missing source/current evidence is `Unverifiable`. Any source↔current mismatch
+makes every row a conflict candidate and prevents handoff without a user
+decision. A typo requires rechecking all same-kind tokens; never generalize
+source unreliability to adopt current code silently.
 
 Unless the user explicitly decides to change wording, preserve spelling, case,
 spacing, punctuation, symbols, numbers, and meaningful line breaks. Do not
-translate, paraphrase, shorten, correct, fix typos, or normalize during ticket
-writing. If an image literal is unreadable or sources conflict, do not guess;
-stop as `Blocked` or `Unverifiable`.
+translate, paraphrase, shorten, correct, fix typos, or normalize.
 
-After write, compare every literal against coverage and actual ticket
-acceptance/verification. Unauthorized drift or missing comparison evidence
-prevents completion and implementation handoff. Mark only approved wording as
-`authorized change`.
+After write, compare all three literal columns against coverage and actual
+ticket acceptance/verification. Unauthorized drift or missing comparison
+evidence prevents completion and implementation handoff. Mark only approved
+wording as `authorized change`.
 
 ## CHECKPOINT / STOP
 

@@ -176,20 +176,25 @@ not exception approval.
 
 ### 🔴 HARD GATE · source UI writing
 
-If user-provided source contains visible UI copy, freeze a UI-writing inventory
-before mutation. Map each label, button, heading, guide/help copy, table or
-column name, placeholder, validation/error, and status text from its source
-location to its implementation destination, preserving the exact literal.
+For every string literal rendered in UI, freeze a UI-writing inventory before
+mutation. Labels, copy, numbers, units, currency, suffixes, and separators are
+examples, not an upper bound. Each row maps source location, non-empty source
+literal, current rendered/source-path literal, target literal, and
+implementation destination.
+
+Missing source/current evidence is `Unverifiable`. Any source↔current mismatch
+makes every row a conflict candidate and prevents `Pass` or commit without a
+user decision. A typo requires rechecking all same-kind tokens; never
+generalize source unreliability to adopt current code silently.
 
 Unless the user explicitly requests a wording change, preserve spelling, case,
 spacing, punctuation, symbols, numbers, and meaningful line breaks. Prohibit
 translation, paraphrase, shortening, correction, typo fixes, and repository
-normalization. If source text is unreadable or sources conflict, do not guess;
-stop as `Blocked` until one exact literal is confirmed.
+normalization.
 
-After implementation, compare every literal in rendered UI or its source path
-and include the comparison in candidate/staged review. Any unauthorized
-character drift is `Fail`; missing exact-comparison evidence is
+After implementation, compare all three literal columns and include them in
+candidate/staged review; a code before/after table cannot replace the source
+column. Unauthorized drift is `Fail`; missing exact-comparison evidence is
 `Unverifiable`. Mark only explicitly approved wording as `authorized change`.
 
 ### 🔴 HARD GATE · browser tools

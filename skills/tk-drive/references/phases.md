@@ -17,6 +17,10 @@ drive-wide orchestration, aggregate verification, or the final receipt.
 
 - Resolve branch, initial `HEAD`, pre-existing dirty paths, and ownership
   before mutation.
+- For a remote source, retrieve the complete body, all comments and thread
+  updates, and every referenced attachment before freezing scope. An
+  inaccessible required item is `Unverifiable`; a later scope amendment is
+  source, not optional context.
 - Source precedence is: latest explicit drive input, confirmed
   same-conversation decisions, relevant current spec, relevant current
   tickets, repository instructions, code/tests.
@@ -95,6 +99,10 @@ Drive does not ask the question inline. A
 `pending | aborted | Blocked | Unverifiable` receipt stops downstream
 handoffs. A `confirmed` receipt returns cited decisions to drive without
 writing an artifact or invoking another phase.
+
+Approval is granular to the exact axis asked. A premise embedded in an option
+explanation is not confirmed by selecting that option; label it unconfirmed or
+route it as a separate decision.
 
 When spec or ticket work discovers a new user-owned decision, the phase owner
 returns `User decision: required` in its native non-success receipt to drive.

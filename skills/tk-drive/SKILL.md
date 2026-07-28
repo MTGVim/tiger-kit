@@ -49,24 +49,27 @@ phase invariants. A child success receipt is never a response boundary.
 
 ### 🔴 HARD GATE · source UI writing
 
-If user-provided source contains a label, button, heading, guide/help copy,
-table or column name, placeholder, validation/error, or status text, freeze an
-inventory before spec mutation. Map source location, exact literal, spec R/AC,
-optional ticket, and implementation destination.
+For every string literal rendered in UI, freeze an inventory before spec
+mutation; labels, copy, numbers, units, currency, suffixes, and separators are
+examples, not an upper bound. Map source location, non-empty source literal,
+current rendered/source-path literal, target literal, spec R/AC, optional
+ticket, and implementation destination.
 
-Unless the user explicitly approves a wording change, prohibit translation,
-paraphrase, shortening, correction, typo fixes, and normalization. Mark only
-approved changes as `authorized change`. An unreadable literal is
-`Unverifiable`; conflicting literals that require a user choice are `Blocked`.
+Missing source/current evidence is `Unverifiable`. Any source↔current mismatch
+makes every row a conflict candidate and prevents `Ready`, `Pass`, or commit without
+a user decision. A typo requires rechecking all same-kind tokens; never generalize
+source unreliability to adopt current code silently.
 
-Compare the same inventory exactly in the spec, tickets, implementation,
-candidate/staged diff, and rendered UI. Do not commit when any unauthorized
-drift or exact-comparison evidence gap remains.
+Approval covers only the asked axis; option premises remain unconfirmed. Only exact
+separately approved wording is an `authorized change`; prohibit all other drift.
+
+Compare the inventory exactly through spec, tickets, implementation,
+candidate/staged diff, and rendered UI; drift or evidence gaps block commit.
 
 ## Workflow
 
-1. `preflight`: resolve source, relevant spec/tickets, repository instructions,
-   branch, initial `HEAD`, dirty ownership, drift, task identity, completed
+1. `preflight`: resolve the complete source per phase invariants, relevant
+   artifacts/instructions, Git and dirty ownership, task identity, completed
    phases, and unresolved decisions.
 2. `decision phase`: when any unresolved user-owned decision prevents a Ready
    spec, explicitly hand current source, evidence, confirmed decisions, and
