@@ -63,6 +63,10 @@ If the answers are weak, choose `inline`, `merge`, `convert to reference`, `make
 ## Change discipline
 
 - Preserve canonical names, documented invocation boundaries, and upstream attribution.
+- When editing `skills/tk-*/evals/evals.json`, anchor every mutation to the
+  intended case's exact `id` and verify that new assertions remain inside that
+  case. Never target repeated JSON structure such as `assertions` or
+  `terminal_status` alone.
 - Reuse existing skill-local files before adding new surfaces; prefer deletion and the Python standard library.
 - Keep validation local-only. Do not add GitHub Actions workflows for validators, evals, packaging smoke tests, or CLI canaries.
 - Run `python3 scripts/validate_skills.py`, `python3 scripts/validate_skills.py --links-only`, and `npx --yes skills add . --list` for relevant changes.
