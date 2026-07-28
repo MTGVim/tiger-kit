@@ -367,9 +367,9 @@
 - case: drive-blocks-unreadable-ui-literal
   skill: tk-drive
   expect: "Unreadable source UI literals are never guessed and prevent commit as Unverifiable."
-- case: drive-blocks-conflicting-ui-literals
+- case: drive-routes-conflicting-ui-literals-to-decision
   skill: tk-drive
-  expect: "Conflicting source UI literals are preserved as evidence and require one user decision before work can continue from Blocked."
+  expect: "Conflicting source UI literals are preserved as evidence, handed to the grill decision phase, and return Pending without changing Git."
 - case: drive-commit-command-failure-is-fail
   skill: tk-drive
   expect: "A failed final commit command preserves its output and actual Git state and terminates as Fail without claiming commit success."

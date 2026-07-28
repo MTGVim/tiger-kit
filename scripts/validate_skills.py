@@ -183,7 +183,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-keeps-ticket-ledger",
     "drive-preserves-source-ui-writing-verbatim",
     "drive-blocks-unreadable-ui-literal",
-    "drive-blocks-conflicting-ui-literals",
+    "drive-routes-conflicting-ui-literals-to-decision",
     "drive-commit-command-failure-is-fail",
     "drive-precommit-drift-is-blocked",
     "drive-carries-authorized-ui-writing-change",
