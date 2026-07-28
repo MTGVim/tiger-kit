@@ -16,7 +16,7 @@ if __package__:
         validate_release_alignment,
         validate_release_version_contract,
         validate_runtime_scratch,
-        validate_phase_owner_language,
+        validate_skill_language,
         validate_skill,
         validate_skill_eval_files,
     )
@@ -31,7 +31,7 @@ else:
         validate_release_alignment,
         validate_release_version_contract,
         validate_runtime_scratch,
-        validate_phase_owner_language,
+        validate_skill_language,
         validate_skill,
         validate_skill_eval_files,
     )
@@ -108,25 +108,19 @@ class CanonicalSkillContractTest(unittest.TestCase):
 
         self.assertEqual(reflect, grooming)
 
-    def test_phase_owner_contracts_use_english_and_preserve_user_output_language(
+    def test_canonical_skill_contracts_use_english_and_preserve_user_output_language(
         self,
     ) -> None:
         root = Path(__file__).resolve().parents[1]
 
-        self.assertEqual(validate_phase_owner_language(root), [])
+        self.assertEqual(validate_skill_language(root), [])
 
-    def test_phase_owner_language_validator_rejects_mixed_operational_prose(
+    def test_skill_language_validator_rejects_mixed_operational_prose(
         self,
     ) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            for skill in (
-                "tk-drive",
-                "tk-grill-me",
-                "tk-implement",
-                "tk-to-spec",
-                "tk-to-tickets",
-            ):
+            for skill in EXPECTED_SKILLS:
                 skill_dir = root / "skills" / skill
                 references = skill_dir / "references"
                 references.mkdir(parents=True)
@@ -134,13 +128,13 @@ class CanonicalSkillContractTest(unittest.TestCase):
                     "Operational contract. User-facing prose follows the user's language.\n",
                     encoding="utf-8",
                 )
-            mixed = root / "skills" / "tk-drive" / "references" / "phase.md"
+            mixed = root / "skills" / "tk-browser-verify" / "references" / "phase.md"
             mixed.write_text("Do not mix 운영 문장.\n", encoding="utf-8")
 
-            errors = validate_phase_owner_language(root)
+            errors = validate_skill_language(root)
 
             self.assertEqual(len(errors), 1)
-            self.assertIn("phase-owner operational prose must be English", errors[0])
+            self.assertIn("canonical skill operational prose must be English", errors[0])
 
 
 class RuntimeScratchTest(unittest.TestCase):

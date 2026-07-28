@@ -1,7 +1,7 @@
 ---
 name: tk-handoff
-description: "[user/auto] 검증된 handoff artifact를 작성하거나 기존 handoff를 명확히 재개할 때 사용합니다. 일반 요약·상태 질문·generic continue에는 적용하지 않습니다."
-argument-hint: "[목표 또는 대상] [--output <경로>|--resume]"
+description: "[user/auto] Write a verified handoff artifact or explicitly resume an existing handoff. Do not apply to ordinary summaries, status questions, or generic continuation."
+argument-hint: "[goal or target] [--output <path>|--resume]"
 metadata:
   tigerkit:
     kind: hybrid
@@ -9,85 +9,116 @@ metadata:
     relationship: native
 ---
 
-# 인수인계
+# Handoff
 
-명시 호출 또는 handoff 작성·resume 의도가 명확한 요청에 사용합니다. 일반 요약·상태 질문·generic continue에는 자동으로 활성화하지 말고, 다른 스킬을 호출하지 마세요.
+Apply on explicit invocation or a clear handoff write/resume request. Do not
+auto-apply to summaries, status questions, or generic continuation, and do not
+invoke another skill.
 
 ## Workflow
 
-### 새 인수인계
+### New handoff
 
-새 작성은 다음 순서로 진행하세요.
+1. `evidence`: map current branch, files, and command results to path-cited
+   facts and `verified | unverified`.
+2. `schema`: map facts and user approvals to required-section draft and
+   `confirmed | pending` decisions.
+3. `write`: map approved draft and output path to the actual written file.
+4. `receipt`: map write/revalidation results to
+   `reported | applied | pending` and evidence locations.
 
-1. `evidence`: 입력은 현재 브랜치·파일·명령 결과이고, 출력은 경로가 붙은 확인 사실과 `verified | unverified` 목록입니다.
-2. `schema`: 입력은 확인 사실과 사용자의 승인이고, 출력은 필수 섹션별 초안과 `confirmed | pending` 결정 목록입니다.
-3. `write`: 입력은 승인된 초안과 출력 경로이고, 출력은 실제로 작성된 파일 경로입니다.
-4. `receipt`: 입력은 작성 결과와 재검증 결과이고, 출력은 `reported | applied | pending` 및 증거 위치가 구분된 인수인계입니다.
+### Resume
 
-### 인수인계 재개
+1. `state check`: compare existing handoff with current Git/files and list
+   matches plus `drift | conflict`.
+2. `materiality`: classify through the resume table with evidence.
+3. `continue or checkpoint`: follow the table's continuation/stop result.
+4. `continue or stop`: use no-drift approval or explicit material-drift
+   confirmation to produce the next work or stop reason.
 
-재개는 다음 순서로 진행하세요.
-
-1. `state check`: 입력은 기존 인수인계와 현재 Git·파일 상태이고, 출력은 일치 항목과 `drift | conflict` 목록입니다.
-2. `materiality`: 입력은 drift/conflict 목록이고, 출력은 아래 resume 판정표의 분류와 근거입니다.
-3. `continue or checkpoint`: 입력은 분류이고, 출력은 판정표의 계속 또는 중단 상태입니다.
-4. `continue or stop`: 입력은 no-drift 승인 또는 material drift에 대한 명시적 확인이고, 출력은 계속할 작업 또는 중단 사유입니다.
-
-### Resume 판정표
+### Resume decision table
 
 | Classification | Evidence | Action |
 |---|---|---|
-| `none` | branch·목표·결정·ownership·verification이 현재 증거와 일치 | `--resume`을 계속 승인으로 보고 추가 질문 없이 진행 |
-| `non-material` | timestamp·출력 순서처럼 결과를 바꾸지 않는 차이 | 차이를 기록하고 추가 질문 없이 진행 |
-| `material drift` | branch/목표 scope, confirmed decision, changed-file ownership 또는 verification 결과가 달라짐 | 필요한 결정 하나와 `pending | Blocked`; 답변 전 중단 |
-| `conflict` | handoff와 현재 source가 서로 다른 의도나 결과를 요구 | 양쪽 evidence와 선택지를 제시하고 `Blocked`; 자동 해결 금지 |
-| `unverified` | 필수 Git·파일 상태를 현재 확인할 수 없음 | 추정하지 않고 `Unverifiable` |
+| `none` | branch, goal, decisions, ownership, and verification match current evidence | treat `--resume` as approval and continue without another question |
+| `non-material` | timestamp/order differences cannot change outcome | record and continue without another question |
+| `material drift` | branch/goal scope, confirmed decisions, changed-file ownership, or verification result differs | ask one required decision; stop `pending | Blocked` |
+| `conflict` | handoff and current source require incompatible intent/result | present both evidence sets and choices; stop `Blocked` |
+| `unverified` | required Git/file state cannot be checked | do not infer; stop `Unverifiable` |
 
-## 계약
+## Contract
 
-새 인수인계의 기본 작성 대상은 `.tigerkit/handoff.md`입니다. 다음 필수 schema를 사용하세요.
+The default write target is `.tigerkit/handoff.md` with:
 
-- `Goal`: 목표와 범위
-- `Status`: 작업 진행 상태인 `pending | in_progress | completed | aborted | Blocked`
-- `Repository state`: 현재 branch·HEAD·worktree 상태
-- `Handoff path`: 작성하거나 읽은 정확한 handoff 경로
-- `Decisions`: 사용자 답변/승인과 연결된 결정만 `confirmed`로, 나머지는 `pending`
-- `Changed files`: 실제로 확인한 경로만
-- `Commands`: 실제로 실행한 명령 문자열만
-- `Verification`: Commands를 포함한 검증 항목별 결과, `verified | unverified`와 증거 위치
-- `Remaining work`: 아직 끝나지 않은 전체 작업
-- `Open questions`: 진행 전에 답이 필요한 결정
-- `Risks`: 질문과 별개로 남은 실패·회귀 가능성
-- `Next step`: Remaining work에서 선택한 즉시 실행할 한 단계
-- `Resume hints`: Next step을 반복하지 말고 재개에만 필요한 환경·순서·명령
+- `Goal`: goal and scope
+- `Status`: `pending | in_progress | completed | aborted | Blocked`
+- `Repository state`: current branch, HEAD, and worktree
+- `Handoff path`: exact path written/read
+- `Decisions`: only answer/approval-linked decisions are `confirmed`; others
+  are `pending`
+- `Changed files`: observed paths only
+- `Commands`: exact commands actually executed
+- `Verification`: per-check result, `verified | unverified`, evidence location
+- `Remaining work`: all unfinished work
+- `Open questions`: decisions required before progress
+- `Risks`: remaining failure/regression risk, separate from questions
+- `Next step`: one immediate action selected from Remaining work
+- `Resume hints`: only environment/order/commands needed to resume, without
+  repeating Next step
 
-`Next step`은 대화 내용을 재구성하지 않아도 실행할 수 있는 하나의 원자적 행동이어야 하며, exact target, 이미 충족된 prerequisite 또는 그 섹션 참조, 관찰 가능한 완료 증거를 포함하세요. 미결 `Open questions`가 실행을 막으면 downstream 작업을 적지 말고 해당 결정 하나를 얻는 것을 Next step으로 두세요.
+`Next step` must be executable without reconstructing conversation and include
+an exact target, satisfied prerequisites or section reference, and observable
+completion evidence. When an open question blocks work, Next step obtains that
+one decision instead of naming downstream execution.
 
-`verified`는 현재 실행에서 확인한 증거가 있을 때만 사용하세요. 이전 handoff의 주장, 계획, 모델 추론, 실행하지 않은 명령은 `unverified`로 유지하고 성공했다고 표현하지 마세요. Branch·HEAD는 Repository state, handoff 파일 경로는 Handoff path만 소유합니다. Commands는 과거에 실제 실행한 명령만 소유하며 Next step·Resume hints의 미래 명령을 미리 복사하지 않습니다. 실행 성공·실패는 Verification만 소유하고 Commands에 결과를 덧붙이지 마세요. Verification의 handoff 내용·schema 재확인과 Receipt의 handoff 작성 상태는 서로 다른 상태이므로 각각 한 번만 기록하고 다른 쪽에서는 참조하세요. Receipt의 `reported | applied | pending`은 handoff 작성·적용 상태이며 작업 진행 `Status`와 섞지 마세요. Receipt에는 작성·적용 상태와 내용이 있는 Repository state·Handoff path·Verification 등 섹션 참조만 남기고 raw 경로, branch·HEAD, `Commands`, 검증 결과 또는 미래 작업 본문을 복사하지 마세요. 빈 섹션은 생략하고, 기존 spec/ticket/diff 경로는 복사하지 말고 참조하세요.
+Use `verified` only for evidence checked in this run. Prior handoff claims,
+plans, model inference, and unexecuted commands remain `unverified`. Section
+ownership is strict: Repository state owns branch/HEAD; Handoff path owns the
+path; Commands owns executed command strings only; Verification owns outcomes;
+Next step/Resume hints own future commands. Receipt's
+`reported | applied | pending` is artifact disposition, not work Status.
+Receipt contains disposition and section references, not duplicated paths,
+Git state, commands, results, or future work. Omit empty sections and reference
+existing spec/ticket/diff content instead of copying it.
 
-`.tigerkit/handoff.md`는 재개용 단일 snapshot입니다. 장기 요구사항·결정은 `.tigerkit/spec.md`의 relevant R/AC를, 실제 multi-slice ledger는 `.tigerkit/tickets.md`의 ticket ID를 참조하고 본문을 복제하지 마세요. 새 `.tigerkit/work-map.md`, archive, current pointer 또는 global state를 만들지 않습니다. 기존 `work-map.md`가 있어도 legacy scratch로 무시하고 자동 수정·이관·삭제하지 마세요.
+`.tigerkit/handoff.md` is the only resume snapshot. Reference durable R/AC from
+`.tigerkit/spec.md` and multi-slice ticket IDs from `.tigerkit/tickets.md`.
+Never create `.tigerkit/work-map.md`, an archive, current pointer, or global
+state. Treat an existing work-map as legacy scratch; do not modify, migrate, or
+delete it.
 
 ## CHECKPOINT / STOP
 
-`--resume` 자체는 현재 handoff를 재개하라는 명시적 승인입니다. 계속·중단 여부는 Resume 판정표만 따르세요.
+`--resume` explicitly authorizes resume, but continuation follows only the
+resume table.
 
-상위 스크래치 디렉터리는 필요할 때 만들고, 같은 디렉터리 임시 파일을 작성한 뒤 rename하고 결과를 다시 읽으세요. 이 경로가 실패하면 아래 복구 표를 따르며, 보관본/현재 포인터를 만들거나 `.gitignore`를 편집하지 말고 스크래치가 무시되지 않으면 경고하세요. 인수인계 파일 작성 자체가 요청된 출력이라도 미확정 결정을 `confirmed`로 바꾸지는 않습니다.
+Create scratch parents lazily, write a same-directory temporary file, rename
+atomically, and reread it. On failure use the recovery table. Never make
+archives/current pointers or edit `.gitignore`; warn when scratch is not
+ignored. A requested handoff file does not turn unresolved decisions into
+`confirmed`.
 
-재개/계속 의도일 때 인수인계를 읽고 현재 Git 및 파일 상태를 검사한 뒤 Resume 판정표로 분류하세요. 재개 후에도 현재 확인한 증거가 없는 항목은 `unverified`로 유지하세요.
+On resume, read the handoff and current Git/files, then classify. Preserve
+`unverified` for anything without current evidence.
 
-## 실패 복구
+## Failure recovery
 
-| 트리거 | 1차 처리 | 계속 실패하면 |
-| --- | --- | --- |
-| 기존 handoff가 없거나 읽을 수 없음 | 경로와 접근 실패를 보고하고 새 작성과 재개를 구분합니다. | 재개에 필요한 상태를 복원할 증거가 없으면 `Unverifiable`로 멈추고 내용을 추정하지 않습니다. |
-| 임시 파일 작성·교체 실패 | 기존 handoff를 그대로 보존하고 이번 실행이 만든 임시 파일만 정리하며 `pending`으로 보고합니다. | 기존 파일 보존 여부를 확인할 수 없으면 추가 쓰기를 중단하고 `Blocked`로 남깁니다. |
-| 작성 후 재검증이 schema·실제 상태와 불일치 | `applied`로 표시하지 않고 불일치 항목을 `unverified`로 되돌립니다. | 안전하게 다시 읽어 대조할 수 없으면 `Unverifiable`로 종료합니다. |
-| legacy work-map이 존재함 | handoff source로 채택하지 않고 legacy scratch로 무시합니다. | 자동 수정·이관·삭제하지 않고 현재 handoff와 spec/tickets evidence만 사용합니다. |
+| Trigger | First action | If still failing |
+|---|---|---|
+| handoff missing/unreadable | report path/access and distinguish new write from resume | stop `Unverifiable` when evidence cannot reconstruct resume state |
+| temp write/replace failure | preserve existing handoff, clean only run-owned temp, report `pending` | stop further writes `Blocked` if preservation is unknown |
+| reread disagrees with schema/current state | do not mark `applied`; return mismatches to `unverified` | stop `Unverifiable` if safe reread is impossible |
+| legacy work-map exists | ignore as legacy scratch | use only current handoff/spec/ticket evidence; never mutate it |
 
-대화 기록을 복사하거나, 보관본/현재 포인터를 만들거나, 자동으로 커밋하거나 게시하지 마세요.
+Do not copy conversation history, create archive/current pointers, or
+automatically commit/publish.
+
+User-facing progress and receipt prose follows the user's language while
+canonical fields and status tokens remain unchanged.
 
 ## DO NOT / ANTI-PATTERNS
 
-- 실행하지 않은 명령·검증·결정을 `verified` 또는 `confirmed`로 기록하지 마세요.
-- material drift/conflict를 사용자 확인 없이 해결된 것으로 간주하거나 작업을 계속하지 마세요.
-- 보관본, 현재 포인터, 자동 commit 또는 publish를 만들지 마세요.
+- Do not mark an unexecuted command, check, or decision
+  `verified | confirmed`.
+- Do not resolve material drift/conflict or continue without confirmation.
+- Do not create archives, current pointers, automatic commits, or publication.

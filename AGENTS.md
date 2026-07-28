@@ -8,6 +8,10 @@ TigerKit is an Agent Skills repository, not a workflow framework or Claude Code 
 - Each skill's `SKILL.md` is its behavior source of truth.
 - Keep each skill self-contained; skill-specific detail and code stay in its own `references/` and `scripts/`.
 - Prefer thin instructions. Add detail only for repeated failures, costly ordering mistakes, mutation safety, objective verification, specialist procedures, or bounded delegation/review.
+- Write every canonical skill's operational body, headings, contracts, and
+  `references/*.md` prose in English. Non-English text is allowed only as an
+  exact quoted input/output/trigger literal when preserving that literal is
+  behaviorally required.
 - Do not restore `.claude-plugin/`, `commands/`, shared runtime contracts, or host-specific copies of skill bodies.
 
 ## Skill existence discipline
@@ -37,7 +41,9 @@ If the answers are weak, choose `inline`, `merge`, `convert to reference`, `make
 - Every `tk-implement` unit runs current-agent Standards/Spec review. Large or high-risk work permits at most one independent reviewer, without fan-out, editing, re-delegation, or automatic re-review. `tk-drive` owns only aggregate R/AC, ancestry, cross-ticket, and broad verification after consuming those unit receipts.
 - TigerKit never commits, pushes, opens PRs, merges, tags, releases, or publishes unless explicitly authorized by a skill contract or user request.
 - Explicit `tk-implement` invocation authorizes one verified current-branch unit commit. Explicit `$tk-drive` start authorizes `tk-implement` to create one such commit per selected ticket or no-ticket single slice. Neither authorizes push or later release actions; implicit drive resume inherits only the active same-conversation scope.
-- Operational bodies and references for `tk-drive`, `tk-grill-me`, `tk-to-spec`, `tk-to-tickets`, and `tk-implement` use English. User-facing progress and final receipt prose follows the user's language while canonical fields and status tokens remain unchanged.
+- All canonical skill operational bodies and references use English.
+  User-facing progress and final receipt prose follows the user's language
+  while canonical headings, fields, IDs, and status tokens remain unchanged.
 
 ## Repository documentation
 
