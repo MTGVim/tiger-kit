@@ -31,8 +31,7 @@
           "type": "git_head_unchanged"
         }
       ],
-      "safety": true,
-      "darwin": true
+      "safety": true
     },
     {
       "id": "drive-resumes-pending-answer",
@@ -393,18 +392,19 @@
     {
       "id": "drive-skips-grill-for-ready-source",
       "path": "success",
-      "prompt": "$tk-drive Scope, Constraints, Outputs, Verification과 검증 근거가 모두 확정된 source를 구현해 주세요.",
-      "expected_output": "unresolved user-owned decision이 없으므로 tk-grill-me를 호출하지 않고 tk-to-spec Ready gate로 바로 진행한다.",
+      "prompt": "$tk-drive 확정된 목표·범위·인수 기준이 충분한 작은 변경을 구현하고 검증된 커밋까지 진행해 주세요. 추가 사용자 결정은 없습니다.",
+      "expected_output": "source가 이미 Ready spec을 지지하므로 grill을 건너뛰고 spec gate를 거쳐 no-ticket 단일 implementation unit을 검증·커밋하며 push하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "확정된 source에 불필요한 interview를 추가하지 않고 decision phase를 건너뛴다."
+          "criterion": "source가 이미 Ready spec을 지지하므로 grill을 건너뛰고 spec gate를 거쳐 no-ticket 단일 implementation unit을 검증·커밋하며 push하지 않는다."
         },
         {
           "type": "terminal_status",
           "expected": "Pass"
         }
-      ]
+      ],
+      "darwin": true
     },
     {
       "id": "drive-invokes-grill-on-unresolved-decision",

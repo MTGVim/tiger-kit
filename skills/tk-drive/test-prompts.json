@@ -1,12 +1,12 @@
 [
   {
     "id": 1,
-    "prompt": "이 기능을 구현하고 커밋해줘",
-    "expected": "명시적 $tk-drive가 아니므로 workflow나 commit authority를 시작하지 않는다."
+    "prompt": "[active tk-drive → tk-grill-me pending question: A or B?] A로 진행해",
+    "expected": "tk-grill-me가 답변을 반영해 confirmed receipt를 반환하면 drive가 decision source traceability를 갱신하고 spec gate부터 자동 계속한다."
   },
   {
     "id": 2,
-    "prompt": "[active tk-drive → tk-grill-me pending question: A or B?] A로 진행해",
-    "expected": "tk-grill-me가 답변을 반영해 confirmed receipt를 반환하면 drive가 decision source traceability를 갱신하고 spec gate부터 자동 계속한다."
+    "prompt": "$tk-drive 확정된 목표·범위·인수 기준이 충분한 작은 변경을 구현하고 검증된 커밋까지 진행해 주세요. 추가 사용자 결정은 없습니다.",
+    "expected": "source가 이미 Ready spec을 지지하므로 grill을 건너뛰고 spec gate를 거쳐 no-ticket 단일 implementation unit을 검증·커밋하며 push하지 않는다."
   }
 ]
