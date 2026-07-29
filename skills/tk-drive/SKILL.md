@@ -43,7 +43,7 @@ unsuccessful phase and never recreate it inline. Before each handoff, record
 `Success state` and one `Outstanding transition`; success must echo
 `Return to: tk-drive` and that transition verbatim. A missing or mismatched echo
 is receipt drift and `Blocked`; a valid success triggers its same-turn
-transition.
+transition. Keep the active turn live until that transition executes: only initial SSOT ambiguity, a newly evidenced user-owned decision, `Pending | Blocked | Fail | Unverifiable`, receipt drift, an explicit user stop, inaccessible terminal evidence, or the final drive receipt returns control; `Ready | confirmed | Pass`, progress, task size, and partial results never do, and no commentary, summary, confirmation request, receipt echo, or final response may intervene.
 
 ### 🔴 HARD GATE · source UI writing
 

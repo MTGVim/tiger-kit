@@ -137,6 +137,47 @@ evidence-supported non-success terminal receipt if no valid transition exists.
 For an active-drive success receipt, first verify its verbatim
 `Outstanding transition` echo, then execute that transition in the same turn.
 
+The stop set is closed. Drive may return control only to clear initial SSOT
+ambiguity, obtain a newly evidenced user-owned decision, honor an explicit
+user stop, report receipt drift, report an evidence-backed
+`Pending | Blocked | Fail | Unverifiable` state, or emit its final receipt.
+`Ready | confirmed | Pass`, progress, task size, and partial results cannot
+open a response boundary. No user-facing text may occur between a matching
+success receipt and its next recorded transition.
+
+Host-native continuation evidence starts from an explicit drive invocation in
+a disposable checkout and records ordered phase invocation, receipt, next
+phase, final-output, and terminal-status events. A synthetic prompt that starts
+after a claimed receipt is not continuation evidence. Event-required
+assertions fail when events are missing or malformed; adapters without events
+remain compatible for assertions that do not require them. Keep the runner
+host-generic; the live continuation canary is Codex scoped and uses two
+fresh incident runs with the selected implementation holdout and boundary
+control.
+
+The Codex app-server does not expose child skill receipts as structured host
+events. When and only when both `TK_DRIVE_EVENT_RECORDER` and
+`TK_DRIVE_EVENT_LOG` are non-empty, phase evidence is therefore mandatory:
+
+- immediately before beginning a phase owner's work, run
+  `python3 "$TK_DRIVE_EVENT_RECORDER" phase_invocation <phase>`;
+- after validating that owner's matching native success receipt and before
+  executing or reporting its transition, run
+  `python3 "$TK_DRIVE_EVENT_RECORDER" phase_receipt <phase> <state> "<Outstanding transition>"`.
+
+These markers record observed orchestration; they never create or replace a
+handoff, receipt, or transition. Do not emit them when either variable is
+absent. A recorder failure makes the live evaluation `Unverifiable`.
+
+Use the [Codex eval adapter](../scripts/codex_eval_adapter.py) as the runner's
+adapter command. It stages repo skills through Codex's host-native
+`.agents/skills` path and supplies `tk-drive` as an explicit app-server skill
+input. Set `TK_EVAL_CODEX_HOME` to an authenticated Codex home when the
+isolated runner home has no login; the adapter copies only `auth.json`.
+Run `drive-live-continues-after-ready-spec`,
+`drive-live-implementation-holdout`, and
+`drive-live-initial-ssot-stop-control` twice each at the candidate `HEAD`.
+
 ## Decision owner
 
 Skip decision closure when confirmed source and evidence already support a

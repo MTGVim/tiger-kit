@@ -28,6 +28,8 @@ TERMINAL_STATUSES = {
     "NotApplicable",
 }
 SUPPORTED_HOSTS = ("claude-code", "codex", "hermes-agent")
+EVENT_TYPES = {"phase_invocation", "phase_receipt", "final_output"}
+SUCCESS_STATES = {"Ready", "confirmed", "Pass"}
 DIAGNOSTIC_MARKER_START = "<!-- TIGERKIT_DIAGNOSTIC_START -->"
 DIAGNOSTIC_MARKER_END = "<!-- TIGERKIT_DIAGNOSTIC_END -->"
 DIAGNOSTIC_PHASES = ("understanding", "planning", "execution", "formatting")
@@ -82,6 +84,60 @@ def validate_adapter_result(
             "adapter result terminal_status must be one of "
             + ", ".join(sorted(TERMINAL_STATUSES))
         )
+    if "events" in result:
+        events = result.get("events")
+        if not isinstance(events, list) or not events:
+            errors.append("adapter result events must be a non-empty list")
+        else:
+            required_fields = {
+                "phase_invocation": ("phase",),
+                "phase_receipt": ("phase", "state", "transition"),
+                "final_output": ("terminal_status",),
+            }
+            final_statuses: list[object] = []
+            for index, event in enumerate(events, 1):
+                if not isinstance(event, dict):
+                    errors.append(f"adapter result events item {index} must be an object")
+                    continue
+                event_type = event.get("type")
+                if not isinstance(event_type, str) or event_type not in EVENT_TYPES:
+                    errors.append(
+                        f"adapter result events item {index} type must be one of "
+                        + ", ".join(sorted(EVENT_TYPES))
+                    )
+                    continue
+                for field in required_fields[str(event_type)]:
+                    value = event.get(field)
+                    if not isinstance(value, str) or not value.strip():
+                        errors.append(
+                            f"adapter result events item {index} {event_type} "
+                            f"requires non-empty {field}"
+                        )
+                if (
+                    event_type == "final_output"
+                    and event.get("terminal_status") not in TERMINAL_STATUSES
+                ):
+                    errors.append(
+                        f"adapter result events item {index} final_output terminal_status "
+                        "must use the terminal enum"
+                    )
+                elif event_type == "final_output":
+                    final_statuses.append(event.get("terminal_status"))
+                if (
+                    event_type == "phase_receipt"
+                    and event.get("state") not in SUCCESS_STATES
+                ):
+                    errors.append(
+                        f"adapter result events item {index} phase_receipt state "
+                        "must be Ready, confirmed, or Pass"
+                    )
+            if not final_statuses:
+                errors.append("adapter result events require a final_output event")
+            elif final_statuses[-1] != terminal_status:
+                errors.append(
+                    "adapter result final_output terminal_status must match "
+                    "adapter result terminal_status"
+                )
     return errors
 
 
@@ -385,6 +441,22 @@ def compare_eval_contracts(
                             "without an explicit migration"
                         )
                     continue
+                baseline_hosts = baseline_case.get("hosts")
+                candidate_hosts = candidate_case.get("hosts")
+                baseline_host_set = (
+                    set(baseline_hosts)
+                    if isinstance(baseline_hosts, list)
+                    else set(SUPPORTED_HOSTS)
+                )
+                candidate_host_set = (
+                    set(candidate_hosts)
+                    if isinstance(candidate_hosts, list)
+                    else set(SUPPORTED_HOSTS)
+                )
+                if not baseline_host_set.issubset(candidate_host_set):
+                    errors.append(
+                        f"{skill}: behavior case {case_id!r} restricted host coverage"
+                    )
                 if baseline_case.get("safety") is True and candidate_case.get("safety") is not True:
                     errors.append(f"{skill}: behavior case {case_id!r} weakened safety coverage")
                 baseline_types = {
@@ -682,14 +754,119 @@ def _candidate_diff(checkout: Path, initial_head: str | None) -> str | None:
     return "".join(chunks)
 
 
+def _event_matches(event: object, matcher: Mapping[str, object]) -> bool:
+    return isinstance(event, dict) and all(
+        event.get(key) == value for key, value in matcher.items()
+    )
+
+
 def verify_mechanical_assertion(
     assertion: Mapping[str, object],
     *,
     adapter_result: Mapping[str, object],
     checkout: Path,
     initial_head: str | None,
+    host: str | None = None,
 ) -> dict[str, object]:
     assertion_type = assertion.get("type")
+    if assertion_type in {"event_order", "event_absent"}:
+        scoped_hosts = assertion.get("hosts")
+        if isinstance(scoped_hosts, list) and host is None:
+            return {
+                "type": assertion_type,
+                "passed": False,
+                "evidence": f"host=None; scoped {assertion_type} requires a host",
+            }
+        if isinstance(scoped_hosts, list) and host not in scoped_hosts:
+            return {
+                "type": assertion_type,
+                "passed": True,
+                "evidence": (
+                    f"host={host!r}; scoped_hosts={scoped_hosts!r}; not applicable"
+                ),
+            }
+        events = adapter_result.get("events")
+        if assertion_type == "event_absent":
+            matcher = assertion.get("event")
+            if not isinstance(events, list) or not isinstance(matcher, dict):
+                return {
+                    "type": assertion_type,
+                    "passed": False,
+                    "evidence": (
+                        f"host={host!r}; events_available={isinstance(events, list)}; "
+                        "event_absent contract unavailable"
+                    ),
+                }
+            matching_indices = [
+                index
+                for index, event in enumerate(events)
+                if _event_matches(event, matcher)
+            ]
+            return {
+                "type": assertion_type,
+                "passed": not matching_indices,
+                "evidence": (
+                    f"host={host!r}; event={matcher!r}; "
+                    f"matching_indices={matching_indices!r}"
+                ),
+            }
+        before = assertion.get("before")
+        after = assertion.get("after")
+        forbidden = assertion.get("forbidden_between", [])
+        if (
+            not isinstance(events, list)
+            or not isinstance(before, dict)
+            or not isinstance(after, dict)
+            or not isinstance(forbidden, list)
+        ):
+            return {
+                "type": assertion_type,
+                "passed": False,
+                "evidence": (
+                    f"host={host!r}; events_available={isinstance(events, list)}; "
+                    "event_order contract unavailable"
+                ),
+            }
+
+        before_indices = [
+            index
+            for index, event in enumerate(events)
+            if _event_matches(event, before)
+        ]
+        after_indices = [
+            index
+            for index, event in enumerate(events)
+            if _event_matches(event, after)
+        ]
+        blocked_pairs: list[tuple[int, int]] = []
+        for before_index in before_indices:
+            for after_index in after_indices:
+                if after_index <= before_index:
+                    continue
+                has_forbidden = any(
+                    _event_matches(events[index], matcher)
+                    for index in range(before_index + 1, after_index)
+                    for matcher in forbidden
+                    if isinstance(matcher, dict)
+                )
+                if not has_forbidden:
+                    return {
+                        "type": assertion_type,
+                        "passed": True,
+                        "evidence": (
+                            f"host={host!r}; before_index={before_index}; "
+                            f"after_index={after_index}; forbidden_between=False"
+                        ),
+                    }
+                blocked_pairs.append((before_index, after_index))
+        return {
+            "type": assertion_type,
+            "passed": False,
+            "evidence": (
+                f"host={host!r}; before_indices={before_indices!r}; "
+                f"after_indices={after_indices!r}; blocked_pairs={blocked_pairs!r}"
+            ),
+        }
     if assertion_type == "terminal_status":
         actual = adapter_result.get("terminal_status")
         expected = assertion.get("expected")
@@ -809,6 +986,7 @@ def grade_behavior(
     *,
     checkout: Path,
     initial_head: str | None,
+    host: str | None = None,
 ) -> list[dict[str, object]]:
     judge_assertions = [
         str(assertion["criterion"])
@@ -845,6 +1023,7 @@ def grade_behavior(
                     adapter_result=adapter_result,
                     checkout=checkout,
                     initial_head=initial_head,
+                    host=host,
                 )
             )
     return results
@@ -1116,6 +1295,8 @@ def evaluate_diagnostic_checkout(
             case_id = f"{skill}:behavior:{case['id']}"
             if case_filter and case_id not in case_filter:
                 continue
+            if isinstance(case.get("hosts"), list) and host not in case["hosts"]:
+                continue
             eligible_cases.append((skill, case))
     named_holdouts = [
         item for item in eligible_cases if "holdout" in str(item[1]["id"]).casefold()
@@ -1165,6 +1346,7 @@ def evaluate_diagnostic_checkout(
                     case["assertions"],
                     checkout=run_checkout,
                     initial_head=initial_head,
+                    host=host,
                 )
             records.append(
                 {
@@ -1178,6 +1360,7 @@ def evaluate_diagnostic_checkout(
                     "diagnostic": diagnostic,
                     "parse_error": parse_error,
                     "terminal_status": result.get("terminal_status"),
+                    "events": result.get("events"),
                     "duration_ms": result.get("duration_ms"),
                     "total_tokens": result.get("total_tokens"),
                     "tool_uses": result.get("tool_uses"),
@@ -1470,6 +1653,8 @@ def evaluate_checkout(
             case_id = f"{skill}:behavior:{case['id']}"
             if case_filter and case_id not in case_filter:
                 continue
+            if isinstance(case.get("hosts"), list) and host not in case["hosts"]:
+                continue
             for run_number in range(1, runs + 1):
                 with isolated_checkout(checkout) as run_checkout:
                     initial_head = git_head(run_checkout)
@@ -1487,6 +1672,7 @@ def evaluate_checkout(
                         case["assertions"],
                         checkout=run_checkout,
                         initial_head=initial_head,
+                        host=host,
                     )
                 passed = all(row["passed"] for row in assertion_results)
                 behavior_total += 1
@@ -1506,6 +1692,8 @@ def evaluate_checkout(
                         "passed": passed,
                         "safety": case.get("safety") is True,
                         "assertion_results": assertion_results,
+                        "terminal_status": result.get("terminal_status"),
+                        "events": result.get("events"),
                         "duration_ms": result["duration_ms"],
                         "total_tokens": result.get("total_tokens"),
                     }

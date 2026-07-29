@@ -100,6 +100,61 @@ class AdapterResultTest(unittest.TestCase):
 
         self.assertTrue(any("terminal_status must be one of" in error for error in errors))
 
+    def test_accepts_optional_ordered_events_and_rejects_malformed_events(self) -> None:
+        result = {
+            "skill_loaded": True,
+            "output": "done",
+            "terminal_status": "Pass",
+            "events": [
+                {"type": "phase_invocation", "phase": "tk-to-spec"},
+                {
+                    "type": "phase_receipt",
+                    "phase": "tk-to-spec",
+                    "state": "Ready",
+                    "transition": "ticket decision",
+                },
+                {"type": "phase_invocation", "phase": "tk-implement"},
+                {"type": "final_output", "terminal_status": "Pass"},
+            ],
+        }
+
+        self.assertEqual(validate_adapter_result(result), [])
+
+        for events in (
+            [],
+            ["phase_receipt"],
+            [{"type": "phase_invocation"}],
+            [{"type": "phase_receipt", "phase": "tk-to-spec", "state": "Ready"}],
+            [
+                {
+                    "type": "phase_receipt",
+                    "phase": "tk-to-spec",
+                    "state": "Draft",
+                    "transition": "ticket decision",
+                },
+                {"type": "final_output", "terminal_status": "Pass"},
+            ],
+            [{"type": "final_output", "terminal_status": "applied"}],
+            [{"type": "unknown"}],
+        ):
+            malformed = dict(result)
+            malformed["events"] = events
+            with self.subTest(events=events):
+                self.assertTrue(
+                    any(
+                        "adapter result events" in error
+                        for error in validate_adapter_result(malformed)
+                    )
+                )
+        mismatch = dict(result)
+        mismatch["terminal_status"] = "Blocked"
+        self.assertTrue(
+            any(
+                "final_output terminal_status must match" in error
+                for error in validate_adapter_result(mismatch)
+            )
+        )
+
 
 class VerdictTest(unittest.TestCase):
     def test_candidate_regression_fails(self) -> None:
@@ -788,6 +843,21 @@ class RunnerContractTest(unittest.TestCase):
 
         self.assertEqual(compare_eval_contracts(baseline, candidate), [])
 
+    def test_contract_drift_rejects_restricting_an_existing_case_to_fewer_hosts(
+        self,
+    ) -> None:
+        baseline = self.contract(
+            [self.behavior("safe", {"type": "terminal_status", "expected": "Pass"})]
+        )
+        candidate = self.contract(
+            [self.behavior("safe", {"type": "terminal_status", "expected": "Pass"})]
+        )
+        candidate["tk-sample"]["behavior"]["evals"][0]["hosts"] = ["claude-code"]
+
+        errors = compare_eval_contracts(baseline, candidate)
+
+        self.assertTrue(any("restricted host coverage" in error for error in errors))
+
     def test_catalog_contract_drift_rejects_deleted_critical_case(self) -> None:
         baseline = {
             "critical_hosts": ["claude-code", "codex", "hermes-agent"],
@@ -868,6 +938,218 @@ class RunnerContractTest(unittest.TestCase):
             ]
 
             self.assertTrue(all(row["passed"] for row in rows))
+
+    def test_event_order_requires_receipt_then_next_phase_without_final_output(self) -> None:
+        assertion = {
+            "type": "event_order",
+            "hosts": ["claude-code"],
+            "before": {
+                "type": "phase_receipt",
+                "phase": "tk-to-spec",
+                "state": "Ready",
+                "transition": "ticket decision",
+            },
+            "after": {"type": "phase_invocation", "phase": "tk-implement"},
+            "forbidden_between": [{"type": "final_output"}],
+        }
+        valid = [
+            {"type": "phase_invocation", "phase": "tk-to-spec"},
+            {
+                "type": "phase_receipt",
+                "phase": "tk-to-spec",
+                "state": "Ready",
+                "transition": "ticket decision",
+            },
+            {"type": "phase_invocation", "phase": "tk-implement"},
+            {"type": "final_output", "terminal_status": "Pass"},
+        ]
+
+        with tempfile.TemporaryDirectory() as directory:
+            checkout = Path(directory)
+            passing = verify_mechanical_assertion(
+                assertion,
+                adapter_result={"events": valid},
+                checkout=checkout,
+                initial_head=None,
+                host="claude-code",
+            )
+            skipped = verify_mechanical_assertion(
+                assertion,
+                adapter_result={},
+                checkout=checkout,
+                initial_head=None,
+                host="codex",
+            )
+            missing_host = verify_mechanical_assertion(
+                assertion,
+                adapter_result={"events": valid},
+                checkout=checkout,
+                initial_head=None,
+            )
+
+            failures = []
+            for events in (
+                None,
+                valid[:2],
+                [valid[2], valid[1], valid[3]],
+                [
+                    valid[1],
+                    {"type": "final_output", "terminal_status": "Pass"},
+                    valid[2],
+                ],
+                [
+                    {
+                        **valid[1],
+                        "transition": "aggregate verification",
+                    },
+                    valid[2],
+                ],
+            ):
+                adapter_result = {} if events is None else {"events": events}
+                failures.append(
+                    verify_mechanical_assertion(
+                        assertion,
+                        adapter_result=adapter_result,
+                        checkout=checkout,
+                        initial_head=None,
+                        host="claude-code",
+                    )
+                )
+
+        self.assertTrue(passing["passed"])
+        self.assertTrue(skipped["passed"])
+        self.assertFalse(missing_host["passed"])
+        self.assertTrue(all(not row["passed"] for row in failures))
+
+    def test_event_absent_requires_event_evidence_and_honors_host_scope(self) -> None:
+        assertion = {
+            "type": "event_absent",
+            "hosts": ["claude-code"],
+            "event": {"type": "phase_invocation", "phase": "tk-implement"},
+        }
+        without_implementation = [
+            {"type": "phase_invocation", "phase": "tk-grill-me"},
+            {"type": "final_output", "terminal_status": "Pending"},
+        ]
+        with_implementation = [
+            *without_implementation[:1],
+            {"type": "phase_invocation", "phase": "tk-implement"},
+            without_implementation[-1],
+        ]
+
+        with tempfile.TemporaryDirectory() as directory:
+            checkout = Path(directory)
+            passing = verify_mechanical_assertion(
+                assertion,
+                adapter_result={"events": without_implementation},
+                checkout=checkout,
+                initial_head=None,
+                host="claude-code",
+            )
+            failing = verify_mechanical_assertion(
+                assertion,
+                adapter_result={"events": with_implementation},
+                checkout=checkout,
+                initial_head=None,
+                host="claude-code",
+            )
+            missing = verify_mechanical_assertion(
+                assertion,
+                adapter_result={},
+                checkout=checkout,
+                initial_head=None,
+                host="claude-code",
+            )
+            skipped = verify_mechanical_assertion(
+                assertion,
+                adapter_result={},
+                checkout=checkout,
+                initial_head=None,
+                host="codex",
+            )
+
+        self.assertTrue(passing["passed"])
+        self.assertFalse(failing["passed"])
+        self.assertFalse(missing["passed"])
+        self.assertTrue(skipped["passed"])
+
+    def test_behavior_records_preserve_adapter_events(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            checkout = root / "checkout"
+            (checkout / "skills" / "tk-sample").mkdir(parents=True)
+            adapter = root / "adapter.py"
+            events = [
+                {
+                    "type": "phase_receipt",
+                    "phase": "tk-to-spec",
+                    "state": "Ready",
+                    "transition": "ticket decision",
+                },
+                {"type": "phase_invocation", "phase": "tk-implement"},
+                {"type": "final_output", "terminal_status": "Pass"},
+            ]
+            adapter.write_text(
+                "import json\n"
+                f"events = {events!r}\n"
+                "print(json.dumps({'skill_loaded': True, 'output': 'Status: Pass', "
+                "'terminal_status': 'Pass', 'total_tokens': 1, 'events': events}))\n",
+                encoding="utf-8",
+            )
+            contracts = {
+                "tk-sample": {
+                    "triggers": {"kind": "user-invoked", "queries": []},
+                    "behavior": {
+                        "evals": [
+                            {
+                                "id": "ordered",
+                                "prompt": "run ordered continuation",
+                                "assertions": [
+                                    {
+                                        "type": "event_order",
+                                        "before": events[0],
+                                        "after": events[1],
+                                        "forbidden_between": [
+                                            {"type": "final_output"}
+                                        ],
+                                    },
+                                    {
+                                        "type": "terminal_status",
+                                        "expected": "Pass",
+                                    },
+                                ],
+                            }
+                        ]
+                    },
+                }
+            }
+
+            _, records = evaluate_checkout(
+                checkout,
+                contracts,
+                adapter_command=f"python3 {adapter}",
+                grader_command="unused",
+                host="claude-code",
+                runs=1,
+                case_filter=None,
+            )
+            contracts["tk-sample"]["behavior"]["evals"][0]["hosts"] = [
+                "claude-code"
+            ]
+            skipped_summary, skipped_records = evaluate_checkout(
+                checkout,
+                contracts,
+                adapter_command=f"python3 {adapter}",
+                grader_command="unused",
+                host="codex",
+                runs=1,
+                case_filter=None,
+            )
+
+        self.assertEqual(records[0]["events"], events)
+        self.assertEqual(records[0]["terminal_status"], "Pass")
+        self.assertEqual(skipped_summary["behavior_runs"], 0)
+        self.assertEqual(skipped_records, [])
 
     def test_catalog_routing_uses_selected_skill_metadata(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

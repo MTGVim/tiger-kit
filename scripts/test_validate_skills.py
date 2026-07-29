@@ -290,9 +290,63 @@ class CanonicalSkillContractTest(unittest.TestCase):
             cases = {case["id"]: case for case in payload["evals"]}
             for case_id in case_ids:
                 with self.subTest(skill=skill, case=case_id):
-                    prompt = cases[case_id]["prompt"]
+                    case = cases[case_id]
+                    prompt = case["prompt"]
                     self.assertIn("Success state:", prompt)
                     self.assertIn("Outstanding transition:", prompt)
+
+    def test_drive_live_canary_matrix_is_codex_scoped(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        payload = json.loads(
+            (root / "skills/tk-drive/evals/evals.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        cases = {case["id"]: case for case in payload["evals"]}
+
+        for case_id in (
+            "drive-live-continues-after-ready-spec",
+            "drive-live-implementation-holdout",
+            "drive-live-initial-ssot-stop-control",
+        ):
+            with self.subTest(case=case_id):
+                self.assertEqual(cases[case_id]["hosts"], ["codex"])
+                self.assertTrue(cases[case_id]["prompt"].startswith("/tk-drive "))
+
+        holdout_types = [
+            assertion["type"]
+            for assertion in cases["drive-live-implementation-holdout"][
+                "assertions"
+            ]
+        ]
+        self.assertEqual(holdout_types, ["event_order", "terminal_status"])
+        self.assertEqual(
+            cases["drive-live-implementation-holdout"]["assertions"][0][
+                "before"
+            ],
+            {
+                "type": "phase_receipt",
+                "phase": "tk-implement",
+                "state": "Pass",
+            },
+        )
+        self.assertEqual(
+            cases["drive-live-initial-ssot-stop-control"]["path"], "boundary"
+        )
+        self.assertEqual(
+            [
+                assertion["type"]
+                for assertion in cases["drive-live-initial-ssot-stop-control"][
+                    "assertions"
+                ]
+            ],
+            [
+                "terminal_status",
+                "git_head_unchanged",
+                "event_absent",
+                "path_absent",
+            ],
+        )
 
     def test_drive_reflection_tail_is_fixed_point_and_bounded(self) -> None:
         root = Path(__file__).resolve().parents[1]
@@ -847,6 +901,76 @@ class SkillEvalFixtureTest(unittest.TestCase):
             )
 
             self.assertEqual(validate_skill_eval_files(skill, "user-invoked"), [])
+
+    def test_validates_host_scoped_event_order_assertions(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            skill = Path(directory) / "tk-sample"
+            self.write_valid_trigger_contract(skill)
+            success = self.valid_behavior_case("ok")
+            success["hosts"] = ["claude-code"]
+            success["assertions"].append(
+                {
+                    "type": "event_order",
+                    "hosts": ["claude-code"],
+                    "before": {
+                        "type": "phase_receipt",
+                        "phase": "tk-to-spec",
+                        "state": "Ready",
+                        "transition": "ticket decision",
+                    },
+                    "after": {
+                        "type": "phase_invocation",
+                        "phase": "tk-implement",
+                    },
+                    "forbidden_between": [{"type": "final_output"}],
+                }
+            )
+            success["assertions"].append(
+                {
+                    "type": "event_absent",
+                    "hosts": ["claude-code"],
+                    "event": {
+                        "type": "phase_invocation",
+                        "phase": "tk-implement",
+                    },
+                }
+            )
+            self.write_behavior_contract(
+                skill,
+                [success, self.valid_behavior_case("stop", "boundary")],
+            )
+
+            self.assertEqual(validate_skill_eval_files(skill, "user-invoked"), [])
+
+            success["hosts"] = ["unknown-host"]
+            success["assertions"][-2] = {
+                "type": "event_order",
+                "hosts": ["unknown-host"],
+                "before": {"type": "phase_receipt"},
+                "after": {"type": "unknown"},
+                "forbidden_between": "final_output",
+            }
+            success["assertions"][-1] = {
+                "type": "event_absent",
+                "hosts": ["unknown-host"],
+                "event": {"type": "unknown"},
+            }
+            self.write_behavior_contract(
+                skill,
+                [success, self.valid_behavior_case("stop", "boundary")],
+            )
+
+            errors = validate_skill_eval_files(skill, "user-invoked")
+
+            self.assertTrue(any("case 1 hosts" in error for error in errors))
+            self.assertTrue(any("event_order hosts" in error for error in errors))
+            self.assertTrue(any("event_order before" in error for error in errors))
+            self.assertTrue(any("event_order after" in error for error in errors))
+            self.assertTrue(
+                any("event_order forbidden_between" in error for error in errors)
+            )
+            self.assertTrue(any("event_absent hosts" in error for error in errors))
+            self.assertTrue(any("event_absent event" in error for error in errors))
 
     def test_rejects_duplicate_behavior_id(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

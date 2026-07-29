@@ -26,6 +26,8 @@ CORE_FRONTMATTER_FIELDS = {
 }
 HOST_EXTENSION_FIELDS = {"argument-hint", "disable-model-invocation"}
 MECHANICAL_ASSERTION_TYPES = {
+    "event_absent",
+    "event_order",
     "terminal_status",
     "path_exists",
     "path_absent",
@@ -39,6 +41,7 @@ MECHANICAL_ASSERTION_TYPES = {
     "git_diff_contains",
     "git_diff_absent",
 }
+EVENT_TYPES = {"phase_invocation", "phase_receipt", "final_output"}
 TERMINAL_STATUSES = {
     "Pass",
     "Fail",
@@ -999,6 +1002,20 @@ def validate_skill_eval_files(skill_dir: Path, kind: str) -> list[str]:
                 for field in ("prompt", "expected_output"):
                     if not isinstance(case.get(field), str) or not str(case.get(field)).strip():
                         errors.append(f"{label}: evals/evals.json: case {index} needs {field}")
+                hosts = case.get("hosts")
+                if hosts is not None and (
+                    not isinstance(hosts, list)
+                    or not hosts
+                    or not all(
+                        isinstance(host, str) and host in SUPPORTED_EVAL_HOSTS
+                        for host in hosts
+                    )
+                    or len(set(hosts)) != len(hosts)
+                ):
+                    errors.append(
+                        f"{label}: evals/evals.json: case {index} hosts must be "
+                        "unique supported hosts"
+                    )
                 assertions = case.get("assertions")
                 if not isinstance(assertions, list) or not assertions:
                     errors.append(f"{label}: evals/evals.json: case {index} needs non-empty assertions")
@@ -1058,6 +1075,126 @@ def validate_skill_eval_files(skill_dir: Path, kind: str) -> list[str]:
                                 errors.append(
                                     f"{label}: evals/evals.json: case {index} terminal_status "
                                     "expected/allowed and forbidden values must not overlap"
+                                )
+                        elif assertion_type == "event_order":
+                            hosts = assertion.get("hosts")
+                            if hosts is not None and (
+                                not isinstance(hosts, list)
+                                or not hosts
+                                or not all(
+                                    isinstance(host, str)
+                                    and host in SUPPORTED_EVAL_HOSTS
+                                    for host in hosts
+                                )
+                                or len(set(hosts)) != len(hosts)
+                            ):
+                                errors.append(
+                                    f"{label}: evals/evals.json: case {index} "
+                                    "event_order hosts must be unique supported hosts"
+                                )
+                            required_match_fields = {
+                                "phase_invocation": ("phase",),
+                                "phase_receipt": ("phase", "state"),
+                            }
+                            for field in ("before", "after"):
+                                matcher = assertion.get(field)
+                                event_type = (
+                                    matcher.get("type")
+                                    if isinstance(matcher, dict)
+                                    else None
+                                )
+                                required = (
+                                    required_match_fields.get(event_type)
+                                    if isinstance(event_type, str)
+                                    else None
+                                )
+                                valid = (
+                                    isinstance(matcher, dict)
+                                    and event_type in EVENT_TYPES
+                                    and required is not None
+                                    and all(
+                                        isinstance(matcher.get(key), str)
+                                        and str(matcher.get(key)).strip()
+                                        for key in required
+                                    )
+                                    and (
+                                        event_type != "phase_receipt"
+                                        or matcher.get("state")
+                                        in {"Ready", "confirmed", "Pass"}
+                                    )
+                                )
+                                if not valid:
+                                    errors.append(
+                                        f"{label}: evals/evals.json: case {index} "
+                                        f"event_order {field} needs a complete phase event matcher"
+                                    )
+                            forbidden = assertion.get("forbidden_between", [])
+                            if not isinstance(forbidden, list) or not forbidden or not all(
+                                isinstance(matcher, dict)
+                                and isinstance(matcher.get("type"), str)
+                                and matcher.get("type") in EVENT_TYPES
+                                for matcher in forbidden
+                            ):
+                                errors.append(
+                                    f"{label}: evals/evals.json: case {index} "
+                                    "event_order forbidden_between needs event matchers"
+                                )
+                        elif assertion_type == "event_absent":
+                            hosts = assertion.get("hosts")
+                            if hosts is not None and (
+                                not isinstance(hosts, list)
+                                or not hosts
+                                or not all(
+                                    isinstance(host, str)
+                                    and host in SUPPORTED_EVAL_HOSTS
+                                    for host in hosts
+                                )
+                                or len(set(hosts)) != len(hosts)
+                            ):
+                                errors.append(
+                                    f"{label}: evals/evals.json: case {index} "
+                                    "event_absent hosts must be unique supported hosts"
+                                )
+                            matcher = assertion.get("event")
+                            event_type = (
+                                matcher.get("type")
+                                if isinstance(matcher, dict)
+                                else None
+                            )
+                            required_match_fields = {
+                                "phase_invocation": ("phase",),
+                                "phase_receipt": ("phase", "state"),
+                                "final_output": ("terminal_status",),
+                            }
+                            required = (
+                                required_match_fields.get(event_type)
+                                if isinstance(event_type, str)
+                                else None
+                            )
+                            valid = (
+                                isinstance(matcher, dict)
+                                and event_type in EVENT_TYPES
+                                and required is not None
+                                and all(
+                                    isinstance(matcher.get(key), str)
+                                    and str(matcher.get(key)).strip()
+                                    for key in required
+                                )
+                                and (
+                                    event_type != "phase_receipt"
+                                    or matcher.get("state")
+                                    in {"Ready", "confirmed", "Pass"}
+                                )
+                                and (
+                                    event_type != "final_output"
+                                    or matcher.get("terminal_status")
+                                    in TERMINAL_STATUSES
+                                )
+                            )
+                            if not valid:
+                                errors.append(
+                                    f"{label}: evals/evals.json: case {index} "
+                                    "event_absent event needs a valid event matcher"
                                 )
                         elif assertion_type in {
                             "path_exists",
