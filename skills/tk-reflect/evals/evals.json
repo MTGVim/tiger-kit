@@ -729,6 +729,45 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "reflect-response-language-preserves-machine-tokens",
+      "path": "success",
+      "prompt": "/tk-reflect 최신 명시 언어 지시는 한국어입니다. 최종 표의 설명은 한국어로 쓰되 RF-01, Status: Pass, skills/tk-reflect/SKILL.md, git revert abc123, exact source literal \"Do not translate me\"는 byte-stable하게 보존해 주세요. 새 mutation은 하지 마세요.",
+      "expected_output": "Disposition의 Candidate/Action/Why 설명은 한국어이고 지정된 ID, status, path, command, exact source literal은 한 글자도 번역·변형하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "사람이 읽는 설명은 한국어지만 canonical heading/key/token과 exact source literal은 그대로이며 보존 토큰 주변 설명도 한국어다."
+        },
+        {
+          "type": "output_contains",
+          "text": "RF-01"
+        },
+        {
+          "type": "output_contains",
+          "text": "Status: Pass"
+        },
+        {
+          "type": "output_contains",
+          "text": "skills/tk-reflect/SKILL.md"
+        },
+        {
+          "type": "output_contains",
+          "text": "git revert abc123"
+        },
+        {
+          "type": "output_contains",
+          "text": "Do not translate me"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

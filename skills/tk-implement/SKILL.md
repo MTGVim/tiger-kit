@@ -291,8 +291,9 @@ unverified items, and R/AC references without repeating the body. Omit
 `Remaining risks` when empty. Receipt is a status/provenance index, not a
 substitute for the Changed rows.
 
-Write user-facing progress and report prose in the user's language. Preserve
-the canonical headings, status tokens, IDs, and receipt keys above.
+### 🔴 HARD GATE · response language
+
+Before any user-facing progress, question, summary, or receipt, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose receipt value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, receipt keys, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
 
 ## User decision questions
 

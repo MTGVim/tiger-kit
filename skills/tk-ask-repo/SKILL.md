@@ -122,15 +122,16 @@ fields`, `Path`, `State`, `Attribution`, `Must change`, `Must not change`, and
 the reason. For A/D/E, `Must not change` is required and says `none found` when
 empty.
 
-For multiple meaningful fields, consumers, or candidates, use one compact table
-with question-family columns. Use a sentence when only one user-relevant row exists; rows never represent files, commands, or raw evidence. These are
+For multiple meaningful fields, consumers, or candidates, use one compact table with question-family columns. Use a sentence when only one user-relevant row exists; rows never represent files, commands, or raw evidence. These are
 budgets, not quotas.
 
 Do not echo the inbound question or repeat evidence across sections. `Receipt`
 starts with `Outcome: <one user-facing sentence>`; remaining fields are `reported | Blocked | Unverifiable`, next owner, and section references.
 It indexes status/provenance, never answer or result rows.
 
-Write user-facing prose in the user's language; keep identifiers and status tokens as-is.
+### 🔴 HARD GATE · response language
+
+Before any user-facing progress, question, summary, or receipt, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose receipt value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, receipt keys, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
 
 ## User decision questions
 

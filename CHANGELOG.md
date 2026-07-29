@@ -20,6 +20,9 @@
 - Recorded the durable ownership, rollback, fixed-point, and supersession
   rationale in ADR 0001 without adding skills, runtime surfaces, or release
   automation.
+- Added the same response-language hard gate to all 14 skills so the latest
+  explicit language instruction controls every free-form user-facing sentence
+  while canonical tokens and exact source literals remain byte-stable.
 
 ## 20.1.7 — Repository Answers, Drive Liveness, and Concise Receipts
 

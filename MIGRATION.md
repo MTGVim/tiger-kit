@@ -22,6 +22,12 @@ decision-first ordering and one-question user decision turns remain unchanged.
 `tk-reflect` continues to show the readable
 `ID | Candidate | Action | Target | Why` table for non-no-op results.
 
+All 14 skills now resolve the response language from the latest explicit user
+instruction, falling back to the current user message. Free-form progress,
+questions, summaries, and receipt values stay in that language even when the
+source is English. Canonical headings, receipt keys, status tokens, IDs,
+commands, paths, code, and exact source literals remain byte-stable.
+
 See
 [`docs/adr/0001-implementation-quality-and-optimistic-reflection.md`](docs/adr/0001-implementation-quality-and-optimistic-reflection.md)
 for the durable decision and supersession rules.

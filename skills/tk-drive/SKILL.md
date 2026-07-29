@@ -126,8 +126,9 @@ Return control only with that final receipt or an explicit phase-stop receipt;
 first assert that every consumed success receipt has its next transition.
 Reference child receipts instead of copying their evidence; never expose a child handoff envelope or invoke reflection outside the successful drive tail.
 
-Write user-facing progress updates and the final receipt in the user's language,
-while preserving canonical status and receipt field names.
+### 🔴 HARD GATE · response language
+
+Before any user-facing progress, question, summary, or receipt, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose receipt value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, receipt keys, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
 
 ## User decision questions
 

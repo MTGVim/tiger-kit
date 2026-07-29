@@ -713,6 +713,38 @@
           "expected": "Pass"
         }
       ]
+    },
+    {
+      "id": "drive-response-language-explicit-korean",
+      "path": "success",
+      "prompt": "[active tk-drive] 최신 명시 언어 지시는 한국어입니다. Source, commit message, skill body가 영어여도 final result의 free-form 설명은 모두 한국어로 쓰고 canonical headings/status/IDs는 보존해 주세요.",
+      "expected_output": "Outcome 값, Implemented, Verification, reflection 설명과 Receipt의 prose value를 한국어로 쓰며 영어 source 때문에 설명 문장이 영어로 바뀌지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "canonical headings, receipt keys, status tokens, IDs는 그대로 유지하지만 모든 free-form progress, summary, result, receipt value가 한국어이고 accidental English explanatory sentence가 없다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "drive-response-language-explicit-english",
+      "path": "success",
+      "prompt": "[active tk-drive] The latest explicit language instruction is English. Earlier conversation and source notes are Korean. Return the final result with all free-form progress, summaries, and receipt values in English while preserving canonical tokens.",
+      "expected_output": "Free-form Outcome, Implemented, Verification, and receipt values are English despite earlier Korean context, while canonical headings, statuses, IDs, commands, and paths remain unchanged.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "The latest explicit English instruction wins over prior Korean context and all explanatory prose is English without translating machine-relevant tokens."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ]
 }

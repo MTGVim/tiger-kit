@@ -16,6 +16,7 @@ if __package__:
         validate_catalog_routing,
         validate_release_alignment,
         validate_release_version_contract,
+        validate_response_language_contract,
         validate_runtime_scratch,
         validate_skill_language,
         validate_user_decision_contract,
@@ -33,6 +34,7 @@ else:
         validate_catalog_routing,
         validate_release_alignment,
         validate_release_version_contract,
+        validate_response_language_contract,
         validate_runtime_scratch,
         validate_skill_language,
         validate_user_decision_contract,
@@ -78,6 +80,8 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "drive-requires-explicit-start",
                 "drive-resumes-pending-answer",
                 "drive-bounds-result-cardinality",
+                "drive-response-language-explicit-korean",
+                "drive-response-language-explicit-english",
                 "drive-reflects-once-after-aggregate-pass",
                 "drive-invokes-phase-owners",
                 "drive-continues-after-ready-spec",
@@ -136,6 +140,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "reflect-hands-off-qualified-skill-incident-once",
                 "reflect-skips-diagnosis-without-four-gate",
                 "reflect-blocks-repeated-diagnosis-handoff",
+                "reflect-response-language-preserves-machine-tokens",
                 "reflect-drive-applies-eligible-tracked-repo-rule",
                 "reflect-drive-never-creates-local-rule-target",
                 "reflect-drive-skill-candidate-is-promotion-packet-only",
@@ -274,6 +279,30 @@ class CanonicalSkillContractTest(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
 
         self.assertEqual(validate_skill_language(root), [])
+        self.assertEqual(validate_response_language_contract(root), [])
+
+    def test_response_language_gate_rejects_one_weakened_skill(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source_root = Path(__file__).resolve().parents[1]
+            for skill in EXPECTED_SKILLS:
+                target = root / "skills" / skill / "SKILL.md"
+                target.parent.mkdir(parents=True)
+                text = (source_root / "skills" / skill / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                if skill == "tk-ask-repo":
+                    text = text.replace(
+                        "latest explicit user language instruction",
+                        "current source language",
+                        1,
+                    )
+                target.write_text(text, encoding="utf-8")
+
+            errors = validate_response_language_contract(root)
+
+            self.assertEqual(len(errors), 1)
+            self.assertIn("tk-ask-repo", errors[0])
 
     def test_canonical_skills_embed_native_user_decision_contract(self) -> None:
         root = Path(__file__).resolve().parents[1]

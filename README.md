@@ -19,6 +19,11 @@ behavior-preserving simplify, 성공한 drive 끝의 안전한 optimistic reflec
 [ADR 0001](docs/adr/0001-implementation-quality-and-optimistic-reflection.md)에
 기록되어 있습니다.
 
+14개 canonical skill 모두 최신 명시 언어 지시를 우선하는 response-language
+hard gate를 포함합니다. 별도 지시가 없으면 현재 사용자 메시지의 언어를
+따르며, 자유 서술은 그 언어로 통일합니다. Canonical heading, receipt key,
+status, ID, command, path, code, exact source literal은 원문 그대로 유지합니다.
+
 ## 설치
 
 모든 지원 host에 전체 skill을 전역 설치합니다.

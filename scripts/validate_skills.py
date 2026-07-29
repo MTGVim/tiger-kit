@@ -81,6 +81,13 @@ RESULT_BUDGET_TOKENS = {
     "tk-to-spec": ("two to five short bullets", "top five to seven"),
     "tk-to-tickets": ("two to seven tickets", "top five to seven"),
 }
+RESPONSE_LANGUAGE_GATE = (
+    "### 🔴 HARD GATE · response language\n\n"
+    "Before any user-facing progress, question, summary, or receipt, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. "
+    "Write every free-form user-facing sentence and every prose receipt value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. "
+    "Keep canonical headings, receipt keys, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. "
+    "Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language."
+)
 CATALOG_ROUTING_BOUNDARIES = {
     "tk-ask-repo vs ordinary repository Q&A",
     "tk-ask-repo vs tk-implement",
@@ -259,6 +266,8 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-requires-explicit-start",
     "drive-resumes-pending-answer",
     "drive-bounds-result-cardinality",
+    "drive-response-language-explicit-korean",
+    "drive-response-language-explicit-english",
     "drive-reflects-once-after-aggregate-pass",
     "drive-skips-unneeded-tickets",
     "drive-keeps-ticket-ledger",
@@ -322,6 +331,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "reflect-hands-off-qualified-skill-incident-once",
     "reflect-skips-diagnosis-without-four-gate",
     "reflect-blocks-repeated-diagnosis-handoff",
+    "reflect-response-language-preserves-machine-tokens",
     "merge-conflict-bounds-result-cardinality",
 }
 
@@ -429,6 +439,21 @@ def validate_user_decision_contract(root: Path) -> list[str]:
             errors.append(
                 f"{skill}: SKILL.md: native user-decision question contract missing "
                 + ", ".join(repr(token) for token in missing)
+            )
+    return errors
+
+
+def validate_response_language_contract(root: Path) -> list[str]:
+    errors: list[str] = []
+    for skill in sorted(EXPECTED_SKILLS):
+        path = root / "skills" / skill / "SKILL.md"
+        if not path.is_file():
+            errors.append(f"{skill}: SKILL.md: add the response-language hard gate")
+            continue
+        text = path.read_text(encoding="utf-8")
+        if text.count(RESPONSE_LANGUAGE_GATE) != 1:
+            errors.append(
+                f"{skill}: SKILL.md: preserve exactly one complete response-language hard gate"
             )
     return errors
 
@@ -598,6 +623,7 @@ def validate_repository_contract() -> list[str]:
     errors.extend(validate_local_only_workflows(ROOT))
     errors.extend(validate_skill_language(ROOT))
     errors.extend(validate_user_decision_contract(ROOT))
+    errors.extend(validate_response_language_contract(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
             errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 20.2.0")
@@ -666,7 +692,7 @@ def validate_repository_contract() -> list[str]:
             "## Efficiency gate",
             "Never semantically mutate the canonical source skill",
             "upstream-draft-ready",
-            "user's language",
+            "### 🔴 HARD GATE · response language",
         ),
         "scripts/run_skill_evals.py": (
             '"--diagnose"',
@@ -761,12 +787,6 @@ def validate_skill_language(root: Path) -> list[str]:
                     errors.append(
                         f"{relative}:{number}: canonical skill operational prose must be English"
                     )
-        if skill_path.is_file() and "user's language" not in skill_path.read_text(
-            encoding="utf-8"
-        ):
-            errors.append(
-                f"{skill_path.relative_to(root)}: preserve user-language output style"
-            )
     return errors
 
 

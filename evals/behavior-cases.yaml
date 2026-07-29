@@ -613,3 +613,12 @@
 - case: to-tickets-bounds-result-cardinality
   skill: tk-to-tickets
   expect: "Two to seven tickets use the readable slice table; larger decompositions show the top five to seven plus coverage summary and artifact path."
+- case: drive-response-language-explicit-korean
+  skill: tk-drive
+  expect: "The latest explicit Korean instruction keeps every free-form progress, result, summary, and receipt value in Korean even when sources and skill bodies are English."
+- case: drive-response-language-explicit-english
+  skill: tk-drive
+  expect: "The latest explicit English instruction overrides earlier Korean context for free-form prose while canonical machine tokens remain unchanged."
+- case: reflect-response-language-preserves-machine-tokens
+  skill: tk-reflect
+  expect: "Korean explanatory prose preserves canonical headings, receipt keys, status tokens, IDs, commands, paths, code, and exact source literals byte-for-byte."
