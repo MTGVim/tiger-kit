@@ -72,6 +72,8 @@ With no material signal, keep the baseline path silent: create no risk artifact 
 
 Drive classifies and reconciles the profile but never chooses a phase owner's commands, browser route, test seam, or review method. Required inaccessible non-user-owned evidence is `Unverifiable` before implementation; only a genuinely user-owned authority or intent gap may use the existing decision owner. Never drop or weaken an obligation to continue.
 
+Reject orchestration shortcuts: invoke owners instead of recreating their work or accepting prose receipts; slice tickets by independently verifiable behavior instead of phases, files, or commands; freeze source-located signals instead of inflating risk; and reconcile current aggregate evidence instead of replaying child evidence.
+
 ## Workflow
 
 1. `preflight`: resolve the complete source per phase invariants, relevant
