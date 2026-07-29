@@ -95,9 +95,13 @@ retry, nested-call, or fan-out metrics.
 
 When the repository is not TigerKit and the target is `tk-*`, verify TigerKit
 origin/ref, consumer overrides, and—when possible—the incident against
-unmodified upstream source. Consumer-only drift is `local-only`. A verified
-upstream cause may produce an anonymized issue draft by following
+unmodified upstream source. Consumer-only drift is `local-only`. Before any
+upstream proposal, complete the provenance, reproduction, control/holdout,
+issue-search, and ancestry gates in
 [upstream-issue-anonymization.md](references/upstream-issue-anonymization.md).
+A matching issue is cited and reconciled instead of redrafted. Only
+`upstream-draft-ready` may include an upstream issue title or body; every
+other disposition reports evidence gaps without proposal content.
 Never create, comment on, label, or publish an issue automatically.
 
 ## Mutation boundary

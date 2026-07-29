@@ -528,10 +528,28 @@
   expect: "Diagnosis experiments stay isolated and semantic canonical changes become tk-learn handoff proposals without commit."
 - case: skill-diagnose-drafts-anonymized-upstream-issue
   skill: tk-skill-diagnose
-  expect: "Verified reproduction against unmodified TigerKit source may produce an anonymized upstream issue title/body draft without remote mutation."
+  expect: "Exact provenance, two fresh upstream reproductions, clean control and holdout, accessible duplicate search, ancestry reconciliation, and redaction permit an anonymized draft without remote mutation."
 - case: skill-diagnose-keeps-consumer-drift-local
   skill: tk-skill-diagnose
   expect: "An incident reproduced only in a consumer-local override is local-only and produces no upstream issue draft."
+- case: skill-diagnose-withholds-draft-without-exact-ref
+  skill: tk-skill-diagnose
+  expect: "Missing exact upstream ref or content hash is upstream-unverifiable and suppresses all title/body proposal content."
+- case: skill-diagnose-withholds-draft-without-two-upstream-runs
+  skill: tk-skill-diagnose
+  expect: "Fewer than two fresh matched upstream reproductions cannot reach upstream-draft-ready or emit proposal content."
+- case: skill-diagnose-withholds-draft-without-control-holdout
+  skill: tk-skill-diagnose
+  expect: "Missing nearby control or unused holdout evidence keeps upstream proposal eligibility unverifiable."
+- case: skill-diagnose-withholds-draft-for-matching-open-issue
+  skill: tk-skill-diagnose
+  expect: "A matching open upstream issue is cited and reconciled instead of receiving a duplicate title/body proposal."
+- case: skill-diagnose-withholds-draft-for-unverified-closed-regression
+  skill: tk-skill-diagnose
+  expect: "A matching closed issue is not called a regression without exact later upstream reproduction and fix ancestry evidence."
+- case: skill-diagnose-withholds-draft-when-issue-search-unavailable
+  skill: tk-skill-diagnose
+  expect: "An inaccessible open and closed upstream issue search is not treated as no match and suppresses proposal content."
 - case: skill-diagnose-redacts-private-upstream-evidence
   skill: tk-skill-diagnose
   expect: "Private identifiers, paths, URLs, literals, and secrets are removed and residue-checked before any upstream-draft-ready disposition."

@@ -136,6 +136,12 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "skill-diagnose-never-mutates-canonical-path",
                 "skill-diagnose-drafts-anonymized-upstream-issue",
                 "skill-diagnose-keeps-consumer-drift-local",
+                "skill-diagnose-withholds-draft-without-exact-ref",
+                "skill-diagnose-withholds-draft-without-two-upstream-runs",
+                "skill-diagnose-withholds-draft-without-control-holdout",
+                "skill-diagnose-withholds-draft-for-matching-open-issue",
+                "skill-diagnose-withholds-draft-for-unverified-closed-regression",
+                "skill-diagnose-withholds-draft-when-issue-search-unavailable",
                 "skill-diagnose-redacts-private-upstream-evidence",
                 "reflect-hands-off-qualified-skill-incident-once",
                 "reflect-skips-diagnosis-without-four-gate",
@@ -346,6 +352,98 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "event_absent",
                 "path_absent",
             ],
+        )
+
+    def test_skill_diagnose_upstream_proposal_matrix_is_fail_closed(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        payload = json.loads(
+            (root / "skills/tk-skill-diagnose/evals/evals.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        cases = {case["id"]: case for case in payload["evals"]}
+        positive = cases["skill-diagnose-drafts-anonymized-upstream-issue"]
+        positive_assertions = positive["assertions"]
+
+        self.assertIn(
+            {
+                "type": "output_contains",
+                "text": "## Summary",
+            },
+            positive_assertions,
+        )
+        self.assertIn(
+            {
+                "type": "output_contains",
+                "text": "## Privacy note",
+            },
+            positive_assertions,
+        )
+
+        expected = {
+            "skill-diagnose-keeps-consumer-drift-local": ("local-only", "Pass"),
+            "skill-diagnose-withholds-draft-without-exact-ref": (
+                "upstream-unverifiable",
+                "Unverifiable",
+            ),
+            "skill-diagnose-withholds-draft-without-two-upstream-runs": (
+                "upstream-unverifiable",
+                "Unverifiable",
+            ),
+            "skill-diagnose-withholds-draft-without-control-holdout": (
+                "upstream-unverifiable",
+                "Unverifiable",
+            ),
+            "skill-diagnose-withholds-draft-for-matching-open-issue": (
+                "upstream-candidate",
+                "Pass",
+            ),
+            "skill-diagnose-withholds-draft-for-unverified-closed-regression": (
+                "upstream-unverifiable",
+                "Unverifiable",
+            ),
+            "skill-diagnose-withholds-draft-when-issue-search-unavailable": (
+                "upstream-unverifiable",
+                "Unverifiable",
+            ),
+        }
+        for case_id, (disposition, terminal_status) in expected.items():
+            with self.subTest(case=case_id):
+                case = cases[case_id]
+                assertions = case["assertions"]
+                self.assertEqual(case["path"], "boundary")
+                self.assertIn(
+                    {"type": "output_contains", "text": disposition},
+                    assertions,
+                )
+                self.assertIn(
+                    {"type": "output_absent", "text": "## Summary"},
+                    assertions,
+                )
+                self.assertIn(
+                    {"type": "output_absent", "text": "## Environment"},
+                    assertions,
+                )
+                self.assertIn(
+                    {"type": "terminal_status", "expected": terminal_status},
+                    assertions,
+                )
+                self.assertIn({"type": "git_head_unchanged"}, assertions)
+
+        skill_text = (
+            root / "skills/tk-skill-diagnose/SKILL.md"
+        ).read_text(encoding="utf-8")
+        reference_text = (
+            root
+            / "skills/tk-skill-diagnose/references/upstream-issue-anonymization.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "Only `upstream-draft-ready` may include an upstream issue title or body",
+            " ".join(skill_text.split()),
+        )
+        self.assertIn(
+            "accessible open and closed upstream issue search",
+            " ".join(reference_text.split()),
         )
 
     def test_drive_reflection_tail_is_fixed_point_and_bounded(self) -> None:

@@ -17,6 +17,32 @@ Consumer-only reproduction is `local-only`. If exact upstream source cannot be
 checked, local diagnosis may continue but upstream disposition is
 `upstream-unverifiable`.
 
+## Proposal eligibility gate
+
+Do not write a proposed title, body, or any draft-template section until all
+of these are verified:
+
+1. canonical origin plus the exact installed/candidate ref, snapshot, or
+   content hash;
+2. two fresh matched reproductions against unmodified upstream source;
+3. a nearby control and unused holdout with no critical regression;
+4. an accessible open and closed upstream issue search covering the same
+   target, symptom, and root-cause theme;
+5. reconciliation of every match with the exact ref and known fix ancestry;
+6. the final `upstream-draft-ready` disposition.
+
+If issue search is inaccessible, exact provenance is missing, upstream has
+fewer than two fresh reproductions, or control/holdout evidence is incomplete,
+use `upstream-unverifiable` and omit proposal content. A consumer-only
+reproduction remains `local-only`.
+
+Cite a matching open issue and its evidence state instead of drafting another
+proposal. For a matching closed issue, classify a regression candidate only
+when an exact later unmodified upstream source satisfies the same two-run,
+control, and holdout gates; otherwise cite the closed issue and use
+`upstream-unverifiable`. `upstream-candidate` may identify the matching issue
+or remaining owner work, but it never includes a new title/body proposal.
+
 ## Required redaction
 
 Remove or generalize:
@@ -34,6 +60,9 @@ Then separately verify that technical reproduction details still remain. If
 either check is unavailable, do not use `upstream-draft-ready`.
 
 ## Draft template
+
+Use this template only after the proposal eligibility gate reaches
+`upstream-draft-ready`.
 
 ```markdown
 ## Summary
