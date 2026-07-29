@@ -1,3 +1,19 @@
+# TigerKit 20.1.7 repository answers and concise receipts
+
+TigerKit 20.1.7 expands the catalog from 13 to 14 canonical skills:
+2 user-invoked and 12 hybrid. The new user-invoked `tk-ask-repo` skill is a
+read-only investigation desk for inbound repository questions; existing skill
+names and phase-owner invocation paths remain valid.
+
+`tk-drive` now requires a Ready spec for every run and carries each successful
+child receipt's next transition in the same turn. Output is decision-first,
+multi-item results use compact behavior-level tables, and receipt-bearing
+skills start receipts with one localized `Outcome` sentence before canonical
+status and provenance fields.
+
+No runtime framework, plugin surface, shared contract, or new scratch artifact
+is added. Consumers only need to refresh the installed skill package.
+
 # TigerKit 20.1.6 structured user decision questions
 
 TigerKit 20.1.6 preserves all 13 canonical skills and their invocation

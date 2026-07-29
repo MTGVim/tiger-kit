@@ -1,5 +1,25 @@
 # Changelog
 
+## 20.1.7 — Repository Answers, Drive Liveness, and Concise Receipts
+
+- Expanded the catalog to 14 canonical skills with the user-invoked
+  `tk-ask-repo` investigation desk, including source-located value, structure,
+  existence, impact, and attribution traversals.
+- Fixed `tk-drive` child-receipt liveness so successful phase-owner handoffs
+  carry their next transition, and required every drive run to pass through a
+  Ready spec without a small-task exception.
+- Made terminal output decision-first across the catalog, removed empty or
+  duplicate narration, and kept raw logs and detailed evidence in their owned
+  artifacts or bounded ledgers.
+- Added conditional itemized result tables for multi-item implementation,
+  verification, diagnosis, conflict, prototype, and ticket results while
+  keeping single-item output as one sentence.
+- Added one localized `Outcome` sentence to every receipt-bearing contract so
+  users can understand the result before status and provenance fields.
+- Preserved `tk-reflect` report-only behavior, drive/spec/ticket phase
+  ownership, approval and mutation boundaries, and all prior safety and
+  terminal-state contracts.
+
 ## 20.1.6 — Structured User Decision Questions
 
 - Standardized a self-contained user-decision question contract across all 13
