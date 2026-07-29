@@ -6,7 +6,7 @@
   },
   {
     "id": 2,
-    "prompt": "$tk-drive tenant authorization과 사용자 데이터 write 경계를 바꾸는 이슈를 구현해 주세요. Protected entry-point evidence, regression seam, 독립 reviewer capability가 있습니다.",
+    "prompt": "$tk-drive tenant authorization과 사용자 데이터 write 경계를 바꾸는 이슈를 구현해 주세요. Protected entry-point evidence, regression seam, 독립 reviewer capability가 있고, 허용할 actor–tenant–target rule과 acceptance criteria는 source에서 이미 확정되어 추가 사용자 결정이 없습니다.",
     "expected": "security-data signal에서 regression-seam, side-effect-recovery, independent-review를 canonical order로 한 번씩 도출하고 정확한 test/recovery/review 방법은 tk-implement가 소유한다."
   }
 ]

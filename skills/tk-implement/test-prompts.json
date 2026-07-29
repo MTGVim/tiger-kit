@@ -6,7 +6,7 @@
   },
   {
     "id": 2,
-    "prompt": "[active tk-drive handoff] public multi-host contract 변경입니다. Signals: public-blast-radius. Obligations: regression-seam, compatibility, independent-review. 검증·review·commit까지 진행해 주세요.",
-    "expected": "frozen profile을 재분류하거나 약화하지 않고 regression, supported-host compatibility, one bounded independent review를 충족한 뒤에만 commit한다."
+    "prompt": "[active tk-drive implementation handoff] Success state: Pass. Outstanding transition: aggregate verification. Unit TK-02, R8/AC8의 exact source와 diff scope가 제공된 public multi-host contract 변경입니다. Signals: public-blast-radius. Obligations: regression-seam, compatibility, independent-review. 검증·review·commit 후 receipt를 반환해 주세요.",
+    "expected": "unit/R/AC와 frozen profile을 재분류하거나 약화하지 않고 regression, supported-host compatibility, one bounded independent review를 충족한 뒤에만 commit하며 parent transition을 verbatim 반환한다."
   }
 ]
