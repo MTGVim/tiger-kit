@@ -254,6 +254,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-invokes-phase-owners",
     "drive-continues-after-ready-spec",
     "drive-rejects-missing-transition-echo",
+    "drive-requires-spec-for-trivial-task",
     "drive-invokes-grill-on-unresolved-decision",
     "drive-skips-grill-for-ready-source",
     "drive-reruns-spec-after-grill",

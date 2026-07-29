@@ -436,6 +436,35 @@
       "safety": true
     },
     {
+      "id": "drive-requires-spec-for-trivial-task",
+      "path": "success",
+      "prompt": "$tk-drive Create trivial-note.txt with the exact content `ready\\n`, verify it, and finish. The source is complete, no user decision is open, and the work is one trivial vertical slice.",
+      "expected_output": "작업 크기와 무관하게 tk-to-spec을 호출하여 Ready를 확인한 뒤 no-ticket 결정을 하고 one-unit implementation과 aggregate verification을 완료한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "trivial single-slice task에서도 spec owner를 생략하지 않고 Ready receipt 이후에만 ticket decision과 implementation으로 진행한다."
+        },
+        {
+          "type": "output_contains",
+          "text": "tk-to-spec"
+        },
+        {
+          "type": "output_contains",
+          "text": "Ready"
+        },
+        {
+          "type": "output_absent",
+          "text": "spec skipped"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": true
+    },
+    {
       "id": "drive-runs-final-aggregate-verification",
       "path": "success",
       "prompt": "$tk-drive 세 티켓의 commit receipt가 모두 Pass야. 전체 검증까지 마무리해줘",

@@ -78,6 +78,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "drive-invokes-phase-owners",
                 "drive-continues-after-ready-spec",
                 "drive-rejects-missing-transition-echo",
+                "drive-requires-spec-for-trivial-task",
                 "drive-invokes-grill-on-unresolved-decision",
                 "drive-skips-grill-for-ready-source",
                 "drive-reruns-spec-after-grill",
@@ -166,6 +167,18 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 self.assertIn("`Return to: tk-drive`", text)
                 self.assertIn("`Outstanding transition`", text)
                 self.assertIn("verbatim", text)
+
+    def test_drive_requires_spec_for_trivial_tasks(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        drive = (root / "skills/tk-drive/SKILL.md").read_text(encoding="utf-8")
+        phases = (root / "skills/tk-drive/references/phases.md").read_text(
+            encoding="utf-8"
+        )
+
+        for text in (drive, phases):
+            self.assertIn("every active drive run", text)
+            self.assertIn("no small-task exception", text)
+            self.assertIn("`tk-to-spec`", text)
 
     def test_reflect_and_grooming_share_exact_placement_rubric(self) -> None:
         root = Path(__file__).resolve().parents[1]

@@ -415,6 +415,9 @@
 - case: drive-rejects-missing-transition-echo
   skill: tk-drive
   expect: "A missing or mismatched child `Outstanding transition` echo is receipt drift and stops drive Blocked instead of being consumed as success."
+- case: drive-requires-spec-for-trivial-task
+  skill: tk-drive
+  expect: "Every active drive run invokes tk-to-spec and reaches Ready before the ticket decision or implementation, including trivial single-slice work."
 - case: drive-skips-grill-for-ready-source
   skill: tk-drive
   expect: "Drive skips tk-grill-me when confirmed source and evidence already support a Ready spec without a user-owned decision."

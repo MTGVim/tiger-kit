@@ -40,6 +40,9 @@ phase invariants. Do not create drive-only or global state.
 Follow [phase invariants](references/phases.md). Drive owns orchestration;
 `tk-grill-me`, `tk-to-spec`, `tk-to-tickets`, and `tk-implement` respectively
 own decision closure, spec, ticket decomposition, and one implementation unit.
+`tk-to-spec` is mandatory on every active drive run before the ticket decision
+or implementation. There is no small-task exception; task size and
+proportionality affect only whether a ticket ledger is justified.
 
 Invoke only the phase and support owners allowed by the phase invariants; do
 not create a shared runtime contract.
@@ -86,7 +89,8 @@ candidate/staged diff, and rendered UI; drift or evidence gaps block commit.
    sufficient. Continue only from its `confirmed` receipt.
 3. `spec phase`: explicitly hand current source, confirmed decisions, and
    traceability to `tk-to-spec`; accept only a `Ready` receipt, then make the
-   ticket decision in the same active turn.
+   ticket decision in the same active turn. Run this phase for every task,
+   including trivial and single-slice work.
 4. `ticket decision`: use `tk-to-tickets` only for at least two independent
    vertical slices or material ledger value. Otherwise create no ticket/ledger
    and carry task identity plus Ready R/AC as one no-ticket unit.

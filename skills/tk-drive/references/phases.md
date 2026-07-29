@@ -126,11 +126,15 @@ automatically routing it again. Phase owners never invoke one another.
 
 ## Spec owner
 
-Apply `tk-to-spec` with the confirmed source and decisions. It alone owns the
-source map, stable R/AC IDs, Ready gate, spec write/print behavior, and UI
-writing inventory. Drive records its receipt and does not repair a non-Ready
-spec inline. A decision-related non-Ready receipt returns to drive's decision
-owner; all other non-Ready states stop at the spec phase.
+Apply `tk-to-spec` on every active drive run with the confirmed source and
+decisions before any ticket decision or implementation.
+There is no small-task exception; size, proportionality, and a single-slice
+shape affect only the ticket decision after `Ready`. The spec owner alone owns
+the source map, stable R/AC IDs, Ready gate, spec write/print behavior, and UI
+writing inventory.
+Drive records its receipt and does not repair a non-Ready spec inline. A
+decision-related non-Ready receipt returns to drive's decision owner; all other
+non-Ready states stop at the spec phase.
 
 ## Ticket decision and owner
 
