@@ -77,6 +77,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "drive-does-not-auto-reflect",
                 "drive-invokes-phase-owners",
                 "drive-continues-after-ready-spec",
+                "drive-rejects-missing-transition-echo",
                 "drive-invokes-grill-on-unresolved-decision",
                 "drive-skips-grill-for-ready-source",
                 "drive-reruns-spec-after-grill",
@@ -86,10 +87,13 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "drive-scopes-approval-to-asked-axis",
                 "drive-reads-complete-remote-source",
                 "grill-accepts-active-drive-handoff",
+                "grill-echoes-drive-transition",
                 "grill-returns-control-to-drive",
                 "grill-uses-native-question-tool",
+                "to-spec-echoes-drive-transition",
                 "to-spec-returns-decision-blocker-to-drive",
                 "to-spec-blocks-source-current-ui-mismatch",
+                "to-tickets-echoes-drive-transition",
                 "to-tickets-returns-decision-blocker-to-drive",
                 "to-tickets-blocks-source-current-ui-mismatch",
                 "implement-reviews-every-standalone-run",
@@ -98,6 +102,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "implement-allows-bounded-hook-bypass",
                 "implement-diagnoses-unknown-cause-failure",
                 "implement-active-drive-handoff-triggers",
+                "implement-echoes-drive-transition",
                 "implement-blocks-source-current-ui-mismatch",
                 "implement-production-behavior-requires-durable-test",
                 "grooming-vendor-artifact-remains-report-only",
@@ -135,6 +140,32 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 for case in REQUIRED_BEHAVIOR_CASES
             )
         )
+
+    def test_drive_success_receipts_echo_the_outstanding_transition(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        drive = (root / "skills/tk-drive/SKILL.md").read_text(encoding="utf-8")
+        phases = (root / "skills/tk-drive/references/phases.md").read_text(
+            encoding="utf-8"
+        )
+
+        for text in (drive, phases):
+            self.assertIn("`Success state`", text)
+            self.assertIn("`Outstanding transition`", text)
+            self.assertIn("missing or mismatched", text)
+
+        for skill in (
+            "tk-grill-me",
+            "tk-to-spec",
+            "tk-to-tickets",
+            "tk-implement",
+        ):
+            with self.subTest(skill=skill):
+                text = (root / f"skills/{skill}/SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                self.assertIn("`Return to: tk-drive`", text)
+                self.assertIn("`Outstanding transition`", text)
+                self.assertIn("verbatim", text)
 
     def test_reflect_and_grooming_share_exact_placement_rubric(self) -> None:
         root = Path(__file__).resolve().parents[1]

@@ -31,8 +31,13 @@ evidence.
 
 Standalone and drive handoff use the same Ready contract. In a drive handoff,
 preserve task identity and source traceability; return `Phase: spec`, status,
-artifact path, and R/AC IDs. If status is not `Ready`, do not create a substitute
-spec or weaken the verdict so drive can continue.
+artifact path, and R/AC IDs. The handoff also supplies `Success state` and
+`Outstanding transition`. On `Ready`, include `Return to: tk-drive` and echo
+the parent-supplied `Outstanding transition` verbatim without choosing or
+executing it. A missing or mismatched `Success state` or transition cannot
+produce a successful active-drive receipt; return `Blocked`. If status is not
+`Ready`, do not create a substitute spec or weaken the verdict so drive can
+continue.
 
 ## Workflow
 

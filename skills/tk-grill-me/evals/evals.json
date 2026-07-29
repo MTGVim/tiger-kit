@@ -174,6 +174,33 @@
       ]
     },
     {
+      "id": "grill-echoes-drive-transition",
+      "path": "success",
+      "prompt": "[active tk-drive decision handoff] Success state: confirmed. Outstanding transition: spec gate. The user explicitly confirmed the only pending decision. Return the decision receipt.",
+      "expected_output": "confirmed receipt에 Return to: tk-drive와 parent가 준 Outstanding transition: spec gate를 그대로 포함하고 downstream phase를 실행하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "active-drive confirmed receipt가 parent-supplied transition을 verbatim echo하고 그 transition을 직접 실행하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "Return to: tk-drive"
+        },
+        {
+          "type": "output_contains",
+          "text": "Outstanding transition: spec gate"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
       "id": "grill-uses-native-question-tool",
       "path": "boundary",
       "prompt": "/tk-grill-me 현재 host 실행 context에 native structured user-input tool과 option preview/prototype card 기능이 노출되어 있습니다. 배포 전략 결정을 물어야 합니다. prose 질문으로 우회하지 말고 host tool과 preview를 쓰며, Question 안에서 evidence 기반 맥락과 영향을 읽기 쉽게 설명한 다음 최대 3개 제안 중 정확히 하나를 (추천) 표시하고 제 답을 기다리세요.",

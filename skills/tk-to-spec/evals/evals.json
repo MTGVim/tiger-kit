@@ -205,6 +205,30 @@
       ]
     },
     {
+      "id": "to-spec-echoes-drive-transition",
+      "path": "success",
+      "prompt": "[active tk-drive spec handoff] Success state: Ready. Outstanding transition: ticket decision. Write and revalidate the complete Ready spec for the supplied one-file task, then return the receipt.",
+      "expected_output": "Ready receipt에 Return to: tk-drive와 parent가 준 Outstanding transition: ticket decision을 그대로 포함하고 ticket decision을 직접 수행하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "active-drive Ready receipt가 parent-supplied transition을 verbatim echo하고 ticket 또는 implementation phase를 실행하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "Return to: tk-drive"
+        },
+        {
+          "type": "output_contains",
+          "text": "Outstanding transition: ticket decision"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
       "id": "to-spec-returns-decision-blocker-to-drive",
       "path": "boundary",
       "prompt": "[active tk-drive spec handoff] Confirmed sources conflict on API compatibility and require a user decision. Do not interview or invoke grill.",

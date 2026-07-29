@@ -497,6 +497,30 @@
       ]
     },
     {
+      "id": "implement-echoes-drive-transition",
+      "path": "success",
+      "prompt": "[active tk-drive implementation handoff] Success state: Pass. Outstanding transition: aggregate verification. Implement the supplied one-file ticket TK-02 as one unit, verify and review it, commit it, then return the receipt.",
+      "expected_output": "Pass receipt에 Return to: tk-drive와 parent가 준 Outstanding transition: aggregate verification을 그대로 포함하며 aggregate verification을 직접 소유하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "active-drive Pass receipt가 parent-supplied transition을 verbatim echo하고 drive-wide aggregate verification을 실행하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "Return to: tk-drive"
+        },
+        {
+          "type": "output_contains",
+          "text": "Outstanding transition: aggregate verification"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
       "id": "implement-ordinary-request-does-not-trigger",
       "path": "boundary",
       "prompt": "이 함수의 버그를 고쳐 주세요.",

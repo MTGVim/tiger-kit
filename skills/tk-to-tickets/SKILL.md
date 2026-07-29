@@ -24,7 +24,12 @@ Source precedence is: user-designated source, current conversation,
 Standalone and drive handoff use the same vertical-slice contract. Drive
 decides whether tickets are needed; this skill does not re-own that decision or
 proceed to implementation. Return `Phase: tickets`, path, `Status: Pass` after
-successful write/revalidation, ticket IDs, and source R/AC coverage.
+successful write/revalidation, ticket IDs, and source R/AC coverage. An active
+drive handoff also supplies `Success state` and `Outstanding transition`. On
+`Pass`, include `Return to: tk-drive` and echo the parent-supplied
+`Outstanding transition` verbatim without choosing or executing it. A missing
+or mismatched `Success state` or transition cannot produce a successful
+active-drive receipt; return `Blocked`.
 
 When an active-drive handoff exposes a missing user decision, return the native
 non-success receipt to drive. Do not invoke `tk-grill-me` or edit the Ready

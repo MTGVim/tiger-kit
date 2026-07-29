@@ -39,8 +39,13 @@ creating tickets.
 Standalone execution and drive handoff use the same implementation, test,
 review, and commit contract. For a drive handoff, preserve task identity,
 ticket/R/AC, initial `HEAD`, and ownership; return phase, unit/ticket ID,
-commit SHA, and verification/review evidence. Do not take ownership of
-drive-wide cross-ticket verification or its final receipt.
+commit SHA, and verification/review evidence. The handoff also supplies
+`Success state` and `Outstanding transition`. On `Pass`, include
+`Return to: tk-drive` and echo the parent-supplied `Outstanding transition`
+verbatim without choosing or executing it. A missing or mismatched
+`Success state` or transition cannot produce a successful active-drive
+receipt; return `Blocked`. Do not take ownership of drive-wide cross-ticket
+verification or its final receipt.
 
 ### Terminal-state contract
 

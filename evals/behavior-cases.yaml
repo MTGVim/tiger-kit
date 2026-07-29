@@ -115,6 +115,9 @@
 - case: grill-returns-control-to-drive
   skill: tk-grill-me
   expect: "A confirmed drive handoff returns Decisions, assumptions, risks, and control to tk-drive without invoking spec, tickets, or implementation."
+- case: grill-echoes-drive-transition
+  skill: tk-grill-me
+  expect: "A confirmed active-drive receipt echoes `Return to: tk-drive` and the parent-supplied `Outstanding transition` verbatim without executing it."
 - case: implement-tdd-requires-observed-red
   skill: tk-implement
   expect: "TDD requires executing the focused test and observing a real failure before implementation."
@@ -175,6 +178,9 @@
 - case: implement-active-drive-handoff-triggers
   skill: tk-implement
   expect: "An explicit active-drive implementation handoff carrying one unit/ticket and R/AC activates the same unit contract as standalone invocation."
+- case: implement-echoes-drive-transition
+  skill: tk-implement
+  expect: "A successful active-drive implementation receipt echoes `Return to: tk-drive` and the parent-supplied `Outstanding transition` verbatim without executing drive-wide verification."
 - case: implement-ordinary-request-does-not-trigger
   skill: tk-implement
   expect: "An ordinary implementation request does not auto-activate the hybrid skill or its commit authority."
@@ -250,6 +256,9 @@
 - case: to-spec-active-drive-handoff
   skill: tk-to-spec
   expect: "An explicit active-drive spec handoff uses the standalone Ready contract and returns a drive-consumable phase receipt without taking downstream ownership."
+- case: to-spec-echoes-drive-transition
+  skill: tk-to-spec
+  expect: "A Ready active-drive spec receipt echoes `Return to: tk-drive` and the parent-supplied `Outstanding transition` verbatim without making the ticket decision."
 - case: to-spec-returns-decision-blocker-to-drive
   skill: tk-to-spec
   expect: "A user-decision blocker returns `User decision: required`, the new decision, and evidence in a native non-Ready receipt to drive without invoking grill or writing a substitute Ready spec."
@@ -274,6 +283,9 @@
 - case: to-tickets-active-drive-handoff
   skill: tk-to-tickets
   expect: "An explicit active-drive ticket handoff uses the standalone vertical-slice contract and returns a drive-consumable ledger receipt without implementing."
+- case: to-tickets-echoes-drive-transition
+  skill: tk-to-tickets
+  expect: "A successful active-drive ticket receipt echoes `Return to: tk-drive` and the parent-supplied `Outstanding transition` verbatim without implementing."
 - case: to-tickets-returns-decision-blocker-to-drive
   skill: tk-to-tickets
   expect: "A user-decision blocker returns `User decision: required`, the new decision, and evidence in a native ticket receipt to drive without invoking grill or editing the Ready spec."
@@ -400,6 +412,9 @@
 - case: drive-continues-after-ready-spec
   skill: tk-drive
   expect: "A consumed Ready spec is never a response boundary: drive makes the ticket decision and continues through implementation and aggregate verification in the same active turn, or returns an explicit evidence-supported terminal receipt."
+- case: drive-rejects-missing-transition-echo
+  skill: tk-drive
+  expect: "A missing or mismatched child `Outstanding transition` echo is receipt drift and stops drive Blocked instead of being consumed as success."
 - case: drive-skips-grill-for-ready-source
   skill: tk-drive
   expect: "Drive skips tk-grill-me when confirmed source and evidence already support a Ready spec without a user-owned decision."

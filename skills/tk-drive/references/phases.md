@@ -40,8 +40,19 @@ drive-wide orchestration, aggregate verification, or the final receipt.
 
 Every handoff records phase, task identity, source/artifact paths, stable R/AC
 or ticket IDs, branch, initial/current `HEAD`, ownership, and the success state
-needed to continue. Each owner keeps its native receipt; drive maps only the
-minimal continuation state and does not create a shared runtime contract.
+needed to continue. Before invoking the owner, drive records the native
+`Success state` and exactly one drive-owned `Outstanding transition`. The
+transition names the next drive action after success, such as `spec gate`,
+`ticket decision`, `implementation unit <ID>`, or `aggregate verification`.
+Each owner keeps its native receipt; drive maps only the minimal continuation
+state and does not create a shared runtime contract.
+
+On native success, an active-drive owner echoes `Return to: tk-drive` and the
+parent-supplied `Outstanding transition` verbatim without choosing or executing
+that transition. Drive compares the echo with the recorded handoff before
+consuming the receipt. A missing or mismatched success-state or transition echo
+is receipt drift and stops drive `Blocked`; progress text or an otherwise valid
+child receipt cannot substitute for the echo.
 
 Decision-capable non-success receipts include
 `User decision: required | none`. `required` must cite a new user-owned
@@ -85,6 +96,8 @@ Before returning control, verify that every consumed receipt has one recorded
 outgoing transition. A receipt with no transition is an orchestration failure:
 do not silently return or ask the user to invoke drive again; emit the
 evidence-supported non-success terminal receipt if no valid transition exists.
+For an active-drive success receipt, first verify its verbatim
+`Outstanding transition` echo, then execute that transition in the same turn.
 
 ## Decision owner
 

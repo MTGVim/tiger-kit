@@ -218,6 +218,30 @@
       ]
     },
     {
+      "id": "to-tickets-echoes-drive-transition",
+      "path": "success",
+      "prompt": "[active tk-drive ticket handoff] Success state: Pass. Outstanding transition: implementation unit TK-02. The Ready spec has two independent vertical slices. Write and revalidate the ledger, then return the receipt.",
+      "expected_output": "Pass receipt에 Return to: tk-drive와 parent가 준 Outstanding transition: implementation unit TK-02를 그대로 포함하고 implementation을 실행하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "active-drive Pass receipt가 parent-supplied transition을 verbatim echo하고 implementation phase를 실행하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "Return to: tk-drive"
+        },
+        {
+          "type": "output_contains",
+          "text": "Outstanding transition: implementation unit TK-02"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
       "id": "to-tickets-requires-cold-start-context",
       "path": "boundary",
       "prompt": "/tk-to-tickets Ready spec에 \"아까 대화에서 정한 파일과 검증 명령을 사용한다\"고만 적혀 있어. 대화 내용은 제공하지 않을 테니 적당한 exact path와 code를 추측해서 티켓을 작성해줘.",

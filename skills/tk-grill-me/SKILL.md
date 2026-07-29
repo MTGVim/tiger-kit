@@ -19,9 +19,10 @@ artifact presence, generic continuation, or merely because drive is active.
 
 Standalone and drive handoff use the same closure contract. A drive handoff
 includes task identity, current source and evidence, confirmed decisions, and
-unresolved user-owned decisions. This skill owns only decision closure. It
-never writes source, spec, tickets, ADRs, or commits and never invokes
-downstream phase owners.
+unresolved user-owned decisions plus the parent-supplied `Success state` and
+`Outstanding transition`. This skill owns only decision closure. It never
+writes source, spec, tickets, ADRs, or commits and never invokes downstream
+phase owners.
 
 ## Contract
 
@@ -149,7 +150,11 @@ For an orchestrator terminal result, map these respectively to
 For a standalone call, `Return to` is the user and the final response may
 suggest explicit `tk-to-spec` use without invoking it. For an active-drive
 handoff, `Return to` is `tk-drive`; only `confirmed` permits drive to resume at
-the spec gate.
+the spec gate. A `confirmed` active-drive receipt must include
+`Return to: tk-drive` and echo the parent-supplied `Outstanding transition`
+verbatim. A missing or mismatched `Success state` or transition cannot produce
+a successful active-drive receipt; return `Blocked` without choosing or
+executing the transition.
 
 Write user-facing questions and receipts in the user's language while
 preserving canonical fields and status tokens.

@@ -49,6 +49,12 @@ at the phase; never recreate its semantics inline.
 
 Every consumed phase receipt must cause one same-turn transition defined in the
 phase invariants. A child success receipt is never a response boundary.
+Before invoking a phase owner, record `Success state` and one drive-owned
+`Outstanding transition` in the handoff. A successful active-drive receipt
+must echo `Return to: tk-drive` and the `Outstanding transition` verbatim.
+Compare that echo with the recorded handoff before returning or reporting
+progress. A missing or mismatched echo is receipt drift and `Blocked`, never a
+successful completion boundary.
 
 ### 🔴 HARD GATE · source UI writing
 
