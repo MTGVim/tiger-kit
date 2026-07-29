@@ -1,4 +1,4 @@
-# TigerKit 20.2.0 candidate
+# TigerKit 20.2.0
 
 <p align="center">
   <img src="assets/tigerkit-cover.png" width="960" alt="TigerKit Agent Skills 표지">
@@ -8,10 +8,10 @@ TigerKit은 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent 
 모음입니다. 중앙 workflow runtime 없이 14개 self-contained skill을
 `npx skills`로 배포합니다. Decision closure, spec, ticket, implementation은
 각각 하나의 canonical phase skill이 소유하고 `tk-drive`가 그 결과를
-단방향으로 오케스트레이션합니다. 최신 immutable release는 `v20.1.7`이며,
-현재 `main`의 다음 release candidate는 `v20.2.0`입니다.
+단방향으로 오케스트레이션합니다. 최신 immutable release는 `v20.2.0`이며,
+현재 `main`에는 다음 release를 위한 skill 변경이 포함될 수 있습니다.
 
-`v20.2.0` candidate는 구현 전 repository fit 결정, initial GREEN 뒤 한 번의
+`v20.2.0` release는 구현 전 repository fit 결정, initial GREEN 뒤 한 번의
 behavior-preserving simplify, 성공한 drive 끝의 안전한 optimistic reflection,
 결과 규모에 맞춘 bounded summary, 근거 기반 verification profile을
 추가합니다. `tk-reflect`의 non-no-op 결과는
@@ -50,10 +50,10 @@ npx skills add MTGVim/tiger-kit \
   --skill tk-browser-verify
 ```
 
-변경되지 않는 `v20.1.7` snapshot:
+변경되지 않는 `v20.2.0` snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v20.1.7" \
+npx skills add "MTGVim/tiger-kit#v20.2.0" \
   --global \
   --agent claude-code \
   --agent codex \
