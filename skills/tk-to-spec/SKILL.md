@@ -105,10 +105,14 @@ inputs, not slices or tickets: drive alone decides whether a ledger is
 justified, and `tk-to-tickets` alone owns decomposition, ticket IDs, coverage,
 and dependencies. Otherwise use `Draft`, `Blocked`, or `Unverifiable`.
 
-User-facing output is one compact receipt; the artifact owns the spec body.
-The receipt starts with `Outcome: <one user-facing sentence>`, then records
-phase, path, status, and R/AC IDs and references the source-map, candidate-area,
-unverified, conflict, and verification sections instead of restating them.
+Lead with the `Ready | Draft | Blocked | Unverifiable` decision. Summarize the
+core scope, requirements, and exceptions in two to five short bullets; one
+result may use one to three short lines. For eight or more underlying items,
+show the top five to seven and cite the spec artifact path that owns the full
+inventory. The receipt starts with `Outcome: <one user-facing sentence>`, then
+records phase, path, status, and R/AC IDs and references the source-map,
+candidate-area, unverified, conflict, and verification sections instead of
+restating them. These are budgets, not quotas.
 
 ### 🔴 HARD GATE · source UI writing
 
@@ -139,8 +143,9 @@ inventory. Missing or unresolved assumptions remain `Draft`; source conflict
 requiring a user decision is `Blocked`; inaccessible required source or
 uncheckable UI literals are `Unverifiable`. Never save them as `Ready`.
 
-Write user-facing progress and receipt prose in the user's language. Preserve
-canonical status tokens, IDs, and receipt keys.
+### 🔴 HARD GATE · response language
+
+Before any user-facing progress, question, summary, or receipt, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose receipt value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, receipt keys, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
 
 ## User decision questions
 

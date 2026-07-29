@@ -26,7 +26,7 @@ requires a fresh explicit start and reconstruction from repository evidence.
 An explicit start authorizes planning, ticket-level implementation,
 verification, review, and verified current-branch unit commits within the
 current source scope. It does not authorize push, PR, merge, tag, release,
-publish, automatic reflection, history rewriting, or out-of-scope mutation.
+publish, history rewriting, or out-of-scope mutation; it authorizes only the one post-verification `tk-reflect` tail defined in the phase invariants.
 
 Prefer the latest explicit source and revalidate artifacts as defined by the
 phase invariants. Do not create drive-only or global state.
@@ -64,11 +64,21 @@ separately approved wording is an `authorized change`; prohibit all other drift.
 Compare the inventory exactly through spec, tickets, implementation,
 candidate/staged diff, and rendered UI; drift or evidence gaps block commit.
 
+### 🔴 HARD GATE · risk-based verification profile
+
+During preflight, select material risk signals only from source-located request/repository evidence. Follow the canonical signal-to-obligation mapping and ordering in [phase invariants](references/phases.md); do not use a score, severity ranking, task label, or unsupported possibility as evidence.
+
+With no material signal, keep the baseline path silent: create no risk artifact or profile section and add no reviewer, browser run, compatibility command, or user-facing default. With any material signal, freeze only `Signals`, source-located `Evidence`, derived `Obligations`, and `Unverified` before the spec handoff, then carry that compact profile through existing handoff envelopes.
+
+Drive classifies and reconciles the profile but never chooses a phase owner's commands, browser route, test seam, or review method. Required inaccessible non-user-owned evidence is `Unverifiable` before implementation; only a genuinely user-owned authority or intent gap may use the existing decision owner. Never drop or weaken an obligation to continue.
+
+Reject orchestration shortcuts: invoke owners instead of recreating their work or accepting prose receipts; slice tickets by independently verifiable behavior instead of phases, files, or commands; freeze source-located signals instead of inflating risk; and reconcile current aggregate evidence instead of replaying child evidence.
+
 ## Workflow
 
 1. `preflight`: resolve the complete source per phase invariants, relevant
    artifacts/instructions, Git and dirty ownership, task identity, completed
-   phases, and unresolved decisions.
+   phases, unresolved decisions, and the evidence-based verification profile.
 2. `decision phase`: when any unresolved user-owned decision prevents a Ready
    spec, explicitly hand current source, evidence, confirmed decisions, and
    open decisions to `tk-grill-me`. Skip this phase when the source is already
@@ -88,13 +98,14 @@ candidate/staged diff, and rendered UI; drift or evidence gaps block commit.
    `verified` only from the matching verified commit receipt, then hand off the
    next unit or enter aggregate verification.
 7. `aggregate verification`: reconcile all unit receipts, commit ancestry,
-   R/AC coverage, and cross-ticket interaction; run the broadest executable
-   relevant verification once. Do not repeat each ticket's line-level
-   Standards/Spec review.
-8. `corrective cycle/report`: for one isolated final change-related regression,
+   R/AC coverage, cross-ticket interaction, and every frozen material
+   verification obligation; run the broadest executable relevant verification
+   once. Do not repeat each ticket's line-level Standards/Spec review.
+8. `corrective cycle`: for one isolated final change-related regression,
    create at most one corrective ticket through `tk-to-tickets`, run
    `tk-implement` once, and rerun broad verification once. Otherwise stop
-   mutating and produce the final receipt.
+   product mutation.
+9. `reflection tail/report`: after product `Pass`, follow the phase invariant to reflect exactly once and report product versus final HEAD.
 
 At any downstream phase, only a native receipt with
 `User decision: required` and a newly identified user-owned decision returns
@@ -117,22 +128,17 @@ next handoff, and never rewrite history. Only an isolated final
 change-related regression permits the one corrective cycle defined in the
 phase invariants.
 
-Lead the final response with a compact receipt starting `Outcome: <one user-facing sentence>`. `Status` and `Source` are required.
-Include `Phases`, `Tickets`,
-`Verification`, `Integration review`, `Commits`, `Remaining risks`, and
-`Reusable candidate` only when they contain decision-relevant or non-default
-information. Omit skipped phases, no-ticket placeholders, empty risks, and an
-absent reusable candidate. Use `Status: Pass` only after every completion gate.
+Lead with `Outcome: <one user-facing sentence>`, then `Implemented` with two to seven behavior-level bullets and `Verification` with one to four aggregate-result bullets; these are budgets, not quotas. If there are eight or more results, show the top five to seven and cite the owning spec, ticket, implementation, or reflection ledger. Include `Reflection`, `Skill candidates`, and `Remaining risks` only when meaningful; omit reflection no-op, zero candidates, empty risks, skipped phases, and no-ticket placeholders.
 
-For multiple tickets, place a compact `Ticket | Outcome | Commit` table before the receipt. Use a sentence when only one user-relevant row exists; rows are vertical slices, never phases/files/commands, and Receipt's Outcome summarizes them without repeating rows.
+For multiple tickets, place a compact `Ticket | Outcome | Commit` table before a compact Receipt. Use a sentence when only one user-relevant row exists; rows are vertical slices, never phases/files/commands. Receipt starts with the Outcome sentence and owns required `Status`, `Source`, phase/ticket IDs, product and reflection commits, ledger paths, and provenance without replacing or repeating result rows. Use `Status: Pass` only after every completion gate.
 
 Return control only with that final receipt or an explicit phase-stop receipt;
 first assert that every consumed success receipt has its next transition.
-Reference child receipts instead of copying their evidence, and never expose a
-child handoff envelope or invoke `tk-reflect`.
+Reference child receipts instead of copying their evidence; never expose a child handoff envelope or invoke reflection outside the successful drive tail.
 
-Write user-facing progress updates and the final receipt in the user's language,
-while preserving canonical status and receipt field names.
+### 🔴 HARD GATE · response language
+
+Before any user-facing progress, question, summary, or receipt, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose receipt value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, receipt keys, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
 
 ## User decision questions
 

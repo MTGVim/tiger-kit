@@ -136,7 +136,11 @@ Confirmed terms may later enter a spec, but this skill does not create or edit
 
 Use only non-empty final sections: `## Decisions`, `## Assumptions`,
 `## Remaining risks`, and `## Receipt`. `## Decisions` alone owns decision
-content. Do not add a second combined-goal summary. In `## Receipt`, record
+content. Keep a question turn atomic at one unresolved decision. For confirmed
+results, use one to three short lines for one decision, two to seven readable
+rows or bullets for a compound decision set, and the top five to seven plus the
+owning source/spec path for eight or more. These are budgets, not quotas. Do
+not add a second combined-goal summary. In `## Receipt`, record
 `Outcome: <one user-facing sentence>`, `Phase: decision`, `Status`, source or
 user-answer evidence, whether decisions were applied, the `## Decisions`
 reference when it exists, and `Return to`. Do not duplicate decisions in the
@@ -156,8 +160,9 @@ verbatim. A missing or mismatched `Success state` or transition cannot produce
 a successful active-drive receipt; return `Blocked` without choosing or
 executing the transition.
 
-Write user-facing questions and receipts in the user's language while
-preserving canonical fields and status tokens.
+### 🔴 HARD GATE · response language
+
+Before any user-facing progress, question, summary, or receipt, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose receipt value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, receipt keys, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
 
 ## User decision questions
 

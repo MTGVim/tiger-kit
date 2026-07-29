@@ -39,7 +39,7 @@ creating tickets.
 Standalone execution and drive handoff use the same implementation, test,
 review, and commit contract. For a drive handoff, preserve task identity,
 ticket/R/AC, initial `HEAD`, and ownership; return phase, unit/ticket ID,
-commit SHA, and verification/review evidence. The handoff also supplies
+commit SHA, and verification/review evidence. Preserve a material verification profile's four fields and follow the existing-owner mapping in [review-boundary](references/review-boundary.md); never recompute or weaken it. The handoff also supplies
 `Success state` and `Outstanding transition`. On `Pass`, include
 `Return to: tk-drive` and echo the parent-supplied `Outstanding transition`
 verbatim without choosing or executing it. A missing or mismatched
@@ -70,18 +70,20 @@ source location used.
 1. `understand/inspect`: resolve the standalone request or drive handoff,
    related source, unit/ticket ID, scope, constraints, R/AC, initial `HEAD`,
    branch, pre-existing dirty inventory, and unresolved decisions.
-2. `resolve strategy`: from code/test evidence, choose `direct | delegated`,
-   `tdd | no-tdd`, conditional bug investigation, and whether one independent
-   reviewer is permitted.
-3. `implement/incremental verification`: implement the smallest coherent
-   vertical slice and run focused verification after each slice.
+2. `resolve strategy and design fit`: from code/test evidence, choose
+   `direct | delegated`, `tdd | no-tdd`, conditional bug investigation,
+   repository ownership for every major responsibility, and whether one
+   independent reviewer is permitted.
+3. `implement/simplify`: reach initial GREEN, run the one behavior-preserving
+   simplify pass, and rerun focused verification when it changes the unit.
 4. `final unit verification`: bind final evidence and failure classification
    to the current branch, `HEAD`, and verified diff/path scope.
 5. `review/commit`: run current-agent Standards/Spec review against the
    candidate/staged snapshot, optionally use one bounded independent reviewer,
    confirm no drift, and create one unit commit or stop.
-6. `report`: return non-duplicated output sections and an ID-mapped receipt
-   tied to the final branch, `HEAD`, commit, and verification evidence.
+6. `report`: update the implementation ledger and return non-duplicated output
+   sections plus an ID-mapped receipt tied to the final branch, `HEAD`, commit,
+   and verification evidence.
 
 ## CHECKPOINT / STOP
 
@@ -124,6 +126,7 @@ useful public test seam. Proceeding with implementation and verification.
 ```
 
 See [delegation](references/delegation.md) for the bounded delegation contract.
+Before mutation and after initial GREEN, follow the current-agent-owned design-fit, one-pass simplify, and atomic `.tigerkit/implementation.md` ledger gates in [review-boundary](references/review-boundary.md); never invoke `tk-ask-repo` for repository-fit decisions.
 
 When Figma, a screenshot, or a design specification defines expected UI, apply
 hybrid `tk-browser-verify` design-intent preflight before source mutation or any
@@ -133,12 +136,12 @@ browser-tool call. Follow its `Blocked` boundary on conflict or ambiguity.
 
 ### Execution ownership and investigation
 
-In `direct`, the current agent implements the smallest coherent slices and
-repeats focused verification. In `delegated`, give one implementor the scope
-and completion criteria, then have the current agent inspect the diff and
-evidence. Never nest delegation or let a subagent invoke a user-invoked
-TigerKit skill. The implementor does not call browser tools; final browser
-verification belongs to the current agent.
+In `direct`, the current agent implements coherent slices; each slice proves one externally observable behavior
+and its related R/AC rather than a file/function layer, then repeats focused verification. In `delegated`, give
+one implementor the scope and completion criteria, then have the current agent
+inspect the diff and evidence. Never nest delegation or let a subagent invoke
+a user-invoked TigerKit skill. The implementor does not call browser tools;
+final browser verification belongs to the current agent.
 
 For an unknown-cause bug, intermittent failure, or performance regression,
 apply the [investigation loop](references/investigation.md) before mutation. Do
@@ -151,13 +154,14 @@ diagnose-only request remains read-only and receives no commit authority.
 When TDD is selected, choose a meaningful public behavior seam and write one
 focused vertical-slice test. Run it and observe red, implement the minimum
 change to make it green, and rerun that test plus related verification. Repeat
-for another slice when needed. The required loop is `red → green`; refactor is
-not mandatory in every cycle. Before implementation, confirm that red is caused
-by the expected missing behavior rather than a setup, syntax, fixture, or mock
-failure; repair invalid test evidence and rerun until the expected red is
-observed. Exercise real behavior and collaborators where practical; mock only
-unavoidable external side-effect boundaries, not the behavior under test. Do
-not call post-hoc tests TDD, claim an already passing test was red, test private
+for another slice when needed. The required loop is `red → green`; the separate
+simplify gate runs once after the unit first reaches GREEN rather than inside
+every cycle. Before implementation, confirm that red is caused by the expected
+missing behavior rather than a setup, syntax, fixture, or mock failure; repair
+invalid test evidence and rerun until the expected red is observed. Exercise
+real behavior and in-process collaborators; mock only an external side effect that
+is unavailable or unsafe in the test environment, never the behavior under test. Do not call
+post-hoc tests TDD, claim an already passing test was red, test private
 implementation details, or distort a production API for tests. If the user
 requires TDD but no useful seam exists, do not silently switch to no-TDD;
 present the seam gap and options for a user decision. In automatic mode, do not
@@ -249,7 +253,7 @@ it does not repeat drive's aggregate traceability review. Permit one independent
 reviewer only for `large` work or high-risk authentication, payment, privacy,
 authorization, dependency, migration/data-loss, concurrency, or public API
 changes. Bound the flow to one review, one fix, and one regression verification.
-An important finding, drift, or unverified coverage prevents commit.
+A finding prevents commit when it violates R/AC, public behavior, security/data safety, the durable-test gate, or the fixed reviewed snapshot; style-only suggestions do not. Drift or unverified required coverage also prevents commit. When an evidence-backed active-drive profile includes `independent-review`, the one bounded reviewer is required; unavailable review capability is `Unverifiable`, not permission to drop the obligation.
 
 ## Commit and report
 
@@ -270,15 +274,13 @@ Without a separate request, do not push, create a PR, merge, tag, release, or
 publish. Do not automatically invoke another user-invoked skill.
 
 Lead with `## Changed`, then `## Verification`, optional
-`## Remaining risks`, and `## Receipt`. Add `## Strategy` only for an explicit
-choice, exception, or plan deviation. Do not add a separate `## Commit`;
-`Receipt` starts with `Outcome: <one user-facing sentence>` and owns the commit
-SHA/message or why no commit exists.
-
-When `Changed` covers more than one independently meaningful user-visible or
-unit behavior, render a compact `Item | Change | Verification` table. Use a
-sentence when only one user-relevant row exists. Rows represent behavior, not
-files, commands, or evidence fragments.
+`## Remaining risks`, and `## Receipt`. For a successful unit, use 2–5 short,
+behavior-oriented bullets under `Changed` and 1–4 verification-result bullets
+under `Verification`; these are bounded budgets, not quotas for padding. When underlying results exceed the budget, cite `.tigerkit/implementation.md`. Add
+`## Strategy` only for an explicit choice, exception, or plan deviation. Do not
+add a separate `## Commit`; `Receipt` starts with
+`Outcome: <one user-facing sentence>` and owns the commit SHA/message or why no
+commit exists.
 
 Describe user-visible or unit behavior, not only files. Summarize commands and
 results; never paste logs or narrate review mechanics. `Verification` owns
@@ -289,8 +291,9 @@ unverified items, and R/AC references without repeating the body. Omit
 `Remaining risks` when empty. Receipt is a status/provenance index, not a
 substitute for the Changed rows.
 
-Write user-facing progress and report prose in the user's language. Preserve
-the canonical headings, status tokens, IDs, and receipt keys above.
+### 🔴 HARD GATE · response language
+
+Before any user-facing progress, question, summary, or receipt, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose receipt value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, receipt keys, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
 
 ## User decision questions
 

@@ -1,6 +1,6 @@
 ---
 name: tk-reflect
-description: "[user/auto] Classify reusable rule or skill candidates from conversation, diff, and outcome evidence. Implicit mode is report-only; do not apply to ordinary summaries/completion or mutate automatically."
+description: "[user/auto] Classify reusable rule or skill candidates from conversation, diff, and outcome evidence. Implicit mode is report-only; only a valid active-drive tail may apply an eligible repo rule automatically."
 argument-hint: "<conversation, change, diff, outcome, or source>"
 metadata:
   tigerkit:
@@ -11,10 +11,11 @@ metadata:
 
 # Reflect
 
-Apply on explicit invocation or a clear request to extract reusable candidates
-from evidence. Do not auto-apply to an ordinary summary or implementation
-completion. Implicit mode is report-only. Do not invoke another skill except
-for the single bounded diagnosis handoff below.
+Apply on explicit invocation, a clear request to extract reusable candidates
+from evidence, or one valid active-drive tail handoff. Do not auto-apply to an
+ordinary summary or implementation completion. Implicit mode is report-only.
+Do not invoke another skill except for the single bounded diagnosis handoff
+below.
 
 Read current conversation, changes, diff, implementation/test/review outcomes,
 relevant `.tigerkit/` artifacts, the current host's discoverable file-based
@@ -34,6 +35,16 @@ choose `propose | update | merge | no-op | discard`.
    candidates; choose target and action. A separate Draft owns wording.
 5. `apply/receipt`: combine candidate, separate approval, and fresh target state
    into the transition-table result and references; do not copy candidate body.
+
+## Drive-tail mode
+
+Only a handoff containing `Mode: drive-optimistic`, `Success state: Pass`, and
+`Outstanding transition: final receipt` grants the bounded authority in
+[drive-optimistic reflection](references/drive-optimistic.md). It may apply
+only an eligible existing `repo rule`, writes `.tigerkit/reflect.md`, never
+promotes a skill, and returns `Return to: tk-drive` plus the outstanding
+transition verbatim. Missing or mismatched authority falls back to no mutation
+and cannot return a drive-tail success receipt.
 
 ### Conditional Agent Skill diagnosis
 
@@ -65,6 +76,10 @@ correctness. Never call diagnosis twice for one run, call it again for the same
 End equivalent recurrence as `Blocked`.
 
 ### Candidate transition table
+
+This table governs standalone and ordinary implicit reflection; drive-tail
+transitions use the eligibility, restoration, and receipt table in its
+reference.
 
 | Candidate | Condition | Status | Mutation |
 |---|---|---|---|
@@ -121,8 +136,9 @@ Repository targets are codebase/domain/tool/team-specific; user targets repeat
 across repositories. Persistent memory is a current-host file-based target whose
 native path must be demonstrated. Default is report-only. Writing a rule into
 DESIGN, reuse-map, rule, or persistent-memory files requires separate explicit
-approval naming target and scope. Silence, continuation, past analogous
-answers, or reflect invocation is not approval.
+approval naming target and scope, except for an eligible existing repository
+rule in the valid drive-tail mode. Silence, continuation, past analogous
+answers, or standalone reflect invocation is not approval.
 
 Only `tk-learn` creates a new skill or semantically updates/merges one. This
 skill reports skill evidence, current-host native exact target, working draft,
@@ -135,10 +151,11 @@ violated deterministic claim or apply gate, `aborted` for user stop, and
 `Blocked` for conflict/unclear apply scope. Never mix per-candidate
 `reported | pending | applied` with run terminal status.
 
-By default, mutate no file and create no ledger. Only an explicit report-
-artifact request may write the bounded `.tigerkit/reflect.md` ledger below;
-that does not authorize target application. Do not inspect legacy global state
-or generalize a one-off workaround. `RF-##` is run-local, not durable identity.
+By default, mutate no file and create no ledger. An explicit report-artifact
+request may write the bounded `.tigerkit/reflect.md` ledger below without
+authorizing target application; valid drive-tail mode writes the same ledger
+under its own bounded authority. Do not inspect legacy global state or
+generalize a one-off workaround. `RF-##` is run-local, not durable identity.
 Never promote raw credentials, logs, or screenshots verbatim even after
 approval.
 
@@ -149,8 +166,10 @@ table.
 
 ## CHECKPOINT / STOP
 
-After target, evidence, confidence, and action, require separate explicit apply
-approval. Before it, stop at `pending | reported`.
+Outside valid drive-tail mode, require separate explicit apply approval after
+target, evidence, confidence, and action. Before it, stop at
+`pending | reported`. Drive-tail mode follows its eligibility and rollback
+checkpoint instead of asking a question.
 
 ## Output contract
 
@@ -164,22 +183,29 @@ decision-relevant rows:
 | RF-01 | `<short name>` | `<action/status>` | `<target>` | `<evidence refs>` |
 
 Keep chat compact by citing evidence paths instead of copying long bodies.
+Every `Action` and `Why` cell must explain the human-readable next action and
+reason; an `RF-##` ID or status token alone is not a result. Keep at most five
+rows and cite `.tigerkit/reflect.md` when it owns additional candidates. A
+no-op stays minimal.
 Within `## Disposition`, add a bounded `Draft` block only when an actionable
 rule/skill candidate requires working wording.
 
-Only on an explicit report-artifact request, write or replace
-`.tigerkit/reflect.md`. The ledger has one compact row per candidate with ID,
-target, evidence references, interpretation, confidence, action, status, and
-optional draft path. It contains no raw logs, transcripts, diff excerpts,
-repeated rationale, or copied receipt fields. Create its parent lazily, write
-atomically, and warn if scratch is not ignored; never modify `.gitignore`.
+Only on an explicit report-artifact request outside drive-tail mode, or on a
+valid drive-tail handoff, write or replace `.tigerkit/reflect.md`. The
+standalone ledger has one compact row per
+candidate with ID, target, evidence references, interpretation, confidence,
+action, status, and optional draft path; drive-tail fields follow its
+reference. It contains no raw logs, transcripts, diff excerpts, repeated
+rationale, or copied receipt fields. Create its parent lazily, write atomically,
+and warn if scratch is not ignored; never modify `.gitignore`.
 Receipt starts with `Outcome: <one user-facing sentence>`, then records
 terminal status, candidate counts, ledger path when written, and IDs requiring
-a decision. With no candidate, emit one `— | None | no-op | — | no verified
-reusable evidence` row.
+a decision; it never substitutes for the Disposition table. With no candidate,
+emit one `— | None | no-op | — | no verified reusable evidence` row.
 
-User-facing progress and receipt prose follows the user's language while
-canonical headings, IDs, fields, and status tokens remain unchanged.
+### 🔴 HARD GATE · response language
+
+Before any user-facing progress, question, summary, or receipt, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose receipt value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, receipt keys, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
 
 ## User decision questions
 

@@ -1,12 +1,12 @@
 [
   {
     "id": 1,
-    "prompt": "[active tk-drive → tk-grill-me pending question: A or B? Original handoff: Success state: confirmed; Outstanding transition: spec gate] A로 진행해",
-    "expected": "tk-grill-me가 답변을 반영해 confirmed receipt를 반환하면 drive가 decision source traceability를 갱신하고 spec gate부터 자동 계속한다."
+    "prompt": "$tk-drive README 오탈자 한 건을 구현·검증·커밋해 주세요. Source와 repository evidence상 public contract, UI/browser, data/auth, persisted state, compatibility, concurrency, side effect 위험은 없습니다.",
+    "expected": "material signal을 만들지 않고 risk artifact/profile/reviewer/browser/compatibility work 없이 Ready spec과 no-ticket baseline flow를 완료한다."
   },
   {
     "id": 2,
-    "prompt": "$tk-drive 확정된 목표·범위·인수 기준이 충분한 작은 변경을 구현하고 검증된 커밋까지 진행해 주세요. 추가 사용자 결정은 없습니다.",
-    "expected": "source가 이미 Ready spec을 지지하므로 grill을 건너뛰고 spec gate를 거쳐 no-ticket 단일 implementation unit을 검증·커밋하며 push하지 않는다."
+    "prompt": "$tk-drive tenant authorization과 사용자 데이터 write 경계를 바꾸는 이슈를 구현해 주세요. Protected entry-point evidence, regression seam, 독립 reviewer capability가 있고, 허용할 actor–tenant–target rule과 acceptance criteria는 source에서 이미 확정되어 추가 사용자 결정이 없습니다.",
+    "expected": "security-data signal에서 regression-seam, side-effect-recovery, independent-review를 canonical order로 한 번씩 도출하고 정확한 test/recovery/review 방법은 tk-implement가 소유한다."
   }
 ]

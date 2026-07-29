@@ -138,6 +138,9 @@ When more than one ID is affected, render `Diagnosis` as a compact
 `ID | Incident | Root cause` table and `Action` as an `ID | Next action` table.
 Use a sentence when only one user-relevant row exists. Rows represent
 root-cause themes, not experiments, hosts, logs, or evidence fragments.
+Summarize two to seven reproduced/root-cause/candidate results as bounded rows
+or bullets. For eight or more, show the top five to seven and cite
+`.tigerkit/skill-diagnosis.md` for the remainder. These are budgets, not quotas.
 
 When the run uses more than one experiment or host, or has more than five
 evidence rows, write or replace `.tigerkit/skill-diagnosis.md`. Its compact
@@ -162,8 +165,9 @@ separate from terminal status:
   not be verified.
 - `NotApplicable`: no qualifying skill incident exists.
 
-Write user-facing progress and receipt prose in the user's language. Preserve
-canonical headings, IDs, enums, and status tokens.
+### 🔴 HARD GATE · response language
+
+Before any user-facing progress, question, summary, or receipt, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose receipt value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, receipt keys, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
 
 ## User decision questions
 

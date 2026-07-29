@@ -112,9 +112,14 @@ When more than one conflict path is resolved, render `Resolution` as a compact
 `Path | Intent | Result` table. Use a sentence when only one user-relevant row
 exists. Receipt starts with `Outcome: <one user-facing sentence>`, remains a
 status/provenance index, and does not repeat resolution rows.
+Summarize compound intent, resolved path groups, and verification in two to
+five short rows or bullets. For eight or more paths, group them into the top
+five to seven intent/result rows and cite the exact remaining paths. These are
+budgets, not quotas.
 
-User-facing progress and receipt prose follows the user's language while
-canonical headings and status tokens remain unchanged.
+### 🔴 HARD GATE · response language
+
+Before any user-facing progress, question, summary, or receipt, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose receipt value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, receipt keys, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
 
 ## User decision questions
 

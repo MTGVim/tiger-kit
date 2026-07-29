@@ -235,6 +235,18 @@
 - case: reflect-bounds-summary-cell-length
   skill: tk-reflect
   expect: "A formatting-only Disposition reprint preserves IDs and order while omitting evidence bodies, drafts, and work narration."
+- case: reflect-drive-applies-eligible-tracked-repo-rule
+  skill: tk-reflect
+  expect: "A valid drive-optimistic tail applies only a high-confidence eligible existing tracked repo rule, creates one reflection commit, and reports git-revert rollback in the bounded Disposition table."
+- case: reflect-drive-never-creates-local-rule-target
+  skill: tk-reflect
+  expect: "Drive-tail local application requires an exact pre-existing user-managed file and never creates a new ignored or untracked rule target."
+- case: reflect-drive-skill-candidate-is-promotion-packet-only
+  skill: tk-reflect
+  expect: "A drive-tail skill candidate remains pending in a promotion packet and never creates, edits, commits, or invokes a skill."
+- case: reflect-drive-blocks-target-drift
+  skill: tk-reflect
+  expect: "Target drift or indeterminate restoration stops optimistic application as Blocked or Unverifiable while preserving product evidence."
 - case: reflect-classifies-repo-placement
   skill: tk-reflect
   expect: "The closed safety set, verified paths, immediate parent, tracked regular siblings, and threshold deterministically select root rule, nested rule, or repo skill."
@@ -391,9 +403,9 @@
 - case: drive-resumes-pending-answer
   skill: tk-drive
   expect: "tk-grill-me owns a direct same-conversation answer to its active pending decision; after its confirmed receipt, drive resumes at the spec gate without another invocation."
-- case: drive-does-not-auto-reflect
+- case: drive-reflects-once-after-aggregate-pass
   skill: tk-drive
-  expect: "Completion reports only whether a reusable candidate exists and never invokes reflection automatically."
+  expect: "After aggregate product verification passes, drive invokes exactly one drive-optimistic reflection tail, verifies the final-receipt transition echo, and continues in the same turn."
 - case: drive-skips-unneeded-tickets
   skill: tk-drive
   expect: "A single short vertical slice moves from Ready spec directly to implementation without a ticket artifact."
@@ -402,7 +414,7 @@
   expect: "Multi-slice or long-resume work tracks pending, in_progress, verified, or blocked with evidence and revalidates on resume."
 - case: drive-bounds-nested-skills
   skill: tk-drive
-  expect: "Phase-owner invocation is limited to tk-grill-me, tk-to-spec, tk-to-tickets, and tk-implement; support invocation is limited to prototype, browser verification, and merge conflict handling."
+  expect: "Phase-owner invocation is limited to tk-grill-me, tk-to-spec, tk-to-tickets, and tk-implement; support invocation is limited to prototype, browser verification, merge conflict handling, and one post-Pass drive-optimistic reflection tail."
 - case: drive-commits-per-ticket
   skill: tk-drive
   expect: "Each independently verifiable ticket is handed to tk-implement for one commit, and drive creates no separate final commit."
@@ -559,3 +571,66 @@
 - case: ask-repo-blocks-contradicted-premise
   skill: tk-ask-repo
   expect: "A premise contradicted by repository evidence is reported as a contradiction and stops Blocked."
+- case: ask-repo-bounds-result-cardinality
+  skill: tk-ask-repo
+  expect: "One answer may use one to three short paragraphs, compound answers use bounded bullets or a table, and eight or more results show the top five to seven plus owning evidence paths."
+- case: browser-bounds-result-cardinality
+  skill: tk-browser-verify
+  expect: "Compound visual, network, and final-state results use bounded bullets or scenario rows; eight or more show the top five to seven plus the browser ledger path."
+- case: drive-bounds-result-cardinality
+  skill: tk-drive
+  expect: "Final output keeps one Outcome sentence but also explains Implemented and Verification results within their budgets before a nonduplicative receipt."
+- case: grill-bounds-confirmed-results
+  skill: tk-grill-me
+  expect: "Confirmed compound decisions may use two to seven readable rows or bullets while every question turn remains one user-owned decision."
+- case: grooming-bounds-result-cardinality
+  skill: tk-grooming
+  expect: "The existing Disposition table reports bounded readable findings without adding lifecycle behavior or letting the receipt replace result rows."
+- case: handoff-bounds-result-cardinality
+  skill: tk-handoff
+  expect: "Current state, completed work, next action, and blockers use two to five bullets with the artifact path owning any larger inventory."
+- case: implement-reports-bounded-behavior-summary
+  skill: tk-implement
+  expect: "Changed explains two to five behavior-level results and Verification reports one to four core checks before a nonduplicative status/provenance receipt."
+- case: learn-bounds-result-cardinality
+  skill: tk-learn
+  expect: "Promotion decision, candidates, targets, and remaining gates use two to seven rows or bullets and preserve the pre-approval write boundary."
+- case: merge-conflict-bounds-result-cardinality
+  skill: tk-merge-conflict
+  expect: "Resolved intent, path groups, and verification use two to five readable rows or bullets while exact paths remain traceable."
+- case: prototype-bounds-result-cardinality
+  skill: tk-prototype
+  expect: "Comparison results and selection rationale use two to five bullets or option rows, with larger evidence owned by the prototype path."
+- case: reflect-bounds-result-cardinality
+  skill: tk-reflect
+  expect: "The readable ID, Candidate, Action, Target, Why table remains mandatory for non-no-op results and the receipt never reduces it to RF codes."
+- case: skill-diagnose-bounds-result-cardinality
+  skill: tk-skill-diagnose
+  expect: "Reproduction, root cause, and candidate results use two to seven bullets or ID rows, with larger evidence owned by the diagnosis ledger."
+- case: to-spec-bounds-result-cardinality
+  skill: tk-to-spec
+  expect: "The Ready or non-Ready decision leads two to five scope, requirement, or exception bullets and cites the owning spec artifact."
+- case: to-tickets-bounds-result-cardinality
+  skill: tk-to-tickets
+  expect: "Two to seven tickets use the readable slice table; larger decompositions show the top five to seven plus coverage summary and artifact path."
+- case: drive-response-language-explicit-korean
+  skill: tk-drive
+  expect: "The latest explicit Korean instruction keeps every free-form progress, result, summary, and receipt value in Korean even when sources and skill bodies are English."
+- case: drive-response-language-explicit-english
+  skill: tk-drive
+  expect: "The latest explicit English instruction overrides earlier Korean context for free-form prose while canonical machine tokens remain unchanged."
+- case: drive-risk-profile-low-risk-silent
+  skill: tk-drive
+  expect: "A source-evidenced low-risk change keeps the baseline flow silent and adds no profile artifact, reviewer, browser run, compatibility command, or default output."
+- case: drive-risk-profile-browser-ui
+  skill: tk-drive
+  expect: "Persistent browser/UI and network evidence derives canonical regression-seam and browser-verdict obligations before implementation while browser ownership stays with tk-implement and tk-browser-verify."
+- case: drive-risk-profile-auth-data
+  skill: tk-drive
+  expect: "Authentication and user-data evidence derives regression-seam, side-effect-recovery, and independent-review once in canonical order without adding unsupported browser work."
+- case: drive-risk-profile-inaccessible-evidence
+  skill: tk-drive
+  expect: "Inaccessible required schema and rollback evidence stops Unverifiable before spec weakening, implementation, commit, aggregate Pass, or reflection."
+- case: reflect-response-language-preserves-machine-tokens
+  skill: tk-reflect
+  expect: "Korean explanatory prose preserves canonical headings, receipt keys, status tokens, IDs, commands, paths, code, and exact source literals byte-for-byte."

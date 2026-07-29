@@ -107,6 +107,22 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "handoff-bounds-result-cardinality",
+      "path": "success",
+      "prompt": "/tk-handoff 이미 검증된 handoff artifact를 기준으로 완료·미완료·next action·blocker가 합계 9건인 최종 보고를 작성해 주세요.",
+      "expected_output": "현재 상태와 다음 행동을 2–5개 behavior-level bullet로 요약하고 상위 5–7개 underlying item과 handoff artifact path를 제시하며 Receipt는 이를 반복하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "conversation history나 artifact 본문을 복사하지 않고 실행 가능한 bounded result summary를 먼저 제공한다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ]
 }

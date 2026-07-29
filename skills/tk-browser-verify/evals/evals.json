@@ -316,6 +316,26 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "browser-bounds-result-cardinality",
+      "path": "success",
+      "prompt": "이미 완료한 9개 visual/network/final-state criterion의 Verdict를 결과 규모에 맞게 보고해 주세요. raw console과 capture 본문은 붙이지 마세요.",
+      "expected_output": "Verdict를 먼저 제시하고 Verified에 상위 5–7개 criterion 결과와 나머지를 소유한 browser ledger path를 보여 주며 빈 section과 raw evidence를 생략한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "여러 검증 결과를 readable bullet 또는 Criterion table로 요약하고 Receipt 성격의 Verdict가 결과를 대체하거나 복제하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "## Verified"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ]
 }

@@ -65,6 +65,29 @@ USER_DECISION_CONTRACT_TOKENS = (
     "Hermes Agent",
     "`clarify`",
 )
+RESULT_BUDGET_TOKENS = {
+    "tk-ask-repo": ("one to three short paragraphs", "two to seven results", "top five to seven"),
+    "tk-browser-verify": ("two to seven verified scenarios", "top five to seven"),
+    "tk-drive": ("two to seven behavior-level bullets", "one to four aggregate-result bullets", "top five to seven"),
+    "tk-grill-me": ("two to seven readable", "top five to seven"),
+    "tk-grooming": ("two to seven findings", "top five to seven"),
+    "tk-handoff": ("two to five short bullets", "top five to seven"),
+    "tk-implement": ("2–5 short", "1–4 verification-result bullets", "underlying results exceed"),
+    "tk-learn": ("two to seven candidate", "top five to seven"),
+    "tk-merge-conflict": ("two to five short rows or bullets", "top five to seven"),
+    "tk-prototype": ("two to five bullets or", "top five to seven"),
+    "tk-reflect": ("at most five", "never substitutes for the Disposition table"),
+    "tk-skill-diagnose": ("two to seven reproduced", "top five to seven"),
+    "tk-to-spec": ("two to five short bullets", "top five to seven"),
+    "tk-to-tickets": ("two to seven tickets", "top five to seven"),
+}
+RESPONSE_LANGUAGE_GATE = (
+    "### 🔴 HARD GATE · response language\n\n"
+    "Before any user-facing progress, question, summary, or receipt, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. "
+    "Write every free-form user-facing sentence and every prose receipt value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. "
+    "Keep canonical headings, receipt keys, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. "
+    "Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language."
+)
 CATALOG_ROUTING_BOUNDARIES = {
     "tk-ask-repo vs ordinary repository Q&A",
     "tk-ask-repo vs tk-implement",
@@ -123,6 +146,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "ask-repo-refuses-effort-estimate",
     "ask-repo-search-failure-is-unverifiable",
     "ask-repo-blocks-contradicted-premise",
+    "ask-repo-bounds-result-cardinality",
     "implement-auto-decides-unspecified-strategy",
     "implement-respects-explicit-strategy",
     "implement-routes-visible-ui-through-browser-verify",
@@ -148,11 +172,13 @@ REQUIRED_BEHAVIOR_CASES = {
     "browser-chrome-headless-new-first-launch",
     "browser-interactive-auth-only-headed-exception",
     "browser-captures-move-to-tigerkit-ledger",
+    "browser-bounds-result-cardinality",
     "grill-me-keeps-one-question-at-a-time",
     "grill-uses-native-question-tool",
     "grill-me-researches-facts-before-asking",
     "grill-me-does-not-write-domain-docs",
     "grill-me-does-not-create-adrs",
+    "grill-bounds-confirmed-results",
     "implement-tdd-requires-observed-red",
     "implement-tdd-uses-public-behavior",
     "implement-non-tdd-still-verifies",
@@ -178,6 +204,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "implement-runs-existing-coverage-gate",
     "implement-blocks-testless-production-without-exception",
     "implement-one-ticket-one-commit",
+    "implement-reports-bounded-behavior-summary",
     "standalone-diagnose-only-is-read-only",
     "standalone-review-only-is-read-only",
     "implement-review-15-files-800-lines-is-small",
@@ -190,6 +217,11 @@ REQUIRED_BEHAVIOR_CASES = {
     "reflect-checks-persistent-memory-prior-art",
     "reflect-separates-adjacent-memory-scope",
     "reflect-bounds-summary-cell-length",
+    "reflect-bounds-result-cardinality",
+    "reflect-drive-applies-eligible-tracked-repo-rule",
+    "reflect-drive-never-creates-local-rule-target",
+    "reflect-drive-skill-candidate-is-promotion-packet-only",
+    "reflect-drive-blocks-target-drift",
     "reflect-classifies-repo-placement",
     "reflect-numbered-summary-target-table",
     "to-spec-does-not-create-tickets",
@@ -199,6 +231,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "to-spec-active-drive-handoff",
     "to-spec-returns-decision-blocker-to-drive",
     "to-spec-records-vertical-slicing-candidate-areas",
+    "to-spec-bounds-result-cardinality",
     "to-tickets-does-not-create-spec",
     "to-tickets-initial-status-is-pending",
     "to-tickets-keeps-one-vertical-bug-slice",
@@ -207,27 +240,39 @@ REQUIRED_BEHAVIOR_CASES = {
     "to-tickets-active-drive-handoff",
     "to-tickets-returns-decision-blocker-to-drive",
     "to-tickets-derives-from-candidate-areas",
+    "to-tickets-bounds-result-cardinality",
     "prototype-is-not-production",
     "prototype-web-uses-disposable-variants",
     "prototype-web-toggle-preserves-legibility",
+    "prototype-bounds-result-cardinality",
     "grooming-defaults-report-only",
     "grooming-vendor-artifact-remains-report-only",
     "grooming-unknown-ownership-asks-before-proposal",
     "grooming-honors-declared-exclusions",
     "grooming-classifies-repo-placement",
     "grooming-numbered-summary-target-table",
+    "grooming-bounds-result-cardinality",
     "legacy-global-state-is-not-scanned",
     "handoff-resume-no-drift-continues",
     "handoff-resume-material-drift-blocks",
+    "handoff-bounds-result-cardinality",
     "traceability-preserves-requirement-ids",
     "implement-review-high-risk-is-conditional",
     "browser-accessibility-is-conditional",
     "learn-requires-eval-and-compatibility",
     "learn-implicit-write-awaits-approval",
+    "learn-bounds-result-cardinality",
     "handoff-ignores-generic-continue",
     "drive-requires-explicit-start",
     "drive-resumes-pending-answer",
-    "drive-does-not-auto-reflect",
+    "drive-bounds-result-cardinality",
+    "drive-response-language-explicit-korean",
+    "drive-response-language-explicit-english",
+    "drive-risk-profile-low-risk-silent",
+    "drive-risk-profile-browser-ui",
+    "drive-risk-profile-auth-data",
+    "drive-risk-profile-inaccessible-evidence",
+    "drive-reflects-once-after-aggregate-pass",
     "drive-skips-unneeded-tickets",
     "drive-keeps-ticket-ledger",
     "drive-preserves-source-ui-writing-verbatim",
@@ -286,9 +331,12 @@ REQUIRED_BEHAVIOR_CASES = {
     "skill-diagnose-drafts-anonymized-upstream-issue",
     "skill-diagnose-keeps-consumer-drift-local",
     "skill-diagnose-redacts-private-upstream-evidence",
+    "skill-diagnose-bounds-result-cardinality",
     "reflect-hands-off-qualified-skill-incident-once",
     "reflect-skips-diagnosis-without-four-gate",
     "reflect-blocks-repeated-diagnosis-handoff",
+    "reflect-response-language-preserves-machine-tokens",
+    "merge-conflict-bounds-result-cardinality",
 }
 
 
@@ -399,6 +447,21 @@ def validate_user_decision_contract(root: Path) -> list[str]:
     return errors
 
 
+def validate_response_language_contract(root: Path) -> list[str]:
+    errors: list[str] = []
+    for skill in sorted(EXPECTED_SKILLS):
+        path = root / "skills" / skill / "SKILL.md"
+        if not path.is_file():
+            errors.append(f"{skill}: SKILL.md: add the response-language hard gate")
+            continue
+        text = path.read_text(encoding="utf-8")
+        if text.count(RESPONSE_LANGUAGE_GATE) != 1:
+            errors.append(
+                f"{skill}: SKILL.md: preserve exactly one complete response-language hard gate"
+            )
+    return errors
+
+
 def validate_skill(path: Path) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -487,6 +550,18 @@ def validate_skill(path: Path) -> tuple[list[str], list[str]]:
         if token in text:
             errors.append(f"{label}: SKILL.md: forbidden {token!r}; {fix}")
 
+    normalized_text = " ".join(text.split())
+    missing_budget = [
+        token
+        for token in RESULT_BUDGET_TOKENS.get(label, ())
+        if token not in normalized_text
+    ]
+    if missing_budget:
+        errors.append(
+            f"{label}: SKILL.md: bounded result contract missing "
+            + ", ".join(repr(token) for token in missing_budget)
+        )
+
     for target in LINK.findall(text):
         target = target.split("#", 1)[0]
         if not target or re.match(r"^[a-z]+://", target) or target.startswith("#"):
@@ -548,20 +623,21 @@ def validate_repository_contract() -> list[str]:
     )
     for relative in required_files:
         if not (ROOT / relative).is_file():
-            errors.append(f"{relative}: required TigerKit 20.1.7 repository file is missing")
+            errors.append(f"{relative}: required TigerKit 20.2.0 repository file is missing")
     errors.extend(validate_local_only_workflows(ROOT))
     errors.extend(validate_skill_language(ROOT))
     errors.extend(validate_user_decision_contract(ROOT))
+    errors.extend(validate_response_language_contract(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
-            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 20.1.7")
+            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 20.2.0")
     errors.extend(validate_runtime_scratch(ROOT))
     ignored = (ROOT / ".gitignore").read_text(encoding="utf-8") if (ROOT / ".gitignore").is_file() else ""
     if ".tigerkit/" not in ignored.splitlines():
         errors.append(".gitignore: document TigerKit repo-local scratch with .tigerkit/")
     required_text = {
         "README.md": (
-            "TigerKit 20.1.7",
+            "TigerKit 20.2.0",
             "14",
             "Claude Code",
             "Codex",
@@ -570,7 +646,7 @@ def validate_repository_contract() -> list[str]:
             "사용 시나리오",
         ),
         "MIGRATION.md": (
-            "TigerKit 20.1.7",
+            "TigerKit 20.2.0",
             "Removed Skills",
             "model-only",
             "hybrid",
@@ -620,7 +696,7 @@ def validate_repository_contract() -> list[str]:
             "## Efficiency gate",
             "Never semantically mutate the canonical source skill",
             "upstream-draft-ready",
-            "user's language",
+            "### 🔴 HARD GATE · response language",
         ),
         "scripts/run_skill_evals.py": (
             '"--diagnose"',
@@ -715,12 +791,6 @@ def validate_skill_language(root: Path) -> list[str]:
                     errors.append(
                         f"{relative}:{number}: canonical skill operational prose must be English"
                     )
-        if skill_path.is_file() and "user's language" not in skill_path.read_text(
-            encoding="utf-8"
-        ):
-            errors.append(
-                f"{skill_path.relative_to(root)}: preserve user-language output style"
-            )
     return errors
 
 
