@@ -172,6 +172,26 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "grill-uses-native-question-tool",
+      "path": "boundary",
+      "prompt": "/tk-grill-me 현재 host 실행 context에 native structured user-input tool과 option preview/prototype card 기능이 노출되어 있습니다. 배포 전략 결정을 물어야 합니다. prose 질문으로 우회하지 말고 host tool과 preview를 쓰며, Question 안에서 evidence 기반 맥락과 영향을 읽기 쉽게 설명한 다음 최대 3개 제안 중 정확히 하나를 (추천) 표시하고 제 답을 기다리세요.",
+      "expected_output": "노출된 host-native structured question tool과 결정에 유용한 preview/prototype 기능을 반드시 사용하고, Question 안에서 evidence-derived context·decision impact·unresolved axis를 읽기 쉽게 설명한 뒤 Recommendation을 보여 준다. 상호 배타적인 제안 2–3개와 tradeoff를 제공하고 정확히 하나만 localized recommendation marker로 표시한 뒤 Pending으로 멈춘다. 원시 Evidence를 읽어야만 질문을 이해하게 하지 않으며, 도구가 실제로 노출되지 않은 환경에서만 prose fallback을 허용하고 실패·거절은 부재로 취급하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "현재 실행 context에 native structured user-input tool이 노출되면 이를 반드시 호출하며 prose로 우회하지 않는다. 노출된 option preview/prototype 기능이 결정을 구체화하면 적극 사용한다. Question이 Recommendation보다 먼저 나오고 evidence-derived context, decision impact, unresolved axis를 읽기 쉽게 설명하여 원시 Evidence 해독을 요구하지 않는다. 제안은 2–3개이며 tradeoff가 있고 정확히 하나만 (Recommended) 또는 (추천)으로 표시된다. plain-text fallback은 도구가 노출되지 않은 경우에만 허용하며 도구 실패나 거절을 부재로 간주하지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pending"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true
     }
   ]
 }

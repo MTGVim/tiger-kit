@@ -52,7 +52,10 @@ confirmed evidence.
 3. `identify gaps`: compare facts and confirmed decisions against the
    Scope, Constraints, Outputs, and Verification ledger.
 4. `ask`: select the highest-impact unresolved user-owned decision and present
-   exactly one `Recommendation`, `Evidence`, and `Question`.
+   exactly one `Question`, `Recommendation`, and `Evidence`, in that order.
+   Make Question explain the evidence-derived context and decision impact in
+   readable user-facing language; keep raw paths, logs, and traceability in
+   Evidence below it.
 5. `incorporate answer`: preserve the answer as the corresponding Decision,
    Constraint, Out of scope, Output, or Verification entry.
 6. `repeat or close`: do not repeat answered questions; ask the next one or
@@ -80,9 +83,10 @@ safe-progress blocker, scope or irreversible-effect change, verification
 blocker, then downstream rework; break any remaining tie in ledger order.
 
 The ledger is not a per-turn dump template. On a question turn, report only
-new or changed evidence, the selected unresolved item, one Recommendation,
-Evidence, and Question, and `pending`. Repeat unchanged axes only when needed
-to explain a conflict or evaluate closure.
+new or changed evidence, the selected unresolved item, one Question,
+Recommendation, and Evidence in that order, and `pending`. Repeat unchanged
+axes only when needed to explain a conflict or evaluate closure.
+Question must remain understandable without reading the raw Evidence field.
 
 ## Facts and user judgment
 
@@ -149,6 +153,36 @@ the spec gate.
 
 Write user-facing questions and receipts in the user's language while
 preserving canonical fields and status tokens.
+
+## User decision questions
+
+When this skill reaches a user-owned decision, ask exactly one question at a
+time. Render `Question` before `Recommendation` and the proposals. Offer
+two or three mutually exclusive proposals and state the material tradeoff of
+each. Make `Question` self-contained: summarize the
+evidence-derived context, decision impact, and unresolved axis in user-facing
+language before asking. It must not require the user to decode raw `Evidence`.
+Mark exactly one best recommendation by ending its label with a localized marker such as
+`(Recommended)` or `(추천)`. A host-generated custom or Other choice does not
+count as an authored proposal.
+
+When the active question tool exposes
+option previews, prototype cards, or equivalent rich choice surfaces and a concrete preview can clarify the
+decision, use it proactively. Do not invent unsupported fields or use this
+presentation rule to bypass existing prototype or phase boundaries.
+
+If the current execution context exposes a native structured user-input tool,
+the skill must call that tool. Plain-text questions are allowed only when no
+such tool is exposed. A failed or rejected tool call is not tool absence: report
+the failure and preserve the pending or blocked state instead of silently
+downgrading to prose. Host examples:
+
+- Claude Code: `AskUserQuestion`
+- Codex: `request_user_input`
+- Hermes Agent: `clarify`
+
+This contract changes question presentation only. It does not grant new
+decision authority or weaken any existing stop, approval, or phase boundary.
 
 ## DO NOT / ANTI-PATTERNS
 

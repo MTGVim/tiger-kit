@@ -1,5 +1,25 @@
 # Changelog
 
+## 20.1.6 — Structured User Decision Questions
+
+- Standardized a self-contained user-decision question contract across all 13
+  canonical skills, with one question at a time, two or three mutually
+  exclusive proposals, material tradeoffs, and exactly one localized
+  recommendation marker.
+- Required `Question` to precede `Recommendation` and to explain the
+  evidence-derived context, decision impact, and unresolved axis in readable
+  user-facing prose instead of requiring users to decode raw evidence.
+- Required native structured user-input tools whenever the active host exposes
+  one, with explicit Claude Code `AskUserQuestion`, Codex
+  `request_user_input`, and Hermes Agent `clarify` examples and prose fallback
+  only when no such tool is available.
+- Made supported option previews and prototype cards proactive aids when they
+  clarify a decision without expanding the owning skill's authority.
+- Added repository validation, unit coverage, and the required
+  `grill-uses-native-question-tool` behavior-eval contract to prevent drift in
+  ordering, readability, tool gating, option count, and recommendation
+  labeling.
+
 ## 20.1.5 — Empirical Agent Skill Diagnosis and Catalog Reliability
 
 - Expanded the catalog from 12 to 13 canonical skills while retaining one
