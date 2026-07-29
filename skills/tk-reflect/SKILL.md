@@ -129,11 +129,11 @@ Only `tk-learn` creates a new skill or semantically updates/merges one. This
 skill reports skill evidence, current-host native exact target, working draft,
 and `pending` only; it never invokes tk-learn or writes a skill path.
 
-Run terminal status is `Pass | Fail | Blocked | Unverifiable | aborted`. `Pass`
-means the evidence/classification workflow completed and every approved
-mutation was revalidated; candidates may intentionally remain `pending`.
-Use `Fail` for a violated deterministic claim or apply gate, `aborted` for user
-stop, and `Blocked` for conflict/unclear apply scope. Never mix per-candidate
+Run terminal status is `Pass | Pending | Fail | Blocked | Unverifiable |
+aborted`. Use `Pending` while actionable candidates await apply disposition,
+`Pass` after a completed no-op/report or revalidated mutation, `Fail` for a
+violated deterministic claim or apply gate, `aborted` for user stop, and
+`Blocked` for conflict/unclear apply scope. Never mix per-candidate
 `reported | pending | applied` with run terminal status.
 
 By default, mutate no canonical target. A report-only run may replace the

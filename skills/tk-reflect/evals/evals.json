@@ -5,7 +5,7 @@
       "id": "legacy-1",
       "path": "success",
       "prompt": "/tk-reflect 이번 diff에서 반복적으로 확인된 검증 규칙 후보를 repo rule·repo skill·user rule·user skill·persistent memory의 다섯 축으로 분류해 보고해 주세요. 적용은 하지 마세요.",
-      "expected_output": "repo rule·repo skill·user rule·user skill·persistent memory로 분류하고 후보 상태는 pending, 완료된 report-only run은 Pass인 compact Disposition과 Receipt를 낸다.",
+      "expected_output": "repo rule·repo skill·user rule·user skill·persistent memory로 분류하고 후보와 report-only terminal status가 pending인 compact Disposition과 Receipt를 낸다.",
       "assertions": [
         {
           "type": "judge",
@@ -17,7 +17,7 @@
         },
         {
           "type": "terminal_status",
-          "expected": "Pass"
+          "expected": "Pending"
         },
         {
           "type": "git_head_unchanged"
@@ -303,7 +303,7 @@
       "id": "empty-summary-is-not-omitted",
       "path": "boundary",
       "prompt": "/tk-reflect verified evidence를 검토했지만 재사용 가능한 rule이나 skill 후보가 없습니다. 결과만 보고해 주세요.",
-      "expected_output": "후보가 없어도 Disposition 표에 no-op과 verified reusable evidence 없음 의미를 한 행으로 명시하고 완료된 run은 Pass로 끝낸다.",
+      "expected_output": "후보가 없어도 Disposition 표에 no-op과 verified reusable evidence 없음 의미를 한 행으로 명시하고 Unverifiable로 끝낸다.",
       "assertions": [
         {
           "type": "judge",
@@ -311,7 +311,7 @@
         },
         {
           "type": "terminal_status",
-          "expected": "Pass"
+          "expected": "Unverifiable"
         },
         {
           "type": "git_head_unchanged"

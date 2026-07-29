@@ -316,7 +316,7 @@
       "id": "empty-summary-is-not-omitted",
       "path": "boundary",
       "prompt": "/tk-grooming 지정 범위를 검토했지만 독립적인 감사 항목이 없습니다. report-only 결과를 출력해 주세요.",
-      "expected_output": "항목이 없어도 Disposition 표에 None·keep·no finding 의미를 한 행으로 명시하고 완료된 audit는 Pass로 끝낸다.",
+      "expected_output": "항목이 없어도 Disposition 표에 None·keep·no finding 의미를 한 행으로 명시하고 Unverifiable로 끝낸다.",
       "assertions": [
         {
           "type": "judge",
@@ -324,7 +324,7 @@
         },
         {
           "type": "terminal_status",
-          "expected": "Pass"
+          "expected": "Unverifiable"
         },
         {
           "type": "git_head_unchanged"
