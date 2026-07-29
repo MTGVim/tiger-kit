@@ -136,12 +136,13 @@ browser-tool call. Follow its `Blocked` boundary on conflict or ambiguity.
 
 ### Execution ownership and investigation
 
-In `direct`, the current agent implements the smallest coherent slices and
-repeats focused verification. In `delegated`, give one implementor the scope
-and completion criteria, then have the current agent inspect the diff and
-evidence. Never nest delegation or let a subagent invoke a user-invoked
-TigerKit skill. The implementor does not call browser tools; final browser
-verification belongs to the current agent.
+In `direct`, the current agent implements coherent slices; each slice proves
+one externally observable behavior and its related R/AC rather than a
+file/function layer, then repeats focused verification. In `delegated`, give
+one implementor the scope and completion criteria, then have the current agent
+inspect the diff and evidence. Never nest delegation or let a subagent invoke
+a user-invoked TigerKit skill. The implementor does not call browser tools;
+final browser verification belongs to the current agent.
 
 For an unknown-cause bug, intermittent failure, or performance regression,
 apply the [investigation loop](references/investigation.md) before mutation. Do
@@ -159,8 +160,9 @@ simplify gate runs once after the unit first reaches GREEN rather than inside
 every cycle. Before implementation, confirm that red is caused by the expected
 missing behavior rather than a setup, syntax, fixture, or mock failure; repair
 invalid test evidence and rerun until the expected red is observed. Exercise
-real behavior and collaborators where practical; mock only unavoidable
-external side-effect boundaries, not the behavior under test. Do not call
+real behavior and in-process collaborators; mock only an external side effect
+that is unavailable or unsafe in the test environment, never the behavior
+under test. Do not call
 post-hoc tests TDD, claim an already passing test was red, test private
 implementation details, or distort a production API for tests. If the user
 requires TDD but no useful seam exists, do not silently switch to no-TDD;
@@ -253,7 +255,12 @@ it does not repeat drive's aggregate traceability review. Permit one independent
 reviewer only for `large` work or high-risk authentication, payment, privacy,
 authorization, dependency, migration/data-loss, concurrency, or public API
 changes. Bound the flow to one review, one fix, and one regression verification.
-An important finding, drift, or unverified coverage prevents commit. When an evidence-backed active-drive profile includes `independent-review`, the one bounded reviewer is required; unavailable review capability is `Unverifiable`, not permission to drop the obligation.
+A finding prevents commit when it violates R/AC, public behavior,
+security/data safety, the durable-test gate, or the fixed reviewed snapshot;
+style-only suggestions do not. Drift or unverified required coverage also
+prevents commit. When an evidence-backed active-drive profile includes
+`independent-review`, the one bounded reviewer is required; unavailable review capability is
+`Unverifiable`, not permission to drop the obligation.
 
 ## Commit and report
 
