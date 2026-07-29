@@ -4,16 +4,12 @@
     {
       "id": "legacy-1",
       "path": "success",
-      "prompt": "/tk-to-tickets 다음 Ready spec을 정확히 두 개의 독립 검증 가능한 수직 티켓으로 .tigerkit/tickets.md에 분해하세요. Candidate VS-01 covers R-01/AC-01: --json 실행은 exit 0, parse 가능한 JSON, report fields 유지; entry points=scripts/report.py와 tests/test_report_cli.py; verification=python3 -m unittest tests.test_report_cli.ReportJson. Candidate VS-02 covers R-02/AC-02: 옵션 없는 실행은 기존 text snapshot 유지; 같은 entry points; verification=python3 -m unittest tests.test_report_cli.ReportText. 두 candidate는 independently verifiable이고 공유 계산 로직에만 의존하며 사용자 결정은 모두 확정됐습니다. 구현은 시작하지 마세요.",
-      "expected_output": "VS-01과 VS-02의 ID·R/AC coverage를 보존해 정확히 두 개의 pending vertical ticket으로 materialize하고, mutable status·dependency·verification을 ticket artifact에만 기록한 뒤 coverage를 재검증한다.",
+      "prompt": "/tk-to-tickets 다음 Ready spec을 정확히 두 개의 독립 검증 가능한 수직 티켓으로 .tigerkit/tickets.md에 분해하세요. Goal: report CLI의 JSON 소비자 지원과 기존 text 호환성을 제공한다. R-01/AC-01: --json 실행은 exit 0, parse 가능한 JSON, report fields 유지; entry points=scripts/report.py와 tests/test_report_cli.py; verification=python3 -m unittest tests.test_report_cli.ReportJson. R-02/AC-02: 옵션 없는 실행은 기존 text snapshot 유지; 같은 entry points; verification=python3 -m unittest tests.test_report_cli.ReportText. 두 동작은 공유 계산 로직에만 의존하며 사용자 결정은 모두 확정됐습니다. 구현은 시작하지 마세요.",
+      "expected_output": "R-01/AC-01과 R-02/AC-02를 정확히 두 개의 pending vertical ticket으로 보존하고, 각 티켓에 독립 goal·scope·entry point·verification과 명시적 dependency를 기록한 뒤 coverage를 재검증한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "Ready-spec candidate VS-01과 VS-02를 불필요하게 재분해하거나 재번호화하지 않고 R/AC coverage와 독립 verification을 pending tickets로 materialize한다."
-        },
-        {
-          "type": "judge",
-          "criterion": "채팅은 decomposition decision과 Receipt만 보여 주고 ticket body·coverage·dependency 상세를 중복 출력하지 않는다."
+          "criterion": "R-01/AC-01과 R-02/AC-02를 정확히 두 개의 pending vertical ticket으로 보존하고, 각 티켓에 독립 goal·scope·entry point·verification과 명시적 dependency를 기록한 뒤 coverage를 재검증한다."
         },
         {
           "type": "terminal_status",
@@ -93,6 +89,31 @@
         {
           "type": "terminal_status",
           "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "to-tickets-derives-from-candidate-areas",
+      "path": "success",
+      "prompt": "/tk-to-tickets Ready spec의 candidate area Search는 R1/AC1, Export는 R2/AC2와 coupling evidence만 제공합니다. 이 area를 preapproved slice나 ticket ID로 취급하지 말고 독립성을 검증해 수직 티켓을 작성하세요.",
+      "expected_output": "Candidate areas를 source evidence로 사용하되 tk-to-tickets가 독립 slice boundaries, ticket IDs, coverage, dependencies를 직접 도출하고 pending ticket artifact를 작성한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "Area labels를 ticket IDs로 물려받거나 독립성을 가정하지 않고 R/AC와 coupling evidence에서 vertical decomposition을 수행한다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/tickets.md"
+        },
+        {
+          "type": "path_text_contains",
+          "path": ".tigerkit/tickets.md",
+          "text": "Status: pending"
         }
       ]
     },

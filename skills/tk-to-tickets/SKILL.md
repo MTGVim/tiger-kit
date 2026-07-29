@@ -41,9 +41,9 @@ cites the new decision and source evidence.
 
 1. `extract source requirements`: capture requirement/acceptance IDs, source
    locations, and `confirmed | unverified | conflict`.
-2. `vertical slices`: validate and materialize Ready-spec candidates. Derive a
-   candidate only when none exists, it is stale, or it is not independently
-   verifiable.
+2. `vertical slices`: derive independent behavior slices. Treat Ready-spec
+   candidate areas only as source evidence, never as preapproved slices or
+   ticket IDs.
 3. `acceptance and verification`: define observable acceptance criteria and
    executable verification commands or evidence.
 4. `traceability and dependencies`: map every source ID to ticket coverage,
@@ -85,10 +85,10 @@ infer implementation progress. Preserve source R/AC IDs in each ticket and in
 the coverage table. Without source IDs, cite source location and do not invent
 IDs.
 
-When a Ready spec has vertical-slice candidates, preserve their IDs and R/AC
-coverage unless evidence proves a split or merge is needed. Record the reason
-for any change. Mutable status, dependencies, commit receipts, and resume state
-belong only in tickets, never in the spec.
+When a Ready spec has vertical-slicing candidate areas, use their R/AC and
+coupling evidence but independently prove slice boundaries. This skill alone
+assigns ticket IDs and owns coverage, dependencies, and ticket shape. Mutable
+status, commit receipts, and resume state also belong only in tickets.
 
 Each ticket must be executable from the artifact and its cited sources without
 hidden conversation context. Name only evidence-supported entry points, and

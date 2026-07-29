@@ -280,7 +280,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
             "tk-prototype": ("Lead with `## Confirmed`", "Keep command mechanics after the decision"),
             "tk-reflect": ("In chat, emit only", "no raw logs, transcripts, diff excerpts"),
             "tk-skill-diagnose": ("In chat, emit `## Diagnosis`", "Never copy raw logs, transcripts"),
-            "tk-to-spec": ("User-facing output is one status sentence plus the receipt", "Vertical slicing candidates"),
+            "tk-to-spec": ("User-facing output is one status sentence plus the receipt", "Vertical slicing candidate areas"),
             "tk-to-tickets": ("User-facing output states the decomposition decision", "artifact owns ticket bodies"),
         }
         forbidden = {

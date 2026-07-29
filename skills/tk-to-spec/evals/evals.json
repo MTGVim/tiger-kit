@@ -96,11 +96,27 @@
       "id": "stable-source-ids",
       "path": "success",
       "prompt": "/tk-to-spec 기존 R1과 AC1을 유지하면서 새 요구사항 하나를 추가해 주세요.",
-      "expected_output": "기존 R1/AC1을 재번호하지 않고 새 requirement/acceptance에 다음 고유 ID를 부여해 source map과 vertical slicing candidates에 연결한다.",
+      "expected_output": "기존 R1/AC1을 재번호하지 않고 새 requirement/acceptance에 다음 고유 ID를 부여하며 source map에 연결한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "기존 R1/AC1을 재번호하지 않고 새 ID를 source map과 candidate ID·user-visible behavior·R/AC coverage·independent verification·ledger justified/reason에 연결하되 ticket status·dependencies·commits·resume state는 쓰지 않는다."
+          "criterion": "기존 R1/AC1을 재번호하지 않고 새 requirement/acceptance에 다음 고유 ID를 부여하며 source map에 연결한다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "to-spec-records-vertical-slicing-candidate-areas",
+      "path": "success",
+      "prompt": "/tk-to-spec R1/AC1 검색 동작과 R2/AC2 내보내기 동작을 포함한 Ready spec을 작성해 주세요. 티켓 분해나 ledger 결정은 하지 말고 vertical slicing candidate areas만 기록하세요.",
+      "expected_output": "Vertical slicing candidate areas가 area label·user-visible behavior·R/AC·coupling evidence만 기록하고 독립 slice, ticket ID, coverage, dependency, ledger justified 결정을 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "Candidate areas는 비권위 입력으로만 존재하며 drive의 ledger decision과 tk-to-tickets의 decomposition·ID·coverage·dependency ownership을 침범하지 않는다."
         },
         {
           "type": "terminal_status",

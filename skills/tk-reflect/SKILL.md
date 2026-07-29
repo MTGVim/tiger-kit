@@ -1,6 +1,6 @@
 ---
 name: tk-reflect
-description: "[user/auto] Classify reusable rule or skill candidates from conversation, diff, and outcome evidence. Implicit mode is report-only for canonical targets and may write only its bounded .tigerkit ledger; do not apply to ordinary summaries/completion."
+description: "[user/auto] Classify reusable rule or skill candidates from conversation, diff, and outcome evidence. Implicit mode is report-only; do not apply to ordinary summaries/completion or mutate automatically."
 argument-hint: "<conversation, change, diff, outcome, or source>"
 metadata:
   tigerkit:
@@ -13,9 +13,8 @@ metadata:
 
 Apply on explicit invocation or a clear request to extract reusable candidates
 from evidence. Do not auto-apply to an ordinary summary or implementation
-completion. Implicit mode cannot mutate canonical targets; it may write only
-the bounded report ledger below. Do not invoke another skill except for the
-single bounded diagnosis handoff below.
+completion. Implicit mode is report-only. Do not invoke another skill except
+for the single bounded diagnosis handoff below.
 
 Read current conversation, changes, diff, implementation/test/review outcomes,
 relevant `.tigerkit/` artifacts, the current host's discoverable file-based
@@ -136,11 +135,12 @@ violated deterministic claim or apply gate, `aborted` for user stop, and
 `Blocked` for conflict/unclear apply scope. Never mix per-candidate
 `reported | pending | applied` with run terminal status.
 
-By default, mutate no canonical target. A report-only run may replace the
-bounded `.tigerkit/reflect.md` ledger defined below; this is not apply approval.
-Do not inspect legacy global state or generalize a one-off workaround.
-`RF-##` is run-local, not durable identity. Never promote raw credentials,
-logs, or screenshots verbatim even after approval.
+By default, mutate no file and create no ledger. Only an explicit report-
+artifact request may write the bounded `.tigerkit/reflect.md` ledger below;
+that does not authorize target application. Do not inspect legacy global state
+or generalize a one-off workaround. `RF-##` is run-local, not durable identity.
+Never promote raw credentials, logs, or screenshots verbatim even after
+approval.
 
 Unreadable required source is `unverified` with path/error and cannot support
 interpretation. Retry once only after exact access/path/command appears;
@@ -163,12 +163,15 @@ decision-relevant rows:
 | --- | --- | --- | --- | --- |
 | RF-01 | `<short name>` | `<action/status>` | `<target>` | `<evidence refs>` |
 
-Write or replace `.tigerkit/reflect.md` when the run has more candidates,
-requires more than two evidence references for any candidate, or needs draft
-wording. The ledger has one compact row per candidate with ID, target,
-evidence references, interpretation, confidence, action, status, and optional
-draft path. It contains no raw logs, transcripts, diff excerpts, repeated
-rationale, or copied receipt fields. Create its parent lazily, write
+Keep chat compact by citing evidence paths instead of copying long bodies.
+Within `## Disposition`, add a bounded `Draft` block only when an actionable
+rule/skill candidate requires working wording.
+
+Only on an explicit report-artifact request, write or replace
+`.tigerkit/reflect.md`. The ledger has one compact row per candidate with ID,
+target, evidence references, interpretation, confidence, action, status, and
+optional draft path. It contains no raw logs, transcripts, diff excerpts,
+repeated rationale, or copied receipt fields. Create its parent lazily, write
 atomically, and warn if scratch is not ignored; never modify `.gitignore`.
 Receipt records terminal status, candidate counts, ledger path when written,
 and IDs requiring a decision. With no candidate, emit one `— | None | no-op |

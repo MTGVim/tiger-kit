@@ -47,8 +47,9 @@ continue.
    `verified | unverified`.
 3. `separate and identify`: separate facts, decisions, assumptions, and
    unresolved conflicts; assign stable requirement and acceptance IDs.
-4. `vertical slice candidates`: identify independently verifiable user-visible
-   behavior candidates without assigning mutable execution state.
+4. `vertical slicing candidate areas`: group related R/AC by user-visible
+   behavior and coupling evidence without deciding independence, ticket shape,
+   IDs, or whether a ledger is justified.
 5. `Ready gate`: return `Ready | Draft | Blocked | Unverifiable` with missing
    evidence.
 6. `write/print and verify`: write the selected output or print-only result,
@@ -98,15 +99,16 @@ seam exists, state that gap in verification planning.
 Use `Ready` only when the spec includes problem, goal, included/excluded scope,
 requirements, acceptance criteria, verification, source traceability, and
 verifiability with no unresolved conflict. It also includes a compact
-`Vertical slicing candidates` table with candidate ID, user-visible behavior,
-R/AC coverage, independent verification, and `ledger justified: yes | no`
-plus reason. This table must not contain ticket status, dependencies, commits,
-or resume state. Otherwise use `Draft`, `Blocked`, or `Unverifiable`.
+`Vertical slicing candidate areas` table with area label, user-visible
+behavior, R/AC coverage, and coupling evidence. Areas are non-authoritative
+inputs, not slices or tickets: drive alone decides whether a ledger is
+justified, and `tk-to-tickets` alone owns decomposition, ticket IDs, coverage,
+and dependencies. Otherwise use `Draft`, `Blocked`, or `Unverifiable`.
 
 User-facing output is one status sentence plus the receipt; the artifact owns
 the spec body. The receipt records phase, path, status, and R/AC IDs, then
-references the source-map, candidate, unverified, conflict, and verification
-sections instead of restating their content.
+references the source-map, candidate-area, unverified, conflict, and
+verification sections instead of restating their content.
 
 ### 🔴 HARD GATE · source UI writing
 

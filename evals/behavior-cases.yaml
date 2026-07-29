@@ -243,7 +243,10 @@
   expect: "Every candidate keeps one stable RF-## ID through the compact Disposition, optional ledger, and receipt without duplicating evidence or draft prose in chat."
 - case: to-spec-does-not-create-tickets
   skill: tk-to-spec
-  expect: "A Ready spec records independently verifiable vertical-slice candidates without taking ownership of ticket status, dependencies, commits, or resume state."
+  expect: "A Ready spec records non-authoritative vertical-slicing candidate areas while drive keeps the ledger decision and tk-to-tickets keeps decomposition, IDs, coverage, and dependencies."
+- case: to-spec-records-vertical-slicing-candidate-areas
+  skill: tk-to-spec
+  expect: "Candidate areas record only a label, user-visible behavior, R/AC, and coupling evidence; they are not slices, tickets, or a ledger decision."
 - case: to-spec-structures-bug-evidence
   skill: tk-to-spec
   expect: "Bug specs separate symptom, current and expected behavior, reproduction, evidence, environment, and missing regression seam."
@@ -264,7 +267,10 @@
   expect: "A user-decision blocker returns `User decision: required`, the new decision, and evidence in a native non-Ready receipt to drive without invoking grill or writing a substitute Ready spec."
 - case: to-tickets-does-not-create-spec
   skill: tk-to-tickets
-  expect: "Ticket decomposition consumes Ready-spec vertical-slice candidates when valid and does not create or modify the spec."
+  expect: "Ticket decomposition may use Ready-spec candidate areas as evidence but independently owns slice boundaries and does not create or modify the spec."
+- case: to-tickets-derives-from-candidate-areas
+  skill: tk-to-tickets
+  expect: "Candidate areas are evidence only; tk-to-tickets independently derives vertical boundaries, IDs, coverage, and dependencies."
 - case: to-tickets-initial-status-is-pending
   skill: tk-to-tickets
   expect: "Standalone ticket creation initializes every ticket as pending."

@@ -1,8 +1,8 @@
 [
   {
     "id": 1,
-    "prompt": "/tk-to-tickets 다음 Ready spec을 정확히 두 개의 독립 검증 가능한 수직 티켓으로 .tigerkit/tickets.md에 분해하세요. Candidate VS-01 covers R-01/AC-01: --json 실행은 exit 0, parse 가능한 JSON, report fields 유지; entry points=scripts/report.py와 tests/test_report_cli.py; verification=python3 -m unittest tests.test_report_cli.ReportJson. Candidate VS-02 covers R-02/AC-02: 옵션 없는 실행은 기존 text snapshot 유지; 같은 entry points; verification=python3 -m unittest tests.test_report_cli.ReportText. 두 candidate는 independently verifiable이고 공유 계산 로직에만 의존하며 사용자 결정은 모두 확정됐습니다. 구현은 시작하지 마세요.",
-    "expected": "VS-01과 VS-02의 ID·R/AC coverage를 보존해 정확히 두 개의 pending vertical ticket으로 materialize하고, mutable status·dependency·verification을 ticket artifact에만 기록한 뒤 coverage를 재검증한다."
+    "prompt": "/tk-to-tickets 다음 Ready spec을 정확히 두 개의 독립 검증 가능한 수직 티켓으로 .tigerkit/tickets.md에 분해하세요. Goal: report CLI의 JSON 소비자 지원과 기존 text 호환성을 제공한다. R-01/AC-01: --json 실행은 exit 0, parse 가능한 JSON, report fields 유지; entry points=scripts/report.py와 tests/test_report_cli.py; verification=python3 -m unittest tests.test_report_cli.ReportJson. R-02/AC-02: 옵션 없는 실행은 기존 text snapshot 유지; 같은 entry points; verification=python3 -m unittest tests.test_report_cli.ReportText. 두 동작은 공유 계산 로직에만 의존하며 사용자 결정은 모두 확정됐습니다. 구현은 시작하지 마세요.",
+    "expected": "R-01/AC-01과 R-02/AC-02를 정확히 두 개의 pending vertical ticket으로 보존하고, 각 티켓에 독립 goal·scope·entry point·verification과 명시적 dependency를 기록한 뒤 coverage를 재검증한다."
   },
   {
     "id": 2,
