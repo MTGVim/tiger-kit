@@ -189,12 +189,15 @@ actions without a safe environment and explicit authority are `Unverifiable`.
 
 ### Evidence retention and reporting
 
-Keep only useful ledger evidence; create no empty files. Prefer run IDs like
-`YYYYMMDD-HHmmss-<short-slug>`. Store verified nonsensitive facts in
-`.tigerkit/browser-verify/env.md` or `screens/<screen>.md` only when needed.
-Create parents lazily and replace atomically when possible. Do not auto-create
-`login.local.md`; if explicitly requested, never print its content and prefer
-mode `0600`. Do not inspect or migrate legacy global TigerKit state.
+Keep only evidence that supports a criterion, finding, or cleanup result; create
+no empty files. A ledger row contains criterion, state, evidence path,
+redaction, and cleanup state. Never paste or store raw console, network/HAR, or
+transcript bodies when a path plus compact finding is sufficient. Store
+verified nonsensitive facts in `.tigerkit/browser-verify/env.md` or
+`screens/<screen>.md` only when needed. Create parents lazily and replace
+atomically when possible. Do not auto-create `login.local.md`; if explicitly
+requested, never print its content and prefer mode `0600`. Do not inspect or
+migrate legacy global TigerKit state.
 
 Do not edit production code or promote evidence into a rule/skill, except for
 the bounded `instrumented` evidence class in [visual](references/visual.md),
@@ -206,40 +209,23 @@ alignment `Status: confirmed | pending | Blocked`; it is not runtime Verdict.
 `## Verdict` owns the overall result, `## Verified` criteria, `## Findings`
 deviations, `## Evidence` observations/captures, `## Unverified` omitted scope,
 and `## Cleanup` owned-resource results. These sections are the receipt; do not
-add `## Receipt` or duplicate facts. Omit empty Findings/Unverified/Cleanup.
+add `## Receipt`, paste raw evidence bodies, or duplicate facts. Omit empty
+Findings/Unverified/Cleanup.
 
 User-facing progress and receipt prose follows the user's language while the
 canonical headings, fields, and status tokens above remain unchanged.
 
 ## User decision questions
 
-When this skill reaches a user-owned decision, ask exactly one question at a
-time. Render `Question` before `Recommendation` and the proposals. Offer
-two or three mutually exclusive proposals and state the material tradeoff of
-each. Make `Question` self-contained: summarize the
-evidence-derived context, decision impact, and unresolved axis in user-facing
-language before asking. It must not require the user to decode raw `Evidence`.
-Mark exactly one best recommendation by ending its label with a localized marker such as
-`(Recommended)` or `(추천)`. A host-generated custom or Other choice does not
-count as an authored proposal.
+When a user-owned decision blocks progress, ask one self-contained `Question`
+before any `Recommendation`. Show only decision-relevant evidence, two or three
+mutually exclusive options with material tradeoffs, and exactly one label
+ending `(Recommended)` or `(추천)`.
 
-When the active question tool exposes
-option previews, prototype cards, or equivalent rich choice surfaces and a concrete preview can clarify the
-decision, use it proactively. Do not invent unsupported fields or use this
-presentation rule to bypass existing prototype or phase boundaries.
-
-If the current execution context exposes a native structured user-input tool,
-the skill must call that tool. Plain-text questions are allowed only when no
-such tool is exposed. A failed or rejected tool call is not tool absence: report
-the failure and preserve the pending or blocked state instead of silently
-downgrading to prose. Host examples:
-
-- Claude Code: `AskUserQuestion`
-- Codex: `request_user_input`
-- Hermes Agent: `clarify`
-
-This contract changes question presentation only. It does not grant new
-decision authority or weaken any existing stop, approval, or phase boundary.
+Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex
+`request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only
+when none is exposed. A failed or rejected call is not absence; preserve
+`Pending | Blocked`. This changes presentation, not authority or stop gates.
 
 ## DO NOT / ANTI-PATTERNS
 

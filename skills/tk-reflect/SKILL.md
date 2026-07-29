@@ -1,6 +1,6 @@
 ---
 name: tk-reflect
-description: "[user/auto] Classify and report reusable rule or skill candidates from conversation, diff, and outcome evidence. Implicit mode is report-only; do not apply to ordinary summaries/completion or mutate automatically."
+description: "[user/auto] Classify reusable rule or skill candidates from conversation, diff, and outcome evidence. Implicit mode is report-only for canonical targets and may write only its bounded .tigerkit ledger; do not apply to ordinary summaries/completion."
 argument-hint: "<conversation, change, diff, outcome, or source>"
 metadata:
   tigerkit:
@@ -13,8 +13,9 @@ metadata:
 
 Apply on explicit invocation or a clear request to extract reusable candidates
 from evidence. Do not auto-apply to an ordinary summary or implementation
-completion. Implicit mode is report-only. Do not invoke another skill except
-for the single bounded diagnosis handoff below.
+completion. Implicit mode cannot mutate canonical targets; it may write only
+the bounded report ledger below. Do not invoke another skill except for the
+single bounded diagnosis handoff below.
 
 Read current conversation, changes, diff, implementation/test/review outcomes,
 relevant `.tigerkit/` artifacts, the current host's discoverable file-based
@@ -135,10 +136,11 @@ Use `Fail` for a violated deterministic claim or apply gate, `aborted` for user
 stop, and `Blocked` for conflict/unclear apply scope. Never mix per-candidate
 `reported | pending | applied` with run terminal status.
 
-By default, mutate no file and create no persistent ledger/identifier. Do not
-inspect legacy global state or generalize a one-off workaround. `RF-##` is
-response-local, not ledger state. Never promote raw credentials, logs, or
-screenshots verbatim even after approval.
+By default, mutate no canonical target. A report-only run may replace the
+bounded `.tigerkit/reflect.md` ledger defined below; this is not apply approval.
+Do not inspect legacy global state or generalize a one-off workaround.
+`RF-##` is run-local, not durable identity. Never promote raw credentials,
+logs, or screenshots verbatim even after approval.
 
 Unreadable required source is `unverified` with path/error and cannot support
 interpretation. Retry once only after exact access/path/command appears;
@@ -150,68 +152,42 @@ table.
 After target, evidence, confidence, and action, require separate explicit apply
 approval. Before it, stop at `pending | reported`.
 
-Each nonempty candidate reports exactly once: `Target`, IDed `Evidence`,
-`Interpretation`, `Confidence`, `Action`, optional `Draft`, and `Receipt`.
-Create no duplicate reason/work/learning fields; Receipt holds status and
-references only.
-
 ## Output contract
 
-Assign `RF-01`, `RF-02`, ... once in discovery order. Title each
-`### RF-01 · <short name>` and reuse that ID across Target, Evidence,
-Interpretation, Confidence, Action, Draft, Receipt, and final Summary. Never
-renumber per section or emit an un-IDed candidate/rule.
+Assign `RF-01`, `RF-02`, ... once in discovery order. In chat, emit only
+`## Disposition` and `## Receipt`; insert the decision question between them
+only when apply approval is required. Disposition shows at most five
+decision-relevant rows:
 
-The response's final section is always:
+| ID | Candidate | Action | Target | Why |
+| --- | --- | --- | --- | --- |
+| RF-01 | `<short name>` | `<action/status>` | `<target>` | `<evidence refs>` |
 
-| No. | Rule | Summary | Target |
-| --- | --- | --- | --- |
-| RF-01 | `<short name> (<axis>)` | `<one sentence>` | `<concrete target or unresolved (reason)>` |
-
-One row per candidate. Summary adds no evidence; Target is a concrete
-file/skill/user/memory scope or `unresolved (<reason>)`. Keep `Summary` near 40
-display characters and `Target` near 50 when an unambiguous compact path or
-label is available. Do not copy evidence, draft, actions, or working text into
-the table, and do not truncate a target into ambiguity. With no candidate or an
-`Unverifiable` run, emit
-`| — | None | No reusable rule/skill candidate | No application |`.
-
-If the user asks to reprint a table that wrapped or broke, shorten the cells and
-emit the same table with the same IDs and order. Do not rediscover, renumber, or
-add evidence during a formatting-only reprint.
+Write or replace `.tigerkit/reflect.md` when the run has more candidates,
+requires more than two evidence references for any candidate, or needs draft
+wording. The ledger has one compact row per candidate with ID, target,
+evidence references, interpretation, confidence, action, status, and optional
+draft path. It contains no raw logs, transcripts, diff excerpts, repeated
+rationale, or copied receipt fields. Create its parent lazily, write
+atomically, and warn if scratch is not ignored; never modify `.gitignore`.
+Receipt records terminal status, candidate counts, ledger path when written,
+and IDs requiring a decision. With no candidate, emit one `— | None | no-op |
+— | no verified reusable evidence` row.
 
 User-facing progress and receipt prose follows the user's language while
 canonical headings, IDs, fields, and status tokens remain unchanged.
 
 ## User decision questions
 
-When this skill reaches a user-owned decision, ask exactly one question at a
-time. Render `Question` before `Recommendation` and the proposals. Offer
-two or three mutually exclusive proposals and state the material tradeoff of
-each. Make `Question` self-contained: summarize the
-evidence-derived context, decision impact, and unresolved axis in user-facing
-language before asking. It must not require the user to decode raw `Evidence`.
-Mark exactly one best recommendation by ending its label with a localized marker such as
-`(Recommended)` or `(추천)`. A host-generated custom or Other choice does not
-count as an authored proposal.
+When a user-owned decision blocks progress, ask one self-contained `Question`
+before any `Recommendation`. Show only decision-relevant evidence, two or three
+mutually exclusive options with material tradeoffs, and exactly one label
+ending `(Recommended)` or `(추천)`.
 
-When the active question tool exposes
-option previews, prototype cards, or equivalent rich choice surfaces and a concrete preview can clarify the
-decision, use it proactively. Do not invent unsupported fields or use this
-presentation rule to bypass existing prototype or phase boundaries.
-
-If the current execution context exposes a native structured user-input tool,
-the skill must call that tool. Plain-text questions are allowed only when no
-such tool is exposed. A failed or rejected tool call is not tool absence: report
-the failure and preserve the pending or blocked state instead of silently
-downgrading to prose. Host examples:
-
-- Claude Code: `AskUserQuestion`
-- Codex: `request_user_input`
-- Hermes Agent: `clarify`
-
-This contract changes question presentation only. It does not grant new
-decision authority or weaken any existing stop, approval, or phase boundary.
+Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex
+`request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only
+when none is exposed. A failed or rejected call is not absence; preserve
+`Pending | Blocked`. This changes presentation, not authority or stop gates.
 
 ## DO NOT / ANTI-PATTERNS
 

@@ -115,72 +115,30 @@ rendering before concluding the element is missing.
 
 ## Output contract
 
-Use only non-empty sections. `Must not change` is always present for A/D/E.
+Lead with `Answer` in one to three sentences. Add only the non-empty evidence
+sections needed for the question family: `Evidence`, `Origin`, `Sibling
+fields`, `Path`, `State`, `Attribution`, `Must change`, `Must not change`, and
+`Remaining concerns`. Evidence cites `path:line`; unavailable sources include
+the reason. For A/D/E, `Must not change` is required and says `none found` when
+empty.
 
-- `Question`: the inbound question verbatim, and its family
-- `Answer`: the conclusion, in one to three sentences, before any detail
-- `Evidence`: `path:line` per claim; `unavailable` entries with reasons
-- `Origin` (A): assignment site and what the value actually means
-- `Sibling fields` (A): same-record alternatives and their documented meanings
-- `Path` (B): ordered hops with boundaries named
-- `State` (C): absent | unreleased | empty | live, with the refs searched
-- `Attribution` (A, E): which side owns it, and the evidence for that
-- `Must change`: table of `path:line` · identifier · current → intended
-- `Must not change`: consumers already correct, and why. `none found` when
-  empty.
-- `Remaining concerns`: unclear consumers, unreadable sources, open decisions
-- `Receipt`: `reported | Blocked | Unverifiable`, and the next owner
+Do not echo the inbound question or repeat evidence across sections. `Receipt`
+contains only `reported | Blocked | Unverifiable`, the next owner when one
+exists, and section references.
 
 Write user-facing prose in the user's language; keep identifiers and status
 tokens as-is.
-
-## Related
-
-The related rules own axis-specific traps; this skill owns the intake desk,
-classification, routing, shared evidence contract, and consumer sweep:
-
-- [Producer-existence verification](https://github.com/MTGVim/tiger-kit/issues/196#%EA%B8%B0%EC%A1%B4-%EC%9E%90%EC%82%B0%EA%B3%BC%EC%9D%98-%EA%B4%80%EA%B3%84)
-- [Response-field type and nullability verification](https://github.com/MTGVim/tiger-kit/issues/196#%EA%B8%B0%EC%A1%B4-%EC%9E%90%EC%82%B0%EA%B3%BC%EC%9D%98-%EA%B4%80%EA%B3%84)
-- [Consumer-chain attribution](https://github.com/MTGVim/tiger-kit/issues/196#%EA%B8%B0%EC%A1%B4-%EC%9E%90%EC%82%B0%EA%B3%BC%EC%9D%98-%EA%B4%80%EA%B3%84)
 
 ## User decision questions
 
 Normal investigation does not make this skill the decision owner: name the
 decision and stop as `Blocked`. Only when an authorized caller separately
-makes this skill the user-decision owner, ask exactly one question at a time.
-Render `Question` before `Recommendation` and the proposals. Offer
-two or three mutually exclusive proposals and state the material tradeoff of
-each. Make `Question` self-contained: summarize the
-evidence-derived context, decision impact, and unresolved axis in user-facing
-language before asking. It must not require the user to decode raw `Evidence`.
-Mark exactly one best recommendation by ending its label with a localized marker such as
-`(Recommended)` or `(추천)`. A host-generated custom or Other choice does not
-count as an authored proposal.
+makes this skill the user-decision owner, ask one self-contained `Question`
+before any `Recommendation`. Show only decision-relevant evidence, two or three
+mutually exclusive options with material tradeoffs, and exactly one label
+ending `(Recommended)` or `(추천)`.
 
-When the active question tool exposes
-option previews, prototype cards, or equivalent rich choice surfaces and a concrete preview can clarify the
-decision, use it proactively. Do not invent unsupported fields or use this
-presentation rule to bypass existing prototype or phase boundaries.
-
-If the current execution context exposes a native structured user-input tool,
-the skill must call that tool. Plain-text questions are allowed only when no
-such tool is exposed. A failed or rejected tool call is not tool absence: report
-the failure and preserve the pending or blocked state instead of silently
-downgrading to prose. Host examples:
-
-- Claude Code: `AskUserQuestion`
-- Codex: `request_user_input`
-- Hermes Agent: `clarify`
-
-This contract changes question presentation only. It does not grant new
-decision authority or weaken any existing stop, approval, or phase boundary.
-
-## DO NOT / ANTI-PATTERNS
-
-- Do not edit source, create a spec, ticket, commit, or open a branch.
-- Do not treat a type or schema declaration as an origin.
-- Do not report absence from one search, or a count from an unverified pattern.
-- Do not report for A/D/E before the sweep, or omit `Must not change`.
-- Do not resolve a two-candidate ambiguity yourself.
-- Do not estimate effort or schedule; report scale (sites, files) only.
-- Do not invoke another user-invoked skill; name the next owner instead.
+Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex
+`request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only
+when none is exposed. A failed or rejected call is not absence; preserve
+`Pending | Blocked`. This changes presentation, not authority or stop gates.

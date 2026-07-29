@@ -21,7 +21,7 @@ is report-only.
    allowed mutation. Carry forward explicit exclusions from the active
    conversation or a durable governing source without reconfirmation.
 2. `discovery`: read only existing native paths and inventory candidates in the
-   four target areas.
+   requested areas.
 3. `evidence`: record area-specific observations, paths, verification state,
    and ownership evidence for every candidate.
 4. `classification/proposal`: apply the
@@ -37,8 +37,9 @@ is report-only.
 7. `revalidate`: recheck links, duplication, and frontmatter; report results,
    unverified scope, and unresolved items.
 
-Inspect the four existing areas: repository rules, repository skills, user
-rules, and user skills. Use actual host-native paths from
+Inspect only the areas named or implied by the request. Inspect all four areas
+—repository rules, repository skills, user rules, and user skills—only for a
+catalog-wide audit. Use actual host-native paths from
 [discovery](references/discovery.md). Do not create missing files or inspect,
 migrate, or create legacy/global TigerKit state.
 
@@ -107,38 +108,22 @@ Evidence records actual path/content for each area; missing required evidence
 makes that area `Unverifiable`. Any blocked area prevents an overall completed
 claim; use `Complete | Fail | Partial/Blocked | Unverifiable`.
 
-Single owners are:
-
-- `## Findings`: area observations, evidence, unverified/unresolved items;
-- `## Proposed actions`: classification and proposal;
-- `## Applied`: actual mutations only;
-- `## Verification`: post-apply revalidation.
-
-Do not mix classification into Findings. Report-only may omit empty Applied and
-post-apply Verification. Receipt records overall status,
-`report-only | applied`, and references to nonempty sections without repeating
-their content.
-
 ## Output contract
 
 Assign `GR-01`, `GR-02`, ... once in first-identification order to each
-independent normative instruction/workflow. Use the same ID in Findings,
-Proposed actions, Applied/Verification when present, Receipt references, and
-the final Summary. Never renumber per section or emit an un-IDed item.
+independent normative instruction/workflow. Lead with one `## Disposition`
+table:
 
-The final section is always this fixed `## Summary` table. Each item gets one
-row. `Rule` holds a short name plus classification, `Summary` one sentence with
-no new evidence, and `Target` a concrete path/skill/user scope or
-`unresolved (<reason>)`. A vendor row uses `keep (vendor)` and identifies the
-resolved vendor-owned target in `Target`. Do not copy body
-evidence/proposals/changes/tests.
+| ID | Item | Action | Target | Basis |
+| --- | --- | --- | --- | --- |
+| GR-01 | `<short name>` | `<classification>` | `<target>` | `<evidence refs>` |
 
-| No. | Rule | Summary | Target |
-| --- | --- | --- | --- |
-| GR-01 | `<short name> (<classification>)` | `<one sentence>` | `<concrete target or unresolved (reason)>` |
-
-With no item or an entirely `Unverifiable` audit, still emit:
-`| — | None | No audit item | No application |`.
+Use the same ID for applied changes and verification. Add `## Exceptions` only
+for evidence gaps, ownership conflicts, unresolved scope, or failed
+verification. Add `## Applied` and `## Verification` only after mutation.
+`## Receipt` records overall status, `report-only | applied`, and IDs without
+repeating the table. With no item, emit one `— | None | keep | — | no finding`
+row. Vendor rows use `keep (vendor)`.
 
 User-facing progress and receipt prose follows the user's language while
 canonical headings, IDs, classifications, and status tokens remain unchanged.
@@ -151,33 +136,15 @@ delete/move stops `Partial/Blocked | Unverifiable`.
 
 ## User decision questions
 
-When this skill reaches a user-owned decision, ask exactly one question at a
-time. Render `Question` before `Recommendation` and the proposals. Offer
-two or three mutually exclusive proposals and state the material tradeoff of
-each. Make `Question` self-contained: summarize the
-evidence-derived context, decision impact, and unresolved axis in user-facing
-language before asking. It must not require the user to decode raw `Evidence`.
-Mark exactly one best recommendation by ending its label with a localized marker such as
-`(Recommended)` or `(추천)`. A host-generated custom or Other choice does not
-count as an authored proposal.
+When a user-owned decision blocks progress, ask one self-contained `Question`
+before any `Recommendation`. Show only decision-relevant evidence, two or three
+mutually exclusive options with material tradeoffs, and exactly one label
+ending `(Recommended)` or `(추천)`.
 
-When the active question tool exposes
-option previews, prototype cards, or equivalent rich choice surfaces and a concrete preview can clarify the
-decision, use it proactively. Do not invent unsupported fields or use this
-presentation rule to bypass existing prototype or phase boundaries.
-
-If the current execution context exposes a native structured user-input tool,
-the skill must call that tool. Plain-text questions are allowed only when no
-such tool is exposed. A failed or rejected tool call is not tool absence: report
-the failure and preserve the pending or blocked state instead of silently
-downgrading to prose. Host examples:
-
-- Claude Code: `AskUserQuestion`
-- Codex: `request_user_input`
-- Hermes Agent: `clarify`
-
-This contract changes question presentation only. It does not grant new
-decision authority or weaken any existing stop, approval, or phase boundary.
+Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex
+`request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only
+when none is exposed. A failed or rejected call is not absence; preserve
+`Pending | Blocked`. This changes presentation, not authority or stop gates.
 
 ## DO NOT / ANTI-PATTERNS
 

@@ -12,20 +12,14 @@ metadata:
 
 # Drive
 
-Start a workflow only when the user explicitly selects `tk-drive` in the
-current host. `/tk-drive`, `$tk-drive`, and direct selection in a host skill
-picker are equivalent explicit starts. Once started, keep ownership while a
-child phase waits for and incorporates the directly corresponding answer; when
-that phase returns a continuation receipt, resume without another invocation.
-A continuation receipt is an internal transition, not a terminal response:
-when it carries no stop state, advance to the next required phase in the same
-turn instead of ending after the child receipt.
+Start only when the user selects `/tk-drive`, `$tk-drive`, or the host skill
+picker. Within that conversation, keep ownership across the directly
+corresponding child answer and continuation receipt; a success receipt advances
+to the next required phase in the same turn.
 
-An ordinary code request, generic `continue`, an existing `.tigerkit/`
-artifact, an answer outside an active child phase, a new session, or a broken
-conversation is not a start or resume. Leave ordinary implementation with the
-current agent. In a new session, require a new explicit `$tk-drive` start and
-reconstruct phases from repository evidence.
+An ordinary request, generic `continue`, artifact presence, unrelated answer,
+new session, or broken conversation is not a start or resume. A new session
+requires a fresh explicit start and reconstruction from repository evidence.
 
 ## Contract
 
@@ -44,20 +38,12 @@ own decision closure, spec, ticket decomposition, and one implementation unit.
 or implementation. There is no small-task exception; task size and
 proportionality affect only whether a ticket ledger is justified.
 
-Invoke only the phase and support owners allowed by the phase invariants; do
-not create a shared runtime contract.
-
-If a phase skill is unavailable or unsuccessful, propagate that state and stop
-at the phase; never recreate its semantics inline.
-
-Every consumed phase receipt must cause one same-turn transition defined in the
-phase invariants. A child success receipt is never a response boundary.
-Before invoking a phase owner, record `Success state` and one drive-owned
-`Outstanding transition` in the handoff. A successful active-drive receipt
-must echo `Return to: tk-drive` and the `Outstanding transition` verbatim.
-Compare that echo with the recorded handoff before returning or reporting
-progress. A missing or mismatched echo is receipt drift and `Blocked`, never a
-successful completion boundary.
+Invoke only owners allowed by the phase invariants. Propagate an unavailable or
+unsuccessful phase and never recreate it inline. Before each handoff, record
+`Success state` and one `Outstanding transition`; success must echo
+`Return to: tk-drive` and that transition verbatim. A missing or mismatched echo
+is receipt drift and `Blocked`; a valid success triggers its same-turn
+transition.
 
 ### 🔴 HARD GATE · source UI writing
 
@@ -116,15 +102,11 @@ control to drive. Hand it to `tk-grill-me`; after `confirmed`, re-run
 `tk-to-spec` to `Ready` before tickets. A repeated or equivalent blocker after
 that confirmation is `Blocked`, not another automatic loop.
 
-## 🔴 CHECKPOINT · 🛑 STOP · decision handoff and resume
+## 🔴 CHECKPOINT · 🛑 STOP · decision handoff
 
-Drive does not ask or reproduce grill questions. A `tk-grill-me`
-`pending | aborted | Blocked | Unverifiable` receipt stops downstream handoffs
-and preserves the active phase evidence. When grill returns `confirmed`, merge
-only its cited Decisions into source traceability and resume at the spec gate.
-If the user's answer adds unrelated scope or does not correspond to the active
-grill decision, do not inherit commit authority; report the drift or require a
-new explicit `$tk-drive` start.
+Drive does not reproduce grill questions. A non-confirmed grill receipt stops;
+`confirmed` merges only cited Decisions and resumes at the spec gate. An
+unrelated answer gains no commit authority and requires a new explicit start.
 
 ## Failure and completion
 
@@ -135,56 +117,29 @@ next handoff, and never rewrite history. Only an isolated final
 change-related regression permits the one corrective cycle defined in the
 phase invariants.
 
-The final receipt owns `Status`, `Source`, `Phases`, `Tickets`,
+Lead the final response with one sentence stating the outcome, then a compact
+receipt. `Status` and `Source` are required. Include `Phases`, `Tickets`,
 `Verification`, `Integration review`, `Commits`, `Remaining risks`, and
-`Reusable candidate`. Use `Status: Pass` only after every completion gate. Do
-not duplicate child evidence or invoke `tk-reflect`.
+`Reusable candidate` only when they contain decision-relevant or non-default
+information. Omit skipped phases, no-ticket placeholders, empty risks, and an
+absent reusable candidate. Use `Status: Pass` only after every completion gate.
 
 Return control only with that final receipt or an explicit phase-stop receipt;
 first assert that every consumed success receipt has its next transition.
+Reference child receipts instead of copying their evidence, and never expose a
+child handoff envelope or invoke `tk-reflect`.
 
 Write user-facing progress updates and the final receipt in the user's language,
 while preserving canonical status and receipt field names.
 
 ## User decision questions
 
-When this skill reaches a user-owned decision, ask exactly one question at a
-time. Render `Question` before `Recommendation` and the proposals. Offer
-two or three mutually exclusive proposals and state the material tradeoff of
-each. Make `Question` self-contained: summarize the
-evidence-derived context, decision impact, and unresolved axis in user-facing
-language before asking. It must not require the user to decode raw `Evidence`.
-Mark exactly one best recommendation by ending its label with a localized marker such as
-`(Recommended)` or `(추천)`. A host-generated custom or Other choice does not
-count as an authored proposal.
+When a user-owned decision blocks progress, ask one self-contained `Question`
+before any `Recommendation`. Show only decision-relevant evidence, two or three
+mutually exclusive options with material tradeoffs, and exactly one label
+ending `(Recommended)` or `(추천)`.
 
-When the active question tool exposes
-option previews, prototype cards, or equivalent rich choice surfaces and a concrete preview can clarify the
-decision, use it proactively. Do not invent unsupported fields or use this
-presentation rule to bypass existing prototype or phase boundaries.
-
-If the current execution context exposes a native structured user-input tool,
-the skill must call that tool. Plain-text questions are allowed only when no
-such tool is exposed. A failed or rejected tool call is not tool absence: report
-the failure and preserve the pending or blocked state instead of silently
-downgrading to prose. Host examples:
-
-- Claude Code: `AskUserQuestion`
-- Codex: `request_user_input`
-- Hermes Agent: `clarify`
-
-This contract changes question presentation only. It does not grant new
-decision authority or weaken any existing stop, approval, or phase boundary.
-
-## DO NOT / ANTI-PATTERNS
-
-- Do not start from an ordinary request, artifact, or generic continuation.
-- Do not extend commit authority from an unrelated answer, force tickets for a
-  small slice, or trust stale ticket status.
-- Do not duplicate or bypass phase-owner semantics.
-- Do not ask grill questions inline, let spec or tickets invoke grill, or resume
-  downstream artifacts without revalidating the Ready spec.
-- Do not stage/commit source, repeat ticket-level review, rewrite verified
-  commits, run a second corrective cycle, or invoke skills outside allowlists.
-- Do not stop after a child success receipt; continue or emit an explicit
-  terminal reason in the same turn.
+Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex
+`request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only
+when none is exposed. A failed or rejected call is not absence; preserve
+`Pending | Blocked`. This changes presentation, not authority or stop gates.

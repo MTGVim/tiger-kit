@@ -1,8 +1,8 @@
 [
   {
     "id": 1,
-    "prompt": "/tk-grooming skills/tk-to-spec 범위를 감사하고, 네 영역별 evidence와 분류·제안만 보고해 주세요. 파일은 수정하지 마세요.",
-    "expected": "범위를 확정하고 실제 경로를 조사한 뒤 네 영역 evidence와 분류를 보고-only receipt로 남기며 apply하지 않는다."
+    "prompt": "/tk-grooming skills/tk-to-spec 범위만 감사하고 evidence와 분류·제안만 보고해 주세요. 파일은 수정하지 마세요.",
+    "expected": "요청된 범위의 실제 경로만 조사한 뒤 Disposition과 report-only Receipt를 남기며 apply하지 않는다."
   },
   {
     "id": 2,

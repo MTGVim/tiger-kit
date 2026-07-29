@@ -13,7 +13,7 @@
         },
         {
           "type": "judge",
-          "criterion": "Tested·Variants or harness·Confirmed·Still fake·Production implication이 receipt 전체이며 각 내용을 한 섹션에만 기록하고 별도 Receipt를 만들지 않는다."
+          "criterion": "Confirmed와 Production implication을 command mechanics보다 먼저 보여 주고, Tested·Variants or harness·Still fake는 내용이 있을 때만 한 번씩 소유하며 별도 Receipt를 만들지 않는다."
         },
         {
           "type": "terminal_status",

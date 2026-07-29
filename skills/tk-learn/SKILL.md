@@ -87,55 +87,32 @@ permanent skill registry/global state.
 Before explicit current-turn apply approval, write neither canonical paths nor
 `.tigerkit/skill-drafts/<skill-name>/`. Past approval, implicit invocation, and
 generic continuation are insufficient. Before approval the candidate is
-`pending`; Created path reports exact planned path plus `not created`.
+`pending`; Target path reports the exact planned path plus `not created`.
 
 Even after approval, never report `applied` while any checklist row is unpassed.
 
 ## Output contract
 
-Before approval, each field has one owner:
-
-- `Evidence`: cases, threshold, source, `verified | unverified`
-- `Dedupe`: inspected scope, `merge | no-op | continue | pending`, basis
-- `Candidate`: target, proposed name/kind, triggers, minimum SKILL.md,
-  eval/baseline/compatibility
-- `Created path`: exact planned path and `not created`
-- `Verification`: executed checks or pre-execution `unverified`
-- `Remaining concerns`: pre-approval blockers
-- `Receipt`: `reported | pending | applied` and references only
+Lead with the promotion or no-op decision. Use only non-empty `Evidence`,
+`Dedupe`, `Candidate`, `Target path`, `Verification`, and
+`Remaining concerns`. For a threshold-failed or duplicate no-op, omit
+`Candidate` and `Verification` unless they add decision-relevant evidence.
+`Receipt` owns `reported | pending | applied` and section references only.
 
 User-facing progress and receipt prose follows the user's language while
 canonical fields and status tokens remain unchanged.
 
 ## User decision questions
 
-When this skill reaches a user-owned decision, ask exactly one question at a
-time. Render `Question` before `Recommendation` and the proposals. Offer
-two or three mutually exclusive proposals and state the material tradeoff of
-each. Make `Question` self-contained: summarize the
-evidence-derived context, decision impact, and unresolved axis in user-facing
-language before asking. It must not require the user to decode raw `Evidence`.
-Mark exactly one best recommendation by ending its label with a localized marker such as
-`(Recommended)` or `(추천)`. A host-generated custom or Other choice does not
-count as an authored proposal.
+When a user-owned decision blocks progress, ask one self-contained `Question`
+before any `Recommendation`. Show only decision-relevant evidence, two or three
+mutually exclusive options with material tradeoffs, and exactly one label
+ending `(Recommended)` or `(추천)`.
 
-When the active question tool exposes
-option previews, prototype cards, or equivalent rich choice surfaces and a concrete preview can clarify the
-decision, use it proactively. Do not invent unsupported fields or use this
-presentation rule to bypass existing prototype or phase boundaries.
-
-If the current execution context exposes a native structured user-input tool,
-the skill must call that tool. Plain-text questions are allowed only when no
-such tool is exposed. A failed or rejected tool call is not tool absence: report
-the failure and preserve the pending or blocked state instead of silently
-downgrading to prose. Host examples:
-
-- Claude Code: `AskUserQuestion`
-- Codex: `request_user_input`
-- Hermes Agent: `clarify`
-
-This contract changes question presentation only. It does not grant new
-decision authority or weaken any existing stop, approval, or phase boundary.
+Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex
+`request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only
+when none is exposed. A failed or rejected call is not absence; preserve
+`Pending | Blocked`. This changes presentation, not authority or stop gates.
 
 ## DO NOT / ANTI-PATTERNS
 

@@ -2,7 +2,7 @@
   {
     "id": 1,
     "prompt": "/tk-reflect 이번 diff에서 반복적으로 확인된 검증 규칙 후보를 repo rule·repo skill·user rule·user skill·persistent memory의 다섯 축으로 분류해 보고해 주세요. 적용은 하지 마세요.",
-    "expected": "repo rule·repo skill·user rule·user skill·persistent memory로 분류하고 evidence·interpretation·confidence·action을 분리한 report-only pending receipt를 낸다."
+    "expected": "repo rule·repo skill·user rule·user skill·persistent memory로 분류하고 후보 상태는 pending, 완료된 report-only run은 Pass인 compact Disposition과 Receipt를 낸다."
   },
   {
     "id": 2,

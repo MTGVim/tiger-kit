@@ -234,16 +234,16 @@
   expect: "When persistent memory and a candidate share facts but own different behavioral axes, Interpretation records the separation and any reciprocal cross-reference remains pending."
 - case: reflect-bounds-summary-cell-length
   skill: tk-reflect
-  expect: "Summary and Target stay near 40 and 50 display characters respectively, omit evidence and drafts, and a width-fix reprint preserves IDs and order."
+  expect: "A formatting-only Disposition reprint preserves IDs and order while omitting evidence bodies, drafts, and work narration."
 - case: reflect-classifies-repo-placement
   skill: tk-reflect
   expect: "The closed safety set, verified paths, immediate parent, tracked regular siblings, and threshold deterministically select root rule, nested rule, or repo skill."
 - case: reflect-numbered-summary-target-table
   skill: tk-reflect
-  expect: "Every candidate keeps one stable RF-## ID through the body and receipt, and the final fixed Summary table gives exactly one one-line rule summary and concrete application target per ID."
+  expect: "Every candidate keeps one stable RF-## ID through the compact Disposition, optional ledger, and receipt without duplicating evidence or draft prose in chat."
 - case: to-spec-does-not-create-tickets
   skill: tk-to-spec
-  expect: "A spec is produced without ticket decomposition."
+  expect: "A Ready spec records independently verifiable vertical-slice candidates without taking ownership of ticket status, dependencies, commits, or resume state."
 - case: to-spec-structures-bug-evidence
   skill: tk-to-spec
   expect: "Bug specs separate symptom, current and expected behavior, reproduction, evidence, environment, and missing regression seam."
@@ -264,7 +264,7 @@
   expect: "A user-decision blocker returns `User decision: required`, the new decision, and evidence in a native non-Ready receipt to drive without invoking grill or writing a substitute Ready spec."
 - case: to-tickets-does-not-create-spec
   skill: tk-to-tickets
-  expect: "Ticket decomposition does not create or modify a spec."
+  expect: "Ticket decomposition consumes Ready-spec vertical-slice candidates when valid and does not create or modify the spec."
 - case: to-tickets-initial-status-is-pending
   skill: tk-to-tickets
   expect: "Standalone ticket creation initializes every ticket as pending."
@@ -300,7 +300,7 @@
   expect: "Wide columns and narrow stacks remain simultaneous unless they harm the concept or minimum legibility, in which case an explicit A/B or A/B/C toggle is allowed."
 - case: grooming-defaults-report-only
   skill: tk-grooming
-  expect: "Findings and proposals are emitted without edits by default."
+  expect: "A compact Disposition and report-only receipt are emitted without edits by default."
 - case: grooming-vendor-artifact-remains-report-only
   skill: tk-grooming
   expect: "Resolved package-manager, updater, symlink, and history evidence routes a vendor artifact to keep (vendor) and prevents mutation even with --apply."
@@ -315,7 +315,7 @@
   expect: "The same placement rubric maps kind changes to convert, root/nested changes to move, mixed units to split, and correct placement to keep."
 - case: grooming-numbered-summary-target-table
   skill: tk-grooming
-  expect: "Every audit item keeps one stable GR-## ID through findings, proposals, apply, validation, and receipt, and the final fixed Summary table gives exactly one one-line rule summary and concrete application target per ID."
+  expect: "Every audit item keeps one stable GR-## ID through Disposition, optional apply/validation, and receipt without duplicating evidence."
 - case: legacy-global-state-is-not-scanned
   skill: tk-grooming
   expect: "Legacy global TigerKit state is not automatically discovered or migrated."

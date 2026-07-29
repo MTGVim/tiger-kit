@@ -96,11 +96,11 @@
       "id": "stable-source-ids",
       "path": "success",
       "prompt": "/tk-to-spec 기존 R1과 AC1을 유지하면서 새 요구사항 하나를 추가해 주세요.",
-      "expected_output": "기존 R1/AC1을 재번호하지 않고 새 requirement/acceptance에 다음 고유 ID를 부여하며 source map에 연결한다.",
+      "expected_output": "기존 R1/AC1을 재번호하지 않고 새 requirement/acceptance에 다음 고유 ID를 부여해 source map과 vertical slicing candidates에 연결한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "기존 R1/AC1을 재번호하지 않고 새 requirement/acceptance에 다음 고유 ID를 부여하며 source map에 연결한다."
+          "criterion": "기존 R1/AC1을 재번호하지 않고 새 ID를 source map과 candidate ID·user-visible behavior·R/AC coverage·independent verification·ledger justified/reason에 연결하되 ticket status·dependencies·commits·resume state는 쓰지 않는다."
         },
         {
           "type": "terminal_status",

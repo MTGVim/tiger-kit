@@ -229,20 +229,20 @@ class CanonicalSkillContractTest(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         required = (
             "## User decision questions",
-            "Render `Question` before `Recommendation` and the proposals.",
-            "evidence-derived context, decision impact, and unresolved axis",
-            "must not require the user to decode raw `Evidence`",
-            "two or three mutually exclusive proposals",
-            "exactly one best recommendation",
+            "`Question`",
+            "`Recommendation`",
+            "decision-relevant evidence",
+            "two or three",
+            "mutually exclusive options",
+            "exactly one label",
             "`(Recommended)` or `(추천)`",
-            "option previews, prototype cards, or equivalent",
-            "use it proactively",
-            "must call that tool",
-            "Plain-text questions are allowed only",
-            "failed or rejected tool call",
-            "Claude Code: `AskUserQuestion`",
-            "Codex: `request_user_input`",
-            "Hermes Agent: `clarify`",
+            "native structured input",
+            "Plain text is allowed only",
+            "failed or rejected call is not absence",
+            "`AskUserQuestion`",
+            "`request_user_input`",
+            "Hermes Agent",
+            "`clarify`",
         )
 
         for skill in EXPECTED_SKILLS:
@@ -254,7 +254,53 @@ class CanonicalSkillContractTest(unittest.TestCase):
                     all(token in text for token in required),
                     f"{skill} is missing the native user-decision question contract",
                 )
+                start = text.index("## User decision questions")
+                end = text.find("\n## ", start + 4)
+                section = text[start:] if end < 0 else text[start:end]
+                self.assertLess(
+                    len(section.encode("utf-8")),
+                    900,
+                    f"{skill} user-decision contract is not compact",
+                )
+                self.assertNotIn("option previews, prototype cards", section)
         self.assertEqual(validate_user_decision_contract(root), [])
+
+    def test_canonical_skill_outputs_are_decision_first_and_nonduplicative(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        required = {
+            "tk-ask-repo": ("Lead with `Answer`", "Do not echo the inbound question"),
+            "tk-browser-verify": ("Never paste or store raw console", "`## Receipt`, paste raw evidence bodies"),
+            "tk-drive": ("no-ticket placeholders", "child handoff envelope"),
+            "tk-grill-me": ("The ledger is not a per-turn dump template", "Do not duplicate decisions"),
+            "tk-grooming": ("Lead with one `## Disposition`", "Add `## Exceptions` only"),
+            "tk-handoff": ("Receipt contains disposition and section references", "Omit empty sections"),
+            "tk-implement": ("Lead with `## Changed`", "never paste logs or narrate review mechanics"),
+            "tk-learn": ("Lead with the promotion or no-op decision", "`Target path`"),
+            "tk-merge-conflict": ("Use only non-empty sections in this order", "`Blocked: no active conflict`"),
+            "tk-prototype": ("Lead with `## Confirmed`", "Keep command mechanics after the decision"),
+            "tk-reflect": ("In chat, emit only", "no raw logs, transcripts, diff excerpts"),
+            "tk-skill-diagnose": ("In chat, emit `## Diagnosis`", "Never copy raw logs, transcripts"),
+            "tk-to-spec": ("User-facing output is one status sentence plus the receipt", "Vertical slicing candidates"),
+            "tk-to-tickets": ("User-facing output states the decomposition decision", "artifact owns ticket bodies"),
+        }
+        forbidden = {
+            "tk-grooming": ("The final section is always this fixed `## Summary` table",),
+            "tk-implement": ("a non-empty `## Remaining risks`",),
+            "tk-learn": ("Created path reports exact planned path",),
+            "tk-reflect": ("The response's final section is always:",),
+            "tk-skill-diagnose": ("Emit these canonical sections:",),
+        }
+
+        self.assertEqual(set(required), EXPECTED_SKILLS)
+        for skill, tokens in required.items():
+            with self.subTest(skill=skill):
+                text = (root / "skills" / skill / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                self.assertTrue(all(token in text for token in tokens))
+                self.assertTrue(
+                    all(token not in text for token in forbidden.get(skill, ()))
+                )
 
     def test_user_decision_contract_gate_rejects_one_weakened_skill(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -268,8 +314,8 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 ).read_text(encoding="utf-8")
                 if skill == "tk-prototype":
                     text = text.replace(
-                        "Codex: `request_user_input`",
-                        "Codex: ask in prose",
+                        "`request_user_input`, or Hermes",
+                        "ask in prose, or Hermes",
                     )
                 target.write_text(text, encoding="utf-8")
 
@@ -277,7 +323,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
 
             self.assertEqual(len(errors), 1)
             self.assertIn("tk-prototype", errors[0])
-            self.assertIn("Codex: `request_user_input`", errors[0])
+            self.assertIn("`request_user_input`", errors[0])
 
     def test_skill_language_validator_rejects_mixed_operational_prose(
         self,
