@@ -26,7 +26,7 @@ requires a fresh explicit start and reconstruction from repository evidence.
 An explicit start authorizes planning, ticket-level implementation,
 verification, review, and verified current-branch unit commits within the
 current source scope. It does not authorize push, PR, merge, tag, release,
-publish, automatic reflection, history rewriting, or out-of-scope mutation.
+publish, history rewriting, or out-of-scope mutation; it authorizes only the one post-verification `tk-reflect` tail defined in the phase invariants.
 
 Prefer the latest explicit source and revalidate artifacts as defined by the
 phase invariants. Do not create drive-only or global state.
@@ -91,10 +91,11 @@ candidate/staged diff, and rendered UI; drift or evidence gaps block commit.
    R/AC coverage, and cross-ticket interaction; run the broadest executable
    relevant verification once. Do not repeat each ticket's line-level
    Standards/Spec review.
-8. `corrective cycle/report`: for one isolated final change-related regression,
+8. `corrective cycle`: for one isolated final change-related regression,
    create at most one corrective ticket through `tk-to-tickets`, run
    `tk-implement` once, and rerun broad verification once. Otherwise stop
-   mutating and produce the final receipt.
+   product mutation.
+9. `reflection tail/report`: after product `Pass`, follow the phase invariant to reflect exactly once and report product versus final HEAD.
 
 At any downstream phase, only a native receipt with
 `User decision: required` and a newly identified user-owned decision returns
@@ -128,8 +129,7 @@ For multiple tickets, place a compact `Ticket | Outcome | Commit` table before t
 
 Return control only with that final receipt or an explicit phase-stop receipt;
 first assert that every consumed success receipt has its next transition.
-Reference child receipts instead of copying their evidence, and never expose a
-child handoff envelope or invoke `tk-reflect`.
+Reference child receipts instead of copying their evidence; never expose a child handoff envelope or invoke reflection outside the successful drive tail.
 
 Write user-facing progress updates and the final receipt in the user's language,
 while preserving canonical status and receipt field names.

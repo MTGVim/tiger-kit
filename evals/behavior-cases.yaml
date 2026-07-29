@@ -235,6 +235,18 @@
 - case: reflect-bounds-summary-cell-length
   skill: tk-reflect
   expect: "A formatting-only Disposition reprint preserves IDs and order while omitting evidence bodies, drafts, and work narration."
+- case: reflect-drive-applies-eligible-tracked-repo-rule
+  skill: tk-reflect
+  expect: "A valid drive-optimistic tail applies only a high-confidence eligible existing tracked repo rule, creates one reflection commit, and reports git-revert rollback in the bounded Disposition table."
+- case: reflect-drive-never-creates-local-rule-target
+  skill: tk-reflect
+  expect: "Drive-tail local application requires an exact pre-existing user-managed file and never creates a new ignored or untracked rule target."
+- case: reflect-drive-skill-candidate-is-promotion-packet-only
+  skill: tk-reflect
+  expect: "A drive-tail skill candidate remains pending in a promotion packet and never creates, edits, commits, or invokes a skill."
+- case: reflect-drive-blocks-target-drift
+  skill: tk-reflect
+  expect: "Target drift or indeterminate restoration stops optimistic application as Blocked or Unverifiable while preserving product evidence."
 - case: reflect-classifies-repo-placement
   skill: tk-reflect
   expect: "The closed safety set, verified paths, immediate parent, tracked regular siblings, and threshold deterministically select root rule, nested rule, or repo skill."
@@ -391,9 +403,9 @@
 - case: drive-resumes-pending-answer
   skill: tk-drive
   expect: "tk-grill-me owns a direct same-conversation answer to its active pending decision; after its confirmed receipt, drive resumes at the spec gate without another invocation."
-- case: drive-does-not-auto-reflect
+- case: drive-reflects-once-after-aggregate-pass
   skill: tk-drive
-  expect: "Completion reports only whether a reusable candidate exists and never invokes reflection automatically."
+  expect: "After aggregate product verification passes, drive invokes exactly one drive-optimistic reflection tail, verifies the final-receipt transition echo, and continues in the same turn."
 - case: drive-skips-unneeded-tickets
   skill: tk-drive
   expect: "A single short vertical slice moves from Ready spec directly to implementation without a ticket artifact."
@@ -402,7 +414,7 @@
   expect: "Multi-slice or long-resume work tracks pending, in_progress, verified, or blocked with evidence and revalidates on resume."
 - case: drive-bounds-nested-skills
   skill: tk-drive
-  expect: "Phase-owner invocation is limited to tk-grill-me, tk-to-spec, tk-to-tickets, and tk-implement; support invocation is limited to prototype, browser verification, and merge conflict handling."
+  expect: "Phase-owner invocation is limited to tk-grill-me, tk-to-spec, tk-to-tickets, and tk-implement; support invocation is limited to prototype, browser verification, merge conflict handling, and one post-Pass drive-optimistic reflection tail."
 - case: drive-commits-per-ticket
   skill: tk-drive
   expect: "Each independently verifiable ticket is handed to tk-implement for one commit, and drive creates no separate final commit."

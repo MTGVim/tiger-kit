@@ -8,8 +8,9 @@ inline.
 The phase-owner allowlist is
 `tk-grill-me | tk-to-spec | tk-to-tickets | tk-implement`. The conditional
 support allowlist is
-`tk-prototype | tk-browser-verify | tk-merge-conflict`. Do not invoke other
-planning, learning, reflection, or handoff skills.
+`tk-prototype | tk-browser-verify | tk-merge-conflict | tk-reflect
+(drive-optimistic tail only)`. Do not invoke other planning, learning,
+reflection, or handoff skills.
 Do not intercept standalone phase requests or let a phase owner take over
 drive-wide orchestration, aggregate verification, or the final receipt.
 
@@ -89,8 +90,12 @@ of:
 Spec `Ready` transitions to the ticket decision. A valid ticket ledger
 transitions to its first or next pending unit. A matching implementation
 `Pass` transitions to the next unit or aggregate verification. Aggregate
-success transitions to the final `Pass` receipt. Progress commentary and child
-receipt summaries do not discharge this obligation.
+success transitions to the reflection tail. Reflection `Pass` with a matching
+echo transitions to the final `Pass` receipt. A reflection `Fail` with verified
+restoration also transitions to the final receipt while preserving product
+`Pass`; unrestored or indeterminate reflection state stops
+`Blocked | Unverifiable`. Progress commentary and child receipt summaries do
+not discharge this obligation.
 
 Before returning control, verify that every consumed receipt has one recorded
 outgoing transition. A receipt with no transition is an orchestration failure:
@@ -187,6 +192,10 @@ After all units are committed:
 - classify failure as `change-related`, `pre-existing`, `environment`, or
   `unverifiable`.
 
+Freeze the successful product verification HEAD before reflection. A later
+tracked reflection commit changes final HEAD but never the product verification
+evidence; ignored/local reflection leaves both HEAD values equal.
+
 High-risk cumulative effects may require broader verification before an
 individual unit commit through `tk-implement`; the final aggregate gate still
 runs once.
@@ -203,11 +212,40 @@ unverifiable failures. Do not amend, squash, force-push, or silently rewrite
 verified commits. A repeated failure, unisolated cause, or second requested
 cycle ends in the one concrete terminal state supported by current evidence.
 
+## Reflection tail
+
+After aggregate product verification (including one successful corrective
+cycle when used) is `Pass`, hand off exactly once to `tk-reflect`:
+
+```text
+Mode: drive-optimistic
+Success state: Pass
+Outstanding transition: final receipt
+Return to: tk-drive
+```
+
+The handoff cites task identity, product verification HEAD, implementation
+ledger, spec/tickets, ordered commits, aggregate evidence, branch, initial
+HEAD, and pre-existing dirty ownership. `tk-reflect` alone owns prevention
+classification, eligibility, rule mutation/rollback, skill promotion packets,
+and `.tigerkit/reflect.md`.
+
+Accept success only with `Status: Pass`, `Return to: tk-drive`, and the
+verbatim `Outstanding transition: final receipt` echo, then emit the final
+receipt in the same turn. A no-op is successful and omitted from user output.
+A verified-restored reflection failure is reported but preserves product
+`Pass`; target drift, failed restoration, out-of-scope mutation, or an
+indeterminate workspace ends `Blocked | Unverifiable`.
+
+Never enter this tail for `Fail | Blocked | Unverifiable` product verification,
+call it twice, invoke `tk-learn`, auto-promote a skill, or let reflection touch
+product/source paths.
+
 ## Final receipt
 
 Report source identity, phase receipts, ticket states, ordered
 ticket/unit-to-commit mapping, broad verification, integration review, actual
 branch and `HEAD`, remaining risks, and reusable-candidate existence. Do not
-repeat child evidence or automatically invoke reflection, handoff, release, or
-publish actions. User-facing prose follows the user's language; canonical
-fields and status tokens remain unchanged.
+repeat child evidence or automatically invoke another reflection, handoff,
+release, or publish action. User-facing prose follows the user's language;
+canonical fields and status tokens remain unchanged.

@@ -74,7 +74,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "ask-repo-blocks-contradicted-premise",
                 "drive-requires-explicit-start",
                 "drive-resumes-pending-answer",
-                "drive-does-not-auto-reflect",
+                "drive-reflects-once-after-aggregate-pass",
                 "drive-invokes-phase-owners",
                 "drive-continues-after-ready-spec",
                 "drive-rejects-missing-transition-echo",
@@ -128,6 +128,10 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "reflect-hands-off-qualified-skill-incident-once",
                 "reflect-skips-diagnosis-without-four-gate",
                 "reflect-blocks-repeated-diagnosis-handoff",
+                "reflect-drive-applies-eligible-tracked-repo-rule",
+                "reflect-drive-never-creates-local-rule-target",
+                "reflect-drive-skill-candidate-is-promotion-packet-only",
+                "reflect-drive-blocks-target-drift",
                 "browser-bounds-instrumented-evidence",
                 "browser-instrumentation-residue-failure-is-unverifiable",
                 "browser-proves-current-serving-source",
@@ -206,6 +210,36 @@ class CanonicalSkillContractTest(unittest.TestCase):
                     prompt = cases[case_id]["prompt"]
                     self.assertIn("Success state:", prompt)
                     self.assertIn("Outstanding transition:", prompt)
+
+    def test_drive_reflection_tail_is_fixed_point_and_bounded(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        drive = (root / "skills/tk-drive/SKILL.md").read_text(encoding="utf-8")
+        phases = (
+            root / "skills/tk-drive/references/phases.md"
+        ).read_text(encoding="utf-8")
+        reflect = (
+            root / "skills/tk-reflect/SKILL.md"
+        ).read_text(encoding="utf-8")
+        tail = (
+            root / "skills/tk-reflect/references/drive-optimistic.md"
+        ).read_text(encoding="utf-8")
+
+        required = (
+            "Mode: drive-optimistic",
+            "Success state: Pass",
+            "Outstanding transition: final receipt",
+            "Return to: tk-drive",
+        )
+        for text in (phases, reflect, tail):
+            with self.subTest(source=text[:40]):
+                self.assertTrue(all(token in text for token in required[:3]))
+        self.assertIn("reflect exactly once", drive)
+        self.assertIn("Return to: tk-drive", phases)
+        self.assertIn("Return to: tk-drive", tail)
+        self.assertIn("product verification HEAD", phases)
+        self.assertIn("tracked reflection commit", tail)
+        self.assertIn("reflect-backup", tail)
+        self.assertIn("never mutates a skill", " ".join(tail.split()))
 
     def test_reflect_and_grooming_share_exact_placement_rubric(self) -> None:
         root = Path(__file__).resolve().parents[1]
