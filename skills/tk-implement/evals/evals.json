@@ -27,7 +27,7 @@
           "expected": "Pass"
         }
       ],
-      "darwin": true
+      "darwin": false
     },
     {
       "id": "legacy-2",
@@ -483,18 +483,31 @@
     {
       "id": "implement-active-drive-handoff-triggers",
       "path": "success",
-      "prompt": "[active tk-drive implementation handoff] Success state: Pass. Outstanding transition: aggregate verification. Implement ticket TK-02 covering R8-R11 as one unit, verify it, review it, and return the commit receipt.",
-      "expected_output": "명시적인 active-drive implementation handoff를 tk-implement 범위로 받아 ticket/R/AC와 initial HEAD를 보존하고 unit-level Pass receipt와 commit SHA를 반환한다.",
+      "prompt": "[active tk-drive handoff] public multi-host contract 변경입니다. Signals: public-blast-radius. Obligations: regression-seam, compatibility, independent-review. 검증·review·commit까지 진행해 주세요.",
+      "expected_output": "frozen profile을 재분류하거나 약화하지 않고 regression, supported-host compatibility, one bounded independent review를 충족한 뒤에만 commit한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "active drive라는 사실만이 아니라 ticket과 R/AC가 담긴 explicit implementation handoff를 positive로 처리한다."
+          "criterion": "active-drive frozen verification profile을 재분류하거나 약화하지 않고 regression, supported-host compatibility, one bounded independent review를 구현 전에 계획하고 충족한 뒤에만 commit한다."
+        },
+        {
+          "type": "output_contains",
+          "text": "regression-seam"
+        },
+        {
+          "type": "output_contains",
+          "text": "compatibility"
+        },
+        {
+          "type": "output_contains",
+          "text": "independent-review"
         },
         {
           "type": "terminal_status",
           "expected": "Pass"
         }
-      ]
+      ],
+      "darwin": true
     },
     {
       "id": "implement-echoes-drive-transition",

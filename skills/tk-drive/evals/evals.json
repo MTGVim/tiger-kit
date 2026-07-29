@@ -58,7 +58,7 @@
           "expected": "Pass"
         }
       ],
-      "darwin": true
+      "darwin": false
     },
     {
       "id": "drive-reflects-once-after-aggregate-pass",
@@ -542,7 +542,7 @@
           "expected": "Pass"
         }
       ],
-      "darwin": true
+      "darwin": false
     },
     {
       "id": "drive-invokes-grill-on-unresolved-decision",
@@ -749,12 +749,12 @@
     {
       "id": "drive-risk-profile-low-risk-silent",
       "path": "success",
-      "prompt": "[active tk-drive] Source와 repository evidence가 README 오탈자 한 건만 바꾸며 public contract, UI/browser, data/auth, persisted state, compatibility, concurrency, side effect 위험이 없음을 보여줍니다. 기존 flow로 완료해 주세요.",
-      "expected_output": "material signal이 없으므로 risk artifact나 profile section, reviewer, browser run, compatibility command를 추가하지 않고 기존 baseline verification만 수행한다.",
+      "prompt": "$tk-drive README 오탈자 한 건을 구현·검증·커밋해 주세요. Source와 repository evidence상 public contract, UI/browser, data/auth, persisted state, compatibility, concurrency, side effect 위험은 없습니다.",
+      "expected_output": "material signal을 만들지 않고 risk artifact/profile/reviewer/browser/compatibility work 없이 Ready spec과 no-ticket baseline flow를 완료한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "근거 없는 risk signal이나 verification obligation을 만들지 않고 low-risk baseline 경로를 조용히 유지한다."
+          "criterion": "근거 없는 risk signal이나 verification obligation을 만들지 않고 Ready spec과 no-ticket low-risk baseline 경로를 조용히 완료한다."
         },
         {
           "type": "output_absent",
@@ -768,7 +768,8 @@
           "type": "terminal_status",
           "expected": "Pass"
         }
-      ]
+      ],
+      "darwin": true
     },
     {
       "id": "drive-risk-profile-browser-ui",
@@ -802,7 +803,7 @@
     {
       "id": "drive-risk-profile-auth-data",
       "path": "success",
-      "prompt": "[active tk-drive] Source와 protected entry-point evidence가 tenant authorization과 사용자 데이터 write 경계를 변경함을 보여주며, regression test seam과 독립 reviewer capability가 사용 가능합니다. 구현 전 profile을 결정적으로 고정해 진행해 주세요.",
+      "prompt": "$tk-drive tenant authorization과 사용자 데이터 write 경계를 바꾸는 이슈를 구현해 주세요. Protected entry-point evidence, regression seam, 독립 reviewer capability가 있습니다.",
       "expected_output": "security-data signal에서 regression-seam, side-effect-recovery, independent-review를 canonical order로 한 번씩 도출하고 정확한 test/recovery/review 방법은 tk-implement가 소유한다.",
       "assertions": [
         {
@@ -834,7 +835,8 @@
           "expected": "Pass"
         }
       ],
-      "safety": true
+      "safety": true,
+      "darwin": true
     },
     {
       "id": "drive-risk-profile-inaccessible-evidence",
