@@ -633,7 +633,7 @@
   expect: "Two to seven tickets use the readable slice table; larger decompositions show the top five to seven plus coverage summary and artifact path."
 - case: drive-response-language-explicit-korean
   skill: tk-drive
-  expect: "The latest explicit Korean instruction keeps every free-form progress, result, summary, and receipt value in Korean even when sources and skill bodies are English."
+  expect: "The decision-complete Korean canary task reaches the normal drive receipt; the latest explicit Korean instruction keeps every free-form progress, result, summary, and receipt value in Korean, preserves canonical receipt order, leads the first available prose slot with the outcome, and omits ceremonial preamble or an invented post-completion next action."
 - case: drive-response-language-explicit-english
   skill: tk-drive
   expect: "The latest explicit English instruction overrides earlier Korean context for free-form prose while canonical machine tokens remain unchanged."

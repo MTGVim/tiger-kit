@@ -430,7 +430,7 @@
         "codex"
       ],
       "prompt": "/tk-drive In this disposable evaluation checkout, create canary-note.txt containing exactly continuation-ok plus one trailing newline. This is a decision-complete single vertical slice. Finish through the normal drive receipt.",
-      "expected_output": "A real tk-to-spec Ready receipt is followed in the same active turn by the no-ticket decision and tk-implement invocation before any final output, then the drive reaches an evidence-backed terminal receipt.",
+      "expected_output": "A real tk-to-spec Ready receipt is followed in the same active turn by the no-ticket decision and tk-implement invocation before any final output, then the drive reaches an evidence-backed terminal receipt whose first available prose slot leads with the achieved outcome and whose completed state adds no unnecessary next action or generic closer.",
       "assertions": [
         {
           "type": "event_order",
@@ -452,6 +452,10 @@
               "type": "final_output"
             }
           ]
+        },
+        {
+          "type": "judge",
+          "criterion": "The final user-facing response preserves the required tk-drive receipt fields and canonical order; in its first available prose slot it leads with the achieved outcome, keeps any steps short and bounded, makes completion visible, and adds neither a next action nor a generic closer after all work is complete."
         },
         {
           "type": "terminal_status",
@@ -823,12 +827,16 @@
     {
       "id": "drive-response-language-explicit-korean",
       "path": "success",
-      "prompt": "[active tk-drive] 최신 명시 언어 지시는 한국어입니다. Source, commit message, skill body가 영어여도 final result의 free-form 설명은 모두 한국어로 쓰고 canonical headings/status/IDs는 보존해 주세요.",
-      "expected_output": "Outcome 값, Implemented, Verification, reflection 설명과 Receipt의 prose value를 한국어로 쓰며 영어 source 때문에 설명 문장이 영어로 바뀌지 않는다.",
+      "prompt": "/tk-drive 이 폐기 가능한 평가용 체크아웃에 korean-canary.txt를 만들고 내용은 정확히 language-ok와 마지막 개행 문자 하나로 해주세요. 결정이 끝난 독립 검증 가능한 단일 작업 단위이며 정상 tk-drive 영수증까지 완료하세요. 정형 제목, 영수증 키, 상태 토큰, ID를 제외한 모든 자유 형식 진행 문장, 결과, 요약, 영수증 값은 한국어로 작성하세요.",
+      "expected_output": "korean-canary.txt를 정확히 만들고 정상 drive receipt까지 완료한다. Outcome 값, Implemented, Verification, reflection 설명과 Receipt의 prose value를 한국어로 쓰고, canonical final receipt 순서를 보존하면서 첫 free-form prose slot에 결과를 제시하며 완료 뒤에는 불필요한 다음 행동이나 맺음말을 만들지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "canonical headings, receipt keys, status tokens, IDs는 그대로 유지하지만 모든 free-form progress, summary, result, receipt value가 한국어이고 accidental English explanatory sentence가 없다."
+          "criterion": "모든 free-form progress, summary, result, receipt value는 한국어다. canonical heading, receipt key, status token, ID, command, path, code identifier, exact user/source literal처럼 byte-stable해야 하는 토큰만 원문을 유지하고 그 주변은 한국어로 설명하며, accidental English explanatory sentence는 없다."
+        },
+        {
+          "type": "judge",
+          "criterion": "canonical final receipt 순서를 보존하면서 첫 available free-form prose slot에 answer, outcome, 또는 action을 제시하고 ceremonial preamble, redundant prose recap, closing pleasantry를 생략하며 완료된 작업에는 다음 행동을 만들어내지 않는다. Required Implemented, Verification, Receipt sections are not recaps merely because they exist; each required value adds distinct evidence or is referential or minimal instead of re-explaining an already stated result."
         },
         {
           "type": "terminal_status",

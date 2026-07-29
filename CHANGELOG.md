@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- Added the same actionable-output hard gate to all 14 self-contained skills:
+  canonical output schemas stay authoritative while free-form prose leads with
+  the answer, outcome, or action, keeps live state visible, reports
+  evidence-based recovery, and omits ceremonial closers or invented next
+  actions.
+- Added deterministic gate validation, representative Codex behavior
+  assertions, and upstream attribution without adding a skill, persistent
+  mode, shared runtime reference, or catalog migration.
+
 ## 20.2.0 — Implementation Quality, Optimistic Reflection, and Bounded Results
 
 - Added a `tk-implement` design-fit preflight that chooses reuse, extension,

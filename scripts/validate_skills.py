@@ -84,6 +84,24 @@ RESULT_BUDGET_TOKENS = {
     "tk-to-spec": ("two to five short bullets", "top five to seven"),
     "tk-to-tickets": ("two to seven tickets", "top five to seven"),
 }
+ACTIONABLE_OUTPUT_GATE = (
+    "### 🔴 HARD GATE · actionable user output\n\n"
+    "Treat the skill's canonical output contract as the schema and this gate as its presentation layer. "
+    "Never remove or reorder required headings, tables, receipt keys, IDs, status tokens, result budgets, approval or safety boundaries, host-required progress notices, or response-language rules. "
+    "Apply the response-language rules to every free-form clause and prose receipt value; retain another language only for canonical tokens, code identifiers, commands, paths, or exact quoted or source literals. "
+    "Ordinary workflow jargon is prose, not a code identifier: translate it unless changing the token would make it incorrect.\n\n"
+    "In the first available free-form prose slot, lead with the answer, outcome, or action instead of a preamble. "
+    "For multi-step user work, use the fewest bounded numbered steps. "
+    "For continuing work, restate current state and the next transition without duplicating a plan or receipt. "
+    "Make completed behavior visible. "
+    "State errors as the observed failure, an evidence-backed cause when known, and a concrete recovery; never manufacture a cause.\n\n"
+    "Suppress tangents, ceremonial openers, repeated recaps, and closing pleasantries. "
+    "When a required schema field repeats a result already stated, keep the field but make its value referential or minimal instead of recapping the result. "
+    "When work remains, end with exactly one concrete next action owned by the user or workflow; when work is complete, stop without inventing one. "
+    "Use a concrete time estimate only when evidence supports it and it helps the person executing the step.\n\n"
+    "When this gate conflicts with the canonical output contract or the host harness, preserve the higher-priority contract and apply the same shape inside its first prose value or slot. "
+    "Do not label the user, mention this gate, expose a persistent mode, or require a runtime reference outside this skill."
+)
 RESPONSE_LANGUAGE_GATE = (
     "### 🔴 HARD GATE · response language\n\n"
     "Before any user-facing progress, question, summary, or receipt, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. "
@@ -471,6 +489,25 @@ def validate_response_language_contract(root: Path) -> list[str]:
     return errors
 
 
+def validate_actionable_output_contract(root: Path) -> list[str]:
+    errors: list[str] = []
+    for skill in sorted(EXPECTED_SKILLS):
+        path = root / "skills" / skill / "SKILL.md"
+        if not path.is_file():
+            errors.append(f"{skill}: SKILL.md: add the actionable-output hard gate")
+            continue
+        text = path.read_text(encoding="utf-8")
+        heading = ACTIONABLE_OUTPUT_GATE.splitlines()[0]
+        if (
+            text.count(ACTIONABLE_OUTPUT_GATE) != 1
+            or text.count(heading) != 1
+        ):
+            errors.append(
+                f"{skill}: SKILL.md: preserve exactly one complete actionable-output hard gate"
+            )
+    return errors
+
+
 def validate_skill(path: Path) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -636,6 +673,7 @@ def validate_repository_contract() -> list[str]:
     errors.extend(validate_local_only_workflows(ROOT))
     errors.extend(validate_skill_language(ROOT))
     errors.extend(validate_user_decision_contract(ROOT))
+    errors.extend(validate_actionable_output_contract(ROOT))
     errors.extend(validate_response_language_contract(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():

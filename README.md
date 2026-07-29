@@ -25,6 +25,12 @@ hard gate를 포함합니다. 별도 지시가 없으면 현재 사용자 메시
 따르며, 자유 서술은 그 언어로 통일합니다. Canonical heading, receipt key,
 status, ID, command, path, code, exact source literal은 원문 그대로 유지합니다.
 
+같은 14개 skill은 canonical output schema를 보존하는 actionable-output hard
+gate도 자체 포함합니다. 필수 heading·table·receipt 순서는 그대로 두고 첫
+자유 서술 위치에서 답·결과·행동을 먼저 제시하며, 진행 상태와 근거 있는
+복구 행동을 짧게 드러냅니다. 완료 뒤에는 불필요한 다음 행동이나 맺음말을
+만들지 않습니다. 별도 mode skill이나 shared runtime reference는 없습니다.
+
 ## 설치
 
 모든 지원 host에 전체 skill을 전역 설치합니다.

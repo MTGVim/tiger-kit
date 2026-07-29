@@ -7,6 +7,9 @@ TigerKit is an Agent Skills repository, not a workflow framework or Claude Code 
 - Keep exactly 14 canonical skills under `skills/tk-*/`: 2 user-invoked and 12 hybrid. Do not add model-only skills.
 - Each skill's `SKILL.md` is its behavior source of truth.
 - Keep each skill self-contained; skill-specific detail and code stay in its own `references/` and `scripts/`.
+- A cross-cutting presentation contract may use one validator constant as its
+  maintenance reference, but every distributed skill must embed the complete
+  runtime block; never depend on a shared runtime reference outside the skill.
 - Prefer thin instructions. Add detail only for repeated failures, costly ordering mistakes, mutation safety, objective verification, specialist procedures, or bounded delegation/review.
 - Write every canonical skill's operational body, headings, contracts, and
   `references/*.md` prose in English. Non-English text is allowed only as an

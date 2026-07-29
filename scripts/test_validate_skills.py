@@ -7,11 +7,13 @@ import unittest
 
 if __package__:
     from scripts.validate_skills import (
+        ACTIONABLE_OUTPUT_GATE,
         EXPECTED_SKILLS,
         REQUIRED_BEHAVIOR_CASES,
         RESULT_BUDGET_TOKENS,
         USER_INVOKED_SKILLS,
         parse_latest_changelog_version,
+        validate_actionable_output_contract,
         validate_local_only_workflows,
         validate_catalog_routing,
         validate_release_alignment,
@@ -25,11 +27,13 @@ if __package__:
     )
 else:
     from validate_skills import (
+        ACTIONABLE_OUTPUT_GATE,
         EXPECTED_SKILLS,
         REQUIRED_BEHAVIOR_CASES,
         RESULT_BUDGET_TOKENS,
         USER_INVOKED_SKILLS,
         parse_latest_changelog_version,
+        validate_actionable_output_contract,
         validate_local_only_workflows,
         validate_catalog_routing,
         validate_release_alignment,
@@ -494,6 +498,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
 
         self.assertEqual(validate_skill_language(root), [])
         self.assertEqual(validate_response_language_contract(root), [])
+        self.assertEqual(validate_actionable_output_contract(root), [])
 
     def test_response_language_gate_rejects_one_weakened_skill(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -514,6 +519,99 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 target.write_text(text, encoding="utf-8")
 
             errors = validate_response_language_contract(root)
+
+            self.assertEqual(len(errors), 1)
+            self.assertIn("tk-ask-repo", errors[0])
+
+    def test_actionable_output_gate_rejects_one_weakened_skill(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source_root = Path(__file__).resolve().parents[1]
+            for skill in EXPECTED_SKILLS:
+                target = root / "skills" / skill / "SKILL.md"
+                target.parent.mkdir(parents=True)
+                text = (source_root / "skills" / skill / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                if skill == "tk-ask-repo":
+                    text = text.replace(
+                        "first available free-form prose slot",
+                        "last available free-form prose slot",
+                        1,
+                    )
+                target.write_text(text, encoding="utf-8")
+
+            errors = validate_actionable_output_contract(root)
+
+            self.assertEqual(len(errors), 1)
+            self.assertIn("tk-ask-repo", errors[0])
+
+    def test_actionable_output_gate_rejects_one_duplicate(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source_root = Path(__file__).resolve().parents[1]
+            for skill in EXPECTED_SKILLS:
+                target = root / "skills" / skill / "SKILL.md"
+                target.parent.mkdir(parents=True)
+                text = (source_root / "skills" / skill / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                if skill == "tk-ask-repo":
+                    start = text.index("### 🔴 HARD GATE · actionable user output")
+                    end = text.index("### 🔴 HARD GATE · response language", start)
+                    text = text[:end] + text[start:end] + text[end:]
+                target.write_text(text, encoding="utf-8")
+
+            errors = validate_actionable_output_contract(root)
+
+            self.assertEqual(len(errors), 1)
+            self.assertIn("tk-ask-repo", errors[0])
+
+    def test_actionable_output_gate_rejects_one_missing_gate(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source_root = Path(__file__).resolve().parents[1]
+            for skill in EXPECTED_SKILLS:
+                target = root / "skills" / skill / "SKILL.md"
+                target.parent.mkdir(parents=True)
+                text = (source_root / "skills" / skill / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                if skill == "tk-ask-repo":
+                    text = text.replace(ACTIONABLE_OUTPUT_GATE, "", 1)
+                target.write_text(text, encoding="utf-8")
+
+            errors = validate_actionable_output_contract(root)
+
+            self.assertEqual(len(errors), 1)
+            self.assertIn("tk-ask-repo", errors[0])
+
+    def test_actionable_output_gate_rejects_exact_plus_weakened_duplicate(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source_root = Path(__file__).resolve().parents[1]
+            for skill in EXPECTED_SKILLS:
+                target = root / "skills" / skill / "SKILL.md"
+                target.parent.mkdir(parents=True)
+                text = (source_root / "skills" / skill / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                if skill == "tk-ask-repo":
+                    weakened = ACTIONABLE_OUTPUT_GATE.replace(
+                        "first available free-form prose slot",
+                        "last available free-form prose slot",
+                        1,
+                    )
+                    text = text.replace(
+                        ACTIONABLE_OUTPUT_GATE,
+                        ACTIONABLE_OUTPUT_GATE + "\n\n" + weakened,
+                        1,
+                    )
+                target.write_text(text, encoding="utf-8")
+
+            errors = validate_actionable_output_contract(root)
 
             self.assertEqual(len(errors), 1)
             self.assertIn("tk-ask-repo", errors[0])

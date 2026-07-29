@@ -67,3 +67,40 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+All 14 canonical skills include a cross-cutting presentation contract inspired
+by `ayghri/i-have-adhd`, source snapshot
+`07684c4ab625dd7d1ea6e99e065f60bc0ac6a1ba`
+(`skills/i-have-adhd/SKILL.md`). TigerKit retains the action-first,
+bounded-step, live-state, visible-completion, evidence-based recovery, and
+no-ceremonial-closer principles while preserving each skill's canonical output
+schema and response-language contract. TigerKit does not distribute the
+upstream skill, diagnose users, or implement its persistent mode. Existing
+per-skill origin metadata continues to describe the primary workflow source;
+this cross-cutting attribution is preserved here.
+
+`ayghri/i-have-adhd` upstream license:
+
+```text
+MIT License
+
+Copyright (c) 2026 Ayoub Ghriss
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
