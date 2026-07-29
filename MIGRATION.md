@@ -1,3 +1,25 @@
+# TigerKit 20.1.6 structured user decision questions
+
+TigerKit 20.1.6 preserves all 13 canonical skills and their invocation
+boundaries. Every skill now uses the same presentation contract when it owns a
+user decision: one question at a time, two or three mutually exclusive
+proposals, and exactly one localized recommendation marker.
+
+The `Question` field now appears before `Recommendation` and explains the
+evidence-derived context, decision impact, and unresolved axis in readable
+user-facing prose. Raw `Evidence` remains available for traceability but is no
+longer required reading to understand the choice.
+
+When the active host exposes a native structured user-input tool, the skill
+must use it. The canonical examples are Claude Code `AskUserQuestion`, Codex
+`request_user_input`, and Hermes Agent `clarify`. Plain-text fallback is
+allowed only when no equivalent tool is exposed. Supported option previews or
+prototype cards should be used when they materially clarify the choice.
+
+No skill name, phase ownership rule, explicit invocation path, runtime surface,
+or installation command changes in this release. Consumers only need to
+refresh the installed skill package.
+
 # TigerKit 20.1.5 empirical diagnosis and catalog refinement
 
 This release expands the catalog from 12 to 13 canonical skills:
