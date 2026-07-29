@@ -126,6 +126,26 @@
           "expected": "Pass"
         }
       ]
+    },
+    {
+      "id": "prototype-bounds-result-cardinality",
+      "path": "success",
+      "prompt": "이미 실행한 disposable A/B/C prototype에서 비교 observation 9건이 나왔습니다. 선택 근거와 production implication을 최종 보고해 주세요.",
+      "expected_output": "Confirmed에 상위 5–7개 비교 결과를 2–5개 bullet 또는 option row로 묶고 prototype/evidence path를 제시하며 command mechanics는 뒤로 둔다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "결론과 selection rationale를 먼저 설명하고 raw output이나 production-ready 주장을 포함하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "## Confirmed"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ]
 }

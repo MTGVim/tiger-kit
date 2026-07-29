@@ -9,6 +9,7 @@ if __package__:
     from scripts.validate_skills import (
         EXPECTED_SKILLS,
         REQUIRED_BEHAVIOR_CASES,
+        RESULT_BUDGET_TOKENS,
         USER_INVOKED_SKILLS,
         parse_latest_changelog_version,
         validate_local_only_workflows,
@@ -25,6 +26,7 @@ else:
     from validate_skills import (
         EXPECTED_SKILLS,
         REQUIRED_BEHAVIOR_CASES,
+        RESULT_BUDGET_TOKENS,
         USER_INVOKED_SKILLS,
         parse_latest_changelog_version,
         validate_local_only_workflows,
@@ -72,8 +74,10 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "ask-repo-refuses-effort-estimate",
                 "ask-repo-search-failure-is-unverifiable",
                 "ask-repo-blocks-contradicted-premise",
+                "ask-repo-bounds-result-cardinality",
                 "drive-requires-explicit-start",
                 "drive-resumes-pending-answer",
+                "drive-bounds-result-cardinality",
                 "drive-reflects-once-after-aggregate-pass",
                 "drive-invokes-phase-owners",
                 "drive-continues-after-ready-spec",
@@ -91,6 +95,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "grill-echoes-drive-transition",
                 "grill-returns-control-to-drive",
                 "grill-uses-native-question-tool",
+                "grill-bounds-confirmed-results",
                 "to-spec-echoes-drive-transition",
                 "to-spec-returns-decision-blocker-to-drive",
                 "to-spec-blocks-source-current-ui-mismatch",
@@ -106,12 +111,15 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "implement-echoes-drive-transition",
                 "implement-blocks-source-current-ui-mismatch",
                 "implement-production-behavior-requires-durable-test",
+                "implement-reports-bounded-behavior-summary",
                 "grooming-vendor-artifact-remains-report-only",
                 "grooming-unknown-ownership-asks-before-proposal",
                 "grooming-honors-declared-exclusions",
+                "grooming-bounds-result-cardinality",
                 "reflect-checks-persistent-memory-prior-art",
                 "reflect-separates-adjacent-memory-scope",
                 "reflect-bounds-summary-cell-length",
+                "reflect-bounds-result-cardinality",
                 "skill-diagnose-reproduces-overtrigger-selection",
                 "skill-diagnose-isolates-approval-bypass",
                 "skill-diagnose-separates-grader-false-negative",
@@ -137,6 +145,14 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "browser-proves-current-serving-source",
                 "browser-classifies-failure-origin",
                 "browser-causal-fix-requires-negative-control",
+                "browser-bounds-result-cardinality",
+                "handoff-bounds-result-cardinality",
+                "learn-bounds-result-cardinality",
+                "merge-conflict-bounds-result-cardinality",
+                "prototype-bounds-result-cardinality",
+                "skill-diagnose-bounds-result-cardinality",
+                "to-spec-bounds-result-cardinality",
+                "to-tickets-bounds-result-cardinality",
             }.issubset(REQUIRED_BEHAVIOR_CASES)
         )
         self.assertFalse(
@@ -318,7 +334,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
             "tk-prototype": ("Lead with `## Confirmed`", "Keep command mechanics after the decision"),
             "tk-reflect": ("In chat, emit only", "no raw logs, transcripts, diff excerpts"),
             "tk-skill-diagnose": ("In chat, emit `## Diagnosis`", "Never copy raw logs, transcripts"),
-            "tk-to-spec": ("User-facing output is one compact receipt", "Vertical slicing candidate areas"),
+            "tk-to-spec": ("Lead with the `Ready | Draft | Blocked | Unverifiable` decision", "Vertical slicing candidate areas"),
             "tk-to-tickets": ("User-facing output uses the ticket table", "artifact owns ticket bodies"),
         }
         result_tables = {
@@ -341,6 +357,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
         }
 
         self.assertEqual(set(required), EXPECTED_SKILLS)
+        self.assertEqual(set(RESULT_BUDGET_TOKENS), EXPECTED_SKILLS)
         for skill, tokens in required.items():
             with self.subTest(skill=skill):
                 text = (root / "skills" / skill / "SKILL.md").read_text(
@@ -362,6 +379,28 @@ class CanonicalSkillContractTest(unittest.TestCase):
                         "`Outcome: <one user-facing sentence>`",
                         text,
                     )
+                normalized = " ".join(text.split())
+                self.assertTrue(
+                    all(token in normalized for token in RESULT_BUDGET_TOKENS[skill])
+                )
+
+    def test_catalog_result_budget_gate_rejects_one_weakened_skill(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            skill_dir = Path(directory) / "tk-ask-repo"
+            skill_dir.mkdir()
+            source = (
+                Path(__file__).resolve().parents[1]
+                / "skills/tk-ask-repo/SKILL.md"
+            ).read_text(encoding="utf-8")
+            weakened = source.replace("top five to seven", "several", 1)
+            path = skill_dir / "SKILL.md"
+            path.write_text(weakened, encoding="utf-8")
+
+            errors, _ = validate_skill(path)
+
+            self.assertTrue(
+                any("bounded result contract missing" in error for error in errors)
+            )
 
     def test_user_decision_contract_gate_rejects_one_weakened_skill(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

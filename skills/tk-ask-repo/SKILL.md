@@ -115,7 +115,7 @@ rendering before concluding the element is missing.
 
 ## Output contract
 
-Lead with `Answer` in one to three sentences. Add only the non-empty evidence
+Lead with `Answer`. For one result, use one to three short paragraphs. For two to seven results, use compact bullets or one question-family table. For eight or more, show the top five to seven and cite the evidence paths that own the remainder; never invent an artifact. Add only the non-empty evidence
 sections needed for the question family: `Evidence`, `Origin`, `Sibling
 fields`, `Path`, `State`, `Attribution`, `Must change`, `Must not change`, and
 `Remaining concerns`. Evidence cites `path:line`; unavailable sources include
@@ -123,14 +123,14 @@ the reason. For A/D/E, `Must not change` is required and says `none found` when
 empty.
 
 For multiple meaningful fields, consumers, or candidates, use one compact table
-with question-family columns. Use a sentence when only one user-relevant row exists; rows never represent files, commands, or raw evidence.
+with question-family columns. Use a sentence when only one user-relevant row exists; rows never represent files, commands, or raw evidence. These are
+budgets, not quotas.
 
 Do not echo the inbound question or repeat evidence across sections. `Receipt`
 starts with `Outcome: <one user-facing sentence>`; remaining fields are `reported | Blocked | Unverifiable`, next owner, and section references.
 It indexes status/provenance, never answer or result rows.
 
-Write user-facing prose in the user's language; keep identifiers and status
-tokens as-is.
+Write user-facing prose in the user's language; keep identifiers and status tokens as-is.
 
 ## User decision questions
 

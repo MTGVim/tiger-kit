@@ -183,6 +183,10 @@ decision-relevant rows:
 | RF-01 | `<short name>` | `<action/status>` | `<target>` | `<evidence refs>` |
 
 Keep chat compact by citing evidence paths instead of copying long bodies.
+Every `Action` and `Why` cell must explain the human-readable next action and
+reason; an `RF-##` ID or status token alone is not a result. Keep at most five
+rows and cite `.tigerkit/reflect.md` when it owns additional candidates. A
+no-op stays minimal.
 Within `## Disposition`, add a bounded `Draft` block only when an actionable
 rule/skill candidate requires working wording.
 
@@ -196,8 +200,8 @@ rationale, or copied receipt fields. Create its parent lazily, write atomically,
 and warn if scratch is not ignored; never modify `.gitignore`.
 Receipt starts with `Outcome: <one user-facing sentence>`, then records
 terminal status, candidate counts, ledger path when written, and IDs requiring
-a decision. With no candidate, emit one `— | None | no-op | — | no verified
-reusable evidence` row.
+a decision; it never substitutes for the Disposition table. With no candidate,
+emit one `— | None | no-op | — | no verified reusable evidence` row.
 
 User-facing progress and receipt prose follows the user's language while
 canonical headings, IDs, fields, and status tokens remain unchanged.

@@ -99,7 +99,10 @@ Lead with the promotion or no-op decision. Use only non-empty `Evidence`,
 `Candidate` and `Verification` unless they add decision-relevant evidence.
 When more than one candidate is evaluated, render `Candidate` as a compact
 `Candidate | Disposition | Target` table. Use a sentence when only one
-user-relevant row exists. `Receipt` starts with
+user-relevant row exists. Summarize two to seven candidate, target, and
+remaining-gate results as bounded rows or bullets. For eight or more, show the
+top five to seven and cite the draft or planned target path that owns the
+remainder. These are budgets, not quotas. `Receipt` starts with
 `Outcome: <one user-facing sentence>`, then owns
 `reported | pending | applied` and section references only; it does not
 substitute for candidate results.

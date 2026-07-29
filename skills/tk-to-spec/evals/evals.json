@@ -267,6 +267,26 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "to-spec-bounds-result-cardinality",
+      "path": "success",
+      "prompt": "/tk-to-spec Ready 검증이 끝났고 핵심 scope/requirement/exception이 합계 9건입니다. spec body를 채팅에 복사하지 말고 최종 결과를 보고해 주세요.",
+      "expected_output": "Ready 판정 뒤 상위 5–7개 핵심 결과를 2–5개 bullet로 묶고 spec artifact path를 제시하며 Receipt는 phase/path/R/AC provenance만 가진다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "Outcome 한 문장이나 compact Receipt만으로 실제 spec 결과를 대체하지 않고 artifact body의 장문 복사를 피한다."
+        },
+        {
+          "type": "output_contains",
+          "text": "Ready"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ]
 }

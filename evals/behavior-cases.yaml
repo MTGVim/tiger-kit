@@ -571,3 +571,45 @@
 - case: ask-repo-blocks-contradicted-premise
   skill: tk-ask-repo
   expect: "A premise contradicted by repository evidence is reported as a contradiction and stops Blocked."
+- case: ask-repo-bounds-result-cardinality
+  skill: tk-ask-repo
+  expect: "One answer may use one to three short paragraphs, compound answers use bounded bullets or a table, and eight or more results show the top five to seven plus owning evidence paths."
+- case: browser-bounds-result-cardinality
+  skill: tk-browser-verify
+  expect: "Compound visual, network, and final-state results use bounded bullets or scenario rows; eight or more show the top five to seven plus the browser ledger path."
+- case: drive-bounds-result-cardinality
+  skill: tk-drive
+  expect: "Final output keeps one Outcome sentence but also explains Implemented and Verification results within their budgets before a nonduplicative receipt."
+- case: grill-bounds-confirmed-results
+  skill: tk-grill-me
+  expect: "Confirmed compound decisions may use two to seven readable rows or bullets while every question turn remains one user-owned decision."
+- case: grooming-bounds-result-cardinality
+  skill: tk-grooming
+  expect: "The existing Disposition table reports bounded readable findings without adding lifecycle behavior or letting the receipt replace result rows."
+- case: handoff-bounds-result-cardinality
+  skill: tk-handoff
+  expect: "Current state, completed work, next action, and blockers use two to five bullets with the artifact path owning any larger inventory."
+- case: implement-reports-bounded-behavior-summary
+  skill: tk-implement
+  expect: "Changed explains two to five behavior-level results and Verification reports one to four core checks before a nonduplicative status/provenance receipt."
+- case: learn-bounds-result-cardinality
+  skill: tk-learn
+  expect: "Promotion decision, candidates, targets, and remaining gates use two to seven rows or bullets and preserve the pre-approval write boundary."
+- case: merge-conflict-bounds-result-cardinality
+  skill: tk-merge-conflict
+  expect: "Resolved intent, path groups, and verification use two to five readable rows or bullets while exact paths remain traceable."
+- case: prototype-bounds-result-cardinality
+  skill: tk-prototype
+  expect: "Comparison results and selection rationale use two to five bullets or option rows, with larger evidence owned by the prototype path."
+- case: reflect-bounds-result-cardinality
+  skill: tk-reflect
+  expect: "The readable ID, Candidate, Action, Target, Why table remains mandatory for non-no-op results and the receipt never reduces it to RF codes."
+- case: skill-diagnose-bounds-result-cardinality
+  skill: tk-skill-diagnose
+  expect: "Reproduction, root cause, and candidate results use two to seven bullets or ID rows, with larger evidence owned by the diagnosis ledger."
+- case: to-spec-bounds-result-cardinality
+  skill: tk-to-spec
+  expect: "The Ready or non-Ready decision leads two to five scope, requirement, or exception bullets and cites the owning spec artifact."
+- case: to-tickets-bounds-result-cardinality
+  skill: tk-to-tickets
+  expect: "Two to seven tickets use the readable slice table; larger decompositions show the top five to seven plus coverage summary and artifact path."

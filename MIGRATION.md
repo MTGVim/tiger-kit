@@ -1,3 +1,31 @@
+# TigerKit 20.2.0 implementation quality and optimistic reflection
+
+TigerKit 20.2.0 keeps all 14 canonical skill names, the 2 user-invoked /
+12 hybrid split, and the existing installation commands. Consumers only need
+to refresh the installed skill package; no runtime migration is required.
+
+`tk-implement` now records an evidence-backed repository-fit decision before
+mutation and runs exactly one behavior-preserving simplify pass after initial
+GREEN. Detailed fit, simplify, verification, and review evidence lives in the
+repo-local `.tigerkit/implementation.md` scratch ledger.
+
+After aggregate product verification passes, `tk-drive` runs one
+`drive-optimistic` reflection tail. Only proven existing repository rules may
+be applied automatically. Tracked rules use a separate reflection commit with
+`git revert` rollback; pre-existing ignored/local rules use a hash-bound
+before-image. Skill candidates remain report-only promotion packets.
+
+User-facing results are no longer forced into one completion sentence. Each
+skill uses its own bounded result budget, cites an owning artifact for large
+result sets, and keeps Receipt limited to status and provenance. Existing
+decision-first ordering and one-question user decision turns remain unchanged.
+`tk-reflect` continues to show the readable
+`ID | Candidate | Action | Target | Why` table for non-no-op results.
+
+See
+[`docs/adr/0001-implementation-quality-and-optimistic-reflection.md`](docs/adr/0001-implementation-quality-and-optimistic-reflection.md)
+for the durable decision and supersession rules.
+
 # TigerKit 20.1.7 repository answers and concise receipts
 
 TigerKit 20.1.7 expands the catalog from 13 to 14 canonical skills:

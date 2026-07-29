@@ -112,6 +112,10 @@ When more than one conflict path is resolved, render `Resolution` as a compact
 `Path | Intent | Result` table. Use a sentence when only one user-relevant row
 exists. Receipt starts with `Outcome: <one user-facing sentence>`, remains a
 status/provenance index, and does not repeat resolution rows.
+Summarize compound intent, resolved path groups, and verification in two to
+five short rows or bullets. For eight or more paths, group them into the top
+five to seven intent/result rows and cite the exact remaining paths. These are
+budgets, not quotas.
 
 User-facing progress and receipt prose follows the user's language while
 canonical headings and status tokens remain unchanged.

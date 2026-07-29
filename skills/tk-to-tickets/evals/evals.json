@@ -313,6 +313,26 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "to-tickets-bounds-result-cardinality",
+      "path": "success",
+      "prompt": "/tk-to-tickets Ready spec에서 독립 vertical ticket 9개를 검증했습니다. ticket body를 복사하지 말고 decomposition 결과를 보고해 주세요.",
+      "expected_output": "상위 5–7개 Ticket | User-visible slice row, compact coverage/blocked summary, tickets artifact path를 제시하고 Receipt는 IDs/count를 중복하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "ticket 수에 맞는 bounded table을 제공하고 artifact가 전체 ledger를 소유하며 Receipt가 slice 결과를 대체하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "Ticket | User-visible slice"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ]
 }

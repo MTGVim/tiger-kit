@@ -219,6 +219,29 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "grill-bounds-confirmed-results",
+      "path": "success",
+      "prompt": "/tk-grill-me 모든 질문이 끝났고 서로 연관된 confirmed decision 9건이 있습니다. 질문을 더 하지 말고 최종 결과를 읽기 쉽게 반환해 주세요.",
+      "expected_output": "Decisions에 상위 5–7개 readable row 또는 bullet과 owning source/spec path를 제시하고 Receipt는 decisions를 복제하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "confirmed compound result에는 bounded multi-line summary를 허용하되 question turn의 one-question atomicity를 완화하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "## Decisions"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

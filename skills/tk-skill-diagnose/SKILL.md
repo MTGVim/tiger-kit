@@ -138,6 +138,9 @@ When more than one ID is affected, render `Diagnosis` as a compact
 `ID | Incident | Root cause` table and `Action` as an `ID | Next action` table.
 Use a sentence when only one user-relevant row exists. Rows represent
 root-cause themes, not experiments, hosts, logs, or evidence fragments.
+Summarize two to seven reproduced/root-cause/candidate results as bounded rows
+or bullets. For eight or more, show the top five to seven and cite
+`.tigerkit/skill-diagnosis.md` for the remainder. These are budgets, not quotas.
 
 When the run uses more than one experiment or host, or has more than five
 evidence rows, write or replace `.tigerkit/skill-diagnosis.md`. Its compact

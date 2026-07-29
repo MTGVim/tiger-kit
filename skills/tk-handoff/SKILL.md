@@ -85,6 +85,11 @@ Receipt starts with `Outcome: <one user-facing sentence>`, then contains
 disposition and section references, not duplicated paths, Git state, commands,
 results, or future work. Omit empty sections and reference existing
 spec/ticket/diff content instead of copying it.
+Summarize current state, completed work, next action, and blockers in two to
+five short bullets when compound; one result may use one to three short lines.
+For eight or more underlying items, show the top five to seven and cite the
+handoff artifact path that owns the full inventory. These are budgets, not
+quotas.
 
 `.tigerkit/handoff.md` is the only resume snapshot. Reference durable R/AC from
 `.tigerkit/spec.md` and multi-slice ticket IDs from `.tigerkit/tickets.md`.

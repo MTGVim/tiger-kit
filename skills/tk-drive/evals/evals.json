@@ -689,6 +689,30 @@
           "expected": "Pass"
         }
       ]
+    },
+    {
+      "id": "drive-bounds-result-cardinality",
+      "path": "success",
+      "prompt": "[active tk-drive] aggregate verification과 reflection tail이 Pass입니다. 사용자에게 의미 있는 구현 결과 9건, ticket commit 3건, 검증 결과 4건을 final receipt로 보고해 주세요.",
+      "expected_output": "Outcome 뒤 Implemented 상위 5–7개, Ticket table, Verification 1–4개, product/reflection commit provenance를 제시하고 no-op/empty section과 중복을 생략한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "Outcome 한 문장으로 실제 결과를 대체하지 않고 decision-first bounded summary와 compact nonduplicative Receipt를 제공한다."
+        },
+        {
+          "type": "output_contains",
+          "text": "Implemented"
+        },
+        {
+          "type": "output_contains",
+          "text": "Verification"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ]
 }

@@ -121,6 +121,10 @@ table:
 Use the same ID for applied changes and verification. Add `## Exceptions` only
 for evidence gaps, ownership conflicts, unresolved scope, or failed
 verification. Add `## Applied` and `## Verification` only after mutation.
+Show two to seven findings as table rows. For eight or more, show the top five
+to seven and group the remainder behind their audited target paths; do not add
+an artifact or lifecycle behavior solely to hold output. These are budgets,
+not quotas.
 `## Receipt` starts with `Outcome: <one user-facing sentence>`, then records
 overall status, `report-only | applied`, and IDs without repeating the table.
 With no item, emit one `— | None | keep | — | no finding` row. Vendor rows use

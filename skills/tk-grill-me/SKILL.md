@@ -136,7 +136,11 @@ Confirmed terms may later enter a spec, but this skill does not create or edit
 
 Use only non-empty final sections: `## Decisions`, `## Assumptions`,
 `## Remaining risks`, and `## Receipt`. `## Decisions` alone owns decision
-content. Do not add a second combined-goal summary. In `## Receipt`, record
+content. Keep a question turn atomic at one unresolved decision. For confirmed
+results, use one to three short lines for one decision, two to seven readable
+rows or bullets for a compound decision set, and the top five to seven plus the
+owning source/spec path for eight or more. These are budgets, not quotas. Do
+not add a second combined-goal summary. In `## Receipt`, record
 `Outcome: <one user-facing sentence>`, `Phase: decision`, `Status`, source or
 user-answer evidence, whether decisions were applied, the `## Decisions`
 reference when it exists, and `Return to`. Do not duplicate decisions in the

@@ -302,6 +302,26 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "skill-diagnose-bounds-result-cardinality",
+      "path": "success",
+      "prompt": "/tk-skill-diagnose 이미 검증한 incident/root-cause/candidate result가 9건입니다. 원시 trace 없이 최종 진단을 작성해 주세요.",
+      "expected_output": "Diagnosis와 Action에 상위 5–7개 ID 결과와 skill-diagnosis ledger path를 제시하고 Receipt는 diagnosis/action row를 복제하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "reproduction/root cause/candidate verdict를 bounded bullet 또는 ID table로 설명하고 raw logs/transcripts를 제외한다."
+        },
+        {
+          "type": "output_contains",
+          "text": "## Diagnosis"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ]
 }

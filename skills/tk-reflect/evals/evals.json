@@ -706,6 +706,29 @@
           "expected": "Pass"
         }
       ]
+    },
+    {
+      "id": "reflect-bounds-result-cardinality",
+      "path": "success",
+      "prompt": "/tk-reflect 검증된 후보 9건을 최종 보고해 주세요. RF 코드만 나열하지 말고 기존 표 형식을 유지해 제가 다음 행동을 이해할 수 있게 해 주세요.",
+      "expected_output": "Disposition에 최대 5개 human-readable Candidate/Action/Target/Why row를 유지하고 나머지는 reflect ledger path로 연결하며 Receipt는 status/provenance만 기록한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "ID | Candidate | Action | Target | Why 표를 유지하고 각 Action/Why가 다음 행동과 이유를 설명하며 RF ID나 status token만으로 결과를 대체하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "| ID | Candidate | Action | Target | Why |"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

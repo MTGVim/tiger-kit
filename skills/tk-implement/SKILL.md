@@ -276,7 +276,7 @@ publish. Do not automatically invoke another user-invoked skill.
 Lead with `## Changed`, then `## Verification`, optional
 `## Remaining risks`, and `## Receipt`. For a successful unit, use 2–5 short,
 behavior-oriented bullets under `Changed` and 1–4 verification-result bullets
-under `Verification`; these are bounded budgets, not quotas for padding. Add
+under `Verification`; these are bounded budgets, not quotas for padding. When underlying results exceed the budget, cite `.tigerkit/implementation.md`. Add
 `## Strategy` only for an explicit choice, exception, or plan deviation. Do not
 add a separate `## Commit`; `Receipt` starts with
 `Outcome: <one user-facing sentence>` and owns the commit SHA/message or why no

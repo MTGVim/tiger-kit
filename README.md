@@ -1,4 +1,4 @@
-# TigerKit 20.1.7
+# TigerKit 20.2.0 candidate
 
 <p align="center">
   <img src="assets/tigerkit-cover.png" width="960" alt="TigerKit Agent Skills 표지">
@@ -9,7 +9,15 @@ TigerKit은 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent 
 `npx skills`로 배포합니다. Decision closure, spec, ticket, implementation은
 각각 하나의 canonical phase skill이 소유하고 `tk-drive`가 그 결과를
 단방향으로 오케스트레이션합니다. 최신 immutable release는 `v20.1.7`이며,
-현재 `main`에는 다음 release를 위한 orchestration 변경이 포함될 수 있습니다.
+현재 `main`의 다음 release candidate는 `v20.2.0`입니다.
+
+`v20.2.0` candidate는 구현 전 repository fit 결정, initial GREEN 뒤 한 번의
+behavior-preserving simplify, 성공한 drive 끝의 안전한 optimistic reflection,
+결과 규모에 맞춘 bounded summary를 추가합니다. `tk-reflect`의 non-no-op
+결과는 `ID | Candidate | Action | Target | Why` 표를 유지하며 Receipt가
+코드명만으로 표를 대체하지 않습니다. 장기 결정 근거와 안전 경계는
+[ADR 0001](docs/adr/0001-implementation-quality-and-optimistic-reflection.md)에
+기록되어 있습니다.
 
 ## 설치
 

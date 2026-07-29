@@ -1,5 +1,26 @@
 # Changelog
 
+## 20.2.0 — Implementation Quality, Optimistic Reflection, and Bounded Results
+
+- Added a `tk-implement` design-fit preflight that chooses reuse, extension,
+  local ownership, or evidence-backed shared abstraction before mutation.
+- Added one behavior-preserving simplify pass after initial GREEN and before
+  final verification, while keeping Standards and Spec review independent.
+- Added bounded `.tigerkit/implementation.md` evidence for repository fit,
+  simplify disposition, verification, and current-agent review.
+- Routed successful aggregate drive work through exactly one fixed-point
+  `drive-optimistic` reflection tail.
+- Limited optimistic mutation to high-confidence existing repository rules,
+  with separate tracked-commit and ignored/local before-image rollback.
+- Kept skill candidates report-only as promotion packets and preserved the
+  human-readable `ID | Candidate | Action | Target | Why` reflection table.
+- Replaced strict one-line result compression across all 14 skills with
+  decision-first, cardinality-aware bounded summaries and nonduplicative
+  receipts.
+- Recorded the durable ownership, rollback, fixed-point, and supersession
+  rationale in ADR 0001 without adding skills, runtime surfaces, or release
+  automation.
+
 ## 20.1.7 — Repository Answers, Drive Liveness, and Concise Receipts
 
 - Expanded the catalog to 14 canonical skills with the user-invoked

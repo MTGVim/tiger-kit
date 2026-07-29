@@ -102,6 +102,10 @@ sentence when only one user-relevant row exists. Record whether
 content/data/state stayed equal. Use `not observed` for unseen differences and
 `unverifiable` for missing evidence. Do not promote unaudited aesthetic
 preference into a conclusion.
+Summarize comparison results and selection rationale in two to five bullets or
+option rows. For eight or more observations, show the top five to seven and
+cite the prototype or evidence path that owns the remainder. These are budgets,
+not quotas.
 
 User-facing progress and receipt prose follows the user's language while
 canonical headings and status tokens remain unchanged.

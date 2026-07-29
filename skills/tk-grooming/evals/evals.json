@@ -454,6 +454,29 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "grooming-bounds-result-cardinality",
+      "path": "success",
+      "prompt": "/tk-grooming --report-only 감사에서 독립 finding 9건이 검증됐습니다. lifecycle 기능은 추가하지 말고 최종 결과만 정리해 주세요.",
+      "expected_output": "Disposition에 상위 5–7개 human-readable row와 나머지 audited target path를 제시하고 Receipt는 GR ID만으로 결과를 대체하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "기존 Disposition table과 report-only semantics를 유지하면서 compound result를 bounded하게 설명한다."
+        },
+        {
+          "type": "output_contains",
+          "text": "| ID | Item | Action | Target | Basis |"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

@@ -105,10 +105,14 @@ inputs, not slices or tickets: drive alone decides whether a ledger is
 justified, and `tk-to-tickets` alone owns decomposition, ticket IDs, coverage,
 and dependencies. Otherwise use `Draft`, `Blocked`, or `Unverifiable`.
 
-User-facing output is one compact receipt; the artifact owns the spec body.
-The receipt starts with `Outcome: <one user-facing sentence>`, then records
-phase, path, status, and R/AC IDs and references the source-map, candidate-area,
-unverified, conflict, and verification sections instead of restating them.
+Lead with the `Ready | Draft | Blocked | Unverifiable` decision. Summarize the
+core scope, requirements, and exceptions in two to five short bullets; one
+result may use one to three short lines. For eight or more underlying items,
+show the top five to seven and cite the spec artifact path that owns the full
+inventory. The receipt starts with `Outcome: <one user-facing sentence>`, then
+records phase, path, status, and R/AC IDs and references the source-map,
+candidate-area, unverified, conflict, and verification sections instead of
+restating them. These are budgets, not quotas.
 
 ### 🔴 HARD GATE · source UI writing
 

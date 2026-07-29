@@ -216,7 +216,9 @@ Findings/Unverified/Cleanup. Start Verdict with
 When more than one criterion is verified, render `## Verified` as a compact
 `Criterion | Result | Evidence` table. Use a sentence when only one
 user-relevant row exists. Rows represent acceptance criteria, not screenshots,
-commands, or log fragments.
+commands, or log fragments. Summarize two to seven verified scenarios as
+bounded bullets or rows. For eight or more, show the top five to seven and cite
+the browser ledger path that owns the remainder. The budget is not a quota.
 
 User-facing progress and receipt prose follows the user's language while the
 canonical headings, fields, and status tokens above remain unchanged.
