@@ -6,6 +6,65 @@ to that unit/ticket and its R/AC; drive separately owns aggregate traceability
 and cross-ticket verification. Review is separate from direct/delegated
 implementation, and an implementor never counts as an independent reviewer.
 
+## Pre-review quality gates
+
+These gates run before final unit verification and review. The current agent
+owns them in direct and delegated modes; an implementor may return evidence but
+does not make the ownership decision.
+
+### Design fit
+
+Before source mutation:
+
+1. inspect the one to three closest existing implementations and their tests;
+2. inventory reusable components, hooks, utilities, types, state owners,
+   query-key factories, and test helpers;
+3. identify the existing module that owns each changed responsibility;
+4. classify every major responsibility as `reuse existing`,
+   `extend existing`, `local implementation`, or `new shared abstraction`.
+
+Use `new shared abstraction` only when code evidence shows an actual second
+consumer, an independent variation axis in the current diff, or a clearly
+insufficient existing public seam. Without that evidence, keep the
+responsibility local or extend its existing owner. Record inspected
+paths/symbols and the classification. Do not invoke `tk-ask-repo` or create a
+parallel abstraction for convenience.
+
+### Behavior-preserving simplify
+
+After initial GREEN and before final unit verification, run exactly one pass
+over the current unit diff and directly connected call sites:
+
+- **Repository reuse:** replace parallel helpers, components, hooks, or types
+  with the existing owner where behavior stays unchanged.
+- **Simplicity:** remove unnecessary wrappers, pass-throughs, state, effects,
+  branches, and indirection.
+- **Efficiency:** remove duplicate lookup, transformation, traversal, render
+  work, and unsupported memoization.
+- **Abstraction fit:** place responsibility with the correct owner, keep
+  single-use code local, share only for evidenced consumers, and narrow public
+  surfaces to actual need.
+
+Do not change R/AC, behavior, or UI writing, and do not expand into unrelated
+cleanup or a repository-wide refactor. Apply at most one bounded change set
+and rerun focused verification. With no finding, record `no-op`. Do not add a
+reviewer, repeat the full Standards/Spec review, or create a review loop.
+
+### Implementation ledger
+
+Atomically write `.tigerkit/implementation.md` with a same-directory temporary
+file plus rename. Update the current unit section for the same task identity;
+replace a different task without an archive. Never modify `.gitignore`, and
+warn once for the task when `.tigerkit/` is not ignored.
+
+Each unit section records task and unit/ticket identity, R/AC references,
+design-fit evidence as `reuse | extend | local | new abstraction`, inspected
+paths/symbols, simplify finding and `changed | no-op | deferred`, rerun focused
+verification, Standards and Spec dispositions, unit commit SHA, and remaining
+risk. Keep it bounded: no raw transcript, full diff, repeated command output,
+secret, or unrelated history. After commit, update the SHA without staging the
+ignored scratch file.
+
 ## Fixed point and inventory
 
 At preflight, record initial `HEAD`, branch, and pre-existing dirty paths.
@@ -32,6 +91,12 @@ state is `Blocked`; inaccessible evidence after a stable snapshot is
 
 The current agent runs both axes even for small, low-risk work and keeps the
 verdicts separate.
+
+The earlier simplify gate is a proactive, behavior-preserving mutation pass
+over repository reuse, simplicity, efficiency, and abstraction fit. It is not
+a review axis and does not own correctness or R/AC verdicts. Standards review
+may still identify a structural defect that simplify missed, but it does not
+repeat the simplify checklist or start another full review cycle.
 
 - **Standards:** repository instructions, correctness, duplication, scope
   creep, ownership, unnecessary pass-throughs, public/private boundary leaks,

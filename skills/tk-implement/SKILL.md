@@ -70,18 +70,20 @@ source location used.
 1. `understand/inspect`: resolve the standalone request or drive handoff,
    related source, unit/ticket ID, scope, constraints, R/AC, initial `HEAD`,
    branch, pre-existing dirty inventory, and unresolved decisions.
-2. `resolve strategy`: from code/test evidence, choose `direct | delegated`,
-   `tdd | no-tdd`, conditional bug investigation, and whether one independent
-   reviewer is permitted.
-3. `implement/incremental verification`: implement the smallest coherent
-   vertical slice and run focused verification after each slice.
+2. `resolve strategy and design fit`: from code/test evidence, choose
+   `direct | delegated`, `tdd | no-tdd`, conditional bug investigation,
+   repository ownership for every major responsibility, and whether one
+   independent reviewer is permitted.
+3. `implement/simplify`: reach initial GREEN, run the one behavior-preserving
+   simplify pass, and rerun focused verification when it changes the unit.
 4. `final unit verification`: bind final evidence and failure classification
    to the current branch, `HEAD`, and verified diff/path scope.
 5. `review/commit`: run current-agent Standards/Spec review against the
    candidate/staged snapshot, optionally use one bounded independent reviewer,
    confirm no drift, and create one unit commit or stop.
-6. `report`: return non-duplicated output sections and an ID-mapped receipt
-   tied to the final branch, `HEAD`, commit, and verification evidence.
+6. `report`: update the implementation ledger and return non-duplicated output
+   sections plus an ID-mapped receipt tied to the final branch, `HEAD`, commit,
+   and verification evidence.
 
 ## CHECKPOINT / STOP
 
@@ -124,6 +126,7 @@ useful public test seam. Proceeding with implementation and verification.
 ```
 
 See [delegation](references/delegation.md) for the bounded delegation contract.
+Before mutation and after initial GREEN, follow the current-agent-owned design-fit, one-pass simplify, and atomic `.tigerkit/implementation.md` ledger gates in [review-boundary](references/review-boundary.md); never invoke `tk-ask-repo` for repository-fit decisions.
 
 When Figma, a screenshot, or a design specification defines expected UI, apply
 hybrid `tk-browser-verify` design-intent preflight before source mutation or any
@@ -151,13 +154,14 @@ diagnose-only request remains read-only and receives no commit authority.
 When TDD is selected, choose a meaningful public behavior seam and write one
 focused vertical-slice test. Run it and observe red, implement the minimum
 change to make it green, and rerun that test plus related verification. Repeat
-for another slice when needed. The required loop is `red → green`; refactor is
-not mandatory in every cycle. Before implementation, confirm that red is caused
-by the expected missing behavior rather than a setup, syntax, fixture, or mock
-failure; repair invalid test evidence and rerun until the expected red is
-observed. Exercise real behavior and collaborators where practical; mock only
-unavoidable external side-effect boundaries, not the behavior under test. Do
-not call post-hoc tests TDD, claim an already passing test was red, test private
+for another slice when needed. The required loop is `red → green`; the separate
+simplify gate runs once after the unit first reaches GREEN rather than inside
+every cycle. Before implementation, confirm that red is caused by the expected
+missing behavior rather than a setup, syntax, fixture, or mock failure; repair
+invalid test evidence and rerun until the expected red is observed. Exercise
+real behavior and collaborators where practical; mock only unavoidable
+external side-effect boundaries, not the behavior under test. Do not call
+post-hoc tests TDD, claim an already passing test was red, test private
 implementation details, or distort a production API for tests. If the user
 requires TDD but no useful seam exists, do not silently switch to no-TDD;
 present the seam gap and options for a user decision. In automatic mode, do not
@@ -270,15 +274,13 @@ Without a separate request, do not push, create a PR, merge, tag, release, or
 publish. Do not automatically invoke another user-invoked skill.
 
 Lead with `## Changed`, then `## Verification`, optional
-`## Remaining risks`, and `## Receipt`. Add `## Strategy` only for an explicit
-choice, exception, or plan deviation. Do not add a separate `## Commit`;
-`Receipt` starts with `Outcome: <one user-facing sentence>` and owns the commit
-SHA/message or why no commit exists.
-
-When `Changed` covers more than one independently meaningful user-visible or
-unit behavior, render a compact `Item | Change | Verification` table. Use a
-sentence when only one user-relevant row exists. Rows represent behavior, not
-files, commands, or evidence fragments.
+`## Remaining risks`, and `## Receipt`. For a successful unit, use 2–5 short,
+behavior-oriented bullets under `Changed` and 1–4 verification-result bullets
+under `Verification`; these are bounded budgets, not quotas for padding. Add
+`## Strategy` only for an explicit choice, exception, or plan deviation. Do not
+add a separate `## Commit`; `Receipt` starts with
+`Outcome: <one user-facing sentence>` and owns the commit SHA/message or why no
+commit exists.
 
 Describe user-visible or unit behavior, not only files. Summarize commands and
 results; never paste logs or narrate review mechanics. `Verification` owns
