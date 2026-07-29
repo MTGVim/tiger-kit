@@ -122,6 +122,15 @@
     - tk-implement
     - tk-grill-me
     - tk-handoff
+- skill: tk-ask-repo
+  examples:
+    - "$tk-ask-repo 이 화면 값이 어디서 오는지 조사해줘"
+    - "/tk-ask-repo 이 심볼을 바꾸면 무엇이 깨지는지 조사해줘"
+    - "skill picker에서 tk-ask-repo를 직접 선택해 이 repository 질문에 답해줘"
+  nearby:
+    - tk-grill-me
+    - tk-implement
+    - tk-browser-verify
 - skill: tk-merge-conflict
   positive:
     - "tk-merge-conflict로 현재 rebase를 완료해줘"

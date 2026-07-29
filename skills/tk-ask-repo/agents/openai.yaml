@@ -1,0 +1,7 @@
+interface:
+  display_name: "TigerKit: Ask Repo"
+  short_description: "[user] Investigate an inbound repository question with source-located evidence."
+  default_prompt: "Use tk-ask-repo to classify this inbound repository question, traverse to source-located evidence, sweep affected consumers when required, and report ownership without implementing changes."
+
+policy:
+  allow_implicit_invocation: false

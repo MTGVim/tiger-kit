@@ -237,6 +237,62 @@
       "focus_skill": "tk-reflect",
       "expected_selected_skill": "tk-reflect",
       "critical": true
+    },
+    {
+      "id": "ask-repo-explicit-investigation",
+      "boundary": "tk-ask-repo vs ordinary repository Q&A",
+      "prompt": "$tk-ask-repo 이 화면의 Display name 값이 어디서 오는지 path:line 근거로 조사해 주세요.",
+      "focus_skill": "tk-ask-repo",
+      "expected_selected_skill": "tk-ask-repo",
+      "critical": true
+    },
+    {
+      "id": "ask-repo-ordinary-investigation",
+      "boundary": "tk-ask-repo vs ordinary repository Q&A",
+      "prompt": "이 화면의 Display name 값이 어디서 오는지 조사해 주세요.",
+      "focus_skill": "tk-ask-repo",
+      "expected_selected_skill": null,
+      "critical": false
+    },
+    {
+      "id": "ask-repo-vs-implement",
+      "boundary": "tk-ask-repo vs tk-implement",
+      "prompt": "$tk-implement 이 값이 잘못 내려오는 버그를 고치고 검증된 commit을 만들어 주세요.",
+      "focus_skill": "tk-implement",
+      "expected_selected_skill": "tk-implement",
+      "critical": true
+    },
+    {
+      "id": "ask-repo-vs-grill",
+      "boundary": "tk-ask-repo vs tk-grill-me",
+      "prompt": "$tk-grill-me 이 기능을 유지할지 제거할지 결정을 한 번에 하나씩 닫아 주세요.",
+      "focus_skill": "tk-grill-me",
+      "expected_selected_skill": "tk-grill-me",
+      "critical": true
+    },
+    {
+      "id": "ask-repo-vs-runtime-reproduction",
+      "boundary": "tk-ask-repo vs runtime reproduction",
+      "prompt": "브라우저에서 QA 환경의 저장 실패를 직접 재현해 주세요.",
+      "focus_skill": "tk-browser-verify",
+      "expected_selected_skill": "tk-browser-verify",
+      "critical": true
+    },
+    {
+      "id": "ask-repo-vs-general-knowledge",
+      "boundary": "tk-ask-repo vs general technical knowledge",
+      "prompt": "Python TypedDict의 일반적인 사용법을 설명해 주세요.",
+      "focus_skill": "tk-ask-repo",
+      "expected_selected_skill": null,
+      "critical": true
+    },
+    {
+      "id": "ask-repo-vs-effort-estimation",
+      "boundary": "tk-ask-repo vs effort estimation",
+      "prompt": "이 기능을 고치는 데 며칠 걸리는지 추정해 주세요.",
+      "focus_skill": "tk-ask-repo",
+      "expected_selected_skill": null,
+      "critical": true
     }
   ]
 }

@@ -4,7 +4,7 @@
 
 TigerKit is an Agent Skills repository, not a workflow framework or Claude Code plugin.
 
-- Keep exactly 13 canonical skills under `skills/tk-*/`: 1 user-invoked and 12 hybrid. Do not add model-only skills.
+- Keep exactly 14 canonical skills under `skills/tk-*/`: 2 user-invoked and 12 hybrid. Do not add model-only skills.
 - Each skill's `SKILL.md` is its behavior source of truth.
 - Keep each skill self-contained; skill-specific detail and code stay in its own `references/` and `scripts/`.
 - Prefer thin instructions. Add detail only for repeated failures, costly ordering mistakes, mutation safety, objective verification, specialist procedures, or bounded delegation/review.
@@ -35,6 +35,8 @@ If the answers are weak, choose `inline`, `merge`, `convert to reference`, `make
 
 - `tk-drive` is the user-invoked orchestrator. It may invoke only the documented
   hybrid phase owners; phase owners never invoke sibling phase owners.
+- `tk-ask-repo` is the user-invoked read-only investigation desk. It reports
+  repository evidence and ownership boundaries but never implements or mutates.
 - Small work and ordinary follow-up feedback stay owned by the current agent without requiring a new skill.
 - Non-agent tools, MCPs, sandboxes, browsers, and context-management utilities remain available whenever useful.
 - Delegate implementation ownership only for real isolation or parallel benefit; never nest agent delegation.

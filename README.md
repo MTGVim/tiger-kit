@@ -5,7 +5,7 @@
 </p>
 
 TigerKit은 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent Skills
-모음입니다. 중앙 workflow runtime 없이 13개 self-contained skill을
+모음입니다. 중앙 workflow runtime 없이 14개 self-contained skill을
 `npx skills`로 배포합니다. Decision closure, spec, ticket, implementation은
 각각 하나의 canonical phase skill이 소유하고 `tk-drive`가 그 결과를
 단방향으로 오케스트레이션합니다. 최신 immutable release는 `v20.1.6`이며,
@@ -50,12 +50,13 @@ Claude Code와 Hermes Agent에서는 `/tk-implement` 같은 slash command로 표
 
 ## Skill 목록
 
-- **`[user]` user-invoked 1개**: 사용자가 명시적으로 선택하며 implicit invocation이 차단됩니다.
+- **`[user]` user-invoked 2개**: 사용자가 명시적으로 선택하며 implicit invocation이 차단됩니다.
 - **`[user/auto]` hybrid 12개**: 사용자 선택과 description의 좁은 positive trigger를 모두 지원합니다.
 - model-only skill은 없습니다.
 
 | Skill | 호출 | 목적 |
 | --- | --- | --- |
+| `tk-ask-repo` | user | 외부에서 들어온 repository 질문을 분류하고 원점·소비처·영향·책임을 `path:line` 근거로 조사합니다. |
 | `tk-drive` | user | 명시적으로 시작한 source를 조건부 decision closure, canonical phase owner, ticket별 commit과 최종 aggregate verification까지 진행합니다. |
 | `tk-grill-me` | hybrid | 명시 선택 또는 drive decision handoff에서 사실을 조사하고 중요한 결정을 한 번에 한 질문씩 닫습니다. |
 | `tk-to-spec` | hybrid | 독립 요청 또는 drive handoff에서 Ready spec을 작성·검증합니다. |

@@ -508,3 +508,30 @@
 - case: reflect-blocks-repeated-diagnosis-handoff
   skill: tk-reflect
   expect: "An equivalent Incident ID, target, and blocker recurrence ends Blocked without another handoff or reflect-diagnose cycle."
+- case: ask-repo-value-finds-assignment-origin
+  skill: tk-ask-repo
+  expect: "A value question descends past declarations to the assignment site, inspects sibling fields, sweeps consumers, and reports Must not change."
+- case: ask-repo-impact-sweeps-consumers
+  skill: tk-ask-repo
+  expect: "An impact question verifies matching semantics, sweeps all readers and writers, states exclusions, and classifies must change, must not change, and unclear consumers."
+- case: ask-repo-existence-distinguishes-states
+  skill: tk-ask-repo
+  expect: "An existence question checks the current base ref and in-flight work before distinguishing absent, unreleased, empty, and live."
+- case: ask-repo-attribution-uses-transport
+  skill: tk-ask-repo
+  expect: "Attribution follows the consuming path to its end and uses whether the correct value is already present in transport to assign ownership."
+- case: ask-repo-blocks-two-candidate-ambiguity
+  skill: tk-ask-repo
+  expect: "Two defensible candidate answers are presented with evidence and stop Blocked instead of being resolved by the investigator."
+- case: ask-repo-refuses-implementation-diff
+  skill: tk-ask-repo
+  expect: "An implementation or diff request is routed to the appropriate owner without source mutation or a partial investigation."
+- case: ask-repo-refuses-effort-estimate
+  skill: tk-ask-repo
+  expect: "An effort or schedule request reports evidence-supported scale only and refuses a time estimate."
+- case: ask-repo-search-failure-is-unverifiable
+  skill: tk-ask-repo
+  expect: "A failed anchor search lists the searches run and returns Unverifiable instead of reporting absence."
+- case: ask-repo-blocks-contradicted-premise
+  skill: tk-ask-repo
+  expect: "A premise contradicted by repository evidence is reported as a contradiction and stops Blocked."

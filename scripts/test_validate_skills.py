@@ -44,6 +44,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
         self.assertEqual(
             EXPECTED_SKILLS,
             {
+                "tk-ask-repo",
                 "tk-browser-verify",
                 "tk-drive",
                 "tk-grill-me",
@@ -59,9 +60,18 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "tk-to-tickets",
             },
         )
-        self.assertEqual(USER_INVOKED_SKILLS, {"tk-drive"})
+        self.assertEqual(USER_INVOKED_SKILLS, {"tk-ask-repo", "tk-drive"})
         self.assertTrue(
             {
+                "ask-repo-value-finds-assignment-origin",
+                "ask-repo-impact-sweeps-consumers",
+                "ask-repo-existence-distinguishes-states",
+                "ask-repo-attribution-uses-transport",
+                "ask-repo-blocks-two-candidate-ambiguity",
+                "ask-repo-refuses-implementation-diff",
+                "ask-repo-refuses-effort-estimate",
+                "ask-repo-search-failure-is-unverifiable",
+                "ask-repo-blocks-contradicted-premise",
                 "drive-requires-explicit-start",
                 "drive-resumes-pending-answer",
                 "drive-does-not-auto-reflect",

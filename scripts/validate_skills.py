@@ -66,6 +66,12 @@ USER_DECISION_CONTRACT_TOKENS = (
     "Hermes Agent: `clarify`",
 )
 CATALOG_ROUTING_BOUNDARIES = {
+    "tk-ask-repo vs ordinary repository Q&A",
+    "tk-ask-repo vs tk-implement",
+    "tk-ask-repo vs tk-grill-me",
+    "tk-ask-repo vs runtime reproduction",
+    "tk-ask-repo vs general technical knowledge",
+    "tk-ask-repo vs effort estimation",
     "tk-to-spec vs tk-to-tickets",
     "tk-reflect vs tk-grooming",
     "tk-learn vs tk-reflect/tk-grooming",
@@ -85,6 +91,7 @@ CATALOG_ROUTING_BOUNDARIES = {
 HYBRID_TRIGGER_FACETS = {"formal", "casual", "typo", "ko-en", "short", "compound"}
 HANGUL_SYLLABLE = re.compile(r"[가-힣]")
 EXPECTED_SKILLS = {
+    "tk-ask-repo",
     "tk-browser-verify",
     "tk-drive",
     "tk-grill-me",
@@ -100,12 +107,22 @@ EXPECTED_SKILLS = {
     "tk-to-tickets",
 }
 USER_INVOKED_SKILLS = {
+    "tk-ask-repo",
     "tk-drive",
 }
 HYBRID_SKILLS = EXPECTED_SKILLS - USER_INVOKED_SKILLS
 KEBAB = re.compile(r"^tk-[a-z0-9]+(?:-[a-z0-9]+)*$")
 LINK = re.compile(r"\[[^]]*]\(([^)]+)\)")
 REQUIRED_BEHAVIOR_CASES = {
+    "ask-repo-value-finds-assignment-origin",
+    "ask-repo-impact-sweeps-consumers",
+    "ask-repo-existence-distinguishes-states",
+    "ask-repo-attribution-uses-transport",
+    "ask-repo-blocks-two-candidate-ambiguity",
+    "ask-repo-refuses-implementation-diff",
+    "ask-repo-refuses-effort-estimate",
+    "ask-repo-search-failure-is-unverifiable",
+    "ask-repo-blocks-contradicted-premise",
     "implement-auto-decides-unspecified-strategy",
     "implement-respects-explicit-strategy",
     "implement-routes-visible-ui-through-browser-verify",
@@ -537,7 +554,7 @@ def validate_repository_contract() -> list[str]:
     required_text = {
         "README.md": (
             "TigerKit 20.1.6",
-            "13",
+            "14",
             "Claude Code",
             "Codex",
             "Hermes Agent",
@@ -1145,7 +1162,7 @@ def validate_eval_fixtures() -> list[str]:
         if duplicates:
             errors.append(f"evals/trigger-cases.yaml: duplicate skills: {', '.join(sorted(set(duplicates)))}")
         if set(entries) != EXPECTED_SKILLS:
-            errors.append("evals/trigger-cases.yaml: cover exactly the 13 canonical skills")
+            errors.append("evals/trigger-cases.yaml: cover exactly the 14 canonical skills")
         for skill, values in sorted(entries.items()):
             if skill in USER_INVOKED_SKILLS:
                 if values["examples"] < 2:

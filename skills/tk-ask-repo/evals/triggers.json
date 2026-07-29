@@ -1,0 +1,72 @@
+{
+  "skill": "tk-ask-repo",
+  "kind": "user-invoked",
+  "queries": [
+    {
+      "id": "train-explicit-value",
+      "split": "train",
+      "query": "$tk-ask-repo 화면의 Display name 값이 틀린 것 같은데 어디서 오는지 조사해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "train-implicit-block",
+      "split": "train",
+      "query": "화면의 Display name 값이 틀린 것 같은데 어디서 오는지 조사해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-impact",
+      "split": "validation",
+      "query": "$tk-ask-repo 이 심볼을 바꾸면 무엇이 깨지는지 조사해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-existence",
+      "split": "validation",
+      "query": "/tk-ask-repo 이 기능이 현재 base에 있는지 조사해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-attribution",
+      "split": "validation",
+      "query": "$tk-ask-repo QA에서는 보이는데 운영에서는 안 보이는 원인이 소비 측인지 생산 측인지 조사해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-structure",
+      "split": "validation",
+      "query": "$tk-ask-repo 이 endpoint에서 store까지 흐름이 어떻게 이어지는지 조사해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-ordinary-question",
+      "split": "validation",
+      "query": "이 값이 왜 이렇게 내려오는지 조사해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-implementation-request",
+      "split": "validation",
+      "query": "이 버그를 고치고 commit해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-decision-request",
+      "split": "validation",
+      "query": "이 기능을 유지하는 게 좋을지 결정해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-general-knowledge",
+      "split": "validation",
+      "query": "Python TypedDict 사용법을 알려줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-effort-estimate",
+      "split": "validation",
+      "query": "이 기능을 고치는 데 며칠 걸릴지 추정해줘",
+      "should_trigger": false
+    }
+  ]
+}
