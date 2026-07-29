@@ -41,7 +41,7 @@
     {
       "id": "drive-resumes-pending-answer",
       "path": "success",
-      "prompt": "[active tk-drive → tk-grill-me pending question: A or B?] A로 진행해",
+      "prompt": "[active tk-drive → tk-grill-me pending question: A or B? Original handoff: Success state: confirmed; Outstanding transition: spec gate] A로 진행해",
       "expected_output": "tk-grill-me가 답변을 반영해 confirmed receipt를 반환하면 drive가 decision source traceability를 갱신하고 spec gate부터 자동 계속한다.",
       "assertions": [
         {
@@ -400,7 +400,7 @@
     {
       "id": "drive-continues-after-ready-spec",
       "path": "success",
-      "prompt": "[active tk-drive] tk-to-spec이 Ready receipt를 반환했습니다. 추가 사용자 결정은 없고 source는 하나의 작은 vertical slice입니다. 여기서 상태만 보고하고 멈추지 말고 완료해 주세요.",
+      "prompt": "[active tk-drive] The original handoff recorded Success state: Ready and Outstanding transition: ticket decision. tk-to-spec returned Ready and echoed that transition. 추가 사용자 결정은 없고 source는 하나의 작은 vertical slice입니다. 여기서 상태만 보고하고 멈추지 말고 완료해 주세요.",
       "expected_output": "Ready receipt를 response boundary로 삼지 않고 같은 active turn에서 no-ticket 결정을 거쳐 tk-implement, aggregate verification, 명시적 terminal receipt까지 진행한다.",
       "assertions": [
         {
@@ -558,7 +558,7 @@
     {
       "id": "drive-reruns-spec-after-grill",
       "path": "success",
-      "prompt": "[active tk-drive] tickets phase가 새 사용자 결정을 요구해 Blocked였고 tk-grill-me가 confirmed Decisions를 반환했습니다. 기존 Ready spec과 tickets부터 이어서 처리해 주세요.",
+      "prompt": "[active tk-drive] The decision handoff recorded Success state: confirmed and Outstanding transition: spec gate. tickets phase가 새 사용자 결정을 요구해 Blocked였고 tk-grill-me가 confirmed Decisions와 그 transition echo를 반환했습니다. 기존 Ready spec과 tickets부터 이어서 처리해 주세요.",
       "expected_output": "새 Decisions를 source traceability에 반영하고 tk-to-spec Ready gate를 다시 통과한 뒤에만 tickets를 재도출한다.",
       "assertions": [
         {

@@ -180,6 +180,33 @@ class CanonicalSkillContractTest(unittest.TestCase):
             self.assertIn("no small-task exception", text)
             self.assertIn("`tk-to-spec`", text)
 
+    def test_active_drive_success_fixtures_include_transition_envelope(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        fixtures = {
+            "tk-drive": (
+                "drive-resumes-pending-answer",
+                "drive-continues-after-ready-spec",
+                "drive-reruns-spec-after-grill",
+            ),
+            "tk-grill-me": ("grill-returns-control-to-drive",),
+            "tk-to-spec": ("to-spec-active-drive-handoff",),
+            "tk-to-tickets": ("to-tickets-active-drive-handoff",),
+            "tk-implement": ("implement-active-drive-handoff-triggers",),
+        }
+
+        for skill, case_ids in fixtures.items():
+            payload = json.loads(
+                (root / f"skills/{skill}/evals/evals.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            cases = {case["id"]: case for case in payload["evals"]}
+            for case_id in case_ids:
+                with self.subTest(skill=skill, case=case_id):
+                    prompt = cases[case_id]["prompt"]
+                    self.assertIn("Success state:", prompt)
+                    self.assertIn("Outstanding transition:", prompt)
+
     def test_reflect_and_grooming_share_exact_placement_rubric(self) -> None:
         root = Path(__file__).resolve().parents[1]
         reflect = (

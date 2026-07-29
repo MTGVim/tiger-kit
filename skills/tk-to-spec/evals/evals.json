@@ -191,7 +191,7 @@
     {
       "id": "to-spec-active-drive-handoff",
       "path": "success",
-      "prompt": "[active tk-drive spec handoff] Use the confirmed source and decisions for task TASK-02 to write and revalidate a Ready spec, then return Phase: spec with path and R/AC IDs.",
+      "prompt": "[active tk-drive spec handoff] Success state: Ready. Outstanding transition: ticket decision. Use the confirmed source and decisions for task TASK-02 to write and revalidate a Ready spec, then return Phase: spec with path and R/AC IDs.",
       "expected_output": "standalone과 같은 Ready gate를 적용하고 task identity/source traceability를 보존한 drive-consumable spec receipt를 반환하며 tickets나 implementation을 소유하지 않는다.",
       "assertions": [
         {

@@ -483,7 +483,7 @@
     {
       "id": "implement-active-drive-handoff-triggers",
       "path": "success",
-      "prompt": "[active tk-drive implementation handoff] Implement ticket TK-02 covering R8-R11 as one unit, verify it, review it, and return the commit receipt.",
+      "prompt": "[active tk-drive implementation handoff] Success state: Pass. Outstanding transition: aggregate verification. Implement ticket TK-02 covering R8-R11 as one unit, verify it, review it, and return the commit receipt.",
       "expected_output": "명시적인 active-drive implementation handoff를 tk-implement 범위로 받아 ticket/R/AC와 initial HEAD를 보존하고 unit-level Pass receipt와 commit SHA를 반환한다.",
       "assertions": [
         {

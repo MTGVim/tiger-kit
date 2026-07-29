@@ -149,7 +149,7 @@
     {
       "id": "grill-returns-control-to-drive",
       "path": "success",
-      "prompt": "[active tk-drive / tk-grill-me closure] Scope, Constraints, Outputs, Verification이 모두 확정되었고 제시된 한 문장 목표를 사용자가 명시적으로 승인했습니다.",
+      "prompt": "[active tk-drive / tk-grill-me closure] Success state: confirmed. Outstanding transition: spec gate. Scope, Constraints, Outputs, Verification이 모두 확정되었고 제시된 한 문장 목표를 사용자가 명시적으로 승인했습니다.",
       "expected_output": "Status confirmed와 중복 없는 Decisions 참조, assumptions, remaining risks, Return to tk-drive를 반환하고 spec/tickets/implementation을 직접 호출하지 않는다.",
       "assertions": [
         {
