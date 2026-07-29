@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "/tk-ask-repo `evals/fixtures/value_flow/`의 Profile 화면에서 `Display name` 값이 legal name으로 보여. 어디를 고쳐야 하는지 조사해줘.",
+    "expected": "질문을 A로 분류하고 소비 표현식, transport 선언, producer 대입 지점까지 하강한 뒤 sibling `short_name`과 전체 소비처를 분류해 `Must change`와 `Must not change`를 보고한다."
+  },
+  {
+    "id": 2,
+    "prompt": "/tk-ask-repo `evals/fixtures/value_flow/`에서 payload의 `display_name`을 `short_name`으로 바꾸면 무엇이 깨지는지 전수 조사해줘.",
+    "expected": "검증한 검색 semantics와 제외 범위를 밝히고 모든 reader/writer를 must change, must not change, unclear로 분류한다."
+  }
+]

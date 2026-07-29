@@ -31,8 +31,13 @@ evidence.
 
 Standalone and drive handoff use the same Ready contract. In a drive handoff,
 preserve task identity and source traceability; return `Phase: spec`, status,
-artifact path, and R/AC IDs. If status is not `Ready`, do not create a substitute
-spec or weaken the verdict so drive can continue.
+artifact path, and R/AC IDs. The handoff also supplies `Success state` and
+`Outstanding transition`. On `Ready`, include `Return to: tk-drive` and echo
+the parent-supplied `Outstanding transition` verbatim without choosing or
+executing it. A missing or mismatched `Success state` or transition cannot
+produce a successful active-drive receipt; return `Blocked`. If status is not
+`Ready`, do not create a substitute spec or weaken the verdict so drive can
+continue.
 
 ## Workflow
 
@@ -42,11 +47,14 @@ spec or weaken the verdict so drive can continue.
    `verified | unverified`.
 3. `separate and identify`: separate facts, decisions, assumptions, and
    unresolved conflicts; assign stable requirement and acceptance IDs.
-4. `Ready gate`: return `Ready | Draft | Blocked | Unverifiable` with missing
+4. `vertical slicing candidate areas`: group related R/AC by user-visible
+   behavior and coupling evidence without deciding independence, ticket shape,
+   IDs, or whether a ledger is justified.
+5. `Ready gate`: return `Ready | Draft | Blocked | Unverifiable` with missing
    evidence.
-5. `write/print and verify`: write the selected output or print-only result,
+6. `write/print and verify`: write the selected output or print-only result,
    then revalidate required elements, source map, and IDs.
-6. `receipt`: connect phase, path, status, source map, unverified items,
+7. `receipt`: connect phase, path, status, source map, unverified items,
    conflicts, and verification in a standalone or drive-consumable receipt.
 
 Write to the user-designated path, print only when requested, otherwise write
@@ -90,10 +98,17 @@ seam exists, state that gap in verification planning.
 
 Use `Ready` only when the spec includes problem, goal, included/excluded scope,
 requirements, acceptance criteria, verification, source traceability, and
-verifiability with no unresolved conflict. Otherwise use `Draft`, `Blocked`,
-or `Unverifiable`. The receipt records phase, path, status, and R/AC IDs, then
-references the source-map, unverified, conflict, and verification sections
-instead of restating their content.
+verifiability with no unresolved conflict. It also includes a compact
+`Vertical slicing candidate areas` table with area label, user-visible
+behavior, R/AC coverage, and coupling evidence. Areas are non-authoritative
+inputs, not slices or tickets: drive alone decides whether a ledger is
+justified, and `tk-to-tickets` alone owns decomposition, ticket IDs, coverage,
+and dependencies. Otherwise use `Draft`, `Blocked`, or `Unverifiable`.
+
+User-facing output is one compact receipt; the artifact owns the spec body.
+The receipt starts with `Outcome: <one user-facing sentence>`, then records
+phase, path, status, and R/AC IDs and references the source-map, candidate-area,
+unverified, conflict, and verification sections instead of restating them.
 
 ### 🔴 HARD GATE · source UI writing
 
@@ -129,33 +144,15 @@ canonical status tokens, IDs, and receipt keys.
 
 ## User decision questions
 
-When this skill reaches a user-owned decision, ask exactly one question at a
-time. Render `Question` before `Recommendation` and the proposals. Offer
-two or three mutually exclusive proposals and state the material tradeoff of
-each. Make `Question` self-contained: summarize the
-evidence-derived context, decision impact, and unresolved axis in user-facing
-language before asking. It must not require the user to decode raw `Evidence`.
-Mark exactly one best recommendation by ending its label with a localized marker such as
-`(Recommended)` or `(추천)`. A host-generated custom or Other choice does not
-count as an authored proposal.
+When a user-owned decision blocks progress, ask one self-contained `Question`
+before any `Recommendation`. Show only decision-relevant evidence, two or three
+mutually exclusive options with material tradeoffs, and exactly one label
+ending `(Recommended)` or `(추천)`.
 
-When the active question tool exposes
-option previews, prototype cards, or equivalent rich choice surfaces and a concrete preview can clarify the
-decision, use it proactively. Do not invent unsupported fields or use this
-presentation rule to bypass existing prototype or phase boundaries.
-
-If the current execution context exposes a native structured user-input tool,
-the skill must call that tool. Plain-text questions are allowed only when no
-such tool is exposed. A failed or rejected tool call is not tool absence: report
-the failure and preserve the pending or blocked state instead of silently
-downgrading to prose. Host examples:
-
-- Claude Code: `AskUserQuestion`
-- Codex: `request_user_input`
-- Hermes Agent: `clarify`
-
-This contract changes question presentation only. It does not grant new
-decision authority or weaken any existing stop, approval, or phase boundary.
+Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex
+`request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only
+when none is exposed. A failed or rejected call is not absence; preserve
+`Pending | Blocked`. This changes presentation, not authority or stop gates.
 
 ## DO NOT / ANTI-PATTERNS
 

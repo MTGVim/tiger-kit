@@ -19,9 +19,10 @@ artifact presence, generic continuation, or merely because drive is active.
 
 Standalone and drive handoff use the same closure contract. A drive handoff
 includes task identity, current source and evidence, confirmed decisions, and
-unresolved user-owned decisions. This skill owns only decision closure. It
-never writes source, spec, tickets, ADRs, or commits and never invokes
-downstream phase owners.
+unresolved user-owned decisions plus the parent-supplied `Success state` and
+`Outstanding transition`. This skill owns only decision closure. It never
+writes source, spec, tickets, ADRs, or commits and never invokes downstream
+phase owners.
 
 ## Contract
 
@@ -136,11 +137,11 @@ Confirmed terms may later enter a spec, but this skill does not create or edit
 Use only non-empty final sections: `## Decisions`, `## Assumptions`,
 `## Remaining risks`, and `## Receipt`. `## Decisions` alone owns decision
 content. Do not add a second combined-goal summary. In `## Receipt`, record
-`Phase: decision`, `Status`, source or user-answer evidence, whether decisions
-were applied, the `## Decisions` reference when it exists, and `Return to`.
-Do not duplicate decisions in the receipt. On a question turn with no decision,
-omit the Decisions reference and return the unresolved ledger item with
-`pending`.
+`Outcome: <one user-facing sentence>`, `Phase: decision`, `Status`, source or
+user-answer evidence, whether decisions were applied, the `## Decisions`
+reference when it exists, and `Return to`. Do not duplicate decisions in the
+receipt. On a question turn with no decision, omit the Decisions reference and
+return the unresolved ledger item with `pending`.
 
 Native `Status` uses `confirmed | pending | aborted | Blocked | Unverifiable`.
 For an orchestrator terminal result, map these respectively to
@@ -149,40 +150,26 @@ For an orchestrator terminal result, map these respectively to
 For a standalone call, `Return to` is the user and the final response may
 suggest explicit `tk-to-spec` use without invoking it. For an active-drive
 handoff, `Return to` is `tk-drive`; only `confirmed` permits drive to resume at
-the spec gate.
+the spec gate. A `confirmed` active-drive receipt must include
+`Return to: tk-drive` and echo the parent-supplied `Outstanding transition`
+verbatim. A missing or mismatched `Success state` or transition cannot produce
+a successful active-drive receipt; return `Blocked` without choosing or
+executing the transition.
 
 Write user-facing questions and receipts in the user's language while
 preserving canonical fields and status tokens.
 
 ## User decision questions
 
-When this skill reaches a user-owned decision, ask exactly one question at a
-time. Render `Question` before `Recommendation` and the proposals. Offer
-two or three mutually exclusive proposals and state the material tradeoff of
-each. Make `Question` self-contained: summarize the
-evidence-derived context, decision impact, and unresolved axis in user-facing
-language before asking. It must not require the user to decode raw `Evidence`.
-Mark exactly one best recommendation by ending its label with a localized marker such as
-`(Recommended)` or `(추천)`. A host-generated custom or Other choice does not
-count as an authored proposal.
+When a user-owned decision blocks progress, ask one self-contained `Question`
+before any `Recommendation`. Show only decision-relevant evidence, two or three
+mutually exclusive options with material tradeoffs, and exactly one label
+ending `(Recommended)` or `(추천)`.
 
-When the active question tool exposes
-option previews, prototype cards, or equivalent rich choice surfaces and a concrete preview can clarify the
-decision, use it proactively. Do not invent unsupported fields or use this
-presentation rule to bypass existing prototype or phase boundaries.
-
-If the current execution context exposes a native structured user-input tool,
-the skill must call that tool. Plain-text questions are allowed only when no
-such tool is exposed. A failed or rejected tool call is not tool absence: report
-the failure and preserve the pending or blocked state instead of silently
-downgrading to prose. Host examples:
-
-- Claude Code: `AskUserQuestion`
-- Codex: `request_user_input`
-- Hermes Agent: `clarify`
-
-This contract changes question presentation only. It does not grant new
-decision authority or weaken any existing stop, approval, or phase boundary.
+Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex
+`request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only
+when none is exposed. A failed or rejected call is not absence; preserve
+`Pending | Blocked`. This changes presentation, not authority or stop gates.
 
 ## DO NOT / ANTI-PATTERNS
 

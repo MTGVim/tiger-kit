@@ -5,15 +5,15 @@
       "id": "legacy-1",
       "path": "success",
       "prompt": "/tk-reflect 이번 diff에서 반복적으로 확인된 검증 규칙 후보를 repo rule·repo skill·user rule·user skill·persistent memory의 다섯 축으로 분류해 보고해 주세요. 적용은 하지 마세요.",
-      "expected_output": "repo rule·repo skill·user rule·user skill·persistent memory로 분류하고 evidence·interpretation·confidence·action을 분리한 report-only pending receipt를 낸다.",
+      "expected_output": "repo rule·repo skill·user rule·user skill·persistent memory로 분류하고 후보와 report-only terminal status가 pending인 compact Disposition과 Receipt를 낸다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "repo rule·repo skill·user rule·user skill·persistent memory로 분류하고 evidence·interpretation·confidence·action을 분리한 report-only pending receipt를 낸다."
+          "criterion": "repo rule·repo skill·user rule·user skill·persistent memory로 분류하고 후보 상태와 run terminal status를 섞지 않는다."
         },
         {
           "type": "judge",
-          "criterion": "각 후보에서 Evidence는 관찰, Interpretation은 재사용 범위·경계 가설, Confidence는 등급·Basis Evidence ID·불확실성, 초안은 실제 처방만 소유하고 서로의 내용을 반복하지 않으며, 별도 이 대상인 이유·작업·학습 내용 필드 없이 Receipt에는 상태와 필드 참조만 남긴다."
+          "criterion": "채팅에는 decision-relevant Disposition과 Receipt만 두고 evidence 본문·로그·Receipt를 반복하지 않으며, 명시적 report-artifact 요청이 없으므로 .tigerkit/reflect.md를 포함한 어떤 파일도 쓰지 않는다."
         },
         {
           "type": "terminal_status",
@@ -21,6 +21,10 @@
         },
         {
           "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
         }
       ],
       "darwin": true
@@ -279,16 +283,16 @@
     {
       "id": "numbered-summary-target-table",
       "path": "success",
-      "prompt": "/tk-reflect verified evidence에서 서로 다른 재사용 후보 2개를 report-only로 정리해 주세요. 본문과 맨 아래 요약에서 번호와 적용 타깃이 분명해야 합니다.",
-      "expected_output": "후보에 RF-01과 RF-02를 한 번 부여해 모든 본문 필드와 Receipt에서 유지하고, 마지막 Summary 고정 표에 ID별 한 줄 요약과 구체적인 적용 타깃을 정확히 한 행씩 출력한다.",
+      "prompt": "/tk-reflect verified evidence에서 서로 다른 재사용 후보 2개를 report-only로 정리해 주세요. 번호와 적용 타깃이 분명한 간결한 표만 보여 주세요.",
+      "expected_output": "후보에 RF-01과 RF-02를 한 번 부여하고 Disposition 표에 action/status·target·evidence refs를 정확히 한 행씩 출력한 뒤 Receipt에서 ID만 참조한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "모든 후보가 발견 순서의 RF-01, RF-02 ID를 가지며 대상·Evidence·Interpretation·Confidence·Action·초안(있는 경우)·Receipt에서 동일 ID를 유지하고, ID 없는 후보나 섹션별 재번호화가 없다."
+          "criterion": "모든 후보가 발견 순서의 RF-01, RF-02 ID를 가지며 Disposition·명시 요청 시 ledger·Receipt에서 동일 ID를 유지하고 ID 없는 후보나 재번호화가 없다."
         },
         {
           "type": "judge",
-          "criterion": "응답의 마지막 섹션이 정확히 No. | Rule | 한 줄 요약 | 적용 타깃 열의 Summary 표이며 각 RF ID가 정확히 한 행에 나오고, 구체적인 적용 타깃을 밝히며 상세 evidence나 초안을 반복하거나 새 evidence를 추가하지 않는다."
+          "criterion": "채팅은 ID | Candidate | Action | Target | Why의 Disposition 표와 Receipt만 포함하고 각 RF ID가 정확히 한 행에 나오며 상세 evidence·초안·작업 서술을 반복하지 않는다."
         },
         {
           "type": "terminal_status",
@@ -303,11 +307,11 @@
       "id": "empty-summary-is-not-omitted",
       "path": "boundary",
       "prompt": "/tk-reflect verified evidence를 검토했지만 재사용 가능한 rule이나 skill 후보가 없습니다. 결과만 보고해 주세요.",
-      "expected_output": "후보가 없어도 마지막 Summary 고정 표를 출력하고 없음·재사용 후보 없음·적용 없음을 한 행으로 명시한다.",
+      "expected_output": "후보가 없어도 Disposition 표에 no-op과 verified reusable evidence 없음 의미를 한 행으로 명시하고 Unverifiable로 끝낸다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "후보가 없다는 이유로 Summary를 생략하지 않고, 마지막 고정 표에 | — | 없음 | 재사용 가능한 rule/skill 후보 없음 | 적용 없음 | 의미의 한 행을 출력한다."
+          "criterion": "후보가 없다는 이유로 Disposition을 생략하지 않고 | — | None | no-op | — | no verified reusable evidence | 의미의 한 행을 출력한다."
         },
         {
           "type": "terminal_status",
@@ -433,12 +437,12 @@
     {
       "id": "reflect-bounds-summary-cell-length",
       "path": "success",
-      "prompt": "/tk-reflect 직전 Summary 표가 터미널에서 깨졌어요. evidence를 빼고 같은 표를 짧게 다시 출력해 주세요.",
-      "expected_output": "기존 RF IDs와 순서를 유지하고 Summary 약 40자, Target 약 50자의 간결한 셀로 같은 표만 재출력한다.",
+      "prompt": "/tk-reflect 직전 Disposition 표가 터미널에서 깨졌어요. 같은 IDs와 순서로 evidence 본문 없이 짧게 다시 출력해 주세요.",
+      "expected_output": "기존 RF IDs와 순서를 유지하고 decision-relevant 셀만 남긴 같은 Disposition 표와 Receipt를 재출력한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "formatting-only reprint가 후보를 재탐색·재번호화하지 않고 evidence, draft, action을 표에 넣지 않으며 target을 모호하게 자르지 않는다."
+          "criterion": "formatting-only reprint가 후보를 재탐색·재번호화하지 않고 evidence 본문·draft·작업 서술을 넣지 않으며 target을 모호하게 자르지 않는다."
         },
         {
           "type": "terminal_status",

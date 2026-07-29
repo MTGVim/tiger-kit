@@ -115,6 +115,9 @@
 - case: grill-returns-control-to-drive
   skill: tk-grill-me
   expect: "A confirmed drive handoff returns Decisions, assumptions, risks, and control to tk-drive without invoking spec, tickets, or implementation."
+- case: grill-echoes-drive-transition
+  skill: tk-grill-me
+  expect: "A confirmed active-drive receipt echoes `Return to: tk-drive` and the parent-supplied `Outstanding transition` verbatim without executing it."
 - case: implement-tdd-requires-observed-red
   skill: tk-implement
   expect: "TDD requires executing the focused test and observing a real failure before implementation."
@@ -175,6 +178,9 @@
 - case: implement-active-drive-handoff-triggers
   skill: tk-implement
   expect: "An explicit active-drive implementation handoff carrying one unit/ticket and R/AC activates the same unit contract as standalone invocation."
+- case: implement-echoes-drive-transition
+  skill: tk-implement
+  expect: "A successful active-drive implementation receipt echoes `Return to: tk-drive` and the parent-supplied `Outstanding transition` verbatim without executing drive-wide verification."
 - case: implement-ordinary-request-does-not-trigger
   skill: tk-implement
   expect: "An ordinary implementation request does not auto-activate the hybrid skill or its commit authority."
@@ -228,16 +234,19 @@
   expect: "When persistent memory and a candidate share facts but own different behavioral axes, Interpretation records the separation and any reciprocal cross-reference remains pending."
 - case: reflect-bounds-summary-cell-length
   skill: tk-reflect
-  expect: "Summary and Target stay near 40 and 50 display characters respectively, omit evidence and drafts, and a width-fix reprint preserves IDs and order."
+  expect: "A formatting-only Disposition reprint preserves IDs and order while omitting evidence bodies, drafts, and work narration."
 - case: reflect-classifies-repo-placement
   skill: tk-reflect
   expect: "The closed safety set, verified paths, immediate parent, tracked regular siblings, and threshold deterministically select root rule, nested rule, or repo skill."
 - case: reflect-numbered-summary-target-table
   skill: tk-reflect
-  expect: "Every candidate keeps one stable RF-## ID through the body and receipt, and the final fixed Summary table gives exactly one one-line rule summary and concrete application target per ID."
+  expect: "Every candidate keeps one stable RF-## ID through the compact Disposition, optional ledger, and receipt without duplicating evidence or draft prose in chat."
 - case: to-spec-does-not-create-tickets
   skill: tk-to-spec
-  expect: "A spec is produced without ticket decomposition."
+  expect: "A Ready spec records non-authoritative vertical-slicing candidate areas while drive keeps the ledger decision and tk-to-tickets keeps decomposition, IDs, coverage, and dependencies."
+- case: to-spec-records-vertical-slicing-candidate-areas
+  skill: tk-to-spec
+  expect: "Candidate areas record only a label, user-visible behavior, R/AC, and coupling evidence; they are not slices, tickets, or a ledger decision."
 - case: to-spec-structures-bug-evidence
   skill: tk-to-spec
   expect: "Bug specs separate symptom, current and expected behavior, reproduction, evidence, environment, and missing regression seam."
@@ -250,12 +259,18 @@
 - case: to-spec-active-drive-handoff
   skill: tk-to-spec
   expect: "An explicit active-drive spec handoff uses the standalone Ready contract and returns a drive-consumable phase receipt without taking downstream ownership."
+- case: to-spec-echoes-drive-transition
+  skill: tk-to-spec
+  expect: "A Ready active-drive spec receipt echoes `Return to: tk-drive` and the parent-supplied `Outstanding transition` verbatim without making the ticket decision."
 - case: to-spec-returns-decision-blocker-to-drive
   skill: tk-to-spec
   expect: "A user-decision blocker returns `User decision: required`, the new decision, and evidence in a native non-Ready receipt to drive without invoking grill or writing a substitute Ready spec."
 - case: to-tickets-does-not-create-spec
   skill: tk-to-tickets
-  expect: "Ticket decomposition does not create or modify a spec."
+  expect: "Ticket decomposition may use Ready-spec candidate areas as evidence but independently owns slice boundaries and does not create or modify the spec."
+- case: to-tickets-derives-from-candidate-areas
+  skill: tk-to-tickets
+  expect: "Candidate areas are evidence only; tk-to-tickets independently derives vertical boundaries, IDs, coverage, and dependencies."
 - case: to-tickets-initial-status-is-pending
   skill: tk-to-tickets
   expect: "Standalone ticket creation initializes every ticket as pending."
@@ -274,6 +289,9 @@
 - case: to-tickets-active-drive-handoff
   skill: tk-to-tickets
   expect: "An explicit active-drive ticket handoff uses the standalone vertical-slice contract and returns a drive-consumable ledger receipt without implementing."
+- case: to-tickets-echoes-drive-transition
+  skill: tk-to-tickets
+  expect: "A successful active-drive ticket receipt echoes `Return to: tk-drive` and the parent-supplied `Outstanding transition` verbatim without implementing."
 - case: to-tickets-returns-decision-blocker-to-drive
   skill: tk-to-tickets
   expect: "A user-decision blocker returns `User decision: required`, the new decision, and evidence in a native ticket receipt to drive without invoking grill or editing the Ready spec."
@@ -288,7 +306,7 @@
   expect: "Wide columns and narrow stacks remain simultaneous unless they harm the concept or minimum legibility, in which case an explicit A/B or A/B/C toggle is allowed."
 - case: grooming-defaults-report-only
   skill: tk-grooming
-  expect: "Findings and proposals are emitted without edits by default."
+  expect: "A compact Disposition and report-only receipt are emitted without edits by default."
 - case: grooming-vendor-artifact-remains-report-only
   skill: tk-grooming
   expect: "Resolved package-manager, updater, symlink, and history evidence routes a vendor artifact to keep (vendor) and prevents mutation even with --apply."
@@ -303,7 +321,7 @@
   expect: "The same placement rubric maps kind changes to convert, root/nested changes to move, mixed units to split, and correct placement to keep."
 - case: grooming-numbered-summary-target-table
   skill: tk-grooming
-  expect: "Every audit item keeps one stable GR-## ID through findings, proposals, apply, validation, and receipt, and the final fixed Summary table gives exactly one one-line rule summary and concrete application target per ID."
+  expect: "Every audit item keeps one stable GR-## ID through Disposition, optional apply/validation, and receipt without duplicating evidence."
 - case: legacy-global-state-is-not-scanned
   skill: tk-grooming
   expect: "Legacy global TigerKit state is not automatically discovered or migrated."
@@ -400,6 +418,12 @@
 - case: drive-continues-after-ready-spec
   skill: tk-drive
   expect: "A consumed Ready spec is never a response boundary: drive makes the ticket decision and continues through implementation and aggregate verification in the same active turn, or returns an explicit evidence-supported terminal receipt."
+- case: drive-rejects-missing-transition-echo
+  skill: tk-drive
+  expect: "A missing or mismatched child `Outstanding transition` echo is receipt drift and stops drive Blocked instead of being consumed as success."
+- case: drive-requires-spec-for-trivial-task
+  skill: tk-drive
+  expect: "Every active drive run invokes tk-to-spec and reaches Ready before the ticket decision or implementation, including trivial single-slice work."
 - case: drive-skips-grill-for-ready-source
   skill: tk-drive
   expect: "Drive skips tk-grill-me when confirmed source and evidence already support a Ready spec without a user-owned decision."
@@ -508,3 +532,30 @@
 - case: reflect-blocks-repeated-diagnosis-handoff
   skill: tk-reflect
   expect: "An equivalent Incident ID, target, and blocker recurrence ends Blocked without another handoff or reflect-diagnose cycle."
+- case: ask-repo-value-finds-assignment-origin
+  skill: tk-ask-repo
+  expect: "A value question descends past declarations to the assignment site, inspects sibling fields, sweeps consumers, and reports Must not change."
+- case: ask-repo-impact-sweeps-consumers
+  skill: tk-ask-repo
+  expect: "An impact question verifies matching semantics, sweeps all readers and writers, states exclusions, and classifies must change, must not change, and unclear consumers."
+- case: ask-repo-existence-distinguishes-states
+  skill: tk-ask-repo
+  expect: "An existence question checks the current base ref and in-flight work before distinguishing absent, unreleased, empty, and live."
+- case: ask-repo-attribution-uses-transport
+  skill: tk-ask-repo
+  expect: "Attribution follows the consuming path to its end and uses whether the correct value is already present in transport to assign ownership."
+- case: ask-repo-blocks-two-candidate-ambiguity
+  skill: tk-ask-repo
+  expect: "Two defensible candidate answers are presented with evidence and stop Blocked instead of being resolved by the investigator."
+- case: ask-repo-refuses-implementation-diff
+  skill: tk-ask-repo
+  expect: "An implementation or diff request is routed to the appropriate owner without source mutation or a partial investigation."
+- case: ask-repo-refuses-effort-estimate
+  skill: tk-ask-repo
+  expect: "An effort or schedule request reports evidence-supported scale only and refuses a time estimate."
+- case: ask-repo-search-failure-is-unverifiable
+  skill: tk-ask-repo
+  expect: "A failed anchor search lists the searches run and returns Unverifiable instead of reporting absence."
+- case: ask-repo-blocks-contradicted-premise
+  skill: tk-ask-repo
+  expect: "A premise contradicted by repository evidence is reported as a contradiction and stops Blocked."

@@ -93,6 +93,31 @@
       ]
     },
     {
+      "id": "to-tickets-derives-from-candidate-areas",
+      "path": "success",
+      "prompt": "/tk-to-tickets Ready spec의 candidate area Search는 R1/AC1, Export는 R2/AC2와 coupling evidence만 제공합니다. 이 area를 preapproved slice나 ticket ID로 취급하지 말고 독립성을 검증해 수직 티켓을 작성하세요.",
+      "expected_output": "Candidate areas를 source evidence로 사용하되 tk-to-tickets가 독립 slice boundaries, ticket IDs, coverage, dependencies를 직접 도출하고 pending ticket artifact를 작성한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "Area labels를 ticket IDs로 물려받거나 독립성을 가정하지 않고 R/AC와 coupling evidence에서 vertical decomposition을 수행한다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/tickets.md"
+        },
+        {
+          "type": "path_text_contains",
+          "path": ".tigerkit/tickets.md",
+          "text": "Status: pending"
+        }
+      ]
+    },
+    {
       "id": "to-tickets-does-not-create-spec",
       "path": "success",
       "prompt": "이 Ready spec을 수직 티켓으로 분해해줘",
@@ -204,12 +229,36 @@
     {
       "id": "to-tickets-active-drive-handoff",
       "path": "success",
-      "prompt": "[active tk-drive ticket handoff] The Ready spec has three independent vertical slices and drive decided a ledger is justified. Write and verify the ticket ledger and return Phase: tickets.",
+      "prompt": "[active tk-drive ticket handoff] Success state: Pass. Outstanding transition: first pending implementation unit. The Ready spec has three independent vertical slices and drive decided a ledger is justified. Write and verify the ticket ledger and return Phase: tickets.",
       "expected_output": "standalone과 같은 vertical-slice contract로 ticket IDs, source R/AC coverage, dependencies와 terminal state를 반환하고 implementation으로 진행하지 않는다.",
       "assertions": [
         {
           "type": "judge",
           "criterion": "explicit active-drive ticket handoff를 positive로 처리하되 ticket 필요성 판단을 다시 소유하거나 구현하지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "to-tickets-echoes-drive-transition",
+      "path": "success",
+      "prompt": "[active tk-drive ticket handoff] Success state: Pass. Outstanding transition: implementation unit TK-02. The Ready spec has two independent vertical slices. Write and revalidate the ledger, then return the receipt.",
+      "expected_output": "Pass receipt에 Return to: tk-drive와 parent가 준 Outstanding transition: implementation unit TK-02를 그대로 포함하고 implementation을 실행하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "active-drive Pass receipt가 parent-supplied transition을 verbatim echo하고 implementation phase를 실행하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "Return to: tk-drive"
+        },
+        {
+          "type": "output_contains",
+          "text": "Outstanding transition: implementation unit TK-02"
         },
         {
           "type": "terminal_status",

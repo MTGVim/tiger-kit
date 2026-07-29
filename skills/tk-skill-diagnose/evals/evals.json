@@ -53,12 +53,16 @@
     {
       "id": "skill-diagnose-separates-grader-false-negative",
       "path": "success",
-      "prompt": "/tk-skill-diagnose actual output과 Git state는 contract를 충족하지만 regex grader만 실패한 case를 분석해 주세요.",
-      "expected_output": "정상 deliverable과 잘못된 assertion을 대조해 evaluation plane으로 분류하고 skill body 확대 대신 grader owner를 제안한다.",
+      "prompt": "/tk-skill-diagnose Target exact path: skills/tk-implement/SKILL.md. Origin/ref: TigerKit canonical current HEAD. Host/invocation: Codex direct. Observed prompt: 작은 문구 변경을 구현·검증·커밋. Expected: Changed·Verification·Receipt와 unchanged remote state. Observed: output과 git show evidence는 contract를 충족했지만 regex grader가 별도 Commit heading이 없다고 실패. Evidence commands: git show --stat HEAD, git status --short. Candidate/baseline refs: current HEAD / previous HEAD.",
+      "expected_output": "정상 deliverable과 잘못된 assertion을 대조해 evaluation plane으로 분류하고 skill body 확대 대신 grader owner를 제안하며 Diagnosis·Action·Receipt만 간결하게 출력한다.",
       "assertions": [
         {
           "type": "judge",
           "criterion": "Normal output의 deterministic evidence와 failing grader criterion을 분리하고 evaluation owner를 정확히 지목한다."
+        },
+        {
+          "type": "judge",
+          "criterion": "채팅에는 Diagnosis·Action·필요한 Remaining uncertainty·Receipt만 두고 Target/Incident/Reproduction 등 열 개의 절차 섹션이나 raw command output을 반복하지 않는다."
         },
         {
           "type": "output_contains",
@@ -188,6 +192,10 @@
         {
           "type": "judge",
           "criterion": "Candidate가 한 root-cause theme로 제한되고 incident/control/holdout 및 두 clean final checks가 분리된다."
+        },
+        {
+          "type": "judge",
+          "criterion": "실험 evidence가 다섯 행을 넘으면 compact .tigerkit/skill-diagnosis.md가 세부 evidence refs를 소유하고 chat은 Diagnosis·Action·Receipt만 보여 준다."
         },
         {
           "type": "terminal_status",

@@ -149,7 +149,7 @@
     {
       "id": "grill-returns-control-to-drive",
       "path": "success",
-      "prompt": "[active tk-drive / tk-grill-me closure] Scope, Constraints, Outputs, Verification이 모두 확정되었고 제시된 한 문장 목표를 사용자가 명시적으로 승인했습니다.",
+      "prompt": "[active tk-drive / tk-grill-me closure] Success state: confirmed. Outstanding transition: spec gate. Scope, Constraints, Outputs, Verification이 모두 확정되었고 제시된 한 문장 목표를 사용자가 명시적으로 승인했습니다.",
       "expected_output": "Status confirmed와 중복 없는 Decisions 참조, assumptions, remaining risks, Return to tk-drive를 반환하고 spec/tickets/implementation을 직접 호출하지 않는다.",
       "assertions": [
         {
@@ -163,6 +163,33 @@
         {
           "type": "output_contains",
           "text": "tk-drive"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "grill-echoes-drive-transition",
+      "path": "success",
+      "prompt": "[active tk-drive decision handoff] Success state: confirmed. Outstanding transition: spec gate. The user explicitly confirmed the only pending decision. Return the decision receipt.",
+      "expected_output": "confirmed receipt에 Return to: tk-drive와 parent가 준 Outstanding transition: spec gate를 그대로 포함하고 downstream phase를 실행하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "active-drive confirmed receipt가 parent-supplied transition을 verbatim echo하고 그 transition을 직접 실행하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "Return to: tk-drive"
+        },
+        {
+          "type": "output_contains",
+          "text": "Outstanding transition: spec gate"
         },
         {
           "type": "terminal_status",

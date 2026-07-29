@@ -109,6 +109,22 @@
       ]
     },
     {
+      "id": "to-spec-records-vertical-slicing-candidate-areas",
+      "path": "success",
+      "prompt": "/tk-to-spec R1/AC1 검색 동작과 R2/AC2 내보내기 동작을 포함한 Ready spec을 작성해 주세요. 티켓 분해나 ledger 결정은 하지 말고 vertical slicing candidate areas만 기록하세요.",
+      "expected_output": "Vertical slicing candidate areas가 area label·user-visible behavior·R/AC·coupling evidence만 기록하고 독립 slice, ticket ID, coverage, dependency, ledger justified 결정을 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "Candidate areas는 비권위 입력으로만 존재하며 drive의 ledger decision과 tk-to-tickets의 decomposition·ID·coverage·dependency ownership을 침범하지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
       "id": "to-spec-structures-bug-evidence",
       "path": "success",
       "prompt": "로그인 실패 버그의 현재/기대 동작, 재현, evidence와 missing seam을 구현 명세로 작성해줘",
@@ -191,12 +207,36 @@
     {
       "id": "to-spec-active-drive-handoff",
       "path": "success",
-      "prompt": "[active tk-drive spec handoff] Use the confirmed source and decisions for task TASK-02 to write and revalidate a Ready spec, then return Phase: spec with path and R/AC IDs.",
+      "prompt": "[active tk-drive spec handoff] Success state: Ready. Outstanding transition: ticket decision. Use the confirmed source and decisions for task TASK-02 to write and revalidate a Ready spec, then return Phase: spec with path and R/AC IDs.",
       "expected_output": "standalone과 같은 Ready gate를 적용하고 task identity/source traceability를 보존한 drive-consumable spec receipt를 반환하며 tickets나 implementation을 소유하지 않는다.",
       "assertions": [
         {
           "type": "judge",
           "criterion": "explicit active-drive spec handoff를 positive로 처리하되 Ready가 아닌 결과를 inline 보완하지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "to-spec-echoes-drive-transition",
+      "path": "success",
+      "prompt": "[active tk-drive spec handoff] Success state: Ready. Outstanding transition: ticket decision. Write and revalidate the complete Ready spec for the supplied one-file task, then return the receipt.",
+      "expected_output": "Ready receipt에 Return to: tk-drive와 parent가 준 Outstanding transition: ticket decision을 그대로 포함하고 ticket decision을 직접 수행하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "active-drive Ready receipt가 parent-supplied transition을 verbatim echo하고 ticket 또는 implementation phase를 실행하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "Return to: tk-drive"
+        },
+        {
+          "type": "output_contains",
+          "text": "Outstanding transition: ticket decision"
         },
         {
           "type": "terminal_status",

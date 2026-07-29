@@ -24,7 +24,12 @@ Source precedence is: user-designated source, current conversation,
 Standalone and drive handoff use the same vertical-slice contract. Drive
 decides whether tickets are needed; this skill does not re-own that decision or
 proceed to implementation. Return `Phase: tickets`, path, `Status: Pass` after
-successful write/revalidation, ticket IDs, and source R/AC coverage.
+successful write/revalidation, ticket IDs, and source R/AC coverage. An active
+drive handoff also supplies `Success state` and `Outstanding transition`. On
+`Pass`, include `Return to: tk-drive` and echo the parent-supplied
+`Outstanding transition` verbatim without choosing or executing it. A missing
+or mismatched `Success state` or transition cannot produce a successful
+active-drive receipt; return `Blocked`.
 
 When an active-drive handoff exposes a missing user decision, return the native
 non-success receipt to drive. Do not invoke `tk-grill-me` or edit the Ready
@@ -36,8 +41,9 @@ cites the new decision and source evidence.
 
 1. `extract source requirements`: capture requirement/acceptance IDs, source
    locations, and `confirmed | unverified | conflict`.
-2. `vertical slices`: create candidates with initial `Status: pending`, one
-   independent goal, scope, behavior, and tests.
+2. `vertical slices`: derive independent behavior slices. Treat Ready-spec
+   candidate areas only as source evidence, never as preapproved slices or
+   ticket IDs.
 3. `acceptance and verification`: define observable acceptance criteria and
    executable verification commands or evidence.
 4. `traceability and dependencies`: map every source ID to ticket coverage,
@@ -79,6 +85,11 @@ infer implementation progress. Preserve source R/AC IDs in each ticket and in
 the coverage table. Without source IDs, cite source location and do not invent
 IDs.
 
+When a Ready spec has vertical-slicing candidate areas, use their R/AC and
+coupling evidence but independently prove slice boundaries. This skill alone
+assigns ticket IDs and owns coverage, dependencies, and ticket shape. Mutable
+status, commit receipts, and resume state also belong only in tickets.
+
 Each ticket must be executable from the artifact and its cited sources without
 hidden conversation context. Name only evidence-supported entry points, and
 include runnable verification with expected evidence; never invent exact paths
@@ -88,11 +99,19 @@ or code.
 
 Keep behavior and its tests in the same ticket; do not create horizontal
 type/API/UI/test-only tickets. If evidence cannot support independent slices,
-return `Unresolved split report`. Classify unsupported requirements or
-unresolved conflicts as `Blocked` or `Unverifiable`. The receipt records phase,
-path, status, ticket IDs/count, then references coverage, dependencies,
-evidence, unverified items, and unresolved split sections without restating
-their content.
+return `Status: Blocked` with an `Unresolved split report`. Classify unsupported
+requirements or unresolved conflicts as `Blocked` or `Unverifiable`.
+
+User-facing output uses the ticket table when multiple or Receipt Outcome when
+one; the artifact owns ticket bodies. The receipt starts with
+`Outcome: <one user-facing sentence>`, then records phase, path, status,
+ticket IDs/count and references coverage, dependencies, evidence, unverified
+items, and unresolved split sections without restating them.
+
+When more than one ticket is created, place a compact
+`Ticket | User-visible slice` table before the receipt. Use a sentence when
+only one user-relevant row exists, as Receipt Outcome. The receipt may index
+IDs/count but does not substitute for or repeat the slice rows.
 
 Keep one bug as one vertical slice from reproduction through root-cause fix,
 regression seam, original reproduction, and cleanup. Do not split it into
@@ -135,33 +154,15 @@ canonical status tokens, IDs, and receipt keys.
 
 ## User decision questions
 
-When this skill reaches a user-owned decision, ask exactly one question at a
-time. Render `Question` before `Recommendation` and the proposals. Offer
-two or three mutually exclusive proposals and state the material tradeoff of
-each. Make `Question` self-contained: summarize the
-evidence-derived context, decision impact, and unresolved axis in user-facing
-language before asking. It must not require the user to decode raw `Evidence`.
-Mark exactly one best recommendation by ending its label with a localized marker such as
-`(Recommended)` or `(추천)`. A host-generated custom or Other choice does not
-count as an authored proposal.
+When a user-owned decision blocks progress, ask one self-contained `Question`
+before any `Recommendation`. Show only decision-relevant evidence, two or three
+mutually exclusive options with material tradeoffs, and exactly one label
+ending `(Recommended)` or `(추천)`.
 
-When the active question tool exposes
-option previews, prototype cards, or equivalent rich choice surfaces and a concrete preview can clarify the
-decision, use it proactively. Do not invent unsupported fields or use this
-presentation rule to bypass existing prototype or phase boundaries.
-
-If the current execution context exposes a native structured user-input tool,
-the skill must call that tool. Plain-text questions are allowed only when no
-such tool is exposed. A failed or rejected tool call is not tool absence: report
-the failure and preserve the pending or blocked state instead of silently
-downgrading to prose. Host examples:
-
-- Claude Code: `AskUserQuestion`
-- Codex: `request_user_input`
-- Hermes Agent: `clarify`
-
-This contract changes question presentation only. It does not grant new
-decision authority or weaken any existing stop, approval, or phase boundary.
+Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex
+`request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only
+when none is exposed. A failed or rejected call is not absence; preserve
+`Pending | Blocked`. This changes presentation, not authority or stop gates.
 
 ## DO NOT / ANTI-PATTERNS
 

@@ -81,9 +81,10 @@ Use `applied` only after the atomic write and reread agree with current
 repository state. Use `reported` only for a verified no-drift resume/report
 that required no artifact write. Otherwise use `pending` or the applicable
 recovery-table stop state.
-Receipt contains disposition and section references, not duplicated paths,
-Git state, commands, results, or future work. Omit empty sections and reference
-existing spec/ticket/diff content instead of copying it.
+Receipt starts with `Outcome: <one user-facing sentence>`, then contains
+disposition and section references, not duplicated paths, Git state, commands,
+results, or future work. Omit empty sections and reference existing
+spec/ticket/diff content instead of copying it.
 
 `.tigerkit/handoff.md` is the only resume snapshot. Reference durable R/AC from
 `.tigerkit/spec.md` and multi-slice ticket IDs from `.tigerkit/tickets.md`.
@@ -122,33 +123,15 @@ canonical fields and status tokens remain unchanged.
 
 ## User decision questions
 
-When this skill reaches a user-owned decision, ask exactly one question at a
-time. Render `Question` before `Recommendation` and the proposals. Offer
-two or three mutually exclusive proposals and state the material tradeoff of
-each. Make `Question` self-contained: summarize the
-evidence-derived context, decision impact, and unresolved axis in user-facing
-language before asking. It must not require the user to decode raw `Evidence`.
-Mark exactly one best recommendation by ending its label with a localized marker such as
-`(Recommended)` or `(추천)`. A host-generated custom or Other choice does not
-count as an authored proposal.
+When a user-owned decision blocks progress, ask one self-contained `Question`
+before any `Recommendation`. Show only decision-relevant evidence, two or three
+mutually exclusive options with material tradeoffs, and exactly one label
+ending `(Recommended)` or `(추천)`.
 
-When the active question tool exposes
-option previews, prototype cards, or equivalent rich choice surfaces and a concrete preview can clarify the
-decision, use it proactively. Do not invent unsupported fields or use this
-presentation rule to bypass existing prototype or phase boundaries.
-
-If the current execution context exposes a native structured user-input tool,
-the skill must call that tool. Plain-text questions are allowed only when no
-such tool is exposed. A failed or rejected tool call is not tool absence: report
-the failure and preserve the pending or blocked state instead of silently
-downgrading to prose. Host examples:
-
-- Claude Code: `AskUserQuestion`
-- Codex: `request_user_input`
-- Hermes Agent: `clarify`
-
-This contract changes question presentation only. It does not grant new
-decision authority or weaken any existing stop, approval, or phase boundary.
+Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex
+`request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only
+when none is exposed. A failed or rejected call is not absence; preserve
+`Pending | Blocked`. This changes presentation, not authority or stop gates.
 
 ## DO NOT / ANTI-PATTERNS
 

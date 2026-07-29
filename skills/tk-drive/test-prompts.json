@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "prompt": "[active tk-drive → tk-grill-me pending question: A or B?] A로 진행해",
+    "prompt": "[active tk-drive → tk-grill-me pending question: A or B? Original handoff: Success state: confirmed; Outstanding transition: spec gate] A로 진행해",
     "expected": "tk-grill-me가 답변을 반영해 confirmed receipt를 반환하면 drive가 decision source traceability를 갱신하고 spec gate부터 자동 계속한다."
   },
   {

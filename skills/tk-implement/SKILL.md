@@ -39,8 +39,13 @@ creating tickets.
 Standalone execution and drive handoff use the same implementation, test,
 review, and commit contract. For a drive handoff, preserve task identity,
 ticket/R/AC, initial `HEAD`, and ownership; return phase, unit/ticket ID,
-commit SHA, and verification/review evidence. Do not take ownership of
-drive-wide cross-ticket verification or its final receipt.
+commit SHA, and verification/review evidence. The handoff also supplies
+`Success state` and `Outstanding transition`. On `Pass`, include
+`Return to: tk-drive` and echo the parent-supplied `Outstanding transition`
+verbatim without choosing or executing it. A missing or mismatched
+`Success state` or transition cannot produce a successful active-drive
+receipt; return `Blocked`. Do not take ownership of drive-wide cross-ticket
+verification or its final receipt.
 
 ### Terminal-state contract
 
@@ -264,65 +269,37 @@ implementation scope and candidate diff.
 Without a separate request, do not push, create a PR, merge, tag, release, or
 publish. Do not automatically invoke another user-invoked skill.
 
-Report `## Strategy`, `## Changed`, `## Verification`, `## Commit`, a
-non-empty `## Remaining risks`, and `## Receipt`. Describe unit/ticket behavior,
-not only files. Include commands and results, coverage state, failure
-classification, commit SHA/message, or why no commit exists. `Strategy` owns
-only execution mode, TDD, review choice, and reasons. `Changed` owns behavior.
-`Verification` owns commands, results, classification, and
-`hook drift: none | format-only | reverted-semantic`. `Receipt` owns
-phase, unit/ticket ID, status (`Pass | Fail | Blocked | Unverifiable`), commit
-SHA, unverified items, and R/AC-to-`Changed`/`Verification` references without
-repeating the body.
+Lead with `## Changed`, then `## Verification`, optional
+`## Remaining risks`, and `## Receipt`. Add `## Strategy` only for an explicit
+choice, exception, or plan deviation. Do not add a separate `## Commit`;
+`Receipt` starts with `Outcome: <one user-facing sentence>` and owns the commit
+SHA/message or why no commit exists.
+
+When `Changed` covers more than one independently meaningful user-visible or
+unit behavior, render a compact `Item | Change | Verification` table. Use a
+sentence when only one user-relevant row exists. Rows represent behavior, not
+files, commands, or evidence fragments.
+
+Describe user-visible or unit behavior, not only files. Summarize commands and
+results; never paste logs or narrate review mechanics. `Verification` owns
+coverage, failure classification, and
+`hook drift: none | format-only | reverted-semantic`. `Receipt` owns phase,
+unit/ticket ID, status (`Pass | Fail | Blocked | Unverifiable`), commit,
+unverified items, and R/AC references without repeating the body. Omit
+`Remaining risks` when empty. Receipt is a status/provenance index, not a
+substitute for the Changed rows.
 
 Write user-facing progress and report prose in the user's language. Preserve
 the canonical headings, status tokens, IDs, and receipt keys above.
 
 ## User decision questions
 
-When this skill reaches a user-owned decision, ask exactly one question at a
-time. Render `Question` before `Recommendation` and the proposals. Offer
-two or three mutually exclusive proposals and state the material tradeoff of
-each. Make `Question` self-contained: summarize the
-evidence-derived context, decision impact, and unresolved axis in user-facing
-language before asking. It must not require the user to decode raw `Evidence`.
-Mark exactly one best recommendation by ending its label with a localized marker such as
-`(Recommended)` or `(추천)`. A host-generated custom or Other choice does not
-count as an authored proposal.
+When a user-owned decision blocks progress, ask one self-contained `Question`
+before any `Recommendation`. Show only decision-relevant evidence, two or three
+mutually exclusive options with material tradeoffs, and exactly one label
+ending `(Recommended)` or `(추천)`.
 
-When the active question tool exposes
-option previews, prototype cards, or equivalent rich choice surfaces and a concrete preview can clarify the
-decision, use it proactively. Do not invent unsupported fields or use this
-presentation rule to bypass existing prototype or phase boundaries.
-
-If the current execution context exposes a native structured user-input tool,
-the skill must call that tool. Plain-text questions are allowed only when no
-such tool is exposed. A failed or rejected tool call is not tool absence: report
-the failure and preserve the pending or blocked state instead of silently
-downgrading to prose. Host examples:
-
-- Claude Code: `AskUserQuestion`
-- Codex: `request_user_input`
-- Hermes Agent: `clarify`
-
-This contract changes question presentation only. It does not grant new
-decision authority or weaken any existing stop, approval, or phase boundary.
-
-## DO NOT / ANTI-PATTERNS
-
-- Do not bypass hooks outside the bounded byte-preservation or hook-config
-  exceptions, commit before verification, commit a failing change, push, or
-  create a PR.
-- Do not batch standalone multi-ticket input or create tickets.
-- Do not auto-apply this hybrid skill from an ordinary implementation request
-  or merely because drive is active.
-- Do not commit production behavior without a durable test or an approved
-  named exception.
-- Do not invent coverage dependencies or percentages when tooling is absent.
-- Do not nest delegation or let a subagent invoke a user-invoked skill.
-- Do not alter source UI writing without approval or commit without exact
-  comparison.
-- Do not directly call Chrome MCP, Playwright, CDP, or a native browser before
-  applying `tk-browser-verify`.
-- Do not replace browser runtime evidence with DOM, unit-test, or build
-  success.
+Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex
+`request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only
+when none is exposed. A failed or rejected call is not absence; preserve
+`Pending | Blocked`. This changes presentation, not authority or stop gates.

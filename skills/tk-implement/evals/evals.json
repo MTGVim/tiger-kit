@@ -20,7 +20,7 @@
         },
         {
           "type": "judge",
-          "criterion": "Strategy는 실행 방식·TDD·review와 이유만, Changed는 변경 동작, Verification은 검증 명령·결과·실패 분류를 각각 한 번만 소유하고, Receipt에는 상태·미검증·requirement/acceptance ID별 섹션 참조만 남긴다."
+          "criterion": "Changed를 먼저, Verification을 다음에 두고 빈 Remaining risks와 별도 Commit 섹션을 생략한다. Strategy는 실제 선택·예외·deviation이 있을 때만 쓰며 Receipt에는 상태·commit·미검증·R/AC 참조만 남기고 로그나 review narration을 출력하지 않는다."
         },
         {
           "type": "terminal_status",
@@ -483,12 +483,36 @@
     {
       "id": "implement-active-drive-handoff-triggers",
       "path": "success",
-      "prompt": "[active tk-drive implementation handoff] Implement ticket TK-02 covering R8-R11 as one unit, verify it, review it, and return the commit receipt.",
+      "prompt": "[active tk-drive implementation handoff] Success state: Pass. Outstanding transition: aggregate verification. Implement ticket TK-02 covering R8-R11 as one unit, verify it, review it, and return the commit receipt.",
       "expected_output": "명시적인 active-drive implementation handoff를 tk-implement 범위로 받아 ticket/R/AC와 initial HEAD를 보존하고 unit-level Pass receipt와 commit SHA를 반환한다.",
       "assertions": [
         {
           "type": "judge",
           "criterion": "active drive라는 사실만이 아니라 ticket과 R/AC가 담긴 explicit implementation handoff를 positive로 처리한다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "implement-echoes-drive-transition",
+      "path": "success",
+      "prompt": "[active tk-drive implementation handoff] Success state: Pass. Outstanding transition: aggregate verification. Implement the supplied one-file ticket TK-02 as one unit, verify and review it, commit it, then return the receipt.",
+      "expected_output": "Pass receipt에 Return to: tk-drive와 parent가 준 Outstanding transition: aggregate verification을 그대로 포함하며 aggregate verification을 직접 소유하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "active-drive Pass receipt가 parent-supplied transition을 verbatim echo하고 drive-wide aggregate verification을 실행하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "Return to: tk-drive"
+        },
+        {
+          "type": "output_contains",
+          "text": "Outstanding transition: aggregate verification"
         },
         {
           "type": "terminal_status",

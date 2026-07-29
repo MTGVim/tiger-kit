@@ -44,6 +44,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
         self.assertEqual(
             EXPECTED_SKILLS,
             {
+                "tk-ask-repo",
                 "tk-browser-verify",
                 "tk-drive",
                 "tk-grill-me",
@@ -59,14 +60,25 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "tk-to-tickets",
             },
         )
-        self.assertEqual(USER_INVOKED_SKILLS, {"tk-drive"})
+        self.assertEqual(USER_INVOKED_SKILLS, {"tk-ask-repo", "tk-drive"})
         self.assertTrue(
             {
+                "ask-repo-value-finds-assignment-origin",
+                "ask-repo-impact-sweeps-consumers",
+                "ask-repo-existence-distinguishes-states",
+                "ask-repo-attribution-uses-transport",
+                "ask-repo-blocks-two-candidate-ambiguity",
+                "ask-repo-refuses-implementation-diff",
+                "ask-repo-refuses-effort-estimate",
+                "ask-repo-search-failure-is-unverifiable",
+                "ask-repo-blocks-contradicted-premise",
                 "drive-requires-explicit-start",
                 "drive-resumes-pending-answer",
                 "drive-does-not-auto-reflect",
                 "drive-invokes-phase-owners",
                 "drive-continues-after-ready-spec",
+                "drive-rejects-missing-transition-echo",
+                "drive-requires-spec-for-trivial-task",
                 "drive-invokes-grill-on-unresolved-decision",
                 "drive-skips-grill-for-ready-source",
                 "drive-reruns-spec-after-grill",
@@ -76,10 +88,13 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "drive-scopes-approval-to-asked-axis",
                 "drive-reads-complete-remote-source",
                 "grill-accepts-active-drive-handoff",
+                "grill-echoes-drive-transition",
                 "grill-returns-control-to-drive",
                 "grill-uses-native-question-tool",
+                "to-spec-echoes-drive-transition",
                 "to-spec-returns-decision-blocker-to-drive",
                 "to-spec-blocks-source-current-ui-mismatch",
+                "to-tickets-echoes-drive-transition",
                 "to-tickets-returns-decision-blocker-to-drive",
                 "to-tickets-blocks-source-current-ui-mismatch",
                 "implement-reviews-every-standalone-run",
@@ -88,6 +103,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "implement-allows-bounded-hook-bypass",
                 "implement-diagnoses-unknown-cause-failure",
                 "implement-active-drive-handoff-triggers",
+                "implement-echoes-drive-transition",
                 "implement-blocks-source-current-ui-mismatch",
                 "implement-production-behavior-requires-durable-test",
                 "grooming-vendor-artifact-remains-report-only",
@@ -126,6 +142,71 @@ class CanonicalSkillContractTest(unittest.TestCase):
             )
         )
 
+    def test_drive_success_receipts_echo_the_outstanding_transition(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        drive = (root / "skills/tk-drive/SKILL.md").read_text(encoding="utf-8")
+        phases = (root / "skills/tk-drive/references/phases.md").read_text(
+            encoding="utf-8"
+        )
+
+        for text in (drive, phases):
+            self.assertIn("`Success state`", text)
+            self.assertIn("`Outstanding transition`", text)
+            self.assertIn("missing or mismatched", text)
+
+        for skill in (
+            "tk-grill-me",
+            "tk-to-spec",
+            "tk-to-tickets",
+            "tk-implement",
+        ):
+            with self.subTest(skill=skill):
+                text = (root / f"skills/{skill}/SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                self.assertIn("`Return to: tk-drive`", text)
+                self.assertIn("`Outstanding transition`", text)
+                self.assertIn("verbatim", text)
+
+    def test_drive_requires_spec_for_trivial_tasks(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        drive = (root / "skills/tk-drive/SKILL.md").read_text(encoding="utf-8")
+        phases = (root / "skills/tk-drive/references/phases.md").read_text(
+            encoding="utf-8"
+        )
+
+        for text in (drive, phases):
+            self.assertIn("every active drive run", text)
+            self.assertIn("no small-task exception", text)
+            self.assertIn("`tk-to-spec`", text)
+
+    def test_active_drive_success_fixtures_include_transition_envelope(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        fixtures = {
+            "tk-drive": (
+                "drive-resumes-pending-answer",
+                "drive-continues-after-ready-spec",
+                "drive-reruns-spec-after-grill",
+            ),
+            "tk-grill-me": ("grill-returns-control-to-drive",),
+            "tk-to-spec": ("to-spec-active-drive-handoff",),
+            "tk-to-tickets": ("to-tickets-active-drive-handoff",),
+            "tk-implement": ("implement-active-drive-handoff-triggers",),
+        }
+
+        for skill, case_ids in fixtures.items():
+            payload = json.loads(
+                (root / f"skills/{skill}/evals/evals.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            cases = {case["id"]: case for case in payload["evals"]}
+            for case_id in case_ids:
+                with self.subTest(skill=skill, case=case_id):
+                    prompt = cases[case_id]["prompt"]
+                    self.assertIn("Success state:", prompt)
+                    self.assertIn("Outstanding transition:", prompt)
+
     def test_reflect_and_grooming_share_exact_placement_rubric(self) -> None:
         root = Path(__file__).resolve().parents[1]
         reflect = (
@@ -148,20 +229,20 @@ class CanonicalSkillContractTest(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         required = (
             "## User decision questions",
-            "Render `Question` before `Recommendation` and the proposals.",
-            "evidence-derived context, decision impact, and unresolved axis",
-            "must not require the user to decode raw `Evidence`",
-            "two or three mutually exclusive proposals",
-            "exactly one best recommendation",
+            "`Question`",
+            "`Recommendation`",
+            "decision-relevant evidence",
+            "two or three",
+            "mutually exclusive options",
+            "exactly one label",
             "`(Recommended)` or `(추천)`",
-            "option previews, prototype cards, or equivalent",
-            "use it proactively",
-            "must call that tool",
-            "Plain-text questions are allowed only",
-            "failed or rejected tool call",
-            "Claude Code: `AskUserQuestion`",
-            "Codex: `request_user_input`",
-            "Hermes Agent: `clarify`",
+            "native structured input",
+            "Plain text is allowed only",
+            "failed or rejected call is not absence",
+            "`AskUserQuestion`",
+            "`request_user_input`",
+            "Hermes Agent",
+            "`clarify`",
         )
 
         for skill in EXPECTED_SKILLS:
@@ -173,7 +254,77 @@ class CanonicalSkillContractTest(unittest.TestCase):
                     all(token in text for token in required),
                     f"{skill} is missing the native user-decision question contract",
                 )
+                start = text.index("## User decision questions")
+                end = text.find("\n## ", start + 4)
+                section = text[start:] if end < 0 else text[start:end]
+                self.assertLess(
+                    len(section.encode("utf-8")),
+                    900,
+                    f"{skill} user-decision contract is not compact",
+                )
+                self.assertNotIn("option previews, prototype cards", section)
         self.assertEqual(validate_user_decision_contract(root), [])
+
+    def test_canonical_skill_outputs_are_decision_first_and_nonduplicative(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        required = {
+            "tk-ask-repo": ("Lead with `Answer`", "Do not echo the inbound question"),
+            "tk-browser-verify": ("Never paste or store raw console", "`## Receipt`, paste raw evidence bodies"),
+            "tk-drive": ("no-ticket placeholders", "child handoff envelope"),
+            "tk-grill-me": ("The ledger is not a per-turn dump template", "Do not duplicate decisions"),
+            "tk-grooming": ("Lead with one `## Disposition`", "Add `## Exceptions` only"),
+            "tk-handoff": ("Receipt starts with", "Omit empty sections"),
+            "tk-implement": ("Lead with `## Changed`", "never paste logs or narrate review mechanics"),
+            "tk-learn": ("Lead with the promotion or no-op decision", "`Target path`"),
+            "tk-merge-conflict": ("Use only non-empty sections in this order", "`Blocked: no active conflict`"),
+            "tk-prototype": ("Lead with `## Confirmed`", "Keep command mechanics after the decision"),
+            "tk-reflect": ("In chat, emit only", "no raw logs, transcripts, diff excerpts"),
+            "tk-skill-diagnose": ("In chat, emit `## Diagnosis`", "Never copy raw logs, transcripts"),
+            "tk-to-spec": ("User-facing output is one compact receipt", "Vertical slicing candidate areas"),
+            "tk-to-tickets": ("User-facing output uses the ticket table", "artifact owns ticket bodies"),
+        }
+        result_tables = {
+            "tk-ask-repo": "fields, consumers, or candidates",
+            "tk-browser-verify": "`Criterion | Result | Evidence`",
+            "tk-drive": "`Ticket | Outcome | Commit`",
+            "tk-implement": "`Item | Change | Verification`",
+            "tk-learn": "`Candidate | Disposition | Target`",
+            "tk-merge-conflict": "`Path | Intent | Result`",
+            "tk-prototype": "`Criterion | A | B [| C] | Conclusion | Evidence`",
+            "tk-skill-diagnose": "`ID | Incident | Root cause`",
+            "tk-to-tickets": "`Ticket | User-visible slice`",
+        }
+        outcome_receipts = EXPECTED_SKILLS - {"tk-prototype"}
+        forbidden = {
+            "tk-grooming": ("The final section is always this fixed `## Summary` table",),
+            "tk-implement": ("a non-empty `## Remaining risks`",),
+            "tk-learn": ("Created path reports exact planned path",),
+            "tk-reflect": ("The response's final section is always:",),
+            "tk-skill-diagnose": ("Emit these canonical sections:",),
+        }
+
+        self.assertEqual(set(required), EXPECTED_SKILLS)
+        for skill, tokens in required.items():
+            with self.subTest(skill=skill):
+                text = (root / "skills" / skill / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                self.assertTrue(all(token in text for token in tokens))
+                self.assertTrue(
+                    all(token not in text for token in forbidden.get(skill, ()))
+                )
+                if skill in result_tables:
+                    normalized = " ".join(text.split())
+                    self.assertIn(result_tables[skill], normalized)
+                    self.assertIn(
+                        "Use a sentence when only one user-relevant row exists",
+                        normalized,
+                    )
+                if skill in outcome_receipts:
+                    self.assertIn(
+                        "`Outcome: <one user-facing sentence>`",
+                        text,
+                    )
 
     def test_user_decision_contract_gate_rejects_one_weakened_skill(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -187,8 +338,8 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 ).read_text(encoding="utf-8")
                 if skill == "tk-prototype":
                     text = text.replace(
-                        "Codex: `request_user_input`",
-                        "Codex: ask in prose",
+                        "`request_user_input`, or Hermes",
+                        "ask in prose, or Hermes",
                     )
                 target.write_text(text, encoding="utf-8")
 
@@ -196,7 +347,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
 
             self.assertEqual(len(errors), 1)
             self.assertIn("tk-prototype", errors[0])
-            self.assertIn("Codex: `request_user_input`", errors[0])
+            self.assertIn("`request_user_input`", errors[0])
 
     def test_skill_language_validator_rejects_mixed_operational_prose(
         self,

@@ -22,8 +22,8 @@ sources cannot resolve intent, do not guess: stop `Blocked`. Unreadable required
 state/evidence is `Unverifiable`.
 
 First check only active-operation markers and unmerged index existence. If both
-are absent, report `Not applicable` once and stop without source, marker, or
-test investigation.
+are absent, report `Blocked: no active conflict` once and stop without source,
+marker, or test investigation.
 
 Use `Pass` only after every completion signal in Command evidence is verified.
 Editing conflict files alone is not completion.
@@ -101,45 +101,32 @@ force push, ordinary push, unsupported mass deletion, or unrelated formatting.
 
 ## Completion report
 
-Single owners are: `Operation` for kind/state/completion; conflict/intent/
-resolution/follow-up sections for their facts; `Stage/continue` for commands and
-direct outputs; `Verification` for tests/markers/index checks. Do not duplicate
-stage success in Verification or decide operation completion in Stage/continue.
-Follow-up names only remaining work. Receipt records status, unverified items,
-and references. Push requires a separate request.
+Use only non-empty sections in this order: `Operation`, `Resolution`,
+`Verification`, `Follow-up`, `Receipt`. `Operation` owns kind, state, stage, and
+continue outcome; `Resolution` owns conflict, intent, and chosen result;
+`Verification` owns tests, markers, and index checks. Follow-up names only
+remaining work. Receipt records status, unverified items, and references
+without duplication. Push requires a separate request.
+
+When more than one conflict path is resolved, render `Resolution` as a compact
+`Path | Intent | Result` table. Use a sentence when only one user-relevant row
+exists. Receipt starts with `Outcome: <one user-facing sentence>`, remains a
+status/provenance index, and does not repeat resolution rows.
 
 User-facing progress and receipt prose follows the user's language while
 canonical headings and status tokens remain unchanged.
 
 ## User decision questions
 
-When this skill reaches a user-owned decision, ask exactly one question at a
-time. Render `Question` before `Recommendation` and the proposals. Offer
-two or three mutually exclusive proposals and state the material tradeoff of
-each. Make `Question` self-contained: summarize the
-evidence-derived context, decision impact, and unresolved axis in user-facing
-language before asking. It must not require the user to decode raw `Evidence`.
-Mark exactly one best recommendation by ending its label with a localized marker such as
-`(Recommended)` or `(추천)`. A host-generated custom or Other choice does not
-count as an authored proposal.
+When a user-owned decision blocks progress, ask one self-contained `Question`
+before any `Recommendation`. Show only decision-relevant evidence, two or three
+mutually exclusive options with material tradeoffs, and exactly one label
+ending `(Recommended)` or `(추천)`.
 
-When the active question tool exposes
-option previews, prototype cards, or equivalent rich choice surfaces and a concrete preview can clarify the
-decision, use it proactively. Do not invent unsupported fields or use this
-presentation rule to bypass existing prototype or phase boundaries.
-
-If the current execution context exposes a native structured user-input tool,
-the skill must call that tool. Plain-text questions are allowed only when no
-such tool is exposed. A failed or rejected tool call is not tool absence: report
-the failure and preserve the pending or blocked state instead of silently
-downgrading to prose. Host examples:
-
-- Claude Code: `AskUserQuestion`
-- Codex: `request_user_input`
-- Hermes Agent: `clarify`
-
-This contract changes question presentation only. It does not grant new
-decision authority or weaken any existing stop, approval, or phase boundary.
+Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex
+`request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only
+when none is exposed. A failed or rejected call is not absence; preserve
+`Pending | Blocked`. This changes presentation, not authority or stop gates.
 
 ## DO NOT / ANTI-PATTERNS
 

@@ -50,22 +50,28 @@ TERMINAL_STATUSES = {
 SUPPORTED_EVAL_HOSTS = {"claude-code", "codex", "hermes-agent"}
 USER_DECISION_CONTRACT_TOKENS = (
     "## User decision questions",
-    "Render `Question` before `Recommendation` and the proposals.",
-    "evidence-derived context, decision impact, and unresolved axis",
-    "must not require the user to decode raw `Evidence`",
-    "two or three mutually exclusive proposals",
-    "exactly one best recommendation",
+    "`Question`",
+    "`Recommendation`",
+    "decision-relevant evidence",
+    "two or three",
+    "mutually exclusive options",
+    "exactly one label",
     "`(Recommended)` or `(추천)`",
-    "option previews, prototype cards, or equivalent",
-    "use it proactively",
-    "must call that tool",
-    "Plain-text questions are allowed only",
-    "failed or rejected tool call",
-    "Claude Code: `AskUserQuestion`",
-    "Codex: `request_user_input`",
-    "Hermes Agent: `clarify`",
+    "native structured input",
+    "Plain text is allowed only",
+    "failed or rejected call is not absence",
+    "`AskUserQuestion`",
+    "`request_user_input`",
+    "Hermes Agent",
+    "`clarify`",
 )
 CATALOG_ROUTING_BOUNDARIES = {
+    "tk-ask-repo vs ordinary repository Q&A",
+    "tk-ask-repo vs tk-implement",
+    "tk-ask-repo vs tk-grill-me",
+    "tk-ask-repo vs runtime reproduction",
+    "tk-ask-repo vs general technical knowledge",
+    "tk-ask-repo vs effort estimation",
     "tk-to-spec vs tk-to-tickets",
     "tk-reflect vs tk-grooming",
     "tk-learn vs tk-reflect/tk-grooming",
@@ -85,6 +91,7 @@ CATALOG_ROUTING_BOUNDARIES = {
 HYBRID_TRIGGER_FACETS = {"formal", "casual", "typo", "ko-en", "short", "compound"}
 HANGUL_SYLLABLE = re.compile(r"[가-힣]")
 EXPECTED_SKILLS = {
+    "tk-ask-repo",
     "tk-browser-verify",
     "tk-drive",
     "tk-grill-me",
@@ -100,12 +107,22 @@ EXPECTED_SKILLS = {
     "tk-to-tickets",
 }
 USER_INVOKED_SKILLS = {
+    "tk-ask-repo",
     "tk-drive",
 }
 HYBRID_SKILLS = EXPECTED_SKILLS - USER_INVOKED_SKILLS
 KEBAB = re.compile(r"^tk-[a-z0-9]+(?:-[a-z0-9]+)*$")
 LINK = re.compile(r"\[[^]]*]\(([^)]+)\)")
 REQUIRED_BEHAVIOR_CASES = {
+    "ask-repo-value-finds-assignment-origin",
+    "ask-repo-impact-sweeps-consumers",
+    "ask-repo-existence-distinguishes-states",
+    "ask-repo-attribution-uses-transport",
+    "ask-repo-blocks-two-candidate-ambiguity",
+    "ask-repo-refuses-implementation-diff",
+    "ask-repo-refuses-effort-estimate",
+    "ask-repo-search-failure-is-unverifiable",
+    "ask-repo-blocks-contradicted-premise",
     "implement-auto-decides-unspecified-strategy",
     "implement-respects-explicit-strategy",
     "implement-routes-visible-ui-through-browser-verify",
@@ -181,6 +198,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "to-spec-blocks-source-current-ui-mismatch",
     "to-spec-active-drive-handoff",
     "to-spec-returns-decision-blocker-to-drive",
+    "to-spec-records-vertical-slicing-candidate-areas",
     "to-tickets-does-not-create-spec",
     "to-tickets-initial-status-is-pending",
     "to-tickets-keeps-one-vertical-bug-slice",
@@ -188,6 +206,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "to-tickets-blocks-source-current-ui-mismatch",
     "to-tickets-active-drive-handoff",
     "to-tickets-returns-decision-blocker-to-drive",
+    "to-tickets-derives-from-candidate-areas",
     "prototype-is-not-production",
     "prototype-web-uses-disposable-variants",
     "prototype-web-toggle-preserves-legibility",
@@ -236,6 +255,8 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-bounds-nested-skills",
     "drive-invokes-phase-owners",
     "drive-continues-after-ready-spec",
+    "drive-rejects-missing-transition-echo",
+    "drive-requires-spec-for-trivial-task",
     "drive-invokes-grill-on-unresolved-decision",
     "drive-skips-grill-for-ready-source",
     "drive-reruns-spec-after-grill",
@@ -248,6 +269,10 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-aggregate-review-boundary",
     "grill-accepts-active-drive-handoff",
     "grill-returns-control-to-drive",
+    "grill-echoes-drive-transition",
+    "to-spec-echoes-drive-transition",
+    "to-tickets-echoes-drive-transition",
+    "implement-echoes-drive-transition",
     "skill-diagnose-reproduces-overtrigger-selection",
     "skill-diagnose-isolates-approval-bypass",
     "skill-diagnose-separates-grader-false-negative",
@@ -523,21 +548,21 @@ def validate_repository_contract() -> list[str]:
     )
     for relative in required_files:
         if not (ROOT / relative).is_file():
-            errors.append(f"{relative}: required TigerKit 20.1.6 repository file is missing")
+            errors.append(f"{relative}: required TigerKit 20.1.7 repository file is missing")
     errors.extend(validate_local_only_workflows(ROOT))
     errors.extend(validate_skill_language(ROOT))
     errors.extend(validate_user_decision_contract(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
-            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 20.1.6")
+            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 20.1.7")
     errors.extend(validate_runtime_scratch(ROOT))
     ignored = (ROOT / ".gitignore").read_text(encoding="utf-8") if (ROOT / ".gitignore").is_file() else ""
     if ".tigerkit/" not in ignored.splitlines():
         errors.append(".gitignore: document TigerKit repo-local scratch with .tigerkit/")
     required_text = {
         "README.md": (
-            "TigerKit 20.1.6",
-            "13",
+            "TigerKit 20.1.7",
+            "14",
             "Claude Code",
             "Codex",
             "Hermes Agent",
@@ -545,7 +570,7 @@ def validate_repository_contract() -> list[str]:
             "사용 시나리오",
         ),
         "MIGRATION.md": (
-            "TigerKit 20.1.6",
+            "TigerKit 20.1.7",
             "Removed Skills",
             "model-only",
             "hybrid",
@@ -582,10 +607,10 @@ def validate_repository_contract() -> list[str]:
         ),
         "skills/tk-reflect/SKILL.md": (
             "Assign `RF-01`, `RF-02`, ... once in discovery order",
-            "renumber per section or emit an un-IDed candidate/rule",
-            "The response's final section is always:",
-            "| No. | Rule | Summary | Target |",
-            "| — | None | No reusable rule/skill candidate | No application |",
+            "In chat, emit only",
+            "| ID | Candidate | Action | Target | Why |",
+            "Only on an explicit report-artifact request",
+            "no raw logs, transcripts, diff excerpts",
             "Only `tk-learn` creates a new skill or semantically updates/merges one",
             "### Conditional Agent Skill diagnosis",
         ),
@@ -612,10 +637,10 @@ def validate_repository_contract() -> list[str]:
         ),
         "skills/tk-grooming/SKILL.md": (
             "Assign `GR-01`, `GR-02`, ... once in first-identification order",
-            "Never renumber per section or emit an un-IDed item",
-            "The final section is always this fixed `## Summary` table",
-            "| No. | Rule | Summary | Target |",
-            "| — | None | No audit item | No application |",
+            "Lead with one `## Disposition`",
+            "| ID | Item | Action | Target | Basis |",
+            "Add `## Exceptions` only",
+            "`report-only | applied`",
             "rule-to-skill `convert`, workflow `split`, and semantic",
         ),
         "skills/tk-learn/SKILL.md": (
@@ -624,7 +649,7 @@ def validate_repository_contract() -> list[str]:
             "fan out/sync across hosts",
         ),
         "skills/tk-drive/SKILL.md": (
-            "`/tk-drive`, `$tk-drive`, and direct selection in a host skill",
+            "selects `/tk-drive`, `$tk-drive`, or the host skill",
             "### 🔴 HARD GATE · source UI writing",
             "`authorized change`",
         ),
@@ -1145,7 +1170,7 @@ def validate_eval_fixtures() -> list[str]:
         if duplicates:
             errors.append(f"evals/trigger-cases.yaml: duplicate skills: {', '.join(sorted(set(duplicates)))}")
         if set(entries) != EXPECTED_SKILLS:
-            errors.append("evals/trigger-cases.yaml: cover exactly the 13 canonical skills")
+            errors.append("evals/trigger-cases.yaml: cover exactly the 14 canonical skills")
         for skill, values in sorted(entries.items()):
             if skill in USER_INVOKED_SKILLS:
                 if values["examples"] < 2:
