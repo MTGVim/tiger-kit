@@ -62,7 +62,11 @@ it.
    - correct value **absent**, or the assignment itself is wrong → producer
      change; name the type and the field
    - both → split, state which blocks the other
-6. `report`: emit the output contract. Do not propose a diff.
+6. `verify`: before reporting, record the refs and anchor/query variants
+   searched, verify any matching semantics used for scope, and confirm every
+   traversal hop is cited. For A/D/E, also record sweep exclusions and any
+   dynamic-dispatch coverage.
+7. `report`: emit the output contract. Do not propose a diff.
 
 ### Family traversals
 
