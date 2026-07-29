@@ -48,6 +48,23 @@ TERMINAL_STATUSES = {
     "NotApplicable",
 }
 SUPPORTED_EVAL_HOSTS = {"claude-code", "codex", "hermes-agent"}
+USER_DECISION_CONTRACT_TOKENS = (
+    "## User decision questions",
+    "Render `Question` before `Recommendation` and the proposals.",
+    "evidence-derived context, decision impact, and unresolved axis",
+    "must not require the user to decode raw `Evidence`",
+    "two or three mutually exclusive proposals",
+    "exactly one best recommendation",
+    "`(Recommended)` or `(추천)`",
+    "option previews, prototype cards, or equivalent",
+    "use it proactively",
+    "must call that tool",
+    "Plain-text questions are allowed only",
+    "failed or rejected tool call",
+    "Claude Code: `AskUserQuestion`",
+    "Codex: `request_user_input`",
+    "Hermes Agent: `clarify`",
+)
 CATALOG_ROUTING_BOUNDARIES = {
     "tk-to-spec vs tk-to-tickets",
     "tk-reflect vs tk-grooming",
@@ -115,6 +132,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "browser-interactive-auth-only-headed-exception",
     "browser-captures-move-to-tigerkit-ledger",
     "grill-me-keeps-one-question-at-a-time",
+    "grill-uses-native-question-tool",
     "grill-me-researches-facts-before-asking",
     "grill-me-does-not-write-domain-docs",
     "grill-me-does-not-create-adrs",
@@ -339,6 +357,23 @@ def validate_local_only_workflows(root: Path) -> list[str]:
     return errors
 
 
+def validate_user_decision_contract(root: Path) -> list[str]:
+    errors: list[str] = []
+    for skill in sorted(EXPECTED_SKILLS):
+        path = root / "skills" / skill / "SKILL.md"
+        if not path.is_file():
+            errors.append(f"{skill}: SKILL.md: add the native user-decision question contract")
+            continue
+        text = path.read_text(encoding="utf-8")
+        missing = [token for token in USER_DECISION_CONTRACT_TOKENS if token not in text]
+        if missing:
+            errors.append(
+                f"{skill}: SKILL.md: native user-decision question contract missing "
+                + ", ".join(repr(token) for token in missing)
+            )
+    return errors
+
+
 def validate_skill(path: Path) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -491,6 +526,7 @@ def validate_repository_contract() -> list[str]:
             errors.append(f"{relative}: required TigerKit 20.1.5 repository file is missing")
     errors.extend(validate_local_only_workflows(ROOT))
     errors.extend(validate_skill_language(ROOT))
+    errors.extend(validate_user_decision_contract(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
             errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 20.1.5")

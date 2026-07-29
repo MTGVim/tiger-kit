@@ -79,6 +79,9 @@
 - case: grill-me-keeps-one-question-at-a-time
   skill: tk-grill-me
   expect: "Only one highest-impact user decision question is asked at a time."
+- case: grill-uses-native-question-tool
+  skill: tk-grill-me
+  expect: "When a native structured user-input tool is exposed, call it and proactively use relevant preview/prototype support; make Question explain evidence-derived context and impact before two or three proposals with tradeoffs and exactly one localized recommendation marker, and use prose only when no such tool is exposed, never after tool failure or rejection."
 - case: grill-me-researches-facts-before-asking
   skill: tk-grill-me
   expect: "Facts available in code or environment are researched before asking the user."

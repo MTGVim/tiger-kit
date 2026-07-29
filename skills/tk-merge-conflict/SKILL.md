@@ -111,6 +111,36 @@ and references. Push requires a separate request.
 User-facing progress and receipt prose follows the user's language while
 canonical headings and status tokens remain unchanged.
 
+## User decision questions
+
+When this skill reaches a user-owned decision, ask exactly one question at a
+time. Render `Question` before `Recommendation` and the proposals. Offer
+two or three mutually exclusive proposals and state the material tradeoff of
+each. Make `Question` self-contained: summarize the
+evidence-derived context, decision impact, and unresolved axis in user-facing
+language before asking. It must not require the user to decode raw `Evidence`.
+Mark exactly one best recommendation by ending its label with a localized marker such as
+`(Recommended)` or `(추천)`. A host-generated custom or Other choice does not
+count as an authored proposal.
+
+When the active question tool exposes
+option previews, prototype cards, or equivalent rich choice surfaces and a concrete preview can clarify the
+decision, use it proactively. Do not invent unsupported fields or use this
+presentation rule to bypass existing prototype or phase boundaries.
+
+If the current execution context exposes a native structured user-input tool,
+the skill must call that tool. Plain-text questions are allowed only when no
+such tool is exposed. A failed or rejected tool call is not tool absence: report
+the failure and preserve the pending or blocked state instead of silently
+downgrading to prose. Host examples:
+
+- Claude Code: `AskUserQuestion`
+- Codex: `request_user_input`
+- Hermes Agent: `clarify`
+
+This contract changes question presentation only. It does not grant new
+decision authority or weaken any existing stop, approval, or phase boundary.
+
 ## DO NOT / ANTI-PATTERNS
 
 - Do not choose one side or invent behavior without evidence.

@@ -17,6 +17,7 @@ if __package__:
         validate_release_version_contract,
         validate_runtime_scratch,
         validate_skill_language,
+        validate_user_decision_contract,
         validate_skill,
         validate_skill_eval_files,
     )
@@ -32,6 +33,7 @@ else:
         validate_release_version_contract,
         validate_runtime_scratch,
         validate_skill_language,
+        validate_user_decision_contract,
         validate_skill,
         validate_skill_eval_files,
     )
@@ -75,6 +77,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "drive-reads-complete-remote-source",
                 "grill-accepts-active-drive-handoff",
                 "grill-returns-control-to-drive",
+                "grill-uses-native-question-tool",
                 "to-spec-returns-decision-blocker-to-drive",
                 "to-spec-blocks-source-current-ui-mismatch",
                 "to-tickets-returns-decision-blocker-to-drive",
@@ -140,6 +143,60 @@ class CanonicalSkillContractTest(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
 
         self.assertEqual(validate_skill_language(root), [])
+
+    def test_canonical_skills_embed_native_user_decision_contract(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        required = (
+            "## User decision questions",
+            "Render `Question` before `Recommendation` and the proposals.",
+            "evidence-derived context, decision impact, and unresolved axis",
+            "must not require the user to decode raw `Evidence`",
+            "two or three mutually exclusive proposals",
+            "exactly one best recommendation",
+            "`(Recommended)` or `(추천)`",
+            "option previews, prototype cards, or equivalent",
+            "use it proactively",
+            "must call that tool",
+            "Plain-text questions are allowed only",
+            "failed or rejected tool call",
+            "Claude Code: `AskUserQuestion`",
+            "Codex: `request_user_input`",
+            "Hermes Agent: `clarify`",
+        )
+
+        for skill in EXPECTED_SKILLS:
+            with self.subTest(skill=skill):
+                text = (root / "skills" / skill / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                self.assertTrue(
+                    all(token in text for token in required),
+                    f"{skill} is missing the native user-decision question contract",
+                )
+        self.assertEqual(validate_user_decision_contract(root), [])
+
+    def test_user_decision_contract_gate_rejects_one_weakened_skill(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source_root = Path(__file__).resolve().parents[1]
+            for skill in EXPECTED_SKILLS:
+                target = root / "skills" / skill / "SKILL.md"
+                target.parent.mkdir(parents=True)
+                text = (
+                    source_root / "skills" / skill / "SKILL.md"
+                ).read_text(encoding="utf-8")
+                if skill == "tk-prototype":
+                    text = text.replace(
+                        "Codex: `request_user_input`",
+                        "Codex: ask in prose",
+                    )
+                target.write_text(text, encoding="utf-8")
+
+            errors = validate_user_decision_contract(root)
+
+            self.assertEqual(len(errors), 1)
+            self.assertIn("tk-prototype", errors[0])
+            self.assertIn("Codex: `request_user_input`", errors[0])
 
     def test_skill_language_validator_rejects_mixed_operational_prose(
         self,
