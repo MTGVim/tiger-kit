@@ -37,6 +37,37 @@ drive-wide orchestration, aggregate verification, or the final receipt.
 - Do not create current pointers, archives, automatic migration, or other
   drive-only or global state.
 
+### Risk-based verification profile
+
+After source and ownership are resolved, classify only material signals with
+an exact source/repository location. A category name, task label, intuition, or
+unsupported possibility is not evidence.
+
+| Signal | Material evidence | Derived obligations |
+| --- | --- | --- |
+| `security-data` | user/sensitive data, authentication, authorization, privacy, payment, or another trust boundary changes | `regression-seam`, `side-effect-recovery`, `independent-review` |
+| `state-compatibility` | schema, migration, persisted state, backward compatibility, dependency, or old/new reader-writer behavior changes | `regression-seam`, `compatibility`, `side-effect-recovery`, `independent-review` |
+| `public-blast-radius` | a public API, distributed contract, or behavior used by multiple evidenced consumers changes | `regression-seam`, `compatibility`, `independent-review` |
+| `browser-network` | persistent visible UI, browser runtime, network transition, or cross-browser behavior changes | `regression-seam`, `browser-verdict` |
+| `concurrency-side-effect` | concurrency, retry, idempotency, destructive operation, or external side effect changes | `regression-seam`, `side-effect-recovery`, `independent-review` |
+| `evidence-recovery` | required source/reproduction/testability evidence is missing or unstable, or rollback cost/failure-detection delay is material | `evidence-closure` |
+
+Emit selected signals in table order. De-duplicate derived obligations and emit
+them in this order: `evidence-closure`, `regression-seam`, `compatibility`,
+`browser-verdict`, `side-effect-recovery`, `independent-review`. The compact
+material profile contains only `Signals`, source-located `Evidence`,
+`Obligations`, and `Unverified`.
+
+With no selected signal, preserve the baseline path without an artifact,
+profile section, additional handoff payload, reviewer, browser run,
+compatibility command, or user output. Never create a dedicated risk document
+or convert the mapping into a score.
+
+Before the spec handoff, freeze any material profile. Required inaccessible
+non-user-owned evidence is `Unverifiable`; missing user-owned authority or
+intent may route through the existing decision owner. Do not infer a safe
+default, continue with an incomplete profile, or silently remove an obligation.
+
 ## Phase handoff envelope
 
 Every handoff records phase, task identity, source/artifact paths, stable R/AC
@@ -45,6 +76,8 @@ needed to continue. Before invoking the owner, drive records the native
 `Success state` and exactly one drive-owned `Outstanding transition`. The
 transition names the next drive action after success, such as `spec gate`,
 `ticket decision`, `implementation unit <ID>`, or `aggregate verification`.
+When a material verification profile exists, the envelope also carries its
+frozen four fields unchanged; a baseline run carries no placeholder profile.
 Each owner keeps its native receipt; drive maps only the minimal continuation
 state and does not create a shared runtime contract.
 
@@ -141,6 +174,11 @@ Drive records its receipt and does not repair a non-Ready spec inline. A
 decision-related non-Ready receipt returns to drive's decision owner; all other
 non-Ready states stop at the spec phase.
 
+For a material profile, give the spec owner its evidence and obligations as
+verification input. The spec owner decides how they map to R/AC and
+verifiability inside its existing contract; drive does not write those
+requirements or accept a Ready spec that silently omits a material obligation.
+
 ## Ticket decision and owner
 
 Drive decides whether tickets are justified: use them only for at least two
@@ -154,6 +192,10 @@ shape, and ledger writes. Keep at most one ticket `in_progress`. Status text is
 not evidence; only a matching implementation receipt can make a ticket
 `verified`. A decision-related non-success receipt returns to drive, which must
 restore a Ready spec before asking tickets to derive again.
+
+Signal count, obligation count, or a risk label never justifies a ticket
+ledger. The existing independent-slice/material-ledger rule remains the only
+ticket decision.
 
 ## Prototype
 
@@ -175,6 +217,12 @@ Before the next handoff, confirm the receipt's unit/ticket ID, commit SHA,
 branch, ancestry, R/AC evidence, and unchanged ownership boundary. Never ask
 `tk-implement` to batch tickets, and never create a separate drive commit.
 
+Pass the frozen material profile to each affected unit. `tk-implement` owns the
+exact supported regression seam, compatibility scope, side-effect/recovery
+evidence, browser handoff, and bounded independent-review method. It must
+return its native non-success state rather than recompute signals, drop an
+obligation, or perform work owned by a sibling phase.
+
 For visible UI or browser behavior, `tk-implement` owns the required
 `tk-browser-verify` gate. Drive aggregates returned literal/rendered evidence
 without selecting browser tools itself.
@@ -185,6 +233,8 @@ After all units are committed:
 
 - verify every R/AC ID is covered by a unit receipt and commit;
 - verify commit ancestry and current `HEAD` match the ordered unit receipts;
+- reconcile every frozen material obligation with unit and broad verification
+  evidence; a missing or unverifiable obligation prevents aggregate `Pass`;
 - inspect cross-ticket interfaces, cumulative side effects, and uncovered
   scope without repeating each ticket's line-level code review;
 - run the broadest executable relevant tests, build, integration, and browser
@@ -249,3 +299,7 @@ branch and `HEAD`, remaining risks, and reusable-candidate existence. Do not
 repeat child evidence or automatically invoke another reflection, handoff,
 release, or publish action. User-facing prose follows the user's language;
 canonical fields and status tokens remain unchanged.
+
+Mention the verification profile only when it materially changed executed
+verification or leaves meaningful residual risk. Omit baseline/no-op profile
+details and never print an all-default signal checklist.

@@ -6,6 +6,27 @@ to that unit/ticket and its R/AC; drive separately owns aggregate traceability
 and cross-ticket verification. Review is separate from direct/delegated
 implementation, and an implementor never counts as an independent reviewer.
 
+## Active-drive verification obligations
+
+Preserve a material profile's `Signals`, source-located `Evidence`,
+`Obligations`, and `Unverified` fields unchanged. Do not recompute signals or
+add/drop obligations from a task label.
+
+| Obligation | Existing owner in `tk-implement` |
+| --- | --- |
+| `evidence-closure` | inspection/test-seam checkpoint before mutation |
+| `regression-seam` | public-behavior test and coverage contract |
+| `compatibility` | affected supported consumer, old/new contract, or host verification |
+| `browser-verdict` | `tk-browser-verify` hard gate and receipt |
+| `side-effect-recovery` | error, partial-failure, retry/idempotency, and rollback evidence |
+| `independent-review` | one bounded non-editing independent reviewer |
+
+Choose the exact supported test, command, browser route, recovery proof, and
+review focus inside the corresponding owner. If evidence cannot establish an
+obligation, return `Unverifiable`; if required authority or a user decision is
+missing, return `Blocked`. Never report `Pass` or commit after silently
+weakening the profile. A baseline handoff has no profile and adds no work.
+
 ## Pre-review quality gates
 
 These gates run before final unit verification and review. The current agent

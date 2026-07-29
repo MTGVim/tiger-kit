@@ -28,6 +28,13 @@ questions, summaries, and receipt values stay in that language even when the
 source is English. Canonical headings, receipt keys, status tokens, IDs,
 commands, paths, code, and exact source literals remain byte-stable.
 
+`tk-drive` now freezes a compact verification profile only when exact
+source/repository evidence shows material risk. The profile derives existing
+regression, compatibility, browser, recovery, and bounded independent-review
+obligations without adding a score, lifecycle, or risk artifact. Low-risk
+flows remain silent and unchanged; inaccessible required evidence stops with
+the existing non-success contract before implementation.
+
 See
 [`docs/adr/0001-implementation-quality-and-optimistic-reflection.md`](docs/adr/0001-implementation-quality-and-optimistic-reflection.md)
 for the durable decision and supersession rules.

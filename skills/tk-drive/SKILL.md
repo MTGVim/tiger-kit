@@ -64,11 +64,19 @@ separately approved wording is an `authorized change`; prohibit all other drift.
 Compare the inventory exactly through spec, tickets, implementation,
 candidate/staged diff, and rendered UI; drift or evidence gaps block commit.
 
+### 🔴 HARD GATE · risk-based verification profile
+
+During preflight, select material risk signals only from source-located request/repository evidence. Follow the canonical signal-to-obligation mapping and ordering in [phase invariants](references/phases.md); do not use a score, severity ranking, task label, or unsupported possibility as evidence.
+
+With no material signal, keep the baseline path silent: create no risk artifact or profile section and add no reviewer, browser run, compatibility command, or user-facing default. With any material signal, freeze only `Signals`, source-located `Evidence`, derived `Obligations`, and `Unverified` before the spec handoff, then carry that compact profile through existing handoff envelopes.
+
+Drive classifies and reconciles the profile but never chooses a phase owner's commands, browser route, test seam, or review method. Required inaccessible non-user-owned evidence is `Unverifiable` before implementation; only a genuinely user-owned authority or intent gap may use the existing decision owner. Never drop or weaken an obligation to continue.
+
 ## Workflow
 
 1. `preflight`: resolve the complete source per phase invariants, relevant
    artifacts/instructions, Git and dirty ownership, task identity, completed
-   phases, and unresolved decisions.
+   phases, unresolved decisions, and the evidence-based verification profile.
 2. `decision phase`: when any unresolved user-owned decision prevents a Ready
    spec, explicitly hand current source, evidence, confirmed decisions, and
    open decisions to `tk-grill-me`. Skip this phase when the source is already
@@ -88,9 +96,9 @@ candidate/staged diff, and rendered UI; drift or evidence gaps block commit.
    `verified` only from the matching verified commit receipt, then hand off the
    next unit or enter aggregate verification.
 7. `aggregate verification`: reconcile all unit receipts, commit ancestry,
-   R/AC coverage, and cross-ticket interaction; run the broadest executable
-   relevant verification once. Do not repeat each ticket's line-level
-   Standards/Spec review.
+   R/AC coverage, cross-ticket interaction, and every frozen material
+   verification obligation; run the broadest executable relevant verification
+   once. Do not repeat each ticket's line-level Standards/Spec review.
 8. `corrective cycle`: for one isolated final change-related regression,
    create at most one corrective ticket through `tk-to-tickets`, run
    `tk-implement` once, and rerun broad verification once. Otherwise stop

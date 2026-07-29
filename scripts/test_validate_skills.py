@@ -205,6 +205,68 @@ class CanonicalSkillContractTest(unittest.TestCase):
             self.assertIn("no small-task exception", text)
             self.assertIn("`tk-to-spec`", text)
 
+    def test_drive_risk_profile_is_deterministic_and_owner_preserving(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        drive = (root / "skills/tk-drive/SKILL.md").read_text(encoding="utf-8")
+        phases = (root / "skills/tk-drive/references/phases.md").read_text(
+            encoding="utf-8"
+        )
+        implement = (root / "skills/tk-implement/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        review = (
+            root / "skills/tk-implement/references/review-boundary.md"
+        ).read_text(encoding="utf-8")
+
+        signals = (
+            "security-data",
+            "state-compatibility",
+            "public-blast-radius",
+            "browser-network",
+            "concurrency-side-effect",
+            "evidence-recovery",
+        )
+        obligations = (
+            "evidence-closure",
+            "regression-seam",
+            "compatibility",
+            "browser-verdict",
+            "side-effect-recovery",
+            "independent-review",
+        )
+        mappings = (
+            ("security-data", "regression-seam", "side-effect-recovery", "independent-review"),
+            ("state-compatibility", "regression-seam", "compatibility", "side-effect-recovery", "independent-review"),
+            ("public-blast-radius", "regression-seam", "compatibility", "independent-review"),
+            ("browser-network", "regression-seam", "browser-verdict"),
+            ("concurrency-side-effect", "regression-seam", "side-effect-recovery", "independent-review"),
+            ("evidence-recovery", "evidence-closure"),
+        )
+
+        self.assertIn("### 🔴 HARD GATE · risk-based verification profile", drive)
+        signal_positions = [phases.index(f"`{signal}`") for signal in signals]
+        normalized_phases = " ".join(phases.split())
+        obligation_order = "De-duplicate derived obligations and emit them in this order"
+        obligations_text = normalized_phases[normalized_phases.index(obligation_order) :]
+        obligation_positions = [
+            obligations_text.index(f"`{obligation}`") for obligation in obligations
+        ]
+        self.assertEqual(signal_positions, sorted(signal_positions))
+        self.assertEqual(obligation_positions, sorted(obligation_positions))
+        self.assertTrue(all(signal in phases for signal in signals))
+        self.assertTrue(all(obligation in phases for obligation in obligations))
+        for mapping in mappings:
+            row = next(line for line in phases.splitlines() if f"`{mapping[0]}`" in line)
+            with self.subTest(signal=mapping[0]):
+                self.assertTrue(all(f"`{token}`" in row for token in mapping))
+        self.assertIn("With no material signal, keep the baseline path silent", drive)
+        self.assertIn("Never create a dedicated risk document", phases)
+        self.assertIn("never justifies a ticket ledger", normalized_phases)
+        self.assertIn("material verification profile's four fields", implement)
+        self.assertTrue(all(obligation in review for obligation in obligations))
+        self.assertIn("unavailable review capability is", implement)
+        self.assertIn("`Unverifiable`", review)
+
     def test_active_drive_success_fixtures_include_transition_envelope(self) -> None:
         root = Path(__file__).resolve().parents[1]
         fixtures = {

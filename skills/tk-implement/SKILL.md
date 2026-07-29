@@ -39,7 +39,7 @@ creating tickets.
 Standalone execution and drive handoff use the same implementation, test,
 review, and commit contract. For a drive handoff, preserve task identity,
 ticket/R/AC, initial `HEAD`, and ownership; return phase, unit/ticket ID,
-commit SHA, and verification/review evidence. The handoff also supplies
+commit SHA, and verification/review evidence. Preserve a material verification profile's four fields and follow the existing-owner mapping in [review-boundary](references/review-boundary.md); never recompute or weaken it. The handoff also supplies
 `Success state` and `Outstanding transition`. On `Pass`, include
 `Return to: tk-drive` and echo the parent-supplied `Outstanding transition`
 verbatim without choosing or executing it. A missing or mismatched
@@ -253,7 +253,7 @@ it does not repeat drive's aggregate traceability review. Permit one independent
 reviewer only for `large` work or high-risk authentication, payment, privacy,
 authorization, dependency, migration/data-loss, concurrency, or public API
 changes. Bound the flow to one review, one fix, and one regression verification.
-An important finding, drift, or unverified coverage prevents commit.
+An important finding, drift, or unverified coverage prevents commit. When an evidence-backed active-drive profile includes `independent-review`, the one bounded reviewer is required; unavailable review capability is `Unverifiable`, not permission to drop the obligation.
 
 ## Commit and report
 

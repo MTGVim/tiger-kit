@@ -13,9 +13,10 @@ TigerKit은 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent 
 
 `v20.2.0` candidate는 구현 전 repository fit 결정, initial GREEN 뒤 한 번의
 behavior-preserving simplify, 성공한 drive 끝의 안전한 optimistic reflection,
-결과 규모에 맞춘 bounded summary를 추가합니다. `tk-reflect`의 non-no-op
-결과는 `ID | Candidate | Action | Target | Why` 표를 유지하며 Receipt가
-코드명만으로 표를 대체하지 않습니다. 장기 결정 근거와 안전 경계는
+결과 규모에 맞춘 bounded summary, 근거 기반 verification profile을
+추가합니다. `tk-reflect`의 non-no-op 결과는
+`ID | Candidate | Action | Target | Why` 표를 유지하며 Receipt가 코드명만으로
+표를 대체하지 않습니다. 장기 결정 근거와 안전 경계는
 [ADR 0001](docs/adr/0001-implementation-quality-and-optimistic-reflection.md)에
 기록되어 있습니다.
 
@@ -117,6 +118,12 @@ user-owned decision이 있으면 drive가 `tk-grill-me`에 decision closure를
 → ticket마다 tk-implement: test + review + verified commit 하나
 → tk-drive: aggregate traceability + broad verification 한 번
 ```
+
+Preflight는 source와 repository evidence에서 material risk signal이 확인될
+때만 compact verification profile을 고정합니다. Profile은 기존 owner에
+regression, compatibility, browser, recovery, bounded independent-review
+의무를 전달할 뿐 새 score·stage·artifact를 만들지 않습니다. 근거가 없는
+low-risk 경로는 추가 출력이나 검증 없이 기존 흐름을 유지합니다.
 
 Spec 또는 tickets 단계가 새 사용자 결정을 요구하면 해당 phase는
 `User decision: required`와 근거를 native non-success receipt로 drive에

@@ -619,6 +619,18 @@
 - case: drive-response-language-explicit-english
   skill: tk-drive
   expect: "The latest explicit English instruction overrides earlier Korean context for free-form prose while canonical machine tokens remain unchanged."
+- case: drive-risk-profile-low-risk-silent
+  skill: tk-drive
+  expect: "A source-evidenced low-risk change keeps the baseline flow silent and adds no profile artifact, reviewer, browser run, compatibility command, or default output."
+- case: drive-risk-profile-browser-ui
+  skill: tk-drive
+  expect: "Persistent browser/UI and network evidence derives canonical regression-seam and browser-verdict obligations before implementation while browser ownership stays with tk-implement and tk-browser-verify."
+- case: drive-risk-profile-auth-data
+  skill: tk-drive
+  expect: "Authentication and user-data evidence derives regression-seam, side-effect-recovery, and independent-review once in canonical order without adding unsupported browser work."
+- case: drive-risk-profile-inaccessible-evidence
+  skill: tk-drive
+  expect: "Inaccessible required schema and rollback evidence stops Unverifiable before spec weakening, implementation, commit, aggregate Pass, or reflection."
 - case: reflect-response-language-preserves-machine-tokens
   skill: tk-reflect
   expect: "Korean explanatory prose preserves canonical headings, receipt keys, status tokens, IDs, commands, paths, code, and exact source literals byte-for-byte."

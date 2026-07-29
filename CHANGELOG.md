@@ -23,6 +23,9 @@
 - Added the same response-language hard gate to all 14 skills so the latest
   explicit language instruction controls every free-form user-facing sentence
   while canonical tokens and exact source literals remain byte-stable.
+- Added evidence-based `tk-drive` verification profiles that keep low-risk
+  work silent, derive deterministic obligations for material risk, preserve
+  phase ownership, and reconcile those obligations before aggregate `Pass`.
 
 ## 20.1.7 — Repository Answers, Drive Liveness, and Concise Receipts
 
