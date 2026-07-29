@@ -173,9 +173,10 @@ target, evidence references, interpretation, confidence, action, status, and
 optional draft path. It contains no raw logs, transcripts, diff excerpts,
 repeated rationale, or copied receipt fields. Create its parent lazily, write
 atomically, and warn if scratch is not ignored; never modify `.gitignore`.
-Receipt records terminal status, candidate counts, ledger path when written,
-and IDs requiring a decision. With no candidate, emit one `— | None | no-op |
-— | no verified reusable evidence` row.
+Receipt starts with `Outcome: <one user-facing sentence>`, then records
+terminal status, candidate counts, ledger path when written, and IDs requiring
+a decision. With no candidate, emit one `— | None | no-op | — | no verified
+reusable evidence` row.
 
 User-facing progress and receipt prose follows the user's language while
 canonical headings, IDs, fields, and status tokens remain unchanged.

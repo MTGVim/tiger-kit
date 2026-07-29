@@ -117,12 +117,14 @@ next handoff, and never rewrite history. Only an isolated final
 change-related regression permits the one corrective cycle defined in the
 phase invariants.
 
-Lead the final response with one sentence stating the outcome, then a compact
-receipt. `Status` and `Source` are required. Include `Phases`, `Tickets`,
+Lead the final response with a compact receipt starting `Outcome: <one user-facing sentence>`. `Status` and `Source` are required.
+Include `Phases`, `Tickets`,
 `Verification`, `Integration review`, `Commits`, `Remaining risks`, and
 `Reusable candidate` only when they contain decision-relevant or non-default
 information. Omit skipped phases, no-ticket placeholders, empty risks, and an
 absent reusable candidate. Use `Status: Pass` only after every completion gate.
+
+For multiple tickets, place a compact `Ticket | Outcome | Commit` table before the receipt. Use a sentence when only one user-relevant row exists; rows are vertical slices, never phases/files/commands, and Receipt's Outcome summarizes them without repeating rows.
 
 Return control only with that final receipt or an explicit phase-stop receipt;
 first assert that every consumed success receipt has its next transition.

@@ -210,7 +210,13 @@ alignment `Status: confirmed | pending | Blocked`; it is not runtime Verdict.
 deviations, `## Evidence` observations/captures, `## Unverified` omitted scope,
 and `## Cleanup` owned-resource results. These sections are the receipt; do not
 add `## Receipt`, paste raw evidence bodies, or duplicate facts. Omit empty
-Findings/Unverified/Cleanup.
+Findings/Unverified/Cleanup. Start Verdict with
+`Outcome: <one user-facing sentence>`.
+
+When more than one criterion is verified, render `## Verified` as a compact
+`Criterion | Result | Evidence` table. Use a sentence when only one
+user-relevant row exists. Rows represent acceptance criteria, not screenshots,
+commands, or log fragments.
 
 User-facing progress and receipt prose follows the user's language while the
 canonical headings, fields, and status tokens above remain unchanged.

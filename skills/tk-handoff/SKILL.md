@@ -81,9 +81,10 @@ Use `applied` only after the atomic write and reread agree with current
 repository state. Use `reported` only for a verified no-drift resume/report
 that required no artifact write. Otherwise use `pending` or the applicable
 recovery-table stop state.
-Receipt contains disposition and section references, not duplicated paths,
-Git state, commands, results, or future work. Omit empty sections and reference
-existing spec/ticket/diff content instead of copying it.
+Receipt starts with `Outcome: <one user-facing sentence>`, then contains
+disposition and section references, not duplicated paths, Git state, commands,
+results, or future work. Omit empty sections and reference existing
+spec/ticket/diff content instead of copying it.
 
 `.tigerkit/handoff.md` is the only resume snapshot. Reference durable R/AC from
 `.tigerkit/spec.md` and multi-slice ticket IDs from `.tigerkit/tickets.md`.

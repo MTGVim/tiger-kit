@@ -134,6 +134,11 @@ share a root-cause theme. In chat, emit `## Diagnosis`, `## Action`, optional
 verified root cause or reproduction verdict; Action names only the next owner
 or validated candidate.
 
+When more than one ID is affected, render `Diagnosis` as a compact
+`ID | Incident | Root cause` table and `Action` as an `ID | Next action` table.
+Use a sentence when only one user-relevant row exists. Rows represent
+root-cause themes, not experiments, hosts, logs, or evidence fragments.
+
 When the run uses more than one experiment or host, or has more than five
 evidence rows, write or replace `.tigerkit/skill-diagnosis.md`. Its compact
 rows contain ID, target/provenance, incident, evidence references,
@@ -144,8 +149,10 @@ warn if scratch is not ignored; never modify `.gitignore`.
 
 Upstream disposition is exactly `not-applicable | local-only |
 upstream-candidate | upstream-draft-ready | upstream-unverifiable`. Receipt
-contains terminal status, affected IDs, ledger path when written, and section
-references only. Keep incident state separate from terminal status:
+starts with `Outcome: <one user-facing sentence>`, then contains terminal
+status, affected IDs, ledger path when written, and section references only.
+It does not substitute for diagnosis or action rows. Keep incident state
+separate from terminal status:
 
 - `Pass`: the diagnosis workflow and evidence completed; it does not mean the
   target skill is issue-free.

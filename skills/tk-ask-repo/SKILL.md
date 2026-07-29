@@ -122,9 +122,12 @@ fields`, `Path`, `State`, `Attribution`, `Must change`, `Must not change`, and
 the reason. For A/D/E, `Must not change` is required and says `none found` when
 empty.
 
+For multiple meaningful fields, consumers, or candidates, use one compact table
+with question-family columns. Use a sentence when only one user-relevant row exists; rows never represent files, commands, or raw evidence.
+
 Do not echo the inbound question or repeat evidence across sections. `Receipt`
-contains only `reported | Blocked | Unverifiable`, the next owner when one
-exists, and section references.
+starts with `Outcome: <one user-facing sentence>`; remaining fields are `reported | Blocked | Unverifiable`, next owner, and section references.
+It indexes status/provenance, never answer or result rows.
 
 Write user-facing prose in the user's language; keep identifiers and status
 tokens as-is.

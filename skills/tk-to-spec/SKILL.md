@@ -105,10 +105,10 @@ inputs, not slices or tickets: drive alone decides whether a ledger is
 justified, and `tk-to-tickets` alone owns decomposition, ticket IDs, coverage,
 and dependencies. Otherwise use `Draft`, `Blocked`, or `Unverifiable`.
 
-User-facing output is one status sentence plus the receipt; the artifact owns
-the spec body. The receipt records phase, path, status, and R/AC IDs, then
-references the source-map, candidate-area, unverified, conflict, and
-verification sections instead of restating their content.
+User-facing output is one compact receipt; the artifact owns the spec body.
+The receipt starts with `Outcome: <one user-facing sentence>`, then records
+phase, path, status, and R/AC IDs and references the source-map, candidate-area,
+unverified, conflict, and verification sections instead of restating them.
 
 ### 🔴 HARD GATE · source UI writing
 

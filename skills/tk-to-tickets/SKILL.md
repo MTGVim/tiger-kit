@@ -102,10 +102,16 @@ type/API/UI/test-only tickets. If evidence cannot support independent slices,
 return `Status: Blocked` with an `Unresolved split report`. Classify unsupported
 requirements or unresolved conflicts as `Blocked` or `Unverifiable`.
 
-User-facing output states the decomposition decision, then the receipt; the
-artifact owns ticket bodies. The receipt records phase, path, status, ticket
-IDs/count, then references coverage, dependencies, evidence, unverified items,
-and unresolved split sections without restating their content.
+User-facing output uses the ticket table when multiple or Receipt Outcome when
+one; the artifact owns ticket bodies. The receipt starts with
+`Outcome: <one user-facing sentence>`, then records phase, path, status,
+ticket IDs/count and references coverage, dependencies, evidence, unverified
+items, and unresolved split sections without restating them.
+
+When more than one ticket is created, place a compact
+`Ticket | User-visible slice` table before the receipt. Use a sentence when
+only one user-relevant row exists, as Receipt Outcome. The receipt may index
+IDs/count but does not substitute for or repeat the slice rows.
 
 Keep one bug as one vertical slice from reproduction through root-cause fix,
 regression seam, original reproduction, and cleanup. Do not split it into

@@ -121,9 +121,10 @@ table:
 Use the same ID for applied changes and verification. Add `## Exceptions` only
 for evidence gaps, ownership conflicts, unresolved scope, or failed
 verification. Add `## Applied` and `## Verification` only after mutation.
-`## Receipt` records overall status, `report-only | applied`, and IDs without
-repeating the table. With no item, emit one `— | None | keep | — | no finding`
-row. Vendor rows use `keep (vendor)`.
+`## Receipt` starts with `Outcome: <one user-facing sentence>`, then records
+overall status, `report-only | applied`, and IDs without repeating the table.
+With no item, emit one `— | None | keep | — | no finding` row. Vendor rows use
+`keep (vendor)`.
 
 User-facing progress and receipt prose follows the user's language while
 canonical headings, IDs, classifications, and status tokens remain unchanged.

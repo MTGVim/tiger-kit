@@ -137,11 +137,11 @@ Confirmed terms may later enter a spec, but this skill does not create or edit
 Use only non-empty final sections: `## Decisions`, `## Assumptions`,
 `## Remaining risks`, and `## Receipt`. `## Decisions` alone owns decision
 content. Do not add a second combined-goal summary. In `## Receipt`, record
-`Phase: decision`, `Status`, source or user-answer evidence, whether decisions
-were applied, the `## Decisions` reference when it exists, and `Return to`.
-Do not duplicate decisions in the receipt. On a question turn with no decision,
-omit the Decisions reference and return the unresolved ledger item with
-`pending`.
+`Outcome: <one user-facing sentence>`, `Phase: decision`, `Status`, source or
+user-answer evidence, whether decisions were applied, the `## Decisions`
+reference when it exists, and `Return to`. Do not duplicate decisions in the
+receipt. On a question turn with no decision, omit the Decisions reference and
+return the unresolved ledger item with `pending`.
 
 Native `Status` uses `confirmed | pending | aborted | Blocked | Unverifiable`.
 For an orchestrator terminal result, map these respectively to

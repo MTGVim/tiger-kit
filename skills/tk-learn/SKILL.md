@@ -97,7 +97,12 @@ Lead with the promotion or no-op decision. Use only non-empty `Evidence`,
 `Dedupe`, `Candidate`, `Target path`, `Verification`, and
 `Remaining concerns`. For a threshold-failed or duplicate no-op, omit
 `Candidate` and `Verification` unless they add decision-relevant evidence.
-`Receipt` owns `reported | pending | applied` and section references only.
+When more than one candidate is evaluated, render `Candidate` as a compact
+`Candidate | Disposition | Target` table. Use a sentence when only one
+user-relevant row exists. `Receipt` starts with
+`Outcome: <one user-facing sentence>`, then owns
+`reported | pending | applied` and section references only; it does not
+substitute for candidate results.
 
 User-facing progress and receipt prose follows the user's language while
 canonical fields and status tokens remain unchanged.

@@ -273,16 +273,28 @@ class CanonicalSkillContractTest(unittest.TestCase):
             "tk-drive": ("no-ticket placeholders", "child handoff envelope"),
             "tk-grill-me": ("The ledger is not a per-turn dump template", "Do not duplicate decisions"),
             "tk-grooming": ("Lead with one `## Disposition`", "Add `## Exceptions` only"),
-            "tk-handoff": ("Receipt contains disposition and section references", "Omit empty sections"),
+            "tk-handoff": ("Receipt starts with", "Omit empty sections"),
             "tk-implement": ("Lead with `## Changed`", "never paste logs or narrate review mechanics"),
             "tk-learn": ("Lead with the promotion or no-op decision", "`Target path`"),
             "tk-merge-conflict": ("Use only non-empty sections in this order", "`Blocked: no active conflict`"),
             "tk-prototype": ("Lead with `## Confirmed`", "Keep command mechanics after the decision"),
             "tk-reflect": ("In chat, emit only", "no raw logs, transcripts, diff excerpts"),
             "tk-skill-diagnose": ("In chat, emit `## Diagnosis`", "Never copy raw logs, transcripts"),
-            "tk-to-spec": ("User-facing output is one status sentence plus the receipt", "Vertical slicing candidate areas"),
-            "tk-to-tickets": ("User-facing output states the decomposition decision", "artifact owns ticket bodies"),
+            "tk-to-spec": ("User-facing output is one compact receipt", "Vertical slicing candidate areas"),
+            "tk-to-tickets": ("User-facing output uses the ticket table", "artifact owns ticket bodies"),
         }
+        result_tables = {
+            "tk-ask-repo": "fields, consumers, or candidates",
+            "tk-browser-verify": "`Criterion | Result | Evidence`",
+            "tk-drive": "`Ticket | Outcome | Commit`",
+            "tk-implement": "`Item | Change | Verification`",
+            "tk-learn": "`Candidate | Disposition | Target`",
+            "tk-merge-conflict": "`Path | Intent | Result`",
+            "tk-prototype": "`Criterion | A | B [| C] | Conclusion | Evidence`",
+            "tk-skill-diagnose": "`ID | Incident | Root cause`",
+            "tk-to-tickets": "`Ticket | User-visible slice`",
+        }
+        outcome_receipts = EXPECTED_SKILLS - {"tk-prototype"}
         forbidden = {
             "tk-grooming": ("The final section is always this fixed `## Summary` table",),
             "tk-implement": ("a non-empty `## Remaining risks`",),
@@ -301,6 +313,18 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 self.assertTrue(
                     all(token not in text for token in forbidden.get(skill, ()))
                 )
+                if skill in result_tables:
+                    normalized = " ".join(text.split())
+                    self.assertIn(result_tables[skill], normalized)
+                    self.assertIn(
+                        "Use a sentence when only one user-relevant row exists",
+                        normalized,
+                    )
+                if skill in outcome_receipts:
+                    self.assertIn(
+                        "`Outcome: <one user-facing sentence>`",
+                        text,
+                    )
 
     def test_user_decision_contract_gate_rejects_one_weakened_skill(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

@@ -108,6 +108,11 @@ continue outcome; `Resolution` owns conflict, intent, and chosen result;
 remaining work. Receipt records status, unverified items, and references
 without duplication. Push requires a separate request.
 
+When more than one conflict path is resolved, render `Resolution` as a compact
+`Path | Intent | Result` table. Use a sentence when only one user-relevant row
+exists. Receipt starts with `Outcome: <one user-facing sentence>`, remains a
+status/provenance index, and does not repeat resolution rows.
+
 User-facing progress and receipt prose follows the user's language while
 canonical headings and status tokens remain unchanged.
 

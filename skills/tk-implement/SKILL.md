@@ -272,7 +272,13 @@ publish. Do not automatically invoke another user-invoked skill.
 Lead with `## Changed`, then `## Verification`, optional
 `## Remaining risks`, and `## Receipt`. Add `## Strategy` only for an explicit
 choice, exception, or plan deviation. Do not add a separate `## Commit`;
-`Receipt` owns the commit SHA/message or why no commit exists.
+`Receipt` starts with `Outcome: <one user-facing sentence>` and owns the commit
+SHA/message or why no commit exists.
+
+When `Changed` covers more than one independently meaningful user-visible or
+unit behavior, render a compact `Item | Change | Verification` table. Use a
+sentence when only one user-relevant row exists. Rows represent behavior, not
+files, commands, or evidence fragments.
 
 Describe user-visible or unit behavior, not only files. Summarize commands and
 results; never paste logs or narrate review mechanics. `Verification` owns
@@ -280,7 +286,8 @@ coverage, failure classification, and
 `hook drift: none | format-only | reverted-semantic`. `Receipt` owns phase,
 unit/ticket ID, status (`Pass | Fail | Blocked | Unverifiable`), commit,
 unverified items, and R/AC references without repeating the body. Omit
-`Remaining risks` when empty.
+`Remaining risks` when empty. Receipt is a status/provenance index, not a
+substitute for the Changed rows.
 
 Write user-facing progress and report prose in the user's language. Preserve
 the canonical headings, status tokens, IDs, and receipt keys above.

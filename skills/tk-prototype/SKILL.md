@@ -96,11 +96,12 @@ command results, Variants or harness the alternatives/path/run URL and final
 `kept | removed` state, and Still fake the fake/real and unverified scope.
 Keep command mechanics after the decision.
 
-For every criterion, `## Confirmed` records one
-`criterion | A | B [| C] | conclusion | Tested evidence reference` comparison
-and whether content/data/state stayed equal. Use `not observed` for unseen
-differences and `unverifiable` for missing evidence. Do not promote unaudited
-aesthetic preference into a conclusion.
+When more than one criterion or variant is compared, render `## Confirmed` as
+a compact `Criterion | A | B [| C] | Conclusion | Evidence` table. Use a
+sentence when only one user-relevant row exists. Record whether
+content/data/state stayed equal. Use `not observed` for unseen differences and
+`unverifiable` for missing evidence. Do not promote unaudited aesthetic
+preference into a conclusion.
 
 User-facing progress and receipt prose follows the user's language while
 canonical headings and status tokens remain unchanged.
