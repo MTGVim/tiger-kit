@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - auto-optimize/20260729-122439
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
 
 permissions:
   contents: write
@@ -16,7 +23,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-          SELF_BRANCH: ${{ github.ref_name }}
+          SELF_BRANCH: ${{ github.head_ref || github.ref_name }}
         shell: bash
         run: |
           set -euo pipefail
@@ -60,5 +67,5 @@ jobs:
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
-          SELF_BRANCH: ${{ github.ref_name }}
+          SELF_BRANCH: ${{ github.head_ref || github.ref_name }}
         run: gh api --method DELETE "repos/${GITHUB_REPOSITORY}/git/refs/heads/${SELF_BRANCH}"
