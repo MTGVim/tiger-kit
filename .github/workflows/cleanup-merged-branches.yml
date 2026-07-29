@@ -1,0 +1,107 @@
+name: One-off merged branch cleanup
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: one-off-merged-branch-cleanup
+  cancel-in-progress: true
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete merged branches except main
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          SELF_BRANCH: ${{ github.head_ref }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          repo="$GITHUB_REPOSITORY"
+          default="$DEFAULT_BRANCH"
+          self="$SELF_BRANCH"
+          tmp="$(mktemp -d)"
+          trap 'rm -rf "$tmp"' EXIT
+
+          git -C "$tmp" init -q
+          git -C "$tmp" remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${repo}.git"
+          git -C "$tmp" fetch -q --no-tags --prune origin '+refs/heads/*:refs/remotes/origin/*'
+
+          merged_pairs="$tmp/merged-pr-heads.tsv"
+          open_heads="$tmp/open-pr-heads.txt"
+
+          gh api --paginate --slurp \
+            "repos/${repo}/pulls?state=closed&base=${default}&per_page=100" \
+            | jq -r --arg repo "$repo" \
+                '.[][] | select(.merged_at != null and .head.repo.full_name == $repo) | [.head.ref, .head.sha] | @tsv' \
+            > "$merged_pairs"
+
+          gh api --paginate --slurp \
+            "repos/${repo}/pulls?state=open&per_page=100" \
+            | jq -r --arg repo "$repo" \
+                '.[][] | select(.head.repo.full_name == $repo) | .head.ref' \
+            | sort -u \
+            > "$open_heads"
+
+          deleted=0
+          kept=0
+          failed=0
+
+          while IFS=$'\t' read -r branch current_sha; do
+            if [[ "$branch" == "$default" || "$branch" == "$self" ]]; then
+              continue
+            fi
+
+            if grep -Fqx -- "$branch" "$open_heads"; then
+              echo "KEPT_OPEN_PR $branch"
+              kept=$((kept + 1))
+              continue
+            fi
+
+            reason=""
+            if git -C "$tmp" merge-base --is-ancestor "$current_sha" "refs/remotes/origin/$default"; then
+              reason="ancestor-of-main"
+            elif awk -F '\t' -v branch="$branch" -v sha="$current_sha" \
+              '$1 == branch && $2 == sha { found=1 } END { exit(found ? 0 : 1) }' "$merged_pairs"; then
+              reason="merged-pr-head"
+            fi
+
+            if [[ -n "$reason" ]]; then
+              if git -C "$tmp" push -q origin --delete "$branch"; then
+                echo "DELETED [$reason] $branch"
+                deleted=$((deleted + 1))
+              else
+                echo "FAILED [$reason] $branch"
+                failed=$((failed + 1))
+              fi
+            else
+              echo "KEPT_UNMERGED $branch"
+              kept=$((kept + 1))
+            fi
+          done < <(git -C "$tmp" for-each-ref --format='%(refname:strip=3)%09%(objectname)' refs/remotes/origin | sort)
+
+          echo "SUMMARY deleted=$deleted kept=$kept failed=$failed"
+
+      - name: Delete cleanup branch
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SELF_BRANCH: ${{ github.head_ref }}
+        shell: bash
+        run: |
+          git push -q \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            --delete "$SELF_BRANCH"
