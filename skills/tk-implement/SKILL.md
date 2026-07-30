@@ -20,7 +20,7 @@ One invocation owns one independently verifiable unit and, after verification an
 
 Explicit user instructions outrank defaults. Do not weaken or reconfirm settled scope, method, prohibitions, strategy, verification, or commit instructions. Ask only when instructions conflict or safe execution requires a material user decision. Never claim a source was read or a check passed unless it was actually read or executed.
 
-For active drive, preserve task identity, ticket/R/AC, initial `HEAD`, pre-existing dirty paths, and the frozen verification profile. Return the unit ID, native status, commit when present, and verification/review evidence to the graph. Do not emit a terminal user result or take ownership of cross-unit verification or finalization.
+For active drive, preserve task identity, ticket/R/AC, initial `HEAD`, pre-existing dirty paths, and a material verification profile's four fields. Follow the owner mapping in [review-boundary.md](references/review-boundary.md); never recompute or weaken it. Return the unit ID, native status, commit when present, and verification/review evidence to the graph. Do not emit a terminal user result or take ownership of cross-unit verification or finalization.
 
 | Status | Meaning | Commit |
 | --- | --- | --- |
@@ -58,7 +58,7 @@ Load [execution-gates.md](references/execution-gates.md) selectively:
 - **Browser verification** for visible UI, interaction, navigation, responsive behavior, or browser final state.
 - **Final review/commit** for every unit.
 
-Before mutation and after initial green, use [review-boundary.md](references/review-boundary.md) for design fit, one simplify pass, fixed candidate/staged evidence, implementation ledger ownership, Standards/Spec review, and post-commit hook drift.
+Before mutation and after initial green, use [review-boundary.md](references/review-boundary.md) for design fit, one simplify pass, fixed candidate/staged evidence, implementation ledger ownership, Standards/Spec review, and post-commit hook drift. Use at most one independent reviewer when large or high-risk work warrants it; unavailable review capability is `Unverifiable`, not permission to drop a frozen obligation.
 
 ## CHECKPOINT / STOP
 
@@ -68,7 +68,7 @@ Before editing, stop `Blocked` when requirements conflict, authority is unsafe, 
 
 Commit exactly once only when status is `Pass` and commit is not prohibited. Stage only this unit's paths; preserve pre-existing user changes. Never broaden staging, bypass hooks for convenience, push, create a PR, merge, tag, release, or publish without a separate request.
 
-Lead with `## Changed`, then `## Verification`, and optional `## Strategy` or `## Remaining risks`. For a successful unit, use 2–5 short, behavior-oriented bullets under `Changed` and 1–4 verification-result bullets under `Verification`. When underlying results exceed the budget, keep only the most decision-relevant items and cite `.tigerkit/implementation.md`. Record the commit once. Keep logs, detailed mappings, and provenance in the ledger.
+Lead with `## Changed`, then `## Verification`, and optional `## Strategy` or `## Remaining risks`. For a successful unit, use 2–5 short, behavior-oriented bullets under `Changed` and 1–4 verification-result bullets under `Verification`. When underlying results exceed the budget, keep only the most decision-relevant items and cite `.tigerkit/implementation.md`. Record the commit once. Summarize commands and results; never paste logs or narrate review mechanics. Keep detailed mappings and provenance in the ledger.
 
 For active drive, return only the internal unit ID, status (`Pass | Fail | Blocked | Unverifiable`), commit, R/AC references, verification/review evidence, and unverified items.
 
