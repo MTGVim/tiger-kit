@@ -7,6 +7,6 @@
   {
     "id": 2,
     "prompt": "[active tk-drive Preparing ticket handoff] Ready spec을 수직 티켓으로 분해하세요. 분해 중 새 사용자 선택이 발견되면 spec을 고치거나 grill을 부르지 마세요.",
-    "expected": "native non-success receipt에 User decision: required와 근거를 담아 prep으로 반환하고, Ready spec 수정·grill 호출·implementation을 하지 않는다."
+    "expected": "native non-success state에 User decision: required와 근거를 담아 active graph에 넘기고, Ready spec 수정·grill 호출·implementation을 하지 않는다."
   }
 ]

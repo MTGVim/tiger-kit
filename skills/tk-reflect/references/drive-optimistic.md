@@ -8,12 +8,9 @@ their report-only and separate-approval contracts.
 
 Require the handoff to include:
 
-```text
-Mode: drive-optimistic
-Success state: Pass
-Outstanding transition: final receipt
-Return to: tk-drive
-```
+Require a valid active-drive reflection handoff after aggregate product
+verification. The handoff names the eligible target and its containment
+evidence; it does not store a caller-return instruction.
 
 Also require task identity, product verification HEAD, branch, initial HEAD,
 pre-existing dirty ownership, ordered product commits, aggregate verification,
@@ -122,12 +119,10 @@ Verified restoration preserves product `Pass` while reflection reports
 `Fail`. Failed restoration, target drift, out-of-scope changes, or indeterminate
 workspace state is `Blocked | Unverifiable`.
 
-On successful mutation or no-op, return `Status: Pass`,
-`Return to: tk-drive`, and
-`Outstanding transition: final receipt` verbatim. Include product verification
-HEAD, final HEAD, reflection commit or local rollback when applicable, and
-candidate IDs. Omit no-op, empty risks, and zero-candidate sections from
-user-facing output.
+On successful mutation or no-op, pass product verification HEAD, final HEAD,
+reflection commit or local rollback when applicable, candidate IDs, and
+validation evidence directly to `tk-drive finalization`. Omit no-op, empty
+risks, and zero-candidate sections from user-facing output.
 
 For every non-no-op result, preserve the standalone bounded Disposition table:
 

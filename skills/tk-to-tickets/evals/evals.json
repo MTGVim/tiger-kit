@@ -17,6 +17,11 @@
       "reason": "The echoed ticket transition is owned by tk-drive."
     },
     {
+      "from": "to-tickets-echoes-prep-transition",
+      "to": "to-tickets-routes-ledger-state-directly",
+      "reason": "Direct drive consumes verified ticket-ledger state without a return envelope."
+    },
+    {
       "from": "to-tickets-returns-decision-blocker-to-drive",
       "to": "to-tickets-returns-decision-blocker-to-prep",
       "reason": "Decision blockers now return to the active preparation."
@@ -81,11 +86,11 @@
       "id": "active-drive-preparing-returns-decision-blocker",
       "path": "boundary",
       "prompt": "[active tk-drive Preparing ticket handoff] Ready spec을 수직 티켓으로 분해하세요. 분해 중 새 사용자 선택이 발견되면 spec을 고치거나 grill을 부르지 마세요.",
-      "expected_output": "native non-success receipt에 User decision: required와 근거를 담아 prep으로 반환하고, Ready spec 수정·grill 호출·implementation을 하지 않는다.",
+      "expected_output": "native non-success state에 User decision: required와 근거를 담아 active graph에 넘기고, Ready spec 수정·grill 호출·implementation을 하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "native non-success receipt에 User decision: required와 근거를 담아 prep으로 반환하고, Ready spec 수정·grill 호출·implementation을 하지 않는다."
+          "criterion": "native non-success state에 User decision: required와 근거를 담아 active graph에 넘기고, Ready spec 수정·grill 호출·implementation을 하지 않는다."
         },
         {
           "type": "terminal_status",
@@ -251,8 +256,8 @@
     {
       "id": "to-tickets-active-drive-preparing-handoff",
       "path": "success",
-      "prompt": "[active tk-drive Preparing ticket handoff] Success state: Pass. Outstanding transition: seal preparation. The Ready spec has three independent vertical slices and prep decided a ledger is justified. Write and verify the ticket ledger and return Phase: tickets.",
-      "expected_output": "standalone과 같은 vertical-slice contract로 ticket IDs, source R/AC coverage, dependencies와 terminal state를 반환하고 implementation으로 진행하지 않는다.",
+      "prompt": "[active tk-drive ticket handoff] The Ready spec has three independent vertical slices and the graph selected a ledger. Write and verify it, then pass ticket IDs and R/AC coverage to the active graph.",
+      "expected_output": "standalone과 같은 vertical-slice contract로 ticket IDs, source R/AC coverage, dependencies를 active graph에 넘기고 implementation을 직접 실행하지 않는다.",
       "assertions": [
         {
           "type": "judge",
@@ -265,22 +270,22 @@
       ]
     },
     {
-      "id": "to-tickets-echoes-prep-transition",
+      "id": "to-tickets-routes-ledger-state-directly",
       "path": "success",
-      "prompt": "[active tk-drive Preparing ticket handoff] Success state: Pass. Outstanding transition: seal preparation. The Ready spec has two independent vertical slices. Write and revalidate the ledger, then return the receipt.",
-      "expected_output": "Pass receipt에 Return to: tk-drive과 parent가 준 Outstanding transition: seal preparation을 그대로 포함하고 implementation을 실행하지 않는다.",
+      "prompt": "[active tk-drive ticket handoff] The Ready spec has two independent vertical slices. Write and revalidate the ledger, then pass its verified state directly to the active graph.",
+      "expected_output": "verified ledger state를 다음 applicable node에 직접 넘기고 terminal result나 caller-return instruction을 만들지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "active-drive-preparing Pass receipt가 parent-supplied transition을 verbatim echo하고 implementation phase를 실행하지 않는다."
+          "criterion": "active-drive verified ledger state를 직접 넘기되 implementation phase를 실행하지 않는다."
         },
         {
-          "type": "output_contains",
-          "text": "Return to: tk-drive"
+          "type": "output_absent",
+          "text": "Return to:"
         },
         {
-          "type": "output_contains",
-          "text": "Outstanding transition: implementation unit TK-02"
+          "type": "output_absent",
+          "text": "Outstanding transition"
         },
         {
           "type": "terminal_status",

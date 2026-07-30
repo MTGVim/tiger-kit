@@ -19,6 +19,7 @@ if __package__:
         validate_local_only_workflows,
         validate_catalog_routing,
         validate_browser_preflight_contract,
+        validate_compact_preflight_contract,
         validate_drive_graph_contract,
         validate_learning_loop_contract,
         validate_prepared_drive_contract,
@@ -48,6 +49,7 @@ else:
         validate_local_only_workflows,
         validate_catalog_routing,
         validate_browser_preflight_contract,
+        validate_compact_preflight_contract,
         validate_drive_graph_contract,
         validate_learning_loop_contract,
         validate_prepared_drive_contract,
@@ -66,6 +68,19 @@ else:
 
 
 class CanonicalSkillContractTest(unittest.TestCase):
+    def test_compact_preflight_replaces_lifecycle_machinery(self) -> None:
+        source_root = Path(__file__).resolve().parents[1]
+        self.assertEqual(validate_compact_preflight_contract(source_root), [])
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            obsolete = root / "skills/tk-drive/scripts/prep_state.py"
+            obsolete.parent.mkdir(parents=True)
+            obsolete.write_text("legacy\n", encoding="utf-8")
+            errors = validate_compact_preflight_contract(root)
+
+        self.assertTrue(any("obsolete drive lifecycle machinery" in error for error in errors))
+
     def test_grill_contract_keeps_one_owner_for_both_callers(self) -> None:
         source_root = Path(__file__).resolve().parents[1]
         self.assertEqual(validate_unified_grill_contract(source_root), [])
@@ -132,12 +147,12 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "ask-repo-search-failure-is-unverifiable",
                 "ask-repo-blocks-contradicted-premise",
                 "ask-repo-bounds-result-cardinality",
-                "drive-prepares-only-after-ready-gates",
+                "drive-writes-compact-preflight",
                 "drive-bounds-task-anchored-prior-art",
                 "drive-excludes-forbidden-prior-art",
-                "drive-preserves-terminal-on-failed-preparing",
-                "drive-reseals-one-active-amendment",
-                "drive-continues-automatically-after-ready",
+                "drive-preserves-preflight-on-write-failure",
+                "drive-rejects-preflight-secrets",
+                "drive-resumes-from-current-evidence",
                 "adhd-explicit-one-shot",
                 "adhd-does-not-carry-over",
                 "adhd-safety-exception",
@@ -148,7 +163,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "drive-response-language-explicit-english",
                 "drive-reflects-once-after-aggregate-pass",
                 "drive-invokes-phase-owners",
-                "drive-continues-after-prep-claim",
+                "drive-continues-after-preflight",
                 "drive-enforces-exact-procedure-graph",
                 "drive-continues-without-receipt-boundary",
                 "drive-continues-multi-unit-through-reflection",
@@ -157,9 +172,10 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "drive-amends-on-first-new-decision",
                 "drive-skips-grill-for-ready-source",
                 "drive-blocks-second-amendment",
-                "drive-claims-ready-prep-atomically",
-                "drive-invalidates-stale-prep",
-                "drive-finalizes-owned-claim",
+                "drive-writes-compact-preflight",
+                "drive-preserves-preflight-on-write-failure",
+                "drive-rejects-preflight-secrets",
+                "drive-resumes-from-current-evidence",
                 "drive-blocks-repeated-decision-return",
                 "drive-commits-per-ticket",
                 "drive-invalidates-source-current-ui-mismatch",
@@ -170,10 +186,10 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "grill-me-active-drive-routes-directly",
                 "grill-me-blocks-active-drive-autostart",
                 "grill-me-does-not-mutate-or-invoke-phases",
-                "to-spec-echoes-prep-transition",
+                "to-spec-routes-ready-state-directly",
                 "to-spec-returns-decision-blocker-to-prep",
                 "to-spec-blocks-source-current-ui-mismatch",
-                "to-tickets-echoes-prep-transition",
+                "to-tickets-routes-ledger-state-directly",
                 "to-tickets-returns-decision-blocker-to-prep",
                 "to-tickets-blocks-source-current-ui-mismatch",
                 "implement-reviews-every-standalone-run",
@@ -182,7 +198,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "implement-allows-bounded-hook-bypass",
                 "implement-diagnoses-unknown-cause-failure",
                 "implement-active-drive-handoff-triggers",
-                "implement-echoes-drive-transition",
+                "implement-routes-unit-state-directly",
                 "implement-blocks-source-current-ui-mismatch",
                 "implement-production-behavior-requires-durable-test",
                 "implement-reports-bounded-behavior-summary",
@@ -465,7 +481,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
             },
             {
                 "drive-resumes-pending-answer": "drive-resumes-preparing-decision-answer",
-                "drive-continues-after-ready-spec": "drive-continues-automatically-after-ready",
+                "drive-continues-after-ready-spec": "drive-resumes-from-current-evidence",
                 "drive-live-continues-after-ready-spec": "drive-live-prepared-execution",
                 "drive-live-initial-ssot-stop-control": "drive-live-prepares-and-executes-source",
                 "drive-requires-spec-for-trivial-task": "drive-prepares-trivial-task",
@@ -515,7 +531,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
             )
         )
         cases = {case["id"]: case for case in payload["evals"]}
-        case = cases["drive-continues-after-prep-claim"]
+        case = cases["drive-continues-after-preflight"]
         self.assertNotIn("Success state:", case["prompt"])
         self.assertNotIn("Outstanding transition:", case["prompt"])
         self.assertIn("applicable node", case["prompt"])
@@ -1388,10 +1404,8 @@ class SkillEvalFixtureTest(unittest.TestCase):
                     "type": "event_order",
                     "hosts": ["claude-code"],
                     "before": {
-                        "type": "phase_receipt",
+                        "type": "phase_invocation",
                         "phase": "tk-to-spec",
-                        "state": "Ready",
-                        "transition": "ticket decision",
                     },
                     "after": {
                         "type": "phase_invocation",
@@ -1421,7 +1435,7 @@ class SkillEvalFixtureTest(unittest.TestCase):
             success["assertions"][-2] = {
                 "type": "event_order",
                 "hosts": ["unknown-host"],
-                "before": {"type": "phase_receipt"},
+                "before": {"type": "unknown"},
                 "after": {"type": "unknown"},
                 "forbidden_between": "final_output",
             }

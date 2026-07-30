@@ -5,6 +5,11 @@
       "from": "implement-diagnosis-reports-missing-seam",
       "to": "implement-diagnosis-blocks-missing-seam",
       "reason": "TigerKit 20.1.3 strengthens missing-seam handling from a successful report to a pre-commit named-exception checkpoint."
+    },
+    {
+      "from": "implement-echoes-drive-transition",
+      "to": "implement-routes-unit-state-directly",
+      "reason": "Direct drive consumes verified unit state without a return envelope."
     }
   ],
   "evals": [
@@ -483,8 +488,8 @@
     {
       "id": "implement-active-drive-handoff-triggers",
       "path": "success",
-      "prompt": "[active tk-drive implementation handoff] Success state: Pass. Outstanding transition: aggregate verification. Unit TK-02, R8/AC8의 exact source와 diff scope가 제공된 public multi-host contract 변경입니다. Signals: public-blast-radius. Obligations: regression-seam, compatibility, independent-review. 검증·review·commit 후 receipt를 반환해 주세요.",
-      "expected_output": "unit/R/AC와 frozen profile을 재분류하거나 약화하지 않고 regression, supported-host compatibility, one bounded independent review를 충족한 뒤에만 commit하며 parent transition을 verbatim 반환한다.",
+      "prompt": "[active tk-drive implementation handoff] Unit TK-02, R8/AC8의 exact source와 diff scope가 제공된 public multi-host contract 변경입니다. Signals: public-blast-radius. Obligations: regression-seam, compatibility, independent-review. 검증·review·commit 후 native unit state를 active graph에 넘겨 주세요.",
+      "expected_output": "unit/R/AC와 frozen profile을 재분류하거나 약화하지 않고 regression, supported-host compatibility, one bounded independent review를 충족한 뒤에만 commit하며 unit evidence를 active graph에 직접 넘긴다.",
       "assertions": [
         {
           "type": "judge",
@@ -503,12 +508,12 @@
           "text": "independent-review"
         },
         {
-          "type": "output_contains",
-          "text": "Return to: tk-drive"
+          "type": "output_absent",
+          "text": "Return to:"
         },
         {
-          "type": "output_contains",
-          "text": "Outstanding transition: aggregate verification"
+          "type": "output_absent",
+          "text": "Outstanding transition"
         },
         {
           "type": "terminal_status",
@@ -518,22 +523,22 @@
       "darwin": true
     },
     {
-      "id": "implement-echoes-drive-transition",
+      "id": "implement-routes-unit-state-directly",
       "path": "success",
-      "prompt": "[active tk-drive implementation handoff] Success state: Pass. Outstanding transition: aggregate verification. Implement the supplied one-file ticket TK-02 as one unit, verify and review it, commit it, then return the receipt.",
-      "expected_output": "Pass receipt에 Return to: tk-drive와 parent가 준 Outstanding transition: aggregate verification을 그대로 포함하며 aggregate verification을 직접 소유하지 않는다.",
+      "prompt": "[active tk-drive implementation handoff] Implement the supplied one-file ticket TK-02 as one unit, verify and review it, commit it, then pass its native unit state to the active graph.",
+      "expected_output": "verified unit state와 commit evidence를 다음 applicable graph node에 직접 넘기며 aggregate verification을 직접 소유하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "active-drive Pass receipt가 parent-supplied transition을 verbatim echo하고 drive-wide aggregate verification을 실행하지 않는다."
+          "criterion": "active-drive verified unit state를 직접 넘기고 drive-wide aggregate verification을 실행하지 않는다."
         },
         {
-          "type": "output_contains",
-          "text": "Return to: tk-drive"
+          "type": "output_absent",
+          "text": "Return to:"
         },
         {
-          "type": "output_contains",
-          "text": "Outstanding transition: aggregate verification"
+          "type": "output_absent",
+          "text": "Outstanding transition"
         },
         {
           "type": "terminal_status",

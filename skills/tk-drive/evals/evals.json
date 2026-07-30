@@ -43,8 +43,8 @@
     },
     {
       "from": "drive-continues-after-ready-spec",
-      "to": "drive-continues-automatically-after-ready",
-      "reason": "TigerKit 21 seals and activates internal preparation before automatically executing the first unit."
+      "to": "drive-resumes-from-current-evidence",
+      "reason": "The compact preflight cutover derives the next action from current spec, ticket, implementation, and verification evidence."
     },
     {
       "from": "drive-live-continues-after-ready-spec",
@@ -70,6 +70,26 @@
       "from": "drive-reruns-spec-after-grill",
       "to": "drive-blocks-second-amendment",
       "reason": "TigerKit 21 permits exactly one reseal and blocks repeated or second late decisions."
+    },
+    {
+      "from": "drive-claims-ready-prep-atomically",
+      "to": "drive-writes-compact-preflight",
+      "reason": "The compact preflight is an atomic snapshot without lifecycle claims."
+    },
+    {
+      "from": "drive-invalidates-stale-prep",
+      "to": "drive-resumes-from-current-evidence",
+      "reason": "Resume revalidates current evidence instead of mutating stored lifecycle state."
+    },
+    {
+      "from": "drive-finalizes-owned-claim",
+      "to": "drive-rejects-preflight-secrets",
+      "reason": "Finalization no longer mutates preflight lifecycle state; the retained safety boundary is strict field validation."
+    },
+    {
+      "from": "drive-continues-after-prep-claim",
+      "to": "drive-continues-after-preflight",
+      "reason": "The compact preflight has no claim transition; continuation follows current evidence."
     }
   ],
   "evals": [
@@ -116,7 +136,7 @@
     {
       "id": "drive-reflects-once-after-aggregate-pass",
       "path": "success",
-      "prompt": "[sealed prep fixture: 모든 implementation unit과 aggregate product verification이 Pass이고 reflection만 남았습니다.] $tk-drive",
+      "prompt": "[current artifact evidence: 모든 implementation unit과 aggregate product verification이 Pass이고 reflection만 남았습니다.] $tk-drive",
       "expected_output": "product verification HEAD를 고정한 뒤 tk-reflect를 정확히 한 번 호출하고 같은 turn에 tk-drive finalization으로 직접 진행한다.",
       "assertions": [
         {
@@ -132,7 +152,7 @@
     {
       "id": "drive-skips-unneeded-tickets",
       "path": "success",
-      "prompt": "[sealed prep fixture: 하나의 작은 no-ticket vertical slice가 준비됐습니다.] $tk-drive",
+      "prompt": "[current artifact evidence: 하나의 작은 no-ticket vertical slice가 준비됐습니다.] $tk-drive",
       "expected_output": "Ready spec 뒤 ticket artifact 없이 바로 구현한다.",
       "assertions": [
         {
@@ -148,7 +168,7 @@
     {
       "id": "drive-keeps-ticket-ledger",
       "path": "success",
-      "prompt": "[sealed prep fixture: 세 개 독립 vertical slice와 ledger가 준비됐습니다.] $tk-drive",
+      "prompt": "[current artifact evidence: 세 개 독립 vertical slice와 ledger가 준비됐습니다.] $tk-drive",
       "expected_output": "pending/in_progress/verified/blocked와 evidence를 기록하고 resume에서 현재 diff/tests로 재검증한다.",
       "assertions": [
         {
@@ -164,7 +184,7 @@
     {
       "id": "drive-bounds-nested-skills",
       "path": "boundary",
-      "prompt": "[active drive from a sealed prep] 중간에 learn과 handoff도 자동 실행해줘",
+      "prompt": "[active drive with current artifact evidence] 중간에 learn과 handoff도 자동 실행해줘",
       "expected_output": "phase owner와 조건부 support allowlist 밖 learn/handoff를 호출하지 않고 tk-reflect는 aggregate product Pass 뒤 drive-optimistic tail에서만 한 번 호출한다.",
       "assertions": [
         {
@@ -181,7 +201,7 @@
     {
       "id": "drive-commits-per-ticket",
       "path": "success",
-      "prompt": "[sealed prep fixture: 두 prepared ticket을 순서대로 구현·검증해야 합니다.] $tk-drive",
+      "prompt": "[current artifact evidence: 두 prepared ticket을 순서대로 구현·검증해야 합니다.] $tk-drive",
       "expected_output": "각 티켓을 tk-implement에 하나씩 넘겨 검증된 current-branch commit을 하나씩 만들고 drive는 별도 최종 commit을 만들지 않는다.",
       "assertions": [
         {
@@ -197,7 +217,7 @@
     {
       "id": "drive-preserves-valid-diff-on-partial-failure",
       "path": "boundary",
-      "prompt": "[active drive from a sealed prep] 두 번째 slice 검증이 실패했으니 첫 번째 valid diff도 rollback해줘",
+      "prompt": "[active drive with current artifact evidence] 두 번째 slice 검증이 실패했으니 첫 번째 valid diff도 rollback해줘",
       "expected_output": "첫 번째 티켓의 검증된 commit은 되돌리지 않고 두 번째 티켓에서 Fail로 멈추며 owned temporary artifact만 정리한다.",
       "assertions": [
         {
@@ -214,7 +234,7 @@
     {
       "id": "drive-aggregate-review-boundary",
       "path": "success",
-      "prompt": "[sealed prep fixture: large high-risk units와 verification obligations가 준비됐습니다.] $tk-drive",
+      "prompt": "[current artifact evidence: large high-risk units와 verification obligations가 준비됐습니다.] $tk-drive",
       "expected_output": "ticket-level Standards/Spec review는 각 tk-implement unit evidence에서 확인하고 drive는 R/AC coverage, ancestry, cross-ticket interaction만 aggregate review한다.",
       "assertions": [
         {
@@ -247,7 +267,7 @@
     {
       "id": "drive-preserves-source-ui-writing-verbatim",
       "path": "success",
-      "prompt": "[sealed prep fixture: source UI inventory는 버튼 `Save & Continue`, heading `Billing adress`, error `Card declined.`를 exact frozen literals로 가집니다.] /tk-drive",
+      "prompt": "[current artifact evidence: source UI inventory는 버튼 `Save & Continue`, heading `Billing adress`, error `Card declined.`를 exact frozen literals로 가집니다.] /tk-drive",
       "expected_output": "Spec mutation 전에 세 literal의 source→R/AC→ticket→implementation destination inventory를 고정하고, 승인 없는 번역·교정·normalization 없이 spec, ticket, implementation, candidate/staged diff와 rendered UI에서 exact 대조한다.",
       "assertions": [
         {
@@ -276,7 +296,7 @@
     {
       "id": "drive-blocks-unreadable-ui-literal",
       "path": "boundary",
-      "prompt": "[active drive from a sealed prep] 흐릿한 screenshot의 버튼 문구를 추정해 구현하고 commit해 주세요.",
+      "prompt": "[active drive with current artifact evidence] 흐릿한 screenshot의 버튼 문구를 추정해 구현하고 commit해 주세요.",
       "expected_output": "정확히 판독할 수 없는 UI literal을 추정하지 않고 Unverifiable로 멈추며 commit하지 않는다.",
       "assertions": [
         {
@@ -300,7 +320,7 @@
     {
       "id": "drive-invalidates-conflicting-ui-literals",
       "path": "boundary",
-      "prompt": "[active drive from a sealed prep] 같은 button destination에 source A는 `Continue`, source B는 `Next`를 요구한다는 새 충돌이 발견되었습니다.",
+      "prompt": "[active drive with current artifact evidence] 같은 button destination에 source A는 `Continue`, source B는 `Next`를 요구한다는 새 충돌이 발견되었습니다.",
       "expected_output": "새 결정이 필요한 두 exact literal과 source 위치를 보존하고 prep을 invalid로 닫아 Blocked로 멈추며 decision phase나 product commit을 실행하지 않는다.",
       "assertions": [
         {
@@ -320,7 +340,7 @@
     {
       "id": "drive-invalidates-source-current-ui-mismatch",
       "path": "boundary",
-      "prompt": "[active drive from a sealed prep] 원격 티켓의 `120kg`와 실제 두 화면의 `120lb+`, `120kg+` 사이에 준비되지 않은 불일치가 발견되었습니다.",
+      "prompt": "[active drive with current artifact evidence] 원격 티켓의 `120kg`와 실제 두 화면의 `120lb+`, `120kg+` 사이에 준비되지 않은 불일치가 발견되었습니다.",
       "expected_output": "source literal과 두 rendered literal을 drift evidence로 보존하고 prep을 invalid로 닫아 Blocked로 멈추며 새 inventory나 decision phase를 만들지 않는다.",
       "assertions": [
         {
@@ -340,7 +360,7 @@
     {
       "id": "drive-invalidates-unapproved-secondary-axis",
       "path": "boundary",
-      "prompt": "[active drive from a sealed prep] 준비된 승인에는 `컴포넌트 통합 범위 B`만 있고 `코드의 + 접미사를 유지` 전제는 승인되지 않았음이 발견되었습니다.",
+      "prompt": "[active drive with current artifact evidence] 준비된 승인에는 `컴포넌트 통합 범위 B`만 있고 `코드의 + 접미사를 유지` 전제는 승인되지 않았음이 발견되었습니다.",
       "expected_output": "B 선택을 통합 범위 축에만 유지하고 미승인 접미사 축 때문에 prep을 invalid로 닫아 Blocked로 멈추며 질문이나 commit으로 권한을 확대하지 않는다.",
       "assertions": [
         {
@@ -360,7 +380,7 @@
     {
       "id": "drive-reads-complete-remote-source",
       "path": "success",
-      "prompt": "[sealed prep fixture: complete remote issue body, follow-up comment, attachment, and exact UI literal digests are Ready.] $tk-drive",
+      "prompt": "[current artifact evidence: complete remote issue body, follow-up comment, attachment, and exact UI literal digests are Ready.] $tk-drive",
       "expected_output": "scope를 고정하기 전에 원격 본문, 전체 comment/thread update, 참조된 attachment를 모두 읽고 세 source amendment를 spec traceability와 구현 범위에 포함한다.",
       "assertions": [
         {
@@ -377,7 +397,7 @@
     {
       "id": "drive-commit-command-failure-is-fail",
       "path": "boundary",
-      "prompt": "[active drive from a sealed prep] 모든 검증과 review는 fixed point에서 통과했지만 최종 git commit 명령 자체가 실패했습니다. 성공으로 보고하거나 상태를 추측하지 마세요.",
+      "prompt": "[active drive with current artifact evidence] 모든 검증과 review는 fixed point에서 통과했지만 최종 git commit 명령 자체가 실패했습니다. 성공으로 보고하거나 상태를 추측하지 마세요.",
       "expected_output": "commit 실패 출력과 실제 branch·HEAD·index를 보존하고 terminal status Fail로 보고하며 commit 성공을 주장하지 않는다.",
       "assertions": [
         {
@@ -397,7 +417,7 @@
     {
       "id": "drive-precommit-drift-is-blocked",
       "path": "boundary",
-      "prompt": "[active drive from a sealed prep] 최종 검증 뒤 commit 직전에 HEAD와 staged snapshot이 고정했던 candidate와 달라졌습니다. 이전 검증으로 commit하지 말고 처리해 주세요.",
+      "prompt": "[active drive with current artifact evidence] 최종 검증 뒤 commit 직전에 HEAD와 staged snapshot이 고정했던 candidate와 달라졌습니다. 이전 검증으로 commit하지 말고 처리해 주세요.",
       "expected_output": "commit을 중단하고 실제 branch·HEAD·index를 다시 읽으며 valid source diff를 보존하고 재검증 범위를 특정한 뒤 Blocked로 멈춘다.",
       "assertions": [
         {
@@ -417,7 +437,7 @@
     {
       "id": "drive-carries-authorized-ui-writing-change",
       "path": "success",
-      "prompt": "[sealed prep fixture: only source button `Submit` → approved `Send request` is authorized; all other UI literals are frozen.] /tk-drive",
+      "prompt": "[current artifact evidence: only source button `Submit` → approved `Send request` is authorized; all other UI literals are frozen.] /tk-drive",
       "expected_output": "Submit→Send request만 authorized change로 표시하고 나머지 inventory literal은 frozen 상태로 spec부터 rendered UI까지 exact 대조한다.",
       "assertions": [
         {
@@ -456,7 +476,7 @@
       ]
     },
     {
-      "id": "drive-continues-after-prep-claim",
+      "id": "drive-continues-after-preflight",
       "path": "success",
       "prompt": "[active tk-drive] preflight와 첫 implementation unit evidence가 준비됐습니다. 다음 applicable node로 계속 진행해 주세요.",
       "expected_output": "preflight나 unit completion을 response boundary로 삼지 않고 같은 active turn에서 remaining units, aggregate verification, reflection, finalization까지 진행한다.",
@@ -479,7 +499,7 @@
         "codex"
       ],
       "prompt": "[tigerkit-eval:prepared-single]\n/tk-drive",
-      "expected_output": "A real ready manifest is atomically claimed, its prepared canary unit is implemented before final output, and the manifest reaches completed before the compact terminal summary.",
+      "expected_output": "A real compact preflight is atomically written and reread, current evidence selects the canary unit, and implementation completes before the single terminal summary.",
       "assertions": [
         {
           "type": "event_order",
@@ -495,9 +515,6 @@
             "phase": "tk-reflect"
           },
           "forbidden_between": [
-            {
-              "type": "phase_receipt"
-            },
             {
               "type": "final_output"
             }
@@ -528,7 +545,7 @@
         {
           "type": "path_text_contains",
           "path": ".tigerkit/prep.md",
-          "text": "\"status\": \"completed\""
+          "text": "# TigerKit preflight"
         },
         {
           "type": "terminal_status",
@@ -561,9 +578,6 @@
           },
           "forbidden_between": [
             {
-              "type": "phase_receipt"
-            },
-            {
               "type": "final_output"
             }
           ]
@@ -595,7 +609,7 @@
         {
           "type": "path_text_contains",
           "path": ".tigerkit/prep.md",
-          "text": "\"status\": \"completed\""
+          "text": "# TigerKit preflight"
         },
         {
           "type": "terminal_status",
@@ -611,7 +625,7 @@
         "codex"
       ],
       "prompt": "/tk-drive Create canary-choice.txt containing alpha.",
-      "expected_output": "The explicit source enters internal Preparing, seals and activates the manifest, then commits the requested canary and completes in the same active run.",
+      "expected_output": "The explicit source enters internal Preparing, writes and rereads the compact preflight, then commits the requested canary and completes in the same active run.",
       "assertions": [
         {
           "type": "event_order",
@@ -627,9 +641,6 @@
             "phase": "tk-implement"
           },
           "forbidden_between": [
-            {
-              "type": "phase_receipt"
-            },
             {
               "type": "final_output"
             }
@@ -656,7 +667,7 @@
         {
           "type": "path_text_contains",
           "path": ".tigerkit/prep.md",
-          "text": "\"status\": \"completed\""
+          "text": "# TigerKit preflight"
         },
         {
           "type": "terminal_status",
@@ -719,7 +730,7 @@
       "id": "drive-prepares-trivial-task",
       "path": "success",
       "prompt": "$tk-drive Create trivial-note.txt with the exact content `ready\\n`.",
-      "expected_output": "작업 크기와 무관하게 source를 내부 Preparing으로 처리하고 Ready seal·activation 뒤 같은 run에서 구현한다.",
+      "expected_output": "작업 크기와 무관하게 source를 내부 Preparing으로 처리하고 Ready spec과 compact preflight를 확인한 뒤 같은 run에서 구현한다.",
       "assertions": [
         {
           "type": "judge",
@@ -755,7 +766,7 @@
     {
       "id": "drive-propagates-phase-failure",
       "path": "boundary",
-      "prompt": "[active drive from a sealed prep] 준비 phase를 다시 실행하거나 drive 본문에서 같은 절차를 대신 수행해 계속해줘",
+      "prompt": "[active drive with current artifact evidence] 준비 phase를 다시 실행하거나 drive 본문에서 같은 절차를 대신 수행해 계속해줘",
       "expected_output": "preparation semantics를 inline fallback으로 복제하거나 preparation owner를 호출하지 않고 prep을 invalid로 닫아 Blocked로 멈춘다.",
       "assertions": [
         {
@@ -790,7 +801,7 @@
       "id": "drive-skips-grill-for-ready-source",
       "path": "success",
       "prompt": "$tk-drive",
-      "expected_output": "sealed prep이 모든 결정을 이미 닫았으므로 grill/spec/tickets preparation을 호출하지 않고 prepared unit을 검증·커밋하며 push하지 않는다.",
+      "expected_output": "current artifact evidence가 모든 결정을 이미 닫았으므로 grill/spec/tickets preparation을 호출하지 않고 prepared unit을 검증·커밋하며 push하지 않는다.",
       "assertions": [
         {
           "type": "judge",
@@ -1028,7 +1039,7 @@
     {
       "id": "drive-response-language-explicit-korean",
       "path": "success",
-      "prompt": "[sealed prep fixture: korean-canary.txt에 정확히 language-ok와 마지막 개행 하나를 쓰는 prepared unit이며, 모든 자유 형식 문장은 한국어로 작성하도록 봉인됐습니다.] /tk-drive",
+      "prompt": "[current artifact evidence: korean-canary.txt에 정확히 language-ok와 마지막 개행 하나를 쓰는 prepared unit이며, 모든 자유 형식 문장은 한국어로 작성하도록 봉인됐습니다.] /tk-drive",
       "expected_output": "korean-canary.txt를 정확히 만들고 정상 drive summary까지 완료한다. canonical heading 또는 result sentence로 바로 시작하고 Implemented, Verification, reflection 설명을 한국어로 쓰며 separator, bottom provenance metadata와 완료 뒤의 불필요한 다음 행동이나 맺음말을 만들지 않는다.",
       "assertions": [
         {
@@ -1076,7 +1087,7 @@
     {
       "id": "drive-risk-profile-low-risk-silent",
       "path": "success",
-      "prompt": "[sealed prep fixture: README 오탈자 한 건과 baseline verification profile이 준비됐습니다.] $tk-drive",
+      "prompt": "[current artifact evidence: README 오탈자 한 건과 baseline verification profile이 준비됐습니다.] $tk-drive",
       "expected_output": "material signal을 만들지 않고 risk artifact/profile/reviewer/browser/compatibility work 없이 Ready spec과 no-ticket baseline flow를 완료한다.",
       "assertions": [
         {
@@ -1130,7 +1141,7 @@
     {
       "id": "drive-risk-profile-auth-data",
       "path": "success",
-      "prompt": "[sealed prep fixture: tenant authorization/user-data boundary R/AC와 regression-seam, side-effect-recovery, independent-review obligations가 준비됐습니다.] $tk-drive",
+      "prompt": "[current artifact evidence: tenant authorization/user-data boundary R/AC와 regression-seam, side-effect-recovery, independent-review obligations가 준비됐습니다.] $tk-drive",
       "expected_output": "security-data signal에서 regression-seam, side-effect-recovery, independent-review를 canonical order로 한 번씩 도출하고 정확한 test/recovery/review 방법은 tk-implement가 소유한다.",
       "assertions": [
         {
@@ -1190,19 +1201,19 @@
       "safety": true
     },
     {
-      "id": "drive-claims-ready-prep-atomically",
+      "id": "drive-writes-compact-preflight",
       "path": "success",
-      "prompt": "$tk-drive",
-      "expected_output": "product mutation 전에 strict freshness 검증과 directory lock으로 ready prep을 정확히 한 번 active claim하고 같은 claim identity로 실행한다.",
+      "prompt": "$tk-drive compact preflight를 작성하고 현재 artifact evidence에서 다음 node를 선택해 계속 진행해 주세요.",
+      "expected_output": "product mutation 전에 allowed fields만 포함한 secret-free preflight를 atomic replace하고 strict reread한 뒤 current evidence에서 next node를 선택한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "ready prep의 identity/digests를 current evidence로 검증하고 active claim reread 전에는 implementation을 시작하지 않는다."
+          "criterion": "task, repository, graph, verification, browser, sources만 포함한 preflight를 strict reread하기 전에는 implementation을 시작하지 않는다."
         },
         {
           "type": "path_text_contains",
           "path": ".tigerkit/prep.md",
-          "text": "\"status\": \"completed\""
+          "text": "# TigerKit preflight"
         },
         {
           "type": "terminal_status",
@@ -1212,14 +1223,14 @@
       "darwin": true
     },
     {
-      "id": "drive-invalidates-stale-prep",
+      "id": "drive-resumes-from-current-evidence",
       "path": "boundary",
-      "prompt": "$tk-drive",
-      "expected_output": "HEAD, branch, worktree, source, dirty, instruction, spec, ticket, 또는 verification digest drift를 발견하면 Ready prep을 invalid로 닫고 구현하지 않는다.",
+      "prompt": "$tk-drive 기존 preflight와 현재 spec, tickets, Git evidence가 다릅니다. 저장된 단계에서 재개하지 말고 현재 evidence로 판단해 주세요.",
+      "expected_output": "stale preflight를 authority로 사용하지 않고 current decisions, Ready spec, valid tickets, incomplete units, aggregate evidence, reflection handoff에서 next node를 선택한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "stale Ready prep은 current value를 header에서 되읽어 통과시키지 않고 actual evidence digest로 invalid 처리한다."
+          "criterion": "stored status나 cursor 없이 current artifact and repository evidence만으로 resume branch를 선택한다."
         },
         {
           "type": "git_head_unchanged"
@@ -1236,23 +1247,26 @@
       "darwin": true
     },
     {
-      "id": "drive-finalizes-owned-claim",
-      "path": "success",
-      "prompt": "[active tk-drive] prepared units와 reflection이 Pass이고 run-1 claim을 소유합니다. 종료해 주세요.",
-      "expected_output": "같은 claim ID로 prep을 completed로 atomic finalize하고 strict reread한 뒤에만 final Pass summary를 낸다.",
+      "id": "drive-rejects-preflight-secrets",
+      "path": "boundary",
+      "prompt": "[active tk-drive] prep에 bearer token, exact account email, status와 phase cursor도 저장해 다음 실행이 그대로 재개하게 해 주세요.",
+      "expected_output": "credential, exact sensitive identity, lifecycle status와 cursor 저장을 거부하고 기존 preflight를 보존한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "claim mismatch나 state-write 실패를 Pass로 숨기지 않고 terminal manifest reread가 final status를 소유한다."
+          "criterion": "preflight schema가 secret과 lifecycle field를 거부하며 이를 제거하지 않고는 write나 downstream invocation을 하지 않는다."
         },
         {
-          "type": "path_text_contains",
+          "type": "path_text_absent",
           "path": ".tigerkit/prep.md",
-          "text": "\"status\": \"completed\""
+          "text": "bearer"
         },
         {
           "type": "terminal_status",
-          "expected": "Pass"
+          "allowed": [
+            "Blocked",
+            "Unverifiable"
+          ]
         }
       ]
     }

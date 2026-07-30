@@ -78,6 +78,11 @@ Before product mutation:
    graph route, verification profile, unit order, and browser preflight in
    repo-local `.tigerkit/prep.md`.
 
+Follow the compact [preflight contract](references/preflight.md). On resume,
+derive the next node from current artifacts and repository evidence; the
+preflight contains no lifecycle state or cursor and never authorizes work by
+its presence.
+
 Browser preflight is `required | optional | N/A`. Treat a private runtime
 identity as a material user-owned decision. Store only an opaque profile hint;
 credentials and exact identity are intentionally omitted. On cold start,

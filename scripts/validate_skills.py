@@ -43,7 +43,7 @@ MECHANICAL_ASSERTION_TYPES = {
     "git_diff_contains",
     "git_diff_absent",
 }
-EVENT_TYPES = {"phase_invocation", "phase_receipt", "final_output"}
+EVENT_TYPES = {"phase_invocation", "final_output"}
 TERMINAL_STATUSES = {
     "Pass",
     "Fail",
@@ -113,6 +113,29 @@ DRIVE_TERMINAL_SUMMARY_GATE = (
     "Persist provenance only in an artifact or ledger already owned by the workflow. "
     "Never require a shared runtime reference outside this skill."
 )
+DIRECT_TERMINAL_SUMMARY_GATE = (
+    "### 🔴 HARD GATE · terminal user summary\n\n"
+    "Treat progress commentary, internal procedure evidence, and the terminal user response as distinct surfaces. "
+    "Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. "
+    "Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. "
+    "Do not emit a terminal user-summary opening between successful consecutive active-drive procedure invocations.\n\n"
+    "Do not render a receipt heading, `Outcome:` label, phase-success token, caller-return instruction, or terminal provenance/status block in the user summary. "
+    "When the result requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. "
+    "Expose a path, ID, commit, or recovery detail only when it changes user action or the canonical result schema requires it.\n\n"
+    "Persist provenance only in an artifact or ledger already owned by the workflow. "
+    "A read-only skill remains read-only. Never require a shared runtime reference outside this skill."
+)
+DIRECT_GRAPH_SKILLS = {
+    "tk-browser-verify",
+    "tk-drive",
+    "tk-grill-me",
+    "tk-implement",
+    "tk-merge-conflict",
+    "tk-prototype",
+    "tk-reflect",
+    "tk-to-spec",
+    "tk-to-tickets",
+}
 DRIVE_GRAPH_NODES = {
     "tk-drive:preflight",
     "tk-grill-me",
@@ -206,9 +229,7 @@ ADHD_FORBIDDEN_TOKENS = (
     "latest explicit activation or stop event wins",
 )
 LEARNING_LOOP_TOKENS = {
-    "skills/tk-grill-me/SKILL.md": (
-        "`Return to: tk-drive`",
-    ),
+    "skills/tk-grill-me/SKILL.md": ("active drive",),
     "skills/tk-reflect/SKILL.md": (
         "Preferred prevention owner",
         "Host dependency",
@@ -220,14 +241,14 @@ LEARNING_LOOP_TOKENS = {
         "inaccessible host-only rules",
     ),
     "skills/tk-to-spec/SKILL.md": (
-        "`Return to: tk-drive`",
+        "pass the Ready artifact path",
         "`adopted | already-satisfied | not-applicable | conflict`",
         "R/AC mapping",
         "A `conflict` disposition prevents `Ready`",
         "no relevant prior art exists, omit `## Prior art`",
     ),
     "skills/tk-to-tickets/SKILL.md": (
-        "`Return to: tk-drive`",
+        "directly to the next applicable graph",
     ),
 }
 RESPONSE_LANGUAGE_GATE = (
@@ -303,12 +324,12 @@ REQUIRED_BEHAVIOR_CASES = {
     "ask-repo-search-failure-is-unverifiable",
     "ask-repo-blocks-contradicted-premise",
     "ask-repo-bounds-result-cardinality",
-    "drive-prepares-only-after-ready-gates",
+    "drive-writes-compact-preflight",
     "drive-bounds-task-anchored-prior-art",
     "drive-excludes-forbidden-prior-art",
-    "drive-preserves-terminal-on-failed-preparing",
-    "drive-reseals-one-active-amendment",
-    "drive-continues-automatically-after-ready",
+    "drive-preserves-preflight-on-write-failure",
+    "drive-rejects-preflight-secrets",
+    "drive-resumes-from-current-evidence",
     "drive-enforces-exact-procedure-graph",
     "drive-continues-without-receipt-boundary",
     "drive-continues-multi-unit-through-reflection",
@@ -471,7 +492,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "learn-is-sole-semantic-skill-writer",
     "drive-bounds-nested-skills",
     "drive-invokes-phase-owners",
-    "drive-continues-after-prep-claim",
+    "drive-continues-after-preflight",
     "drive-enforces-exact-procedure-graph",
     "drive-continues-without-receipt-boundary",
     "drive-continues-multi-unit-through-reflection",
@@ -480,9 +501,10 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-amends-on-first-new-decision",
     "drive-skips-grill-for-ready-source",
     "drive-blocks-second-amendment",
-    "drive-claims-ready-prep-atomically",
-    "drive-invalidates-stale-prep",
-    "drive-finalizes-owned-claim",
+    "drive-writes-compact-preflight",
+    "drive-preserves-preflight-on-write-failure",
+    "drive-rejects-preflight-secrets",
+    "drive-resumes-from-current-evidence",
     "drive-blocks-repeated-decision-return",
     "drive-commits-per-ticket",
     "drive-runs-final-aggregate-verification",
@@ -490,9 +512,9 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-bounds-corrective-cycle",
     "drive-preserves-valid-diff-on-partial-failure",
     "drive-aggregate-review-boundary",
-    "to-spec-echoes-prep-transition",
-    "to-tickets-echoes-prep-transition",
-    "implement-echoes-drive-transition",
+    "to-spec-routes-ready-state-directly",
+    "to-tickets-routes-ledger-state-directly",
+    "implement-routes-unit-state-directly",
     "skill-diagnose-reproduces-overtrigger-selection",
     "skill-diagnose-isolates-approval-bypass",
     "skill-diagnose-separates-grader-false-negative",
@@ -660,7 +682,13 @@ def validate_terminal_summary_contract(root: Path) -> list[str]:
             errors.append(f"{skill}: SKILL.md: add the terminal-summary hard gate")
             continue
         text = path.read_text(encoding="utf-8")
-        gate = DRIVE_TERMINAL_SUMMARY_GATE if skill == "tk-drive" else TERMINAL_SUMMARY_GATE
+        gate = (
+            DRIVE_TERMINAL_SUMMARY_GATE
+            if skill == "tk-drive"
+            else DIRECT_TERMINAL_SUMMARY_GATE
+            if skill in DIRECT_GRAPH_SKILLS
+            else TERMINAL_SUMMARY_GATE
+        )
         complete = text.count(gate) == 1 and text.count(terminal_heading) == 1
         ordered = (
             complete
@@ -874,6 +902,62 @@ def validate_unified_grill_contract(root: Path) -> list[str]:
     return errors
 
 
+def validate_compact_preflight_contract(root: Path) -> list[str]:
+    errors: list[str] = []
+    obsolete = (
+        "skills/tk-drive/references/manifest.md",
+        "skills/tk-drive/scripts/prep_manifest.py",
+        "skills/tk-drive/scripts/prep_state.py",
+        "skills/tk-drive/scripts/record_eval_event.py",
+        "skills/tk-drive/scripts/test_prep_manifest.py",
+        "skills/tk-drive/scripts/test_prep_state.py",
+        "skills/tk-drive/scripts/test_record_eval_event.py",
+    )
+    for relative in obsolete:
+        if (root / relative).exists():
+            errors.append(f"{relative}: remove obsolete drive lifecycle machinery")
+
+    required = {
+        "skills/tk-drive/scripts/preflight.py": (
+            "TOP_KEYS",
+            "FORBIDDEN_KEYS",
+            "os.replace",
+            "is_symlink",
+            "parse_preflight(reread)",
+            "choose_resume_action",
+            "browser_identity_action",
+        ),
+        "skills/tk-drive/references/preflight.md": (
+            "Allowed fields",
+            "secret-free",
+            "Evidence-derived resume",
+            "stored cursor",
+        ),
+    }
+    for relative, tokens in required.items():
+        path = root / relative
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        missing = [token for token in tokens if token not in text]
+        if missing:
+            errors.append(
+                f"{relative}: incomplete compact preflight contract "
+                f"({', '.join(missing)})"
+            )
+
+    for skill in sorted(DIRECT_GRAPH_SKILLS - {"tk-drive"}):
+        path = root / "skills" / skill / "SKILL.md"
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        for token in (
+            "`Return to: tk-drive`",
+            "`Outstanding transition`",
+            "Keep phase receipts as internal handoff envelopes",
+        ):
+            if token in text:
+                errors.append(f"{path.relative_to(root)}: remove active return-envelope contract")
+                break
+    return errors
+
+
 def validate_learning_loop_contract(root: Path) -> list[str]:
     errors: list[str] = []
     for relative, tokens in LEARNING_LOOP_TOKENS.items():
@@ -1059,6 +1143,7 @@ def validate_repository_contract() -> list[str]:
     errors.extend(validate_browser_preflight_contract(ROOT))
     errors.extend(validate_single_drive_adhd_contract(ROOT))
     errors.extend(validate_unified_grill_contract(ROOT))
+    errors.extend(validate_compact_preflight_contract(ROOT))
     errors.extend(validate_learning_loop_contract(ROOT))
     errors.extend(validate_response_language_contract(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
@@ -1536,7 +1621,6 @@ def validate_skill_eval_files(skill_dir: Path, kind: str) -> list[str]:
                                 )
                             required_match_fields = {
                                 "phase_invocation": ("phase",),
-                                "phase_receipt": ("phase", "state"),
                             }
                             for field in ("before", "after"):
                                 matcher = assertion.get(field)
@@ -1558,11 +1642,6 @@ def validate_skill_eval_files(skill_dir: Path, kind: str) -> list[str]:
                                         isinstance(matcher.get(key), str)
                                         and str(matcher.get(key)).strip()
                                         for key in required
-                                    )
-                                    and (
-                                        event_type != "phase_receipt"
-                                        or matcher.get("state")
-                                        in {"Ready", "confirmed", "Pass"}
                                     )
                                 )
                                 if not valid:
@@ -1605,7 +1684,6 @@ def validate_skill_eval_files(skill_dir: Path, kind: str) -> list[str]:
                             )
                             required_match_fields = {
                                 "phase_invocation": ("phase",),
-                                "phase_receipt": ("phase", "state"),
                                 "final_output": ("terminal_status",),
                             }
                             required = (
@@ -1621,11 +1699,6 @@ def validate_skill_eval_files(skill_dir: Path, kind: str) -> list[str]:
                                     isinstance(matcher.get(key), str)
                                     and str(matcher.get(key)).strip()
                                     for key in required
-                                )
-                                and (
-                                    event_type != "phase_receipt"
-                                    or matcher.get("state")
-                                    in {"Ready", "confirmed", "Pass"}
                                 )
                                 and (
                                     event_type != "final_output"

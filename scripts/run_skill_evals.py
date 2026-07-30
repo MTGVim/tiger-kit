@@ -28,8 +28,7 @@ TERMINAL_STATUSES = {
     "NotApplicable",
 }
 SUPPORTED_HOSTS = ("claude-code", "codex", "hermes-agent")
-EVENT_TYPES = {"phase_invocation", "phase_receipt", "final_output"}
-SUCCESS_STATES = {"Ready", "confirmed", "Pass"}
+EVENT_TYPES = {"phase_invocation", "final_output"}
 DIAGNOSTIC_MARKER_START = "<!-- TIGERKIT_DIAGNOSTIC_START -->"
 DIAGNOSTIC_MARKER_END = "<!-- TIGERKIT_DIAGNOSTIC_END -->"
 DIAGNOSTIC_PHASES = ("understanding", "planning", "execution", "formatting")
@@ -91,7 +90,6 @@ def validate_adapter_result(
         else:
             required_fields = {
                 "phase_invocation": ("phase",),
-                "phase_receipt": ("phase", "state", "transition"),
                 "final_output": ("terminal_status",),
             }
             final_statuses: list[object] = []
@@ -123,14 +121,6 @@ def validate_adapter_result(
                     )
                 elif event_type == "final_output":
                     final_statuses.append(event.get("terminal_status"))
-                if (
-                    event_type == "phase_receipt"
-                    and event.get("state") not in SUCCESS_STATES
-                ):
-                    errors.append(
-                        f"adapter result events item {index} phase_receipt state "
-                        "must be Ready, confirmed, or Pass"
-                    )
             if not final_statuses:
                 errors.append("adapter result events require a final_output event")
             elif final_statuses[-1] != terminal_status:

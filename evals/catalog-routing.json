@@ -105,7 +105,7 @@
     {
       "id": "implement-vs-drive-active-handoff",
       "boundary": "tk-implement vs tk-drive",
-      "prompt": "[active tk-drive implementation handoff] Implement ticket TK-2 with R3/AC4 as one unit and return its verified commit receipt.",
+      "prompt": "[active tk-drive implementation handoff] Implement ticket TK-2 with R3/AC4 as one unit and pass its verified commit state to the active graph.",
       "focus_skill": "tk-implement",
       "expected_selected_skill": "tk-implement",
       "critical": true
