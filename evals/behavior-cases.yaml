@@ -730,3 +730,19 @@
 - case: reflect-response-language-preserves-machine-tokens
   skill: tk-reflect
   expect: "Korean explanatory prose preserves canonical headings, receipt keys, status tokens, IDs, commands, paths, code, and exact source literals byte-for-byte."
+
+- case: drive-keeps-grill-pending-open
+  skill: tk-drive
+  expect: "A pending grill question waits in the same active conversation and is not terminal non-success."
+
+- case: drive-normalizes-grill-aborted
+  skill: tk-drive
+  expect: "An aborted decision maps to drive Blocked without another question or mutation."
+
+- case: drive-normalizes-terminal-spec-draft
+  skill: tk-drive
+  expect: "A terminal Draft with no user decision or evidence-access failure maps to drive Blocked rather than Ready."
+
+- case: drive-normalizes-unresolved-split
+  skill: tk-drive
+  expect: "An unresolved split without a proven safe no-ticket unit maps to drive Blocked without invented tickets or implementation."

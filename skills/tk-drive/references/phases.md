@@ -106,51 +106,27 @@ affected tickets, then refresh current artifacts before resuming. A second
 amendment or incompatible committed work stops the run without rewriting
 verified history.
 
+## Native-state normalization
+
+Normalize a child result before selecting terminal finalization:
+
+| Native result | Graph action |
+| --- | --- |
+| `confirmed | Ready | Pass` | Follow the existing success edge. |
+| `pending` | Wait for the user's answer in the same active conversation; do not finalize. |
+| `Draft` + `User decision: required` | Use the allowed `tk-grill-me` decision edge, then revalidate the spec. |
+| `Draft` + inaccessible evidence | Normalize to `Unverifiable` when evidence cannot establish readiness. |
+| Other terminal `Draft` | Normalize to `Blocked` when a required execution-ready contract cannot be completed safely. A known write or post-write contract violation is `Fail`. |
+| `Unresolved split report` | Use a no-ticket unit only when Ready R/AC proves exactly one safe independently verifiable unit; otherwise normalize to `Blocked`. |
+| `aborted` | Normalize to `Blocked` with reason `user stopped the decision procedure`; do not ask another question. |
+| `Fail | Blocked | Unverifiable` | Preserve the native status after every allowed alternate edge is exhausted. |
+
 ## Non-success finalization
 
-Enter `tk-drive non-success finalization` only after the originating
-`Fail | Blocked | Unverifiable` is terminal under the edge table. Entry freezes
-source edits, stage/commit, reset/revert/stash/clean, new test/build/server or
-browser execution, and every implementation, reviewer, browser, or reflection
-invocation. Read-only artifact and Git audits remain allowed. A bounded update
-to an existing ticket or implementation ledger remains allowed only under that
-artifact's existing ownership and atomicity contract.
-
-Reread applicable prep, spec, tickets, implementation, and browser evidence,
-then audit branch, HEAD, current-branch ancestry, and dirty paths. Classify:
-
-- `Completed`: an ancestor commit still binds to matching unit receipt, review,
-  and verification evidence;
-- `Stopped`: the unit or procedure that produced terminal non-success;
-- `Dependency blocked`: an incomplete unit transitively depends on `Stopped`;
-- `Not attempted`: an incomplete independent unit was not run after mutation
-  froze;
-- `Unverified`: a change or completion claim lacks current binding evidence.
-
-Branch, HEAD, ancestry, or receipt drift prevents `Completed` classification.
-Pre-existing dirty user paths remain excluded from drive ownership. Preserve
-completed ticket receipts, keep incomplete tickets incomplete, and record only
-bounded `Last attempt`, `Evidence`, and `Recovery` fields when their current
-owner contract permits it. The current implementation attempt may record native
-status, branch/HEAD, uncommitted paths, executed verification, unverified scope,
-`commit: none`, and one recovery condition. Never store raw logs, full diffs,
-transcripts, secrets, or a new lifecycle state.
-
-Recovery is one evidence-derived action: answer a pending decision in the same
-conversation, restore environment or tooling and explicitly rerun the same
-source, manually clean the failed unit state and explicitly rerun, or start a
-fresh drive from source when prep/spec/ticket evidence drifted. Do not promise
-automatic continuation or another unit start.
-
-The terminal response leads with one result sentence and omits empty sections.
-Use `Completed`, `Stopped`, `Remaining`, and `Recovery` only when applicable.
-A multi-unit `Completed` table may use `Unit | Outcome | Commit | Evidence`;
-`Outcome` is a table header, never the forbidden top-level `Outcome:` label.
-`Stopped` may use `Node/unit`, `Reason`, and `Working state`. `Remaining` uses
-`Dependency blocked`, `Not attempted`, or `Unverified`. End with exactly one
-originating `Status: Fail`, `Status: Blocked`, or `Status: Unverifiable` line.
-Never emit `Status: Pass` or a new partial status. This node has no outgoing
-edge.
+After normalization produces terminal `Fail | Blocked | Unverifiable`, freeze
+mutation and follow [non-success-finalization.md](non-success-finalization.md).
+That reference owns scope accounting, ledger writes, recovery, and terminal
+output. The node has no outgoing edge and never starts another specialist.
 
 ## Terminal ownership
 

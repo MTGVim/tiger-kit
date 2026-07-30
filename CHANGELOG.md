@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## 21.0.5 — Lean Terminal Normalization
+
+- Normalized `pending`, `Draft`, `Unresolved split report`, and `aborted`
+  before terminal drive finalization, preserving bounded recovery edges and
+  preventing child receipts from becoming accidental terminal output.
+- Moved detailed non-success accounting into one owned reference while keeping
+  the drive entry and procedure graph compact.
+- Made `tk-drive non-success finalization` the sole downstream writer for
+  bounded ticket-attempt evidence and kept implementation receipts with
+  `tk-implement`.
+- Added contract and eval coverage for pending decisions, aborted decisions,
+  terminal Draft, unresolved split, and writer ownership.
+
 ## 21.0.4 — Read-only Non-success Finalization
 
 - Added one internal `tk-drive non-success finalization` node after alternate

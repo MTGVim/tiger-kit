@@ -371,17 +371,49 @@ class CanonicalSkillContractTest(unittest.TestCase):
         )
         self.assertFalse(any(source == node for source, *_ in DRIVE_GRAPH_EDGES))
 
-        for text in (drive, phases):
+        non_success = (
+            root / "skills/tk-drive/references/non-success-finalization.md"
+        ).read_text(encoding="utf-8")
+        for text in (drive, phases, non_success):
             self.assertIn("tk-drive non-success finalization", text)
-            self.assertIn("Dependency blocked", text)
-            self.assertIn("Not attempted", text)
-            self.assertIn("Unverified", text)
-            self.assertIn("no outgoing edge", text)
+        for token in ("Dependency blocked", "Not attempted", "Unverified"):
+            self.assertIn(token, non_success)
+        self.assertIn("no outgoing edge", drive)
+        self.assertIn("no outgoing edge", phases)
         self.assertIn("changed or uncommitted paths", implement)
         self.assertIn("recovery condition", implement)
         self.assertIn("commit: none", review)
         self.assertIn("Last attempt", tickets)
+        self.assertIn("sole downstream writer", tickets)
         self.assertEqual(validate_drive_graph_contract(root), [])
+
+    def test_drive_normalizes_native_states_before_finalization(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        drive = (root / "skills/tk-drive/SKILL.md").read_text(encoding="utf-8")
+        phases = (root / "skills/tk-drive/references/phases.md").read_text(
+            encoding="utf-8"
+        )
+        non_success = (
+            root / "skills/tk-drive/references/non-success-finalization.md"
+        ).read_text(encoding="utf-8")
+        tickets = (root / "skills/tk-to-tickets/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn(
+            "[non-success finalization](references/non-success-finalization.md)",
+            drive,
+        )
+        for token in (
+            "`pending`",
+            "`Draft` + `User decision: required`",
+            "`Unresolved split report`",
+            "`aborted`",
+        ):
+            self.assertIn(token, phases)
+        self.assertIn("does not rewrite it", non_success)
+        self.assertIn("sole downstream writer", non_success)
+        self.assertIn("sole downstream writer", tickets)
 
     def test_drive_graph_rejects_unknown_node_cycle_and_missing_condition(self) -> None:
         root = Path(__file__).resolve().parents[1]

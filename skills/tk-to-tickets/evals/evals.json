@@ -344,17 +344,12 @@
     {
       "id": "to-tickets-preserves-failed-active-drive-attempt",
       "path": "boundary",
-      "prompt": "[active tk-drive failed-attempt ledger handoff] Existing tickets ledger에서 T1은 completed receipt가 있고 T2는 pending current unit, T3는 unrelated pending입니다. T2 attempt는 Fail이며 evidence와 recovery가 제공됐습니다.",
-      "expected_output": "T1 receipt와 T3를 변경하지 않고 T2 status를 pending으로 유지한 채 T2에만 Last attempt: Fail, Evidence, Recovery를 기록하며 incomplete ticket을 completed로 바꾸지 않는다.",
+      "prompt": "[active tk-drive terminal non-success contract] T1 completed receipt, T2 current pending, T3 unrelated pending인 기존 ledger가 있습니다. T2 implementation attempt는 Fail입니다. tk-to-tickets가 다시 실행되어야 하나요?",
+      "expected_output": "tk-to-tickets를 재실행하거나 ledger를 직접 수정하지 않는다. tk-drive non-success finalization만 exact T2에 bounded Last attempt, Evidence, Recovery를 쓸 수 있고 T1/T3는 보존한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "failed active-drive attempt에서 completed receipt와 unrelated pending ticket을 보존하고 current incomplete ticket에만 bounded failure fields를 추가한다. Dependency blocked, Not attempted, Unverified를 durable status로 쓰지 않는다."
-        },
-        {
-          "type": "path_text_contains",
-          "path": ".tigerkit/tickets.md",
-          "text": "Last attempt: Fail"
+          "criterion": "implementation failure 뒤 ticket decomposition skill을 재진입시키지 않고 downstream bounded writer를 tk-drive non-success finalization 하나로 제한한다."
         },
         {
           "type": "output_absent",
@@ -362,7 +357,7 @@
         },
         {
           "type": "terminal_status",
-          "expected": "Fail"
+          "expected": "Blocked"
         },
         {
           "type": "git_head_unchanged"
