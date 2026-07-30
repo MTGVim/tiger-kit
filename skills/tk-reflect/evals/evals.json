@@ -5,7 +5,7 @@
       "id": "legacy-1",
       "path": "success",
       "prompt": "/tk-reflect 이번 diff에서 반복적으로 확인된 검증 규칙 후보를 repo rule·repo skill·user rule·user skill·persistent memory의 다섯 축으로 분류해 보고해 주세요. 적용은 하지 마세요.",
-      "expected_output": "repo rule·repo skill·user rule·user skill·persistent memory로 분류하고 후보와 report-only terminal status가 pending인 compact Disposition과 Receipt를 낸다.",
+      "expected_output": "repo rule·repo skill·user rule·user skill·persistent memory로 분류하고 후보와 report-only terminal status가 pending인 compact Disposition summary를 낸다.",
       "assertions": [
         {
           "type": "judge",
@@ -13,7 +13,7 @@
         },
         {
           "type": "judge",
-          "criterion": "채팅에는 decision-relevant Disposition과 Receipt만 두고 evidence 본문·로그·Receipt를 반복하지 않으며, 명시적 report-artifact 요청이 없으므로 .tigerkit/reflect.md를 포함한 어떤 파일도 쓰지 않는다."
+          "criterion": "채팅에는 decision-relevant Disposition만 두고 evidence 본문·로그·metadata를 반복하지 않으며, 명시적 report-artifact 요청이 없으므로 .tigerkit/reflect.md를 포함한 어떤 파일도 쓰지 않는다."
         },
         {
           "type": "terminal_status",
@@ -284,15 +284,15 @@
       "id": "numbered-summary-target-table",
       "path": "success",
       "prompt": "/tk-reflect verified evidence에서 서로 다른 재사용 후보 2개를 report-only로 정리해 주세요. 번호와 적용 타깃이 분명한 간결한 표만 보여 주세요.",
-      "expected_output": "후보에 RF-01과 RF-02를 한 번 부여하고 Disposition 표에 action/status·target·evidence refs를 정확히 한 행씩 출력한 뒤 Receipt에서 ID만 참조한다.",
+      "expected_output": "후보에 RF-01과 RF-02를 한 번 부여하고 Disposition 표에 action/status·target·evidence refs를 정확히 한 행씩 출력한 뒤 bottom metadata 없이 Disposition에서 ID를 한 번만 사용한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "모든 후보가 발견 순서의 RF-01, RF-02 ID를 가지며 Disposition·명시 요청 시 ledger·Receipt에서 동일 ID를 유지하고 ID 없는 후보나 재번호화가 없다."
+          "criterion": "모든 후보가 발견 순서의 RF-01, RF-02 ID를 가지며 Disposition·명시 요청 시 ledger에서 동일 ID를 유지하고 ID 없는 후보나 재번호화가 없다."
         },
         {
           "type": "judge",
-          "criterion": "채팅은 ID | Candidate | Action | Target | Why의 Disposition 표와 Receipt만 포함하고 각 RF ID가 정확히 한 행에 나오며 상세 evidence·초안·작업 서술을 반복하지 않는다."
+          "criterion": "채팅은 ID | Candidate | Action | Target | Why의 Disposition 표만 포함하고 각 RF ID가 정확히 한 행에 나오며 상세 evidence·초안·작업 서술을 반복하지 않는다."
         },
         {
           "type": "terminal_status",
@@ -438,7 +438,7 @@
       "id": "reflect-bounds-summary-cell-length",
       "path": "success",
       "prompt": "/tk-reflect 직전 Disposition 표가 터미널에서 깨졌어요. 같은 IDs와 순서로 evidence 본문 없이 짧게 다시 출력해 주세요.",
-      "expected_output": "기존 RF IDs와 순서를 유지하고 decision-relevant 셀만 남긴 같은 Disposition 표와 Receipt를 재출력한다.",
+      "expected_output": "기존 RF IDs와 순서를 유지하고 decision-relevant 셀만 남긴 같은 bottom metadata 없이 Disposition 표를 재출력한다.",
       "assertions": [
         {
           "type": "judge",
@@ -711,7 +711,7 @@
       "id": "reflect-bounds-result-cardinality",
       "path": "success",
       "prompt": "/tk-reflect 검증된 후보 9건을 최종 보고해 주세요. RF 코드만 나열하지 말고 기존 표 형식을 유지해 제가 다음 행동을 이해할 수 있게 해 주세요.",
-      "expected_output": "Disposition에 최대 5개 human-readable Candidate/Action/Target/Why row를 유지하고 나머지는 reflect ledger path로 연결하며 Receipt는 status/provenance만 기록한다.",
+      "expected_output": "Disposition에 최대 5개 human-readable Candidate/Action/Target/Why row를 유지하고 나머지는 reflect ledger path로 연결하며 reflect ledger가 status/provenance를 기록하고 chat에는 bottom metadata를 덧붙이지 않는다.",
       "assertions": [
         {
           "type": "judge",

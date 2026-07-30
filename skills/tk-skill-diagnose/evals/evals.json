@@ -53,8 +53,8 @@
     {
       "id": "skill-diagnose-separates-grader-false-negative",
       "path": "success",
-      "prompt": "/tk-skill-diagnose Target exact path: skills/tk-implement/SKILL.md. Origin/ref: TigerKit canonical current HEAD. Host/invocation: Codex direct. Observed prompt: 작은 문구 변경을 구현·검증·커밋. Expected: Changed·Verification·Receipt와 unchanged remote state. Observed: output과 git show evidence는 contract를 충족했지만 regex grader가 별도 Commit heading이 없다고 실패. Evidence commands: git show --stat HEAD, git status --short. Candidate/baseline refs: current HEAD / previous HEAD.",
-      "expected_output": "정상 deliverable과 잘못된 assertion을 대조해 evaluation plane으로 분류하고 skill body 확대 대신 grader owner를 제안하며 Diagnosis·Action·Receipt만 간결하게 출력한다.",
+      "prompt": "/tk-skill-diagnose Target exact path: skills/tk-implement/SKILL.md. Origin/ref: TigerKit canonical current HEAD. Host/invocation: Codex direct. Observed prompt: 작은 문구 변경을 구현·검증·커밋. Expected: Changed·Verification와 unchanged remote state. Observed: output과 git show evidence는 contract를 충족했지만 regex grader가 별도 Commit heading이 없다고 실패. Evidence commands: git show --stat HEAD, git status --short. Candidate/baseline refs: current HEAD / previous HEAD.",
+      "expected_output": "정상 deliverable과 잘못된 assertion을 대조해 evaluation plane으로 분류하고 skill body 확대 대신 grader owner를 제안하며 Diagnosis·Action만 간결하게 출력한다.",
       "assertions": [
         {
           "type": "judge",
@@ -62,7 +62,7 @@
         },
         {
           "type": "judge",
-          "criterion": "채팅에는 Diagnosis·Action·필요한 Remaining uncertainty·Receipt만 두고 Target/Incident/Reproduction 등 열 개의 절차 섹션이나 raw command output을 반복하지 않는다."
+          "criterion": "채팅에는 Diagnosis·Action·필요한 Remaining uncertainty만 두고 Target/Incident/Reproduction 등 열 개의 절차 섹션이나 raw command output을 반복하지 않는다."
         },
         {
           "type": "output_contains",
@@ -195,7 +195,7 @@
         },
         {
           "type": "judge",
-          "criterion": "실험 evidence가 다섯 행을 넘으면 compact .tigerkit/skill-diagnosis.md가 세부 evidence refs를 소유하고 chat은 Diagnosis·Action·Receipt만 보여 준다."
+          "criterion": "실험 evidence가 다섯 행을 넘으면 compact .tigerkit/skill-diagnosis.md가 세부 evidence refs를 소유하고 chat은 Diagnosis·Action만 보여 준다."
         },
         {
           "type": "terminal_status",
@@ -523,7 +523,7 @@
       "id": "skill-diagnose-bounds-result-cardinality",
       "path": "success",
       "prompt": "/tk-skill-diagnose 이미 검증한 incident/root-cause/candidate result가 9건입니다. 원시 trace 없이 최종 진단을 작성해 주세요.",
-      "expected_output": "Diagnosis와 Action에 상위 5–7개 ID 결과와 skill-diagnosis ledger path를 제시하고 Receipt는 diagnosis/action row를 복제하지 않는다.",
+      "expected_output": "Diagnosis와 Action에 상위 5–7개 ID 결과와 skill-diagnosis ledger path를 제시하고 terminal summary는 bottom metadata에서 diagnosis/action row를 복제하지 않는다.",
       "assertions": [
         {
           "type": "judge",

@@ -13,7 +13,7 @@
         },
         {
           "type": "judge",
-          "criterion": "Evidence가 threshold·출처, Target path가 계획한 정확한 경로와 not created, Verification이 실행하지 못한 target-host 항목의 unverified를 각각 한 번만 소유하고, Receipt에는 적용 상태·미검증 필드 참조만 남긴다."
+          "criterion": "Evidence가 threshold·출처, Target path가 계획한 정확한 경로와 not created, Verification이 실행하지 못한 target-host 항목의 unverified를 각각 한 번만 소유하고, Candidate 또는 Remaining concerns가 적용 상태·미검증을 한 번만 소유하고 bottom metadata를 덧붙이지 않는다."
         },
         {
           "type": "terminal_status",
@@ -104,7 +104,7 @@
       "id": "learn-bounds-result-cardinality",
       "path": "success",
       "prompt": "/tk-learn 검증된 candidate, target, remaining gate가 합계 9건인 approval summary를 작성해 주세요. 아직 apply 승인은 없습니다.",
-      "expected_output": "promotion decision을 먼저 두고 상위 5–7개 candidate/gate 결과와 draft 또는 planned target path를 제시하며 Receipt가 결과를 대체하지 않는다.",
+      "expected_output": "promotion decision을 먼저 두고 상위 5–7개 candidate/gate 결과와 draft 또는 planned target path를 제시하며 terminal summary가 bottom metadata로 결과를 대체하지 않는다.",
       "assertions": [
         {
           "type": "judge",

@@ -64,7 +64,7 @@
       "id": "drive-reflects-once-after-aggregate-pass",
       "path": "success",
       "prompt": "$tk-drive 모든 implementation unit과 aggregate product verification이 Pass인 작업을 완료해줘.",
-      "expected_output": "product verification HEAD를 고정한 뒤 tk-reflect를 Mode: drive-optimistic으로 정확히 한 번 호출하고 verbatim transition echo를 확인한 뒤 같은 turn에 final receipt를 낸다.",
+      "expected_output": "product verification HEAD를 고정한 뒤 tk-reflect를 Mode: drive-optimistic으로 정확히 한 번 호출하고 verbatim transition echo를 확인한 뒤 같은 turn에 final summary를 낸다.",
       "assertions": [
         {
           "type": "judge",
@@ -429,8 +429,8 @@
       "hosts": [
         "codex"
       ],
-      "prompt": "/tk-drive In this disposable evaluation checkout, create canary-note.txt containing exactly continuation-ok plus one trailing newline. This is a decision-complete single vertical slice. Finish through the normal drive receipt.",
-      "expected_output": "A real tk-to-spec Ready receipt is followed in the same active turn by the no-ticket decision and tk-implement invocation before any final output, then the drive reaches an evidence-backed terminal receipt whose first available prose slot leads with the achieved outcome and whose completed state adds no unnecessary next action or generic closer.",
+      "prompt": "/tk-drive In this disposable evaluation checkout, create canary-note.txt containing exactly continuation-ok plus one trailing newline. This is a decision-complete single vertical slice. Finish through the normal drive summary.",
+      "expected_output": "A real tk-to-spec Ready receipt is followed in the same active turn by the no-ticket decision and tk-implement invocation before any final output, then the drive reaches an evidence-backed terminal user summary that starts after one `---` separator and whose first available prose slot leads with the achieved outcome and whose completed state adds no unnecessary next action or generic closer.",
       "assertions": [
         {
           "type": "event_order",
@@ -455,7 +455,7 @@
         },
         {
           "type": "judge",
-          "criterion": "The final user-facing response preserves the required tk-drive receipt fields and canonical order; in its first available prose slot it leads with the achieved outcome, keeps any steps short and bounded, makes completion visible, and adds neither a next action nor a generic closer after all work is complete."
+          "criterion": "The final user-facing response starts after one `---` separator, preserves the required tk-drive result sections, and appends no receipt metadata; in its first available prose slot it leads with the achieved outcome, keeps any steps short and bounded, makes completion visible, and adds neither a next action nor a generic closer after all work is complete."
         },
         {
           "type": "terminal_status",
@@ -470,8 +470,8 @@
       "hosts": [
         "codex"
       ],
-      "prompt": "/tk-drive In this disposable evaluation checkout, create canary-alpha.txt containing exactly alpha plus one trailing newline and canary-beta.txt containing exactly beta plus one trailing newline. They are two decision-complete independent vertical slices. Finish both through the normal drive receipt.",
-      "expected_output": "The host-native run invokes tk-implement twice without returning final output between the two independent implementation units, then reaches the final Pass receipt.",
+      "prompt": "/tk-drive In this disposable evaluation checkout, create canary-alpha.txt containing exactly alpha plus one trailing newline and canary-beta.txt containing exactly beta plus one trailing newline. They are two decision-complete independent vertical slices. Finish both through the normal drive summary.",
+      "expected_output": "The host-native run invokes tk-implement twice without returning final output between the two independent implementation units, then reaches the final Pass summary.",
       "assertions": [
         {
           "type": "event_order",
@@ -787,7 +787,7 @@
     {
       "id": "drive-separates-product-and-reflection-heads",
       "path": "success",
-      "prompt": "[active tk-drive] product HEAD P가 aggregate Pass이고 eligible tracked rule reflection commit R이 생성됐습니다. final receipt를 작성해 주세요.",
+      "prompt": "[active tk-drive] product HEAD P가 aggregate Pass이고 eligible tracked rule reflection commit R이 생성됐습니다. final summary를 작성해 주세요.",
       "expected_output": "Product verification HEAD: P와 Final HEAD: R을 분리하고 product verification을 R에 재귀적으로 다시 묶지 않는다.",
       "assertions": [
         {
@@ -803,12 +803,12 @@
     {
       "id": "drive-bounds-result-cardinality",
       "path": "success",
-      "prompt": "[active tk-drive] aggregate verification과 reflection tail이 Pass입니다. 사용자에게 의미 있는 구현 결과 9건, ticket commit 3건, 검증 결과 4건을 final receipt로 보고해 주세요.",
-      "expected_output": "Outcome 뒤 Implemented 상위 5–7개, Ticket table, Verification 1–4개, product/reflection commit provenance를 제시하고 no-op/empty section과 중복을 생략한다.",
+      "prompt": "[active tk-drive] aggregate verification과 reflection tail이 Pass입니다. 사용자에게 의미 있는 구현 결과 9건, ticket commit 3건, 검증 결과 4건을 final summary로 보고해 주세요.",
+      "expected_output": "`---` 뒤 result sentence와 Implemented 상위 5–7개, Ticket table, Verification 1–4개, product/reflection commit provenance를 제시하고 no-op/empty section과 중복을 생략한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "Outcome 한 문장으로 실제 결과를 대체하지 않고 decision-first bounded summary와 compact nonduplicative Receipt를 제공한다."
+          "criterion": "result sentence 한 문장으로 실제 결과를 대체하지 않고 decision-first bounded summary와 nonduplicative summary without bottom metadata를 제공한다."
         },
         {
           "type": "output_contains",
@@ -827,16 +827,28 @@
     {
       "id": "drive-response-language-explicit-korean",
       "path": "success",
-      "prompt": "/tk-drive 이 폐기 가능한 평가용 체크아웃에 korean-canary.txt를 만들고 내용은 정확히 language-ok와 마지막 개행 문자 하나로 해주세요. 결정이 끝난 독립 검증 가능한 단일 작업 단위이며 정상 tk-drive 영수증까지 완료하세요. 정형 제목, 영수증 키, 상태 토큰, ID를 제외한 모든 자유 형식 진행 문장, 결과, 요약, 영수증 값은 한국어로 작성하세요.",
-      "expected_output": "korean-canary.txt를 정확히 만들고 정상 drive receipt까지 완료한다. Outcome 값, Implemented, Verification, reflection 설명과 Receipt의 prose value를 한국어로 쓰고, canonical final receipt 순서를 보존하면서 첫 free-form prose slot에 결과를 제시하며 완료 뒤에는 불필요한 다음 행동이나 맺음말을 만들지 않는다.",
+      "prompt": "/tk-drive 이 폐기 가능한 평가용 체크아웃에 korean-canary.txt를 만들고 내용은 정확히 language-ok와 마지막 개행 문자 하나로 해주세요. 결정이 끝난 독립 검증 가능한 단일 작업 단위이며 정상 tk-drive 최종 요약까지 완료하세요. 정형 제목, 상태 토큰, ID를 제외한 모든 자유 형식 진행 문장, 결과, 요약은 한국어로 작성하세요.",
+      "expected_output": "korean-canary.txt를 정확히 만들고 정상 drive summary까지 완료한다. result sentence, Implemented, Verification, reflection 설명을 한국어로 쓰고, 정확히 한 번의 `---` 뒤에서 canonical final summary를 시작하며 bottom receipt metadata와 완료 뒤의 불필요한 다음 행동이나 맺음말을 만들지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "모든 free-form progress, summary, result, receipt value는 한국어다. canonical heading, receipt key, status token, ID, command, path, code identifier, exact user/source literal처럼 byte-stable해야 하는 토큰만 원문을 유지하고 그 주변은 한국어로 설명하며, accidental English explanatory sentence는 없다."
+          "criterion": "모든 free-form progress, summary, result, result value는 한국어다. canonical heading, status token, ID, command, path, code identifier, exact user/source literal처럼 byte-stable해야 하는 토큰만 원문을 유지하고 그 주변은 한국어로 설명하며, accidental English explanatory sentence는 없다."
         },
         {
           "type": "judge",
-          "criterion": "canonical final receipt 순서를 보존하면서 첫 available free-form prose slot에 answer, outcome, 또는 action을 제시하고 ceremonial preamble, redundant prose recap, closing pleasantry를 생략하며 완료된 작업에는 다음 행동을 만들어내지 않는다. Required Implemented, Verification, Receipt sections are not recaps merely because they exist; each required value adds distinct evidence or is referential or minimal instead of re-explaining an already stated result."
+          "criterion": "진행 출력과 구분되도록 정확히 한 번의 standalone `---` 뒤에서 canonical final summary를 시작하고, 첫 available free-form prose slot에 answer, outcome, 또는 action을 제시한다. `Outcome:` label, bottom Receipt section, ceremonial preamble, redundant prose recap, closing pleasantry를 생략하며 완료된 작업에는 다음 행동을 만들어내지 않는다. Required Implemented and Verification sections are not recaps merely because they exist; each value adds distinct evidence or is referential or minimal instead of re-explaining an already stated result."
+        },
+        {
+          "type": "output_contains",
+          "text": "---"
+        },
+        {
+          "type": "output_absent",
+          "text": "Outcome:"
+        },
+        {
+          "type": "output_absent",
+          "text": "## Receipt"
         },
         {
           "type": "terminal_status",
@@ -847,8 +859,8 @@
     {
       "id": "drive-response-language-explicit-english",
       "path": "success",
-      "prompt": "[active tk-drive] The latest explicit language instruction is English. Earlier conversation and source notes are Korean. Return the final result with all free-form progress, summaries, and receipt values in English while preserving canonical tokens.",
-      "expected_output": "Free-form Outcome, Implemented, Verification, and receipt values are English despite earlier Korean context, while canonical headings, statuses, IDs, commands, and paths remain unchanged.",
+      "prompt": "[active tk-drive] The latest explicit language instruction is English. Earlier conversation and source notes are Korean. Return the final result with all free-form progress, summaries, and result values in English while preserving canonical tokens.",
+      "expected_output": "Free-form result, Implemented, and Verification values are English despite earlier Korean context, while canonical headings, statuses, IDs, commands, and paths remain unchanged.",
       "assertions": [
         {
           "type": "judge",

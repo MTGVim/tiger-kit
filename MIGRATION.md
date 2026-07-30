@@ -1,17 +1,24 @@
-# Next release · Actionable user output
+# TigerKit 20.3.0 terminal summaries and internal receipts
 
 The 14 canonical skill names and the 2 user-invoked / 12 hybrid split remain
 unchanged. Consumers only need to refresh the installed package.
 
 Every skill now embeds the same actionable-output presentation gate while
-keeping its existing canonical headings, tables, receipt keys, status tokens,
+keeping its existing canonical headings, tables, status tokens,
 result budgets, approval boundaries, and response-language contract. The first
 available free-form prose slot leads with the answer, outcome, or action;
 continuing work exposes current state and the next transition; completed work
 does not invent another action.
 
+Every terminal user response now begins after one standalone Markdown `---`
+separator. Bottom receipt blocks and the repeated `Outcome:` label are no
+longer rendered to the user. Active-drive phase receipts remain internal
+handoff envelopes, and durable provenance stays in the existing artifact or
+ledger already owned by the skill.
+
 There is no `tk-adhd`, `tk-remind`, persistent mode, toggle, shared runtime
-file, or consumer state migration.
+file, universal receipt ledger, read-only write expansion, or consumer state
+migration.
 
 # TigerKit 20.2.0 implementation quality and optimistic reflection
 

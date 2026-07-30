@@ -13,7 +13,7 @@
         },
         {
           "type": "judge",
-          "criterion": "Operation은 operation 종류·상태·stage/continue 결과, Resolution은 conflict·intent·선택 결과, Verification은 테스트·marker·index 확인, Follow-up은 남은 작업만 한 번씩 소유하고 Receipt에는 terminal status·미검증·참조만 남긴다."
+          "criterion": "Operation은 operation 종류·상태·stage/continue 결과, Resolution은 conflict·intent·선택 결과, Verification은 테스트·marker·index 확인, Follow-up은 남은 작업만 한 번씩 소유하고 Operation이 terminal status·미검증·참조를 한 번만 소유하고 bottom metadata를 덧붙이지 않는다."
         },
         {
           "type": "terminal_status",
@@ -107,7 +107,7 @@
       "id": "merge-conflict-bounds-result-cardinality",
       "path": "success",
       "prompt": "active merge가 evidence-backed resolution과 verification을 거쳐 완료됐고 conflict path가 9개입니다. 최종 보고만 작성해 주세요.",
-      "expected_output": "해결 의도와 path group, verification을 2–5개 readable row/bullet로 요약하고 exact remaining paths를 인용하며 Receipt는 resolution을 반복하지 않는다.",
+      "expected_output": "해결 의도와 path group, verification을 2–5개 readable row/bullet로 요약하고 exact remaining paths를 인용하며 terminal summary는 bottom metadata에서 resolution을 반복하지 않는다.",
       "assertions": [
         {
           "type": "judge",

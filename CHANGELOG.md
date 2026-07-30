@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 20.3.0 — Terminal Summaries and Internal Receipts
+
 - Added the same actionable-output hard gate to all 14 self-contained skills:
   canonical output schemas stay authoritative while free-form prose leads with
   the answer, outcome, or action, keeps live state visible, reports
@@ -10,6 +12,18 @@
 - Added deterministic gate validation, representative Codex behavior
   assertions, and upstream attribution without adding a skill, persistent
   mode, shared runtime reference, or catalog migration.
+- Added one exact terminal-summary boundary to all 14 skills: every terminal
+  user response begins after one Markdown `---` separator, while progress and
+  same-turn phase continuation remain unseparated.
+- Removed bottom receipt blocks and the repeated `Outcome:` label from terminal
+  user output. Existing artifacts and ledgers retain durable provenance, and
+  active-drive phase receipts remain internal handoff envelopes.
+- Kept read-only skills read-only and rejected a universal receipt ledger, so
+  the release adds no shared runtime surface, scratch archive, or write
+  expansion.
+- Added exact-block, ordering, mutation, obsolete-rendering, and representative
+  behavior coverage for the new boundary while preserving status semantics,
+  result budgets, phase liveness, and the 14-skill catalog.
 
 ## 20.2.0 — Implementation Quality, Optimistic Reflection, and Bounded Results
 

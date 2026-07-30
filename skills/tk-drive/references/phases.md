@@ -108,7 +108,7 @@ owned by `tk-grill-me`. Its `confirmed` receipt updates source traceability and
 returns control to drive at the spec gate. No other response inherits drive
 authority.
 
-## Receipt liveness
+## Phase receipt liveness
 
 Consuming a native receipt creates a transition obligation; it is not itself
 completion. In the same active turn, drive must map the receipt to exactly one
@@ -117,15 +117,16 @@ of:
 1. the next eligible phase handoff;
 2. the bounded corrective cycle;
 3. `tk-grill-me` for a newly evidenced user-owned decision; or
-4. an explicit drive terminal receipt with the supported
-   `Pass | Pending | Blocked | Fail | Unverifiable` status and reason.
+4. an explicit drive terminal result with the supported
+   `Pass | Pending | Blocked | Fail | Unverifiable` status and reason; its
+   user-facing summary follows the terminal-summary boundary.
 
 Spec `Ready` transitions to the ticket decision. A valid ticket ledger
 transitions to its first or next pending unit. A matching implementation
 `Pass` transitions to the next unit or aggregate verification. Aggregate
 success transitions to the reflection tail. Reflection `Pass` with a matching
-echo transitions to the final `Pass` receipt. A reflection `Fail` with verified
-restoration also transitions to the final receipt while preserving product
+echo transitions to the final `Pass` summary. A reflection `Fail` with verified
+restoration also transitions to the final summary while preserving product
 `Pass`; unrestored or indeterminate reflection state stops
 `Blocked | Unverifiable`. Progress commentary and child receipt summaries do
 not discharge this obligation.
@@ -133,7 +134,7 @@ not discharge this obligation.
 Before returning control, verify that every consumed receipt has one recorded
 outgoing transition. A receipt with no transition is an orchestration failure:
 do not silently return or ask the user to invoke drive again; emit the
-evidence-supported non-success terminal receipt if no valid transition exists.
+evidence-supported non-success terminal summary if no valid transition exists.
 For an active-drive success receipt, first verify its verbatim
 `Outstanding transition` echo, then execute that transition in the same turn.
 

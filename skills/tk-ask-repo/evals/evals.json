@@ -240,11 +240,11 @@
       "id": "ask-repo-bounds-result-cardinality",
       "path": "success",
       "prompt": "/tk-ask-repo 이미 검증된 소비자 9건의 impact 조사 결과를 최종 보고해 주세요. 원시 검색 로그는 반복하지 마세요.",
-      "expected_output": "Answer에서 결론을 먼저 설명하고 상위 5–7개 결과와 나머지를 소유한 evidence path를 제시하며 Receipt는 결과 행을 복제하지 않는다.",
+      "expected_output": "Answer에서 결론을 먼저 설명하고 상위 5–7개 결과와 나머지를 소유한 evidence path를 제시하며 최종 요약은 결과 행 뒤에 metadata block을 덧붙이지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "완료 한 문장으로 축약하지 않고 결과 cardinality에 맞는 bounded summary를 제공하며 raw evidence와 Receipt 중복을 피한다."
+          "criterion": "완료 한 문장으로 축약하지 않고 결과 cardinality에 맞는 bounded summary를 제공하며 raw evidence와 bottom metadata 중복을 피한다."
         },
         {
           "type": "output_contains",

@@ -1,8 +1,8 @@
 [
   {
     "id": 1,
-    "prompt": "/tk-grill-me 결제 내역 검색 결정 기록을 마무리해 주세요. 확인된 저장소 사실은 기존 거래 조회 API가 날짜 범위를 지원한다는 것입니다. 제가 답한 결정은 Scope=기존 조회 화면에 날짜 검색 추가, Constraints=API 변경 없음, Outputs=검색 폼과 결과 목록, Verification=날짜 범위 UI 테스트입니다. 최종 목표 문장도 이 네 결정을 그대로 담은 문장으로 명시 승인합니다. 근거를 확인하고 confirmed Decisions receipt만 반환하되 spec·tickets·implementation은 시작하지 마세요.",
-    "expected": "제공된 사실을 검증 가능한 근거와 분리해 기록하고 Scope·Constraints·Outputs·Verification 및 승인된 목표 문장을 중복 없이 confirmed로 닫으며, downstream 작업 없이 Decisions 참조만 가진 receipt를 반환한다."
+    "prompt": "/tk-grill-me 결제 내역 검색 결정 기록을 마무리해 주세요. 확인된 저장소 사실은 기존 거래 조회 API가 날짜 범위를 지원한다는 것입니다. 제가 답한 결정은 Scope=기존 조회 화면에 날짜 검색 추가, Constraints=API 변경 없음, Outputs=검색 폼과 결과 목록, Verification=날짜 범위 UI 테스트입니다. 최종 목표 문장도 이 네 결정을 그대로 담은 문장으로 명시 승인합니다. 근거를 확인하고 confirmed Decisions summary만 반환하되 spec·tickets·implementation은 시작하지 마세요.",
+    "expected": "제공된 사실을 검증 가능한 근거와 분리해 기록하고 Scope·Constraints·Outputs·Verification 및 승인된 목표 문장을 중복 없이 confirmed로 닫으며, downstream 작업 없이 bottom metadata 없이 Decisions summary를 반환한다."
   },
   {
     "id": 2,

@@ -39,11 +39,11 @@
       "id": "legacy-2",
       "path": "boundary",
       "prompt": "/tk-to-tickets 이 작업을 API 티켓, UI 티켓, 테스트 티켓으로 수평 분할해 주세요. 요구사항 간 독립성은 확인되지 않았습니다.",
-      "expected_output": "수평 분할을 만들지 않고 독립 분할 근거가 부족하다는 Unresolved split report 또는 Blocked receipt를 낸다.",
+      "expected_output": "수평 분할을 만들지 않고 독립 분할 근거가 부족하다는 Unresolved split report 또는 Blocked result를 낸다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "수평 분할을 만들지 않고 독립 분할 근거가 부족하다는 Unresolved split report 또는 Blocked receipt를 낸다."
+          "criterion": "수평 분할을 만들지 않고 독립 분할 근거가 부족하다는 Unresolved split report 또는 Blocked result를 낸다."
         },
         {
           "type": "terminal_status",
@@ -318,11 +318,11 @@
       "id": "to-tickets-bounds-result-cardinality",
       "path": "success",
       "prompt": "/tk-to-tickets Ready spec에서 독립 vertical ticket 9개를 검증했습니다. ticket body를 복사하지 말고 decomposition 결과를 보고해 주세요.",
-      "expected_output": "상위 5–7개 Ticket | User-visible slice row, compact coverage/blocked summary, tickets artifact path를 제시하고 Receipt는 IDs/count를 중복하지 않는다.",
+      "expected_output": "상위 5–7개 Ticket | User-visible slice row, compact coverage/blocked summary, tickets artifact path를 제시하고 tickets artifact가 IDs/count를 소유하고 terminal summary에는 bottom metadata를 덧붙이지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "ticket 수에 맞는 bounded table을 제공하고 artifact가 전체 ledger를 소유하며 Receipt가 slice 결과를 대체하지 않는다."
+          "criterion": "ticket 수에 맞는 bounded table을 제공하고 artifact가 전체 ledger를 소유하며 terminal summary가 metadata로 slice 결과를 대체하지 않는다."
         },
         {
           "type": "output_contains",

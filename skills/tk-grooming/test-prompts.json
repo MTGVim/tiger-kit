@@ -2,7 +2,7 @@
   {
     "id": 1,
     "prompt": "/tk-grooming skills/tk-to-spec 범위만 감사하고 evidence와 분류·제안만 보고해 주세요. 파일은 수정하지 마세요.",
-    "expected": "요청된 범위의 실제 경로만 조사한 뒤 Disposition과 report-only Receipt를 남기며 apply하지 않는다."
+    "expected": "요청된 범위의 실제 경로만 조사한 뒤 report-only Disposition summary를 남기며 apply하지 않는다."
   },
   {
     "id": 2,

@@ -1,4 +1,4 @@
-# TigerKit 20.2.0
+# TigerKit 20.3.0
 
 <p align="center">
   <img src="assets/tigerkit-cover.png" width="960" alt="TigerKit Agent Skills 표지">
@@ -8,28 +8,26 @@ TigerKit은 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent 
 모음입니다. 중앙 workflow runtime 없이 14개 self-contained skill을
 `npx skills`로 배포합니다. Decision closure, spec, ticket, implementation은
 각각 하나의 canonical phase skill이 소유하고 `tk-drive`가 그 결과를
-단방향으로 오케스트레이션합니다. 최신 immutable release는 `v20.2.0`이며,
+단방향으로 오케스트레이션합니다. 최신 immutable release는 `v20.3.0`이며,
 현재 `main`에는 다음 release를 위한 skill 변경이 포함될 수 있습니다.
 
-`v20.2.0` release는 구현 전 repository fit 결정, initial GREEN 뒤 한 번의
-behavior-preserving simplify, 성공한 drive 끝의 안전한 optimistic reflection,
-결과 규모에 맞춘 bounded summary, 근거 기반 verification profile을
-추가합니다. `tk-reflect`의 non-no-op 결과는
-`ID | Candidate | Action | Target | Why` 표를 유지하며 Receipt가 코드명만으로
-표를 대체하지 않습니다. 장기 결정 근거와 안전 경계는
-[ADR 0001](docs/adr/0001-implementation-quality-and-optimistic-reflection.md)에
-기록되어 있습니다.
+`v20.3.0` release는 모든 terminal user summary를 정확히 한 번의 Markdown
+`---` 뒤에서 시작하고, 맨 아래 Receipt block과 반복 `Outcome:` label을
+제거합니다. 진행 commentary와 active-drive phase handoff는 이 경계를 만들지
+않습니다. Phase receipt는 내부 control envelope로 유지되고, 장기 provenance는
+각 skill이 이미 소유한 spec·tickets·implementation·handoff·browser ledger에만
+남습니다. 공용 receipt ledger나 read-only skill의 새 write surface는 없습니다.
 
 14개 canonical skill 모두 최신 명시 언어 지시를 우선하는 response-language
 hard gate를 포함합니다. 별도 지시가 없으면 현재 사용자 메시지의 언어를
-따르며, 자유 서술은 그 언어로 통일합니다. Canonical heading, receipt key,
-status, ID, command, path, code, exact source literal은 원문 그대로 유지합니다.
+따르며, 자유 서술은 그 언어로 통일합니다. Canonical heading, status, ID,
+command, path, code, exact source literal은 원문 그대로 유지합니다.
 
 같은 14개 skill은 canonical output schema를 보존하는 actionable-output hard
-gate도 자체 포함합니다. 필수 heading·table·receipt 순서는 그대로 두고 첫
-자유 서술 위치에서 답·결과·행동을 먼저 제시하며, 진행 상태와 근거 있는
-복구 행동을 짧게 드러냅니다. 완료 뒤에는 불필요한 다음 행동이나 맺음말을
-만들지 않습니다. 별도 mode skill이나 shared runtime reference는 없습니다.
+gate도 자체 포함합니다. 필수 heading·table·status semantics는 유지하면서 첫
+자유 서술 위치에서 답·결과·행동을 먼저 제시하고, 진행 상태와 근거 있는 복구
+행동을 짧게 드러냅니다. 완료 뒤에는 불필요한 다음 행동이나 맺음말을 만들지
+않습니다. 별도 mode skill이나 shared runtime reference는 없습니다.
 
 ## 설치
 
@@ -56,10 +54,10 @@ npx skills add MTGVim/tiger-kit \
   --skill tk-browser-verify
 ```
 
-변경되지 않는 `v20.2.0` snapshot:
+변경되지 않는 `v20.3.0` snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v20.2.0" \
+npx skills add "MTGVim/tiger-kit#v20.3.0" \
   --global \
   --agent claude-code \
   --agent codex \

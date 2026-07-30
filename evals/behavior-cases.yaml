@@ -429,7 +429,7 @@
   expect: "Drive conditionally invokes tk-grill-me, then explicitly invokes tk-to-spec, conditionally tk-to-tickets, and tk-implement per unit, consuming their receipts without recreating phase semantics inline."
 - case: drive-continues-after-ready-spec
   skill: tk-drive
-  expect: "A consumed Ready spec is never a response boundary: drive makes the ticket decision and continues through implementation and aggregate verification in the same active turn, or returns an explicit evidence-supported terminal receipt."
+  expect: "A consumed Ready spec is never a response boundary: drive makes the ticket decision and continues through implementation and aggregate verification in the same active turn, or returns an explicit evidence-supported terminal summary."
 - case: drive-rejects-missing-transition-echo
   skill: tk-drive
   expect: "A missing or mismatched child `Outstanding transition` echo is receipt drift and stops drive Blocked instead of being consumed as success."

@@ -47,7 +47,7 @@ If the answers are weak, choose `inline`, `merge`, `convert to reference`, `make
 - TigerKit never commits, pushes, opens PRs, merges, tags, releases, or publishes unless explicitly authorized by a skill contract or user request.
 - Explicit `tk-implement` invocation authorizes one verified current-branch unit commit. Explicit `$tk-drive` start authorizes `tk-implement` to create one such commit per selected ticket or no-ticket single slice. Neither authorizes push or later release actions; implicit drive resume inherits only the active same-conversation scope.
 - All canonical skill operational bodies and references use English.
-  User-facing progress and final receipt prose follows the user's language
+  User-facing progress and final summary prose follows the user's language
   while canonical headings, fields, IDs, and status tokens remain unchanged.
 
 ## Repository documentation

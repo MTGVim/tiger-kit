@@ -11,6 +11,7 @@ if __package__:
         EXPECTED_SKILLS,
         REQUIRED_BEHAVIOR_CASES,
         RESULT_BUDGET_TOKENS,
+        TERMINAL_SUMMARY_GATE,
         USER_INVOKED_SKILLS,
         parse_latest_changelog_version,
         validate_actionable_output_contract,
@@ -21,6 +22,7 @@ if __package__:
         validate_response_language_contract,
         validate_runtime_scratch,
         validate_skill_language,
+        validate_terminal_summary_contract,
         validate_user_decision_contract,
         validate_skill,
         validate_skill_eval_files,
@@ -31,6 +33,7 @@ else:
         EXPECTED_SKILLS,
         REQUIRED_BEHAVIOR_CASES,
         RESULT_BUDGET_TOKENS,
+        TERMINAL_SUMMARY_GATE,
         USER_INVOKED_SKILLS,
         parse_latest_changelog_version,
         validate_actionable_output_contract,
@@ -41,6 +44,7 @@ else:
         validate_response_language_contract,
         validate_runtime_scratch,
         validate_skill_language,
+        validate_terminal_summary_contract,
         validate_user_decision_contract,
         validate_skill,
         validate_skill_eval_files,
@@ -499,6 +503,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
         self.assertEqual(validate_skill_language(root), [])
         self.assertEqual(validate_response_language_contract(root), [])
         self.assertEqual(validate_actionable_output_contract(root), [])
+        self.assertEqual(validate_terminal_summary_contract(root), [])
 
     def test_response_language_gate_rejects_one_weakened_skill(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -616,6 +621,128 @@ class CanonicalSkillContractTest(unittest.TestCase):
             self.assertEqual(len(errors), 1)
             self.assertIn("tk-ask-repo", errors[0])
 
+    def test_terminal_summary_gate_rejects_one_weakened_skill(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source_root = Path(__file__).resolve().parents[1]
+            for skill in EXPECTED_SKILLS:
+                target = root / "skills" / skill / "SKILL.md"
+                target.parent.mkdir(parents=True)
+                text = (source_root / "skills" / skill / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                if skill == "tk-ask-repo":
+                    text = text.replace(
+                        "exactly one standalone `---` line",
+                        "an optional standalone `---` line",
+                        1,
+                    )
+                target.write_text(text, encoding="utf-8")
+
+            errors = validate_terminal_summary_contract(root)
+
+            self.assertEqual(len(errors), 1)
+            self.assertIn("tk-ask-repo", errors[0])
+
+    def test_terminal_summary_gate_rejects_one_duplicate(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source_root = Path(__file__).resolve().parents[1]
+            for skill in EXPECTED_SKILLS:
+                target = root / "skills" / skill / "SKILL.md"
+                target.parent.mkdir(parents=True)
+                text = (source_root / "skills" / skill / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                if skill == "tk-ask-repo":
+                    text = text.replace(
+                        TERMINAL_SUMMARY_GATE,
+                        TERMINAL_SUMMARY_GATE + "\n\n" + TERMINAL_SUMMARY_GATE,
+                        1,
+                    )
+                target.write_text(text, encoding="utf-8")
+
+            errors = validate_terminal_summary_contract(root)
+
+            self.assertEqual(len(errors), 1)
+            self.assertIn("tk-ask-repo", errors[0])
+
+    def test_terminal_summary_gate_rejects_one_missing_gate(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source_root = Path(__file__).resolve().parents[1]
+            for skill in EXPECTED_SKILLS:
+                target = root / "skills" / skill / "SKILL.md"
+                target.parent.mkdir(parents=True)
+                text = (source_root / "skills" / skill / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                if skill == "tk-ask-repo":
+                    text = text.replace(TERMINAL_SUMMARY_GATE, "", 1)
+                target.write_text(text, encoding="utf-8")
+
+            errors = validate_terminal_summary_contract(root)
+
+            self.assertEqual(len(errors), 1)
+            self.assertIn("tk-ask-repo", errors[0])
+
+    def test_terminal_summary_gate_rejects_one_misplaced_gate(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source_root = Path(__file__).resolve().parents[1]
+            for skill in EXPECTED_SKILLS:
+                target = root / "skills" / skill / "SKILL.md"
+                target.parent.mkdir(parents=True)
+                text = (source_root / "skills" / skill / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                if skill == "tk-ask-repo":
+                    text = text.replace(TERMINAL_SUMMARY_GATE + "\n\n", "", 1)
+                    response_start = text.index(
+                        "### 🔴 HARD GATE · response language"
+                    )
+                    response_end = text.index(
+                        "\n## User decision questions", response_start
+                    )
+                    text = (
+                        text[:response_end]
+                        + "\n\n"
+                        + TERMINAL_SUMMARY_GATE
+                        + text[response_end:]
+                    )
+                target.write_text(text, encoding="utf-8")
+
+            errors = validate_terminal_summary_contract(root)
+
+            self.assertEqual(len(errors), 1)
+            self.assertIn("tk-ask-repo", errors[0])
+
+    def test_terminal_summary_gate_rejects_reintroduced_receipt_rendering(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source_root = Path(__file__).resolve().parents[1]
+            for skill in EXPECTED_SKILLS:
+                target = root / "skills" / skill / "SKILL.md"
+                target.parent.mkdir(parents=True)
+                text = (source_root / "skills" / skill / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                if skill == "tk-ask-repo":
+                    text = text.replace(
+                        TERMINAL_SUMMARY_GATE,
+                        "`Outcome: <one user-facing sentence>`\n\n"
+                        + TERMINAL_SUMMARY_GATE,
+                        1,
+                    )
+                target.write_text(text, encoding="utf-8")
+
+            errors = validate_terminal_summary_contract(root)
+
+            self.assertEqual(len(errors), 1)
+            self.assertIn("tk-ask-repo", errors[0])
+
     def test_canonical_skills_embed_native_user_decision_contract(self) -> None:
         root = Path(__file__).resolve().parents[1]
         required = (
@@ -660,11 +787,11 @@ class CanonicalSkillContractTest(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         required = {
             "tk-ask-repo": ("Lead with `Answer`", "Do not echo the inbound question"),
-            "tk-browser-verify": ("Never paste or store raw console", "`## Receipt`, paste raw evidence bodies"),
+            "tk-browser-verify": ("Never paste or store raw console", "do not add a receipt heading"),
             "tk-drive": ("no-ticket placeholders", "child handoff envelope"),
-            "tk-grill-me": ("The ledger is not a per-turn dump template", "Do not duplicate decisions"),
+            "tk-grill-me": ("The ledger is not a per-turn dump template", "append phase/status provenance"),
             "tk-grooming": ("Lead with one `## Disposition`", "Add `## Exceptions` only"),
-            "tk-handoff": ("Receipt starts with", "Omit empty sections"),
+            "tk-handoff": ("handoff artifact owns disposition", "Omit empty sections"),
             "tk-implement": (
                 "Lead with `## Changed`",
                 "2–5 short",
@@ -672,7 +799,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
             ),
             "tk-learn": ("Lead with the promotion or no-op decision", "`Target path`"),
             "tk-merge-conflict": ("Use only non-empty sections in this order", "`Blocked: no active conflict`"),
-            "tk-prototype": ("Lead with `## Confirmed`", "Keep command mechanics after the decision"),
+            "tk-prototype": ("Record decision-relevant status once", "Keep command mechanics after the decision"),
             "tk-reflect": ("In chat, emit only", "no raw logs, transcripts, diff excerpts"),
             "tk-skill-diagnose": ("In chat, emit `## Diagnosis`", "Never copy raw logs, transcripts"),
             "tk-to-spec": ("Lead with the `Ready | Draft | Blocked | Unverifiable` decision", "Vertical slicing candidate areas"),
@@ -688,7 +815,6 @@ class CanonicalSkillContractTest(unittest.TestCase):
             "tk-skill-diagnose": "`ID | Incident | Root cause`",
             "tk-to-tickets": "`Ticket | User-visible slice`",
         }
-        outcome_receipts = EXPECTED_SKILLS - {"tk-prototype"}
         forbidden = {
             "tk-grooming": ("The final section is always this fixed `## Summary` table",),
             "tk-implement": ("a non-empty `## Remaining risks`",),
@@ -715,11 +841,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
                         "Use a sentence when only one user-relevant row exists",
                         normalized,
                     )
-                if skill in outcome_receipts:
-                    self.assertIn(
-                        "`Outcome: <one user-facing sentence>`",
-                        text,
-                    )
+                self.assertNotIn("`Outcome: <one user-facing sentence>`", text)
                 normalized = " ".join(text.split())
                 self.assertTrue(
                     all(token in normalized for token in RESULT_BUDGET_TOKENS[skill])

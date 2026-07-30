@@ -4,16 +4,16 @@
     {
       "id": "legacy-1",
       "path": "success",
-      "prompt": "로컬 앱에서 사용자가 보는 결제 전 확인 화면의 버튼 문구를 바꿨습니다. 데스크톱과 모바일에서 레이아웃·상호작용·최종 상태를 확인하고 판정 receipt를 만들어 주세요. 실제 결제나 외부 발송은 하지 마세요.",
-      "expected_output": "지속적인 사용자 노출 UI 변경으로 Verdict mode를 선택하고, launch configuration과 안전 범위를 확인한 뒤 runtime screenshot 및 실제 이미지 검사를 포함한 Pass/Fail/Unverifiable receipt를 낸다.",
+      "prompt": "로컬 앱에서 사용자가 보는 결제 전 확인 화면의 버튼 문구를 바꿨습니다. 데스크톱과 모바일에서 레이아웃·상호작용·최종 상태를 확인하고 판정 요약을 만들어 주세요. 실제 결제나 외부 발송은 하지 마세요.",
+      "expected_output": "지속적인 사용자 노출 UI 변경으로 Verdict mode를 선택하고, launch configuration과 안전 범위를 확인한 뒤 runtime screenshot 및 실제 이미지 검사를 포함한 Pass/Fail/Unverifiable Verdict를 낸다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "지속적인 사용자 노출 UI 변경으로 Verdict mode를 선택하고, launch configuration과 안전 범위를 확인한 뒤 runtime screenshot 및 실제 이미지 검사를 포함한 Pass/Fail/Unverifiable receipt를 낸다."
+          "criterion": "지속적인 사용자 노출 UI 변경으로 Verdict mode를 선택하고, launch configuration과 안전 범위를 확인한 뒤 runtime screenshot 및 실제 이미지 검사를 포함한 Pass/Fail/Unverifiable Verdict를 낸다."
         },
         {
           "type": "judge",
-          "criterion": "Alignment Status와 runtime Verdict를 구분하고 내용이 있는 Verified·Findings·Evidence·Unverified·Cleanup이 각 사실을 한 번만 소유하며, 비어 있는 Findings·Unverified·Cleanup은 생략할 수 있고, 이 섹션들이 receipt 전체이므로 별도 Receipt에서 Verdict나 본문을 반복하지 않는다."
+          "criterion": "Alignment Status와 runtime Verdict를 구분하고 내용이 있는 Verified·Findings·Evidence·Unverified·Cleanup이 각 사실을 한 번만 소유하며, 비어 있는 Findings·Unverified·Cleanup은 생략할 수 있고, 이 섹션들이 최종 요약 전체이므로 별도 metadata block에서 Verdict나 본문을 반복하지 않는다."
         },
         {
           "type": "terminal_status",
@@ -147,7 +147,7 @@
       "id": "browser-captures-move-to-tigerkit-ledger",
       "path": "success",
       "prompt": "브라우저 검증 중 도구가 screenshot과 trace를 기본 임시 폴더에 저장했습니다. 이 실행의 캡처를 최종 evidence로 정리해 주세요. 사용자 제공 기준 screenshot은 건드리지 마세요.",
-      "expected_output": "이번 실행 소유 screenshot과 trace만 `.tigerkit/browser-verify/runs/<run-id>/`로 이동하고, 존재·비어 있지 않음·외부 잔존 부재를 확인한 뒤 receipt에는 ledger 경로만 인용한다. 사용자 제공 screenshot은 이동·삭제하지 않으며 소유권이나 이동 검증이 불명확하면 Unverifiable 또는 Blocked로 멈춘다.",
+      "expected_output": "이번 실행 소유 screenshot과 trace만 `.tigerkit/browser-verify/runs/<run-id>/`로 이동하고, 존재·비어 있지 않음·외부 잔존 부재를 확인한 뒤 terminal summary에는 decision-relevant ledger 경로만 인용한다. 사용자 제공 screenshot은 이동·삭제하지 않으며 소유권이나 이동 검증이 불명확하면 Unverifiable 또는 Blocked로 멈춘다.",
       "assertions": [
         {
           "type": "judge",
@@ -155,7 +155,7 @@
         },
         {
           "type": "judge",
-          "criterion": "ledger 파일의 존재·비어 있지 않음과 tool temp·기본 download·사용자 scratch의 이번 실행 capture 잔존 부재를 확인하고 receipt에는 ledger 경로만 인용한다."
+          "criterion": "ledger 파일의 존재·비어 있지 않음과 tool temp·기본 download·사용자 scratch의 이번 실행 capture 잔존 부재를 확인하고 terminal summary에는 decision-relevant ledger 경로만 인용한다."
         },
         {
           "type": "terminal_status",
@@ -325,7 +325,7 @@
       "assertions": [
         {
           "type": "judge",
-          "criterion": "여러 검증 결과를 readable bullet 또는 Criterion table로 요약하고 Receipt 성격의 Verdict가 결과를 대체하거나 복제하지 않는다."
+          "criterion": "여러 검증 결과를 readable bullet 또는 Criterion table로 요약하고 Verdict가 결과를 대체하거나 bottom metadata에서 복제하지 않는다."
         },
         {
           "type": "output_contains",

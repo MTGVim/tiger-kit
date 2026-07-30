@@ -61,7 +61,7 @@ confirmed evidence.
    Constraint, Out of scope, Output, or Verification entry.
 6. `repeat or close`: do not repeat answered questions; ask the next one or
    present the one-sentence closure statement when all four axes are settled.
-7. `return receipt`: without mutation, return
+7. `return decision result`: without mutation, return
    `confirmed | pending | aborted | Blocked | Unverifiable`, a non-duplicated
    Decisions reference when one exists, assumptions, remaining risks, and the
    caller to resume.
@@ -134,18 +134,16 @@ Ask about domain terminology only when different meanings affect a decision.
 Confirmed terms may later enter a spec, but this skill does not create or edit
 `CONTEXT.md`, glossaries, domain documents, or ADRs.
 
-Use only non-empty final sections: `## Decisions`, `## Assumptions`,
-`## Remaining risks`, and `## Receipt`. `## Decisions` alone owns decision
-content. Keep a question turn atomic at one unresolved decision. For confirmed
-results, use one to three short lines for one decision, two to seven readable
-rows or bullets for a compound decision set, and the top five to seven plus the
-owning source/spec path for eight or more. These are budgets, not quotas. Do
-not add a second combined-goal summary. In `## Receipt`, record
-`Outcome: <one user-facing sentence>`, `Phase: decision`, `Status`, source or
-user-answer evidence, whether decisions were applied, the `## Decisions`
-reference when it exists, and `Return to`. Do not duplicate decisions in the
-receipt. On a question turn with no decision, omit the Decisions reference and
-return the unresolved ledger item with `pending`.
+Use only non-empty final sections: `## Decisions`, `## Assumptions`, and
+`## Remaining risks`. `## Decisions` alone owns decision content. Keep a
+question turn atomic at one unresolved decision. For confirmed results, use
+one to three short lines for one decision, two to seven readable rows or
+bullets for a compound decision set, and the top five to seven plus the owning
+source/spec path for eight or more. These are budgets, not quotas. Do not add a
+second combined-goal summary or append phase/status provenance. On a standalone
+question turn, state the unresolved ledger item and `pending` only when needed
+to explain the stop. For active drive, return phase, status, evidence,
+`Return to`, and transition only in the internal handoff envelope.
 
 Native `Status` uses `confirmed | pending | aborted | Blocked | Unverifiable`.
 For an orchestrator terminal result, map these respectively to
@@ -162,17 +160,25 @@ executing the transition.
 
 ### 🔴 HARD GATE · actionable user output
 
-Treat the skill's canonical output contract as the schema and this gate as its presentation layer. Never remove or reorder required headings, tables, receipt keys, IDs, status tokens, result budgets, approval or safety boundaries, host-required progress notices, or response-language rules. Apply the response-language rules to every free-form clause and prose receipt value; retain another language only for canonical tokens, code identifiers, commands, paths, or exact quoted or source literals. Ordinary workflow jargon is prose, not a code identifier: translate it unless changing the token would make it incorrect.
+Treat the skill's canonical output contract as the schema and this gate as its presentation layer. Never remove or reorder required headings, tables, IDs, status tokens, result budgets, approval or safety boundaries, host-required progress notices, or response-language rules. Apply the response-language rules to every free-form clause and prose result value; retain another language only for canonical tokens, code identifiers, commands, paths, or exact quoted or source literals. Ordinary workflow jargon is prose, not a code identifier: translate it unless changing the token would make it incorrect.
 
-In the first available free-form prose slot, lead with the answer, outcome, or action instead of a preamble. For multi-step user work, use the fewest bounded numbered steps. For continuing work, restate current state and the next transition without duplicating a plan or receipt. Make completed behavior visible. State errors as the observed failure, an evidence-backed cause when known, and a concrete recovery; never manufacture a cause.
+In the first available free-form prose slot, lead with the answer, outcome, or action instead of a preamble. For multi-step user work, use the fewest bounded numbered steps. For continuing work, restate current state and the next transition without duplicating a plan or result. Make completed behavior visible. State errors as the observed failure, an evidence-backed cause when known, and a concrete recovery; never manufacture a cause.
 
-Suppress tangents, ceremonial openers, repeated recaps, and closing pleasantries. When a required schema field repeats a result already stated, keep the field but make its value referential or minimal instead of recapping the result. When work remains, end with exactly one concrete next action owned by the user or workflow; when work is complete, stop without inventing one. Use a concrete time estimate only when evidence supports it and it helps the person executing the step.
+Suppress tangents, ceremonial openers, repeated recaps, and closing pleasantries. When a required field repeats a result already stated, make its value referential or minimal instead of recapping the result. When work remains, end with exactly one concrete next action owned by the user or workflow; when work is complete, stop without inventing one. Use a concrete time estimate only when evidence supports it and it helps the person executing the step.
 
 When this gate conflicts with the canonical output contract or the host harness, preserve the higher-priority contract and apply the same shape inside its first prose value or slot. Do not label the user, mention this gate, expose a persistent mode, or require a runtime reference outside this skill.
 
+### 🔴 HARD GATE · terminal user summary
+
+Treat progress commentary, internal handoff envelopes, and the terminal user response as distinct surfaces. Before the first line of every terminal user-facing response, emit exactly one standalone `---` line, then begin immediately with the skill's canonical result heading or result sentence. Do not emit this separator in progress commentary or between a successful phase receipt and the next active-drive phase invocation.
+
+Do not render a receipt heading, `Outcome:` label, or terminal provenance/status block in the user summary. When the host or skill requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the skill's canonical result schema requires it. Keep phase receipts as internal handoff envelopes: when an active parent requires phase, status, IDs, `Return to`, `Success state`, or `Outstanding transition`, return them only to that parent workflow and never echo them in the terminal user summary.
+
+Persist provenance only in an artifact or ledger the skill already owns. A skill without such an owner must not create one solely to store a receipt, and a read-only skill remains read-only. Never require a shared runtime reference outside this skill.
+
 ### 🔴 HARD GATE · response language
 
-Before any user-facing progress, question, summary, or receipt, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose receipt value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, receipt keys, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
+Before any user-facing progress, question, or summary, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose result value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
 
 ## User decision questions
 

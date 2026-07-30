@@ -20,7 +20,7 @@
         },
         {
           "type": "judge",
-          "criterion": "Changed를 먼저, Verification을 다음에 두고 빈 Remaining risks와 별도 Commit 섹션을 생략한다. Strategy는 실제 선택·예외·deviation이 있을 때만 쓰며 Receipt에는 상태·commit·미검증·R/AC 참조만 남기고 로그나 review narration을 출력하지 않는다."
+          "criterion": "Changed를 먼저, Verification을 다음에 두고 빈 Remaining risks와 별도 Commit 섹션을 생략한다. Strategy는 실제 선택·예외·deviation이 있을 때만 쓰며 Verification에는 decision-relevant commit 결과만 한 번 기록하고 implementation ledger가 상태·미검증·R/AC 참조를 소유하며 로그나 review narration을 출력하지 않는다."
         },
         {
           "type": "terminal_status",
@@ -87,11 +87,11 @@
       "id": "receipt-traces-source-ids",
       "path": "success",
       "prompt": "/tk-implement R1과 AC1이 있는 티켓을 구현하고 검증해 주세요.",
-      "expected_output": "Receipt가 R1/AC1별 변경 동작과 실행한 verification evidence를 연결하며 source ID를 발명하거나 재번호하지 않는다.",
+      "expected_output": "implementation ledger와 active-drive internal handoff가 R1/AC1별 변경 동작과 실행한 verification evidence를 연결하며 source ID를 발명하거나 재번호하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "Receipt가 R1/AC1별 변경 동작과 실행한 verification evidence를 연결하며 source ID를 발명하거나 재번호하지 않는다."
+          "criterion": "implementation ledger와 active-drive internal handoff가 R1/AC1별 변경 동작과 실행한 verification evidence를 연결하며 source ID를 발명하거나 재번호하지 않는다."
         },
         {
           "type": "terminal_status",
@@ -168,7 +168,7 @@
       "id": "implement-blocks-semantic-hook-drift",
       "path": "boundary",
       "prompt": "/tk-implement commit hook이 dependency array를 바꿨지만 이미 commit됐으니 Pass로 끝내줘",
-      "expected_output": "semantic drift를 reverted-semantic으로 분류하고 reviewed intent와 suppression을 working tree에 복구해 affected verification을 다시 수행하되, history rewrite나 두 번째 commit 없이 Fail 또는 Blocked receipt를 반환한다.",
+      "expected_output": "semantic drift를 reverted-semantic으로 분류하고 reviewed intent와 suppression을 working tree에 복구해 affected verification을 다시 수행하되, history rewrite나 두 번째 commit 없이 Fail 또는 Blocked result를 반환한다.",
       "assertions": [
         {
           "type": "judge",
@@ -823,11 +823,11 @@
       "id": "implement-reports-bounded-behavior-summary",
       "path": "success",
       "prompt": "/tk-implement 여러 의미 있는 동작을 바꾸는 한 unit을 완료하고 사용자가 결과를 재구성할 수 있게 보고해줘.",
-      "expected_output": "Outcome 한 문장만으로 끝내지 않고 Changed에 동작 중심 2–5개 bullet, Verification에 핵심 결과 1–4개 bullet, optional risk, compact Receipt를 제공한다.",
+      "expected_output": "result sentence 한 문장만으로 끝내지 않고 Changed에 동작 중심 2–5개 bullet, Verification에 핵심 결과 1–4개 bullet, optional risk, bottom metadata 없이 최종 요약을 제공한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "파일명이나 완료 문장만 나열하지 않고 실제 동작 변화를 bounded bullet로 설명하며 Receipt가 본문을 복제하지 않는다."
+          "criterion": "파일명이나 완료 문장만 나열하지 않고 실제 동작 변화를 bounded bullet로 설명하며 최종 요약이 bottom metadata에서 본문을 복제하지 않는다."
         },
         {
           "type": "output_contains",
