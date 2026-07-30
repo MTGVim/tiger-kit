@@ -11,239 +11,136 @@ metadata:
 
 # Reflect
 
-Apply on explicit invocation, a clear request to extract reusable candidates
-from evidence, or one valid active-drive tail handoff. Do not auto-apply to an
-ordinary summary, an output-style utility, an explicit invocation of another
-skill, instructions loaded by that skill, or implementation completion.
-Implicit mode is report-only. Do not invoke another skill except for the
-single bounded diagnosis handoff below.
+Apply only on explicit invocation, a clear reuse-analysis request, or one valid
+active-drive reflection handoff. Ordinary completion, summaries, formatting
+utilities, and another skill's instructions do not trigger it. Default and
+implicit behavior is report-only.
 
-Read current conversation, changes, diff, implementation/test/review outcomes,
-relevant `.tigerkit/` artifacts, the current host's discoverable file-based
-persistent memory, and user-named sources. Classify across exactly five
-axes—`repo rule | repo skill | user rule | user skill | persistent memory`—and
-choose `propose | update | merge | no-op | discard`.
+## Outcome
 
-## Workflow
+From conversation, diff, implementation/test/review evidence, relevant
+`.tigerkit/` artifacts, discoverable file-based persistent memory, and
+user-named sources:
 
-1. `evidence`: produce path/command-cited `verified | unverified` facts,
-   including access failures and prior-art results, classified across the five
-   axes.
-2. `interpretation`: derive a reuse hypothesis separate from facts.
-3. `confidence`: return `high | medium | low` and basis.
-4. `action`: apply the
-   [placement rubric](references/repository-placement.md) to repository
-   candidates; choose target and action. A separate Draft owns wording.
-5. `apply/receipt`: combine candidate, separate approval, and fresh target state
-   into the transition-table result and references; do not copy candidate body.
+1. identify verified and unverified evidence;
+2. derive a reuse interpretation without presenting it as fact;
+3. choose confidence `high | medium | low`;
+4. classify the narrowest owner:
+   `repo rule | repo skill | user rule | user skill | persistent memory`;
+5. choose `propose | update | merge | no-op | discard`.
 
-## Drive-tail mode
+Use [repository placement](references/repository-placement.md) for repository
+candidates. Prefer `no-op` or `merge` over duplication. A rule is a short
+standing instruction; a skill requires a distinct trigger, repeatable procedure,
+I/O, and independent value.
 
-Only a valid active-drive reflection handoff after aggregate product
-verification grants the bounded authority in
-[drive-optimistic reflection](references/drive-optimistic.md). It may apply
-only an eligible exact pre-existing ignored `repo rule` through the guarded
-skill-local script, writes `.tigerkit/reflect.md`, never promotes a skill, and
-passes its classification and mutation evidence directly to
-`tk-drive finalization`. Missing or mismatched authority falls back to no
-mutation.
+Each candidate records:
 
-### Conditional Agent Skill diagnosis
+- `Evidence` with paths/commands and `verified | unverified`;
+- `Interpretation` derived from evidence IDs;
+- `Confidence` and basis;
+- `Preferred prevention owner`;
+- `Host dependency: host-independent | current-host-native | inaccessible`;
+- target, action, status, and a working draft only when actionable.
 
-Before promoting a root-cause-dependent `propose | update | merge`, hand off to
-`tk-skill-diagnose` exactly once only when all four conditions are verified:
+`high` confidence needs independent verified evidence and no unresolved
+counterexample. One verified occurrence without independent support is at most
+`medium`. No verified evidence or unresolved conflict is `low` and cannot
+promote `propose | update | merge`.
 
-1. a specific Agent Skill name or exact `SKILL.md` path;
+## Authority
+
+Standalone reflection does not apply a target. Rule application requires a
+separate explicit approval naming target and scope. Skill creation or semantic
+skill mutation belongs only to `tk-learn`; this skill reports a pending skill
+candidate and never invokes it automatically.
+
+File-based persistent memory is prior art, not an automatic write target. If it
+fully owns the behavior, use `no-op`; if its path is unavailable, record
+`unverified` rather than claiming absence.
+
+The run status is `Pass | Pending | Fail | Blocked | Unverifiable | aborted`.
+Candidate status is separately `reported | pending | applied`; never substitute
+one set for the other.
+
+## Active-drive tail
+
+Only a valid handoff after aggregate product verification may use
+[drive-optimistic reflection](references/drive-optimistic.md). It may apply one
+eligible exact pre-existing ignored `repo rule` through the skill-local script,
+write `.tigerkit/reflect.md`, and pass classification and mutation evidence to
+`tk-drive finalization`. It never creates or promotes a skill. Missing,
+drifted, tracked, unignored, new, symlinked, external, or unrestorable authority
+means no mutation.
+
+## Conditional skill diagnosis
+
+Call `tk-skill-diagnose` once only when all are verified:
+
+1. a specific skill or exact `SKILL.md` path;
 2. an observable expected/observed mismatch or measured resource anomaly;
 3. root cause is not already verified;
-4. the candidate action depends on that cause being true.
+4. the proposed action depends on that cause.
 
-The request must explicitly concern a skill incident, its retrospective, or
-reuse of that incident evidence. Do not hand off for historical mentions,
-existing valid diagnosis receipts, `no-op | discard`, or generic reflection.
-If host-native sibling handoff is unavailable, return a `Diagnosis required`
-payload and `Unverifiable`; never imitate fresh empirical diagnosis inline.
+Send the exact incident, host/invocation, prompt, expected and observed behavior,
+metrics, evidence, and candidate/baseline refs. Use only a reproduced incident
+with verified root cause afterward. An unavailable handoff returns a compact
+`Diagnosis required` payload and `Unverifiable`; do not imitate diagnosis inline
+or create a reflect/diagnose cycle.
 
-Send the exact incident ID, target/path, host/invocation, observed prompt,
-expected behavior or resource anchor, observed behavior/metrics, evidence
-paths/commands, candidate/baseline refs, and `Caller: tk-reflect`. Mark unknowns
-`unverified`.
+## Write and failure rules
 
-After return, use only `Reproduced` plus verified root cause as evidence.
-`Not reproduced` does not verify the original causal claim.
-`Inconclusive | Blocked | Unverifiable` keeps confidence `low` and prevents a
-root-cause-dependent promotion. Efficiency evidence also requires preserved
-correctness. Never call diagnosis twice for one run, call it again for the same
-`Incident ID + target + blocker`, or allow diagnosis to call back into reflect.
-End equivalent recurrence as `Blocked`.
+Create `.tigerkit/reflect.md` only for an explicit report-artifact request or a
+valid drive tail. Write bounded rows atomically; store no raw logs, transcripts,
+diff excerpts, credentials, or screenshots. Never edit `.gitignore`.
 
-### Candidate transition table
+Unreadable required evidence remains `unverified`. Apply or revalidation failure
+preserves the existing target and returns `Fail | Blocked | Unverifiable`.
+Outside drive-tail authority, stop at `pending | reported` until separately
+approved.
 
-This table governs standalone and ordinary implicit reflection; drive-tail
-transitions use the eligibility, restoration, and receipt table in its
-reference.
+## Result
 
-| Candidate | Condition | Status | Mutation |
-|---|---|---|---|
-| Rule `propose | update | merge` | before separate apply approval | `pending` | none |
-| Rule `no-op | discard` | nothing to apply | `reported` | none |
-| Rule `propose | update | merge` | exact target applied/reverified after approval | `applied` | approved scope only |
-| Rule | apply/revalidation failure | `Fail | Blocked | Unverifiable` | preserve existing target; stop mutation |
-| Skill candidate | evidence, exact target, working draft shown | `pending` | no creation/semantic mutation |
-| All candidates | no verified evidence | `Unverifiable` | none |
-
-Each candidate has:
-
-- `Evidence`: observed diff/outcomes/repetitions with path/command and
-  `verified | unverified`.
-- `Interpretation`: reuse scope/boundary hypothesis derived only from Evidence
-  IDs; no prescriptive wording or fact-like hypothesis.
-- `Confidence`: `high | medium | low`, `Basis: <Evidence IDs>`, and only when
-  needed `Uncertainty`.
-- `Preferred prevention owner`: exactly one of
-  `repo rule | repo skill | user rule | user skill | persistent memory`,
-  chosen from the narrowest durable owner that can prevent recurrence.
-- `Host dependency`: `host-independent | current-host-native | inaccessible`,
-  with the exact native path or unavailable evidence when host behavior is
-  required.
-- `Action`: prefer `merge | no-op` for duplication. A rule is a short standing
-  instruction; a skill needs trigger, repeated steps, I/O, and independent
-  value.
-
-Choose Action in order: complete ownership by an existing target is `no-op`;
-missing verified boundary in the same target is `update`; consolidating
-overlapping targets is `merge`; no suitable target plus rule/skill qualification
-is `propose`; one-off or unresolved unverified/conflicting evidence is
-`discard`. Action is not apply authority, and every skill candidate stays
-`pending`.
-
-Treat discoverable file-based persistent memory as prior art, not as an
-automatic write target. When memory completely owns the same behavior and
-scope, choose `no-op`. When memory and a candidate share facts but own different
-behavioral axes, record the separation in Interpretation and Action, keep the
-targets distinct, and propose reciprocal cross-references only when both exact
-targets are known. Cross-reference or memory mutation remains `pending` until
-separately approved. If the host memory path is unavailable or unreadable,
-record it as `unverified`; do not claim that memory contains no prior art.
-
-For `repo rule | repo skill`, Evidence owns normalized raw placement input,
-Interpretation owns root/nested/skill boundary, and Action owns the choice.
-Create no duplicate placement field. Missing/conflicting threshold evidence
-keeps confidence `low` and prevents promotion.
-
-Confidence rises only as follows: `high` requires at least two independently
-verified Evidence IDs from different occurrences/source types and no unresolved
-conflict/counterexample; `medium` requires at least one verified ID but lacks
-one of repetition, independence, or boundary; no verified evidence or
-unresolved conflict/counterexample is `low` and cannot promote
-`propose | update | merge`.
-
-## Contract
-
-Repository targets are codebase/domain/tool/team-specific; user targets repeat
-across repositories. Persistent memory is a current-host file-based target whose
-native path must be demonstrated. Default is report-only. Writing a rule into
-DESIGN, reuse-map, rule, or persistent-memory files requires separate explicit
-approval naming target and scope, except for an eligible existing repository
-rule in the valid drive-tail mode. Silence, continuation, past analogous
-answers, or standalone reflect invocation is not approval.
-
-Only `tk-learn` creates a new skill or semantically updates/merges one. This
-skill reports skill evidence, current-host native exact target, working draft,
-and `pending` only; it never invokes tk-learn or writes a skill path.
-
-Run terminal status is `Pass | Pending | Fail | Blocked | Unverifiable |
-aborted`. Use `Pending` while actionable candidates await apply disposition,
-`Pass` after a completed no-op/report or revalidated mutation, `Fail` for a
-violated deterministic claim or apply gate, `aborted` for user stop, and
-`Blocked` for conflict/unclear apply scope. Never mix per-candidate
-`reported | pending | applied` with run terminal status.
-
-By default, mutate no file and create no ledger. An explicit report-artifact
-request may write the bounded `.tigerkit/reflect.md` ledger below without
-authorizing target application; valid drive-tail mode writes the same ledger
-under its own bounded authority. Do not inspect legacy global state or
-generalize a one-off workaround. `RF-##` is run-local, not durable identity.
-Never promote raw credentials, logs, or screenshots verbatim even after
-approval.
-
-Unreadable required source is `unverified` with path/error and cannot support
-interpretation. Retry once only after exact access/path/command appears;
-otherwise fix `Unverifiable`. Apply/revalidation failures follow the transition
-table.
-
-## CHECKPOINT / STOP
-
-Outside valid drive-tail mode, require separate explicit apply approval after
-target, evidence, confidence, and action. Before it, stop at
-`pending | reported`. Drive-tail mode follows its eligibility and rollback
-checkpoint instead of asking a question.
-
-## Output contract
-
-Assign `RF-01`, `RF-02`, ... once in discovery order. In chat, emit only
-`## Disposition`; insert the decision question after it only when apply
-approval is required. Disposition shows at most five
-decision-relevant rows:
+In chat, emit only `## Disposition` and, when approval is needed, one decision
+question after it.
 
 | ID | Candidate | Action | Target | Why |
 | --- | --- | --- | --- | --- |
 | RF-01 | `<short name>` | `<action/status>` | `<target>` | `<evidence refs>` |
 
-Keep chat compact by citing evidence paths instead of copying long bodies.
-Every `Action` and `Why` cell must explain the human-readable next action and
-reason; an `RF-##` ID or status token alone is not a result. Keep at most five
-rows and cite `.tigerkit/reflect.md` when it owns additional candidates. A
-no-op stays minimal.
-Within `## Disposition`, add a bounded `Draft` block only when an actionable
-rule/skill candidate requires working wording.
-
-Only on an explicit report-artifact request outside drive-tail mode, or on a
-valid drive-tail handoff, write or replace `.tigerkit/reflect.md`. The
-standalone ledger has one compact row per
-candidate with ID, target, evidence references, interpretation, confidence,
-preferred prevention owner, host dependency, action, status, and optional
-draft path; drive-tail fields follow its reference. It contains
-no raw logs, transcripts, diff excerpts, repeated rationale, or copied output
-fields.
-Create its parent lazily, write atomically, and warn if scratch is not ignored;
-never modify `.gitignore`.
-The ledger records terminal status, candidate counts, its own path, and IDs
-requiring a decision; the chat summary never substitutes for the Disposition
-table or appends that metadata. With no candidate, emit one
-`— | None | no-op | — | no verified reusable evidence` row.
+Assign `RF-01`, `RF-02`, ... once in discovery order. Show at most five rows and
+cite `.tigerkit/reflect.md` for the rest. Every Action and Why cell must explain
+the human next action; IDs and status tokens alone are not a result. A no-op is
+minimal. With no candidate, emit one `None | no-op` row. In chat, no raw logs,
+transcripts, diff excerpts, repeated rationale, or bottom provenance block.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Treat progress commentary, internal procedure evidence, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between successful consecutive active-drive procedure invocations.
-
-Do not render a receipt heading, `Outcome:` label, phase-success token, caller-return instruction, or terminal provenance/status block in the user summary. When the result requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the canonical result schema requires it.
-
-Persist provenance only in an artifact or ledger already owned by the workflow. A read-only skill remains read-only. Never require a shared runtime reference outside this skill.
+Keep progress and internal procedure evidence out of the terminal user response.
+Begin with the canonical result heading or sentence. Emit no ceremonial
+preamble, receipt heading, `Outcome:` label, duplicate status, or active-drive
+child summary. Persist detail only in an artifact already owned by this skill;
+a read-only path remains read-only.
 
 ### 🔴 HARD GATE · response language
 
-Before any user-facing progress, question, or summary, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose result value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
+Use the latest explicit user language, otherwise the current message's language.
+Preserve canonical headings, status tokens, IDs, commands, paths, code, and
+quoted source literals exactly. Rewrite free-form language drift before return.
 
 ## User decision questions
 
-When a user-owned decision blocks progress, ask one self-contained `Question`
-before any `Recommendation`. Show only decision-relevant evidence, two or three
-mutually exclusive options with material tradeoffs, and exactly one label
-ending `(Recommended)` or `(추천)`.
+Ask one self-contained `Question` only for a material user-owned decision, then
+show a `Recommendation`, two or three mutually exclusive options, and exactly
+one `(Recommended)` or `(추천)` label. Use native `AskUserQuestion`, Codex
+`request_user_input`, or Hermes Agent `clarify`; plain text is allowed only when
+none is exposed. A failed or rejected call is not absence; preserve
+`Pending | Blocked`.
 
-Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex
-`request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only
-when none is exposed. A failed or rejected call is not absence; preserve
-`Pending | Blocked`. This changes presentation, not authority or stop gates.
-
-## DO NOT / ANTI-PATTERNS
+## Pitfalls
 
 - Do not present interpretation as fact or inflate confidence.
-- Do not duplicate an existing skill or mutate without apply approval.
-- Do not omit discoverable persistent memory from prior-art checks or invent an
-  undiscovered host memory path.
-- Do not diagnose inline, repeat a diagnosis handoff, or create a
-  reflect/diagnose cycle.
-- Do not promote raw credentials/logs/screenshots or one-off workarounds.
-- Do not omit, reuse, or renumber candidate IDs, or omit Summary.
+- Do not duplicate a target, mutate without approval, or promote a one-off
+  workaround.
+- Do not invent an inaccessible memory path or omit discoverable prior art.
+- Do not repeat diagnosis, diagnose inline, or promote sensitive raw evidence.
