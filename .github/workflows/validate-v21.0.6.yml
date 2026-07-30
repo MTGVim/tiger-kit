@@ -38,18 +38,17 @@ jobs:
           changelog = Path('CHANGELOG.md')
           text = changelog.read_text(encoding='utf-8')
           marker = '## Unreleased\n\n'
-          entry = '''## 21.0.6 — Lean Core Skills
-
-- Compressed `tk-drive` into a thin orchestration recipe while preserving its
-  preparation, unit execution, aggregate verification, amendment, and
-  non-success boundaries.
-- Compressed `tk-implement` into one unit workflow and moved conditional test,
-  source-writing, browser, review, and commit detail into a lazily loaded
-  execution-gates reference.
-- Preserved current trigger, status, ledger, verification, review, commit, and
-  cross-host contracts while reducing eager hot-path instructions.
-
-'''
+          entry = (
+              '## 21.0.6 — Lean Core Skills\n\n'
+              '- Compressed `tk-drive` into a thin orchestration recipe while preserving its\n'
+              '  preparation, unit execution, aggregate verification, amendment, and\n'
+              '  non-success boundaries.\n'
+              '- Compressed `tk-implement` into one unit workflow and moved conditional test,\n'
+              '  source-writing, browser, review, and commit detail into a lazily loaded\n'
+              '  execution-gates reference.\n'
+              '- Preserved current trigger, status, ledger, verification, review, commit, and\n'
+              '  cross-host contracts while reducing eager hot-path instructions.\n\n'
+          )
           if '## 21.0.6 — Lean Core Skills' in text:
               raise SystemExit('v21.0.6 changelog entry already exists')
           if text.count(marker) != 1:
