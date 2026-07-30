@@ -8,6 +8,7 @@ import unittest
 if __package__:
     from scripts.validate_skills import (
         DRIVE_GRAPH_EDGES,
+        DRIVE_GRAPH_NODES,
         DRIVE_TERMINAL_SUMMARY_GATE,
         DRIVE_STAGE_TOKENS,
         EXPECTED_SKILLS,
@@ -40,6 +41,7 @@ if __package__:
 else:
     from validate_skills import (
         DRIVE_GRAPH_EDGES,
+        DRIVE_GRAPH_NODES,
         DRIVE_TERMINAL_SUMMARY_GATE,
         DRIVE_STAGE_TOKENS,
         EXPECTED_SKILLS,
@@ -333,16 +335,78 @@ class CanonicalSkillContractTest(unittest.TestCase):
 
         self.assertEqual(validate_drive_graph_contract(root), [])
 
+    def test_drive_declares_read_only_non_success_finalization(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        drive = (root / "skills/tk-drive/SKILL.md").read_text(encoding="utf-8")
+        phases = (root / "skills/tk-drive/references/phases.md").read_text(
+            encoding="utf-8"
+        )
+        implement = (root / "skills/tk-implement/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        review = (
+            root / "skills/tk-implement/references/review-boundary.md"
+        ).read_text(encoding="utf-8")
+        tickets = (root / "skills/tk-to-tickets/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+
+        node = "tk-drive:non-success-finalization"
+        self.assertIn(node, DRIVE_GRAPH_NODES)
+        sources = {source for source, target, *_ in DRIVE_GRAPH_EDGES if target == node}
+        self.assertEqual(
+            sources,
+            {
+                "tk-drive:preflight",
+                "tk-grill-me",
+                "tk-prototype",
+                "tk-to-spec",
+                "tk-to-tickets",
+                "tk-implement",
+                "tk-merge-conflict",
+                "aggregate-verification",
+                "tk-browser-verify",
+                "tk-reflect",
+            },
+        )
+        self.assertFalse(any(source == node for source, *_ in DRIVE_GRAPH_EDGES))
+
+        for text in (drive, phases):
+            self.assertIn("tk-drive non-success finalization", text)
+            self.assertIn("Dependency blocked", text)
+            self.assertIn("Not attempted", text)
+            self.assertIn("Unverified", text)
+            self.assertIn("no outgoing edge", text)
+        self.assertIn("changed or uncommitted paths", implement)
+        self.assertIn("recovery condition", implement)
+        self.assertIn("commit: none", review)
+        self.assertIn("Last attempt", tickets)
+        self.assertEqual(validate_drive_graph_contract(root), [])
+
     def test_drive_graph_rejects_unknown_node_cycle_and_missing_condition(self) -> None:
         root = Path(__file__).resolve().parents[1]
         unknown = list(DRIVE_GRAPH_EDGES)
         unknown[0] = ("tk-drive:preflight", "tk-gril-me", "", "confirmed", "stop", "tk-to-specc")
         cycle = list(DRIVE_GRAPH_EDGES)
         cycle.append(("tk-drive:finalization", "tk-drive:preflight", "restart", "ready", "stop", "tk-grill-me"))
+        non_success_cycle = list(DRIVE_GRAPH_EDGES)
+        non_success_cycle.append(
+            (
+                "tk-drive:non-success-finalization",
+                "tk-drive:preflight",
+                "restart",
+                "ready",
+                "stop",
+                "tk-grill-me",
+            )
+        )
         duplicate = list(DRIVE_GRAPH_EDGES) + [DRIVE_GRAPH_EDGES[0]]
 
         unknown_errors = validate_drive_graph_contract(root, tuple(unknown))
         cycle_errors = validate_drive_graph_contract(root, tuple(cycle))
+        non_success_cycle_errors = validate_drive_graph_contract(
+            root, tuple(non_success_cycle)
+        )
         duplicate_errors = validate_drive_graph_contract(root, tuple(duplicate))
 
         self.assertTrue(any("unknown node 'tk-gril-me'" in error for error in unknown_errors))
@@ -350,6 +414,9 @@ class CanonicalSkillContractTest(unittest.TestCase):
         self.assertTrue(any("missing terminal condition" in error for error in unknown_errors))
         self.assertTrue(any("edge set differs" in error for error in unknown_errors))
         self.assertTrue(any("forbidden cycle" in error for error in cycle_errors))
+        self.assertTrue(
+            any("forbidden cycle" in error for error in non_success_cycle_errors)
+        )
         self.assertTrue(any("duplicate edge is ambiguous" in error for error in duplicate_errors))
 
     def test_drive_stage_gate_rejects_contract_weakening(self) -> None:

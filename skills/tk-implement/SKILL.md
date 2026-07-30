@@ -54,6 +54,13 @@ ownership of drive-wide cross-ticket verification or finalization.
 | `Blocked` | Required input, authority, or user decision is missing; safety boundaries conflict; or drift follows the verified snapshot | Stop further mutation and identify the decision or re-verification scope | Prohibited |
 | `Unverifiable` | Verification was attempted but environment, tooling, or evidence limitations prevent a verdict | Separate executed scope from unavailable evidence | Prohibited |
 
+For an active-drive non-success, the internal handoff includes the unit or
+ticket ID, native status, actual branch and HEAD, changed or uncommitted paths,
+executed verification, unverified items, the failure or blocker, and one
+recovery condition. It grants no cleanup, commit, continuation, downstream
+specialist, or finalization authority. The active graph consumes this bounded
+evidence only after applying any supported alternate edge.
+
 Source precedence is: current request, confirmed conversation decisions,
 relevant `.tigerkit/tickets.md`, relevant `.tigerkit/spec.md`, repository
 instructions, code/tests. Existing files are not automatically relevant.

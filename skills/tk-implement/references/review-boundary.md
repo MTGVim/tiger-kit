@@ -82,9 +82,13 @@ Each unit section records task and unit/ticket identity, R/AC references,
 design-fit evidence as `reuse | extend | local | new abstraction`, inspected
 paths/symbols, simplify finding and `changed | no-op | deferred`, rerun focused
 verification, Standards and Spec dispositions, unit commit SHA, and remaining
-risk. Keep it bounded: no raw transcript, full diff, repeated command output,
-secret, or unrelated history. After commit, update the SHA without staging the
-ignored scratch file.
+risk. A no-commit terminal attempt instead records native status, actual branch
+and HEAD, changed or uncommitted paths, executed verification, unverified scope,
+`commit: none`, the failure or blocker, and one recovery condition. It never
+reuses stale candidate, review, or verification evidence to classify the unit
+as completed. Keep the ledger bounded: no raw transcript, full diff, repeated
+command output, secret, or unrelated history. After commit, update the SHA
+without staging the ignored scratch file.
 
 ## Fixed point and inventory
 
