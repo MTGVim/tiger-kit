@@ -1,0 +1,62 @@
+name: Publish TigerKit v21.0.5
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: github.event.pull_request.head.ref == 'release-tag/v21.0.5'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Tag exact main and publish GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_MAIN: 023a1f2e102548c43c73c7de92187f2d9e7414d9
+          EXPECTED_CANDIDATE: cc0f9177d12126ffad9759c9f803b3cc1a3bdb3a
+          CANDIDATE_BRANCH: release/v21.0.5
+          TAG: v21.0.5
+        run: |
+          git fetch origin main --tags
+          test "$(git rev-parse origin/main)" = "$EXPECTED_MAIN"
+          test "$(git rev-parse HEAD)" = "$EXPECTED_MAIN"
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "tag already exists"
+            exit 1
+          fi
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "release already exists"
+            exit 1
+          fi
+
+          git config user.name "TigerKit Release Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git tag -a "$TAG" "$EXPECTED_MAIN" -m "$TAG"
+          git push origin "refs/tags/$TAG"
+          gh release create "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$TAG" \
+            --generate-notes \
+            --verify-tag
+
+          candidate_tip="$(git ls-remote --heads origin "refs/heads/$CANDIDATE_BRANCH" | awk '{print $1}')"
+          if [ -n "$candidate_tip" ]; then
+            test "$candidate_tip" = "$EXPECTED_CANDIDATE"
+            git push origin --delete "$CANDIDATE_BRANCH"
+          fi
+
+          git push origin --delete "release-tag/v21.0.5" || true
