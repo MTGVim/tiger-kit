@@ -18,7 +18,7 @@ Start only when the user selects `/tk-drive`, `$tk-drive`, or the host skill pic
 
 One start authorizes Preparing, Executing, aggregate verification, unit review, one verified current-branch commit per selected unit, at most three corrective unit commits, and one successful `tk-reflect` tail. It does not authorize push, PR, merge, tag, release, publish, history rewriting, or out-of-scope mutation.
 
-Drive owns the workflow and the only active-drive terminal response. Child procedures own their specialist result and return it to the graph; they do not stop a successful run to ask the user to invoke drive again.
+Drive owns the workflow and the only active-drive terminal response. Child procedures own their specialist work and pass their native result state directly to the next applicable node. They do not stop a successful run to ask the user to invoke drive again.
 
 ## Direct procedure graph
 
@@ -62,7 +62,9 @@ Before product mutation:
 
 Freeze every user-visible source literal and its `authorized change` in R/AC before mutation. Executing must compare the source, current value, candidate/staged diff, and rendered result. Missing evidence, an unresolved mismatch, or wording outside the frozen authorization stops before commit.
 
-Freeze the risk-based verification profile from current evidence; Executing may not weaken it or invent unsupported obligations.
+### 🔴 HARD GATE · risk-based verification profile
+
+During Preparing, classify material signals and obligations from current evidence. Consume the sealed material profile during Executing. Drive cannot add unsupported obligations, remove an obligation, or substitute weaker evidence.
 
 Browser preflight is `required | optional | N/A`. A private runtime identity is material user-owned input. Store only an opaque profile hint and an `intentionally omitted` marker; re-request missing identity on cold start. Runtime rehydration is not a Preparing amendment.
 
@@ -87,13 +89,13 @@ One late material user-owned decision may use one amendment through `tk-grill-me
 
 ## Non-success
 
-After recovery edges are exhausted, normalize the child state through `phases.md`, freeze mutation, and enter the internal read-only finalizer. Follow [non-success-finalization.md](references/non-success-finalization.md). Do not clean the failed unit, invoke another specialist, create a partial status or new ledger, or start an independent unit.
+After recovery edges are exhausted, normalize the child state through `phases.md`, freeze mutation, and enter the internal read-only finalizer. Follow [non-success finalization](references/non-success-finalization.md). It has no outgoing edge. Do not clean the failed unit, invoke another specialist, create a partial status or new ledger, or start an independent unit.
 
 ## Success finalization
 
 After aggregate product verification passes, invoke `tk-reflect` exactly once only when a valid handoff exists. A no-op is successful. Then reread source, spec, tickets when present, prep, implementation evidence, ancestry, and verification before emitting one terminal response.
 
-Lead with one user-facing result sentence. Then render `Implemented` with two to seven behavior-level bullets and `Verification` with one to four aggregate-result bullets. For multiple units, include a compact `Ticket | Outcome | Commit` table. When underlying results exceed these limits, keep only the top five to seven items ranked by user impact and verification value. Include `Reflection`, `Skill candidates`, and `Remaining risks` only when meaningful. End `Verification` with exactly `Status: Pass`; terminal non-success belongs to the read-only finalizer.
+Lead with one user-facing result sentence. Then render `Implemented` with two to seven behavior-level bullets and `Verification` with one to four aggregate-result bullets. For multiple units, include a compact `Ticket | Outcome | Commit` table. Use a sentence when only one user-relevant row exists. When underlying results exceed these limits, keep only the top five to seven items ranked by user impact and verification value. Include `Reflection`, `Skill candidates`, and `Remaining risks` only when meaningful. End `Verification` with exactly `Status: Pass`; terminal non-success belongs to the read-only finalizer.
 
 ### 🔴 HARD GATE · terminal user summary
 
