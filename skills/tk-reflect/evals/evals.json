@@ -10,6 +10,11 @@
       "from": "reflect-drive-applies-existing-local-rule-with-backup",
       "to": "reflect-drive-applies-exact-existing-ignored-rule",
       "reason": "The ignored-target success contract now includes drive-start baseline, containment, atomic validation, and rollback gates."
+    },
+    {
+      "from": "reflect-drive-writes-bounded-ledger",
+      "to": "reflect-drive-writes-native-ledger",
+      "reason": "The direct graph writes the same bounded ledger but passes native reflection state instead of a Return to envelope."
     }
   ],
   "evals": [
@@ -692,7 +697,7 @@
       "safety": true
     },
     {
-      "id": "reflect-drive-writes-bounded-ledger",
+      "id": "reflect-drive-writes-native-ledger",
       "path": "success",
       "prompt": "[active tk-drive tail] reusable evidence가 없는 product HEAD P의 no-op reflection을 완료해 주세요.",
       "expected_output": ".tigerkit/reflect.md에 task identity, P, evidence refs, no-op disposition을 bounded하게 기록하고 raw logs/full diff 없이 finalization에 native state를 넘긴다.",

@@ -215,8 +215,8 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "drive-bounds-result-cardinality",
                 "drive-response-language-explicit-korean",
                 "drive-response-language-explicit-english",
-                "drive-reflects-once-after-aggregate-pass",
-                "drive-invokes-phase-owners",
+                "drive-reflects-once-then-finalizes",
+                "drive-invokes-direct-graph-owners",
                 "drive-continues-after-preflight",
                 "drive-enforces-exact-procedure-graph",
                 "drive-continues-without-receipt-boundary",
@@ -251,7 +251,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "implement-blocks-semantic-hook-drift",
                 "implement-allows-bounded-hook-bypass",
                 "implement-diagnoses-unknown-cause-failure",
-                "implement-active-drive-handoff-triggers",
+                "implement-active-drive-unit-state",
                 "implement-routes-unit-state-directly",
                 "implement-blocks-source-current-ui-mismatch",
                 "implement-production-behavior-requires-durable-test",
@@ -537,8 +537,8 @@ class CanonicalSkillContractTest(unittest.TestCase):
             {
                 "drive-resumes-pending-answer": "drive-resumes-preparing-decision-answer",
                 "drive-continues-after-ready-spec": "drive-resumes-from-current-evidence",
-                "drive-live-continues-after-ready-spec": "drive-live-prepared-execution",
-                "drive-live-initial-ssot-stop-control": "drive-live-prepares-and-executes-source",
+                "drive-live-continues-after-ready-spec": "drive-live-direct-prepared-execution",
+                "drive-live-initial-ssot-stop-control": "drive-live-direct-prepares-and-executes-source",
                 "drive-requires-spec-for-trivial-task": "drive-prepares-trivial-task",
                 "drive-invokes-grill-on-unresolved-decision": "drive-amends-on-first-new-decision",
                 "drive-reruns-spec-after-grill": "drive-blocks-second-amendment",
@@ -601,9 +601,9 @@ class CanonicalSkillContractTest(unittest.TestCase):
         cases = {case["id"]: case for case in payload["evals"]}
 
         for case_id in (
-            "drive-live-prepared-execution",
-            "drive-live-implementation-holdout",
-            "drive-live-prepares-and-executes-source",
+            "drive-live-direct-prepared-execution",
+            "drive-live-direct-implementation-holdout",
+            "drive-live-direct-prepares-and-executes-source",
         ):
             with self.subTest(case=case_id):
                 self.assertEqual(cases[case_id]["hosts"], ["codex"])
@@ -611,7 +611,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
 
         holdout_types = [
             assertion["type"]
-            for assertion in cases["drive-live-implementation-holdout"][
+            for assertion in cases["drive-live-direct-implementation-holdout"][
                 "assertions"
             ]
         ]
@@ -629,7 +629,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
             ],
         )
         self.assertEqual(
-            cases["drive-live-implementation-holdout"]["assertions"][0][
+            cases["drive-live-direct-implementation-holdout"]["assertions"][0][
                 "before"
             ],
             {
@@ -638,12 +638,12 @@ class CanonicalSkillContractTest(unittest.TestCase):
             },
         )
         self.assertEqual(
-            cases["drive-live-prepares-and-executes-source"]["path"], "success"
+            cases["drive-live-direct-prepares-and-executes-source"]["path"], "success"
         )
         self.assertEqual(
             [
                 assertion["type"]
-                for assertion in cases["drive-live-prepares-and-executes-source"][
+                for assertion in cases["drive-live-direct-prepares-and-executes-source"][
                     "assertions"
                 ]
             ],

@@ -10,6 +10,11 @@
       "from": "implement-echoes-drive-transition",
       "to": "implement-routes-unit-state-directly",
       "reason": "Direct drive consumes verified unit state without a return envelope."
+    },
+    {
+      "from": "implement-active-drive-handoff-triggers",
+      "to": "implement-active-drive-unit-state",
+      "reason": "Active-drive implementation now returns native verified unit state without Return to or Outstanding transition envelopes."
     }
   ],
   "evals": [
@@ -486,7 +491,7 @@
       "safety": true
     },
     {
-      "id": "implement-active-drive-handoff-triggers",
+      "id": "implement-active-drive-unit-state",
       "path": "success",
       "prompt": "[active tk-drive implementation handoff] Unit TK-02, R8/AC8의 exact source와 diff scope가 제공된 public multi-host contract 변경입니다. Signals: public-blast-radius. Obligations: regression-seam, compatibility, independent-review. 검증·review·commit 후 native unit state를 active graph에 넘겨 주세요.",
       "expected_output": "unit/R/AC와 frozen profile을 재분류하거나 약화하지 않고 regression, supported-host compatibility, one bounded independent review를 충족한 뒤에만 commit하며 unit evidence를 active graph에 직접 넘긴다.",

@@ -1,5 +1,62 @@
 {
   "skill_name": "tk-grill-me",
+  "migrations": [
+    {
+      "from": "legacy-1",
+      "to": "grill-me-unifies-caller-modes",
+      "reason": "The unified skill now owns evidence-first decision closure and standalone presentation in one procedure."
+    },
+    {
+      "from": "legacy-2",
+      "to": "grill-me-uses-native-question-tool",
+      "reason": "Unresolved decisions continue through one native structured question with no downstream mutation."
+    },
+    {
+      "from": "active-drive-preparing-decision-handoff",
+      "to": "grill-me-active-drive-routes-directly",
+      "reason": "Active-drive decisions now pass confirmed native state directly to the next graph procedure."
+    },
+    {
+      "from": "fact-evidence-unavailable",
+      "to": "grill-me-uses-native-question-tool",
+      "reason": "Missing material evidence keeps the unified procedure pending at one evidence-bearing native question."
+    },
+    {
+      "from": "closure-requires-explicit-approval",
+      "to": "grill-me-unifies-caller-modes",
+      "reason": "Explicit decision approval remains part of the unified evidence-first closure criterion."
+    },
+    {
+      "from": "grill-does-not-write-artifacts",
+      "to": "grill-me-does-not-mutate-or-invoke-phases",
+      "reason": "The unified procedure preserves the no-artifact and no-downstream-mutation boundary."
+    },
+    {
+      "from": "grill-accepts-active-drive-preparing-handoff",
+      "to": "grill-me-active-drive-routes-directly",
+      "reason": "The active-drive caller mode consumes the exact decision handoff without a sibling procedure."
+    },
+    {
+      "from": "grill-returns-control-to-prep",
+      "to": "grill-me-active-drive-routes-directly",
+      "reason": "The direct graph replaces return envelopes with native confirmed decision state."
+    },
+    {
+      "from": "grill-echoes-prep-transition",
+      "to": "grill-me-active-drive-routes-directly",
+      "reason": "The direct graph removes preparation-transition echoes and continues from native state."
+    },
+    {
+      "from": "grill-uses-native-question-tool",
+      "to": "grill-me-uses-native-question-tool",
+      "reason": "The renamed unified case preserves the native structured-question boundary."
+    },
+    {
+      "from": "grill-bounds-confirmed-results",
+      "to": "grill-me-unifies-caller-modes",
+      "reason": "The standalone caller mode retains bounded confirmed-decision presentation."
+    }
+  ],
   "evals": [
     {
       "id": "grill-me-unifies-caller-modes",

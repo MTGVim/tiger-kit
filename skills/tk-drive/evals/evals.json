@@ -18,7 +18,7 @@
     },
     {
       "from": "drive-does-not-auto-reflect",
-      "to": "drive-reflects-once-after-aggregate-pass",
+      "to": "drive-reflects-once-then-finalizes",
       "reason": "TigerKit 20.2.0 replaces report-only reusable-candidate output with one bounded drive-optimistic reflection tail after product aggregate verification passes."
     },
     {
@@ -48,12 +48,12 @@
     },
     {
       "from": "drive-live-continues-after-ready-spec",
-      "to": "drive-live-prepared-execution",
+      "to": "drive-live-direct-prepared-execution",
       "reason": "TigerKit 21 live coverage starts from an eval-owned sealed Ready prep."
     },
     {
       "from": "drive-live-initial-ssot-stop-control",
-      "to": "drive-live-prepares-and-executes-source",
+      "to": "drive-live-direct-prepares-and-executes-source",
       "reason": "TigerKit 21 makes explicit raw source the single public drive start surface."
     },
     {
@@ -95,6 +95,41 @@
       "from": "drive-separates-product-and-reflection-heads",
       "to": "drive-preserves-head-after-local-reflection",
       "reason": "Drive-tail reflection now auto-applies only to an ignored local rule and therefore cannot advance Git HEAD."
+    },
+    {
+      "from": "drive-rejects-missing-transition-echo",
+      "to": "drive-owns-single-terminal-output",
+      "reason": "The direct graph removes transition-envelope echoes and gives only tk-drive finalization terminal-output ownership."
+    },
+    {
+      "from": "drive-rejects-reflection-transition-drift",
+      "to": "drive-rejects-reflection-edge-drift",
+      "reason": "The direct graph validates the native reflection next edge instead of a rendered transition envelope."
+    },
+    {
+      "from": "drive-reflects-once-after-aggregate-pass",
+      "to": "drive-reflects-once-then-finalizes",
+      "reason": "The direct graph replaces the final-receipt transition with native reflection state followed by tk-drive finalization."
+    },
+    {
+      "from": "drive-invokes-phase-owners",
+      "to": "drive-invokes-direct-graph-owners",
+      "reason": "The direct graph may invoke tk-to-spec when preparation evidence requires it and no longer treats its absence as a universal assertion."
+    },
+    {
+      "from": "drive-live-prepared-execution",
+      "to": "drive-live-direct-prepared-execution",
+      "reason": "The compact preflight removes lifecycle status and phase-receipt assertions while preserving isolated prepared execution."
+    },
+    {
+      "from": "drive-live-implementation-holdout",
+      "to": "drive-live-direct-implementation-holdout",
+      "reason": "The direct graph orders implementation units by current evidence without receipt or completed-status lifecycle fields."
+    },
+    {
+      "from": "drive-live-prepares-and-executes-source",
+      "to": "drive-live-direct-prepares-and-executes-source",
+      "reason": "Cold-start execution now passes native procedure state and keeps the compact preflight lifecycle-free."
     }
   ],
   "evals": [
@@ -139,7 +174,7 @@
       "darwin": false
     },
     {
-      "id": "drive-reflects-once-after-aggregate-pass",
+      "id": "drive-reflects-once-then-finalizes",
       "path": "success",
       "prompt": "[current artifact evidence: 모든 implementation unit과 aggregate product verification이 Pass이고 reflection만 남았습니다.] $tk-drive",
       "expected_output": "product verification HEAD를 고정한 뒤 tk-reflect를 정확히 한 번 호출하고 같은 turn에 tk-drive finalization으로 직접 진행한다.",
@@ -465,7 +500,7 @@
       "safety": true
     },
     {
-      "id": "drive-invokes-phase-owners",
+      "id": "drive-invokes-direct-graph-owners",
       "path": "success",
       "prompt": "$tk-drive",
       "expected_output": "현재 artifact evidence에서 applicable한 exact graph node를 선택하고 각 성공 뒤 다음 node를 직접 호출한다.",
@@ -498,7 +533,7 @@
       "safety": true
     },
     {
-      "id": "drive-live-prepared-execution",
+      "id": "drive-live-direct-prepared-execution",
       "path": "success",
       "hosts": [
         "codex"
@@ -560,7 +595,7 @@
       "safety": true
     },
     {
-      "id": "drive-live-implementation-holdout",
+      "id": "drive-live-direct-implementation-holdout",
       "path": "success",
       "hosts": [
         "codex"
@@ -624,7 +659,7 @@
       "safety": true
     },
     {
-      "id": "drive-live-prepares-and-executes-source",
+      "id": "drive-live-direct-prepares-and-executes-source",
       "path": "success",
       "hosts": [
         "codex"

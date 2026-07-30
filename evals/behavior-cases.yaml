@@ -169,7 +169,7 @@
 - case: implement-diagnosis-blocks-missing-seam
   skill: tk-implement
   expect: "A missing public regression seam is reported with a seam option and deterministic alternative verification, then commit remains blocked until an explicit named exception."
-- case: implement-active-drive-handoff-triggers
+- case: implement-active-drive-unit-state
   skill: tk-implement
   expect: "An explicit active-drive implementation handoff carrying one unit/ticket and R/AC activates the same unit contract as standalone invocation."
 - case: implement-routes-unit-state-directly
@@ -400,7 +400,7 @@
 - case: drive-resumes-preparing-decision-answer
   skill: tk-drive
   expect: "A direct answer to the one pending Preparing decision resumes the same active drive and continues the recorded preparation transition."
-- case: drive-reflects-once-after-aggregate-pass
+- case: drive-reflects-once-then-finalizes
   skill: tk-drive
   expect: "After aggregate product verification passes, drive invokes exactly one reflection tail and continues directly to finalization in the same turn."
 - case: drive-skips-unneeded-tickets
@@ -421,7 +421,7 @@
 - case: drive-aggregate-review-boundary
   skill: tk-drive
   expect: "tk-implement owns ticket-level Standards/Spec review while drive owns aggregate R/AC coverage, ancestry, and cross-ticket interaction without repeating line-level review."
-- case: drive-invokes-phase-owners
+- case: drive-invokes-direct-graph-owners
   skill: tk-drive
   expect: "Drive follows the exact applicable procedure graph, invokes each owner directly, and never asks a successful child to return control to its caller."
 - case: drive-continues-after-preflight
