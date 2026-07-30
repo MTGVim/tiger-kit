@@ -1221,7 +1221,7 @@ def validate_repository_contract() -> list[str]:
     )
     for relative in required_files:
         if not (ROOT / relative).is_file():
-            errors.append(f"{relative}: required TigerKit 21.0.2 repository file is missing")
+            errors.append(f"{relative}: required TigerKit 21.0.3 repository file is missing")
     errors.extend(validate_local_only_workflows(ROOT))
     errors.extend(validate_skill_language(ROOT))
     errors.extend(validate_user_decision_contract(ROOT))
@@ -1238,14 +1238,14 @@ def validate_repository_contract() -> list[str]:
     errors.extend(validate_response_language_contract(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
-            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 21.0.2")
+            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 21.0.3")
     errors.extend(validate_runtime_scratch(ROOT))
     ignored = (ROOT / ".gitignore").read_text(encoding="utf-8") if (ROOT / ".gitignore").is_file() else ""
     if ".tigerkit/" not in ignored.splitlines():
         errors.append(".gitignore: document TigerKit repo-local scratch with .tigerkit/")
     required_text = {
         "README.md": (
-            "TigerKit 21.0.2",
+            "TigerKit 21.0.3",
             "15",
             "Claude Code",
             "Codex",

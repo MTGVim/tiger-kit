@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 21.0.3 — Direct Procedure Graph and Portable Validation
+
 - Kept decision closure unified in `tk-grill-me` and replaced parent-return
   orchestration with one validated direct `tk-drive → tk-grill-me →
   tk-to-spec → tk-to-tickets (conditional) → tk-implement` procedure graph.
