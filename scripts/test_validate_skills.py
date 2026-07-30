@@ -20,6 +20,7 @@ if __package__:
         validate_catalog_routing,
         validate_browser_preflight_contract,
         validate_compact_preflight_contract,
+        validate_continuation_boundary,
         validate_drive_graph_contract,
         validate_learning_loop_contract,
         validate_prepared_drive_contract,
@@ -51,6 +52,7 @@ else:
         validate_catalog_routing,
         validate_browser_preflight_contract,
         validate_compact_preflight_contract,
+        validate_continuation_boundary,
         validate_drive_graph_contract,
         validate_learning_loop_contract,
         validate_prepared_drive_contract,
@@ -70,6 +72,31 @@ else:
 
 
 class CanonicalSkillContractTest(unittest.TestCase):
+    def test_continuation_is_honest_about_runtime_boundary(self) -> None:
+        source_root = Path(__file__).resolve().parents[1]
+        self.assertEqual(validate_continuation_boundary(source_root), [])
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            relative = "skills/tk-drive/SKILL.md"
+            target = root / relative
+            target.parent.mkdir(parents=True)
+            target.write_text(
+                (
+                    source_root / relative
+                ).read_text(encoding="utf-8").replace(
+                    "not a durable scheduler",
+                    "a durable scheduler",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            errors = validate_continuation_boundary(root)
+
+        self.assertTrue(
+            any("runtime workflow engine" in error for error in errors)
+        )
+
     def test_reflect_auto_apply_is_limited_to_exact_ignored_target(self) -> None:
         source_root = Path(__file__).resolve().parents[1]
         self.assertEqual(validate_reflect_ignored_target_contract(source_root), [])
@@ -769,6 +796,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
         self.assertEqual(validate_drive_graph_contract(root), [])
         self.assertEqual(validate_prepared_drive_contract(root), [])
         self.assertEqual(validate_reflect_ignored_target_contract(root), [])
+        self.assertEqual(validate_continuation_boundary(root), [])
 
     def test_response_language_gate_rejects_one_weakened_skill(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

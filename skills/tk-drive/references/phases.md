@@ -52,6 +52,12 @@ On failure, expose one actionable blocking fact. Follow an alternate edge only
 when the table permits it and current evidence satisfies its entry condition;
 otherwise stop the top-level run without downstream invocation.
 
+This continuation contract is prompt-directed and probabilistic. It does not
+provide durable scheduling, event replay, or guaranteed cross-turn execution.
+After a host or process boundary, derive the next node from current artifacts
+and repository evidence instead of claiming that an earlier prompt still owns
+runtime control.
+
 ## Preparing evidence
 
 Bind source anchors, repository root, worktree, branch, baseline HEAD,

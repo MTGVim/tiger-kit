@@ -55,6 +55,12 @@ A successful node selects and invokes its next applicable node immediately in
 the same active turn. A blocked or unverifiable node exposes one actionable
 fact and either follows an allowed alternate edge or stops the top-level run.
 
+Direct continuation is a prompt-directed instruction to the current agent,
+not a durable scheduler, event replay protocol, or guaranteed cross-turn
+execution. If the host ends the turn or process, resume only by rereading
+current artifacts and repository evidence; never claim runtime-backed
+continuation.
+
 ## Preparing
 
 Before product mutation:
@@ -155,6 +161,8 @@ contract; otherwise keep it report-only or stop on unsafe restoration.
 
 Then `tk-drive` rereads the current source, spec, tickets when present,
 preflight, implementation ledger, commit ancestry, and verification evidence.
+Continuation therefore depends on rereading current artifacts and repository evidence,
+not replaying a stored workflow cursor; it provides no guaranteed cross-turn execution.
 Only this finalization node emits the active-drive terminal response.
 
 Lead with one user-facing result sentence. Then render `Implemented` with two

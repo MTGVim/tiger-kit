@@ -206,6 +206,26 @@ BROWSER_PREFLIGHT_TOKENS = (
     "re-request",
     "not a Preparing amendment",
 )
+CONTINUATION_BOUNDARY_TOKENS = {
+    "README.md": (
+        "prompt-directed",
+        "확률적",
+        "durable scheduler",
+        "workflow engine",
+    ),
+    "skills/tk-drive/SKILL.md": (
+        "prompt-directed instruction",
+        "not a durable scheduler",
+        "guaranteed cross-turn execution",
+        "rereading current artifacts and repository evidence",
+    ),
+    "skills/tk-drive/references/phases.md": (
+        "prompt-directed and probabilistic",
+        "durable scheduling",
+        "event replay",
+        "guaranteed cross-turn execution",
+    ),
+}
 ADHD_CONTRACT_TOKENS = (
     "disable-model-invocation: true",
     "/tk-adhd",
@@ -872,6 +892,20 @@ def validate_reflect_ignored_target_contract(root: Path) -> list[str]:
     return errors
 
 
+def validate_continuation_boundary(root: Path) -> list[str]:
+    errors: list[str] = []
+    for relative, tokens in CONTINUATION_BOUNDARY_TOKENS.items():
+        path = root / relative
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        missing = [token for token in tokens if token not in text]
+        if missing:
+            errors.append(
+                f"{relative}: distinguish prompt-directed continuation from a "
+                f"runtime workflow engine ({', '.join(missing)})"
+            )
+    return errors
+
+
 def validate_browser_preflight_contract(root: Path) -> list[str]:
     errors: list[str] = []
     for relative in (
@@ -1199,6 +1233,7 @@ def validate_repository_contract() -> list[str]:
     errors.extend(validate_unified_grill_contract(ROOT))
     errors.extend(validate_compact_preflight_contract(ROOT))
     errors.extend(validate_reflect_ignored_target_contract(ROOT))
+    errors.extend(validate_continuation_boundary(ROOT))
     errors.extend(validate_learning_loop_contract(ROOT))
     errors.extend(validate_response_language_contract(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
