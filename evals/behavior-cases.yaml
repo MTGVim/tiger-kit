@@ -172,6 +172,9 @@
 - case: implement-active-drive-unit-state
   skill: tk-implement
   expect: "An explicit active-drive implementation handoff carrying one unit/ticket and R/AC activates the same unit contract as standalone invocation."
+- case: implement-active-drive-non-success-handoff
+  skill: tk-implement
+  expect: "A non-success active-drive unit handoff records native status, actual branch and HEAD, changed paths, executed and unavailable verification, failure evidence, one recovery condition, and commit: none without cleanup or continuation authority."
 - case: implement-routes-unit-state-directly
   skill: tk-implement
   expect: "A successful active-drive implementation passes verified unit and commit evidence directly to the next applicable graph node without rendering a terminal result or executing drive-wide verification."
@@ -304,6 +307,9 @@
 - case: to-tickets-returns-decision-blocker-to-prep
   skill: tk-to-tickets
   expect: "A user-decision blocker passes `User decision: required`, the unresolved choice, and evidence as native ticket state to the active graph without invoking grill or editing the Ready spec."
+- case: to-tickets-preserves-failed-active-drive-attempt
+  skill: tk-to-tickets
+  expect: "A failed active-drive attempt preserves completed receipts and unrelated pending tickets, keeps the current ticket incomplete, and adds only bounded Last attempt, Evidence, and Recovery fields."
 - case: prototype-is-not-production
   skill: tk-prototype
   expect: "The result distinguishes fake and real behavior and is not called production-ready."
@@ -438,7 +444,19 @@
   expect: "A multi-unit run continues after the first tk-implement unit, finishes every selected unit, performs aggregate verification, runs the valid reflection tail, and reaches finalization."
 - case: drive-owns-single-terminal-response
   skill: tk-drive
-  expect: "Only tk-drive finalization emits exactly one active-drive terminal response, beginning with the result and containing no standalone separator, Outcome label, receipt heading, phase Pass token, caller-return instruction, or bottom provenance block."
+  expect: "Only the applicable tk-drive finalization node emits exactly one active-drive terminal response, beginning with the result and containing no standalone separator, Outcome label, receipt heading, caller-return instruction, or bottom provenance block."
+- case: drive-finalizes-partial-blocked-scope
+  skill: tk-drive
+  expect: "After alternate edges are exhausted, terminal Blocked freezes product mutation and accounts verified ancestors as Completed, the interrupted unit as Stopped, dependent units as Dependency blocked, independent pending units as Not attempted, and stale receipts as Unverified."
+- case: drive-finalizes-aggregate-fail
+  skill: tk-drive
+  expect: "After corrective edges are exhausted, aggregate Fail preserves verified unit commits, freezes mutation and downstream invocation, accounts the failed aggregate node as Stopped, and reports one evidence-derived recovery action."
+- case: drive-finalizes-browser-unverifiable
+  skill: tk-drive
+  expect: "A terminal Unverifiable browser verdict does not retry browser or verification work; it marks the browser node Stopped and the unit lacking required evidence Unverified."
+- case: drive-blocks-unrestored-reflection-state
+  skill: tk-drive
+  expect: "An unrestored reflection state preserves product commits, accounts tk-reflect as Stopped and uncertain workspace scope as Unverified, and terminates Unverifiable without new cleanup or verification."
 - case: drive-prepares-trivial-task
   skill: tk-drive
   expect: "Every explicit source, including a trivial single slice, passes through internal Ready preparation and then continues automatically into implementation."

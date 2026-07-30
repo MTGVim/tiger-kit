@@ -149,6 +149,7 @@ DRIVE_GRAPH_NODES = {
     "tk-browser-verify",
     "tk-reflect",
     "tk-drive:finalization",
+    "tk-drive:non-success-finalization",
 }
 DRIVE_GRAPH_EDGES = (
     ("tk-drive:preflight", "tk-grill-me", "material decisions remain", "confirmed", "stop", "tk-to-spec"),
@@ -169,6 +170,16 @@ DRIVE_GRAPH_EDGES = (
     ("aggregate-verification", "tk-reflect", "valid reflection handoff", "complete-or-no-op", "restore-or-stop", "tk-drive:finalization"),
     ("aggregate-verification", "tk-drive:finalization", "verified and reflection N/A", "terminal evidence reread", "stop", "terminal"),
     ("tk-reflect", "tk-drive:finalization", "reflection completed", "terminal evidence reread", "stop", "terminal"),
+    ("tk-drive:preflight", "tk-drive:non-success-finalization", "terminal non-success with no alternate edge", "scope accounted", "preserve native status", "terminal"),
+    ("tk-grill-me", "tk-drive:non-success-finalization", "terminal non-success with no alternate edge", "scope accounted", "preserve native status", "terminal"),
+    ("tk-prototype", "tk-drive:non-success-finalization", "terminal non-success with no alternate edge", "scope accounted", "preserve native status", "terminal"),
+    ("tk-to-spec", "tk-drive:non-success-finalization", "terminal non-success with no alternate edge", "scope accounted", "preserve native status", "terminal"),
+    ("tk-to-tickets", "tk-drive:non-success-finalization", "terminal non-success with no alternate edge", "scope accounted", "preserve native status", "terminal"),
+    ("tk-implement", "tk-drive:non-success-finalization", "terminal non-success with no alternate edge", "scope accounted", "preserve native status", "terminal"),
+    ("tk-merge-conflict", "tk-drive:non-success-finalization", "terminal non-success with no alternate edge", "scope accounted", "preserve native status", "terminal"),
+    ("aggregate-verification", "tk-drive:non-success-finalization", "terminal non-success with no alternate edge", "scope accounted", "preserve native status", "terminal"),
+    ("tk-browser-verify", "tk-drive:non-success-finalization", "terminal non-success with no alternate edge", "scope accounted", "preserve native status", "terminal"),
+    ("tk-reflect", "tk-drive:non-success-finalization", "terminal non-success with no alternate edge", "scope accounted", "preserve native status", "terminal"),
 )
 DRIVE_ALLOWED_LOOP_EDGES = {
     ("tk-grill-me", "tk-prototype"),
@@ -355,6 +366,10 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-continues-without-receipt-boundary",
     "drive-continues-multi-unit-through-reflection",
     "drive-owns-single-terminal-response",
+    "drive-finalizes-partial-blocked-scope",
+    "drive-finalizes-aggregate-fail",
+    "drive-finalizes-browser-unverifiable",
+    "drive-blocks-unrestored-reflection-state",
     "adhd-explicit-one-shot",
     "adhd-does-not-carry-over",
     "adhd-safety-exception",
@@ -408,6 +423,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "implement-diagnosis-cleans-instrumentation",
     "implement-diagnosis-blocks-missing-seam",
     "implement-active-drive-unit-state",
+    "implement-active-drive-non-success-handoff",
     "implement-ordinary-request-does-not-trigger",
     "implement-blocks-standalone-multi-ticket",
     "implement-production-behavior-requires-durable-test",
@@ -454,6 +470,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "to-tickets-blocks-source-current-ui-mismatch",
     "to-tickets-active-drive-preparing-handoff",
     "to-tickets-returns-decision-blocker-to-prep",
+    "to-tickets-preserves-failed-active-drive-attempt",
     "to-tickets-derives-from-candidate-areas",
     "to-tickets-bounds-result-cardinality",
     "prototype-is-not-production",
@@ -741,7 +758,10 @@ def validate_drive_graph_contract(
                 errors.append(f"drive graph edge {index}: unknown node {node!r}")
         if not all(value.strip() for value in (entry, success, failure, next_edge)):
             errors.append(f"drive graph edge {index}: missing terminal condition")
-        if source == "tk-drive:finalization" or target == "tk-drive:preflight":
+        if source in {
+            "tk-drive:finalization",
+            "tk-drive:non-success-finalization",
+        } or target == "tk-drive:preflight":
             errors.append(f"drive graph edge {index}: forbidden cycle")
         for next_node in next_edge.split("|"):
             if next_node != "terminal" and next_node not in DRIVE_GRAPH_NODES:
@@ -801,6 +821,7 @@ def validate_drive_graph_contract(
             "aggregate verification",
             "tk-reflect",
             "tk-drive finalization",
+            "tk-drive non-success finalization",
             "entry",
             "success",
             "failure",
@@ -1221,7 +1242,7 @@ def validate_repository_contract() -> list[str]:
     )
     for relative in required_files:
         if not (ROOT / relative).is_file():
-            errors.append(f"{relative}: required TigerKit 21.0.3 repository file is missing")
+            errors.append(f"{relative}: required TigerKit 21.0.4 repository file is missing")
     errors.extend(validate_local_only_workflows(ROOT))
     errors.extend(validate_skill_language(ROOT))
     errors.extend(validate_user_decision_contract(ROOT))
@@ -1238,14 +1259,14 @@ def validate_repository_contract() -> list[str]:
     errors.extend(validate_response_language_contract(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
-            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 21.0.3")
+            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 21.0.4")
     errors.extend(validate_runtime_scratch(ROOT))
     ignored = (ROOT / ".gitignore").read_text(encoding="utf-8") if (ROOT / ".gitignore").is_file() else ""
     if ".tigerkit/" not in ignored.splitlines():
         errors.append(".gitignore: document TigerKit repo-local scratch with .tigerkit/")
     required_text = {
         "README.md": (
-            "TigerKit 21.0.3",
+            "TigerKit 21.0.4",
             "15",
             "Claude Code",
             "Codex",

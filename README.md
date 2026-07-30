@@ -4,12 +4,12 @@
   <img src="assets/tigerkit-cover.png" width="960" alt="TigerKit Agent Skills 표지">
 </p>
 
-TigerKit 21.0.3는 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent Skills
+TigerKit 21.0.4는 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent Skills
 모음입니다. 중앙 workflow runtime 없이 15개 self-contained skill을
 `npx skills`로 배포합니다. 하나의 명시적 `tk-drive <source>`가 내부
 direct procedure graph에서 `tk-grill-me`, Ready spec, 조건부 ticket,
 implementation·aggregate verification·reflection을 순서대로 선택합니다.
-최신 immutable release는 `v21.0.3`이며,
+최신 immutable release는 `v21.0.4`이며,
 현재 `main`에는 다음 release를 위한 skill 변경이 포함될 수 있습니다.
 
 현재 `main`의 `tk-drive`는 phase receipt나 mutable prep lifecycle로
@@ -34,7 +34,8 @@ response-language hard gate와 terminal-summary boundary를 자체 포함합니�
 최종 사용자 영역은 해당 skill의 canonical 첫 heading 또는 result sentence로
 바로 시작하며 standalone separator, 반복 `Outcome:`, 하단 receipt metadata를
 렌더링하지 않습니다. Active drive의 성공 procedure 사이에는 terminal
-response를 만들지 않으며, `tk-drive finalization`만 최종 사용자 응답을
+response를 만들지 않습니다. 검증된 성공은 `tk-drive finalization`, terminal
+non-success는 `tk-drive non-success finalization`만 최종 사용자 응답을
 소유합니다.
 
 `tk-drive` Preparing은 product mutation 전에 material implementation 및
@@ -69,10 +70,10 @@ npx skills add MTGVim/tiger-kit \
   --skill tk-browser-verify
 ```
 
-변경되지 않는 `v21.0.3` snapshot:
+변경되지 않는 `v21.0.4` snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v21.0.3" \
+npx skills add "MTGVim/tiger-kit#v21.0.4" \
   --global \
   --agent claude-code \
   --agent codex \
@@ -139,7 +140,11 @@ ledger를 검증한 뒤 compact preflight를 기록합니다. 같은 active turn
 → ticket마다 tk-implement: test + review + verified commit 하나
 → tk-drive: aggregate traceability + broad verification 한 번
 → tk-reflect: 조건부 classification + exact ignored-rule safety gate
-→ tk-drive finalization: terminal response 하나
+→ tk-drive finalization: 성공 terminal response 하나
+
+terminal non-success + alternate edge 소진
+→ product mutation freeze
+→ tk-drive non-success finalization: scoped terminal response 하나
 ```
 
 Preflight는 task scope, repository/worktree/branch/baseline/dirty evidence,
@@ -163,6 +168,15 @@ mutation을 중단합니다. Reflection 자동 적용은 drive 시작 시 기록
 기존 ignored/untracked user-managed repo rule 하나에만 허용됩니다. Tracked,
 new, unignored, symlinked, external, drifted, ambiguous target은 정상 approval
 boundary에 남습니다.
+
+Recoverable alternate edge가 없는 `Fail | Blocked | Unverifiable`에서는
+product mutation과 downstream specialist invocation을 즉시 동결합니다.
+`tk-drive non-success finalization`은 기존 artifact와 Git evidence만 다시
+읽어 prior verified commits를 `Completed`, 직접 중단된 scope를 `Stopped`,
+남은 unit을 `Dependency blocked | Not attempted | Unverified`로 구분하고,
+originating native status와 recovery action 하나를 보고합니다. 새 partial
+status, public skill, run ledger, 자동 cleanup, 독립 unit continuation은
+추가하지 않습니다.
 
 ### 브라우저 검증이 필요한 구현
 

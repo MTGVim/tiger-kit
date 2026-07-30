@@ -47,19 +47,24 @@ tk-drive preflight
        -> corrective tk-implement, at most three cycles
   -> tk-reflect, only for a valid reflection handoff
   -> tk-drive finalization
+
+terminal non-success after allowed alternate edges are exhausted
+  -> freeze product mutation
+  -> tk-drive non-success finalization
 ```
 
 Use only exact canonical node names. For every edge, apply the entry, success,
 failure, and next-node contract in [references/phases.md](references/phases.md).
 A successful node selects and invokes its next applicable node immediately in
-the same active turn. A blocked or unverifiable node exposes one actionable
-fact and either follows an allowed alternate edge or stops the top-level run.
+the same active turn. A non-success node exposes one actionable fact and uses
+an allowed alternate edge first. When no alternate edge remains, it freezes
+product mutation and enters `tk-drive non-success finalization`.
 
 Direct continuation is a prompt-directed instruction to the current agent,
 not a durable scheduler, event replay protocol, or guaranteed cross-turn
-execution. If the host ends the turn or process, resume only by rereading
-current artifacts and repository evidence; never claim runtime-backed
-continuation.
+execution. If the host ends the turn or process, resume only by
+rereading current artifacts and repository evidence; never claim
+runtime-backed continuation.
 
 ## Preparing
 
@@ -152,6 +157,58 @@ amendment through `tk-grill-me`, Ready-spec revalidation, and affected-ticket
 rederivation. A second amendment or incompatible committed work stops the run;
 never rewrite verified history automatically.
 
+## Non-success finalization
+
+After an originating `Fail | Blocked | Unverifiable` exhausts every applicable
+alternate edge, retry budget, or amendment, stop product mutation and enter
+`tk-drive non-success finalization`. It is an internal read-only node, not a
+public skill, and has no outgoing edge.
+
+From entry onward, do not edit product or source files, stage or commit, reset,
+revert, stash, clean, run a new test/build/server/browser command, or invoke an
+implementation, reviewer, browser, or reflection child. Read-only artifact and
+Git audits remain allowed. A bounded terminal-attempt update may touch only an
+existing ticket or implementation ledger under its current writer, atomicity,
+and ownership contract.
+
+Preserve the originating native status; never replace it with a partial global
+status. Reread the current source, spec, tickets when present, preflight,
+implementation ledger, existing browser evidence when applicable, branch,
+HEAD, ancestry, and dirty inventory. Classify the selected scope as:
+
+- `Completed`: the unit commit is current-branch ancestry and matching receipt,
+  review, and verification evidence still bind to it;
+- `Stopped`: the unit or procedure that directly produced terminal non-success;
+- `Dependency blocked`: an incomplete unit transitively depends on `Stopped`;
+- `Not attempted`: an incomplete independent unit was not run after mutation
+  froze;
+- `Unverified`: current evidence cannot bind a change or completion claim to a
+  verdict.
+
+Branch, HEAD, ancestry, or receipt drift prevents `Completed`. Preserve prior
+completed ticket receipts, keep incomplete tickets incomplete, and exclude
+pre-existing dirty user paths from drive ownership. The current no-commit
+attempt may record only native status, branch/HEAD, uncommitted paths, executed
+verification, unverified scope, `commit: none`, blocker or failure, and recovery
+condition. Never create `.tigerkit/run.md`, `.tigerkit/findings.md`, another
+ledger, a cursor, or a lifecycle status.
+
+Choose one recovery action from current evidence: consume a pending decision
+answer in the same conversation, restore environment or tooling and explicitly
+rerun the same source, manually clean the failed unit state and explicitly
+rerun, or start fresh from source when prep/spec/ticket evidence drifted. Do
+not promise runtime-backed continuation or start another independent unit.
+
+Only this node emits the active-drive terminal response after terminal
+non-success. Lead with one result sentence. Render `Completed`, `Stopped`,
+`Remaining`, and `Recovery` only when applicable. A multi-unit completed table
+uses `Unit | Outcome | Commit | Evidence`; `Outcome` is permitted only as that
+table header, never as the forbidden top-level `Outcome:` label. `Stopped` may
+use `Node/unit`, `Reason`, and `Working state`. `Remaining` distinguishes
+`Dependency blocked`, `Not attempted`, and `Unverified`. End with exactly one
+originating `Status: Fail`, `Status: Blocked`, or `Status: Unverifiable` line.
+Never emit `Status: Pass` for partial scope.
+
 ## Reflection and finalization
 
 After product verification succeeds, invoke `tk-reflect` exactly once when a
@@ -159,11 +216,12 @@ valid reflection handoff exists. A no-op classification is successful.
 Automatic application is allowed only under the reflection containment
 contract; otherwise keep it report-only or stop on unsafe restoration.
 
-Then `tk-drive` rereads the current source, spec, tickets when present,
-preflight, implementation ledger, commit ancestry, and verification evidence.
-Continuation therefore depends on rereading current artifacts and repository evidence,
-not replaying a stored workflow cursor; it provides no guaranteed cross-turn execution.
-Only this finalization node emits the active-drive terminal response.
+For verified success, `tk-drive` rereads the current source, spec, tickets when
+present, preflight, implementation ledger, commit ancestry, and verification
+evidence. Continuation therefore depends on rereading current artifacts and
+repository evidence, not replaying a stored workflow cursor; it provides no
+guaranteed cross-turn execution. Only `tk-drive finalization` emits the
+successful active-drive terminal response.
 
 Lead with one user-facing result sentence. Then render `Implemented` with two
 to seven behavior-level bullets and `Verification` with one to four
@@ -176,9 +234,8 @@ exceed these limits, keep only the top five to seven items ranked by user
 impact and verification value.
 
 End `Verification` with the single exact `Status: Pass` line only after every
-required artifact and verification result has been reread. A non-success
-result leads with its one status, reason, and recovery and stops downstream
-invocation.
+required artifact and verification result has been reread. Any terminal
+non-success routes to the read-only node above instead of this success output.
 
 ### 🔴 HARD GATE · terminal user summary
 

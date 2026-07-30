@@ -86,6 +86,14 @@ coupling evidence but independently prove slice boundaries. This skill alone
 assigns ticket IDs and owns coverage, dependencies, and ticket shape. Mutable
 status, commit receipts, and resume state also belong only in tickets.
 
+For a failed active-drive attempt, keep the current incomplete status and every
+completed ticket receipt unchanged. The existing ticket owner may add only
+bounded `Last attempt: Fail | Blocked | Unverifiable`, `Evidence`, and
+`Recovery` fields to the current incomplete ticket. `Dependency blocked`,
+`Not attempted`, and `Unverified` are terminal presentation classifications
+computed from status and dependencies, not new durable ticket statuses. Do not
+rewrite unrelated pending tickets or mark any incomplete ticket completed.
+
 Each ticket must be executable from the artifact and its cited sources without
 hidden conversation context. Name only evidence-supported entry points, and
 include runnable verification with expected evidence; never invent exact paths
