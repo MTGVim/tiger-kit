@@ -101,7 +101,12 @@ jobs:
           new = '(r"`conflict` disposition prevents `Ready`", "conflict gate"),'
           if text.count(old) != 1:
               raise SystemExit(f'unexpected conflict gate count: {text.count(old)}')
-          validator.write_text(text.replace(old, new), encoding='utf-8')
+          text = text.replace(old, new)
+          text = text.replace(
+              'incomplete learning-loop structure',
+              'incomplete learning-loop ownership structure',
+          )
+          validator.write_text(text, encoding='utf-8')
           PY
 
       - name: Prepare version metadata
