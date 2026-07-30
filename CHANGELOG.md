@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 21.0.7 — Zero-crust Contracts
+
+- Replaced validator magic-phrase checks with structural checks for user decisions, terminal output, response language, and learning-loop ownership.
+- Reduced `tk-browser-verify`, `tk-reflect`, `tk-to-spec`, and `tk-to-tickets` to their unique trigger, authority, evidence, state, and failure contracts.
+- Preserved browser launch/capture safety, reflection apply authority, Ready traceability, vertical ticket ownership, behavior evals, and package compatibility while reducing eager instruction weight.
+
 ## 21.0.6 — Lean Core Skills
 
 - Compressed `tk-drive` into a thin orchestration recipe while preserving its

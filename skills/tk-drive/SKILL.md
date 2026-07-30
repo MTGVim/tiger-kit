@@ -113,4 +113,4 @@ Before any user-facing progress, question, or summary, resolve the response lang
 
 When a user-owned decision blocks Preparing or the one amendment, ask one self-contained `Question` before any `Recommendation`. Show only decision-relevant evidence, two or three mutually exclusive options with material tradeoffs, and exactly one label ending `(Recommended)` or `(추천)`.
 
-Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex `request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only when none is exposed. A failed or rejected call is not absence; preserve the supported non-success state.
+Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex `request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only when none is exposed. A failed or rejected call is not absence; preserve `Pending | Blocked`.

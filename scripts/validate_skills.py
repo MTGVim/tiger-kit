@@ -677,75 +677,96 @@ def validate_local_only_workflows(root: Path) -> list[str]:
     return errors
 
 
+def _markdown_section(text: str, heading: str) -> str | None:
+    if text.count(heading) != 1:
+        return None
+    start = text.index(heading) + len(heading)
+    match = re.search(r"(?m)^#{1,3} ", text[start:])
+    end = start + match.start() if match else len(text)
+    return text[start:end].strip()
+
+
 def validate_user_decision_contract(root: Path) -> list[str]:
     errors: list[str] = []
-    for skill in sorted(EXPECTED_SKILLS):
-        if skill == "tk-adhd":
-            continue
+    heading = "## User decision questions"
+    required_tools = ("AskUserQuestion", "request_user_input", "clarify")
+    for skill in sorted(EXPECTED_SKILLS - {"tk-adhd"}):
         path = root / "skills" / skill / "SKILL.md"
-        if not path.is_file():
-            errors.append(f"{skill}: SKILL.md: add the native user-decision question contract")
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        section = _markdown_section(text, heading)
+        if section is None:
+            errors.append(f"{skill}: SKILL.md: add exactly one {heading!r} section")
             continue
-        text = path.read_text(encoding="utf-8")
-        missing = [token for token in USER_DECISION_CONTRACT_TOKENS if token not in text]
+        normalized = " ".join(section.split())
+        missing: list[str] = []
+        if "Question" not in normalized:
+            missing.append("Question")
+        if "Recommendation" not in normalized:
+            missing.append("Recommendation")
+        if not any(marker in normalized for marker in ("(Recommended)", "(추천)")):
+            missing.append("one recommended marker")
+        missing.extend(tool for tool in required_tools if tool not in normalized)
+        if "plain text" not in normalized.casefold():
+            missing.append("plain-text fallback boundary")
+        if not any(status in normalized for status in ("Pending", "Blocked")):
+            missing.append("Pending/Blocked preservation")
         if missing:
             errors.append(
-                f"{skill}: SKILL.md: native user-decision question contract missing "
-                + ", ".join(repr(token) for token in missing)
+                f"{skill}: SKILL.md: incomplete user-decision structure ({', '.join(missing)})"
             )
+        if len(section.encode("utf-8")) >= 900:
+            errors.append(f"{skill}: SKILL.md: keep user-decision structure below 900 bytes")
+        if "option previews, prototype cards" in section:
+            errors.append(f"{skill}: SKILL.md: remove question-presentation ceremony")
     return errors
-
 
 def validate_response_language_contract(root: Path) -> list[str]:
     errors: list[str] = []
-    for skill in sorted(EXPECTED_SKILLS):
-        if skill == "tk-adhd":
-            continue
+    heading = "### 🔴 HARD GATE · response language"
+    for skill in sorted(EXPECTED_SKILLS - {"tk-adhd"}):
         path = root / "skills" / skill / "SKILL.md"
-        if not path.is_file():
-            errors.append(f"{skill}: SKILL.md: add the response-language hard gate")
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        section = _markdown_section(text, heading)
+        if section is None:
+            errors.append(f"{skill}: SKILL.md: add exactly one response-language gate")
             continue
-        text = path.read_text(encoding="utf-8")
-        if text.count(RESPONSE_LANGUAGE_GATE) != 1:
+        normalized = " ".join(section.casefold().split())
+        if len(section.encode("utf-8")) >= 1000:
+            errors.append(f"{skill}: SKILL.md: keep response-language gate below 1000 bytes")
+        if "language" not in normalized or not any(
+            token in normalized for token in ("canonical", "status", "ids", "paths")
+        ):
             errors.append(
-                f"{skill}: SKILL.md: preserve exactly one complete response-language hard gate"
+                f"{skill}: SKILL.md: response-language gate must preserve user language and machine tokens"
             )
     return errors
-
 
 def validate_terminal_summary_contract(root: Path) -> list[str]:
     errors: list[str] = []
-    terminal_heading = TERMINAL_SUMMARY_GATE.splitlines()[0]
-    language_heading = RESPONSE_LANGUAGE_GATE.splitlines()[0]
-    forbidden = ("`Outcome: <one user-facing sentence>`", "## Receipt")
-    for skill in sorted(EXPECTED_SKILLS):
-        if skill == "tk-adhd":
-            continue
+    terminal_heading = "### 🔴 HARD GATE · terminal user summary"
+    language_heading = "### 🔴 HARD GATE · response language"
+    forbidden_patterns = (
+        re.compile(r"(?m)^## Receipt\s*$"),
+        re.compile(r"(?m)^Outcome:"),
+        re.compile(r"`Outcome:\s*<one user-facing sentence>`"),
+    )
+    for skill in sorted(EXPECTED_SKILLS - {"tk-adhd"}):
         path = root / "skills" / skill / "SKILL.md"
-        if not path.is_file():
-            errors.append(f"{skill}: SKILL.md: add the terminal-summary hard gate")
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        section = _markdown_section(text, terminal_heading)
+        if section is None:
+            errors.append(f"{skill}: SKILL.md: add exactly one terminal-summary gate")
             continue
-        text = path.read_text(encoding="utf-8")
-        gate = (
-            DRIVE_TERMINAL_SUMMARY_GATE
-            if skill == "tk-drive"
-            else DIRECT_TERMINAL_SUMMARY_GATE
-            if skill in DIRECT_GRAPH_SKILLS
-            else TERMINAL_SUMMARY_GATE
-        )
-        complete = text.count(gate) == 1 and text.count(terminal_heading) == 1
-        ordered = (
-            complete
-            and text.count(language_heading) == 1
-            and text.index(terminal_heading) < text.index(language_heading)
-        )
-        if not complete or not ordered or any(token in text for token in forbidden):
-            errors.append(
-                f"{skill}: SKILL.md: preserve one ordered terminal-summary hard gate "
-                "and remove terminal receipt rendering"
-            )
+        if text.count(language_heading) != 1 or text.index(terminal_heading) > text.index(language_heading):
+            errors.append(f"{skill}: SKILL.md: place terminal-summary gate before response-language gate")
+        normalized = " ".join(section.casefold().split())
+        if len(section.encode("utf-8")) >= 1600:
+            errors.append(f"{skill}: SKILL.md: keep terminal-summary gate below 1600 bytes")
+        if "terminal user response" not in normalized or "progress" not in normalized:
+            errors.append(f"{skill}: SKILL.md: separate progress from terminal user output")
+        if any(pattern.search(text) for pattern in forbidden_patterns):
+            errors.append(f"{skill}: SKILL.md: remove terminal receipt or Outcome rendering")
     return errors
-
 
 def validate_drive_graph_contract(
     root: Path,
@@ -1073,17 +1094,37 @@ def validate_compact_preflight_contract(root: Path) -> list[str]:
 
 def validate_learning_loop_contract(root: Path) -> list[str]:
     errors: list[str] = []
-    for relative, tokens in LEARNING_LOOP_TOKENS.items():
+    checks = {
+        "skills/tk-drive/SKILL.md": (
+            (r"at most (?:seven|7)", "bounded prior-art count"),
+            (r"prior-art|prior art", "prior-art discovery"),
+            (r"raw sessions", "forbidden transient evidence"),
+        ),
+        "skills/tk-reflect/SKILL.md": (
+            (r"Preferred prevention owner", "prevention owner"),
+            (r"Host dependency", "host dependency"),
+        ),
+        "skills/tk-to-spec/SKILL.md": (
+            (r"adopted \| already-satisfied \| not-applicable \| conflict", "prior-art disposition"),
+            (r"R/AC mapping", "R/AC mapping"),
+            (r"`conflict` disposition prevents `Ready`", "conflict gate"),
+            (r"omit `## Prior art`", "empty prior-art omission"),
+        ),
+        "skills/tk-to-tickets/SKILL.md": (
+            (r"active.*graph", "active graph handoff"),
+            (r"coverage", "source coverage"),
+            (r"dependenc", "dependency ownership"),
+        ),
+    }
+    for relative, patterns in checks.items():
         path = root / relative
         text = " ".join(path.read_text(encoding="utf-8").split()) if path.is_file() else ""
-        missing = [token for token in tokens if token not in text]
+        missing = [label for pattern, label in patterns if not re.search(pattern, text, re.I)]
         if missing:
             errors.append(
-                f"{relative}: preserve bounded learning-loop ownership "
-                f"({', '.join(missing)})"
+                f"{relative}: incomplete learning-loop ownership structure ({', '.join(missing)})"
             )
     return errors
-
 
 def validate_skill(path: Path) -> tuple[list[str], list[str]]:
     errors: list[str] = []
@@ -1173,18 +1214,6 @@ def validate_skill(path: Path) -> tuple[list[str], list[str]]:
         if token in text:
             errors.append(f"{label}: SKILL.md: forbidden {token!r}; {fix}")
 
-    normalized_text = " ".join(text.split())
-    missing_budget = [
-        token
-        for token in RESULT_BUDGET_TOKENS.get(label, ())
-        if token not in normalized_text
-    ]
-    if missing_budget:
-        errors.append(
-            f"{label}: SKILL.md: bounded result contract missing "
-            + ", ".join(repr(token) for token in missing_budget)
-        )
-
     for target in LINK.findall(text):
         target = target.split("#", 1)[0]
         if not target or re.match(r"^[a-z]+://", target) or target.startswith("#"):
@@ -1196,7 +1225,7 @@ def validate_skill(path: Path) -> tuple[list[str], list[str]]:
             errors.append(f"{label}: SKILL.md link {target!r}: create the referenced file or remove the link")
 
     non_empty = sum(bool(line.strip()) for line in text.splitlines())
-    limit = 250 if kind == "hybrid" else 120
+    limit = 160 if kind == "hybrid" else 120
     if non_empty > limit:
         warnings.append(
             f"{label}: SKILL.md: {non_empty} non-empty lines; move detail into references/ "
@@ -1246,7 +1275,7 @@ def validate_repository_contract() -> list[str]:
     )
     for relative in required_files:
         if not (ROOT / relative).is_file():
-            errors.append(f"{relative}: required TigerKit 21.0.6 repository file is missing")
+            errors.append(f"{relative}: required TigerKit 21.0.7 repository file is missing")
     errors.extend(validate_local_only_workflows(ROOT))
     errors.extend(validate_skill_language(ROOT))
     errors.extend(validate_user_decision_contract(ROOT))
@@ -1263,14 +1292,14 @@ def validate_repository_contract() -> list[str]:
     errors.extend(validate_response_language_contract(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
-            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 21.0.6")
+            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 21.0.7")
     errors.extend(validate_runtime_scratch(ROOT))
     ignored = (ROOT / ".gitignore").read_text(encoding="utf-8") if (ROOT / ".gitignore").is_file() else ""
     if ".tigerkit/" not in ignored.splitlines():
         errors.append(".gitignore: document TigerKit repo-local scratch with .tigerkit/")
     required_text = {
         "README.md": (
-            "TigerKit 21.0.6",
+            "TigerKit 21.0.7",
             "15",
             "Claude Code",
             "Codex",
@@ -1296,32 +1325,12 @@ def validate_repository_contract() -> list[str]:
             "Behavior merged from removed adapted skills",
             "MIT License",
         ),
-        "skills/tk-browser-verify/SKILL.md": (
-            "## 🔴 HARD GATE · Chrome `--headless=new`",
-            "contain the exact token `--headless=new`",
-            "do not open a headed browser",
-            "headless launch failure",
-            "user must directly complete",
-            "restart the same binary and `user-data-dir`",
-            "`Sensitivity: normal | sensitive`",
-            "`Redaction: N/A | verified | failed | unverifiable`",
-            "`Residue check: verified | unverifiable`",
-        ),
         "skills/tk-browser-verify/references/environment.md": (
             "process arguments prove exact `--headless=new`",
             "Before a CDP provider",
             "do not fall back headed",
             "Visible requests, headless failure",
             "prove lock release",
-        ),
-        "skills/tk-reflect/SKILL.md": (
-            "Assign `RF-01`, `RF-02`, ... once in discovery order",
-            "In chat, emit only",
-            "| ID | Candidate | Action | Target | Why |",
-            "Only on an explicit report-artifact request",
-            "no raw logs, transcripts, diff excerpts",
-            "Only `tk-learn` creates a new skill or semantically updates/merges one",
-            "### Conditional Agent Skill diagnosis",
         ),
         "skills/tk-skill-diagnose/SKILL.md": (
             "## Intake gate",
@@ -1356,11 +1365,6 @@ def validate_repository_contract() -> list[str]:
             "sole TigerKit writer",
             "current-host native repo/user skill paths",
             "fan out/sync across hosts",
-        ),
-        "skills/tk-drive/SKILL.md": (
-            "selects `/tk-drive`, `$tk-drive`, or the host skill",
-            "### 🔴 HARD GATE · source UI writing",
-            "`authorized change`",
         ),
         "skills/tk-handoff/SKILL.md": (
             "only resume snapshot",

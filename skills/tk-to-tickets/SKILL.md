@@ -12,186 +12,113 @@ metadata:
 
 # Write tickets
 
-Use for explicit invocation, a clear natural-language request for vertical
-ticket decomposition, or an explicit handoff in which active `tk-drive`
-provides a Ready spec and ticket-decision evidence. Do not auto-activate from
-spec writing, remote issue creation, implementation, artifact presence, or
-merely because prep is active.
+Use only for an explicit vertical-ticket decomposition request or an exact active
+`tk-drive` handoff containing a Ready source and the decision that tickets are
+needed. Do not write the spec, publish remote issues, or implement.
 
-Source precedence is: user-designated source, current conversation,
-`.tigerkit/spec.md`, request, relevant code.
-
-Standalone and active-drive calls use the same vertical-slice contract. The
-caller decides whether tickets are needed; this skill does not re-own that
-decision or proceed to implementation. On success, pass the artifact path,
-ticket IDs, and source R/AC coverage directly to the next applicable graph
-node without rendering a terminal result.
-
-When an active-drive call exposes a missing user decision, pass the native
-non-success state and evidence to the active graph. Do not invoke
-`tk-grill-me` or edit the Ready spec. Include
-`User decision: required | none`; `required` cites the new decision and source
-evidence.
+Source precedence is user-designated source, current confirmed decisions,
+`.tigerkit/spec.md`, the request, then relevant code.
 
 ## Workflow
 
-1. `extract source requirements`: capture requirement/acceptance IDs, source
-   locations, and `confirmed | unverified | conflict`.
-2. `vertical slices`: derive independent behavior slices. Treat Ready-spec
-   candidate areas only as source evidence, never as preapproved slices or
-   ticket IDs.
-3. `acceptance and verification`: define observable acceptance criteria and
-   executable verification commands or evidence.
-4. `traceability and dependencies`: map every source ID to ticket coverage,
-   predecessor tickets, and unresolved split problems.
-5. `checkpoint`: return write permission or
+1. **Extract** — collect source R/AC IDs or source locations and classify them
+   `confirmed | unverified | conflict`.
+2. **Slice** — derive user-visible vertical behaviors. Treat spec candidate areas
+   as evidence, not preapproved slices or ticket IDs.
+3. **Prove independence** — each ticket must have an independently observable
+   goal, scope, acceptance criteria, verification, and supported entry points.
+4. **Map** — cover every source ID, record predecessors, coupling, and unresolved
+   split problems.
+5. **Gate** — return writable tickets or
    `Unresolved split report | Blocked | Unverifiable`.
-6. `write/verify/receipt`: write only after the checkpoint, then revalidate
-   source-ID coverage and dependencies and return the phase receipt.
+6. **Write and verify** — atomically write the ledger, reread it, and verify
+   coverage, dependencies, and ticket contents.
 
-Write to the user-designated path or `.tigerkit/tickets.md` using
-`# <Feature> Tickets`. Under `.tigerkit/`, create the parent only when needed,
-prefer a same-directory temporary file plus rename, never create timestamped
-archives or modify `.gitignore`, and warn if scratch is not ignored. Do not
-implement or publish to a remote tracker.
+## Ticket contract
 
-## Failure paths
+Each ticket begins `Status: pending` and is executable from the artifact and its
+cited sources without hidden conversation context. Preserve R/AC IDs; when none
+exist, cite source locations rather than inventing IDs.
 
-| Trigger | Terminal state | Recovery |
-|---|---|---|
-| No evidence for independent decomposition | `Unresolved split report` | Do not invent tickets; report requirements or dependencies preventing the split |
-| Confirmed sources conflict or a user decision is missing | `Blocked` | Identify conflicting IDs and one needed decision; do not write |
-| Required source access prevents traceability | `Unverifiable` | Record inaccessible path, error, and affected IDs; do not write |
-| Source ID/status or target changes after checkpoint | `Blocked` | Preserve the target and rerun checkpoint with new evidence |
-| Write/rename fails | `Fail` | Preserve the intact target and precisely restore/revalidate only this run's changes |
-| Post-write coverage, UI literal, or dependency mismatches | Use the one supported state: `Fail` for a known invalid output, `Unverifiable` when evidence cannot establish validity | Do not report completion; stop further writes and record actual state |
+A ticket is a vertical behavior unit: keep behavior, tests, and verification
+together. Do not split into type/API/UI/test layers or diagnose/fix/verify
+stages. Keep one bug as one slice from reproduction through root-cause fix,
+regression seam, original reproduction, and cleanup.
 
-After write/rename, reread the file and confirm every source ID maps to the
-coverage table and actual tickets and that dependencies match the candidate.
-Do not substitute terminal states for one another.
+This skill alone assigns ticket IDs and owns ticket shape, coverage,
+dependencies, mutable status, commit receipts, and resume state. It does not
+re-own whether a ledger is needed.
 
-## Contract
+| State | Meaning |
+| --- | --- |
+| `Unresolved split report` | Evidence cannot support independent boundaries |
+| `Blocked` | Confirmed conflict, missing decision, or post-checkpoint drift |
+| `Unverifiable` | Required source access or traceability evidence is unavailable |
+| `Fail` | Writing or post-write validation produced a known invalid result |
 
-### Ticket shape and traceability
+Do not write from `Draft | Blocked | Unverifiable`. On active-drive non-success,
+pass native state, exact evidence, and `User decision: required | none` directly
+to the graph; do not invoke `tk-grill-me` or edit the Ready spec.
 
-Preserve source traceability per requirement. Each ticket begins
-`Status: pending` and is a vertical behavior unit with an independent goal,
-scope, acceptance criteria, and verification. Standalone execution does not
-infer implementation progress. Preserve source R/AC IDs in each ticket and in
-the coverage table. Without source IDs, cite source location and do not invent
-IDs.
+## Failed-attempt ownership
 
-When a Ready spec has vertical-slicing candidate areas, use their R/AC and
-coupling evidence but independently prove slice boundaries. This skill alone
-assigns ticket IDs and owns coverage, dependencies, and ticket shape. Mutable
-status, commit receipts, and resume state also belong only in tickets.
+Preserve completed receipts and unrelated pending tickets. When an exact ledger
+and current incomplete ticket exist, `tk-drive non-success finalization` is the
+sole downstream writer for bounded `Last attempt`, `Evidence`, and `Recovery`
+fields. It never invokes this skill again. `Dependency blocked`, `Not attempted`,
+and `Unverified` are terminal presentation classifications, not durable ticket
+statuses.
 
-For a failed active-drive attempt, keep the current incomplete status and every
-completed ticket receipt unchanged. When a ledger already exists,
-`tk-drive non-success finalization` is the sole downstream writer authorized
-to add bounded `Last attempt: Fail | Blocked | Unverifiable`, `Evidence`, and
-`Recovery` fields to the exact current incomplete ticket. It uses this skill's
-atomic replacement discipline and never invokes `tk-to-tickets` again. When no
-exact ledger/current ticket exists, write nothing. `Dependency blocked`, `Not
-attempted`, and `Unverified` remain terminal presentation classifications, not
-durable ticket statuses. Preserve unrelated pending tickets and never mark an
-incomplete ticket completed.
+## Source UI writing
 
-Each ticket must be executable from the artifact and its cited sources without
-hidden conversation context. Name only evidence-supported entry points, and
-include runnable verification with expected evidence; never invent exact paths
-or code.
+When source or the Ready spec defines rendered text, freeze source location,
+source literal, current rendered/source-path literal, target literal, R/AC, and
+owning ticket before decomposition. Preserve exact spelling, case, spacing,
+punctuation, symbols, numbers, units, and meaningful line breaks unless wording
+change is explicitly authorized.
 
-### Vertical-slice boundaries
+Missing source/current evidence is `Unverifiable`; source↔current mismatch is a
+conflict and prevents handoff. Mark only approved wording as `authorized change`.
+Do not translate, paraphrase, normalize, or silently fix typos.
 
-Keep behavior and its tests in the same ticket; do not create horizontal
-type/API/UI/test-only tickets. If evidence cannot support independent slices,
-return `Status: Blocked` with an `Unresolved split report`. Classify unsupported
-requirements or unresolved conflicts as `Blocked` or `Unverifiable`.
+## Output
+
+Write to `--output` or atomically replace `.tigerkit/tickets.md`. Create parents
+lazily, do not archive, do not modify `.gitignore`, and never publish remotely.
 
 User-facing output uses the ticket table when multiple or one result sentence
-when singular; the artifact owns ticket bodies, phase, path, status, ticket
-IDs/count, coverage, dependencies, evidence, unverified items, and unresolved
-split sections. Do not restate that provenance in a bottom metadata block. For
-active prep, return required control fields only in the internal handoff.
-
-When more than one ticket is created, place a compact
-`Ticket | User-visible slice` table in the terminal summary. Use a sentence
-when only one user-relevant row exists. The artifact may index IDs/count but
-does not substitute for or repeat the slice rows.
-Show two to seven tickets as rows. For eight or more, show the top five to
-seven, add a compact coverage or blocker summary, and cite the tickets artifact
-path for the complete ledger. These are budgets, not quotas.
-
-Keep one bug as one vertical slice from reproduction through root-cause fix,
-regression seam, original reproduction, and cleanup. Do not split it into
-UI/API/test or diagnose/fix/verify layers. From a Ready spec, cover every R/AC.
-Do not write from `Draft | Blocked | Unverifiable`.
-
-### 🔴 HARD GATE · source UI writing
-
-For every string literal rendered in UI by user source or the Ready spec,
-freeze a separate inventory before decomposition. Labels, copy, numbers,
-units, currency, suffixes, and separators are examples, not an upper bound.
-Each row maps source location, non-empty source literal, current
-rendered/source-path literal, target literal, existing R/AC, and owning ticket.
-
-Missing source/current evidence is `Unverifiable`. Any source↔current mismatch
-makes every row a conflict candidate and prevents handoff without a user
-decision. A typo requires rechecking all same-kind tokens; never generalize
-source unreliability to adopt current code silently.
-
-Unless the user explicitly decides to change wording, preserve spelling, case,
-spacing, punctuation, symbols, numbers, and meaningful line breaks. Do not
-translate, paraphrase, shorten, correct, fix typos, or normalize.
-
-After write, compare all three literal columns against coverage and actual
-ticket acceptance/verification. Unauthorized drift or missing comparison
-evidence prevents completion and implementation handoff. Mark only approved
-wording as `authorized change`.
-
-## CHECKPOINT / STOP
-
-Before writing, cold-start each ticket against only the artifact and its cited
-sources, then check decomposition evidence, source traceability, unresolved
-conflicts, and UI-writing inventory. When essential context is hidden or
-evidence is insufficient, or an exact UI literal cannot be compared, do not
-create or overwrite tickets; return `Unresolved split report`, `Blocked`, or
-`Unverifiable`.
+when singular; the artifact owns ticket bodies, status, coverage, dependencies,
+evidence, and unresolved split detail. For multiple tickets, use
+`Ticket | User-visible slice`. Use a sentence when only one user-relevant row
+exists. Show two to seven tickets; for more, show the top five to seven, include
+a compact coverage/blocker summary, and cite the ledger. Active prep receives
+only the internal path, ticket IDs, coverage, and state handoff.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Treat progress commentary, internal procedure evidence, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between successful consecutive active-drive procedure invocations.
-
-Do not render a receipt heading, `Outcome:` label, phase-success token, caller-return instruction, or terminal provenance/status block in the user summary. When the result requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the canonical result schema requires it.
-
-Persist provenance only in an artifact or ledger already owned by the workflow. A read-only skill remains read-only. Never require a shared runtime reference outside this skill.
+Keep progress and internal procedure evidence out of the terminal user response.
+Begin with the canonical result heading or sentence. Emit no ceremonial
+preamble, receipt heading, `Outcome:` label, duplicate status, or active-drive
+child summary. Put detailed provenance only in the owned tickets artifact.
 
 ### 🔴 HARD GATE · response language
 
-Before any user-facing progress, question, or summary, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose result value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
+Use the latest explicit user language, otherwise the current message's language.
+Preserve canonical headings, status tokens, IDs, commands, paths, code, and
+quoted source literals exactly. Rewrite free-form language drift before return.
 
 ## User decision questions
 
-When a user-owned decision blocks progress, ask one self-contained `Question`
-before any `Recommendation`. Show only decision-relevant evidence, two or three
-mutually exclusive options with material tradeoffs, and exactly one label
-ending `(Recommended)` or `(추천)`.
+Ask one self-contained `Question` only for a material user-owned decision, then
+show a `Recommendation`, two or three mutually exclusive options, and exactly
+one `(Recommended)` or `(추천)` label. Use native `AskUserQuestion`, Codex
+`request_user_input`, or Hermes Agent `clarify`; plain text is allowed only when
+none is exposed. A failed or rejected call is not absence; preserve
+`Pending | Blocked`.
 
-Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex
-`request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only
-when none is exposed. A failed or rejected call is not absence; preserve
-`Pending | Blocked`. This changes presentation, not authority or stop gates.
+## Pitfalls
 
-## DO NOT / ANTI-PATTERNS
-
-- Do not create horizontal type/API/UI/test-only tickets or unsupported
-  performance numbers.
-- Do not alter source UI writing without approval or call tickets
-  implementation-ready without exact comparison.
-- Do not freeze unresolved requirements/conflicts as facts or force
-  non-independent work into separate tickets.
-- Do not bypass `Unresolved split report | Blocked | Unverifiable | Fail`
-  inline merely because active prep called this skill.
-- Do not write the spec, implement, publish remotely, or create traceability
-  from unconfirmed source.
+- Do not force non-independent work into separate tickets.
+- Do not invent exact paths, code, IDs, or unsupported performance numbers.
+- Do not alter source UI writing or hide essential context.
+- Do not implement, publish, or repair a non-success state inline.
