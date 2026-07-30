@@ -26,6 +26,17 @@ jobs:
       - name: Apply zero-crust migration
         shell: bash
         run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('scripts/zero_crust_migrate.py')
+          text = path.read_text(encoding='utf-8')
+          old = 'pattern.subn(replacement.rstrip() + "\\n\\n", text, count=1)'
+          new = 'pattern.subn(lambda _match: replacement.rstrip() + "\\n\\n", text, count=1)'
+          if text.count(old) != 2:
+              raise SystemExit(f'unexpected replacement runner count: {text.count(old)}')
+          path.write_text(text.replace(old, new), encoding='utf-8')
+          PY
           python3 scripts/zero_crust_migrate.py
 
       - name: Prepare version metadata
