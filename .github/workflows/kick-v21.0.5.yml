@@ -1,0 +1,59 @@
+name: Kick TigerKit v21.0.5 preparation
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  contents: write
+
+jobs:
+  kick:
+    if: github.event.pull_request.head.ref == 'release/v21.0.5'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Execute one-shot preparation
+        shell: bash
+        run: |
+          rm -f .github/workflows/kick-v21.0.5.yml
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+
+          path = Path('.github/workflows/prepare-v21.0.5.yml')
+          lines = path.read_text(encoding='utf-8').splitlines()
+          blocks = []
+          index = 0
+          while index < len(lines):
+              line = lines[index]
+              if line.strip() != 'run: |':
+                  index += 1
+                  continue
+              indent = len(line) - len(line.lstrip())
+              index += 1
+              block = []
+              while index < len(lines):
+                  current = lines[index]
+                  current_indent = len(current) - len(current.lstrip())
+                  if current.strip() and current_indent <= indent:
+                      break
+                  prefix = ' ' * (indent + 2)
+                  block.append(current[len(prefix):] if current.startswith(prefix) else '')
+                  index += 1
+              blocks.append('\n'.join(block))
+
+          if len(blocks) != 4:
+              raise SystemExit(f'expected 4 preparation run blocks, found {len(blocks)}')
+          for block in blocks:
+              subprocess.run(['bash', '-euo', 'pipefail', '-c', block], check=True)
+          PY
