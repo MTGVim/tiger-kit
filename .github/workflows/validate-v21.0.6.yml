@@ -35,6 +35,12 @@ jobs:
               raise SystemExit('unexpected TigerKit README version surface')
           readme.write_text(text.replace('21.0.5', '21.0.6'), encoding='utf-8')
 
+          validator = Path('scripts/validate_skills.py')
+          text = validator.read_text(encoding='utf-8')
+          if '21.0.5' not in text:
+              raise SystemExit('current validator version marker missing')
+          validator.write_text(text.replace('21.0.5', '21.0.6'), encoding='utf-8')
+
           changelog = Path('CHANGELOG.md')
           text = changelog.read_text(encoding='utf-8')
           marker = '## Unreleased\n\n'
