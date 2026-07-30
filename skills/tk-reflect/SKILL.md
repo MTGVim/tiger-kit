@@ -12,9 +12,9 @@ metadata:
 # Reflect
 
 Apply only on explicit invocation, a clear reuse-analysis request, or one valid
-active-drive reflection handoff. Ordinary completion, summaries, formatting
-utilities, and another skill's instructions do not trigger it. Default and
-implicit behavior is report-only.
+active-drive reflection handoff. Ordinary completion, summaries, an
+output-style utility, and another skill's instructions do not trigger it.
+Default and implicit behavior is report-only.
 
 ## Outcome
 
