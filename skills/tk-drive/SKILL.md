@@ -12,30 +12,20 @@ metadata:
 
 # Drive
 
-Start only when the user selects `/tk-drive`, `$tk-drive`, or the host skill
-picker with a source. A pending decision answer may resume the same active run
-in the same conversation. An ordinary request, generic continuation, scratch
-artifact, terminal run, or new session is not a start or resume.
+Start only when the user selects `/tk-drive`, `$tk-drive`, or the host skill picker with a source, or answers this drive's pending decision in the same conversation. Ordinary implementation requests, generic continuation, artifacts, or a new session do not start or resume it.
 
 ## Authority
 
-An explicit start authorizes Preparing, Executing, aggregate verification,
-review, one verified current-branch unit commit per selected unit, at most
-three corrective unit commits, and one successful `tk-reflect` tail. It does
-not authorize push, PR, merge, tag, release, publish, history rewriting, or
-out-of-scope mutation.
+One start authorizes Preparing, Executing, aggregate verification, unit review, one verified current-branch commit per selected unit, at most three corrective unit commits, and one successful `tk-reflect` tail. It does not authorize push, PR, merge, tag, release, publish, history rewriting, or out-of-scope mutation.
 
-Drive owns the workflow and the only active-drive terminal user response.
-Participating procedures own their specialist work and pass their native
-result state directly to the next applicable node. They do not invoke sibling
-phase owners or stop a successful run to ask the caller to resume it.
+Drive owns the workflow and the only active-drive terminal response. Child procedures own their specialist work and pass their native result state directly to the next applicable node. They do not stop a successful run to ask the user to invoke drive again.
 
 ## Direct procedure graph
 
 ```text
 tk-drive preflight
-  -> tk-grill-me, when material decisions remain
-       -> tk-prototype, only when a bounded comparison reduces uncertainty
+  -> tk-grill-me, only for material user-owned decisions
+       -> tk-prototype, only when a bounded comparison helps
        -> tk-grill-me
   -> tk-to-spec
   -> tk-to-tickets, only for multiple independently verifiable units
@@ -43,159 +33,69 @@ tk-drive preflight
        -> tk-merge-conflict, only for an active conflict
        -> tk-implement
   -> aggregate verification
-       -> tk-browser-verify, only when preflight or changed UI requires it
+       -> tk-browser-verify, only when required
        -> corrective tk-implement, at most three cycles
   -> tk-reflect, only for a valid reflection handoff
   -> tk-drive finalization
 
-terminal non-success after allowed alternate edges are exhausted
+terminal non-success
   -> freeze product mutation
   -> tk-drive non-success finalization
 ```
 
-Use only exact canonical node names. For every edge, apply the entry, success,
-failure, and next-node contract in [references/phases.md](references/phases.md).
-A successful node selects and invokes its next applicable node immediately in
-the same active turn. A non-success node exposes one actionable fact and uses
-an allowed alternate edge first. When no alternate edge remains, it freezes
-product mutation and enters `tk-drive non-success finalization`.
+Use the complete edge and state-normalization contract in [phases.md](references/phases.md). For every edge, apply its entry, success, failure, and next-node contract. A successful node invokes its next applicable node in the same active turn. An allowed recovery edge runs before terminal finalization.
 
-Direct continuation is a prompt-directed instruction to the current agent,
-not a durable scheduler, event replay protocol, or guaranteed cross-turn
-execution. If the host ends the turn or process, resume only by
-rereading current artifacts and repository evidence; never claim
-runtime-backed continuation.
+Direct continuation is a prompt-directed instruction, not a durable scheduler or guaranteed cross-turn execution. After a host or process boundary, resume by rereading current artifacts and repository evidence.
 
 ## Preparing
 
 Before product mutation:
 
-1. Resolve the repository root, applicable instructions, branch, baseline
-   HEAD, worktree identity, and dirty-path inventory.
-2. Read the complete source. Preserve stable source anchors and exact source UI
-   literals.
-3. Discover at most seven relevant durable prior-art items from applicable
-   rules, ADRs, tests, types, lint, CI, repository skills, and code invariants.
-   Exclude raw sessions, prior implementation or reflection scratch, pending
-   drafts, arbitrary global state, unrelated work, and inaccessible host-only
-   rules.
-4. Use `tk-grill-me` only for unresolved material user-owned decisions. When a
-   bounded comparison would reduce uncertainty, use `tk-prototype` and feed its
-   evidence back into the same decision procedure.
-5. Use `tk-to-spec` to create or validate one Ready R/AC contract.
-6. Use `tk-to-tickets` only when the Ready work has multiple independently
-   verifiable vertical units; otherwise define one no-ticket unit.
-7. Freeze the task goal, included and excluded scope, source UI inventory,
-   graph route, verification profile, unit order, and browser preflight in
-   repo-local `.tigerkit/prep.md`.
-
-Follow the compact [preflight contract](references/preflight.md). On resume,
-derive the next node from current artifacts and repository evidence; the
-preflight contains no lifecycle state or cursor and never authorizes work by
-its presence.
-
-Browser preflight is `required | optional | N/A`. Treat a private runtime
-identity as a material user-owned decision. Store only an opaque profile hint;
-credentials and exact identity are intentionally omitted. On cold start,
-re-request identity when current evidence cannot reconstruct it safely.
-Re-requesting that runtime input is not a Preparing amendment.
-
-Preparing and Executing are one continuous run. Completing preparation
-immediately starts the first `tk-implement` unit in the same active turn.
+1. Resolve repository instructions, branch, baseline `HEAD`, worktree, and pre-existing dirty paths.
+2. Read the complete source. Discover at most seven relevant durable prior-art items from applicable rules, ADRs, tests, types, lint, CI, repository skills, and code invariants. Exclude raw sessions, prior implementation or reflection scratch, pending drafts, arbitrary global state, unrelated work, and inaccessible host-only rules.
+3. Close only material user-owned decisions through `tk-grill-me`; use `tk-prototype` only when evidence will reduce the decision.
+4. Produce or validate one Ready R/AC spec with `tk-to-spec`.
+5. Use `tk-to-tickets` only when multiple vertical units are independently verifiable; otherwise use one no-ticket unit.
+6. Write the compact `.tigerkit/prep.md` snapshot through [preflight.md](references/preflight.md), then start Executing immediately.
 
 ### 🔴 HARD GATE · source UI writing
 
-During Preparing, inventory every user-visible source literal and freeze its
-`authorized change` in R/AC. During Executing, map every selected literal
-through the unit, candidate and staged diff, and rendered UI. Missing current
-evidence, an unprepared mismatch, or wording outside the frozen authorization
-stops mutation before commit.
+Freeze every user-visible source literal and its `authorized change` in R/AC before mutation. Executing must compare the source, current value, candidate/staged diff, and rendered result. Missing evidence, an unresolved mismatch, or wording outside the frozen authorization stops before commit.
 
 ### 🔴 HARD GATE · risk-based verification profile
 
-During Preparing, classify the material signals and obligations before
-selecting verification. Consume the sealed material profile during Executing
-and cover its exact frozen profile with unit and aggregate evidence. Drive
-cannot add unsupported obligations, remove an obligation, or substitute a
-weaker signal.
+During Preparing, classify material signals and obligations from current evidence. Consume the sealed material profile during Executing. Drive cannot add unsupported obligations, remove an obligation, or substitute weaker evidence.
+
+Browser preflight is `required | optional | N/A`. A private runtime identity is material user-owned input. Store only an opaque profile hint and an `intentionally omitted` marker; re-request missing identity on cold start. Runtime rehydration is not a Preparing amendment.
 
 ## Executing
 
-For each selected unit:
+For each unit:
 
-1. Map the unit to exact R/AC and inspect its local blast radius.
-2. Choose TDD when a meaningful failing test can precede implementation;
-   otherwise record the direct strategy and reason.
-3. Implement only that unit, simplify it, and run focused verification.
-4. Perform the current-agent Standards/Spec review. Large or high-risk work may
-   use at most one independent read-only reviewer.
-5. Stage only the unit's paths, review the staged candidate, create exactly one
-   current-branch commit, and audit hook drift immediately.
-6. Continue directly to the next selected unit. After the last unit, continue
-   directly to aggregate verification.
+1. pass its exact R/AC, scope, order, and verification profile to `tk-implement`;
+2. accept only a verified one-unit commit or its bounded non-success handoff;
+3. preserve pre-existing user changes and audit commit ancestry;
+4. continue directly to the next selected unit.
 
-Use `tk-merge-conflict` only when an actual merge, rebase, cherry-pick, or
-revert conflict becomes active. A successful resolution returns execution to
-the interrupted `tk-implement` unit.
+Use `tk-merge-conflict` only for a real merge, rebase, cherry-pick, or revert conflict, then return to the interrupted unit.
 
-## Aggregate verification and correction
+## Aggregate verification
 
-After all unit commits, verify R/AC traceability, commit ancestry, unit
-boundaries, the frozen verification profile, excluded-scope preservation, and
-broad repository checks. Use `tk-browser-verify` only when preflight or changed
-UI requires it, then return directly to aggregate verification.
+After all unit commits, verify R/AC traceability, ancestry, unit boundaries, excluded scope, the frozen profile, and broad repository checks. Use `tk-browser-verify` when preflight or changed UI requires runtime evidence.
 
-The initial implementation is followed by zero corrective cycles when
-aggregate verification passes. Otherwise isolate the smallest affected unit
-and permit at most three corrective `tk-implement` cycles. Record cycles
-`1`, `2`, and `3`. A fourth cycle, repeated unchanged failure, unisolated
-failure, or scope expansion stops mutation with the remaining failing command
-and evidence.
+A passing initial implementation uses zero corrective cycles. An isolated implementation defect may use at most three corrective `tk-implement` cycles. A fourth cycle, repeated unchanged failure, unisolated failure, or scope expansion freezes mutation.
 
-One material user-owned decision discovered after execution may use one
-amendment through `tk-grill-me`, Ready-spec revalidation, and affected-ticket
-rederivation. A second amendment or incompatible committed work stops the run;
-never rewrite verified history automatically.
+One late material user-owned decision may use one amendment through `tk-grill-me`, Ready-spec revalidation, affected-ticket rederivation, and prep refresh. A second amendment or incompatible committed work is terminal `Blocked`; never rewrite verified history automatically.
 
-## Non-success finalization
+## Non-success
 
-After a child-native non-success exhausts every applicable alternate edge,
-retry budget, or amendment, normalize it through `phases.md`, freeze product
-mutation, and enter the internal read-only `tk-drive non-success finalization`.
-It has no outgoing edge.
+After recovery edges are exhausted, normalize the child state through `phases.md`, freeze mutation, and enter the internal read-only finalizer. Follow [non-success finalization](references/non-success-finalization.md). It has no outgoing edge. Do not clean the failed unit, invoke another specialist, create a partial status or new ledger, or start an independent unit.
 
-Follow the complete scope-accounting, ledger-ownership, recovery, and terminal
-output contract in [non-success finalization](references/non-success-finalization.md).
-Do not invoke another specialist, create a partial status or new ledger, clean
-the failed unit, or continue an independent unit after mutation freezes.
+## Success finalization
 
-## Reflection and finalization
+After aggregate product verification passes, invoke `tk-reflect` exactly once only when a valid handoff exists. A no-op is successful. Then reread source, spec, tickets when present, prep, implementation evidence, ancestry, and verification before emitting one terminal response.
 
-After product verification succeeds, invoke `tk-reflect` exactly once when a
-valid reflection handoff exists. A no-op classification is successful.
-Automatic application is allowed only under the reflection containment
-contract; otherwise keep it report-only or stop on unsafe restoration.
-
-For verified success, `tk-drive` rereads the current source, spec, tickets when
-present, preflight, implementation ledger, commit ancestry, and verification
-evidence. Continuation therefore depends on rereading current artifacts and
-repository evidence, not replaying a stored workflow cursor; it provides no
-guaranteed cross-turn execution. Only `tk-drive finalization` emits the
-successful active-drive terminal response.
-
-Lead with one user-facing result sentence. Then render `Implemented` with two
-to seven behavior-level bullets and `Verification` with one to four
-aggregate-result bullets. For multiple units, include a compact
-`Ticket | Outcome | Commit` table. Include `Reflection`, `Skill candidates`,
-and `Remaining risks` only when meaningful.
-
-Use a sentence when only one user-relevant row exists. When underlying results
-exceed these limits, keep only the top five to seven items ranked by user
-impact and verification value.
-
-End `Verification` with the single exact `Status: Pass` line only after every
-required artifact and verification result has been reread. Any terminal
-non-success routes to the read-only node above instead of this success output.
+Lead with one user-facing result sentence. Then render `Implemented` with two to seven behavior-level bullets and `Verification` with one to four aggregate-result bullets. For multiple units, include a compact `Ticket | Outcome | Commit` table. Use a sentence when only one user-relevant row exists. When underlying results exceed these limits, keep only the top five to seven items ranked by user impact and verification value. Include `Reflection`, `Skill candidates`, and `Remaining risks` only when meaningful. End `Verification` with exactly `Status: Pass`; terminal non-success belongs to the read-only finalizer.
 
 ### 🔴 HARD GATE · terminal user summary
 
@@ -211,12 +111,6 @@ Before any user-facing progress, question, or summary, resolve the response lang
 
 ## User decision questions
 
-When a user-owned decision blocks Preparing or the one amendment, ask one
-self-contained `Question` before any `Recommendation`. Show only
-decision-relevant evidence, two or three mutually exclusive options with
-material tradeoffs, and exactly one label ending `(Recommended)` or `(추천)`.
+When a user-owned decision blocks Preparing or the one amendment, ask one self-contained `Question` before any `Recommendation`. Show only decision-relevant evidence, two or three mutually exclusive options with material tradeoffs, and exactly one label ending `(Recommended)` or `(추천)`.
 
-Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex
-`request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only
-when none is exposed. A failed or rejected call is not absence; preserve the
-supported non-success state.
+Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex `request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only when none is exposed. A failed or rejected call is not absence; preserve the supported non-success state.

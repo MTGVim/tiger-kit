@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## 21.0.6 — Lean Core Skills
+
+- Compressed `tk-drive` into a thin orchestration recipe while preserving its
+  preparation, unit execution, aggregate verification, amendment, and
+  non-success boundaries.
+- Compressed `tk-implement` into one unit workflow and moved conditional test,
+  source-writing, browser, review, and commit detail into a lazily loaded
+  execution-gates reference.
+- Preserved current trigger, status, ledger, verification, review, commit, and
+  cross-host contracts while reducing eager hot-path instructions.
+
 ## 21.0.5 — Lean Terminal Normalization
 
 - Normalized `pending`, `Draft`, `Unresolved split report`, and `aborted`
