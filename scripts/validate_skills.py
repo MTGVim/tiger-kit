@@ -214,6 +214,9 @@ CATALOG_ROUTING_BOUNDARIES = {
 }
 HYBRID_TRIGGER_FACETS = {"formal", "casual", "typo", "ko-en", "short", "compound"}
 HANGUL_SYLLABLE = re.compile(r"[가-힣]")
+# This is the current catalog snapshot, not a product target count. Update it,
+# its kind sets, and their tests whenever an independently justified catalog
+# change lands.
 EXPECTED_SKILLS = {
     "tk-ask-repo",
     "tk-browser-verify",
@@ -285,12 +288,11 @@ REQUIRED_BEHAVIOR_CASES = {
     "browser-interactive-auth-only-headed-exception",
     "browser-captures-move-to-tigerkit-ledger",
     "browser-bounds-result-cardinality",
-    "grill-me-keeps-one-question-at-a-time",
-    "grill-uses-native-question-tool",
-    "grill-me-researches-facts-before-asking",
-    "grill-me-does-not-write-domain-docs",
-    "grill-me-does-not-create-adrs",
-    "grill-bounds-confirmed-results",
+    "grill-me-unifies-caller-modes",
+    "grill-me-uses-native-question-tool",
+    "grill-me-active-drive-routes-directly",
+    "grill-me-blocks-active-drive-autostart",
+    "grill-me-does-not-mutate-or-invoke-phases",
     "implement-tdd-requires-observed-red",
     "implement-tdd-uses-public-behavior",
     "implement-non-tdd-still-verifies",
@@ -432,9 +434,6 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-bounds-corrective-cycle",
     "drive-preserves-valid-diff-on-partial-failure",
     "drive-aggregate-review-boundary",
-    "grill-accepts-active-drive-preparing-handoff",
-    "grill-returns-control-to-prep",
-    "grill-echoes-prep-transition",
     "to-spec-echoes-prep-transition",
     "to-tickets-echoes-prep-transition",
     "implement-echoes-drive-transition",
@@ -720,6 +719,39 @@ def validate_single_drive_adhd_contract(root: Path) -> list[str]:
     return errors
 
 
+def validate_unified_grill_contract(root: Path) -> list[str]:
+    errors: list[str] = []
+    split = root / "skills" / "tk-grilling"
+    if split.exists():
+        errors.append(
+            "skills/tk-grilling: merge the boundary-less duplicate procedure into tk-grill-me"
+        )
+
+    grill_path = root / "skills" / "tk-grill-me" / "SKILL.md"
+    grill = grill_path.read_text(encoding="utf-8") if grill_path.is_file() else ""
+    required = (
+        "one evidence-first decision procedure",
+        "`standalone`",
+        "`active drive`",
+        "continues directly to the next applicable procedure",
+        "Do not split the same decision procedure into another skill",
+    )
+    missing = [token for token in required if token not in grill]
+    if missing:
+        errors.append(
+            "skills/tk-grill-me/SKILL.md: preserve unified standalone/active-drive "
+            "decision ownership (" + ", ".join(missing) + ")"
+        )
+
+    drive_path = root / "skills" / "tk-drive" / "SKILL.md"
+    drive = drive_path.read_text(encoding="utf-8") if drive_path.is_file() else ""
+    if "`tk-grill-me`" not in drive:
+        errors.append(
+            "skills/tk-drive/SKILL.md: name tk-grill-me as the exact decision edge"
+        )
+    return errors
+
+
 def validate_learning_loop_contract(root: Path) -> list[str]:
     errors: list[str] = []
     for relative, tokens in LEARNING_LOOP_TOKENS.items():
@@ -904,6 +936,7 @@ def validate_repository_contract() -> list[str]:
     errors.extend(validate_prepared_drive_contract(ROOT))
     errors.extend(validate_browser_preflight_contract(ROOT))
     errors.extend(validate_single_drive_adhd_contract(ROOT))
+    errors.extend(validate_unified_grill_contract(ROOT))
     errors.extend(validate_learning_loop_contract(ROOT))
     errors.extend(validate_response_language_contract(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):

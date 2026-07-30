@@ -26,7 +26,7 @@ steps, current-state restatement를 적용합니다. 다음 응답에는 승계�
 않으며 같은 출력을 원하면 다시 명시적으로 호출해야 합니다. 다른 skill,
 ADHD 언급, formatting 요청은 이 utility를 암묵적으로 호출하지 않습니다.
 
-나머지 14개 canonical skill은 최신 명시 언어 지시를 우선하는
+`tk-adhd` 이외의 canonical skill은 최신 명시 언어 지시를 우선하는
 response-language hard gate와 terminal-summary boundary를 자체 포함합니다.
 최종 사용자 영역은 해당 skill의 canonical 첫 heading 또는 result sentence로
 바로 시작하며 standalone separator, 반복 `Outcome:`, 하단 receipt metadata를
@@ -128,7 +128,7 @@ Executing이 즉시 첫 unit을 시작합니다.
 
 ```text
 <host-native explicit tk-drive> <source>
-→ 필요할 때만 tk-grill-me: confirmed Decisions receipt
+→ 필요할 때만 tk-grill-me: confirmed decision state
 → tk-to-spec: Ready spec
 → 필요할 때만 tk-to-tickets: vertical ticket ledger
 → .tigerkit/prep.md: sealed Ready + active claim

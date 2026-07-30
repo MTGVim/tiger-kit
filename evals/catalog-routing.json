@@ -25,7 +25,7 @@
     {
       "id": "drive-vs-grill-active-handoff",
       "boundary": "tk-drive vs tk-grill-me",
-      "prompt": "[active tk-drive decision handoff] Close this unresolved user-owned decision and return the receipt to drive.",
+      "prompt": "[active tk-drive decision handoff] Close this unresolved user-owned decision and return the native decision state for the next procedure.",
       "focus_skill": "tk-grill-me",
       "expected_selected_skill": "tk-grill-me",
       "critical": true

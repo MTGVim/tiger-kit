@@ -28,6 +28,7 @@ if __package__:
         validate_single_drive_adhd_contract,
         validate_skill_language,
         validate_terminal_summary_contract,
+        validate_unified_grill_contract,
         validate_user_decision_contract,
         validate_skill,
         validate_skill_eval_files,
@@ -55,6 +56,7 @@ else:
         validate_single_drive_adhd_contract,
         validate_skill_language,
         validate_terminal_summary_contract,
+        validate_unified_grill_contract,
         validate_user_decision_contract,
         validate_skill,
         validate_skill_eval_files,
@@ -62,6 +64,36 @@ else:
 
 
 class CanonicalSkillContractTest(unittest.TestCase):
+    def test_grill_contract_keeps_one_owner_for_both_callers(self) -> None:
+        source_root = Path(__file__).resolve().parents[1]
+        self.assertEqual(validate_unified_grill_contract(source_root), [])
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            grill = root / "skills/tk-grill-me/SKILL.md"
+            drive = root / "skills/tk-drive/SKILL.md"
+            grill.parent.mkdir(parents=True)
+            drive.parent.mkdir(parents=True)
+            grill.write_text(
+                (source_root / "skills/tk-grill-me/SKILL.md").read_text(
+                    encoding="utf-8"
+                ),
+                encoding="utf-8",
+            )
+            drive.write_text(
+                (source_root / "skills/tk-drive/SKILL.md").read_text(
+                    encoding="utf-8"
+                ),
+                encoding="utf-8",
+            )
+            (root / "skills/tk-grilling").mkdir()
+
+            errors = validate_unified_grill_contract(root)
+
+        self.assertTrue(
+            any("boundary-less duplicate procedure" in error for error in errors)
+        )
+
     def test_canonical_skill_distribution_and_phase_owner_behaviors(self) -> None:
         self.assertEqual(
             EXPECTED_SKILLS,
@@ -128,11 +160,11 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "drive-invalidates-source-current-ui-mismatch",
                 "drive-invalidates-unapproved-secondary-axis",
                 "drive-reads-complete-remote-source",
-                "grill-accepts-active-drive-preparing-handoff",
-                "grill-echoes-prep-transition",
-                "grill-returns-control-to-prep",
-                "grill-uses-native-question-tool",
-                "grill-bounds-confirmed-results",
+                "grill-me-unifies-caller-modes",
+                "grill-me-uses-native-question-tool",
+                "grill-me-active-drive-routes-directly",
+                "grill-me-blocks-active-drive-autostart",
+                "grill-me-does-not-mutate-or-invoke-phases",
                 "to-spec-echoes-prep-transition",
                 "to-spec-returns-decision-blocker-to-prep",
                 "to-spec-blocks-source-current-ui-mismatch",
@@ -504,7 +536,6 @@ class CanonicalSkillContractTest(unittest.TestCase):
             "tk-drive": (
                 "drive-continues-after-prep-claim",
             ),
-            "tk-grill-me": ("grill-returns-control-to-prep",),
             "tk-to-spec": ("to-spec-active-drive-preparing-handoff",),
             "tk-to-tickets": ("to-tickets-active-drive-preparing-handoff",),
             "tk-implement": ("implement-active-drive-handoff-triggers",),
@@ -959,7 +990,10 @@ class CanonicalSkillContractTest(unittest.TestCase):
             "tk-ask-repo": ("Lead with `Answer`", "Do not echo the inbound question"),
             "tk-browser-verify": ("Never paste or store raw console", "do not add a receipt heading"),
             "tk-drive": ("explicit source", "internal handoff envelopes"),
-            "tk-grill-me": ("The ledger is not a per-turn dump template", "append phase/status provenance"),
+            "tk-grill-me": (
+                "The ledger is not a per-turn dump template",
+                "consumes native status directly",
+            ),
             "tk-grooming": ("Lead with one `## Disposition`", "Add `## Exceptions` only"),
             "tk-handoff": ("handoff artifact owns disposition", "Omit empty sections"),
             "tk-implement": (
