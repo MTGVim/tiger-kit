@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "/tk-adhd We are halfway through a five-step migration. Restate the current state and tell me what to do next.",
+    "expected": "Makes the completed progress visible, restates the current step, leads with one concrete next action, and does not claim to enable a persistent mode."
+  },
+  {
+    "id": 2,
+    "prompt": "[Previous response used `/tk-adhd`; this request does not invoke it.] The schema update is done. Continue.",
+    "expected": "Does not apply or claim persistent ADHD output behavior and explains only if needed that a new explicit invocation is required for this response."
+  }
+]

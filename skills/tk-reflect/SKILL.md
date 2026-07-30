@@ -1,6 +1,6 @@
 ---
 name: tk-reflect
-description: "[user/auto] Classify reusable rule or skill candidates from conversation, diff, and outcome evidence. Implicit mode is report-only; only a valid active-drive tail may apply an eligible repo rule automatically."
+description: "[user/auto] Classify reusable rule or skill candidates only when the user requests reuse analysis from conversation, diff, or outcome evidence, or when a valid active-drive tail hands off. Do not apply to summaries, output-style utilities, explicit invocation of another skill, or ordinary task completion. Implicit mode is report-only."
 argument-hint: "<conversation, change, diff, outcome, or source>"
 metadata:
   tigerkit:
@@ -13,9 +13,10 @@ metadata:
 
 Apply on explicit invocation, a clear request to extract reusable candidates
 from evidence, or one valid active-drive tail handoff. Do not auto-apply to an
-ordinary summary or implementation completion. Implicit mode is report-only.
-Do not invoke another skill except for the single bounded diagnosis handoff
-below.
+ordinary summary, an output-style utility, an explicit invocation of another
+skill, instructions loaded by that skill, or implementation completion.
+Implicit mode is report-only. Do not invoke another skill except for the
+single bounded diagnosis handoff below.
 
 Read current conversation, changes, diff, implementation/test/review outcomes,
 relevant `.tigerkit/` artifacts, the current host's discoverable file-based

@@ -311,18 +311,18 @@
       "critical": true
     },
     {
-      "id": "recap-explicit",
-      "boundary": "tk-recap explicit invocation vs implicit formatting",
-      "prompt": "$tk-recap 지금 진행 상태와 다음 행동이 보이게 해 주세요.",
-      "focus_skill": "tk-recap",
-      "expected_selected_skill": "tk-recap",
+      "id": "adhd-explicit",
+      "boundary": "tk-adhd explicit invocation vs tk-reflect and implicit formatting",
+      "prompt": "$tk-adhd 지금 진행 상태와 다음 행동이 보이게 해 주세요.",
+      "focus_skill": "tk-adhd",
+      "expected_selected_skill": "tk-adhd",
       "critical": true
     },
     {
-      "id": "track-implicit-block",
-      "boundary": "tk-recap explicit invocation vs implicit formatting",
+      "id": "adhd-implicit-block",
+      "boundary": "tk-adhd explicit invocation vs tk-reflect and implicit formatting",
       "prompt": "진행 상태와 다음 행동이 보이게 정리해 주세요.",
-      "focus_skill": "tk-recap",
+      "focus_skill": "tk-adhd",
       "expected_selected_skill": null,
       "critical": true
     }

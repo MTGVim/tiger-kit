@@ -1,17 +1,17 @@
 {
-  "skill": "tk-recap",
+  "skill": "tk-adhd",
   "kind": "user-invoked",
   "queries": [
     {
       "id": "train-explicit-slash",
       "split": "train",
-      "query": "/tk-recap 지금 진행 상태랑 다음 행동이 잘 보이게 해줘",
+      "query": "/tk-adhd 지금 진행 상태랑 다음 행동이 잘 보이게 해줘",
       "should_trigger": true
     },
     {
       "id": "train-explicit-dollar",
       "split": "train",
-      "query": "$tk-recap make this long task easier to follow",
+      "query": "$tk-adhd make this long task easier to follow",
       "should_trigger": true
     },
     {
@@ -35,7 +35,7 @@
     {
       "id": "test-explicit-picker",
       "split": "validation",
-      "query": "Use the skill picker to select tk-recap for this session",
+      "query": "Use the skill picker to select tk-adhd for this response",
       "should_trigger": true
     },
     {
@@ -51,16 +51,22 @@
       "should_trigger": false
     },
     {
-      "id": "test-stop-without-active-block",
+      "id": "test-normal-mode-block",
       "split": "validation",
       "query": "normal mode",
       "should_trigger": false
     },
     {
-      "id": "test-explicit-stop-resume",
+      "id": "test-stop-command-block",
       "split": "validation",
-      "query": "[tk-recap active] stop recap mode",
-      "should_trigger": true
+      "query": "stop adhd mode",
+      "should_trigger": false
+    },
+    {
+      "id": "test-prior-invocation-does-not-carry",
+      "split": "validation",
+      "query": "[Previous response used /tk-adhd.] Continue with the next step.",
+      "should_trigger": false
     }
   ]
 }

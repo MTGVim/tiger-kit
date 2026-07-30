@@ -74,7 +74,7 @@ RESULT_BUDGET_TOKENS = {
     "tk-ask-repo": ("one to three short paragraphs", "two to seven results", "top five to seven"),
     "tk-browser-verify": ("two to seven verified scenarios", "top five to seven"),
     "tk-drive": ("two to seven behavior-level bullets", "one to four aggregate-result bullets", "top five to seven"),
-    "tk-recap": ("## Rules", "## When to break the rules"),
+    "tk-adhd": ("## Rules", "## When to break the rules"),
     "tk-grill-me": ("two to seven readable", "top five to seven"),
     "tk-grooming": ("two to seven findings", "top five to seven"),
     "tk-handoff": ("two to five short bullets", "top five to seven"),
@@ -132,18 +132,28 @@ BROWSER_PREFLIGHT_TOKENS = (
     "re-request",
     "not a Preparing amendment",
 )
-RECAP_CONTRACT_TOKENS = (
+ADHD_CONTRACT_TOKENS = (
     "disable-model-invocation: true",
+    "/tk-adhd",
+    "$tk-adhd",
     "origin: ayghri/i-have-adhd",
     "relationship: adapted",
     "upstream-skill: skills/i-have-adhd/SKILL.md",
-    "## Persistence",
-    "stop recap mode",
-    "stop adhd mode",
-    "normal mode",
+    "## Scope",
+    "only to the current response",
+    "Do not carry them into the next response",
+    "Every later response requires a new explicit",
+    "No activation, stop command, confirmation, file, preference, or session state",
+    "does not invoke this utility",
     "## Rules",
     "## When to break the rules",
     "## Pre-send check",
+)
+ADHD_FORBIDDEN_TOKENS = (
+    "## Persistence",
+    "ADHD mode: on",
+    "ADHD mode: off",
+    "latest explicit activation or stop event wins",
 )
 LEARNING_LOOP_TOKENS = {
     "skills/tk-grill-me/SKILL.md": (
@@ -193,7 +203,7 @@ CATALOG_ROUTING_BOUNDARIES = {
     "tk-drive vs tk-handoff/generic continue",
     "tk-drive vs tk-grill-me",
     "tk-drive explicit source vs generic request",
-    "tk-recap explicit invocation vs implicit formatting",
+    "tk-adhd explicit invocation vs tk-reflect and implicit formatting",
     "tk-merge-conflict vs ordinary conflict-marker edit",
     "tk-skill-diagnose vs ordinary application/code debugging",
     "tk-skill-diagnose vs tk-grooming",
@@ -214,7 +224,7 @@ EXPECTED_SKILLS = {
     "tk-implement",
     "tk-learn",
     "tk-merge-conflict",
-    "tk-recap",
+    "tk-adhd",
     "tk-prototype",
     "tk-reflect",
     "tk-skill-diagnose",
@@ -224,7 +234,7 @@ EXPECTED_SKILLS = {
 USER_INVOKED_SKILLS = {
     "tk-ask-repo",
     "tk-drive",
-    "tk-recap",
+    "tk-adhd",
 }
 HYBRID_SKILLS = EXPECTED_SKILLS - USER_INVOKED_SKILLS
 KEBAB = re.compile(r"^tk-[a-z0-9]+(?:-[a-z0-9]+)*$")
@@ -246,9 +256,9 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-preserves-terminal-on-failed-preparing",
     "drive-reseals-one-active-amendment",
     "drive-continues-automatically-after-ready",
-    "recap-explicit-activation",
-    "recap-stop-command",
-    "recap-safety-exception",
+    "adhd-explicit-one-shot",
+    "adhd-does-not-carry-over",
+    "adhd-safety-exception",
     "implement-auto-decides-unspecified-strategy",
     "implement-respects-explicit-strategy",
     "implement-routes-visible-ui-through-browser-verify",
@@ -549,7 +559,7 @@ def validate_local_only_workflows(root: Path) -> list[str]:
 def validate_user_decision_contract(root: Path) -> list[str]:
     errors: list[str] = []
     for skill in sorted(EXPECTED_SKILLS):
-        if skill == "tk-recap":
+        if skill == "tk-adhd":
             continue
         path = root / "skills" / skill / "SKILL.md"
         if not path.is_file():
@@ -568,7 +578,7 @@ def validate_user_decision_contract(root: Path) -> list[str]:
 def validate_response_language_contract(root: Path) -> list[str]:
     errors: list[str] = []
     for skill in sorted(EXPECTED_SKILLS):
-        if skill == "tk-recap":
+        if skill == "tk-adhd":
             continue
         path = root / "skills" / skill / "SKILL.md"
         if not path.is_file():
@@ -588,7 +598,7 @@ def validate_terminal_summary_contract(root: Path) -> list[str]:
     language_heading = RESPONSE_LANGUAGE_GATE.splitlines()[0]
     forbidden = ("`Outcome: <one user-facing sentence>`", "## Receipt")
     for skill in sorted(EXPECTED_SKILLS):
-        if skill == "tk-recap":
+        if skill == "tk-adhd":
             continue
         path = root / "skills" / skill / "SKILL.md"
         if not path.is_file():
@@ -676,18 +686,24 @@ def validate_browser_preflight_contract(root: Path) -> list[str]:
     return errors
 
 
-def validate_single_drive_recap_contract(root: Path) -> list[str]:
+def validate_single_drive_adhd_contract(root: Path) -> list[str]:
     errors: list[str] = []
     if (root / "skills" / "tk-prep").exists():
         errors.append("skills/tk-prep: remove the public preparation skill surface")
 
-    recap_path = root / "skills" / "tk-recap" / "SKILL.md"
-    recap = recap_path.read_text(encoding="utf-8") if recap_path.is_file() else ""
-    missing = [token for token in RECAP_CONTRACT_TOKENS if token not in recap]
+    adhd_path = root / "skills" / "tk-adhd" / "SKILL.md"
+    adhd = adhd_path.read_text(encoding="utf-8") if adhd_path.is_file() else ""
+    missing = [token for token in ADHD_CONTRACT_TOKENS if token not in adhd]
     if missing:
         errors.append(
-            "skills/tk-recap/SKILL.md: preserve explicit adapted recap-mode contract "
+            "skills/tk-adhd/SKILL.md: preserve explicit adapted one-shot ADHD utility contract "
             + ", ".join(repr(token) for token in missing)
+        )
+    forbidden = [token for token in ADHD_FORBIDDEN_TOKENS if token in adhd]
+    if forbidden:
+        errors.append(
+            "skills/tk-adhd/SKILL.md: remove persistent ADHD-mode state "
+            + ", ".join(repr(token) for token in forbidden)
         )
 
     readme = root / "README.md"
@@ -879,7 +895,7 @@ def validate_repository_contract() -> list[str]:
     )
     for relative in required_files:
         if not (ROOT / relative).is_file():
-            errors.append(f"{relative}: required TigerKit 21.0.1 repository file is missing")
+            errors.append(f"{relative}: required TigerKit 21.0.2 repository file is missing")
     errors.extend(validate_local_only_workflows(ROOT))
     errors.extend(validate_skill_language(ROOT))
     errors.extend(validate_user_decision_contract(ROOT))
@@ -887,19 +903,19 @@ def validate_repository_contract() -> list[str]:
     errors.extend(validate_drive_transition_debt_contract(ROOT))
     errors.extend(validate_prepared_drive_contract(ROOT))
     errors.extend(validate_browser_preflight_contract(ROOT))
-    errors.extend(validate_single_drive_recap_contract(ROOT))
+    errors.extend(validate_single_drive_adhd_contract(ROOT))
     errors.extend(validate_learning_loop_contract(ROOT))
     errors.extend(validate_response_language_contract(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
-            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 21.0.1")
+            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 21.0.2")
     errors.extend(validate_runtime_scratch(ROOT))
     ignored = (ROOT / ".gitignore").read_text(encoding="utf-8") if (ROOT / ".gitignore").is_file() else ""
     if ".tigerkit/" not in ignored.splitlines():
         errors.append(".gitignore: document TigerKit repo-local scratch with .tigerkit/")
     required_text = {
         "README.md": (
-            "TigerKit 21.0.1",
+            "TigerKit 21.0.2",
             "15",
             "Claude Code",
             "Codex",

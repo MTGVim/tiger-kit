@@ -1,3 +1,18 @@
+# TigerKit 21.0.2 ADHD utility rename and reflection boundary
+
+The explicit one-shot output utility is renamed again to remove semantic
+overlap with recap/reflection features:
+
+```text
+old: /tk-recap
+new: /tk-adhd
+```
+
+Invoke `/tk-adhd` again for every response that should use the ADHD-oriented
+output shape. It has no activation, stop command, preference, or session state.
+An ADHD mention, formatting request, prior invocation, or another skill does
+not invoke it.
+
 # TigerKit 21.0.1 terminal opening, browser preflight, and recap mode
 
 The catalog remains at 15 skills, but the explicit persistent output utility
@@ -95,9 +110,9 @@ longer rendered to the user. Active-drive phase receipts remain internal
 handoff envelopes, and durable provenance stays in the existing artifact or
 ledger already owned by the skill.
 
-There is no `tk-adhd`, `tk-remind`, persistent mode, toggle, shared runtime
-file, universal receipt ledger, read-only write expansion, or consumer state
-migration.
+TigerKit 20.2.1 added no `tk-adhd`, `tk-remind`, persistent mode, toggle,
+shared runtime file, universal receipt ledger, read-only write expansion, or
+consumer state migration; later sections supersede that historical boundary.
 
 # TigerKit 20.2.0 implementation quality and optimistic reflection
 
