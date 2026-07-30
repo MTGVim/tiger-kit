@@ -1,4 +1,4 @@
-# TigerKit 21.0.1
+# TigerKit 21.0.2
 
 <p align="center">
   <img src="assets/tigerkit-cover.png" width="960" alt="TigerKit Agent Skills 표지">
@@ -9,11 +9,11 @@ TigerKit은 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent 
 `npx skills`로 배포합니다. 하나의 명시적 `tk-drive <source>`가 내부
 `Preparing → Executing` 흐름에서 decision closure, Ready spec, 필요한
 ticket, implementation·aggregate verification·reflection까지 이어갑니다.
-최신 immutable release는 `v21.0.1`이며,
+최신 immutable release는 `v21.0.2`이며,
 현재 `main`에는 다음 release를 위한 skill 변경이 포함될 수 있습니다.
 
-`v21.0.1`은 terminal output을 단순화하고 준비 단계에서 browser 전략을
-고정하며 explicit one-shot output utility를 `tk-adhd`로 제공합니다.
+`v21.0.2`는 explicit one-shot output utility를 `tk-adhd`로 제공하고,
+일반 summary·다른 skill 호출이 `tk-reflect`로 잘못 routing되지 않게 합니다.
 `/tk-drive <source>` 또는 `$tk-drive <source>`가 worktree-local
 `.tigerkit/prep.md`를 내부적으로 seal·activate한 뒤 추가 확인 없이 첫
 implementation unit으로 진행합니다. 실행 중 늦게 발견된 user-owned
@@ -65,10 +65,10 @@ npx skills add MTGVim/tiger-kit \
   --skill tk-browser-verify
 ```
 
-변경되지 않는 `v21.0.1` snapshot:
+변경되지 않는 `v21.0.2` snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v21.0.1" \
+npx skills add "MTGVim/tiger-kit#v21.0.2" \
   --global \
   --agent claude-code \
   --agent codex \

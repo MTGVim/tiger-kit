@@ -1,4 +1,4 @@
-# Unreleased ADHD utility rename and reflection boundary
+# TigerKit 21.0.2 ADHD utility rename and reflection boundary
 
 The explicit one-shot output utility is renamed again to remove semantic
 overlap with recap/reflection features:

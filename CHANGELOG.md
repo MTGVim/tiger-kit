@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 21.0.2 — ADHD Utility and Reflection Boundary
+
 - Renamed the explicit output utility from `tk-recap` to `tk-adhd` and made it
   one-shot: each explicit invocation shapes only its current response, with no
   activation, stop command, or cross-turn state.
