@@ -87,12 +87,15 @@ assigns ticket IDs and owns coverage, dependencies, and ticket shape. Mutable
 status, commit receipts, and resume state also belong only in tickets.
 
 For a failed active-drive attempt, keep the current incomplete status and every
-completed ticket receipt unchanged. The existing ticket owner may add only
-bounded `Last attempt: Fail | Blocked | Unverifiable`, `Evidence`, and
-`Recovery` fields to the current incomplete ticket. `Dependency blocked`,
-`Not attempted`, and `Unverified` are terminal presentation classifications
-computed from status and dependencies, not new durable ticket statuses. Do not
-rewrite unrelated pending tickets or mark any incomplete ticket completed.
+completed ticket receipt unchanged. When a ledger already exists,
+`tk-drive non-success finalization` is the sole downstream writer authorized
+to add bounded `Last attempt: Fail | Blocked | Unverifiable`, `Evidence`, and
+`Recovery` fields to the exact current incomplete ticket. It uses this skill's
+atomic replacement discipline and never invokes `tk-to-tickets` again. When no
+exact ledger/current ticket exists, write nothing. `Dependency blocked`, `Not
+attempted`, and `Unverified` remain terminal presentation classifications, not
+durable ticket statuses. Preserve unrelated pending tickets and never mark an
+incomplete ticket completed.
 
 Each ticket must be executable from the artifact and its cited sources without
 hidden conversation context. Name only evidence-supported entry points, and
