@@ -12,308 +12,74 @@ metadata:
 
 # Implement
 
-Use only for explicit `/tk-implement`, `$tk-implement`, host-picker selection,
-or an explicit implementation handoff in which an active `tk-drive` provides
-one ticket or no-ticket unit and its R/AC. Do not auto-activate from an ordinary
-implementation request, generic continuation, artifact presence, or merely
-because drive is active.
+Use only for explicit `/tk-implement`, `$tk-implement`, host-picker selection, or an exact active `tk-drive` handoff containing one ticket or no-ticket unit and its R/AC. Ordinary implementation requests, generic continuation, artifacts, or drive presence alone do not activate it.
 
-## Contract
+## Unit contract
 
-The user's explicit instructions outrank defaults and recommendations. Do not
-weaken, expand, replace, or reconfirm scope, method, prohibitions,
-`direct|delegated`, `tdd|no-tdd`, verification, or commit instructions. Ask for
-one decision only when instructions conflict or cannot be executed safely.
+One invocation owns one independently verifiable unit and, after verification and review, exactly one current-branch commit. With tickets: `one ticket = one unit = one commit`. Standalone multi-ticket input must select one ticket or use `$tk-drive`; do not recreate drive orchestration.
 
-Never report a source as read or a verification as passed unless it was
-actually read or executed.
+Explicit user instructions outrank defaults. Do not weaken or reconfirm settled scope, method, prohibitions, strategy, verification, or commit instructions. Ask only when instructions conflict or safe execution requires a material user decision. Never claim a source was read or a check passed unless it was actually read or executed.
 
-One invocation owns one independently verifiable implementation unit and
-creates one commit after review. With tickets:
-`one ticket = one unit = one commit`. Without tickets, the complete explicit
-single-slice request or Ready spec is one unit. If standalone input contains
-multiple tickets, stop before mutation and ask the user to select one or use
-`$tk-drive`. Do not recreate drive orchestration with a batch loop or by
-creating tickets.
+For active drive, preserve task identity, ticket/R/AC, initial `HEAD`, pre-existing dirty paths, and the frozen verification profile. Return the unit ID, native status, commit when present, and verification/review evidence to the graph. Do not emit a terminal user result or take ownership of cross-unit verification or finalization.
 
-Standalone execution and drive handoff use the same implementation, test,
-review, and commit contract. For a drive handoff, preserve task identity,
-ticket/R/AC, initial `HEAD`, and ownership; pass the unit/ticket ID, commit SHA,
-and verification/review evidence directly to the next applicable graph node.
-Preserve a material verification profile's four fields and follow the
-existing-owner mapping in [review-boundary](references/review-boundary.md);
-never recompute or weaken it. Do not render a terminal result or take
-ownership of drive-wide cross-ticket verification or finalization.
+| Status | Meaning | Commit |
+| --- | --- | --- |
+| `Pass` | Unit behavior, required tests/checks, and review match the final candidate | Exactly one, when separable from user changes |
+| `Fail` | Change-related failure, invalid evidence, unauthorized UI drift, or commit failure | None |
+| `Blocked` | Required input/authority/decision is missing or safe ownership conflicts | None |
+| `Unverifiable` | Required verification was attempted but cannot establish a verdict | None |
 
-### Terminal-state contract
-
-| Status | Trigger | Required action | Commit |
-|---|---|---|---|
-| `Pass` | Unit scope is complete and test/coverage gates plus change-related verification/review evidence match the candidate/staged snapshot | Report ID-mapped change and verification references plus remaining risk | Allow exactly one commit when the unit diff can be safely separated from pre-existing user changes |
-| `Fail` | Change-related failure, invalid browser evidence, unauthorized UI-writing drift, or commit failure | Preserve failed command/observation, actual `HEAD`, and uncommitted state | Prohibited |
-| `Blocked` | Required input, authority, or user decision is missing; safety boundaries conflict; or drift follows the verified snapshot | Stop further mutation and identify the decision or re-verification scope | Prohibited |
-| `Unverifiable` | Verification was attempted but environment, tooling, or evidence limitations prevent a verdict | Separate executed scope from unavailable evidence | Prohibited |
-
-For an active-drive non-success, the internal handoff includes the unit or
-ticket ID, native status, actual branch and HEAD, changed or uncommitted paths,
-executed verification, unverified items, the failure or blocker, and one
-recovery condition. It grants no cleanup, commit, continuation, downstream
-specialist, or finalization authority. The active graph consumes this bounded
-evidence only after applying any supported alternate edge.
-
-Source precedence is: current request, confirmed conversation decisions,
-relevant `.tigerkit/tickets.md`, relevant `.tigerkit/spec.md`, repository
-instructions, code/tests. Existing files are not automatically relevant.
-
-At scope start, freeze all requirement or acceptance IDs from the relevant
-spec/ticket. In the implementation ledger and active-drive internal handoff,
-map each ID to changed behavior and verification evidence. If the source has
-no IDs, do not invent them; record the source location used.
+A drive non-success handoff includes actual branch/`HEAD`, changed or uncommitted paths, executed and unavailable verification, blocker/failure, and one recovery condition. It grants no cleanup, continuation, commit, downstream specialist, or finalization authority.
 
 ## Workflow
 
-1. `understand/inspect`: resolve the standalone request or drive handoff,
-   related source, unit/ticket ID, scope, constraints, R/AC, initial `HEAD`,
-   branch, pre-existing dirty inventory, and unresolved decisions.
-2. `resolve strategy and design fit`: from code/test evidence, choose
-   `direct | delegated`, `tdd | no-tdd`, conditional bug investigation,
-   repository ownership for every major responsibility, and whether one
-   independent reviewer is permitted.
-3. `implement/simplify`: reach initial GREEN, run the one behavior-preserving
-   simplify pass, and rerun focused verification when it changes the unit.
-4. `final unit verification`: bind final evidence and failure classification
-   to the current branch, `HEAD`, and verified diff/path scope.
-5. `review/commit`: run current-agent Standards/Spec review against the
-   candidate/staged snapshot, optionally use one bounded independent reviewer,
-   confirm no drift, and create one unit commit or stop.
-6. `report`: update the implementation ledger and return non-duplicated output
-   sections plus an ID-mapped receipt tied to the final branch, `HEAD`, commit,
-   and verification evidence.
-
-## CHECKPOINT / STOP
-
-Complete investigation and strategy before source mutation. If requirements
-conflict, authority is unsafe, UI intent conflicts, or a required decision
-remains, do not implement; stop as `Blocked` with the evidence.
+1. **Inspect** — resolve source, unit, R/AC or source anchors, branch, initial `HEAD`, relevant code/tests/instructions, and pre-existing dirty paths.
+2. **Choose strategy** — use `direct` by default; use `delegated` only when one bounded implementor can own a transferable unit and isolation adds value. Choose TDD only with a meaningful public-behavior seam.
+3. **Implement** — change only the unit, prove coherent behavior slices, and reach initial green.
+4. **Simplify** — run exactly one behavior-preserving reuse/simplicity/ownership pass through [review-boundary.md](references/review-boundary.md).
+5. **Verify and review** — apply the relevant sections of [execution-gates.md](references/execution-gates.md), then the Standards/Spec review.
+6. **Commit and report** — recheck branch, `HEAD`, staged ownership, and evidence; commit once only for `Pass`; update `.tigerkit/implementation.md` and return the bounded result.
 
 ## Strategy
 
-Before editing, inspect relevant code, tests, scripts, and state
-non-destructively. Do not create, edit, or delete files, run an implementor, or
-commit during this inspection. Non-agent tools such as context-mode, MCP,
-search, sandboxes, and test runners are not delegation. Browser tools still
-cannot bypass the `tk-browser-verify` precondition below.
+Inspect before mutation. Decide unspecified `direct | delegated` and `tdd | no-tdd` without an approval ceremony.
 
-After inspection, choose any unspecified execution mode and TDD mode, briefly
-state the reason, and implement without an approval question. Prefer `direct`
-for small changes, shared files, or tight implementation-verification loops.
-Use `delegated` only when scope and completion criteria are independently
-transferable and isolation adds material value. Choose TDD when a public
-behavior seam, test infrastructure, and regression risk are clear. Choose
-no-TDD for copy, configuration, mechanical changes, or when no useful test seam
-exists.
+- Prefer `direct` for small changes, shared files, or tight edit/verification loops.
+- Use `delegated` only with exactly one bounded implementor; load [delegation.md](references/delegation.md). If inferred delegation is unavailable, fall back to direct. If the user required it, return `Blocked`.
+- For unknown-cause bugs, intermittent failures, or performance regressions, load [investigation.md](references/investigation.md). Do not guess-patch; skip the full investigation loop when the cause is already established.
+- Do not nest delegation or let an implementor invoke a user-invoked TigerKit skill. The current agent owns final evidence, review, staging, and commit.
 
-Honor user-selected modes and decide only missing modes. Ask only when meaning
-branches into materially different outcomes or requires risky irreversible
-authority. Do not turn strategy choice into an approval gate.
+## Applicable gates
 
-`delegated` also requires a current-host capability for exactly one bounded
-autonomous implementor. If delegation was inferred and that capability is
-unavailable, fall back to `direct` and record the reason. If the user explicitly
-requires delegation and the capability is unavailable, stop `Blocked` before
-any edit.
+Load [execution-gates.md](references/execution-gates.md) selectively:
 
-Example:
+- **Tests/coverage** for behavior changes, bugs, regressions, and repository thresholds.
+- **Source UI writing** when source material defines exact user-visible text.
+- **Browser verification** for visible UI, interaction, navigation, responsive behavior, or browser final state.
+- **Final review/commit** for every unit.
 
-```text
-Implementation strategy: direct, no TDD — this is a copy-only change with no
-useful public test seam. Proceeding with implementation and verification.
-```
+Before mutation and after initial green, use [review-boundary.md](references/review-boundary.md) for design fit, one simplify pass, fixed candidate/staged evidence, implementation ledger ownership, Standards/Spec review, and post-commit hook drift.
 
-See [delegation](references/delegation.md) for the bounded delegation contract.
-Before mutation and after initial GREEN, follow the current-agent-owned design-fit, one-pass simplify, and atomic `.tigerkit/implementation.md` ledger gates in [review-boundary](references/review-boundary.md); never invoke `tk-ask-repo` for repository-fit decisions.
+## CHECKPOINT / STOP
 
-When Figma, a screenshot, or a design specification defines expected UI, apply
-hybrid `tk-browser-verify` design-intent preflight before source mutation or any
-browser-tool call. Follow its `Blocked` boundary on conflict or ambiguity.
+Before editing, stop `Blocked` when requirements conflict, authority is unsafe, exact UI intent is unresolved, or a required user decision remains. During execution, apply the status table without converting unavailable evidence into `Pass`.
 
-## Implementation and verification
+## Commit and result
 
-### Execution ownership and investigation
+Commit exactly once only when status is `Pass` and commit is not prohibited. Stage only this unit's paths; preserve pre-existing user changes. Never broaden staging, bypass hooks for convenience, push, create a PR, merge, tag, release, or publish without a separate request.
 
-In `direct`, the current agent implements coherent slices; each slice proves one externally observable behavior
-and its related R/AC rather than a file/function layer, then repeats focused verification. In `delegated`, give
-one implementor the scope and completion criteria, then have the current agent
-inspect the diff and evidence. Never nest delegation or let a subagent invoke
-a user-invoked TigerKit skill. The implementor does not call browser tools;
-final browser verification belongs to the current agent.
+For standalone success, lead with `## Changed`, then `## Verification`, and optional `## Strategy` or `## Remaining risks` only when meaningful. Describe behavior, summarize checks, and report the commit once. Keep logs, detailed mappings, and provenance in `.tigerkit/implementation.md`.
 
-For an unknown-cause bug, intermittent failure, or performance regression,
-apply the [investigation loop](references/investigation.md) before mutation. Do
-not guess-patch without a reproducible red-capable signal. Do not impose the
-full hypothesis procedure when the cause is already established. An ordinary
-diagnose-only request remains read-only and receives no commit authority.
-
-### Test and coverage
-
-When TDD is selected, choose a meaningful public behavior seam and write one
-focused vertical-slice test. Run it and observe red, implement the minimum
-change to make it green, and rerun that test plus related verification. Repeat
-for another slice when needed. The required loop is `red → green`; the separate
-simplify gate runs once after the unit first reaches GREEN rather than inside
-every cycle. Before implementation, confirm that red is caused by the expected
-missing behavior rather than a setup, syntax, fixture, or mock failure; repair
-invalid test evidence and rerun until the expected red is observed. Exercise
-real behavior and in-process collaborators; mock only an external side effect that
-is unavailable or unsafe in the test environment, never the behavior under test. Do not call
-post-hoc tests TDD, claim an already passing test was red, test private
-implementation details, or distort a production API for tests. If the user
-requires TDD but no useful seam exists, do not silently switch to no-TDD;
-present the seam gap and options for a user decision. In automatic mode, do not
-select TDD without a useful seam.
-
-TDD is a strategy, but a durable automated test is a completion condition for
-production behavior. For a bug or regression with a meaningful public seam,
-run a failing regression test and observe red before the fix, then green after
-it. Protect new production behavior with a new or updated public-behavior test
-before commit even when TDD was not selected. Only non-runtime changes such as
-copy, documentation, pure configuration, or mechanical edits may omit a new
-test with a recorded reason; always run relevant verification.
-
-Run existing repository coverage commands and thresholds as-is. Treat a
-change-related regression or threshold miss as failure. If coverage tooling
-does not exist, do not install or invent a dependency, instrumentation, or
-percentage; report `coverage: unavailable`. Missing coverage numbers neither
-replace nor fail the durable public-behavior test requirement.
-
-### 🔴 CHECKPOINT · 🛑 STOP · testless production behavior
-
-When production behavior has no meaningful test seam, never grant a silent
-testless `Pass`. Present a seam-addition option and deterministic alternative
-verification, then stop before commit for the user's decision. Only an
-explicitly approved, named exception permits the alternative verification.
-After success, record the exception basis, unverified scope, and residual risk
-in the receipt. Silence, schedule pressure, and an existing no-TDD choice are
-not exception approval.
-
-### 🔴 HARD GATE · source UI writing
-
-For every string literal rendered in UI, freeze a UI-writing inventory before
-mutation. Labels, copy, numbers, units, currency, suffixes, and separators are
-examples, not an upper bound. Each row maps source location, non-empty source
-literal, current rendered/source-path literal, target literal, and
-implementation destination.
-
-Missing source/current evidence is `Unverifiable`. Any source↔current mismatch
-makes every row a conflict candidate and prevents `Pass` or commit without a
-user decision. A typo requires rechecking all same-kind tokens; never
-generalize source unreliability to adopt current code silently.
-
-Unless the user explicitly requests a wording change, preserve spelling, case,
-spacing, punctuation, symbols, numbers, and meaningful line breaks. Prohibit
-translation, paraphrase, shortening, correction, typo fixes, and repository
-normalization.
-
-After implementation, compare all three literal columns and include them in
-candidate/staged review; a code before/after table cannot replace the source
-column. Unauthorized drift is `Fail`; missing exact-comparison evidence is
-`Unverifiable`. Mark only explicitly approved wording as `authorized change`.
-
-### 🔴 HARD GATE · browser tools
-
-When scope includes visible UI, layout, styling, responsive behavior,
-interaction, navigation, form submission, or browser network/final state,
-apply hybrid `tk-browser-verify` as the active verification contract **before
-the first browser-tool or verification-server call**. Execute its mode
-selection, launch configuration, and safety checkpoint first. Mentioning the
-skill or wrapping later evidence in its format is not application.
-
-`tk-implement` must not directly select or call Chrome MCP, Playwright, CDP, or
-a native browser. Those tools are available only inside a
-`tk-browser-verify` contract that passed the precondition. A browser call made
-before the gate is invalid evidence and causes `Fail`. If browser verification
-is prohibited or the skill cannot be applied, do not substitute direct tools;
-use `Unverifiable`. DOM, accessibility tree, unit tests, or build success do
-not replace runtime screenshots and actual image inspection.
-
-### Final verification and review
-
-After each slice, run focused tests plus affected static checks, build, and
-required browser/integration verification. After the unit is complete, run the
-broadest relevant verification affected by that unit on the cumulative branch.
-Drive owns the final cross-ticket broad verification after collecting all unit
-receipts. Classify failures as `change-related`, `pre-existing`, `environment`,
-or `unverifiable`, then apply the terminal-state contract.
-
-Record final verification with the branch, `HEAD`, and verified diff/path
-scope. Immediately before commit, confirm current branch, `HEAD`, and staged
-diff still match. On unexpected drift or unverified staged changes, do not
-commit; preserve user changes and rerun affected verification or report
-`Blocked`. If commit itself fails, do not retry with broad staging or a bypass;
-record actual `HEAD` and uncommitted state in a `Fail` receipt.
-
-Every unit runs the current agent's [built-in review](references/review-boundary.md)
-regardless of size or risk. Review owns the current unit/ticket diff and R/AC;
-it does not repeat drive's aggregate traceability review. Permit one independent
-reviewer only for `large` work or high-risk authentication, payment, privacy,
-authorization, dependency, migration/data-loss, concurrency, or public API
-changes. Bound the flow to one review, one fix, and one regression verification.
-A finding prevents commit when it violates R/AC, public behavior, security/data safety, the durable-test gate, or the fixed reviewed snapshot; style-only suggestions do not. Drift or unverified required coverage also prevents commit. When an evidence-backed active-drive profile includes `independent-review`, the one bounded reviewer is required; unavailable review capability is `Unverifiable`, not permission to drop the obligation.
-
-## Commit and report
-
-Create exactly one current-branch unit commit only when status is `Pass` and
-the user did not prohibit commit. An implementor never commits; the current
-agent verifies the staged diff and commits. For a drive handoff, return commit
-SHA and unit/ticket ID so drive does not create another commit.
-
-Immediately after commit, audit the committed diff against the frozen reviewed
-candidate using [post-commit drift rules](references/review-boundary.md).
-Unclassified or semantic hook drift means the commit is not a verified `Pass`.
-
-An ordinary review-only request is a read-only agent task and grants no source
-mutation or commit authority. Review inside this skill owns only the explicit
-implementation scope and candidate diff.
-
-Without a separate request, do not push, create a PR, merge, tag, release, or
-publish. Do not automatically invoke another user-invoked skill.
-
-Lead with `## Changed`, then `## Verification`, and optional
-`## Remaining risks`. For a successful unit, use 2–5 short,
-behavior-oriented bullets under `Changed` and 1–4 verification-result bullets
-under `Verification`; these are bounded budgets, not quotas for padding. When underlying results exceed the budget, cite `.tigerkit/implementation.md`. Add
-`## Strategy` only for an explicit choice, exception, or plan deviation.
-Record the commit SHA/message once under `Verification` when a commit exists;
-the implementation ledger owns the full phase/status/ID provenance.
-
-Describe user-visible or unit behavior, not only files. Summarize commands and
-results; never paste logs or narrate review mechanics. `Verification` owns
-coverage, failure classification, commit, and
-`hook drift: none | format-only | reverted-semantic`. For active drive, return
-phase, unit/ticket ID, status (`Pass | Fail | Blocked | Unverifiable`), commit,
-unverified items, and R/AC references only in the internal handoff envelope.
-Omit `Remaining risks` when empty.
+For active drive, return only the internal unit ID, status (`Pass | Fail | Blocked | Unverifiable`), commit, R/AC references, verification/review evidence, and unverified items.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Treat progress commentary, internal procedure evidence, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between successful consecutive active-drive procedure invocations.
-
-Do not render a receipt heading, `Outcome:` label, phase-success token, caller-return instruction, or terminal provenance/status block in the user summary. When the result requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the canonical result schema requires it.
-
-Persist provenance only in an artifact or ledger already owned by the workflow. A read-only skill remains read-only. Never require a shared runtime reference outside this skill.
+Treat progress, internal evidence, and terminal output as separate surfaces. Start with the canonical result heading. Do not emit a separator, top-level `Outcome:`, receipt heading, caller-return instruction, duplicate provenance block, or terminal user result during an active drive handoff.
 
 ### 🔴 HARD GATE · response language
 
-Before any user-facing progress, question, or summary, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose result value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
+Use the latest explicit language instruction, otherwise the current user's language, for every free-form user-facing sentence. Preserve canonical headings, status tokens, IDs, commands, paths, code, and exact source literals.
 
-## User decision questions
+## User decisions
 
-When a user-owned decision blocks progress, ask one self-contained `Question`
-before any `Recommendation`. Show only decision-relevant evidence, two or three
-mutually exclusive options with material tradeoffs, and exactly one label
-ending `(Recommended)` or `(추천)`.
-
-Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex
-`request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only
-when none is exposed. A failed or rejected call is not absence; preserve
-`Pending | Blocked`. This changes presentation, not authority or stop gates.
+When a material user-owned decision blocks progress, ask one self-contained question with two or three mutually exclusive options, relevant evidence, and one recommendation. Use host-native structured input when available; a failed or rejected call remains non-success and never authorizes guessing.
