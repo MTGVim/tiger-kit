@@ -1,0 +1,82 @@
+name: Validate TigerKit v21.0.6
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    if: github.event.pull_request.head.ref == 'release/v21.0.6'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Prepare version metadata
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          readme = Path('README.md')
+          text = readme.read_text(encoding='utf-8')
+          if text.count('21.0.5') != 3:
+              raise SystemExit('unexpected TigerKit README version surface')
+          readme.write_text(text.replace('21.0.5', '21.0.6'), encoding='utf-8')
+
+          changelog = Path('CHANGELOG.md')
+          text = changelog.read_text(encoding='utf-8')
+          marker = '## Unreleased\n\n'
+          entry = '''## 21.0.6 — Lean Core Skills
+
+- Compressed `tk-drive` into a thin orchestration recipe while preserving its
+  preparation, unit execution, aggregate verification, amendment, and
+  non-success boundaries.
+- Compressed `tk-implement` into one unit workflow and moved conditional test,
+  source-writing, browser, review, and commit detail into a lazily loaded
+  execution-gates reference.
+- Preserved current trigger, status, ledger, verification, review, commit, and
+  cross-host contracts while reducing eager hot-path instructions.
+
+'''
+          if '## 21.0.6 — Lean Core Skills' in text:
+              raise SystemExit('v21.0.6 changelog entry already exists')
+          if text.count(marker) != 1:
+              raise SystemExit('unexpected changelog marker')
+          changelog.write_text(text.replace(marker, marker + entry, 1), encoding='utf-8')
+          PY
+
+      - name: Validate exact candidate
+        shell: bash
+        run: |
+          python3 scripts/validate_skills.py
+          python3 scripts/validate_skills.py --links-only
+          python3 -m unittest discover -s scripts -p 'test_*.py'
+          python3 scripts/sync_eval_compat.py
+          npx --yes skills@1.5.9 add . --list
+          npx --yes skills add . --list
+          git diff --check
+
+      - name: Commit validated release candidate
+        shell: bash
+        run: |
+          find scripts -type d -name __pycache__ -prune -exec rm -rf {} +
+          rm -f .github/workflows/validate-v21.0.6.yml
+          rmdir .github/workflows 2>/dev/null || true
+          rmdir .github 2>/dev/null || true
+          git config user.name 'TigerKit Release Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -A
+          git commit -m 'chore(release): prepare v21.0.6'
+          git push origin HEAD:release/v21.0.6
