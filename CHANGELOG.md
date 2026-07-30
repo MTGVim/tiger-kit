@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## 21.0.4 — Read-only Non-success Finalization
+
+- Added one internal `tk-drive non-success finalization` node after alternate
+  edges are exhausted, freezing product mutation and preserving the originating
+  `Fail | Blocked | Unverifiable` status.
+- Accounted verified, stopped, dependency-blocked, unattempted, and unverified
+  scope from existing artifacts and Git evidence with one deterministic
+  recovery action, without adding a public skill, partial status, run ledger,
+  scheduler, or automatic cleanup.
+- Extended `tk-implement` and `tk-to-tickets` non-success handoffs and added
+  validator and eval coverage for terminal graph edges, stale receipts, bounded
+  ledger evidence, and portable Claude Code, Codex, and Hermes Agent behavior.
+
 ## 21.0.3 — Direct Procedure Graph and Portable Validation
 
 - Kept decision closure unified in `tk-grill-me` and replaced parent-return
