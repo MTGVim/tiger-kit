@@ -1,6 +1,6 @@
 ---
 name: tk-browser-verify
-description: "[user/auto] Verify real-page UI accuracy or interaction in a browser, or resume this skill's pending runtime-identity request in the same conversation. Use Guard mode for disposable HTML, prototypes, layout, hover, and form exploration unless explicitly invoked; explicit invocation overrides Guard and selects Verdict, as do persistent user-visible source changes and official runtime verdict requests. Do not auto-apply to passive web research, document reading, URL extraction, or simple screenshot saving. This skill does not own source mutation or replace sufficient non-browser static verification."
+description: "[user/auto] Verify real-page UI accuracy or interaction in a browser, or resume this skill's pending runtime-identity request in the same conversation. Use Guard for disposable exploration and Verdict for explicit invocation or persistent user-visible changes. Do not apply to passive web research, document reading, URL extraction, or simple screenshot saving."
 metadata:
   tigerkit:
     kind: hybrid
@@ -10,269 +10,125 @@ metadata:
 
 # Browser verification
 
-Apply directly when browser evidence is needed to judge real-page UI accuracy
-or interaction. Do not auto-apply to passive web research, document reading,
-URL extraction, or simple screenshot saving. Explicit invocation always selects
-Verdict mode. A direct answer to this skill's pending runtime-identity request
-may resume the same active browser verification in the same conversation; an
-unrelated identity mention or new session may not.
+Apply only when real browser evidence is needed. Explicit invocation selects
+`Verdict`; a direct answer to this run's pending runtime-identity question may
+resume it in the same conversation.
 
-## Mode selection
+## Modes
 
-Before any browser tool or verification server call, choose one mode and apply
-only the relevant items in [proactive UI verification](references/ui-verification.md).
-Select [accessibility](references/accessibility.md) only for form, dialog,
-navigation, keyboard, or focus scope. Run design-intent preflight only when an
-actual Figma file, screenshot, or design specification is input; classify it
-`same | different | unclear`. Without a design basis, alignment is `N/A`: do
-not invent an `## Alignment` receipt.
+Choose before any browser or verification-server call.
 
-- **Guard mode**: disposable HTML, prototypes, or exploration without a
-  persistent user-visible source change or official verdict. Do not create a
-  responsive matrix or terminal verdict; inspect a screenshot only when making
-  a visual claim.
-- **Verdict mode**: persistent user-visible UI source changes, explicit
-  invocation, or an official verdict request. Apply the complete contract.
+- **Guard** — disposable HTML, prototypes, and exploratory UI checks. Run only
+  the requested trusted interaction, inspect a screenshot when making a visual
+  claim, record minimal evidence, and clean owned resources. Do not manufacture
+  a responsive matrix or official verdict.
+- **Verdict** — explicit invocation, persistent user-visible source changes, or
+  an official runtime verdict. Verify every required criterion and return
+  `Pass | Fail | Blocked | Unverifiable`.
 
-For a local disposable Guard target with no auth, external mutation, or
-sensitive data, pass both hard gates and perform only:
-`owned headless session → requested trusted interaction → required screenshot
-and computed state → one normal-sensitivity ledger row → owned cleanup`.
-Do not create network/HAR/console/video evidence, a responsive matrix, an
-environment table, or a terminal verdict unless the observed state requires it.
-
-Never use Guard mode to bypass a Verdict completion gate. Omit N/A receipt
-sections in Guard mode and report only requested results and necessary evidence.
-
-Choose the simplest browser-native, Playwright-compatible, MCP, or CDP route
-that can observe the target. The default uses a disposable isolated profile;
-reuse of an auth profile is optional only for the interactive-auth exception.
-
-When an active `tk-drive` supplies a frozen browser strategy, consume its
-classification, target environment, Guard/Verdict mode, account role/tenant,
-opaque profile hint, authentication expectation, safe interaction boundary,
-and cold-start marker without reopening product decisions. If exact runtime
-identity is marked `intentionally omitted`, ask the user to re-supply it once
-before browser launch and keep it ephemeral; this is runtime rehydration, not
-a Preparing amendment. Reject material strategy drift back to the parent.
-
-## 🔴 HARD GATE · Chrome `--headless=new`
-
-Before the first browser-related tool call in either mode, freeze the launch
-route. A newly started Chrome/Chromium defaults to an owned isolated profile,
-and tool configuration or process argv must prove that actual launch arguments
-contain the exact token `--headless=new`. Record binary, effective arguments,
-profile path, and ownership as environment evidence.
-
-Never infer the token from `headless`, `headless: true`, provider defaults, a
-tool name, or this instruction. If an auto-launch tool cannot inject and prove
-the exact argument, do not use it first. Start Chrome directly with
-`--headless=new` and attach to its verified CDP endpoint. If neither route is
-possible, do not open a headed browser: Verdict is `Unverifiable`, and Guard
-reports why it cannot proceed.
-
-A headed exception is allowed only when the user must directly complete
-credential entry, OTP, 2FA/2-step verification, passkey, CAPTCHA, or device
-approval. Record the auth barrier, direct-input need, and user approval before
-launch. A visible/headed request, headless launch failure, blank screen,
-timeout, provider convenience, or debugging is not an exception and cannot
-trigger headed fallback.
-
-Interactive login uses a user-local persistent profile outside the repository.
-After the user authenticates, close the headed owned browser, verify profile
-lock release, restart the same binary and `user-data-dir` with
-`--headless=new`, recheck arguments, and only then verify the product. Do not
-capture product evidence in the headed session. If the same-profile handoff is
-not proven, stop `Unverifiable`. Never output, capture, copy, or commit profile
-contents, credentials, OTPs, cookies, or tokens. When the user explicitly
-requires Firefox or Safari, use its verified native headless mode; the
-headed-first prohibition remains.
+Consume an active `tk-drive` browser profile without reopening product
+choices. Re-request an `intentionally omitted` runtime identity once, keep it
+ephemeral, and return material strategy drift to the parent.
 
 ## Workflow
 
-1. `mode/scope`: produce Guard/Verdict mode and a safe interaction boundary.
-2. `preflight`: produce required decisions, applicable references, and design
-   relation only when a design basis exists.
-3. `environment`: prove browser binary, exact `--headless=new`, isolated
-   profile, auth exception state, and that current-worktree source is served.
-4. `run/evidence`: record target identity, safe initial state, navigation,
-   interaction, network/final state, screenshots plus actual image inspection,
-   and conditional keyboard/focus/semantic/instrumented evidence.
-5. `verdict`: return `Pass | Fail | Blocked | Unverifiable` and unverified scope.
-6. `receipt/cleanup`: report the result and clean up only run-owned resources.
+1. **Scope** — choose Guard/Verdict, target, success criteria, and safe
+   interaction boundary.
+2. **Preflight** — load only applicable references: [UI verification](references/ui-verification.md),
+   [design](references/design.md), [accessibility](references/accessibility.md),
+   [visual](references/visual.md), [behavior](references/behavior.md), and
+   [safety](references/safety.md).
+3. **Launch** — prove the browser, effective arguments, profile ownership, and
+   current-worktree serving source.
+4. **Run** — navigate from a known state, perform safe interactions, inspect
+   required network/final state, capture screenshots, and inspect the actual
+   images.
+5. **Verdict** — bind each criterion to evidence and classify failures as
+   `change-related | pre-existing | environment | unverifiable`.
+6. **Cleanup** — close only run-owned browser resources and verify required
+   capture residue.
 
-Follow [session lifecycle](references/session-lifecycle.md) for every new
-browser. Suppress first-run/login/sync UI when possible. Skip or close it
-safely without logging in. Clean up only the browser/context/window created by
-this run; preserve pre-existing user sessions.
+Follow [session lifecycle](references/session-lifecycle.md) for browser
+ownership and [environment](references/environment.md) for serving-source and
+launch evidence.
 
-Select only relevant references: [visual](references/visual.md),
-[behavior](references/behavior.md), [environment](references/environment.md),
-[design](references/design.md), [accessibility](references/accessibility.md),
-and [safety](references/safety.md).
+## Critical pitfalls
 
-## CHECKPOINT / STOP
+### Chrome launch
 
-Immediately before a browser tool or verification server call, confirm mode,
-launch configuration, exact `--headless=new` evidence, and safe interaction
-scope. Without launch evidence, make no browser call and use the terminal-state
-contract below.
-
-### Stop before browser start
-
-When stopping before session creation, do not print the future checklist or
-empty evidence sections. For a design blocker, return `## Alignment` and one
-choice question. Otherwise return terminal status, one-line cause, and the
-input required to resume. Name only the actual blocker. If no resource was
-created, cleanup is one sentence.
-
-## 🔴 HARD GATE · capture ledger
-
-Before the first capture in either mode, designate
-`.tigerkit/browser-verify/runs/<run-id>/` as this run's only capture ledger and
-record destinations for screenshots, traces, video, network/HAR, and console
-dumps. Prefer directing tool output there initially.
-
-If a tool forces output to tool temp, default downloads, or user scratch, move
-only files proven to be owned by this run immediately after capture. User
-screenshots/fixtures and pre-existing or other-run artifacts are input evidence
-only; never move, rename, or delete them. Unknown ownership is `Blocked`.
-
-For every inventory item record kind, original/ledger path, ownership, move
-result, and:
-
-- `Sensitivity: normal | sensitive`
-- `Redaction: N/A | verified | failed | unverifiable`
-- `Residue check: verified | unverifiable`
-
-Inspect network/HAR/console and auth-adjacent captures for authorization,
-cookies, tokens, credentials, secrets, and sensitive bodies. Use sensitive
-captures only after verified redaction and original-path residue absence.
-`failed | unverifiable` redaction or unverifiable residue makes the result
+A newly started Chrome/Chromium must prove the exact effective argument
+`--headless=new` before the first browser call. Do not infer it from a tool name,
+`headless: true`, or provider defaults. If an auto-launch route cannot prove the
+argument, launch directly and attach through CDP; otherwise return
 `Unverifiable`.
 
-If the parent `.tigerkit/` is not ignored by version control, do not persist
-unverified sensitive captures there. Redact in run-owned external temp and move
-only a safe result, or stop `Unverifiable`. Never edit `.gitignore`.
+A headed browser is allowed only for user-completed credential entry, OTP,
+2FA, passkey, CAPTCHA, or device approval. After authentication, close the
+headed owned browser and resume the same profile with verified headless launch
+before collecting product evidence. Never expose profile contents, credentials,
+cookies, OTPs, or tokens.
 
-Verify every ledger file exists and is non-empty, no run-owned capture remains
-outside the ledger, and the receipt cites only ledger paths. Unknown move,
-existence, redaction, or residue state is `Unverifiable`. Warn for normal
-captures when `.tigerkit/` is not ignored.
+### Evidence and captures
 
-## Verdict mode contract
+DOM, accessibility, network success, or visual similarity does not replace a
+runtime screenshot plus actual image inspection. Changed behavior needs the
+relevant transition and final-state evidence, not only a toast or local DOM
+change.
 
-Confirm target URL, environment, success criteria, and safe interactions, then
-pass the Chrome gate. Use the headed auth exception only after approval, and
-resume the same profile headlessly before verification.
+Before the first persisted capture, use
+`.tigerkit/browser-verify/runs/<run-id>/` as the run-owned ledger. Move only
+files proven to belong to this run. Sensitive network, console, or auth-adjacent
+captures require verified redaction and residue absence; otherwise use
+`Unverifiable`. Never edit `.gitignore` or delete user-owned evidence.
 
-When a design basis exists, run [design](references/design.md) intent preflight
-before exploration. Decompose visible spacing across frame, container,
-component, and child. If the instruction and design differ or are unclear,
-describe both final outcomes, criteria, and evidence; ask one explicit choice
-and stop `Blocked` before implementation or browser launch. Silence is not
-agreement. Skip this paragraph when there is no design basis.
+Never paste or store raw console, network/HAR, or transcript bodies when a path
+and compact finding are enough. Instrumented evidence is allowed only under the
+restoration and residue rules in [visual](references/visual.md).
 
-### Execution evidence and interruption
+On crash, connection loss, timeout, or unexpected route/tab change, discard the
+partial-flow verdict and retry once from the same verified initial state. Then
+stop `Unverifiable` if evidence is still incomplete.
 
-Preserve this order:
-`design intent → decision if needed → environment → navigation → interaction →
-transition → network → final state → screenshot → image inspection → verdict`.
-DOM, accessibility tree, network success, or visual similarity never replaces
-screenshot inspection.
+Do not edit production code. Unsafe irreversible interaction without a safe
+environment and explicit authority is `Unverifiable`.
 
-| Status | Trigger | Required receipt |
-|---|---|---|
-| `Pass` | all criteria, required breakpoints, runtime screenshots, and image inspection verified | per-criterion `Verified` plus ledger evidence |
-| `Fail` | runtime requirement violation observed | screenshot, reproduction, and `change-related \| pre-existing \| environment` classification |
-| `Blocked` | a pre-session design decision is missing | `## Alignment` decision receipt; no screenshot |
-| `Unverifiable` | safe authority/environment or required runtime evidence is unavailable | executed scope, missing evidence, cleanup |
+## Result
 
-On connection loss, crash, navigation timeout, or unexpected route/tab change,
-discard partial-flow evidence. Retry once only after rechecking the same target,
-environment, and safe initial state; otherwise Verdict is `Unverifiable` and
-Guard reports incomplete scope. Always attempt owned cleanup.
+| Status | Meaning |
+| --- | --- |
+| `Pass` | Every required criterion and runtime image check is verified |
+| `Fail` | A runtime requirement violation is observed |
+| `Blocked` | A pre-session user decision is required |
+| `Unverifiable` | Safe environment, authority, or required evidence is unavailable |
 
-Changed behavior needs transition, request/response, and final UI state
-evidence. A toast or local DOM change alone is insufficient. Unsafe irreversible
-actions without a safe environment and explicit authority are `Unverifiable`.
-
-### Evidence retention and reporting
-
-Keep only evidence that supports a criterion, finding, or cleanup result; create
-no empty files. A ledger row contains criterion, state, evidence path,
-redaction, and cleanup state. Never paste or store raw console, network/HAR, or
-transcript bodies when a path plus compact finding is sufficient. Store
-verified nonsensitive facts in `.tigerkit/browser-verify/env.md` or
-`screens/<screen>.md` only when needed. Create parents lazily and replace
-atomically when possible. Do not auto-create `login.local.md`; if explicitly
-requested, never print its content and prefer mode `0600`. Do not inspect or
-migrate legacy global TigerKit state.
-
-Do not edit production code or promote evidence into a rule/skill, except for
-the bounded `instrumented` evidence class in [visual](references/visual.md),
-which requires restoration and measured residue absence in Guard and Verdict.
-
-When a design basis exists, `## Alignment` owns `Instruction`, `Design basis`,
-`Spacing stack`, `Relation`, `Expected implementation`, `User decision`, and
-alignment `Status: confirmed | pending | Blocked`; it is not runtime Verdict.
-`## Verdict` owns the overall result, `## Verified` criteria, `## Findings`
-deviations, `## Evidence` observations/captures, `## Unverified` omitted scope,
-and `## Cleanup` owned-resource results. These sections are the terminal user
-summary; do not add a receipt heading, paste raw evidence bodies, or duplicate
-facts. Omit empty Findings/Unverified/Cleanup. Begin Verdict with the observed
-result sentence. The browser ledger owns capture provenance and cleanup detail.
-
-When more than one criterion is verified, render `## Verified` as a compact
-`Criterion | Result | Evidence` table. Use a sentence when only one
-user-relevant row exists. Rows represent acceptance criteria, not screenshots,
-commands, or log fragments. Summarize two to seven verified scenarios as
-bounded bullets or rows. For eight or more, show the top five to seven and cite
-the browser ledger path that owns the remainder. The budget is not a quota.
+When a design basis exists, use `## Alignment` only for the design decision.
+Use `## Verdict` for the runtime result, with non-empty `## Verified`, optional
+`## Findings`, `## Evidence`, `## Unverified`, and `## Cleanup`. When several
+criteria exist, use `Criterion | Result | Evidence`; use a sentence when only
+one user-relevant row exists. Summarize two to seven verified scenarios; for
+more, show the top five to seven and cite the ledger. Do not add a receipt
+heading or duplicate provenance.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Treat progress commentary, internal procedure evidence, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between successful consecutive active-drive procedure invocations.
-
-Do not render a receipt heading, `Outcome:` label, phase-success token, caller-return instruction, or terminal provenance/status block in the user summary. When the result requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the canonical result schema requires it.
-
-Persist provenance only in an artifact or ledger already owned by the workflow. A read-only skill remains read-only. Never require a shared runtime reference outside this skill.
+Keep progress and internal procedure evidence out of the terminal user response.
+Begin with the canonical result heading or sentence. Emit no ceremonial
+preamble, receipt heading, `Outcome:` label, duplicate status, or active-drive
+child summary. Put detailed provenance only in this skill's owned ledger; a
+read-only path remains read-only.
 
 ### 🔴 HARD GATE · response language
 
-Before any user-facing progress, question, or summary, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose result value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
+Use the latest explicit user language, otherwise the current message's language.
+Preserve canonical headings, status tokens, IDs, commands, paths, code, and
+quoted source literals exactly. Rewrite any free-form language drift before
+returning.
 
 ## User decision questions
 
-When a user-owned decision blocks progress, ask one self-contained `Question`
-before any `Recommendation`. Show only decision-relevant evidence, two or three
-mutually exclusive options with material tradeoffs, and exactly one label
-ending `(Recommended)` or `(추천)`.
-
-Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex
-`request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only
-when none is exposed. A failed or rejected call is not absence; preserve
-`Pending | Blocked`. This changes presentation, not authority or stop gates.
-
-## DO NOT / ANTI-PATTERNS
-
-- Do not call an auto-browser without launch configuration and exact
-  `--headless=new` evidence, or use headed-first/fallback outside interactive
-  auth.
-- Do not continue product verification in the headed login session or resume
-  through a different profile.
-- Do not leave run captures outside the ledger or use sensitive captures
-  without redaction and residue proof.
-- Do not move user-provided or unknown-ownership artifacts.
-- Do not reuse an existing server without current-worktree, asset-pipeline, and
-  serving-version proof; never diagnose stale observations as code defects.
-- Do not use instrumented evidence instead of cheap direct observation or
-  complete without measured cleanup.
-- Do not claim `pre-existing` without baseline reproduction or causal `Pass`
-  without a negative control.
-- Do not replace screenshot inspection with DOM, accessibility tree, network,
-  unit-test, or build success.
-- Do not perform real payment, deletion, or external sending without a safe
-  environment and explicit authority.
-- Do not replace relevant keyboard/focus/semantic evidence with screenshots or
-  claim full WCAG compliance from a limited flow.
+Ask one self-contained `Question` only for a material user-owned decision, then
+show a `Recommendation`, two or three mutually exclusive options, and exactly
+one `(Recommended)` or `(추천)` label. Use native `AskUserQuestion`, Codex
+`request_user_input`, or Hermes Agent `clarify`; plain text is allowed only when
+none is exposed. A failed or rejected call is not absence; preserve
+`Pending | Blocked`.
