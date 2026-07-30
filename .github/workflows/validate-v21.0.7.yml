@@ -31,11 +31,53 @@ jobs:
 
           path = Path('scripts/zero_crust_migrate.py')
           text = path.read_text(encoding='utf-8')
+
           old = 'pattern.subn(replacement.rstrip() + "\\n\\n", text, count=1)'
           new = 'pattern.subn(lambda _match: replacement.rstrip() + "\\n\\n", text, count=1)'
           if text.count(old) != 2:
               raise SystemExit(f'unexpected replacement runner count: {text.count(old)}')
-          path.write_text(text.replace(old, new), encoding='utf-8')
+          text = text.replace(old, new)
+
+          old_block = '''for relative in (
+              "skills/tk-browser-verify/SKILL.md",
+              "skills/tk-reflect/SKILL.md",
+              "skills/tk-drive/SKILL.md",
+          ):
+              block = re.compile(
+                  rf\'''(?ms)        "{re.escape(relative)}": \\(.*?\\n        \\),\\n\'''
+              )
+              validator, count = block.subn("", validator, count=1)
+              if count != 1:
+                  raise SystemExit(f"expected one required_text block for {relative}, found {count}")
+          '''
+          new_block = '''required_start = validator.index("    required_text = {")
+          required_end = validator.index(
+              "    for relative, needles in required_text.items():",
+              required_start,
+          )
+          required_block = validator[required_start:required_end]
+          for relative in (
+              "skills/tk-browser-verify/SKILL.md",
+              "skills/tk-reflect/SKILL.md",
+              "skills/tk-drive/SKILL.md",
+          ):
+              block = re.compile(
+                  rf\'''(?ms)        "{re.escape(relative)}": \\(.*?^        \\),\\n\'''
+              )
+              required_block, count = block.subn("", required_block, count=1)
+              if count != 1:
+                  raise SystemExit(
+                      f"expected one repository required_text block for {relative}, found {count}"
+                  )
+          validator = (
+              validator[:required_start]
+              + required_block
+              + validator[required_end:]
+          )
+          '''
+          if text.count(old_block) != 1:
+              raise SystemExit('unexpected required_text migration block')
+          path.write_text(text.replace(old_block, new_block), encoding='utf-8')
           PY
           python3 scripts/zero_crust_migrate.py
 
