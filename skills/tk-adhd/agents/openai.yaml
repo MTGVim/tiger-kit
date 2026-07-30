@@ -1,7 +1,7 @@
 interface:
-  display_name: "Recap Mode"
+  display_name: "ADHD Mode"
   short_description: "[user] Shape long work into visible, actionable progress"
-  default_prompt: "Use $tk-recap to make the current work easier to follow and act on."
+  default_prompt: "Use $tk-adhd to make the current work easier to follow and act on."
 
 policy:
   allow_implicit_invocation: false

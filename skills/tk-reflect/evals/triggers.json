@@ -159,6 +159,15 @@
       ]
     },
     {
+      "id": "validation-negative-explicit-output-mode",
+      "split": "validation",
+      "query": "$tk-adhd 지금 진행 상태와 다음 행동이 보이게 해줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
       "id": "validation-positive-diagnosis-dependent",
       "split": "validation",
       "query": "tk-drive의 반복 blocker incident를 회고하고 원인이 맞을 때만 재사용 rule 후보로 분류해 주세요.",

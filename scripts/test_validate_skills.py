@@ -25,7 +25,7 @@ if __package__:
         validate_release_version_contract,
         validate_response_language_contract,
         validate_runtime_scratch,
-        validate_single_drive_recap_contract,
+        validate_single_drive_adhd_contract,
         validate_skill_language,
         validate_terminal_summary_contract,
         validate_user_decision_contract,
@@ -52,7 +52,7 @@ else:
         validate_release_version_contract,
         validate_response_language_contract,
         validate_runtime_scratch,
-        validate_single_drive_recap_contract,
+        validate_single_drive_adhd_contract,
         validate_skill_language,
         validate_terminal_summary_contract,
         validate_user_decision_contract,
@@ -75,7 +75,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "tk-implement",
                 "tk-learn",
                 "tk-merge-conflict",
-                "tk-recap",
+                "tk-adhd",
                 "tk-prototype",
                 "tk-reflect",
                 "tk-skill-diagnose",
@@ -84,7 +84,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
             },
         )
         self.assertEqual(
-            USER_INVOKED_SKILLS, {"tk-ask-repo", "tk-drive", "tk-recap"}
+            USER_INVOKED_SKILLS, {"tk-ask-repo", "tk-drive", "tk-adhd"}
         )
         self.assertTrue(
             {
@@ -104,9 +104,9 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "drive-preserves-terminal-on-failed-preparing",
                 "drive-reseals-one-active-amendment",
                 "drive-continues-automatically-after-ready",
-                "recap-explicit-activation",
-                "recap-stop-command",
-                "recap-safety-exception",
+                "adhd-explicit-activation",
+                "adhd-stop-command",
+                "adhd-safety-exception",
                 "drive-requires-explicit-start",
                 "drive-resumes-preparing-decision-answer",
                 "drive-bounds-result-cardinality",
@@ -305,16 +305,26 @@ class CanonicalSkillContractTest(unittest.TestCase):
             self.assertIn("same active", text)
         self.assertNotIn("tk-prep", drive)
 
-    def test_recap_is_explicit_adapted_and_not_shared(self) -> None:
+    def test_adhd_is_explicit_adapted_and_not_shared(self) -> None:
         root = Path(__file__).resolve().parents[1]
-        recap = (root / "skills/tk-recap/SKILL.md").read_text(encoding="utf-8")
+        adhd = (root / "skills/tk-adhd/SKILL.md").read_text(encoding="utf-8")
 
-        self.assertIn("disable-model-invocation: true", recap)
-        self.assertIn("origin: ayghri/i-have-adhd", recap)
-        self.assertIn("relationship: adapted", recap)
-        self.assertIn("## Persistence", recap)
-        self.assertIn("## When to break the rules", recap)
-        self.assertEqual(validate_single_drive_recap_contract(root), [])
+        self.assertIn("disable-model-invocation: true", adhd)
+        self.assertIn("origin: ayghri/i-have-adhd", adhd)
+        self.assertIn("relationship: adapted", adhd)
+        self.assertIn("latest explicit activation or stop event wins", adhd)
+        self.assertIn("never an activation event", adhd)
+        self.assertIn("## Persistence", adhd)
+        self.assertIn("## When to break the rules", adhd)
+        self.assertEqual(validate_single_drive_adhd_contract(root), [])
+
+        reflect = (root / "skills/tk-reflect/SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("explicit invocation of another skill", reflect)
+        self.assertIn("output-style mode", reflect)
+        reflect_triggers = (
+            root / "skills/tk-reflect/evals/triggers.json"
+        ).read_text(encoding="utf-8")
+        self.assertIn("$tk-adhd 지금 진행 상태와 다음 행동이 보이게 해줘", reflect_triggers)
 
     def test_drive_event_recorder_command_is_unambiguous(self) -> None:
         root = Path(__file__).resolve().parents[1]
@@ -919,7 +929,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
             "`clarify`",
         )
 
-        for skill in EXPECTED_SKILLS - {"tk-recap"}:
+        for skill in EXPECTED_SKILLS - {"tk-adhd"}:
             with self.subTest(skill=skill):
                 text = (root / "skills" / skill / "SKILL.md").read_text(
                     encoding="utf-8"
@@ -955,7 +965,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
             ),
             "tk-learn": ("Lead with the promotion or no-op decision", "`Target path`"),
             "tk-merge-conflict": ("Use only non-empty sections in this order", "`Blocked: no active conflict`"),
-            "tk-recap": ("## Rules", "## When to break the rules"),
+            "tk-adhd": ("## Rules", "## When to break the rules"),
             "tk-prototype": ("Record decision-relevant status once", "Keep command mechanics after the decision"),
             "tk-reflect": ("In chat, emit only", "no raw logs, transcripts, diff excerpts"),
             "tk-skill-diagnose": ("In chat, emit `## Diagnosis`", "Never copy raw logs, transcripts"),

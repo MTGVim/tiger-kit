@@ -13,7 +13,7 @@ ticket, implementation·aggregate verification·reflection까지 이어갑니다
 현재 `main`에는 다음 release를 위한 skill 변경이 포함될 수 있습니다.
 
 `v21.0.1`은 terminal output을 단순화하고 준비 단계에서 browser 전략을
-고정하며 explicit persistent output utility를 `tk-recap`으로 제공합니다.
+고정하며 explicit persistent output utility를 `tk-adhd`로 제공합니다.
 `/tk-drive <source>` 또는 `$tk-drive <source>`가 worktree-local
 `.tigerkit/prep.md`를 내부적으로 seal·activate한 뒤 추가 확인 없이 첫
 implementation unit으로 진행합니다. 실행 중 늦게 발견된 user-owned
@@ -21,9 +21,9 @@ decision은 한 번만 Preparing amendment를 거칠 수 있고, 초기 구현 �
 자동수정은 최대 세 번입니다. 기존 direct single-unit `tk-implement`
 사용은 그대로 유효합니다.
 
-`tk-recap`을 명시적으로 선택하면 action-first, bounded steps, persistent
-state restatement를 적용하며 `stop recap mode`, `stop adhd mode`, 또는
-`normal mode`까지 유지됩니다. 다른 skill은 이 mode를 암묵적으로
+`tk-adhd`를 명시적으로 선택하면 action-first, bounded steps, persistent
+state restatement를 적용하며 `stop adhd mode` 또는 `normal mode`까지
+현재 대화에서 유지됩니다. 다른 skill은 이 mode를 암묵적으로
 활성화하지 않습니다.
 
 나머지 14개 canonical skill은 최신 명시 언어 지시를 우선하는
@@ -87,7 +87,7 @@ Claude Code와 Hermes Agent에서는 `/tk-implement` 같은 slash command로 표
 | --- | --- | --- |
 | `tk-ask-repo` | user | 외부에서 들어온 repository 질문을 분류하고 원점·소비처·영향·책임을 `path:line` 근거로 조사합니다. |
 | `tk-drive` | user | 명시 source를 내부 Preparing에서 Ready로 만들고 같은 run의 Executing에서 unit별 commit, aggregate verification, reflection까지 진행합니다. |
-| `tk-recap` | user | 명시적으로 켜고 끄는 persistent action-first 출력 mode를 제공합니다. |
+| `tk-adhd` | user | 명시적으로 켜고 끄는 conversation-local action-first 출력 mode를 제공합니다. |
 | `tk-grill-me` | hybrid | 명시 선택 또는 prep decision handoff에서 사실을 조사하고 중요한 결정을 한 번에 한 질문씩 닫습니다. |
 | `tk-to-spec` | hybrid | 독립 요청 또는 prep handoff에서 Ready spec을 작성·검증합니다. |
 | `tk-to-tickets` | hybrid | 독립 요청 또는 prep handoff에서 source를 수직 ticket으로 나눕니다. |

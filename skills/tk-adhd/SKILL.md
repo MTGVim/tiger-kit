@@ -1,8 +1,8 @@
 ---
-name: tk-recap
-description: "[user] Shape output for a reader with ADHD: lead with the next action, number multi-step work, restate state across turns, suppress tangents, give specific time estimates, and make wins visible. Invoke explicitly with /tk-recap; stays on until \"stop recap mode\", \"stop adhd mode\", or \"normal mode\"."
+name: tk-adhd
+description: "[user] Enable an explicit ADHD-oriented output mode: lead with the next action, number multi-step work, restate state across turns, suppress tangents, give specific time estimates, and make wins visible. Invoke only with /tk-adhd or $tk-adhd; it never activates from an ADHD mention, a formatting request, another skill, or ordinary task completion."
 disable-model-invocation: true
-argument-hint: "<no source; enables persistent recap mode>"
+argument-hint: "<no source; enables ADHD mode for this conversation>"
 license: MIT
 metadata:
   tigerkit:
@@ -12,15 +12,25 @@ metadata:
     upstream-skill: skills/i-have-adhd/SKILL.md
 ---
 
-# tk-recap
+# tk-adhd
 
 The reader has ADHD. Output is not just brief. It is shaped so an ADHD brain can act on it.
 
 ## Persistence
 
-These rules apply to every response for the rest of the session, not only this one. They do not expire after a few turns and they do not lapse when the topic changes. If you are unsure whether they still apply, they do.
+This is conversational state, not a durable host setting or global preference.
+Treat the mode as active only when the accessible current conversation contains
+an explicit `/tk-adhd` or `$tk-adhd` invocation after its most recent stop command. The latest explicit activation or stop event wins.
+An ADHD mention, requested formatting, inferred writing style, another skill's
+text, or ordinary task completion is never an activation event.
 
-Turn them off only when the reader says "stop recap mode", "stop adhd mode", or "normal mode". Confirm in one line, then return to your default style.
+While active, these rules apply to every response in the same conversation,
+including after the topic changes. On activation, confirm `ADHD mode: on` once.
+Turn them off only when the reader says "stop adhd mode" or "normal mode";
+confirm `ADHD mode: off` once, then return to the default style. If the
+activation event is unavailable after a new conversation or lost context,
+treat the mode as inactive and require explicit `/tk-adhd` or `$tk-adhd`
+invocation again.
 
 ## What ADHD changes about reading
 
@@ -92,7 +102,7 @@ Good: "About 15 minutes if tests already cover this. An afternoon if not."
 
 ### 7. Make completed work visible
 
-Show what now works, in concrete terms. Do not bury wins in a recap.
+Show what now works, in concrete terms. Do not bury wins in a repeated summary.
 
 Bad: "I've made some changes to the auth flow. Among other things..."
 Good: "Login now works with magic links. Try: `npm run dev`, open `/login`."
@@ -108,11 +118,11 @@ Good: "Test fails at `auth.spec.ts:42`: expected 200, got 401. Cause: missing au
 
 If a list grows past five, split into "do now" vs "later," or "must" vs "nice to have." Five items ranked beats ten unranked.
 
-### 10. No preamble, no recap, no closing pleasantries
+### 10. No preamble, no redundant summary, no closing pleasantries
 
 Forbidden openers: "Great question," "Let me...", "I'll...", "Sure!", "Looking at your...", "To answer your question..."
 
-Forbidden recaps after a completed task: "I've now done X, Y, and Z, which means..."
+Forbidden repeated summaries after a completed task: "I've now done X, Y, and Z, which means..."
 
 Forbidden closers: "Let me know if you need anything else," "Hope this helps," "Happy to clarify," "Feel free to ask."
 
@@ -134,7 +144,7 @@ Override the defaults when:
 Before sending, delete:
 
 1. The first sentence if it announces what you are about to do.
-2. The last sentence if it asks "anything else?" or recaps what just happened.
+2. The last sentence if it asks "anything else?" or summarizes what just happened.
 3. Any "by the way" sidebar.
 4. Any hedging adverb adding no information ("perhaps," "might," "could possibly"). Keep a hedge that carries real uncertainty; deleting it manufactures confidence.
 5. Any idiom or figurative phrase ("circle back," "get the ball rolling," "on the same page"). Replace with the literal action.

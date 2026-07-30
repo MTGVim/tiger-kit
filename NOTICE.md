@@ -68,7 +68,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-`tk-recap` is adapted from `ayghri/i-have-adhd`, source snapshot
+`tk-adhd` is adapted from `ayghri/i-have-adhd`, source snapshot
 `07684c4ab625dd7d1ea6e99e065f60bc0ac6a1ba`
 ([`skills/i-have-adhd/SKILL.md`](https://github.com/ayghri/i-have-adhd/blob/07684c4ab625dd7d1ea6e99e065f60bc0ac6a1ba/skills/i-have-adhd/SKILL.md)).
 Relationship metadata: `relationship: adapted`. TigerKit preserves the
@@ -76,7 +76,7 @@ upstream action-first, bounded-step, persistent state, specific-time,
 visible-completion, safety-exception, and no-ceremonial-closer behavior while
 renaming the explicit invocation surface and adding TigerKit metadata and
 evals. No other canonical skill inherits these ADHD-oriented rules through a
-shared output contract, and `tk-recap` never activates implicitly.
+shared output contract, and `tk-adhd` never activates implicitly.
 
 `ayghri/i-have-adhd` upstream license:
 

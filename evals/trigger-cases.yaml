@@ -58,6 +58,7 @@
     - "방금 변경을 짧게 요약해줘"
     - "후보를 바로 규칙 파일에 적용해줘"
     - "active tk-drive가 구현 중이야"
+    - "$tk-adhd 지금 진행 상태와 다음 행동이 보이게 해줘"
 - skill: tk-skill-diagnose
   positive:
     - "tk-learn이 일반 구현 요청에 과잉 호출되는 원인을 clean context에서 재현해줘"
@@ -124,11 +125,11 @@
     - tk-implement
     - tk-grill-me
     - tk-handoff
-- skill: tk-recap
+- skill: tk-adhd
   examples:
-    - "$tk-recap 지금 진행 상태와 다음 행동이 보이게 해줘"
-    - "/tk-recap 이 긴 작업을 따라가기 쉽게 정리해줘"
-    - "skill picker에서 tk-recap을 선택해 이 세션에 recap mode를 켜줘"
+    - "$tk-adhd 지금 진행 상태와 다음 행동이 보이게 해줘"
+    - "/tk-adhd 이 긴 작업을 따라가기 쉽게 정리해줘"
+    - "skill picker에서 tk-adhd를 선택해 이 대화에 ADHD mode를 켜줘"
   nearby:
     - tk-drive
     - tk-handoff

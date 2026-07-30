@@ -634,14 +634,14 @@
 - case: drive-excludes-forbidden-prior-art
   skill: tk-drive
   expect: "Raw conversations, old implementation/reflection scratch, pending drafts, global state, and inaccessible host-only rules cannot supply prior-art evidence."
-- case: recap-explicit-activation
-  skill: tk-recap
-  expect: "Only explicit tk-recap activation enables the persistent ADHD-oriented output shape and makes current progress plus the next action visible."
-- case: recap-stop-command
-  skill: tk-recap
-  expect: "An active recap mode stops only on one of its documented stop commands and confirms the return to default style in one line."
-- case: recap-safety-exception
-  skill: tk-recap
+- case: adhd-explicit-activation
+  skill: tk-adhd
+  expect: "Only explicit tk-adhd activation enables the conversation-local ADHD-oriented output shape; tk-reflect is not selected, and current progress plus the next action remain visible."
+- case: adhd-stop-command
+  skill: tk-adhd
+  expect: "The latest explicit activation or stop event in accessible conversation state wins; an active mode stops only on a documented stop command and confirms `ADHD mode: off` once."
+- case: adhd-safety-exception
+  skill: tk-adhd
   expect: "Destructive action, real ambiguity, a debug spiral, user-requested explanation, or a harness conflict overrides the formatting default without weakening safety."
 - case: browser-bounds-result-cardinality
   skill: tk-browser-verify
