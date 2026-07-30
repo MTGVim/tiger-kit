@@ -10,13 +10,10 @@ from pathlib import Path
 
 
 PHASES = {
-    "tk-grill-me",
-    "tk-to-spec",
-    "tk-to-tickets",
     "tk-implement",
     "tk-reflect",
 }
-SUCCESS_STATES = {"Ready", "confirmed", "Pass"}
+SUCCESS_STATES = {"Pass"}
 
 
 def _event(arguments: list[str]) -> dict[str, str]:
@@ -41,7 +38,7 @@ def _event(arguments: list[str]) -> dict[str, str]:
         }
     raise ValueError(
         "usage: record_eval_event.py phase_invocation <phase> | "
-        "phase_receipt <phase> <Ready|confirmed|Pass> <transition>"
+        "phase_receipt <phase> <Pass> <transition>"
     )
 
 

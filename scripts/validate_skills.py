@@ -122,6 +122,22 @@ DRIVE_TRANSITION_DEBT_GATE = (
     "an unexecuted `Outstanding transition`; execute the recorded transition in the\n"
     "same active turn or return the one evidence-supported non-success state."
 )
+DRIVE_RAW_SOURCE_REJECTION = (
+    "`Status: Blocked`\n"
+    "`Reason: tk-drive consumes a sealed TigerKit prep, not a raw source.`\n"
+    "`Next: /tk-prep <source>`"
+)
+DRIVE_PREPARED_ONLY_GATE = (
+    "Prepared drive may invoke only `tk-implement` and the single allowed\n"
+    "`tk-reflect` tail.\n"
+    "It must not invoke `tk-grill-me`, `tk-to-spec`, `tk-to-tickets`, or\n"
+    "`tk-prototype` during initial or corrective execution."
+)
+DRIVE_CORRECTIVE_BOUND_GATE = (
+    "The initial implementation consumes zero corrective cycles.\n"
+    "At most three post-initial corrective cycles are permitted inside frozen R/AC;\n"
+    "a fourth cycle or any scope, ticket, or decision expansion stops mutation."
+)
 RESPONSE_LANGUAGE_GATE = (
     "### 🔴 HARD GATE · response language\n\n"
     "Before any user-facing progress, question, or summary, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. "
@@ -312,7 +328,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "learn-bounds-result-cardinality",
     "handoff-ignores-generic-continue",
     "drive-requires-explicit-start",
-    "drive-resumes-pending-answer",
+    "drive-rejects-pending-preparation-answer",
     "drive-bounds-result-cardinality",
     "drive-response-language-explicit-korean",
     "drive-response-language-explicit-english",
@@ -324,11 +340,11 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-skips-unneeded-tickets",
     "drive-keeps-ticket-ledger",
     "drive-preserves-source-ui-writing-verbatim",
-    "drive-blocks-source-current-ui-mismatch",
-    "drive-scopes-approval-to-asked-axis",
+    "drive-invalidates-source-current-ui-mismatch",
+    "drive-invalidates-unapproved-secondary-axis",
     "drive-reads-complete-remote-source",
     "drive-blocks-unreadable-ui-literal",
-    "drive-routes-conflicting-ui-literals-to-decision",
+    "drive-invalidates-conflicting-ui-literals",
     "drive-commit-command-failure-is-fail",
     "drive-precommit-drift-is-blocked",
     "drive-carries-authorized-ui-writing-change",
@@ -347,13 +363,16 @@ REQUIRED_BEHAVIOR_CASES = {
     "learn-is-sole-semantic-skill-writer",
     "drive-bounds-nested-skills",
     "drive-invokes-phase-owners",
-    "drive-continues-after-ready-spec",
+    "drive-continues-after-prep-claim",
     "drive-checks-transition-debt-before-terminal-output",
     "drive-rejects-missing-transition-echo",
-    "drive-requires-spec-for-trivial-task",
-    "drive-invokes-grill-on-unresolved-decision",
+    "drive-requires-prep-for-trivial-task",
+    "drive-invalidates-on-new-decision",
     "drive-skips-grill-for-ready-source",
-    "drive-reruns-spec-after-grill",
+    "drive-does-not-rerun-spec-after-drift",
+    "drive-claims-ready-prep-atomically",
+    "drive-invalidates-stale-prep",
+    "drive-finalizes-owned-claim",
     "drive-blocks-repeated-decision-return",
     "drive-commits-per-ticket",
     "drive-runs-final-aggregate-verification",
@@ -586,6 +605,32 @@ def validate_drive_transition_debt_contract(root: Path) -> list[str]:
     return errors
 
 
+def validate_prepared_drive_contract(root: Path) -> list[str]:
+    errors: list[str] = []
+    drive = root / "skills/tk-drive/SKILL.md"
+    phases = root / "skills/tk-drive/references/phases.md"
+    if (
+        not drive.is_file()
+        or drive.read_text(encoding="utf-8").count(DRIVE_RAW_SOURCE_REJECTION)
+        != 1
+    ):
+        errors.append(
+            "skills/tk-drive/SKILL.md: preserve the exact raw-source rejection"
+        )
+    for path, label in (
+        (drive, "skills/tk-drive/SKILL.md"),
+        (phases, "skills/tk-drive/references/phases.md"),
+    ):
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        if text.count(DRIVE_PREPARED_ONLY_GATE) != 1:
+            errors.append(f"{label}: preserve exactly one prepared-only phase gate")
+        if text.count(DRIVE_CORRECTIVE_BOUND_GATE) != 1:
+            errors.append(
+                f"{label}: preserve exactly one three-cycle corrective gate"
+            )
+    return errors
+
+
 def validate_skill(path: Path) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -754,6 +799,7 @@ def validate_repository_contract() -> list[str]:
     errors.extend(validate_actionable_output_contract(ROOT))
     errors.extend(validate_terminal_summary_contract(ROOT))
     errors.extend(validate_drive_transition_debt_contract(ROOT))
+    errors.extend(validate_prepared_drive_contract(ROOT))
     errors.extend(validate_response_language_contract(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():

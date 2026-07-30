@@ -1,317 +1,169 @@
-# Phase invariants
+# Prepared-drive invariants
 
-These are orchestration gates. Semantic phase behavior belongs to
-`tk-grill-me`, `tk-to-spec`, `tk-to-tickets`, and `tk-implement`; drive
-consumes their receipts and never recreates a failed or unavailable phase
-inline.
+These gates apply only after explicit `tk-drive` selection without a source.
+Preparation semantics belong to `tk-prep`; drive consumes one sealed manifest
+and never reconstructs preparation from conversation.
 
-The phase-owner allowlist is
-`tk-grill-me | tk-to-spec | tk-to-tickets | tk-implement`. The conditional
-support allowlist is
-`tk-prototype | tk-browser-verify | tk-merge-conflict | tk-reflect
-(drive-optimistic tail only)`. Do not invoke other planning, learning,
-reflection, or handoff skills.
-Do not intercept standalone phase requests or let a phase owner take over
-drive-wide orchestration, aggregate verification, or the final receipt.
+The phase-owner allowlist is `tk-implement | tk-reflect (drive-optimistic tail
+only)`. The conditional support allowlist is
+`tk-browser-verify | tk-merge-conflict`. Drive does not invoke
+`tk-grill-me`, `tk-to-spec`, `tk-to-tickets`, or `tk-prototype`.
 
-## Preflight and source
+Prepared drive may invoke only `tk-implement` and the single allowed
+`tk-reflect` tail.
+It must not invoke `tk-grill-me`, `tk-to-spec`, `tk-to-tickets`, or
+`tk-prototype` during initial or corrective execution.
 
-- Resolve branch, initial `HEAD`, pre-existing dirty paths, and ownership
-  before mutation.
-- For a remote source, retrieve the complete body, all comments and thread
-  updates, and every referenced attachment before freezing scope. An
-  inaccessible required item is `Unverifiable`; a later scope amendment is
-  source, not optional context.
-- Source precedence is: latest explicit drive input, confirmed
-  same-conversation decisions, relevant current spec, relevant current
-  tickets, repository instructions, code/tests.
-- Adopt existing artifacts only when task identity and current evidence match.
-  Revalidate completed phases and skip them only when their owner skill's
-  current contract still passes.
-- When a new decision invalidates a Ready spec or downstream tickets,
-  revalidate the spec through `tk-to-spec`, then replace or remove stale
-  tickets without archives. Ask only when task identity or decision reversal
-  cannot be established.
-- Treat `/tk-drive`, `$tk-drive`, and picker-equivalent direct selection as
-  host-native explicit starts. Do not bind explicit start to one host syntax.
-- Do not create current pointers, archives, automatic migration, or other
-  drive-only or global state.
+## Prepared input and authority
 
-### Risk-based verification profile
+The only start artifact is worktree-local `.tigerkit/prep.md` with
+`schema_version: tigerkit.prep/v1` and `status: ready`. Raw source text,
+another path, copied JSON, an in-memory header, conversation history, a
+terminal manifest, or an active manifest grants no authority.
 
-After source and ownership are resolved, classify only material signals with
-an exact source/repository location. A category name, task label, intuition, or
-unsupported possibility is not evidence.
+Preparation binds task ID and anchors, repository root, worktree, branch, base
+HEAD, source, dirty inventory, instructions, spec, tickets/no-ticket mode, and
+verification profile. Drive rechecks every binding with
+`scripts/prep_state.py claim`. It must pass current canonical inventories, not
+values copied back from the header merely to satisfy equality.
 
-| Signal | Material evidence | Derived obligations |
-| --- | --- | --- |
-| `security-data` | user/sensitive data, authentication, authorization, privacy, payment, or another trust boundary changes | `regression-seam`, `side-effect-recovery`, `independent-review` |
-| `state-compatibility` | schema, migration, persisted state, backward compatibility, dependency, or old/new reader-writer behavior changes | `regression-seam`, `compatibility`, `side-effect-recovery`, `independent-review` |
-| `public-blast-radius` | a public API, distributed contract, or behavior used by multiple evidenced consumers changes | `regression-seam`, `compatibility`, `independent-review` |
-| `browser-network` | persistent visible UI, browser runtime, network transition, or cross-browser behavior changes | `regression-seam`, `browser-verdict` |
-| `concurrency-side-effect` | concurrency, retry, idempotency, destructive operation, or external side effect changes | `regression-seam`, `side-effect-recovery`, `independent-review` |
-| `evidence-recovery` | required source/reproduction/testability evidence is missing or unstable, or rollback cost/failure-detection delay is material | `evidence-closure` |
+The script uses the `.tigerkit` directory lock, strict parsing, canonical
+digests, and atomic mode-0600 replacement. A successful claim changes exactly
+`ready → active`, adds claim identity and `claimed_at`, preserves prep/task
+identity and all digests, and strictly rereads while locked. A freshness
+failure changes a valid Ready manifest to `invalid`; malformed or missing
+state remains untouched. Two claim attempts cannot both succeed.
 
-Emit selected signals in table order. De-duplicate derived obligations and emit
-them in this order: `evidence-closure`, `regression-seam`, `compatibility`,
-`browser-verdict`, `side-effect-recovery`, `independent-review`. The compact
-material profile contains only `Signals`, source-located `Evidence`,
-`Obligations`, and `Unverified`.
+No product mutation, child handoff, or implementation ledger transition may
+precede a successful claim. Record the returned `prep_id`, `claim_id`, and
+active-state reread in the implementation ledger.
 
-With no selected signal, preserve the baseline path without an artifact,
-profile section, additional handoff payload, reviewer, browser run,
-compatibility command, or user output. Never create a dedicated risk document
-or convert the mapping into a score.
+## Frozen execution
 
-Before the spec handoff, freeze any material profile. Required inaccessible
-non-user-owned evidence is `Unverifiable`; missing user-owned authority or
-intent may route through the existing decision owner. Do not infer a safe
-default, continue with an incomplete profile, or silently remove an obligation.
+Read `.tigerkit/spec.md` and `.tigerkit/tickets.md` only through references
+validated by the manifest. A no-ticket prep is one frozen unit. Ticket mode
+uses the exact prepared order and dependencies. Keep at most one unit
+`in_progress`; each prepared unit is handed to `tk-implement` at most once
+before any corrective cycle.
 
-## Phase handoff envelope
+Drive may reconcile repository evidence needed to execute frozen R/AC, but
+cannot:
 
-Every handoff records phase, task identity, source/artifact paths, stable R/AC
-or ticket IDs, branch, initial/current `HEAD`, ownership, and the success state
-needed to continue. Before invoking the owner, drive records the native
-`Success state` and exactly one drive-owned `Outstanding transition`. The
-transition names the next drive action after success, such as `spec gate`,
-`ticket decision`, `implementation unit <ID>`, or `aggregate verification`.
-When a material verification profile exists, the envelope also carries its
-frozen four fields unchanged; a baseline run carries no placeholder profile.
-Each owner keeps its native receipt; drive maps only the minimal continuation
-state and does not create a shared runtime contract.
+- add or remove R/AC, units, tickets, source literals, or profile obligations;
+- seek or incorporate a new product decision;
+- reinterpret dirty ownership or task identity;
+- rerun preparation owners;
+- silently accept drift because the implementation seems safe.
 
-On native success, an active-drive owner echoes `Return to: tk-drive` and the
-parent-supplied `Outstanding transition` verbatim without choosing or executing
-that transition. Drive compares the echo with the recorded handoff before
-consuming the receipt. A missing or mismatched success-state or transition echo
-is receipt drift and stops drive `Blocked`; progress text or an otherwise valid
-child receipt cannot substitute for the echo.
+Any such need makes the run `invalid | Blocked` and requires a new
+`/tk-prep <source>`.
 
-Decision-capable non-success receipts include
-`User decision: required | none`. `required` must cite a new user-owned
-decision and its evidence; `none` never routes to grill. Drive maps grill native
-status to workflow terminal status as `confirmed → Pass`, `pending → Pending`,
-`aborted | Blocked → Blocked`, and `Unverifiable → Unverifiable`.
+## Handoff envelope
 
-- Decision closure continues only from `tk-grill-me` `confirmed`.
-- Spec continues only from `tk-to-spec` `Ready`.
-- Tickets continue only from a successfully written and revalidated
-  `tk-to-tickets` ledger.
-- Implementation continues only from a `tk-implement` `Pass` receipt with the
-  expected unit/ticket ID and commit SHA.
-- `Draft`, `Pending`, `Blocked`, `Fail`, `Unverifiable`, unavailable skills,
-  stale evidence, or mismatched IDs stop drive at that phase.
+Every implementation handoff records prep and claim IDs, task identity,
+prepared unit/ticket ID, stable R/AC, branch, initial/current HEAD, dirty
+ownership, source UI inventory, and material verification obligations. Before
+invocation, drive records the native `Success state` and exactly one
+`Outstanding transition`: the next prepared unit, aggregate verification,
+next corrective cycle, reflection, or finalization.
 
-The user's answer to the directly corresponding pending grill question stays
-owned by `tk-grill-me`. Its `confirmed` receipt updates source traceability and
-returns control to drive at the spec gate. No other response inherits drive
-authority.
+An active-drive owner must echo `Return to: tk-drive` and the exact
+`Outstanding transition`. Drive consumes only:
 
-## Phase receipt liveness
+- `tk-implement` `Status: Pass` with the expected unit/ticket ID and commit;
+- `tk-reflect` `Status: Pass` with the expected drive-optimistic tail echo.
 
-Consuming a native receipt creates a transition obligation; it is not itself
-completion. In the same active turn, drive must map the receipt to exactly one
-of:
+When both `TK_DRIVE_EVENT_RECORDER` and `TK_DRIVE_EVENT_LOG` are present in
+an evaluation-owned environment, drive invokes the recorder immediately
+before each allowed phase with `phase_invocation <phase>` and immediately
+after its matching successful receipt with
+`phase_receipt <phase> Pass <Outstanding transition>`. A recorder failure is
+`Unverifiable`; drive never fabricates, delays, or backfills an event and does
+not record outside that conditional evaluation environment.
 
-1. the next eligible phase handoff;
-2. the bounded corrective cycle;
-3. `tk-grill-me` for a newly evidenced user-owned decision; or
-4. an explicit drive terminal result with the supported
-   `Pass | Pending | Blocked | Fail | Unverifiable` status and reason; its
-   user-facing summary follows the terminal-summary boundary.
+Unavailable skills, `Pending | Blocked | Fail | Unverifiable`, mismatched IDs,
+missing commits, ancestry drift, or receipt drift stop the transition. A child
+cannot add scope or route a decision owner; it returns the native non-success
+state and drive finalizes or preserves state according to evidence.
 
-Spec `Ready` transitions to the ticket decision. A valid ticket ledger
-transitions to its first or next pending unit. A matching implementation
-`Pass` transitions to the next unit or aggregate verification. Aggregate
-success transitions to the reflection tail. Reflection `Pass` with a matching
-echo transitions to the final `Pass` summary. A reflection `Fail` with verified
-restoration also transitions to the final summary while preserving product
-`Pass`; unrestored or indeterminate reflection state stops
-`Blocked | Unverifiable`. Progress commentary and child receipt summaries do
-not discharge this obligation.
+## Receipt liveness
+
+Consuming a success receipt creates transition debt; it is not completion. In
+the same active turn, drive must execute exactly one recorded next action:
+
+1. the next prepared implementation unit;
+2. aggregate verification;
+3. one numbered corrective unit within the frozen R/AC;
+4. the single reflection tail;
+5. terminal manifest finalization; or
+6. an evidence-supported non-success terminal result.
+
+Progress commentary and receipt summaries do not discharge transition debt.
+No user-facing text occurs between a matching success receipt and its recorded
+transition.
 
 Before returning control, verify that every consumed receipt has one recorded
-outgoing transition. A receipt with no transition is an orchestration failure:
-do not silently return or ask the user to invoke drive again; emit the
-evidence-supported non-success terminal summary if no valid transition exists.
-For an active-drive success receipt, first verify its verbatim
-`Outstanding transition` echo, then execute that transition in the same turn.
+outgoing transition. A receipt with no executable transition is `Blocked`;
+never ask the user to invoke drive again to continue the same run.
 Immediately before emitting terminal `---`, run the transition-debt check.
 Terminal output is prohibited while any consumed successful receipt still has
 an unexecuted `Outstanding transition`; execute the recorded transition in the
 same active turn or return the one evidence-supported non-success state.
 
-The stop set is closed. Drive may return control only to clear initial SSOT
-ambiguity, obtain a newly evidenced user-owned decision, honor an explicit
-user stop, report receipt drift, report an evidence-backed
-`Pending | Blocked | Fail | Unverifiable` state, or emit its final receipt.
-`Ready | confirmed | Pass`, progress, task size, and partial results cannot
-open a response boundary. No user-facing text may occur between a matching
-success receipt and its next recorded transition.
-
-Host-native continuation evidence starts from an explicit drive invocation in
-a disposable checkout and records ordered phase invocation, receipt, next
-phase, final-output, and terminal-status events. A synthetic prompt that starts
-after a claimed receipt is not continuation evidence. Event-required
-assertions fail when events are missing or malformed; adapters without events
-remain compatible for assertions that do not require them. Keep the runner
-host-generic; the live continuation canary is Codex scoped and uses two
-fresh incident runs with the selected implementation holdout and boundary
-control.
-
-The Codex app-server does not expose child skill receipts as structured host
-events. When and only when both `TK_DRIVE_EVENT_RECORDER` and
-`TK_DRIVE_EVENT_LOG` are non-empty, phase evidence is therefore mandatory:
-
-- immediately before beginning a phase owner's work, run
-  `python3 "$TK_DRIVE_EVENT_RECORDER" phase_invocation <phase>`;
-- after validating that owner's matching native success receipt and before
-  executing or reporting its transition, run
-  `python3 "$TK_DRIVE_EVENT_RECORDER" phase_receipt <phase> <state> "<Outstanding transition>"`.
-
-These markers record observed orchestration; they never create or replace a
-handoff, receipt, or transition. Do not emit them when either variable is
-absent. A recorder failure makes the live evaluation `Unverifiable`.
-
-Use the [Codex eval adapter](../scripts/codex_eval_adapter.py) as the runner's
-adapter command. It stages repo skills through Codex's host-native
-`.agents/skills` path and supplies `tk-drive` as an explicit app-server skill
-input. Set `TK_EVAL_CODEX_HOME` to an authenticated Codex home when the
-isolated runner home has no login; the adapter copies only `auth.json`.
-Run `drive-live-continues-after-ready-spec`,
-`drive-live-implementation-holdout`, and
-`drive-live-initial-ssot-stop-control` twice each at the candidate `HEAD`.
-
-## Decision owner
-
-Skip decision closure when confirmed source and evidence already support a
-Ready spec without a user-owned choice. Otherwise apply `tk-grill-me` with task
-identity, current source and evidence, confirmed decisions, and unresolved
-user-owned decisions.
-
-`tk-grill-me` alone owns investigation, the four-axis ambiguity ledger,
-one-question-at-a-time interaction, closure approval, and its decision receipt.
-Drive does not ask the question inline. A
-`pending | aborted | Blocked | Unverifiable` receipt stops downstream
-handoffs. A `confirmed` receipt returns cited decisions to drive without
-writing an artifact or invoking another phase.
-
-Approval is granular to the exact axis asked. A premise embedded in an option
-explanation is not confirmed by selecting that option; label it unconfirmed or
-route it as a separate decision.
-
-When spec or ticket work discovers a new user-owned decision, the phase owner
-returns `User decision: required` in its native non-success receipt to drive.
-Drive invokes `tk-grill-me`; after confirmation it re-runs `tk-to-spec` to
-`Ready` before rederiving or resuming tickets. If the same or equivalent
-decision blocker recurs after that confirmation, stop `Blocked` instead of
-automatically routing it again. Phase owners never invoke one another.
-
-## Spec owner
-
-Apply `tk-to-spec` on every active drive run with the confirmed source and
-decisions before any ticket decision or implementation.
-There is no small-task exception; size, proportionality, and a single-slice
-shape affect only the ticket decision after `Ready`. The spec owner alone owns
-the source map, stable R/AC IDs, Ready gate, spec write/print behavior, and UI
-writing inventory.
-Drive records its receipt and does not repair a non-Ready spec inline. A
-decision-related non-Ready receipt returns to drive's decision owner; all other
-non-Ready states stop at the spec phase.
-
-For a material profile, give the spec owner its evidence and obligations as
-verification input. The spec owner decides how they map to R/AC and
-verifiability inside its existing contract; drive does not write those
-requirements or accept a Ready spec that silently omits a material obligation.
-
-## Ticket decision and owner
-
-Drive decides whether tickets are justified: use them only for at least two
-independently verifiable vertical slices or when a long-running/resumable task
-materially benefits from a ledger. Otherwise pass the Ready spec to
-implementation as one unit.
-
-When tickets are justified, apply `tk-to-tickets`. It alone owns vertical
-decomposition, ticket IDs, source coverage, dependencies, corrective-ticket
-shape, and ledger writes. Keep at most one ticket `in_progress`. Status text is
-not evidence; only a matching implementation receipt can make a ticket
-`verified`. A decision-related non-success receipt returns to drive, which must
-restore a Ready spec before asking tickets to derive again.
-
-Signal count, obligation count, or a risk label never justifies a ticket
-ledger. The existing independent-slice/material-ledger rule remains the only
-ticket decision.
-
-## Prototype
-
-Use a disposable web branch only when unresolved visual choices affect behavior
-or structure and side-by-side evidence will reduce the pending decision. Keep
-the same content, data, and state across 2–3 meaningful alternatives. Do not
-add an option without distinct decision value or prototype a choice that
-repository evidence already resolves.
+The closed stop set is: raw/missing input, claim or identity failure, receipt
+drift, explicit user stop, inaccessible required evidence,
+`Pending | Blocked | Fail | Unverifiable`, corrective exhaustion, state-write
+failure, or the final terminal summary.
 
 ## Implementation owner
 
-Apply `tk-implement` once per selected ticket, or once for a no-ticket
-single-slice spec. It alone owns direct/delegated strategy, TDD/no-TDD,
-production-behavior tests, existing coverage gates, testless exceptions,
-focused and affected verification, ticket-level Standards/Spec review,
-staging, and one current-branch commit.
+`tk-implement` alone owns direct/delegated strategy, TDD/no-TDD, production
+tests, focused and affected verification, ticket-level Standards/Spec review,
+staging, and one current-branch unit commit. It receives the frozen
+verification profile and owns the exact regression, compatibility,
+side-effect/recovery, browser, and bounded review methods required for its
+unit.
 
-Before the next handoff, confirm the receipt's unit/ticket ID, commit SHA,
-branch, ancestry, R/AC evidence, and unchanged ownership boundary. Never ask
-`tk-implement` to batch tickets, and never create a separate drive commit.
+Before the next handoff, drive verifies the receipt's prepared unit ID, commit
+SHA, branch, ancestry, R/AC evidence, and dirty ownership. It never batches
+prepared units or creates a separate drive commit.
 
-Pass the frozen material profile to each affected unit. `tk-implement` owns the
-exact supported regression seam, compatibility scope, side-effect/recovery
-evidence, browser handoff, and bounded independent-review method. It must
-return its native non-success state rather than recompute signals, drop an
-obligation, or perform work owned by a sibling phase.
+## Aggregate verification
 
-For visible UI or browser behavior, `tk-implement` owns the required
-`tk-browser-verify` gate. Drive aggregates returned literal/rendered evidence
-without selecting browser tools itself.
+After the complete initial unit set:
 
-## Aggregate verification and review
+- verify every frozen R/AC maps to a matching unit receipt and commit;
+- verify ordered commit ancestry and current HEAD;
+- reconcile source UI literals and every material profile obligation;
+- inspect cross-unit behavior and cumulative side effects;
+- run the broadest relevant executable tests, build, integration, package,
+  and browser verification once;
+- classify each failure as `change-related | pre-existing | environment |
+  unverifiable`.
 
-After all units are committed:
+Freeze the successful product verification HEAD before reflection. A later tracked
+reflection commit changes final HEAD but not product evidence.
 
-- verify every R/AC ID is covered by a unit receipt and commit;
-- verify commit ancestry and current `HEAD` match the ordered unit receipts;
-- reconcile every frozen material obligation with unit and broad verification
-  evidence; a missing or unverifiable obligation prevents aggregate `Pass`;
-- inspect cross-ticket interfaces, cumulative side effects, and uncovered
-  scope without repeating each ticket's line-level code review;
-- run the broadest executable relevant tests, build, integration, and browser
-  verification once;
-- classify failure as `change-related`, `pre-existing`, `environment`, or
-  `unverifiable`.
+## Corrective cycles
 
-Freeze the successful product verification HEAD before reflection. A later
-tracked reflection commit changes final HEAD but never the product verification
-evidence; ignored/local reflection leaves both HEAD values equal.
+Initial implementation is not a corrective cycle. Only an isolated
+change-related defect inside frozen R/AC can start a correction. Record cycle
+`1`, `2`, or `3`, invoke `tk-implement` for one independently verifiable
+corrective unit, then rerun affected and aggregate verification.
 
-High-risk cumulative effects may require broader verification before an
-individual unit commit through `tk-implement`; the final aggregate gate still
-runs once.
+The initial implementation consumes zero corrective cycles.
+At most three post-initial corrective cycles are permitted inside frozen R/AC;
+a fourth cycle or any scope, ticket, or decision expansion stops mutation.
 
-## Corrective cycle
-
-On a final change-related failure, isolate the affected R/AC and root cause. If
-it forms one independently verifiable unit, apply `tk-to-tickets` to append one
-corrective ticket, then apply `tk-implement` once and rerun aggregate
-verification once.
-
-Do not create a corrective ticket for pre-existing, environment, or
-unverifiable failures. Do not amend, squash, force-push, or silently rewrite
-verified commits. A repeated failure, unisolated cause, or second requested
-cycle ends in the one concrete terminal state supported by current evidence.
+Do not create a corrective ticket, add scope, ask a product decision, amend or
+squash a verified commit, or reset the cycle count after a different symptom.
+A fourth cycle, repeated failure, unisolated cause, new R/AC, new ticket, or
+new decision ends product mutation in the one evidence-supported terminal
+state.
 
 ## Reflection tail
 
-After aggregate product verification (including one successful corrective
-cycle when used) is `Pass`, hand off exactly once to `tk-reflect`:
+After aggregate product `Pass`, hand off exactly once to `tk-reflect`:
 
 ```text
 Mode: drive-optimistic
@@ -320,32 +172,35 @@ Outstanding transition: final receipt
 Return to: tk-drive
 ```
 
-The handoff cites task identity, product verification HEAD, implementation
-ledger, spec/tickets, ordered commits, aggregate evidence, branch, initial
-HEAD, and pre-existing dirty ownership. `tk-reflect` alone owns prevention
-classification, eligibility, rule mutation/rollback, skill promotion packets,
-and `.tigerkit/reflect.md`.
+The handoff cites prep/claim IDs, product verification HEAD, implementation ledger,
+spec/tickets, ordered commits, aggregate evidence, branch, initial HEAD, and
+dirty ownership. A no-op is successful. A verified-restored reflection failure
+may preserve product `Pass`, but terminal status and remaining risk must record
+the reflection outcome. Unrestored or indeterminate state is
+`Blocked | Unverifiable`.
 
-Accept success only with `Status: Pass`, `Return to: tk-drive`, and the
-verbatim `Outstanding transition: final receipt` echo, then emit the final
-receipt in the same turn. A no-op is successful and omitted from user output.
-A verified-restored reflection failure is reported but preserves product
-`Pass`; target drift, failed restoration, out-of-scope mutation, or an
-indeterminate workspace ends `Blocked | Unverifiable`.
+The `final receipt` transition begins by finalizing and strictly rereading the
+manifest; no user-facing text may precede that state mutation.
 
-Never enter this tail for `Fail | Blocked | Unverifiable` product verification,
-call it twice, invoke `tk-learn`, auto-promote a skill, or let reflection touch
-product/source paths.
+## Terminal state
 
-## Final receipt
+The same claim owner calls:
 
-Report source identity, phase receipts, ticket states, ordered
-ticket/unit-to-commit mapping, broad verification, integration review, actual
-branch and `HEAD`, remaining risks, and reusable-candidate existence. Do not
-repeat child evidence or automatically invoke another reflection, handoff,
-release, or publish action. User-facing prose follows the user's language;
-canonical fields and status tokens remain unchanged.
+`prep_state.py finalize .tigerkit/prep.md --claim-id <id> --status <completed|invalid|failed> --finished-at <UTC>`
 
-Mention the verification profile only when it materially changed executed
-verification or leaves meaningful residual risk. Omit baseline/no-op profile
-details and never print an all-default signal checklist.
+Use `completed` only when the prepared product and required reflection tail
+complete. Use `invalid` for identity, scope, or preparation invalidation and
+`failed` for verified execution failure. If terminal evidence is inaccessible,
+leave `active` rather than fabricate a transition and report exact recovery.
+
+Strictly reread terminal state before chat output. A terminal manifest remains
+at the same path for diagnosis and cannot authorize another run. Do not
+archive, rename, delete, migrate, or create a pointer.
+
+## Final summary
+
+Report behavior, unit-to-commit mapping when useful, aggregate verification,
+reflection only when meaningful, remaining risks, and the one terminal status.
+The artifact owns prep/claim provenance; the implementation ledger owns
+detailed receipts. Do not copy either into chat or automatically push, open a
+PR, tag, release, publish, or begin another preparation.

@@ -1,7 +1,7 @@
 interface:
   display_name: "TigerKit: Drive"
-  short_description: "[user] Orchestrate explicit work through decision closure to verified commits."
-  default_prompt: "Use tk-drive to orchestrate this source through conditional tk-grill-me decision closure and the canonical spec, ticket, and implementation phase owners to verified ticket-level commits and final aggregate verification."
+  short_description: "[user] Consume a sealed preparation through commits and terminal state."
+  default_prompt: "Use tk-drive without a raw source to claim .tigerkit/prep.md, execute its frozen units through verified commits, aggregate verification, one reflection tail, and terminal prep state."
 
 policy:
   allow_implicit_invocation: false

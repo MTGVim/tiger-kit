@@ -356,6 +356,26 @@ class PrepManifestTest(unittest.TestCase):
         mistyped_ticket_mode = dict(header)
         mistyped_ticket_mode["ticket_mode"] = {}
         mutations.append(module.render_document(mistyped_ticket_mode, body))
+        unsorted_anchors = dict(header)
+        unsorted_anchors["task"] = {
+            **header["task"],
+            "anchors": ["z-anchor", "a-anchor"],
+        }
+        unsorted_identity = {
+            key: unsorted_anchors[key]
+            for key in (
+                "schema_version",
+                "task",
+                "repository",
+                "digests",
+                "ticket_mode",
+            )
+        }
+        unsorted_anchors["prep_id"] = (
+            "prep-"
+            + module._digest(module._canonical_json(unsorted_identity))[:16]
+        )
+        mutations.append(module.render_document(unsorted_anchors, body))
         mutations.append("```json\n{\"schema_version\":\n```\n")
         mutations.append(
             document.replace(

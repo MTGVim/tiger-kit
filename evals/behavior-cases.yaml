@@ -400,9 +400,9 @@
 - case: drive-requires-explicit-start
   skill: tk-drive
   expect: "Only host-native explicit tk-drive selection starts a workflow; /tk-drive, $tk-drive, and picker selection are positive while ordinary implementation, generic continue, artifacts, and unrelated answers are not."
-- case: drive-resumes-pending-answer
+- case: drive-rejects-pending-preparation-answer
   skill: tk-drive
-  expect: "tk-grill-me owns a direct same-conversation answer to its active pending decision; after its confirmed receipt, drive resumes at the spec gate without another invocation."
+  expect: "A new decision cannot be merged into an active sealed run; drive invalidates it and requires a fresh tk-prep."
 - case: drive-reflects-once-after-aggregate-pass
   skill: tk-drive
   expect: "After aggregate product verification passes, drive invokes exactly one drive-optimistic reflection tail, verifies the final-receipt transition echo, and continues in the same turn."
@@ -414,7 +414,7 @@
   expect: "Multi-slice or long-resume work tracks pending, in_progress, verified, or blocked with evidence and revalidates on resume."
 - case: drive-bounds-nested-skills
   skill: tk-drive
-  expect: "Phase-owner invocation is limited to tk-grill-me, tk-to-spec, tk-to-tickets, and tk-implement; support invocation is limited to prototype, browser verification, merge conflict handling, and one post-Pass drive-optimistic reflection tail."
+  expect: "Prepared drive invokes only tk-implement and one post-Pass drive-optimistic tk-reflect tail, with browser verification or merge-conflict support when required."
 - case: drive-commits-per-ticket
   skill: tk-drive
   expect: "Each independently verifiable ticket is handed to tk-implement for one commit, and drive creates no separate final commit."
@@ -426,28 +426,37 @@
   expect: "tk-implement owns ticket-level Standards/Spec review while drive owns aggregate R/AC coverage, ancestry, and cross-ticket interaction without repeating line-level review."
 - case: drive-invokes-phase-owners
   skill: tk-drive
-  expect: "Drive conditionally invokes tk-grill-me, then explicitly invokes tk-to-spec, conditionally tk-to-tickets, and tk-implement per unit, consuming their receipts without recreating phase semantics inline."
-- case: drive-continues-after-ready-spec
+  expect: "Drive consumes preparation and invokes tk-implement per prepared unit plus one tk-reflect tail without invoking initial preparation owners."
+- case: drive-continues-after-prep-claim
   skill: tk-drive
-  expect: "A consumed Ready spec is never a response boundary: drive makes the ticket decision and continues through implementation and aggregate verification in the same active turn, or returns an explicit evidence-supported terminal summary."
+  expect: "A successful atomic prep claim is never a response boundary: drive continues through prepared implementation, aggregate verification, reflection, and terminal state."
 - case: drive-checks-transition-debt-before-terminal-output
   skill: tk-drive
   expect: "Immediately before terminal `---`, drive rejects any consumed successful receipt whose recorded `Outstanding transition` has not executed; it continues that transition in the same active turn or returns one evidence-supported non-success state."
 - case: drive-rejects-missing-transition-echo
   skill: tk-drive
   expect: "A missing or mismatched child `Outstanding transition` echo is receipt drift and stops drive Blocked instead of being consumed as success."
-- case: drive-requires-spec-for-trivial-task
+- case: drive-requires-prep-for-trivial-task
   skill: tk-drive
-  expect: "Every active drive run invokes tk-to-spec and reaches Ready before the ticket decision or implementation, including trivial single-slice work."
+  expect: "Every task, including a trivial single slice, requires a sealed Ready prep; raw source is rejected with the exact Blocked result."
 - case: drive-skips-grill-for-ready-source
   skill: tk-drive
   expect: "Drive skips tk-grill-me when confirmed source and evidence already support a Ready spec without a user-owned decision."
-- case: drive-invokes-grill-on-unresolved-decision
+- case: drive-invalidates-on-new-decision
   skill: tk-drive
-  expect: "Drive hands source, evidence, confirmed decisions, and unresolved user-owned decisions to tk-grill-me instead of asking an inline question."
-- case: drive-reruns-spec-after-grill
+  expect: "A newly required user decision is sealed-scope drift; drive invalidates the run and never invokes grill inline."
+- case: drive-does-not-rerun-spec-after-drift
   skill: tk-drive
-  expect: "After new confirmed Decisions, drive re-runs tk-to-spec to Ready before rederiving or resuming tickets."
+  expect: "Scope or ticket drift invalidates the run; drive does not rerun spec or tickets and requires fresh preparation."
+- case: drive-claims-ready-prep-atomically
+  skill: tk-drive
+  expect: "Drive validates actual current identities and digests under the shared directory lock, then exactly one claimant changes Ready to Active before product mutation."
+- case: drive-invalidates-stale-prep
+  skill: tk-drive
+  expect: "Repository or content drift atomically changes a valid Ready prep to Invalid and cannot authorize implementation."
+- case: drive-finalizes-owned-claim
+  skill: tk-drive
+  expect: "Only the matching active claim finalizes Completed, Invalid, or Failed; drive strictly rereads terminal state before user output."
 - case: drive-blocks-repeated-decision-return
   skill: tk-drive
   expect: "The same or equivalent decision blocker after confirmation stops Blocked instead of entering another automatic grill loop."
@@ -459,25 +468,25 @@
   expect: "Unavailable or unsuccessful phase owners stop the workflow at that phase with the evidence-supported terminal state and no inline fallback."
 - case: drive-bounds-corrective-cycle
   skill: tk-drive
-  expect: "One isolated final change-related regression may create one corrective ticket and commit; repeated failure stops without amend, squash, rollback, or another cycle."
+  expect: "Initial implementation is excluded from the count; up to three isolated frozen-R/AC corrective cycles are allowed, and a fourth or scope expansion stops."
 - case: drive-preserves-source-ui-writing-verbatim
   skill: tk-drive
-  expect: "Drive freezes exact source UI literals before spec mutation and rechecks them through spec, tickets, implementation, candidate/staged diff, and rendered UI."
-- case: drive-blocks-source-current-ui-mismatch
+  expect: "Drive consumes the sealed source UI inventory and rechecks exact literals through prepared units, implementation, candidate/staged diff, and rendered UI."
+- case: drive-invalidates-source-current-ui-mismatch
   skill: tk-drive
-  expect: "Drive inventories every rendered string literal, including numeric, unit, currency, suffix, and separator tokens, and routes any source-current mismatch to a user decision before Ready, Pass, or commit."
-- case: drive-scopes-approval-to-asked-axis
+  expect: "An unprepared source-current literal mismatch invalidates prepared authority before Pass or commit; drive does not route a new decision."
+- case: drive-invalidates-unapproved-secondary-axis
   skill: tk-drive
   expect: "A decision approval covers only the axis explicitly asked; ancillary premises in an option explanation stay unconfirmed and cannot authorize UI writing changes."
 - case: drive-reads-complete-remote-source
   skill: tk-drive
-  expect: "Remote preflight reads the complete body, all comments and thread updates, and referenced attachments before scope is frozen."
+  expect: "Preparation owns complete remote-source retrieval; drive verifies the sealed source digest and refuses raw or amended source."
 - case: drive-blocks-unreadable-ui-literal
   skill: tk-drive
   expect: "Unreadable source UI literals are never guessed and prevent commit as Unverifiable."
-- case: drive-routes-conflicting-ui-literals-to-decision
+- case: drive-invalidates-conflicting-ui-literals
   skill: tk-drive
-  expect: "Conflicting source UI literals are preserved as evidence, handed to the grill decision phase, and return Pending without changing Git."
+  expect: "A newly conflicting UI literal invalidates the sealed run without invoking a decision phase or changing product Git."
 - case: drive-commit-command-failure-is-fail
   skill: tk-drive
   expect: "A failed final commit command preserves its output and actual Git state and terminates as Fail without claiming commit success."
@@ -486,7 +495,7 @@
   expect: "HEAD or staged-snapshot drift after verification blocks commit and requires a new fixed-point verification."
 - case: drive-carries-authorized-ui-writing-change
   skill: tk-drive
-  expect: "Only the explicitly approved UI writing change is marked authorized while every other literal remains frozen."
+  expect: "Drive consumes only the explicitly prepared UI writing change while every other sealed literal remains frozen."
 - case: reflect-placement-regression-matrix
   skill: tk-reflect
   expect: "Closed safety tokens, sibling thresholds, no-path, multiple-parent, overrides, and missing-host evidence route deterministically."

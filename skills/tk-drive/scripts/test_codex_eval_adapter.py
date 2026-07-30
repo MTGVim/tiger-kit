@@ -14,6 +14,7 @@ from codex_eval_adapter import (
     _read_event_log,
     _remove_project_skills,
     _restore_git_exclude,
+    _prepare_live_fixture,
     _stage_project_skills,
 )
 
@@ -61,12 +62,12 @@ class CodexObservationTest(unittest.TestCase):
             }
         )
         events = [
-            {"type": "phase_invocation", "phase": "tk-to-spec"},
+            {"type": "phase_invocation", "phase": "tk-implement"},
             {
                 "type": "phase_receipt",
-                "phase": "tk-to-spec",
-                "state": "Ready",
-                "transition": "ticket decision",
+                "phase": "tk-implement",
+                "state": "Pass",
+                "transition": "aggregate verification",
             },
             {"type": "phase_invocation", "phase": "tk-implement"},
         ]
@@ -74,7 +75,7 @@ class CodexObservationTest(unittest.TestCase):
         result = observation.result(
             skill="tk-drive",
             mode="behavior",
-            available_skills=["tk-drive", "tk-to-spec", "tk-implement"],
+            available_skills=["tk-drive", "tk-implement"],
             selected=True,
             events=events,
         )
@@ -199,13 +200,70 @@ class CodexObservationTest(unittest.TestCase):
             self.assertEqual(exclude.read_bytes(), original)
             self.assertFalse((checkout / ".agents").exists())
 
+    def test_prepared_live_fixture_is_strict_and_source_free(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            checkout = Path(directory)
+            subprocess.run(["git", "init", "-qb", "main"], cwd=checkout, check=True)
+            subprocess.run(
+                ["git", "config", "user.email", "canary@example.invalid"],
+                cwd=checkout,
+                check=True,
+            )
+            subprocess.run(
+                ["git", "config", "user.name", "Canary"],
+                cwd=checkout,
+                check=True,
+            )
+            (checkout / "README.md").write_text("fixture\n", encoding="utf-8")
+            subprocess.run(["git", "add", "README.md"], cwd=checkout, check=True)
+            subprocess.run(["git", "commit", "-qm", "fixture"], cwd=checkout, check=True)
+            skills_target = checkout / ".agents" / "skills"
+            prep_scripts = skills_target / "tk-prep" / "scripts"
+            prep_scripts.mkdir(parents=True)
+            source_script = (
+                Path(__file__).resolve().parents[2]
+                / "tk-prep"
+                / "scripts"
+                / "prep_manifest.py"
+            )
+            (prep_scripts / "prep_manifest.py").write_bytes(
+                source_script.read_bytes()
+            )
+
+            prompt = _prepare_live_fixture(
+                checkout,
+                skills_target,
+                "[tigerkit-eval:prepared-two-unit]\n/tk-drive",
+            )
+            manifest = checkout / ".tigerkit" / "prep.md"
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    str(Path(__file__).with_name("prep_state.py")),
+                    "validate",
+                    str(manifest),
+                ],
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+
+            self.assertEqual(prompt, "/tk-drive")
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            self.assertIn('"status": "ready"', manifest.read_text(encoding="utf-8"))
+            tickets = (checkout / ".tigerkit" / "tickets.md").read_text(
+                encoding="utf-8"
+            )
+            self.assertIn("T-EVAL-ALPHA", tickets)
+            self.assertIn("T-EVAL-BETA", tickets)
+
     def test_event_log_rejects_malformed_rows(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "events.jsonl"
             path.write_text(
-                '{"type":"phase_invocation","phase":"tk-to-spec"}\n'
-                '{"type":"phase_receipt","phase":"tk-to-spec","state":"Draft",'
-                '"transition":"ticket decision"}\n',
+                '{"type":"phase_invocation","phase":"tk-implement"}\n'
+                '{"type":"phase_receipt","phase":"tk-implement","state":"Draft",'
+                '"transition":"aggregate verification"}\n',
                 encoding="utf-8",
             )
 

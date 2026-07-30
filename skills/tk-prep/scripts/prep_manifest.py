@@ -124,7 +124,9 @@ def validate_header(value: Any) -> dict[str, Any]:
 
     task = _require_keys(header["task"], {"id", "anchors"}, "manifest.task")
     _require_string(task["id"], "manifest.task.id")
-    _require_string_list(task["anchors"], "manifest.task.anchors")
+    anchors = _require_string_list(task["anchors"], "manifest.task.anchors")
+    if anchors != sorted(anchors):
+        raise ManifestError("manifest.task.anchors: expected canonical order")
 
     repository = _require_keys(
         header["repository"],

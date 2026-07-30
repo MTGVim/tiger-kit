@@ -9,9 +9,11 @@ import queue
 import re
 import shutil
 import subprocess
+import sys
 import threading
 import time
 from collections import deque
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import IO, Mapping
 
@@ -19,13 +21,14 @@ from typing import IO, Mapping
 TERMINAL_STATUSES = ("Pass", "Pending", "Blocked", "Fail", "Unverifiable")
 EVENT_TYPES = {"phase_invocation", "phase_receipt"}
 PHASES = {
-    "tk-grill-me",
-    "tk-to-spec",
-    "tk-to-tickets",
     "tk-implement",
     "tk-reflect",
 }
-SUCCESS_STATES = {"Ready", "confirmed", "Pass"}
+SUCCESS_STATES = {"Pass"}
+LIVE_FIXTURES = {
+    "[tigerkit-eval:prepared-single]\n/tk-drive": "single",
+    "[tigerkit-eval:prepared-two-unit]\n/tk-drive": "two-unit",
+}
 STATUS_PATTERN = re.compile(
     r"(?m)^[ \t]*(?:[-*][ \t]+)?Status:[ \t]*"
     r"(Pass|Pending|Blocked|Fail|Unverifiable)[ \t]*$"
@@ -302,6 +305,159 @@ def _remove_project_skills(skills_target: Path, remove_agents_dir: bool) -> None
         agents_dir.rmdir()
 
 
+def _git_value(checkout: Path, *arguments: str) -> str:
+    completed = subprocess.run(
+        ["git", *arguments],
+        cwd=checkout,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    value = completed.stdout.strip()
+    if completed.returncode != 0 or not value:
+        raise RuntimeError(f"cannot resolve eval Git identity: {' '.join(arguments)}")
+    return value
+
+
+def _prepare_live_fixture(
+    checkout: Path,
+    skills_target: Path,
+    prompt: str,
+) -> str:
+    kind = LIVE_FIXTURES.get(prompt)
+    if kind is None:
+        return prompt
+
+    tigerkit = checkout / ".tigerkit"
+    if tigerkit.exists():
+        raise RuntimeError("prepared eval fixture requires an empty .tigerkit path")
+    tigerkit.mkdir()
+    units = [
+        (
+            "T-EVAL-1",
+            "Create `canary-ready.txt` containing `ready` plus one trailing newline.",
+        )
+    ]
+    if kind == "two-unit":
+        units = [
+            (
+                "T-EVAL-ALPHA",
+                "Create `canary-alpha.txt` containing `alpha` plus one trailing newline.",
+            ),
+            (
+                "T-EVAL-BETA",
+                "Create `canary-beta.txt` containing `beta` plus one trailing newline.",
+            ),
+        ]
+    dirty_inventory = [".tigerkit/spec.md", ".tigerkit/tickets.md"]
+    instruction_inventory: list[str] = []
+    profile = {
+        "obligations": ["regression-seam"],
+        "signals": ["state-compatibility"],
+    }
+    evidence = (
+        "Use these exact claim inputs: "
+        f"`--dirty-inventory-json {json.dumps(json.dumps(dirty_inventory))}`, "
+        f"`--instruction-inventory-json {json.dumps(json.dumps(instruction_inventory))}`, "
+        f"and `--verification-profile-json {json.dumps(json.dumps(profile, sort_keys=True))}`. "
+        "The prep manifest itself is excluded from its pre-write dirty inventory."
+    )
+    spec_lines = [
+        "# TigerKit eval spec",
+        "",
+        "Status: Ready",
+        "",
+        "## Requirements",
+        "",
+    ]
+    ticket_lines = ["# TigerKit eval tickets", "", "Status: Pass", ""]
+    for index, (ticket_id, requirement) in enumerate(units, 1):
+        spec_lines.append(f"- R{index}: {requirement}")
+        ticket_lines.extend(
+            (
+                f"## {ticket_id}",
+                "",
+                "Status: pending",
+                f"Requirement: R{index}",
+                f"Acceptance: the exact file content for R{index} is verified.",
+                "",
+            )
+        )
+    spec_lines.extend(
+        (
+            "",
+            "## Acceptance criteria",
+            "",
+            *[
+                f"- AC{index}: Verify the exact file content required by R{index}."
+                for index in range(1, len(units) + 1)
+            ],
+            "",
+            "## Prepared claim evidence",
+            "",
+            evidence,
+            "",
+        )
+    )
+    spec = tigerkit / "spec.md"
+    tickets = tigerkit / "tickets.md"
+    spec.write_text("\n".join(spec_lines), encoding="utf-8")
+    tickets.write_text("\n".join(ticket_lines), encoding="utf-8")
+
+    head = _git_value(checkout, "rev-parse", "HEAD")
+    branch = _git_value(checkout, "branch", "--show-current")
+    source = f"tigerkit-eval:{kind}"
+    created_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    command = [
+        sys.executable,
+        str(skills_target / "tk-prep" / "scripts" / "prep_manifest.py"),
+        "create",
+        "--output",
+        str(tigerkit / "prep.md"),
+        "--task-id",
+        source,
+        "--task-anchor",
+        source,
+        "--repository-root",
+        str(checkout),
+        "--worktree",
+        str(checkout),
+        "--branch",
+        branch,
+        "--base-head",
+        head,
+        "--source",
+        source,
+        "--dirty-inventory-json",
+        json.dumps(dirty_inventory),
+        "--instruction-inventory-json",
+        json.dumps(instruction_inventory),
+        "--spec",
+        str(spec),
+        "--ticket-mode",
+        "tickets",
+        "--tickets",
+        str(tickets),
+        "--verification-profile-json",
+        json.dumps(profile, sort_keys=True),
+        "--prior-art-ref",
+        "none",
+        "--created-at",
+        created_at,
+    ]
+    completed = subprocess.run(
+        command,
+        cwd=checkout,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        detail = completed.stderr.strip() or completed.stdout.strip()
+        raise RuntimeError(f"cannot create prepared eval fixture: {detail}")
+    return "/tk-drive"
+
+
 def _hide_project_skills_from_git(
     checkout: Path,
 ) -> tuple[Path, bytes | None] | None:
@@ -536,6 +692,7 @@ def main() -> int:
     try:
         skills_target, remove_agents_dir = _stage_project_skills(checkout)
         exclude_state = _hide_project_skills_from_git(checkout)
+        prompt = _prepare_live_fixture(checkout, skills_target, prompt)
         skill_path = skills_target / skill / "SKILL.md"
         recorder = skills_target / "tk-drive" / "scripts" / "record_eval_event.py"
         available_skills, selected = _run_codex(
