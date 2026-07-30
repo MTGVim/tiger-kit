@@ -68,7 +68,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-All 14 canonical skills include a cross-cutting presentation contract inspired
+All 15 canonical skills include a cross-cutting presentation contract inspired
 by `ayghri/i-have-adhd`, source snapshot
 `07684c4ab625dd7d1ea6e99e065f60bc0ac6a1ba`
 (`skills/i-have-adhd/SKILL.md`). TigerKit retains the action-first,

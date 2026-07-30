@@ -293,6 +293,22 @@
       "focus_skill": "tk-ask-repo",
       "expected_selected_skill": null,
       "critical": true
+    },
+    {
+      "id": "prep-explicit-source",
+      "boundary": "tk-prep vs tk-drive/raw source",
+      "prompt": "$tk-prep 이 issue를 sealed preparation manifest로 준비해 주세요.",
+      "focus_skill": "tk-prep",
+      "expected_selected_skill": "tk-prep",
+      "critical": true
+    },
+    {
+      "id": "drive-raw-source-rejected",
+      "boundary": "tk-prep vs tk-drive/raw source",
+      "prompt": "$tk-drive 이 raw issue를 바로 구현해 주세요.",
+      "focus_skill": "tk-drive",
+      "expected_selected_skill": "tk-drive",
+      "critical": true
     }
   ]
 }

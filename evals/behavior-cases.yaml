@@ -595,6 +595,18 @@
 - case: ask-repo-bounds-result-cardinality
   skill: tk-ask-repo
   expect: "One answer may use one to three short paragraphs, compound answers use bounded bullets or a table, and eight or more results show the top five to seven plus owning evidence paths."
+- case: prep-writes-only-after-ready-gates
+  skill: tk-prep
+  expect: "Preparation writes and strictly rereads one atomic Ready manifest only after decision, spec, ticket or no-ticket, verification-profile, and cold-start gates pass."
+- case: prep-preserves-terminal-on-failed-gate
+  skill: tk-prep
+  expect: "Pending, blocked, failed, or unverifiable preparation preserves the prior terminal manifest byte-for-byte."
+- case: prep-rejects-active-replacement
+  skill: tk-prep
+  expect: "An active manifest blocks replacement so concurrent preparation cannot destroy run ownership."
+- case: prep-does-not-implement
+  skill: tk-prep
+  expect: "Preparation may invoke only its semantic preparation phase owners and never implements, commits, consumes drive, reflects, pushes, or publishes."
 - case: browser-bounds-result-cardinality
   skill: tk-browser-verify
   expect: "Compound visual, network, and final-state results use bounded bullets or scenario rows; eight or more show the top five to seven plus the browser ledger path."

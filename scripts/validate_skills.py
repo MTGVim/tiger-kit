@@ -78,6 +78,7 @@ RESULT_BUDGET_TOKENS = {
     "tk-implement": ("2–5 short", "1–4 verification-result bullets", "underlying results exceed"),
     "tk-learn": ("two to seven candidate", "top five to seven"),
     "tk-merge-conflict": ("two to five short rows or bullets", "top five to seven"),
+    "tk-prep": ("one to four short lines", "two to seven preparation findings", "top five to seven"),
     "tk-prototype": ("two to five bullets or", "top five to seven"),
     "tk-reflect": ("at most five", "never substitutes for the Disposition table"),
     "tk-skill-diagnose": ("two to seven reproduced", "top five to seven"),
@@ -143,6 +144,7 @@ CATALOG_ROUTING_BOUNDARIES = {
     "tk-handoff vs generic summary/continue",
     "tk-drive vs tk-handoff/generic continue",
     "tk-drive vs tk-grill-me",
+    "tk-prep vs tk-drive/raw source",
     "tk-merge-conflict vs ordinary conflict-marker edit",
     "tk-skill-diagnose vs ordinary application/code debugging",
     "tk-skill-diagnose vs tk-grooming",
@@ -163,6 +165,7 @@ EXPECTED_SKILLS = {
     "tk-implement",
     "tk-learn",
     "tk-merge-conflict",
+    "tk-prep",
     "tk-prototype",
     "tk-reflect",
     "tk-skill-diagnose",
@@ -172,6 +175,7 @@ EXPECTED_SKILLS = {
 USER_INVOKED_SKILLS = {
     "tk-ask-repo",
     "tk-drive",
+    "tk-prep",
 }
 HYBRID_SKILLS = EXPECTED_SKILLS - USER_INVOKED_SKILLS
 KEBAB = re.compile(r"^tk-[a-z0-9]+(?:-[a-z0-9]+)*$")
@@ -187,6 +191,10 @@ REQUIRED_BEHAVIOR_CASES = {
     "ask-repo-search-failure-is-unverifiable",
     "ask-repo-blocks-contradicted-premise",
     "ask-repo-bounds-result-cardinality",
+    "prep-writes-only-after-ready-gates",
+    "prep-preserves-terminal-on-failed-gate",
+    "prep-rejects-active-replacement",
+    "prep-does-not-implement",
     "implement-auto-decides-unspecified-strategy",
     "implement-respects-explicit-strategy",
     "implement-routes-visible-ui-through-browser-verify",
@@ -1493,7 +1501,10 @@ def validate_eval_fixtures() -> list[str]:
         if duplicates:
             errors.append(f"evals/trigger-cases.yaml: duplicate skills: {', '.join(sorted(set(duplicates)))}")
         if set(entries) != EXPECTED_SKILLS:
-            errors.append("evals/trigger-cases.yaml: cover exactly the 14 canonical skills")
+            errors.append(
+                "evals/trigger-cases.yaml: cover exactly "
+                f"the {len(EXPECTED_SKILLS)} canonical skills"
+            )
         for skill, values in sorted(entries.items()):
             if skill in USER_INVOKED_SKILLS:
                 if values["examples"] < 2:

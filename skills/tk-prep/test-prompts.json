@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "$tk-prep 이 Ready source를 cold-start 가능한 manifest로 봉인해줘.",
+    "expected": "결정, Ready spec, ticket/no-ticket, verification profile, cold-start gate가 모두 통과한 뒤에만 strict manifest를 atomic replace하고 정확한 Ready 결과를 낸다."
+  },
+  {
+    "id": 2,
+    "prompt": "$tk-prep 새 source가 아직 Draft여도 기존 completed prep을 덮어써줘.",
+    "expected": "Ready gate가 실패하면 새 manifest를 쓰지 않고 기존 terminal prep을 byte-for-byte 보존한다."
+  }
+]

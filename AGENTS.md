@@ -4,7 +4,7 @@
 
 TigerKit is an Agent Skills repository, not a workflow framework or Claude Code plugin.
 
-- Keep exactly 14 canonical skills under `skills/tk-*/`: 2 user-invoked and 12 hybrid. Do not add model-only skills.
+- Keep exactly 15 canonical skills under `skills/tk-*/`: 3 user-invoked and 12 hybrid. Do not add model-only skills.
 - Each skill's `SKILL.md` is its behavior source of truth.
 - Keep each skill self-contained; skill-specific detail and code stay in its own `references/` and `scripts/`.
 - A cross-cutting presentation contract may use one validator constant as its

@@ -69,6 +69,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "tk-implement",
                 "tk-learn",
                 "tk-merge-conflict",
+                "tk-prep",
                 "tk-prototype",
                 "tk-reflect",
                 "tk-skill-diagnose",
@@ -76,7 +77,9 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "tk-to-tickets",
             },
         )
-        self.assertEqual(USER_INVOKED_SKILLS, {"tk-ask-repo", "tk-drive"})
+        self.assertEqual(
+            USER_INVOKED_SKILLS, {"tk-ask-repo", "tk-drive", "tk-prep"}
+        )
         self.assertTrue(
             {
                 "ask-repo-value-finds-assignment-origin",
@@ -89,6 +92,10 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "ask-repo-search-failure-is-unverifiable",
                 "ask-repo-blocks-contradicted-premise",
                 "ask-repo-bounds-result-cardinality",
+                "prep-writes-only-after-ready-gates",
+                "prep-preserves-terminal-on-failed-gate",
+                "prep-rejects-active-replacement",
+                "prep-does-not-implement",
                 "drive-requires-explicit-start",
                 "drive-resumes-pending-answer",
                 "drive-bounds-result-cardinality",
@@ -837,6 +844,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
             ),
             "tk-learn": ("Lead with the promotion or no-op decision", "`Target path`"),
             "tk-merge-conflict": ("Use only non-empty sections in this order", "`Blocked: no active conflict`"),
+            "tk-prep": ("On success, emit exactly", "A failed atomic replace is `Fail`"),
             "tk-prototype": ("Record decision-relevant status once", "Keep command mechanics after the decision"),
             "tk-reflect": ("In chat, emit only", "no raw logs, transcripts, diff excerpts"),
             "tk-skill-diagnose": ("In chat, emit `## Diagnosis`", "Never copy raw logs, transcripts"),

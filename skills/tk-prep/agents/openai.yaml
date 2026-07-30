@@ -1,0 +1,7 @@
+interface:
+  display_name: "TigerKit: Prepare"
+  short_description: "[user] Seal an explicit source into a cold-start-capable preparation manifest."
+  default_prompt: "Use tk-prep to close decisions, create the Ready spec and conditional tickets, bind repository and verification evidence, and atomically write one sealed .tigerkit/prep.md without implementing."
+
+policy:
+  allow_implicit_invocation: false

@@ -122,6 +122,15 @@
     - tk-implement
     - tk-grill-me
     - tk-handoff
+- skill: tk-prep
+  examples:
+    - "$tk-prep 이 issue를 sealed manifest로 준비해줘"
+    - "/tk-prep 이 Ready spec과 source를 cold-start 가능하게 봉인해줘"
+    - "skill picker에서 tk-prep을 선택해 이 source를 준비해줘"
+  nearby:
+    - tk-drive
+    - tk-grill-me
+    - tk-to-spec
 - skill: tk-ask-repo
   examples:
     - "$tk-ask-repo 이 화면 값이 어디서 오는지 조사해줘"
