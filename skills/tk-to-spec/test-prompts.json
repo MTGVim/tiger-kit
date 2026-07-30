@@ -6,7 +6,7 @@
   },
   {
     "id": 2,
-    "prompt": "[active tk-drive spec handoff] 확인된 source로 Ready spec을 작성하세요. 조사 중 새 사용자 선택이 필요하면 대신 결정하거나 grill을 부르지 마세요.",
-    "expected": "새 user-owned decision이 필요하면 native non-Ready receipt에 User decision: required와 근거를 담아 drive로 반환하고, substitute Ready spec을 쓰거나 grill을 직접 호출하지 않는다."
+    "prompt": "[active tk-drive Preparing spec handoff] 확인된 source로 Ready spec을 작성하세요. 조사 중 새 사용자 선택이 필요하면 대신 결정하거나 grill을 부르지 마세요.",
+    "expected": "새 user-owned decision이 필요하면 native non-Ready receipt에 User decision: required와 근거를 담아 prep으로 반환하고, substitute Ready spec을 쓰거나 grill을 직접 호출하지 않는다."
   }
 ]

@@ -13,7 +13,7 @@ from unittest import mock
 
 
 SCRIPT = Path(__file__).with_name("prep_state.py")
-PREP_SCRIPT = SCRIPT.parents[2] / "tk-prep" / "scripts" / "prep_manifest.py"
+PREP_SCRIPT = SCRIPT.with_name("prep_manifest.py")
 SCHEMA = "tigerkit.prep/v1"
 
 

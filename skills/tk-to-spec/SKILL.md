@@ -1,6 +1,6 @@
 ---
 name: tk-to-spec
-description: "[user/auto] Turn confirmed decisions and evidence into a Ready implementation spec. Apply to an explicit standalone spec-artifact request or an explicit spec handoff from active tk-drive; do not apply to ticket decomposition, interviews, remote issues, or implementation requests."
+description: "[user/auto] Turn confirmed decisions and evidence into a Ready implementation spec. Apply to an explicit standalone spec-artifact request or an explicit spec handoff from active tk-drive Preparing; do not apply to ticket decomposition, interviews, remote issues, or implementation requests."
 argument-hint: "<conversation, source, or request> [--output <path>|--print-only]"
 metadata:
   tigerkit:
@@ -16,27 +16,27 @@ Use for explicit invocation, a clear natural-language request for an
 implementation spec artifact, or an explicit spec handoff in which active
 `tk-drive` provides current source and decisions. Do not auto-activate from
 ticket decomposition, an interview, remote issue creation, an implementation
-request, artifact presence, or merely because drive is active.
+request, artifact presence, or merely because prep is active.
 
 Source precedence is: user-designated source, current decisions,
 tickets/documents, relevant code, existing `.tigerkit/spec.md`. Do not start an
 interview, create tickets, publish, or implement.
 
-When an active-drive handoff still needs a user decision, return the native
-`Draft | Blocked | Unverifiable` receipt to drive. Do not invoke
-`tk-grill-me`; drive alone decides whether to route that evidence through its
+When an active-drive-preparing handoff still needs a user decision, return the native
+`Draft | Blocked | Unverifiable` receipt to prep. Do not invoke
+`tk-grill-me`; prep alone decides whether to route that evidence through its
 decision phase and retry the spec gate. Include
 `User decision: required | none`; `required` cites the new decision and source
 evidence.
 
-Standalone and drive handoff use the same Ready contract. In a drive handoff,
+Standalone and prep handoff use the same Ready contract. In a prep handoff,
 preserve task identity and source traceability; return `Phase: spec`, status,
 artifact path, and R/AC IDs. The handoff also supplies `Success state` and
 `Outstanding transition`. On `Ready`, include `Return to: tk-drive` and echo
 the parent-supplied `Outstanding transition` verbatim without choosing or
 executing it. A missing or mismatched `Success state` or transition cannot
-produce a successful active-drive receipt; return `Blocked`. If status is not
-`Ready`, do not create a substitute spec or weaken the verdict so drive can
+produce a successful active-drive-preparing receipt; return `Blocked`. If status is not
+`Ready`, do not create a substitute spec or weaken the verdict so prep can
 continue.
 
 ## Workflow
@@ -45,17 +45,23 @@ continue.
    ordered source plus any existing spec.
 2. `source map`: map each claim to source location and
    `verified | unverified`.
-3. `separate and identify`: separate facts, decisions, assumptions, and
-   unresolved conflicts; assign stable requirement and acceptance IDs.
-4. `vertical slicing candidate areas`: group related R/AC by user-visible
+3. `separate and identify`: separate facts, decisions, assumptions, unresolved
+   conflicts, and relevant prior art; assign stable requirement and acceptance
+   IDs.
+4. `prior-art disposition`: for each relevant item, record exactly one
+   `adopted | already-satisfied | not-applicable | conflict` disposition,
+   evidence reference, semantic reason, and R/AC mapping. A `conflict`
+   disposition prevents `Ready` until prep closes the decision. When no
+   relevant prior art exists, omit `## Prior art` entirely.
+5. `vertical slicing candidate areas`: group related R/AC by user-visible
    behavior and coupling evidence without deciding independence, ticket shape,
    IDs, or whether a ledger is justified.
-5. `Ready gate`: return `Ready | Draft | Blocked | Unverifiable` with missing
+6. `Ready gate`: return `Ready | Draft | Blocked | Unverifiable` with missing
    evidence.
-6. `write/print and verify`: write the selected output or print-only result,
+7. `write/print and verify`: write the selected output or print-only result,
    then revalidate required elements, source map, and IDs.
-7. `receipt`: connect phase, path, status, source map, unverified items,
-   conflicts, and verification in a standalone or drive-consumable receipt.
+8. `receipt`: connect phase, path, status, source map, unverified items,
+   conflicts, and verification in a standalone or prep-consumable receipt.
 
 Write to the user-designated path, print only when requested, otherwise write
 `.tigerkit/spec.md`. When an existing spec covers the same task, retain valid
@@ -101,17 +107,27 @@ requirements, acceptance criteria, verification, source traceability, and
 verifiability with no unresolved conflict. It also includes a compact
 `Vertical slicing candidate areas` table with area label, user-visible
 behavior, R/AC coverage, and coupling evidence. Areas are non-authoritative
-inputs, not slices or tickets: drive alone decides whether a ledger is
+inputs, not slices or tickets: prep alone decides whether a ledger is
 justified, and `tk-to-tickets` alone owns decomposition, ticket IDs, coverage,
 and dependencies. Otherwise use `Draft`, `Blocked`, or `Unverifiable`.
+
+When relevant prior art exists, write `## Prior art` with one row per item:
+evidence reference, semantic disposition
+`adopted | already-satisfied | not-applicable | conflict`, rationale, and R/AC
+mapping. Do not map by keyword coincidence.
+A `conflict` disposition prevents `Ready` and returns the exact decision
+evidence to prep.
+When no relevant prior art exists, omit `## Prior art`; never emit `none`, an
+empty table, or a placeholder.
 
 Lead with the `Ready | Draft | Blocked | Unverifiable` decision. Summarize the
 core scope, requirements, and exceptions in two to five short bullets; one
 result may use one to three short lines. For eight or more underlying items,
 show the top five to seven and cite the spec artifact path that owns the full
 inventory. The spec artifact owns phase, path, status, R/AC IDs, source map,
-candidate areas, unverified items, conflicts, and verification. Do not restate
-that provenance in a bottom metadata block. For active drive, return the
+candidate areas, prior-art dispositions, unverified items, conflicts, and
+verification. Do not restate that provenance in a bottom metadata block. For
+active prep, return the
 required phase/status/path/R/AC and transition fields only in the internal
 handoff envelope. These are budgets, not quotas.
 
@@ -143,16 +159,6 @@ Before writing, check required elements, unresolved conflicts, and UI-writing
 inventory. Missing or unresolved assumptions remain `Draft`; source conflict
 requiring a user decision is `Blocked`; inaccessible required source or
 uncheckable UI literals are `Unverifiable`. Never save them as `Ready`.
-
-### 🔴 HARD GATE · actionable user output
-
-Treat the skill's canonical output contract as the schema and this gate as its presentation layer. Never remove or reorder required headings, tables, IDs, status tokens, result budgets, approval or safety boundaries, host-required progress notices, or response-language rules. Apply the response-language rules to every free-form clause and prose result value; retain another language only for canonical tokens, code identifiers, commands, paths, or exact quoted or source literals. Ordinary workflow jargon is prose, not a code identifier: translate it unless changing the token would make it incorrect.
-
-In the first available free-form prose slot, lead with the answer, outcome, or action instead of a preamble. For multi-step user work, use the fewest bounded numbered steps. For continuing work, restate current state and the next transition without duplicating a plan or result. Make completed behavior visible. State errors as the observed failure, an evidence-backed cause when known, and a concrete recovery; never manufacture a cause.
-
-Suppress tangents, ceremonial openers, repeated recaps, and closing pleasantries. When a required field repeats a result already stated, make its value referential or minimal instead of recapping the result. When work remains, end with exactly one concrete next action owned by the user or workflow; when work is complete, stop without inventing one. Use a concrete time estimate only when evidence supports it and it helps the person executing the step.
-
-When this gate conflicts with the canonical output contract or the host harness, preserve the higher-priority contract and apply the same shape inside its first prose value or slot. Do not label the user, mention this gate, expose a persistent mode, or require a runtime reference outside this skill.
 
 ### 🔴 HARD GATE · terminal user summary
 
@@ -188,7 +194,7 @@ when none is exposed. A failed or rejected call is not absence; preserve
 - Do not mark a document with missing required elements `Ready` or describe
   implementation as complete.
 - Do not repair `Draft | Blocked | Unverifiable | Fail` inline merely because
-  active drive called this skill.
+  active prep called this skill.
 - Do not mix interviews, ticket creation, implementation, or remote publishing
   into this output. If a combined spec/ticket request produces a non-Ready
   spec, do not proceed to tickets.

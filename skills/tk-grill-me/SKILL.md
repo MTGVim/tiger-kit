@@ -1,7 +1,7 @@
 ---
 name: tk-grill-me
-description: "[user/auto] Validate an idea, plan, design, ticket, or RFC through evidence-first, one-question-at-a-time decision closure. Use on explicit invocation, an explicit decision handoff from active tk-drive, or the answer to this skill's pending question; do not auto-start from ordinary ambiguity."
-argument-hint: "<idea, plan, design, ticket, RFC, source, or active-drive handoff>"
+description: "[user/auto] Validate an idea, plan, design, ticket, or RFC through evidence-first, one-question-at-a-time decision closure. Use on explicit invocation, an explicit decision handoff from active tk-drive Preparing, or the answer to this skill's pending question; do not auto-start from ordinary ambiguity."
+argument-hint: "<idea, plan, design, ticket, RFC, source, or active-drive-preparing handoff>"
 metadata:
   tigerkit:
     kind: hybrid
@@ -15,9 +15,9 @@ metadata:
 Use for explicit invocation, an explicit decision handoff from active
 `tk-drive`, or the user's answer to this skill's pending question in the same
 conversation. Do not auto-activate from an ordinary ambiguous request,
-artifact presence, generic continuation, or merely because drive is active.
+artifact presence, generic continuation, or merely because prep is active.
 
-Standalone and drive handoff use the same closure contract. A drive handoff
+Standalone and prep handoff use the same closure contract. A prep handoff
 includes task identity, current source and evidence, confirmed decisions, and
 unresolved user-owned decisions plus the parent-supplied `Success state` and
 `Outstanding transition`. This skill owns only decision closure. It never
@@ -142,7 +142,7 @@ bullets for a compound decision set, and the top five to seven plus the owning
 source/spec path for eight or more. These are budgets, not quotas. Do not add a
 second combined-goal summary or append phase/status provenance. On a standalone
 question turn, state the unresolved ledger item and `pending` only when needed
-to explain the stop. For active drive, return phase, status, evidence,
+to explain the stop. For active prep, return phase, status, evidence,
 `Return to`, and transition only in the internal handoff envelope.
 
 Native `Status` uses `confirmed | pending | aborted | Blocked | Unverifiable`.
@@ -150,23 +150,13 @@ For an orchestrator terminal result, map these respectively to
 `Pass | Pending | Blocked | Blocked | Unverifiable`.
 
 For a standalone call, `Return to` is the user and the final response may
-suggest explicit `tk-to-spec` use without invoking it. For an active-drive
-handoff, `Return to` is `tk-drive`; only `confirmed` permits drive to resume at
-the spec gate. A `confirmed` active-drive receipt must include
+suggest explicit `tk-to-spec` use without invoking it. For an active-drive-preparing
+handoff, `Return to` is `tk-drive`; only `confirmed` permits prep to resume at
+the spec gate. A `confirmed` active-drive-preparing receipt must include
 `Return to: tk-drive` and echo the parent-supplied `Outstanding transition`
 verbatim. A missing or mismatched `Success state` or transition cannot produce
-a successful active-drive receipt; return `Blocked` without choosing or
+a successful active-drive-preparing receipt; return `Blocked` without choosing or
 executing the transition.
-
-### 🔴 HARD GATE · actionable user output
-
-Treat the skill's canonical output contract as the schema and this gate as its presentation layer. Never remove or reorder required headings, tables, IDs, status tokens, result budgets, approval or safety boundaries, host-required progress notices, or response-language rules. Apply the response-language rules to every free-form clause and prose result value; retain another language only for canonical tokens, code identifiers, commands, paths, or exact quoted or source literals. Ordinary workflow jargon is prose, not a code identifier: translate it unless changing the token would make it incorrect.
-
-In the first available free-form prose slot, lead with the answer, outcome, or action instead of a preamble. For multi-step user work, use the fewest bounded numbered steps. For continuing work, restate current state and the next transition without duplicating a plan or result. Make completed behavior visible. State errors as the observed failure, an evidence-backed cause when known, and a concrete recovery; never manufacture a cause.
-
-Suppress tangents, ceremonial openers, repeated recaps, and closing pleasantries. When a required field repeats a result already stated, make its value referential or minimal instead of recapping the result. When work remains, end with exactly one concrete next action owned by the user or workflow; when work is complete, stop without inventing one. Use a concrete time estimate only when evidence supports it and it helps the person executing the step.
-
-When this gate conflicts with the canonical output contract or the host harness, preserve the higher-priority contract and apply the same shape inside its first prose value or slot. Do not label the user, mention this gate, expose a persistent mode, or require a runtime reference outside this skill.
 
 ### 🔴 HARD GATE · terminal user summary
 
@@ -199,5 +189,5 @@ when none is exposed. A failed or rejected call is not absence; preserve
 - Do not interpret investigation, silence, or forward motion as approval.
 - Do not mutate artifacts or call `tk-to-spec`, `tk-to-tickets`,
   `tk-implement`, or another sibling phase owner.
-- Do not auto-start from ordinary ambiguity or an active drive without an
+- Do not auto-start from ordinary ambiguity or an active prep without an
   explicit decision handoff.

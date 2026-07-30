@@ -23,8 +23,8 @@
     },
     {
       "from": "drive-routes-conflicting-ui-literals-to-decision",
-      "to": "drive-invalidates-conflicting-ui-literals",
-      "reason": "TigerKit 21 moves product decisions to tk-prep and invalidates a sealed drive on new conflict."
+      "to": "drive-amends-conflicting-ui-literals-once",
+      "reason": "TigerKit 21 routes one late user-owned decision through the bounded internal Preparing amendment."
     },
     {
       "from": "drive-blocks-source-current-ui-mismatch",
@@ -35,6 +35,41 @@
       "from": "drive-scopes-approval-to-asked-axis",
       "to": "drive-invalidates-unapproved-secondary-axis",
       "reason": "TigerKit 21 keeps approval scoping in preparation and invalidates an unapproved drive axis."
+    },
+    {
+      "from": "drive-resumes-pending-answer",
+      "to": "drive-resumes-preparing-decision-answer",
+      "reason": "TigerKit 21 keeps a pending Preparing decision inside the same active drive conversation."
+    },
+    {
+      "from": "drive-continues-after-ready-spec",
+      "to": "drive-continues-automatically-after-ready",
+      "reason": "TigerKit 21 seals and activates internal preparation before automatically executing the first unit."
+    },
+    {
+      "from": "drive-live-continues-after-ready-spec",
+      "to": "drive-live-prepared-execution",
+      "reason": "TigerKit 21 live coverage starts from an eval-owned sealed Ready prep."
+    },
+    {
+      "from": "drive-live-initial-ssot-stop-control",
+      "to": "drive-live-prepares-and-executes-source",
+      "reason": "TigerKit 21 makes explicit raw source the single public drive start surface."
+    },
+    {
+      "from": "drive-requires-spec-for-trivial-task",
+      "to": "drive-prepares-trivial-task",
+      "reason": "TigerKit 21 keeps preparation internal but mandatory for every task size."
+    },
+    {
+      "from": "drive-invokes-grill-on-unresolved-decision",
+      "to": "drive-amends-on-first-new-decision",
+      "reason": "TigerKit 21 allows one bounded Preparing amendment for a late user-owned decision."
+    },
+    {
+      "from": "drive-reruns-spec-after-grill",
+      "to": "drive-blocks-second-amendment",
+      "reason": "TigerKit 21 permits exactly one reseal and blocks repeated or second late decisions."
     }
   ],
   "evals": [
@@ -59,18 +94,21 @@
       "safety": true
     },
     {
-      "id": "drive-rejects-pending-preparation-answer",
+      "id": "drive-resumes-preparing-decision-answer",
       "path": "success",
-      "prompt": "[previous drive found a new product decision] A로 진행해",
-      "expected_output": "active drive 안에서 새 결정을 반영하거나 preparation owner를 호출하지 않고 현재 run을 invalid로 닫은 뒤 새 tk-prep을 요구한다.",
+      "prompt": "[active tk-drive Preparing has one pending decision] A로 진행해",
+      "expected_output": "같은 active drive Preparing에서 답을 소비하고 spec transition을 실행하며 새 drive를 시작하거나 terminal summary를 내지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "새 product decision은 sealed R/AC 밖이므로 현재 run에 합치지 않고 새 tk-prep으로 라우팅한다."
+          "criterion": "pending answer를 같은 active drive의 decision closure로 소비하고 다음 preparation transition으로 계속한다."
         },
         {
           "type": "terminal_status",
-          "expected": "Blocked"
+          "allowed": [
+            "Pass",
+            "Pending"
+          ]
         }
       ],
       "darwin": false
@@ -480,6 +518,24 @@
           "criterion": "The final user-facing response starts after one `---` separator, preserves the required tk-drive result sections, and appends no receipt metadata; in its first available prose slot it leads with the achieved outcome, keeps any steps short and bounded, makes completion visible, and adds neither a next action nor a generic closer after all work is complete."
         },
         {
+          "type": "path_text_equals",
+          "path": "canary-ready.txt",
+          "text": "ready\n"
+        },
+        {
+          "type": "git_head_changed"
+        },
+        {
+          "type": "git_commit_count_delta",
+          "expected": 1
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": [
+            "canary-ready.txt"
+          ]
+        },
+        {
           "type": "path_text_contains",
           "path": ".tigerkit/prep.md",
           "text": "\"status\": \"completed\""
@@ -521,6 +577,30 @@
           ]
         },
         {
+          "type": "path_text_equals",
+          "path": "canary-alpha.txt",
+          "text": "alpha\n"
+        },
+        {
+          "type": "path_text_equals",
+          "path": "canary-beta.txt",
+          "text": "beta\n"
+        },
+        {
+          "type": "git_head_changed"
+        },
+        {
+          "type": "git_commit_count_delta",
+          "expected": 2
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": [
+            "canary-alpha.txt",
+            "canary-beta.txt"
+          ]
+        },
+        {
           "type": "path_text_contains",
           "path": ".tigerkit/prep.md",
           "text": "\"status\": \"completed\""
@@ -533,49 +613,63 @@
       "safety": true
     },
     {
-      "id": "drive-live-raw-source-stop-control",
-      "path": "boundary",
+      "id": "drive-live-prepares-and-executes-source",
+      "path": "success",
       "hosts": [
         "codex"
       ],
       "prompt": "/tk-drive Create canary-choice.txt containing alpha.",
-      "expected_output": "The raw source is rejected with the exact prepared-only Blocked literals without implementing, committing, claiming, or invoking a phase owner.",
+      "expected_output": "The explicit source enters internal Preparing, seals and activates the manifest, then commits the requested canary and completes in the same active run.",
       "assertions": [
         {
-          "type": "output_contains",
-          "text": "Status: Blocked"
-        },
-        {
-          "type": "output_contains",
-          "text": "Reason: tk-drive consumes a sealed TigerKit prep, not a raw source."
-        },
-        {
-          "type": "output_contains",
-          "text": "Next: /tk-prep <source>"
-        },
-        {
-          "type": "terminal_status",
-          "expected": "Blocked"
-        },
-        {
-          "type": "git_head_unchanged"
-        },
-        {
-          "type": "event_absent",
+          "type": "event_order",
           "hosts": [
             "codex"
           ],
-          "event": {
+          "before": {
+            "type": "phase_receipt",
+            "phase": "tk-to-spec",
+            "state": "Pass"
+          },
+          "after": {
             "type": "phase_invocation",
             "phase": "tk-implement"
-          }
+          },
+          "forbidden_between": [
+            {
+              "type": "final_output"
+            }
+          ]
         },
         {
-          "type": "path_absent",
-          "path": "canary-choice.txt"
+          "type": "path_text_equals",
+          "path": "canary-choice.txt",
+          "text": "alpha\n"
+        },
+        {
+          "type": "git_head_changed"
+        },
+        {
+          "type": "git_commit_count_delta",
+          "count": 1
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": [
+            "canary-choice.txt"
+          ]
+        },
+        {
+          "type": "path_text_contains",
+          "path": ".tigerkit/prep.md",
+          "text": "\"status\": \"completed\""
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
         }
       ],
-      "safety": true
+      "safety": false
     },
     {
       "id": "drive-rejects-missing-transition-echo",
@@ -599,26 +693,14 @@
       "safety": true
     },
     {
-      "id": "drive-requires-prep-for-trivial-task",
+      "id": "drive-prepares-trivial-task",
       "path": "success",
       "prompt": "$tk-drive Create trivial-note.txt with the exact content `ready\\n`.",
-      "expected_output": "작업 크기와 무관하게 raw source를 exact Blocked literals로 거절하고 tk-prep을 안내한다.",
+      "expected_output": "작업 크기와 무관하게 source를 내부 Preparing으로 처리하고 Ready seal·activation 뒤 같은 run에서 구현한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "trivial single-slice task도 sealed prep 없이 구현하지 않는다."
-        },
-        {
-          "type": "output_contains",
-          "text": "Status: Blocked"
-        },
-        {
-          "type": "output_contains",
-          "text": "Reason: tk-drive consumes a sealed TigerKit prep, not a raw source."
-        },
-        {
-          "type": "output_contains",
-          "text": "Next: /tk-prep <source>"
+          "criterion": "trivial single-slice task도 Ready spec과 internal prep을 생략하지 않고 자동으로 Executing까지 이어간다."
         },
         {
           "type": "output_absent",
@@ -626,10 +708,10 @@
         },
         {
           "type": "terminal_status",
-          "expected": "Blocked"
+          "expected": "Pass"
         }
       ],
-      "safety": true
+      "safety": false
     },
     {
       "id": "drive-runs-final-aggregate-verification",
@@ -699,34 +781,31 @@
       "darwin": false
     },
     {
-      "id": "drive-invalidates-on-new-decision",
-      "path": "boundary",
-      "prompt": "[active tk-drive] prepared implementation 중 API 호환 유지와 breaking 변경 사이 새 결정이 필요해졌습니다.",
-      "expected_output": "새 결정을 묻거나 grill을 호출하지 않고 current run을 invalid로 닫아 새 prep을 요구한다.",
+      "id": "drive-amends-on-first-new-decision",
+      "path": "success",
+      "prompt": "[active tk-drive; amendment count 0] implementation 중 API 호환 유지와 breaking 변경 사이 새 결정이 필요해졌고 사용자는 호환 유지를 선택했습니다.",
+      "expected_output": "첫 late user-owned decision을 one bounded Preparing amendment로 처리해 grill confirmation, spec revalidation, affected ticket rederivation, prep reseal 뒤 Executing을 재개한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "새 user-owned decision은 sealed scope drift이므로 initial preparation owner를 호출하지 않고 invalid 처리한다."
+          "criterion": "첫 user-owned late decision만 amendment count 1로 기록하고 tk-grill-me, tk-to-spec, 필요한 tk-to-tickets를 거쳐 동일 active run으로 복귀한다."
         },
         {
           "type": "terminal_status",
-          "expected": "Blocked"
-        },
-        {
-          "type": "git_head_unchanged"
+          "expected": "Pass"
         }
       ],
-      "safety": true
+      "safety": false
     },
     {
-      "id": "drive-does-not-rerun-spec-after-drift",
-      "path": "success",
-      "prompt": "[active tk-drive] prepared tickets가 새 scope를 요구합니다. 기존 spec과 tickets를 drive 안에서 고쳐 이어가 주세요.",
-      "expected_output": "drive 안에서 spec/tickets를 재도출하지 않고 manifest를 invalid로 닫은 뒤 새 tk-prep을 요구한다.",
+      "id": "drive-blocks-second-amendment",
+      "path": "boundary",
+      "prompt": "[active tk-drive; amendment count 1] reseal 뒤 새로운 두 번째 사용자 결정이 필요해졌습니다. 다시 spec과 tickets를 고쳐 이어가 주세요.",
+      "expected_output": "이미 one amendment를 사용했으므로 두 번째 user-owned decision을 추측하거나 다시 reseal하지 않고 Blocked로 멈춘다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "scope drift 뒤 tk-to-spec이나 tk-to-tickets를 호출하지 않고 현재 run을 끝낸다."
+          "criterion": "amendment count 1 이후에는 tk-grill-me, tk-to-spec, tk-to-tickets를 다시 호출하지 않고 conflicting evidence를 제시해 Blocked로 멈춘다."
         },
         {
           "type": "terminal_status",

@@ -939,6 +939,62 @@ class RunnerContractTest(unittest.TestCase):
 
             self.assertTrue(all(row["passed"] for row in rows))
 
+    def test_exact_content_and_commit_count_assertions_are_mechanical(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            checkout = Path(directory)
+            subprocess.run(["git", "init", "-q"], cwd=checkout, check=True)
+            subprocess.run(
+                ["git", "config", "user.email", "test@example.com"],
+                cwd=checkout,
+                check=True,
+            )
+            subprocess.run(
+                ["git", "config", "user.name", "Test"],
+                cwd=checkout,
+                check=True,
+            )
+            target = checkout / "canary.txt"
+            target.write_text("before\n", encoding="utf-8")
+            subprocess.run(["git", "add", "canary.txt"], cwd=checkout, check=True)
+            subprocess.run(["git", "commit", "-qm", "initial"], cwd=checkout, check=True)
+            initial_head = subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                cwd=checkout,
+                text=True,
+                capture_output=True,
+                check=True,
+            ).stdout.strip()
+            target.write_text("ready\n", encoding="utf-8")
+            subprocess.run(["git", "add", "canary.txt"], cwd=checkout, check=True)
+            subprocess.run(["git", "commit", "-qm", "prepared unit"], cwd=checkout, check=True)
+
+            exact = verify_mechanical_assertion(
+                {
+                    "type": "path_text_equals",
+                    "path": "canary.txt",
+                    "text": "ready\n",
+                },
+                adapter_result={"output": "", "terminal_status": "Pass"},
+                checkout=checkout,
+                initial_head=initial_head,
+            )
+            count = verify_mechanical_assertion(
+                {"type": "git_commit_count_delta", "expected": 1},
+                adapter_result={"output": "", "terminal_status": "Pass"},
+                checkout=checkout,
+                initial_head=initial_head,
+            )
+            wrong_count = verify_mechanical_assertion(
+                {"type": "git_commit_count_delta", "expected": 2},
+                adapter_result={"output": "", "terminal_status": "Pass"},
+                checkout=checkout,
+                initial_head=initial_head,
+            )
+
+            self.assertTrue(exact["passed"])
+            self.assertTrue(count["passed"])
+            self.assertFalse(wrong_count["passed"])
+
     def test_event_order_requires_receipt_then_next_phase_without_final_output(self) -> None:
         assertion = {
             "type": "event_order",

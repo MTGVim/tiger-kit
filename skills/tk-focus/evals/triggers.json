@@ -1,0 +1,66 @@
+{
+  "skill": "tk-focus",
+  "kind": "user-invoked",
+  "queries": [
+    {
+      "id": "train-explicit-slash",
+      "split": "train",
+      "query": "/tk-focus 지금 진행 상태랑 다음 행동이 잘 보이게 해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "train-explicit-dollar",
+      "split": "train",
+      "query": "$tk-focus make this long task easier to follow",
+      "should_trigger": true
+    },
+    {
+      "id": "train-implicit-formatting-block",
+      "split": "train",
+      "query": "진행 상태랑 다음 행동이 잘 보이게 정리해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "train-drive-block",
+      "split": "train",
+      "query": "/tk-drive implement issue 206 and keep the progress concise",
+      "should_trigger": false
+    },
+    {
+      "id": "train-other-skill-block",
+      "split": "train",
+      "query": "/tk-handoff 현재 상태를 다음 세션에 넘겨줘",
+      "should_trigger": false
+    },
+    {
+      "id": "test-explicit-picker",
+      "split": "validation",
+      "query": "Use the skill picker to select tk-focus for this session",
+      "should_trigger": true
+    },
+    {
+      "id": "test-implicit-adhd-block",
+      "split": "validation",
+      "query": "I have ADHD, please keep the next step visible",
+      "should_trigger": false
+    },
+    {
+      "id": "test-explain-block",
+      "split": "validation",
+      "query": "Explain this architecture with numbered steps",
+      "should_trigger": false
+    },
+    {
+      "id": "test-stop-without-active-block",
+      "split": "validation",
+      "query": "normal mode",
+      "should_trigger": false
+    },
+    {
+      "id": "test-explicit-stop-resume",
+      "split": "validation",
+      "query": "[tk-focus active] stop focus mode",
+      "should_trigger": true
+    }
+  ]
+}

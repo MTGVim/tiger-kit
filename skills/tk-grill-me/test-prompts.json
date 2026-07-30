@@ -6,7 +6,7 @@
   },
   {
     "id": 2,
-    "prompt": "[active tk-drive decision handoff] 저장 방식 A/B 중 하나가 확정되지 않았습니다. 근거를 조사하고 질문 하나만 제시한 뒤 제 답을 받기 전에는 downstream 작업을 하지 마세요.",
-    "expected": "active-drive handoff를 유효한 진입으로 받아 한 질문만 pending으로 반환하고, 답변 후 confirmed Decisions receipt와 Return to: tk-drive만 제공하며 spec·tickets·implementation을 호출하지 않는다."
+    "prompt": "[active tk-drive Preparing decision handoff] 저장 방식 A/B 중 하나가 확정되지 않았습니다. 근거를 조사하고 질문 하나만 제시한 뒤 제 답을 받기 전에는 downstream 작업을 하지 마세요.",
+    "expected": "active-drive-preparing handoff를 유효한 진입으로 받아 한 질문만 pending으로 반환하고, 답변 후 confirmed Decisions receipt와 Return to: tk-drive만 제공하며 spec·tickets·implementation을 호출하지 않는다."
   }
 ]

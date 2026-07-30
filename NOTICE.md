@@ -68,16 +68,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-All 15 canonical skills include a cross-cutting presentation contract inspired
-by `ayghri/i-have-adhd`, source snapshot
+`tk-focus` is adapted from `ayghri/i-have-adhd`, source snapshot
 `07684c4ab625dd7d1ea6e99e065f60bc0ac6a1ba`
-(`skills/i-have-adhd/SKILL.md`). TigerKit retains the action-first,
-bounded-step, live-state, visible-completion, evidence-based recovery, and
-no-ceremonial-closer principles while preserving each skill's canonical output
-schema and response-language contract. TigerKit does not distribute the
-upstream skill, diagnose users, or implement its persistent mode. Existing
-per-skill origin metadata continues to describe the primary workflow source;
-this cross-cutting attribution is preserved here.
+([`skills/i-have-adhd/SKILL.md`](https://github.com/ayghri/i-have-adhd/blob/07684c4ab625dd7d1ea6e99e065f60bc0ac6a1ba/skills/i-have-adhd/SKILL.md)).
+Relationship metadata: `relationship: adapted`. TigerKit preserves the
+upstream action-first, bounded-step, persistent state, specific-time,
+visible-completion, safety-exception, and no-ceremonial-closer behavior while
+renaming the explicit invocation surface and adding TigerKit metadata and
+evals. No other canonical skill inherits these ADHD-oriented rules through a
+shared output contract, and `tk-focus` never activates implicitly.
 
 `ayghri/i-have-adhd` upstream license:
 

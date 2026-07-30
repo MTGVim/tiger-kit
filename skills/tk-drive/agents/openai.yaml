@@ -1,7 +1,7 @@
 interface:
   display_name: "TigerKit: Drive"
   short_description: "[user] Consume a sealed preparation through commits and terminal state."
-  default_prompt: "Use tk-drive without a raw source to claim .tigerkit/prep.md, execute its frozen units through verified commits, aggregate verification, one reflection tail, and terminal prep state."
+  default_prompt: "Use $tk-drive with an explicit source to prepare and execute one continuous run through verified unit commits, aggregate verification, one reflection tail, and terminal state."
 
 policy:
   allow_implicit_invocation: false

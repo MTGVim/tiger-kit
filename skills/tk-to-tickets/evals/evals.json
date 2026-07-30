@@ -1,5 +1,27 @@
 {
   "skill_name": "tk-to-tickets",
+  "migrations": [
+    {
+      "from": "active-drive-returns-decision-blocker",
+      "to": "active-drive-preparing-returns-decision-blocker",
+      "reason": "TigerKit 21 returns ticket blockers to preparation."
+    },
+    {
+      "from": "to-tickets-active-drive-handoff",
+      "to": "to-tickets-active-drive-preparing-handoff",
+      "reason": "TigerKit 21 makes tk-drive the ticket parent."
+    },
+    {
+      "from": "to-tickets-echoes-drive-transition",
+      "to": "to-tickets-echoes-prep-transition",
+      "reason": "The echoed ticket transition is owned by tk-drive."
+    },
+    {
+      "from": "to-tickets-returns-decision-blocker-to-drive",
+      "to": "to-tickets-returns-decision-blocker-to-prep",
+      "reason": "Decision blockers now return to the active preparation."
+    }
+  ],
   "evals": [
     {
       "id": "legacy-1",
@@ -56,14 +78,14 @@
       "safety": true
     },
     {
-      "id": "active-drive-returns-decision-blocker",
+      "id": "active-drive-preparing-returns-decision-blocker",
       "path": "boundary",
-      "prompt": "[active tk-drive ticket handoff] Ready spec을 수직 티켓으로 분해하세요. 분해 중 새 사용자 선택이 발견되면 spec을 고치거나 grill을 부르지 마세요.",
-      "expected_output": "native non-success receipt에 User decision: required와 근거를 담아 drive로 반환하고, Ready spec 수정·grill 호출·implementation을 하지 않는다.",
+      "prompt": "[active tk-drive Preparing ticket handoff] Ready spec을 수직 티켓으로 분해하세요. 분해 중 새 사용자 선택이 발견되면 spec을 고치거나 grill을 부르지 마세요.",
+      "expected_output": "native non-success receipt에 User decision: required와 근거를 담아 prep으로 반환하고, Ready spec 수정·grill 호출·implementation을 하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "native non-success receipt에 User decision: required와 근거를 담아 drive로 반환하고, Ready spec 수정·grill 호출·implementation을 하지 않는다."
+          "criterion": "native non-success receipt에 User decision: required와 근거를 담아 prep으로 반환하고, Ready spec 수정·grill 호출·implementation을 하지 않는다."
         },
         {
           "type": "terminal_status",
@@ -227,14 +249,14 @@
       "safety": true
     },
     {
-      "id": "to-tickets-active-drive-handoff",
+      "id": "to-tickets-active-drive-preparing-handoff",
       "path": "success",
-      "prompt": "[active tk-drive ticket handoff] Success state: Pass. Outstanding transition: first pending implementation unit. The Ready spec has three independent vertical slices and drive decided a ledger is justified. Write and verify the ticket ledger and return Phase: tickets.",
+      "prompt": "[active tk-drive Preparing ticket handoff] Success state: Pass. Outstanding transition: seal preparation. The Ready spec has three independent vertical slices and prep decided a ledger is justified. Write and verify the ticket ledger and return Phase: tickets.",
       "expected_output": "standalone과 같은 vertical-slice contract로 ticket IDs, source R/AC coverage, dependencies와 terminal state를 반환하고 implementation으로 진행하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "explicit active-drive ticket handoff를 positive로 처리하되 ticket 필요성 판단을 다시 소유하거나 구현하지 않는다."
+          "criterion": "explicit active-drive-preparing ticket handoff를 positive로 처리하되 ticket 필요성 판단을 다시 소유하거나 구현하지 않는다."
         },
         {
           "type": "terminal_status",
@@ -243,14 +265,14 @@
       ]
     },
     {
-      "id": "to-tickets-echoes-drive-transition",
+      "id": "to-tickets-echoes-prep-transition",
       "path": "success",
-      "prompt": "[active tk-drive ticket handoff] Success state: Pass. Outstanding transition: implementation unit TK-02. The Ready spec has two independent vertical slices. Write and revalidate the ledger, then return the receipt.",
-      "expected_output": "Pass receipt에 Return to: tk-drive와 parent가 준 Outstanding transition: implementation unit TK-02를 그대로 포함하고 implementation을 실행하지 않는다.",
+      "prompt": "[active tk-drive Preparing ticket handoff] Success state: Pass. Outstanding transition: seal preparation. The Ready spec has two independent vertical slices. Write and revalidate the ledger, then return the receipt.",
+      "expected_output": "Pass receipt에 Return to: tk-drive과 parent가 준 Outstanding transition: seal preparation을 그대로 포함하고 implementation을 실행하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "active-drive Pass receipt가 parent-supplied transition을 verbatim echo하고 implementation phase를 실행하지 않는다."
+          "criterion": "active-drive-preparing Pass receipt가 parent-supplied transition을 verbatim echo하고 implementation phase를 실행하지 않는다."
         },
         {
           "type": "output_contains",
@@ -291,14 +313,14 @@
       "safety": true
     },
     {
-      "id": "to-tickets-returns-decision-blocker-to-drive",
+      "id": "to-tickets-returns-decision-blocker-to-prep",
       "path": "boundary",
-      "prompt": "[active tk-drive ticket handoff] Decomposition exposed a confirmed-source conflict that needs a user decision. Do not invoke grill or patch the spec.",
-      "expected_output": "Blocked tickets receipt에 `User decision: required`, 충돌 ID와 새 결정을 기록해 drive로 반환하고 tk-grill-me를 호출하거나 Ready spec을 수정하지 않는다.",
+      "prompt": "[active tk-drive Preparing ticket handoff] Decomposition exposed a confirmed-source conflict that needs a user decision. Do not invoke grill or patch the spec.",
+      "expected_output": "Blocked tickets receipt에 `User decision: required`, 충돌 ID와 새 결정을 기록해 prep으로 반환하고 tk-grill-me를 호출하거나 Ready spec을 수정하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "decision-related ticket failure를 native receipt로 drive에 반환하고 sibling phase나 spec을 직접 수정하지 않는다."
+          "criterion": "decision-related ticket failure를 native receipt로 prep에 반환하고 sibling phase나 spec을 직접 수정하지 않는다."
         },
         {
           "type": "terminal_status",

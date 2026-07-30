@@ -143,7 +143,7 @@
     {
       "id": "validation-negative-7",
       "split": "validation",
-      "query": "active tk-drive가 ticket 여부를 판단 중이야",
+      "query": "active tk-drive Preparing이 ticket 여부를 판단 중이야",
       "should_trigger": false,
       "facets": [
         "formal"
@@ -161,7 +161,7 @@
     {
       "id": "validation-positive-drive-handoff",
       "split": "validation",
-      "query": "[active tk-drive ticket handoff] Ready spec과 ticket-decision evidence로 vertical ledger를 작성해",
+      "query": "[active tk-drive Preparing ticket handoff] Ready spec과 ticket-decision evidence로 vertical ledger를 작성해",
       "should_trigger": true,
       "facets": [
         "ko-en",

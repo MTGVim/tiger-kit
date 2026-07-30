@@ -7,6 +7,7 @@ import json
 import os
 import queue
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -15,12 +16,16 @@ import time
 from collections import deque
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import IO, Mapping
+from typing import IO, Callable, Mapping
 
 
 TERMINAL_STATUSES = ("Pass", "Pending", "Blocked", "Fail", "Unverifiable")
 EVENT_TYPES = {"phase_invocation", "phase_receipt"}
 PHASES = {
+    "tk-grill-me",
+    "tk-to-spec",
+    "tk-to-tickets",
+    "tk-prototype",
     "tk-implement",
     "tk-reflect",
 }
@@ -28,6 +33,15 @@ SUCCESS_STATES = {"Pass"}
 LIVE_FIXTURES = {
     "[tigerkit-eval:prepared-single]\n/tk-drive": "single",
     "[tigerkit-eval:prepared-two-unit]\n/tk-drive": "two-unit",
+    "/tk-drive Create canary-choice.txt containing alpha.": "cold-start",
+}
+LIVE_FIXTURE_CONTENT = {
+    "single": {"canary-ready.txt": b"ready\n"},
+    "two-unit": {
+        "canary-alpha.txt": b"alpha\n",
+        "canary-beta.txt": b"beta\n",
+    },
+    "cold-start": {"canary-choice.txt": b"alpha\n"},
 }
 STATUS_PATTERN = re.compile(
     r"(?m)^[ \t]*(?:[-*][ \t]+)?Status:[ \t]*"
@@ -138,6 +152,7 @@ class JsonRpcProcess:
         *,
         cwd: Path,
         env: Mapping[str, str],
+        approval_handler: Callable[[Mapping[str, object]], bool] | None = None,
     ) -> None:
         self.process = subprocess.Popen(
             command,
@@ -151,6 +166,7 @@ class JsonRpcProcess:
         )
         self._messages: queue.Queue[str | None] = queue.Queue()
         self._stderr: deque[str] = deque(maxlen=20)
+        self._approval_handler = approval_handler
         assert self.process.stdout is not None
         assert self.process.stderr is not None
         threading.Thread(
@@ -199,8 +215,18 @@ class JsonRpcProcess:
         return value
 
     def respond_to_server_request(self, message: Mapping[str, object]) -> bool:
-        if "id" not in message or not isinstance(message.get("method"), str):
+        method = message.get("method")
+        if "id" not in message or not isinstance(method, str):
             return False
+        params = message.get("params")
+        if (
+            method == "item/commandExecution/requestApproval"
+            and self._approval_handler is not None
+            and isinstance(params, dict)
+        ):
+            decision = "accept" if self._approval_handler(params) else "decline"
+            self.send({"id": message["id"], "result": {"decision": decision}})
+            return True
         self.send(
             {
                 "id": message["id"],
@@ -264,12 +290,14 @@ def _build_turn_start_params(
     prompt: str,
     skill: str,
     skill_path: Path,
+    approval_policy: str,
 ) -> dict[str, object]:
     return {
         "threadId": thread_id,
+        "approvalPolicy": approval_policy,
         "sandboxPolicy": {
             "type": "workspaceWrite",
-            "writableRoots": [str(checkout), str(checkout / ".git")],
+            "writableRoots": [str(checkout)],
             "networkAccess": False,
         },
         "input": [
@@ -319,6 +347,52 @@ def _git_value(checkout: Path, *arguments: str) -> str:
     return value
 
 
+def _ensure_eval_branch(checkout: Path, kind: str) -> str:
+    completed = subprocess.run(
+        ["git", "branch", "--show-current"],
+        cwd=checkout,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        raise RuntimeError("cannot resolve eval Git identity: branch --show-current")
+    branch = completed.stdout.strip()
+    if branch:
+        return branch
+    branch = f"tigerkit-eval-{kind}"
+    switched = subprocess.run(
+        ["git", "switch", "-c", branch],
+        cwd=checkout,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if switched.returncode != 0:
+        detail = switched.stderr.strip() or switched.stdout.strip()
+        raise RuntimeError(f"cannot create prepared eval branch: {detail}")
+    return branch
+
+
+def _configure_eval_git(checkout: Path) -> None:
+    hooks = checkout / ".tigerkit" / "no-hooks"
+    hooks.mkdir(parents=True)
+    for key, value in (
+        ("core.hooksPath", str(hooks)),
+        ("commit.gpgsign", "false"),
+        ("tag.gpgsign", "false"),
+    ):
+        completed = subprocess.run(
+            ["git", "config", "--local", key, value],
+            cwd=checkout,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if completed.returncode != 0:
+            raise RuntimeError(f"cannot secure prepared eval Git config: {key}")
+
+
 def _prepare_live_fixture(
     checkout: Path,
     skills_target: Path,
@@ -326,6 +400,9 @@ def _prepare_live_fixture(
 ) -> str:
     kind = LIVE_FIXTURES.get(prompt)
     if kind is None:
+        return prompt
+    if kind == "cold-start":
+        _configure_eval_git(checkout)
         return prompt
 
     tigerkit = checkout / ".tigerkit"
@@ -405,12 +482,12 @@ def _prepare_live_fixture(
     tickets.write_text("\n".join(ticket_lines), encoding="utf-8")
 
     head = _git_value(checkout, "rev-parse", "HEAD")
-    branch = _git_value(checkout, "branch", "--show-current")
+    branch = _ensure_eval_branch(checkout, kind)
     source = f"tigerkit-eval:{kind}"
     created_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     command = [
         sys.executable,
-        str(skills_target / "tk-prep" / "scripts" / "prep_manifest.py"),
+        str(skills_target / "tk-drive" / "scripts" / "prep_manifest.py"),
         "create",
         "--output",
         str(tigerkit / "prep.md"),
@@ -455,16 +532,226 @@ def _prepare_live_fixture(
     if completed.returncode != 0:
         detail = completed.stderr.strip() or completed.stdout.strip()
         raise RuntimeError(f"cannot create prepared eval fixture: {detail}")
-    return "/tk-drive"
+    _configure_eval_git(checkout)
+    return (
+        "[tigerkit-eval: same active tk-drive Preparing has just sealed this "
+        "eval-owned Ready manifest; continue the recorded seal-and-activate "
+        "transition]\n/tk-drive"
+    )
+
+
+class LiveGitApprovalGate:
+    """Approve only the fixture's exact, non-composite Git add/commit commands."""
+
+    def __init__(self, checkout: Path, kind: str) -> None:
+        self.checkout = checkout.resolve()
+        self.expected = LIVE_FIXTURE_CONTENT[kind]
+
+    def __call__(self, params: Mapping[str, object]) -> bool:
+        allowed = self._is_allowed(params)
+        if not allowed:
+            command = params.get("command")
+            cwd = params.get("cwd")
+            print(
+                "LiveGitApprovalGate declined "
+                f"cwd={cwd!r} command={command!r} keys={sorted(params)}",
+                file=sys.stderr,
+            )
+        return allowed
+
+    def _is_allowed(self, params: Mapping[str, object]) -> bool:
+        if params.get("networkApprovalContext") is not None:
+            return False
+        permissions = params.get("additionalPermissions")
+        if isinstance(permissions, dict):
+            network = permissions.get("network")
+            if isinstance(network, dict) and network.get("enabled") is True:
+                return False
+        cwd = params.get("cwd")
+        command = params.get("command")
+        if not isinstance(cwd, str) or not isinstance(command, str):
+            return False
+        try:
+            if Path(cwd).resolve() != self.checkout:
+                return False
+            wrapped_script = self._wrapped_script(command)
+            if wrapped_script is not None:
+                if self._allow_staged_content_script(wrapped_script):
+                    return True
+                if "\n" in wrapped_script:
+                    return self._allow_multiline_script(wrapped_script)
+            tokens = self._command_tokens(command)
+        except (OSError, ValueError):
+            return False
+        if any(marker in command for marker in ("\x00", "\n", "\r", "`", "$")):
+            return False
+        if not tokens or Path(tokens[0]).name != "git":
+            return False
+        operators = {"&&", "||", ";", "|", "&", ">", ">>", "<", "<<"}
+        present = [token for token in tokens if token in operators]
+        if present:
+            if present != ["&&"] or tokens.count("&&") != 1:
+                return False
+            boundary = tokens.index("&&")
+            if not self._staged_paths():
+                return self._allow_add(tokens[:boundary]) and self._allow_commit(
+                    tokens[boundary + 1 :],
+                    require_staged=False,
+                )
+            return False
+        if len(tokens) >= 2 and tokens[1] == "add":
+            return self._allow_add(tokens)
+        if len(tokens) >= 2 and tokens[1] == "commit":
+            return self._allow_commit(tokens)
+        return False
+
+    def _command_tokens(self, command: str) -> list[str]:
+        wrapped = self._wrapped_script(command)
+        return self._shell_tokens(wrapped) if wrapped is not None else self._shell_tokens(command)
+
+    def _wrapped_script(self, command: str) -> str | None:
+        tokens = self._shell_tokens(command)
+        if (
+            len(tokens) == 3
+            and tokens[1] == "-lc"
+            and Path(tokens[0]).is_absolute()
+            and Path(tokens[0]).parent in {Path("/bin"), Path("/usr/bin")}
+            and Path(tokens[0]).name in {"bash", "sh", "zsh"}
+        ):
+            return tokens[2]
+        return None
+
+    def _allow_multiline_script(self, script: str) -> bool:
+        if "\x00" in script or "\r" in script or self._staged_paths():
+            return False
+        lines = script.splitlines()
+        if len(lines) != 10 or any(not line.strip() for line in lines):
+            return False
+        add_tokens = self._shell_tokens(lines[0])
+        if not self._allow_add(add_tokens):
+            return False
+        paths = add_tokens[2:]
+        if paths[:1] == ["--"]:
+            paths = paths[1:]
+        branch = _git_value(self.checkout, "branch", "--show-current")
+        head = _git_value(self.checkout, "rev-parse", "HEAD")
+        staged = "\n".join(paths)
+        expected_middle = [
+            "git diff --cached --stat",
+            "git diff --cached --numstat",
+            "git diff --cached --name-status",
+            "git diff --cached --check",
+            shlex.join(["git", "diff", "--cached", "--", *paths]),
+            f'test "$(git branch --show-current)" = {shlex.quote(branch)}',
+            f'test "$(git rev-parse HEAD)" = {shlex.quote(head)}',
+            f'test "$(git diff --cached --name-only)" = {shlex.quote(staged)}',
+        ]
+        return lines[1:-1] == expected_middle and self._allow_commit(
+            self._shell_tokens(lines[-1]),
+            require_staged=False,
+        )
+
+    def _allow_staged_content_script(self, script: str) -> bool:
+        if "\x00" in script or "\r" in script or "\n" in script or self._staged_paths():
+            return False
+        for path, content in self.expected.items():
+            if not self._allow_add(["git", "add", "--", path]):
+                continue
+            expected = " && ".join(
+                (
+                    f"git add -- {path}",
+                    f'test "$(git show :{path} | wc -c | tr -d \' \')" = {len(content)}',
+                    (
+                        f'test "$(git show :{path} | od -An -tx1 | '
+                        f'tr -d \' \\\\n\')" = {content.hex()}'
+                    ),
+                    "git diff --cached --stat",
+                    "git diff --cached --numstat",
+                    "git diff --cached --name-only",
+                    "git diff --cached --check",
+                    f"git diff --cached -- {path}",
+                    "git rev-parse HEAD",
+                    "git branch --show-current",
+                )
+            )
+            if script == expected:
+                return True
+        return False
+
+    @staticmethod
+    def _shell_tokens(command: str) -> list[str]:
+        lexer = shlex.shlex(
+            command,
+            posix=True,
+            punctuation_chars=";&|<>",
+        )
+        lexer.whitespace_split = True
+        return list(lexer)
+
+    def _allow_add(self, tokens: list[str]) -> bool:
+        paths = tokens[2:]
+        if paths[:1] == ["--"]:
+            paths = paths[1:]
+        if not paths or len(paths) != len(set(paths)):
+            return False
+        if any(path not in self.expected for path in paths):
+            return False
+        return all(
+            (self.checkout / path).is_file()
+            and (self.checkout / path).read_bytes() == self.expected[path]
+            for path in paths
+        )
+
+    def _allow_commit(
+        self,
+        tokens: list[str],
+        *,
+        require_staged: bool = True,
+    ) -> bool:
+        message: str | None = None
+        if len(tokens) == 4 and tokens[2] in {"-m", "--message"}:
+            message = tokens[3]
+        elif len(tokens) == 3 and tokens[2].startswith("--message="):
+            message = tokens[2].partition("=")[2]
+        if not message or len(message) > 200 or "\x00" in message:
+            return False
+        if not require_staged:
+            return True
+        staged = self._staged_paths()
+        return len(staged) == 1 and staged[0] in self.expected
+
+    def _staged_paths(self) -> list[str]:
+        completed = subprocess.run(
+            ["git", "diff", "--cached", "--name-only", "-z"],
+            cwd=self.checkout,
+            capture_output=True,
+            check=False,
+        )
+        if completed.returncode != 0:
+            return []
+        return [
+            value.decode("utf-8")
+            for value in completed.stdout.split(b"\0")
+            if value
+        ]
 
 
 def _hide_project_skills_from_git(
     checkout: Path,
 ) -> tuple[Path, bytes | None] | None:
-    git_dir = checkout / ".git"
-    if not git_dir.is_dir():
+    completed = subprocess.run(
+        ["git", "rev-parse", "--git-path", "info/exclude"],
+        cwd=checkout,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    raw_path = completed.stdout.strip()
+    if completed.returncode != 0 or not raw_path:
         return None
-    exclude = git_dir / "info" / "exclude"
+    exclude = Path(raw_path)
+    if not exclude.is_absolute():
+        exclude = checkout / exclude
     original = exclude.read_bytes() if exclude.is_file() else None
     exclude.parent.mkdir(parents=True, exist_ok=True)
     content = original or b""
@@ -566,6 +853,25 @@ def _prepare_codex_home(run_dir: Path) -> Path:
     return target
 
 
+def _scrubbed_child_env() -> dict[str, str]:
+    allowed = (
+        "LANG",
+        "LC_ALL",
+        "LC_CTYPE",
+        "SSL_CERT_DIR",
+        "SSL_CERT_FILE",
+        "TERM",
+        "TZ",
+    )
+    child = {
+        key: os.environ[key]
+        for key in allowed
+        if os.environ.get(key)
+    }
+    child["PATH"] = os.environ.get("PATH", os.defpath)
+    return child
+
+
 def _app_server_command() -> list[str]:
     command = ["codex", "app-server", "--stdio"]
     model = os.environ.get("TK_EVAL_CODEX_MODEL")
@@ -584,13 +890,15 @@ def _run_codex(
     recorder: Path,
     run_dir: Path,
     observation: CodexObservation,
+    approval_handler: Callable[[Mapping[str, object]], bool] | None,
 ) -> tuple[list[str], bool]:
     deadline = time.monotonic() + float(
         os.environ.get("TK_EVAL_TIMEOUT_SECONDS", "1200")
     )
-    child_env = os.environ.copy()
+    child_env = _scrubbed_child_env()
     child_env.update(
         {
+            "HOME": str(run_dir / "home"),
             "CODEX_HOME": str(_prepare_codex_home(run_dir)),
             "TK_DRIVE_EVENT_LOG": str(event_log),
             "TK_DRIVE_EVENT_RECORDER": str(recorder),
@@ -600,7 +908,12 @@ def _run_codex(
             "GIT_COMMITTER_EMAIL": "tigerkit-eval@example.invalid",
         }
     )
-    client = JsonRpcProcess(_app_server_command(), cwd=checkout, env=child_env)
+    client = JsonRpcProcess(
+        _app_server_command(),
+        cwd=checkout,
+        env=child_env,
+        approval_handler=approval_handler,
+    )
     try:
         client.request(
             "initialize",
@@ -629,7 +942,7 @@ def _run_codex(
             raise RuntimeError("Codex did not expose the staged repo tk-drive skill")
         thread_params: dict[str, object] = {
             "cwd": str(checkout),
-            "approvalPolicy": "never",
+            "approvalPolicy": "on-request" if approval_handler else "never",
             "sandbox": "workspace-write",
             "ephemeral": True,
             "serviceName": "tigerkit_eval",
@@ -653,6 +966,7 @@ def _run_codex(
                 prompt=prompt,
                 skill=skill,
                 skill_path=skill_path,
+                approval_policy="on-request" if approval_handler else "never",
             ),
             deadline=deadline,
             observation=observation,
@@ -691,8 +1005,9 @@ def main() -> int:
     exclude_state: tuple[Path, bytes | None] | None = None
     try:
         skills_target, remove_agents_dir = _stage_project_skills(checkout)
-        exclude_state = _hide_project_skills_from_git(checkout)
+        fixture_kind = LIVE_FIXTURES.get(prompt)
         prompt = _prepare_live_fixture(checkout, skills_target, prompt)
+        exclude_state = _hide_project_skills_from_git(checkout)
         skill_path = skills_target / skill / "SKILL.md"
         recorder = skills_target / "tk-drive" / "scripts" / "record_eval_event.py"
         available_skills, selected = _run_codex(
@@ -704,6 +1019,11 @@ def main() -> int:
             recorder=recorder,
             run_dir=run_dir,
             observation=observation,
+            approval_handler=(
+                LiveGitApprovalGate(checkout, fixture_kind)
+                if fixture_kind is not None
+                else None
+            ),
         )
     except (OSError, RuntimeError, TimeoutError, ValueError) as exc:
         observation.fail(f"Codex eval is unverifiable: {exc}")

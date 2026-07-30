@@ -1,36 +1,35 @@
-# TigerKit 20.3.1
+# TigerKit 21.0.0
 
 <p align="center">
   <img src="assets/tigerkit-cover.png" width="960" alt="TigerKit Agent Skills 표지">
 </p>
 
 TigerKit은 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent Skills
-모음입니다. 중앙 workflow runtime 없이 14개 self-contained skill을
-`npx skills`로 배포합니다. Decision closure, spec, ticket, implementation은
-각각 하나의 canonical phase skill이 소유하고 `tk-drive`가 그 결과를
-단방향으로 오케스트레이션합니다. 최신 immutable release는 `v20.3.1`이며,
+모음입니다. 중앙 workflow runtime 없이 15개 self-contained skill을
+`npx skills`로 배포합니다. 하나의 명시적 `tk-drive <source>`가 내부
+`Preparing → Executing` 흐름에서 decision closure, Ready spec, 필요한
+ticket, implementation·aggregate verification·reflection까지 이어갑니다.
+최신 immutable release는 `v21.0.0`이며,
 현재 `main`에는 다음 release를 위한 skill 변경이 포함될 수 있습니다.
 
-`v20.3.1` release는 모든 terminal user summary를 정확히 한 번의 Markdown
-`---` 뒤에서 시작하고, 맨 아래 Receipt block과 반복 `Outcome:` label을
-제거합니다. 진행 commentary와 active-drive phase handoff는 이 경계를 만들지
-않습니다. Phase receipt는 내부 control envelope로 유지되고, 장기 provenance는
-각 skill이 이미 소유한 spec·tickets·implementation·handoff·browser ledger에만
-남습니다. 공용 receipt ledger나 read-only skill의 새 write surface는 없습니다.
-`tk-drive`는 terminal boundary 직전에 transition debt를 검사하므로 성공한
-child receipt의 `Outstanding transition`이 실행되기 전에는 최종 응답으로
-종료할 수 없습니다.
+`v21.0.0`은 준비와 실행을 한 번의 활성 drive 안에서 연결합니다.
+`/tk-drive <source>` 또는 `$tk-drive <source>`가 worktree-local
+`.tigerkit/prep.md`를 내부적으로 seal·activate한 뒤 추가 확인 없이 첫
+implementation unit으로 진행합니다. 실행 중 늦게 발견된 user-owned
+decision은 한 번만 Preparing amendment를 거칠 수 있고, 초기 구현 뒤
+자동수정은 최대 세 번입니다. 기존 direct single-unit `tk-implement`
+사용은 그대로 유효합니다.
 
-14개 canonical skill 모두 최신 명시 언어 지시를 우선하는 response-language
-hard gate를 포함합니다. 별도 지시가 없으면 현재 사용자 메시지의 언어를
-따르며, 자유 서술은 그 언어로 통일합니다. Canonical heading, status, ID,
-command, path, code, exact source literal은 원문 그대로 유지합니다.
+`tk-focus`를 명시적으로 선택하면 action-first, bounded steps, persistent
+state restatement를 적용하며 `stop focus mode`, `stop adhd mode`, 또는
+`normal mode`까지 유지됩니다. 다른 skill은 이 mode를 암묵적으로
+활성화하지 않습니다.
 
-같은 14개 skill은 canonical output schema를 보존하는 actionable-output hard
-gate도 자체 포함합니다. 필수 heading·table·status semantics는 유지하면서 첫
-자유 서술 위치에서 답·결과·행동을 먼저 제시하고, 진행 상태와 근거 있는 복구
-행동을 짧게 드러냅니다. 완료 뒤에는 불필요한 다음 행동이나 맺음말을 만들지
-않습니다. 별도 mode skill이나 shared runtime reference는 없습니다.
+나머지 14개 canonical skill은 최신 명시 언어 지시를 우선하는
+response-language hard gate와 terminal-summary boundary를 자체 포함합니다.
+최종 사용자 영역은 standalone `---` 뒤에 시작하며 반복 `Outcome:` 또는
+하단 receipt metadata를 렌더링하지 않습니다. Phase receipt는 active parent의
+내부 handoff로만 전달됩니다.
 
 ## 설치
 
@@ -57,10 +56,10 @@ npx skills add MTGVim/tiger-kit \
   --skill tk-browser-verify
 ```
 
-변경되지 않는 `v20.3.1` snapshot:
+변경되지 않는 `v21.0.0` snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v20.3.1" \
+npx skills add "MTGVim/tiger-kit#v21.0.0" \
   --global \
   --agent claude-code \
   --agent codex \
@@ -71,17 +70,18 @@ Claude Code와 Hermes Agent에서는 `/tk-implement` 같은 slash command로 표
 
 ## Skill 목록
 
-- **`[user]` user-invoked 2개**: 사용자가 명시적으로 선택하며 implicit invocation이 차단됩니다.
+- **`[user]` user-invoked 3개**: 사용자가 명시적으로 선택하며 implicit invocation이 차단됩니다.
 - **`[user/auto]` hybrid 12개**: 사용자 선택과 description의 좁은 positive trigger를 모두 지원합니다.
 - model-only skill은 없습니다.
 
 | Skill | 호출 | 목적 |
 | --- | --- | --- |
 | `tk-ask-repo` | user | 외부에서 들어온 repository 질문을 분류하고 원점·소비처·영향·책임을 `path:line` 근거로 조사합니다. |
-| `tk-drive` | user | 명시적으로 시작한 source를 조건부 decision closure, canonical phase owner, ticket별 commit과 최종 aggregate verification까지 진행합니다. |
-| `tk-grill-me` | hybrid | 명시 선택 또는 drive decision handoff에서 사실을 조사하고 중요한 결정을 한 번에 한 질문씩 닫습니다. |
-| `tk-to-spec` | hybrid | 독립 요청 또는 drive handoff에서 Ready spec을 작성·검증합니다. |
-| `tk-to-tickets` | hybrid | 독립 요청 또는 drive handoff에서 source를 수직 ticket으로 나눕니다. |
+| `tk-drive` | user | 명시 source를 내부 Preparing에서 Ready로 만들고 같은 run의 Executing에서 unit별 commit, aggregate verification, reflection까지 진행합니다. |
+| `tk-focus` | user | 명시적으로 켜고 끄는 persistent action-first 출력 mode를 제공합니다. |
+| `tk-grill-me` | hybrid | 명시 선택 또는 prep decision handoff에서 사실을 조사하고 중요한 결정을 한 번에 한 질문씩 닫습니다. |
+| `tk-to-spec` | hybrid | 독립 요청 또는 prep handoff에서 Ready spec을 작성·검증합니다. |
+| `tk-to-tickets` | hybrid | 독립 요청 또는 prep handoff에서 source를 수직 ticket으로 나눕니다. |
 | `tk-implement` | hybrid | 명시 선택 또는 drive의 implementation handoff에서 unit 하나를 테스트·review하고 commit 하나로 만듭니다. |
 | `tk-prototype` | hybrid | 폐기 가능한 UI 또는 logic 비교 검증물을 실제 실행합니다. |
 | `tk-reflect` | hybrid | 명확한 회고 요청에서 재사용 가능한 rule/skill 후보를 report-only로 분류합니다. |
@@ -110,20 +110,23 @@ Standalone decision discovery에는 `tk-grill-me`를 명시적으로 선택할 �
 바로 사용할 수 있습니다. 일반 구현 요청은 이 hybrid skill을 자동 호출하지
 않습니다.
 
-전체 흐름은 현재 host에서 user-invoked `tk-drive`를 명시적으로 선택해
-시작합니다. Claude Code·Hermes Agent의 `/tk-drive`, Codex의 `$tk-drive`,
-host skill picker의 직접 선택이 같은 explicit start입니다. Unresolved
-user-owned decision이 있으면 drive가 `tk-grill-me`에 decision closure를
-위임하고, `confirmed` receipt 뒤 spec gate부터 자동으로 이어갑니다. 이미
-명확한 source에는 grill을 호출하지 않습니다.
+전체 흐름은 `tk-drive` 하나를 source와 함께 명시 선택합니다. Claude
+Code·Hermes Agent에서는 `/tk-drive <source>`, Codex에서는
+`$tk-drive <source>`를 사용합니다. Preparing은 unresolved user-owned
+decision만 `tk-grill-me`에 위임하고 Ready spec과 필요한 vertical ticket
+ledger를 만든 뒤 manifest를 seal·activate합니다. 같은 active run의
+Executing이 즉시 첫 unit을 시작합니다.
 
 ```text
 <host-native explicit tk-drive> <source>
 → 필요할 때만 tk-grill-me: confirmed Decisions receipt
 → tk-to-spec: Ready spec
 → 필요할 때만 tk-to-tickets: vertical ticket ledger
+→ .tigerkit/prep.md: sealed Ready + active claim
 → ticket마다 tk-implement: test + review + verified commit 하나
 → tk-drive: aggregate traceability + broad verification 한 번
+→ tk-reflect: preferred prevention owner + host dependency
+→ .tigerkit/prep.md: completed
 ```
 
 Preflight는 source와 repository evidence에서 material risk signal이 확인될
@@ -133,10 +136,11 @@ regression, compatibility, browser, recovery, bounded independent-review
 low-risk 경로는 추가 출력이나 검증 없이 기존 흐름을 유지합니다.
 
 Spec 또는 tickets 단계가 새 사용자 결정을 요구하면 해당 phase는
-`User decision: required`와 근거를 native non-success receipt로 drive에
-반환합니다. Drive는 grill로 결정을 닫고 Ready spec을 다시 검증한 뒤
-downstream tickets를 재도출합니다. 같은 blocker가 재발하면 다시 순환하지
-않고 `Blocked`로 멈춥니다. Phase owner끼리는 서로 호출하지 않습니다.
+`User decision: required`와 근거를 drive Preparing에 반환합니다. Drive는
+grill로 결정을 닫고 Ready spec을 다시 검증한 뒤 필요한 downstream tickets를
+재도출합니다. Executing 중 발견된 첫 late decision도 동일한 owner를 통한
+한 번의 amendment만 허용하며, 같은 blocker 재발 또는 두 번째 결정은
+`Blocked`로 멈춥니다. Phase owner끼리는 서로 호출하지 않습니다.
 
 ### 브라우저 검증이 필요한 구현
 

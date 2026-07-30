@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "/tk-focus We are halfway through a five-step migration. Restate the current state and tell me what to do next.",
+    "expected": "Enables the persistent focus style, makes the completed progress visible, restates the current step, and leads with one concrete next action."
+  },
+  {
+    "id": 2,
+    "prompt": "[tk-focus is active from an earlier explicit invocation] The schema update is done; the backfill and verification remain. Continue.",
+    "expected": "Keeps the focus style active without another invocation, states the completed schema win, and gives the backfill as the next bounded action."
+  }
+]

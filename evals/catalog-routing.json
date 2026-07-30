@@ -295,19 +295,35 @@
       "critical": true
     },
     {
-      "id": "prep-explicit-source",
-      "boundary": "tk-prep vs tk-drive/raw source",
-      "prompt": "$tk-prep 이 issue를 sealed preparation manifest로 준비해 주세요.",
-      "focus_skill": "tk-prep",
-      "expected_selected_skill": "tk-prep",
+      "id": "drive-explicit-source",
+      "boundary": "tk-drive explicit source vs generic request",
+      "prompt": "$tk-drive 이 issue를 준비부터 검증된 구현까지 진행해 주세요.",
+      "focus_skill": "tk-drive",
+      "expected_selected_skill": "tk-drive",
       "critical": true
     },
     {
-      "id": "drive-raw-source-rejected",
-      "boundary": "tk-prep vs tk-drive/raw source",
-      "prompt": "$tk-drive 이 raw issue를 바로 구현해 주세요.",
+      "id": "drive-generic-request",
+      "boundary": "tk-drive explicit source vs generic request",
+      "prompt": "이 issue를 구현해 주세요.",
       "focus_skill": "tk-drive",
-      "expected_selected_skill": "tk-drive",
+      "expected_selected_skill": null,
+      "critical": true
+    },
+    {
+      "id": "focus-explicit",
+      "boundary": "tk-focus explicit invocation vs implicit formatting",
+      "prompt": "$tk-focus 지금 진행 상태와 다음 행동이 보이게 해 주세요.",
+      "focus_skill": "tk-focus",
+      "expected_selected_skill": "tk-focus",
+      "critical": true
+    },
+    {
+      "id": "focus-implicit-block",
+      "boundary": "tk-focus explicit invocation vs implicit formatting",
+      "prompt": "진행 상태와 다음 행동이 보이게 정리해 주세요.",
+      "focus_skill": "tk-focus",
+      "expected_selected_skill": null,
       "critical": true
     }
   ]

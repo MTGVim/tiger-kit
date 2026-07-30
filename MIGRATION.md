@@ -1,3 +1,55 @@
+# TigerKit 21.0.0 single-drive preparation and focus mode
+
+TigerKit 21 expands the catalog to 15 canonical skills: 3 user-invoked and
+12 hybrid. Installations gain the explicit user-invoked `tk-focus`; no
+model-only skill is added.
+
+The orchestration entry point stays singular:
+
+```text
+old: /tk-drive <source>
+new: /tk-drive <source>
+```
+
+Use the equivalent `$tk-drive <source>` selection in Codex. The behavioral
+change is internal:
+
+```text
+Preparing → Executing
+```
+
+The one active `tk-drive` owns decision closure, Ready spec, ticket/no-ticket
+choice, verification profile, bounded task-anchored prior-art intake, and the
+atomic worktree-local `.tigerkit/prep.md`. Once Ready, it validates and claims
+that internal manifest and starts the first implementation unit without a
+second command or confirmation. Executing permits one bounded late Preparing
+amendment and at most three post-initial corrective cycles.
+
+Existing `.tigerkit/` scratch is not migrated. There is no archive, current
+pointer, global state, `CONTEXT.md`, or automatic legacy conversion. A later
+fully Ready run may replace a terminal manifest; an active manifest allows
+only its matching one-amendment reseal. Direct standalone `tk-implement`
+remains valid, with one ticket and one verified commit per unit.
+
+`tk-focus` adapts `ayghri/i-have-adhd` as an explicit persistent output mode.
+It never activates from an ordinary request or an ADHD mention. It stays
+active until `stop focus mode`, `stop adhd mode`, or `normal mode`, while
+safety, ambiguity, and host constraints continue to outrank brevity.
+
+## Removed Skills
+
+No previously released canonical skill is removed. The proposed separate
+preparation command is intentionally not a public skill; preparation remains
+an internal `tk-drive` stage. Phase ownership remains with the existing
+hybrid grill, spec, ticket, prototype, implementation, and reflection skills.
+
+Reflection now classifies a preferred prevention owner and host dependency.
+The next related prep discovers at most seven durable task-related items from
+repository evidence. `tk-to-spec` owns semantic
+`adopted | already-satisfied | not-applicable | conflict` disposition and R/AC
+mapping; no relevant item produces no `## Prior art`, while conflict blocks
+Ready.
+
 # TigerKit 20.3.1 terminal transition-debt gate
 
 The 14 canonical skill names and the 2 user-invoked / 12 hybrid split remain

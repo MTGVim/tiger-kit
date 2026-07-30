@@ -37,6 +37,8 @@ MECHANICAL_ASSERTION_TYPES = {
     "output_absent",
     "path_text_contains",
     "path_text_absent",
+    "path_text_equals",
+    "git_commit_count_delta",
     "changed_paths_equal",
     "git_diff_contains",
     "git_diff_absent",
@@ -72,37 +74,19 @@ RESULT_BUDGET_TOKENS = {
     "tk-ask-repo": ("one to three short paragraphs", "two to seven results", "top five to seven"),
     "tk-browser-verify": ("two to seven verified scenarios", "top five to seven"),
     "tk-drive": ("two to seven behavior-level bullets", "one to four aggregate-result bullets", "top five to seven"),
+    "tk-focus": ("## Rules", "## When to break the rules"),
     "tk-grill-me": ("two to seven readable", "top five to seven"),
     "tk-grooming": ("two to seven findings", "top five to seven"),
     "tk-handoff": ("two to five short bullets", "top five to seven"),
     "tk-implement": ("2–5 short", "1–4 verification-result bullets", "underlying results exceed"),
     "tk-learn": ("two to seven candidate", "top five to seven"),
     "tk-merge-conflict": ("two to five short rows or bullets", "top five to seven"),
-    "tk-prep": ("one to four short lines", "two to seven preparation findings", "top five to seven"),
     "tk-prototype": ("two to five bullets or", "top five to seven"),
     "tk-reflect": ("at most five", "never substitutes for the Disposition table"),
     "tk-skill-diagnose": ("two to seven reproduced", "top five to seven"),
     "tk-to-spec": ("two to five short bullets", "top five to seven"),
     "tk-to-tickets": ("two to seven tickets", "top five to seven"),
 }
-ACTIONABLE_OUTPUT_GATE = (
-    "### 🔴 HARD GATE · actionable user output\n\n"
-    "Treat the skill's canonical output contract as the schema and this gate as its presentation layer. "
-    "Never remove or reorder required headings, tables, IDs, status tokens, result budgets, approval or safety boundaries, host-required progress notices, or response-language rules. "
-    "Apply the response-language rules to every free-form clause and prose result value; retain another language only for canonical tokens, code identifiers, commands, paths, or exact quoted or source literals. "
-    "Ordinary workflow jargon is prose, not a code identifier: translate it unless changing the token would make it incorrect.\n\n"
-    "In the first available free-form prose slot, lead with the answer, outcome, or action instead of a preamble. "
-    "For multi-step user work, use the fewest bounded numbered steps. "
-    "For continuing work, restate current state and the next transition without duplicating a plan or result. "
-    "Make completed behavior visible. "
-    "State errors as the observed failure, an evidence-backed cause when known, and a concrete recovery; never manufacture a cause.\n\n"
-    "Suppress tangents, ceremonial openers, repeated recaps, and closing pleasantries. "
-    "When a required field repeats a result already stated, make its value referential or minimal instead of recapping the result. "
-    "When work remains, end with exactly one concrete next action owned by the user or workflow; when work is complete, stop without inventing one. "
-    "Use a concrete time estimate only when evidence supports it and it helps the person executing the step.\n\n"
-    "When this gate conflicts with the canonical output contract or the host harness, preserve the higher-priority contract and apply the same shape inside its first prose value or slot. "
-    "Do not label the user, mention this gate, expose a persistent mode, or require a runtime reference outside this skill."
-)
 TERMINAL_SUMMARY_GATE = (
     "### 🔴 HARD GATE · terminal user summary\n\n"
     "Treat progress commentary, internal handoff envelopes, and the terminal user response as distinct surfaces. "
@@ -122,22 +106,61 @@ DRIVE_TRANSITION_DEBT_GATE = (
     "an unexecuted `Outstanding transition`; execute the recorded transition in the\n"
     "same active turn or return the one evidence-supported non-success state."
 )
-DRIVE_RAW_SOURCE_REJECTION = (
-    "`Status: Blocked`\n"
-    "`Reason: tk-drive consumes a sealed TigerKit prep, not a raw source.`\n"
-    "`Next: /tk-prep <source>`"
+DRIVE_STAGE_TOKENS = (
+    "Preparing",
+    "Executing",
+    "same active",
+    "`tk-grill-me`",
+    "`tk-to-spec`",
+    "`tk-to-tickets`",
+    "`tk-prototype`",
+    "`tk-implement`",
+    "`tk-reflect`",
+    "one amendment",
 )
-DRIVE_PREPARED_ONLY_GATE = (
-    "Prepared drive may invoke only `tk-implement` and the single allowed\n"
-    "`tk-reflect` tail.\n"
-    "It must not invoke `tk-grill-me`, `tk-to-spec`, `tk-to-tickets`, or\n"
-    "`tk-prototype` during initial or corrective execution."
+DRIVE_CORRECTIVE_BOUND_TOKENS = (
+    "zero corrective cycles",
+    "at most three",
+    "fourth cycle",
 )
-DRIVE_CORRECTIVE_BOUND_GATE = (
-    "The initial implementation consumes zero corrective cycles.\n"
-    "At most three post-initial corrective cycles are permitted inside frozen R/AC;\n"
-    "a fourth cycle or any scope, ticket, or decision expansion stops mutation."
+FOCUS_CONTRACT_TOKENS = (
+    "disable-model-invocation: true",
+    "origin: ayghri/i-have-adhd",
+    "relationship: adapted",
+    "upstream-skill: skills/i-have-adhd/SKILL.md",
+    "## Persistence",
+    "stop focus mode",
+    "stop adhd mode",
+    "normal mode",
+    "## Rules",
+    "## When to break the rules",
+    "## Pre-send check",
 )
+LEARNING_LOOP_TOKENS = {
+    "skills/tk-grill-me/SKILL.md": (
+        "`Return to: tk-drive`",
+    ),
+    "skills/tk-reflect/SKILL.md": (
+        "Preferred prevention owner",
+        "Host dependency",
+    ),
+    "skills/tk-drive/SKILL.md": (
+        "at most seven",
+        "applicable rules, ADRs, tests, types, lint, CI, repository skills, and code invariants",
+        "raw sessions, prior implementation or reflection scratch, pending drafts, arbitrary global state",
+        "inaccessible host-only rules",
+    ),
+    "skills/tk-to-spec/SKILL.md": (
+        "`Return to: tk-drive`",
+        "`adopted | already-satisfied | not-applicable | conflict`",
+        "R/AC mapping",
+        "A `conflict` disposition prevents `Ready`",
+        "no relevant prior art exists, omit `## Prior art`",
+    ),
+    "skills/tk-to-tickets/SKILL.md": (
+        "`Return to: tk-drive`",
+    ),
+}
 RESPONSE_LANGUAGE_GATE = (
     "### 🔴 HARD GATE · response language\n\n"
     "Before any user-facing progress, question, or summary, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. "
@@ -160,7 +183,8 @@ CATALOG_ROUTING_BOUNDARIES = {
     "tk-handoff vs generic summary/continue",
     "tk-drive vs tk-handoff/generic continue",
     "tk-drive vs tk-grill-me",
-    "tk-prep vs tk-drive/raw source",
+    "tk-drive explicit source vs generic request",
+    "tk-focus explicit invocation vs implicit formatting",
     "tk-merge-conflict vs ordinary conflict-marker edit",
     "tk-skill-diagnose vs ordinary application/code debugging",
     "tk-skill-diagnose vs tk-grooming",
@@ -181,7 +205,7 @@ EXPECTED_SKILLS = {
     "tk-implement",
     "tk-learn",
     "tk-merge-conflict",
-    "tk-prep",
+    "tk-focus",
     "tk-prototype",
     "tk-reflect",
     "tk-skill-diagnose",
@@ -191,7 +215,7 @@ EXPECTED_SKILLS = {
 USER_INVOKED_SKILLS = {
     "tk-ask-repo",
     "tk-drive",
-    "tk-prep",
+    "tk-focus",
 }
 HYBRID_SKILLS = EXPECTED_SKILLS - USER_INVOKED_SKILLS
 KEBAB = re.compile(r"^tk-[a-z0-9]+(?:-[a-z0-9]+)*$")
@@ -207,10 +231,15 @@ REQUIRED_BEHAVIOR_CASES = {
     "ask-repo-search-failure-is-unverifiable",
     "ask-repo-blocks-contradicted-premise",
     "ask-repo-bounds-result-cardinality",
-    "prep-writes-only-after-ready-gates",
-    "prep-preserves-terminal-on-failed-gate",
-    "prep-rejects-active-replacement",
-    "prep-does-not-implement",
+    "drive-prepares-only-after-ready-gates",
+    "drive-bounds-task-anchored-prior-art",
+    "drive-excludes-forbidden-prior-art",
+    "drive-preserves-terminal-on-failed-preparing",
+    "drive-reseals-one-active-amendment",
+    "drive-continues-automatically-after-ready",
+    "focus-explicit-activation",
+    "focus-stop-command",
+    "focus-safety-exception",
     "implement-auto-decides-unspecified-strategy",
     "implement-respects-explicit-strategy",
     "implement-routes-visible-ui-through-browser-verify",
@@ -282,6 +311,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "reflect-separates-adjacent-memory-scope",
     "reflect-bounds-summary-cell-length",
     "reflect-bounds-result-cardinality",
+    "reflect-classifies-prevention-owner-and-host-dependency",
     "reflect-drive-applies-eligible-tracked-repo-rule",
     "reflect-drive-never-creates-local-rule-target",
     "reflect-drive-skill-candidate-is-promotion-packet-only",
@@ -292,17 +322,20 @@ REQUIRED_BEHAVIOR_CASES = {
     "to-spec-structures-bug-evidence",
     "to-spec-preserves-source-ui-writing-verbatim",
     "to-spec-blocks-source-current-ui-mismatch",
-    "to-spec-active-drive-handoff",
-    "to-spec-returns-decision-blocker-to-drive",
+    "to-spec-active-drive-preparing-handoff",
+    "to-spec-returns-decision-blocker-to-prep",
     "to-spec-records-vertical-slicing-candidate-areas",
     "to-spec-bounds-result-cardinality",
+    "to-spec-disposes-prior-art-semantically",
+    "to-spec-omits-empty-prior-art",
+    "to-spec-blocks-prior-art-conflict",
     "to-tickets-does-not-create-spec",
     "to-tickets-initial-status-is-pending",
     "to-tickets-keeps-one-vertical-bug-slice",
     "to-tickets-preserves-source-ui-writing-verbatim",
     "to-tickets-blocks-source-current-ui-mismatch",
-    "to-tickets-active-drive-handoff",
-    "to-tickets-returns-decision-blocker-to-drive",
+    "to-tickets-active-drive-preparing-handoff",
+    "to-tickets-returns-decision-blocker-to-prep",
     "to-tickets-derives-from-candidate-areas",
     "to-tickets-bounds-result-cardinality",
     "prototype-is-not-production",
@@ -328,7 +361,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "learn-bounds-result-cardinality",
     "handoff-ignores-generic-continue",
     "drive-requires-explicit-start",
-    "drive-rejects-pending-preparation-answer",
+    "drive-resumes-preparing-decision-answer",
     "drive-bounds-result-cardinality",
     "drive-response-language-explicit-korean",
     "drive-response-language-explicit-english",
@@ -366,10 +399,10 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-continues-after-prep-claim",
     "drive-checks-transition-debt-before-terminal-output",
     "drive-rejects-missing-transition-echo",
-    "drive-requires-prep-for-trivial-task",
-    "drive-invalidates-on-new-decision",
+    "drive-prepares-trivial-task",
+    "drive-amends-on-first-new-decision",
     "drive-skips-grill-for-ready-source",
-    "drive-does-not-rerun-spec-after-drift",
+    "drive-blocks-second-amendment",
     "drive-claims-ready-prep-atomically",
     "drive-invalidates-stale-prep",
     "drive-finalizes-owned-claim",
@@ -380,11 +413,11 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-bounds-corrective-cycle",
     "drive-preserves-valid-diff-on-partial-failure",
     "drive-aggregate-review-boundary",
-    "grill-accepts-active-drive-handoff",
-    "grill-returns-control-to-drive",
-    "grill-echoes-drive-transition",
-    "to-spec-echoes-drive-transition",
-    "to-tickets-echoes-drive-transition",
+    "grill-accepts-active-drive-preparing-handoff",
+    "grill-returns-control-to-prep",
+    "grill-echoes-prep-transition",
+    "to-spec-echoes-prep-transition",
+    "to-tickets-echoes-prep-transition",
     "implement-echoes-drive-transition",
     "skill-diagnose-reproduces-overtrigger-selection",
     "skill-diagnose-isolates-approval-bypass",
@@ -507,6 +540,8 @@ def validate_local_only_workflows(root: Path) -> list[str]:
 def validate_user_decision_contract(root: Path) -> list[str]:
     errors: list[str] = []
     for skill in sorted(EXPECTED_SKILLS):
+        if skill == "tk-focus":
+            continue
         path = root / "skills" / skill / "SKILL.md"
         if not path.is_file():
             errors.append(f"{skill}: SKILL.md: add the native user-decision question contract")
@@ -524,6 +559,8 @@ def validate_user_decision_contract(root: Path) -> list[str]:
 def validate_response_language_contract(root: Path) -> list[str]:
     errors: list[str] = []
     for skill in sorted(EXPECTED_SKILLS):
+        if skill == "tk-focus":
+            continue
         path = root / "skills" / skill / "SKILL.md"
         if not path.is_file():
             errors.append(f"{skill}: SKILL.md: add the response-language hard gate")
@@ -536,32 +573,14 @@ def validate_response_language_contract(root: Path) -> list[str]:
     return errors
 
 
-def validate_actionable_output_contract(root: Path) -> list[str]:
-    errors: list[str] = []
-    for skill in sorted(EXPECTED_SKILLS):
-        path = root / "skills" / skill / "SKILL.md"
-        if not path.is_file():
-            errors.append(f"{skill}: SKILL.md: add the actionable-output hard gate")
-            continue
-        text = path.read_text(encoding="utf-8")
-        heading = ACTIONABLE_OUTPUT_GATE.splitlines()[0]
-        if (
-            text.count(ACTIONABLE_OUTPUT_GATE) != 1
-            or text.count(heading) != 1
-        ):
-            errors.append(
-                f"{skill}: SKILL.md: preserve exactly one complete actionable-output hard gate"
-            )
-    return errors
-
-
 def validate_terminal_summary_contract(root: Path) -> list[str]:
     errors: list[str] = []
     terminal_heading = TERMINAL_SUMMARY_GATE.splitlines()[0]
-    actionable_heading = ACTIONABLE_OUTPUT_GATE.splitlines()[0]
     language_heading = RESPONSE_LANGUAGE_GATE.splitlines()[0]
     forbidden = ("`Outcome: <one user-facing sentence>`", "## Receipt")
     for skill in sorted(EXPECTED_SKILLS):
+        if skill == "tk-focus":
+            continue
         path = root / "skills" / skill / "SKILL.md"
         if not path.is_file():
             errors.append(f"{skill}: SKILL.md: add the terminal-summary hard gate")
@@ -573,11 +592,8 @@ def validate_terminal_summary_contract(root: Path) -> list[str]:
         )
         ordered = (
             complete
-            and text.count(actionable_heading) == 1
             and text.count(language_heading) == 1
-            and text.index(actionable_heading)
-            < text.index(terminal_heading)
-            < text.index(language_heading)
+            and text.index(terminal_heading) < text.index(language_heading)
         )
         if not complete or not ordered or any(token in text for token in forbidden):
             errors.append(
@@ -609,24 +625,69 @@ def validate_prepared_drive_contract(root: Path) -> list[str]:
     errors: list[str] = []
     drive = root / "skills/tk-drive/SKILL.md"
     phases = root / "skills/tk-drive/references/phases.md"
-    if (
-        not drive.is_file()
-        or drive.read_text(encoding="utf-8").count(DRIVE_RAW_SOURCE_REJECTION)
-        != 1
-    ):
-        errors.append(
-            "skills/tk-drive/SKILL.md: preserve the exact raw-source rejection"
-        )
     for path, label in (
         (drive, "skills/tk-drive/SKILL.md"),
         (phases, "skills/tk-drive/references/phases.md"),
     ):
         text = path.read_text(encoding="utf-8") if path.is_file() else ""
-        if text.count(DRIVE_PREPARED_ONLY_GATE) != 1:
-            errors.append(f"{label}: preserve exactly one prepared-only phase gate")
-        if text.count(DRIVE_CORRECTIVE_BOUND_GATE) != 1:
+        missing_stage = [token for token in DRIVE_STAGE_TOKENS if token not in text]
+        if missing_stage:
             errors.append(
-                f"{label}: preserve exactly one three-cycle corrective gate"
+                f"{label}: preserve Preparing-to-Executing stage ownership "
+                f"({', '.join(missing_stage)})"
+            )
+        normalized = " ".join(text.casefold().split())
+        missing_correction = [
+            token
+            for token in DRIVE_CORRECTIVE_BOUND_TOKENS
+            if token not in normalized
+        ]
+        if missing_correction:
+            errors.append(
+                f"{label}: preserve the three-cycle corrective boundary "
+                f"({', '.join(missing_correction)})"
+            )
+    return errors
+
+
+def validate_single_drive_focus_contract(root: Path) -> list[str]:
+    errors: list[str] = []
+    if (root / "skills" / "tk-prep").exists():
+        errors.append("skills/tk-prep: remove the public preparation skill surface")
+
+    focus_path = root / "skills" / "tk-focus" / "SKILL.md"
+    focus = focus_path.read_text(encoding="utf-8") if focus_path.is_file() else ""
+    missing = [token for token in FOCUS_CONTRACT_TOKENS if token not in focus]
+    if missing:
+        errors.append(
+            "skills/tk-focus/SKILL.md: preserve explicit adapted focus-mode contract "
+            + ", ".join(repr(token) for token in missing)
+        )
+
+    readme = root / "README.md"
+    readme_text = readme.read_text(encoding="utf-8") if readme.is_file() else ""
+    if "tk-prep" in readme_text:
+        errors.append("README.md: remove the public tk-prep invocation surface")
+
+    shared_heading = "### 🔴 HARD GATE · actionable user output"
+    for path in sorted((root / "skills").glob("tk-*/SKILL.md")):
+        if shared_heading in path.read_text(encoding="utf-8"):
+            errors.append(
+                f"{path.relative_to(root)}: remove the shared ADHD-oriented output gate"
+            )
+    return errors
+
+
+def validate_learning_loop_contract(root: Path) -> list[str]:
+    errors: list[str] = []
+    for relative, tokens in LEARNING_LOOP_TOKENS.items():
+        path = root / relative
+        text = " ".join(path.read_text(encoding="utf-8").split()) if path.is_file() else ""
+        missing = [token for token in tokens if token not in text]
+        if missing:
+            errors.append(
+                f"{relative}: preserve bounded learning-loop ownership "
+                f"({', '.join(missing)})"
             )
     return errors
 
@@ -792,26 +853,27 @@ def validate_repository_contract() -> list[str]:
     )
     for relative in required_files:
         if not (ROOT / relative).is_file():
-            errors.append(f"{relative}: required TigerKit 20.3.1 repository file is missing")
+            errors.append(f"{relative}: required TigerKit 21.0.0 repository file is missing")
     errors.extend(validate_local_only_workflows(ROOT))
     errors.extend(validate_skill_language(ROOT))
     errors.extend(validate_user_decision_contract(ROOT))
-    errors.extend(validate_actionable_output_contract(ROOT))
     errors.extend(validate_terminal_summary_contract(ROOT))
     errors.extend(validate_drive_transition_debt_contract(ROOT))
     errors.extend(validate_prepared_drive_contract(ROOT))
+    errors.extend(validate_single_drive_focus_contract(ROOT))
+    errors.extend(validate_learning_loop_contract(ROOT))
     errors.extend(validate_response_language_contract(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
-            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 20.3.1")
+            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 21.0.0")
     errors.extend(validate_runtime_scratch(ROOT))
     ignored = (ROOT / ".gitignore").read_text(encoding="utf-8") if (ROOT / ".gitignore").is_file() else ""
     if ".tigerkit/" not in ignored.splitlines():
         errors.append(".gitignore: document TigerKit repo-local scratch with .tigerkit/")
     required_text = {
         "README.md": (
-            "TigerKit 20.3.1",
-            "14",
+            "TigerKit 21.0.0",
+            "15",
             "Claude Code",
             "Codex",
             "Hermes Agent",
@@ -819,7 +881,7 @@ def validate_repository_contract() -> list[str]:
             "사용 시나리오",
         ),
         "MIGRATION.md": (
-            "TigerKit 20.3.1",
+            "TigerKit 21.0.0",
             "Removed Skills",
             "model-only",
             "hybrid",
@@ -970,7 +1032,12 @@ def validate_skill_language(root: Path) -> list[str]:
 def validate_repo_links() -> list[str]:
     errors: list[str] = []
     for path in sorted(ROOT.rglob("*.md")):
-        if ".git" in path.parts or ".tigerkit" in path.parts:
+        relative = path.relative_to(ROOT)
+        if (
+            ".git" in path.parts
+            or ".tigerkit" in path.parts
+            or relative.parts[0] in {".agents", ".codex"}
+        ):
             continue
         text = path.read_text(encoding="utf-8")
         for target in LINK.findall(text):
@@ -981,7 +1048,14 @@ def validate_repo_links() -> list[str]:
             if not resolved.exists():
                 errors.append(f"{path.relative_to(ROOT)}: broken relative link {target!r}")
     for path in ROOT.rglob("*"):
-        if ".git" not in path.parts and ".tigerkit" not in path.parts and path.is_symlink() and not path.exists():
+        relative = path.relative_to(ROOT)
+        if (
+            ".git" not in path.parts
+            and ".tigerkit" not in path.parts
+            and relative.parts[0] not in {".agents", ".codex"}
+            and path.is_symlink()
+            and not path.exists()
+        ):
             errors.append(f"{path.relative_to(ROOT)}: broken symlink")
     return errors
 

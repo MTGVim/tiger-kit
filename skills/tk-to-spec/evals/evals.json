@@ -1,5 +1,27 @@
 {
   "skill_name": "tk-to-spec",
+  "migrations": [
+    {
+      "from": "active-drive-returns-decision-blocker",
+      "to": "active-drive-preparing-returns-decision-blocker",
+      "reason": "TigerKit 21 returns specification blockers to preparation."
+    },
+    {
+      "from": "to-spec-active-drive-handoff",
+      "to": "to-spec-active-drive-preparing-handoff",
+      "reason": "TigerKit 21 makes tk-drive the specification parent."
+    },
+    {
+      "from": "to-spec-echoes-drive-transition",
+      "to": "to-spec-echoes-prep-transition",
+      "reason": "The echoed specification transition is owned by tk-drive."
+    },
+    {
+      "from": "to-spec-returns-decision-blocker-to-drive",
+      "to": "to-spec-returns-decision-blocker-to-prep",
+      "reason": "Decision blockers now return to the active preparation."
+    }
+  ],
   "evals": [
     {
       "id": "legacy-1",
@@ -52,14 +74,14 @@
       "darwin": true
     },
     {
-      "id": "active-drive-returns-decision-blocker",
+      "id": "active-drive-preparing-returns-decision-blocker",
       "path": "boundary",
-      "prompt": "[active tk-drive spec handoff] 확인된 source로 Ready spec을 작성하세요. 조사 중 새 사용자 선택이 필요하면 대신 결정하거나 grill을 부르지 마세요.",
-      "expected_output": "새 user-owned decision이 필요하면 native non-Ready receipt에 User decision: required와 근거를 담아 drive로 반환하고, substitute Ready spec을 쓰거나 grill을 직접 호출하지 않는다.",
+      "prompt": "[active tk-drive Preparing spec handoff] 확인된 source로 Ready spec을 작성하세요. 조사 중 새 사용자 선택이 필요하면 대신 결정하거나 grill을 부르지 마세요.",
+      "expected_output": "새 user-owned decision이 필요하면 native non-Ready receipt에 User decision: required와 근거를 담아 prep으로 반환하고, substitute Ready spec을 쓰거나 grill을 직접 호출하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "새 user-owned decision이 필요하면 native non-Ready receipt에 User decision: required와 근거를 담아 drive로 반환하고, substitute Ready spec을 쓰거나 grill을 직접 호출하지 않는다."
+          "criterion": "새 user-owned decision이 필요하면 native non-Ready receipt에 User decision: required와 근거를 담아 prep으로 반환하고, substitute Ready spec을 쓰거나 grill을 직접 호출하지 않는다."
         },
         {
           "type": "terminal_status",
@@ -205,14 +227,14 @@
       "safety": true
     },
     {
-      "id": "to-spec-active-drive-handoff",
+      "id": "to-spec-active-drive-preparing-handoff",
       "path": "success",
-      "prompt": "[active tk-drive spec handoff] Success state: Ready. Outstanding transition: ticket decision. Use the confirmed source and decisions for task TASK-02 to write and revalidate a Ready spec, then return Phase: spec with path and R/AC IDs.",
-      "expected_output": "standalone과 같은 Ready gate를 적용하고 task identity/source traceability를 보존한 drive-consumable spec receipt를 반환하며 tickets나 implementation을 소유하지 않는다.",
+      "prompt": "[active tk-drive Preparing spec handoff] Success state: Ready. Outstanding transition: ticket decision. Use the confirmed source and decisions for task TASK-02 to write and revalidate a Ready spec, then return Phase: spec with path and R/AC IDs.",
+      "expected_output": "standalone과 같은 Ready gate를 적용하고 task identity/source traceability를 보존한 prep-consumable spec receipt를 반환하며 tickets나 implementation을 소유하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "explicit active-drive spec handoff를 positive로 처리하되 Ready가 아닌 결과를 inline 보완하지 않는다."
+          "criterion": "explicit active-drive-preparing spec handoff를 positive로 처리하되 Ready가 아닌 결과를 inline 보완하지 않는다."
         },
         {
           "type": "terminal_status",
@@ -221,14 +243,14 @@
       ]
     },
     {
-      "id": "to-spec-echoes-drive-transition",
+      "id": "to-spec-echoes-prep-transition",
       "path": "success",
-      "prompt": "[active tk-drive spec handoff] Success state: Ready. Outstanding transition: ticket decision. Write and revalidate the complete Ready spec for the supplied one-file task, then return the receipt.",
-      "expected_output": "Ready receipt에 Return to: tk-drive와 parent가 준 Outstanding transition: ticket decision을 그대로 포함하고 ticket decision을 직접 수행하지 않는다.",
+      "prompt": "[active tk-drive Preparing spec handoff] Success state: Ready. Outstanding transition: ticket decision. Write and revalidate the complete Ready spec for the supplied one-file task, then return the receipt.",
+      "expected_output": "Ready receipt에 Return to: tk-drive과 parent가 준 Outstanding transition: ticket decision을 그대로 포함하고 ticket decision을 직접 수행하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "active-drive Ready receipt가 parent-supplied transition을 verbatim echo하고 ticket 또는 implementation phase를 실행하지 않는다."
+          "criterion": "active-drive-preparing Ready receipt가 parent-supplied transition을 verbatim echo하고 ticket 또는 implementation phase를 실행하지 않는다."
         },
         {
           "type": "output_contains",
@@ -245,14 +267,14 @@
       ]
     },
     {
-      "id": "to-spec-returns-decision-blocker-to-drive",
+      "id": "to-spec-returns-decision-blocker-to-prep",
       "path": "boundary",
-      "prompt": "[active tk-drive spec handoff] Confirmed sources conflict on API compatibility and require a user decision. Do not interview or invoke grill.",
-      "expected_output": "Blocked spec receipt에 `User decision: required`, 충돌 source와 새 결정을 기록해 drive로 반환하고 tk-grill-me를 직접 호출하거나 Ready spec을 쓰지 않는다.",
+      "prompt": "[active tk-drive Preparing spec handoff] Confirmed sources conflict on API compatibility and require a user decision. Do not interview or invoke grill.",
+      "expected_output": "Blocked spec receipt에 `User decision: required`, 충돌 source와 새 결정을 기록해 prep으로 반환하고 tk-grill-me를 직접 호출하거나 Ready spec을 쓰지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "사용자 결정이 필요한 non-Ready 상태를 native receipt로 drive에 반환하고 sibling phase를 호출하지 않는다."
+          "criterion": "사용자 결정이 필요한 non-Ready 상태를 native receipt로 prep에 반환하고 sibling phase를 호출하지 않는다."
         },
         {
           "type": "terminal_status",
@@ -287,6 +309,67 @@
           "expected": "Pass"
         }
       ]
+    },
+    {
+      "id": "to-spec-disposes-prior-art-semantically",
+      "path": "success",
+      "prompt": "[active tk-drive Preparing spec handoff] 세 prior-art evidence가 각각 새 요구에 채택됨, 현재 코드가 이미 충족함, 이 task에는 적용되지 않음으로 확인됐습니다. R/AC에 의미적으로 연결해 Ready spec을 작성하세요.",
+      "expected_output": "## Prior art에 adopted, already-satisfied, not-applicable disposition과 evidence/rationale/R/AC mapping을 기록하고 keyword coincidence 없이 Ready를 판정한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "각 관련 prior-art item이 정확히 한 disposition과 semantic R/AC mapping을 소유한다."
+        },
+        {
+          "type": "path_text_contains",
+          "path": ".tigerkit/spec.md",
+          "text": "## Prior art"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "to-spec-omits-empty-prior-art",
+      "path": "success",
+      "prompt": "[active tk-drive Preparing spec handoff] bounded discovery에서 relevant prior art가 0개였습니다. empty table이나 none placeholder 없이 Ready spec을 작성하세요.",
+      "expected_output": "spec에 ## Prior art section, empty table, none placeholder를 만들지 않고 나머지 Ready gate만 판정한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "relevant prior art가 없을 때 section과 ceremony를 모두 생략한다."
+        },
+        {
+          "type": "output_absent",
+          "text": "## Prior art"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "to-spec-blocks-prior-art-conflict",
+      "path": "boundary",
+      "prompt": "[active tk-drive Preparing spec handoff] verified repository invariant와 새 source requirement가 충돌합니다. 임의로 adopted 처리해 Ready로 만들지 마세요.",
+      "expected_output": "conflict disposition과 양쪽 evidence 및 필요한 decision을 기록하고 Ready spec을 쓰지 않은 채 Blocked를 tk-drive에 반환한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "prior-art conflict를 숨기거나 keyword mapping으로 해소하지 않고 decision closure 전 Ready를 금지한다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Blocked"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true
     }
   ]
 }

@@ -109,15 +109,15 @@
 - case: grill-me-does-not-create-adrs
   skill: tk-grill-me
   expect: "The skill does not create ADRs automatically."
-- case: grill-accepts-active-drive-handoff
+- case: grill-accepts-active-drive-preparing-handoff
   skill: tk-grill-me
-  expect: "An explicit active-drive decision handoff is a valid entry; grill owns only decision closure and returns a typed receipt without mutation."
-- case: grill-returns-control-to-drive
+  expect: "An explicit active-drive-preparing decision handoff is a valid entry; grill owns only decision closure and returns a typed receipt without mutation."
+- case: grill-returns-control-to-prep
   skill: tk-grill-me
-  expect: "A confirmed drive handoff returns Decisions, assumptions, risks, and control to tk-drive without invoking spec, tickets, or implementation."
-- case: grill-echoes-drive-transition
+  expect: "A confirmed prep handoff returns Decisions, assumptions, risks, and control to tk-drive without invoking spec, tickets, or implementation."
+- case: grill-echoes-prep-transition
   skill: tk-grill-me
-  expect: "A confirmed active-drive receipt echoes `Return to: tk-drive` and the parent-supplied `Outstanding transition` verbatim without executing it."
+  expect: "A confirmed active-drive-preparing receipt echoes `Return to: tk-drive` and the parent-supplied `Outstanding transition` verbatim without executing it."
 - case: implement-tdd-requires-observed-red
   skill: tk-implement
   expect: "TDD requires executing the focused test and observing a real failure before implementation."
@@ -268,15 +268,15 @@
 - case: to-spec-blocks-source-current-ui-mismatch
   skill: tk-to-spec
   expect: "The UI inventory contains source, current rendered/source-path, and target literal columns; a missing source column is Unverifiable, and any source-current mismatch makes all rows conflict candidates that prevent Ready without a user decision."
-- case: to-spec-active-drive-handoff
+- case: to-spec-active-drive-preparing-handoff
   skill: tk-to-spec
-  expect: "An explicit active-drive spec handoff uses the standalone Ready contract and returns a drive-consumable phase receipt without taking downstream ownership."
-- case: to-spec-echoes-drive-transition
+  expect: "An explicit active-drive-preparing spec handoff uses the standalone Ready contract and returns a prep-consumable phase receipt without taking downstream ownership."
+- case: to-spec-echoes-prep-transition
   skill: tk-to-spec
-  expect: "A Ready active-drive spec receipt echoes `Return to: tk-drive` and the parent-supplied `Outstanding transition` verbatim without making the ticket decision."
-- case: to-spec-returns-decision-blocker-to-drive
+  expect: "A Ready active-drive-preparing spec receipt echoes `Return to: tk-drive` and the parent-supplied `Outstanding transition` verbatim without making the ticket decision."
+- case: to-spec-returns-decision-blocker-to-prep
   skill: tk-to-spec
-  expect: "A user-decision blocker returns `User decision: required`, the new decision, and evidence in a native non-Ready receipt to drive without invoking grill or writing a substitute Ready spec."
+  expect: "A user-decision blocker returns `User decision: required`, the new decision, and evidence in a native non-Ready receipt to prep without invoking grill or writing a substitute Ready spec."
 - case: to-tickets-does-not-create-spec
   skill: tk-to-tickets
   expect: "Ticket decomposition may use Ready-spec candidate areas as evidence but independently owns slice boundaries and does not create or modify the spec."
@@ -298,15 +298,15 @@
 - case: to-tickets-blocks-source-current-ui-mismatch
   skill: tk-to-tickets
   expect: "Ticket decomposition preserves the three-column UI inventory and stops when the source column is absent or a source-current conflict escaped the Ready spec."
-- case: to-tickets-active-drive-handoff
+- case: to-tickets-active-drive-preparing-handoff
   skill: tk-to-tickets
-  expect: "An explicit active-drive ticket handoff uses the standalone vertical-slice contract and returns a drive-consumable ledger receipt without implementing."
-- case: to-tickets-echoes-drive-transition
+  expect: "An explicit active-drive-preparing ticket handoff uses the standalone vertical-slice contract and returns a prep-consumable ledger receipt without implementing."
+- case: to-tickets-echoes-prep-transition
   skill: tk-to-tickets
-  expect: "A successful active-drive ticket receipt echoes `Return to: tk-drive` and the parent-supplied `Outstanding transition` verbatim without implementing."
-- case: to-tickets-returns-decision-blocker-to-drive
+  expect: "A successful active-drive-preparing ticket receipt echoes `Return to: tk-drive` and the parent-supplied `Outstanding transition` verbatim without implementing."
+- case: to-tickets-returns-decision-blocker-to-prep
   skill: tk-to-tickets
-  expect: "A user-decision blocker returns `User decision: required`, the new decision, and evidence in a native ticket receipt to drive without invoking grill or editing the Ready spec."
+  expect: "A user-decision blocker returns `User decision: required`, the new decision, and evidence in a native ticket receipt to prep without invoking grill or editing the Ready spec."
 - case: prototype-is-not-production
   skill: tk-prototype
   expect: "The result distinguishes fake and real behavior and is not called production-ready."
@@ -400,9 +400,9 @@
 - case: drive-requires-explicit-start
   skill: tk-drive
   expect: "Only host-native explicit tk-drive selection starts a workflow; /tk-drive, $tk-drive, and picker selection are positive while ordinary implementation, generic continue, artifacts, and unrelated answers are not."
-- case: drive-rejects-pending-preparation-answer
+- case: drive-resumes-preparing-decision-answer
   skill: tk-drive
-  expect: "A new decision cannot be merged into an active sealed run; drive invalidates it and requires a fresh tk-prep."
+  expect: "A direct answer to the one pending Preparing decision resumes the same active drive and continues the recorded preparation transition."
 - case: drive-reflects-once-after-aggregate-pass
   skill: tk-drive
   expect: "After aggregate product verification passes, drive invokes exactly one drive-optimistic reflection tail, verifies the final-receipt transition echo, and continues in the same turn."
@@ -436,18 +436,18 @@
 - case: drive-rejects-missing-transition-echo
   skill: tk-drive
   expect: "A missing or mismatched child `Outstanding transition` echo is receipt drift and stops drive Blocked instead of being consumed as success."
-- case: drive-requires-prep-for-trivial-task
+- case: drive-prepares-trivial-task
   skill: tk-drive
-  expect: "Every task, including a trivial single slice, requires a sealed Ready prep; raw source is rejected with the exact Blocked result."
+  expect: "Every explicit source, including a trivial single slice, passes through internal Ready preparation and then continues automatically into implementation."
 - case: drive-skips-grill-for-ready-source
   skill: tk-drive
   expect: "Drive skips tk-grill-me when confirmed source and evidence already support a Ready spec without a user-owned decision."
-- case: drive-invalidates-on-new-decision
+- case: drive-amends-on-first-new-decision
   skill: tk-drive
-  expect: "A newly required user decision is sealed-scope drift; drive invalidates the run and never invokes grill inline."
-- case: drive-does-not-rerun-spec-after-drift
+  expect: "The first late user-owned decision enters one bounded Preparing amendment, revalidates the spec and affected tickets, reseals, and resumes Executing."
+- case: drive-blocks-second-amendment
   skill: tk-drive
-  expect: "Scope or ticket drift invalidates the run; drive does not rerun spec or tickets and requires fresh preparation."
+  expect: "After one Preparing amendment has been consumed, a repeated blocker or second user-owned decision stops Blocked without another reseal."
 - case: drive-claims-ready-prep-atomically
   skill: tk-drive
   expect: "Drive validates actual current identities and digests under the shared directory lock, then exactly one claimant changes Ready to Active before product mutation."
@@ -604,24 +604,39 @@
 - case: ask-repo-bounds-result-cardinality
   skill: tk-ask-repo
   expect: "One answer may use one to three short paragraphs, compound answers use bounded bullets or a table, and eight or more results show the top five to seven plus owning evidence paths."
-- case: prep-writes-only-after-ready-gates
-  skill: tk-prep
+- case: drive-prepares-only-after-ready-gates
+  skill: tk-drive
   expect: "Preparation writes and strictly rereads one atomic Ready manifest only after decision, spec, ticket or no-ticket, verification-profile, and cold-start gates pass."
-- case: prep-preserves-terminal-on-failed-gate
-  skill: tk-prep
+- case: drive-preserves-terminal-on-failed-preparing
+  skill: tk-drive
   expect: "Pending, blocked, failed, or unverifiable preparation preserves the prior terminal manifest byte-for-byte."
-- case: prep-rejects-active-replacement
-  skill: tk-prep
-  expect: "An active manifest blocks replacement so concurrent preparation cannot destroy run ownership."
-- case: prep-does-not-implement
-  skill: tk-prep
-  expect: "Preparation may invoke only its semantic preparation phase owners and never implements, commits, consumes drive, reflects, pushes, or publishes."
+- case: drive-reseals-one-active-amendment
+  skill: tk-drive
+  expect: "Only the active run owner may reseal one bounded Preparing amendment; a wrong owner, repeated blocker, or second amendment is blocked."
+- case: drive-continues-automatically-after-ready
+  skill: tk-drive
+  expect: "After Ready preparation is sealed and reread, the same active drive run activates it and executes the first implementation unit without another confirmation."
+- case: drive-bounds-task-anchored-prior-art
+  skill: tk-drive
+  expect: "Preparation keeps at most seven task-anchored durable items from allowed repository sources and carries evidence, preferred prevention owner, and host dependency into spec."
+- case: drive-excludes-forbidden-prior-art
+  skill: tk-drive
+  expect: "Raw conversations, old implementation/reflection scratch, pending drafts, global state, and inaccessible host-only rules cannot supply prior-art evidence."
+- case: focus-explicit-activation
+  skill: tk-focus
+  expect: "Only explicit tk-focus activation enables the persistent ADHD-oriented output shape and makes current progress plus the next action visible."
+- case: focus-stop-command
+  skill: tk-focus
+  expect: "An active focus mode stops only on one of its documented stop commands and confirms the return to default style in one line."
+- case: focus-safety-exception
+  skill: tk-focus
+  expect: "Destructive action, real ambiguity, a debug spiral, user-requested explanation, or a harness conflict overrides the formatting default without weakening safety."
 - case: browser-bounds-result-cardinality
   skill: tk-browser-verify
   expect: "Compound visual, network, and final-state results use bounded bullets or scenario rows; eight or more show the top five to seven plus the browser ledger path."
 - case: drive-bounds-result-cardinality
   skill: tk-drive
-  expect: "Final output keeps one Outcome sentence but also explains Implemented and Verification results within their budgets before a nonduplicative receipt."
+  expect: "Final output starts after one separator, explains Implemented and Verification results within their budgets, and appends no receipt or bottom metadata block."
 - case: grill-bounds-confirmed-results
   skill: tk-grill-me
   expect: "Confirmed compound decisions may use two to seven readable rows or bullets while every question turn remains one user-owned decision."
@@ -646,18 +661,30 @@
 - case: reflect-bounds-result-cardinality
   skill: tk-reflect
   expect: "The readable ID, Candidate, Action, Target, Why table remains mandatory for non-no-op results and the receipt never reduces it to RF codes."
+- case: reflect-classifies-prevention-owner-and-host-dependency
+  skill: tk-reflect
+  expect: "Every reusable candidate classifies one preferred durable prevention owner and an evidence-backed host dependency without inventing another host's path."
 - case: skill-diagnose-bounds-result-cardinality
   skill: tk-skill-diagnose
   expect: "Reproduction, root cause, and candidate results use two to seven bullets or ID rows, with larger evidence owned by the diagnosis ledger."
 - case: to-spec-bounds-result-cardinality
   skill: tk-to-spec
   expect: "The Ready or non-Ready decision leads two to five scope, requirement, or exception bullets and cites the owning spec artifact."
+- case: to-spec-disposes-prior-art-semantically
+  skill: tk-to-spec
+  expect: "Relevant prior art receives one adopted, already-satisfied, not-applicable, or conflict disposition with evidence, rationale, and semantic R/AC mapping."
+- case: to-spec-omits-empty-prior-art
+  skill: tk-to-spec
+  expect: "No relevant prior art creates no Prior art section, empty table, none placeholder, or output ceremony."
+- case: to-spec-blocks-prior-art-conflict
+  skill: tk-to-spec
+  expect: "A prior-art conflict blocks Ready and returns exact decision evidence to active drive Preparing."
 - case: to-tickets-bounds-result-cardinality
   skill: tk-to-tickets
   expect: "Two to seven tickets use the readable slice table; larger decompositions show the top five to seven plus coverage summary and artifact path."
 - case: drive-response-language-explicit-korean
   skill: tk-drive
-  expect: "The decision-complete Korean canary task reaches the normal drive receipt; the latest explicit Korean instruction keeps every free-form progress, result, summary, and receipt value in Korean, preserves canonical receipt order, leads the first available prose slot with the outcome, and omits ceremonial preamble or an invented post-completion next action."
+  expect: "The decision-complete Korean canary task reaches the normal drive summary; the latest explicit Korean instruction keeps every free-form progress and result sentence in Korean while canonical machine tokens remain stable."
 - case: drive-response-language-explicit-english
   skill: tk-drive
   expect: "The latest explicit English instruction overrides earlier Korean context for free-form prose while canonical machine tokens remain unchanged."

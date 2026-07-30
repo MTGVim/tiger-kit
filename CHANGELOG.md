@@ -2,6 +2,31 @@
 
 ## Unreleased
 
+## 21.0.0 — Single-Drive Preparation and Explicit Focus
+
+- Kept one public `tk-drive <source>` entry point and expanded the canonical
+  catalog to 15 skills: 3 user-invoked and 12 hybrid, including the explicit
+  persistent `tk-focus` adaptation.
+- Added strict, atomic `.tigerkit/prep.md` creation with task, repository,
+  source, dirty, instruction, spec, ticket, and verification-profile identity
+  digests as an internal Preparing boundary.
+- Changed `tk-drive` to continue automatically from Preparing into Executing,
+  permit one bounded late Preparing amendment and at most three post-initial
+  corrective cycles, and finalize the same claim before terminal output.
+- Preserved raw `/tk-drive <source>` as the only public full-run command;
+  direct standalone `tk-implement` remains supported and old scratch is not
+  migrated.
+- Added task-anchored discovery of at most seven durable prior-art items,
+  preferred prevention-owner and host-dependency classification, and semantic
+  `adopted | already-satisfied | not-applicable | conflict` R/AC disposition.
+- Added strict state-race, cross-skill wire-compatibility, recovery, eval
+  migration, Codex cold-start and prepared-continuation paths, and three-host
+  package coverage.
+- Removed the shared actionable-output presentation gate; `tk-focus` owns the
+  adapted ADHD-oriented rules and is never selected implicitly. All other
+  skills retain the terminal `---` boundary, user-language behavior, and
+  internal-only phase receipts.
+
 ## 20.3.1 — Terminal Transition-Debt Gate
 
 - Added an explicit last-mile `tk-drive` transition-debt check immediately

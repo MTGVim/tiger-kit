@@ -47,7 +47,7 @@
     {
       "id": "validation-drive-handoff-formal",
       "split": "validation",
-      "query": "[active tk-drive decision handoff] source와 evidence를 바탕으로 unresolved user-owned decision을 닫아 주세요.",
+      "query": "[active tk-drive Preparing decision handoff] source와 evidence를 바탕으로 unresolved user-owned decision을 닫아 주세요.",
       "should_trigger": true,
       "facets": [
         "compound"
@@ -56,7 +56,7 @@
     {
       "id": "validation-drive-handoff-short",
       "split": "validation",
-      "query": "[active drive → tk-grill-me] decision phase",
+      "query": "[active prep → tk-grill-me] decision phase",
       "should_trigger": true,
       "facets": [
         "short"
@@ -74,7 +74,7 @@
     {
       "id": "validation-drive-pending-answer",
       "split": "validation",
-      "query": "[active drive / grill pending question] 추천한 A안으로 진행해",
+      "query": "[active prep / grill pending question] 추천한 A안으로 진행해",
       "should_trigger": true,
       "facets": [
         "formal"

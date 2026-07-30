@@ -44,7 +44,7 @@ RFC3339_UTC = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
 
 
 class ManifestError(ValueError):
-    """The preparation document or its inputs violate the public contract."""
+    """The internal preparation document or its inputs violate the contract."""
 
 
 def _strict_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -421,7 +421,33 @@ def create_ready_manifest(arguments: argparse.Namespace) -> dict[str, Any]:
         if output.exists():
             current, _ = parse_document(output.read_text(encoding="utf-8"))
             if current["status"] == "active":
-                raise ManifestError("manifest: active prep cannot be replaced")
+                claim_id = arguments.replace_active_claim_id
+                if claim_id is None or claim_id != current["claim"]["id"]:
+                    raise ManifestError(
+                        "manifest: active prep replacement requires its claim id"
+                    )
+                replacement, body = parse_document(document)
+                if replacement["task"] != current["task"]:
+                    raise ManifestError(
+                        "manifest: amendment cannot change task identity"
+                    )
+                if replacement["repository"] != current["repository"]:
+                    raise ManifestError(
+                        "manifest: amendment cannot change repository identity"
+                    )
+                replacement["status"] = "active"
+                replacement["claim"] = current["claim"]
+                replacement["timestamps"] = {
+                    "created_at": current["timestamps"]["created_at"],
+                    "claimed_at": current["timestamps"]["claimed_at"],
+                    "finished_at": None,
+                }
+                validate_header(replacement)
+                document = render_document(replacement, body)
+            elif arguments.replace_active_claim_id is not None:
+                raise ManifestError(
+                    "manifest: amendment requires an active preparation"
+                )
         with tempfile.NamedTemporaryFile(
             mode="w",
             encoding="utf-8",
@@ -470,6 +496,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     create.add_argument("--verification-profile-json", required=True)
     create.add_argument("--prior-art-ref", required=True)
     create.add_argument("--created-at", required=True)
+    create.add_argument("--replace-active-claim-id")
     validate = subparsers.add_parser("validate")
     validate.add_argument("path")
     return parser.parse_args(argv)

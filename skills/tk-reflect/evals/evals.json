@@ -768,6 +768,33 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "reflect-classifies-prevention-owner-and-host-dependency",
+      "path": "success",
+      "prompt": "/tk-reflect 같은 회귀가 두 번 발생했고 tracked repository rule로 예방할 수 있지만 적용 경로는 현재 host의 native AGENTS.md에 의존합니다. report-only로 분류해 주세요.",
+      "expected_output": "candidate evidence와 별도로 Preferred prevention owner: repo rule, Host dependency: current-host-native, exact native path를 기록하고 타 host path를 추정하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "preferred durable owner와 host dependency를 독립 필드로 분류하고 unavailable host evidence를 cross-host 추정으로 채우지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "repo rule"
+        },
+        {
+          "type": "output_contains",
+          "text": "current-host-native"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import os
+import shlex
 import subprocess
 import sys
 import tempfile
@@ -9,11 +11,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from codex_eval_adapter import (
     CodexObservation,
+    LiveGitApprovalGate,
     _build_turn_start_params,
     _hide_project_skills_from_git,
     _read_event_log,
     _remove_project_skills,
     _restore_git_exclude,
+    _scrubbed_child_env,
     _prepare_live_fixture,
     _stage_project_skills,
 )
@@ -140,6 +144,7 @@ class CodexObservationTest(unittest.TestCase):
             prompt="$tk-drive do the work",
             skill="tk-drive",
             skill_path=skill_path,
+            approval_policy="on-request",
         )
 
         self.assertEqual(
@@ -157,10 +162,26 @@ class CodexObservationTest(unittest.TestCase):
             params["sandboxPolicy"],
             {
                 "type": "workspaceWrite",
-                "writableRoots": [str(checkout), str(checkout / ".git")],
+                "writableRoots": [str(checkout)],
                 "networkAccess": False,
             },
         )
+        self.assertNotIn("dangerFullAccess", str(params))
+        self.assertEqual(params["approvalPolicy"], "on-request")
+
+    def test_child_environment_drops_unrelated_secrets(self) -> None:
+        original = os.environ.get("AWS_SECRET_ACCESS_KEY")
+        os.environ["AWS_SECRET_ACCESS_KEY"] = "do-not-inherit"
+        try:
+            child = _scrubbed_child_env()
+        finally:
+            if original is None:
+                os.environ.pop("AWS_SECRET_ACCESS_KEY", None)
+            else:
+                os.environ["AWS_SECRET_ACCESS_KEY"] = original
+
+        self.assertNotIn("AWS_SECRET_ACCESS_KEY", child)
+        self.assertIn("PATH", child)
 
     def test_project_skill_staging_is_git_invisible_and_fully_restored(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -200,7 +221,23 @@ class CodexObservationTest(unittest.TestCase):
             self.assertEqual(exclude.read_bytes(), original)
             self.assertFalse((checkout / ".agents").exists())
 
-    def test_prepared_live_fixture_is_strict_and_source_free(self) -> None:
+    def test_cold_start_fixture_keeps_source_and_creates_no_manifest(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            checkout = Path(directory)
+            subprocess.run(["git", "init", "-qb", "main"], cwd=checkout, check=True)
+            prompt = "/tk-drive Create canary-choice.txt containing alpha."
+
+            result = _prepare_live_fixture(
+                checkout,
+                checkout / ".agents" / "skills",
+                prompt,
+            )
+
+            self.assertEqual(result, prompt)
+            self.assertFalse((checkout / ".tigerkit/prep.md").exists())
+            self.assertTrue((checkout / ".tigerkit/no-hooks").is_dir())
+
+    def test_prepared_live_fixture_is_strict_same_run_continuation(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             checkout = Path(directory)
             subprocess.run(["git", "init", "-qb", "main"], cwd=checkout, check=True)
@@ -217,16 +254,21 @@ class CodexObservationTest(unittest.TestCase):
             (checkout / "README.md").write_text("fixture\n", encoding="utf-8")
             subprocess.run(["git", "add", "README.md"], cwd=checkout, check=True)
             subprocess.run(["git", "commit", "-qm", "fixture"], cwd=checkout, check=True)
+            subprocess.run(
+                ["git", "checkout", "--detach", "-q"],
+                cwd=checkout,
+                check=True,
+            )
             skills_target = checkout / ".agents" / "skills"
-            prep_scripts = skills_target / "tk-prep" / "scripts"
-            prep_scripts.mkdir(parents=True)
+            drive_scripts = skills_target / "tk-drive" / "scripts"
+            drive_scripts.mkdir(parents=True)
             source_script = (
                 Path(__file__).resolve().parents[2]
-                / "tk-prep"
+                / "tk-drive"
                 / "scripts"
                 / "prep_manifest.py"
             )
-            (prep_scripts / "prep_manifest.py").write_bytes(
+            (drive_scripts / "prep_manifest.py").write_bytes(
                 source_script.read_bytes()
             )
 
@@ -248,14 +290,226 @@ class CodexObservationTest(unittest.TestCase):
                 check=False,
             )
 
-            self.assertEqual(prompt, "/tk-drive")
+            self.assertIn("same active tk-drive Preparing", prompt)
+            self.assertTrue(prompt.endswith("\n/tk-drive"))
             self.assertEqual(completed.returncode, 0, completed.stderr)
+            self.assertTrue((checkout / ".git").is_dir())
+            self.assertTrue((checkout / ".tigerkit/no-hooks").is_dir())
+            self.assertEqual(
+                subprocess.run(
+                    ["git", "config", "--local", "--get", "core.hooksPath"],
+                    cwd=checkout,
+                    text=True,
+                    capture_output=True,
+                    check=True,
+                ).stdout.strip(),
+                str(checkout / ".tigerkit/no-hooks"),
+            )
+            self.assertEqual(
+                subprocess.run(
+                    ["git", "branch", "--show-current"],
+                    cwd=checkout,
+                    text=True,
+                    capture_output=True,
+                    check=True,
+                ).stdout.strip(),
+                "tigerkit-eval-two-unit",
+            )
             self.assertIn('"status": "ready"', manifest.read_text(encoding="utf-8"))
             tickets = (checkout / ".tigerkit" / "tickets.md").read_text(
                 encoding="utf-8"
             )
             self.assertIn("T-EVAL-ALPHA", tickets)
             self.assertIn("T-EVAL-BETA", tickets)
+
+    def test_live_git_approval_is_limited_to_exact_fixture_add_and_commit(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            checkout = Path(directory)
+            subprocess.run(["git", "init", "-qb", "main"], cwd=checkout, check=True)
+            subprocess.run(
+                ["git", "config", "user.email", "canary@example.invalid"],
+                cwd=checkout,
+                check=True,
+            )
+            subprocess.run(
+                ["git", "config", "user.name", "Canary"],
+                cwd=checkout,
+                check=True,
+            )
+            (checkout / "README.md").write_text("fixture\n", encoding="utf-8")
+            subprocess.run(["git", "add", "README.md"], cwd=checkout, check=True)
+            subprocess.run(["git", "commit", "-qm", "fixture"], cwd=checkout, check=True)
+            (checkout / "canary-ready.txt").write_text("ready\n", encoding="utf-8")
+            gate = LiveGitApprovalGate(checkout, "single")
+            base = {
+                "cwd": str(checkout),
+                "networkApprovalContext": None,
+                "additionalPermissions": None,
+            }
+
+            self.assertTrue(gate({**base, "command": "git add -- canary-ready.txt"}))
+            self.assertTrue(
+                gate(
+                    {
+                        **base,
+                        "command": (
+                            "/usr/bin/zsh -lc "
+                            "'git add -- canary-ready.txt'"
+                        ),
+                    }
+                )
+            )
+            branch = subprocess.check_output(
+                ["git", "branch", "--show-current"],
+                cwd=checkout,
+                text=True,
+            ).strip()
+            head = subprocess.check_output(
+                ["git", "rev-parse", "HEAD"],
+                cwd=checkout,
+                text=True,
+            ).strip()
+            script = "\n".join(
+                (
+                    "git add -- canary-ready.txt",
+                    "git diff --cached --stat",
+                    "git diff --cached --numstat",
+                    "git diff --cached --name-status",
+                    "git diff --cached --check",
+                    "git diff --cached -- canary-ready.txt",
+                    f'test "$(git branch --show-current)" = {branch}',
+                    f'test "$(git rev-parse HEAD)" = {head}',
+                    'test "$(git diff --cached --name-only)" = canary-ready.txt',
+                    'git commit -m "test: add canary"',
+                )
+            )
+            wrapped_script = f"/usr/bin/zsh -lc {shlex.quote(script)}"
+            self.assertTrue(gate({**base, "command": wrapped_script}))
+            self.assertFalse(
+                gate(
+                    {
+                        **base,
+                        "command": wrapped_script.replace(
+                            "git diff --cached --check",
+                            "touch escaped",
+                        ),
+                    }
+                )
+            )
+            self.assertTrue(
+                gate(
+                    {
+                        **base,
+                        "command": (
+                            "git add -- canary-ready.txt && "
+                            "git commit -m 'add canary'"
+                        ),
+                    }
+                )
+            )
+            self.assertFalse(gate({**base, "command": "git add -A"}))
+            self.assertFalse(
+                gate(
+                    {
+                        **base,
+                        "command": "git add canary-ready.txt && touch escaped",
+                    }
+                )
+            )
+            self.assertFalse(
+                gate(
+                    {
+                        **base,
+                        "command": (
+                            "/tmp/zsh -lc "
+                            "'git add -- canary-ready.txt'"
+                        ),
+                    }
+                )
+            )
+            self.assertFalse(
+                gate(
+                    {
+                        **base,
+                        "command": (
+                            "/usr/bin/zsh -lc "
+                            "'git add canary-ready.txt; touch escaped'"
+                        ),
+                    }
+                )
+            )
+            self.assertFalse(
+                gate(
+                    {
+                        **base,
+                        "command": "git add canary-ready.txt",
+                        "additionalPermissions": {"network": {"enabled": True}},
+                    }
+                )
+            )
+            self.assertFalse(
+                gate(
+                    {
+                        **base,
+                        "command": (
+                            "git add canary-ready.txt && "
+                            "git commit -m canary && touch escaped"
+                        ),
+                    }
+                )
+            )
+            self.assertFalse(
+                gate(
+                    {
+                        **base,
+                        "command": (
+                            "git add canary-ready.txt && "
+                            "git commit -m \"$HOME\""
+                        ),
+                    }
+                )
+            )
+            staged_content_script = " && ".join(
+                (
+                    "git add -- canary-ready.txt",
+                    'test "$(git show :canary-ready.txt | wc -c | tr -d \' \')" = 6',
+                    (
+                        'test "$(git show :canary-ready.txt | od -An -tx1 | '
+                        'tr -d \' \\\\n\')" = 72656164790a'
+                    ),
+                    "git diff --cached --stat",
+                    "git diff --cached --numstat",
+                    "git diff --cached --name-only",
+                    "git diff --cached --check",
+                    "git diff --cached -- canary-ready.txt",
+                    "git rev-parse HEAD",
+                    "git branch --show-current",
+                )
+            )
+            wrapped_staged_content = (
+                f"/usr/bin/zsh -lc {shlex.quote(staged_content_script)}"
+            )
+            self.assertTrue(gate({**base, "command": wrapped_staged_content}))
+            self.assertFalse(
+                gate(
+                    {
+                        **base,
+                        "command": wrapped_staged_content.replace(
+                            "72656164790a",
+                            "00",
+                        ),
+                    }
+                )
+            )
+            subprocess.run(
+                ["git", "add", "--", "canary-ready.txt"],
+                cwd=checkout,
+                check=True,
+            )
+            self.assertTrue(gate({**base, "command": "git commit -m 'add canary'"}))
+            self.assertFalse(gate({**base, "command": "git commit -am 'escape'"}))
 
     def test_event_log_rejects_malformed_rows(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

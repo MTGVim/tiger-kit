@@ -10,6 +10,10 @@ from pathlib import Path
 
 
 PHASES = {
+    "tk-grill-me",
+    "tk-to-spec",
+    "tk-to-tickets",
+    "tk-prototype",
     "tk-implement",
     "tk-reflect",
 }

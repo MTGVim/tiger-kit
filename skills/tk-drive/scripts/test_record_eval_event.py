@@ -19,6 +19,11 @@ class RecordEvalEventTest(unittest.TestCase):
             env["TK_DRIVE_EVENT_LOG"] = str(event_log)
 
             subprocess.run(
+                [sys.executable, str(SCRIPT), "phase_invocation", "tk-to-spec"],
+                env=env,
+                check=True,
+            )
+            subprocess.run(
                 [sys.executable, str(SCRIPT), "phase_invocation", "tk-implement"],
                 env=env,
                 check=True,
@@ -43,6 +48,7 @@ class RecordEvalEventTest(unittest.TestCase):
             self.assertEqual(
                 rows,
                 [
+                    {"type": "phase_invocation", "phase": "tk-to-spec"},
                     {"type": "phase_invocation", "phase": "tk-implement"},
                     {
                         "type": "phase_receipt",

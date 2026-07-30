@@ -109,10 +109,10 @@ change drive terminal status and do not create a user question.
 
 Atomically write or replace `.tigerkit/reflect.md`. Record task identity,
 product verification HEAD, evidence refs, each candidate's interpretation,
-confidence, prevention owner, action, eligibility result, application and
-validation, tracked commit or local rollback snapshot, promotion packet, and
-pending/discard reason. Do not store raw logs, transcripts, full diffs,
-credentials, or copied receipt prose.
+confidence, preferred prevention owner, host dependency, action, eligibility
+result, application and validation, tracked commit or local rollback snapshot,
+promotion packet, and pending/discard reason. Do not store raw logs,
+transcripts, full diffs, credentials, or copied receipt prose.
 
 ## Failure and receipt
 

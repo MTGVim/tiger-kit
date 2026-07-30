@@ -947,6 +947,71 @@ def verify_mechanical_assertion(
                 f"text={text!r}; contains={contains}"
             ),
         }
+    if assertion_type == "path_text_equals":
+        target, inside = _safe_checkout_path(checkout, assertion.get("path"))
+        expected = assertion.get("text")
+        readable = inside and target.is_file()
+        try:
+            content = (
+                target.read_text(encoding="utf-8", errors="replace")
+                if readable
+                else ""
+            )
+        except OSError:
+            readable = False
+            content = ""
+        passed = isinstance(expected, str) and readable and content == expected
+        return {
+            "type": assertion_type,
+            "passed": passed,
+            "evidence": (
+                f"path={assertion.get('path')!r}; readable={readable}; "
+                f"actual_length={len(content)}; expected_length="
+                f"{len(expected) if isinstance(expected, str) else None}"
+            ),
+        }
+    if assertion_type == "git_commit_count_delta":
+        expected = assertion.get("expected")
+        final_head = git_head(checkout)
+        valid_expected = (
+            isinstance(expected, int)
+            and not isinstance(expected, bool)
+            and expected >= 0
+        )
+        ancestor = (
+            initial_head is not None
+            and final_head is not None
+            and subprocess.run(
+                ["git", "merge-base", "--is-ancestor", initial_head, final_head],
+                cwd=checkout,
+                text=True,
+                capture_output=True,
+                check=False,
+            ).returncode
+            == 0
+        )
+        count: int | None = None
+        if ancestor:
+            completed = subprocess.run(
+                ["git", "rev-list", "--count", f"{initial_head}..{final_head}"],
+                cwd=checkout,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            if completed.returncode == 0:
+                try:
+                    count = int(completed.stdout.strip())
+                except ValueError:
+                    count = None
+        return {
+            "type": assertion_type,
+            "passed": valid_expected and ancestor and count == expected,
+            "evidence": (
+                f"initial_head={initial_head!r}; final_head={final_head!r}; "
+                f"ancestor={ancestor}; commit_count={count!r}; expected={expected!r}"
+            ),
+        }
     if assertion_type == "changed_paths_equal":
         expected = assertion.get("paths", [])
         actual = _changed_paths(checkout, initial_head)

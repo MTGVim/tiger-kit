@@ -310,6 +310,75 @@ class PrepManifestTest(unittest.TestCase):
         self.assertNotEqual(completed.returncode, 0)
         self.assertEqual(self.output.read_text(encoding="utf-8"), active_document)
 
+    def test_active_manifest_allows_same_run_amendment_reseal(self) -> None:
+        self.assertEqual(self.run_create().returncode, 0)
+        module = load_module()
+        ready_header, body = module.parse_document(
+            self.output.read_text(encoding="utf-8")
+        )
+        active_header = {
+            **ready_header,
+            "status": "active",
+            "claim": {"actor": "codex", "id": "run-1"},
+            "timestamps": {
+                **ready_header["timestamps"],
+                "claimed_at": "2026-07-30T01:03:00Z",
+            },
+        }
+        self.output.write_text(
+            module.render_document(active_header, body),
+            encoding="utf-8",
+        )
+        (self.root / ".tigerkit/spec.md").write_text(
+            "# Spec\n\nStatus: Ready\n\n## Requirements\n\n- R1 amended\n",
+            encoding="utf-8",
+        )
+
+        completed = self.run_create(
+            "--created-at",
+            "2026-07-30T02:00:00Z",
+            "--replace-active-claim-id",
+            "run-1",
+        )
+
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        amended, _ = module.parse_document(
+            self.output.read_text(encoding="utf-8")
+        )
+        self.assertEqual(amended["status"], "active")
+        self.assertEqual(amended["claim"], active_header["claim"])
+        self.assertEqual(
+            amended["timestamps"],
+            active_header["timestamps"],
+        )
+        self.assertNotEqual(amended["prep_id"], active_header["prep_id"])
+
+    def test_active_manifest_rejects_wrong_amendment_claim(self) -> None:
+        self.assertEqual(self.run_create().returncode, 0)
+        module = load_module()
+        ready_header, body = module.parse_document(
+            self.output.read_text(encoding="utf-8")
+        )
+        active_header = {
+            **ready_header,
+            "status": "active",
+            "claim": {"actor": "codex", "id": "run-1"},
+            "timestamps": {
+                **ready_header["timestamps"],
+                "claimed_at": "2026-07-30T01:03:00Z",
+            },
+        }
+        active_document = module.render_document(active_header, body)
+        self.output.write_text(active_document, encoding="utf-8")
+
+        completed = self.run_create(
+            "--replace-active-claim-id",
+            "other-run",
+        )
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertEqual(self.output.read_text(encoding="utf-8"), active_document)
+
     def test_strict_parser_rejects_schema_mutations(self) -> None:
         self.assertEqual(self.run_create().returncode, 0)
         module = load_module()
