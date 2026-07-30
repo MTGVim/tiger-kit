@@ -68,18 +68,24 @@ Before editing, stop `Blocked` when requirements conflict, authority is unsafe, 
 
 Commit exactly once only when status is `Pass` and commit is not prohibited. Stage only this unit's paths; preserve pre-existing user changes. Never broaden staging, bypass hooks for convenience, push, create a PR, merge, tag, release, or publish without a separate request.
 
-For standalone success, lead with `## Changed`, then `## Verification`, and optional `## Strategy` or `## Remaining risks` only when meaningful. Describe behavior, summarize checks, and report the commit once. Keep logs, detailed mappings, and provenance in `.tigerkit/implementation.md`.
+Lead with `## Changed`, then `## Verification`, and optional `## Strategy` or `## Remaining risks`. For a successful unit, use 2–5 short, behavior-oriented bullets under `Changed` and 1–4 verification-result bullets under `Verification`. When underlying results exceed the budget, keep only the most decision-relevant items and cite `.tigerkit/implementation.md`. Record the commit once. Keep logs, detailed mappings, and provenance in the ledger.
 
 For active drive, return only the internal unit ID, status (`Pass | Fail | Blocked | Unverifiable`), commit, R/AC references, verification/review evidence, and unverified items.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Treat progress, internal evidence, and terminal output as separate surfaces. Start with the canonical result heading. Do not emit a separator, top-level `Outcome:`, receipt heading, caller-return instruction, duplicate provenance block, or terminal user result during an active drive handoff.
+Treat progress commentary, internal procedure evidence, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between successful consecutive active-drive procedure invocations.
+
+Do not render a receipt heading, `Outcome:` label, phase-success token, caller-return instruction, or terminal provenance/status block in the user summary. When the result requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the canonical result schema requires it.
+
+Persist provenance only in an artifact or ledger already owned by the workflow. A read-only skill remains read-only. Never require a shared runtime reference outside this skill.
 
 ### 🔴 HARD GATE · response language
 
-Use the latest explicit language instruction, otherwise the current user's language, for every free-form user-facing sentence. Preserve canonical headings, status tokens, IDs, commands, paths, code, and exact source literals.
+Before any user-facing progress, question, or summary, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose result value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
 
-## User decisions
+## User decision questions
 
-When a material user-owned decision blocks progress, ask one self-contained question with two or three mutually exclusive options, relevant evidence, and one recommendation. Use host-native structured input when available; a failed or rejected call remains non-success and never authorizes guessing.
+When a user-owned decision blocks progress, ask one self-contained `Question` before any `Recommendation`. Show only decision-relevant evidence, two or three mutually exclusive options with material tradeoffs, and exactly one label ending `(Recommended)` or `(추천)`.
+
+Use native structured input when exposed: Claude Code `AskUserQuestion`, Codex `request_user_input`, or Hermes Agent `clarify`. Plain text is allowed only when none is exposed. A failed or rejected call is not absence; preserve `Pending | Blocked`. This changes presentation, not authority or stop gates.
