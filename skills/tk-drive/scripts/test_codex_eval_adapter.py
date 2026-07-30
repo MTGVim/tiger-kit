@@ -67,12 +67,6 @@ class CodexObservationTest(unittest.TestCase):
         )
         events = [
             {"type": "phase_invocation", "phase": "tk-implement"},
-            {
-                "type": "phase_receipt",
-                "phase": "tk-implement",
-                "state": "Pass",
-                "transition": "aggregate verification",
-            },
             {"type": "phase_invocation", "phase": "tk-implement"},
         ]
 
@@ -266,9 +260,9 @@ class CodexObservationTest(unittest.TestCase):
                 Path(__file__).resolve().parents[2]
                 / "tk-drive"
                 / "scripts"
-                / "prep_manifest.py"
+                / "preflight.py"
             )
-            (drive_scripts / "prep_manifest.py").write_bytes(
+            (drive_scripts / "preflight.py").write_bytes(
                 source_script.read_bytes()
             )
 
@@ -278,21 +272,13 @@ class CodexObservationTest(unittest.TestCase):
                 "[tigerkit-eval:prepared-two-unit]\n/tk-drive",
             )
             manifest = checkout / ".tigerkit" / "prep.md"
-            completed = subprocess.run(
-                [
-                    sys.executable,
-                    str(Path(__file__).with_name("prep_state.py")),
-                    "validate",
-                    str(manifest),
-                ],
-                text=True,
-                capture_output=True,
-                check=False,
-            )
-
-            self.assertIn("same active tk-drive Preparing", prompt)
+            self.assertIn("infer the next action", prompt)
             self.assertTrue(prompt.endswith("\n/tk-drive"))
-            self.assertEqual(completed.returncode, 0, completed.stderr)
+            self.assertTrue(
+                manifest.read_text(encoding="utf-8").startswith(
+                    "# TigerKit preflight\n\n```json\n"
+                )
+            )
             self.assertTrue((checkout / ".git").is_dir())
             self.assertTrue((checkout / ".tigerkit/no-hooks").is_dir())
             self.assertEqual(
@@ -315,7 +301,8 @@ class CodexObservationTest(unittest.TestCase):
                 ).stdout.strip(),
                 "tigerkit-eval-two-unit",
             )
-            self.assertIn('"status": "ready"', manifest.read_text(encoding="utf-8"))
+            self.assertNotIn('"status"', manifest.read_text(encoding="utf-8"))
+            self.assertNotIn('"cursor"', manifest.read_text(encoding="utf-8"))
             tickets = (checkout / ".tigerkit" / "tickets.md").read_text(
                 encoding="utf-8"
             )
@@ -516,8 +503,7 @@ class CodexObservationTest(unittest.TestCase):
             path = Path(directory) / "events.jsonl"
             path.write_text(
                 '{"type":"phase_invocation","phase":"tk-implement"}\n'
-                '{"type":"phase_receipt","phase":"tk-implement","state":"Draft",'
-                '"transition":"aggregate verification"}\n',
+                '{"type":"phase_invocation","phase":"tk-implment"}\n',
                 encoding="utf-8",
             )
 

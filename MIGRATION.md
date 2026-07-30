@@ -1,3 +1,47 @@
+# TigerKit main direct graph and compact preflight
+
+The next major-release source keeps the current 15-skill catalog but replaces
+the `tk-drive` lifecycle protocol. No new `tk-grilling` skill is added:
+`tk-grill-me` owns the evidence-first decision procedure in both standalone
+and active-drive modes, varying only result routing.
+
+The active graph is:
+
+```text
+tk-drive preflight
+→ tk-grill-me, when a material user decision remains
+→ tk-to-spec
+→ tk-to-tickets, only for multiple independently verifiable units
+→ tk-implement, once per unit
+→ aggregate verification
+→ tk-reflect, only for a valid tail
+→ tk-drive finalization
+```
+
+Successful procedures pass native state directly to the next applicable node.
+Phase receipts, caller-return instructions, mutable prep status, claims,
+finalize transitions, and stored cursors are removed from the current runtime.
+Only `tk-drive finalization` owns the active-drive terminal response.
+
+`.tigerkit/prep.md` is now a compact secret-free preflight snapshot. It stores
+task scope and decisions, repository identity and dirty paths, the selected
+graph and verification profile, conditional non-sensitive browser hints, and
+spec/ticket references. It never stores credentials, exact identity, lifecycle
+status, claims, or a resume cursor. Existing lifecycle manifests are not
+migrated or treated as authority; a current run derives its next action from
+the actual artifacts, Git state, tests, and browser evidence.
+
+Corrective implementation remains bounded to three observed, isolated failure
+cycles. Drive-tail reflection no longer auto-applies tracked rules or creates a
+reflection commit. Its only automatic mutation is one exact pre-existing
+ignored/untracked user-managed repository rule recorded at drive start, guarded
+by containment, baseline hash, secure backup, atomic replacement, validation,
+and verified rollback. Every other target keeps its normal approval boundary.
+
+Same-turn Agent Skill continuation remains prompt-directed and probabilistic.
+TigerKit does not claim durable scheduling, event replay, or guaranteed
+cross-turn continuation; those require a runtime-backed workflow product.
+
 # TigerKit 21.0.2 ADHD utility rename and reflection boundary
 
 The explicit one-shot output utility is renamed again to remove semantic

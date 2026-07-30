@@ -76,15 +76,15 @@
 - case: browser-interactive-auth-only-headed-exception
   skill: tk-browser-verify
   expect: "Headed mode is used only for user-completed interactive login; after authentication the owned headed browser closes and verification resumes under exact --headless=new with the same repo-external persistent profile."
-- case: grill-me-keeps-one-question-at-a-time
+- case: grill-me-unifies-caller-modes
   skill: tk-grill-me
-  expect: "Only one highest-impact user decision question is asked at a time."
-- case: grill-uses-native-question-tool
+  expect: "Standalone and active-drive callers use one evidence-first decision procedure and the same closure criteria; only result routing differs."
+- case: grill-me-uses-native-question-tool
   skill: tk-grill-me
-  expect: "When a native structured user-input tool is exposed, call it and proactively use relevant preview/prototype support; make Question explain evidence-derived context and impact before two or three proposals with tradeoffs and exactly one localized recommendation marker, and use prose only when no such tool is exposed, never after tool failure or rejection."
-- case: grill-me-researches-facts-before-asking
+  expect: "When a native structured user-input tool is exposed, call it for exactly one Question, Recommendation, and Evidence decision; use prose only when no such tool is exposed, never after tool failure or rejection."
+- case: grill-me-active-drive-routes-directly
   skill: tk-grill-me
-  expect: "Facts available in code or environment are researched before asking the user."
+  expect: "A confirmed active-drive decision state returns directly to the next graph node without a terminal result, receipt, Return to, or outstanding transition."
 - case: grill-me-keeps-ambiguity-ledger
   skill: tk-grill-me
   expect: "The conversation tracks Scope, Constraints, Outputs, and Verification separately and does not let one subtopic hide unresolved tracks."
@@ -102,22 +102,16 @@
   expect: "After all four ledger tracks are resolved, the skill restates a one-sentence goal and completes only after explicit user approval."
 - case: grill-me-ledger-stays-in-conversation
   skill: tk-grill-me
-  expect: "The ambiguity ledger stays in the conversation and receipt without automatically creating .tigerkit files, specs, tickets, or domain documents."
-- case: grill-me-does-not-write-domain-docs
+  expect: "The ambiguity ledger stays in the conversation without automatically creating .tigerkit files, specs, tickets, or domain documents."
+- case: grill-me-does-not-mutate-or-invoke-phases
   skill: tk-grill-me
-  expect: "The skill does not mutate CONTEXT, glossary, or domain documents."
+  expect: "The skill does not mutate CONTEXT, glossary, ADR, spec, tickets, implementation, or invoke a downstream phase owner."
 - case: grill-me-does-not-create-adrs
   skill: tk-grill-me
   expect: "The skill does not create ADRs automatically."
-- case: grill-accepts-active-drive-preparing-handoff
+- case: grill-me-blocks-active-drive-autostart
   skill: tk-grill-me
-  expect: "An explicit active-drive-preparing decision handoff is a valid entry; grill owns only decision closure and returns a typed receipt without mutation."
-- case: grill-returns-control-to-prep
-  skill: tk-grill-me
-  expect: "A confirmed prep handoff returns Decisions, assumptions, risks, and control to tk-drive without invoking spec, tickets, or implementation."
-- case: grill-echoes-prep-transition
-  skill: tk-grill-me
-  expect: "A confirmed active-drive-preparing receipt echoes `Return to: tk-drive` and the parent-supplied `Outstanding transition` verbatim without executing it."
+  expect: "Merely saying drive is active does not start decision closure; an exact active-drive decision handoff is required."
 - case: implement-tdd-requires-observed-red
   skill: tk-implement
   expect: "TDD requires executing the focused test and observing a real failure before implementation."
@@ -175,12 +169,12 @@
 - case: implement-diagnosis-blocks-missing-seam
   skill: tk-implement
   expect: "A missing public regression seam is reported with a seam option and deterministic alternative verification, then commit remains blocked until an explicit named exception."
-- case: implement-active-drive-handoff-triggers
+- case: implement-active-drive-unit-state
   skill: tk-implement
   expect: "An explicit active-drive implementation handoff carrying one unit/ticket and R/AC activates the same unit contract as standalone invocation."
-- case: implement-echoes-drive-transition
+- case: implement-routes-unit-state-directly
   skill: tk-implement
-  expect: "A successful active-drive implementation receipt echoes `Return to: tk-drive` and the parent-supplied `Outstanding transition` verbatim without executing drive-wide verification."
+  expect: "A successful active-drive implementation passes verified unit and commit evidence directly to the next applicable graph node without rendering a terminal result or executing drive-wide verification."
 - case: implement-ordinary-request-does-not-trigger
   skill: tk-implement
   expect: "An ordinary implementation request does not auto-activate the hybrid skill or its commit authority."
@@ -235,12 +229,15 @@
 - case: reflect-bounds-summary-cell-length
   skill: tk-reflect
   expect: "A formatting-only Disposition reprint preserves IDs and order while omitting evidence bodies, drafts, and work narration."
-- case: reflect-drive-applies-eligible-tracked-repo-rule
+- case: reflect-drive-applies-exact-existing-ignored-rule
   skill: tk-reflect
-  expect: "A valid drive-optimistic tail applies only a high-confidence eligible existing tracked repo rule, creates one reflection commit, and reports git-revert rollback in the bounded Disposition table."
+  expect: "A valid drive-optimistic tail applies only one high-confidence exact pre-existing ignored user-managed repo rule through baseline, containment, secure-backup, atomic-write, validation, and verified-rollback gates without changing Git HEAD."
 - case: reflect-drive-never-creates-local-rule-target
   skill: tk-reflect
   expect: "Drive-tail local application requires an exact pre-existing user-managed file and never creates a new ignored or untracked rule target."
+- case: reflect-drive-rejects-ineligible-target-matrix
+  skill: tk-reflect
+  expect: "Tracked, unignored, new, symlinked, external, changed-since-baseline, and ambiguous targets remain pending under their normal approval boundary and receive no automatic mutation."
 - case: reflect-drive-skill-candidate-is-promotion-packet-only
   skill: tk-reflect
   expect: "A drive-tail skill candidate remains pending in a promotion packet and never creates, edits, commits, or invokes a skill."
@@ -270,13 +267,13 @@
   expect: "The UI inventory contains source, current rendered/source-path, and target literal columns; a missing source column is Unverifiable, and any source-current mismatch makes all rows conflict candidates that prevent Ready without a user decision."
 - case: to-spec-active-drive-preparing-handoff
   skill: tk-to-spec
-  expect: "An explicit active-drive-preparing spec handoff uses the standalone Ready contract and returns a prep-consumable phase receipt without taking downstream ownership."
-- case: to-spec-echoes-prep-transition
+  expect: "An explicit active-drive spec invocation uses the standalone Ready contract and passes the native spec path and R/AC state directly to the active graph without taking downstream ownership."
+- case: to-spec-routes-ready-state-directly
   skill: tk-to-spec
-  expect: "A Ready active-drive-preparing spec receipt echoes `Return to: tk-drive` and the parent-supplied `Outstanding transition` verbatim without making the ticket decision."
+  expect: "A Ready active-drive spec passes the artifact path and R/AC IDs directly to the next applicable graph node without rendering a terminal result or making the ticket decision."
 - case: to-spec-returns-decision-blocker-to-prep
   skill: tk-to-spec
-  expect: "A user-decision blocker returns `User decision: required`, the new decision, and evidence in a native non-Ready receipt to prep without invoking grill or writing a substitute Ready spec."
+  expect: "A user-decision blocker passes `User decision: required`, the unresolved choice, and source evidence as native non-Ready state to the active graph without invoking grill or writing a substitute Ready spec."
 - case: to-tickets-does-not-create-spec
   skill: tk-to-tickets
   expect: "Ticket decomposition may use Ready-spec candidate areas as evidence but independently owns slice boundaries and does not create or modify the spec."
@@ -300,13 +297,13 @@
   expect: "Ticket decomposition preserves the three-column UI inventory and stops when the source column is absent or a source-current conflict escaped the Ready spec."
 - case: to-tickets-active-drive-preparing-handoff
   skill: tk-to-tickets
-  expect: "An explicit active-drive-preparing ticket handoff uses the standalone vertical-slice contract and returns a prep-consumable ledger receipt without implementing."
-- case: to-tickets-echoes-prep-transition
+  expect: "An explicit active-drive ticket invocation uses the standalone vertical-slice contract and passes the native ledger state directly to the active graph without implementing."
+- case: to-tickets-routes-ledger-state-directly
   skill: tk-to-tickets
-  expect: "A successful active-drive-preparing ticket receipt echoes `Return to: tk-drive` and the parent-supplied `Outstanding transition` verbatim without implementing."
+  expect: "A successful active-drive ticket ledger passes ticket IDs and R/AC coverage directly to the next applicable graph node without rendering a terminal result or implementing."
 - case: to-tickets-returns-decision-blocker-to-prep
   skill: tk-to-tickets
-  expect: "A user-decision blocker returns `User decision: required`, the new decision, and evidence in a native ticket receipt to prep without invoking grill or editing the Ready spec."
+  expect: "A user-decision blocker passes `User decision: required`, the unresolved choice, and evidence as native ticket state to the active graph without invoking grill or editing the Ready spec."
 - case: prototype-is-not-production
   skill: tk-prototype
   expect: "The result distinguishes fake and real behavior and is not called production-ready."
@@ -403,9 +400,9 @@
 - case: drive-resumes-preparing-decision-answer
   skill: tk-drive
   expect: "A direct answer to the one pending Preparing decision resumes the same active drive and continues the recorded preparation transition."
-- case: drive-reflects-once-after-aggregate-pass
+- case: drive-reflects-once-then-finalizes
   skill: tk-drive
-  expect: "After aggregate product verification passes, drive invokes exactly one drive-optimistic reflection tail, verifies the final-receipt transition echo, and continues in the same turn."
+  expect: "After aggregate product verification passes, drive invokes exactly one reflection tail and continues directly to finalization in the same turn."
 - case: drive-skips-unneeded-tickets
   skill: tk-drive
   expect: "A single short vertical slice moves from Ready spec directly to implementation without a ticket artifact."
@@ -424,18 +421,24 @@
 - case: drive-aggregate-review-boundary
   skill: tk-drive
   expect: "tk-implement owns ticket-level Standards/Spec review while drive owns aggregate R/AC coverage, ancestry, and cross-ticket interaction without repeating line-level review."
-- case: drive-invokes-phase-owners
+- case: drive-invokes-direct-graph-owners
   skill: tk-drive
-  expect: "Drive consumes preparation and invokes tk-implement per prepared unit plus one tk-reflect tail without invoking initial preparation owners."
-- case: drive-continues-after-prep-claim
+  expect: "Drive follows the exact applicable procedure graph, invokes each owner directly, and never asks a successful child to return control to its caller."
+- case: drive-continues-after-preflight
   skill: tk-drive
-  expect: "A successful atomic prep claim is never a response boundary: drive continues through prepared implementation, aggregate verification, reflection, and terminal state."
-- case: drive-checks-transition-debt-before-terminal-output
+  expect: "Completed preflight is never a response boundary: drive continues through implementation, aggregate verification, reflection, and finalization."
+- case: drive-enforces-exact-procedure-graph
   skill: tk-drive
-  expect: "Immediately before the terminal user summary, drive rejects any consumed successful receipt whose recorded `Outstanding transition` has not executed; it continues that transition in the same active turn or returns one evidence-supported non-success state."
-- case: drive-rejects-missing-transition-echo
+  expect: "Every edge uses a canonical node name and declares entry, success, failure, and next-node conditions; unknown nodes, misspellings, forbidden cycles, and incomplete edges fail validation."
+- case: drive-continues-without-receipt-boundary
   skill: tk-drive
-  expect: "A missing or mismatched child `Outstanding transition` echo is receipt drift and stops drive Blocked instead of being consumed as success."
+  expect: "Successful active-drive procedures invoke the next applicable node in the same turn without a user turn, success receipt, caller-return instruction, or terminal output between them."
+- case: drive-continues-multi-unit-through-reflection
+  skill: tk-drive
+  expect: "A multi-unit run continues after the first tk-implement unit, finishes every selected unit, performs aggregate verification, runs the valid reflection tail, and reaches finalization."
+- case: drive-owns-single-terminal-response
+  skill: tk-drive
+  expect: "Only tk-drive finalization emits exactly one active-drive terminal response, beginning with the result and containing no standalone separator, Outcome label, receipt heading, phase Pass token, caller-return instruction, or bottom provenance block."
 - case: drive-prepares-trivial-task
   skill: tk-drive
   expect: "Every explicit source, including a trivial single slice, passes through internal Ready preparation and then continues automatically into implementation."
@@ -456,19 +459,10 @@
   expect: "Preparation persists only non-identifying browser hints plus an intentionally-omitted cold-start marker; a fresh executor re-requests the exact runtime identity once before launch without consuming a Preparing amendment."
 - case: drive-amends-on-first-new-decision
   skill: tk-drive
-  expect: "The first late user-owned decision enters one bounded Preparing amendment, revalidates the spec and affected tickets, reseals, and resumes Executing."
+  expect: "The first late user-owned decision enters one bounded Preparing amendment, revalidates the spec and affected tickets, refreshes current artifacts, and resumes Executing."
 - case: drive-blocks-second-amendment
   skill: tk-drive
-  expect: "After one Preparing amendment has been consumed, a repeated blocker or second user-owned decision stops Blocked without another reseal."
-- case: drive-claims-ready-prep-atomically
-  skill: tk-drive
-  expect: "Drive validates actual current identities and digests under the shared directory lock, then exactly one claimant changes Ready to Active before product mutation."
-- case: drive-invalidates-stale-prep
-  skill: tk-drive
-  expect: "Repository or content drift atomically changes a valid Ready prep to Invalid and cannot authorize implementation."
-- case: drive-finalizes-owned-claim
-  skill: tk-drive
-  expect: "Only the matching active claim finalizes Completed, Invalid, or Failed; drive strictly rereads terminal state before user output."
+  expect: "After one Preparing amendment has been consumed, a repeated blocker or second user-owned decision stops Blocked without another artifact mutation."
 - case: drive-blocks-repeated-decision-return
   skill: tk-drive
   expect: "The same or equivalent decision blocker after confirmation stops Blocked instead of entering another automatic grill loop."
@@ -480,7 +474,10 @@
   expect: "Unavailable or unsuccessful phase owners stop the workflow at that phase with the evidence-supported terminal state and no inline fallback."
 - case: drive-bounds-corrective-cycle
   skill: tk-drive
-  expect: "Initial implementation is excluded from the count; up to three isolated frozen-R/AC corrective cycles are allowed, and a fourth or scope expansion stops."
+  expect: "Initial implementation is excluded from the count; each of at most three corrective cycles targets one observed isolated failure, and a fourth, repeated unchanged failure, or scope expansion stops with the remaining failing command and evidence once."
+- case: drive-stops-on-procedure-failure
+  skill: tk-drive
+  expect: "A blocked or unverifiable procedure exposes one actionable blocking fact once, takes only an evidence-supported alternate edge, and otherwise stops without success evidence or an unchanged-transition loop."
 - case: drive-preserves-source-ui-writing-verbatim
   skill: tk-drive
   expect: "Drive consumes the sealed source UI inventory and rechecks exact literals through prepared units, implementation, candidate/staged diff, and rendered UI."
@@ -616,18 +613,18 @@
 - case: ask-repo-bounds-result-cardinality
   skill: tk-ask-repo
   expect: "One answer may use one to three short paragraphs, compound answers use bounded bullets or a table, and eight or more results show the top five to seven plus owning evidence paths."
-- case: drive-prepares-only-after-ready-gates
+- case: drive-writes-compact-preflight
   skill: tk-drive
-  expect: "Preparation writes and strictly rereads one atomic Ready manifest only after decision, spec, ticket or no-ticket, verification-profile, and cold-start gates pass."
-- case: drive-preserves-terminal-on-failed-preparing
+  expect: "Preparation atomically writes and strictly rereads one compact secret-free preflight containing only task, repository, graph, verification, browser, and source-reference fields."
+- case: drive-preserves-preflight-on-write-failure
   skill: tk-drive
-  expect: "Pending, blocked, failed, or unverifiable preparation preserves the prior terminal manifest byte-for-byte."
-- case: drive-reseals-one-active-amendment
+  expect: "A symlink, external path, or interrupted replacement fails without a partial file and preserves any prior preflight byte-for-byte."
+- case: drive-rejects-preflight-secrets
   skill: tk-drive
-  expect: "Only the active run owner may reseal one bounded Preparing amendment; a wrong owner, repeated blocker, or second amendment is blocked."
-- case: drive-continues-automatically-after-ready
+  expect: "Preflight validation rejects lifecycle fields, credentials, cookies, tokens, OTPs, passwords, exact sensitive identity, unsafe URLs, and non-opaque profile hints."
+- case: drive-resumes-from-current-evidence
   skill: tk-drive
-  expect: "After Ready preparation is sealed and reread, the same active drive run activates it and executes the first implementation unit without another confirmation."
+  expect: "Resume chooses decision closure, spec, tickets, implementation, aggregate verification, reflection, or finalization from current artifacts and repository evidence without a stored status or cursor."
 - case: drive-bounds-task-anchored-prior-art
   skill: tk-drive
   expect: "Preparation keeps at most seven task-anchored durable items from allowed repository sources and carries evidence, preferred prevention owner, and host dependency into spec."

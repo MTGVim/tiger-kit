@@ -17,6 +17,11 @@
       "reason": "The echoed specification transition is owned by tk-drive."
     },
     {
+      "from": "to-spec-echoes-prep-transition",
+      "to": "to-spec-routes-ready-state-directly",
+      "reason": "Direct drive consumes Ready specification state without a return envelope."
+    },
+    {
       "from": "to-spec-returns-decision-blocker-to-drive",
       "to": "to-spec-returns-decision-blocker-to-prep",
       "reason": "Decision blockers now return to the active preparation."
@@ -77,11 +82,11 @@
       "id": "active-drive-preparing-returns-decision-blocker",
       "path": "boundary",
       "prompt": "[active tk-drive Preparing spec handoff] 확인된 source로 Ready spec을 작성하세요. 조사 중 새 사용자 선택이 필요하면 대신 결정하거나 grill을 부르지 마세요.",
-      "expected_output": "새 user-owned decision이 필요하면 native non-Ready receipt에 User decision: required와 근거를 담아 prep으로 반환하고, substitute Ready spec을 쓰거나 grill을 직접 호출하지 않는다.",
+      "expected_output": "새 user-owned decision이 필요하면 native non-Ready state에 User decision: required와 근거를 담아 active graph에 넘기고, substitute Ready spec을 쓰거나 grill을 직접 호출하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "새 user-owned decision이 필요하면 native non-Ready receipt에 User decision: required와 근거를 담아 prep으로 반환하고, substitute Ready spec을 쓰거나 grill을 직접 호출하지 않는다."
+          "criterion": "새 user-owned decision이 필요하면 native non-Ready state에 User decision: required와 근거를 담아 active graph에 넘기고, substitute Ready spec을 쓰거나 grill을 직접 호출하지 않는다."
         },
         {
           "type": "terminal_status",
@@ -229,8 +234,8 @@
     {
       "id": "to-spec-active-drive-preparing-handoff",
       "path": "success",
-      "prompt": "[active tk-drive Preparing spec handoff] Success state: Ready. Outstanding transition: ticket decision. Use the confirmed source and decisions for task TASK-02 to write and revalidate a Ready spec, then return Phase: spec with path and R/AC IDs.",
-      "expected_output": "standalone과 같은 Ready gate를 적용하고 task identity/source traceability를 보존한 prep-consumable spec receipt를 반환하며 tickets나 implementation을 소유하지 않는다.",
+      "prompt": "[active tk-drive spec handoff] Use the confirmed source and decisions for task TASK-02 to write and revalidate a Ready spec, then pass its path and R/AC IDs to the active graph.",
+      "expected_output": "standalone과 같은 Ready gate를 적용하고 task identity/source traceability를 보존한 native spec state를 active graph에 넘기며 tickets나 implementation을 소유하지 않는다.",
       "assertions": [
         {
           "type": "judge",
@@ -243,22 +248,22 @@
       ]
     },
     {
-      "id": "to-spec-echoes-prep-transition",
+      "id": "to-spec-routes-ready-state-directly",
       "path": "success",
-      "prompt": "[active tk-drive Preparing spec handoff] Success state: Ready. Outstanding transition: ticket decision. Write and revalidate the complete Ready spec for the supplied one-file task, then return the receipt.",
-      "expected_output": "Ready receipt에 Return to: tk-drive과 parent가 준 Outstanding transition: ticket decision을 그대로 포함하고 ticket decision을 직접 수행하지 않는다.",
+      "prompt": "[active tk-drive spec handoff] Write and revalidate the complete Ready spec for the supplied one-file task, then pass the Ready path and R/AC IDs directly to the active graph.",
+      "expected_output": "Ready state를 다음 applicable graph node에 직접 넘기고 terminal result나 caller-return instruction을 만들지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "active-drive-preparing Ready receipt가 parent-supplied transition을 verbatim echo하고 ticket 또는 implementation phase를 실행하지 않는다."
+          "criterion": "active-drive Ready state를 직접 넘기되 ticket 또는 implementation phase를 직접 실행하지 않는다."
         },
         {
-          "type": "output_contains",
-          "text": "Return to: tk-drive"
+          "type": "output_absent",
+          "text": "Return to:"
         },
         {
-          "type": "output_contains",
-          "text": "Outstanding transition: ticket decision"
+          "type": "output_absent",
+          "text": "Outstanding transition"
         },
         {
           "type": "terminal_status",
@@ -270,11 +275,11 @@
       "id": "to-spec-returns-decision-blocker-to-prep",
       "path": "boundary",
       "prompt": "[active tk-drive Preparing spec handoff] Confirmed sources conflict on API compatibility and require a user decision. Do not interview or invoke grill.",
-      "expected_output": "Blocked spec receipt에 `User decision: required`, 충돌 source와 새 결정을 기록해 prep으로 반환하고 tk-grill-me를 직접 호출하거나 Ready spec을 쓰지 않는다.",
+      "expected_output": "Blocked spec state에 `User decision: required`, 충돌 source와 새 결정을 기록해 active graph에 넘기고 tk-grill-me를 직접 호출하거나 Ready spec을 쓰지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "사용자 결정이 필요한 non-Ready 상태를 native receipt로 prep에 반환하고 sibling phase를 호출하지 않는다."
+          "criterion": "사용자 결정이 필요한 non-Ready 상태를 active graph에 넘기고 sibling phase를 호출하지 않는다."
         },
         {
           "type": "terminal_status",

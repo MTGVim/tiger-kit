@@ -1,12 +1,12 @@
 [
   {
     "id": 1,
-    "prompt": "$tk-drive",
-    "expected": "product mutation 전에 strict freshness 검증과 directory lock으로 ready prep을 정확히 한 번 active claim하고 같은 claim identity로 실행한다."
+    "prompt": "$tk-drive compact preflight를 작성하고 현재 artifact evidence에서 다음 node를 선택해 계속 진행해 주세요.",
+    "expected": "product mutation 전에 allowed fields만 포함한 secret-free preflight를 atomic replace하고 strict reread한 뒤 current evidence에서 next node를 선택한다."
   },
   {
     "id": 2,
-    "prompt": "$tk-drive",
-    "expected": "HEAD, branch, worktree, source, dirty, instruction, spec, ticket, 또는 verification digest drift를 발견하면 Ready prep을 invalid로 닫고 구현하지 않는다."
+    "prompt": "$tk-drive 기존 preflight와 현재 spec, tickets, Git evidence가 다릅니다. 저장된 단계에서 재개하지 말고 현재 evidence로 판단해 주세요.",
+    "expected": "stale preflight를 authority로 사용하지 않고 current decisions, Ready spec, valid tickets, incomplete units, aggregate evidence, reflection handoff에서 next node를 선택한다."
   }
 ]

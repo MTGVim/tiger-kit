@@ -8,12 +8,9 @@ their report-only and separate-approval contracts.
 
 Require the handoff to include:
 
-```text
-Mode: drive-optimistic
-Success state: Pass
-Outstanding transition: final receipt
-Return to: tk-drive
-```
+Require a valid active-drive reflection handoff after aggregate product
+verification. The handoff names the eligible target and its containment
+evidence; it does not store a caller-return instruction.
 
 Also require task identity, product verification HEAD, branch, initial HEAD,
 pre-existing dirty ownership, ordered product commits, aggregate verification,
@@ -21,11 +18,12 @@ and evidence refs for `.tigerkit/implementation.md`, spec, and tickets. Missing
 or mismatched authority is `Blocked`; inaccessible required evidence is
 `Unverifiable`.
 
-Freeze the product verification HEAD and every candidate target's path,
-content, hash, tracked/ignored state, and ownership before mutation. Reflection
-may not touch product/source paths. A tracked reflection commit may advance
-final HEAD; ignored/local-only reflection leaves final HEAD equal to product
-verification HEAD.
+The drive-start implementation ledger must already name the one exact
+normalized repository-relative target, prove that it existed, record its
+before-image SHA-256, and classify it as user-managed, untracked, and ignored.
+Freeze the product verification HEAD and reread that baseline evidence before
+mutation. Reflection may not touch product/source paths. Local-only reflection
+leaves final HEAD equal to product verification HEAD.
 
 ## Prevention owner
 
@@ -52,7 +50,10 @@ Apply a repository rule only when every condition holds:
 - confidence is `high`, backed by at least two independently verified Evidence
   IDs and no counterexample;
 - repository-specific trigger, action, and boundary are exact;
-- an existing exact user-managed repository rule target is verified;
+- the drive-start ledger proves one existing exact user-managed repository
+  rule target;
+- the target is currently a regular non-symlink file contained by the
+  repository, untracked, ignored, and byte-identical to its baseline SHA-256;
 - the target is not vendor, generated, global, user-level, persistent memory,
   or unknown ownership;
 - target content and ownership have not drifted;
@@ -64,25 +65,30 @@ Use the repository placement rubric before eligibility. A candidate that fails
 any condition stays `pending` without a drive-stopping question. No verified
 reusable evidence is a successful `no-op`.
 
-## Tracked target
+## Ineligible targets
 
-Freeze the product HEAD and target hash, apply only the eligible rule scope,
-and revalidate syntax, links, ownership, diff scope, and target hash lineage.
-Create one separate commit whose changed paths are only the allowed rule
-targets; prefer `chore(tigerkit): reflect <short rule>`. Report product and
-reflection commits separately and give `git revert <reflection-sha>` as
-rollback.
+Tracked, unignored, new, symlinked, external, changed-since-baseline,
+ambiguous, generated, or ownership-unknown targets never auto-apply. Keep the
+candidate `pending` under its normal approval boundary and do not create a
+replacement local target. A target path containing a glob or resolving
+through another path is ambiguous.
 
-If write/revalidation fails before commit, restore the exact frozen content
-and verify its hash. Never amend, squash, reset, or hide the product commits.
-
-## Existing ignored or untracked local target
+## Exact existing ignored target
 
 The exact user-managed local rule file must already exist at drive start.
 Never create a new local rule target. Before mutation, save its exact
 before-image and hash in the current task's single latest snapshot under
-`.tigerkit/reflect-backup/`. Revalidate the target hash, syntax, links, and
-ownership after writing.
+`.tigerkit/reflect-backup/`.
+
+Use `scripts/ignored_rule_apply.py` with the exact repository root,
+repository-relative target, drive-start SHA-256, a regular candidate file
+inside `.tigerkit/`, and at least one shell-free JSON-array validation command.
+The script rechecks containment, every path component, regular-file and
+symlink state, Git tracked/ignored state, and baseline hash; writes a mode-0600
+backup; atomically replaces the target; reruns the supplied syntax/link
+validation; and restores the exact before-image when post-write validation
+fails. Do not bypass a script rejection or treat the ownership assertion as a
+fact the script can infer.
 
 This path creates no commit and does not change final HEAD. Report
 `applied locally`, the target, and the rollback snapshot or exact restore
@@ -110,24 +116,22 @@ change drive terminal status and do not create a user question.
 Atomically write or replace `.tigerkit/reflect.md`. Record task identity,
 product verification HEAD, evidence refs, each candidate's interpretation,
 confidence, preferred prevention owner, host dependency, action, eligibility
-result, application and validation, tracked commit or local rollback snapshot,
-promotion packet, and pending/discard reason. Do not store raw logs,
+result, application and validation, local rollback snapshot, promotion packet,
+and pending/discard reason. Do not store raw logs,
 transcripts, full diffs, credentials, or copied receipt prose.
 
-## Failure and receipt
+## Failure and completion
 
-A pre-write failure leaves targets untouched. On a tracked pre-commit failure
-or local write failure, restore the exact before-image and verify its hash.
-Verified restoration preserves product `Pass` while reflection reports
-`Fail`. Failed restoration, target drift, out-of-scope changes, or indeterminate
-workspace state is `Blocked | Unverifiable`.
+A pre-write failure leaves targets untouched. On a local write or validation
+failure, restore the exact before-image and verify its hash. Verified
+restoration preserves product `Pass` while reflection reports `Fail`. Failed
+restoration, target drift, out-of-scope changes, or indeterminate workspace
+state is `Blocked | Unverifiable`.
 
-On successful mutation or no-op, return `Status: Pass`,
-`Return to: tk-drive`, and
-`Outstanding transition: final receipt` verbatim. Include product verification
-HEAD, final HEAD, reflection commit or local rollback when applicable, and
-candidate IDs. Omit no-op, empty risks, and zero-candidate sections from
-user-facing output.
+On successful mutation or no-op, pass product verification HEAD, final HEAD,
+local rollback when applicable, candidate IDs, and validation evidence
+directly to `tk-drive finalization`. Omit no-op, empty risks, and
+zero-candidate sections from user-facing output.
 
 For every non-no-op result, preserve the standalone bounded Disposition table:
 
@@ -135,6 +139,6 @@ For every non-no-op result, preserve the standalone bounded Disposition table:
 | --- | --- | --- | --- | --- |
 | RF-01 | `<plain-language name>` | `<action/status and next step>` | `<target>` | `<evidence refs>` |
 
-Show at most five decision-relevant rows. The receipt owns status, provenance,
-commit/rollback, and decision IDs; it never replaces the table with code names
-alone.
+Show at most five decision-relevant rows. Status, provenance, rollback, and
+decision IDs remain in the owned ledger; they never replace the table with
+code names alone.

@@ -2,6 +2,25 @@
 
 ## Unreleased
 
+## 21.0.3 — Direct Procedure Graph and Portable Validation
+
+- Kept decision closure unified in `tk-grill-me` and replaced parent-return
+  orchestration with one validated direct `tk-drive → tk-grill-me →
+  tk-to-spec → tk-to-tickets (conditional) → tk-implement` procedure graph.
+- Replaced the mutable prep lifecycle, claim/finalize scripts, phase receipt
+  recorder, and stored resume cursor with a compact secret-free
+  `.tigerkit/prep.md`, invocation-only eval evidence, and current-evidence
+  resume decisions.
+- Bounded corrective execution with mechanical procedure-count assertions and
+  one remaining-failure report after the third unsuccessful correction.
+- Restricted drive-tail reflection auto-apply to one exact pre-existing ignored
+  user-managed rule target and added a guarded secure-backup, atomic-write,
+  validation, and exact-rollback executor; tracked and unsafe targets remain
+  pending.
+- Documented that Agent Skill continuation is prompt-directed and
+  probabilistic, not durable scheduling or replay, and retained portable
+  Claude Code, Codex, and Hermes Agent distribution.
+
 ## 21.0.2 — ADHD Utility and Reflection Boundary
 
 - Renamed the explicit output utility from `tk-recap` to `tk-adhd` and made it

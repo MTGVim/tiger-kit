@@ -28,8 +28,7 @@ TERMINAL_STATUSES = {
     "NotApplicable",
 }
 SUPPORTED_HOSTS = ("claude-code", "codex", "hermes-agent")
-EVENT_TYPES = {"phase_invocation", "phase_receipt", "final_output"}
-SUCCESS_STATES = {"Ready", "confirmed", "Pass"}
+EVENT_TYPES = {"phase_invocation", "final_output"}
 DIAGNOSTIC_MARKER_START = "<!-- TIGERKIT_DIAGNOSTIC_START -->"
 DIAGNOSTIC_MARKER_END = "<!-- TIGERKIT_DIAGNOSTIC_END -->"
 DIAGNOSTIC_PHASES = ("understanding", "planning", "execution", "formatting")
@@ -91,7 +90,6 @@ def validate_adapter_result(
         else:
             required_fields = {
                 "phase_invocation": ("phase",),
-                "phase_receipt": ("phase", "state", "transition"),
                 "final_output": ("terminal_status",),
             }
             final_statuses: list[object] = []
@@ -123,14 +121,6 @@ def validate_adapter_result(
                     )
                 elif event_type == "final_output":
                     final_statuses.append(event.get("terminal_status"))
-                if (
-                    event_type == "phase_receipt"
-                    and event.get("state") not in SUCCESS_STATES
-                ):
-                    errors.append(
-                        f"adapter result events item {index} phase_receipt state "
-                        "must be Ready, confirmed, or Pass"
-                    )
             if not final_statuses:
                 errors.append("adapter result events require a final_output event")
             elif final_statuses[-1] != terminal_status:
@@ -769,7 +759,7 @@ def verify_mechanical_assertion(
     host: str | None = None,
 ) -> dict[str, object]:
     assertion_type = assertion.get("type")
-    if assertion_type in {"event_order", "event_absent"}:
+    if assertion_type in {"event_order", "event_absent", "event_count"}:
         scoped_hosts = assertion.get("hosts")
         if isinstance(scoped_hosts, list) and host is None:
             return {
@@ -786,6 +776,51 @@ def verify_mechanical_assertion(
                 ),
             }
         events = adapter_result.get("events")
+        if assertion_type == "event_count":
+            matcher = assertion.get("event")
+            minimum = assertion.get("min")
+            maximum = assertion.get("max")
+            if not isinstance(events, list) or not isinstance(matcher, dict):
+                return {
+                    "type": assertion_type,
+                    "passed": False,
+                    "evidence": (
+                        f"host={host!r}; events_available={isinstance(events, list)}; "
+                        "event_count contract unavailable"
+                    ),
+                }
+            count = sum(_event_matches(event, matcher) for event in events)
+            valid_minimum = (
+                minimum is None
+                or (
+                    isinstance(minimum, int)
+                    and not isinstance(minimum, bool)
+                    and minimum >= 0
+                )
+            )
+            valid_maximum = (
+                maximum is None
+                or (
+                    isinstance(maximum, int)
+                    and not isinstance(maximum, bool)
+                    and maximum >= 0
+                )
+            )
+            passed = (
+                valid_minimum
+                and valid_maximum
+                and (minimum is not None or maximum is not None)
+                and (minimum is None or count >= minimum)
+                and (maximum is None or count <= maximum)
+            )
+            return {
+                "type": assertion_type,
+                "passed": passed,
+                "evidence": (
+                    f"host={host!r}; event={matcher!r}; count={count}; "
+                    f"min={minimum!r}; max={maximum!r}"
+                ),
+            }
         if assertion_type == "event_absent":
             matcher = assertion.get("event")
             if not isinstance(events, list) or not isinstance(matcher, dict):

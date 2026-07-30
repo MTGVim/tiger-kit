@@ -107,12 +107,7 @@ class AdapterResultTest(unittest.TestCase):
             "terminal_status": "Pass",
             "events": [
                 {"type": "phase_invocation", "phase": "tk-to-spec"},
-                {
-                    "type": "phase_receipt",
-                    "phase": "tk-to-spec",
-                    "state": "Ready",
-                    "transition": "ticket decision",
-                },
+                {"type": "phase_invocation", "phase": "tk-to-spec"},
                 {"type": "phase_invocation", "phase": "tk-implement"},
                 {"type": "final_output", "terminal_status": "Pass"},
             ],
@@ -122,15 +117,12 @@ class AdapterResultTest(unittest.TestCase):
 
         for events in (
             [],
-            ["phase_receipt"],
+            ["unknown"],
             [{"type": "phase_invocation"}],
-            [{"type": "phase_receipt", "phase": "tk-to-spec", "state": "Ready"}],
             [
                 {
-                    "type": "phase_receipt",
+                    "type": "unknown",
                     "phase": "tk-to-spec",
-                    "state": "Draft",
-                    "transition": "ticket decision",
                 },
                 {"type": "final_output", "terminal_status": "Pass"},
             ],
@@ -995,27 +987,16 @@ class RunnerContractTest(unittest.TestCase):
             self.assertTrue(count["passed"])
             self.assertFalse(wrong_count["passed"])
 
-    def test_event_order_requires_receipt_then_next_phase_without_final_output(self) -> None:
+    def test_event_order_requires_consecutive_phases_without_final_output(self) -> None:
         assertion = {
             "type": "event_order",
             "hosts": ["claude-code"],
-            "before": {
-                "type": "phase_receipt",
-                "phase": "tk-to-spec",
-                "state": "Ready",
-                "transition": "ticket decision",
-            },
+            "before": {"type": "phase_invocation", "phase": "tk-to-spec"},
             "after": {"type": "phase_invocation", "phase": "tk-implement"},
             "forbidden_between": [{"type": "final_output"}],
         }
         valid = [
             {"type": "phase_invocation", "phase": "tk-to-spec"},
-            {
-                "type": "phase_receipt",
-                "phase": "tk-to-spec",
-                "state": "Ready",
-                "transition": "ticket decision",
-            },
             {"type": "phase_invocation", "phase": "tk-implement"},
             {"type": "final_output", "terminal_status": "Pass"},
         ]
@@ -1046,18 +1027,20 @@ class RunnerContractTest(unittest.TestCase):
             failures = []
             for events in (
                 None,
-                valid[:2],
-                [valid[2], valid[1], valid[3]],
+                valid[:1],
+                [valid[1], valid[0], valid[2]],
                 [
-                    valid[1],
+                    valid[0],
                     {"type": "final_output", "terminal_status": "Pass"},
+                    valid[1],
                     valid[2],
                 ],
                 [
                     {
-                        **valid[1],
-                        "transition": "aggregate verification",
+                        **valid[0],
+                        "phase": "tk-grill-me",
                     },
+                    valid[1],
                     valid[2],
                 ],
             ):
@@ -1072,10 +1055,56 @@ class RunnerContractTest(unittest.TestCase):
                     )
                 )
 
+            self.assertTrue(passing["passed"])
+            self.assertTrue(skipped["passed"])
+            self.assertFalse(missing_host["passed"])
+            self.assertTrue(all(not row["passed"] for row in failures))
+
+    def test_event_count_enforces_bounded_phase_invocations(self) -> None:
+        assertion = {
+            "type": "event_count",
+            "hosts": ["codex"],
+            "event": {"type": "phase_invocation", "phase": "tk-implement"},
+            "max": 3,
+        }
+        events = [
+            {"type": "phase_invocation", "phase": "tk-implement"},
+            {"type": "phase_invocation", "phase": "tk-implement"},
+            {"type": "phase_invocation", "phase": "tk-implement"},
+        ]
+
+        with tempfile.TemporaryDirectory() as directory:
+            checkout = Path(directory)
+            passing = verify_mechanical_assertion(
+                assertion,
+                adapter_result={"events": events},
+                checkout=checkout,
+                initial_head=None,
+                host="codex",
+            )
+            failing = verify_mechanical_assertion(
+                assertion,
+                adapter_result={
+                    "events": [
+                        *events,
+                        {"type": "phase_invocation", "phase": "tk-implement"},
+                    ]
+                },
+                checkout=checkout,
+                initial_head=None,
+                host="codex",
+            )
+            skipped = verify_mechanical_assertion(
+                assertion,
+                adapter_result={},
+                checkout=checkout,
+                initial_head=None,
+                host="claude-code",
+            )
+
         self.assertTrue(passing["passed"])
+        self.assertFalse(failing["passed"])
         self.assertTrue(skipped["passed"])
-        self.assertFalse(missing_host["passed"])
-        self.assertTrue(all(not row["passed"] for row in failures))
 
     def test_event_absent_requires_event_evidence_and_honors_host_scope(self) -> None:
         assertion = {
@@ -1136,12 +1165,7 @@ class RunnerContractTest(unittest.TestCase):
             (checkout / "skills" / "tk-sample").mkdir(parents=True)
             adapter = root / "adapter.py"
             events = [
-                {
-                    "type": "phase_receipt",
-                    "phase": "tk-to-spec",
-                    "state": "Ready",
-                    "transition": "ticket decision",
-                },
+                {"type": "phase_invocation", "phase": "tk-to-spec"},
                 {"type": "phase_invocation", "phase": "tk-implement"},
                 {"type": "final_output", "terminal_status": "Pass"},
             ]

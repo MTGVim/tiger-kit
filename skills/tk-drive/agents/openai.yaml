@@ -1,7 +1,7 @@
 interface:
   display_name: "TigerKit: Drive"
-  short_description: "[user] Consume a sealed preparation through commits and terminal state."
-  default_prompt: "Use $tk-drive with an explicit source to prepare and execute one continuous run through verified unit commits, aggregate verification, one reflection tail, and terminal state."
+  short_description: "[user] Drive a direct graph through verified completion."
+  default_prompt: "Use $tk-drive with an explicit source to select the direct procedure graph from current evidence, implement verified units, run aggregate verification and optional reflection, and emit one terminal response."
 
 policy:
   allow_implicit_invocation: false

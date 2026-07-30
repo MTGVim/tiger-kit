@@ -1,37 +1,41 @@
-# TigerKit 21.0.2
+# TigerKit
 
 <p align="center">
   <img src="assets/tigerkit-cover.png" width="960" alt="TigerKit Agent Skills 표지">
 </p>
 
-TigerKit은 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent Skills
+TigerKit 21.0.3는 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent Skills
 모음입니다. 중앙 workflow runtime 없이 15개 self-contained skill을
 `npx skills`로 배포합니다. 하나의 명시적 `tk-drive <source>`가 내부
-`Preparing → Executing` 흐름에서 decision closure, Ready spec, 필요한
-ticket, implementation·aggregate verification·reflection까지 이어갑니다.
-최신 immutable release는 `v21.0.2`이며,
+direct procedure graph에서 `tk-grill-me`, Ready spec, 조건부 ticket,
+implementation·aggregate verification·reflection을 순서대로 선택합니다.
+최신 immutable release는 `v21.0.3`이며,
 현재 `main`에는 다음 release를 위한 skill 변경이 포함될 수 있습니다.
 
-`v21.0.2`는 explicit one-shot output utility를 `tk-adhd`로 제공하고,
-일반 summary·다른 skill 호출이 `tk-reflect`로 잘못 routing되지 않게 합니다.
-`/tk-drive <source>` 또는 `$tk-drive <source>`가 worktree-local
-`.tigerkit/prep.md`를 내부적으로 seal·activate한 뒤 추가 확인 없이 첫
-implementation unit으로 진행합니다. 실행 중 늦게 발견된 user-owned
-decision은 한 번만 Preparing amendment를 거칠 수 있고, 초기 구현 뒤
-자동수정은 최대 세 번입니다. 기존 direct single-unit `tk-implement`
-사용은 그대로 유효합니다.
+현재 `main`의 `tk-drive`는 phase receipt나 mutable prep lifecycle로
+제어를 되돌리지 않습니다. 각 procedure의 native 결과를 다음 applicable
+node에 직접 넘기며, `.tigerkit/prep.md`는 task·repository·graph·verification
+profile·조건부 browser hint·spec/ticket reference만 담는 compact preflight
+snapshot입니다. Resume은 저장된 status/cursor가 아니라 현재 artifact, Git,
+test, browser evidence에서 다음 node를 다시 선택합니다.
+
+Agent Skill의 same-turn continuation은 prompt-directed이며 확률적입니다.
+TigerKit은 durable scheduler, event replay, hard cross-turn continuation을
+보장하는 workflow engine이 아닙니다. 그런 보장이 필요한 작업에는 별도
+runtime product가 필요합니다.
 
 `tk-adhd`를 명시적으로 선택하면 그 응답 하나에만 action-first, bounded
 steps, current-state restatement를 적용합니다. 다음 응답에는 승계되지
 않으며 같은 출력을 원하면 다시 명시적으로 호출해야 합니다. 다른 skill,
 ADHD 언급, formatting 요청은 이 utility를 암묵적으로 호출하지 않습니다.
 
-나머지 14개 canonical skill은 최신 명시 언어 지시를 우선하는
+`tk-adhd` 이외의 canonical skill은 최신 명시 언어 지시를 우선하는
 response-language hard gate와 terminal-summary boundary를 자체 포함합니다.
 최종 사용자 영역은 해당 skill의 canonical 첫 heading 또는 result sentence로
 바로 시작하며 standalone separator, 반복 `Outcome:`, 하단 receipt metadata를
-렌더링하지 않습니다. Phase receipt는 active parent의 내부 handoff로만
-전달됩니다.
+렌더링하지 않습니다. Active drive의 성공 procedure 사이에는 terminal
+response를 만들지 않으며, `tk-drive finalization`만 최종 사용자 응답을
+소유합니다.
 
 `tk-drive` Preparing은 product mutation 전에 material implementation 및
 verification strategy를 점검합니다. Browser evidence는
@@ -65,10 +69,10 @@ npx skills add MTGVim/tiger-kit \
   --skill tk-browser-verify
 ```
 
-변경되지 않는 `v21.0.2` snapshot:
+변경되지 않는 `v21.0.3` snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v21.0.2" \
+npx skills add "MTGVim/tiger-kit#v21.0.3" \
   --global \
   --agent claude-code \
   --agent codex \
@@ -88,10 +92,10 @@ Claude Code와 Hermes Agent에서는 `/tk-implement` 같은 slash command로 표
 | `tk-ask-repo` | user | 외부에서 들어온 repository 질문을 분류하고 원점·소비처·영향·책임을 `path:line` 근거로 조사합니다. |
 | `tk-drive` | user | 명시 source를 내부 Preparing에서 Ready로 만들고 같은 run의 Executing에서 unit별 commit, aggregate verification, reflection까지 진행합니다. |
 | `tk-adhd` | user | 명시 호출한 응답 하나를 action-first 형태로 만드는 단발 출력 utility입니다. |
-| `tk-grill-me` | hybrid | 명시 선택 또는 prep decision handoff에서 사실을 조사하고 중요한 결정을 한 번에 한 질문씩 닫습니다. |
-| `tk-to-spec` | hybrid | 독립 요청 또는 prep handoff에서 Ready spec을 작성·검증합니다. |
-| `tk-to-tickets` | hybrid | 독립 요청 또는 prep handoff에서 source를 수직 ticket으로 나눕니다. |
-| `tk-implement` | hybrid | 명시 선택 또는 drive의 implementation handoff에서 unit 하나를 테스트·review하고 commit 하나로 만듭니다. |
+| `tk-grill-me` | hybrid | 명시 선택 또는 active-drive decision edge에서 사실을 조사하고 중요한 결정을 한 번에 한 질문씩 닫습니다. |
+| `tk-to-spec` | hybrid | 독립 요청 또는 active-drive graph에서 Ready spec을 작성·검증합니다. |
+| `tk-to-tickets` | hybrid | 독립 요청 또는 active-drive graph에서 source를 수직 ticket으로 나눕니다. |
+| `tk-implement` | hybrid | 명시 선택 또는 drive graph에서 unit 하나를 테스트·review하고 commit 하나로 만듭니다. |
 | `tk-prototype` | hybrid | 폐기 가능한 UI 또는 logic 비교 검증물을 실제 실행합니다. |
 | `tk-reflect` | hybrid | 명확한 회고 요청에서 재사용 가능한 rule/skill 후보를 report-only로 분류합니다. |
 | `tk-skill-diagnose` | hybrid | 관찰되거나 측정된 Agent Skill 이상을 fresh execution으로 재현하고 failure plane·효율 원인을 격리합니다. |
@@ -123,33 +127,42 @@ Standalone decision discovery에는 `tk-grill-me`를 명시적으로 선택할 �
 Code·Hermes Agent에서는 `/tk-drive <source>`, Codex에서는
 `$tk-drive <source>`를 사용합니다. Preparing은 unresolved user-owned
 decision만 `tk-grill-me`에 위임하고 Ready spec과 필요한 vertical ticket
-ledger를 만든 뒤 manifest를 seal·activate합니다. 같은 active run의
-Executing이 즉시 첫 unit을 시작합니다.
+ledger를 검증한 뒤 compact preflight를 기록합니다. 같은 active turn에서
+현재 evidence가 가리키는 첫 implementation unit으로 직접 진행합니다.
 
 ```text
 <host-native explicit tk-drive> <source>
-→ 필요할 때만 tk-grill-me: confirmed Decisions receipt
+→ 필요할 때만 tk-grill-me: confirmed decision state
 → tk-to-spec: Ready spec
 → 필요할 때만 tk-to-tickets: vertical ticket ledger
-→ .tigerkit/prep.md: sealed Ready + active claim
+→ .tigerkit/prep.md: compact secret-free preflight
 → ticket마다 tk-implement: test + review + verified commit 하나
 → tk-drive: aggregate traceability + broad verification 한 번
-→ tk-reflect: preferred prevention owner + host dependency
-→ .tigerkit/prep.md: completed
+→ tk-reflect: 조건부 classification + exact ignored-rule safety gate
+→ tk-drive finalization: terminal response 하나
 ```
 
-Preflight는 source와 repository evidence에서 material risk signal이 확인될
-때만 compact verification profile을 고정합니다. Profile은 기존 owner에
-regression, compatibility, browser, recovery, bounded independent-review
-의무를 전달할 뿐 새 score·stage·artifact를 만들지 않습니다. 근거가 없는
-low-risk 경로는 추가 출력이나 검증 없이 기존 흐름을 유지합니다.
+Preflight는 task scope, repository/worktree/branch/baseline/dirty evidence,
+procedure graph, compact verification profile, browser decision과 안전한
+runtime hint, spec/ticket reference만 기록합니다. Credential, cookie, token,
+OTP, exact identity, lifecycle status, claim, cursor는 저장하지 않습니다.
+Writer는 repo-local·symlink-safe·mode-0600 atomic replacement를 사용하며,
+resume은 artifact와 repository evidence를 다시 읽습니다.
 
-Spec 또는 tickets 단계가 새 사용자 결정을 요구하면 해당 phase는
-`User decision: required`와 근거를 drive Preparing에 반환합니다. Drive는
-grill로 결정을 닫고 Ready spec을 다시 검증한 뒤 필요한 downstream tickets를
-재도출합니다. Executing 중 발견된 첫 late decision도 동일한 owner를 통한
+Spec 또는 tickets 단계가 새 사용자 결정을 요구하면 해당 procedure는
+`User decision: required`와 근거를 active graph에 직접 넘깁니다. Drive는
+`tk-grill-me`로 결정을 닫고 Ready spec을 다시 검증한 뒤 필요한 downstream
+tickets를 재도출합니다. Executing 중 발견된 첫 late decision도 같은 graph의
 한 번의 amendment만 허용하며, 같은 blocker 재발 또는 두 번째 결정은
 `Blocked`로 멈춥니다. Phase owner끼리는 서로 호출하지 않습니다.
+
+초기 구현 뒤 aggregate verification이 격리된 실패를 관찰한 경우에만
+corrective `tk-implement`를 최대 세 번 호출합니다. 네 번째, 동일 실패 반복,
+격리되지 않은 실패, scope 확장은 남은 실패 명령과 근거를 한 번 보고하고
+mutation을 중단합니다. Reflection 자동 적용은 drive 시작 시 기록된 정확한
+기존 ignored/untracked user-managed repo rule 하나에만 허용됩니다. Tracked,
+new, unignored, symlinked, external, drifted, ambiguous target은 정상 approval
+boundary에 남습니다.
 
 ### 브라우저 검증이 필요한 구현
 
@@ -252,7 +265,11 @@ branch 한정 결정 → spec / ticket / commit / PR
 
 ## `.tigerkit/`
 
-`.tigerkit/`은 현재 spec, ticket, handoff, prototype, skill draft, browser evidence를 보관하는 선택적 repo/worktree-local scratch입니다. 영구 project 문서나 전역 TigerKit 상태가 아닙니다. TigerKit은 consumer repository의 `.gitignore`를 수정하지 않고, scratch가 무시되지 않으면 경고합니다. `docs/tigerkit/`를 만들지 않습니다.
+`.tigerkit/`은 compact preflight, 현재 spec, ticket, implementation/reflection
+ledger, handoff, prototype, skill draft, browser evidence를 보관하는 선택적
+repo/worktree-local scratch입니다. 영구 project 문서나 전역 TigerKit 상태가
+아닙니다. TigerKit은 consumer repository의 `.gitignore`를 수정하지 않고,
+scratch가 무시되지 않으면 경고합니다. `docs/tigerkit/`를 만들지 않습니다.
 
 ## 버전 관리
 

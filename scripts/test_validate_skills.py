@@ -7,7 +7,8 @@ import unittest
 
 if __package__:
     from scripts.validate_skills import (
-        DRIVE_TRANSITION_DEBT_GATE,
+        DRIVE_GRAPH_EDGES,
+        DRIVE_TERMINAL_SUMMARY_GATE,
         DRIVE_STAGE_TOKENS,
         EXPECTED_SKILLS,
         REQUIRED_BEHAVIOR_CASES,
@@ -18,9 +19,12 @@ if __package__:
         validate_local_only_workflows,
         validate_catalog_routing,
         validate_browser_preflight_contract,
-        validate_drive_transition_debt_contract,
+        validate_compact_preflight_contract,
+        validate_continuation_boundary,
+        validate_drive_graph_contract,
         validate_learning_loop_contract,
         validate_prepared_drive_contract,
+        validate_reflect_ignored_target_contract,
         validate_release_alignment,
         validate_release_version_contract,
         validate_response_language_contract,
@@ -28,13 +32,15 @@ if __package__:
         validate_single_drive_adhd_contract,
         validate_skill_language,
         validate_terminal_summary_contract,
+        validate_unified_grill_contract,
         validate_user_decision_contract,
         validate_skill,
         validate_skill_eval_files,
     )
 else:
     from validate_skills import (
-        DRIVE_TRANSITION_DEBT_GATE,
+        DRIVE_GRAPH_EDGES,
+        DRIVE_TERMINAL_SUMMARY_GATE,
         DRIVE_STAGE_TOKENS,
         EXPECTED_SKILLS,
         REQUIRED_BEHAVIOR_CASES,
@@ -45,9 +51,12 @@ else:
         validate_local_only_workflows,
         validate_catalog_routing,
         validate_browser_preflight_contract,
-        validate_drive_transition_debt_contract,
+        validate_compact_preflight_contract,
+        validate_continuation_boundary,
+        validate_drive_graph_contract,
         validate_learning_loop_contract,
         validate_prepared_drive_contract,
+        validate_reflect_ignored_target_contract,
         validate_release_alignment,
         validate_release_version_contract,
         validate_response_language_contract,
@@ -55,6 +64,7 @@ else:
         validate_single_drive_adhd_contract,
         validate_skill_language,
         validate_terminal_summary_contract,
+        validate_unified_grill_contract,
         validate_user_decision_contract,
         validate_skill,
         validate_skill_eval_files,
@@ -62,6 +72,99 @@ else:
 
 
 class CanonicalSkillContractTest(unittest.TestCase):
+    def test_continuation_is_honest_about_runtime_boundary(self) -> None:
+        source_root = Path(__file__).resolve().parents[1]
+        self.assertEqual(validate_continuation_boundary(source_root), [])
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            relative = "skills/tk-drive/SKILL.md"
+            target = root / relative
+            target.parent.mkdir(parents=True)
+            target.write_text(
+                (
+                    source_root / relative
+                ).read_text(encoding="utf-8").replace(
+                    "not a durable scheduler",
+                    "a durable scheduler",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            errors = validate_continuation_boundary(root)
+
+        self.assertTrue(
+            any("runtime workflow engine" in error for error in errors)
+        )
+
+    def test_reflect_auto_apply_is_limited_to_exact_ignored_target(self) -> None:
+        source_root = Path(__file__).resolve().parents[1]
+        self.assertEqual(validate_reflect_ignored_target_contract(source_root), [])
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            relative = "skills/tk-reflect/references/drive-optimistic.md"
+            target = root / relative
+            target.parent.mkdir(parents=True)
+            target.write_text(
+                (
+                    source_root / relative
+                ).read_text(encoding="utf-8").replace(
+                    "Tracked, unignored, new, symlinked, external, changed-since-baseline",
+                    "Most unsafe targets",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            errors = validate_reflect_ignored_target_contract(root)
+
+        self.assertTrue(
+            any("exact ignored-target reflection safety" in error for error in errors)
+        )
+
+    def test_compact_preflight_replaces_lifecycle_machinery(self) -> None:
+        source_root = Path(__file__).resolve().parents[1]
+        self.assertEqual(validate_compact_preflight_contract(source_root), [])
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            obsolete = root / "skills/tk-drive/scripts/prep_state.py"
+            obsolete.parent.mkdir(parents=True)
+            obsolete.write_text("legacy\n", encoding="utf-8")
+            errors = validate_compact_preflight_contract(root)
+
+        self.assertTrue(any("obsolete drive lifecycle machinery" in error for error in errors))
+
+    def test_grill_contract_keeps_one_owner_for_both_callers(self) -> None:
+        source_root = Path(__file__).resolve().parents[1]
+        self.assertEqual(validate_unified_grill_contract(source_root), [])
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            grill = root / "skills/tk-grill-me/SKILL.md"
+            drive = root / "skills/tk-drive/SKILL.md"
+            grill.parent.mkdir(parents=True)
+            drive.parent.mkdir(parents=True)
+            grill.write_text(
+                (source_root / "skills/tk-grill-me/SKILL.md").read_text(
+                    encoding="utf-8"
+                ),
+                encoding="utf-8",
+            )
+            drive.write_text(
+                (source_root / "skills/tk-drive/SKILL.md").read_text(
+                    encoding="utf-8"
+                ),
+                encoding="utf-8",
+            )
+            (root / "skills/tk-grilling").mkdir()
+
+            errors = validate_unified_grill_contract(root)
+
+        self.assertTrue(
+            any("boundary-less duplicate procedure" in error for error in errors)
+        )
+
     def test_canonical_skill_distribution_and_phase_owner_behaviors(self) -> None:
         self.assertEqual(
             EXPECTED_SKILLS,
@@ -98,12 +201,12 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "ask-repo-search-failure-is-unverifiable",
                 "ask-repo-blocks-contradicted-premise",
                 "ask-repo-bounds-result-cardinality",
-                "drive-prepares-only-after-ready-gates",
+                "drive-writes-compact-preflight",
                 "drive-bounds-task-anchored-prior-art",
                 "drive-excludes-forbidden-prior-art",
-                "drive-preserves-terminal-on-failed-preparing",
-                "drive-reseals-one-active-amendment",
-                "drive-continues-automatically-after-ready",
+                "drive-preserves-preflight-on-write-failure",
+                "drive-rejects-preflight-secrets",
+                "drive-resumes-from-current-evidence",
                 "adhd-explicit-one-shot",
                 "adhd-does-not-carry-over",
                 "adhd-safety-exception",
@@ -112,31 +215,35 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "drive-bounds-result-cardinality",
                 "drive-response-language-explicit-korean",
                 "drive-response-language-explicit-english",
-                "drive-reflects-once-after-aggregate-pass",
-                "drive-invokes-phase-owners",
-                "drive-continues-after-prep-claim",
-                "drive-rejects-missing-transition-echo",
+                "drive-reflects-once-then-finalizes",
+                "drive-invokes-direct-graph-owners",
+                "drive-continues-after-preflight",
+                "drive-enforces-exact-procedure-graph",
+                "drive-continues-without-receipt-boundary",
+                "drive-continues-multi-unit-through-reflection",
+                "drive-owns-single-terminal-response",
                 "drive-prepares-trivial-task",
                 "drive-amends-on-first-new-decision",
                 "drive-skips-grill-for-ready-source",
                 "drive-blocks-second-amendment",
-                "drive-claims-ready-prep-atomically",
-                "drive-invalidates-stale-prep",
-                "drive-finalizes-owned-claim",
+                "drive-writes-compact-preflight",
+                "drive-preserves-preflight-on-write-failure",
+                "drive-rejects-preflight-secrets",
+                "drive-resumes-from-current-evidence",
                 "drive-blocks-repeated-decision-return",
                 "drive-commits-per-ticket",
                 "drive-invalidates-source-current-ui-mismatch",
                 "drive-invalidates-unapproved-secondary-axis",
                 "drive-reads-complete-remote-source",
-                "grill-accepts-active-drive-preparing-handoff",
-                "grill-echoes-prep-transition",
-                "grill-returns-control-to-prep",
-                "grill-uses-native-question-tool",
-                "grill-bounds-confirmed-results",
-                "to-spec-echoes-prep-transition",
+                "grill-me-unifies-caller-modes",
+                "grill-me-uses-native-question-tool",
+                "grill-me-active-drive-routes-directly",
+                "grill-me-blocks-active-drive-autostart",
+                "grill-me-does-not-mutate-or-invoke-phases",
+                "to-spec-routes-ready-state-directly",
                 "to-spec-returns-decision-blocker-to-prep",
                 "to-spec-blocks-source-current-ui-mismatch",
-                "to-tickets-echoes-prep-transition",
+                "to-tickets-routes-ledger-state-directly",
                 "to-tickets-returns-decision-blocker-to-prep",
                 "to-tickets-blocks-source-current-ui-mismatch",
                 "implement-reviews-every-standalone-run",
@@ -144,8 +251,8 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "implement-blocks-semantic-hook-drift",
                 "implement-allows-bounded-hook-bypass",
                 "implement-diagnoses-unknown-cause-failure",
-                "implement-active-drive-handoff-triggers",
-                "implement-echoes-drive-transition",
+                "implement-active-drive-unit-state",
+                "implement-routes-unit-state-directly",
                 "implement-blocks-source-current-ui-mismatch",
                 "implement-production-behavior-requires-durable-test",
                 "implement-reports-bounded-behavior-summary",
@@ -181,8 +288,9 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "reflect-skips-diagnosis-without-four-gate",
                 "reflect-blocks-repeated-diagnosis-handoff",
                 "reflect-response-language-preserves-machine-tokens",
-                "reflect-drive-applies-eligible-tracked-repo-rule",
+                "reflect-drive-applies-exact-existing-ignored-rule",
                 "reflect-drive-never-creates-local-rule-target",
+                "reflect-drive-rejects-ineligible-target-matrix",
                 "reflect-drive-skill-candidate-is-promotion-packet-only",
                 "reflect-drive-blocks-target-drift",
                 "browser-bounds-instrumented-evidence",
@@ -210,7 +318,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
             )
         )
 
-    def test_drive_success_receipts_echo_the_outstanding_transition(self) -> None:
+    def test_drive_declares_direct_continuation_and_one_terminal_owner(self) -> None:
         root = Path(__file__).resolve().parents[1]
         drive = (root / "skills/tk-drive/SKILL.md").read_text(encoding="utf-8")
         phases = (root / "skills/tk-drive/references/phases.md").read_text(
@@ -218,51 +326,31 @@ class CanonicalSkillContractTest(unittest.TestCase):
         )
 
         for text in (drive, phases):
-            self.assertIn("`Success state`", text)
-            self.assertIn("`Outstanding transition`", text)
-            self.assertIn("mismatched", text)
+            self.assertIn("same active turn", text)
+            self.assertIn("tk-drive finalization", text)
+            self.assertNotIn("Outstanding transition", text)
+            self.assertNotIn("Return to: tk-drive", text)
 
-        for skill in ("tk-implement",):
-            with self.subTest(skill=skill):
-                text = (root / f"skills/{skill}/SKILL.md").read_text(
-                    encoding="utf-8"
-                )
-                self.assertIn("`Return to: tk-drive`", text)
-                self.assertIn("`Outstanding transition`", text)
-                self.assertIn("verbatim", text)
+        self.assertEqual(validate_drive_graph_contract(root), [])
 
-    def test_drive_transition_debt_gate_rejects_one_weakened_source(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            source_root = Path(__file__).resolve().parents[1]
-            for relative in (
-                "skills/tk-drive/SKILL.md",
-                "skills/tk-drive/references/phases.md",
-            ):
-                target = root / relative
-                target.parent.mkdir(parents=True)
-                text = (source_root / relative).read_text(encoding="utf-8")
-                if relative.endswith("/SKILL.md"):
-                    text = text.replace(
-                        DRIVE_TRANSITION_DEBT_GATE,
-                        DRIVE_TRANSITION_DEBT_GATE.replace(
-                            "Terminal output is prohibited",
-                            "Terminal output is discouraged",
-                            1,
-                        ),
-                        1,
-                    )
-                target.write_text(text, encoding="utf-8")
+    def test_drive_graph_rejects_unknown_node_cycle_and_missing_condition(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        unknown = list(DRIVE_GRAPH_EDGES)
+        unknown[0] = ("tk-drive:preflight", "tk-gril-me", "", "confirmed", "stop", "tk-to-specc")
+        cycle = list(DRIVE_GRAPH_EDGES)
+        cycle.append(("tk-drive:finalization", "tk-drive:preflight", "restart", "ready", "stop", "tk-grill-me"))
+        duplicate = list(DRIVE_GRAPH_EDGES) + [DRIVE_GRAPH_EDGES[0]]
 
-            errors = validate_drive_transition_debt_contract(root)
+        unknown_errors = validate_drive_graph_contract(root, tuple(unknown))
+        cycle_errors = validate_drive_graph_contract(root, tuple(cycle))
+        duplicate_errors = validate_drive_graph_contract(root, tuple(duplicate))
 
-            self.assertEqual(
-                errors,
-                [
-                    "skills/tk-drive/SKILL.md: preserve exactly one terminal "
-                    "transition-debt gate"
-                ],
-            )
+        self.assertTrue(any("unknown node 'tk-gril-me'" in error for error in unknown_errors))
+        self.assertTrue(any("unknown next node 'tk-to-specc'" in error for error in unknown_errors))
+        self.assertTrue(any("missing terminal condition" in error for error in unknown_errors))
+        self.assertTrue(any("edge set differs" in error for error in unknown_errors))
+        self.assertTrue(any("forbidden cycle" in error for error in cycle_errors))
+        self.assertTrue(any("duplicate edge is ambiguous" in error for error in duplicate_errors))
 
     def test_drive_stage_gate_rejects_contract_weakening(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -330,22 +418,16 @@ class CanonicalSkillContractTest(unittest.TestCase):
         ).read_text(encoding="utf-8")
         self.assertIn("$tk-adhd 지금 진행 상태와 다음 행동이 보이게 해줘", reflect_triggers)
 
-    def test_drive_event_recorder_command_is_unambiguous(self) -> None:
+    def test_drive_runtime_contract_does_not_require_event_recorder(self) -> None:
         root = Path(__file__).resolve().parents[1]
         for relative in (
             "skills/tk-drive/SKILL.md",
             "skills/tk-drive/references/phases.md",
         ):
             text = (root / relative).read_text(encoding="utf-8")
-            normalized = " ".join(text.split())
-            self.assertIn(
-                '`"$TK_DRIVE_EVENT_RECORDER" phase_invocation <phase>`',
-                normalized,
-            )
-            self.assertIn(
-                "Do not pass `TK_DRIVE_EVENT_LOG` as a command argument",
-                normalized,
-            )
+            self.assertNotIn("TK_DRIVE_EVENT_RECORDER", text)
+            self.assertNotIn("TK_DRIVE_EVENT_LOG", text)
+            self.assertIn("same active turn", text)
 
     def test_learning_loop_is_bounded_owned_and_fail_closed(self) -> None:
         root = Path(__file__).resolve().parents[1]
@@ -384,12 +466,10 @@ class CanonicalSkillContractTest(unittest.TestCase):
             "no relevant prior art exists, omit `## Prior art`",
         ):
             self.assertIn(token, spec)
-        for skill in ("tk-grill-me", "tk-to-spec", "tk-to-tickets"):
-            text = (root / f"skills/{skill}/SKILL.md").read_text(
-                encoding="utf-8"
-            )
-            self.assertIn("`Return to: tk-drive`", text)
-            self.assertNotIn("`Return to: tk-prep`", text)
+        self.assertIn(
+            "pass their native result state directly",
+            " ".join(prep.split()),
+        )
         self.assertEqual(validate_learning_loop_contract(root), [])
 
     def test_learning_loop_validator_rejects_owner_cap_and_conflict_drift(
@@ -456,9 +536,9 @@ class CanonicalSkillContractTest(unittest.TestCase):
             },
             {
                 "drive-resumes-pending-answer": "drive-resumes-preparing-decision-answer",
-                "drive-continues-after-ready-spec": "drive-continues-automatically-after-ready",
-                "drive-live-continues-after-ready-spec": "drive-live-prepared-execution",
-                "drive-live-initial-ssot-stop-control": "drive-live-prepares-and-executes-source",
+                "drive-continues-after-ready-spec": "drive-resumes-from-current-evidence",
+                "drive-live-continues-after-ready-spec": "drive-live-direct-prepared-execution",
+                "drive-live-initial-ssot-stop-control": "drive-live-direct-prepares-and-executes-source",
                 "drive-requires-spec-for-trivial-task": "drive-prepares-trivial-task",
                 "drive-invokes-grill-on-unresolved-decision": "drive-amends-on-first-new-decision",
                 "drive-reruns-spec-after-grill": "drive-blocks-second-amendment",
@@ -498,31 +578,18 @@ class CanonicalSkillContractTest(unittest.TestCase):
         self.assertIn("unavailable review capability is", implement)
         self.assertIn("`Unverifiable`", review)
 
-    def test_active_drive_success_fixtures_include_transition_envelope(self) -> None:
+    def test_active_drive_success_fixtures_use_direct_graph_state(self) -> None:
         root = Path(__file__).resolve().parents[1]
-        fixtures = {
-            "tk-drive": (
-                "drive-continues-after-prep-claim",
-            ),
-            "tk-grill-me": ("grill-returns-control-to-prep",),
-            "tk-to-spec": ("to-spec-active-drive-preparing-handoff",),
-            "tk-to-tickets": ("to-tickets-active-drive-preparing-handoff",),
-            "tk-implement": ("implement-active-drive-handoff-triggers",),
-        }
-
-        for skill, case_ids in fixtures.items():
-            payload = json.loads(
-                (root / f"skills/{skill}/evals/evals.json").read_text(
-                    encoding="utf-8"
-                )
+        payload = json.loads(
+            (root / "skills/tk-drive/evals/evals.json").read_text(
+                encoding="utf-8"
             )
-            cases = {case["id"]: case for case in payload["evals"]}
-            for case_id in case_ids:
-                with self.subTest(skill=skill, case=case_id):
-                    case = cases[case_id]
-                    prompt = case["prompt"]
-                    self.assertIn("Success state:", prompt)
-                    self.assertIn("Outstanding transition:", prompt)
+        )
+        cases = {case["id"]: case for case in payload["evals"]}
+        case = cases["drive-continues-after-preflight"]
+        self.assertNotIn("Success state:", case["prompt"])
+        self.assertNotIn("Outstanding transition:", case["prompt"])
+        self.assertIn("applicable node", case["prompt"])
 
     def test_drive_live_canary_matrix_is_codex_scoped(self) -> None:
         root = Path(__file__).resolve().parents[1]
@@ -534,9 +601,9 @@ class CanonicalSkillContractTest(unittest.TestCase):
         cases = {case["id"]: case for case in payload["evals"]}
 
         for case_id in (
-            "drive-live-prepared-execution",
-            "drive-live-implementation-holdout",
-            "drive-live-prepares-and-executes-source",
+            "drive-live-direct-prepared-execution",
+            "drive-live-direct-implementation-holdout",
+            "drive-live-direct-prepares-and-executes-source",
         ):
             with self.subTest(case=case_id):
                 self.assertEqual(cases[case_id]["hosts"], ["codex"])
@@ -544,7 +611,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
 
         holdout_types = [
             assertion["type"]
-            for assertion in cases["drive-live-implementation-holdout"][
+            for assertion in cases["drive-live-direct-implementation-holdout"][
                 "assertions"
             ]
         ]
@@ -562,22 +629,21 @@ class CanonicalSkillContractTest(unittest.TestCase):
             ],
         )
         self.assertEqual(
-            cases["drive-live-implementation-holdout"]["assertions"][0][
+            cases["drive-live-direct-implementation-holdout"]["assertions"][0][
                 "before"
             ],
             {
-                "type": "phase_receipt",
+                "type": "phase_invocation",
                 "phase": "tk-implement",
-                "state": "Pass",
             },
         )
         self.assertEqual(
-            cases["drive-live-prepares-and-executes-source"]["path"], "success"
+            cases["drive-live-direct-prepares-and-executes-source"]["path"], "success"
         )
         self.assertEqual(
             [
                 assertion["type"]
-                for assertion in cases["drive-live-prepares-and-executes-source"][
+                for assertion in cases["drive-live-direct-prepares-and-executes-source"][
                     "assertions"
                 ]
             ],
@@ -697,20 +763,14 @@ class CanonicalSkillContractTest(unittest.TestCase):
             root / "skills/tk-reflect/references/drive-optimistic.md"
         ).read_text(encoding="utf-8")
 
-        required = (
-            "Mode: drive-optimistic",
-            "Success state: Pass",
-            "Outstanding transition: final receipt",
-            "Return to: tk-drive",
-        )
-        for text in (phases, reflect, tail):
-            with self.subTest(source=text[:40]):
-                self.assertTrue(all(token in text for token in required[:3]))
-        self.assertIn("reflect exactly once", drive)
-        self.assertIn("Return to: tk-drive", phases)
-        self.assertIn("Return to: tk-drive", tail)
-        self.assertIn("product verification HEAD", phases)
-        self.assertIn("tracked reflection commit", tail)
+        self.assertIn("invoke `tk-reflect` exactly once", drive)
+        self.assertIn("tk-reflect", phases)
+        self.assertIn("tk-drive finalization", phases)
+        self.assertNotIn("Outstanding transition", phases)
+        self.assertNotIn("Return to: tk-drive", phases)
+        self.assertNotIn("## Tracked target", tail)
+        self.assertIn("scripts/ignored_rule_apply.py", tail)
+        self.assertIn("untracked, and ignored", tail)
         self.assertIn("reflect-backup", tail)
         self.assertIn("never mutates a skill", " ".join(tail.split()))
 
@@ -733,8 +793,10 @@ class CanonicalSkillContractTest(unittest.TestCase):
         self.assertEqual(validate_skill_language(root), [])
         self.assertEqual(validate_response_language_contract(root), [])
         self.assertEqual(validate_terminal_summary_contract(root), [])
-        self.assertEqual(validate_drive_transition_debt_contract(root), [])
+        self.assertEqual(validate_drive_graph_contract(root), [])
         self.assertEqual(validate_prepared_drive_contract(root), [])
+        self.assertEqual(validate_reflect_ignored_target_contract(root), [])
+        self.assertEqual(validate_continuation_boundary(root), [])
 
     def test_response_language_gate_rejects_one_weakened_skill(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -802,11 +864,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 target.parent.mkdir(parents=True, exist_ok=True)
                 text = source.read_text(encoding="utf-8")
                 if relative.endswith("SKILL.md"):
-                    text = text.replace(
-                        "re-request on cold start",
-                        "reuse the hidden identity",
-                        1,
-                    )
+                    text = text.replace("re-request", "reuse")
                 target.write_text(text, encoding="utf-8")
 
             errors = validate_browser_preflight_contract(root)
@@ -958,8 +1016,11 @@ class CanonicalSkillContractTest(unittest.TestCase):
         required = {
             "tk-ask-repo": ("Lead with `Answer`", "Do not echo the inbound question"),
             "tk-browser-verify": ("Never paste or store raw console", "do not add a receipt heading"),
-            "tk-drive": ("explicit source", "internal handoff envelopes"),
-            "tk-grill-me": ("The ledger is not a per-turn dump template", "append phase/status provenance"),
+            "tk-drive": ("explicit source", "internal procedure evidence"),
+            "tk-grill-me": (
+                "The ledger is not a per-turn dump template",
+                "consumes native status directly",
+            ),
             "tk-grooming": ("Lead with one `## Disposition`", "Add `## Exceptions` only"),
             "tk-handoff": ("handoff artifact owns disposition", "Omit empty sections"),
             "tk-implement": (
@@ -1402,10 +1463,8 @@ class SkillEvalFixtureTest(unittest.TestCase):
                     "type": "event_order",
                     "hosts": ["claude-code"],
                     "before": {
-                        "type": "phase_receipt",
+                        "type": "phase_invocation",
                         "phase": "tk-to-spec",
-                        "state": "Ready",
-                        "transition": "ticket decision",
                     },
                     "after": {
                         "type": "phase_invocation",
@@ -1435,7 +1494,7 @@ class SkillEvalFixtureTest(unittest.TestCase):
             success["assertions"][-2] = {
                 "type": "event_order",
                 "hosts": ["unknown-host"],
-                "before": {"type": "phase_receipt"},
+                "before": {"type": "unknown"},
                 "after": {"type": "unknown"},
                 "forbidden_between": "final_output",
             }

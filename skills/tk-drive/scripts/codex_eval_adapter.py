@@ -11,6 +11,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 from collections import deque
@@ -20,7 +21,7 @@ from typing import IO, Callable, Mapping
 
 
 TERMINAL_STATUSES = ("Pass", "Pending", "Blocked", "Fail", "Unverifiable")
-EVENT_TYPES = {"phase_invocation", "phase_receipt"}
+EVENT_TYPES = {"phase_invocation"}
 PHASES = {
     "tk-grill-me",
     "tk-to-spec",
@@ -29,7 +30,6 @@ PHASES = {
     "tk-implement",
     "tk-reflect",
 }
-SUCCESS_STATES = {"Pass"}
 LIVE_FIXTURES = {
     "[tigerkit-eval:prepared-single]\n/tk-drive": "single",
     "[tigerkit-eval:prepared-two-unit]\n/tk-drive": "two-unit",
@@ -432,13 +432,6 @@ def _prepare_live_fixture(
         "obligations": ["regression-seam"],
         "signals": ["state-compatibility"],
     }
-    evidence = (
-        "Use these exact claim inputs: "
-        f"`--dirty-inventory-json {json.dumps(json.dumps(dirty_inventory))}`, "
-        f"`--instruction-inventory-json {json.dumps(json.dumps(instruction_inventory))}`, "
-        f"and `--verification-profile-json {json.dumps(json.dumps(profile, sort_keys=True))}`. "
-        "The prep manifest itself is excluded from its pre-write dirty inventory."
-    )
     spec_lines = [
         "# TigerKit eval spec",
         "",
@@ -470,10 +463,6 @@ def _prepare_live_fixture(
                 for index in range(1, len(units) + 1)
             ],
             "",
-            "## Prepared claim evidence",
-            "",
-            evidence,
-            "",
         )
     )
     spec = tigerkit / "spec.md"
@@ -484,59 +473,70 @@ def _prepare_live_fixture(
     head = _git_value(checkout, "rev-parse", "HEAD")
     branch = _ensure_eval_branch(checkout, kind)
     source = f"tigerkit-eval:{kind}"
-    created_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    preflight_input = {
+        "task": {
+            "goal": f"Execute the {kind} TigerKit canary.",
+            "included_scope": [ticket_id for ticket_id, _ in units],
+            "excluded_scope": [],
+            "confirmed_decisions": ["Use exact canary contents."],
+        },
+        "repository": {
+            "root": str(checkout),
+            "worktree": str(checkout),
+            "branch": branch,
+            "baseline_head": head,
+            "dirty_paths": dirty_inventory,
+        },
+        "execution": {
+            "procedure_graph": ["tk-implement", "aggregate verification", "tk-reflect"],
+            "verification_profile": profile,
+        },
+        "browser": {
+            "decision": "N/A",
+            "environment_url": None,
+            "account_role_or_tenant_class": None,
+            "opaque_profile_hint": None,
+            "authentication_expectation": None,
+            "ask_identity_on_cold_start": None,
+        },
+        "sources": {
+            "spec": ".tigerkit/spec.md",
+            "tickets": ".tigerkit/tickets.md",
+        },
+    }
+    with tempfile.NamedTemporaryFile(
+        mode="w", encoding="utf-8", suffix=".json", delete=False
+    ) as handle:
+        json.dump(preflight_input, handle)
+        input_path = Path(handle.name)
     command = [
         sys.executable,
-        str(skills_target / "tk-drive" / "scripts" / "prep_manifest.py"),
-        "create",
-        "--output",
+        str(skills_target / "tk-drive" / "scripts" / "preflight.py"),
+        "write",
         str(tigerkit / "prep.md"),
-        "--task-id",
-        source,
-        "--task-anchor",
-        source,
-        "--repository-root",
-        str(checkout),
         "--worktree",
         str(checkout),
-        "--branch",
-        branch,
-        "--base-head",
-        head,
-        "--source",
-        source,
-        "--dirty-inventory-json",
-        json.dumps(dirty_inventory),
-        "--instruction-inventory-json",
-        json.dumps(instruction_inventory),
-        "--spec",
-        str(spec),
-        "--ticket-mode",
-        "tickets",
-        "--tickets",
-        str(tickets),
-        "--verification-profile-json",
-        json.dumps(profile, sort_keys=True),
-        "--prior-art-ref",
-        "none",
-        "--created-at",
-        created_at,
+        "--input",
+        str(input_path),
     ]
-    completed = subprocess.run(
-        command,
-        cwd=checkout,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
+    try:
+        completed = subprocess.run(
+            command,
+            cwd=checkout,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+    finally:
+        input_path.unlink(missing_ok=True)
     if completed.returncode != 0:
         detail = completed.stderr.strip() or completed.stdout.strip()
         raise RuntimeError(f"cannot create prepared eval fixture: {detail}")
     _configure_eval_git(checkout)
     return (
-        "[tigerkit-eval: same active tk-drive Preparing has just sealed this "
-        "eval-owned Ready manifest; continue the recorded seal-and-activate "
-        "transition]\n/tk-drive"
+        "[tigerkit-eval: current preflight, Ready spec, tickets, and Git "
+        "evidence show incomplete implementation units; infer the next action "
+        "from current evidence and continue]\n/tk-drive"
     )
 
 
@@ -788,19 +788,9 @@ def _read_event_log(path: Path) -> list[dict[str, str]]:
         if not isinstance(event, dict) or event.get("type") not in EVENT_TYPES:
             raise RuntimeError(f"tk-drive event log line {line_number} has invalid type")
         event_type = event["type"]
-        expected = (
-            {"type", "phase"}
-            if event_type == "phase_invocation"
-            else {"type", "phase", "state", "transition"}
-        )
+        expected = {"type", "phase"}
         if set(event) != expected or event.get("phase") not in PHASES:
             raise RuntimeError(f"tk-drive event log line {line_number} has invalid fields")
-        if event_type == "phase_receipt" and (
-            event.get("state") not in SUCCESS_STATES
-            or not isinstance(event.get("transition"), str)
-            or not event["transition"].strip()
-        ):
-            raise RuntimeError(f"tk-drive event log line {line_number} has invalid receipt")
         events.append({key: str(value) for key, value in event.items()})
     return events
 
@@ -900,8 +890,8 @@ def _run_codex(
         {
             "HOME": str(run_dir / "home"),
             "CODEX_HOME": str(_prepare_codex_home(run_dir)),
-            "TK_DRIVE_EVENT_LOG": str(event_log),
-            "TK_DRIVE_EVENT_RECORDER": str(recorder),
+            "TK_DRIVE_PROCEDURE_LOG": str(event_log),
+            "TK_DRIVE_PROCEDURE_RECORDER": str(recorder),
             "GIT_AUTHOR_NAME": "TigerKit Eval",
             "GIT_AUTHOR_EMAIL": "tigerkit-eval@example.invalid",
             "GIT_COMMITTER_NAME": "TigerKit Eval",
@@ -963,7 +953,13 @@ def _run_codex(
             _build_turn_start_params(
                 thread_id=thread_id,
                 checkout=checkout,
-                prompt=prompt,
+                prompt=(
+                    prompt
+                    + "\n\nEvaluation instrumentation only: immediately before "
+                    "each participating procedure invocation, run "
+                    '`"$TK_DRIVE_PROCEDURE_RECORDER" <canonical-phase>`. '
+                    "This records invocation only and does not change routing."
+                ),
                 skill=skill,
                 skill_path=skill_path,
                 approval_policy="on-request" if approval_handler else "never",
@@ -1009,7 +1005,9 @@ def main() -> int:
         prompt = _prepare_live_fixture(checkout, skills_target, prompt)
         exclude_state = _hide_project_skills_from_git(checkout)
         skill_path = skills_target / skill / "SKILL.md"
-        recorder = skills_target / "tk-drive" / "scripts" / "record_eval_event.py"
+        recorder = (
+            skills_target / "tk-drive" / "scripts" / "record_procedure_event.py"
+        )
         available_skills, selected = _run_codex(
             checkout=checkout,
             prompt=prompt,

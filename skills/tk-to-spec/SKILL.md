@@ -22,22 +22,17 @@ Source precedence is: user-designated source, current decisions,
 tickets/documents, relevant code, existing `.tigerkit/spec.md`. Do not start an
 interview, create tickets, publish, or implement.
 
-When an active-drive-preparing handoff still needs a user decision, return the native
-`Draft | Blocked | Unverifiable` receipt to prep. Do not invoke
-`tk-grill-me`; prep alone decides whether to route that evidence through its
-decision phase and retry the spec gate. Include
-`User decision: required | none`; `required` cites the new decision and source
-evidence.
+When an active-drive handoff still needs a user decision, expose the native
+`Draft | Blocked | Unverifiable` state and its evidence to the active graph.
+Do not invoke `tk-grill-me`; the graph owner decides whether decision closure
+is applicable. Include `User decision: required | none`; `required` cites the
+new decision and source evidence.
 
-Standalone and prep handoff use the same Ready contract. In a prep handoff,
-preserve task identity and source traceability; return `Phase: spec`, status,
-artifact path, and R/AC IDs. The handoff also supplies `Success state` and
-`Outstanding transition`. On `Ready`, include `Return to: tk-drive` and echo
-the parent-supplied `Outstanding transition` verbatim without choosing or
-executing it. A missing or mismatched `Success state` or transition cannot
-produce a successful active-drive-preparing receipt; return `Blocked`. If status is not
-`Ready`, do not create a substitute spec or weaken the verdict so prep can
-continue.
+Standalone and active-drive calls use the same Ready contract. In active drive,
+preserve task identity and source traceability and pass the Ready artifact path
+plus R/AC IDs directly to the next applicable node. Do not render a terminal
+result or choose a downstream node outside the caller-supplied graph. If the
+state is not `Ready`, do not create a substitute spec or weaken the verdict.
 
 ## Workflow
 
@@ -171,11 +166,11 @@ uncheckable UI literals are `Unverifiable`. Never save them as `Ready`.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Treat progress commentary, internal handoff envelopes, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between a successful phase receipt and the next active-drive phase invocation.
+Treat progress commentary, internal procedure evidence, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between successful consecutive active-drive procedure invocations.
 
-Do not render a receipt heading, `Outcome:` label, or terminal provenance/status block in the user summary. When the host or skill requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the skill's canonical result schema requires it. Keep phase receipts as internal handoff envelopes: when an active parent requires phase, status, IDs, `Return to`, `Success state`, or `Outstanding transition`, return them only to that parent workflow and never echo them in the terminal user summary.
+Do not render a receipt heading, `Outcome:` label, phase-success token, caller-return instruction, or terminal provenance/status block in the user summary. When the result requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the canonical result schema requires it.
 
-Persist provenance only in an artifact or ledger the skill already owns. A skill without such an owner must not create one solely to store a receipt, and a read-only skill remains read-only. Never require a shared runtime reference outside this skill.
+Persist provenance only in an artifact or ledger already owned by the workflow. A read-only skill remains read-only. Never require a shared runtime reference outside this skill.
 
 ### 🔴 HARD GATE · response language
 

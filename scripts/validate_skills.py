@@ -27,6 +27,7 @@ CORE_FRONTMATTER_FIELDS = {
 HOST_EXTENSION_FIELDS = {"argument-hint", "disable-model-invocation"}
 MECHANICAL_ASSERTION_TYPES = {
     "event_absent",
+    "event_count",
     "event_order",
     "terminal_status",
     "path_exists",
@@ -43,7 +44,7 @@ MECHANICAL_ASSERTION_TYPES = {
     "git_diff_contains",
     "git_diff_absent",
 }
-EVENT_TYPES = {"phase_invocation", "phase_receipt", "final_output"}
+EVENT_TYPES = {"phase_invocation", "final_output"}
 TERMINAL_STATUSES = {
     "Pass",
     "Fail",
@@ -101,12 +102,85 @@ TERMINAL_SUMMARY_GATE = (
     "A skill without such an owner must not create one solely to store a receipt, and a read-only skill remains read-only. "
     "Never require a shared runtime reference outside this skill."
 )
-DRIVE_TRANSITION_DEBT_GATE = (
-    "Immediately before emitting the terminal user summary, run the transition-debt check.\n"
-    "Terminal output is prohibited while any consumed successful receipt still has\n"
-    "an unexecuted `Outstanding transition`; execute the recorded transition in the\n"
-    "same active turn or return the one evidence-supported non-success state."
+DRIVE_TERMINAL_SUMMARY_GATE = (
+    "### 🔴 HARD GATE · terminal user summary\n\n"
+    "Treat progress commentary, internal procedure evidence, and the terminal user response as distinct surfaces. "
+    "Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. "
+    "Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. "
+    "Do not emit a terminal user-summary opening between successful consecutive active-drive procedure invocations.\n\n"
+    "Do not render a receipt heading, `Outcome:` label, phase-success token, caller-return instruction, or terminal provenance/status block in the user summary. "
+    "When the result requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. "
+    "Expose a path, ID, commit, or recovery detail only when it changes user action or the canonical result schema requires it.\n\n"
+    "Persist provenance only in an artifact or ledger already owned by the workflow. "
+    "Never require a shared runtime reference outside this skill."
 )
+DIRECT_TERMINAL_SUMMARY_GATE = (
+    "### 🔴 HARD GATE · terminal user summary\n\n"
+    "Treat progress commentary, internal procedure evidence, and the terminal user response as distinct surfaces. "
+    "Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. "
+    "Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. "
+    "Do not emit a terminal user-summary opening between successful consecutive active-drive procedure invocations.\n\n"
+    "Do not render a receipt heading, `Outcome:` label, phase-success token, caller-return instruction, or terminal provenance/status block in the user summary. "
+    "When the result requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. "
+    "Expose a path, ID, commit, or recovery detail only when it changes user action or the canonical result schema requires it.\n\n"
+    "Persist provenance only in an artifact or ledger already owned by the workflow. "
+    "A read-only skill remains read-only. Never require a shared runtime reference outside this skill."
+)
+DIRECT_GRAPH_SKILLS = {
+    "tk-browser-verify",
+    "tk-drive",
+    "tk-grill-me",
+    "tk-implement",
+    "tk-merge-conflict",
+    "tk-prototype",
+    "tk-reflect",
+    "tk-to-spec",
+    "tk-to-tickets",
+}
+DRIVE_GRAPH_NODES = {
+    "tk-drive:preflight",
+    "tk-grill-me",
+    "tk-prototype",
+    "tk-to-spec",
+    "tk-to-tickets",
+    "tk-implement",
+    "tk-merge-conflict",
+    "aggregate-verification",
+    "tk-browser-verify",
+    "tk-reflect",
+    "tk-drive:finalization",
+}
+DRIVE_GRAPH_EDGES = (
+    ("tk-drive:preflight", "tk-grill-me", "material decisions remain", "confirmed", "stop", "tk-to-spec"),
+    ("tk-drive:preflight", "tk-to-spec", "no material decisions remain", "Ready", "stop", "tk-to-tickets|tk-implement"),
+    ("tk-grill-me", "tk-prototype", "bounded comparison reduces uncertainty", "evidence", "stop", "tk-grill-me"),
+    ("tk-prototype", "tk-grill-me", "comparison completed", "confirmed", "stop", "tk-to-spec"),
+    ("tk-grill-me", "tk-to-spec", "decisions confirmed", "Ready", "stop", "tk-to-tickets|tk-implement"),
+    ("tk-to-spec", "tk-to-tickets", "multiple units", "verified tickets", "stop", "tk-implement"),
+    ("tk-to-spec", "tk-implement", "single unit", "verified commit", "stop", "tk-implement|aggregate-verification"),
+    ("tk-to-tickets", "tk-implement", "verified tickets", "verified commit", "stop", "tk-implement|aggregate-verification"),
+    ("tk-implement", "tk-merge-conflict", "active conflict", "resolved", "stop", "tk-implement"),
+    ("tk-merge-conflict", "tk-implement", "conflict resolved", "verified commit", "stop", "tk-implement|aggregate-verification"),
+    ("tk-implement", "tk-implement", "more selected units", "verified commit", "stop", "tk-implement|aggregate-verification"),
+    ("tk-implement", "aggregate-verification", "all units committed", "verified", "correct-or-stop", "tk-browser-verify|tk-implement|tk-reflect|tk-drive:finalization"),
+    ("aggregate-verification", "tk-browser-verify", "browser evidence required", "verified", "stop", "aggregate-verification"),
+    ("tk-browser-verify", "aggregate-verification", "browser check completed", "verified", "stop", "tk-implement|tk-reflect|tk-drive:finalization"),
+    ("aggregate-verification", "tk-implement", "isolated failure under correction limit", "verified commit", "stop", "aggregate-verification"),
+    ("aggregate-verification", "tk-reflect", "valid reflection handoff", "complete-or-no-op", "restore-or-stop", "tk-drive:finalization"),
+    ("aggregate-verification", "tk-drive:finalization", "verified and reflection N/A", "terminal evidence reread", "stop", "terminal"),
+    ("tk-reflect", "tk-drive:finalization", "reflection completed", "terminal evidence reread", "stop", "terminal"),
+)
+DRIVE_ALLOWED_LOOP_EDGES = {
+    ("tk-grill-me", "tk-prototype"),
+    ("tk-prototype", "tk-grill-me"),
+    ("tk-implement", "tk-merge-conflict"),
+    ("tk-merge-conflict", "tk-implement"),
+    ("tk-implement", "tk-implement"),
+    ("tk-implement", "aggregate-verification"),
+    ("aggregate-verification", "tk-implement"),
+    ("aggregate-verification", "tk-browser-verify"),
+    ("tk-browser-verify", "aggregate-verification"),
+}
 DRIVE_STAGE_TOKENS = (
     "Preparing",
     "Executing",
@@ -132,6 +206,26 @@ BROWSER_PREFLIGHT_TOKENS = (
     "re-request",
     "not a Preparing amendment",
 )
+CONTINUATION_BOUNDARY_TOKENS = {
+    "README.md": (
+        "prompt-directed",
+        "확률적",
+        "durable scheduler",
+        "workflow engine",
+    ),
+    "skills/tk-drive/SKILL.md": (
+        "prompt-directed instruction",
+        "not a durable scheduler",
+        "guaranteed cross-turn execution",
+        "rereading current artifacts and repository evidence",
+    ),
+    "skills/tk-drive/references/phases.md": (
+        "prompt-directed and probabilistic",
+        "durable scheduling",
+        "event replay",
+        "guaranteed cross-turn execution",
+    ),
+}
 ADHD_CONTRACT_TOKENS = (
     "disable-model-invocation: true",
     "/tk-adhd",
@@ -156,9 +250,7 @@ ADHD_FORBIDDEN_TOKENS = (
     "latest explicit activation or stop event wins",
 )
 LEARNING_LOOP_TOKENS = {
-    "skills/tk-grill-me/SKILL.md": (
-        "`Return to: tk-drive`",
-    ),
+    "skills/tk-grill-me/SKILL.md": ("active drive",),
     "skills/tk-reflect/SKILL.md": (
         "Preferred prevention owner",
         "Host dependency",
@@ -170,14 +262,14 @@ LEARNING_LOOP_TOKENS = {
         "inaccessible host-only rules",
     ),
     "skills/tk-to-spec/SKILL.md": (
-        "`Return to: tk-drive`",
+        "pass the Ready artifact path",
         "`adopted | already-satisfied | not-applicable | conflict`",
         "R/AC mapping",
         "A `conflict` disposition prevents `Ready`",
         "no relevant prior art exists, omit `## Prior art`",
     ),
     "skills/tk-to-tickets/SKILL.md": (
-        "`Return to: tk-drive`",
+        "directly to the next applicable graph",
     ),
 }
 RESPONSE_LANGUAGE_GATE = (
@@ -214,6 +306,9 @@ CATALOG_ROUTING_BOUNDARIES = {
 }
 HYBRID_TRIGGER_FACETS = {"formal", "casual", "typo", "ko-en", "short", "compound"}
 HANGUL_SYLLABLE = re.compile(r"[가-힣]")
+# This is the current catalog snapshot, not a product target count. Update it,
+# its kind sets, and their tests whenever an independently justified catalog
+# change lands.
 EXPECTED_SKILLS = {
     "tk-ask-repo",
     "tk-browser-verify",
@@ -250,12 +345,16 @@ REQUIRED_BEHAVIOR_CASES = {
     "ask-repo-search-failure-is-unverifiable",
     "ask-repo-blocks-contradicted-premise",
     "ask-repo-bounds-result-cardinality",
-    "drive-prepares-only-after-ready-gates",
+    "drive-writes-compact-preflight",
     "drive-bounds-task-anchored-prior-art",
     "drive-excludes-forbidden-prior-art",
-    "drive-preserves-terminal-on-failed-preparing",
-    "drive-reseals-one-active-amendment",
-    "drive-continues-automatically-after-ready",
+    "drive-preserves-preflight-on-write-failure",
+    "drive-rejects-preflight-secrets",
+    "drive-resumes-from-current-evidence",
+    "drive-enforces-exact-procedure-graph",
+    "drive-continues-without-receipt-boundary",
+    "drive-continues-multi-unit-through-reflection",
+    "drive-owns-single-terminal-response",
     "adhd-explicit-one-shot",
     "adhd-does-not-carry-over",
     "adhd-safety-exception",
@@ -285,12 +384,11 @@ REQUIRED_BEHAVIOR_CASES = {
     "browser-interactive-auth-only-headed-exception",
     "browser-captures-move-to-tigerkit-ledger",
     "browser-bounds-result-cardinality",
-    "grill-me-keeps-one-question-at-a-time",
-    "grill-uses-native-question-tool",
-    "grill-me-researches-facts-before-asking",
-    "grill-me-does-not-write-domain-docs",
-    "grill-me-does-not-create-adrs",
-    "grill-bounds-confirmed-results",
+    "grill-me-unifies-caller-modes",
+    "grill-me-uses-native-question-tool",
+    "grill-me-active-drive-routes-directly",
+    "grill-me-blocks-active-drive-autostart",
+    "grill-me-does-not-mutate-or-invoke-phases",
     "implement-tdd-requires-observed-red",
     "implement-tdd-uses-public-behavior",
     "implement-non-tdd-still-verifies",
@@ -309,7 +407,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "implement-diagnosis-reruns-original-reproduction",
     "implement-diagnosis-cleans-instrumentation",
     "implement-diagnosis-blocks-missing-seam",
-    "implement-active-drive-handoff-triggers",
+    "implement-active-drive-unit-state",
     "implement-ordinary-request-does-not-trigger",
     "implement-blocks-standalone-multi-ticket",
     "implement-production-behavior-requires-durable-test",
@@ -331,8 +429,9 @@ REQUIRED_BEHAVIOR_CASES = {
     "reflect-bounds-summary-cell-length",
     "reflect-bounds-result-cardinality",
     "reflect-classifies-prevention-owner-and-host-dependency",
-    "reflect-drive-applies-eligible-tracked-repo-rule",
+    "reflect-drive-applies-exact-existing-ignored-rule",
     "reflect-drive-never-creates-local-rule-target",
+    "reflect-drive-rejects-ineligible-target-matrix",
     "reflect-drive-skill-candidate-is-promotion-packet-only",
     "reflect-drive-blocks-target-drift",
     "reflect-classifies-repo-placement",
@@ -388,7 +487,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-risk-profile-browser-ui",
     "drive-risk-profile-auth-data",
     "drive-risk-profile-inaccessible-evidence",
-    "drive-reflects-once-after-aggregate-pass",
+    "drive-reflects-once-then-finalizes",
     "drive-skips-unneeded-tickets",
     "drive-keeps-ticket-ledger",
     "drive-preserves-source-ui-writing-verbatim",
@@ -414,30 +513,31 @@ REQUIRED_BEHAVIOR_CASES = {
     "grooming-semantic-convert-is-proposal-only",
     "learn-is-sole-semantic-skill-writer",
     "drive-bounds-nested-skills",
-    "drive-invokes-phase-owners",
-    "drive-continues-after-prep-claim",
-    "drive-checks-transition-debt-before-terminal-output",
-    "drive-rejects-missing-transition-echo",
+    "drive-invokes-direct-graph-owners",
+    "drive-continues-after-preflight",
+    "drive-enforces-exact-procedure-graph",
+    "drive-continues-without-receipt-boundary",
+    "drive-continues-multi-unit-through-reflection",
+    "drive-owns-single-terminal-response",
     "drive-prepares-trivial-task",
     "drive-amends-on-first-new-decision",
     "drive-skips-grill-for-ready-source",
     "drive-blocks-second-amendment",
-    "drive-claims-ready-prep-atomically",
-    "drive-invalidates-stale-prep",
-    "drive-finalizes-owned-claim",
+    "drive-writes-compact-preflight",
+    "drive-preserves-preflight-on-write-failure",
+    "drive-rejects-preflight-secrets",
+    "drive-resumes-from-current-evidence",
     "drive-blocks-repeated-decision-return",
     "drive-commits-per-ticket",
     "drive-runs-final-aggregate-verification",
     "drive-propagates-phase-failure",
     "drive-bounds-corrective-cycle",
+    "drive-stops-on-procedure-failure",
     "drive-preserves-valid-diff-on-partial-failure",
     "drive-aggregate-review-boundary",
-    "grill-accepts-active-drive-preparing-handoff",
-    "grill-returns-control-to-prep",
-    "grill-echoes-prep-transition",
-    "to-spec-echoes-prep-transition",
-    "to-tickets-echoes-prep-transition",
-    "implement-echoes-drive-transition",
+    "to-spec-routes-ready-state-directly",
+    "to-tickets-routes-ledger-state-directly",
+    "implement-routes-unit-state-directly",
     "skill-diagnose-reproduces-overtrigger-selection",
     "skill-diagnose-isolates-approval-bypass",
     "skill-diagnose-separates-grader-false-negative",
@@ -605,10 +705,14 @@ def validate_terminal_summary_contract(root: Path) -> list[str]:
             errors.append(f"{skill}: SKILL.md: add the terminal-summary hard gate")
             continue
         text = path.read_text(encoding="utf-8")
-        complete = (
-            text.count(TERMINAL_SUMMARY_GATE) == 1
-            and text.count(terminal_heading) == 1
+        gate = (
+            DRIVE_TERMINAL_SUMMARY_GATE
+            if skill == "tk-drive"
+            else DIRECT_TERMINAL_SUMMARY_GATE
+            if skill in DIRECT_GRAPH_SKILLS
+            else TERMINAL_SUMMARY_GATE
         )
+        complete = text.count(gate) == 1 and text.count(terminal_heading) == 1
         ordered = (
             complete
             and text.count(language_heading) == 1
@@ -622,21 +726,89 @@ def validate_terminal_summary_contract(root: Path) -> list[str]:
     return errors
 
 
-def validate_drive_transition_debt_contract(root: Path) -> list[str]:
+def validate_drive_graph_contract(
+    root: Path,
+    edges: tuple[tuple[str, str, str, str, str, str], ...] = DRIVE_GRAPH_EDGES,
+) -> list[str]:
     errors: list[str] = []
-    for relative in (
-        "skills/tk-drive/SKILL.md",
-        "skills/tk-drive/references/phases.md",
-    ):
-        path = root / relative
-        if (
-            not path.is_file()
-            or path.read_text(encoding="utf-8").count(DRIVE_TRANSITION_DEBT_GATE)
-            != 1
-        ):
-            errors.append(
-                f"{relative}: preserve exactly one terminal transition-debt gate"
-            )
+    for index, edge in enumerate(edges, 1):
+        if len(edge) != 6:
+            errors.append(f"drive graph edge {index}: expected six fields")
+            continue
+        source, target, entry, success, failure, next_edge = edge
+        for node in (source, target):
+            if node not in DRIVE_GRAPH_NODES:
+                errors.append(f"drive graph edge {index}: unknown node {node!r}")
+        if not all(value.strip() for value in (entry, success, failure, next_edge)):
+            errors.append(f"drive graph edge {index}: missing terminal condition")
+        if source == "tk-drive:finalization" or target == "tk-drive:preflight":
+            errors.append(f"drive graph edge {index}: forbidden cycle")
+        for next_node in next_edge.split("|"):
+            if next_node != "terminal" and next_node not in DRIVE_GRAPH_NODES:
+                errors.append(
+                    f"drive graph edge {index}: unknown next node {next_node!r}"
+                )
+
+    pair_list = [(edge[0], edge[1]) for edge in edges if len(edge) == 6]
+    actual_pairs = set(pair_list)
+    expected_pairs = {(edge[0], edge[1]) for edge in DRIVE_GRAPH_EDGES}
+    if len(pair_list) != len(actual_pairs):
+        errors.append("drive graph: duplicate edge is ambiguous")
+    if actual_pairs != expected_pairs:
+        errors.append("drive graph: edge set differs from the canonical direct graph")
+
+    adjacency: dict[str, set[str]] = {node: set() for node in DRIVE_GRAPH_NODES}
+    for source, target in actual_pairs:
+        if source in adjacency and target in adjacency:
+            adjacency[source].add(target)
+
+    active: list[str] = []
+    visited: set[str] = set()
+
+    def visit(node: str) -> None:
+        visited.add(node)
+        active.append(node)
+        for target in adjacency[node]:
+            if target not in visited:
+                visit(target)
+                continue
+            if target not in active:
+                continue
+            start = active.index(target)
+            cycle_nodes = active[start:] + [target]
+            cycle_edges = set(zip(cycle_nodes, cycle_nodes[1:]))
+            if not cycle_edges.issubset(DRIVE_ALLOWED_LOOP_EDGES):
+                errors.append(
+                    "drive graph: forbidden cycle "
+                    + " -> ".join(cycle_nodes)
+                )
+        active.pop()
+
+    for node in sorted(DRIVE_GRAPH_NODES):
+        if node not in visited:
+            visit(node)
+
+    drive = root / "skills/tk-drive/SKILL.md"
+    phases = root / "skills/tk-drive/references/phases.md"
+    for path, label in ((drive, str(drive.relative_to(root))), (phases, str(phases.relative_to(root)))):
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        required = (
+            "tk-drive preflight",
+            "tk-grill-me",
+            "tk-to-spec",
+            "tk-to-tickets",
+            "tk-implement",
+            "aggregate verification",
+            "tk-reflect",
+            "tk-drive finalization",
+            "entry",
+            "success",
+            "failure",
+            "next",
+        )
+        missing = [token for token in required if token not in text.casefold()]
+        if missing:
+            errors.append(f"{label}: incomplete direct graph contract ({', '.join(missing)})")
     return errors
 
 
@@ -665,6 +837,71 @@ def validate_prepared_drive_contract(root: Path) -> list[str]:
             errors.append(
                 f"{label}: preserve the three-cycle corrective boundary "
                 f"({', '.join(missing_correction)})"
+            )
+    return errors
+
+
+def validate_reflect_ignored_target_contract(root: Path) -> list[str]:
+    errors: list[str] = []
+    required = {
+        "skills/tk-reflect/SKILL.md": (
+            "exact pre-existing ignored `repo rule`",
+            "skill-local script",
+        ),
+        "skills/tk-reflect/references/drive-optimistic.md": (
+            "drive-start implementation ledger",
+            "untracked, and ignored",
+            "Tracked, unignored, new, symlinked, external, changed-since-baseline",
+            "`scripts/ignored_rule_apply.py`",
+            "mode-0600",
+            "atomically replaces",
+            "restores the exact before-image",
+        ),
+        "skills/tk-reflect/scripts/ignored_rule_apply.py": (
+            "git\", \"ls-files",
+            "git\", \"check-ignore",
+            "os.replace",
+            "reflect-backup",
+            "exact rollback verified",
+        ),
+        "skills/tk-reflect/scripts/test_ignored_rule_apply.py": (
+            "test_applies_existing_ignored_target_with_secure_backup",
+            "test_rejects_tracked_target_before_write",
+            "test_rejects_new_external_symlink_and_ambiguous_targets",
+            "test_rejects_target_changed_since_baseline",
+            "test_failed_validation_restores_exact_before_image",
+        ),
+    }
+    for relative, tokens in required.items():
+        path = root / relative
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        missing = [token for token in tokens if token not in text]
+        if missing:
+            errors.append(
+                f"{relative}: preserve exact ignored-target reflection safety "
+                f"({', '.join(missing)})"
+            )
+    reference = root / "skills/tk-reflect/references/drive-optimistic.md"
+    text = reference.read_text(encoding="utf-8") if reference.is_file() else ""
+    for forbidden in ("## Tracked target", "Create one separate commit"):
+        if forbidden in text:
+            errors.append(
+                "skills/tk-reflect/references/drive-optimistic.md: "
+                f"remove tracked-target auto-apply contract {forbidden!r}"
+            )
+    return errors
+
+
+def validate_continuation_boundary(root: Path) -> list[str]:
+    errors: list[str] = []
+    for relative, tokens in CONTINUATION_BOUNDARY_TOKENS.items():
+        path = root / relative
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        missing = [token for token in tokens if token not in text]
+        if missing:
+            errors.append(
+                f"{relative}: distinguish prompt-directed continuation from a "
+                f"runtime workflow engine ({', '.join(missing)})"
             )
     return errors
 
@@ -717,6 +954,95 @@ def validate_single_drive_adhd_contract(root: Path) -> list[str]:
             errors.append(
                 f"{path.relative_to(root)}: remove the shared ADHD-oriented output gate"
             )
+    return errors
+
+
+def validate_unified_grill_contract(root: Path) -> list[str]:
+    errors: list[str] = []
+    split = root / "skills" / "tk-grilling"
+    if split.exists():
+        errors.append(
+            "skills/tk-grilling: merge the boundary-less duplicate procedure into tk-grill-me"
+        )
+
+    grill_path = root / "skills" / "tk-grill-me" / "SKILL.md"
+    grill = grill_path.read_text(encoding="utf-8") if grill_path.is_file() else ""
+    required = (
+        "one evidence-first decision procedure",
+        "`standalone`",
+        "`active drive`",
+        "continues directly to the next applicable procedure",
+        "Do not split the same decision procedure into another skill",
+    )
+    missing = [token for token in required if token not in grill]
+    if missing:
+        errors.append(
+            "skills/tk-grill-me/SKILL.md: preserve unified standalone/active-drive "
+            "decision ownership (" + ", ".join(missing) + ")"
+        )
+
+    drive_path = root / "skills" / "tk-drive" / "SKILL.md"
+    drive = drive_path.read_text(encoding="utf-8") if drive_path.is_file() else ""
+    if "`tk-grill-me`" not in drive:
+        errors.append(
+            "skills/tk-drive/SKILL.md: name tk-grill-me as the exact decision edge"
+        )
+    return errors
+
+
+def validate_compact_preflight_contract(root: Path) -> list[str]:
+    errors: list[str] = []
+    obsolete = (
+        "skills/tk-drive/references/manifest.md",
+        "skills/tk-drive/scripts/prep_manifest.py",
+        "skills/tk-drive/scripts/prep_state.py",
+        "skills/tk-drive/scripts/record_eval_event.py",
+        "skills/tk-drive/scripts/test_prep_manifest.py",
+        "skills/tk-drive/scripts/test_prep_state.py",
+        "skills/tk-drive/scripts/test_record_eval_event.py",
+    )
+    for relative in obsolete:
+        if (root / relative).exists():
+            errors.append(f"{relative}: remove obsolete drive lifecycle machinery")
+
+    required = {
+        "skills/tk-drive/scripts/preflight.py": (
+            "TOP_KEYS",
+            "FORBIDDEN_KEYS",
+            "os.replace",
+            "is_symlink",
+            "parse_preflight(reread)",
+            "choose_resume_action",
+            "browser_identity_action",
+        ),
+        "skills/tk-drive/references/preflight.md": (
+            "Allowed fields",
+            "secret-free",
+            "Evidence-derived resume",
+            "stored cursor",
+        ),
+    }
+    for relative, tokens in required.items():
+        path = root / relative
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        missing = [token for token in tokens if token not in text]
+        if missing:
+            errors.append(
+                f"{relative}: incomplete compact preflight contract "
+                f"({', '.join(missing)})"
+            )
+
+    for skill in sorted(DIRECT_GRAPH_SKILLS - {"tk-drive"}):
+        path = root / "skills" / skill / "SKILL.md"
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        for token in (
+            "`Return to: tk-drive`",
+            "`Outstanding transition`",
+            "Keep phase receipts as internal handoff envelopes",
+        ):
+            if token in text:
+                errors.append(f"{path.relative_to(root)}: remove active return-envelope contract")
+                break
     return errors
 
 
@@ -895,27 +1221,31 @@ def validate_repository_contract() -> list[str]:
     )
     for relative in required_files:
         if not (ROOT / relative).is_file():
-            errors.append(f"{relative}: required TigerKit 21.0.2 repository file is missing")
+            errors.append(f"{relative}: required TigerKit 21.0.3 repository file is missing")
     errors.extend(validate_local_only_workflows(ROOT))
     errors.extend(validate_skill_language(ROOT))
     errors.extend(validate_user_decision_contract(ROOT))
     errors.extend(validate_terminal_summary_contract(ROOT))
-    errors.extend(validate_drive_transition_debt_contract(ROOT))
+    errors.extend(validate_drive_graph_contract(ROOT))
     errors.extend(validate_prepared_drive_contract(ROOT))
     errors.extend(validate_browser_preflight_contract(ROOT))
     errors.extend(validate_single_drive_adhd_contract(ROOT))
+    errors.extend(validate_unified_grill_contract(ROOT))
+    errors.extend(validate_compact_preflight_contract(ROOT))
+    errors.extend(validate_reflect_ignored_target_contract(ROOT))
+    errors.extend(validate_continuation_boundary(ROOT))
     errors.extend(validate_learning_loop_contract(ROOT))
     errors.extend(validate_response_language_contract(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
-            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 21.0.2")
+            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 21.0.3")
     errors.extend(validate_runtime_scratch(ROOT))
     ignored = (ROOT / ".gitignore").read_text(encoding="utf-8") if (ROOT / ".gitignore").is_file() else ""
     if ".tigerkit/" not in ignored.splitlines():
         errors.append(".gitignore: document TigerKit repo-local scratch with .tigerkit/")
     required_text = {
         "README.md": (
-            "TigerKit 21.0.2",
+            "TigerKit 21.0.3",
             "15",
             "Claude Code",
             "Codex",
@@ -1381,7 +1711,6 @@ def validate_skill_eval_files(skill_dir: Path, kind: str) -> list[str]:
                                 )
                             required_match_fields = {
                                 "phase_invocation": ("phase",),
-                                "phase_receipt": ("phase", "state"),
                             }
                             for field in ("before", "after"):
                                 matcher = assertion.get(field)
@@ -1403,11 +1732,6 @@ def validate_skill_eval_files(skill_dir: Path, kind: str) -> list[str]:
                                         isinstance(matcher.get(key), str)
                                         and str(matcher.get(key)).strip()
                                         for key in required
-                                    )
-                                    and (
-                                        event_type != "phase_receipt"
-                                        or matcher.get("state")
-                                        in {"Ready", "confirmed", "Pass"}
                                     )
                                 )
                                 if not valid:
@@ -1450,7 +1774,6 @@ def validate_skill_eval_files(skill_dir: Path, kind: str) -> list[str]:
                             )
                             required_match_fields = {
                                 "phase_invocation": ("phase",),
-                                "phase_receipt": ("phase", "state"),
                                 "final_output": ("terminal_status",),
                             }
                             required = (
@@ -1468,11 +1791,6 @@ def validate_skill_eval_files(skill_dir: Path, kind: str) -> list[str]:
                                     for key in required
                                 )
                                 and (
-                                    event_type != "phase_receipt"
-                                    or matcher.get("state")
-                                    in {"Ready", "confirmed", "Pass"}
-                                )
-                                and (
                                     event_type != "final_output"
                                     or matcher.get("terminal_status")
                                     in TERMINAL_STATUSES
@@ -1482,6 +1800,62 @@ def validate_skill_eval_files(skill_dir: Path, kind: str) -> list[str]:
                                 errors.append(
                                     f"{label}: evals/evals.json: case {index} "
                                     "event_absent event needs a valid event matcher"
+                                )
+                        elif assertion_type == "event_count":
+                            hosts = assertion.get("hosts")
+                            if hosts is not None and (
+                                not isinstance(hosts, list)
+                                or not hosts
+                                or not all(
+                                    isinstance(host, str)
+                                    and host in SUPPORTED_EVAL_HOSTS
+                                    for host in hosts
+                                )
+                                or len(set(hosts)) != len(hosts)
+                            ):
+                                errors.append(
+                                    f"{label}: evals/evals.json: case {index} "
+                                    "event_count hosts must be unique supported hosts"
+                                )
+                            matcher = assertion.get("event")
+                            valid_matcher = (
+                                isinstance(matcher, dict)
+                                and matcher.get("type") == "phase_invocation"
+                                and isinstance(matcher.get("phase"), str)
+                                and str(matcher.get("phase")).strip()
+                            )
+                            minimum = assertion.get("min")
+                            maximum = assertion.get("max")
+                            valid_minimum = (
+                                minimum is None
+                                or (
+                                    isinstance(minimum, int)
+                                    and not isinstance(minimum, bool)
+                                    and minimum >= 0
+                                )
+                            )
+                            valid_maximum = (
+                                maximum is None
+                                or (
+                                    isinstance(maximum, int)
+                                    and not isinstance(maximum, bool)
+                                    and maximum >= 0
+                                )
+                            )
+                            if (
+                                not valid_matcher
+                                or not valid_minimum
+                                or not valid_maximum
+                                or (minimum is None and maximum is None)
+                                or (
+                                    isinstance(minimum, int)
+                                    and isinstance(maximum, int)
+                                    and minimum > maximum
+                                )
+                            ):
+                                errors.append(
+                                    f"{label}: evals/evals.json: case {index} "
+                                    "event_count needs a phase matcher and valid min/max"
                                 )
                         elif assertion_type in {
                             "path_exists",

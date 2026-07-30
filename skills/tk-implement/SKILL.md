@@ -38,14 +38,12 @@ creating tickets.
 
 Standalone execution and drive handoff use the same implementation, test,
 review, and commit contract. For a drive handoff, preserve task identity,
-ticket/R/AC, initial `HEAD`, and ownership; return phase, unit/ticket ID,
-commit SHA, and verification/review evidence. Preserve a material verification profile's four fields and follow the existing-owner mapping in [review-boundary](references/review-boundary.md); never recompute or weaken it. The handoff also supplies
-`Success state` and `Outstanding transition`. On `Pass`, include
-`Return to: tk-drive` and echo the parent-supplied `Outstanding transition`
-verbatim without choosing or executing it. A missing or mismatched
-`Success state` or transition cannot produce a successful active-drive
-receipt; return `Blocked`. Do not take ownership of drive-wide cross-ticket
-verification or its final summary.
+ticket/R/AC, initial `HEAD`, and ownership; pass the unit/ticket ID, commit SHA,
+and verification/review evidence directly to the next applicable graph node.
+Preserve a material verification profile's four fields and follow the
+existing-owner mapping in [review-boundary](references/review-boundary.md);
+never recompute or weaken it. Do not render a terminal result or take
+ownership of drive-wide cross-ticket verification or finalization.
 
 ### Terminal-state contract
 
@@ -291,11 +289,11 @@ Omit `Remaining risks` when empty.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Treat progress commentary, internal handoff envelopes, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between a successful phase receipt and the next active-drive phase invocation.
+Treat progress commentary, internal procedure evidence, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between successful consecutive active-drive procedure invocations.
 
-Do not render a receipt heading, `Outcome:` label, or terminal provenance/status block in the user summary. When the host or skill requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the skill's canonical result schema requires it. Keep phase receipts as internal handoff envelopes: when an active parent requires phase, status, IDs, `Return to`, `Success state`, or `Outstanding transition`, return them only to that parent workflow and never echo them in the terminal user summary.
+Do not render a receipt heading, `Outcome:` label, phase-success token, caller-return instruction, or terminal provenance/status block in the user summary. When the result requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the canonical result schema requires it.
 
-Persist provenance only in an artifact or ledger the skill already owns. A skill without such an owner must not create one solely to store a receipt, and a read-only skill remains read-only. Never require a shared runtime reference outside this skill.
+Persist provenance only in an artifact or ledger already owned by the workflow. A read-only skill remains read-only. Never require a shared runtime reference outside this skill.
 
 ### 🔴 HARD GATE · response language
 
