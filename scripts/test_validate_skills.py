@@ -23,6 +23,7 @@ if __package__:
         validate_drive_graph_contract,
         validate_learning_loop_contract,
         validate_prepared_drive_contract,
+        validate_reflect_ignored_target_contract,
         validate_release_alignment,
         validate_release_version_contract,
         validate_response_language_contract,
@@ -53,6 +54,7 @@ else:
         validate_drive_graph_contract,
         validate_learning_loop_contract,
         validate_prepared_drive_contract,
+        validate_reflect_ignored_target_contract,
         validate_release_alignment,
         validate_release_version_contract,
         validate_response_language_contract,
@@ -68,6 +70,31 @@ else:
 
 
 class CanonicalSkillContractTest(unittest.TestCase):
+    def test_reflect_auto_apply_is_limited_to_exact_ignored_target(self) -> None:
+        source_root = Path(__file__).resolve().parents[1]
+        self.assertEqual(validate_reflect_ignored_target_contract(source_root), [])
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            relative = "skills/tk-reflect/references/drive-optimistic.md"
+            target = root / relative
+            target.parent.mkdir(parents=True)
+            target.write_text(
+                (
+                    source_root / relative
+                ).read_text(encoding="utf-8").replace(
+                    "Tracked, unignored, new, symlinked, external, changed-since-baseline",
+                    "Most unsafe targets",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            errors = validate_reflect_ignored_target_contract(root)
+
+        self.assertTrue(
+            any("exact ignored-target reflection safety" in error for error in errors)
+        )
+
     def test_compact_preflight_replaces_lifecycle_machinery(self) -> None:
         source_root = Path(__file__).resolve().parents[1]
         self.assertEqual(validate_compact_preflight_contract(source_root), [])
@@ -234,8 +261,9 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "reflect-skips-diagnosis-without-four-gate",
                 "reflect-blocks-repeated-diagnosis-handoff",
                 "reflect-response-language-preserves-machine-tokens",
-                "reflect-drive-applies-eligible-tracked-repo-rule",
+                "reflect-drive-applies-exact-existing-ignored-rule",
                 "reflect-drive-never-creates-local-rule-target",
+                "reflect-drive-rejects-ineligible-target-matrix",
                 "reflect-drive-skill-candidate-is-promotion-packet-only",
                 "reflect-drive-blocks-target-drift",
                 "browser-bounds-instrumented-evidence",
@@ -713,7 +741,9 @@ class CanonicalSkillContractTest(unittest.TestCase):
         self.assertIn("tk-drive finalization", phases)
         self.assertNotIn("Outstanding transition", phases)
         self.assertNotIn("Return to: tk-drive", phases)
-        self.assertIn("tracked reflection commit", tail)
+        self.assertNotIn("## Tracked target", tail)
+        self.assertIn("scripts/ignored_rule_apply.py", tail)
+        self.assertIn("untracked, and ignored", tail)
         self.assertIn("reflect-backup", tail)
         self.assertIn("never mutates a skill", " ".join(tail.split()))
 
@@ -738,6 +768,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
         self.assertEqual(validate_terminal_summary_contract(root), [])
         self.assertEqual(validate_drive_graph_contract(root), [])
         self.assertEqual(validate_prepared_drive_contract(root), [])
+        self.assertEqual(validate_reflect_ignored_target_contract(root), [])
 
     def test_response_language_gate_rejects_one_weakened_skill(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

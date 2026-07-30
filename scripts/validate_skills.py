@@ -27,6 +27,7 @@ CORE_FRONTMATTER_FIELDS = {
 HOST_EXTENSION_FIELDS = {"argument-hint", "disable-model-invocation"}
 MECHANICAL_ASSERTION_TYPES = {
     "event_absent",
+    "event_count",
     "event_order",
     "terminal_status",
     "path_exists",
@@ -408,8 +409,9 @@ REQUIRED_BEHAVIOR_CASES = {
     "reflect-bounds-summary-cell-length",
     "reflect-bounds-result-cardinality",
     "reflect-classifies-prevention-owner-and-host-dependency",
-    "reflect-drive-applies-eligible-tracked-repo-rule",
+    "reflect-drive-applies-exact-existing-ignored-rule",
     "reflect-drive-never-creates-local-rule-target",
+    "reflect-drive-rejects-ineligible-target-matrix",
     "reflect-drive-skill-candidate-is-promotion-packet-only",
     "reflect-drive-blocks-target-drift",
     "reflect-classifies-repo-placement",
@@ -510,6 +512,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-runs-final-aggregate-verification",
     "drive-propagates-phase-failure",
     "drive-bounds-corrective-cycle",
+    "drive-stops-on-procedure-failure",
     "drive-preserves-valid-diff-on-partial-failure",
     "drive-aggregate-review-boundary",
     "to-spec-routes-ready-state-directly",
@@ -814,6 +817,57 @@ def validate_prepared_drive_contract(root: Path) -> list[str]:
             errors.append(
                 f"{label}: preserve the three-cycle corrective boundary "
                 f"({', '.join(missing_correction)})"
+            )
+    return errors
+
+
+def validate_reflect_ignored_target_contract(root: Path) -> list[str]:
+    errors: list[str] = []
+    required = {
+        "skills/tk-reflect/SKILL.md": (
+            "exact pre-existing ignored `repo rule`",
+            "skill-local script",
+        ),
+        "skills/tk-reflect/references/drive-optimistic.md": (
+            "drive-start implementation ledger",
+            "untracked, and ignored",
+            "Tracked, unignored, new, symlinked, external, changed-since-baseline",
+            "`scripts/ignored_rule_apply.py`",
+            "mode-0600",
+            "atomically replaces",
+            "restores the exact before-image",
+        ),
+        "skills/tk-reflect/scripts/ignored_rule_apply.py": (
+            "git\", \"ls-files",
+            "git\", \"check-ignore",
+            "os.replace",
+            "reflect-backup",
+            "exact rollback verified",
+        ),
+        "skills/tk-reflect/scripts/test_ignored_rule_apply.py": (
+            "test_applies_existing_ignored_target_with_secure_backup",
+            "test_rejects_tracked_target_before_write",
+            "test_rejects_new_external_symlink_and_ambiguous_targets",
+            "test_rejects_target_changed_since_baseline",
+            "test_failed_validation_restores_exact_before_image",
+        ),
+    }
+    for relative, tokens in required.items():
+        path = root / relative
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        missing = [token for token in tokens if token not in text]
+        if missing:
+            errors.append(
+                f"{relative}: preserve exact ignored-target reflection safety "
+                f"({', '.join(missing)})"
+            )
+    reference = root / "skills/tk-reflect/references/drive-optimistic.md"
+    text = reference.read_text(encoding="utf-8") if reference.is_file() else ""
+    for forbidden in ("## Tracked target", "Create one separate commit"):
+        if forbidden in text:
+            errors.append(
+                "skills/tk-reflect/references/drive-optimistic.md: "
+                f"remove tracked-target auto-apply contract {forbidden!r}"
             )
     return errors
 
@@ -1144,6 +1198,7 @@ def validate_repository_contract() -> list[str]:
     errors.extend(validate_single_drive_adhd_contract(ROOT))
     errors.extend(validate_unified_grill_contract(ROOT))
     errors.extend(validate_compact_preflight_contract(ROOT))
+    errors.extend(validate_reflect_ignored_target_contract(ROOT))
     errors.extend(validate_learning_loop_contract(ROOT))
     errors.extend(validate_response_language_contract(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
@@ -1710,6 +1765,62 @@ def validate_skill_eval_files(skill_dir: Path, kind: str) -> list[str]:
                                 errors.append(
                                     f"{label}: evals/evals.json: case {index} "
                                     "event_absent event needs a valid event matcher"
+                                )
+                        elif assertion_type == "event_count":
+                            hosts = assertion.get("hosts")
+                            if hosts is not None and (
+                                not isinstance(hosts, list)
+                                or not hosts
+                                or not all(
+                                    isinstance(host, str)
+                                    and host in SUPPORTED_EVAL_HOSTS
+                                    for host in hosts
+                                )
+                                or len(set(hosts)) != len(hosts)
+                            ):
+                                errors.append(
+                                    f"{label}: evals/evals.json: case {index} "
+                                    "event_count hosts must be unique supported hosts"
+                                )
+                            matcher = assertion.get("event")
+                            valid_matcher = (
+                                isinstance(matcher, dict)
+                                and matcher.get("type") == "phase_invocation"
+                                and isinstance(matcher.get("phase"), str)
+                                and str(matcher.get("phase")).strip()
+                            )
+                            minimum = assertion.get("min")
+                            maximum = assertion.get("max")
+                            valid_minimum = (
+                                minimum is None
+                                or (
+                                    isinstance(minimum, int)
+                                    and not isinstance(minimum, bool)
+                                    and minimum >= 0
+                                )
+                            )
+                            valid_maximum = (
+                                maximum is None
+                                or (
+                                    isinstance(maximum, int)
+                                    and not isinstance(maximum, bool)
+                                    and maximum >= 0
+                                )
+                            )
+                            if (
+                                not valid_matcher
+                                or not valid_minimum
+                                or not valid_maximum
+                                or (minimum is None and maximum is None)
+                                or (
+                                    isinstance(minimum, int)
+                                    and isinstance(maximum, int)
+                                    and minimum > maximum
+                                )
+                            ):
+                                errors.append(
+                                    f"{label}: evals/evals.json: case {index} "
+                                    "event_count needs a phase matcher and valid min/max"
                                 )
                         elif assertion_type in {
                             "path_exists",

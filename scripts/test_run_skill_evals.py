@@ -1055,10 +1055,56 @@ class RunnerContractTest(unittest.TestCase):
                     )
                 )
 
+            self.assertTrue(passing["passed"])
+            self.assertTrue(skipped["passed"])
+            self.assertFalse(missing_host["passed"])
+            self.assertTrue(all(not row["passed"] for row in failures))
+
+    def test_event_count_enforces_bounded_phase_invocations(self) -> None:
+        assertion = {
+            "type": "event_count",
+            "hosts": ["codex"],
+            "event": {"type": "phase_invocation", "phase": "tk-implement"},
+            "max": 3,
+        }
+        events = [
+            {"type": "phase_invocation", "phase": "tk-implement"},
+            {"type": "phase_invocation", "phase": "tk-implement"},
+            {"type": "phase_invocation", "phase": "tk-implement"},
+        ]
+
+        with tempfile.TemporaryDirectory() as directory:
+            checkout = Path(directory)
+            passing = verify_mechanical_assertion(
+                assertion,
+                adapter_result={"events": events},
+                checkout=checkout,
+                initial_head=None,
+                host="codex",
+            )
+            failing = verify_mechanical_assertion(
+                assertion,
+                adapter_result={
+                    "events": [
+                        *events,
+                        {"type": "phase_invocation", "phase": "tk-implement"},
+                    ]
+                },
+                checkout=checkout,
+                initial_head=None,
+                host="codex",
+            )
+            skipped = verify_mechanical_assertion(
+                assertion,
+                adapter_result={},
+                checkout=checkout,
+                initial_head=None,
+                host="claude-code",
+            )
+
         self.assertTrue(passing["passed"])
+        self.assertFalse(failing["passed"])
         self.assertTrue(skipped["passed"])
-        self.assertFalse(missing_host["passed"])
-        self.assertTrue(all(not row["passed"] for row in failures))
 
     def test_event_absent_requires_event_evidence_and_honors_host_scope(self) -> None:
         assertion = {

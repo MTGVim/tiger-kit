@@ -229,12 +229,15 @@
 - case: reflect-bounds-summary-cell-length
   skill: tk-reflect
   expect: "A formatting-only Disposition reprint preserves IDs and order while omitting evidence bodies, drafts, and work narration."
-- case: reflect-drive-applies-eligible-tracked-repo-rule
+- case: reflect-drive-applies-exact-existing-ignored-rule
   skill: tk-reflect
-  expect: "A valid drive-optimistic tail applies only a high-confidence eligible existing tracked repo rule, creates one reflection commit, and reports git-revert rollback in the bounded Disposition table."
+  expect: "A valid drive-optimistic tail applies only one high-confidence exact pre-existing ignored user-managed repo rule through baseline, containment, secure-backup, atomic-write, validation, and verified-rollback gates without changing Git HEAD."
 - case: reflect-drive-never-creates-local-rule-target
   skill: tk-reflect
   expect: "Drive-tail local application requires an exact pre-existing user-managed file and never creates a new ignored or untracked rule target."
+- case: reflect-drive-rejects-ineligible-target-matrix
+  skill: tk-reflect
+  expect: "Tracked, unignored, new, symlinked, external, changed-since-baseline, and ambiguous targets remain pending under their normal approval boundary and receive no automatic mutation."
 - case: reflect-drive-skill-candidate-is-promotion-packet-only
   skill: tk-reflect
   expect: "A drive-tail skill candidate remains pending in a promotion packet and never creates, edits, commits, or invokes a skill."
@@ -456,10 +459,10 @@
   expect: "Preparation persists only non-identifying browser hints plus an intentionally-omitted cold-start marker; a fresh executor re-requests the exact runtime identity once before launch without consuming a Preparing amendment."
 - case: drive-amends-on-first-new-decision
   skill: tk-drive
-  expect: "The first late user-owned decision enters one bounded Preparing amendment, revalidates the spec and affected tickets, reseals, and resumes Executing."
+  expect: "The first late user-owned decision enters one bounded Preparing amendment, revalidates the spec and affected tickets, refreshes current artifacts, and resumes Executing."
 - case: drive-blocks-second-amendment
   skill: tk-drive
-  expect: "After one Preparing amendment has been consumed, a repeated blocker or second user-owned decision stops Blocked without another reseal."
+  expect: "After one Preparing amendment has been consumed, a repeated blocker or second user-owned decision stops Blocked without another artifact mutation."
 - case: drive-blocks-repeated-decision-return
   skill: tk-drive
   expect: "The same or equivalent decision blocker after confirmation stops Blocked instead of entering another automatic grill loop."
@@ -471,7 +474,10 @@
   expect: "Unavailable or unsuccessful phase owners stop the workflow at that phase with the evidence-supported terminal state and no inline fallback."
 - case: drive-bounds-corrective-cycle
   skill: tk-drive
-  expect: "Initial implementation is excluded from the count; up to three isolated frozen-R/AC corrective cycles are allowed, and a fourth or scope expansion stops."
+  expect: "Initial implementation is excluded from the count; each of at most three corrective cycles targets one observed isolated failure, and a fourth, repeated unchanged failure, or scope expansion stops with the remaining failing command and evidence once."
+- case: drive-stops-on-procedure-failure
+  skill: tk-drive
+  expect: "A blocked or unverifiable procedure exposes one actionable blocking fact once, takes only an evidence-supported alternate edge, and otherwise stops without success evidence or an unchanged-transition loop."
 - case: drive-preserves-source-ui-writing-verbatim
   skill: tk-drive
   expect: "Drive consumes the sealed source UI inventory and rechecks exact literals through prepared units, implementation, candidate/staged diff, and rendered UI."

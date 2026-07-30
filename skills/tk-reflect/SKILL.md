@@ -42,9 +42,10 @@ choose `propose | update | merge | no-op | discard`.
 Only a valid active-drive reflection handoff after aggregate product
 verification grants the bounded authority in
 [drive-optimistic reflection](references/drive-optimistic.md). It may apply
-only an eligible existing `repo rule`, writes `.tigerkit/reflect.md`, never
-promotes a skill, and passes its classification and mutation evidence directly
-to `tk-drive finalization`. Missing or mismatched authority falls back to no
+only an eligible exact pre-existing ignored `repo rule` through the guarded
+skill-local script, writes `.tigerkit/reflect.md`, never promotes a skill, and
+passes its classification and mutation evidence directly to
+`tk-drive finalization`. Missing or mismatched authority falls back to no
 mutation.
 
 ### Conditional Agent Skill diagnosis

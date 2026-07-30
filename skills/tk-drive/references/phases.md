@@ -78,12 +78,16 @@ unit remains, then invokes aggregate verification.
 
 The initial implementation has zero corrective cycles when verification
 passes. An isolated failure permits at most three corrective cycles through
-`aggregate verification → tk-implement → aggregate verification`. A fourth
-cycle, repeated unchanged failure, or unisolated failure stops mutation.
+`aggregate verification → tk-implement → aggregate verification`. Number them
+`1`, `2`, and `3`; each cycle must cite the observed failing command or check,
+its isolated cause, and the smallest affected unit. A fourth cycle, repeated
+unchanged failure, unisolated failure, or scope expansion stops mutation and
+reports the remaining failing command and evidence once.
 
-one amendment may revisit `tk-grill-me`, Ready-spec validation, and affected
-tickets. A second amendment or incompatible committed work stops the run
-without rewriting verified history.
+Only one amendment may revisit `tk-grill-me`, Ready-spec validation, and
+affected tickets, then refresh current artifacts before resuming. A second
+amendment or incompatible committed work stops the run without rewriting
+verified history.
 
 ## Terminal ownership
 
