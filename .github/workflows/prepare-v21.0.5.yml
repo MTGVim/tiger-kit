@@ -1,0 +1,439 @@
+name: Prepare TigerKit v21.0.5
+
+on:
+  push:
+    branches:
+      - "release/v21.0.5"
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply semantic compression and terminal normalization
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from __future__ import annotations
+
+          import json
+          from pathlib import Path
+
+
+          def write(path: str, content: str) -> None:
+              Path(path).write_text(content.rstrip() + "\n", encoding="utf-8")
+
+
+          def replace_section(path: str, start: str, end: str, replacement: str) -> None:
+              target = Path(path)
+              text = target.read_text(encoding="utf-8")
+              if text.count(start) != 1 or text.count(end) != 1:
+                  raise SystemExit(f"section markers changed in {path}: {start!r} / {end!r}")
+              before, rest = text.split(start, 1)
+              _, after = rest.split(end, 1)
+              target.write_text(before + replacement.rstrip() + "\n\n" + end + after, encoding="utf-8")
+
+
+          non_success_reference = r'''# Drive non-success finalization
+
+`tk-drive non-success finalization` owns terminal accounting only after
+`phases.md` normalizes a child-native result to `Fail | Blocked |
+Unverifiable` and every allowed alternate edge, retry, and amendment is
+exhausted. It is internal, read-only, and has no outgoing edge.
+
+## Freeze boundary
+
+At entry, stop product and source mutation. Do not edit, create, or delete
+product files; stage or commit; reset, revert, stash, or clean; start a new
+test, build, server, or browser command; or invoke another implementation,
+reviewer, browser, reflection, or phase-owner child.
+
+Read-only artifact and Git audits remain allowed. Do not infer missing evidence
+from self-report or rerun work merely to improve the terminal receipt.
+
+## Scope accounting
+
+Reread applicable source, prep, spec, tickets, implementation ledger, and
+existing browser evidence, then audit branch, `HEAD`, current-branch ancestry,
+and dirty paths. Classify selected scope as:
+
+- `Completed`: an ancestor commit still binds to matching unit receipt, review,
+  and verification evidence;
+- `Stopped`: the unit or procedure that produced terminal non-success;
+- `Dependency blocked`: an incomplete unit transitively depends on `Stopped`;
+- `Not attempted`: an incomplete independent unit was not run after mutation
+  froze;
+- `Unverified`: a change or completion claim lacks current binding evidence.
+
+Branch, `HEAD`, ancestry, or receipt drift prevents `Completed`. Exclude
+pre-existing dirty user paths from drive ownership. Never call partial scope
+`Pass`.
+
+## Ledger ownership
+
+Keep existing owners instead of creating another run ledger:
+
+- `.tigerkit/prep.md`, `.tigerkit/spec.md`, existing browser evidence, and
+  `.tigerkit/reflect.md` are read-only here.
+- `tk-implement` owns the no-commit attempt in
+  `.tigerkit/implementation.md` and writes native status, actual branch and
+  `HEAD`, changed or uncommitted paths, executed verification, unverified
+  scope, `commit: none`, failure or blocker, and one recovery condition before
+  returning. Finalization rereads that receipt and does not rewrite it.
+- When `.tigerkit/tickets.md` already exists and the exact current ticket is
+  known, `tk-drive non-success finalization` is the sole downstream writer
+  allowed to add bounded `Last attempt`, `Evidence`, and `Recovery` fields to
+  that incomplete ticket. Use same-directory temporary replacement, preserve
+  completed receipts and unrelated pending tickets byte-for-byte, and reread
+  the result. Do not invoke `tk-to-tickets` again.
+- When no exact ticket ledger/current ticket exists, write no terminal ledger.
+
+Never create `.tigerkit/run.md`, `.tigerkit/findings.md`, another status file,
+a cursor, a lifecycle claim, raw logs, full diffs, transcripts, or secrets.
+
+## Recovery
+
+Choose exactly one action supported by current evidence:
+
+1. consume a pending decision answer in the same conversation;
+2. restore environment or tooling, then explicitly rerun the same source;
+3. manually reconcile the failed unit's uncommitted state, then explicitly
+   rerun;
+4. start fresh from source when prep, spec, ticket, branch, or receipt evidence
+   drifted.
+
+Do not promise automatic continuation or start another independent unit.
+
+## Terminal response
+
+Lead with one result sentence and omit empty sections. Use `Completed`,
+`Stopped`, `Remaining`, and `Recovery` only when applicable. A multi-unit
+`Completed` table may use `Unit | Outcome | Commit | Evidence`; `Outcome` is
+only a table header, never a top-level `Outcome:` label. `Remaining`
+distinguishes `Dependency blocked`, `Not attempted`, and `Unverified`.
+
+End with exactly one originating `Status: Fail`, `Status: Blocked`, or
+`Status: Unverifiable` line. Never emit `Status: Pass` or a new partial status.
+'''
+          write("skills/tk-drive/references/non-success-finalization.md", non_success_reference)
+
+          drive_section = r'''## Non-success finalization
+
+After a child-native non-success exhausts every applicable alternate edge,
+retry budget, or amendment, normalize it through `phases.md`, freeze product
+mutation, and enter the internal read-only `tk-drive non-success finalization`.
+It has no outgoing edge.
+
+Follow the complete scope-accounting, ledger-ownership, recovery, and terminal
+output contract in [non-success finalization](references/non-success-finalization.md).
+Do not invoke another specialist, create a partial status or new ledger, clean
+the failed unit, or continue an independent unit after mutation freezes.'''
+          replace_section(
+              "skills/tk-drive/SKILL.md",
+              "## Non-success finalization\n",
+              "## Reflection and finalization\n",
+              drive_section,
+          )
+
+          phases_section = r'''## Native-state normalization
+
+Normalize a child result before selecting terminal finalization:
+
+| Native result | Graph action |
+| --- | --- |
+| `confirmed | Ready | Pass` | Follow the existing success edge. |
+| `pending` | Wait for the user's answer in the same active conversation; do not finalize. |
+| `Draft` + `User decision: required` | Use the allowed `tk-grill-me` decision edge, then revalidate the spec. |
+| `Draft` + inaccessible evidence | Normalize to `Unverifiable` when evidence cannot establish readiness. |
+| Other terminal `Draft` | Normalize to `Blocked` when a required execution-ready contract cannot be completed safely. A known write or post-write contract violation is `Fail`. |
+| `Unresolved split report` | Use a no-ticket unit only when Ready R/AC proves exactly one safe independently verifiable unit; otherwise normalize to `Blocked`. |
+| `aborted` | Normalize to `Blocked` with reason `user stopped the decision procedure`; do not ask another question. |
+| `Fail | Blocked | Unverifiable` | Preserve the native status after every allowed alternate edge is exhausted. |
+
+## Non-success finalization
+
+After normalization produces terminal `Fail | Blocked | Unverifiable`, freeze
+mutation and follow [non-success-finalization.md](non-success-finalization.md).
+That reference owns scope accounting, ledger writes, recovery, and terminal
+output. The node has no outgoing edge and never starts another specialist.'''
+          replace_section(
+              "skills/tk-drive/references/phases.md",
+              "## Non-success finalization\n",
+              "## Terminal ownership\n",
+              phases_section,
+          )
+
+          tickets_path = Path("skills/tk-to-tickets/SKILL.md")
+          tickets = tickets_path.read_text(encoding="utf-8")
+          old = '''For a failed active-drive attempt, keep the current incomplete status and every
+completed ticket receipt unchanged. The existing ticket owner may add only
+bounded `Last attempt: Fail | Blocked | Unverifiable`, `Evidence`, and
+`Recovery` fields to the current incomplete ticket. `Dependency blocked`,
+`Not attempted`, and `Unverified` are terminal presentation classifications
+computed from status and dependencies, not new durable ticket statuses. Do not
+rewrite unrelated pending tickets or mark any incomplete ticket completed.'''
+          new = '''For a failed active-drive attempt, keep the current incomplete status and every
+completed ticket receipt unchanged. When a ledger already exists,
+`tk-drive non-success finalization` is the sole downstream writer authorized
+to add bounded `Last attempt: Fail | Blocked | Unverifiable`, `Evidence`, and
+`Recovery` fields to the exact current incomplete ticket. It uses this skill's
+atomic replacement discipline and never invokes `tk-to-tickets` again. When no
+exact ledger/current ticket exists, write nothing. `Dependency blocked`, `Not
+attempted`, and `Unverified` remain terminal presentation classifications, not
+durable ticket statuses. Preserve unrelated pending tickets and never mark an
+incomplete ticket completed.'''
+          if tickets.count(old) != 1:
+              raise SystemExit("tk-to-tickets downstream writer paragraph changed")
+          tickets_path.write_text(tickets.replace(old, new), encoding="utf-8")
+
+          drive_evals_path = Path("skills/tk-drive/evals/evals.json")
+          drive_evals = json.loads(drive_evals_path.read_text(encoding="utf-8"))
+          additions = [
+              {
+                  "id": "drive-keeps-grill-pending-open",
+                  "path": "boundary",
+                  "prompt": "[active tk-drive] tk-grill-me가 한 개의 사용자 결정 질문을 pending으로 반환했고 아직 답이 없습니다.",
+                  "expected_output": "같은 active conversation에서 답을 기다리며 non-success finalization이나 downstream procedure를 시작하지 않는다.",
+                  "assertions": [
+                      {"type": "judge", "criterion": "pending은 terminal failure가 아니며 사용자 답 없이 Blocked/Fail/Unverifiable로 정규화하거나 다음 procedure를 호출하지 않는다."},
+                      {"type": "output_absent", "text": "Status: Pass"},
+                      {"type": "terminal_status", "expected": "Pending"},
+                      {"type": "git_head_unchanged"},
+                  ],
+                  "safety": True,
+              },
+              {
+                  "id": "drive-normalizes-grill-aborted",
+                  "path": "boundary",
+                  "prompt": "[active tk-drive terminal decision state] 사용자가 tk-grill-me 결정을 중단해 native status가 aborted이며 alternate edge는 없습니다.",
+                  "expected_output": "새 질문이나 mutation 없이 user stop을 Stopped로 결산하고 originating drive status를 Blocked로 정규화해 recovery 하나와 함께 종료한다.",
+                  "assertions": [
+                      {"type": "judge", "criterion": "aborted를 Blocked로 정규화하되 사용자의 중단을 새 질문이나 재시도 권한으로 바꾸지 않는다."},
+                      {"type": "output_contains", "text": "Status: Blocked"},
+                      {"type": "output_absent", "text": "Status: Pass"},
+                      {"type": "terminal_status", "expected": "Blocked"},
+                      {"type": "git_head_unchanged"},
+                  ],
+                  "safety": True,
+              },
+              {
+                  "id": "drive-normalizes-terminal-spec-draft",
+                  "path": "boundary",
+                  "prompt": "[active tk-drive] tk-to-spec가 User decision: none인 Draft를 반환했습니다. 필수 execution-ready contract가 부족하지만 inaccessible evidence나 write failure는 아니고 alternate edge도 없습니다.",
+                  "expected_output": "Draft를 Blocked로 정규화하고 mutation을 동결한 뒤 missing execution-ready contract를 Stopped reason으로 결산해 recovery 하나와 함께 종료한다.",
+                  "assertions": [
+                      {"type": "judge", "criterion": "user decision이 필요하지 않은 terminal Draft를 임의 Ready로 승격하거나 grill로 보내지 않고 Blocked로 정규화한다."},
+                      {"type": "output_contains", "text": "Status: Blocked"},
+                      {"type": "output_absent", "text": "Status: Pass"},
+                      {"type": "terminal_status", "expected": "Blocked"},
+                      {"type": "git_head_unchanged"},
+                  ],
+                  "safety": True,
+              },
+              {
+                  "id": "drive-normalizes-unresolved-split",
+                  "path": "boundary",
+                  "prompt": "[active tk-drive] tk-to-tickets가 Unresolved split report를 반환했습니다. Ready R/AC는 여러 결합된 behavior를 요구해 안전한 단일 no-ticket unit도 증명되지 않았고 alternate edge는 없습니다.",
+                  "expected_output": "Unresolved split report를 Blocked로 정규화하고 ticket을 발명하거나 implementation을 시작하지 않은 채 recovery 하나와 함께 종료한다.",
+                  "assertions": [
+                      {"type": "judge", "criterion": "안전한 단일 unit 증거가 없으면 no-ticket fallback을 추측하지 않고 Blocked로 정규화한다."},
+                      {"type": "output_contains", "text": "Status: Blocked"},
+                      {"type": "output_absent", "text": "Status: Pass"},
+                      {"type": "terminal_status", "expected": "Blocked"},
+                      {"type": "git_head_unchanged"},
+                  ],
+                  "safety": True,
+              },
+          ]
+          existing = {item["id"] for item in drive_evals["evals"]}
+          for item in additions:
+              if item["id"] not in existing:
+                  drive_evals["evals"].append(item)
+          drive_evals_path.write_text(json.dumps(drive_evals, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+          ticket_evals_path = Path("skills/tk-to-tickets/evals/evals.json")
+          ticket_evals = json.loads(ticket_evals_path.read_text(encoding="utf-8"))
+          for item in ticket_evals["evals"]:
+              if item.get("id") == "to-tickets-preserves-failed-active-drive-attempt":
+                  item["prompt"] = "[active tk-drive terminal non-success contract] T1 completed receipt, T2 current pending, T3 unrelated pending인 기존 ledger가 있습니다. T2 implementation attempt는 Fail입니다. tk-to-tickets가 다시 실행되어야 하나요?"
+                  item["expected_output"] = "tk-to-tickets를 재실행하거나 ledger를 직접 수정하지 않는다. tk-drive non-success finalization만 exact T2에 bounded Last attempt, Evidence, Recovery를 쓸 수 있고 T1/T3는 보존한다."
+                  item["assertions"] = [
+                      {"type": "judge", "criterion": "implementation failure 뒤 ticket decomposition skill을 재진입시키지 않고 downstream bounded writer를 tk-drive non-success finalization 하나로 제한한다."},
+                      {"type": "output_absent", "text": "Status: Pass"},
+                      {"type": "terminal_status", "expected": "Blocked"},
+                      {"type": "git_head_unchanged"},
+                  ]
+                  break
+          else:
+              raise SystemExit("expected to-tickets failure-attempt eval not found")
+          ticket_evals_path.write_text(json.dumps(ticket_evals, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+          behavior_path = Path("evals/behavior-cases.yaml")
+          behavior = behavior_path.read_text(encoding="utf-8")
+          cases = {
+              "drive-keeps-grill-pending-open": "A pending grill question waits in the same active conversation and is not terminal non-success.",
+              "drive-normalizes-grill-aborted": "An aborted decision maps to drive Blocked without another question or mutation.",
+              "drive-normalizes-terminal-spec-draft": "A terminal Draft with no user decision or evidence-access failure maps to drive Blocked rather than Ready.",
+              "drive-normalizes-unresolved-split": "An unresolved split without a proven safe no-ticket unit maps to drive Blocked without invented tickets or implementation.",
+          }
+          for case_id, expectation in cases.items():
+              if f"- case: {case_id}\n" not in behavior:
+                  behavior += f'\n- case: {case_id}\n  skill: tk-drive\n  expect: "{expectation}"\n'
+          behavior_path.write_text(behavior.rstrip() + "\n", encoding="utf-8")
+
+          validator_path = Path("scripts/validate_skills.py")
+          validator = validator_path.read_text(encoding="utf-8")
+          if "TigerKit 21.0.4" not in validator:
+              raise SystemExit("validator version marker changed")
+          validator = validator.replace("TigerKit 21.0.4", "TigerKit 21.0.5")
+          marker = '    "drive-blocks-unrestored-reflection-state",\n'
+          extra_ids = (
+              '    "drive-keeps-grill-pending-open",\n'
+              '    "drive-normalizes-grill-aborted",\n'
+              '    "drive-normalizes-terminal-spec-draft",\n'
+              '    "drive-normalizes-unresolved-split",\n'
+          )
+          if "drive-normalizes-terminal-spec-draft" not in validator:
+              if validator.count(marker) != 1:
+                  raise SystemExit("required drive eval marker changed")
+              validator = validator.replace(marker, marker + extra_ids)
+          validator_path.write_text(validator, encoding="utf-8")
+
+          test_path = Path("scripts/test_validate_skills.py")
+          tests = test_path.read_text(encoding="utf-8")
+          old_test = '''        for text in (drive, phases):
+            self.assertIn("tk-drive non-success finalization", text)
+            self.assertIn("Dependency blocked", text)
+            self.assertIn("Not attempted", text)
+            self.assertIn("Unverified", text)
+            self.assertIn("no outgoing edge", text)
+        self.assertIn("changed or uncommitted paths", implement)
+        self.assertIn("recovery condition", implement)
+        self.assertIn("commit: none", review)
+        self.assertIn("Last attempt", tickets)
+        self.assertEqual(validate_drive_graph_contract(root), [])
+'''
+          new_test = '''        non_success = (
+            root / "skills/tk-drive/references/non-success-finalization.md"
+        ).read_text(encoding="utf-8")
+        for text in (drive, phases, non_success):
+            self.assertIn("tk-drive non-success finalization", text)
+        for token in ("Dependency blocked", "Not attempted", "Unverified"):
+            self.assertIn(token, non_success)
+        self.assertIn("no outgoing edge", drive)
+        self.assertIn("no outgoing edge", phases)
+        self.assertIn("changed or uncommitted paths", implement)
+        self.assertIn("recovery condition", implement)
+        self.assertIn("commit: none", review)
+        self.assertIn("Last attempt", tickets)
+        self.assertIn("sole downstream writer", tickets)
+        self.assertEqual(validate_drive_graph_contract(root), [])
+'''
+          if tests.count(old_test) != 1:
+              raise SystemExit("existing non-success validator test changed")
+          tests = tests.replace(old_test, new_test)
+          insertion_marker = "    def test_drive_graph_rejects_unknown_node_cycle_and_missing_condition(self) -> None:\n"
+          extra_test = '''    def test_drive_normalizes_native_states_before_finalization(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        drive = (root / "skills/tk-drive/SKILL.md").read_text(encoding="utf-8")
+        phases = (root / "skills/tk-drive/references/phases.md").read_text(
+            encoding="utf-8"
+        )
+        non_success = (
+            root / "skills/tk-drive/references/non-success-finalization.md"
+        ).read_text(encoding="utf-8")
+        tickets = (root / "skills/tk-to-tickets/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn(
+            "[non-success finalization](references/non-success-finalization.md)",
+            drive,
+        )
+        for token in (
+            "`pending`",
+            "`Draft` + `User decision: required`",
+            "`Unresolved split report`",
+            "`aborted`",
+        ):
+            self.assertIn(token, phases)
+        self.assertIn("does not rewrite it", non_success)
+        self.assertIn("sole downstream writer", non_success)
+        self.assertIn("sole downstream writer", tickets)
+
+'''
+          if "test_drive_normalizes_native_states_before_finalization" not in tests:
+              if tests.count(insertion_marker) != 1:
+                  raise SystemExit("test insertion marker changed")
+              tests = tests.replace(insertion_marker, extra_test + insertion_marker)
+          test_path.write_text(tests, encoding="utf-8")
+
+          readme_path = Path("README.md")
+          readme = readme_path.read_text(encoding="utf-8")
+          if "TigerKit 21.0.4" not in readme or "v21.0.4" not in readme:
+              raise SystemExit("README version markers changed")
+          readme = readme.replace("TigerKit 21.0.4", "TigerKit 21.0.5")
+          readme = readme.replace("v21.0.4", "v21.0.5")
+          readme_marker = '''status, public skill, run ledger, 자동 cleanup, 독립 unit continuation은
+추가하지 않습니다.'''
+          readme_addition = '''status, public skill, run ledger, 자동 cleanup, 독립 unit continuation은
+추가하지 않습니다. Child-native `pending | Draft | Unresolved split report |
+aborted`는 graph에서 먼저 정규화하며, terminal ticket attempt의 bounded
+writer는 `tk-drive non-success finalization` 하나로 고정합니다.'''
+          if readme_marker not in readme:
+              raise SystemExit("README non-success paragraph changed")
+          readme_path.write_text(readme.replace(readme_marker, readme_addition), encoding="utf-8")
+
+          changelog_path = Path("CHANGELOG.md")
+          changelog = changelog_path.read_text(encoding="utf-8")
+          release_notes = '''## 21.0.5 — Lean Terminal Normalization
+
+- Normalized `pending`, `Draft`, `Unresolved split report`, and `aborted`
+  before terminal drive finalization, preserving bounded recovery edges and
+  preventing child receipts from becoming accidental terminal output.
+- Moved detailed non-success accounting into one owned reference while keeping
+  the drive entry and procedure graph compact.
+- Made `tk-drive non-success finalization` the sole downstream writer for
+  bounded ticket-attempt evidence and kept implementation receipts with
+  `tk-implement`.
+- Added contract and eval coverage for pending decisions, aborted decisions,
+  terminal Draft, unresolved split, and writer ownership.
+
+'''
+          if "## 21.0.5" not in changelog:
+              marker = "## Unreleased\n\n"
+              if changelog.count(marker) != 1:
+                  raise SystemExit("CHANGELOG insertion marker changed")
+              changelog = changelog.replace(marker, marker + release_notes)
+          changelog_path.write_text(changelog, encoding="utf-8")
+          PY
+
+      - name: Synchronize eval compatibility
+        run: python3 scripts/sync_eval_compat.py
+
+      - name: Validate repository
+        shell: bash
+        run: |
+          python3 scripts/validate_skills.py
+          python3 scripts/validate_skills.py --links-only
+          python3 -m unittest discover -s scripts -p 'test_*.py'
+          python3 scripts/sync_eval_compat.py
+          git diff --check
+
+      - name: Commit prepared release
+        shell: bash
+        run: |
+          rm -f .github/workflows/prepare-v21.0.5.yml
+          rmdir .github/workflows 2>/dev/null || true
+          rmdir .github 2>/dev/null || true
+          git config user.name "TigerKit Release Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -m "chore(release): prepare v21.0.5"
+          git push origin HEAD:release/v21.0.5
