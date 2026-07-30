@@ -115,6 +115,12 @@ TERMINAL_SUMMARY_GATE = (
     "A skill without such an owner must not create one solely to store a receipt, and a read-only skill remains read-only. "
     "Never require a shared runtime reference outside this skill."
 )
+DRIVE_TRANSITION_DEBT_GATE = (
+    "Immediately before emitting terminal `---`, run the transition-debt check.\n"
+    "Terminal output is prohibited while any consumed successful receipt still has\n"
+    "an unexecuted `Outstanding transition`; execute the recorded transition in the\n"
+    "same active turn or return the one evidence-supported non-success state."
+)
 RESPONSE_LANGUAGE_GATE = (
     "### 🔴 HARD GATE · response language\n\n"
     "Before any user-facing progress, question, or summary, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. "
@@ -334,6 +340,7 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-bounds-nested-skills",
     "drive-invokes-phase-owners",
     "drive-continues-after-ready-spec",
+    "drive-checks-transition-debt-before-terminal-output",
     "drive-rejects-missing-transition-echo",
     "drive-requires-spec-for-trivial-task",
     "drive-invokes-grill-on-unresolved-decision",
@@ -553,6 +560,24 @@ def validate_terminal_summary_contract(root: Path) -> list[str]:
     return errors
 
 
+def validate_drive_transition_debt_contract(root: Path) -> list[str]:
+    errors: list[str] = []
+    for relative in (
+        "skills/tk-drive/SKILL.md",
+        "skills/tk-drive/references/phases.md",
+    ):
+        path = root / relative
+        if (
+            not path.is_file()
+            or path.read_text(encoding="utf-8").count(DRIVE_TRANSITION_DEBT_GATE)
+            != 1
+        ):
+            errors.append(
+                f"{relative}: preserve exactly one terminal transition-debt gate"
+            )
+    return errors
+
+
 def validate_skill(path: Path) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -714,23 +739,24 @@ def validate_repository_contract() -> list[str]:
     )
     for relative in required_files:
         if not (ROOT / relative).is_file():
-            errors.append(f"{relative}: required TigerKit 20.3.0 repository file is missing")
+            errors.append(f"{relative}: required TigerKit 20.3.1 repository file is missing")
     errors.extend(validate_local_only_workflows(ROOT))
     errors.extend(validate_skill_language(ROOT))
     errors.extend(validate_user_decision_contract(ROOT))
     errors.extend(validate_actionable_output_contract(ROOT))
     errors.extend(validate_terminal_summary_contract(ROOT))
+    errors.extend(validate_drive_transition_debt_contract(ROOT))
     errors.extend(validate_response_language_contract(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
-            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 20.3.0")
+            errors.append(f"{relative}: remove legacy/runtime surface from TigerKit 20.3.1")
     errors.extend(validate_runtime_scratch(ROOT))
     ignored = (ROOT / ".gitignore").read_text(encoding="utf-8") if (ROOT / ".gitignore").is_file() else ""
     if ".tigerkit/" not in ignored.splitlines():
         errors.append(".gitignore: document TigerKit repo-local scratch with .tigerkit/")
     required_text = {
         "README.md": (
-            "TigerKit 20.3.0",
+            "TigerKit 20.3.1",
             "14",
             "Claude Code",
             "Codex",
@@ -739,7 +765,7 @@ def validate_repository_contract() -> list[str]:
             "사용 시나리오",
         ),
         "MIGRATION.md": (
-            "TigerKit 20.3.0",
+            "TigerKit 20.3.1",
             "Removed Skills",
             "model-only",
             "hybrid",

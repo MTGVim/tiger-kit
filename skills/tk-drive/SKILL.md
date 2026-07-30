@@ -140,6 +140,10 @@ metadata block.
 
 Return control only with that final summary or an explicit phase-stop result;
 first assert that every consumed success receipt has its next transition.
+Immediately before emitting terminal `---`, run the transition-debt check.
+Terminal output is prohibited while any consumed successful receipt still has
+an unexecuted `Outstanding transition`; execute the recorded transition in the
+same active turn or return the one evidence-supported non-success state.
 Reference child receipts internally instead of copying their evidence; never
 expose a child handoff envelope or invoke reflection outside the successful
 drive tail.

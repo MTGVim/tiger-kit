@@ -137,6 +137,10 @@ do not silently return or ask the user to invoke drive again; emit the
 evidence-supported non-success terminal summary if no valid transition exists.
 For an active-drive success receipt, first verify its verbatim
 `Outstanding transition` echo, then execute that transition in the same turn.
+Immediately before emitting terminal `---`, run the transition-debt check.
+Terminal output is prohibited while any consumed successful receipt still has
+an unexecuted `Outstanding transition`; execute the recorded transition in the
+same active turn or return the one evidence-supported non-success state.
 
 The stop set is closed. Drive may return control only to clear initial SSOT
 ambiguity, obtain a newly evidenced user-owned decision, honor an explicit

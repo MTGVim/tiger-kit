@@ -1,7 +1,13 @@
-# TigerKit 20.3.0 terminal summaries and internal receipts
+# TigerKit 20.3.1 terminal transition-debt gate
 
 The 14 canonical skill names and the 2 user-invoked / 12 hybrid split remain
 unchanged. Consumers only need to refresh the installed package.
+
+`tk-drive` now performs one explicit transition-debt check immediately before
+terminal `---` output. A successful child receipt with an unexecuted
+`Outstanding transition` continues in the same active turn or returns the one
+evidence-supported non-success state; it is never exposed as a terminal
+response boundary.
 
 Every skill now embeds the same actionable-output presentation gate while
 keeping its existing canonical headings, tables, status tokens,

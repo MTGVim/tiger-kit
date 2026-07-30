@@ -430,6 +430,9 @@
 - case: drive-continues-after-ready-spec
   skill: tk-drive
   expect: "A consumed Ready spec is never a response boundary: drive makes the ticket decision and continues through implementation and aggregate verification in the same active turn, or returns an explicit evidence-supported terminal summary."
+- case: drive-checks-transition-debt-before-terminal-output
+  skill: tk-drive
+  expect: "Immediately before terminal `---`, drive rejects any consumed successful receipt whose recorded `Outstanding transition` has not executed; it continues that transition in the same active turn or returns one evidence-supported non-success state."
 - case: drive-rejects-missing-transition-echo
   skill: tk-drive
   expect: "A missing or mismatched child `Outstanding transition` echo is receipt drift and stops drive Blocked instead of being consumed as success."

@@ -1,4 +1,4 @@
-# TigerKit 20.3.0
+# TigerKit 20.3.1
 
 <p align="center">
   <img src="assets/tigerkit-cover.png" width="960" alt="TigerKit Agent Skills 표지">
@@ -8,15 +8,18 @@ TigerKit은 Claude Code, Codex, Hermes Agent용 소규모 엔지니어링 Agent 
 모음입니다. 중앙 workflow runtime 없이 14개 self-contained skill을
 `npx skills`로 배포합니다. Decision closure, spec, ticket, implementation은
 각각 하나의 canonical phase skill이 소유하고 `tk-drive`가 그 결과를
-단방향으로 오케스트레이션합니다. 최신 immutable release는 `v20.3.0`이며,
+단방향으로 오케스트레이션합니다. 최신 immutable release는 `v20.3.1`이며,
 현재 `main`에는 다음 release를 위한 skill 변경이 포함될 수 있습니다.
 
-`v20.3.0` release는 모든 terminal user summary를 정확히 한 번의 Markdown
+`v20.3.1` release는 모든 terminal user summary를 정확히 한 번의 Markdown
 `---` 뒤에서 시작하고, 맨 아래 Receipt block과 반복 `Outcome:` label을
 제거합니다. 진행 commentary와 active-drive phase handoff는 이 경계를 만들지
 않습니다. Phase receipt는 내부 control envelope로 유지되고, 장기 provenance는
 각 skill이 이미 소유한 spec·tickets·implementation·handoff·browser ledger에만
 남습니다. 공용 receipt ledger나 read-only skill의 새 write surface는 없습니다.
+`tk-drive`는 terminal boundary 직전에 transition debt를 검사하므로 성공한
+child receipt의 `Outstanding transition`이 실행되기 전에는 최종 응답으로
+종료할 수 없습니다.
 
 14개 canonical skill 모두 최신 명시 언어 지시를 우선하는 response-language
 hard gate를 포함합니다. 별도 지시가 없으면 현재 사용자 메시지의 언어를
@@ -54,10 +57,10 @@ npx skills add MTGVim/tiger-kit \
   --skill tk-browser-verify
 ```
 
-변경되지 않는 `v20.3.0` snapshot:
+변경되지 않는 `v20.3.1` snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v20.3.0" \
+npx skills add "MTGVim/tiger-kit#v20.3.1" \
   --global \
   --agent claude-code \
   --agent codex \

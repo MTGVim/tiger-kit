@@ -8,6 +8,7 @@ import unittest
 if __package__:
     from scripts.validate_skills import (
         ACTIONABLE_OUTPUT_GATE,
+        DRIVE_TRANSITION_DEBT_GATE,
         EXPECTED_SKILLS,
         REQUIRED_BEHAVIOR_CASES,
         RESULT_BUDGET_TOKENS,
@@ -17,6 +18,7 @@ if __package__:
         validate_actionable_output_contract,
         validate_local_only_workflows,
         validate_catalog_routing,
+        validate_drive_transition_debt_contract,
         validate_release_alignment,
         validate_release_version_contract,
         validate_response_language_contract,
@@ -30,6 +32,7 @@ if __package__:
 else:
     from validate_skills import (
         ACTIONABLE_OUTPUT_GATE,
+        DRIVE_TRANSITION_DEBT_GATE,
         EXPECTED_SKILLS,
         REQUIRED_BEHAVIOR_CASES,
         RESULT_BUDGET_TOKENS,
@@ -39,6 +42,7 @@ else:
         validate_actionable_output_contract,
         validate_local_only_workflows,
         validate_catalog_routing,
+        validate_drive_transition_debt_contract,
         validate_release_alignment,
         validate_release_version_contract,
         validate_response_language_contract,
@@ -206,6 +210,39 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 self.assertIn("`Return to: tk-drive`", text)
                 self.assertIn("`Outstanding transition`", text)
                 self.assertIn("verbatim", text)
+
+    def test_drive_transition_debt_gate_rejects_one_weakened_source(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source_root = Path(__file__).resolve().parents[1]
+            for relative in (
+                "skills/tk-drive/SKILL.md",
+                "skills/tk-drive/references/phases.md",
+            ):
+                target = root / relative
+                target.parent.mkdir(parents=True)
+                text = (source_root / relative).read_text(encoding="utf-8")
+                if relative.endswith("/SKILL.md"):
+                    text = text.replace(
+                        DRIVE_TRANSITION_DEBT_GATE,
+                        DRIVE_TRANSITION_DEBT_GATE.replace(
+                            "Terminal output is prohibited",
+                            "Terminal output is discouraged",
+                            1,
+                        ),
+                        1,
+                    )
+                target.write_text(text, encoding="utf-8")
+
+            errors = validate_drive_transition_debt_contract(root)
+
+            self.assertEqual(
+                errors,
+                [
+                    "skills/tk-drive/SKILL.md: preserve exactly one terminal "
+                    "transition-debt gate"
+                ],
+            )
 
     def test_drive_requires_spec_for_trivial_tasks(self) -> None:
         root = Path(__file__).resolve().parents[1]
@@ -504,6 +541,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
         self.assertEqual(validate_response_language_contract(root), [])
         self.assertEqual(validate_actionable_output_contract(root), [])
         self.assertEqual(validate_terminal_summary_contract(root), [])
+        self.assertEqual(validate_drive_transition_debt_contract(root), [])
 
     def test_response_language_gate_rejects_one_weakened_skill(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

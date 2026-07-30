@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 20.3.1 — Terminal Transition-Debt Gate
+
+- Added an explicit last-mile `tk-drive` transition-debt check immediately
+  before terminal `---` output. A consumed successful child receipt with an
+  unexecuted `Outstanding transition` can no longer become a response
+  boundary.
+- Added a deterministic contract mutation test while preserving the existing
+  host-generic event-order assertion and Codex continuation canary.
+
 ## 20.3.0 — Terminal Summaries and Internal Receipts
 
 - Added the same actionable-output hard gate to all 14 self-contained skills:
