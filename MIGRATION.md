@@ -1,3 +1,24 @@
+# Unreleased terminal opening and strategy preflight
+
+The catalog remains at 15 skills, but the explicit persistent output utility
+is renamed:
+
+```text
+old: /tk-focus
+new: /tk-recap
+```
+
+Use `stop recap mode`, `stop adhd mode`, or `normal mode` to disable it.
+Terminal user responses now begin directly with the owning canonical heading
+or result sentence; the leading Markdown `---` separator is no longer emitted.
+
+`tk-drive` Preparing now reviews material implementation and verification
+strategy before product mutation. Browser evidence is classified
+`required | optional | N/A`; selected browser routes bind non-identifying
+environment, role/tenant, opaque profile, authentication, and safe-interaction
+hints in the Ready spec. An exact runtime identity is intentionally omitted
+and marked for one cold-start re-request instead of being persisted.
+
 # TigerKit 21.0.0 single-drive preparation and focus mode
 
 TigerKit 21 expands the catalog to 15 canonical skills: 3 user-invoked and

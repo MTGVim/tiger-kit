@@ -74,7 +74,7 @@ RESULT_BUDGET_TOKENS = {
     "tk-ask-repo": ("one to three short paragraphs", "two to seven results", "top five to seven"),
     "tk-browser-verify": ("two to seven verified scenarios", "top five to seven"),
     "tk-drive": ("two to seven behavior-level bullets", "one to four aggregate-result bullets", "top five to seven"),
-    "tk-focus": ("## Rules", "## When to break the rules"),
+    "tk-recap": ("## Rules", "## When to break the rules"),
     "tk-grill-me": ("two to seven readable", "top five to seven"),
     "tk-grooming": ("two to seven findings", "top five to seven"),
     "tk-handoff": ("two to five short bullets", "top five to seven"),
@@ -90,8 +90,9 @@ RESULT_BUDGET_TOKENS = {
 TERMINAL_SUMMARY_GATE = (
     "### 🔴 HARD GATE · terminal user summary\n\n"
     "Treat progress commentary, internal handoff envelopes, and the terminal user response as distinct surfaces. "
-    "Before the first line of every terminal user-facing response, emit exactly one standalone `---` line, then begin immediately with the skill's canonical result heading or result sentence. "
-    "Do not emit this separator in progress commentary or between a successful phase receipt and the next active-drive phase invocation.\n\n"
+    "Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. "
+    "Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. "
+    "Do not emit a terminal user-summary opening between a successful phase receipt and the next active-drive phase invocation.\n\n"
     "Do not render a receipt heading, `Outcome:` label, or terminal provenance/status block in the user summary. "
     "When the host or skill requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. "
     "Expose a path, ID, commit, or recovery detail only when it changes user action or the skill's canonical result schema requires it. "
@@ -101,7 +102,7 @@ TERMINAL_SUMMARY_GATE = (
     "Never require a shared runtime reference outside this skill."
 )
 DRIVE_TRANSITION_DEBT_GATE = (
-    "Immediately before emitting terminal `---`, run the transition-debt check.\n"
+    "Immediately before emitting the terminal user summary, run the transition-debt check.\n"
     "Terminal output is prohibited while any consumed successful receipt still has\n"
     "an unexecuted `Outstanding transition`; execute the recorded transition in the\n"
     "same active turn or return the one evidence-supported non-success state."
@@ -123,13 +124,21 @@ DRIVE_CORRECTIVE_BOUND_TOKENS = (
     "at most three",
     "fourth cycle",
 )
-FOCUS_CONTRACT_TOKENS = (
+BROWSER_PREFLIGHT_TOKENS = (
+    "required | optional | N/A",
+    "material user-owned",
+    "opaque profile",
+    "intentionally omitted",
+    "re-request",
+    "not a Preparing amendment",
+)
+RECAP_CONTRACT_TOKENS = (
     "disable-model-invocation: true",
     "origin: ayghri/i-have-adhd",
     "relationship: adapted",
     "upstream-skill: skills/i-have-adhd/SKILL.md",
     "## Persistence",
-    "stop focus mode",
+    "stop recap mode",
     "stop adhd mode",
     "normal mode",
     "## Rules",
@@ -184,7 +193,7 @@ CATALOG_ROUTING_BOUNDARIES = {
     "tk-drive vs tk-handoff/generic continue",
     "tk-drive vs tk-grill-me",
     "tk-drive explicit source vs generic request",
-    "tk-focus explicit invocation vs implicit formatting",
+    "tk-recap explicit invocation vs implicit formatting",
     "tk-merge-conflict vs ordinary conflict-marker edit",
     "tk-skill-diagnose vs ordinary application/code debugging",
     "tk-skill-diagnose vs tk-grooming",
@@ -205,7 +214,7 @@ EXPECTED_SKILLS = {
     "tk-implement",
     "tk-learn",
     "tk-merge-conflict",
-    "tk-focus",
+    "tk-recap",
     "tk-prototype",
     "tk-reflect",
     "tk-skill-diagnose",
@@ -215,7 +224,7 @@ EXPECTED_SKILLS = {
 USER_INVOKED_SKILLS = {
     "tk-ask-repo",
     "tk-drive",
-    "tk-focus",
+    "tk-recap",
 }
 HYBRID_SKILLS = EXPECTED_SKILLS - USER_INVOKED_SKILLS
 KEBAB = re.compile(r"^tk-[a-z0-9]+(?:-[a-z0-9]+)*$")
@@ -237,9 +246,9 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-preserves-terminal-on-failed-preparing",
     "drive-reseals-one-active-amendment",
     "drive-continues-automatically-after-ready",
-    "focus-explicit-activation",
-    "focus-stop-command",
-    "focus-safety-exception",
+    "recap-explicit-activation",
+    "recap-stop-command",
+    "recap-safety-exception",
     "implement-auto-decides-unspecified-strategy",
     "implement-respects-explicit-strategy",
     "implement-routes-visible-ui-through-browser-verify",
@@ -540,7 +549,7 @@ def validate_local_only_workflows(root: Path) -> list[str]:
 def validate_user_decision_contract(root: Path) -> list[str]:
     errors: list[str] = []
     for skill in sorted(EXPECTED_SKILLS):
-        if skill == "tk-focus":
+        if skill == "tk-recap":
             continue
         path = root / "skills" / skill / "SKILL.md"
         if not path.is_file():
@@ -559,7 +568,7 @@ def validate_user_decision_contract(root: Path) -> list[str]:
 def validate_response_language_contract(root: Path) -> list[str]:
     errors: list[str] = []
     for skill in sorted(EXPECTED_SKILLS):
-        if skill == "tk-focus":
+        if skill == "tk-recap":
             continue
         path = root / "skills" / skill / "SKILL.md"
         if not path.is_file():
@@ -579,7 +588,7 @@ def validate_terminal_summary_contract(root: Path) -> list[str]:
     language_heading = RESPONSE_LANGUAGE_GATE.splitlines()[0]
     forbidden = ("`Outcome: <one user-facing sentence>`", "## Receipt")
     for skill in sorted(EXPECTED_SKILLS):
-        if skill == "tk-focus":
+        if skill == "tk-recap":
             continue
         path = root / "skills" / skill / "SKILL.md"
         if not path.is_file():
@@ -650,17 +659,34 @@ def validate_prepared_drive_contract(root: Path) -> list[str]:
     return errors
 
 
-def validate_single_drive_focus_contract(root: Path) -> list[str]:
+def validate_browser_preflight_contract(root: Path) -> list[str]:
+    errors: list[str] = []
+    for relative in (
+        "skills/tk-drive/SKILL.md",
+        "skills/tk-drive/references/phases.md",
+    ):
+        path = root / relative
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        missing = [token for token in BROWSER_PREFLIGHT_TOKENS if token not in text]
+        if missing:
+            errors.append(
+                f"{relative}: preserve conditional browser strategy preflight "
+                f"({', '.join(missing)})"
+            )
+    return errors
+
+
+def validate_single_drive_recap_contract(root: Path) -> list[str]:
     errors: list[str] = []
     if (root / "skills" / "tk-prep").exists():
         errors.append("skills/tk-prep: remove the public preparation skill surface")
 
-    focus_path = root / "skills" / "tk-focus" / "SKILL.md"
-    focus = focus_path.read_text(encoding="utf-8") if focus_path.is_file() else ""
-    missing = [token for token in FOCUS_CONTRACT_TOKENS if token not in focus]
+    recap_path = root / "skills" / "tk-recap" / "SKILL.md"
+    recap = recap_path.read_text(encoding="utf-8") if recap_path.is_file() else ""
+    missing = [token for token in RECAP_CONTRACT_TOKENS if token not in recap]
     if missing:
         errors.append(
-            "skills/tk-focus/SKILL.md: preserve explicit adapted focus-mode contract "
+            "skills/tk-recap/SKILL.md: preserve explicit adapted recap-mode contract "
             + ", ".join(repr(token) for token in missing)
         )
 
@@ -860,7 +886,8 @@ def validate_repository_contract() -> list[str]:
     errors.extend(validate_terminal_summary_contract(ROOT))
     errors.extend(validate_drive_transition_debt_contract(ROOT))
     errors.extend(validate_prepared_drive_contract(ROOT))
-    errors.extend(validate_single_drive_focus_contract(ROOT))
+    errors.extend(validate_browser_preflight_contract(ROOT))
+    errors.extend(validate_single_drive_recap_contract(ROOT))
     errors.extend(validate_learning_loop_contract(ROOT))
     errors.extend(validate_response_language_contract(ROOT))
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):

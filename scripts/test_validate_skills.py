@@ -17,6 +17,7 @@ if __package__:
         parse_latest_changelog_version,
         validate_local_only_workflows,
         validate_catalog_routing,
+        validate_browser_preflight_contract,
         validate_drive_transition_debt_contract,
         validate_learning_loop_contract,
         validate_prepared_drive_contract,
@@ -24,7 +25,7 @@ if __package__:
         validate_release_version_contract,
         validate_response_language_contract,
         validate_runtime_scratch,
-        validate_single_drive_focus_contract,
+        validate_single_drive_recap_contract,
         validate_skill_language,
         validate_terminal_summary_contract,
         validate_user_decision_contract,
@@ -43,6 +44,7 @@ else:
         parse_latest_changelog_version,
         validate_local_only_workflows,
         validate_catalog_routing,
+        validate_browser_preflight_contract,
         validate_drive_transition_debt_contract,
         validate_learning_loop_contract,
         validate_prepared_drive_contract,
@@ -50,7 +52,7 @@ else:
         validate_release_version_contract,
         validate_response_language_contract,
         validate_runtime_scratch,
-        validate_single_drive_focus_contract,
+        validate_single_drive_recap_contract,
         validate_skill_language,
         validate_terminal_summary_contract,
         validate_user_decision_contract,
@@ -73,7 +75,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "tk-implement",
                 "tk-learn",
                 "tk-merge-conflict",
-                "tk-focus",
+                "tk-recap",
                 "tk-prototype",
                 "tk-reflect",
                 "tk-skill-diagnose",
@@ -82,7 +84,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
             },
         )
         self.assertEqual(
-            USER_INVOKED_SKILLS, {"tk-ask-repo", "tk-drive", "tk-focus"}
+            USER_INVOKED_SKILLS, {"tk-ask-repo", "tk-drive", "tk-recap"}
         )
         self.assertTrue(
             {
@@ -102,9 +104,9 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "drive-preserves-terminal-on-failed-preparing",
                 "drive-reseals-one-active-amendment",
                 "drive-continues-automatically-after-ready",
-                "focus-explicit-activation",
-                "focus-stop-command",
-                "focus-safety-exception",
+                "recap-explicit-activation",
+                "recap-stop-command",
+                "recap-safety-exception",
                 "drive-requires-explicit-start",
                 "drive-resumes-preparing-decision-answer",
                 "drive-bounds-result-cardinality",
@@ -303,16 +305,16 @@ class CanonicalSkillContractTest(unittest.TestCase):
             self.assertIn("same active", text)
         self.assertNotIn("tk-prep", drive)
 
-    def test_focus_is_explicit_adapted_and_not_shared(self) -> None:
+    def test_recap_is_explicit_adapted_and_not_shared(self) -> None:
         root = Path(__file__).resolve().parents[1]
-        focus = (root / "skills/tk-focus/SKILL.md").read_text(encoding="utf-8")
+        recap = (root / "skills/tk-recap/SKILL.md").read_text(encoding="utf-8")
 
-        self.assertIn("disable-model-invocation: true", focus)
-        self.assertIn("origin: ayghri/i-have-adhd", focus)
-        self.assertIn("relationship: adapted", focus)
-        self.assertIn("## Persistence", focus)
-        self.assertIn("## When to break the rules", focus)
-        self.assertEqual(validate_single_drive_focus_contract(root), [])
+        self.assertIn("disable-model-invocation: true", recap)
+        self.assertIn("origin: ayghri/i-have-adhd", recap)
+        self.assertIn("relationship: adapted", recap)
+        self.assertIn("## Persistence", recap)
+        self.assertIn("## When to break the rules", recap)
+        self.assertEqual(validate_single_drive_recap_contract(root), [])
 
     def test_drive_event_recorder_command_is_unambiguous(self) -> None:
         root = Path(__file__).resolve().parents[1]
@@ -755,8 +757,8 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 )
                 if skill == "tk-ask-repo":
                     text = text.replace(
-                        "exactly one standalone `---` line",
-                        "an optional standalone `---` line",
+                        "Do not emit a standalone separator",
+                        "A standalone separator is optional",
                         1,
                     )
                 target.write_text(text, encoding="utf-8")
@@ -765,6 +767,38 @@ class CanonicalSkillContractTest(unittest.TestCase):
 
             self.assertEqual(len(errors), 1)
             self.assertIn("tk-ask-repo", errors[0])
+
+    def test_drive_browser_preflight_is_material_private_and_cold_start_safe(
+        self,
+    ) -> None:
+        root = Path(__file__).resolve().parents[1]
+
+        self.assertEqual(validate_browser_preflight_contract(root), [])
+
+    def test_drive_browser_preflight_rejects_one_weakened_surface(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source_root = Path(__file__).resolve().parents[1]
+            for relative in (
+                "skills/tk-drive/SKILL.md",
+                "skills/tk-drive/references/phases.md",
+            ):
+                source = source_root / relative
+                target = root / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                text = source.read_text(encoding="utf-8")
+                if relative.endswith("SKILL.md"):
+                    text = text.replace(
+                        "re-request on cold start",
+                        "reuse the hidden identity",
+                        1,
+                    )
+                target.write_text(text, encoding="utf-8")
+
+            errors = validate_browser_preflight_contract(root)
+
+            self.assertEqual(len(errors), 1)
+            self.assertIn("skills/tk-drive/SKILL.md", errors[0])
 
     def test_terminal_summary_gate_rejects_one_duplicate(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -885,7 +919,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
             "`clarify`",
         )
 
-        for skill in EXPECTED_SKILLS - {"tk-focus"}:
+        for skill in EXPECTED_SKILLS - {"tk-recap"}:
             with self.subTest(skill=skill):
                 text = (root / "skills" / skill / "SKILL.md").read_text(
                     encoding="utf-8"
@@ -921,7 +955,7 @@ class CanonicalSkillContractTest(unittest.TestCase):
             ),
             "tk-learn": ("Lead with the promotion or no-op decision", "`Target path`"),
             "tk-merge-conflict": ("Use only non-empty sections in this order", "`Blocked: no active conflict`"),
-            "tk-focus": ("## Rules", "## When to break the rules"),
+            "tk-recap": ("## Rules", "## When to break the rules"),
             "tk-prototype": ("Record decision-relevant status once", "Keep command mechanics after the decision"),
             "tk-reflect": ("In chat, emit only", "no raw logs, transcripts, diff excerpts"),
             "tk-skill-diagnose": ("In chat, emit `## Diagnosis`", "Never copy raw logs, transcripts"),

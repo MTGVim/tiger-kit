@@ -81,6 +81,15 @@
       "should_trigger": true
     },
     {
+      "id": "validation-positive-9",
+      "split": "validation",
+      "query": "[active tk-browser-verify pending runtime identity] tenant A의 work-admin profile을 사용해",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
       "id": "validation-negative-1",
       "split": "validation",
       "query": "서버 내부 로그 문구만 수정해줘",
@@ -126,6 +135,12 @@
       "id": "validation-negative-8",
       "split": "validation",
       "query": "CSS 변경 없이 접근성 원칙을 설명해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-9",
+      "split": "validation",
+      "query": "다른 작업 얘긴데 예전에 work-admin profile을 썼어",
       "should_trigger": false
     }
   ]

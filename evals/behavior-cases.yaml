@@ -432,7 +432,7 @@
   expect: "A successful atomic prep claim is never a response boundary: drive continues through prepared implementation, aggregate verification, reflection, and terminal state."
 - case: drive-checks-transition-debt-before-terminal-output
   skill: tk-drive
-  expect: "Immediately before terminal `---`, drive rejects any consumed successful receipt whose recorded `Outstanding transition` has not executed; it continues that transition in the same active turn or returns one evidence-supported non-success state."
+  expect: "Immediately before the terminal user summary, drive rejects any consumed successful receipt whose recorded `Outstanding transition` has not executed; it continues that transition in the same active turn or returns one evidence-supported non-success state."
 - case: drive-rejects-missing-transition-echo
   skill: tk-drive
   expect: "A missing or mismatched child `Outstanding transition` echo is receipt drift and stops drive Blocked instead of being consumed as success."
@@ -442,6 +442,18 @@
 - case: drive-skips-grill-for-ready-source
   skill: tk-drive
   expect: "Drive skips tk-grill-me when confirmed source and evidence already support a Ready spec without a user-owned decision."
+- case: drive-preflights-material-strategy
+  skill: tk-drive
+  expect: "Preparing inspects implementation and verification strategy before product mutation, resolves repository-evidenced and implementation-owned facts itself, and asks one at a time only about material user-owned choices."
+- case: drive-classifies-browser-strategy-conditionally
+  skill: tk-drive
+  expect: "Browser evidence is classified required, optional, or N/A; only a required or selected optional route binds target environment, mode, role/tenant, opaque profile hint, auth expectation, and safe interactions."
+- case: drive-browser-na-is-silent
+  skill: tk-drive
+  expect: "A task with no browser-relevant behavior records browser evidence as N/A without asking an account/profile question or creating an empty browser strategy section."
+- case: drive-rehydrates-omitted-browser-identity
+  skill: tk-drive
+  expect: "Preparation persists only non-identifying browser hints plus an intentionally-omitted cold-start marker; a fresh executor re-requests the exact runtime identity once before launch without consuming a Preparing amendment."
 - case: drive-amends-on-first-new-decision
   skill: tk-drive
   expect: "The first late user-owned decision enters one bounded Preparing amendment, revalidates the spec and affected tickets, reseals, and resumes Executing."
@@ -622,21 +634,21 @@
 - case: drive-excludes-forbidden-prior-art
   skill: tk-drive
   expect: "Raw conversations, old implementation/reflection scratch, pending drafts, global state, and inaccessible host-only rules cannot supply prior-art evidence."
-- case: focus-explicit-activation
-  skill: tk-focus
-  expect: "Only explicit tk-focus activation enables the persistent ADHD-oriented output shape and makes current progress plus the next action visible."
-- case: focus-stop-command
-  skill: tk-focus
-  expect: "An active focus mode stops only on one of its documented stop commands and confirms the return to default style in one line."
-- case: focus-safety-exception
-  skill: tk-focus
+- case: recap-explicit-activation
+  skill: tk-recap
+  expect: "Only explicit tk-recap activation enables the persistent ADHD-oriented output shape and makes current progress plus the next action visible."
+- case: recap-stop-command
+  skill: tk-recap
+  expect: "An active recap mode stops only on one of its documented stop commands and confirms the return to default style in one line."
+- case: recap-safety-exception
+  skill: tk-recap
   expect: "Destructive action, real ambiguity, a debug spiral, user-requested explanation, or a harness conflict overrides the formatting default without weakening safety."
 - case: browser-bounds-result-cardinality
   skill: tk-browser-verify
   expect: "Compound visual, network, and final-state results use bounded bullets or scenario rows; eight or more show the top five to seven plus the browser ledger path."
 - case: drive-bounds-result-cardinality
   skill: tk-drive
-  expect: "Final output starts after one separator, explains Implemented and Verification results within their budgets, and appends no receipt or bottom metadata block."
+  expect: "Final output starts directly with its canonical result heading or sentence, explains Implemented and Verification results within their budgets, and appends no separator, receipt, or bottom metadata block."
 - case: grill-bounds-confirmed-results
   skill: tk-grill-me
   expect: "Confirmed compound decisions may use two to seven readable rows or bullets while every question turn remains one user-owned decision."

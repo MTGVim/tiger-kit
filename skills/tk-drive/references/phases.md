@@ -26,6 +26,7 @@ Before any product mutation, bind:
 - applicable instructions and initial dirty inventory;
 - resolved user decisions;
 - Ready R/AC, source UI writing inventory, and verification profile;
+- material implementation/verification strategy and conditional browser route;
 - ticket order or one no-ticket slice;
 - bounded prior-art dispositions;
 - cold-start reconstruction evidence.
@@ -40,6 +41,27 @@ prior art is a silent no-op.
 `tk-to-spec` owns `adopted | already-satisfied | not-applicable | conflict`
 disposition and R/AC linkage. Drive owns discovery and supplies the evidence;
 it does not duplicate spec semantics.
+
+## Strategy and browser preflight
+
+Before decision closure, inspect the implementation sequence, verification
+approach, required tools and permissions, safe side effects, and recovery or
+stop conditions. Resolve repository-evidenced and implementation-owned facts
+without asking. Route only a material user-owned choice through
+`tk-grill-me`, one at a time; ordinary implementation details remain agent
+owned.
+
+For user-visible web UI or browser-relevant behavior, classify browser
+evidence as `required | optional | N/A`. When required, or optional and
+selected, bind target URL/environment, Guard/Verdict mode, account role and
+tenant, `isolated` or opaque profile hint, authentication expectation, safe
+interaction boundary, and unavailable runtime inputs. Persist only
+non-identifying hints. An exact identity that must not be stored is
+`intentionally omitted` with `re-request on cold start`; credentials, cookies,
+tokens, OTPs, and profile contents never enter preparation artifacts. The
+executor may re-request that already confirmed runtime input once before
+browser launch, and that rehydration is not a Preparing amendment. `N/A`
+causes no browser question or empty strategy section.
 
 ## Internal manifest boundary
 
@@ -108,7 +130,7 @@ completion. In the same active turn, execute exactly the recorded transition.
 Progress commentary and receipt summaries do not discharge this debt, and no
 user-facing text occurs between a matching success and its transition.
 
-Immediately before emitting terminal `---`, run the transition-debt check.
+Immediately before emitting the terminal user summary, run the transition-debt check.
 Terminal output is prohibited while any consumed successful receipt still has
 an unexecuted `Outstanding transition`; execute the recorded transition in the
 same active turn or return the one evidence-supported non-success state.

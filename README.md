@@ -20,16 +20,24 @@ decision은 한 번만 Preparing amendment를 거칠 수 있고, 초기 구현 �
 자동수정은 최대 세 번입니다. 기존 direct single-unit `tk-implement`
 사용은 그대로 유효합니다.
 
-`tk-focus`를 명시적으로 선택하면 action-first, bounded steps, persistent
-state restatement를 적용하며 `stop focus mode`, `stop adhd mode`, 또는
+`tk-recap`을 명시적으로 선택하면 action-first, bounded steps, persistent
+state restatement를 적용하며 `stop recap mode`, `stop adhd mode`, 또는
 `normal mode`까지 유지됩니다. 다른 skill은 이 mode를 암묵적으로
 활성화하지 않습니다.
 
 나머지 14개 canonical skill은 최신 명시 언어 지시를 우선하는
 response-language hard gate와 terminal-summary boundary를 자체 포함합니다.
-최종 사용자 영역은 standalone `---` 뒤에 시작하며 반복 `Outcome:` 또는
-하단 receipt metadata를 렌더링하지 않습니다. Phase receipt는 active parent의
-내부 handoff로만 전달됩니다.
+최종 사용자 영역은 해당 skill의 canonical 첫 heading 또는 result sentence로
+바로 시작하며 standalone separator, 반복 `Outcome:`, 하단 receipt metadata를
+렌더링하지 않습니다. Phase receipt는 active parent의 내부 handoff로만
+전달됩니다.
+
+`tk-drive` Preparing은 product mutation 전에 material implementation 및
+verification strategy를 점검합니다. Browser evidence는
+`required | optional | N/A`로 분류하며, 필요할 때만 target environment,
+계정 역할·tenant, opaque profile hint, 인증 기대값과 safe interaction을
+명확화합니다. 정확한 식별정보는 저장하지 않고 cold-start 재요청 marker만
+Ready spec에 남깁니다.
 
 ## 설치
 
@@ -78,7 +86,7 @@ Claude Code와 Hermes Agent에서는 `/tk-implement` 같은 slash command로 표
 | --- | --- | --- |
 | `tk-ask-repo` | user | 외부에서 들어온 repository 질문을 분류하고 원점·소비처·영향·책임을 `path:line` 근거로 조사합니다. |
 | `tk-drive` | user | 명시 source를 내부 Preparing에서 Ready로 만들고 같은 run의 Executing에서 unit별 commit, aggregate verification, reflection까지 진행합니다. |
-| `tk-focus` | user | 명시적으로 켜고 끄는 persistent action-first 출력 mode를 제공합니다. |
+| `tk-recap` | user | 명시적으로 켜고 끄는 persistent action-first 출력 mode를 제공합니다. |
 | `tk-grill-me` | hybrid | 명시 선택 또는 prep decision handoff에서 사실을 조사하고 중요한 결정을 한 번에 한 질문씩 닫습니다. |
 | `tk-to-spec` | hybrid | 독립 요청 또는 prep handoff에서 Ready spec을 작성·검증합니다. |
 | `tk-to-tickets` | hybrid | 독립 요청 또는 prep handoff에서 source를 수직 ticket으로 나눕니다. |

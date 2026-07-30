@@ -53,12 +53,21 @@ continue.
    evidence reference, semantic reason, and R/AC mapping. A `conflict`
    disposition prevents `Ready` until prep closes the decision. When no
    relevant prior art exists, omit `## Prior art` entirely.
-5. `vertical slicing candidate areas`: group related R/AC by user-visible
+5. `execution strategy`: when active-drive evidence contains material
+   execution prerequisites, record `## Execution strategy` with the confirmed
+   approach, verification route, and safe recovery conditions. For selected
+   browser evidence, preserve `required | optional`, target
+   URL/environment, Guard/Verdict mode, account role/tenant, opaque profile
+   hint, authentication expectation, safe interaction boundary, and any
+   `intentionally omitted → re-request on cold start` marker. Never record
+   exact identities, credentials, cookies, tokens, OTPs, or profile contents.
+   Omit the section when no material strategy exists.
+6. `vertical slicing candidate areas`: group related R/AC by user-visible
    behavior and coupling evidence without deciding independence, ticket shape,
    IDs, or whether a ledger is justified.
-6. `Ready gate`: return `Ready | Draft | Blocked | Unverifiable` with missing
+7. `Ready gate`: return `Ready | Draft | Blocked | Unverifiable` with missing
    evidence.
-7. `write/print and verify`: write the selected output or print-only result,
+8. `write/print and verify`: write the selected output or print-only result,
    then revalidate required elements, source map, and IDs.
 8. `receipt`: connect phase, path, status, source map, unverified items,
    conflicts, and verification in a standalone or prep-consumable receipt.
@@ -162,7 +171,7 @@ uncheckable UI literals are `Unverifiable`. Never save them as `Ready`.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Treat progress commentary, internal handoff envelopes, and the terminal user response as distinct surfaces. Before the first line of every terminal user-facing response, emit exactly one standalone `---` line, then begin immediately with the skill's canonical result heading or result sentence. Do not emit this separator in progress commentary or between a successful phase receipt and the next active-drive phase invocation.
+Treat progress commentary, internal handoff envelopes, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between a successful phase receipt and the next active-drive phase invocation.
 
 Do not render a receipt heading, `Outcome:` label, or terminal provenance/status block in the user summary. When the host or skill requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the skill's canonical result schema requires it. Keep phase receipts as internal handoff envelopes: when an active parent requires phase, status, IDs, `Return to`, `Success state`, or `Outstanding transition`, return them only to that parent workflow and never echo them in the terminal user summary.
 
