@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 21.0.1 — Terminal Opening, Browser Preflight, and Recap Mode
+
 - Removed the terminal Markdown `---` separator from every distributed skill;
   terminal responses now begin directly with the owning canonical result
   heading or result sentence while internal receipts remain hidden.

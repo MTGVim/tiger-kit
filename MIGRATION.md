@@ -1,4 +1,4 @@
-# Unreleased terminal opening and strategy preflight
+# TigerKit 21.0.1 terminal opening, browser preflight, and recap mode
 
 The catalog remains at 15 skills, but the explicit persistent output utility
 is renamed:
