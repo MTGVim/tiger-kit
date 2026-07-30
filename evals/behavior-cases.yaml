@@ -399,7 +399,7 @@
   expect: "A direct answer to the one pending Preparing decision resumes the same active drive and continues the recorded preparation transition."
 - case: drive-reflects-once-after-aggregate-pass
   skill: tk-drive
-  expect: "After aggregate product verification passes, drive invokes exactly one drive-optimistic reflection tail, verifies the final-receipt transition echo, and continues in the same turn."
+  expect: "After aggregate product verification passes, drive invokes exactly one reflection tail and continues directly to finalization in the same turn."
 - case: drive-skips-unneeded-tickets
   skill: tk-drive
   expect: "A single short vertical slice moves from Ready spec directly to implementation without a ticket artifact."
@@ -420,16 +420,22 @@
   expect: "tk-implement owns ticket-level Standards/Spec review while drive owns aggregate R/AC coverage, ancestry, and cross-ticket interaction without repeating line-level review."
 - case: drive-invokes-phase-owners
   skill: tk-drive
-  expect: "Drive consumes preparation and invokes tk-implement per prepared unit plus one tk-reflect tail without invoking initial preparation owners."
+  expect: "Drive follows the exact applicable procedure graph, invokes each owner directly, and never asks a successful child to return control to its caller."
 - case: drive-continues-after-prep-claim
   skill: tk-drive
-  expect: "A successful atomic prep claim is never a response boundary: drive continues through prepared implementation, aggregate verification, reflection, and terminal state."
-- case: drive-checks-transition-debt-before-terminal-output
+  expect: "Completed preflight is never a response boundary: drive continues through implementation, aggregate verification, reflection, and finalization."
+- case: drive-enforces-exact-procedure-graph
   skill: tk-drive
-  expect: "Immediately before the terminal user summary, drive rejects any consumed successful receipt whose recorded `Outstanding transition` has not executed; it continues that transition in the same active turn or returns one evidence-supported non-success state."
-- case: drive-rejects-missing-transition-echo
+  expect: "Every edge uses a canonical node name and declares entry, success, failure, and next-node conditions; unknown nodes, misspellings, forbidden cycles, and incomplete edges fail validation."
+- case: drive-continues-without-receipt-boundary
   skill: tk-drive
-  expect: "A missing or mismatched child `Outstanding transition` echo is receipt drift and stops drive Blocked instead of being consumed as success."
+  expect: "Successful active-drive procedures invoke the next applicable node in the same turn without a user turn, success receipt, caller-return instruction, or terminal output between them."
+- case: drive-continues-multi-unit-through-reflection
+  skill: tk-drive
+  expect: "A multi-unit run continues after the first tk-implement unit, finishes every selected unit, performs aggregate verification, runs the valid reflection tail, and reaches finalization."
+- case: drive-owns-single-terminal-response
+  skill: tk-drive
+  expect: "Only tk-drive finalization emits exactly one active-drive terminal response, beginning with the result and containing no standalone separator, Outcome label, receipt heading, phase Pass token, caller-return instruction, or bottom provenance block."
 - case: drive-prepares-trivial-task
   skill: tk-drive
   expect: "Every explicit source, including a trivial single slice, passes through internal Ready preparation and then continues automatically into implementation."

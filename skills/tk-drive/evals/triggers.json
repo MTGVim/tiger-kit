@@ -35,17 +35,17 @@
     {
       "from": "validation-positive-5",
       "to": "validation-child-pending-answer",
-      "reason": "TigerKit 20.1.5 routes an active grill pending answer to tk-grill-me before drive resumes from the child receipt."
+      "reason": "An active grill pending answer stays owned by tk-grill-me before drive continues from confirmed decision state."
     },
     {
       "from": "validation-positive-6",
       "to": "validation-child-pending-answer",
-      "reason": "TigerKit 20.1.5 routes an active grill pending answer to tk-grill-me before drive resumes from the child receipt."
+      "reason": "An active grill pending answer stays owned by tk-grill-me before drive continues from confirmed decision state."
     },
     {
       "from": "validation-positive-7",
       "to": "validation-child-pending-answer",
-      "reason": "TigerKit 20.1.5 routes an active grill pending answer to tk-grill-me before drive resumes from the child receipt."
+      "reason": "An active grill pending answer stays owned by tk-grill-me before drive continues from confirmed decision state."
     },
     {
       "from": "validation-positive-8",

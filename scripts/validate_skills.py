@@ -101,12 +101,62 @@ TERMINAL_SUMMARY_GATE = (
     "A skill without such an owner must not create one solely to store a receipt, and a read-only skill remains read-only. "
     "Never require a shared runtime reference outside this skill."
 )
-DRIVE_TRANSITION_DEBT_GATE = (
-    "Immediately before emitting the terminal user summary, run the transition-debt check.\n"
-    "Terminal output is prohibited while any consumed successful receipt still has\n"
-    "an unexecuted `Outstanding transition`; execute the recorded transition in the\n"
-    "same active turn or return the one evidence-supported non-success state."
+DRIVE_TERMINAL_SUMMARY_GATE = (
+    "### 🔴 HARD GATE · terminal user summary\n\n"
+    "Treat progress commentary, internal procedure evidence, and the terminal user response as distinct surfaces. "
+    "Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. "
+    "Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. "
+    "Do not emit a terminal user-summary opening between successful consecutive active-drive procedure invocations.\n\n"
+    "Do not render a receipt heading, `Outcome:` label, phase-success token, caller-return instruction, or terminal provenance/status block in the user summary. "
+    "When the result requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. "
+    "Expose a path, ID, commit, or recovery detail only when it changes user action or the canonical result schema requires it.\n\n"
+    "Persist provenance only in an artifact or ledger already owned by the workflow. "
+    "Never require a shared runtime reference outside this skill."
 )
+DRIVE_GRAPH_NODES = {
+    "tk-drive:preflight",
+    "tk-grill-me",
+    "tk-prototype",
+    "tk-to-spec",
+    "tk-to-tickets",
+    "tk-implement",
+    "tk-merge-conflict",
+    "aggregate-verification",
+    "tk-browser-verify",
+    "tk-reflect",
+    "tk-drive:finalization",
+}
+DRIVE_GRAPH_EDGES = (
+    ("tk-drive:preflight", "tk-grill-me", "material decisions remain", "confirmed", "stop", "tk-to-spec"),
+    ("tk-drive:preflight", "tk-to-spec", "no material decisions remain", "Ready", "stop", "tk-to-tickets|tk-implement"),
+    ("tk-grill-me", "tk-prototype", "bounded comparison reduces uncertainty", "evidence", "stop", "tk-grill-me"),
+    ("tk-prototype", "tk-grill-me", "comparison completed", "confirmed", "stop", "tk-to-spec"),
+    ("tk-grill-me", "tk-to-spec", "decisions confirmed", "Ready", "stop", "tk-to-tickets|tk-implement"),
+    ("tk-to-spec", "tk-to-tickets", "multiple units", "verified tickets", "stop", "tk-implement"),
+    ("tk-to-spec", "tk-implement", "single unit", "verified commit", "stop", "tk-implement|aggregate-verification"),
+    ("tk-to-tickets", "tk-implement", "verified tickets", "verified commit", "stop", "tk-implement|aggregate-verification"),
+    ("tk-implement", "tk-merge-conflict", "active conflict", "resolved", "stop", "tk-implement"),
+    ("tk-merge-conflict", "tk-implement", "conflict resolved", "verified commit", "stop", "tk-implement|aggregate-verification"),
+    ("tk-implement", "tk-implement", "more selected units", "verified commit", "stop", "tk-implement|aggregate-verification"),
+    ("tk-implement", "aggregate-verification", "all units committed", "verified", "correct-or-stop", "tk-browser-verify|tk-implement|tk-reflect|tk-drive:finalization"),
+    ("aggregate-verification", "tk-browser-verify", "browser evidence required", "verified", "stop", "aggregate-verification"),
+    ("tk-browser-verify", "aggregate-verification", "browser check completed", "verified", "stop", "tk-implement|tk-reflect|tk-drive:finalization"),
+    ("aggregate-verification", "tk-implement", "isolated failure under correction limit", "verified commit", "stop", "aggregate-verification"),
+    ("aggregate-verification", "tk-reflect", "valid reflection handoff", "complete-or-no-op", "restore-or-stop", "tk-drive:finalization"),
+    ("aggregate-verification", "tk-drive:finalization", "verified and reflection N/A", "terminal evidence reread", "stop", "terminal"),
+    ("tk-reflect", "tk-drive:finalization", "reflection completed", "terminal evidence reread", "stop", "terminal"),
+)
+DRIVE_ALLOWED_LOOP_EDGES = {
+    ("tk-grill-me", "tk-prototype"),
+    ("tk-prototype", "tk-grill-me"),
+    ("tk-implement", "tk-merge-conflict"),
+    ("tk-merge-conflict", "tk-implement"),
+    ("tk-implement", "tk-implement"),
+    ("tk-implement", "aggregate-verification"),
+    ("aggregate-verification", "tk-implement"),
+    ("aggregate-verification", "tk-browser-verify"),
+    ("tk-browser-verify", "aggregate-verification"),
+}
 DRIVE_STAGE_TOKENS = (
     "Preparing",
     "Executing",
@@ -259,6 +309,10 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-preserves-terminal-on-failed-preparing",
     "drive-reseals-one-active-amendment",
     "drive-continues-automatically-after-ready",
+    "drive-enforces-exact-procedure-graph",
+    "drive-continues-without-receipt-boundary",
+    "drive-continues-multi-unit-through-reflection",
+    "drive-owns-single-terminal-response",
     "adhd-explicit-one-shot",
     "adhd-does-not-carry-over",
     "adhd-safety-exception",
@@ -418,8 +472,10 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-bounds-nested-skills",
     "drive-invokes-phase-owners",
     "drive-continues-after-prep-claim",
-    "drive-checks-transition-debt-before-terminal-output",
-    "drive-rejects-missing-transition-echo",
+    "drive-enforces-exact-procedure-graph",
+    "drive-continues-without-receipt-boundary",
+    "drive-continues-multi-unit-through-reflection",
+    "drive-owns-single-terminal-response",
     "drive-prepares-trivial-task",
     "drive-amends-on-first-new-decision",
     "drive-skips-grill-for-ready-source",
@@ -604,10 +660,8 @@ def validate_terminal_summary_contract(root: Path) -> list[str]:
             errors.append(f"{skill}: SKILL.md: add the terminal-summary hard gate")
             continue
         text = path.read_text(encoding="utf-8")
-        complete = (
-            text.count(TERMINAL_SUMMARY_GATE) == 1
-            and text.count(terminal_heading) == 1
-        )
+        gate = DRIVE_TERMINAL_SUMMARY_GATE if skill == "tk-drive" else TERMINAL_SUMMARY_GATE
+        complete = text.count(gate) == 1 and text.count(terminal_heading) == 1
         ordered = (
             complete
             and text.count(language_heading) == 1
@@ -621,21 +675,89 @@ def validate_terminal_summary_contract(root: Path) -> list[str]:
     return errors
 
 
-def validate_drive_transition_debt_contract(root: Path) -> list[str]:
+def validate_drive_graph_contract(
+    root: Path,
+    edges: tuple[tuple[str, str, str, str, str, str], ...] = DRIVE_GRAPH_EDGES,
+) -> list[str]:
     errors: list[str] = []
-    for relative in (
-        "skills/tk-drive/SKILL.md",
-        "skills/tk-drive/references/phases.md",
-    ):
-        path = root / relative
-        if (
-            not path.is_file()
-            or path.read_text(encoding="utf-8").count(DRIVE_TRANSITION_DEBT_GATE)
-            != 1
-        ):
-            errors.append(
-                f"{relative}: preserve exactly one terminal transition-debt gate"
-            )
+    for index, edge in enumerate(edges, 1):
+        if len(edge) != 6:
+            errors.append(f"drive graph edge {index}: expected six fields")
+            continue
+        source, target, entry, success, failure, next_edge = edge
+        for node in (source, target):
+            if node not in DRIVE_GRAPH_NODES:
+                errors.append(f"drive graph edge {index}: unknown node {node!r}")
+        if not all(value.strip() for value in (entry, success, failure, next_edge)):
+            errors.append(f"drive graph edge {index}: missing terminal condition")
+        if source == "tk-drive:finalization" or target == "tk-drive:preflight":
+            errors.append(f"drive graph edge {index}: forbidden cycle")
+        for next_node in next_edge.split("|"):
+            if next_node != "terminal" and next_node not in DRIVE_GRAPH_NODES:
+                errors.append(
+                    f"drive graph edge {index}: unknown next node {next_node!r}"
+                )
+
+    pair_list = [(edge[0], edge[1]) for edge in edges if len(edge) == 6]
+    actual_pairs = set(pair_list)
+    expected_pairs = {(edge[0], edge[1]) for edge in DRIVE_GRAPH_EDGES}
+    if len(pair_list) != len(actual_pairs):
+        errors.append("drive graph: duplicate edge is ambiguous")
+    if actual_pairs != expected_pairs:
+        errors.append("drive graph: edge set differs from the canonical direct graph")
+
+    adjacency: dict[str, set[str]] = {node: set() for node in DRIVE_GRAPH_NODES}
+    for source, target in actual_pairs:
+        if source in adjacency and target in adjacency:
+            adjacency[source].add(target)
+
+    active: list[str] = []
+    visited: set[str] = set()
+
+    def visit(node: str) -> None:
+        visited.add(node)
+        active.append(node)
+        for target in adjacency[node]:
+            if target not in visited:
+                visit(target)
+                continue
+            if target not in active:
+                continue
+            start = active.index(target)
+            cycle_nodes = active[start:] + [target]
+            cycle_edges = set(zip(cycle_nodes, cycle_nodes[1:]))
+            if not cycle_edges.issubset(DRIVE_ALLOWED_LOOP_EDGES):
+                errors.append(
+                    "drive graph: forbidden cycle "
+                    + " -> ".join(cycle_nodes)
+                )
+        active.pop()
+
+    for node in sorted(DRIVE_GRAPH_NODES):
+        if node not in visited:
+            visit(node)
+
+    drive = root / "skills/tk-drive/SKILL.md"
+    phases = root / "skills/tk-drive/references/phases.md"
+    for path, label in ((drive, str(drive.relative_to(root))), (phases, str(phases.relative_to(root)))):
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        required = (
+            "tk-drive preflight",
+            "tk-grill-me",
+            "tk-to-spec",
+            "tk-to-tickets",
+            "tk-implement",
+            "aggregate verification",
+            "tk-reflect",
+            "tk-drive finalization",
+            "entry",
+            "success",
+            "failure",
+            "next",
+        )
+        missing = [token for token in required if token not in text.casefold()]
+        if missing:
+            errors.append(f"{label}: incomplete direct graph contract ({', '.join(missing)})")
     return errors
 
 
@@ -932,7 +1054,7 @@ def validate_repository_contract() -> list[str]:
     errors.extend(validate_skill_language(ROOT))
     errors.extend(validate_user_decision_contract(ROOT))
     errors.extend(validate_terminal_summary_contract(ROOT))
-    errors.extend(validate_drive_transition_debt_contract(ROOT))
+    errors.extend(validate_drive_graph_contract(ROOT))
     errors.extend(validate_prepared_drive_contract(ROOT))
     errors.extend(validate_browser_preflight_contract(ROOT))
     errors.extend(validate_single_drive_adhd_contract(ROOT))
