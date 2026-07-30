@@ -634,12 +634,12 @@
 - case: drive-excludes-forbidden-prior-art
   skill: tk-drive
   expect: "Raw conversations, old implementation/reflection scratch, pending drafts, global state, and inaccessible host-only rules cannot supply prior-art evidence."
-- case: adhd-explicit-activation
+- case: adhd-explicit-one-shot
   skill: tk-adhd
-  expect: "Only explicit tk-adhd activation enables the conversation-local ADHD-oriented output shape; tk-reflect is not selected, and current progress plus the next action remain visible."
-- case: adhd-stop-command
+  expect: "Only an explicit current-response tk-adhd invocation applies the ADHD-oriented output shape; tk-reflect is not selected, and current progress plus the next action remain visible."
+- case: adhd-does-not-carry-over
   skill: tk-adhd
-  expect: "The latest explicit activation or stop event in accessible conversation state wins; an active mode stops only on a documented stop command and confirms `ADHD mode: off` once."
+  expect: "A prior tk-adhd invocation never carries into a later response; no activation, stop, confirmation, preference, or session state exists, and every shaped response requires a new explicit invocation."
 - case: adhd-safety-exception
   skill: tk-adhd
   expect: "Destructive action, real ambiguity, a debug spiral, user-requested explanation, or a harness conflict overrides the formatting default without weakening safety."

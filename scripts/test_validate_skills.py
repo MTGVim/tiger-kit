@@ -104,8 +104,8 @@ class CanonicalSkillContractTest(unittest.TestCase):
                 "drive-preserves-terminal-on-failed-preparing",
                 "drive-reseals-one-active-amendment",
                 "drive-continues-automatically-after-ready",
-                "adhd-explicit-activation",
-                "adhd-stop-command",
+                "adhd-explicit-one-shot",
+                "adhd-does-not-carry-over",
                 "adhd-safety-exception",
                 "drive-requires-explicit-start",
                 "drive-resumes-preparing-decision-answer",
@@ -312,15 +312,19 @@ class CanonicalSkillContractTest(unittest.TestCase):
         self.assertIn("disable-model-invocation: true", adhd)
         self.assertIn("origin: ayghri/i-have-adhd", adhd)
         self.assertIn("relationship: adapted", adhd)
-        self.assertIn("latest explicit activation or stop event wins", adhd)
-        self.assertIn("never an activation event", adhd)
-        self.assertIn("## Persistence", adhd)
+        self.assertIn("only to the current response", adhd)
+        self.assertIn("Do not carry them into the next response", adhd)
+        self.assertIn("Every later response requires a new explicit", adhd)
+        self.assertIn("## Scope", adhd)
+        self.assertNotIn("## Persistence", adhd)
+        self.assertNotIn("ADHD mode: on", adhd)
+        self.assertNotIn("ADHD mode: off", adhd)
         self.assertIn("## When to break the rules", adhd)
         self.assertEqual(validate_single_drive_adhd_contract(root), [])
 
         reflect = (root / "skills/tk-reflect/SKILL.md").read_text(encoding="utf-8")
         self.assertIn("explicit invocation of another skill", reflect)
-        self.assertIn("output-style mode", reflect)
+        self.assertIn("output-style utility", reflect)
         reflect_triggers = (
             root / "skills/tk-reflect/evals/triggers.json"
         ).read_text(encoding="utf-8")

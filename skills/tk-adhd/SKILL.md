@@ -1,8 +1,8 @@
 ---
 name: tk-adhd
-description: "[user] Enable an explicit ADHD-oriented output mode: lead with the next action, number multi-step work, restate state across turns, suppress tangents, give specific time estimates, and make wins visible. Invoke only with /tk-adhd or $tk-adhd; it never activates from an ADHD mention, a formatting request, another skill, or ordinary task completion."
+description: "[user] Shape one explicitly invoked response for a reader with ADHD: lead with the next action, number multi-step work, restate current state, suppress tangents, give specific time estimates, and make wins visible. Invoke only with /tk-adhd or $tk-adhd. Never persist into later responses or activate from an ADHD mention, a formatting request, another skill, or ordinary task completion."
 disable-model-invocation: true
-argument-hint: "<no source; enables ADHD mode for this conversation>"
+argument-hint: "<request or current work to shape once>"
 license: MIT
 metadata:
   tigerkit:
@@ -16,21 +16,16 @@ metadata:
 
 The reader has ADHD. Output is not just brief. It is shaped so an ADHD brain can act on it.
 
-## Persistence
+## Scope
 
-This is conversational state, not a durable host setting or global preference.
-Treat the mode as active only when the accessible current conversation contains
-an explicit `/tk-adhd` or `$tk-adhd` invocation after its most recent stop command. The latest explicit activation or stop event wins.
-An ADHD mention, requested formatting, inferred writing style, another skill's
-text, or ordinary task completion is never an activation event.
+Apply these rules only to the current response created by an explicit
+`/tk-adhd` or `$tk-adhd` invocation. Do not carry them into the next response,
+even in the same conversation. Every later response requires a new explicit
+invocation.
 
-While active, these rules apply to every response in the same conversation,
-including after the topic changes. On activation, confirm `ADHD mode: on` once.
-Turn them off only when the reader says "stop adhd mode" or "normal mode";
-confirm `ADHD mode: off` once, then return to the default style. If the
-activation event is unavailable after a new conversation or lost context,
-treat the mode as inactive and require explicit `/tk-adhd` or `$tk-adhd`
-invocation again.
+No activation, stop command, confirmation, file, preference, or session state
+exists. An ADHD mention, requested formatting, inferred writing style, another
+skill's text, or ordinary task completion does not invoke this utility.
 
 ## What ADHD changes about reading
 
@@ -84,9 +79,10 @@ Good: "Here's the fix. Separately: there is also a stale dependency. Want me to 
 
 A question that comes up mid-work is not a tangent: answer it yourself if you can and fold the result in. If it still needs the reader, surface it once, at the end.
 
-### 5. Restate state every turn
+### 5. Restate the current state
 
-The reader cannot hold "we are on step 3 of 5" between messages. Restate it.
+The reader may not retain "we are on step 3 of 5" from earlier messages.
+Restate the relevant state in this response.
 
 Bad: "Done. Ready for the next part?"
 Good: "Step 3 of 5 done: schema updated. Next: backfill the new column. Run the script?"

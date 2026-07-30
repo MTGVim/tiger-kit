@@ -1,6 +1,6 @@
-# Unreleased ADHD mode rename and reflection boundary
+# Unreleased ADHD utility rename and reflection boundary
 
-The explicit persistent output utility is renamed again to remove semantic
+The explicit one-shot output utility is renamed again to remove semantic
 overlap with recap/reflection features:
 
 ```text
@@ -8,10 +8,10 @@ old: /tk-recap
 new: /tk-adhd
 ```
 
-Use `stop adhd mode` or `normal mode` to disable it. Mode state is
-conversation-local: the latest explicit activation or stop event wins. A new
-conversation, missing activation evidence, an ADHD mention, or a formatting
-request does not activate the mode.
+Invoke `/tk-adhd` again for every response that should use the ADHD-oriented
+output shape. It has no activation, stop command, preference, or session state.
+An ADHD mention, formatting request, prior invocation, or another skill does
+not invoke it.
 
 # TigerKit 21.0.1 terminal opening, browser preflight, and recap mode
 

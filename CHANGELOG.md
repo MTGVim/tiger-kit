@@ -2,11 +2,11 @@
 
 ## Unreleased
 
-- Renamed the explicit output mode from `tk-recap` to `tk-adhd`, defined its
-  active state from the latest explicit activation/stop event in the accessible
-  conversation, and kept it inactive across new or unverifiable context.
+- Renamed the explicit output utility from `tk-recap` to `tk-adhd` and made it
+  one-shot: each explicit invocation shapes only its current response, with no
+  activation, stop command, or cross-turn state.
 - Narrowed `tk-reflect` selection metadata and trigger coverage so summaries,
-  output-style modes, and explicit invocation of another skill cannot route to
+  output-style utilities, and explicit invocation of another skill cannot route to
   reflection.
 
 ## 21.0.1 — Terminal Opening, Browser Preflight, and Recap Mode

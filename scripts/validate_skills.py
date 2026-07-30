@@ -139,15 +139,21 @@ ADHD_CONTRACT_TOKENS = (
     "origin: ayghri/i-have-adhd",
     "relationship: adapted",
     "upstream-skill: skills/i-have-adhd/SKILL.md",
-    "## Persistence",
-    "stop adhd mode",
-    "normal mode",
-    "latest explicit activation or stop event wins",
-    "never an activation event",
-    "treat the mode as inactive",
+    "## Scope",
+    "only to the current response",
+    "Do not carry them into the next response",
+    "Every later response requires a new explicit",
+    "No activation, stop command, confirmation, file, preference, or session state",
+    "does not invoke this utility",
     "## Rules",
     "## When to break the rules",
     "## Pre-send check",
+)
+ADHD_FORBIDDEN_TOKENS = (
+    "## Persistence",
+    "ADHD mode: on",
+    "ADHD mode: off",
+    "latest explicit activation or stop event wins",
 )
 LEARNING_LOOP_TOKENS = {
     "skills/tk-grill-me/SKILL.md": (
@@ -250,8 +256,8 @@ REQUIRED_BEHAVIOR_CASES = {
     "drive-preserves-terminal-on-failed-preparing",
     "drive-reseals-one-active-amendment",
     "drive-continues-automatically-after-ready",
-    "adhd-explicit-activation",
-    "adhd-stop-command",
+    "adhd-explicit-one-shot",
+    "adhd-does-not-carry-over",
     "adhd-safety-exception",
     "implement-auto-decides-unspecified-strategy",
     "implement-respects-explicit-strategy",
@@ -690,8 +696,14 @@ def validate_single_drive_adhd_contract(root: Path) -> list[str]:
     missing = [token for token in ADHD_CONTRACT_TOKENS if token not in adhd]
     if missing:
         errors.append(
-            "skills/tk-adhd/SKILL.md: preserve explicit adapted ADHD-mode contract "
+            "skills/tk-adhd/SKILL.md: preserve explicit adapted one-shot ADHD utility contract "
             + ", ".join(repr(token) for token in missing)
+        )
+    forbidden = [token for token in ADHD_FORBIDDEN_TOKENS if token in adhd]
+    if forbidden:
+        errors.append(
+            "skills/tk-adhd/SKILL.md: remove persistent ADHD-mode state "
+            + ", ".join(repr(token) for token in forbidden)
         )
 
     readme = root / "README.md"

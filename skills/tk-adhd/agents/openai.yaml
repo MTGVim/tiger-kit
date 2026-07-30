@@ -1,7 +1,7 @@
 interface:
-  display_name: "ADHD Mode"
+  display_name: "ADHD Output"
   short_description: "[user] Shape long work into visible, actionable progress"
-  default_prompt: "Use $tk-adhd to make the current work easier to follow and act on."
+  default_prompt: "Use $tk-adhd to shape this response into visible, actionable progress."
 
 policy:
   allow_implicit_invocation: false
