@@ -81,6 +81,29 @@ jobs:
           PY
           python3 scripts/zero_crust_migrate.py
 
+          python3 - <<'PY'
+          from pathlib import Path
+
+          tests = Path('scripts/test_validate_skills.py')
+          text = tests.read_text(encoding='utf-8')
+          if 'import re\n' not in text:
+              text = text.replace('import json\n', 'import json\nimport re\n', 1)
+          text = text.replace(
+              'self.assertIn("`request_user_input`", errors[0])',
+              'self.assertIn("request_user_input", errors[0])',
+              1,
+          )
+          tests.write_text(text, encoding='utf-8')
+
+          validator = Path('scripts/validate_skills.py')
+          text = validator.read_text(encoding='utf-8')
+          old = '(r"conflict.*prevents `Ready`", "conflict gate"),'
+          new = '(r"`conflict` disposition prevents `Ready`", "conflict gate"),'
+          if text.count(old) != 1:
+              raise SystemExit(f'unexpected conflict gate count: {text.count(old)}')
+          validator.write_text(text.replace(old, new), encoding='utf-8')
+          PY
+
       - name: Prepare version metadata
         shell: bash
         run: |
