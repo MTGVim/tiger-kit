@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## 21.0.1 — Terminal Opening, Browser Preflight, and Recap Mode
+
+- Removed the terminal Markdown `---` separator from every distributed skill;
+  terminal responses now begin directly with the owning canonical result
+  heading or result sentence while internal receipts remain hidden.
+- Added a material-only strategy preflight to `tk-drive` Preparing, including
+  conditional `required | optional | N/A` browser routing, non-identifying
+  account/profile hints, authentication and safe-interaction planning, and an
+  explicit cold-start re-request marker for intentionally omitted identities.
+- Renamed the explicit persistent output utility from `tk-focus` to
+  `tk-recap`, including picker metadata, stop language, routing, and evals, to
+  avoid collision with host-provided focus features.
+
 ## 21.0.0 — Single-Drive Preparation and Explicit Focus
 
 - Kept one public `tk-drive <source>` entry point and expanded the canonical

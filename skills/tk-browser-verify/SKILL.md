@@ -1,6 +1,6 @@
 ---
 name: tk-browser-verify
-description: "[user/auto] Verify real-page UI accuracy or interaction in a browser. Use Guard mode for disposable HTML, prototypes, layout, hover, and form exploration unless explicitly invoked; explicit invocation overrides Guard and selects Verdict, as do persistent user-visible source changes and official runtime verdict requests. Do not auto-apply to passive web research, document reading, URL extraction, or simple screenshot saving. This skill does not own source mutation or replace sufficient non-browser static verification."
+description: "[user/auto] Verify real-page UI accuracy or interaction in a browser, or resume this skill's pending runtime-identity request in the same conversation. Use Guard mode for disposable HTML, prototypes, layout, hover, and form exploration unless explicitly invoked; explicit invocation overrides Guard and selects Verdict, as do persistent user-visible source changes and official runtime verdict requests. Do not auto-apply to passive web research, document reading, URL extraction, or simple screenshot saving. This skill does not own source mutation or replace sufficient non-browser static verification."
 metadata:
   tigerkit:
     kind: hybrid
@@ -13,7 +13,9 @@ metadata:
 Apply directly when browser evidence is needed to judge real-page UI accuracy
 or interaction. Do not auto-apply to passive web research, document reading,
 URL extraction, or simple screenshot saving. Explicit invocation always selects
-Verdict mode.
+Verdict mode. A direct answer to this skill's pending runtime-identity request
+may resume the same active browser verification in the same conversation; an
+unrelated identity mention or new session may not.
 
 ## Mode selection
 
@@ -45,6 +47,14 @@ sections in Guard mode and report only requested results and necessary evidence.
 Choose the simplest browser-native, Playwright-compatible, MCP, or CDP route
 that can observe the target. The default uses a disposable isolated profile;
 reuse of an auth profile is optional only for the interactive-auth exception.
+
+When an active `tk-drive` supplies a frozen browser strategy, consume its
+classification, target environment, Guard/Verdict mode, account role/tenant,
+opaque profile hint, authentication expectation, safe interaction boundary,
+and cold-start marker without reopening product decisions. If exact runtime
+identity is marked `intentionally omitted`, ask the user to re-supply it once
+before browser launch and keep it ephemeral; this is runtime rehydration, not
+a Preparing amendment. Reject material strategy drift back to the parent.
 
 ## 🔴 HARD GATE · Chrome `--headless=new`
 
@@ -222,7 +232,7 @@ the browser ledger path that owns the remainder. The budget is not a quota.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Treat progress commentary, internal handoff envelopes, and the terminal user response as distinct surfaces. Before the first line of every terminal user-facing response, emit exactly one standalone `---` line, then begin immediately with the skill's canonical result heading or result sentence. Do not emit this separator in progress commentary or between a successful phase receipt and the next active-drive phase invocation.
+Treat progress commentary, internal handoff envelopes, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between a successful phase receipt and the next active-drive phase invocation.
 
 Do not render a receipt heading, `Outcome:` label, or terminal provenance/status block in the user summary. When the host or skill requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the skill's canonical result schema requires it. Keep phase receipts as internal handoff envelopes: when an active parent requires phase, status, IDs, `Return to`, `Success state`, or `Outstanding transition`, return them only to that parent workflow and never echo them in the terminal user summary.
 

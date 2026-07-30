@@ -81,6 +81,26 @@ and verify that its exact frozen profile is covered by unit and aggregate
 evidence. Drive cannot add unsupported obligations, remove an obligation, or
 substitute a weaker signal.
 
+### 🔴 HARD GATE · material strategy preflight
+
+During Preparing and before product mutation, inspect the implementation and
+verification strategy. Resolve repository-evidenced and implementation-owned
+facts without asking. Ask through `tk-grill-me`, one at a time, only for a
+material user-owned choice that can change behavior, scope, acceptance,
+verification authority, target environment, permissions, or safe execution.
+Do not ask about ordinary tool or implementation details.
+
+For user-visible web UI or browser-relevant behavior, classify browser
+evidence as `required | optional | N/A`. When it is required, or optional and
+selected, freeze the target URL/environment, Guard/Verdict mode, account role
+and tenant, `isolated` or opaque profile hint, authentication expectation,
+safe interaction boundary, and unavailable runtime inputs. Persist only
+non-identifying hints. Mark an exact account or profile identity that must not
+be stored as `intentionally omitted` with `re-request on cold start`; never
+persist credentials, cookies, tokens, OTPs, or profile contents. Re-requesting
+that confirmed runtime input before browser launch is not a Preparing amendment.
+When browser evidence is `N/A`, add no browser question or artifact ceremony.
+
 ## Preparing
 
 1. `identify`: bind the complete source, stable task ID and anchors,
@@ -94,7 +114,9 @@ substitute a weaker signal.
    implementation or reflection scratch, pending drafts, arbitrary global
    state, unrelated work, and inaccessible host-only rules. No relevant prior
    art is a silent no-op.
-3. `profile`: freeze material verification signals and obligations.
+3. `strategy/profile`: inspect the material implementation and verification
+   strategy, classify conditional browser evidence, and freeze the confirmed
+   non-sensitive execution hints, signals, and obligations.
 4. `decide`: invoke `tk-grill-me` only for unresolved user-owned decisions.
    Stop on `Pending | Blocked | Unverifiable`; never infer approval.
 5. `specify`: invoke `tk-to-spec` with source evidence, decisions, prior-art
@@ -188,14 +210,14 @@ manifest rereads `completed`. A non-success result leads with its one status,
 reason, and recovery; do not add another status or receipt block.
 
 Return control only with that terminal summary or an explicit phase stop.
-Immediately before emitting terminal `---`, run the transition-debt check.
+Immediately before emitting the terminal user summary, run the transition-debt check.
 Terminal output is prohibited while any consumed successful receipt still has
 an unexecuted `Outstanding transition`; execute the recorded transition in the
 same active turn or return the one evidence-supported non-success state.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Treat progress commentary, internal handoff envelopes, and the terminal user response as distinct surfaces. Before the first line of every terminal user-facing response, emit exactly one standalone `---` line, then begin immediately with the skill's canonical result heading or result sentence. Do not emit this separator in progress commentary or between a successful phase receipt and the next active-drive phase invocation.
+Treat progress commentary, internal handoff envelopes, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between a successful phase receipt and the next active-drive phase invocation.
 
 Do not render a receipt heading, `Outcome:` label, or terminal provenance/status block in the user summary. When the host or skill requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the skill's canonical result schema requires it. Keep phase receipts as internal handoff envelopes: when an active parent requires phase, status, IDs, `Return to`, `Success state`, or `Outstanding transition`, return them only to that parent workflow and never echo them in the terminal user summary.
 

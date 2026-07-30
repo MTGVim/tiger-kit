@@ -1,8 +1,8 @@
 ---
-name: tk-focus
-description: "[user] Shape output for a reader with ADHD: lead with the next action, number multi-step work, restate state across turns, suppress tangents, give specific time estimates, and make wins visible. Invoke explicitly with /tk-focus; stays on until \"stop focus mode\", \"stop adhd mode\", or \"normal mode\"."
+name: tk-recap
+description: "[user] Shape output for a reader with ADHD: lead with the next action, number multi-step work, restate state across turns, suppress tangents, give specific time estimates, and make wins visible. Invoke explicitly with /tk-recap; stays on until \"stop recap mode\", \"stop adhd mode\", or \"normal mode\"."
 disable-model-invocation: true
-argument-hint: "<no source; enables persistent focus mode>"
+argument-hint: "<no source; enables persistent recap mode>"
 license: MIT
 metadata:
   tigerkit:
@@ -12,7 +12,7 @@ metadata:
     upstream-skill: skills/i-have-adhd/SKILL.md
 ---
 
-# tk-focus
+# tk-recap
 
 The reader has ADHD. Output is not just brief. It is shaped so an ADHD brain can act on it.
 
@@ -20,7 +20,7 @@ The reader has ADHD. Output is not just brief. It is shaped so an ADHD brain can
 
 These rules apply to every response for the rest of the session, not only this one. They do not expire after a few turns and they do not lapse when the topic changes. If you are unsure whether they still apply, they do.
 
-Turn them off only when the reader says "stop focus mode", "stop adhd mode", or "normal mode". Confirm in one line, then return to your default style.
+Turn them off only when the reader says "stop recap mode", "stop adhd mode", or "normal mode". Confirm in one line, then return to your default style.
 
 ## What ADHD changes about reading
 

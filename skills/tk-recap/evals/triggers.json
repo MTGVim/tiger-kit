@@ -1,17 +1,17 @@
 {
-  "skill": "tk-focus",
+  "skill": "tk-recap",
   "kind": "user-invoked",
   "queries": [
     {
       "id": "train-explicit-slash",
       "split": "train",
-      "query": "/tk-focus 지금 진행 상태랑 다음 행동이 잘 보이게 해줘",
+      "query": "/tk-recap 지금 진행 상태랑 다음 행동이 잘 보이게 해줘",
       "should_trigger": true
     },
     {
       "id": "train-explicit-dollar",
       "split": "train",
-      "query": "$tk-focus make this long task easier to follow",
+      "query": "$tk-recap make this long task easier to follow",
       "should_trigger": true
     },
     {
@@ -35,7 +35,7 @@
     {
       "id": "test-explicit-picker",
       "split": "validation",
-      "query": "Use the skill picker to select tk-focus for this session",
+      "query": "Use the skill picker to select tk-recap for this session",
       "should_trigger": true
     },
     {
@@ -59,7 +59,7 @@
     {
       "id": "test-explicit-stop-resume",
       "split": "validation",
-      "query": "[tk-focus active] stop focus mode",
+      "query": "[tk-recap active] stop recap mode",
       "should_trigger": true
     }
   ]
