@@ -2,80 +2,105 @@
 
 ## Product boundary
 
-TigerKit is an Agent Skills repository, not a workflow framework or Claude Code plugin.
+TigerKit is an Agent Skills repository, not a workflow runtime, plugin, or shared
+state framework.
 
-- Let the canonical catalog follow independently justified skill boundaries;
-  do not preserve a skill, invent one, or change its invocation kind to satisfy
-  a target count. When the catalog or an invocation kind changes, update the
-  validator catalog, tests, and current documentation in the same change.
-- Each skill's `SKILL.md` is its behavior source of truth.
-- Keep each skill self-contained; skill-specific detail and code stay in its own `references/` and `scripts/`.
-- A cross-cutting presentation contract may use one validator constant as its
-  maintenance reference, but every distributed skill must embed the complete
-  runtime block; never depend on a shared runtime reference outside the skill.
-- Prefer thin instructions. Add detail only for repeated failures, costly ordering mistakes, mutation safety, objective verification, specialist procedures, or bounded delegation/review.
-- Write every canonical skill's operational body, headings, contracts, and
-  `references/*.md` prose in English. Non-English text is allowed only as an
-  exact quoted input/output/trigger literal when preserving that literal is
-  behaviorally required.
-- Do not restore `.claude-plugin/`, `commands/`, shared runtime contracts, or host-specific copies of skill bodies.
+- Keep each `skills/tk-*` package self-contained.
+- `SKILL.md` owns runtime behavior; package-local `references/`, `scripts/`,
+  `agents/`, and `evals/` own conditional detail and executable evidence.
+- Do not restore `.claude-plugin/`, `commands/`, global TigerKit state, host-specific
+  copies of skill bodies, or GitHub Actions validation.
+- Prefer deletion and progressive disclosure over duplicated ceremony.
+- Canonical operational prose is English; user-facing prose follows the user's
+  language while exact statuses, IDs, commands, paths, and literals remain stable.
 
 ## Skill existence discipline
 
-Before adding a skill or splitting behavior from an existing skill, check:
+A skill needs an independent invocation or narrow automatic trigger, a procedure
+materially different from ordinary model behavior, objective completion criteria,
+and an owned artifact, mutation, approval, or safety boundary.
 
-1. Does a user have a reason to invoke it independently?
-2. Does it have a unique and clear automatic trigger?
-3. Is its procedure materially different from normal model behavior?
-4. Does it have objective completion criteria?
-5. Does it own an independent artifact, mutation, approval, or safety boundary?
-6. Does it have at least two real consumers?
-7. If it has one consumer, is it too large or risky to inline?
-8. Does it justify loading a separate description into context?
-9. Would removing it lower real task quality?
-10. Would ordinary conversation be more natural?
+Before adding or retaining a skill, verify:
 
-If the answers are weak, choose `inline`, `merge`, `convert to reference`, `make user-invoked`, or `delete`. Prefer self-contained skills with independent value and completion boundaries over micro-skills used only by another micro-skill.
+1. a user or a documented parent has a real reason to invoke it;
+2. positive and negative trigger cases distinguish it from adjacent behavior;
+3. success and boundary eval paths exist;
+4. catalog routing or another documented consumer references it;
+5. removing it would reduce measured task quality.
 
-## Behavior boundaries
+Weak candidates should be inlined, merged, converted to a conditional reference,
+made explicitly user-invoked, or deleted. `scripts/audit_catalog.py` derives this
+evidence from canonical contracts. It may mark `tk-drive` for removal review only
+when `scripts/run_drive_experiment.py` reports a measured `RemoveCandidate` result.
 
-- `tk-drive` is the user-invoked orchestrator. It may invoke only the documented
-  hybrid phase owners; phase owners never invoke sibling phase owners.
-- `tk-ask-repo` is the user-invoked read-only investigation desk. It reports
-  repository evidence and ownership boundaries but never implements or mutates.
-- Small work and ordinary follow-up feedback stay owned by the current agent without requiring a new skill.
-- Non-agent tools, MCPs, sandboxes, browsers, and context-management utilities remain available whenever useful.
-- Delegate implementation ownership only for real isolation or parallel benefit; never nest agent delegation.
-- Every `tk-implement` unit runs current-agent Standards/Spec review. Large or high-risk work permits at most one independent reviewer, without fan-out, editing, re-delegation, or automatic re-review. `tk-drive` owns only aggregate R/AC, ancestry, cross-ticket, and broad verification after consuming those unit receipts.
-- TigerKit never commits, pushes, opens PRs, merges, tags, releases, or publishes unless explicitly authorized by a skill contract or user request.
-- Explicit `tk-implement` invocation authorizes one verified current-branch unit commit. Explicit `$tk-drive` start authorizes `tk-implement` to create one such commit per selected ticket or no-ticket single slice. Neither authorizes push or later release actions; implicit drive resume inherits only the active same-conversation scope.
-- All canonical skill operational bodies and references use English.
-  User-facing progress and final summary prose follows the user's language
-  while canonical headings, fields, IDs, and status tokens remain unchanged.
+## Core boundaries
 
-## Repository documentation
+- `tk-drive` is the explicit orchestrator. Phase owners never invoke sibling phase
+  owners. Continuation is prompt-directed, not durable scheduling.
+- `tk-ask-repo` is read-only investigation and never implements.
+- `tk-implement` owns one unit and one verified current-branch commit.
+- `tk-drive` may authorize one such commit per selected unit and owns aggregate
+  traceability, ancestry, cross-unit verification, and finalization.
+- Browser tools for user-visible behavior run inside `tk-browser-verify`.
+- Push, PR, merge, tag, release, and publish need separate explicit authority.
+- Small work and ordinary follow-up feedback stay in the current conversation.
 
-- Do not accumulate `CONTEXT.md`, domain documents, glossaries, or ADRs automatically during feature work.
-- Keep branch-local decisions in the conversation, `.tigerkit/spec.md`, `.tigerkit/tickets.md`, commit messages, PR descriptions, code, and tests.
-- Write an ADR only when the decision constrains the repository long-term and the user explicitly requests it.
-- Do not reference removed skills in current runtime contracts. Historical mentions belong only in `MIGRATION.md`, `CHANGELOG.md`, or `NOTICE.md`.
+## Eval single source of truth
 
-## State and distribution
+Only these files own executable eval behavior:
 
-- Runtime scratch is repo/worktree-local `.tigerkit/`; never use global TigerKit state.
-- Do not create archives, current pointers, repo/scope/worktree keys, or automatic legacy migration.
-- Do not modify a consumer repository's `.gitignore`; warn when scratch is not ignored.
-- Distribution is through `npx skills` for Claude Code, Codex, and Hermes Agent. Root `CLAUDE.md` and `AGENTS.md` are maintainer guidance and are not installed as skill content.
-- Git tags and GitHub Releases are the version source of truth.
+```text
+skills/<skill>/evals/triggers.json
+skills/<skill>/evals/evals.json
+evals/catalog-routing.json
+evals/release-critical.json
+evals/drive-ab.json
+```
 
-## Change discipline
+Do not add generated `test-prompts.json`, root trigger/behavior mirror fixtures,
+Darwin projections, or Python lists duplicating canonical case IDs. The validator
+auto-discovers `skills/tk-*`; adding or deleting a justified skill must not require a
+catalog count edit in Python.
 
-- Preserve canonical names, documented invocation boundaries, and upstream attribution.
-- When editing `skills/tk-*/evals/evals.json`, anchor every mutation to the
-  intended case's exact `id` and verify that new assertions remain inside that
-  case. Never target repeated JSON structure such as `assertions` or
-  `terminal_status` alone.
-- Reuse existing skill-local files before adding new surfaces; prefer deletion and the Python standard library.
-- Keep validation local-only. Do not add GitHub Actions workflows for validators, evals, packaging smoke tests, or CLI canaries.
-- Run `python3 scripts/validate_skills.py`, `python3 scripts/validate_skills.py --links-only`, and `npx --yes skills add . --list` for relevant changes.
-- For packaging changes, smoke-install Claude Code, Codex, and Hermes Agent in temporary homes.
+When changing an eval:
+
+- address a case by exact `id`;
+- preserve or explicitly migrate existing case IDs;
+- keep at least one mechanical assertion per behavior case;
+- preserve safety, host coverage, terminal strictness, and nonterminal assertions
+  unless a documented migration replaces them;
+- keep release-critical references resolvable to canonical cases.
+
+## Host quality
+
+`scripts/adapters/tigerkit_host_adapter.py` is the default live adapter. It tries
+Codex, Claude Code, and Hermes Agent in that order under isolated homes. A missing
+or unusable runtime is quality `Advisory`, not deterministic success or failure.
+Custom adapters may override the command but must return the same JSON protocol.
+
+The adapter's selected-skill and phase events are eval-envelope evidence produced
+by the host run. Do not present them as lower-level runtime telemetry when the host
+does not expose such telemetry directly.
+
+## State and documentation
+
+Runtime scratch is repo/worktree-local `.tigerkit/`; never create global archives,
+current pointers, or automatic migration. Branch decisions belong in spec, tickets,
+commits, PRs, code, and tests. Create an ADR only on an explicit request for a
+long-lived repository constraint.
+
+## Required checks
+
+```bash
+python3 scripts/validate_skills.py
+python3 scripts/validate_skills.py --links-only
+python3 -m unittest discover -s scripts -p 'test_*.py'
+python3 scripts/audit_catalog.py --check
+npx --yes skills@1.5.9 add . --list
+npx --yes skills add . --list
+git diff --check
+```
+
+For packaging changes, smoke-install all supported hosts in disposable homes. For
+release quality, run `scripts/run_release_gate.py`; for drive retention evidence,
+run `scripts/run_drive_experiment.py`. Keep all validation local-only.
