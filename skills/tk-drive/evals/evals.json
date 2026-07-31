@@ -48,7 +48,7 @@
     },
     {
       "from": "drive-live-continues-after-ready-spec",
-      "to": "drive-live-direct-prepared-execution",
+      "to": "drive-live-direct-prepared-execution-finalizes",
       "reason": "TigerKit 21 live coverage starts from an eval-owned sealed Ready prep."
     },
     {
@@ -148,7 +148,7 @@
     },
     {
       "from": "drive-live-prepared-execution",
-      "to": "drive-live-direct-prepared-execution",
+      "to": "drive-live-direct-prepared-execution-finalizes",
       "reason": "The compact preflight removes lifecycle status and phase-receipt assertions while preserving isolated prepared execution."
     },
     {
@@ -160,6 +160,11 @@
       "from": "drive-live-prepares-and-executes-source",
       "to": "drive-live-direct-prepares-and-executes-source",
       "reason": "Cold-start execution now passes native procedure state and keeps the compact preflight lifecycle-free."
+    },
+    {
+      "from": "drive-live-direct-prepared-execution",
+      "to": "drive-live-direct-prepared-execution-finalizes",
+      "reason": "Issue 224 removes the reflection tail from the live prepared-execution contract."
     }
   ],
   "evals": [
@@ -691,7 +696,7 @@
       "safety": true
     },
     {
-      "id": "drive-live-direct-prepared-execution",
+      "id": "drive-live-direct-prepared-execution-finalizes",
       "path": "success",
       "hosts": [
         "codex"

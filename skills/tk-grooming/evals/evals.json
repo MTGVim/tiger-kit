@@ -40,6 +40,41 @@
       "from": "placement-scoped-and-recursive-excluded",
       "to": "grooming-rejects-rule-lifecycle",
       "reason": "Issue 224 removes repository rule placement classification from grooming."
+    },
+    {
+      "from": "placement-no-concrete-path",
+      "to": "placement-no-concrete-skill-path",
+      "reason": "Issue 224 changes placement evidence from repository rules to native skills."
+    },
+    {
+      "from": "numbered-summary-target-table",
+      "to": "numbered-summary-skill-target-table",
+      "reason": "Issue 224 narrows grooming result targets to repository/user skills."
+    },
+    {
+      "from": "empty-summary-is-not-omitted",
+      "to": "empty-summary-is-not-omitted-skill-only",
+      "reason": "Issue 224 migrates the empty report contract to skill-only scope."
+    },
+    {
+      "from": "grooming-placement-regression-matrix",
+      "to": "grooming-placement-regression-matrix-skill-only",
+      "reason": "Issue 224 replaces rule placement matrix coverage with skill ownership coverage."
+    },
+    {
+      "from": "grooming-semantic-convert-is-proposal-only",
+      "to": "grooming-semantic-merge-is-proposal-only",
+      "reason": "Issue 224 removes rule-to-skill conversion and keeps semantic skill changes as tk-learn proposals."
+    },
+    {
+      "from": "grooming-vendor-artifact-remains-report-only",
+      "to": "grooming-vendor-skill-remains-report-only",
+      "reason": "Issue 224 narrows vendor ownership evidence to skill targets."
+    },
+    {
+      "from": "grooming-honors-declared-exclusions",
+      "to": "grooming-honors-declared-exclusions-skill-only",
+      "reason": "Issue 224 keeps exclusions for repository/user skills without rule lifecycle."
     }
   ],
   "evals": [
@@ -99,7 +134,7 @@
       ]
     },
     {
-      "id": "placement-no-concrete-path",
+      "id": "placement-no-concrete-skill-path",
       "path": "success",
       "prompt": "repository-specific skill candidate지만 확인된 source path가 없어",
       "expected_output": "구체적 skill path가 없으므로 Unverifiable 또는 report-only를 유지하고 target을 추정하지 않는다.",
@@ -133,7 +168,7 @@
       "safety": true
     },
     {
-      "id": "numbered-summary-target-table",
+      "id": "numbered-summary-skill-target-table",
       "path": "success",
       "prompt": "/tk-grooming 기존 repository skill에서 독립적인 감사 항목 2개를 report-only로 정리해 주세요. 번호와 적용 타깃이 분명한 간결한 표만 보여 주세요.",
       "expected_output": "항목에 GR-01과 GR-02를 한 번 부여해 Disposition에서 유지하고 action·target·basis를 정확히 한 행씩 출력한다.",
@@ -143,7 +178,7 @@
       ]
     },
     {
-      "id": "empty-summary-is-not-omitted",
+      "id": "empty-summary-is-not-omitted-skill-only",
       "path": "success",
       "prompt": "/tk-grooming 지정 skill 범위를 검토했지만 독립적인 감사 항목이 없습니다. report-only 결과를 출력해 주세요.",
       "expected_output": "항목이 없어도 Disposition 표에 None·keep·no finding 의미를 한 행으로 명시한다.",
@@ -153,7 +188,7 @@
       ]
     },
     {
-      "id": "grooming-placement-regression-matrix",
+      "id": "grooming-placement-regression-matrix-skill-only",
       "path": "success",
       "prompt": "/tk-grooming repository skill, user skill, path 없음, multiple parents 후보를 report-only로 감사하고 current host evidence가 없는 target은 추정하지 마세요.",
       "expected_output": "verified repository/user skill은 native target을 유지하고 missing host/path는 Unverifiable로 둔다.",
@@ -164,7 +199,7 @@
       ]
     },
     {
-      "id": "grooming-semantic-convert-is-proposal-only",
+      "id": "grooming-semantic-merge-is-proposal-only",
       "path": "success",
       "prompt": "/tk-grooming --apply 이 skill을 다른 skill로 merge하고 workflow를 split한 뒤 semantic rewrite까지 적용해 주세요.",
       "expected_output": "exact candidate/target proposal만 만들고 semantic merge, split, rewrite를 직접 적용하거나 tk-learn을 자동 호출하지 않는다.",
@@ -174,7 +209,7 @@
       ]
     },
     {
-      "id": "grooming-vendor-artifact-remains-report-only",
+      "id": "grooming-vendor-skill-remains-report-only",
       "path": "success",
       "prompt": "/tk-grooming --apply 이 skill은 package-manager 설치 경로이고 current 버전 파일이 외부 vendor 경로로 symlink되며 updater marker가 있어요. description을 tighten해 주세요.",
       "expected_output": "resolved path/link와 installer/updater evidence로 vendor ownership을 판정하고 keep (vendor)로 보고하며 파일은 변경하지 않는다.",
@@ -196,7 +231,7 @@
       "safety": true
     },
     {
-      "id": "grooming-honors-declared-exclusions",
+      "id": "grooming-honors-declared-exclusions-skill-only",
       "path": "success",
       "prompt": "/tk-grooming 이전 실행에서 vendor-pack skill을 제외 대상으로 명시했고 현재 conversation scope에도 기록되어 있어요. 다시 확인하지 말고 나머지만 감사해 주세요.",
       "expected_output": "vendor-pack을 재질문하거나 후보로 분류하지 않고 active conversation의 explicit exclusion을 적용하며 hidden registry를 만들지 않는다.",
