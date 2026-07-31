@@ -5,7 +5,7 @@
 </p>
 
 TigerKit 21.0.10은 Claude Code, Codex, Hermes Agent용 엔지니어링 Agent Skills
-모음입니다. 중앙 workflow runtime이나 plugin 없이 14개 self-contained skill을
+모음입니다. 중앙 workflow runtime이나 plugin 없이 15개 self-contained skill을
 `npx skills`로 배포합니다. 최신 immutable snapshot은 `v21.0.10`이며 `main`에는
 다음 릴리스 변경이 포함될 수 있습니다.
 
@@ -44,6 +44,7 @@ Claude Code와 Hermes Agent에서는 `/tk-implement`, Codex에서는
 | `tk-to-spec` | hybrid | 독립 구현 가능한 Ready R/AC spec 작성 |
 | `tk-to-tickets` | hybrid | Ready spec을 독립 검증 가능한 vertical units로 분해 |
 | `tk-implement` | hybrid | unit 하나를 구현·테스트·review하고 verified commit 하나 생성 |
+| `tk-pr` | user | `open | triage | respond`로 PR lifecycle을 소유하고 remote write 전 publish checkpoint 적용 |
 | `tk-prototype` | hybrid | 폐기 가능한 UI/logic 비교물을 실행 |
 | `tk-browser-verify` | hybrid | 실제 browser UI·network·최종 상태 검증 |
 | `tk-skill-diagnose` | hybrid | 관찰된 Agent Skill incident를 재현·격리하고 verified `learn-ready` objective를 handoff |
@@ -67,6 +68,31 @@ explicit tk-drive <source>
 → 필요할 때 tk-browser-verify
 → tk-drive finalization
 ```
+
+## `tk-pr`
+
+```text
+tk-pr open
+→ verified commits와 repository PR convention 조사
+→ exact draft와 publish plan
+→ current-turn publish approval
+→ explicit push + draft PR create/update
+
+tk-pr triage
+→ deterministic read-only REST collection
+→ conflict/check/review/reply/re-review 상태 분류
+
+tk-pr respond
+→ review cards + user selection
+→ resolution unit마다 tk-implement + verified commit
+→ aggregate verification + exact outbound plan
+→ current-turn publish approval
+→ push + reply + verified resolve + optional human re-review
+```
+
+`tk-pr`은 product code나 product commit을 직접 소유하지 않습니다. 리뷰 반영은
+`tk-implement`에 resolution unit으로 handoff하고, `apply` 권한과 push·reply·resolve
+같은 remote publish 권한을 분리합니다.
 
 `tk-learn`만 `create | improve | merge` skill 변경을 작성합니다.
 `tk-skill-diagnose`는 검증된 목표를 `learn-ready`로 handoff하고,
@@ -106,6 +132,7 @@ release-critical references를 직접 검증합니다.
 python3 scripts/validate_skills.py
 python3 scripts/validate_skills.py --links-only
 python3 -m unittest discover -s scripts -p 'test_*.py'
+node --test skills/tk-pr/scripts/triage.test.mjs
 python3 scripts/audit_catalog.py --check
 npx --yes skills@1.5.9 add . --list
 npx --yes skills add . --list
@@ -140,14 +167,10 @@ python3 scripts/run_drive_experiment.py \
 `.tigerkit/`은 repo/worktree-local scratch이며 영구 project 문서나 전역 상태가
 아닙니다. TigerKit은 consumer `.gitignore`를 수정하지 않습니다.
 
-`tk-reflect`는 valid run마다 bounded `.tigerkit/reflect.md`를 원자적으로 갱신하고
-채팅에는 요약표만 보여 줍니다. 직접 적용은 기존 user-managed user-level rule 또는
-Git이 untracked로 증명한 repo rule 한 개로 제한되며, tracked·new·vendor·symlink·
-drift target은 변경하지 않습니다.
-
 `tk-implement`와 `tk-drive`의 명시 호출은 문서화된 current-branch commit까지만
-허용합니다. Push, PR, merge, tag, release, publish는 별도 명시 권한 없이는
-수행하지 않습니다.
+허용합니다. `tk-pr open|respond`만 exact publish plan에 대한 current-turn 승인 후
+bounded push·PR create/update·reply·verified thread resolve·human re-review를 수행할
+수 있습니다. Merge, tag, release, publish는 별도 명시 권한 없이는 수행하지 않습니다.
 
 Git tag가 immutable version source of truth입니다. Release 준비·PR·annotated tag·
 peeled SHA verification은 private maintainer repository의 `tigerkit-release`와
