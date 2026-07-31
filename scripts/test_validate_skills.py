@@ -109,6 +109,23 @@ class EvalSotValidatorTest(unittest.TestCase):
                 errors = validate_skills.validate_repository_contract(set())
             self.assertFalse(any("immutable snapshot" in error for error in errors))
 
+    def test_release_version_check_accepts_date_sequence_hash_snapshot(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "skills").mkdir()
+            (root / "README.md").write_text(
+                "latest `v2026.08.01-2-abcde`\n", encoding="utf-8"
+            )
+            (root / "CHANGELOG.md").write_text(
+                "## 2026.08.01-2 — Release\n", encoding="utf-8"
+            )
+            (root / ".gitignore").write_text(".tigerkit/\n", encoding="utf-8")
+            with patch.object(validate_skills, "ROOT", root), patch.object(
+                validate_skills, "SKILLS", root / "skills"
+            ):
+                errors = validate_skills.validate_repository_contract(set())
+            self.assertFalse(any("immutable snapshot" in error for error in errors))
+
 
 if __name__ == "__main__":
     unittest.main()
