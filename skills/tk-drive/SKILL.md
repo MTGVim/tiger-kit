@@ -1,6 +1,6 @@
 ---
 name: tk-drive
-description: "[user] Drive an explicit source through decision closure, a Ready spec, conditional tickets, verified unit commits, aggregate verification, and reflection in one continuous run. Use only when selected explicitly with a source, or when resuming this skill's pending decision in the same conversation."
+description: "[user] Drive an explicit source through decision closure, a Ready spec, conditional tickets, verified unit commits, aggregate verification, and finalization in one continuous run. Use only when selected explicitly with a source, or when resuming this skill's pending decision in the same conversation."
 disable-model-invocation: true
 argument-hint: "<source, request, issue, or existing Ready spec>"
 metadata:
@@ -16,7 +16,7 @@ Start only when the user selects `/tk-drive`, `$tk-drive`, or the host skill pic
 
 ## Authority
 
-One start authorizes Preparing, Executing, aggregate verification, unit review, one verified current-branch commit per selected unit, at most three corrective unit commits, and one successful `tk-reflect` tail. It does not authorize push, PR, merge, tag, release, publish, history rewriting, or out-of-scope mutation.
+One start authorizes Preparing, Executing, aggregate verification, unit review, one verified current-branch commit per selected unit, and at most three corrective unit commits. It does not authorize push, PR, merge, tag, release, publish, history rewriting, or out-of-scope mutation.
 
 Drive owns the workflow and the only active-drive terminal response. Child procedures own their specialist work and pass their native result state directly to the next applicable node. They do not stop a successful run to ask the user to invoke drive again.
 
@@ -35,7 +35,6 @@ tk-drive preflight
   -> aggregate verification
        -> tk-browser-verify, only when required
        -> corrective tk-implement, at most three cycles
-  -> tk-reflect, only for a valid reflection handoff
   -> tk-drive finalization
 
 terminal non-success
@@ -52,7 +51,7 @@ Direct continuation is a prompt-directed instruction, not a durable scheduler or
 Before product mutation:
 
 1. Resolve repository instructions, branch, baseline `HEAD`, worktree, and pre-existing dirty paths.
-2. Read the complete source. Discover at most seven relevant durable prior-art items from applicable rules, ADRs, tests, types, lint, CI, repository skills, and code invariants. Exclude raw sessions, prior implementation or reflection scratch, pending drafts, arbitrary global state, unrelated work, and inaccessible host-only rules.
+2. Read the complete source. Discover at most seven relevant durable prior-art items from applicable rules, ADRs, tests, types, lint, CI, repository skills, and code invariants. Exclude raw sessions, prior implementation scratch, pending drafts, arbitrary global state, unrelated work, and inaccessible host-only rules.
 3. Close only material user-owned decisions through `tk-grill-me`; use `tk-prototype` only when evidence will reduce the decision.
 4. Produce or validate one Ready R/AC spec with `tk-to-spec`.
 5. Use `tk-to-tickets` only when multiple vertical units are independently verifiable; otherwise use one no-ticket unit.
@@ -93,9 +92,9 @@ After recovery edges are exhausted, normalize the child state through `phases.md
 
 ## Success finalization
 
-After aggregate product verification passes, invoke `tk-reflect` exactly once only when a valid handoff exists. A no-op is successful. Then reread source, spec, tickets when present, prep, implementation evidence, ancestry, and verification before emitting one terminal response.
+After aggregate product verification passes, finish directly. Reread source, spec, tickets when present, prep, implementation evidence, ancestry, and verification before emitting one terminal response. TigerKit does not own a post-session reflection or persistent-memory phase.
 
-Lead with one user-facing result sentence. Then render `Implemented` with two to seven behavior-level bullets and `Verification` with one to four aggregate-result bullets. For multiple units, include a compact `Ticket | Outcome | Commit` table. Use a sentence when only one user-relevant row exists. When underlying results exceed these limits, keep only the top five to seven items ranked by user impact and verification value. Include `Reflection`, `Skill candidates`, and `Remaining risks` only when meaningful. End `Verification` with exactly `Status: Pass`; terminal non-success belongs to the read-only finalizer.
+Lead with one user-facing result sentence. Then render `Implemented` with two to seven behavior-level bullets and `Verification` with one to four aggregate-result bullets. For multiple units, include a compact `Ticket | Outcome | Commit` table. Use a sentence when only one user-relevant row exists. When underlying results exceed these limits, keep only the top five to seven items ranked by user impact and verification value. Include `Remaining risks` only when meaningful. End `Verification` with exactly `Status: Pass`; terminal non-success belongs to the read-only finalizer.
 
 ### 🔴 HARD GATE · terminal user summary
 

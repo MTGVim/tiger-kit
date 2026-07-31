@@ -1,7 +1,7 @@
 interface:
   display_name: "TigerKit: Drive"
   short_description: "[user] Drive a direct graph through verified completion."
-  default_prompt: "Use $tk-drive with an explicit source to select the direct procedure graph from current evidence, implement verified units, run aggregate verification and optional reflection, and emit one terminal response."
+  default_prompt: "Use $tk-drive with an explicit source to select the direct procedure graph from current evidence, implement verified units, run aggregate verification, and emit one terminal response."
 
 policy:
   allow_implicit_invocation: false

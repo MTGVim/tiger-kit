@@ -40,7 +40,6 @@ Choose the next node from current artifacts and repository evidence:
 | Ready spec, multiple units, no valid tickets | `tk-to-tickets` |
 | Ready spec or tickets with incomplete units | `tk-implement` |
 | Changed implementation without complete aggregate evidence | aggregate verification |
-| Aggregate complete with a valid reflection handoff | `tk-reflect` |
 | Required work and aggregate verification complete | `tk-drive finalization` |
 
 Use `scripts/preflight.py resume --evidence <json-file>` for the deterministic

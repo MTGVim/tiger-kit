@@ -10,7 +10,7 @@ exhausted. It is internal, read-only, and has no outgoing edge.
 At entry, stop product and source mutation. Do not edit, create, or delete
 product files; stage or commit; reset, revert, stash, or clean; start a new
 test, build, server, or browser command; or invoke another implementation,
-reviewer, browser, reflection, or phase-owner child.
+reviewer, browser, learning, or phase-owner child.
 
 Read-only artifact and Git audits remain allowed. Do not infer missing evidence
 from self-report or rerun work merely to improve the terminal receipt.

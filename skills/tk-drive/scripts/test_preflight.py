@@ -168,14 +168,6 @@ class PreflightTest(unittest.TestCase):
                 {
                     "ready_spec": True,
                     "aggregate_complete": True,
-                    "valid_reflection_handoff": True,
-                },
-                "tk-reflect",
-            ),
-            (
-                {
-                    "ready_spec": True,
-                    "aggregate_complete": True,
                     "required_work_complete": True,
                 },
                 "tk-drive finalization",

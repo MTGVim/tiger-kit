@@ -28,7 +28,6 @@ PHASES = {
     "tk-to-tickets",
     "tk-prototype",
     "tk-implement",
-    "tk-reflect",
 }
 LIVE_FIXTURES = {
     "[tigerkit-eval:prepared-single]\n/tk-drive": "single",
@@ -488,7 +487,7 @@ def _prepare_live_fixture(
             "dirty_paths": dirty_inventory,
         },
         "execution": {
-            "procedure_graph": ["tk-implement", "aggregate verification", "tk-reflect"],
+            "procedure_graph": ["tk-implement", "aggregate verification"],
             "verification_profile": profile,
         },
         "browser": {

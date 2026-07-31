@@ -21,8 +21,8 @@
     "catalog:behavior:drive-vs-grill-drive",
     "catalog:behavior:drive-vs-grill-standalone-grill",
     "catalog:behavior:spec-vs-tickets-spec",
-    "catalog:behavior:reflect-vs-grooming-reflect",
-    "catalog:behavior:learn-vs-reflect-grooming-learn",
+    "catalog:behavior:grooming-vs-learn-audit",
+    "catalog:behavior:learn-vs-grooming-learn",
     "catalog:behavior:implement-vs-drive-drive",
     "catalog:behavior:implement-vs-drive-ordinary-request",
     "catalog:behavior:prototype-vs-browser-browser",
@@ -30,6 +30,7 @@
     "catalog:behavior:drive-vs-handoff-resume-generic",
     "catalog:behavior:merge-conflict-vs-marker-active",
     "catalog:behavior:merge-conflict-vs-marker-ordinary",
-    "catalog:behavior:skill-diagnose-vs-code-debugging"
+    "catalog:behavior:skill-diagnose-vs-code-debugging",
+    "catalog:behavior:skill-diagnose-vs-learn-ready"
   ]
 }
