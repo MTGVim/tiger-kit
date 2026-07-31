@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 21.0.10 — Release
+
+- fix: align stable README snapshot
+
 ## 21.0.9 — Release
 
 - Issue #224 removes the retired reflection skill and ends `tk-drive` directly
