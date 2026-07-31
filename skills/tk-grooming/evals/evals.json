@@ -75,6 +75,11 @@
       "from": "grooming-honors-declared-exclusions",
       "to": "grooming-honors-declared-exclusions-skill-only",
       "reason": "Issue 224 keeps exclusions for repository/user skills without rule lifecycle."
+    },
+    {
+      "from": "grooming-bounds-result-cardinality",
+      "to": "grooming-bounds-result-cardinality-skill-only",
+      "reason": "Issue 224 narrows the bounded result table to repository/user skill targets."
     }
   ],
   "evals": [
@@ -241,7 +246,7 @@
       ]
     },
     {
-      "id": "grooming-bounds-result-cardinality",
+      "id": "grooming-bounds-result-cardinality-skill-only",
       "path": "success",
       "prompt": "/tk-grooming --report-only skill 감사에서 독립 finding 9건이 검증됐습니다. lifecycle 기능은 추가하지 말고 최종 결과만 정리해 주세요.",
       "expected_output": "Disposition에 상위 5–7개 human-readable row와 나머지 audited skill target path를 제시한다.",
