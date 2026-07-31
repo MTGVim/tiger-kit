@@ -1,6 +1,6 @@
 ---
 name: tk-implement
-description: "[user/auto] Implement, test, review, and create one current-branch commit for one independently verifiable unit. Apply only on explicit standalone selection or an explicit implementation handoff from an active tk-drive; never auto-trigger from an ordinary implementation request."
+description: "[user/auto] Implement, test, review, and create one current-branch commit for one independently verifiable unit. Apply only on explicit standalone selection or an explicit implementation handoff from an active tk-drive or tk-pr respond; never auto-trigger from an ordinary implementation request."
 argument-hint: "<request, ticket, or spec> [direct|delegated] [tdd|no-tdd]"
 metadata:
   tigerkit:
@@ -12,15 +12,15 @@ metadata:
 
 # Implement
 
-Use only for explicit `/tk-implement`, `$tk-implement`, host-picker selection, or an exact active `tk-drive` handoff containing one ticket or no-ticket unit and its R/AC. Ordinary implementation requests, generic continuation, artifacts, or drive presence alone do not activate it.
+Use only for explicit `/tk-implement`, `$tk-implement`, host-picker selection, an exact active `tk-drive` handoff containing one ticket or no-ticket unit and its R/AC, or an exact active `tk-pr respond` handoff containing one resolution unit, its comment/thread IDs, R/AC, and verification obligations. Ordinary implementation requests, generic continuation, artifacts, or parent-workflow presence alone do not activate it.
 
 ## Unit contract
 
-One invocation owns one independently verifiable unit and, after verification and review, exactly one current-branch commit. With tickets: `one ticket = one unit = one commit`. Standalone multi-ticket input must select one ticket or use `$tk-drive`; do not recreate drive orchestration.
+One invocation owns one independently verifiable unit and, after verification and review, exactly one current-branch commit. With tickets: `one ticket = one unit = one commit`. With PR feedback: one coherent resolution unit may satisfy multiple comment/thread IDs and still creates one commit. Standalone multi-ticket input must select one ticket or use `$tk-drive`; do not recreate parent orchestration.
 
 Explicit user instructions outrank defaults. Do not weaken or reconfirm settled scope, method, prohibitions, strategy, verification, or commit instructions. Ask only when instructions conflict or safe execution requires a material user decision. Never claim a source was read or a check passed unless it was actually read or executed.
 
-For active drive, preserve task identity, ticket/R/AC, initial `HEAD`, pre-existing dirty paths, and a material verification profile's four fields. Follow the owner mapping in [review-boundary.md](references/review-boundary.md); never recompute or weaken it. Return the unit ID, native status, commit when present, and verification/review evidence to the graph. Do not emit a terminal user result or take ownership of cross-unit verification or finalization.
+For an active parent workflow, preserve its task identity, unit ID, source IDs, initial `HEAD`, pre-existing dirty paths, and material verification profile. An active `tk-pr respond` handoff also preserves repository, PR number, PR head SHA, and exact comment/thread IDs. Follow the owner mapping in [review-boundary.md](references/review-boundary.md); never recompute or weaken it. Return the unit ID, native status, commit when present, and verification/review evidence to the active parent. Do not emit a terminal user result or take ownership of cross-unit verification, PR publication, or finalization.
 
 | Status | Meaning | Commit |
 | --- | --- | --- |
@@ -29,7 +29,7 @@ For active drive, preserve task identity, ticket/R/AC, initial `HEAD`, pre-exist
 | `Blocked` | Required input/authority/decision is missing or safe ownership conflicts | None |
 | `Unverifiable` | Required verification was attempted but cannot establish a verdict | None |
 
-A drive non-success handoff includes actual branch/`HEAD`, changed or uncommitted paths, executed and unavailable verification, blocker/failure, and one recovery condition. It grants no cleanup, continuation, commit, downstream specialist, or finalization authority.
+An active-parent non-success handoff includes actual branch/`HEAD`, changed or uncommitted paths, executed and unavailable verification, blocker/failure, and one recovery condition. For `tk-pr respond`, it also includes unchanged PR/comment/thread identity and `commit: none`. It grants no cleanup, continuation, remote write, downstream specialist, or finalization authority.
 
 ## Workflow
 
@@ -66,15 +66,15 @@ Before editing, stop `Blocked` when requirements conflict, authority is unsafe, 
 
 ## Commit and result
 
-Commit exactly once only when status is `Pass` and commit is not prohibited. Stage only this unit's paths; preserve pre-existing user changes. Never broaden staging, bypass hooks for convenience, push, create a PR, merge, tag, release, or publish without a separate request.
+Commit exactly once only when status is `Pass` and commit is not prohibited. Stage only this unit's paths; preserve pre-existing user changes. Never broaden staging, bypass hooks for convenience, push, create or update a PR, post review replies, resolve threads, request review, merge, tag, release, or publish without a separate owner and request.
 
 Lead with `## Changed`, then `## Verification`, and optional `## Strategy` or `## Remaining risks`. For a successful unit, use 2–5 short, behavior-oriented bullets under `Changed` and 1–4 verification-result bullets under `Verification`. When underlying results exceed the budget, keep only the most decision-relevant items and cite `.tigerkit/implementation.md`. Record the commit once. Summarize commands and results; never paste logs or narrate review mechanics. Keep detailed mappings and provenance in the ledger.
 
-For active drive, return only the internal unit ID, status (`Pass | Fail | Blocked | Unverifiable`), commit, R/AC references, verification/review evidence, and unverified items.
+For an active parent workflow, return only the internal unit ID, status (`Pass | Fail | Blocked | Unverifiable`), commit, source references, verification/review evidence, and unverified items. For `tk-pr respond`, include exact satisfied and unsatisfied comment/thread IDs without replying to GitHub.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Treat progress commentary, internal procedure evidence, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between successful consecutive active-drive procedure invocations.
+Treat progress commentary, internal procedure evidence, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between successful consecutive active-parent procedure invocations.
 
 Do not render a receipt heading, `Outcome:` label, phase-success token, caller-return instruction, or terminal provenance/status block in the user summary. When the result requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the canonical result schema requires it.
 
