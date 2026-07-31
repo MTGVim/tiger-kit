@@ -1,47 +1,41 @@
 # Empirical diagnostic method
 
-Use this reference after intake passes. The method adapts mizchi's
-`empirical-prompt-tuning` for incident diagnosis rather than broad prompt
-optimization.
+Read this reference only after intake identifies one exact target and incident.
+It adapts empirical prompt tuning for causal diagnosis, not broad optimization.
 
-## Static iteration 0
+## 1. Static consistency
 
-Before dispatch:
+Before fresh execution, compare the frontmatter description with the body:
 
-1. List the positive and negative trigger promises in the description.
-2. List each capability promise.
-3. Locate its body owner in workflow, failure, approval, mutation, or output
-   contracts.
-4. Record description-only promises, body-only behavior, and contradictory
-   owners as hypotheses.
+- positive and negative triggers;
+- capability and output promises;
+- approval, mutation, failure, and recovery owners.
 
-Static consistency can narrow reproduction but cannot prove cause.
+Description-only promises, body-only behavior, and contradictory owners are
+hypotheses. Static consistency never proves runtime cause.
 
-## Freeze scenarios and requirements
+## 2. Freeze the smallest deciding set
 
-Use this bounded set:
+Freeze before experimentation:
 
 ```text
-A. incident/median: the observed prompt
-B. nearby control/edge: adjacent behavior that should remain valid
-C. holdout: an existing case not used to choose the candidate
+Incident: the observed prompt and expected/observed result
+Control: the nearest adjacent behavior that distinguishes the suspected cause
+Must preserve: critical behavior, safety, routing, authority, and host boundary
+Metric: actual anchor, labeled proxy, or unavailable
 ```
 
-Prefer existing trigger and behavior evals in TigerKit. In an external
-repository, normalize the actual incident without persisting private data.
-Freeze three to seven requirements per scenario, including at least one
-`[critical]` requirement. Do not change requirements or critical tags after
-seeing a candidate.
+Add another scenario only when the first incident/control pair cannot separate
+the failure planes. A generic holdout is optional, not a default ceremony.
 
-## Fresh execution
+## 3. Fresh execution
 
-Run the target twice in clean, matched contexts. Use fresh executors for every
-candidate re-evaluation; an executor that saw the previous diagnosis is not
-fresh. If fresh dispatch is unavailable, stop empirical claims as
-`Unverifiable`.
+Run the incident once in a clean matched context. Repeat only when the result is
+unstable, close to a metric threshold, or ambiguous against the control. An
+executor that saw the diagnosis or candidate is not fresh.
 
-The normal deliverable remains primary. A separate diagnostic suffix asks only
-for:
+Keep the normal deliverable primary. When the adapter supports a diagnostic
+suffix, collect only:
 
 ```json
 {
@@ -54,7 +48,7 @@ for:
   "unclear_points": [
     {
       "issue": "observed event",
-      "cause": "instruction-level cause",
+      "cause": "candidate cause",
       "general_fix_rule": "class-level prevention rule"
     }
   ],
@@ -63,60 +57,41 @@ for:
 }
 ```
 
-Empty issue/fill-in arrays are valid. Do not ask the executor to restate an
-expected output, judge criterion, mechanical expectation, or baseline/candidate
-verdict. Malformed diagnostics are an evaluation-plane record, not proof that
-the normal deliverable failed.
+Do not reveal expected answers, judge criteria, or baseline/candidate verdicts
+to the executor. Malformed diagnostics are evaluation-plane evidence; they do
+not automatically invalidate an otherwise verified deliverable.
 
-## Two-sided evidence
+## 4. Two-sided evidence
 
-Capture:
+Combine:
 
-- normal assertions and deterministic Git/path/runtime evidence;
-- phase-local trace;
-- `Issue / Cause / General Fix Rule`;
-- discretionary fill-ins and retries;
-- available token, duration, tool, nested-call, and fan-out metrics.
+- deterministic assertions and Git/path/runtime evidence;
+- selection/loading and host/adapter events;
+- phase-local trace and discretionary fill-ins;
+- actual token, duration, tool, nested-call, or retry metrics when available.
 
-Qualitative ambiguity is primary; resource metrics are supporting evidence.
-Connect each causal claim to at least one instruction, runtime, routing, or eval
-artifact. Do not accept self-report alone.
+Self-report is one observation, never sufficient cause. Every causal claim
+needs an instruction, routing, runtime, repository, or eval anchor.
 
-## Minimum candidate
+## 5. Minimum experiment
 
-Before creating a temporary candidate, state:
+Use a run-owned isolated checkout only when incident/control evidence cannot
+prove the cause directly. State the suspected cause and expected distinguishing
+result first. Change one root-cause theme and run the smallest affected scenario.
 
-```text
-Frozen requirement/assertion served
-General Fix Rule applied
-Expected correctness effect
-Expected resource effect
-```
+The experiment confirms or rejects causality; it is not the canonical patch.
+A second experiment requires a new specific cause from the first result. Do not
+stack wording changes after the same failure repeats.
 
-Change one root-cause theme per candidate. Related micro-edits may remain one
-theme; unrelated fixes wait. If the same failure class persists after two
-themes, report a structural problem rather than stacking patches.
+## 6. Disposition
 
-## Convergence and holdout
+- verified existing-package objective → compact `evolve-ready` handoff;
+- new independently useful skill → `learn-candidate`;
+- grader/harness/fixture defect → `eval-owner`;
+- loader/adapter/host defect → `host-owner`;
+- consumer override/configuration → `local-only`;
+- not reproduced or target correct → `no-change`;
+- missing decisive evidence → `unverifiable`.
 
-A final candidate needs two consecutive fresh checks with:
-
-- no new unclear point;
-- no repeated `stuck | skipped`;
-- no critical/control regression;
-- no retry regression;
-- matched resource improvement when efficiency is claimed.
-
-Run one unused holdout last. Any correctness, safety, routing, mutation, or
-holdout regression rejects the candidate regardless of token/time savings.
-
-Maintain a run-local failure ledger keyed by normalized General Fix Rule.
-Repeated patterns explain convergence or structural divergence; the ledger is
-never global TigerKit state.
-
-## Cost boundary
-
-Default to one target, one incident, one nearby control, one holdout, two trials
-per scenario, two concurrent fresh executors, and two candidate themes. Stop on
-repeated equivalent blockers, rate limits, or executor failure rather than
-retrying indefinitely.
+Write a temporary diagnostic artifact only when actual telemetry or more than
+five evidence rows require it. Never create a durable optimization ledger.
