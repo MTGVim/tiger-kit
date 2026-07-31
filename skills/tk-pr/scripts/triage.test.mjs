@@ -3,6 +3,7 @@ import test from 'node:test';
 import {
   classifyPullRequest,
   computeReviewDecision,
+  flattenPages,
   hasAuthorResponseAfter,
   isActionableText,
   latestExternalMessage,
@@ -15,6 +16,14 @@ test('parseRepoFromRemote supports SSH and HTTPS remotes', () => {
   assert.equal(parseRepoFromRemote('https://github.com/openai/openai.git'), 'openai/openai');
   assert.equal(parseRepoFromRemote('ssh://git@github.com/openai/openai.git'), 'openai/openai');
   assert.equal(parseRepoFromRemote('not-a-remote'), null);
+});
+
+test('flattenPages supports arrays and check-runs object pages', () => {
+  assert.deepEqual(flattenPages([[{ id: 1 }], [{ id: 2 }]]), [{ id: 1 }, { id: 2 }]);
+  assert.deepEqual(
+    flattenPages([{ total_count: 2, check_runs: [{ id: 1 }] }, { check_runs: [{ id: 2 }] }], 'check_runs'),
+    [{ id: 1 }, { id: 2 }],
+  );
 });
 
 test('stripNoise removes hidden and details content', () => {
@@ -34,6 +43,14 @@ test('computeReviewDecision keeps only each reviewer latest state', () => {
     { user: { login: 'author' }, state: 'CHANGES_REQUESTED', submitted_at: '2026-01-03T00:00:00Z' },
   ], 'author');
   assert.deepEqual(decision, { decision: 'APPROVED', decisiveAt: '2026-01-02T00:00:00Z' });
+});
+
+test('a later COMMENTED review does not clear changes requested', () => {
+  const decision = computeReviewDecision([
+    { user: { login: 'reviewer' }, state: 'CHANGES_REQUESTED', submitted_at: '2026-01-01T00:00:00Z' },
+    { user: { login: 'reviewer' }, state: 'COMMENTED', submitted_at: '2026-01-02T00:00:00Z' },
+  ], 'author');
+  assert.deepEqual(decision, { decision: 'CHANGES_REQUESTED', decisiveAt: '2026-01-01T00:00:00Z' });
 });
 
 test('latestExternalMessage uses the latest external message, not an older request', () => {
