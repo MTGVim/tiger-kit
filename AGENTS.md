@@ -94,7 +94,7 @@ long-lived repository constraint.
 ```bash
 python3 scripts/validate_skills.py
 python3 scripts/validate_skills.py --links-only
-python3 -m unittest discover -s scripts -p 'test_*.py'
+python3 -B -m unittest discover -s scripts -p 'test_*.py'
 python3 scripts/audit_catalog.py --check
 npx --yes skills@1.5.9 add . --list
 npx --yes skills add . --list

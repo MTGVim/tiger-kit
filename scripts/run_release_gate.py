@@ -5,11 +5,14 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import os
 import shlex
 import subprocess
 import sys
 from pathlib import Path
 from typing import Mapping
+
+os.environ.setdefault("PYTHONDONTWRITEBYTECODE", "1")
 
 from run_skill_evals import (
     SUPPORTED_HOSTS,
@@ -33,7 +36,16 @@ HOST_ORDER = ("codex", "claude-code", "hermes-agent")
 
 
 def run_checked(command: list[str], *, cwd: Path) -> dict[str, object]:
-    completed = subprocess.run(command, cwd=cwd, text=True, capture_output=True, check=False)
+    env = os.environ.copy()
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
+    completed = subprocess.run(
+        command,
+        cwd=cwd,
+        env=env,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
     return {
         "command": shlex.join(command),
         "passed": completed.returncode == 0,
@@ -231,7 +243,7 @@ def main() -> int:
         commands = [
             ["python3", "scripts/validate_skills.py"],
             ["python3", "scripts/validate_skills.py", "--links-only"],
-            ["python3", "-m", "unittest", "discover", "-s", "scripts", "-p", "test_*.py"],
+            ["python3", "-B", "-m", "unittest", "discover", "-s", "scripts", "-p", "test_*.py"],
             ["python3", "scripts/audit_catalog.py", "--check"],
             ["git", "diff", "--exit-code"],
             ["npx", "--yes", "skills@1.5.9", "add", ".", "--list"],
