@@ -4,9 +4,9 @@
   <img src="assets/tigerkit-cover.png" width="960" alt="TigerKit Agent Skills 표지">
 </p>
 
-TigerKit 21.0.8은 Claude Code, Codex, Hermes Agent용 엔지니어링 Agent Skills
+TigerKit 21.0.9은 Claude Code, Codex, Hermes Agent용 엔지니어링 Agent Skills
 모음입니다. 중앙 workflow runtime이나 plugin 없이 15개 self-contained skill을
-`npx skills`로 배포합니다. 최신 immutable snapshot은 `v21.0.8`이며 `main`에는
+`npx skills`로 배포합니다. 최신 immutable snapshot은 `v21.0.9`이며 `main`에는
 다음 릴리스 변경이 포함될 수 있습니다.
 
 ## 설치
@@ -23,7 +23,7 @@ npx skills add MTGVim/tiger-kit \
 고정 snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v21.0.8" \
+npx skills add "MTGVim/tiger-kit#v21.0.9" \
   --global \
   --agent claude-code \
   --agent codex \
@@ -46,7 +46,7 @@ Claude Code와 Hermes Agent에서는 `/tk-implement`, Codex에서는
 | `tk-implement` | hybrid | unit 하나를 구현·테스트·review하고 verified commit 하나 생성 |
 | `tk-prototype` | hybrid | 폐기 가능한 UI/logic 비교물을 실행 |
 | `tk-browser-verify` | hybrid | 실제 browser UI·network·최종 상태 검증 |
-| `tk-reflect` | hybrid | 재사용 가능한 rule/skill 후보를 분류하고 제한된 안전 적용 수행 |
+| `tk-reflect` | hybrid | 재사용 가능한 rule/skill 후보를 분류하고 bounded ledger와 제한된 안전 적용을 소유 |
 | `tk-skill-diagnose` | hybrid | 관찰된 Agent Skill incident를 재현·격리하고 verified objective를 maintainer evolve로 handoff |
 | `tk-learn` | hybrid | 근거 있는 새 repository/user skill을 승인 경계 아래 작성 |
 | `tk-grooming` | hybrid | 기존 rule/skill 중복·범위·배치를 감사 |
@@ -112,7 +112,7 @@ Release gate:
 
 ```bash
 python3 scripts/run_release_gate.py \
-  --baseline v21.0.7 \
+  --baseline v21.0.8 \
   --candidate HEAD \
   --output /tmp/tigerkit-release-gate
 ```
@@ -135,6 +135,11 @@ python3 scripts/run_drive_experiment.py \
 
 `.tigerkit/`은 repo/worktree-local scratch이며 영구 project 문서나 전역 상태가
 아닙니다. TigerKit은 consumer `.gitignore`를 수정하지 않습니다.
+
+`tk-reflect`는 valid run마다 bounded `.tigerkit/reflect.md`를 원자적으로 갱신하고
+채팅에는 요약표만 보여 줍니다. 직접 적용은 기존 user-managed user-level rule 또는
+Git이 untracked로 증명한 repo rule 한 개로 제한되며, tracked·new·vendor·symlink·
+drift target은 변경하지 않습니다.
 
 `tk-implement`와 `tk-drive`의 명시 호출은 문서화된 current-branch commit까지만
 허용합니다. Push, PR, merge, tag, release, publish는 별도 명시 권한 없이는
