@@ -5,7 +5,7 @@ import { realpathSync } from 'node:fs';
 
 const SUCCESS_CONCLUSIONS = new Set(['success', 'neutral', 'skipped']);
 const NO_ACTION_PATTERN = /(?:no action|nothing to change|looks good|lgtm|이상 발견 없음|조치 없음)/i;
-const REQUEST_PATTERN = /(?:\?|please\b|could you\b|would you\b|부탁|요청|해\s*주(?:세요|시겠|길)?)/i;
+const REQUEST_PATTERN = /(?:\?|please\b|could you\b|would you\b|\b(?:should|must|need(?:s|ed)? to)\b|(?:^|[\n.!?]\s*)(?:please\s+)?(?:change|rename|remove|add|use|replace|update|fix|move|extract|avoid|prefer|document|test|handle|return|make|consider)\b|부탁|요청|해\s*주(?:세요|시겠|길)?|(?:수정|변경|추가|삭제|제거|교체|적용|처리|분리|이동|확인)(?:해|하세요|해주세요|해야|할 필요))/i;
 
 export function stripNoise(body = '') {
   return body
@@ -119,10 +119,10 @@ export function classifyPullRequest({
 }) {
   if (conflict) return 'merge_conflict';
   if (checksFailed) return 'checks_failed';
-  if (draft) return 'draft';
   if (decision === 'CHANGES_REQUESTED') {
     return authorRespondedToChangeRequest ? 'awaiting_re_review' : 'changes_requested';
   }
+  if (draft) return 'draft';
   if (latestExternalActionable) {
     return authorRespondedToLatestExternal ? 'awaiting_re_review' : 'needs_reply';
   }
