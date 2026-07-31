@@ -2,11 +2,12 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   classifyPullRequest,
+  computeReplyEvidence,
   computeReviewDecision,
   flattenPages,
   hasAuthorResponseAfter,
   isActionableText,
-  latestExternalMessage,
+  latestExternalMessagesByScope,
   parseRepoFromRemote,
   stripNoise,
 } from './triage.mjs';
@@ -53,13 +54,26 @@ test('a later COMMENTED review does not clear changes requested', () => {
   assert.deepEqual(decision, { decision: 'CHANGES_REQUESTED', decisiveAt: '2026-01-01T00:00:00Z' });
 });
 
-test('latestExternalMessage uses the latest external message, not an older request', () => {
+test('latest external message supersedes older requests only in the same scope', () => {
   const rows = [
-    { login: 'reviewer', timestamp: '2026-01-01T00:00:00Z', body: 'Could you rename this?' },
-    { login: 'reviewer', timestamp: '2026-01-02T00:00:00Z', body: 'LGTM' },
+    { scope: 'inline:1', login: 'reviewer-a', timestamp: '2026-01-01T00:00:00Z', body: 'Could you rename this?' },
+    { scope: 'inline:1', login: 'reviewer-a', timestamp: '2026-01-02T00:00:00Z', body: 'LGTM' },
+    { scope: 'inline:2', login: 'reviewer-b', timestamp: '2026-01-03T00:00:00Z', body: 'Please add a test.' },
   ];
-  assert.equal(latestExternalMessage(rows, 'author').body, 'LGTM');
-  assert.equal(isActionableText(latestExternalMessage(rows, 'author').body), false);
+  const latest = latestExternalMessagesByScope(rows, 'author');
+  assert.deepEqual(latest.map((row) => row.body), ['LGTM', 'Please add a test.']);
+  assert.deepEqual(computeReplyEvidence(rows, 'author').outstanding.map((row) => row.scope), ['inline:2']);
+});
+
+test('reply evidence requires an author response in the same thread scope', () => {
+  const rows = [
+    { scope: 'inline:1', login: 'reviewer', timestamp: '2026-01-01T00:00:00Z', body: 'Could you rename this?' },
+    { scope: 'inline:2', login: 'author', timestamp: '2026-01-02T00:00:00Z', body: 'Done elsewhere.' },
+    { scope: 'inline:1', login: 'author', timestamp: '2026-01-03T00:00:00Z', body: 'Renamed.' },
+  ];
+  const reply = computeReplyEvidence(rows, 'author');
+  assert.equal(reply.outstanding.length, 0);
+  assert.deepEqual(reply.responded.map((row) => row.scope), ['inline:1']);
 });
 
 test('hasAuthorResponseAfter is scoped to the decisive timestamp', () => {
