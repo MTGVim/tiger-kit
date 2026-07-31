@@ -4,10 +4,10 @@
   <img src="assets/tigerkit-cover.png" width="960" alt="TigerKit Agent Skills 표지">
 </p>
 
-TigerKit 21.0.8은 Claude Code, Codex, Hermes Agent용 엔지니어링 Agent Skills
+TigerKit 21.0.10은 Claude Code, Codex, Hermes Agent용 엔지니어링 Agent Skills
 모음입니다. 중앙 workflow runtime이나 plugin 없이 14개 self-contained skill을
-`npx skills`로 배포합니다. 최신 immutable snapshot은 `v21.0.8`이며 `main`에는
-`v21.0.9` 후보 변경이 포함됩니다.
+`npx skills`로 배포합니다. 최신 immutable snapshot은 `v21.0.10`이며 `main`에는
+다음 릴리스 변경이 포함될 수 있습니다.
 
 ## 설치
 
@@ -23,7 +23,7 @@ npx skills add MTGVim/tiger-kit \
 고정 snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v21.0.8" \
+npx skills add "MTGVim/tiger-kit#v21.0.10" \
   --global \
   --agent claude-code \
   --agent codex \
