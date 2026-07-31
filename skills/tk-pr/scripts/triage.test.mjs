@@ -35,6 +35,9 @@ test('actionable text does not revive old requests after LGTM-like messages', ()
   assert.equal(isActionableText('Could you rename this?'), true);
   assert.equal(isActionableText('LGTM, nothing to change.'), false);
   assert.equal(isActionableText('핵심 액션 아이템: 이상 발견 없음'), false);
+  assert.equal(isActionableText('Rename this variable.'), true);
+  assert.equal(isActionableText('This should use the shared helper.'), true);
+  assert.equal(isActionableText('이 검증을 추가해야 합니다.'), true);
 });
 
 test('computeReviewDecision keeps only each reviewer latest state', () => {
@@ -86,7 +89,7 @@ test('hasAuthorResponseAfter is scoped to the decisive timestamp', () => {
   assert.equal(hasAuthorResponseAfter(rows, 'author', '2026-01-04T00:00:00Z'), false);
 });
 
-test('classification priority is conflict, checks, draft, review state, reply', () => {
+test('classification priority is conflict, checks, changes requested, draft, reply', () => {
   const base = {
     draft: false,
     conflict: false,
@@ -98,6 +101,7 @@ test('classification priority is conflict, checks, draft, review state, reply', 
   };
   assert.equal(classifyPullRequest({ ...base, conflict: true, checksFailed: true }), 'merge_conflict');
   assert.equal(classifyPullRequest({ ...base, checksFailed: true, draft: true }), 'checks_failed');
+  assert.equal(classifyPullRequest({ ...base, draft: true, decision: 'CHANGES_REQUESTED' }), 'changes_requested');
   assert.equal(classifyPullRequest({ ...base, draft: true }), 'draft');
   assert.equal(classifyPullRequest({ ...base, decision: 'CHANGES_REQUESTED' }), 'changes_requested');
   assert.equal(classifyPullRequest({
