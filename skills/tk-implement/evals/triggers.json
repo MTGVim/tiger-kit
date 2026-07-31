@@ -19,155 +19,140 @@
       "split": "validation",
       "query": "/tk-implement implement this unit and create its verified commit",
       "should_trigger": true,
-      "facets": [
-        "formal"
-      ]
+      "facets": ["formal"]
     },
     {
       "id": "validation-explicit",
       "split": "validation",
       "query": "$tk-implement 이 티켓 하나 구현하고 검증 커밋해줘",
       "should_trigger": true,
-      "facets": [
-        "ko-en"
-      ]
+      "facets": ["ko-en"]
     },
     {
       "id": "validation-positive-picker",
       "split": "validation",
       "query": "I selected tk-implement in the skill picker. Run this one unit.",
       "should_trigger": true,
-      "facets": [
-        "casual"
-      ]
+      "facets": ["casual"]
     },
     {
       "id": "validation-positive-drive-formal",
       "split": "validation",
       "query": "[active tk-drive implementation handoff] Ticket TK-2, R3/AC4, implement as one unit and return the commit receipt.",
       "should_trigger": true,
-      "facets": [
-        "formal",
-        "compound"
-      ]
+      "facets": ["formal", "compound"]
     },
     {
       "id": "validation-positive-drive-casual",
       "split": "validation",
       "query": "[active drive handoff] 이 티켓 하나 implement하고 receipt 줘",
       "should_trigger": true,
-      "facets": [
-        "casual",
-        "ko-en"
-      ]
+      "facets": ["casual", "ko-en"]
     },
     {
       "id": "validation-positive-drive-typo",
       "split": "validation",
       "query": "[tk-drive implementation handoff] tickt TK-7 하나만 implemnt 해줘",
       "should_trigger": true,
-      "facets": [
-        "typo"
-      ]
+      "facets": ["typo"]
     },
     {
       "id": "validation-positive-short",
       "split": "validation",
       "query": "/tk-implement TK-9",
       "should_trigger": true,
-      "facets": [
-        "short"
-      ]
+      "facets": ["short"]
     },
     {
       "id": "validation-positive-no-ticket-unit",
       "split": "validation",
       "query": "[active tk-drive implementation handoff] No tickets; implement the Ready single-slice spec as one unit.",
       "should_trigger": true,
-      "facets": [
-        "compound"
-      ]
+      "facets": ["compound"]
+    },
+    {
+      "id": "validation-positive-pr-resolution-unit",
+      "split": "validation",
+      "query": "[active tk-pr respond implementation handoff] PR #42 head abc123, resolution unit RU-2 for comments C11/C12, implement and return native unit state without replying.",
+      "should_trigger": true,
+      "facets": ["formal", "compound"]
+    },
+    {
+      "id": "validation-positive-pr-casual",
+      "split": "validation",
+      "query": "[active tk-pr respond handoff] C7/C8 같은 수정이야. unit 하나로 implemnt 해줘",
+      "should_trigger": true,
+      "facets": ["casual", "typo", "ko-en"]
     },
     {
       "id": "validation-negative-ordinary-fix",
       "split": "validation",
       "query": "이 버그를 고쳐 주세요",
       "should_trigger": false,
-      "facets": [
-        "formal"
-      ]
+      "facets": ["formal"]
     },
     {
       "id": "validation-negative-active-drive-vague",
       "split": "validation",
       "query": "tk-drive가 active니까 알아서 구현해",
       "should_trigger": false,
-      "facets": [
-        "casual"
-      ]
+      "facets": ["casual"]
+    },
+    {
+      "id": "validation-negative-active-pr-vague",
+      "split": "validation",
+      "query": "PR 리뷰가 있으니 알아서 코드를 바꾸고 답글도 달아",
+      "should_trigger": false,
+      "facets": ["casual", "compound"]
     },
     {
       "id": "validation-negative-generic-continue",
       "split": "validation",
       "query": "계속",
       "should_trigger": false,
-      "facets": [
-        "short"
-      ]
+      "facets": ["short"]
     },
     {
       "id": "validation-negative-artifact",
       "split": "validation",
       "query": ".tigerkit/tickets.md가 있으니 implicit implement 해줘",
       "should_trigger": false,
-      "facets": [
-        "ko-en"
-      ]
+      "facets": ["ko-en"]
     },
     {
       "id": "validation-negative-review",
       "split": "validation",
       "query": "Review this diff without changing it.",
       "should_trigger": false,
-      "facets": [
-        "formal"
-      ]
+      "facets": ["formal"]
     },
     {
       "id": "validation-negative-diagnose",
       "split": "validation",
       "query": "이 간헐 실패 원인만 진단해줘",
       "should_trigger": false,
-      "facets": [
-        "casual"
-      ]
+      "facets": ["casual"]
     },
     {
       "id": "validation-negative-typo",
       "split": "validation",
       "query": "이 코드 설먕해쥐",
       "should_trigger": false,
-      "facets": [
-        "typo"
-      ]
+      "facets": ["typo"]
     },
     {
       "id": "validation-negative-compound",
       "split": "validation",
       "query": "현재 상태를 요약하고 다음 구현 아이디어만 제안하되 코드는 바꾸지 마",
       "should_trigger": false,
-      "facets": [
-        "compound"
-      ]
+      "facets": ["compound"]
     },
     {
       "id": "validation-nearby-block",
       "split": "validation",
       "query": "이 아이디어를 폐기 가능한 UI로 비교해줘",
       "should_trigger": false,
-      "facets": [
-        "casual"
-      ]
+      "facets": ["casual"]
     }
   ]
 }
