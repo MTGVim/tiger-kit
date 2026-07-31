@@ -2,9 +2,9 @@
 """Run one TigerKit eval through a host CLI and normalize its result."""
 from __future__ import annotations
 
+import getpass
 import json
 import os
-import pwd
 import re
 import shutil
 import subprocess
@@ -47,10 +47,14 @@ def executable_for(host: str) -> str:
 
 
 def real_home() -> Path:
-    try:
-        return Path(pwd.getpwuid(os.getuid()).pw_dir)
-    except (KeyError, OSError):
-        return Path.home()
+    explicit = os.environ.get("TK_EVAL_REAL_HOME") or os.environ.get("USERPROFILE")
+    if explicit:
+        return Path(explicit)
+    username = getpass.getuser()
+    expanded = os.path.expanduser(f"~{username}")
+    if expanded != f"~{username}":
+        return Path(expanded)
+    return Path.home()
 
 
 def install_skills(host: str, checkout: Path) -> list[str]:
@@ -97,7 +101,7 @@ def host_environment(host: str) -> dict[str, str]:
     env.setdefault("GIT_CONFIG_GLOBAL", str(source_home / ".gitconfig"))
     if host == "codex":
         # Codex subscription auth is inseparable from CODEX_HOME. Reuse the real
-        # home read/write rather than copying single-use refresh credentials.
+        # home rather than copying single-use refresh credentials.
         env["CODEX_HOME"] = str(source_home / ".codex")
     elif host == "claude-code":
         # --setting-sources project below excludes personal behavior settings;
