@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Run one TigerKit eval through the selected host CLI and normalize its result."""
+"""Run one TigerKit eval through a host CLI and normalize its result."""
 from __future__ import annotations
 
 import json
 import os
+import pwd
 import re
 import shutil
 import subprocess
@@ -32,37 +33,80 @@ def require_env(name: str) -> str:
 
 
 def executable_for(host: str) -> str:
-    candidates = {
-        "codex": ("codex",),
-        "claude-code": ("claude",),
-        "hermes-agent": ("hermes",),
+    candidate = {
+        "codex": "codex",
+        "claude-code": "claude",
+        "hermes-agent": "hermes",
     }.get(host)
-    if candidates is None:
+    if candidate is None:
         raise RuntimeError(f"unsupported host {host}")
-    for candidate in candidates:
-        resolved = shutil.which(candidate)
-        if resolved:
-            return resolved
-    raise RuntimeError(f"{host} executable unavailable")
+    resolved = shutil.which(candidate)
+    if not resolved:
+        raise RuntimeError(f"{host} executable unavailable")
+    return resolved
+
+
+def real_home() -> Path:
+    try:
+        return Path(pwd.getpwuid(os.getuid()).pw_dir)
+    except (KeyError, OSError):
+        return Path.home()
 
 
 def install_skills(host: str, checkout: Path) -> list[str]:
+    """Install into the disposable checkout, never the user's real skill folders."""
     source = checkout / "skills"
-    homes = {
-        "codex": Path(require_env("CODEX_HOME")) / "skills",
-        "claude-code": Path(require_env("CLAUDE_CONFIG_DIR")) / "skills",
-        "hermes-agent": Path(require_env("HERMES_HOME")) / "skills",
-    }
-    target = homes[host]
-    target.mkdir(parents=True, exist_ok=True)
+    targets = [checkout / ".agents/skills"]
+    if host == "codex":
+        targets.append(checkout / ".codex/skills")
+    elif host == "claude-code":
+        targets.append(checkout / ".claude/skills")
+    else:
+        targets.append(checkout / ".hermes/skills")
+    for target in targets:
+        target.mkdir(parents=True, exist_ok=True)
+
     installed: list[str] = []
     for skill_dir in sorted(source.glob("tk-*")):
         if not (skill_dir / "SKILL.md").is_file():
             continue
-        destination = target / skill_dir.name
-        shutil.copytree(skill_dir, destination, dirs_exist_ok=True)
+        for target in targets:
+            shutil.copytree(
+                skill_dir,
+                target / skill_dir.name,
+                dirs_exist_ok=True,
+            )
         installed.append(skill_dir.name)
     return installed
+
+
+def seed_hermes_config(isolated_home: Path, source_home: Path) -> None:
+    """Copy non-refreshing provider config; never copy OAuth auth.json."""
+    source = source_home / ".hermes"
+    isolated_home.mkdir(parents=True, exist_ok=True)
+    for name in ("config.yaml", ".env"):
+        candidate = source / name
+        if candidate.is_file():
+            shutil.copy2(candidate, isolated_home / name)
+
+
+def host_environment(host: str) -> dict[str, str]:
+    """Keep isolated state while allowing existing host authentication."""
+    env = os.environ.copy()
+    source_home = real_home()
+    env.setdefault("GIT_CONFIG_GLOBAL", str(source_home / ".gitconfig"))
+    if host == "codex":
+        # Codex subscription auth is inseparable from CODEX_HOME. Reuse the real
+        # home read/write rather than copying single-use refresh credentials.
+        env["CODEX_HOME"] = str(source_home / ".codex")
+    elif host == "claude-code":
+        # --setting-sources project below excludes personal behavior settings;
+        # the real config directory remains available for CLI authentication.
+        env["CLAUDE_CONFIG_DIR"] = str(source_home / ".claude")
+    else:
+        isolated = Path(require_env("HERMES_HOME"))
+        seed_hermes_config(isolated, source_home)
+    return env
 
 
 def harness_prompt(prompt: str, installed: Iterable[str]) -> str:
@@ -84,18 +128,24 @@ At the very end, emit exactly one marker-delimited JSON object and no prose afte
 }}
 {MARKER_END}
 
-Do not claim a skill or phase was loaded or invoked unless it actually was. The installed catalog is {installed_json}.
+Do not claim a skill or phase was loaded or invoked unless it actually was. The project-local installed catalog is {installed_json}.
 
 USER TASK:
 {prompt}
 """
 
 
-def run_process(command: list[str], *, cwd: Path) -> tuple[str, str, int, float]:
+def run_process(
+    command: list[str],
+    *,
+    cwd: Path,
+    env: dict[str, str],
+) -> tuple[str, str, int, float]:
     started = time.monotonic()
     completed = subprocess.run(
         command,
         cwd=cwd,
+        env=env,
         text=True,
         capture_output=True,
         check=False,
@@ -140,10 +190,13 @@ def claude_text(stdout: str) -> tuple[str, float | None]:
     usage = value.get("usage")
     tokens: float | None = None
     if isinstance(usage, dict):
-        total = usage.get("input_tokens", 0)
-        output = usage.get("output_tokens", 0)
-        if all(isinstance(item, (int, float)) and not isinstance(item, bool) for item in (total, output)):
-            tokens = float(total) + float(output)
+        input_tokens = usage.get("input_tokens", 0)
+        output_tokens = usage.get("output_tokens", 0)
+        if all(
+            isinstance(item, (int, float)) and not isinstance(item, bool)
+            for item in (input_tokens, output_tokens)
+        ):
+            tokens = float(input_tokens) + float(output_tokens)
     return result if isinstance(result, str) else stdout, tokens
 
 
@@ -185,6 +238,7 @@ def main() -> int:
     executable = executable_for(host)
     installed = install_skills(host, checkout)
     wrapped = harness_prompt(prompt, installed)
+    env = host_environment(host)
 
     if host == "codex":
         command = [
@@ -205,6 +259,8 @@ def main() -> int:
             "json",
             "--max-turns",
             "40",
+            "--setting-sources",
+            "project",
             "--dangerously-skip-permissions",
         ]
     else:
@@ -215,12 +271,17 @@ def main() -> int:
             wrapped,
             "--toolsets",
             "terminal,skills",
-            "--ignore-user-config",
         ]
 
-    stdout, stderr, returncode, duration_ms = run_process(command, cwd=checkout)
+    stdout, stderr, returncode, duration_ms = run_process(
+        command,
+        cwd=checkout,
+        env=env,
+    )
     if returncode != 0:
-        raise RuntimeError(stderr.strip() or stdout.strip() or f"{host} exited {returncode}")
+        raise RuntimeError(
+            stderr.strip() or stdout.strip() or f"{host} exited {returncode}"
+        )
     if host == "codex":
         text, total_tokens = codex_text(stdout)
     elif host == "claude-code":
