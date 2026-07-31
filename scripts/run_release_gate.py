@@ -26,6 +26,7 @@ from run_skill_evals import (
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "evals" / "release-critical.json"
+HOST_ORDER = ("codex", "claude-code", "hermes-agent")
 
 
 def run_checked(command: list[str], *, cwd: Path) -> dict[str, object]:
@@ -53,8 +54,12 @@ def load_manifest() -> dict[str, object]:
     runs = value.get("runs")
     behavior = value.get("behavior_cases")
     routing = value.get("catalog_cases")
-    if hosts != list(SUPPORTED_HOSTS):
-        raise ValueError("release-critical hosts must exactly match supported hosts")
+    if hosts != list(HOST_ORDER):
+        raise ValueError(
+            "release-critical hosts must be ordered codex, claude-code, hermes-agent"
+        )
+    if not set(HOST_ORDER).issubset(set(SUPPORTED_HOSTS)):
+        raise ValueError("release-critical host order contains an unsupported host")
     if isinstance(runs, bool) or not isinstance(runs, int) or runs < 2:
         raise ValueError("release-critical runs must be an integer of at least two")
     if not isinstance(behavior, list) or not all(isinstance(v, str) and v for v in behavior):
@@ -74,7 +79,7 @@ def normalized_assertions(case: Mapping[str, object]) -> list[dict[str, object]]
             continue
         row = copy.deepcopy(raw)
         if row.get("type") in {"event_order", "event_absent", "event_count"}:
-            row["hosts"] = list(SUPPORTED_HOSTS)
+            row["hosts"] = list(HOST_ORDER)
         if (
             row.get("type") == "git_commit_count_delta"
             and "expected" not in row
@@ -113,136 +118,194 @@ def catalog_case_map(
     }
 
 
-def run_live_gate(
+def validate_manifest_cases(
+    contracts: Mapping[str, Mapping[str, object]],
+    catalog: Mapping[str, object] | None,
+    manifest: Mapping[str, object],
+) -> list[str]:
+    behavior = behavior_case_map(contracts)
+    routing = catalog_case_map(catalog)
+    errors = [
+        f"missing release behavior case: {case_id}"
+        for case_id in manifest["behavior_cases"]  # type: ignore[index]
+        if str(case_id) not in behavior
+    ]
+    errors.extend(
+        f"missing release catalog case: {case_id}"
+        for case_id in manifest["catalog_cases"]  # type: ignore[index]
+        if str(case_id) not in routing
+    )
+    return errors
+
+
+def run_one_host(
+    host: str,
     candidate_root: Path,
     contracts: Mapping[str, Mapping[str, object]],
     catalog: Mapping[str, object] | None,
     *,
     adapter_command: str,
     manifest: Mapping[str, object],
-) -> tuple[list[dict[str, object]], list[str], list[str]]:
+) -> tuple[list[dict[str, object]], list[str], str | None]:
     records: list[dict[str, object]] = []
     failures: list[str] = []
-    unavailable: list[str] = []
     behavior = behavior_case_map(contracts)
     routing = catalog_case_map(catalog)
     runs = int(manifest["runs"])
 
-    for host in SUPPORTED_HOSTS:
-        for case_id in manifest["behavior_cases"]:  # type: ignore[index]
-            item = behavior.get(str(case_id))
-            if item is None:
-                failures.append(f"missing release behavior case: {case_id}")
-                continue
-            skill, case = item
-            assertions = normalized_assertions(case)
-            for run_number in range(1, runs + 1):
-                try:
-                    with isolated_checkout(candidate_root) as checkout:
-                        initial_head = git_head(checkout)
-                        adapter_result = run_adapter(
-                            adapter_command,
-                            checkout=checkout,
-                            skill=skill,
-                            prompt=str(case["prompt"]),
-                            mode="behavior",
-                            host=host,
-                        )
-                        assertion_results = grade_behavior(
-                            "",
-                            adapter_result,
-                            assertions,
-                            checkout=checkout,
-                            initial_head=initial_head,
-                            host=host,
-                        )
-                    passed = all(bool(row["passed"]) for row in assertion_results)
-                except (OSError, RuntimeError, subprocess.SubprocessError) as exc:
-                    unavailable.append(f"{host} {case_id}: {exc}")
-                    records.append(
-                        {
-                            "host": host,
-                            "case": case_id,
-                            "run": run_number,
-                            "passed": False,
-                            "unavailable": str(exc),
-                        }
+    for case_id in manifest["behavior_cases"]:  # type: ignore[index]
+        skill, case = behavior[str(case_id)]
+        assertions = normalized_assertions(case)
+        for run_number in range(1, runs + 1):
+            try:
+                with isolated_checkout(candidate_root) as checkout:
+                    initial_head = git_head(checkout)
+                    adapter_result = run_adapter(
+                        adapter_command,
+                        checkout=checkout,
+                        skill=skill,
+                        prompt=str(case["prompt"]),
+                        mode="behavior",
+                        host=host,
                     )
-                    continue
+                    assertion_results = grade_behavior(
+                        "",
+                        adapter_result,
+                        assertions,
+                        checkout=checkout,
+                        initial_head=initial_head,
+                        host=host,
+                    )
+            except (OSError, RuntimeError, subprocess.SubprocessError) as exc:
                 records.append(
                     {
                         "host": host,
                         "case": case_id,
                         "run": run_number,
-                        "passed": passed,
-                        "terminal_status": adapter_result.get("terminal_status"),
-                        "events": adapter_result.get("events"),
-                        "assertions": assertion_results,
+                        "passed": False,
+                        "unavailable": str(exc),
                     }
                 )
-                if not passed:
-                    failures.append(f"{host} {case_id} run {run_number} failed")
+                return records, failures, str(exc)
+            passed = all(bool(row["passed"]) for row in assertion_results)
+            records.append(
+                {
+                    "host": host,
+                    "case": case_id,
+                    "run": run_number,
+                    "passed": passed,
+                    "terminal_status": adapter_result.get("terminal_status"),
+                    "events": adapter_result.get("events"),
+                    "assertions": assertion_results,
+                }
+            )
+            if not passed:
+                failures.append(f"{host} {case_id} run {run_number} failed")
 
-        for case_id in manifest["catalog_cases"]:  # type: ignore[index]
-            case = routing.get(str(case_id))
-            if case is None:
-                failures.append(f"missing release catalog case: {case_id}")
-                continue
-            for run_number in range(1, runs + 1):
-                try:
-                    with isolated_checkout(candidate_root) as checkout:
-                        adapter_result = run_adapter(
-                            adapter_command,
-                            checkout=checkout,
-                            skill=str(case["focus_skill"]),
-                            prompt=str(case["prompt"]),
-                            mode="catalog-routing",
-                            host=host,
-                        )
-                    expected = case.get("expected_selected_skill")
-                    loaded = adapter_result.get("loaded_skills")
-                    passed = (
-                        adapter_result.get("selected_skill") == expected
-                        and (
-                            expected is None
-                            or isinstance(loaded, list)
-                            and expected in loaded
-                        )
+    for case_id in manifest["catalog_cases"]:  # type: ignore[index]
+        case = routing[str(case_id)]
+        for run_number in range(1, runs + 1):
+            try:
+                with isolated_checkout(candidate_root) as checkout:
+                    adapter_result = run_adapter(
+                        adapter_command,
+                        checkout=checkout,
+                        skill=str(case["focus_skill"]),
+                        prompt=str(case["prompt"]),
+                        mode="catalog-routing",
+                        host=host,
                     )
-                except (OSError, RuntimeError, subprocess.SubprocessError) as exc:
-                    unavailable.append(f"{host} {case_id}: {exc}")
-                    records.append(
-                        {
-                            "host": host,
-                            "case": case_id,
-                            "run": run_number,
-                            "passed": False,
-                            "unavailable": str(exc),
-                        }
-                    )
-                    continue
+            except (OSError, RuntimeError, subprocess.SubprocessError) as exc:
                 records.append(
                     {
                         "host": host,
                         "case": case_id,
                         "run": run_number,
-                        "passed": passed,
-                        "expected_selected_skill": expected,
-                        "actual_selected_skill": adapter_result.get("selected_skill"),
-                        "loaded_skills": loaded,
+                        "passed": False,
+                        "unavailable": str(exc),
                     }
                 )
-                if not passed:
-                    failures.append(f"{host} {case_id} run {run_number} failed")
+                return records, failures, str(exc)
+            expected = case.get("expected_selected_skill")
+            loaded = adapter_result.get("loaded_skills")
+            passed = (
+                adapter_result.get("selected_skill") == expected
+                and (expected is None or isinstance(loaded, list) and expected in loaded)
+            )
+            records.append(
+                {
+                    "host": host,
+                    "case": case_id,
+                    "run": run_number,
+                    "passed": passed,
+                    "expected_selected_skill": expected,
+                    "actual_selected_skill": adapter_result.get("selected_skill"),
+                    "loaded_skills": loaded,
+                }
+            )
+            if not passed:
+                failures.append(f"{host} {case_id} run {run_number} failed")
 
-    return records, sorted(set(failures)), sorted(set(unavailable))
+    return records, sorted(set(failures)), None
+
+
+def run_live_gate(
+    candidate_root: Path,
+    contracts: Mapping[str, Mapping[str, object]],
+    catalog: Mapping[str, object] | None,
+    *,
+    adapter_command: str | None,
+    manifest: Mapping[str, object],
+) -> tuple[list[dict[str, object]], list[dict[str, object]], str | None]:
+    records: list[dict[str, object]] = []
+    host_results: list[dict[str, object]] = []
+    if not adapter_command:
+        return (
+            records,
+            [
+                {"host": host, "status": "not-run", "reason": "adapter command unavailable"}
+                for host in HOST_ORDER
+            ],
+            None,
+        )
+
+    selected_host: str | None = None
+    for index, host in enumerate(HOST_ORDER):
+        host_records, failures, unavailable = run_one_host(
+            host,
+            candidate_root,
+            contracts,
+            catalog,
+            adapter_command=adapter_command,
+            manifest=manifest,
+        )
+        records.extend(host_records)
+        if unavailable is not None:
+            host_results.append(
+                {"host": host, "status": "unavailable", "reason": unavailable}
+            )
+            continue
+        if failures:
+            host_results.append(
+                {"host": host, "status": "failed", "failures": failures}
+            )
+            continue
+        selected_host = host
+        host_results.append({"host": host, "status": "passed"})
+        for remaining in HOST_ORDER[index + 1 :]:
+            host_results.append(
+                {"host": remaining, "status": "not-run", "reason": f"{host} already passed"}
+            )
+        break
+
+    return records, host_results, selected_host
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--baseline", required=True)
     parser.add_argument("--candidate", default="HEAD")
-    parser.add_argument("--adapter-command", required=True)
+    parser.add_argument("--adapter-command")
     parser.add_argument("--output", required=True)
     return parser.parse_args()
 
@@ -269,6 +332,9 @@ def main() -> int:
         candidate_catalog = load_catalog_contract(candidate_root)
         contract_errors.extend(compare_eval_contracts(baseline_contracts, candidate_contracts))
         contract_errors.extend(compare_catalog_contracts(baseline_catalog, candidate_catalog))
+        contract_errors.extend(
+            validate_manifest_cases(candidate_contracts, candidate_catalog, manifest)
+        )
 
         commands = [
             ["python3", "scripts/validate_skills.py"],
@@ -283,7 +349,7 @@ def main() -> int:
         for command in commands:
             static_records.append(run_checked(command, cwd=candidate_root))
 
-        live_records, live_failures, unavailable = run_live_gate(
+        live_records, host_results, selected_host = run_live_gate(
             candidate_root,
             candidate_contracts,
             candidate_catalog,
@@ -294,25 +360,32 @@ def main() -> int:
     static_failures = [
         str(row["command"]) for row in static_records if not bool(row["passed"])
     ]
-    reasons = sorted(set(contract_errors + static_failures + live_failures))
-    status = "Fail" if reasons else "Unverifiable" if unavailable else "Pass"
+    blocking_reasons = sorted(set(contract_errors + static_failures))
+    quality_status = "Pass" if selected_host else "Advisory"
+    status = "Fail" if blocking_reasons else "Pass"
     result = {
         "status": status,
+        "release_blocked": bool(blocking_reasons),
         "baseline": baseline_sha,
         "candidate": candidate_sha,
         "manifest": manifest,
         "contract_errors": contract_errors,
         "static": static_records,
-        "live": live_records,
-        "reasons": reasons,
-        "unavailable": unavailable,
+        "blocking_reasons": blocking_reasons,
+        "quality": {
+            "status": quality_status,
+            "host_order": list(HOST_ORDER),
+            "selected_host": selected_host,
+            "hosts": host_results,
+            "records": live_records,
+        },
     }
     (output / "release-gate.json").write_text(
         json.dumps(result, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))
-    return 0 if status == "Pass" else 1 if status == "Fail" else 2
+    return 0 if status == "Pass" else 1
 
 
 if __name__ == "__main__":
