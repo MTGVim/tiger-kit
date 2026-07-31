@@ -1,6 +1,6 @@
 # ADR 0001: Implementation quality gates and optimistic reflection
 
-- Status: Accepted
+- Status: Superseded by ADR 0003
 - Date: 2026-07-29
 - Candidate release: v20.2.0
 - Source: MTGVim/tiger-kit issue #200

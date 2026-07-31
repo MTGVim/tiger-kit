@@ -1,7 +1,27 @@
+# TigerKit 21.0.9 skill ownership and browser evidence boundary
+
+Issue #224 removes the retired reflection package and makes the ownership
+boundaries explicit. This maintenance release uses the patch-only release
+procedure selected by the maintainer; it does not claim the issue's suggested
+major-version policy.
+
+- `tk-drive` ends after aggregate verification and finalization. There is no
+  post-verification learning/reflection phase or separate writer tail.
+- `tk-learn` is the sole writer for skill `create | improve | merge`.
+  `tk-skill-diagnose` emits one verified `learn-ready` handoff and never patches
+  the canonical skill. `tk-grooming` audits repository/user skills only and
+  does not own rule lifecycle.
+- `tk-browser-verify` requires at least one non-empty screenshot and actual
+  image inspection for every started Guard or Verdict run. Its result records
+  `Evidence directory: /absolute/path/...` when resolvable; otherwise the
+  result is `Unverifiable` with `Evidence directory: unavailable`.
+- Existing historical sections below retain their original release wording;
+  they are not current routing or ownership instructions.
+
 # TigerKit main direct graph and compact preflight
 
-The next major-release source keeps the current 15-skill catalog but replaces
-the `tk-drive` lifecycle protocol. No new `tk-grilling` skill is added:
+The maintenance source keeps the current 14-skill catalog and replaces the
+`tk-drive` lifecycle protocol. No new `tk-grilling` skill is added:
 `tk-grill-me` owns the evidence-first decision procedure in both standalone
 and active-drive modes, varying only result routing.
 
@@ -14,7 +34,6 @@ tk-drive preflight
 → tk-to-tickets, only for multiple independently verifiable units
 → tk-implement, once per unit
 → aggregate verification
-→ tk-reflect, only for a valid tail
 → tk-drive finalization
 ```
 
@@ -32,11 +51,8 @@ migrated or treated as authority; a current run derives its next action from
 the actual artifacts, Git state, tests, and browser evidence.
 
 Corrective implementation remains bounded to three observed, isolated failure
-cycles. Drive-tail reflection no longer auto-applies tracked rules or creates a
-reflection commit. Its only automatic mutation is one exact pre-existing
-ignored/untracked user-managed repository rule recorded at drive start, guarded
-by containment, baseline hash, secure backup, atomic replacement, validation,
-and verified rollback. Every other target keeps its normal approval boundary.
+cycles. The drive owns no rule, persistent-memory, or post-session learning
+lifecycle. Every skill change keeps its normal `tk-learn` approval boundary.
 
 Same-turn Agent Skill continuation remains prompt-directed and probabilistic.
 TigerKit does not claim durable scheduling, event replay, or guaranteed

@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- Issue #224 removes the retired reflection skill and ends `tk-drive` directly
+  after aggregate verification; `tk-learn` now solely owns skill
+  `create | improve | merge`, while diagnosis emits `learn-ready` and grooming
+  is limited to repository/user skills.
+- Every started `tk-browser-verify` Guard or Verdict run now requires a
+  non-empty screenshot, actual image inspection, and an absolute
+  `Evidence directory: /...` when resolvable.
+- Added explicit eval-contract retirement evidence and ADR 0003 for the new
+  ownership and browser-evidence boundaries.
+
 ## 21.0.8 — Eval SSOT and Empirical Quality
 
 - Made skill-local trigger and behavior JSON the single source of truth, removed generated Darwin prompt projections and root fixture mirrors, and replaced hardcoded catalog snapshots with auto-discovery.
