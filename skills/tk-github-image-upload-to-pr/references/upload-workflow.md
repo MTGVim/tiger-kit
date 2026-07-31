@@ -12,6 +12,9 @@
   checklist, links, images, footer, and line endings.
 - Default to the PR body. Use a comment only when the user names the comment
   target or explicitly asks for comment insertion.
+- When `evidence_required: true`, accept only a producer handoff from
+  `tk-browser-verify` or `tk-prototype`; do not infer a requirement from
+  the presence of arbitrary image files.
 
 ## Staging and browser
 
@@ -64,6 +67,28 @@ Delete only the run-owned staging directory and confirm its absence. If
 cleanup fails, report the exact owned path and do not claim `Pass`. If upload
 or verification fails, report whether the PR body was changed; do not retry by
 submitting a comment.
+
+## Producer handoff
+
+The handoff is valid only when it carries:
+
+```text
+evidence_required: true
+producer: tk-browser-verify | tk-prototype
+evidence_directory: <absolute run-owned path>
+artifacts:
+  - path: <absolute non-empty image path>
+    criterion: <criterion or caption>
+    inspected: true
+```
+
+For `tk-browser-verify`, require the producer's `Pass` result and its
+existing `Evidence directory` and `Screenshot` entries. For
+`tk-prototype`, require the tested screenshot path and actual image
+inspection; do not describe a Guard comparison as an official runtime verdict.
+If the handoff is required but missing or invalid, return `Blocked` before
+upload. The parent may keep a created PR, but must report
+`evidence_state: blocked` rather than full completion.
 
 ## Upstream reference
 

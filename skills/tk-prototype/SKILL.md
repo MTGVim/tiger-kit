@@ -32,7 +32,9 @@ scratch is tracked.
 4. `run`: execute selected variants/harness and capture actual output or
    screenshots plus command result.
 5. `compare`: map evidence to criteria, verified differences, unverified items,
-   and next decision.
+   and next decision. When a parent request marks PR evidence as required,
+   retain a run-owned absolute `Screenshot: <path>` and the actual image
+   inspection under `## Tested`.
 6. `terminal summary`: return `## Confirmed`, `## Production implication`,
    `## Tested`, `## Variants or harness`, and `## Still fake` as applicable.
    Do not append a provenance/status block.
@@ -63,6 +65,10 @@ dependencies, and production source.
 Do not commit by default. Do not invest in production abstractions/error
 handling, call output production-ready, auto-promote it, or invoke another user
 skill.
+
+For a PR evidence handoff, expose the screenshot path, run-owned evidence
+directory, criterion, and actual image inspection. This is evidence of the
+prototype comparison, not an official runtime verdict.
 
 ## Failure paths
 
