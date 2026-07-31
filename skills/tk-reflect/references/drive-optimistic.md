@@ -1,29 +1,23 @@
 # Drive-optimistic reflection
 
 This mode is available only from one active `tk-drive` tail after aggregate
-product verification passes. Standalone and ordinary implicit reflection keep
-their report-only and separate-approval contracts.
+product verification passes. Standalone reflection uses the same local apply
+safety boundary, while only the active drive owns finalization.
 
 ## Entry and fixed point
 
-Require the handoff to include:
-
 Require a valid active-drive reflection handoff after aggregate product
-verification. The handoff names the eligible target and its containment
-evidence; it does not store a caller-return instruction.
+verification. The handoff includes task identity, product verification HEAD,
+branch, initial HEAD, pre-existing dirty ownership, ordered product commits,
+aggregate verification, and evidence refs for `.tigerkit/implementation.md`,
+spec, and tickets. Missing or mismatched authority is `Blocked`; inaccessible
+required evidence is `Unverifiable`.
 
-Also require task identity, product verification HEAD, branch, initial HEAD,
-pre-existing dirty ownership, ordered product commits, aggregate verification,
-and evidence refs for `.tigerkit/implementation.md`, spec, and tickets. Missing
-or mismatched authority is `Blocked`; inaccessible required evidence is
-`Unverifiable`.
-
-The drive-start implementation ledger must already name the one exact
-normalized repository-relative target, prove that it existed, record its
-before-image SHA-256, and classify it as user-managed, untracked, and ignored.
-Freeze the product verification HEAD and reread that baseline evidence before
-mutation. Reflection may not touch product/source paths. Local-only reflection
-leaves final HEAD equal to product verification HEAD.
+Freeze the product verification HEAD before reflection. Reflection may not touch
+product/source paths. A local rule apply leaves final HEAD equal to product
+verification HEAD. Capture the exact target identity, ownership evidence,
+current bytes, SHA-256, and target state at reflection start; the target need not
+have been predicted in the drive-start ledger.
 
 ## Prevention owner
 
@@ -35,65 +29,67 @@ Classify every candidate at the earliest verified prevention point:
 - `lint/typecheck`;
 - `CI`;
 - `repo rule`;
+- `user rule`;
 - `skill`;
 - `discard`.
 
-Only `repo rule` can be applied in this mode. Other actionable owners remain
-follow-up candidates; `skill` receives a promotion packet and never mutates a
-skill.
+Only an eligible local `repo rule` or `user rule` can be applied in this mode.
+Other actionable owners remain follow-up candidates; `skill` receives a
+promotion packet and never mutates a skill.
 
 ## Optimistic eligibility
 
-Apply a repository rule only when every condition holds:
+Apply at most one local rule only when every condition holds:
 
-- prevention owner is `repo rule`;
+- prevention owner is `repo rule` or `user rule`;
 - confidence is `high`, backed by at least two independently verified Evidence
   IDs and no counterexample;
-- repository-specific trigger, action, and boundary are exact;
-- the drive-start ledger proves one existing exact user-managed repository
-  rule target;
-- the target is currently a regular non-symlink file contained by the
-  repository, untracked, ignored, and byte-identical to its baseline SHA-256;
-- the target is not vendor, generated, global, user-level, persistent memory,
-  or unknown ownership;
-- target content and ownership have not drifted;
+- trigger, action, and boundary are exact;
+- one existing exact user-managed target is proven at reflection start;
+- the target is a regular non-symlink file and byte-identical to its frozen
+  reflection-start SHA-256 immediately before mutation;
+- a repo target is inside the exact current worktree and Git proves it is
+  untracked; ignored and visible untracked states are both eligible;
+- a user target is an exact current-host-native path inside the user's home and
+  outside the current repository;
+- the target is not vendor, generated, persistent memory, or unknown ownership;
 - no test, lint/typecheck, or CI owner prevents the issue earlier;
 - the change is not skill creation or semantic skill mutation;
 - the user did not prohibit reflection.
 
-Use the repository placement rubric before eligibility. A candidate that fails
-any condition stays `pending` without a drive-stopping question. No verified
-reusable evidence is a successful `no-op`.
+Use [local rule apply](local-rule-apply.md) before eligibility. A candidate that
+fails any condition stays `pending` without a drive-stopping question. No
+verified reusable evidence is a successful `no-op`.
 
 ## Ineligible targets
 
-Tracked, unignored, new, symlinked, external, changed-since-baseline,
-ambiguous, generated, or ownership-unknown targets never auto-apply. Keep the
-candidate `pending` under its normal approval boundary and do not create a
-replacement local target. A target path containing a glob or resolving
-through another path is ambiguous.
+Tracked repository files, new or missing targets, symlinked targets, paths
+outside their allowed scope, changed-since-baseline targets, globs, ambiguous
+paths, generated/vendor targets, and ownership-unknown targets never
+local-apply. Keep the candidate `pending` and do not create a replacement target.
 
-## Exact existing ignored target
+A repository target is not ineligible merely because `git check-ignore` exits
+`1`; that is the verified `untracked-visible` state. Exit codes other than the
+documented tracked/untracked and ignored/visible values, or disagreement with
+`git status`, are `Unverifiable` and prohibit mutation.
 
-The exact user-managed local rule file must already exist at drive start.
-Never create a new local rule target. Before mutation, save its exact
-before-image and hash in the current task's single latest snapshot under
-`.tigerkit/reflect-backup/`.
+## Exact existing local target
 
-Use `scripts/ignored_rule_apply.py` with the exact repository root,
-repository-relative target, drive-start SHA-256, a regular candidate file
-inside `.tigerkit/`, and at least one shell-free JSON-array validation command.
-The script rechecks containment, every path component, regular-file and
-symlink state, Git tracked/ignored state, and baseline hash; writes a mode-0600
-backup; atomically replaces the target; reruns the supplied syntax/link
-validation; and restores the exact before-image when post-write validation
-fails. Do not bypass a script rejection or treat the ownership assertion as a
-fact the script can infer.
+Never create a new local rule target. Before mutation, save the exact before
+image and metadata in `.tigerkit/reflect-backup/`.
 
-This path creates no commit and does not change final HEAD. Report
-`applied locally`, the target, and the rollback snapshot or exact restore
-command. Target or snapshot drift prohibits automatic rollback and is
-`Blocked | Unverifiable`.
+Use `scripts/safe_rule_apply.py` with the exact repository root, target scope,
+exact target, reflection-start SHA-256, verified `--user-managed` assertion, a
+regular candidate file inside `.tigerkit/`, and at least one shell-free
+JSON-array validation command. The script rechecks containment, path components,
+regular-file and symlink state, repo Git state or user-scope separation,
+baseline hash, backup, atomic replacement, post-write state, validators, and
+exact rollback.
+
+This path creates no commit and does not change final HEAD. Record `applied
+locally`, scope, target state, ignore source when present, and the rollback
+snapshot or exact restore command. Target or snapshot drift prohibits automatic
+rollback and is `Blocked | Unverifiable`.
 
 ## Skill promotion packet
 
@@ -113,32 +109,31 @@ change drive terminal status and do not create a user question.
 
 ## Ledger
 
-Atomically write or replace `.tigerkit/reflect.md`. Record task identity,
-product verification HEAD, evidence refs, each candidate's interpretation,
-confidence, preferred prevention owner, host dependency, action, eligibility
-result, application and validation, local rollback snapshot, promotion packet,
-and pending/discard reason. Do not store raw logs,
-transcripts, full diffs, credentials, or copied receipt prose.
+Atomically write or replace `.tigerkit/reflect.md` for every tail, including
+no-op and pending outcomes. Record task identity, product verification HEAD,
+evidence refs, each candidate's interpretation, confidence, preferred
+prevention owner, host dependency, target state, action, eligibility result,
+application and validation, local rollback snapshot, promotion packet, and
+pending/discard reason. Do not store raw logs, transcripts, full diffs,
+credentials, screenshots, or copied receipt prose.
 
 ## Failure and completion
 
 A pre-write failure leaves targets untouched. On a local write or validation
-failure, restore the exact before-image and verify its hash. Verified
-restoration preserves product `Pass` while reflection reports `Fail`. Failed
-restoration, target drift, out-of-scope changes, or indeterminate workspace
-state is `Blocked | Unverifiable`.
+failure, restore the exact before image and verify its hash. Verified restoration
+preserves product `Pass` while reflection reports `Fail`. Failed restoration,
+target drift, out-of-scope changes, or indeterminate workspace state is
+`Blocked | Unverifiable`.
 
 On successful mutation or no-op, pass product verification HEAD, final HEAD,
-local rollback when applicable, candidate IDs, and validation evidence
-directly to `tk-drive finalization`. Omit no-op, empty risks, and
-zero-candidate sections from user-facing output.
+local rollback when applicable, candidate IDs, ledger path, and validation
+evidence directly to `tk-drive finalization`.
 
-For every non-no-op result, preserve the standalone bounded Disposition table:
+The terminal user sees only the bounded standalone Disposition summary:
 
 | ID | Candidate | Action | Target | Why |
 | --- | --- | --- | --- | --- |
 | RF-01 | `<plain-language name>` | `<action/status and next step>` | `<target>` | `<evidence refs>` |
 
-Show at most five decision-relevant rows. Status, provenance, rollback, and
-decision IDs remain in the owned ledger; they never replace the table with
-code names alone.
+Show at most five decision-relevant rows. The ledger owns complete evidence,
+status, provenance, rollback, and promotion details.

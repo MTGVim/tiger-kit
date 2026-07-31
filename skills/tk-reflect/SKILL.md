@@ -1,6 +1,6 @@
 ---
 name: tk-reflect
-description: "[user/auto] Classify reusable rule or skill candidates only when the user requests reuse analysis from conversation, diff, or outcome evidence, or when a valid active-drive tail hands off. Do not apply to summaries, output-style utilities, explicit invocation of another skill, or ordinary task completion. Implicit mode is report-only."
+description: "[user/auto] Classify reusable rule or skill candidates when the user requests reuse analysis or a valid active-drive tail hands off; always persist the bounded reflection ledger and safely apply only eligible existing local rule targets."
 argument-hint: "<conversation, change, diff, outcome, or source>"
 metadata:
   tigerkit:
@@ -14,7 +14,6 @@ metadata:
 Apply only on explicit invocation, a clear reuse-analysis request, or one valid
 active-drive reflection handoff. Ordinary completion, summaries, an
 output-style utility, and another skill's instructions do not trigger it.
-Default and implicit behavior is report-only.
 
 ## Outcome
 
@@ -27,7 +26,8 @@ user-named sources:
 3. choose confidence `high | medium | low`;
 4. classify the narrowest owner:
    `repo rule | repo skill | user rule | user skill | persistent memory`;
-5. choose `propose | update | merge | no-op | discard`.
+5. choose `propose | update | merge | no-op | discard`;
+6. persist the bounded result in `.tigerkit/reflect.md` before terminal output.
 
 Use [repository placement](references/repository-placement.md) for repository
 candidates. Prefer `no-op` or `merge` over duplication. A rule is a short
@@ -41,7 +41,7 @@ Each candidate records:
 - `Confidence` and basis;
 - `Preferred prevention owner`;
 - `Host dependency: host-independent | current-host-native | inaccessible`;
-- target, action, status, and a working draft only when actionable.
+- target, target state, action, status, and a working draft when actionable.
 
 `high` confidence needs independent verified evidence and no unresolved
 counterexample. One verified occurrence without independent support is at most
@@ -50,10 +50,24 @@ promote `propose | update | merge`.
 
 ## Authority
 
-Standalone reflection does not apply a target. Rule application requires a
-separate explicit approval naming target and scope. Skill creation or semantic
-skill mutation belongs only to `tk-learn`; this skill reports a pending skill
-candidate and never invokes it automatically.
+A valid run always owns the bounded `.tigerkit/reflect.md` ledger. Classification
+is otherwise report-only except for one eligible existing local rule target.
+
+A valid explicit run or active-drive tail may apply one exact existing
+user-managed rule when confidence is `high`, at least two independent verified
+Evidence IDs support it, no counterexample or earlier prevention owner exists,
+and [local rule apply](references/local-rule-apply.md) passes. Eligible target
+scopes are:
+
+- an existing user-level host-native rule outside the current repository;
+- an existing repository rule that Git proves is untracked, whether ignored or
+  visible in `git status`.
+
+Tracked repository targets, new targets, vendor/generated targets, unknown
+ownership, symlinks, external paths, drifted targets, skills, and persistent
+memory are never changed by this skill. They remain `pending` under their normal
+approval or owning-skill boundary. Skill creation or semantic skill mutation
+belongs only to `tk-learn`; this skill never invokes it automatically.
 
 File-based persistent memory is prior art, not an automatic write target. If it
 fully owns the behavior, use `no-op`; if its path is unavailable, record
@@ -67,11 +81,11 @@ one set for the other.
 
 Only a valid handoff after aggregate product verification may use
 [drive-optimistic reflection](references/drive-optimistic.md). It may apply one
-eligible exact pre-existing ignored `repo rule` through the skill-local script,
+eligible local `repo rule` or `user rule` through the skill-local executor,
 write `.tigerkit/reflect.md`, and pass classification and mutation evidence to
-`tk-drive finalization`. It never creates or promotes a skill. Missing,
-drifted, tracked, unignored, new, symlinked, external, or unrestorable authority
-means no mutation.
+`tk-drive finalization`. It never creates or promotes a skill. Missing, drifted,
+tracked-repo, new, symlinked, vendor-managed, ownership-unknown, external, or
+unrestorable authority means no target mutation.
 
 ## Conditional skill diagnosis
 
@@ -88,39 +102,51 @@ with verified root cause afterward. An unavailable handoff returns a compact
 `Diagnosis required` payload and `Unverifiable`; do not imitate diagnosis inline
 or create a reflect/diagnose cycle.
 
-## Write and failure rules
+## Ledger and failure rules
 
-Create `.tigerkit/reflect.md` only for an explicit report-artifact request or a
-valid drive tail. Write bounded rows atomically; store no raw logs, transcripts,
-diff excerpts, credentials, or screenshots. Never edit `.gitignore`.
+Require one exact writable Git worktree root for every completed run. Atomically
+write or replace `.tigerkit/reflect.md` for explicit, implicit, active-drive,
+report-only, pending, applied, and no-op outcomes. Record task identity,
+evidence refs, interpretations, confidence, prevention owner, host dependency,
+target state, action, status, validation, rollback, and unresolved reason. Keep
+rows bounded and use the same `RF-*` IDs shown in chat.
+
+Render the bounded Markdown as a regular candidate file inside `.tigerkit/`
+starting with `# Reflection ledger`, then persist it through
+`scripts/write_reflect_ledger.py`. A direct, partial, or unverified write is not
+completion.
+
+Store no raw logs, transcripts, full diffs, credentials, screenshots, or copied
+receipt prose. Never edit `.gitignore`. If the ledger cannot be written and
+reread exactly, do not claim completion; return `Unverifiable` with the failed
+path and check.
 
 Unreadable required evidence remains `unverified`. Apply or revalidation failure
 preserves the existing target and returns `Fail | Blocked | Unverifiable`.
-Outside drive-tail authority, stop at `pending | reported` until separately
-approved.
+Verified exact rollback reports `Fail`; unverified restoration is `Blocked |
+Unverifiable`.
 
 ## Result
 
 In chat, emit only `## Disposition` and, when approval is needed, one decision
-question after it.
+question after it. The ledger owns all detail; chat shows at most five
+human-decision-relevant rows and points to `.tigerkit/reflect.md` when more exist.
 
 | ID | Candidate | Action | Target | Why |
 | --- | --- | --- | --- | --- |
 | RF-01 | `<short name>` | `<action/status>` | `<target>` | `<evidence refs>` |
 
-Assign `RF-01`, `RF-02`, ... once in discovery order. Show at most five rows and
-cite `.tigerkit/reflect.md` for the rest. Every Action and Why cell must explain
-the human next action; IDs and status tokens alone are not a result. A no-op is
-minimal. With no candidate, emit one `None | no-op` row. In chat, no raw logs,
-transcripts, diff excerpts, repeated rationale, or bottom provenance block.
+Assign `RF-01`, `RF-02`, ... once in discovery order. Every Action and Why cell
+must explain the human next action. A no-op is minimal. With no candidate, emit
+one `None | no-op` row. In chat, do not include raw evidence, drafts, logs,
+transcripts, repeated rationale, or a bottom provenance block.
 
 ### 🔴 HARD GATE · terminal user summary
 
 Keep progress and internal procedure evidence out of the terminal user response.
-Begin with the canonical result heading or sentence. Emit no ceremonial
-preamble, receipt heading, `Outcome:` label, duplicate status, or active-drive
-child summary. Persist detail only in an artifact already owned by this skill;
-a read-only path remains read-only.
+Begin with the canonical result heading. Emit no ceremonial preamble, receipt
+heading, `Outcome:` label, duplicate status, or active-drive child summary.
+Persist detail only in `.tigerkit/reflect.md`.
 
 ### 🔴 HARD GATE · response language
 
@@ -140,7 +166,8 @@ none is exposed. A failed or rejected call is not absence; preserve
 ## Pitfalls
 
 - Do not present interpretation as fact or inflate confidence.
-- Do not duplicate a target, mutate without approval, or promote a one-off
-  workaround.
+- Do not skip the ledger, duplicate a target, or mutate outside local authority.
+- Do not treat `git check-ignore` exit 1 as a command failure or an ineligible
+  untracked target.
 - Do not invent an inaccessible memory path or omit discoverable prior art.
 - Do not repeat diagnosis, diagnose inline, or promote sensitive raw evidence.
