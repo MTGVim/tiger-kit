@@ -1,0 +1,166 @@
+{
+  "skill": "tk-pr",
+  "kind": "user-invoked",
+  "queries": [
+    {
+      "id": "train-positive",
+      "split": "train",
+      "query": "$tk-pr open 현재 브랜치로 draft PR을 준비해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "train-negative",
+      "split": "train",
+      "query": "이 함수의 버그를 고쳐줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-positive-1",
+      "split": "validation",
+      "query": "/tk-pr open verified commits로 PR 초안을 만들고 publish 전에 확인받아 주세요",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-2",
+      "split": "validation",
+      "query": "$tk-pr open 기존 PR 본문과 스크린샷을 보존해서 갱신해줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-3",
+      "split": "validation",
+      "query": "/tk-pr triage 내 오픈 피알들 트리아지해죠",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-positive-4",
+      "split": "validation",
+      "query": "$tk-pr respond 이 PR review comments를 resolution unit으로 묶어줘",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-5",
+      "split": "validation",
+      "query": "/tk-pr triage",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-positive-6",
+      "split": "validation",
+      "query": "$tk-pr respond 리뷰 코멘트를 정리하고 선택한 것만 수정한 뒤 답글 계획까지 만들어줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-7",
+      "split": "validation",
+      "query": "/tk-pr respond 반영 커밋 이후 push·reply·resolve publish plan을 보여줘",
+      "should_trigger": true,
+      "facets": [
+        "formal",
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-8",
+      "split": "validation",
+      "query": "$tk-pr open base와 head를 검증해 draft PR을 준비해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "casual",
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-negative-1",
+      "split": "validation",
+      "query": "현재 verified commits로 PR 초안을 만들고 publish 전에 확인받아 주세요",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-2",
+      "split": "validation",
+      "query": "PR 열어줘. 근데 푸시랑 생성 전엔 초안 보여줘",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-3",
+      "split": "validation",
+      "query": "내 오픈 피알들 트리아지해죠",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-negative-4",
+      "split": "validation",
+      "query": "이 PR review comments를 resolution unit으로 묶어서 respond 해줘",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-negative-5",
+      "split": "validation",
+      "query": "PR triage",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-negative-6",
+      "split": "validation",
+      "query": "리뷰 코멘트를 정리하고 선택한 것만 수정한 뒤 답글 계획까지 만들어줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-7",
+      "split": "validation",
+      "query": "기존 pull request의 본문과 스크린샷을 보존하면서 제목과 설명을 갱신해 주세요",
+      "should_trigger": false,
+      "facets": [
+        "formal",
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-negative-8",
+      "split": "validation",
+      "query": "리뷰 반영 커밋은 끝났어. 푸시·답글·resolve할 정확한 publish plan 보여줘",
+      "should_trigger": false,
+      "facets": [
+        "casual",
+        "compound"
+      ]
+    }
+  ]
+}
