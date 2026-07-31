@@ -15,8 +15,9 @@ passkey, CAPTCHA, or device approval. Reuse only a user-local profile outside
 the repository. Never output, copy, or commit credentials, cookies, tokens,
 profile contents, or profile paths.
 
-Every Verdict success, failure, and runtime-blocked final state needs a
-screenshot and actual image analysis. Missing either prevents `Pass`.
+Every Guard or Verdict success, failure, and runtime-blocked final state needs a
+non-empty screenshot and actual image analysis. Missing either prevents a
+completed result and makes the run `Unverifiable`.
 
 Separate screenshot/video from network/HAR/console inventory and record
 `Sensitivity`, `Redaction`, and `Residue check`. Authorization, cookies,

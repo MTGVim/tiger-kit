@@ -19,9 +19,9 @@ resume it in the same conversation.
 Choose before any browser or verification-server call.
 
 - **Guard** — disposable HTML, prototypes, and exploratory UI checks. Run only
-  the requested trusted interaction, inspect a screenshot when making a visual
-  claim, record minimal evidence, and clean owned resources. Do not manufacture
-  a responsive matrix or official verdict.
+  the requested trusted interaction, capture at least one run-owned screenshot,
+  inspect the actual image, record minimal evidence, and clean owned resources.
+  Do not manufacture a responsive matrix or official verdict.
 - **Verdict** — explicit invocation, persistent user-visible source changes, or
   an official runtime verdict. Verify every required criterion and return
   `Pass | Fail | Blocked | Unverifiable`.
@@ -41,8 +41,8 @@ ephemeral, and return material strategy drift to the parent.
 3. **Launch** — prove the browser, effective arguments, profile ownership, and
    current-worktree serving source.
 4. **Run** — navigate from a known state, perform safe interactions, inspect
-   required network/final state, capture screenshots, and inspect the actual
-   images.
+   required network/final state, capture at least one screenshot, and inspect
+   the actual image(s).
 5. **Verdict** — bind each criterion to evidence and classify failures as
    `change-related | pre-existing | environment | unverifiable`.
 6. **Cleanup** — close only run-owned browser resources and verify required
@@ -71,15 +71,25 @@ cookies, OTPs, or tokens.
 ### Evidence and captures
 
 DOM, accessibility, network success, or visual similarity does not replace a
-runtime screenshot plus actual image inspection. Changed behavior needs the
+runtime screenshot plus actual image inspection. Every Guard and Verdict run
+must leave at least one non-empty run-owned screenshot plus its actual image
+inspection; missing capture or inspection makes the result `Unverifiable`.
+Changed behavior needs the
 relevant transition and final-state evidence, not only a toast or local DOM
 change.
 
-Before the first persisted capture, use
-`.tigerkit/browser-verify/runs/<run-id>/` as the run-owned ledger. Move only
+Before the first persisted capture, create and resolve
+`.tigerkit/browser-verify/runs/<run-id>/` as the run-owned ledger. Record its
+absolute path as `Evidence directory: /absolute/path/...` in the terminal
+`## Evidence` section whenever the path is resolvable. Move only
 files proven to belong to this run. Sensitive network, console, or auth-adjacent
 captures require verified redaction and residue absence; otherwise use
 `Unverifiable`. Never edit `.gitignore` or delete user-owned evidence.
+
+The evidence directory must contain the non-empty screenshot before a completed
+Guard result or a `Pass` Verdict. If the directory cannot be resolved, emit
+`Evidence directory: unavailable` and return `Unverifiable`; never substitute a
+relative path when an absolute path is required.
 
 Never paste or store raw console, network/HAR, or transcript bodies when a path
 and compact finding are enough. Instrumented evidence is allowed only under the
@@ -103,7 +113,9 @@ environment and explicit authority is `Unverifiable`.
 
 When a design basis exists, use `## Alignment` only for the design decision.
 Use `## Verdict` for the runtime result, with non-empty `## Verified`, optional
-`## Findings`, `## Evidence`, `## Unverified`, and `## Cleanup`. When several
+`## Findings`, `## Evidence`, `## Unverified`, and `## Cleanup`. `## Evidence`
+must include `Evidence directory: <absolute path>` and at least one
+`Screenshot: <path>` plus the actual image inspection result. When several
 criteria exist, use `Criterion | Result | Evidence`; use a sentence when only
 one user-relevant row exists. Summarize two to seven verified scenarios; for
 more, show the top five to seven and cite the ledger. Do not add a receipt

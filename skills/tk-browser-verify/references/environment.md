@@ -19,10 +19,16 @@ profile/login state; preserve the attached-session boundary.
 
 ## Screenshot paths
 
-Choose screenshot `filePath` relative to the browser tool's workspace root. If
+Choose screenshot `filePath` relative to the browser tool's workspace root and
+resolve the run ledger to an absolute directory for the user-facing result. If
 external scratch paths are rejected, save under the repo/workspace temporarily,
 move as required, and leave no residue. Inline capture is enough for a
 single-use close-up when supported.
+
+Every Guard and Verdict run records `Evidence directory: <absolute path>` and
+at least one non-empty `Screenshot: <path>` after actual image inspection. If
+the absolute directory cannot be resolved, return `Unverifiable` and emit
+`Evidence directory: unavailable`.
 
 ## Server auto-open
 
