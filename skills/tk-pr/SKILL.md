@@ -1,7 +1,7 @@
 ---
 name: tk-pr
 description: "[user] Own a GitHub pull request lifecycle through explicit open, triage, or respond mode. Draft and inspect safely, delegate review fixes to tk-implement, and require a current-turn publish checkpoint before any remote write."
-argument-hint: "open|triage|respond [PR, branch, repository, or profile]"
+argument-hint: "open|triage|respond [PR, branch, or repository]"
 disable-model-invocation: true
 metadata:
   tigerkit:
