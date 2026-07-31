@@ -1,0 +1,90 @@
+{
+  "skill": "tk-github-image-upload-to-pr",
+  "kind": "user-invoked",
+  "queries": [
+    {
+      "id": "train-explicit",
+      "split": "train",
+      "query": "$tk-github-image-upload-to-pr",
+      "should_trigger": true
+    },
+    {
+      "id": "train-negative",
+      "split": "train",
+      "query": "PR 상태를 확인해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-positive-1",
+      "split": "validation",
+      "query": "/tk-github-image-upload-to-pr 이 PNG를 현재 PR 본문에 넣어줘",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-2",
+      "split": "validation",
+      "query": "로컬 screenshot 두 장을 GitHub PR에 첨부해줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-3",
+      "split": "validation",
+      "query": "PR comment에 이 이미지 올려줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-4",
+      "split": "validation",
+      "query": "PR에 스크린샷 삽입",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-negative-1",
+      "split": "validation",
+      "query": "스크린샷을 새로 캡처해줘",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-2",
+      "split": "validation",
+      "query": "새 PR을 만들어줘",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-3",
+      "split": "validation",
+      "query": "열린 PR의 review와 checks를 triage해줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-4",
+      "split": "validation",
+      "query": "GitHub 이미지 업로드 방법을 설명해줘",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    }
+  ]
+}

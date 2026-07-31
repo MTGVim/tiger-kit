@@ -362,6 +362,30 @@
       "focus_skill": "tk-pr-respond",
       "expected_selected_skill": "tk-pr-respond",
       "critical": true
+    },
+    {
+      "id": "github-image-upload-explicit",
+      "boundary": "tk-github-image-upload-to-pr vs generic GitHub help",
+      "prompt": "/tk-github-image-upload-to-pr 이 스크린샷을 현재 PR body에 넣어줘",
+      "focus_skill": "tk-github-image-upload-to-pr",
+      "expected_selected_skill": "tk-github-image-upload-to-pr",
+      "critical": true
+    },
+    {
+      "id": "github-image-upload-vs-screenshot-capture",
+      "boundary": "tk-github-image-upload-to-pr vs screenshot capture",
+      "prompt": "이 화면의 screenshot을 새로 찍어줘",
+      "focus_skill": "tk-github-image-upload-to-pr",
+      "expected_selected_skill": null,
+      "critical": true
+    },
+    {
+      "id": "github-image-upload-vs-pr-open",
+      "boundary": "tk-github-image-upload-to-pr vs tk-pr-open",
+      "prompt": "현재 브랜치로 새 PR을 열고 이 이미지도 넣어줘",
+      "focus_skill": "tk-pr-open",
+      "expected_selected_skill": "tk-pr-open",
+      "critical": true
     }
   ]
 }
