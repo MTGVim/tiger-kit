@@ -1,8 +1,8 @@
 {
   "version": 1,
   "hosts": [
-    "claude-code",
     "codex",
+    "claude-code",
     "hermes-agent"
   ],
   "runs": 2,
