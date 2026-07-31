@@ -1,0 +1,74 @@
+{
+  "version": 1,
+  "runs": 2,
+  "hosts": [
+    "codex",
+    "claude-code",
+    "hermes-agent"
+  ],
+  "scenarios": [
+    {
+      "id": "single-unit-json-output",
+      "source": "In evals/fixtures/drive_ab/report.py add a --json option. With --json, stdout must be one parseable JSON object containing the existing name and count fields. Without --json, preserve the exact current text output. Add durable tests and commit the verified change.",
+      "verification": [
+        "python3 -m unittest evals.fixtures.drive_ab.test_report"
+      ],
+      "drive_required_phases": [
+        "tk-drive",
+        "tk-to-spec",
+        "tk-implement",
+        "aggregate-verification",
+        "tk-drive:finalization"
+      ],
+      "composition_required_phases": [
+        "tk-to-spec",
+        "tk-implement"
+      ],
+      "expected_terminal": [
+        "Pass"
+      ],
+      "expect_commit": true
+    },
+    {
+      "id": "multi-unit-json-and-csv",
+      "source": "In evals/fixtures/drive_ab/report.py add two independently testable output modes: --json emits a parseable JSON object and --csv emits a header plus one data row. Preserve the default text output, add durable tests for all three modes, keep the work in vertical units, and commit each verified unit.",
+      "verification": [
+        "python3 -m unittest evals.fixtures.drive_ab.test_report"
+      ],
+      "drive_required_phases": [
+        "tk-drive",
+        "tk-to-spec",
+        "tk-to-tickets",
+        "tk-implement",
+        "aggregate-verification",
+        "tk-drive:finalization"
+      ],
+      "composition_required_phases": [
+        "tk-to-spec",
+        "tk-to-tickets",
+        "tk-implement"
+      ],
+      "expected_terminal": [
+        "Pass"
+      ],
+      "expect_commit": true
+    },
+    {
+      "id": "material-format-decision",
+      "source": "In evals/fixtures/drive_ab/report.py add JSON output, but the requested key convention is intentionally unresolved: snake_case and camelCase are both acceptable to different consumers. Do not choose on the user's behalf. Surface exactly one material decision before implementation.",
+      "verification": [],
+      "drive_required_phases": [
+        "tk-drive",
+        "tk-grill-me"
+      ],
+      "composition_required_phases": [
+        "tk-grill-me"
+      ],
+      "expected_terminal": [
+        "Pending",
+        "Blocked"
+      ],
+      "expect_commit": false
+    }
+  ]
+}
