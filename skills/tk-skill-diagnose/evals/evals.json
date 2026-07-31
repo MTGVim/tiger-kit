@@ -80,7 +80,7 @@
     {
       "id": "skill-diagnose-classifies-host-loading-difference",
       "path": "success",
-      "prompt": "/tk-skill-diagnose Claude Code에서는 tk-reflect가 loaded=true지만 Codex에서는 selected 후 loaded=false인 matched prompt를 진단해 주세요.",
+      "prompt": "/tk-skill-diagnose Claude Code에서는 tk-learn이 loaded=true지만 Codex에서는 selected 후 loaded=false인 matched prompt를 진단해 주세요.",
       "expected_output": "host별 selection/loading evidence를 비교해 compatibility plane으로 분류하고 SKILL.md 원인으로 단정하지 않는다.",
       "assertions": [
         {

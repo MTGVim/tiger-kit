@@ -1,6 +1,6 @@
 ---
 name: tk-skill-diagnose
-description: "[user/auto] Reproduce and isolate one observed or measured Agent Skill anomaly in a fresh context, then route a verified existing-package objective to tigerkit-evolve. Use for selection, instruction, output, host, eval, stability, or resource incidents. Do not use for ordinary code bugs, static audits, new skill creation, or symptom-free optimization."
+description: "[user/auto] Reproduce and isolate one observed or measured Agent Skill anomaly in a fresh context, then route a verified skill objective to tk-learn. Use for selection, instruction, output, host, eval, stability, or resource incidents. Do not use for ordinary code bugs, static audits, new skill creation, or symptom-free optimization."
 argument-hint: "<skill name/path> <incident prompt, expected, observed, host, metric, or trace>"
 metadata:
   tigerkit:
@@ -17,9 +17,9 @@ incident evidence; generic words such as "skill", "debug", or "performance" are
 not enough.
 
 This skill diagnoses. It does not write canonical skills, optimize a catalog,
-or own the final patch. Existing-package changes route to `tigerkit-evolve`;
-new independently useful skills route to `tk-learn`. Never semantically mutate
-the canonical source skill.
+or own the final patch. Verified skill objectives route to `tk-learn` as the
+sole `create | improve | merge` writer. Never semantically mutate the canonical
+source skill.
 
 ## Intake gate
 
@@ -34,9 +34,10 @@ Mark missing values `unverified`. No incident or metric anchor is
 `NotApplicable`. Missing fresh execution or inaccessible required evidence is
 `Unverifiable | Blocked`, not permission to infer a cause.
 
-A `tk-reflect` handoff is accepted once only when it names the incident, exact
-target, host/invocation, prompt, expected and observed result, and evidence.
-Never call `tk-reflect` or repeat the same target + incident + blocker cycle.
+One `learn-ready` handoff is accepted once only when it names the incident,
+exact target, host/invocation, prompt, expected and observed result, and
+evidence. Never invoke `tk-learn` from this diagnostic phase or repeat the same
+target + incident + blocker cycle.
 
 ## Evidence order
 
@@ -89,7 +90,7 @@ isolation; never rewrite or patch the canonical target.
 
 ## Routes
 
-### Existing package: `evolve-ready`
+### Verified skill objective: `learn-ready`
 
 Use only when one existing package and one concrete testable objective are
 verified. Emit:
@@ -104,7 +105,7 @@ Metric: <actual measurement, labeled proxy, or unavailable>
 Incident: <stable ID or source reference>
 ```
 
-This is input to a later explicit `tigerkit-evolve`; do not invoke it.
+This is input to a later explicit `tk-learn`; do not invoke it.
 
 ### Other dispositions
 

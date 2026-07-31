@@ -85,7 +85,7 @@ stack wording changes after the same failure repeats.
 
 ## 6. Disposition
 
-- verified existing-package objective → compact `evolve-ready` handoff;
+- verified skill objective → compact `learn-ready` handoff;
 - new independently useful skill → `learn-candidate`;
 - grader/harness/fixture defect → `eval-owner`;
 - loader/adapter/host defect → `host-owner`;
