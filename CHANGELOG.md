@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.01-2 — Release
+
+- feat: split PR lifecycle into canonical skills
+
 ## 2026.08.01-1 — Release
 
 - fix: validate date release snapshots
