@@ -13,7 +13,9 @@
     "tk-drive:behavior:drive-live-direct-prepares-and-executes-source",
     "tk-drive:behavior:drive-live-direct-prepared-execution-finalizes",
     "tk-drive:behavior:drive-live-direct-implementation-holdout",
-    "tk-drive:behavior:drive-keeps-grill-pending-open"
+    "tk-drive:behavior:drive-keeps-grill-pending-open",
+    "tk-pr:behavior:pr-triage-is-read-only",
+    "tk-pr:behavior:pr-respond-apply-does-not-publish"
   ],
   "catalog_cases": [
     "catalog:behavior:drive-vs-grill-drive",
