@@ -1,0 +1,16 @@
+{
+  "skill": "tk-pr-open",
+  "kind": "user-invoked",
+  "queries": [
+    {"id":"train-explicit","split":"train","query":"$tk-pr-open","should_trigger":true},
+    {"id":"train-negative","split":"train","query":"PR 열어줘","should_trigger":false},
+    {"id":"validation-positive-1","split":"validation","query":"/tk-pr-open 현재 브랜치의 검증된 커밋으로 PR을 준비해줘","should_trigger":true,"facets":["formal"]},
+    {"id":"validation-positive-2","split":"validation","query":"tk-pr-open draft 만들어줘","should_trigger":true,"facets":["casual"]},
+    {"id":"validation-positive-3","split":"validation","query":"$tk-pr-open 기존 PR 업데이트","should_trigger":true,"facets":["short"]},
+    {"id":"validation-positive-4","split":"validation","query":"PR open 해줘","should_trigger":true,"facets":["ko-en"]},
+    {"id":"validation-negative-1","split":"validation","query":"이 PR 내용만 요약해줘","should_trigger":false,"facets":["formal"]},
+    {"id":"validation-negative-2","split":"validation","query":"리뷰 코멘트에 답변해줘","should_trigger":false,"facets":["casual"]},
+    {"id":"validation-negative-3","split":"validation","query":"PR merge 해줘","should_trigger":false,"facets":["compound"]},
+    {"id":"validation-negative-4","split":"validation","query":"그냥 커밋만 만들어줘","should_trigger":false,"facets":["short"]}
+  ]
+}

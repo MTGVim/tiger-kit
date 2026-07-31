@@ -1,6 +1,6 @@
 ---
 name: tk-implement
-description: "[user/auto] Implement, test, review, and create one current-branch commit for one independently verifiable unit. Apply only on explicit standalone selection or an explicit implementation handoff from an active tk-drive; never auto-trigger from an ordinary implementation request."
+description: "[user/auto] Implement, test, review, and create one current-branch commit for one independently verifiable unit. Apply only on explicit standalone selection or an exact handoff from tk-drive or tk-pr-respond; never auto-trigger from an ordinary implementation request."
 argument-hint: "<request, ticket, or spec> [direct|delegated] [tdd|no-tdd]"
 metadata:
   tigerkit:
@@ -12,7 +12,7 @@ metadata:
 
 # Implement
 
-Use only for explicit `/tk-implement`, `$tk-implement`, host-picker selection, or an exact active `tk-drive` handoff containing one ticket or no-ticket unit and its R/AC. Ordinary implementation requests, generic continuation, artifacts, or drive presence alone do not activate it.
+Use only for explicit `/tk-implement`, `$tk-implement`, host-picker selection, an exact active `tk-drive` handoff containing one ticket or no-ticket unit and its R/AC, or an exact active `tk-pr-respond` handoff containing one resolution unit, its comment/thread IDs, PR head SHA, R/AC, and verification obligations. Ordinary implementation requests, generic continuation, artifacts, or parent-workflow presence alone do not activate it.
 
 ## Unit contract
 
@@ -20,7 +20,7 @@ One invocation owns one independently verifiable unit and, after verification an
 
 Explicit user instructions outrank defaults. Do not weaken or reconfirm settled scope, method, prohibitions, strategy, verification, or commit instructions. Ask only when instructions conflict or safe execution requires a material user decision. Never claim a source was read or a check passed unless it was actually read or executed.
 
-For active drive, preserve task identity, ticket/R/AC, initial `HEAD`, pre-existing dirty paths, and a material verification profile's four fields. Follow the owner mapping in [review-boundary.md](references/review-boundary.md); never recompute or weaken it. Return the unit ID, native status, commit when present, and verification/review evidence to the graph. Do not emit a terminal user result or take ownership of cross-unit verification or finalization.
+For active drive or PR response, preserve task identity, unit ID, source IDs, initial `HEAD`, pre-existing dirty paths, and a material verification profile's four fields. A PR response handoff also preserves repository, PR number, PR head SHA, and exact comment/thread IDs. Follow the owner mapping in [review-boundary.md](references/review-boundary.md); never recompute or weaken it. Return the unit ID, native status, commit when present, and verification/review evidence to the parent. Do not emit a terminal user result or take ownership of cross-unit verification, remote publication, or finalization.
 
 | Status | Meaning | Commit |
 | --- | --- | --- |

@@ -1,0 +1,16 @@
+{
+  "skill": "tk-pr-triage",
+  "kind": "user-invoked",
+  "queries": [
+    {"id":"train-explicit","split":"train","query":"$tk-pr-triage","should_trigger":true},
+    {"id":"train-negative","split":"train","query":"PR 상태 알려줘","should_trigger":false},
+    {"id":"validation-positive-1","split":"validation","query":"/tk-pr-triage 현재 repository의 열린 PR을 정리해줘","should_trigger":true,"facets":["formal"]},
+    {"id":"validation-positive-2","split":"validation","query":"tk-pr-triage review request 뭐가 남았어?","should_trigger":true,"facets":["casual"]},
+    {"id":"validation-positive-3","split":"validation","query":"$tk-pr-triage checks와 changes requested 확인","should_trigger":true,"facets":["compound"]},
+    {"id":"validation-positive-4","split":"validation","query":"PR triage","should_trigger":true,"facets":["short"]},
+    {"id":"validation-negative-1","split":"validation","query":"PR 리뷰 반영하고 답글도 달아줘","should_trigger":false,"facets":["formal"]},
+    {"id":"validation-negative-2","split":"validation","query":"새 PR을 만들어줘","should_trigger":false,"facets":["casual"]},
+    {"id":"validation-negative-3","split":"validation","query":"이슈를 triage해줘","should_trigger":false,"facets":["ko-en"]},
+    {"id":"validation-negative-4","split":"validation","query":"그냥 GitHub 사용법 설명해줘","should_trigger":false,"facets":["compound"]}
+  ]
+}
