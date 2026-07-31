@@ -111,6 +111,11 @@ evidence refs, interpretations, confidence, prevention owner, host dependency,
 target state, action, status, validation, rollback, and unresolved reason. Keep
 rows bounded and use the same `RF-*` IDs shown in chat.
 
+Render the bounded Markdown as a regular candidate file inside `.tigerkit/`
+starting with `# Reflection ledger`, then persist it through
+`scripts/write_reflect_ledger.py`. A direct, partial, or unverified write is not
+completion.
+
 Store no raw logs, transcripts, full diffs, credentials, screenshots, or copied
 receipt prose. Never edit `.gitignore`. If the ledger cannot be written and
 reread exactly, do not claim completion; return `Unverifiable` with the failed
