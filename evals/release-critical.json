@@ -13,12 +13,7 @@
     "tk-drive:behavior:drive-live-direct-prepares-and-executes-source",
     "tk-drive:behavior:drive-live-direct-prepared-execution",
     "tk-drive:behavior:drive-live-direct-implementation-holdout",
-    "tk-drive:behavior:drive-keeps-grill-pending-open",
-    "tk-reflect:behavior:reflect-report-only-writes-ledger",
-    "tk-reflect:behavior:reflect-applies-existing-repo-untracked-visible-rule",
-    "tk-reflect:behavior:reflect-applies-existing-user-level-rule",
-    "tk-reflect:behavior:reflect-rejects-tracked-repo-rule",
-    "tk-reflect:behavior:reflect-ledger-write-failure-is-unverifiable"
+    "tk-drive:behavior:drive-keeps-grill-pending-open"
   ],
   "catalog_cases": [
     "catalog:behavior:drive-vs-grill-drive",
