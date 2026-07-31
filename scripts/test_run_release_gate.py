@@ -66,6 +66,11 @@ class ReleaseGateContractTest(unittest.TestCase):
         self.assertIn("tigerkit_host_adapter.py", command)
         self.assertTrue(run_release_gate.BUILTIN_ADAPTER.is_file())
 
+    def test_live_quality_is_opt_in_or_explicitly_overridden(self) -> None:
+        self.assertFalse(run_release_gate.live_quality_enabled(requested=False, adapter_command=None))
+        self.assertTrue(run_release_gate.live_quality_enabled(requested=True, adapter_command=None))
+        self.assertTrue(run_release_gate.live_quality_enabled(requested=False, adapter_command="adapter"))
+
     def test_live_gate_uses_ordered_fallback_and_stops_after_first_pass(self) -> None:
         outcomes = {
             "codex": ([], [], "codex unavailable"),
