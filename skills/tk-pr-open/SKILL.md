@@ -27,26 +27,39 @@ anything before the approval gate below.
    branch, `HEAD`, dirty paths, base branch, and any existing PR for the branch.
 2. Verify that the intended commits are present, that unrelated dirty paths are
    preserved, and that the proposed PR does not duplicate an existing PR.
-3. Draft the exact title, body, base/head refs, push refspec, and known
-   exclusions in `.tigerkit/pr-open.md`. Preserve existing PR body sections,
-   checklists, attachments, and user-authored notes when updating a PR.
-4. Show a bounded publish plan and stop with `Pending`. A generic “go ahead”
+3. If the request or Ready contract marks `evidence_required: true`, collect
+   only valid screenshot handoffs from `tk-browser-verify` or `tk-prototype`.
+   Record the producer, absolute evidence directory, screenshot paths, actual
+   inspection, and criterion in the plan. Do not treat arbitrary screenshots as
+   evidence.
+4. Draft the exact title, body, base/head refs, push refspec, evidence state,
+   and known exclusions in `.tigerkit/pr-open.md`. Preserve existing PR body
+   sections, checklists, attachments, and user-authored notes when updating a
+   PR.
+5. Show a bounded publish plan and stop with `Pending`. A generic “go ahead”
    does not approve a different or stale plan.
-5. After current-turn approval, recheck branch, `HEAD`, PR identity, and open
+6. After current-turn approval, recheck branch, `HEAD`, PR identity, and open
    state. Push the explicit refspec and create or update only the named PR.
-6. Re-read the remote PR and report its URL, head SHA, operation result, and
-   remaining checks. Do not merge or request a release from this skill.
+   When required evidence is valid, hand it to
+   `tk-github-image-upload-to-pr` after the PR exists.
+7. Re-read the remote PR and report its URL, head SHA, operation result,
+   evidence state, and remaining checks. If required evidence is missing or
+   upload fails, keep the PR result but return `Blocked` for final completion.
+   Do not merge or request a release from this skill.
 
 ## Publication gate
 
 The plan must name the repository, PR or create target, base branch, head
-branch, exact push refspec, title, body, operation order, and exclusions. Any
+branch, exact push refspec, title, body, evidence requirement/state, operation
+order, and exclusions. Any
 branch drift, PR head drift, identity mismatch, dirty-path change, or changed
 body invalidates approval and returns `Blocked` with a refreshed plan.
 
-Use `Pass` only when the requested PR operation completed, `Pending` while
-waiting for approval, `Blocked` for stale or unsafe scope, `Fail` for a write
-failure, and `Unverifiable` when required Git or GitHub evidence is unavailable.
+Use `Pass` only when the requested PR operation completed and required
+evidence is uploaded, `Pending` while waiting for approval, `Blocked` for
+missing/failed required evidence or stale/unsafe scope, `Fail` for a write
+failure, and `Unverifiable` when required Git or GitHub evidence is
+unavailable.
 
 Lead with `## PR open` and show only user-relevant state, verification, and
 remaining risks. Keep full provenance in `.tigerkit/pr-open.md`.

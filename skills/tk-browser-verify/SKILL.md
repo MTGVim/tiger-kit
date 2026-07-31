@@ -91,6 +91,11 @@ Guard result or a `Pass` Verdict. If the directory cannot be resolved, emit
 `Evidence directory: unavailable` and return `Unverifiable`; never substitute a
 relative path when an absolute path is required.
 
+When a parent request marks PR evidence as required, preserve the absolute
+`Evidence directory`, `Screenshot`, criterion, and actual image inspection
+as the producer handoff. Only a `Pass` Verdict may be handed to
+`tk-github-image-upload-to-pr`.
+
 Never paste or store raw console, network/HAR, or transcript bodies when a path
 and compact finding are enough. Instrumented evidence is allowed only under the
 restoration and residue rules in [visual](references/visual.md).

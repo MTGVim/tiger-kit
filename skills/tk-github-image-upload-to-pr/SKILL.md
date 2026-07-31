@@ -13,9 +13,10 @@ metadata:
 # GitHub image upload to PR
 
 Start only when the user selects `/tk-github-image-upload-to-pr`,
-`$tk-github-image-upload-to-pr`, or explicitly asks to insert local image
-evidence into an existing GitHub PR. Do not activate for screenshot capture,
-generic GitHub help, PR creation, PR review, or issue triage.
+`$tk-github-image-upload-to-pr`, explicitly asks to insert local image
+evidence into an existing GitHub PR, or receives an exact handoff from
+`tk-pr-open` with `evidence_required: true`. Do not activate for screenshot
+capture, generic GitHub help, PR creation, PR review, or issue triage.
 
 ## Scope
 
@@ -25,6 +26,11 @@ PRs, submit comments, merge, change reviewers, or publish releases. Comment
 insertion is allowed only when the user explicitly requests it. The default
 target is the PR body.
 
+When called from `tk-pr-open`, accept only a producer evidence handoff from
+`tk-browser-verify` or `tk-prototype` with `evidence_required: true`.
+Missing or invalid required evidence blocks the evidence handoff but does not
+undo a PR that `tk-pr-open` already created.
+
 Use [references/upload-workflow.md](references/upload-workflow.md) for the
 operational contract. Use `tk-browser-verify` for browser-controlled runtime
 verification; do not bypass its browser boundary.
@@ -32,7 +38,8 @@ verification; do not bypass its browser boundary.
 ## Workflow
 
 1. Resolve the executing repository from `origin`, the current PR, and one or
-   more regular local image files. Read the existing PR body before editing.
+   more regular local image files or a valid producer evidence handoff. Read
+   the existing PR body before editing.
 2. Use an existing `## 스크린샷` heading when present; otherwise insert before
    the AI footer or append at the end. Preserve all unrelated body content.
 3. Create meaningful run-owned copies inside the browser automation workspace,
@@ -56,6 +63,22 @@ verification; do not bypass its browser boundary.
 8. Remove owned staging files on every exit path. Do not log or return signed
    URL JWTs or query strings.
 
+## Producer evidence handoff
+
+Require all of the following when `evidence_required: true`:
+
+- `producer` is exactly `tk-browser-verify` or `tk-prototype`;
+- each artifact is a non-empty image with an absolute path and run-owned
+  evidence directory;
+- each image was actually inspected, with its criterion or caption preserved;
+- `tk-browser-verify` artifacts come from a `Pass` result;
+- `tk-prototype` artifacts include the tested screenshot path and actual
+  image inspection, without being presented as an official runtime verdict.
+
+Reject arbitrary screenshots, missing paths, `Unverifiable` results, and
+artifacts that cannot be tied to the current run. Return `Blocked` before
+upload when required evidence is absent or invalid.
+
 ## Failure handling
 
 Return `Blocked` for a draft or missing user-owned target decision,
@@ -63,6 +86,10 @@ Return `Blocked` for a draft or missing user-owned target decision,
 `Fail` for upload or cleanup errors. State whether the PR body was changed
 and what the user must do next. Never claim an upload succeeded from a
 placeholder, fixed delay, or API response alone.
+
+When called from `tk-pr-open`, preserve the separate PR operation result and
+return the evidence state as `uploaded` or `blocked`; the parent must not
+claim full completion while required evidence remains blocked.
 
 ## Result
 
