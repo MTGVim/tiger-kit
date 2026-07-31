@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 21.0.8 — Eval SSOT and Empirical Quality
+
+- Made skill-local trigger and behavior JSON the single source of truth, removed generated Darwin prompt projections and root fixture mirrors, and replaced hardcoded catalog snapshots with auto-discovery.
+- Added a built-in project-local Codex → Claude Code → Hermes Agent quality adapter that preserves authentication without mutating user skill folders; unavailable live hosts remain visible `Advisory` evidence.
+- Added exact-candidate `tk-drive` versus explicit-composition A/B experiments and an evidence-derived catalog audit; retained all 15 skills because no measured removal evidence was available.
+- Added local release-critical and catalog gates around the new schema while keeping GitHub Actions absent.
+
 ## 21.0.7 — Zero-crust Contracts
 
 - Replaced validator magic-phrase checks with structural checks for user decisions, terminal output, response language, and learning-loop ownership.
@@ -377,7 +384,7 @@
 
 - Added explicit STOP checkpoints before remote changes, Promote integration, release mutations, and post-release main cleanup.
 - Hardened the maintainer release fixtures and validator contract for promotion, resume, dry-run, and post-release branch reconciliation.
-- Preserved the 13 canonical skill distribution and runtime-neutral release workflow.
+- Preserved the 13-skill distribution and runtime-neutral release workflow.
 
 ## 19.0.11 — Canonical Skill Workflow Optimization
 
