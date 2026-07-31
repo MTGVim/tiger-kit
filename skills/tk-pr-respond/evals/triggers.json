@@ -1,0 +1,16 @@
+{
+  "skill": "tk-pr-respond",
+  "kind": "user-invoked",
+  "queries": [
+    {"id":"train-explicit","split":"train","query":"$tk-pr-respond","should_trigger":true},
+    {"id":"train-negative","split":"train","query":"리뷰 코멘트가 뭔지 설명해줘","should_trigger":false},
+    {"id":"validation-positive-1","split":"validation","query":"/tk-pr-respond 선택한 review feedback을 반영해줘","should_trigger":true,"facets":["formal"]},
+    {"id":"validation-positive-2","split":"validation","query":"tk-pr-respond PR 리뷰 답변 준비","should_trigger":true,"facets":["casual"]},
+    {"id":"validation-positive-3","split":"validation","query":"$tk-pr-respond thread 2와 3을 resolution unit으로 묶어줘","should_trigger":true,"facets":["compound"]},
+    {"id":"validation-positive-4","split":"validation","query":"PR respond","should_trigger":true,"facets":["short"]},
+    {"id":"validation-negative-1","split":"validation","query":"PR 상태만 읽어줘","should_trigger":false,"facets":["formal"]},
+    {"id":"validation-negative-2","split":"validation","query":"새 PR을 열어줘","should_trigger":false,"facets":["casual"]},
+    {"id":"validation-negative-3","split":"validation","query":"이 코드를 그냥 고쳐줘","should_trigger":false,"facets":["ko-en"]},
+    {"id":"validation-negative-4","split":"validation","query":"리뷰를 요약만 해줘","should_trigger":false,"facets":["compound"]}
+  ]
+}

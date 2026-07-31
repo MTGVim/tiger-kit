@@ -1,0 +1,5 @@
+interface:
+  display_name: "TigerKit: Open PR"
+  short_description: "[user] Open or update one pull request after an exact publish approval."
+  policy:
+    allow_implicit_invocation: false

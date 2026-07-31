@@ -62,6 +62,27 @@
       ]
     },
     {
+      "id": "validation-positive-pr-resolution-unit",
+      "split": "validation",
+      "query": "[active tk-pr-respond handoff] PR #42 head abc123, resolution unit RU-2 for comments C11/C12, implement and return native unit state without replying.",
+      "should_trigger": true,
+      "facets": [
+        "formal",
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-pr-casual",
+      "split": "validation",
+      "query": "[active tk-pr-respond handoff] C7/C8 같은 수정이야. unit 하나로 implemnt 해줘",
+      "should_trigger": true,
+      "facets": [
+        "casual",
+        "typo",
+        "ko-en"
+      ]
+    },
+    {
       "id": "validation-positive-drive-typo",
       "split": "validation",
       "query": "[tk-drive implementation handoff] tickt TK-7 하나만 implemnt 해줘",
@@ -101,6 +122,15 @@
       "id": "validation-negative-active-drive-vague",
       "split": "validation",
       "query": "tk-drive가 active니까 알아서 구현해",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-active-pr-vague",
+      "split": "validation",
+      "query": "tk-pr-respond가 active니까 리뷰 수정 알아서 해줘",
       "should_trigger": false,
       "facets": [
         "casual"

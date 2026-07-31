@@ -338,6 +338,30 @@
       "focus_skill": "tk-adhd",
       "expected_selected_skill": null,
       "critical": true
+    },
+    {
+      "id": "pr-open-explicit",
+      "boundary": "tk-pr-open vs tk-pr-triage vs tk-pr-respond",
+      "prompt": "/tk-pr-open 현재 브랜치로 PR draft를 준비해줘",
+      "focus_skill": "tk-pr-open",
+      "expected_selected_skill": "tk-pr-open",
+      "critical": true
+    },
+    {
+      "id": "pr-triage-explicit",
+      "boundary": "tk-pr-open vs tk-pr-triage vs tk-pr-respond",
+      "prompt": "/tk-pr-triage 현재 repository의 열린 PR을 정리해줘",
+      "focus_skill": "tk-pr-triage",
+      "expected_selected_skill": "tk-pr-triage",
+      "critical": true
+    },
+    {
+      "id": "pr-respond-explicit",
+      "boundary": "tk-pr-open vs tk-pr-triage vs tk-pr-respond",
+      "prompt": "/tk-pr-respond 선택한 review feedback을 반영해줘",
+      "focus_skill": "tk-pr-respond",
+      "expected_selected_skill": "tk-pr-respond",
+      "critical": true
     }
   ]
 }

@@ -5,9 +5,9 @@
 </p>
 
 TigerKit 2026.08.01-1-989e5은 Claude Code, Codex, Hermes Agent용 엔지니어링 Agent Skills
-모음입니다. 중앙 workflow runtime이나 plugin 없이 14개 self-contained skill을
-`npx skills`로 배포합니다. 최신 immutable snapshot은 `v2026.08.01-1-989e5`이며 `main`에는
-다음 릴리스 변경이 포함될 수 있습니다.
+모음입니다. 중앙 workflow runtime이나 plugin 없이 self-contained skill을
+`npx skills`로 배포합니다. 최신 immutable snapshot은 `v2026.08.01-1-989e5`이며, 이
+snapshot은 14개 skill을 포함합니다. 현재 `main`에는 다음 릴리스 후보가 포함될 수 있습니다.
 
 ## 설치
 
@@ -45,6 +45,7 @@ update lock에 원격 source로 추적되지 않으므로, 실제 사용자 설�
 
 Claude Code와 Hermes Agent에서는 `/tk-implement`, Codex에서는
 `$tk-implement` 또는 skill picker를 사용합니다.
+PR lifecycle은 `/tk-pr-open`, `/tk-pr-triage`, `/tk-pr-respond`를 각각 직접 선택합니다.
 
 ## Skill 표면
 
@@ -57,6 +58,9 @@ Claude Code와 Hermes Agent에서는 `/tk-implement`, Codex에서는
 | `tk-to-spec` | hybrid | 독립 구현 가능한 Ready R/AC spec 작성 |
 | `tk-to-tickets` | hybrid | Ready spec을 독립 검증 가능한 vertical units로 분해 |
 | `tk-implement` | hybrid | unit 하나를 구현·테스트·review하고 verified commit 하나 생성 |
+| `tk-pr-open` | user | 검증된 현재 브랜치 커밋으로 PR 초안·publish plan을 작성하고 승인 후 create/update |
+| `tk-pr-triage` | user | 실행 repository의 PR·review·check·reply 상태를 read-only 분류 |
+| `tk-pr-respond` | user | 선택한 review feedback을 resolution unit으로 묶어 `tk-implement`에 위임하고 승인 후 publish |
 | `tk-prototype` | hybrid | 폐기 가능한 UI/logic 비교물을 실행 |
 | `tk-browser-verify` | hybrid | 실제 browser UI·network·최종 상태 검증 |
 | `tk-skill-diagnose` | hybrid | 관찰된 Agent Skill incident를 재현·격리하고 verified `learn-ready` objective를 handoff |
@@ -67,6 +71,32 @@ Claude Code와 Hermes Agent에서는 `/tk-implement`, Codex에서는
 
 작은 수정과 일반 후속 피드백은 skill 없이 현재 대화에서 처리합니다. 별도 artifact,
 commit, 검증 또는 안전 경계가 있을 때만 해당 skill을 선택합니다.
+
+## PR lifecycle
+
+```text
+/tk-pr-open
+→ repository·branch·HEAD·기존 PR 확인
+→ exact draft와 publish plan
+→ current-turn publish approval
+→ bounded push + PR create/update
+
+/tk-pr-triage
+→ executing repository resolve
+→ paginated read-only PR·review·check·reply collection
+→ actionable category와 next action
+
+/tk-pr-respond
+→ review thread와 comment를 resolution unit으로 grouping
+→ user selection
+→ unit마다 tk-implement + verified commit
+→ aggregate verification과 exact publish plan
+→ current-turn approval 뒤 push·reply·verified resolve
+```
+
+세 skill은 모드 옵션을 공유하지 않습니다. `tk-pr-triage`는 항상 read-only이며,
+`tk-pr-open`과 `tk-pr-respond`도 exact publish plan의 현재 turn 승인이 있기 전에는
+remote write를 하지 않습니다.
 
 ## `tk-drive`
 
@@ -120,6 +150,8 @@ python3 scripts/validate_skills.py
 python3 scripts/validate_skills.py --links-only
 python3 -m unittest discover -s scripts -p 'test_*.py'
 python3 scripts/audit_catalog.py --check
+node --check skills/tk-pr-triage/scripts/triage.mjs
+node --test skills/tk-pr-triage/scripts/triage.test.mjs
 npx --yes skills@1.5.9 add . --list
 npx --yes skills add . --list
 git diff --check
@@ -163,6 +195,10 @@ Evidence, dedupe, trigger/eval, baseline/compatibility gate를 먼저 검증하�
 `tk-implement`와 `tk-drive`의 명시 호출은 문서화된 current-branch commit까지만
 허용합니다. Push, PR, merge, tag, release, publish는 별도 명시 권한 없이는
 수행하지 않습니다.
+
+`tk-pr-triage`는 remote와 local을 변경하지 않습니다. `tk-pr-open`은 PR create/update를,
+`tk-pr-respond`는 push·reply·verified thread resolve를 exact current-turn publish
+approval 뒤에만 수행합니다. 두 skill 모두 merge·tag·release 권한을 갖지 않습니다.
 
 Git tag가 immutable version source of truth입니다. Release 준비·PR·annotated tag·
 peeled SHA verification은 private maintainer repository의 `tigerkit-release`와
