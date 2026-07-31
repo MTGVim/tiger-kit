@@ -4,9 +4,9 @@
   <img src="assets/tigerkit-cover.png" width="960" alt="TigerKit Agent Skills 표지">
 </p>
 
-TigerKit 21.0.10은 Claude Code, Codex, Hermes Agent용 엔지니어링 Agent Skills
+TigerKit 2026.08.01-1-989e5은 Claude Code, Codex, Hermes Agent용 엔지니어링 Agent Skills
 모음입니다. 중앙 workflow runtime이나 plugin 없이 14개 self-contained skill을
-`npx skills`로 배포합니다. 최신 immutable snapshot은 `v21.0.10`이며 `main`에는
+`npx skills`로 배포합니다. 최신 immutable snapshot은 `v2026.08.01-1-989e5`이며 `main`에는
 다음 릴리스 변경이 포함될 수 있습니다.
 
 ## 설치
@@ -23,12 +23,25 @@ npx skills add MTGVim/tiger-kit \
 고정 snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v21.0.10" \
+npx skills add "MTGVim/tiger-kit#v2026.08.01-1-989e5" \
   --global \
   --agent claude-code \
   --agent codex \
   --agent hermes-agent
 ```
+
+최신 main 설치를 계속 따라가려면 GitHub source로 설치한 뒤 전역 update를
+실행합니다.
+
+```bash
+npx skills update --global --yes
+# 짧은 표기: npx skills update -g -y
+```
+
+`npx skills add .` 또는 로컬 경로 설치는 저장소 검증·개발용입니다. Skills CLI의
+update lock에 원격 source로 추적되지 않으므로, 실제 사용자 설치에는
+`MTGVim/tiger-kit`를 사용하세요. 고정 snapshot을 바꾸려면 원하는 tag로
+`skills add`를 다시 실행합니다.
 
 Claude Code와 Hermes Agent에서는 `/tk-implement`, Codex에서는
 `$tk-implement` 또는 skill picker를 사용합니다.
@@ -47,7 +60,7 @@ Claude Code와 Hermes Agent에서는 `/tk-implement`, Codex에서는
 | `tk-prototype` | hybrid | 폐기 가능한 UI/logic 비교물을 실행 |
 | `tk-browser-verify` | hybrid | 실제 browser UI·network·최종 상태 검증 |
 | `tk-skill-diagnose` | hybrid | 관찰된 Agent Skill incident를 재현·격리하고 verified `learn-ready` objective를 handoff |
-| `tk-learn` | hybrid | `create | improve | merge`를 유일하게 소유하는 repository/user skill 작성자 |
+| `tk-learn` | hybrid | `create | improve | merge`를 유일하게 소유하는 repository/user skill 작성자; 승인 전에는 쓰지 않음 |
 | `tk-grooming` | hybrid | 기존 repository/user skill의 중복·범위·배치를 감사 |
 | `tk-handoff` | hybrid | 현재 evidence 기반 resume snapshot 작성·재개 |
 | `tk-merge-conflict` | hybrid | 진행 중인 Git conflict의 의도를 복원하고 operation 완료 |
@@ -116,16 +129,17 @@ Release gate:
 
 ```bash
 python3 scripts/run_release_gate.py \
-  --baseline v21.0.8 \
+  --baseline v2026.08.01-1-989e5 \
   --candidate HEAD \
   --output /tmp/tigerkit-release-gate
 ```
 
-Live quality는 built-in adapter가 `Codex → Claude Code → Hermes Agent` 순서로
+Live quality를 요청한 경우에만 built-in adapter가 `Codex → Claude Code → Hermes Agent` 순서로
 설치 여부와 비대화형 실행을 시도하고 첫 complete pass에서 멈춥니다. 실행기,
 인증 또는 안정적인 결과가 없으면 `quality.status: Advisory`로 남기되 deterministic
-validator·test·package 실패와 혼동하지 않습니다. `--adapter-command`는 custom
-adapter override용입니다.
+validator·test·package 실패와 혼동하지 않습니다. 일반 릴리즈에서는 live canary가
+기본 비활성화되며, 필요할 때 `scripts/run_release_gate.py --live-quality`로
+명시합니다. `--adapter-command`는 custom adapter override용입니다.
 
 Drive 비교 실험:
 
@@ -140,10 +154,11 @@ python3 scripts/run_drive_experiment.py \
 `.tigerkit/`은 repo/worktree-local scratch이며 영구 project 문서나 전역 상태가
 아닙니다. TigerKit은 consumer `.gitignore`를 수정하지 않습니다.
 
-`tk-reflect`는 valid run마다 bounded `.tigerkit/reflect.md`를 원자적으로 갱신하고
-채팅에는 요약표만 보여 줍니다. 직접 적용은 기존 user-managed user-level rule 또는
-Git이 untracked로 증명한 repo rule 한 개로 제한되며, tracked·new·vendor·symlink·
-drift target은 변경하지 않습니다.
+`tk-learn`은 reusable skill의 `create | improve | merge`를 유일하게 소유합니다.
+Evidence, dedupe, trigger/eval, baseline/compatibility gate를 먼저 검증하고,
+현재 turn의 명시적 apply 승인이 있기 전에는 canonical skill path를 쓰지 않습니다.
+`tk-skill-diagnose`와 `tk-grooming`은 `tk-learn`용 proposal만 만들며 자동 invoke하지
+않습니다.
 
 `tk-implement`와 `tk-drive`의 명시 호출은 문서화된 current-branch commit까지만
 허용합니다. Push, PR, merge, tag, release, publish는 별도 명시 권한 없이는

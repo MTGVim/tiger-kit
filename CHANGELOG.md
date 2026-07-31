@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 2026.08.01-1 — Release
+
+- fix: validate date release snapshots
+- perf: make live release canary opt-in
+- docs: refresh README cover and bytecode hygiene
+
 ## 21.0.10 — Release
 
 - fix: align stable README snapshot

@@ -1,5 +1,9 @@
 # TigerKit worktree-local scratch.
 .tigerkit/
 
+# Python tooling must not pollute release worktrees with bytecode.
+__pycache__/
+*.py[cod]
+
 # Maintainer-only release skill; install it at user scope instead.
 .claude/skills/tigerkit-release/

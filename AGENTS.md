@@ -94,7 +94,7 @@ long-lived repository constraint.
 ```bash
 python3 scripts/validate_skills.py
 python3 scripts/validate_skills.py --links-only
-python3 -m unittest discover -s scripts -p 'test_*.py'
+python3 -B -m unittest discover -s scripts -p 'test_*.py'
 python3 scripts/audit_catalog.py --check
 npx --yes skills@1.5.9 add . --list
 npx --yes skills add . --list
@@ -103,4 +103,6 @@ git diff --check
 
 For packaging changes, smoke-install all supported hosts in disposable homes. For
 release quality, run `scripts/run_release_gate.py`; for drive retention evidence,
-run `scripts/run_drive_experiment.py`. Keep all validation local-only.
+run `scripts/run_drive_experiment.py`. The release gate's deterministic checks
+run by default; its slow live host canary is opt-in with `--live-quality` and an
+omitted canary remains `quality.status: Advisory`. Keep all validation local-only.

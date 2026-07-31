@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
-"""Run TigerKit's deterministic release gate and advisory live quality canary."""
+"""Run TigerKit's deterministic release gate and optional live quality canary."""
 from __future__ import annotations
 
 import argparse
 import copy
 import json
+import os
 import shlex
 import subprocess
 import sys
 from pathlib import Path
 from typing import Mapping
+
+os.environ.setdefault("PYTHONDONTWRITEBYTECODE", "1")
 
 from run_skill_evals import (
     SUPPORTED_HOSTS,
@@ -33,7 +36,16 @@ HOST_ORDER = ("codex", "claude-code", "hermes-agent")
 
 
 def run_checked(command: list[str], *, cwd: Path) -> dict[str, object]:
-    completed = subprocess.run(command, cwd=cwd, text=True, capture_output=True, check=False)
+    env = os.environ.copy()
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
+    completed = subprocess.run(
+        command,
+        cwd=cwd,
+        env=env,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
     return {
         "command": shlex.join(command),
         "passed": completed.returncode == 0,
@@ -193,11 +205,20 @@ def default_adapter_command() -> str:
     return f"{shlex.quote(sys.executable)} {shlex.quote(str(BUILTIN_ADAPTER))}"
 
 
+def live_quality_enabled(*, requested: bool, adapter_command: str | None) -> bool:
+    return requested or bool(adapter_command)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--baseline", required=True)
     parser.add_argument("--candidate", default="HEAD")
     parser.add_argument("--adapter-command", help="override the built-in ordered host adapter")
+    parser.add_argument(
+        "--live-quality",
+        action="store_true",
+        help="run the slow live host canary; disabled for normal releases",
+    )
     parser.add_argument("--output", required=True)
     return parser.parse_args()
 
@@ -231,7 +252,7 @@ def main() -> int:
         commands = [
             ["python3", "scripts/validate_skills.py"],
             ["python3", "scripts/validate_skills.py", "--links-only"],
-            ["python3", "-m", "unittest", "discover", "-s", "scripts", "-p", "test_*.py"],
+            ["python3", "-B", "-m", "unittest", "discover", "-s", "scripts", "-p", "test_*.py"],
             ["python3", "scripts/audit_catalog.py", "--check"],
             ["git", "diff", "--exit-code"],
             ["npx", "--yes", "skills@1.5.9", "add", ".", "--list"],
@@ -240,7 +261,29 @@ def main() -> int:
         ]
         for command in commands:
             static_records.append(run_checked(command, cwd=candidate_root))
-        live_records, host_results, selected_host = run_live_gate(candidate_root, candidate_contracts, candidate_catalog, adapter_command=adapter_command, manifest=manifest)
+        live_enabled = live_quality_enabled(
+            requested=args.live_quality,
+            adapter_command=args.adapter_command,
+        )
+        if live_enabled:
+            live_records, host_results, selected_host = run_live_gate(
+                candidate_root,
+                candidate_contracts,
+                candidate_catalog,
+                adapter_command=adapter_command,
+                manifest=manifest,
+            )
+        else:
+            live_records = []
+            host_results = [
+                {
+                    "host": host,
+                    "status": "not-run",
+                    "reason": "live quality disabled by default; use --live-quality",
+                }
+                for host in HOST_ORDER
+            ]
+            selected_host = None
     static_failures = [str(row["command"]) for row in static_records if not bool(row["passed"])]
     blocking_reasons = sorted(set(contract_errors + static_failures))
     result = {
@@ -254,7 +297,7 @@ def main() -> int:
         "blocking_reasons": blocking_reasons,
         "quality": {
             "status": "Pass" if selected_host else "Advisory",
-            "adapter": "override" if args.adapter_command else "built-in",
+            "adapter": "override" if args.adapter_command else ("built-in" if args.live_quality else "disabled"),
             "host_order": list(HOST_ORDER),
             "selected_host": selected_host,
             "hosts": host_results,

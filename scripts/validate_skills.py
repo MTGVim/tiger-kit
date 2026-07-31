@@ -537,7 +537,10 @@ def validate_repo_links() -> list[str]:
 
 
 def parse_latest_changelog_version(text: str) -> str | None:
-    match = re.search(r"(?m)^## (\d+\.\d+\.\d+)(?:\s|$)", text)
+    match = re.search(
+        r"(?m)^## ((?:\d{4}\.\d{2}\.\d{2}-\d+|\d+\.\d+\.\d+))(?:\s|$)",
+        text,
+    )
     return match.group(1) if match else None
 
 
@@ -591,7 +594,10 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
         version = parse_latest_changelog_version(changelog.read_text(encoding="utf-8"))
         if version is None:
             errors.append("CHANGELOG.md: add a leading semantic release heading")
-        elif f"`v{version}`" not in readme.read_text(encoding="utf-8"):
+        elif not re.search(
+            rf"`v{re.escape(version)}(?:-[0-9a-f]{{5}})?`",
+            readme.read_text(encoding="utf-8"),
+        ):
             errors.append(f"README.md: reference latest immutable snapshot v{version}")
 
     for directory in SKILLS.glob("*/**"):
