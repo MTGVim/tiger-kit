@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.01-4 — Release
+
+- feat(workflow): hand off required PR evidence
+
 ## 2026.08.01-3 — Release
 
 - feat(skill): add GitHub PR image upload skill
