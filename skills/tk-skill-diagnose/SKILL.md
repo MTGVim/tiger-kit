@@ -18,9 +18,10 @@ not enough.
 
 This skill diagnoses. It does not write canonical skills, optimize a catalog,
 or own the final patch. Existing-package changes route to `tigerkit-evolve`;
-new independently useful skills route to `tk-learn`.
+new independently useful skills route to `tk-learn`. Never semantically mutate
+the canonical source skill.
 
-## Intake
+## Intake gate
 
 Record:
 
@@ -47,16 +48,24 @@ Decide in this order:
 3. one nearby control that distinguishes the suspected failure plane;
 4. a run-owned minimum experiment only when needed to prove causality.
 
-Self-report suggests a hypothesis; it does not prove root cause. Repeat a fresh
-run only when the first result is unstable or the boundary remains ambiguous.
-Do not require fixed trial counts, a generic holdout suite, or rubric scoring
-when narrower evidence decides the incident.
+Reproduction is `Reproduced | Not reproduced | Inconclusive`. Self-report
+suggests a hypothesis; it does not prove root cause. Repeat a fresh run only
+when the first result is unstable or the boundary remains ambiguous. Do not
+require fixed trial counts, a generic holdout suite, or rubric scoring when
+narrower evidence decides the incident.
 
 Read these references only when applicable:
 
 - [failure planes](references/failure-planes.md)
 - [empirical method](references/empirical-method.md)
 - [upstream issue anonymization](references/upstream-issue-anonymization.md)
+
+## Efficiency gate
+
+A resource claim needs a matched baseline, historical run, repository threshold,
+or explicit budget. Otherwise report the observed value as profile-only and the
+direction as `Unverifiable`. Never offset correctness or safety regression with
+lower tokens, time, calls, retries, or fan-out.
 
 ## Workflow
 
@@ -107,8 +116,9 @@ This is input to a later explicit `tigerkit-evolve`; do not invoke it.
 - `unverifiable`: evidence cannot decide safely.
 
 For an external consumer repository, verify upstream origin/ref and current
-upstream behavior before proposing an anonymized issue. Never create, comment,
-label, or publish the issue automatically.
+upstream behavior before proposing an anonymized issue. Only a duplicate-checked,
+redacted proposal with verified provenance is `upstream-draft-ready`; never
+create, comment, label, or publish it automatically.
 
 ## Result
 
@@ -155,7 +165,7 @@ A failed or rejected tool call preserves `Pending | Blocked`.
 
 - Do not assume the skill body is the cause.
 - Do not patch a non-reproduced incident from wording intuition.
-- Do not trade correctness or safety for lower resource use.
+- Do not trade correctness, safety, or holdout behavior for lower resource use.
 - Do not use fixed repeated runs or judge majorities to manufacture confidence.
 - Do not leak expected answers, secrets, or private evidence into prompts.
 - Do not mutate canonical skills or invoke downstream skills automatically.
