@@ -1,0 +1,7 @@
+interface:
+  display_name: "TigerKit: PR lifecycle"
+  short_description: "[user] PR 생성·트리아지·리뷰 대응을 안전하게 진행합니다."
+  default_prompt: "Use $tk-pr with explicit open, triage, or respond mode. Keep triage read-only, delegate review fixes to tk-implement, and stop for a current-turn publish approval before remote writes."
+
+policy:
+  allow_implicit_invocation: false
