@@ -28,37 +28,77 @@ class HostAdapterTest(unittest.TestCase):
                 {"type": "final_output", "terminal_status": "Pass"},
             ],
         }
-        text = f"before\n{adapter.MARKER_START}\n{json.dumps(payload)}\n{adapter.MARKER_END}"
+        text = (
+            f"before\n{adapter.MARKER_START}\n"
+            f"{json.dumps(payload)}\n{adapter.MARKER_END}"
+        )
         self.assertEqual(adapter.extract_payload(text), payload)
 
     def test_rejects_missing_result_envelope(self) -> None:
         with self.assertRaisesRegex(RuntimeError, "omitted"):
             adapter.extract_payload("plain output")
 
-    def test_codex_jsonl_extracts_last_agent_message_and_usage(self) -> None:
+    def test_codex_jsonl_extracts_agent_messages_and_usage(self) -> None:
         stdout = "\n".join(
             [
-                json.dumps({"type": "item.completed", "item": {"type": "agent_message", "text": "first"}}),
+                json.dumps(
+                    {
+                        "type": "item.completed",
+                        "item": {"type": "agent_message", "text": "first"},
+                    }
+                ),
                 json.dumps({"type": "turn.completed", "usage": {"total_tokens": 42}}),
-                json.dumps({"type": "item.completed", "item": {"type": "agent_message", "text": "second"}}),
+                json.dumps(
+                    {
+                        "type": "item.completed",
+                        "item": {"type": "agent_message", "text": "second"},
+                    }
+                ),
             ]
         )
         text, tokens = adapter.codex_text(stdout)
         self.assertEqual(text, "first\nsecond")
         self.assertEqual(tokens, 42.0)
 
-    def test_installs_all_skill_packages_into_isolated_host_home(self) -> None:
+    def test_installs_skills_only_inside_disposable_checkout(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            checkout = root / "repo"
+            checkout = Path(directory) / "repo"
             skill = checkout / "skills/tk-example"
             skill.mkdir(parents=True)
             (skill / "SKILL.md").write_text("# Example\n", encoding="utf-8")
-            home = root / "codex"
-            with patch.dict(os.environ, {"CODEX_HOME": str(home)}):
-                installed = adapter.install_skills("codex", checkout)
+
+            installed = adapter.install_skills("codex", checkout)
+
             self.assertEqual(installed, ["tk-example"])
-            self.assertTrue((home / "skills/tk-example/SKILL.md").is_file())
+            self.assertTrue((checkout / ".agents/skills/tk-example/SKILL.md").is_file())
+            self.assertTrue((checkout / ".codex/skills/tk-example/SKILL.md").is_file())
+
+    def test_codex_reuses_real_auth_home_without_installing_user_skills(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            home = Path(directory) / "real-home"
+            home.mkdir()
+            with patch.object(adapter, "real_home", return_value=home):
+                env = adapter.host_environment("codex")
+            self.assertEqual(env["CODEX_HOME"], str(home / ".codex"))
+            self.assertFalse((home / ".codex/skills").exists())
+
+    def test_hermes_copies_provider_config_but_not_oauth_state(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source_home = root / "source"
+            source = source_home / ".hermes"
+            source.mkdir(parents=True)
+            (source / "config.yaml").write_text("model: test\n", encoding="utf-8")
+            (source / ".env").write_text("KEY=value\n", encoding="utf-8")
+            (source / "auth.json").write_text("secret\n", encoding="utf-8")
+            isolated = root / "isolated"
+            with patch.object(adapter, "real_home", return_value=source_home), patch.dict(
+                os.environ, {"HERMES_HOME": str(isolated)}
+            ):
+                adapter.host_environment("hermes-agent")
+            self.assertTrue((isolated / "config.yaml").is_file())
+            self.assertTrue((isolated / ".env").is_file())
+            self.assertFalse((isolated / "auth.json").exists())
 
     def test_missing_executable_is_an_unavailable_host(self) -> None:
         with patch.object(adapter.shutil, "which", return_value=None):
