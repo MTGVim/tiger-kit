@@ -10,7 +10,13 @@ import sys
 from pathlib import Path
 from typing import Mapping
 
-from run_skill_evals import git_head, isolated_checkout, resolve_ref, run_adapter
+from run_skill_evals import (
+    detached_worktree,
+    git_head,
+    isolated_checkout,
+    resolve_ref,
+    run_adapter,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "evals/drive-ab.json"
@@ -39,7 +45,13 @@ def load_manifest() -> dict[str, object]:
         if not isinstance(scenario_id, str) or not scenario_id or scenario_id in ids:
             raise ValueError(f"drive A/B scenario {index} needs a unique id")
         ids.add(scenario_id)
-        for field in ("source", "drive_required_phases", "composition_required_phases", "expected_terminal", "verification"):
+        for field in (
+            "source",
+            "drive_required_phases",
+            "composition_required_phases",
+            "expected_terminal",
+            "verification",
+        ):
             if field not in scenario:
                 raise ValueError(f"drive A/B scenario {scenario_id} needs {field}")
         if not isinstance(scenario.get("expect_commit"), bool):
@@ -51,10 +63,12 @@ def prompt_for(arm: str, source: str) -> str:
     if arm == "drive":
         return f"$tk-drive {source}"
     return (
-        "Do not invoke tk-drive. Execute the same source through explicit TigerKit phase owners: "
-        "use $tk-grill-me only for a material user decision, then $tk-to-spec, use $tk-to-tickets "
-        "only for multiple independent units, invoke $tk-implement once per unit, and perform one final "
-        "broad verification. Do not claim the drive orchestration path. Source: " + source
+        "Do not invoke tk-drive. Execute the same source through explicit TigerKit "
+        "phase owners: use $tk-grill-me only for a material user decision, then "
+        "$tk-to-spec, use $tk-to-tickets only for multiple independent units, "
+        "invoke $tk-implement once per unit, and perform one final broad "
+        "verification. Do not claim the drive orchestration path. Source: "
+        + source
     )
 
 
@@ -112,7 +126,11 @@ def ordered_phases(events: object, required: list[str]) -> bool:
     for required_phase in required:
         found = None
         for index, event in enumerate(events[cursor + 1 :], cursor + 1):
-            if isinstance(event, dict) and event.get("type") == "phase_invocation" and event.get("phase") == required_phase:
+            if (
+                isinstance(event, dict)
+                and event.get("type") == "phase_invocation"
+                and event.get("phase") == required_phase
+            ):
                 found = index
                 break
         if found is None:
@@ -146,8 +164,13 @@ def run_arm(
     expected_terminal = scenario.get("expected_terminal", [])
     required = scenario.get(f"{arm}_required_phases", [])
     expect_commit = scenario.get("expect_commit") is True
-    terminal_ok = isinstance(expected_terminal, list) and result.get("terminal_status") in expected_terminal
-    phases_ok = isinstance(required, list) and ordered_phases(result.get("events"), [str(value) for value in required])
+    terminal_ok = (
+        isinstance(expected_terminal, list)
+        and result.get("terminal_status") in expected_terminal
+    )
+    phases_ok = isinstance(required, list) and ordered_phases(
+        result.get("events"), [str(value) for value in required]
+    )
     commit_ok = (final_head != initial_head) if expect_commit else (final_head == initial_head)
     verification_ok = all(bool(row["passed"]) for row in verification)
     passed = terminal_ok and phases_ok and commit_ok and verification_ok
@@ -174,15 +197,29 @@ def summarize(records: list[dict[str, object]]) -> dict[str, object]:
     for arm in ARMS:
         arm_records = [row for row in records if row.get("arm") == arm]
         passed = sum(row.get("passed") is True for row in arm_records)
-        continuations = sum(row.get("continuation_ok") is True for row in arm_records)
-        tokens = [float(row["total_tokens"]) for row in arm_records if isinstance(row.get("total_tokens"), (int, float))]
-        durations = [float(row["duration_ms"]) for row in arm_records if isinstance(row.get("duration_ms"), (int, float))]
+        continuations = sum(
+            row.get("continuation_ok") is True for row in arm_records
+        )
+        tokens = [
+            float(row["total_tokens"])
+            for row in arm_records
+            if isinstance(row.get("total_tokens"), (int, float))
+        ]
+        durations = [
+            float(row["duration_ms"])
+            for row in arm_records
+            if isinstance(row.get("duration_ms"), (int, float))
+        ]
         rows[arm] = {
             "runs": len(arm_records),
             "pass_rate": passed / len(arm_records) if arm_records else 0.0,
-            "continuation_rate": continuations / len(arm_records) if arm_records else 0.0,
+            "continuation_rate": (
+                continuations / len(arm_records) if arm_records else 0.0
+            ),
             "mean_tokens": sum(tokens) / len(tokens) if tokens else None,
-            "mean_duration_ms": sum(durations) / len(durations) if durations else None,
+            "mean_duration_ms": (
+                sum(durations) / len(durations) if durations else None
+            ),
         }
     drive = rows["drive"]
     composition = rows["composition"]
@@ -209,17 +246,11 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main() -> int:
-    args = parse_args()
-    output = Path(args.output).resolve()
-    if output == ROOT or ROOT in output.parents:
-        raise SystemExit("--output must be outside the repository")
-    output.mkdir(parents=True, exist_ok=True)
-    manifest = load_manifest()
-    candidate_sha = resolve_ref(args.candidate)
-    adapter_command = args.adapter_command or f"{shlex.quote(sys.executable)} {shlex.quote(str(BUILTIN_ADAPTER))}"
-
-    candidate = ROOT
+def run_candidate(
+    candidate: Path,
+    manifest: Mapping[str, object],
+    adapter_command: str,
+) -> tuple[list[dict[str, object]], list[dict[str, object]], str | None]:
     records: list[dict[str, object]] = []
     host_attempts: list[dict[str, object]] = []
     selected_host: str | None = None
@@ -240,12 +271,33 @@ def main() -> int:
                             )
                         )
         except (OSError, RuntimeError, subprocess.SubprocessError) as exc:
-            host_attempts.append({"host": host, "status": "unavailable", "reason": str(exc)})
+            host_attempts.append(
+                {"host": host, "status": "unavailable", "reason": str(exc)}
+            )
             continue
         selected_host = host
         records = host_records
         host_attempts.append({"host": host, "status": "completed"})
         break
+    return records, host_attempts, selected_host
+
+
+def main() -> int:
+    args = parse_args()
+    output = Path(args.output).resolve()
+    if output == ROOT or ROOT in output.parents:
+        raise SystemExit("--output must be outside the repository")
+    output.mkdir(parents=True, exist_ok=True)
+    manifest = load_manifest()
+    candidate_sha = resolve_ref(args.candidate)
+    adapter_command = args.adapter_command or (
+        f"{shlex.quote(sys.executable)} {shlex.quote(str(BUILTIN_ADAPTER))}"
+    )
+
+    with detached_worktree(args.candidate) as candidate:
+        records, host_attempts, selected_host = run_candidate(
+            candidate, manifest, adapter_command
+        )
 
     if selected_host is None:
         result = {
@@ -257,17 +309,17 @@ def main() -> int:
             "records": [],
         }
     else:
-        summary = summarize(records)
         result = {
             "status": "Pass",
             "candidate": candidate_sha,
             "selected_host": selected_host,
             "hosts": host_attempts,
-            **summary,
+            **summarize(records),
             "records": records,
         }
     (output / "drive-ab.json").write_text(
-        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
