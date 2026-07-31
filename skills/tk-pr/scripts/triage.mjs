@@ -68,20 +68,44 @@ export function computeReviewDecision(reviews, authorLogin) {
   return { decision: 'REVIEW_REQUIRED', decisiveAt: null };
 }
 
-export function latestExternalMessage(rows, authorLogin) {
+export function latestExternalMessagesByScope(rows, authorLogin) {
+  const latest = new Map();
   const ordered = [...rows].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-  for (let index = ordered.length - 1; index >= 0; index -= 1) {
-    const row = ordered[index];
-    if (row.login && row.login !== authorLogin && stripNoise(row.body)) return row;
+  for (const row of ordered) {
+    if (
+      row.replyEligible !== false
+      && row.scope
+      && row.login
+      && row.login !== authorLogin
+      && stripNoise(row.body)
+    ) {
+      latest.set(row.scope, row);
+    }
   }
-  return null;
+  return [...latest.values()];
 }
 
-export function hasAuthorResponseAfter(rows, authorLogin, timestamp) {
+export function hasAuthorResponseAfter(rows, authorLogin, timestamp, scope = null) {
   if (!timestamp) return false;
   return rows.some(
-    (row) => row.login === authorLogin && new Date(row.timestamp) > new Date(timestamp),
+    (row) => row.login === authorLogin
+      && (!scope || row.scope === scope)
+      && new Date(row.timestamp) > new Date(timestamp),
   );
+}
+
+export function computeReplyEvidence(rows, authorLogin) {
+  const actionable = latestExternalMessagesByScope(rows, authorLogin)
+    .filter((row) => isActionableText(row.body));
+  const outstanding = [];
+  const responded = [];
+  for (const row of actionable) {
+    const target = hasAuthorResponseAfter(rows, authorLogin, row.timestamp, row.scope)
+      ? responded
+      : outstanding;
+    target.push({ scope: row.scope, login: row.login, timestamp: row.timestamp, id: row.id || null });
+  }
+  return { outstanding, responded };
 }
 
 export function classifyPullRequest({
@@ -166,6 +190,7 @@ function collectRows(reviews, inlineComments, issueComments) {
       body: review.body || '',
       kind: 'review',
       state: review.state,
+      replyEligible: false,
     })),
     ...inlineComments.map((comment) => ({
       login: comment.user?.login,
@@ -173,6 +198,7 @@ function collectRows(reviews, inlineComments, issueComments) {
       body: comment.body || '',
       kind: 'inline_comment',
       id: comment.id,
+      scope: `inline:${comment.in_reply_to_id || comment.id}`,
     })),
     ...issueComments.map((comment) => ({
       login: comment.user?.login,
@@ -180,6 +206,7 @@ function collectRows(reviews, inlineComments, issueComments) {
       body: comment.body || '',
       kind: 'issue_comment',
       id: comment.id,
+      scope: 'issue',
     })),
   ].filter((row) => row.timestamp);
 }
@@ -252,10 +279,14 @@ async function triageRepository(repo, login) {
       );
       continue;
     }
+    if (detail.data.mergeable === null || detail.data.mergeable_state === 'unknown') {
+      failures.push(`#${pull.number}: mergeability remained unknown after retry`);
+      continue;
+    }
 
     const rows = collectRows(reviews.data, inlineComments.data, issueComments.data);
     const review = computeReviewDecision(reviews.data, login);
-    const external = latestExternalMessage(rows, login);
+    const reply = computeReplyEvidence(rows, login);
     const check = checkState(repo, pull.head.sha);
     failures.push(...check.errors.map((error) => `#${pull.number}: ${error}`));
 
@@ -265,10 +296,8 @@ async function triageRepository(repo, login) {
       checksFailed: check.failures.length > 0,
       decision: review.decision,
       authorRespondedToChangeRequest: hasAuthorResponseAfter(rows, login, review.decisiveAt),
-      latestExternalActionable: Boolean(external && isActionableText(external.body)),
-      authorRespondedToLatestExternal: external
-        ? hasAuthorResponseAfter(rows, login, external.timestamp)
-        : false,
+      latestExternalActionable: reply.outstanding.length > 0 || reply.responded.length > 0,
+      authorRespondedToLatestExternal: reply.outstanding.length === 0 && reply.responded.length > 0,
     });
 
     if (!['approved', 'pending_review'].includes(category)) {
@@ -276,9 +305,7 @@ async function triageRepository(repo, login) {
         pullItem(repo, pull, category, {
           reviewDecision: review.decision,
           decisiveAt: review.decisiveAt,
-          latestExternal: external
-            ? { login: external.login, timestamp: external.timestamp, actionable: isActionableText(external.body) }
-            : null,
+          replyEvidence: reply,
           failedChecks: check.failures,
           mergeableState: detail.data.mergeable_state,
         }),
