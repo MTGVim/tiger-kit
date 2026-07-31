@@ -31,13 +31,23 @@ export function parseRepoFromRemote(remote) {
 
 export function computeReviewDecision(reviews, authorLogin) {
   const latestByReviewer = new Map();
-  for (const review of reviews) {
+  const ordered = [...reviews].sort((a, b) => {
+    const left = a.submitted_at || a.created_at || '';
+    const right = b.submitted_at || b.created_at || '';
+    return left.localeCompare(right);
+  });
+  for (const review of ordered) {
     const login = review.user?.login;
-    if (!login || login === authorLogin || review.state === 'PENDING') continue;
-    const previous = latestByReviewer.get(login);
+    const state = review.state;
+    if (!login || login === authorLogin || state === 'PENDING') continue;
     const timestamp = review.submitted_at || review.created_at || '';
-    if (!previous || timestamp >= previous.timestamp) {
-      latestByReviewer.set(login, { state: review.state, timestamp });
+    const previous = latestByReviewer.get(login);
+    if (state === 'APPROVED' || state === 'CHANGES_REQUESTED') {
+      latestByReviewer.set(login, { state, timestamp });
+    } else if (state === 'DISMISSED') {
+      latestByReviewer.delete(login);
+    } else if (!previous) {
+      latestByReviewer.set(login, { state, timestamp });
     }
   }
   const entries = [...latestByReviewer.values()];
@@ -123,13 +133,20 @@ function ghObject(path) {
   }
 }
 
-function ghList(path) {
+export function flattenPages(pages, arrayField = null) {
+  return pages.flatMap((page) => {
+    if (Array.isArray(page)) return page;
+    if (arrayField && Array.isArray(page?.[arrayField])) return page[arrayField];
+    return [];
+  });
+}
+
+function ghList(path, arrayField = null) {
   const result = run('gh', ['api', path, '--paginate', '--slurp'], { allowFailure: true });
   if (!result.ok) return result;
   try {
     const pages = JSON.parse(result.stdout || '[]');
-    const items = pages.flatMap((page) => (Array.isArray(page) ? page : []));
-    return { ok: true, data: items };
+    return { ok: true, data: flattenPages(pages, arrayField) };
   } catch (error) {
     return { ok: false, error: `Invalid paginated JSON from ${path}: ${error.message}` };
   }
@@ -168,7 +185,7 @@ function collectRows(reviews, inlineComments, issueComments) {
 }
 
 function checkState(repo, sha) {
-  const checkRuns = ghList(`repos/${repo}/commits/${sha}/check-runs?per_page=100`);
+  const checkRuns = ghList(`repos/${repo}/commits/${sha}/check-runs?per_page=100`, 'check_runs');
   const combined = ghObject(`repos/${repo}/commits/${sha}/status`);
   const failures = [];
   if (checkRuns.ok) {
@@ -220,7 +237,11 @@ async function triageRepository(repo, login) {
       continue;
     }
 
-    const detail = ghObject(`repos/${repo}/pulls/${pull.number}`);
+    let detail = ghObject(`repos/${repo}/pulls/${pull.number}`);
+    if (detail.ok && (detail.data.mergeable === null || detail.data.mergeable_state === 'unknown')) {
+      await new Promise((resolve) => setTimeout(resolve, 750));
+      detail = ghObject(`repos/${repo}/pulls/${pull.number}`);
+    }
     const reviews = ghList(`repos/${repo}/pulls/${pull.number}/reviews?per_page=100`);
     const inlineComments = ghList(`repos/${repo}/pulls/${pull.number}/comments?per_page=100`);
     const issueComments = ghList(`repos/${repo}/issues/${pull.number}/comments?per_page=100`);
