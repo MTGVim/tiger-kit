@@ -1,7 +1,9 @@
 # Browser session lifecycle
 
 Classify session ownership before browser interaction and clean up only
-run-owned resources regardless of verdict. This applies to native browsers,
+run-owned resources regardless of verdict. Every Guard and Verdict run creates
+an evidence ledger before its first persisted capture and leaves at least one
+non-empty screenshot plus actual image inspection. This applies to native browsers,
 Playwright-compatible drivers, MCP, and CDP.
 
 ## Session ownership
@@ -58,6 +60,14 @@ credentials, or guess an ambiguous consent action.
 
 If browser UI cannot be distinguished from the target or safely dismissed,
 return `Unverifiable`.
+
+## Evidence ledger
+
+Resolve `.tigerkit/browser-verify/runs/<run-id>/` to an absolute path before the
+first capture. Record `Evidence directory: <absolute path>` and each
+`Screenshot: <path>` in the result. A missing screenshot, empty file, failed
+image inspection, or unresolved directory is `Unverifiable`; never report a
+relative directory as a successful evidence location.
 
 ## Cleanup
 

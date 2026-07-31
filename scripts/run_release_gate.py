@@ -21,6 +21,7 @@ from run_skill_evals import (
     isolated_checkout,
     load_catalog_contract,
     load_eval_contracts,
+    load_retired_skill_contracts,
     resolve_ref,
     run_adapter,
 )
@@ -57,6 +58,9 @@ def load_manifest() -> dict[str, object]:
         rows = value.get(field)
         if not isinstance(rows, list) or not rows or not all(isinstance(row, str) and row for row in rows):
             raise ValueError(f"release-critical {field} must be a non-empty string list")
+    retired = value.get("retired_skill_contracts", [])
+    if not isinstance(retired, list) or not all(isinstance(row, str) and row for row in retired):
+        raise ValueError("release-critical retired_skill_contracts must be a string list")
     return value
 
 
@@ -215,7 +219,13 @@ def main() -> int:
         candidate_contracts = load_eval_contracts(candidate_root, None)
         baseline_catalog = load_catalog_contract(baseline_root)
         candidate_catalog = load_catalog_contract(candidate_root)
-        contract_errors.extend(compare_eval_contracts(baseline_contracts, candidate_contracts))
+        contract_errors.extend(
+            compare_eval_contracts(
+                baseline_contracts,
+                candidate_contracts,
+                retired_skills=load_retired_skill_contracts(candidate_root),
+            )
+        )
         contract_errors.extend(compare_catalog_contracts(baseline_catalog, candidate_catalog))
         contract_errors.extend(validate_manifest_cases(candidate_contracts, candidate_catalog, manifest))
         commands = [

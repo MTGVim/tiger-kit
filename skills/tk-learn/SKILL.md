@@ -1,7 +1,7 @@
 ---
 name: tk-learn
 description: "[user/auto] Design a reusable repository or user skill from supplied experience or material. On a clear skill-authoring intent, proceed only through draft and approval checkpoint; do not write before approval."
-argument-hint: "<conversation, note, path, URL, workflow, or reflect candidate>"
+argument-hint: "<conversation, note, path, URL, workflow, or skill-evolution candidate>"
 metadata:
   tigerkit:
     kind: hybrid
@@ -12,13 +12,14 @@ metadata:
 # Learn
 
 Apply on explicit invocation or clear intent to author a reusable skill. Turn a
-conversation, note, path, URL, repeated workflow, or reflect candidate into a
+conversation, note, path, URL, repeated workflow, or skill-evolution candidate into a
 `repo skill | user skill` candidate. Rules, one-off tips, and ordinary
 implementation are out of scope; do not invoke another user-invoked skill.
 
-This is the sole TigerKit writer for new skills and semantic update/merge of
-existing skills. A candidate/target from another skill must still pass this
-skill's evidence, dedupe, eval, compatibility, and apply gates.
+This is the sole TigerKit writer for skill `create | improve | merge`, including
+new skills and semantic updates of existing skills. A candidate/target from
+another skill must still pass this skill's evidence, dedupe, eval,
+compatibility, and apply gates.
 
 Draft and apply are separate:
 

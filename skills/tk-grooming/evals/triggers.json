@@ -5,7 +5,7 @@
     {
       "id": "train-positive",
       "split": "train",
-      "query": "$tk-grooming 기존 규칙과 스킬을 감사해줘",
+      "query": "$tk-grooming 기존 repository와 user skill을 감사해줘",
       "should_trigger": true
     },
     {
@@ -17,7 +17,7 @@
     {
       "id": "validation-positive-1",
       "split": "validation",
-      "query": "저장소 rule과 skill의 중복·범위·배치를 감사해 주세요",
+      "query": "저장소 skill과 user skill의 중복·범위·배치를 감사해 주세요",
       "should_trigger": true,
       "facets": [
         "formal"
@@ -44,7 +44,7 @@
     {
       "id": "validation-positive-4",
       "split": "validation",
-      "query": "룰/스킬 그루밍 해줘",
+      "query": "repository/user skill 그루밍 해줘",
       "should_trigger": true,
       "facets": [
         "ko-en"
@@ -71,7 +71,7 @@
     {
       "id": "validation-positive-7",
       "split": "validation",
-      "query": "참조를 확인해 keep/move/convert/delete를 제안하되 수정은 하지 마",
+      "query": "참조를 확인해 skill keep/move/delete를 제안하되 수정은 하지 마",
       "should_trigger": true,
       "facets": [
         "formal"
@@ -116,7 +116,7 @@
     {
       "id": "validation-negative-4",
       "split": "validation",
-      "query": "이번 diff에서 재사용 후보를 찾아줘",
+      "query": "이번 diff에서 재사용 skill 후보를 찾아줘",
       "should_trigger": false,
       "facets": [
         "ko-en"

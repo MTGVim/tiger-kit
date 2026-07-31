@@ -42,7 +42,6 @@ RESUME_KEYS = {
     "incomplete_units",
     "implementation_changed",
     "aggregate_complete",
-    "valid_reflection_handoff",
     "required_work_complete",
 }
 FORBIDDEN_KEYS = {
@@ -281,8 +280,6 @@ def choose_resume_action(value: Any) -> str:
         return "tk-implement"
     if evidence["implementation_changed"] and not evidence["aggregate_complete"]:
         return "aggregate verification"
-    if evidence["aggregate_complete"] and evidence["valid_reflection_handoff"]:
-        return "tk-reflect"
     if evidence["required_work_complete"] and evidence["aggregate_complete"]:
         return "tk-drive finalization"
     raise PreflightError("resume evidence is incomplete or contradictory")

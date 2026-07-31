@@ -1,6 +1,6 @@
 ---
 name: tk-grooming
-description: "[user/auto] Audit duplication, scope, placement, and triggers in existing repository/user rules or skills. Default to report-only and never mutate before a literal --apply or current-turn approval."
+description: "[user/auto] Audit duplication, scope, placement, and triggers in existing repository or user skills. Default to report-only and never mutate before a literal --apply or current-turn approval."
 argument-hint: "[scope] [--apply]"
 metadata:
   tigerkit:
@@ -25,9 +25,9 @@ is report-only.
 3. `evidence`: record area-specific observations, paths, verification state,
    and ownership evidence for every candidate.
 4. `classification/proposal`: apply the
-   [placement rubric](references/repository-placement.md) to repository
+   [placement rubric](references/repository-placement.md) to skill
    candidates and classify each as
-   `keep | keep (vendor) | tighten | merge | split | move | convert | deprecate
+   `keep | keep (vendor) | tighten | merge | split | move | deprecate
    | delete | fix`.
 5. `🔴 CHECKPOINT · 🛑 STOP`: summarize scope, evidence, proposal, and allowed
    apply in a receipt. A literal initial `--apply` pre-approves only the exact
@@ -37,18 +37,16 @@ is report-only.
 7. `revalidate`: recheck links, duplication, and frontmatter; report results,
    unverified scope, and unresolved items.
 
-Inspect only the areas named or implied by the request. Inspect all four areas
-—repository rules, repository skills, user rules, and user skills—only for a
-catalog-wide audit. Use actual host-native paths from
-[discovery](references/discovery.md). Do not create missing files or inspect,
-migrate, or create legacy/global TigerKit state.
+Inspect only the repository or user skill areas named or implied by the request.
+Use actual host-native skill paths from [discovery](references/discovery.md).
+Do not create missing files or inspect, migrate, or create repository/user rule
+state or legacy/global TigerKit state.
 
-Judge repository rules/skills by independently normative instruction/workflow,
-not whole file. Use `convert` when kind changes, `move` when root versus nested
-rule placement changes, and `split` when one artifact mixes independent
-outcomes. Use `tighten` only to remove duplication/ambiguity without changing
-owner, kind, scope, or meaning. Otherwise use `keep`. Missing or conflicting
-path/count/threshold evidence makes only that area
+Judge repository/user skills by independently normative instruction/workflow,
+not whole file. Use `move` only for an exact native skill target, and `split`
+when one artifact mixes independent outcomes. Use `tighten` only to remove
+duplication/ambiguity without changing owner, kind, scope, or meaning. Otherwise
+use `keep`. Missing or conflicting path/ownership evidence makes only that area
 `Partial/Blocked | Unverifiable`.
 
 Determine ownership from resolved paths and link targets, package-manager
@@ -62,16 +60,15 @@ installed.
 Classification is not mutation authority. Even after apply approval, this
 skill directly owns only meaning-preserving `tighten`, mechanical `move` with
 an exact target, unreferenced `delete`, and frontmatter/link `fix`. Semantic
-`merge`, `deprecate`, rule-to-skill `convert`, workflow `split`, and semantic
-skill rewrite remain exact proposals with `pending`; they may feed `tk-learn`,
-but this skill never invokes it. Vendor-managed candidates remain report-only
-under every apply mode.
+`merge`, `deprecate`, workflow `split`, and semantic skill rewrite remain exact
+proposals with `pending`; they may feed `tk-learn`, but this skill never invokes
+it. Vendor-managed candidates remain report-only under every apply mode.
 
 Apply only after literal initial `--apply` or explicit current-turn approval
 names an exact scope. Past approval or generic continuation is insufficient.
 Before mutation reread source, search references before deletion, preserve
 managed/generated ownership markings, and never mix broad repo/user edits.
-This skill does not invent knowledge or replace reflection/learning.
+This skill does not invent knowledge or replace skill learning.
 
 An exclusion explicitly declared in the active conversation remains excluded
 for later grooming runs in that conversation. An exclusion recorded in a

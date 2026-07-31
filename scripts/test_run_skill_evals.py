@@ -654,7 +654,7 @@ class DiagnosticRunnerTest(unittest.TestCase):
                 "print(json.dumps({\n"
                 "    'skill_loaded': True,\n"
                 "    'output': output,\n"
-                "    'terminal_status': 'Pending',\n"
+                "    'terminal_status': 'Pass',\n"
                 "    'total_tokens': 7 if mode == 'diagnostic' else 3,\n"
                 "    'duration_ms': 11 if mode == 'diagnostic' else 5,\n"
                 "    'tool_uses': 1,\n"
@@ -684,9 +684,9 @@ class DiagnosticRunnerTest(unittest.TestCase):
                     "--runs",
                     "2",
                     "--skill",
-                    "tk-reflect",
+                    "tk-drive",
                     "--case",
-                    "tk-reflect:behavior:legacy-1",
+                    "tk-drive:behavior:drive-finalizes-after-aggregate",
                     "--adapter-command",
                     f"python3 {adapter}",
                     "--grader-command",
@@ -834,6 +834,19 @@ class RunnerContractTest(unittest.TestCase):
         )
 
         self.assertEqual(compare_eval_contracts(baseline, candidate), [])
+
+    def test_contract_drift_accepts_explicitly_retired_skill(self) -> None:
+        baseline = self.contract(
+            [self.behavior("safe", {"type": "terminal_status", "expected": "Pass"})]
+        )
+
+        errors = compare_eval_contracts(
+            baseline,
+            {},
+            retired_skills={"tk-sample"},
+        )
+
+        self.assertEqual(errors, [])
 
     def test_contract_drift_rejects_restricting_an_existing_case_to_fewer_hosts(
         self,

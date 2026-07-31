@@ -1,5 +1,42 @@
 {
   "version": 1,
+  "migrations": [
+    {
+      "from": "reflect-vs-grooming-reflect",
+      "to": "learn-vs-grooming-learn",
+      "reason": "Issue 224 removes the report-only reflection selector; explicit reusable-skill authoring remains owned by tk-learn."
+    },
+    {
+      "from": "reflect-vs-grooming-grooming",
+      "to": "grooming-vs-learn-audit",
+      "reason": "Issue 224 narrows grooming to skills and removes rule/reflection ownership."
+    },
+    {
+      "from": "learn-vs-reflect-grooming-learn",
+      "to": "learn-vs-grooming-learn",
+      "reason": "Issue 224 makes tk-learn the sole skill-evolution owner."
+    },
+    {
+      "from": "learn-vs-reflect-grooming-grooming",
+      "to": "learn-vs-grooming-grooming",
+      "reason": "Issue 224 narrows grooming to repository/user skills."
+    },
+    {
+      "from": "learn-vs-reflect-grooming-reflect",
+      "to": "learn-vs-grooming-learn",
+      "reason": "Issue 224 removes report-only reflection routing; reusable skill changes route to tk-learn."
+    },
+    {
+      "from": "skill-diagnose-vs-reflect",
+      "to": "skill-diagnose-vs-learn-ready",
+      "reason": "Issue 224 replaces the removed reflection route with a learn-ready diagnosis result."
+    },
+    {
+      "from": "reflect-conditional-diagnosis-handoff",
+      "to": "skill-diagnose-vs-learn-ready",
+      "reason": "Issue 224 makes diagnosis the owner of the learn-ready handoff."
+    }
+  ],
   "critical_hosts": [
     "claude-code",
     "codex",
@@ -47,40 +84,24 @@
       "critical": false
     },
     {
-      "id": "reflect-vs-grooming-reflect",
-      "boundary": "tk-reflect vs tk-grooming",
-      "prompt": "이번 diff에서 새 재사용 rule/skill 후보를 찾아 주세요.",
-      "focus_skill": "tk-reflect",
-      "expected_selected_skill": "tk-reflect",
-      "critical": true
-    },
-    {
-      "id": "reflect-vs-grooming-grooming",
-      "boundary": "tk-reflect vs tk-grooming",
+      "id": "grooming-vs-learn-audit",
+      "boundary": "tk-grooming vs tk-learn",
       "prompt": "기존 repo rule과 skill의 중복·범위·배치를 감사해 주세요.",
       "focus_skill": "tk-grooming",
       "expected_selected_skill": "tk-grooming",
-      "critical": false
+      "critical": true
     },
     {
-      "id": "learn-vs-reflect-grooming-learn",
-      "boundary": "tk-learn vs tk-reflect/tk-grooming",
+      "id": "learn-vs-grooming-learn",
+      "boundary": "tk-learn vs tk-grooming",
       "prompt": "이 반복 경험을 재사용 가능한 새 repository skill로 설계해 주세요.",
       "focus_skill": "tk-learn",
       "expected_selected_skill": "tk-learn",
       "critical": true
     },
     {
-      "id": "learn-vs-reflect-grooming-reflect",
-      "boundary": "tk-learn vs tk-reflect/tk-grooming",
-      "prompt": "이번 diff와 결과에서 재사용 가능한 rule 또는 skill 후보만 분류해 보고해 주세요.",
-      "focus_skill": "tk-reflect",
-      "expected_selected_skill": "tk-reflect",
-      "critical": true
-    },
-    {
-      "id": "learn-vs-reflect-grooming-grooming",
-      "boundary": "tk-learn vs tk-reflect/tk-grooming",
+      "id": "learn-vs-grooming-grooming",
+      "boundary": "tk-learn vs tk-grooming",
       "prompt": "이미 존재하는 repository rule과 skill의 중복·범위·트리거를 감사해 주세요.",
       "focus_skill": "tk-grooming",
       "expected_selected_skill": "tk-grooming",
@@ -215,11 +236,11 @@
       "critical": true
     },
     {
-      "id": "skill-diagnose-vs-reflect",
-      "boundary": "tk-skill-diagnose vs tk-reflect",
-      "prompt": "이번 diff와 결과에서 재사용 가능한 rule 또는 skill 후보만 분류해 주세요.",
-      "focus_skill": "tk-reflect",
-      "expected_selected_skill": "tk-reflect",
+      "id": "skill-diagnose-vs-learn-ready",
+      "boundary": "tk-skill-diagnose vs tk-learn",
+      "prompt": "관찰된 Agent Skill incident를 재현하고 verified learn-ready payload로 handoff해 주세요.",
+      "focus_skill": "tk-skill-diagnose",
+      "expected_selected_skill": "tk-skill-diagnose",
       "critical": true
     },
     {
@@ -228,14 +249,6 @@
       "prompt": "관찰된 incident 없이 모든 TigerKit skill의 점수를 catalog-wide로 최적화해 주세요.",
       "focus_skill": "tk-skill-diagnose",
       "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "reflect-conditional-diagnosis-handoff",
-      "boundary": "tk-reflect conditional handoff vs generic reflection",
-      "prompt": "특정 tk-drive incident의 미확정 원인에 의존하는 재사용 rule 후보를 회고하고 판정해 주세요.",
-      "focus_skill": "tk-reflect",
-      "expected_selected_skill": "tk-reflect",
       "critical": true
     },
     {
@@ -312,7 +325,7 @@
     },
     {
       "id": "adhd-explicit",
-      "boundary": "tk-adhd explicit invocation vs tk-reflect and implicit formatting",
+      "boundary": "tk-adhd explicit invocation vs ordinary formatting",
       "prompt": "$tk-adhd 지금 진행 상태와 다음 행동이 보이게 해 주세요.",
       "focus_skill": "tk-adhd",
       "expected_selected_skill": "tk-adhd",
@@ -320,7 +333,7 @@
     },
     {
       "id": "adhd-implicit-block",
-      "boundary": "tk-adhd explicit invocation vs tk-reflect and implicit formatting",
+      "boundary": "tk-adhd explicit invocation vs ordinary formatting",
       "prompt": "진행 상태와 다음 행동이 보이게 정리해 주세요.",
       "focus_skill": "tk-adhd",
       "expected_selected_skill": null,

@@ -330,6 +330,20 @@ def load_catalog_contract(root: Path) -> dict[str, object] | None:
     return value
 
 
+def load_retired_skill_contracts(root: Path) -> set[str]:
+    """Read explicit baseline eval contracts retired by the candidate release."""
+    path = root / "evals" / "release-critical.json"
+    if not path.is_file():
+        return set()
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, dict):
+        raise ValueError("evals/release-critical.json must contain one object")
+    rows = value.get("retired_skill_contracts", [])
+    if not isinstance(rows, list) or not all(isinstance(row, str) and row for row in rows):
+        raise ValueError("retired_skill_contracts must be a list of non-empty strings")
+    return set(rows)
+
+
 def _contract_case_map(contract: Mapping[str, object], key: str) -> dict[str, Mapping[str, object]]:
     rows = contract.get(key, [])
     if not isinstance(rows, list):
@@ -397,12 +411,17 @@ def _terminal_forbidden(assertions: object) -> set[str]:
 def compare_eval_contracts(
     baseline: Mapping[str, Mapping[str, object]],
     candidate: Mapping[str, Mapping[str, object]],
+    *,
+    retired_skills: set[str] | None = None,
 ) -> list[str]:
     """Reject deleted or mechanically weakened eval coverage before model execution."""
     errors: list[str] = []
+    retired = retired_skills or set()
     for skill, baseline_contract in sorted(baseline.items()):
         candidate_contract = candidate.get(skill)
         if candidate_contract is None:
+            if skill in retired:
+                continue
             errors.append(f"{skill}: candidate deleted the baseline eval contract")
             continue
         for section, key in (("trigger", "queries"), ("behavior", "evals")):
@@ -1956,13 +1975,18 @@ def main() -> int:
             candidate_contracts = load_eval_contracts(candidate_root, selected)
             baseline_catalog = load_catalog_contract(baseline_root)
             candidate_catalog = load_catalog_contract(candidate_root)
+            candidate_retired_skills = load_retired_skill_contracts(candidate_root)
     except (OSError, subprocess.SubprocessError, ValueError, json.JSONDecodeError) as exc:
         if args.dry_run or output is None:
             raise SystemExit(f"cannot load eval contracts: {exc}") from exc
         result = {"status": "Unverifiable", "error": f"cannot load eval contracts: {exc}"}
         write_result(output, result)
         return 2
-    contract_errors = compare_eval_contracts(baseline_contracts, candidate_contracts)
+    contract_errors = compare_eval_contracts(
+        baseline_contracts,
+        candidate_contracts,
+        retired_skills=candidate_retired_skills,
+    )
     contract_errors.extend(
         compare_catalog_contracts(baseline_catalog, candidate_catalog)
     )

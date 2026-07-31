@@ -6,23 +6,21 @@
     "hermes-agent"
   ],
   "runs": 2,
+  "retired_skill_contracts": [
+    "tk-reflect"
+  ],
   "behavior_cases": [
     "tk-drive:behavior:drive-live-direct-prepares-and-executes-source",
-    "tk-drive:behavior:drive-live-direct-prepared-execution",
+    "tk-drive:behavior:drive-live-direct-prepared-execution-finalizes",
     "tk-drive:behavior:drive-live-direct-implementation-holdout",
-    "tk-drive:behavior:drive-keeps-grill-pending-open",
-    "tk-reflect:behavior:reflect-report-only-writes-ledger",
-    "tk-reflect:behavior:reflect-applies-existing-repo-untracked-visible-rule",
-    "tk-reflect:behavior:reflect-applies-existing-user-level-rule",
-    "tk-reflect:behavior:reflect-rejects-tracked-repo-rule",
-    "tk-reflect:behavior:reflect-ledger-write-failure-is-unverifiable"
+    "tk-drive:behavior:drive-keeps-grill-pending-open"
   ],
   "catalog_cases": [
     "catalog:behavior:drive-vs-grill-drive",
     "catalog:behavior:drive-vs-grill-standalone-grill",
     "catalog:behavior:spec-vs-tickets-spec",
-    "catalog:behavior:reflect-vs-grooming-reflect",
-    "catalog:behavior:learn-vs-reflect-grooming-learn",
+    "catalog:behavior:grooming-vs-learn-audit",
+    "catalog:behavior:learn-vs-grooming-learn",
     "catalog:behavior:implement-vs-drive-drive",
     "catalog:behavior:implement-vs-drive-ordinary-request",
     "catalog:behavior:prototype-vs-browser-browser",
@@ -30,6 +28,7 @@
     "catalog:behavior:drive-vs-handoff-resume-generic",
     "catalog:behavior:merge-conflict-vs-marker-active",
     "catalog:behavior:merge-conflict-vs-marker-ordinary",
-    "catalog:behavior:skill-diagnose-vs-code-debugging"
+    "catalog:behavior:skill-diagnose-vs-code-debugging",
+    "catalog:behavior:skill-diagnose-vs-learn-ready"
   ]
 }

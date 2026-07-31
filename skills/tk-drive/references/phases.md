@@ -1,7 +1,7 @@
 # Drive procedure graph
 
 `tk-drive` owns one continuous `Preparing → Executing → aggregate verification
-→ reflection → finalization` run. A source enters only through an explicit
+→ finalization` run. A source enters only through an explicit
 drive invocation or a pending answer in the same active conversation.
 
 ## Canonical nodes
@@ -10,7 +10,7 @@ drive invocation or a pending answer in the same active conversation.
   `tk-drive finalization`, `tk-drive non-success finalization`
 - Preparing: `tk-grill-me`, `tk-prototype`, `tk-to-spec`, `tk-to-tickets`
 - Executing: `tk-implement`, `tk-merge-conflict`
-- Verification and tail: `tk-browser-verify`, `tk-reflect`
+- Verification: `tk-browser-verify`
 
 Unknown nodes, aliases, misspellings, and implicit sibling calls are invalid.
 
@@ -29,13 +29,11 @@ Unknown nodes, aliases, misspellings, and implicit sibling calls are invalid.
 | `tk-implement` | `tk-merge-conflict` | an actual operation conflict is active | conflict resolved | use conflict recovery when supported; otherwise finalize terminal non-success | interrupted `tk-implement` |
 | `tk-merge-conflict` | `tk-implement` | conflict resolution verified | interrupted unit verified and committed | use an allowed alternate edge; otherwise finalize terminal non-success | `tk-implement` or `aggregate verification` |
 | `tk-implement` | `tk-implement` | another selected unit remains | next unit verified and committed | use an allowed alternate edge; otherwise finalize terminal non-success | `tk-implement` or `aggregate verification` |
-| `tk-implement` | `aggregate verification` | all selected units are committed | aggregate obligations verified | correct an isolated failure when supported; otherwise finalize terminal non-success | `tk-browser-verify`, corrective `tk-implement`, `tk-reflect`, or finalization |
+| `tk-implement` | `aggregate verification` | all selected units are committed | aggregate obligations verified | correct an isolated failure when supported; otherwise finalize terminal non-success | `tk-browser-verify`, corrective `tk-implement`, or finalization |
 | `aggregate verification` | `tk-browser-verify` | preflight or changed UI requires browser evidence | required scenarios verified | use an allowed alternate edge; otherwise finalize terminal non-success | `aggregate verification` |
-| `tk-browser-verify` | `aggregate verification` | browser evidence completed | aggregate browser obligation satisfied | use an allowed alternate edge; otherwise finalize terminal non-success | corrective `tk-implement`, `tk-reflect`, or finalization |
+| `tk-browser-verify` | `aggregate verification` | browser evidence completed | aggregate browser obligation satisfied | use an allowed alternate edge; otherwise finalize terminal non-success | corrective `tk-implement` or finalization |
 | `aggregate verification` | `tk-implement` | an isolated correctable failure remains and fewer than three cycles ran | corrective unit verified and committed | finalize terminal non-success on repeated, exhausted, or unisolated failure | `aggregate verification` |
-| `aggregate verification` | `tk-reflect` | product verification passed and a valid reflection handoff exists | classification completed or no-op | restore safely when supported; otherwise finalize terminal non-success | `tk-drive finalization` |
-| `aggregate verification` | `tk-drive finalization` | product verification passed and reflection is not applicable | final evidence reread | finalize terminal non-success on evidence drift | terminal response |
-| `tk-reflect` | `tk-drive finalization` | reflection completed safely | final evidence reread | finalize terminal non-success on unrestored or unverifiable state | terminal response |
+| `aggregate verification` | `tk-drive finalization` | product verification passed | final evidence reread | finalize terminal non-success on evidence drift | terminal response |
 | `tk-drive preflight` | `tk-drive non-success finalization` | terminal native non-success and no allowed alternate edge remains | scope accounted and recovery derived | preserve originating native status and available evidence | terminal response |
 | `tk-grill-me` | `tk-drive non-success finalization` | terminal native non-success and no allowed alternate edge remains | scope accounted and recovery derived | preserve originating native status and available evidence | terminal response |
 | `tk-prototype` | `tk-drive non-success finalization` | terminal native non-success and no allowed alternate edge remains | scope accounted and recovery derived | preserve originating native status and available evidence | terminal response |
@@ -45,7 +43,6 @@ Unknown nodes, aliases, misspellings, and implicit sibling calls are invalid.
 | `tk-merge-conflict` | `tk-drive non-success finalization` | terminal native non-success and no allowed alternate edge remains | scope accounted and recovery derived | preserve originating native status and available evidence | terminal response |
 | `aggregate verification` | `tk-drive non-success finalization` | terminal native non-success and no allowed alternate edge remains | scope accounted and recovery derived | preserve originating native status and available evidence | terminal response |
 | `tk-browser-verify` | `tk-drive non-success finalization` | terminal native non-success and no allowed alternate edge remains | scope accounted and recovery derived | preserve originating native status and available evidence | terminal response |
-| `tk-reflect` | `tk-drive non-success finalization` | terminal native non-success and no allowed alternate edge remains | scope accounted and recovery derived | preserve originating native status and available evidence | terminal response |
 
 Only the explicitly bounded comparison, conflict-resolution, multi-unit,
 browser-verification, and corrective loops are allowed. `tk-drive finalization`

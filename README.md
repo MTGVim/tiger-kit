@@ -4,8 +4,8 @@
   <img src="assets/tigerkit-cover.png" width="960" alt="TigerKit Agent Skills 표지">
 </p>
 
-현재 `main`의 TigerKit은 Claude Code, Codex, Hermes Agent용 엔지니어링 Agent Skills
-모음입니다. 중앙 workflow runtime이나 plugin 없이 15개 self-contained skill을
+TigerKit 21.0.8은 Claude Code, Codex, Hermes Agent용 엔지니어링 Agent Skills
+모음입니다. 중앙 workflow runtime이나 plugin 없이 14개 self-contained skill을
 `npx skills`로 배포합니다. 최신 immutable snapshot은 `v21.0.8`이며 `main`에는
 `v21.0.9` 후보 변경이 포함됩니다.
 
@@ -37,7 +37,7 @@ Claude Code와 Hermes Agent에서는 `/tk-implement`, Codex에서는
 
 | Skill | 호출 | 소유 범위 |
 | --- | --- | --- |
-| `tk-drive` | user | 명시 source를 결정·Ready spec·조건부 tickets·unit commits·aggregate verification·reflection까지 진행 |
+| `tk-drive` | user | 명시 source를 결정·Ready spec·조건부 tickets·unit commits·aggregate verification·finalization까지 진행 |
 | `tk-ask-repo` | user | repository 질문을 `path:line` 근거로 조사하는 read-only desk |
 | `tk-adhd` | user | 현재 응답 하나를 action-first 형태로 정리하는 one-shot utility |
 | `tk-grill-me` | hybrid | material user decision을 evidence-first 질문 하나씩 닫음 |
@@ -46,10 +46,9 @@ Claude Code와 Hermes Agent에서는 `/tk-implement`, Codex에서는
 | `tk-implement` | hybrid | unit 하나를 구현·테스트·review하고 verified commit 하나 생성 |
 | `tk-prototype` | hybrid | 폐기 가능한 UI/logic 비교물을 실행 |
 | `tk-browser-verify` | hybrid | 실제 browser UI·network·최종 상태 검증 |
-| `tk-reflect` | hybrid | 재사용 가능한 rule/skill 후보를 분류하고 bounded ledger와 제한된 안전 적용을 소유 |
-| `tk-skill-diagnose` | hybrid | 관찰된 Agent Skill incident를 재현·격리하고 verified objective를 maintainer evolve로 handoff |
-| `tk-learn` | hybrid | 근거 있는 새 repository/user skill을 승인 경계 아래 작성 |
-| `tk-grooming` | hybrid | 기존 rule/skill 중복·범위·배치를 감사 |
+| `tk-skill-diagnose` | hybrid | 관찰된 Agent Skill incident를 재현·격리하고 verified `learn-ready` objective를 handoff |
+| `tk-learn` | hybrid | `create | improve | merge`를 유일하게 소유하는 repository/user skill 작성자 |
+| `tk-grooming` | hybrid | 기존 repository/user skill의 중복·범위·배치를 감사 |
 | `tk-handoff` | hybrid | 현재 evidence 기반 resume snapshot 작성·재개 |
 | `tk-merge-conflict` | hybrid | 진행 중인 Git conflict의 의도를 복원하고 operation 완료 |
 
@@ -66,9 +65,14 @@ explicit tk-drive <source>
 → unit마다 tk-implement + verified commit
 → aggregate verification
 → 필요할 때 tk-browser-verify
-→ 조건부 tk-reflect
 → tk-drive finalization
 ```
+
+`tk-learn`만 `create | improve | merge` skill 변경을 작성합니다.
+`tk-skill-diagnose`는 검증된 목표를 `learn-ready`로 handoff하고,
+`tk-grooming`은 repository/user skill만 감사하며 rule lifecycle을 소유하지
+않습니다. `tk-browser-verify`는 Guard와 Verdict 모두 실제 이미지 검사를 거친
+스크린샷과 가능한 경우 `Evidence directory: /absolute/path/...`를 남깁니다.
 
 Continuation은 prompt-directed이며 durable scheduler나 cross-turn replay를
 보장하지 않습니다. Process 또는 host 경계를 넘으면 `.tigerkit/` artifact,

@@ -45,7 +45,7 @@
     {
       "id": "validation-positive-host-compatibility",
       "split": "validation",
-      "query": "Claude Code에서는 load되는데 Codex에서 tk-reflect가 안 불리는 host compatibility 차이를 diagnose해줘",
+      "query": "Claude Code에서는 load되는데 Codex에서 tk-learn이 안 불리는 host compatibility 차이를 diagnose해줘",
       "should_trigger": true,
       "facets": [
         "ko-en"

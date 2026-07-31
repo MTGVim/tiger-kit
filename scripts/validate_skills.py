@@ -10,6 +10,13 @@ from pathlib import Path
 from typing import Mapping
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def _display_path(path: Path) -> str:
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
 SKILLS = ROOT / "skills"
 KINDS = {"user-invoked", "hybrid"}
 INVOCATION_LABELS = {"user-invoked": "[user]", "hybrid": "[user/auto]"}
@@ -113,10 +120,10 @@ def load_json_object(path: Path, errors: list[str]) -> dict[str, object] | None:
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
-        errors.append(f"{path.relative_to(ROOT)}: invalid JSON: {exc}")
+        errors.append(f"{_display_path(path)}: invalid JSON: {exc}")
         return None
     if not isinstance(value, dict):
-        errors.append(f"{path.relative_to(ROOT)}: top-level value must be an object")
+        errors.append(f"{_display_path(path)}: top-level value must be an object")
         return None
     return value
 
@@ -237,7 +244,7 @@ def validate_skill_language(skill_dir: Path) -> list[str]:
             prose = "" if in_fence else re.sub(r"`[^`]*`", "", line)
             if HANGUL_SYLLABLE.search(prose):
                 errors.append(
-                    f"{path.relative_to(ROOT)}:{number}: canonical operational prose must be English"
+                    f"{_display_path(path)}:{number}: canonical operational prose must be English"
                 )
     return errors
 
@@ -251,12 +258,12 @@ def validate_trigger_contract(
     if data is None:
         return errors, ids
     if data.get("skill") != name:
-        errors.append(f"{path.relative_to(ROOT)}: skill must equal {name}")
+        errors.append(f"{_display_path(path)}: skill must equal {name}")
     if data.get("kind") != kind:
-        errors.append(f"{path.relative_to(ROOT)}: kind must equal {kind}")
+        errors.append(f"{_display_path(path)}: kind must equal {kind}")
     queries = data.get("queries")
     if not isinstance(queries, list) or not queries:
-        errors.append(f"{path.relative_to(ROOT)}: queries must be a non-empty list")
+        errors.append(f"{_display_path(path)}: queries must be a non-empty list")
         return errors, ids
 
     splits: set[str] = set()
@@ -268,7 +275,7 @@ def validate_trigger_contract(
     facets: set[str] = set()
     for index, row in enumerate(queries, 1):
         if not isinstance(row, dict):
-            errors.append(f"{path.relative_to(ROOT)}: query {index} must be an object")
+            errors.append(f"{_display_path(path)}: query {index} must be an object")
             continue
         query_id = row.get("id")
         split = row.get("split")
@@ -276,21 +283,21 @@ def validate_trigger_contract(
         should_trigger = row.get("should_trigger")
         row_facets = row.get("facets", [])
         if not isinstance(query_id, str) or not query_id:
-            errors.append(f"{path.relative_to(ROOT)}: query {index} needs id")
+            errors.append(f"{_display_path(path)}: query {index} needs id")
         elif query_id in ids:
-            errors.append(f"{path.relative_to(ROOT)}: duplicate id {query_id}")
+            errors.append(f"{_display_path(path)}: duplicate id {query_id}")
         else:
             ids.add(query_id)
         if split not in {"train", "validation"}:
-            errors.append(f"{path.relative_to(ROOT)}: query {query_id or index} has invalid split")
+            errors.append(f"{_display_path(path)}: query {query_id or index} has invalid split")
         else:
             splits.add(str(split))
         if not isinstance(query, str) or not query.strip():
-            errors.append(f"{path.relative_to(ROOT)}: query {query_id or index} needs text")
+            errors.append(f"{_display_path(path)}: query {query_id or index} needs text")
         elif split in normalized_by_split:
             normalized_by_split[str(split)].add(" ".join(query.casefold().split()))
         if not isinstance(should_trigger, bool):
-            errors.append(f"{path.relative_to(ROOT)}: query {query_id or index} needs boolean should_trigger")
+            errors.append(f"{_display_path(path)}: query {query_id or index} needs boolean should_trigger")
         elif should_trigger:
             positives += 1
             validation_positive += int(split == "validation")
@@ -300,21 +307,21 @@ def validate_trigger_contract(
         if not isinstance(row_facets, list) or not all(
             isinstance(facet, str) and facet in HYBRID_TRIGGER_FACETS for facet in row_facets
         ):
-            errors.append(f"{path.relative_to(ROOT)}: invalid facets on {query_id or index}")
+            errors.append(f"{_display_path(path)}: invalid facets on {query_id or index}")
         elif split == "validation":
             facets.update(row_facets)
 
     if splits != {"train", "validation"}:
-        errors.append(f"{path.relative_to(ROOT)}: include train and validation splits")
+        errors.append(f"{_display_path(path)}: include train and validation splits")
     if normalized_by_split["train"] & normalized_by_split["validation"]:
-        errors.append(f"{path.relative_to(ROOT)}: train/validation prompts overlap")
+        errors.append(f"{_display_path(path)}: train/validation prompts overlap")
     if not positives or not negatives:
-        errors.append(f"{path.relative_to(ROOT)}: include positive and negative cases")
+        errors.append(f"{_display_path(path)}: include positive and negative cases")
     if kind == "hybrid":
         if validation_positive < 8 or validation_negative < 8:
-            errors.append(f"{path.relative_to(ROOT)}: hybrid validation needs 8 positive and 8 negative cases")
+            errors.append(f"{_display_path(path)}: hybrid validation needs 8 positive and 8 negative cases")
         if facets != HYBRID_TRIGGER_FACETS:
-            errors.append(f"{path.relative_to(ROOT)}: hybrid validation must cover all facets")
+            errors.append(f"{_display_path(path)}: hybrid validation must cover all facets")
     return errors, ids
 
 
@@ -325,7 +332,8 @@ def _validate_event_matcher(value: object, *, allow_final: bool) -> bool:
     if event_type == "phase_invocation":
         return isinstance(value.get("phase"), str) and bool(str(value.get("phase")).strip())
     if allow_final and event_type == "final_output":
-        return value.get("terminal_status") in TERMINAL_STATUSES
+        status = value.get("terminal_status")
+        return status is None or status in TERMINAL_STATUSES
     return False
 
 
@@ -336,32 +344,32 @@ def validate_behavior_contract(name: str, path: Path) -> tuple[list[str], set[st
     if data is None:
         return errors, ids
     if data.get("skill_name") != name:
-        errors.append(f"{path.relative_to(ROOT)}: skill_name must equal {name}")
+        errors.append(f"{_display_path(path)}: skill_name must equal {name}")
     cases = data.get("evals")
     if not isinstance(cases, list) or not cases:
-        errors.append(f"{path.relative_to(ROOT)}: evals must be a non-empty list")
+        errors.append(f"{_display_path(path)}: evals must be a non-empty list")
         return errors, ids
 
     paths: set[str] = set()
     for index, case in enumerate(cases, 1):
         if not isinstance(case, dict):
-            errors.append(f"{path.relative_to(ROOT)}: case {index} must be an object")
+            errors.append(f"{_display_path(path)}: case {index} must be an object")
             continue
         case_id = case.get("id")
         path_type = case.get("path")
         if not isinstance(case_id, str) or not case_id:
-            errors.append(f"{path.relative_to(ROOT)}: case {index} needs id")
+            errors.append(f"{_display_path(path)}: case {index} needs id")
         elif case_id in ids:
-            errors.append(f"{path.relative_to(ROOT)}: duplicate case id {case_id}")
+            errors.append(f"{_display_path(path)}: duplicate case id {case_id}")
         else:
             ids.add(case_id)
         if path_type not in {"success", "boundary"}:
-            errors.append(f"{path.relative_to(ROOT)}: case {case_id or index} has invalid path")
+            errors.append(f"{_display_path(path)}: case {case_id or index} has invalid path")
         else:
             paths.add(str(path_type))
         for field in ("prompt", "expected_output"):
             if not isinstance(case.get(field), str) or not str(case.get(field)).strip():
-                errors.append(f"{path.relative_to(ROOT)}: case {case_id or index} needs {field}")
+                errors.append(f"{_display_path(path)}: case {case_id or index} needs {field}")
         hosts = case.get("hosts")
         if hosts is not None and (
             not isinstance(hosts, list)
@@ -369,71 +377,71 @@ def validate_behavior_contract(name: str, path: Path) -> tuple[list[str], set[st
             or len(set(hosts)) != len(hosts)
             or not all(isinstance(host, str) and host in SUPPORTED_EVAL_HOSTS for host in hosts)
         ):
-            errors.append(f"{path.relative_to(ROOT)}: case {case_id or index} has invalid hosts")
+            errors.append(f"{_display_path(path)}: case {case_id or index} has invalid hosts")
 
         assertions = case.get("assertions")
         mechanical = False
         if not isinstance(assertions, list) or not assertions:
-            errors.append(f"{path.relative_to(ROOT)}: case {case_id or index} needs assertions")
+            errors.append(f"{_display_path(path)}: case {case_id or index} needs assertions")
             continue
         for assertion_index, assertion in enumerate(assertions, 1):
             if not isinstance(assertion, dict):
-                errors.append(f"{path.relative_to(ROOT)}: assertion {assertion_index} must be an object")
+                errors.append(f"{_display_path(path)}: assertion {assertion_index} must be an object")
                 continue
             assertion_type = assertion.get("type")
             if assertion_type == "judge":
                 if not isinstance(assertion.get("criterion"), str) or not str(assertion.get("criterion")).strip():
-                    errors.append(f"{path.relative_to(ROOT)}: judge assertion needs criterion")
+                    errors.append(f"{_display_path(path)}: judge assertion needs criterion")
                 continue
             if assertion_type not in MECHANICAL_ASSERTION_TYPES:
-                errors.append(f"{path.relative_to(ROOT)}: unknown assertion type {assertion_type!r}")
+                errors.append(f"{_display_path(path)}: unknown assertion type {assertion_type!r}")
                 continue
             mechanical = True
             if assertion_type == "terminal_status":
                 expected = assertion.get("expected")
                 allowed = assertion.get("allowed")
                 if (expected is None) == (allowed is None):
-                    errors.append(f"{path.relative_to(ROOT)}: terminal_status needs expected or allowed")
+                    errors.append(f"{_display_path(path)}: terminal_status needs expected or allowed")
                 values = [expected] if expected is not None else allowed
                 if not isinstance(values, list) or not values or not all(value in TERMINAL_STATUSES for value in values):
-                    errors.append(f"{path.relative_to(ROOT)}: invalid terminal status values")
+                    errors.append(f"{_display_path(path)}: invalid terminal status values")
             elif assertion_type == "event_order":
                 if not _validate_event_matcher(assertion.get("before"), allow_final=False) or not _validate_event_matcher(assertion.get("after"), allow_final=False):
-                    errors.append(f"{path.relative_to(ROOT)}: event_order needs phase matchers")
+                    errors.append(f"{_display_path(path)}: event_order needs phase matchers")
                 forbidden = assertion.get("forbidden_between", [])
                 if not isinstance(forbidden, list) or not forbidden or not all(
                     _validate_event_matcher(value, allow_final=True) for value in forbidden
                 ):
-                    errors.append(f"{path.relative_to(ROOT)}: event_order needs forbidden_between matchers")
+                    errors.append(f"{_display_path(path)}: event_order needs forbidden_between matchers")
             elif assertion_type == "event_absent":
                 if not _validate_event_matcher(assertion.get("event"), allow_final=True):
-                    errors.append(f"{path.relative_to(ROOT)}: event_absent needs an event matcher")
+                    errors.append(f"{_display_path(path)}: event_absent needs an event matcher")
             elif assertion_type == "event_count":
                 if not _validate_event_matcher(assertion.get("event"), allow_final=False):
-                    errors.append(f"{path.relative_to(ROOT)}: event_count needs a phase matcher")
+                    errors.append(f"{_display_path(path)}: event_count needs a phase matcher")
                 minimum = assertion.get("min")
                 maximum = assertion.get("max")
                 if minimum is None and maximum is None:
-                    errors.append(f"{path.relative_to(ROOT)}: event_count needs min or max")
+                    errors.append(f"{_display_path(path)}: event_count needs min or max")
             elif assertion_type in {"path_exists", "path_absent", "path_text_contains", "path_text_absent", "path_text_equals"}:
                 if not _safe_relative(assertion.get("path")):
-                    errors.append(f"{path.relative_to(ROOT)}: path assertion needs a safe relative path")
+                    errors.append(f"{_display_path(path)}: path assertion needs a safe relative path")
             elif assertion_type == "changed_paths_equal":
                 values = assertion.get("paths")
                 if not isinstance(values, list) or not all(_safe_relative(value) for value in values):
-                    errors.append(f"{path.relative_to(ROOT)}: changed_paths_equal needs safe paths")
+                    errors.append(f"{_display_path(path)}: changed_paths_equal needs safe paths")
             elif assertion_type in {"output_contains", "output_absent", "git_diff_contains", "git_diff_absent", "path_text_contains", "path_text_absent", "path_text_equals"}:
                 if not isinstance(assertion.get("text"), str) or not str(assertion.get("text")).strip():
-                    errors.append(f"{path.relative_to(ROOT)}: {assertion_type} needs text")
+                    errors.append(f"{_display_path(path)}: {assertion_type} needs text")
         if not mechanical:
-            errors.append(f"{path.relative_to(ROOT)}: case {case_id or index} needs mechanical evidence")
+            errors.append(f"{_display_path(path)}: case {case_id or index} needs mechanical evidence")
         files = case.get("files", [])
         if not isinstance(files, list) or not all(
             isinstance(relative, str) and (path.parent.parent / relative).is_file() for relative in files
         ):
-            errors.append(f"{path.relative_to(ROOT)}: case {case_id or index} has missing input files")
+            errors.append(f"{_display_path(path)}: case {case_id or index} has missing input files")
     if paths != {"success", "boundary"}:
-        errors.append(f"{path.relative_to(ROOT)}: include success and boundary paths")
+        errors.append(f"{_display_path(path)}: include success and boundary paths")
     return errors, ids
 
 
@@ -447,36 +455,36 @@ def validate_catalog(
     if data is None:
         return errors, ids
     if data.get("version") != 1:
-        errors.append(f"{path.relative_to(ROOT)}: version must be 1")
+        errors.append(f"{_display_path(path)}: version must be 1")
     hosts = data.get("critical_hosts")
     if not isinstance(hosts, list) or set(hosts) != SUPPORTED_EVAL_HOSTS:
-        errors.append(f"{path.relative_to(ROOT)}: critical_hosts must cover all supported hosts")
+        errors.append(f"{_display_path(path)}: critical_hosts must cover all supported hosts")
     cases = data.get("cases")
     if not isinstance(cases, list) or not cases:
-        errors.append(f"{path.relative_to(ROOT)}: cases must be a non-empty list")
+        errors.append(f"{_display_path(path)}: cases must be a non-empty list")
         return errors, ids
     for index, case in enumerate(cases, 1):
         if not isinstance(case, dict):
-            errors.append(f"{path.relative_to(ROOT)}: case {index} must be an object")
+            errors.append(f"{_display_path(path)}: case {index} must be an object")
             continue
         case_id = case.get("id")
         if not isinstance(case_id, str) or not case_id:
-            errors.append(f"{path.relative_to(ROOT)}: case {index} needs id")
+            errors.append(f"{_display_path(path)}: case {index} needs id")
         elif case_id in ids:
-            errors.append(f"{path.relative_to(ROOT)}: duplicate id {case_id}")
+            errors.append(f"{_display_path(path)}: duplicate id {case_id}")
         else:
             ids.add(case_id)
         if not isinstance(case.get("boundary"), str) or not str(case.get("boundary")).strip():
-            errors.append(f"{path.relative_to(ROOT)}: case {case_id or index} needs boundary")
+            errors.append(f"{_display_path(path)}: case {case_id or index} needs boundary")
         if not isinstance(case.get("prompt"), str) or not str(case.get("prompt")).strip():
-            errors.append(f"{path.relative_to(ROOT)}: case {case_id or index} needs prompt")
+            errors.append(f"{_display_path(path)}: case {case_id or index} needs prompt")
         if case.get("focus_skill") not in skill_names:
-            errors.append(f"{path.relative_to(ROOT)}: case {case_id or index} has unknown focus_skill")
+            errors.append(f"{_display_path(path)}: case {case_id or index} has unknown focus_skill")
         selected = case.get("expected_selected_skill")
         if selected is not None and selected not in skill_names:
-            errors.append(f"{path.relative_to(ROOT)}: case {case_id or index} has unknown selected skill")
+            errors.append(f"{_display_path(path)}: case {case_id or index} has unknown selected skill")
         if not isinstance(case.get("critical"), bool):
-            errors.append(f"{path.relative_to(ROOT)}: case {case_id or index} needs critical boolean")
+            errors.append(f"{_display_path(path)}: case {case_id or index} needs critical boolean")
     return errors, ids
 
 
@@ -489,10 +497,10 @@ def validate_release_critical(
     if data is None:
         return errors
     if data.get("hosts") != list(HOST_ORDER):
-        errors.append(f"{path.relative_to(ROOT)}: hosts must be ordered {', '.join(HOST_ORDER)}")
+        errors.append(f"{_display_path(path)}: hosts must be ordered {', '.join(HOST_ORDER)}")
     runs = data.get("runs")
     if isinstance(runs, bool) or not isinstance(runs, int) or runs < 2:
-        errors.append(f"{path.relative_to(ROOT)}: runs must be at least 2")
+        errors.append(f"{_display_path(path)}: runs must be at least 2")
     known_behavior = {
         f"{skill}:behavior:{case_id}"
         for skill, ids in behavior_ids.items()
@@ -501,10 +509,15 @@ def validate_release_critical(
     behavior = data.get("behavior_cases")
     routing = data.get("catalog_cases")
     if not isinstance(behavior, list) or not behavior or not all(value in known_behavior for value in behavior):
-        errors.append(f"{path.relative_to(ROOT)}: behavior_cases must reference canonical cases")
+        errors.append(f"{_display_path(path)}: behavior_cases must reference canonical cases")
     known_catalog = {f"catalog:behavior:{case_id}" for case_id in catalog_ids}
     if not isinstance(routing, list) or not routing or not all(value in known_catalog for value in routing):
-        errors.append(f"{path.relative_to(ROOT)}: catalog_cases must reference canonical cases")
+        errors.append(f"{_display_path(path)}: catalog_cases must reference canonical cases")
+    retired = data.get("retired_skill_contracts", [])
+    if not isinstance(retired, list) or not all(isinstance(value, str) and value for value in retired):
+        errors.append(f"{_display_path(path)}: retired_skill_contracts must be a string list")
+    elif any(value in behavior_ids for value in retired):
+        errors.append(f"{_display_path(path)}: retired_skill_contracts contains an active skill")
     return errors
 
 
@@ -568,8 +581,6 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
     for relative in (".claude-plugin", "commands", "hooks", "docs/tigerkit", "package.json"):
         if (ROOT / relative).exists():
             errors.append(f"{relative}: remove legacy/runtime surface")
-    if (ROOT / ".tigerkit").exists():
-        errors.append(".tigerkit: remove runtime scratch from the packaged repository")
     ignored = (ROOT / ".gitignore").read_text(encoding="utf-8") if (ROOT / ".gitignore").is_file() else ""
     if ".tigerkit/" not in ignored.splitlines():
         errors.append(".gitignore: include .tigerkit/")
@@ -609,12 +620,12 @@ def validate_all() -> tuple[list[str], list[str]]:
         trigger_path = skill_dir / "evals/triggers.json"
         behavior_path = skill_dir / "evals/evals.json"
         if not trigger_path.is_file():
-            errors.append(f"{trigger_path.relative_to(ROOT)}: add canonical trigger contract")
+            errors.append(f"{_display_path(trigger_path)}: add canonical trigger contract")
         else:
             trigger_errors, _ = validate_trigger_contract(name, str(kind), trigger_path)
             errors.extend(trigger_errors)
         if not behavior_path.is_file():
-            errors.append(f"{behavior_path.relative_to(ROOT)}: add canonical behavior contract")
+            errors.append(f"{_display_path(behavior_path)}: add canonical behavior contract")
             behavior_ids[name] = set()
         else:
             behavior_errors, ids = validate_behavior_contract(name, behavior_path)

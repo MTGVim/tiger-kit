@@ -2,15 +2,18 @@
 
 ## Runtime evidence
 
-Guard visual/layout/style claims require an inspected screenshot and necessary
-computed state. Pure network/DOM exploration does not. If entry flow is
-unstable and only CSS behavior matters, a DOM-injected element may use exact
-production classes, but label the bypass.
+Every Guard and Verdict run requires at least one non-empty inspected
+screenshot. Guard visual/layout/style claims also require the necessary
+computed state; pure network/DOM exploration does not satisfy the screenshot
+contract. If entry flow is unstable and only CSS behavior matters, a
+DOM-injected element may use exact production classes, but label the bypass.
 
-After a Verdict session starts, capture and actually inspect every success,
+After a browser session starts, capture and actually inspect every success,
 failure, and runtime-blocked final state. Capture without image analysis is not
-evidence and makes the verdict `Unverifiable`. A pre-session alignment
-`Blocked` needs no screenshot.
+evidence and makes the result `Unverifiable`. A pre-session block that cannot
+start a safe browser cannot produce a product screenshot; record
+`Evidence directory: unavailable` and `Unverifiable` rather than inventing an
+image.
 
 ## Instrumented evidence
 
@@ -80,7 +83,8 @@ Before comparing rem values, verify equal root font size.
 
 ## Evidence
 
-Verdict `## Evidence` records width, screenshot path, and visual result.
+Guard and Verdict `## Evidence` records the absolute evidence directory, width
+when applicable, screenshot path, and visual result.
 Missing width/screenshot/analysis belongs in `## Unverified`. Link every
 finding to an observed image; irrelevant captures are not evidence.
 

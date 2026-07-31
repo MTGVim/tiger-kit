@@ -80,7 +80,7 @@
     {
       "id": "validation-positive-8",
       "split": "validation",
-      "query": "$tk-learn 이 reflect 후보를 dedupe하고 portable skill로 만들어줘",
+      "query": "$tk-learn 이 skill-evolution 후보를 dedupe하고 portable skill로 만들어줘",
       "should_trigger": true,
       "facets": [
         "compound"

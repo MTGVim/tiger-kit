@@ -17,7 +17,6 @@ PHASES = {
     "tk-implement",
     "tk-browser-verify",
     "tk-merge-conflict",
-    "tk-reflect",
 }
 
 
