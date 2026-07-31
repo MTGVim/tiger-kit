@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.01-3 — Release
+
+- feat(skill): add GitHub PR image upload skill
+
 ## 2026.08.01-2 — Release
 
 - feat: split PR lifecycle into canonical skills
