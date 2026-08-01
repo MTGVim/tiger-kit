@@ -1,7 +1,7 @@
 # TigerKit
 
 <p align="center">
-  <img src="assets/tigerkit-cover.png" width="960" alt="TigerKit Agent Skills 표지">
+  <img src="assets/tigerkit-cover.webp" width="960" alt="TigerKit Agent Skills 표지">
 </p>
 
 TigerKit 2026.08.01-4-6c8c7은 Claude Code, Codex, Hermes Agent용 엔지니어링 Agent Skills
