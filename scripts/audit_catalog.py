@@ -76,8 +76,10 @@ def audit(experiment: Mapping[str, object] | None = None) -> dict[str, object]:
         consumers = sorted(catalog[name])
         independent = kind == "user-invoked" or triggers > 0
         objective = {"success", "boundary"}.issubset(paths)
-        referenced = bool(consumers) or drive[name] or kind == "user-invoked"
-        disposition = "Keep" if independent and objective and referenced else "Review"
+        referenced = bool(consumers) or drive[name]
+        disposition = (
+            "ContractComplete" if independent and objective and referenced else "Review"
+        )
         basis = []
         if kind == "user-invoked":
             basis.append("explicit independent invocation")
@@ -108,11 +110,15 @@ def audit(experiment: Mapping[str, object] | None = None) -> dict[str, object]:
                 "basis": basis,
             }
         )
-    review = [row["skill"] for row in rows if row["disposition"] != "Keep"]
+    review = [
+        row["skill"]
+        for row in rows
+        if row["disposition"] != "ContractComplete"
+    ]
     return {
         "status": "Pass" if not review else "Review",
         "skill_count": len(rows),
-        "keep_count": len(rows) - len(review),
+        "contract_complete_count": len(rows) - len(review),
         "review": review,
         "skills": rows,
     }

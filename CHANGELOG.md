@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 2026.08.02-1 — Release
+
+- fix(tooling): clarify catalog audit disposition
+- perf(docs): shrink README cover
+
 ## 2026.08.01-4 — Release
 
 - feat(workflow): hand off required PR evidence
