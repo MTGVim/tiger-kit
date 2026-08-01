@@ -4,9 +4,9 @@
   <img src="assets/tigerkit-cover.webp" width="960" alt="TigerKit Agent Skills 표지">
 </p>
 
-TigerKit 2026.08.01-4-6c8c7은 Claude Code, Codex, Hermes Agent용 엔지니어링 Agent Skills
+TigerKit 2026.08.02-1-3b8ff은 Claude Code, Codex, Hermes Agent용 엔지니어링 Agent Skills
 모음입니다. 중앙 workflow runtime이나 plugin 없이 self-contained skill을
-`npx skills`로 배포합니다. 최신 immutable snapshot은 `v2026.08.01-4-6c8c7`이며, 이
+`npx skills`로 배포합니다. 최신 immutable snapshot은 `v2026.08.02-1-3b8ff`이며, 이
 snapshot은 14개 skill을 포함합니다. 현재 `main`에는 다음 릴리스 후보가 포함될 수 있습니다.
 
 ## 설치
@@ -23,7 +23,7 @@ npx skills add MTGVim/tiger-kit \
 고정 snapshot:
 
 ```bash
-npx skills add "MTGVim/tiger-kit#v2026.08.01-4-6c8c7" \
+npx skills add "MTGVim/tiger-kit#v2026.08.02-1-3b8ff" \
   --global \
   --agent claude-code \
   --agent codex \
@@ -161,7 +161,7 @@ Release gate:
 
 ```bash
 python3 scripts/run_release_gate.py \
-  --baseline v2026.08.01-4-6c8c7 \
+  --baseline v2026.08.02-1-3b8ff \
   --candidate HEAD \
   --output /tmp/tigerkit-release-gate
 ```
