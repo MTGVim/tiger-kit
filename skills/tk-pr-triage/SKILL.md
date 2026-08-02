@@ -26,7 +26,10 @@ the `origin` remote of the executing repository. Never hardcode TigerKit.
 1. Resolve the authenticated GitHub login and target repository.
 2. Execute `scripts/triage.mjs` directly. It uses paginated REST reads for open
    PRs, direct and team review requests, review decisions, inline comments,
-   issue comments, checks, and status.
+   issue comments, checks, and status. On a nonzero exit or a bounded API
+   failure that leaves required evidence unavailable, rerun that repository
+   once from a fresh script execution; never merge partial snapshots. Preserve
+   a repeated failure and return `Unverifiable` when it prevents classification.
 3. Report only actionable items for the authenticated author or requested
    reviewer. Preserve repository, PR number, author, head SHA, and evidence for
    every item; never mix data between repositories or PRs.

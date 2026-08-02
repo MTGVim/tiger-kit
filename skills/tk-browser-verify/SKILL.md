@@ -33,13 +33,19 @@ ephemeral, and return material strategy drift to the parent.
 ## Workflow
 
 1. **Scope** — choose Guard/Verdict, target, success criteria, and safe
-   interaction boundary.
+   interaction boundary. For a local-app request, an omitted URL or launch
+   command is discovery work, not a user decision: inspect repository scripts,
+   documentation, and listening processes, then proceed only with one
+   worktree-bound target.
 2. **Preflight** — load only applicable references: [UI verification](references/ui-verification.md),
    [design](references/design.md), [accessibility](references/accessibility.md),
    [visual](references/visual.md), [behavior](references/behavior.md), and
    [safety](references/safety.md).
 3. **Launch** — prove the browser, effective arguments, profile ownership, and
-   current-worktree serving source.
+   current-worktree serving source. An unnamed browser provider is not itself
+   `Unverifiable`; use the first available native, Playwright-compatible, MCP,
+   or verified CDP route without installing dependencies, and return
+   `Unverifiable` only when none can capture and inspect the required evidence.
 4. **Run** — navigate from a known state, perform safe interactions, inspect
    required network/final state, capture at least one screenshot, and inspect
    the actual image(s).

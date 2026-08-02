@@ -26,7 +26,10 @@ unit; `tk-implement` owns the unit commit and verification.
 
 1. Resolve exactly one PR, repository, author, authenticated user, branch, head
    SHA, base, open/draft state, checks, reviews, comments, and review threads.
-   Complete pagination and stop on author/login mismatch before mutation.
+   Explicit comment or thread IDs are sufficient discovery anchors: when the PR
+   number is omitted, search the current repository and branch and proceed only
+   if every selected ID resolves to the same open PR. Complete pagination and
+   stop on missing, ambiguous, or author/login-mismatched identity before mutation.
 2. Group current review findings by thread and suppress superseded iterations.
    Preserve exact comment/thread IDs, a bounded quote, requested outcome, R/AC,
    scope, exclusions, and verification obligations.

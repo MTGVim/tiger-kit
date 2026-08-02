@@ -33,7 +33,7 @@ A drive non-success handoff includes actual branch/`HEAD`, changed or uncommitte
 
 ## Workflow
 
-1. **Inspect** — resolve source, unit, R/AC or source anchors, branch, initial `HEAD`, relevant code/tests/instructions, and pre-existing dirty paths.
+1. **Inspect** — resolve source, unit, R/AC or source anchors, branch, initial `HEAD`, relevant code/tests/instructions, and pre-existing dirty paths. For standalone natural-language input, use repository evidence to resolve one target and derive working R/AC; missing paths or prewritten R/AC alone is not `Blocked`. Continue only when the target and expected behavior become unambiguous; otherwise stop before mutation.
 2. **Choose strategy** — use `direct` by default; use `delegated` only when one bounded implementor can own a transferable unit and isolation adds value. Choose TDD only with a meaningful public-behavior seam.
 3. **Implement** — change only the unit, prove coherent behavior slices, and reach initial green.
 4. **Simplify** — run exactly one behavior-preserving reuse/simplicity/ownership pass through [review-boundary.md](references/review-boundary.md).
