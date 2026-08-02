@@ -40,6 +40,11 @@ Each ticket begins `Status: pending` and is executable from the artifact and its
 cited sources without hidden conversation context. Preserve R/AC IDs; when none
 exist, cite source locations rather than inventing IDs.
 
+Use these core fields in order: `Status`, `Goal`, `Coverage`, `Scope`, `Entry
+points`, `Dependencies`, and `Verification`. `Coverage` names every owned R/AC
+or source location, and an independent ticket writes `Dependencies: none`
+instead of leaving dependency state implicit.
+
 A ticket is a vertical behavior unit: keep behavior, tests, and verification
 together. Do not split into type/API/UI/test layers or diagnose/fix/verify
 stages. Keep one bug as one slice from reproduction through root-cause fix,
