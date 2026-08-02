@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 2026.08.03-1 — Release
+
+- optimize tk-pr-triage: retry incomplete API collection
+- optimize tk-to-tickets: define core ticket fields
+- optimize tk-pr-respond: discover PR from selected comments
+- optimize tk-browser-verify: discover local verification routes
+- optimize tk-implement: resolve standalone targets from repo evidence
+
 ## 2026.08.02-1 — Release
 
 - fix(tooling): clarify catalog audit disposition
