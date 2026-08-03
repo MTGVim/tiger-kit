@@ -55,7 +55,7 @@ anything before the approval gate below.
    upload fails, keep the PR result but return `Blocked` for final completion.
    Do not merge or request a release from this skill.
 
-## Publication gate
+## 🔴 CHECKPOINT / STOP · Publication gate
 
 The plan must name the repository, PR or create target, base branch, head
 branch, exact push refspec, title, body, evidence requirement/state, operation
