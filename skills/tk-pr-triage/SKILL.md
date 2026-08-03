@@ -16,14 +16,19 @@ Start only when the user selects `/tk-pr-triage`, `$tk-pr-triage`, or the host
 skill picker. Do not activate from a generic GitHub question, implementation
 request, issue triage, or review-response request.
 
-This skill is strictly read-only. It owns no local artifact and must not mutate
-files, branches, commits, GitHub issues, pull requests, comments, reviews, or
-threads. Resolve the target from an explicit repository argument; otherwise use
-the `origin` remote of the executing repository. Never hardcode TigerKit.
+This skill is read-only for repositories and GitHub: it must not mutate project
+files, branches, commits, issues, pull requests, comments, reviews, or threads.
+Its only owned state is `$XDG_CONFIG_HOME/tigerkit/pr-triage.json` (falling back
+to `~/.config/tigerkit/pr-triage.json`), which contains a `repositories` array.
+Explicit repository arguments are one-run overrides. Without arguments, read
+that config; if it is missing, bootstrap it with the executing repository's
+`origin` and report the created path. Never hardcode TigerKit.
 
 ## Workflow
 
-1. Resolve the authenticated GitHub login and target repository.
+1. Resolve the authenticated GitHub login and repository targets from explicit
+   arguments or the triage config. If a missing config cannot be bootstrapped
+   because `origin` is unavailable, stop `Unverifiable` with the exact remedy.
 2. Execute `scripts/triage.mjs` directly. It uses paginated REST reads for open
    PRs, direct and team review requests, review decisions, inline comments,
    issue comments, checks, and status. On a nonzero exit or a bounded API
@@ -37,11 +42,17 @@ the `origin` remote of the executing repository. Never hardcode TigerKit.
    `changes_requested`, `needs_reply`, `review_requested`, `awaiting_re_review`,
    or `draft`. Keep API failures visible as `checks_unverifiable` or in the
    bounded `failures` list; never turn missing evidence into approval.
-5. End with one next action per item. Recommendations do not authorize apply,
-   reply, resolve, push, merge, or release.
+5. Render user-facing results before any question. First group by `Act now`,
+   `Review requests`, and `Waiting`, then group by repository inside each status;
+   omit empty groups. For each item show priority, PR, plain-language current
+   state, why it needs attention, and one recommended next action; keep raw
+   category and provenance as supporting detail rather than making the user
+   decode them. Do not ask a question by default. Recommendations do not
+   authorize apply, reply, resolve, push, merge, or release.
 
 The deterministic script is a reducer, not a remote-write client. Its output
-contains a generation time, login, repositories, counts, items, and failures.
+contains a generation time, login, config source, repositories, counts, items,
+and failures.
 If review-thread resolution state is required, `tk-pr-respond` must fetch the
 current thread state again before proposing or executing a resolve operation.
 

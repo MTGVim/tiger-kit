@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { realpathSync } from 'node:fs';
+import { mkdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { dirname, join } from 'node:path';
 
 const SUCCESS_CONCLUSIONS = new Set(['success', 'neutral', 'skipped']);
 const NO_ACTION_PATTERN = /(?:no action|nothing to change|looks good|lgtm|이상 발견 없음|조치 없음)/i;
@@ -97,8 +99,10 @@ export function latestAuthorResponseAfter(rows, authorLogin, timestamp, scope = 
     .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))[0] || null;
 }
 
-export function computeReplyEvidence(rows, authorLogin) {
-  const actionable = latestExternalMessagesByScope(rows, authorLogin).filter((row) => isActionableText(row.body));
+export function computeReplyEvidence(rows, authorLogin, afterTimestamp = null) {
+  const actionable = latestExternalMessagesByScope(rows, authorLogin)
+    .filter((row) => isActionableText(row.body))
+    .filter((row) => !afterTimestamp || new Date(row.timestamp) > new Date(afterTimestamp));
   const outstanding = [];
   const responded = [];
   for (const row of actionable) {
@@ -113,6 +117,42 @@ export function computeReplyEvidence(rows, authorLogin) {
     });
   }
   return { outstanding, responded };
+}
+
+export function triageConfigPath(env = process.env) {
+  return join(env.XDG_CONFIG_HOME || join(env.HOME || homedir(), '.config'), 'tigerkit', 'pr-triage.json');
+}
+
+function configuredRepositories(value, path) {
+  if (!Array.isArray(value?.repositories)
+      || !value.repositories.length
+      || value.repositories.some((repo) => typeof repo !== 'string' || !/^[^/\s]+\/[^/\s]+$/.test(repo))) {
+    throw new Error(`Invalid triage config ${path}: repositories must be a non-empty owner/name array`);
+  }
+  return [...new Set(value.repositories)];
+}
+
+export function loadOrBootstrapConfig(path, fallbackRepositories = []) {
+  try {
+    return { repositories: configuredRepositories(JSON.parse(readFileSync(path, 'utf8')), path), bootstrapped: false };
+  } catch (error) {
+    if (error.code !== 'ENOENT') {
+      if (error instanceof SyntaxError) throw new Error(`Invalid JSON in triage config ${path}: ${error.message}`);
+      throw error;
+    }
+  }
+  if (!fallbackRepositories.length) {
+    throw new Error(`Cannot bootstrap triage config ${path}: supply --repo owner/name or run from a checkout with origin`);
+  }
+  const repositories = configuredRepositories({ repositories: fallbackRepositories }, path);
+  mkdirSync(dirname(path), { recursive: true });
+  try {
+    writeFileSync(path, `${JSON.stringify({ repositories }, null, 2)}\n`, { encoding: 'utf8', flag: 'wx' });
+  } catch (error) {
+    if (error.code === 'EEXIST') return loadOrBootstrapConfig(path, fallbackRepositories);
+    throw error;
+  }
+  return { repositories, bootstrapped: true };
 }
 
 export function classifyPullRequest({
@@ -252,7 +292,11 @@ async function triageRepository(repo, login, teamKeys) {
     }
     const rows = collectRows(reviews.data, inlineComments.data, issueComments.data);
     const review = computeReviewDecision(reviews.data, login);
-    const reply = computeReplyEvidence(rows, login);
+    const reply = computeReplyEvidence(
+      rows,
+      login,
+      review.decision === 'APPROVED' ? review.decisiveAt : null,
+    );
     const check = checkState(repo, pull.head.sha);
     const changeResponse = review.decisiveAt
       && reply.responded.some((item) => item.responseAt && new Date(item.responseAt) > new Date(review.decisiveAt));
@@ -301,15 +345,26 @@ async function main() {
   if (!user.ok) throw new Error(`Unable to resolve GitHub identity: ${user.error}`);
   const userTeams = ghList('user/teams?per_page=100');
   const teamKeys = userTeams.ok ? teamKeysForUser(userTeams.data) : new Set();
-  const repos = args.repos.length ? args.repos : [currentRepository()].filter(Boolean);
-  if (!repos.length) throw new Error('No repository supplied and origin could not be resolved');
+  const configPath = args.repos.length ? null : triageConfigPath();
+  const target = args.repos.length
+    ? { repositories: configuredRepositories({ repositories: args.repos }, 'arguments'), bootstrapped: false }
+    : loadOrBootstrapConfig(configPath, [currentRepository()].filter(Boolean));
+  const repos = target.repositories;
   const results = [];
   for (const repo of [...new Set(repos)]) results.push(await triageRepository(repo, user.data.login, teamKeys));
   const items = results.flatMap((result) => result.items);
   const failures = results.flatMap((result) => result.failures.map((error) => ({ repository: result.repository, error })));
   if (!userTeams.ok) failures.unshift({ repository: null, error: `Unable to resolve team review membership: ${userTeams.error}` });
   const counts = items.reduce((accumulator, item) => { accumulator[item.category] = (accumulator[item.category] || 0) + 1; return accumulator; }, {});
-  console.log(JSON.stringify({ generatedAt: new Date().toISOString(), login: user.data.login, repositories: [...new Set(repos)], counts, items, failures }, null, 2));
+  console.log(JSON.stringify({
+    generatedAt: new Date().toISOString(),
+    login: user.data.login,
+    config: { path: configPath, source: configPath ? 'config' : 'arguments', bootstrapped: target.bootstrapped },
+    repositories: repos,
+    counts,
+    items,
+    failures,
+  }, null, 2));
 }
 
 function isDirectRun() {

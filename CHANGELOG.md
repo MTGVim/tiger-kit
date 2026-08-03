@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.03-2 — Release
+
+- feat(pr): restore user-first PR workflows
+
 ## 2026.08.03-1 — Release
 
 - optimize tk-pr-triage: retry incomplete API collection

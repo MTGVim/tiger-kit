@@ -33,14 +33,23 @@ unit; `tk-implement` owns the unit commit and verification.
 2. Group current review findings by thread and suppress superseded iterations.
    Preserve exact comment/thread IDs, a bounded quote, requested outcome, R/AC,
    scope, exclusions, and verification obligations.
-3. Show numbered resolution units and wait for the user's selection. Selection
-   authorizes only those units; it does not authorize a remote write.
+3. Before asking for a selection, show every current finding in a compact table:
+   comment/thread ID, reviewer and bounded quote or faithful summary, requested
+   outcome, assessment, recommended `apply | reply | defer` disposition with
+   rationale, expected change scope, and verification. Include a reply draft for
+   `reply` recommendations. Group coupled findings into numbered resolution
+   units, state one recommended selection, then ask one selection question.
+   Selection authorizes only those units; it does not authorize a remote write.
 4. Handoff one unit at a time to `tk-implement` with the PR identity and exact
    comment/thread IDs. Do not create empty per-comment commits. Aggregate only
    verified unit results and keep deferred or unverified threads open.
 5. Draft `.tigerkit/pr-respond.md` with exact push refspec, reply bodies,
    resolvable thread IDs, intentionally open threads, reviewers, and exclusions.
-   Stop with `Pending` for current-turn publication approval.
+   Before publication approval, show a second compact table with each selected
+   ID, implementation result, verification, exact reply draft, and recommended
+   `resolve | keep open` thread action, followed by the outbound operation order
+   and one recommendation. Then ask one publication question and stop with
+   `Pending`.
 6. After approval, recheck branch, local `HEAD`, PR head SHA, open state, author,
    checks, and thread state. Drift invalidates approval and returns `Blocked`.
 7. Publish in this order: explicit push, exact replies, verified thread

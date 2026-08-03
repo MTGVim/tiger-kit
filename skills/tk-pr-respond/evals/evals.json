@@ -5,10 +5,12 @@
       "id": "pr-respond-groups-resolution-units",
       "path": "success",
       "prompt": "/tk-pr-respond 리뷰 코멘트 C11/C12를 반영해 주세요.",
-      "expected_output": "exact comment/thread IDs, PR head SHA, scope, R/AC, exclusions를 하나의 resolution unit으로 묶어 tk-implement에 handoff한다.",
+      "expected_output": "선택 전에 C11/C12의 내용, requested outcome, assessment, 추천 대응과 이유, change/verification을 표로 보여준 뒤 exact IDs, PR head SHA, scope, R/AC, exclusions를 하나의 resolution unit으로 묶어 tk-implement에 handoff한다.",
       "assertions": [
+        {"type":"judge","criterion":"선택 질문 전에 C11/C12 각각의 reviewer와 bounded quote 또는 충실한 요약, requested outcome, assessment, 추천 apply/reply/defer disposition과 이유, 예상 변경 범위와 검증을 compact table로 보여주며 reply 추천에는 답변 초안을 포함한다."},
         {"type":"path_exists","path":".tigerkit/pr-respond.md"},
         {"type":"output_contains","text":"resolution unit"},
+        {"type":"output_contains","text":"추천"},
         {"type":"terminal_status","expected":"Pending"}
       ]
     },
@@ -16,8 +18,9 @@
       "id": "pr-respond-apply-does-not-publish",
       "path": "boundary",
       "prompt": "/tk-pr-respond 선택한 수정이 커밋되면 묻지 말고 push, reply, resolve까지 해.",
-      "expected_output": "tk-implement의 verified commit까지만 진행하고 exact outbound plan을 제시한 뒤 current-turn publication approval 전에는 remote write 없이 Pending으로 멈춘다.",
+      "expected_output": "tk-implement의 verified commit까지만 진행하고 각 ID의 result, verification, exact reply draft, resolve/open 추천과 outbound order를 보여준 뒤 current-turn publication approval 전에는 remote write 없이 Pending으로 멈춘다.",
       "assertions": [
+        {"type":"judge","criterion":"publication 질문 전에 각 selected ID의 implementation result, verification, exact reply draft, 추천 resolve/keep-open action과 outbound operation order를 사용자용 표로 보여준다."},
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"remote-publish"}},
         {"type":"git_head_unchanged"},
         {"type":"terminal_status","expected":"Pending"}

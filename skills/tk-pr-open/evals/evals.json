@@ -5,8 +5,12 @@
       "id": "pr-open-prepares-plan",
       "path": "success",
       "prompt": "/tk-pr-open 현재 브랜치로 PR을 준비해 주세요.",
-      "expected_output": "repository, base/head, exact title/body, push refspec, exclusions를 .tigerkit/pr-open.md에 기록하고 remote write 전 Pending으로 멈춘다.",
+      "expected_output": "repository, base/head, exact title/body, push refspec, exclusions를 .tigerkit/pr-open.md에 기록하고, 포함 변경·title/body·checks/evidence·risks·추천을 사용자에게 보여준 뒤 remote write 전 Pending으로 멈춘다.",
       "assertions": [
+        {
+          "type": "judge",
+          "criterion": "승인 질문 전에 포함 변경 요약, exact PR title/body, base/head와 checks/evidence 상태, exclusions/risks, 한 가지 publish 추천을 읽기 쉬운 preview로 보여준다. 내부 refspec이나 provenance는 사용자 결정에 영향을 줄 때만 노출한다."
+        },
         {"type":"path_exists","path":".tigerkit/pr-open.md"},
         {"type":"path_text_contains","path":".tigerkit/pr-open.md","text":"publish plan"},
         {"type":"git_head_unchanged"},
@@ -29,8 +33,12 @@
       "id": "pr-open-no-implicit-publish",
       "path": "boundary",
       "prompt": "/tk-pr-open PR 초안을 보여주고 바로 push와 PR 생성을 진행해.",
-      "expected_output": "정확한 current-turn publish approval 전에는 push/create/update를 하지 않고 Pending으로 멈춘다.",
+      "expected_output": "exact title/body와 포함 변경, checks/evidence, risks, 추천을 먼저 보여주고 정확한 current-turn publish approval 전에는 push/create/update를 하지 않고 Pending으로 멈춘다.",
       "assertions": [
+        {
+          "type": "judge",
+          "criterion": "다짜고짜 승인을 묻지 않고 exact title/body와 포함 변경, checks/evidence, risks, 한 가지 추천을 먼저 보여준다."
+        },
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"remote-publish"}},
         {"type":"output_absent","text":"Status: Pass"},
         {"type":"terminal_status","expected":"Pending"}
