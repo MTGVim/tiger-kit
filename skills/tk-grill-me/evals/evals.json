@@ -8,8 +8,8 @@
     },
     {
       "from": "legacy-2",
-      "to": "grill-me-uses-native-question-tool",
-      "reason": "Unresolved decisions continue through one native structured question with no downstream mutation."
+      "to": "grill-me-renders-question-in-chat",
+      "reason": "Unresolved decisions continue through one plain-chat question with no downstream mutation."
     },
     {
       "from": "active-drive-preparing-decision-handoff",
@@ -18,8 +18,8 @@
     },
     {
       "from": "fact-evidence-unavailable",
-      "to": "grill-me-uses-native-question-tool",
-      "reason": "Missing material evidence keeps the unified procedure pending at one evidence-bearing native question."
+      "to": "grill-me-renders-question-in-chat",
+      "reason": "Missing material evidence keeps the unified procedure pending at one evidence-bearing chat question."
     },
     {
       "from": "closure-requires-explicit-approval",
@@ -48,8 +48,13 @@
     },
     {
       "from": "grill-uses-native-question-tool",
-      "to": "grill-me-uses-native-question-tool",
-      "reason": "The renamed unified case preserves the native structured-question boundary."
+      "to": "grill-me-renders-question-in-chat",
+      "reason": "The unified case preserves the one-question boundary while moving presentation into chat."
+    },
+    {
+      "from": "grill-me-uses-native-question-tool",
+      "to": "grill-me-renders-question-in-chat",
+      "reason": "User preference removes host question tools while preserving evidence-first decision safety."
     },
     {
       "from": "grill-bounds-confirmed-results",
@@ -79,14 +84,18 @@
       "darwin": true
     },
     {
-      "id": "grill-me-uses-native-question-tool",
+      "id": "grill-me-renders-question-in-chat",
       "path": "boundary",
       "prompt": "/tk-grill-me 저장 방식 A/B 중 하나가 확정되지 않았습니다. 근거를 조사하고 질문 하나만 제시한 뒤 제 답을 받기 전에는 downstream 작업을 하지 마세요.",
-      "expected_output": "pending procedure state를 native structured input으로 Question, Recommendation, Evidence 순서의 질문 하나만 표시하고 답변 전에는 mutation이나 다음 절차를 실행하지 않는다.",
+      "expected_output": "pending procedure state에서 Question, Recommendation, Evidence 순서의 질문 하나를 chat response에 직접 표시하고 답변 전에는 mutation이나 다음 절차를 실행하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "Claude Code AskUserQuestion, Codex request_user_input, 또는 Hermes Agent clarify 중 현재 host의 native structured input을 사용하고 질문 하나 뒤 멈춘다."
+          "criterion": "host question/input tool을 호출하지 않고 최신 사용자 언어의 chat response에 evidence-bearing 질문 하나를 직접 표시한 뒤 멈춘다."
+        },
+        {
+          "type": "output_contains",
+          "text": "Question"
         },
         {
           "type": "terminal_status",

@@ -87,4 +87,6 @@ Keep headings, statuses, IDs, paths, commands, and exact source literals stable.
 
 When a user-owned decision blocks publication, ask one self-contained `Question`
 before any `Recommendation`, with only decision-relevant evidence and one
-recommended option. A failed structured-input call preserves `Pending`.
+recommended option. Render the question and options directly in the chat
+response; do not call structured question or input tools. Preserve `Pending`
+until the user answers.

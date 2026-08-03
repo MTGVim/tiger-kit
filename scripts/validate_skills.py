@@ -64,6 +64,15 @@ HOST_EXTENSION_FIELDS = {"argument-hint", "disable-model-invocation"}
 KEBAB = re.compile(r"^tk-[a-z0-9]+(?:-[a-z0-9]+)*$")
 LINK = re.compile(r"\[[^]]*]\(([^)]+)\)")
 HANGUL_SYLLABLE = re.compile(r"[가-힣]")
+QUESTION_TOOL_TOKENS = (
+    "AskUserQuestion",
+    "request_user_input",
+    "Hermes Agent `clarify`",
+    "native structured input",
+    "native structured question",
+    "native structured-question",
+    "structured-input call",
+)
 
 
 def scalar(value: str) -> object:
@@ -245,6 +254,20 @@ def validate_skill_language(skill_dir: Path) -> list[str]:
             if HANGUL_SYLLABLE.search(prose):
                 errors.append(
                     f"{_display_path(path)}:{number}: canonical operational prose must be English"
+                )
+    return errors
+
+
+def validate_plain_chat_contract(skill_dir: Path) -> list[str]:
+    errors: list[str] = []
+    for path in skill_dir.rglob("*"):
+        if not path.is_file() or path.suffix not in {".md", ".json", ".yaml", ".yml", ".py", ".mjs"}:
+            continue
+        text = path.read_text(encoding="utf-8")
+        for token in QUESTION_TOOL_TOKENS:
+            if token in text:
+                errors.append(
+                    f"{_display_path(path)}: render questions in plain chat; remove {token!r}"
                 )
     return errors
 
@@ -660,6 +683,7 @@ def validate_all() -> tuple[list[str], list[str]]:
         errors.extend(skill_errors)
         warnings.extend(skill_warnings)
         errors.extend(validate_skill_language(skill_dir))
+        errors.extend(validate_plain_chat_contract(skill_dir))
         kind = nested(data, "metadata", "tigerkit", "kind")
         trigger_path = skill_dir / "evals/triggers.json"
         behavior_path = skill_dir / "evals/evals.json"

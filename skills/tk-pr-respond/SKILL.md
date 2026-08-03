@@ -80,4 +80,6 @@ Keep headings, statuses, IDs, paths, commands, and exact source literals stable.
 
 When selection, identity, scope, or publication blocks progress, ask one
 self-contained `Question` before any `Recommendation`, with one recommended
-option. A failed structured-input call preserves `Pending` or `Blocked`.
+option. Render the question and options directly in the chat response; do not
+call structured question or input tools. Preserve `Pending | Blocked` until the
+user answers.
