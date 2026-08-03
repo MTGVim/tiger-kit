@@ -31,7 +31,11 @@ documents/tickets, relevant code, then an existing `.tigerkit/spec.md`.
    When no relevant prior art exists, omit `## Prior art`.
 5. **Specify** — define problem, goal, included/excluded scope, requirements,
    acceptance criteria, verification, source traceability, and material execution
-   strategy.
+   strategy. Classify `PR evidence` as `required | optional | N/A`: `required`
+   only for confirmed attached-visual-proof requirements or browser-rendered AC
+   that code and checks cannot communicate meaningfully, `optional` when a
+   screenshot merely helps review, and `N/A` without a browser-visible result.
+   Do not promote browser verification alone into required PR evidence.
 6. **Slice candidates** — record `Vertical slicing candidate areas` by
    user-visible behavior, R/AC coverage, and coupling evidence. They are inputs,
    not tickets or approved slice boundaries.
@@ -62,13 +66,19 @@ passes artifact path and R/AC IDs directly to the next applicable graph node.
 
 ## Execution strategy
 
-Include `## Execution strategy` only when material prerequisites exist. Preserve
-the confirmed implementation/verification route and safe recovery conditions.
+Every Ready spec includes `## Execution strategy` for the PR-evidence decision;
+include other prerequisites only when material. Preserve the confirmed
+implementation/verification route and safe recovery conditions.
 For selected browser evidence, retain required/optional mode, target environment,
 Guard/Verdict, account role or tenant, opaque profile hint, auth expectation,
 safe interaction boundary, and `intentionally omitted → re-request on cold
 start`. Never store identity, credentials, cookies, tokens, OTPs, or profile
 contents.
+
+Every Ready spec records exactly `PR evidence: required | optional | N/A` under
+`## Execution strategy`; `required` and `optional` also record one review-facing
+criterion. Missing or ambiguous material input prevents `Ready` rather than
+silently defaulting to `N/A`.
 
 ## Source UI writing
 

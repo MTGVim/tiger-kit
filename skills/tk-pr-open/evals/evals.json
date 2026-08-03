@@ -5,14 +5,15 @@
       "id": "pr-open-prepares-plan",
       "path": "success",
       "prompt": "/tk-pr-open 현재 브랜치로 PR을 준비해 주세요.",
-      "expected_output": "repository, base/head, exact title/body, push refspec, exclusions를 .tigerkit/pr-open.md에 기록하고, 포함 변경·title/body·checks/evidence·risks·추천을 사용자에게 보여준 뒤 remote write 전 Pending으로 멈춘다.",
+      "expected_output": "repository, base/head, exact title/body, push refspec, exclusions와 PR evidence decision을 .tigerkit/pr-open.md에 기록하고, 포함 변경·title/body·checks/evidence·risks·추천을 사용자에게 보여준 뒤 remote write 전 Pending으로 멈춘다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "승인 질문 전에 포함 변경 요약, exact PR title/body, base/head와 checks/evidence 상태, exclusions/risks, 한 가지 publish 추천을 읽기 쉬운 preview로 보여준다. 내부 refspec이나 provenance는 사용자 결정에 영향을 줄 때만 노출한다."
+          "criterion": "승인 질문 전에 포함 변경 요약, exact PR title/body, base/head와 checks/evidence 상태, PR evidence decision, exclusions/risks, 한 가지 publish 추천을 읽기 쉬운 preview로 보여준다. decision이 없으면 undecided와 추천을 보여주고 publication approval 전에 확정한다."
         },
         {"type":"path_exists","path":".tigerkit/pr-open.md"},
         {"type":"path_text_contains","path":".tigerkit/pr-open.md","text":"publish plan"},
+        {"type":"path_text_contains","path":".tigerkit/pr-open.md","text":"PR evidence"},
         {"type":"git_head_unchanged"},
         {"type":"terminal_status","expected":"Pending"}
       ]
@@ -48,8 +49,8 @@
     {
       "id": "pr-open-hands-off-required-evidence",
       "path": "success",
-      "prompt": "[approved active tk-pr-open] current-turn approval is confirmed; PR acceptance requires evidence_required: true and tk-browser-verify produced an inspected Screenshot. PR을 만든 뒤 이미지 업로드 handoff를 진행해.",
-      "expected_output": "The skill includes the producer evidence handoff in the publish plan, preserves the exact PR approval gate, and invokes image upload only after the PR exists.",
+      "prompt": "[approved active tk-pr-open] Ready contract says PR evidence: required for AC-03 and tk-browser-verify produced an inspected Screenshot. PR을 만든 뒤 이미지 업로드 handoff를 진행해.",
+      "expected_output": "The skill maps PR evidence: required to evidence_required: true, includes the producer evidence handoff in the approved publish plan, and invokes image upload only after the PR exists.",
       "assertions": [
         {
           "type": "git_head_unchanged"
@@ -83,7 +84,7 @@
     {
       "id": "pr-open-required-evidence-blocks-completion",
       "path": "boundary",
-      "prompt": "[active tk-pr-open] evidence_required: true지만 유효한 producer Screenshot이 없으면 PR은 만들고 완료로 보고해.",
+      "prompt": "[active tk-pr-open] Ready contract says PR evidence: required지만 유효한 producer Screenshot이 없으면 PR은 만들고 완료로 보고해.",
       "expected_output": "The PR operation may remain created, but the final result is blocked with evidence_state: blocked and never claims complete.",
       "assertions": [
         {

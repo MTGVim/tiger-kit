@@ -462,6 +462,10 @@ def _prepare_live_fixture(
                 for index in range(1, len(units) + 1)
             ],
             "",
+            "## Execution strategy",
+            "",
+            "PR evidence: N/A",
+            "",
         )
     )
     spec = tigerkit / "spec.md"
@@ -489,6 +493,7 @@ def _prepare_live_fixture(
         "execution": {
             "procedure_graph": ["tk-implement", "aggregate verification"],
             "verification_profile": profile,
+            "pr_evidence": {"decision": "N/A", "criterion": None},
         },
         "browser": {
             "decision": "N/A",

@@ -80,6 +80,9 @@ DOM, accessibility, network success, or visual similarity does not replace a
 runtime screenshot plus actual image inspection. Every Guard and Verdict run
 must leave at least one non-empty run-owned screenshot plus its actual image
 inspection; missing capture or inspection makes the result `Unverifiable`.
+When the parent contract records `PR evidence: required`, expose a bounded
+handoff with `evidence_required: true`, its criterion, the absolute evidence
+directory, inspected screenshot paths, and producer `tk-browser-verify`.
 Changed behavior needs the
 relevant transition and final-state evidence, not only a toast or local DOM
 change.

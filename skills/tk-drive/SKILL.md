@@ -65,6 +65,15 @@ Freeze every user-visible source literal and its `authorized change` in R/AC bef
 
 During Preparing, classify material signals and obligations from current evidence. Consume the sealed material profile during Executing. Drive cannot add unsupported obligations, remove an obligation, or substitute weaker evidence.
 
+Classify PR evidence separately as `required | optional | N/A` and seal it in
+the Ready spec and preflight with a criterion whenever applicable. Use
+`required` only when a confirmed source requires attached visual proof or a
+browser-rendered acceptance criterion cannot be meaningfully reviewed from
+code and checks alone; use `optional` when a screenshot would help review but
+is not acceptance-critical; use `N/A` when no browser-visible result exists.
+Browser verification being `required` does not by itself make PR evidence
+`required`. Return a material ambiguity to Preparing instead of guessing.
+
 Browser preflight is `required | optional | N/A`. A private runtime identity is material user-owned input. Store only an opaque profile hint and an `intentionally omitted` marker; re-request missing identity on cold start. Runtime rehydration is not a Preparing amendment.
 
 ## Executing

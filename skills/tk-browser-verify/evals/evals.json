@@ -388,6 +388,26 @@
           "expected": "Pass"
         }
       ]
+    },
+    {
+      "id": "browser-emits-required-pr-evidence-handoff",
+      "path": "success",
+      "prompt": "[active tk-drive browser handoff] Ready contract records PR evidence: required for AC-03. Verdict screenshot을 실제 inspect한 뒤 downstream handoff를 반환해 주세요.",
+      "expected_output": "Evidence result includes evidence_required: true, AC-03 criterion, producer, absolute evidence directory, and inspected screenshot paths without uploading them itself.",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "evidence_required"
+        },
+        {
+          "type": "output_contains",
+          "text": "Evidence directory:"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ]
 }

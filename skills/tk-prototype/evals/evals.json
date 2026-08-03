@@ -146,6 +146,26 @@
           "expected": "Pass"
         }
       ]
+    },
+    {
+      "id": "prototype-emits-required-pr-evidence-handoff",
+      "path": "success",
+      "prompt": "[active tk-drive prototype handoff] Ready contract records PR evidence: required for AC-07. 선택된 prototype screenshot을 inspect한 뒤 downstream handoff를 반환해 주세요.",
+      "expected_output": "Prototype result exposes evidence_required: true, AC-07 criterion, producer, run-owned absolute evidence directory, and inspected screenshot path without uploading it.",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "evidence_required"
+        },
+        {
+          "type": "output_contains",
+          "text": "Screenshot:"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ]
 }

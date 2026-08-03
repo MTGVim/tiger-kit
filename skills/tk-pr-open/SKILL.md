@@ -27,11 +27,15 @@ anything before the approval gate below.
    branch, `HEAD`, dirty paths, base branch, and any existing PR for the branch.
 2. Verify that the intended commits are present, that unrelated dirty paths are
    preserved, and that the proposed PR does not duplicate an existing PR.
-3. If the request or Ready contract marks `evidence_required: true`, collect
-   only valid screenshot handoffs from `tk-browser-verify` or `tk-prototype`.
-   Record the producer, absolute evidence directory, screenshot paths, actual
-   inspection, and criterion in the plan. Do not treat arbitrary screenshots as
-   evidence.
+3. Consume `PR evidence: required | optional | N/A` from the request or Ready
+   contract. Map `required` to `evidence_required: true` and collect only valid
+   screenshot handoffs from `tk-browser-verify` or `tk-prototype`; `optional`
+   uploads only evidence explicitly included in the approved plan, and `N/A`
+   never invokes the uploader. Record the producer, absolute evidence directory,
+   screenshot paths, actual inspection, and criterion in the plan. If the
+   decision is absent, show `PR evidence: undecided` with one recommendation and
+   obtain it before publication approval. Do not infer required evidence from
+   arbitrary screenshots or from browser verification alone.
 4. Draft the exact title, body, base/head refs, push refspec, evidence state,
    and known exclusions in `.tigerkit/pr-open.md`. Preserve existing PR body
    sections, checklists, attachments, and user-authored notes when updating a
