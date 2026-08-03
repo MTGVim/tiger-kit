@@ -55,7 +55,8 @@ Before product mutation:
 3. Close only material user-owned decisions through `tk-grill-me`; use `tk-prototype` only when evidence will reduce the decision.
 4. Produce or validate one Ready R/AC spec with `tk-to-spec`.
 5. Use `tk-to-tickets` only when multiple vertical units are independently verifiable; otherwise use one no-ticket unit.
-6. Write the compact `.tigerkit/prep.md` snapshot through [preflight.md](references/preflight.md), then start Executing immediately.
+6. For each unit, seal expected `direct | delegated`, expected `low | high | unknown-until-diff` risk, and Additional review as `required | not-required | unknown-until-diff`; candidate evidence may raise but never silently downgrade the obligation.
+7. Write the compact `.tigerkit/prep.md` snapshot through [preflight.md](references/preflight.md), then start Executing immediately.
 
 ### 🔴 HARD GATE · source UI writing
 
@@ -103,7 +104,7 @@ After recovery edges are exhausted, normalize the child state through `phases.md
 
 After aggregate product verification passes, finish directly. Reread source, spec, tickets when present, prep, implementation evidence, ancestry, and verification before emitting one terminal response. TigerKit does not own a post-session reflection or persistent-memory phase.
 
-Lead with one user-facing result sentence. Then render `Implemented` with two to seven behavior-level bullets and `Verification` with one to four aggregate-result bullets. For multiple units, include a compact `Ticket | Outcome | Commit` table. Use a sentence when only one user-relevant row exists. When underlying results exceed these limits, keep only the top five to seven items ranked by user impact and verification value. Include `Remaining risks` only when meaningful. End `Verification` with exactly `Status: Pass`; terminal non-success belongs to the read-only finalizer.
+Lead with one user-facing result sentence. Then render `Implemented` with two to seven behavior-level bullets and `Verification` with one to four aggregate-result bullets. For multiple units, include a compact `Ticket | Outcome | Commit` table plus `Unit | Strategy | Additional review | Fix rounds | Result`; summarize review routes instead of repeating raw per-unit review text. Use a sentence when only one user-relevant row exists. When underlying results exceed these limits, keep only the top five to seven items ranked by user impact and verification value. Include `Remaining risks` only when meaningful. End `Verification` with exactly `Status: Pass`; terminal non-success belongs to the read-only finalizer.
 
 ### 🔴 HARD GATE · terminal user summary
 

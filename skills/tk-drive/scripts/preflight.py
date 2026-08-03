@@ -23,9 +23,10 @@ REPOSITORY_KEYS = {
     "baseline_head",
     "dirty_paths",
 }
-EXECUTION_KEYS = {"procedure_graph", "verification_profile", "pr_evidence"}
+EXECUTION_KEYS = {"procedure_graph", "verification_profile", "pr_evidence", "units"}
 PROFILE_KEYS = {"signals", "obligations"}
 PR_EVIDENCE_KEYS = {"decision", "criterion"}
+UNIT_KEYS = {"id", "strategy", "risk", "additional_review"}
 BROWSER_KEYS = {
     "decision",
     "environment_url",
@@ -76,6 +77,9 @@ SAFE_LABEL = re.compile(r"^[A-Za-z0-9][A-Za-z0-9 ._:/-]{0,199}$")
 AUTH_EXPECTATIONS = {"pre-authenticated", "interactive-login-required", "no-auth"}
 BROWSER_DECISIONS = {"required", "optional", "N/A"}
 PR_EVIDENCE_DECISIONS = {"required", "optional", "N/A"}
+IMPLEMENTATION_STRATEGIES = {"direct", "delegated"}
+RISK_PROFILES = {"low", "high", "unknown-until-diff"}
+ADDITIONAL_REVIEW_DECISIONS = {"required", "not-required", "unknown-until-diff"}
 
 
 class PreflightError(ValueError):
@@ -170,6 +174,26 @@ def validate_preflight(value: Any) -> dict[str, Any]:
     _strings(execution["procedure_graph"], "execution.procedure_graph", allow_empty=False)
     _strings(profile["signals"], "verification_profile.signals")
     _strings(profile["obligations"], "verification_profile.obligations")
+    units = execution["units"]
+    if not isinstance(units, list) or not units:
+        raise PreflightError("execution.units: expected non-empty unit list")
+    unit_ids: set[str] = set()
+    for index, raw_unit in enumerate(units):
+        unit = _object(raw_unit, UNIT_KEYS, f"execution.units[{index}]")
+        unit_id = unit["id"]
+        if not isinstance(unit_id, str) or not SAFE_LABEL.fullmatch(unit_id):
+            raise PreflightError(f"execution.units[{index}].id: expected safe label")
+        if unit_id in unit_ids:
+            raise PreflightError("execution.units: duplicate id")
+        unit_ids.add(unit_id)
+        if unit["strategy"] not in IMPLEMENTATION_STRATEGIES:
+            raise PreflightError(f"execution.units[{index}].strategy: unsupported")
+        if unit["risk"] not in RISK_PROFILES:
+            raise PreflightError(f"execution.units[{index}].risk: unsupported")
+        if unit["additional_review"] not in ADDITIONAL_REVIEW_DECISIONS:
+            raise PreflightError(
+                f"execution.units[{index}].additional_review: unsupported"
+            )
     pr_evidence_decision = pr_evidence["decision"]
     if pr_evidence_decision not in PR_EVIDENCE_DECISIONS:
         raise PreflightError("pr_evidence.decision: expected required, optional, or N/A")
