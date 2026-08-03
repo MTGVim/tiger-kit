@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2026.08.03-9 — Release
+
 - fix(skills): restore the `tk-grill-me` invocation label in Codex
 
 ## 2026.08.03-8 — Release
