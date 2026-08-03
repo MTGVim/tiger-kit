@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- fix(docs): keep README skill catalog complete and release-neutral
+- fix(skills): use canonical `tk-*` names in skill pickers
+
 ## 2026.08.03-7 — Release
 
 - optimize tk-pr-open: mark publication checkpoint

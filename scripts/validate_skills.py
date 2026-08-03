@@ -184,6 +184,8 @@ def validate_frontmatter_and_body(
 
     openai_path = skill_dir / "agents/openai.yaml"
     openai_text = openai_path.read_text(encoding="utf-8") if openai_path.is_file() else ""
+    if "display_name:" in openai_text:
+        errors.append(f"{label}: agents/openai.yaml must use the canonical skill name")
     disabled = data.get("disable-model-invocation") is True
     implicit_blocked = "allow_implicit_invocation: false" in openai_text
     if kind == "user-invoked":
@@ -191,7 +193,7 @@ def validate_frontmatter_and_body(
             errors.append(f"{label}: user-invoked skill requires argument-hint")
         if not disabled:
             errors.append(f"{label}: user-invoked skill requires disable-model-invocation: true")
-        for token in ("interface:", "display_name:", "short_description:", "policy:", "allow_implicit_invocation: false"):
+        for token in ("interface:", "short_description:", "policy:", "allow_implicit_invocation: false"):
             if token not in openai_text:
                 errors.append(f"{label}: agents/openai.yaml missing {token}")
         if 'short_description: "[user] ' not in openai_text:
@@ -650,16 +652,10 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
         errors.append(".gitignore: include .tigerkit/")
 
     changelog = ROOT / "CHANGELOG.md"
-    readme = ROOT / "README.md"
-    if changelog.is_file() and readme.is_file():
-        version = parse_latest_changelog_version(changelog.read_text(encoding="utf-8"))
-        if version is None:
-            errors.append("CHANGELOG.md: add a leading semantic release heading")
-        elif not re.search(
-            rf"`v{re.escape(version)}(?:-[0-9a-f]{{5}})?`",
-            readme.read_text(encoding="utf-8"),
-        ):
-            errors.append(f"README.md: reference latest immutable snapshot v{version}")
+    if changelog.is_file() and parse_latest_changelog_version(
+        changelog.read_text(encoding="utf-8")
+    ) is None:
+        errors.append("CHANGELOG.md: add a leading semantic release heading")
 
     for directory in SKILLS.glob("*/**"):
         if directory.is_dir() and directory.name in {"references", "scripts", "agents", "evals"} and not any(directory.iterdir()):

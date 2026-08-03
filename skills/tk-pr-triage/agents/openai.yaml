@@ -1,5 +1,4 @@
 interface:
-  display_name: "TigerKit: PR Triage"
   short_description: "[user] Read-only triage of current-repository pull requests and review state."
   policy:
     allow_implicit_invocation: false

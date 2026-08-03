@@ -1,5 +1,4 @@
 interface:
-  display_name: "TigerKit: Respond to PR"
   short_description: "[user] Resolve selected review feedback through verified units and an approved publish plan."
   policy:
     allow_implicit_invocation: false
