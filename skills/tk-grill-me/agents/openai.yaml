@@ -1,3 +1,3 @@
 interface:
-  short_description: "Close one user-owned decision at a time."
+  short_description: "[user/auto] Close one user-owned decision at a time."
   default_prompt: "Use $tk-grill-me to investigate evidence, ask one user-owned decision at a time, and route the result for standalone or active-drive use without mutating artifacts."
