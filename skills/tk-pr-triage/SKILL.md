@@ -75,4 +75,6 @@ Keep headings, statuses, IDs, paths, commands, and exact source literals stable.
 ## User decision questions
 
 Triage is read-only. If the next action requires user choice, ask one
-self-contained `Question` before any `Recommendation`; do not mutate state.
+self-contained `Question` before any `Recommendation`; render it directly in
+the chat response and do not call structured question or input tools. Do not
+mutate state.

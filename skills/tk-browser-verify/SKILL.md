@@ -154,7 +154,6 @@ returning.
 
 Ask one self-contained `Question` only for a material user-owned decision, then
 show a `Recommendation`, two or three mutually exclusive options, and exactly
-one `(Recommended)` or `(추천)` label. Use native `AskUserQuestion`, Codex
-`request_user_input`, or Hermes Agent `clarify`; plain text is allowed only when
-none is exposed. A failed or rejected call is not absence; preserve
-`Pending | Blocked`.
+one `(Recommended)` or `(추천)` label. Render the question and options directly
+in the chat response; do not call structured question or input tools. Preserve
+`Pending | Blocked` until the user answers.

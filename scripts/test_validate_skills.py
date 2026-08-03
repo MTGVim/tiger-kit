@@ -87,6 +87,15 @@ class EvalSotValidatorTest(unittest.TestCase):
             errors, _ = validate_skills.validate_trigger_contract("tk-example", "user-invoked", path)
             self.assertTrue(any("overlap" in error for error in errors))
 
+    def test_plain_chat_contract_rejects_question_tools(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "SKILL.md").write_text(
+                "Use AskUserQuestion for this decision.\n", encoding="utf-8"
+            )
+            errors = validate_skills.validate_plain_chat_contract(root)
+            self.assertTrue(any("render questions in plain chat" in error for error in errors))
+
     def test_release_critical_references_canonical_case_ids(self) -> None:
         skills = validate_skills.discover_skills()
         behavior_ids: dict[str, set[str]] = {}

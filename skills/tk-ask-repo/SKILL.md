@@ -108,6 +108,6 @@ Normal investigation does not own decisions: name the decision and stop
 `Blocked`. Only an explicitly authorized decision handoff may ask one
 self-contained `Question` before `Recommendation`, offer two or three mutually
 exclusive options with tradeoffs, and mark one `(Recommended)` or `(추천)`.
-Use Claude Code `AskUserQuestion`, Codex `request_user_input`, or Hermes Agent
-`clarify` when exposed; plain text is allowed only when none exists. A failed or
-rejected tool call preserves `Pending | Blocked`.
+Render the question, recommendation, and options directly in the chat response;
+do not call structured question or input tools. Preserve `Pending | Blocked`
+until the user answers.

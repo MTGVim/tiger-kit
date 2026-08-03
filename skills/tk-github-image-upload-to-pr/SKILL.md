@@ -114,4 +114,6 @@ source literals; translate only free-form explanatory prose.
 Ask one self-contained question before browser mutation when the repository,
 PR, insertion location, comment target, or private runtime identity is
 ambiguous. Show only decision-relevant evidence and put one
-`(Recommended)` label on the recommended option.
+`(Recommended)` label on the recommended option. Render the question and
+options directly in the chat response; do not call structured question or
+input tools.

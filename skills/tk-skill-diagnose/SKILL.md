@@ -158,9 +158,9 @@ quoted literals exactly.
 Ask only when a material user-owned decision blocks diagnosis. Put one
 self-contained `Question` before `Recommendation`, offer two or three mutually
 exclusive options with tradeoffs, and mark exactly one `(Recommended)` or
-`(추천)`. Use Claude Code `AskUserQuestion`, Codex `request_user_input`, or
-Hermes Agent `clarify` when exposed; plain text is allowed only when none exists.
-A failed or rejected tool call preserves `Pending | Blocked`.
+`(추천)`. Render the question, recommendation, and options directly in the chat
+response; do not call structured question or input tools. Preserve
+`Pending | Blocked` until the user answers.
 
 ## Pitfalls
 

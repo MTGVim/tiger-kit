@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.03-5 — Release
+
+- feat(ux): render skill questions directly in chat
+
 ## 2026.08.03-4 — Release
 
 - feat(pr): own PR evidence decisions in preparation
