@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.03-4 — Release
+
+- feat(pr): own PR evidence decisions in preparation
+
 ## 2026.08.03-3 — Release
 
 - fix(pr): allow verified image upload handoffs

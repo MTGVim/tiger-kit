@@ -1354,7 +1354,7 @@
       "id": "drive-risk-profile-browser-ui",
       "path": "success",
       "prompt": "[active tk-drive] Source와 현재 코드가 persistent checkout UI의 submit interaction과 network transition 변경을 명시하고, current-worktree browser environment와 public test seam은 사용 가능합니다. 구현 전 verification profile을 고정해 진행해 주세요.",
-      "expected_output": "source-located browser-network signal에서 regression-seam과 browser-verdict를 구현 전에 도출해 handoff하고, drive가 browser tool을 직접 선택하거나 실행하지 않는다.",
+      "expected_output": "source-located browser-network signal에서 regression-seam과 browser-verdict를 구현 전에 도출하고, attached-proof requirement가 없으므로 PR evidence: optional로 별도 판정해 handoff하며 drive가 browser tool을 직접 선택하거나 실행하지 않는다.",
       "assertions": [
         {
           "type": "judge",
@@ -1371,6 +1371,36 @@
         {
           "type": "output_contains",
           "text": "browser-verdict"
+        },
+        {
+          "type": "output_contains",
+          "text": "PR evidence: optional"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": true
+    },
+    {
+      "id": "drive-classifies-required-pr-evidence",
+      "path": "success",
+      "prompt": "[active tk-drive Preparing] Confirmed source의 AC-03은 checkout 완료 화면을 browser에서 검증하고 그 inspected screenshot을 PR에 첨부해야 review 가능하다고 명시합니다. PR evidence 결정을 sealed prep에 기록해 주세요.",
+      "expected_output": "confirmed attached-proof requirement와 browser-rendered AC-03을 근거로 PR evidence: required와 criterion을 Ready spec 및 preflight에 고정한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "browser required 자체가 아니라 confirmed PR attachment requirement와 AC-03을 required 판정 근거로 사용하고 criterion을 함께 보존한다."
+        },
+        {
+          "type": "output_contains",
+          "text": "PR evidence: required"
+        },
+        {
+          "type": "path_text_contains",
+          "path": ".tigerkit/prep.md",
+          "text": "\"pr_evidence\""
         },
         {
           "type": "terminal_status",

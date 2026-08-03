@@ -48,6 +48,10 @@ class PreflightTest(unittest.TestCase):
                     "signals": ["state-compatibility"],
                     "obligations": ["regression-seam"],
                 },
+                "pr_evidence": {
+                    "decision": "N/A",
+                    "criterion": None,
+                },
             },
             "browser": {
                 "decision": "N/A",
@@ -115,6 +119,14 @@ class PreflightTest(unittest.TestCase):
             "ready",
         )
         browser["opaque_profile_hint"] = "person@example.test"
+        with self.assertRaises(self.module.PreflightError):
+            self.module.validate_preflight(self.value)
+
+    def test_pr_evidence_requires_a_criterion_when_applicable(self) -> None:
+        evidence = self.value["execution"]["pr_evidence"]
+        evidence.update({"decision": "required", "criterion": "Show the rendered AC-3 state."})
+        self.assertEqual(self.module.validate_preflight(self.value), self.value)
+        evidence["criterion"] = None
         with self.assertRaises(self.module.PreflightError):
             self.module.validate_preflight(self.value)
 

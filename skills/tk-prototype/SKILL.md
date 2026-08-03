@@ -32,9 +32,11 @@ scratch is tracked.
 4. `run`: execute selected variants/harness and capture actual output or
    screenshots plus command result.
 5. `compare`: map evidence to criteria, verified differences, unverified items,
-   and next decision. When a parent request marks PR evidence as required,
+   and next decision. When a parent contract records `PR evidence: required`,
    retain a run-owned absolute `Screenshot: <path>` and the actual image
-   inspection under `## Tested`.
+   inspection under `## Tested`, then expose a bounded handoff with
+   `evidence_required: true`, the criterion, evidence directory, and producer
+   `tk-prototype`.
 6. `terminal summary`: return `## Confirmed`, `## Production implication`,
    `## Tested`, `## Variants or harness`, and `## Still fake` as applicable.
    Do not append a provenance/status block.

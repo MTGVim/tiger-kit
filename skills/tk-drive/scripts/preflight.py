@@ -23,8 +23,9 @@ REPOSITORY_KEYS = {
     "baseline_head",
     "dirty_paths",
 }
-EXECUTION_KEYS = {"procedure_graph", "verification_profile"}
+EXECUTION_KEYS = {"procedure_graph", "verification_profile", "pr_evidence"}
 PROFILE_KEYS = {"signals", "obligations"}
+PR_EVIDENCE_KEYS = {"decision", "criterion"}
 BROWSER_KEYS = {
     "decision",
     "environment_url",
@@ -74,6 +75,7 @@ OPAQUE_HINT = re.compile(r"^opaque:[A-Za-z0-9._-]{1,64}$")
 SAFE_LABEL = re.compile(r"^[A-Za-z0-9][A-Za-z0-9 ._:/-]{0,199}$")
 AUTH_EXPECTATIONS = {"pre-authenticated", "interactive-login-required", "no-auth"}
 BROWSER_DECISIONS = {"required", "optional", "N/A"}
+PR_EVIDENCE_DECISIONS = {"required", "optional", "N/A"}
 
 
 class PreflightError(ValueError):
@@ -138,6 +140,7 @@ def validate_preflight(value: Any) -> dict[str, Any]:
     profile = _object(
         execution["verification_profile"], PROFILE_KEYS, "verification_profile"
     )
+    pr_evidence = _object(execution["pr_evidence"], PR_EVIDENCE_KEYS, "pr_evidence")
     browser = _object(root["browser"], BROWSER_KEYS, "browser")
     sources = _object(root["sources"], SOURCE_KEYS, "sources")
 
@@ -167,6 +170,15 @@ def validate_preflight(value: Any) -> dict[str, Any]:
     _strings(execution["procedure_graph"], "execution.procedure_graph", allow_empty=False)
     _strings(profile["signals"], "verification_profile.signals")
     _strings(profile["obligations"], "verification_profile.obligations")
+    pr_evidence_decision = pr_evidence["decision"]
+    if pr_evidence_decision not in PR_EVIDENCE_DECISIONS:
+        raise PreflightError("pr_evidence.decision: expected required, optional, or N/A")
+    criterion = pr_evidence["criterion"]
+    if pr_evidence_decision == "N/A":
+        if criterion is not None:
+            raise PreflightError("pr_evidence.criterion: expected null when decision is N/A")
+    elif not isinstance(criterion, str) or not criterion.strip() or len(criterion) > 500:
+        raise PreflightError("pr_evidence.criterion: expected bounded string when applicable")
 
     decision = browser["decision"]
     if decision not in BROWSER_DECISIONS:
