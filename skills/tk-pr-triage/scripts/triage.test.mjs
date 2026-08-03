@@ -1,4 +1,8 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import test from 'node:test';
 import {
   classifyPullRequest,
@@ -8,10 +12,12 @@ import {
   isActionableText,
   latestAuthorResponseAfter,
   latestExternalMessagesByScope,
+  loadOrBootstrapConfig,
   parseRepoFromRemote,
   requestedTeamForUser,
   stripNoise,
   teamKeysForUser,
+  triageConfigPath,
 } from './triage.mjs';
 
 test('parseRepoFromRemote supports SSH and HTTPS remotes', () => {
@@ -75,6 +81,30 @@ test('review response evidence is not inferred from an unrelated author comment'
   const reply = computeReplyEvidence(rows, 'author');
   assert.equal(reply.outstanding.length, 1);
   assert.equal(reply.responded.length, 0);
+});
+
+test('approval bounds reply evidence to comments after the approval', () => {
+  const rows = [
+    { scope: 'inline:1', login: 'reviewer', timestamp: '2026-01-01T00:00:00Z', body: 'Please fix this.' },
+    { scope: 'inline:1', login: 'author', timestamp: '2026-01-02T00:00:00Z', body: 'Fixed.' },
+    { scope: 'inline:2', login: 'reviewer', timestamp: '2026-01-04T00:00:00Z', body: 'Please add a test.' },
+  ];
+  const reply = computeReplyEvidence(rows, 'author', '2026-01-03T00:00:00Z');
+  assert.deepEqual(reply.responded, []);
+  assert.equal(reply.outstanding[0].scope, 'inline:2');
+});
+
+test('missing triage config bootstraps the current repository', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'tk-pr-triage-'));
+  try {
+    const path = triageConfigPath({ XDG_CONFIG_HOME: root });
+    const loaded = loadOrBootstrapConfig(path, ['MTGVim/tiger-kit']);
+    assert.deepEqual(loaded, { repositories: ['MTGVim/tiger-kit'], bootstrapped: true });
+    assert.deepEqual(JSON.parse(readFileSync(path, 'utf8')), { repositories: ['MTGVim/tiger-kit'] });
+    assert.deepEqual(loadOrBootstrapConfig(path), { repositories: ['MTGVim/tiger-kit'], bootstrapped: false });
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
 });
 
 test('unavailable check evidence is never classified as approval', () => {

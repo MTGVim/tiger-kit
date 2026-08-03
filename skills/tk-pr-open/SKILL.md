@@ -36,8 +36,12 @@ anything before the approval gate below.
    and known exclusions in `.tigerkit/pr-open.md`. Preserve existing PR body
    sections, checklists, attachments, and user-authored notes when updating a
    PR.
-5. Show a bounded publish plan and stop with `Pending`. A generic “go ahead”
-   does not approve a different or stale plan.
+5. Before asking for approval, show a user-facing preview in this order:
+   included changes, exact PR title and body, base/head and check/evidence state,
+   exclusions or risks, and one publish recommendation. Keep refspec, identity,
+   and provenance detail in the artifact unless it changes the user's decision.
+   Ask one approval question and stop with `Pending`. A generic “go ahead” does
+   not approve a different or stale plan.
 6. After current-turn approval, recheck branch, `HEAD`, PR identity, and open
    state. Push the explicit refspec and create or update only the named PR.
    When required evidence is valid, hand it to
