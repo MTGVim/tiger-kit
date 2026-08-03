@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.03-6 — Release
+
+- feat(pr): add safe rebase workflow
+
 ## 2026.08.03-5 — Release
 
 - feat(ux): render skill questions directly in chat

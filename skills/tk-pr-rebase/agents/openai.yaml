@@ -1,0 +1,5 @@
+interface:
+  display_name: "TigerKit: Rebase PR"
+  short_description: "[user] Safely rebase one PR and publish an approved force-with-lease and review follow-up."
+  policy:
+    allow_implicit_invocation: false
