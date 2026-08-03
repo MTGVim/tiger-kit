@@ -1,11 +1,10 @@
 ---
 name: tk-github-image-upload-to-pr
-description: "[user] Upload local evidence images into an existing GitHub PR body or explicitly requested comment through an authenticated CDP browser without submitting an upload composer."
+description: "[user/auto] Upload local evidence images into an existing GitHub PR body or explicitly requested comment through an authenticated CDP browser. Use on explicit selection, a clear local-image insertion request, or an exact evidence_required handoff from active tk-pr-open; do not apply to generic PR, screenshot, or GitHub requests."
 argument-hint: "<PR and local image path(s)>"
-disable-model-invocation: true
 metadata:
   tigerkit:
-    kind: user-invoked
+    kind: hybrid
     origin: tigerkit
     relationship: native
 ---
@@ -14,9 +13,10 @@ metadata:
 
 Start only when the user selects `/tk-github-image-upload-to-pr`,
 `$tk-github-image-upload-to-pr`, explicitly asks to insert local image
-evidence into an existing GitHub PR, or receives an exact handoff from
-`tk-pr-open` with `evidence_required: true`. Do not activate for screenshot
-capture, generic GitHub help, PR creation, PR review, or issue triage.
+evidence into an existing GitHub PR, or when active `tk-pr-open` sends an exact
+handoff with `evidence_required: true`. The parent handoff is the only automatic
+trigger. Do not activate for screenshot capture, generic GitHub help, PR
+creation, PR review, or issue triage.
 
 ## Scope
 
