@@ -132,6 +132,12 @@ reproduction verdict, verified failure plane, evidence, route, and exact next
 handoff. Do not copy raw logs, transcripts, screenshots, secrets, or repeated
 run narration.
 
+When experiment evidence exceeds five rows or a later resume needs the exact
+references, atomically replace `.tigerkit/skill-diagnosis.md` with the bounded
+incident IDs, candidate/control/holdout evidence refs, measurements, and route.
+Keep the chat response to `## Diagnosis`, `## Action`, and necessary uncertainty;
+do not create an archive, lifecycle state, or duplicate raw output.
+
 Use one terminal status:
 
 - `Pass`: diagnosis and routing completed;

@@ -164,4 +164,5 @@ until the user answers. This changes presentation, not authority or stop gates.
   mutate vendor-managed artifacts even with `--apply`.
 - Do not inspect or migrate legacy/global TigerKit state.
 - Do not apply semantic convert/split/rewrite or invoke `tk-learn`.
-- Do not omit, reuse, or renumber item IDs, or omit Summary.
+- Do not omit, reuse, or renumber item IDs, or append a duplicate summary after
+  the `## Disposition` result.

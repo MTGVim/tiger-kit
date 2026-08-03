@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 2026.08.03-7 — Release
+
+- optimize tk-pr-open: mark publication checkpoint
+- optimize tk-skill-diagnose: own evidence ledger
+- optimize tk-grooming: align summary contract
+- optimize tk-pr-triage: mark read-only handoff
+- optimize tk-adhd: mark safety checkpoint
+- feat: strengthen implementation review convergence
+
 ## 2026.08.03-6 — Release
 
 - feat(pr): add safe rebase workflow

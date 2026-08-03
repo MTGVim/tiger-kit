@@ -52,6 +52,14 @@ class PreflightTest(unittest.TestCase):
                     "decision": "N/A",
                     "criterion": None,
                 },
+                "units": [
+                    {
+                        "id": "TK-1",
+                        "strategy": "direct",
+                        "risk": "low",
+                        "additional_review": "not-required",
+                    }
+                ],
             },
             "browser": {
                 "decision": "N/A",
@@ -129,6 +137,33 @@ class PreflightTest(unittest.TestCase):
         evidence["criterion"] = None
         with self.assertRaises(self.module.PreflightError):
             self.module.validate_preflight(self.value)
+
+    def test_units_seal_strategy_risk_and_additional_review(self) -> None:
+        units = self.value["execution"]["units"]
+        units.append(
+            {
+                "id": "TK-2",
+                "strategy": "delegated",
+                "risk": "unknown-until-diff",
+                "additional_review": "unknown-until-diff",
+            }
+        )
+        self.assertEqual(self.module.validate_preflight(self.value), self.value)
+
+        for key, invalid in (
+            ("strategy", "auto"),
+            ("risk", "medium"),
+            ("additional_review", "optional"),
+        ):
+            candidate = json.loads(json.dumps(self.value))
+            candidate["execution"]["units"][0][key] = invalid
+            with self.subTest(key=key), self.assertRaises(self.module.PreflightError):
+                self.module.validate_preflight(candidate)
+
+        duplicate = json.loads(json.dumps(self.value))
+        duplicate["execution"]["units"][1]["id"] = "TK-1"
+        with self.assertRaises(self.module.PreflightError):
+            self.module.validate_preflight(duplicate)
 
     def test_rejects_external_and_symlink_outputs(self) -> None:
         external = self.root.parent / "prep.md"

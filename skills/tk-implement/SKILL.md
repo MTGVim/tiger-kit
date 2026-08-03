@@ -34,18 +34,18 @@ A drive non-success handoff includes actual branch/`HEAD`, changed or uncommitte
 ## Workflow
 
 1. **Inspect** — resolve source, unit, R/AC or source anchors, branch, initial `HEAD`, relevant code/tests/instructions, and pre-existing dirty paths. For standalone natural-language input, use repository evidence to resolve one target and derive working R/AC; missing paths or prewritten R/AC alone is not `Blocked`. Continue only when the target and expected behavior become unambiguous; otherwise stop before mutation.
-2. **Choose strategy** — use `direct` by default; use `delegated` only when one bounded implementor can own a transferable unit and isolation adds value. Choose TDD only with a meaningful public-behavior seam.
+2. **Choose strategy and review route** — select `direct | delegated` by transferability and isolation value, classify risk separately, and determine `required | not-required | unknown-until-diff` Additional review. Choose TDD only with a meaningful public-behavior seam.
 3. **Implement** — change only the unit, prove coherent behavior slices, and reach initial green.
 4. **Simplify** — run exactly one behavior-preserving reuse/simplicity/ownership pass through [review-boundary.md](references/review-boundary.md).
-5. **Verify and review** — apply the relevant sections of [execution-gates.md](references/execution-gates.md), then the Standards/Spec review.
+5. **Verify and review** — apply the relevant sections of [execution-gates.md](references/execution-gates.md), run Built-in Standards/Spec review, and run exactly one compatible Additional review when required. Resolve accepted blocking findings through the bounded fix/verification/scoped-re-review loop in [review-boundary.md](references/review-boundary.md).
 6. **Commit and report** — recheck branch, `HEAD`, staged ownership, and evidence; commit once only for `Pass`; update `.tigerkit/implementation.md` and return the bounded result.
 
 ## Strategy
 
-Inspect before mutation. Decide unspecified `direct | delegated` and `tdd | no-tdd` without an approval ceremony.
+Inspect before mutation. Decide unspecified `direct | delegated` and `tdd | no-tdd` without an approval ceremony. Implementation strategy and product/change risk are separate axes; delegation never implies either low or high risk.
 
-- Prefer `direct` for small changes, shared files, or tight edit/verification loops.
-- Use `delegated` only with exactly one bounded implementor; load [delegation.md](references/delegation.md). If inferred delegation is unavailable, fall back to direct. If the user required it, return `Blocked`.
+- Prefer `direct` when any direct condition in [delegation.md](references/delegation.md) applies.
+- Consider `delegated` only when every transferability condition there holds and exactly one bounded implementor is available. If inferred delegation is unavailable, fall back to direct. If the user required it, return `Blocked`.
 - For unknown-cause bugs, intermittent failures, or performance regressions, load [investigation.md](references/investigation.md). Do not guess-patch; skip the full investigation loop when the cause is already established.
 - Do not nest delegation or let an implementor invoke a user-invoked TigerKit skill. The current agent owns final evidence, review, staging, and commit.
 
@@ -58,7 +58,7 @@ Load [execution-gates.md](references/execution-gates.md) selectively:
 - **Browser verification** for visible UI, interaction, navigation, responsive behavior, or browser final state.
 - **Final review/commit** for every unit.
 
-Before mutation and after initial green, use [review-boundary.md](references/review-boundary.md) for design fit, one simplify pass, fixed candidate/staged evidence, implementation ledger ownership, Standards/Spec review, and post-commit hook drift. Use at most one independent reviewer when large or high-risk work warrants it; unavailable review capability is `Unverifiable`, not permission to drop a frozen obligation.
+Before mutation and after initial green, use [review-boundary.md](references/review-boundary.md) for design fit, one simplify pass, fixed candidate/staged evidence, review-route selection, finding adjudication, bounded convergence, implementation ledger ownership, and post-commit hook drift. Required-but-unavailable Additional review is `Unverifiable`, not permission to drop the obligation.
 
 ## CHECKPOINT / STOP
 
@@ -68,7 +68,7 @@ Before editing, stop `Blocked` when requirements conflict, authority is unsafe, 
 
 Commit exactly once only when status is `Pass` and commit is not prohibited. Stage only this unit's paths; preserve pre-existing user changes. Never broaden staging, bypass hooks for convenience, push, create a PR, merge, tag, release, or publish without a separate request.
 
-Lead with `## Changed`, then `## Verification`, and optional `## Strategy` or `## Remaining risks`. For a successful unit, use 2–5 short, behavior-oriented bullets under `Changed` and 1–4 verification-result bullets under `Verification`. When underlying results exceed the budget, keep only the most decision-relevant items and cite `.tigerkit/implementation.md`. Record the commit once. Summarize commands and results; never paste logs or narrate review mechanics. Keep detailed mappings and provenance in the ledger.
+Lead with `## Changed`, then `## Verification`, `## Review`, and optional `## Strategy` or `## Remaining risks`. Include `## Review` in successful and non-successful standalone results: report implementation strategy, Built-in review, Additional review route or `not required | unavailable`, fix rounds, finding disposition counts, and actual review-driven fixes. A clean small/low-risk result may compress this to one sentence. For a successful unit, use 2–5 short, behavior-oriented bullets under `Changed` and 1–4 verification-result bullets under `Verification`. When underlying results exceed the budget, keep only the most decision-relevant items and cite `.tigerkit/implementation.md`. Record the commit once. Summarize commands and results; never paste logs, reviewer prompts, chain of thought, model tiers, provider internals, authentication details, or credentials. Keep detailed mappings and provenance in the ledger.
 
 For active drive, return only the internal unit ID, status (`Pass | Fail | Blocked | Unverifiable`), commit, R/AC references, verification/review evidence, and unverified items.
 

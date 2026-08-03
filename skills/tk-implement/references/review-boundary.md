@@ -1,10 +1,11 @@
-# Built-in implementation review
+# Implementation review boundary
 
 Every standalone unit and every unit handed off by active drive runs this
 current-agent gate after unit verification and before commit. Review is scoped
 to that unit/ticket and its R/AC; drive separately owns aggregate traceability
 and cross-ticket verification. Review is separate from direct/delegated
-implementation, and an implementor never counts as an independent reviewer.
+implementation. A delegated implementor's self-review never replaces controller
+Built-in review or a required Additional review.
 
 ## Active-drive verification obligations
 
@@ -81,10 +82,14 @@ warn once for the task when `.tigerkit/` is not ignored.
 Each unit section records task and unit/ticket identity, R/AC references,
 design-fit evidence as `reuse | extend | local | new abstraction`, inspected
 paths/symbols, simplify finding and `changed | no-op | deferred`, rerun focused
-verification, Standards and Spec dispositions, unit commit SHA, and remaining
-risk. A no-commit terminal attempt instead records native status, actual branch
-and HEAD, changed or uncommitted paths, executed verification, unverified scope,
-`commit: none`, the failure or blocker, and one recovery condition. It never
+verification, implementation strategy, Built-in review status, whether
+Additional review was required, its capability label, candidate snapshot
+identifier, findings and dispositions, fix-round history, review-driven
+changes, Standards and Spec dispositions, unit commit SHA, and remaining or
+deferred risk. A no-commit terminal attempt instead records native status,
+actual branch and HEAD, changed or uncommitted paths, executed verification,
+unverified scope, `commit: none`, the failure or blocker, and one recovery
+condition. It never
 reuses stale candidate, review, or verification evidence to classify the unit
 as completed. Keep the ledger bounded: no raw transcript, full diff, repeated
 command output, secret, or unrelated history. After commit, update the SHA
@@ -106,11 +111,36 @@ context-indexed summarization, paged file/hunk inspection, or one bounded
 independent reviewer while tracking every changed file and hunk. Missing
 coverage makes the verdict `Unverifiable`.
 
-Pin review-head SHA and candidate/staged snapshot before findings. Recheck
+Pin review-head SHA, candidate diff, changed-file inventory, staged/working-tree
+ownership, and a diff fingerprint before findings. Built-in and Additional
+review inspect this same snapshot. Recheck
 `HEAD`, branch, and staged inventory immediately before verdict and commit.
 Never combine stale line evidence with a changed review head. Changed review
 state is `Blocked`; inaccessible evidence after a stable snapshot is
 `Unverifiable`.
+
+If an Additional reviewer mutates files, invalidate its result, report the
+mutation, and restore or safely isolate the frozen snapshot. Return
+`Unverifiable` when restoration or isolation cannot be proven.
+
+## Additional review policy
+
+Built-in Standards/Spec review is mandatory for every unit. Additional review
+is required when any are true: a high-risk signal exists; diff size is
+`size_unknown`; a `large` diff changes executable behavior; the user explicitly
+requires separate/independent review; or a sealed drive obligation requires it.
+Pure documentation, comments, and non-behavioral generated artifacts are not
+forced into Additional review by size alone.
+
+Select exactly one compatible read-only capability in this order: one named by
+the user, one required by repository/user instructions, then one available in
+the current host. The path must be distinct from implementation. Loading a
+checklist or another `SKILL.md` in the same agent is not independent review.
+Do not auto-install, request new authentication solely for review, transmit code
+to an unauthorized provider, fan out, permit reviewer mutation or nested
+delegation, or run unrelated commands. When Additional review is required but
+unavailable, return `Unverifiable` and do not commit; stop before implementation
+when unavailability is known in preflight.
 
 ## Review axes
 
@@ -145,14 +175,36 @@ lane and evidence rather than an all-N/A checklist.
 | Concurrency | atomicity, ordering, retry/idempotency, race and cancellation boundaries |
 | Public API | compatibility, validation/error contract, consumer migration, version boundary |
 
-Each finding needs severity, fixed-diff `file:line` evidence, applicable
-repository/spec basis, and concrete impact. One independent reviewer is
-allowed only for `large` or high-risk work. It may not edit, re-delegate, fan
-out, or automatically re-review.
+Each finding needs severity, candidate-snapshot `file:line` evidence, applicable
+repository/spec basis, concrete impact or failure path, and reproduction detail
+when practical. Generic suggestions without concrete evidence are non-blocking.
 
-The bounded flow is
-`review once → fix once → regression verification once → stop`. Do not commit
-while an important finding, drift, or unverified coverage remains.
+Aggregate Built-in and Additional findings as `accepted | rejected | contested
+| deferred-minor`. Merge only the same defect and fix path, preserve distinct
+failure modes, reject unsupported findings, recalibrate inflated severity, and
+exclude clearly pre-existing defects from the blocking set. A real plan/spec
+conflict requiring user judgment is `Blocked`.
+
+Blocking findings are failed spec compliance, Critical or Important findings,
+a controller-confirmed `cannot verify` gap, or a reproducible correctness/
+regression failure. Run at most five fix rounds. One round is exactly: fix open
+blocking findings, run covering verification, run scoped re-review over the fix
+diff, then update open-finding state. Scoped re-review checks whether accepted
+findings are fixed and whether the fix introduced new Critical/Important
+breakage; untouched-code observations, unrelated refactors, style preferences,
+and new Minor findings cannot extend the loop. The controller always performs
+Built-in scoped review, and every round also uses a compatible independent
+scoped review path when Additional review was initially required.
+
+Rounds 1–3 use the current implementation owner. For delegated work, resume the
+original implementor or give a fresh implementor the same brief, report, and
+open findings when resumption is impossible. For rounds 4–5, switch to a fresh
+implementation context when available; otherwise trip the breaker after round
+3 instead of repeating the ineffective route. At the cap or early breaker,
+adjudicate every open finding: unsupported as `rejected`, real Minor as
+`deferred-minor`, real blocking as `Unverifiable`, plan/spec conflict as
+`Blocked`, and covering verification failure as `Fail`. Never commit while an
+accepted blocking finding, drift, or unverified coverage remains.
 
 ## Post-commit hook drift
 

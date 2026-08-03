@@ -494,6 +494,15 @@ def _prepare_live_fixture(
             "procedure_graph": ["tk-implement", "aggregate verification"],
             "verification_profile": profile,
             "pr_evidence": {"decision": "N/A", "criterion": None},
+            "units": [
+                {
+                    "id": ticket_id,
+                    "strategy": "direct",
+                    "risk": "low",
+                    "additional_review": "not-required",
+                }
+                for ticket_id, _ in units
+            ],
         },
         "browser": {
             "decision": "N/A",

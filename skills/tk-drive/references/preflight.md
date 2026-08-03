@@ -7,7 +7,8 @@ a lifecycle record and grants no execution authority by its presence.
 
 - Task: goal, included scope, excluded scope, confirmed decisions
 - Repository: root, worktree, branch, baseline HEAD, dirty paths
-- Execution: intended procedure graph, verification signals and obligations
+- Execution: intended procedure graph, verification signals and obligations,
+  and per-unit expected strategy, risk, and Additional-review obligation
 - Browser: `required | optional | N/A`
 - Required browser runtime only: environment or URL, non-identifying account
   role or tenant class, optional `opaque:<id>` profile hint, authentication

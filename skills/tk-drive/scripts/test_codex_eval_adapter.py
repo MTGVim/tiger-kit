@@ -303,6 +303,7 @@ class CodexObservationTest(unittest.TestCase):
             )
             self.assertNotIn('"status"', manifest.read_text(encoding="utf-8"))
             self.assertNotIn('"cursor"', manifest.read_text(encoding="utf-8"))
+            self.assertIn('"additional_review": "not-required"', manifest.read_text(encoding="utf-8"))
             tickets = (checkout / ".tigerkit" / "tickets.md").read_text(
                 encoding="utf-8"
             )

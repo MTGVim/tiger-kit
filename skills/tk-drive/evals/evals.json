@@ -438,11 +438,15 @@
       "id": "drive-aggregate-review-boundary",
       "path": "success",
       "prompt": "[current artifact evidence: large high-risk units와 verification obligations가 준비됐습니다.] $tk-drive",
-      "expected_output": "ticket-level Standards/Spec review는 각 tk-implement unit evidence에서 확인하고 drive는 R/AC coverage, ancestry, cross-ticket interaction만 aggregate review한다.",
+      "expected_output": "ticket-level Standards/Spec review는 각 tk-implement unit evidence에서 확인하고 drive는 R/AC coverage, ancestry, cross-ticket interaction과 compact review-route summary만 aggregate한다.",
       "assertions": [
         {
           "type": "judge",
           "criterion": "drive가 각 ticket의 line-level code review를 반복하지 않고 aggregate traceability와 cross-ticket integration만 소유한다."
+        },
+        {
+          "type": "judge",
+          "criterion": "multiple units의 final output은 Unit, Strategy, Additional review, Fix rounds, Result를 compact table로 요약하고 raw finding text를 반복하지 않는다."
         },
         {
           "type": "terminal_status",
@@ -1648,6 +1652,27 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "drive-seals-per-unit-review-expectations",
+      "path": "success",
+      "prompt": "[active tk-drive Preparing] U1은 transferable low-risk이고 U2는 current-context high-risk이며 candidate가 risk를 올릴 수도 있습니다. 실행 전 review profile을 봉인해 주세요.",
+      "expected_output": "각 unit의 expected strategy, risk, Additional review required/not-required/unknown-until-diff를 Ready spec과 strict preflight에 기록하고 candidate evidence가 obligation을 raise할 수 있게 한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "delegation과 risk를 별도 축으로 기록하고 candidate evidence 없이 sealed review obligation을 downgrade하지 않는다."
+        },
+        {
+          "type": "path_text_contains",
+          "path": ".tigerkit/prep.md",
+          "text": "\"additional_review\""
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ]
 }

@@ -124,7 +124,11 @@ Forbidden closers: "Let me know if you need anything else," "Hope this helps," "
 
 Start with the answer. End when the answer is done.
 
-## When to break the rules
+## 🔴 CHECKPOINT / STOP · When to break the rules
+
+Before a destructive action or unresolved ambiguity, stop and apply the
+matching branch below; do not provide an executable destructive command until
+the required confirmation is explicit.
 
 Override the defaults when:
 
