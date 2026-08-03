@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.03-3 — Release
+
+- fix(pr): allow verified image upload handoffs
+
 ## 2026.08.03-2 — Release
 
 - feat(pr): restore user-first PR workflows
