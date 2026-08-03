@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2026.08.03-8 — Release
+
 - fix(docs): keep README skill catalog complete and release-neutral
 - fix(skills): use canonical `tk-*` names in skill pickers
 
