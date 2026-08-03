@@ -43,8 +43,10 @@ unit; `tk-implement` owns the unit commit and verification.
 4. Handoff one unit at a time to `tk-implement` with the PR identity and exact
    comment/thread IDs. Do not create empty per-comment commits. Aggregate only
    verified unit results and keep deferred or unverified threads open.
-5. Draft `.tigerkit/pr-respond.md` with exact push refspec, reply bodies,
-   resolvable thread IDs, intentionally open threads, reviewers, and exclusions.
+5. Draft `.tigerkit/pr-respond.md` with exact push refspec, a reply body for
+   every selected current finding, resolvable thread IDs, intentionally open
+   threads, prior human reviewers, re-review candidates, and exclusions. Every
+   external reply/comment ends with `_🤖 본 코멘트는 AI가 작성했습니다._`.
    Before publication approval, show a second compact table with each selected
    ID, implementation result, verification, exact reply draft, and recommended
    `resolve | keep open` thread action, followed by the outbound operation order
@@ -52,9 +54,21 @@ unit; `tk-implement` owns the unit commit and verification.
    `Pending`.
 6. After approval, recheck branch, local `HEAD`, PR head SHA, open state, author,
    checks, and thread state. Drift invalidates approval and returns `Blocked`.
-7. Publish in this order: explicit push, exact replies, verified thread
-   resolution, optional summary comment, and selected human re-review requests.
-   Re-read the PR and report partial writes as `Fail`. Never force-push, merge,
+7. Publish in this order: explicit push; exact reply to every selected current
+   finding; verified thread resolution only after its reply succeeds; optional
+   approved summary comment; fresh review, requested-reviewer, thread, check,
+   and mergeability read; conditional human re-review requests; then the
+   applicable approved normal or reviewer-mention fallback summary comment. A
+   failed reply leaves its thread open.
+8. Re-request review only when no current actionable, deferred, or unverified
+   finding remains. Use the observed post-push state rather than guessing stale
+   review settings. Request prior human reviewers whose feedback was addressed
+   or whose approval is no longer valid for the new head; exclude the PR author,
+   authenticated user, bots, and reviewers with a still-valid approval. Prefer
+   a formal GitHub review request. If GitHub rejects an otherwise eligible
+   reviewer, use only the approved fallback summary comment to mention them and
+   report `mention fallback`, not a formal request.
+9. Re-read the PR and report partial writes as `Fail`. Never force-push, merge,
    close unrelated threads, request bot review, tag, release, or publish a
    release.
 

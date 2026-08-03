@@ -16,7 +16,8 @@
     "tk-drive:behavior:drive-keeps-grill-pending-open",
     "tk-pr-open:behavior:pr-open-prepares-plan",
     "tk-pr-triage:behavior:pr-triage-is-read-only",
-    "tk-pr-respond:behavior:pr-respond-apply-does-not-publish"
+    "tk-pr-respond:behavior:pr-respond-apply-does-not-publish",
+    "tk-pr-rebase:behavior:pr-rebase-requires-exact-lease-and-freshness"
   ],
   "catalog_cases": [
     "catalog:behavior:drive-vs-grill-drive",
@@ -32,6 +33,8 @@
     "catalog:behavior:merge-conflict-vs-marker-active",
     "catalog:behavior:merge-conflict-vs-marker-ordinary",
     "catalog:behavior:skill-diagnose-vs-code-debugging",
-    "catalog:behavior:skill-diagnose-vs-learn-ready"
+    "catalog:behavior:skill-diagnose-vs-learn-ready",
+    "catalog:behavior:pr-rebase-explicit",
+    "catalog:behavior:pr-rebase-generic-block"
   ]
 }

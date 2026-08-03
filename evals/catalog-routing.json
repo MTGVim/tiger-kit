@@ -364,6 +364,22 @@
       "critical": true
     },
     {
+      "id": "pr-rebase-explicit",
+      "boundary": "tk-pr-rebase vs tk-merge-conflict vs ordinary rebase",
+      "prompt": "/tk-pr-rebase PR #42를 최신 base로 rebase해줘",
+      "focus_skill": "tk-pr-rebase",
+      "expected_selected_skill": "tk-pr-rebase",
+      "critical": true
+    },
+    {
+      "id": "pr-rebase-generic-block",
+      "boundary": "tk-pr-rebase vs tk-merge-conflict vs ordinary rebase",
+      "prompt": "이 PR branch를 최신 main으로 rebase해줘",
+      "focus_skill": "tk-pr-rebase",
+      "expected_selected_skill": null,
+      "critical": true
+    },
+    {
       "id": "github-image-upload-explicit",
       "boundary": "tk-github-image-upload-to-pr vs generic GitHub help",
       "prompt": "/tk-github-image-upload-to-pr 이 스크린샷을 현재 PR body에 넣어줘",

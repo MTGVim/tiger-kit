@@ -45,7 +45,8 @@ update lock에 원격 source로 추적되지 않으므로, 실제 사용자 설�
 
 Claude Code와 Hermes Agent에서는 `/tk-implement`, Codex에서는
 `$tk-implement` 또는 skill picker를 사용합니다.
-PR lifecycle은 `/tk-pr-open`, `/tk-pr-triage`, `/tk-pr-respond`를 각각 직접 선택합니다.
+PR lifecycle은 `/tk-pr-open`, `/tk-pr-triage`, `/tk-pr-respond`,
+`/tk-pr-rebase`를 각각 직접 선택합니다.
 
 ## Skill 표면
 
@@ -61,6 +62,7 @@ PR lifecycle은 `/tk-pr-open`, `/tk-pr-triage`, `/tk-pr-respond`를 각각 직�
 | `tk-pr-open` | user | 검증된 현재 브랜치 커밋으로 PR 초안·publish plan을 작성하고 승인 후 create/update |
 | `tk-pr-triage` | user | 실행 repository의 PR·review·check·reply 상태를 read-only 분류 |
 | `tk-pr-respond` | user | 선택한 review feedback을 resolution unit으로 묶어 `tk-implement`에 위임하고 승인 후 publish |
+| `tk-pr-rebase` | user | 열린 PR을 최신 base에 rebase하고 승인 후 force-with-lease·review follow-up publish |
 | `tk-prototype` | hybrid | 폐기 가능한 UI/logic 비교물을 실행 |
 | `tk-browser-verify` | hybrid | 실제 browser UI·network·최종 상태 검증 |
 | `tk-skill-diagnose` | hybrid | 관찰된 Agent Skill incident를 재현·격리하고 verified `learn-ready` objective를 handoff |
@@ -92,11 +94,19 @@ commit, 검증 또는 안전 경계가 있을 때만 해당 skill을 선택합�
 → unit마다 tk-implement + verified commit
 → aggregate verification과 exact publish plan
 → current-turn approval 뒤 push·reply·verified resolve
+→ 모든 actionable finding 해결 시 필요한 human reviewer에게 re-review request
+
+/tk-pr-rebase
+→ exact PR head와 최신 base SHA 고정
+→ local rebase; active conflict만 tk-merge-conflict로 해결
+→ verification과 exact force-with-lease·review follow-up plan
+→ current-turn approval 뒤 publish
+→ post-push review state에 따라 human re-review request
 ```
 
-세 skill은 모드 옵션을 공유하지 않습니다. `tk-pr-triage`는 항상 read-only이며,
-`tk-pr-open`과 `tk-pr-respond`도 exact publish plan의 현재 turn 승인이 있기 전에는
-remote write를 하지 않습니다.
+네 skill은 모드 옵션을 공유하지 않습니다. `tk-pr-triage`는 항상 read-only이며,
+`tk-pr-open`, `tk-pr-respond`, `tk-pr-rebase`도 exact publish plan의 현재 turn 승인이
+있기 전에는 remote write를 하지 않습니다.
 
 ## `tk-drive`
 
@@ -198,7 +208,9 @@ Evidence, dedupe, trigger/eval, baseline/compatibility gate를 먼저 검증하�
 
 `tk-pr-triage`는 remote와 local을 변경하지 않습니다. `tk-pr-open`은 PR create/update를,
 `tk-pr-respond`는 push·reply·verified thread resolve를 exact current-turn publish
-approval 뒤에만 수행합니다. 두 skill 모두 merge·tag·release 권한을 갖지 않습니다.
+approval 뒤에만 수행합니다. `tk-pr-rebase`는 exact lease를 고정한 force-with-lease,
+rebase-satisfied reply·resolve, 조건부 human re-review만 같은 승인 뒤에 수행합니다.
+세 mutation skill 모두 merge·tag·release 권한을 갖지 않습니다.
 
 Git tag가 immutable version source of truth입니다. Release 준비·PR·annotated tag·
 peeled SHA verification은 private maintainer repository의 `tigerkit-release`와
