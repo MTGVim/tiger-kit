@@ -521,6 +521,44 @@ def validate_release_critical(
     return errors
 
 
+def validate_invocation_graph(
+    skills: Mapping[str, tuple[Path, dict[str, object], str]],
+) -> list[str]:
+    errors: list[str] = []
+    kinds = {
+        name: nested(data, "metadata", "tigerkit", "kind")
+        for name, (_, data, _) in skills.items()
+    }
+
+    def phases(value: object) -> list[str]:
+        if isinstance(value, Mapping):
+            found = []
+            if value.get("type") == "phase_invocation" and isinstance(value.get("phase"), str):
+                found.append(str(value["phase"]))
+            for child in value.values():
+                found.extend(phases(child))
+            return found
+        if isinstance(value, list):
+            return [phase for child in value for phase in phases(child)]
+        return []
+
+    for owner, (skill_dir, _, _) in skills.items():
+        try:
+            cases = json.loads((skill_dir / "evals/evals.json").read_text(encoding="utf-8")).get("evals", [])
+        except (OSError, UnicodeError, json.JSONDecodeError, AttributeError):
+            continue
+        for case in cases:
+            if not isinstance(case, Mapping):
+                continue
+            for target in phases(case.get("assertions", [])):
+                if target != owner and kinds.get(target) == "user-invoked":
+                    errors.append(
+                        f"{_display_path(skill_dir / 'evals/evals.json')}: case {case.get('id')} "
+                        f"cannot invoke user-invoked skill {target}; make the target hybrid or remove the handoff"
+                    )
+    return errors
+
+
 def validate_repo_links() -> list[str]:
     errors: list[str] = []
     for path in sorted(ROOT.rglob("*.md")):
@@ -640,6 +678,7 @@ def validate_all() -> tuple[list[str], list[str]]:
 
     catalog_errors, catalog_ids = validate_catalog(set(skills), behavior_ids)
     errors.extend(catalog_errors)
+    errors.extend(validate_invocation_graph(skills))
     errors.extend(validate_release_critical(behavior_ids, catalog_ids))
     errors.extend(validate_repository_contract(set(skills)))
     errors.extend(validate_repo_links())

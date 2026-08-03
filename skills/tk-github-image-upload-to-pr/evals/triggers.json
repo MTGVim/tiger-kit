@@ -1,6 +1,6 @@
 {
   "skill": "tk-github-image-upload-to-pr",
-  "kind": "user-invoked",
+  "kind": "hybrid",
   "queries": [
     {
       "id": "train-explicit",
@@ -51,6 +51,42 @@
       ]
     },
     {
+      "id": "validation-positive-5",
+      "split": "validation",
+      "query": "[active tk-pr-open evidence handoff] evidence_required: true, producer: tk-browser-verify, inspected Screenshot을 현재 PR body에 첨부해줘.",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-6",
+      "split": "validation",
+      "query": "검증된 local image evidence를 기존 PR 본문에 업로드해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-7",
+      "split": "validation",
+      "query": "pr에 이 로컬 imgae 넣어줘",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-positive-8",
+      "split": "validation",
+      "query": "현재 PR 설명에 이 캡처 파일 첨부",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
       "id": "validation-negative-1",
       "split": "validation",
       "query": "스크린샷을 새로 캡처해줘",
@@ -84,6 +120,42 @@
       "should_trigger": false,
       "facets": [
         "ko-en"
+      ]
+    },
+    {
+      "id": "validation-negative-5",
+      "split": "validation",
+      "query": "이 이미지를 GitHub issue에 올려줘",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-6",
+      "split": "validation",
+      "query": "PR 본문에 있는 이미지가 깨졌는지 확인해 주세요.",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-7",
+      "split": "validation",
+      "query": "tk-pr-open으로 PR을 만들되 evidence_required는 아니야.",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-8",
+      "split": "validation",
+      "query": "pr imgae 업로드 스크립트가 어디 있는지 설명해줘",
+      "should_trigger": false,
+      "facets": [
+        "typo"
       ]
     }
   ]
