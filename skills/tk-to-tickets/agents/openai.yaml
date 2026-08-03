@@ -1,3 +1,2 @@
 interface:
-  display_name: "TigerKit: Write Tickets"
   short_description: "[user/auto] Create independently verifiable vertical tickets."

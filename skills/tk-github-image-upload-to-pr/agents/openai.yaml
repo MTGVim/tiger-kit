@@ -1,5 +1,4 @@
 interface:
-  display_name: "TigerKit: Upload PR Image"
   short_description: "[user/auto] Upload local image evidence into an existing GitHub PR."
   policy:
     allow_implicit_invocation: true

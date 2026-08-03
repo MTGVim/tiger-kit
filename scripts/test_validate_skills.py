@@ -133,33 +133,16 @@ class EvalSotValidatorTest(unittest.TestCase):
             errors = validate_skills.validate_invocation_graph(skills)
             self.assertTrue(any("cannot invoke user-invoked skill tk-child" in error for error in errors))
 
-    def test_release_version_check_is_not_pinned_to_one_version(self) -> None:
+    def test_readme_does_not_require_a_release_version(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "skills").mkdir()
-            (root / "README.md").write_text("latest `v99.4.2`\n", encoding="utf-8")
+            (root / "README.md").write_text("timeless product docs\n", encoding="utf-8")
             (root / "CHANGELOG.md").write_text("## 99.4.2 — Example\n", encoding="utf-8")
             (root / ".gitignore").write_text(".tigerkit/\n", encoding="utf-8")
             with patch.object(validate_skills, "ROOT", root), patch.object(validate_skills, "SKILLS", root / "skills"):
                 errors = validate_skills.validate_repository_contract(set())
-            self.assertFalse(any("immutable snapshot" in error for error in errors))
-
-    def test_release_version_check_accepts_date_sequence_hash_snapshot(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            (root / "skills").mkdir()
-            (root / "README.md").write_text(
-                "latest `v2026.08.01-2-abcde`\n", encoding="utf-8"
-            )
-            (root / "CHANGELOG.md").write_text(
-                "## 2026.08.01-2 — Release\n", encoding="utf-8"
-            )
-            (root / ".gitignore").write_text(".tigerkit/\n", encoding="utf-8")
-            with patch.object(validate_skills, "ROOT", root), patch.object(
-                validate_skills, "SKILLS", root / "skills"
-            ):
-                errors = validate_skills.validate_repository_contract(set())
-            self.assertFalse(any("immutable snapshot" in error for error in errors))
+            self.assertFalse(any("README.md" in error for error in errors))
 
 
 if __name__ == "__main__":

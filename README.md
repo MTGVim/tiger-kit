@@ -4,10 +4,9 @@
   <img src="assets/tigerkit-cover.webp" width="960" alt="TigerKit Agent Skills 표지">
 </p>
 
-TigerKit 2026.08.03-7-a5b16은 Claude Code, Codex, Hermes Agent용 엔지니어링 Agent Skills
-모음입니다. 중앙 workflow runtime이나 plugin 없이 self-contained skill을
-`npx skills`로 배포합니다. 최신 immutable snapshot은 `v2026.08.03-7-a5b16`이며, 이
-snapshot은 14개 skill을 포함합니다. 현재 `main`에는 다음 릴리스 후보가 포함될 수 있습니다.
+TigerKit은 Claude Code, Codex, Hermes Agent용 엔지니어링 Agent Skills 모음입니다.
+중앙 workflow runtime이나 plugin 없이 self-contained skill을 `npx skills`로
+배포합니다.
 
 ## 설치
 
@@ -20,28 +19,16 @@ npx skills add MTGVim/tiger-kit \
   --skill '*'
 ```
 
-고정 snapshot:
-
-```bash
-npx skills add "MTGVim/tiger-kit#v2026.08.03-7-a5b16" \
-  --global \
-  --agent claude-code \
-  --agent codex \
-  --agent hermes-agent
-```
-
-최신 main 설치를 계속 따라가려면 GitHub source로 설치한 뒤 전역 update를
-실행합니다.
+설치된 skill을 갱신하려면 전역 update를 실행합니다.
 
 ```bash
 npx skills update --global --yes
 # 짧은 표기: npx skills update -g -y
 ```
 
-`npx skills add .` 또는 로컬 경로 설치는 저장소 검증·개발용입니다. Skills CLI의
-update lock에 원격 source로 추적되지 않으므로, 실제 사용자 설치에는
-`MTGVim/tiger-kit`를 사용하세요. 고정 snapshot을 바꾸려면 원하는 tag로
-`skills add`를 다시 실행합니다.
+`npx skills add .` 또는 로컬 경로 설치는 저장소 검증·개발용입니다. 같은 checkout에
+전역 설치와 로컬 설치를 함께 두면 Codex가 두 skill root를 모두 발견해 picker에
+중복 표시할 수 있으므로 실제 사용자 설치에는 `MTGVim/tiger-kit`를 사용하세요.
 
 Claude Code와 Hermes Agent에서는 `/tk-implement`, Codex에서는
 `$tk-implement` 또는 skill picker를 사용합니다.
@@ -63,6 +50,7 @@ PR lifecycle은 `/tk-pr-open`, `/tk-pr-triage`, `/tk-pr-respond`,
 | `tk-pr-triage` | user | 실행 repository의 PR·review·check·reply 상태를 read-only 분류 |
 | `tk-pr-respond` | user | 선택한 review feedback을 resolution unit으로 묶어 `tk-implement`에 위임하고 승인 후 publish |
 | `tk-pr-rebase` | user | 열린 PR을 최신 base에 rebase하고 승인 후 force-with-lease·review follow-up publish |
+| `tk-github-image-upload-to-pr` | user | 로컬 evidence image를 인증된 browser session으로 기존 PR 본문이나 요청된 comment에 upload |
 | `tk-prototype` | hybrid | 폐기 가능한 UI/logic 비교물을 실행 |
 | `tk-browser-verify` | hybrid | 실제 browser UI·network·최종 상태 검증 |
 | `tk-skill-diagnose` | hybrid | 관찰된 Agent Skill incident를 재현·격리하고 verified `learn-ready` objective를 handoff |
@@ -171,7 +159,7 @@ Release gate:
 
 ```bash
 python3 scripts/run_release_gate.py \
-  --baseline v2026.08.03-7-a5b16 \
+  --baseline "$(git describe --tags --abbrev=0)" \
   --candidate HEAD \
   --output /tmp/tigerkit-release-gate
 ```
@@ -212,9 +200,5 @@ approval 뒤에만 수행합니다. `tk-pr-rebase`는 exact lease를 고정한 f
 rebase-satisfied reply·resolve, 조건부 human re-review만 같은 승인 뒤에 수행합니다.
 세 mutation skill 모두 merge·tag·release 권한을 갖지 않습니다.
 
-Git tag가 immutable version source of truth입니다. Release 준비·PR·annotated tag·
-peeled SHA verification은 private maintainer repository의 `tigerkit-release`와
-idempotent release driver가 소유하며 GitHub Actions는 사용하지 않습니다.
-
-TigerKit 20.1.2 이하에서 갱신한다면 [MIGRATION.md](MIGRATION.md)를 읽으세요.
+이전 구조에서 갱신한다면 [MIGRATION.md](MIGRATION.md)를 읽으세요.
 Attribution은 [NOTICE.md](NOTICE.md)에 보존됩니다.
