@@ -203,6 +203,8 @@ def validate_frontmatter_and_body(
             errors.append(f"{label}: hybrid skill must allow implicit invocation")
         if implicit_blocked:
             errors.append(f"{label}: hybrid Codex policy must not block implicit invocation")
+        if openai_text and 'short_description: "[user/auto] ' not in openai_text:
+            errors.append(f"{label}: Codex short_description must begin with [user/auto]")
 
     if name != "tk-adhd":
         terminal = "### 🔴 HARD GATE · terminal user summary"

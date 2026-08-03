@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(skills): restore the `tk-grill-me` invocation label in Codex
+
 ## 2026.08.03-8 — Release
 
 - fix(docs): keep README skill catalog complete and release-neutral
