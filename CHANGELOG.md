@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 2026.08.05-1 — Release
+
+- compress tk skills: reduce contract prose
+- optimize tk-github-image-upload: consolidate risks
+- optimize tk-pr-open: encode failure paths
+- optimize tk-implement: consolidate anti-patterns
+
 ## 2026.08.04-3 — Release
 
 - refactor: simplify orchestration release checks
