@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+## 2026.08.04-3 — Release
+
+- refactor: simplify orchestration release checks
+- fix: make eval recorder executable
+- fix: stabilize respond CI commit path
+- fix: require respond canary commit
+- fix: accept safe equivalent eval scripts
+- fix: secure verified eval commit scripts
+- fix: run prepared Codex eval fixtures
+- fix: accept current Codex message events
+- fix: harden PR sweep lifecycle
+- fix: surface outstanding PR feedback
+- fix: keep orchestration visibly moving
+
 ## 2026.08.04-2 — Release
 
 - feat: add bounded PR sweep orchestrator

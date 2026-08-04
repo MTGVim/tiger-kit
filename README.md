@@ -173,12 +173,8 @@ python3 scripts/run_release_gate.py \
   --output /tmp/tigerkit-release-gate
 ```
 
-Live quality를 요청한 경우에만 built-in adapter가 `Codex → Claude Code → Hermes Agent` 순서로
-설치 여부와 비대화형 실행을 시도하고 첫 complete pass에서 멈춥니다. 실행기,
-인증 또는 안정적인 결과가 없으면 `quality.status: Advisory`로 남기되 deterministic
-validator·test·package 실패와 혼동하지 않습니다. 일반 릴리즈에서는 live canary가
-기본 비활성화되며, 필요할 때 `scripts/run_release_gate.py --live-quality`로
-명시합니다. `--adapter-command`는 custom adapter override용입니다.
+Release gate는 contract 비교, validator, test, package, diff를 로컬에서만 실행합니다.
+실제 host 품질 실험은 release 차단 조건이 아니며 별도의 목적별 실험으로 수행합니다.
 
 Drive 비교 실험:
 

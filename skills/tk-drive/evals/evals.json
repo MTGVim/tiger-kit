@@ -686,11 +686,19 @@
       "id": "drive-continues-after-preflight",
       "path": "success",
       "prompt": "[active tk-drive] preflight와 첫 implementation unit evidence가 준비됐습니다. 다음 applicable node로 계속 진행해 주세요.",
-      "expected_output": "preflight나 unit completion을 response boundary로 삼지 않고 같은 active turn에서 remaining units, aggregate verification, finalization까지 진행한다.",
+      "expected_output": "preflight와 unit 경계에서 ▶️ Progress/Decision/Evidence/Result-Next 의미의 compact nonterminal checkpoint를 보여주되 response boundary로 삼지 않고 같은 active turn에서 remaining units, aggregate verification, finalization까지 진행하고 full success를 ✅ Pass로 강조한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "현재 evidence 뒤 사용자 재호출을 기다리지 않고 다음 applicable node로 즉시 전이하며 finalization에서만 최종 결과를 낸다."
+          "criterion": "현재 evidence 뒤 Drive가 소유한 compact progress checkpoint로 계획·결정·근거·다음 행동을 알리고 사용자 재호출을 기다리지 않은 채 다음 applicable node로 즉시 전이하며 finalization에서만 최종 결과를 낸다."
+        },
+        {
+          "type": "output_contains",
+          "text": "▶️ Progress"
+        },
+        {
+          "type": "output_contains",
+          "text": "✅ Pass"
         },
         {
           "type": "terminal_status",
@@ -768,7 +776,7 @@
         "codex"
       ],
       "prompt": "[tigerkit-eval:prepared-two-unit]\n/tk-drive",
-      "expected_output": "The host-native run invokes tk-implement twice without returning final output between the two independent implementation units, then reaches the final Pass summary.",
+      "expected_output": "The host-native run reports compact nonterminal plan and unit checkpoints, invokes tk-implement twice without returning final output or pausing between the two independent implementation units, reports aggregate verification before and after long work, then reaches the single final Pass summary.",
       "assertions": [
         {
           "type": "event_order",
@@ -788,6 +796,10 @@
               "type": "final_output"
             }
           ]
+        },
+        {
+          "type": "judge",
+          "criterion": "Drive owns concise progress at the prepared plan, each unit boundary, and aggregate verification; each checkpoint begins with the stable text-plus-emoji marker `▶️ Progress` and communicates the chosen decision, decisive evidence, and result/next action without exposing raw reasoning, a child receipt, approval request, terminal status, or timer-heartbeat promise; full success is visibly `✅ Pass` while canonical `Status: Pass` remains unchanged."
         },
         {
           "type": "path_text_equals",
@@ -1133,6 +1145,10 @@
         {
           "type": "judge",
           "criterion": "confirmed decision과 같은 blocker의 재발을 progress 없는 cycle로 분류하고 두 번째 automatic grill handoff를 만들지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "⛔ Blocked"
         },
         {
           "type": "terminal_status",

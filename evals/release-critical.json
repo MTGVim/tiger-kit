@@ -1,11 +1,5 @@
 {
   "version": 1,
-  "hosts": [
-    "codex",
-    "claude-code",
-    "hermes-agent"
-  ],
-  "runs": 2,
   "retired_skill_contracts": [
     "tk-reflect"
   ],

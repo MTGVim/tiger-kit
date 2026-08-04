@@ -51,6 +51,7 @@ STATUS_PATTERN = re.compile(
 class CodexObservation:
     def __init__(self) -> None:
         self.output = ""
+        self._terminal_output = ""
         self.total_tokens: int | None = None
         self.duration_ms: int | float | None = None
         self.tool_uses = 0
@@ -68,17 +69,19 @@ class CodexObservation:
                 return
             item_type = item.get("type")
             item_id = item.get("id")
+            is_agent_message = item_type in {"agentMessage", "agent_message"}
             if (
-                item_type != "agentMessage"
+                not is_agent_message
                 and isinstance(item_id, str)
                 and item_id not in self._seen_tool_items
             ):
                 self._seen_tool_items.add(item_id)
                 self.tool_uses += 1
-            if method == "item/completed" and item_type == "agentMessage":
+            if method == "item/completed" and is_agent_message:
                 text = item.get("text")
                 if isinstance(text, str):
-                    self.output = text
+                    self.output = f"{self.output}\n\n{text}" if self.output else text
+                    self._terminal_output = text
             return
         if method == "thread/tokenUsage/updated":
             token_usage = params.get("tokenUsage")
@@ -100,14 +103,16 @@ class CodexObservation:
         items = turn.get("items")
         if not self.output and isinstance(items, list):
             for item in items:
-                if not isinstance(item, dict) or item.get("type") != "agentMessage":
+                if not isinstance(item, dict) or item.get("type") not in {"agentMessage", "agent_message"}:
                     continue
                 text = item.get("text")
                 if isinstance(text, str):
-                    self.output = text
+                    self.output = f"{self.output}\n\n{text}" if self.output else text
+                    self._terminal_output = text
 
     def fail(self, output: str) -> None:
         self.output = output
+        self._terminal_output = output
         self.turn_failed = True
 
     def result(
@@ -120,7 +125,7 @@ class CodexObservation:
         events: list[dict[str, str]],
     ) -> dict[str, object]:
         status = _terminal_status(
-            self.output,
+            self._terminal_output or self.output,
             mode=mode,
             is_error=self.turn_failed,
         )

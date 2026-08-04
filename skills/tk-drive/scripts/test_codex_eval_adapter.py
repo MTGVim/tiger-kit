@@ -24,6 +24,38 @@ from codex_eval_adapter import (
 
 
 class CodexObservationTest(unittest.TestCase):
+    def test_preserves_progress_messages_but_derives_status_from_last_message(self) -> None:
+        observation = CodexObservation()
+        for item_id, text in [
+            ("progress", "▶️ Progress\nDecision: publish next"),
+            ("final", "## PR respond\n✅ Pass\nStatus: Pass"),
+        ]:
+            observation.consume(
+                {
+                    "method": "item/completed",
+                    "params": {
+                        "item": {
+                            "type": "agent_message" if item_id == "progress" else "agentMessage",
+                            "id": item_id,
+                            "text": text,
+                        }
+                    },
+                }
+            )
+
+        result = observation.result(
+            skill="tk-pr-respond",
+            mode="behavior",
+            available_skills=["tk-pr-respond"],
+            selected=True,
+            events=[],
+        )
+
+        self.assertIn("▶️ Progress", result["output"])
+        self.assertIn("## PR respond", result["output"])
+        self.assertEqual(result["terminal_status"], "Pass")
+        self.assertEqual(result["tool_uses"], 0)
+
     def test_extracts_marked_phase_order_bulleted_status_and_metrics(self) -> None:
         observation = CodexObservation()
         observation.consume(
