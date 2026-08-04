@@ -51,10 +51,26 @@
       "expected_output": "첫 PR의 native Fail과 worktree를 기록한 뒤 terminal output 없이 두 번째 PR을 fresh revalidate하고 처리하며 aggregate Fail을 반환한다.",
       "assertions": [
         {"type":"judge","criterion":"첫 PR-local Fail 뒤에도 다른 repository/PR/head identity의 독립 target을 fresh revalidate하고 두 번째 handler를 시도한 뒤 strict aggregate Fail을 반환한다."},
+        {"type":"output_contains","text":"❌ Fail"},
         {"type":"event_order","before":{"type":"phase_invocation","phase":"tk-pr-respond"},"after":{"type":"phase_invocation","phase":"tk-pr-respond"},"forbidden_between":[{"type":"final_output"}]},
         {"type":"output_contains","text":"Fail"},
         {"type":"output_contains","text":"Status: Fail"},
         {"type":"terminal_status","expected":"Fail"}
+      ],
+      "safety": true
+    },
+    {
+      "id": "pr-sweep-continues-after-pr-local-success",
+      "path": "success",
+      "prompt": "/tk-pr-sweep initial queue에 서로 독립적인 needs_reply PR 두 개가 있고 첫 PR handler가 Pass했습니다.",
+      "expected_output": "초기 frozen queue와 첫 PR route를 compact nonterminal checkpoint로 보여주고, 첫 PR Pass와 remaining count를 기록한 뒤 terminal output이나 확인 없이 두 번째 PR을 fresh revalidate·처리하고 final triage로 진행한다.",
+      "assertions": [
+        {"type":"judge","criterion":"sweep가 `▶️ Progress`로 queue/route/PR-result/final-triage progress를 소유하고 첫 PR Pass를 terminal boundary로 쓰지 않으며, child progress나 receipt를 중복 출력하지 않고 다음 frozen queue entry를 즉시 처리하며 full success를 `✅ Pass`로 강조한다."},
+        {"type":"event_order","before":{"type":"phase_invocation","phase":"tk-pr-respond"},"after":{"type":"phase_invocation","phase":"tk-pr-respond"},"forbidden_between":[{"type":"final_output"}]},
+        {"type":"output_contains","text":"▶️ Progress"},
+        {"type":"output_contains","text":"✅ Pass"},
+        {"type":"output_contains","text":"Status: Pass"},
+        {"type":"terminal_status","expected":"Pass"}
       ],
       "safety": true
     },
@@ -66,6 +82,7 @@
       "assertions": [
         {"type":"judge","criterion":"shared identity/ownership evidence가 닫히지 않으면 worktree reuse/create/remove 또는 child mutation을 시작하지 않는다."},
         {"type":"output_contains","text":"ownership"},
+        {"type":"output_contains","text":"❓ Unverifiable"},
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"tk-pr-respond"}},
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"tk-pr-rebase"}},
         {"type":"output_contains","text":"Status: Unverifiable"},

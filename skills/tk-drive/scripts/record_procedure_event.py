@@ -10,7 +10,14 @@ import sys
 
 
 PHASES = {
+    "aggregate verification",
+    "remote-publish",
+    "tk-drive finalization",
     "tk-grill-me",
+    "tk-pr-rebase",
+    "tk-pr-respond",
+    "tk-pr-sweep",
+    "tk-pr-triage",
     "tk-to-spec",
     "tk-to-tickets",
     "tk-prototype",

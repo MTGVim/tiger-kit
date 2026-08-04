@@ -28,7 +28,32 @@ unit; `tk-implement` owns the unit commit and verification.
 - **CI:** explicit `--ci`, directly or through `tk-pr-sweep`, is bounded authority
   to process the fresh supported scope without questions. It is not authority for
   another PR, external CI, unverifiable checks, force-push, merge, close, tag,
-  release, or publication outside this PR response.
+  release, draft-to-`Ready for review` transitions, or publication outside this
+  PR response.
+
+## Progress commentary
+
+Direct CI mode owns a compact progress surface beginning `▶️ Progress` at meaningful boundaries: after
+freezing the supported scope and plan; before and after each `tk-implement`
+unit; before and after each bounded check cycle or long verification; before the
+freshness recheck and exact publication sequence; and after the final fresh PR
+read. Each checkpoint carries `Progress`, `Decision`, `Evidence`, and
+`Result/Next` semantics using only the decisive fresh evidence and active bound.
+
+A checkpoint is nonterminal commentary. It never asks for approval, emits
+`Pending`, exposes a child receipt or status, or pauses an already-authorized CI
+flow. When invoked by `tk-pr-sweep`, return the same checkpoint evidence
+internally and let the sweep render the unified progress surface; do not emit
+duplicate child commentary. Before long blocking work, state what is starting
+and the next decision condition, then report its result immediately afterward.
+Do not promise timer heartbeats or expose raw chain-of-thought or
+command-by-command logs. Normal mode retains its existing tables and questions.
+
+Make outcomes scannable without replacing canonical status tokens: use
+`✅ Pass`, `⏳ Waiting`, `⚠️ Advisory`, `❌ Fail`, `⛔ Blocked`, and
+`❓ Unverifiable` for the corresponding checkpoint or terminal outcome. Always
+pair the emoji with that exact text; never emit an emoji-only state. Preserve
+the terminal `Status: <token>` literal expected by the owning result schema.
 
 ## Workflow
 
@@ -49,9 +74,11 @@ unit; `tk-implement` owns the unit commit and verification.
    units, state one recommended selection, then ask one selection question.
    Selection authorizes only those units; it does not authorize a remote write.
 4. Handoff one unit at a time to `tk-implement` with the PR identity and exact
-   comment/thread IDs. Treat `Pass` as an internal loop signal: without
-   user-facing output, a pause, or confirmation, invoke `tk-implement` for the
-   next selected unit. Leave the loop only after every selected unit has a
+   comment/thread IDs. Treat `Pass` as an internal loop signal: without a
+   terminal response, pause, or confirmation, use the CI-owned or sweep-owned
+   progress checkpoint when applicable and invoke `tk-implement` for the next
+   selected unit. Normal mode adds no intermediate checkpoint. Leave the loop
+   only after every selected unit has a
    verified result or a bounded non-success remains. Do not create empty
    per-comment commits. Aggregate only verified unit results and keep deferred
    or unverified threads open.
@@ -59,11 +86,11 @@ unit; `tk-implement` owns the unit commit and verification.
    every selected current finding, resolvable thread IDs, intentionally open
    threads, prior human reviewers, re-review candidates, and exclusions. Every
    external reply/comment ends with `_🤖 본 코멘트는 AI가 작성했습니다._`.
-   Before publication approval, show a second compact table with each selected
-   ID, implementation result, verification, exact reply draft, and recommended
-   `resolve | keep open` thread action, followed by the outbound operation order
-   and one recommendation. Then ask one publication question and stop with
-   `Pending`.
+   In Normal mode, before publication approval, show a second compact table with
+   each selected ID, implementation result, verification, exact reply draft, and
+   recommended `resolve | keep open` thread action, followed by the outbound
+   operation order and one recommendation. Then ask one publication question and
+   stop with `Pending`. CI mode never enters this approval boundary.
 6. After approval, recheck branch, local `HEAD`, PR head SHA, open state, author,
    checks, and thread state. Drift invalidates approval and returns `Blocked`.
 7. Publish in this order: explicit push; exact reply to every selected current
@@ -81,8 +108,8 @@ unit; `tk-implement` owns the unit commit and verification.
    reviewer, use only the approved fallback summary comment to mention them and
    report `mention fallback`, not a formal request.
 9. Re-read the PR and report partial writes as `Fail`. Never force-push, merge,
-   close unrelated threads, request bot review, tag, release, or publish a
-   release.
+   close unrelated threads, request bot review, mark a draft ready for review,
+   tag, release, or publish a release.
 
 ## CI mode
 
@@ -92,7 +119,10 @@ unit; `tk-implement` owns the unit commit and verification.
    `Blocked` before mutation on identity, repository, ref, or head drift.
 2. For `changes_requested` or `needs_reply`, treat every fresh actionable finding
    as selected, form the minimum independently verifiable resolution units, and
-   run the normal `tk-implement` loop without a selection question.
+   run the normal `tk-implement` loop without a selection question. Each unit
+   `Pass` is an internal CI signal. After the last verified unit, continue in the
+   same active flow to freshness recheck and publication; do not emit a terminal
+   response, return `Pending`, or apply the Normal-mode publication question.
 3. For `checks_failed`, resolve each failed check to its provider. Automate only
    GitHub Actions checks. Read the current run, job, step, annotation, and bounded
    log evidence; keep external-provider failures report-only. Distinguish a
@@ -101,15 +131,18 @@ unit; `tk-implement` owns the unit commit and verification.
    interactive `gh-fix-ci` procedure as an automatic child. When no supported
    repository-caused failure remains, create no unit or push and return
    `Unverifiable` with the observed unsupported or unavailable state.
-4. After a repository-caused Actions fix passes local verification, push only the
-   frozen head refspec. Immediately before that push, re-read repository,
-   authenticated identity, open state, remote head/ref, and verify that the local
-   commit descends from the frozen head; any mismatch is `Blocked`. Then fetch the
-   new exact head and fresh check state. When that head equals the just-pushed
-   commit, promote it to the expected head and ancestry baseline for the next
-   cycle. Allow at most three corrective cycles. Repeated unchanged failure, an
-   exhausted third cycle, or unverifiable post-push checks stops without a fourth
-   mutation.
+4. After every selected feedback unit has a verified result, or after one
+   repository-caused Actions fix returns `Pass`, render direct CI progress or
+   return its evidence to the active sweep, then immediately re-read repository,
+   authenticated identity, open state, remote head/ref, and verify that every
+   local unit commit descends from the frozen head. Any mismatch is `Blocked`;
+   otherwise push only the frozen head refspec before replies or thread
+   resolution. Never stop after a unit commit or ask for publication approval.
+   For a repository-caused Actions fix, fetch the new exact head and fresh check state.
+   When that head equals the just-pushed commit, promote it to the expected head
+   and ancestry baseline for the next cycle. Allow at most three corrective
+   cycles. Repeated unchanged failure, an exhausted third cycle, or unverifiable
+   post-push checks stops without a fourth mutation.
 5. Publish exact per-finding replies, resolve only freshly verified threads, and
    conditionally request human re-review using the normal ordering and exclusions.
    Publish at most one PR-level summary comment combining CI-fix and supplied

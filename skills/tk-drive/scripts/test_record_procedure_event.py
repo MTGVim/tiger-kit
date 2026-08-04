@@ -29,6 +29,23 @@ class ProcedureEventTest(unittest.TestCase):
                 {"type": "phase_invocation", "phase": "tk-implement"},
             )
 
+    def test_records_remote_publication_boundary(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "events.jsonl"
+            env = {**os.environ, "TK_DRIVE_PROCEDURE_LOG": str(path)}
+            completed = subprocess.run(
+                [sys.executable, str(SCRIPT), "remote-publish"],
+                env=env,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            self.assertEqual(
+                json.loads(path.read_text(encoding="utf-8")),
+                {"type": "phase_invocation", "phase": "remote-publish"},
+            )
+
     def test_rejects_unknown_phase_without_writing(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "events.jsonl"

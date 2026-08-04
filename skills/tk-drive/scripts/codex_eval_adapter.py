@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run one tk-drive eval through Codex app-server's explicit skill input."""
+"""Run one TigerKit eval through Codex app-server's explicit skill input."""
 
 from __future__ import annotations
 
@@ -23,7 +23,14 @@ from typing import IO, Callable, Mapping
 TERMINAL_STATUSES = ("Pass", "Pending", "Blocked", "Fail", "Unverifiable")
 EVENT_TYPES = {"phase_invocation"}
 PHASES = {
+    "aggregate verification",
+    "remote-publish",
+    "tk-drive finalization",
     "tk-grill-me",
+    "tk-pr-rebase",
+    "tk-pr-respond",
+    "tk-pr-sweep",
+    "tk-pr-triage",
     "tk-to-spec",
     "tk-to-tickets",
     "tk-prototype",
@@ -32,6 +39,7 @@ PHASES = {
 LIVE_FIXTURES = {
     "[tigerkit-eval:prepared-single]\n/tk-drive": "single",
     "[tigerkit-eval:prepared-two-unit]\n/tk-drive": "two-unit",
+    "[tigerkit-eval:prepared-respond-ci]\n/tk-pr-respond --ci": "respond-ci",
     "/tk-drive Create canary-choice.txt containing alpha.": "cold-start",
 }
 LIVE_FIXTURE_CONTENT = {
@@ -40,6 +48,7 @@ LIVE_FIXTURE_CONTENT = {
         "canary-alpha.txt": b"alpha\n",
         "canary-beta.txt": b"beta\n",
     },
+    "respond-ci": {"respond-canary.txt": b"resolved\n"},
     "cold-start": {"canary-choice.txt": b"alpha\n"},
 }
 STATUS_PATTERN = re.compile(
@@ -51,6 +60,7 @@ STATUS_PATTERN = re.compile(
 class CodexObservation:
     def __init__(self) -> None:
         self.output = ""
+        self._terminal_output = ""
         self.total_tokens: int | None = None
         self.duration_ms: int | float | None = None
         self.tool_uses = 0
@@ -78,7 +88,8 @@ class CodexObservation:
             if method == "item/completed" and item_type == "agentMessage":
                 text = item.get("text")
                 if isinstance(text, str):
-                    self.output = text
+                    self.output = f"{self.output}\n\n{text}" if self.output else text
+                    self._terminal_output = text
             return
         if method == "thread/tokenUsage/updated":
             token_usage = params.get("tokenUsage")
@@ -104,10 +115,12 @@ class CodexObservation:
                     continue
                 text = item.get("text")
                 if isinstance(text, str):
-                    self.output = text
+                    self.output = f"{self.output}\n\n{text}" if self.output else text
+                    self._terminal_output = text
 
     def fail(self, output: str) -> None:
         self.output = output
+        self._terminal_output = output
         self.turn_failed = True
 
     def result(
@@ -120,7 +133,7 @@ class CodexObservation:
         events: list[dict[str, str]],
     ) -> dict[str, object]:
         status = _terminal_status(
-            self.output,
+            self._terminal_output or self.output,
             mode=mode,
             is_error=self.turn_failed,
         )
@@ -392,6 +405,127 @@ def _configure_eval_git(checkout: Path) -> None:
             raise RuntimeError(f"cannot secure prepared eval Git config: {key}")
 
 
+def _prepare_respond_ci_fixture(checkout: Path) -> str:
+    tigerkit = checkout / ".tigerkit"
+    if tigerkit.exists():
+        raise RuntimeError("prepared eval fixture requires an empty .tigerkit path")
+    tigerkit.mkdir()
+    branch = _ensure_eval_branch(checkout, "respond-ci")
+    head = _git_value(checkout, "rev-parse", "HEAD")
+    remote = tigerkit / "respond-ci-remote.git"
+    for command in (
+        ["git", "init", "--bare", "-q", str(remote)],
+        ["git", "push", "-q", str(remote), f"{head}:refs/heads/{branch}"],
+    ):
+        completed = subprocess.run(
+            command,
+            cwd=checkout,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if completed.returncode != 0:
+            detail = completed.stderr.strip() or completed.stdout.strip()
+            raise RuntimeError(f"cannot prepare respond CI fixture: {detail}")
+    state = {
+        "repository": "tigerkit/eval",
+        "pull_request": 42,
+        "author": "tigerkit-eval",
+        "authenticated_user": "tigerkit-eval",
+        "open": True,
+        "head_ref": branch,
+        "head_sha": head,
+        "comment_id": "C-EVAL-1",
+        "thread_id": "T-EVAL-1",
+        "requested_outcome": "Create respond-canary.txt containing resolved plus one trailing newline.",
+        "reply": False,
+        "resolved": False,
+        "remote": str(remote),
+    }
+    (tigerkit / "respond-ci-state.json").write_text(
+        json.dumps(state, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    transport = tigerkit / "respond-ci-fixture.py"
+    transport.write_text(
+        '''#!/usr/bin/env python3
+import json
+from pathlib import Path
+import subprocess
+import sys
+
+root = Path.cwd()
+state_path = root / ".tigerkit/respond-ci-state.json"
+state = json.loads(state_path.read_text(encoding="utf-8"))
+
+def git(*args):
+    result = subprocess.run(["git", *args], cwd=root, text=True, capture_output=True)
+    if result.returncode:
+        raise SystemExit(result.stderr.strip() or result.stdout.strip())
+    return result.stdout.strip()
+
+def save():
+    state_path.write_text(json.dumps(state, indent=2, sort_keys=True) + "\\n", encoding="utf-8")
+
+command = sys.argv[1] if len(sys.argv) > 1 else ""
+if command == "read":
+    finding = None if state["resolved"] else {
+        "comment_id": state["comment_id"],
+        "thread_id": state["thread_id"],
+        "requested_outcome": state["requested_outcome"],
+    }
+    print(json.dumps({**state, "finding": finding}, sort_keys=True))
+elif command == "push":
+    current = git("rev-parse", "HEAD")
+    git("merge-base", "--is-ancestor", state["head_sha"], current)
+    if (root / "respond-canary.txt").read_bytes() != b"resolved\\n":
+        raise SystemExit("respond canary content mismatch")
+    git("push", "-q", state["remote"], f"{current}:refs/heads/{state['head_ref']}")
+    state["head_sha"] = current
+    state["pushed"] = True
+    save()
+    print(json.dumps({"pushed_head": current}))
+elif command == "reply":
+    body = " ".join(sys.argv[2:])
+    if not state.get("pushed") or not body.endswith("_🤖 본 코멘트는 AI가 작성했습니다._"):
+        raise SystemExit("reply requires pushed head and exact disclosure")
+    state["reply"] = True
+    save()
+    print(json.dumps({"reply": True}))
+elif command == "resolve":
+    if not state["reply"]:
+        raise SystemExit("thread resolution requires a successful reply")
+    state["resolved"] = True
+    save()
+    print(json.dumps({"resolved": True}))
+elif command == "verify":
+    remote_head = git("--git-dir", state["remote"], "rev-parse", f"refs/heads/{state['head_ref']}")
+    current = git("rev-parse", "HEAD")
+    ok = state.get("pushed") and state["reply"] and state["resolved"] and remote_head == current
+    print(json.dumps({"complete": bool(ok), "head": current}, sort_keys=True))
+    raise SystemExit(0 if ok else 1)
+else:
+    raise SystemExit("usage: respond-ci-fixture.py read|push|reply <body>|resolve|verify")
+''',
+        encoding="utf-8",
+    )
+    transport.chmod(0o700)
+    _configure_eval_git(checkout)
+    return (
+        "[tigerkit-eval: active tk-pr-sweep handoff with exact PR #42/head "
+        "evidence; use `python3 .tigerkit/respond-ci-fixture.py read` for every "
+        "fresh PR read. The one actionable finding requires an independently "
+        "verified tk-implement unit that creates `respond-canary.txt` containing "
+        "`resolved` plus one trailing newline. After its Pass, emit only the "
+        "owning nonterminal progress checkpoint and continue without asking or "
+        "ending the turn. Immediately before publication, record "
+        "`remote-publish`, then run the fixture `push`, `reply` with the exact AI "
+        "disclosure suffix, `resolve`, and `verify` commands in order. Finish only "
+        "after a fresh `read` proves the thread resolved.]\n"
+        "/tk-pr-respond --ci"
+    )
+
+
 def _prepare_live_fixture(
     checkout: Path,
     skills_target: Path,
@@ -403,6 +537,8 @@ def _prepare_live_fixture(
     if kind == "cold-start":
         _configure_eval_git(checkout)
         return prompt
+    if kind == "respond-ci":
+        return _prepare_respond_ci_fixture(checkout)
 
     tigerkit = checkout / ".tigerkit"
     if tigerkit.exists():
@@ -812,6 +948,7 @@ def _available_repo_skills(
     result: Mapping[str, object],
     *,
     checkout: Path,
+    expected_skill: str,
 ) -> tuple[list[str], dict[str, object] | None]:
     data = result.get("data")
     if not isinstance(data, list):
@@ -830,18 +967,18 @@ def _available_repo_skills(
             if isinstance(value.get("name"), str) and value.get("enabled") is True
         }
     )
-    drive = next(
+    selected = next(
         (
             value
             for value in skills
-            if value.get("name") == "tk-drive"
+            if value.get("name") == expected_skill
             and value.get("enabled") is True
             and value.get("path")
-            == str(checkout / ".agents/skills/tk-drive/SKILL.md")
+            == str(checkout / ".agents/skills" / expected_skill / "SKILL.md")
         ),
         None,
     )
-    return names, drive
+    return names, selected
 
 
 def _prepare_codex_home(run_dir: Path) -> Path:
@@ -940,9 +1077,10 @@ def _run_codex(
         available_skills, selected_skill = _available_repo_skills(
             skill_result,
             checkout=checkout,
+            expected_skill=skill,
         )
-        if skill != "tk-drive" or selected_skill is None:
-            raise RuntimeError("Codex did not expose the staged repo tk-drive skill")
+        if selected_skill is None:
+            raise RuntimeError(f"Codex did not expose the staged repo {skill} skill")
         thread_params: dict[str, object] = {
             "cwd": str(checkout),
             "approvalPolicy": "on-request" if approval_handler else "never",

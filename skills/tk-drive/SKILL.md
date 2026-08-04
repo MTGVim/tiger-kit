@@ -46,6 +46,31 @@ Use the complete edge and state-normalization contract in [phases.md](references
 
 Direct continuation is a prompt-directed instruction, not a durable scheduler or guaranteed cross-turn execution. After a host or process boundary, resume by rereading current artifacts and repository evidence.
 
+## Progress commentary
+
+Drive owns user-visible progress for the active graph. At meaningful boundaries,
+render one compact checkpoint beginning `▶️ Progress` with `Decision`, `Evidence`, and
+`Result/Next` semantics. Show the initial procedure plan after preflight, each
+unit start and verified result, aggregate-verification start and result, every
+corrective-cycle transition, and the transition to finalization. Use only the
+decisive repository/runtime fact and active safety or retry bound; mention a
+rejected alternative only when it was materially competitive.
+
+A checkpoint is nonterminal commentary, not a child receipt, approval request,
+phase-success output, or status. Within existing authority, render it and
+continue immediately. Child procedures return their native state internally;
+Drive translates that evidence into the checkpoint instead of exposing duplicate
+child commentary. Before long blocking verification, state what is starting and
+the next decision condition, then report its result immediately afterward. Do
+not promise timer-based heartbeats or expose raw chain-of-thought or
+command-by-command logs.
+
+Make outcomes scannable without replacing canonical status tokens: use
+`✅ Pass`, `⏳ Waiting`, `⚠️ Advisory`, `❌ Fail`, `⛔ Blocked`, and
+`❓ Unverifiable` for the corresponding checkpoint or terminal outcome. Always
+pair the emoji with that exact text; never emit an emoji-only state. Preserve
+the required terminal `Status: <token>` line unchanged.
+
 ## Preparing
 
 Before product mutation:
@@ -84,7 +109,10 @@ For each unit:
 1. pass its exact R/AC, scope, order, and verification profile to `tk-implement`;
 2. accept only a verified one-unit commit or its bounded non-success handoff;
 3. preserve pre-existing user changes and audit commit ancestry;
-4. treat `Pass` as an internal loop signal: without user-facing output, a pause, or confirmation, invoke `tk-implement` for the next selected unit; leave the loop only after every selected unit is committed or a bounded non-success remains after recovery.
+4. treat `Pass` as an internal loop signal: without a terminal response, pause,
+   or confirmation, render Drive's owning progress checkpoint and invoke
+   `tk-implement` for the next selected unit; leave the loop only after every
+   selected unit is committed or a bounded non-success remains after recovery.
 
 Use `tk-merge-conflict` only for a real merge, rebase, cherry-pick, or revert conflict, then return to the interrupted unit.
 
@@ -104,7 +132,9 @@ After recovery edges are exhausted, normalize the child state through `phases.md
 
 After aggregate product verification passes, finish directly. Reread source, spec, tickets when present, prep, implementation evidence, ancestry, and verification before emitting one terminal response. TigerKit does not own a post-session reflection or persistent-memory phase.
 
-Lead with one user-facing result sentence. Then render `Implemented` with two to seven behavior-level bullets and `Verification` with one to four aggregate-result bullets. For multiple units, include a compact `Ticket | Outcome | Commit` table plus `Unit | Strategy | Additional review | Fix rounds | Result`; summarize review routes instead of repeating raw per-unit review text. Use a sentence when only one user-relevant row exists. When underlying results exceed these limits, keep only the top five to seven items ranked by user impact and verification value. Include `Remaining risks` only when meaningful. End `Verification` with exactly `Status: Pass`; terminal non-success belongs to the read-only finalizer.
+Lead with one user-facing result sentence. Start it with `✅ Pass` for full
+success; non-success finalization uses the mapped problem marker without
+altering its canonical `Status: <token>` line. Then render `Implemented` with two to seven behavior-level bullets and `Verification` with one to four aggregate-result bullets. For multiple units, include a compact `Ticket | Outcome | Commit` table plus `Unit | Strategy | Additional review | Fix rounds | Result`; summarize review routes instead of repeating raw per-unit review text. Use a sentence when only one user-relevant row exists. When underlying results exceed these limits, keep only the top five to seven items ranked by user impact and verification value. Include `Remaining risks` only when meaningful. End `Verification` with exactly `Status: Pass`; terminal non-success belongs to the read-only finalizer.
 
 ### 🔴 HARD GATE · terminal user summary
 

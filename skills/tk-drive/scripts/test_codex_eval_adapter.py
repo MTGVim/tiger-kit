@@ -24,6 +24,37 @@ from codex_eval_adapter import (
 
 
 class CodexObservationTest(unittest.TestCase):
+    def test_preserves_progress_messages_but_derives_status_from_last_message(self) -> None:
+        observation = CodexObservation()
+        for item_id, text in [
+            ("progress", "▶️ Progress\nDecision: publish next"),
+            ("final", "## PR respond\n✅ Pass\nStatus: Pass"),
+        ]:
+            observation.consume(
+                {
+                    "method": "item/completed",
+                    "params": {
+                        "item": {
+                            "type": "agentMessage",
+                            "id": item_id,
+                            "text": text,
+                        }
+                    },
+                }
+            )
+
+        result = observation.result(
+            skill="tk-pr-respond",
+            mode="behavior",
+            available_skills=["tk-pr-respond"],
+            selected=True,
+            events=[],
+        )
+
+        self.assertIn("▶️ Progress", result["output"])
+        self.assertIn("## PR respond", result["output"])
+        self.assertEqual(result["terminal_status"], "Pass")
+
     def test_extracts_marked_phase_order_bulleted_status_and_metrics(self) -> None:
         observation = CodexObservation()
         observation.consume(
@@ -230,6 +261,66 @@ class CodexObservationTest(unittest.TestCase):
             self.assertEqual(result, prompt)
             self.assertFalse((checkout / ".tigerkit/prep.md").exists())
             self.assertTrue((checkout / ".tigerkit/no-hooks").is_dir())
+
+    def test_respond_ci_fixture_requires_commit_push_reply_and_resolution(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            checkout = Path(directory)
+            subprocess.run(["git", "init", "-qb", "main"], cwd=checkout, check=True)
+            subprocess.run(
+                ["git", "config", "user.email", "canary@example.invalid"],
+                cwd=checkout,
+                check=True,
+            )
+            subprocess.run(
+                ["git", "config", "user.name", "Canary"],
+                cwd=checkout,
+                check=True,
+            )
+            (checkout / "README.md").write_text("fixture\n", encoding="utf-8")
+            subprocess.run(["git", "add", "README.md"], cwd=checkout, check=True)
+            subprocess.run(["git", "commit", "-qm", "fixture"], cwd=checkout, check=True)
+
+            prompt = _prepare_live_fixture(
+                checkout,
+                checkout / ".agents" / "skills",
+                "[tigerkit-eval:prepared-respond-ci]\n/tk-pr-respond --ci",
+            )
+            self.assertIn("remote-publish", prompt)
+            self.assertTrue(prompt.endswith("\n/tk-pr-respond --ci"))
+            transport = checkout / ".tigerkit/respond-ci-fixture.py"
+            read = subprocess.run(
+                [sys.executable, str(transport), "read"],
+                cwd=checkout,
+                text=True,
+                capture_output=True,
+                check=True,
+            ).stdout
+            self.assertIn('"thread_id": "T-EVAL-1"', read)
+
+            (checkout / "respond-canary.txt").write_text("resolved\n", encoding="utf-8")
+            subprocess.run(["git", "add", "respond-canary.txt"], cwd=checkout, check=True)
+            subprocess.run(["git", "commit", "-qm", "canary"], cwd=checkout, check=True)
+            subprocess.run([sys.executable, str(transport), "push"], cwd=checkout, check=True)
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(transport),
+                    "reply",
+                    "Fixed.",
+                    "_🤖 본 코멘트는 AI가 작성했습니다._",
+                ],
+                cwd=checkout,
+                check=True,
+            )
+            subprocess.run([sys.executable, str(transport), "resolve"], cwd=checkout, check=True)
+            verified = subprocess.run(
+                [sys.executable, str(transport), "verify"],
+                cwd=checkout,
+                text=True,
+                capture_output=True,
+                check=True,
+            ).stdout
+            self.assertIn('"complete": true', verified)
 
     def test_prepared_live_fixture_is_strict_same_run_continuation(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

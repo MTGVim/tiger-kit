@@ -17,6 +17,7 @@
     "tk-pr-open:behavior:pr-open-prepares-plan",
     "tk-pr-triage:behavior:pr-triage-is-read-only",
     "tk-pr-respond:behavior:pr-respond-apply-does-not-publish",
+    "tk-pr-respond:behavior:pr-respond-live-ci-publication-continuation",
     "tk-pr-rebase:behavior:pr-rebase-requires-exact-lease-and-freshness"
   ],
   "catalog_cases": [

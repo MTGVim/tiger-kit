@@ -31,7 +31,7 @@ verified force-with-lease, replies, verified thread resolution, conditional
 human re-review, and at most one PR-level summary comment. It does not authorize
 external CI repair, unverifiable-check repair, PR creation, merge, close, tag,
 release, general publication, history rewriting outside the exact rebase lease,
-or out-of-scope product work.
+draft-to-`Ready for review` transitions, or out-of-scope product work.
 
 ## Closed router
 
@@ -64,18 +64,16 @@ receipt. Reclassify from GitHub evidence.
    `git worktree` only when Orca is unavailable or the repository is unregistered,
    and record which fallback and exact path were used.
 4. Invoke exactly one owner from the closed router. A child `Pass` is an internal
-   signal: re-triage that exact PR/head without a terminal response, then follow a
-   new supported category only while its bound remains. A child non-success is
-   recorded and does not authorize a sibling call for that same failed state.
+   signal: render the sweep-owned progress checkpoint, re-triage that exact
+   PR/head without a terminal response or pause, then follow a new supported
+   category only while its bound remains. A child non-success is recorded and
+   does not authorize a sibling call for that same failed state.
 5. Keep prompt-local route evidence only: one rebase per exact
    `(base_sha, head_sha)`, at most three GitHub Actions corrective cycles, and one
    feedback response per fresh head SHA. Repeated unchanged failure or an
    exhausted bound stops that PR without another mutation. Do not create a
    durable cursor, scheduler, retry queue, or shared state framework.
-6. Continue after PR-local `Fail`, `Blocked`, or `Unverifiable`. Freeze all
-   remaining mutation only for a shared safety failure such as unresolved
-   authenticated identity, corrupt configured-repository evidence, or inability
-   to prove repository/worktree ownership.
+6. After every PR-local `Pass`, `Fail`, `Blocked`, or `Unverifiable`, record the result and remaining count, then advance immediately to the next frozen queue entry without a child receipt, terminal response, pause, or confirmation. Freeze all remaining mutation only for a shared safety failure such as unresolved authenticated identity, corrupt configured-repository evidence, or inability to prove repository/worktree ownership.
 7. Track one summary budget per PR. Accept `summary budget: unused` from rebase;
    let a later response publish the combined rebase/CI summary, otherwise publish
    one rebase-only summary after the final fresh PR read. Never publish a second
@@ -94,6 +92,18 @@ receipt. Reclassify from GitHub evidence.
    disposition, report-only items, systemic stop if any, and every remaining
    final-triage item. Do not store credentials or a resume cursor.
 
+## Progress commentary
+
+The sweep owns the unified progress surface. At meaningful boundaries, render one compact checkpoint beginning `▶️ Progress` with `Decision`, `Evidence`, and `Result/Next` semantics: after freezing the initial queue; before each PR route; after every child mutation or bounded check cycle; when closing a PR with its remaining count; and before and after final triage. Use only the decisive fresh GitHub/repository evidence and active route bound. Mention a rejected route only when evidence made it materially competitive.
+
+These checkpoints are nonterminal commentary and never consume the one terminal response. A child invoked by the sweep returns its decision, evidence, result, and next action internally; it does not render duplicate progress, a receipt, or a status. Within existing sweep authority, render the checkpoint and continue immediately. Before a long blocking check or verification, state what is starting and the next decision condition, then report its result immediately afterward. Do not promise timer heartbeats or expose raw chain-of-thought or command-by-command logs.
+
+Make outcomes scannable without replacing canonical status tokens: use
+`✅ Pass`, `⏳ Waiting`, `⚠️ Advisory`, `❌ Fail`, `⛔ Blocked`, and
+`❓ Unverifiable` for the corresponding PR-local, checkpoint, or aggregate
+outcome. Always pair the emoji with that exact text; never emit an emoji-only
+state. Preserve the required terminal `Status: <token>` line unchanged.
+
 ## Aggregate result
 
 `Pass` requires every supported target encountered by the initial, per-PR, or
@@ -108,7 +118,9 @@ Lead with `## PR sweep`. Show processed PR results, report-only external CI and
 `checks_unverifiable`, retained worktrees, and all remaining final-triage items.
 For eight or more rows, show the top five to seven and cite
 `.tigerkit/pr-sweep.md`. Keep exact child provenance in owned artifacts, not in
-the terminal response.
+the terminal response. Lead the aggregate result itself with its mapped visible
+marker, including `✅ Pass` for a full pass, without replacing the exact final
+status line.
 
 ### 🔴 HARD GATE · terminal user summary
 
