@@ -35,7 +35,7 @@ class CodexObservationTest(unittest.TestCase):
                     "method": "item/completed",
                     "params": {
                         "item": {
-                            "type": "agentMessage",
+                            "type": "agent_message" if item_id == "progress" else "agentMessage",
                             "id": item_id,
                             "text": text,
                         }
@@ -54,6 +54,7 @@ class CodexObservationTest(unittest.TestCase):
         self.assertIn("▶️ Progress", result["output"])
         self.assertIn("## PR respond", result["output"])
         self.assertEqual(result["terminal_status"], "Pass")
+        self.assertEqual(result["tool_uses"], 0)
 
     def test_extracts_marked_phase_order_bulleted_status_and_metrics(self) -> None:
         observation = CodexObservation()

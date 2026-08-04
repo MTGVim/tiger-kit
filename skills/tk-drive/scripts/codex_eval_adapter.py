@@ -78,14 +78,15 @@ class CodexObservation:
                 return
             item_type = item.get("type")
             item_id = item.get("id")
+            is_agent_message = item_type in {"agentMessage", "agent_message"}
             if (
-                item_type != "agentMessage"
+                not is_agent_message
                 and isinstance(item_id, str)
                 and item_id not in self._seen_tool_items
             ):
                 self._seen_tool_items.add(item_id)
                 self.tool_uses += 1
-            if method == "item/completed" and item_type == "agentMessage":
+            if method == "item/completed" and is_agent_message:
                 text = item.get("text")
                 if isinstance(text, str):
                     self.output = f"{self.output}\n\n{text}" if self.output else text
@@ -111,7 +112,7 @@ class CodexObservation:
         items = turn.get("items")
         if not self.output and isinstance(items, list):
             for item in items:
-                if not isinstance(item, dict) or item.get("type") != "agentMessage":
+                if not isinstance(item, dict) or item.get("type") not in {"agentMessage", "agent_message"}:
                     continue
                 text = item.get("text")
                 if isinstance(text, str):
