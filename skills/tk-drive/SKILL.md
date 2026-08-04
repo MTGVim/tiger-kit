@@ -84,7 +84,7 @@ For each unit:
 1. pass its exact R/AC, scope, order, and verification profile to `tk-implement`;
 2. accept only a verified one-unit commit or its bounded non-success handoff;
 3. preserve pre-existing user changes and audit commit ancestry;
-4. continue directly to the next selected unit.
+4. treat `Pass` as an internal loop signal: without user-facing output, a pause, or confirmation, invoke `tk-implement` for the next selected unit; leave the loop only after every selected unit is committed or a bounded non-success remains after recovery.
 
 Use `tk-merge-conflict` only for a real merge, rebase, cherry-pick, or revert conflict, then return to the interrupted unit.
 
