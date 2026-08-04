@@ -1,11 +1,10 @@
 ---
 name: tk-pr-triage
-description: "[user] Read-only triage of the executing repository's GitHub pull requests, reviews, checks, replies, and re-review state."
+description: "[user/auto] Read-only triage of configured GitHub pull requests, reviews, checks, replies, and re-review state."
 argument-hint: "<repository or current repository>"
-disable-model-invocation: true
 metadata:
   tigerkit:
-    kind: user-invoked
+    kind: hybrid
     origin: tigerkit
     relationship: native
 ---
@@ -14,7 +13,8 @@ metadata:
 
 Start only when the user selects `/tk-pr-triage`, `$tk-pr-triage`, or the host
 skill picker. Do not activate from a generic GitHub question, implementation
-request, issue triage, or review-response request.
+request, issue triage, or review-response request. A fresh configured-repository
+handoff from active `tk-pr-sweep` is the only automatic entry.
 
 This skill is read-only for repositories and GitHub: it must not mutate project
 files, branches, commits, issues, pull requests, comments, reviews, or threads.

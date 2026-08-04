@@ -1,0 +1,4 @@
+interface:
+  short_description: "[user] Sweep supported PR maintenance across configured repositories with fresh bounded evidence."
+  policy:
+    allow_implicit_invocation: false

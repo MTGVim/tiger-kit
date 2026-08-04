@@ -35,14 +35,18 @@ when `scripts/run_drive_experiment.py` reports a measured `RemoveCandidate` resu
 
 ## Core boundaries
 
-- `tk-drive` is the explicit orchestrator. Phase owners never invoke sibling phase
-  owners. Continuation is prompt-directed, not durable scheduling.
+- `tk-drive` is the explicit product-change orchestrator. `tk-pr-sweep` is the
+  narrow second explicit orchestrator for multi-PR maintenance only. Other phase
+  owners never invoke sibling phase owners. Continuation is prompt-directed, not
+  durable scheduling.
 - `tk-ask-repo` is read-only investigation and never implements.
 - `tk-implement` owns one unit and one verified current-branch commit.
 - `tk-drive` may authorize one such commit per selected unit and owns aggregate
   traceability, ancestry, cross-unit verification, and finalization.
 - Browser tools for user-visible behavior run inside `tk-browser-verify`.
-- Push, PR, merge, tag, release, and publish need separate explicit authority.
+- Push, PR, merge, tag, release, and publish need separate explicit authority;
+  explicit `tk-pr-sweep` supplies only its documented bounded PR-maintenance
+  authority.
 - Small work and ordinary follow-up feedback stay in the current conversation.
 
 ## Eval single source of truth

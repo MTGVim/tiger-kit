@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 2026.08.04-2 — Release
+
+- feat: add bounded PR sweep orchestrator
+- feat: add sweep CI mode to PR rebase
+- feat: add CI mode to PR response
+
 ## 2026.08.04-1 — Release
 
 - fix(workflows): continue through every successful implementation unit

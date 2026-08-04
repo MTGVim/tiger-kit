@@ -1,6 +1,6 @@
 {
   "skill": "tk-pr-rebase",
-  "kind": "user-invoked",
+  "kind": "hybrid",
   "queries": [
     {"id":"train-explicit","split":"train","query":"$tk-pr-rebase","should_trigger":true},
     {"id":"train-negative","split":"train","query":"이 PR을 최신 main으로 rebase해줘","should_trigger":false},
@@ -8,9 +8,17 @@
     {"id":"validation-positive-2","split":"validation","query":"tk-pr-rebase 이 PR update하고 리뷰 다시 요청해줘","should_trigger":true,"facets":["casual"]},
     {"id":"validation-positive-3","split":"validation","query":"$tk-pr-rebase #42","should_trigger":true,"facets":["short"]},
     {"id":"validation-positive-4","split":"validation","query":"tk-pr-rebase 충돌 해결하고 force-with-lease 뒤 reviewer에게 재요청","should_trigger":true,"facets":["compound"]},
+    {"id":"validation-positive-ci","split":"validation","query":"$tk-pr-rebase --ci PR #42","should_trigger":true,"facets":["short"]},
+    {"id":"validation-positive-handoff-ko-en","split":"validation","query":"[active tk-pr-sweep handoff] exact base/head로 tk-pr-rebase --ci","should_trigger":true,"facets":["ko-en"]},
+    {"id":"validation-positive-typo","split":"validation","query":"tk-pr-rebse PR #42 exact lease","should_trigger":true,"facets":["typo"]},
+    {"id":"validation-positive-handoff-formal","split":"validation","query":"[active tk-pr-sweep → tk-pr-rebase --ci] frozen pair를 처리해 주세요","should_trigger":true,"facets":["formal"]},
     {"id":"validation-negative-1","split":"validation","query":"진행 중인 rebase conflict만 해결해줘","should_trigger":false,"facets":["formal"]},
     {"id":"validation-negative-2","split":"validation","query":"PR 리뷰 코멘트를 반영하고 답글 달아줘","should_trigger":false,"facets":["casual"]},
     {"id":"validation-negative-3","split":"validation","query":"update branch 상태만 확인해줘","should_trigger":false,"facets":["ko-en"]},
-    {"id":"validation-negative-4","split":"validation","query":"현재 브랜치를 rebase해","should_trigger":false,"facets":["short"]}
+    {"id":"validation-negative-4","split":"validation","query":"현재 브랜치를 rebase해","should_trigger":false,"facets":["short"]},
+    {"id":"validation-negative-ci-generic","split":"validation","query":"충돌 난 PR들을 CI에서 전부 rebase해","should_trigger":false,"facets":["compound"]},
+    {"id":"validation-negative-short-extra","split":"validation","query":"rebase help","should_trigger":false,"facets":["short"]},
+    {"id":"validation-negative-typo","split":"validation","query":"현재 branch rebsae해","should_trigger":false,"facets":["typo"]},
+    {"id":"validation-negative-handoff-like","split":"validation","query":"active conflict니까 자동으로 계속해","should_trigger":false,"facets":["ko-en"]}
   ]
 }

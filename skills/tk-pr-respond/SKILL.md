@@ -1,11 +1,10 @@
 ---
 name: tk-pr-respond
-description: "[user] Resolve selected GitHub pull-request feedback through verified tk-implement units and an exact current-turn publication plan."
-argument-hint: "<pull request or repository>"
-disable-model-invocation: true
+description: "[user/auto] Resolve one pull request's selected feedback or GitHub Actions failures through verified tk-implement units and bounded publication."
+argument-hint: "<pull request or repository> [--ci]"
 metadata:
   tigerkit:
-    kind: user-invoked
+    kind: hybrid
     origin: tigerkit
     relationship: native
 ---
@@ -14,13 +13,22 @@ metadata:
 
 Start only when the user selects `/tk-pr-respond`, `$tk-pr-respond`, or the host
 skill picker. Do not activate from generic review, implementation, triage, or
-continuation requests.
+continuation requests. A fresh exact-PR handoff from active `tk-pr-sweep` is the
+only automatic entry.
 
 This skill owns review interpretation, resolution-unit planning, aggregate
 review state, and bounded remote publication. It writes `.tigerkit/pr-respond.md`
 as evidence, but it never edits product code or creates product commits itself.
 Each code change is delegated to `tk-implement` as one independently verifiable
 unit; `tk-implement` owns the unit commit and verification.
+
+## Modes
+
+- **Normal:** preserve the selection and publication questions in this contract.
+- **CI:** explicit `--ci`, directly or through `tk-pr-sweep`, is bounded authority
+  to process the fresh supported scope without questions. It is not authority for
+  another PR, external CI, unverifiable checks, force-push, merge, close, tag,
+  release, or publication outside this PR response.
 
 ## Workflow
 
@@ -75,6 +83,42 @@ unit; `tk-implement` owns the unit commit and verification.
 9. Re-read the PR and report partial writes as `Fail`. Never force-push, merge,
    close unrelated threads, request bot review, tag, release, or publish a
    release.
+
+## CI mode
+
+1. Freeze repository, authenticated identity, PR author, open state, base, head
+   ref/SHA, exact push refspec, checks, findings, and requested reviewers from a
+   fresh read. Direct `--ci` and a sweep handoff have the same authority. Stop
+   `Blocked` before mutation on identity, repository, ref, or head drift.
+2. For `changes_requested` or `needs_reply`, treat every fresh actionable finding
+   as selected, form the minimum independently verifiable resolution units, and
+   run the normal `tk-implement` loop without a selection question.
+3. For `checks_failed`, resolve each failed check to its provider. Automate only
+   GitHub Actions checks. Read the current run, job, step, annotation, and bounded
+   log evidence; keep external-provider failures report-only. Distinguish a
+   repository-caused failure from queued, cancelled, flaky, infrastructure, or
+   inaccessible evidence before creating a resolution unit. Do not invoke an
+   interactive `gh-fix-ci` procedure as an automatic child. When no supported
+   repository-caused failure remains, create no unit or push and return
+   `Unverifiable` with the observed unsupported or unavailable state.
+4. After a repository-caused Actions fix passes local verification, push only the
+   frozen head refspec. Immediately before that push, re-read repository,
+   authenticated identity, open state, remote head/ref, and verify that the local
+   commit descends from the frozen head; any mismatch is `Blocked`. Then fetch the
+   new exact head and fresh check state. When that head equals the just-pushed
+   commit, promote it to the expected head and ancestry baseline for the next
+   cycle. Allow at most three corrective cycles. Repeated unchanged failure, an
+   exhausted third cycle, or unverifiable post-push checks stops without a fourth
+   mutation.
+5. Publish exact per-finding replies, resolve only freshly verified threads, and
+   conditionally request human re-review using the normal ordering and exclusions.
+   Publish at most one PR-level summary comment combining CI-fix and supplied
+   rebase outcomes. Every generated reply or comment ends exactly with
+   `_🤖 본 코멘트는 AI가 작성했습니다._`.
+6. Re-read the PR after all writes. Return `Pass` only when the selected feedback
+   and supported GitHub Actions failures are complete on the observed head.
+   External CI is report-only; missing required evidence is `Unverifiable`, drift
+   is `Blocked`, and a change-related or partial-write failure is `Fail`.
 
 Use `Pass` only when the requested response scope is complete, `Pending` while
 waiting for selection or publication approval, `Blocked` for authority,
