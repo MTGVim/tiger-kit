@@ -11,66 +11,63 @@ metadata:
 
 # Prototype
 
-Apply on explicit invocation or a request for an executable disposable
+Apply on explicit invocation or request for executable disposable
 comparison/harness. Do not auto-apply to production implementation or
 conversation-only exploration.
 
-Accept a prompt, idea, screenshot, spec, ticket, code, or design reference.
-Unless a temporary route/harness is more useful, write under
+Accept prompt, idea, screenshot, spec, ticket, code, or design reference.
+Unless temporary route/harness is more useful, write under
 `.tigerkit/prototypes/<slug>/`. Create parents lazily, replace atomically when
-possible, never archive automatically or edit `.gitignore`, and warn when
-scratch is tracked.
+possible, never auto-archive or edit `.gitignore`, warn when scratch is tracked.
 
 ## Workflow
 
-1. `hypothesis/success criteria`: produce measurable criteria from the idea,
+1. `hypothesis/success criteria`: derive measurable criteria from idea,
    references, and verification question.
 2. `temporary path/boundary`: inspect repository preflight; choose existing
    toolchain/UI stack/components/tokens, temp path, artifact ownership, and
    `fake | real` integration boundary.
-3. `variants/harness`: build 2–3 variants or a harness with real example I/O.
-4. `run`: execute selected variants/harness and capture actual output or
+3. `variants/harness`: build 2–3 variants or harness with real example I/O.
+4. `run`: execute selected variants/harness; capture actual output or
    screenshots plus command result.
 5. `compare`: map evidence to criteria, verified differences, unverified items,
-   and next decision. When a parent contract records `PR evidence: required`,
-   retain a run-owned absolute `Screenshot: <path>` and the actual image
-   inspection under `## Tested`, then expose a bounded handoff with
-   `evidence_required: true`, the criterion, evidence directory, and producer
-   `tk-prototype`.
+   and next decision. When parent contract records `PR evidence: required`,
+   retain run-owned absolute `Screenshot: <path>` and actual image inspection
+   under `## Tested`, then expose bounded handoff with `evidence_required: true`,
+   criterion, evidence directory, and producer `tk-prototype`.
 6. `terminal summary`: return `## Confirmed`, `## Production implication`,
    `## Tested`, `## Variants or harness`, and `## Still fake` as applicable.
-   Do not append a provenance/status block.
+   Do not append provenance/status block.
 
 For unresolved UI comparison, build 2–3 materially different rendered
 alternatives with a switch. Vary information architecture, flow, hierarchy,
-navigation, or feedback, not color alone. For logic, prefer a small pure
-harness with example inputs/outputs and minimal adapter.
+navigation, or feedback—not color alone. For logic, prefer small pure harness
+with example inputs/outputs and minimal adapter.
 
 For web prototypes, inspect repository run commands, installed UI stack,
-components, and design tokens. Reuse a safe isolated route/harness without new
-dependencies or manifest/lockfile changes. If none exists, use a small
+components, and design tokens. Reuse safe isolated route/harness without new
+dependencies or manifest/lockfile changes. If none exists, use small
 `.tigerkit/prototypes/<slug>/index.html`, `styles.css`, and `app.js`.
 
-Hold content, data, and interaction state constant while comparing only 2–3
-decision-relevant concepts. Default to side-by-side 2–3 columns wide and stacked
-narrow. Use an explicit A/B or A/B/C toggle only when simultaneous rendering
-harms the concept or minimum legibility. Stop at A/B if a third adds no
-independent value; create no prototype when repository evidence resolves the
-decision.
+Hold content, data, and interaction state constant while comparing 2–3
+decision-relevant concepts. Default side-by-side 2–3 columns wide, stacked
+narrow. Use explicit A/B or A/B/C toggle only when simultaneous rendering harms
+concept or minimum legibility. Stop at A/B if third adds no independent value;
+create no prototype when repository evidence resolves decision.
 
 Verify web output through `tk-browser-verify` Guard mode, including actual
-interaction, run URL/command, and success-criteria screenshots. Check both wide
-and narrow only when the hypothesis concerns responsiveness/layout. Clean only
-run-owned tracked harnesses and temporary servers; preserve existing routes,
-dependencies, and production source.
+interaction, run URL/command, and success-criteria screenshots. Check wide and
+narrow only when hypothesis concerns responsiveness/layout. Clean only run-owned
+tracked harnesses and temporary servers; preserve existing routes, dependencies,
+and production source.
 
 Do not commit by default. Do not invest in production abstractions/error
 handling, call output production-ready, auto-promote it, or invoke another user
 skill.
 
-For a PR evidence handoff, expose the screenshot path, run-owned evidence
-directory, criterion, and actual image inspection. This is evidence of the
-prototype comparison, not an official runtime verdict.
+For PR evidence handoff, expose screenshot path, run-owned evidence directory,
+criterion, and actual image inspection. This proves prototype comparison, not an
+official runtime verdict.
 
 ## Failure paths
 
@@ -91,59 +88,66 @@ Before execution, confirm temp path, fake/real data, and verification question.
 No environment or production-scope expansion stops `Blocked | Unverifiable`.
 
 Before reporting, reconcile command, actual output/screenshot, fake/real
-boundary, and unverified scope. Any missing item or failed execution prevents
+boundary, and unverified scope. Missing item or failed execution prevents
 `Complete`; use `Fail | Blocked | Unverifiable`.
 
 ## Contract
 
-Record decision-relevant status once in the owning section. Lead with
-`## Confirmed`, then
-`## Production implication`, `## Tested`, `## Variants or harness`, and
-`## Still fake`; omit empty sections. Confirmed owns evidence-backed
-conclusions, Production implication the discard/iterate/next decision, Tested
-command results, Variants or harness the alternatives/path/run URL and final
-`kept | removed` state, and Still fake the fake/real and unverified scope.
-Keep command mechanics after the decision.
+Record decision-relevant status once in owning section. Lead with
+`## Confirmed`, then `## Production implication`, `## Tested`,
+`## Variants or harness`, and `## Still fake`; omit empty sections. Confirmed
+owns evidence-backed conclusions; Production implication, discard/iterate/next
+decision; Tested, command results; Variants or harness, alternatives/path/run
+URL and final `kept | removed` state; Still fake, fake/real and unverified scope.
+Keep command mechanics after decision.
 
-When more than one criterion or variant is compared, render `## Confirmed` as
-a compact `Criterion | A | B [| C] | Conclusion | Evidence` table. Use a
-sentence when only one user-relevant row exists. Record whether
-content/data/state stayed equal. Use `not observed` for unseen differences and
-`unverifiable` for missing evidence. Do not promote unaudited aesthetic
-preference into a conclusion.
-Summarize comparison results and selection rationale in two to five bullets or
-option rows. For eight or more observations, show the top five to seven and
-cite the prototype or evidence path that owns the remainder. These are budgets,
-not quotas.
+When comparing multiple criteria or variants, render `## Confirmed` as compact
+`Criterion | A | B [| C] | Conclusion | Evidence` table. Use sentence for one
+user-relevant row. Record whether content/data/state stayed equal. Use
+`not observed` for unseen differences and `unverifiable` for missing evidence.
+Do not promote unaudited aesthetic preference into conclusion.
+Summarize results and selection rationale in two to five bullets or option rows.
+For eight or more observations, show top five to seven and cite prototype or
+evidence path owning remainder. These are budgets, not quotas.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Treat progress commentary, internal procedure evidence, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between successful consecutive active-drive procedure invocations.
+Separate progress/internal evidence from terminal response. Start with skill's
+canonical result heading, or canonical result sentence when schema has no heading.
+No standalone separator, preamble, or progress recap first; no terminal opening
+between successful consecutive active-drive procedure invocations.
 
-Do not render a receipt heading, `Outcome:` label, phase-success token, caller-return instruction, or terminal provenance/status block in the user summary. When the result requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the canonical result schema requires it.
+User summary: no receipt heading, `Outcome:` label, phase-success token,
+caller-return instruction, or provenance/status block. If terminal status is
+required, put one exact `Status: <token>` line in owning result section, never
+bottom metadata. Expose path, ID, commit, or recovery detail only when user action
+changes or canonical schema requires it.
 
-Persist provenance only in an artifact or ledger already owned by the workflow. A read-only skill remains read-only. Never require a shared runtime reference outside this skill.
+Persist provenance only in workflow-owned artifact/ledger. Read-only stays
+read-only. Never require shared runtime reference outside this skill.
 
 ### 🔴 HARD GATE · response language
 
-Before any user-facing progress, question, or summary, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose result value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
+Before any user-facing text, resolve language from latest explicit instruction;
+otherwise current user message. Use it for all free-form sentences and prose
+values, regardless of English sources, skills, tools, or code. Keep canonical
+headings, status tokens, IDs, commands, paths, code, and exact quoted/source
+literals byte-stable; explain around them. Rewrite language drift before return.
 
 ## User decision questions
 
-When a user-owned decision blocks progress, ask one self-contained `Question`
-before any `Recommendation`. Show only decision-relevant evidence, two or three
-mutually exclusive options with material tradeoffs, and exactly one label
-ending `(Recommended)` or `(추천)`.
+When user-owned decision blocks progress, show one self-contained `Question`
+before `Recommendation`, only decision-relevant evidence, two or three exclusive
+options with material tradeoffs, and exactly one `(Recommended)` or `(추천)` label.
 
-Render variant previews, comparisons, recommendations, options, and any question
-directly in the chat response; do not use a structured question or input tool as
-the presentation surface. Preserve `Pending | Blocked` until the user answers.
-Execution tools may still build and run the disposable prototype; this changes
-presentation, not execution authority or stop gates.
+Render variant previews, comparisons, recommendations, options, and questions in
+chat, never via structured question/input tool. Preserve `Pending | Blocked`
+until answer. Execution tools may still build/run disposable prototype; this
+changes presentation, not execution authority or stop gates.
 
 ## DO NOT / ANTI-PATTERNS
 
 - Do not call a prototype production-ready or auto-promote/commit it.
 - Do not report fake integration as real or claim success without run evidence.
 - Do not add color-only variants, dependencies, manifest/lockfile edits,
-  unnecessary production abstraction, or a valueless third option.
+  unnecessary production abstraction, or valueless third option.

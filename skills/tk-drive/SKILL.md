@@ -12,13 +12,13 @@ metadata:
 
 # Drive
 
-Start only when the user selects `/tk-drive`, `$tk-drive`, or the host skill picker with a source, or answers this drive's pending decision in the same conversation. Ordinary implementation requests, generic continuation, artifacts, or a new session do not start or resume it.
+Start only when user selects `/tk-drive`, `$tk-drive`, or host skill picker with a source, or answers this drive's pending decision in the same conversation. Ordinary implementation requests, generic continuation, artifacts, or new sessions neither start nor resume it.
 
 ## Authority
 
-One start authorizes Preparing, Executing, aggregate verification, unit review, one verified current-branch commit per selected unit, and at most three corrective unit commits. It does not authorize push, PR, merge, tag, release, publish, history rewriting, or out-of-scope mutation.
+One start authorizes Preparing, Executing, aggregate verification, unit review, one verified current-branch commit per selected unit, and up to three corrective unit commits. It excludes push, PR, merge, tag, release, publish, history rewriting, and out-of-scope mutation.
 
-Drive owns the workflow and the only active-drive terminal response. Child procedures own their specialist work and pass their native result state directly to the next applicable node. They do not stop a successful run to ask the user to invoke drive again.
+Drive owns workflow and the only active-drive terminal response. Child procedures own specialist work and pass native result state directly to the next applicable node. A successful run never stops to ask the user to invoke drive again.
 
 ## Direct procedure graph
 
@@ -42,102 +42,83 @@ terminal non-success
   -> tk-drive non-success finalization
 ```
 
-Use the complete edge and state-normalization contract in [phases.md](references/phases.md). For every edge, apply its entry, success, failure, and next-node contract. A successful node invokes its next applicable node in the same active turn. An allowed recovery edge runs before terminal finalization.
+Use complete edge/state-normalization contract in [phases.md](references/phases.md). Apply each edge's entry, success, failure, and next-node contract. Successful nodes invoke the next applicable node in the same active turn; allowed recovery runs before terminal finalization.
 
-Direct continuation is a prompt-directed instruction, not a durable scheduler or guaranteed cross-turn execution. After a host or process boundary, resume by rereading current artifacts and repository evidence.
+Continuation is prompt-directed, not a durable scheduler or guaranteed cross-turn execution. After host/process boundaries, resume by rereading current artifacts and repository evidence.
 
 ## Progress
 
-At the plan, each unit start/result, aggregate verification start/result, and
-finalization, emit one compact `▶️ Progress` checkpoint containing the decision,
-decisive evidence, and result/next action, then continue immediately within
-existing authority. Do not expose child receipts, raw reasoning, command logs,
-timer promises, approval requests, or a nonterminal `Status:` line.
+At plan, each unit start/result, aggregate verification start/result, and finalization, emit one compact `▶️ Progress` checkpoint with decision, decisive evidence, and result/next action; continue immediately within authority. Exclude child receipts, raw reasoning, command logs, timer promises, approval requests, and nonterminal `Status:` lines.
 
-Use
-`✅ Pass`, `⏳ Waiting`, `⚠️ Advisory`, `❌ Fail`, `⛔ Blocked`, and
-`❓ Unverifiable` for matching outcomes while preserving terminal
-`Status: <token>` exactly.
+Use `✅ Pass`, `⏳ Waiting`, `⚠️ Advisory`, `❌ Fail`, `⛔ Blocked`, and `❓ Unverifiable` for matching outcomes; preserve terminal `Status: <token>` exactly.
 
 ## Preparing
 
 Before product mutation:
 
 1. Resolve repository instructions, branch, baseline `HEAD`, worktree, and pre-existing dirty paths.
-2. Read the complete source. Discover at most seven relevant durable prior-art items from applicable rules, ADRs, tests, types, lint, CI, repository skills, and code invariants. Exclude raw sessions, prior implementation scratch, pending drafts, arbitrary global state, unrelated work, and inaccessible host-only rules.
-3. Close only material user-owned decisions through `tk-grill-me`; use `tk-prototype` only when evidence will reduce the decision.
+2. Read complete source. Find at most seven relevant durable prior-art items from applicable rules, ADRs, tests, types, lint, CI, repository skills, and code invariants. Exclude raw sessions, implementation scratch, pending drafts, arbitrary global state, unrelated work, and inaccessible host-only rules.
+3. Close only material user-owned decisions through `tk-grill-me`; use `tk-prototype` only when evidence reduces the decision.
 4. Produce or validate one Ready R/AC spec with `tk-to-spec`.
-5. Use `tk-to-tickets` only when multiple vertical units are independently verifiable; otherwise use one no-ticket unit.
-6. For each unit, seal expected `direct | delegated`, expected `low | high | unknown-until-diff` risk, and Additional review as `required | not-required | unknown-until-diff`; candidate evidence may raise but never silently downgrade the obligation.
-7. Write the compact `.tigerkit/prep.md` snapshot through [preflight.md](references/preflight.md), then start Executing immediately.
+5. Use `tk-to-tickets` only for multiple independently verifiable vertical units; otherwise one no-ticket unit.
+6. Seal each unit's expected `direct | delegated`, risk `low | high | unknown-until-diff`, and Additional review `required | not-required | unknown-until-diff`; evidence may raise but never silently lower obligations.
+7. Write compact `.tigerkit/prep.md` via [preflight.md](references/preflight.md); immediately start Executing.
 
 ### 🔴 HARD GATE · source UI writing
 
-Freeze every user-visible source literal and its `authorized change` in R/AC before mutation. Executing must compare the source, current value, candidate/staged diff, and rendered result. Missing evidence, an unresolved mismatch, or wording outside the frozen authorization stops before commit.
+Freeze every user-visible source literal and its `authorized change` in R/AC before mutation. Executing compares source, current value, candidate/staged diff, and rendered result. Missing evidence, unresolved mismatch, or wording outside authorization stops before commit.
 
 ### 🔴 HARD GATE · risk-based verification profile
 
-During Preparing, classify material signals and obligations from current evidence. Consume the sealed material profile during Executing. Drive cannot add unsupported obligations, remove an obligation, or substitute weaker evidence.
+During Preparing, classify material signals/obligations from current evidence. Executing consumes the sealed profile. Drive cannot add unsupported obligations, remove obligations, or substitute weaker evidence.
 
-Classify PR evidence separately as `required | optional | N/A` and seal it in
-the Ready spec and preflight with a criterion whenever applicable. Use
-`required` only when a confirmed source requires attached visual proof or a
-browser-rendered acceptance criterion cannot be meaningfully reviewed from
-code and checks alone; use `optional` when a screenshot would help review but
-is not acceptance-critical; use `N/A` when no browser-visible result exists.
-Browser verification being `required` does not by itself make PR evidence
-`required`. Return a material ambiguity to Preparing instead of guessing.
+Classify PR evidence separately as `required | optional | N/A`; seal it and a criterion in Ready spec/preflight when applicable. `required` only when a confirmed source demands attached visual proof or a browser-rendered acceptance criterion cannot be meaningfully code-reviewed; `optional` when screenshot aids review but is not acceptance-critical; `N/A` when no browser-visible result exists. Browser verification being `required` does not itself make PR evidence `required`. Return material ambiguity to Preparing.
 
-Browser preflight is `required | optional | N/A`. A private runtime identity is material user-owned input. Store only an opaque profile hint and an `intentionally omitted` marker; re-request missing identity on cold start. Runtime rehydration is not a Preparing amendment.
+Browser preflight is `required | optional | N/A`. Private runtime identity is material user-owned input. Store only opaque profile hint plus `intentionally omitted`; re-request missing identity on cold start. Runtime rehydration is not a Preparing amendment.
 
 ## Executing
 
 For each unit:
 
-1. pass its exact R/AC, scope, order, and verification profile to `tk-implement`;
-2. accept only a verified one-unit commit or its bounded non-success handoff;
-3. preserve pre-existing user changes and audit commit ancestry;
-4. treat `Pass` as an internal loop signal: without a terminal response, pause,
-   or confirmation, render Drive's owning progress checkpoint and invoke
-   `tk-implement` for the next selected unit; leave the loop only after every
-   selected unit is committed or a bounded non-success remains after recovery.
+1. pass exact R/AC, scope, order, and verification profile to `tk-implement`;
+2. accept only a verified one-unit commit or bounded non-success handoff;
+3. preserve pre-existing user changes; audit commit ancestry;
+4. treat `Pass` as internal loop signal: without terminal response, pause, or confirmation, render Drive's progress checkpoint and invoke `tk-implement` for the next unit. Exit only when all units are committed or bounded non-success remains after recovery.
 
-Use `tk-merge-conflict` only for a real merge, rebase, cherry-pick, or revert conflict, then return to the interrupted unit.
+Use `tk-merge-conflict` only for an active merge, rebase, cherry-pick, or revert conflict; then return to the interrupted unit.
 
 ## Aggregate verification
 
-After all unit commits, verify R/AC traceability, ancestry, unit boundaries, excluded scope, the frozen profile, and broad repository checks. Use `tk-browser-verify` when preflight or changed UI requires runtime evidence.
+After all commits, verify R/AC traceability, ancestry, unit boundaries, excluded scope, frozen profile, and broad repository checks. Use `tk-browser-verify` when preflight or changed UI requires runtime evidence.
 
-A passing initial implementation uses zero corrective cycles. An isolated implementation defect may use at most three corrective `tk-implement` cycles. A fourth cycle, repeated unchanged failure, unisolated failure, or scope expansion freezes mutation.
+Passing initial implementation uses zero corrective cycles. Isolated defects may use at most three corrective `tk-implement` cycles. Fourth cycle, repeated unchanged failure, unisolated failure, or scope expansion freezes mutation.
 
 One late material user-owned decision may use one amendment through `tk-grill-me`, Ready-spec revalidation, affected-ticket rederivation, and prep refresh. A second amendment or incompatible committed work is terminal `Blocked`; never rewrite verified history automatically.
 
 ## Non-success
 
-After recovery edges are exhausted, normalize the child state through `phases.md`, freeze mutation, and enter the internal read-only finalizer. Follow [non-success finalization](references/non-success-finalization.md). It has no outgoing edge. Do not clean the failed unit, invoke another specialist, create a partial status or new ledger, or start an independent unit.
+After recovery edges exhaust, normalize child state through `phases.md`, freeze mutation, and enter internal read-only finalizer. Follow [non-success finalization](references/non-success-finalization.md). It has no outgoing edge. Never clean failed units, invoke another specialist, create partial status/new ledger, or start an independent unit.
 
 ## Success finalization
 
-After aggregate product verification passes, finish directly. Reread source, spec, tickets when present, prep, implementation evidence, ancestry, and verification before emitting one terminal response. TigerKit does not own a post-session reflection or persistent-memory phase.
+After aggregate verification passes, finish directly. Reread source, spec, tickets if present, prep, implementation evidence, ancestry, and verification before one terminal response. TigerKit owns no post-session reflection or persistent-memory phase.
 
-Lead with one user-facing result sentence. Start it with `✅ Pass` for full
-success; non-success finalization uses the mapped problem marker without
-altering its canonical `Status: <token>` line. Then render `Implemented` with two to seven behavior-level bullets and `Verification` with one to four aggregate-result bullets. For multiple units, include a compact `Ticket | Outcome | Commit` table plus `Unit | Strategy | Additional review | Fix rounds | Result`; summarize review routes instead of repeating raw per-unit review text. Use a sentence when only one user-relevant row exists. When underlying results exceed these limits, keep only the top five to seven items ranked by user impact and verification value. Include `Remaining risks` only when meaningful. End `Verification` with exactly `Status: Pass`; terminal non-success belongs to the read-only finalizer.
+Lead with one result sentence: `✅ Pass` for full success; non-success uses mapped marker without changing canonical `Status: <token>`. Then `Implemented` with two to seven behavior bullets and `Verification` with one to four aggregate bullets. For multiple units, add compact `Ticket | Outcome | Commit` and `Unit | Strategy | Additional review | Fix rounds | Result` tables; summarize review routes, not raw per-unit text. Use a sentence for one user-relevant row. If results exceed limits, show top five to seven by user impact and verification value. Include `Remaining risks` only when meaningful. End `Verification` with exactly `Status: Pass`; terminal non-success belongs to read-only finalizer.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Treat progress commentary, internal procedure evidence, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between successful consecutive active-drive procedure invocations.
+Separate progress, internal procedure evidence, and terminal response. Begin terminal response with canonical result heading or sentence. No separator, preamble, or recap first; no terminal-summary opening between consecutive successful active-drive procedure invocations.
 
-Do not render a receipt heading, `Outcome:` label, phase-success token, caller-return instruction, or terminal provenance/status block in the user summary. When the result requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the canonical result schema requires it.
+Never render a receipt heading, `Outcome:` label, phase-success token, caller-return instruction, or terminal provenance/status block. Put one required exact `Status: <token>` line in the owning result section. Show paths, IDs, commits, or recovery details only when actionable or schema-required.
 
-Persist provenance only in an artifact or ledger already owned by the workflow. Never require a shared runtime reference outside this skill.
+Persist provenance only in an existing workflow-owned artifact/ledger. Never require shared runtime references outside this skill.
 
 ### 🔴 HARD GATE · response language
 
-Before any user-facing progress, question, or summary, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose result value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
+Before user-facing progress, questions, or summaries, use latest explicit language instruction; otherwise current message language. All free-form sentences and prose values use it; never switch to English because sources, skills, tools, or code are English. Preserve canonical headings, status tokens, IDs, commands, paths, code, and exact source literals byte-stable. Rewrite language drift before return.
 
 ## User decision questions
 
-When a user-owned decision blocks Preparing or the one amendment, ask one self-contained `Question` before any `Recommendation`. Show only decision-relevant evidence, two or three mutually exclusive options with material tradeoffs, and exactly one label ending `(Recommended)` or `(추천)`.
+When a user-owned decision blocks Preparing or the one amendment, ask one self-contained `Question` before `Recommendation`. Show only relevant evidence, two or three mutually exclusive options with material tradeoffs, and exactly one `(Recommended)` or `(추천)`.
 
-Render the question, recommendation, and options directly in the chat response; do not call structured question or input tools. Preserve `Pending | Blocked` until the user answers.
+Render directly in chat; do not call structured question/input tools. Remain `Pending | Blocked` until answered.
