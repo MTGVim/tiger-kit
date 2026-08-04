@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.04-1 — Release
+
+- fix(workflows): continue through every successful implementation unit
+
 ## 2026.08.03-9 — Release
 
 - fix(skills): restore the `tk-grill-me` invocation label in Codex

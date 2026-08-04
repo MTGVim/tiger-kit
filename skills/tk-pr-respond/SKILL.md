@@ -41,8 +41,12 @@ unit; `tk-implement` owns the unit commit and verification.
    units, state one recommended selection, then ask one selection question.
    Selection authorizes only those units; it does not authorize a remote write.
 4. Handoff one unit at a time to `tk-implement` with the PR identity and exact
-   comment/thread IDs. Do not create empty per-comment commits. Aggregate only
-   verified unit results and keep deferred or unverified threads open.
+   comment/thread IDs. Treat `Pass` as an internal loop signal: without
+   user-facing output, a pause, or confirmation, invoke `tk-implement` for the
+   next selected unit. Leave the loop only after every selected unit has a
+   verified result or a bounded non-success remains. Do not create empty
+   per-comment commits. Aggregate only verified unit results and keep deferred
+   or unverified threads open.
 5. Draft `.tigerkit/pr-respond.md` with exact push refspec, a reply body for
    every selected current finding, resolvable thread IDs, intentionally open
    threads, prior human reviewers, re-review candidates, and exclusions. Every
