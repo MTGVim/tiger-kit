@@ -23,6 +23,7 @@ TERMINAL_STATUSES = {
     "Pending",
     "NotApplicable",
 }
+PREPARED_CODEX_PREFIX = "[tigerkit-eval:prepared-"
 
 
 def require_env(name: str) -> str:
@@ -111,6 +112,11 @@ def host_environment(host: str) -> dict[str, str]:
         isolated = Path(require_env("HERMES_HOME"))
         seed_hermes_config(isolated, source_home)
     return env
+
+
+def prepared_codex_adapter(checkout: Path, prompt: str) -> Path | None:
+    candidate = checkout / "skills/tk-drive/scripts/codex_eval_adapter.py"
+    return candidate if prompt.startswith(PREPARED_CODEX_PREFIX) and candidate.is_file() else None
 
 
 def harness_prompt(prompt: str, installed: Iterable[str]) -> str:
@@ -240,6 +246,18 @@ def main() -> int:
     prompt = require_env("TK_EVAL_PROMPT")
     checkout = Path.cwd()
     executable = executable_for(host)
+    if host == "codex" and (specialized := prepared_codex_adapter(checkout, prompt)):
+        env = os.environ.copy()
+        auth_home = real_home() / ".codex"
+        if (auth_home / "auth.json").is_file():
+            env.setdefault("TK_EVAL_CODEX_HOME", str(auth_home))
+        stdout, stderr, returncode, _ = run_process(
+            [sys.executable, str(specialized)], cwd=checkout, env=env
+        )
+        if returncode != 0:
+            raise RuntimeError(stderr.strip() or stdout.strip() or "prepared Codex adapter failed")
+        print(stdout.strip())
+        return 0
     installed = install_skills(host, checkout)
     wrapped = harness_prompt(prompt, installed)
     env = host_environment(host)
