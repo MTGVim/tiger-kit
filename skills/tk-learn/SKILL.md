@@ -11,50 +11,23 @@ metadata:
 
 # Learn
 
-Apply on explicit invocation or clear intent to author a reusable skill. Turn a
-conversation, note, path, URL, repeated workflow, or skill-evolution candidate into a
-`repo skill | user skill` candidate. Rules, one-off tips, and ordinary
-implementation are out of scope; do not invoke another user-invoked skill.
+Apply on explicit invocation or clear intent to author reusable skill. Turn conversation, note, path, URL, repeated workflow, or skill-evolution candidate into `repo skill | user skill` candidate. Rules, one-off tips, and ordinary implementation are out of scope; never invoke another user-invoked skill.
 
-This is the sole TigerKit writer for skill `create | improve | merge`, including
-new skills and semantic updates of existing skills. A candidate/target from
-another skill must still pass this skill's evidence, dedupe, eval,
-compatibility, and apply gates.
+Sole TigerKit writer for skill `create | improve | merge`, including new skills and semantic updates. Candidate/target from another skill must still pass evidence, dedupe, eval, compatibility, and apply gates.
 
-Draft and apply are separate:
+Draft/apply are separate:
 
-- `draft gate`: distinguish verified evidence from unchecked user statements
-  and design a `pending` candidate. A clear design request still receives a
-  draft when evidence remains `unverified`.
-- `apply gate`: every checklist row must pass before any skill-path write.
+- `draft gate`: distinguish verified evidence from unchecked user statements; design `pending` candidate. Clear design request still gets draft when evidence remains `unverified`.
+- `apply gate`: every checklist row must pass before skill-path write.
 
 ## Workflow
 
-1. **Evidence ledger:** assign each case/workflow an ID, claim, source, and
-   `verified | unverified`. Two user-stated cases whose artifacts are
-   inaccessible stay separate unverified rows and still support a draft.
-   Promotion requires two independently verified repetitions or an
-   artifact-backed reusable workflow. Unverified rows never pass apply.
-   One-off mistakes, raw logs, or unsourced single claims end `no-op`.
-2. **Promotion and dedupe:** apply
-   [skill quality](references/skill-quality.md), then compare existing
-   repo/user skills, default model capability, and a short rule. Choose
-   `merge | no-op | continue | pending`. If catalogs are unreadable, stay
-   `pending` but continue drafting.
-3. **Candidate proposal:** give target, working name, invocation kind, and
-   positive/negative triggers. Use user domain/workflow language for a
-   lowercase hyphen-case verb-led name under 64 characters; check collisions
-   and mark `proposed`. Unsupported values stay `TBD`.
-4. **Minimum draft:** show minimal SKILL.md input, workflow, failure branches,
-   approval boundary, completion criteria, output contract, and DO NOT list.
-   Add train/validation triggers, success/boundary assertions, no-skill or
-   prior-skill baseline, and portable-core/host-extension decision.
-5. **Approval summary:** summarize each apply check and planned path once, then
-   stop in the checklist-defined state.
-6. **Write, verify, report:** only after Apply authority passes, preserve
-   before-write content, write through a same-directory temporary target and
-   atomic rename, then reread and verify frontmatter, links, evals, and
-   target-host invocation before reporting `applied`.
+1. **Evidence ledger:** assign each case/workflow ID, claim, source, and `verified | unverified`. Two user-stated cases with inaccessible artifacts stay separate unverified rows and support draft. Promotion needs two independently verified repetitions or artifact-backed reusable workflow. Unverified rows never pass apply. One-off mistakes, raw logs, or unsourced single claims end `no-op`.
+2. **Promotion and dedupe:** apply [skill quality](references/skill-quality.md), then compare existing repo/user skills, default model capability, and short rule. Choose `merge | no-op | continue | pending`. If catalogs unreadable, stay `pending` but continue drafting.
+3. **Candidate proposal:** give target, working name, invocation kind, and positive/negative triggers. Use user domain/workflow language for lowercase hyphen-case verb-led name under 64 characters; check collisions and mark `proposed`. Unsupported values remain `TBD`.
+4. **Minimum draft:** show minimal SKILL.md input, workflow, failure branches, approval boundary, completion criteria, output contract, and DO NOT list. Add train/validation triggers, success/boundary assertions, no-skill or prior-skill baseline, and portable-core/host-extension decision.
+5. **Approval summary:** summarize each apply check and planned path once; stop in checklist-defined state.
+6. **Write, verify, report:** only after Apply authority passes, preserve before-write content, write through same-directory temporary target and atomic rename, then reread/verify frontmatter, links, evals, and target-host invocation before `applied`.
 
 ### Apply gate checklist
 
@@ -67,77 +40,52 @@ Draft and apply are separate:
 | Baseline/compatibility | no-skill/prior baseline and portable-core/host-extension decision verified | `pending | Unverifiable` |
 | Apply authority | current-turn approval names exact candidate and target path | `pending`; no write |
 
-Use only current-host native repo/user skill paths proven by actual path or
-host discovery. Unknown host is `Unverifiable`; never invent a location, force
-one host's path on another, fan out/sync across hosts, or use `.tigerkit/` as a
-permanent skill registry/global state.
+Use only current-host native repo/user skill paths proven by actual path or host discovery. Unknown host is `Unverifiable`; never invent location, force one host's path on another, fan out/sync across hosts, or use `.tigerkit/` as permanent skill registry/global state.
 
 ## Failure paths
 
 | Trigger | Immediate action | Still unresolved |
 |---|---|---|
-| two cases/workflow claimed but artifacts unreadable | record each `unverified` and show requested `pending` draft | request exact artifacts/checks; do not write |
+| two cases/workflow claimed but artifacts unreadable | record each `unverified`; show requested `pending` draft | request exact artifacts/checks; no write |
 | one one-off case or raw log only | record threshold/privacy and `no-op` | create no candidate/path |
 | duplicate of skill/default capability | report `merge | no-op` and basis | create no new directory |
-| target/name/trigger partly unknown | draft supported values as `proposed`, others `TBD` | keep Candidate identity `pending`; do not write |
+| target/name/trigger partly unknown | draft supported values as `proposed`, others `TBD` | keep Candidate identity `pending`; no write |
 | evidence/target/approval conflict | present conflict and one decision | stop `Blocked` |
-| write/post-write check fails | preserve existing target and clean run temp; remove a partial new target only when proven run-owned | restore only when exact/reverifiable; ownership or preservation uncertainty is `Blocked | Unverifiable`, otherwise report actual path and `Fail` |
+| write/post-write check fails | preserve existing target and clean run temp; remove partial new target only when proven run-owned | restore only when exact/reverifiable; ownership/preservation uncertainty is `Blocked | Unverifiable`, else report actual path and `Fail` |
 
 ## 🔴 CHECKPOINT · 🛑 STOP
 
-Before explicit current-turn apply approval, write neither canonical paths nor
-`.tigerkit/skill-drafts/<skill-name>/`. Past approval, implicit invocation, and
-generic continuation are insufficient. Before approval the candidate is
-`pending`; Target path reports the exact planned path plus `not created`.
+Before explicit current-turn apply approval, write neither canonical paths nor `.tigerkit/skill-drafts/<skill-name>/`. Past approval, implicit invocation, and generic continuation are insufficient. Before approval candidate is `pending`; Target path reports exact planned path plus `not created`.
 
-Even after approval, never report `applied` while any checklist row is unpassed.
+Even after approval, never report `applied` while any checklist row remains unpassed.
 
 ## Output contract
 
-Lead with the promotion or no-op decision. Use only non-empty `Evidence`,
-`Dedupe`, `Candidate`, `Target path`, `Verification`, and
-`Remaining concerns`. For a threshold-failed or duplicate no-op, omit
-`Candidate` and `Verification` unless they add decision-relevant evidence.
-When more than one candidate is evaluated, render `Candidate` as a compact
-`Candidate | Disposition | Target` table. Use a sentence when only one
-user-relevant row exists. Summarize two to seven candidate, target, and
-remaining-gate results as bounded rows or bullets. For eight or more, show the
-top five to seven and cite the draft or planned target path that owns the
-remainder. These are budgets, not quotas. Record
-`reported | pending | applied` in the owning candidate or concern section
-without appending metadata or substituting for candidate results.
+Lead with promotion/no-op decision. Use only non-empty `Evidence`, `Dedupe`, `Candidate`, `Target path`, `Verification`, and `Remaining concerns`. For threshold-failed or duplicate no-op, omit `Candidate` and `Verification` unless decision-relevant. For multiple candidates, render `Candidate` as compact `Candidate | Disposition | Target` table; use sentence for one user-relevant row. Summarize 2–7 candidate, target, and remaining-gate results as bounded rows/bullets. For 8+, show top 5–7 and cite draft/planned target path owning remainder. Budgets, not quotas. Record `reported | pending | applied` in owning candidate/concern section; never append metadata or substitute for candidate results.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Treat progress commentary, internal handoff envelopes, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between a successful phase receipt and the next active-drive phase invocation.
+Separate progress commentary, internal handoff envelopes, and terminal user response. Begin every terminal user-facing response directly with skill's canonical result heading or, if result schema has no heading, canonical result sentence. Never place standalone separator, ceremonial preamble, or progress recap before opening. Never emit terminal user-summary opening between successful phase receipt and next active-drive phase invocation.
 
-Do not render a receipt heading, `Outcome:` label, or terminal provenance/status block in the user summary. When the host or skill requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the skill's canonical result schema requires it. Keep phase receipts as internal handoff envelopes: when an active parent requires phase, status, IDs, `Return to`, `Success state`, or `Outstanding transition`, return them only to that parent workflow and never echo them in the terminal user summary.
+Never render receipt heading, `Outcome:` label, or terminal provenance/status block in user summary. When host/skill requires terminal status, emit single exact `Status: <token>` line in owning result section, not bottom metadata block. Expose path, ID, commit, or recovery detail only when it changes user action or schema requires it. Keep phase receipts as internal handoff envelopes: when active parent requires phase, status, IDs, `Return to`, `Success state`, or `Outstanding transition`, return only to parent; never echo in terminal user summary.
 
-Persist provenance only in an artifact or ledger the skill already owns. A skill without such an owner must not create one solely to store a receipt, and a read-only skill remains read-only. Never require a shared runtime reference outside this skill.
+Persist provenance only in skill-owned artifact/ledger. Never create owner solely for receipt; read-only skill remains read-only. Never require shared runtime reference outside this skill.
 
 ### 🔴 HARD GATE · response language
 
-Before any user-facing progress, question, or summary, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose result value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
+Before user-facing progress, question, or summary, resolve language from latest explicit user language instruction; otherwise current user message's language. Write every free-form user-facing sentence and prose result value in that language. Never switch to English due to sources, skill bodies, tools, or code. Keep canonical headings, status tokens, IDs, commands, paths, code, and exact quoted/source literals byte-stable; explain around preserved token in resolved language. Before return, scan free-form user prose and rewrite drift.
 
 ## User decision questions
 
-When a user-owned decision blocks progress, ask one self-contained `Question`
-before any `Recommendation`. Show only decision-relevant evidence, two or three
-mutually exclusive options with material tradeoffs, and exactly one label
-ending `(Recommended)` or `(추천)`.
+When user-owned decision blocks progress, ask one self-contained `Question` before any `Recommendation`. Show only decision-relevant evidence, two or three mutually exclusive options with material tradeoffs, and exactly one label ending `(Recommended)` or `(추천)`.
 
-Render the question, recommendation, and options directly in the chat response;
-do not call structured question or input tools. Preserve `Pending | Blocked`
-until the user answers. This changes presentation, not authority or stop gates.
+Render question, recommendation, and options directly in chat; never call structured question/input tools. Preserve `Pending | Blocked` until answer. This changes presentation, not authority or stop gates.
 
 ## DO NOT / ANTI-PATTERNS
 
-- Do not promote one-off cases, credentials, raw logs, or screenshots into
-  reusable evidence or copy them into a draft.
-- Do not omit a requested pending draft merely because evidence is unverified.
-- Do not create a duplicate skill, verbose default-capability wrapper, or
-  indistinguishable trigger pair.
-- Do not write before approval or treat implicit invocation as authority.
-- Do not duplicate name/kind/path/verification/concerns in Receipt.
-- Do not archive automatically, edit `.gitignore`, invoke another user skill,
-  push, or publish.
+- Never promote one-off cases, credentials, raw logs, or screenshots into reusable evidence or copy into draft.
+- Never omit requested pending draft because evidence is unverified.
+- Never create duplicate skill, verbose default-capability wrapper, or indistinguishable trigger pair.
+- Never write before approval or treat implicit invocation as authority.
+- Never duplicate name/kind/path/verification/concerns in Receipt.
+- Never auto-archive, edit `.gitignore`, invoke another user skill, push, or publish.

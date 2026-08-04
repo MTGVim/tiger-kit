@@ -10,111 +10,51 @@ metadata:
 
 # Browser verification
 
-Apply only when real browser evidence is needed. Explicit invocation selects
-`Verdict`; a direct answer to this run's pending runtime-identity question may
-resume it in the same conversation.
+Apply only when real browser evidence is required. Explicit invocation selects `Verdict`; a direct answer to this run's pending runtime-identity question may resume it in the same conversation.
 
 ## Modes
 
 Choose before any browser or verification-server call.
 
-- **Guard** — disposable HTML, prototypes, and exploratory UI checks. Run only
-  the requested trusted interaction, capture at least one run-owned screenshot,
-  inspect the actual image, record minimal evidence, and clean owned resources.
-  Do not manufacture a responsive matrix or official verdict.
-- **Verdict** — explicit invocation, persistent user-visible source changes, or
-  an official runtime verdict. Verify every required criterion and return
-  `Pass | Fail | Blocked | Unverifiable`.
+- **Guard** — disposable HTML, prototypes, exploratory UI checks. Run only requested trusted interactions, capture and inspect at least one run-owned screenshot, record minimal evidence, clean owned resources. Do not create a responsive matrix or official verdict.
+- **Verdict** — explicit invocation, persistent user-visible changes, or official runtime verdict. Verify all criteria; return `Pass | Fail | Blocked | Unverifiable`.
 
-Consume an active `tk-drive` browser profile without reopening product
-choices. Re-request an `intentionally omitted` runtime identity once, keep it
-ephemeral, and return material strategy drift to the parent.
+Consume an active `tk-drive` browser profile without reopening product decisions. Re-request an `intentionally omitted` runtime identity once, keep it ephemeral, and return material strategy drift to the parent.
 
 ## Workflow
 
-1. **Scope** — choose Guard/Verdict, target, success criteria, and safe
-   interaction boundary. For a local-app request, an omitted URL or launch
-   command is discovery work, not a user decision: inspect repository scripts,
-   documentation, and listening processes, then proceed only with one
-   worktree-bound target.
-2. **Preflight** — load only applicable references: [UI verification](references/ui-verification.md),
-   [design](references/design.md), [accessibility](references/accessibility.md),
-   [visual](references/visual.md), [behavior](references/behavior.md), and
-   [safety](references/safety.md).
-3. **Launch** — prove the browser, effective arguments, profile ownership, and
-   current-worktree serving source. An unnamed browser provider is not itself
-   `Unverifiable`; use the first available native, Playwright-compatible, MCP,
-   or verified CDP route without installing dependencies, and return
-   `Unverifiable` only when none can capture and inspect the required evidence.
-4. **Run** — navigate from a known state, perform safe interactions, inspect
-   required network/final state, capture at least one screenshot, and inspect
-   the actual image(s).
-5. **Verdict** — bind each criterion to evidence and classify failures as
-   `change-related | pre-existing | environment | unverifiable`.
-6. **Cleanup** — close only run-owned browser resources and verify required
-   capture residue.
+1. **Scope** — choose Guard/Verdict, target, criteria, safe interaction boundary. For local apps, omitted URL/launch command is discovery, not a user decision: inspect repository scripts, docs, and listening processes; proceed only with one worktree-bound target.
+2. **Preflight** — load applicable references only: [UI verification](references/ui-verification.md), [design](references/design.md), [accessibility](references/accessibility.md), [visual](references/visual.md), [behavior](references/behavior.md), [safety](references/safety.md).
+3. **Launch** — prove browser, effective arguments, profile ownership, and current-worktree serving source. An unnamed provider is not automatically `Unverifiable`; use the first available native, Playwright-compatible, MCP, or verified CDP route without installing dependencies. Return `Unverifiable` only if none can capture and inspect required evidence.
+4. **Run** — start from known state, perform safe interactions, inspect required network/final state, capture screenshots, inspect actual images.
+5. **Verdict** — bind each criterion to evidence; classify failures `change-related | pre-existing | environment | unverifiable`.
+6. **Cleanup** — close only run-owned resources; verify required capture residue.
 
-Follow [session lifecycle](references/session-lifecycle.md) for browser
-ownership and [environment](references/environment.md) for serving-source and
-launch evidence.
+Follow [session lifecycle](references/session-lifecycle.md) for browser ownership and [environment](references/environment.md) for serving-source and launch evidence.
 
 ## Critical pitfalls
 
 ### Chrome launch
 
-A newly started Chrome/Chromium must prove the exact effective argument
-`--headless=new` before the first browser call. Do not infer it from a tool name,
-`headless: true`, or provider defaults. If an auto-launch route cannot prove the
-argument, launch directly and attach through CDP; otherwise return
-`Unverifiable`.
+New Chrome/Chromium must prove exact effective argument `--headless=new` before the first browser call. Tool names, `headless: true`, and provider defaults are insufficient. If auto-launch cannot prove it, launch directly and attach through CDP; otherwise return `Unverifiable`.
 
-A headed browser is allowed only for user-completed credential entry, OTP,
-2FA, passkey, CAPTCHA, or device approval. After authentication, close the
-headed owned browser and resume the same profile with verified headless launch
-before collecting product evidence. Never expose profile contents, credentials,
-cookies, OTPs, or tokens.
+Headed browser allowed only for user credential entry, OTP, 2FA, passkey, CAPTCHA, or device approval. After auth, close the owned headed browser and resume the same profile with verified headless launch before product evidence. Never expose profile contents, credentials, cookies, OTPs, or tokens.
 
 ### Evidence and captures
 
-DOM, accessibility, network success, or visual similarity does not replace a
-runtime screenshot plus actual image inspection. Every Guard and Verdict run
-must leave at least one non-empty run-owned screenshot plus its actual image
-inspection; missing capture or inspection makes the result `Unverifiable`.
-When the parent contract records `PR evidence: required`, expose a bounded
-handoff with `evidence_required: true`, its criterion, the absolute evidence
-directory, inspected screenshot paths, and producer `tk-browser-verify`.
-Changed behavior needs the
-relevant transition and final-state evidence, not only a toast or local DOM
-change.
+DOM, accessibility, network success, and visual similarity cannot replace a runtime screenshot plus actual image inspection. Every Guard/Verdict run needs one non-empty run-owned screenshot and inspection; otherwise `Unverifiable`. When parent records `PR evidence: required`, return a bounded handoff containing `evidence_required: true`, criterion, absolute evidence directory, inspected screenshot paths, and producer `tk-browser-verify`. Changed behavior requires transition and final-state evidence, not only a toast or local DOM change.
 
-Before the first persisted capture, create and resolve
-`.tigerkit/browser-verify/runs/<run-id>/` as the run-owned ledger. Record its
-absolute path as `Evidence directory: /absolute/path/...` in the terminal
-`## Evidence` section whenever the path is resolvable. Move only
-files proven to belong to this run. Sensitive network, console, or auth-adjacent
-captures require verified redaction and residue absence; otherwise use
-`Unverifiable`. Never edit `.gitignore` or delete user-owned evidence.
+Before first persisted capture, create and resolve `.tigerkit/browser-verify/runs/<run-id>/` as run-owned ledger. When resolvable, record absolute `Evidence directory: /absolute/path/...` in terminal `## Evidence`. Move only proven run-owned files. Sensitive network, console, or auth-adjacent captures require verified redaction and no residue; otherwise `Unverifiable`. Never edit `.gitignore` or delete user-owned evidence.
 
-The evidence directory must contain the non-empty screenshot before a completed
-Guard result or a `Pass` Verdict. If the directory cannot be resolved, emit
-`Evidence directory: unavailable` and return `Unverifiable`; never substitute a
-relative path when an absolute path is required.
+The evidence directory must contain the non-empty screenshot before completed Guard or `Pass` Verdict. If unresolved, emit `Evidence directory: unavailable` and return `Unverifiable`; never use a relative path where absolute is required.
 
-When a parent request marks PR evidence as required, preserve the absolute
-`Evidence directory`, `Screenshot`, criterion, and actual image inspection
-as the producer handoff. Only a `Pass` Verdict may be handed to
-`tk-github-image-upload-to-pr`.
+For required PR evidence, preserve absolute `Evidence directory`, `Screenshot`, criterion, and actual image inspection in the producer handoff. Only `Pass` Verdict may go to `tk-github-image-upload-to-pr`.
 
-Never paste or store raw console, network/HAR, or transcript bodies when a path
-and compact finding are enough. Instrumented evidence is allowed only under the
-restoration and residue rules in [visual](references/visual.md).
+Never paste/store raw console, network/HAR, or transcript bodies when a path and compact finding suffice. Instrumented evidence must follow restoration/residue rules in [visual](references/visual.md).
 
-On crash, connection loss, timeout, or unexpected route/tab change, discard the
-partial-flow verdict and retry once from the same verified initial state. Then
-stop `Unverifiable` if evidence is still incomplete.
+On crash, connection loss, timeout, or unexpected route/tab change, discard partial verdict and retry once from the same verified initial state. If still incomplete, stop `Unverifiable`.
 
-Do not edit production code. Unsafe irreversible interaction without a safe
-environment and explicit authority is `Unverifiable`.
+Never edit production code. Unsafe irreversible interaction without safe environment and explicit authority is `Unverifiable`.
 
 ## Result
 
@@ -125,35 +65,16 @@ environment and explicit authority is `Unverifiable`.
 | `Blocked` | A pre-session user decision is required |
 | `Unverifiable` | Safe environment, authority, or required evidence is unavailable |
 
-When a design basis exists, use `## Alignment` only for the design decision.
-Use `## Verdict` for the runtime result, with non-empty `## Verified`, optional
-`## Findings`, `## Evidence`, `## Unverified`, and `## Cleanup`. `## Evidence`
-must include `Evidence directory: <absolute path>` and at least one
-`Screenshot: <path>` plus the actual image inspection result. When several
-criteria exist, use `Criterion | Result | Evidence`; use a sentence when only
-one user-relevant row exists. Summarize two to seven verified scenarios; for
-more, show the top five to seven and cite the ledger. Do not add a receipt
-heading or duplicate provenance.
+With a design basis, use `## Alignment` only for the design decision. Use `## Verdict` for runtime result, with non-empty `## Verified`, optional `## Findings`, `## Evidence`, `## Unverified`, and `## Cleanup`. `## Evidence` includes `Evidence directory: <absolute path>`, at least one `Screenshot: <path>`, and actual image inspection. For multiple criteria, use `Criterion | Result | Evidence`; for one user-relevant row, use a sentence. Summarize two to seven scenarios; for more, show top five to seven and cite the ledger. No receipt heading or duplicate provenance.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Keep progress and internal procedure evidence out of the terminal user response.
-Begin with the canonical result heading or sentence. Emit no ceremonial
-preamble, receipt heading, `Outcome:` label, duplicate status, or active-drive
-child summary. Put detailed provenance only in this skill's owned ledger; a
-read-only path remains read-only.
+Keep progress and internal procedure evidence out of terminal response. Begin with canonical result heading or sentence. No preamble, receipt heading, `Outcome:` label, duplicate status, or active-drive child summary. Put detailed provenance only in the owned ledger; read-only stays read-only.
 
 ### 🔴 HARD GATE · response language
 
-Use the latest explicit user language, otherwise the current message's language.
-Preserve canonical headings, status tokens, IDs, commands, paths, code, and
-quoted source literals exactly. Rewrite any free-form language drift before
-returning.
+Use latest explicit user language; otherwise current message language. Preserve canonical headings, status tokens, IDs, commands, paths, code, and quoted source literals exactly. Rewrite drifting free-form language before return.
 
 ## User decision questions
 
-Ask one self-contained `Question` only for a material user-owned decision, then
-show a `Recommendation`, two or three mutually exclusive options, and exactly
-one `(Recommended)` or `(추천)` label. Render the question and options directly
-in the chat response; do not call structured question or input tools. Preserve
-`Pending | Blocked` until the user answers.
+Ask one self-contained `Question` only for a material user-owned decision, followed by `Recommendation`, two or three mutually exclusive options, and exactly one `(Recommended)` or `(추천)`. Render directly in chat; do not call structured question/input tools. Remain `Pending | Blocked` until answered.

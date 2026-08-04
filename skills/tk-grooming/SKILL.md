@@ -11,98 +11,86 @@ metadata:
 
 # Grooming
 
-Apply on explicit invocation or a clear audit request for existing rules or
-skills. Do not auto-apply to ordinary cleanup or implementation. Implicit mode
-is report-only.
+Apply on explicit invocation or clear audit request for existing rules or
+skills. Do not auto-apply to ordinary cleanup or implementation. Implicit mode:
+report-only.
 
 ## Workflow
 
 1. `scope`: resolve requested scope, literal `--apply`, target paths, and
-   allowed mutation. Carry forward explicit exclusions from the active
-   conversation or a durable governing source without reconfirmation.
-2. `discovery`: read only existing native paths and inventory candidates in the
+   allowed mutation. Retain explicit exclusions from active conversation or a
+   durable governing source without reconfirmation.
+2. `discovery`: read only existing native paths; inventory candidates in
    requested areas.
 3. `evidence`: record area-specific observations, paths, verification state,
    and ownership evidence for every candidate.
 4. `classification/proposal`: apply the
-   [placement rubric](references/repository-placement.md) to skill
-   candidates and classify each as
-   `keep | keep (vendor) | tighten | merge | split | move | deprecate
+   [placement rubric](references/repository-placement.md) to skill candidates;
+   classify `keep | keep (vendor) | tighten | merge | split | move | deprecate
    | delete | fix`.
 5. `🔴 CHECKPOINT · 🛑 STOP`: summarize scope, evidence, proposal, and allowed
-   apply in a receipt. A literal initial `--apply` pre-approves only the exact
-   passing receipt scope; otherwise stop for explicit current-turn approval.
+   apply in a receipt. Literal initial `--apply` pre-approves only exact passing
+   receipt scope; otherwise stop for explicit current-turn approval.
 6. `apply/report`: report-only emits proposals/receipt. With authority, reread
-   source and mutate only the approved receipt scope.
+   source; mutate only approved receipt scope.
 7. `revalidate`: recheck links, duplication, and frontmatter; report results,
    unverified scope, and unresolved items.
 
-Inspect only the repository or user skill areas named or implied by the request.
-Use actual host-native skill paths from [discovery](references/discovery.md).
-Do not create missing files or inspect, migrate, or create repository/user rule
-state or legacy/global TigerKit state.
+Inspect only repository or user skill areas named or implied by request. Use
+actual host-native skill paths from [discovery](references/discovery.md). Do not
+create missing files or inspect, migrate, or create repository/user rule state
+or legacy/global TigerKit state.
 
 Judge repository/user skills by independently normative instruction/workflow,
-not whole file. Use `move` only for an exact native skill target, and `split`
-when one artifact mixes independent outcomes. Use `tighten` only to remove
+not whole file. Use `move` only with exact native skill target; use `split` when
+one artifact mixes independent outcomes. Use `tighten` only to remove
 duplication/ambiguity without changing owner, kind, scope, or meaning. Otherwise
-use `keep`. Missing or conflicting path/ownership evidence makes only that area
+use `keep`. Missing/conflicting path or ownership evidence makes only that area
 `Partial/Blocked | Unverifiable`.
 
 Determine ownership from resolved paths and link targets, package-manager
 installation locations, updater/version artifacts, and available author
-history. Names and naming conventions are never ownership evidence. A confirmed
-vendor-managed candidate is always `keep (vendor)`: report the quality finding,
-but do not propose or perform an edit. If ownership is uncertain, stop before
-an edit proposal and ask whether the artifact is user-managed or externally
-installed.
+history. Names and conventions are not evidence. Confirmed vendor-managed
+candidate is always `keep (vendor)`: report quality finding, never propose or
+edit. If ownership is uncertain, stop before edit proposal; ask whether
+user-managed or externally installed.
 
-Classification is not mutation authority. Even after apply approval, this
-skill directly owns only meaning-preserving `tighten`, mechanical `move` with
-an exact target, unreferenced `delete`, and frontmatter/link `fix`. Semantic
-`merge`, `deprecate`, workflow `split`, and semantic skill rewrite remain exact
-proposals with `pending`; they may feed `tk-learn`, but this skill never invokes
-it. Vendor-managed candidates remain report-only under every apply mode.
+Classification grants no mutation authority. Even with approval, directly own
+only meaning-preserving `tighten`, mechanical `move` with exact target,
+unreferenced `delete`, and frontmatter/link `fix`. Semantic `merge`,
+`deprecate`, workflow `split`, and semantic skill rewrite remain exact proposals
+with `pending`; they may feed `tk-learn`, but this skill never invokes it.
+Vendor-managed candidates remain report-only in every apply mode.
 
 Apply only after literal initial `--apply` or explicit current-turn approval
-names an exact scope. Past approval or generic continuation is insufficient.
-Before mutation reread source, search references before deletion, preserve
-managed/generated ownership markings, and never mix broad repo/user edits.
-This skill does not invent knowledge or replace skill learning.
+names exact scope. Past approval or generic continuation is insufficient.
+Before mutation, reread source, search references before deletion, preserve
+managed/generated ownership markings, and never mix broad repo/user edits. Do
+not invent knowledge or replace skill learning.
 
-An exclusion explicitly declared in the active conversation remains excluded
-for later grooming runs in that conversation. An exclusion recorded in a
-governing repository/user rule or another requested durable source remains
-excluded across sessions. Do not create hidden global state or use
-`.tigerkit/` to persist exclusions.
+An exclusion declared in active conversation remains excluded for later
+grooming runs in that conversation. One recorded in a governing repository/user
+rule or another requested durable source remains excluded across sessions. Do
+not create hidden global state or use `.tigerkit/` to persist exclusions.
 
-Literal `--apply` does not skip the checkpoint. It pre-approves a matching
-evidence/target receipt in the same run. Scope, evidence, or target drift stops
+Literal `--apply` does not skip checkpoint. It pre-approves matching
+evidence/target receipt in same run. Scope, evidence, or target drift stops
 `Partial/Blocked` for a new decision.
 
 ## Failure paths
 
-- Missing/unreadable path: mark only that area `Unverifiable`, preserve other
-  areas read-only, and report required access.
-- Unknown ownership: make no edit proposal or mutation; return
-  `Partial/Blocked` with one ownership question.
-- Vendor ownership discovered after classification: replace any edit action
-  with `keep (vendor)`, preserve the artifact, and report the evidence.
-- Conflicting scope/apply authority: make no change and return
-  `Partial/Blocked` with one required decision.
-- Referenced delete/move target: do not mutate; change proposal to
-  `keep | tighten` and cite references.
-- Target drift after checkpoint: do not mutate; return `Partial/Blocked` with
-  fresh evidence and require a new proposal.
-- Failed post-apply validation: never claim `Complete`. Restore/revalidate only
-  when this run's delta is exactly reversible, then return `Fail` with the
-  revalidation evidence. If preservation or restoration is uncertain, stop
-  mutation as `Unverifiable` and report the check, paths, and observed state.
+- Missing/unreadable path: mark only that area `Unverifiable`, preserve other areas read-only, and report required access.
+- Unknown ownership: make no edit proposal or mutation; return `Partial/Blocked` with one ownership question.
+- Vendor ownership discovered after classification: replace any edit action with `keep (vendor)`, preserve artifact, and report evidence.
+- Conflicting scope/apply authority: make no change; return `Partial/Blocked` with one required decision.
+- Referenced delete/move target: do not mutate; change proposal to `keep | tighten` and cite references.
+- Target drift after checkpoint: do not mutate; return `Partial/Blocked` with fresh evidence and require new proposal.
+- Failed post-apply validation: never claim `Complete`. Restore/revalidate only when this run's delta is exactly reversible; return `Fail` with evidence. If preservation or restoration is uncertain, stop mutation as `Unverifiable`; report check, paths, and observed state.
 
 ## Contract
 
-Evidence records actual path/content for each area; missing required evidence
-makes that area `Unverifiable`. Any blocked area prevents an overall completed
+Evidence records actual path/content for each area. Missing required evidence
+makes that area `Unverifiable`. Any blocked area prevents overall completed
 claim; use `Complete | Fail | Partial/Blocked | Unverifiable`.
 
 ## Output contract
@@ -115,54 +103,69 @@ table:
 | --- | --- | --- | --- | --- |
 | GR-01 | `<short name>` | `<classification>` | `<target>` | `<evidence refs>` |
 
-Use the same ID for applied changes and verification. Add `## Exceptions` only
-for evidence gaps, ownership conflicts, unresolved scope, or failed
-verification. Add `## Applied` and `## Verification` only after mutation.
-Show two to seven findings as table rows. For eight or more, show the top five
-to seven and group the remainder behind their audited target paths; do not add
-an artifact or lifecycle behavior solely to hold output. These are budgets,
-not quotas.
+Reuse ID for applied changes and verification. Add `## Exceptions` only for
+evidence gaps, ownership conflicts, unresolved scope, or failed verification.
+Add `## Applied` and `## Verification` only after mutation. Show two to seven
+findings as rows. For eight or more, show top five to seven and group remainder
+behind audited target paths; do not create artifact/lifecycle behavior solely
+for output. Budgets, not quotas.
+
 Record overall `report-only | applied` disposition in `## Disposition` without
-repeating the table or appending metadata. With no item, emit one
+repeating table or appending metadata. With no item, emit one
 `— | None | keep | — | no finding` row. Vendor rows use `keep (vendor)`.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Treat progress commentary, internal handoff envelopes, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between a successful phase receipt and the next active-drive phase invocation.
+Keep progress commentary, internal handoff envelopes, and terminal response
+distinct. Start every terminal user-facing response directly with canonical
+result heading or, when schema owns none, canonical result sentence. No
+standalone separator, ceremonial preamble, or progress recap. Do not emit a
+terminal user-summary opening between successful phase receipt and next
+active-drive phase invocation.
 
-Do not render a receipt heading, `Outcome:` label, or terminal provenance/status block in the user summary. When the host or skill requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the skill's canonical result schema requires it. Keep phase receipts as internal handoff envelopes: when an active parent requires phase, status, IDs, `Return to`, `Success state`, or `Outstanding transition`, return them only to that parent workflow and never echo them in the terminal user summary.
+Do not render receipt heading, `Outcome:` label, or terminal provenance/status
+block. If host or skill requires terminal status, emit one exact
+`Status: <token>` line in owning result section, not bottom metadata. Expose
+path, ID, commit, or recovery detail only when it changes user action or schema
+requires it. Keep phase receipts internal: when active parent requires phase,
+status, IDs, `Return to`, `Success state`, or `Outstanding transition`, return
+only to parent workflow; never echo in terminal summary.
 
-Persist provenance only in an artifact or ledger the skill already owns. A skill without such an owner must not create one solely to store a receipt, and a read-only skill remains read-only. Never require a shared runtime reference outside this skill.
+Persist provenance only in skill-owned artifact or ledger. Do not create one
+solely for receipt; read-only remains read-only. Never require a shared runtime
+reference outside this skill.
 
 ### 🔴 HARD GATE · response language
 
-Before any user-facing progress, question, or summary, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose result value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
+Before user-facing progress, question, or summary, choose latest explicit user
+language; else current user message language. Write all free-form user-facing
+sentences and prose result values in it. Do not switch to English due to
+sources, skill bodies, tools, or code. Preserve headings, status tokens, IDs,
+commands, paths, code, and exact quoted/source literals byte-stable; explain in
+chosen language. Before return, scan and fix language drift.
 
 ## CHECKPOINT / STOP
 
-Do not start `--apply` mutation before the audit receipt identifies evidence
-and allowed scope. Ambiguous scope or missing reference evidence for
-delete/move stops `Partial/Blocked | Unverifiable`.
+Do not start `--apply` mutation before audit receipt identifies evidence and
+allowed scope. Ambiguous scope or missing reference evidence for delete/move
+stops `Partial/Blocked | Unverifiable`.
 
 ## User decision questions
 
-When a user-owned decision blocks progress, ask one self-contained `Question`
+When user-owned decision blocks progress, ask one self-contained `Question`
 before any `Recommendation`. Show only decision-relevant evidence, two or three
 mutually exclusive options with material tradeoffs, and exactly one label
 ending `(Recommended)` or `(추천)`.
 
-Render the question, recommendation, and options directly in the chat response;
-do not call structured question or input tools. Preserve `Pending | Blocked`
-until the user answers. This changes presentation, not authority or stop gates.
+Render question, recommendation, and options directly in chat; do not call
+structured question or input tools. Preserve `Pending | Blocked` until user
+answers. This changes presentation, not authority or stop gates.
 
 ## DO NOT / ANTI-PATTERNS
 
-- Do not mutate without apply authority or skip reference checks for
-  delete/move.
+- Do not mutate without apply authority or skip reference checks for delete/move.
 - Do not silently mix unrequested repository/user files.
-- Do not infer ownership from a name, propose edits for unknown ownership, or
-  mutate vendor-managed artifacts even with `--apply`.
+- Do not infer ownership from a name, propose edits for unknown ownership, or mutate vendor-managed artifacts even with `--apply`.
 - Do not inspect or migrate legacy/global TigerKit state.
 - Do not apply semantic convert/split/rewrite or invoke `tk-learn`.
-- Do not omit, reuse, or renumber item IDs, or append a duplicate summary after
-  the `## Disposition` result.
+- Do not omit, reuse, or renumber item IDs, or append a duplicate summary after the `## Disposition` result.

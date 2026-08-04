@@ -12,58 +12,37 @@ metadata:
 
 # Ask Repo
 
-Read-only investigation for questions arriving from outside the codebase. Never
-edit source, artifacts, tickets, or Git history, and never invoke a sibling
-skill. When the answer requires a decision or implementation, name the owner
-and stop.
+Read-only investigation of external codebase questions. Never edit source, artifacts, tickets, or Git history, or invoke a sibling skill. If an answer needs a decision or implementation, name the owner and stop.
 
 ## Evidence contract
 
-- Every repository-state claim cites `path:line`, or says `unavailable` with a
-  reason.
-- Preserve the asker's exact symptom, label, or identifier as the first search
-  anchor.
-- A declaration proves shape, not origin. Trace a value to the assignment,
-  stored input, literal, or external boundary that produces it.
-- "Not found" is not "absent". Search current base and relevant in-flight work
-  before concluding absence.
-- For value, impact, and attribution questions, classify consumers as
-  `must change | must not change | unclear`. `Must not change` is required and
-  says `none found` when empty.
+- Every repository-state claim cites `path:line`, or says `unavailable` and why.
+- Use the asker's exact symptom, label, or identifier as the first search anchor.
+- Declarations prove shape, not origin. Trace values to their producing assignment, stored input, literal, or external boundary.
+- "Not found" is not "absent". Search current base and relevant in-flight work first.
+- For value, impact, and attribution, classify consumers `must change | must not change | unclear`. `Must not change` is mandatory; say `none found` when empty.
 
 ## Workflow
 
-1. **Classify** the question:
-   `value | structure | existence | impact | attribution`. Split mixed asks and
-   identify the blocking part.
-2. **Anchor** on the asker's visible string, identifier, route, endpoint, or
-   symbol. If no concrete anchor survives search, report the attempted queries
-   and stop `Unverifiable`.
-3. **Traverse** with the matching path below, recording `path:line` at each hop.
-4. **Sweep** all relevant readers/writers for value, impact, and attribution;
-   verify the search semantics used for any count that determines scope.
+1. **Classify** as `value | structure | existence | impact | attribution`. Split mixed asks; identify the blocker.
+2. **Anchor** on the visible string, identifier, route, endpoint, or symbol. If no concrete anchor survives, report attempted queries and stop `Unverifiable`.
+3. **Traverse** via the matching path below; record `path:line` each hop.
+4. **Sweep** relevant readers/writers for value, impact, and attribution; verify search semantics for scope-determining counts.
 5. **Attribute** from evidence:
-   - correct value already exists in the payload → consuming side;
-   - correct value is absent or assigned incorrectly → producer and exact field;
-   - both → split responsibility and say which blocks the other.
-6. **Verify** current ref, searched variants, dynamic-dispatch gaps, exclusions,
-   and every cited hop before reporting.
+   - correct value in payload → consuming side;
+   - value absent or wrong → producer and exact field;
+   - both → split responsibility; name which blocks the other.
+6. **Verify** current ref, variants searched, dynamic-dispatch gaps, exclusions, and every cited hop.
 
 ## Traversals
 
-- **Value**: visible string → bound key/prop/column → consuming expression →
-  transport field → declaring type → assignment site. Read sibling assignments
-  and comments before deciding meaning.
-- **Structure**: entry point → ordered boundaries such as
-  view → transport → producer → store/external. Mark dynamic dispatch.
+- **Value**: visible string → bound key/prop/column → consuming expression → transport field → declaring type → assignment site. Read sibling assignments and comments before judging meaning.
+- **Structure**: entry point → ordered boundaries, e.g. view → transport → producer → store/external. Mark dynamic dispatch.
 - **Existence**: current base ref → open/unmerged work → environment state.
   Distinguish `absent | unreleased here | present but empty/placeholder |
-  present and live`. Trace the introducing change for "since when".
-- **Impact**: symbol/field/pattern → all readers and writers → classify each
-  consumer and state what the search excluded.
-- **Attribution**: finish the consuming-side trace before blaming the producer.
-  Check transforms, permissions, feature gates, conditional rendering, and
-  same-path environment differences.
+  present and live`. Trace introducing change for "since when".
+- **Impact**: symbol/field/pattern → all readers/writers → classify every consumer; state search exclusions.
+- **Attribution**: finish consuming-side trace before blaming producer. Check transforms, permissions, feature gates, conditional rendering, and same-path environment differences.
 
 ## Failure boundaries
 
@@ -78,36 +57,26 @@ and stop.
 
 ## Result
 
-Lead with `Answer`. Use one to three short paragraphs for one result, compact
-bullets or one family-specific table for two to seven, and the top five to seven
-plus owning evidence paths for larger results.
+Lead with `Answer`. Use one to three short paragraphs for one result; compact bullets or one family-specific table for two to seven; top five to seven plus owning evidence paths for more.
 
 Include only relevant non-empty sections:
 `Evidence | Origin | Sibling fields | Path | State | Attribution |
 Must change | Must not change | Remaining concerns`.
 
-Do not echo the inbound question, repeat evidence, propose a diff, invent an
-artifact, or append a receipt/provenance block. State `Blocked | Unverifiable`,
-the next owner, or one recovery action only when it changes what the user can do.
+Do not echo the question, repeat evidence, propose a diff, invent an artifact, or append a receipt/provenance block. State `Blocked | Unverifiable`, next owner, or one recovery action only when actionable.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Treat progress commentary, internal handoff envelopes, and the terminal user response as distinct surfaces. Begin every terminal user-facing response directly with the skill's canonical result heading or, when its result schema owns no heading, its canonical result sentence. Do not emit a standalone separator, ceremonial preamble, or progress recap before that opening. Do not emit a terminal user-summary opening between a successful phase receipt and the next active-drive phase invocation.
+Separate progress, internal handoffs, and terminal response. Start every terminal response directly with the canonical result heading, or canonical result sentence when no heading exists. No separator, preamble, or progress recap first. Between successful active-drive phases, emit no terminal-summary opening.
 
-Do not render a receipt heading, `Outcome:` label, or terminal provenance/status block in the user summary. When the host or skill requires a terminal status, emit the single exact `Status: <token>` line in the owning result section instead of a bottom metadata block. Expose a path, ID, commit, or recovery detail only when it changes user action or the skill's canonical result schema requires it. Keep phase receipts as internal handoff envelopes: when an active parent requires phase, status, IDs, `Return to`, `Success state`, or `Outstanding transition`, return them only to that parent workflow and never echo them in the terminal user summary.
+Never render a receipt heading, `Outcome:` label, or terminal provenance/status block. If terminal status is required, put one exact `Status: <token>` line in its owning result section. Show paths, IDs, commits, or recovery details only when they change user action or the canonical schema requires them. Phase receipts are internal handoff envelopes: return required phase, status, IDs, `Return to`, `Success state`, or `Outstanding transition` only to the parent, never the terminal summary.
 
-Persist provenance only in an artifact or ledger the skill already owns. A skill without such an owner must not create one solely to store a receipt, and a read-only skill remains read-only. Never require a shared runtime reference outside this skill.
+Persist provenance only in an artifact or ledger this skill already owns. Never create one only for a receipt; read-only stays read-only. Never require a shared runtime reference outside this skill.
 
 ### 🔴 HARD GATE · response language
 
-Before any user-facing progress, question, or summary, resolve the response language from the latest explicit user language instruction; otherwise use the current user message's language. Write every free-form user-facing sentence and every prose result value in that resolved language, and do not switch to English because sources, skill bodies, tools, or code are English. Keep canonical headings, status tokens, IDs, commands, paths, code, and exact quoted or source literals byte-stable; explain them in the resolved language around the preserved token. Before returning, scan all free-form user-facing prose and rewrite any sentence that drifts from the resolved language.
+Before user-facing progress, questions, or summaries, use the latest explicit language instruction; otherwise current message language. All free-form sentences and prose result values use it. Do not switch to English because sources, skills, tools, or code are English. Preserve canonical headings, status tokens, IDs, commands, paths, code, and exact source literals byte-stable; explain around them in the resolved language. Before return, rewrite any drifting free-form prose.
 
 ## User decision questions
 
-Normal investigation does not own decisions: name the decision and stop
-`Blocked`. Only an explicitly authorized decision handoff may ask one
-self-contained `Question` before `Recommendation`, offer two or three mutually
-exclusive options with tradeoffs, and mark one `(Recommended)` or `(추천)`.
-Render the question, recommendation, and options directly in the chat response;
-do not call structured question or input tools. Preserve `Pending | Blocked`
-until the user answers.
+Normal investigation owns no decisions: name the decision and stop `Blocked`. Only an explicitly authorized handoff may ask one self-contained `Question` before `Recommendation`, with two or three mutually exclusive trade-off options and one `(Recommended)` or `(추천)`. Render directly in chat; do not call structured question/input tools. Remain `Pending | Blocked` until answered.

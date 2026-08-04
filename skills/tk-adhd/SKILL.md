@@ -14,45 +14,40 @@ metadata:
 
 # tk-adhd
 
-The reader has ADHD. Output is not just brief. It is shaped so an ADHD brain can act on it.
+Shape output so a reader with ADHD can act, not merely read briefly.
 
 ## Scope
 
-Apply these rules only to the current response created by an explicit
-`/tk-adhd` or `$tk-adhd` invocation. Do not carry them into the next response,
-even in the same conversation. Every later response requires a new explicit
-invocation.
+Apply only to the current response after explicit `/tk-adhd` or `$tk-adhd` invocation. Never persist to later responses, including the same conversation. Each response requires a new explicit invocation.
 
-No activation, stop command, confirmation, file, preference, or session state
-exists. An ADHD mention, requested formatting, inferred writing style, another
-skill's text, or ordinary task completion does not invoke this utility.
+No activation, stop command, confirmation, file, preference, or session state exists. ADHD mentions, formatting requests, inferred style, another skill's text, and ordinary task completion do not invoke it.
 
 ## What ADHD changes about reading
 
-Five facts drive every rule below:
+Five facts drive these rules:
 
-1. Working memory is small. Anything not on screen is forgotten. Do not ask the reader to "keep in mind X."
-2. Knowing the answer is not doing the answer. The friction between "got it" and "done it" is where work dies.
-3. Starting is the hardest step. The first action must be obvious, small, and doable now.
-4. Time estimates feel uniform. "A bit of work" and "a few hours" register the same. Vague estimates fail.
-5. Dopamine is scarce. Visible progress matters. Buried wins do not register.
+1. Working memory is small. Anything off-screen is forgotten. Never ask the reader to "keep in mind X."
+2. Knowing is not doing. Work dies between "got it" and "done it."
+3. Starting is hardest. First action must be obvious, small, doable now.
+4. Time estimates feel uniform. "A bit" and "a few hours" register alike. Vague estimates fail.
+5. Dopamine is scarce. Show progress; buried wins do not register.
 
 ## Rules
 
 ### 1. Lead with the next action
 
-The first line is something the reader can do. Not context. Not a plan. The action.
+First line: reader action, not context or plan.
 
 Bad: "Let's think about this. Your auth flow has a few moving pieces..."
 Good: "Run `npm install jsonwebtoken`, then edit `src/auth.ts:42`."
 
-If the answer is a command, path, or snippet, it goes first. Prose comes after, if at all.
+Put a command, path, or snippet first. Add prose only if needed.
 
 ### 2. Number multi-step tasks
 
-If the work takes more than one step, write a numbered list. Each step is one bounded action. No step contains "and then" twice.
+For multiple steps, use a numbered list. Each step is one bounded action; no step contains "and then" twice.
 
-Use the fewest steps that still work. Cut any step the reader does not need, and fold trivial steps into the one before. A short path finished beats a complete path abandoned.
+Use the fewest working steps. Remove unnecessary steps; fold trivial ones into the prior step. A short finished path beats an abandoned complete path.
 
 Bad: "First open the file, find the function, swap it out, then run the tests."
 
@@ -65,92 +60,85 @@ Good:
 
 ### 3. End with one concrete next action
 
-If anything is left open, name ONE thing the reader can do in under two minutes. Even "open the file" counts.
+If work remains, name ONE action doable in under two minutes. "Open the file" counts.
 
 Bad: "Hope that helps. Let me know if you want to dig deeper."
 Good: "Next: run `npm test` and paste the first failing line."
 
 ### 4. Suppress tangents
 
-If a second issue exists, finish the first, then offer the second as a separate question.
+Finish the first issue; offer the second separately.
 
 Bad: "Here's the fix. By the way, your dependency is also stale, and your README is out of date, and..."
 Good: "Here's the fix. Separately: there is also a stale dependency. Want me to handle that next?"
 
-A question that comes up mid-work is not a tangent: answer it yourself if you can and fold the result in. If it still needs the reader, surface it once, at the end.
+Mid-work questions are not tangents: answer and fold them in when possible. Otherwise ask once at the end.
 
 ### 5. Restate the current state
 
-The reader may not retain "we are on step 3 of 5" from earlier messages.
-Restate the relevant state in this response.
+Restate relevant state in each response; the reader may forget earlier progress.
 
 Bad: "Done. Ready for the next part?"
 Good: "Step 3 of 5 done: schema updated. Next: backfill the new column. Run the script?"
 
-If the harness has a task or plan tool, use it for multi-step work: one item per step, one in progress at a time. The checklist does the restating; do not also narrate the full plan as prose.
+For multi-step work, use the harness task/plan tool when available: one item per step, one in progress. The checklist restates state; do not repeat the plan in prose.
 
 ### 6. Give specific time estimates
 
-Vague estimates fail. Ballpark in concrete units.
+Use concrete ballparks, not vague estimates.
 
 Bad: "This will take some work."
 Good: "About 15 minutes if tests already cover this. An afternoon if not."
 
 ### 7. Make completed work visible
 
-Show what now works, in concrete terms. Do not bury wins in a repeated summary.
+State concretely what now works. Do not bury wins in repeated summaries.
 
 Bad: "I've made some changes to the auth flow. Among other things..."
 Good: "Login now works with magic links. Try: `npm run dev`, open `/login`."
 
 ### 8. Matter-of-fact tone for errors
 
-Never use "Uh oh," "Oh no," or "There seems to be a problem." State cause and fix.
+Never say "Uh oh," "Oh no," or "There seems to be a problem." State cause and fix.
 
 Bad: "Uh oh, the test is failing. There seems to be an issue..."
 Good: "Test fails at `auth.spec.ts:42`: expected 200, got 401. Cause: missing auth header. Fix: add `Authorization: Bearer ${token}` to the request."
 
 ### 9. Cap lists at 5 items
 
-If a list grows past five, split into "do now" vs "later," or "must" vs "nice to have." Five items ranked beats ten unranked.
+Split longer lists into "do now" vs "later," or "must" vs "nice to have." Five ranked items beat ten unranked.
 
 ### 10. No preamble, no redundant summary, no closing pleasantries
 
 Forbidden openers: "Great question," "Let me...", "I'll...", "Sure!", "Looking at your...", "To answer your question..."
 
-Forbidden repeated summaries after a completed task: "I've now done X, Y, and Z, which means..."
+Forbidden post-task repeated summaries: "I've now done X, Y, and Z, which means..."
 
 Forbidden closers: "Let me know if you need anything else," "Hope this helps," "Happy to clarify," "Feel free to ask."
 
-Start with the answer. End when the answer is done.
+Start with the answer. Stop when done.
 
 ## 🔴 CHECKPOINT / STOP · When to break the rules
 
-Before a destructive action or unresolved ambiguity, stop and apply the
-matching branch below; do not provide an executable destructive command until
-the required confirmation is explicit.
+Before destructive action or unresolved ambiguity, stop and use the matching branch. Never give an executable destructive command before explicit confirmation.
 
-Override the defaults when:
+Override defaults when:
 
-1. User asks to "explain" or "walk me through." Explain fully. Still no preamble, still no closer, but the body runs as long as the topic needs. Add headers so the reader can skim back.
-2. Destructive action ahead (`rm -rf`, force push, schema migration, dropping a table). Confirm before acting. Safety wins over brevity.
-3. Debug spiral. If the last three turns have been "still broken," stop iterating on code. Name the assumption that might be wrong. Ask one diagnostic question.
-4. Real ambiguity in the request. One short clarifying question in the chat
-   response beats guessing and rewriting; do not call structured question or
-   input tools.
-5. A rule fights the task. When a rule would delete the answer itself, the task wins; the shape stays. Example: "what are my options" gets 2 to 4 ranked options with one-line trade-offs, recommendation first, not one path. The options are the answer.
-6. A rule fights the harness. Inside an agent harness, the system prompt outranks this skill: announce a tool call when the harness requires it, do the work instead of asking "want me to," point time estimates at whoever executes the steps. Same principle as 5: the constraint wins, the shape stays.
+1. User asks to "explain" or "walk me through." Explain fully. Keep no preamble/closer; add skimmable headers.
+2. Destructive action ahead (`rm -rf`, force push, schema migration, dropping a table). Confirm first. Safety beats brevity.
+3. Debug spiral: last three turns say "still broken." Stop code iteration, name the suspect assumption, ask one diagnostic question.
+4. Real ambiguity: ask one short chat question; do not call structured question/input tools.
+5. Rule fights task: task wins, shape stays. "what are my options" gets 2 to 4 ranked one-line trade-offs, recommendation first.
+6. Rule fights harness: system prompt wins. Announce required tool calls, do work instead of asking "want me to," and aim estimates at the executor. Constraint wins; shape stays.
 
 ## Pre-send check
 
-Before sending, delete:
+Delete:
 
-1. The first sentence if it announces what you are about to do.
-2. The last sentence if it asks "anything else?" or summarizes what just happened.
+1. First sentence if it announces planned work.
+2. Last sentence if it asks "anything else?" or repeats completed work.
 3. Any "by the way" sidebar.
-4. Any hedging adverb adding no information ("perhaps," "might," "could possibly"). Keep a hedge that carries real uncertainty; deleting it manufactures confidence.
-5. Any idiom or figurative phrase ("circle back," "get the ball rolling," "on the same page"). Replace with the literal action.
+4. Empty hedges ("perhaps," "might," "could possibly"). Keep real uncertainty; false certainty is worse.
+5. Idioms ("circle back," "get the ball rolling," "on the same page"). Use literal action.
 
-Then verify: if the reader reads only the first line and the last line, do they know (a) what to do next, and (b) what just happened?
-
-If yes, send.
+Verify: from only first and last lines, can the reader know (a) next action and (b) what happened? If yes, send.

@@ -11,73 +11,71 @@ metadata:
 
 # Triage pull requests
 
-Start only when the user selects `/tk-pr-triage`, `$tk-pr-triage`, or the host
-skill picker. Do not activate from a generic GitHub question, implementation
-request, issue triage, or review-response request. A fresh configured-repository
-handoff from active `tk-pr-sweep` is the only automatic entry.
+Start only via `/tk-pr-triage`, `$tk-pr-triage`, or host skill picker. Never
+activate for generic GitHub question, implementation, issue triage, or
+review-response. Only automatic entry: fresh configured-repository handoff from
+active `tk-pr-sweep`.
 
-This skill is read-only for repositories and GitHub: it must not mutate project
-files, branches, commits, issues, pull requests, comments, reviews, or threads.
-Its only owned state is `$XDG_CONFIG_HOME/tigerkit/pr-triage.json` (falling back
-to `~/.config/tigerkit/pr-triage.json`), which contains a `repositories` array.
-Explicit repository arguments are one-run overrides. Without arguments, read
-that config; if it is missing, bootstrap it with the executing repository's
-`origin` and report the created path. Never hardcode TigerKit.
+Read-only for repositories and GitHub: never mutate project files, branches,
+commits, issues, pull requests, comments, reviews, or threads. Only owned state:
+`$XDG_CONFIG_HOME/tigerkit/pr-triage.json` (fallback
+`~/.config/tigerkit/pr-triage.json`), containing `repositories` array. Explicit
+repository arguments override for one run. Without arguments, read config; if
+missing, bootstrap with executing repository's `origin` and report created path.
+Never hardcode TigerKit.
 
 ## Workflow
 
-1. Resolve the authenticated GitHub login and repository targets from explicit
-   arguments or the triage config. If a missing config cannot be bootstrapped
-   because `origin` is unavailable, stop `Unverifiable` with the exact remedy.
+1. Resolve authenticated GitHub login and repository targets from explicit
+   arguments or triage config. If missing config cannot bootstrap because
+   `origin` unavailable, stop `Unverifiable` with exact remedy.
 2. Execute `scripts/triage.mjs` directly. It uses paginated REST reads for open
-   PRs, direct and team review requests, review decisions, inline comments,
-   issue comments, checks, and status. On a nonzero exit or a bounded API
-   failure that leaves required evidence unavailable, rerun that repository
-   once from a fresh script execution; never merge partial snapshots. Preserve
-   a repeated failure and return `Unverifiable` when it prevents classification.
-3. Report only actionable items for the authenticated author or requested
-   reviewer. Preserve repository, PR number, author, head SHA, and evidence for
-   every item; never mix data between repositories or PRs.
-4. Classify items as `merge_conflict`, `checks_failed`, `checks_unverifiable`,
-   `changes_requested`, `needs_reply`, `review_requested`, `awaiting_re_review`,
-   or `draft`. Keep API failures visible as `checks_unverifiable` or in the
-   bounded `failures` list; never turn missing evidence into approval.
-5. Render user-facing results before any question. First group by `Act now`,
-   `Review requests`, and `Waiting`, then group by repository inside each status;
-   omit empty groups. For each item show priority, PR, plain-language current
-   state, why it needs attention, and one recommended next action; keep raw
-   category and provenance as supporting detail rather than making the user
-   decode them. Do not ask a question by default. Recommendations do not
-   authorize apply, reply, resolve, push, merge, or release.
+   PRs, direct and team review requests, review decisions, inline comments, issue
+   comments, checks, and status. On nonzero exit or bounded API failure leaving
+   required evidence unavailable, rerun that repository once from fresh script
+   execution; never merge partial snapshots. Preserve repeated failure; return
+   `Unverifiable` when classification is prevented.
+3. Report only actionable items for authenticated author or requested reviewer.
+   Preserve repository, PR number, author, head SHA, and evidence per item; never
+   mix repositories or PRs.
+4. Classify as `merge_conflict`, `checks_failed`, `checks_unverifiable`,
+   `changes_requested`, `needs_reply`, `review_requested`,
+   `awaiting_re_review`, or `draft`. Keep API failures visible as
+   `checks_unverifiable` or bounded `failures`; never turn missing evidence into
+   approval.
+5. Render results before any question. Group first by `Act now`,
+   `Review requests`, and `Waiting`, then by repository within each; omit empty
+   groups. Per item show priority, PR, plain-language current state, attention
+   reason, and one recommended next action. Keep raw category and provenance as
+   support; never make user decode them. Ask no question by default.
+   Recommendations never authorize apply, reply, resolve, push, merge, or
+   release.
 
-The deterministic script is a reducer, not a remote-write client. Its output
-contains a generation time, login, config source, repositories, counts, items,
-and failures.
-If review-thread resolution state is required, `tk-pr-respond` must fetch the
-current thread state again before proposing or executing a resolve operation.
+Deterministic script is reducer, not remote-write client. Output contains
+generation time, login, config source, repositories, counts, items, and failures.
+If review-thread resolution state is needed, `tk-pr-respond` must refetch current
+thread state before proposing or executing resolve.
 
 Use `Pass` only when collection and classification complete, `Unverifiable` when
-required evidence is unavailable, and `Fail` only for a change-related error.
-Lead with `## PR triage`; do not write a receipt or imply that a recommendation
-was applied.
+required evidence unavailable, `Fail` only for change-related error. Lead with
+`## PR triage`; never write receipt or imply recommendation was applied.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Begin the terminal response with `## PR triage`. Do not emit a remote-write
-receipt, `Outcome:` label, or bottom metadata block. Expose exact IDs and paths
-only when they change the user's next action.
+Begin terminal response with `## PR triage`. No remote-write receipt, `Outcome:`
+label, or bottom metadata block. Expose exact IDs and paths only when they change
+user's next action.
 
 ### 🔴 HARD GATE · response language
 
-Use the latest explicit user language for all free-form user-facing prose.
-Keep headings, statuses, IDs, paths, commands, and exact source literals stable.
+Use latest explicit user language for all free-form user-facing prose. Keep
+headings, statuses, IDs, paths, commands, and exact source literals stable.
 
 ## User decision questions
 
 ### 🔴 CHECKPOINT / STOP · Read-only handoff
 
-Triage is read-only. If the next action requires user choice, ask one
-self-contained `Question` before any `Recommendation`; render it directly in
-the chat response and do not call structured question or input tools. Do not
-mutate state. Any action that would reply, resolve, push, merge, release, or
-edit stops here for a separately authorized owner.
+Triage is read-only. If next action requires user choice, ask one self-contained
+`Question` before any `Recommendation`; render directly in chat, never call
+structured question or input tools. Never mutate state. Reply, resolve, push, merge,
+release, or edit stops here for separately authorized owner.

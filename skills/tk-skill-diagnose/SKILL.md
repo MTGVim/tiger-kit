@@ -12,14 +12,14 @@ metadata:
 # Agent Skill Diagnosis
 
 Use only for one exact Agent Skill target and one observed or measured anomaly.
-Direct selection is allowed. Automatic selection requires both the target and
-incident evidence; generic words such as "skill", "debug", or "performance" are
-not enough.
+Direct selection allowed. Automatic selection requires target and incident
+evidence; generic words such as "skill", "debug", or "performance" are
+insufficient.
 
-This skill diagnoses. It does not write canonical skills, optimize a catalog,
-or own the final patch. Verified skill objectives route to `tk-learn` as the
-sole `create | improve | merge` writer. Never semantically mutate the canonical
-source skill.
+This skill diagnoses. It does not write canonical skills, optimize catalog, or
+own final patch. Verified skill objectives route to `tk-learn` as sole
+`create | improve | merge` writer. Never semantically mutate canonical source
+skill.
 
 ## Intake gate
 
@@ -32,30 +32,29 @@ Record:
 
 Mark missing values `unverified`. No incident or metric anchor is
 `NotApplicable`. Missing fresh execution or inaccessible required evidence is
-`Unverifiable | Blocked`, not permission to infer a cause.
+`Unverifiable | Blocked`, not permission to infer cause.
 
-One `learn-ready` handoff is accepted once only when it names the incident,
-exact target, host/invocation, prompt, expected and observed result, and
-evidence. Never invoke `tk-learn` from this diagnostic phase or repeat the same
-target + incident + blocker cycle.
+Accept one `learn-ready` handoff once only when it names incident, exact target,
+host/invocation, prompt, expected and observed result, and evidence. Never invoke
+`tk-learn` from diagnostic phase or repeat same target + incident + blocker cycle.
 
 ## Evidence order
 
-Decide in this order:
+Decide in order:
 
 1. target provenance, description/body consistency, deterministic assertions,
    repository state, and adapter/host evidence;
-2. the smallest fresh reproduction of the incident;
-3. one nearby control that distinguishes the suspected failure plane;
-4. a run-owned minimum experiment only when needed to prove causality.
+2. smallest fresh incident reproduction;
+3. one nearby control distinguishing suspected failure plane;
+4. run-owned minimum experiment only when needed to prove causality.
 
 Reproduction is `Reproduced | Not reproduced | Inconclusive`. Self-report
-suggests a hypothesis; it does not prove root cause. Repeat a fresh run only
-when the first result is unstable or the boundary remains ambiguous. Do not
-require fixed trial counts, a generic holdout suite, or rubric scoring when
-narrower evidence decides the incident.
+suggests hypothesis; it does not prove root cause. Repeat fresh run only when
+first result is unstable or boundary remains ambiguous. Do not require fixed
+trial counts, generic holdout suite, or rubric scoring when narrower evidence
+decides incident.
 
-Read these references only when applicable:
+Read references only when applicable:
 
 - [failure planes](references/failure-planes.md)
 - [empirical method](references/empirical-method.md)
@@ -63,30 +62,30 @@ Read these references only when applicable:
 
 ## Efficiency gate
 
-A resource claim needs a matched baseline, historical run, repository threshold,
-or explicit budget. Otherwise report the observed value as profile-only and the
-direction as `Unverifiable`. Never offset correctness or safety regression with
-lower tokens, time, calls, retries, or fan-out.
+Resource claim needs matched baseline, historical run, repository threshold, or
+explicit budget. Otherwise report observed value as profile-only and direction as
+`Unverifiable`. Never offset correctness or safety regression with lower tokens,
+time, calls, retries, or fan-out.
 
 ## Workflow
 
-1. **Freeze** the exact incident, target ref, must-preserve behavior, affected
-   host, and reliable evidence/metric.
-2. **Reproduce** once in a clean context. Classify
+1. **Freeze** exact incident, target ref, must-preserve behavior, affected host,
+   and reliable evidence/metric.
+2. **Reproduce** once in clean context. Classify
    `Reproduced | Not reproduced | Inconclusive`.
-3. **Control** the nearest alternative: loader vs body, parent vs child,
-   candidate vs grader, one host vs another, correctness vs resource cost.
-4. **Isolate** the verified failure plane:
+3. **Control** nearest alternative: loader vs body, parent vs child, candidate vs
+   grader, one host vs another, correctness vs resource cost.
+4. **Isolate** verified failure plane:
    `selection | loading | instruction | planning | execution | formatting |
    evaluation | compatibility | efficiency | local override`.
 5. **Experiment when needed** in one run-owned isolated checkout. Change one
-   root-cause theme only and use the experiment to confirm or reject the cause;
-   never treat it as the canonical fix.
-6. **Route** the next owner from verified evidence.
+   root-cause theme only; confirm or reject cause. Never treat experiment as
+   canonical fix.
+6. **Route** next owner from verified evidence.
 
-Stop after a conclusive cause or disposition. A second experiment is allowed
-only when the first exposes a new specific cause. Clean only run-owned
-isolation; never rewrite or patch the canonical target.
+Stop after conclusive cause or disposition. Second experiment allowed only when
+first exposes new specific cause. Clean only run-owned isolation; never rewrite
+or patch canonical target.
 
 ## Routes
 
@@ -105,73 +104,71 @@ Metric: <actual measurement, labeled proxy, or unavailable>
 Incident: <stable ID or source reference>
 ```
 
-This is input to a later explicit `tk-learn`; do not invoke it.
+This is input to later explicit `tk-learn`; do not invoke it.
 
 ### Other dispositions
 
-- `learn-candidate`: a new independently useful skill is required.
-- `eval-owner`: grader, fixture, harness, or assertion is the verified cause.
-- `host-owner`: loader, metadata, adapter, or host runtime is the verified cause.
-- `local-only`: consumer override/configuration causes the incident.
-- `no-change`: target behavior is correct or the incident is not reproduced.
+- `learn-candidate`: new independently useful skill required.
+- `eval-owner`: grader, fixture, harness, or assertion is verified cause.
+- `host-owner`: loader, metadata, adapter, or host runtime is verified cause.
+- `local-only`: consumer override/configuration causes incident.
+- `no-change`: target behavior correct or incident not reproduced.
 - `unverifiable`: evidence cannot decide safely.
 
-For an external consumer repository, verify upstream origin/ref and current
-upstream behavior before proposing an anonymized issue. Only a duplicate-checked,
-redacted proposal with verified provenance is `upstream-draft-ready`; never
-create, comment, label, or publish it automatically.
+For external consumer repository, verify upstream origin/ref and current upstream
+behavior before proposing anonymized issue. Only duplicate-checked, redacted
+proposal with verified provenance is `upstream-draft-ready`; never create,
+comment, label, or publish automatically.
 
 ## Result
 
-Lead with `## Diagnosis`, then `## Action`, and add `## Remaining uncertainty`
-only when needed.
+Lead with `## Diagnosis`, then `## Action`; add `## Remaining uncertainty` only
+when needed.
 
 For one incident, use short prose. For multiple symptoms sharing one cause, keep
-one stable `SD-##` row per cause in `ID | Incident | Root cause`. Report the
+one stable `SD-##` row per cause in `ID | Incident | Root cause`. Report
 reproduction verdict, verified failure plane, evidence, route, and exact next
-handoff. Do not copy raw logs, transcripts, screenshots, secrets, or repeated
-run narration.
+handoff. Do not copy raw logs, transcripts, screenshots, secrets, or repeated run
+narration.
 
-When experiment evidence exceeds five rows or a later resume needs the exact
-references, atomically replace `.tigerkit/skill-diagnosis.md` with the bounded
-incident IDs, candidate/control/holdout evidence refs, measurements, and route.
-Keep the chat response to `## Diagnosis`, `## Action`, and necessary uncertainty;
-do not create an archive, lifecycle state, or duplicate raw output.
+When experiment evidence exceeds five rows or later resume needs exact references,
+atomically replace `.tigerkit/skill-diagnosis.md` with bounded incident IDs,
+candidate/control/holdout evidence refs, measurements, and route. Keep chat to
+`## Diagnosis`, `## Action`, and necessary uncertainty; do not create archive,
+lifecycle state, or duplicate raw output.
 
 Use one terminal status:
 
 - `Pass`: diagnosis and routing completed;
-- `Fail`: a deterministic diagnosis/experiment claim violated a gate;
-- `Blocked`: required permission, decision, or environment is unavailable;
-- `Unverifiable`: provenance, reproduction, cause, or metric cannot be verified;
+- `Fail`: deterministic diagnosis/experiment claim violated a gate;
+- `Blocked`: required permission, decision, or environment unavailable;
+- `Unverifiable`: provenance, reproduction, cause, or metric unverifiable;
 - `NotApplicable`: no qualifying Agent Skill incident exists.
 
 ### 🔴 HARD GATE · terminal user summary
 
-Keep progress and the terminal user response separate. Begin directly with `## Diagnosis`.
-Do not emit a ceremonial preamble, `Outcome:`, receipt heading, duplicated
-status, or raw internal handoff. Expose only evidence and paths that change the
-next action.
+Separate progress from terminal response. Begin with `## Diagnosis`; no preamble,
+`Outcome:`, receipt heading, duplicate status, or raw internal handoff. Expose
+only evidence and paths changing next action.
 
 ### 🔴 HARD GATE · response language
 
-Use the latest explicit user language, otherwise the current message's language.
-Preserve canonical headings, statuses, IDs, commands, paths, schemas, code, and
-quoted literals exactly.
+Use latest explicit user language, else current message's language. Preserve
+canonical headings, statuses, IDs, commands, paths, schemas, code, and quoted
+literals exactly.
 
 ## User decision questions
 
-Ask only when a material user-owned decision blocks diagnosis. Put one
-self-contained `Question` before `Recommendation`, offer two or three mutually
-exclusive options with tradeoffs, and mark exactly one `(Recommended)` or
-`(추천)`. Render the question, recommendation, and options directly in the chat
-response; do not call structured question or input tools. Preserve
-`Pending | Blocked` until the user answers.
+Only when material user-owned decision blocks diagnosis: put one self-contained
+`Question` before `Recommendation`; offer two or three exclusive options with
+tradeoffs; mark exactly one `(Recommended)` or `(추천)`. Render directly in chat,
+never via structured question/input tool. Preserve `Pending | Blocked` until
+answer.
 
 ## Pitfalls
 
-- Do not assume the skill body is the cause.
-- Do not patch a non-reproduced incident from wording intuition.
+- Do not assume skill body is cause.
+- Do not patch non-reproduced incident from wording intuition.
 - Do not trade correctness, safety, or holdout behavior for lower resource use.
 - Do not use fixed repeated runs or judge majorities to manufacture confidence.
 - Do not leak expected answers, secrets, or private evidence into prompts.
