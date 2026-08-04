@@ -43,6 +43,7 @@ test('stripNoise removes hidden and details content', () => {
 
 test('actionable text does not revive an old request after an LGTM-like message', () => {
   assert.equal(isActionableText('Please add a test.'), true);
+  assert.equal(isActionableText('- **Fix:** Replace the stale ref before push.'), true);
   assert.equal(isActionableText('LGTM, no action.'), false);
 });
 
@@ -120,7 +121,7 @@ test('unavailable check evidence is never classified as approval', () => {
   }), 'checks_unverifiable');
 });
 
-test('classification priority is checks, conflict, changes requested, draft, reply', () => {
+test('classification priority is checks, conflict, outstanding reply, changes requested, draft', () => {
   const base = {
     draft: true,
     conflict: false,
@@ -133,7 +134,9 @@ test('classification priority is checks, conflict, changes requested, draft, rep
   };
   assert.equal(classifyPullRequest({ ...base, checksUnverifiable: true }), 'checks_unverifiable');
   assert.equal(classifyPullRequest({ ...base, checksUnverifiable: false, conflict: true }), 'merge_conflict');
-  assert.equal(classifyPullRequest({ ...base, conflict: false }), 'changes_requested');
+  assert.equal(classifyPullRequest({ ...base, conflict: false }), 'needs_reply');
+  assert.equal(classifyPullRequest({ ...base, conflict: false, latestExternalActionable: false }), 'changes_requested');
+  assert.equal(classifyPullRequest({ ...base, conflict: false, authorRespondedToChangeRequest: true }), 'needs_reply');
   assert.equal(classifyPullRequest({ ...base, conflict: false, draft: false, decision: 'APPROVED' }), 'needs_reply');
   assert.equal(classifyPullRequest({ ...base, conflict: false, draft: false, decision: 'APPROVED', latestExternalActionable: false }), 'approved');
 });

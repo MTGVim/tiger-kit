@@ -15,7 +15,8 @@ export function stripNoise(body = '') {
 
 export function isActionableText(body = '') {
   const text = stripNoise(body);
-  return Boolean(text) && !NO_ACTION_PATTERN.test(text) && REQUEST_PATTERN.test(text);
+  const normalized = text.replace(/(^|\n)\s*(?:[-*#>]+\s*)+/g, '$1');
+  return Boolean(text) && !NO_ACTION_PATTERN.test(text) && REQUEST_PATTERN.test(normalized);
 }
 
 export function parseRepoFromRemote(remote) {
@@ -168,6 +169,7 @@ export function classifyPullRequest({
   if (checksUnverifiable) return 'checks_unverifiable';
   if (conflict) return 'merge_conflict';
   if (checksFailed) return 'checks_failed';
+  if (latestExternalActionable && !authorRespondedToLatestExternal) return 'needs_reply';
   if (decision === 'CHANGES_REQUESTED') {
     return authorRespondedToChangeRequest ? 'awaiting_re_review' : 'changes_requested';
   }
