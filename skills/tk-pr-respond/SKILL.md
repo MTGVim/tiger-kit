@@ -31,29 +31,18 @@ unit; `tk-implement` owns the unit commit and verification.
   release, draft-to-`Ready for review` transitions, or publication outside this
   PR response.
 
-## Progress commentary
+## Progress
 
-Direct CI mode owns a compact progress surface beginning `▶️ Progress` at meaningful boundaries: after
-freezing the supported scope and plan; before and after each `tk-implement`
-unit; before and after each bounded check cycle or long verification; before the
-freshness recheck and exact publication sequence; and after the final fresh PR
-read. Each checkpoint carries `Progress`, `Decision`, `Evidence`, and
-`Result/Next` semantics using only the decisive fresh evidence and active bound.
+In direct CI mode, emit compact `▶️ Progress` checkpoints after scope selection,
+around each unit/check, before publication, and after the final fresh read; each
+states the decision, decisive evidence, and result/next action, then continues
+without approval, `Pending`, or a pause. Under `tk-pr-sweep`, return this evidence
+to the sweep instead of duplicating commentary. Normal mode is unchanged.
 
-A checkpoint is nonterminal commentary. It never asks for approval, emits
-`Pending`, exposes a child receipt or status, or pauses an already-authorized CI
-flow. When invoked by `tk-pr-sweep`, return the same checkpoint evidence
-internally and let the sweep render the unified progress surface; do not emit
-duplicate child commentary. Before long blocking work, state what is starting
-and the next decision condition, then report its result immediately afterward.
-Do not promise timer heartbeats or expose raw chain-of-thought or
-command-by-command logs. Normal mode retains its existing tables and questions.
-
-Make outcomes scannable without replacing canonical status tokens: use
+Use
 `✅ Pass`, `⏳ Waiting`, `⚠️ Advisory`, `❌ Fail`, `⛔ Blocked`, and
-`❓ Unverifiable` for the corresponding checkpoint or terminal outcome. Always
-pair the emoji with that exact text; never emit an emoji-only state. Preserve
-the terminal `Status: <token>` literal expected by the owning result schema.
+`❓ Unverifiable` for matching outcomes while preserving terminal
+`Status: <token>` exactly.
 
 ## Workflow
 

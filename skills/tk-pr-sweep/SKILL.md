@@ -51,7 +51,7 @@ receipt. Reclassify from GitHub evidence.
 ## Workflow
 
 1. Resolve authenticated identity and configured repositories through a fresh full `tk-pr-triage`. Never execute a supplied/cached queue; freeze supported items in triage priority/repository/PR order and record report-only items.
-2. Before each queued PR, re-read repository identity, author/open/draft state, base/head refs and SHAs, category/provider evidence, reviews, comments, threads, and checks. Route stale entries afresh; stop mutation on author/login, fork destination, or ownership ambiguity. A draft stays report-only; never mark it `Ready for review`.
+2. Before each queued PR, re-read repository identity, author/open/draft state, base/head refs and SHAs, category/provider evidence, reviews, comments, threads, and checks. Route stale entries afresh; stop mutation on author/login, fork destination, or ownership ambiguity. Preserve draft state; never mark it `Ready for review`.
 3. Fetch the exact remote PR head into a sweep-owned deterministic local ref and prove its SHA. Reuse only a clean worktree whose remote repository, PR, head ref, and `HEAD` match. Otherwise prefer current-schema `orca worktree list --json` and `orca worktree create --json`, rooted at the fetched head rather than a coincidental local branch; use direct Git only when Orca is unavailable or the repository is unregistered. Before mutation, verify worktree `HEAD` and the exact push refspec target the observed head repository/ref; ambiguity stops that PR. Record fetched ref/SHA, worktree owner/path, push refspec, and fallback.
 4. In each new worktree, run once the repository-owned setup that enforces its lockfile; if none is documented, use the lockfile package manager in frozen/immutable mode. Share only the package cache; never symlink `node_modules` or another checkout's dependency tree.
 5. Invoke exactly one closed-router owner. A child `Pass` is internal: render the sweep checkpoint, re-triage that exact PR/head without a terminal response or pause, then follow a new supported category only within its bound. Record child non-success without a sibling call for the same failed state.
@@ -62,18 +62,18 @@ receipt. Reclassify from GitHub evidence.
 10. Remove only a sweep-created clean worktree whose complete route is freshly `Pass`, preferring its matching Orca removal; retain and report `follow-up-queued`, `waiting`, dirty, failed, blocked, unverifiable, ambiguous, or reused worktrees.
 11. After every initial target is accounted for, run new full triage without growing an unbounded queue. A processed PR whose sweep-owned new head exhausted feedback cycles is `follow-up-queued`; any other final-only supported `Act now` item is `Blocked`; both prevent batch `Pass`. Write `.tigerkit/pr-sweep.md` with evidence times, exact routes, child states, consumed bounds, summary budget, worktree owner/disposition, setup command class, report-only items, systemic stop, and all final items. Store no credentials or resume cursor.
 
-## Progress commentary
+## Progress
 
-The sweep owns the unified progress surface. At meaningful boundaries, render one compact checkpoint beginning `▶️ Progress` with `Decision`, `Evidence`, and `Result/Next` semantics: after freezing the initial queue; before each PR route; after every child mutation or bounded check cycle; when closing a PR with its remaining count; and before and after final triage. Use only the decisive fresh GitHub/repository evidence and active route bound. Mention a rejected route only when evidence made it materially competitive.
+After queue freeze, before and after each PR route/check, and around final triage,
+emit one compact `▶️ Progress` checkpoint with the decision, decisive evidence,
+result/next action, and remaining count; then continue within sweep authority.
+Children return evidence internally. Do not expose child receipts, raw reasoning,
+command logs, timer promises, approval requests, or nonterminal `Status:` lines.
 
-These checkpoints are nonterminal commentary and never consume the one terminal response. A child invoked by the sweep returns its decision, evidence, result, and next action internally; it does not render duplicate progress, a receipt, or a status. Within existing sweep authority, render the checkpoint and continue immediately. Before a long blocking check or verification, state what is starting and the next decision condition, then report its result immediately afterward. Do not promise timer heartbeats or expose raw chain-of-thought or command-by-command logs.
-
-Make outcomes scannable without replacing canonical status tokens: use
+Use
 `✅ Pass`, `⏳ Waiting`, `⚠️ Advisory`, `❌ Fail`, `⛔ Blocked`, and
-`❓ Unverifiable` for the corresponding PR-local, checkpoint, or aggregate
-outcome. Always pair the emoji with that exact text; never emit an emoji-only
-state. Render `follow-up-queued` and `waiting` with `⏳ Waiting`. Preserve the
-required terminal `Status: <token>` line unchanged.
+`❓ Unverifiable` for matching outcomes. Render `follow-up-queued` and `waiting`
+as `⏳ Waiting`, and preserve terminal `Status: <token>` exactly.
 
 ## Aggregate result
 

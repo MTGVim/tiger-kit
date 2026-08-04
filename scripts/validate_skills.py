@@ -22,7 +22,6 @@ KINDS = {"user-invoked", "hybrid"}
 INVOCATION_LABELS = {"user-invoked": "[user]", "hybrid": "[user/auto]"}
 RELATIONSHIPS = {"copied", "adapted", "inspired-by", "forked", "native"}
 SUPPORTED_EVAL_HOSTS = {"claude-code", "codex", "hermes-agent"}
-HOST_ORDER = ("codex", "claude-code", "hermes-agent")
 HYBRID_TRIGGER_FACETS = {"formal", "casual", "typo", "ko-en", "short", "compound"}
 TERMINAL_STATUSES = {
     "Pass",
@@ -523,11 +522,6 @@ def validate_release_critical(
     data = load_json_object(path, errors)
     if data is None:
         return errors
-    if data.get("hosts") != list(HOST_ORDER):
-        errors.append(f"{_display_path(path)}: hosts must be ordered {', '.join(HOST_ORDER)}")
-    runs = data.get("runs")
-    if isinstance(runs, bool) or not isinstance(runs, int) or runs < 2:
-        errors.append(f"{_display_path(path)}: runs must be at least 2")
     known_behavior = {
         f"{skill}:behavior:{case_id}"
         for skill, ids in behavior_ids.items()

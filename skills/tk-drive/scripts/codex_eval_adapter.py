@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run one TigerKit eval through Codex app-server's explicit skill input."""
+"""Run one tk-drive eval through Codex app-server's explicit skill input."""
 
 from __future__ import annotations
 
@@ -23,14 +23,7 @@ from typing import IO, Callable, Mapping
 TERMINAL_STATUSES = ("Pass", "Pending", "Blocked", "Fail", "Unverifiable")
 EVENT_TYPES = {"phase_invocation"}
 PHASES = {
-    "aggregate verification",
-    "remote-publish",
-    "tk-drive finalization",
     "tk-grill-me",
-    "tk-pr-rebase",
-    "tk-pr-respond",
-    "tk-pr-sweep",
-    "tk-pr-triage",
     "tk-to-spec",
     "tk-to-tickets",
     "tk-prototype",
@@ -39,7 +32,6 @@ PHASES = {
 LIVE_FIXTURES = {
     "[tigerkit-eval:prepared-single]\n/tk-drive": "single",
     "[tigerkit-eval:prepared-two-unit]\n/tk-drive": "two-unit",
-    "[tigerkit-eval:prepared-respond-ci]\n/tk-pr-respond --ci": "respond-ci",
     "/tk-drive Create canary-choice.txt containing alpha.": "cold-start",
 }
 LIVE_FIXTURE_CONTENT = {
@@ -48,7 +40,6 @@ LIVE_FIXTURE_CONTENT = {
         "canary-alpha.txt": b"alpha\n",
         "canary-beta.txt": b"beta\n",
     },
-    "respond-ci": {"respond-canary.txt": b"resolved\n"},
     "cold-start": {"canary-choice.txt": b"alpha\n"},
 }
 STATUS_PATTERN = re.compile(
@@ -406,166 +397,6 @@ def _configure_eval_git(checkout: Path) -> None:
             raise RuntimeError(f"cannot secure prepared eval Git config: {key}")
 
 
-def _prepare_respond_ci_fixture(checkout: Path) -> str:
-    tigerkit = checkout / ".tigerkit"
-    if tigerkit.exists():
-        raise RuntimeError("prepared eval fixture requires an empty .tigerkit path")
-    tigerkit.mkdir()
-    branch = _ensure_eval_branch(checkout, "respond-ci")
-    head = _git_value(checkout, "rev-parse", "HEAD")
-    remote = tigerkit / "respond-ci-remote.git"
-    for command in (
-        ["git", "init", "--bare", "-q", str(remote)],
-        ["git", "push", "-q", str(remote), f"{head}:refs/heads/{branch}"],
-    ):
-        completed = subprocess.run(
-            command,
-            cwd=checkout,
-            text=True,
-            capture_output=True,
-            check=False,
-        )
-        if completed.returncode != 0:
-            detail = completed.stderr.strip() or completed.stdout.strip()
-            raise RuntimeError(f"cannot prepare respond CI fixture: {detail}")
-    state = {
-        "repository": "tigerkit/eval",
-        "pull_request": 42,
-        "author": "tigerkit-eval",
-        "authenticated_user": "tigerkit-eval",
-        "open": True,
-        "head_ref": branch,
-        "head_sha": head,
-        "comment_id": "C-EVAL-1",
-        "thread_id": "T-EVAL-1",
-        "requested_outcome": "Create respond-canary.txt containing resolved plus one trailing newline.",
-        "reply": False,
-        "resolved": False,
-        "remote": str(remote),
-    }
-    (tigerkit / "respond-ci-state.json").write_text(
-        json.dumps(state, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-    transport = tigerkit / "respond-ci-fixture.py"
-    transport.write_text(
-        '''#!/usr/bin/env python3
-import json
-from pathlib import Path
-import subprocess
-import sys
-
-root = Path.cwd()
-state_path = root / ".tigerkit/respond-ci-state.json"
-state = json.loads(state_path.read_text(encoding="utf-8"))
-
-def git(*args):
-    result = subprocess.run(["git", *args], cwd=root, text=True, capture_output=True)
-    if result.returncode:
-        raise SystemExit(result.stderr.strip() or result.stdout.strip())
-    return result.stdout.strip()
-
-def save():
-    state_path.write_text(json.dumps(state, indent=2, sort_keys=True) + "\\n", encoding="utf-8")
-
-command = sys.argv[1] if len(sys.argv) > 1 else ""
-if command == "read":
-    finding = None if state["resolved"] else {
-        "comment_id": state["comment_id"],
-        "thread_id": state["thread_id"],
-        "requested_outcome": state["requested_outcome"],
-    }
-    print(json.dumps({**state, "finding": finding}, sort_keys=True))
-elif command == "push":
-    current = git("rev-parse", "HEAD")
-    git("merge-base", "--is-ancestor", state["head_sha"], current)
-    if git("rev-list", "--count", f"{state['head_sha']}..{current}") != "1":
-        raise SystemExit("push requires exactly one new commit")
-    if (root / "respond-canary.txt").read_bytes() != b"resolved\\n":
-        raise SystemExit("respond canary content mismatch")
-    git("push", "-q", state["remote"], f"{current}:refs/heads/{state['head_ref']}")
-    state["head_sha"] = current
-    state["pushed"] = True
-    save()
-    print(json.dumps({"pushed_head": current}))
-elif command == "commit":
-    if git("branch", "--show-current") != state["head_ref"]:
-        raise SystemExit("commit requires the prepared head branch")
-    if git("rev-parse", "HEAD") != state["head_sha"]:
-        raise SystemExit("commit requires the prepared head SHA")
-    if (root / "respond-canary.txt").read_bytes() != b"resolved\\n":
-        raise SystemExit("respond canary content mismatch")
-    status = git(
-        "status",
-        "--porcelain",
-        "--untracked-files=all",
-        "--",
-        ".",
-        ":(exclude).tigerkit",
-        ":(exclude).agents",
-    )
-    if status != "?? respond-canary.txt":
-        raise SystemExit("commit requires only the untracked respond canary")
-    git("add", "--", "respond-canary.txt")
-    if git("diff", "--cached", "--name-only") != "respond-canary.txt":
-        raise SystemExit("commit staged path mismatch")
-    staged = subprocess.run(
-        ["git", "show", ":respond-canary.txt"], cwd=root, capture_output=True
-    )
-    if staged.returncode or staged.stdout != b"resolved\\n":
-        raise SystemExit("commit staged content mismatch")
-    git("commit", "-qm", "test: resolve PR feedback canary")
-    current = git("rev-parse", "HEAD")
-    if git("rev-list", "--count", f"{state['head_sha']}..{current}") != "1":
-        raise SystemExit("commit did not create exactly one commit")
-    print(json.dumps({"committed_head": current}))
-elif command == "reply":
-    body = " ".join(sys.argv[2:])
-    if not state.get("pushed") or not body.endswith("_🤖 본 코멘트는 AI가 작성했습니다._"):
-        raise SystemExit("reply requires pushed head and exact disclosure")
-    state["reply"] = True
-    save()
-    print(json.dumps({"reply": True}))
-elif command == "resolve":
-    if not state["reply"]:
-        raise SystemExit("thread resolution requires a successful reply")
-    state["resolved"] = True
-    save()
-    print(json.dumps({"resolved": True}))
-elif command == "verify":
-    remote_head = git("--git-dir", state["remote"], "rev-parse", f"refs/heads/{state['head_ref']}")
-    current = git("rev-parse", "HEAD")
-    ok = state.get("pushed") and state["reply"] and state["resolved"] and remote_head == current
-    print(json.dumps({"complete": bool(ok), "head": current}, sort_keys=True))
-    raise SystemExit(0 if ok else 1)
-else:
-    raise SystemExit("usage: respond-ci-fixture.py read|commit|push|reply <body>|resolve|verify")
-''',
-        encoding="utf-8",
-    )
-    transport.chmod(0o700)
-    _configure_eval_git(checkout)
-    fixture_command = shlex.join(
-        [sys.executable, "-I", ".tigerkit/respond-ci-fixture.py"]
-    )
-    commit_command = f"{fixture_command} commit"
-    return (
-        "[tigerkit-eval: active tk-pr-sweep handoff with exact PR #42/head "
-        f"evidence; use `{fixture_command} read` for every "
-        "fresh PR read. The one actionable finding requires an independently "
-        "verified tk-implement unit that creates `respond-canary.txt` containing "
-        "`resolved` plus one trailing newline. After its Pass, emit only the "
-        "owning nonterminal progress checkpoint and continue without asking or "
-        f"ending the turn. For the unit commit, run exactly `{commit_command}`; "
-        "do not run `git add` or `git commit` directly. Immediately before "
-        f"publication, record `remote-publish`. Then use `{fixture_command}` for "
-        "`push`, `reply` with the exact AI disclosure suffix, `resolve`, and "
-        "`verify` in order. Finish only "
-        "after a fresh `read` proves the thread resolved.]\n"
-        "/tk-pr-respond --ci"
-    )
-
-
 def _prepare_live_fixture(
     checkout: Path,
     skills_target: Path,
@@ -577,8 +408,6 @@ def _prepare_live_fixture(
     if kind == "cold-start":
         _configure_eval_git(checkout)
         return prompt
-    if kind == "respond-ci":
-        return _prepare_respond_ci_fixture(checkout)
 
     tigerkit = checkout / ".tigerkit"
     if tigerkit.exists():
@@ -730,16 +559,11 @@ def _prepare_live_fixture(
 
 
 class LiveGitApprovalGate:
-    """Approve only fixture-scoped Git add/commit commands and verification."""
+    """Approve only the fixture's exact, non-composite Git add/commit commands."""
 
     def __init__(self, checkout: Path, kind: str) -> None:
         self.checkout = checkout.resolve()
-        self.kind = kind
         self.expected = LIVE_FIXTURE_CONTENT[kind]
-        transport = self.checkout / ".tigerkit/respond-ci-fixture.py"
-        self.respond_transport = (
-            transport.read_bytes() if kind == "respond-ci" else None
-        )
 
     def __call__(self, params: Mapping[str, object]) -> bool:
         allowed = self._is_allowed(params)
@@ -768,20 +592,18 @@ class LiveGitApprovalGate:
         try:
             if Path(cwd).resolve() != self.checkout:
                 return False
-            if self._allow_respond_commit(command):
-                return True
             wrapped_script = self._wrapped_script(command)
             if wrapped_script is not None:
-                if self._allow_verified_script(wrapped_script):
-                    return True
                 if self._allow_staged_content_script(wrapped_script):
                     return True
+                if "\n" in wrapped_script:
+                    return self._allow_multiline_script(wrapped_script)
             tokens = self._command_tokens(command)
         except (OSError, ValueError):
             return False
         if any(marker in command for marker in ("\x00", "\n", "\r", "`", "$")):
             return False
-        if not tokens or tokens[0] != "git":
+        if not tokens or Path(tokens[0]).name != "git":
             return False
         operators = {"&&", "||", ";", "|", "&", ">", ">>", "<", "<<"}
         present = [token for token in tokens if token in operators]
@@ -801,27 +623,6 @@ class LiveGitApprovalGate:
             return self._allow_commit(tokens)
         return False
 
-    def _allow_respond_commit(self, command: str) -> bool:
-        transport = self.checkout / ".tigerkit/respond-ci-fixture.py"
-        wrapped = self._wrapped_script(command)
-        candidate = wrapped if wrapped is not None else command
-        return (
-            self.kind == "respond-ci"
-            and self.respond_transport is not None
-            and candidate
-            == shlex.join(
-                [sys.executable, "-I", ".tigerkit/respond-ci-fixture.py", "commit"]
-            )
-            and transport.is_file()
-            and transport.read_bytes() == self.respond_transport
-            and not self._staged_paths()
-            and all(
-                (self.checkout / path).is_file()
-                and (self.checkout / path).read_bytes() == content
-                for path, content in self.expected.items()
-            )
-        )
-
     def _command_tokens(self, command: str) -> list[str]:
         wrapped = self._wrapped_script(command)
         return self._shell_tokens(wrapped) if wrapped is not None else self._shell_tokens(command)
@@ -837,6 +638,36 @@ class LiveGitApprovalGate:
         ):
             return tokens[2]
         return None
+
+    def _allow_multiline_script(self, script: str) -> bool:
+        if "\x00" in script or "\r" in script or self._staged_paths():
+            return False
+        lines = script.splitlines()
+        if len(lines) != 10 or any(not line.strip() for line in lines):
+            return False
+        add_tokens = self._shell_tokens(lines[0])
+        if not self._allow_add(add_tokens):
+            return False
+        paths = add_tokens[2:]
+        if paths[:1] == ["--"]:
+            paths = paths[1:]
+        branch = _git_value(self.checkout, "branch", "--show-current")
+        head = _git_value(self.checkout, "rev-parse", "HEAD")
+        staged = "\n".join(paths)
+        expected_middle = [
+            "git diff --cached --stat",
+            "git diff --cached --numstat",
+            "git diff --cached --name-status",
+            "git diff --cached --check",
+            shlex.join(["git", "diff", "--cached", "--", *paths]),
+            f'test "$(git branch --show-current)" = {shlex.quote(branch)}',
+            f'test "$(git rev-parse HEAD)" = {shlex.quote(head)}',
+            f'test "$(git diff --cached --name-only)" = {shlex.quote(staged)}',
+        ]
+        return lines[1:-1] == expected_middle and self._allow_commit(
+            self._shell_tokens(lines[-1]),
+            require_staged=False,
+        )
 
     def _allow_staged_content_script(self, script: str) -> bool:
         if "\x00" in script or "\r" in script or "\n" in script or self._staged_paths():
@@ -865,131 +696,6 @@ class LiveGitApprovalGate:
                 return True
         return False
 
-    def _allow_verified_script(self, script: str) -> bool:
-        if "\x00" in script or "\r" in script or "\n" in script:
-            return False
-        segments = self._script_segments(script)
-        if segments is None:
-            return False
-        commands = [self._shell_tokens(segment) for segment in segments]
-        if any(
-            token in {"&&", "||", ";", "|", "&", ">", ">>", "<", "<<"}
-            for command in commands
-            for token in command
-        ):
-            return False
-        if any(not command for command in commands):
-            return False
-        branch = _git_value(self.checkout, "branch", "--show-current")
-        head = _git_value(self.checkout, "rev-parse", "HEAD")
-        if not re.fullmatch(r"[0-9a-f]{40,64}", head):
-            return False
-        staged = self._staged_paths()
-        for path, content in self.expected.items():
-            if (
-                not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._/-]*", path)
-                or Path(path).is_absolute()
-                or ".." in Path(path).parts
-            ):
-                continue
-            remaining = commands
-            if commands[0] == ["git", "add", "--", path]:
-                if staged or not self._allow_add(commands[0]):
-                    continue
-                remaining = commands[1:]
-            elif staged != [path] or not self._staged_content_matches(path):
-                continue
-            if not remaining:
-                continue
-            has_commit = self._allow_commit(remaining[-1], require_staged=False)
-            checks = remaining[:-1] if has_commit else remaining
-            if staged and not has_commit:
-                continue
-            branch_check = ["test", "$(git branch --show-current)", "=", branch]
-            head_check = ["test", "$(git rev-parse HEAD)", "=", head]
-            scoped_diff = ["git", "diff", "--cached", "--", path]
-            quoted_branch = "'" + branch.replace("'", "'\"'\"'") + "'"
-            branch_sources = {
-                f'test "$(git branch --show-current)" = {quoted_branch}'
-            }
-            unsafe_shell = "`$\\\"';&|<>(){}!#"
-            if not any(
-                character.isspace() or character in unsafe_shell
-                for character in branch
-            ) and not branch.startswith("="):
-                branch_sources.add(
-                    f'test "$(git branch --show-current)" = {branch}'
-                )
-            allowed = [
-                ["git", "diff", "--cached", "--stat"],
-                ["git", "diff", "--cached", "--numstat"],
-                ["git", "diff", "--cached", "--name-only"],
-                ["git", "diff", "--cached", "--name-status"],
-                ["git", "diff", "--cached", "--check"],
-                scoped_diff,
-                branch_check,
-                head_check,
-                ["test", "$(git diff --cached --name-only)", "=", path],
-                ["test", f"$(wc -c < {path} | tr -d ' ')", "=", str(len(content))],
-                ["test", f"$(od -An -tx1 {path} | tr -d ' \\n')", "=", content.hex()],
-                ["test", f"$(git show :{path} | wc -c | tr -d ' ')", "=", str(len(content))],
-                ["test", f"$(git show :{path} | od -An -tx1 | tr -d ' \\n')", "=", content.hex()],
-            ]
-            if (
-                branch_check in checks
-                and head_check in checks
-                and scoped_diff in checks
-                and any(segment in branch_sources for segment in segments)
-                and len(checks) == len({tuple(command) for command in checks})
-                and all(command in allowed for command in checks)
-            ):
-                return True
-        return False
-
-    @staticmethod
-    def _script_segments(script: str) -> list[str] | None:
-        segments: list[str] = []
-        start = 0
-        quote: str | None = None
-        escaped = False
-        index = 0
-        while index < len(script):
-            character = script[index]
-            if escaped:
-                escaped = False
-            elif character == "\\" and quote != "'":
-                escaped = True
-            elif quote is not None:
-                if character == quote:
-                    quote = None
-            elif character in {"'", '"'}:
-                quote = character
-            elif script.startswith("&&", index):
-                segment = script[start:index].strip()
-                if not segment:
-                    return None
-                segments.append(segment)
-                index += 2
-                start = index
-                continue
-            index += 1
-        if quote is not None or escaped:
-            return None
-        segment = script[start:].strip()
-        if not segment:
-            return None
-        segments.append(segment)
-        return segments
-
-    def _staged_content_matches(self, path: str) -> bool:
-        completed = subprocess.run(
-            ["git", "show", f":{path}"],
-            cwd=self.checkout,
-            capture_output=True,
-            check=False,
-        )
-        return completed.returncode == 0 and completed.stdout == self.expected[path]
-
     @staticmethod
     def _shell_tokens(command: str) -> list[str]:
         lexer = shlex.shlex(
@@ -997,13 +703,10 @@ class LiveGitApprovalGate:
             posix=True,
             punctuation_chars=";&|<>",
         )
-        lexer.commenters = ""
         lexer.whitespace_split = True
         return list(lexer)
 
     def _allow_add(self, tokens: list[str]) -> bool:
-        if tokens[:2] != ["git", "add"]:
-            return False
         paths = tokens[2:]
         if paths[:1] == ["--"]:
             paths = paths[1:]
@@ -1023,22 +726,12 @@ class LiveGitApprovalGate:
         *,
         require_staged: bool = True,
     ) -> bool:
-        if tokens[:2] != ["git", "commit"]:
-            return False
         message: str | None = None
         if len(tokens) == 4 and tokens[2] in {"-m", "--message"}:
             message = tokens[3]
         elif len(tokens) == 3 and tokens[2].startswith("--message="):
             message = tokens[2].partition("=")[2]
-        if (
-            not message
-            or len(message) > 200
-            or not message[0].isalnum()
-            or any(
-                not (character.isalnum() or character in " .,:/@_+-")
-                for character in message
-            )
-        ):
+        if not message or len(message) > 200 or "\x00" in message:
             return False
         if not require_staged:
             return True
@@ -1124,7 +817,6 @@ def _available_repo_skills(
     result: Mapping[str, object],
     *,
     checkout: Path,
-    expected_skill: str,
 ) -> tuple[list[str], dict[str, object] | None]:
     data = result.get("data")
     if not isinstance(data, list):
@@ -1143,18 +835,18 @@ def _available_repo_skills(
             if isinstance(value.get("name"), str) and value.get("enabled") is True
         }
     )
-    selected = next(
+    drive = next(
         (
             value
             for value in skills
-            if value.get("name") == expected_skill
+            if value.get("name") == "tk-drive"
             and value.get("enabled") is True
             and value.get("path")
-            == str(checkout / ".agents/skills" / expected_skill / "SKILL.md")
+            == str(checkout / ".agents/skills/tk-drive/SKILL.md")
         ),
         None,
     )
-    return names, selected
+    return names, drive
 
 
 def _prepare_codex_home(run_dir: Path) -> Path:
@@ -1253,10 +945,9 @@ def _run_codex(
         available_skills, selected_skill = _available_repo_skills(
             skill_result,
             checkout=checkout,
-            expected_skill=skill,
         )
-        if selected_skill is None:
-            raise RuntimeError(f"Codex did not expose the staged repo {skill} skill")
+        if skill != "tk-drive" or selected_skill is None:
+            raise RuntimeError("Codex did not expose the staged repo tk-drive skill")
         thread_params: dict[str, object] = {
             "cwd": str(checkout),
             "approvalPolicy": "on-request" if approval_handler else "never",

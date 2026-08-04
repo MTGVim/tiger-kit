@@ -82,19 +82,6 @@ class HostAdapterTest(unittest.TestCase):
             self.assertEqual(env["CODEX_HOME"], str(home / ".codex"))
             self.assertFalse((home / ".codex/skills").exists())
 
-    def test_prepared_codex_prompt_uses_candidate_fixture_adapter_only(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            checkout = Path(directory)
-            candidate = checkout / "skills/tk-drive/scripts/codex_eval_adapter.py"
-            candidate.parent.mkdir(parents=True)
-            candidate.write_text("# fixture adapter\n", encoding="utf-8")
-
-            self.assertEqual(
-                adapter.prepared_codex_adapter(checkout, "[tigerkit-eval:prepared-respond-ci]\n/tk-pr-respond --ci"),
-                candidate,
-            )
-            self.assertIsNone(adapter.prepared_codex_adapter(checkout, "/tk-pr-respond --ci"))
-
     def test_hermes_copies_provider_config_but_not_oauth_state(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
