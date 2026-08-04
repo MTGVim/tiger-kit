@@ -479,6 +479,8 @@ if command == "read":
 elif command == "push":
     current = git("rev-parse", "HEAD")
     git("merge-base", "--is-ancestor", state["head_sha"], current)
+    if git("rev-list", "--count", f"{state['head_sha']}..{current}") != "1":
+        raise SystemExit("push requires exactly one new commit")
     if (root / "respond-canary.txt").read_bytes() != b"resolved\\n":
         raise SystemExit("respond canary content mismatch")
     git("push", "-q", state["remote"], f"{current}:refs/heads/{state['head_ref']}")
@@ -520,7 +522,9 @@ else:
         "`resolved` plus one trailing newline. After its Pass, emit only the "
         "owning nonterminal progress checkpoint and continue without asking or "
         "ending the turn. Immediately before publication, record "
-        "`remote-publish`, then run the fixture `push`, `reply` with the exact AI "
+        "`remote-publish`. Join every compound Git verification/commit command "
+        "with literal `&&`; newline-separated shell commands are denied. Then run "
+        "the fixture `push`, `reply` with the exact AI "
         "disclosure suffix, `resolve`, and `verify` commands in order. Finish only "
         "after a fresh `read` proves the thread resolved.]\n"
         "/tk-pr-respond --ci"

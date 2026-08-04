@@ -287,6 +287,7 @@ class CodexObservationTest(unittest.TestCase):
                 "[tigerkit-eval:prepared-respond-ci]\n/tk-pr-respond --ci",
             )
             self.assertIn("remote-publish", prompt)
+            self.assertIn("literal `&&`", prompt)
             self.assertTrue(prompt.endswith("\n/tk-pr-respond --ci"))
             transport = checkout / ".tigerkit/respond-ci-fixture.py"
             read = subprocess.run(
@@ -299,6 +300,15 @@ class CodexObservationTest(unittest.TestCase):
             self.assertIn('"thread_id": "T-EVAL-1"', read)
 
             (checkout / "respond-canary.txt").write_text("resolved\n", encoding="utf-8")
+            no_commit = subprocess.run(
+                [sys.executable, str(transport), "push"],
+                cwd=checkout,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertNotEqual(no_commit.returncode, 0)
+            self.assertIn("exactly one new commit", no_commit.stderr)
             subprocess.run(["git", "add", "respond-canary.txt"], cwd=checkout, check=True)
             subprocess.run(["git", "commit", "-qm", "canary"], cwd=checkout, check=True)
             subprocess.run([sys.executable, str(transport), "push"], cwd=checkout, check=True)
