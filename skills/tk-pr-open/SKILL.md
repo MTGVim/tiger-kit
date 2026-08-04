@@ -59,15 +59,16 @@ anything before the approval gate below.
 
 The plan must name the repository, PR or create target, base branch, head
 branch, exact push refspec, title, body, evidence requirement/state, operation
-order, and exclusions. Any
-branch drift, PR head drift, identity mismatch, dirty-path change, or changed
-body invalidates approval and returns `Blocked` with a refreshed plan.
+order, and exclusions.
 
-Use `Pass` only when the requested PR operation completed and required
-evidence is uploaded, `Pending` while waiting for approval, `Blocked` for
-missing/failed required evidence or stale/unsafe scope, `Fail` for a write
-failure, and `Unverifiable` when required Git or GitHub evidence is
-unavailable.
+| Trigger | First action | If unresolved |
+| --- | --- | --- |
+| Waiting for exact current-turn approval | Make no remote write | `Pending` |
+| Branch/PR head, identity, dirty paths, body, or target changed | Invalidate approval and refresh the plan | `Blocked` |
+| Required Git or GitHub evidence is unavailable | Record the attempted check and evidence gap | `Unverifiable` |
+| Push, create, or update fails or writes only part of the plan | Re-read the remote PR and report exactly what applied | `Fail` |
+| Required upload is missing or fails after PR creation | Keep the PR, report the evidence recovery condition | `Blocked` |
+| Requested PR operation and required evidence verify | Report the fresh URL and head SHA | `Pass` |
 
 Lead with `## PR open` and show only user-relevant state, verification, and
 remaining risks. Keep full provenance in `.tigerkit/pr-open.md`.
