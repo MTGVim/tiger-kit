@@ -478,6 +478,106 @@ class CodexObservationTest(unittest.TestCase):
                     }
                 )
             )
+            for unsafe_commit in (
+                'touch escaped -m "test: add canary"',
+                'git commit -m "$(touch escaped)"',
+                'git commit -m "`touch escaped`"',
+            ):
+                self.assertFalse(
+                    gate(
+                        {
+                            **base,
+                            "command": f"/usr/bin/zsh -lc {shlex.quote(script.replace('git commit -m \"test: add canary\"', unsafe_commit))}",
+                        }
+                    )
+                )
+            verified_worktree = " && ".join(
+                (
+                    "git add -- canary-ready.txt",
+                    "git diff --cached --stat",
+                    "git diff --cached --numstat",
+                    "git diff --cached --name-only",
+                    "git diff --cached -- canary-ready.txt",
+                    f'test "$(git branch --show-current)" = {branch}',
+                    f'test "$(git rev-parse HEAD)" = {head}',
+                    'test "$(wc -c < canary-ready.txt | tr -d \' \')" = 6',
+                    'test "$(od -An -tx1 canary-ready.txt | tr -d \' \\n\')" = 72656164790a',
+                )
+            )
+            self.assertTrue(
+                gate(
+                    {
+                        **base,
+                        "command": f"/usr/bin/zsh -lc {shlex.quote(verified_worktree)}",
+                    }
+                )
+            )
+            verified_commit = " && ".join(
+                (
+                    "git add -- canary-ready.txt",
+                    "git diff --cached --stat",
+                    "git diff --cached --numstat",
+                    "git diff --cached --name-only",
+                    "git diff --cached -- canary-ready.txt",
+                    f'test "$(git branch --show-current)" = {branch}',
+                    f'test "$(git rev-parse HEAD)" = {head}',
+                    'test "$(git diff --cached --name-only)" = canary-ready.txt',
+                    'test "$(git show :canary-ready.txt | wc -c | tr -d \' \')" = 6',
+                    'test "$(git show :canary-ready.txt | od -An -tx1 | tr -d \' \\n\')" = 72656164790a',
+                    'git commit -m "test: add canary"',
+                )
+            )
+            self.assertTrue(
+                gate(
+                    {
+                        **base,
+                        "command": f"/usr/bin/zsh -lc {shlex.quote(verified_commit)}",
+                    }
+                )
+            )
+            self.assertFalse(
+                gate(
+                    {
+                        **base,
+                        "command": f"/usr/bin/zsh -lc {shlex.quote(verified_commit.replace(head, '0' * 40))}",
+                    }
+                )
+            )
+            escaped = checkout / "escaped"
+            injected_commit = verified_commit.replace(
+                'git commit -m "test: add canary"',
+                'git commit -m "$(touch escaped)"',
+            )
+            self.assertFalse(
+                gate(
+                    {
+                        **base,
+                        "command": f"/usr/bin/zsh -lc {shlex.quote(injected_commit)}",
+                    }
+                )
+            )
+            self.assertFalse(escaped.exists())
+            for command in (
+                "./git add -- canary-ready.txt",
+                "/tmp/git add -- canary-ready.txt",
+                verified_commit.replace(
+                    'git commit -m "test: add canary"',
+                    'touch escaped -m "test: add canary"',
+                ),
+                verified_commit.replace(
+                    'git commit -m "test: add canary"',
+                    'git commit -m "`touch escaped`"',
+                ),
+            ):
+                self.assertFalse(
+                    gate(
+                        {
+                            **base,
+                            "command": f"/usr/bin/zsh -lc {shlex.quote(command)}",
+                        }
+                    )
+                )
+            self.assertFalse(escaped.exists())
             self.assertTrue(
                 gate(
                     {

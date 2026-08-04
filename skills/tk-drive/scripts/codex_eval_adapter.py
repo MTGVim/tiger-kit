@@ -726,6 +726,8 @@ class LiveGitApprovalGate:
                 return False
             wrapped_script = self._wrapped_script(command)
             if wrapped_script is not None:
+                if self._allow_verified_script(wrapped_script):
+                    return True
                 if self._allow_staged_content_script(wrapped_script):
                     return True
                 if "\n" in wrapped_script:
@@ -735,7 +737,7 @@ class LiveGitApprovalGate:
             return False
         if any(marker in command for marker in ("\x00", "\n", "\r", "`", "$")):
             return False
-        if not tokens or Path(tokens[0]).name != "git":
+        if not tokens or tokens[0] != "git":
             return False
         operators = {"&&", "||", ";", "|", "&", ">", ">>", "<", "<<"}
         present = [token for token in tokens if token in operators]
@@ -828,6 +830,47 @@ class LiveGitApprovalGate:
                 return True
         return False
 
+    def _allow_verified_script(self, script: str) -> bool:
+        if "\x00" in script or "\r" in script or "\n" in script or self._staged_paths():
+            return False
+        tokens = self._shell_tokens(script)
+        commands: list[list[str]] = [[]]
+        for token in tokens:
+            if token == "&&":
+                commands.append([])
+            elif token in {"||", ";", "|", "&", ">", ">>", "<", "<<"}:
+                return False
+            else:
+                commands[-1].append(token)
+        if any(not command for command in commands):
+            return False
+        branch = _git_value(self.checkout, "branch", "--show-current")
+        head = _git_value(self.checkout, "rev-parse", "HEAD")
+        for path, content in self.expected.items():
+            common = [
+                ["git", "add", "--", path],
+                ["git", "diff", "--cached", "--stat"],
+                ["git", "diff", "--cached", "--numstat"],
+                ["git", "diff", "--cached", "--name-only"],
+                ["git", "diff", "--cached", "--", path],
+                ["test", "$(git branch --show-current)", "=", branch],
+                ["test", "$(git rev-parse HEAD)", "=", head],
+            ]
+            worktree_checks = common + [
+                ["test", f"$(wc -c < {path} | tr -d ' ')", "=", str(len(content))],
+                ["test", f"$(od -An -tx1 {path} | tr -d ' \\n')", "=", content.hex()],
+            ]
+            if commands == worktree_checks:
+                return self._allow_add(commands[0])
+            index_checks = common + [
+                ["test", "$(git diff --cached --name-only)", "=", path],
+                ["test", f"$(git show :{path} | wc -c | tr -d ' ')", "=", str(len(content))],
+                ["test", f"$(git show :{path} | od -An -tx1 | tr -d ' \\n')", "=", content.hex()],
+            ]
+            if commands[:-1] == index_checks and self._allow_add(commands[0]):
+                return self._allow_commit(commands[-1], require_staged=False)
+        return False
+
     @staticmethod
     def _shell_tokens(command: str) -> list[str]:
         lexer = shlex.shlex(
@@ -839,6 +882,8 @@ class LiveGitApprovalGate:
         return list(lexer)
 
     def _allow_add(self, tokens: list[str]) -> bool:
+        if tokens[:2] != ["git", "add"]:
+            return False
         paths = tokens[2:]
         if paths[:1] == ["--"]:
             paths = paths[1:]
@@ -858,12 +903,18 @@ class LiveGitApprovalGate:
         *,
         require_staged: bool = True,
     ) -> bool:
+        if tokens[:2] != ["git", "commit"]:
+            return False
         message: str | None = None
         if len(tokens) == 4 and tokens[2] in {"-m", "--message"}:
             message = tokens[3]
         elif len(tokens) == 3 and tokens[2].startswith("--message="):
             message = tokens[2].partition("=")[2]
-        if not message or len(message) > 200 or "\x00" in message:
+        if (
+            not message
+            or len(message) > 200
+            or any(marker in message for marker in ("\x00", "\n", "\r", "$", "`"))
+        ):
             return False
         if not require_staged:
             return True
