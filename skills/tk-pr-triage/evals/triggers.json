@@ -1,6 +1,6 @@
 {
   "skill": "tk-pr-triage",
-  "kind": "user-invoked",
+  "kind": "hybrid",
   "queries": [
     {"id":"train-explicit","split":"train","query":"$tk-pr-triage","should_trigger":true},
     {"id":"train-negative","split":"train","query":"PR 상태 알려줘","should_trigger":false},
@@ -8,9 +8,17 @@
     {"id":"validation-positive-2","split":"validation","query":"tk-pr-triage review request 뭐가 남았어?","should_trigger":true,"facets":["casual"]},
     {"id":"validation-positive-3","split":"validation","query":"$tk-pr-triage checks와 changes requested 확인","should_trigger":true,"facets":["compound"]},
     {"id":"validation-positive-4","split":"validation","query":"PR triage","should_trigger":true,"facets":["short"]},
+    {"id":"validation-positive-handoff-ko-en","split":"validation","query":"[active tk-pr-sweep handoff] configured repos fresh tk-pr-triage","should_trigger":true,"facets":["ko-en"]},
+    {"id":"validation-positive-typo","split":"validation","query":"tk-pr-triag configured PR 확인","should_trigger":true,"facets":["typo"]},
+    {"id":"validation-positive-handoff","split":"validation","query":"[active tk-pr-sweep] final fresh triage를 실행해 주세요","should_trigger":true,"facets":["formal"]},
+    {"id":"validation-positive-handoff-short","split":"validation","query":"[active tk-pr-sweep → tk-pr-triage] final","should_trigger":true,"facets":["short"]},
     {"id":"validation-negative-1","split":"validation","query":"PR 리뷰 반영하고 답글도 달아줘","should_trigger":false,"facets":["formal"]},
     {"id":"validation-negative-2","split":"validation","query":"새 PR을 만들어줘","should_trigger":false,"facets":["casual"]},
     {"id":"validation-negative-3","split":"validation","query":"이슈를 triage해줘","should_trigger":false,"facets":["ko-en"]},
-    {"id":"validation-negative-4","split":"validation","query":"그냥 GitHub 사용법 설명해줘","should_trigger":false,"facets":["compound"]}
+    {"id":"validation-negative-4","split":"validation","query":"그냥 GitHub 사용법 설명해줘","should_trigger":false,"facets":["compound"]},
+    {"id":"validation-negative-short","split":"validation","query":"PR status","should_trigger":false,"facets":["short"]},
+    {"id":"validation-negative-typo","split":"validation","query":"이슈 trige 해줘","should_trigger":false,"facets":["typo"]},
+    {"id":"validation-negative-generic-extra","split":"validation","query":"여러 PR을 자동으로 고쳐줘","should_trigger":false,"facets":["casual"]},
+    {"id":"validation-negative-handoff-like","split":"validation","query":"active 작업이니 PR 수정 계속","should_trigger":false,"facets":["ko-en"]}
   ]
 }

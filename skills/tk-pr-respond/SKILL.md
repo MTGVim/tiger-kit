@@ -1,11 +1,10 @@
 ---
 name: tk-pr-respond
-description: "[user] Resolve one pull request's selected feedback or GitHub Actions failures through verified tk-implement units and bounded publication."
+description: "[user/auto] Resolve one pull request's selected feedback or GitHub Actions failures through verified tk-implement units and bounded publication."
 argument-hint: "<pull request or repository> [--ci]"
-disable-model-invocation: true
 metadata:
   tigerkit:
-    kind: user-invoked
+    kind: hybrid
     origin: tigerkit
     relationship: native
 ---

@@ -1,11 +1,10 @@
 ---
 name: tk-pr-rebase
-description: "[user] Rebase one open GitHub pull request onto the exact latest base, resolve conflicts, verify, and publish through approved or sweep-owned force-with-lease authority."
+description: "[user/auto] Rebase one open GitHub pull request onto the exact latest base, resolve conflicts, verify, and publish through approved or sweep-owned force-with-lease authority."
 argument-hint: "<pull request or repository> [--ci]"
-disable-model-invocation: true
 metadata:
   tigerkit:
-    kind: user-invoked
+    kind: hybrid
     origin: tigerkit
     relationship: native
 ---

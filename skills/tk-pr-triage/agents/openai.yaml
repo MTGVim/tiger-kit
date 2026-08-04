@@ -1,4 +1,2 @@
 interface:
-  short_description: "[user] Read-only triage of current-repository pull requests and review state."
-  policy:
-    allow_implicit_invocation: false
+  short_description: "[user/auto] Read-only triage of configured pull requests and review state."

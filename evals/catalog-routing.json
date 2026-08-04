@@ -380,6 +380,30 @@
       "critical": true
     },
     {
+      "id": "pr-sweep-explicit",
+      "boundary": "tk-pr-sweep vs tk-pr-triage/tk-pr-respond/tk-pr-rebase",
+      "prompt": "/tk-pr-sweep configured repositories의 지원 가능한 Act now PR을 처리해줘",
+      "focus_skill": "tk-pr-sweep",
+      "expected_selected_skill": "tk-pr-sweep",
+      "critical": true
+    },
+    {
+      "id": "pr-sweep-generic-block",
+      "boundary": "tk-pr-sweep vs ordinary PR maintenance request",
+      "prompt": "열린 PR들을 알아서 정리하고 CI도 고쳐줘",
+      "focus_skill": "tk-pr-sweep",
+      "expected_selected_skill": null,
+      "critical": true
+    },
+    {
+      "id": "pr-sweep-vs-triage",
+      "boundary": "tk-pr-sweep vs tk-pr-triage/tk-pr-respond/tk-pr-rebase",
+      "prompt": "/tk-pr-triage configured repositories 상태만 읽어줘",
+      "focus_skill": "tk-pr-triage",
+      "expected_selected_skill": "tk-pr-triage",
+      "critical": true
+    },
+    {
       "id": "github-image-upload-explicit",
       "boundary": "tk-github-image-upload-to-pr vs generic GitHub help",
       "prompt": "/tk-github-image-upload-to-pr 이 스크린샷을 현재 PR body에 넣어줘",
