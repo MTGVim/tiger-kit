@@ -18,7 +18,7 @@ Use only for explicit `/tk-implement`, `$tk-implement`, host-picker selection, a
 
 One invocation owns one independently verifiable unit and, after verification and review, exactly one current-branch commit. With tickets: `one ticket = one unit = one commit`. Standalone multi-ticket input must select one ticket or use `$tk-drive`; do not recreate drive orchestration.
 
-Explicit user instructions outrank defaults. Do not weaken or reconfirm settled scope, method, prohibitions, strategy, verification, or commit instructions. Ask only when instructions conflict or safe execution requires a material user decision. Never claim a source was read or a check passed unless it was actually read or executed.
+Explicit user instructions outrank defaults. Do not weaken or reconfirm settled scope, method, prohibitions, strategy, verification, or commit instructions. Ask only when instructions conflict or safe execution requires a material user decision.
 
 For active drive or PR response, preserve task identity, unit ID, source IDs, initial `HEAD`, pre-existing dirty paths, and a material verification profile's four fields. A PR response handoff also preserves repository, PR number, PR head SHA, and exact comment/thread IDs. Follow the owner mapping in [review-boundary.md](references/review-boundary.md); never recompute or weaken it. Return the unit ID, native status, commit when present, and verification/review evidence to the parent. Do not emit a terminal user result or take ownership of cross-unit verification, remote publication, or finalization.
 
@@ -47,7 +47,7 @@ Inspect before mutation. Decide unspecified `direct | delegated` and `tdd | no-t
 - Prefer `direct` when any direct condition in [delegation.md](references/delegation.md) applies.
 - Consider `delegated` only when every transferability condition there holds and exactly one bounded implementor is available. If inferred delegation is unavailable, fall back to direct. If the user required it, return `Blocked`.
 - For unknown-cause bugs, intermittent failures, or performance regressions, load [investigation.md](references/investigation.md). Do not guess-patch; skip the full investigation loop when the cause is already established.
-- Do not nest delegation or let an implementor invoke a user-invoked TigerKit skill. The current agent owns final evidence, review, staging, and commit.
+- The current agent owns final evidence, review, staging, and commit.
 
 ## Applicable gates
 
@@ -64,9 +64,17 @@ Before mutation and after initial green, use [review-boundary.md](references/rev
 
 Before editing, stop `Blocked` when requirements conflict, authority is unsafe, exact UI intent is unresolved, or a required user decision remains. During execution, apply the status table without converting unavailable evidence into `Pass`.
 
+## Do not
+
+- Do not invent source access, test execution, review, or passing evidence.
+- Do not broaden the unit, stage pre-existing user changes, or create extra commits.
+- Do not nest delegation or let an implementor invoke a user-invoked TigerKit skill.
+- Do not commit a non-`Pass` unit or bypass hooks for convenience.
+- Do not push, open a PR, merge, tag, release, publish, or own parent finalization.
+
 ## Commit and result
 
-Commit exactly once only when status is `Pass` and commit is not prohibited. Stage only this unit's paths; preserve pre-existing user changes. Never broaden staging, bypass hooks for convenience, push, create a PR, merge, tag, release, or publish without a separate request.
+Commit exactly once only when status is `Pass` and commit is not prohibited. Preserve pre-existing user changes.
 
 Lead with `## Changed`, then `## Verification`, `## Review`, and optional `## Strategy` or `## Remaining risks`. Include `## Review` in successful and non-successful standalone results: report implementation strategy, Built-in review, Additional review route or `not required | unavailable`, fix rounds, finding disposition counts, and actual review-driven fixes. A clean small/low-risk result may compress this to one sentence. For a successful unit, use 2–5 short, behavior-oriented bullets under `Changed` and 1–4 verification-result bullets under `Verification`. When underlying results exceed the budget, keep only the most decision-relevant items and cite `.tigerkit/implementation.md`. Record the commit once. Summarize commands and results; never paste logs, reviewer prompts, chain of thought, model tiers, provider internals, authentication details, or credentials. Keep detailed mappings and provenance in the ledger.
 
