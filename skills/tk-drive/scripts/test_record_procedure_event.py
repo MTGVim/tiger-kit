@@ -17,7 +17,7 @@ class ProcedureEventTest(unittest.TestCase):
             path = Path(directory) / "events.jsonl"
             env = {**os.environ, "TK_DRIVE_PROCEDURE_LOG": str(path)}
             completed = subprocess.run(
-                [sys.executable, str(SCRIPT), "tk-implement"],
+                [str(SCRIPT), "tk-implement"],
                 env=env,
                 text=True,
                 capture_output=True,
