@@ -1,7 +1,7 @@
 ---
 name: tk-pr-rebase
-description: "[user] Rebase one open GitHub pull request onto the exact latest base, resolve active conflicts, verify, and publish only an approved force-with-lease and review follow-up."
-argument-hint: "<pull request or repository>"
+description: "[user] Rebase one open GitHub pull request onto the exact latest base, resolve conflicts, verify, and publish through approved or sweep-owned force-with-lease authority."
+argument-hint: "<pull request or repository> [--ci]"
 disable-model-invocation: true
 metadata:
   tigerkit:
@@ -14,13 +14,22 @@ metadata:
 
 Start only when the user selects `/tk-pr-rebase`, `$tk-pr-rebase`, or the host
 skill picker. Do not activate from a generic rebase, update-branch, conflict,
-review-response, or continuation request.
+review-response, or continuation request. A fresh exact-PR handoff from active
+`tk-pr-sweep` is the only automatic entry.
 
 This skill owns one PR's local rebase, `.tigerkit/pr-rebase.md` plan, bounded
 force-with-lease publication, rebase-satisfied review replies and thread
 resolution, rebase summary comment, and conditional human re-review request. It
 does not implement unrelated review feedback, merge, close, tag, release, or
 change repository rules.
+
+## Modes
+
+- **Normal:** explicit invocation authorizes the local rebase only; retain the
+  publication question below.
+- **Sweep CI:** `--ci` is valid only with an active `tk-pr-sweep` handoff that
+  freezes the exact repository, PR, base/head refs and SHAs, and route attempt.
+  That handoff is bounded publication authority without another question.
 
 ## Workflow
 
@@ -36,7 +45,7 @@ change repository rules.
 3. Classify current findings. A thread may be closed by this skill only when its
    requested outcome is satisfied by updating the PR to the frozen base. Keep
    unrelated, deferred, superseded-uncertain, and unverified findings open.
-4. Rebase the PR branch onto the exact `base_sha`. An explicit invocation
+4. Rebase the PR branch onto the exact `base_sha`. A normal explicit invocation
    authorizes this local rebase, not abort, reset, push, or comment publication.
    When conflicts occur, use `tk-merge-conflict` for each active conflict
    iteration and resume only after its operation, intent, index, marker, and
@@ -75,6 +84,34 @@ change repository rules.
 11. Re-read the PR once more. Report partial remote writes exactly and never
     claim a reply, resolution, review request, check, or mergeable state that was
     not observed.
+
+## Sweep CI mode
+
+1. Require a fresh active-sweep handoff for one exact open PR and one previously
+   unused `(base_sha, old_head)` pair. Missing, ambiguous, direct-only, or repeated
+   authority is `Blocked` before rebase or remote write.
+2. Run the normal identity, ownership, clean-worktree, exact-base, conflict,
+   preservation, and verification gates. Record the pair and verified `new_head`
+   in `.tigerkit/pr-rebase.md`; do not create a separate sweep ledger.
+3. Skip only the publication question. Immediately before the push and each later
+   remote write, re-read the frozen repository, PR, identities, open state,
+   base/head refs and SHAs, remote, exact refspec, lease, review/thread targets,
+   and local clean state. Any drift is `Blocked`; never refresh the lease to
+   overwrite an unexpected head.
+4. When a rewrite is required, publish exactly once as
+   `git push <remote> <new_head>:<full-head-ref>
+   --force-with-lease=<full-head-ref>:<old_head>`. Confirm that the remote PR head
+   equals `new_head`, then promote it as the expected head for later reply/thread
+   writes. If no rewrite is required, do not push and return the observed head.
+5. Apply only rebase-satisfied replies, verified thread resolutions, and
+   conditional re-review using the normal order. Defer the PR-level summary to
+   `tk-pr-sweep`, return its exact draft/material with `summary budget: unused`,
+   and never publish the normal or mention-fallback summary in CI mode. Every
+   generated reply ends exactly with `_🤖 본 코멘트는 AI가 작성했습니다._`.
+6. Return the exact repository/PR, consumed `(base_sha, old_head)` pair,
+   `new_head`, fresh category evidence, remaining open findings, and native
+   `Pass | Fail | Blocked | Unverifiable` state to the active sweep. Do not emit a
+   user-facing phase summary; the sweep owns aggregate output.
 
 ## Publication gate
 
