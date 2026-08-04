@@ -21,10 +21,8 @@ creation, PR review, or issue triage.
 ## Scope
 
 This skill owns one bounded upload: local image staging, GitHub attachment
-upload, a minimal PR body update, and render verification. It does not create
-PRs, submit comments, merge, change reviewers, or publish releases. Comment
-insertion is allowed only when the user explicitly requests it. The default
-target is the PR body.
+upload, a minimal PR body update, and render verification. The default target
+is the PR body.
 
 When called from `tk-pr-open`, accept only a producer evidence handoff from
 `tk-browser-verify` or `tk-prototype` with `evidence_required: true`.
@@ -33,7 +31,7 @@ undo a PR that `tk-pr-open` already created.
 
 Use [references/upload-workflow.md](references/upload-workflow.md) for the
 operational contract. Use `tk-browser-verify` for browser-controlled runtime
-verification; do not bypass its browser boundary.
+verification.
 
 ## Workflow
 
@@ -47,21 +45,18 @@ verification; do not bypass its browser boundary.
    copies.
 4. Connect to an authenticated existing Chrome CDP session first, then an
    authenticated persistent CDP/Playwright profile. Stop with actionable
-   guidance when neither is available. Never use Orca or screen control as an
-   automatic fallback.
+   guidance when neither is available.
 5. In the visible GitHub composer, use `Attach files` or
    `Paste, drop, or click to add files`. Poll each placeholder until it
    becomes a `user-attachments` URL or equivalent image element; fixed sleep
    alone is not success evidence.
-6. Detect a non-empty pre-existing draft before writing. Do not overwrite it.
-   After collecting asset URLs, clear the temporary composer and confirm it is
-   empty and not submittable. Never click comment, close-with-comment, or any
-   submit button.
+6. Detect a non-empty pre-existing draft before writing. After collecting asset
+   URLs, clear the temporary composer and confirm it is empty and not
+   submittable.
 7. Update only the PR body through the GitHub API or equivalent, then verify
    the asset URLs in the body and on the rendered PR page. Treat GitHub's
    signed `private-user-images.githubusercontent.com` rewrite as normal.
-8. Remove owned staging files on every exit path. Do not log or return signed
-   URL JWTs or query strings.
+8. Remove owned staging files on every exit path.
 
 ## Producer evidence handoff
 
@@ -79,13 +74,20 @@ Reject arbitrary screenshots, missing paths, `Unverifiable` results, and
 artifacts that cannot be tied to the current run. Return `Blocked` before
 upload when required evidence is absent or invalid.
 
+## Do not
+
+- Do not create a PR, merge, change reviewers, publish a release, or insert a comment unless the user explicitly selected that comment target.
+- Do not bypass `tk-browser-verify`, or use Orca or screen control as an automatic browser fallback.
+- Do not overwrite a pre-existing draft or click comment, close-with-comment, or another submit button.
+- Do not claim success from a placeholder, fixed delay, or API response without rendered-page evidence.
+- Do not log or return signed URL JWTs or query strings.
+
 ## Failure handling
 
 Return `Blocked` for a draft or missing user-owned target decision,
 `Unverifiable` for missing CDP, authentication, or render evidence, and
 `Fail` for upload or cleanup errors. State whether the PR body was changed
-and what the user must do next. Never claim an upload succeeded from a
-placeholder, fixed delay, or API response alone.
+and what the user must do next.
 
 When called from `tk-pr-open`, preserve the separate PR operation result and
 return the evidence state as `uploaded` or `blocked`; the parent must not
