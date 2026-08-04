@@ -466,7 +466,7 @@ class CodexObservationTest(unittest.TestCase):
                 )
             )
             wrapped_script = f"/usr/bin/zsh -lc {shlex.quote(script)}"
-            self.assertTrue(gate({**base, "command": wrapped_script}))
+            self.assertFalse(gate({**base, "command": wrapped_script}))
             self.assertFalse(
                 gate(
                     {
@@ -478,10 +478,32 @@ class CodexObservationTest(unittest.TestCase):
                     }
                 )
             )
+            reordered_multiline = "\n".join(
+                (
+                    "git add -- canary-ready.txt",
+                    f'test "$(git branch --show-current)" = {branch}',
+                    f'test "$(git rev-parse HEAD)" = {head}',
+                    "git diff --cached --stat",
+                    "git diff --cached --numstat",
+                    "git diff --cached --name-only",
+                    "git diff --cached --check",
+                    "git diff --cached -- canary-ready.txt",
+                    'git commit -m "test: reordered canary"',
+                )
+            )
+            self.assertFalse(
+                gate(
+                    {
+                        **base,
+                        "command": f"/usr/bin/zsh -lc {shlex.quote(reordered_multiline)}",
+                    }
+                )
+            )
             for unsafe_commit in (
                 'touch escaped -m "test: add canary"',
                 'git commit -m "$(touch escaped)"',
                 'git commit -m "`touch escaped`"',
+                r"git commit -m *(e:touch\ escaped:)",
             ):
                 self.assertFalse(
                     gate(
@@ -535,6 +557,29 @@ class CodexObservationTest(unittest.TestCase):
                     }
                 )
             )
+            reordered_verified_commit = " && ".join(
+                (
+                    "git add -- canary-ready.txt",
+                    "git diff --cached --stat",
+                    "git diff --cached --numstat",
+                    "git diff --cached --name-only",
+                    "git diff --cached -- canary-ready.txt",
+                    f'test "$(git branch --show-current)" = {branch}',
+                    f'test "$(git rev-parse HEAD)" = {head}',
+                    'test "$(git diff --cached --name-only)" = canary-ready.txt',
+                    'test "$(git show :canary-ready.txt | od -An -tx1 | tr -d \' \\n\')" = 72656164790a',
+                    "git diff --cached --check",
+                    'git commit -m "test: reordered canary"',
+                )
+            )
+            self.assertTrue(
+                gate(
+                    {
+                        **base,
+                        "command": f"/usr/bin/zsh -lc {shlex.quote(reordered_verified_commit)}",
+                    }
+                )
+            )
             self.assertFalse(
                 gate(
                     {
@@ -544,6 +589,22 @@ class CodexObservationTest(unittest.TestCase):
                 )
             )
             escaped = checkout / "escaped"
+            comment_injection = " && ".join(
+                (
+                    "git add -- canary-ready.txt#; touch escaped #",
+                    f'test "$(git branch --show-current)" = {branch}',
+                    f'test "$(git rev-parse HEAD)" = {head}',
+                    "git diff --cached -- canary-ready.txt",
+                )
+            )
+            self.assertFalse(
+                gate(
+                    {
+                        **base,
+                        "command": f"/usr/bin/zsh -lc {shlex.quote(comment_injection)}",
+                    }
+                )
+            )
             injected_commit = verified_commit.replace(
                 'git commit -m "test: add canary"',
                 'git commit -m "$(touch escaped)"',
@@ -688,6 +749,141 @@ class CodexObservationTest(unittest.TestCase):
                 cwd=checkout,
                 check=True,
             )
+            staged_commit = " && ".join(
+                (
+                    f'test "$(git branch --show-current)" = {branch}',
+                    f'test "$(git rev-parse HEAD)" = {head}',
+                    "git diff --cached --stat",
+                    "git diff --cached --numstat",
+                    "git diff --cached --name-only",
+                    "git diff --cached --check",
+                    "git diff --cached -- canary-ready.txt",
+                    'git commit -m "test: staged canary"',
+                )
+            )
+            self.assertFalse(
+                gate(
+                    {
+                        **base,
+                        "command": f"/usr/bin/zsh -lc {shlex.quote(staged_commit.replace(' && ', chr(10)))}",
+                    }
+                )
+            )
+            self.assertTrue(
+                gate(
+                    {
+                        **base,
+                        "command": f"/usr/bin/zsh -lc {shlex.quote(staged_commit)}",
+                    }
+                )
+            )
+            (checkout / "canary-ready.txt").write_text("wrong\n", encoding="utf-8")
+            subprocess.run(
+                ["git", "add", "--", "canary-ready.txt"],
+                cwd=checkout,
+                check=True,
+            )
+            (checkout / "canary-ready.txt").write_text("ready\n", encoding="utf-8")
+            self.assertFalse(
+                gate(
+                    {
+                        **base,
+                        "command": f"/usr/bin/zsh -lc {shlex.quote(staged_commit)}",
+                    }
+                )
+            )
+            subprocess.run(
+                ["git", "add", "--", "canary-ready.txt"],
+                cwd=checkout,
+                check=True,
+            )
+            for valid_branch in (
+                "feature@2",
+                "feature+test",
+                "기능/test",
+                "feature!2",
+                "feature#2",
+                "feature(2)",
+                "=ls",
+            ):
+                subprocess.run(
+                    ["git", "switch", "-qc", valid_branch],
+                    cwd=checkout,
+                    check=True,
+                )
+                branch_operand = (
+                    f"'{valid_branch}'"
+                    if valid_branch.startswith("=")
+                    else shlex.quote(valid_branch)
+                )
+                valid_branch_script = staged_commit.replace(
+                    f'= {branch}',
+                    f'= {branch_operand}',
+                    1,
+                )
+                self.assertTrue(
+                    gate(
+                        {
+                            **base,
+                            "command": f"/usr/bin/zsh -lc {shlex.quote(valid_branch_script)}",
+                        }
+                    )
+                )
+                if valid_branch.startswith("="):
+                    self.assertFalse(
+                        gate(
+                            {
+                                **base,
+                                "command": f"/usr/bin/zsh -lc {shlex.quote(valid_branch_script.replace(branch_operand, valid_branch, 1))}",
+                            }
+                        )
+                    )
+                subprocess.run(
+                    ["git", "switch", "-q", branch],
+                    cwd=checkout,
+                    check=True,
+                )
+            for malicious_branch in (
+                "evil$(touch${IFS}escaped)",
+                "evil`touch${IFS}escaped`",
+            ):
+                subprocess.run(
+                    ["git", "switch", "-qc", malicious_branch],
+                    cwd=checkout,
+                    check=True,
+                )
+                injected_branch_script = staged_commit.replace(
+                    f'= {branch}',
+                    f'= {malicious_branch}',
+                    1,
+                )
+                quoted_branch_script = staged_commit.replace(
+                    f'= {branch}',
+                    f'= {shlex.quote(malicious_branch)}',
+                    1,
+                )
+                self.assertTrue(
+                    gate(
+                        {
+                            **base,
+                            "command": f"/usr/bin/zsh -lc {shlex.quote(quoted_branch_script)}",
+                        }
+                    )
+                )
+                self.assertFalse(
+                    gate(
+                        {
+                            **base,
+                            "command": f"/usr/bin/zsh -lc {shlex.quote(injected_branch_script)}",
+                        }
+                    )
+                )
+                self.assertFalse((checkout / "escaped").exists())
+                subprocess.run(
+                    ["git", "switch", "-q", branch],
+                    cwd=checkout,
+                    check=True,
+                )
             self.assertTrue(gate({**base, "command": "git commit -m 'add canary'"}))
             self.assertFalse(gate({**base, "command": "git commit -am 'escape'"}))
 

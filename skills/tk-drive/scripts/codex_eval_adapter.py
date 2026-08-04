@@ -691,7 +691,7 @@ def _prepare_live_fixture(
 
 
 class LiveGitApprovalGate:
-    """Approve only the fixture's exact, non-composite Git add/commit commands."""
+    """Approve only fixture-scoped Git add/commit commands and verification."""
 
     def __init__(self, checkout: Path, kind: str) -> None:
         self.checkout = checkout.resolve()
@@ -730,8 +730,6 @@ class LiveGitApprovalGate:
                     return True
                 if self._allow_staged_content_script(wrapped_script):
                     return True
-                if "\n" in wrapped_script:
-                    return self._allow_multiline_script(wrapped_script)
             tokens = self._command_tokens(command)
         except (OSError, ValueError):
             return False
@@ -773,36 +771,6 @@ class LiveGitApprovalGate:
             return tokens[2]
         return None
 
-    def _allow_multiline_script(self, script: str) -> bool:
-        if "\x00" in script or "\r" in script or self._staged_paths():
-            return False
-        lines = script.splitlines()
-        if len(lines) != 10 or any(not line.strip() for line in lines):
-            return False
-        add_tokens = self._shell_tokens(lines[0])
-        if not self._allow_add(add_tokens):
-            return False
-        paths = add_tokens[2:]
-        if paths[:1] == ["--"]:
-            paths = paths[1:]
-        branch = _git_value(self.checkout, "branch", "--show-current")
-        head = _git_value(self.checkout, "rev-parse", "HEAD")
-        staged = "\n".join(paths)
-        expected_middle = [
-            "git diff --cached --stat",
-            "git diff --cached --numstat",
-            "git diff --cached --name-status",
-            "git diff --cached --check",
-            shlex.join(["git", "diff", "--cached", "--", *paths]),
-            f'test "$(git branch --show-current)" = {shlex.quote(branch)}',
-            f'test "$(git rev-parse HEAD)" = {shlex.quote(head)}',
-            f'test "$(git diff --cached --name-only)" = {shlex.quote(staged)}',
-        ]
-        return lines[1:-1] == expected_middle and self._allow_commit(
-            self._shell_tokens(lines[-1]),
-            require_staged=False,
-        )
-
     def _allow_staged_content_script(self, script: str) -> bool:
         if "\x00" in script or "\r" in script or "\n" in script or self._staged_paths():
             return False
@@ -831,45 +799,129 @@ class LiveGitApprovalGate:
         return False
 
     def _allow_verified_script(self, script: str) -> bool:
-        if "\x00" in script or "\r" in script or "\n" in script or self._staged_paths():
+        if "\x00" in script or "\r" in script or "\n" in script:
             return False
-        tokens = self._shell_tokens(script)
-        commands: list[list[str]] = [[]]
-        for token in tokens:
-            if token == "&&":
-                commands.append([])
-            elif token in {"||", ";", "|", "&", ">", ">>", "<", "<<"}:
-                return False
-            else:
-                commands[-1].append(token)
+        segments = self._script_segments(script)
+        if segments is None:
+            return False
+        commands = [self._shell_tokens(segment) for segment in segments]
+        if any(
+            token in {"&&", "||", ";", "|", "&", ">", ">>", "<", "<<"}
+            for command in commands
+            for token in command
+        ):
+            return False
         if any(not command for command in commands):
             return False
         branch = _git_value(self.checkout, "branch", "--show-current")
         head = _git_value(self.checkout, "rev-parse", "HEAD")
+        if not re.fullmatch(r"[0-9a-f]{40,64}", head):
+            return False
+        staged = self._staged_paths()
         for path, content in self.expected.items():
-            common = [
-                ["git", "add", "--", path],
+            if (
+                not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._/-]*", path)
+                or Path(path).is_absolute()
+                or ".." in Path(path).parts
+            ):
+                continue
+            remaining = commands
+            if commands[0] == ["git", "add", "--", path]:
+                if staged or not self._allow_add(commands[0]):
+                    continue
+                remaining = commands[1:]
+            elif staged != [path] or not self._staged_content_matches(path):
+                continue
+            if not remaining:
+                continue
+            has_commit = self._allow_commit(remaining[-1], require_staged=False)
+            checks = remaining[:-1] if has_commit else remaining
+            if staged and not has_commit:
+                continue
+            branch_check = ["test", "$(git branch --show-current)", "=", branch]
+            head_check = ["test", "$(git rev-parse HEAD)", "=", head]
+            scoped_diff = ["git", "diff", "--cached", "--", path]
+            quoted_branch = "'" + branch.replace("'", "'\"'\"'") + "'"
+            branch_sources = {
+                f'test "$(git branch --show-current)" = {quoted_branch}'
+            }
+            unsafe_shell = "`$\\\"';&|<>(){}!#"
+            if not any(
+                character.isspace() or character in unsafe_shell
+                for character in branch
+            ) and not branch.startswith("="):
+                branch_sources.add(
+                    f'test "$(git branch --show-current)" = {branch}'
+                )
+            allowed = [
                 ["git", "diff", "--cached", "--stat"],
                 ["git", "diff", "--cached", "--numstat"],
                 ["git", "diff", "--cached", "--name-only"],
-                ["git", "diff", "--cached", "--", path],
-                ["test", "$(git branch --show-current)", "=", branch],
-                ["test", "$(git rev-parse HEAD)", "=", head],
-            ]
-            worktree_checks = common + [
+                ["git", "diff", "--cached", "--name-status"],
+                ["git", "diff", "--cached", "--check"],
+                scoped_diff,
+                branch_check,
+                head_check,
+                ["test", "$(git diff --cached --name-only)", "=", path],
                 ["test", f"$(wc -c < {path} | tr -d ' ')", "=", str(len(content))],
                 ["test", f"$(od -An -tx1 {path} | tr -d ' \\n')", "=", content.hex()],
-            ]
-            if commands == worktree_checks:
-                return self._allow_add(commands[0])
-            index_checks = common + [
-                ["test", "$(git diff --cached --name-only)", "=", path],
                 ["test", f"$(git show :{path} | wc -c | tr -d ' ')", "=", str(len(content))],
                 ["test", f"$(git show :{path} | od -An -tx1 | tr -d ' \\n')", "=", content.hex()],
             ]
-            if commands[:-1] == index_checks and self._allow_add(commands[0]):
-                return self._allow_commit(commands[-1], require_staged=False)
+            if (
+                branch_check in checks
+                and head_check in checks
+                and scoped_diff in checks
+                and any(segment in branch_sources for segment in segments)
+                and len(checks) == len({tuple(command) for command in checks})
+                and all(command in allowed for command in checks)
+            ):
+                return True
         return False
+
+    @staticmethod
+    def _script_segments(script: str) -> list[str] | None:
+        segments: list[str] = []
+        start = 0
+        quote: str | None = None
+        escaped = False
+        index = 0
+        while index < len(script):
+            character = script[index]
+            if escaped:
+                escaped = False
+            elif character == "\\" and quote != "'":
+                escaped = True
+            elif quote is not None:
+                if character == quote:
+                    quote = None
+            elif character in {"'", '"'}:
+                quote = character
+            elif script.startswith("&&", index):
+                segment = script[start:index].strip()
+                if not segment:
+                    return None
+                segments.append(segment)
+                index += 2
+                start = index
+                continue
+            index += 1
+        if quote is not None or escaped:
+            return None
+        segment = script[start:].strip()
+        if not segment:
+            return None
+        segments.append(segment)
+        return segments
+
+    def _staged_content_matches(self, path: str) -> bool:
+        completed = subprocess.run(
+            ["git", "show", f":{path}"],
+            cwd=self.checkout,
+            capture_output=True,
+            check=False,
+        )
+        return completed.returncode == 0 and completed.stdout == self.expected[path]
 
     @staticmethod
     def _shell_tokens(command: str) -> list[str]:
@@ -878,6 +930,7 @@ class LiveGitApprovalGate:
             posix=True,
             punctuation_chars=";&|<>",
         )
+        lexer.commenters = ""
         lexer.whitespace_split = True
         return list(lexer)
 
@@ -913,7 +966,11 @@ class LiveGitApprovalGate:
         if (
             not message
             or len(message) > 200
-            or any(marker in message for marker in ("\x00", "\n", "\r", "$", "`"))
+            or not message[0].isalnum()
+            or any(
+                not (character.isalnum() or character in " .,:/@_+-")
+                for character in message
+            )
         ):
             return False
         if not require_staged:
