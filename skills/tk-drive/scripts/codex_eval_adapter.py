@@ -488,6 +488,37 @@ elif command == "push":
     state["pushed"] = True
     save()
     print(json.dumps({"pushed_head": current}))
+elif command == "commit":
+    if git("branch", "--show-current") != state["head_ref"]:
+        raise SystemExit("commit requires the prepared head branch")
+    if git("rev-parse", "HEAD") != state["head_sha"]:
+        raise SystemExit("commit requires the prepared head SHA")
+    if (root / "respond-canary.txt").read_bytes() != b"resolved\\n":
+        raise SystemExit("respond canary content mismatch")
+    status = git(
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+        "--",
+        ".",
+        ":(exclude).tigerkit",
+        ":(exclude).agents",
+    )
+    if status != "?? respond-canary.txt":
+        raise SystemExit("commit requires only the untracked respond canary")
+    git("add", "--", "respond-canary.txt")
+    if git("diff", "--cached", "--name-only") != "respond-canary.txt":
+        raise SystemExit("commit staged path mismatch")
+    staged = subprocess.run(
+        ["git", "show", ":respond-canary.txt"], cwd=root, capture_output=True
+    )
+    if staged.returncode or staged.stdout != b"resolved\\n":
+        raise SystemExit("commit staged content mismatch")
+    git("commit", "-qm", "test: resolve PR feedback canary")
+    current = git("rev-parse", "HEAD")
+    if git("rev-list", "--count", f"{state['head_sha']}..{current}") != "1":
+        raise SystemExit("commit did not create exactly one commit")
+    print(json.dumps({"committed_head": current}))
 elif command == "reply":
     body = " ".join(sys.argv[2:])
     if not state.get("pushed") or not body.endswith("_🤖 본 코멘트는 AI가 작성했습니다._"):
@@ -508,24 +539,28 @@ elif command == "verify":
     print(json.dumps({"complete": bool(ok), "head": current}, sort_keys=True))
     raise SystemExit(0 if ok else 1)
 else:
-    raise SystemExit("usage: respond-ci-fixture.py read|push|reply <body>|resolve|verify")
+    raise SystemExit("usage: respond-ci-fixture.py read|commit|push|reply <body>|resolve|verify")
 ''',
         encoding="utf-8",
     )
     transport.chmod(0o700)
     _configure_eval_git(checkout)
+    fixture_command = shlex.join(
+        [sys.executable, "-I", ".tigerkit/respond-ci-fixture.py"]
+    )
+    commit_command = f"{fixture_command} commit"
     return (
         "[tigerkit-eval: active tk-pr-sweep handoff with exact PR #42/head "
-        "evidence; use `python3 .tigerkit/respond-ci-fixture.py read` for every "
+        f"evidence; use `{fixture_command} read` for every "
         "fresh PR read. The one actionable finding requires an independently "
         "verified tk-implement unit that creates `respond-canary.txt` containing "
         "`resolved` plus one trailing newline. After its Pass, emit only the "
         "owning nonterminal progress checkpoint and continue without asking or "
-        "ending the turn. Immediately before publication, record "
-        "`remote-publish`. Join every compound Git verification/commit command "
-        "with literal `&&`; newline-separated shell commands are denied. Then run "
-        "the fixture `push`, `reply` with the exact AI "
-        "disclosure suffix, `resolve`, and `verify` commands in order. Finish only "
+        f"ending the turn. For the unit commit, run exactly `{commit_command}`; "
+        "do not run `git add` or `git commit` directly. Immediately before "
+        f"publication, record `remote-publish`. Then use `{fixture_command}` for "
+        "`push`, `reply` with the exact AI disclosure suffix, `resolve`, and "
+        "`verify` in order. Finish only "
         "after a fresh `read` proves the thread resolved.]\n"
         "/tk-pr-respond --ci"
     )
@@ -699,7 +734,12 @@ class LiveGitApprovalGate:
 
     def __init__(self, checkout: Path, kind: str) -> None:
         self.checkout = checkout.resolve()
+        self.kind = kind
         self.expected = LIVE_FIXTURE_CONTENT[kind]
+        transport = self.checkout / ".tigerkit/respond-ci-fixture.py"
+        self.respond_transport = (
+            transport.read_bytes() if kind == "respond-ci" else None
+        )
 
     def __call__(self, params: Mapping[str, object]) -> bool:
         allowed = self._is_allowed(params)
@@ -728,6 +768,8 @@ class LiveGitApprovalGate:
         try:
             if Path(cwd).resolve() != self.checkout:
                 return False
+            if self._allow_respond_commit(command):
+                return True
             wrapped_script = self._wrapped_script(command)
             if wrapped_script is not None:
                 if self._allow_verified_script(wrapped_script):
@@ -758,6 +800,27 @@ class LiveGitApprovalGate:
         if len(tokens) >= 2 and tokens[1] == "commit":
             return self._allow_commit(tokens)
         return False
+
+    def _allow_respond_commit(self, command: str) -> bool:
+        transport = self.checkout / ".tigerkit/respond-ci-fixture.py"
+        wrapped = self._wrapped_script(command)
+        candidate = wrapped if wrapped is not None else command
+        return (
+            self.kind == "respond-ci"
+            and self.respond_transport is not None
+            and candidate
+            == shlex.join(
+                [sys.executable, "-I", ".tigerkit/respond-ci-fixture.py", "commit"]
+            )
+            and transport.is_file()
+            and transport.read_bytes() == self.respond_transport
+            and not self._staged_paths()
+            and all(
+                (self.checkout / path).is_file()
+                and (self.checkout / path).read_bytes() == content
+                for path, content in self.expected.items()
+            )
+        )
 
     def _command_tokens(self, command: str) -> list[str]:
         wrapped = self._wrapped_script(command)

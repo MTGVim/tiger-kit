@@ -287,11 +287,14 @@ class CodexObservationTest(unittest.TestCase):
                 "[tigerkit-eval:prepared-respond-ci]\n/tk-pr-respond --ci",
             )
             self.assertIn("remote-publish", prompt)
-            self.assertIn("literal `&&`", prompt)
+            commit_command = shlex.join(
+                [sys.executable, "-I", ".tigerkit/respond-ci-fixture.py", "commit"]
+            )
+            self.assertIn(f"run exactly `{commit_command}`", prompt)
             self.assertTrue(prompt.endswith("\n/tk-pr-respond --ci"))
             transport = checkout / ".tigerkit/respond-ci-fixture.py"
             read = subprocess.run(
-                [sys.executable, str(transport), "read"],
+                [sys.executable, "-I", str(transport), "read"],
                 cwd=checkout,
                 text=True,
                 capture_output=True,
@@ -301,7 +304,7 @@ class CodexObservationTest(unittest.TestCase):
 
             (checkout / "respond-canary.txt").write_text("resolved\n", encoding="utf-8")
             no_commit = subprocess.run(
-                [sys.executable, str(transport), "push"],
+                [sys.executable, "-I", str(transport), "push"],
                 cwd=checkout,
                 text=True,
                 capture_output=True,
@@ -309,12 +312,48 @@ class CodexObservationTest(unittest.TestCase):
             )
             self.assertNotEqual(no_commit.returncode, 0)
             self.assertIn("exactly one new commit", no_commit.stderr)
-            subprocess.run(["git", "add", "respond-canary.txt"], cwd=checkout, check=True)
-            subprocess.run(["git", "commit", "-qm", "canary"], cwd=checkout, check=True)
-            subprocess.run([sys.executable, str(transport), "push"], cwd=checkout, check=True)
+            gate = LiveGitApprovalGate(checkout, "respond-ci")
+            base = {
+                "cwd": str(checkout),
+                "networkApprovalContext": None,
+                "additionalPermissions": None,
+            }
+            self.assertTrue(gate({**base, "command": commit_command}))
+            self.assertTrue(
+                gate(
+                    {
+                        **base,
+                        "command": f"/usr/bin/zsh -lc {shlex.quote(commit_command)}",
+                    }
+                )
+            )
+            self.assertFalse(gate({**base, "command": f"{commit_command} extra"}))
+            original_transport = transport.read_bytes()
+            transport.write_bytes(original_transport + b"\n")
+            self.assertFalse(gate({**base, "command": commit_command}))
+            transport.write_bytes(original_transport)
+            escaped = checkout / "escaped"
+            (checkout / ".tigerkit/subprocess.py").write_text(
+                f"open({str(escaped)!r}, 'w').write('hijacked')\n"
+                "raise SystemExit(77)\n",
+                encoding="utf-8",
+            )
+            self.assertTrue(gate({**base, "command": commit_command}))
+            subprocess.run(
+                [sys.executable, "-I", str(transport), "commit"],
+                cwd=checkout,
+                check=True,
+            )
+            self.assertFalse(escaped.exists())
+            subprocess.run(
+                [sys.executable, "-I", str(transport), "push"],
+                cwd=checkout,
+                check=True,
+            )
             subprocess.run(
                 [
                     sys.executable,
+                    "-I",
                     str(transport),
                     "reply",
                     "Fixed.",
@@ -323,9 +362,13 @@ class CodexObservationTest(unittest.TestCase):
                 cwd=checkout,
                 check=True,
             )
-            subprocess.run([sys.executable, str(transport), "resolve"], cwd=checkout, check=True)
+            subprocess.run(
+                [sys.executable, "-I", str(transport), "resolve"],
+                cwd=checkout,
+                check=True,
+            )
             verified = subprocess.run(
-                [sys.executable, str(transport), "verify"],
+                [sys.executable, "-I", str(transport), "verify"],
                 cwd=checkout,
                 text=True,
                 capture_output=True,
