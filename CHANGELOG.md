@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.05-3 — Release
+
+- fix: complete PR response workflow
+
 ## 2026.08.05-2 — Release
 
 - feat: gate PR sweep mutations

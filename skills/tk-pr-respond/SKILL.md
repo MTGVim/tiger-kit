@@ -63,29 +63,46 @@ exactly.
    numbered resolution units, state one recommended selection, ask one selection
    question. Selection authorizes only units, never remote write.
 4. Handoff one unit at a time to `tk-implement` with PR identity and exact
-   comment/thread IDs. `Pass` is internal loop signal: without terminal response,
-   pause, or confirmation, use CI or sweep progress checkpoint when applicable and
-   invoke `tk-implement` for next selected unit. Normal mode adds no intermediate checkpoint. Exit
-   only after every selected unit has verified result or bounded non-success.
-   Never create empty per-comment commits. Aggregate verified results only; keep
-   deferred or unverified threads open.
+   comment/thread IDs while tracking the numbered selected-unit list and current
+   index. `Pass` is internal. A unit-local `Fail` may advance only after clean
+   worktree, identity, ref, and head evidence remain valid; `Blocked`,
+   `Unverifiable`, scope/freshness/identity drift, or shared-safety failure
+   freezes the remaining units. Otherwise record the result and, while any
+   selected unit remains, invoke the next unit in the same turn without
+   terminal output, pause, or confirmation. A child result is never a user
+   boundary. Exit only after every selected unit has a verified result or a
+   justified bounded stop. Never create empty per-comment commits; keep
+   deferred or unverified threads open. A failed unit remains open and is
+   excluded from reply/resolve; the final aggregate remains `Fail` even when
+   later independent units pass.
 5. Draft `.tigerkit/pr-respond.md` with exact push refspec, reply body per selected
    current finding, resolvable thread IDs, intentionally open threads, prior
-   human reviewers, re-review candidates, and exclusions. End every external
-   reply/comment with `_🤖 본 코멘트는 AI가 작성했습니다._`. In Normal mode,
-   before approval show second compact table: each selected ID, implementation
-   result, verification, exact reply draft, recommended
-   `resolve | keep open`; then outbound order and one recommendation. Ask one
-   publication question; stop `Pending`. CI never enters this boundary.
+   human reviewers, re-review candidates, exclusions, and one PR-level review
+   summary draft covering every selected unit, reply, verified resolution, open
+   thread, and next re-review action. End every external reply/comment with
+   `_🤖 본 코멘트는 AI가 작성했습니다._`. In Normal mode, before approval show
+   the second compact table with each selected ID, implementation result,
+   verification, exact reply draft, and `resolve | keep open` recommendation,
+   then the exact summary draft and outbound order; ask one publication
+   question and stop `Pending`. CI never enters this boundary.
 6. After approval, recheck branch, local `HEAD`, PR head SHA, open state, author,
    checks, and threads. Drift invalidates approval; return `Blocked`.
 7. Publish in order: explicit push; exact reply to each selected current finding;
-   verified thread resolution only after reply succeeds; optional approved
-   summary; fresh review, requested-reviewer, thread, check, and mergeability
-   read; conditional human re-review; applicable approved normal or
-   reviewer-mention fallback summary. Failed reply leaves thread open.
-8. Re-request review only with no current actionable, deferred, or unverified
-   finding. Use observed post-push state; never guess stale-review settings.
+   verified thread resolution only after reply succeeds; fresh review,
+   requested-reviewer, thread, check, and mergeability read; conditional human
+   re-review under step 8's exclusions and its fresh result; exactly one required
+   PR-level review summary
+   comment containing the final review/fallback outcome. If a parent sweep has
+   consumed its shared summary budget, return this content to the parent and do
+   not publish it here. Otherwise put any mention fallback in this one summary,
+   or use it only as the approved replacement; never publish a second summary.
+   If no supported remote write occurs because all work is deferred, no-op, or
+   report-only, keep only the draft and publish no summary comment. Failed reply
+   leaves its thread open.
+8. Apply these rules to the conditional re-review before step 7 publishes its
+   summary: request review only with no current actionable, deferred, or
+   unverified finding. Use observed post-push state; never guess stale-review
+   settings.
    Request prior humans whose feedback was addressed or approval is invalid for
    new head. Exclude PR author, authenticated user, bots, and still-valid
    approvers. Prefer formal GitHub request. If GitHub rejects an otherwise
@@ -110,21 +127,30 @@ thread resolution, re-review, or summary.
    reviewers. Direct `--ci` and sweep handoff grant same authority. Stop
    `Blocked` before mutation on identity, repository, ref, or head drift.
 2. For `changes_requested` or `needs_reply`, select every fresh actionable
-   finding, create minimum independently verifiable units, run normal
-   `tk-implement` loop without selection question. Each unit `Pass` is internal.
-   After last verified unit, continue same active flow through freshness recheck
-   and publication; no terminal response, `Pending`, or Normal publication
-   question.
+   finding, create minimum independently verifiable units, and track the
+   remaining-unit count. Run the `tk-implement` loop without a selection
+   question; after each unit `Pass` or unit-local `Fail` with clean evidence,
+   immediately invoke the next unit. Do not enter freshness recheck or publication until the
+   remaining-unit count is zero; no terminal response, `Pending`, or Normal
+   publication question may occur between units. A unit-local `Fail` advances
+   only with clean identity/ref/head evidence; `Blocked`, `Unverifiable`, or
+   shared-safety failure stops the remaining units. A failed unit remains open
+   and is excluded from reply/resolve; a final aggregate `Fail` is not promoted
+   to `Pass` by later successful units.
 3. For `checks_failed`, resolve each failure provider. Automate GitHub Actions
    only. Read current run, job, step, annotation, and bounded log evidence;
    external-provider failures stay report-only. Before creating unit,
    distinguish repository cause from queued, cancelled, flaky, infrastructure,
    or inaccessible evidence. Never invoke interactive `gh-fix-ci` as automatic
    child. If no supported repository-caused failure remains, create no unit or push;
-   return `Unverifiable` with observed unsupported or unavailable state.
-4. After every feedback unit has verified result, or one repository-caused
-   Actions fix returns `Pass`, render direct CI progress or return evidence to
-   active sweep, then immediately re-read repository, authenticated identity,
+   return `Unverifiable` with observed unsupported or unavailable state. One
+   repository-caused Actions fix is one cycle, not completion: after each cycle
+   fresh-read all failures, keep any supported remaining count, and repeat only
+   within the maximum three cycles.
+4. After the last feedback unit has a verified result, or one
+   repository-caused Actions fix returns `Pass`, render direct CI progress or
+   return evidence to active sweep, then immediately re-read repository,
+   authenticated identity,
    open state, remote head/ref; verify all local unit commits descend from frozen
    head. Mismatch is `Blocked`; otherwise push only frozen head refspec before
    replies or resolution. Never stop after unit commit or request approval. For
@@ -134,9 +160,15 @@ thread resolution, re-review, or summary.
    failure, exhausted third cycle, or unverifiable post-push checks stops without
    fourth mutation.
 5. Publish exact per-finding replies, resolve only freshly verified threads, and
-   conditionally request human re-review in normal order and exclusions. Publish at
-   most one PR-level summary combining CI-fix and supplied rebase outcomes. Every
-   generated reply/comment ends exactly with
+   fresh-read the PR state. When supported remote response work was published,
+   conditionally request human re-review in normal order and exclusions, fresh-
+   read its result, then publish exactly one required PR-level review summary
+   combining selected feedback, verification, remaining open threads, and
+   rebase/CI outcomes. If the path is external/report-only, deferred, or has no
+   supported remote write, publish no summary comment. Under sweep,
+   `summary budget: unused` lets this response consume and return the budget as
+   consumed; `summary budget: consumed` makes it return the draft without
+   publishing. Every generated reply/comment ends exactly with
    `_🤖 본 코멘트는 AI가 작성했습니다._`.
 6. Re-read PR after all writes. Return `Pass` only when selected feedback and
    supported GitHub Actions failures complete on observed head. External CI is
