@@ -28,6 +28,10 @@ verification.
   supported scope without questions. It never authorizes another PR, external
   CI, unverifiable checks, force-push, merge, close, tag, release,
   draft-to-`Ready for review` transitions, or publication outside this response.
+  A sweep handoff marked `test-only` additionally forbids production source,
+  configuration, dependency, lockfile, security/data/performance, or weakened
+  assertion changes; if the selected finding needs any of those, return
+  `Blocked` before invoking `tk-implement`.
 
 ## Progress
 
@@ -92,6 +96,14 @@ exactly.
    release, or publish release.
 
 ## CI mode
+
+When the sweep handoff is `test-only`, inspect the complete selected finding
+before invoking `tk-implement`. Permit only paths in the repository's existing
+test layout (`test/`, `tests/`, `spec/`, `*.test.*`, `*.spec.*`, or documented
+test fixtures); mixed, unknown, production, configuration, dependency,
+lockfile, security/data/performance, or weakened-assertion work is `Blocked`.
+That scope violation blocks the whole response: no unit, commit, push, reply,
+thread resolution, re-review, or summary.
 
 1. From fresh read freeze repository, authenticated identity, PR author, open
    state, base, head ref/SHA, exact push refspec, checks, findings, and requested

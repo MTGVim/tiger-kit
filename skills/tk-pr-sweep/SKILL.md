@@ -18,19 +18,56 @@ continuation, or multi-repository requests.
 
 Explicit multi-PR maintenance orchestrator only. `tk-drive` owns product-change
 lifecycle. `tk-pr-triage` stays read-only; one-PR owners `tk-pr-rebase` and
-`tk-pr-respond` never invoke each other. Sweep owns `.tigerkit/pr-sweep.md`,
-worktree coordination, route bounds, one shared PR-summary budget, aggregate
-verification, and sole terminal response.
+`tk-pr-respond` never invoke each other. Sweep owns the preflight preview,
+one batch approval, `.tigerkit/pr-sweep.md`, worktree coordination, route
+bounds, one shared PR-summary budget, aggregate verification, and sole
+terminal response.
 
 ## Authority
 
-One explicit start authorizes fresh configured-repository triage and, per fresh
-supported target: bounded local implementation/commits; exact branch push;
-verified force-with-lease; replies; verified thread resolution; conditional
-human re-review; maximum one PR summary. Never authorizes external CI or
-unverifiable-check repair, PR creation, merge, close, tag, release, general
+One explicit start authorizes fresh configured-repository triage and a
+read-only preview. A second current-turn approval authorizes only the rows
+shown as low-risk and `auto` in that preview: bounded local
+implementation/commits; exact branch push; replies; verified thread
+resolution; conditional human re-review; and at most one PR summary. It never
+silently broadens to a new PR, head, category, or high-risk action. External CI
+or unverifiable-check repair, PR creation, merge, close, tag, release, general
 publication, history rewrite outside exact rebase lease,
-draft-to-`Ready for review` transition, or out-of-scope product work.
+draft-to-`Ready for review` transition, and out-of-scope product work remain
+unauthorized. An exact high-risk PR/route needs a new explicit selection and
+preview.
+
+## Preflight preview
+
+Before any worktree creation, local commit, push, reply, or thread resolution,
+run fresh full `tk-pr-triage` and render `## PR sweep preview` with a table for
+every initial item: repository, PR number, title, link, observed head SHA,
+fresh category, planned action, risk, and decisive evidence. Include report-only
+and held items. State `No remote changes yet`. If there are `auto` rows, stop
+with `Status: Pending` until the user explicitly approves them. If there are no
+`auto` rows, complete the report-only run without an approval. Never replace
+this gate with a timer or automatic continuation; do not ask for approval once
+per PR.
+
+### Risk gate
+
+Mark a row `auto` only when the requested change is test-only: test files or
+test cases may change, but production source, configuration, dependencies,
+lockfiles, security/data/performance behavior, or weakened assertions may not.
+This means paths in the repository's existing test layout (`test/`, `tests/`,
+`spec/`, `*.test.*`, `*.spec.*`, or documented test fixtures) only; mixed,
+unknown, or helper/config paths are not `auto`. The child must stop before
+commit if its planned or staged paths leave that scope. A test-only change still
+needs repository tests to pass.
+
+Mark bug fixes, behavior changes, merge-conflict resolution, CI corrective
+changes, security/data/performance work, ambiguous scope or requests, and
+ownership or provider uncertainty `hold` or `report-only` by default. A user
+may explicitly select one or more named held rows in a later preview; generic
+batch approval never selects them. That later preview must name every exact PR,
+observed head, and route; a current-turn approval of that exact high-risk set
+may then authorize the existing closed router for those rows only. It is a
+separate approval, not a broadening of the low-risk batch.
 
 ## Closed router
 
@@ -38,6 +75,7 @@ draft-to-`Ready for review` transition, or out-of-scope product work.
 | --- | --- | --- |
 | `merge_conflict` | exact base/head pair | `tk-pr-rebase --ci` |
 | `checks_failed` | every selected failure is GitHub Actions | `tk-pr-respond --ci` |
+| `checks_failed` | any selected failure is external or provider `unknown` | report-only |
 | `changes_requested` | fresh actionable findings | `tk-pr-respond --ci` |
 | `needs_reply` | fresh actionable findings | `tk-pr-respond --ci` |
 | external-only `checks_failed` | provider evidence | report-only |
@@ -49,15 +87,28 @@ Reclassify from GitHub evidence.
 
 ## Workflow
 
-1. Fresh full `tk-pr-triage`: resolve authenticated identity and configured
-   repositories. Reject supplied/cached queues. Freeze supported items in triage
-   priority/repository/PR order; record report-only items.
-2. Before each queued PR, re-read repository identity, author/open/draft state,
-   base and head refs and SHAs, category/provider evidence, reviews, comments, threads,
-   and checks. Reroute stale entries. Stop mutation on author/login, fork
-   destination, or ownership ambiguity. Preserve draft; never mark
-   `Ready for review`.
-3. Fetch exact remote PR head into sweep-owned deterministic local ref; prove
+1. Run fresh full `tk-pr-triage`: resolve authenticated identity and configured
+   repositories. Reject supplied/cached queues; build the preview in triage
+   priority/repository/PR order and record report-only and held items.
+2. Stop at the preflight checkpoint until the user approves the displayed
+   low-risk rows. Freeze only those approved rows. A later exact high-risk
+   selection creates a new preview; never infer it from a generic continuation.
+3. Before each approved PR, re-read repository identity, author/open/draft
+   state, base and head refs and SHAs, category/provider evidence, reviews,
+   comments, threads, and checks. If the head or evidence drifted from the
+   preview, reclassify before mutation; external drift invalidates that row and
+   holds it. A sweep-owned new head may continue only within its declared bound.
+   Stop mutation on author/login, fork destination, or ownership ambiguity.
+   Preserve draft; never mark `Ready for review`.
+4. Before creating a worktree, compare fresh GitHub evidence with the approved
+   finding. If the finding is resolved and any requested code/test change is
+   proven present on the observed head by current diff, commit, or test
+   evidence, or if fresh triage explicitly marks it reply-only with no
+   code/test obligation and its exact reply/thread is current and complete,
+   record `Skipped: already applied` and do not invoke a child or create a
+   worktree. Never use a complete reply to skip a code/test finding. If
+   evidence is ambiguous, hold; do not guess from a local report or ledger.
+5. Fetch exact remote PR head into sweep-owned deterministic local ref; prove
    SHA. Reuse only clean worktree matching remote repository, PR, head ref, and
    `HEAD`. Otherwise prefer current-schema `orca worktree list --json` and
    `orca worktree create --json`, rooted at fetched head—not coincidental local
@@ -65,36 +116,39 @@ Reclassify from GitHub evidence.
    Before mutation, verify worktree `HEAD` and exact push refspec target observed
    head repository/ref; ambiguity stops PR. Record fetched ref/SHA, worktree
    owner/path, push refspec, fallback.
-4. Per new worktree, run repository-owned lockfile-enforcing setup once. If none
+6. Per new worktree, run repository-owned lockfile-enforcing setup once. If none
    documented, use lockfile package manager frozen/immutable mode. Share package
    cache only; never symlink `node_modules` or another checkout's dependency tree.
-5. Invoke exactly one closed-router owner. Child `Pass` is internal: render sweep
-   checkpoint; re-triage exact PR/head without terminal response or pause; follow
-   new supported category only within bound. Record child non-success; no sibling
-   call for same failed state.
-6. Keep prompt-local bounds: one rebase per exact `(base_sha, head_sha)`, maximum
+7. Invoke exactly one closed-router owner. For an `auto` row, pass the
+   `test-only` scope and stop before commit if the child would leave it. Child
+   `Pass` is internal: render sweep checkpoint; re-triage exact PR/head without
+   terminal response or pause; follow a new supported category only within
+   bound. Record child non-success; no sibling call for the same failed state.
+8. Keep prompt-local bounds: one rebase per exact `(base_sha, head_sha)`, maximum
    three GitHub Actions corrective cycles, one feedback response per fresh head
    SHA. Allow at most two additional feedback cycles when sweep-owned pushes
    create heads. Repeated unchanged feedback or third additional head becomes
    `follow-up-queued` without mutation. Never create durable cursor, scheduler,
    retry queue, or shared state framework.
-7. For post-push `IN_PROGRESS`, perform at most three fresh rechecks. If still
+9. For post-push `IN_PROGRESS`, perform at most three fresh rechecks. If still
    incomplete: record `waiting`, retain worktree, continue frozen queue without
    mutation. Repeated unchanged failure or exhausted mutation bound stops PR.
-8. After PR-local `Pass`, `follow-up-queued`, `waiting`, `Fail`, `Blocked`, or
-   `Unverifiable`, record result and remaining count; immediately advance to next
-   frozen entry without child receipt, terminal response, pause, or confirmation.
-   Freeze later mutation only on shared safety failure: unresolved identity,
-   corrupt repository evidence, or unprovable repository/worktree ownership.
-9. One summary budget per PR. Accept rebase `summary budget: unused`; let later
-   response combine outcomes, else publish one rebase-only summary after final
-   fresh PR read. Never publish second PR summary. Every generated
-   reply/comment ends exactly `_🤖 본 코멘트는 AI가 작성했습니다._`.
-10. Remove only sweep-created clean worktree whose complete route is freshly
-    `Pass`; prefer matching Orca removal. Retain and report `follow-up-queued`, `waiting`,
-    dirty, failed, blocked, unverifiable, ambiguous, or reused worktrees.
-11. After accounting for all initial targets, run new full triage without growing
-    unbounded queue. Processed PR whose sweep-owned new head exhausted
+10. After PR-local `Pass`, `Skipped: already applied`, `follow-up-queued`,
+    `waiting`, `Fail`, `Blocked`, or `Unverifiable`, record result and remaining
+    count; immediately advance to the next frozen entry without child receipt,
+    terminal response, pause, or confirmation. Freeze later mutation only on
+    shared safety failure: unresolved identity, corrupt repository evidence, or
+    unprovable repository/worktree ownership.
+11. One summary budget per PR. Accept rebase `summary budget: unused`; let later
+    response combine outcomes, else publish one rebase-only summary after final
+    fresh PR read. Never publish a second PR summary. Every generated
+    reply/comment ends exactly `_🤖 본 코멘트는 AI가 작성했습니다._`.
+12. Remove only sweep-created clean worktree whose complete route is freshly
+    `Pass`; prefer matching Orca removal. Retain and report `follow-up-queued`,
+    `waiting`, dirty, failed, blocked, unverifiable, ambiguous, or reused
+    worktrees.
+13. After accounting for all initial targets, run new full triage without growing
+    an unbounded queue. A processed PR whose sweep-owned new head exhausted
     feedback cycles is `follow-up-queued`; any other final-only supported
     `Act now` item is `Blocked`; either prevents batch `Pass`. Write
     `.tigerkit/pr-sweep.md` with evidence times, exact routes, child states,
@@ -104,11 +158,12 @@ Reclassify from GitHub evidence.
 
 ## Progress
 
-After queue freeze, before and after each PR route/check, and around final triage,
-emit compact `▶️ Progress`: decision, decisive evidence, result/next action,
-remaining count. Continue within sweep authority. Children return evidence
-internally. Never expose child receipts, raw reasoning, command logs, timer
-promises, approval requests, or nonterminal `Status:` lines.
+After preview approval, before and after each PR route/check, and around final
+triage, emit compact `▶️ Progress`: decision, decisive evidence, result/next
+action, remaining count. The preview owns the single batch approval; never
+repeat it per PR. Children return evidence internally. Never expose child
+receipts, raw reasoning, command logs, timer promises, or nonterminal
+`Status:` lines.
 
 Use `✅ Pass`, `⏳ Waiting`, `⚠️ Advisory`, `❌ Fail`, `⛔ Blocked`, and
 `❓ Unverifiable` for matching outcomes. Render `follow-up-queued` and `waiting`
@@ -116,20 +171,30 @@ as `⏳ Waiting`; preserve terminal `Status: <token>` exactly.
 
 ## Aggregate result
 
-`Pass` requires every supported target from initial, per-PR, or final router pass.
+`Skipped: already applied` is a PR-local `Pass` with no mutation and counts as
+a supported target pass in the batch aggregate. `Pass` requires every
+supported target from initial, per-PR, or final router pass.
 `follow-up-queued` and `waiting` aggregate to `Pending`, never `Blocked` or
 `Fail`. Otherwise aggregate supported results:
 `Fail > Blocked > Unverifiable > Pending > Pass`; preserve shared systemic
 status that froze later mutation. Keep external CI, `checks_unverifiable`, and
 unsupported final items conspicuous; they are not supported successes and alone
-do not change otherwise empty/successful batch from `Pass`.
+do not change otherwise empty/successful batch from `Pass`. When no `auto` row
+exists, the report-only/held inventory is scope-complete and does not need
+approval or change that otherwise empty batch from `Pass`. After an approved
+`auto` batch, a held row awaiting the user's exact high-risk selection or a
+re-preview after external head drift is `Pending`; a supported `Act now` item
+still present only at final triage is `Blocked`.
 
-Lead `## PR sweep`. Show processed results, report-only external CI and
-`checks_unverifiable`, retained worktrees, all remaining final-triage items. For
-eight+ rows, show top five to seven and cite `.tigerkit/pr-sweep.md`. Keep exact
-child provenance in artifacts, not terminal response. Lead aggregate result with
-mapped visible marker, including `✅ Pass` for full pass, without replacing exact
-final status line.
+Lead `## PR sweep`. Show a Markdown table for every processed PR with
+repository, PR number, title, link, initial category, approved/planned action,
+actual result, and skip/hold reason when applicable. Also show report-only
+external CI and `checks_unverifiable`, retained worktrees, and all remaining
+final-triage items. For eight+ final-only rows, show the top five to seven with
+links and cite `.tigerkit/pr-sweep.md`. Keep exact child provenance in
+artifacts, not terminal response. Lead aggregate result with mapped visible
+marker, including `✅ Pass` for full pass, without replacing exact final status
+line.
 
 ### 🔴 HARD GATE · terminal user summary
 
@@ -145,7 +210,8 @@ literals stable.
 
 ## User decision questions
 
-No routine selection or publication questions. If new material identity, ownership,
-or out-of-scope authority decision is required, ask one self-contained `Question`
-before any `Recommendation`; stop `Pending | Blocked`. Never infer or broaden
-sweep.
+The preflight preview owns one routine batch approval. Do not ask per-PR
+selection or publication questions after that approval. If a new material
+identity, ownership, high-risk scope, or out-of-scope authority decision is
+required, ask one self-contained `Question` before any `Recommendation`; stop
+`Pending | Blocked`. Never infer or broaden the sweep.

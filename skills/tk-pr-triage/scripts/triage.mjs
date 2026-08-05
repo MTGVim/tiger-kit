@@ -207,6 +207,13 @@ function ghList(path, arrayField = null) {
   }
 }
 
+export function checkProvider(check = {}) {
+  const slug = String(check.app?.slug || '').toLowerCase();
+  const name = String(check.app?.name || '').toLowerCase();
+  if (!slug && !name) return 'unknown';
+  return slug === 'github-actions' || /github\s*actions/.test(name) ? 'github-actions' : 'external';
+}
+
 function currentRepository() {
   const remote = run('git', ['remote', 'get-url', 'origin'], { allowFailure: true });
   return remote.ok ? parseRepoFromRemote(remote.stdout) : null;
@@ -227,13 +234,21 @@ function checkState(repo, sha) {
   if (checkRuns.ok) {
     for (const check of checkRuns.data) {
       if (check.status === 'completed' && !SUCCESS_CONCLUSIONS.has(check.conclusion)) {
-        failures.push({ kind: 'check_run', name: check.name, state: check.conclusion });
+        failures.push({
+          kind: 'check_run',
+          name: check.name,
+          state: check.conclusion,
+          provider: checkProvider(check),
+          app: check.app?.slug || check.app?.name || null,
+        });
       }
     }
   }
   if (combined.ok && ['failure', 'error'].includes(combined.data.state)) {
     for (const status of combined.data.statuses || []) {
-      if (['failure', 'error'].includes(status.state)) failures.push({ kind: 'status', name: status.context, state: status.state });
+      if (['failure', 'error'].includes(status.state)) {
+        failures.push({ kind: 'status', name: status.context, state: status.state, provider: 'unknown' });
+      }
     }
   }
   return {
