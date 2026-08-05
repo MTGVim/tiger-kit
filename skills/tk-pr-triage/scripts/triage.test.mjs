@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import {
+  checkProvider,
   classifyPullRequest,
   computeReplyEvidence,
   computeReviewDecision,
@@ -35,6 +36,12 @@ test('team review requests are matched against the authenticated user teams', ()
 test('flattenPages supports arrays and object pages', () => {
   assert.deepEqual(flattenPages([[{ id: 1 }], [{ id: 2 }]]), [{ id: 1 }, { id: 2 }]);
   assert.deepEqual(flattenPages([{ check_runs: [{ id: 3 }] }], 'check_runs'), [{ id: 3 }]);
+});
+
+test('check provider evidence distinguishes GitHub Actions, external, and unknown', () => {
+  assert.equal(checkProvider({ app: { slug: 'github-actions' } }), 'github-actions');
+  assert.equal(checkProvider({ app: { name: 'GitLab CI' } }), 'external');
+  assert.equal(checkProvider({}), 'unknown');
 });
 
 test('stripNoise removes hidden and details content', () => {

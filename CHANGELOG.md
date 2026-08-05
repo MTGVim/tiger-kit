@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.05-2 — Release
+
+- feat: gate PR sweep mutations
+
 ## 2026.08.05-1 — Release
 
 - compress tk skills: reduce contract prose
