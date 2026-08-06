@@ -17,7 +17,8 @@ Use only for explicit vertical-ticket decomposition request or exact active
 Do not write spec, publish remote issues, or implement.
 
 Source precedence: user-designated source, current confirmed decisions,
-`.tigerkit/spec.md`, request, then relevant code.
+`.tigerkit/spec.md`, selected `.tigerkit/improve.md` `IMP-*` findings, request,
+then relevant code.
 
 ## Workflow
 
@@ -31,7 +32,10 @@ Source precedence: user-designated source, current confirmed decisions,
    split problems.
 5. **Gate** — return writable tickets or
    `Unresolved split report | Blocked | Unverifiable`.
-6. **Write and verify** — atomically write ledger, reread it, verify coverage,
+6. **Handoff** — apply [executor-handoff.md](references/executor-handoff.md)
+   to each ticket; a ticket must be executable from its own evidence with no
+   hidden parent or sibling context.
+7. **Write and verify** — atomically write ledger, reread it, verify coverage,
    dependencies, and ticket contents.
 
 ## Ticket contract
@@ -45,7 +49,10 @@ points`, `Dependencies`, and `Verification`. `Coverage` names every owned R/AC o
 location; independent ticket writes `Dependencies: none` instead of implicit
 dependency state.
 
-A ticket is vertical behavior unit: keep behavior, tests, and verification
+A selected `IMP-*` finding is source evidence only. Preserve its ID, exact
+evidence, confidence, route hint, and verification baseline; do not turn a
+finding into a ticket until its boundary is independently proven. A ticket is
+vertical behavior unit: keep behavior, tests, and verification
 together. Do not split into type/API/UI/test layers or diagnose/fix/verify stages.
 Keep one bug as one slice from reproduction through root-cause fix, regression
 seam, original reproduction, and cleanup.

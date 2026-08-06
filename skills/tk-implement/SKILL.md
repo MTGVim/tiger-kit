@@ -1,7 +1,7 @@
 ---
 name: tk-implement
 description: "[user/auto] Implement, test, review, and create one current-branch commit for one independently verifiable unit. Apply only on explicit standalone selection or an exact handoff from tk-drive or tk-pr-respond; never auto-trigger from an ordinary implementation request."
-argument-hint: "<request, ticket, or spec> [direct|delegated] [tdd|no-tdd]"
+argument-hint: "<request, ticket, or spec> [direct|delegated] [tdd|no-tdd] | --config [--show|--migrate|--reset|--repo]"
 metadata:
   tigerkit:
     kind: hybrid
@@ -30,6 +30,32 @@ For active drive or PR response, preserve task identity, unit ID, source IDs, in
 | `Unverifiable` | Required verification attempted but cannot establish verdict | None |
 
 A drive non-success handoff includes actual branch/`HEAD`, changed/uncommitted paths, executed/unavailable verification, blocker/failure, and one recovery condition. It grants no cleanup, continuation, commit, downstream specialist, or finalization authority.
+
+## Cost-aware routing
+
+`strategy` and `tier` are independent:
+
+- `strategy`: `direct | delegated` — whether implementation ownership transfers.
+- `tier`: `cheap | standard | most_capable` — the lowest sufficient reasoning
+  level for the unit.
+
+Ready, independently transferable implementation units default to
+`delegated + cheap` on hosts with per-call model support. Use `direct` when
+briefing/isolation costs more than implementation, context cannot be safely
+transferred, the cause/design/scope is open, or no compatible implementor is
+available. Use `standard` for multi-file integration or ordinary debugging;
+use `most_capable` or controller recovery for design, unknown-cause, or
+security-critical decisions. Escalate once for context, sizing, or reasoning;
+do not retry a design decision as a cheaper implementation.
+
+`$tk-implement --config` manages the host mapping described in
+[model-routing.md](references/model-routing.md). `--show` is read-only,
+`--migrate` previews and applies only an explicit managed mapping,
+`--reset` removes that mapping at the selected scope, and `--repo` selects the
+current-repository override. Repository override wins over user host context,
+which wins over the inherited current model. Unsupported per-call model or
+effort capability is reported as advisory and falls back to safe direct/current
+execution; it is never claimed as applied.
 
 ## Workflow
 

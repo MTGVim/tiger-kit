@@ -17,7 +17,8 @@ Use only for explicit implementation-spec artifact request or exact active
 issue, or implement.
 
 Source precedence: user-designated source, confirmed decisions, cited
-documents/tickets, relevant code, then existing `.tigerkit/spec.md`.
+documents/tickets, selected `.tigerkit/improve.md` findings, relevant code,
+then existing `.tigerkit/spec.md`.
 
 ## Workflow
 
@@ -39,7 +40,10 @@ documents/tickets, relevant code, then existing `.tigerkit/spec.md`.
 6. **Slice candidates** — record `Vertical slicing candidate areas` by
    user-visible behavior, R/AC coverage, and coupling evidence. These are inputs,
    not tickets or approved slice boundaries.
-7. **Gate and write** — return `Ready | Draft | Blocked | Unverifiable`, write
+7. **Handoff** — apply [executor-handoff.md](references/executor-handoff.md)
+   to every Ready source so a cheaper executor can work from exact evidence,
+   boundaries, verification, assumptions, and drift handling.
+8. **Gate and write** — return `Ready | Draft | Blocked | Unverifiable`, write
    only supported state, reread it, verify source map and IDs.
 
 For bugs, separate symptom, current behavior, expected behavior, reproduction,

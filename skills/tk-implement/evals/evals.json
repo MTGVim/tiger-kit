@@ -990,6 +990,37 @@
           "expected": "Pass"
         }
       ]
+    },
+    {
+      "id": "implement-config-keeps-strategy-and-tier-independent",
+      "path": "success",
+      "prompt": "$tk-implement --config --show 현재 host의 cheap, standard, most_capable routing을 보여 주세요. strategy와 tier를 합치거나 파일을 수정하지 마세요.",
+      "expected_output": "effective mapping과 repo-local → user-level → current-model precedence를 read-only로 보여 주고 strategy direct|delegated와 tier cheap|standard|most_capable를 독립 축으로 유지한다.",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "strategy"
+        },
+        {
+          "type": "output_contains",
+          "text": "tier"
+        },
+        {
+          "type": "output_contains",
+          "text": "repo-local explicit override"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }
