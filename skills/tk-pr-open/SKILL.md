@@ -12,7 +12,7 @@ metadata:
 
 # Open pull request
 
-Start only when user selects `/tk-pr-open`, `$tk-pr-open`, or host skill picker. Never activate from generic PR question, code review, implementation request, or existing `.tigerkit` artifact.
+Start when the user selects `/tk-pr-open`, `$tk-pr-open`, or host skill picker, or clearly asks in natural language to prepare, open, or update one PR. A conversational user trigger starts only this skill's local preview; it never implies publication. Never activate from a generic PR question, code review, implementation request, merge request, multi-PR maintenance request, or existing `.tigerkit` artifact alone.
 
 Own one pull-request draft and bounded publication plan. May inspect local Git/GitHub state and write `.tigerkit/pr-open.md`. Never edit product code, create product commits, merge, tag, release, or publish before approval gate below.
 
