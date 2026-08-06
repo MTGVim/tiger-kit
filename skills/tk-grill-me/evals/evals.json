@@ -98,6 +98,10 @@
           "text": "Question"
         },
         {
+          "type": "output_contains",
+          "text": "❓ grill-me"
+        },
+        {
           "type": "terminal_status",
           "expected": "Pending"
         },

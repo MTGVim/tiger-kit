@@ -130,8 +130,10 @@ mutually exclusive options with material tradeoffs, and exactly one label
 ending `(Recommended)` or `(추천)`.
 
 Render question, recommendation, evidence, and options directly in chat; do not
-call structured question or input tools. Preserve `Pending | Blocked` until
-user answers. This changes presentation, not authority or stop gates.
+call structured question or input tools. For a standalone question, begin with
+`❓ grill-me · 답변 필요`; an active drive owns the parent display
+`drive > grill-me` and must not duplicate it. Preserve `Pending | Blocked`
+until user answers. This changes presentation, not authority or stop gates.
 
 ## DO NOT / ANTI-PATTERNS
 

@@ -38,7 +38,7 @@
     },
     {
       "from": "drive-resumes-pending-answer",
-      "to": "drive-resumes-preparing-decision-answer",
+      "to": "drive-resumes-preparing-decision-answer-compact",
       "reason": "TigerKit 21 keeps a pending Preparing decision inside the same active drive conversation."
     },
     {
@@ -88,7 +88,7 @@
     },
     {
       "from": "drive-continues-after-prep-claim",
-      "to": "drive-continues-after-preflight",
+      "to": "drive-continues-after-preflight-compact",
       "reason": "The compact preflight has no claim transition; continuation follows current evidence."
     },
     {
@@ -165,6 +165,21 @@
       "from": "drive-live-direct-prepared-execution",
       "to": "drive-live-direct-prepared-execution-finalizes",
       "reason": "Issue 224 removes the reflection tail from the live prepared-execution contract."
+    },
+    {
+      "from": "drive-resumes-preparing-decision-answer",
+      "to": "drive-resumes-preparing-decision-answer-compact",
+      "reason": "The compact progress contract replaces legacy orchestration labels while preserving the same decision-resume boundary."
+    },
+    {
+      "from": "drive-continues-after-preflight",
+      "to": "drive-continues-after-preflight-compact",
+      "reason": "The compact progress contract replaces legacy progress labels while preserving automatic continuation and terminal success assertions."
+    },
+    {
+      "from": "drive-keeps-grill-pending-open",
+      "to": "drive-keeps-grill-pending-open-compact",
+      "reason": "The compact user-input marker replaces the legacy waiting/orchestration labels without changing the pending safety boundary."
     }
   ],
   "evals": [
@@ -189,10 +204,10 @@
       "safety": true
     },
     {
-      "id": "drive-resumes-preparing-decision-answer",
+      "id": "drive-resumes-preparing-decision-answer-compact",
       "path": "success",
       "prompt": "[active tk-drive Preparing has one pending decision] A로 진행해",
-      "expected_output": "같은 active drive Preparing에서 답을 소비하고 `▶️ Progress · Orchestration: tk-drive → tk-to-spec`로 spec transition을 실행하며 새 drive를 시작하거나 terminal summary를 내지 않는다.",
+      "expected_output": "같은 active drive Preparing에서 답을 소비하고 `▶️ drive > spec`으로 spec transition을 실행하며 새 drive를 시작하거나 terminal summary를 내지 않는다.",
       "assertions": [
         {
           "type": "judge",
@@ -200,7 +215,7 @@
         },
         {
           "type": "output_contains",
-          "text": "Orchestration: tk-drive → tk-to-spec"
+          "text": "drive > spec"
         },
         {
           "type": "terminal_status",
@@ -211,6 +226,43 @@
         }
       ],
       "darwin": false
+    },
+    {
+      "id": "drive-reinvocation-resumes-after-answer",
+      "path": "success",
+      "prompt": "[active tk-drive] tk-grill-me의 단일 spec 결정 질문에 사용자가 답했고 current spec은 Ready이며 한 개의 incomplete unit이 있습니다. 사용자가 `$tk-drive`를 다시 호출했습니다.",
+      "expected_output": "새 drive나 재질문 없이 current evidence에서 resume하고 `▶️ drive > implement` 뒤 aggregate verification과 finalization까지 계속한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "no-source explicit re-invocation을 같은 active drive의 continuation으로 인식하고 current spec/decision/unit evidence를 reread한 뒤 valid Ready를 즉시 implementation으로 연결하며 새 approval이나 second tk-grill-me를 요구하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "▶️ drive > implement"
+        },
+        {
+          "type": "event_count",
+          "event": {
+            "type": "phase_invocation",
+            "phase": "tk-implement"
+          },
+          "min": 1,
+          "max": 1
+        },
+        {
+          "type": "event_absent",
+          "event": {
+            "type": "phase_invocation",
+            "phase": "tk-grill-me"
+          }
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": true
     },
     {
       "id": "drive-finalizes-after-aggregate",
@@ -687,22 +739,22 @@
       ]
     },
     {
-      "id": "drive-continues-after-preflight",
+      "id": "drive-continues-after-preflight-compact",
       "path": "success",
       "prompt": "[active tk-drive] preflight와 첫 implementation unit evidence가 준비됐습니다. 다음 applicable node로 계속 진행해 주세요.",
-      "expected_output": "preflight와 unit 경계에서 ▶️ Progress/Decision/Evidence/Result-Next 의미의 compact nonterminal checkpoint를 보여주되 response boundary로 삼지 않고 같은 active turn에서 remaining units, aggregate verification, finalization까지 진행하고 full success를 ✅ Pass로 강조한다.",
+      "expected_output": "preflight와 unit 경계에서 `▶️ drive > <node>` 형식의 compact nonterminal checkpoint를 보여주되 response boundary로 삼지 않고 같은 active turn에서 remaining units, aggregate verification, finalization까지 진행하고 full success를 ✅ Pass로 강조한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "현재 evidence 뒤 Drive가 소유한 compact progress checkpoint로 계획·결정·근거·다음 행동과 semantic orchestration node를 알리고 사용자 재호출을 기다리지 않은 채 다음 applicable node로 즉시 전이하며 finalization에서만 최종 결과를 낸다."
+          "criterion": "현재 evidence 뒤 Drive가 소유한 one-line `drive > node` progress checkpoint로 현재 orchestration 위치를 알리고 사용자 재호출을 기다리지 않은 채 다음 applicable node로 즉시 전이하며 finalization에서만 최종 결과를 낸다."
         },
         {
           "type": "output_contains",
-          "text": "▶️ Progress"
+          "text": "▶️ drive >"
         },
         {
           "type": "output_contains",
-          "text": "Orchestration: tk-drive"
+          "text": "drive >"
         },
         {
           "type": "output_contains",
@@ -807,7 +859,7 @@
         },
         {
           "type": "judge",
-          "criterion": "Drive owns concise progress at the prepared plan, each unit boundary, and aggregate verification; each checkpoint begins with the stable text-plus-emoji marker `▶️ Progress` and communicates the chosen decision, decisive evidence, and result/next action without exposing raw reasoning, a child receipt, approval request, terminal status, or timer-heartbeat promise; full success is visibly `✅ Pass` while canonical `Status: Pass` remains unchanged."
+          "criterion": "Drive owns one-line progress at the prepared plan, each unit boundary, and aggregate verification; each checkpoint uses the compact display form `▶️ drive > <node>` with no raw reasoning, child receipt, approval request, terminal status, or timer-heartbeat promise; full success is visibly `✅ Pass` while canonical `Status: Pass` remains unchanged."
         },
         {
           "type": "path_text_equals",
@@ -1570,26 +1622,30 @@
       ]
     },
     {
-      "id": "drive-keeps-grill-pending-open",
+      "id": "drive-keeps-grill-pending-open-compact",
       "path": "boundary",
       "prompt": "[active tk-drive] tk-grill-me가 한 개의 사용자 결정 질문을 pending으로 반환했고 아직 답이 없습니다.",
       "expected_output": "같은 active conversation에서 답을 기다리며 non-success finalization이나 downstream procedure를 시작하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "pending은 terminal failure가 아니며 사용자 답 없이 Blocked/Fail/Unverifiable로 정규화하거나 다음 procedure를 호출하지 않는다. `▶️ Progress · ⏳ Waiting · Orchestration: tk-drive → tk-grill-me`와 wait reason/next action을 보여 준다."
+          "criterion": "pending은 terminal failure가 아니며 사용자 답 없이 Blocked/Fail/Unverifiable로 정규화하거나 다음 procedure를 호출하지 않는다. `❓ drive > grill-me · 답변 필요`를 보여 주고 `⏳ Waiting`으로 표시하지 않는다."
         },
         {
           "type": "output_contains",
-          "text": "▶️ Progress"
+          "text": "❓ drive > grill-me"
         },
         {
           "type": "output_contains",
+          "text": "답변 필요"
+        },
+        {
+          "type": "output_absent",
           "text": "⏳ Waiting"
         },
         {
           "type": "output_contains",
-          "text": "Orchestration: tk-drive → tk-grill-me"
+          "text": "drive > grill-me"
         },
         {
           "type": "output_absent",

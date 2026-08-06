@@ -21,11 +21,20 @@ Choose before any browser or verification-server call.
 
 Consume an active `tk-drive` browser profile without reopening product decisions. Re-request an `intentionally omitted` runtime identity once, keep it ephemeral, and return material strategy drift to the parent.
 
+## Progress
+
+Standalone runs emit one compact line at scope/server/browser/verdict
+boundaries, e.g. `▶️ browser-verify · server`, `⏳ browser-verify · readiness`,
+or `✅ browser-verify`; omit `tk-`. A parent owns `parent > browser-verify`.
+Use `❓` for user runtime input, `🟢` for standalone Ready, and `⏳` only for
+server/remote readiness. Suppress raw logs/receipts; keep paths and bounded
+findings in the evidence artifact.
+
 ## Workflow
 
 1. **Scope** — choose Guard/Verdict, target, criteria, safe interaction boundary. For local apps, omitted URL/launch command is discovery, not a user decision: inspect repository scripts, docs, and listening processes; proceed only with one worktree-bound target.
 2. **Preflight** — load applicable references only: [UI verification](references/ui-verification.md), [design](references/design.md), [accessibility](references/accessibility.md), [visual](references/visual.md), [behavior](references/behavior.md), [safety](references/safety.md).
-3. **Launch** — prove browser, effective arguments, profile ownership, and current-worktree serving source. An unnamed provider is not automatically `Unverifiable`; use the first available native, Playwright-compatible, MCP, or verified CDP route without installing dependencies. Return `Unverifiable` only if none can capture and inspect required evidence.
+3. **Launch** — prove browser, effective arguments, profile ownership, and current-worktree serving source. An unnamed provider is not automatically `Unverifiable`; use the first available native, Playwright-compatible, MCP, or verified CDP route without installing dependencies. If starting a long-running verification server, launch it as a run-owned background process, record PID/cwd/port/command/log path, tail only bounded startup output, and poll a concrete readiness signal with a bounded timeout; never wait for the server process to exit. Continue after readiness, and return `Fail | Unverifiable` with the log path and last bounded lines when startup fails. Return `Unverifiable` only if none can capture and inspect required evidence.
 4. **Run** — start from known state, perform safe interactions, inspect required network/final state, capture screenshots, inspect actual images.
 5. **Verdict** — bind each criterion to evidence; classify failures `change-related | pre-existing | environment | unverifiable`.
 6. **Cleanup** — close only run-owned resources; verify required capture residue.
