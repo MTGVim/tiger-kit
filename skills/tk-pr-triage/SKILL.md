@@ -45,9 +45,13 @@ Never hardcode TigerKit.
    approval.
 5. Render results before any question. Group first by `Act now`,
    `Review requests`, and `Waiting`, then by repository within each; omit empty
-   groups. Per item show priority, PR, plain-language current state, attention
-   reason, and one recommended next action. Keep raw category and provenance as
-   support; never make user decode them. Ask no question by default.
+   groups. Render each PR as a Markdown link using its `url`, and each actionable
+   review/thread evidence as a Markdown link when its URL is available; never
+   expose raw URLs in the user-facing table. Per item show priority, PR,
+   plain-language current state, attention reason, and one recommended next
+   action. Normalize GitHub `<br>`/`<br/>` breaks to real newlines before display.
+   Keep raw category and provenance as support; never make user decode them. Ask
+   no question by default.
    Recommendations never authorize apply, reply, resolve, push, merge, or
    release.
 
@@ -69,7 +73,7 @@ user's next action.
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
 
 Use latest explicit user language for all free-form user-facing prose. Keep
 headings, statuses, IDs, paths, commands, and exact source literals stable.
@@ -82,3 +86,6 @@ Triage is read-only. If next action requires user choice, ask one self-contained
 `Question` before any `Recommendation`; render directly in chat, never call
 structured question or input tools. Never mutate state. Reply, resolve, push, merge,
 release, or edit stops here for separately authorized owner.
+## Progress
+
+At meaningful work boundaries, standalone output uses `🚗 pr-triage · <short state>`; use `🙋 pr-triage · 응답 필요` for a question/approval gate, `⏳ pr-triage · 대기` for CI/remote/re-review wait, and `🛑 pr-triage · 중단` for a checkpoint/abort stop. Omit `tk-` from display names; a parent owns `🚗 parent > pr-triage`. Keep terminal `Status: <token>` unchanged.

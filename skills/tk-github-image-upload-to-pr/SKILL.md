@@ -102,7 +102,7 @@ heading, `Outcome:`, caller-return instruction, or bottom provenance block.
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
 
 Use latest explicit user language, else current user message language. Preserve
 headings, statuses, IDs, commands, paths, code, and exact source literals;
@@ -115,3 +115,6 @@ insertion location, comment target, or private runtime identity is ambiguous.
 Show only decision-relevant evidence and one `(Recommended)` label. Render
 question and options directly in chat; do not call structured question or
 input tools.
+## Progress
+
+At meaningful work boundaries, standalone output uses `🚗 github-image-upload-to-pr · <short state>`; use `🙋 github-image-upload-to-pr · 응답 필요` for a question/approval gate, `⏳ github-image-upload-to-pr · 대기` for CI/remote/re-review wait, and `🛑 github-image-upload-to-pr · 중단` for a checkpoint/abort stop. Omit `tk-` from display names; a parent owns `🚗 parent > github-image-upload-to-pr`. Keep terminal `Status: <token>` unchanged.

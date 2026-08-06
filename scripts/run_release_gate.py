@@ -47,6 +47,18 @@ def run_checked(command: list[str], *, cwd: Path) -> dict[str, object]:
     }
 
 
+def ensure_clean_worktree(root: Path = ROOT) -> None:
+    completed = subprocess.run(
+        ["git", "status", "--porcelain", "--untracked-files=all"],
+        cwd=root,
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+    if completed.stdout.strip():
+        raise ValueError("release gate requires a clean worktree; commit candidate changes first")
+
+
 def load_manifest() -> dict[str, object]:
     value = json.loads(MANIFEST.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
@@ -55,6 +67,8 @@ def load_manifest() -> dict[str, object]:
         rows = value.get(field)
         if not isinstance(rows, list) or not rows or not all(isinstance(row, str) and row for row in rows):
             raise ValueError(f"release-critical {field} must be a non-empty string list")
+    if value.get("progress_contract") != {"version": 1, "scope": "all-tk-skills"}:
+        raise ValueError("release-critical progress_contract must cover all tk-* skills at version 1")
     retired = value.get("retired_skill_contracts", [])
     if not isinstance(retired, list) or not all(isinstance(row, str) and row for row in retired):
         raise ValueError("release-critical retired_skill_contracts must be a string list")
@@ -104,6 +118,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
+    ensure_clean_worktree()
     output = Path(args.output).resolve()
     if output == ROOT or ROOT in output.parents:
         raise SystemExit("--output must be outside the repository")
@@ -138,6 +153,7 @@ def main() -> int:
             ["python3", "scripts/validate_skills.py", "--links-only"],
             ["python3", "-B", "-m", "unittest", "discover", "-s", "scripts", "-p", "test_*.py"],
             ["python3", "scripts/audit_catalog.py", "--check"],
+            ["python3", "scripts/validate_progress_contract.py"],
             ["git", "diff", "--exit-code"],
             ["npx", "--yes", "skills@1.5.9", "add", ".", "--list"],
             ["npx", "--yes", "skills", "add", ".", "--list"],

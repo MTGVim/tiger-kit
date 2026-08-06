@@ -108,7 +108,7 @@ in owned tickets artifact.
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
 
 Use latest explicit user language, else current message's language. Preserve
 canonical headings, status tokens, IDs, commands, paths, code, and quoted source
@@ -127,3 +127,6 @@ question/input tool. Preserve `Pending | Blocked` until answer.
 - Do not invent exact paths, code, IDs, or unsupported performance numbers.
 - Do not alter source UI writing or hide essential context.
 - Do not implement, publish, or repair non-success state inline.
+## Progress
+
+At meaningful work boundaries, standalone output uses `🚗 to-tickets · <short state>`; use `🙋 to-tickets · 응답 필요` for a question/approval gate, `⏳ to-tickets · 대기` for CI/remote/re-review wait, and `🛑 to-tickets · 중단` for a checkpoint/abort stop. Omit `tk-` from display names; a parent owns `🚗 parent > to-tickets`. Keep terminal `Status: <token>` unchanged.

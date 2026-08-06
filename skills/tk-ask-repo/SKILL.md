@@ -83,10 +83,13 @@ Persist provenance only in an artifact or ledger this skill already owns. Never 
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
 
 Before user-facing progress, questions, or summaries, use the latest explicit language instruction; otherwise current message language. All free-form sentences and prose result values use it. Do not switch to English because sources, skills, tools, or code are English. Preserve canonical headings, status tokens, IDs, commands, paths, code, and exact source literals byte-stable; explain around them in the resolved language. Before return, rewrite any drifting free-form prose.
 
 ## User decision questions
 
 Normal investigation owns no decisions: name the decision and stop `Blocked`. Only an explicitly authorized handoff may ask one self-contained `Question` before `Recommendation`, with two or three mutually exclusive trade-off options and one `(Recommended)` or `(추천)`. Render directly in chat; do not call structured question/input tools. Remain `Pending | Blocked` until answered.
+## Progress
+
+At meaningful work boundaries, standalone output uses `🚗 ask-repo · <short state>`; use `🙋 ask-repo · 응답 필요` for a question/approval gate, `⏳ ask-repo · 대기` for CI/remote/re-review wait, and `🛑 ask-repo · 중단` for a checkpoint/abort stop. Omit `tk-` from display names; a parent owns `🚗 parent > ask-repo`. Keep terminal `Status: <token>` unchanged.

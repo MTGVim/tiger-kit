@@ -2,6 +2,11 @@
   "skill_name": "tk-grill-me",
   "migrations": [
     {
+      "from": "grill-me-renders-question-in-chat-actor",
+      "to": "grill-me-renders-question-in-chat-compact-progress-v2",
+      "reason": "The standalone response marker now uses the universal compact contract."
+    },
+    {
       "from": "legacy-1",
       "to": "grill-me-unifies-caller-modes",
       "reason": "The unified skill now owns evidence-first decision closure and standalone presentation in one procedure."
@@ -89,7 +94,7 @@
       "darwin": true
     },
     {
-      "id": "grill-me-renders-question-in-chat-actor",
+      "id": "grill-me-renders-question-in-chat-compact-progress-v2",
       "path": "boundary",
       "prompt": "/tk-grill-me 저장 방식 A/B 중 하나가 확정되지 않았습니다. 근거를 조사하고 질문 하나만 제시한 뒤 제 답을 받기 전에는 downstream 작업을 하지 마세요.",
       "expected_output": "pending procedure state에서 Question, Recommendation, Evidence 순서의 질문 하나를 chat response에 직접 표시하고 답변 전에는 mutation이나 다음 절차를 실행하지 않는다.",
@@ -104,7 +109,7 @@
         },
         {
           "type": "output_contains",
-          "text": "👤 grill-me"
+          "text": "🙋 grill-me"
         },
         {
           "type": "terminal_status",

@@ -422,6 +422,81 @@ def _terminal_forbidden(assertions: object) -> set[str]:
     return values
 
 
+def _compare_behavior_preservation(
+    skill: str,
+    case_id: str,
+    baseline_case: Mapping[str, object],
+    candidate_case: Mapping[str, object],
+    *,
+    exact_assertions: bool,
+) -> list[str]:
+    errors: list[str] = []
+    baseline_hosts = baseline_case.get("hosts")
+    candidate_hosts = candidate_case.get("hosts")
+    baseline_host_set = (
+        set(baseline_hosts) if isinstance(baseline_hosts, list) else set(SUPPORTED_HOSTS)
+    )
+    candidate_host_set = (
+        set(candidate_hosts) if isinstance(candidate_hosts, list) else set(SUPPORTED_HOSTS)
+    )
+    if not baseline_host_set.issubset(candidate_host_set):
+        errors.append(f"{skill}: behavior case {case_id!r} restricted host coverage")
+    if baseline_case.get("safety") is True and candidate_case.get("safety") is not True:
+        errors.append(f"{skill}: behavior case {case_id!r} weakened safety coverage")
+    baseline_types = Counter(
+        str(row.get("type"))
+        for row in baseline_case.get("assertions", [])
+        if isinstance(row, dict) and row.get("type") != "judge"
+    )
+    candidate_types = Counter(
+        str(row.get("type"))
+        for row in candidate_case.get("assertions", [])
+        if isinstance(row, dict) and row.get("type") != "judge"
+    )
+    missing_types = {
+        assertion_type: count - candidate_types[assertion_type]
+        for assertion_type, count in baseline_types.items()
+        if candidate_types[assertion_type] < count
+    }
+    if missing_types:
+        errors.append(
+            f"{skill}: behavior case {case_id!r} removed mechanical assertions "
+            f"{sorted(missing_types)}"
+        )
+    if exact_assertions:
+        candidate_nonterminal = [
+            json.dumps(assertion, ensure_ascii=False, sort_keys=True)
+            for assertion in candidate_case.get("assertions", [])
+            if isinstance(assertion, dict)
+            and assertion.get("type") not in {"judge", "terminal_status"}
+        ]
+        for assertion in baseline_case.get("assertions", []):
+            if not isinstance(assertion, dict) or assertion.get("type") in {
+                "judge",
+                "terminal_status",
+            }:
+                continue
+            fingerprint = json.dumps(assertion, ensure_ascii=False, sort_keys=True)
+            if fingerprint in candidate_nonterminal:
+                candidate_nonterminal.remove(fingerprint)
+            else:
+                errors.append(
+                    f"{skill}: behavior case {case_id!r} weakened assertion "
+                    f"{assertion!r}"
+                )
+    baseline_terminal = _terminal_values(baseline_case.get("assertions"))
+    candidate_terminal = _terminal_values(candidate_case.get("assertions"))
+    if baseline_terminal and (
+        not candidate_terminal or not candidate_terminal.issubset(baseline_terminal)
+    ):
+        errors.append(f"{skill}: behavior case {case_id!r} weakened terminal expectations")
+    baseline_forbidden = _terminal_forbidden(baseline_case.get("assertions"))
+    candidate_forbidden = _terminal_forbidden(candidate_case.get("assertions"))
+    if not baseline_forbidden.issubset(candidate_forbidden):
+        errors.append(f"{skill}: behavior case {case_id!r} removed forbidden terminal values")
+    return errors
+
+
 def compare_eval_contracts(
     baseline: Mapping[str, Mapping[str, object]],
     candidate: Mapping[str, Mapping[str, object]],
@@ -449,6 +524,7 @@ def compare_eval_contracts(
             migrations = _migration_map(candidate_data)
             for case_id, baseline_case in sorted(baseline_cases.items()):
                 candidate_case = candidate_cases.get(case_id)
+                migrated = False
                 if candidate_case is None:
                     migrated_to = migrations.get(case_id)
                     if not migrated_to or migrated_to not in candidate_cases:
@@ -456,7 +532,9 @@ def compare_eval_contracts(
                             f"{skill}: candidate deleted {section} case {case_id!r} "
                             "without an explicit migration reason"
                         )
-                    continue
+                        continue
+                    candidate_case = candidate_cases[migrated_to]
+                    migrated = True
                 if section == "trigger":
                     if candidate_case.get("should_trigger") is not baseline_case.get("should_trigger"):
                         errors.append(
@@ -464,79 +542,15 @@ def compare_eval_contracts(
                             "without an explicit migration"
                         )
                     continue
-                baseline_hosts = baseline_case.get("hosts")
-                candidate_hosts = candidate_case.get("hosts")
-                baseline_host_set = (
-                    set(baseline_hosts)
-                    if isinstance(baseline_hosts, list)
-                    else set(SUPPORTED_HOSTS)
+                errors.extend(
+                    _compare_behavior_preservation(
+                        skill,
+                        case_id,
+                        baseline_case,
+                        candidate_case,
+                        exact_assertions=not migrated,
+                    )
                 )
-                candidate_host_set = (
-                    set(candidate_hosts)
-                    if isinstance(candidate_hosts, list)
-                    else set(SUPPORTED_HOSTS)
-                )
-                if not baseline_host_set.issubset(candidate_host_set):
-                    errors.append(
-                        f"{skill}: behavior case {case_id!r} restricted host coverage"
-                    )
-                if baseline_case.get("safety") is True and candidate_case.get("safety") is not True:
-                    errors.append(f"{skill}: behavior case {case_id!r} weakened safety coverage")
-                baseline_types = {
-                    str(row.get("type"))
-                    for row in baseline_case.get("assertions", [])
-                    if isinstance(row, dict) and row.get("type") != "judge"
-                }
-                candidate_types = {
-                    str(row.get("type"))
-                    for row in candidate_case.get("assertions", [])
-                    if isinstance(row, dict) and row.get("type") != "judge"
-                }
-                if not baseline_types.issubset(candidate_types):
-                    errors.append(
-                        f"{skill}: behavior case {case_id!r} removed mechanical assertions "
-                        f"{sorted(baseline_types - candidate_types)}"
-                    )
-                candidate_nonterminal = [
-                    json.dumps(assertion, ensure_ascii=False, sort_keys=True)
-                    for assertion in candidate_case.get("assertions", [])
-                    if isinstance(assertion, dict)
-                    and assertion.get("type") not in {"judge", "terminal_status"}
-                ]
-                for assertion in baseline_case.get("assertions", []):
-                    if not isinstance(assertion, dict) or assertion.get("type") in {
-                        "judge",
-                        "terminal_status",
-                    }:
-                        continue
-                    fingerprint = json.dumps(
-                        assertion, ensure_ascii=False, sort_keys=True
-                    )
-                    if fingerprint in candidate_nonterminal:
-                        candidate_nonterminal.remove(fingerprint)
-                    else:
-                        errors.append(
-                            f"{skill}: behavior case {case_id!r} weakened assertion "
-                            f"{assertion!r}"
-                        )
-                baseline_terminal = _terminal_values(baseline_case.get("assertions"))
-                candidate_terminal = _terminal_values(candidate_case.get("assertions"))
-                if baseline_terminal and (
-                    not candidate_terminal or not candidate_terminal.issubset(baseline_terminal)
-                ):
-                    errors.append(
-                        f"{skill}: behavior case {case_id!r} weakened terminal expectations"
-                    )
-                baseline_forbidden = _terminal_forbidden(
-                    baseline_case.get("assertions")
-                )
-                candidate_forbidden = _terminal_forbidden(
-                    candidate_case.get("assertions")
-                )
-                if not baseline_forbidden.issubset(candidate_forbidden):
-                    errors.append(
-                        f"{skill}: behavior case {case_id!r} removed forbidden terminal values"
-                    )
     return errors
 
 

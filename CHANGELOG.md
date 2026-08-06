@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- feat: standardize universal car-based compact progress output across tk-* skills
+- fix: render PR/thread URLs as clickable links and normalize GitHub break tags for TUI
+- test: enforce the shared progress contract in the deterministic release gate
+
 ## 2026.08.06-7 — Release
 
 - fix: align tk-pr-open hybrid natural-language routing with its publication gate

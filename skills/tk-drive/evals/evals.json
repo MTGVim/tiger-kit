@@ -2,6 +2,21 @@
   "skill_name": "tk-drive",
   "migrations": [
     {
+      "from": "drive-reinvocation-resumes-after-answer-actor",
+      "to": "drive-reinvocation-resumes-after-answer-compact-progress-v2",
+      "reason": "Progress output now uses the universal car marker."
+    },
+    {
+      "from": "drive-continues-after-preflight-final-marker",
+      "to": "drive-continues-after-preflight-compact-progress-v2",
+      "reason": "Progress output now uses the universal car marker."
+    },
+    {
+      "from": "drive-keeps-grill-pending-open-actor",
+      "to": "drive-keeps-grill-pending-open-compact-progress-v2",
+      "reason": "Decision checkpoints now use the response marker and localized wait label."
+    },
+    {
       "from": "drive-resumes-preparing-decision-answer-compact",
       "to": "drive-resumes-preparing-decision-answer-actor",
       "reason": "Automatic drive progress changes to the robot marker."
@@ -242,7 +257,7 @@
       "id": "drive-resumes-preparing-decision-answer-actor",
       "path": "success",
       "prompt": "[active tk-drive Preparing has one pending decision] A로 진행해",
-      "expected_output": "같은 active drive Preparing에서 답을 소비하고 `🤖 drive > spec`으로 spec transition을 실행하며 새 drive를 시작하거나 terminal summary를 내지 않는다.",
+      "expected_output": "같은 active drive Preparing에서 답을 소비하고 `🚗 drive > spec`으로 spec transition을 실행하며 새 drive를 시작하거나 terminal summary를 내지 않는다.",
       "assertions": [
         {
           "type": "judge",
@@ -263,10 +278,10 @@
       "darwin": false
     },
     {
-      "id": "drive-reinvocation-resumes-after-answer-actor",
+      "id": "drive-reinvocation-resumes-after-answer-compact-progress-v2",
       "path": "success",
       "prompt": "[active tk-drive] tk-grill-me의 단일 spec 결정 질문에 사용자가 답했고 current spec은 Ready이며 한 개의 incomplete unit이 있습니다. 사용자가 `$tk-drive`를 다시 호출했습니다.",
-      "expected_output": "새 drive나 재질문 없이 current evidence에서 resume하고 `🤖 drive > implement` 뒤 aggregate verification과 finalization까지 계속한다.",
+      "expected_output": "새 drive나 재질문 없이 current evidence에서 resume하고 `🚗 drive > implement` 뒤 aggregate verification과 finalization까지 계속한다.",
       "assertions": [
         {
           "type": "judge",
@@ -274,7 +289,7 @@
         },
         {
           "type": "output_contains",
-          "text": "🤖 drive > implement"
+          "text": "🚗 drive > implement"
         },
         {
           "type": "event_count",
@@ -774,18 +789,18 @@
       ]
     },
     {
-      "id": "drive-continues-after-preflight-final-marker",
+      "id": "drive-continues-after-preflight-compact-progress-v2",
       "path": "success",
       "prompt": "[active tk-drive] preflight와 첫 implementation unit evidence가 준비됐습니다. 다음 applicable node로 계속 진행해 주세요.",
-      "expected_output": "preflight와 unit 경계에서 `🤖 drive > <node>` 형식의 compact checkpoint를 보여주고, terminal summary에도 `🤖 drive > finalization`을 남겨 직접 tk-implement와 구분하되 같은 active turn에서 remaining units, aggregate verification, finalization까지 진행하고 terminal `Status: Pass`를 반환한다.",
+      "expected_output": "preflight와 unit 경계에서 `🚗 drive > <node>` 형식의 compact checkpoint를 보여주고, terminal summary에도 `🚗 drive > finalization`을 남겨 직접 tk-implement와 구분하되 같은 active turn에서 remaining units, aggregate verification, finalization까지 진행하고 terminal `Status: Pass`를 반환한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "현재 evidence 뒤 Drive가 소유한 one-line `drive > node` progress checkpoint로 현재 orchestration 위치를 알리고 사용자 재호출을 기다리지 않은 채 다음 applicable node로 즉시 전이하며, terminal summary에도 `🤖 drive > finalization`을 한 번 표시한다. 이 marker는 route context이고 `Status: Pass`가 유일한 outcome token이다."
+          "criterion": "현재 evidence 뒤 Drive가 소유한 one-line `drive > node` progress checkpoint로 현재 orchestration 위치를 알리고 사용자 재호출을 기다리지 않은 채 다음 applicable node로 즉시 전이하며, terminal summary에도 `🚗 drive > finalization`을 한 번 표시한다. 이 marker는 route context이고 `Status: Pass`가 유일한 outcome token이다."
         },
         {
           "type": "output_contains",
-          "text": "🤖 drive >"
+          "text": "🚗 drive >"
         },
         {
           "type": "output_contains",
@@ -793,7 +808,7 @@
         },
         {
           "type": "output_contains",
-          "text": "🤖 drive > finalization"
+          "text": "🚗 drive > finalization"
         },
         {
           "type": "terminal_status",
@@ -894,7 +909,7 @@
         },
         {
           "type": "judge",
-          "criterion": "Drive owns one-line progress at the prepared plan, each unit boundary, aggregate verification, and terminal finalization; nonterminal checkpoints use the compact display form `🤖 drive > <node>`, the terminal response repeats only `🤖 drive > finalization` as route context, and terminal `Status: Pass` remains the sole outcome token."
+          "criterion": "Drive owns one-line progress at the prepared plan, each unit boundary, aggregate verification, and terminal finalization; nonterminal checkpoints use the compact display form `🚗 drive > <node>`, the terminal response repeats only `🚗 drive > finalization` as route context, and terminal `Status: Pass` remains the sole outcome token."
         },
         {
           "type": "path_text_equals",
@@ -1657,26 +1672,26 @@
       ]
     },
     {
-      "id": "drive-keeps-grill-pending-open-actor",
+      "id": "drive-keeps-grill-pending-open-compact-progress-v2",
       "path": "boundary",
       "prompt": "[active tk-drive] tk-grill-me가 한 개의 사용자 결정 질문을 pending으로 반환했고 아직 답이 없습니다.",
       "expected_output": "같은 active conversation에서 답을 기다리며 non-success finalization이나 downstream procedure를 시작하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "pending은 terminal failure가 아니며 사용자 답 없이 Blocked/Fail/Unverifiable로 정규화하거나 다음 procedure를 호출하지 않는다. `👤 drive > grill-me · 답변 필요`를 보여 주고 `⏳ Waiting`으로 표시하지 않는다."
+          "criterion": "pending은 terminal failure가 아니며 사용자 답 없이 Blocked/Fail/Unverifiable로 정규화하거나 다음 procedure를 호출하지 않는다. `🙋 drive > grill-me · 응답 필요`를 보여 주고 `⏳ 대기`로 표시하지 않는다."
         },
         {
           "type": "output_contains",
-          "text": "👤 drive > grill-me"
+          "text": "🙋 drive > grill-me"
         },
         {
           "type": "output_contains",
-          "text": "답변 필요"
+          "text": "응답 필요"
         },
         {
           "type": "output_absent",
-          "text": "⏳ Waiting"
+          "text": "⏳ 대기"
         },
         {
           "type": "output_contains",

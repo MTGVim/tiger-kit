@@ -115,7 +115,7 @@ read-only. Never require a shared runtime reference outside this skill.
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
 
 Before user-facing progress, question, or summary, choose latest explicit user
 language; else current user message language. Write all free-form user-facing
@@ -133,7 +133,7 @@ ending `(Recommended)` or `(추천)`.
 
 Render question, recommendation, evidence, and options directly in chat; do not
 call structured question or input tools. For a standalone question, begin with
-`👤 grill-me · 답변 필요`; an active drive owns the parent display
+`🙋 grill-me · 응답 필요`; an active drive owns the parent display
 `drive > grill-me` and must not duplicate it. Preserve `Pending | Blocked`
 until user answers. This changes presentation, not authority or stop gates.
 
@@ -143,3 +143,6 @@ until user answers. This changes presentation, not authority or stop gates.
 - Do not decide for the user or bundle independent decisions.
 - Do not mutate artifacts or invoke downstream phase owners.
 - Do not let active-drive routing become a receipt or terminal stop.
+## Progress
+
+At meaningful work boundaries, standalone output uses `🚗 grill-me · <short state>`; use `🙋 grill-me · 응답 필요` for a question/approval gate, `⏳ grill-me · 대기` for CI/remote/re-review wait, and `🛑 grill-me · 중단` for a checkpoint/abort stop. Omit `tk-` from display names; a parent owns `🚗 parent > grill-me`. Keep terminal `Status: <token>` unchanged.

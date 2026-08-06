@@ -56,7 +56,9 @@ feedback, merge, close, tag, release, or change repository rules.
 6. Write `.tigerkit/pr-rebase.md`: frozen refs and SHAs, verification, exact
    `--force-with-lease` expectation/refspec, every outbound reply, thread action,
    intentionally open finding, summary, prior human reviewers, normal and
-   reviewer-mention fallback bodies, exclusions. End every external
+   reviewer-mention fallback bodies, exclusions. Render PR and review/thread
+   references as clickable Markdown links in user-facing output when URLs exist;
+   normalize GitHub `<br>`/`<br/>` breaks to real newlines before display. End every external
    reply/comment with `_🤖 본 코멘트는 AI가 작성했습니다._`.
 7. Show base, old/new head, verification, exact replies and
    `resolve | keep open` actions, re-review candidates, operation order, risks,
@@ -131,7 +133,7 @@ SHAs, and recovery details only when they change next action.
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
 
 Use latest explicit user language for all free-form user-facing prose. Keep
 headings, statuses, IDs, paths, commands, refs, and exact source literals stable.
@@ -143,3 +145,6 @@ self-contained `Question` before any `Recommendation`, with only
 decision-relevant evidence and one recommended option. Render question and options
 directly in chat; never call structured question or input tools. Preserve
 `Pending | Blocked` until user answers.
+## Progress
+
+At meaningful work boundaries, standalone output uses `🚗 pr-rebase · <short state>`; use `🙋 pr-rebase · 응답 필요` for a question/approval gate, `⏳ pr-rebase · 대기` for CI/remote/re-review wait, and `🛑 pr-rebase · 중단` for a checkpoint/abort stop. Omit `tk-` from display names; a parent owns `🚗 parent > pr-rebase`. Keep terminal `Status: <token>` unchanged.

@@ -36,12 +36,12 @@ verification.
 ## Progress
 
 In direct CI mode, emit one compact line at scope/unit/publication boundaries,
-such as `🤖 respond > implement 1/2` or `🤖 respond > publish`. Omit `tk-`,
+such as `🚗 respond > implement 1/2` or `🚗 respond > publish`. Omit `tk-`,
 receipts, reasoning, logs, and repeated checks. Under sweep, return evidence
 without duplicate commentary; in standalone Normal mode mark selection or
-publication as `👤 respond · 답변 필요`. Actual names/contracts keep `tk-`.
+publication as `🙋 respond · 응답 필요`. Actual names/contracts keep `tk-`.
 
-Use `⏳ Waiting` only when waiting is the next action; preserve terminal
+Use `⏳ 대기` only when waiting is the next action; preserve terminal
 `Status: <token>` as the only final outcome marker.
 
 ## Workflow
@@ -80,7 +80,7 @@ Use `⏳ Waiting` only when waiting is the next action; preserve terminal
    summary draft covering every selected unit, reply, verified resolution, open
    thread, and next re-review action. End every external reply/comment with
    `_🤖 본 코멘트는 AI가 작성했습니다._`. In Normal mode, before approval show
-   the second compact table with each selected ID, implementation result,
+   the second compact table with each selected clickable thread link or ID, implementation result,
    verification, exact reply draft, and `resolve | keep open` recommendation,
    then the exact summary draft and outbound order; ask one publication
    question and stop `Pending`. CI never enters this boundary.
@@ -188,7 +188,7 @@ details only when they change user's next action.
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
 
 Use latest explicit user language for all free-form user-facing prose. Keep
 headings, statuses, IDs, paths, commands, and exact source literals stable.

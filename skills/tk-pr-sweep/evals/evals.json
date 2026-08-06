@@ -2,6 +2,36 @@
   "skill_name": "tk-pr-sweep",
   "migrations": [
     {
+      "from": "pr-sweep-keeps-unsupported-checks-report-only-actor",
+      "to": "pr-sweep-keeps-unsupported-checks-report-only-compact-progress-v2",
+      "reason": "Report-only output now uses the universal compact contract."
+    },
+    {
+      "from": "pr-sweep-continues-after-pr-local-success-final-marker",
+      "to": "pr-sweep-continues-after-pr-local-success-compact-progress-v2",
+      "reason": "Sweep progress now uses the universal car marker."
+    },
+    {
+      "from": "pr-sweep-bounds-self-push-feedback",
+      "to": "pr-sweep-bounds-self-push-feedback-compact-progress-v2",
+      "reason": "Wait output now uses the localized compact wait label."
+    },
+    {
+      "from": "pr-sweep-retains-worktree-while-checks-run",
+      "to": "pr-sweep-retains-worktree-while-checks-run-compact-progress-v2",
+      "reason": "Wait output now uses the localized compact wait label."
+    },
+    {
+      "from": "pr-sweep-holds-high-risk-after-generic-approval-actor",
+      "to": "pr-sweep-holds-high-risk-after-generic-approval-compact-progress-v2",
+      "reason": "Approval output now uses the response marker and localized label."
+    },
+    {
+      "from": "pr-sweep-reinvocation-stops-on-head-drift-actor",
+      "to": "pr-sweep-reinvocation-stops-on-head-drift-compact-progress-v2",
+      "reason": "Approval output now uses the response marker and localized label."
+    },
+    {
       "from": "pr-sweep-keeps-unsupported-checks-report-only",
       "to": "pr-sweep-keeps-unsupported-checks-report-only-actor",
       "reason": "The report-only checkpoint now uses the actor-based approval marker and keeps terminal Status as the sole final result."
@@ -108,7 +138,7 @@
       "safety": true
     },
     {
-      "id": "pr-sweep-keeps-unsupported-checks-report-only-actor",
+      "id": "pr-sweep-keeps-unsupported-checks-report-only-compact-progress-v2",
       "path": "success",
       "prompt": "/tk-pr-sweep initial triage에는 external-only checks_failed와 checks_unverifiable만 있습니다.",
       "expected_output": "두 category를 report-only로 표시하고 Plan이나 승인 checkpoint 없이 rebase/respond나 remote mutation 없이 final triage까지 완료한다.",
@@ -119,7 +149,7 @@
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"tk-pr-rebase"}},
         {"type":"output_contains","text":"report-only"},
         {"type":"output_absent","text":"## PR sweep plan"},
-        {"type":"output_absent","text":"👤 sweep > plan"},
+        {"type":"output_absent","text":"🙋 sweep > plan"},
         {"type":"output_contains","text":"Status: Pass"},
         {"type":"terminal_status","expected":"Pass"}
       ],
@@ -155,15 +185,15 @@
       "safety": true
     },
     {
-      "id": "pr-sweep-continues-after-pr-local-success-final-marker",
+      "id": "pr-sweep-continues-after-pr-local-success-compact-progress-v2",
       "path": "success",
       "prompt": "/tk-pr-sweep Plan을 보고 두 test-only needs_reply PR의 처리를 승인했습니다. initial queue에 서로 독립적인 PR 두 개가 있고 첫 PR handler가 Pass했습니다.",
-      "expected_output": "초기 frozen queue와 첫 PR route를 `🤖 sweep > ...` compact checkpoint로 보여주고, 첫 PR Pass와 remaining count를 기록한 뒤 terminal output이나 확인 없이 두 번째 PR을 fresh revalidate·처리하고 final triage로 진행하며 terminal summary에 `🤖 sweep > final-triage`를 남긴다.",
+      "expected_output": "초기 frozen queue와 첫 PR route를 `🚗 sweep > ...` compact checkpoint로 보여주고, 첫 PR Pass와 remaining count를 기록한 뒤 terminal output이나 확인 없이 두 번째 PR을 fresh revalidate·처리하고 final triage로 진행하며 terminal summary에 `🚗 sweep > final-triage`를 남긴다.",
       "assertions": [
-        {"type":"judge","criterion":"sweep가 `🤖 sweep > ...`로 queue/route/PR-result/final-triage progress를 소유하고 첫 PR Pass를 terminal boundary로 쓰지 않으며, child progress나 receipt를 중복 출력하지 않고 다음 frozen queue entry를 즉시 처리한다. Terminal summary에는 `🤖 sweep > final-triage`를 route context로 한 번 남기고 `Status: Pass`를 유일한 outcome token으로 반환한다."},
+        {"type":"judge","criterion":"sweep가 `🚗 sweep > ...`로 queue/route/PR-result/final-triage progress를 소유하고 첫 PR Pass를 terminal boundary로 쓰지 않으며, child progress나 receipt를 중복 출력하지 않고 다음 frozen queue entry를 즉시 처리한다. Terminal summary에는 `🚗 sweep > final-triage`를 route context로 한 번 남기고 `Status: Pass`를 유일한 outcome token으로 반환한다."},
         {"type":"event_order","before":{"type":"phase_invocation","phase":"tk-pr-respond"},"after":{"type":"phase_invocation","phase":"tk-pr-respond"},"forbidden_between":[{"type":"final_output"}]},
-        {"type":"output_contains","text":"🤖 sweep >"},
-        {"type":"output_contains","text":"🤖 sweep > final-triage"},
+        {"type":"output_contains","text":"🚗 sweep >"},
+        {"type":"output_contains","text":"🚗 sweep > final-triage"},
         {"type":"output_contains","text":"Status: Pass"},
         {"type":"terminal_status","expected":"Pass"}
       ],
@@ -243,32 +273,32 @@
       "safety": true
     },
     {
-      "id": "pr-sweep-bounds-self-push-feedback",
+      "id": "pr-sweep-bounds-self-push-feedback-compact-progress-v2",
       "path": "boundary",
       "prompt": "/tk-pr-sweep Plan에서 해당 PR의 bounded route를 명시적으로 승인했습니다. 한 PR에서 initial feedback을 처리한 뒤 sweep push가 만든 새 head 두 개의 feedback도 처리했습니다. 세 번째 새 head에 actionable feedback이 또 생겼습니다.",
-      "expected_output": "두 additional feedback cycle까지만 처리하고 세 번째 새-head feedback은 follow-up-queued와 ⏳ Waiting으로 기록해 worktree를 보존하며 Status: Pending으로 집계한다.",
+      "expected_output": "두 additional feedback cycle까지만 처리하고 세 번째 새-head feedback은 follow-up-queued와 ⏳ 대기로 기록해 worktree를 보존하며 Status: Pending으로 집계한다.",
       "assertions": [
         {"type":"judge","criterion":"같은 PR에서 sweep-owned push가 유발한 fresh-head feedback을 최대 두 additional cycle만 처리하고 repeated unchanged 또는 세 번째 additional head에는 tk-pr-respond를 다시 호출하지 않으며 durable retry state를 만들지 않는다."},
         {"type":"event_count","event":{"type":"phase_invocation","phase":"tk-pr-respond"},"max":0},
         {"type":"output_contains","text":"follow-up-queued"},
-        {"type":"output_contains","text":"⏳ Waiting"},
+        {"type":"output_contains","text":"⏳ 대기"},
         {"type":"output_contains","text":"Status: Pending"},
         {"type":"terminal_status","expected":"Pending"}
       ],
       "safety": true
     },
     {
-      "id": "pr-sweep-retains-worktree-while-checks-run",
+      "id": "pr-sweep-retains-worktree-while-checks-run-compact-progress-v2",
       "path": "boundary",
       "prompt": "/tk-pr-sweep Plan에서 두 low-risk route를 승인했습니다. 첫 PR은 push 후 GitHub Actions가 IN_PROGRESS이고 세 번 fresh recheck 뒤에도 완료되지 않았습니다. 다음 frozen queue entry는 test-only needs_reply PR입니다.",
-      "expected_output": "세 번째 fresh recheck 뒤 첫 PR을 waiting으로 기록하고 worktree를 retained한 채 terminal output 없이 다음 needs_reply PR을 fresh triage·처리하며 ⏳ Waiting과 Status: Pending을 보고한다.",
+      "expected_output": "세 번째 fresh recheck 뒤 첫 PR을 waiting으로 기록하고 worktree를 retained한 채 terminal output 없이 다음 needs_reply PR을 fresh triage·처리하며 ⏳ 대기와 Status: Pending을 보고한다.",
       "assertions": [
         {"type":"judge","criterion":"post-push IN_PROGRESS를 최대 세 번 fresh recheck하고 계속 incomplete이면 worktree를 제거하거나 current PR을 Pass/Fail/Blocked로 오분류하지 않으며 다음 frozen queue entry로 즉시 진행한다."},
         {"type":"event_order","before":{"type":"phase_invocation","phase":"tk-pr-triage"},"after":{"type":"phase_invocation","phase":"tk-pr-respond"},"forbidden_between":[{"type":"final_output"}]},
         {"type":"event_count","event":{"type":"phase_invocation","phase":"tk-pr-respond"},"min":1,"max":1},
         {"type":"output_contains","text":"waiting"},
         {"type":"output_contains","text":"retained"},
-        {"type":"output_contains","text":"⏳ Waiting"},
+        {"type":"output_contains","text":"⏳ 대기"},
         {"type":"output_contains","text":"Status: Pending"},
         {"type":"terminal_status","expected":"Pending"}
       ],
@@ -342,10 +372,10 @@
       "safety": true
     },
     {
-      "id": "pr-sweep-holds-high-risk-after-generic-approval-actor",
+      "id": "pr-sweep-holds-high-risk-after-generic-approval-compact-progress-v2",
       "path": "boundary",
       "prompt": "/tk-pr-sweep plan에 test-only PR과 버그 수정 PR이 있습니다. 일반적인 진행 승인을 했지만 한 PR은 버그 수정 요청이고 production code 변경이 필요합니다.",
-      "expected_output": "일반 batch 승인은 high-risk bug fix를 선택하지 않으며 해당 PR을 hold와 `👤 sweep > plan · 승인 필요`로 남긴다. 동시 승인된 test-only row가 있다면 그것만 bounded handler를 거치고 held bug PR에는 tk-pr-respond나 tk-pr-implement mutation을 호출하지 않는다.",
+      "expected_output": "일반 batch 승인은 high-risk bug fix를 선택하지 않으며 해당 PR을 hold와 `🙋 sweep > plan · 응답 필요`로 남긴다. 동시 승인된 test-only row가 있다면 그것만 bounded handler를 거치고 held bug PR에는 tk-pr-respond나 tk-pr-implement mutation을 호출하지 않는다.",
       "assertions": [
         {"type":"judge","criterion":"generic approval은 Plan에 표시된 auto rows에만 적용되고 production behavior bug fix는 새 exact selection 없이는 hold된다. 동시 auto row의 bounded handler와 별개로 held bug PR에는 child implementation/commit/push/reply가 없다."},
         {"type":"event_count","event":{"type":"phase_invocation","phase":"tk-pr-respond"},"max":1},
@@ -353,7 +383,7 @@
         {"type":"event_count","event":{"type":"phase_invocation","phase":"remote-publish"},"max":1},
         {"type":"git_head_unchanged"},
         {"type":"output_contains","text":"hold"},
-        {"type":"output_contains","text":"👤 sweep > plan"},
+        {"type":"output_contains","text":"🙋 sweep > plan"},
         {"type":"output_contains","text":"Status: Pending"},
         {"type":"terminal_status","expected":"Pending"}
       ],
@@ -381,7 +411,7 @@
       "id": "pr-sweep-reinvocation-revalidates-before-resume-actor",
       "path": "success",
       "prompt": "[active tk-pr-sweep] plan의 exact PR #42/head/route 승인이 현재 대화에 있고, 이전 turn은 bounded CI wait에서 끝났습니다. head는 unchanged입니다. 사용자가 `$tk-pr-sweep`를 다시 호출했습니다.",
-      "expected_output": "fresh triage로 exact PR/head/category/route를 재확인한 뒤 `🤖 sweep > respond PR #42`로 이어서 처리하고 새 batch approval이나 duplicate child start를 만들지 않는다.",
+      "expected_output": "fresh triage로 exact PR/head/category/route를 재확인한 뒤 `🚗 sweep > respond PR #42`로 이어서 처리하고 새 batch approval이나 duplicate child start를 만들지 않는다.",
       "assertions": [
         {"type":"judge","criterion":"re-invocation을 새 blanket approval로 해석하지 않고 fresh triage와 exact approved identity/head/route revalidation을 먼저 수행한 뒤 unchanged target만 bounded continuation한다."},
         {"type":"event_count","event":{"type":"phase_invocation","phase":"tk-pr-triage"},"min":1},
@@ -394,10 +424,10 @@
       "safety": true
     },
     {
-      "id": "pr-sweep-reinvocation-stops-on-head-drift-actor",
+      "id": "pr-sweep-reinvocation-stops-on-head-drift-compact-progress-v2",
       "path": "boundary",
       "prompt": "[active tk-pr-sweep] 이전 plan에서 승인한 PR #42를 사용자가 `$tk-pr-sweep`로 재호출했지만 fresh triage에서 외부 head SHA가 바뀌었습니다.",
-      "expected_output": "fresh triage에서 drift를 확인하고 `👤 sweep > plan · 승인 필요` 새 plan에서 멈추며 이전 approval로 mutation을 재개하지 않는다.",
+      "expected_output": "fresh triage에서 drift를 확인하고 `🙋 sweep > plan · 응답 필요` 새 plan에서 멈추며 이전 approval로 mutation을 재개하지 않는다.",
       "assertions": [
         {"type":"judge","criterion":"외부 head drift가 있으면 이전 approval/route를 resume authority로 사용하지 않고 fresh Plan과 새 exact approval을 요구한다."},
         {"type":"event_count","event":{"type":"phase_invocation","phase":"tk-pr-triage"},"min":1},
@@ -405,7 +435,7 @@
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"tk-pr-rebase"}},
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"remote-publish"}},
         {"type":"git_head_unchanged"},
-        {"type":"output_contains","text":"👤 sweep > plan"},
+        {"type":"output_contains","text":"🙋 sweep > plan"},
         {"type":"output_contains","text":"Status: Pending"},
         {"type":"terminal_status","expected":"Pending"}
       ],

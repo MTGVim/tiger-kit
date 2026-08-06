@@ -101,7 +101,7 @@ archives or modify `.gitignore`. Reread result before reporting.
 
 Lead with `Ready | Draft | Blocked | Unverifiable` decision. For a standalone
 Ready result, make the non-advancing handoff visible as
-`👤 spec · Ready · 다음 단계 수동`; an active drive owns the parent display
+`🙋 spec · Ready · 다음 단계 수동`; an active drive owns the parent display
 `drive > spec` and immediately consumes a valid Ready handoff. Summarize core
 scope, requirements, and exceptions in two to five short bullets; for single
 result use one to three short lines. For larger inventory, show top five to seven
@@ -118,7 +118,7 @@ in owned spec artifact.
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
 
 Use latest explicit user language, else current message's language. Preserve
 canonical headings, status tokens, IDs, commands, paths, code, and quoted source
@@ -137,3 +137,6 @@ question/input tool. Preserve `Pending | Blocked` until answer.
 - Do not renumber stable R/AC IDs or reuse deleted IDs.
 - Do not mark missing, conflicting, or inaccessible evidence `Ready`.
 - Do not create tickets or implement from non-Ready spec.
+## Progress
+
+At meaningful work boundaries, standalone output uses `🚗 to-spec · <short state>`; use `🙋 to-spec · 응답 필요` for a question/approval gate, `⏳ to-spec · 대기` for CI/remote/re-review wait, and `🛑 to-spec · 중단` for a checkpoint/abort stop. Omit `tk-` from display names; a parent owns `🚗 parent > to-spec`. Keep terminal `Status: <token>` unchanged.
