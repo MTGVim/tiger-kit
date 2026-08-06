@@ -153,6 +153,8 @@ only evidence and paths changing next action.
 
 ### 🔴 HARD GATE · response language
 
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+
 Use latest explicit user language, else current message's language. Preserve
 canonical headings, statuses, IDs, commands, paths, schemas, code, and quoted
 literals exactly.

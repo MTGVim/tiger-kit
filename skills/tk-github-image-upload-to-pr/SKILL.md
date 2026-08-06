@@ -102,6 +102,8 @@ heading, `Outcome:`, caller-return instruction, or bottom provenance block.
 
 ### 🔴 HARD GATE · response language
 
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+
 Use latest explicit user language, else current user message language. Preserve
 headings, statuses, IDs, commands, paths, code, and exact source literals;
 translate only free-form explanatory prose.

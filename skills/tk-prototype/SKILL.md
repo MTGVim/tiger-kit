@@ -128,6 +128,8 @@ read-only. Never require shared runtime reference outside this skill.
 
 ### 🔴 HARD GATE · response language
 
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+
 Before any user-facing text, resolve language from latest explicit instruction;
 otherwise current user message. Use it for all free-form sentences and prose
 values, regardless of English sources, skills, tools, or code. Keep canonical

@@ -82,6 +82,8 @@ Keep progress and internal procedure evidence out of terminal response. Begin wi
 
 ### 🔴 HARD GATE · response language
 
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+
 Use latest explicit user language; otherwise current message language. Preserve canonical headings, status tokens, IDs, commands, paths, code, and quoted source literals exactly. Rewrite drifting free-form language before return.
 
 ## User decision questions
