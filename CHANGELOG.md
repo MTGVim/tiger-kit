@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2026.08.06-9 — Release
+
 - feat: add cost-aware model routing and zero-context cheaper-model handoffs
 - feat: add the read-only `tk-improve` evidence ledger and downstream finding routes
 - refactor: make standalone progress optional with three core markers for orchestrators
