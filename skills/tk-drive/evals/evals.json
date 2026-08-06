@@ -2,6 +2,16 @@
   "skill_name": "tk-drive",
   "migrations": [
     {
+      "from": "drive-live-direct-implementation-final-marker",
+      "to": "drive-live-direct-implementation-finalization-boundary",
+      "reason": "The finalization route remains a nonterminal boundary; terminal output no longer repeats a progress marker."
+    },
+    {
+      "from": "drive-continues-after-preflight-compact-progress-v2",
+      "to": "drive-continues-after-preflight-finalization-boundary",
+      "reason": "The finalization route is emitted before the terminal response instead of under the terminal heading."
+    },
+    {
       "from": "drive-reinvocation-resumes-after-answer-actor",
       "to": "drive-reinvocation-resumes-after-answer-compact-progress-v2",
       "reason": "Progress output now uses the universal car marker."
@@ -789,14 +799,14 @@
       ]
     },
     {
-      "id": "drive-continues-after-preflight-compact-progress-v2",
+      "id": "drive-continues-after-preflight-finalization-boundary",
       "path": "success",
       "prompt": "[active tk-drive] preflight와 첫 implementation unit evidence가 준비됐습니다. 다음 applicable node로 계속 진행해 주세요.",
-      "expected_output": "preflight와 unit 경계에서 `🚗 drive > <node>` 형식의 compact checkpoint를 보여주고, terminal summary에도 `🚗 drive > finalization`을 남겨 직접 tk-implement와 구분하되 같은 active turn에서 remaining units, aggregate verification, finalization까지 진행하고 terminal `Status: Pass`를 반환한다.",
+      "expected_output": "preflight와 unit 경계에서 `🚗 drive > <node>` 형식의 compact checkpoint를 보여주고, terminal response 직전 finalization boundary를 거쳐 직접 tk-implement와 구분하되 같은 active turn에서 remaining units, aggregate verification, finalization까지 진행하고 terminal `Status: Pass`를 반환한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "현재 evidence 뒤 Drive가 소유한 one-line `drive > node` progress checkpoint로 현재 orchestration 위치를 알리고 사용자 재호출을 기다리지 않은 채 다음 applicable node로 즉시 전이하며, terminal summary에도 `🚗 drive > finalization`을 한 번 표시한다. 이 marker는 route context이고 `Status: Pass`가 유일한 outcome token이다."
+          "criterion": "현재 evidence 뒤 Drive가 소유한 one-line `drive > node` progress checkpoint로 현재 orchestration 위치를 알리고 사용자 재호출을 기다리지 않은 채 다음 applicable node로 즉시 전이하며, terminal response 전 finalization boundary를 한 번 표시한다. Terminal response에는 progress marker가 없고 `Status: Pass`가 유일한 outcome token이다."
         },
         {
           "type": "output_contains",
@@ -880,7 +890,7 @@
       "safety": true
     },
     {
-      "id": "drive-live-direct-implementation-final-marker",
+      "id": "drive-live-direct-implementation-finalization-boundary",
       "path": "success",
       "hosts": [
         "codex"
@@ -909,7 +919,7 @@
         },
         {
           "type": "judge",
-          "criterion": "Drive owns one-line progress at the prepared plan, each unit boundary, aggregate verification, and terminal finalization; nonterminal checkpoints use the compact display form `🚗 drive > <node>`, the terminal response repeats only `🚗 drive > finalization` as route context, and terminal `Status: Pass` remains the sole outcome token."
+          "criterion": "Drive owns one-line progress at the prepared plan, each unit boundary, aggregate verification, and the finalization boundary before terminal output; nonterminal checkpoints use the compact display form `🚗 drive > <node>`, the terminal response has no progress marker, and terminal `Status: Pass` remains the sole outcome token."
         },
         {
           "type": "path_text_equals",

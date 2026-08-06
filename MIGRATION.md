@@ -13,6 +13,12 @@ owner and `tk-to-tickets` remains the local vertical-unit owner.
 per-call capabilities; unsupported inferred optimization falls back to the
 current model/direct route rather than claiming application.
 
+Standalone skills are now silent by default. Optional progress uses only
+`🚗` for meaningful active boundaries, `🙋` for user response/approval, and
+`⏳` when external waiting is the next action; terminal responses keep
+`Status: <token>` without a progress marker. The deterministic progress
+contract is version 2.
+
 Issue #224 removes the retired reflection package and makes the ownership
 boundaries explicit. This maintenance release uses the patch-only release
 procedure selected by the maintainer; it does not claim the issue's suggested

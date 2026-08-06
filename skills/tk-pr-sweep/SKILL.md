@@ -188,10 +188,9 @@ boundaries, emit one line such as `🚗 sweep > respond PR #42 1/3`,
 wait. Keep only
 the one decisive token (PR/route/count or wait reason); the marker and route
 encode result/next action. Suppress child receipts, reasoning, logs, timers, and
-nonterminal `Status:` lines; actual skill names/contracts keep `tk-`. The
-terminal response repeats one final route marker (for example
-`🚗 sweep > final-triage`) so an orchestrated result is distinct from a direct
-one-PR child result.
+nonterminal `Status:` lines; actual skill names/contracts keep `tk-`. Emit the
+final-triage route before the terminal response when it is a meaningful
+boundary; the terminal response itself has no progress marker.
 
 Render `follow-up-queued`, `waiting`, and re-review-pending as `⏳ 대기`
 when waiting is the next action. Omit healthy no-op progress rows from the
@@ -217,18 +216,17 @@ approval or change that otherwise empty batch from `Pass`. After an approved
 re-Plan after external head drift is `Pending`; a supported `Act now` item
 still present only at final triage is `Blocked`.
 
-Lead `## PR sweep`, then one final compact marker such as
-`🚗 sweep > final-triage` directly under the heading. This marker identifies
-the terminal route as orchestrated; direct one-PR skills do not emit a
-`sweep >` marker. Show a Markdown table for every processed PR with
+Lead `## PR sweep`; the terminal response has no progress marker, while a
+preceding `🚗 sweep > final-triage` boundary distinguishes orchestration from a
+direct one-PR result. Show a Markdown table for every processed PR with
 repository, PR number, title, clickable link, initial category, approved/planned action,
 actual result, and skip/hold reason when applicable. Also show report-only
 external CI and `checks_unverifiable`, retained worktrees, and all remaining
 final-triage items. For eight+ final-only rows, show the top five to seven with
 links and cite `.tigerkit/pr-sweep.md`. Keep exact child provenance in
 artifacts, not terminal response. Lead the aggregate result once and end with
-the exact terminal `Status` line; do not add a second mapped result marker. The
-final progress marker is route context, not a result or status line. A
+the exact terminal `Status` line; do not add a second mapped result marker. Any
+pre-summary progress marker is route context, not a result or status line. A
 normal re-review-pending row is report-only/no-op and must not trigger an
 automatic rebase.
 
@@ -240,7 +238,7 @@ block. End aggregate result section exactly `Status: <token>`.
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🚗 meaningful boundary` only for long-running work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
 
 Use latest explicit user language for free-form user-facing prose. Keep
 headings, statuses, IDs, paths, commands, refs, categories, and exact source
