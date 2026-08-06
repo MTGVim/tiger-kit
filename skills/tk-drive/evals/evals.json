@@ -192,11 +192,15 @@
       "id": "drive-resumes-preparing-decision-answer",
       "path": "success",
       "prompt": "[active tk-drive Preparing has one pending decision] A로 진행해",
-      "expected_output": "같은 active drive Preparing에서 답을 소비하고 spec transition을 실행하며 새 drive를 시작하거나 terminal summary를 내지 않는다.",
+      "expected_output": "같은 active drive Preparing에서 답을 소비하고 `▶️ Progress · Orchestration: tk-drive → tk-to-spec`로 spec transition을 실행하며 새 drive를 시작하거나 terminal summary를 내지 않는다.",
       "assertions": [
         {
           "type": "judge",
           "criterion": "pending answer를 같은 active drive의 decision closure로 소비하고 다음 preparation transition으로 계속한다."
+        },
+        {
+          "type": "output_contains",
+          "text": "Orchestration: tk-drive → tk-to-spec"
         },
         {
           "type": "terminal_status",
@@ -690,11 +694,15 @@
       "assertions": [
         {
           "type": "judge",
-          "criterion": "현재 evidence 뒤 Drive가 소유한 compact progress checkpoint로 계획·결정·근거·다음 행동을 알리고 사용자 재호출을 기다리지 않은 채 다음 applicable node로 즉시 전이하며 finalization에서만 최종 결과를 낸다."
+          "criterion": "현재 evidence 뒤 Drive가 소유한 compact progress checkpoint로 계획·결정·근거·다음 행동과 semantic orchestration node를 알리고 사용자 재호출을 기다리지 않은 채 다음 applicable node로 즉시 전이하며 finalization에서만 최종 결과를 낸다."
         },
         {
           "type": "output_contains",
           "text": "▶️ Progress"
+        },
+        {
+          "type": "output_contains",
+          "text": "Orchestration: tk-drive"
         },
         {
           "type": "output_contains",
@@ -1569,7 +1577,37 @@
       "assertions": [
         {
           "type": "judge",
-          "criterion": "pending은 terminal failure가 아니며 사용자 답 없이 Blocked/Fail/Unverifiable로 정규화하거나 다음 procedure를 호출하지 않는다."
+          "criterion": "pending은 terminal failure가 아니며 사용자 답 없이 Blocked/Fail/Unverifiable로 정규화하거나 다음 procedure를 호출하지 않는다. `▶️ Progress · ⏳ Waiting · Orchestration: tk-drive → tk-grill-me`와 wait reason/next action을 보여 준다."
+        },
+        {
+          "type": "output_contains",
+          "text": "▶️ Progress"
+        },
+        {
+          "type": "output_contains",
+          "text": "⏳ Waiting"
+        },
+        {
+          "type": "output_contains",
+          "text": "Orchestration: tk-drive → tk-grill-me"
+        },
+        {
+          "type": "output_absent",
+          "text": "Status: Pending"
+        },
+        {
+          "type": "event_absent",
+          "event": {
+            "type": "phase_invocation",
+            "phase": "tk-to-spec"
+          }
+        },
+        {
+          "type": "event_absent",
+          "event": {
+            "type": "phase_invocation",
+            "phase": "tk-implement"
+          }
         },
         {
           "type": "output_absent",

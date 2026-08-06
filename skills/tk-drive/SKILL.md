@@ -48,9 +48,24 @@ Continuation is prompt-directed, not a durable scheduler or guaranteed cross-tur
 
 ## Progress
 
-At plan, each unit start/result, aggregate verification start/result, and finalization, emit one compact `▶️ Progress` checkpoint with decision, decisive evidence, and result/next action; continue immediately within authority. Exclude child receipts, raw reasoning, command logs, timer promises, approval requests, and nonterminal `Status:` lines.
+At plan, each unit start/result, aggregate verification start/result, finalization, and every pending-decision boundary, emit one compact `▶️ Progress` checkpoint with decision, decisive evidence, and result/next action; continue immediately within authority for non-pending checkpoints. A pending decision is the deliberate response boundary until its explicit answer. Every checkpoint appends the semantic owner and current node as `Orchestration: tk-drive → <phase/node>`; a multi-unit execution checkpoint may add only the bounded `(current/total)` index. Exclude child receipts, raw reasoning, command logs, timer promises, approval requests, and nonterminal `Status:` lines.
 
 Use `✅ Pass`, `⏳ Waiting`, `⚠️ Advisory`, `❌ Fail`, `⛔ Blocked`, and `❓ Unverifiable` for matching outcomes; preserve terminal `Status: <token>` exactly.
+
+For an intentional decision wait, render the status beside the checkpoint rather
+than silently returning a question:
+
+```text
+▶️ Progress · ⏳ Waiting · Orchestration: tk-drive → tk-grill-me
+Decision: <one user-owned decision>
+Evidence: <decisive fact>
+Result/Next: <answer condition> → <next node>
+```
+
+This is nonterminal commentary. Preserve native `Pending`, emit no terminal
+`Status:` line, and invoke no downstream procedure until the explicit answer.
+Use the same form when only the final agreed-goal approval remains, identifying
+that approval in `Decision` and keeping `tk-grill-me` as the current node.
 
 ## Preparing
 
@@ -121,4 +136,9 @@ Before user-facing progress, questions, or summaries, use latest explicit langua
 
 When a user-owned decision blocks Preparing or the one amendment, ask one self-contained `Question` before `Recommendation`. Show only relevant evidence, two or three mutually exclusive options with material tradeoffs, and exactly one `(Recommended)` or `(추천)`.
 
-Render directly in chat; do not call structured question/input tools. Remain `Pending | Blocked` until answered.
+Render directly in chat; do not call structured question/input tools. Emit the
+nonterminal `▶️ Progress · ⏳ Waiting · Orchestration: tk-drive → tk-grill-me`
+checkpoint with the wait reason and next node before the question. Remain
+native `Pending` for an unanswered question (or preserve native `Blocked` when
+the originating state is blocked) until answered; an explicit answer resumes
+the existing graph without asking the user to invoke drive again.

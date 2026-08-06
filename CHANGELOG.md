@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.06-1 — Release
+
+- fix: clarify drive orchestration status
+
 ## 2026.08.05-3 — Release
 
 - fix: complete PR response workflow
