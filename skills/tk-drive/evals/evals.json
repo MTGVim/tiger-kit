@@ -38,7 +38,7 @@
     },
     {
       "from": "drive-resumes-pending-answer",
-      "to": "drive-resumes-preparing-decision-answer",
+      "to": "drive-resumes-preparing-decision-answer-compact",
       "reason": "TigerKit 21 keeps a pending Preparing decision inside the same active drive conversation."
     },
     {
@@ -88,7 +88,7 @@
     },
     {
       "from": "drive-continues-after-prep-claim",
-      "to": "drive-continues-after-preflight",
+      "to": "drive-continues-after-preflight-compact",
       "reason": "The compact preflight has no claim transition; continuation follows current evidence."
     },
     {
@@ -165,6 +165,21 @@
       "from": "drive-live-direct-prepared-execution",
       "to": "drive-live-direct-prepared-execution-finalizes",
       "reason": "Issue 224 removes the reflection tail from the live prepared-execution contract."
+    },
+    {
+      "from": "drive-resumes-preparing-decision-answer",
+      "to": "drive-resumes-preparing-decision-answer-compact",
+      "reason": "The compact progress contract replaces legacy orchestration labels while preserving the same decision-resume boundary."
+    },
+    {
+      "from": "drive-continues-after-preflight",
+      "to": "drive-continues-after-preflight-compact",
+      "reason": "The compact progress contract replaces legacy progress labels while preserving automatic continuation and terminal success assertions."
+    },
+    {
+      "from": "drive-keeps-grill-pending-open",
+      "to": "drive-keeps-grill-pending-open-compact",
+      "reason": "The compact user-input marker replaces the legacy waiting/orchestration labels without changing the pending safety boundary."
     }
   ],
   "evals": [
@@ -189,7 +204,7 @@
       "safety": true
     },
     {
-      "id": "drive-resumes-preparing-decision-answer",
+      "id": "drive-resumes-preparing-decision-answer-compact",
       "path": "success",
       "prompt": "[active tk-drive Preparing has one pending decision] A로 진행해",
       "expected_output": "같은 active drive Preparing에서 답을 소비하고 `▶️ drive > spec`으로 spec transition을 실행하며 새 drive를 시작하거나 terminal summary를 내지 않는다.",
@@ -719,7 +734,7 @@
       ]
     },
     {
-      "id": "drive-continues-after-preflight",
+      "id": "drive-continues-after-preflight-compact",
       "path": "success",
       "prompt": "[active tk-drive] preflight와 첫 implementation unit evidence가 준비됐습니다. 다음 applicable node로 계속 진행해 주세요.",
       "expected_output": "preflight와 unit 경계에서 `▶️ drive > <node>` 형식의 compact nonterminal checkpoint를 보여주되 response boundary로 삼지 않고 같은 active turn에서 remaining units, aggregate verification, finalization까지 진행하고 full success를 ✅ Pass로 강조한다.",
@@ -1602,7 +1617,7 @@
       ]
     },
     {
-      "id": "drive-keeps-grill-pending-open",
+      "id": "drive-keeps-grill-pending-open-compact",
       "path": "boundary",
       "prompt": "[active tk-drive] tk-grill-me가 한 개의 사용자 결정 질문을 pending으로 반환했고 아직 답이 없습니다.",
       "expected_output": "같은 active conversation에서 답을 기다리며 non-success finalization이나 downstream procedure를 시작하지 않는다.",
