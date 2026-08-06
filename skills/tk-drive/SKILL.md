@@ -52,25 +52,26 @@ A no-source `$tk-drive` after an answered decision or host/process boundary
 resumes the same source only after rereading current artifacts and repository
 evidence. Do not restart, re-ask, or stop at valid `Ready`; continue to the next
 node, verification, and finalization. Stale/contradictory evidence emits one
-`❓` checkpoint before mutation; cursor, lifecycle claim, and child receipt are
+`👤` checkpoint before mutation; cursor, lifecycle claim, and child receipt are
 never authority.
 
 ## Progress
 
 At plan, meaningful node transitions, aggregate verification, finalization, and
-non-advancing boundaries, emit one line such as `▶️ drive > implement 2/4`,
-`❓ drive > grill-me · 답변 필요`, `🟢 spec · Ready · 다음 단계 수동`, or
-`⏳ drive > browser-verify · server`. Omit `tk-`; `▶️` auto-continues, `❓`
-needs user input, `🟢` is standalone manual `Ready`, and `⏳` is machine/remote
-wait. Keep only the one decisive token (unit/count, route, or wait reason); the
-marker and route encode result/next action. A Ready child consumed by drive
-stays `▶️`. Direct skills show only their name. Suppress receipts, reasoning,
+non-advancing boundaries, emit one line such as `🤖 drive > implement 2/4`,
+`👤 drive > grill-me · 답변 필요`, `👤 spec · Ready · 다음 단계 수동`, or
+`⏳ drive > browser-verify · server`. Omit `tk-`; `🤖` is automatic work, `👤`
+needs user input or action, and `⏳` is machine/remote wait. Keep only the one
+decisive token (unit/count, route, or wait reason); the marker and route encode
+result/next action. A Ready child consumed by drive stays `🤖`. Direct skills
+show only their name. Suppress receipts, reasoning,
 logs, timers, approval requests, and nonterminal `Status:` lines; actual skill
 names/contracts keep `tk-`.
 
-Use `✅ Pass`, `⏳ Waiting`, `⚠️ Advisory`, `❌ Fail`, `⛔ Blocked`, and `❓ Unverifiable` for matching outcomes; preserve terminal `Status: <token>` exactly.
+Preserve terminal `Status: <token>` as the only final outcome marker. Use
+nonterminal `⏳ Waiting` only when waiting is the next action.
 
-For an intentional decision checkpoint, emit `❓ drive > grill-me · 답변 필요`
+For an intentional decision checkpoint, emit `👤 drive > grill-me · 답변 필요`
 before the question:
 
 ```text
@@ -135,7 +136,14 @@ After recovery edges exhaust, normalize child state through `phases.md`, freeze 
 
 After aggregate verification passes, finish directly. Reread source, spec, tickets if present, prep, implementation evidence, ancestry, and verification before one terminal response. TigerKit owns no post-session reflection or persistent-memory phase.
 
-Lead with one result sentence: `✅ Pass` for full success; non-success uses mapped marker without changing canonical `Status: <token>`. Then `Implemented` with two to seven behavior bullets and `Verification` with one to four aggregate bullets. For multiple units, add compact `Ticket | Outcome | Commit` and `Unit | Strategy | Additional review | Fix rounds | Result` tables; summarize review routes, not raw per-unit text. Use a sentence for one user-relevant row. If results exceed limits, show top five to seven by user impact and verification value. Include `Remaining risks` only when meaningful. End `Verification` with exactly `Status: Pass`; terminal non-success belongs to read-only finalizer.
+Lead with `Implemented` and two to seven behavior bullets, then `Verification`
+with one to four aggregate bullets. For multiple units, add compact
+`Ticket | Outcome | Commit` and `Unit | Strategy | Additional review | Fix rounds | Result`
+tables; summarize review routes, not raw per-unit text. Use a sentence for one
+user-relevant row. If results exceed limits, show top five to seven by user
+impact and verification value. Include `Remaining risks` only when meaningful.
+End `Verification` with exactly `Status: Pass`; terminal non-success belongs to
+the read-only finalizer.
 
 ### 🔴 HARD GATE · terminal user summary
 
@@ -156,7 +164,7 @@ Before user-facing progress, questions, or summaries, use latest explicit langua
 When a user-owned decision blocks Preparing or the one amendment, ask one self-contained `Question` before `Recommendation`. Show only relevant evidence, two or three mutually exclusive options with material tradeoffs, and exactly one `(Recommended)` or `(추천)`.
 
 Render directly in chat; do not call structured question/input tools. Emit the
-nonterminal `❓ drive > grill-me · 답변 필요` checkpoint before the question. Remain
+nonterminal `👤 drive > grill-me · 답변 필요` checkpoint before the question. Remain
 native `Pending` for an unanswered question. If the originating state is
 `Blocked`, preserve that terminal state and follow non-success finalization
 instead of presenting it as a user-input checkpoint. An explicit answer resumes

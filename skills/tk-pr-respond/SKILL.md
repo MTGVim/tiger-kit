@@ -36,14 +36,13 @@ verification.
 ## Progress
 
 In direct CI mode, emit one compact line at scope/unit/publication boundaries,
-such as `▶️ respond > implement 1/2`, `▶️ respond > publish`, or `✅ respond`.
-Omit `tk-`, receipts, reasoning, logs, and repeated checks. Under sweep, return
-evidence without duplicate commentary; in standalone Normal mode mark selection
-or publication as `❓ respond · 답변 필요`. Actual names/contracts keep `tk-`.
+such as `🤖 respond > implement 1/2` or `🤖 respond > publish`. Omit `tk-`,
+receipts, reasoning, logs, and repeated checks. Under sweep, return evidence
+without duplicate commentary; in standalone Normal mode mark selection or
+publication as `👤 respond · 답변 필요`. Actual names/contracts keep `tk-`.
 
-Use `✅ Pass`, `⏳ Waiting`, `⚠️ Advisory`, `❌ Fail`, `⛔ Blocked`, and
-`❓ Unverifiable` for matching outcomes; preserve terminal `Status: <token>`
-exactly.
+Use `⏳ Waiting` only when waiting is the next action; preserve terminal
+`Status: <token>` as the only final outcome marker.
 
 ## Workflow
 

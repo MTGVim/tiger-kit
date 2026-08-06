@@ -12,6 +12,11 @@
       "reason": "Unresolved decisions continue through one plain-chat question with no downstream mutation."
     },
     {
+      "from": "grill-me-renders-question-in-chat",
+      "to": "grill-me-renders-question-in-chat-actor",
+      "reason": "The standalone user-action marker changes from the question icon to the neutral person marker."
+    },
+    {
       "from": "active-drive-preparing-decision-handoff",
       "to": "grill-me-active-drive-routes-directly",
       "reason": "Active-drive decisions now pass confirmed native state directly to the next graph procedure."
@@ -84,7 +89,7 @@
       "darwin": true
     },
     {
-      "id": "grill-me-renders-question-in-chat",
+      "id": "grill-me-renders-question-in-chat-actor",
       "path": "boundary",
       "prompt": "/tk-grill-me 저장 방식 A/B 중 하나가 확정되지 않았습니다. 근거를 조사하고 질문 하나만 제시한 뒤 제 답을 받기 전에는 downstream 작업을 하지 마세요.",
       "expected_output": "pending procedure state에서 Question, Recommendation, Evidence 순서의 질문 하나를 chat response에 직접 표시하고 답변 전에는 mutation이나 다음 절차를 실행하지 않는다.",
@@ -99,7 +104,7 @@
         },
         {
           "type": "output_contains",
-          "text": "❓ grill-me"
+          "text": "👤 grill-me"
         },
         {
           "type": "terminal_status",

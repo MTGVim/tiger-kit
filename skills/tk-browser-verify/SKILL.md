@@ -24,10 +24,11 @@ Consume an active `tk-drive` browser profile without reopening product decisions
 ## Progress
 
 Standalone runs emit one compact line at scope/server/browser/verdict
-boundaries, e.g. `▶️ browser-verify · server`, `⏳ browser-verify · readiness`,
-or `✅ browser-verify`; omit `tk-`. A parent owns `parent > browser-verify`.
-Use `❓` for user runtime input, `🟢` for standalone Ready, and `⏳` only for
-server/remote readiness. Suppress raw logs/receipts; keep paths and bounded
+boundaries, e.g. `🤖 browser-verify · server`, `⏳ browser-verify · readiness`,
+or `👤 browser-verify · runtime input`; omit `tk-`. A parent owns
+`parent > browser-verify`. Use `👤` for user runtime input or action and `⏳`
+only for server/remote readiness. Preserve terminal `Status: <token>` as the
+only final outcome marker. Suppress raw logs/receipts; keep paths and bounded
 findings in the evidence artifact.
 
 ## Workflow
