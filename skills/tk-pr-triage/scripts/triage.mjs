@@ -30,8 +30,12 @@ export function formatLocalTimestamp(value) {
   return `${formatted} ${timeZone}`;
 }
 
+export function normalizeGitHubText(body = '') {
+  return String(body ?? '').replace(/<br\s*\/?\s*>/gi, '\n').replace(/\r\n?/g, '\n');
+}
+
 export function stripNoise(body = '') {
-  return body.replace(/<!--[\s\S]*?-->/g, '').replace(/<details>[\s\S]*?<\/details>/gi, '').trim();
+  return normalizeGitHubText(body).replace(/<!--[\s\S]*?-->/g, '').replace(/<details>[\s\S]*?<\/details>/gi, '').trim();
 }
 
 export function isActionableText(body = '') {
@@ -135,6 +139,7 @@ export function computeReplyEvidence(rows, authorLogin, afterTimestamp = null) {
       login: row.login,
       timestamp: row.timestamp,
       id: row.id || null,
+      url: row.url || null,
       responseAt: response?.timestamp || null,
     });
   }
@@ -240,11 +245,11 @@ function currentRepository() {
   return remote.ok ? parseRepoFromRemote(remote.stdout) : null;
 }
 
-function collectRows(reviews, inlineComments, issueComments) {
+export function collectRows(reviews, inlineComments, issueComments) {
   return [
-    ...reviews.map((review) => ({ login: review.user?.login, timestamp: review.submitted_at || review.created_at, body: review.body || '', kind: 'review', state: review.state, replyEligible: false })),
-    ...inlineComments.map((comment) => ({ login: comment.user?.login, timestamp: comment.created_at, body: comment.body || '', kind: 'inline_comment', id: comment.id, scope: `inline:${comment.in_reply_to_id || comment.id}` })),
-    ...issueComments.map((comment) => ({ login: comment.user?.login, timestamp: comment.created_at, body: comment.body || '', kind: 'issue_comment', id: comment.id, scope: 'issue' })),
+    ...reviews.map((review) => ({ login: review.user?.login, timestamp: review.submitted_at || review.created_at, body: normalizeGitHubText(review.body), url: review.html_url || null, kind: 'review', state: review.state, replyEligible: false })),
+    ...inlineComments.map((comment) => ({ login: comment.user?.login, timestamp: comment.created_at, body: normalizeGitHubText(comment.body), url: comment.html_url || null, kind: 'inline_comment', id: comment.id, scope: `inline:${comment.in_reply_to_id || comment.id}` })),
+    ...issueComments.map((comment) => ({ login: comment.user?.login, timestamp: comment.created_at, body: normalizeGitHubText(comment.body), url: comment.html_url || null, kind: 'issue_comment', id: comment.id, scope: 'issue' })),
   ].filter((row) => row.timestamp);
 }
 

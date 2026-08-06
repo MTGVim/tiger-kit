@@ -848,6 +848,28 @@ class RunnerContractTest(unittest.TestCase):
 
         self.assertEqual(errors, [])
 
+    def test_contract_migration_preserves_safety_and_mechanical_shape(self) -> None:
+        baseline_case = self.behavior(
+            "old",
+            {"type": "output_contains", "text": "old marker"},
+        )
+        baseline_case["safety"] = True
+        baseline = self.contract([baseline_case])
+        candidate_case = self.behavior(
+            "new",
+            {"type": "output_contains", "text": "new marker"},
+        )
+        candidate_case["safety"] = True
+        candidate = self.contract([candidate_case])
+        candidate["tk-sample"]["behavior"]["migrations"] = [
+            {"from": "old", "to": "new", "reason": "marker vocabulary migration"}
+        ]
+        self.assertEqual(compare_eval_contracts(baseline, candidate), [])
+
+        candidate_case["safety"] = False
+        errors = compare_eval_contracts(baseline, candidate)
+        self.assertTrue(any("weakened safety coverage" in error for error in errors))
+
     def test_contract_drift_rejects_restricting_an_existing_case_to_fewer_hosts(
         self,
     ) -> None:

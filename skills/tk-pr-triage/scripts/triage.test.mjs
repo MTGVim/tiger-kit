@@ -15,6 +15,8 @@ import {
   latestAuthorResponseAfter,
   latestExternalMessagesByScope,
   loadOrBootstrapConfig,
+  collectRows,
+  normalizeGitHubText,
   parseRepoFromRemote,
   requestedTeamForUser,
   stripNoise,
@@ -52,6 +54,23 @@ test('check provider evidence distinguishes GitHub Actions, external, and unknow
 
 test('stripNoise removes hidden and details content', () => {
   assert.equal(stripNoise('visible <!-- hidden --> <details>secret</details>'), 'visible');
+});
+
+test('normalizeGitHubText turns HTML breaks into TUI newlines', () => {
+  assert.equal(normalizeGitHubText('first<br>second<br />third<BR/>fourth'), 'first\nsecond\nthird\nfourth');
+});
+
+test('collected review rows preserve clickable thread URLs and normalized bodies', () => {
+  const rows = collectRows([], [{
+    user: { login: 'reviewer' },
+    created_at: '2026-01-01T00:00:00Z',
+    body: 'Please add<br>test.',
+    html_url: 'https://github.com/example/repo/pull/1#discussion_r1',
+    id: 1,
+  }], []);
+  assert.equal(rows[0].body, 'Please add\ntest.');
+  assert.equal(rows[0].url, 'https://github.com/example/repo/pull/1#discussion_r1');
+  assert.equal(computeReplyEvidence(rows, 'author').outstanding[0].url, rows[0].url);
 });
 
 test('actionable text does not revive an old request after an LGTM-like message', () => {

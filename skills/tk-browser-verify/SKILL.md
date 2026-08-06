@@ -24,10 +24,10 @@ Consume an active `tk-drive` browser profile without reopening product decisions
 ## Progress
 
 Standalone runs emit one compact line at scope/server/browser/verdict
-boundaries, e.g. `🤖 browser-verify · server`, `⏳ browser-verify · readiness`,
-or `👤 browser-verify · runtime input`; omit `tk-`. A parent owns
-`parent > browser-verify`. Use `👤` for user runtime input or action and `⏳`
-only for server/remote readiness. Preserve terminal `Status: <token>` as the
+boundaries, e.g. `🚗 browser-verify · server`, `⏳ browser-verify · 대기`,
+or `🙋 browser-verify · 응답 필요`; omit `tk-`. A parent owns
+`parent > browser-verify`. Use `🙋` for user runtime input or approval and `⏳`
+for server/remote/re-review wait. Preserve terminal `Status: <token>` as the
 only final outcome marker. Suppress raw logs/receipts; keep paths and bounded
 findings in the evidence artifact.
 
@@ -83,7 +83,7 @@ Keep progress and internal procedure evidence out of terminal response. Begin wi
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
 
 Use latest explicit user language; otherwise current message language. Preserve canonical headings, status tokens, IDs, commands, paths, code, and quoted source literals exactly. Rewrite drifting free-form language before return.
 

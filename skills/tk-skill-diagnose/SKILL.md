@@ -153,7 +153,7 @@ only evidence and paths changing next action.
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
 
 Use latest explicit user language, else current message's language. Preserve
 canonical headings, statuses, IDs, commands, paths, schemas, code, and quoted
@@ -175,3 +175,6 @@ answer.
 - Do not use fixed repeated runs or judge majorities to manufacture confidence.
 - Do not leak expected answers, secrets, or private evidence into prompts.
 - Do not mutate canonical skills or invoke downstream skills automatically.
+## Progress
+
+At meaningful work boundaries, standalone output uses `🚗 skill-diagnose · <short state>`; use `🙋 skill-diagnose · 응답 필요` for a question/approval gate, `⏳ skill-diagnose · 대기` for CI/remote/re-review wait, and `🛑 skill-diagnose · 중단` for a checkpoint/abort stop. Omit `tk-` from display names; a parent owns `🚗 parent > skill-diagnose`. Keep terminal `Status: <token>` unchanged.

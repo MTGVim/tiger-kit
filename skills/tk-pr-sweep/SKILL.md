@@ -28,7 +28,7 @@ terminal response.
 Re-invocation grants no new approval and trusts no cursor, child receipt, or
 stale artifact: run fresh full `tk-pr-triage`, match the exact approval/head,
 and continue only for unchanged rows. Drift or no match emits
-`👤 sweep > plan · 승인 필요` and stops before mutation; an unfinished CI
+`🙋 sweep > plan · 응답 필요` and stops before mutation; an unfinished CI
 wait gets a bounded fresh recheck, not a blind child restart.
 
 ## Authority
@@ -54,9 +54,9 @@ run fresh full `tk-pr-triage`. When at least one `auto` row exists, render
 `## PR sweep plan` with a table for every initial item: repository, PR number,
 title, link, observed head SHA, fresh category, planned action, risk, and
 decisive evidence. Include report-only and held items, state
-`No remote changes yet`, show one legend: `🤖` automatic, `👤` user action,
-`👀` re-review/no-op, and `⏳` machine/remote wait, then emit
-`👤 sweep > plan · 승인 필요`,
+`No remote changes yet`, show one legend: `🚗` active work,
+`🙋` user response/approval, and `⏳` CI/remote/re-review wait, then emit
+`🙋 sweep > plan · 응답 필요`,
 and stop with `Status: Pending` until the user explicitly approves the rows.
 When there are no `auto` rows, do not render a Plan or approval checkpoint;
 render the report-only result directly. Never replace this gate with a timer or
@@ -181,20 +181,22 @@ Reclassify from GitHub evidence.
 ## Progress
 
 After Plan approval, at meaningful route/result, wait, and final-triage
-boundaries, emit one line such as `🤖 sweep > respond PR #42 1/3`,
-`👤 sweep > plan · 승인 필요`, `👀 sweep > re-review PR #42 · no-op`, or
-`⏳ sweep > respond PR #42 · CI`. Omit `tk-`; `🤖` is automatic work, `👤`
-needs user approval or action, `👀` is re-review pending with no sweep mutation,
-and `⏳` is machine/remote wait. Keep only
+boundaries, emit one line such as `🚗 sweep > respond PR #42 1/3`,
+`🙋 sweep > plan · 응답 필요`, `⏳ sweep > re-review PR #42`, or
+`⏳ sweep > respond PR #42 · CI`. Omit `tk-`; `🚗` marks active work,
+`🙋` needs user response or approval, and `⏳` is machine/remote/re-review
+wait. Keep only
 the one decisive token (PR/route/count or wait reason); the marker and route
 encode result/next action. Suppress child receipts, reasoning, logs, timers, and
 nonterminal `Status:` lines; actual skill names/contracts keep `tk-`. The
 terminal response repeats one final route marker (for example
-`🤖 sweep > final-triage`) so an orchestrated result is distinct from a direct
+`🚗 sweep > final-triage`) so an orchestrated result is distinct from a direct
 one-PR child result.
 
-Render `follow-up-queued` and `waiting` as `⏳ Waiting` when the wait itself is
-the next action. Render re-review-pending normal rows as `👀 ... · no-op`.
+Render `follow-up-queued`, `waiting`, and re-review-pending as `⏳ 대기`
+when waiting is the next action. Omit healthy no-op progress rows from the
+default progress output; the final aggregate table still lists every processed
+PR with its observed result.
 Keep terminal `Status: <token>` as the only final outcome marker; never repeat
 it with another mapped result line.
 
@@ -216,10 +218,10 @@ re-Plan after external head drift is `Pending`; a supported `Act now` item
 still present only at final triage is `Blocked`.
 
 Lead `## PR sweep`, then one final compact marker such as
-`🤖 sweep > final-triage` directly under the heading. This marker identifies
+`🚗 sweep > final-triage` directly under the heading. This marker identifies
 the terminal route as orchestrated; direct one-PR skills do not emit a
 `sweep >` marker. Show a Markdown table for every processed PR with
-repository, PR number, title, link, initial category, approved/planned action,
+repository, PR number, title, clickable link, initial category, approved/planned action,
 actual result, and skip/hold reason when applicable. Also show report-only
 external CI and `checks_unverifiable`, retained worktrees, and all remaining
 final-triage items. For eight+ final-only rows, show the top five to seven with
@@ -238,7 +240,7 @@ block. End aggregate result section exactly `Status: <token>`.
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
 
 Use latest explicit user language for free-form user-facing prose. Keep
 headings, statuses, IDs, paths, commands, refs, categories, and exact source

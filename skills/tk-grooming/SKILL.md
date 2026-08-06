@@ -137,7 +137,7 @@ reference outside this skill.
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
 
 Before user-facing progress, question, or summary, choose latest explicit user
 language; else current user message language. Write all free-form user-facing
@@ -171,3 +171,6 @@ answers. This changes presentation, not authority or stop gates.
 - Do not inspect or migrate legacy/global TigerKit state.
 - Do not apply semantic convert/split/rewrite or invoke `tk-learn`.
 - Do not omit, reuse, or renumber item IDs, or append a duplicate summary after the `## Disposition` result.
+## Progress
+
+At meaningful work boundaries, standalone output uses `🚗 grooming · <short state>`; use `🙋 grooming · 응답 필요` for a question/approval gate, `⏳ grooming · 대기` for CI/remote/re-review wait, and `🛑 grooming · 중단` for a checkpoint/abort stop. Omit `tk-` from display names; a parent owns `🚗 parent > grooming`. Keep terminal `Status: <token>` unchanged.

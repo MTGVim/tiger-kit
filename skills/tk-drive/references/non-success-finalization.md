@@ -70,7 +70,7 @@ Do not promise automatic continuation or start another independent unit.
 
 ## Terminal response
 
-Lead with one final compact route marker such as `🤖 drive > finalization`,
+Lead with one final compact route marker such as `🚗 drive > finalization`,
 then one result sentence; this distinguishes the orchestrated finalizer from
 a direct `tk-implement` result. Omit empty sections. Use `Completed`,
 `Stopped`, `Remaining`, and `Recovery` only when applicable. A multi-unit
