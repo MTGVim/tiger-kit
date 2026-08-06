@@ -90,6 +90,8 @@ Persist provenance only in workflow-owned artifact/ledger. Read-only skill remai
 
 ### 🔴 HARD GATE · response language
 
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+
 Before user-facing progress, question, or summary, resolve language from latest explicit user language instruction; otherwise current user message's language. Write every free-form user-facing sentence and prose result value in that language. Never switch to English due to sources, skill bodies, tools, or code. Keep canonical headings, status tokens, IDs, commands, paths, code, and exact quoted/source literals byte-stable; explain around preserved token in resolved language. Before return, scan all free-form user prose and rewrite drift.
 
 ## User decision questions

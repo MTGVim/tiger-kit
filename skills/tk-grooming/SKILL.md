@@ -137,6 +137,8 @@ reference outside this skill.
 
 ### 🔴 HARD GATE · response language
 
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+
 Before user-facing progress, question, or summary, choose latest explicit user
 language; else current user message language. Write all free-form user-facing
 sentences and prose result values in it. Do not switch to English due to

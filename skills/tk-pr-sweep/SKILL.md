@@ -13,29 +13,29 @@ metadata:
 # Sweep pull requests
 
 Start only via `/tk-pr-sweep`, `$tk-pr-sweep`, or host skill picker. A same-
-conversation re-invocation after preview, child route, or system wait resumes
+conversation re-invocation after Plan, child route, or system wait resumes
 only after fresh triage revalidates the approved repository/PR/head/category/
 route. Never activate for generic PR cleanup, triage, response, rebase, CI,
 release, continuation, or multi-repository requests.
 
 Explicit multi-PR maintenance orchestrator only. `tk-drive` owns product-change
 lifecycle. `tk-pr-triage` stays read-only; one-PR owners `tk-pr-rebase` and
-`tk-pr-respond` never invoke each other. Sweep owns the preflight preview,
-one batch approval, `.tigerkit/pr-sweep.md`, worktree coordination, route
+`tk-pr-respond` never invoke each other. Sweep owns the Plan when
+mutation rows exist, one batch approval, `.tigerkit/pr-sweep.md`, worktree coordination, route
 bounds, one shared PR-summary budget, aggregate verification, and sole
 terminal response.
 
 Re-invocation grants no new approval and trusts no cursor, child receipt, or
 stale artifact: run fresh full `tk-pr-triage`, match the exact approval/head,
 and continue only for unchanged rows. Drift or no match emits
-`❓ sweep > preflight · 승인 필요` and stops before mutation; an unfinished CI
+`✋ sweep > plan · 승인 필요` and stops before mutation; an unfinished CI
 wait gets a bounded fresh recheck, not a blind child restart.
 
 ## Authority
 
-One explicit start authorizes fresh configured-repository triage and a
-read-only preview. A second current-turn approval authorizes only the rows
-shown as low-risk and `auto` in that preview: bounded local
+One explicit start authorizes fresh configured-repository triage. When `auto`
+rows exist, render one read-only Plan; a second current-turn approval
+authorizes only the rows shown as low-risk and `auto` in that Plan: bounded local
 implementation/commits; exact branch push; replies; verified thread
 resolution; conditional human re-review; and at most one PR summary. It never
 silently broadens to a new PR, head, category, or high-risk action. External CI
@@ -43,20 +43,21 @@ or unverifiable-check repair, PR creation, merge, close, tag, release, general
 publication, history rewrite outside exact rebase lease,
 draft-to-`Ready for review` transition, and out-of-scope product work remain
 unauthorized. An exact high-risk PR/route needs a new explicit selection and
-preview.
+Plan.
 
-## Preflight preview
+## Plan
 
 Before any worktree creation, local commit, push, reply, or thread resolution,
-run fresh full `tk-pr-triage` and render `## PR sweep preview` with a table for
-every initial item: repository, PR number, title, link, observed head SHA,
-fresh category, planned action, risk, and decisive evidence. Include report-only
-and held items. State `No remote changes yet`. If there are `auto` rows, emit
-`❓ sweep > preflight · 승인 필요` and stop with `Status: Pending` until the
-user explicitly approves them. If there are no
-`auto` rows, complete the report-only run without an approval. Never replace
-this gate with a timer or automatic continuation; do not ask for approval once
-per PR.
+run fresh full `tk-pr-triage`. When at least one `auto` row exists, render
+`## PR sweep plan` with a table for every initial item: repository, PR number,
+title, link, observed head SHA, fresh category, planned action, risk, and
+decisive evidence. Include report-only and held items, state
+`No remote changes yet`, show one `legend` for any emoji markers, emit
+`✋ sweep > plan · 승인 필요`,
+and stop with `Status: Pending` until the user explicitly approves the rows.
+When there are no `auto` rows, do not render a Plan or approval checkpoint;
+render the report-only result directly. Never replace this gate with a timer or
+automatic continuation; do not ask for approval once per PR.
 
 ### Risk gate
 
@@ -72,8 +73,8 @@ needs repository tests to pass.
 Mark bug fixes, behavior changes, merge-conflict resolution, CI corrective
 changes, security/data/performance work, ambiguous scope or requests, and
 ownership or provider uncertainty `hold` or `report-only` by default. A user
-may explicitly select one or more named held rows in a later preview; generic
-batch approval never selects them. That later preview must name every exact PR,
+may explicitly select one or more named held rows in a later Plan; generic
+batch approval never selects them. That later Plan must name every exact PR,
 observed head, and route; a current-turn approval of that exact high-risk set
 may then authorize the existing closed router for those rows only. It is a
 separate approval, not a broadening of the low-risk batch.
@@ -97,15 +98,16 @@ Reclassify from GitHub evidence.
 ## Workflow
 
 1. Run fresh full `tk-pr-triage`: resolve authenticated identity and configured
-   repositories. Reject supplied/cached queues; build the preview in triage
-   priority/repository/PR order and record report-only and held items.
-2. Stop at the preflight checkpoint until the user approves the displayed
+   repositories. Reject supplied/cached queues; build the Plan only when an
+   `auto` row exists, in triage priority/repository/PR order, and record
+   report-only and held items.
+2. When the Plan exists, stop at its checkpoint until the user approves the displayed
    low-risk rows. Freeze only those approved rows. A later exact high-risk
-   selection creates a new preview; never infer it from a generic continuation.
+   selection creates a new Plan; never infer it from a generic continuation.
 3. Before each approved PR, re-read repository identity, author/open/draft
    state, base and head refs and SHAs, category/provider evidence, reviews,
    comments, threads, and checks. If the head or evidence drifted from the
-   preview, reclassify before mutation; external drift invalidates that row and
+   Plan, reclassify before mutation; external drift invalidates that row and
    holds it. A sweep-owned new head may continue only within its declared bound.
    Stop mutation on author/login, fork destination, or ownership ambiguity.
    Preserve draft; never mark `Ready for review`.
@@ -169,19 +171,20 @@ Reclassify from GitHub evidence.
 
 ## Progress
 
-After preview approval, at meaningful route/result, wait, and final-triage
+After Plan approval, at meaningful route/result, wait, and final-triage
 boundaries, emit one line such as `▶️ sweep > respond PR #42 1/3`,
-`❓ sweep > preflight · 승인 필요`, `⏳ sweep > respond PR #42 · CI`, or
+`✋ sweep > plan · 승인 필요`, `⏳ sweep > respond PR #42 · CI`, or
 `✅ sweep > respond PR #42`. Omit `tk-`; `▶️` auto-continues, `❓` needs user
-input, `🟢` is standalone manual `Ready`, and `⏳` is machine wait. Keep only
+input, `✋` needs user approval, `🟢` is standalone manual `Ready`, and `⏳` is
+machine wait. Keep only
 the one decisive token (PR/route/count or wait reason); the marker and route
 encode result/next action. Suppress child receipts, reasoning, logs, timers, and
 nonterminal `Status:` lines; actual skill names/contracts keep `tk-`.
 
 Use `✅ Pass`, `⏳ Waiting`, `⚠️ Advisory`, `❌ Fail`, `⛔ Blocked`, and
 `❓ Unverifiable` for matching outcomes. Render `follow-up-queued` and `waiting`
-as `⏳ Waiting`; render user approval, exact held-route selection, and preview
-reconfirmation as `❓`, not `⏳`. Preserve terminal `Status: <token>` exactly.
+as `⏳ Waiting`; render user approval, exact held-route selection, and Plan
+reconfirmation as `✋`, not `⏳`. Preserve terminal `Status: <token>` exactly.
 
 ## Aggregate result
 
@@ -197,7 +200,7 @@ do not change otherwise empty/successful batch from `Pass`. When no `auto` row
 exists, the report-only/held inventory is scope-complete and does not need
 approval or change that otherwise empty batch from `Pass`. After an approved
 `auto` batch, a held row awaiting the user's exact high-risk selection or a
-re-preview after external head drift is `Pending`; a supported `Act now` item
+re-Plan after external head drift is `Pending`; a supported `Act now` item
 still present only at final triage is `Blocked`.
 
 Lead `## PR sweep`. Show a Markdown table for every processed PR with
@@ -218,13 +221,15 @@ block. End aggregate result section exactly `Status: <token>`.
 
 ### 🔴 HARD GATE · response language
 
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+
 Use latest explicit user language for free-form user-facing prose. Keep
 headings, statuses, IDs, paths, commands, refs, categories, and exact source
 literals stable.
 
 ## User decision questions
 
-The preflight preview owns one routine batch approval. Do not ask per-PR
+The Plan owns one routine batch approval. Do not ask per-PR
 selection or publication questions after that approval. If a new material
 identity, ownership, high-risk scope, or out-of-scope authority decision is
 required, ask one self-contained `Question` before any `Recommendation`; stop

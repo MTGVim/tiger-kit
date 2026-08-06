@@ -9,6 +9,27 @@ const SUCCESS_CONCLUSIONS = new Set(['success', 'neutral', 'skipped']);
 const NO_ACTION_PATTERN = /(?:no action|nothing to change|looks good|lgtm|이상 발견 없음|조치 없음)/i;
 const REQUEST_PATTERN = /(?:\?|please\b|could you\b|would you\b|\b(?:should|must|need(?:s|ed)? to)\b|(?:^|[\n.!?]\s*)(?:please\s+)?(?:change|rename|remove|add|use|replace|update|fix|move|extract|avoid|prefer|document|test|handle|return|make|consider)\b|부탁|요청|해\s*주(?:세요|시겠|길)?|(?:수정|변경|추가|삭제|제거|교체|적용|처리|분리|이동|확인)(?:해|하세요|해주세요|해야|할 필요))/i;
 
+export function localTimeZone() {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+}
+
+export function formatLocalTimestamp(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  const timeZone = localTimeZone();
+  const formatted = new Intl.DateTimeFormat('sv-SE', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+    timeZone,
+  }).format(date);
+  return `${formatted} ${timeZone}`;
+}
+
 export function stripNoise(body = '') {
   return body.replace(/<!--[\s\S]*?-->/g, '').replace(/<details>[\s\S]*?<\/details>/gi, '').trim();
 }
@@ -373,8 +394,10 @@ async function main() {
   const failures = results.flatMap((result) => result.failures.map((error) => ({ repository: result.repository, error })));
   if (!userTeams.ok) failures.unshift({ repository: null, error: `Unable to resolve team review membership: ${userTeams.error}` });
   const counts = items.reduce((accumulator, item) => { accumulator[item.category] = (accumulator[item.category] || 0) + 1; return accumulator; }, {});
+  const generatedAt = new Date();
   console.log(JSON.stringify({
-    generatedAt: new Date().toISOString(),
+    generatedAt: generatedAt.toISOString(),
+    generatedAtLocal: formatLocalTimestamp(generatedAt),
     login: user.data.login,
     config: { path: configPath, source: configPath ? 'config' : 'arguments', bootstrapped: target.bootstrapped },
     repositories: repos,

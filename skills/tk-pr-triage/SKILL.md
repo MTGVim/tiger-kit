@@ -51,8 +51,9 @@ Never hardcode TigerKit.
    Recommendations never authorize apply, reply, resolve, push, merge, or
    release.
 
-Deterministic script is reducer, not remote-write client. Output contains
-generation time, login, config source, repositories, counts, items, and failures.
+Deterministic script is reducer, not remote-write client. Output contains raw
+generation time for machine comparison and a labeled local generation time for
+user display, plus login, config source, repositories, counts, items, and failures.
 If review-thread resolution state is needed, `tk-pr-respond` must refetch current
 thread state before proposing or executing resolve.
 
@@ -67,6 +68,8 @@ label, or bottom metadata block. Expose exact IDs and paths only when they chang
 user's next action.
 
 ### 🔴 HARD GATE · response language
+
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
 
 Use latest explicit user language for all free-form user-facing prose. Keep
 headings, statuses, IDs, paths, commands, and exact source literals stable.

@@ -34,6 +34,10 @@ Five facts drive these rules:
 
 ## Rules
 
+### Shared output conventions
+
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+
 ### 1. Lead with the next action
 
 First line: reader action, not context or plan.

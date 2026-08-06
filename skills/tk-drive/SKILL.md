@@ -147,6 +147,8 @@ Persist provenance only in an existing workflow-owned artifact/ledger. Never req
 
 ### 🔴 HARD GATE · response language
 
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When a table uses emoji status markers, show one legend before the table and omit duplicate English status text in its rows; preserve any required terminal `Status: <token>`.
+
 Before user-facing progress, questions, or summaries, use latest explicit language instruction; otherwise current message language. All free-form sentences and prose values use it; never switch to English because sources, skills, tools, or code are English. Preserve canonical headings, status tokens, IDs, commands, paths, code, and exact source literals byte-stable. Rewrite language drift before return.
 
 ## User decision questions

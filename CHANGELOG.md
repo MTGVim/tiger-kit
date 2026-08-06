@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 2026.08.06-5 — Release
+
+- test: migrate sweep approval contracts
+- fix: clarify sweep output and local times
+
 ## 2026.08.06-4 — Release
 
 - fix: align pr-open conversational trigger
