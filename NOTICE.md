@@ -67,39 +67,3 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
-
-`tk-adhd` is adapted from `ayghri/i-have-adhd`, source snapshot
-`07684c4ab625dd7d1ea6e99e065f60bc0ac6a1ba`
-([`skills/i-have-adhd/SKILL.md`](https://github.com/ayghri/i-have-adhd/blob/07684c4ab625dd7d1ea6e99e065f60bc0ac6a1ba/skills/i-have-adhd/SKILL.md)).
-Relationship metadata: `relationship: adapted`. TigerKit preserves the
-upstream action-first, bounded-step, persistent state, specific-time,
-visible-completion, safety-exception, and no-ceremonial-closer behavior while
-renaming the explicit invocation surface and adding TigerKit metadata and
-evals. No other canonical skill inherits these ADHD-oriented rules through a
-shared output contract, and `tk-adhd` never activates implicitly.
-
-`ayghri/i-have-adhd` upstream license:
-
-```text
-MIT License
-
-Copyright (c) 2026 Ayoub Ghriss
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```

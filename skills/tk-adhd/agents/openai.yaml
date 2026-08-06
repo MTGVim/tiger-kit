@@ -1,6 +1,0 @@
-interface:
-  short_description: "[user] Shape long work into visible, actionable progress"
-  default_prompt: "Use $tk-adhd to shape this response into visible, actionable progress."
-
-policy:
-  allow_implicit_invocation: false

@@ -188,7 +188,10 @@ needs user approval or action, `👀` is re-review pending with no sweep mutatio
 and `⏳` is machine/remote wait. Keep only
 the one decisive token (PR/route/count or wait reason); the marker and route
 encode result/next action. Suppress child receipts, reasoning, logs, timers, and
-nonterminal `Status:` lines; actual skill names/contracts keep `tk-`.
+nonterminal `Status:` lines; actual skill names/contracts keep `tk-`. The
+terminal response repeats one final route marker (for example
+`🤖 sweep > final-triage`) so an orchestrated result is distinct from a direct
+one-PR child result.
 
 Render `follow-up-queued` and `waiting` as `⏳ Waiting` when the wait itself is
 the next action. Render re-review-pending normal rows as `👀 ... · no-op`.
@@ -212,14 +215,18 @@ approval or change that otherwise empty batch from `Pass`. After an approved
 re-Plan after external head drift is `Pending`; a supported `Act now` item
 still present only at final triage is `Blocked`.
 
-Lead `## PR sweep`. Show a Markdown table for every processed PR with
+Lead `## PR sweep`, then one final compact marker such as
+`🤖 sweep > final-triage` directly under the heading. This marker identifies
+the terminal route as orchestrated; direct one-PR skills do not emit a
+`sweep >` marker. Show a Markdown table for every processed PR with
 repository, PR number, title, link, initial category, approved/planned action,
 actual result, and skip/hold reason when applicable. Also show report-only
 external CI and `checks_unverifiable`, retained worktrees, and all remaining
 final-triage items. For eight+ final-only rows, show the top five to seven with
 links and cite `.tigerkit/pr-sweep.md`. Keep exact child provenance in
 artifacts, not terminal response. Lead the aggregate result once and end with
-the exact terminal `Status` line; do not add a second mapped result marker. A
+the exact terminal `Status` line; do not add a second mapped result marker. The
+final progress marker is route context, not a result or status line. A
 normal re-review-pending row is report-only/no-op and must not trigger an
 automatic rebase.
 

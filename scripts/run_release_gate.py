@@ -18,6 +18,7 @@ from run_skill_evals import (
     detached_worktree,
     load_catalog_contract,
     load_eval_contracts,
+    load_retired_catalog_cases,
     load_retired_skill_contracts,
     resolve_ref,
 )
@@ -57,6 +58,9 @@ def load_manifest() -> dict[str, object]:
     retired = value.get("retired_skill_contracts", [])
     if not isinstance(retired, list) or not all(isinstance(row, str) and row for row in retired):
         raise ValueError("release-critical retired_skill_contracts must be a string list")
+    retired_catalog = value.get("retired_catalog_cases", [])
+    if not isinstance(retired_catalog, list) or not all(isinstance(row, str) and row for row in retired_catalog):
+        raise ValueError("release-critical retired_catalog_cases must be a string list")
     return value
 
 
@@ -121,7 +125,13 @@ def main() -> int:
                 retired_skills=load_retired_skill_contracts(candidate_root),
             )
         )
-        contract_errors.extend(compare_catalog_contracts(baseline_catalog, candidate_catalog))
+        contract_errors.extend(
+            compare_catalog_contracts(
+                baseline_catalog,
+                candidate_catalog,
+                retired_cases=load_retired_catalog_cases(candidate_root),
+            )
+        )
         contract_errors.extend(validate_manifest_cases(candidate_contracts, candidate_catalog, manifest))
         commands = [
             ["python3", "scripts/validate_skills.py"],

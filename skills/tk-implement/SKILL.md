@@ -20,7 +20,7 @@ One invocation owns one independently verifiable unit and, after verification/re
 
 Explicit user instructions outrank defaults. Never weaken or reconfirm settled scope, method, prohibitions, strategy, verification, or commit instructions. Ask only for conflicting instructions or material decisions required for safe execution.
 
-For active drive or PR response, preserve task identity, unit ID, source IDs, initial `HEAD`, pre-existing dirty paths, and four fields of material verification profile. PR response also preserves repository, PR number, PR head SHA, and exact comment/thread IDs. Follow owner mapping in [review-boundary.md](references/review-boundary.md); never recompute/weaken it. Return unit ID, native status, commit when present, and verification/review evidence to parent. Never emit terminal user result or own cross-unit verification, remote publication, or finalization.
+For active drive or PR response, preserve task identity, unit ID, source IDs, initial `HEAD`, pre-existing dirty paths, and four fields of material verification profile. PR response also preserves repository, PR number, PR head SHA, and exact comment/thread IDs. Follow owner mapping in [review-boundary.md](references/review-boundary.md); never recompute/weaken it. Return unit ID, native status, commit when present, and verification/review evidence to parent. Never emit terminal user result or own cross-unit verification, remote publication, or finalization. A standalone invocation uses its own `## Implement` result and emits no `drive >` or `sweep >` marker; the active parent owns that final orchestration marker.
 
 | Status | Meaning | Commit |
 | --- | --- | --- |

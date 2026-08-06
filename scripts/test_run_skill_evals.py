@@ -884,6 +884,31 @@ class RunnerContractTest(unittest.TestCase):
         self.assertTrue(any("deleted case" in error for error in errors))
         self.assertTrue(any("critical host" in error for error in errors))
 
+    def test_catalog_contract_drift_accepts_explicitly_retired_case(self) -> None:
+        baseline = {
+            "critical_hosts": ["claude-code", "codex", "hermes-agent"],
+            "cases": [
+                {
+                    "id": "retired",
+                    "expected_selected_skill": "tk-adhd",
+                    "critical": True,
+                }
+            ],
+        }
+        candidate = {
+            "critical_hosts": ["claude-code", "codex", "hermes-agent"],
+            "cases": [],
+        }
+
+        self.assertEqual(
+            compare_catalog_contracts(
+                baseline,
+                candidate,
+                retired_cases={"retired"},
+            ),
+            [],
+        )
+
     def test_content_path_and_diff_assertions_are_mechanical(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             checkout = Path(directory)

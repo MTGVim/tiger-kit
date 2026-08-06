@@ -1,18 +1,18 @@
 ---
 name: tk-pr-open
-description: "[user] Open or update one GitHub pull request from verified current-branch commits; require exact current-turn approval before remote publication."
+description: "[user/auto] Open or update one GitHub pull request from verified current-branch commits; require exact current-turn approval before remote publication."
 argument-hint: "<repository or branch>"
-disable-model-invocation: true
+disable-model-invocation: false
 metadata:
   tigerkit:
-    kind: user-invoked
+    kind: hybrid
     origin: tigerkit
     relationship: native
 ---
 
 # Open pull request
 
-Start when the user selects `/tk-pr-open`, `$tk-pr-open`, or host skill picker, or clearly asks in natural language to prepare, open, or update one PR. A conversational user trigger starts only this skill's local preview; it never implies publication. Never activate from a generic PR question, code review, implementation request, merge request, multi-PR maintenance request, or existing `.tigerkit` artifact alone.
+Start when the user selects `/tk-pr-open`, `$tk-pr-open`, or host skill picker, or when a clear single-PR request asks to prepare, open, or update one PR in natural language. Natural-language routing starts only this skill's local preview; it never implies publication. Never activate from a generic PR question, code review, implementation request, merge request, multi-PR maintenance request, or existing `.tigerkit` artifact alone.
 
 Own one pull-request draft and bounded publication plan. May inspect local Git/GitHub state and write `.tigerkit/pr-open.md`. Never edit product code, create product commits, merge, tag, release, or publish before approval gate below.
 

@@ -66,7 +66,9 @@ decisive token (unit/count, route, or wait reason); the marker and route encode
 result/next action. A Ready child consumed by drive stays `🤖`. Direct skills
 show only their name. Suppress receipts, reasoning,
 logs, timers, approval requests, and nonterminal `Status:` lines; actual skill
-names/contracts keep `tk-`.
+names/contracts keep `tk-`. The terminal response repeats one final route
+marker (for example `🤖 drive > finalization`) so an orchestrated result is
+distinct from a direct child result.
 
 Preserve terminal `Status: <token>` as the only final outcome marker. Use
 nonterminal `⏳ Waiting` only when waiting is the next action.
@@ -136,14 +138,19 @@ After recovery edges exhaust, normalize child state through `phases.md`, freeze 
 
 After aggregate verification passes, finish directly. Reread source, spec, tickets if present, prep, implementation evidence, ancestry, and verification before one terminal response. TigerKit owns no post-session reflection or persistent-memory phase.
 
-Lead with `Implemented` and two to seven behavior bullets, then `Verification`
+Lead with `Implemented`, then one final compact marker such as
+`🤖 drive > finalization` directly under the canonical heading. This marker
+identifies the terminal route as orchestrated; a direct `tk-implement` result
+does not emit a `drive >` marker. Follow with two to seven behavior bullets,
+then `Verification`
 with one to four aggregate bullets. For multiple units, add compact
 `Ticket | Outcome | Commit` and `Unit | Strategy | Additional review | Fix rounds | Result`
 tables; summarize review routes, not raw per-unit text. Use a sentence for one
 user-relevant row. If results exceed limits, show top five to seven by user
 impact and verification value. Include `Remaining risks` only when meaningful.
 End `Verification` with exactly `Status: Pass`; terminal non-success belongs to
-the read-only finalizer.
+the read-only finalizer. The final marker is route context, not a second result
+or status line; keep `Status: <token>` as the sole outcome token.
 
 ### 🔴 HARD GATE · terminal user summary
 
