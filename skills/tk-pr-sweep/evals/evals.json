@@ -321,6 +321,8 @@
         {"type":"event_count","event":{"type":"phase_invocation","phase":"tk-pr-triage"},"min":1},
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"tk-pr-respond"}},
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"tk-pr-rebase"}},
+        {"type":"event_absent","event":{"type":"phase_invocation","phase":"remote-publish"}},
+        {"type":"git_head_unchanged"},
         {"type":"output_contains","text":"❓ sweep > preflight"},
         {"type":"output_contains","text":"Status: Pending"},
         {"type":"terminal_status","expected":"Pending"}
