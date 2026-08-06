@@ -33,8 +33,7 @@ npx skills update --global --yes
 Claude Code와 Hermes Agent에서는 `/tk-implement`, Codex에서는
 `$tk-implement` 또는 skill picker를 사용합니다.
 PR lifecycle은 `/tk-pr-open`, `/tk-pr-triage`, `/tk-pr-respond`,
-`/tk-pr-rebase`, `/tk-pr-sweep`를 직접 선택하며, `tk-pr-open`은 명확한
-단일 PR 자연어 요청으로도 시작할 수 있습니다.
+`/tk-pr-rebase`, `/tk-pr-sweep`를 직접 선택합니다.
 
 ## Skill 표면
 

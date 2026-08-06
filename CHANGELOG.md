@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.07-1 — Release
+
+- docs: streamline README invocation notes
+
 ## 2026.08.06-9 — Release
 
 - feat: add cost-aware model routing and zero-context cheaper-model handoffs
