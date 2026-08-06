@@ -231,7 +231,7 @@
       "id": "drive-reinvocation-resumes-after-answer",
       "path": "success",
       "prompt": "[active tk-drive] tk-grill-me의 단일 spec 결정 질문에 사용자가 답했고 current spec은 Ready이며 한 개의 incomplete unit이 있습니다. 사용자가 `$tk-drive`를 다시 호출했습니다.",
-      "expected_output": "새 drive나 재질문 없이 current evidence에서 resume하고 `▶️ drive > spec` 뒤 `tk-implement`, aggregate verification, finalization까지 계속한다.",
+      "expected_output": "새 drive나 재질문 없이 current evidence에서 resume하고 `▶️ drive > implement` 뒤 aggregate verification과 finalization까지 계속한다.",
       "assertions": [
         {
           "type": "judge",
@@ -239,11 +239,7 @@
         },
         {
           "type": "output_contains",
-          "text": "drive · resume"
-        },
-        {
-          "type": "output_contains",
-          "text": "drive > spec"
+          "text": "▶️ drive > implement"
         },
         {
           "type": "event_absent",
