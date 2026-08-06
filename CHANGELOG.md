@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.06-6 — Release
+
+- feat: streamline orchestration progress
+
 ## 2026.08.06-5 — Release
 
 - test: migrate sweep approval contracts
