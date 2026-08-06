@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+## 2026.08.06-3 — Release
+
+- test: guard resume mutation boundaries
+- docs: retain decisive compact progress tokens
+- test: tighten resume safety coverage
+- test: migrate compact progress contracts
+- fix: resume workflows with compact progress
+
 ## 2026.08.06-2 — Release
 
 - fix: clarify drive blocked state
