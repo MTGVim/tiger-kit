@@ -173,9 +173,10 @@ After preview approval, at meaningful route/result, wait, and final-triage
 boundaries, emit one line such as `▶️ sweep > respond PR #42 1/3`,
 `❓ sweep > preflight · 승인 필요`, `⏳ sweep > respond PR #42 · CI`, or
 `✅ sweep > respond PR #42`. Omit `tk-`; `▶️` auto-continues, `❓` needs user
-input, `🟢` is standalone manual `Ready`, and `⏳` is machine wait. Suppress
-child receipts, reasoning, logs, timers, and nonterminal `Status:` lines; actual
-skill names/contracts keep `tk-`.
+input, `🟢` is standalone manual `Ready`, and `⏳` is machine wait. Keep only
+the one decisive token (PR/route/count or wait reason); the marker and route
+encode result/next action. Suppress child receipts, reasoning, logs, timers, and
+nonterminal `Status:` lines; actual skill names/contracts keep `tk-`.
 
 Use `✅ Pass`, `⏳ Waiting`, `⚠️ Advisory`, `❌ Fail`, `⛔ Blocked`, and
 `❓ Unverifiable` for matching outcomes. Render `follow-up-queued` and `waiting`

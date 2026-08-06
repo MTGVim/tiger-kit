@@ -62,9 +62,11 @@ non-advancing boundaries, emit one line such as `▶️ drive > implement 2/4`,
 `❓ drive > grill-me · 답변 필요`, `🟢 spec · Ready · 다음 단계 수동`, or
 `⏳ drive > browser-verify · server`. Omit `tk-`; `▶️` auto-continues, `❓`
 needs user input, `🟢` is standalone manual `Ready`, and `⏳` is machine/remote
-wait. A Ready child consumed by drive stays `▶️`. Direct skills show only their
-name. Suppress receipts, reasoning, logs, timers, approval requests, and
-nonterminal `Status:` lines; actual skill names/contracts keep `tk-`.
+wait. Keep only the one decisive token (unit/count, route, or wait reason); the
+marker and route encode result/next action. A Ready child consumed by drive
+stays `▶️`. Direct skills show only their name. Suppress receipts, reasoning,
+logs, timers, approval requests, and nonterminal `Status:` lines; actual skill
+names/contracts keep `tk-`.
 
 Use `✅ Pass`, `⏳ Waiting`, `⚠️ Advisory`, `❌ Fail`, `⛔ Blocked`, and `❓ Unverifiable` for matching outcomes; preserve terminal `Status: <token>` exactly.
 
