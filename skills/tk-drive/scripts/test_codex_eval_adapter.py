@@ -27,7 +27,7 @@ class CodexObservationTest(unittest.TestCase):
     def test_preserves_progress_messages_but_derives_status_from_last_message(self) -> None:
         observation = CodexObservation()
         for item_id, text in [
-            ("progress", "▶️ Progress\nDecision: publish next"),
+            ("progress", "▶️ drive > implement\ncontinue"),
             ("final", "## PR respond\n✅ Pass\nStatus: Pass"),
         ]:
             observation.consume(
@@ -51,7 +51,7 @@ class CodexObservationTest(unittest.TestCase):
             events=[],
         )
 
-        self.assertIn("▶️ Progress", result["output"])
+        self.assertIn("▶️ drive > implement", result["output"])
         self.assertIn("## PR respond", result["output"])
         self.assertEqual(result["terminal_status"], "Pass")
         self.assertEqual(result["tool_uses"], 0)

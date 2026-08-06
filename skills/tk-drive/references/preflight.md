@@ -43,6 +43,13 @@ Choose the next node from current artifacts and repository evidence:
 | Changed implementation without complete aggregate evidence | aggregate verification |
 | Required work and aggregate verification complete | `tk-drive finalization` |
 
+When the user explicitly re-invokes `$tk-drive` without a new source after an
+answered decision or host/process boundary, run this same evidence mapping
+again. Treat it as a continuation only when one current source and route are
+bound; do not restart preparation or ask for approval again. A valid `Ready`
+spec selects `tk-to-tickets` or `tk-implement` immediately. Stored status,
+cursor, lifecycle claim, or child receipt cannot select the next node.
+
 Use `scripts/preflight.py resume --evidence <json-file>` for the deterministic
 projection. Stale or contradictory artifacts require revalidation; never use
 a stored cursor or lifecycle value as resume authority.

@@ -1,6 +1,6 @@
 ---
 name: tk-drive
-description: "[user] Drive an explicit source through decision closure, a Ready spec, conditional tickets, verified unit commits, aggregate verification, and finalization in one continuous run. Use only when selected explicitly with a source, or when resuming this skill's pending decision in the same conversation."
+description: "[user] Drive an explicit source through decision closure, a Ready spec, conditional tickets, verified unit commits, aggregate verification, and finalization in one continuous run. Use only when selected explicitly with a source, or when resuming an unfinished drive in the same conversation."
 disable-model-invocation: true
 argument-hint: "<source, request, issue, or existing Ready spec>"
 metadata:
@@ -12,7 +12,7 @@ metadata:
 
 # Drive
 
-Start only when user selects `/tk-drive`, `$tk-drive`, or host skill picker with a source, or answers this drive's pending decision in the same conversation. Ordinary implementation requests, generic continuation, artifacts, or new sessions neither start nor resume it.
+Start only when user selects `/tk-drive`, `$tk-drive`, or the host skill picker with a source, or explicitly re-invokes it in the same conversation after a pending decision or unfinished drive. A no-source re-invocation is a continuation request only after current artifacts and repository evidence validate one resumable source; it does not create a second run or grant a new approval. Ordinary implementation requests, generic continuation, artifacts, or new sessions neither start nor resume it.
 
 ## Authority
 
@@ -46,20 +46,33 @@ Use complete edge/state-normalization contract in [phases.md](references/phases.
 
 Continuation is prompt-directed, not a durable scheduler or guaranteed cross-turn execution. After host/process boundaries, resume by rereading current artifacts and repository evidence.
 
+## Re-invocation
+
+A no-source `$tk-drive` after an answered decision or host/process boundary
+resumes the same source only after rereading current artifacts and repository
+evidence. Do not restart, re-ask, or stop at valid `Ready`; continue to the next
+node, verification, and finalization. Stale/contradictory evidence emits one
+`❓` checkpoint before mutation; cursor, lifecycle claim, and child receipt are
+never authority.
+
 ## Progress
 
-At plan, each unit start/result, aggregate verification start/result, finalization, and every pending-decision boundary, emit one compact `▶️ Progress` checkpoint with decision, decisive evidence, and result/next action; continue immediately within authority for non-pending checkpoints. A pending decision is the deliberate response boundary until its explicit answer. Every checkpoint appends the semantic owner and current node as `Orchestration: tk-drive → <phase/node>`; a multi-unit execution checkpoint may add only the bounded `(current/total)` index. Exclude child receipts, raw reasoning, command logs, timer promises, approval requests, and nonterminal `Status:` lines.
+At plan, meaningful node transitions, aggregate verification, finalization, and
+non-advancing boundaries, emit one line such as `▶️ drive > implement 2/4`,
+`❓ drive > grill-me · 답변 필요`, `🟢 spec · Ready · 다음 단계 수동`, or
+`⏳ drive > browser-verify · server`. Omit `tk-`; `▶️` auto-continues, `❓`
+needs user input, `🟢` is standalone manual `Ready`, and `⏳` is machine/remote
+wait. A Ready child consumed by drive stays `▶️`. Direct skills show only their
+name. Suppress receipts, reasoning, logs, timers, approval requests, and
+nonterminal `Status:` lines; actual skill names/contracts keep `tk-`.
 
 Use `✅ Pass`, `⏳ Waiting`, `⚠️ Advisory`, `❌ Fail`, `⛔ Blocked`, and `❓ Unverifiable` for matching outcomes; preserve terminal `Status: <token>` exactly.
 
-For an intentional decision wait, render the status beside the checkpoint rather
-than silently returning a question:
+For an intentional decision checkpoint, emit `❓ drive > grill-me · 답변 필요`
+before the question:
 
 ```text
-▶️ Progress · ⏳ Waiting · Orchestration: tk-drive → tk-grill-me
-Decision: <one user-owned decision>
-Evidence: <decisive fact>
-Result/Next: <answer condition> → <next node>
+Question: <one user-owned decision>
 ```
 
 This is nonterminal commentary. Preserve native `Pending`, emit no terminal
@@ -95,7 +108,9 @@ Browser preflight is `required | optional | N/A`. Private runtime identity is ma
 
 For each unit:
 
-1. pass exact R/AC, scope, order, and verification profile to `tk-implement`;
+1. pass only the unit ID, exact R/AC, scope, order, verification profile, and
+   artifact paths plus current delta to `tk-implement`; let the child read the
+   full artifact instead of repeating unrelated source, history, or receipts;
 2. accept only a verified one-unit commit or bounded non-success handoff;
 3. preserve pre-existing user changes; audit commit ancestry;
 4. treat `Pass` as internal loop signal: without terminal response, pause, or confirmation, render Drive's progress checkpoint and invoke `tk-implement` for the next unit. Exit only when all units are committed or bounded non-success remains after recovery.
@@ -137,9 +152,10 @@ Before user-facing progress, questions, or summaries, use latest explicit langua
 When a user-owned decision blocks Preparing or the one amendment, ask one self-contained `Question` before `Recommendation`. Show only relevant evidence, two or three mutually exclusive options with material tradeoffs, and exactly one `(Recommended)` or `(추천)`.
 
 Render directly in chat; do not call structured question/input tools. Emit the
-nonterminal `▶️ Progress · ⏳ Waiting · Orchestration: tk-drive → tk-grill-me`
-checkpoint with the wait reason and next node before the question. Remain
+nonterminal `❓ drive > grill-me · 답변 필요` checkpoint before the question. Remain
 native `Pending` for an unanswered question. If the originating state is
 `Blocked`, preserve that terminal state and follow non-success finalization
-instead of presenting it as `Waiting`. An explicit answer resumes the existing
-graph without asking the user to invoke drive again.
+instead of presenting it as a user-input checkpoint. An explicit answer resumes
+the existing graph; an explicit `$tk-drive` re-invocation in the same
+conversation performs the same current-evidence resume when the host did not
+continue automatically.

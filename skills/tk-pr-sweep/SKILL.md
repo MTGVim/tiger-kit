@@ -12,9 +12,11 @@ metadata:
 
 # Sweep pull requests
 
-Start only via `/tk-pr-sweep`, `$tk-pr-sweep`, or host skill picker. Never
-activate for generic PR cleanup, triage, response, rebase, CI, release,
-continuation, or multi-repository requests.
+Start only via `/tk-pr-sweep`, `$tk-pr-sweep`, or host skill picker. A same-
+conversation re-invocation after preview, child route, or system wait resumes
+only after fresh triage revalidates the approved repository/PR/head/category/
+route. Never activate for generic PR cleanup, triage, response, rebase, CI,
+release, continuation, or multi-repository requests.
 
 Explicit multi-PR maintenance orchestrator only. `tk-drive` owns product-change
 lifecycle. `tk-pr-triage` stays read-only; one-PR owners `tk-pr-rebase` and
@@ -22,6 +24,12 @@ lifecycle. `tk-pr-triage` stays read-only; one-PR owners `tk-pr-rebase` and
 one batch approval, `.tigerkit/pr-sweep.md`, worktree coordination, route
 bounds, one shared PR-summary budget, aggregate verification, and sole
 terminal response.
+
+Re-invocation grants no new approval and trusts no cursor, child receipt, or
+stale artifact: run fresh full `tk-pr-triage`, match the exact approval/head,
+and continue only for unchanged rows. Drift or no match emits
+`❓ sweep > preflight · 승인 필요` and stops before mutation; an unfinished CI
+wait gets a bounded fresh recheck, not a blind child restart.
 
 ## Authority
 
@@ -43,8 +51,9 @@ Before any worktree creation, local commit, push, reply, or thread resolution,
 run fresh full `tk-pr-triage` and render `## PR sweep preview` with a table for
 every initial item: repository, PR number, title, link, observed head SHA,
 fresh category, planned action, risk, and decisive evidence. Include report-only
-and held items. State `No remote changes yet`. If there are `auto` rows, stop
-with `Status: Pending` until the user explicitly approves them. If there are no
+and held items. State `No remote changes yet`. If there are `auto` rows, emit
+`❓ sweep > preflight · 승인 필요` and stop with `Status: Pending` until the
+user explicitly approves them. If there are no
 `auto` rows, complete the report-only run without an approval. Never replace
 this gate with a timer or automatic continuation; do not ask for approval once
 per PR.
@@ -119,9 +128,11 @@ Reclassify from GitHub evidence.
 6. Per new worktree, run repository-owned lockfile-enforcing setup once. If none
    documented, use lockfile package manager frozen/immutable mode. Share package
    cache only; never symlink `node_modules` or another checkout's dependency tree.
-7. Invoke exactly one closed-router owner. For an `auto` row, pass the
-   `test-only` scope and stop before commit if the child would leave it. Child
-   `Pass` is internal: render sweep checkpoint; re-triage exact PR/head without
+7. Invoke exactly one closed-router owner. Pass only exact PR/head, route,
+   bounded finding scope, and artifact paths; do not repeat the full triage
+   table or child receipt. For an `auto` row, pass the `test-only` scope and
+   stop before commit if the child would leave it. Child `Pass` is internal:
+   render sweep checkpoint; re-triage exact PR/head without
    terminal response or pause; follow a new supported category only within
    bound. Record child non-success; no sibling call for the same failed state.
 8. Keep prompt-local bounds: one rebase per exact `(base_sha, head_sha)`, maximum
@@ -158,16 +169,18 @@ Reclassify from GitHub evidence.
 
 ## Progress
 
-After preview approval, before and after each PR route/check, and around final
-triage, emit compact `▶️ Progress`: decision, decisive evidence, result/next
-action, remaining count. The preview owns the single batch approval; never
-repeat it per PR. Children return evidence internally. Never expose child
-receipts, raw reasoning, command logs, timer promises, or nonterminal
-`Status:` lines.
+After preview approval, at meaningful route/result, wait, and final-triage
+boundaries, emit one line such as `▶️ sweep > respond PR #42 1/3`,
+`❓ sweep > preflight · 승인 필요`, `⏳ sweep > respond PR #42 · CI`, or
+`✅ sweep > respond PR #42`. Omit `tk-`; `▶️` auto-continues, `❓` needs user
+input, `🟢` is standalone manual `Ready`, and `⏳` is machine wait. Suppress
+child receipts, reasoning, logs, timers, and nonterminal `Status:` lines; actual
+skill names/contracts keep `tk-`.
 
 Use `✅ Pass`, `⏳ Waiting`, `⚠️ Advisory`, `❌ Fail`, `⛔ Blocked`, and
 `❓ Unverifiable` for matching outcomes. Render `follow-up-queued` and `waiting`
-as `⏳ Waiting`; preserve terminal `Status: <token>` exactly.
+as `⏳ Waiting`; render user approval, exact held-route selection, and preview
+reconfirmation as `❓`, not `⏳`. Preserve terminal `Status: <token>` exactly.
 
 ## Aggregate result
 

@@ -43,6 +43,20 @@ Do not use `BROWSER=none && yarn start` as an example of exporting the variable
 to a child. Otherwise use a verified flag/configuration. If suppression is
 impossible, continue but close only tabs created by this run and report it.
 
+## Server startup and readiness
+
+When this run starts a long-running development or verification server, start it
+as a run-owned background process rather than waiting for command exit. Record
+the exact PID, cwd, command, port, and bounded log path in the run-owned
+evidence. Tail startup output while polling the repository's concrete HTTP,
+CDP, or port readiness signal at a bounded interval and timeout. A dev server
+continuing to emit logs is not itself a failure or a readiness condition.
+
+After readiness, continue to browser verification. On timeout or process exit,
+preserve the last bounded log lines and return `Fail | Unverifiable`; never
+guess readiness from a fixed sleep and never kill a process not proven owned by
+this run.
+
 ## Current verification target
 
 When a server already listens, inspect process cwd, command, ownership,

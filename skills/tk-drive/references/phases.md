@@ -55,6 +55,13 @@ same active turn. Procedure evidence remains internal to the workflow. Do not
 wait for a new user turn, ask the caller to resume, or emit a user-facing
 phase-complete stopping surface.
 
+An explicit `$tk-drive` re-invocation in the same conversation after a pending
+answer or host/process boundary is also a continuation request. Re-read current
+artifacts and repository evidence, consume the already-answered decision, and
+select the next applicable row. Do not restart preparation, request a second
+approval, or stop at a valid `Ready` spec. If source identity or evidence drift
+cannot be resolved, stop before mutation and expose one actionable checkpoint.
+
 On failure, expose one actionable blocking fact and apply every supported
 alternate edge before treating the state as terminal. When no alternate edge
 remains, freeze product mutation and enter `tk-drive non-success finalization`;
@@ -64,7 +71,8 @@ This continuation contract is prompt-directed and probabilistic. It does not
 provide durable scheduling, event replay, or guaranteed cross-turn execution.
 After a host or process boundary, derive the next node from current artifacts
 and repository evidence instead of claiming that an earlier prompt still owns
-runtime control.
+runtime control. A stored cursor, lifecycle claim, or child receipt is never
+resume authority.
 
 ## Preparing evidence
 

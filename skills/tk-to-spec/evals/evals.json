@@ -48,7 +48,7 @@
       "id": "legacy-2",
       "path": "success",
       "prompt": "/tk-to-spec 다음 confirmed source로 독립 구현 명세를 .tigerkit/spec.md에 작성하세요. Goal: scripts/report.py에 기계 판독 가능한 JSON 출력 옵션을 추가한다. Scope: 기존 text 출력은 유지하고 --json일 때만 JSON을 출력한다. R-01: --json은 동일한 report fields를 JSON object로 출력한다. AC-01: Given 기존 입력, when --json 실행, then exit 0이고 stdout은 parse 가능한 JSON이며 text label은 없다. AC-02: Given 옵션 없음, when 실행, then 기존 text snapshot이 유지된다. Verification: python3 -m unittest tests.test_report_cli. Out of scope: report 계산 로직과 network 호출. 티켓이나 구현은 시작하지 마세요.",
-      "expected_output": "Goal·Scope·R-01·AC-01/02·Verification·Out of scope와 source traceability를 보존하고 PR evidence: N/A를 기록한 Ready spec을 .tigerkit/spec.md에 쓰고 재검증한 뒤, 티켓 생성·구현·게시 없이 bottom metadata 없이 Ready summary를 반환한다.",
+      "expected_output": "Goal·Scope·R-01·AC-01/02·Verification·Out of scope와 source traceability를 보존하고 PR evidence: N/A를 기록한 Ready spec을 .tigerkit/spec.md에 쓰고 재검증한 뒤, 티켓 생성·구현·게시 없이 `🟢 spec · Ready · 다음 단계 수동`을 포함한 Ready summary를 반환한다.",
       "assertions": [
         {
           "type": "judge",
@@ -57,6 +57,10 @@
         {
           "type": "terminal_status",
           "expected": "Pass"
+        },
+        {
+          "type": "output_contains",
+          "text": "🟢 spec · Ready"
         },
         {
           "type": "path_exists",
