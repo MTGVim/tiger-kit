@@ -139,6 +139,7 @@ When a user-owned decision blocks Preparing or the one amendment, ask one self-c
 Render directly in chat; do not call structured question/input tools. Emit the
 nonterminal `▶️ Progress · ⏳ Waiting · Orchestration: tk-drive → tk-grill-me`
 checkpoint with the wait reason and next node before the question. Remain
-native `Pending` for an unanswered question (or preserve native `Blocked` when
-the originating state is blocked) until answered; an explicit answer resumes
-the existing graph without asking the user to invoke drive again.
+native `Pending` for an unanswered question. If the originating state is
+`Blocked`, preserve that terminal state and follow non-success finalization
+instead of presenting it as `Waiting`. An explicit answer resumes the existing
+graph without asking the user to invoke drive again.
