@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.06-4 — Release
+
+- fix: align pr-open conversational trigger
+
 ## 2026.08.06-3 — Release
 
 - test: guard resume mutation boundaries
