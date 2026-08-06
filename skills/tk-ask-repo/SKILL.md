@@ -14,6 +14,14 @@ metadata:
 
 Read-only investigation of external codebase questions. Never edit source, artifacts, tickets, or Git history, or invoke a sibling skill. If an answer needs a decision or implementation, name the owner and stop.
 
+## Invocation
+
+Start only when the user selects `/tk-ask-repo`, `$tk-ask-repo`, or the host
+skill picker with a concrete inbound repository question. This is a
+user-invoked-only skill: `disable-model-invocation: true` and
+`allow_implicit_invocation: false` are the authoritative host flags, so a
+natural-language question without explicit selection does not start it.
+
 ## Evidence contract
 
 - Every repository-state claim cites `path:line`, or says `unavailable` and why.

@@ -1,4 +1,2 @@
 interface:
-  short_description: "[user] Open or update one pull request after an exact publish approval."
-  policy:
-    allow_implicit_invocation: false
+  short_description: "[user/auto] Open or update one pull request after an exact publish approval."

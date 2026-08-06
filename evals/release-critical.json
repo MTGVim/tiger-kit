@@ -1,12 +1,17 @@
 {
   "version": 1,
   "retired_skill_contracts": [
-    "tk-reflect"
+    "tk-reflect",
+    "tk-adhd"
+  ],
+  "retired_catalog_cases": [
+    "adhd-explicit",
+    "adhd-implicit-block"
   ],
   "behavior_cases": [
     "tk-drive:behavior:drive-live-direct-prepares-and-executes-source",
     "tk-drive:behavior:drive-live-direct-prepared-execution-finalizes",
-    "tk-drive:behavior:drive-live-direct-implementation-actor",
+    "tk-drive:behavior:drive-live-direct-implementation-final-marker",
     "tk-drive:behavior:drive-keeps-grill-pending-open-actor",
     "tk-pr-open:behavior:pr-open-prepares-plan",
     "tk-pr-triage:behavior:pr-triage-is-read-only",

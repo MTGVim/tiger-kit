@@ -33,7 +33,8 @@ npx skills update --global --yes
 Claude Code와 Hermes Agent에서는 `/tk-implement`, Codex에서는
 `$tk-implement` 또는 skill picker를 사용합니다.
 PR lifecycle은 `/tk-pr-open`, `/tk-pr-triage`, `/tk-pr-respond`,
-`/tk-pr-rebase`, `/tk-pr-sweep`를 각각 직접 선택합니다.
+`/tk-pr-rebase`, `/tk-pr-sweep`를 직접 선택하며, `tk-pr-open`은 명확한
+단일 PR 자연어 요청으로도 시작할 수 있습니다.
 
 ## Skill 표면
 
@@ -41,12 +42,11 @@ PR lifecycle은 `/tk-pr-open`, `/tk-pr-triage`, `/tk-pr-respond`,
 | --- | --- | --- |
 | `tk-drive` | user | 명시 source를 결정·Ready spec·조건부 tickets·unit commits·aggregate verification·finalization까지 진행 |
 | `tk-ask-repo` | user | repository 질문을 `path:line` 근거로 조사하는 read-only desk |
-| `tk-adhd` | user | 현재 응답 하나를 action-first 형태로 정리하는 one-shot utility |
 | `tk-grill-me` | hybrid | material user decision을 evidence-first 질문 하나씩 닫음 |
 | `tk-to-spec` | hybrid | 독립 구현 가능한 Ready R/AC spec 작성 |
 | `tk-to-tickets` | hybrid | Ready spec을 독립 검증 가능한 vertical units로 분해 |
 | `tk-implement` | hybrid | unit 하나를 구현·테스트·review하고 verified commit 하나 생성 |
-| `tk-pr-open` | user | 검증된 현재 브랜치 커밋으로 PR 초안·publish plan을 작성하고 승인 후 create/update |
+| `tk-pr-open` | hybrid | 명확한 단일 PR 요청으로 초안·publish plan을 작성하고 승인 후 create/update |
 | `tk-pr-triage` | hybrid | 명시 호출 또는 sweep handoff에서 repository의 PR·review·check·reply 상태를 read-only 분류 |
 | `tk-pr-respond` | hybrid | 명시 호출 또는 sweep handoff에서 feedback·GitHub Actions를 resolution unit으로 처리하고 bounded publish |
 | `tk-pr-rebase` | hybrid | 명시 호출 또는 sweep handoff에서 열린 PR을 최신 base에 rebase하고 bounded force-with-lease·review follow-up publish |

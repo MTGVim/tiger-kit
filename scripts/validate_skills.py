@@ -205,15 +205,14 @@ def validate_frontmatter_and_body(
         if openai_text and 'short_description: "[user/auto] ' not in openai_text:
             errors.append(f"{label}: Codex short_description must begin with [user/auto]")
 
-    if name != "tk-adhd":
-        terminal = "### 🔴 HARD GATE · terminal user summary"
-        language = "### 🔴 HARD GATE · response language"
-        decision = "## User decision questions"
-        for heading in (terminal, language, decision):
-            if text.count(heading) != 1:
-                errors.append(f"{label}: require exactly one {heading}")
-        if terminal in text and language in text and text.index(terminal) > text.index(language):
-            errors.append(f"{label}: terminal summary gate must precede response language gate")
+    terminal = "### 🔴 HARD GATE · terminal user summary"
+    language = "### 🔴 HARD GATE · response language"
+    decision = "## User decision questions"
+    for heading in (terminal, language, decision):
+        if text.count(heading) != 1:
+            errors.append(f"{label}: require exactly one {heading}")
+    if terminal in text and language in text and text.index(terminal) > text.index(language):
+        errors.append(f"{label}: terminal summary gate must precede response language gate")
 
     forbidden = {
         "commands/": "legacy command runtime",

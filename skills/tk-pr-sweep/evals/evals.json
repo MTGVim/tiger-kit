@@ -12,6 +12,11 @@
       "reason": "Automatic progress uses the robot marker and removes the duplicated visible Pass beside terminal Status."
     },
     {
+      "from": "pr-sweep-continues-after-pr-local-success-actor",
+      "to": "pr-sweep-continues-after-pr-local-success-final-marker",
+      "reason": "Sweep terminal output now repeats a compact final-triage route marker so orchestrated results are distinct from direct one-PR results."
+    },
+    {
       "from": "pr-sweep-stops-on-systemic-ownership-failure",
       "to": "pr-sweep-stops-on-systemic-ownership-failure-actor",
       "reason": "Terminal Unverifiable is now represented only by the canonical Status line."
@@ -150,14 +155,15 @@
       "safety": true
     },
     {
-      "id": "pr-sweep-continues-after-pr-local-success-actor",
+      "id": "pr-sweep-continues-after-pr-local-success-final-marker",
       "path": "success",
       "prompt": "/tk-pr-sweep Plan을 보고 두 test-only needs_reply PR의 처리를 승인했습니다. initial queue에 서로 독립적인 PR 두 개가 있고 첫 PR handler가 Pass했습니다.",
-      "expected_output": "초기 frozen queue와 첫 PR route를 `🤖 sweep > ...` compact checkpoint로 보여주고, 첫 PR Pass와 remaining count를 기록한 뒤 terminal output이나 확인 없이 두 번째 PR을 fresh revalidate·처리하고 final triage로 진행한다.",
+      "expected_output": "초기 frozen queue와 첫 PR route를 `🤖 sweep > ...` compact checkpoint로 보여주고, 첫 PR Pass와 remaining count를 기록한 뒤 terminal output이나 확인 없이 두 번째 PR을 fresh revalidate·처리하고 final triage로 진행하며 terminal summary에 `🤖 sweep > final-triage`를 남긴다.",
       "assertions": [
-        {"type":"judge","criterion":"sweep가 `🤖 sweep > ...`로 queue/route/PR-result/final-triage progress를 소유하고 첫 PR Pass를 terminal boundary로 쓰지 않으며, child progress나 receipt를 중복 출력하지 않고 다음 frozen queue entry를 즉시 처리하며 terminal `Status: Pass`만 반환한다."},
+        {"type":"judge","criterion":"sweep가 `🤖 sweep > ...`로 queue/route/PR-result/final-triage progress를 소유하고 첫 PR Pass를 terminal boundary로 쓰지 않으며, child progress나 receipt를 중복 출력하지 않고 다음 frozen queue entry를 즉시 처리한다. Terminal summary에는 `🤖 sweep > final-triage`를 route context로 한 번 남기고 `Status: Pass`를 유일한 outcome token으로 반환한다."},
         {"type":"event_order","before":{"type":"phase_invocation","phase":"tk-pr-respond"},"after":{"type":"phase_invocation","phase":"tk-pr-respond"},"forbidden_between":[{"type":"final_output"}]},
         {"type":"output_contains","text":"🤖 sweep >"},
+        {"type":"output_contains","text":"🤖 sweep > final-triage"},
         {"type":"output_contains","text":"Status: Pass"},
         {"type":"terminal_status","expected":"Pass"}
       ],

@@ -324,27 +324,27 @@
       "critical": true
     },
     {
-      "id": "adhd-explicit",
-      "boundary": "tk-adhd explicit invocation vs ordinary formatting",
-      "prompt": "$tk-adhd 지금 진행 상태와 다음 행동이 보이게 해 주세요.",
-      "focus_skill": "tk-adhd",
-      "expected_selected_skill": "tk-adhd",
-      "critical": true
-    },
-    {
-      "id": "adhd-implicit-block",
-      "boundary": "tk-adhd explicit invocation vs ordinary formatting",
-      "prompt": "진행 상태와 다음 행동이 보이게 정리해 주세요.",
-      "focus_skill": "tk-adhd",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
       "id": "pr-open-explicit",
       "boundary": "tk-pr-open vs tk-pr-triage vs tk-pr-respond",
       "prompt": "/tk-pr-open 현재 브랜치로 PR draft를 준비해줘",
       "focus_skill": "tk-pr-open",
       "expected_selected_skill": "tk-pr-open",
+      "critical": true
+    },
+    {
+      "id": "pr-open-natural-language",
+      "boundary": "tk-pr-open natural-language single-PR intent vs generic PR question",
+      "prompt": "현재 브랜치로 PR 열어줘",
+      "focus_skill": "tk-pr-open",
+      "expected_selected_skill": "tk-pr-open",
+      "critical": true
+    },
+    {
+      "id": "pr-open-generic-question",
+      "boundary": "tk-pr-open natural-language single-PR intent vs generic PR question",
+      "prompt": "이 PR이 무엇을 바꾸는지 요약해줘",
+      "focus_skill": "tk-pr-open",
+      "expected_selected_skill": null,
       "critical": true
     },
     {

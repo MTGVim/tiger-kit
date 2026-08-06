@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 2026.08.06-7 — Release
+
+- fix: align tk-pr-open hybrid natural-language routing with its publication gate
+- docs: make tk-ask-repo entry and host invocation flags explicit
+- remove: delete unused tk-adhd utility
+
 ## 2026.08.06-6 — Release
 
 - feat: streamline orchestration progress
