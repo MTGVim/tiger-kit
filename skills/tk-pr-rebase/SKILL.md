@@ -26,8 +26,10 @@ feedback, merge, close, tag, release, or change repository rules.
 - **Normal:** explicit invocation authorizes local rebase only; keep publication
   question below.
 - **Sweep CI:** `--ci` requires active `tk-pr-sweep` handoff freezing exact
-  repository, PR, base/head refs and SHAs, and route attempt. Handoff grants
-  bounded publication without another question.
+  repository, PR, base/head refs and SHAs, and route attempt. After the sweep
+  Plan approval, the handoff grants bounded rebase/conflict resolution and
+  publication without another question; semantic conflict ambiguity remains
+  `Blocked`.
 
 ## Workflow
 
@@ -46,7 +48,8 @@ feedback, merge, close, tag, release, or change repository rules.
 4. Rebase branch onto exact `base_sha`. Normal invocation authorizes local rebase,
    not abort, reset, push, or comment publication. For each conflict iteration,
    use `tk-merge-conflict`; resume only after operation, intent, index, marker,
-   and verification gates pass. Never guess or auto-abort.
+   and verification gates pass. In Sweep CI, the exact approved maintenance-
+   rebase handoff may publish the verified result; never guess or auto-abort.
 5. Verify rebase ended; worktree and index clean; `base_sha` ancestors new `HEAD`;
    intended commits and diff remain; relevant tests/checks pass. If branch already
    contains `base_sha` and needs no rewrite, do not force-push.

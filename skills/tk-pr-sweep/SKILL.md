@@ -28,17 +28,19 @@ terminal response.
 Re-invocation grants no new approval and trusts no cursor, child receipt, or
 stale artifact: run fresh full `tk-pr-triage`, match the exact approval/head,
 and continue only for unchanged rows. Drift or no match emits
-`✋ sweep > plan · 승인 필요` and stops before mutation; an unfinished CI
+`👤 sweep > plan · 승인 필요` and stops before mutation; an unfinished CI
 wait gets a bounded fresh recheck, not a blind child restart.
 
 ## Authority
 
 One explicit start authorizes fresh configured-repository triage. When `auto`
 rows exist, render one read-only Plan; a second current-turn approval
-authorizes only the rows shown as low-risk and `auto` in that Plan: bounded local
-implementation/commits; exact branch push; replies; verified thread
-resolution; conditional human re-review; and at most one PR summary. It never
-silently broadens to a new PR, head, category, or high-risk action. External CI
+authorizes only the rows shown as `auto` in that Plan: bounded test-only
+implementation/commits, or exact maintenance rebase/conflict resolution;
+exact branch push; replies; verified thread resolution; conditional human
+re-review; and at most one PR summary. It never
+silently broadens to a new PR, head, category, or route outside the displayed
+`auto`/maintenance-rebase guard. External CI
 or unverifiable-check repair, PR creation, merge, close, tag, release, general
 publication, history rewrite outside exact rebase lease,
 draft-to-`Ready for review` transition, and out-of-scope product work remain
@@ -52,8 +54,9 @@ run fresh full `tk-pr-triage`. When at least one `auto` row exists, render
 `## PR sweep plan` with a table for every initial item: repository, PR number,
 title, link, observed head SHA, fresh category, planned action, risk, and
 decisive evidence. Include report-only and held items, state
-`No remote changes yet`, show one `legend` for any emoji markers, emit
-`✋ sweep > plan · 승인 필요`,
+`No remote changes yet`, show one legend: `🤖` automatic, `👤` user action,
+`👀` re-review/no-op, and `⏳` machine/remote wait, then emit
+`👤 sweep > plan · 승인 필요`,
 and stop with `Status: Pending` until the user explicitly approves the rows.
 When there are no `auto` rows, do not render a Plan or approval checkpoint;
 render the report-only result directly. Never replace this gate with a timer or
@@ -61,29 +64,33 @@ automatic continuation; do not ask for approval once per PR.
 
 ### Risk gate
 
-Mark a row `auto` only when the requested change is test-only: test files or
-test cases may change, but production source, configuration, dependencies,
-lockfiles, security/data/performance behavior, or weakened assertions may not.
-This means paths in the repository's existing test layout (`test/`, `tests/`,
-`spec/`, `*.test.*`, `*.spec.*`, or documented test fixtures) only; mixed,
-unknown, or helper/config paths are not `auto`. The child must stop before
-commit if its planned or staged paths leave that scope. A test-only change still
-needs repository tests to pass.
+Mark a row `auto` only for test-only changes or bounded maintenance rebase.
+Test-only means test files or test cases may change, but production source,
+configuration, dependencies, lockfiles, security/data/performance behavior, or
+weakened assertions may not. Maintenance rebase means an exact repository/PR,
+base/head SHA pair, same-repository source, clean worktree, and
+`tk-pr-rebase --ci` route; `tk-merge-conflict` may resolve only the frozen
+rebase conflicts and must stop on semantic ambiguity. It may not implement
+unrelated feedback or broaden product scope. Both routes require fresh
+verification and the child must stop before commit or push when its bound is
+exceeded.
 
-Mark bug fixes, behavior changes, merge-conflict resolution, CI corrective
-changes, security/data/performance work, ambiguous scope or requests, and
-ownership or provider uncertainty `hold` or `report-only` by default. A user
-may explicitly select one or more named held rows in a later Plan; generic
-batch approval never selects them. That later Plan must name every exact PR,
-observed head, and route; a current-turn approval of that exact high-risk set
-may then authorize the existing closed router for those rows only. It is a
-separate approval, not a broadening of the low-risk batch.
+Mark bug fixes, behavior changes, CI corrective changes, security/data/
+performance work, ambiguous scope or requests, and ownership or provider
+uncertainty `hold` or `report-only` by default. A merge-conflict row is `auto`
+only when it satisfies the maintenance-rebase guard above; all other
+high-risk routes remain held. A user may explicitly select one or more named
+held rows in a later Plan; generic batch approval never selects them. That
+later Plan must name every exact PR, observed head, and route; a current-turn
+approval of that exact high-risk set may then authorize the existing closed
+router for those rows only. It is a separate approval, not a broadening of the
+routine batch.
 
 ## Closed router
 
 | Fresh category | Evidence | Route |
 | --- | --- | --- |
-| `merge_conflict` | exact base/head pair | `tk-pr-rebase --ci` |
+| `merge_conflict` | exact base/head pair and maintenance-rebase guard | `tk-pr-rebase --ci` |
 | `checks_failed` | every selected failure is GitHub Actions | `tk-pr-respond --ci` |
 | `checks_failed` | any selected failure is external or provider `unknown` | report-only |
 | `changes_requested` | fresh actionable findings | `tk-pr-respond --ci` |
@@ -102,7 +109,7 @@ Reclassify from GitHub evidence.
    `auto` row exists, in triage priority/repository/PR order, and record
    report-only and held items.
 2. When the Plan exists, stop at its checkpoint until the user approves the displayed
-   low-risk rows. Freeze only those approved rows. A later exact high-risk
+   `auto` rows. Freeze only those approved rows. A later exact high-risk
    selection creates a new Plan; never infer it from a generic continuation.
 3. Before each approved PR, re-read repository identity, author/open/draft
    state, base and head refs and SHAs, category/provider evidence, reviews,
@@ -132,8 +139,10 @@ Reclassify from GitHub evidence.
    cache only; never symlink `node_modules` or another checkout's dependency tree.
 7. Invoke exactly one closed-router owner. Pass only exact PR/head, route,
    bounded finding scope, and artifact paths; do not repeat the full triage
-   table or child receipt. For an `auto` row, pass the `test-only` scope and
-   stop before commit if the child would leave it. Child `Pass` is internal:
+   table or child receipt. For an `auto` test row, pass the `test-only` scope;
+   for an `auto` rebase row, pass `maintenance-rebase` and the exact
+   `(base_sha, head_sha)` pair. Stop before commit or push if the child would
+   leave its bound. Child `Pass` is internal:
    render sweep checkpoint; re-triage exact PR/head without
    terminal response or pause; follow a new supported category only within
    bound. Record child non-success; no sibling call for the same failed state.
@@ -172,19 +181,19 @@ Reclassify from GitHub evidence.
 ## Progress
 
 After Plan approval, at meaningful route/result, wait, and final-triage
-boundaries, emit one line such as `▶️ sweep > respond PR #42 1/3`,
-`✋ sweep > plan · 승인 필요`, `⏳ sweep > respond PR #42 · CI`, or
-`✅ sweep > respond PR #42`. Omit `tk-`; `▶️` auto-continues, `❓` needs user
-input, `✋` needs user approval, `🟢` is standalone manual `Ready`, and `⏳` is
-machine wait. Keep only
+boundaries, emit one line such as `🤖 sweep > respond PR #42 1/3`,
+`👤 sweep > plan · 승인 필요`, `👀 sweep > re-review PR #42 · no-op`, or
+`⏳ sweep > respond PR #42 · CI`. Omit `tk-`; `🤖` is automatic work, `👤`
+needs user approval or action, `👀` is re-review pending with no sweep mutation,
+and `⏳` is machine/remote wait. Keep only
 the one decisive token (PR/route/count or wait reason); the marker and route
 encode result/next action. Suppress child receipts, reasoning, logs, timers, and
 nonterminal `Status:` lines; actual skill names/contracts keep `tk-`.
 
-Use `✅ Pass`, `⏳ Waiting`, `⚠️ Advisory`, `❌ Fail`, `⛔ Blocked`, and
-`❓ Unverifiable` for matching outcomes. Render `follow-up-queued` and `waiting`
-as `⏳ Waiting`; render user approval, exact held-route selection, and Plan
-reconfirmation as `✋`, not `⏳`. Preserve terminal `Status: <token>` exactly.
+Render `follow-up-queued` and `waiting` as `⏳ Waiting` when the wait itself is
+the next action. Render re-review-pending normal rows as `👀 ... · no-op`.
+Keep terminal `Status: <token>` as the only final outcome marker; never repeat
+it with another mapped result line.
 
 ## Aggregate result
 
@@ -209,9 +218,10 @@ actual result, and skip/hold reason when applicable. Also show report-only
 external CI and `checks_unverifiable`, retained worktrees, and all remaining
 final-triage items. For eight+ final-only rows, show the top five to seven with
 links and cite `.tigerkit/pr-sweep.md`. Keep exact child provenance in
-artifacts, not terminal response. Lead aggregate result with mapped visible
-marker, including `✅ Pass` for full pass, without replacing exact final status
-line.
+artifacts, not terminal response. Lead the aggregate result once and end with
+the exact terminal `Status` line; do not add a second mapped result marker. A
+normal re-review-pending row is report-only/no-op and must not trigger an
+automatic rebase.
 
 ### 🔴 HARD GATE · terminal user summary
 

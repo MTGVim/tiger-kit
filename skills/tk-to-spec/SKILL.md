@@ -101,7 +101,7 @@ archives or modify `.gitignore`. Reread result before reporting.
 
 Lead with `Ready | Draft | Blocked | Unverifiable` decision. For a standalone
 Ready result, make the non-advancing handoff visible as
-`🟢 spec · Ready · 다음 단계 수동`; an active drive owns the parent display
+`👤 spec · Ready · 다음 단계 수동`; an active drive owns the parent display
 `drive > spec` and immediately consumes a valid Ready handoff. Summarize core
 scope, requirements, and exceptions in two to five short bullets; for single
 result use one to three short lines. For larger inventory, show top five to seven
