@@ -67,8 +67,8 @@ def load_manifest() -> dict[str, object]:
         rows = value.get(field)
         if not isinstance(rows, list) or not rows or not all(isinstance(row, str) and row for row in rows):
             raise ValueError(f"release-critical {field} must be a non-empty string list")
-    if value.get("progress_contract") != {"version": 1, "scope": "all-tk-skills"}:
-        raise ValueError("release-critical progress_contract must cover all tk-* skills at version 1")
+    if value.get("progress_contract") != {"version": 2, "scope": "all-tk-skills"}:
+        raise ValueError("release-critical progress_contract must cover all tk-* skills at version 2")
     retired = value.get("retired_skill_contracts", [])
     if not isinstance(retired, list) or not all(isinstance(row, str) and row for row in retired):
         raise ValueError("release-critical retired_skill_contracts must be a string list")

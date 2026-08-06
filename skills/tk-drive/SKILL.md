@@ -67,9 +67,9 @@ decisive token (unit/count, route, or wait reason); the marker and route encode
 result/next action. A Ready child consumed by drive stays `🚗`. Direct skills use
 `🚗 <skill> · <state>`; parent routes use `🚗 parent > child`. Suppress receipts, reasoning,
 logs, timers, approval requests, and nonterminal `Status:` lines; actual skill
-names/contracts keep `tk-`. The terminal response repeats one final route
-marker (for example `🚗 drive > finalization`) so an orchestrated result is
-distinct from a direct child result.
+names/contracts keep `tk-`. Emit the finalization route before the terminal
+response when it is a meaningful boundary; the terminal response itself has no
+progress marker.
 
 Preserve terminal `Status: <token>` as the only final outcome marker. Use
 nonterminal `⏳ 대기` only when waiting is the next action.
@@ -93,10 +93,13 @@ Before product mutation:
 1. Resolve repository instructions, branch, baseline `HEAD`, worktree, and pre-existing dirty paths.
 2. Read complete source. Find at most seven relevant durable prior-art items from applicable rules, ADRs, tests, types, lint, CI, repository skills, and code invariants. Exclude raw sessions, implementation scratch, pending drafts, arbitrary global state, unrelated work, and inaccessible host-only rules.
 3. Close only material user-owned decisions through `tk-grill-me`; use `tk-prototype` only when evidence reduces the decision.
-4. Produce or validate one Ready R/AC spec with `tk-to-spec`.
-5. Use `tk-to-tickets` only for multiple independently verifiable vertical units; otherwise one no-ticket unit.
-6. Seal each unit's expected `direct | delegated`, risk `low | high | unknown-until-diff`, and Additional review `required | not-required | unknown-until-diff`; evidence may raise but never silently lower obligations.
-7. Write compact `.tigerkit/prep.md` via [preflight.md](references/preflight.md); immediately start Executing.
+4. If the source is an `IMP-*` finding, reread the current valid
+   `.tigerkit/improve.md` entry and pass it as source evidence to `tk-to-spec`;
+   never invoke `tk-improve` as a sibling phase.
+5. Produce or validate one Ready R/AC spec with `tk-to-spec`.
+6. Use `tk-to-tickets` only for multiple independently verifiable vertical units; otherwise one no-ticket unit.
+7. Seal each unit's expected `direct | delegated`, model tier, risk `low | high | unknown-until-diff`, and Additional review `required | not-required | unknown-until-diff`; evidence may raise but never silently lower obligations.
+8. Write compact `.tigerkit/prep.md` via [preflight.md](references/preflight.md); immediately start Executing.
 
 ### 🔴 HARD GATE · source UI writing
 
@@ -139,10 +142,9 @@ After recovery edges exhaust, normalize child state through `phases.md`, freeze 
 
 After aggregate verification passes, finish directly. Reread source, spec, tickets if present, prep, implementation evidence, ancestry, and verification before one terminal response. TigerKit owns no post-session reflection or persistent-memory phase.
 
-Lead with `Implemented`, then one final compact marker such as
-`🚗 drive > finalization` directly under the canonical heading. This marker
-identifies the terminal route as orchestrated; a direct `tk-implement` result
-does not emit a `drive >` marker. Follow with two to seven behavior bullets,
+Lead with `Implemented`; the terminal response has no progress marker, while a
+preceding `🚗 drive > finalization` boundary distinguishes orchestration from a
+direct `tk-implement` result. Follow with two to seven behavior bullets,
 then `Verification`
 with one to four aggregate bullets. For multiple units, add compact
 `Ticket | Outcome | Commit` and `Unit | Strategy | Additional review | Fix rounds | Result`
@@ -150,8 +152,7 @@ tables; summarize review routes, not raw per-unit text. Use a sentence for one
 user-relevant row. If results exceed limits, show top five to seven by user
 impact and verification value. Include `Remaining risks` only when meaningful.
 End `Verification` with exactly `Status: Pass`; terminal non-success belongs to
-the read-only finalizer. The final marker is route context, not a second result
-or status line; keep `Status: <token>` as the sole outcome token.
+the read-only finalizer. Keep `Status: <token>` as the sole outcome token.
 
 ### 🔴 HARD GATE · terminal user summary
 
@@ -163,7 +164,7 @@ Persist provenance only in an existing workflow-owned artifact/ledger. Never req
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🚗 meaningful boundary` only for long-running work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
 
 Before user-facing progress, questions, or summaries, use latest explicit language instruction; otherwise current message language. All free-form sentences and prose values use it; never switch to English because sources, skills, tools, or code are English. Preserve canonical headings, status tokens, IDs, commands, paths, code, and exact source literals byte-stable. Rewrite language drift before return.
 

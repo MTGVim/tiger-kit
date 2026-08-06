@@ -73,7 +73,7 @@ Persist provenance only in skill-owned artifact/ledger. Never create owner solel
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🚗 meaningful boundary` only for long-running work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
 
 Before user-facing progress, question, or summary, resolve language from latest explicit user language instruction; otherwise current user message's language. Write every free-form user-facing sentence and prose result value in that language. Never switch to English due to sources, skill bodies, tools, or code. Keep canonical headings, status tokens, IDs, commands, paths, code, and exact quoted/source literals byte-stable; explain around preserved token in resolved language. Before return, scan free-form user prose and rewrite drift.
 
@@ -93,4 +93,4 @@ Render question, recommendation, and options directly in chat; never call struct
 - Never auto-archive, edit `.gitignore`, invoke another user skill, push, or publish.
 ## Progress
 
-At meaningful work boundaries, standalone output uses `🚗 learn · <short state>`; use `🙋 learn · 응답 필요` for a question/approval gate, `⏳ learn · 대기` for CI/remote/re-review wait, and `🛑 learn · 중단` for a checkpoint/abort stop. Omit `tk-` from display names; a parent owns `🚗 parent > learn`. Keep terminal `Status: <token>` unchanged.
+Standalone skills are silent by default. Emit no progress for routine start or success; use `🙋 learn · 응답 필요` only for a user decision/approval, `⏳ learn · 대기` only when external waiting is next, and `🚗 learn · <short state>` only at a meaningful long-running boundary. Omit `tk-` from display names; a parent owns `🚗 parent > learn`. Terminal responses contain no progress marker; keep `Status: <token>` unchanged.

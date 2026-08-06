@@ -17,7 +17,8 @@ Use only for explicit vertical-ticket decomposition request or exact active
 Do not write spec, publish remote issues, or implement.
 
 Source precedence: user-designated source, current confirmed decisions,
-`.tigerkit/spec.md`, request, then relevant code.
+`.tigerkit/spec.md`, selected `.tigerkit/improve.md` `IMP-*` findings, request,
+then relevant code.
 
 ## Workflow
 
@@ -31,7 +32,10 @@ Source precedence: user-designated source, current confirmed decisions,
    split problems.
 5. **Gate** — return writable tickets or
    `Unresolved split report | Blocked | Unverifiable`.
-6. **Write and verify** — atomically write ledger, reread it, verify coverage,
+6. **Handoff** — apply [executor-handoff.md](references/executor-handoff.md)
+   to each ticket; a ticket must be executable from its own evidence with no
+   hidden parent or sibling context.
+7. **Write and verify** — atomically write ledger, reread it, verify coverage,
    dependencies, and ticket contents.
 
 ## Ticket contract
@@ -45,7 +49,10 @@ points`, `Dependencies`, and `Verification`. `Coverage` names every owned R/AC o
 location; independent ticket writes `Dependencies: none` instead of implicit
 dependency state.
 
-A ticket is vertical behavior unit: keep behavior, tests, and verification
+A selected `IMP-*` finding is source evidence only. Preserve its ID, exact
+evidence, confidence, route hint, and verification baseline; do not turn a
+finding into a ticket until its boundary is independently proven. A ticket is
+vertical behavior unit: keep behavior, tests, and verification
 together. Do not split into type/API/UI/test layers or diagnose/fix/verify stages.
 Keep one bug as one slice from reproduction through root-cause fix, regression
 seam, original reproduction, and cleanup.
@@ -108,7 +115,7 @@ in owned tickets artifact.
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🚗 meaningful boundary` only for long-running work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
 
 Use latest explicit user language, else current message's language. Preserve
 canonical headings, status tokens, IDs, commands, paths, code, and quoted source
@@ -129,4 +136,4 @@ question/input tool. Preserve `Pending | Blocked` until answer.
 - Do not implement, publish, or repair non-success state inline.
 ## Progress
 
-At meaningful work boundaries, standalone output uses `🚗 to-tickets · <short state>`; use `🙋 to-tickets · 응답 필요` for a question/approval gate, `⏳ to-tickets · 대기` for CI/remote/re-review wait, and `🛑 to-tickets · 중단` for a checkpoint/abort stop. Omit `tk-` from display names; a parent owns `🚗 parent > to-tickets`. Keep terminal `Status: <token>` unchanged.
+Standalone skills are silent by default. Emit no progress for routine start or success; use `🙋 to-tickets · 응답 필요` only for a user decision/approval, `⏳ to-tickets · 대기` only when external waiting is next, and `🚗 to-tickets · <short state>` only at a meaningful long-running boundary. Omit `tk-` from display names; a parent owns `🚗 parent > to-tickets`. Terminal responses contain no progress marker; keep `Status: <token>` unchanged.

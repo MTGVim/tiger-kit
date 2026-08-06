@@ -139,7 +139,7 @@ reference outside this skill.
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🚗 meaningful boundary` only for long-running work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
 
 Before user-facing progress, question, or summary, choose latest explicit user
 language; else current user message language. Write all free-form user-facing
@@ -166,4 +166,4 @@ answers. This changes presentation, not authority or stop gates.
 - Do not create archives, current pointers, automatic commits, or publication.
 ## Progress
 
-At meaningful work boundaries, standalone output uses `🚗 handoff · <short state>`; use `🙋 handoff · 응답 필요` for a question/approval gate, `⏳ handoff · 대기` for CI/remote/re-review wait, and `🛑 handoff · 중단` for a checkpoint/abort stop. Omit `tk-` from display names; a parent owns `🚗 parent > handoff`. Keep terminal `Status: <token>` unchanged.
+Standalone skills are silent by default. Emit no progress for routine start or success; use `🙋 handoff · 응답 필요` only for a user decision/approval, `⏳ handoff · 대기` only when external waiting is next, and `🚗 handoff · <short state>` only at a meaningful long-running boundary. Omit `tk-` from display names; a parent owns `🚗 parent > handoff`. Terminal responses contain no progress marker; keep `Status: <token>` unchanged.

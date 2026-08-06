@@ -41,6 +41,7 @@ PR lifecycle은 `/tk-pr-open`, `/tk-pr-triage`, `/tk-pr-respond`,
 | Skill | 호출 | 소유 범위 |
 | --- | --- | --- |
 | `tk-drive` | user | 명시 source를 결정·Ready spec·조건부 tickets·unit commits·aggregate verification·finalization까지 진행 |
+| `tk-improve` | user | repository를 read-only audit하고 `.tigerkit/improve.md`에 evidence-backed `IMP-*` finding을 기록 |
 | `tk-ask-repo` | user | repository 질문을 `path:line` 근거로 조사하는 read-only desk |
 | `tk-grill-me` | hybrid | material user decision을 evidence-first 질문 하나씩 닫음 |
 | `tk-to-spec` | hybrid | 독립 구현 가능한 Ready R/AC spec 작성 |
@@ -65,20 +66,19 @@ commit, 검증 또는 안전 경계가 있을 때만 해당 skill을 선택합�
 
 ## 출력 표시
 
-모든 skill은 짧은 진행 표기를 사용합니다. 이모지 뒤에는 항상 공백을 둡니다.
+일반적인 standalone skill은 진행 표기를 생략하고, 사용자 응답·외부 대기 또는
+긴 작업 경계에서만 선택적으로 표시합니다. 이모지 뒤에는 항상 공백을 둡니다.
 
 | 표기 | 의미 |
 | --- | --- |
-| `🚗 진행` | 직접 또는 오케스트레이션된 작업 (`🚗 drive > child`는 부모 경로) |
-| `🙋 응답 필요` | 질문 또는 사용자 승인·조치 필요 |
-| `❓ 질문` | 아직 해석이 확정되지 않은 모호점 |
-| `⏳ 대기` | CI·원격 작업·재리뷰 대기 |
-| `🛑 중단` | checkpoint 또는 abort |
-| `✅ 완료` / `❌ 실패` | 완료 행 / 실제 검증 실패 |
+| `🚗 진행` | 의미 있는 긴 작업 경계 또는 부모 오케스트레이션 (`🚗 drive > child`) |
+| `🙋 응답 필요` | 사용자 질문·승인·조치 필요 |
+| `⏳ 대기` | 다음 행동이 CI·원격 작업·재리뷰 대기 |
 
 정상 no-op 행은 생략하고, 표에는 한 번만 범례를 둡니다. PR·review thread 링크는
 클릭 가능한 Markdown 링크로 표시하며 GitHub의 `<br>`/`<br/>`는 TUI용 실제 개행으로
-정규화합니다. 최종 결과는 `Status: <token>` 한 줄만 결과 토큰으로 사용합니다.
+정규화합니다. terminal response에는 progress marker를 넣지 않으며, 최종 결과는
+`Status: <token>` 한 줄만 결과 토큰으로 사용합니다.
 
 ## PR lifecycle
 

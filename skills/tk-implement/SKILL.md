@@ -1,7 +1,7 @@
 ---
 name: tk-implement
 description: "[user/auto] Implement, test, review, and create one current-branch commit for one independently verifiable unit. Apply only on explicit standalone selection or an exact handoff from tk-drive or tk-pr-respond; never auto-trigger from an ordinary implementation request."
-argument-hint: "<request, ticket, or spec> [direct|delegated] [tdd|no-tdd]"
+argument-hint: "<request, ticket, or spec> [direct|delegated] [tdd|no-tdd] | --config [--show|--migrate|--reset|--repo]"
 metadata:
   tigerkit:
     kind: hybrid
@@ -30,6 +30,32 @@ For active drive or PR response, preserve task identity, unit ID, source IDs, in
 | `Unverifiable` | Required verification attempted but cannot establish verdict | None |
 
 A drive non-success handoff includes actual branch/`HEAD`, changed/uncommitted paths, executed/unavailable verification, blocker/failure, and one recovery condition. It grants no cleanup, continuation, commit, downstream specialist, or finalization authority.
+
+## Cost-aware routing
+
+`strategy` and `tier` are independent:
+
+- `strategy`: `direct | delegated` — whether implementation ownership transfers.
+- `tier`: `cheap | standard | most_capable` — the lowest sufficient reasoning
+  level for the unit.
+
+Ready, independently transferable implementation units default to
+`delegated + cheap` on hosts with per-call model support. Use `direct` when
+briefing/isolation costs more than implementation, context cannot be safely
+transferred, the cause/design/scope is open, or no compatible implementor is
+available. Use `standard` for multi-file integration or ordinary debugging;
+use `most_capable` or controller recovery for design, unknown-cause, or
+security-critical decisions. Escalate once for context, sizing, or reasoning;
+do not retry a design decision as a cheaper implementation.
+
+`$tk-implement --config` manages the host mapping described in
+[model-routing.md](references/model-routing.md). `--show` is read-only,
+`--migrate` previews and applies only an explicit managed mapping,
+`--reset` removes that mapping at the selected scope, and `--repo` selects the
+current-repository override. Repository override wins over user host context,
+which wins over the inherited current model. Unsupported per-call model or
+effort capability is reported as advisory and falls back to safe direct/current
+execution; it is never claimed as applied.
 
 ## Workflow
 
@@ -90,7 +116,7 @@ Persist provenance only in workflow-owned artifact/ledger. Read-only skill remai
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🚗 meaningful boundary` only for long-running work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
 
 Before user-facing progress, question, or summary, resolve language from latest explicit user language instruction; otherwise current user message's language. Write every free-form user-facing sentence and prose result value in that language. Never switch to English due to sources, skill bodies, tools, or code. Keep canonical headings, status tokens, IDs, commands, paths, code, and exact quoted/source literals byte-stable; explain around preserved token in resolved language. Before return, scan all free-form user prose and rewrite drift.
 
@@ -101,4 +127,4 @@ When user-owned decision blocks progress, ask one self-contained `Question` befo
 Render question, recommendation, and options directly in chat; never call structured question/input tools. Preserve `Pending | Blocked` until answer. This changes presentation, not authority or stop gates.
 ## Progress
 
-At meaningful work boundaries, standalone output uses `🚗 implement · <short state>`; use `🙋 implement · 응답 필요` for a question/approval gate, `⏳ implement · 대기` for CI/remote/re-review wait, and `🛑 implement · 중단` for a checkpoint/abort stop. Omit `tk-` from display names; a parent owns `🚗 parent > implement`. Keep terminal `Status: <token>` unchanged.
+Standalone skills are silent by default. Emit no progress for routine start or success; use `🙋 implement · 응답 필요` only for a user decision/approval, `⏳ implement · 대기` only when external waiting is next, and `🚗 implement · <short state>` only at a meaningful long-running boundary. Omit `tk-` from display names; a parent owns `🚗 parent > implement`. Terminal responses contain no progress marker; keep `Status: <token>` unchanged.

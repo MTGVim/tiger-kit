@@ -17,7 +17,8 @@ Use only for explicit implementation-spec artifact request or exact active
 issue, or implement.
 
 Source precedence: user-designated source, confirmed decisions, cited
-documents/tickets, relevant code, then existing `.tigerkit/spec.md`.
+documents/tickets, selected `.tigerkit/improve.md` findings, relevant code,
+then existing `.tigerkit/spec.md`.
 
 ## Workflow
 
@@ -39,7 +40,10 @@ documents/tickets, relevant code, then existing `.tigerkit/spec.md`.
 6. **Slice candidates** — record `Vertical slicing candidate areas` by
    user-visible behavior, R/AC coverage, and coupling evidence. These are inputs,
    not tickets or approved slice boundaries.
-7. **Gate and write** — return `Ready | Draft | Blocked | Unverifiable`, write
+7. **Handoff** — apply [executor-handoff.md](references/executor-handoff.md)
+   to every Ready source so a cheaper executor can work from exact evidence,
+   boundaries, verification, assumptions, and drift handling.
+8. **Gate and write** — return `Ready | Draft | Blocked | Unverifiable`, write
    only supported state, reread it, verify source map and IDs.
 
 For bugs, separate symptom, current behavior, expected behavior, reproduction,
@@ -118,7 +122,7 @@ in owned spec artifact.
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. When progress or a nonterminal status is shown, use these compact markers: `🚗 active work`, `🙋 response/approval needed`, `❓ genuinely ambiguous question`, `⏳ CI/remote/re-review wait`, `🛑 checkpoint/abort stop`, `✅ completed row`, and `❌ actual failure`. Put one space after every emoji marker, omit generic no-op rows, show one legend before tables, and omit duplicate English status text in rows; preserve any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🚗 meaningful boundary` only for long-running work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
 
 Use latest explicit user language, else current message's language. Preserve
 canonical headings, status tokens, IDs, commands, paths, code, and quoted source
@@ -139,4 +143,4 @@ question/input tool. Preserve `Pending | Blocked` until answer.
 - Do not create tickets or implement from non-Ready spec.
 ## Progress
 
-At meaningful work boundaries, standalone output uses `🚗 to-spec · <short state>`; use `🙋 to-spec · 응답 필요` for a question/approval gate, `⏳ to-spec · 대기` for CI/remote/re-review wait, and `🛑 to-spec · 중단` for a checkpoint/abort stop. Omit `tk-` from display names; a parent owns `🚗 parent > to-spec`. Keep terminal `Status: <token>` unchanged.
+Standalone skills are silent by default. Emit no progress for routine start or success; use `🙋 to-spec · 응답 필요` only for a user decision/approval, `⏳ to-spec · 대기` only when external waiting is next, and `🚗 to-spec · <short state>` only at a meaningful long-running boundary. Omit `tk-` from display names; a parent owns `🚗 parent > to-spec`. Terminal responses contain no progress marker; keep `Status: <token>` unchanged.
