@@ -1,0 +1,16 @@
+# Handoff plan adaptation
+
+Adapted from `shadcn/improve` at source snapshot
+`03369ee6d7cafbfcecc4346539b05b3dc0a603bb`. The upstream template's quality
+bar is applied to each `IMP-*` finding rather than copied as a second plan
+lifecycle.
+
+A cheaper executor must receive self-contained context, exact paths and
+symbols, current-state excerpts or evidence, repository conventions, commands
+with expected results, hard in/out boundaries, assumptions, and explicit
+STOP/report-back conditions. Stamp the finding with the audited HEAD and say
+how to handle drift. Keep dependencies and maintenance notes grounded.
+
+`tk-improve` never writes `plans/`, implementation code, tickets, or remote
+issues. `tk-to-spec`, `tk-to-tickets`, and `tk-drive` own those downstream
+artifacts and decisions.

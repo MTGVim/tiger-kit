@@ -93,10 +93,13 @@ Before product mutation:
 1. Resolve repository instructions, branch, baseline `HEAD`, worktree, and pre-existing dirty paths.
 2. Read complete source. Find at most seven relevant durable prior-art items from applicable rules, ADRs, tests, types, lint, CI, repository skills, and code invariants. Exclude raw sessions, implementation scratch, pending drafts, arbitrary global state, unrelated work, and inaccessible host-only rules.
 3. Close only material user-owned decisions through `tk-grill-me`; use `tk-prototype` only when evidence reduces the decision.
-4. Produce or validate one Ready R/AC spec with `tk-to-spec`.
-5. Use `tk-to-tickets` only for multiple independently verifiable vertical units; otherwise one no-ticket unit.
-6. Seal each unit's expected `direct | delegated`, risk `low | high | unknown-until-diff`, and Additional review `required | not-required | unknown-until-diff`; evidence may raise but never silently lower obligations.
-7. Write compact `.tigerkit/prep.md` via [preflight.md](references/preflight.md); immediately start Executing.
+4. If the source is an `IMP-*` finding, reread the current valid
+   `.tigerkit/improve.md` entry and pass it as source evidence to `tk-to-spec`;
+   never invoke `tk-improve` as a sibling phase.
+5. Produce or validate one Ready R/AC spec with `tk-to-spec`.
+6. Use `tk-to-tickets` only for multiple independently verifiable vertical units; otherwise one no-ticket unit.
+7. Seal each unit's expected `direct | delegated`, model tier, risk `low | high | unknown-until-diff`, and Additional review `required | not-required | unknown-until-diff`; evidence may raise but never silently lower obligations.
+8. Write compact `.tigerkit/prep.md` via [preflight.md](references/preflight.md); immediately start Executing.
 
 ### 🔴 HARD GATE · source UI writing
 

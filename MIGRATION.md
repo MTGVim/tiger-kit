@@ -1,5 +1,18 @@
 # TigerKit 21.0.9 skill ownership and browser evidence boundary
 
+## Open issues #260 and #261
+
+The next maintenance release adds user-invoked `tk-improve`, which owns only
+the local `.tigerkit/improve.md` evidence ledger. `IMP-*` findings are source
+evidence for `tk-to-spec`, `tk-to-tickets`, or `tk-drive`; they are not tickets,
+plans, commits, or remote issues. `tk-to-spec` remains the single Ready-source
+owner and `tk-to-tickets` remains the local vertical-unit owner.
+
+`tk-implement` now treats `direct | delegated` strategy independently from
+`cheap | standard | most_capable` tier. Host adapters may report unsupported
+per-call capabilities; unsupported inferred optimization falls back to the
+current model/direct route rather than claiming application.
+
 Issue #224 removes the retired reflection package and makes the ownership
 boundaries explicit. This maintenance release uses the patch-only release
 procedure selected by the maintainer; it does not claim the issue's suggested

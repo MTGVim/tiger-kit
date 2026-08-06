@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- feat: add cost-aware model routing and zero-context cheaper-model handoffs
+- feat: add the read-only `tk-improve` evidence ledger and downstream finding routes
+- refactor: make progress optional and retain compact visibility for orchestrators
+
 ## 2026.08.06-8 — Release
 
 - feat: standardize universal car-based compact progress output across tk-* skills
