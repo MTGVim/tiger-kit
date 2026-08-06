@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.06-2 — Release
+
+- fix: clarify drive blocked state
+
 ## 2026.08.06-1 — Release
 
 - fix: clarify drive orchestration status
