@@ -53,7 +53,7 @@
     {
       "id": "validation-positive-5",
       "split": "validation",
-      "query": "임시 HTML hover와 focus가 맞는지 브라우저로 확ㅇ니해줘",
+      "query": "임시 HTML hover와 focus가 맞는지 브라우저로 확인해줘",
       "should_trigger": true,
       "facets": [
         "typo"
@@ -62,7 +62,7 @@
     {
       "id": "validation-positive-6",
       "split": "validation",
-      "query": "prototype 클릭 검증",
+      "query": "prototype의 클릭을 검증해줘",
       "should_trigger": true,
       "facets": [
         "short"
@@ -83,7 +83,7 @@
     {
       "id": "validation-positive-9",
       "split": "validation",
-      "query": "[active tk-browser-verify transient auth request] ephemeral secret handle SESSION_TOKEN을 사용해",
+      "query": "[active tk-browser-verify transient auth request] ephemeral secret handle SESSION_TOKEN을 사용해 headless auth를 설정해",
       "should_trigger": true,
       "facets": [
         "compound"

@@ -1,6 +1,6 @@
 ---
 name: tk-browser-verify
-description: "[user/auto] Verify approved browser-visible acceptance criteria in a headless browser. Use for explicit real-page verification or an exact parent verifier handoff; not for passive web research, generic design critique, implementation, or screenshot-only requests."
+description: "[user/auto] 승인된 browser-visible acceptance criteria를 headless browser에서 검증합니다. 명시적 real-page verification 또는 정확한 parent verifier handoff에 사용하며, passive web research, generic design critique, implementation, screenshot-only request에는 사용하지 않습니다."
 metadata:
   tigerkit:
     kind: hybrid
@@ -8,99 +8,100 @@ metadata:
     relationship: native
 ---
 
-# Browser verification
+# 브라우저 검증
 
-Use only for browser-visible acceptance criteria that require runtime evidence.
-Explicit invocation supplies the criteria directly; a nested Drive/Respond route
-uses only the already-approved scenarios, target, auth plan, and limitations.
+runtime evidence가 필요한 browser-visible acceptance criteria에만 사용합니다.
+명시적 호출은 criteria를 직접 제공하며, nested Drive/Respond route는 이미 승인된
+scenarios, target, auth plan, limitations만 사용합니다.
 
-This is a read-only acceptance verifier. It never edits product/test/config
-source, opens a visible browser, or creates a Markdown lifecycle ledger. A nested
-run returns compact facts and evidence paths to the top-level owner's ledger.
+read-only acceptance verifier입니다. product/test/config source를 수정하거나 visible
+browser를 열거나 Markdown lifecycle ledger를 만들지 않습니다. nested run은
+top-level owner의 ledger에 compact facts와 evidence paths를 반환합니다.
 
-## Headless prerequisite
+## Headless 사전조건
 
-Before product mutation, establish that every required scenario can run
-headlessly. Use the first supported route:
+product mutation 전에 모든 required scenario가 headlessly 실행될 수 있음을
+확인합니다. 지원되는 route 중 먼저 해당하는 것을 사용합니다.
 
-1. no authentication is required;
-2. reuse an already available safe, run-owned authenticated session/profile whose
-   current headless state can be verified;
-3. transiently inject short-lived user-supplied token/session material through a
-   repository/application-supported mechanism such as a request header, cookie,
-   or storage bootstrap;
-4. use username/password only through a repository-supported fully
-   non-interactive login with no OTP, MFA, SSO, CAPTCHA, passkey, or device
-   approval.
+1. authentication이 필요하지 않음;
+2. current headless state를 검증할 수 있는, 이미 사용 가능한 safe하고
+   run-owned인 authenticated session/profile을 재사용함;
+3. request header, cookie, storage bootstrap 같은 repository/application-supported
+   mechanism을 통해 user-supplied short-lived token/session material을 일시적으로
+   주입함;
+4. OTP, MFA, SSO, CAPTCHA, passkey, device approval이 없는 repository-supported
+   fully non-interactive login에서만 username/password를 사용함.
 
-Never guess an injection mechanism. Bind it to repository/application evidence or
-an explicit user-provided method, then verify the resulting authenticated state.
-If interactive authentication is required, request suitable short-lived material
-through an available ephemeral secret-input channel. If safe headless
-authentication still cannot be established, return `Unverifiable` before product
-mutation; never open a visible-browser fallback.
+injection mechanism을 절대 추측하지 않습니다. repository/application evidence 또는
+명시적으로 사용자가 제공한 method에 연결한 뒤 resulting authenticated state를
+검증합니다. interactive authentication이 필요하면 사용 가능한 ephemeral
+secret-input channel을 통해 적합한 short-lived material을 요청합니다. safe
+headless authentication을 여전히 확립할 수 없으면 product mutation 전에
+`Unverifiable`을 반환하며 visible-browser fallback을 절대 열지 않습니다.
 
-Auth values are operational inputs only. Never echo or persist usernames,
-passwords, tokens, OTPs, cookies, session values, recovery codes, sensitive
-identity, secret-bearing commands, or raw auth/network captures in chat,
-`.tigerkit/*.md`, prompts, logs, summaries, or child receipts. Record only facts
-such as `auth mode: token-headless` and `authenticated state established`.
+Auth values는 operational input으로만 취급합니다. usernames, passwords, tokens,
+OTPs, cookies, session values, recovery codes, sensitive identity, secret-bearing
+commands, raw auth/network captures를 chat, `.tigerkit/*.md`, prompts, logs,
+summaries, child receipts에 절대 echo하거나 persist하지 않습니다. `auth mode: token-headless`,
+`authenticated state established` 같은 fact만 기록합니다.
 
 ## Workflow
 
-1. **Scope** — freeze exact criteria, target URL/environment, safe interaction
-   boundary, current candidate identity, and parent approval facts. Do not broaden
-   into generic visual critique or reopen settled product decisions.
-2. **Prepare** — load only applicable references: [environment](references/environment.md),
+1. **범위(Scope)** — exact criteria, target URL/environment, safe interaction
+   boundary, current candidate identity, parent approval facts를 고정합니다.
+   generic visual critique로 넓히거나 결정된 product decision을 다시 열지 않습니다.
+2. **준비(Prepare)** — 적용되는 reference만 로드합니다: [environment](references/environment.md),
    [behavior](references/behavior.md), [visual](references/visual.md),
-   [accessibility](references/accessibility.md), and [safety](references/safety.md).
-   Prove the auth prerequisite before any parent worker mutates product state.
-3. **Launch** — use an available native, Playwright-compatible, MCP, or verified
-   CDP route without installing dependencies. Every new Chrome/Chromium process
-   must prove exact effective argument `--headless=new` before its first browser
-   call; otherwise attach to a directly launched verified headless endpoint or
-   return `Unverifiable`.
-4. **Run** — prove current-worktree serving source, begin from known state, use
-   trusted interactions, inspect required request/response and final state, and
-   capture at least one non-empty run-owned screenshot of every decision-relevant
-   final state. Actually inspect each cited image.
-5. **Verdict** — bind each approved criterion to evidence and report `Pass`,
-   `Fail`, `Blocked`, or `Unverifiable`. Classify observed failures as
-   `change-related`, `pre-existing`, `environment`, or `unverifiable` only when
-   the evidence supports that origin.
-6. **Cleanup** — close only run-owned resources and verify capture/redaction
-   residue using [session lifecycle](references/session-lifecycle.md).
+   [accessibility](references/accessibility.md), [safety](references/safety.md).
+   parent worker가 product state를 변경하기 전에 auth prerequisite를 증명합니다.
+3. **실행 준비(Launch)** — dependency를 설치하지 않고 사용 가능한 native,
+   Playwright-compatible, MCP 또는 verified CDP route를 사용합니다. 새
+   Chrome/Chromium process는 첫 browser call 전에 exact effective argument
+   `--headless=new`를 반드시 증명해야 합니다. 그렇지 않으면 직접 시작한
+   verified headless endpoint에 연결하거나 `Unverifiable`을 반환합니다.
+4. **실행(Run)** — current-worktree serving source를 증명하고 known state에서
+   시작하며 trusted interaction을 사용합니다. required request/response와 final
+   state를 inspect하고 decision-relevant한 모든 final state에 대해 최소 하나의
+   non-empty run-owned screenshot을 capture합니다. 인용한 image는 모두 실제로
+   inspect합니다.
+5. **판정(Verdict)** — 승인된 각 criterion을 evidence에 연결하고 `Pass`,
+   `Fail`, `Blocked`, `Unverifiable`를 보고합니다. evidence가 origin을 뒷받침할
+   때만 observed failure를 `change-related`, `pre-existing`, `environment`,
+   `unverifiable`로 분류합니다.
+6. **정리(Cleanup)** — run-owned resource만 닫고 [session lifecycle](references/session-lifecycle.md)을
+   사용해 capture/redaction residue를 확인합니다.
 
-Long-running verification servers run as owned background processes. Record
-PID/cwd/port/command and a bounded log path, poll a concrete readiness signal with
-a timeout, and continue after readiness instead of waiting for process exit.
+Long-running verification server는 owned background process로 실행합니다.
+PID/cwd/port/command와 bounded log path를 기록하고, timeout이 있는 concrete
+readiness signal을 poll합니다. process exit를 기다리지 말고 readiness 이후
+계속합니다.
 
-## Evidence and result
+## Evidence와 result
 
-Binary evidence may live in a run-owned `.tigerkit/evidence/browser/<run-id>/`
-directory; no Markdown file belongs there. Move only proven run-owned captures,
-never user fixtures. Sensitive capture is usable only after verified redaction
-and residue absence; otherwise return `Unverifiable` and preserve no secret.
+Binary evidence는 run-owned `.tigerkit/evidence/browser/<run-id>/` directory에
+둘 수 있으며, 그곳에 Markdown file을 두지 않습니다. proven run-owned capture만
+이동하고 user fixture는 절대 이동하지 않습니다. Sensitive capture는 verified
+redaction과 residue absence를 확인한 뒤에만 사용할 수 있습니다. 그렇지 않으면
+`Unverifiable`을 반환하고 secret을 보존하지 않습니다.
 
-A nested result contains only status, per-criterion facts, non-sensitive auth
-mode, absolute evidence directory, inspected screenshot paths, limitations, and
-cleanup facts. When approved PR evidence is required, also return
-`evidence_required: true`, its criterion, and producer `tk-browser-verify`; never
-upload it.
+nested result에는 status, per-criterion facts, non-sensitive auth mode, absolute
+evidence directory, inspected screenshot paths, limitations, cleanup facts만
+포함합니다. 승인된 PR evidence가 required이면 `evidence_required: true`, 해당
+criterion, producer `tk-browser-verify`도 반환하되 upload하지 않습니다.
 
-A standalone result starts with `## Verdict`, includes `Status: <token>`,
-`## Verified`, optional bounded findings/unverified facts, `## Evidence`, and
-cleanup facts. `## Evidence` names the absolute evidence directory and every
-inspected screenshot. Missing required runtime evidence is `Unverifiable`, never
-`Pass`.
+standalone result는 `## Verdict`로 시작하고 `Status: <token>`, `## Verified`,
+선택적인 bounded findings/unverified facts, `## Evidence`, cleanup facts를
+포함합니다. `## Evidence`에는 absolute evidence directory와 inspected screenshot을
+모두 적습니다. required runtime evidence가 없으면 `Unverifiable`이며 절대
+`Pass`가 아닙니다.
 
 | Status | Meaning |
 | --- | --- |
-| `Pass` | Every approved browser criterion has current inspected evidence |
-| `Fail` | Current runtime evidence violates an approved criterion |
-| `Blocked` | A user-owned safety or target decision is required before the run |
-| `Unverifiable` | Required headless auth, environment, or evidence cannot be established |
+| `Pass` | 승인된 모든 browser criterion에 current inspected evidence가 있음 |
+| `Fail` | current runtime evidence가 승인된 criterion을 위반함 |
+| `Blocked` | run 전에 user-owned safety 또는 target decision이 필요함 |
+| `Unverifiable` | required headless auth, environment 또는 evidence를 확립할 수 없음 |
 
-Never cause unauthorized payment, external communication, destructive change,
-production-data mutation, or account/permission change. Never commit, publish, or
-modify product source.
+unauthorized payment, external communication, destructive change, production-data
+mutation, account/permission change를 절대 일으키지 않습니다. commit, publish,
+product source 수정도 절대 하지 않습니다.
