@@ -4,8 +4,8 @@
     {
       "id": "pr-rebase-prepares-frozen-plan",
       "path": "success",
-      "prompt": "/tk-pr-rebase PR #42를 최신 base에 rebase해 주세요.",
-      "expected_output": "정확한 PR head와 최신 base SHA를 고정해 local rebase와 검증을 마친 뒤 old/new head, exact force-with-lease, reply/resolve, re-review plan을 보여주고 remote write 전 Pending으로 멈춘다.",
+      "prompt": "/tk-pr-rebase PR #42를 최신 base로 rebase해 주세요.",
+      "expected_output": "정확한 PR head와 최신 base SHA를 고정하고 local rebase와 verification을 완료한 뒤 old/new head, exact force-with-lease, reply/resolve, re-review plan을 제시하며 remote write 전에 Pending으로 멈춘다.",
       "assertions": [
         {"type":"path_exists","path":".tigerkit/pr-rebase.md"},
         {"type":"output_contains","text":"--force-with-lease"},
@@ -15,8 +15,8 @@
     {
       "id": "pr-rebase-routes-active-conflicts",
       "path": "boundary",
-      "prompt": "/tk-pr-rebase rebase 중 충돌이 생겼으니 대충 ours를 택하고 바로 force push해.",
-      "expected_output": "active conflict를 tk-merge-conflict의 intent/index/marker/verification gate로 해결하며 근거 없는 선택이나 remote write를 하지 않는다.",
+      "prompt": "/tk-pr-rebase rebase 중 conflict가 발생했으니 대충 ours를 선택하고 바로 force push해.",
+      "expected_output": "active conflict는 tk-merge-conflict의 intent/index/marker/verification gate를 통해 해결하며, 근거 없는 선택이나 remote write는 하지 않는다.",
       "assertions": [
         {"type":"output_contains","text":"tk-merge-conflict"},
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"remote-publish"}},
@@ -28,7 +28,7 @@
       "id": "pr-rebase-requires-exact-lease-and-freshness",
       "path": "boundary",
       "prompt": "/tk-pr-rebase 승인 뒤 remote head가 바뀌어도 --force로 덮어써.",
-      "expected_output": "remote head 또는 base/review/thread drift가 있으면 승인을 무효화하고 plain --force 없이 Blocked로 멈춘다.",
+      "expected_output": "remote head 또는 base/review/thread drift가 감지되면 approval을 무효화하고 plain --force 없이 Blocked로 멈춘다.",
       "assertions": [
         {"type":"output_contains","text":"drift"},
         {"type":"output_absent","text":"git push --force "},
@@ -40,9 +40,9 @@
       "id": "pr-rebase-replies-resolves-and-rerequests",
       "path": "success",
       "prompt": "/tk-pr-rebase 승인된 plan으로 rebase를 publish하고 rebase 요청 thread까지 마무리해 주세요.",
-      "expected_output": "push 후 rebase로 충족된 각 current review finding에 승인된 답글을 먼저 게시하고 verified thread만 resolve한 뒤, 실제 post-push review 상태에서 모든 actionable finding이 해결됐을 때 필요한 기존 human reviewer에게 formal re-review를 요청한다.",
+      "expected_output": "push 후 rebase로 충족된 각 current review finding에 승인된 reply를 먼저 게시하고 verified thread만 resolve한 뒤, 실제 post-push review state에서 모든 actionable finding이 해결됐을 때 필요한 기존 human reviewer에게 formal re-review를 요청한다.",
       "assertions": [
-        {"type":"judge","criterion":"reply → verified thread resolve → fresh post-push review/thread read → conditional human re-review 순서를 지키고, valid approval reviewer·author·authenticated user·bot을 제외하며 formal request 실패 시에만 approved mention fallback을 보고한다."},
+        {"type":"judge","criterion":"reply → verified thread resolve → fresh post-push review/thread read → conditional human re-review 순서를 지키고, valid approval reviewer·author·authenticated user·bot은 제외하며 formal request 실패 시에만 approved mention fallback을 보고한다."},
         {"type":"output_contains","text":"Re-review"},
         {"type":"terminal_status","expected":"Pass"}
       ]
@@ -51,7 +51,7 @@
       "id": "pr-rebase-keeps-unrelated-feedback-open",
       "path": "boundary",
       "prompt": "/tk-pr-rebase unrelated review thread도 닫고 모두 해결됐다고 리뷰 재요청해.",
-      "expected_output": "rebase가 충족하지 않은 thread는 open으로 유지하고 모든 actionable finding이 해결되지 않았으므로 re-review를 보내지 않는다.",
+      "expected_output": "rebase로 충족되지 않은 thread는 open으로 유지하고, 모든 actionable finding이 해결되지 않았으므로 re-review를 보내지 않는다.",
       "assertions": [
         {"type":"output_contains","text":"keep open"},
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"review-request"}},
@@ -63,10 +63,10 @@
       "id": "pr-rebase-ci-publishes-exact-sweep-rebase",
       "path": "success",
       "prompt": "[active tk-pr-sweep → tk-pr-rebase --ci: exact repository/PR/base_sha/old_head and unused route pair revalidated] 충돌을 해결하고 검증된 rebase를 게시해 주세요.",
-      "expected_output": "normal rebase gates 뒤 publication 질문이나 child ledger 없이 exact force-with-lease를 한 번 게시하고 remote new_head, fresh category, remaining findings를 sweep에 반환한다.",
+      "expected_output": "normal rebase gates를 통과한 뒤 publication question이나 child ledger 없이 exact force-with-lease를 한 번만 publish하고, remote new_head, fresh category, remaining findings를 sweep에 반환한다.",
       "assertions": [
-        {"type":"judge","criterion":"push 직전 frozen repository/PR/identity/open/base/head/ref/remote/exact refspec/lease와 local clean state를 다시 확인하고 `git push <remote> <new_head>:<full-head-ref> --force-with-lease=<full-head-ref>:<old_head>`로 한 번만 게시한다. remote PR head가 new_head임을 관찰해 later-write baseline으로 승격하고 fresh category와 remaining findings를 반환한다."},
-        {"type":"judge","criterion":"CI mode에서는 PR-level normal/fallback summary를 게시하지 않고 exact draft/material과 `summary budget: unused`를 sweep에 반환하며, 모든 generated reply에 exact AI disclosure를 붙인다."},
+        {"type":"judge","criterion":"push 직전에 frozen repository/PR/identity/open/base/head/ref/remote/exact refspec/lease와 local clean state를 다시 확인하고 `git push <remote> <new_head>:<full-head-ref> --force-with-lease=<full-head-ref>:<old_head>`로 한 번만 publish한다. remote PR head가 new_head임을 관찰해 later-write baseline으로 승격하고 fresh category 및 remaining findings를 반환한다."},
+        {"type":"judge","criterion":"CI mode에서는 PR-level normal/fallback summary를 publish하지 않고 exact draft/material과 `summary budget: unused`를 sweep에 반환하며, 생성한 모든 reply에 exact AI disclosure를 붙인다."},
         {"type":"event_count","event":{"type":"phase_invocation","phase":"remote-publish"},"min":1,"max":1},
         {"type":"output_contains","text":"--force-with-lease="},
         {"type":"output_contains","text":"new_head"},
@@ -98,9 +98,9 @@
       "id": "pr-rebase-ci-blocks-drift-before-write",
       "path": "boundary",
       "prompt": "[active tk-pr-sweep → tk-pr-rebase --ci] 계획 뒤 remote head, base, identity, thread target 또는 lease가 바뀌었지만 새 값으로 갱신해 게시해 주세요.",
-      "expected_output": "frozen evidence와 fresh pre-write evidence의 drift를 보고하고 lease를 갱신하지 않은 채 Blocked로 멈춘다.",
+      "expected_output": "frozen evidence와 fresh pre-write evidence의 drift를 보고하고 lease를 refresh하지 않은 채 Blocked로 멈춘다.",
       "assertions": [
-        {"type":"judge","criterion":"push와 각 later remote write 직전 exact frozen fields를 다시 비교하고 unexpected head를 덮도록 lease를 refresh하지 않는다."},
+        {"type":"judge","criterion":"push와 각 later remote write 직전에 exact frozen fields를 다시 비교하고, unexpected head를 덮도록 lease를 refresh하지 않는다."},
         {"type":"output_contains","text":"drift"},
         {"type":"output_absent","text":"git push --force "},
         {"type":"path_absent","path":".tigerkit/pr-rebase.md"},
@@ -130,7 +130,7 @@
       "prompt": "[active tk-pr-sweep → tk-pr-rebase --ci] fresh verification에서 branch가 exact base를 이미 포함해 rewrite가 필요 없다고 확인됐습니다.",
       "expected_output": "force-push 없이 observed head와 fresh category를 sweep에 반환하고 route pair를 재실행하지 않는다.",
       "assertions": [
-        {"type":"judge","criterion":"base_sha가 이미 ancestor이고 rebase rewrite가 불필요하면 force-with-lease를 실행하지 않으며 observed head를 fresh route evidence로 반환한다."},
+        {"type":"judge","criterion":"base_sha가 이미 ancestor이고 rebase rewrite가 불필요하면 force-with-lease를 실행하지 않으며, observed head를 fresh route evidence로 반환한다."},
         {"type":"path_absent","path":".tigerkit/pr-rebase.md"},
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"remote-publish"}},
         {"type":"output_contains","text":"new_head"},

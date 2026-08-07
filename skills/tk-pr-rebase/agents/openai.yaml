@@ -1,2 +1,2 @@
 interface:
-  short_description: "[user/auto] Safely rebase one PR through approved or sweep-owned authority."
+  short_description: "[user/auto] 승인된 또는 sweep-owned authority를 통해 하나의 PR을 안전하게 rebase합니다."
