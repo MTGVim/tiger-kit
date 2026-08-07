@@ -21,10 +21,8 @@ Screenshots support visible-focus and layout claims but do not prove keyboard
 reachability, accessible names, or error association. DOM/accessibility-tree
 evidence alone does not prove visible focus.
 
-## Scope receipt
+## Scope facts
 
 Record inspected flow, keyboard path, focus result, semantic evidence,
 findings, and omitted scope. Never claim full WCAG or product-wide
 accessibility conformance from a limited rule set or single flow.
-
-User-facing progress and receipt prose follows the user's language.

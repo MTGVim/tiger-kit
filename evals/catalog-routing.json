@@ -55,6 +55,51 @@
       "from": "improve-finding-to-drive",
       "to": "audit-finding-to-drive",
       "reason": "Rename catalog routing cases and finding vocabulary with the tk-audit skill identity."
+    },
+    {
+      "from": "spec-vs-tickets-spec",
+      "to": "drive-prepares-and-slices",
+      "reason": "Issue 277 removes phase-skill routing and makes explicit Drive own preparation, unit slicing, and fresh-worker mutation."
+    },
+    {
+      "from": "spec-vs-tickets-tickets",
+      "to": "drive-prepares-and-slices",
+      "reason": "Issue 277 removes phase-skill routing and makes explicit Drive own preparation, unit slicing, and fresh-worker mutation."
+    },
+    {
+      "from": "implement-vs-drive-implement",
+      "to": "drive-sdd-owned-change",
+      "reason": "Issue 277 removes phase-skill routing and makes explicit Drive own preparation, unit slicing, and fresh-worker mutation."
+    },
+    {
+      "from": "implement-vs-drive-drive",
+      "to": "drive-sdd-owned-change",
+      "reason": "Issue 277 removes phase-skill routing and makes explicit Drive own preparation, unit slicing, and fresh-worker mutation."
+    },
+    {
+      "from": "implement-vs-drive-active-handoff",
+      "to": "drive-worker-handoff-is-internal",
+      "reason": "Issue 277 removes phase-skill routing and makes explicit Drive own preparation, unit slicing, and fresh-worker mutation."
+    },
+    {
+      "from": "implement-vs-drive-ordinary-request",
+      "to": "drive-generic-request",
+      "reason": "Issue 277 removes phase-skill routing and makes explicit Drive own preparation, unit slicing, and fresh-worker mutation."
+    },
+    {
+      "from": "ask-repo-vs-implement",
+      "to": "ask-repo-vs-drive",
+      "reason": "Issue 277 removes phase-skill routing and makes explicit Drive own preparation, unit slicing, and fresh-worker mutation."
+    },
+    {
+      "from": "pr-sweep-vs-triage",
+      "to": "pr-sweep-report-explicit",
+      "reason": "Issue 277 removes the triage wrapper skill and routes explicit read-only PR inventory through tk-pr-sweep --report."
+    },
+    {
+      "from": "pr-triage-explicit",
+      "to": "pr-sweep-report-explicit",
+      "reason": "Issue 277 removes the triage wrapper skill and routes explicit read-only PR inventory through tk-pr-sweep --report."
     }
   ],
   "critical_hosts": [
@@ -88,22 +133,6 @@
       "critical": true
     },
     {
-      "id": "spec-vs-tickets-spec",
-      "boundary": "tk-to-spec vs tk-to-tickets",
-      "prompt": "확정된 결정을 독립 구현 명세로 작성해 주세요.",
-      "focus_skill": "tk-to-spec",
-      "expected_selected_skill": "tk-to-spec",
-      "critical": true
-    },
-    {
-      "id": "spec-vs-tickets-tickets",
-      "boundary": "tk-to-spec vs tk-to-tickets",
-      "prompt": "이 Ready 명세를 독립 검증 가능한 vertical ticket으로 나눠 주세요.",
-      "focus_skill": "tk-to-tickets",
-      "expected_selected_skill": "tk-to-tickets",
-      "critical": false
-    },
-    {
       "id": "grooming-vs-learn-audit",
       "boundary": "tk-grooming vs tk-learn",
       "prompt": "기존 repo rule과 skill의 중복·범위·배치를 감사해 주세요.",
@@ -125,38 +154,6 @@
       "prompt": "이미 존재하는 repository rule과 skill의 중복·범위·트리거를 감사해 주세요.",
       "focus_skill": "tk-grooming",
       "expected_selected_skill": "tk-grooming",
-      "critical": true
-    },
-    {
-      "id": "implement-vs-drive-implement",
-      "boundary": "tk-implement vs tk-drive",
-      "prompt": "/tk-implement 이 변경을 구현하고 검증된 commit을 만들어 주세요.",
-      "focus_skill": "tk-implement",
-      "expected_selected_skill": "tk-implement",
-      "critical": false
-    },
-    {
-      "id": "implement-vs-drive-drive",
-      "boundary": "tk-implement vs tk-drive",
-      "prompt": "$tk-drive 이 source를 spec부터 검증된 commit까지 진행해 주세요.",
-      "focus_skill": "tk-drive",
-      "expected_selected_skill": "tk-drive",
-      "critical": true
-    },
-    {
-      "id": "implement-vs-drive-active-handoff",
-      "boundary": "tk-implement vs tk-drive",
-      "prompt": "[active tk-drive implementation handoff] Implement ticket TK-2 with R3/AC4 as one unit and pass its verified commit state to the active graph.",
-      "focus_skill": "tk-implement",
-      "expected_selected_skill": "tk-implement",
-      "critical": true
-    },
-    {
-      "id": "implement-vs-drive-ordinary-request",
-      "boundary": "tk-implement vs tk-drive",
-      "prompt": "이 함수의 버그를 고쳐 주세요.",
-      "focus_skill": "tk-implement",
-      "expected_selected_skill": null,
       "critical": true
     },
     {
@@ -288,14 +285,6 @@
       "critical": false
     },
     {
-      "id": "ask-repo-vs-implement",
-      "boundary": "tk-ask-repo vs tk-implement",
-      "prompt": "$tk-implement 이 값이 잘못 내려오는 버그를 고치고 검증된 commit을 만들어 주세요.",
-      "focus_skill": "tk-implement",
-      "expected_selected_skill": "tk-implement",
-      "critical": true
-    },
-    {
       "id": "ask-repo-vs-grill",
       "boundary": "tk-ask-repo vs tk-grill-me",
       "prompt": "$tk-grill-me 이 기능을 유지할지 제거할지 결정을 한 번에 하나씩 닫아 주세요.",
@@ -345,7 +334,7 @@
     },
     {
       "id": "pr-open-explicit",
-      "boundary": "tk-pr-open vs tk-pr-triage vs tk-pr-respond",
+      "boundary": "tk-pr-open vs tk-pr-sweep --report vs tk-pr-respond",
       "prompt": "/tk-pr-open 현재 브랜치로 PR draft를 준비해줘",
       "focus_skill": "tk-pr-open",
       "expected_selected_skill": "tk-pr-open",
@@ -376,16 +365,8 @@
       "critical": true
     },
     {
-      "id": "pr-triage-explicit",
-      "boundary": "tk-pr-open vs tk-pr-triage vs tk-pr-respond",
-      "prompt": "/tk-pr-triage 현재 repository의 열린 PR을 정리해줘",
-      "focus_skill": "tk-pr-triage",
-      "expected_selected_skill": "tk-pr-triage",
-      "critical": true
-    },
-    {
       "id": "pr-respond-explicit",
-      "boundary": "tk-pr-open vs tk-pr-triage vs tk-pr-respond",
+      "boundary": "tk-pr-open vs tk-pr-sweep --report vs tk-pr-respond",
       "prompt": "/tk-pr-respond 선택한 review feedback을 반영해줘",
       "focus_skill": "tk-pr-respond",
       "expected_selected_skill": "tk-pr-respond",
@@ -409,7 +390,7 @@
     },
     {
       "id": "pr-sweep-explicit",
-      "boundary": "tk-pr-sweep vs tk-pr-triage/tk-pr-respond/tk-pr-rebase",
+      "boundary": "tk-pr-sweep vs tk-pr-sweep --report/tk-pr-respond/tk-pr-rebase",
       "prompt": "/tk-pr-sweep configured repositories의 지원 가능한 Act now PR을 처리해줘",
       "focus_skill": "tk-pr-sweep",
       "expected_selected_skill": "tk-pr-sweep",
@@ -421,14 +402,6 @@
       "prompt": "열린 PR들을 알아서 정리하고 CI도 고쳐줘",
       "focus_skill": "tk-pr-sweep",
       "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "pr-sweep-vs-triage",
-      "boundary": "tk-pr-sweep vs tk-pr-triage/tk-pr-respond/tk-pr-rebase",
-      "prompt": "/tk-pr-triage configured repositories 상태만 읽어줘",
-      "focus_skill": "tk-pr-triage",
-      "expected_selected_skill": "tk-pr-triage",
       "critical": true
     },
     {
@@ -485,6 +458,54 @@
       "prompt": "$tk-drive AUD-003을 Ready spec부터 verified commit까지 진행해줘",
       "focus_skill": "tk-drive",
       "expected_selected_skill": "tk-drive",
+      "critical": true
+    },
+    {
+      "id": "drive-prepares-and-slices",
+      "boundary": "tk-drive integrated preparation and unit slicing",
+      "prompt": "$tk-drive 이 confirmed source를 Ready R/AC와 dependency units로 준비해 승인 후 구현해 주세요.",
+      "focus_skill": "tk-drive",
+      "expected_selected_skill": "tk-drive",
+      "critical": true
+    },
+    {
+      "id": "drive-sdd-owned-change",
+      "boundary": "tk-drive explicit SDD workflow vs ordinary request",
+      "prompt": "$tk-drive 이 변경을 준비부터 fresh-worker verified commit까지 진행해 주세요.",
+      "focus_skill": "tk-drive",
+      "expected_selected_skill": "tk-drive",
+      "critical": true
+    },
+    {
+      "id": "drive-worker-handoff-is-internal",
+      "boundary": "tk-drive controller vs internal worker handoff",
+      "prompt": "[active approved tk-drive] Execute approved unit U2 through a fresh worker and continue the owning Drive lifecycle.",
+      "focus_skill": "tk-drive",
+      "expected_selected_skill": "tk-drive",
+      "critical": true
+    },
+    {
+      "id": "ask-repo-vs-drive",
+      "boundary": "tk-ask-repo vs tk-drive",
+      "prompt": "$tk-drive 이 값이 잘못 내려오는 버그를 준비부터 verified commit까지 진행해 주세요.",
+      "focus_skill": "tk-drive",
+      "expected_selected_skill": "tk-drive",
+      "critical": true
+    },
+    {
+      "id": "pr-sweep-report-explicit",
+      "boundary": "tk-pr-sweep --report vs tk-pr-respond vs interactive tk-pr-sweep",
+      "prompt": "/tk-pr-sweep --report configured repositories 상태만 읽어줘",
+      "focus_skill": "tk-pr-sweep",
+      "expected_selected_skill": "tk-pr-sweep",
+      "critical": true
+    },
+    {
+      "id": "browser-headless-auth-verifier-explicit",
+      "boundary": "tk-browser-verify headless auth prerequisite",
+      "prompt": "승인된 staging AC를 headless browser에서 검증해 주세요. OTP 로그인 대신 문서화된 transient session bootstrap을 사용해야 합니다.",
+      "focus_skill": "tk-browser-verify",
+      "expected_selected_skill": "tk-browser-verify",
       "critical": true
     }
   ]

@@ -9,21 +9,18 @@
   "scenarios": [
     {
       "id": "single-unit-json-output",
-      "source": "In evals/fixtures/drive_ab/report.py add a --json option. With --json, stdout must be one parseable JSON object containing the existing name and count fields. Without --json, preserve the exact current text output. Add durable tests and commit the verified change.",
+      "source": "[active run with this exact plan already approved] In evals/fixtures/drive_ab/report.py add a --json option. With --json, stdout must be one parseable JSON object containing the existing name and count fields. Without --json, preserve the exact current text output. Add durable tests and commit the verified change.",
       "verification": [
         "python3 -m unittest evals.fixtures.drive_ab.test_report"
       ],
       "drive_required_phases": [
         "tk-drive",
-        "tk-to-spec",
-        "tk-implement",
+        "fresh-worker",
+        "Close gaps",
         "aggregate-verification",
         "tk-drive:finalization"
       ],
-      "composition_required_phases": [
-        "tk-to-spec",
-        "tk-implement"
-      ],
+      "control_required_phases": [],
       "expected_terminal": [
         "Pass"
       ],
@@ -31,23 +28,18 @@
     },
     {
       "id": "multi-unit-json-and-csv",
-      "source": "In evals/fixtures/drive_ab/report.py add two independently testable output modes: --json emits a parseable JSON object and --csv emits a header plus one data row. Preserve the default text output, add durable tests for all three modes, keep the work in vertical units, and commit each verified unit.",
+      "source": "[active run with this exact two-unit plan already approved] In evals/fixtures/drive_ab/report.py add two independently testable output modes: --json emits a parseable JSON object and --csv emits a header plus one data row. Preserve the default text output, add durable tests for all three modes, keep the work in vertical units, and commit each verified unit.",
       "verification": [
         "python3 -m unittest evals.fixtures.drive_ab.test_report"
       ],
       "drive_required_phases": [
         "tk-drive",
-        "tk-to-spec",
-        "tk-to-tickets",
-        "tk-implement",
+        "fresh-worker",
+        "Close gaps",
         "aggregate-verification",
         "tk-drive:finalization"
       ],
-      "composition_required_phases": [
-        "tk-to-spec",
-        "tk-to-tickets",
-        "tk-implement"
-      ],
+      "control_required_phases": [],
       "expected_terminal": [
         "Pass"
       ],
@@ -61,9 +53,7 @@
         "tk-drive",
         "tk-grill-me"
       ],
-      "composition_required_phases": [
-        "tk-grill-me"
-      ],
+      "control_required_phases": [],
       "expected_terminal": [
         "Pending",
         "Blocked"

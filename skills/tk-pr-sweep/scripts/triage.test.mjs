@@ -128,7 +128,7 @@ test('approval bounds reply evidence to comments after the approval', () => {
 });
 
 test('missing triage config bootstraps the current repository', async () => {
-  const root = await mkdtemp(join(tmpdir(), 'tk-pr-triage-'));
+  const root = await mkdtemp(join(tmpdir(), 'tk-pr-sweep-triage-'));
   try {
     const path = triageConfigPath({ XDG_CONFIG_HOME: root });
     const loaded = loadOrBootstrapConfig(path, ['MTGVim/tiger-kit']);

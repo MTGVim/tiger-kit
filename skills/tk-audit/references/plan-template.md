@@ -11,6 +11,5 @@ with expected results, hard in/out boundaries, assumptions, and explicit
 STOP/report-back conditions. Stamp the finding with the audited HEAD and say
 how to handle drift. Keep dependencies and maintenance notes grounded.
 
-`tk-audit` never writes `plans/`, implementation code, tickets, or remote
-issues. `tk-to-spec`, `tk-to-tickets`, and `tk-drive` own those downstream
-artifacts and decisions.
+`tk-audit` never writes `plans/`, implementation code, units, or remote issues.
+`tk-drive` owns downstream R/AC, execution units, and decisions.

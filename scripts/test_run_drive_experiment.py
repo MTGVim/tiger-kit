@@ -18,14 +18,14 @@ class DriveExperimentTest(unittest.TestCase):
     def test_required_phases_must_precede_final_output(self) -> None:
         events = [
             {"type": "phase_invocation", "phase": "tk-drive"},
-            {"type": "phase_invocation", "phase": "tk-to-spec"},
+            {"type": "phase_invocation", "phase": "fresh-worker"},
             {"type": "final_output", "terminal_status": "Pass"},
         ]
         self.assertTrue(
-            run_drive_experiment.ordered_phases(events, ["tk-drive", "tk-to-spec"])
+            run_drive_experiment.ordered_phases(events, ["tk-drive", "fresh-worker"])
         )
         self.assertFalse(
-            run_drive_experiment.ordered_phases(events, ["tk-drive", "tk-implement"])
+            run_drive_experiment.ordered_phases(events, ["fresh-worker", "tk-drive"])
         )
 
     def test_drive_is_kept_when_quality_is_not_worse(self) -> None:
@@ -57,17 +57,17 @@ class DriveExperimentTest(unittest.TestCase):
         records = [
             {"arm": "drive", "passed": False, "continuation_ok": False},
             {"arm": "drive", "passed": False, "continuation_ok": False},
-            {"arm": "composition", "passed": True, "continuation_ok": True},
-            {"arm": "composition", "passed": True, "continuation_ok": True},
+            {"arm": "control", "passed": True, "continuation_ok": True},
+            {"arm": "control", "passed": True, "continuation_ok": True},
         ]
         self.assertEqual(
             run_drive_experiment.summarize(records)["decision"], "RemoveCandidate"
         )
 
-    def test_composition_prompt_explicitly_excludes_drive(self) -> None:
-        prompt = run_drive_experiment.prompt_for("composition", "source")
-        self.assertIn("Do not invoke tk-drive", prompt)
-        self.assertIn("$tk-to-spec", prompt)
+    def test_control_prompt_excludes_tigerkit(self) -> None:
+        prompt = run_drive_experiment.prompt_for("control", "source")
+        self.assertIn("Do not invoke any TigerKit skill", prompt)
+        self.assertNotIn("$tk-drive", prompt)
 
     def test_run_candidate_passes_exact_worktree_to_every_arm(self) -> None:
         candidate = Path("/tmp/exact-candidate")

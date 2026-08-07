@@ -83,7 +83,7 @@
     {
       "id": "validation-positive-9",
       "split": "validation",
-      "query": "[active tk-browser-verify pending runtime identity] tenant A의 work-admin profile을 사용해",
+      "query": "[active tk-browser-verify transient auth request] ephemeral secret handle SESSION_TOKEN을 사용해",
       "should_trigger": true,
       "facets": [
         "compound"

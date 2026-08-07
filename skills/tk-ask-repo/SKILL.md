@@ -72,37 +72,3 @@ Include only relevant non-empty sections:
 Must change | Must not change | Remaining concerns`.
 
 Do not echo the question, repeat evidence, propose a diff, invent an artifact, or append a receipt/provenance block. State `Blocked | Unverifiable`, next owner, or one recovery action only when actionable.
-
-### 🔴 HARD GATE · terminal user summary
-
-Separate progress, internal handoffs, and terminal response. Start every terminal response directly with the canonical result heading, or canonical result sentence when no heading exists. No separator, preamble, or progress recap first. Between successful active-drive phases, emit no terminal-summary opening.
-
-Never render a receipt heading, `Outcome:` label, or terminal provenance/status block. If terminal status is required, put one exact `Status: <token>` line in its owning result section. Show paths, IDs, commits, or recovery details only when they change user action or the canonical schema requires them. Phase receipts are internal handoff envelopes: return required phase, status, IDs, `Return to`, `Success state`, or `Outstanding transition` only to the parent, never the terminal summary.
-
-Persist provenance only in an artifact or ledger this skill already owns. Never create one only for a receipt; read-only stays read-only. Never require a shared runtime reference outside this skill.
-
-### 🔴 HARD GATE · response language
-
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🚗 meaningful boundary` only for long-running work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
-
-Before user-facing progress, questions, or summaries, use the latest explicit language instruction; otherwise current message language. All free-form sentences and prose result values use it. Do not switch to English because sources, skills, tools, or code are English. Preserve canonical headings, status tokens, IDs, commands, paths, code, and exact source literals byte-stable; explain around them in the resolved language. Before return, rewrite any drifting free-form prose.
-
-## User decision questions
-
-Normal investigation owns no decisions: name the decision and stop `Blocked`. Only an explicitly authorized handoff may ask one self-contained `Question` before `Recommendation`, with two or three mutually exclusive trade-off options and one `(Recommended)` or `(추천)`. Render directly in chat; do not call structured question/input tools. Remain `Pending | Blocked` until answered.
-## Progress
-
-Standalone skills are silent by default. Emit no progress for routine start or success; use `🙋 ask-repo · 응답 필요` only for a user decision/approval, `⏳ ask-repo · 대기` only when external waiting is next, and `🚗 ask-repo · <short state>` only at a meaningful long-running boundary. Omit `tk-` from display names; a parent owns `🚗 parent > ask-repo`. Terminal responses contain no progress marker; keep `Status: <token>` unchanged.
-
-## Next-action handoff
-
-Whenever this skill hands control back to the user for a question, `Pending`,
-`Blocked`, `Unverifiable`, bounded wait, or an actionable terminal result, end
-the visible handoff with exactly one `Next:` line naming the recommended action
-or next skill and its condition. Before rendering any user-facing `Question` or
-publication/approval plan, emit exactly one nonterminal hand-raise checkpoint
-in this skill's `🙋 ... · 응답 필요` form; a parent may own the display in
-orchestration. Do not use only a `🤹` or `🚗` boundary marker for a user
-decision. Mark the single recommended option with `👍 Recommendation:`.
-Do not leave only a child receipt or generic “continue”; omit `Next:` only for
-a terminal success with no follow-up action.

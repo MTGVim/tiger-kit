@@ -173,7 +173,7 @@
       "assertions": [
         {
           "type": "judge",
-          "criterion": "tk-to-spec, tk-to-tickets, tk-implement를 호출하지 않고 artifact와 Git HEAD를 그대로 둔다."
+          "criterion": "tk-drive 또는 fresh worker를 호출하지 않고 artifact와 Git HEAD를 그대로 둔다."
         },
         {
           "type": "git_head_unchanged"

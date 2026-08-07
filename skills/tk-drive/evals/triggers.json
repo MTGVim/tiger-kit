@@ -191,7 +191,7 @@
     {
       "id": "validation-artifact-presence",
       "split": "validation",
-      "query": ".tigerkit/spec.md가 있으니 알아서 시작해",
+      "query": ".tigerkit/drive.md가 있으니 알아서 시작해",
       "should_trigger": false,
       "facets": [
         "typo"

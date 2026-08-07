@@ -10,8 +10,8 @@ only to observe state, computed values, and coordinates; never treat
 `element.click()`, `form.submit()`, or `dispatchEvent()` as interaction
 evidence.
 
-A mutation claim requires the related network request and response. Verdict
-mode links UI transition, request/response, and final UI state in one flow.
+A mutation claim requires the related network request and response. Acceptance
+verification links UI transition, request/response, and final UI state in one flow.
 A response, toast, or local DOM change alone is insufficient.
 
 ## Gated states and dialogs
@@ -39,5 +39,3 @@ cycle.
 Confirm whether provider `fill(uid, "")` clears the value. If empty fill is a
 no-op, fill a nonempty value and use trusted Backspace, or send one Backspace
 per actual character from the field end. Reobserve an empty value before save.
-
-User-facing progress and receipt prose follows the user's language.

@@ -1,36 +1,48 @@
 {
   "version": 1,
-  "progress_contract": {
-    "version": 2,
-    "scope": "all-tk-skills"
-  },
   "retired_skill_contracts": [
     "tk-reflect",
     "tk-adhd",
-    "tk-improve"
+    "tk-improve",
+    "tk-to-spec",
+    "tk-to-tickets",
+    "tk-implement",
+    "tk-pr-triage"
   ],
   "retired_catalog_cases": [
     "adhd-explicit",
     "adhd-implicit-block"
   ],
   "behavior_cases": [
-    "tk-drive:behavior:drive-live-direct-prepares-and-executes-source",
-    "tk-drive:behavior:drive-live-direct-prepared-execution-finalizes",
-    "tk-drive:behavior:drive-live-direct-implementation-finalization-boundary",
-    "tk-drive:behavior:drive-keeps-grill-pending-open-compact-progress-v2",
+    "tk-drive:behavior:drive-live-sdd-prepares-and-executes-source",
+    "tk-drive:behavior:drive-live-sdd-prepared-execution-finalizes",
+    "tk-drive:behavior:drive-live-sdd-implementation-finalization-boundary",
+    "tk-drive:behavior:drive-keeps-blocking-question-pending",
     "tk-pr-open:behavior:pr-open-prepares-plan",
-    "tk-pr-triage:behavior:pr-triage-is-read-only",
-    "tk-pr-respond:behavior:pr-respond-apply-does-not-publish",
-    "tk-pr-rebase:behavior:pr-rebase-requires-exact-lease-and-freshness"
+    "tk-pr-sweep:behavior:pr-sweep-report-is-read-only",
+    "tk-pr-respond:behavior:pr-respond-waits-for-single-plan-approval",
+    "tk-pr-rebase:behavior:pr-rebase-requires-exact-lease-and-freshness",
+    "tk-drive:behavior:drive-presents-single-approval-surface",
+    "tk-drive:behavior:drive-blocks-without-worker",
+    "tk-drive:behavior:drive-verifies-before-unit-commit",
+    "tk-drive:behavior:drive-owns-single-current-ledger",
+    "tk-pr-respond:behavior:pr-respond-prepares-single-approved-plan",
+    "tk-pr-respond:behavior:pr-respond-verifies-before-commit-and-owns-single-ledger",
+    "tk-pr-sweep:behavior:pr-sweep-single-plan-before-worker-mutation",
+    "tk-pr-sweep:behavior:pr-sweep-nested-routes-use-single-sweep-ledger",
+    "tk-browser-verify:behavior:browser-transient-auth-material-establishes-headless-session",
+    "tk-browser-verify:behavior:browser-unknown-auth-injection-is-unverifiable",
+    "tk-browser-verify:behavior:browser-auth-unavailable-stops-before-mutation",
+    "tk-browser-verify:behavior:browser-captures-return-to-owner-ledger"
   ],
   "catalog_cases": [
     "catalog:behavior:drive-vs-grill-drive",
     "catalog:behavior:drive-vs-grill-standalone-grill",
-    "catalog:behavior:spec-vs-tickets-spec",
+    "catalog:behavior:drive-prepares-and-slices",
     "catalog:behavior:grooming-vs-learn-audit",
     "catalog:behavior:learn-vs-grooming-learn",
-    "catalog:behavior:implement-vs-drive-drive",
-    "catalog:behavior:implement-vs-drive-ordinary-request",
+    "catalog:behavior:drive-sdd-owned-change",
+    "catalog:behavior:drive-generic-request",
     "catalog:behavior:prototype-vs-browser-browser",
     "catalog:behavior:handoff-vs-summary-handoff",
     "catalog:behavior:drive-vs-handoff-resume-generic",
@@ -39,6 +51,8 @@
     "catalog:behavior:skill-diagnose-vs-code-debugging",
     "catalog:behavior:skill-diagnose-vs-learn-ready",
     "catalog:behavior:pr-rebase-explicit",
-    "catalog:behavior:pr-rebase-generic-block"
+    "catalog:behavior:pr-rebase-generic-block",
+    "catalog:behavior:pr-sweep-report-explicit",
+    "catalog:behavior:browser-headless-auth-verifier-explicit"
   ]
 }

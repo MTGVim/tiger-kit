@@ -16,20 +16,22 @@ activate for generic rebase, update-branch, conflict, review-response, or
 continuation. Only automatic entry: fresh exact-PR handoff from active
 `tk-pr-sweep`.
 
-Own one PR's local rebase, `.tigerkit/pr-rebase.md` plan, bounded
-force-with-lease publication, rebase-satisfied review replies and thread resolution,
-rebase summary, and conditional human re-review. Never implement unrelated
-feedback, merge, close, tag, release, or change repository rules.
+Own one PR's local rebase, bounded force-with-lease publication, rebase-satisfied
+review replies and thread resolution, rebase summary, and conditional human
+re-review. Standalone execution owns `.tigerkit/pr-rebase.md`; Sweep CI writes no
+child Markdown ledger and returns compact evidence to `.tigerkit/pr-sweep.md`.
+Never implement unrelated feedback, merge, close, tag, release, or change
+repository rules.
 
 ## Modes
 
 - **Normal:** explicit invocation authorizes local rebase only; keep publication
   question below.
 - **Sweep CI:** `--ci` requires active `tk-pr-sweep` handoff freezing exact
-  repository, PR, base/head refs and SHAs, and route attempt. After the sweep
-  Plan approval, the handoff grants bounded rebase/conflict resolution and
-  publication without another question; semantic conflict ambiguity remains
-  `Blocked`.
+  repository, PR, base/head refs and SHAs, route attempt, and fresh isolated
+  worker/specialist dispatch. After the sweep Plan approval, the handoff grants
+  bounded rebase/conflict resolution and publication without another question;
+  semantic conflict ambiguity or missing dispatch isolation remains `Blocked`.
 
 ## Workflow
 
@@ -53,10 +55,12 @@ feedback, merge, close, tag, release, or change repository rules.
 5. Verify rebase ended; worktree and index clean; `base_sha` ancestors new `HEAD`;
    intended commits and diff remain; relevant tests/checks pass. If branch already
    contains `base_sha` and needs no rewrite, do not force-push.
-6. Write `.tigerkit/pr-rebase.md`: frozen refs and SHAs, verification, exact
-   `--force-with-lease` expectation/refspec, every outbound reply, thread action,
-   intentionally open finding, summary, prior human reviewers, normal and
-   reviewer-mention fallback bodies, exclusions. Render PR and review/thread
+6. In Normal mode, write `.tigerkit/pr-rebase.md`: frozen refs and SHAs,
+   verification, exact `--force-with-lease` expectation/refspec, every outbound
+   reply, thread action, intentionally open finding, summary, prior human
+   reviewers, normal and reviewer-mention fallback bodies, and exclusions. In
+   Sweep CI, write no Markdown ledger and return those compact facts to the
+   parent. Render PR and review/thread
    references as clickable Markdown links in user-facing output when URLs exist;
    normalize GitHub `<br>`/`<br/>` breaks to real newlines before display. End every external
    reply/comment with `_🤖 본 코멘트는 AI가 작성했습니다._`.
@@ -85,11 +89,14 @@ feedback, merge, close, tag, release, or change repository rules.
 ## Sweep CI mode
 
 1. Require fresh active-sweep handoff for one exact open PR and unused
-   `(base_sha, old_head)` pair. Missing, ambiguous, direct-only, or repeated
-   authority is `Blocked` before rebase or remote write.
+   `(base_sha, old_head)` pair plus proof that Sweep dispatched this route as a
+   fresh isolated worker/specialist. Missing, ambiguous, inline/direct-only, or
+   repeated authority is `Blocked` before rebase or remote write; never fall back
+   to controller execution.
 2. Run normal identity, ownership, clean-worktree, exact-base, conflict,
-   preservation, and verification gates. Record pair and verified `new_head` in
-   `.tigerkit/pr-rebase.md`; no separate sweep ledger.
+   preservation, and verification gates. Return the pair, verified `new_head`,
+   and compact verification evidence to `.tigerkit/pr-sweep.md`; do not create
+   `.tigerkit/pr-rebase.md` or any other child Markdown ledger.
 3. Skip only publication question. Immediately before push and every later
    remote write, re-read frozen repository, PR, identities, open state, base and head
    refs and SHAs, remote, exact refspec, lease, review and thread targets, and local clean
@@ -122,42 +129,5 @@ Use `Pass` only after requested local and remote scope is observed complete;
 `Fail` for change-related or partial-write failure; `Unverifiable` when required
 Git, GitHub, test, review, or thread evidence is unavailable.
 
-Lead with `## PR rebase`. Keep exact outbound text and full provenance in owned
-artifact.
-
-### 🔴 HARD GATE · terminal user summary
-
-Begin terminal response with `## PR rebase`. No receipt heading, `Outcome:`
-label, procedural preamble, or bottom metadata block. Expose exact IDs, refs,
-SHAs, and recovery details only when they change next action.
-
-### 🔴 HARD GATE · response language
-
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🚗 meaningful boundary` only for long-running work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
-
-Use latest explicit user language for all free-form user-facing prose. Keep
-headings, statuses, IDs, paths, commands, refs, and exact source literals stable.
-
-## User decision questions
-
-When identity, scope, conflict intent, or publication blocks progress, ask one
-self-contained `Question` before any `Recommendation`, with only
-decision-relevant evidence and one recommended option. Render question and options
-directly in chat; never call structured question or input tools. Preserve
-`Pending | Blocked` until user answers.
-## Progress
-
-Standalone skills are silent by default. Emit no progress for routine start or success; use `🙋 pr-rebase · 응답 필요` only for a user decision/approval, `⏳ pr-rebase · 대기` only when external waiting is next, and `🚗 pr-rebase · <short state>` only at a meaningful long-running boundary. Omit `tk-` from display names; a parent owns `🚗 parent > pr-rebase`. Terminal responses contain no progress marker; keep `Status: <token>` unchanged.
-
-## Next-action handoff
-
-Whenever this skill hands control back to the user for a question, `Pending`,
-`Blocked`, `Unverifiable`, bounded wait, or an actionable terminal result, end
-the visible handoff with exactly one `Next:` line naming the recommended action
-or next skill and its condition. Before rendering any user-facing `Question` or
-publication/approval plan, emit exactly one nonterminal hand-raise checkpoint
-in this skill's `🙋 ... · 응답 필요` form; a parent may own the display in
-orchestration. Do not use only a `🤹` or `🚗` boundary marker for a user
-decision. Mark the single recommended option with `👍 Recommendation:`.
-Do not leave only a child receipt or generic “continue”; omit `Next:` only for
-a terminal success with no follow-up action.
+Lead with `## PR rebase`. Keep exact outbound text and full provenance in the
+standalone owned artifact or, in Sweep CI, the compact parent evidence.

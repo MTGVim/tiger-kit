@@ -12,7 +12,7 @@ metadata:
 
 # Open pull request
 
-Start when the user selects `/tk-pr-open`, `$tk-pr-open`, or host skill picker, or when a clear single-PR request asks to prepare, open, or update one PR in natural language. This includes a post-`tk-drive` handoff such as “the verified commit is done; prepare the PR”: an existing verified current-branch commit is the expected input, not duplicate implementation work. Reuse that commit; never invoke `tk-implement` or create another product commit for this handoff. Natural-language routing starts only this skill's local preview; it never implies publication. Never activate from a generic PR question, code review, implementation request, merge request, multi-PR maintenance request, or existing `.tigerkit` artifact alone.
+Start when the user selects `/tk-pr-open`, `$tk-pr-open`, or host skill picker, or when a clear single-PR request asks to prepare, open, or update one PR in natural language. This includes a post-`tk-drive` handoff such as “the verified commit is done; prepare the PR”: an existing verified current-branch commit is the expected input, not duplicate implementation work. Reuse that commit; never dispatch another product worker or create another product commit for this handoff. Natural-language routing starts only this skill's local preview; it never implies publication. Never activate from a generic PR question, code review, implementation request, merge request, multi-PR maintenance request, or existing `.tigerkit` artifact alone.
 
 Own one pull-request draft and bounded publication plan. May inspect local Git/GitHub state and write `.tigerkit/pr-open.md`. Never edit product code, create product commits, merge, tag, release, or publish before approval gate below.
 
@@ -40,33 +40,3 @@ Plan must name repository, PR/create target, base branch, head branch, exact pus
 | Requested PR operation and required evidence verify | Report fresh URL and head SHA | `Pass` |
 
 Lead with `## PR open`; show only user-relevant state, verification, remaining risks. Keep full provenance in `.tigerkit/pr-open.md`.
-
-### 🔴 HARD GATE · terminal user summary
-
-Begin terminal response with `## PR open`. Never emit receipt heading, `Outcome:` label, procedural preamble, or bottom metadata block. Expose path, ID, commit, or recovery detail only when it changes user's next action.
-
-### 🔴 HARD GATE · response language
-
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🚗 meaningful boundary` only for long-running work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
-
-Use latest explicit user language for all free-form user-facing prose. Keep headings, statuses, IDs, paths, commands, and exact source literals stable.
-
-## User decision questions
-
-When user-owned decision blocks publication, ask one self-contained `Question` before any `Recommendation`, with only decision-relevant evidence and one recommended option. Render question/options directly in chat; never call structured question/input tools. Preserve `Pending` until answer.
-## Progress
-
-Standalone skills are silent by default. Emit no progress for routine start or success; use `🙋 pr-open · 응답 필요` only for a user decision/approval, `⏳ pr-open · 대기` only when external waiting is next, and `🚗 pr-open · <short state>` only at a meaningful long-running boundary. Omit `tk-` from display names; a parent owns `🚗 parent > pr-open`. Terminal responses contain no progress marker; keep `Status: <token>` unchanged.
-
-## Next-action handoff
-
-Whenever this skill hands control back to the user for a question, `Pending`,
-`Blocked`, `Unverifiable`, bounded wait, or an actionable terminal result, end
-the visible handoff with exactly one `Next:` line naming the recommended action
-or next skill and its condition. Before rendering any user-facing `Question` or
-publication/approval plan, emit exactly one nonterminal hand-raise checkpoint
-in this skill's `🙋 ... · 응답 필요` form; a parent may own the display in
-orchestration. Do not use only a `🤹` or `🚗` boundary marker for a user
-decision. Mark the single recommended option with `👍 Recommendation:`.
-Do not leave only a child receipt or generic “continue”; omit `Next:` only for
-a terminal success with no follow-up action.

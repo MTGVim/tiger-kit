@@ -40,9 +40,12 @@ when `scripts/run_drive_experiment.py` reports a measured `RemoveCandidate` resu
   owners never invoke sibling phase owners. Continuation is prompt-directed, not
   durable scheduling.
 - `tk-ask-repo` is read-only investigation and never implements.
-- `tk-implement` owns one unit and one verified current-branch commit.
-- `tk-drive` may authorize one such commit per selected unit and owns aggregate
-  traceability, ancestry, cross-unit verification, and finalization.
+- `tk-drive` and `tk-pr-respond` controllers never author product changes;
+  fresh workers produce one bounded candidate at a time.
+- Required verifiers and R/AC gap closure precede one verified commit per unit;
+  the top-level owner may perform only the final mechanical Git bookkeeping.
+- `tk-drive` owns aggregate traceability, ancestry, cross-unit verification, and
+  finalization.
 - Browser tools for user-visible behavior run inside `tk-browser-verify`.
 - Push, PR, merge, tag, release, and publish need separate explicit authority;
   explicit `tk-pr-sweep` supplies only its documented bounded PR-maintenance

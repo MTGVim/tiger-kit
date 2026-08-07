@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 2026.08.07-13 — Release
+
+- refactor: make browser acceptance verification headless-only with transient evidence-backed auth and secret-free nested evidence
+- remove: delete headed-login, nested browser ledger, source-instrumentation, and universal progress/Next presentation contracts
+- docs: complete Issue #277 current-surface, eval, release-critical, validator, and package migration
+- refactor: give Respond and Sweep one approved Prepare/Execute/Close gaps/Finalize lifecycle
+- remove: replace the PR triage wrapper skill with `tk-pr-sweep --report` and moved deterministic scripts
+- refactor: consolidate standalone Respond and top-level Sweep evidence into one owner ledger each
+- refactor: collapse Drive preparation, unit slicing, and implementation into one approved fresh-worker lifecycle
+- remove: delete the three superseded Drive phase-skill packages and model-routing configuration surface
+- refactor: replace split Drive artifacts with `.tigerkit/drive.md` and narrow review to R/AC acceptance gaps
+
 ## 2026.08.07-12 — Release
 
 - feat: prefer reviewed gh-attach uploads

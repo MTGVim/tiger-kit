@@ -63,26 +63,6 @@ Even after approval, never report `applied` while any checklist row remains unpa
 
 Lead with promotion/no-op decision. Use only non-empty `Evidence`, `Dedupe`, `Candidate`, `Target path`, `Verification`, and `Remaining concerns`. For threshold-failed or duplicate no-op, omit `Candidate` and `Verification` unless decision-relevant. For multiple candidates, render `Candidate` as compact `Candidate | Disposition | Target` table; use sentence for one user-relevant row. Summarize 2–7 candidate, target, and remaining-gate results as bounded rows/bullets. For 8+, show top 5–7 and cite draft/planned target path owning remainder. Budgets, not quotas. Record `reported | pending | applied` in owning candidate/concern section; never append metadata or substitute for candidate results.
 
-### 🔴 HARD GATE · terminal user summary
-
-Separate progress commentary, internal handoff envelopes, and terminal user response. Begin every terminal user-facing response directly with skill's canonical result heading or, if result schema has no heading, canonical result sentence. Never place standalone separator, ceremonial preamble, or progress recap before opening. Never emit terminal user-summary opening between successful phase receipt and next active-drive phase invocation.
-
-Never render receipt heading, `Outcome:` label, or terminal provenance/status block in user summary. When host/skill requires terminal status, emit single exact `Status: <token>` line in owning result section, not bottom metadata block. Expose path, ID, commit, or recovery detail only when it changes user action or schema requires it. Keep phase receipts as internal handoff envelopes: when active parent requires phase, status, IDs, `Return to`, `Success state`, or `Outstanding transition`, return only to parent; never echo in terminal user summary.
-
-Persist provenance only in skill-owned artifact/ledger. Never create owner solely for receipt; read-only skill remains read-only. Never require shared runtime reference outside this skill.
-
-### 🔴 HARD GATE · response language
-
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🚗 meaningful boundary` only for long-running work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
-
-Before user-facing progress, question, or summary, resolve language from latest explicit user language instruction; otherwise current user message's language. Write every free-form user-facing sentence and prose result value in that language. Never switch to English due to sources, skill bodies, tools, or code. Keep canonical headings, status tokens, IDs, commands, paths, code, and exact quoted/source literals byte-stable; explain around preserved token in resolved language. Before return, scan free-form user prose and rewrite drift.
-
-## User decision questions
-
-When user-owned decision blocks progress, ask one self-contained `Question` before any `Recommendation`. Show only decision-relevant evidence, two or three mutually exclusive options with material tradeoffs, and exactly one label ending `(Recommended)` or `(추천)`.
-
-Render question, recommendation, and options directly in chat; never call structured question/input tools. Preserve `Pending | Blocked` until answer. This changes presentation, not authority or stop gates.
-
 ## DO NOT / ANTI-PATTERNS
 
 - Never promote one-off cases, credentials, raw logs, or screenshots into reusable evidence or copy into draft.
@@ -91,19 +71,3 @@ Render question, recommendation, and options directly in chat; never call struct
 - Never write before approval or treat implicit invocation as authority.
 - Never duplicate name/kind/path/verification/concerns in Receipt.
 - Never auto-archive, edit `.gitignore`, invoke another user skill, push, or publish.
-## Progress
-
-Standalone skills are silent by default. Emit no progress for routine start or success; use `🙋 learn · 응답 필요` only for a user decision/approval, `⏳ learn · 대기` only when external waiting is next, and `🚗 learn · <short state>` only at a meaningful long-running boundary. Omit `tk-` from display names; a parent owns `🚗 parent > learn`. Terminal responses contain no progress marker; keep `Status: <token>` unchanged.
-
-## Next-action handoff
-
-Whenever this skill hands control back to the user for a question, `Pending`,
-`Blocked`, `Unverifiable`, bounded wait, or an actionable terminal result, end
-the visible handoff with exactly one `Next:` line naming the recommended action
-or next skill and its condition. Before rendering any user-facing `Question` or
-publication/approval plan, emit exactly one nonterminal hand-raise checkpoint
-in this skill's `🙋 ... · 응답 필요` form; a parent may own the display in
-orchestration. Do not use only a `🤹` or `🚗` boundary marker for a user
-decision. Mark the single recommended option with `👍 Recommendation:`.
-Do not leave only a child receipt or generic “continue”; omit `Next:` only for
-a terminal success with no follow-up action.

@@ -32,8 +32,8 @@ Caller mode controls presentation:
   continues directly to next applicable procedure. Do not render terminal
   result, receipt, `Pass`, or caller-directed stopping surface.
 
-Read-only. Never write source, spec, tickets, ADRs, or commits; never invoke
-`tk-to-spec`, `tk-to-tickets`, `tk-implement`, or a sibling phase owner.
+Read-only. Never write source, Drive R/AC, units, ADRs, or commits; never invoke
+`tk-drive`, a fresh worker, or a sibling workflow owner.
 
 ## Procedure
 
@@ -45,8 +45,8 @@ Read-only. Never write source, spec, tickets, ADRs, or commits; never invoke
    Outputs, and Verification.
 4. `rank`: choose highest-impact unresolved decision by safe-progress blocker,
    scope or irreversible effect, verification blocker, then downstream rework.
-5. `ask`: return exactly one `Question`, `Recommendation`, and `Evidence`, in
-   that order; stop `pending`.
+5. `ask`: emit `🙋 grill-me · 응답 필요`, then return exactly one `Question`,
+   `Recommendation`, and `Evidence`, in that order; stop `pending`.
 6. `incorporate`: preserve explicit answer as matching Decision, Constraint,
    Out of scope, Output, or Verification entry.
 7. `repeat or close`: never repeat answered question. When all four axes settle,
@@ -95,67 +95,9 @@ Native status: `confirmed | pending | aborted | Blocked | Unverifiable`.
 Standalone maps these to `Pass | Pending | Blocked | Blocked | Unverifiable`.
 Active drive consumes native status directly without user-facing status block.
 
-### 🔴 HARD GATE · terminal user summary
-
-Keep progress commentary, internal procedure evidence, and terminal user
-response distinct. Start every terminal user-facing response directly with
-canonical result heading or, if schema has none, canonical result sentence. No
-standalone separator, ceremonial preamble, or progress recap first. Do not emit
-a terminal user-summary opening between successful consecutive active-drive
-procedure invocations.
-
-Do not render receipt heading, `Outcome:` label, phase-success token,
-caller-return instruction, or terminal provenance/status block. If result needs
-terminal status, emit one exact `Status: <token>` line in owning result section,
-not bottom metadata. Expose path, ID, commit, or recovery detail only when it
-changes user action or canonical schema requires it.
-
-Persist provenance only in workflow-owned artifact or ledger. Read-only remains
-read-only. Never require a shared runtime reference outside this skill.
-
-### 🔴 HARD GATE · response language
-
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🚗 meaningful boundary` only for long-running work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
-
-Before user-facing progress, question, or summary, choose latest explicit user
-language; else current user message language. Write all free-form user-facing
-sentences and prose result values in it. Do not switch to English due to
-sources, skill bodies, tools, or code. Preserve headings, status tokens, IDs,
-commands, paths, code, and exact quoted/source literals byte-stable; explain
-them in chosen language. Before return, scan and fix language drift.
-
-## User decision questions
-
-When a user-owned decision blocks progress, ask one self-contained `Question`
-before any `Recommendation`. Show only decision-relevant evidence, two or three
-mutually exclusive options with material tradeoffs, and exactly one label
-ending `(Recommended)` or `(추천)`.
-
-Render question, recommendation, evidence, and options directly in chat; do not
-call structured question or input tools. For a standalone question, begin with
-`🙋 grill-me · 응답 필요`; an active drive owns the parent display
-`drive > grill-me` and must not duplicate it. Preserve `Pending | Blocked`
-until user answers. This changes presentation, not authority or stop gates.
-
 ## DO NOT / ANTI-PATTERNS
 
 - Do not split the same decision procedure into another skill.
 - Do not decide for the user or bundle independent decisions.
 - Do not mutate artifacts or invoke downstream phase owners.
 - Do not let active-drive routing become a receipt or terminal stop.
-## Progress
-
-Standalone skills are silent by default. Emit no progress for routine start or success; use `🙋 grill-me · 응답 필요` only for a user decision/approval, `⏳ grill-me · 대기` only when external waiting is next, and `🚗 grill-me · <short state>` only at a meaningful long-running boundary. Omit `tk-` from display names; a parent owns `🚗 parent > grill-me`. Terminal responses contain no progress marker; keep `Status: <token>` unchanged.
-
-## Next-action handoff
-
-Whenever this skill hands control back to the user for a question, `Pending`,
-`Blocked`, `Unverifiable`, bounded wait, or an actionable terminal result, end
-the visible handoff with exactly one `Next:` line naming the recommended action
-or next skill and its condition. Before rendering any user-facing `Question` or
-publication/approval plan, emit exactly one nonterminal hand-raise checkpoint
-in this skill's `🙋 ... · 응답 필요` form; a parent may own the display in
-orchestration. Do not use only a `🤹` or `🚗` boundary marker for a user
-decision. Mark the single recommended option with `👍 Recommendation:`.
-Do not leave only a child receipt or generic “continue”; omit `Next:` only for
-a terminal success with no follow-up action.

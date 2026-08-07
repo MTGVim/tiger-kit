@@ -54,7 +54,7 @@
     {
       "id": "validation-positive-eval-false-negative",
       "split": "validation",
-      "query": "실제 tk-implement 출력과 Git state는 맞는데 grader만 실패하는지 skill과 eval 원인을 분리해 주세요.",
+      "query": "실제 tk-drive 출력과 Git state는 맞는데 grader만 실패하는지 skill과 eval 원인을 분리해 주세요.",
       "should_trigger": true,
       "facets": [
         "formal"
@@ -100,7 +100,7 @@
     {
       "id": "validation-positive-stability",
       "split": "validation",
-      "query": "같은 prompt에서 tk-to-spec 결과와 terminal state가 매번 흔들리는 이유를 진단해줘",
+      "query": "같은 prompt에서 tk-drive Prepare 결과와 terminal state가 매번 흔들리는 이유를 진단해줘",
       "should_trigger": true,
       "facets": [
         "casual",
