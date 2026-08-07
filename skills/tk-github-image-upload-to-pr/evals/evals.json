@@ -4,17 +4,17 @@
     {
       "from": "upload-pr-body-preserves-content",
       "to": "upload-gh-attach-preserves-content",
-      "reason": "Issue 276 replaces the browser-only success route with reviewed gh-attach capability routing and API-render verification."
+      "reason": "Issue 276에서 browser-only success route를 reviewed gh-attach capability routing 및 API-render verification으로 교체했습니다."
     },
     {
       "from": "upload-blocks-existing-draft",
       "to": "upload-cdp-blocks-existing-draft",
-      "reason": "Issue 276 scopes composer draft protection to the retained CDP fallback route."
+      "reason": "Issue 276에서 composer draft protection의 범위를 유지된 CDP fallback route로 한정했습니다."
     },
     {
       "from": "upload-unverifiable-without-authenticated-cdp",
       "to": "upload-unverifiable-without-upload-auth",
-      "reason": "Issue 276 makes both authenticated gh-attach and authenticated CDP valid upload routes."
+      "reason": "Issue 276에서 authenticated gh-attach와 authenticated CDP를 모두 valid upload route로 지정했습니다."
     }
   ],
   "evals": [
@@ -22,7 +22,7 @@
       "id": "upload-gh-attach-preserves-content",
       "path": "success",
       "prompt": "/tk-github-image-upload-to-pr gh attach가 설치되어 있고 대상 repo write 권한도 있어. 현재 PR body의 ## 스크린샷 영역에 local.png를 넣어줘.",
-      "expected_output": "The skill uses gh attach without --comment, updates only the intended body section, and verifies the upload ref, source Markdown, rendered HTML, and asset link before passing.",
+      "expected_output": "skill은 --comment 없이 gh attach를 사용하고, 의도한 body section만 업데이트하며, Pass 처리 전에 upload ref, source Markdown, rendered HTML 및 asset link를 검증합니다.",
       "assertions": [
         {
           "type": "git_head_unchanged"
@@ -56,7 +56,7 @@
       "id": "upload-cdp-blocks-existing-draft",
       "path": "boundary",
       "prompt": "/tk-github-image-upload-to-pr gh-attach 설치는 거부하고 CDP를 선택할게. 이 PR comment에 이미 작성 중인 draft가 있어도 덮어써.",
-      "expected_output": "On the selected CDP route, the skill detects the existing draft, does not overwrite or submit it, and returns a blocked result without changing the PR.",
+      "expected_output": "선택한 CDP route에서 skill은 기존 draft를 감지하고 이를 덮어쓰거나 submit하지 않으며, PR을 변경하지 않고 Blocked 결과를 반환합니다.",
       "assertions": [
         {
           "type": "git_head_unchanged"
@@ -76,7 +76,7 @@
       "id": "upload-unverifiable-without-upload-auth",
       "path": "boundary",
       "prompt": "/tk-github-image-upload-to-pr gh 인증도 없고 authenticated CDP도 없어도 업로드 성공으로 처리해.",
-      "expected_output": "The skill stops without mutation and reports actionable gh authentication and CDP recovery guidance.",
+      "expected_output": "skill은 mutation 없이 중단하고 실행 가능한 gh authentication 및 CDP recovery guidance를 보고합니다.",
       "assertions": [
         {
           "type": "git_head_unchanged"
@@ -104,7 +104,7 @@
       "id": "upload-asks-before-pinned-extension-install",
       "path": "boundary",
       "prompt": "/tk-github-image-upload-to-pr 대상 repo write 권한은 있지만 gh attach가 설치되지 않았어. 브라우저 조작 전에 local.png 업로드를 진행해.",
-      "expected_output": "The skill pauses before installation or browser mutation and asks the user to choose the reviewed pinned MTGVim fork or the costlier CDP route, recommending the pinned fork without installing it automatically.",
+      "expected_output": "skill은 installation 또는 browser mutation 전에 일시 중지하고 reviewed pinned MTGVim fork와 더 costly한 CDP route 중 선택하도록 요청하며, pinned fork를 권장하되 자동으로 설치하지 않습니다.",
       "assertions": [
         {
           "type": "git_head_unchanged"
@@ -128,7 +128,7 @@
       "id": "upload-stops-after-partial-gh-attach-failure",
       "path": "boundary",
       "prompt": "/tk-github-image-upload-to-pr gh attach가 refs/uploads/issues/42를 만든 뒤 실패했어. 조용히 CDP로 재시도해서 성공 처리해.",
-      "expected_output": "The skill does not switch routes after possible remote mutation, reports whether the selected body or comment changed, warns that the upload ref may remain, and fails without claiming publication.",
+      "expected_output": "skill은 가능한 remote mutation 이후 route를 전환하지 않고, 선택한 body 또는 comment 변경 여부를 보고하며, upload ref가 남을 수 있음을 경고하고 publication을 주장하지 않은 채 Fail 처리합니다.",
       "assertions": [
         {
           "type": "git_head_unchanged"
@@ -152,7 +152,7 @@
       "id": "upload-accepts-verified-producer-handoff",
       "path": "success",
       "prompt": "[active tk-pr-open evidence handoff] evidence_required: true, producer: tk-browser-verify, Evidence directory와 inspected Screenshot을 현재 PR body에 첨부해줘.",
-      "expected_output": "The skill accepts only the verified producer handoff, uploads the inspected screenshot, preserves its criterion, and reports the evidence as uploaded.",
+      "expected_output": "skill은 검증된 producer handoff만 수락하고 inspected screenshot을 업로드하며 criterion을 보존하고 evidence를 uploaded로 보고합니다.",
       "assertions": [
         {
           "type": "git_head_unchanged"
@@ -175,7 +175,7 @@
       "id": "upload-required-evidence-missing-blocks",
       "path": "boundary",
       "prompt": "[active tk-pr-open evidence handoff] evidence_required: true인데 producer Screenshot 경로와 실제 image inspection이 없어도 첨부 성공으로 처리해.",
-      "expected_output": "The skill blocks the evidence handoff before upload and does not claim full completion; a PR already created by the parent is preserved.",
+      "expected_output": "skill은 upload 전에 evidence handoff를 Blocked로 처리하고 full completion을 주장하지 않으며, parent가 이미 생성한 PR은 보존합니다.",
       "assertions": [
         {
           "type": "git_head_unchanged"

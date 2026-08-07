@@ -1,22 +1,22 @@
-# Empirical diagnostic method
+# 경험적 진단 방법
 
-Read this reference only after intake identifies one exact target and incident.
-It adapts empirical prompt tuning for causal diagnosis, not broad optimization.
+Intake에서 정확히 하나의 target과 incident를 확인한 뒤에만 이 reference를 읽는다.
+넓은 optimization이 아니라 causal diagnosis에 맞춘 empirical prompt tuning이다.
 
-## 1. Static consistency
+## 1. 정적 일관성
 
-Before fresh execution, compare the frontmatter description with the body:
+fresh execution 전에 frontmatter description과 body를 비교한다:
 
-- positive and negative triggers;
-- capability and output promises;
-- approval, mutation, failure, and recovery owners.
+- positive 및 negative triggers;
+- capability 및 output promises;
+- approval, mutation, failure 및 recovery owners.
 
-Description-only promises, body-only behavior, and contradictory owners are
-hypotheses. Static consistency never proves runtime cause.
+Description-only promise, body-only behavior 및 모순되는 owner는 hypotheses다.
+정적 일관성만으로는 runtime cause를 증명할 수 없다.
 
-## 2. Freeze the smallest deciding set
+## 2. 가장 작게 결정하는 set 고정
 
-Freeze before experimentation:
+experiment 전에 다음을 고정한다:
 
 ```text
 Incident: the observed prompt and expected/observed result
@@ -25,17 +25,16 @@ Must preserve: critical behavior, safety, routing, authority, and host boundary
 Metric: actual anchor, labeled proxy, or unavailable
 ```
 
-Add another scenario only when the first incident/control pair cannot separate
-the failure planes. A generic holdout is optional, not a default ceremony.
+첫 incident/control pair로 failure planes를 구분할 수 없을 때만 scenario를 추가한다.
+generic holdout은 optional이며 default ceremony가 아니다.
 
 ## 3. Fresh execution
 
-Run the incident once in a clean matched context. Repeat only when the result is
-unstable, close to a metric threshold, or ambiguous against the control. An
-executor that saw the diagnosis or candidate is not fresh.
+clean matched context에서 incident를 한 번 실행한다. 결과가 unstable하거나 metric
+threshold에 가깝거나 control과 비교해 모호할 때만 반복한다. diagnosis 또는 candidate를
+본 executor는 fresh하지 않다.
 
-Keep the normal deliverable primary. When the adapter supports a diagnostic
-suffix, collect only:
+normal deliverable을 우선한다. adapter가 diagnostic suffix를 지원하면 다음만 수집한다:
 
 ```json
 {
@@ -57,41 +56,41 @@ suffix, collect only:
 }
 ```
 
-Do not reveal expected answers, judge criteria, or baseline/candidate verdicts
-to the executor. Malformed diagnostics are evaluation-plane evidence; they do
-not automatically invalidate an otherwise verified deliverable.
+executor에게 expected answers, judge criteria 또는 baseline/candidate verdicts를
+공개하지 않는다. Malformed diagnostics는 evaluation-plane evidence이며, 검증된
+deliverable을 자동으로 무효화하지 않는다.
 
-## 4. Two-sided evidence
+## 4. 양면 evidence
 
-Combine:
+다음을 결합한다:
 
-- deterministic assertions and Git/path/runtime evidence;
-- selection/loading and host/adapter events;
-- phase-local trace and discretionary fill-ins;
-- actual token, duration, tool, nested-call, or retry metrics when available.
+- deterministic assertions와 Git/path/runtime evidence;
+- selection/loading 및 host/adapter events;
+- phase-local trace 및 discretionary fill-ins;
+- 사용 가능한 경우 actual token, duration, tool, nested-call 또는 retry metrics.
 
-Self-report is one observation, never sufficient cause. Every causal claim
-needs an instruction, routing, runtime, repository, or eval anchor.
+Self-report는 하나의 observation일 뿐, 원인을 입증하기에 충분하지 않다. 모든 causal
+claim에는 instruction, routing, runtime, repository 또는 eval anchor가 필요하다.
 
 ## 5. Minimum experiment
 
-Use a run-owned isolated checkout only when incident/control evidence cannot
-prove the cause directly. State the suspected cause and expected distinguishing
-result first. Change one root-cause theme and run the smallest affected scenario.
+incident/control evidence만으로 cause를 직접 증명할 수 없을 때만 run-owned isolated
+checkout을 사용한다. 먼저 suspected cause와 이를 구분할 expected result를 명시한다.
+하나의 root-cause theme만 바꾸고 affected scenario를 가장 작게 실행한다.
 
-The experiment confirms or rejects causality; it is not the canonical patch.
-A second experiment requires a new specific cause from the first result. Do not
-stack wording changes after the same failure repeats.
+experiment는 causality를 confirm 또는 reject하며 canonical patch가 아니다. 두 번째
+experiment에는 첫 결과에서 나온 새 specific cause가 필요하다. 같은 failure가 반복된
+뒤 wording changes를 쌓지 않는다.
 
 ## 6. Disposition
 
-- verified skill objective → compact `learn-ready` handoff;
-- new independently useful skill → `learn-candidate`;
+- verified skill objective → 간결한 `learn-ready` handoff;
+- independently useful한 새 skill → `learn-candidate`;
 - grader/harness/fixture defect → `eval-owner`;
 - loader/adapter/host defect → `host-owner`;
 - consumer override/configuration → `local-only`;
-- not reproduced or target correct → `no-change`;
-- missing decisive evidence → `unverifiable`.
+- not reproduced 또는 target correct → `no-change`;
+- decisive evidence missing → `unverifiable`.
 
-Write a temporary diagnostic artifact only when actual telemetry or more than
-five evidence rows require it. Never create a durable optimization ledger.
+실제 telemetry 또는 다섯 개가 넘는 evidence row가 필요할 때만 temporary diagnostic
+artifact를 작성한다. durable optimization ledger는 만들지 않는다.

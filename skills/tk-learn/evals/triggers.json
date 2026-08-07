@@ -53,7 +53,7 @@
     {
       "id": "validation-positive-5",
       "split": "validation",
-      "query": "Turn these examples into a reusable Codex skill draft",
+      "query": "이 예시들을 재사용 가능한 Codex skill draft로 바꿔줘",
       "should_trigger": true,
       "facets": [
         "short"

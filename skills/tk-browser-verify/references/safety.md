@@ -1,21 +1,23 @@
 # Browser safety
 
-Without a safe environment and explicit authority, do not cause payment,
-external communication, irreversible deletion, production-data mutation,
-account change, permission change, or an equivalent side effect. Prefer an
-exact repository-evidenced response mock for an approved UI state over sending,
-saving, or paying.
+safe environment와 명시적 authority가 없으면 payment, external communication,
+irreversible deletion, production-data mutation, account change, permission
+change 또는 동등한 side effect를 일으키지 않습니다. approved UI state에는
+sending, saving, paying보다 exact repository-evidenced response mock을
+우선합니다.
 
-Headless-only is absolute. Interactive authentication has no visible-browser exception.
-Do not request a secret in ordinary chat or put secret-bearing values/commands in
-prompts, output, ledgers, logs, screenshots, HAR, console capture, or receipts.
-Use only an available ephemeral secret-input channel and record a non-sensitive
-auth-mode fact.
+Headless-only는 절대 규칙입니다. Interactive authentication에도 visible-browser
+exception은 없습니다. ordinary chat에서 secret을 요청하거나 secret-bearing
+value/command를 prompts, output, ledgers, logs, screenshots, HAR, console
+capture, receipts에 넣지 않습니다. 사용 가능한 ephemeral secret-input channel만
+사용하고 non-sensitive auth-mode fact만 기록합니다.
 
-Separate screenshots/video from network/HAR/console inventory. Authorization,
-cookies, tokens, credentials, and sensitive bodies make a capture sensitive.
-Use it only after verified redaction and absence of the original and moved-path
-residue. Otherwise delete the owned capture safely and return `Unverifiable`.
+screenshots/video와 network/HAR/console inventory를 분리합니다. Authorization,
+cookies, tokens, credentials, sensitive bodies가 있으면 capture는 sensitive입니다.
+verified redaction과 original 및 moved-path residue 부재를 확인한 뒤에만
+사용합니다. 그렇지 않으면 owned capture를 안전하게 삭제하고 `Unverifiable`을
+반환합니다.
 
-Never move/delete user screenshots, fixtures, profiles, or unknown-ownership
-artifacts. Never edit `.gitignore` for evidence handling.
+user screenshot, fixture, profile 또는 ownership을 알 수 없는 artifact를 절대
+move/delete하지 않습니다. evidence handling을 위해 `.gitignore`를 절대
+수정하지 않습니다.

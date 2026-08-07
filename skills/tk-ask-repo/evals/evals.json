@@ -5,7 +5,7 @@
       "id": "ask-repo-value-finds-assignment-origin",
       "path": "success",
       "prompt": "/tk-ask-repo `evals/fixtures/value_flow/`의 Profile 화면에서 `Display name` 값이 legal name으로 보여. 어디를 고쳐야 하는지 조사해줘.",
-      "expected_output": "질문을 A로 분류하고 소비 표현식, transport 선언, producer 대입 지점까지 하강한 뒤 sibling `short_name`과 전체 소비처를 분류해 `Must change`와 `Must not change`를 보고한다.",
+      "expected_output": "질문을 `value`로 분류하고 consuming expression, transport declaration, producer assignment site까지 추적한 뒤 sibling `short_name`과 전체 consumer를 분류해 `Must change`와 `Must not change`를 보고한다.",
       "files": [
         "evals/fixtures/value_flow/consumer.py",
         "evals/fixtures/value_flow/transport.py",
@@ -14,7 +14,7 @@
       "assertions": [
         {
           "type": "judge",
-          "criterion": "Origin은 transport 선언이 아니라 producer.py의 실제 대입 지점 path:line을 가리키고, sibling short_name의 의미와 소비처 sweep을 근거로 설명한다."
+          "criterion": "Origin은 transport declaration이 아니라 `producer.py`의 실제 assignment site `path:line`을 가리키고, sibling `short_name`의 의미와 consumer sweep을 근거로 설명한다."
         },
         {
           "type": "output_contains",
@@ -39,7 +39,7 @@
       "id": "ask-repo-impact-sweeps-consumers",
       "path": "success",
       "prompt": "/tk-ask-repo `evals/fixtures/value_flow/`에서 payload의 `display_name`을 `short_name`으로 바꾸면 무엇이 깨지는지 전수 조사해줘.",
-      "expected_output": "검증한 검색 semantics와 제외 범위를 밝히고 모든 reader/writer를 must change, must not change, unclear로 분류한다.",
+      "expected_output": "검증한 search semantics와 exclusion 범위를 밝히고 모든 reader/writer를 `must change`, `must not change`, `unclear`로 분류한다.",
       "files": [
         "evals/fixtures/value_flow/consumer.py",
         "evals/fixtures/value_flow/transport.py",
@@ -48,7 +48,7 @@
       "assertions": [
         {
           "type": "judge",
-          "criterion": "화면, 이메일, invoice 소비처와 producer writer를 전수하고, invoice_name을 Must not change로 보존하며 count 제외 범위를 명시한다."
+          "criterion": "화면, email, invoice consumer와 producer writer를 모두 확인하고, `invoice_name`은 `Must not change`로 보존하며 count exclusion 범위를 명시한다."
         },
         {
           "type": "output_contains",
@@ -69,7 +69,7 @@
       "id": "ask-repo-existence-distinguishes-states",
       "path": "success",
       "prompt": "/tk-ask-repo `tk-ask-repo`가 current base ref에 존재하고 live catalog에 포함됐는지, 없다는 단정 없이 상태를 조사해줘.",
-      "expected_output": "current base와 in-flight work의 검색 범위를 밝히고 absent, unreleased, empty, live 중 하나로 상태를 보고한다.",
+      "expected_output": "current base와 in-flight work의 search scope를 밝히고 `absent`, `unreleased`, `empty`, `live` 중 하나로 상태를 보고한다.",
       "assertions": [
         {
           "type": "judge",
@@ -92,7 +92,7 @@
       "id": "ask-repo-attribution-uses-transport",
       "path": "success",
       "prompt": "/tk-ask-repo `evals/fixtures/value_flow/`의 Profile Display name 오류가 소비 측인지 생산 측인지 판정해줘.",
-      "expected_output": "correct short_name이 transport에 이미 있음을 근거로 화면과 이메일 소비 측을 소유자로 판정하고 invoice의 legal-name 소비는 보존한다.",
+      "expected_output": "correct `short_name`이 transport에 이미 있음을 근거로 화면과 email consumer를 owner로 판정하고 invoice의 legal-name consumer는 보존한다.",
       "files": [
         "evals/fixtures/value_flow/consumer.py",
         "evals/fixtures/value_flow/transport.py",
@@ -101,7 +101,7 @@
       "assertions": [
         {
           "type": "judge",
-          "criterion": "Attribution은 correct short_name이 payload에 이미 있는지에 근거하고 producer 변경을 요구하지 않는다."
+          "criterion": "Attribution은 correct `short_name`이 payload에 이미 있는지에 근거하고 producer 변경을 요구하지 않는다."
         },
         {
           "type": "output_contains",
@@ -125,14 +125,14 @@
       "id": "ask-repo-blocks-two-candidate-ambiguity",
       "path": "boundary",
       "prompt": "/tk-ask-repo `evals/fixtures/ambiguous_names.py`의 Preferred name에는 `alias`와 `short_name` 중 어느 필드를 써야 하는지 조사해줘.",
-      "expected_output": "두 후보가 모두 defensible임을 path:line 근거로 제시하고 스스로 고르지 않은 채 decision owner를 명명해 Blocked로 멈춘다.",
+      "expected_output": "두 후보가 모두 defensible임을 `path:line` 근거로 제시하고 스스로 선택하지 않은 채 decision owner를 명명해 `Blocked`로 멈춘다.",
       "files": [
         "evals/fixtures/ambiguous_names.py"
       ],
       "assertions": [
         {
           "type": "judge",
-          "criterion": "alias와 short_name을 모두 근거와 함께 제시하고 임의 선택이나 diff 제안 없이 decision을 명명한다."
+          "criterion": "`alias`와 `short_name`을 모두 근거와 함께 제시하고 임의 선택이나 diff 제안 없이 decision owner를 명시한다."
         },
         {
           "type": "terminal_status",
@@ -148,11 +148,11 @@
       "id": "ask-repo-refuses-implementation-diff",
       "path": "boundary",
       "prompt": "/tk-ask-repo 위 조사 없이 `skills/tk-drive/SKILL.md`를 바로 수정하고 commit해줘.",
-      "expected_output": "구현 요청이 out of scope임을 밝히고 적절한 구현 owner만 명명하며 파일, Git, spec, ticket을 변경하지 않는다.",
+      "expected_output": "구현 요청이 out of scope임을 밝히고 적절한 implementation owner만 명명하며 file, Git, spec, ticket을 변경하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "구현이나 부분 조사에 착수하지 않고 implementation owner를 명명한다."
+          "criterion": "구현이나 부분 조사에 착수하지 않고 implementation owner를 명시한다."
         },
         {
           "type": "terminal_status",
@@ -200,11 +200,11 @@
       "id": "ask-repo-search-failure-is-unverifiable",
       "path": "boundary",
       "prompt": "/tk-ask-repo 이 repository의 `definitely_missing_widget_9f1e` 값이 어디서 오는지 조사해줘.",
-      "expected_output": "시도한 exact/partial/catalog/identifier 검색을 나열하고 존재하지 않는다고 단정하지 않은 채 Unverifiable로 끝낸다.",
+      "expected_output": "시도한 exact/partial/catalog/identifier search를 나열하고 존재하지 않는다고 단정하지 않은 채 `Unverifiable`로 끝낸다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "검색 실패와 verified absence를 구분하고 실제 검색 범위와 failure를 보존한다."
+          "criterion": "search failure와 verified absence를 구분하고 실제 search scope와 failure를 보존한다."
         },
         {
           "type": "terminal_status",
@@ -220,11 +220,11 @@
       "id": "ask-repo-blocks-contradicted-premise",
       "path": "boundary",
       "prompt": "/tk-ask-repo `tk-drive`는 hybrid라 자동 호출되는데 왜 이 요청에서는 선택되지 않았는지 조사해줘.",
-      "expected_output": "canonical metadata가 tk-drive를 user-invoked로 정의한다는 모순을 path:line으로 보고하고 잘못된 전제를 따라 답하지 않은 채 Blocked로 끝낸다.",
+      "expected_output": "canonical metadata가 tk-drive를 user-invoked로 정의한다는 contradiction을 `path:line`으로 보고하고 잘못된 premise를 따르지 않은 채 `Blocked`로 끝낸다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "전제를 그대로 수용하지 않고 tk-drive kind와 implicit-invocation policy의 source evidence를 인용한다."
+          "criterion": "premise를 그대로 수용하지 않고 tk-drive kind와 implicit-invocation policy의 source evidence를 인용한다."
         },
         {
           "type": "terminal_status",
@@ -240,11 +240,11 @@
       "id": "ask-repo-bounds-result-cardinality",
       "path": "success",
       "prompt": "/tk-ask-repo 이미 검증된 소비자 9건의 impact 조사 결과를 최종 보고해 주세요. 원시 검색 로그는 반복하지 마세요.",
-      "expected_output": "Answer에서 결론을 먼저 설명하고 상위 5–7개 결과와 나머지를 소유한 evidence path를 제시하며 최종 요약은 결과 행 뒤에 metadata block을 덧붙이지 않는다.",
+      "expected_output": "`Answer`에서 결론을 먼저 설명하고 상위 5–7개 결과와 나머지를 소유한 evidence path로 제시하며 최종 요약 뒤에 metadata block을 덧붙이지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "완료 한 문장으로 축약하지 않고 결과 cardinality에 맞는 bounded summary를 제공하며 raw evidence와 bottom metadata 중복을 피한다."
+          "criterion": "완료를 한 문장으로 축약하지 않고 result cardinality에 맞는 bounded summary를 제공하며 raw evidence와 bottom metadata의 중복을 피한다."
         },
         {
           "type": "output_contains",

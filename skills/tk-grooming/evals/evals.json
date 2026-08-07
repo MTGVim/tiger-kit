@@ -4,82 +4,82 @@
     {
       "from": "grooming-placement-root-move",
       "to": "grooming-rejects-rule-lifecycle",
-      "reason": "Issue 224 removes repository/user rule lifecycle from grooming."
+      "reason": "Issue 224에서 grooming의 repository/user rule lifecycle을 제거합니다."
     },
     {
       "from": "grooming-placement-threshold-conflict",
       "to": "grooming-rejects-rule-lifecycle",
-      "reason": "Issue 224 removes rule-threshold classification from grooming."
+      "reason": "Issue 224에서 rule-threshold classification을 grooming에서 제거합니다."
     },
     {
       "from": "placement-explicit-override-precedence",
       "to": "grooming-rejects-rule-lifecycle",
-      "reason": "Issue 224 removes repository rule placement overrides from grooming."
+      "reason": "Issue 224에서 repository rule placement override를 grooming에서 제거합니다."
     },
     {
       "from": "placement-invalid-override",
       "to": "grooming-rejects-rule-lifecycle",
-      "reason": "Issue 224 removes repository rule placement overrides from grooming."
+      "reason": "Issue 224에서 repository rule placement override를 grooming에서 제거합니다."
     },
     {
       "from": "placement-generic-must-is-not-safety",
       "to": "grooming-rejects-rule-lifecycle",
-      "reason": "Issue 224 removes rule safety classification from grooming."
+      "reason": "Issue 224에서 rule safety classification을 grooming에서 제거합니다."
     },
     {
       "from": "placement-repository-threshold-20",
       "to": "grooming-rejects-rule-lifecycle",
-      "reason": "Issue 224 removes repository rule threshold classification from grooming."
+      "reason": "Issue 224에서 repository rule threshold classification을 grooming에서 제거합니다."
     },
     {
       "from": "placement-same-priority-threshold-conflict",
       "to": "grooming-rejects-rule-lifecycle",
-      "reason": "Issue 224 removes repository rule threshold classification from grooming."
+      "reason": "Issue 224에서 repository rule threshold classification을 grooming에서 제거합니다."
     },
     {
       "from": "placement-scoped-and-recursive-excluded",
       "to": "grooming-rejects-rule-lifecycle",
-      "reason": "Issue 224 removes repository rule placement classification from grooming."
+      "reason": "Issue 224에서 repository rule placement classification을 grooming에서 제거합니다."
     },
     {
       "from": "placement-no-concrete-path",
       "to": "placement-no-concrete-skill-path",
-      "reason": "Issue 224 changes placement evidence from repository rules to native skills."
+      "reason": "Issue 224에서 placement evidence를 repository rule에서 native skill로 변경합니다."
     },
     {
       "from": "numbered-summary-target-table",
       "to": "numbered-summary-skill-target-table",
-      "reason": "Issue 224 narrows grooming result targets to repository/user skills."
+      "reason": "Issue 224에서 grooming 결과 target을 repository/user skill로 좁힙니다."
     },
     {
       "from": "empty-summary-is-not-omitted",
       "to": "empty-summary-is-not-omitted-skill-only",
-      "reason": "Issue 224 migrates the empty report contract to skill-only scope."
+      "reason": "Issue 224에서 빈 report contract를 skill-only scope로 이관합니다."
     },
     {
       "from": "grooming-placement-regression-matrix",
       "to": "grooming-placement-regression-matrix-skill-only",
-      "reason": "Issue 224 replaces rule placement matrix coverage with skill ownership coverage."
+      "reason": "Issue 224에서 rule placement matrix coverage를 skill ownership coverage로 대체합니다."
     },
     {
       "from": "grooming-semantic-convert-is-proposal-only",
       "to": "grooming-semantic-merge-is-proposal-only",
-      "reason": "Issue 224 removes rule-to-skill conversion and keeps semantic skill changes as tk-learn proposals."
+      "reason": "Issue 224에서 rule-to-skill conversion을 제거하고 semantic skill change는 tk-learn proposal로 유지합니다."
     },
     {
       "from": "grooming-vendor-artifact-remains-report-only",
       "to": "grooming-vendor-skill-remains-report-only",
-      "reason": "Issue 224 narrows vendor ownership evidence to skill targets."
+      "reason": "Issue 224에서 vendor ownership evidence를 skill target으로 좁힙니다."
     },
     {
       "from": "grooming-honors-declared-exclusions",
       "to": "grooming-honors-declared-exclusions-skill-only",
-      "reason": "Issue 224 keeps exclusions for repository/user skills without rule lifecycle."
+      "reason": "Issue 224에서 repository/user skill의 exclusion을 rule lifecycle 없이 유지합니다."
     },
     {
       "from": "grooming-bounds-result-cardinality",
       "to": "grooming-bounds-result-cardinality-skill-only",
-      "reason": "Issue 224 narrows the bounded result table to repository/user skill targets."
+      "reason": "Issue 224에서 bounded result table의 target을 repository/user skill로 좁힙니다."
     }
   ],
   "evals": [

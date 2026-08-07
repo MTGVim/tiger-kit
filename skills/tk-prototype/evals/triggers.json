@@ -53,7 +53,7 @@
     {
       "id": "validation-positive-5",
       "split": "validation",
-      "query": "Build a disposable runnable comparison for these flows",
+      "query": "이 흐름들을 위한 disposable runnable comparison을 만들어줘",
       "should_trigger": true,
       "facets": [
         "short"

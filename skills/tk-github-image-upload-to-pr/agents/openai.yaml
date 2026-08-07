@@ -1,4 +1,4 @@
 interface:
-  short_description: "[user/auto] Upload local image evidence into an existing GitHub PR."
+  short_description: "[user/auto] 기존 GitHub PR에 local image evidence를 업로드합니다."
   policy:
     allow_implicit_invocation: true

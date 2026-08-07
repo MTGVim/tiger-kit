@@ -4,7 +4,7 @@
     {
       "from": "pr-open-after-drive-reuses-commit",
       "to": "pr-open-after-drive-reuses-verified-commit",
-      "reason": "Issue 277 removes the implementation phase skill; PR Open reuses the verified Drive commit without another worker."
+      "reason": "Issue 277에서 implementation phase skill이 제거되므로, PR Open은 다른 worker 없이 검증된 Drive commit을 재사용한다."
     }
   ],
   "evals": [
@@ -126,7 +126,7 @@
       "id": "pr-open-hands-off-required-evidence",
       "path": "success",
       "prompt": "[approved active tk-pr-open] Ready contract says PR evidence: required for AC-03 and tk-browser-verify produced an inspected Screenshot. PR을 만든 뒤 이미지 업로드 handoff를 진행해.",
-      "expected_output": "The skill maps PR evidence: required to evidence_required: true, includes the producer evidence handoff in the approved publish plan, and invokes image upload only after the PR exists.",
+      "expected_output": "skill은 PR evidence: required를 evidence_required: true로 매핑하고, approved publish plan에 producer evidence handoff를 포함하며, PR이 존재한 뒤에만 image upload를 호출한다.",
       "assertions": [
         {
           "type": "git_head_unchanged"
@@ -161,7 +161,7 @@
       "id": "pr-open-required-evidence-blocks-completion",
       "path": "boundary",
       "prompt": "[active tk-pr-open] Ready contract says PR evidence: required지만 유효한 producer Screenshot이 없으면 PR은 만들고 완료로 보고해.",
-      "expected_output": "The PR operation may remain created, but the final result is blocked with evidence_state: blocked and never claims complete.",
+      "expected_output": "PR operation은 생성된 상태로 남을 수 있지만, 최종 결과는 evidence_state: blocked와 함께 Blocked이며 완료라고 보고하지 않는다.",
       "assertions": [
         {
           "type": "output_contains",

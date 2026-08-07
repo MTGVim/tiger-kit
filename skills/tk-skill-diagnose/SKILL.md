@@ -1,6 +1,6 @@
 ---
 name: tk-skill-diagnose
-description: "[user/auto] Reproduce and isolate one observed or measured Agent Skill anomaly in a fresh context, then route a verified skill objective to tk-learn. Use for selection, instruction, output, host, eval, stability, or resource incidents. Do not use for ordinary code bugs, static audits, new skill creation, or symptom-free optimization."
+description: "[user/auto] 하나의 observed 또는 measured Agent Skill anomaly를 fresh context에서 재현·격리한 뒤, 검증된 skill objective를 tk-learn으로 라우팅한다. selection, instruction, output, host, eval, stability 또는 resource incident에 사용한다. ordinary code bug, static audit, new skill creation 또는 symptom-free optimization에는 사용하지 않는다."
 argument-hint: "<skill name/path> <incident prompt, expected, observed, host, metric, or trace>"
 metadata:
   tigerkit:
@@ -9,52 +9,51 @@ metadata:
     relationship: adapted
 ---
 
-# Agent Skill Diagnosis
+# Agent Skill 진단
 
-Use only for one exact Agent Skill target and one observed or measured anomaly.
-Direct selection allowed. Automatic selection requires target and incident
-evidence; generic words such as "skill", "debug", or "performance" are
-insufficient.
+정확히 하나의 Agent Skill target과 하나의 observed 또는 measured anomaly에만 사용한다.
+Direct selection은 허용한다. Automatic selection에는 target과 incident evidence가
+필요하며, "skill", "debug", "performance" 같은 generic 단어만으로는 부족하다.
 
-This skill diagnoses. It does not write canonical skills, optimize catalog, or
-own final patch. Verified skill objectives route to `tk-learn` as sole
-`create | improve | merge` writer. Never semantically mutate canonical source
-skill.
+이 skill은 진단만 수행한다. canonical skill을 작성하거나 catalog를 optimize하거나
+최종 patch를 소유하지 않는다. 검증된 skill objective는 `tk-learn`을 sole
+`create | improve | merge` writer로 거쳐 라우팅한다. canonical source skill을
+의미적으로 mutate하지 않는다.
 
 ## Intake gate
 
-Record:
+다음을 기록한다:
 
-- exact target package/path, installed ref, origin, host, and invocation;
-- incident prompt, expected behavior or metric anchor, and observed result;
-- available transcript/event, file, Git, eval, or resource evidence;
-- known consumer override or host configuration.
+- exact target package/path, installed ref, origin, host 및 invocation;
+- incident prompt, expected behavior 또는 metric anchor 및 observed result;
+- 사용 가능한 transcript/event, file, Git, eval 또는 resource evidence;
+- 알려진 consumer override 또는 host configuration.
 
-Mark missing values `unverified`. No incident or metric anchor is
-`NotApplicable`. Missing fresh execution or inaccessible required evidence is
-`Unverifiable | Blocked`, not permission to infer cause.
+누락값은 `unverified`로 표시한다. incident나 metric anchor가 없다는 것은
+`NotApplicable`이 아니다. fresh execution이 없거나 필요한 evidence에 접근할 수
+없으면 원인을 추론할 권한이 아니라 `Unverifiable | Blocked`다.
 
-Accept one `learn-ready` handoff once only when it names incident, exact target,
-host/invocation, prompt, expected and observed result, and evidence. Never invoke
-`tk-learn` from diagnostic phase or repeat same target + incident + blocker cycle.
+incident, exact target, host/invocation, prompt, expected 및 observed result, evidence를
+명시한 `learn-ready` handoff는 한 번만 수락한다. diagnostic phase에서 `tk-learn`을
+invoke하지 않으며, 동일한 target + incident + blocker cycle을 반복하지 않는다.
 
 ## Evidence order
 
-Decide in order:
+다음 순서로 결정한다:
 
 1. target provenance, description/body consistency, deterministic assertions,
-   repository state, and adapter/host evidence;
-2. smallest fresh incident reproduction;
-3. one nearby control distinguishing suspected failure plane;
-4. run-owned minimum experiment only when needed to prove causality.
+   repository state 및 adapter/host evidence;
+2. 가장 작은 fresh incident reproduction;
+3. 의심되는 failure plane을 구분하는 하나의 nearby control;
+4. causality를 입증하는 데 필요할 때만 run-owned minimum experiment.
 
-Reproduction is `Reproduced | Not reproduced | Inconclusive`. Self-report
-suggests hypothesis; it does not prove root cause. Repeat fresh run only when
-first result is unstable or boundary remains ambiguous. Do not require fixed
-trial counts, generic holdout suite, or rubric scoring when narrower evidence
-decides incident.
+재현 결과는 `Reproduced | Not reproduced | Inconclusive` 중 하나다. Self-report는
+hypothesis를 제안할 뿐 root cause를 증명하지 않는다. 첫 결과가 unstable하거나
+control과의 경계가 모호할 때만 fresh run을 반복한다. 원인을 좁은 evidence로 결정할
+수 있는데도 fixed trial counts, generic holdout suite 또는 rubric scoring을 요구하지
+않는다.
 
-Read references only when applicable:
+해당할 때만 다음 references를 읽는다:
 
 - [failure planes](references/failure-planes.md)
 - [empirical method](references/empirical-method.md)
@@ -62,37 +61,38 @@ Read references only when applicable:
 
 ## Efficiency gate
 
-Resource claim needs matched baseline, historical run, repository threshold, or
-explicit budget. Otherwise report observed value as profile-only and direction as
-`Unverifiable`. Never offset correctness or safety regression with lower tokens,
-time, calls, retries, or fan-out.
+Resource claim에는 matched baseline, historical run, repository threshold 또는
+명시적 budget이 필요하다. 그렇지 않으면 observed value는 profile-only로 보고하고
+방향은 `Unverifiable`로 둔다. 낮은 tokens, time, calls, retries 또는 fan-out을
+이유로 correctness 또는 safety regression을 상쇄하지 않는다.
 
 ## Workflow
 
-1. **Freeze** exact incident, target ref, must-preserve behavior, affected host,
-   and reliable evidence/metric.
-2. **Reproduce** once in clean context. Classify
-   `Reproduced | Not reproduced | Inconclusive`.
-3. **Control** nearest alternative: loader vs body, parent vs child, candidate vs
-   grader, one host vs another, correctness vs resource cost.
-4. **Isolate** verified failure plane:
+1. **Freeze**: exact incident, target ref, must-preserve behavior, affected host 및
+   reliable evidence/metric을 고정한다.
+2. **Reproduce**: clean context에서 한 번 재현한다. 결과를
+   `Reproduced | Not reproduced | Inconclusive`로 분류한다.
+3. **Control**: nearest alternative를 비교한다. loader와 body, parent와 child,
+   candidate와 grader, 한 host와 다른 host, correctness와 resource cost를
+   구분한다.
+4. **Isolate**: 검증된 failure plane을 다음 중에서 선택한다:
    `selection | loading | instruction | planning | execution | formatting |
    evaluation | compatibility | efficiency | local override`.
-5. **Experiment when needed** in one run-owned isolated checkout. Change one
-   root-cause theme only; confirm or reject cause. Never treat experiment as
-   canonical fix.
-6. **Route** next owner from verified evidence.
+5. **Experiment when needed**: 하나의 run-owned isolated checkout에서만 수행한다.
+   하나의 root-cause theme만 바꾸고 cause를 confirm 또는 reject한다. experiment를
+   canonical fix로 취급하지 않는다.
+6. **Route**: 검증된 evidence에 따라 다음 owner를 정한다.
 
-Stop after conclusive cause or disposition. Second experiment allowed only when
-first exposes new specific cause. Clean only run-owned isolation; never rewrite
-or patch canonical target.
+결론적인 cause 또는 disposition에서 멈춘다. 첫 experiment가 새로운 구체적 cause를
+드러낸 경우에만 두 번째 experiment를 허용한다. run-owned isolation만 정리하며
+canonical target을 다시 쓰거나 patch하지 않는다.
 
 ## Routes
 
 ### Verified skill objective: `learn-ready`
 
-Use only when one existing package and one concrete testable objective are
-verified. Emit:
+하나의 기존 package와 하나의 구체적이며 testable한 objective가 검증된 경우에만
+사용한다. 다음을 emit한다:
 
 ```text
 Target package: skills/<name>/
@@ -104,52 +104,52 @@ Metric: <actual measurement, labeled proxy, or unavailable>
 Incident: <stable ID or source reference>
 ```
 
-This is input to later explicit `tk-learn`; do not invoke it.
+이는 이후 명시적으로 실행하는 `tk-learn`의 input이다. 여기서 invoke하지 않는다.
 
 ### Other dispositions
 
-- `learn-candidate`: new independently useful skill required.
-- `eval-owner`: grader, fixture, harness, or assertion is verified cause.
-- `host-owner`: loader, metadata, adapter, or host runtime is verified cause.
-- `local-only`: consumer override/configuration causes incident.
-- `no-change`: target behavior correct or incident not reproduced.
-- `unverifiable`: evidence cannot decide safely.
+- `learn-candidate`: independently useful한 새 skill이 필요하다.
+- `eval-owner`: grader, fixture, harness 또는 assertion이 검증된 원인이다.
+- `host-owner`: loader, metadata, adapter 또는 host runtime이 검증된 원인이다.
+- `local-only`: consumer override/configuration이 incident를 일으킨다.
+- `no-change`: target behavior가 올바르거나 incident가 재현되지 않는다.
+- `unverifiable`: evidence로 안전하게 결정할 수 없다.
 
-For external consumer repository, verify upstream origin/ref and current upstream
-behavior before proposing anonymized issue. Only duplicate-checked, redacted
-proposal with verified provenance is `upstream-draft-ready`; never create,
-comment, label, or publish automatically.
+external consumer repository에서는 anonymized issue를 제안하기 전에 upstream
+origin/ref와 현재 upstream behavior를 검증한다. duplicate check를 마친 redacted
+proposal만 `upstream-draft-ready`이며, 자동으로 create, comment, label 또는 publish하지
+않는다.
 
 ## Result
 
-Lead with `## Diagnosis`, then `## Action`; add `## Remaining uncertainty` only
-when needed.
+`## Diagnosis`로 시작하고 이어서 `## Action`을 출력한다. 필요할 때만
+`## Remaining uncertainty`를 추가한다.
 
-For one incident, use short prose. For multiple symptoms sharing one cause, keep
-one stable `SD-##` row per cause in `ID | Incident | Root cause`. Report
-reproduction verdict, verified failure plane, evidence, route, and exact next
-handoff. Do not copy raw logs, transcripts, screenshots, secrets, or repeated run
-narration.
+하나의 incident에는 짧은 prose를 사용한다. 여러 symptom이 하나의 cause를 공유하면
+`ID | Incident | Root cause` 형식으로 cause마다 안정적인 `SD-##` row 하나를 유지한다.
+reproduction verdict, verified failure plane, evidence, route 및 정확한 next handoff를
+보고한다. raw logs, transcripts, screenshots, secrets 또는 반복된 run narration을
+복사하지 않는다.
 
-When experiment evidence exceeds five rows or later resume needs exact references,
-atomically replace `.tigerkit/skill-diagnosis.md` with bounded incident IDs,
-candidate/control/holdout evidence refs, measurements, and route. Keep chat to
-`## Diagnosis`, `## Action`, and necessary uncertainty; do not create archive,
-lifecycle state, or duplicate raw output.
+experiment evidence가 다섯 row를 넘거나 이후 resume에 정확한 references가 필요하면
+`.tigerkit/skill-diagnosis.md`를 bounded incident IDs, candidate/control/holdout
+evidence refs, measurements 및 route와 함께 atomically replace한다. 채팅에는
+`## Diagnosis`, `## Action` 및 필요한 uncertainty만 남긴다. archive, lifecycle state
+또는 중복된 raw output은 만들지 않는다.
 
-Use one terminal status:
+다음 terminal status 중 하나를 사용한다:
 
-- `Pass`: diagnosis and routing completed;
-- `Fail`: deterministic diagnosis/experiment claim violated a gate;
-- `Blocked`: required permission, decision, or environment unavailable;
-- `Unverifiable`: provenance, reproduction, cause, or metric unverifiable;
-- `NotApplicable`: no qualifying Agent Skill incident exists.
+- `Pass`: diagnosis와 routing이 완료되었다.
+- `Fail`: deterministic diagnosis/experiment claim이 gate를 위반했다.
+- `Blocked`: 필요한 permission, decision 또는 environment를 사용할 수 없다.
+- `Unverifiable`: provenance, reproduction, cause 또는 metric을 검증할 수 없다.
+- `NotApplicable`: 적격한 Agent Skill incident가 없다.
 
 ## Pitfalls
 
-- Do not assume skill body is cause.
-- Do not patch non-reproduced incident from wording intuition.
-- Do not trade correctness, safety, or holdout behavior for lower resource use.
-- Do not use fixed repeated runs or judge majorities to manufacture confidence.
-- Do not leak expected answers, secrets, or private evidence into prompts.
-- Do not mutate canonical skills or invoke downstream skills automatically.
+- skill body가 원인이라고 가정하지 않는다.
+- 재현되지 않은 incident를 wording intuition만으로 patch하지 않는다.
+- 낮은 resource 사용을 위해 correctness, safety 또는 holdout behavior를 바꾸지 않는다.
+- confidence를 만들기 위해 fixed repeated runs 또는 judge majorities를 사용하지 않는다.
+- expected answers, secrets 또는 private evidence를 prompts에 유출하지 않는다.
+- canonical skills를 mutate하거나 downstream skills를 자동으로 invoke하지 않는다.

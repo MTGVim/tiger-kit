@@ -1,6 +1,6 @@
 interface:
-  short_description: "[user] Investigate an inbound repository question with source-located evidence."
-  default_prompt: "Use tk-ask-repo to classify this inbound repository question, traverse to source-located evidence, sweep affected consumers when required, and report ownership without implementing changes."
+  short_description: "[user] 들어온 repository 질문을 source-located evidence와 함께 조사합니다."
+  default_prompt: "tk-ask-repo를 사용해 이 repository 질문을 분류하고, source-located evidence까지 추적하며, 필요하면 영향받는 consumer를 sweep하고, 변경을 구현하지 않은 채 ownership을 보고하세요."
 
 policy:
   allow_implicit_invocation: false
