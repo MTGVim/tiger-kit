@@ -53,7 +53,7 @@ Draft와 apply는 분리됩니다.
 | evidence/target/approval이 충돌함 | 충돌과 하나의 결정을 제시함 | `Blocked`로 중지 |
 | write/post-write check가 실패함 | 기존 target과 실행 임시 파일을 보존하고, run-owned임이 입증된 경우에만 부분적으로 생성된 새 target을 제거함 | 정확히 재현·검증할 수 있을 때만 복구함; ownership/preservation이 불확실하면 `Blocked | Unverifiable`, 그 외에는 실제 path와 `Fail`을 보고함 |
 
-## 🔴 CHECKPOINT · 🛑 STOP
+## 🔴 CHECKPOINT · 🛑 STOP (승인·중단 지점)
 
 명시적 current-turn apply approval 전에는 canonical path나 `.tigerkit/skill-drafts/<skill-name>/`에 쓰지 않습니다. 과거 approval, implicit invocation, generic continuation은 충분한 권한이 아닙니다. approval 전 candidate는 `pending`이며 Target path에는 정확한 planned path와 `not created`를 보고합니다.
 

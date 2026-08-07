@@ -45,7 +45,7 @@ commands, raw auth/network captures를 chat, `.tigerkit/*.md`, prompts, logs,
 summaries, child receipts에 절대 echo하거나 persist하지 않습니다. `auth mode: token-headless`,
 `authenticated state established` 같은 fact만 기록합니다.
 
-## Workflow
+## 작업 흐름
 
 1. **범위(Scope)** — exact criteria, target URL/environment, safe interaction
    boundary, current candidate identity, parent approval facts를 고정합니다.
@@ -95,7 +95,7 @@ standalone result는 `## Verdict`로 시작하고 `Status: <token>`, `## Verifie
 모두 적습니다. required runtime evidence가 없으면 `Unverifiable`이며 절대
 `Pass`가 아닙니다.
 
-| Status | Meaning |
+| 상태 | 의미 |
 | --- | --- |
 | `Pass` | 승인된 모든 browser criterion에 current inspected evidence가 있음 |
 | `Fail` | current runtime evidence가 승인된 criterion을 위반함 |

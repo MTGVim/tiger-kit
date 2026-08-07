@@ -36,9 +36,9 @@ Read-only다. source, Drive R/AC, units, ADRs, commits를 절대 쓰지 않으�
 
 ## 절차
 
-1. `read input`: task identity, caller mode, source, current evidence,
+1. `read input(입력 읽기)`: task identity, caller mode, source, current evidence,
    confirmed decisions, unresolved user-owned decisions, pending question을 바인딩한다.
-2. `investigate facts`: source-located
+2. `investigate facts(사실 조사)`: source-located
    `verified | inferred | unavailable` facts를 생성한다.
 3. `identify gaps`: Scope, Constraints, Outputs, Verification 전반에서
    facts와 decisions를 비교한다.

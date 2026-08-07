@@ -128,7 +128,7 @@ finding은 두 개에서 일곱 개까지 행으로 표시합니다. 여덟 개 
 `— | None | keep | — | no finding` 행 하나를 출력합니다. Vendor 행에는
 `keep (vendor)`를 사용합니다.
 
-## CHECKPOINT / STOP
+## CHECKPOINT / STOP (승인·중단 지점)
 
 audit receipt가 evidence와 허용 scope를 식별하기 전에는 `--apply` mutation을
 시작하지 않습니다. 모호한 scope 또는 delete/move에 필요한 reference

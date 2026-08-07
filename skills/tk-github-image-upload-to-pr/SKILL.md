@@ -54,7 +54,7 @@ browser-controlled runtime verification에는 `tk-browser-verify`를 사용합�
 7. 모든 exit path에서 owned staging file만 제거합니다. upload attempt가
    remote state를 만들었을 수 있으면 route를 조용히 전환하지 않습니다.
 
-## Producer evidence handoff
+## Producer evidence handoff(생산자 증거 인계)
 
 `evidence_required: true`이면 다음을 요구합니다.
 

@@ -16,7 +16,7 @@ metadata:
 
 하나의 pull-request draft와 bounded publication plan을 소유한다. local Git/GitHub state를 inspect하고 `.tigerkit/pr-open.md`를 작성할 수 있다. 아래 approval gate 전에는 product code 수정, product commit 생성, merge, tag, release, publish를 하지 않는다.
 
-## Workflow
+## 작업 흐름
 
 1. 실행 repository, authenticated GitHub identity, current branch, `HEAD`, dirty paths, base branch, 해당 branch의 existing PR을 확인한다.
 2. intended commits가 존재하는지, unrelated dirty paths가 보존되는지, proposed PR이 existing PR을 중복하지 않는지 검증한다.
@@ -26,7 +26,7 @@ metadata:
 6. current-turn approval 후 branch, `HEAD`, PR identity, open state를 다시 확인한다. explicit refspec만 push하고, 지정된 PR만 create/update한다. required evidence가 유효하면 PR이 존재한 뒤 `tk-github-image-upload-to-pr`로 handoff한다.
 7. remote PR을 다시 읽고 URL, head SHA, operation result, evidence state, remaining checks를 보고한다. required evidence가 없거나 upload가 실패하면 PR result는 유지하되 final completion은 `Blocked`로 반환한다. merge하거나 release를 요청하지 않는다.
 
-## 🔴 CHECKPOINT / STOP · Publication gate
+## 🔴 CHECKPOINT / STOP · 발행 게이트(Publication gate)
 
 Plan에는 repository, PR/create target, base branch, head branch, exact push refspec, title, body, evidence requirement/state, operation order, exclusions를 명시해야 한다.
 

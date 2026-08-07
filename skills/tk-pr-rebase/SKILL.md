@@ -9,7 +9,7 @@ metadata:
     relationship: native
 ---
 
-# Pull Request rebase
+# Pull Request rebase(리베이스)
 
 `/tk-pr-rebase`, `$tk-pr-rebase`, 또는 host skill picker를 통해서만 시작한다. generic
 rebase, update-branch, conflict, review-response, continuation에는 절대
@@ -121,7 +121,7 @@ tag, release를 수행하거나 repository rules를 바꾸지 않는다.
    user-facing phase summary는 작성하지 않으며 aggregate output은 sweep가
    소유한다.
 
-## Publication gate
+## 발행 게이트(Publication gate)
 
 Plan은 repository, PR, identities, base 및 head refs와 SHAs, lease, refspec,
 verification, replies, thread actions, summary body, re-review candidates,

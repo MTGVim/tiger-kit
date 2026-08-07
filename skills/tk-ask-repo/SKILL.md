@@ -54,12 +54,12 @@ user-invoked-only다. `disable-model-invocation: true`와
 
 ## 추적 경로
 
-- **Value**: visible string → bound key/prop/column → consuming expression →
+- **Value(값)**: visible string → bound key/prop/column → consuming expression →
   transport field → declaring type → assignment site. 의미를 판단하기 전에 sibling
   assignment와 comment를 읽는다.
 - **Structure**: entry point → ordered boundary, 예: view → transport → producer →
   store/external. dynamic dispatch를 표시한다.
-- **Existence**: current base ref → open/unmerged work → environment state.
+- **Existence(존재)**: current base ref → open/unmerged work → environment state.
   `absent | unreleased here | present but empty/placeholder | present and live`를
   구분한다. "since when"을 확인하기 위해 introducing change를 추적한다.
 - **Impact**: symbol/field/pattern → 모든 reader/writer → 모든 consumer를 분류하고
@@ -70,7 +70,7 @@ user-invoked-only다. `disable-model-invocation: true`와
 
 ## 실패 경계
 
-| Condition | Result |
+| 조건 | 결과 |
 | --- | --- |
 | exact 및 component search 뒤에도 anchor가 없음 | 실행한 query와 함께 `Unverifiable` |
 | 필요한 source를 읽을 수 없음 | gap을 인용하고 그 너머를 추론하지 않음 |

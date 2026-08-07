@@ -10,7 +10,7 @@ metadata:
     relationship: native
 ---
 
-# Drive
+# Drive 실행
 
 사용자가 `/tk-drive`, `$tk-drive`, 또는 source가 포함된 host skill picker를
 명시적으로 선택했을 때만 시작한다. source 없이 다시 호출하면, 같은 대화에서
@@ -33,7 +33,7 @@ dispatch하지 못하면 `Blocked`로 중단한다. 절대 controller edit으로
 않는다. Worker는 다른 user-owned TigerKit workflow를 orchestrate하거나
 호출하지 않는다.
 
-## Lifecycle
+## 생명주기(Lifecycle)
 
 ```text
 Prepare -> Execute -> Close gaps -> Finalize
@@ -44,7 +44,7 @@ Drive가 이 lifecycle을 소유한다. Child receipt는 내부 자료이며 `co
 boundary를 지난 뒤에는 cursor나 lifecycle claim이 아니라 새 근거에서 다음
 행동을 도출한다.
 
-## Prepare
+## 준비(Prepare)
 
 1. Complete source와 적용되는 repository instruction을 읽는다. Branch,
    baseline `HEAD`, worktree, pre-existing dirty paths, 그리고 관련 durable
@@ -79,7 +79,7 @@ remote-state, verifier-prerequisite, irreversible-decision drift가 생기면
 승인은 무효가 되어 Prepare로 돌아간다. Plan이 변하지 않았다면 routine
 second approval을 받지 않는다.
 
-## Execute
+## 실행(Execute)
 
 각 dependency wave마다 unit 하나를 맡은 fresh worker를 dispatch한다. Worker에게는
 ID/goal, exact R/AC, scope/exclusion, 관련 path, verification obligation,
@@ -106,7 +106,7 @@ serialize하거나 다시 Prepare한다. Worker는 semantic merge를 임의로 �
 않는다. Isolation, integration order, stale-base/conflict detection, cleanup은
 Drive가 소유한다.
 
-## Close gaps
+## 공백 닫기(Close gaps)
 
 승인된 각 R/AC에 대해 관찰된 evidence를 `satisfied`, `missing`, `partial`,
 `unverifiable` 중 하나로 분류한다. Acceptance와 관련된 scope/exclusion,
@@ -121,7 +121,7 @@ built-in 또는 third-party reviewer를 쓴다. Required review를 사용할 수
 없으면 `Unverifiable`이다. 모든 fix는 여전히 fresh corrective worker에게
 보낸다.
 
-## Finalize
+## 최종화(Finalize)
 
 모든 verified unit commit 뒤에 aggregate R/AC traceability, repository check,
 ancestry, exclusion, freshness를 다시 확인한다. Unit commit, verifier/gap
