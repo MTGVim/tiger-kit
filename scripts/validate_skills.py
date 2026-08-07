@@ -62,7 +62,6 @@ CORE_FRONTMATTER_FIELDS = {
 HOST_EXTENSION_FIELDS = {"argument-hint", "disable-model-invocation"}
 KEBAB = re.compile(r"^tk-[a-z0-9]+(?:-[a-z0-9]+)*$")
 LINK = re.compile(r"\[[^]]*]\(([^)]+)\)")
-HANGUL_SYLLABLE = re.compile(r"[가-힣]")
 QUESTION_TOOL_TOKENS = (
     "AskUserQuestion",
     "request_user_input",
@@ -230,25 +229,6 @@ def validate_frontmatter_and_body(
     if non_empty > limit:
         warnings.append(f"{label}: {non_empty} non-empty SKILL.md lines (warning limit {limit})")
     return errors, warnings
-
-
-def validate_skill_language(skill_dir: Path) -> list[str]:
-    errors: list[str] = []
-    paths = [skill_dir / "SKILL.md", *sorted((skill_dir / "references").glob("*.md"))]
-    for path in paths:
-        if not path.is_file():
-            continue
-        in_fence = False
-        for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
-            if line.lstrip().startswith("```"):
-                in_fence = not in_fence
-                continue
-            prose = "" if in_fence else re.sub(r"`[^`]*`", "", line)
-            if HANGUL_SYLLABLE.search(prose):
-                errors.append(
-                    f"{_display_path(path)}:{number}: canonical operational prose must be English"
-                )
-    return errors
 
 
 def validate_plain_chat_contract(skill_dir: Path) -> list[str]:
@@ -664,7 +644,6 @@ def validate_all() -> tuple[list[str], list[str]]:
         skill_errors, skill_warnings = validate_frontmatter_and_body(name, skill_dir, data, text)
         errors.extend(skill_errors)
         warnings.extend(skill_warnings)
-        errors.extend(validate_skill_language(skill_dir))
         errors.extend(validate_plain_chat_contract(skill_dir))
         kind = nested(data, "metadata", "tigerkit", "kind")
         trigger_path = skill_dir / "evals/triggers.json"

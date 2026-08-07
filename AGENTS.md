@@ -11,8 +11,8 @@ state framework.
 - Do not restore `.claude-plugin/`, `commands/`, global TigerKit state, host-specific
   copies of skill bodies, or GitHub Actions validation.
 - Prefer deletion and progressive disclosure over duplicated ceremony.
-- Canonical operational prose is English; user-facing prose follows the user's
-  language while exact statuses, IDs, commands, paths, and literals remain stable.
+- Canonical operational prose may be Korean or English; user-facing prose follows
+  the user's language while exact statuses, IDs, commands, paths, and literals remain stable.
 
 ## Skill existence discipline
 

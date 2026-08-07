@@ -15,6 +15,28 @@ class EvalSotValidatorTest(unittest.TestCase):
         errors, _ = validate_skills.validate_all()
         self.assertEqual(errors, [])
 
+    def test_korean_canonical_prose_is_accepted(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            skill_dir = root / "tk-example"
+            skill_dir.mkdir()
+            data = {
+                "name": "tk-example",
+                "description": "[user/auto] 예시 스킬",
+                "metadata": {
+                    "tigerkit": {
+                        "kind": "hybrid",
+                        "origin": "tigerkit",
+                        "relationship": "native",
+                    }
+                },
+            }
+            with patch.object(validate_skills, "ROOT", root):
+                errors, _ = validate_skills.validate_frontmatter_and_body(
+                    "tk-example", skill_dir, data, "한국어 운영 지침\n"
+                )
+            self.assertEqual(errors, [])
+
     def test_catalog_is_discovered_from_skill_directories(self) -> None:
         skills = validate_skills.discover_skills()
         self.assertGreater(len(skills), 0)
