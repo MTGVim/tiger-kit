@@ -1,35 +1,33 @@
-# Skill discovery candidates
+# Skill discovery 후보
 
-Repository skills may exist under `.agents/skills/`, `.claude/skills/`, or
-`.hermes/skills/`. User skills may exist under the host's `.agents`, `.claude`,
-`.codex`, or `.hermes` skill directories. Repository and user rule files are
-outside this skill's scope.
+Repository skill은 `.agents/skills/`, `.claude/skills/`, 또는
+`.hermes/skills/` 아래에 있을 수 있습니다. User skill은 host의 `.agents`,
+`.claude`, `.codex`, 또는 `.hermes` skill directory 아래에 있을 수 있습니다.
+Repository와 user rule file은 이 skill의 scope 밖입니다.
 
-Identify the current host through actual paths or host-discovery evidence and
-interpret only its native targets. If the host is unknown, do not invent a
-target; leave it `Unverifiable`. Never force one host's location onto another
-or fan out/synchronize across hosts.
-Never use `.tigerkit/` as a persistent registry.
+실제 path 또는 host-discovery evidence로 current host를 식별하고 해당 host의
+native target만 해석합니다. host를 알 수 없으면 target을 지어내지 말고
+`Unverifiable`로 둡니다. 한 host의 location을 다른 host에 강제하거나 여러
+host로 fan out/synchronize하지 않습니다.
+`.tigerkit/`을 persistent registry로 사용하지 않습니다.
 
-## Ownership evidence
+## Ownership 증거
 
-Resolve each candidate path and every relevant symlink before proposing an
-edit. Classify ownership from observed evidence:
+edit를 proposal하기 전에 각 candidate path와 관련된 모든 symlink를
+resolve합니다. 관찰된 evidence로 ownership을 분류합니다.
 
-- package-manager installation roots or manifests;
-- updater-controlled markers, version files, or update metadata;
-- a version/current file or directory symlink that resolves into an external
-  installation root;
-- available author history showing or failing to show user authorship.
+- package-manager installation root 또는 manifest
+- updater가 관리하는 marker, version file, update metadata
+- external installation root로 resolve되는 version/current file 또는 directory
+  symlink
+- user authorship를 보여주거나 보여주지 않는 확인 가능한 author history
 
-No single weak signal is conclusive, and absence of user history alone does
-not prove vendor ownership. Combine the available path, link, installer,
-updater, and history evidence. Artifact names and naming conventions are not
-ownership evidence.
+약한 signal 하나만으로 결론 내리지 않으며 user history가 없다는 사실만으로
+vendor ownership을 증명하지 않습니다. path, link, installer, updater,
+history evidence를 조합합니다. vendor ownership이 확인된 candidate는
+`keep (vendor)` report-only로 처리합니다. Unknown ownership은 edit proposal
+전에 user decision 하나가 필요합니다. active conversation 또는 durable
+governing source에 이미 있는 explicit exclusion을 존중하고 hidden global
+state나 `.tigerkit/`에 저장하지 않습니다.
 
-Confirmed vendor ownership makes the candidate report-only as `keep (vendor)`.
-Unknown ownership requires one user decision before any edit proposal. Honor
-explicit exclusions already present in the active conversation or a durable
-governing source; do not persist them in hidden global state or `.tigerkit/`.
-
-User-facing progress and receipt prose follows the user's language.
+User-facing progress와 receipt prose는 사용자의 언어를 따릅니다.

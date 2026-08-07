@@ -53,7 +53,7 @@
     {
       "id": "validation-positive-5",
       "split": "validation",
-      "query": "Audit the existing repo and user skills for overlap and placement",
+      "query": "기존 repo와 user skill의 중복·배치를 감사해줘",
       "should_trigger": true,
       "facets": [
         "short"
