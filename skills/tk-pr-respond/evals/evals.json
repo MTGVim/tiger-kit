@@ -4,97 +4,97 @@
     {
       "from": "pr-respond-ci-processes-fresh-feedback-without-questions-actor",
       "to": "pr-respond-ci-processes-feedback-through-fresh-workers-v4",
-      "reason": "Direct CI progress now uses the orchestration marker."
+      "reason": "Direct CI progress는 이제 orchestration marker를 사용한다."
     },
     {
       "from": "pr-respond-ci-processes-fresh-feedback-without-questions-compact-progress-v2",
       "to": "pr-respond-ci-processes-feedback-through-fresh-workers-v4",
-      "reason": "Host-visible child receipts now require an explicit parent continuation checkpoint and same-turn publication lifecycle."
+      "reason": "Host-visible child receipts에는 이제 명시적인 parent continuation checkpoint와 same-turn publication lifecycle이 필요하다."
     },
     {
       "from": "pr-respond-ci-processes-fresh-feedback-without-questions",
       "to": "pr-respond-ci-processes-fresh-feedback-without-questions-actor",
-      "reason": "Direct CI progress uses the orchestration marker and terminal Status is no longer duplicated with a visible Pass marker."
+      "reason": "Direct CI progress는 orchestration marker를 사용하며 terminal Status는 더 이상 visible Pass marker와 중복되지 않는다."
     },
     {
       "from": "pr-respond-ci-bounds-actions-cycles",
       "to": "pr-respond-ci-bounds-fresh-worker-cycles",
-      "reason": "Issue 277 moves fresh-worker dispatch under PR Respond."
+      "reason": "Issue 277은 fresh-worker dispatch를 PR Respond 아래로 이동한다."
     },
     {
       "from": "pr-respond-ci-does-not-fix-non-repository-failures",
       "to": "pr-respond-ci-skips-worker-for-non-repository-failures",
-      "reason": "Issue 277 moves fresh-worker dispatch under PR Respond."
+      "reason": "Issue 277은 fresh-worker dispatch를 PR Respond 아래로 이동한다."
     },
     {
       "from": "pr-respond-ci-keeps-external-ci-report-only",
       "to": "pr-respond-ci-keeps-external-ci-worker-free",
-      "reason": "Issue 277 moves fresh-worker dispatch under PR Respond."
+      "reason": "Issue 277은 fresh-worker dispatch를 PR Respond 아래로 이동한다."
     },
     {
       "from": "pr-respond-ci-processes-fresh-feedback-without-questions-orchestration-v3",
       "to": "pr-respond-ci-processes-feedback-through-fresh-workers-v4",
-      "reason": "Issue 277 moves fresh-worker dispatch under PR Respond."
+      "reason": "Issue 277은 fresh-worker dispatch를 PR Respond 아래로 이동한다."
     },
     {
       "from": "pr-respond-ci-promotes-fresh-head-between-cycles",
       "to": "pr-respond-ci-promotes-head-between-worker-cycles",
-      "reason": "Issue 277 moves fresh-worker dispatch under PR Respond."
+      "reason": "Issue 277은 fresh-worker dispatch를 PR Respond 아래로 이동한다."
     },
     {
       "from": "pr-respond-ci-repairs-github-actions",
       "to": "pr-respond-ci-repairs-actions-through-fresh-worker",
-      "reason": "Issue 277 moves fresh-worker dispatch under PR Respond."
+      "reason": "Issue 277은 fresh-worker dispatch를 PR Respond 아래로 이동한다."
     },
     {
       "from": "pr-respond-continues-all-selected-units",
       "to": "pr-respond-plans-all-worker-waves-before-approval",
-      "reason": "Issue 277 moves fresh-worker dispatch under PR Respond."
+      "reason": "Issue 277은 fresh-worker dispatch를 PR Respond 아래로 이동한다."
     },
     {
       "from": "pr-respond-sweep-test-only-stops-before-production-change",
       "to": "pr-respond-sweep-test-only-stops-before-production-worker",
-      "reason": "Issue 277 moves fresh-worker dispatch under PR Respond."
+      "reason": "Issue 277은 fresh-worker dispatch를 PR Respond 아래로 이동한다."
     },
     {
       "from": "pr-respond-groups-resolution-units",
       "to": "pr-respond-prepares-single-approved-plan",
-      "reason": "Issue #277 directly migrates the released baseline case to the final one-checkpoint contract."
+      "reason": "Issue #277은 released baseline case를 final one-checkpoint contract로 직접 migrate한다."
     },
     {
       "from": "pr-respond-continues-all-fresh-worker-units",
       "to": "pr-respond-plans-all-worker-waves-before-approval",
-      "reason": "Issue 277 replaces selection/publication double approval with one complete Respond plan approval."
+      "reason": "Issue 277은 selection/publication double approval을 one complete Respond plan approval으로 대체한다."
     },
     {
       "from": "pr-respond-apply-does-not-publish",
       "to": "pr-respond-waits-for-single-plan-approval",
-      "reason": "Issue #277 directly migrates the released baseline case to the final one-checkpoint contract."
+      "reason": "Issue #277은 released baseline case를 final one-checkpoint contract로 직접 migrate한다."
     },
     {
       "from": "pr-respond-executes-approved-worker-waves",
       "to": "pr-respond-plans-all-worker-waves-before-approval",
-      "reason": "Preserve the old Pending boundary while moving all mutation behind Respond single-plan approval."
+      "reason": "모든 mutation을 Respond single-plan approval 뒤로 이동하면서 기존 `Pending` boundary를 보존한다."
     },
     {
       "from": "pr-respond-prepares-one-approved-plan",
       "to": "pr-respond-prepares-single-approved-plan",
-      "reason": "Issue #277 removes action-line boilerplate and superseded worker ledgers while preserving one-plan and top-level-ledger behavior."
+      "reason": "Issue #277은 action-line boilerplate와 superseded worker ledgers를 제거하면서 one-plan 및 top-level-ledger 동작을 보존한다."
     },
     {
       "from": "pr-respond-does-not-mutate-before-plan-approval",
       "to": "pr-respond-waits-for-single-plan-approval",
-      "reason": "Issue #277 removes action-line boilerplate and superseded worker ledgers while preserving one-plan and top-level-ledger behavior."
+      "reason": "Issue #277은 action-line boilerplate와 superseded worker ledgers를 제거하면서 one-plan 및 top-level-ledger 동작을 보존한다."
     },
     {
       "from": "pr-respond-verifies-before-commit-and-owns-ledger",
       "to": "pr-respond-verifies-before-commit-and-owns-single-ledger",
-      "reason": "Issue #277 removes action-line boilerplate and superseded worker ledgers while preserving one-plan and top-level-ledger behavior."
+      "reason": "Issue #277은 action-line boilerplate와 superseded worker ledgers를 제거하면서 one-plan 및 top-level-ledger 동작을 보존한다."
     },
     {
       "from": "pr-respond-nested-defers-ledger-to-sweep",
       "to": "pr-respond-nested-defers-state-to-sweep",
-      "reason": "Issue #277 removes action-line boilerplate and superseded worker ledgers while preserving one-plan and top-level-ledger behavior."
+      "reason": "Issue #277은 action-line boilerplate와 superseded worker ledgers를 제거하면서 one-plan 및 top-level-ledger 동작을 보존한다."
     }
   ],
   "evals": [
@@ -366,7 +366,7 @@
     {
       "id": "pr-respond-executes-approved-plan-without-reapproval",
       "path": "success",
-      "prompt": "[active tk-pr-respond: one plan approved for RU-1/RU-2 and exact bounded publication] Execute and finalize the plan.",
+      "prompt": "[active tk-pr-respond: RU-1/RU-2에 대한 하나의 plan과 exact bounded publication 승인됨] 해당 plan을 Execute하고 Finalize한다.",
       "expected_output": "Respond가 fresh-worker waves, final-candidate verifiers, R/AC gap closure, commits, fresh PR validation, approved publication을 추가 질문 없이 완료한다.",
       "assertions": [
         {"type":"event_order","before":{"type":"phase_invocation","phase":"fresh-worker"},"after":{"type":"phase_invocation","phase":"remote-publish"},"forbidden_between":[{"type":"final_output"}]},
