@@ -36,6 +36,30 @@ arguments and authenticated target state before product evidence. A failed
 handoff is `Unverifiable`. Preserve the user's persistent auth profile at
 cleanup.
 
+## CDP availability and profile recovery
+
+Do not treat the user's default Chrome profile as a reusable
+`--remote-debugging-port` launch target. Chrome 136+ ignores remote-debugging
+switches against its default data directory. A directly started CDP endpoint
+therefore needs a dedicated `--user-data-dir` outside the repository; when
+authentication is required, that profile needs one user-completed login before
+the verified headless restart described above. See Chrome's
+[remote-debugging security change](https://developer.chrome.com/blog/remote-debugging-port).
+
+Where the installed Chrome and Chrome DevTools MCP support it,
+`--autoConnect` may attach to an already running signed-in profile through
+`chrome://inspect/#remote-debugging` only after the user's explicit Chrome
+Allow action. Classify that browser as attached: never close its process,
+pre-existing windows, or tabs. Follow the
+[Chrome DevTools MCP running-instance contract](https://github.com/ChromeDevTools/chrome-devtools-mcp#connecting-to-a-running-chrome-instance),
+including its supported Chrome version and approval prompt.
+
+`DevToolsActivePort`, a saved port number, or a prior browser UUID can be
+stale. Availability requires a current socket connection and successful
+endpoint/browser inspection. If no authenticated live endpoint or safe
+dedicated-profile recovery exists, return `Unverifiable` with the two
+supported recovery paths; do not launch a desktop-controller fallback.
+
 ## First-run UI suppression
 
 When supported, prefer native options such as:
