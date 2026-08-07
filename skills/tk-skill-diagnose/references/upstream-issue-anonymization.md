@@ -1,68 +1,64 @@
-# Upstream issue anonymization
+# Upstream issue 익명화
 
-Use only in a consumer repository whose target is a TigerKit-origin `tk-*`
-skill.
+TigerKit-origin `tk-*` skill을 target으로 하는 consumer repository에서만 사용한다.
 
-## Provenance gate
+## 출처 확인 게이트
 
-Verify:
+다음을 검증한다:
 
-1. TigerKit origin from metadata/path;
-2. installed ref/version or source snapshot;
-3. consumer-local edits or overrides;
-4. reproduction against unmodified TigerKit source when possible;
-5. separation of local configuration from upstream contract behavior.
+1. metadata/path에서 TigerKit origin;
+2. installed ref/version 또는 source snapshot;
+3. consumer-local edits 또는 overrides;
+4. 가능하면 unmodified TigerKit source에 대한 reproduction;
+5. local configuration과 upstream contract behavior의 분리.
 
-Consumer-only reproduction is `local-only`. If exact upstream source cannot be
-checked, local diagnosis may continue but upstream disposition is
-`upstream-unverifiable`.
+Consumer-only reproduction은 `local-only`다. 정확한 upstream source를 확인할 수
+없어도 local diagnosis는 계속할 수 있지만 upstream disposition은
+`upstream-unverifiable`다.
 
-## Proposal eligibility gate
+## 제안 적격성 게이트
 
-Do not write a proposed title, body, or any draft-template section until all
-of these are verified:
+다음 항목을 모두 검증하기 전에는 proposed title, body 또는 draft-template section을
+작성하지 않는다:
 
-1. canonical origin plus the exact installed/candidate ref, snapshot, or
-   content hash;
-2. two fresh matched reproductions against unmodified upstream source;
-3. a nearby control and unused holdout with no critical regression;
-4. an accessible open and closed upstream issue search covering the same
-   target, symptom, and root-cause theme;
-5. reconciliation of every match with the exact ref and known fix ancestry;
-6. the final `upstream-draft-ready` disposition.
+1. canonical origin과 exact installed/candidate ref, snapshot 또는 content hash;
+2. unmodified upstream source에 대한 두 번의 fresh matched reproduction;
+3. critical regression이 없는 nearby control 및 unused holdout;
+4. 같은 target, symptom 및 root-cause theme를 다루는 accessible open/closed upstream issue search;
+5. 모든 match를 exact ref 및 known fix ancestry와 대조;
+6. 최종 `upstream-draft-ready` disposition.
 
-If issue search is inaccessible, exact provenance is missing, upstream has
-fewer than two fresh reproductions, or control/holdout evidence is incomplete,
-use `upstream-unverifiable` and omit proposal content. A consumer-only
-reproduction remains `local-only`.
+issue search에 접근할 수 없거나, exact provenance가 없거나, upstream reproduction이
+두 번보다 적거나, control/holdout evidence가 불완전하면
+`upstream-unverifiable`을 사용하고 proposal content를 생략한다. Consumer-only
+reproduction은 `local-only`로 남긴다.
 
-Cite a matching open issue and its evidence state instead of drafting another
-proposal. For a matching closed issue, classify a regression candidate only
-when an exact later unmodified upstream source satisfies the same two-run,
-control, and holdout gates; otherwise cite the closed issue and use
-`upstream-unverifiable`. `upstream-candidate` may identify the matching issue
-or remaining owner work, but it never includes a new title/body proposal.
+matching open issue를 새 proposal로 작성하지 말고 해당 issue와 evidence state를
+인용한다. matching closed issue의 경우 exact later unmodified upstream source가
+동일한 two-run, control 및 holdout gate를 충족할 때만 regression candidate로 분류한다.
+그 외에는 closed issue를 인용하고 `upstream-unverifiable`을 사용한다.
+`upstream-candidate`는 matching issue 또는 남은 owner work를 식별할 수 있지만 새
+title/body proposal을 포함하지 않는다.
 
-## Required redaction
+## 필수 비식별화
 
-Remove or generalize:
+다음을 제거하거나 일반화한다:
 
-- company, organization, product, and repository names;
-- internal tickets, issues, PRs, users, customers, and account identifiers;
-- internal URLs, hosts, API endpoints, credentials, tokens, cookies, secrets;
-- home directories and absolute paths;
-- raw logs and screenshots;
-- private UI literals and business data;
-- private package or infrastructure names.
+- company, organization, product 및 repository names;
+- internal tickets, issues, PRs, users, customers 및 account identifiers;
+- internal URLs, hosts, API endpoints, credentials, tokens, cookies 및 secrets;
+- home directories 및 absolute paths;
+- raw logs 및 screenshots;
+- private UI literals 및 business data;
+- private package 또는 infrastructure names.
 
-After drafting, search for every original identifier and sensitive literal.
-Then separately verify that technical reproduction details still remain. If
-either check is unavailable, do not use `upstream-draft-ready`.
+초안을 작성한 뒤 모든 original identifier와 sensitive literal을 검색한다. 그 다음
+technical reproduction details가 여전히 남아 있는지 별도로 확인한다. 어느 한쪽 확인이
+불가능하면 `upstream-draft-ready`를 사용하지 않는다.
 
-## Draft template
+## 초안 템플릿
 
-Use this template only after the proposal eligibility gate reaches
-`upstream-draft-ready`.
+제안 적격성 게이트가 `upstream-draft-ready`에 도달한 뒤에만 다음 template을 사용한다.
 
 ```markdown
 ## Summary
@@ -123,5 +119,5 @@ This report was derived from an external consumer repository. Names, paths,
 URLs, domain data, identifiers, and private literals were removed.
 ```
 
-Return title and body as a proposal only. Never create, comment on, label,
-publish, or otherwise mutate GitHub as part of diagnosis.
+title과 body는 proposal로만 반환한다. 진단의 일부로 GitHub를 create, comment, label,
+publish하거나 그 밖의 방식으로 mutate하지 않는다.
