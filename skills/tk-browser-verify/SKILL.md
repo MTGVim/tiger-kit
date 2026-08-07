@@ -90,3 +90,11 @@ Use latest explicit user language; otherwise current message language. Preserve 
 ## User decision questions
 
 Ask one self-contained `Question` only for a material user-owned decision, followed by `Recommendation`, two or three mutually exclusive options, and exactly one `(Recommended)` or `(추천)`. Render directly in chat; do not call structured question/input tools. Remain `Pending | Blocked` until answered.
+
+## Next-action handoff
+
+Whenever this skill hands control back to the user for a question, `Pending`,
+`Blocked`, `Unverifiable`, bounded wait, or an actionable terminal result, end
+the visible handoff with exactly one `Next:` line naming the recommended action
+or next skill and its condition. Do not leave only a child receipt or generic
+“continue”; omit `Next:` only for a terminal success with no follow-up action.

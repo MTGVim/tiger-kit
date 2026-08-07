@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.07-10 — Release
+
+- docs: add next-action handoffs
+
 ## 2026.08.07-9 — Release
 
 - test: migrate orchestration eval contracts

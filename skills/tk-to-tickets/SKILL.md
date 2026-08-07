@@ -137,3 +137,11 @@ question/input tool. Preserve `Pending | Blocked` until answer.
 ## Progress
 
 Standalone skills are silent by default. Emit no progress for routine start or success; use `🙋 to-tickets · 응답 필요` only for a user decision/approval, `⏳ to-tickets · 대기` only when external waiting is next, and `🚗 to-tickets · <short state>` only at a meaningful long-running boundary. Omit `tk-` from display names; a parent owns `🚗 parent > to-tickets`. Terminal responses contain no progress marker; keep `Status: <token>` unchanged.
+
+## Next-action handoff
+
+Whenever this skill hands control back to the user for a question, `Pending`,
+`Blocked`, `Unverifiable`, bounded wait, or an actionable terminal result, end
+the visible handoff with exactly one `Next:` line naming the recommended action
+or next skill and its condition. Do not leave only a child receipt or generic
+“continue”; omit `Next:` only for a terminal success with no follow-up action.
