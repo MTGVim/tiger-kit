@@ -40,7 +40,7 @@ PR lifecycle은 `/tk-pr-open`, `/tk-pr-triage`, `/tk-pr-respond`,
 | Skill | 호출 | 소유 범위 |
 | --- | --- | --- |
 | `tk-drive` | user | 명시 source를 결정·Ready spec·조건부 tickets·unit commits·aggregate verification·finalization까지 진행 |
-| `tk-improve` | user | repository를 read-only audit하고 `.tigerkit/improve.md`에 evidence-backed `IMP-*` finding을 기록 |
+| `tk-audit` | user | repository를 read-only audit하고 `.tigerkit/audit.md`에 evidence-backed `AUD-*` finding을 기록 |
 | `tk-ask-repo` | user | repository 질문을 `path:line` 근거로 조사하는 read-only desk |
 | `tk-grill-me` | hybrid | material user decision을 evidence-first 질문 하나씩 닫음 |
 | `tk-to-spec` | hybrid | 독립 구현 가능한 Ready R/AC spec 작성 |

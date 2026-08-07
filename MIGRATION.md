@@ -1,6 +1,14 @@
 # TigerKit 21.0.9 skill ownership and browser evidence boundary
 
-## Open issues #260 and #261
+## Internal advisor naming cleanup
+
+The next maintenance release renames the user-invoked read-only advisor from
+`tk-improve` to `tk-audit`. Its local ledger is now `.tigerkit/audit.md`, and
+finding IDs use the `AUD-*` prefix. Existing `.tigerkit/improve.md` scratch
+files are not migrated automatically; external issue publication remains
+user-owned.
+
+## Open issues #260 and #261 (historical)
 
 The next maintenance release adds user-invoked `tk-improve`, which owns only
 the local `.tigerkit/improve.md` evidence ledger. `IMP-*` findings are source

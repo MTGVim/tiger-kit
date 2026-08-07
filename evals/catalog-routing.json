@@ -35,6 +35,26 @@
       "from": "reflect-conditional-diagnosis-handoff",
       "to": "skill-diagnose-vs-learn-ready",
       "reason": "Issue 224 makes diagnosis the owner of the learn-ready handoff."
+    },
+    {
+      "from": "improve-explicit-audit",
+      "to": "audit-explicit-audit",
+      "reason": "Rename the user-invoked read-only advisor from tk-improve to tk-audit."
+    },
+    {
+      "from": "improve-vs-grooming",
+      "to": "audit-vs-grooming",
+      "reason": "Rename catalog routing cases with the tk-audit skill identity."
+    },
+    {
+      "from": "improve-vs-ask-repo",
+      "to": "audit-vs-ask-repo",
+      "reason": "Rename catalog routing cases with the tk-audit skill identity."
+    },
+    {
+      "from": "improve-finding-to-drive",
+      "to": "audit-finding-to-drive",
+      "reason": "Rename catalog routing cases and finding vocabulary with the tk-audit skill identity."
     }
   ],
   "critical_hosts": [
@@ -428,33 +448,33 @@
       "critical": true
     },
     {
-      "id": "improve-explicit-audit",
-      "boundary": "tk-improve explicit read-only audit vs generic improvement request",
-      "prompt": "$tk-improve repository의 security와 test coverage를 evidence-backed IMP finding으로 audit해줘",
-      "focus_skill": "tk-improve",
-      "expected_selected_skill": "tk-improve",
+      "id": "audit-explicit-audit",
+      "boundary": "tk-audit explicit read-only audit vs generic improvement request",
+      "prompt": "$tk-audit repository의 security와 test coverage를 evidence-backed AUD finding으로 audit해줘",
+      "focus_skill": "tk-audit",
+      "expected_selected_skill": "tk-audit",
       "critical": true
     },
     {
-      "id": "improve-vs-grooming",
-      "boundary": "tk-improve vs tk-grooming skill-surface audit",
+      "id": "audit-vs-grooming",
+      "boundary": "tk-audit vs tk-grooming skill-surface audit",
       "prompt": "$tk-grooming 기존 skill의 중복·범위·배치를 report-only로 감사해줘",
       "focus_skill": "tk-grooming",
       "expected_selected_skill": "tk-grooming",
       "critical": true
     },
     {
-      "id": "improve-vs-ask-repo",
-      "boundary": "tk-improve vs tk-ask-repo evidence question",
+      "id": "audit-vs-ask-repo",
+      "boundary": "tk-audit vs tk-ask-repo evidence question",
       "prompt": "$tk-ask-repo 이 symbol의 생산자와 소비자를 path:line 근거로 조사해줘",
       "focus_skill": "tk-ask-repo",
       "expected_selected_skill": "tk-ask-repo",
       "critical": true
     },
     {
-      "id": "improve-finding-to-drive",
-      "boundary": "tk-improve finding source vs tk-drive execution",
-      "prompt": "$tk-drive IMP-003을 Ready spec부터 verified commit까지 진행해줘",
+      "id": "audit-finding-to-drive",
+      "boundary": "tk-audit finding source vs tk-drive execution",
+      "prompt": "$tk-drive AUD-003을 Ready spec부터 verified commit까지 진행해줘",
       "focus_skill": "tk-drive",
       "expected_selected_skill": "tk-drive",
       "critical": true

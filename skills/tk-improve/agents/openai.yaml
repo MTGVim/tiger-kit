@@ -1,6 +1,0 @@
-interface:
-  short_description: "[user] Audit a repository and write evidence-backed improvement findings."
-  default_prompt: "Use $tk-improve for a read-only audit; write only .tigerkit/improve.md with stable IMP-* findings and never implement or publish."
-
-policy:
-  allow_implicit_invocation: false

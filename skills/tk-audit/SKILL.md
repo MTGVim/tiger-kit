@@ -1,6 +1,6 @@
 ---
-name: tk-improve
-description: "[user] Audit a repository read-only and write prioritized evidence-backed IMP-* improvement findings for other skills or cheaper executors."
+name: tk-audit
+description: "[user] Audit a repository read-only and write prioritized evidence-backed AUD-* findings for other skills or cheaper executors."
 license: MIT
 argument-hint: "[quick|standard|deep] [security|perf|tests|architecture|branch|next]"
 disable-model-invocation: true
@@ -12,12 +12,12 @@ metadata:
     relationship: adapted
 ---
 
-# Improve
+# Audit
 
-Use only for explicit `$tk-improve` or `/tk-improve` selection. This is a
+Use only for explicit `$tk-audit` or `/tk-audit` selection. This is a
 read-only codebase advisor: source code, tests, configuration, and history are
 never modified. The only owned artifact is the repository-local
-`.tigerkit/improve.md` finding ledger.
+`.tigerkit/audit.md` finding ledger.
 
 ## Invocation
 
@@ -28,7 +28,7 @@ never modified. The only owned artifact is the repository-local
   `introduced | pre-existing`;
 - `next`: audit grounded direction candidates, separate from problem findings.
 
-Modifiers compose, such as `deep branch` or `quick security`. `tk-improve`
+Modifiers compose, such as `deep branch` or `quick security`. `tk-audit`
 does not implement, write a spec or ticket, publish an issue, create a
 worktree, or invoke another user-invoked TigerKit skill.
 
@@ -45,13 +45,13 @@ worktree, or invoke another user-invoked TigerKit skill.
    instructions. Do not report a finding without exact path/line evidence.
 4. **Prioritize** — order findings by impact ÷ effort, confidence, fix risk,
    and dependency. Keep direction candidates separate from defects.
-5. **Ledger** — atomically replace or update `.tigerkit/improve.md`, preserve
+5. **Ledger** — atomically replace or update `.tigerkit/audit.md`, preserve
    stable IDs and prior rejected/resolved/stale findings, and state audited and
    unaudited scope.
 
 ## Finding contract
 
-Each open candidate has a stable `IMP-*` ID, title, category, exact evidence,
+Each open candidate has a stable `AUD-*` ID, title, category, exact evidence,
 impact, effort, fix risk, confidence, relevant files/entry points, verification
 baseline, short fix sketch, dependency/order hint, and suggested route:
 `drive-direct | spec-first | group-before-spec | tickets-ready | investigate`.
@@ -69,12 +69,12 @@ source HEAD, exact paths/symbols, current evidence, commands and expected
 results, in/out scope, assumptions, STOP/report-back conditions, and drift
 handling. The adapted upstream plan quality in
 [plan-template.md](references/plan-template.md) informs this contract, but
-`tk-improve` does not create `plans/` or own execution.
+`tk-audit` does not create `plans/` or own execution.
 
-`tk-to-spec IMP-003` consumes one finding as source evidence and owns the Ready
-R/AC source. `tk-to-tickets IMP-003` owns only independently proven vertical
-units. `$tk-drive IMP-003` consumes the current valid ledger and routes through
-spec first; it does not invoke `tk-improve` again. Remote Jira/GitHub
+`tk-to-spec AUD-003` consumes one finding as source evidence and owns the Ready
+R/AC source. `tk-to-tickets AUD-003` owns only independently proven vertical
+units. `$tk-drive AUD-003` consumes the current valid ledger and routes through
+spec first; it does not invoke `tk-audit` again. Remote Jira/GitHub
 publication remains outside all three local skills.
 
 ## Ledger safety
@@ -109,4 +109,4 @@ cannot be resolved from evidence, ask one plain-chat `Question` with a
 
 ## Progress
 
-Standalone skills are silent by default. Emit no progress for routine start or success; use `🙋 improve · 응답 필요` only for a user decision/approval, `⏳ improve · 대기` only when external waiting is next, and `🚗 improve · <short state>` only at a meaningful long-running boundary. Omit `tk-` from display names. Terminal responses contain no progress marker; keep `Status: <token>` unchanged.
+Standalone skills are silent by default. Emit no progress for routine start or success; use `🙋 audit · 응답 필요` only for a user decision/approval, `⏳ audit · 대기` only when external waiting is next, and `🚗 audit · <short state>` only at a meaningful long-running boundary. Omit `tk-` from display names. Terminal responses contain no progress marker; keep `Status: <token>` unchanged.
