@@ -87,7 +87,11 @@ Fetch and prove the exact remote head before mutation. Reuse only an exact clean
 owned worktree; otherwise prefer Orca and fall back to Git only when unavailable.
 Run frozen/immutable setup once; share package cache only, never dependencies.
 
-Invoke exactly one owner per current category. Pass the frozen PR/head/route,
+Invoke exactly one owner per current category. A mutating maintenance-rebase row
+must dispatch `tk-pr-rebase --ci` as a fresh isolated worker/specialist, never run
+it inline in the Sweep controller. If the host cannot dispatch that worker, mark
+the row `Blocked` before local or remote mutation; there is no direct fallback.
+Pass the frozen PR/head/route,
 finding IDs, R/AC, scope/exclusions, verification, worktree facts, ledger owner
 `tk-pr-sweep`, and summary budget. Nested Respond, Rebase, workers, reviewers, and
 verifiers write no child Markdown ledger; they return compact evidence to
