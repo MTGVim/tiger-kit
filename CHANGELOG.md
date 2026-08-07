@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.07-7 — Release
+
+- docs(routing): show strategy reasons
+
 ## 2026.08.07-6 — Release
 
 - docs(tk-implement): record route reasons

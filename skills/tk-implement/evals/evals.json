@@ -867,7 +867,7 @@
       "id": "implement-reports-bounded-behavior-summary",
       "path": "success",
       "prompt": "/tk-implement 여러 의미 있는 동작을 바꾸는 한 unit을 완료하고 사용자가 결과를 재구성할 수 있게 보고해줘.",
-      "expected_output": "result sentence 한 문장만으로 끝내지 않고 Changed에 동작 중심 2–5개 bullet, Verification에 핵심 결과 1–4개 bullet, optional risk, bottom metadata 없이 최종 요약을 제공한다.",
+      "expected_output": "result sentence 한 문장만으로 끝내지 않고 Changed에 동작 중심 2–5개 bullet, Strategy에 direct | delegated와 Strategy reason 및 Fallback 상태, Verification에 핵심 결과 1–4개 bullet, optional risk, bottom metadata 없이 최종 요약을 제공한다.",
       "assertions": [
         {
           "type": "judge",
@@ -880,6 +880,14 @@
         {
           "type": "output_contains",
           "text": "## Verification"
+        },
+        {
+          "type": "output_contains",
+          "text": "## Strategy"
+        },
+        {
+          "type": "output_contains",
+          "text": "Strategy reason"
         },
         {
           "type": "output_absent",
@@ -975,15 +983,23 @@
       "id": "implement-reports-review-route-and-fixes",
       "path": "success",
       "prompt": "/tk-implement delegated high-risk unit에서 Additional review finding 두 개를 2 round에 고친 뒤 결과를 보고해 주세요.",
-      "expected_output": "Review section에 delegated, Built-in, Additional capability label, 2/5 rounds, disposition counts, 실제 review-driven fixes를 보고하고 internal prompts/models는 숨긴다.",
+      "expected_output": "Strategy section에 delegated와 Strategy reason을 먼저 보고하고, Review section에 Built-in, Additional capability label, 2/5 rounds, disposition counts, 실제 review-driven fixes를 보고하며 internal prompts/models는 숨긴다.",
       "assertions": [
         {
           "type": "output_contains",
           "text": "## Review"
         },
         {
+          "type": "output_contains",
+          "text": "## Strategy"
+        },
+        {
+          "type": "output_contains",
+          "text": "Strategy reason"
+        },
+        {
           "type": "judge",
-          "criterion": "strategy, review route, snapshot, finding dispositions, fix-round count와 actual fixes를 ledger에 기록하고 bounded user summary에는 decision-relevant review facts만 남긴다."
+          "criterion": "bounded user summary에 Strategy와 Strategy reason을 명시하고, strategy, review route, snapshot, finding dispositions, fix-round count와 actual fixes를 ledger에 기록하며 internal prompts/models는 숨긴다."
         },
         {
           "type": "terminal_status",
