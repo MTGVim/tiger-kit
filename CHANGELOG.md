@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+## 2026.08.08-1 — Release
+
+- docs: localize tk-skill-diagnose
+- docs: localize tk-prototype to Korean
+- docs(tk-pr-respond): localize contract in Korean
+- docs(tk-pr-rebase): localize contract in Korean
+- docs(tk-pr-open): localize contract in Korean
+- docs(skills): localize merge conflict Korean
+- docs(tk-learn): localize authoring contract
+- docs(tk-handoff): localize in Korean
+- docs(skills): localize tk-grooming in Korean
+- docs(tk-grill-me): localize prose
+- docs(tk-github-image-upload-to-pr): localize Korean prose
+- docs(tk-browser-verify): localize Korean prose
+- docs(tk-ask-repo): localize Korean prose
+- docs(tk-pr-sweep): localize Korean prose
+- docs(tk-drive): localize Korean prose
+- docs(tk-audit): localize Korean prose
+- docs: allow Korean canonical prose
+
 ## 2026.08.07-13 — Release
 
 - refactor: make browser acceptance verification headless-only with transient evidence-backed auth and secret-free nested evidence
