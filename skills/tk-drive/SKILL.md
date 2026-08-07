@@ -146,7 +146,9 @@ Lead with `Implemented`; the terminal response has no progress marker, while a
 preceding `🚗 drive > finalization` boundary distinguishes orchestration from a
 direct `tk-implement` result. Follow with two to seven behavior bullets, then
 `## Strategy` with every unit's resolved `direct | delegated` choice and
-user-useful selection reason, then `Verification`
+user-useful selection reason. For one unit, render each Strategy field as its
+own `-` bullet, then render `## Review` with `Additional review` as its own
+bullet. Then `Verification`
 with one to four aggregate bullets. For multiple units, add compact
 `Ticket | Outcome | Commit` and `Unit | Strategy | Strategy reason | Additional review | Fix rounds | Result`
 tables; include any `delegated -> direct` fallback transition and reason in the
