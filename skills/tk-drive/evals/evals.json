@@ -562,7 +562,7 @@
         },
         {
           "type": "judge",
-          "criterion": "multiple units의 final output은 Unit, Strategy, Additional review, Fix rounds, Result를 compact table로 요약하고 raw finding text를 반복하지 않는다."
+          "criterion": "multiple units의 final output은 Unit, Strategy, Strategy reason, Additional review, Fix rounds, Result를 compact table로 요약하고 fallback transition/reason이 있으면 함께 보여 주며 raw finding text를 반복하지 않는다."
         },
         {
           "type": "terminal_status",
@@ -1397,7 +1397,7 @@
       "id": "drive-bounds-result-cardinality",
       "path": "success",
       "prompt": "[active tk-drive] aggregate verification이 Pass입니다. 사용자에게 의미 있는 구현 결과 9건, ticket commit 3건, 검증 결과 4건을 final summary로 보고해 주세요.",
-      "expected_output": "canonical result heading 또는 result sentence로 바로 시작하고 Implemented 상위 5–7개, Ticket table, Verification 1–4개를 제시하며 separator, no-op/empty section과 중복을 생략한다.",
+      "expected_output": "canonical result heading 또는 result sentence로 바로 시작하고 Implemented 상위 5–7개, `## Strategy`의 unit별 Strategy와 Strategy reason, Ticket table, Verification 1–4개를 제시하며 separator, no-op/empty section과 중복을 생략한다.",
       "assertions": [
         {
           "type": "judge",
@@ -1410,6 +1410,14 @@
         {
           "type": "output_contains",
           "text": "Verification"
+        },
+        {
+          "type": "output_contains",
+          "text": "Strategy"
+        },
+        {
+          "type": "output_contains",
+          "text": "Strategy reason"
         },
         {
           "type": "terminal_status",

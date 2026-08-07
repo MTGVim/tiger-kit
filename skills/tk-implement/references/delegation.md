@@ -60,13 +60,14 @@ dispatch; the tier is not a provider, model alias, or agent by itself.
    satisfies the unit. Otherwise choose the first tier-compatible writable
    candidate in the host's stable roster order; do not invent a provider alias.
 4. Pass the selected identifier and tier to dispatch and record the
-   `resolved implementor`, dispatch values, and selection reason in the
-   handoff/evidence.
+   `resolved implementor`, dispatch values, and selection reason in the unit
+   result, handoff/evidence, and implementation ledger.
 
 If no suitable candidate exists, an inferred optimization falls back to
-`direct` plus the current model and reports that fallback. A required override
-that cannot be satisfied is `Blocked`; never substitute a read-only or
-unrelated candidate silently.
+`direct` plus the current model and reports the transition and reason in the
+unit result and implementation ledger. A required override that cannot be
+satisfied is `Blocked`; never substitute a read-only or unrelated candidate
+silently.
 
 The current agent inspects the actual diff, request compliance, and
 verification evidence, adjudicates findings, and owns the bounded fix loop in

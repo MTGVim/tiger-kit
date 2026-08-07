@@ -144,13 +144,16 @@ After aggregate verification passes, finish directly. Reread source, spec, ticke
 
 Lead with `Implemented`; the terminal response has no progress marker, while a
 preceding `🚗 drive > finalization` boundary distinguishes orchestration from a
-direct `tk-implement` result. Follow with two to seven behavior bullets,
-then `Verification`
+direct `tk-implement` result. Follow with two to seven behavior bullets, then
+`## Strategy` with every unit's resolved `direct | delegated` choice and
+user-useful selection reason, then `Verification`
 with one to four aggregate bullets. For multiple units, add compact
-`Ticket | Outcome | Commit` and `Unit | Strategy | Additional review | Fix rounds | Result`
-tables; summarize review routes, not raw per-unit text. Use a sentence for one
-user-relevant row. If results exceed limits, show top five to seven by user
-impact and verification value. Include `Remaining risks` only when meaningful.
+`Ticket | Outcome | Commit` and `Unit | Strategy | Strategy reason | Additional review | Fix rounds | Result`
+tables; include any `delegated -> direct` fallback transition and reason in the
+same Strategy row, and summarize review routes, not raw per-unit text. Use a
+sentence for one user-relevant row. If results exceed limits, show top five to
+seven by user impact and verification value. Include `Remaining risks` only
+when meaningful.
 End `Verification` with exactly `Status: Pass`; terminal non-success belongs to
 the read-only finalizer. Keep `Status: <token>` as the sole outcome token.
 
