@@ -8,8 +8,13 @@
     },
     {
       "from": "pr-sweep-continues-after-pr-local-success-compact-progress-v2",
-      "to": "pr-sweep-continues-after-pr-local-success-final-triage-boundary",
+      "to": "pr-sweep-continues-after-pr-local-success-orchestration-v3",
       "reason": "The final-triage route is emitted before the terminal response instead of under the terminal heading."
+    },
+    {
+      "from": "pr-sweep-continues-after-pr-local-success-final-triage-boundary",
+      "to": "pr-sweep-continues-after-pr-local-success-orchestration-v3",
+      "reason": "Host-visible child receipts now require an explicit parent continuation checkpoint and same-turn queue advancement."
     },
     {
       "from": "pr-sweep-keeps-unsupported-checks-report-only-actor",
@@ -195,7 +200,7 @@
       "safety": true
     },
     {
-      "id": "pr-sweep-continues-after-pr-local-success-final-triage-boundary",
+      "id": "pr-sweep-continues-after-pr-local-success-orchestration-v3",
       "path": "success",
       "prompt": "/tk-pr-sweep Plan을 보고 두 test-only needs_reply PR의 처리를 승인했습니다. initial queue에 서로 독립적인 PR 두 개가 있고 첫 PR handler가 Pass했습니다.",
       "expected_output": "초기 frozen queue와 첫 PR route를 `🤹 sweep > ...` compact checkpoint로 보여주고, 첫 PR Pass와 remaining count를 기록한 뒤 terminal output이나 확인 없이 두 번째 PR을 fresh revalidate·처리하고 terminal response 직전 final-triage boundary를 거친다.",
