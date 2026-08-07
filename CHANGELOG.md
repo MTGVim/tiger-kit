@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- refactor: give Respond and Sweep one approved Prepare/Execute/Close gaps/Finalize lifecycle
+- remove: replace the PR triage wrapper skill with `tk-pr-sweep --report` and moved deterministic scripts
+- refactor: consolidate standalone Respond and top-level Sweep evidence into one owner ledger each
 - refactor: collapse Drive preparation, unit slicing, and implementation into one approved fresh-worker lifecycle
 - remove: delete the three superseded Drive phase-skill packages and model-routing configuration surface
 - refactor: replace split Drive artifacts with `.tigerkit/drive.md` and narrow review to R/AC acceptance gaps

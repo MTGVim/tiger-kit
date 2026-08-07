@@ -1,2 +1,0 @@
-interface:
-  short_description: "[user/auto] Read-only triage of configured pull requests and review state."

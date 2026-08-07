@@ -10,7 +10,8 @@
     "tk-improve",
     "tk-to-spec",
     "tk-to-tickets",
-    "tk-implement"
+    "tk-implement",
+    "tk-pr-triage"
   ],
   "retired_catalog_cases": [
     "adhd-explicit",
@@ -22,13 +23,17 @@
     "tk-drive:behavior:drive-live-sdd-implementation-finalization-boundary",
     "tk-drive:behavior:drive-keeps-blocking-decision-pending",
     "tk-pr-open:behavior:pr-open-prepares-plan",
-    "tk-pr-triage:behavior:pr-triage-is-read-only",
-    "tk-pr-respond:behavior:pr-respond-apply-does-not-publish",
+    "tk-pr-sweep:behavior:pr-sweep-report-is-read-only",
+    "tk-pr-respond:behavior:pr-respond-does-not-mutate-before-plan-approval",
     "tk-pr-rebase:behavior:pr-rebase-requires-exact-lease-and-freshness",
     "tk-drive:behavior:drive-presents-one-approval",
     "tk-drive:behavior:drive-blocks-without-worker",
     "tk-drive:behavior:drive-verifies-before-unit-commit",
-    "tk-drive:behavior:drive-owns-only-drive-ledger"
+    "tk-drive:behavior:drive-owns-only-drive-ledger",
+    "tk-pr-respond:behavior:pr-respond-prepares-one-approved-plan",
+    "tk-pr-respond:behavior:pr-respond-verifies-before-commit-and-owns-ledger",
+    "tk-pr-sweep:behavior:pr-sweep-one-plan-before-fresh-worker-mutation",
+    "tk-pr-sweep:behavior:pr-sweep-nested-routes-use-only-sweep-ledger"
   ],
   "catalog_cases": [
     "catalog:behavior:drive-vs-grill-drive",
@@ -46,6 +51,7 @@
     "catalog:behavior:skill-diagnose-vs-code-debugging",
     "catalog:behavior:skill-diagnose-vs-learn-ready",
     "catalog:behavior:pr-rebase-explicit",
-    "catalog:behavior:pr-rebase-generic-block"
+    "catalog:behavior:pr-rebase-generic-block",
+    "catalog:behavior:pr-sweep-report-explicit"
   ]
 }

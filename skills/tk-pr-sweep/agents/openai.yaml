@@ -1,4 +1,4 @@
 interface:
-  short_description: "[user] Sweep supported PR maintenance across configured repositories with fresh bounded evidence."
+  short_description: "[user] Sweep approved PR maintenance or report triage read-only."
   policy:
     allow_implicit_invocation: false

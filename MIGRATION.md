@@ -73,6 +73,19 @@ task from source and repository evidence in `drive.md`; artifact presence alone
 grants no authority. Nested workers, reviewers, and verifiers return compact
 evidence instead of writing lifecycle Markdown.
 
+## PR workflow migration
+
+`tk-pr-respond` now prepares one exact-PR resolution and publication plan, asks
+once, then runs fresh-worker units, acceptance verification, commits, and the
+already-approved bounded remote actions. There is no later publication approval.
+Standalone state is `.tigerkit/pr-respond.md`.
+
+The former PR-triage wrapper has no replacement skill. Use
+`$tk-pr-sweep --report` for read-only inventory; interactive `$tk-pr-sweep`
+prepares one multi-PR batch approval and invokes the moved deterministic triage
+script directly. Top-level state is `.tigerkit/pr-sweep.md`; nested Respond,
+Rebase, workers, reviewers, and verifiers write no competing Markdown ledger.
+
 ## Authority
 
 Drive may create the approved verified current-branch unit commits. Push, PR,

@@ -32,8 +32,8 @@ npx skills update --global --yes
 
 Claude Code와 Hermes Agent에서는 `/tk-drive`, Codex에서는
 `$tk-drive` 또는 skill picker를 사용합니다.
-PR lifecycle은 `/tk-pr-open`, `/tk-pr-triage`, `/tk-pr-respond`,
-`/tk-pr-rebase`, `/tk-pr-sweep`를 직접 선택합니다.
+PR lifecycle은 `/tk-pr-open`, `/tk-pr-respond`, `/tk-pr-rebase`,
+`/tk-pr-sweep`를 직접 선택하며 read-only inventory는 `/tk-pr-sweep --report`를 사용합니다.
 
 ## Skill 표면
 
@@ -44,10 +44,9 @@ PR lifecycle은 `/tk-pr-open`, `/tk-pr-triage`, `/tk-pr-respond`,
 | `tk-ask-repo` | user | repository 질문을 `path:line` 근거로 조사하는 read-only desk |
 | `tk-grill-me` | hybrid | material user decision을 evidence-first 질문 하나씩 닫음 |
 | `tk-pr-open` | hybrid | 명확한 단일 PR 요청으로 초안·publish plan을 작성하고 승인 후 create/update |
-| `tk-pr-triage` | hybrid | 명시 호출 또는 sweep handoff에서 repository의 PR·review·check·reply 상태를 read-only 분류 |
-| `tk-pr-respond` | hybrid | 명시 호출 또는 sweep handoff에서 feedback·GitHub Actions를 resolution unit으로 처리하고 bounded publish |
+| `tk-pr-respond` | hybrid | 단일 PR을 한 번 준비·승인하고 fresh-worker resolution unit·acceptance gap closure·bounded publish까지 처리 |
 | `tk-pr-rebase` | hybrid | 명시 호출 또는 sweep handoff에서 열린 PR을 최신 base에 rebase하고 bounded force-with-lease·review follow-up publish |
-| `tk-pr-sweep` | user | configured repositories의 지원 가능한 PR maintenance를 fresh triage·bounded child routes로 일괄 처리 |
+| `tk-pr-sweep` | user | deterministic `--report` 또는 한 번 승인한 multi-PR maintenance batch와 bounded child routes를 소유 |
 | `tk-github-image-upload-to-pr` | user | 로컬 evidence image를 인증된 browser session으로 기존 PR 본문이나 요청된 comment에 upload |
 | `tk-prototype` | hybrid | 폐기 가능한 UI/logic 비교물을 실행 |
 | `tk-browser-verify` | hybrid | 실제 browser UI·network·최종 상태 검증 |
@@ -85,18 +84,11 @@ commit, 검증 또는 안전 경계가 있을 때만 해당 skill을 선택합�
 → current-turn publish approval
 → bounded push + PR create/update
 
-/tk-pr-triage
-→ executing repository resolve
-→ paginated read-only PR·review·check·reply collection
-→ actionable category와 next action
-
 /tk-pr-respond
-→ review thread와 comment를 resolution unit으로 grouping
-→ user selection
-→ unit마다 fresh worker candidate + verifier + verified commit
-→ aggregate verification과 exact publish plan
-→ current-turn approval 뒤 push·reply·verified resolve
-→ 모든 actionable finding 해결 시 필요한 human reviewer에게 re-review request
+→ fresh exact-PR evidence와 apply | reply | defer resolution units/waves 준비
+→ assumptions·verification·bounded publication을 포함한 한 번의 plan approval
+→ unit마다 fresh worker candidate → verifier → R/AC gap closure → verified commit
+→ fresh PR validation 뒤 이미 승인된 push·reply·resolve·re-review·summary
 
 /tk-pr-rebase
 → exact PR head와 최신 base SHA 고정
@@ -105,18 +97,22 @@ commit, 검증 또는 안전 경계가 있을 때만 해당 skill을 선택합�
 → current-turn approval 뒤 publish
 → post-push review state에 따라 human re-review request
 
+/tk-pr-sweep --report
+→ package-local deterministic triage를 read-only 실행
+
 /tk-pr-sweep
-→ configured repositories fresh triage
-→ supported Act now PR을 exact head로 순차 revalidate
+→ configured repositories deterministic triage와 actionable/held/report-only batch 준비
+→ assumptions·waves·bounded child/publication actions를 포함한 한 번의 plan approval
 → conflict는 tk-pr-rebase --ci, Actions·feedback은 tk-pr-respond --ci
-→ PR-local failure를 격리하고 bounded route·worktree lifecycle 적용
-→ final fresh triage와 aggregate report
+→ nested routes는 competing Markdown ledger 없이 pr-sweep evidence로 반환
+→ final deterministic triage와 aggregate R/AC gap result
 ```
 
-다섯 skill은 포괄 권한을 공유하지 않습니다. `tk-pr-triage`는 항상 read-only이며,
-`tk-pr-open`, 일반 `tk-pr-respond`, 일반 `tk-pr-rebase`는 exact publish plan의 현재
-turn 승인이 있기 전에는 remote write를 하지 않습니다. 명시적 `tk-pr-sweep`만 fresh
-exact evidence 안에서 child의 bounded `--ci` route를 승인합니다.
+네 skill은 포괄 권한을 공유하지 않습니다. `tk-pr-sweep --report`는 read-only이고,
+`tk-pr-open`, standalone `tk-pr-respond`, standalone `tk-pr-rebase`는 각자의 exact
+plan 승인이 있기 전에는 remote write를 하지 않습니다. 명시적 interactive
+`tk-pr-sweep` plan만 fresh exact evidence 안에서 child의 bounded `--ci` route를
+한 번 승인합니다.
 
 ## `tk-drive`
 
@@ -170,8 +166,8 @@ python3 scripts/validate_skills.py
 python3 scripts/validate_skills.py --links-only
 python3 -m unittest discover -s scripts -p 'test_*.py'
 python3 scripts/audit_catalog.py --check
-node --check skills/tk-pr-triage/scripts/triage.mjs
-node --test skills/tk-pr-triage/scripts/triage.test.mjs
+node --check skills/tk-pr-sweep/scripts/triage.mjs
+node --test skills/tk-pr-sweep/scripts/triage.test.mjs
 npx --yes skills@1.5.9 add . --list
 npx --yes skills add . --list
 git diff --check
@@ -213,12 +209,11 @@ Evidence, dedupe, trigger/eval, baseline/compatibility gate를 먼저 검증하�
 candidate를 verifier와 R/AC gap closure 뒤 commit합니다. Push, PR, merge, tag,
 release, publish는 별도 명시 권한 없이는 수행하지 않습니다.
 
-`tk-pr-triage`는 remote와 local을 변경하지 않습니다. `tk-pr-open`은 PR create/update를,
-`tk-pr-respond`는 push·reply·verified thread resolve를 exact current-turn publish
-approval 뒤에만 수행합니다. `tk-pr-rebase`는 exact lease를 고정한 force-with-lease,
-rebase-satisfied reply·resolve, 조건부 human re-review만 같은 승인 뒤에 수행합니다.
-`tk-pr-sweep`는 이 두 one-PR owner의 bounded `--ci` route만 orchestration합니다.
-네 mutation skill 모두 merge·tag·release 권한을 갖지 않습니다.
+`tk-pr-sweep --report`는 repository와 GitHub를 변경하지 않습니다. `tk-pr-open`은 PR create/update를,
+standalone `tk-pr-respond`는 한 번 승인한 exact plan 안에서 push·reply·verified resolve를,
+`tk-pr-rebase`는 exact lease를 고정한 force-with-lease와 review follow-up만 수행합니다.
+interactive `tk-pr-sweep`는 승인된 batch 안에서 두 one-PR owner의 bounded `--ci` route만
+orchestration합니다. 네 mutation skill 모두 merge·tag·release 권한을 갖지 않습니다.
 
 이전 구조에서 갱신한다면 [MIGRATION.md](MIGRATION.md)를 읽으세요.
 Attribution은 [NOTICE.md](NOTICE.md)에 보존됩니다.
