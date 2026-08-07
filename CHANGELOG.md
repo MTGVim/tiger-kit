@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 2026.08.07-9 — Release
+
+- test: migrate orchestration eval contracts
+- fix: resume parent orchestration
+
 ## 2026.08.07-8 — Release
 
 - optimize tk-drive: bullet routing metadata
