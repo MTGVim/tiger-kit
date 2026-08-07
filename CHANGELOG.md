@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.07-11 — Release
+
+- fix: mark user decision checkpoints
+
 ## 2026.08.07-10 — Release
 
 - docs: add next-action handoffs

@@ -184,5 +184,10 @@ Standalone skills are silent by default. Emit no progress for routine start or s
 Whenever this skill hands control back to the user for a question, `Pending`,
 `Blocked`, `Unverifiable`, bounded wait, or an actionable terminal result, end
 the visible handoff with exactly one `Next:` line naming the recommended action
-or next skill and its condition. Do not leave only a child receipt or generic
-“continue”; omit `Next:` only for a terminal success with no follow-up action.
+or next skill and its condition. Before rendering any user-facing `Question` or
+publication/approval plan, emit exactly one nonterminal hand-raise checkpoint
+in this skill's `🙋 ... · 응답 필요` form; a parent may own the display in
+orchestration. Do not use only a `🤹` or `🚗` boundary marker for a user
+decision. Mark the single recommended option with `👍 Recommendation:`.
+Do not leave only a child receipt or generic “continue”; omit `Next:` only for
+a terminal success with no follow-up action.

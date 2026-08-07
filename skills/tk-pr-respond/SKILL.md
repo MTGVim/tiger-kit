@@ -209,7 +209,11 @@ headings, statuses, IDs, paths, commands, and exact source literals stable.
 When selection, identity, scope, or publication blocks progress, ask one
 self-contained `Question` before any `Recommendation`, with one recommended
 option. Render question and options directly in chat; never call structured
-question or input tools. Preserve `Pending | Blocked` until user answers.
+question or input tools. Immediately before that user-facing question or a
+publication-plan approval request, emit the nonterminal checkpoint
+`🙋 respond · 응답 필요`; do not substitute a `🤹` boundary marker or omit the
+checkpoint. Mark the single recommended option with `👍 Recommendation:` so it
+is visually prominent. Preserve `Pending | Blocked` until user answers.
 
 Whenever `tk-pr-respond` hands control back to the user for selection,
 publication approval, `Pending`, `Blocked`, `Unverifiable`, bounded wait, or an
