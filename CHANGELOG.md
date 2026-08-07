@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2026.08.07-13 — Release
+
 - refactor: make browser acceptance verification headless-only with transient evidence-backed auth and secret-free nested evidence
 - remove: delete headed-login, nested browser ledger, source-instrumentation, and universal progress/Next presentation contracts
 - docs: complete Issue #277 current-surface, eval, release-critical, validator, and package migration
