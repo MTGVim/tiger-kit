@@ -53,7 +53,7 @@
     {
       "id": "validation-positive-5",
       "split": "validation",
-      "query": "Resume the work from the existing handoff and check drift",
+      "query": "기존 handoff에서 작업을 재개하고 drift를 확인해줘",
       "should_trigger": true,
       "facets": [
         "short"
@@ -62,7 +62,7 @@
     {
       "id": "validation-positive-6",
       "split": "validation",
-      "query": "handoff resume",
+      "query": "handoff 재개",
       "should_trigger": true,
       "facets": [
         "compound"
