@@ -20,6 +20,6 @@ condition. Never reset, revert, stash, clean, rewrite verified history, stage, o
 commit a non-passing candidate. Preserve pre-existing user changes.
 
 The terminal response contains only useful `Completed`, `Stopped`, `Remaining`,
-and `Recovery` sections, exactly one originating `Status:` line, and one `Next:`
-line only when the recovery requires user action. Never describe partial scope as
-`Pass`.
+and `Recovery` sections plus exactly one originating `Status:` line. Name a
+concrete recovery action only when user action is required. Never describe
+partial scope as `Pass`.

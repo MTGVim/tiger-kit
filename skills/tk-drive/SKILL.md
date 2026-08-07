@@ -50,7 +50,9 @@ derive the next action from fresh evidence, not a cursor or lifecycle claim.
 2. Resolve reversible ambiguity from evidence and safe defaults. Record every
    material controller choice, basis, and behavior-changing alternative. Invoke
    `tk-grill-me` only when a user-owned decision prevents a safe executable plan;
-   use `tk-prototype` only when a bounded comparison can close that decision.
+   while its question is pending emit `🙋 drive > grill-me · 응답 필요` and
+   dispatch no worker. Use `tk-prototype` only when a bounded comparison can close
+   that decision.
 3. Write Ready requirements and acceptance criteria with source anchors, scope,
    exclusions, frozen user-visible literals, and verification obligations.
 4. Derive `1..N` independently verifiable units, their dependency graph and waves.
@@ -68,8 +70,8 @@ derive the next action from fresh evidence, not a cursor or lifecycle claim.
    goal/source, included/excluded scope, R/AC, units/waves, verification, risks,
    assumptions/ambiguities, and any bounded external actions.
 
-The approval question is the action surface: emit one `🙋 drive · 응답 필요` line,
-show exactly one `👍 Recommendation:`, and do not add a redundant `Next:` line.
+The approval question is the action surface: emit one `🙋 drive · 응답 필요` line
+and show exactly one `👍 Recommendation:`.
 Approval covers only the displayed snapshot. Material source, scope, branch/head,
 remote-state, verifier-prerequisite, or irreversible-decision drift invalidates it
 and returns to Prepare; unchanged plans never receive a second routine approval.
@@ -104,7 +106,7 @@ order, stale-base/conflict detection, and cleanup.
 For every approved R/AC classify observed evidence as `satisfied`, `missing`,
 `partial`, or `unverifiable`. Check only acceptance-relevant scope/exclusions,
 units, verifiers, externally visible behavior, commit/ancestry, dirty-path
-ownership, and evidence freshness. This is not a general code review.
+ownership, and evidence freshness. Omit findings outside those acceptance facts.
 
 When evidence cannot support a confident verdict, dispatch at most one stronger
 fresh non-mutating reviewer with the same narrow R/AC brief. Use an available
@@ -121,28 +123,6 @@ facts. On non-success, freeze mutation and follow
 [non-success-finalization.md](references/non-success-finalization.md).
 
 On success, emit one concise behavior result, useful unit commits, one to four
-aggregate verification bullets, and exactly `Status: Pass`. Do not claim broad
-review coverage; suggest broader review once only when useful.
-
-### 🔴 HARD GATE · terminal user summary
-
-Only Drive emits the active run's terminal response. Start directly with the
-canonical result sentence or heading; omit receipts, phase-success tokens,
-provenance blocks, raw logs, worker tiers, and progress markers. Use one exact
-`Status: Pass | Fail | Blocked | Unverifiable` line. Add `Next:` only when a
-concrete user action remains.
-
-### 🔴 HARD GATE · response language
-
-Use the user's latest explicit language, otherwise the current message language,
-for free-form user-facing prose. Preserve canonical statuses, IDs, commands,
-paths, code, and source literals. Progress is limited to meaningful `🤹`
-orchestration boundaries, `🙋` user input, and `⏳` external waits; terminal
-responses contain none.
-
-## User decision questions
-
-Ask one self-contained question only when a user-owned decision blocks safe
-planning. Show two or three mutually exclusive options and exactly one
-`(Recommended)` or `(추천)` after `👍 Recommendation:`. Render it in chat, keep
-the run pending, and perform no downstream mutation until answered.
+aggregate verification bullets, and exactly `Status: Pass`. Only Drive emits the
+active run's terminal response; omit child receipts, raw logs, dispatch tiers,
+and progress markers.

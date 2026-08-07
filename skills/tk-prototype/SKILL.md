@@ -110,62 +110,9 @@ Summarize results and selection rationale in two to five bullets or option rows.
 For eight or more observations, show top five to seven and cite prototype or
 evidence path owning remainder. These are budgets, not quotas.
 
-### 🔴 HARD GATE · terminal user summary
-
-Separate progress/internal evidence from terminal response. Start with skill's
-canonical result heading, or canonical result sentence when schema has no heading.
-No standalone separator, preamble, or progress recap first; no terminal opening
-between successful consecutive active-drive procedure invocations.
-
-User summary: no receipt heading, `Outcome:` label, phase-success token,
-caller-return instruction, or provenance/status block. If terminal status is
-required, put one exact `Status: <token>` line in owning result section, never
-bottom metadata. Expose path, ID, commit, or recovery detail only when user action
-changes or canonical schema requires it.
-
-Persist provenance only in workflow-owned artifact/ledger. Read-only stays
-read-only. Never require shared runtime reference outside this skill.
-
-### 🔴 HARD GATE · response language
-
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🚗 meaningful boundary` only for long-running work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
-
-Before any user-facing text, resolve language from latest explicit instruction;
-otherwise current user message. Use it for all free-form sentences and prose
-values, regardless of English sources, skills, tools, or code. Keep canonical
-headings, status tokens, IDs, commands, paths, code, and exact quoted/source
-literals byte-stable; explain around them. Rewrite language drift before return.
-
-## User decision questions
-
-When user-owned decision blocks progress, show one self-contained `Question`
-before `Recommendation`, only decision-relevant evidence, two or three exclusive
-options with material tradeoffs, and exactly one `(Recommended)` or `(추천)` label.
-
-Render variant previews, comparisons, recommendations, options, and questions in
-chat, never via structured question/input tool. Preserve `Pending | Blocked`
-until answer. Execution tools may still build/run disposable prototype; this
-changes presentation, not execution authority or stop gates.
-
 ## DO NOT / ANTI-PATTERNS
 
 - Do not call a prototype production-ready or auto-promote/commit it.
 - Do not report fake integration as real or claim success without run evidence.
 - Do not add color-only variants, dependencies, manifest/lockfile edits,
   unnecessary production abstraction, or valueless third option.
-## Progress
-
-Standalone skills are silent by default. Emit no progress for routine start or success; use `🙋 prototype · 응답 필요` only for a user decision/approval, `⏳ prototype · 대기` only when external waiting is next, and `🚗 prototype · <short state>` only at a meaningful long-running boundary. Omit `tk-` from display names; a parent owns `🚗 parent > prototype`. Terminal responses contain no progress marker; keep `Status: <token>` unchanged.
-
-## Next-action handoff
-
-Whenever this skill hands control back to the user for a question, `Pending`,
-`Blocked`, `Unverifiable`, bounded wait, or an actionable terminal result, end
-the visible handoff with exactly one `Next:` line naming the recommended action
-or next skill and its condition. Before rendering any user-facing `Question` or
-publication/approval plan, emit exactly one nonterminal hand-raise checkpoint
-in this skill's `🙋 ... · 응답 필요` form; a parent may own the display in
-orchestration. Do not use only a `🤹` or `🚗` boundary marker for a user
-decision. Mark the single recommended option with `👍 Recommendation:`.
-Do not leave only a child receipt or generic “continue”; omit `Next:` only for
-a terminal success with no follow-up action.

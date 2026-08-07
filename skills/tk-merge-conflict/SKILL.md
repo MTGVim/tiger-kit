@@ -72,44 +72,8 @@ Use only non-empty sections in order: `Operation`, `Resolution`, `Verification`,
 
 For multiple resolved conflict paths, render `Resolution` as compact `Path | Intent | Result` table; use sentence for one user-relevant row. Begin with resolved result; never repeat resolution rows or append metadata. Summarize compound intent, resolved path groups, and verification in 2–5 short rows/bullets. For 8+ paths, group into top 5–7 intent/result rows and cite exact remaining paths. Budgets, not quotas.
 
-### 🔴 HARD GATE · terminal user summary
-
-Separate progress commentary, internal procedure evidence, and terminal user response. Begin every terminal user-facing response directly with skill's canonical result heading or, if result schema has no heading, canonical result sentence. Never place standalone separator, ceremonial preamble, or progress recap before opening. Never emit terminal user-summary opening between successful consecutive active-drive procedure invocations.
-
-Never render receipt heading, `Outcome:` label, phase-success token, caller-return instruction, or terminal provenance/status block in user summary. When result requires terminal status, emit single exact `Status: <token>` line in owning result section, not bottom metadata block. Expose path, ID, commit, or recovery detail only when it changes user action or canonical result schema requires it.
-
-Persist provenance only in workflow-owned artifact/ledger. Read-only skill remains read-only. Never require shared runtime reference outside this skill.
-
-### 🔴 HARD GATE · response language
-
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🚗 meaningful boundary` only for long-running work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
-
-Before user-facing progress, question, or summary, resolve language from latest explicit user language instruction; otherwise current user message's language. Write every free-form user-facing sentence and prose result value in that language. Never switch to English due to sources, skill bodies, tools, or code. Keep canonical headings, status tokens, IDs, commands, paths, code, and exact quoted/source literals byte-stable; explain around preserved token in resolved language. Before return, scan free-form user prose and rewrite drift.
-
-## User decision questions
-
-When user-owned decision blocks progress, ask one self-contained `Question` before any `Recommendation`. Show only decision-relevant evidence, two or three mutually exclusive options with material tradeoffs, and exactly one label ending `(Recommended)` or `(추천)`.
-
-Render question, recommendation, and options directly in chat; never call structured question/input tools. Preserve `Pending | Blocked` until answer. This changes presentation, not authority or stop gates.
-
 ## DO NOT / ANTI-PATTERNS
 
 - Never choose one side or invent behavior without evidence.
 - Never auto-run abort, `reset --hard`, `clean`, force push, or push.
 - Never claim completion after editing files without proving unmerged state, verification, and operation termination.
-## Progress
-
-Standalone skills are silent by default. Emit no progress for routine start or success; use `🙋 merge-conflict · 응답 필요` only for a user decision/approval, `⏳ merge-conflict · 대기` only when external waiting is next, and `🚗 merge-conflict · <short state>` only at a meaningful long-running boundary. Omit `tk-` from display names; a parent owns `🚗 parent > merge-conflict`. Terminal responses contain no progress marker; keep `Status: <token>` unchanged.
-
-## Next-action handoff
-
-Whenever this skill hands control back to the user for a question, `Pending`,
-`Blocked`, `Unverifiable`, bounded wait, or an actionable terminal result, end
-the visible handoff with exactly one `Next:` line naming the recommended action
-or next skill and its condition. Before rendering any user-facing `Question` or
-publication/approval plan, emit exactly one nonterminal hand-raise checkpoint
-in this skill's `🙋 ... · 응답 필요` form; a parent may own the display in
-orchestration. Do not use only a `🤹` or `🚗` boundary marker for a user
-decision. Mark the single recommended option with `👍 Recommendation:`.
-Do not leave only a child receipt or generic “continue”; omit `Next:` only for
-a terminal success with no follow-up action.

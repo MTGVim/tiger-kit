@@ -1,9 +1,5 @@
 {
   "version": 1,
-  "progress_contract": {
-    "version": 2,
-    "scope": "all-tk-skills"
-  },
   "retired_skill_contracts": [
     "tk-reflect",
     "tk-adhd",
@@ -21,19 +17,23 @@
     "tk-drive:behavior:drive-live-sdd-prepares-and-executes-source",
     "tk-drive:behavior:drive-live-sdd-prepared-execution-finalizes",
     "tk-drive:behavior:drive-live-sdd-implementation-finalization-boundary",
-    "tk-drive:behavior:drive-keeps-blocking-decision-pending",
+    "tk-drive:behavior:drive-keeps-blocking-question-pending",
     "tk-pr-open:behavior:pr-open-prepares-plan",
     "tk-pr-sweep:behavior:pr-sweep-report-is-read-only",
-    "tk-pr-respond:behavior:pr-respond-does-not-mutate-before-plan-approval",
+    "tk-pr-respond:behavior:pr-respond-waits-for-single-plan-approval",
     "tk-pr-rebase:behavior:pr-rebase-requires-exact-lease-and-freshness",
-    "tk-drive:behavior:drive-presents-one-approval",
+    "tk-drive:behavior:drive-presents-single-approval-surface",
     "tk-drive:behavior:drive-blocks-without-worker",
     "tk-drive:behavior:drive-verifies-before-unit-commit",
-    "tk-drive:behavior:drive-owns-only-drive-ledger",
-    "tk-pr-respond:behavior:pr-respond-prepares-one-approved-plan",
-    "tk-pr-respond:behavior:pr-respond-verifies-before-commit-and-owns-ledger",
-    "tk-pr-sweep:behavior:pr-sweep-one-plan-before-fresh-worker-mutation",
-    "tk-pr-sweep:behavior:pr-sweep-nested-routes-use-only-sweep-ledger"
+    "tk-drive:behavior:drive-owns-single-current-ledger",
+    "tk-pr-respond:behavior:pr-respond-prepares-single-approved-plan",
+    "tk-pr-respond:behavior:pr-respond-verifies-before-commit-and-owns-single-ledger",
+    "tk-pr-sweep:behavior:pr-sweep-single-plan-before-worker-mutation",
+    "tk-pr-sweep:behavior:pr-sweep-nested-routes-use-single-sweep-ledger",
+    "tk-browser-verify:behavior:browser-transient-auth-material-establishes-headless-session",
+    "tk-browser-verify:behavior:browser-unknown-auth-injection-is-unverifiable",
+    "tk-browser-verify:behavior:browser-auth-unavailable-stops-before-mutation",
+    "tk-browser-verify:behavior:browser-captures-return-to-owner-ledger"
   ],
   "catalog_cases": [
     "catalog:behavior:drive-vs-grill-drive",
@@ -52,6 +52,7 @@
     "catalog:behavior:skill-diagnose-vs-learn-ready",
     "catalog:behavior:pr-rebase-explicit",
     "catalog:behavior:pr-rebase-generic-block",
-    "catalog:behavior:pr-sweep-report-explicit"
+    "catalog:behavior:pr-sweep-report-explicit",
+    "catalog:behavior:browser-headless-auth-verifier-explicit"
   ]
 }

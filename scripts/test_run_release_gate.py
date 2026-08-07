@@ -19,7 +19,6 @@ class ReleaseGateContractTest(unittest.TestCase):
 
     def test_manifest_is_closed_and_references_existing_cases(self) -> None:
         manifest = run_release_gate.load_manifest()
-        self.assertEqual(manifest["progress_contract"], {"version": 2, "scope": "all-tk-skills"})
         contracts = load_eval_contracts(run_release_gate.ROOT, None)
         catalog = load_catalog_contract(run_release_gate.ROOT)
         self.assertEqual(run_release_gate.validate_manifest_cases(contracts, catalog, manifest), [])

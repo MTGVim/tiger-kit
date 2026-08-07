@@ -69,8 +69,8 @@ Prepare -> Execute -> Close gaps -> Finalize
    bounded remote actions, and `No remote changes yet`.
 
 Emit one `🙋 sweep > plan · 응답 필요`, show exactly one
-`👍 Recommendation:`, and ask the approval question without a redundant `Next:`
-line. Before approval create no worktree/commit and perform no remote write. The
+`👍 Recommendation:`, and ask the approval question. Before approval create no
+worktree/commit and perform no remote write. The
 approval supplies the exact bounded authority to nested Respond/Rebase; they do
 not ask again. Material identity, PR head/state/category/scope/route, verifier, or
 irreversible-decision drift invalidates the affected plan and returns to Prepare.
@@ -90,8 +90,8 @@ Run frozen/immutable setup once; share package cache only, never dependencies.
 Invoke exactly one owner per current category. Pass the frozen PR/head/route,
 finding IDs, R/AC, scope/exclusions, verification, worktree facts, ledger owner
 `tk-pr-sweep`, and summary budget. Nested Respond, Rebase, workers, reviewers, and
-verifiers write no `.tigerkit/pr-respond.md`, `.tigerkit/implementation.md`, or
-competing ledger; they return compact evidence to `.tigerkit/pr-sweep.md`. Controller and
+verifiers write no child Markdown ledger; they return compact evidence to
+`.tigerkit/pr-sweep.md`. Controller and
 nested Respond never author product edits; corrections use fresh workers and the
 automatic `cheapest | standard | strongest | host-default` tier policy.
 
@@ -101,7 +101,9 @@ base/head pair, at most three GitHub Actions corrective cycles, and one feedback
 response per fresh head plus at most two sweep-owned follow-up heads. Repeated
 unchanged or exhausted work becomes `follow-up-queued`, not another mutation.
 Post-push `IN_PROGRESS` gets at most three fresh rechecks; if still incomplete,
-record `waiting`, retain the worktree, and continue independent rows.
+record `waiting`, retain the worktree, and continue independent rows. Emit
+`⏳ sweep · 대기` only when the returned state actually requires an external
+check or re-review wait.
 
 Stop later mutation only for shared safety failure such as unresolved identity,
 corrupt repository evidence, or unprovable worktree ownership. PR-local `Fail`,
@@ -130,19 +132,3 @@ PR plus remaining report-only/held items, uses one exact
 `Status: Pass | Fail | Blocked | Unverifiable | Pending` line, omits child receipts,
 and follows the user's language while preserving canonical IDs, statuses,
 commands, paths, and exact literals.
-
-### 🔴 HARD GATE · terminal user summary
-
-Only Sweep emits the batch terminal `## PR sweep`. Omit child receipts,
-provenance blocks, raw logs, and duplicate result tokens.
-
-### 🔴 HARD GATE · response language
-
-Use the user's latest explicit language for free-form prose. Preserve exact
-statuses, IDs, paths, commands, refs, categories, links, and outbound drafts.
-
-## User decision questions
-
-Ask only the one batch-plan approval or a truly blocking user-owned decision.
-Show two or three exclusive options and exactly one recommended option; do not
-ask per-PR or publication questions inside an unchanged approved plan.

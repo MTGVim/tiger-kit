@@ -60,6 +60,24 @@ evidence. Broader style, architecture, optimization, security, and performance
 review remains outside this workflow unless it is explicit acceptance or
 repository policy.
 
+## Headless browser verification
+
+`tk-browser-verify` is now a read-only headless acceptance verifier. Browser
+scenarios, target, auth mode, and limitations belong on the top-level approval
+surface. A required authenticated scenario must establish one of these before a
+product worker runs: no-auth access, a verified run-owned headless session, or a
+transient repository/application-supported token/session bootstrap.
+
+Interactive login has no browser exception. OTP, MFA, SSO, CAPTCHA, passkey, or
+device approval requires suitable short-lived auth material through an ephemeral
+secret-input channel; when that cannot establish the approved state, the result
+is `Unverifiable` before product mutation. Secret values are never echoed or
+persisted.
+
+The verifier creates no Markdown lifecycle ledger. Nested runs return compact
+criterion facts and inspected binary evidence paths to `drive.md`,
+`pr-respond.md`, or `pr-sweep.md`, whichever owns the top-level run.
+
 ## State migration
 
 Drive uses one repo/worktree-local Markdown ledger:

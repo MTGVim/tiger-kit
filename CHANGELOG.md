@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- refactor: make browser acceptance verification headless-only with transient evidence-backed auth and secret-free nested evidence
+- remove: delete headed-login, nested browser ledger, source-instrumentation, and universal progress/Next presentation contracts
+- docs: complete Issue #277 current-surface, eval, release-critical, validator, and package migration
 - refactor: give Respond and Sweep one approved Prepare/Execute/Close gaps/Finalize lifecycle
 - remove: replace the PR triage wrapper skill with `tk-pr-sweep --report` and moved deterministic scripts
 - refactor: consolidate standalone Respond and top-level Sweep evidence into one owner ledger each

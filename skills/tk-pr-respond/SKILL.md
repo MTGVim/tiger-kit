@@ -31,7 +31,7 @@ exclusions, controller-resolved assumptions and basis, units/waves, verification
 approved publication actions, worker/correction/commit evidence, thread actions,
 and final observed PR state. Store no secret, transcript, or full log.
 
-When invoked under Sweep, write **no** `pr-respond.md`, implementation ledger, or
+When invoked under Sweep, write **no** `pr-respond.md`, child ledger, or
 other Markdown lifecycle file. Return compact evidence to the owning
 `.tigerkit/pr-sweep.md`. Artifact presence grants no authority.
 
@@ -70,8 +70,8 @@ Prepare -> Execute -> Close gaps -> Finalize
    risks, and assumptions/ambiguities. This is the only normal approval.
 
 Emit one `🙋 respond · 응답 필요`, show exactly one `👍 Recommendation:`, and ask
-the approval question without a redundant `Next:` line. Before approval perform
-no worker dispatch, commit, or remote write. Approval authorizes only the displayed
+the approval question. Before approval perform no worker dispatch, commit, or
+remote write. Approval authorizes only the displayed
 snapshot and Respond's existing bounded authority; it also authorizes the listed
 publication, so **never ask a second publication question**.
 
@@ -153,19 +153,3 @@ Sweep. Standalone output begins `## PR respond`, includes one exact
 `Status: Pass | Fail | Blocked | Unverifiable | Pending` line, omits worker
 receipts and raw logs, and uses the user's language while preserving canonical
 IDs, statuses, commands, paths, and exact literals.
-
-### 🔴 HARD GATE · terminal user summary
-
-Only standalone Respond emits `## PR respond`; nested runs return internal
-evidence. Omit child receipts, provenance blocks, and duplicate result tokens.
-
-### 🔴 HARD GATE · response language
-
-Use the user's latest explicit language for free-form prose. Preserve exact
-statuses, IDs, paths, commands, links, and outbound drafts.
-
-## User decision questions
-
-Ask only the one plan approval or a truly blocking user-owned decision. Show two
-or three exclusive options and exactly one recommended option; do not use a
-second routine selection or publication question.

@@ -499,6 +499,14 @@
       "focus_skill": "tk-pr-sweep",
       "expected_selected_skill": "tk-pr-sweep",
       "critical": true
+    },
+    {
+      "id": "browser-headless-auth-verifier-explicit",
+      "boundary": "tk-browser-verify headless auth prerequisite",
+      "prompt": "승인된 staging AC를 headless browser에서 검증해 주세요. OTP 로그인 대신 문서화된 transient session bootstrap을 사용해야 합니다.",
+      "focus_skill": "tk-browser-verify",
+      "expected_selected_skill": "tk-browser-verify",
+      "critical": true
     }
   ]
 }

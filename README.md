@@ -49,7 +49,7 @@ PR lifecycle은 `/tk-pr-open`, `/tk-pr-respond`, `/tk-pr-rebase`,
 | `tk-pr-sweep` | user | deterministic `--report` 또는 한 번 승인한 multi-PR maintenance batch와 bounded child routes를 소유 |
 | `tk-github-image-upload-to-pr` | user | 로컬 evidence image를 인증된 browser session으로 기존 PR 본문이나 요청된 comment에 upload |
 | `tk-prototype` | hybrid | 폐기 가능한 UI/logic 비교물을 실행 |
-| `tk-browser-verify` | hybrid | 실제 browser UI·network·최종 상태 검증 |
+| `tk-browser-verify` | hybrid | 승인된 browser-visible AC를 headless-only로 검증하고 compact evidence를 상위 owner에 반환 |
 | `tk-skill-diagnose` | hybrid | 관찰된 Agent Skill incident를 재현·격리하고 verified `learn-ready` objective를 handoff |
 | `tk-learn` | hybrid | `create | improve | merge`를 유일하게 소유하는 repository/user skill 작성자; 승인 전에는 쓰지 않음 |
 | `tk-grooming` | hybrid | 기존 repository/user skill의 중복·범위·배치를 감사 |
@@ -130,8 +130,11 @@ explicit tk-drive <source>
 `tk-learn`만 `create | improve | merge` skill 변경을 작성합니다.
 `tk-skill-diagnose`는 검증된 목표를 `learn-ready`로 handoff하고,
 `tk-grooming`은 repository/user skill만 감사하며 rule lifecycle을 소유하지
-않습니다. `tk-browser-verify`는 Guard와 Verdict 모두 실제 이미지 검사를 거친
-스크린샷과 가능한 경우 `Evidence directory: /absolute/path/...`를 남깁니다.
+않습니다. `tk-browser-verify`는 visible login이나 product source mutation 없이
+승인된 AC만 검증합니다. 인증이 필요하면 repository/application 근거가 있는
+transient token/session injection을 사용하고, 불가능하면 product mutation 전에
+`Unverifiable`을 반환합니다. Nested verifier는 Markdown ledger를 만들지 않고
+상위 owner에 compact facts와 inspected binary evidence path만 반환합니다.
 
 Continuation은 prompt-directed이며 durable scheduler나 cross-turn replay를
 보장하지 않습니다. Process 또는 host 경계를 넘으면 `.tigerkit/` artifact,
