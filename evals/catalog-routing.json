@@ -360,6 +360,14 @@
       "critical": true
     },
     {
+      "id": "pr-open-after-drive-natural-language",
+      "boundary": "tk-drive completion handoff vs tk-pr-open natural-language single-PR intent",
+      "prompt": "tk-drive 구현 commit까지 끝났습니다. 이제 PR 준비해줘",
+      "focus_skill": "tk-pr-open",
+      "expected_selected_skill": "tk-pr-open",
+      "critical": true
+    },
+    {
       "id": "pr-open-generic-question",
       "boundary": "tk-pr-open natural-language single-PR intent vs generic PR question",
       "prompt": "이 PR이 무엇을 바꾸는지 요약해줘",
