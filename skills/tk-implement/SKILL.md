@@ -50,7 +50,10 @@ do not retry a design decision as a cheaper implementation.
 
 `$tk-implement --config` manages the host mapping described in
 [model-routing.md](references/model-routing.md). `--show` is read-only,
-`--migrate` previews and applies only an explicit managed mapping,
+`--migrate` is a real preview/apply flow, not show-only: for Claude Code it
+must present one choice — `Add effort-only agent definitions` or `Keep
+effort: inherit without definitions` — and wait for the selected option plus
+explicit apply before writing,
 `--reset` removes that mapping at the selected scope, and `--repo` selects the
 current-repository override. Repository override wins over user host context,
 which wins over the inherited current model. `per_call_effort` is the exact

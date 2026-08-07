@@ -88,9 +88,18 @@ carry `effort` only and have no model field.
 
 For `--config --migrate`, the preview lists the definition files it would
 create, one effort-only file per distinct effort value in the managed block,
-alongside the preserved/removed text and proposed mapping. Nothing is written
-until the same explicit apply action required for the managed block is
-confirmed. `--config --reset` removes only the definitions TigerKit created.
+alongside the preserved/removed text and proposed mapping. This is a real
+preview/apply flow, not show-only. After the preview, ask one decision
+checkpoint before any write:
+
+- `Add effort-only agent definitions` — create the distinct effort-only
+  definitions, with no `model` field; explicit apply is still required.
+- `Keep effort: inherit without definitions` — create no definition files and
+  leave every affected tier at `effort: inherit`.
+
+Nothing is written until the user selects one option and confirms the same
+explicit apply action required for the managed block. `--config --reset`
+removes only the definitions TigerKit created.
 
 If a tier's model has no effort parameter, including Haiku, the tier is inert:
 no definition file is created and its block value is `effort: inherit`. If the

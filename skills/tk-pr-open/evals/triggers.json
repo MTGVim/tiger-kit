@@ -13,6 +13,7 @@
     {"id":"validation-positive-6","split":"validation","query":"현재 브랜치로 PR draft 만들고 title/body와 publish plan까지 준비해줘","should_trigger":true,"facets":["compound"]},
     {"id":"validation-positive-7","split":"validation","query":"검증된 커밋으로 PR을 준비해줘","should_trigger":true,"facets":["formal"]},
     {"id":"validation-positive-8","split":"validation","query":"PR draft 올려줘","should_trigger":true,"facets":["casual"]},
+    {"id":"validation-positive-9","split":"validation","query":"tk-drive 끝났고 검증된 커밋도 있으니 PR 준비해줘","should_trigger":true,"facets":["compound"]},
     {"id":"validation-negative-1","split":"validation","query":"이 PR 내용만 요약해줘","should_trigger":false,"facets":["formal"]},
     {"id":"validation-negative-2","split":"validation","query":"리뷰 코멘트에 답변해줘","should_trigger":false,"facets":["casual"]},
     {"id":"validation-negative-3","split":"validation","query":"PR merge 해줘","should_trigger":false,"facets":["compound"]},
@@ -20,6 +21,7 @@
     {"id":"validation-negative-5","split":"validation","query":"PR 상태만 보여줘","should_trigger":false,"facets":["formal"]},
     {"id":"validation-negative-6","split":"validation","query":"tk-pr-opne가 무슨 뜻인지 설명해줘","should_trigger":false,"facets":["typo"]},
     {"id":"validation-negative-7","split":"validation","query":"PR을 닫지 말고 리뷰만 정리해줘","should_trigger":false,"facets":["ko-en"]},
-    {"id":"validation-negative-8","split":"validation","query":"main에 바로 merge하고 배포까지 해줘","should_trigger":false,"facets":["compound"]}
+    {"id":"validation-negative-8","split":"validation","query":"main에 바로 merge하고 배포까지 해줘","should_trigger":false,"facets":["compound"]},
+    {"id":"validation-negative-9","split":"validation","query":"tk-drive 구현하고 검증된 커밋만 만들어줘","should_trigger":false,"facets":["compound"]}
   ]
 }

@@ -12,7 +12,7 @@ metadata:
 
 # Open pull request
 
-Start when the user selects `/tk-pr-open`, `$tk-pr-open`, or host skill picker, or when a clear single-PR request asks to prepare, open, or update one PR in natural language. Natural-language routing starts only this skill's local preview; it never implies publication. Never activate from a generic PR question, code review, implementation request, merge request, multi-PR maintenance request, or existing `.tigerkit` artifact alone.
+Start when the user selects `/tk-pr-open`, `$tk-pr-open`, or host skill picker, or when a clear single-PR request asks to prepare, open, or update one PR in natural language. This includes a post-`tk-drive` handoff such as “the verified commit is done; prepare the PR”: an existing verified current-branch commit is the expected input, not duplicate implementation work. Reuse that commit; never invoke `tk-implement` or create another product commit for this handoff. Natural-language routing starts only this skill's local preview; it never implies publication. Never activate from a generic PR question, code review, implementation request, merge request, multi-PR maintenance request, or existing `.tigerkit` artifact alone.
 
 Own one pull-request draft and bounded publication plan. May inspect local Git/GitHub state and write `.tigerkit/pr-open.md`. Never edit product code, create product commits, merge, tag, release, or publish before approval gate below.
 

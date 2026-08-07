@@ -1113,6 +1113,49 @@
       ]
     },
     {
+      "id": "implement-config-claude-migrate-offers-choice",
+      "path": "success",
+      "prompt": "$tk-implement --config --migrate Claude Code preview 후 사용자에게 가능한 선택지를 안내하세요. 아직 선택하거나 apply하지 말고, 파일이 미리 쓰이지 않았는지도 분명히 하세요.",
+      "expected_output": "migrate가 show-only가 아닌 preview/apply 흐름임을 설명하고, `Add effort-only agent definitions`와 `Keep effort: inherit without definitions` 두 선택지를 정확히 제시하며, 선택과 explicit apply 전에는 쓰지 않는다고 안내한다.",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "Add effort-only agent definitions"
+        },
+        {
+          "type": "output_contains",
+          "text": "Keep effort: inherit without definitions"
+        },
+        {
+          "type": "output_contains",
+          "text": "preview/apply"
+        },
+        {
+          "type": "output_contains",
+          "text": "explicit apply"
+        },
+        {
+          "type": "output_contains",
+          "text": "effort: inherit"
+        },
+        {
+          "type": "judge",
+          "criterion": "Claude Code migrate는 두 선택지를 사용자가 고를 때까지 어느 파일도 쓰지 않고, 정의 추가 선택은 effort-only/no model이며 정의 거부 선택은 영향을 받는 tier를 effort: inherit로 둔다고 명확히 안내한다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
       "id": "implement-config-codex-pairs-model-and-effort",
       "path": "success",
       "prompt": "$tk-implement --config --show Codex의 tier model routing을 설명하세요. spawn에서 model만 보내 effort가 reset되지 않도록 검증하세요.",

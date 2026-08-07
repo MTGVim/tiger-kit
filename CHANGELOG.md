@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 2026.08.07-4 — Release
+
+- docs(tk-pr-open): reuse drive commits for PR prep
+- docs(tk-implement): clarify Claude migrate choices
+
 ## 2026.08.07-3 — Release
 
 - fix(tk-implement): clarify effort routing
