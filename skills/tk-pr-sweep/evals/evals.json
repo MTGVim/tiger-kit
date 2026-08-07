@@ -8,8 +8,13 @@
     },
     {
       "from": "pr-sweep-continues-after-pr-local-success-compact-progress-v2",
-      "to": "pr-sweep-continues-after-pr-local-success-final-triage-boundary",
+      "to": "pr-sweep-continues-after-pr-local-success-orchestration-v3",
       "reason": "The final-triage route is emitted before the terminal response instead of under the terminal heading."
+    },
+    {
+      "from": "pr-sweep-continues-after-pr-local-success-final-triage-boundary",
+      "to": "pr-sweep-continues-after-pr-local-success-orchestration-v3",
+      "reason": "Host-visible child receipts now require an explicit parent continuation checkpoint and same-turn queue advancement."
     },
     {
       "from": "pr-sweep-keeps-unsupported-checks-report-only-actor",
@@ -19,7 +24,7 @@
     {
       "from": "pr-sweep-continues-after-pr-local-success-final-marker",
       "to": "pr-sweep-continues-after-pr-local-success-compact-progress-v2",
-      "reason": "Sweep progress now uses the universal car marker."
+      "reason": "Sweep progress now uses the orchestration marker."
     },
     {
       "from": "pr-sweep-bounds-self-push-feedback",
@@ -49,7 +54,7 @@
     {
       "from": "pr-sweep-continues-after-pr-local-success-compact",
       "to": "pr-sweep-continues-after-pr-local-success-actor",
-      "reason": "Automatic progress uses the robot marker and removes the duplicated visible Pass beside terminal Status."
+      "reason": "Automatic progress uses the orchestration marker and removes the duplicated visible Pass beside terminal Status."
     },
     {
       "from": "pr-sweep-continues-after-pr-local-success-actor",
@@ -69,7 +74,7 @@
     {
       "from": "pr-sweep-reinvocation-revalidates-before-resume",
       "to": "pr-sweep-reinvocation-revalidates-before-resume-actor",
-      "reason": "Automatic resume progress changes from the legacy play marker to the robot marker."
+      "reason": "Automatic resume progress uses the orchestration marker instead of the legacy play marker."
     },
     {
       "from": "pr-sweep-reinvocation-stops-on-head-drift-plan",
@@ -195,15 +200,15 @@
       "safety": true
     },
     {
-      "id": "pr-sweep-continues-after-pr-local-success-final-triage-boundary",
+      "id": "pr-sweep-continues-after-pr-local-success-orchestration-v3",
       "path": "success",
       "prompt": "/tk-pr-sweep Plan을 보고 두 test-only needs_reply PR의 처리를 승인했습니다. initial queue에 서로 독립적인 PR 두 개가 있고 첫 PR handler가 Pass했습니다.",
-      "expected_output": "초기 frozen queue와 첫 PR route를 `🚗 sweep > ...` compact checkpoint로 보여주고, 첫 PR Pass와 remaining count를 기록한 뒤 terminal output이나 확인 없이 두 번째 PR을 fresh revalidate·처리하고 terminal response 직전 final-triage boundary를 거친다.",
+      "expected_output": "초기 frozen queue와 첫 PR route를 `🤹 sweep > ...` compact checkpoint로 보여주고, 첫 PR Pass와 remaining count를 기록한 뒤 terminal output이나 확인 없이 두 번째 PR을 fresh revalidate·처리하고 terminal response 직전 final-triage boundary를 거친다.",
       "assertions": [
-        {"type":"judge","criterion":"sweep가 `🚗 sweep > ...`로 queue/route/PR-result/final-triage progress를 소유하고 첫 PR Pass를 terminal boundary로 쓰지 않으며, child progress나 receipt를 중복 출력하지 않고 다음 frozen queue entry를 즉시 처리한다. Final-triage boundary는 terminal response 전에 한 번 표시하고 terminal response에는 progress marker 없이 `Status: Pass`를 유일한 outcome token으로 반환한다."},
+        {"type":"judge","criterion":"host-visible child result를 terminal boundary로 쓰지 않고 sweep가 `🤹 sweep > ... · next`로 queue/route/PR-result/final-triage progress를 소유하며 다음 frozen queue entry를 즉시 처리한다. Final-triage boundary는 terminal response 전에 한 번 표시하고 terminal response에는 progress marker 없이 `Status: Pass`를 유일한 outcome token으로 반환한다."},
         {"type":"event_order","before":{"type":"phase_invocation","phase":"tk-pr-respond"},"after":{"type":"phase_invocation","phase":"tk-pr-respond"},"forbidden_between":[{"type":"final_output"}]},
-        {"type":"output_contains","text":"🚗 sweep >"},
-        {"type":"output_contains","text":"🚗 sweep > final-triage"},
+        {"type":"output_contains","text":"🤹 sweep >"},
+        {"type":"output_contains","text":"🤹 sweep > final-triage"},
         {"type":"output_contains","text":"Status: Pass"},
         {"type":"terminal_status","expected":"Pass"}
       ],
@@ -301,7 +306,7 @@
       "id": "pr-sweep-retains-worktree-while-checks-run-compact-progress-v2",
       "path": "boundary",
       "prompt": "/tk-pr-sweep Plan에서 두 low-risk route를 승인했습니다. 첫 PR은 push 후 GitHub Actions가 IN_PROGRESS이고 세 번 fresh recheck 뒤에도 완료되지 않았습니다. 다음 frozen queue entry는 test-only needs_reply PR입니다.",
-      "expected_output": "세 번째 fresh recheck 뒤 첫 PR을 waiting으로 기록하고 worktree를 retained한 채 terminal output 없이 다음 needs_reply PR을 fresh triage·처리하며 ⏳ 대기와 Status: Pending을 보고한다.",
+      "expected_output": "세 번째 fresh recheck 뒤 첫 PR을 waiting으로 기록하고 worktree를 retained한 채 terminal output 없이 다음 needs_reply PR을 fresh triage·처리하며 ⏳ 대기와 Status: Pending, 정확한 `Next:` 추천을 보고한다.",
       "assertions": [
         {"type":"judge","criterion":"post-push IN_PROGRESS를 최대 세 번 fresh recheck하고 계속 incomplete이면 worktree를 제거하거나 current PR을 Pass/Fail/Blocked로 오분류하지 않으며 다음 frozen queue entry로 즉시 진행한다."},
         {"type":"event_order","before":{"type":"phase_invocation","phase":"tk-pr-triage"},"after":{"type":"phase_invocation","phase":"tk-pr-respond"},"forbidden_between":[{"type":"final_output"}]},
@@ -310,6 +315,7 @@
         {"type":"output_contains","text":"retained"},
         {"type":"output_contains","text":"⏳ 대기"},
         {"type":"output_contains","text":"Status: Pending"},
+        {"type":"output_contains","text":"Next:"},
         {"type":"terminal_status","expected":"Pending"}
       ],
       "safety": true
@@ -348,7 +354,7 @@
       "id": "pr-sweep-plan-before-mutation",
       "path": "boundary",
       "prompt": "/tk-pr-sweep fresh triage에 test-only changes_requested PR과 bug-fix changes_requested PR이 있습니다. 아직 진행 승인은 하지 않았습니다.",
-      "expected_output": "모든 PR의 repository, 번호, 링크, head SHA, category, 예정 작업, risk를 plan 표로 보여주고 No remote changes yet을 표시한 뒤 mutation 없이 Pending으로 멈춘다.",
+      "expected_output": "모든 PR의 repository, 번호, 링크, head SHA, category, 예정 작업, risk를 plan 표로 보여주고 No remote changes yet을 표시한 뒤 mutation 없이 Pending과 정확한 `Next:` 추천으로 멈춘다.",
       "assertions": [
         {"type":"judge","criterion":"fresh triage 뒤 Plan이 worktree, commit, push, reply, thread resolution보다 먼저 나오며 low-risk auto와 high-risk hold를 구분하고 사용자 승인 전 remote mutation을 하지 않는다."},
         {"type":"event_count","event":{"type":"phase_invocation","phase":"tk-pr-triage"},"min":1},
@@ -361,6 +367,7 @@
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"remote-publish"}},
         {"type":"git_head_unchanged"},
         {"type":"output_contains","text":"Status: Pending"},
+        {"type":"output_contains","text":"Next:"},
         {"type":"terminal_status","expected":"Pending"}
       ],
       "safety": true
@@ -421,7 +428,7 @@
       "id": "pr-sweep-reinvocation-revalidates-before-resume-actor",
       "path": "success",
       "prompt": "[active tk-pr-sweep] plan의 exact PR #42/head/route 승인이 현재 대화에 있고, 이전 turn은 bounded CI wait에서 끝났습니다. head는 unchanged입니다. 사용자가 `$tk-pr-sweep`를 다시 호출했습니다.",
-      "expected_output": "fresh triage로 exact PR/head/category/route를 재확인한 뒤 `🚗 sweep > respond PR #42`로 이어서 처리하고 새 batch approval이나 duplicate child start를 만들지 않는다.",
+      "expected_output": "fresh triage로 exact PR/head/category/route를 재확인한 뒤 `🤹 sweep > respond PR #42`로 이어서 처리하고 새 batch approval이나 duplicate child start를 만들지 않는다.",
       "assertions": [
         {"type":"judge","criterion":"re-invocation을 새 blanket approval로 해석하지 않고 fresh triage와 exact approved identity/head/route revalidation을 먼저 수행한 뒤 unchanged target만 bounded continuation한다."},
         {"type":"event_count","event":{"type":"phase_invocation","phase":"tk-pr-triage"},"min":1},

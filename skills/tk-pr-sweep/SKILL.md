@@ -25,6 +25,14 @@ mutation rows exist, one batch approval, `.tigerkit/pr-sweep.md`, worktree coord
 bounds, one shared PR-summary budget, aggregate verification, and sole
 terminal response.
 
+Parent continuation is mandatory: a child route result is an internal receipt,
+even when a host renders nested child output. After every child result, Sweep
+emits one parent-owned continuation checkpoint naming the next PR/route and
+immediately resumes the frozen queue in the same turn. Never stop, wait, ask the
+user to say “continue,” or return a child result as terminal output. Only the
+Sweep Plan checkpoint, bounded wait/hold, or final aggregate response is a user
+boundary.
+
 Re-invocation grants no new approval and trusts no cursor, child receipt, or
 stale artifact: run fresh full `tk-pr-triage`, match the exact approval/head,
 and continue only for unchanged rows. Drift or no match emits
@@ -54,7 +62,7 @@ run fresh full `tk-pr-triage`. When at least one `auto` row exists, render
 `## PR sweep plan` with a table for every initial item: repository, PR number,
 title, link, observed head SHA, fresh category, planned action, risk, and
 decisive evidence. Include report-only and held items, state
-`No remote changes yet`, show one legend: `🚗` active work,
+`No remote changes yet`, show one legend: `🤹` active orchestration,
 `🙋` user response/approval, and `⏳` CI/remote/re-review wait, then emit
 `🙋 sweep > plan · 응답 필요`,
 and stop with `Status: Pending` until the user explicitly approves the rows.
@@ -142,10 +150,11 @@ Reclassify from GitHub evidence.
    table or child receipt. For an `auto` test row, pass the `test-only` scope;
    for an `auto` rebase row, pass `maintenance-rebase` and the exact
    `(base_sha, head_sha)` pair. Stop before commit or push if the child would
-   leave its bound. Child `Pass` is internal:
-   render sweep checkpoint; re-triage exact PR/head without
-   terminal response or pause; follow a new supported category only within
-   bound. Record child non-success; no sibling call for the same failed state.
+   leave its bound. Child `Pass` is internal, even when nested child output is
+   visible: render one `🤹 sweep > <route> <PR> · next` checkpoint; re-triage
+   exact PR/head without terminal response or pause; follow a new supported
+   category only within bound. Record child non-success; no sibling call for the
+   same failed state.
 8. Keep prompt-local bounds: one rebase per exact `(base_sha, head_sha)`, maximum
    three GitHub Actions corrective cycles, one feedback response per fresh head
    SHA. Allow at most two additional feedback cycles when sweep-owned pushes
@@ -157,8 +166,9 @@ Reclassify from GitHub evidence.
    mutation. Repeated unchanged failure or exhausted mutation bound stops PR.
 10. After PR-local `Pass`, `Skipped: already applied`, `follow-up-queued`,
     `waiting`, `Fail`, `Blocked`, or `Unverifiable`, record result and remaining
-    count; immediately advance to the next frozen entry without child receipt,
-    terminal response, pause, or confirmation. Freeze later mutation only on
+    count; emit one `🤹 sweep > <next route/PR> · next` checkpoint and immediately
+    advance to the next frozen entry without child receipt, terminal response,
+    pause, or confirmation. Freeze later mutation only on
     shared safety failure: unresolved identity, corrupt repository evidence, or
     unprovable repository/worktree ownership.
 11. One summary budget per PR. Accept rebase `summary budget: unused`; let later
@@ -181,9 +191,9 @@ Reclassify from GitHub evidence.
 ## Progress
 
 After Plan approval, at meaningful route/result, wait, and final-triage
-boundaries, emit one line such as `🚗 sweep > respond PR #42 1/3`,
+boundaries, emit one line such as `🤹 sweep > respond PR #42 1/3 · next`,
 `🙋 sweep > plan · 응답 필요`, `⏳ sweep > re-review PR #42`, or
-`⏳ sweep > respond PR #42 · CI`. Omit `tk-`; `🚗` marks active work,
+`⏳ sweep > respond PR #42 · CI`. Omit `tk-`; `🤹` marks active orchestration,
 `🙋` needs user response or approval, and `⏳` is machine/remote/re-review
 wait. Keep only
 the one decisive token (PR/route/count or wait reason); the marker and route
@@ -217,7 +227,7 @@ re-Plan after external head drift is `Pending`; a supported `Act now` item
 still present only at final triage is `Blocked`.
 
 Lead `## PR sweep`; the terminal response has no progress marker, while a
-preceding `🚗 sweep > final-triage` boundary distinguishes orchestration from a
+preceding `🤹 sweep > final-triage` boundary distinguishes orchestration from a
 direct one-PR result. Show a Markdown table for every processed PR with
 repository, PR number, title, clickable link, initial category, approved/planned action,
 actual result, and skip/hold reason when applicable. Also show report-only
@@ -238,7 +248,7 @@ block. End aggregate result section exactly `Status: <token>`.
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🚗 meaningful boundary` only for long-running work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🤹 meaningful boundary` only for long-running orchestration work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
 
 Use latest explicit user language for free-form user-facing prose. Keep
 headings, statuses, IDs, paths, commands, refs, categories, and exact source
@@ -251,3 +261,10 @@ selection or publication questions after that approval. If a new material
 identity, ownership, high-risk scope, or out-of-scope authority decision is
 required, ask one self-contained `Question` before any `Recommendation`; stop
 `Pending | Blocked`. Never infer or broaden the sweep.
+
+Whenever Sweep hands control back to the user for Plan approval, `Pending`,
+`Blocked`, `Unverifiable`, bounded wait, or an actionable terminal result, end
+the visible handoff with exactly one `Next:` line naming the recommended action
+and condition. Use one concrete action such as approving the displayed rows,
+re-invoking `$tk-pr-sweep` after a host boundary, or waiting for the named
+external event; never leave only a child receipt or generic “continue.”
