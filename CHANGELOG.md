@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 2026.08.07-8 — Release
+
+- optimize tk-drive: bullet routing metadata
+- optimize tk-implement: bullet routing metadata
+
 ## 2026.08.07-7 — Release
 
 - docs(routing): show strategy reasons
