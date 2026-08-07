@@ -21,6 +21,13 @@ never edit product code or create product commits. Delegate each code change to
 `tk-implement` as one independently verifiable unit; `tk-implement` owns commit and
 verification.
 
+Parent continuation is mandatory: a `tk-implement` result is an internal receipt,
+even when the host renders the child output. After every child result, emit one
+parent-owned continuation checkpoint naming the next `respond` phase and continue
+in the same turn. Never stop, wait, ask the user to say “continue,” or return the
+child result as terminal output. Only this skill's publication checkpoint or
+terminal response is a user boundary.
+
 ## Modes
 
 - **Normal:** retain selection and publication questions.
@@ -36,7 +43,8 @@ verification.
 ## Progress
 
 In direct CI mode, emit one compact line at scope/unit/publication boundaries,
-such as `🚗 respond > implement 1/2` or `🚗 respond > publish`. Omit `tk-`,
+such as `🤹 respond > implement 1/2 · next unit` or `🤹 respond > publish ·
+reply/resolve/re-review/summary`. Omit `tk-`,
 receipts, reasoning, logs, and repeated checks. Under sweep, return evidence
 without duplicate commentary; in standalone Normal mode mark selection or
 publication as `🙋 respond · 응답 필요`. Actual names/contracts keep `tk-`.
@@ -67,9 +75,12 @@ Use `⏳ 대기` only when waiting is the next action; preserve terminal
    worktree, identity, ref, and head evidence remain valid; `Blocked`,
    `Unverifiable`, scope/freshness/identity drift, or shared-safety failure
    freezes the remaining units. Otherwise record the result and, while any
-   selected unit remains, invoke the next unit in the same turn without
-   terminal output, pause, or confirmation. A child result is never a user
-   boundary. Exit only after every selected unit has a verified result or a
+   selected unit remains, emit one parent-owned `🤹 respond > implement
+   <index>/<total> · <next>` checkpoint before invoking the next unit in the
+   same turn without terminal output, pause, or confirmation. A host-visible
+   child result is still only an internal receipt, never a user boundary. After
+   the last unit, emit the next parent phase and continue the contract; do not
+   wait for a user nudge. Exit only after every selected unit has a verified result or a
    justified bounded stop. Never create empty per-comment commits; keep
    deferred or unverified threads open. A failed unit remains open and is
    excluded from reply/resolve; the final aggregate remains `Fail` even when
@@ -188,7 +199,7 @@ details only when they change user's next action.
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🚗 meaningful boundary` only for long-running work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🤹 meaningful boundary` only for long-running orchestration work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
 
 Use latest explicit user language for all free-form user-facing prose. Keep
 headings, statuses, IDs, paths, commands, and exact source literals stable.
@@ -199,3 +210,12 @@ When selection, identity, scope, or publication blocks progress, ask one
 self-contained `Question` before any `Recommendation`, with one recommended
 option. Render question and options directly in chat; never call structured
 question or input tools. Preserve `Pending | Blocked` until user answers.
+
+Whenever `tk-pr-respond` hands control back to the user for selection,
+publication approval, `Pending`, `Blocked`, `Unverifiable`, bounded wait, or an
+actionable terminal result, end the visible handoff with exactly one `Next:` line
+naming the recommended action and condition. Use one concrete action such as
+answering the shown question, re-invoking `$tk-pr-respond` after a host boundary,
+or approving this response's publication plan; never leave only a child receipt
+or generic “continue.” Do not recommend `tk-pr-open` unless the user separately
+asks to open a new PR.

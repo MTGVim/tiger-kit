@@ -20,6 +20,13 @@ One start authorizes Preparing, Executing, aggregate verification, unit review, 
 
 Drive owns workflow and the only active-drive terminal response. Child procedures own specialist work and pass native result state directly to the next applicable node. A successful run never stops to ask the user to invoke drive again.
 
+Parent continuation is mandatory: a child result is an internal receipt, even when
+the host renders the child output. After every child result, Drive emits one
+parent-owned continuation checkpoint naming the next node and immediately resumes
+the graph in the same turn. It never stops, waits for “continue,” or returns a
+child result as terminal output. Only a Drive decision checkpoint, bounded wait,
+non-success finalization, or final terminal response is a user boundary.
+
 ## Direct procedure graph
 
 ```text
@@ -42,7 +49,7 @@ terminal non-success
   -> tk-drive non-success finalization
 ```
 
-Use complete edge/state-normalization contract in [phases.md](references/phases.md). Apply each edge's entry, success, failure, and next-node contract. Successful nodes invoke the next applicable node in the same active turn; allowed recovery runs before terminal finalization.
+Use complete edge/state-normalization contract in [phases.md](references/phases.md). Apply each edge's entry, success, failure, and next-node contract. Successful nodes invoke the next applicable node in the same active turn; allowed recovery runs before terminal finalization. A host-visible child result does not change this edge: emit one `🤹 drive > <node> · <next>` checkpoint, consume the receipt, and continue without user confirmation.
 
 Continuation is prompt-directed, not a durable scheduler or guaranteed cross-turn execution. After host/process boundaries, resume by rereading current artifacts and repository evidence.
 
@@ -58,14 +65,15 @@ never authority.
 ## Progress
 
 At plan, meaningful node transitions, aggregate verification, finalization, and
-non-advancing boundaries, emit one line such as `🚗 drive > implement 2/4`,
+non-advancing boundaries, emit one line such as `🤹 drive > implement 2/4 · next
+unit`,
 `🙋 drive > grill-me · 응답 필요`, `🙋 spec · Ready · 다음 단계 수동`, or
-`⏳ drive > browser-verify · 대기`. Omit `tk-`; `🚗` marks active work,
+`⏳ drive > browser-verify · 대기`. Omit `tk-`; `🤹` marks active orchestration,
 `🙋` needs user response or approval, and `⏳` is machine/remote/re-review
 wait. Keep only the one
 decisive token (unit/count, route, or wait reason); the marker and route encode
-result/next action. A Ready child consumed by drive stays `🚗`. Direct skills use
-`🚗 <skill> · <state>`; parent routes use `🚗 parent > child`. Suppress receipts, reasoning,
+result/next action. A Ready child consumed by drive stays `🤹`. Direct skills use
+`🤹 <skill> · <state>`; parent routes use `🤹 parent > child`. Suppress receipts, reasoning,
 logs, timers, approval requests, and nonterminal `Status:` lines; actual skill
 names/contracts keep `tk-`. Emit the finalization route before the terminal
 response when it is a meaningful boundary; the terminal response itself has no
@@ -122,7 +130,12 @@ For each unit:
    full artifact instead of repeating unrelated source, history, or receipts;
 2. accept only a verified one-unit commit or bounded non-success handoff;
 3. preserve pre-existing user changes; audit commit ancestry;
-4. treat `Pass` as internal loop signal: without terminal response, pause, or confirmation, render Drive's progress checkpoint and invoke `tk-implement` for the next unit. Exit only when all units are committed or bounded non-success remains after recovery.
+4. treat `Pass` as an internal loop signal: even if the child output is visible,
+   render one `🤹 drive > implement <index>/<total> · <next>` checkpoint and invoke
+   the next applicable node without terminal response, pause, or confirmation.
+   After the last unit, continue to aggregate verification and finalization in the
+   same turn. Exit only when all units are committed or bounded non-success
+   remains after recovery.
 
 Use `tk-merge-conflict` only for an active merge, rebase, cherry-pick, or revert conflict; then return to the interrupted unit.
 
@@ -143,7 +156,7 @@ After recovery edges exhaust, normalize child state through `phases.md`, freeze 
 After aggregate verification passes, finish directly. Reread source, spec, tickets if present, prep, implementation evidence, ancestry, and verification before one terminal response. TigerKit owns no post-session reflection or persistent-memory phase.
 
 Lead with `Implemented`; the terminal response has no progress marker, while a
-preceding `🚗 drive > finalization` boundary distinguishes orchestration from a
+preceding `🤹 drive > finalization` boundary distinguishes orchestration from a
 direct `tk-implement` result. Follow with two to seven behavior bullets, then
 `## Strategy` with every unit's resolved `direct | delegated` choice and
 user-useful selection reason. For one unit, render each Strategy field as its
@@ -169,7 +182,7 @@ Persist provenance only in an existing workflow-owned artifact/ledger. Never req
 
 ### 🔴 HARD GATE · response language
 
-When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🚗 meaningful boundary` only for long-running work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
+When a user-facing result includes an absolute time, convert it to the user's local timezone and label the timezone; keep raw machine timestamps only in owned evidence. Progress is optional and nonterminal: standalone execution is silent by default; emit `🙋 response/approval needed` only when user action is required, `⏳ wait` only when external waiting is next, or `🤹 meaningful boundary` only for long-running orchestration work. Put one space after each marker, omit no-op rows, and keep terminal responses free of progress markers while preserving any required terminal `Status: <token>`.
 
 Before user-facing progress, questions, or summaries, use latest explicit language instruction; otherwise current message language. All free-form sentences and prose values use it; never switch to English because sources, skills, tools, or code are English. Preserve canonical headings, status tokens, IDs, commands, paths, code, and exact source literals byte-stable. Rewrite language drift before return.
 
@@ -185,3 +198,10 @@ instead of presenting it as a user-input checkpoint. An explicit answer resumes
 the existing graph; an explicit `$tk-drive` re-invocation in the same
 conversation performs the same current-evidence resume when the host did not
 continue automatically.
+
+Whenever Drive hands control back to the user for a question, `Pending`, `Blocked`,
+`Unverifiable`, bounded wait, or an actionable terminal result, end the visible
+handoff with exactly one `Next:` line naming the recommended action and condition.
+Use one concrete action such as answering the shown question, re-invoking
+`$tk-drive` after a host boundary, or waiting for the named external event; never
+leave only a child receipt or generic “continue.”
