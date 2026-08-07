@@ -259,8 +259,11 @@ literals stable.
 The Plan owns one routine batch approval. Do not ask per-PR
 selection or publication questions after that approval. If a new material
 identity, ownership, high-risk scope, or out-of-scope authority decision is
-required, ask one self-contained `Question` before any `Recommendation`; stop
-`Pending | Blocked`. Never infer or broaden the sweep.
+required, emit `🙋 sweep > plan · 응답 필요` immediately before the Plan approval
+question or other user-facing `Question`; ask one self-contained `Question`
+before any `Recommendation`, mark the single recommended option with
+`👍 Recommendation:`, and stop `Pending | Blocked`. Never infer or broaden the
+sweep.
 
 Whenever Sweep hands control back to the user for Plan approval, `Pending`,
 `Blocked`, `Unverifiable`, bounded wait, or an actionable terminal result, end

@@ -190,6 +190,9 @@ Before user-facing progress, questions, or summaries, use latest explicit langua
 
 When a user-owned decision blocks Preparing or the one amendment, ask one self-contained `Question` before `Recommendation`. Show only relevant evidence, two or three mutually exclusive options with material tradeoffs, and exactly one `(Recommended)` or `(추천)`.
 
+Mark the single recommended option with `👍 Recommendation:` so it is visually
+prominent.
+
 Render directly in chat; do not call structured question/input tools. Emit the
 nonterminal `🙋 drive > grill-me · 응답 필요` checkpoint before the question. Remain
 native `Pending` for an unanswered question. If the originating state is
