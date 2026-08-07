@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.07-6 — Release
+
+- docs(tk-implement): record route reasons
+
 ## 2026.08.07-5 — Release
 
 - fix(tk-implement): define implementor routing
