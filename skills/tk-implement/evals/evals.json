@@ -1021,6 +1021,131 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "implement-config-reports-effort-capability-state",
+      "path": "success",
+      "prompt": "$tk-implement --config --show host의 effort routing을 보여 주세요. per-call 지원을 boolean으로 요약하지 말고 각 상태의 실제 consequence와 inert fallback을 설명하세요.",
+      "expected_output": "per_call | definition_only | unavailable 세 상태와 각 consequence를 보고하고, 적용되지 않은 effort를 applied로 가장하지 않으며 필요하면 effort: inherit을 보여 준다.",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "per_call | definition_only | unavailable"
+        },
+        {
+          "type": "output_contains",
+          "text": "every dispatch"
+        },
+        {
+          "type": "output_contains",
+          "text": "managed definition file"
+        },
+        {
+          "type": "output_contains",
+          "text": "advisory/fallback"
+        },
+        {
+          "type": "output_contains",
+          "text": "effort: inherit"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "implement-config-claude-effort-roster-is-explicit",
+      "path": "success",
+      "prompt": "$tk-implement --config --migrate Claude Code의 effort roster를 preview하세요. definition-only 파일, dispatch model 분리, explicit apply, reset, Haiku와 decline fallback을 빠짐없이 설명하세요.",
+      "expected_output": "distinct effort 값마다 effort-only definition 파일 하나를 preview하고 model은 넣지 않으며, explicit apply 전에는 쓰지 않고, --reset은 TigerKit이 만든 파일만 제거하며, Haiku 또는 roster decline은 effort: inherit을 사용한다고 설명한다.",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "definition_only"
+        },
+        {
+          "type": "output_contains",
+          "text": "effort-only"
+        },
+        {
+          "type": "output_contains",
+          "text": "one effort-only file per distinct effort value"
+        },
+        {
+          "type": "output_contains",
+          "text": "no model"
+        },
+        {
+          "type": "output_contains",
+          "text": "explicit apply"
+        },
+        {
+          "type": "output_contains",
+          "text": "removes only the definitions TigerKit created"
+        },
+        {
+          "type": "output_contains",
+          "text": "effort: inherit"
+        },
+        {
+          "type": "judge",
+          "criterion": "Claude Code preview는 definition 파일 목록을 보여 주되 model을 definition에 bake하지 않고, explicit apply 전 write를 하지 않으며, inert/declined tier를 inherit로 남긴다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "implement-config-codex-pairs-model-and-effort",
+      "path": "success",
+      "prompt": "$tk-implement --config --show Codex의 tier model routing을 설명하세요. spawn에서 model만 보내 effort가 reset되지 않도록 검증하세요.",
+      "expected_output": "Codex는 model override마다 같은 call에 matching reasoning_effort를 함께 보내며 model-only dispatch를 허용하지 않는다고 설명한다.",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "reasoning_effort"
+        },
+        {
+          "type": "output_contains",
+          "text": "same call"
+        },
+        {
+          "type": "output_contains",
+          "text": "model-only dispatch"
+        },
+        {
+          "type": "judge",
+          "criterion": "Codex dispatch contract는 model을 내보내는 모든 spawn에 matching reasoning_effort를 포함하고 model-only dispatch를 금지한다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

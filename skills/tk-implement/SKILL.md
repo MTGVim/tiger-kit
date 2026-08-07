@@ -53,9 +53,15 @@ do not retry a design decision as a cheaper implementation.
 `--migrate` previews and applies only an explicit managed mapping,
 `--reset` removes that mapping at the selected scope, and `--repo` selects the
 current-repository override. Repository override wins over user host context,
-which wins over the inherited current model. Unsupported per-call model or
-effort capability is reported as advisory and falls back to safe direct/current
-execution; it is never claimed as applied.
+which wins over the inherited current model. `per_call_effort` is the exact
+three-state capability `per_call | definition_only | unavailable`; routing
+reports the state and consequence rather than claiming an inert effort value
+is applied. Claude Code uses effort-only managed definitions when its state is
+`definition_only`, keeps dispatch-time `model` separate, and uses
+`effort: inherit` for inert or uncovered tiers. Codex emits `model` and
+`reasoning_effort` together on every spawn. A required override that the host
+cannot satisfy is `Blocked`; an inferred optimization falls back to safe
+direct/current execution and is never claimed as applied.
 
 ## Workflow
 
