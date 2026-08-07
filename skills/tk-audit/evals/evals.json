@@ -4,8 +4,8 @@
     {
       "id": "improve-quick-writes-evidence-ledger",
       "path": "success",
-      "prompt": "$tk-audit quick tests 현재 repository의 위험한 테스트 공백만 audit하고 .tigerkit/audit.md에 stable AUD-* findings를 기록해 주세요. source files, tests, plans, tickets는 수정하지 마세요.",
-      "expected_output": "quick tests audit이 exact evidence와 AUD-* ledger를 만들고 source mutation, plan/ticket 생성, remote publication 없이 Pass를 반환한다.",
+      "prompt": "$tk-audit quick tests 현재 repository의 위험한 테스트 공백만 audit하고 .tigerkit/audit.md에 안정적인 AUD-* findings를 기록해 주세요. 소스 파일, 테스트, plans, tickets는 수정하지 마세요.",
+      "expected_output": "quick tests audit이 정확한 근거와 AUD-* ledger를 만들고 소스 수정, plan/ticket 생성, remote publication 없이 Pass를 반환한다.",
       "assertions": [
         {
           "type": "path_exists",
@@ -34,8 +34,8 @@
     {
       "id": "improve-branch-preserves-scope-and-attribution",
       "path": "success",
-      "prompt": "$tk-audit branch current branch changes와 direct consumers만 확인하고 introduced와 pre-existing를 구분해 ledger에 기록해 주세요. 감사하지 않은 영역은 지우지 마세요.",
-      "expected_output": "branch audit이 merge-base 범위, introduced|pre-existing attribution, audited/unaudited 경계와 stable existing IDs를 보존한다.",
+      "prompt": "$tk-audit branch 현재 branch 변경과 direct consumers만 확인하고 introduced와 pre-existing를 구분해 ledger에 기록해 주세요. 감사하지 않은 영역은 삭제하지 마세요.",
+      "expected_output": "branch audit이 merge-base 범위, introduced|pre-existing attribution, audited/unaudited 경계와 기존 stable IDs를 보존한다.",
       "assertions": [
         {
           "type": "path_exists",
@@ -60,12 +60,12 @@
     {
       "id": "improve-does-not-implement-or-publish",
       "path": "boundary",
-      "prompt": "$tk-audit security audit 결과를 바로 구현하고 GitHub issue로 publish해 주세요.",
-      "expected_output": "read-only advisor boundary를 지키고 source 구현, ticket/plan 생성, remote publication을 하지 않은 채 Blocked로 멈춘다.",
+      "prompt": "$tk-audit security audit 결과를 즉시 구현하고 GitHub issue로 publish해 주세요.",
+      "expected_output": "read-only advisor boundary를 지키고 소스 구현, ticket/plan 생성, remote publication 없이 Blocked로 멈춘다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "tk-audit는 source를 수정하거나 plans/tickets/remote issue를 만들지 않고 advisor boundary 밖 요청을 Blocked로 반환한다."
+          "criterion": "tk-audit는 소스를 수정하거나 plans/tickets/remote issue를 만들지 않고 advisor boundary 밖의 요청을 Blocked로 반환한다."
         },
         {
           "type": "terminal_status",
@@ -84,7 +84,7 @@
     {
       "id": "improve-finding-is-not-a-ticket",
       "path": "boundary",
-      "prompt": "$tk-audit AUD-003을 독립 ticket과 구현 commit으로 바로 바꿔 주세요.",
+      "prompt": "$tk-audit AUD-003을 독립된 ticket과 구현 commit으로 즉시 바꿔 주세요.",
       "expected_output": "AUD-* finding은 evidence-backed candidate로만 ledger에 남고 tk-drive나 fresh worker를 직접 호출하지 않는다.",
       "assertions": [
         {

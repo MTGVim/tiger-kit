@@ -1,6 +1,6 @@
 interface:
-  short_description: "[user] Audit a repository and write evidence-backed AUD-* findings."
-  default_prompt: "Use $tk-audit for a read-only audit; write only .tigerkit/audit.md with stable AUD-* findings and never implement or publish."
+  short_description: "[user] 저장소를 감사하고 근거 기반 AUD-* findings를 작성한다."
+  default_prompt: "$tk-audit를 사용해 읽기 전용 audit을 수행한다. 안정적인 AUD-* findings만 .tigerkit/audit.md에 작성하고 절대 구현하거나 publish하지 않는다."
 
 policy:
   allow_implicit_invocation: false
