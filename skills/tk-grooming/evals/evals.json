@@ -86,10 +86,10 @@
     {
       "id": "legacy-1",
       "path": "success",
-      "prompt": "/tk-grooming skills/tk-to-spec 범위만 감사하고 evidence와 분류·제안만 보고해 주세요. 파일은 수정하지 마세요.",
+      "prompt": "/tk-grooming skills/tk-drive 범위만 감사하고 evidence와 분류·제안만 보고해 주세요. 파일은 수정하지 마세요.",
       "expected_output": "요청된 skill 범위의 실제 경로만 조사한 뒤 report-only Disposition summary를 남기며 apply하지 않는다.",
       "assertions": [
-        {"type": "judge", "criterion": "요청된 skills/tk-to-spec 범위만 조사하고 report-only를 유지한다."},
+        {"type": "judge", "criterion": "요청된 skills/tk-drive 범위만 조사하고 report-only를 유지한다."},
         {"type": "terminal_status", "expected": "Pass"}
       ],
       "darwin": true
@@ -97,7 +97,7 @@
     {
       "id": "legacy-2",
       "path": "success",
-      "prompt": "/tk-grooming skills/tk-to-spec --apply 감사 결과에서 참조가 확인된 오래된 문구만 적용해 주세요.",
+      "prompt": "/tk-grooming skills/tk-drive --apply 감사 결과에서 참조가 확인된 오래된 문구만 적용해 주세요.",
       "expected_output": "적용 전 감사 결과와 허용 범위를 확인하고 참조·중복·frontmatter를 재검증한다.",
       "assertions": [
         {"type": "judge", "criterion": "적용 전 허용 범위를 확인하고 정확한 skill scope만 재검증한다."},

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare tk-drive with explicit phase composition on matched scenarios."""
+"""Compare tk-drive with ordinary host execution on matched scenarios."""
 from __future__ import annotations
 
 import argparse
@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "evals/drive-ab.json"
 BUILTIN_ADAPTER = ROOT / "scripts/adapters/tigerkit_host_adapter.py"
 HOST_ORDER = ("codex", "claude-code", "hermes-agent")
-ARMS = ("drive", "composition")
+ARMS = ("drive", "control")
 
 
 def load_manifest() -> dict[str, object]:
@@ -48,7 +48,7 @@ def load_manifest() -> dict[str, object]:
         for field in (
             "source",
             "drive_required_phases",
-            "composition_required_phases",
+            "control_required_phases",
             "expected_terminal",
             "verification",
         ):
@@ -63,11 +63,8 @@ def prompt_for(arm: str, source: str) -> str:
     if arm == "drive":
         return f"$tk-drive {source}"
     return (
-        "Do not invoke tk-drive. Execute the same source through explicit TigerKit "
-        "phase owners: use $tk-grill-me only for a material user decision, then "
-        "$tk-to-spec, use $tk-to-tickets only for multiple independent units, "
-        "invoke $tk-implement once per unit, and perform one final broad "
-        "verification. Do not claim the drive orchestration path. Source: "
+        "Do not invoke any TigerKit skill. Execute the same source using ordinary "
+        "host behavior, with no claim of Drive orchestration or authority. Source: "
         + source
     )
 
@@ -154,7 +151,7 @@ def run_arm(
         result = run_adapter(
             adapter_command,
             checkout=checkout,
-            skill="tk-drive" if arm == "drive" else "tk-to-spec",
+            skill="tk-drive",
             prompt=prompt_for(arm, str(scenario["source"])),
             mode="drive-ab",
             host=host,
@@ -222,16 +219,16 @@ def summarize(records: list[dict[str, object]]) -> dict[str, object]:
             ),
         }
     drive = rows["drive"]
-    composition = rows["composition"]
+    control = rows["control"]
     drive_pass = float(drive["pass_rate"])
-    composition_pass = float(composition["pass_rate"])
+    control_pass = float(control["pass_rate"])
     drive_continuation = float(drive["continuation_rate"])
-    composition_continuation = float(composition["continuation_rate"])
-    if drive_pass >= composition_pass and drive_continuation >= composition_continuation:
+    control_continuation = float(control["continuation_rate"])
+    if drive_pass >= control_pass and drive_continuation >= control_continuation:
         decision = "Keep"
     elif drive_pass >= 0.67 and drive_continuation >= 0.67:
         decision = "Experimental"
-    elif composition_pass - drive_pass >= 0.34:
+    elif control_pass - drive_pass >= 0.34:
         decision = "RemoveCandidate"
     else:
         decision = "Review"

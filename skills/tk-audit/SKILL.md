@@ -71,11 +71,9 @@ handling. The adapted upstream plan quality in
 [plan-template.md](references/plan-template.md) informs this contract, but
 `tk-audit` does not create `plans/` or own execution.
 
-`tk-to-spec AUD-003` consumes one finding as source evidence and owns the Ready
-R/AC source. `tk-to-tickets AUD-003` owns only independently proven vertical
-units. `$tk-drive AUD-003` consumes the current valid ledger and routes through
-spec first; it does not invoke `tk-audit` again. Remote Jira/GitHub
-publication remains outside all three local skills.
+`$tk-drive AUD-003` consumes one current finding as source evidence, prepares
+Ready R/AC and independently proven units, and does not invoke `tk-audit` again.
+Remote Jira/GitHub publication remains outside both local skills.
 
 ## Ledger safety
 

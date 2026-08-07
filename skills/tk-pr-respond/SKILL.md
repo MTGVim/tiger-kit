@@ -1,6 +1,6 @@
 ---
 name: tk-pr-respond
-description: "[user/auto] Resolve one pull request's selected feedback or GitHub Actions failures through verified tk-implement units and bounded publication."
+description: "[user/auto] Resolve one pull request's selected feedback or GitHub Actions failures through verified fresh-worker units and bounded publication."
 argument-hint: "<pull request or repository> [--ci]"
 metadata:
   tigerkit:
@@ -17,11 +17,11 @@ automatic entry: fresh exact-PR handoff from active `tk-pr-sweep`.
 
 Own review interpretation, resolution-unit planning, aggregate review state,
 and bounded remote publication. Write `.tigerkit/pr-respond.md` evidence, but
-never edit product code or create product commits. Delegate each code change to
-`tk-implement` as one independently verifiable unit; `tk-implement` owns commit and
-verification.
+never edit product code. Delegate each code change to a fresh worker as one
+independently verifiable candidate; required verification precedes mechanical
+commit bookkeeping.
 
-Parent continuation is mandatory: a `tk-implement` result is an internal receipt,
+Parent continuation is mandatory: a fresh-worker result is an internal receipt,
 even when the host renders the child output. After every child result, emit one
 parent-owned continuation checkpoint naming the next `respond` phase and continue
 in the same turn. Never stop, wait, ask the user to say “continue,” or return the
@@ -38,7 +38,7 @@ terminal response is a user boundary.
   A sweep handoff marked `test-only` additionally forbids production source,
   configuration, dependency, lockfile, security/data/performance, or weakened
   assertion changes; if the selected finding needs any of those, return
-  `Blocked` before invoking `tk-implement`.
+  `Blocked` before invoking a fresh worker.
 
 ## Progress
 
@@ -69,7 +69,7 @@ Use `⏳ 대기` only when waiting is the next action; preserve terminal
    and verification. Include reply draft for `reply`. Group coupled findings into
    numbered resolution units, state one recommended selection, ask one selection
    question. Selection authorizes only units, never remote write.
-4. Handoff one unit at a time to `tk-implement` with PR identity and exact
+4. Handoff one unit at a time to a fresh worker with PR identity and exact
    comment/thread IDs while tracking the numbered selected-unit list and current
    index. `Pass` is internal. A unit-local `Fail` may advance only after clean
    worktree, identity, ref, and head evidence remain valid; `Blocked`,
@@ -125,7 +125,7 @@ Use `⏳ 대기` only when waiting is the next action; preserve terminal
 ## CI mode
 
 When the sweep handoff is `test-only`, inspect the complete selected finding
-before invoking `tk-implement`. Permit only paths in the repository's existing
+before invoking a fresh worker. Permit only paths in the repository's existing
 test layout (`test/`, `tests/`, `spec/`, `*.test.*`, `*.spec.*`, or documented
 test fixtures); mixed, unknown, production, configuration, dependency,
 lockfile, security/data/performance, or weakened-assertion work is `Blocked`.
@@ -138,7 +138,7 @@ thread resolution, re-review, or summary.
    `Blocked` before mutation on identity, repository, ref, or head drift.
 2. For `changes_requested` or `needs_reply`, select every fresh actionable
    finding, create minimum independently verifiable units, and track the
-   remaining-unit count. Run the `tk-implement` loop without a selection
+   remaining-unit count. Run the fresh-worker loop without a selection
    question; after each unit `Pass` or unit-local `Fail` with clean evidence,
    immediately invoke the next unit. Do not enter freshness recheck or publication until the
    remaining-unit count is zero; no terminal response, `Pending`, or Normal

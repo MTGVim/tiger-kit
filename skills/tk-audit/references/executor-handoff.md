@@ -12,6 +12,5 @@ or the audit session.
 - **Safety**: include only a secret location and credential type; never copy
   values, cookies, tokens, or private identity.
 
-This contract prepares a candidate for `tk-to-spec`, `tk-to-tickets`, or
-`tk-drive`; it grants no implementation, ticket, or remote-publication
-authority.
+This contract prepares a candidate for `tk-drive`; it grants no implementation,
+unit, or remote-publication authority.

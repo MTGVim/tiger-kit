@@ -87,8 +87,8 @@ five short bullets when compound; one result may use one to three short lines.
 For eight or more underlying items, show top five to seven and cite artifact
 path owning full inventory. Budgets, not quotas.
 
-`.tigerkit/handoff.md` is the only resume snapshot. Reference durable R/AC from
-`.tigerkit/spec.md` and multi-slice ticket IDs from `.tigerkit/tickets.md`.
+`.tigerkit/handoff.md` is the only resume snapshot. Reference durable R/AC and
+multi-unit IDs from `.tigerkit/drive.md` when Drive owns the source run.
 Never create `.tigerkit/work-map.md`, archive, current pointer, or global state.
 Treat existing work-map as legacy scratch; do not modify, migrate, or delete.
 

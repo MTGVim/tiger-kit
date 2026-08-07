@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- refactor: collapse Drive preparation, unit slicing, and implementation into one approved fresh-worker lifecycle
+- remove: delete the three superseded Drive phase-skill packages and model-routing configuration surface
+- refactor: replace split Drive artifacts with `.tigerkit/drive.md` and narrow review to R/AC acceptance gaps
+
 ## 2026.08.07-12 — Release
 
 - feat: prefer reviewed gh-attach uploads

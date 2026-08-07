@@ -155,7 +155,7 @@
     {
       "id": "validation-standalone-blocked-receipt",
       "split": "validation",
-      "query": "tk-to-spec이 Blocked를 반환했어",
+      "query": "Drive Prepare가 Blocked를 반환했어",
       "should_trigger": false,
       "facets": [
         "short"

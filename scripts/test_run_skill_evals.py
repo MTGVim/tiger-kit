@@ -106,9 +106,9 @@ class AdapterResultTest(unittest.TestCase):
             "output": "done",
             "terminal_status": "Pass",
             "events": [
-                {"type": "phase_invocation", "phase": "tk-to-spec"},
-                {"type": "phase_invocation", "phase": "tk-to-spec"},
-                {"type": "phase_invocation", "phase": "tk-implement"},
+                {"type": "phase_invocation", "phase": "Prepare"},
+                {"type": "phase_invocation", "phase": "Prepare"},
+                {"type": "phase_invocation", "phase": "fresh-worker"},
                 {"type": "final_output", "terminal_status": "Pass"},
             ],
         }
@@ -122,7 +122,7 @@ class AdapterResultTest(unittest.TestCase):
             [
                 {
                     "type": "unknown",
-                    "phase": "tk-to-spec",
+                    "phase": "Prepare",
                 },
                 {"type": "final_output", "terminal_status": "Pass"},
             ],
@@ -1051,13 +1051,13 @@ class RunnerContractTest(unittest.TestCase):
         assertion = {
             "type": "event_order",
             "hosts": ["claude-code"],
-            "before": {"type": "phase_invocation", "phase": "tk-to-spec"},
-            "after": {"type": "phase_invocation", "phase": "tk-implement"},
+            "before": {"type": "phase_invocation", "phase": "Prepare"},
+            "after": {"type": "phase_invocation", "phase": "fresh-worker"},
             "forbidden_between": [{"type": "final_output"}],
         }
         valid = [
-            {"type": "phase_invocation", "phase": "tk-to-spec"},
-            {"type": "phase_invocation", "phase": "tk-implement"},
+            {"type": "phase_invocation", "phase": "Prepare"},
+            {"type": "phase_invocation", "phase": "fresh-worker"},
             {"type": "final_output", "terminal_status": "Pass"},
         ]
 
@@ -1124,13 +1124,13 @@ class RunnerContractTest(unittest.TestCase):
         assertion = {
             "type": "event_count",
             "hosts": ["codex"],
-            "event": {"type": "phase_invocation", "phase": "tk-implement"},
+            "event": {"type": "phase_invocation", "phase": "fresh-worker"},
             "max": 3,
         }
         events = [
-            {"type": "phase_invocation", "phase": "tk-implement"},
-            {"type": "phase_invocation", "phase": "tk-implement"},
-            {"type": "phase_invocation", "phase": "tk-implement"},
+            {"type": "phase_invocation", "phase": "fresh-worker"},
+            {"type": "phase_invocation", "phase": "fresh-worker"},
+            {"type": "phase_invocation", "phase": "fresh-worker"},
         ]
 
         with tempfile.TemporaryDirectory() as directory:
@@ -1147,7 +1147,7 @@ class RunnerContractTest(unittest.TestCase):
                 adapter_result={
                     "events": [
                         *events,
-                        {"type": "phase_invocation", "phase": "tk-implement"},
+                        {"type": "phase_invocation", "phase": "fresh-worker"},
                     ]
                 },
                 checkout=checkout,
@@ -1170,7 +1170,7 @@ class RunnerContractTest(unittest.TestCase):
         assertion = {
             "type": "event_absent",
             "hosts": ["claude-code"],
-            "event": {"type": "phase_invocation", "phase": "tk-implement"},
+            "event": {"type": "phase_invocation", "phase": "fresh-worker"},
         }
         without_implementation = [
             {"type": "phase_invocation", "phase": "tk-grill-me"},
@@ -1178,7 +1178,7 @@ class RunnerContractTest(unittest.TestCase):
         ]
         with_implementation = [
             *without_implementation[:1],
-            {"type": "phase_invocation", "phase": "tk-implement"},
+            {"type": "phase_invocation", "phase": "fresh-worker"},
             without_implementation[-1],
         ]
 
@@ -1225,8 +1225,8 @@ class RunnerContractTest(unittest.TestCase):
             (checkout / "skills" / "tk-sample").mkdir(parents=True)
             adapter = root / "adapter.py"
             events = [
-                {"type": "phase_invocation", "phase": "tk-to-spec"},
-                {"type": "phase_invocation", "phase": "tk-implement"},
+                {"type": "phase_invocation", "phase": "Prepare"},
+                {"type": "phase_invocation", "phase": "fresh-worker"},
                 {"type": "final_output", "terminal_status": "Pass"},
             ]
             adapter.write_text(

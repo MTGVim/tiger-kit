@@ -30,8 +30,8 @@ npx skills update --global --yes
 전역 설치와 로컬 설치를 함께 두면 Codex가 두 skill root를 모두 발견해 picker에
 중복 표시할 수 있으므로 실제 사용자 설치에는 `MTGVim/tiger-kit`를 사용하세요.
 
-Claude Code와 Hermes Agent에서는 `/tk-implement`, Codex에서는
-`$tk-implement` 또는 skill picker를 사용합니다.
+Claude Code와 Hermes Agent에서는 `/tk-drive`, Codex에서는
+`$tk-drive` 또는 skill picker를 사용합니다.
 PR lifecycle은 `/tk-pr-open`, `/tk-pr-triage`, `/tk-pr-respond`,
 `/tk-pr-rebase`, `/tk-pr-sweep`를 직접 선택합니다.
 
@@ -39,13 +39,10 @@ PR lifecycle은 `/tk-pr-open`, `/tk-pr-triage`, `/tk-pr-respond`,
 
 | Skill | 호출 | 소유 범위 |
 | --- | --- | --- |
-| `tk-drive` | user | 명시 source를 결정·Ready spec·조건부 tickets·unit commits·aggregate verification·finalization까지 진행 |
+| `tk-drive` | user | 명시 source를 한 번 준비·승인하고 fresh worker unit·R/AC gap closure·verified commits·finalization까지 진행 |
 | `tk-audit` | user | repository를 read-only audit하고 `.tigerkit/audit.md`에 evidence-backed `AUD-*` finding을 기록 |
 | `tk-ask-repo` | user | repository 질문을 `path:line` 근거로 조사하는 read-only desk |
 | `tk-grill-me` | hybrid | material user decision을 evidence-first 질문 하나씩 닫음 |
-| `tk-to-spec` | hybrid | 독립 구현 가능한 Ready R/AC spec 작성 |
-| `tk-to-tickets` | hybrid | Ready spec을 독립 검증 가능한 vertical units로 분해 |
-| `tk-implement` | hybrid | unit 하나를 구현·테스트·review하고 verified commit 하나 생성 |
 | `tk-pr-open` | hybrid | 명확한 단일 PR 요청으로 초안·publish plan을 작성하고 승인 후 create/update |
 | `tk-pr-triage` | hybrid | 명시 호출 또는 sweep handoff에서 repository의 PR·review·check·reply 상태를 read-only 분류 |
 | `tk-pr-respond` | hybrid | 명시 호출 또는 sweep handoff에서 feedback·GitHub Actions를 resolution unit으로 처리하고 bounded publish |
@@ -70,7 +67,7 @@ commit, 검증 또는 안전 경계가 있을 때만 해당 skill을 선택합�
 
 | 표기 | 의미 |
 | --- | --- |
-| `🚗 진행` | 의미 있는 긴 작업 경계 또는 부모 오케스트레이션 (`🚗 drive > child`) |
+| `🤹 진행` | 의미 있는 긴 작업 경계 또는 부모 오케스트레이션 (`🤹 drive > child`) |
 | `🙋 응답 필요` | 사용자 질문·승인·조치 필요 |
 | `⏳ 대기` | 다음 행동이 CI·원격 작업·재리뷰 대기 |
 
@@ -96,7 +93,7 @@ commit, 검증 또는 안전 경계가 있을 때만 해당 skill을 선택합�
 /tk-pr-respond
 → review thread와 comment를 resolution unit으로 grouping
 → user selection
-→ unit마다 tk-implement + verified commit
+→ unit마다 fresh worker candidate + verifier + verified commit
 → aggregate verification과 exact publish plan
 → current-turn approval 뒤 push·reply·verified resolve
 → 모든 actionable finding 해결 시 필요한 human reviewer에게 re-review request
@@ -125,13 +122,13 @@ exact evidence 안에서 child의 bounded `--ci` route를 승인합니다.
 
 ```text
 explicit tk-drive <source>
-→ material decision이 있을 때만 tk-grill-me
-→ tk-to-spec
-→ 여러 독립 unit일 때만 tk-to-tickets
-→ unit마다 tk-implement + verified commit
-→ aggregate verification
-→ 필요할 때 tk-browser-verify
-→ tk-drive finalization
+→ Prepare: Ready R/AC, assumptions, units/waves, verification obligations
+→ material blocking decision이 있을 때만 tk-grill-me
+→ 한 번의 final plan approval
+→ Execute: unit마다 fresh worker candidate
+→ required verifier 후 R/AC Close gaps
+→ unit마다 verified commit
+→ aggregate verification → Finalize
 ```
 
 `tk-learn`만 `create | improve | merge` skill 변경을 작성합니다.
@@ -145,7 +142,7 @@ Continuation은 prompt-directed이며 durable scheduler나 cross-turn replay를
 Git, tests, browser evidence를 다시 읽어 다음 node를 선택합니다.
 
 TigerKit은 이 한계를 문구로 숨기지 않습니다. `scripts/run_drive_experiment.py`는
-동일한 source를 `tk-drive` arm과 명시 phase composition arm으로 실행하여 terminal
+동일한 source를 `tk-drive` arm과 ordinary host control arm으로 실행하여 terminal
 상태, phase continuation, commit, verification, token/time을 비교합니다. 측정된
 명확한 열세가 없으면 catalog에서 `tk-drive`를 자동 삭제하지 않습니다.
 
@@ -211,9 +208,10 @@ Evidence, dedupe, trigger/eval, baseline/compatibility gate를 먼저 검증하�
 `tk-skill-diagnose`와 `tk-grooming`은 `tk-learn`용 proposal만 만들며 자동 invoke하지
 않습니다.
 
-`tk-implement`와 `tk-drive`의 명시 호출은 문서화된 current-branch commit까지만
-허용합니다. Push, PR, merge, tag, release, publish는 별도 명시 권한 없이는
-수행하지 않습니다.
+`tk-drive`의 명시 호출은 승인된 unit의 문서화된 current-branch commit까지만
+허용합니다. Controller는 product change를 직접 작성하지 않고 fresh worker
+candidate를 verifier와 R/AC gap closure 뒤 commit합니다. Push, PR, merge, tag,
+release, publish는 별도 명시 권한 없이는 수행하지 않습니다.
 
 `tk-pr-triage`는 remote와 local을 변경하지 않습니다. `tk-pr-open`은 PR create/update를,
 `tk-pr-respond`는 push·reply·verified thread resolve를 exact current-turn publish

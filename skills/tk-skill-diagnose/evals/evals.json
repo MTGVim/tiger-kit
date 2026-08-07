@@ -53,7 +53,7 @@
     {
       "id": "skill-diagnose-separates-grader-false-negative",
       "path": "success",
-      "prompt": "/tk-skill-diagnose Target exact path: skills/tk-implement/SKILL.md. Origin/ref: TigerKit canonical current HEAD. Host/invocation: Codex direct. Observed prompt: 작은 문구 변경을 구현·검증·커밋. Expected: Changed·Verification와 unchanged remote state. Observed: output과 git show evidence는 contract를 충족했지만 regex grader가 별도 Commit heading이 없다고 실패. Evidence commands: git show --stat HEAD, git status --short. Candidate/baseline refs: current HEAD / previous HEAD.",
+      "prompt": "/tk-skill-diagnose Target exact path: skills/tk-drive/SKILL.md. Origin/ref: TigerKit canonical current HEAD. Host/invocation: Codex direct. Observed prompt: 작은 문구 변경을 구현·검증·커밋. Expected: Changed·Verification와 unchanged remote state. Observed: output과 git show evidence는 contract를 충족했지만 regex grader가 별도 Commit heading이 없다고 실패. Evidence commands: git show --stat HEAD, git status --short. Candidate/baseline refs: current HEAD / previous HEAD.",
       "expected_output": "정상 deliverable과 잘못된 assertion을 대조해 evaluation plane으로 분류하고 skill body 확대 대신 grader owner를 제안하며 Diagnosis·Action만 간결하게 출력한다.",
       "assertions": [
         {
@@ -234,7 +234,7 @@
     {
       "id": "skill-diagnose-drafts-anonymized-upstream-issue",
       "path": "success",
-      "prompt": "/tk-skill-diagnose external consumer의 tk-implement incident입니다. canonical origin=MTGVim/tiger-kit, exact installed ref=v20.2.0 and content hash=abc123을 확인했습니다. unmodified upstream source의 fresh matched runs R1/R2에서 2/2 재현됐고 nearby control C1/C2와 unused holdout H1/H2는 critical regression 없이 통과했습니다. 같은 target, symptom, root-cause theme에 대한 accessible open/closed upstream issue search와 known fix ancestry reconciliation에서 match가 없었습니다. private identifier redaction과 잔재 검증도 가능합니다. upstream issue draft를 제안해 주세요.",
+      "prompt": "/tk-skill-diagnose external consumer의 tk-drive incident입니다. canonical origin=MTGVim/tiger-kit, exact installed ref=v20.2.0 and content hash=abc123을 확인했습니다. unmodified upstream source의 fresh matched runs R1/R2에서 2/2 재현됐고 nearby control C1/C2와 unused holdout H1/H2는 critical regression 없이 통과했습니다. 같은 target, symptom, root-cause theme에 대한 accessible open/closed upstream issue search와 known fix ancestry reconciliation에서 match가 없었습니다. private identifier redaction과 잔재 검증도 가능합니다. upstream issue draft를 제안해 주세요.",
       "expected_output": "모든 eligibility gate를 근거로 exact anonymized title/body를 upstream-draft-ready로 제안하되 issue를 생성하지 않는다.",
       "assertions": [
         {

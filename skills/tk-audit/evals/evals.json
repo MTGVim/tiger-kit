@@ -85,7 +85,7 @@
       "id": "improve-finding-is-not-a-ticket",
       "path": "boundary",
       "prompt": "$tk-audit AUD-003을 독립 ticket과 구현 commit으로 바로 바꿔 주세요.",
-      "expected_output": "AUD-* finding은 evidence-backed candidate로만 ledger에 남고 tk-to-spec/tk-to-tickets/tk-implement를 직접 호출하지 않는다.",
+      "expected_output": "AUD-* finding은 evidence-backed candidate로만 ledger에 남고 tk-drive나 fresh worker를 직접 호출하지 않는다.",
       "assertions": [
         {
           "type": "output_absent",

@@ -1,6 +1,6 @@
 interface:
-  short_description: "[user] Drive a direct graph through verified completion."
-  default_prompt: "Use $tk-drive with an explicit source to select the direct procedure graph from current evidence, implement verified units, run aggregate verification, and emit one terminal response."
+  short_description: "[user] Drive one approved fresh-worker change run."
+  default_prompt: "Use $tk-drive with an explicit source to prepare one approval surface, dispatch fresh workers, close R/AC gaps, create verified unit commits, and finalize."
 
 policy:
   allow_implicit_invocation: false

@@ -32,8 +32,8 @@ Caller mode controls presentation:
   continues directly to next applicable procedure. Do not render terminal
   result, receipt, `Pass`, or caller-directed stopping surface.
 
-Read-only. Never write source, spec, tickets, ADRs, or commits; never invoke
-`tk-to-spec`, `tk-to-tickets`, `tk-implement`, or a sibling phase owner.
+Read-only. Never write source, Drive R/AC, units, ADRs, or commits; never invoke
+`tk-drive`, a fresh worker, or a sibling workflow owner.
 
 ## Procedure
 

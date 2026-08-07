@@ -55,6 +55,41 @@
       "from": "improve-finding-to-drive",
       "to": "audit-finding-to-drive",
       "reason": "Rename catalog routing cases and finding vocabulary with the tk-audit skill identity."
+    },
+    {
+      "from": "spec-vs-tickets-spec",
+      "to": "drive-prepares-and-slices",
+      "reason": "Issue 277 removes phase-skill routing and makes explicit Drive own preparation, unit slicing, and fresh-worker mutation."
+    },
+    {
+      "from": "spec-vs-tickets-tickets",
+      "to": "drive-prepares-and-slices",
+      "reason": "Issue 277 removes phase-skill routing and makes explicit Drive own preparation, unit slicing, and fresh-worker mutation."
+    },
+    {
+      "from": "implement-vs-drive-implement",
+      "to": "drive-sdd-owned-change",
+      "reason": "Issue 277 removes phase-skill routing and makes explicit Drive own preparation, unit slicing, and fresh-worker mutation."
+    },
+    {
+      "from": "implement-vs-drive-drive",
+      "to": "drive-sdd-owned-change",
+      "reason": "Issue 277 removes phase-skill routing and makes explicit Drive own preparation, unit slicing, and fresh-worker mutation."
+    },
+    {
+      "from": "implement-vs-drive-active-handoff",
+      "to": "drive-worker-handoff-is-internal",
+      "reason": "Issue 277 removes phase-skill routing and makes explicit Drive own preparation, unit slicing, and fresh-worker mutation."
+    },
+    {
+      "from": "implement-vs-drive-ordinary-request",
+      "to": "drive-generic-request",
+      "reason": "Issue 277 removes phase-skill routing and makes explicit Drive own preparation, unit slicing, and fresh-worker mutation."
+    },
+    {
+      "from": "ask-repo-vs-implement",
+      "to": "ask-repo-vs-drive",
+      "reason": "Issue 277 removes phase-skill routing and makes explicit Drive own preparation, unit slicing, and fresh-worker mutation."
     }
   ],
   "critical_hosts": [
@@ -88,22 +123,6 @@
       "critical": true
     },
     {
-      "id": "spec-vs-tickets-spec",
-      "boundary": "tk-to-spec vs tk-to-tickets",
-      "prompt": "확정된 결정을 독립 구현 명세로 작성해 주세요.",
-      "focus_skill": "tk-to-spec",
-      "expected_selected_skill": "tk-to-spec",
-      "critical": true
-    },
-    {
-      "id": "spec-vs-tickets-tickets",
-      "boundary": "tk-to-spec vs tk-to-tickets",
-      "prompt": "이 Ready 명세를 독립 검증 가능한 vertical ticket으로 나눠 주세요.",
-      "focus_skill": "tk-to-tickets",
-      "expected_selected_skill": "tk-to-tickets",
-      "critical": false
-    },
-    {
       "id": "grooming-vs-learn-audit",
       "boundary": "tk-grooming vs tk-learn",
       "prompt": "기존 repo rule과 skill의 중복·범위·배치를 감사해 주세요.",
@@ -125,38 +144,6 @@
       "prompt": "이미 존재하는 repository rule과 skill의 중복·범위·트리거를 감사해 주세요.",
       "focus_skill": "tk-grooming",
       "expected_selected_skill": "tk-grooming",
-      "critical": true
-    },
-    {
-      "id": "implement-vs-drive-implement",
-      "boundary": "tk-implement vs tk-drive",
-      "prompt": "/tk-implement 이 변경을 구현하고 검증된 commit을 만들어 주세요.",
-      "focus_skill": "tk-implement",
-      "expected_selected_skill": "tk-implement",
-      "critical": false
-    },
-    {
-      "id": "implement-vs-drive-drive",
-      "boundary": "tk-implement vs tk-drive",
-      "prompt": "$tk-drive 이 source를 spec부터 검증된 commit까지 진행해 주세요.",
-      "focus_skill": "tk-drive",
-      "expected_selected_skill": "tk-drive",
-      "critical": true
-    },
-    {
-      "id": "implement-vs-drive-active-handoff",
-      "boundary": "tk-implement vs tk-drive",
-      "prompt": "[active tk-drive implementation handoff] Implement ticket TK-2 with R3/AC4 as one unit and pass its verified commit state to the active graph.",
-      "focus_skill": "tk-implement",
-      "expected_selected_skill": "tk-implement",
-      "critical": true
-    },
-    {
-      "id": "implement-vs-drive-ordinary-request",
-      "boundary": "tk-implement vs tk-drive",
-      "prompt": "이 함수의 버그를 고쳐 주세요.",
-      "focus_skill": "tk-implement",
-      "expected_selected_skill": null,
       "critical": true
     },
     {
@@ -286,14 +273,6 @@
       "focus_skill": "tk-ask-repo",
       "expected_selected_skill": null,
       "critical": false
-    },
-    {
-      "id": "ask-repo-vs-implement",
-      "boundary": "tk-ask-repo vs tk-implement",
-      "prompt": "$tk-implement 이 값이 잘못 내려오는 버그를 고치고 검증된 commit을 만들어 주세요.",
-      "focus_skill": "tk-implement",
-      "expected_selected_skill": "tk-implement",
-      "critical": true
     },
     {
       "id": "ask-repo-vs-grill",
@@ -483,6 +462,38 @@
       "id": "audit-finding-to-drive",
       "boundary": "tk-audit finding source vs tk-drive execution",
       "prompt": "$tk-drive AUD-003을 Ready spec부터 verified commit까지 진행해줘",
+      "focus_skill": "tk-drive",
+      "expected_selected_skill": "tk-drive",
+      "critical": true
+    },
+    {
+      "id": "drive-prepares-and-slices",
+      "boundary": "tk-drive integrated preparation and unit slicing",
+      "prompt": "$tk-drive 이 confirmed source를 Ready R/AC와 dependency units로 준비해 승인 후 구현해 주세요.",
+      "focus_skill": "tk-drive",
+      "expected_selected_skill": "tk-drive",
+      "critical": true
+    },
+    {
+      "id": "drive-sdd-owned-change",
+      "boundary": "tk-drive explicit SDD workflow vs ordinary request",
+      "prompt": "$tk-drive 이 변경을 준비부터 fresh-worker verified commit까지 진행해 주세요.",
+      "focus_skill": "tk-drive",
+      "expected_selected_skill": "tk-drive",
+      "critical": true
+    },
+    {
+      "id": "drive-worker-handoff-is-internal",
+      "boundary": "tk-drive controller vs internal worker handoff",
+      "prompt": "[active approved tk-drive] Execute approved unit U2 through a fresh worker and continue the owning Drive lifecycle.",
+      "focus_skill": "tk-drive",
+      "expected_selected_skill": "tk-drive",
+      "critical": true
+    },
+    {
+      "id": "ask-repo-vs-drive",
+      "boundary": "tk-ask-repo vs tk-drive",
+      "prompt": "$tk-drive 이 값이 잘못 내려오는 버그를 준비부터 verified commit까지 진행해 주세요.",
       "focus_skill": "tk-drive",
       "expected_selected_skill": "tk-drive",
       "critical": true
