@@ -12,15 +12,15 @@ metadata:
 # Agent Skill 진단
 
 정확히 하나의 Agent Skill target과 하나의 observed 또는 measured anomaly에만 사용한다.
-Direct selection은 허용한다. Automatic selection에는 target과 incident evidence가
-필요하며, "skill", "debug", "performance" 같은 generic 단어만으로는 부족하다.
+직접 선택은 허용한다. 자동 선택에는 target과 incident evidence가 필요하며,
+`skill`, `debug`, `performance` 같은 일반 단어만으로는 부족하다.
 
-이 skill은 진단만 수행한다. canonical skill을 작성하거나 catalog를 optimize하거나
-최종 patch를 소유하지 않는다. 검증된 skill objective는 `tk-learn`을 sole
+이 skill은 진단만 수행한다. canonical skill을 작성하거나 catalog를 최적화하거나
+최종 patch를 소유하지 않는다. 검증된 skill objective는 `tk-learn`을 유일한
 `create | improve | merge` writer로 거쳐 라우팅한다. canonical source skill을
-의미적으로 mutate하지 않는다.
+의미적으로 변경하지 않는다.
 
-## Intake gate
+## 입력 게이트
 
 다음을 기록한다:
 
@@ -34,62 +34,62 @@ Direct selection은 허용한다. Automatic selection에는 target과 incident e
 없으면 원인을 추론할 권한이 아니라 `Unverifiable | Blocked`다.
 
 incident, exact target, host/invocation, prompt, expected 및 observed result, evidence를
-명시한 `learn-ready` handoff는 한 번만 수락한다. diagnostic phase에서 `tk-learn`을
-invoke하지 않으며, 동일한 target + incident + blocker cycle을 반복하지 않는다.
+명시한 `learn-ready` handoff는 한 번만 수락한다. 진단 단계에서는 `tk-learn`을
+호출하지 않으며, 동일한 target + incident + blocker cycle을 반복하지 않는다.
 
-## Evidence order
+## 증거 순서
 
 다음 순서로 결정한다:
 
-1. target provenance, description/body consistency, deterministic assertions,
+1. target provenance, description/body 일관성, deterministic assertions,
    repository state 및 adapter/host evidence;
-2. 가장 작은 fresh incident reproduction;
-3. 의심되는 failure plane을 구분하는 하나의 nearby control;
-4. causality를 입증하는 데 필요할 때만 run-owned minimum experiment.
+2. 가장 작은 fresh incident 재현;
+3. 의심되는 failure plane을 구분하는 하나의 인접 control;
+4. 인과관계를 입증하는 데 필요할 때만 run-owned minimum experiment.
 
 재현 결과는 `Reproduced | Not reproduced | Inconclusive` 중 하나다. Self-report는
-hypothesis를 제안할 뿐 root cause를 증명하지 않는다. 첫 결과가 unstable하거나
-control과의 경계가 모호할 때만 fresh run을 반복한다. 원인을 좁은 evidence로 결정할
+가설을 제안할 뿐 root cause를 증명하지 않는다. 첫 결과가 불안정하거나
+control과의 경계가 모호할 때만 fresh run을 반복한다. 좁은 evidence로 원인을 결정할
 수 있는데도 fixed trial counts, generic holdout suite 또는 rubric scoring을 요구하지
 않는다.
 
 해당할 때만 다음 references를 읽는다:
 
-- [failure planes](references/failure-planes.md)
-- [empirical method](references/empirical-method.md)
-- [upstream issue anonymization](references/upstream-issue-anonymization.md)
+- [failure plane와 evidence](references/failure-planes.md)
+- [경험적 진단 방법](references/empirical-method.md)
+- [upstream issue 익명화](references/upstream-issue-anonymization.md)
 
-## Efficiency gate
+## 효율성 게이트
 
 Resource claim에는 matched baseline, historical run, repository threshold 또는
-명시적 budget이 필요하다. 그렇지 않으면 observed value는 profile-only로 보고하고
-방향은 `Unverifiable`로 둔다. 낮은 tokens, time, calls, retries 또는 fan-out을
+명시적 budget이 필요하다. 그렇지 않으면 observed value는 profile만 기록하고
+방향은 `Unverifiable`로 둔다. tokens, time, calls, retries 또는 fan-out이 적다는
 이유로 correctness 또는 safety regression을 상쇄하지 않는다.
 
-## Workflow
+## 작업 흐름
 
-1. **Freeze**: exact incident, target ref, must-preserve behavior, affected host 및
-   reliable evidence/metric을 고정한다.
-2. **Reproduce**: clean context에서 한 번 재현한다. 결과를
+1. **동결(Freeze)**: exact incident, target ref, must-preserve behavior, affected host 및
+   신뢰할 수 있는 evidence/metric을 고정한다.
+2. **재현(Reproduce)**: clean context에서 한 번 재현한다. 결과를
    `Reproduced | Not reproduced | Inconclusive`로 분류한다.
-3. **Control**: nearest alternative를 비교한다. loader와 body, parent와 child,
+3. **대조(Control)**: nearest alternative를 비교한다. loader와 body, parent와 child,
    candidate와 grader, 한 host와 다른 host, correctness와 resource cost를
    구분한다.
-4. **Isolate**: 검증된 failure plane을 다음 중에서 선택한다:
+4. **격리(Isolate)**: 검증된 failure plane을 다음 중에서 선택한다:
    `selection | loading | instruction | planning | execution | formatting |
    evaluation | compatibility | efficiency | local override`.
-5. **Experiment when needed**: 하나의 run-owned isolated checkout에서만 수행한다.
-   하나의 root-cause theme만 바꾸고 cause를 confirm 또는 reject한다. experiment를
+5. **필요할 때만 실험(Experiment)**: 하나의 run-owned isolated checkout에서만 수행한다.
+   하나의 root-cause theme만 바꾸고 원인을 confirm 또는 reject한다. experiment를
    canonical fix로 취급하지 않는다.
-6. **Route**: 검증된 evidence에 따라 다음 owner를 정한다.
+6. **라우팅(Route)**: 검증된 evidence에 따라 다음 owner를 정한다.
 
 결론적인 cause 또는 disposition에서 멈춘다. 첫 experiment가 새로운 구체적 cause를
 드러낸 경우에만 두 번째 experiment를 허용한다. run-owned isolation만 정리하며
 canonical target을 다시 쓰거나 patch하지 않는다.
 
-## Routes
+## 라우팅
 
-### Verified skill objective: `learn-ready`
+### 검증된 skill objective: `learn-ready`
 
 하나의 기존 package와 하나의 구체적이며 testable한 objective가 검증된 경우에만
 사용한다. 다음을 emit한다:
@@ -104,28 +104,28 @@ Metric: <actual measurement, labeled proxy, or unavailable>
 Incident: <stable ID or source reference>
 ```
 
-이는 이후 명시적으로 실행하는 `tk-learn`의 input이다. 여기서 invoke하지 않는다.
+이는 이후 명시적으로 실행하는 `tk-learn`의 input이다. 여기서 호출하지 않는다.
 
-### Other dispositions
+### 기타 처분
 
-- `learn-candidate`: independently useful한 새 skill이 필요하다.
+- `learn-candidate`: 독립적으로 유용한 새 skill이 필요하다.
 - `eval-owner`: grader, fixture, harness 또는 assertion이 검증된 원인이다.
 - `host-owner`: loader, metadata, adapter 또는 host runtime이 검증된 원인이다.
 - `local-only`: consumer override/configuration이 incident를 일으킨다.
 - `no-change`: target behavior가 올바르거나 incident가 재현되지 않는다.
 - `unverifiable`: evidence로 안전하게 결정할 수 없다.
 
-external consumer repository에서는 anonymized issue를 제안하기 전에 upstream
+external consumer repository에서는 익명화된 issue를 제안하기 전에 upstream
 origin/ref와 현재 upstream behavior를 검증한다. duplicate check를 마친 redacted
-proposal만 `upstream-draft-ready`이며, 자동으로 create, comment, label 또는 publish하지
-않는다.
+proposal만 `upstream-draft-ready`로 분류하며, 자동으로 create, comment, label 또는
+publish하지 않는다.
 
-## Result
+## 결과
 
 `## Diagnosis`로 시작하고 이어서 `## Action`을 출력한다. 필요할 때만
 `## Remaining uncertainty`를 추가한다.
 
-하나의 incident에는 짧은 prose를 사용한다. 여러 symptom이 하나의 cause를 공유하면
+하나의 incident에는 짧은 설명을 사용한다. 여러 symptom이 하나의 cause를 공유하면
 `ID | Incident | Root cause` 형식으로 cause마다 안정적인 `SD-##` row 하나를 유지한다.
 reproduction verdict, verified failure plane, evidence, route 및 정확한 next handoff를
 보고한다. raw logs, transcripts, screenshots, secrets 또는 반복된 run narration을
@@ -145,7 +145,7 @@ evidence refs, measurements 및 route와 함께 atomically replace한다. 채팅
 - `Unverifiable`: provenance, reproduction, cause 또는 metric을 검증할 수 없다.
 - `NotApplicable`: 적격한 Agent Skill incident가 없다.
 
-## Pitfalls
+## 주의사항
 
 - skill body가 원인이라고 가정하지 않는다.
 - 재현되지 않은 incident를 wording intuition만으로 patch하지 않는다.

@@ -1,6 +1,6 @@
 # Upstream issue 익명화
 
-TigerKit-origin `tk-*` skill을 target으로 하는 consumer repository에서만 사용한다.
+TigerKit-origin `tk-*` skill을 대상으로 하는 consumer repository에서만 사용한다.
 
 ## 출처 확인 게이트
 
@@ -9,11 +9,11 @@ TigerKit-origin `tk-*` skill을 target으로 하는 consumer repository에서만
 1. metadata/path에서 TigerKit origin;
 2. installed ref/version 또는 source snapshot;
 3. consumer-local edits 또는 overrides;
-4. 가능하면 unmodified TigerKit source에 대한 reproduction;
+4. 가능하면 변경되지 않은 TigerKit source에 대한 reproduction;
 5. local configuration과 upstream contract behavior의 분리.
 
 Consumer-only reproduction은 `local-only`다. 정확한 upstream source를 확인할 수
-없어도 local diagnosis는 계속할 수 있지만 upstream disposition은
+없어도 local diagnosis는 계속할 수 있지만 upstream 처분은
 `upstream-unverifiable`다.
 
 ## 제안 적격성 게이트
@@ -33,7 +33,7 @@ issue search에 접근할 수 없거나, exact provenance가 없거나, upstream
 `upstream-unverifiable`을 사용하고 proposal content를 생략한다. Consumer-only
 reproduction은 `local-only`로 남긴다.
 
-matching open issue를 새 proposal로 작성하지 말고 해당 issue와 evidence state를
+일치하는 open issue를 새 proposal로 작성하지 말고 해당 issue와 evidence state를
 인용한다. matching closed issue의 경우 exact later unmodified upstream source가
 동일한 two-run, control 및 holdout gate를 충족할 때만 regression candidate로 분류한다.
 그 외에는 closed issue를 인용하고 `upstream-unverifiable`을 사용한다.
@@ -58,7 +58,7 @@ technical reproduction details가 여전히 남아 있는지 별도로 확인한
 
 ## 초안 템플릿
 
-제안 적격성 게이트가 `upstream-draft-ready`에 도달한 뒤에만 다음 template을 사용한다.
+제안 적격성 게이트가 `upstream-draft-ready`에 도달한 뒤에만 다음 템플릿을 사용한다.
 
 ```markdown
 ## Summary
@@ -120,4 +120,4 @@ URLs, domain data, identifiers, and private literals were removed.
 ```
 
 title과 body는 proposal로만 반환한다. 진단의 일부로 GitHub를 create, comment, label,
-publish하거나 그 밖의 방식으로 mutate하지 않는다.
+publish하거나 그 밖의 방식으로 변경하지 않는다.
