@@ -841,11 +841,11 @@
       "id": "implement-writes-bounded-implementation-ledger",
       "path": "success",
       "prompt": "/tk-implement active drive의 TK-9 unit을 구현·검증·review·commit하고 상세 evidence ledger를 남겨줘.",
-      "expected_output": ".tigerkit/implementation.md를 atomic하게 갱신하고 task/unit/R/AC, design-fit, inspected paths/symbols, simplify disposition, focused verification, Standards/Spec disposition, commit SHA, risk를 기록하되 raw transcript와 full diff는 저장하지 않는다.",
+      "expected_output": ".tigerkit/implementation.md를 atomic하게 갱신하고 task/unit/R/AC, design-fit, inspected paths/symbols, simplify disposition, focused verification, Standards/Spec disposition, 선택한 direct | delegated strategy와 선택 사유, delegated 시 resolved implementor, inferred fallback 시 전환·사유, commit SHA, risk를 기록하되 raw transcript와 full diff는 저장하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "same task는 unit section을 갱신하고 다른 task identity는 archive 없이 교체하며 .gitignore를 수정하지 않는다."
+          "criterion": "same task는 unit section을 갱신하고 다른 task identity는 archive 없이 교체하며 .gitignore를 수정하지 않는다. 선택한 direct | delegated strategy와 선택 사유를 남기고 delegated면 resolved implementor를, fallback이면 전환·사유를 함께 기록한다."
         },
         {
           "type": "path_text_contains",

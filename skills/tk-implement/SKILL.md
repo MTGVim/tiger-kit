@@ -48,6 +48,8 @@ use `most_capable` or controller recovery for design, unknown-cause, or
 security-critical decisions. Escalate once for context, sizing, or reasoning;
 do not retry a design decision as a cheaper implementation.
 
+## Model delegation configuration
+
 `$tk-implement --config` manages the host mapping described in
 [model-routing.md](references/model-routing.md). `--show` is read-only,
 `--migrate` is a real preview/apply flow, not show-only: for Claude Code it
@@ -76,6 +78,13 @@ toolset/permission evidence exists, and uses the same safe direct/current or
 required-override `Blocked` fallback. CLI support is not claimed as effective
 adapter behavior until the wiring and host eval change together.
 
+Once an explicit `$tk-implement` activation or exact active handoff is
+accepted, the unit's resolved `direct | delegated` strategy, tier, and
+implementor are user-authorized without a second approval. This authorization
+is bounded to that unit: `--config` alone never activates implementation or
+unrelated dispatch, and a user-required delegation that cannot be satisfied is
+still `Blocked`.
+
 ## Workflow
 
 1. **Inspect** — resolve source, unit, R/AC or source anchors, branch, initial `HEAD`, relevant code/tests/instructions, and pre-existing dirty paths. For standalone natural-language input, use repository evidence to resolve one target and derive working R/AC; missing paths or prewritten R/AC alone is not `Blocked`. Continue when target and expected behavior are unambiguous; otherwise stop before mutation.
@@ -87,7 +96,7 @@ adapter behavior until the wiring and host eval change together.
 
 ## Strategy
 
-Inspect before mutation. Decide unspecified `direct | delegated` and `tdd | no-tdd` without approval ceremony. Implementation strategy and product/change risk are separate; delegation implies neither low nor high risk.
+Inspect before mutation. Decide unspecified `direct | delegated` and `tdd | no-tdd` without approval ceremony. Implementation strategy and product/change risk are separate; delegation implies neither low nor high risk. Record the selected strategy and its reason in the implementation ledger; record the transition and reason when an inferred route falls back.
 
 - Prefer `direct` when any direct condition in [delegation.md](references/delegation.md) applies.
 - Consider `delegated` only when every transferability condition there holds and exactly one bounded implementor is available. If inferred delegation unavailable, use direct. If user required it, return `Blocked`.
