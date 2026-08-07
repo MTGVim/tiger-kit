@@ -388,12 +388,12 @@
     {
       "id": "to-tickets-requires-self-contained-improve-finding-context",
       "path": "boundary",
-      "prompt": "/tk-to-tickets IMP-007 finding을 티켓으로 나눠 주세요. finding과 parent conversation을 숨겨진 context로 가정하거나 exact paths, evidence, verification, STOP/report-back conditions 없이 ticket을 만들지 마세요.",
-      "expected_output": "IMP-007의 independent boundary를 증명할 evidence가 부족하면 ticket을 쓰지 않고 Blocked로 멈춘다.",
+      "prompt": "/tk-to-tickets AUD-007 finding을 티켓으로 나눠 주세요. finding과 parent conversation을 숨겨진 context로 가정하거나 exact paths, evidence, verification, STOP/report-back conditions 없이 ticket을 만들지 마세요.",
+      "expected_output": "AUD-007의 independent boundary를 증명할 evidence가 부족하면 ticket을 쓰지 않고 Blocked로 멈춘다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "improve finding을 ticket으로 복사하지 않고 zero-session-context handoff contract와 independent boundary 증거가 없으면 decomposition을 중단한다."
+          "criterion": "audit finding을 ticket으로 복사하지 않고 zero-session-context handoff contract와 independent boundary 증거가 없으면 decomposition을 중단한다."
         },
         {
           "type": "terminal_status",

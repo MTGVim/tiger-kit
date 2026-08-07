@@ -1,11 +1,11 @@
 {
-  "skill": "tk-improve",
+  "skill": "tk-audit",
   "kind": "user-invoked",
   "queries": [
     {
       "id": "train-explicit-audit",
       "split": "train",
-      "query": "$tk-improve 저장소의 correctness, security, tests 개선 후보를 근거와 함께 찾아줘",
+      "query": "$tk-audit 저장소의 correctness, security, tests 개선 후보를 근거와 함께 찾아줘",
       "should_trigger": true
     },
     {
@@ -17,31 +17,31 @@
     {
       "id": "validation-quick",
       "split": "validation",
-      "query": "$tk-improve quick tests 테스트 공백을 IMP finding으로 기록해줘",
+      "query": "$tk-audit quick tests 테스트 공백을 AUD finding으로 기록해줘",
       "should_trigger": true
     },
     {
       "id": "validation-deep",
       "split": "validation",
-      "query": "$tk-improve deep 전체 audit을 하고 stable finding ledger를 갱신해줘",
+      "query": "$tk-audit deep 전체 audit을 하고 stable finding ledger를 갱신해줘",
       "should_trigger": true
     },
     {
       "id": "validation-branch",
       "split": "validation",
-      "query": "/tk-improve branch 현재 diff의 introduced와 pre-existing 문제를 구분해줘",
+      "query": "/tk-audit branch 현재 diff의 introduced와 pre-existing 문제를 구분해줘",
       "should_trigger": true
     },
     {
       "id": "validation-direction",
       "split": "validation",
-      "query": "$tk-improve next 다음에 만들 grounded direction 후보를 보여줘",
+      "query": "$tk-audit next 다음에 만들 grounded direction 후보를 보여줘",
       "should_trigger": true
     },
     {
       "id": "validation-ko-en",
       "split": "validation",
-      "query": "$tk-improve security 보안 audit 해줘",
+      "query": "$tk-audit security 보안 audit 해줘",
       "should_trigger": true
     },
     {

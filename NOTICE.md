@@ -68,7 +68,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-`tk-improve` adapts `shadcn/improve` from source snapshot
+`tk-audit` adapts `shadcn/improve` from source snapshot
 `03369ee6d7cafbfcecc4346539b05b3dc0a603bb`:
 
 - `skills/improve/SKILL.md`
@@ -77,8 +77,9 @@ SOFTWARE.
 
 TigerKit keeps the upstream senior-advisor/read-only boundary, evidence-first
 audit categories, cheaper-executor handoff quality, and MIT attribution while
-changing the owned artifact to `.tigerkit/improve.md` and routing candidates to
-TigerKit's existing spec/ticket/drive owners. Relationship metadata:
+changing the owned artifact to `.tigerkit/audit.md`, using `AUD-*` finding IDs,
+and routing candidates to TigerKit's existing spec/ticket/drive owners.
+Relationship metadata:
 `origin: shadcn/improve`, `relationship: adapted`.
 
 `shadcn/improve` upstream license:

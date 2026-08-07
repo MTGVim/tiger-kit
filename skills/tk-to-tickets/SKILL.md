@@ -17,7 +17,7 @@ Use only for explicit vertical-ticket decomposition request or exact active
 Do not write spec, publish remote issues, or implement.
 
 Source precedence: user-designated source, current confirmed decisions,
-`.tigerkit/spec.md`, selected `.tigerkit/improve.md` `IMP-*` findings, request,
+`.tigerkit/spec.md`, selected `.tigerkit/audit.md` `AUD-*` findings, request,
 then relevant code.
 
 ## Workflow
@@ -49,7 +49,7 @@ points`, `Dependencies`, and `Verification`. `Coverage` names every owned R/AC o
 location; independent ticket writes `Dependencies: none` instead of implicit
 dependency state.
 
-A selected `IMP-*` finding is source evidence only. Preserve its ID, exact
+A selected `AUD-*` finding is source evidence only. Preserve its ID, exact
 evidence, confidence, route hint, and verification baseline; do not turn a
 finding into a ticket until its boundary is independently proven. A ticket is
 vertical behavior unit: keep behavior, tests, and verification

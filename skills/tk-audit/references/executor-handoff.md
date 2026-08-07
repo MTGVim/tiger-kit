@@ -1,6 +1,6 @@
 # Cheaper-model handoff
 
-Write each `IMP-*` finding so the next model can act without this conversation
+Write each `AUD-*` finding so the next model can act without this conversation
 or the audit session.
 
 - **Context closure**: include exact paths/symbols, current evidence,

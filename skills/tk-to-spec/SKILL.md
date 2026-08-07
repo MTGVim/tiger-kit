@@ -17,7 +17,7 @@ Use only for explicit implementation-spec artifact request or exact active
 issue, or implement.
 
 Source precedence: user-designated source, confirmed decisions, cited
-documents/tickets, selected `.tigerkit/improve.md` findings, relevant code,
+documents/tickets, selected `.tigerkit/audit.md` `AUD-*` findings, relevant code,
 then existing `.tigerkit/spec.md`.
 
 ## Workflow

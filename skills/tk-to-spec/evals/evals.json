@@ -424,8 +424,8 @@
     {
       "id": "to-spec-closes-improve-finding-for-cheaper-executor",
       "path": "success",
-      "prompt": "/tk-to-spec .tigerkit/improve.md의 IMP-003 finding을 Ready source로 바꿔 주세요. conversation을 다시 보지 않는 cheaper executor가 실행할 수 있도록 exact paths, current evidence, verification, in/out scope, STOP/report-back conditions, secret-safe context, source HEAD drift handling을 inline하고 ticket은 만들지 마세요.",
-      "expected_output": "IMP-003의 evidence와 route hint를 보존한 Ready spec을 쓰고 cheaper-model handoff contract의 exact context, boundaries, verification, decisions, secrets, drift fields를 포함한다.",
+      "prompt": "/tk-to-spec .tigerkit/audit.md의 AUD-003 finding을 Ready source로 바꿔 주세요. conversation을 다시 보지 않는 cheaper executor가 실행할 수 있도록 exact paths, current evidence, verification, in/out scope, STOP/report-back conditions, secret-safe context, source HEAD drift handling을 inline하고 ticket은 만들지 마세요.",
+      "expected_output": "AUD-003의 evidence와 route hint를 보존한 Ready spec을 쓰고 cheaper-model handoff contract의 exact context, boundaries, verification, decisions, secrets, drift fields를 포함한다.",
       "assertions": [
         {
           "type": "output_contains",
@@ -433,7 +433,7 @@
         },
         {
           "type": "output_contains",
-          "text": "IMP-003"
+          "text": "AUD-003"
         },
         {
           "type": "output_contains",

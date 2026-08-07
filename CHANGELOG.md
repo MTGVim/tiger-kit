@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- refactor: rename the read-only `tk-improve` advisor to `tk-audit` with an `AUD-*` ledger
+
 ## 2026.08.07-1 — Release
 
 - docs: streamline README invocation notes
