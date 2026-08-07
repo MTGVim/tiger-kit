@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.07-12 — Release
+
+- feat: prefer reviewed gh-attach uploads
+
 ## 2026.08.07-11 — Release
 
 - fix: mark user decision checkpoints
