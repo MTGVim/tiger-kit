@@ -82,10 +82,12 @@ warn once for the task when `.tigerkit/` is not ignored.
 Each unit section records task and unit/ticket identity, R/AC references,
 design-fit evidence as `reuse | extend | local | new abstraction`, inspected
 paths/symbols, simplify finding and `changed | no-op | deferred`, rerun focused
-verification, implementation strategy, Built-in review status, whether
+verification, Built-in review status, whether
 Additional review was required, its capability label, candidate snapshot
 identifier, findings and dispositions, fix-round history, review-driven
-changes, Standards and Spec dispositions, unit commit SHA, and remaining or
+changes, Standards and Spec dispositions, implementation strategy and its
+selection reason, resolved implementor when delegated, fallback transition and
+reason when an inferred route falls back, unit commit SHA, and remaining or
 deferred risk. A no-commit terminal attempt instead records native status,
 actual branch and HEAD, changed or uncommitted paths, executed verification,
 unverified scope, `commit: none`, the failure or blocker, and one recovery
