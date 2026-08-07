@@ -1064,9 +1064,21 @@
     {
       "id": "implement-config-claude-effort-roster-is-explicit",
       "path": "success",
-      "prompt": "$tk-implement --config --migrate Claude Code의 effort roster를 preview하세요. definition-only 파일, dispatch model 분리, explicit apply, reset, Haiku와 decline fallback을 빠짐없이 설명하세요.",
-      "expected_output": "distinct effort 값마다 effort-only definition 파일 하나를 preview하고 model은 넣지 않으며, explicit apply 전에는 쓰지 않고, --reset은 TigerKit이 만든 파일만 제거하며, Haiku 또는 roster decline은 effort: inherit을 사용한다고 설명한다.",
+      "prompt": "$tk-implement --config --migrate Claude Code의 effort roster와 v2 agent mapping을 preview하세요. 기존 writable roster 우선, definition-only 파일, dispatch model 분리, explicit apply, reset, Haiku와 decline fallback을 빠짐없이 설명하세요.",
+      "expected_output": "v2의 agent로 기존 writable agent type을 먼저 매핑하고, 적합한 roster가 없을 때만 distinct effort 값마다 effort-only definition 파일 하나를 preview하며 model은 넣지 않고, explicit apply 전에는 쓰지 않으며, --reset은 TigerKit이 만든 파일만 제거하고, Haiku 또는 roster decline은 effort: inherit을 사용한다고 설명한다.",
       "assertions": [
+        {
+          "type": "output_contains",
+          "text": "v2"
+        },
+        {
+          "type": "output_contains",
+          "text": "agent"
+        },
+        {
+          "type": "output_contains",
+          "text": "existing writable"
+        },
         {
           "type": "output_contains",
           "text": "definition_only"
@@ -1115,9 +1127,13 @@
     {
       "id": "implement-config-claude-migrate-offers-choice",
       "path": "success",
-      "prompt": "$tk-implement --config --migrate Claude Code preview 후 사용자에게 가능한 선택지를 안내하세요. 아직 선택하거나 apply하지 말고, 파일이 미리 쓰이지 않았는지도 분명히 하세요.",
-      "expected_output": "migrate가 show-only가 아닌 preview/apply 흐름임을 설명하고, `Add effort-only agent definitions`와 `Keep effort: inherit without definitions` 두 선택지를 정확히 제시하며, 선택과 explicit apply 전에는 쓰지 않는다고 안내한다.",
+      "prompt": "$tk-implement --config --migrate Claude Code preview 후 사용자에게 가능한 선택지를 안내하세요. 기존 roster 매핑을 기본 권장으로 표시하고 아직 선택하거나 apply하지 말며 파일이 미리 쓰이지 않았는지도 분명히 하세요.",
+      "expected_output": "migrate가 show-only가 아닌 preview/apply 흐름임을 설명하고, `Map tiers to existing agent types`를 Recommended로 먼저 제시한 뒤 `Add effort-only agent definitions`와 `Keep effort: inherit without definitions`를 정확히 제시하며, roster가 tier를 커버하면 정의 추가 option을 unavailable로 표시하고, 선택과 explicit apply 전에는 쓰지 않는다고 안내한다.",
       "assertions": [
+        {
+          "type": "output_contains",
+          "text": "Map tiers to existing agent types"
+        },
         {
           "type": "output_contains",
           "text": "Add effort-only agent definitions"
@@ -1139,8 +1155,16 @@
           "text": "effort: inherit"
         },
         {
+          "type": "output_contains",
+          "text": "Recommended"
+        },
+        {
+          "type": "output_contains",
+          "text": "unavailable"
+        },
+        {
           "type": "judge",
-          "criterion": "Claude Code migrate는 두 선택지를 사용자가 고를 때까지 어느 파일도 쓰지 않고, 정의 추가 선택은 effort-only/no model이며 정의 거부 선택은 영향을 받는 tier를 effort: inherit로 둔다고 명확히 안내한다."
+          "criterion": "Claude Code migrate는 기존 agent type 매핑을 기본 권장으로 포함한 세 선택지의 exact label을 항상 보여 주고, roster가 충분하면 정의 추가 option을 unavailable로 표시하며, 사용자가 고를 때까지 어느 파일도 쓰지 않는다. 정의 추가가 actionable한 경우에만 writable Implementor tools/instructions를 가진 effort-only/no model definition을 제안하고, 정의 거부 선택은 영향을 받는 tier를 effort: inherit로 둔다고 명확히 안내한다."
         },
         {
           "type": "terminal_status",
@@ -1158,9 +1182,17 @@
     {
       "id": "implement-config-codex-pairs-model-and-effort",
       "path": "success",
-      "prompt": "$tk-implement --config --show Codex의 tier model routing을 설명하세요. spawn에서 model만 보내 effort가 reset되지 않도록 검증하세요.",
-      "expected_output": "Codex는 model override마다 같은 call에 matching reasoning_effort를 함께 보내며 model-only dispatch를 허용하지 않는다고 설명한다.",
+      "prompt": "$tk-implement --config --show Codex의 tier-to-implementor model routing을 설명하세요. writable implementor를 먼저 고르고 spawn에서 model만 보내 effort가 reset되지 않도록 검증하세요.",
+      "expected_output": "Codex는 resolved writable implementor를 선택하고 model override마다 같은 call에 matching reasoning_effort를 함께 보내며 model-only dispatch를 허용하지 않는다고 설명한다.",
       "assertions": [
+        {
+          "type": "output_contains",
+          "text": "resolved implementor"
+        },
+        {
+          "type": "output_contains",
+          "text": "writable"
+        },
         {
           "type": "output_contains",
           "text": "reasoning_effort"
@@ -1176,6 +1208,222 @@
         {
           "type": "judge",
           "criterion": "Codex dispatch contract는 model을 내보내는 모든 spawn에 matching reasoning_effort를 포함하고 model-only dispatch를 금지한다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "implement-delegated-resolves-writable-implementor",
+      "path": "success",
+      "prompt": "$tk-implement delegated unit을 실행할 때 tier를 실제 implementor로 해석하는 절차를 설명하세요. read-only 후보를 배제하고 선택 근거를 남기며 후보가 없을 때의 안전한 fallback과 required override 결과도 포함하세요.",
+      "expected_output": "delegated dispatch 전에 host candidate roster를 조회하고 writable 도구와 unit 요구사항에 맞는 resolved implementor를 고르며, read-only 후보를 거부하고 tier·implementor·selection reason을 기록한다. 후보가 없으면 inferred optimization은 direct/current model로 fallback하고 required override는 Blocked다.",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "Implementor resolution"
+        },
+        {
+          "type": "output_contains",
+          "text": "host's candidate roster"
+        },
+        {
+          "type": "output_contains",
+          "text": "resolved implementor"
+        },
+        {
+          "type": "output_contains",
+          "text": "read-only"
+        },
+        {
+          "type": "output_contains",
+          "text": "selection reason"
+        },
+        {
+          "type": "output_contains",
+          "text": "direct"
+        },
+        {
+          "type": "output_contains",
+          "text": "Blocked"
+        },
+        {
+          "type": "judge",
+          "criterion": "delegated tier는 dispatch 전에 host 후보를 조회하고 writable·tool·unit 요구사항을 검증하며 read-only 후보를 배제한다. 선택된 implementor와 근거를 남기고, 후보 부재 시 inferred optimization만 direct/current으로 안전하게 낮추며 required override는 Blocked다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "implement-config-show-reports-resolved-implementor",
+      "path": "success",
+      "prompt": "$tk-implement --config --show 각 tier의 resolved implementor, dispatch model, effort effective 상태와 선택 근거를 보여 주세요. v2 agent가 없거나 effort가 inert인 경우도 applied로 가장하지 마세요.",
+      "expected_output": "--show가 tier별로 resolved implementor, dispatch model, effective/inert/unknown effort, v2 agent와 selection reason을 보고하고 backing path가 없으면 effort: inherit로 표시한다.",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "resolved implementor"
+        },
+        {
+          "type": "output_contains",
+          "text": "dispatch model"
+        },
+        {
+          "type": "output_contains",
+          "text": "effective"
+        },
+        {
+          "type": "output_contains",
+          "text": "selection reason"
+        },
+        {
+          "type": "output_contains",
+          "text": "agent"
+        },
+        {
+          "type": "output_contains",
+          "text": "effort: inherit"
+        },
+        {
+          "type": "judge",
+          "criterion": "--config --show는 모든 tier에 대해 implementor·model·effort effective 여부·근거를 분리해 보고하고, inert/unknown/fallback을 applied로 서술하지 않으며 쓰지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "implement-config-unknown-host-safe-fallback",
+      "path": "success",
+      "prompt": "$tk-implement --config --show adapter 절이 없는 host를 설명하세요. capability를 추측하지 말고 unknown을 보고하며 inferred optimization과 required override를 각각 안전하게 처리하세요.",
+      "expected_output": "adapter가 없는 host는 per_call_model, per_call_effort, provider_override를 unknown으로 보고하고 direct/current-model fallback을 사용하며, 적용을 요구한 override는 Blocked로 멈추고 inert effort는 effort: inherit로 둔다.",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "per_call_model: unknown"
+        },
+        {
+          "type": "output_contains",
+          "text": "per_call_effort: unknown"
+        },
+        {
+          "type": "output_contains",
+          "text": "provider_override: unknown"
+        },
+        {
+          "type": "output_contains",
+          "text": "direct/current"
+        },
+        {
+          "type": "output_contains",
+          "text": "Blocked"
+        },
+        {
+          "type": "output_contains",
+          "text": "effort: inherit"
+        },
+        {
+          "type": "judge",
+          "criterion": "어댑터가 미기재인 host는 세 capability를 unknown으로 보고하고 임의의 tier·model·provider 추측을 하지 않는다. inferred optimization은 direct/current으로 안전하게 fallback하고 required override는 Blocked다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "implement-config-hermes-per-call-routing",
+      "path": "success",
+      "prompt": "$tk-implement --config --show Hermes의 model routing과 delegated implementor를 설명하세요. 실제 hermes chat CLI가 제공하는 per-call 인자와 writable toolset을 근거로 같은 invocation의 dispatch를 검증하세요.",
+      "expected_output": "Hermes CLI는 --model, --reasoning, --provider를 지원하지만 현재 TigerKit adapter는 hermes chat -q와 --toolsets terminal,skills만 전달하므로, writable terminal,skills가 있는 hermes-chat을 식별하더라도 세 routing capability는 unknown이다. inferred optimization은 direct/current fallback, required override는 Blocked이며 CLI capability를 effective dispatch라고 가장하지 않는다.",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "hermes chat"
+        },
+        {
+          "type": "output_contains",
+          "text": "hermes-chat"
+        },
+        {
+          "type": "output_contains",
+          "text": "terminal,skills"
+        },
+        {
+          "type": "output_contains",
+          "text": "--model"
+        },
+        {
+          "type": "output_contains",
+          "text": "--reasoning"
+        },
+        {
+          "type": "output_contains",
+          "text": "--provider"
+        },
+        {
+          "type": "output_contains",
+          "text": "same invocation"
+        },
+        {
+          "type": "output_contains",
+          "text": "per_call"
+        },
+        {
+          "type": "output_contains",
+          "text": "unknown"
+        },
+        {
+          "type": "output_contains",
+          "text": "does not forward"
+        },
+        {
+          "type": "output_contains",
+          "text": "direct/current"
+        },
+        {
+          "type": "output_contains",
+          "text": "Blocked"
+        },
+        {
+          "type": "judge",
+          "criterion": "Hermes contract은 CLI가 `--model`, `--reasoning`, `--provider`를 지원한다는 사실과 현재 TigerKit adapter가 `-q` 및 `--toolsets terminal,skills`만 전달한다는 사실을 분리한다. 따라서 `hermes-chat` writable candidate 근거는 남기되 세 routing capability를 unknown으로 보고하고 direct/current fallback 및 required override Blocked를 사용하며, 아직 flag를 보낸다고 주장하지 않는다."
         },
         {
           "type": "terminal_status",

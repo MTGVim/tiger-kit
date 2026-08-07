@@ -46,6 +46,28 @@ The implementor does not create another agent, re-delegate, invoke a
 user-invoked TigerKit skill, expand scope, mix unrelated refactors, commit,
 push, create a PR, merge, tag, release, or publish.
 
+## Implementor resolution
+
+After `delegated` and its tier are fixed, resolve the implementor before
+dispatch; the tier is not a provider, model alias, or agent by itself.
+
+1. Query the selected host's candidate roster and collect each stable
+   implementor identifier, writable tools, model/profile, effort backing, and
+   read-only flag.
+2. Reject candidates that cannot edit the unit, lack required tools, or are
+   read-only investigation/planning personas such as `Explore` or `Plan`.
+3. Prefer the v2 managed `agent` mapping when it is a writable candidate that
+   satisfies the unit. Otherwise choose the first tier-compatible writable
+   candidate in the host's stable roster order; do not invent a provider alias.
+4. Pass the selected identifier and tier to dispatch and record the
+   `resolved implementor`, dispatch values, and selection reason in the
+   handoff/evidence.
+
+If no suitable candidate exists, an inferred optimization falls back to
+`direct` plus the current model and reports that fallback. A required override
+that cannot be satisfied is `Blocked`; never substitute a read-only or
+unrelated candidate silently.
+
 The current agent inspects the actual diff, request compliance, and
 verification evidence, adjudicates findings, and owns the bounded fix loop in
 [review-boundary.md](review-boundary.md). Rounds 1–3 resume the original

@@ -51,20 +51,30 @@ do not retry a design decision as a cheaper implementation.
 `$tk-implement --config` manages the host mapping described in
 [model-routing.md](references/model-routing.md). `--show` is read-only,
 `--migrate` is a real preview/apply flow, not show-only: for Claude Code it
-must present one choice — `Add effort-only agent definitions` or `Keep
-effort: inherit without definitions` — and wait for the selected option plus
-explicit apply before writing,
+must present one choice from `Map tiers to existing agent types` (Recommended),
+`Add effort-only agent definitions`, or `Keep effort: inherit without
+definitions`, and wait for the selected option plus explicit apply before
+writing,
 `--reset` removes that mapping at the selected scope, and `--repo` selects the
 current-repository override. Repository override wins over user host context,
 which wins over the inherited current model. `per_call_effort` is the exact
-three-state capability `per_call | definition_only | unavailable`; routing
-reports the state and consequence rather than claiming an inert effort value
-is applied. Claude Code uses effort-only managed definitions when its state is
-`definition_only`, keeps dispatch-time `model` separate, and uses
-`effort: inherit` for inert or uncovered tiers. Codex emits `model` and
-`reasoning_effort` together on every spawn. A required override that the host
-cannot satisfy is `Blocked`; an inferred optimization falls back to safe
-direct/current execution and is never claimed as applied.
+three-state capability `per_call | definition_only | unavailable` for an
+available adapter; a missing adapter reports `unknown`. `--show` reports each
+tier's `resolved implementor`, dispatch model, effective effort, and selection
+reason rather than claiming an inert value is applied. Delegated work rejects
+read-only candidates, prefers a writable v2 `agent` mapping or stable host
+roster match, and records the resolution before dispatch. Claude Code prefers
+existing writable agent types; generated definitions have no baked model and
+must preserve the Implementor contract. Codex emits the selected implementor,
+`model`, and `reasoning_effort` together on every spawn. A required override
+that the host cannot satisfy is `Blocked`; an inferred optimization falls back
+to safe direct/current execution and is never claimed as applied.
+Hermes CLI exposes `--model`, `--reasoning`, and `--provider`, but the current
+TigerKit adapter forwards only `-q` and `--toolsets terminal,skills`; it reports
+that routing as `unknown`, resolves writable `hermes-chat` only when the
+toolset/permission evidence exists, and uses the same safe direct/current or
+required-override `Blocked` fallback. CLI support is not claimed as effective
+adapter behavior until the wiring and host eval change together.
 
 ## Workflow
 
