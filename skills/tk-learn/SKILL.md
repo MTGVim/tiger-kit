@@ -59,6 +59,22 @@ Draft와 apply는 분리됩니다.
 
 approval 후에도 checklist row가 하나라도 통과하지 않았으면 `applied`로 보고하지 않습니다.
 
+## 터미널 상태 계약
+
+`Decision`과 terminal `Status`는 분리해 보고합니다. `no-op`은 skill을 만들지
+않았다는 결정이고, 실제 쓰기가 없으므로 `Status: Pending`으로 감쌉니다.
+
+| 결과 조건 | Decision | Status |
+|---|---|---|
+| threshold 미달, 중복, 또는 승인 전 draft | `no-op | pending | merge | continue` | `Pending` |
+| implicit invocation 또는 evidence/target/approval 충돌 | `Blocked` | `Blocked` |
+| target, host, compatibility를 확인할 수 없음 | `pending` | `Unverifiable` |
+| current-turn approval 후 write/post-write 검증까지 모두 통과 | `applied` | `Pass` |
+| write 또는 post-write 검증 실패 | `applied` | `Fail` |
+
+`Status`는 결과의 마지막에 정확히 한 번 쓰고, `Pending`·`Blocked`·
+`Unverifiable`이면 canonical path에 쓰지 않습니다.
+
 ## 출력 계약
 
 promotion/no-op decision을 먼저 제시합니다. 비어 있지 않은 `Evidence`, `Dedupe`, `Candidate`, `Target path`, `Verification`, `Remaining concerns`만 사용합니다. threshold 실패 또는 중복으로 인한 no-op이면 decision에 필요한 경우를 제외하고 `Candidate`와 `Verification`을 생략합니다. candidate가 여러 개면 `Candidate`를 간결한 `Candidate | Disposition | Target` 표로 표시하고, user-relevant row가 하나면 문장으로 표시합니다. candidate, target, remaining-gate 결과가 2–7개면 제한된 row/bullet로 요약합니다. 8개 이상이면 상위 5–7개를 보여주고 나머지를 소유하는 draft/planned target path를 인용합니다. quota가 아니라 budget을 사용합니다. 소유한 candidate/concern section에 `reported | pending | applied`를 기록하며 metadata를 덧붙이거나 candidate 결과를 대체하지 않습니다.
