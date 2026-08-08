@@ -87,6 +87,23 @@ Resource claim에는 matched baseline, historical run, repository threshold 또�
 드러낸 경우에만 두 번째 experiment를 허용한다. run-owned isolation만 정리하며
 canonical target을 다시 쓰거나 patch하지 않는다.
 
+## 🔴 CHECKPOINT / STOP · 다음 단계 진행 게이트
+
+각 checkpoint를 통과하기 전에는 다음 단계, experiment 또는 handoff를 시작하지 않는다.
+
+- **입력 checkpoint**: exact target, eligible incident 및 incident evidence가 있다. 적격
+  incident가 없으면 `NotApplicable`, 필요한 evidence나 environment가 없으면
+  `Blocked | Unverifiable`로 멈춘다.
+- **재현 checkpoint**: fresh result를 `Reproduced | Not reproduced | Inconclusive` 중
+  하나로 기록한다. `Inconclusive`이면 cause나 route를 확정하지 않고 `Unverifiable`로
+  멈춘다.
+- **격리 checkpoint**: 하나의 failure plane과 이를 구분하는 adjacent control이
+  evidence로 확인되었다. 아니면 root-cause claim을 하지 않고 `Unverifiable`로 멈춘다.
+- **라우팅 checkpoint**: 하나의 구체적이고 testable한 objective와 must-preserve
+  boundary가 검증되었다. 아니면 `learn-ready` handoff를 emit하지 않는다.
+- **🛑 STOP**: `learn-ready`를 emit한 뒤에도 이 skill은 `tk-learn`을 호출하거나
+  canonical skill/catalog를 mutate하지 않는다. 별도의 명시적 invocation을 기다린다.
+
 ## 라우팅
 
 ### 검증된 skill objective: `learn-ready`
