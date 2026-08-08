@@ -91,9 +91,10 @@ canonical target을 다시 쓰거나 patch하지 않는다.
 
 각 checkpoint를 통과하기 전에는 다음 단계, experiment 또는 handoff를 시작하지 않는다.
 
-- **입력 checkpoint**: exact target, eligible incident 및 incident evidence가 있다. 적격
-  incident가 없으면 `NotApplicable`, 필요한 evidence나 environment가 없으면
-  `Blocked | Unverifiable`로 멈춘다.
+- **입력 checkpoint**: exact target, eligible Agent Skill incident 및 incident evidence가
+  있다. ordinary code bug처럼 적격 Agent Skill incident 자체가 아니면 `NotApplicable`로
+  멈춘다. incident 또는 metric anchor가 필요한데 누락·미검증이면 `NotApplicable`이
+  아니며 `Blocked | Unverifiable`로 멈춘다.
 - **재현 checkpoint**: fresh result를 `Reproduced | Not reproduced | Inconclusive` 중
   하나로 기록한다. `Inconclusive`이면 cause나 route를 확정하지 않고 `Unverifiable`로
   멈춘다.
