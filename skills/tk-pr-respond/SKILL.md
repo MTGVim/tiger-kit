@@ -137,6 +137,19 @@ state, checks, threads를 fresh-read한다. 변경되지 않은, 이미 approved
    still-valid approvers;
 6. at most one PR summary.
 
+## Terminal branch contract
+
+아래 terminal branch 중 하나에 도달하면 해당 상태를 기록하고 그 branch의 후속 조치만
+수행한다. 다른 branch를 추정하거나 `Pass`로 승격하지 않는다.
+
+| 조건 | 즉시 조치 | Status |
+|---|---|---|
+| approval question 또는 user-owned decision 대기 | worker, commit, remote write를 하지 않고 표시된 snapshot을 유지한다 | `Pending` |
+| identity, authority, freshness, scope 또는 `--ci` boundary가 unresolved | mutation 전에 멈추고 정확한 blocker를 기록한다 | `Blocked` |
+| required evidence 또는 independent review를 사용할 수 없음 | finding/unit을 open으로 유지하고 판정을 확정하지 않는다 | `Unverifiable` |
+| partial remote write 또는 approved operation failure | remote를 다시 읽어 적용된 상태만 보고하고 임의 retry하지 않는다 | `Fail` |
+| 모든 selected unit이 gap을 close하고 approved action 및 fresh final-read가 완료됨 | exact result와 remaining checks만 보고한다 | `Pass` |
+
 Sweep 아래에서는 one-summary budget을 consume하고, 이미 consume했으면 draft를 반환한다.
 모든 generated external comment는 정확히
 `_🤖 본 코멘트는 AI가 작성했습니다._`로 끝난다. failed reply는 thread를 open으로 남긴다.
