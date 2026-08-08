@@ -53,6 +53,18 @@ Read-only다. source, Drive R/AC, units, ADRs, commits를 절대 쓰지 않으�
    명시적 승인을 위해 합의된 목표 문장 하나를 제시한다.
 8. `confirm`: 그 문장을 명시적으로 승인한 뒤에만 `confirmed`를 반환한다.
 
+standalone의 질문 turn에서는 아래 packet만 user-facing으로 렌더링합니다. `Evidence`는
+source-located fact만 담고, 없으면 `unavailable`로 둡니다. active drive에서는 이
+packet을 표시하지 않고 같은 state를 caller에게 직접 반환합니다.
+
+```text
+🙋 grill-me · 응답 필요
+Question: <정확히 하나의 user-owned decision>
+Recommendation: <safe default 또는 none>
+Evidence: <source와 verified | inferred | unavailable fact>
+Native status: pending
+```
+
 ## 모호성 ledger
 
 ledger는 conversation 안에서만 유지한다:
