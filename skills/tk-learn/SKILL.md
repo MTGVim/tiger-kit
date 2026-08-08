@@ -47,7 +47,7 @@ Draft와 apply는 분리됩니다.
 | Trigger | 즉시 조치 | 계속 미해결인 내용 |
 |---|---|---|
 | 두 case/workflow를 주장했지만 artifact를 읽을 수 없음 | 각각 `unverified`로 기록하고 요청된 `pending` draft를 보여줌 | 정확한 artifact/check를 요청함; no write |
-| 일회성 case 하나 또는 raw log만 있음 | threshold/privacy와 `no-op`을 기록함 | candidate/path를 만들지 않음 |
+| 일회성 case 하나 또는 raw log만 있음 | threshold/privacy와 `Decision: no-op`, `Status: Pending`을 기록함 | candidate/path를 만들지 않음 |
 | skill/default capability와 중복됨 | `merge | no-op`과 근거를 보고함 | 새 directory를 만들지 않음 |
 | target/name/trigger 일부를 알 수 없음 | 지원되는 값은 `proposed`, 나머지는 `TBD`로 draft함 | Candidate identity를 `pending`으로 유지함; no write |
 | evidence/target/approval이 충돌함 | 충돌과 하나의 결정을 제시함 | `Blocked`로 중지 |
@@ -58,6 +58,9 @@ Draft와 apply는 분리됩니다.
 명시적 current-turn apply approval 전에는 canonical path나 `.tigerkit/skill-drafts/<skill-name>/`에 쓰지 않습니다. 과거 approval, implicit invocation, generic continuation은 충분한 권한이 아닙니다. approval 전 candidate는 `pending`이며 Target path에는 정확한 planned path와 `not created`를 보고합니다.
 
 approval 후에도 checklist row가 하나라도 통과하지 않았으면 `applied`로 보고하지 않습니다.
+
+일회성 `no-op` 경로는 위 표의 `Status: Pending`을 사용합니다. 이는 해당
+경계 결과에만 적용하며, 모든 draft를 `Pending`으로 바꾸지 않습니다.
 
 ## 출력 계약
 
