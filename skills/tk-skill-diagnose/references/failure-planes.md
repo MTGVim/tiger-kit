@@ -1,6 +1,6 @@
-# Failure planes와 evidence
+# Failure plane와 evidence
 
-처음부터 wording-defect라고 가정하지 않는다. 관찰된 모든 symptom을 evidence-backed
+처음부터 문구 결함이라고 가정하지 않는다. 관찰된 모든 symptom을 evidence-backed
 plane 하나 이상에 따라 분류한다.
 
 | Plane | 의미 | 대표 evidence |
@@ -35,7 +35,7 @@ tool/nested-call/fan-out variance
 - resource use가 증가하면 증가한 phase, retry, reference descent, tool loop, nested call 또는 fan-out을 식별한다.
 - 모든 self-reported cause 옆에 deterministic evidence를 요구한다.
 
-## Efficiency 비교
+## 효율성 비교
 
 최소 하나의 anchor를 검증해야 한다:
 
@@ -58,7 +58,7 @@ Resource savings는 다음을 상쇄할 수 없다:
 
 matched anchor가 없으면 현재 measurement를 `Profile only`로 보고한다.
 
-## Diagnostic verdict
+## 진단 판정(Diagnostic verdict)
 
 - `Fail`: deterministic/critical regression, 반복되는 새 weak phase, 반복되는 retry regression 또는 savings를 위해 correctness를 교환함.
 - `Concern`: 한 번 발생한 unclear point/fill-in 또는 unmatched resource 증가.

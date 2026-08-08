@@ -36,9 +36,9 @@ Read-only다. source, Drive R/AC, units, ADRs, commits를 절대 쓰지 않으�
 
 ## 절차
 
-1. `read input`: task identity, caller mode, source, current evidence,
+1. `read input(입력 읽기)`: task identity, caller mode, source, current evidence,
    confirmed decisions, unresolved user-owned decisions, pending question을 바인딩한다.
-2. `investigate facts`: source-located
+2. `investigate facts(사실 조사)`: source-located
    `verified | inferred | unavailable` facts를 생성한다.
 3. `identify gaps`: Scope, Constraints, Outputs, Verification 전반에서
    facts와 decisions를 비교한다.
@@ -52,6 +52,18 @@ Read-only다. source, Drive R/AC, units, ADRs, commits를 절대 쓰지 않으�
 7. `repeat or close`: 이미 답한 질문은 반복하지 않는다. 네 축이 모두 정리되면,
    명시적 승인을 위해 합의된 목표 문장 하나를 제시한다.
 8. `confirm`: 그 문장을 명시적으로 승인한 뒤에만 `confirmed`를 반환한다.
+
+standalone의 질문 turn에서는 아래 packet만 user-facing으로 렌더링합니다. `Evidence`는
+source-located fact만 담고, 없으면 `unavailable`로 둡니다. active drive에서는 이
+packet을 표시하지 않고 같은 state를 caller에게 직접 반환합니다.
+
+```text
+🙋 grill-me · 응답 필요
+Question: <정확히 하나의 user-owned decision>
+Recommendation: <safe default 또는 none>
+Evidence: <source와 verified | inferred | unavailable fact>
+Native status: pending
+```
 
 ## 모호성 ledger
 

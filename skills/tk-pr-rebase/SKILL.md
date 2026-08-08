@@ -9,7 +9,7 @@ metadata:
     relationship: native
 ---
 
-# Pull Request rebase
+# Pull Request rebase(리베이스)
 
 `/tk-pr-rebase`, `$tk-pr-rebase`, 또는 host skill picker를 통해서만 시작한다. generic
 rebase, update-branch, conflict, review-response, continuation에는 절대
@@ -70,6 +70,20 @@ tag, release를 수행하거나 repository rules를 바꾸지 않는다.
    `resolve | keep open` actions, re-review candidates, operation order, risks,
    one recommendation을 보여준다. publication question은 하나만 하고
    `Pending`으로 멈춘다.
+
+### 🔴 CHECKPOINT / STOP · publication approval
+
+`🔴 CHECKPOINT`에서 base, old/new head, verification, exact replies, thread actions,
+re-review candidates, operation order와 risks를 한 번에 보여준다. 사용자의 exact
+current-turn approval 전에는 push, reply, thread resolution, re-review request 또는
+summary를 수행하지 않는다. local rebase는 Normal mode의 local-only authority 안에서만
+허용한다.
+
+`🛑 STOP` — approval이 없으면 `Pending`으로 멈춘다. approval 뒤 frozen branch, head,
+base, identity, dirty-path, review 또는 thread가 drift하면 다시 쓰지 말고 refreshed plan과
+함께 `Blocked`를 반환한다. Sweep CI는 exact approved handoff가 있을 때만 이 질문을
+건너뛴다.
+
 8. current-turn approval 후 모든 frozen local 및 remote field를 다시 읽는다.
    branch, head, base, identity, dirty-path, review, thread 중 하나라도 drift하면
    approval은 무효이며, refreshed plan과 함께 `Blocked`를 반환한다.
@@ -121,7 +135,7 @@ tag, release를 수행하거나 repository rules를 바꾸지 않는다.
    user-facing phase summary는 작성하지 않으며 aggregate output은 sweep가
    소유한다.
 
-## Publication gate
+## 발행 게이트(Publication gate)
 
 Plan은 repository, PR, identities, base 및 head refs와 SHAs, lease, refspec,
 verification, replies, thread actions, summary body, re-review candidates,

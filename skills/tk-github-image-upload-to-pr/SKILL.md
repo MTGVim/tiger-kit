@@ -54,7 +54,28 @@ browser-controlled runtime verification에는 `tk-browser-verify`를 사용합�
 7. 모든 exit path에서 owned staging file만 제거합니다. upload attempt가
    remote state를 만들었을 수 있으면 route를 조용히 전환하지 않습니다.
 
-## Producer evidence handoff
+## 실행 receipt · 단일 evidence record
+
+모든 upload attempt는 아래 하나의 receipt로 남깁니다. 이는 별도 lifecycle
+output이 아니라 `## GitHub image upload` 결과와 approval/verification 판단에
+쓰는 단일 evidence record입니다. 값이 없으면 `none` 또는 `unavailable`로
+명시하고 추측하지 않습니다.
+
+```text
+Repository: <owner>/<repo>
+PR / Target: <pr-number> / body | existing comment <comment-id>
+Source images: <absolute path list>
+Route: gh-attach | CDP
+Entry: <exact reviewed command | browser route>
+Generated Markdown: <asset refs | none>
+Remote ref: <refs/uploads/issues/<pr-number> | none | unknown>
+Verification: <source body/comment | rendered HTML/page | unavailable>
+Changed: <body/comment changed | unchanged | unknown>
+Cleanup: <owned staging path removed | failed | not applicable>
+Status: Pass | Fail | Blocked | Unverifiable
+```
+
+## Producer evidence handoff(생산자 증거 인계)
 
 `evidence_required: true`이면 다음을 요구합니다.
 

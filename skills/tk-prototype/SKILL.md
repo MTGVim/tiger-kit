@@ -9,7 +9,7 @@ metadata:
     relationship: native
 ---
 
-# Prototype
+# Prototype(프로토타입)
 
 명시적 invocation 또는 실행 가능한 disposable comparison/harness 요청에 적용한다.
 production implementation이나 대화만으로 진행되는 exploration에는 자동 적용하지
@@ -31,6 +31,19 @@ archive하거나 `.gitignore`를 편집하지 않는다. scratch가 tracked 상�
    만든다.
 4. `run`: 선택한 variants/harness를 실행하고 actual output 또는 screenshots와
    command result를 캡처한다.
+
+각 run은 `## Tested` 아래 다음 receipt 필드로 기록한다. command를 요약하지 말고
+실제 실행값을 적는다.
+
+```text
+Command: <exact command and arguments>
+CWD: <absolute worktree or route path>
+Exit code: <integer>
+Output: <bounded summary or absolute output path>
+Artifact: <absolute path | none>; ownership: run-owned | pre-existing
+Screenshot: <absolute path | N/A>; actual inspection: yes | no | N/A
+```
+
 5. `compare`: evidence를 criteria에 매핑해 verified differences, unverified items
    및 next decision을 정리한다. parent contract가 `PR evidence: required`를
    기록하면 run-owned absolute `Screenshot: <path>`와 actual image inspection을
@@ -84,7 +97,7 @@ official runtime verdict가 아니다.
 | cleanup failure | run-owned resource만 다시 식별하고 outcome을 보고한다 | `Fail | Unverifiable`; existing route/process를 보존한다 |
 | scope expands into production/promotion/commit | prototype을 중지하고 별도 implementation request로 분리한다 | `Blocked`; auto-promote하지 않는다 |
 
-## 🔴 CHECKPOINT · 🛑 STOP · execution boundaries
+## 🔴 CHECKPOINT · 🛑 STOP · 실행 경계(execution boundaries)
 
 실행 전에 temp path, fake/real data 및 verification question을 확인한다.
 environment 또는 production-scope expansion이 발생하면 `Blocked | Unverifiable`에서
@@ -94,7 +107,7 @@ environment 또는 production-scope expansion이 발생하면 `Blocked | Unverif
 대조한다. 하나라도 빠졌거나 실행이 실패하면 `Complete`가 될 수 없다.
 `Fail | Blocked | Unverifiable`을 사용한다.
 
-## Contract
+## 계약(Contract)
 
 결정에 필요한 status는 소유 섹션에서 한 번만 기록한다. `## Confirmed`로 시작한 뒤
 `## Production implication`, `## Tested`, `## Variants or harness` 및 `## Still fake`를
@@ -113,7 +126,7 @@ conclusion을 소유하고, `Production implication`은 discard/iterate/next dec
 observation이 8개 이상이면 상위 5–7개를 표시하고 나머지를 소유한 prototype 또는
 evidence path를 인용한다. 이는 budget이지 quota가 아니다.
 
-## DO NOT / ANTI-PATTERNS
+## DO NOT / 금지 패턴(ANTI-PATTERNS)
 
 - prototype을 production-ready라고 부르거나 auto-promote/commit하지 않는다.
 - fake integration을 real이라고 보고하거나 run evidence 없이 success를 주장하지 않는다.

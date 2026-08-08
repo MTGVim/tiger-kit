@@ -10,7 +10,7 @@ metadata:
     relationship: native
 ---
 
-# Pull request Sweep
+# Pull request Sweep(일괄 유지보수)
 
 `/tk-pr-sweep`, `$tk-pr-sweep`, 또는 host skill picker로만 시작합니다. 일반 PR
 상태 확인, 단일 PR 작업, release, continuation으로는 시작하지 않습니다. Sweep는
@@ -42,14 +42,14 @@ primary/corrective edit에 fresh workers를 사용합니다. Sweep는 child auth
 Prepare -> Execute -> Close gaps -> Finalize
 ```
 
-## Prepare
+## 준비(Prepare)
 
 1. fresh deterministic triage를 실행하고 supplied queue, cached report, stale
    ledger, cursor는 무시합니다. identity, PR/base/head state, categories,
    checks/providers, reviews, comments, threads, requested reviewers를 확인합니다.
 2. 모든 row를 actionable, held, report-only로 분류하고 closed router를 사용합니다.
 
-   | Fresh evidence | Bounded route |
+   | 새 evidence | 제한된 route |
    | --- | --- |
    | exact maintenance conflict with same-repository base/head and clean ownership | `tk-pr-rebase --ci` |
    | repository-caused GitHub Actions failure | `tk-pr-respond --ci` |
@@ -66,10 +66,9 @@ Prepare -> Execute -> Close gaps -> Finalize
    exclusions를 freeze합니다. proven independence와 host-provided isolation이
    함께 있을 때만 concurrency를 허용하고, wave를 도출합니다. uncertainty는
    serialize하며 scheduler는 만들지 않습니다.
-5. `.tigerkit/pr-sweep.md`를 atomically replace한 뒤 reread하고, 모든 actionable,
-   held, report-only row와 assumptions/ambiguities, route wave, verification,
-   risks, worktree ownership, bounded remote actions, `No remote changes yet`를
-   담은 compact `## PR sweep plan` 하나를 표시합니다.
+5. `.tigerkit/pr-sweep.md`를 atomically replace한 뒤 reread하고 actionable/held/report-only row, assumptions/ambiguities, route wave, verification, risks, worktree ownership, bounded remote actions, `No remote changes yet`를 담은 단일 `## PR sweep plan`을 표시합니다. Plan evidence fields (각 한 번): `Repository scope`, `Triage ref`,
+   `Rows (PR # | head SHA | category | route)`, `Routes / waves`, `Verification`, `Risks / exclusions`, `Worktree ownership`,
+   `Authority`, `Approval`, `Remote changes: No remote changes yet`; unknown은 `unavailable`로 두고 route/authority를 추측하지 않습니다.
 
 `🙋 sweep > plan · 응답 필요`를 하나만 emit하고 `👍 Recommendation:`을 정확히 하나 표시한 뒤 approval question을 묻습니다. approval 전에는 worktree/commit을
 만들거나 remote write를 수행하지 않습니다. approval은 nested Respond/Rebase에
@@ -78,7 +77,7 @@ material identity, PR head/state/category/scope/route, verifier 또는
 irreversible decision이 drift하면 해당 plan은 무효가 되어 Prepare로 돌아갑니다.
 변경되지 않은 row에는 routine checkpoint를 다시 주지 않습니다.
 
-## Execute
+## 실행(Execute)
 
 frozen wave를 처리합니다. 각 row 전에 triage를 다시 실행하고 identity, PR state,
 head/category/provider, refspec, threads, checks를 증명합니다. 이미 완료된 작업은

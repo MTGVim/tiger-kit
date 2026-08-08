@@ -23,7 +23,7 @@ primary 또는 corrective edit는 하나의 bounded resolution unit으로 fresh 
 mechanical staging과 verified commit 하나를 소유할 수 있다. usable worker가 없으면
 직접 fallback하지 않고 `Blocked`로 끝낸다.
 
-## Authority and ledger
+## 권한과 ledger(Authority and ledger)
 
 Standalone Respond는 `.tigerkit/pr-respond.md`를 원자적으로 대체하고 다시 읽는다.
 PR/repository/head/refspec, current finding IDs, R/AC, scope와 exclusions, controller가
@@ -35,13 +35,13 @@ Sweep 아래에서 호출되면 `pr-respond.md`, child ledger, 기타 Markdown l
 **절대 작성하지 않는다.** owning `.tigerkit/pr-sweep.md`에 compact evidence를 반환한다.
 Artifact가 있다고 authority가 생기지는 않는다.
 
-## Lifecycle
+## 생명주기(Lifecycle)
 
 ```text
 Prepare -> Execute -> Close gaps -> Finalize
 ```
 
-### Prepare
+### 준비(Prepare)
 
 1. 정확히 하나의 open PR을 fresh-read한다: repository, authenticated user, author,
    branch/base, head ref/SHA, draft state, checks, reviews, comments, threads,
@@ -85,7 +85,7 @@ Material PR head/thread/check/identity/refspec, source, scope, verifier,
 irreversible-decision drift는 approval을 무효화하고 Prepare로 돌아가게 한다. 변경되지
 않은 plan은 routine checkpoint를 다시 받지 않는다.
 
-### Execute
+### 실행(Execute)
 
 각 dependency wave마다 unit당 fresh worker 하나를 dispatch한다. worker에는 ID/goal,
 exact PR finding과 R/AC IDs, scope/exclusions, relevant paths, verification, Git ownership
@@ -93,7 +93,7 @@ facts만 준다. worker는 current evidence를 검사하고 자기 unit만 구�
 checks를 실행하고, bounded behavior-preserving simplify/reuse pass를 한 번 수행한 뒤,
 changed paths, candidate evidence, unresolved items를 반환한다.
 
-Use this invariant:
+다음 불변식을 사용한다:
 
 ```text
 candidate -> required tests/checks/browser verifier -> Close gaps
@@ -114,7 +114,7 @@ exact push 뒤에는 freshly observed just-pushed head만 promote하고 relevant
 rerun한다. corrective cycle 세 번 뒤에 중지한다. interactive CI workflow를 automatic
 children으로 절대 invoke하지 않는다.
 
-### Close gaps
+### 공백 닫기(Close gaps)
 
 모든 approved finding/R/AC를 `satisfied`, `missing`, `partial`, 또는 `unverifiable`로
 분류한다. approved scope/exclusions, skipped units, externally visible behavior, required
@@ -123,7 +123,7 @@ review가 아니다. verdict를 확정할 수 없으면 같은 narrow brief를 �
 non-mutating reviewer를 최대 한 명 사용한다. required-but-unavailable independent review는
 `Unverifiable`다. correction은 여전히 fresh worker에게 보낸다.
 
-### Finalize and publish
+### 최종화 및 발행(Finalize and publish)
 
 모든 selected unit이 gap을 close한 뒤 repository identity, local `HEAD`, PR head/ref/open
 state, checks, threads를 fresh-read한다. 변경되지 않은, 이미 approved된 action만 다음
@@ -136,6 +136,19 @@ state, checks, threads를 fresh-read한다. 변경되지 않은, 이미 approved
 5. conditional human re-review, excluding author, authenticated user, bots, and
    still-valid approvers;
 6. at most one PR summary.
+
+## Terminal branch contract
+
+아래 terminal branch 중 하나에 도달하면 해당 상태를 기록하고 그 branch의 후속 조치만
+수행한다. 다른 branch를 추정하거나 `Pass`로 승격하지 않는다.
+
+| 조건 | 즉시 조치 | Status |
+|---|---|---|
+| approval question 또는 user-owned decision 대기 | worker, commit, remote write를 하지 않고 표시된 snapshot을 유지한다 | `Pending` |
+| identity, authority, freshness, scope 또는 `--ci` boundary가 unresolved | mutation 전에 멈추고 정확한 blocker를 기록한다 | `Blocked` |
+| required evidence 또는 independent review를 사용할 수 없음 | finding/unit을 open으로 유지하고 판정을 확정하지 않는다 | `Unverifiable` |
+| partial remote write 또는 approved operation failure | remote를 다시 읽어 적용된 상태만 보고하고 임의 retry하지 않는다 | `Fail` |
+| 모든 selected unit이 gap을 close하고 approved action 및 fresh final-read가 완료됨 | exact result와 remaining checks만 보고한다 | `Pass` |
 
 Sweep 아래에서는 one-summary budget을 consume하고, 이미 consume했으면 draft를 반환한다.
 모든 generated external comment는 정확히

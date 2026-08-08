@@ -45,7 +45,18 @@ commands, raw auth/network captures를 chat, `.tigerkit/*.md`, prompts, logs,
 summaries, child receipts에 절대 echo하거나 persist하지 않습니다. `auth mode: token-headless`,
 `authenticated state established` 같은 fact만 기록합니다.
 
-## Workflow
+## 🔴 CHECKPOINT / STOP · browser 실행 허가
+
+`🔴 CHECKPOINT`에서 exact criteria, target/environment, parent approval facts, auth mode,
+effective headless argument와 evidence directory를 먼저 고정한다. 이 항목이 검증되기
+전에는 browser interaction이나 product mutation을 시작하지 않는다.
+
+`🛑 STOP` — safe headless authentication 또는 effective `--headless=new`를 증명할 수
+없으면 visible-browser fallback을 열지 말고 `Unverifiable`을 반환한다. 실행 후
+criterion별 current evidence와 실제 inspect한 screenshot이 없으면 `Pass`를 반환하지
+않고 해당 상태를 `Unverifiable`로 유지한다.
+
+## 작업 흐름
 
 1. **범위(Scope)** — exact criteria, target URL/environment, safe interaction
    boundary, current candidate identity, parent approval facts를 고정합니다.
@@ -95,7 +106,7 @@ standalone result는 `## Verdict`로 시작하고 `Status: <token>`, `## Verifie
 모두 적습니다. required runtime evidence가 없으면 `Unverifiable`이며 절대
 `Pass`가 아닙니다.
 
-| Status | Meaning |
+| 상태 | 의미 |
 | --- | --- |
 | `Pass` | 승인된 모든 browser criterion에 current inspected evidence가 있음 |
 | `Fail` | current runtime evidence가 승인된 criterion을 위반함 |

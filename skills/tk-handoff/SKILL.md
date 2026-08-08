@@ -27,7 +27,7 @@ invoke하지 않습니다.
 4. `receipt`: write/revalidation 결과를
    `reported | applied | pending` 및 evidence location으로 매핑합니다.
 
-### Resume
+### 재개(Resume)
 
 1. `state check`: existing handoff를 current Git/files와 비교하고 일치 항목과
    `drift | conflict`를 나열합니다.
@@ -36,7 +36,7 @@ invoke하지 않습니다.
 4. `continue or stop`: no-drift approval 또는 명시적 material-drift
    confirmation으로 next work 또는 stop reason을 생성합니다.
 
-### Resume decision table
+### 재개 결정표(Resume decision table)
 
 | Classification | Evidence | Action |
 |---|---|---|
@@ -46,7 +46,7 @@ invoke하지 않습니다.
 | `conflict` | handoff와 current source가 양립할 수 없는 intent/result를 요구함 | 두 evidence set과 선택지를 제시하고 `Blocked`에서 중지 |
 | `unverified` | 필요한 Git/file state를 확인할 수 없음 | 추론하지 말고 `Unverifiable`에서 중지 |
 
-## Contract
+## 계약(Contract)
 
 기본 대상 `.tigerkit/handoff.md`에는 다음이 포함됩니다:
 
@@ -63,6 +63,26 @@ invoke하지 않습니다.
 - `Risks`: question과 분리한 남은 failure/regression risk
 - `Next step`: Remaining work에서 선택한 하나의 즉시 action
 - `Resume hints`: Next step을 반복하지 않고 resume에 필요한 environment/order/command만
+
+`handoff.md`는 아래 single snapshot skeleton을 사용합니다. 각 field는 artifact가
+한 번만 소유하며, 실행하지 않은 값은 `unverified` 또는 `pending`으로 둡니다.
+
+```text
+Goal: <goal and scope>
+Status: pending | in_progress | completed | aborted | Blocked
+Repository state: <branch, HEAD, worktree>
+Handoff path: <exact path>
+Decisions: <confirmed | pending decisions>
+Changed files: <observed paths | none>
+Commands: <exact executed commands | none>
+Verification: <check/result/evidence location>
+Remaining work: <unfinished work | none>
+Open questions: <required decisions | none>
+Risks: <failure/regression risks | none>
+Next step: <one exact immediate action>
+Resume hints: <environment/order/command>
+Disposition: reported | applied | pending
+```
 
 `Next step`은 conversation을 재구성하지 않고 실행 가능해야 합니다: exact
 target, satisfied prerequisite 또는 section reference, observable completion
@@ -94,7 +114,7 @@ next action, blocker를 2–5개의 짧은 bullet로 요약하고, 하나의 res
 않습니다. 기존 work-map은 legacy scratch로 취급하며 수정·migrate·delete하지
 않습니다.
 
-## CHECKPOINT / STOP
+## CHECKPOINT / STOP (승인·중단 지점)
 
 `--resume`은 resume을 authorize하며, continuation은 resume table만 따릅니다.
 
@@ -107,7 +127,7 @@ current pointer를 만들거나 `.gitignore`를 수정하지 않습니다. scrat
 Resume 시 handoff와 current Git/files를 읽고 classify합니다. current evidence가
 없는 내용은 `unverified`로 유지합니다.
 
-## Failure recovery
+## 실패 복구(Failure recovery)
 
 | Trigger | First action | If still failing |
 |---|---|---|

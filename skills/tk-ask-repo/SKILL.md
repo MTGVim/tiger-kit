@@ -52,14 +52,27 @@ user-invoked-only다. `disable-model-invocation: true`와
 6. **Verify**에서 current ref, 검색한 variant, dynamic-dispatch gap, exclusion,
    그리고 인용한 모든 hop을 확인한다.
 
+## 🔴 CHECKPOINT / STOP · 조사 경계
+
+`🔴 CHECKPOINT`에서 exact question, 첫 search anchor, current ref와 read-only 범위를
+확인한 뒤에만 Traverse/Sweep를 시작한다. anchor가 없거나 source를 읽을 수 없거나
+두 개의 plausible answer가 남으면 더 진행하지 않는다. anchor가 없으면 아래 실패
+경계의 `Unverifiable`, 두 plausible answer가 남으면 `Blocked`를 반환하며, source를
+읽을 수 없으면 gap을 인용하고 그 너머를 추론하지 않는다.
+
+`🛑 STOP` — request가 implementation, decision, runtime reproduction, estimate 또는
+general knowledge로 판명되면 repository를 계속 조사하지 않고 올바른 owner를 지정한다.
+이 skill은 source, artifact, ticket, Git history를 수정하거나 sibling skill을 invoke하지
+않는다.
+
 ## 추적 경로
 
-- **Value**: visible string → bound key/prop/column → consuming expression →
+- **Value(값)**: visible string → bound key/prop/column → consuming expression →
   transport field → declaring type → assignment site. 의미를 판단하기 전에 sibling
   assignment와 comment를 읽는다.
 - **Structure**: entry point → ordered boundary, 예: view → transport → producer →
   store/external. dynamic dispatch를 표시한다.
-- **Existence**: current base ref → open/unmerged work → environment state.
+- **Existence(존재)**: current base ref → open/unmerged work → environment state.
   `absent | unreleased here | present but empty/placeholder | present and live`를
   구분한다. "since when"을 확인하기 위해 introducing change를 추적한다.
 - **Impact**: symbol/field/pattern → 모든 reader/writer → 모든 consumer를 분류하고
@@ -70,7 +83,7 @@ user-invoked-only다. `disable-model-invocation: true`와
 
 ## 실패 경계
 
-| Condition | Result |
+| 조건 | 결과 |
 | --- | --- |
 | exact 및 component search 뒤에도 anchor가 없음 | 실행한 query와 함께 `Unverifiable` |
 | 필요한 source를 읽을 수 없음 | gap을 인용하고 그 너머를 추론하지 않음 |

@@ -34,6 +34,27 @@ operation state, 모든 conflict hunk, 양쪽 primary source, resolution basis�
 6. `continue`: operation에 맞는 continue command를 실행하고 결과를 기록합니다.
 7. `receipt`: `Pass | Fail | Blocked | Unverifiable`, 미검증 항목, operation/verification/follow-up section 참조를 반환하되 내용을 복사하지 않습니다.
 
+## resolution receipt · 단일 evidence record
+
+모든 resolution run은 아래 하나의 receipt로 남깁니다. 이는 별도 결과 section이
+아니라 `Operation` → `Resolution` → `Verification` → `Follow-up` 보고의 단일
+evidence record입니다. 알 수 없는 값은 `unavailable` 또는 `not run`으로 적고
+추측하지 않습니다.
+
+```text
+Operation: <merge | rebase | cherry-pick | revert> / <state + step>
+Repository HEAD: <commit>
+Conflict paths: <path list | none>
+Index / markers: <unmerged count, marker count>
+Intent basis: <source refs and hunk mapping | unavailable>
+Resolution: <Path | Intent | Result rows>
+Staged: <exact paths | none>
+Verification: <checks and result | Unverifiable>
+Continue: <exact continue command and result | not run>
+Follow-up: <remaining work | none>
+Status: Pass | Fail | Blocked | Unverifiable
+```
+
 필수 선행 output이 없으면 절대 진행하지 않습니다. 새 conflict가 생기면 `conflict inventory`부터 다시 시작합니다.
 
 intent 분석 전에 index stage 1/2/3을 실제 base, current commit, operation target/replayed commit에 매핑하고 commit ID/path를 기록합니다. 특히 rebase/cherry-pick/revert에서는 `ours`/`theirs`만으로 user branch나 desired behavior를 절대 추론하지 말고 operation metadata와 실제 commit content를 사용합니다.
