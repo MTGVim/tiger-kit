@@ -64,6 +64,26 @@ invoke하지 않습니다.
 - `Next step`: Remaining work에서 선택한 하나의 즉시 action
 - `Resume hints`: Next step을 반복하지 않고 resume에 필요한 environment/order/command만
 
+`handoff.md`는 아래 single snapshot skeleton을 사용합니다. 각 field는 artifact가
+한 번만 소유하며, 실행하지 않은 값은 `unverified` 또는 `pending`으로 둡니다.
+
+```text
+Goal: <goal and scope>
+Status: pending | in_progress | completed | aborted | Blocked
+Repository state: <branch, HEAD, worktree>
+Handoff path: <exact path>
+Decisions: <confirmed | pending decisions>
+Changed files: <observed paths | none>
+Commands: <exact executed commands | none>
+Verification: <check/result/evidence location>
+Remaining work: <unfinished work | none>
+Open questions: <required decisions | none>
+Risks: <failure/regression risks | none>
+Next step: <one exact immediate action>
+Resume hints: <environment/order/command>
+Disposition: reported | applied | pending
+```
+
 `Next step`은 conversation을 재구성하지 않고 실행 가능해야 합니다: exact
 target, satisfied prerequisite 또는 section reference, observable completion
 evidence를 포함합니다. open question이 work를 막으면 Next step은 downstream
