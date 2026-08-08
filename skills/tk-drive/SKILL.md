@@ -67,10 +67,12 @@ boundary를 지난 뒤에는 cursor나 lifecycle claim이 아니라 새 근거�
    사용할 수 없으면 mutation 전에 `Unverifiable`이다.
 6. [worker-dispatch.md](references/worker-dispatch.md)에 따라 dispatch에 필요한
    최소 tier를 선택한다.
-7. [ledger.md](references/ledger.md)에 따라 `.tigerkit/drive.md`의 현재 task를
-   atomically replace하고 다시 읽는다. 그런 다음 goal/source, 포함·제외 범위,
-   R/AC, unit/wave, verification, risk, assumption/ambiguity, bounded external
-   action을 담은 하나의 compact approval surface를 제시한다.
+7. [ledger.md](references/ledger.md)에 따라 `.tigerkit/drive.md`의 current task를 atomically
+   replace하고 reread한 뒤 하나의 compact approval surface를 제시한다. Plan record는
+   `Repository (branch/HEAD/dirty paths)`, `Source / Goal (anchor)`, `Scope / Exclusions`,
+   `Frozen literals`, `R/AC`, `Units / Waves (ownership)`, `Verification (tests/browser/auth)`,
+   `Risks / Assumptions`, `Bounded external actions`, `Ledger / Approval`을 각각 한 번 소유하며,
+   unknown은 `unavailable`로 둔다. 이는 별도 lifecycle output이 아닌 approval evidence이다.
 
 Approval question이 action surface다. `🙋 drive · 응답 필요`를 한 줄 출력하고
 정확히 하나의 `👍 Recommendation:`을 보여 준다.
