@@ -31,6 +31,19 @@ archive하거나 `.gitignore`를 편집하지 않는다. scratch가 tracked 상�
    만든다.
 4. `run`: 선택한 variants/harness를 실행하고 actual output 또는 screenshots와
    command result를 캡처한다.
+
+각 run은 `## Tested` 아래 다음 receipt 필드로 기록한다. command를 요약하지 말고
+실제 실행값을 적는다.
+
+```text
+Command: <exact command and arguments>
+CWD: <absolute worktree or route path>
+Exit code: <integer>
+Output: <bounded summary or absolute output path>
+Artifact: <absolute path | none>; ownership: run-owned | pre-existing
+Screenshot: <absolute path | N/A>; actual inspection: yes | no | N/A
+```
+
 5. `compare`: evidence를 criteria에 매핑해 verified differences, unverified items
    및 next decision을 정리한다. parent contract가 `PR evidence: required`를
    기록하면 run-owned absolute `Screenshot: <path>`와 actual image inspection을
