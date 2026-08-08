@@ -56,8 +56,9 @@ user-invoked-only다. `disable-model-invocation: true`와
 
 `🔴 CHECKPOINT`에서 exact question, 첫 search anchor, current ref와 read-only 범위를
 확인한 뒤에만 Traverse/Sweep를 시작한다. anchor가 없거나 source를 읽을 수 없거나
-두 개의 plausible answer가 남으면 더 진행하지 않고 아래 실패 경계의
-`Unverifiable` 또는 `Blocked`를 반환한다.
+두 개의 plausible answer가 남으면 더 진행하지 않는다. anchor가 없으면 아래 실패
+경계의 `Unverifiable`, 두 plausible answer가 남으면 `Blocked`를 반환하며, source를
+읽을 수 없으면 gap을 인용하고 그 너머를 추론하지 않는다.
 
 `🛑 STOP` — request가 implementation, decision, runtime reproduction, estimate 또는
 general knowledge로 판명되면 repository를 계속 조사하지 않고 올바른 owner를 지정한다.
