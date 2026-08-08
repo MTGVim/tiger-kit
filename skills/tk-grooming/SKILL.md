@@ -31,6 +31,22 @@ mode는 report-only입니다.
    receipt에 요약합니다. Literal initial `--apply`는 정확히 통과한 receipt
    scope만 사전 승인하며, 그 외에는 명시적인 current-turn approval 전까지
    멈춥니다.
+
+Receipt에는 다음 필드를 빠짐없이 둔다. 이는 별도 lifecycle output이 아니라
+`.tigerkit/audit.md`와 approval 판단에 쓰는 단일 evidence record다.
+
+```text
+Scope: <exact repository/user skill scope>
+Target paths: <exact paths | none>
+Evidence refs: <path:line or unavailable>
+Proposal IDs: <GR-## list | none>
+Apply authority: report-only | literal --apply | current-turn approval
+Audited: <covered paths/categories>
+Unaudited: <excluded or incomplete paths/categories>
+Verification: <check results or unavailable>
+Drift rule: <scope/evidence/target change => Partial/Blocked>
+```
+
 6. `apply/report`: report-only는 proposal/receipt를 출력합니다. authority가
    있으면 source를 다시 읽고 승인된 receipt scope만 변경합니다.
 7. `revalidate`: link, duplication, frontmatter를 다시 확인하고 결과,
