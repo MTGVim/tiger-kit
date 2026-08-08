@@ -2,6 +2,31 @@
 
 ## Unreleased
 
+## 2026.08.08-2 — Release
+
+- docs(tk-drive): sharpen approval surface
+- docs(tk-handoff): define snapshot skeleton
+- docs(tk-pr-sweep): sharpen plan evidence
+- docs(tk-merge-conflict): define resolution receipt
+- docs(tk-grill-me): define question packet
+- docs(tk-learn): align no-op status
+- Revert "docs(tk-learn): define terminal statuses"
+- docs(tk-learn): define terminal statuses
+- docs(tk-github-image): add upload receipt
+- docs(tk-grooming): define receipt fields
+- docs(tk-audit): add scope checkpoint
+- docs(tk-browser-verify): add launch gate
+- docs(tk-prototype): define run receipt
+- docs(tk-ask-repo): clarify source gap
+- docs(tk-ask-repo): add inquiry gate
+- docs(tk-pr-rebase): add approval gate
+- docs(tk-pr-respond): map terminal branches
+- docs(tk-skill-diagnose): clarify input gate
+- docs(tk-skill-diagnose): add checkpoints
+- docs(tk-pr-open): sharpen plan template
+- docs: polish Korean skill headings
+- docs(tk-skill-diagnose): finish Korean localization
+
 ## 2026.08.08-1 — Release
 
 - docs: localize tk-skill-diagnose
