@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.10-3 — Release
+
+- fix(skills): make hybrid invocation explicit
+
 ## 2026.08.10-2 — Release
 
 - feat(execution): recommend direct units
