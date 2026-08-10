@@ -1,119 +1,113 @@
-# Fresh-worker dispatch
+# Fresh worker 전달
 
-This is the canonical tier-to-capability contract for `tk-drive` and delegated
-`tk-pr-respond`/`tk-pr-sweep` workers. Consumer skills refer to this file; they
-do not redefine the tier vocabulary.
+이 문서는 `tk-drive` 와 위임된 `tk-pr-respond`/`tk-pr-sweep` worker의
+catalog tier-to-capability 계약이다. 소비 skill은 이 파일을 참조하며 tier vocabulary를
+재정의하지 않는다.
 
-## Two-axis tier contract
+## 두 축 tier 계약
 
-Every requested tier resolves two independent axes. The axes describe
-capability, not a provider, model name, or user-configurable setting.
+요청된 모든 tier는 두 독립 축으로 해석된다. 축은 provider, model name 또는
+user-configurable setting이 아니라 capability를 설명한다.
 
-| Tier | Model axis | Effort axis | Use when |
+| Tier | Model 축 | Effort 축 | 사용 시점 |
 | --- | --- | --- | --- |
-| `cheapest` | lowest sufficient | low | Mechanical work or bounded implementation with a known pattern and complete evidence |
-| `standard` | standard sufficient | medium | Multi-file implementation with interacting interfaces, or focused debugging after the cheapest tier cannot prove the fix |
-| `strongest` | highest available | high | Design-heavy, unknown-cause, broad-reasoning, security/data-sensitive, or high-complexity work |
-| `host-default` | host default | inherit | The host cannot select a tier per spawn |
+| `cheapest` | lowest sufficient | low | 알려진 pattern과 complete evidence가 있는 mechanical 작업 또는 bounded 구현 |
+| `standard` | standard sufficient | medium | 상호작용하는 interface를 가진 multi-file 구현 또는 cheapest tier로 fix를 입증할 수 없을 때의 focused debugging |
+| `strongest` | highest available | high | design-heavy, unknown-cause, broad-reasoning, security/data-sensitive 또는 high-complexity 작업 |
+| `host-default` | host default | inherit | host가 spawn별 tier를 선택할 수 없음 |
 
-The requested tier is selected from unit evidence. It is not exposed as a user
-decision, and provider/model names are never stored in a receipt or ledger.
+요청 tier는 unit evidence에서 선택된다. 이는 user decision으로 노출하지 않으며
+provider/model name은 receipt나 ledger에 절대 저장하지 않는다.
 
-Implementation work starts at `cheapest`. File count, urgency, or a preference
-for a stronger model is not evidence for promotion. Use `standard` only when
-the unit's interfaces or debugging evidence require it, and use `strongest` only
-for design, unknown-cause, security/data-sensitive, or demonstrated reasoning
-failure. A corrective escalation promotes one tier at most once and remains
-bounded.
+구현 작업은 `cheapest` 에서 시작한다. 파일 수, 긴급성 또는 더 강한 model
+선호는 promotion 근거가 아니다. unit의 interface 또는 debugging evidence가 요구할 때만
+`standard` 를 쓰고, design, unknown-cause, security/data-sensitive 또는 입증된 reasoning
+failure일 때만 `strongest` 를 쓴다. corrective escalation은 한 tier만 최대 한 번
+promotion하며 bounded 상태를 유지한다.
 
-## Execution strategy
+## 실행 전략
 
-Each unit records one explicit execution strategy: `direct` or `delegated`.
+각 unit은 `direct` 또는 `delegated` 중 하나의 explicit execution strategy를 기록한다.
 
-| Strategy | Executor | Allowed when |
+| 전략 | 실행자 | 허용 조건 |
 | --- | --- | --- |
-| `direct` | The current host context temporarily acts as the unit executor; no subagent is spawned. | The user passes `--direct` or approves the displayed plan recommendation `strategy=direct`, and the unit is one bounded standalone `tk-drive` or standalone `tk-pr-respond` implementation. |
-| `delegated` | One fresh worker receives the bounded unit brief. | A fresh context, isolation, independent worker, reviewer handoff, design-heavy reasoning, or parent `tk-pr-sweep` route is required. |
+| `direct` | 현재 host context가 일시적으로 unit executor 역할을 하며 subagent를 spawn하지 않는다. | 사용자가 `--direct` 를 전달하거나 표시된 plan recommendation `strategy=direct` 를 승인하고, unit이 하나의 bounded standalone `tk-drive` 또는 standalone `tk-pr-respond` 구현일 때이다. |
+| `delegated` | 하나의 fresh worker가 bounded unit brief를 받는다. | fresh context, isolation, independent worker, reviewer handoff, design-heavy reasoning 또는 parent `tk-pr-sweep` route가 필요할 때이다. |
 
-For a bounded known-pattern implementation with no isolation obligation,
-Prepare recommends `strategy=direct` with `tier=cheapest` in the single
-`👍 Recommendation:` approval surface. In `tk-drive` this is the default
-recommendation; standalone `tk-pr-respond` uses the same recommendation unless
-the unit needs isolation or another delegated-only boundary. Approval of that
-displayed plan is the explicit strategy approval; do not ask for a second
-direct confirmation. `--direct` preselects the same strategy. If the user
-chooses delegated, honor that choice. This is a role handoff, not controller
-fallback: while editing, the current context is the unit executor and may touch
-only the frozen unit paths. It cannot expand scope, create another unit, change
-the approval/ledger owner, or publish remotely. After the candidate is ready,
-the owning controller resumes verification and mechanical bookkeeping.
+isolation obligation이 없는 bounded known-pattern implementation에서는 Prepare가 단일
+`👍 Recommendation:` approval surface에서 `strategy=direct` 와 `tier=cheapest` 를
+권고한다. `tk-drive` 에서는 이것이 기본 recommendation이며 standalone `tk-pr-respond` 도
+unit에 isolation 또는 다른 delegated-only boundary가 필요하지 않은 한 같은 권고를 쓴다.
+표시한 plan의 approval은 explicit strategy approval이므로 두 번째 direct confirmation을
+요청하지 않는다. `--direct` 는 같은 strategy를 미리 선택한다. 사용자가 delegated를
+선택하면 그 선택을 따른다. 이것은 controller fallback이 아닌 role handoff다. 편집 중에는
+current context가 unit executor이며 frozen unit paths만 건드릴 수 있다. scope 확장,
+다른 unit 생성, approval/ledger owner 변경 또는 remote publish는 할 수 없다. candidate가
+준비되면 owning controller가 verification과 mechanical bookkeeping을 재개한다.
 
-`direct` is never an implicit fallback for an unavailable delegated worker. If
-the approved strategy is `delegated`, an unusable worker remains `Blocked`.
-`tk-pr-sweep` is delegated-only because its multi-PR isolation and nested-owner
-boundaries cannot be replaced by one direct executor.
+`direct` 는 unavailable delegated worker의 implicit fallback이 될 수 없다. approved
+strategy가 `delegated` 이면 unusable worker는 `Blocked` 로 남는다. `tk-pr-sweep` 는
+multi-PR isolation과 nested-owner boundary를 하나의 direct executor로 대체할 수 없어
+delegated-only다.
 
-Direct execution inherits the current host context; it must not claim a lower
-model than the host provides. The low-tier preference applies to delegated
-workers through the model/effort axes below.
+Direct execution은 current host context를 상속하므로 host가 제공하는 것보다 낮은
+model을 주장하면 안 된다. 아래 model/effort 축을 통한 low-tier preference는 delegated
+worker에 적용한다.
 
-## Host capability contract
+## Host capability 계약
 
-Determine capability independently for the `model` and `effort` axes before the
-first dispatch. Each axis has exactly one of these states:
+첫 dispatch 전에 `model` 과 `effort` 축의 capability를 독립적으로 결정한다. 각 축은
+정확히 다음 상태 중 하나다:
 
-| State | Meaning and rule |
+| 상태 | 의미와 규칙 |
 | --- | --- |
-| `per_call` | The axis can be sent on every spawn. |
-| `definition_only` | The axis is effective only through an existing matching host/agent definition. If that definition is absent, treat the axis as `unavailable`; do not invent a roster or create a provider-specific mapping. |
-| `unavailable` | The axis cannot be applied. Use `host-default` for model and `inherit` for effort. |
+| `per_call` | 축을 모든 spawn에 보낼 수 있다. |
+| `definition_only` | 축은 existing matching host/agent definition을 통해서만 적용된다. definition이 없으면 축을 `unavailable` 로 처리하며 roster를 발명하거나 provider-specific mapping을 만들지 않는다. |
+| `unavailable` | 축을 적용할 수 없다. model에는 `host-default` 를, effort에는 `inherit` 을 사용한다. |
 
-TigerKit does not ship a provider-specific effort-definition roster. A
-`definition_only` capability is therefore usable only when the host already
-provides the matching definition.
+TigerKit은 provider-specific effort-definition roster를 제공하지 않는다. 그러므로
+`definition_only` capability는 host가 이미 matching definition을 제공할 때만 쓸 수 있다.
 
-Resolve the axes separately. A host may therefore apply a model per call while
-using effort from an existing definition, or apply only effort while the model
-uses the host default. Never claim an axis was applied when its capability is
-`definition_only` without the backing definition.
+축은 별도로 해석한다. 따라서 host는 existing definition의 effort를 쓰면서 model을
+call마다 적용하거나, model은 host default로 두고 effort만 적용할 수 있다. backing
+definition 없이 capability가 `definition_only` 인 축이 적용되었다고 주장하지 않는다.
 
 ## Deterministic collapse
 
-When a host exposes fewer controls than the requested tier, preserve the
-requested tier as an internal fact and record the realized collapse. Do not
-silently promote, invent a mapping layer, or silently switch execution strategy.
+host가 requested tier보다 적은 controls를 노출하면 requested tier를 internal fact로
+보존하고 realized collapse를 기록한다. silent promotion, mapping layer 발명 또는
+silent execution strategy 전환은 하지 않는다.
 
-1. If `model` is unavailable, realize model as `host-default` and still apply
-   the effort axis when it is available.
-2. If `effort` is unavailable, realize effort as `inherit` and still apply the
-   model axis when it is available.
-3. If both axes are unavailable, realize the dispatch as `host-default`.
-4. If only effort is available, `cheapest` and `standard` both realize `low`,
-   `strongest` realizes `high`, and `host-default` realizes `inherit`.
-5. If no per-spawn tier selection is possible, use `host-default` for the
-   dispatch and keep the original tier only as non-user-visible evidence.
+1. `model` 축을 사용할 수 없으면 model을 `host-default` 로 실현하고, 사용할 수 있는
+   경우에도 effort 축은 적용한다.
+2. `effort` 축을 사용할 수 없으면 effort를 `inherit` 으로 실현하고, 사용할 수 있는
+   경우에도 model 축은 적용한다.
+3. 두 축을 모두 사용할 수 없으면 dispatch를 `host-default` 로 실현한다.
+4. effort만 사용할 수 있으면 `cheapest` 와 `standard` 는 모두 `low` 로 실현하고,
+   `strongest` 는 `high` 로, `host-default` 는 `inherit` 으로 실현한다.
+5. spawn별 tier 선택이 불가능하면 dispatch에 `host-default` 를 사용하고 원래 tier는
+   user에게 보이지 않는 evidence로만 보존한다.
 
-The ledger records symbolic facts such as
+ledger는 다음과 같은 symbolic fact를 기록한다:
 `requested=strongest; model=host-default; effort=high; collapse=model-unavailable`.
-It never records provider/model names, secrets, or a user-facing tier choice.
+provider/model name, secret 또는 user-facing tier choice는 절대 기록하지 않는다.
 
-## Dispatch authorization and failure
+## Dispatch authorization 및 실패
 
-`tk-drive` is `user-invoked` and has `disable-model-invocation: true`. An
-explicit `/tk-drive` or `$tk-drive` invocation is the user's request for the
-skill's approved execution strategy. It also satisfies a host restriction that
-only permits an AgentTool after a user request; do not reverse an approved
-delegated run into direct execution. If the host cannot spawn a usable worker,
-stop with `Blocked` unless `direct` was selected before mutation. Direct mode
-must still obey the one-unit scope and verification boundaries above.
+`tk-drive` 는 `user-invoked` 이며 `disable-model-invocation: true` 를 가진다. explicit
+`/tk-drive` 또는 `$tk-drive` invocation은 skill의 approved execution strategy에 대한
+user request다. 또한 user request 뒤에만 AgentTool을 허용하는 host restriction도
+충족한다. approved delegated run을 direct execution으로 되돌리지 않는다. host가 usable
+worker를 spawn할 수 없으면 mutation 전에 `direct` 를 선택하지 않은 한 `Blocked` 로
+중단한다. Direct mode도 위 one-unit scope와 verification boundary를 따라야 한다.
 
-Escalate only after missing context is supplied and a demonstrated reasoning or
-complexity failure remains. Escalation uses one tier higher and a fresh worker;
-it is bounded and never an unlimited retry loop.
+missing context가 제공된 뒤에도 입증된 reasoning 또는 complexity failure가 남을 때만
+escalate한다. Escalation은 한 tier 높은 fresh worker를 쓰며 bounded이고 unlimited retry
+loop가 아니다.
 
-Each fresh worker brief contains one unit, exact R/AC, source/ticket scope,
-scope/exclusion, verification obligation, and current Git ownership facts. It
-must include these repository-root-derived absolute paths verbatim:
+각 fresh worker brief에는 one unit, exact R/AC, source/ticket scope, scope/exclusion,
+verification obligation 및 current Git ownership facts가 들어간다. 다음
+repository-root-derived absolute path를 verbatim으로 포함해야 한다:
 
 ```text
 /home/tigeryoo/workspace/tiger-kit/.tigerkit/drive.md
@@ -122,6 +116,5 @@ must include these repository-root-derived absolute paths verbatim:
 /home/tigeryoo/workspace/tiger-kit/.tigerkit/implement.md
 ```
 
-The brief identifies source/ticket scope without copying document bodies. Do
-not nest unrelated source, verbose history, child receipts, secrets, or another
-workflow's authority.
+brief는 document body를 복사하지 않고 source/ticket scope를 식별한다. unrelated source,
+verbose history, child receipt, secret 또는 다른 workflow의 authority를 중첩하지 않는다.

@@ -30,14 +30,14 @@ Consumer-only reproduction은 `local-only`다. 정확한 upstream source를 확�
 
 issue search에 접근할 수 없거나, exact provenance가 없거나, upstream reproduction이
 두 번보다 적거나, control/holdout evidence가 불완전하면
-`upstream-unverifiable`을 사용하고 proposal content를 생략한다. Consumer-only
-reproduction은 `local-only`로 남긴다.
+`upstream-unverifiable` 을 사용하고 proposal content를 생략한다. Consumer-only
+reproduction은 `local-only` 로 남긴다.
 
 일치하는 open issue를 새 proposal로 작성하지 말고 해당 issue와 evidence state를
 인용한다. matching closed issue의 경우 exact later unmodified upstream source가
 동일한 two-run, control 및 holdout gate를 충족할 때만 regression candidate로 분류한다.
-그 외에는 closed issue를 인용하고 `upstream-unverifiable`을 사용한다.
-`upstream-candidate`는 matching issue 또는 남은 owner work를 식별할 수 있지만 새
+그 외에는 closed issue를 인용하고 `upstream-unverifiable` 을 사용한다.
+`upstream-candidate` 는 matching issue 또는 남은 owner work를 식별할 수 있지만 새
 title/body proposal을 포함하지 않는다.
 
 ## 필수 비식별화
@@ -54,11 +54,11 @@ title/body proposal을 포함하지 않는다.
 
 초안을 작성한 뒤 모든 original identifier와 sensitive literal을 검색한다. 그 다음
 technical reproduction details가 여전히 남아 있는지 별도로 확인한다. 어느 한쪽 확인이
-불가능하면 `upstream-draft-ready`를 사용하지 않는다.
+불가능하면 `upstream-draft-ready` 를 사용하지 않는다.
 
 ## 초안 템플릿
 
-제안 적격성 게이트가 `upstream-draft-ready`에 도달한 뒤에만 다음 템플릿을 사용한다.
+제안 적격성 게이트가 `upstream-draft-ready` 에 도달한 뒤에만 다음 템플릿을 사용한다.
 
 ```markdown
 ## Summary
@@ -72,7 +72,7 @@ technical reproduction details가 여전히 남아 있는지 별도로 확인한
 - Invocation: explicit | automatic | handoff
 - Consumer repository: anonymized external repository
 
-## Minimal reproduction
+## 최소 재현
 
 1. ...
 2. ...
@@ -85,7 +85,7 @@ technical reproduction details가 여전히 남아 있는지 별도로 확인한
 
 ...
 
-## Reproduction evidence
+## 재현 evidence
 
 - Runs: N/N
 - Failure plane: ...
@@ -101,22 +101,22 @@ technical reproduction details가 여전히 남아 있는지 별도로 확인한
 - Cause: ...
 - General Fix Rule: ...
 
-## Proposed contract or eval change
+## 제안 contract 또는 eval 변경
 
 ...
 
 ## Acceptance criteria
 
-- [ ] Incident no longer reproduces
-- [ ] Existing positive/control behavior remains valid
-- [ ] Boundary/holdout cases remain unchanged
-- [ ] Supported host compatibility remains intact
-- [ ] Resource claim, if any, is reproduced under matched conditions
+- [ ] Incident가 더 이상 재현되지 않는다
+- [ ] Existing positive/control behavior가 유효하게 유지된다
+- [ ] Boundary/holdout case가 변하지 않는다
+- [ ] Supported host compatibility가 유지된다
+- [ ] Resource claim이 있으면 matched condition에서 재현된다
 
 ## Privacy note
 
-This report was derived from an external consumer repository. Names, paths,
-URLs, domain data, identifiers, and private literals were removed.
+이 report는 external consumer repository에서 파생했다. names, paths,
+URLs, domain data, identifiers 및 private literals는 제거했다.
 ```
 
 title과 body는 proposal로만 반환한다. 진단의 일부로 GitHub를 create, comment, label,

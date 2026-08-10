@@ -1,6 +1,6 @@
 # Drive ledger
 
-`.tigerkit/drive.md`는 하나의 Drive run을 위한 유일한 Markdown lifecycle
+`.tigerkit/drive.md` 는 하나의 Drive run을 위한 유일한 Markdown lifecycle
 ledger다. Repo/worktree-local file의 current task를 atomically replace하고
 다시 읽는다. Old task를 archive하거나 pointer, cursor, scheduler, global
 state를 만들지 않는다. Artifact가 존재한다고 권한이 생기지는 않는다.
@@ -13,7 +13,7 @@ state를 만들지 않는다. Artifact가 존재한다고 권한이 생기지는
 - dispatch, verifier/gap, correction, commit, aggregate/terminal/recovery receipt.
 
 Goal, scope, exclusion, frozen literal, R/AC, 구현 지시와 verifier detail은 `spec.md`,
-`tickets.md`, `implement.md`에만 둔다. `drive.md`에 복사하지 않는다.
+`tickets.md`, `implement.md` 에만 둔다. `drive.md` 에 복사하지 않는다.
 
 Nested worker, reviewer, verifier는 경쟁하는 Markdown ledger를 작성하지 않는다.
 Binary evidence는 run-owned directory를 참조하는 방식으로 둘 수 있다. Raw

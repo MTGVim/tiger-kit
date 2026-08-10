@@ -12,7 +12,7 @@ metadata:
 
 # 하나의 pull request에 응답
 
-`/tk-pr-respond`, `$tk-pr-respond`, host skill picker, 또는 active `tk-pr-sweep`의
+`/tk-pr-respond`, `$tk-pr-respond`, host skill picker, 또는 active `tk-pr-sweep` 의
 fresh exact-PR handoff를 통해서만 시작한다. generic review, implementation, triage,
 continuation, 또는 둘 이상의 PR에는 절대 활성화하지 않는다.
 
@@ -26,18 +26,18 @@ direct plan에서는 current context가
 controller fallback이 아니며 nested Sweep handoff에는 사용할 수 없다. required
 verification과 gap closure가 통과한 뒤에만 controller가 각 unit의 mechanical
 staging과 verified commit 하나를 소유할 수 있다. usable worker가 없으면 delegated
-plan을 direct로 뒤집지 않고 `Blocked`로 끝낸다.
+plan을 direct로 뒤집지 않고 `Blocked` 로 끝낸다.
 
 ## 권한과 ledger(Authority and ledger)
 
-Standalone Respond는 `.tigerkit/pr-respond.md`를 원자적으로 대체하고 다시 읽는다.
+Standalone Respond는 `.tigerkit/pr-respond.md` 를 원자적으로 대체하고 다시 읽는다.
 PR/repository/head/refspec, current finding IDs, R/AC, scope와 exclusions, controller가
 근거와 함께 해결한 assumptions, units/waves, verification, approved publication
 actions, worker/correction/commit evidence, thread actions, 최종 관찰 PR state를 기록한다.
 secret, transcript, full log는 저장하지 않는다.
 
 Sweep 아래에서 호출되면 `pr-respond.md`, child ledger, 기타 Markdown lifecycle file을
-**절대 작성하지 않는다.** owning `.tigerkit/pr-sweep.md`에 compact evidence를 반환한다.
+**절대 작성하지 않는다.** owning `.tigerkit/pr-sweep.md` 에 compact evidence를 반환한다.
 Artifact가 있다고 authority가 생기지는 않는다.
 
 ## 생명주기(Lifecycle)
@@ -53,28 +53,28 @@ Prepare -> Execute -> Close gaps -> Finalize
    requested reviewers, exact push refspec. pagination을 완료한다. missing,
    mixed-PR, author/login-mismatched, ambiguous identity는 mutation 전에 `Blocked`다.
 2. superseded iteration을 억제하고 각 current finding 또는 supported
-   GitHub Actions failure를 `apply | reply | defer`로 분류한다. exact IDs, bounded
+   GitHub Actions failure를 `apply | reply | defer` 로 분류한다. exact IDs, bounded
    quote/summary, requested outcome, R/AC, scope, exclusions, reply draft,
    verification을 보존한다. External/unknown-provider CI는 report-only다. queued,
    cancelled, flaky, infrastructure, inaccessible failure는 code change를 정당화하지
    않는다.
 3. evidence로 ordinary reversible ambiguity를 해결한다. 모든 material assumption과
    그 basis, behavior-changing alternative를 기록한다. user-owned decision이 safe
-   executable plan을 막을 때만 `tk-grill-me`를 사용한다.
+   executable plan을 막을 때만 `tk-grill-me` 를 사용한다.
 4. independently verifiable resolution unit과 dependency wave를 도출한다. coupled
    또는 uncertain work는 serialize한다. concurrent unit에는 host-provided isolated
    checkout/worktree와 proven independence가 필요하다. scheduler를 만들지 않는다.
-5. `skills/tk-drive/references/worker-dispatch.md`의 canonical worker-dispatch
+5. `skills/tk-drive/references/worker-dispatch.md` 의 canonical worker-dispatch
    contract에 따라 unit별 `direct | delegated` strategy와 least-sufficient worker tier를
    선택하고, 격리 의무가 없는 bounded known-pattern unit이면
-   `strategy=direct`, `tier=cheapest`를 우선 추천한다. fresh context,
+   `strategy=direct`, `tier=cheapest` 를 우선 추천한다. fresh context,
    isolation, reviewer handoff, design-heavy reasoning이 필요하면 delegated와
    그 근거를 추천한다. model/effort
    capability를 축별로 결정론적으로 실현한다. model configuration이나
    provider/model mapping은 절대 노출하지 않는다. per-spawn 선택이 불가능하면
    `host-default` collapse를 기록한다. direct가 승인되지 않았고 usable fresh worker를
-   dispatch할 수 없으면 `Blocked`로 끝낸다. Parent Sweep의 `--ci` handoff는 항상
-   delegated이며 direct strategy로 바꾸지 않는다. `👍 Recommendation:`에
+   dispatch할 수 없으면 `Blocked` 로 끝낸다. Parent Sweep의 `--ci` handoff는 항상
+   delegated이며 direct strategy로 바꾸지 않는다. `👍 Recommendation:` 에
    strategy와 tier를 포함하고, 사용자가 표시된 plan을 승인하면 그것이 direct
    strategy에 대한 명시적 승인이다. 별도 direct 확인은 묻지 않는다.
 6. goal/PR/head, included/excluded findings, apply/reply/defer decisions, R/AC,
@@ -82,12 +82,12 @@ Prepare -> Execute -> Close gaps -> Finalize
    risks, assumptions/ambiguities를 포함한 compact approval surface 하나를 준비한다. 이것이
    유일한 normal approval이다.
 
-`🙋 respond · 응답 필요` 하나를 emit하고, 정확히 하나의 `👍 Recommendation:`을 보여주고,
+`🙋 respond · 응답 필요` 하나를 emit하고, 정확히 하나의 `👍 Recommendation:` 을 보여주고,
 approval question을 묻는다. approval 전에는 worker dispatch, commit, remote write를
 하지 않는다. Approval은 표시된 snapshot과 Respond의 existing bounded authority만
 승인한다. listed publication도 승인하므로 **두 번째 publication question을 절대 묻지 않는다.**
 
-`--ci`는 explicit invocation 또는 parent Sweep handoff가 equivalent exact
+`--ci` 는 explicit invocation 또는 parent Sweep handoff가 equivalent exact
 PR/head/finding/route, verification, publication bound를 이미 제공할 때만 interactive
 checkpoint를 건너뛴다. Sweep `test-only` route는 repository의 existing test layout만
 허용하며 production, configuration, dependency/lockfile, security/data/performance,
@@ -130,7 +130,7 @@ children으로 절대 invoke하지 않는다.
 
 ### 공백 닫기(Close gaps)
 
-모든 approved finding/R/AC를 `satisfied`, `missing`, `partial`, 또는 `unverifiable`로
+모든 approved finding/R/AC를 `satisfied`, `missing`, `partial`, 또는 `unverifiable` 로
 분류한다. approved scope/exclusions, skipped units, externally visible behavior, required
 verifier evidence, commit ancestry/ownership, freshness만 확인한다. 이것은 general code
 review가 아니다. verdict를 확정할 수 없으면 같은 narrow brief를 가진 stronger fresh
@@ -143,18 +143,17 @@ non-mutating reviewer를 최대 한 명 사용한다. required-but-unavailable i
 state, checks, threads를 fresh-read한다. 변경되지 않은, 이미 approved된 action만 다음
 순서로 publish한다.
 
-1. exact branch push when a verified commit exists;
-2. exact reply per current finding;
-3. resolve only a freshly verified thread after its reply succeeds;
-4. fresh review/thread/check/mergeability read;
-5. conditional human re-review, excluding author, authenticated user, bots, and
-   still-valid approvers;
-6. at most one PR summary.
+1. 검증된 commit이 있을 때 정확한 branch를 push한다.
+2. 현재 finding별로 정확히 reply한다.
+3. reply가 성공한 뒤 fresh verification을 거친 thread만 resolve한다.
+4. review/thread/check/mergeability를 fresh-read한다.
+5. author, authenticated user, bot 및 여전히 유효한 approver를 제외하고 조건부 human re-review를 한다.
+6. PR summary는 최대 하나만 작성한다.
 
 ## Terminal branch contract
 
 아래 terminal branch 중 하나에 도달하면 해당 상태를 기록하고 그 branch의 후속 조치만
-수행한다. 다른 branch를 추정하거나 `Pass`로 승격하지 않는다.
+수행한다. 다른 branch를 추정하거나 `Pass` 로 승격하지 않는다.
 
 | 조건 | 즉시 조치 | Status |
 |---|---|---|
@@ -166,7 +165,7 @@ state, checks, threads를 fresh-read한다. 변경되지 않은, 이미 approved
 
 Sweep 아래에서는 one-summary budget을 consume하고, 이미 consume했으면 draft를 반환한다.
 모든 generated external comment는 정확히
-`_🤖 본 코멘트는 AI가 작성했습니다._`로 끝난다. failed reply는 thread를 open으로 남긴다.
+`_🤖 본 코멘트는 AI가 작성했습니다._` 로 끝난다. failed reply는 thread를 open으로 남긴다.
 Deferred, failed, partial, unverifiable finding은 open으로 유지한다. force-push, merge,
 unrelated thread close, bot review request, draft ready 표시, tag, release, release
 publish는 절대 하지 않는다.
@@ -174,7 +173,7 @@ publish는 절대 하지 않는다.
 최종 PR을 fresh-read한다. partial remote write는 `Fail`; required evidence가 없으면
 `Unverifiable`; authority/identity/freshness conflict는 `Blocked`; approved scope가
 complete면 `Pass`다. nested run은 Sweep에 compact evidence만 반환한다. Standalone
-output은 `## PR respond`로 시작하고 정확히 하나의
+output은 `## PR respond` 로 시작하고 정확히 하나의
 `Status: Pass | Fail | Blocked | Unverifiable | Pending` line을 포함한다. worker
 receipts와 raw logs는 생략하며, canonical IDs, statuses, commands, paths, exact literals를
 보존한 채 사용자의 언어를 사용한다.

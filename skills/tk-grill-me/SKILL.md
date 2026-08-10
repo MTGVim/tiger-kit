@@ -28,7 +28,7 @@ procedure, safety boundary, completion criteria를 공유하고; 결과 routing�
 Caller mode가 presentation을 제어한다:
 
 - `standalone`: 사용자에게 하나의 pending question 또는 최종 decision result를 표시한다.
-- `active drive`: 같은 decision state를 내부적으로 반환하여 `tk-drive`가
+- `active drive`: 같은 decision state를 내부적으로 반환하여 `tk-drive` 가
   다음 applicable procedure를 직접 계속하게 한다. terminal result, receipt,
   `Pass`, 또는 caller-directed stopping surface를 렌더링하지 않는다.
 
@@ -46,16 +46,16 @@ Read-only다. source, Drive R/AC, units, ADRs, commits를 절대 쓰지 않으�
 4. `rank`: safe-progress blocker, scope 또는 irreversible effect,
    verification blocker, downstream rework 순으로 가장 영향이 큰 unresolved
    decision을 선택한다.
-5. `ask`: `🙋 grill-me · 응답 필요`를 출력한 뒤, 정확히 하나의 `Question`,
-   `Recommendation`, `Evidence`를 그 순서로 반환하고 `pending`에서 멈춘다.
+5. `ask`: `🙋 grill-me · 응답 필요` 를 출력한 뒤, 정확히 하나의 `Question`,
+   `Recommendation`, `Evidence` 를 그 순서로 반환하고 `pending` 에서 멈춘다.
 6. `incorporate`: 명시적 answer를 일치하는 `Decision`, `Constraint`, `Out of scope`,
    `Output`, 또는 `Verification` entry로 보존한다.
 7. `repeat or close`: 이미 답한 질문은 반복하지 않는다. 네 축이 모두 정리되면,
    명시적 승인을 위해 합의된 목표 문장 하나를 제시한다.
-8. `confirm`: 그 문장을 명시적으로 승인한 뒤에만 `confirmed`를 반환한다.
+8. `confirm`: 그 문장을 명시적으로 승인한 뒤에만 `confirmed` 를 반환한다.
 
-standalone의 질문 turn에서는 아래 packet만 user-facing으로 렌더링합니다. `Evidence`는
-source-located fact만 담고, 없으면 `unavailable`로 둡니다. active drive에서는 이
+standalone의 질문 turn에서는 아래 packet만 user-facing으로 렌더링합니다. `Evidence` 는
+source-located fact만 담고, 없으면 `unavailable` 로 둡니다. active drive에서는 이
 packet을 표시하지 않고 같은 state를 caller에게 직접 반환합니다.
 
 ```text
@@ -82,10 +82,10 @@ ledger는 per-turn dump template가 아니다. Question turn에는 새로 생기
 ## 사실과 사용자 판단
 
 - 정확한 repository 또는 runtime evidence가 뒷받침하는 current facts만 자동 confirm하고; source를 cite한다.
-- code-pattern 결론에 judgment가 필요하면 `inferred`로 표시한다.
+- code-pattern 결론에 judgment가 필요하면 `inferred` 로 표시한다.
 - mixed fact-and-choice question을 묻기 전에 current facts를 먼저 조사한다.
 - goals, scope, priorities, business rules, success criteria, new behavior에 대해서는 항상 질문한다.
-- 필요한 evidence에 접근할 수 없으면 `Unverifiable`을 반환한다. 단, 독립적인 decision이 여전히 안전하면 예외다.
+- 필요한 evidence에 접근할 수 없으면 `Unverifiable` 을 반환한다. 단, 독립적인 decision이 여전히 안전하면 예외다.
 - confirmed sources가 충돌하면 양쪽을 보존하고 하나의 decision question을 묻는다; 묵묵히 선택하지 않는다.
 
 ## 답변 보존과 종결
@@ -94,18 +94,18 @@ free-form answer의 의미를 보존한다. 말하지 않은 내용은 assumptio
 의미를 바꾸거나, confirmed evidence와 충돌하거나, material ambiguity를 만들 때만
 clarification을 요청한다.
 
-`done`과 model confidence만으로는 ledger를 닫지 않는다. 네 축을 모두 확인하고,
+`done` 과 model confidence만으로는 ledger를 닫지 않는다. 네 축을 모두 확인하고,
 unresolved 상태에서는 다음 highest-impact question을 묻고, 최종 합의 목표 문장에
 대한 명시적 승인을 요구한다.
 
-Standalone confirmed results에는 비어 있지 않은 `## Decisions`,
-`## Assumptions`, `## Remaining risks`만 사용한다. phase/status provenance는
+Standalone confirmed result에는 비어 있지 않은 `## Decisions`,
+`## Assumptions`, `## Remaining risks` 만 사용한다. phase/status provenance는
 붙이지 않는다. 하나의 decision에는 한 줄에서 세 줄을 사용하고, compound set에는
-읽기 쉬운 두 줄에서 일곱 rows 또는 bullets를 사용한다. 여덟 개 이상이면 owning
+읽기 쉬운 두 줄에서 일곱 개의 row 또는 bullet을 사용한다. 여덟 개 이상이면 owning
 source 또는 spec reference와 함께 상위 다섯 개에서 일곱 개만 유지한다.
 
-Native status: `confirmed | pending | aborted | Blocked | Unverifiable`.
-Standalone maps these to `Pass | Pending | Blocked | Blocked | Unverifiable`.
+Native status는 `confirmed | pending | aborted | Blocked | Unverifiable` 이다.
+Standalone은 이를 `Pass | Pending | Blocked | Blocked | Unverifiable` 로 매핑한다.
 Active drive는 user-facing status block 없이 native status를 직접 소비한다.
 
 ## 금지 사항 / 반패턴

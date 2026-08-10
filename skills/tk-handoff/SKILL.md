@@ -21,7 +21,7 @@ invoke하지 않습니다.
 ### 새 handoff
 
 1. `evidence`: 현재 branch, files, command results를 path-cited fact와
-   `verified | unverified`로 매핑합니다.
+   `verified | unverified` 로 매핑합니다.
 2. `schema`: fact와 사용자 승인을 required-section snapshot 및
    `confirmed | pending` decision으로 매핑합니다. 명시적 새 handoff 요청은
    이 artifact를 작성할 권한이며, product·external mutation 승인을 뜻하지
@@ -30,9 +30,9 @@ invoke하지 않습니다.
    `.tigerkit/handoff.md` 또는 명시된 output path에 `pending` snapshot을
    같은 directory의 임시 파일에 쓴 뒤 atomic rename합니다. output parent가
    없으면 필요한 scratch directory만 만듭니다.
-4. `reread`: 실제로 쓴 path를 다시 읽어 required fields, `Status`와
-   `Disposition`의 분리, 현재 evidence와의 일치를 확인합니다. 불일치하면
-   `applied`를 사용하지 않고 `pending` 또는 recovery 상태로 되돌립니다.
+4. `reread`: 실제로 쓴 path를 다시 읽어 required fields, `Status` 와
+   `Disposition` 의 분리, 현재 evidence와의 일치를 확인합니다. 불일치하면
+   `applied` 를 사용하지 않고 `pending` 또는 recovery 상태로 되돌립니다.
 5. `receipt`: 재읽기 결과를 artifact path와 1~3줄의 상태 요약으로만
    보고합니다. snapshot 본문, full draft, evidence inventory를 채팅에
    복사하지 않습니다.
@@ -40,7 +40,7 @@ invoke하지 않습니다.
 ### 재개(Resume)
 
 1. `state check`: existing handoff를 current Git/files와 비교하고 일치 항목과
-   `drift | conflict`를 나열합니다.
+   `drift | conflict` 를 나열합니다.
 2. `materiality`: evidence와 함께 resume table로 분류합니다.
 3. `continue or checkpoint`: table의 continuation/stop result를 따릅니다.
 4. `continue or stop`: no-drift approval 또는 명시적 material-drift
@@ -50,15 +50,15 @@ invoke하지 않습니다.
 
 | Classification | Evidence | Action |
 |---|---|---|
-| `none` | branch, goal, decisions, ownership, verification이 current evidence와 일치함 | `--resume`을 approval로 간주하고 추가 질문 없이 계속 |
+| `none` | branch, goal, decisions, ownership, verification이 current evidence와 일치함 | `--resume` 을 approval로 간주하고 추가 질문 없이 계속 |
 | `non-material` | 결과를 바꿀 수 없는 timestamp/order 차이 | 기록하고 추가 질문 없이 계속 |
-| `material drift` | branch/goal scope, confirmed decisions, changed-file ownership 또는 verification result가 다름 | 필수 decision 하나를 묻고 `pending | Blocked`에서 중지 |
-| `conflict` | handoff와 current source가 양립할 수 없는 intent/result를 요구함 | 두 evidence set과 선택지를 제시하고 `Blocked`에서 중지 |
-| `unverified` | 필요한 Git/file state를 확인할 수 없음 | 추론하지 말고 `Unverifiable`에서 중지 |
+| `material drift` | branch/goal scope, confirmed decisions, changed-file ownership 또는 verification result가 다름 | 필수 decision 하나를 묻고 `pending | Blocked` 에서 중지 |
+| `conflict` | handoff와 current source가 양립할 수 없는 intent/result를 요구함 | 두 evidence set과 선택지를 제시하고 `Blocked` 에서 중지 |
+| `unverified` | 필요한 Git/file state를 확인할 수 없음 | 추론하지 말고 `Unverifiable` 에서 중지 |
 
 ## 계약(Contract)
 
-기본 대상 `.tigerkit/handoff.md`에는 다음이 포함됩니다:
+기본 대상 `.tigerkit/handoff.md` 에는 다음이 포함됩니다:
 
 - `Goal`: goal과 scope
 - `Status`: `pending | in_progress | completed | aborted | Blocked`
@@ -74,8 +74,8 @@ invoke하지 않습니다.
 - `Next step`: Remaining work에서 선택한 하나의 즉시 action
 - `Resume hints`: Next step을 반복하지 않고 resume에 필요한 environment/order/command만
 
-`handoff.md`는 아래 single snapshot skeleton을 사용합니다. 각 field는 artifact가
-한 번만 소유하며, 실행하지 않은 값은 `unverified` 또는 `pending`으로 둡니다.
+`handoff.md` 는 아래 single snapshot skeleton을 사용합니다. 각 field는 artifact가
+한 번만 소유하며, 실행하지 않은 값은 `unverified` 또는 `pending` 으로 둡니다.
 
 ```text
 Goal: <goal and scope>
@@ -94,19 +94,19 @@ Resume hints: <environment/order/command>
 Disposition: reported | applied | pending
 ```
 
-`Next step`은 conversation을 재구성하지 않고 실행 가능해야 합니다: exact
+`Next step` 은 conversation을 재구성하지 않고 실행 가능해야 합니다: exact
 target, satisfied prerequisite 또는 section reference, observable completion
 evidence를 포함합니다. open question이 work를 막으면 Next step은 downstream
 execution이 아니라 해당 decision을 얻는 action이어야 합니다.
 
-이번 실행에서 확인한 evidence에만 `verified`를 사용합니다. 이전 handoff claim,
-plan, model inference, 실행하지 않은 command는 `unverified`로 둡니다. 소유권은
+이번 실행에서 확인한 evidence에만 `verified` 를 사용합니다. 이전 handoff claim,
+plan, model inference, 실행하지 않은 command는 `unverified` 로 둡니다. 소유권은
 엄격히 지킵니다: Repository state는 branch/HEAD를, Handoff path는 path를,
 Commands는 실행한 command string만, Verification은 outcome을,
-Next step/Resume hints는 future command를 소유합니다. `reported | applied | pending`은
+Next step/Resume hints는 future command를 소유합니다. `reported | applied | pending` 은
 artifact disposition이지 work Status가 아닙니다. atomic write와
-reread가 current repository state와 일치한 뒤에만 `applied`를 사용합니다.
-artifact write가 필요 없는 verified no-drift resume/report에는 `reported`를
+reread가 current repository state와 일치한 뒤에만 `applied` 를 사용합니다.
+artifact write가 필요 없는 verified no-drift resume/report에는 `reported` 를
 사용합니다. 그 외에는 `pending` 또는 해당 recovery-table stop state를 사용합니다.
 
 Handoff artifact가 disposition과 section reference를 소유합니다. Terminal
@@ -124,55 +124,55 @@ next action, blocker를 2–5개의 짧은 bullet로 요약하고, 하나의 res
 
 - 경로: `<absolute path>`
 - `Status: <pending | in_progress | completed | aborted | Blocked>`
-- `Disposition: <reported | applied | pending>`와 필요한 경우 1~2줄의 blocker 또는 next action
+- `Disposition: <reported | applied | pending>` 와 필요한 경우 1~2줄의 blocker 또는 next action
 
 새로 작성한 pending handoff에는 위 compact report 뒤에 정확히 하나의 approval
-question을 둡니다. `--resume`의 verified no-drift report와 failure/`Blocked`
+question을 둡니다. `--resume` 의 verified no-drift report와 failure/`Blocked`
 report에는 새 approval question을 만들지 않습니다.
 
 `Goal`, `Decisions`, `Commands`, `Verification`, `Remaining work` 등 snapshot
 필드의 전문을 채팅에 덤프하지 않습니다. write 또는 reread가 확인되지 않으면
 path를 성공한 artifact처럼 보고하지 않습니다.
 
-`.tigerkit/handoff.md`만 resume snapshot입니다. Drive가 source run을 소유하면
-`.tigerkit/drive.md`의 durable R/AC 및 multi-unit ID를 참조합니다. 절대로
+`.tigerkit/handoff.md` 만 resume snapshot입니다. Drive가 source run을 소유하면
+`.tigerkit/drive.md` 의 durable R/AC 및 multi-unit ID를 참조합니다. 절대로
 `.tigerkit/work-map.md`, archive, current pointer 또는 global state를 만들지
 않습니다. 기존 work-map은 legacy scratch로 취급하며 수정·migrate·delete하지
 않습니다.
 
 ## CHECKPOINT / STOP (승인·중단 지점)
 
-`--resume`은 resume을 authorize하며, continuation은 resume table만 따릅니다.
+`--resume` 은 resume을 authorize하며, continuation은 resume table만 따릅니다.
 
 scratch parent는 필요할 때만 만들고, 같은 directory의 temporary file에 쓴 뒤
 atomic rename하고 reread합니다. 실패하면 recovery table을 따릅니다. archive/
-current pointer를 만들거나 `.gitignore`를 수정하지 않습니다. scratch가 ignore되지
+current pointer를 만들거나 `.gitignore` 를 수정하지 않습니다. scratch가 ignore되지
 않았으면 경고합니다. 요청된 handoff file이 unresolved decision을
-`confirmed`로 만들지는 않습니다.
+`confirmed` 로 만들지는 않습니다.
 
 명시적 handoff artifact 자체는 pending snapshot이므로 새 작성 승인 전에 쓸 수
 있습니다. 그러나 product, test, config, Git publication 또는 기타 external
-mutation은 별도 승인 전에는 절대 쓰거나 실행하지 않습니다. `--resume`은
+mutation은 별도 승인 전에는 절대 쓰거나 실행하지 않습니다. `--resume` 은
 continuation을 authorize하지만 material drift/conflict를 해결할 승인을
 대신하지 않습니다.
 
 Resume 시 handoff와 current Git/files를 읽고 classify합니다. current evidence가
-없는 내용은 `unverified`로 유지합니다.
+없는 내용은 `unverified` 로 유지합니다.
 
 ## 실패 복구(Failure recovery)
 
-| Trigger | First action | If still failing |
+| 조건 | 첫 조치 | 계속 실패할 때 |
 |---|---|---|
-| handoff missing/unreadable | path/access를 보고하고 new write와 resume를 구분 | evidence로 resume state를 재구성할 수 없으면 `Unverifiable`에서 중지 |
-| temp write/replace failure | 기존 handoff를 보존하고 run-owned temp만 정리한 뒤 `pending`을 보고 | 보존 여부를 알 수 없으면 추가 write를 중지하고 `Blocked` |
-| reread disagrees with schema/current state | `applied`로 표시하지 말고 mismatch를 `unverified`로 되돌림 | 안전한 reread가 불가능하면 `Unverifiable`에서 중지 |
-| legacy work-map exists | legacy scratch로 무시 | current handoff/spec/ticket evidence만 사용하고 절대 mutate하지 않음 |
+| handoff missing/unreadable | path/access를 보고하고 new write와 resume를 구분한다 | evidence로 resume state를 재구성할 수 없으면 `Unverifiable` 에서 중지한다 |
+| temp write/replace failure | 기존 handoff를 보존하고 run-owned temp만 정리한 뒤 `pending` 을 보고한다 | 보존 여부를 알 수 없으면 추가 write를 중지하고 `Blocked` 로 둔다 |
+| reread disagrees with schema/current state | `applied` 로 표시하지 말고 mismatch를 `unverified` 로 되돌린다 | 안전한 reread가 불가능하면 `Unverifiable` 에서 중지한다 |
+| legacy work-map exists | legacy scratch로 무시한다 | current handoff/spec/ticket evidence만 사용하고 절대 mutate하지 않는다 |
 
 대화 history를 복사하거나 archive/current pointer를 만들지 않으며, 자동으로
 commit/publish하지 않습니다.
 
 ## 금지 사항 / 안티패턴
 
-- 실행하지 않은 command, check 또는 decision을 `verified | confirmed`로 표시하지 않습니다.
+- 실행하지 않은 command, check 또는 decision을 `verified | confirmed` 로 표시하지 않습니다.
 - material drift/conflict를 resolve하거나 confirmation 없이 계속하지 않습니다.
 - archive, current pointer, automatic commit 또는 publication을 만들지 않습니다.

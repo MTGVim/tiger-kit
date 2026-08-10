@@ -17,7 +17,7 @@ metadata:
 `skill`, `debug`, `performance` 같은 일반 단어만으로는 부족하다.
 
 이 skill은 진단만 수행한다. canonical skill을 작성하거나 catalog를 최적화하거나
-최종 patch를 소유하지 않는다. 검증된 skill objective는 `tk-learn`을 유일한
+최종 patch를 소유하지 않는다. 검증된 skill objective는 `tk-learn` 을 유일한
 `create | improve | merge` writer로 거쳐 라우팅한다. canonical source skill을
 의미적으로 변경하지 않는다.
 
@@ -30,12 +30,12 @@ metadata:
 - 사용 가능한 transcript/event, file, Git, eval 또는 resource evidence;
 - 알려진 consumer override 또는 host configuration.
 
-누락값은 `unverified`로 표시한다. incident나 metric anchor가 없다는 것은
-`NotApplicable`이 아니다. fresh execution이 없거나 필요한 evidence에 접근할 수
+누락값은 `unverified` 로 표시한다. incident나 metric anchor가 없다는 것은
+`NotApplicable` 이 아니다. fresh execution이 없거나 필요한 evidence에 접근할 수
 없으면 원인을 추론할 권한이 아니라 `Unverifiable | Blocked`다.
 
 incident, exact target, host/invocation, prompt, expected 및 observed result, evidence를
-명시한 `learn-ready` handoff는 한 번만 수락한다. 진단 단계에서는 `tk-learn`을
+명시한 `learn-ready` handoff는 한 번만 수락한다. 진단 단계에서는 `tk-learn` 을
 호출하지 않으며, 동일한 target + incident + blocker cycle을 반복하지 않는다.
 
 ## 증거 순서
@@ -64,7 +64,7 @@ control과의 경계가 모호할 때만 fresh run을 반복한다. 좁은 evide
 
 Resource claim에는 matched baseline, historical run, repository threshold 또는
 명시적 budget이 필요하다. 그렇지 않으면 observed value는 profile만 기록하고
-방향은 `Unverifiable`로 둔다. tokens, time, calls, retries 또는 fan-out이 적다는
+방향은 `Unverifiable` 로 둔다. tokens, time, calls, retries 또는 fan-out이 적다는
 이유로 correctness 또는 safety regression을 상쇄하지 않는다.
 
 ## 작업 흐름
@@ -72,7 +72,7 @@ Resource claim에는 matched baseline, historical run, repository threshold 또�
 1. **동결(Freeze)**: exact incident, target ref, must-preserve behavior, affected host 및
    신뢰할 수 있는 evidence/metric을 고정한다.
 2. **재현(Reproduce)**: clean context에서 한 번 재현한다. 결과를
-   `Reproduced | Not reproduced | Inconclusive`로 분류한다.
+   `Reproduced | Not reproduced | Inconclusive` 로 분류한다.
 3. **대조(Control)**: nearest alternative를 비교한다. loader와 body, parent와 child,
    candidate와 grader, 한 host와 다른 host, correctness와 resource cost를
    구분한다.
@@ -93,17 +93,17 @@ canonical target을 다시 쓰거나 patch하지 않는다.
 각 checkpoint를 통과하기 전에는 다음 단계, experiment 또는 handoff를 시작하지 않는다.
 
 - **입력 checkpoint**: exact target, eligible Agent Skill incident 및 incident evidence가
-  있다. ordinary code bug처럼 적격 Agent Skill incident 자체가 아니면 `NotApplicable`로
-  멈춘다. incident 또는 metric anchor가 필요한데 누락·미검증이면 `NotApplicable`이
-  아니며 `Blocked | Unverifiable`로 멈춘다.
+  있다. ordinary code bug처럼 적격 Agent Skill incident 자체가 아니면 `NotApplicable` 로
+  멈춘다. incident 또는 metric anchor가 필요한데 누락·미검증이면 `NotApplicable` 이
+  아니며 `Blocked | Unverifiable` 로 멈춘다.
 - **재현 checkpoint**: fresh result를 `Reproduced | Not reproduced | Inconclusive` 중
-  하나로 기록한다. `Inconclusive`이면 cause나 route를 확정하지 않고 `Unverifiable`로
+  하나로 기록한다. `Inconclusive` 이면 cause나 route를 확정하지 않고 `Unverifiable` 로
   멈춘다.
 - **격리 checkpoint**: 하나의 failure plane과 이를 구분하는 adjacent control이
-  evidence로 확인되었다. 아니면 root-cause claim을 하지 않고 `Unverifiable`로 멈춘다.
+  evidence로 확인되었다. 아니면 root-cause claim을 하지 않고 `Unverifiable` 로 멈춘다.
 - **라우팅 checkpoint**: 하나의 구체적이고 testable한 objective와 must-preserve
   boundary가 검증되었다. 아니면 `learn-ready` handoff를 emit하지 않는다.
-- **🛑 STOP**: `learn-ready`를 emit한 뒤에도 이 skill은 `tk-learn`을 호출하거나
+- **🛑 STOP**: `learn-ready` 를 emit한 뒤에도 이 skill은 `tk-learn` 을 호출하거나
   canonical skill/catalog를 mutate하지 않는다. 별도의 명시적 invocation을 기다린다.
 
 ## 라우팅
@@ -123,7 +123,7 @@ Metric: <actual measurement, labeled proxy, or unavailable>
 Incident: <stable ID or source reference>
 ```
 
-이는 이후 명시적으로 실행하는 `tk-learn`의 input이다. 여기서 호출하지 않는다.
+이는 이후 명시적으로 실행하는 `tk-learn` 의 input이다. 여기서 호출하지 않는다.
 
 ### 기타 처분
 
@@ -136,13 +136,13 @@ Incident: <stable ID or source reference>
 
 external consumer repository에서는 익명화된 issue를 제안하기 전에 upstream
 origin/ref와 현재 upstream behavior를 검증한다. duplicate check를 마친 redacted
-proposal만 `upstream-draft-ready`로 분류하며, 자동으로 create, comment, label 또는
+proposal만 `upstream-draft-ready` 로 분류하며, 자동으로 create, comment, label 또는
 publish하지 않는다.
 
 ## 결과
 
-`## Diagnosis`로 시작하고 이어서 `## Action`을 출력한다. 필요할 때만
-`## Remaining uncertainty`를 추가한다.
+`## Diagnosis` 로 시작하고 이어서 `## Action` 을 출력한다. 필요할 때만
+`## Remaining uncertainty` 를 추가한다.
 
 하나의 incident에는 짧은 설명을 사용한다. 여러 symptom이 하나의 cause를 공유하면
 `ID | Incident | Root cause` 형식으로 cause마다 안정적인 `SD-##` row 하나를 유지한다.
@@ -151,7 +151,7 @@ reproduction verdict, verified failure plane, evidence, route 및 정확한 next
 복사하지 않는다.
 
 experiment evidence가 다섯 row를 넘거나 이후 resume에 정확한 references가 필요하면
-`.tigerkit/skill-diagnosis.md`를 bounded incident IDs, candidate/control/holdout
+`.tigerkit/skill-diagnosis.md` 를 bounded incident IDs, candidate/control/holdout
 evidence refs, measurements 및 route와 함께 atomically replace한다. 채팅에는
 `## Diagnosis`, `## Action` 및 필요한 uncertainty만 남긴다. archive, lifecycle state
 또는 중복된 raw output은 만들지 않는다.

@@ -31,7 +31,7 @@ current context가 controller 역할을 잠시 내려놓고 승인된 단 하나
 되며, frozen owned paths만 수정한다. 이것은 controller fallback이 아니다. 이 skill은 user-invoked이므로 명시적 `/tk-drive` 또는
 `$tk-drive` 호출 자체가 host의 user-requested AgentTool 조건을 충족한다.
 Mechanical Git bookkeeping은 final candidate가 통과한 뒤에만 controller가 맡을 수 있다.
-Host가 사용할 수 있는 worker를 delegated strategy로 dispatch하지 못하면 `Blocked`로
+Host가 사용할 수 있는 worker를 delegated strategy로 dispatch하지 못하면 `Blocked` 로
 중단한다. Direct strategy는 approved plan 기록 뒤 mutation을 시작하며, worker unavailable의 암묵적 fallback이 아니다.
 Executor는 다른 user-owned TigerKit workflow를 orchestrate하거나 호출하지 않는다.
 
@@ -56,17 +56,17 @@ boundary를 지난 뒤에는 cursor나 lifecycle claim이 아니라 새 근거�
    progress, approval, receipt만 소유한다. 상세 요구와 지시는 세 작업 문서에만 둔다.
    [documents.md](references/documents.md)와
    [worker-source.md](references/worker-source.md)에 따라 누락 문서를 직접
-   `Pending`으로 발급하거나 complete/fresh/lineage-consistent `Ready` 문서를 generic
+   `Pending` 으로 발급하거나 complete/fresh/lineage-consistent `Ready` 문서를 generic
    source로 소비한다. `Pending`, missing, incomplete, stale, lineage mismatch는 exact
    status로 `Blocked`하고 worker를 dispatch하거나 product를 수정하지 않는다. Branch,
    baseline `HEAD`, worktree, pre-existing dirty paths, 그리고 관련 durable prior-art를
    최대 일곱 개까지 기록한다.
 2. Evidence와 safe default로 되돌릴 수 있는 ambiguity를 해결한다. 모든
    material controller choice, 근거, behavior-changing alternative를 기록한다.
-   User-owned decision이 안전한 executable plan을 막을 때만 `tk-grill-me`를
-   호출한다. 질문이 pending인 동안에는 `🙋 drive > grill-me · 응답 필요`를
+   User-owned decision이 안전한 executable plan을 막을 때만 `tk-grill-me` 를
+   호출한다. 질문이 pending인 동안에는 `🙋 drive > grill-me · 응답 필요` 를
    출력하고 worker를 dispatch하지 않는다. Bounded comparison으로 해당
-   결정을 닫을 수 있을 때만 `tk-prototype`을 사용한다.
+   결정을 닫을 수 있을 때만 `tk-prototype` 을 사용한다.
 3. Source anchor, scope, exclusion, frozen user-visible literal, verification
    obligation을 포함해 Ready requirement와 acceptance criteria를 작성한다.
 4. 독립적으로 검증 가능한 `1..N` unit, dependency graph, wave를 도출한다.
@@ -75,23 +75,23 @@ boundary를 지난 뒤에는 cursor나 lifecycle claim이 아니라 새 근거�
    Scheduler를 만들거나 worker가 mutable worktree를 동시에 공유하게 하지 않는다.
 5. Test/check와 browser verification을 분류한다. Browser-visible AC라면 exact
    scenario, target, non-sensitive auth mode, prerequisite, limitation을
-   계획한다. 그 외에는 `not-required`로 기록한다. Required headless auth를
-   사용할 수 없으면 mutation 전에 `Unverifiable`이다.
+   계획한다. 그 외에는 `not-required` 로 기록한다. Required headless auth를
+   사용할 수 없으면 mutation 전에 `Unverifiable` 이다.
 6. [worker-dispatch.md](references/worker-dispatch.md)에 따라 각 unit의 execution
    strategy와 최소 tier를 선택한다. 격리 없는 bounded known-pattern이면
-   `strategy=direct`, `tier=cheapest`를 우선 추천하고, fresh context·isolation·
-   reviewer handoff·design-heavy reasoning이면 `delegated`와 근거를 추천한다.
-7. [ledger.md](references/ledger.md)에 따라 `.tigerkit/drive.md`의 current progress를 atomically
+   `strategy=direct`, `tier=cheapest` 를 우선 추천하고, fresh context·isolation·
+   reviewer handoff·design-heavy reasoning이면 `delegated` 와 근거를 추천한다.
+7. [ledger.md](references/ledger.md)에 따라 `.tigerkit/drive.md` 의 current progress를 atomically
    replace하고 reread한 뒤 하나의 compact approval surface를 제시한다. Ledger에는
    repository snapshot, 네 absolute path와 document status/lineage check, approval
    snapshot, unit/dispatch/verification receipt만 둔다. Goal, scope, frozen literal,
    R/AC, implementation instruction은 세 작업 문서에서 소유하며 unknown은
-   `unavailable`로 둔다. `👍 Recommendation:`에는 strategy와 tier를 포함하며,
+   `unavailable` 로 둔다. `👍 Recommendation:` 에는 strategy와 tier를 포함하며,
    사용자가 이 plan을 승인하는 것이 direct strategy의 명시적 승인이다.
    별도 direct 확인은 묻지 않는다. 이는 별도 lifecycle output이 아닌 approval evidence이다.
 
-Approval question이 action surface다. `🙋 drive · 응답 필요`와 정확히 하나의
-`👍 Recommendation:`을 보여 준다.
+Approval question이 action surface다. `🙋 drive · 응답 필요` 와 정확히 하나의
+`👍 Recommendation:` 을 보여 준다.
 Approval은 표시된 snapshot에만 적용된다. Material source, scope, branch/head,
 remote-state, verifier-prerequisite, irreversible-decision drift가 생기면
 승인은 무효가 되어 Prepare로 돌아간다. Plan이 변하지 않았다면 routine second approval을 받지 않는다.
@@ -140,7 +140,7 @@ Evidence만으로 confident verdict를 낼 수 없을 때는 동일한 좁은 R/
 사용하는 stronger fresh non-mutating reviewer를 최대 한 번 dispatch한다.
 User/repository policy가 independent review를 요구할 때만 사용 가능한
 built-in 또는 third-party reviewer를 쓴다. Required review를 사용할 수
-없으면 `Unverifiable`이다. 모든 fix는 여전히 fresh corrective worker에게
+없으면 `Unverifiable` 이다. 모든 fix는 여전히 fresh corrective worker에게
 보낸다.
 
 ## 최종화(Finalize)
@@ -148,10 +148,10 @@ built-in 또는 third-party reviewer를 쓴다. Required review를 사용할 수
 모든 verified unit commit 뒤에 aggregate R/AC traceability, repository check,
 ancestry, exclusion, freshness를 다시 확인한다. Unit commit, verifier/gap
 evidence, corrective round, aggregate result, recovery fact를 포함하도록
-`.tigerkit/drive.md`를 갱신한다. Non-success면 mutation을 동결하고
+`.tigerkit/drive.md` 를 갱신한다. Non-success면 mutation을 동결하고
 [non-success-finalization.md](references/non-success-finalization.md)를 따른다.
 
 Success면 concise behavior result, 유용한 unit commit, aggregate verification
-한 개에서 네 개, 정확히 `Status: Pass`를 출력한다. Active run의 terminal
+한 개에서 네 개, 정확히 `Status: Pass` 를 출력한다. Active run의 terminal
 response는 Drive만 출력한다. Child receipt, raw log, dispatch tier,
 progress marker는 생략한다.

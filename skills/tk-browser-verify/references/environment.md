@@ -4,7 +4,7 @@
 또는 CDP route를 선택합니다. 한 번의 run을 위해 새 browser dependency를
 설치하지 않습니다. 새 Chrome/Chromium process는 첫 browser call 전에 exact
 effective `--headless=new`, binary, PID/provider process ID, isolated run-owned
-`user-data-dir`를 반드시 증명해야 합니다.
+`user-data-dir` 를 반드시 증명해야 합니다.
 
 CDP에서는 live endpoint, actual process, port, profile ownership을 확인합니다.
 저장된 port, prior browser UUID, `DevToolsActivePort`, provider default, tool
@@ -22,7 +22,7 @@ authenticated target state를 확인합니다.
 interactive login, OTP, MFA, SSO, CAPTCHA, passkey, device approval에는 browser
 fallback이 없습니다. ephemeral secret-input channel을 통해 short-lived
 token/session을 요청합니다. 승인된 state를 확립할 방법이 없으면 product
-mutation 전에 `Unverifiable`을 반환합니다.
+mutation 전에 `Unverifiable` 을 반환합니다.
 
 ## Server와 serving source
 

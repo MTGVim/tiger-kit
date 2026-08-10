@@ -19,10 +19,10 @@ Description에만 있는 promise, body에만 있는 behavior 및 모순되는 ow
 experiment 전에 다음을 고정한다:
 
 ```text
-Incident: the observed prompt and expected/observed result
-Control: the nearest adjacent behavior that distinguishes the suspected cause
-Must preserve: critical behavior, safety, routing, authority, and host boundary
-Metric: actual anchor, labeled proxy, or unavailable
+Incident: observed prompt와 expected/observed result
+Control: suspected cause를 구별하는 nearest adjacent behavior
+Must preserve: critical behavior, safety, routing, authority 및 host boundary
+Metric: actual anchor, labeled proxy 또는 unavailable
 ```
 
 첫 incident/control pair로 failure planes를 구분할 수 없을 때만 scenario를 추가한다.
@@ -72,7 +72,7 @@ deliverable을 자동으로 무효화하지 않는다.
 Self-report는 하나의 observation일 뿐, 원인을 입증하기에 충분하지 않다. 모든 causal
 claim에는 instruction, routing, runtime, repository 또는 eval anchor가 필요하다.
 
-## 5. Minimum experiment
+## 5. 최소 experiment
 
 incident/control evidence만으로 cause를 직접 증명할 수 없을 때만 run-owned isolated
 checkout을 사용한다. 먼저 suspected cause와 이를 구분할 expected result를 명시한다.

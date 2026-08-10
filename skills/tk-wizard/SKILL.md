@@ -26,8 +26,8 @@ secret은 절대 echo하거나 기본 persist하지 않는다. irreversible acti
 
 기본은 한 번 실행하고 삭제하는 ephemeral user-run이다. agent는 browser/human input flow를
 end-to-end 실행하지 않으며, capture-to-destination trace와 안전한 handoff만 출력한다.
-생성 shell은 `bash -n` 및 가능하면 `shellcheck`으로 정적 검사하고, 실행 권한과 모든 값의
-최종 목적지를 확인한다. host/UI evidence가 없으면 정확히 `Unverifiable` 또는 `Blocked`로
+생성 shell은 `bash -n` 및 가능하면 `shellcheck` 으로 정적 검사하고, 실행 권한과 모든 값의
+최종 목적지를 확인한다. host/UI evidence가 없으면 정확히 `Unverifiable` 또는 `Blocked` 로
 중단한다. credential은 eval이나 출력에 넣지 않는다.
 
 ## 절차
@@ -37,5 +37,5 @@ end-to-end 실행하지 않으며, capture-to-destination trace와 안전한 han
 3. 확인된 stage만 helper로 작성하고, 누락된 evidence는 질문한다.
 4. static validation 결과, 실행 명령, 삭제/보관 handoff를 제공한다.
 
-Upstream adapted from Matt Pocock's `wizard` skill, retrieved 2026-08-11:
+Matt Pocock의 `wizard` skill에서 adapted했으며 2026-08-11에 retrieved했다:
 `https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/wizard/SKILL.md`.

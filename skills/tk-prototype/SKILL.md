@@ -19,7 +19,7 @@ production implementation이나 대화만으로 진행되는 exploration에는 �
 prompt, idea, screenshot, spec, ticket, code 또는 design reference를 입력으로 받는다.
 temporary route/harness가 더 유용하지 않은 한 `.tigerkit/prototypes/<slug>/` 아래에
 작성한다. 상위 디렉터리는 필요할 때만 만들고, 가능하면 원자적으로 교체하며, 자동으로
-archive하거나 `.gitignore`를 편집하지 않는다. scratch가 tracked 상태이면 경고한다.
+archive하거나 `.gitignore` 를 편집하지 않는다. scratch가 tracked 상태이면 경고한다.
 
 ## 작업 흐름
 
@@ -46,12 +46,12 @@ Screenshot: <absolute path | N/A>; actual inspection: yes | no | N/A
 ```
 
 5. `compare`: evidence를 criteria에 매핑해 verified differences, unverified items
-   및 next decision을 정리한다. parent contract가 `PR evidence: required`를
-   기록하면 run-owned absolute `Screenshot: <path>`와 actual image inspection을
+   및 next decision을 정리한다. parent contract가 `PR evidence: required` 를
+   기록하면 run-owned absolute `Screenshot: <path>` 와 actual image inspection을
    `## Tested` 아래 유지하고, `evidence_required: true`, criterion, evidence
-   directory 및 producer `tk-prototype`을 포함한 제한된 handoff를 노출한다.
+   directory 및 producer `tk-prototype` 을 포함한 제한된 handoff를 노출한다.
 6. `terminal summary`: 해당하는 경우 `## Confirmed`, `## Production implication`,
-   `## Tested`, `## Variants or harness` 및 `## Still fake`를 반환한다.
+   `## Tested`, `## Variants or harness` 및 `## Still fake` 를 반환한다.
    provenance/status block은 추가하지 않는다.
 
 해결되지 않은 UI comparison에서는 switch가 있는, 실질적으로 다른 rendered
@@ -62,7 +62,7 @@ minimal adapter를 사용하는 small pure harness를 우선한다.
 web prototype에서는 repository의 run commands, installed UI stack, components 및
 design tokens를 검사한다. 새 dependency나 manifest/lockfile 변경 없이 안전한
 isolated route/harness를 재사용한다. 없으면 작은
-`.tigerkit/prototypes/<slug>/index.html`, `styles.css` 및 `app.js`를 사용한다.
+`.tigerkit/prototypes/<slug>/index.html`, `styles.css` 및 `app.js` 를 사용한다.
 
 비교하는 동안 content, data 및 interaction state를 동일하게 유지하면서 decision-relevant
 concept 2–3개를 비교한다. 기본값은 wide에서 side-by-side 2–3 columns, narrow에서
@@ -93,35 +93,35 @@ official runtime verdict가 아니다.
 |---|---|---|
 | interrupted/partial write | run-owned임이 입증된 불완전 artifact만 정리한다 | `Fail`; unsafe cleanup path와 restart condition을 보고한다 |
 | server/harness failure | command, exit state, output 및 fake/real boundary를 보존한다 | `Fail`; production/dependencies로 벗어나지 않는다 |
-| run succeeds but output/screenshot evidence is unavailable | 같은 boundary 안에서 capture를 한 번 재시도한다 | `Unverifiable`; success/Complete라고 주장하지 않는다 |
+| 실행은 성공했지만 output/screenshot evidence를 사용할 수 없음 | 같은 boundary 안에서 capture를 한 번 재시도한다 | `Unverifiable`; success/Complete라고 주장하지 않는다 |
 | ownership/state conflict with existing artifact | existing path를 보존하고 evidence를 기록한다 | `Blocked`; 쓰기 전에 다른 path를 선택한다 |
 | cleanup failure | run-owned resource만 다시 식별하고 outcome을 보고한다 | `Fail | Unverifiable`; existing route/process를 보존한다 |
-| scope expands into production/promotion/commit | prototype을 중지하고 별도 implementation request로 분리한다 | `Blocked`; auto-promote하지 않는다 |
+| scope가 production/promotion/commit으로 확장됨 | prototype을 중지하고 별도 implementation request로 분리한다 | `Blocked`; auto-promote하지 않는다 |
 
 ## 🔴 CHECKPOINT · 🛑 STOP · 실행 경계(execution boundaries)
 
 실행 전에 temp path, fake/real data 및 verification question을 확인한다.
-environment 또는 production-scope expansion이 발생하면 `Blocked | Unverifiable`에서
+environment 또는 production-scope expansion이 발생하면 `Blocked | Unverifiable` 에서
 멈춘다.
 
 보고 전에 command, actual output/screenshot, fake/real boundary 및 unverified scope를
-대조한다. 하나라도 빠졌거나 실행이 실패하면 `Complete`가 될 수 없다.
-`Fail | Blocked | Unverifiable`을 사용한다.
+대조한다. 하나라도 빠졌거나 실행이 실패하면 `Complete` 가 될 수 없다.
+`Fail | Blocked | Unverifiable` 을 사용한다.
 
 ## 계약(Contract)
 
-결정에 필요한 status는 소유 섹션에서 한 번만 기록한다. `## Confirmed`로 시작한 뒤
-`## Production implication`, `## Tested`, `## Variants or harness` 및 `## Still fake`를
-이어서 사용하며, 비어 있는 섹션은 생략한다. `Confirmed`는 evidence-backed
-conclusion을 소유하고, `Production implication`은 discard/iterate/next decision을,
-`Tested`는 command result를, `Variants or harness`는 alternative/path/run URL 및 최종
-`kept | removed` state를, `Still fake`는 fake/real 및 unverified scope를 소유한다.
+결정에 필요한 status는 소유 섹션에서 한 번만 기록한다. `## Confirmed` 로 시작한 뒤
+`## Production implication`, `## Tested`, `## Variants or harness` 및 `## Still fake` 를
+이어서 사용하며, 비어 있는 섹션은 생략한다. `Confirmed` 는 evidence-backed
+conclusion을 소유하고, `Production implication` 은 discard/iterate/next decision을,
+`Tested` 는 command result를, `Variants or harness` 는 alternative/path/run URL 및 최종
+`kept | removed` state를, `Still fake` 는 fake/real 및 unverified scope를 소유한다.
 결정 이후에 command mechanics를 둔다.
 
-여러 criteria 또는 variants를 비교할 때 `## Confirmed`를 간결한
+여러 criteria 또는 variants를 비교할 때 `## Confirmed` 를 간결한
 `Criterion | A | B [| C] | Conclusion | Evidence` table로 렌더링한다. 사용자와
 관련된 row가 하나면 sentence를 사용한다. content/data/state가 동일하게 유지됐는지
-기록한다. 관찰하지 못한 차이에는 `not observed`, evidence가 없으면 `unverifiable`을
+기록한다. 관찰하지 못한 차이에는 `not observed`, evidence가 없으면 `unverifiable` 을
 사용한다. 감사되지 않은 aesthetic preference를 conclusion으로 승격하지 않는다.
 결과와 selection rationale을 두 개에서 다섯 개의 bullet 또는 option row로 요약한다.
 observation이 8개 이상이면 상위 5–7개를 표시하고 나머지를 소유한 prototype 또는
