@@ -5,17 +5,15 @@ ledger다. Repo/worktree-local file의 current task를 atomically replace하고
 다시 읽는다. Old task를 archive하거나 pointer, cursor, scheduler, global
 state를 만들지 않는다. Artifact가 존재한다고 권한이 생기지는 않는다.
 
-다음 evidence를 compact하게 유지한다.
+다음 progress/approval/receipt만 compact하게 유지한다.
 
-- task/source identity, R/AC, source anchor;
-- scope, exclusion, frozen source literal, durable prior art;
-- 근거와 material alternative를 포함한 controller-resolved assumption/ambiguity;
-- 명시적 user decision과 approved plan snapshot;
-- unit dependency graph, wave, execution strategy, requested dispatch tier, symbolic realized
-  model/effort axes or `host-default`, ownership;
-- test/browser obligation과 non-sensitive auth mode;
-- unit별 candidate, changed path, verifier/gap verdict, correction, commit;
-- aggregate verification, terminal status, non-success recovery evidence.
+- repository snapshot과 네 작업 문서의 absolute path, status, lineage/freshness verdict;
+- 명시적 user decision과 approved snapshot;
+- unit dependency/wave, execution strategy, dispatch tier와 realized axes;
+- dispatch, verifier/gap, correction, commit, aggregate/terminal/recovery receipt.
+
+Goal, scope, exclusion, frozen literal, R/AC, 구현 지시와 verifier detail은 `spec.md`,
+`tickets.md`, `implement.md`에만 둔다. `drive.md`에 복사하지 않는다.
 
 Nested worker, reviewer, verifier는 경쟁하는 Markdown ledger를 작성하지 않는다.
 Binary evidence는 run-owned directory를 참조하는 방식으로 둘 수 있다. Raw

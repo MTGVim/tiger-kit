@@ -111,7 +111,17 @@ Escalate only after missing context is supplied and a demonstrated reasoning or
 complexity failure remains. Escalation uses one tier higher and a fresh worker;
 it is bounded and never an unlimited retry loop.
 
-Each worker brief contains one unit, exact R/AC, relevant source paths,
-scope/exclusion, verification obligation, and current Git ownership facts. Do
+Each fresh worker brief contains one unit, exact R/AC, source/ticket scope,
+scope/exclusion, verification obligation, and current Git ownership facts. It
+must include these repository-root-derived absolute paths verbatim:
+
+```text
+/home/tigeryoo/workspace/tiger-kit/.tigerkit/drive.md
+/home/tigeryoo/workspace/tiger-kit/.tigerkit/spec.md
+/home/tigeryoo/workspace/tiger-kit/.tigerkit/tickets.md
+/home/tigeryoo/workspace/tiger-kit/.tigerkit/implement.md
+```
+
+The brief identifies source/ticket scope without copying document bodies. Do
 not nest unrelated source, verbose history, child receipts, secrets, or another
 workflow's authority.

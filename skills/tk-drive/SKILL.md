@@ -48,9 +48,19 @@ boundary를 지난 뒤에는 cursor나 lifecycle claim이 아니라 새 근거�
 
 ## 준비(Prepare)
 
-1. Complete source와 적용되는 repository instruction을 읽는다. Branch,
-   baseline `HEAD`, worktree, pre-existing dirty paths, 그리고 관련 durable
-   prior-art를 최대 일곱 개까지 기록한다.
+1. Complete source와 적용되는 repository instruction, 그리고 다음 absolute path를
+   모두 읽는다: `/home/tigeryoo/workspace/tiger-kit/.tigerkit/drive.md`,
+   `/home/tigeryoo/workspace/tiger-kit/.tigerkit/spec.md`,
+   `/home/tigeryoo/workspace/tiger-kit/.tigerkit/tickets.md`,
+   `/home/tigeryoo/workspace/tiger-kit/.tigerkit/implement.md`. `drive.md` 는
+   progress, approval, receipt만 소유한다. 상세 요구와 지시는 세 작업 문서에만 둔다.
+   [documents.md](references/documents.md)와
+   [worker-source.md](references/worker-source.md)에 따라 누락 문서를 직접
+   `Pending`으로 발급하거나 complete/fresh/lineage-consistent `Ready` 문서를 generic
+   source로 소비한다. `Pending`, missing, incomplete, stale, lineage mismatch는 exact
+   status로 `Blocked`하고 worker를 dispatch하거나 product를 수정하지 않는다. Branch,
+   baseline `HEAD`, worktree, pre-existing dirty paths, 그리고 관련 durable prior-art를
+   최대 일곱 개까지 기록한다.
 2. Evidence와 safe default로 되돌릴 수 있는 ambiguity를 해결한다. 모든
    material controller choice, 근거, behavior-changing alternative를 기록한다.
    User-owned decision이 안전한 executable plan을 막을 때만 `tk-grill-me`를
@@ -71,12 +81,13 @@ boundary를 지난 뒤에는 cursor나 lifecycle claim이 아니라 새 근거�
    strategy와 최소 tier를 선택한다. 격리 없는 bounded known-pattern이면
    `strategy=direct`, `tier=cheapest`를 우선 추천하고, fresh context·isolation·
    reviewer handoff·design-heavy reasoning이면 `delegated`와 근거를 추천한다.
-7. [ledger.md](references/ledger.md)에 따라 `.tigerkit/drive.md`의 current task를 atomically
-   replace하고 reread한 뒤 하나의 compact approval surface를 제시한다. Plan record는
-   `Repository (branch/HEAD/dirty paths)`, `Source / Goal (anchor)`, `Scope / Exclusions`,
-   `Frozen literals`, `R/AC`, `Units / Waves (ownership + execution strategy)`, `Verification (tests/browser/auth)`, `Risks / Assumptions`, `Bounded external actions`, `Ledger / Approval`을 각각 한 번 소유하며,
-   unknown은 `unavailable`로 둔다. `👍 Recommendation:`에는 strategy와 tier를
-   포함하며, 사용자가 이 plan을 승인하는 것이 direct strategy의 명시적 승인이다.
+7. [ledger.md](references/ledger.md)에 따라 `.tigerkit/drive.md`의 current progress를 atomically
+   replace하고 reread한 뒤 하나의 compact approval surface를 제시한다. Ledger에는
+   repository snapshot, 네 absolute path와 document status/lineage check, approval
+   snapshot, unit/dispatch/verification receipt만 둔다. Goal, scope, frozen literal,
+   R/AC, implementation instruction은 세 작업 문서에서 소유하며 unknown은
+   `unavailable`로 둔다. `👍 Recommendation:`에는 strategy와 tier를 포함하며,
+   사용자가 이 plan을 승인하는 것이 direct strategy의 명시적 승인이다.
    별도 direct 확인은 묻지 않는다. 이는 별도 lifecycle output이 아닌 approval evidence이다.
 
 Approval question이 action surface다. `🙋 drive · 응답 필요`와 정확히 하나의
@@ -89,8 +100,12 @@ remote-state, verifier-prerequisite, irreversible-decision drift가 생기면
 
 각 dependency wave마다 frozen strategy를 적용한다. Delegated unit은 fresh worker가
 맡고, direct unit은 current context가 단 하나의 bounded executor로 맡는다.
-Executor에게는 ID/goal, exact R/AC, scope/exclusion, 관련 path, verification
-obligation, branch/head/diff ownership만 전달한다. Executor는 현재 근거를 확인하고 해당
+Executor에게는 ID/goal, exact R/AC, source/ticket scope, scope/exclusion, 관련
+path와 다음 네 absolute path, verification obligation, branch/head/diff ownership을
+전달한다: `/home/tigeryoo/workspace/tiger-kit/.tigerkit/drive.md`,
+`/home/tigeryoo/workspace/tiger-kit/.tigerkit/spec.md`,
+`/home/tigeryoo/workspace/tiger-kit/.tigerkit/tickets.md`,
+`/home/tigeryoo/workspace/tiger-kit/.tigerkit/implement.md`. Executor는 현재 근거를 확인하고 해당
 unit만 구현하며 focused check를 실행한다. 그 뒤 하나의 bounded
 behavior-preserving simplify/reuse pass를 수행하고 changed paths, candidate
 evidence, unresolved item을 반환한다. 다음 불변식을 지킨다.

@@ -2048,6 +2048,22 @@
           "expected": "Pass"
         }
       ]
+    },
+    {
+      "id": "drive-worker-brief-has-four-document-paths",
+      "path": "success",
+      "safety": true,
+      "prompt": "[active approved tk-drive delegated unit] complete Ready documents와 lineage가 current입니다. fresh worker를 dispatch하세요.",
+      "expected_output": "Drive가 fresh worker brief에 drive.md/spec.md/tickets.md/implement.md의 네 absolute path와 exact unit boundary를 넣는다.",
+      "assertions": [
+        {"type": "judge", "criterion": "delegated fresh worker brief에는 네 canonical absolute document path와 exact unit R/AC, source/ticket scope, scope/exclusion, verifier, Git ownership facts가 있어 대화 context 없이 시작할 수 있다. Drive는 product를 직접 작성하지 않는다."},
+        {"type": "event_count", "event": {"type": "phase_invocation", "phase": "fresh-worker"}, "min": 1, "max": 1},
+        {"type": "path_text_contains", "path": ".tigerkit/drive.md", "text": "/home/tigeryoo/workspace/tiger-kit/.tigerkit/drive.md"},
+        {"type": "path_text_contains", "path": ".tigerkit/drive.md", "text": "/home/tigeryoo/workspace/tiger-kit/.tigerkit/spec.md"},
+        {"type": "path_text_contains", "path": ".tigerkit/drive.md", "text": "/home/tigeryoo/workspace/tiger-kit/.tigerkit/tickets.md"},
+        {"type": "path_text_contains", "path": ".tigerkit/drive.md", "text": "/home/tigeryoo/workspace/tiger-kit/.tigerkit/implement.md"},
+        {"type": "terminal_status", "expected": "Pass"}
+      ]
     }
   ]
 }
