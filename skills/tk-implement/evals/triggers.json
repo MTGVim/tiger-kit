@@ -1,0 +1,10 @@
+{
+  "skill": "tk-implement",
+  "kind": "user-invoked",
+  "queries": [
+    {"id":"implement-train","split":"train","query":"$tk-implement","should_trigger":true},
+    {"id":"implement-explicit","split":"validation","query":"/tk-implement Ready ticket T03을 구현해 주세요","should_trigger":true,"facets":["formal"]},
+    {"id":"implement-explicit-short","split":"validation","query":"$tk-implement T03","should_trigger":true,"facets":["short"]},
+    {"id":"implement-implicit-block","split":"validation","query":"Ready ticket을 구현해 주세요","should_trigger":false,"facets":["formal"]}
+  ]
+}

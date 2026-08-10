@@ -4,7 +4,6 @@
     "tk-reflect",
     "tk-adhd",
     "tk-improve",
-    "tk-implement",
     "tk-pr-triage"
   ],
   "retired_catalog_cases": [
@@ -31,7 +30,12 @@
     "tk-browser-verify:behavior:browser-transient-auth-material-establishes-headless-session",
     "tk-browser-verify:behavior:browser-unknown-auth-injection-is-unverifiable",
     "tk-browser-verify:behavior:browser-auth-unavailable-stops-before-mutation",
-    "tk-browser-verify:behavior:browser-captures-return-to-owner-ledger"
+    "tk-browser-verify:behavior:browser-captures-return-to-owner-ledger",
+    "tk-implement:behavior:implement-success-single-commit-receipt",
+    "tk-implement:behavior:implement-verifier-fail-no-commit",
+    "tk-implement:behavior:implement-missing-input-unverifiable",
+    "tk-implement:behavior:implement-worker-unavailable-block",
+    "tk-implement:behavior:implement-preexisting-dirty-preserved-block"
   ],
   "catalog_cases": [
     "catalog:behavior:drive-vs-grill-drive",

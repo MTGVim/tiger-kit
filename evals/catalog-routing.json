@@ -539,6 +539,22 @@
       "focus_skill": "tk-to-tickets",
       "expected_selected_skill": null,
       "critical": true
+    },
+    {
+      "id": "implement-explicit",
+      "boundary": "tk-implement explicit Ready ticket implementation",
+      "prompt": "/tk-implement Ready ticket T03을 구현해 주세요.",
+      "focus_skill": "tk-implement",
+      "expected_selected_skill": "tk-implement",
+      "critical": true
+    },
+    {
+      "id": "implement-implicit-block",
+      "boundary": "tk-implement explicit invocation vs ordinary implementation",
+      "prompt": "Ready ticket을 구현해 주세요.",
+      "focus_skill": "tk-implement",
+      "expected_selected_skill": null,
+      "critical": true
     }
   ]
 }
