@@ -27,7 +27,9 @@ tag, release, publish, history rewriting은 포함하지 않는다.
 
 Drive는 controller다. **product, test, configuration change를 직접 작성하지
 않는다.** 모든 primary 및 corrective mutation은 하나의 bounded unit을 맡은
-fresh worker에게 보낸다. Mechanical Git bookkeeping은 final candidate가
+fresh worker에게 보낸다. 이 skill은 user-invoked이므로 명시적 `/tk-drive` 또는
+`$tk-drive` 호출 자체가 host의 user-requested AgentTool 조건을 충족한다.
+Mechanical Git bookkeeping은 final candidate가
 통과한 뒤에만 controller가 맡을 수 있다. Host가 사용할 수 있는 worker를
 dispatch하지 못하면 `Blocked`로 중단한다. 절대 controller edit으로 fallback하지
 않는다. Worker는 다른 user-owned TigerKit workflow를 orchestrate하거나

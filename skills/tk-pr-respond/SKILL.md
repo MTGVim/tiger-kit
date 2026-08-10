@@ -59,11 +59,12 @@ Prepare -> Execute -> Close gaps -> Finalize
 4. independently verifiable resolution unit과 dependency wave를 도출한다. coupled
    또는 uncertain work는 serialize한다. concurrent unit에는 host-provided isolated
    checkout/worktree와 proven independence가 필요하다. scheduler를 만들지 않는다.
-5. dispatch마다 least-sufficient worker tier를 선택한다: `cheapest`는 mechanical
-   local work, `standard`는 ordinary multi-file/debugging work, `strongest`는
-   design-heavy, unknown-cause, broad-reasoning, security/data-sensitive work,
-   `host-default`는 per-spawn 선택이 불가능할 때 사용한다. model configuration이나
-   provider/model mapping은 절대 노출하지 않는다.
+5. `skills/tk-drive/references/worker-dispatch.md`의 canonical worker-dispatch
+   contract에 따라 dispatch마다 least-sufficient worker tier를 선택하고, model/effort
+   capability를 축별로 결정론적으로 실현한다. model configuration이나
+   provider/model mapping은 절대 노출하지 않는다. per-spawn 선택이 불가능하면
+   `host-default` collapse를 기록하고, usable fresh worker를 dispatch할 수 없으면
+   `Blocked`로 끝낸다.
 6. goal/PR/head, included/excluded findings, apply/reply/defer decisions, R/AC,
    units/waves, verification, exact bounded `push`/reply/resolve/re-review/summary actions,
    risks, assumptions/ambiguities를 포함한 compact approval surface 하나를 준비한다. 이것이
