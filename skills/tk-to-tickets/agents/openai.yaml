@@ -1,0 +1,6 @@
+interface:
+  short_description: "[user] Ready spec을 검증 가능한 vertical tickets로 분해합니다."
+  default_prompt: "tk-to-tickets를 사용해 Ready spec의 source/R-AC를 누락 없이 vertical ticket으로 분해하세요."
+
+policy:
+  allow_implicit_invocation: false

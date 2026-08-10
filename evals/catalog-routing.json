@@ -523,6 +523,22 @@
       "focus_skill": "tk-to-spec",
       "expected_selected_skill": null,
       "critical": true
+    },
+    {
+      "id": "to-tickets-explicit",
+      "boundary": "tk-to-tickets explicit Ready spec slicing",
+      "prompt": "/tk-to-tickets Ready spec을 독립적인 vertical ticket으로 분해해 주세요.",
+      "focus_skill": "tk-to-tickets",
+      "expected_selected_skill": "tk-to-tickets",
+      "critical": true
+    },
+    {
+      "id": "to-tickets-implicit-block",
+      "boundary": "tk-to-tickets explicit invocation vs ordinary planning",
+      "prompt": "Ready spec을 ticket으로 쪼개 주세요.",
+      "focus_skill": "tk-to-tickets",
+      "expected_selected_skill": null,
+      "critical": true
     }
   ]
 }

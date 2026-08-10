@@ -4,7 +4,6 @@
     "tk-reflect",
     "tk-adhd",
     "tk-improve",
-    "tk-to-tickets",
     "tk-implement",
     "tk-pr-triage"
   ],
@@ -52,6 +51,8 @@
     "catalog:behavior:pr-rebase-explicit",
     "catalog:behavior:pr-rebase-generic-block",
     "catalog:behavior:pr-sweep-report-explicit",
-    "catalog:behavior:browser-headless-auth-verifier-explicit"
+    "catalog:behavior:browser-headless-auth-verifier-explicit",
+    "catalog:behavior:to-tickets-explicit",
+    "catalog:behavior:to-tickets-implicit-block"
   ]
 }
