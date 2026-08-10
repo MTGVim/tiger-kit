@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## 2026.08.11-1 — Release
+
+- docs(skills): localize TigerKit guidance
+- feat(tk-drive): add document lifecycle
+- feat(skills): add tk-mwhat
+- feat(skills): add tk-wizard
+- feat(skills): add tk-implement
+- feat(skills): add tk-to-tickets
+- feat(skills): add tk-to-spec
+- feat(skills): align artifact-first checkpoints
+
 ## 2026.08.10-3 — Release
 
 - fix(skills): make hybrid invocation explicit
