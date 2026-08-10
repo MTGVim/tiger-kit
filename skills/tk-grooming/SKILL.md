@@ -1,6 +1,7 @@
 ---
 name: tk-grooming
 description: "[user/auto] 기존 repository 또는 user skill의 중복·범위·배치·trigger를 감사합니다. 기본값은 report-only이며 literal --apply 또는 current-turn approval 전에는 절대 변경하지 않습니다."
+disable-model-invocation: false
 argument-hint: "[scope] [--apply]"
 metadata:
   tigerkit:

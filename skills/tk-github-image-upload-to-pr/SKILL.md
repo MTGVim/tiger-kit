@@ -1,6 +1,7 @@
 ---
 name: tk-github-image-upload-to-pr
 description: "[user/auto] 기존 GitHub PR body 또는 명시적으로 요청된 comment에 local evidence image를 reviewed gh-attach extension 또는 authenticated CDP browser로 업로드합니다. explicit selection, 명확한 local-image insertion request, active tk-pr-open의 정확한 evidence_required handoff에서 사용하며 generic PR, screenshot 또는 GitHub request에는 적용하지 않습니다."
+disable-model-invocation: false
 argument-hint: "<PR and local image path(s)>"
 metadata:
   tigerkit:

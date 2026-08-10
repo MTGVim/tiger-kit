@@ -1,6 +1,7 @@
 ---
 name: tk-browser-verify
 description: "[user/auto] 승인된 browser-visible acceptance criteria를 headless browser에서 검증합니다. 명시적 real-page verification 또는 정확한 parent verifier handoff에 사용하며, passive web research, generic design critique, implementation, screenshot-only request에는 사용하지 않습니다."
+disable-model-invocation: false
 metadata:
   tigerkit:
     kind: hybrid

@@ -1,6 +1,7 @@
 ---
 name: tk-learn
 description: "[user/auto] 제공된 경험이나 자료에서 재사용 가능한 repository 또는 user skill을 설계합니다. 명확한 skill-authoring intent가 있으면 draft와 approval checkpoint까지만 진행하며, approval 전에는 쓰지 않습니다."
+disable-model-invocation: false
 argument-hint: "<conversation, note, path, URL, workflow, or skill-evolution candidate>"
 metadata:
   tigerkit:

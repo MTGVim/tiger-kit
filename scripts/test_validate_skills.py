@@ -23,6 +23,7 @@ class EvalSotValidatorTest(unittest.TestCase):
             data = {
                 "name": "tk-example",
                 "description": "[user/auto] 예시 스킬",
+                "disable-model-invocation": False,
                 "metadata": {
                     "tigerkit": {
                         "kind": "hybrid",
@@ -36,6 +37,28 @@ class EvalSotValidatorTest(unittest.TestCase):
                     "tk-example", skill_dir, data, "한국어 운영 지침\n"
                 )
             self.assertEqual(errors, [])
+
+    def test_hybrid_requires_explicit_model_invocation_flag(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            skill_dir = root / "tk-example"
+            skill_dir.mkdir()
+            data = {
+                "name": "tk-example",
+                "description": "[user/auto] 예시 스킬",
+                "metadata": {
+                    "tigerkit": {
+                        "kind": "hybrid",
+                        "origin": "tigerkit",
+                        "relationship": "native",
+                    }
+                },
+            }
+            with patch.object(validate_skills, "ROOT", root):
+                errors, _ = validate_skills.validate_frontmatter_and_body(
+                    "tk-example", skill_dir, data, "한국어 운영 지침\n"
+                )
+            self.assertTrue(any("requires disable-model-invocation: false" in error for error in errors))
 
     def test_catalog_is_discovered_from_skill_directories(self) -> None:
         skills = validate_skills.discover_skills()

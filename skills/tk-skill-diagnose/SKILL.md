@@ -1,6 +1,7 @@
 ---
 name: tk-skill-diagnose
 description: "[user/auto] 하나의 observed 또는 measured Agent Skill anomaly를 fresh context에서 재현·격리한 뒤, 검증된 skill objective를 tk-learn으로 라우팅한다. selection, instruction, output, host, eval, stability 또는 resource incident에 사용한다. ordinary code bug, static audit, new skill creation 또는 symptom-free optimization에는 사용하지 않는다."
+disable-model-invocation: false
 argument-hint: "<skill name/path> <incident prompt, expected, observed, host, metric, or trace>"
 metadata:
   tigerkit:
