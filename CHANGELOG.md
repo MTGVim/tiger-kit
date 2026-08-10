@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.10-1 — Release
+
+- fix(tk-drive): restore worker dispatch contract
+
 ## 2026.08.08-2 — Release
 
 - docs(tk-drive): sharpen approval surface

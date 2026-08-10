@@ -1965,6 +1965,32 @@
           "expected": "Pass"
         }
       ]
+    },
+    {
+      "id": "drive-realizes-worker-tier-axes-with-partial-host-capability",
+      "path": "success",
+      "prompt": "[active tk-drive Prepare] U1은 complete-evidence mechanical edit, U2는 ordinary multi-file integration, U3는 security-sensitive unknown-cause change입니다. 사용자가 `$tk-drive`를 명시적으로 호출했고 host capability는 model=unavailable, effort=per_call입니다. 세 unit의 worker dispatch를 준비해 주세요.",
+      "expected_output": "Drive가 U1/U2/U3에 cheapest/standard/strongest를 유지하되 model axis는 host-default로 collapse하고 effort axis는 low/low/high로 실현하며 collapse 사실을 non-user-visible ledger evidence에 기록한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "canonical worker-dispatch contract를 따라 model과 effort를 독립적으로 해석하고, model=unavailable인 host에서도 available effort를 적용한다. U1/U2의 low-effort collapse와 U3의 high-effort realization을 결정론적으로 만들며 provider/model name, user tier decision, controller-edit fallback을 만들지 않는다. 명시적 user-invoked tk-drive 호출을 AgentTool authorization 부족으로 뒤집지 않는다."
+        },
+        {
+          "type": "path_text_contains",
+          "path": ".tigerkit/drive.md",
+          "text": "collapse"
+        },
+        {
+          "type": "path_text_contains",
+          "path": ".tigerkit/drive.md",
+          "text": "host-default"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ]
 }
