@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.10-2 — Release
+
+- feat(execution): recommend direct units
+
 ## 2026.08.10-1 — Release
 
 - fix(tk-drive): restore worker dispatch contract
