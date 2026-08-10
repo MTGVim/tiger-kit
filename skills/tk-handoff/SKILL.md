@@ -1,6 +1,7 @@
 ---
 name: tk-handoff
 description: "[user/auto] verified handoff artifact를 작성하거나 기존 handoff를 명시적으로 재개합니다. 일반 요약, 상태 질문, 일반적인 continuation에는 적용하지 않습니다."
+disable-model-invocation: false
 argument-hint: "[goal or target] [--output <path>|--resume]"
 metadata:
   tigerkit:

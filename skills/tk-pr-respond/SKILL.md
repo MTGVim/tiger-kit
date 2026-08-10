@@ -1,6 +1,7 @@
 ---
 name: tk-pr-respond
 description: "[user/auto] 하나의 pull request에서 선택한 feedback 또는 지원되는 GitHub Actions failure를 하나의 승인된 plan, direct 또는 fresh-worker unit, acceptance verification, 제한된 publication으로 해결합니다."
+disable-model-invocation: false
 argument-hint: "<pull request or repository> [--ci] [--direct]"
 metadata:
   tigerkit:

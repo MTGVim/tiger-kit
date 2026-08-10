@@ -1,6 +1,7 @@
 ---
 name: tk-prototype
 description: "[user/auto] 비교로 불확실성을 줄일 수 있을 때 disposable UI 또는 logic prototype을 만들고 실행한다. production implementation이나 대화형 아이디어 탐색에는 적용하지 않는다."
+disable-model-invocation: false
 argument-hint: "<idea, screenshot, spec, ticket, code, or design reference>"
 metadata:
   tigerkit:

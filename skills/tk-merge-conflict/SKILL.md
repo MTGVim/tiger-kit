@@ -1,6 +1,7 @@
 ---
 name: tk-merge-conflict
 description: "[user/auto] intent evidence를 바탕으로 active merge, rebase, cherry-pick, revert conflict를 해결하고 operation을 완료합니다. active conflict가 없는 일반 파일 수정에는 적용하지 않습니다."
+disable-model-invocation: false
 metadata:
   tigerkit:
     kind: hybrid

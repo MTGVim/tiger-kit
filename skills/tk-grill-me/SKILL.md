@@ -1,6 +1,7 @@
 ---
 name: tk-grill-me
 description: "[user/auto] 사용자 소유 결정을 한 번에 하나씩 evidence-first 질문으로 닫는다. 명시적 invocation, 정확한 active tk-drive decision handoff, 또는 이 스킬의 pending question에 대한 답변에서 사용한다. 일반적인 ambiguity, artifact 존재, generic continuation만으로는 자동 시작하지 않는다."
+disable-model-invocation: false
 metadata:
   tigerkit:
     kind: hybrid

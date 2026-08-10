@@ -197,8 +197,8 @@ def validate_frontmatter_and_body(
         if 'short_description: "[user] ' not in openai_text:
             errors.append(f"{label}: Codex short_description must begin with [user]")
     elif kind == "hybrid":
-        if disabled:
-            errors.append(f"{label}: hybrid skill must allow implicit invocation")
+        if data.get("disable-model-invocation") is not False:
+            errors.append(f"{label}: hybrid skill requires disable-model-invocation: false")
         if implicit_blocked:
             errors.append(f"{label}: hybrid Codex policy must not block implicit invocation")
         if openai_text and 'short_description: "[user/auto] ' not in openai_text:
