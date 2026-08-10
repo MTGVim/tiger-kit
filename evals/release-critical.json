@@ -35,7 +35,11 @@
     "tk-implement:behavior:implement-verifier-fail-no-commit",
     "tk-implement:behavior:implement-missing-input-unverifiable",
     "tk-implement:behavior:implement-worker-unavailable-block",
-    "tk-implement:behavior:implement-preexisting-dirty-preserved-block"
+    "tk-implement:behavior:implement-preexisting-dirty-preserved-block",
+    "tk-wizard:behavior:secret-hidden",
+    "tk-wizard:behavior:irreversible-confirm",
+    "tk-wizard:behavior:unknown-ui",
+    "tk-wizard:behavior:agent-negative"
   ],
   "catalog_cases": [
     "catalog:behavior:drive-vs-grill-drive",

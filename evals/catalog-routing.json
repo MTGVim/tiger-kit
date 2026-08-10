@@ -555,6 +555,14 @@
       "focus_skill": "tk-implement",
       "expected_selected_skill": null,
       "critical": true
+    },
+    {
+      "id": "tk-wizard-explicit-human-session",
+      "boundary": "tk-wizard vs agent-executable work",
+      "prompt": "credential provisioning wizard를 준비해줘",
+      "focus_skill": "tk-wizard",
+      "expected_selected_skill": "tk-wizard",
+      "critical": false
     }
   ]
 }

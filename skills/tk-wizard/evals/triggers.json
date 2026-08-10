@@ -1,0 +1,303 @@
+{
+  "skill": "tk-wizard",
+  "kind": "hybrid",
+  "queries": [
+    {
+      "id": "p-formal",
+      "split": "train",
+      "query": "CI credential provisioning 절차를 준비해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "p-casual",
+      "split": "train",
+      "query": "대시보드에서 키 뽑는 wizard 만들어줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "p-typo",
+      "split": "train",
+      "query": "MFA 셋업 wizrd 단계 정리",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "p-ko-en",
+      "split": "train",
+      "query": "secret을 dashboard에서 발급하는 절차",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "p-short",
+      "split": "train",
+      "query": "OTP 설정 wizard",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "p-compound",
+      "split": "train",
+      "query": "device pairing과 keychain permission 단계를 준비해줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "p-migrate",
+      "split": "validation",
+      "query": "migration cutover 전에 사람이 할 일을 안내해줘 검증문장6",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "p-passkey",
+      "split": "validation",
+      "query": "passkey login 수동 단계를 만들어줘 검증문장7",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "n-agent",
+      "split": "validation",
+      "query": "이 API 호출은 네가 직접 실행해줘 검증문장8",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "n-approval",
+      "split": "validation",
+      "query": "이 변경을 승인할지 결정해줘 검증문장9",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "n-acceptance",
+      "split": "validation",
+      "query": "브라우저 acceptance verification 해줘 검증문장10",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "n-code",
+      "split": "validation",
+      "query": "이 함수 버그를 고쳐줘 검증문장11",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "n-ordinary",
+      "split": "validation",
+      "query": "README를 업데이트해줘 검증문장12",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "n-typo",
+      "split": "validation",
+      "query": "키가 왜 null인지 알려줘 검증문장13",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "n-short",
+      "split": "validation",
+      "query": "결정해줘 검증문장14",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "n-compound",
+      "split": "validation",
+      "query": "테스트 실행하고 PR 열어줘 검증문장15",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "train-extra-True-0",
+      "split": "train",
+      "query": "CI credential provisioning 절차를 준비해 주세요. (추가 0)",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "train-extra-True-1",
+      "split": "train",
+      "query": "CI credential provisioning 절차를 준비해 주세요. (추가 1)",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "train-extra-False-0",
+      "split": "train",
+      "query": "이 API 호출은 네가 직접 실행해줘 (추가 0)",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "train-extra-False-1",
+      "split": "train",
+      "query": "이 API 호출은 네가 직접 실행해줘 (추가 1)",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "train-extra-False-2",
+      "split": "train",
+      "query": "이 API 호출은 네가 직접 실행해줘 (추가 2)",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "train-extra-False-3",
+      "split": "train",
+      "query": "이 API 호출은 네가 직접 실행해줘 (추가 3)",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "train-extra-False-4",
+      "split": "train",
+      "query": "이 API 호출은 네가 직접 실행해줘 (추가 4)",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "train-extra-False-5",
+      "split": "train",
+      "query": "이 API 호출은 네가 직접 실행해줘 (추가 5)",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "train-extra-False-6",
+      "split": "train",
+      "query": "이 API 호출은 네가 직접 실행해줘 (추가 6)",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "train-extra-False-7",
+      "split": "train",
+      "query": "이 API 호출은 네가 직접 실행해줘 (추가 7)",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-extra-True-0",
+      "split": "validation",
+      "query": "CI credential provisioning 절차를 준비해 주세요. (추가 0) 검증문장26",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-extra-True-1",
+      "split": "validation",
+      "query": "CI credential provisioning 절차를 준비해 주세요. (추가 1) 검증문장27",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-extra-True-2",
+      "split": "validation",
+      "query": "CI credential provisioning 절차를 준비해 주세요. (추가 2) 검증문장28",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-extra-True-3",
+      "split": "validation",
+      "query": "CI credential provisioning 절차를 준비해 주세요. (추가 3) 검증문장29",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-extra-True-4",
+      "split": "validation",
+      "query": "CI credential provisioning 절차를 준비해 주세요. (추가 4) 검증문장30",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "val-pos-last",
+      "split": "validation",
+      "facets": [
+        "formal"
+      ],
+      "query": "credential bootstrap manual host path evidence alpha",
+      "should_trigger": true
+    },
+    {
+      "id": "val-neg-last",
+      "split": "validation",
+      "facets": [
+        "casual"
+      ],
+      "query": "refactor this pure function locally beta",
+      "should_trigger": false
+    }
+  ]
+}
