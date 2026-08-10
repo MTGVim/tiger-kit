@@ -16,4 +16,15 @@ specialist procedure, bounded delegation/review에만 세부사항을 추가합�
 - Agent Skills portable-core field와 target-host extension을 분리하고 host별로 body를 복사하지 않습니다. 알 수 없는 target-host invocation은 `pending`으로 남깁니다.
 - approval 전 candidate status는 `reported | pending`이며 어떤 file도 applied하지 않습니다. approval 후 성공만 `applied`를 받습니다.
 
+## Draft artifact checkpoint
+
+pre-approval draft는 저장소 루트의 `.tigerkit/learn.md`에만 pending scratch
+ledger로 기록합니다. candidate, evidence, checklist, target path, not-created
+paths, next step, decision/status를 기록하고 atomic rename 뒤 reread합니다.
+missing, stale, 또는 readback mismatch면 `Blocked`이며 approval 질문과
+canonical write를 모두 중지합니다. 채팅은 absolute path, 상태, 짧은 요약,
+approval question 하나만 보여주고 장부 전문이나 exact file body를 복사하지
+않습니다. approval 전 canonical skill path와
+`.tigerkit/skill-drafts/<skill-name>/`는 반드시 `not created`입니다.
+
 User-facing progress와 receipt prose는 사용자의 언어를 따릅니다.

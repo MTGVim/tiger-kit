@@ -67,13 +67,30 @@ Prepare -> Execute -> Close gaps -> Finalize
    exclusions를 freeze합니다. proven independence와 host-provided isolation이
    함께 있을 때만 concurrency를 허용하고, wave를 도출합니다. uncertainty는
    serialize하며 scheduler는 만들지 않습니다.
-5. `.tigerkit/pr-sweep.md`를 atomically replace한 뒤 reread하고 actionable/held/report-only row, assumptions/ambiguities, route wave, verification, risks, worktree ownership, bounded remote actions, `No remote changes yet`를 담은 단일 `## PR sweep plan`을 표시합니다. Plan evidence fields (각 한 번): `Repository scope`, `Triage ref`,
-   `Rows (PR # | head SHA | category | route)`, `Routes / waves`, `Verification`, `Risks / exclusions`, `Worktree ownership`,
-   `Authority`, `Approval`, `Remote changes: No remote changes yet`; unknown은 `unavailable`로 두고 route/authority를 추측하지 않습니다.
+5. `.tigerkit/pr-sweep.md`를 atomically replace한 뒤 reread합니다. actionable/held/report-only
+   row, assumptions/ambiguities, route wave, verification, risks, worktree ownership,
+   bounded remote actions, `No remote changes yet`와 다음 Plan evidence fields(각 한 번)를
+   파일에 보존합니다: `Repository scope`, `Triage ref`, `Rows (PR # | head SHA | category | route)`,
+   `Routes / waves`, `Verification`, `Risks / exclusions`, `Worktree ownership`, `Authority`,
+   `Approval`, `Remote changes: No remote changes yet`. unknown은 `unavailable`로 두고
+   route/authority를 추측하지 않습니다. 채팅에는 plan 전문이나 이 evidence fields를
+   반복하지 않습니다.
 
-`🙋 sweep > plan · 응답 필요`를 하나만 emit하고 `👍 Recommendation:`을 정확히 하나 표시한 뒤 approval question을 묻습니다. approval 전에는 worktree/commit을
-만들거나 remote write를 수행하지 않습니다. approval은 nested Respond/Rebase에
-정확히 제한된 authority를 제공하며, nested owner는 다시 묻지 않습니다.
+   artifact에는 work `Status`와 별도로 `Disposition: reported | applied | pending`을
+   기록합니다. atomic write와 reread가 일치하면 `Disposition: applied`여도 approval 전
+   work `Status: Pending`은 유지합니다. ledger가 missing/stale이거나 reread가 다르면
+   `Status: Blocked`, `Disposition: pending`으로 멈추고 recommendation, approval
+   question, worktree, commit, remote mutation을 만들지 않습니다.
+
+`🙋 sweep > plan · 응답 필요`를 하나만 emit하고, artifact의 absolute path와 `Status`,
+row/count 요약, 정확히 하나의 `👍 Recommendation:` 및 approval question만 표시합니다.
+사용자는 artifact를 열어 전체 Plan을 검토하며, 채팅에 전문을 복사하지 않습니다. approval 전에는
+worktree/commit을 만들거나 remote write를 수행하지 않습니다. approval은
+nested Respond/Rebase에 정확히 제한된 authority를 제공하며, nested owner는 다시 묻지
+않습니다.
+기존 출력 호환성이 필요한 경우 compact report의 path label로 `PR sweep plan`을,
+remote 상태로 `No remote changes yet`를 유지할 수 있지만, 이는 full evidence field dump가
+아닙니다.
 material identity, PR head/state/category/scope/route, verifier 또는
 irreversible decision이 drift하면 해당 plan은 무효가 되어 Prepare로 돌아갑니다.
 변경되지 않은 row에는 routine checkpoint를 다시 주지 않습니다.

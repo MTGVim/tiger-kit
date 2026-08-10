@@ -22,11 +22,20 @@ invoke하지 않습니다.
 
 1. `evidence`: 현재 branch, files, command results를 path-cited fact와
    `verified | unverified`로 매핑합니다.
-2. `schema`: fact와 사용자 승인을 required-section draft 및
-   `confirmed | pending` decision으로 매핑합니다.
-3. `write`: 승인된 draft와 output path를 written file로 매핑합니다.
-4. `receipt`: write/revalidation 결과를
-   `reported | applied | pending` 및 evidence location으로 매핑합니다.
+2. `schema`: fact와 사용자 승인을 required-section snapshot 및
+   `confirmed | pending` decision으로 매핑합니다. 명시적 새 handoff 요청은
+   이 artifact를 작성할 권한이며, product·external mutation 승인을 뜻하지
+   않습니다.
+3. `write`: 채팅에 초안 전문을 먼저 출력하지 말고, 기본 경로
+   `.tigerkit/handoff.md` 또는 명시된 output path에 `pending` snapshot을
+   같은 directory의 임시 파일에 쓴 뒤 atomic rename합니다. output parent가
+   없으면 필요한 scratch directory만 만듭니다.
+4. `reread`: 실제로 쓴 path를 다시 읽어 required fields, `Status`와
+   `Disposition`의 분리, 현재 evidence와의 일치를 확인합니다. 불일치하면
+   `applied`를 사용하지 않고 `pending` 또는 recovery 상태로 되돌립니다.
+5. `receipt`: 재읽기 결과를 artifact path와 1~3줄의 상태 요약으로만
+   보고합니다. snapshot 본문, full draft, evidence inventory를 채팅에
+   복사하지 않습니다.
 
 ### 재개(Resume)
 
@@ -109,6 +118,22 @@ next action, blocker를 2–5개의 짧은 bullet로 요약하고, 하나의 res
 보여주고 전체 inventory를 소유한 artifact path를 제시합니다. 이는 quota가
 아니라 budget입니다.
 
+## 출력 계약(Output contract)
+
+새 handoff 작성이 성공하면 채팅에는 다음만 보고합니다.
+
+- 경로: `<absolute path>`
+- `Status: <pending | in_progress | completed | aborted | Blocked>`
+- `Disposition: <reported | applied | pending>`와 필요한 경우 1~2줄의 blocker 또는 next action
+
+새로 작성한 pending handoff에는 위 compact report 뒤에 정확히 하나의 approval
+question을 둡니다. `--resume`의 verified no-drift report와 failure/`Blocked`
+report에는 새 approval question을 만들지 않습니다.
+
+`Goal`, `Decisions`, `Commands`, `Verification`, `Remaining work` 등 snapshot
+필드의 전문을 채팅에 덤프하지 않습니다. write 또는 reread가 확인되지 않으면
+path를 성공한 artifact처럼 보고하지 않습니다.
+
 `.tigerkit/handoff.md`만 resume snapshot입니다. Drive가 source run을 소유하면
 `.tigerkit/drive.md`의 durable R/AC 및 multi-unit ID를 참조합니다. 절대로
 `.tigerkit/work-map.md`, archive, current pointer 또는 global state를 만들지
@@ -124,6 +149,12 @@ atomic rename하고 reread합니다. 실패하면 recovery table을 따릅니다
 current pointer를 만들거나 `.gitignore`를 수정하지 않습니다. scratch가 ignore되지
 않았으면 경고합니다. 요청된 handoff file이 unresolved decision을
 `confirmed`로 만들지는 않습니다.
+
+명시적 handoff artifact 자체는 pending snapshot이므로 새 작성 승인 전에 쓸 수
+있습니다. 그러나 product, test, config, Git publication 또는 기타 external
+mutation은 별도 승인 전에는 절대 쓰거나 실행하지 않습니다. `--resume`은
+continuation을 authorize하지만 material drift/conflict를 해결할 승인을
+대신하지 않습니다.
 
 Resume 시 handoff와 current Git/files를 읽고 classify합니다. current evidence가
 없는 내용은 `unverified`로 유지합니다.

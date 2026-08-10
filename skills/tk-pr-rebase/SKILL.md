@@ -58,27 +58,40 @@ tag, release를 수행하거나 repository rules를 바꾸지 않는다.
    ancestor인지, intended commits와 diff가 유지되는지, 관련 tests/checks가
    통과하는지 검증한다. branch가 이미 `base_sha`를 포함해 rewrite가 필요 없으면
    force-push하지 않는다.
-6. Normal mode에서는 `.tigerkit/pr-rebase.md`에 frozen refs와 SHAs,
+6. Normal mode에서는 먼저 `.tigerkit/pr-rebase.md`에 frozen refs와 SHAs,
    verification, exact `--force-with-lease` expectation/refspec, 모든 outbound
    reply, thread action, 의도적으로 open인 finding, summary, prior human
-   reviewers, normal 및 reviewer-mention fallback bodies, exclusions를 기록한다.
+   reviewers, normal 및 reviewer-mention fallback bodies, exclusions를 full plan으로
+   기록한다. 같은 directory의 temporary file에 원자적으로 replace한 뒤 reread하여
+   저장된 내용과 대상 PR/base/head를 검증한다. 저장 또는 reread가 실패하면
+   publication checkpoint로 진행하지 않고 `Blocked`로 멈춘다.
    Sweep CI에서는 Markdown ledger를 작성하지 않고 이 compact facts를 parent에
    반환한다. URLs가 있으면 user-facing output의 PR 및 review/thread
    references를 clickable Markdown links로 렌더링한다. 표시 전에 GitHub
    `<br>`/`<br/>` break를 실제 newline으로 normalize한다. 모든 external
    reply/comment는 `_🤖 본 코멘트는 AI가 작성했습니다._`로 끝낸다.
-7. base, old/new head, verification, exact replies와
-   `resolve | keep open` actions, re-review candidates, operation order, risks,
-   one recommendation을 보여준다. publication question은 하나만 하고
-   `Pending`으로 멈춘다.
+   Normal ledger는 work `Status`와 별도로 `Disposition: reported | applied | pending`을
+   저장한다. atomic write/reread가 current target과 일치하면 `Disposition: applied`여도
+   publication 전 work `Status: Pending`은 유지한다. missing/stale/readback mismatch면
+   `Status: Blocked`, `Disposition: pending`으로 멈추고 publication, reply, resolution,
+   re-review를 수행하지 않는다.
+7. Normal mode의 채팅 output은 artifact-first compact report만 사용한다. 반드시
+   absolute artifact path, `Status`, `Disposition`, 대상 PR/base/head, reply/action 개수,
+   `Recommendation`, 단 하나의 publication question만 표시한다. exact outbound
+   reply/action 본문, fallback body, full operation plan은 채팅에 복사하지 않는다.
+   사용자는 표시된 artifact를 열어 exact literal을 검토한다. artifact path와
+   짧은 상태 보고 외에 full plan을 먼저 채팅에 dump하지 않는다. publication
+   question은 하나만 하고 `Pending`으로 멈춘다.
 
 ### 🔴 CHECKPOINT / STOP · publication approval
 
-`🔴 CHECKPOINT`에서 base, old/new head, verification, exact replies, thread actions,
-re-review candidates, operation order와 risks를 한 번에 보여준다. 사용자의 exact
-current-turn approval 전에는 push, reply, thread resolution, re-review request 또는
-summary를 수행하지 않는다. local rebase는 Normal mode의 local-only authority 안에서만
-허용한다.
+`🔴 CHECKPOINT`에서 artifact path와 `Status`, `Disposition`, 대상 PR/base/head, verification,
+reply/action 개수, `Recommendation`, 단 하나의 publication question을 보여준다.
+exact replies, thread actions, re-review candidates, operation order와 risks는
+`.tigerkit/pr-rebase.md`에서만 소유한다. 사용자는 artifact를 열어 exact literal을
+검토한다. 사용자의 exact current-turn approval 전에는 push, reply, thread resolution,
+re-review request 또는 summary를 수행하지 않는다. local rebase는 Normal mode의
+local-only authority 안에서만 허용한다.
 
 `🛑 STOP` — approval이 없으면 `Pending`으로 멈춘다. approval 뒤 frozen branch, head,
 base, identity, dirty-path, review 또는 thread가 drift하면 다시 쓰지 말고 refreshed plan과
@@ -150,5 +163,14 @@ publication approval 대기는 `Pending`, unsafe authority 또는 drift는 `Bloc
 change-related 또는 partial-write failure는 `Fail`, required Git, GitHub, test,
 review, thread evidence를 사용할 수 없으면 `Unverifiable`이다.
 
-`## PR rebase`로 시작한다. exact outbound text와 full provenance는 standalone
-owned artifact에 보관하고, Sweep CI에서는 compact parent evidence에 보관한다.
+## Output 계약
+
+Normal mode에서 artifact를 성공적으로 reread한 뒤에만 compact report를 출력한다.
+report의 `Recommendation`은 artifact의 recommendation과 동일해야 하며, 단일
+publication question은 사용자의 current-turn approval을 묻는 문장 하나여야 한다.
+absolute path는 한국어 조사나 문장부호와 붙이지 않고 code span으로 격리한다.
+exact outbound text와 full provenance는 standalone owned artifact에 보관하고,
+Sweep CI에서는 기존 compact parent evidence에 보관한다. Sweep CI의 child ledger,
+full plan dump, 별도 publication question은 만들거나 출력하지 않는다.
+
+`## PR rebase`로 시작한다.
