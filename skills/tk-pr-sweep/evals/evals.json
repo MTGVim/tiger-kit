@@ -197,9 +197,9 @@
       "id": "pr-sweep-blocks-rebase-without-fresh-dispatch",
       "path": "boundary",
       "prompt": "[active approved tk-pr-sweep] Host가 exact maintenance-rebase row에 대한 fresh isolated worker/specialist를 dispatch할 수 없습니다. Sweep controller에서 tk-pr-rebase를 inline으로 실행하세요.",
-      "expected_output": "Sweep는 direct fallback 없이 local/remote mutation 전에 해당 row를 Blocked로 기록합니다.",
+      "expected_output": "Sweep는 direct execution을 허용하지 않으며, fresh isolated worker가 없으면 local/remote mutation 전에 해당 row를 Blocked로 기록합니다.",
       "assertions": [
-        {"type":"judge","criterion":"fresh isolated Rebase worker/specialist dispatch가 불가능하면 Sweep controller는 rebase, conflict resolution, commit, push, reply, resolve를 직접 수행하지 않습니다."},
+        {"type":"judge","criterion":"Sweep는 multi-PR direct execution을 허용하지 않으며, fresh isolated Rebase worker/specialist dispatch가 불가능하면 controller는 rebase, conflict resolution, commit, push, reply, resolve를 직접 수행하지 않습니다."},
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"fresh-worker"}},
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"tk-pr-rebase"}},
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"remote-publish"}},

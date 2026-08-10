@@ -1,8 +1,8 @@
 ---
 name: tk-drive
-description: "[user] 하나의 승인으로 product-change source를 준비하고, fresh-worker로 실행해 acceptance gap을 닫고, 검증된 unit commit과 finalization까지 수행한다."
+description: "[user] 하나의 승인으로 product-change source를 준비하고, direct 또는 fresh-worker로 실행해 acceptance gap을 닫고, 검증된 unit commit과 finalization까지 수행한다."
 disable-model-invocation: true
-argument-hint: "<source, request, issue, or approved active run>"
+argument-hint: "<source, request, issue, or approved active run> [--direct]"
 metadata:
   tigerkit:
     kind: user-invoked
@@ -20,20 +20,20 @@ metadata:
 
 ## 권한과 불변식
 
-승인된 plan 하나로 preparation, fresh-worker mutation, required verification,
-승인된 unit마다 하나의 verified current-branch commit, 최대 세 번의 corrective
-round, aggregate verification, finalization을 수행할 수 있다. push, PR, merge,
-tag, release, publish, history rewriting은 포함하지 않는다.
+승인된 plan 하나로 preparation, `direct` 또는 `delegated` unit execution, required
+verification, 승인된 unit마다 하나의 verified current-branch commit, 최대 세 번의
+corrective round, aggregate verification, finalization을 수행할 수 있다. push, PR,
+merge, tag, release, publish, history rewriting은 포함하지 않는다.
 
-Drive는 controller다. **product, test, configuration change를 직접 작성하지
-않는다.** 모든 primary 및 corrective mutation은 하나의 bounded unit을 맡은
-fresh worker에게 보낸다. 이 skill은 user-invoked이므로 명시적 `/tk-drive` 또는
+Drive는 controller다. Delegated strategy에서는 **product, test, configuration change를
+직접 작성하지 않고** bounded unit을 fresh worker에게 보낸다. Direct strategy에서는
+current context가 controller 역할을 잠시 내려놓고 승인된 단 하나의 unit executor가
+되며, frozen owned paths만 수정한다. 이것은 controller fallback이 아니다. 이 skill은 user-invoked이므로 명시적 `/tk-drive` 또는
 `$tk-drive` 호출 자체가 host의 user-requested AgentTool 조건을 충족한다.
-Mechanical Git bookkeeping은 final candidate가
-통과한 뒤에만 controller가 맡을 수 있다. Host가 사용할 수 있는 worker를
-dispatch하지 못하면 `Blocked`로 중단한다. 절대 controller edit으로 fallback하지
-않는다. Worker는 다른 user-owned TigerKit workflow를 orchestrate하거나
-호출하지 않는다.
+Mechanical Git bookkeeping은 final candidate가 통과한 뒤에만 controller가 맡을 수 있다.
+Host가 사용할 수 있는 worker를 delegated strategy로 dispatch하지 못하면 `Blocked`로
+중단한다. Direct strategy는 approved plan 기록 뒤 mutation을 시작하며, worker unavailable의 암묵적 fallback이 아니다.
+Executor는 다른 user-owned TigerKit workflow를 orchestrate하거나 호출하지 않는다.
 
 ## 생명주기(Lifecycle)
 
@@ -67,27 +67,30 @@ boundary를 지난 뒤에는 cursor나 lifecycle claim이 아니라 새 근거�
    scenario, target, non-sensitive auth mode, prerequisite, limitation을
    계획한다. 그 외에는 `not-required`로 기록한다. Required headless auth를
    사용할 수 없으면 mutation 전에 `Unverifiable`이다.
-6. [worker-dispatch.md](references/worker-dispatch.md)에 따라 dispatch에 필요한
-   최소 tier를 선택한다.
+6. [worker-dispatch.md](references/worker-dispatch.md)에 따라 각 unit의 execution
+   strategy와 최소 tier를 선택한다. 격리 없는 bounded known-pattern이면
+   `strategy=direct`, `tier=cheapest`를 우선 추천하고, fresh context·isolation·
+   reviewer handoff·design-heavy reasoning이면 `delegated`와 근거를 추천한다.
 7. [ledger.md](references/ledger.md)에 따라 `.tigerkit/drive.md`의 current task를 atomically
    replace하고 reread한 뒤 하나의 compact approval surface를 제시한다. Plan record는
    `Repository (branch/HEAD/dirty paths)`, `Source / Goal (anchor)`, `Scope / Exclusions`,
-   `Frozen literals`, `R/AC`, `Units / Waves (ownership)`, `Verification (tests/browser/auth)`,
-   `Risks / Assumptions`, `Bounded external actions`, `Ledger / Approval`을 각각 한 번 소유하며,
-   unknown은 `unavailable`로 둔다. 이는 별도 lifecycle output이 아닌 approval evidence이다.
+   `Frozen literals`, `R/AC`, `Units / Waves (ownership + execution strategy)`, `Verification (tests/browser/auth)`, `Risks / Assumptions`, `Bounded external actions`, `Ledger / Approval`을 각각 한 번 소유하며,
+   unknown은 `unavailable`로 둔다. `👍 Recommendation:`에는 strategy와 tier를
+   포함하며, 사용자가 이 plan을 승인하는 것이 direct strategy의 명시적 승인이다.
+   별도 direct 확인은 묻지 않는다. 이는 별도 lifecycle output이 아닌 approval evidence이다.
 
-Approval question이 action surface다. `🙋 drive · 응답 필요`를 한 줄 출력하고
-정확히 하나의 `👍 Recommendation:`을 보여 준다.
+Approval question이 action surface다. `🙋 drive · 응답 필요`와 정확히 하나의
+`👍 Recommendation:`을 보여 준다.
 Approval은 표시된 snapshot에만 적용된다. Material source, scope, branch/head,
 remote-state, verifier-prerequisite, irreversible-decision drift가 생기면
-승인은 무효가 되어 Prepare로 돌아간다. Plan이 변하지 않았다면 routine
-second approval을 받지 않는다.
+승인은 무효가 되어 Prepare로 돌아간다. Plan이 변하지 않았다면 routine second approval을 받지 않는다.
 
 ## 실행(Execute)
 
-각 dependency wave마다 unit 하나를 맡은 fresh worker를 dispatch한다. Worker에게는
-ID/goal, exact R/AC, scope/exclusion, 관련 path, verification obligation,
-branch/head/diff ownership만 전달한다. Worker는 현재 근거를 확인하고 해당
+각 dependency wave마다 frozen strategy를 적용한다. Delegated unit은 fresh worker가
+맡고, direct unit은 current context가 단 하나의 bounded executor로 맡는다.
+Executor에게는 ID/goal, exact R/AC, scope/exclusion, 관련 path, verification
+obligation, branch/head/diff ownership만 전달한다. Executor는 현재 근거를 확인하고 해당
 unit만 구현하며 focused check를 실행한다. 그 뒤 하나의 bounded
 behavior-preserving simplify/reuse pass를 수행하고 changed paths, candidate
 evidence, unresolved item을 반환한다. 다음 불변식을 지킨다.
@@ -97,9 +100,9 @@ candidate -> required tests/checks/browser verifier -> Close gaps
           -> bounded fresh correction when needed -> one verified unit commit
 ```
 
-Required verifier는 commit 전에 final candidate를 대상으로 실행한다. Proven
-owned path만 stage하고 pre-existing user change를 보존한다. Isolated gap이
-있으면 fresh corrective worker를 dispatch하고 영향받은 obligation을 다시
+Required verifier는 commit 전에 final candidate를 대상으로 실행한다. Proven owned path만
+stage하고 pre-existing user change를 보존한다. Direct unit의 isolated gap은 같은 frozen unit과 owned paths 안에서 current executor가 닫고, delegated
+unit의 gap은 fresh corrective worker를 dispatch해 영향받은 obligation을 다시
 실행한다. 최대 세 round를 우선한다. Missing context는 tier upgrade 없이
 보충한다. Demonstrated reasoning failure가 있을 때만 다음 tier의 fresh
 worker를 한 번 사용한다. 변하지 않거나, 원인을 격리할 수 없거나, 충돌하거나,

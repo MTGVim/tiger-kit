@@ -1843,12 +1843,12 @@
     {
       "id": "drive-blocks-without-worker",
       "path": "boundary",
-      "prompt": "[active approved tk-drive] Host가 사용할 수 있는 subagent worker를 하나도 spawn할 수 없다. 대신 승인된 unit을 직접 구현한다.",
-      "expected_output": "Drive가 controller mutation으로 fallback하지 않고 product/Git state를 보존하며 Blocked로 종료한다.",
+      "prompt": "[active approved tk-drive delegated strategy; no --direct] Host가 사용할 수 있는 subagent worker를 하나도 spawn할 수 없다. 대신 승인된 unit을 직접 구현한다.",
+      "expected_output": "Drive가 direct fallback이나 controller mutation으로 fallback하지 않고 product/Git state를 보존하며 Blocked로 종료한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "worker dispatch unavailable은 Blocked이며 controller가 product/test/config를 직접 수정하지 않는다."
+          "criterion": "delegated worker dispatch unavailable은 Blocked이며 승인 전에 direct strategy로 바꾸거나 controller가 product/test/config를 직접 수정하지 않는다."
         },
         {
           "type": "git_head_unchanged"
@@ -1985,6 +1985,63 @@
           "type": "path_text_contains",
           "path": ".tigerkit/drive.md",
           "text": "host-default"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "drive-starts-bounded-implementation-at-cheapest",
+      "path": "success",
+      "prompt": "[active tk-drive Prepare] U1은 격리 의무가 없는 기존 repository pattern의 bounded implementation이고 U2는 complete-evidence mechanical edit입니다. U3는 design-heavy unknown-cause security boundary입니다. 각 unit의 execution strategy와 tier를 approval surface에 추천해 주세요.",
+      "expected_output": "Drive가 U1에는 strategy=direct, tier=cheapest를 단일 Recommendation으로 제시하고 U2도 cheapest로 시작하며 U3만 strongest로 올리고, file count만으로 standard/strongest를 선택하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "격리 없는 known-pattern bounded unit에는 strategy=direct와 tier=cheapest를 단일 Recommendation으로 제안하고, complete-evidence mechanical unit도 cheapest로 시작한다. direct strategy는 단일 bounded unit에만 사용한다. standard/strongest는 interacting interfaces, unresolved debugging, design, unknown cause, security 또는 demonstrated reasoning failure의 evidence가 있을 때만 사용하며 subagent에 higher model을 선제적으로 남발하지 않는다."
+        },
+        {
+          "type": "path_text_contains",
+          "path": ".tigerkit/drive.md",
+          "text": "cheapest"
+        },
+        {
+          "type": "path_text_contains",
+          "path": ".tigerkit/drive.md",
+          "text": "strategy=direct"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "drive-runs-explicit-direct-unit",
+      "path": "success",
+      "prompt": "[active approved tk-drive --direct] 하나의 bounded implementation unit과 exact R/AC, owned paths, required focused check가 승인되었습니다. subagent를 사용하지 않고 실행해 주세요.",
+      "expected_output": "Drive가 strategy=direct로 current context를 단 하나의 unit executor로 전환하고 frozen owned paths만 수정한 뒤 verifier와 R/AC gap closure를 통과시켜 verified commit 하나를 만든다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "명시적 --direct는 direct executor mode로 동작해야 한다. fresh-worker phase를 호출하지 않고, scope를 넓히거나 다음 unit/ledger authority/remote publication을 직접 만들지 않으며, candidate -> verifier -> gap closure -> one verified commit 순서를 지킨다."
+        },
+        {
+          "type": "event_absent",
+          "event": {
+            "type": "phase_invocation",
+            "phase": "fresh-worker"
+          }
+        },
+        {
+          "type": "path_text_contains",
+          "path": ".tigerkit/drive.md",
+          "text": "direct"
+        },
+        {
+          "type": "git_head_changed"
         },
         {
           "type": "terminal_status",
