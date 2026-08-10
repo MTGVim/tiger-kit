@@ -1,7 +1,7 @@
 ---
 name: tk-pr-respond
-description: "[user/auto] 하나의 pull request에서 선택한 feedback 또는 지원되는 GitHub Actions failure를 하나의 승인된 plan, fresh-worker unit, acceptance verification, 제한된 publication으로 해결합니다."
-argument-hint: "<pull request or repository> [--ci]"
+description: "[user/auto] 하나의 pull request에서 선택한 feedback 또는 지원되는 GitHub Actions failure를 하나의 승인된 plan, direct 또는 fresh-worker unit, acceptance verification, 제한된 publication으로 해결합니다."
+argument-hint: "<pull request or repository> [--ci] [--direct]"
 metadata:
   tigerkit:
     kind: hybrid
@@ -15,13 +15,17 @@ metadata:
 fresh exact-PR handoff를 통해서만 시작한다. generic review, implementation, triage,
 continuation, 또는 둘 이상의 PR에는 절대 활성화하지 않는다.
 
-Respond는 한 PR의 feedback/supported-CI plan, fresh-worker 실행,
+Respond는 한 PR의 feedback/supported-CI plan, `direct` 또는 `delegated` unit 실행,
 acceptance verification, bounded push/reply/resolve/re-review/summary를 소유한다. Respond는
-controller다: **product, test, configuration 변경을 절대 작성하지 않는다.** 모든
-primary 또는 corrective edit는 하나의 bounded resolution unit으로 fresh worker에게
-보낸다. required verification과 gap closure가 통과한 뒤에만 controller가 각 unit의
-mechanical staging과 verified commit 하나를 소유할 수 있다. usable worker가 없으면
-직접 fallback하지 않고 `Blocked`로 끝낸다.
+controller다. Delegated strategy에서는 **product, test, configuration 변경을 직접
+작성하지 않는다.** 모든 primary 또는 corrective edit는 하나의 bounded resolution
+unit으로 fresh worker에게 보낸다. Standalone `--direct` 또는 그와 동등한 approved
+direct plan에서는 current context가
+승인된 한 unit의 executor 역할을 맡고 frozen owned paths만 수정한다. 이는
+controller fallback이 아니며 nested Sweep handoff에는 사용할 수 없다. required
+verification과 gap closure가 통과한 뒤에만 controller가 각 unit의 mechanical
+staging과 verified commit 하나를 소유할 수 있다. usable worker가 없으면 delegated
+plan을 direct로 뒤집지 않고 `Blocked`로 끝낸다.
 
 ## 권한과 ledger(Authority and ledger)
 
@@ -60,11 +64,18 @@ Prepare -> Execute -> Close gaps -> Finalize
    또는 uncertain work는 serialize한다. concurrent unit에는 host-provided isolated
    checkout/worktree와 proven independence가 필요하다. scheduler를 만들지 않는다.
 5. `skills/tk-drive/references/worker-dispatch.md`의 canonical worker-dispatch
-   contract에 따라 dispatch마다 least-sufficient worker tier를 선택하고, model/effort
+   contract에 따라 unit별 `direct | delegated` strategy와 least-sufficient worker tier를
+   선택하고, 격리 의무가 없는 bounded known-pattern unit이면
+   `strategy=direct`, `tier=cheapest`를 우선 추천한다. fresh context,
+   isolation, reviewer handoff, design-heavy reasoning이 필요하면 delegated와
+   그 근거를 추천한다. model/effort
    capability를 축별로 결정론적으로 실현한다. model configuration이나
    provider/model mapping은 절대 노출하지 않는다. per-spawn 선택이 불가능하면
-   `host-default` collapse를 기록하고, usable fresh worker를 dispatch할 수 없으면
-   `Blocked`로 끝낸다.
+   `host-default` collapse를 기록한다. direct가 승인되지 않았고 usable fresh worker를
+   dispatch할 수 없으면 `Blocked`로 끝낸다. Parent Sweep의 `--ci` handoff는 항상
+   delegated이며 direct strategy로 바꾸지 않는다. `👍 Recommendation:`에
+   strategy와 tier를 포함하고, 사용자가 표시된 plan을 승인하면 그것이 direct
+   strategy에 대한 명시적 승인이다. 별도 direct 확인은 묻지 않는다.
 6. goal/PR/head, included/excluded findings, apply/reply/defer decisions, R/AC,
    units/waves, verification, exact bounded `push`/reply/resolve/re-review/summary actions,
    risks, assumptions/ambiguities를 포함한 compact approval surface 하나를 준비한다. 이것이
@@ -88,11 +99,12 @@ irreversible-decision drift는 approval을 무효화하고 Prepare로 돌아가�
 
 ### 실행(Execute)
 
-각 dependency wave마다 unit당 fresh worker 하나를 dispatch한다. worker에는 ID/goal,
-exact PR finding과 R/AC IDs, scope/exclusions, relevant paths, verification, Git ownership
-facts만 준다. worker는 current evidence를 검사하고 자기 unit만 구현하며, focused
-checks를 실행하고, bounded behavior-preserving simplify/reuse pass를 한 번 수행한 뒤,
-changed paths, candidate evidence, unresolved items를 반환한다.
+각 dependency wave마다 frozen strategy를 적용한다. delegated unit은 fresh worker가
+맡고, standalone direct unit은 current context가 단 하나의 bounded executor로 맡는다.
+Executor에는 ID/goal, exact PR finding과 R/AC IDs, scope/exclusions, relevant paths,
+verification, Git ownership facts만 준다. Executor는 current evidence를 검사하고 자기
+unit만 구현하며, focused checks를 실행하고, bounded behavior-preserving simplify/reuse
+pass를 한 번 수행한 뒤, changed paths, candidate evidence, unresolved items를 반환한다.
 
 다음 불변식을 사용한다:
 
@@ -101,9 +113,9 @@ candidate -> required tests/checks/browser verifier -> Close gaps
           -> bounded fresh correction when needed -> one verified unit commit
 ```
 
-Required verifiers는 final uncommitted candidate에서 실행한다. gap fix는 항상 새
-worker를 사용한다. escalation 전에 missing context를 제공하고, demonstrated reasoning
-failure에는 한 tier 높은 fresh worker를 배정한다. corrective round는 최대 세 번을
+Required verifiers는 final uncommitted candidate에서 실행한다. direct unit의 gap fix는
+같은 frozen unit과 owned paths 안에서만 수행하고, delegated unit의 gap fix는 새 worker를
+사용한다. escalation 전에 missing context를 제공하고, demonstrated reasoning failure에는 한 tier 높은 fresh worker를 배정한다. corrective round는 최대 세 번을
 선호하며 unchanged failure를 무기한 retry하지 않는다. proven owned paths만 stage하고
 pre-existing user changes를 보존한다.
 

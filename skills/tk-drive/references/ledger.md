@@ -11,7 +11,7 @@ state를 만들지 않는다. Artifact가 존재한다고 권한이 생기지는
 - scope, exclusion, frozen source literal, durable prior art;
 - 근거와 material alternative를 포함한 controller-resolved assumption/ambiguity;
 - 명시적 user decision과 approved plan snapshot;
-- unit dependency graph, wave, requested dispatch tier, symbolic realized
+- unit dependency graph, wave, execution strategy, requested dispatch tier, symbolic realized
   model/effort axes or `host-default`, ownership;
 - test/browser obligation과 non-sensitive auth mode;
 - unit별 candidate, changed path, verifier/gap verdict, correction, commit;

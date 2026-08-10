@@ -35,7 +35,8 @@ retry하며, partial snapshot을 합치거나 누락된 checks로 approval을 �
 Interactive Sweep는 one plan/approval, `.tigerkit/pr-sweep.md`, isolation, frozen
 routes, PR별 summary 하나, aggregate verification, finalization을 소유합니다.
 product changes는 직접 작성하지 않으며, nested `tk-pr-respond --ci`가 모든
-primary/corrective edit에 fresh workers를 사용합니다. Sweep는 child authority를
+primary/corrective edit에 delegated fresh workers를 사용합니다. Sweep는 direct
+execution flag를 받지 않으며, child authority를
 확장하거나 merge, close, PR 생성, tag, release, publish를 수행할 수 없습니다.
 
 ```text
@@ -100,8 +101,7 @@ IDs, R/AC, scope/exclusions, verification, worktree facts, ledger owner
 reviewers, verifiers는 child Markdown ledger를 쓰지 않고 compact evidence를
 `.tigerkit/pr-sweep.md`에 반환합니다. Controller와 nested Respond는 product edit를
 작성하지 않으며, correction은 canonical policy
-`skills/tk-drive/references/worker-dispatch.md`를 따르는 fresh worker를 사용합니다.
-Partial capability는 deterministic collapse를 기록하고, unusable worker는 row를 `Blocked`로 남깁니다.
+`skills/tk-drive/references/worker-dispatch.md`를 따르는 fresh worker를 사용합니다. Partial capability는 deterministic collapse를 기록하고, unusable worker는 row를 `Blocked`로 남깁니다.
 
 각 child result 후 exact PR을 fresh-triage하고 `continue`를 묻지 않은 채 frozen
 queue를 계속합니다. prompt-local bound를 유지합니다: exact base/head pair마다
