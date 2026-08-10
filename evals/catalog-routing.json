@@ -563,6 +563,22 @@
       "focus_skill": "tk-wizard",
       "expected_selected_skill": "tk-wizard",
       "critical": false
+    },
+    {
+      "id": "tk-mwhat-explicit-user-only",
+      "boundary": "tk-mwhat explicit understanding correction vs generic continuation",
+      "prompt": "/tk-mwhat 방금 설명이 무슨 뜻인지 풀어줘",
+      "focus_skill": "tk-mwhat",
+      "expected_selected_skill": "tk-mwhat",
+      "critical": false
+    },
+    {
+      "id": "tk-mwhat-generic-continuation-negative",
+      "boundary": "tk-mwhat explicit understanding correction vs generic continuation",
+      "prompt": "방금 설명을 다시 말해줘",
+      "focus_skill": "tk-mwhat",
+      "expected_selected_skill": null,
+      "critical": false
     }
   ]
 }

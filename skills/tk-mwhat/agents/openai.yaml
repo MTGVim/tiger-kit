@@ -1,0 +1,6 @@
+interface:
+  short_description: "[user] 직전 설명을 짧고 정확하게 다시 설명합니다."
+  default_prompt: "tk-mwhat을 사용해 즉시 앞선 explanation/source만 최대 3줄 의미와 최대 2줄 추천으로 재설명하고 hard stop하세요."
+
+policy:
+  allow_implicit_invocation: false

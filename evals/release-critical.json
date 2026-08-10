@@ -39,7 +39,9 @@
     "tk-wizard:behavior:secret-hidden",
     "tk-wizard:behavior:irreversible-confirm",
     "tk-wizard:behavior:unknown-ui",
-    "tk-wizard:behavior:agent-negative"
+    "tk-wizard:behavior:agent-negative",
+    "tk-mwhat:behavior:literal-source-preservation",
+    "tk-mwhat:behavior:no-mutation-tools"
   ],
   "catalog_cases": [
     "catalog:behavior:drive-vs-grill-drive",
