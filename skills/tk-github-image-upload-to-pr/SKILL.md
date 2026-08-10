@@ -13,8 +13,8 @@ metadata:
 # GitHub PR 이미지 업로드
 
 사용자가 `/tk-github-image-upload-to-pr` 또는
-`$tk-github-image-upload-to-pr`를 선택하거나, 기존 GitHub PR에 local image
-evidence를 명시적으로 요청하거나, active `tk-pr-open`이
+`$tk-github-image-upload-to-pr` 를 선택하거나, 기존 GitHub PR에 local image
+evidence를 명시적으로 요청하거나, active `tk-pr-open` 이
 `evidence_required: true`인 정확한 handoff를 보낼 때만 시작합니다. Parent
 handoff만 automatic trigger입니다. screenshot capture, generic GitHub help,
 PR creation, PR review 또는 issue triage에는 활성화하지 않습니다.
@@ -25,14 +25,14 @@ PR creation, PR review 또는 issue triage에는 활성화하지 않습니다.
 repository-scoped GitHub attachment upload, 최소한의 PR body 또는 selected
 comment update, source/render verification입니다. 기본 target은 PR body입니다.
 
-`tk-pr-open`에서는 `evidence_required: true`인 `tk-browser-verify` 또는
-`tk-prototype`의 producer evidence handoff만 받습니다. required evidence가
-누락되거나 유효하지 않으면 evidence handoff를 `Blocked`로 만들며, 이미
+`tk-pr-open` 에서는 `evidence_required: true`인 `tk-browser-verify` 또는
+`tk-prototype` 의 producer evidence handoff만 받습니다. required evidence가
+누락되거나 유효하지 않으면 evidence handoff를 `Blocked` 로 만들며, 이미
 생성된 `tk-pr-open` PR은 되돌리지 않습니다.
 
 operational contract는
 [references/upload-workflow.md](references/upload-workflow.md)를 사용합니다.
-browser-controlled runtime verification에는 `tk-browser-verify`를 사용합니다.
+browser-controlled runtime verification에는 `tk-browser-verify` 를 사용합니다.
 
 ## 워크플로
 
@@ -59,7 +59,7 @@ browser-controlled runtime verification에는 `tk-browser-verify`를 사용합�
 
 모든 upload attempt는 아래 하나의 receipt로 남깁니다. 이는 별도 lifecycle
 output이 아니라 `## GitHub image upload` 결과와 approval/verification 판단에
-쓰는 단일 evidence record입니다. 값이 없으면 `none` 또는 `unavailable`로
+쓰는 단일 evidence record입니다. 값이 없으면 `none` 또는 `unavailable` 로
 명시하고 추측하지 않습니다.
 
 ```text
@@ -78,9 +78,9 @@ Status: Pass | Fail | Blocked | Unverifiable
 
 ## Producer evidence handoff(생산자 증거 인계)
 
-`evidence_required: true`이면 다음을 요구합니다.
+`evidence_required: true` 이면 다음을 요구합니다.
 
-- `producer`는 `tk-browser-verify` 또는 `tk-prototype` 중 하나여야 합니다.
+- `producer` 는 `tk-browser-verify` 또는 `tk-prototype` 중 하나여야 합니다.
 - 각 artifact는 non-empty image, absolute path, run-owned evidence directory를
   포함해야 합니다.
 - 각 image를 inspected 상태로 두고 criterion 또는 caption을 보존합니다.
@@ -90,7 +90,7 @@ Status: Pass | Fail | Blocked | Unverifiable
 
 임의 screenshot, 누락된 path, `Unverifiable` result 및 current run에 연결되지
 않은 artifact는 거부합니다. required evidence가 없거나 유효하지 않으면
-upload 전에 `Blocked`를 반환합니다.
+upload 전에 `Blocked` 를 반환합니다.
 
 ## 금지 사항
 
@@ -100,7 +100,7 @@ upload 전에 `Blocked`를 반환합니다.
 - 명시적인 user approval 없이 GitHub CLI extension을 install, update 또는
   substitute하지 않습니다. reviewed command는
   `gh extension install MTGVim/gh-attach --pin v0.7.0-mtgvim.1`입니다.
-- `tk-browser-verify`를 우회하거나 Orca 또는 screen control을 automatic
+- `tk-browser-verify` 를 우회하거나 Orca 또는 screen control을 automatic
   browser fallback으로 사용하지 않습니다.
 - pre-existing draft를 덮어쓰거나 comment, close-with-comment 또는 다른
   submit button을 클릭하지 않습니다.
@@ -112,20 +112,20 @@ upload 전에 `Blocked`를 반환합니다.
 ## 실패 처리
 
 draft, selected CDP route 없는 rejected installation 또는 다른 missing
-user-owned decision에는 `Blocked`를 반환합니다. 어느 route에도 authentication
-또는 render evidence가 없으면 `Unverifiable`을, upload, remote ref
-verification 또는 cleanup error면 `Fail`을 반환합니다. selected body/comment가
+user-owned decision에는 `Blocked` 를 반환합니다. 어느 route에도 authentication
+또는 render evidence가 없으면 `Unverifiable` 을, upload, remote ref
+verification 또는 cleanup error면 `Fail` 을 반환합니다. selected body/comment가
 변경되었는지와 upload ref가 남을 수 있는지를 명시합니다. 시작된
-`gh attach`가 실패한 뒤에는 CDP로 조용히 retry하지 않습니다.
+`gh attach` 가 실패한 뒤에는 CDP로 조용히 retry하지 않습니다.
 
-`tk-pr-open`에서는 별도의 PR operation result를 보존하고 evidence state를
-`uploaded` 또는 `blocked`로 반환합니다. required evidence가 계속 blocked인
+`tk-pr-open` 에서는 별도의 PR operation result를 보존하고 evidence state를
+`uploaded` 또는 `blocked` 로 반환합니다. required evidence가 계속 blocked인
 동안 parent는 full completion을 주장할 수 없습니다.
 
 ## 결과
 
-terminal response는 `## GitHub image upload`로 시작합니다. 해당하는 경우
-`## Uploaded`, `## Verification` 및 `## Cleanup`을 포함합니다. owning result
+terminal response는 `## GitHub image upload` 로 시작합니다. 해당하는 경우
+`## Uploaded`, `## Verification` 및 `## Cleanup` 을 포함합니다. owning result
 section의 끝에는 정확히 하나의
 `Status: Pass|Fail|Blocked|Unverifiable` line을 둡니다. 안전할 때만 asset URL을
 노출하고 signed parameter는 redact합니다.

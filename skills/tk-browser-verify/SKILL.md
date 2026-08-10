@@ -38,7 +38,7 @@ injection mechanism을 절대 추측하지 않습니다. repository/application 
 검증합니다. interactive authentication이 필요하면 사용 가능한 ephemeral
 secret-input channel을 통해 적합한 short-lived material을 요청합니다. safe
 headless authentication을 여전히 확립할 수 없으면 product mutation 전에
-`Unverifiable`을 반환하며 visible-browser fallback을 절대 열지 않습니다.
+`Unverifiable` 을 반환하며 visible-browser fallback을 절대 열지 않습니다.
 
 Auth values는 operational input으로만 취급합니다. usernames, passwords, tokens,
 OTPs, cookies, session values, recovery codes, sensitive identity, secret-bearing
@@ -48,14 +48,14 @@ summaries, child receipts에 절대 echo하거나 persist하지 않습니다. `a
 
 ## 🔴 CHECKPOINT / STOP · browser 실행 허가
 
-`🔴 CHECKPOINT`에서 exact criteria, target/environment, parent approval facts, auth mode,
+`🔴 CHECKPOINT` 에서 exact criteria, target/environment, parent approval facts, auth mode,
 effective headless argument와 evidence directory를 먼저 고정한다. 이 항목이 검증되기
 전에는 browser interaction이나 product mutation을 시작하지 않는다.
 
-`🛑 STOP` — safe headless authentication 또는 effective `--headless=new`를 증명할 수
-없으면 visible-browser fallback을 열지 말고 `Unverifiable`을 반환한다. 실행 후
-criterion별 current evidence와 실제 inspect한 screenshot이 없으면 `Pass`를 반환하지
-않고 해당 상태를 `Unverifiable`로 유지한다.
+`🛑 STOP` — safe headless authentication 또는 effective `--headless=new` 를 증명할 수
+없으면 visible-browser fallback을 열지 말고 `Unverifiable` 을 반환한다. 실행 후
+criterion별 current evidence와 실제 inspect한 screenshot이 없으면 `Pass` 를 반환하지
+않고 해당 상태를 `Unverifiable` 로 유지한다.
 
 ## 작업 흐름
 
@@ -69,17 +69,17 @@ criterion별 current evidence와 실제 inspect한 screenshot이 없으면 `Pass
 3. **실행 준비(Launch)** — dependency를 설치하지 않고 사용 가능한 native,
    Playwright-compatible, MCP 또는 verified CDP route를 사용합니다. 새
    Chrome/Chromium process는 첫 browser call 전에 exact effective argument
-   `--headless=new`를 반드시 증명해야 합니다. 그렇지 않으면 직접 시작한
-   verified headless endpoint에 연결하거나 `Unverifiable`을 반환합니다.
+   `--headless=new` 를 반드시 증명해야 합니다. 그렇지 않으면 직접 시작한
+   verified headless endpoint에 연결하거나 `Unverifiable` 을 반환합니다.
 4. **실행(Run)** — current-worktree serving source를 증명하고 known state에서
    시작하며 trusted interaction을 사용합니다. required request/response와 final
    state를 inspect하고 decision-relevant한 모든 final state에 대해 최소 하나의
    non-empty run-owned screenshot을 capture합니다. 인용한 image는 모두 실제로
    inspect합니다.
 5. **판정(Verdict)** — 승인된 각 criterion을 evidence에 연결하고 `Pass`,
-   `Fail`, `Blocked`, `Unverifiable`를 보고합니다. evidence가 origin을 뒷받침할
+   `Fail`, `Blocked`, `Unverifiable` 를 보고합니다. evidence가 origin을 뒷받침할
    때만 observed failure를 `change-related`, `pre-existing`, `environment`,
-   `unverifiable`로 분류합니다.
+   `unverifiable` 로 분류합니다.
 6. **정리(Cleanup)** — run-owned resource만 닫고 [session lifecycle](references/session-lifecycle.md)을
    사용해 capture/redaction residue를 확인합니다.
 
@@ -94,18 +94,18 @@ Binary evidence는 run-owned `.tigerkit/evidence/browser/<run-id>/` directory에
 둘 수 있으며, 그곳에 Markdown file을 두지 않습니다. proven run-owned capture만
 이동하고 user fixture는 절대 이동하지 않습니다. Sensitive capture는 verified
 redaction과 residue absence를 확인한 뒤에만 사용할 수 있습니다. 그렇지 않으면
-`Unverifiable`을 반환하고 secret을 보존하지 않습니다.
+`Unverifiable` 을 반환하고 secret을 보존하지 않습니다.
 
 nested result에는 status, per-criterion facts, non-sensitive auth mode, absolute
 evidence directory, inspected screenshot paths, limitations, cleanup facts만
 포함합니다. 승인된 PR evidence가 required이면 `evidence_required: true`, 해당
 criterion, producer `tk-browser-verify`도 반환하되 upload하지 않습니다.
 
-standalone result는 `## Verdict`로 시작하고 `Status: <token>`, `## Verified`,
+standalone result는 `## Verdict` 로 시작하고 `Status: <token>`, `## Verified`,
 선택적인 bounded findings/unverified facts, `## Evidence`, cleanup facts를
-포함합니다. `## Evidence`에는 absolute evidence directory와 inspected screenshot을
-모두 적습니다. required runtime evidence가 없으면 `Unverifiable`이며 절대
-`Pass`가 아닙니다.
+포함합니다. `## Evidence` 에는 absolute evidence directory와 inspected screenshot을
+모두 적습니다. required runtime evidence가 없으면 `Unverifiable` 이며 절대
+`Pass` 가 아닙니다.
 
 | 상태 | 의미 |
 | --- | --- |

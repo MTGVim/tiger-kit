@@ -5,8 +5,8 @@ interaction 전에 ownership을 분류합니다. owned browser/context/page/proc
 resource입니다. owned resource만 닫고 ownership을 알 수 없으면 닫지 않습니다.
 
 새 owned Chrome/Chromium process는 run-owned isolated profile과 exact
-`--headless=new`를 사용합니다. provider launch arguments를 증명할 수 없으면
-직접 시작한 verified endpoint에 attach하거나 `Unverifiable`을 반환하며 visible
+`--headless=new` 를 사용합니다. provider launch arguments를 증명할 수 없으면
+직접 시작한 verified endpoint에 attach하거나 `Unverifiable` 을 반환하며 visible
 browser로 재시도하지 않습니다. default user profile, stale port file, prior UUID는
 재사용 가능한 session evidence가 아닙니다.
 

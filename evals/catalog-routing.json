@@ -507,6 +507,78 @@
       "focus_skill": "tk-browser-verify",
       "expected_selected_skill": "tk-browser-verify",
       "critical": true
+    },
+    {
+      "id": "to-spec-explicit",
+      "boundary": "tk-to-spec explicit evidence-to-spec invocation",
+      "prompt": "/tk-to-spec 다음 source evidence로 self-contained spec을 작성해 주세요.",
+      "focus_skill": "tk-to-spec",
+      "expected_selected_skill": "tk-to-spec",
+      "critical": true
+    },
+    {
+      "id": "to-spec-implicit-block",
+      "boundary": "tk-to-spec explicit invocation vs ordinary planning",
+      "prompt": "이 source로 spec 초안을 작성해 주세요.",
+      "focus_skill": "tk-to-spec",
+      "expected_selected_skill": null,
+      "critical": true
+    },
+    {
+      "id": "to-tickets-explicit",
+      "boundary": "tk-to-tickets explicit Ready spec slicing",
+      "prompt": "/tk-to-tickets Ready spec을 독립적인 vertical ticket으로 분해해 주세요.",
+      "focus_skill": "tk-to-tickets",
+      "expected_selected_skill": "tk-to-tickets",
+      "critical": true
+    },
+    {
+      "id": "to-tickets-implicit-block",
+      "boundary": "tk-to-tickets explicit invocation vs ordinary planning",
+      "prompt": "Ready spec을 ticket으로 쪼개 주세요.",
+      "focus_skill": "tk-to-tickets",
+      "expected_selected_skill": null,
+      "critical": true
+    },
+    {
+      "id": "implement-explicit",
+      "boundary": "tk-implement explicit Ready ticket implementation",
+      "prompt": "/tk-implement Ready ticket T03을 구현해 주세요.",
+      "focus_skill": "tk-implement",
+      "expected_selected_skill": "tk-implement",
+      "critical": true
+    },
+    {
+      "id": "implement-implicit-block",
+      "boundary": "tk-implement explicit invocation vs ordinary implementation",
+      "prompt": "Ready ticket을 구현해 주세요.",
+      "focus_skill": "tk-implement",
+      "expected_selected_skill": null,
+      "critical": true
+    },
+    {
+      "id": "tk-wizard-explicit-human-session",
+      "boundary": "tk-wizard vs agent-executable work",
+      "prompt": "credential provisioning wizard를 준비해줘",
+      "focus_skill": "tk-wizard",
+      "expected_selected_skill": "tk-wizard",
+      "critical": false
+    },
+    {
+      "id": "tk-mwhat-explicit-user-only",
+      "boundary": "tk-mwhat explicit understanding correction vs generic continuation",
+      "prompt": "/tk-mwhat 방금 설명이 무슨 뜻인지 풀어줘",
+      "focus_skill": "tk-mwhat",
+      "expected_selected_skill": "tk-mwhat",
+      "critical": false
+    },
+    {
+      "id": "tk-mwhat-generic-continuation-negative",
+      "boundary": "tk-mwhat explicit understanding correction vs generic continuation",
+      "prompt": "방금 설명을 다시 말해줘",
+      "focus_skill": "tk-mwhat",
+      "expected_selected_skill": null,
+      "critical": false
     }
   ]
 }

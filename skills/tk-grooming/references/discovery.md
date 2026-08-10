@@ -7,9 +7,9 @@ Repository와 user rule file은 이 skill의 scope 밖입니다.
 
 실제 path 또는 host-discovery evidence로 current host를 식별하고 해당 host의
 native target만 해석합니다. host를 알 수 없으면 target을 지어내지 말고
-`Unverifiable`로 둡니다. 한 host의 location을 다른 host에 강제하거나 여러
+`Unverifiable` 로 둡니다. 한 host의 location을 다른 host에 강제하거나 여러
 host로 fan out/synchronize하지 않습니다.
-`.tigerkit/`을 persistent registry로 사용하지 않습니다.
+`.tigerkit/` 을 persistent registry로 사용하지 않습니다.
 
 ## Ownership 증거
 
@@ -28,6 +28,6 @@ history evidence를 조합합니다. vendor ownership이 확인된 candidate는
 `keep (vendor)` report-only로 처리합니다. Unknown ownership은 edit proposal
 전에 user decision 하나가 필요합니다. active conversation 또는 durable
 governing source에 이미 있는 explicit exclusion을 존중하고 hidden global
-state나 `.tigerkit/`에 저장하지 않습니다.
+state나 `.tigerkit/` 에 저장하지 않습니다.
 
 User-facing progress와 receipt prose는 사용자의 언어를 따릅니다.

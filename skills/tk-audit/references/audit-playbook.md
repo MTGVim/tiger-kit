@@ -1,7 +1,7 @@
 # 감사 playbook
 
-source snapshot `03369ee6d7cafbfcecc4346539b05b3dc0a603bb`의
-`shadcn/improve`에서 adapted했다. categories는 quota가 아니라 evidence
+source snapshot `03369ee6d7cafbfcecc4346539b05b3dc0a603bb` 의
+`shadcn/improve` 에서 adapted했다. categories는 quota가 아니라 evidence
 checklist로 사용한다.
 
 ## Categories

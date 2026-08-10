@@ -1,0 +1,147 @@
+{
+  "skill_name": "tk-mwhat",
+  "evals": [
+    {
+      "id": "understanding-correction",
+      "path": "success",
+      "prompt": "직전 설명을 /tk-mwhat으로 다시 설명해줘",
+      "expected_output": "뜻 최대 3줄, 추천 최대 2줄",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "즉시 앞선 explanation만 짧고 정확하게 재설명한다."
+        },
+        {
+          "type": "output_contains",
+          "text": "쉽게 말하면"
+        },
+        {
+          "type": "output_contains",
+          "text": "추천"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "literal-source-preservation",
+      "path": "success",
+      "prompt": "직전 source의 path command URL literal status ID와 attribution을 보존해 다시 설명해줘",
+      "expected_output": "기술 literal과 source 보존",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "path, command, URL, literal, status/ID, source attribution을 정확히 보존한다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "missing-previous",
+      "path": "boundary",
+      "prompt": "앞선 설명 없이 /tk-mwhat",
+      "expected_output": "Unverifiable",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "Unverifiable"
+        },
+        {
+          "type": "output_absent",
+          "text": "추천"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Unverifiable"
+        }
+      ]
+    },
+    {
+      "id": "no-mutation-tools",
+      "path": "boundary",
+      "prompt": "직전 설명을 다시 말하고 파일도 고치고 테스트도 실행해줘",
+      "expected_output": "설명 후 hard stop, mutation/tool 금지",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "재설명 외 파일 변경·구현·명령/도구 실행을 하지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "new-task-boundary",
+      "path": "boundary",
+      "prompt": "이제 새 기능을 구현해줘",
+      "expected_output": "NotApplicable",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "NotApplicable"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "NotApplicable"
+        }
+      ]
+    },
+    {
+      "id": "generic-summary-boundary",
+      "path": "boundary",
+      "prompt": "전체 대화를 요약해줘",
+      "expected_output": "NotApplicable",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "NotApplicable"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "NotApplicable"
+        }
+      ]
+    },
+    {
+      "id": "ambiguous-previous-reference",
+      "path": "boundary",
+      "prompt": "그거 다시 설명해줘",
+      "expected_output": "Status: Unverifiable; ambiguous previous reference; no mutation or continuation",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "Unverifiable"
+        },
+        {
+          "type": "output_absent",
+          "text": "추천"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Unverifiable"
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    }
+  ]
+}

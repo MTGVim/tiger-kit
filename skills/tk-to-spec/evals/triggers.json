@@ -1,0 +1,11 @@
+{
+  "skill": "tk-to-spec",
+  "kind": "user-invoked",
+  "queries": [
+    {"id":"positive-explicit","split":"train","query":"$tk-to-spec 이 evidence로 spec 초안을 만들어줘","should_trigger":true},
+    {"id":"positive-command","split":"validation","query":"/tk-to-spec issue와 조사 결과를 repository spec으로 변환해줘","should_trigger":true},
+    {"id":"negative-implicit","split":"validation","query":"이 요구사항으로 spec을 만들어줘","should_trigger":false},
+    {"id":"negative-implementation","split":"validation","query":"$tk-to-spec 이 기능을 구현하고 commit해줘","should_trigger":false},
+    {"id":"negative-tickets","split":"validation","query":"$tk-to-spec spec을 ticket으로 쪼개줘","should_trigger":false}
+  ]
+}

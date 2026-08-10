@@ -10,7 +10,7 @@ design/screenshot basis가 있으면 승인된 viewport, DPR, browser, font, ass
 deviation, environment 또는 unverifiable로 분류하며 design intent를 만들거나
 generic critique로 넓히지 않습니다.
 
-responsive AC에서는 실제 `window.innerWidth`를 측정하고 named width와 breakpoint
+responsive AC에서는 실제 `window.innerWidth` 를 측정하고 named width와 breakpoint
 edge를 테스트합니다. 승인된 criteria가 요구하는 경우에만 overflow, clipping,
 overlap, wrapping, truncation, alignment, spacing, sticky/fixed element,
 off-screen control을 inspect합니다. trusted input 후 hover/focus를 측정합니다.

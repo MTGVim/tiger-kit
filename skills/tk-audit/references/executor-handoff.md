@@ -12,5 +12,5 @@
 - **Safety**: secret location과 credential type만 포함한다. values, cookies,
   tokens, private identity는 절대 복사하지 않는다.
 
-이 contract는 `tk-drive`를 위한 candidate를 준비할 뿐이며, implementation,
+이 contract는 `tk-drive` 를 위한 candidate를 준비할 뿐이며, implementation,
 unit, remote-publication authority를 부여하지 않는다.
