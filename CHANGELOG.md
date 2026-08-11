@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.11-8 — Release
+
+- fix(routing): enforce canonical model effort schema
+
 ## 2026.08.11-7 — Release
 
 - fix(browser): verify every visual fidelity axis
