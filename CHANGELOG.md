@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.11-9 — Release
+
+- fix(sweep): enforce frozen child receipts
+
 ## 2026.08.11-8 — Release
 
 - fix(routing): enforce canonical model effort schema
