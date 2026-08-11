@@ -13,6 +13,8 @@ state를 만들지 않는다. Artifact가 존재한다고 권한이 생기지는
 - optional `.tigerkit/session.md` path/status와 active-host routing source;
 - delegated unit의 `requested_selector`, `realized_model`, `reasoning_effort`,
   `worker_id`, `receipt_source` (`unavailable` 허용);
+- direct unit의 `requested_selector=n/a`, session `realized_model` 또는
+  `unavailable`, `reasoning_effort=inherited`;
 - delegated unit의 exact `Frozen receipt`, `Actual receipt`, `Plan deviations`와
   controller 비교 verdict;
 - fresh `general-purpose` implementer/reviewer, task brief/report/diff package,

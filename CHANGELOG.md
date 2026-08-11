@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 2026.08.11-11 — Release
+
+- test(respond): retain mechanical routing evidence
+- test(evals): migrate direct routing contract
+- test(release): reject direct model selectors
+- fix(routing): keep direct on session model
+
 ## 2026.08.11-10 — Release
 
 - fix(pr-open): honor repository templates

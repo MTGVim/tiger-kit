@@ -68,6 +68,10 @@ NON_PORTABLE_ABSOLUTE_PATH = re.compile(
     rf"[A-Za-z]:[\\/]+Users[\\/]+{_PORTABLE_PATH_SEGMENT})"
 )
 NON_PORTABLE_PATH_SKIP_PARTS = {".git", ".tigerkit", ".codegraph", "__pycache__", "node_modules"}
+DIRECT_MODEL_ROUTING = re.compile(
+    r"strategy\s*=\s*direct.*(?:model(?:_class)?|tier)\s*=\s*(?:cheapest|standard|strongest)",
+    re.IGNORECASE,
+)
 QUESTION_TOOL_TOKENS = (
     "AskUserQuestion",
     "request_user_input",
@@ -147,6 +151,20 @@ def discover_skills() -> dict[str, tuple[Path, dict[str, object], str]]:
         data, text = frontmatter(path)
         result[path.parent.name] = (path.parent, data, text)
     return result
+
+
+def validate_routing_invariants(skills_root: Path = SKILLS) -> list[str]:
+    errors: list[str] = []
+    paths = sorted(skills_root.glob("tk-*/SKILL.md"))
+    paths.extend(sorted(skills_root.glob("tk-*/references/*.md")))
+    for path in paths:
+        for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+            if DIRECT_MODEL_ROUTING.search(line.replace("`", "")):
+                errors.append(
+                    f"{_display_path(path)}:{number}: direct inherits the session model; "
+                    "model class/tier selectors are delegated-only"
+                )
+    return errors
 
 
 def _safe_relative(value: object) -> bool:
@@ -702,6 +720,7 @@ def validate_all() -> tuple[list[str], list[str]]:
     errors.extend(catalog_errors)
     errors.extend(validate_invocation_graph(skills))
     errors.extend(validate_release_critical(behavior_ids, catalog_ids))
+    errors.extend(validate_routing_invariants())
     errors.extend(validate_repository_contract(set(skills)))
     errors.extend(validate_repo_links())
     return errors, warnings

@@ -2,6 +2,11 @@
   "skill_name": "tk-pr-respond",
   "migrations": [
     {
+      "from": "pr-respond-starts-bounded-implementation-with-sdd-model",
+      "to": "pr-respond-separates-direct-strategy-from-delegated-model-routing",
+      "reason": "Issue 298 corrects the impossible direct plus model-selector contract; direct inherits the session model and selector tiers are delegated-only."
+    },
+    {
       "from": "pr-respond-ci-processes-fresh-feedback-without-questions-actor",
       "to": "pr-respond-ci-processes-feedback-through-fresh-workers-v4",
       "reason": "Direct CI progress는 이제 orchestration marker를 사용한다."
@@ -385,15 +390,18 @@
       ]
     },
     {
-      "id": "pr-respond-starts-bounded-implementation-with-sdd-model",
+      "id": "pr-respond-separates-direct-strategy-from-delegated-model-routing",
       "path": "success",
       "prompt": "[active approved standalone tk-pr-respond] RU-1은 격리 의무가 없는 기존 repository pattern의 bounded implementation이고 RU-2는 mechanical test edit입니다. RU-3만 design-heavy unknown-cause security fix입니다. worker strategy와 model을 하나의 approval surface에 추천해 주세요.",
-      "expected_output": "Respond가 RU-1에는 strategy=direct, model=cheapest를 단일 Recommendation으로 제시하고 RU-2도 cheapest로 시작하며 RU-3만 strongest로 올리고, 구현이라는 이유만으로 higher model을 선제 선택하지 않는다.",
+      "expected_output": "Respond가 RU-1과 RU-2에는 session model을 inherit하는 strategy=direct와 requested_selector=n/a를 제시하고, delegated인 RU-3에만 strongest selector/effort를 표시한다.",
       "assertions": [
-        {"type":"judge","criterion":"격리 없는 known-pattern bounded unit에는 strategy=direct와 model=cheapest를 단일 Recommendation으로 제안하고 mechanical edit도 cheapest로 시작한다. standard/strongest는 interacting interfaces, unresolved debugging, design, unknown cause, security 또는 demonstrated reasoning failure의 evidence가 있을 때만 선택한다. direct는 standalone one-unit strategy로만 사용한다."},
-        {"type":"path_text_contains","path":".tigerkit/pr-respond.md","text":"cheapest"},
+        {"type":"judge","criterion":"격리 없는 known-pattern bounded unit에는 session model을 바꾸지 않는 strategy=direct를 제안하고 requested_selector=n/a, realized_model=session model 또는 unavailable, reasoning_effort=inherited를 기록한다. Model selector/effort 선택은 delegated unit에만 적용하며 RU-3만 strongest를 사용한다."},
         {"type":"path_text_contains","path":".tigerkit/pr-respond.md","text":"strategy=direct"},
-        {"type":"path_text_contains","path":".tigerkit/pr-respond.md","text":"model=cheapest"},
+        {"type":"path_text_contains","path":".tigerkit/pr-respond.md","text":"requested_selector=n/a"},
+        {"type":"path_text_contains","path":".tigerkit/pr-respond.md","text":"reasoning_effort=inherited"},
+        {"type":"output_absent","text":"strategy=direct, model=cheapest"},
+        {"type":"output_absent","text":"tier=cheapest"},
+        {"type":"output_absent","text":"model_class=cheapest"},
         {"type":"terminal_status","expected":"Pass"}
       ]
     },

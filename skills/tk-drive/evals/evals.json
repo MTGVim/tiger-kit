@@ -2,6 +2,11 @@
   "skill_name": "tk-drive",
   "migrations": [
     {
+      "from": "drive-starts-bounded-implementation-with-sdd-model",
+      "to": "drive-separates-direct-strategy-from-delegated-model-routing",
+      "reason": "Issue 298 corrects the impossible direct plus model-selector contract; direct inherits the session model and selector tiers are delegated-only."
+    },
+    {
       "from": "drive-skips-unneeded-tickets",
       "to": "drive-executes-approved-single-unit",
       "reason": "Issue 277 absorbs phase ownership into Drive and replaces split artifacts with the integrated fresh-worker lifecycle."
@@ -2066,19 +2071,19 @@
       ]
     },
     {
-      "id": "drive-starts-bounded-implementation-with-sdd-model",
+      "id": "drive-separates-direct-strategy-from-delegated-model-routing",
       "path": "success",
       "prompt": "[active tk-drive Prepare] U1은 격리 의무가 없는 기존 repository pattern의 bounded implementation이고 U2는 complete-evidence mechanical edit입니다. U3는 design-heavy unknown-cause security boundary입니다. 각 unit의 execution strategy와 model을 approval surface에 추천해 주세요.",
-      "expected_output": "Drive가 U1에는 strategy=direct, model=cheapest를 단일 Recommendation으로 제시하고 U2도 cheapest로 시작하며 U3만 strongest로 올리고, file count만으로 higher model을 선택하지 않는다.",
+      "expected_output": "Drive가 U1과 U2에는 session model을 inherit하는 strategy=direct와 requested_selector=n/a를 제시하고, delegated인 U3에만 strongest selector/effort를 표시한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "격리 없는 known-pattern bounded unit에는 strategy=direct와 model=cheapest를 단일 Recommendation으로 제안하고, complete-evidence mechanical unit도 cheapest로 시작한다. direct strategy는 단일 bounded unit에만 사용한다. standard/strongest는 interacting interfaces, unresolved debugging, design, unknown cause, security 또는 demonstrated reasoning failure의 evidence가 있을 때만 사용한다."
+          "criterion": "격리 없는 known-pattern bounded unit에는 session model을 바꾸지 않는 strategy=direct를 제안하고 requested_selector=n/a, realized_model=session model 또는 unavailable, reasoning_effort=inherited를 기록한다. Model selector/effort 선택은 delegated unit에만 적용하며 U3만 strongest를 사용한다."
         },
         {
           "type": "path_text_contains",
           "path": ".tigerkit/drive.md",
-          "text": "cheapest"
+          "text": "requested_selector=n/a"
         },
         {
           "type": "path_text_contains",
@@ -2088,7 +2093,19 @@
         {
           "type": "path_text_contains",
           "path": ".tigerkit/drive.md",
-          "text": "model=cheapest"
+          "text": "reasoning_effort=inherited"
+        },
+        {
+          "type": "output_absent",
+          "text": "strategy=direct, model=cheapest"
+        },
+        {
+          "type": "output_absent",
+          "text": "tier=cheapest"
+        },
+        {
+          "type": "output_absent",
+          "text": "model_class=cheapest"
         },
         {
           "type": "terminal_status",
