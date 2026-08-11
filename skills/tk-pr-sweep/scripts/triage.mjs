@@ -191,10 +191,12 @@ export function classifyPullRequest({
   authorRespondedToChangeRequest,
   latestExternalActionable,
   authorRespondedToLatestExternal,
+  unresolvedThreads = [],
 }) {
   if (checksUnverifiable) return 'checks_unverifiable';
   if (conflict) return 'merge_conflict';
   if (checksFailed) return 'checks_failed';
+  if (unresolvedThreads.length) return 'unresolved_threads';
   if (latestExternalActionable && !authorRespondedToLatestExternal) return 'needs_reply';
   if (decision === 'CHANGES_REQUESTED') {
     return authorRespondedToChangeRequest ? 'awaiting_re_review' : 'changes_requested';
@@ -205,6 +207,38 @@ export function classifyPullRequest({
   }
   if (decision === 'APPROVED') return 'approved';
   return 'pending_review';
+}
+
+function reviewThreads(repo, number) {
+  const [owner, name] = repo.split('/');
+  const query = `query($owner:String!,$name:String!,$number:Int!,$endCursor:String) {
+    repository(owner:$owner,name:$name) {
+      pullRequest(number:$number) {
+        reviewThreads(first:100,after:$endCursor) {
+          nodes { id isResolved isOutdated path line comments(first:1) { nodes { url } } }
+          pageInfo { hasNextPage endCursor }
+        }
+      }
+    }
+  }`;
+  const result = run('gh', [
+    'api', 'graphql', '--paginate',
+    '-f', `query=${query}`,
+    '-F', `owner=${owner}`,
+    '-F', `name=${name}`,
+    '-F', `number=${number}`,
+  ], { allowFailure: true });
+  if (!result.ok) return result;
+  try {
+    const pages = result.stdout
+      ? result.stdout.split('\n').filter(Boolean).map((line) => JSON.parse(line))
+      : [];
+    const data = pages.flatMap((page) =>
+      page?.data?.repository?.pullRequest?.reviewThreads?.nodes || []);
+    return { ok: true, data };
+  } catch (error) {
+    return { ok: false, error: `Invalid review-thread JSON for ${repo}#${number}: ${error.message}` };
+  }
 }
 
 function run(command, args, { allowFailure = false } = {}) {
@@ -226,9 +260,14 @@ function ghObject(path) {
 }
 
 function ghList(path, arrayField = null) {
-  const result = run('gh', ['api', path, '--paginate', '--slurp'], { allowFailure: true });
+  const result = run('gh', ['api', path, '--paginate'], { allowFailure: true });
   if (!result.ok) return result;
-  try { return { ok: true, data: flattenPages(JSON.parse(result.stdout || '[]'), arrayField) }; } catch (error) {
+  try {
+    const pages = result.stdout
+      ? result.stdout.split('\n').filter(Boolean).map((line) => JSON.parse(line))
+      : [];
+    return { ok: true, data: flattenPages(pages, arrayField) };
+  } catch (error) {
     return { ok: false, error: `Invalid paginated JSON from ${path}: ${error.message}` };
   }
 }
@@ -324,7 +363,8 @@ async function triageRepository(repo, login, teamKeys) {
     const reviews = ghList(`repos/${repo}/pulls/${pull.number}/reviews?per_page=100`);
     const inlineComments = ghList(`repos/${repo}/pulls/${pull.number}/comments?per_page=100`);
     const issueComments = ghList(`repos/${repo}/issues/${pull.number}/comments?per_page=100`);
-    const required = [detail, reviews, inlineComments, issueComments];
+    const threads = reviewThreads(repo, pull.number);
+    const required = [detail, reviews, inlineComments, issueComments, threads];
     if (required.some((result) => !result.ok)) {
       failures.push(`#${pull.number}: ${required.filter((result) => !result.ok).map((result) => result.error).join('; ')}`);
       continue;
@@ -334,6 +374,7 @@ async function triageRepository(repo, login, teamKeys) {
       continue;
     }
     const rows = collectRows(reviews.data, inlineComments.data, issueComments.data);
+    const unresolvedThreads = threads.data.filter((thread) => !thread.isResolved);
     const review = computeReviewDecision(reviews.data, login);
     const reply = computeReplyEvidence(
       rows,
@@ -352,6 +393,7 @@ async function triageRepository(repo, login, teamKeys) {
       authorRespondedToChangeRequest: Boolean(changeResponse),
       latestExternalActionable: reply.outstanding.length > 0 || reply.responded.length > 0,
       authorRespondedToLatestExternal: reply.outstanding.length === 0 && reply.responded.length > 0,
+      unresolvedThreads,
     });
     failures.push(...check.errors.map((error) => `#${pull.number}: ${error}`));
     if (!['approved', 'pending_review'].includes(category)) {
@@ -362,6 +404,7 @@ async function triageRepository(repo, login, teamKeys) {
         failedChecks: check.failures,
         checkErrors: check.errors,
         mergeableState: detail.data.mergeable_state,
+        unresolvedThreads,
       }));
     }
   }

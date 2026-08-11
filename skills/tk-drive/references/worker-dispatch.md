@@ -1,20 +1,17 @@
 # Fresh worker 전달
 
-이 문서는 `tk-drive` 와 위임된 `tk-pr-respond`/`tk-pr-sweep` worker의
+이 문서는 `tk-drive` 와 위임된 `tk-pr-respond`/`tk-pr-sweep` worker의 direct 또는
 Superpowers식 SDD dispatch 계약이다. 소비 skill은 이 파일을 참조하며 worker/reviewer
 순서를 재정의하지 않는다.
 
-## Superpowers식 SDD worker 계약
+## Delegated SDD worker 계약
 
-복잡한 tier 매핑 대신 `subagent-driven-development`의 짧은 루프를 따른다.
+`delegated` 를 선택한 unit만 `subagent-driven-development`의 짧은 루프를 따른다.
 
 - delegated unit마다 새 `general-purpose` worker 하나를 dispatch한다. 이 label은
   실패가 아니라 implementer/reviewer의 의도된 host role이다.
-- `model`/`effort`는 plan metadata다. `cheapest`/`standard`/`strongest`를
-  provider 이름으로 번역하거나 post-spawn receipt를 발명하지 않는다.
-- model override를 지원하는 native host면 spawn 전에 선택한 `model`을 명시한다.
-  지원하지 않으면 spawn 전에 `model=host-default`로 결정한다. worker를 먼저 띄운
-  뒤 반환 label을 보고 tier를 판정하지 않는다.
+- `model`/`effort`는 plan metadata이며 아래 session routing으로 spawn 전에 native
+  selector를 resolve한다. worker를 먼저 띄운 뒤 반환 label로 model을 추정하지 않는다.
 - implementer prompt에는 task brief, exact scope/R-AC, worktree ownership, report
   path를 넣는다. worker는 질문을 먼저 내고, 구현·focused test·self-review·commit을
   마친 뒤 짧은 status와 report path만 반환한다.
@@ -22,11 +19,46 @@ Superpowers식 SDD dispatch 계약이다. 소비 skill은 이 파일을 참조�
   읽고 `Spec compliance`와 `Task quality` 두 verdict를 내며 worktree를 수정하지 않는다.
 - review가 실패하면 rounds 1–3은 같은 implementer를 resume하고, rounds 4–5는 새
   worker와 한 단계 강한 model을 쓴다. 다섯 번 뒤에도 load-bearing finding이 남으면
-  `Blocked`다. 모든 unit 뒤에는 한 번의 whole-branch review를 수행한다.
+  `Blocked`다. delegated unit이 하나라도 있거나 plan이 요구할 때만 마지막에 한 번의
+  whole-branch review를 수행한다.
 
 model 선택은 작업에 필요한 최소 capability만 쓴다: mechanical 작업은 `cheapest`,
 multi-file integration/debugging은 `standard`, architecture와 final review는
 `strongest`. 파일 수나 막연한 품질 선호만으로 promotion하지 않는다.
+
+## Session model routing
+
+Delegated dispatch 전에 repository root의 optional `.tigerkit/session.md`를 읽는다.
+현재 host section에 `cheapest`, `standard`, `strongest` native selector가 모두 있고
+`Status: Ready`이면 선택한 class를 그 selector로 dispatch한다. 예시는 다음과 같다.
+
+```markdown
+# TigerKit session
+Status: Ready
+
+## claude-code
+- cheapest: haiku
+- standard: sonnet
+- strongest: opus
+```
+
+현재 host section이 없거나 incomplete이면 normal `👍 Recommendation:` 안에
+`.tigerkit/session.md`에 추가할 exact block과 근거를 제안한다. 기존 block을 조용히
+덮어쓰거나 approval 전에 파일을 쓰거나 worker를 dispatch하지 않는다. 사용자가 승인하면
+그 block만 merge하고 reread한 뒤 사용한다. Host catalog/config에서 selector를 확인할 수
+없으면 값을 발명하지 않고 user-owned selector decision으로 남긴다.
+
+Host adapter는 다음 native control을 우선한다.
+
+| host | dispatch control | realized receipt |
+| --- | --- | --- |
+| `claude-code` | `Agent`의 explicit `model` selector | task/agent transcript가 노출한 model |
+| `codex` | spawned agent의 explicit model override | spawned-agent event/usage가 노출한 model |
+| `hermes-agent` | configured `delegation.model`; class별 selector가 필요하면 fresh `hermes -z -m <selector> --usage-file <path>` worker | usage file의 model |
+
+Ledger에는 `model_class`, `requested_selector`, `realized_model`, `reasoning_effort`,
+`worker_id`, `receipt_source`를 기록한다. Host가 realized model을 노출하지 않으면
+`realized_model=unavailable`로 기록하고 requested selector에서 추론하지 않는다.
 
 ## 실행 전략
 
@@ -54,7 +86,9 @@ multi-PR isolation과 nested-owner boundary를 하나의 direct executor로 대�
 delegated-only다.
 
 Direct execution은 current host context를 상속하므로 host가 제공하는 것보다 낮은
-model을 주장하지 않는다. model 선택은 delegated worker의 사전 계획에만 적용한다.
+model을 주장하지 않는다. Subagent, SDD reviewer, session model routing을 사용하지 않고
+focused verification과 self-review만 수행한다. Independent review는 user/repository policy
+또는 acceptance uncertainty가 명시적으로 요구할 때만 계획한다.
 
 ## Dispatch authorization 및 실패
 

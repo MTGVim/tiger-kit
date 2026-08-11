@@ -9,7 +9,10 @@ state를 만들지 않는다. Artifact가 존재한다고 권한이 생기지는
 
 - repository snapshot과 네 작업 문서의 absolute path, status, lineage/freshness verdict;
 - 명시적 user decision과 approved snapshot;
-- unit dependency/wave, execution strategy, 선택한 model;
+- unit dependency/wave, execution strategy, 선택한 model class;
+- optional `.tigerkit/session.md` path/status와 active-host routing source;
+- delegated unit의 `requested_selector`, `realized_model`, `reasoning_effort`,
+  `worker_id`, `receipt_source` (`unavailable` 허용);
 - fresh `general-purpose` implementer/reviewer, task brief/report/diff package,
   `Spec compliance`와 `Task quality` verdict;
 - dispatch, verifier/gap, correction, commit, aggregate/terminal/recovery receipt.
@@ -19,5 +22,5 @@ Goal, scope, exclusion, frozen literal, R/AC, 구현 지시와 verifier detail�
 
 Nested worker, reviewer, verifier는 경쟁하는 Markdown ledger를 작성하지 않는다.
 Binary evidence는 run-owned directory를 참조하는 방식으로 둘 수 있다. Raw
-transcript, chain of thought, full log/diff, provider/model name, password,
+transcript, chain of thought, full log/diff, credential, password,
 token, cookie, OTP, private identity 또는 다른 secret value는 저장하지 않는다.

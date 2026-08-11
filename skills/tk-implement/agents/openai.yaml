@@ -1,5 +1,5 @@
 interface:
-  short_description: "[user] 하나의 Ready ticket을 검증 후 구현하고 독립 검토와 단일 commit receipt를 남깁니다."
+  short_description: "[user] 하나의 Ready ticket을 direct 또는 delegated로 구현하고 단일 commit receipt를 남깁니다."
   default_prompt: "tk-implement로 정확히 하나의 Ready ticket을 안전하게 구현하고 검증하세요."
 
 policy:

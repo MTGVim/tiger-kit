@@ -90,7 +90,7 @@ def seed_hermes_config(isolated_home: Path, source_home: Path) -> None:
     isolated_home.mkdir(parents=True, exist_ok=True)
     for name in ("config.yaml", ".env"):
         candidate = source / name
-        if candidate.is_file():
+        if candidate.is_file() and candidate != isolated_home / name:
             shutil.copy2(candidate, isolated_home / name)
 
 
@@ -108,7 +108,8 @@ def host_environment(host: str) -> dict[str, str]:
         # the real config directory remains available for CLI authentication.
         env["CLAUDE_CONFIG_DIR"] = str(source_home / ".claude")
     else:
-        isolated = Path(require_env("HERMES_HOME"))
+        isolated = Path(env.get("HERMES_HOME", source_home / ".hermes"))
+        env["HERMES_HOME"] = str(isolated)
         seed_hermes_config(isolated, source_home)
     return env
 
@@ -250,7 +251,7 @@ def main() -> int:
             "exec",
             "--json",
             "--ephemeral",
-            "--full-auto",
+            "--dangerously-bypass-approvals-and-sandbox",
             "--skip-git-repo-check",
             wrapped,
         ]
@@ -271,6 +272,7 @@ def main() -> int:
         command = [
             executable,
             "chat",
+            "--quiet",
             "-q",
             wrapped,
             "--toolsets",
