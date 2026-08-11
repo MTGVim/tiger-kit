@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.11-6 — Release
+
+- fix(sweep): finalize every modified PR
+
 ## 2026.08.11-5 — Release
 
 - fix(skills): route workers and PR threads
