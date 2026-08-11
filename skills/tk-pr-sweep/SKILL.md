@@ -68,9 +68,13 @@ Prepare -> Execute -> Close gaps -> Finalize
    exclusions를 freeze합니다. proven independence와 host-provided isolation이
    함께 있을 때만 concurrency를 허용하고, wave를 도출합니다. uncertainty는
    serialize하며 scheduler는 만들지 않습니다. Actionable delegated row가 있으면
-   optional `.tigerkit/session.md`의 active-host model routing을 읽습니다. 없거나
-   incomplete이면 exact Markdown addition을 recommendation에 포함하고 approval 전에는
-   파일을 쓰거나 child를 dispatch하지 않습니다.
+   optional `.tigerkit/session.md`의 active-host model routing을
+   `skills/tk-drive/references/worker-dispatch.md#session-model-routing` 정경
+   schema로 검증합니다. 없거나 incomplete이면 nested class별 model/effort exact
+   Markdown addition과 `routing_state=decision-required`를 recommendation에 포함하고
+   approval 전에는 파일을 쓰거나 child를 dispatch하지 않습니다. 모든 actionable
+   delegated row의 model class, selector, effort, routing source가 chat approval에
+   없으면 `Blocked`입니다.
 5. `.tigerkit/pr-sweep.md`를 atomically replace한 뒤 reread합니다. actionable/held/report-only
    항목, 가정/모호성, 경로 웨이브, 검증, 위험, worktree 소유권,
    bounded remote actions와 `원격 변경: 아직 없음`을 파일에 보존합니다. 다음

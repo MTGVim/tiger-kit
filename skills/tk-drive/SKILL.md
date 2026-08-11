@@ -85,16 +85,21 @@ boundary를 지난 뒤에는 cursor나 lifecycle claim이 아니라 새 근거�
    plan metadata로 소비하고 조용히 덮어쓰지 않는다. 격리 없는 bounded known-pattern이면
    `strategy=direct`, `model=cheapest`를 우선 추천하고, fresh context·isolation·reviewer
    handoff·design-heavy reasoning이면 `delegated`와 근거를 추천한다. Delegated는
-   active-host section이 있는 `.tigerkit/session.md` routing을 사용한다. section이 없거나
-   incomplete이면 같은 approval surface에 exact Markdown addition을 제안하고 approval
-   전에는 파일을 쓰거나 worker를 dispatch하지 않는다. `general-purpose` implementer와
+   active-host section이 있는 `.tigerkit/session.md` routing을
+   `skills/tk-drive/references/worker-dispatch.md#session-model-routing`의 정경
+   schema로 검증해 사용한다. section이 없거나 incomplete이면 nested class별
+   model/effort exact Markdown addition과 `routing_state=decision-required`를 같은
+   approval surface에 제안하고 approval 전에는 파일을 쓰거나 worker를 dispatch하지
+   않는다. actionable delegated unit의 approval에는 model class, selector, effort,
+   routing source가 모두 보여야 하며 누락되면 `Blocked`다. `general-purpose` implementer와
    fresh task reviewer를 한 쌍으로 사용하며 반환 label은 tier 판정에 사용하지 않는다.
 7. [ledger.md](references/ledger.md)에 따라 `.tigerkit/drive.md` 의 current progress를 atomically
    replace하고 reread한 뒤 하나의 compact approval surface를 제시한다. Ledger에는
    repository snapshot, 네 작업 문서와 optional session path/status, document
    status/lineage check, approval snapshot, unit/dispatch/verification receipt만 둔다. Goal, scope, frozen literal,
    R/AC, implementation instruction은 세 작업 문서에서 소유하며 unknown은
-   `unavailable` 로 둔다. `👍 Recommendation:` 에는 strategy와 model을 포함하며,
+   `unavailable` 로 둔다. `👍 Recommendation:` 에는 strategy, model class, selector,
+   effort, routing source를 포함하며,
    사용자가 이 plan을 승인하는 것이 direct strategy의 명시적 승인이다.
    별도 direct 확인은 묻지 않는다. 이는 별도 lifecycle output이 아닌 approval evidence이다.
 
