@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.11-4 — Release
+
+- refactor(skills): adopt SDD worker reviews
+
 ## 2026.08.11-3 — Release
 
 - fix(skills): localize ledgers and verify tiers
