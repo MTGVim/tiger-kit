@@ -93,7 +93,7 @@
     },
     {
       "from": "drive-seals-per-unit-review-expectations",
-      "to": "drive-uses-sdd-worker-review",
+      "to": "drive-uses-configured-session-routing",
       "reason": "Issue 277 replaces split phase and broad-review behavior with one approved fresh-worker Drive lifecycle."
     },
     {
@@ -213,18 +213,28 @@
     },
     {
       "from": "drive-selects-automatic-worker-tiers",
-      "to": "drive-uses-sdd-worker-review",
+      "to": "drive-uses-configured-session-routing",
       "reason": "Replace post-spawn tier receipt checks with the simpler Superpowers-style general-purpose implementer/reviewer loop."
     },
     {
       "from": "drive-realizes-worker-tier-axes-with-partial-host-capability",
-      "to": "drive-uses-sdd-worker-with-host-default",
-      "reason": "Record host-default before spawn and verify the implementer/reviewer loop instead of inventing realized-axis collapse receipts."
+      "to": "drive-proposes-missing-session-routing",
+      "reason": "Propose an explicit repository-local host mapping before dispatch instead of silently collapsing to host-default."
     },
     {
       "from": "drive-starts-bounded-implementation-at-cheapest",
       "to": "drive-starts-bounded-implementation-with-sdd-model",
       "reason": "Rename tier recommendation evidence to the pre-dispatch model choice used by the SDD worker loop."
+    },
+    {
+      "from": "drive-uses-sdd-worker-review",
+      "to": "drive-uses-configured-session-routing",
+      "reason": "Resolve delegated model classes through an approved repository-local host mapping and record requested and realized receipts."
+    },
+    {
+      "from": "drive-uses-sdd-worker-with-host-default",
+      "to": "drive-uses-configured-session-routing",
+      "reason": "Replace host-default execution with approved repository-local selectors while preserving the delegated worker/reviewer success contract; missing routing has separate Pending coverage."
     }
   ],
   "evals": [
@@ -1801,14 +1811,14 @@
       "safety": true
     },
     {
-      "id": "drive-uses-sdd-worker-review",
+      "id": "drive-uses-configured-session-routing",
       "path": "success",
-      "prompt": "[active tk-drive Prepare] U1은 complete evidence의 mechanical edit, U2는 ordinary multi-file change, U3는 security-sensitive unknown-cause change입니다. Superpowers식 SDD worker/reviewer loop를 준비해 주세요.",
-      "expected_output": "Drive가 U1 cheapest, U2 standard, U3 strongest model metadata를 spawn 전에 정하고, 각 delegated unit을 general-purpose implementer와 fresh reviewer로 처리하며 host-default는 preflight에서 기록한다.",
+      "prompt": "[active approved tk-drive delegated] `.tigerkit/session.md`의 현재 host section이 Status: Ready이고 cheapest=fast-model, standard=balanced-model, strongest=strong-model입니다. U1은 mechanical, U2는 multi-file integration, U3는 security-sensitive unknown-cause change입니다. 실행 receipt를 기록해 주세요.",
+      "expected_output": "Drive가 U1/U2/U3를 cheapest/standard/strongest로 분류하고 fast-model/balanced-model/strong-model selector를 spawn 전에 사용하며 requested selector와 host가 노출한 realized model receipt를 기록한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "least-sufficient model을 unit evidence에서 spawn 전에 선택하고 general-purpose implementer -> Spec compliance/Task quality reviewer 순서를 지키며 provider/model mapping이나 user configuration surface를 만들지 않는다."
+          "criterion": "least-sufficient model class를 선택하고 approved active-host session selector를 spawn 전에 사용한다. delegated general-purpose implementer -> Spec compliance/Task quality reviewer 순서를 지키고 requested selector와 host-exposed realized model을 기록하며 미노출 값은 unavailable로 둔다."
         },
         {
           "type": "path_text_contains",
@@ -1823,12 +1833,17 @@
         {
           "type": "path_text_contains",
           "path": ".tigerkit/drive.md",
-          "text": "model="
+          "text": "requested_selector"
         },
         {
           "type": "path_text_contains",
           "path": ".tigerkit/drive.md",
           "text": "Spec compliance"
+        },
+        {
+          "type": "path_text_contains",
+          "path": ".tigerkit/drive.md",
+          "text": "realized_model"
         },
         {
           "type": "terminal_status",
@@ -2002,43 +2017,46 @@
       ]
     },
     {
-      "id": "drive-uses-sdd-worker-with-host-default",
-      "path": "success",
-      "prompt": "[active tk-drive Prepare] U1은 complete-evidence mechanical edit, U2는 ordinary multi-file integration, U3는 security-sensitive unknown-cause change입니다. host가 per-spawn model override를 제공하지 않습니다. 세 unit의 SDD worker/reviewer loop를 준비해 주세요.",
-      "expected_output": "Drive가 model=host-default를 spawn 전에 결정하고 각 unit을 general-purpose implementer와 fresh Spec compliance/Task quality reviewer로 처리한다.",
+      "id": "drive-proposes-missing-session-routing",
+      "path": "boundary",
+      "prompt": "[active tk-drive Prepare] delegated unit이 필요하지만 `.tigerkit/session.md`에 현재 host model routing이 없습니다. 사용 가능한 native selectors는 fast-model, balanced-model, strong-model입니다.",
+      "expected_output": "Drive가 exact `.tigerkit/session.md` host block을 하나의 Recommendation에 제안하고 approval 전에는 파일 쓰기, worker dispatch, product/Git 변경 없이 Pending으로 기다린다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "host-default를 spawn 전에 선택하고 provider/model mapping을 발명하지 않으며, general-purpose implementer와 fresh reviewer의 두 verdict를 commit 전에 요구한다. 명시적 user-invoked tk-drive 호출을 AgentTool authorization 부족으로 뒤집지 않는다."
+          "criterion": "missing active-host routing을 host-default로 조용히 collapse하지 않는다. 확인된 native selector로 exact session Markdown addition을 제안하고 approval 전에는 session file, worker, product, Git을 변경하지 않는다."
         },
         {
           "type": "path_text_contains",
           "path": ".tigerkit/drive.md",
-          "text": "worker=general-purpose"
+          "text": "session.md"
         },
         {
           "type": "path_text_contains",
           "path": ".tigerkit/drive.md",
-          "text": "model=host-default"
+          "text": "fast-model"
         },
         {
           "type": "path_text_contains",
           "path": ".tigerkit/drive.md",
-          "text": "Spec compliance"
+          "text": "balanced-model"
         },
         {
           "type": "path_text_contains",
           "path": ".tigerkit/drive.md",
-          "text": "Task quality"
+          "text": "strong-model"
         },
         {
           "type": "path_text_contains",
-          "path": ".tigerkit/drive.md",
-          "text": "reviewer"
+          "type": "event_absent",
+          "event": {
+            "type": "phase_invocation",
+            "phase": "fresh-worker"
+          }
         },
         {
           "type": "terminal_status",
-          "expected": "Pass"
+          "expected": "Pending"
         }
       ]
     },
@@ -2077,11 +2095,11 @@
       "id": "drive-runs-explicit-direct-unit",
       "path": "success",
       "prompt": "[active approved tk-drive --direct] 하나의 bounded implementation unit과 exact R/AC, owned paths, required focused check가 승인되었습니다. subagent를 사용하지 않고 실행해 주세요.",
-      "expected_output": "Drive가 strategy=direct로 current context를 단 하나의 unit executor로 전환하고 frozen owned paths만 수정한 뒤 verifier와 R/AC gap closure를 통과시켜 verified commit 하나를 만든다.",
+      "expected_output": "Drive가 strategy=direct로 subagent/SDD reviewer 없이 current context를 단 하나의 unit executor로 전환하고 focused verifier와 self-review 뒤 verified commit 하나를 만든다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "명시적 --direct는 direct executor mode로 동작해야 한다. fresh-worker phase를 호출하지 않고, scope를 넓히거나 다음 unit/ledger authority/remote publication을 직접 만들지 않으며, candidate -> verifier -> gap closure -> one verified commit 순서를 지킨다."
+          "criterion": "명시적 --direct는 direct executor mode로 동작해야 한다. implementer, SDD reviewer, session model routing 또는 fresh-worker phase를 호출하지 않고 focused verification과 self-review 뒤 one verified commit을 만든다. scope를 넓히거나 다음 unit/ledger authority/remote publication을 만들지 않는다."
         },
         {
           "type": "event_absent",

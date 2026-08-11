@@ -33,8 +33,9 @@ Coverage의 각 source/R-AC는 정확히 한 ticket에 매핑하거나 명시적
 사유를 적는다. ticket은 layer-only가 아니라 independently observable한 vertical
 slice여야 한다. `model` 과 `effort` 는 provider 이름이 아닌 작업 난이도 metadata로
 제안하고 rationale을 적는다. 이후 SDD worker를 dispatch할 때 model 선택의 근거로
-사용하되, `general-purpose` 반환을 model 선택 증거로 삼거나 post-spawn receipt를
-발명하지 않는다. host가 worker 자체를 제공하지 않으면 mapping을 발명하지 말고
+사용하되 concrete selector는 optional `.tigerkit/session.md`의 active-host routing이
+소유한다. `general-purpose` 반환을 model 선택 증거로 삼지 않고 host가 노출한 realized
+model receipt만 기록한다. host가 worker 자체를 제공하지 않으면 mapping을 발명하지 말고
 setup prerequisite로 표시하며 `tk-wizard` 를 먼저 사용하도록 한다.
 
 문서 끝에는 downstream 소비 전 사용자의 명시적 approval이 필요하다는 경계를 둔다.

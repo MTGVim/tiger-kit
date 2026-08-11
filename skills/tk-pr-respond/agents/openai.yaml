@@ -1,2 +1,2 @@
 interface:
-  short_description: "[user/auto] 하나의 PR을 하나의 승인된 fresh-worker plan으로 처리합니다."
+  short_description: "[user/auto] 하나의 PR을 승인된 direct 또는 fresh-worker plan으로 처리합니다."

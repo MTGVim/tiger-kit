@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.11-5 — Release
+
+- fix(skills): route workers and PR threads
+
 ## 2026.08.11-4 — Release
 
 - refactor(skills): adopt SDD worker reviews

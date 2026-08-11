@@ -35,6 +35,9 @@ PR/repository/head/refspec, current finding IDs, R/AC, scope와 exclusions, cont
 근거와 함께 해결한 assumptions, units/waves, verification, approved publication
 actions, worker/correction/commit evidence, thread actions, 최종 관찰 PR state와
 fresh `general-purpose` implementer/reviewer의 brief/report/diff/verdict를 기록한다.
+Delegated unit이면 optional `.tigerkit/session.md` routing source와 `model_class`,
+`requested_selector`, `realized_model`, `reasoning_effort`, `worker_id`,
+`receipt_source`도 기록한다. 미노출 값은 `unavailable`로 둔다.
 secret, transcript, full log는 저장하지 않는다.
 
 Sweep 아래에서 호출되면 `pr-respond.md`, child ledger, 기타 Markdown lifecycle file을
@@ -71,7 +74,9 @@ Prepare -> Execute -> Close gaps -> Finalize
    없는 bounded known-pattern unit이면 `strategy=direct`, `model=cheapest`를 우선
    추천하고, fresh context·isolation·reviewer handoff·design-heavy reasoning이
    필요하면 `delegated`와 그 근거를 추천한다. Delegated는 fresh `general-purpose`
-   implementer와 task reviewer를 함께 사용하며, model override는 spawn 전에 결정한다.
+   implementer와 task reviewer를 함께 사용한다. active-host `.tigerkit/session.md` routing이
+   있으면 spawn 전에 사용하고, 없으면 exact Markdown addition을 같은 approval surface에
+   제안하며 approval 전에는 파일을 쓰거나 dispatch하지 않는다.
    `general-purpose` 반환은 정상 결과다. Parent Sweep의 `--ci` handoff는 항상
    delegated이며 direct strategy로 바꾸지 않는다. `👍 Recommendation:` 에 strategy와
    model을 포함하고, 사용자가 표시된 plan을 승인하면 그것이 direct strategy에 대한
@@ -105,9 +110,11 @@ irreversible-decision drift는 approval을 무효화하고 Prepare로 돌아가�
 Executor에는 ID/goal, exact PR finding과 R/AC IDs, scope/exclusions, relevant paths,
 verification, Git ownership facts와 task brief/report path를 준다. Implementer는 질문을
 먼저 내고 자기 unit만 구현하며, focused checks·self-review·commit 후 report를 반환한다.
-그 뒤 fresh `general-purpose` reviewer가 diff package를 읽고 `Spec compliance`와
-`Task quality`를 판정하기 전에는 unit을 완료하지 않는다. `general-purpose` label 자체는
-실패가 아니다.
+Direct unit은 여기서 subagent 없이 controller에 candidate를 반환한다. Delegated unit만
+fresh `general-purpose` reviewer가 diff package를 읽고 `Spec compliance`와 `Task
+quality`를 판정하기 전에는 완료하지 않는다. requested selector와 host가 노출한 realized
+model receipt를 기록하고, 미노출 값은 `unavailable`로 둔다. `general-purpose` label
+자체는 실패가 아니다.
 
 다음 불변식을 사용한다:
 
@@ -141,9 +148,11 @@ non-mutating reviewer를 최대 한 명 사용한다. required-but-unavailable i
 
 ### 최종화 및 발행(Finalize and publish)
 
-모든 resolution unit 뒤에는 fresh `general-purpose` whole-PR reviewer를 한 번 dispatch해
-전체 diff의 Spec/AC와 품질을 확인한다. finding이 있으면 하나의 fresh corrective worker와
-한 번의 scoped re-review만 수행하고, load-bearing residual은 `Blocked`로 남긴다.
+Delegated unit이 하나라도 있거나 approved plan이 independent final review를 요구할 때만
+fresh `general-purpose` whole-PR reviewer를 한 번 dispatch해 전체 diff의 Spec/AC와
+품질을 확인한다. all-direct run은 aggregate checks와 self-review만 사용한다. delegated
+review finding이 있으면 하나의 fresh corrective worker와 한 번의 scoped re-review만
+수행하고, load-bearing residual은 `Blocked`로 남긴다.
 모든 selected unit이 gap을 close한 뒤 repository identity, local `HEAD`, PR head/ref/open
 state, checks, threads를 fresh-read한다. 변경되지 않은, 이미 approved된 action만 다음
 순서로 publish한다.
@@ -151,7 +160,9 @@ state, checks, threads를 fresh-read한다. 변경되지 않은, 이미 approved
 1. 검증된 commit이 있을 때 정확한 branch를 push한다.
 2. 현재 finding별로 정확히 reply한다.
 3. reply가 성공한 뒤 fresh verification을 거친 thread만 resolve한다.
-4. review/thread/check/mergeability를 fresh-read한다.
+4. GraphQL `reviewThreads`를 끝까지 paginate해 review/thread/check/mergeability를
+   fresh-read한다. 하나라도 unresolved이면 완료나 waiting-for-review로 판정하지 않고
+   exact thread evidence와 함께 open unit으로 유지한다.
 5. author, authenticated user, bot 및 여전히 유효한 approver를 제외하고 조건부 human re-review를 한다.
 6. PR summary는 최대 하나만 작성한다.
 
@@ -166,7 +177,7 @@ state, checks, threads를 fresh-read한다. 변경되지 않은, 이미 approved
 | identity, authority, freshness, scope 또는 `--ci` boundary가 unresolved | mutation 전에 멈추고 정확한 blocker를 기록한다 | `Blocked` |
 | required evidence 또는 independent review를 사용할 수 없음 | finding/unit을 open으로 유지하고 판정을 확정하지 않는다 | `Unverifiable` |
 | partial remote write 또는 approved operation failure | remote를 다시 읽어 적용된 상태만 보고하고 임의 retry하지 않는다 | `Fail` |
-| 모든 selected unit이 gap을 close하고 approved action 및 fresh final-read가 완료됨 | exact result와 remaining checks만 보고한다 | `Pass` |
+| 모든 selected unit이 gap을 close하고 모든 inline thread가 resolved이며 approved action 및 fresh final-read가 완료됨 | exact result와 remaining checks만 보고한다 | `Pass` |
 
 Sweep 아래에서는 one-summary budget을 consume하고, 이미 consume했으면 draft를 반환한다.
 모든 generated external comment는 정확히

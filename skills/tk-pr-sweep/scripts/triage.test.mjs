@@ -166,6 +166,7 @@ test('classification priority is checks, conflict, outstanding reply, changes re
   };
   assert.equal(classifyPullRequest({ ...base, checksUnverifiable: true }), 'checks_unverifiable');
   assert.equal(classifyPullRequest({ ...base, checksUnverifiable: false, conflict: true }), 'merge_conflict');
+  assert.equal(classifyPullRequest({ ...base, conflict: false, unresolvedThreads: [{ id: 'thread-1' }] }), 'unresolved_threads');
   assert.equal(classifyPullRequest({ ...base, conflict: false }), 'needs_reply');
   assert.equal(classifyPullRequest({ ...base, conflict: false, latestExternalActionable: false }), 'changes_requested');
   assert.equal(classifyPullRequest({ ...base, conflict: false, authorRespondedToChangeRequest: true }), 'needs_reply');

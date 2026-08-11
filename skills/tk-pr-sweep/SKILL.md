@@ -54,6 +54,7 @@ Prepare -> Execute -> Close gaps -> Finalize
    | --- | --- |
    | 동일 repository의 base/head와 명확한 ownership에 정확히 일치하는 maintenance conflict | `tk-pr-rebase --ci` |
    | repository가 유발한 GitHub Actions failure | `tk-pr-respond --ci` |
+   | 하나라도 unresolved인 inline review thread | `tk-pr-respond --ci` |
    | 현재 actionable feedback/reply | `tk-pr-respond --ci` |
    | 외부·unknown·unverifiable check, review request, draft 또는 waiting | report-only |
 
@@ -66,14 +67,17 @@ Prepare -> Execute -> Close gaps -> Finalize
 4. repository/PR/head/category/route/scope/risk/verification/actions와
    exclusions를 freeze합니다. proven independence와 host-provided isolation이
    함께 있을 때만 concurrency를 허용하고, wave를 도출합니다. uncertainty는
-   serialize하며 scheduler는 만들지 않습니다.
+   serialize하며 scheduler는 만들지 않습니다. Actionable delegated row가 있으면
+   optional `.tigerkit/session.md`의 active-host model routing을 읽습니다. 없거나
+   incomplete이면 exact Markdown addition을 recommendation에 포함하고 approval 전에는
+   파일을 쓰거나 child를 dispatch하지 않습니다.
 5. `.tigerkit/pr-sweep.md`를 atomically replace한 뒤 reread합니다. actionable/held/report-only
    항목, 가정/모호성, 경로 웨이브, 검증, 위험, worktree 소유권,
    bounded remote actions와 `원격 변경: 아직 없음`을 파일에 보존합니다. 다음
    계획 증거 필드도 한 번씩 보존합니다: `저장소 범위`, `분류 기준`,
    `항목 (PR # | head SHA | category | route)`, `경로 / 웨이브`, `검증`,
    `위험 / 제외`, `Worktree 소유권`, `권한`, `승인`,
-   `원격 변경: 아직 없음`. unknown은 `unavailable`로 두고
+   `원격 변경: 아직 없음`, active-host routing source와 model class/selector. unknown은 `unavailable`로 두고
    route/authority를 추측하지 않습니다. 채팅에는 plan 전문이나 이 evidence fields를
    반복하지 않습니다.
 
@@ -123,7 +127,9 @@ reviewers, verifiers는 child Markdown ledger를 쓰지 않고 compact evidence�
 작성하지 않으며, correction은 canonical policy
 `skills/tk-drive/references/worker-dispatch.md`를 따르는 fresh worker를 사용합니다.
 Worker preflight가 실패하면 row를 `Blocked`로 남기고, `general-purpose` worker label은
-정상 role로 처리합니다.
+정상 role로 처리합니다. 각 delegated worker의 requested selector, host가 노출한
+realized model, reasoning effort, worker ID와 receipt source를 장부에 기록하며 미노출
+값은 `unavailable`로 둡니다.
 
 각 child result 후 exact PR을 fresh-triage하고 `continue`를 묻지 않은 채 frozen
 queue를 계속합니다. prompt-local bound를 유지합니다: exact base/head pair마다
@@ -132,7 +138,8 @@ response 한 번, sweep-owned follow-up head 최대 두 개입니다. 반복해�
 이거나 소진된 작업은 추가 mutation이 아니라 `follow-up-queued`가 됩니다.
 push 후 `IN_PROGRESS`는 fresh recheck를 최대 세 번 수행하고, 여전히 완료되지
 않으면 `waiting`으로 기록하고 worktree를 유지한 채 independent row를 계속합니다.
-반환된 state가 실제로 external check 또는 re-review 대기를 요구할 때만
+반환된 state가 실제로 external check 또는 re-review 대기를 요구하고 모든 inline
+review thread가 resolved일 때만
 `⏳ sweep · 대기`를 emit합니다.
 
 unresolved identity, corrupt repository evidence, unprovable worktree ownership 같은
