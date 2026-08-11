@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.12-2 — 릴리즈
+
+- docs: 저장소 지침 압축
+
 ## 2026.08.12-1 — Release
 
 - feat: localize skill prose and harden release gate
