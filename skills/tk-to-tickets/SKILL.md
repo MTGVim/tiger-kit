@@ -31,10 +31,10 @@ root를 실제 absolute path로 치환해 보고한다. ticket마다 다음 필�
 
 Coverage의 각 source/R-AC는 정확히 한 ticket에 매핑하거나 명시적으로 `uncovered`
 사유를 적는다. ticket은 layer-only가 아니라 independently observable한 vertical
-slice여야 한다. `model` 과 `effort` 는 provider 이름이 아닌 symbolic capability tier로
-제안하고 rationale을 적는다. 이 값은 이후 worker 호출의 requested axis로 소비되어야
-하며, 실제 host 적용 결과는 `realized_model`/`realized_effort`/`collapse` receipt로
-확인한다. host mapping이 없으면 mapping을 발명하지 말고
+slice여야 한다. `model` 과 `effort` 는 provider 이름이 아닌 작업 난이도 metadata로
+제안하고 rationale을 적는다. 이후 SDD worker를 dispatch할 때 model 선택의 근거로
+사용하되, `general-purpose` 반환을 model 선택 증거로 삼거나 post-spawn receipt를
+발명하지 않는다. host가 worker 자체를 제공하지 않으면 mapping을 발명하지 말고
 setup prerequisite로 표시하며 `tk-wizard` 를 먼저 사용하도록 한다.
 
 문서 끝에는 downstream 소비 전 사용자의 명시적 approval이 필요하다는 경계를 둔다.
@@ -46,7 +46,8 @@ setup prerequisite로 표시하며 `tk-wizard` 를 먼저 사용하도록 한다
 2. coverage를 수집해 각 항목을 한 번만 vertical ticket에 배치한다. 누락·충돌은
    멈추고 원문과 이유를 보존한다.
 3. 각 ticket의 entry point부터 observable acceptance와 verification까지 작성한다.
-4. capability tier와 effort tier를 제안하고 host mapping 유무를 명시한다.
+4. 작업 난이도에 맞는 model metadata와 effort rationale을 제안하고 host worker
+   availability를 명시한다.
 5. self-contained, absolute path, approval boundary를 확인한 뒤 저장한다.
 
 ## 경계

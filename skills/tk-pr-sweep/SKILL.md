@@ -122,8 +122,8 @@ reviewers, verifiers는 child Markdown ledger를 쓰지 않고 compact evidence�
 `.tigerkit/pr-sweep.md`에 반환합니다. Controller와 nested Respond는 product edit를
 작성하지 않으며, correction은 canonical policy
 `skills/tk-drive/references/worker-dispatch.md`를 따르는 fresh worker를 사용합니다.
-Partial capability는 deterministic collapse를 기록하고, unusable worker는 row를
-`Blocked`로 남깁니다.
+Worker preflight가 실패하면 row를 `Blocked`로 남기고, `general-purpose` worker label은
+정상 role로 처리합니다.
 
 각 child result 후 exact PR을 fresh-triage하고 `continue`를 묻지 않은 채 frozen
 queue를 계속합니다. prompt-local bound를 유지합니다: exact base/head pair마다
