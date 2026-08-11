@@ -132,8 +132,10 @@ reviewers, verifiers는 child Markdown ledger를 쓰지 않고 compact evidence�
 `skills/tk-drive/references/worker-dispatch.md`를 따르는 fresh worker를 사용합니다.
 Worker preflight가 실패하면 row를 `Blocked`로 남기고, `general-purpose` worker label은
 정상 role로 처리합니다. 각 delegated worker의 requested selector, host가 노출한
-realized model, reasoning effort, worker ID와 receipt source를 장부에 기록하며 미노출
-값은 `unavailable`로 둡니다.
+realized model과 reasoning effort를 장부에 기록합니다. Worker identity의 canonical
+source는 child self-report가 아니라 controller가 받은 host dispatch surface이며,
+dispatch 직후 worker ID/handle과 receipt source를 기록합니다. Child ID는 optional이고
+`unavailable`이어도 host receipt가 있으면 실패가 아닙니다.
 
 모든 mutating child는 두 단계 handoff입니다. 첫 호출은 `Preflight only`이며 child가
 frozen strategy, model class, requested selector, owned paths를 exact `Frozen receipt`로
@@ -141,12 +143,19 @@ frozen strategy, model class, requested selector, owned paths를 exact `Frozen r
 exact compare해 일치할 때만 같은 child를 resume합니다. 누락·불일치는 새 판단으로
 보정하지 않고 row를 `Blocked`로 남깁니다.
 
-완료 뒤 controller는 `Actual receipt`의 strategy, model class, requested selector,
-worker ID, changed paths와 `Plan deviations`를 frozen row에 기계적으로 대조합니다.
-delegated row에서 worker ID가 없거나 direct actual strategy면 결과와 tests가 정상이더라도
-`Blocked`입니다. class/selector/scope mismatch 또는 `Plan deviations`가 `none`이 아니면
-publication과 `Pass`를 금지하고 exact deviation을 ledger에 기록합니다. 빈 deviation
-field도 미보고로 실패합니다.
+완료 뒤 controller는 host dispatch receipt와 `Actual receipt`의 strategy, model class,
+requested selector, changed paths, `Plan deviations`를 frozen row에 기계적으로
+대조합니다. Host dispatch identity가 없거나 direct actual strategy, class/selector/scope
+mismatch, 빈 deviation field 또는 `scope-violating`이면 결과와 tests가 정상이어도
+`Blocked`입니다.
+
+`transient-self-corrected` deviation은 controller가 fresh ancestry, published diff/tree,
+frozen scope, intended change set와 required tests/checks를 독립적으로 다시 읽어 net
+effect 0을 입증한 경우에만 `Pass with recorded deviation`으로 허용합니다. 이미 push된
+row도 이 verdict면 nested Respond finalization을 끝까지 실행합니다. 입증 실패나
+`scope-violating`이면 추가 publication을 멈추고, fresh child가 exact frozen state를
+복원한 뒤 같은 검증을 통과해야 finalization을 재개하는 recovery condition을 ledger에
+남깁니다. 즉 이미 publish된 row를 설명 없이 반쯤 열린 상태로 버리지 않습니다.
 
 Sweep가 head, thread reply 또는 check-fix를 변경한 모든 PR은 row를 닫기 전에 정확히
 한 번의 nested `tk-pr-respond --ci` finalization을 거칩니다. 최초 owner가 Respond면

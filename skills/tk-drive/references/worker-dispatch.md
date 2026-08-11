@@ -93,18 +93,25 @@ Ledger에는 `model_class`, `requested_selector`, `realized_model`, `reasoning_e
 `worker_id`, `receipt_source`를 기록한다. Host가 realized model을 노출하지 않으면
 `realized_model=unavailable`로 기록하고 requested selector에서 추론하지 않는다.
 
-Delegated child report는 다음 exact receipt를 항상 반환한다. 빈
-`Plan deviations`는 미보고이며 `none` literal만 no-deviation이다.
+Delegated child report는 다음 exact receipt를 항상 반환한다. Worker identity의
+canonical source는 child self-report가 아니라 parent가 받은 host dispatch surface다.
+Child의 worker ID self-report는 optional이며 `unavailable`이어도 된다. Parent는 dispatch
+직후 host worker ID/handle과 receipt source를 ledger에 기록한다. 빈 `Plan deviations`는
+미보고이며 `none` literal만 no-deviation이다.
 
 ```text
 Frozen receipt: strategy=<delegated> model_class=<class> requested_selector=<selector> owned_paths=<exact list>
-Actual receipt: strategy=<actual> model_class=<actual> requested_selector=<actual> worker_id=<id> changed_paths=<exact list>
-Plan deviations: none | <field; frozen; actual; reason>
+Host dispatch receipt: worker_id=<host id or handle> receipt_source=<host dispatch surface>
+Actual receipt: strategy=<actual> model_class=<actual> requested_selector=<actual> changed_paths=<exact list>
+Plan deviations: none | transient-self-corrected:<field; frozen; transient; restored; reason> | scope-violating:<field; frozen; published; reason>
 ```
 
-Parent가 delegated를 freeze했으면 `worker_id`가 비어 있거나 actual strategy가 direct인
-receipt는 결과가 정상이어도 contract violation이다. model class, selector, changed paths도
-frozen receipt와 exact compare하며 mismatch 또는 deviation은 `Pass`가 아니다.
+Parent가 delegated를 freeze했으면 host dispatch receipt가 없거나 actual strategy가
+direct인 결과는 정상이어도 contract violation이다. model class, selector, changed paths도
+frozen receipt와 exact compare한다. `transient-self-corrected`는 parent가 ancestry,
+published diff/tree, frozen scope, intended changes와 required checks를 독립적으로 다시
+읽어 net effect 0을 입증한 경우에만 recorded deviation으로 허용한다. 그 외 mismatch,
+빈 deviation 또는 `scope-violating`은 `Pass`가 아니다.
 
 ## 실행 전략
 
