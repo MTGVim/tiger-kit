@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.11-7 — Release
+
+- fix(browser): verify every visual fidelity axis
+
 ## 2026.08.11-6 — Release
 
 - fix(sweep): finalize every modified PR
