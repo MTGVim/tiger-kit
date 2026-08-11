@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.11-10 — Release
+
+- fix(pr-open): honor repository templates
+
 ## 2026.08.11-9 — Release
 
 - fix(sweep): enforce frozen child receipts
