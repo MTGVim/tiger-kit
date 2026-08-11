@@ -75,11 +75,20 @@ criterion별 current evidence와 실제 inspect한 screenshot이 없으면 `Pass
    시작하며 trusted interaction을 사용합니다. required request/response와 final
    state를 inspect하고 decision-relevant한 모든 final state에 대해 최소 하나의
    non-empty run-owned screenshot을 capture합니다. 인용한 image는 모두 실제로
-   inspect합니다.
-5. **판정(Verdict)** — 승인된 각 criterion을 evidence에 연결하고 `Pass`,
+   inspect합니다. 승인된 visual verbatim/reference 비교에서는
+   [visual](references/visual.md)의 asset, content, geometry, typography, color,
+   imagery, responsive/state 축을 각각 검사하고 축 하나라도 생략하지 않습니다:
+   logo/SVG/icon/raster/background의 presence와 rendered integrity; visible text;
+   position/dimensions/spacing/alignment/crop; loaded font family/weight/size/line-height/
+   letter-spacing; foreground/background/border/SVG fill·stroke/opacity/shadow/gradient;
+   image source/load/intrinsic size/aspect/object-fit·position; 승인된 viewport와
+   hover/focus/active/disabled/loading/error state입니다.
+5. **판정(Verdict)** — 승인된 각 criterion과 visual comparison axis를 evidence에
+   연결하고 `Pass`,
    `Fail`, `Blocked`, `Unverifiable` 를 보고합니다. evidence가 origin을 뒷받침할
    때만 observed failure를 `change-related`, `pre-existing`, `environment`,
-   `unverifiable` 로 분류합니다.
+   `unverifiable` 로 분류합니다. required visual axis가 unchecked이면 aggregate
+   `Pass`를 반환하지 않습니다.
 6. **정리(Cleanup)** — run-owned resource만 닫고 [session lifecycle](references/session-lifecycle.md)을
    사용해 capture/redaction residue를 확인합니다.
 

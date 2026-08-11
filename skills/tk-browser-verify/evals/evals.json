@@ -121,6 +121,34 @@
       ]
     },
     {
+      "id": "browser-verbatim-visual-checks-every-axis",
+      "path": "success",
+      "prompt": "승인된 reference screenshot과 구현 페이지가 verbatim인지 headless로 꼼꼼히 비교해 주세요. 로고 SVG, 색상, 글자 크기, 이미지 누락도 놓치지 마세요.",
+      "expected_output": "Comparable reference/candidate screenshot을 inspect하고 asset, content, geometry, typography, color, imagery, responsive/state를 각각 판정하며 unchecked 축이 있으면 Pass하지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "logo/SVG/icon/image presence와 SVG rendered fill/stroke/viewBox, visible content, layout geometry, loaded font family/weight/size/line-height/letter-spacing, computed colors/paint, image source/load/aspect/crop, viewport/state를 독립 축으로 비교한다."
+        },
+        {
+          "type": "judge",
+          "criterion": "각 mismatch를 axis, named region, reference/candidate observation, viewport/state, inspected screenshot에 연결하고 required axis를 생략하거나 DOM 존재만으로 aggregate Pass하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "typography"
+        },
+        {
+          "type": "output_contains",
+          "text": "imagery"
+        },
+        {
+          "type": "terminal_status",
+          "allowed": ["Pass", "Fail", "Unverifiable"]
+        }
+      ]
+    },
+    {
       "id": "chrome-headless-new-first-launch",
       "path": "boundary",
       "prompt": "Chrome으로 승인된 UI AC를 검증해 주세요. 사용 가능한 browser MCP는 첫 호출 때 창을 열지만 실제 launch argument는 보여 주지 않습니다. visible fallback은 쓰지 마세요.",
