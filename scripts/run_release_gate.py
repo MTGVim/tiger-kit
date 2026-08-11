@@ -22,6 +22,7 @@ from run_skill_evals import (
     load_retired_skill_contracts,
     resolve_ref,
 )
+from validate_skills import validate_portable_artifacts
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "evals/release-critical.json"
@@ -146,6 +147,7 @@ def main() -> int:
             )
         )
         contract_errors.extend(validate_manifest_cases(candidate_contracts, candidate_catalog, manifest))
+        contract_errors.extend(validate_portable_artifacts(candidate_root))
         commands = [
             ["python3", "scripts/validate_skills.py"],
             ["python3", "scripts/validate_skills.py", "--links-only"],

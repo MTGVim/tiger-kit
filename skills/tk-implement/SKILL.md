@@ -13,9 +13,10 @@ metadata:
 # Ready ticket 구현
 
 명시적으로 `/tk-implement` 또는 `$tk-implement` 을 선택한 경우에만 실행한다.
-`/home/tigeryoo/workspace/tiger-kit/.tigerkit/tickets.md` 에서 정확히 하나의
-`Status: Ready` ticket과 `/home/tigeryoo/workspace/tiger-kit/.tigerkit/implement.md` 의
-지시를 읽는다. 입력이 없거나 문서가 없으면 `Status: Unverifiable` 로 멈춘다.
+현재 checkout의 repository root를 `git rev-parse --show-toplevel`로 resolve한 뒤
+`<repository-root>/.tigerkit/tickets.md` 에서 정확히 하나의 `Status: Ready` ticket과
+`<repository-root>/.tigerkit/implement.md` 의 지시를 읽는다. 입력이 없거나 문서가
+없으면 `Status: Unverifiable` 로 멈춘다.
 Pending, stale, lineage mismatch, unresolved `model`/`effort` 는 각각 정확히
 `Status: Blocked` 로 멈추고 변경·stage·commit·receipt를 만들지 않는다.
 

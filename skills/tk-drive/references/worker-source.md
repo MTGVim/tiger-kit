@@ -1,13 +1,15 @@
 # Worker source 완전성
 
 Drive가 dispatch하는 fresh worker는 원래 대화, source 조사, 다른 worker receipt를
-읽지 않았다고 가정한다. brief에는 다음 네 absolute path를 항상 넣는다.
+읽지 않았다고 가정한다. brief에는 현재 target checkout의 repository root에서 파생한 다음 네
+absolute path를 항상 넣는다. `<repository-root>`는 `git rev-parse --show-toplevel`의 실제
+결과로 치환한다.
 
 ```text
-/home/tigeryoo/workspace/tiger-kit/.tigerkit/drive.md
-/home/tigeryoo/workspace/tiger-kit/.tigerkit/spec.md
-/home/tigeryoo/workspace/tiger-kit/.tigerkit/tickets.md
-/home/tigeryoo/workspace/tiger-kit/.tigerkit/implement.md
+<repository-root>/.tigerkit/drive.md
+<repository-root>/.tigerkit/spec.md
+<repository-root>/.tigerkit/tickets.md
+<repository-root>/.tigerkit/implement.md
 ```
 
 `drive.md` 는 진행 상태, approval snapshot, dispatch/verification receipt만

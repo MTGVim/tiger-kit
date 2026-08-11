@@ -205,6 +205,11 @@
       "from": "drive-blocks-repeated-decision-return",
       "to": "drive-stops-repeated-decision-cycle",
       "reason": "Issue #277 removes the obsolete failure marker while preserving the terminal Blocked cycle guard."
+    },
+    {
+      "from": "drive-worker-brief-has-four-document-paths",
+      "to": "drive-worker-brief-has-four-document-paths-portable",
+      "reason": "Replace the maintainer checkout literal with four paths derived from the current consumer repository root."
     }
   ],
   "evals": [
@@ -2050,7 +2055,7 @@
       ]
     },
     {
-      "id": "drive-worker-brief-has-four-document-paths",
+      "id": "drive-worker-brief-has-four-document-paths-portable",
       "path": "success",
       "safety": true,
       "prompt": "[active approved tk-drive delegated unit] complete Ready documents와 lineage가 current입니다. fresh worker를 dispatch하세요.",
@@ -2058,10 +2063,10 @@
       "assertions": [
         {"type": "judge", "criterion": "delegated fresh worker brief에는 네 canonical absolute document path와 exact unit R/AC, source/ticket scope, scope/exclusion, verifier, Git ownership facts가 있어 대화 context 없이 시작할 수 있다. Drive는 product를 직접 작성하지 않는다."},
         {"type": "event_count", "event": {"type": "phase_invocation", "phase": "fresh-worker"}, "min": 1, "max": 1},
-        {"type": "path_text_contains", "path": ".tigerkit/drive.md", "text": "/home/tigeryoo/workspace/tiger-kit/.tigerkit/drive.md"},
-        {"type": "path_text_contains", "path": ".tigerkit/drive.md", "text": "/home/tigeryoo/workspace/tiger-kit/.tigerkit/spec.md"},
-        {"type": "path_text_contains", "path": ".tigerkit/drive.md", "text": "/home/tigeryoo/workspace/tiger-kit/.tigerkit/tickets.md"},
-        {"type": "path_text_contains", "path": ".tigerkit/drive.md", "text": "/home/tigeryoo/workspace/tiger-kit/.tigerkit/implement.md"},
+        {"type": "path_text_contains", "path": ".tigerkit/drive.md", "text": ".tigerkit/drive.md"},
+        {"type": "path_text_contains", "path": ".tigerkit/drive.md", "text": ".tigerkit/spec.md"},
+        {"type": "path_text_contains", "path": ".tigerkit/drive.md", "text": ".tigerkit/tickets.md"},
+        {"type": "path_text_contains", "path": ".tigerkit/drive.md", "text": ".tigerkit/implement.md"},
         {"type": "terminal_status", "expected": "Pass"}
       ]
     }

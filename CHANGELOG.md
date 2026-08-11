@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.11-2 — Release
+
+- fix(portability): derive consumer repository paths
+
 ## 2026.08.11-1 — Release
 
 - docs(skills): localize TigerKit guidance

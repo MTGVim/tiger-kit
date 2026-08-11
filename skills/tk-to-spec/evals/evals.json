@@ -1,8 +1,15 @@
 {
   "skill_name": "tk-to-spec",
+  "migrations": [
+    {
+      "from": "positive-self-contained",
+      "to": "positive-self-contained-portable-path",
+      "reason": "Report the current consumer repository's resolved .tigerkit path instead of the maintainer checkout literal."
+    }
+  ],
   "evals": [
     {
-      "id": "positive-self-contained",
+      "id": "positive-self-contained-portable-path",
       "path": "success",
       "prompt": "/tk-to-spec 다음 evidence만 사용해 spec 초안을 작성해줘: 목표는 X, 변경 path는 skills/example/SKILL.md, 검증은 python test.py이다.",
       "expected_output": "Pending 상태의 self-contained spec을 absolute path에 저장하고 source/R-AC, goal/scope/exclusions, constraints, acceptance, verification, lineage를 포함한다.",
@@ -13,7 +20,7 @@
         },
         {
           "type": "output_contains",
-          "text": "/home/tigeryoo/workspace/tiger-kit/.tigerkit/spec.md"
+          "text": ".tigerkit/spec.md"
         },
         {
           "type": "terminal_status",
