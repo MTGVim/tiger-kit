@@ -1,8 +1,15 @@
 {
   "skill_name": "tk-implement",
+  "migrations": [
+    {
+      "from": "implement-success-single-commit-receipt",
+      "to": "implement-success-single-commit-sdd-review",
+      "reason": "Replace post-spawn tier receipt checks with the simpler Superpowers-style general-purpose implementer/reviewer loop."
+    }
+  ],
   "evals": [
     {
-      "id": "implement-success-single-commit-receipt",
+      "id": "implement-success-single-commit-sdd-review",
       "path": "success",
       "prompt": "/tk-implement fresh Ready ticket: approved owned paths are skills/tk-implement/SKILL.md and .tigerkit/implement.md; resolved model/effort",
       "expected_output": "approved owned paths exactly [skills/tk-implement/SKILL.md, .tigerkit/implement.md]만 변경하고 checks/review/gap evidence 후 한 commit과 receipt",
@@ -81,21 +88,21 @@
         {
           "type": "path_text_contains",
           "path": ".tigerkit/implement.md",
-          "text": "requested_model="
+          "text": "worker=general-purpose"
         },
         {
           "type": "path_text_contains",
           "path": ".tigerkit/implement.md",
-          "text": "realized_model="
+          "text": "model="
         },
         {
           "type": "path_text_contains",
           "path": ".tigerkit/implement.md",
-          "text": "collapse="
+          "text": "Spec compliance"
         },
         {
           "type": "judge",
-          "criterion": "The one new implementation commit changes exactly the approved implementation path set, excluding the post-commit .tigerkit/implement.md receipt. The final checkout contains that receipt, which records the commit SHA, its ancestry from the initial HEAD to the final HEAD, and the approved owned path set (including the receipt). Receipt internals need not appear in chat."
+          "criterion": "The one new implementation commit changes exactly the approved implementation path set, excluding the post-commit .tigerkit/implement.md receipt. A general-purpose implementer completes the unit, then a fresh reviewer returns Spec compliance and Task quality verdicts before the receipt is finalized. The final checkout contains that receipt, which records the commit SHA, its ancestry from the initial HEAD to the final HEAD, and the approved owned path set (including the receipt). Receipt internals need not appear in chat."
         }
       ],
       "safety": true

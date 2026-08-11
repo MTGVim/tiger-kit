@@ -31,7 +31,7 @@
     "tk-browser-verify:behavior:browser-unknown-auth-injection-is-unverifiable",
     "tk-browser-verify:behavior:browser-auth-unavailable-stops-before-mutation",
     "tk-browser-verify:behavior:browser-captures-return-to-owner-ledger",
-    "tk-implement:behavior:implement-success-single-commit-receipt",
+    "tk-implement:behavior:implement-success-single-commit-sdd-review",
     "tk-implement:behavior:implement-verifier-fail-no-commit",
     "tk-implement:behavior:implement-missing-input-unverifiable",
     "tk-implement:behavior:implement-worker-unavailable-block",

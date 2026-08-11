@@ -34,7 +34,7 @@ Standalone Respond는 `.tigerkit/pr-respond.md` 를 원자적으로 대체하고
 PR/repository/head/refspec, current finding IDs, R/AC, scope와 exclusions, controller가
 근거와 함께 해결한 assumptions, units/waves, verification, approved publication
 actions, worker/correction/commit evidence, thread actions, 최종 관찰 PR state와
-worker dispatch envelope의 requested/realized model·effort 및 `collapse`를 기록한다.
+fresh `general-purpose` implementer/reviewer의 brief/report/diff/verdict를 기록한다.
 secret, transcript, full log는 저장하지 않는다.
 
 Sweep 아래에서 호출되면 `pr-respond.md`, child ledger, 기타 Markdown lifecycle file을
@@ -66,23 +66,16 @@ Prepare -> Execute -> Close gaps -> Finalize
    또는 uncertain work는 serialize한다. concurrent unit에는 host-provided isolated
    checkout/worktree와 proven independence가 필요하다. scheduler를 만들지 않는다.
 5. `skills/tk-drive/references/worker-dispatch.md` 의 canonical worker-dispatch
-   contract에 따라 unit별 `direct | delegated` strategy와 least-sufficient worker tier를
-   선택한다. ticket 또는 approved plan에 resolved `model`/`effort`가 있으면 이를
-   그대로 dispatch input으로 사용하고, 격리 의무가 없는 bounded known-pattern unit이면
-   `strategy=direct`, `tier=cheapest` 를 우선 추천한다. fresh context,
-   isolation, reviewer handoff, design-heavy reasoning이 필요하면 delegated와
-   그 근거를 추천한다. model/effort
-   capability를 축별로 결정론적으로 실현한다. model configuration이나
-   provider/model mapping은 절대 노출하지 않는다. per-spawn 선택이 불가능하면
-   `host-default` collapse를 기록한다. direct가 승인되지 않았고 usable fresh worker를
-   dispatch할 수 없으면 `Blocked` 로 끝낸다. Parent Sweep의 `--ci` handoff는 항상
-   delegated이며 direct strategy로 바꾸지 않는다. `👍 Recommendation:` 에
-   strategy와 tier를 포함하고, 사용자가 표시된 plan을 승인하면 그것이 direct
-   strategy에 대한 명시적 승인이다. 별도 direct 확인은 묻지 않는다. Native worker
-   호출에는 `worker_role`, requested/realized model·effort와 `collapse`를 포함한
-   dispatch envelope를 실제 control로 전달한다. `general-purpose` 같은 host agent
-   label만 반환되고 realized axis가 없으면 tier가 적용됐다고 간주하지 않으며, host가
-   축을 조용히 무시하면 mutation 전에 `Blocked`로 멈춘다.
+   contract에 따라 unit별 `direct | delegated` strategy와 최소 model을 선택한다.
+   ticket 또는 approved plan의 `model`/`effort`는 plan metadata로 보존한다. 격리 의무가
+   없는 bounded known-pattern unit이면 `strategy=direct`, `model=cheapest`를 우선
+   추천하고, fresh context·isolation·reviewer handoff·design-heavy reasoning이
+   필요하면 `delegated`와 그 근거를 추천한다. Delegated는 fresh `general-purpose`
+   implementer와 task reviewer를 함께 사용하며, model override는 spawn 전에 결정한다.
+   `general-purpose` 반환은 정상 결과다. Parent Sweep의 `--ci` handoff는 항상
+   delegated이며 direct strategy로 바꾸지 않는다. `👍 Recommendation:` 에 strategy와
+   model을 포함하고, 사용자가 표시된 plan을 승인하면 그것이 direct strategy에 대한
+   명시적 승인이다. 별도 direct 확인은 묻지 않는다.
 6. goal/PR/head, included/excluded findings, apply/reply/defer decisions, R/AC,
    units/waves, verification, exact bounded `push`/reply/resolve/re-review/summary actions,
    risks, assumptions/ambiguities를 포함한 compact approval surface 하나를 준비한다. 이것이
@@ -106,12 +99,15 @@ irreversible-decision drift는 approval을 무효화하고 Prepare로 돌아가�
 
 ### 실행(Execute)
 
-각 dependency wave마다 frozen strategy를 적용한다. delegated unit은 fresh worker가
-맡고, standalone direct unit은 current context가 단 하나의 bounded executor로 맡는다.
+각 dependency wave마다 frozen strategy를 적용한다. delegated unit은 fresh
+`general-purpose` implementer가 맡고, standalone direct unit은 current context가
+단 하나의 bounded executor로 맡는다.
 Executor에는 ID/goal, exact PR finding과 R/AC IDs, scope/exclusions, relevant paths,
-verification, Git ownership facts와 dispatch envelope를 준다. Executor는 current evidence를 검사하고 자기
-unit만 구현하며, focused checks를 실행하고, bounded behavior-preserving simplify/reuse
-pass를 한 번 수행한 뒤, changed paths, candidate evidence, unresolved items를 반환한다.
+verification, Git ownership facts와 task brief/report path를 준다. Implementer는 질문을
+먼저 내고 자기 unit만 구현하며, focused checks·self-review·commit 후 report를 반환한다.
+그 뒤 fresh `general-purpose` reviewer가 diff package를 읽고 `Spec compliance`와
+`Task quality`를 판정하기 전에는 unit을 완료하지 않는다. `general-purpose` label 자체는
+실패가 아니다.
 
 다음 불변식을 사용한다:
 
@@ -122,7 +118,7 @@ candidate -> required tests/checks/browser verifier -> Close gaps
 
 Required verifiers는 final uncommitted candidate에서 실행한다. direct unit의 gap fix는
 같은 frozen unit과 owned paths 안에서만 수행하고, delegated unit의 gap fix는 새 worker를
-사용한다. escalation 전에 missing context를 제공하고, demonstrated reasoning failure에는 한 tier 높은 fresh worker를 배정한다. corrective round는 최대 세 번을
+사용한다. escalation 전에 missing context를 제공하고, demonstrated reasoning failure에는 한 단계 강한 fresh worker를 배정한다. corrective round는 최대 세 번을
 선호하며 unchanged failure를 무기한 retry하지 않는다. proven owned paths만 stage하고
 pre-existing user changes를 보존한다.
 
@@ -145,6 +141,9 @@ non-mutating reviewer를 최대 한 명 사용한다. required-but-unavailable i
 
 ### 최종화 및 발행(Finalize and publish)
 
+모든 resolution unit 뒤에는 fresh `general-purpose` whole-PR reviewer를 한 번 dispatch해
+전체 diff의 Spec/AC와 품질을 확인한다. finding이 있으면 하나의 fresh corrective worker와
+한 번의 scoped re-review만 수행하고, load-bearing residual은 `Blocked`로 남긴다.
 모든 selected unit이 gap을 close한 뒤 repository identity, local `HEAD`, PR head/ref/open
 state, checks, threads를 fresh-read한다. 변경되지 않은, 이미 approved된 action만 다음
 순서로 publish한다.

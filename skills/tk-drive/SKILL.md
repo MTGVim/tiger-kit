@@ -79,19 +79,18 @@ boundary를 지난 뒤에는 cursor나 lifecycle claim이 아니라 새 근거�
    계획한다. 그 외에는 `not-required` 로 기록한다. Required headless auth를
    사용할 수 없으면 mutation 전에 `Unverifiable` 이다.
 6. [worker-dispatch.md](references/worker-dispatch.md)에 따라 각 unit의 execution
-   strategy와 최소 tier를 선택한다. ticket에 이미 resolved `model`/`effort`가 있으면
-   그것을 dispatch input으로 소비하고 새 tier를 조용히 덮어쓰지 않는다. 격리 없는
-   bounded known-pattern이면 `strategy=direct`, `tier=cheapest` 를 우선 추천하고,
-   fresh context·isolation·reviewer handoff·design-heavy reasoning이면 `delegated` 와
-   근거를 추천한다. Worker 호출에는 `worker-dispatch.md`의 requested/realized
-   envelope를 전달하며, host가 축을 무시한 채 generic worker를 실행하면 `Blocked`로
-   멈춘다.
+   strategy와 최소 model을 선택한다. ticket에 이미 resolved `model`/`effort`가 있으면
+   plan metadata로 소비하고 조용히 덮어쓰지 않는다. 격리 없는 bounded known-pattern이면
+   `strategy=direct`, `model=cheapest`를 우선 추천하고, fresh context·isolation·reviewer
+   handoff·design-heavy reasoning이면 `delegated`와 근거를 추천한다. Delegated는
+   `general-purpose` implementer와 fresh task reviewer를 한 쌍으로 사용한다. 반환된
+   `general-purpose` label은 정상 결과이며 tier 판정에 사용하지 않는다.
 7. [ledger.md](references/ledger.md)에 따라 `.tigerkit/drive.md` 의 current progress를 atomically
    replace하고 reread한 뒤 하나의 compact approval surface를 제시한다. Ledger에는
    repository snapshot, 네 absolute path와 document status/lineage check, approval
    snapshot, unit/dispatch/verification receipt만 둔다. Goal, scope, frozen literal,
    R/AC, implementation instruction은 세 작업 문서에서 소유하며 unknown은
-   `unavailable` 로 둔다. `👍 Recommendation:` 에는 strategy와 tier를 포함하며,
+   `unavailable` 로 둔다. `👍 Recommendation:` 에는 strategy와 model을 포함하며,
    사용자가 이 plan을 승인하는 것이 direct strategy의 명시적 승인이다.
    별도 direct 확인은 묻지 않는다. 이는 별도 lifecycle output이 아닌 approval evidence이다.
 
@@ -103,19 +102,18 @@ remote-state, verifier-prerequisite, irreversible-decision drift가 생기면
 
 ## 실행(Execute)
 
-각 dependency wave마다 frozen strategy를 적용한다. Delegated unit은 fresh worker가
-맡고, direct unit은 current context가 단 하나의 bounded executor로 맡는다.
+각 dependency wave마다 frozen strategy를 적용한다. Delegated unit은 fresh
+`general-purpose` implementer가 맡고, direct unit은 current context가 단 하나의
+bounded executor로 맡는다.
 Executor에게는 ID/goal, exact R/AC, source/ticket scope, scope/exclusion, 관련
    path와 현재 target checkout에서 resolve한 `<repository-root>/.tigerkit/` 아래 네
 absolute path, verification obligation, branch/head/diff ownership을 전달한다.
-Dispatch 전에는 `worker_role`, `requested_tier`, `requested_model`, `requested_effort`를
-native worker control에 실제로 전달하고, 반환 receipt에서 `realized_model`,
-`realized_effort`, `collapse`를 확인한다. `general-purpose` 같은 host label만 있고
-realized axis가 없으면 tier 실현으로 간주하지 않으며, host가 축을 조용히 무시하면
-mutation 전에 `Blocked`로 멈춘다.
-Executor는 현재 근거를 확인하고 해당 unit만 구현하며 focused check를 실행한다. 그 뒤 하나의 bounded
-behavior-preserving simplify/reuse pass를 수행하고 changed paths, candidate
-evidence, unresolved item을 반환한다. 다음 불변식을 지킨다.
+Dispatch 전에 host가 worker를 받을 수 있는지 확인하고, 지원하면 선택한 model을 native
+control에 명시한다. Implementer에는 task brief/report path를 주고, 질문·구현·focused
+test·self-review·commit 후 짧은 report를 받는다. 그 뒤 fresh `general-purpose`
+reviewer에게 diff package를 주고 `Spec compliance`와 `Task quality` 두 verdict를
+받기 전에는 unit을 완료로 처리하지 않는다. `general-purpose` 반환 자체는 실패가
+아니다. 다음 불변식을 지킨다.
 
 ```text
 candidate -> required tests/checks/browser verifier -> Close gaps
@@ -125,8 +123,8 @@ candidate -> required tests/checks/browser verifier -> Close gaps
 Required verifier는 commit 전에 final candidate를 대상으로 실행한다. Proven owned path만
 stage하고 pre-existing user change를 보존한다. Direct unit의 isolated gap은 같은 frozen unit과 owned paths 안에서 current executor가 닫고, delegated
 unit의 gap은 fresh corrective worker를 dispatch해 영향받은 obligation을 다시
-실행한다. 최대 세 round를 우선한다. Missing context는 tier upgrade 없이
-보충한다. Demonstrated reasoning failure가 있을 때만 다음 tier의 fresh
+실행한다. 최대 세 round를 우선한다. Missing context는 model upgrade 없이
+보충한다. Demonstrated reasoning failure가 있을 때만 한 단계 강한 fresh
 worker를 한 번 사용한다. 변하지 않거나, 원인을 격리할 수 없거나, 충돌하거나,
 scope를 넓히는 failure가 반복되면 mutation을 중단한다.
 
@@ -152,6 +150,9 @@ built-in 또는 third-party reviewer를 쓴다. Required review를 사용할 수
 
 ## 최종화(Finalize)
 
+모든 unit 뒤에는 fresh `general-purpose` whole-branch reviewer를 한 번 dispatch해 전체
+diff의 Spec/AC와 품질을 확인한다. finding이 있으면 하나의 fresh corrective worker와
+한 번의 scoped re-review만 수행하고, load-bearing residual은 `Blocked`로 남긴다.
 모든 verified unit commit 뒤에 aggregate R/AC traceability, repository check,
 ancestry, exclusion, freshness를 다시 확인한다. Unit commit, verifier/gap
 evidence, corrective round, aggregate result, recovery fact를 포함하도록
@@ -160,5 +161,5 @@ evidence, corrective round, aggregate result, recovery fact를 포함하도록
 
 Success면 concise behavior result, 유용한 unit commit, aggregate verification
 한 개에서 네 개, 정확히 `Status: Pass` 를 출력한다. Active run의 terminal
-response는 Drive만 출력한다. Child receipt, raw log, dispatch tier,
+response는 Drive만 출력한다. Child receipt, raw log, dispatch model,
 progress marker는 생략한다.
