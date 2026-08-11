@@ -4,7 +4,7 @@
   "queries": [
     {"id":"train-explicit","split":"train","query":"$tk-pr-sweep","should_trigger":true},
     {"id":"train-negative","split":"train","query":"열린 PR들을 전부 알아서 정리해줘","should_trigger":false},
-    {"id":"validation-positive-1","split":"validation","query":"/tk-pr-sweep configured repositories의 Act now PR을 처리해줘","should_trigger":true,"facets":["formal"]},
+    {"id":"validation-positive-1","split":"validation","query":"/tk-pr-sweep configured repositories의 지금 처리 PR을 처리해줘","should_trigger":true,"facets":["formal"]},
     {"id":"validation-positive-2","split":"validation","query":"tk-pr-sweep PR maintenance 돌려줘","should_trigger":true,"facets":["casual"]},
     {"id":"validation-positive-3","split":"validation","query":"$tk-pr-sweep conflict, Actions, review feedback까지 bounded 처리","should_trigger":true,"facets":["compound"]},
     {"id":"validation-positive-report","split":"validation","query":"$tk-pr-sweep --report configured repositories 상태만 읽어줘","should_trigger":true,"facets":["formal"]},

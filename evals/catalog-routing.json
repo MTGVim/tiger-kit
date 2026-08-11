@@ -391,7 +391,7 @@
     {
       "id": "pr-sweep-explicit",
       "boundary": "tk-pr-sweep vs tk-pr-sweep --report/tk-pr-respond/tk-pr-rebase",
-      "prompt": "/tk-pr-sweep configured repositories의 지원 가능한 Act now PR을 처리해줘",
+      "prompt": "/tk-pr-sweep configured repositories의 지원 가능한 지금 처리 PR을 처리해줘",
       "focus_skill": "tk-pr-sweep",
       "expected_selected_skill": "tk-pr-sweep",
       "critical": true

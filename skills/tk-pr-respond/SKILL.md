@@ -33,7 +33,8 @@ plan을 direct로 뒤집지 않고 `Blocked` 로 끝낸다.
 Standalone Respond는 `.tigerkit/pr-respond.md` 를 원자적으로 대체하고 다시 읽는다.
 PR/repository/head/refspec, current finding IDs, R/AC, scope와 exclusions, controller가
 근거와 함께 해결한 assumptions, units/waves, verification, approved publication
-actions, worker/correction/commit evidence, thread actions, 최종 관찰 PR state를 기록한다.
+actions, worker/correction/commit evidence, thread actions, 최종 관찰 PR state와
+worker dispatch envelope의 requested/realized model·effort 및 `collapse`를 기록한다.
 secret, transcript, full log는 저장하지 않는다.
 
 Sweep 아래에서 호출되면 `pr-respond.md`, child ledger, 기타 Markdown lifecycle file을
@@ -66,7 +67,8 @@ Prepare -> Execute -> Close gaps -> Finalize
    checkout/worktree와 proven independence가 필요하다. scheduler를 만들지 않는다.
 5. `skills/tk-drive/references/worker-dispatch.md` 의 canonical worker-dispatch
    contract에 따라 unit별 `direct | delegated` strategy와 least-sufficient worker tier를
-   선택하고, 격리 의무가 없는 bounded known-pattern unit이면
+   선택한다. ticket 또는 approved plan에 resolved `model`/`effort`가 있으면 이를
+   그대로 dispatch input으로 사용하고, 격리 의무가 없는 bounded known-pattern unit이면
    `strategy=direct`, `tier=cheapest` 를 우선 추천한다. fresh context,
    isolation, reviewer handoff, design-heavy reasoning이 필요하면 delegated와
    그 근거를 추천한다. model/effort
@@ -76,7 +78,11 @@ Prepare -> Execute -> Close gaps -> Finalize
    dispatch할 수 없으면 `Blocked` 로 끝낸다. Parent Sweep의 `--ci` handoff는 항상
    delegated이며 direct strategy로 바꾸지 않는다. `👍 Recommendation:` 에
    strategy와 tier를 포함하고, 사용자가 표시된 plan을 승인하면 그것이 direct
-   strategy에 대한 명시적 승인이다. 별도 direct 확인은 묻지 않는다.
+   strategy에 대한 명시적 승인이다. 별도 direct 확인은 묻지 않는다. Native worker
+   호출에는 `worker_role`, requested/realized model·effort와 `collapse`를 포함한
+   dispatch envelope를 실제 control로 전달한다. `general-purpose` 같은 host agent
+   label만 반환되고 realized axis가 없으면 tier가 적용됐다고 간주하지 않으며, host가
+   축을 조용히 무시하면 mutation 전에 `Blocked`로 멈춘다.
 6. goal/PR/head, included/excluded findings, apply/reply/defer decisions, R/AC,
    units/waves, verification, exact bounded `push`/reply/resolve/re-review/summary actions,
    risks, assumptions/ambiguities를 포함한 compact approval surface 하나를 준비한다. 이것이
@@ -103,7 +109,7 @@ irreversible-decision drift는 approval을 무효화하고 Prepare로 돌아가�
 각 dependency wave마다 frozen strategy를 적용한다. delegated unit은 fresh worker가
 맡고, standalone direct unit은 current context가 단 하나의 bounded executor로 맡는다.
 Executor에는 ID/goal, exact PR finding과 R/AC IDs, scope/exclusions, relevant paths,
-verification, Git ownership facts만 준다. Executor는 current evidence를 검사하고 자기
+verification, Git ownership facts와 dispatch envelope를 준다. Executor는 current evidence를 검사하고 자기
 unit만 구현하며, focused checks를 실행하고, bounded behavior-preserving simplify/reuse
 pass를 한 번 수행한 뒤, changed paths, candidate evidence, unresolved items를 반환한다.
 

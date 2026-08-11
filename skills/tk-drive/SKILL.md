@@ -79,9 +79,13 @@ boundary를 지난 뒤에는 cursor나 lifecycle claim이 아니라 새 근거�
    계획한다. 그 외에는 `not-required` 로 기록한다. Required headless auth를
    사용할 수 없으면 mutation 전에 `Unverifiable` 이다.
 6. [worker-dispatch.md](references/worker-dispatch.md)에 따라 각 unit의 execution
-   strategy와 최소 tier를 선택한다. 격리 없는 bounded known-pattern이면
-   `strategy=direct`, `tier=cheapest` 를 우선 추천하고, fresh context·isolation·
-   reviewer handoff·design-heavy reasoning이면 `delegated` 와 근거를 추천한다.
+   strategy와 최소 tier를 선택한다. ticket에 이미 resolved `model`/`effort`가 있으면
+   그것을 dispatch input으로 소비하고 새 tier를 조용히 덮어쓰지 않는다. 격리 없는
+   bounded known-pattern이면 `strategy=direct`, `tier=cheapest` 를 우선 추천하고,
+   fresh context·isolation·reviewer handoff·design-heavy reasoning이면 `delegated` 와
+   근거를 추천한다. Worker 호출에는 `worker-dispatch.md`의 requested/realized
+   envelope를 전달하며, host가 축을 무시한 채 generic worker를 실행하면 `Blocked`로
+   멈춘다.
 7. [ledger.md](references/ledger.md)에 따라 `.tigerkit/drive.md` 의 current progress를 atomically
    replace하고 reread한 뒤 하나의 compact approval surface를 제시한다. Ledger에는
    repository snapshot, 네 absolute path와 document status/lineage check, approval
@@ -102,8 +106,13 @@ remote-state, verifier-prerequisite, irreversible-decision drift가 생기면
 각 dependency wave마다 frozen strategy를 적용한다. Delegated unit은 fresh worker가
 맡고, direct unit은 current context가 단 하나의 bounded executor로 맡는다.
 Executor에게는 ID/goal, exact R/AC, source/ticket scope, scope/exclusion, 관련
-path와 현재 target checkout에서 resolve한 `<repository-root>/.tigerkit/` 아래 네
+   path와 현재 target checkout에서 resolve한 `<repository-root>/.tigerkit/` 아래 네
 absolute path, verification obligation, branch/head/diff ownership을 전달한다.
+Dispatch 전에는 `worker_role`, `requested_tier`, `requested_model`, `requested_effort`를
+native worker control에 실제로 전달하고, 반환 receipt에서 `realized_model`,
+`realized_effort`, `collapse`를 확인한다. `general-purpose` 같은 host label만 있고
+realized axis가 없으면 tier 실현으로 간주하지 않으며, host가 축을 조용히 무시하면
+mutation 전에 `Blocked`로 멈춘다.
 Executor는 현재 근거를 확인하고 해당 unit만 구현하며 focused check를 실행한다. 그 뒤 하나의 bounded
 behavior-preserving simplify/reuse pass를 수행하고 changed paths, candidate
 evidence, unresolved item을 반환한다. 다음 불변식을 지킨다.

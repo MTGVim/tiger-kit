@@ -25,7 +25,7 @@
     "tk-drive:behavior:drive-owns-single-current-ledger",
     "tk-pr-respond:behavior:pr-respond-prepares-single-approved-plan",
     "tk-pr-respond:behavior:pr-respond-verifies-before-commit-and-owns-single-ledger",
-    "tk-pr-sweep:behavior:pr-sweep-single-plan-before-worker-mutation",
+    "tk-pr-sweep:behavior:pr-sweep-single-plan-before-worker-mutation-ko",
     "tk-pr-sweep:behavior:pr-sweep-nested-routes-use-single-sweep-ledger",
     "tk-browser-verify:behavior:browser-transient-auth-material-establishes-headless-session",
     "tk-browser-verify:behavior:browser-unknown-auth-injection-is-unverifiable",
