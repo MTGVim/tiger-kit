@@ -141,6 +141,30 @@ class EvalSotValidatorTest(unittest.TestCase):
             errors = validate_skills.validate_plain_chat_contract(root)
             self.assertTrue(any("render questions in plain chat" in error for error in errors))
 
+    def test_direct_strategy_rejects_model_tier_pairing(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            skills = Path(directory)
+            skill = skills / "tk-example"
+            references = skill / "references"
+            references.mkdir(parents=True)
+            (skill / "SKILL.md").write_text(
+                "Recommend `strategy=direct`, `model=cheapest`.\n",
+                encoding="utf-8",
+            )
+            errors = validate_skills.validate_routing_invariants(skills)
+            self.assertTrue(any("delegated-only" in error for error in errors))
+
+    def test_direct_strategy_accepts_session_model_inheritance(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            skills = Path(directory)
+            skill = skills / "tk-example"
+            skill.mkdir()
+            (skill / "SKILL.md").write_text(
+                "Use strategy=direct with model_class=n/a and requested_selector=n/a.\n",
+                encoding="utf-8",
+            )
+            self.assertEqual(validate_skills.validate_routing_invariants(skills), [])
+
     def test_release_critical_references_canonical_case_ids(self) -> None:
         skills = validate_skills.discover_skills()
         behavior_ids: dict[str, set[str]] = {}
