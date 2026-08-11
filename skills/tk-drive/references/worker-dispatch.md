@@ -19,6 +19,34 @@ user-configurable setting이 아니라 capability를 설명한다.
 요청 tier는 unit evidence에서 선택된다. 이는 user decision으로 노출하지 않으며
 provider/model name은 receipt나 ledger에 절대 저장하지 않는다.
 
+## 실제 dispatch 계약
+
+ticket의 resolved `model`/`effort`와 Drive가 승인한 tier는 설명용 문장이 아니라
+native worker 호출의 입력이다. 호출 전마다 다음 dispatch envelope를 만들고 brief와
+host tool 호출 양쪽에 전달한다.
+
+```text
+worker_role=implementer|corrective|reviewer|verifier
+requested_tier=cheapest|standard|strongest|host-default
+requested_model=lowest-sufficient|standard-sufficient|highest-available|host-default
+requested_effort=low|medium|high|inherit
+realized_model=<actual capability axis>
+realized_effort=<actual capability axis>
+collapse=none|model-unavailable|effort-unavailable|spawn-tier-unavailable
+```
+
+- `requested_model`과 `requested_effort`를 prompt에만 적지 말고 native worker
+  호출의 실제 model/effort control에도 전달한다. 호출 API가 축을 받지 않으면
+  해당 축을 `unavailable`로 판정하고 `host-default`/`inherit` collapse를 기록한다.
+- `general-purpose` 같은 host agent label은 worker role 표시일 뿐 tier realization의
+  증거가 아니다. 그 label만 반환되고 `realized_model`/`realized_effort`가 없으면
+  requested tier가 적용됐다고 주장하지 않는다.
+- host가 requested 축을 조용히 무시했는데 collapse를 확인할 수 없으면 mutation 전에
+  `Blocked`로 멈춘다. `host-default`를 실제로 사용한 경우에만 그 사실을 ledger receipt에
+  남기고 다음 unit에서 다시 cheapest/standard를 제안하지 않는다.
+- provider/model name은 저장하지 않되 symbolic requested/realized axis와 collapse는
+  저장한다. 따라서 plan의 tier 제안과 실제 dispatch 결과를 사후에 대조할 수 있어야 한다.
+
 구현 작업은 `cheapest` 에서 시작한다. 파일 수, 긴급성 또는 더 강한 model
 선호는 promotion 근거가 아니다. unit의 interface 또는 debugging evidence가 요구할 때만
 `standard` 를 쓰고, design, unknown-cause, security/data-sensitive 또는 입증된 reasoning

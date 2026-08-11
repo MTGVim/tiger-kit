@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.11-3 — Release
+
+- fix(skills): localize ledgers and verify tiers
+
 ## 2026.08.11-2 — Release
 
 - fix(portability): derive consumer repository paths

@@ -10,6 +10,8 @@ state를 만들지 않는다. Artifact가 존재한다고 권한이 생기지는
 - repository snapshot과 네 작업 문서의 absolute path, status, lineage/freshness verdict;
 - 명시적 user decision과 approved snapshot;
 - unit dependency/wave, execution strategy, dispatch tier와 realized axes;
+- worker dispatch envelope의 `worker_role`, `requested_tier`, `requested_model`,
+  `requested_effort`, `realized_model`, `realized_effort`, `collapse`;
 - dispatch, verifier/gap, correction, commit, aggregate/terminal/recovery receipt.
 
 Goal, scope, exclusion, frozen literal, R/AC, 구현 지시와 verifier detail은 `spec.md`,

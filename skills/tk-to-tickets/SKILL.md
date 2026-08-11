@@ -32,7 +32,9 @@ root를 실제 absolute path로 치환해 보고한다. ticket마다 다음 필�
 Coverage의 각 source/R-AC는 정확히 한 ticket에 매핑하거나 명시적으로 `uncovered`
 사유를 적는다. ticket은 layer-only가 아니라 independently observable한 vertical
 slice여야 한다. `model` 과 `effort` 는 provider 이름이 아닌 symbolic capability tier로
-제안하고 rationale을 적는다. host mapping이 없으면 mapping을 발명하지 말고
+제안하고 rationale을 적는다. 이 값은 이후 worker 호출의 requested axis로 소비되어야
+하며, 실제 host 적용 결과는 `realized_model`/`realized_effort`/`collapse` receipt로
+확인한다. host mapping이 없으면 mapping을 발명하지 말고
 setup prerequisite로 표시하며 `tk-wizard` 를 먼저 사용하도록 한다.
 
 문서 끝에는 downstream 소비 전 사용자의 명시적 approval이 필요하다는 경계를 둔다.

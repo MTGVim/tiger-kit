@@ -1,6 +1,6 @@
 interface:
   short_description: "[user] 승인된 fresh-worker 변경 실행을 하나 진행한다."
-  default_prompt: "$tk-drive와 명시적 source를 사용해 하나의 approval surface를 준비하고, fresh worker를 dispatch하고, R/AC gap을 닫고, verified unit commit을 만든 뒤 finalization한다."
+  default_prompt: "$tk-drive와 명시적 source를 사용해 하나의 approval surface를 준비하고, ticket의 model/effort를 native worker dispatch envelope로 전달·검증하고, fresh worker를 dispatch하고, R/AC gap을 닫고, verified unit commit을 만든 뒤 finalization한다."
 
 policy:
   allow_implicit_invocation: false
