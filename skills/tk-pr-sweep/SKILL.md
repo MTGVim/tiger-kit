@@ -135,6 +135,19 @@ Worker preflight가 실패하면 row를 `Blocked`로 남기고, `general-purpose
 realized model, reasoning effort, worker ID와 receipt source를 장부에 기록하며 미노출
 값은 `unavailable`로 둡니다.
 
+모든 mutating child는 두 단계 handoff입니다. 첫 호출은 `Preflight only`이며 child가
+frozen strategy, model class, requested selector, owned paths를 exact `Frozen receipt`로
+되돌릴 때까지 edit/commit/push를 금지합니다. Controller가 ledger frozen row와 field별
+exact compare해 일치할 때만 같은 child를 resume합니다. 누락·불일치는 새 판단으로
+보정하지 않고 row를 `Blocked`로 남깁니다.
+
+완료 뒤 controller는 `Actual receipt`의 strategy, model class, requested selector,
+worker ID, changed paths와 `Plan deviations`를 frozen row에 기계적으로 대조합니다.
+delegated row에서 worker ID가 없거나 direct actual strategy면 결과와 tests가 정상이더라도
+`Blocked`입니다. class/selector/scope mismatch 또는 `Plan deviations`가 `none`이 아니면
+publication과 `Pass`를 금지하고 exact deviation을 ledger에 기록합니다. 빈 deviation
+field도 미보고로 실패합니다.
+
 Sweep가 head, thread reply 또는 check-fix를 변경한 모든 PR은 row를 닫기 전에 정확히
 한 번의 nested `tk-pr-respond --ci` finalization을 거칩니다. 최초 owner가 Respond면
 그 child가 같은 호출 안에서 finalization까지 소유하고 두 번째 Respond를 만들지

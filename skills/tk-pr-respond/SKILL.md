@@ -82,7 +82,12 @@ Prepare -> Execute -> Close gaps -> Finalize
    approval 전에는 파일을 쓰거나 dispatch하지 않는다. actionable delegated unit의
    model class, selector, effort, routing source가 approval에 모두 보여야 한다.
    `general-purpose` 반환은 정상 결과다. Parent Sweep의 `--ci` handoff는 항상
-   delegated이며 direct strategy로 바꾸지 않는다. `👍 Recommendation:` 에 strategy와
+   delegated이며 direct strategy로 바꾸지 않는다. 첫 호출에서는 mutation 없이 parent가
+   준 frozen strategy/model class/selector/owned paths를 exact `Frozen receipt`로 되돌리고
+   `Preflight only`에서 멈춘다. Parent가 exact match를 확인해 같은 child를 resume한 뒤에만
+   worker를 dispatch한다. fresh worker를 만들 수 없으면 direct edit가 아니라 `Blocked`다.
+   완료 report에는 canonical worker-dispatch의 `Actual receipt`와
+   `Plan deviations: none | ...`을 반드시 포함한다. `👍 Recommendation:` 에 strategy와
    model을 포함하고, 사용자가 표시된 plan을 승인하면 그것이 direct strategy에 대한
    명시적 승인이다. 별도 direct 확인은 묻지 않는다.
 6. goal/PR/head, included/excluded findings, apply/reply/defer decisions, R/AC,

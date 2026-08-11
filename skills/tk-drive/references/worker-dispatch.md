@@ -73,6 +73,10 @@ Routing source는 repository-local `.tigerkit/session.md` 하나다. Host-global
 쓰지 않는다. TigerKit의 runtime state를 repository/worktree 밖에 만들지 않는 product
 boundary를 유지한다.
 
+Class block에서 허용되는 key는 `model`, `effort`뿐이다. 다른 key, 중복 key 또는
+알 수 없는 heading이 있으면 모델이 의미를 추정해 소비하지 않는다. exact unknown
+field를 ledger에 기록하고 dispatch 전에 `Blocked`다.
+
 Actionable delegated unit이 하나라도 있으면 chat approval surface에 unit별
 `model_class`, resolved `model`, `effort`, routing source를 필수로 표시한다.
 누락된 approval surface로는 dispatch하지 않고 `Blocked`다.
@@ -88,6 +92,19 @@ Host adapter는 다음 native control을 우선한다.
 Ledger에는 `model_class`, `requested_selector`, `realized_model`, `reasoning_effort`,
 `worker_id`, `receipt_source`를 기록한다. Host가 realized model을 노출하지 않으면
 `realized_model=unavailable`로 기록하고 requested selector에서 추론하지 않는다.
+
+Delegated child report는 다음 exact receipt를 항상 반환한다. 빈
+`Plan deviations`는 미보고이며 `none` literal만 no-deviation이다.
+
+```text
+Frozen receipt: strategy=<delegated> model_class=<class> requested_selector=<selector> owned_paths=<exact list>
+Actual receipt: strategy=<actual> model_class=<actual> requested_selector=<actual> worker_id=<id> changed_paths=<exact list>
+Plan deviations: none | <field; frozen; actual; reason>
+```
+
+Parent가 delegated를 freeze했으면 `worker_id`가 비어 있거나 actual strategy가 direct인
+receipt는 결과가 정상이어도 contract violation이다. model class, selector, changed paths도
+frozen receipt와 exact compare하며 mismatch 또는 deviation은 `Pass`가 아니다.
 
 ## 실행 전략
 
