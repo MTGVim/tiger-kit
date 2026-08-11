@@ -120,7 +120,7 @@
       "id": "ambiguous-previous-reference",
       "path": "boundary",
       "prompt": "그거 다시 설명해줘",
-      "expected_output": "Status: Unverifiable; ambiguous previous reference; no mutation or continuation",
+      "expected_output": "Status: Unverifiable; 이전 참조가 모호하므로 변경이나 계속 작업을 하지 않는다.",
       "assertions": [
         {
           "type": "output_contains",

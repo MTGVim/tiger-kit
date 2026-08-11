@@ -27,6 +27,9 @@
     "tk-pr-respond:behavior:pr-respond-verifies-before-commit-and-owns-single-ledger",
     "tk-pr-sweep:behavior:pr-sweep-single-plan-before-worker-mutation-ko",
     "tk-pr-sweep:behavior:pr-sweep-nested-routes-use-single-sweep-ledger",
+    "tk-pr-sweep:behavior:pr-sweep-freezes-one-workspace-backend",
+    "tk-pr-sweep:behavior:pr-sweep-recovers-permission-blocked-publication",
+    "tk-pr-sweep:behavior:pr-sweep-blocks-unsafe-publication-recovery",
     "tk-browser-verify:behavior:browser-transient-auth-material-establishes-headless-session",
     "tk-browser-verify:behavior:browser-unknown-auth-injection-is-unverifiable",
     "tk-browser-verify:behavior:browser-auth-unavailable-stops-before-mutation",
@@ -61,6 +64,8 @@
     "catalog:behavior:pr-rebase-explicit",
     "catalog:behavior:pr-rebase-generic-block",
     "catalog:behavior:pr-sweep-report-explicit",
+    "catalog:behavior:pr-sweep-backend-safety-explicit",
+    "catalog:behavior:pr-sweep-recover-publication-explicit",
     "catalog:behavior:browser-headless-auth-verifier-explicit",
     "catalog:behavior:to-tickets-explicit",
     "catalog:behavior:to-tickets-implicit-block"

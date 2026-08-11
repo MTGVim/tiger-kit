@@ -1,4 +1,4 @@
 interface:
-  short_description: "[user] 승인된 PR maintenance를 실행하거나 triage를 읽기 전용으로 보고합니다."
+  short_description: "[user] 승인된 PR 유지보수를 실행하거나 `triage`를 읽기 전용으로 보고합니다."
   policy:
     allow_implicit_invocation: false

@@ -8,7 +8,7 @@
     {"id":"validation-positive-1","split":"validation","query":"/tk-pr-open 현재 브랜치의 검증된 커밋으로 PR을 준비해줘","should_trigger":true,"facets":["formal"]},
     {"id":"validation-positive-2","split":"validation","query":"tk-pr-open draft 만들어줘","should_trigger":true,"facets":["casual"]},
     {"id":"validation-positive-3","split":"validation","query":"$tk-pr-open 기존 PR 업데이트","should_trigger":true,"facets":["short"]},
-    {"id":"validation-positive-4","split":"validation","query":"PR open 해줘","should_trigger":true,"facets":["ko-en"]},
+    {"id":"validation-positive-4","split":"validation","query":"PR 열린 해줘","should_trigger":true,"facets":["ko-en"]},
     {"id":"validation-positive-5","split":"validation","query":"tk-pr-opne 현재 브랜치 PR 열어줘","should_trigger":true,"facets":["typo"]},
     {"id":"validation-positive-6","split":"validation","query":"현재 브랜치로 PR draft 만들고 title/body와 publish plan까지 준비해줘","should_trigger":true,"facets":["compound"]},
     {"id":"validation-positive-7","split":"validation","query":"검증된 커밋으로 PR을 준비해줘","should_trigger":true,"facets":["formal"]},

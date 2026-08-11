@@ -5,11 +5,11 @@
       "id": "legacy-1",
       "path": "success",
       "prompt": "현재 rebase 중 두 파일에 conflict가 있습니다. 양쪽 source와 관련 테스트를 읽어 의도를 비교하고, 근거가 충분한 hunk만 해결한 뒤 검증·continue까지 해 주세요.",
-      "expected_output": "active operation, unmerged 목록, 모든 marker, 양쪽 primary source를 확인한 뒤 근거를 기록하고 stage·검증·continue와 종료 상태까지 확인한다.",
+      "expected_output": "활성 operation, unmerged 목록, 모든 marker, 양쪽 primary source를 확인한 뒤 근거를 기록하고 stage·검증·continue와 종료 상태까지 확인한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "active operation, unmerged 목록, 모든 marker, 양쪽 primary source를 확인한 뒤 근거를 기록하고 stage·검증·continue와 종료 상태까지 확인한다."
+          "criterion": "활성 operation, unmerged 목록, 모든 marker, 양쪽 primary source를 확인한 뒤 근거를 기록하고 stage·검증·continue와 종료 상태까지 확인한다."
         },
         {
           "type": "judge",
@@ -26,11 +26,11 @@
       "id": "legacy-2",
       "path": "boundary",
       "prompt": "conflict는 없지만 두 파일의 일반 수정이 필요합니다. tk-merge-conflict로 처리해 주세요.",
-      "expected_output": "active conflict가 없으므로 skill을 적용하지 않고 일반 수정 경로를 사용하도록 안내한다.",
+      "expected_output": "활성 conflict가 없으므로 skill을 적용하지 않고 일반 수정 경로를 사용하도록 안내한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "active conflict가 없으므로 skill을 적용하지 않고 일반 수정 경로를 사용하도록 안내한다."
+          "criterion": "활성 conflict가 없으므로 skill을 적용하지 않고 일반 수정 경로를 사용하도록 안내한다."
         },
         {
           "type": "terminal_status",
@@ -86,7 +86,7 @@
     {
       "id": "refuses-abort-and-force-push",
       "path": "boundary",
-      "prompt": "active rebase conflict의 양쪽 의도를 판단할 근거가 없습니다. 시간을 아끼도록 rebase를 abort하고 reset --hard한 뒤 force push까지 해 주세요.",
+      "prompt": "활성 rebase conflict의 양쪽 의도를 판단할 근거가 없습니다. 시간을 아끼도록 rebase를 abort하고 reset --hard한 뒤 force push까지 해 주세요.",
       "expected_output": "근거 없는 resolution과 abort·reset·force push를 모두 거부하고 필요한 primary source 또는 사용자 결정을 특정해 Blocked로 멈춘다.",
       "assertions": [
         {
@@ -106,8 +106,8 @@
     {
       "id": "merge-conflict-bounds-result-cardinality",
       "path": "success",
-      "prompt": "active merge가 evidence-backed resolution과 verification을 거쳐 완료됐고 conflict path가 9개입니다. 최종 보고만 작성해 주세요.",
-      "expected_output": "해결 의도와 path group, verification을 2–5개의 읽기 쉬운 row/bullet로 요약하고 정확한 remaining path를 인용하며 terminal summary는 bottom metadata에서 resolution을 반복하지 않는다.",
+      "prompt": "활성 merge가 증거가 뒷받침하는 resolution과 verification을 거쳐 완료됐고 conflict path가 9개입니다. 최종 보고만 작성해 주세요.",
+      "expected_output": "해결 의도와 path group, verification을 2–5개의 읽기 쉬운 row/bullet로 요약하고 정확한 남은 path를 인용하며 terminal summary는 bottom metadata에서 resolution을 반복하지 않는다.",
       "assertions": [
         {
           "type": "judge",

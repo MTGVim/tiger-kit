@@ -29,7 +29,7 @@ tool/nested-call/fan-out variance
 
 ## 격리 규칙
 
-- output은 올바르고 grading만 실패하면 skill body를 늘리기 전에 `evaluation` 을 검사한다.
+- output은 올바르고 grading만 실패하면 skill body를 늘리기 전에 `evaluation`을 검사한다.
 - selection은 올바르지만 `skill_loaded` 가 다르면 `loading` 또는 `compatibility` 를 검사한다.
 - 같은 decision이 반복되면 execution을 탓하기 전에 가장 이른 weak phase와 blocker fingerprint를 찾는다.
 - resource use가 증가하면 증가한 phase, retry, reference descent, tool loop, nested call 또는 fan-out을 식별한다.
@@ -56,7 +56,7 @@ Resource savings는 다음을 상쇄할 수 없다:
 - zero baseline에서의 retry regression;
 - control 또는 holdout regression.
 
-matched anchor가 없으면 현재 measurement를 `Profile only` 로 보고한다.
+matched anchor가 없으면 현재 measurement를 `Profile only`로 보고한다.
 
 ## 진단 판정(Diagnostic verdict)
 

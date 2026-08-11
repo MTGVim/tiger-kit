@@ -17,7 +17,7 @@
     {
       "id": "validation-positive-1",
       "split": "validation",
-      "query": "이 반복 워크플로를 재사용 가능한 repository skill로 설계해 주세요",
+      "query": "이 반복 워크플로를 재사용 가능한 저장소 skill로 설계해 주세요",
       "should_trigger": true,
       "facets": [
         "formal"
@@ -71,7 +71,7 @@
     {
       "id": "validation-positive-7",
       "split": "validation",
-      "query": "trigger와 boundary eval을 포함한 repo skill을 제안하되 승인 전 쓰지 마",
+      "query": "trigger와 boundary eval을 포함한 저장소 skill을 제안하되 승인 전 쓰지 마",
       "should_trigger": true,
       "facets": [
         "formal"
@@ -143,7 +143,7 @@
     {
       "id": "validation-negative-7",
       "split": "validation",
-      "query": "active tk-drive가 다음 구현 phase를 진행 중이야",
+      "query": "활성 tk-drive가 다음 구현 phase를 진행 중이야",
       "should_trigger": false,
       "facets": [
         "formal"

@@ -15,6 +15,10 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Iterator, Mapping
 
+if __package__:
+    from .language_contract import has_korean_prose
+else:
+    from language_contract import has_korean_prose
 
 ROOT = Path(__file__).resolve().parents[1]
 TOKEN_REGRESSION_RATIO = 1.25
@@ -984,6 +988,48 @@ def verify_mechanical_assertion(
             "type": assertion_type,
             "passed": passed,
             "evidence": f"path={relative!r}; inside_checkout={inside}; exists={exists}",
+        }
+    if assertion_type == "path_text_has_hangul":
+        target, inside = _safe_checkout_path(checkout, assertion.get("path"))
+        readable = inside and target.is_file()
+        try:
+            content = (
+                target.read_text(encoding="utf-8", errors="replace")
+                if readable
+                else ""
+            )
+        except OSError:
+            readable = False
+            content = ""
+        has_hangul = any("\uac00" <= char <= "\ud7a3" for char in content)
+        return {
+            "type": assertion_type,
+            "passed": readable and has_hangul,
+            "evidence": (
+                f"path={assertion.get('path')!r}; readable={readable}; "
+                f"has_hangul={has_hangul}"
+            ),
+        }
+    if assertion_type == "path_text_has_korean_prose":
+        target, inside = _safe_checkout_path(checkout, assertion.get("path"))
+        readable = inside and target.is_file()
+        try:
+            content = (
+                target.read_text(encoding="utf-8", errors="replace")
+                if readable
+                else ""
+            )
+        except OSError:
+            readable = False
+            content = ""
+        korean_prose = readable and has_korean_prose(content)
+        return {
+            "type": assertion_type,
+            "passed": korean_prose,
+            "evidence": (
+                f"path={assertion.get('path')!r}; readable={readable}; "
+                f"has_korean_prose={korean_prose}"
+            ),
         }
     if assertion_type in {"git_head_changed", "git_head_unchanged"}:
         final_head = git_head(checkout)

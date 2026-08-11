@@ -4,7 +4,7 @@
     {
       "from": "positive-self-contained",
       "to": "positive-self-contained-portable-path",
-      "reason": "Read and report the current consumer repository's resolved .tigerkit paths instead of the maintainer checkout literal."
+    "reason": "maintainer checkout literal 대신 현재 consumer repository에서 resolve한 .tigerkit 경로를 읽고 보고한다."
     }
   ],
   "evals": [
@@ -23,6 +23,18 @@
           "text": ".tigerkit/tickets.md"
         },
         {
+          "type": "path_exists",
+          "path": ".tigerkit/tickets.md"
+        },
+        {
+          "type": "path_text_has_hangul",
+          "path": ".tigerkit/tickets.md"
+        },
+        {
+          "type": "path_text_has_korean_prose",
+          "path": ".tigerkit/tickets.md"
+        },
+        {
           "type": "terminal_status",
           "expected": "Pass"
         }
@@ -39,6 +51,14 @@
           "criterion": "layer-only 분할을 거부하고 vertical 기준을 설명한다."
         },
         {
+          "type": "path_absent",
+          "path": ".tigerkit/tickets.md"
+        },
+        {
+          "type": "output_contains",
+          "text": "Status: Blocked"
+        },
+        {
           "type": "terminal_status",
           "expected": "Blocked"
         }
@@ -49,7 +69,7 @@
       "id": "missing-coverage",
       "path": "boundary",
       "prompt": "/tk-to-tickets Ready spec을 처리하되 일부 R-AC는 매핑하지 않아도 된다.",
-      "expected_output": "누락 coverage를 추측하지 않고 uncovered 사유 또는 Blocked를 명시한다.",
+      "expected_output": "누락 coverage를 추측하지 않고 `uncovered` 사유 또는 `Blocked`를 명시한다.",
       "assertions": [
         {
           "type": "judge",
@@ -66,11 +86,15 @@
       "id": "pending-stale-input",
       "path": "boundary",
       "prompt": "/tk-to-tickets Pending spec을 ticket으로 만들어줘.",
-      "expected_output": "Pending spec이면 정확히 Status: Blocked로 멈추고 downstream ticket을 생성하지 않는다.",
+      "expected_output": "Pending spec이면 정확히 `Status: Blocked`로 멈추고 downstream ticket을 생성하지 않는다.",
       "assertions": [
         {
           "type": "output_contains",
           "text": "Status: Blocked"
+        },
+        {
+          "type": "path_absent",
+          "path": ".tigerkit/tickets.md"
         },
         {
           "type": "terminal_status",
@@ -90,6 +114,18 @@
           "criterion": "명시적 approval boundary를 유지하며 구현/remote/global state를 하지 않는다."
         },
         {
+          "type": "path_exists",
+          "path": ".tigerkit/tickets.md"
+        },
+        {
+          "type": "path_text_has_hangul",
+          "path": ".tigerkit/tickets.md"
+        },
+        {
+          "type": "path_text_has_korean_prose",
+          "path": ".tigerkit/tickets.md"
+        },
+        {
           "type": "terminal_status",
           "expected": "Pass"
         }
@@ -100,11 +136,15 @@
       "id": "missing-required-input",
       "path": "boundary",
       "prompt": "/tk-to-tickets required spec 또는 evidence가 누락된 상태에서 ticket을 만들어줘.",
-      "expected_output": "필수 spec/evidence가 없으면 정확히 Status: Unverifiable로 멈추고 ticket을 생성하지 않는다.",
+      "expected_output": "필수 spec/evidence가 없으면 정확히 `Status: Unverifiable`로 멈추고 ticket을 생성하지 않는다.",
       "assertions": [
         {
           "type": "output_contains",
           "text": "Status: Unverifiable"
+        },
+        {
+          "type": "path_absent",
+          "path": ".tigerkit/tickets.md"
         },
         {
           "type": "terminal_status",
@@ -117,11 +157,15 @@
       "id": "stale-input",
       "path": "boundary",
       "prompt": "/tk-to-tickets stale Ready spec을 ticket으로 만들어줘.",
-      "expected_output": "stale spec이면 정확히 Status: Blocked로 멈추고 downstream ticket을 생성하지 않는다.",
+      "expected_output": "stale spec이면 정확히 `Status: Blocked`로 멈추고 downstream ticket을 생성하지 않는다.",
       "assertions": [
         {
           "type": "output_contains",
           "text": "Status: Blocked"
+        },
+        {
+          "type": "path_absent",
+          "path": ".tigerkit/tickets.md"
         },
         {
           "type": "terminal_status",
@@ -134,11 +178,15 @@
       "id": "lineage-mismatch",
       "path": "boundary",
       "prompt": "/tk-to-tickets 현재 요청과 lineage가 불일치하는 Ready spec을 처리해줘.",
-      "expected_output": "lineage mismatch이면 정확히 Status: Blocked로 멈추고 ticket을 생성하지 않는다.",
+      "expected_output": "lineage mismatch이면 정확히 `Status: Blocked`로 멈추고 ticket을 생성하지 않는다.",
       "assertions": [
         {
           "type": "output_contains",
           "text": "Status: Blocked"
+        },
+        {
+          "type": "path_absent",
+          "path": ".tigerkit/tickets.md"
         },
         {
           "type": "terminal_status",

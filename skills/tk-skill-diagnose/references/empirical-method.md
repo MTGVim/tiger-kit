@@ -7,9 +7,9 @@
 
 fresh execution 전에 frontmatter description과 body를 비교한다:
 
-- positive 및 negative triggers;
-- capability 및 output promises;
-- approval, mutation, failure 및 recovery owners.
+- positive 및 negative trigger;
+- capability 및 output promise;
+- approval, mutation, failure 및 recovery owner.
 
 Description에만 있는 promise, body에만 있는 behavior 및 모순되는 owner는 가설이다.
 정적 일관성만으로는 runtime cause를 증명할 수 없다.
@@ -19,14 +19,14 @@ Description에만 있는 promise, body에만 있는 behavior 및 모순되는 ow
 experiment 전에 다음을 고정한다:
 
 ```text
-Incident: observed prompt와 expected/observed result
-Control: suspected cause를 구별하는 nearest adjacent behavior
+Incident: 관찰 prompt와 expected/observed result
+Control: suspected cause를 구별하는 가장 가까운 인접 behavior
 Must preserve: critical behavior, safety, routing, authority 및 host boundary
 Metric: actual anchor, labeled proxy 또는 unavailable
 ```
 
-첫 incident/control pair로 failure planes를 구분할 수 없을 때만 scenario를 추가한다.
-generic holdout은 optional이며 default ceremony가 아니다.
+첫 incident/control pair로 failure plane을 구분할 수 없을 때만 scenario를 추가한다.
+generic holdout은 optional이며 기본 ceremony가 아니다.
 
 ## 3. 새 실행(Fresh execution)
 
@@ -56,7 +56,7 @@ normal deliverable을 우선한다. adapter가 diagnostic suffix를 지원할 �
 }
 ```
 
-executor에게 expected answers, judge criteria 또는 baseline/candidate verdicts를
+executor에게 expected answer, judge criteria 또는 baseline/candidate verdict를
 공개하지 않는다. 잘못된 diagnostics는 evaluation-plane evidence이며, 검증된
 deliverable을 자동으로 무효화하지 않는다.
 
@@ -64,10 +64,10 @@ deliverable을 자동으로 무효화하지 않는다.
 
 다음을 결합한다:
 
-- deterministic assertions와 Git/path/runtime evidence;
-- selection/loading 및 host/adapter events;
-- phase-local trace 및 discretionary fill-ins;
-- 사용 가능한 경우 actual token, duration, tool, nested-call 또는 retry metrics.
+- deterministic assertion과 Git/path/runtime evidence;
+- selection/loading 및 host/adapter event;
+- phase-local trace 및 discretionary fill-in;
+- 사용 가능한 경우 actual token, duration, tool, nested-call 또는 retry metric.
 
 Self-report는 하나의 observation일 뿐, 원인을 입증하기에 충분하지 않다. 모든 causal
 claim에는 instruction, routing, runtime, repository 또는 eval anchor가 필요하다.
@@ -80,7 +80,7 @@ checkout을 사용한다. 먼저 suspected cause와 이를 구분할 expected re
 
 experiment는 causality를 confirm 또는 reject하며 canonical patch가 아니다. 두 번째
 experiment에는 첫 결과에서 나온 새 specific cause가 필요하다. 같은 failure가 반복된
-뒤 wording changes를 쌓지 않는다.
+뒤 wording change를 쌓지 않는다.
 
 ## 6. 처분(Disposition)
 

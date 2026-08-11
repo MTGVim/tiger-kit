@@ -4,7 +4,7 @@
     {
       "from": "positive-self-contained",
       "to": "positive-self-contained-portable-path",
-      "reason": "Report the current consumer repository's resolved .tigerkit path instead of the maintainer checkout literal."
+    "reason": "maintainer checkout literal 대신 현재 consumer repository에서 resolve한 .tigerkit 경로를 보고한다."
     }
   ],
   "evals": [
@@ -23,6 +23,18 @@
           "text": ".tigerkit/spec.md"
         },
         {
+          "type": "path_exists",
+          "path": ".tigerkit/spec.md"
+        },
+        {
+          "type": "path_text_has_hangul",
+          "path": ".tigerkit/spec.md"
+        },
+        {
+          "type": "path_text_has_korean_prose",
+          "path": ".tigerkit/spec.md"
+        },
+        {
           "type": "terminal_status",
           "expected": "Pass"
         }
@@ -32,11 +44,23 @@
       "id": "missing-evidence",
       "path": "boundary",
       "prompt": "/tk-to-spec 기능을 만들 spec을 써줘. source evidence나 acceptance는 없다.",
-      "expected_output": "누락을 표시한 self-contained spec artifact를 absolute path에 쓰고 Status: Unverifiable로 멈추며 내용을 발명하지 않는다.",
+      "expected_output": "누락을 표시한 self-contained spec artifact를 absolute path에 쓰고 `Status: Unverifiable`로 멈추며 내용을 발명하지 않는다.",
       "assertions": [
         {
           "type": "judge",
           "criterion": "missing evidence를 명시하고 추측하지 않는다."
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/spec.md"
+        },
+        {
+          "type": "path_text_has_hangul",
+          "path": ".tigerkit/spec.md"
+        },
+        {
+          "type": "path_text_has_korean_prose",
+          "path": ".tigerkit/spec.md"
         },
         {
           "type": "terminal_status",
@@ -49,11 +73,23 @@
       "id": "conflict",
       "path": "boundary",
       "prompt": "/tk-to-spec evidence A는 path를 a라고 하고 evidence B는 b라고 한다. spec을 만들어줘.",
-      "expected_output": "두 근거를 Conflict로 보존하고 Blocked로 멈춘다.",
+      "expected_output": "두 근거를 `Conflict`로 보존하고 `Blocked`로 멈춘다.",
       "assertions": [
         {
           "type": "judge",
           "criterion": "충돌 양쪽과 해결 owner를 기록하며 임의 선택하지 않는다."
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/spec.md"
+        },
+        {
+          "type": "path_text_has_hangul",
+          "path": ".tigerkit/spec.md"
+        },
+        {
+          "type": "path_text_has_korean_prose",
+          "path": ".tigerkit/spec.md"
         },
         {
           "type": "terminal_status",
@@ -66,11 +102,23 @@
       "id": "pending-approval",
       "path": "success",
       "prompt": "/tk-to-spec 목표와 검증을 포함한 spec을 만들되 아직 승인하지 않았다.",
-      "expected_output": "Status Pending이며 downstream 소비 금지와 명시적 사용자 승인 후에만 Ready라는 경계를 포함한다.",
+      "expected_output": "`Status: Pending`이며 downstream 소비 금지와 명시적 사용자 승인 후에만 `Ready`라는 경계를 포함한다.",
       "assertions": [
         {
           "type": "judge",
           "criterion": "Pending을 유지하고 승인 전 Ready로 바꾸지 않는다."
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/spec.md"
+        },
+        {
+          "type": "path_text_has_hangul",
+          "path": ".tigerkit/spec.md"
+        },
+        {
+          "type": "path_text_has_korean_prose",
+          "path": ".tigerkit/spec.md"
         },
         {
           "type": "terminal_status",

@@ -14,10 +14,10 @@ metadata:
 
 사용자가 해야 하는 host-session 절차만 다룬다. 먼저 repository와 host를 조사하고
 stage, 값, 출처, 목적지, secret/public을 inventory한 뒤 **stage 목록을 먼저 보여주고
-확인**받는다. 모르는 UI·명령은 발명하지 않는다. 각 stage는 stranger가 따라 할 수 있는
-한 가지 작업이며, URL을 먼저 열고 정확한 클릭·복사 경로를 쓴다.
+확인**받는다. 모르는 UI·명령은 발명하지 않는다. 각 stage는 처음 보는 사람도 따라 할
+수 있는 한 가지 작업이며, URL을 먼저 열고 정확한 클릭·복사 경로를 쓴다.
 
-## Helper vocabulary
+## Helper 용어
 
 생성하는 shell은 다음 의미의 helper를 사용한다: `stage`(진행/화면 전환), `say`/`step`(설명),
 `open_url`(URL 열기), `ask`(일반 입력), `ask_secret`(hidden input), `write_env`(idempotent
@@ -26,8 +26,8 @@ secret은 절대 echo하거나 기본 persist하지 않는다. irreversible acti
 
 기본은 한 번 실행하고 삭제하는 ephemeral user-run이다. agent는 browser/human input flow를
 end-to-end 실행하지 않으며, capture-to-destination trace와 안전한 handoff만 출력한다.
-생성 shell은 `bash -n` 및 가능하면 `shellcheck` 으로 정적 검사하고, 실행 권한과 모든 값의
-최종 목적지를 확인한다. host/UI evidence가 없으면 정확히 `Unverifiable` 또는 `Blocked` 로
+생성 shell은 `bash -n` 및 가능하면 `shellcheck`로 정적 검사하고, 실행 권한과 모든 값의
+최종 목적지를 확인한다. host/UI evidence가 없으면 정확히 `Unverifiable` 또는 `Blocked`로
 중단한다. credential은 eval이나 출력에 넣지 않는다.
 
 ## 절차

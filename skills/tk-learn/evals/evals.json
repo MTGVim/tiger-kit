@@ -4,7 +4,7 @@
     {
       "id": "legacy-1",
       "path": "success",
-      "prompt": "/tk-learn 같은 운영 실패가 두 사례에서 반복된 evidence와 재사용 workflow를 바탕으로 repo skill 후보를 제안해 주세요. 이름·kind·positive/negative trigger·최소 초안을 보여주고 아직 쓰지 마세요.",
+      "prompt": "/tk-learn 같은 운영 실패가 두 사례에서 반복된 evidence와 재사용 workflow를 바탕으로 저장소 skill 후보를 제안해 주세요. 이름·kind·positive/negative trigger·최소 초안을 보여주고 아직 쓰지 마세요.",
       "expected_output": "반복 evidence와 중복 검색을 확인한 뒤 대상·이름·trigger·초안을 pending으로 제안하고 명시적 승인 전에는 canonical 경로에 쓰지 않는다.",
       "assertions": [
         {
@@ -13,7 +13,7 @@
         },
         {
           "type": "judge",
-          "criterion": "Evidence가 threshold·출처, Target path가 계획한 정확한 경로와 not created, Verification이 실행하지 못한 target-host 항목의 unverified를 각각 한 번만 소유하고, Candidate 또는 Remaining concerns가 적용 상태·미검증을 한 번만 소유하고 bottom metadata를 덧붙이지 않는다."
+          "criterion": "Evidence가 threshold·출처, Target path가 계획한 정확한 경로와 not created, Verification이 실행하지 못한 대상-host 항목의 unverified를 각각 한 번만 소유하고, Candidate 또는 Remaining concerns가 적용 상태·미검증을 한 번만 소유하고 bottom metadata를 덧붙이지 않는다."
         },
         {
           "type": "terminal_status",
@@ -26,11 +26,11 @@
       "id": "legacy-2",
       "path": "boundary",
       "prompt": "/tk-learn 한 번 발생한 개인적인 실수 로그를 새 스킬로 바로 승격해 주세요.",
-      "expected_output": "증거 threshold와 재사용성을 충족하지 못한 일회성 사례로 no-op 또는 pending을 보고하고 skill을 만들지 않는다.",
+      "expected_output": "증거 threshold와 재사용성을 충족하지 못한 일회성 사례로 없음-op 또는 pending을 보고하고 skill을 만들지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "증거 threshold와 재사용성을 충족하지 못한 일회성 사례로 no-op 또는 pending을 보고하고 skill을 만들지 않는다."
+          "criterion": "증거 threshold와 재사용성을 충족하지 못한 일회성 사례로 없음-op 또는 pending을 보고하고 skill을 만들지 않는다."
         },
         {
           "type": "terminal_status",
@@ -46,12 +46,12 @@
     {
       "id": "eval-compatible-candidate",
       "path": "success",
-      "prompt": "/tk-learn 반복된 workflow로 skill 후보를 만들되 trigger validation, behavior assertions, baseline과 host compatibility를 먼저 제안해 주세요.",
-      "expected_output": "승인 전 초안에 train/validation trigger, success/boundary assertions, baseline 계획, portable core와 host extension 판정을 포함한다.",
+      "prompt": "/tk-learn 반복된 workflow로 skill 후보를 만들되 trigger validation, behavior assertion, baseline과 host compatibility를 먼저 제안해 주세요.",
+      "expected_output": "승인 전 초안에 train/validation trigger, success/boundary assertion, baseline 계획, portable core와 host extension 판정을 포함한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "승인 전 초안에 train/validation trigger, success/boundary assertions, baseline 계획, portable core와 host extension 판정을 포함한다."
+          "criterion": "승인 전 초안에 train/validation trigger, success/boundary assertion, baseline 계획, portable core와 host extension 판정을 포함한다."
         },
         {
           "type": "terminal_status",
@@ -62,7 +62,7 @@
     {
       "id": "learn-implicit-write-awaits-approval",
       "path": "boundary",
-      "prompt": "이 사례로 재사용 가능한 repo skill을 만들어줘",
+      "prompt": "이 사례로 재사용 가능한 저장소 skill을 만들어줘",
       "expected_output": "implicit invocation은 draft/checkpoint까지만 진행하고 현재-turn 명시 승인 전 canonical path를 쓰지 않는다.",
       "assertions": [
         {
@@ -82,12 +82,12 @@
     {
       "id": "learn-is-sole-semantic-skill-writer",
       "path": "success",
-      "prompt": "/tk-learn 다른 진단 skill이 제안한 기존 repo skill semantic merge 후보를 current-host native target에 적용해 주세요. 현재 turn 승인은 포함합니다.",
-      "expected_output": "진단 proposal을 그대로 신뢰하지 않고 evidence, dedupe, trigger/eval/baseline/compatibility gate를 재검증한 뒤 current-host native exact target만 semantic update한다.",
+      "prompt": "/tk-learn 다른 진단 skill이 제안한 기존 저장소 skill semantic merge 후보를 현재-host native target에 적용해 주세요. 현재 turn 승인은 포함합니다.",
+      "expected_output": "진단 proposal을 그대로 신뢰하지 않고 증거, 중복 제거, trigger/eval/baseline/호환성 gate를 재검증한 뒤 현재-host native 정확한 target만 semantic update한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "Skill create/semantic update/merge의 유일한 writer로서 자체 품질·승인 gate와 current-host target evidence를 모두 재검증한다."
+          "criterion": "Skill create/semantic update/merge의 유일한 writer로서 자체 품질·승인 gate와 현재-host 대상 evidence를 모두 재검증한다."
         },
         {
           "type": "output_contains",
@@ -103,12 +103,12 @@
     {
       "id": "learn-bounds-result-cardinality",
       "path": "success",
-      "prompt": "/tk-learn 검증된 candidate, target, remaining gate가 합계 9건인 approval summary를 작성해 주세요. 아직 apply 승인은 없습니다.",
-      "expected_output": "promotion decision을 먼저 두고 상위 5–7개 candidate/gate 결과와 draft 또는 planned target path를 제시하며 terminal summary가 bottom metadata로 결과를 대체하지 않는다.",
+      "prompt": "/tk-learn 검증된 candidate, 대상, 남은 gate가 합계 9건인 approval summary를 작성해 주세요. 아직 apply 승인은 없습니다.",
+      "expected_output": "승격 decision을 먼저 두고 상위 5–7개 candidate/gate 결과와 draft 또는 계획한 대상 path를 제시하며 terminal summary가 bottom metadata로 결과를 대체하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "bounded rows 또는 bullets로 candidate 결과를 설명하되 approval 전 write boundary를 유지한다."
+          "criterion": "bounded rows 또는 bullets로 candidate 결과를 설명하되 approval 전 쓰기 boundary를 유지한다."
         },
         {
           "type": "output_contains",
@@ -127,16 +127,16 @@
     {
       "id": "learn-artifact-first-draft-checkpoint",
       "path": "success",
-      "prompt": "/tk-learn 반복된 운영 workflow를 repo skill candidate로 설계하고 apply approval을 기다려 주세요. draft 전문은 채팅에 출력하지 마세요.",
-      "expected_output": "먼저 .tigerkit/learn.md에 pending candidate/evidence/checklist/target path/not-created/next step을 atomic write 후 reread하고, 채팅에는 absolute path·decision/status·짧은 요약·approval question 하나만 보고한다.",
+      "prompt": "/tk-learn 반복된 운영 workflow를 저장소 skill candidate로 설계하고 apply approval을 기다려 주세요. draft 전문은 채팅에 출력하지 마세요.",
+      "expected_output": "먼저 .tigerkit/learn.md에 pending candidate/증거/checklist/대상 path/not-created/next step을 atomic 쓰기 후 reread하고, 채팅에는 absolute path·결정/status·짧은 요약·승인 질문 하나만 보고한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "pre-approval Minimum draft 전문이나 exact planned file body를 채팅에 덤프하지 않고 learn.md artifact-first checkpoint를 사용한다."
+          "criterion": "pre-approval Minimum draft 전문이나 정확한 계획한 file body를 채팅에 덤프하지 않고 learn.md 산출물 우선 checkpoint를 사용한다."
         },
         {
           "type": "judge",
-          "criterion": "learn.md의 필수 field와 not created canonical path, atomic write/reread 및 approval 전 no-write 경계를 명시한다."
+          "criterion": "learn.md의 필수 field와 not created canonical path, atomic 쓰기/재읽기 및 approval 전 없음-쓰기 경계를 명시한다."
         },
         {
           "type": "output_contains",
@@ -152,6 +152,14 @@
         },
         {
           "type": "path_exists",
+          "path": ".tigerkit/learn.md"
+        },
+        {
+          "type": "path_text_has_hangul",
+          "path": ".tigerkit/learn.md"
+        },
+        {
+          "type": "path_text_has_korean_prose",
           "path": ".tigerkit/learn.md"
         },
         {
@@ -216,11 +224,11 @@
       "id": "learn-artifact-readback-failure-blocks",
       "path": "boundary",
       "prompt": "/tk-learn draft ledger를 쓸 때 learn.md가 stale이거나 reread가 작성 내용과 다르면 계속 진행해 주세요.",
-      "expected_output": "stale/missing/readback mismatch를 Blocked로 보고하고 approval question과 canonical skill write를 하지 않는다.",
+      "expected_output": "오래됨/누락/재읽기 불일치를 Blocked로 보고하고 승인 질문과 canonical skill write를 하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "learn.md stale/missing/readback failure를 Blocked로 중지하며 approval 질문과 canonical path 쓰기를 모두 하지 않는다."
+          "criterion": "learn.md 오래됨/누락/재읽기 실패를 Blocked로 중지하며 approval 질문과 canonical path 쓰기를 모두 하지 않는다."
         },
         {
           "type": "output_contains",
