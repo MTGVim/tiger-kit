@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.11-12 — Release
+
+- fix(sweep): recover valid delegated rows
+
 ## 2026.08.11-11 — Release
 
 - test(respond): retain mechanical routing evidence

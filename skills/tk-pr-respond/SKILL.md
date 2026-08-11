@@ -90,7 +90,8 @@ Prepare -> Execute -> Close gaps -> Finalize
    준 frozen strategy/model class/selector/owned paths를 exact `Frozen receipt`로 되돌리고
    `Preflight only`에서 멈춘다. Parent가 exact match를 확인해 같은 child를 resume한 뒤에만
    worker를 dispatch한다. fresh worker를 만들 수 없으면 direct edit가 아니라 `Blocked`다.
-   완료 report에는 canonical worker-dispatch의 `Actual receipt`와
+   Parent는 host dispatch surface의 worker ID/handle을 canonical identity로 기록하며
+   child self-report ID는 optional이다. 완료 report에는 canonical worker-dispatch의 `Actual receipt`와
    `Plan deviations: none | ...`을 반드시 포함한다. `👍 Recommendation:` 에 strategy와
    delegated일 때만 model을 포함하고, 사용자가 표시된 plan을 승인하면 그것이 direct strategy에 대한
    명시적 승인이다. 별도 direct 확인은 묻지 않는다.
