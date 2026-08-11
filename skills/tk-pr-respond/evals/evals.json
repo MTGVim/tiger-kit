@@ -398,6 +398,7 @@
         {"type":"judge","criterion":"격리 없는 known-pattern bounded unit에는 session model을 바꾸지 않는 strategy=direct를 제안하고 requested_selector=n/a, realized_model=session model 또는 unavailable, reasoning_effort=inherited를 기록한다. Model selector/effort 선택은 delegated unit에만 적용하며 RU-3만 strongest를 사용한다."},
         {"type":"path_text_contains","path":".tigerkit/pr-respond.md","text":"strategy=direct"},
         {"type":"path_text_contains","path":".tigerkit/pr-respond.md","text":"requested_selector=n/a"},
+        {"type":"path_text_contains","path":".tigerkit/pr-respond.md","text":"reasoning_effort=inherited"},
         {"type":"output_absent","text":"strategy=direct, model=cheapest"},
         {"type":"output_absent","text":"tier=cheapest"},
         {"type":"output_absent","text":"model_class=cheapest"},
