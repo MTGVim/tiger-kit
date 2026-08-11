@@ -71,8 +71,8 @@ Prepare -> Execute -> Close gaps -> Finalize
 5. `skills/tk-drive/references/worker-dispatch.md` 의 canonical worker-dispatch
    contract에 따라 unit별 `direct | delegated` strategy와 최소 model을 선택한다.
    ticket 또는 approved plan의 `model`/`effort`는 plan metadata로 보존한다. 격리 의무가
-   없는 bounded known-pattern unit이면 `strategy=direct`, `model=cheapest`를 우선
-   추천하고, fresh context·isolation·reviewer handoff·design-heavy reasoning이
+   없는 bounded known-pattern unit이면 session model을 유지하는 `strategy=direct`를
+   우선 추천하고, fresh context·isolation·reviewer handoff·design-heavy reasoning이
    필요하면 `delegated`와 그 근거를 추천한다. Delegated는 fresh `general-purpose`
    implementer와 task reviewer를 함께 사용한다. active-host `.tigerkit/session.md` routing이
    있으면 정경
@@ -81,6 +81,10 @@ Prepare -> Execute -> Close gaps -> Finalize
    addition과 `routing_state=decision-required`를 같은 approval surface에 제안하며
    approval 전에는 파일을 쓰거나 dispatch하지 않는다. actionable delegated unit의
    model class, selector, effort, routing source가 approval에 모두 보여야 한다.
+   Model class/selector/effort 선택은 delegated 전용이다. Direct approval과 ledger에는
+   `cheapest | standard | strongest` tier를 어떤 label로도 붙이지 않고
+   `model_class=n/a`, `requested_selector=n/a`, host가 노출한 session `realized_model` 또는
+   `unavailable`, `reasoning_effort=inherited`를 기록한다.
    `general-purpose` 반환은 정상 결과다. Parent Sweep의 `--ci` handoff는 항상
    delegated이며 direct strategy로 바꾸지 않는다. 첫 호출에서는 mutation 없이 parent가
    준 frozen strategy/model class/selector/owned paths를 exact `Frozen receipt`로 되돌리고
@@ -88,7 +92,7 @@ Prepare -> Execute -> Close gaps -> Finalize
    worker를 dispatch한다. fresh worker를 만들 수 없으면 direct edit가 아니라 `Blocked`다.
    완료 report에는 canonical worker-dispatch의 `Actual receipt`와
    `Plan deviations: none | ...`을 반드시 포함한다. `👍 Recommendation:` 에 strategy와
-   model을 포함하고, 사용자가 표시된 plan을 승인하면 그것이 direct strategy에 대한
+   delegated일 때만 model을 포함하고, 사용자가 표시된 plan을 승인하면 그것이 direct strategy에 대한
    명시적 승인이다. 별도 direct 확인은 묻지 않는다.
 6. goal/PR/head, included/excluded findings, apply/reply/defer decisions, R/AC,
    units/waves, verification, exact bounded `push`/reply/resolve/re-review/summary actions,

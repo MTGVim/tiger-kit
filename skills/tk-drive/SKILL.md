@@ -83,7 +83,7 @@ boundary를 지난 뒤에는 cursor나 lifecycle claim이 아니라 새 근거�
 6. [worker-dispatch.md](references/worker-dispatch.md)에 따라 각 unit의 execution
    strategy와 최소 model을 선택한다. ticket에 이미 resolved `model`/`effort`가 있으면
    plan metadata로 소비하고 조용히 덮어쓰지 않는다. 격리 없는 bounded known-pattern이면
-   `strategy=direct`, `model=cheapest`를 우선 추천하고, fresh context·isolation·reviewer
+   session model을 유지하는 `strategy=direct`를 우선 추천하고, fresh context·isolation·reviewer
    handoff·design-heavy reasoning이면 `delegated`와 근거를 추천한다. Delegated는
    active-host section이 있는 `.tigerkit/session.md` routing을
    `skills/tk-drive/references/worker-dispatch.md#session-model-routing`의 정경
@@ -93,6 +93,10 @@ boundary를 지난 뒤에는 cursor나 lifecycle claim이 아니라 새 근거�
    않는다. actionable delegated unit의 approval에는 model class, selector, effort,
    routing source가 모두 보여야 하며 누락되면 `Blocked`다. `general-purpose` implementer와
    fresh task reviewer를 한 쌍으로 사용하며 반환 label은 tier 판정에 사용하지 않는다.
+   Model class/selector/effort 선택은 delegated 전용이다. Direct approval과 ledger에는
+   `cheapest | standard | strongest` tier를 어떤 label로도 붙이지 않고
+   `model_class=n/a`, `requested_selector=n/a`, host가 노출한 session `realized_model` 또는
+   `unavailable`, `reasoning_effort=inherited`를 기록한다.
 7. [ledger.md](references/ledger.md)에 따라 `.tigerkit/drive.md` 의 current progress를 atomically
    replace하고 reread한 뒤 하나의 compact approval surface를 제시한다. Ledger에는
    repository snapshot, 네 작업 문서와 optional session path/status, document

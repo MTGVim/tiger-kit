@@ -116,8 +116,14 @@ frozen receipt와 exact compare하며 mismatch 또는 deviation은 `Pass`가 아
 | `delegated` | 하나의 fresh worker가 bounded unit brief를 받는다. | fresh context, isolation, independent worker, reviewer handoff, design-heavy reasoning 또는 parent `tk-pr-sweep` route가 필요할 때이다. |
 
 isolation obligation이 없는 bounded known-pattern implementation에서는 Prepare가 단일
-`👍 Recommendation:` approval surface에서 `strategy=direct` 와 `model=cheapest` 를
-권고한다. `tk-drive` 에서는 이것이 기본 recommendation이며 standalone `tk-pr-respond` 도
+`👍 Recommendation:` approval surface에서 `strategy=direct` 를 권고한다. Direct는
+이미 실행 중인 session model을 그대로 사용하므로 model class/selector/effort 선택을
+붙이지 않으며 `cheapest | standard | strongest`를 model, class, tier 등 다른
+label로도 direct에 연결하지 않는다. approval과 ledger에는 `model_class=n/a`,
+`requested_selector=n/a`,
+`realized_model=<host-exposed session model | unavailable>`,
+`reasoning_effort=inherited`를 기록한다. `tk-drive` 에서는 이것이 기본
+recommendation이며 standalone `tk-pr-respond` 도
 unit에 isolation 또는 다른 delegated-only boundary가 필요하지 않은 한 같은 권고를 쓴다.
 표시한 plan의 approval은 explicit strategy approval이므로 두 번째 direct confirmation을
 요청하지 않는다. `--direct` 는 같은 strategy를 미리 선택한다. 사용자가 delegated를
