@@ -1,6 +1,6 @@
 interface:
-  short_description: "[user] evidence를 검증 가능한 repository-local spec으로 변환합니다."
-  default_prompt: "tk-to-spec을 사용해 source evidence를 facts, decisions, conflicts, missing evidence로 분류하고 self-contained spec artifact를 작성하세요."
+  short_description: "[user] 증거를 검증 가능한 저장소 로컬 spec으로 변환합니다."
+  default_prompt: "tk-to-spec을 사용해 source evidence를 사실·결정·충돌·누락 증거로 분류하고 self-contained spec artifact를 작성하세요."
 
 policy:
   allow_implicit_invocation: false

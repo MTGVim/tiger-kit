@@ -43,6 +43,8 @@ MECHANICAL_ASSERTION_TYPES = {
     "output_contains",
     "output_absent",
     "path_text_contains",
+    "path_text_has_hangul",
+    "path_text_has_korean_prose",
     "path_text_absent",
     "path_text_equals",
     "git_commit_count_delta",
@@ -443,7 +445,15 @@ def validate_behavior_contract(name: str, path: Path) -> tuple[list[str], set[st
                 maximum = assertion.get("max")
                 if minimum is None and maximum is None:
                     errors.append(f"{_display_path(path)}: event_count needs min or max")
-            elif assertion_type in {"path_exists", "path_absent", "path_text_contains", "path_text_absent", "path_text_equals"}:
+            elif assertion_type in {
+                "path_exists",
+                "path_absent",
+                "path_text_contains",
+                "path_text_has_hangul",
+                "path_text_has_korean_prose",
+                "path_text_absent",
+                "path_text_equals",
+            }:
                 if not _safe_relative(assertion.get("path")):
                     errors.append(f"{_display_path(path)}: path assertion needs a safe relative path")
             elif assertion_type == "changed_paths_equal":
@@ -639,6 +649,7 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
         "scripts/validate_skills.py",
         "scripts/run_skill_evals.py",
         "scripts/run_release_gate.py",
+        "scripts/language_contract.py",
         "evals/catalog-routing.json",
         "evals/release-critical.json",
     )

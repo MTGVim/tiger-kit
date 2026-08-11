@@ -1,877 +1,726 @@
-# Changelog
+# 변경 이력
 
 ## Unreleased
 
+## 2026.08.12-1 — Release
+
+- feat: localize skill prose and harden release gate
+
 ## 2026.08.11-12 — Release
 
-- fix(sweep): recover valid delegated rows
+- fix(sweep): 유효한 delegated row 복구
 
 ## 2026.08.11-11 — Release
 
-- test(respond): retain mechanical routing evidence
-- test(evals): migrate direct routing contract
-- test(release): reject direct model selectors
-- fix(routing): keep direct on session model
+- test(respond): mechanical routing evidence 유지
+- test(evals): direct routing contract 마이그레이션
+- test(release): direct model selector 거부
+- fix(routing): direct를 session model에 유지
 
 ## 2026.08.11-10 — Release
 
-- fix(pr-open): honor repository templates
+- fix(pr-open): repository template 준수
 
 ## 2026.08.11-9 — Release
 
-- fix(sweep): enforce frozen child receipts
+- fix(sweep): frozen child receipt 강제
 
 ## 2026.08.11-8 — Release
 
-- fix(routing): enforce canonical model effort schema
+- fix(routing): canonical model effort schema 강제
 
 ## 2026.08.11-7 — Release
 
-- fix(browser): verify every visual fidelity axis
+- fix(browser): 모든 visual fidelity axis 검증
 
 ## 2026.08.11-6 — Release
 
-- fix(sweep): finalize every modified PR
+- fix(sweep): 수정된 모든 PR finalize
 
 ## 2026.08.11-5 — Release
 
-- fix(skills): route workers and PR threads
+- fix(skills): worker와 PR thread 라우팅
 
 ## 2026.08.11-4 — Release
 
-- refactor(skills): adopt SDD worker reviews
+- refactor(skills): SDD worker review 도입
 
 ## 2026.08.11-3 — Release
 
-- fix(skills): localize ledgers and verify tiers
+- fix(skills): ledger를 localize하고 tier 검증
 
 ## 2026.08.11-2 — Release
 
-- fix(portability): derive consumer repository paths
+- fix(portability): consumer repository path 도출
 
 ## 2026.08.11-1 — Release
 
-- docs(skills): localize TigerKit guidance
-- feat(tk-drive): add document lifecycle
-- feat(skills): add tk-mwhat
-- feat(skills): add tk-wizard
-- feat(skills): add tk-implement
-- feat(skills): add tk-to-tickets
-- feat(skills): add tk-to-spec
-- feat(skills): align artifact-first checkpoints
+- docs(skills): TigerKit guidance localize
+- feat(tk-drive): document lifecycle 추가
+- feat(skills): tk-mwhat 추가
+- feat(skills): tk-wizard 추가
+- feat(skills): tk-implement 추가
+- feat(skills): tk-to-tickets 추가
+- feat(skills): tk-to-spec 추가
+- feat(skills): artifact-first checkpoint 정렬
 
 ## 2026.08.10-3 — Release
 
-- fix(skills): make hybrid invocation explicit
+- fix(skills): hybrid invocation 명시화
 
 ## 2026.08.10-2 — Release
 
-- feat(execution): recommend direct units
+- feat(execution): direct unit 권장
 
 ## 2026.08.10-1 — Release
 
-- fix(tk-drive): restore worker dispatch contract
+- fix(tk-drive): worker dispatch contract 복원
 
 ## 2026.08.08-2 — Release
 
-- docs(tk-drive): sharpen approval surface
-- docs(tk-handoff): define snapshot skeleton
-- docs(tk-pr-sweep): sharpen plan evidence
-- docs(tk-merge-conflict): define resolution receipt
-- docs(tk-grill-me): define question packet
-- docs(tk-learn): align no-op status
+- docs(tk-drive): approval surface 구체화
+- docs(tk-handoff): snapshot skeleton 정의
+- docs(tk-pr-sweep): plan evidence 구체화
+- docs(tk-merge-conflict): resolution receipt 정의
+- docs(tk-grill-me): question packet 정의
+- docs(tk-learn): no-op status 정렬
 - Revert "docs(tk-learn): define terminal statuses"
-- docs(tk-learn): define terminal statuses
-- docs(tk-github-image): add upload receipt
-- docs(tk-grooming): define receipt fields
-- docs(tk-audit): add scope checkpoint
-- docs(tk-browser-verify): add launch gate
-- docs(tk-prototype): define run receipt
-- docs(tk-ask-repo): clarify source gap
-- docs(tk-ask-repo): add inquiry gate
-- docs(tk-pr-rebase): add approval gate
-- docs(tk-pr-respond): map terminal branches
-- docs(tk-skill-diagnose): clarify input gate
-- docs(tk-skill-diagnose): add checkpoints
-- docs(tk-pr-open): sharpen plan template
-- docs: polish Korean skill headings
-- docs(tk-skill-diagnose): finish Korean localization
+- docs(tk-learn): terminal status 정의
+- docs(tk-github-image): upload receipt 추가
+- docs(tk-grooming): receipt field 정의
+- docs(tk-audit): scope checkpoint 추가
+- docs(tk-browser-verify): launch gate 추가
+- docs(tk-prototype): run receipt 정의
+- docs(tk-ask-repo): source gap 명확화
+- docs(tk-ask-repo): inquiry gate 추가
+- docs(tk-pr-rebase): approval gate 추가
+- docs(tk-pr-respond): terminal branch 매핑
+- docs(tk-skill-diagnose): input gate 명확화
+- docs(tk-skill-diagnose): checkpoint 추가
+- docs(tk-pr-open): plan template 구체화
+- docs: 한국어 skill 제목 다듬기
+- docs(tk-skill-diagnose): 한국어 localize 완료
 
 ## 2026.08.08-1 — Release
 
-- docs: localize tk-skill-diagnose
-- docs: localize tk-prototype to Korean
-- docs(tk-pr-respond): localize contract in Korean
-- docs(tk-pr-rebase): localize contract in Korean
-- docs(tk-pr-open): localize contract in Korean
-- docs(skills): localize merge conflict Korean
-- docs(tk-learn): localize authoring contract
-- docs(tk-handoff): localize in Korean
-- docs(skills): localize tk-grooming in Korean
-- docs(tk-grill-me): localize prose
-- docs(tk-github-image-upload-to-pr): localize Korean prose
-- docs(tk-browser-verify): localize Korean prose
-- docs(tk-ask-repo): localize Korean prose
-- docs(tk-pr-sweep): localize Korean prose
-- docs(tk-drive): localize Korean prose
-- docs(tk-audit): localize Korean prose
-- docs: allow Korean canonical prose
+- docs: tk-skill-diagnose localize
+- docs: tk-prototype 한국어 localize
+- docs(tk-pr-respond): contract 한국어 localize
+- docs(tk-pr-rebase): contract 한국어 localize
+- docs(tk-pr-open): contract 한국어 localize
+- docs(skills): merge conflict 한국어 localize
+- docs(tk-learn): authoring contract localize
+- docs(tk-handoff): 한국어 localize
+- docs(skills): tk-grooming 한국어 localize
+- docs(tk-grill-me): prose localize
+- docs(tk-github-image-upload-to-pr): 한국어 prose localize
+- docs(tk-browser-verify): 한국어 prose localize
+- docs(tk-ask-repo): 한국어 prose localize
+- docs(tk-pr-sweep): 한국어 prose localize
+- docs(tk-drive): 한국어 prose localize
+- docs(tk-audit): 한국어 prose localize
+- docs: 한국어 canonical prose 허용
 
 ## 2026.08.07-13 — Release
 
-- refactor: make browser acceptance verification headless-only with transient evidence-backed auth and secret-free nested evidence
-- remove: delete headed-login, nested browser ledger, source-instrumentation, and universal progress/Next presentation contracts
-- docs: complete Issue #277 current-surface, eval, release-critical, validator, and package migration
-- refactor: give Respond and Sweep one approved Prepare/Execute/Close gaps/Finalize lifecycle
-- remove: replace the PR triage wrapper skill with `tk-pr-sweep --report` and moved deterministic scripts
-- refactor: consolidate standalone Respond and top-level Sweep evidence into one owner ledger each
-- refactor: collapse Drive preparation, unit slicing, and implementation into one approved fresh-worker lifecycle
-- remove: delete the three superseded Drive phase-skill packages and model-routing configuration surface
-- refactor: replace split Drive artifacts with `.tigerkit/drive.md` and narrow review to R/AC acceptance gaps
+- refactor: browser acceptance verification을 headless-only로 전환하고 transient evidence-backed auth 및 secret-free nested evidence 적용
+- remove: headed-login, nested browser ledger, source-instrumentation 및 universal progress/Next presentation contract 제거
+- docs: Issue #277 current-surface, eval, release-critical, validator 및 package migration 완료
+- refactor: Respond와 Sweep에 하나의 승인된 Prepare/Execute/Close gaps/Finalize lifecycle 적용
+- remove: PR triage wrapper skill을 `tk-pr-sweep --report`와 이동한 deterministic script로 교체
+- refactor: standalone Respond와 top-level Sweep evidence를 각각 하나의 owner ledger로 통합
+- refactor: Drive preparation, unit slicing 및 implementation을 하나의 승인된 fresh-worker lifecycle로 통합
+- remove: superseded Drive phase-skill package 3개와 model-routing configuration surface 제거
+- refactor: split Drive artifact를 `.tigerkit/drive.md`로 교체하고 review를 R/AC acceptance gap으로 축소
 
 ## 2026.08.07-12 — Release
 
-- feat: prefer reviewed gh-attach uploads
+- feat: reviewed gh-attach upload 우선
 
 ## 2026.08.07-11 — Release
 
-- fix: mark user decision checkpoints
+- fix: user decision checkpoint 표시
 
 ## 2026.08.07-10 — Release
 
-- docs: add next-action handoffs
+- docs: next-action handoff 추가
 
 ## 2026.08.07-9 — Release
 
-- test: migrate orchestration eval contracts
-- fix: resume parent orchestration
+- test: orchestration eval contract 마이그레이션
+- fix: parent orchestration 재개
 
 ## 2026.08.07-8 — Release
 
-- optimize tk-drive: bullet routing metadata
-- optimize tk-implement: bullet routing metadata
+- optimize tk-drive: routing metadata를 bullet로 정리
+- optimize tk-implement: routing metadata를 bullet로 정리
 
 ## 2026.08.07-7 — Release
 
-- docs(routing): show strategy reasons
+- docs(routing): strategy reason 표시
 
 ## 2026.08.07-6 — Release
 
-- docs(tk-implement): record route reasons
+- docs(tk-implement): route reason 기록
 
 ## 2026.08.07-5 — Release
 
-- fix(tk-implement): define implementor routing
+- fix(tk-implement): implementor routing 정의
 
 ## 2026.08.07-4 — Release
 
-- docs(tk-pr-open): reuse drive commits for PR prep
-- docs(tk-implement): clarify Claude migrate choices
+- docs(tk-pr-open): PR prep에 drive commit 재사용
+- docs(tk-implement): Claude migrate choice 명확화
 
 ## 2026.08.07-3 — Release
 
-- fix(tk-implement): clarify effort routing
+- fix(tk-implement): effort routing 명확화
 
 ## 2026.08.07-2 — Release
 
-- refactor: rename the read-only `tk-improve` advisor to `tk-audit` with an `AUD-*` ledger
+- refactor: read-only `tk-improve` advisor를 `tk-audit`와 `AUD-*` ledger로 rename
 
 ## 2026.08.07-1 — Release
 
-- docs: streamline README invocation notes
+- docs: README invocation note 간소화
 
 ## 2026.08.06-9 — Release
 
-- feat: add cost-aware model routing and zero-context cheaper-model handoffs
-- feat: add the read-only `tk-improve` evidence ledger and downstream finding routes
-- refactor: make standalone progress optional with three core markers for orchestrators
+- feat: cost-aware model routing과 zero-context cheaper-model handoff 추가
+- feat: read-only `tk-improve` evidence ledger와 downstream finding route 추가
+- refactor: orchestrator용 standalone progress를 세 가지 core marker로 선택 사항화
 
 ## 2026.08.06-8 — Release
 
-- feat: standardize universal car-based compact progress output across tk-* skills
-- fix: render PR/thread URLs as clickable links and normalize GitHub break tags for TUI
-- test: enforce the shared progress contract in the deterministic release gate
+- feat: tk-* skill 전반의 universal car-based compact progress output 표준화
+- fix: PR/thread URL을 clickable link로 표시하고 TUI용 GitHub break tag 정규화
+- test: deterministic release gate에서 shared progress contract 강제
 
 ## 2026.08.06-7 — Release
 
-- fix: align tk-pr-open hybrid natural-language routing with its publication gate
-- docs: make tk-ask-repo entry and host invocation flags explicit
-- remove: delete unused tk-adhd utility
+- fix: tk-pr-open hybrid natural-language routing과 publication gate 정렬
+- docs: tk-ask-repo entry와 host invocation flag 명시화
+- remove: 사용하지 않는 tk-adhd utility 제거
 
 ## 2026.08.06-6 — Release
 
-- feat: streamline orchestration progress
+- feat: orchestration progress 간소화
 
 ## 2026.08.06-5 — Release
 
-- test: migrate sweep approval contracts
-- fix: clarify sweep output and local times
+- test: sweep approval contract 마이그레이션
+- fix: sweep output과 local time 명확화
 
 ## 2026.08.06-4 — Release
 
-- fix: align pr-open conversational trigger
+- fix: pr-open conversational trigger 정렬
 
 ## 2026.08.06-3 — Release
 
-- test: guard resume mutation boundaries
-- docs: retain decisive compact progress tokens
-- test: tighten resume safety coverage
-- test: migrate compact progress contracts
-- fix: resume workflows with compact progress
+- test: resume mutation boundary 보호
+- docs: decisive compact progress token 유지
+- test: resume safety coverage 강화
+- test: compact progress contract 마이그레이션
+- fix: compact progress로 workflow 재개
 
 ## 2026.08.06-2 — Release
 
-- fix: clarify drive blocked state
+- fix: drive blocked state 명확화
 
 ## 2026.08.06-1 — Release
 
-- fix: clarify drive orchestration status
+- fix: drive orchestration status 명확화
 
 ## 2026.08.05-3 — Release
 
-- fix: complete PR response workflow
+- fix: PR response workflow 완성
 
 ## 2026.08.05-2 — Release
 
-- feat: gate PR sweep mutations
+- feat: PR sweep mutation에 gate 적용
 
 ## 2026.08.05-1 — Release
 
-- compress tk skills: reduce contract prose
-- optimize tk-github-image-upload: consolidate risks
-- optimize tk-pr-open: encode failure paths
-- optimize tk-implement: consolidate anti-patterns
+- compress tk skill: contract prose 축소
+- optimize tk-github-image-upload: risk 통합
+- optimize tk-pr-open: failure path 인코딩
+- optimize tk-implement: anti-pattern 통합
 
 ## 2026.08.04-3 — Release
 
-- refactor: simplify orchestration release checks
-- fix: make eval recorder executable
-- fix: stabilize respond CI commit path
-- fix: require respond canary commit
-- fix: accept safe equivalent eval scripts
-- fix: secure verified eval commit scripts
-- fix: run prepared Codex eval fixtures
-- fix: accept current Codex message events
-- fix: harden PR sweep lifecycle
-- fix: surface outstanding PR feedback
-- fix: keep orchestration visibly moving
+- refactor: orchestration release check 간소화
+- fix: eval recorder 실행 가능하게 변경
+- fix: respond CI commit path 안정화
+- fix: respond canary commit 필수화
+- fix: 안전한 동등 eval script 허용
+- fix: verified eval commit script 보안 강화
+- fix: 준비된 Codex eval fixture 실행
+- fix: 현재 Codex message event 허용
+- fix: PR sweep lifecycle 강화
+- fix: 미처리 PR feedback 표시
+- fix: orchestration 진행 상태를 계속 표시
 
 ## 2026.08.04-2 — Release
 
-- feat: add bounded PR sweep orchestrator
-- feat: add sweep CI mode to PR rebase
-- feat: add CI mode to PR response
+- feat: bounded PR sweep orchestrator 추가
+- feat: PR rebase에 sweep CI mode 추가
+- feat: PR response에 CI mode 추가
 
 ## 2026.08.04-1 — Release
 
-- fix(workflows): continue through every successful implementation unit
+- fix(workflows): 모든 성공한 implementation unit까지 계속 진행
 
 ## 2026.08.03-9 — Release
 
-- fix(skills): restore the `tk-grill-me` invocation label in Codex
+- fix(skills): Codex의 `tk-grill-me` invocation label 복원
 
 ## 2026.08.03-8 — Release
 
-- fix(docs): keep README skill catalog complete and release-neutral
-- fix(skills): use canonical `tk-*` names in skill pickers
+- fix(docs): README skill catalog를 완전하고 release-neutral하게 유지
+- fix(skills): skill picker에서 canonical `tk-*` 이름 사용
 
 ## 2026.08.03-7 — Release
 
-- optimize tk-pr-open: mark publication checkpoint
-- optimize tk-skill-diagnose: own evidence ledger
-- optimize tk-grooming: align summary contract
-- optimize tk-pr-triage: mark read-only handoff
-- optimize tk-adhd: mark safety checkpoint
-- feat: strengthen implementation review convergence
+- optimize tk-pr-open: publication checkpoint 표시
+- optimize tk-skill-diagnose: evidence ledger 소유
+- optimize tk-grooming: summary contract 정렬
+- optimize tk-pr-triage: read-only handoff 표시
+- optimize tk-adhd: safety checkpoint 표시
+- feat: implementation review convergence 강화
 
 ## 2026.08.03-6 — Release
 
-- feat(pr): add safe rebase workflow
+- feat(pr): 안전한 rebase workflow 추가
 
 ## 2026.08.03-5 — Release
 
-- feat(ux): render skill questions directly in chat
+- feat(ux): chat에 skill question 직접 표시
 
 ## 2026.08.03-4 — Release
 
-- feat(pr): own PR evidence decisions in preparation
+- feat(pr): preparation에서 PR evidence decision 소유
 
 ## 2026.08.03-3 — Release
 
-- fix(pr): allow verified image upload handoffs
+- fix(pr): verified image upload handoff 허용
 
 ## 2026.08.03-2 — Release
 
-- feat(pr): restore user-first PR workflows
+- feat(pr): user-first PR workflow 복원
 
 ## 2026.08.03-1 — Release
 
-- optimize tk-pr-triage: retry incomplete API collection
-- optimize tk-to-tickets: define core ticket fields
-- optimize tk-pr-respond: discover PR from selected comments
-- optimize tk-browser-verify: discover local verification routes
-- optimize tk-implement: resolve standalone targets from repo evidence
+- optimize tk-pr-triage: 불완전한 API 수집 재시도
+- optimize tk-to-tickets: core ticket field 정의
+- optimize tk-pr-respond: 선택한 comment에서 PR 발견
+- optimize tk-browser-verify: local verification route 발견
+- optimize tk-implement: repo evidence에서 standalone target 확인
 
 ## 2026.08.02-1 — Release
 
-- fix(tooling): clarify catalog audit disposition
-- perf(docs): shrink README cover
+- fix(tooling): catalog audit disposition 명확화
+- perf(docs): README cover 축소
 
 ## 2026.08.01-4 — Release
 
-- feat(workflow): hand off required PR evidence
+- feat(workflow): required PR evidence handoff
 
 ## 2026.08.01-3 — Release
 
-- feat(skill): add GitHub PR image upload skill
+- feat(skill): GitHub PR image upload skill 추가
 
 ## 2026.08.01-2 — Release
 
-- feat: split PR lifecycle into canonical skills
+- feat: PR lifecycle을 canonical skill로 분리
 
 ## 2026.08.01-1 — Release
 
-- fix: validate date release snapshots
-- perf: make live release canary opt-in
-- docs: refresh README cover and bytecode hygiene
+- fix: date release snapshot 검증
+- perf: live release canary를 opt-in으로 변경
+- docs: README cover와 bytecode hygiene 갱신
 
 ## 21.0.10 — Release
 
-- fix: align stable README snapshot
+- fix: stable README snapshot 정렬
 
 ## 21.0.9 — Release
 
-- Issue #224 removes the retired reflection skill and ends `tk-drive` directly
-  after aggregate verification; `tk-learn` now solely owns skill
-  `create | improve | merge`, while diagnosis emits `learn-ready` and grooming
-  is limited to repository/user skills.
-- Every started `tk-browser-verify` Guard or Verdict run now requires a
-  non-empty screenshot, actual image inspection, and an absolute
-  `Evidence directory: /...` when resolvable.
-- Added explicit eval-contract retirement evidence and ADR 0003 for the new
-  ownership and browser-evidence boundaries.
-
-## 21.0.8 — Eval SSOT and Empirical Quality
-
-- Made skill-local trigger and behavior JSON the single source of truth, removed generated Darwin prompt projections and root fixture mirrors, and replaced hardcoded catalog snapshots with auto-discovery.
-- Added a built-in project-local Codex → Claude Code → Hermes Agent quality adapter that preserves authentication without mutating user skill folders; unavailable live hosts remain visible `Advisory` evidence.
-- Added exact-candidate `tk-drive` versus explicit-composition A/B experiments and an evidence-derived catalog audit; retained all 15 skills because no measured removal evidence was available.
-- Added local release-critical and catalog gates around the new schema while keeping GitHub Actions absent.
-
-## 21.0.7 — Zero-crust Contracts
-
-- Replaced validator magic-phrase checks with structural checks for user decisions, terminal output, response language, and learning-loop ownership.
-- Reduced `tk-browser-verify`, `tk-reflect`, `tk-to-spec`, and `tk-to-tickets` to their unique trigger, authority, evidence, state, and failure contracts.
-- Preserved browser launch/capture safety, reflection apply authority, Ready traceability, vertical ticket ownership, behavior evals, and package compatibility while reducing eager instruction weight.
-
-## 21.0.6 — Lean Core Skills
-
-- Compressed `tk-drive` into a thin orchestration recipe while preserving its
-  preparation, unit execution, aggregate verification, amendment, and
-  non-success boundaries.
-- Compressed `tk-implement` into one unit workflow and moved conditional test,
-  source-writing, browser, review, and commit detail into a lazily loaded
-  execution-gates reference.
-- Preserved current trigger, status, ledger, verification, review, commit, and
-  cross-host contracts while reducing eager hot-path instructions.
-
-## 21.0.5 — Lean Terminal Normalization
-
-- Normalized `pending`, `Draft`, `Unresolved split report`, and `aborted`
-  before terminal drive finalization, preserving bounded recovery edges and
-  preventing child receipts from becoming accidental terminal output.
-- Moved detailed non-success accounting into one owned reference while keeping
-  the drive entry and procedure graph compact.
-- Made `tk-drive non-success finalization` the sole downstream writer for
-  bounded ticket-attempt evidence and kept implementation receipts with
-  `tk-implement`.
-- Added contract and eval coverage for pending decisions, aborted decisions,
-  terminal Draft, unresolved split, and writer ownership.
-
-## 21.0.4 — Read-only Non-success Finalization
-
-- Added one internal `tk-drive non-success finalization` node after alternate
-  edges are exhausted, freezing product mutation and preserving the originating
-  `Fail | Blocked | Unverifiable` status.
-- Accounted verified, stopped, dependency-blocked, unattempted, and unverified
-  scope from existing artifacts and Git evidence with one deterministic
-  recovery action, without adding a public skill, partial status, run ledger,
-  scheduler, or automatic cleanup.
-- Extended `tk-implement` and `tk-to-tickets` non-success handoffs and added
-  validator and eval coverage for terminal graph edges, stale receipts, bounded
-  ledger evidence, and portable Claude Code, Codex, and Hermes Agent behavior.
-
-## 21.0.3 — Direct Procedure Graph and Portable Validation
-
-- Kept decision closure unified in `tk-grill-me` and replaced parent-return
-  orchestration with one validated direct `tk-drive → tk-grill-me →
-  tk-to-spec → tk-to-tickets (conditional) → tk-implement` procedure graph.
-- Replaced the mutable prep lifecycle, claim/finalize scripts, phase receipt
-  recorder, and stored resume cursor with a compact secret-free
-  `.tigerkit/prep.md`, invocation-only eval evidence, and current-evidence
-  resume decisions.
-- Bounded corrective execution with mechanical procedure-count assertions and
-  one remaining-failure report after the third unsuccessful correction.
-- Restricted drive-tail reflection auto-apply to one exact pre-existing ignored
-  user-managed rule target and added a guarded secure-backup, atomic-write,
-  validation, and exact-rollback executor; tracked and unsafe targets remain
-  pending.
-- Documented that Agent Skill continuation is prompt-directed and
-  probabilistic, not durable scheduling or replay, and retained portable
-  Claude Code, Codex, and Hermes Agent distribution.
-
-## 21.0.2 — ADHD Utility and Reflection Boundary
-
-- Renamed the explicit output utility from `tk-recap` to `tk-adhd` and made it
-  one-shot: each explicit invocation shapes only its current response, with no
-  activation, stop command, or cross-turn state.
-- Narrowed `tk-reflect` selection metadata and trigger coverage so summaries,
-  output-style utilities, and explicit invocation of another skill cannot route to
-  reflection.
-
-## 21.0.1 — Terminal Opening, Browser Preflight, and Recap Mode
-
-- Removed the terminal Markdown `---` separator from every distributed skill;
-  terminal responses now begin directly with the owning canonical result
-  heading or result sentence while internal receipts remain hidden.
-- Added a material-only strategy preflight to `tk-drive` Preparing, including
-  conditional `required | optional | N/A` browser routing, non-identifying
-  account/profile hints, authentication and safe-interaction planning, and an
-  explicit cold-start re-request marker for intentionally omitted identities.
-- Renamed the explicit persistent output utility from `tk-focus` to
-  `tk-recap`, including picker metadata, stop language, routing, and evals, to
-  avoid collision with host-provided focus features.
-
-## 21.0.0 — Single-Drive Preparation and Explicit Focus
-
-- Kept one public `tk-drive <source>` entry point and expanded the canonical
-  catalog to 15 skills: 3 user-invoked and 12 hybrid, including the explicit
-  persistent `tk-focus` adaptation.
-- Added strict, atomic `.tigerkit/prep.md` creation with task, repository,
-  source, dirty, instruction, spec, ticket, and verification-profile identity
-  digests as an internal Preparing boundary.
-- Changed `tk-drive` to continue automatically from Preparing into Executing,
-  permit one bounded late Preparing amendment and at most three post-initial
-  corrective cycles, and finalize the same claim before terminal output.
-- Preserved raw `/tk-drive <source>` as the only public full-run command;
-  direct standalone `tk-implement` remains supported and old scratch is not
-  migrated.
-- Added task-anchored discovery of at most seven durable prior-art items,
-  preferred prevention-owner and host-dependency classification, and semantic
-  `adopted | already-satisfied | not-applicable | conflict` R/AC disposition.
-- Added strict state-race, cross-skill wire-compatibility, recovery, eval
-  migration, Codex cold-start and prepared-continuation paths, and three-host
-  package coverage.
-- Removed the shared actionable-output presentation gate; `tk-focus` owns the
-  adapted ADHD-oriented rules and is never selected implicitly. All other
-  skills retain the terminal `---` boundary, user-language behavior, and
-  internal-only phase receipts.
-
-## 20.3.1 — Terminal Transition-Debt Gate
-
-- Added an explicit last-mile `tk-drive` transition-debt check immediately
-  before terminal `---` output. A consumed successful child receipt with an
-  unexecuted `Outstanding transition` can no longer become a response
-  boundary.
-- Added a deterministic contract mutation test while preserving the existing
-  host-generic event-order assertion and Codex continuation canary.
-
-## 20.3.0 — Terminal Summaries and Internal Receipts
-
-- Added the same actionable-output hard gate to all 14 self-contained skills:
-  canonical output schemas stay authoritative while free-form prose leads with
-  the answer, outcome, or action, keeps live state visible, reports
-  evidence-based recovery, and omits ceremonial closers or invented next
-  actions.
-- Added deterministic gate validation, representative Codex behavior
-  assertions, and upstream attribution without adding a skill, persistent
-  mode, shared runtime reference, or catalog migration.
-- Added one exact terminal-summary boundary to all 14 skills: every terminal
-  user response begins after one Markdown `---` separator, while progress and
-  same-turn phase continuation remain unseparated.
-- Removed bottom receipt blocks and the repeated `Outcome:` label from terminal
-  user output. Existing artifacts and ledgers retain durable provenance, and
-  active-drive phase receipts remain internal handoff envelopes.
-- Kept read-only skills read-only and rejected a universal receipt ledger, so
-  the release adds no shared runtime surface, scratch archive, or write
-  expansion.
-- Added exact-block, ordering, mutation, obsolete-rendering, and representative
-  behavior coverage for the new boundary while preserving status semantics,
-  result budgets, phase liveness, and the 14-skill catalog.
-
-## 20.2.0 — Implementation Quality, Optimistic Reflection, and Bounded Results
-
-- Added a `tk-implement` design-fit preflight that chooses reuse, extension,
-  local ownership, or evidence-backed shared abstraction before mutation.
-- Added one behavior-preserving simplify pass after initial GREEN and before
-  final verification, while keeping Standards and Spec review independent.
-- Added bounded `.tigerkit/implementation.md` evidence for repository fit,
-  simplify disposition, verification, and current-agent review.
-- Routed successful aggregate drive work through exactly one fixed-point
-  `drive-optimistic` reflection tail.
-- Limited optimistic mutation to high-confidence existing repository rules,
-  with separate tracked-commit and ignored/local before-image rollback.
-- Kept skill candidates report-only as promotion packets and preserved the
-  human-readable `ID | Candidate | Action | Target | Why` reflection table.
-- Replaced strict one-line result compression across all 14 skills with
-  decision-first, cardinality-aware bounded summaries and nonduplicative
-  receipts.
-- Recorded the durable ownership, rollback, fixed-point, and supersession
-  rationale in ADR 0001 without adding skills, runtime surfaces, or release
-  automation.
-- Added the same response-language hard gate to all 14 skills so the latest
-  explicit language instruction controls every free-form user-facing sentence
-  while canonical tokens and exact source literals remain byte-stable.
-- Added evidence-based `tk-drive` verification profiles that keep low-risk
-  work silent, derive deterministic obligations for material risk, preserve
-  phase ownership, and reconcile those obligations before aggregate `Pass`.
-
-## 20.1.7 — Repository Answers, Drive Liveness, and Concise Receipts
-
-- Expanded the catalog to 14 canonical skills with the user-invoked
-  `tk-ask-repo` investigation desk, including source-located value, structure,
-  existence, impact, and attribution traversals.
-- Fixed `tk-drive` child-receipt liveness so successful phase-owner handoffs
-  carry their next transition, and required every drive run to pass through a
-  Ready spec without a small-task exception.
-- Made terminal output decision-first across the catalog, removed empty or
-  duplicate narration, and kept raw logs and detailed evidence in their owned
-  artifacts or bounded ledgers.
-- Added conditional itemized result tables for multi-item implementation,
-  verification, diagnosis, conflict, prototype, and ticket results while
-  keeping single-item output as one sentence.
-- Added one localized `Outcome` sentence to every receipt-bearing contract so
-  users can understand the result before status and provenance fields.
-- Preserved `tk-reflect` report-only behavior, drive/spec/ticket phase
-  ownership, approval and mutation boundaries, and all prior safety and
-  terminal-state contracts.
-
-## 20.1.6 — Structured User Decision Questions
-
-- Standardized a self-contained user-decision question contract across all 13
-  canonical skills, with one question at a time, two or three mutually
-  exclusive proposals, material tradeoffs, and exactly one localized
-  recommendation marker.
-- Required `Question` to precede `Recommendation` and to explain the
-  evidence-derived context, decision impact, and unresolved axis in readable
-  user-facing prose instead of requiring users to decode raw evidence.
-- Required native structured user-input tools whenever the active host exposes
-  one, with explicit Claude Code `AskUserQuestion`, Codex
-  `request_user_input`, and Hermes Agent `clarify` examples and prose fallback
-  only when no such tool is available.
-- Made supported option previews and prototype cards proactive aids when they
-  clarify a decision without expanding the owning skill's authority.
-- Added repository validation, unit coverage, and the required
-  `grill-uses-native-question-tool` behavior-eval contract to prevent drift in
-  ordering, readability, tool gating, option count, and recommendation
-  labeling.
-
-## 20.1.5 — Empirical Agent Skill Diagnosis and Catalog Reliability
-
-- Expanded the catalog from 12 to 13 canonical skills while retaining one
-  user-invoked skill and moving to 12 hybrid skills.
-- Added adapted `tk-skill-diagnose` for observed correctness, stability,
-  compatibility, evaluation, and efficiency incidents with clean reproduction,
-  failure-plane isolation, one-theme temporary candidates, and holdout gates.
-- Added the single conditional `tk-reflect → tk-skill-diagnose` handoff and
-  blocked reverse calls, repeated equivalent blockers, and sibling loops.
-- Added an opt-in empirical diagnostic pass to `run_skill_evals.py` with
-  answer-free prompt composition, marker-delimited structured traces, separate
-  metrics/records/ledger, and unchanged normal behavior when disabled.
-- Added external consumer provenance, anonymization, and upstream issue-draft
-  contracts without issue creation or canonical skill mutation.
-- Strengthened `tk-drive` same-turn phase continuation and source-UI literal
-  routing, and required more precise browser runtime evidence.
-- Standardized canonical skill bodies and operational references in English
-  while preserving user-language progress and receipts, and added persistent
-  memory as the fifth `tk-reflect` classification axis.
-- Refined all 13 skills through independent paired ratchets: deterministic
-  failure terminals, delegation fallback, atomic writes, worktree-safe Git
-  state discovery, artifact ownership, and executable spec/ticket evals.
-- Audited post-commit hook drift in isolated eval runs and kept vendor-owned
-  artifacts report-only instead of treating them as candidate mutations.
-- Preserved every existing explicit invocation name and the Agent Skills-only
-  distribution; this patch adds no workflow runtime, plugin surface, or
-  release-time live-eval requirement.
-
-## 20.1.4 — Conditional Decision Orchestration and Skill Refinement
-
-- Made `tk-drive` the single user-invoked workflow entry point and converted
-  `tk-grill-me` to a narrowly triggered hybrid decision phase owner.
-- Replaced drive's one-question inline gate with conditional `tk-grill-me`
-  handoff, while skipping grill entirely for source that already supports a
-  Ready spec.
-- Routed decision-related spec or ticket failures back through drive and grill,
-  using an explicit `User decision` receipt signal, then required Ready-spec
-  revalidation before downstream ticket rederivation and blocked repeated
-  equivalent decision loops.
-- Kept phase owners from invoking siblings, preserved standalone grill/spec/
-  ticket/implementation use, retained 12 canonical skills, and did not add
-  `tk-prep`.
-- Refined every canonical skill with one conservative, independently paired
-  improvement: cheaper negative conflict exits, precise browser blockers,
-  direct no-ticket handoffs, deterministic decision ranking, canonical receipt
-  ownership, and reduced duplicated safety wording.
-- Tightened grooming classification, candidate naming, bounded evidence retry,
-  atomic handoff replacement, and hypothesis-scoped prototype viewport
-  evidence without changing skill names, invocation kinds, or distribution.
-- Refreshed decision-flow evals for drive resume, Ready-source grill skipping,
-  active-drive decision handoffs, and spec/ticket decision returns.
-
-## 20.1.3 — Phase-Owner Improvements
-
-- Made `tk-drive` a thin orchestrator that explicitly hands spec creation to
-  `tk-to-spec`, conditional vertical decomposition to `tk-to-tickets`, and each
-  implementation unit to `tk-implement`, with strict receipt propagation and
-  no inline phase fallback.
-- Converted `tk-implement` to narrowly triggered hybrid invocation while
-  preserving direct selection, and changed drive execution from one final
-  commit to one verified commit per ticket or no-ticket single slice.
-- Required durable automated tests for production behavior, observed red
-  regression tests when a meaningful bug seam exists, existing repository
-  coverage gates when available, and explicit named exceptions before any
-  testless production-behavior commit.
-- Split ticket-level Standards/Spec review from drive-wide ancestry, R/AC,
-  cross-ticket, and broad verification; bounded final correction to one
-  additive corrective ticket and commit without history rewriting.
-- Standardized the four phase-owner operational contracts and references in
-  English while keeping user-facing progress and final receipt prose in the
-  user's language.
-- Refined all 12 skill contracts with bounded evidence, mutation, approval,
-  placement, recovery, and resumability guidance while retaining their
-  existing names and explicit invocation paths.
-- Required TDD red evidence to fail for the expected missing behavior, bounded
-  mocks to unavoidable external side-effect boundaries, and made vertical
-  tickets executable from cited sources without hidden conversation context.
-- Preserved all 12 canonical skill names, changed the distribution to
-  1 user-invoked / 11 hybrid, and added static and executable cross-host
-  routing, phase handoff, failure, test, coverage, and commit regressions.
-
-## 20.1.2 — Deterministic Routing and Failure Contracts
-
-- Added critical routing coverage for `tk-learn` versus reflection/grooming and `tk-drive` versus handoff/generic continuation, with repository validation that requires both boundaries.
-- Promoted merge-conflict and interview safety paths to executable evals, and split unreadable UI text, conflicting UI text, commit-command failure, and pre-commit drift into deterministic `tk-drive` terminal states.
-- Reduced repeated terminal, approval, and output-field guidance in `tk-implement`, `tk-learn`, and `tk-reflect`, then used a two-judge Darwin ratchet and canonical full tests to keep `tk-learn`'s unresolved identity branch explicitly `pending` and write-safe.
-- Preserved all 12 canonical skill names, the 2 user-invoked / 10 hybrid distribution, self-contained resources, and local-only verification boundary.
-
-## 20.1.1 — Explicit Recovery and Freshness Contracts
-
-- Refined all 12 canonical skill contracts with explicit terminal-state, failure-recovery, freshness, and command-evidence tables while preserving their names, invocation kinds, and ownership boundaries.
-- Tightened decision, resume, apply, prototype, handoff, browser-verdict, and conflict-resolution paths so drift and incomplete evidence stop at one well-defined checkpoint without discarding valid partial work.
-- Reduced duplicated status guidance by assigning each outcome and receipt to one owning section, keeping the 2 user-invoked / 10 hybrid distribution surface unchanged.
-
-## 20.1.0 — Cross-Host Parity and Eval Evidence
-
-- Made `tk-drive` explicit start host-neutral across slash commands, Codex `$` invocation, and skill pickers, and carried exact source UI writing through spec, tickets, implementation, staged diff, and rendered evidence.
-- Made `tk-learn` the sole semantic skill writer, limited reflect/grooming to proposal-only semantic changes, resolved only current-host native targets, and simplified handoff state to one `.tigerkit/handoff.md` snapshot.
-- Added browser capture sensitivity, redaction, and residue gates that keep unverified sensitive evidence out of repo-local scratch.
-- Strengthened evals with exact terminal states, content/path/diff assertions, independent baseline/candidate contracts, deletion/weakening drift checks, catalog selection metadata, and a Claude Code/Codex/Hermes Agent critical routing matrix.
-- Locked the deterministic repository placement rubric from #182 with mechanical safety-token, sibling-threshold, override, fallback, and missing-evidence regression coverage while preserving all 12 canonical skill names and invocation kinds.
-
-## 20.0.3 — Headless Verification and Numbered Reports
-
-- Made `tk-browser-verify` launch Chrome with the exact `--headless=new` argument by default, permit headed mode only for user-completed interactive authentication, and resume verification headlessly with the same persistent profile.
-- Made design alignment conditional on an available design basis and shortened pre-session stops without weakening launch, authentication, or TigerKit capture-ledger evidence.
-- Standardized `tk-reflect` and `tk-grooming` outputs with stable per-item IDs, mandatory final summary tables, one-line rule summaries, explicit application targets, and empty-result rows.
-
-## 20.0.2 — Verbatim Fidelity and Capture Ledger
-
-- Hardened `tk-implement`, `tk-to-spec`, and `tk-to-tickets` to preserve source-provided UI labels, buttons, guidance, column names, and related writing as exact literals through implementation artifacts and verification.
-- Made `tk-browser-verify` move run-owned captures from tool or user scratch into a repo-local TigerKit run ledger, preserve user-owned inputs, and block verdicts without custody and residue evidence.
-- Improved all 12 canonical skills with stricter draft/apply boundaries, executable conflict evidence, deduplicated output contracts, aligned receipts, and regression coverage while preserving the 2 user-invoked / 10 hybrid surface.
-
-## 20.0.1 — Local-Only Verification
-
-- Removed the GitHub Actions validator, eval preview, and latest-CLI canary workflows so repository verification runs only on maintainers' local machines.
-- Documented the complete local validation sequence and kept three-host packaging smoke installation as a release requirement.
-- Updated repository and release contracts to reject CI validation workflows and bind release evidence to exact locally validated trees without requiring CI provenance.
-
-## 20.0.0 — Drive-Centered Skill Surface
-
-- Changed the canonical surface to 12 self-contained skills: 2 user-invoked and 10 hybrid.
-- Added explicit-start, same-conversation-resumable `tk-drive` with inline one-question ambiguity handling, optional ticket ledger, bounded nested skills, built-in review parity, one final commit, and partial-failure preservation.
-- Converted planning, prototype, reflection, learning, grooming, and handoff artifact skills to narrowly triggered hybrid contracts.
-- Folded unknown-cause investigation and fixed-point Standards/Spec review into `tk-implement`, then removed their standalone skill surfaces.
-- Added deterministic root/nested rule versus repo-skill placement and disposable wide/narrow web A/B/C prototype guidance.
-- Made skill eval automation API-free and opt-in by removing the unconfigured scheduled live comparison while retaining manual dry-run previews.
-
-## 19.0.17 — Bounded Large-Diff Review
-
-- Added stat/numstat preflight and deterministic file/line thresholds before `tk-code-review` reads diff content.
-- Routed large or size-unknown diffs through bounded inspection while preserving complete file/hunk coverage before `Pass`.
-- Added static and executable regression coverage for large-diff context safety and source immutability.
-
-## 19.0.16 — Enforced Browser Routing and Skill Ratchets
-
-- Made `tk-implement` activate `tk-browser-verify` before any browser tool or verification server, prohibited direct Chrome MCP/Playwright/CDP/native selection, and invalidated browser evidence created before the gate.
-- Ratcheted all 13 canonical skills with clearer workflow ownership, failure-state routing, confidence evidence, checkpoint visibility, and section structure while reverting an attempted safety regression.
-- Added browser-routing behavior/eval fixtures and static validation so bypasses fail deterministic repository checks.
-
-## 19.0.15 — Output Contract Deduplication
-
-- Assigned each substantive result to one named output section across ten canonical skills instead of restating it under overlapping labels.
-- Limited receipts to terminal or disposition status, unresolved items, and references while preserving skill-specific evidence and verification fields.
-- Added primary eval assertions that reject semantically duplicated output across the affected skill contracts.
-- Moved the maintainer-only `tigerkit-release` helper to user scope and removed its repository-tracked skill and fixture surfaces from consumer discovery.
-
-## 19.0.14 — Existing Structure Hardening
-
-- Required stable releases to originate from validated `origin/main` and verify main, peeled tag, GitHub Release, and CI provenance before completion.
-- Added reproducible pinned-CLI validation, a latest-CLI canary, Python regression tests in CI, and an explicit portable-core/host-extension compatibility profile.
-- Made executable trigger and structured behavior eval contracts canonical for all 13 skills, retained generated Darwin prompt projections, and added an isolated baseline comparison runner with scheduled/manual evidence workflow.
-- Strengthened existing handoff, traceability, conditional high-risk review, browser accessibility, and skill-learning contracts without adding canonical skills.
-- Hardened all 13 canonical skill contracts with verified recovery, freshness, and post-write evidence gates while preserving their names and invocation kinds.
-- Reworked the maintainer release flow around intent-aware candidate reconciliation, exact PR and final-main CI evidence, PR merge, tag, and GitHub Release checkpoints.
-
-## 19.0.13 — Canonical Skill Boundary Refinements
-
-- Added explicit failure outcomes across the canonical skills for missing evidence, unresolved decisions, unsafe runtime conditions, and incomplete verification.
-- Added compact workflow input/output, evidence, receipt, and state-check guidance without expanding the 13-skill catalog.
-- Preserved runtime-neutral distribution, invocation boundaries, and mutation safety.
-
-## 19.0.12 — Release Checkpoint and Validation Hardening
-
-- Added explicit STOP checkpoints before remote changes, Promote integration, release mutations, and post-release main cleanup.
-- Hardened the maintainer release fixtures and validator contract for promotion, resume, dry-run, and post-release branch reconciliation.
-- Preserved the 13-skill distribution and runtime-neutral release workflow.
-
-## 19.0.11 — Canonical Skill Workflow Optimization
-
-- Improved all 13 canonical skills with clearer workflow inputs, outputs, checkpoints, failure states, and verification receipts.
-- Added Darwin evaluation prompt fixtures for each canonical skill to support repeatable quality checks.
-- Preserved explicit invocation boundaries, mutation safety, and no-repeat decision guards while tightening implementation and conflict-resolution verification.
-
-## 19.0.10 — Release Promotion and Resume Safety
-
-- Added an explicit promotion flow for named remote release branches with merge-tree preview and no-ff merge.
-- Added partial-success resume rules that preserve existing tags and GitHub Releases without overwriting them.
-- Added dry-run boundaries and maintainer release behavior fixtures.
-
-## 19.0.9 — Structured Grilling and Decision Closure
-
-- Added a conversation-only `Scope`, `Constraints`, `Outputs`, and `Verification` ambiguity ledger to `tk-grill-me`.
-- Separated exact code facts from user judgment, preserved decision boundaries, and added explicit one-sentence goal approval before closure.
-- Expanded static behavior coverage for fact routing, boundary preservation, targeted reconfirmation, and closure behavior.
-
-## 19.0.8 — Evidence Checkpoint Refinements
-
-- Tightened explicit stop boundaries for prototype execution, user decisions, review start, bug hypotheses and patches, and conflict resolution continuation.
-- Preserved truthful `Blocked`, `Unverifiable`, `Fail`, and `pending` outcomes when required evidence or user decisions are missing.
-
-## 19.0.7 — Checkpoints and Anti-Patterns
-
-- Added explicit CHECKPOINT / STOP gates to canonical skills so missing evidence, unresolved decisions, and unsafe execution boundaries end in a truthful blocked or unverifiable state.
-- Added DO NOT / ANTI-PATTERNS guidance for mutation safety, review scope, verification evidence, delegation, and release boundaries.
-- Tightened workflow receipts and decision-field requirements across grooming, handoff, learning, prototyping, specification, ticketing, and conflict resolution.
-- Disabled implicit invocation for the maintainer-only `tigerkit-release` skill.
-
-## 19.0.6 — Guarded Browser Verification Modes
-
-- Added lightweight Guard mode for temporary HTML, prototypes, and exploratory UI checks without forcing responsive matrices or formal verdicts.
-- Preserved the full Verdict mode evidence contract for persistent user-visible source changes, explicit invocation, and formal verification requests.
-- Added a compact P1–P10 router for trusted input, CDP ownership, visual baselines, API-gated states, screenshot paths, responsive checks, cleanup, motion timelines, field clearing, and server auto-open behavior.
-- Clarified automatic trigger exclusions versus explicit invocation and expanded static trigger, behavior, and validation coverage.
-
-## 19.0.5 — Automatic Browser Verification Routing
-
-- Routed user-visible UI and browser behavior changes from `tk-implement` through hybrid `tk-browser-verify` without another approval request.
-- Required design intent preflight before source mutation when Figma, screenshots, or design specifications define the expected UI.
-- Required runtime screenshot capture and actual image inspection after implementation, with commit blocked unless browser verification passes.
-- Updated skill descriptions, documentation, trigger fixtures, behavior fixtures, and canonical validation for the routing contract.
-
-## 19.0.4 — Safe Browser Launch and Autonomous Implementation
-
-- Prevented browser verification from auto-launching until headless execution and a temporary isolated profile are confirmed; otherwise it returns `Unverifiable`.
-- Made explicit user scope, method, prohibitions, execution mode, TDD, verification, and commit decisions binding in `tk-implement`.
-- Made unspecified execution mode and TDD choices resolve automatically after inspection without a strategy approval round trip.
-- Updated static behavior fixtures and canonical validation for both contracts.
-
-## 19.0.3 — Browser Design Intent Gate
-
-- Fixed the distribution smoke install to exercise standard discovery without explicitly selecting internal maintainer skills.
-- Added a required design-intent preflight before browser execution when Figma, screenshots, or design specifications are provided.
-- Decomposed visible spacing into nested frame, container, component, and child layers instead of treating the total offset as one padding value.
-- Blocked conflicting or unclear user and design expectations until the user explicitly selects a concrete final UI; silence cannot approve a deviation.
-- Separated pre-browser `Blocked` decisions from runtime `Unverifiable` evidence failures while retaining screenshot capture and actual image inspection for runtime terminal states.
-- Required an `Alignment` receipt with design basis, spacing stack, relation, expected implementation, user decision, and status.
-
-## 19.0.1 — Procedural Contracts and Release Safety
-
-- Strengthened all 13 canonical skills with explicit preconditions, required sequences, completion gates, failure states, forbidden shortcuts, and evidence receipts.
-- Made browser verification headless by default, limited headed mode to interactive authentication, and required inspected terminal-state screenshots for successful visual verdicts.
-- Added responsive width and breakpoint-edge checks plus evidence-based Figma deviation classification.
-- Allowed ignored repo-local `.tigerkit/` scratch while rejecting tracked or packaged scratch, with regression tests for all three cases.
-- Added the repository-local `tigerkit-release` maintainer skill without changing the 13-skill distribution catalog.
-
-## 19.0.0 — Skill Consolidation and Follow-up Boundaries
-
-TigerKit 19 is a major release that reduces the canonical catalog from 18 skills to 13 while preserving the `v18.0.4` implementation and browser contracts.
-
-### Removed
-
-- Removed redundant micro-skills `tk-grill-with-docs`, `tk-grilling`, `tk-domain-modeling`, `tk-tdd`, and `tk-codebase-design`.
-- Removed the model-only invocation category.
-- Removed automatic feature-branch `CONTEXT.md`, domain document, glossary, and ADR mutation contracts.
-
-### Merged
-
-- Merged fact-first, one-question-at-a-time grilling discipline into `tk-grill-me`.
-- Merged public-behavior `red → green` TDD into the `tk-implement` TDD branch.
-- Merged diff-grounded structure checks into `tk-code-review` Standards review.
-- Merged regression-seam assessment into `tk-diagnosing-bugs`.
-
-### Changed
-
-- Changed `tk-code-review`, `tk-diagnosing-bugs`, and `tk-merge-conflict` from model-only to hybrid.
-- Added fixed-point validation and separate Standards/Spec axes to `tk-code-review`.
-- Added a red-capable feedback-loop gate, regression seam reporting, cleanup, and explicit standalone/embedded commit boundaries to `tk-diagnosing-bugs`.
-- Extended `tk-merge-conflict` through staging, continue/merge commit, repeated conflicts, verification, and operation completion.
-- Made ordinary follow-up feedback continue in the current conversation; separate implementation, diagnosis, review, and learning boundaries escalate to their respective skills.
-- Restricted ADR creation to explicit requests for long-lived repository constraints.
-- Added README use scenarios and maintainer-only skill-existence criteria in `AGENTS.md`.
-
-### Validation
-
-- Validate exactly 13 canonical skills: 9 user-invoked and 4 hybrid.
-- Split user-invoked `examples` fixtures from hybrid `positive`/`negative` fixtures.
-- Validate behavior cases as a required subset with duplicate, required-field, and unknown-skill checks.
-
-## 18.0.4 — Implementation and Browser Contracts
-
-- Added explicit `direct`/`delegated` and TDD strategy approval before `tk-implement` modifies files.
-- Restored incremental verification, bounded review, and verified current-branch commit behavior while keeping push and release actions separately authorized.
-- Defined single-level implementation delegation and kept MCPs, sandboxes, browsers, and context-management tools available in either execution mode.
-- Documented ownership and cleanup rules for browser sessions launched or attached by `tk-browser-verify`.
-- Extended static behavior fixtures and repository validation for these contracts.
-
-## 18.0.3 — Korean Skill Documentation
-
-- Localized skill instructions and the README for Korean users while preserving canonical skill names and invocation labels.
-
-## 18.0.2 — Invocation Labels
-
-- Prefixed skill descriptions with `[user]`, `[auto]`, or `[user/auto]` so picker entries communicate their intended invocation.
-- Mirrored `[user]` in Codex interface descriptions for explicitly invoked skills.
-- Enforced invocation labels in repository validation without renaming skills or changing invocation kinds.
-
-## 18.0.1 — README Invocation Guide
-
-- Distinguished user-invoked, model-invoked, and hybrid skills throughout the README catalog.
-- Restored the cute TigerKit cover image and displayed it at the top of the README.
-- Updated the immutable installation example to `v18.0.1`.
-
-## 18.0.0 — Agent Skills Reboot
-
-TigerKit 18 is a breaking distribution and runtime reboot.
-
-### Breaking changes
-
-- Ended new support for the Claude Code plugin runtime and removed plugin manifests, command wrappers, central state helpers, legacy schema/evidence machinery, and common emoji output contracts from `main`.
-- Switched distribution to 18 self-contained `skills/tk-*/` Agent Skills installed with `npx skills`.
-- Added initial host support for Claude Code, Codex, and Hermes Agent.
-- Replaced legacy `/tk:*` namespace calls with `tk-*` skill names; see `MIGRATION.md` for the mapping.
-- Stopped all automatic discovery or migration of legacy global TigerKit state.
-- Moved optional work state to repo/worktree-local `.tigerkit/` scratch with no repo/worktree keys, ledgers, archives, or current pointers.
+- Issue #224는 retired reflection skill을 제거하고 `tk-drive`를 직접 종료합니다
+  aggregate verification 뒤에는 `tk-learn`이 skill
+  `create | improve | merge`를 단독 소유하고, diagnosis는 `learn-ready`를 출력하며 grooming은
+  repository/user skill로 제한됩니다.
+- 시작된 모든 `tk-browser-verify` Guard 또는 Verdict run에는 다음이 필요합니다.
+  비어 있지 않은 screenshot, 실제 image inspection 및 확인 가능한 경우 절대
+  `Evidence directory: /...`.
+- 새로운
+  ownership 및 browser-evidence 경계를 위한 명시적 eval-contract retirement evidence와 ADR 0003 추가.
+
+## 21.0.8 — Eval SSOT 및 경험적 품질
+
+- skill-local trigger 및 behavior JSON을 single source of truth로 만들고, 생성된 Darwin prompt projection과 root fixture mirror를 제거하며 hardcoded catalog snapshot을 auto-discovery로 교체.
+- 사용자 skill folder를 변경하지 않고 authentication을 보존하는 project-local Codex → Claude Code → Hermes Agent quality adapter를 추가; 사용할 수 없는 live host도 `Advisory` evidence로 표시.
+- exact-candidate `tk-drive`와 explicit-composition을 비교하는 A/B experiment 및 evidence-derived catalog audit를 추가; 측정된 removal evidence가 없어 15개 skill을 모두 유지.
+- 새 schema 주변에 local release-critical 및 catalog gate를 추가하고 GitHub Actions는 계속 두지 않음.
+
+## 21.0.7 — Zero-crust 계약
+
+- validator의 magic-phrase check를 user decision, terminal output, response language 및 learning-loop ownership에 대한 structural check로 교체.
+- `tk-browser-verify`, `tk-reflect`, `tk-to-spec` 및 `tk-to-tickets`를 각자의 고유한 trigger, authority, evidence, state 및 failure contract로 축소.
+- eager instruction weight를 줄이면서 browser launch/capture safety, reflection apply authority, Ready traceability, vertical ticket ownership, behavior eval 및 package compatibility를 보존.
+
+## 21.0.6 — Lean core skill
+
+- `tk-drive`를 얇은 orchestration recipe로 압축하면서 preparation, unit execution, aggregate verification, amendment 및 non-success boundary를 보존.
+- `tk-implement`를 하나의 unit workflow로 압축하고 conditional test, source-writing, browser, review 및 commit 세부사항을 lazy-loaded execution-gates reference로 이동.
+- eager hot-path instruction을 줄이면서 current trigger, status, ledger, verification, review, commit 및 cross-host contract를 보존.
+
+## 21.0.5 — Lean terminal 정규화
+
+- terminal drive finalization 전에 `pending`, `Draft`, `Unresolved split report` 및 `aborted`를 정규화해 bounded recovery edge를 보존하고 child receipt가 우발적인 terminal output이 되지 않게 함.
+- 상세한 non-success accounting을 하나의 owner reference로 옮기면서 drive entry와 procedure graph는 compact하게 유지.
+- `tk-drive non-success finalization`을 bounded ticket-attempt evidence의 유일한 downstream writer로 만들고 implementation receipt는 `tk-implement`에 유지.
+- pending decision, aborted decision, terminal Draft, unresolved split 및 writer ownership에 대한 contract와 eval coverage 추가.
+
+## 21.0.4 — Read-only non-success finalization
+
+- internal `tk-drive non-success finalization` node를 alternate edge 모두 소진한 뒤 추가해 product mutation을 동결하고 최초 `Fail | Blocked | Unverifiable` status를 보존.
+- 기존 artifact와 Git evidence에서 verified, stopped, dependency-blocked, unattempted 및 unverified scope를 하나의 deterministic recovery action으로 기록하고 public skill, partial status, run ledger, scheduler 또는 automatic cleanup은 추가하지 않음.
+- `tk-implement`와 `tk-to-tickets`의 non-success handoff를 확장하고 terminal graph edge, stale receipt, bounded ledger evidence 및 portable Claude Code, Codex, Hermes Agent behavior에 대한 validator와 eval coverage 추가.
+
+## 21.0.3 — Direct procedure graph 및 이식 가능한 검증
+
+- decision closure를 `tk-grill-me`로 통합하고 parent-return
+  orchestration을 검증된 direct `tk-drive → tk-grill-me →
+  tk-to-spec → tk-to-tickets (conditional) → tk-implement` procedure graph로 교체.
+- mutable prep lifecycle, claim/finalize script, phase receipt recorder 및 저장된 resume cursor를 compact secret-free `.tigerkit/prep.md`, invocation-only eval evidence 및 current-evidence resume decision으로 교체.
+- mechanical procedure-count assertion으로 corrective execution을 제한하고 세 번째 correction 실패 뒤 one remaining-failure report를 남김.
+- drive-tail reflection auto-apply를 하나의 exact pre-existing ignored user-managed rule target으로 제한하고 guarded secure-backup, atomic-write, validation 및 exact-rollback executor를 추가하며 tracked 및 unsafe target은 pending으로 유지.
+- Agent Skill continuation이 prompt-directed이고 probabilistic하며 durable scheduling이나 replay가 아님을 문서화하고 portable Claude Code, Codex 및 Hermes Agent distribution을 유지.
+
+## 21.0.2 — ADHD utility 및 reflection 경계
+
+- explicit output utility를 `tk-recap`에서 `tk-adhd`로 rename하고 one-shot으로 만들어 각 explicit invocation이 현재 response만 구성하게 하며 activation, stop command 또는 cross-turn state는 두지 않음.
+- `tk-reflect` selection metadata와 trigger coverage를 좁혀 summary, output-style utility 및 다른 skill의 explicit invocation이 reflection으로 라우팅되지 않게 함.
+
+## 21.0.1 — Terminal opening, browser preflight 및 recap mode
+
+- 모든 distributed skill에서 terminal Markdown `---` separator를 제거해 terminal response가 owning canonical result heading 또는 result sentence로 직접 시작하게 하고 internal receipt는 숨김.
+- `tk-drive` Preparing에 material-only strategy preflight를 추가하고 conditional `required | optional | N/A` browser routing, non-identifying account/profile hint, authentication 및 safe-interaction planning, 의도적으로 생략한 identity를 위한 explicit cold-start re-request marker를 포함.
+- host-provided focus feature와의 충돌을 피하도록 explicit persistent output utility를 `tk-focus`에서 `tk-recap`으로 rename하고 picker metadata, stop language, routing 및 eval도 함께 변경.
+
+## 21.0.0 — Single-Drive preparation 및 explicit focus
+
+- 하나의 public `tk-drive <source>` entry point를 유지하고 canonical catalog를 15개 skill(3 user-invoked, 12 hybrid)로 확장하며 explicit persistent `tk-focus` adaptation을 포함.
+- task, repository, source, dirty, instruction, spec, ticket 및 verification-profile identity digest를 internal Preparing boundary로 사용하는 strict atomic `.tigerkit/prep.md`를 생성.
+- `tk-drive`가 Preparing에서 Executing으로 자동 계속되게 하고 bounded late Preparing amendment 하나와 post-initial corrective cycle 최대 세 번을 허용하며 terminal output 전에 같은 claim을 finalize.
+- raw `/tk-drive <source>`를 유일한 public full-run command로 보존하고 direct standalone `tk-implement`는 계속 지원하며 old scratch는 migrate하지 않음.
+- 최대 일곱 개의 durable prior-art item을 task에 맞춰 발견하고 prevention-owner 및 host-dependency classification과 semantic `adopted | already-satisfied | not-applicable | conflict` R/AC disposition을 추가.
+- strict state-race, cross-skill wire-compatibility, recovery, eval migration, Codex cold-start, prepared-continuation path 및 three-host package coverage 추가.
+- shared actionable-output presentation gate를 제거하고 `tk-focus`가 adapted ADHD-oriented rule을 소유하게 하며 implicit selection하지 않음. 다른 skill은 terminal `---` boundary, user-language behavior 및 internal-only phase receipt를 유지.
+
+## 20.3.1 — Terminal transition-debt gate
+
+- terminal `---` output 직전에 explicit last-mile `tk-drive` transition-debt check를 추가해 소비된 성공 child receipt의 실행되지 않은 `Outstanding transition`이 response boundary가 되지 않게 함.
+- 기존 host-generic event-order assertion과 Codex continuation canary를 보존하는 deterministic contract mutation test 추가.
+
+## 20.3.0 — Terminal summary 및 internal receipt
+
+- 14개 self-contained skill 모두에 동일한 actionable-output hard gate를 추가해 canonical output schema는 authoritative하게 유지하고 free-form prose는 answer, outcome 또는 action을 먼저 제시하며 live state와 evidence-based recovery를 보고하고 ceremonial closer나 invented next action은 생략.
+- deterministic gate validation, representative Codex behavior assertion 및 upstream attribution을 추가하고 skill, persistent mode, shared runtime reference 또는 catalog migration은 추가하지 않음.
+- 14개 skill의 모든 terminal user response가 하나의 Markdown `---` separator 뒤에 시작하도록 exact terminal-summary boundary를 추가하고 progress와 same-turn phase continuation은 분리하지 않음.
+- terminal user output에서 bottom receipt block과 반복되는 `Outcome:` label을 제거하고 기존 artifact와 ledger의 durable provenance 및 active-drive phase receipt의 internal handoff envelope를 유지.
+- read-only skill은 read-only로 유지하고 universal receipt ledger를 거부해 shared runtime surface, scratch archive 또는 write expansion을 추가하지 않음.
+- status semantics, result budget, phase liveness 및 14-skill catalog를 보존하면서 새 boundary에 대한 exact-block, ordering, mutation, obsolete-rendering 및 representative behavior coverage 추가.
+
+## 20.2.0 — Implementation 품질, optimistic reflection 및 bounded result
+
+- `tk-implement` design-fit preflight를 추가해 mutation 전에 reuse, extension, local ownership 또는 evidence-backed shared abstraction을 선택.
+- initial GREEN 뒤 final verification 전에 behavior-preserving simplify pass를 한 번 실행하고 Standards와 Spec review는 독립적으로 유지.
+- repository fit, simplify disposition, verification 및 current-agent review를 위한 bounded `.tigerkit/implementation.md` evidence 추가.
+- 성공한 aggregate drive work를 정확히 하나의 fixed-point `drive-optimistic` reflection tail로 라우팅.
+- optimistic mutation을 high-confidence existing repository rule로 제한하고 tracked-commit과 ignored/local before-image rollback을 분리.
+- skill candidate는 promotion packet으로 report-only 처리하고 사람이 읽을 수 있는 `ID | Candidate | Action | Target | Why` reflection table을 유지.
+- 14개 skill 전반의 strict one-line result compression을 decision-first, cardinality-aware bounded summary와 nonduplicative receipt로 교체.
+- durable ownership, rollback, fixed-point 및 supersession rationale을 ADR 0001에 기록하고 skill, runtime surface 또는 release automation은 추가하지 않음.
+- 최신 explicit language instruction이 모든 free-form user-facing sentence를 제어하면서 canonical token과 exact source literal은 byte-stable하게 유지하도록 14개 skill에 response-language hard gate 추가.
+- low-risk work는 조용히 처리하고 material risk에 대한 deterministic obligation을 도출하며 phase ownership을 보존하고 aggregate `Pass` 전에 obligation을 reconcile하는 evidence-based `tk-drive` verification profile 추가.
+
+## 20.1.7 — Repository 답변, Drive liveness 및 간결한 receipt
+
+- catalog를 14개 canonical skill로 확장하고 user-invoked `tk-ask-repo` investigation desk와 source-located value, structure, existence, impact 및 attribution traversal을 포함.
+- 성공한 phase-owner handoff가 다음 transition을 전달하도록 `tk-drive` child-receipt liveness를 수정하고 모든 drive run이 small-task exception 없이 Ready spec을 거치게 함.
+- catalog 전반의 terminal output을 decision-first로 만들고 empty 또는 duplicate narration을 제거하며 raw log와 상세 evidence는 소유 artifact 또는 bounded ledger에 유지.
+- multi-item implementation, verification, diagnosis, conflict, prototype 및 ticket result에 대한 conditional itemized result table을 추가하고 single-item output은 한 문장으로 유지.
+- 모든 receipt-bearing contract에 localized `Outcome` sentence를 하나씩 추가해 사용자가 status와 provenance field보다 먼저 result를 이해할 수 있게 함.
+- `tk-reflect` report-only behavior, drive/spec/ticket phase ownership, approval 및 mutation boundary와 기존의 모든 safety 및 terminal-state contract를 보존.
+
+## 20.1.6 — 구조화된 user decision question
+
+- 13개 canonical skill 전반에 self-contained user-decision question contract를 표준화하고 한 번에 하나의 question, 서로 배타적인 두세 가지 proposal, material tradeoff 및 정확히 하나의 localized recommendation marker를 요구.
+- `Question`이 `Recommendation`보다 먼저 나오도록 하고 evidence-derived context, decision impact 및 unresolved axis를 읽기 쉬운 user-facing prose로 설명하게 해 사용자가 raw evidence를 해석하지 않아도 되게 함.
+- active host가 제공하는 경우 native structured user-input tool을 사용하게 하고 Claude Code `AskUserQuestion`, Codex `request_user_input` 및 Hermes Agent `clarify` 예시를 명시하며 prose fallback은 해당 tool을 사용할 수 없을 때만 허용.
+- supported option preview와 prototype card가 owning skill의 authority를 넓히지 않고 decision을 명확히 할 때 proactive aid가 되게 함.
+- repository validation, unit coverage 및 필수 `grill-uses-native-question-tool` behavior-eval contract를 추가해 ordering, readability, tool gating, option count 및 recommendation labeling의 drift를 방지.
+
+## 20.1.5 — 경험적 Agent Skill diagnosis 및 catalog 신뢰성
+
+- catalog를 12개에서 13개 canonical skill로 확장하면서 하나의 user-invoked skill과 12개 hybrid skill 구성을 유지.
+- clean reproduction, failure-plane isolation, one-theme temporary candidate 및 holdout gate로 관찰된 correctness, stability, compatibility, evaluation 및 efficiency incident를 다루는 adapted `tk-skill-diagnose` 추가.
+- 단일 conditional `tk-reflect → tk-skill-diagnose` handoff를 추가하고 reverse call, 반복되는 equivalent blocker 및 sibling loop를 차단.
+- `run_skill_evals.py`에 opt-in empirical diagnostic pass를 추가하고 answer-free prompt composition, marker-delimited structured trace 및 별도의 metrics/records/ledger를 사용하며 비활성화하면 normal behavior를 유지.
+- issue를 생성하거나 canonical skill을 변경하지 않고 external consumer provenance, anonymization 및 upstream issue-draft contract 추가.
+- `tk-drive` same-turn phase continuation과 source-UI literal routing을 강화하고 더 정확한 browser runtime evidence를 요구.
+- canonical skill body와 operational reference는 English로 표준화하되 user-language progress와 receipt를 보존하고 persistent memory를 다섯 번째 `tk-reflect` classification axis로 추가.
+- 13개 skill을 independent paired ratchet으로 개선해 deterministic failure terminal, delegation fallback, atomic write, worktree-safe Git state discovery, artifact ownership 및 executable spec/ticket eval을 적용.
+- isolated eval run에서 post-commit hook drift를 감사하고 vendor-owned artifact는 candidate mutation으로 취급하지 않고 report-only로 유지.
+- 기존 explicit invocation name과 Agent Skills-only distribution을 보존하며 workflow runtime, plugin surface 또는 release-time live-eval requirement는 추가하지 않음.
+
+## 20.1.4 — 조건부 decision orchestration 및 skill 개선
+
+- `tk-drive`를 유일한 user-invoked workflow entry point로 만들고 `tk-grill-me`를 좁은 trigger의 hybrid decision phase owner로 전환.
+- drive의 one-question inline gate를 conditional `tk-grill-me` handoff로 교체하고 이미 Ready spec을 지원하는 source에서는 grill을 완전히 건너뜀.
+- decision 관련 spec 또는 ticket failure를 drive와 grill로 되돌려 라우팅하고 explicit `User decision` receipt signal을 사용한 뒤 downstream ticket rederivation 전에 Ready-spec revalidation을 요구하며 반복되는 equivalent decision loop를 차단.
+- phase owner가 sibling을 호출하지 않게 하고 standalone grill/spec/ticket/implementation 사용과 12개 canonical skill을 유지하며 `tk-prep`는 추가하지 않음.
+- 모든 canonical skill을 cheaper negative conflict exit, precise browser blocker, direct no-ticket handoff, deterministic decision ranking, canonical receipt ownership 및 중복 safety wording 축소를 포함한 하나의 보수적 independent paired improvement로 개선.
+- skill name, invocation kind 또는 distribution을 바꾸지 않고 grooming classification, candidate naming, bounded evidence retry, atomic handoff replacement 및 hypothesis-scoped prototype viewport evidence를 강화.
+- drive resume, Ready-source grill skipping, active-drive decision handoff 및 spec/ticket decision return을 위한 decision-flow eval 갱신.
+
+## 20.1.3 — Phase-owner 개선
+
+- `tk-drive`를 thin orchestrator로 만들고 spec creation은 `tk-to-spec`, conditional vertical decomposition은 `tk-to-tickets`, 각 implementation unit은 `tk-implement`에 명시적으로 넘기며 strict receipt propagation과 no inline phase fallback을 유지.
+- `tk-implement`를 narrowly triggered hybrid invocation으로 전환하면서 direct selection을 보존하고 drive execution을 하나의 final commit에서 ticket별 또는 no-ticket single slice별 verified commit 하나로 변경.
+- production behavior에 durable automated test를 요구하고 의미 있는 bug seam이 있으면 observed red regression test를 요구하며 기존 repository coverage gate가 있으면 사용하고 testless production-behavior commit 전에는 explicit named exception을 요구.
+- ticket-level Standards/Spec review를 drive-wide ancestry, R/AC, cross-ticket 및 broad verification과 분리하고 final correction은 하나의 additive corrective ticket과 commit으로 제한하며 history rewriting은 하지 않음.
+- 네 phase-owner operational contract와 reference는 English로 표준화하고 user-facing progress와 final receipt prose는 사용자의 언어로 유지.
+- 12개 skill contract를 bounded evidence, mutation, approval, placement, recovery 및 resumability guidance로 개선하면서 기존 name과 explicit invocation path를 유지.
+- TDD red evidence가 예상된 missing behavior에 대해 실패하게 하고 bounded mock을 피할 수 없는 external side-effect boundary에 한정하며 vertical ticket이 hidden conversation context 없이 cited source에서 실행되게 함.
+- 12개 canonical skill name을 보존하고 distribution을 1 user-invoked / 11 hybrid로 변경하며 static 및 executable cross-host routing, phase handoff, failure, test, coverage 및 commit regression 추가.
+
+## 20.1.2 — deterministic routing 및 failure contract
+
+- `tk-learn` 대 reflection/grooming 및 `tk-drive` 대 handoff/generic continuation의 critical routing coverage를 추가하고 두 boundary를 요구하는 repository validation 적용.
+- merge-conflict와 interview safety path를 executable eval로 승격하고 unreadable UI text, conflicting UI text, commit-command failure 및 pre-commit drift를 deterministic `tk-drive` terminal state로 분리.
+- `tk-implement`, `tk-learn` 및 `tk-reflect`의 반복 terminal, approval 및 output-field guidance를 줄이고 two-judge Darwin ratchet과 canonical full test로 `tk-learn`의 unresolved identity branch를 명시적 `pending`이자 write-safe 상태로 유지.
+- 12개 canonical skill name, 2 user-invoked / 10 hybrid distribution, self-contained resource 및 local-only verification boundary 보존.
+
+## 20.1.1 — 명시적 recovery 및 freshness contract
+
+- 12개 canonical skill contract를 explicit terminal-state, failure-recovery, freshness 및 command-evidence table로 개선하면서 name, invocation kind 및 ownership boundary 보존.
+- decision, resume, apply, prototype, handoff, browser-verdict 및 conflict-resolution path를 강화해 drift와 incomplete evidence가 유효한 partial work를 버리지 않고 하나의 명확한 checkpoint에서 멈추게 함.
+- 각 outcome과 receipt를 하나의 owner section에 배정해 중복 status guidance를 줄이고 2 user-invoked / 10 hybrid distribution surface는 유지.
+
+## 20.1.0 — cross-host parity 및 eval evidence
+
+- `tk-drive` explicit start를 slash command, Codex `$` invocation 및 skill picker에서 host-neutral하게 만들고 exact source UI writing을 spec, ticket, implementation, staged diff 및 rendered evidence까지 전달.
+- `tk-learn`을 유일한 semantic skill writer로 만들고 reflect/grooming은 proposal-only semantic change로 제한하며 current-host native target만 resolve하고 handoff state를 하나의 `.tigerkit/handoff.md` snapshot으로 단순화.
+- 검증되지 않은 sensitive evidence가 repo-local scratch에 남지 않도록 browser capture sensitivity, redaction 및 residue gate 추가.
+- exact terminal state, content/path/diff assertion, independent baseline/candidate contract, deletion/weakening drift check, catalog selection metadata 및 Claude Code/Codex/Hermes Agent critical routing matrix로 eval 강화.
+- #182의 deterministic repository placement rubric을 mechanical safety-token, sibling-threshold, override, fallback 및 missing-evidence regression coverage와 함께 고정하고 12개 canonical skill name과 invocation kind를 보존.
+
+## 20.0.3 — headless 검증 및 번호가 있는 report
+
+- `tk-browser-verify`가 기본적으로 정확한 `--headless=new` argument로 Chrome을 launch하게 하고 user가 완료한 interactive authentication에만 headed mode를 허용하며 같은 persistent profile로 verification을 headlessly 재개.
+- design alignment를 design basis가 있을 때만 수행하도록 하고 launch, authentication 또는 TigerKit capture-ledger evidence를 약화하지 않으면서 pre-session stop을 단축.
+- `tk-reflect` 및 `tk-grooming` output을 stable per-item ID, mandatory final summary table, one-line rule summary, explicit application target 및 empty-result row로 표준화.
+
+## 20.0.2 — verbatim fidelity 및 capture ledger
+
+- `tk-implement`, `tk-to-spec` 및 `tk-to-tickets`가 source-provided UI label, button, guidance, column name 및 관련 writing을 implementation artifact와 verification 전반에서 exact literal로 보존하도록 강화.
+- `tk-browser-verify`가 run-owned capture를 tool 또는 user scratch에서 repo-local TigerKit run ledger로 옮기고 user-owned input을 보존하며 custody와 residue evidence가 없으면 verdict를 차단하도록 함.
+- 12개 canonical skill을 stricter draft/apply boundary, executable conflict evidence, deduplicated output contract, aligned receipt 및 regression coverage로 개선하면서 2 user-invoked / 10 hybrid surface를 보존.
+
+## 20.0.1 — local-only 검증
+
+- GitHub Actions validator, eval preview 및 latest-CLI canary workflow를 제거해 repository verification이 maintainer의 local machine에서만 실행되게 함.
+- complete local validation sequence를 문서화하고 three-host packaging smoke installation을 release requirement로 유지.
+- repository와 release contract를 갱신해 CI validation workflow를 거부하고 CI provenance 없이 release evidence를 exact locally validated tree에 결속.
+
+## 20.0.0 — Drive 중심 skill 구성
+
+- canonical surface를 12개 self-contained skill(2 user-invoked, 10 hybrid)로 변경.
+- inline one-question ambiguity handling, optional ticket ledger, bounded nested skill, built-in review parity, 하나의 final commit 및 partial-failure preservation을 갖춘 explicit-start, same-conversation-resumable `tk-drive` 추가.
+- planning, prototype, reflection, learning, grooming 및 handoff artifact skill을 narrowly triggered hybrid contract로 전환.
+- unknown-cause investigation 및 fixed-point Standards/Spec review를 `tk-implement`에 통합하고 standalone skill surface는 제거.
+- deterministic root/nested rule 대 repo-skill placement와 disposable wide/narrow web A/B/C prototype guidance 추가.
+- 설정되지 않은 scheduled live comparison을 제거하고 manual dry-run preview를 유지해 skill eval automation을 API-free 및 opt-in으로 변경.
+
+## 19.0.17 — bounded large-diff review
+
+- `tk-code-review`가 diff content를 읽기 전에 stat/numstat preflight와 deterministic file/line threshold를 적용.
+- large 또는 size-unknown diff를 bounded inspection으로 라우팅하고 `Pass` 전에 complete file/hunk coverage를 보존.
+- large-diff context safety와 source immutability에 대한 static 및 executable regression coverage 추가.
+
+## 19.0.16 — browser routing 강제 및 skill ratchet
+
+- `tk-implement`가 모든 browser tool 또는 verification server 전에 `tk-browser-verify`를 활성화하게 하고 direct Chrome MCP/Playwright/CDP/native selection을 금지하며 gate 전에 생성된 browser evidence를 무효화.
+- 시도된 safety regression을 되돌리면서 13개 canonical skill의 workflow ownership, failure-state routing, confidence evidence, checkpoint visibility 및 section structure를 더 명확하게 ratchet.
+- bypass가 deterministic repository check에서 실패하도록 browser-routing behavior/eval fixture와 static validation 추가.
+
+## 19.0.15 — output contract 중복 제거
+
+- 열 개 canonical skill에서 각 substantive result를 겹치는 label 아래 반복하지 않고 하나의 named output section에 배정.
+- receipt를 terminal 또는 disposition status, unresolved item 및 reference로 제한하면서 skill-specific evidence와 verification field를 보존.
+- 영향받은 skill contract에서 의미적으로 중복된 output을 거부하는 primary eval assertion 추가.
+- maintainer-only `tigerkit-release` helper를 user scope로 옮기고 repository-tracked skill 및 fixture surface를 consumer discovery에서 제거.
+
+## 19.0.14 — 기존 구조 강화
+
+- stable release가 검증된 `origin/main`에서 시작하고 완료 전에 main, peeled tag, GitHub Release 및 CI provenance를 검증하도록 요구.
+- 재현 가능한 pinned-CLI validation, latest-CLI canary, CI의 Python regression test 및 명시적 portable-core/host-extension compatibility profile 추가.
+- 13개 skill 모두에서 executable trigger와 structured behavior eval contract를 canonical로 만들고 generated Darwin prompt projection을 유지하며 scheduled/manual evidence workflow를 갖춘 isolated baseline comparison runner 추가.
+- canonical skill을 추가하지 않고 기존 handoff, traceability, conditional high-risk review, browser accessibility 및 skill-learning contract 강화.
+- name과 invocation kind를 보존하면서 13개 canonical skill contract 모두에 verified recovery, freshness 및 post-write evidence gate 적용.
+- intent-aware candidate reconciliation, exact PR 및 final-main CI evidence, PR merge, tag 및 GitHub Release checkpoint 중심으로 maintainer release flow 재구성.
+
+## 19.0.13 — canonical skill 경계 개선
+
+- missing evidence, unresolved decision, unsafe runtime condition 및 incomplete verification에 대한 explicit failure outcome을 canonical skill 전반에 추가.
+- 13-skill catalog를 확장하지 않고 compact workflow input/output, evidence, receipt 및 state-check guidance 추가.
+- runtime-neutral distribution, invocation boundary 및 mutation safety 보존.
+
+## 19.0.12 — release checkpoint 및 validation 강화
+
+- remote change, Promote integration, release mutation 및 post-release main cleanup 전에 explicit STOP checkpoint 추가.
+- promotion, resume, dry-run 및 post-release branch reconciliation을 위한 maintainer release fixture와 validator contract 강화.
+- 13-skill distribution과 runtime-neutral release workflow 보존.
+
+## 19.0.11 — canonical skill workflow 최적화
+
+- 13개 canonical skill 모두의 workflow input, output, checkpoint, failure state 및 verification receipt를 더 명확하게 개선.
+- 반복 가능한 quality check를 위해 각 canonical skill의 Darwin evaluation prompt fixture 추가.
+- implementation 및 conflict-resolution verification을 강화하면서 explicit invocation boundary, mutation safety 및 no-repeat decision guard 보존.
+
+## 19.0.10 — release promotion 및 resume safety
+
+- named remote release branch를 위한 explicit promotion flow와 merge-tree preview 및 no-ff merge 추가.
+- 기존 tag와 GitHub Release를 덮어쓰지 않고 보존하는 partial-success resume rule 추가.
+- dry-run boundary와 maintainer release behavior fixture 추가.
+
+## 19.0.9 — 구조화된 grilling 및 decision closure
+
+- `tk-grill-me`에 conversation-only `Scope`, `Constraints`, `Outputs` 및 `Verification` ambiguity ledger 추가.
+- exact code fact와 user judgment를 분리하고 decision boundary를 보존하며 closure 전에 explicit one-sentence goal approval 추가.
+- fact routing, boundary preservation, targeted reconfirmation 및 closure behavior에 대한 static behavior coverage 확장.
+
+## 19.0.8 — evidence checkpoint 개선
+
+- prototype execution, user decision, review start, bug hypothesis와 patch 및 conflict resolution continuation의 explicit stop boundary 강화.
+- required evidence 또는 user decision이 없을 때 truthful `Blocked`, `Unverifiable`, `Fail` 및 `pending` outcome 보존.
+
+## 19.0.7 — checkpoint 및 anti-pattern
+
+- missing evidence, unresolved decision 및 unsafe execution boundary가 truthful blocked 또는 unverifiable state로 끝나도록 canonical skill에 explicit CHECKPOINT / STOP gate 추가.
+- mutation safety, review scope, verification evidence, delegation 및 release boundary를 위한 DO NOT / ANTI-PATTERNS guidance 추가.
+- grooming, handoff, learning, prototyping, specification, ticketing 및 conflict resolution 전반의 workflow receipt와 decision-field requirement 강화.
+- maintainer-only `tigerkit-release` skill의 implicit invocation 비활성화.
+
+## 19.0.6 — 보호된 browser verification mode
+
+- responsive matrix나 formal verdict를 강제하지 않는 temporary HTML, prototype 및 exploratory UI check용 lightweight Guard mode 추가.
+- persistent user-visible source change, explicit invocation 및 formal verification request에 대한 full Verdict mode evidence contract 보존.
+- trusted input, CDP ownership, visual baseline, API-gated state, screenshot path, responsive check, cleanup, motion timeline, field clearing 및 server auto-open behavior를 위한 compact P1–P10 router 추가.
+- automatic trigger exclusion과 explicit invocation의 차이를 명확히 하고 static trigger, behavior 및 validation coverage 확장.
+
+## 19.0.5 — automatic browser verification routing
+
+- `tk-implement`의 user-visible UI 및 browser behavior change를 추가 approval request 없이 hybrid `tk-browser-verify`로 라우팅.
+- Figma, screenshot 또는 design specification이 expected UI를 정의할 때 source mutation 전에 design intent preflight를 요구.
+- implementation 후 runtime screenshot capture와 actual image inspection을 요구하고 browser verification이 통과하지 않으면 commit 차단.
+- routing contract를 위해 skill description, documentation, trigger fixture, behavior fixture 및 canonical validation 갱신.
+
+## 19.0.4 — 안전한 browser launch 및 autonomous implementation
+
+- headless execution과 temporary isolated profile이 확인될 때까지 browser verification의 auto-launch를 막고, 그렇지 않으면 `Unverifiable` 반환.
+- explicit user scope, method, prohibition, execution mode, TDD, verification 및 commit decision을 `tk-implement`에서 binding으로 만듦.
+- 지정되지 않은 execution mode와 TDD choice가 strategy approval round trip 없이 inspection 후 자동으로 resolve되게 함.
+- 두 contract를 위한 static behavior fixture와 canonical validation 갱신.
+
+## 19.0.3 — browser design intent gate
+
+- distribution smoke install이 internal maintainer skill을 명시적으로 선택하지 않고 standard discovery를 실행하도록 수정.
+- Figma, screenshot 또는 design specification이 제공될 때 browser execution 전에 required design-intent preflight 추가.
+- total offset을 하나의 padding value로 취급하지 않고 visible spacing을 nested frame, container, component 및 child layer로 분해.
+- conflicting하거나 불명확한 user 및 design expectation은 사용자가 concrete final UI를 명시적으로 선택할 때까지 차단하며 silence로 deviation을 승인할 수 없게 함.
+- pre-browser `Blocked` decision과 runtime `Unverifiable` evidence failure를 분리하면서 runtime terminal state의 screenshot capture와 actual image inspection을 유지.
+- design basis, spacing stack, relation, expected implementation, user decision 및 status를 담은 `Alignment` receipt를 요구.
+
+## 19.0.1 — procedural contract 및 release safety
+
+- 13개 canonical skill 모두에 explicit precondition, required sequence, completion gate, failure state, forbidden shortcut 및 evidence receipt를 추가해 강화.
+- browser verification을 기본 headless로 만들고 headed mode는 interactive authentication으로 제한하며 성공한 visual verdict에 inspected terminal-state screenshot을 요구.
+- responsive width와 breakpoint-edge check 및 evidence-based Figma deviation classification 추가.
+- ignored repo-local `.tigerkit/` scratch는 허용하고 tracked 또는 packaged scratch는 거부하며 세 경우 모두에 regression test 추가.
+- 13-skill distribution catalog를 바꾸지 않고 repository-local `tigerkit-release` maintainer skill 추가.
+
+## 19.0.0 — skill 통합 및 후속 경계
+
+TigerKit 19는 canonical catalog를 18개 skill에서 13개로 줄이면서 `v18.0.4` implementation과 browser contract를 보존한 major release입니다.
+
+### 제거
+
+- 중복 micro-skill인 `tk-grill-with-docs`, `tk-grilling`, `tk-domain-modeling`, `tk-tdd` 및 `tk-codebase-design` 제거.
+- model-only invocation category 제거.
+- automatic feature-branch `CONTEXT.md`, domain document, glossary 및 ADR mutation contract 제거.
+
+### 병합
+
+- fact-first, one-question-at-a-time grilling discipline을 `tk-grill-me`에 병합.
+- public-behavior `red → green` TDD를 `tk-implement` TDD branch에 병합.
+- diff-grounded structure check를 `tk-code-review` Standards review에 병합.
+- regression-seam assessment를 `tk-diagnosing-bugs`에 병합.
+
+### 변경
+
+- `tk-code-review`, `tk-diagnosing-bugs` 및 `tk-merge-conflict`를 model-only에서 hybrid로 변경.
+- `tk-code-review`에 fixed-point validation과 별도의 Standards/Spec axis 추가.
+- `tk-diagnosing-bugs`에 red-capable feedback-loop gate, regression seam reporting, cleanup 및 explicit standalone/embedded commit boundary 추가.
+- `tk-merge-conflict`를 staging, continue/merge commit, repeated conflict, verification 및 operation completion까지 확장.
+- ordinary follow-up feedback은 현재 conversation에서 계속 처리하고, 별도의 implementation, diagnosis, review 및 learning boundary는 각각의 skill로 escalate.
+- ADR 생성은 long-lived repository constraint에 대한 explicit request로 제한.
+- `AGENTS.md`에 README use scenario와 maintainer-only skill-existence criteria 추가.
+
+### 검증
+
+- 정확히 13개 canonical skill 검증: 9 user-invoked, 4 hybrid.
+- user-invoked `examples` fixture와 hybrid `positive`/`negative` fixture 분리.
+- duplicate, required-field 및 unknown-skill check를 포함해 behavior case를 required subset으로 검증.
+
+## 18.0.4 — implementation 및 browser contract
+
+- `tk-implement`가 file을 수정하기 전에 explicit `direct`/`delegated` 및 TDD strategy approval 추가.
+- push와 release action을 별도 승인으로 유지하면서 incremental verification, bounded review 및 verified current-branch commit behavior 복원.
+- single-level implementation delegation을 정의하고 어느 execution mode에서도 MCP, sandbox, browser 및 context-management tool을 사용할 수 있게 유지.
+- `tk-browser-verify`가 launch하거나 attach한 browser session의 ownership과 cleanup rule 문서화.
+- 이 contract를 위한 static behavior fixture와 repository validation 확장.
+
+## 18.0.3 — 한국어 Skill 문서
+
+- canonical skill name과 invocation label을 보존하면서 Korean user를 위해 skill instruction과 README를 localize.
+
+## 18.0.2 — invocation label
+
+- picker entry가 의도한 invocation을 알리도록 skill description에 `[user]`, `[auto]` 또는 `[user/auto]` prefix 추가.
+- explicit invocation skill의 Codex interface description에도 `[user]` 반영.
+- skill name이나 invocation kind를 바꾸지 않고 repository validation에서 invocation label 강제.
+
+## 18.0.1 — README 호출 안내
+
+- README catalog 전반에서 user-invoked, model-invoked 및 hybrid skill을 구분.
+- TigerKit cover image를 복원해 README 상단에 표시.
+- immutable installation example을 `v18.0.1`로 갱신.
+
+## 18.0.0 — Agent Skills 재구성
+
+TigerKit 18은 distribution과 runtime을 breaking하게 재구성한 릴리스입니다.
+
+### 주요 변경 사항
+
+- Claude Code plugin runtime에 대한 신규 지원을 종료하고 `main`에서 plugin manifest, command wrapper, central state helper, legacy schema/evidence machinery 및 common emoji output contract를 제거.
+- `npx skills`로 설치하는 18개 self-contained `skills/tk-*/` Agent Skills로 distribution 전환.
+- Claude Code, Codex 및 Hermes Agent에 대한 초기 host support 추가.
+- legacy `/tk:*` namespace call을 `tk-*` skill name으로 교체; mapping은 `MIGRATION.md` 참조.
+- legacy global TigerKit state의 automatic discovery 및 migration을 모두 중단.
+- optional work state를 repo/worktree-local `.tigerkit/` scratch로 옮기고 repo/worktree key, ledger, archive 또는 current pointer는 두지 않음.
 
 ### Skill catalog
 
@@ -881,7 +730,7 @@ Hybrid: `tk-browser-verify`.
 
 Model-invoked: `tk-grilling`, `tk-domain-modeling`, `tk-tdd`, `tk-diagnosing-bugs`, `tk-code-review`, `tk-merge-conflict`, `tk-codebase-design`.
 
-### Installation
+### 설치
 
 ```bash
 npx skills add "MTGVim/tiger-kit#v18.0.0" \
@@ -892,10 +741,10 @@ npx skills add "MTGVim/tiger-kit#v18.0.0" \
   --skill '*'
 ```
 
-### Attribution
+### 저작자 표시
 
-Ten skills are adapted from `mattpocock/skills` and retain their upstream names with the `tk-` prefix. See `NOTICE.md`.
+10개 skill은 `mattpocock/skills`에서 adapted했으며 `tk-` prefix와 함께 upstream name을 유지합니다. `NOTICE.md`를 참조하세요.
 
-### Release status
+### 릴리스 상태
 
-This entry is the prepared GitHub Release body. Creating tag `v18.0.0`, publishing the GitHub Release, and any remote push remain separate explicit release actions.
+이 항목은 준비된 GitHub Release 본문입니다. `v18.0.0` tag 생성, GitHub Release publish 및 remote push는 별도의 explicit release action으로 남습니다.

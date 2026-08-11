@@ -1,3 +1,3 @@
 interface:
-  short_description: "[user/auto] Agent Skill 동작·안정성·효율 이상을 실증 진단합니다."
-  default_prompt: "관찰된 Agent Skill anomaly를 재현하고 격리하려면 $tk-skill-diagnose를 사용합니다."
+  short_description: "[user/auto] Agent Skill의 동작·안정성·효율 이상을 실증 진단합니다."
+  default_prompt: "관찰된 Agent Skill 이상을 재현하고 격리하려면 $tk-skill-diagnose를 사용합니다."

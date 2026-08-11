@@ -1,2 +1,2 @@
 interface:
-  short_description: "[user/auto] 정확한 publish approval 후 하나의 pull request를 열거나 업데이트합니다."
+  short_description: "[user/auto] 승인 후 하나의 `pull request`를 열거나 업데이트합니다."

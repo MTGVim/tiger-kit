@@ -501,6 +501,22 @@
       "critical": true
     },
     {
+      "id": "pr-sweep-backend-safety-explicit",
+      "boundary": "tk-pr-sweep 작업 공간 `backend` 안전성",
+      "prompt": "`$tk-pr-sweep` 작업 공간 `backend`와 `worker dispatch backend`를 하나로 고정해 안전성을 검증해 주세요.",
+      "focus_skill": "tk-pr-sweep",
+      "expected_selected_skill": "tk-pr-sweep",
+      "critical": true
+    },
+    {
+      "id": "pr-sweep-recover-publication-explicit",
+      "boundary": "tk-pr-sweep 발행 차단 복구",
+      "prompt": "`$tk-pr-sweep --recover-publication` `frozen refspec`와 원격 `HEAD`를 확인한 뒤 승인된 발행 차단만 복구해 주세요.",
+      "focus_skill": "tk-pr-sweep",
+      "expected_selected_skill": "tk-pr-sweep",
+      "critical": true
+    },
+    {
       "id": "browser-headless-auth-verifier-explicit",
       "boundary": "tk-browser-verify headless auth prerequisite",
       "prompt": "승인된 staging AC를 headless browser에서 검증해 주세요. OTP 로그인 대신 문서화된 transient session bootstrap을 사용해야 합니다.",

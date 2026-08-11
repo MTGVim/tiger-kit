@@ -12,6 +12,14 @@
           "path": ".tigerkit/audit.md"
         },
         {
+          "type": "path_text_has_hangul",
+          "path": ".tigerkit/audit.md"
+        },
+        {
+          "type": "path_text_has_korean_prose",
+          "path": ".tigerkit/audit.md"
+        },
+        {
           "type": "path_text_contains",
           "path": ".tigerkit/audit.md",
           "text": "AUD-"
@@ -39,6 +47,14 @@
       "assertions": [
         {
           "type": "path_exists",
+          "path": ".tigerkit/audit.md"
+        },
+        {
+          "type": "path_text_has_hangul",
+          "path": ".tigerkit/audit.md"
+        },
+        {
+          "type": "path_text_has_korean_prose",
           "path": ".tigerkit/audit.md"
         },
         {

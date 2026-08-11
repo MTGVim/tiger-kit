@@ -5,7 +5,7 @@
 </p>
 
 TigerKit은 Claude Code, Codex, Hermes Agent용 엔지니어링 Agent Skills 모음입니다.
-중앙 workflow runtime이나 plugin 없이 self-contained skill을 `npx skills` 로
+중앙 워크플로 실행기나 플러그인 없이 독립형 스킬을 `npx skills` 로
 배포합니다.
 
 ## 설치
@@ -35,11 +35,14 @@ Claude Code와 Hermes Agent에서는 `/tk-drive`, Codex에서는
 PR lifecycle은 `/tk-pr-open`, `/tk-pr-respond`, `/tk-pr-rebase`,
 `/tk-pr-sweep` 를 직접 선택하며 read-only inventory는 `/tk-pr-sweep --report` 를 사용합니다.
 
-## Skill 표면
+## 스킬 구성
 
 | Skill | 호출 | 소유 범위 |
 | --- | --- | --- |
 | `tk-drive` | user | 명시 source를 한 번 준비·승인하고 fresh worker unit·R/AC gap closure·verified commits·finalization까지 진행 |
+| `tk-implement` | `user` | 하나의 새 `Ready` 티켓을 정확한 범위만 구현하고 필수 검토·검증 뒤 검증된 커밋을 만듦 |
+| `tk-to-spec` | `user` | 원본 증거를 저장소 로컬 `spec.md` 초안으로 변환하고 추측·구현·티켓 분해는 하지 않음 |
+| `tk-to-tickets` | `user` | `Ready` 사양을 독립적으로 관찰 가능한 세로형 티켓으로 분해하고 `tickets.md`를 작성 |
 | `tk-audit` | user | repository를 read-only audit하고 `.tigerkit/audit.md` 에 evidence-backed `AUD-*` finding을 기록 |
 | `tk-ask-repo` | user | repository 질문을 `path:line` 근거로 조사하는 read-only desk |
 | `tk-grill-me` | hybrid | material user decision을 evidence-first 질문 하나씩 닫음 |
@@ -55,6 +58,8 @@ PR lifecycle은 `/tk-pr-open`, `/tk-pr-respond`, `/tk-pr-rebase`,
 | `tk-grooming` | hybrid | 기존 repository/user skill의 중복·범위·배치를 감사 |
 | `tk-handoff` | hybrid | 현재 evidence 기반 resume snapshot 작성·재개 |
 | `tk-merge-conflict` | hybrid | 진행 중인 Git conflict의 의도를 복원하고 operation 완료 |
+| `tk-mwhat` | `user` | 직전 설명이 이해되지 않을 때만 짧고 정확하게 다시 설명하며 파일 변경·실행은 하지 않음 |
+| `tk-wizard` | `hybrid` | 사용자가 직접 해야 하는 프로비저닝·자격 증명·로그인·권한·이관 절차를 임시 단계로 안내 |
 
 작은 수정과 일반 후속 피드백은 skill 없이 현재 대화에서 처리합니다. 별도 artifact,
 commit, 검증 또는 안전 경계가 있을 때만 해당 skill을 선택합니다.
@@ -75,7 +80,7 @@ commit, 검증 또는 안전 경계가 있을 때만 해당 skill을 선택합�
 정규화합니다. terminal response에는 progress marker를 넣지 않으며, 최종 결과는
 `Status: <token>` 한 줄만 결과 토큰으로 사용합니다.
 
-## PR lifecycle
+## PR 수명 주기 안내
 
 ```text
 /tk-pr-open
@@ -145,7 +150,7 @@ TigerKit은 이 한계를 문구로 숨기지 않습니다. `scripts/run_drive_e
 상태, phase continuation, commit, verification, token/time을 비교합니다. 측정된
 명확한 열세가 없으면 catalog에서 `tk-drive` 를 자동 삭제하지 않습니다.
 
-## Eval single source of truth
+## 평가 정본
 
 각 package가 자신의 executable 계약을 소유합니다.
 
@@ -176,7 +181,7 @@ npx --yes skills add . --list
 git diff --check
 ```
 
-Release gate:
+릴리스 검증 게이트:
 
 ```bash
 python3 scripts/run_release_gate.py \
@@ -196,7 +201,7 @@ python3 scripts/run_drive_experiment.py \
   --output /tmp/tigerkit-drive-ab
 ```
 
-## State와 권한
+## 상태와 권한
 
 `.tigerkit/` 은 repo/worktree-local scratch이며 영구 project 문서나 전역 상태가
 아닙니다. TigerKit은 consumer `.gitignore` 를 수정하지 않습니다.
@@ -219,4 +224,4 @@ interactive `tk-pr-sweep` 는 승인된 batch 안에서 두 one-PR owner의 boun
 orchestration합니다. 네 mutation skill 모두 merge·tag·release 권한을 갖지 않습니다.
 
 이전 구조에서 갱신한다면 [MIGRATION.md](MIGRATION.md)를 읽으세요.
-Attribution은 [NOTICE.md](NOTICE.md)에 보존됩니다.
+저작자 표시는 [`NOTICE.md`](NOTICE.md)에 보존됩니다.

@@ -1,48 +1,51 @@
-# Notices
+# 고지
 
-TigerKit includes adapted behavior from `mattpocock/skills` (source snapshot inspected at commit `391a2701dd948f94f56a39f7533f8eea9a859c87`).
+TigerKit에는 `mattpocock/skills`에서 파생한 동작이 포함되어 있습니다(원본 스냅샷은
+커밋 `391a2701dd948f94f56a39f7533f8eea9a859c87`에서 확인됨).
 
-Current adapted skills:
+현재 적용된 스킬:
 
 - `grill-me`
 - `to-spec`
 - `to-tickets`
 - `implement`
 
-Behavior merged from removed adapted skills:
+제거된 적용 스킬에서 병합한 동작:
 
 - `grilling` → `grill-me`
 - `tdd` → `implement`
-- `diagnosing-bugs` → `implement` investigation and planning bug contracts
-- `code-review` → `implement` built-in review
+- `diagnosing-bugs` → `implement` 버그 조사 및 계약 계획
+- `code-review` → `implement` 내장 검토
 
-Removed historical adapted workflows:
+과거에 제거된 적용 작업 흐름:
 
 - `grill-with-docs`
 - `domain-modeling`
 
-Relationship metadata for current adapted skills: `relationship: adapted`. TigerKit preserves upstream skill names with a `tk-` prefix where the skill remains deployed and rewrites behavior to the current TigerKit specification.
+현재 적용 스킬의 관계 메타데이터: `relationship: adapted`. 해당 스킬이 계속
+배포되는 경우 TigerKit은 상위 원본 스킬 이름에 `tk-` 접두사를 유지하고, 동작은 현재
+TigerKit 사양에 맞게 다시 작성합니다.
 
-`tk-merge-conflict` remains TigerKit-native (`origin: tigerkit`, `relationship: native`). No verified source metadata establishes it as an adaptation of `mattpocock/skills` `resolving-merge-conflicts`.
+`tk-merge-conflict`는 TigerKit 고유 스킬로 유지됩니다(`origin: tigerkit`,
+`relationship: native`). 검증된 원본 메타데이터에는 이것이 `mattpocock/skills`의
+`resolving-merge-conflicts`를 적용한 것이라고 확인할 근거가 없습니다.
 
-`tk-skill-diagnose` adapts empirical Agent Skill evaluation methodology from
-`mizchi/skills`, source snapshot
-`7a0d72866a0bb3e9ac3e2768c328b09ba2bc40c4`:
+`tk-skill-diagnose`는 `mizchi/skills`의 경험적 `Agent Skill` 평가 방법론을 적용했습니다.
+원본 스냅샷은
+`7a0d72866a0bb3e9ac3e2768c328b09ba2bc40c4`입니다.
 
 - `meta/empirical-prompt-tuning/SKILL.md`
 - `meta/waxa-eval/`
 
-TigerKit distilled Iteration 0 description/body consistency, frozen
-median/control/holdout scenarios, fresh executors, two-sided phase traces,
-structured `Issue / Cause / General Fix Rule` feedback, one-theme candidate
-experiments, convergence, and run-local failure ledgers. The adaptation adds
-TigerKit-specific failure planes, host/provenance gates, writer ownership,
-local-only diagnostic output, resource/correctness precedence, and anonymized
-upstream issue drafts. It does not copy upstream presentation prose or replace
-Darwin-style broad optimization. Relationship metadata:
+TigerKit은 반복 0의 설명/본문 일관성, 고정 중앙값·대조군·보류군 시나리오, 새 실행자,
+양방향 단계 추적, 구조화된 `Issue / Cause / General Fix Rule` 피드백, 한 주제 후보
+실험, 수렴 및 실행별 실패 장부를 추려냈습니다. 이 적용은 TigerKit 전용 실패 평면,
+호스트/출처 게이트, 작성자 소유권, 로컬 전용 진단 출력, 자원/정확성 우선순위 및
+익명화된 상위 원본 이슈 초안을 추가합니다. 상위 원본 표시 문장을 복사하거나
+`Darwin` 방식의 광범위한 최적화를 대체하지 않습니다. 관계 메타데이터:
 `relationship: adapted`.
 
-`mattpocock/skills` upstream license:
+`mattpocock/skills` 상위 원본 라이선스:
 
 ```text
 MIT License
@@ -68,21 +71,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-`tk-audit` adapts `shadcn/improve` from source snapshot
-`03369ee6d7cafbfcecc4346539b05b3dc0a603bb`:
+`tk-audit`는 원본 스냅샷
+`03369ee6d7cafbfcecc4346539b05b3dc0a603bb`의 `shadcn/improve`를 적용했습니다.
 
 - `skills/improve/SKILL.md`
 - `skills/improve/references/plan-template.md`
 - `skills/improve/references/audit-playbook.md`
 
-TigerKit keeps the upstream senior-advisor/read-only boundary, evidence-first
-audit categories, cheaper-executor handoff quality, and MIT attribution while
-changing the owned artifact to `.tigerkit/audit.md`, using `AUD-*` finding IDs,
-and routing candidates to TigerKit's existing spec/ticket/drive owners.
-Relationship metadata:
+TigerKit은 상위 원본의 수석 조언자/읽기 전용 경계, 증거 우선 감사 범주,
+저비용 실행자 인계 품질 및 MIT 저작자 표시를 유지하면서 소유 장부를
+`.tigerkit/audit.md`로 바꾸고 `AUD-*` 발견 ID를 사용하며 후보를 TigerKit의
+기존 사양·티켓·드라이브 소유자에게 전달합니다. 관계 메타데이터:
 `origin: shadcn/improve`, `relationship: adapted`.
 
-`shadcn/improve` upstream license:
+`shadcn/improve` 상위 원본 라이선스:
 
 ```text
 MIT License

@@ -2005,6 +2005,14 @@
           "path": ".tigerkit/drive.md"
         },
         {
+          "type": "path_text_has_hangul",
+          "path": ".tigerkit/drive.md"
+        },
+        {
+          "type": "path_text_has_korean_prose",
+          "path": ".tigerkit/drive.md"
+        },
+        {
           "type": "path_absent",
           "path": ".tigerkit/worker.md"
         },

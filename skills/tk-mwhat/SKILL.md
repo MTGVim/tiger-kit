@@ -26,10 +26,15 @@ metadata:
 [추천 또는 그대로 보낼 다음 문장 최대 2개의 짧은 줄]
 ```
 
-원문보다 짧게 쓰되 의미를 바꾸지 않는다. path, command, URL, literal, status/ID, source attribution은 정확히 보존한다. 추천을 만들 근거가 없으면 `추천: 없음` 으로 둔다.
+원문보다 짧게 쓰되 의미를 바꾸지 않는다. 경로, 명령, URL, 리터럴,
+`Status`/ID, 원본 저작자 표시는 정확히 보존한다. 추천을 만들 근거가 없으면
+`추천: 없음` 으로 둔다.
 
-재설명 뒤에는 **hard stop**한다. 파일을 변경하거나 구현·계획·요약을 만들거나 명령/도구를 실행하지 않는다. 새 작업·변경 요청·일반 summary 요청은 이 skill의 대상이 아니므로 `NotApplicable` 로 중단한다.
+재설명 뒤에는 **`hard stop`**한다. 파일을 변경하거나 구현·계획·요약을 만들거나 명령/도구를 실행하지 않는다. 새 작업·변경 요청·일반 요약 요청은 이 스킬의 대상이 아니므로 `NotApplicable` 로 중단한다.
 
-## Provenance
+## 출처
 
-Historical prior-art: TigerKit `mwhat` (commit `c6963e8`, `skills/mwhat/SKILL.md`)의 two-block short Korean explanation, exact source/literal preservation, and no implementation contract. Matt Pocock `wait-what` source는 이 checkout/history에서 확인되지 않아 동작을 추정하지 않았다.
+과거 선행 사례: TigerKit `mwhat` (커밋 `c6963e8`, `skills/mwhat/SKILL.md`)의
+두 블록 짧은 한국어 설명, 정확한 원본/리터럴 보존, 구현 계약 없음입니다.
+Matt Pocock의 `wait-what` 원본은 이 체크아웃/기록에서 확인되지 않아 동작을
+추정하지 않았다.

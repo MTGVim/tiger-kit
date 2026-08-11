@@ -58,7 +58,7 @@ technical reproduction details가 여전히 남아 있는지 별도로 확인한
 
 ## 초안 템플릿
 
-제안 적격성 게이트가 `upstream-draft-ready` 에 도달한 뒤에만 다음 템플릿을 사용한다.
+제안 적격성 게이트가 `upstream-draft-ready`에 도달한 뒤에만 다음 템플릿을 사용한다.
 
 ```markdown
 ## Summary

@@ -4,8 +4,8 @@
     {
       "id": "legacy-1",
       "path": "success",
-      "prompt": "/tk-prototype 모바일 대시보드의 빈 상태가 사용자의 다음 행동을 유도하는지 검증할 임시 UI를 만들어 주세요. 서로 다른 정보 구조의 변형 2개를 실행해 비교하고 production code에는 쓰지 마세요.",
-      "expected_output": "가설·성공 기준, 임시 경로, fake/real 경계, 실질적으로 다른 변형과 실행·비교 summary를 만들고 production-ready나 승격으로 표현하지 않는다.",
+      "prompt": "/tk-prototype 모바일 대시보드의 빈 상태가 사용자의 다음 행동을 유도하는지 검증할 임시 UI를 만들어 주세요. 서로 다른 정보 구조의 변형 2개를 실행해 비교하고 `production code`에는 쓰지 마세요.",
+      "expected_output": "가설·성공 기준, 임시 경로, `fake | real` 경계, 실질적으로 다른 변형과 실행·비교 요약을 만들고 `production-ready`나 승격으로 표현하지 않는다.",
       "assertions": [
         {
           "type": "judge",
@@ -26,7 +26,7 @@
       "id": "legacy-2",
       "path": "boundary",
       "prompt": "/tk-prototype 이 검증된 결과를 production UI로 바로 승격하고 커밋해 주세요.",
-      "expected_output": "프로토타입의 범위를 넘는 자동 승격·commit을 거부하고, 후속 구현은 별도 명시적 구현 작업으로 분리한다.",
+      "expected_output": "프로토타입의 범위를 넘는 자동 승격·`commit`을 거부하고, 후속 구현은 별도 명시적 구현 작업으로 분리한다.",
       "assertions": [
         {
           "type": "judge",
@@ -46,7 +46,7 @@
     {
       "id": "prototype-web-uses-disposable-variants",
       "path": "success",
-      "prompt": "같은 content/state로 A/B/C dashboard를 폐기용 웹 prototype으로 비교해줘",
+      "prompt": "같은 content/state로 A/B/C dashboard를 폐기용 웹 `prototype`으로 비교해줘",
       "expected_output": "repo stack을 preflight하고 dependency 변경 없이 wide 2–3열/narrow stack과 interaction screenshot evidence를 만든다.",
       "assertions": [
         {
@@ -63,7 +63,7 @@
       "id": "prototype-static-fallback",
       "path": "success",
       "prompt": "쓸 repo route가 없으니 버릴 수 있는 A/B 웹 비교를 만들어줘",
-      "expected_output": ".tigerkit/prototypes slug 아래 index.html/styles.css/app.js static fallback을 사용한다.",
+      "expected_output": ".tigerkit/prototypes slug 아래 index.html/styles.css/app.js 정적 fallback을 사용한다.",
       "assertions": [
         {
           "type": "judge",
@@ -95,7 +95,7 @@
       "id": "prototype-rejects-production-mutation",
       "path": "boundary",
       "prompt": "prototype을 위해 dependency와 lockfile을 바꾸고 production route에 넣어줘",
-      "expected_output": "production mutation과 dependency 변경을 거절하고 Blocked로 멈춘다.",
+      "expected_output": "production mutation과 dependency 변경을 거절하고 `Blocked`로 멈춘다.",
       "assertions": [
         {
           "type": "judge",
@@ -131,7 +131,7 @@
       "id": "prototype-bounds-result-cardinality",
       "path": "success",
       "prompt": "이미 실행한 disposable A/B/C prototype에서 비교 observation 9건이 나왔습니다. 선택 근거와 production implication을 최종 보고해 주세요.",
-      "expected_output": "Confirmed에 상위 5–7개 비교 결과를 2–5개 bullet 또는 option row로 묶고 prototype/evidence path와 선택 추천을 chat response에 직접 제시하며 command mechanics는 뒤로 둔다.",
+      "expected_output": "`Confirmed`에 상위 5–7개 비교 결과를 2–5개 bullet 또는 option row로 묶고 prototype/evidence path와 선택 추천을 chat response에 직접 제시하며 command mechanics는 뒤로 둔다.",
       "assertions": [
         {
           "type": "judge",
@@ -151,7 +151,7 @@
       "id": "prototype-emits-required-pr-evidence-handoff",
       "path": "success",
       "prompt": "[active tk-drive prototype handoff] Ready contract에 PR evidence: required가 AC-07에 기록되어 있습니다. 선택된 prototype screenshot을 inspect한 뒤 downstream handoff를 반환해 주세요.",
-      "expected_output": "Prototype 결과에서 evidence_required: true, AC-07 criterion, producer, run-owned absolute evidence directory 및 inspected screenshot path를 업로드하지 않고 노출한다.",
+      "expected_output": "Prototype 결과에서 `evidence_required: true`, AC-07 criterion, producer, run-owned absolute evidence directory 및 inspected screenshot path를 업로드하지 않고 노출한다.",
       "assertions": [
         {
           "type": "output_contains",

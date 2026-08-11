@@ -1,3 +1,3 @@
-# Claude Code Guidance
+# Claude Code 지침
 
-Read and follow [AGENTS.md](AGENTS.md).
+[AGENTS.md](AGENTS.md)를 읽고 따르세요.

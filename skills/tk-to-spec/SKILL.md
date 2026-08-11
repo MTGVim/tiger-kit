@@ -10,7 +10,7 @@ metadata:
     relationship: native
 ---
 
-# Evidence를 spec으로 변환
+# Evidence를 `spec`으로 변환
 
 명시적으로 `/tk-to-spec` 또는 `$tk-to-spec` 을 선택한 경우에만 실행한다. 입력은
 대화, issue, artifact, repository 조사 결과 등 실제로 읽을 수 있는 source evidence다.
@@ -18,8 +18,8 @@ metadata:
 
 ## 출력 계약
 
-항상 현재 repository root의 `.tigerkit/spec.md` 에 쓰고, 먼저
-`git rev-parse --show-toplevel`로 root를 resolve한 뒤 결과에 그 root에서 파생한
+유효한 source evidence가 있을 때만 현재 repository root의 `.tigerkit/spec.md`에 쓰고,
+먼저 `git rev-parse --show-toplevel`로 root를 확인한 뒤 결과에 그 root에서 파생한
 실제 absolute path를 보고한다. 문서는 다음을 직접 포함하는 self-contained Markdown이어야
 한다.
 
@@ -29,20 +29,21 @@ metadata:
 - acceptance criteria와 verification 명령/증거
 - facts, confirmed decisions, unverified claims를 별도 표시
 - missing evidence와 conflicts 및 영향
+- 설명 문장과 제목은 한국어로 작성하고, 정확한 필드·상태·ID·명령·경로·URL·리터럴만 원문으로 유지한다.
 
 ## 절차
 
-1. source를 읽고 각 문장을 `Fact | Confirmed decision | Unverified claim` 으로 분류한다.
-2. 없는 정보는 채우지 말고 `Missing evidence` 로 적는다. 모순은 양쪽 근거와
-   해결 owner를 `Conflict` 로 적고 상태를 `Blocked` 또는 `Unverifiable` 로 둔다.
+1. source를 읽고 각 문장을 `Fact | Confirmed decision | Unverified claim`으로 분류한다.
+2. 없는 정보는 채우지 말고 `Missing evidence`로 적는다. 모순은 양쪽 근거와
+   해결 owner를 `Conflict`로 적고 상태를 `Blocked` 또는 `Unverifiable`로 둔다.
 3. goal/scope/제외/제약/acceptance/verification/lineage를 작성한다. 기술적 literal,
    변경 path, 실패 조건도 원문 그대로 둔다.
 4. 저장 전 self-contained인지, 승인 경계가 있는지 확인한다. 사용자가 승인하면
-   그 명시적 승인만으로 `Pending` 을 `Ready` 로 바꿀 수 있다.
+   그 명시적 승인만으로 `Pending`을 `Ready`로 바꿀 수 있다.
 
 정보가 부족해도 self-contained 문서를 만들고 부족한 항목과 절대 경로를 명시한 뒤
-`Status: Unverifiable` 로 멈춘다. conflict가 해소되지 않으면 양쪽 근거를 보존해
-`Status: Blocked` 로 멈춘다. `.tigerkit/` 외 state,
+`Status: Unverifiable`로 멈춘다. conflict가 해소되지 않으면 양쪽 근거를 보존해
+`Status: Blocked`로 멈춘다. `.tigerkit/` 외 state,
 archive/current pointer/global 설정은 만들지 않는다.
 
 ## 경계

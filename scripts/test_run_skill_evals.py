@@ -956,7 +956,7 @@ class RunnerContractTest(unittest.TestCase):
                 capture_output=True,
                 check=True,
             ).stdout.strip()
-            target.write_text("authorized change\n", encoding="utf-8")
+            target.write_text("authorized change 한국어\n", encoding="utf-8")
 
             rows = [
                 verify_mechanical_assertion(
@@ -970,6 +970,15 @@ class RunnerContractTest(unittest.TestCase):
                         "type": "path_text_contains",
                         "path": "message.txt",
                         "text": "authorized change",
+                    },
+                    adapter_result={"output": "", "terminal_status": "Pass"},
+                    checkout=checkout,
+                    initial_head=initial_head,
+                ),
+                verify_mechanical_assertion(
+                    {
+                        "type": "path_text_has_hangul",
+                        "path": "message.txt",
                     },
                     adapter_result={"output": "", "terminal_status": "Pass"},
                     checkout=checkout,
@@ -1046,6 +1055,64 @@ class RunnerContractTest(unittest.TestCase):
             self.assertTrue(exact["passed"])
             self.assertTrue(count["passed"])
             self.assertFalse(wrong_count["passed"])
+
+    def test_text_language_assertions_reject_empty_english_and_escape(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            checkout = Path(directory)
+            target = checkout / "message.txt"
+            assertion = {"type": "path_text_has_hangul", "path": "message.txt"}
+            prose_assertion = {
+                "type": "path_text_has_korean_prose",
+                "path": "message.txt",
+            }
+
+            target.write_text("", encoding="utf-8")
+            empty = verify_mechanical_assertion(
+                assertion,
+                adapter_result={"output": "", "terminal_status": "Pass"},
+                checkout=checkout,
+                initial_head=None,
+            )
+            korean_empty = verify_mechanical_assertion(
+                prose_assertion,
+                adapter_result={"output": "", "terminal_status": "Pass"},
+                checkout=checkout,
+                initial_head=None,
+            )
+            target.write_text("한국어 설명\n", encoding="utf-8")
+            korean = verify_mechanical_assertion(
+                prose_assertion,
+                adapter_result={"output": "", "terminal_status": "Pass"},
+                checkout=checkout,
+                initial_head=None,
+            )
+            target.write_text("English only\n", encoding="utf-8")
+            english = verify_mechanical_assertion(
+                assertion,
+                adapter_result={"output": "", "terminal_status": "Pass"},
+                checkout=checkout,
+                initial_head=None,
+            )
+            target.write_text("English prose 한국어\n", encoding="utf-8")
+            escaped = verify_mechanical_assertion(
+                {"type": "path_text_has_hangul", "path": "../message.txt"},
+                adapter_result={"output": "", "terminal_status": "Pass"},
+                checkout=checkout,
+                initial_head=None,
+            )
+            korean_english = verify_mechanical_assertion(
+                prose_assertion,
+                adapter_result={"output": "", "terminal_status": "Pass"},
+                checkout=checkout,
+                initial_head=None,
+            )
+
+        self.assertFalse(empty["passed"])
+        self.assertFalse(korean_empty["passed"])
+        self.assertTrue(korean["passed"])
+        self.assertFalse(english["passed"])
+        self.assertFalse(korean_english["passed"])
+        self.assertFalse(escaped["passed"])
 
     def test_event_order_requires_consecutive_phases_without_final_output(self) -> None:
         assertion = {

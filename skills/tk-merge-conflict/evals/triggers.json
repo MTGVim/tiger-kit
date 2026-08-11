@@ -11,7 +11,7 @@
     {
       "id": "train-negative",
       "split": "train",
-      "query": "active conflict 없이 파일을 정리해줘 (연습 표현)",
+      "query": "활성 conflict 없이 파일을 정리해줘 (연습 표현)",
       "should_trigger": false
     },
     {
@@ -83,7 +83,7 @@
     {
       "id": "validation-negative-1",
       "split": "validation",
-      "query": "active conflict 없이 파일을 정리해줘",
+      "query": "활성 conflict 없이 파일을 정리해줘",
       "should_trigger": false
     },
     {

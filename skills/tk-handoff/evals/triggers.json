@@ -71,7 +71,7 @@
     {
       "id": "validation-positive-7",
       "split": "validation",
-      "query": "branch와 verification을 확인해서 handoff를 쓰고 open question도 남겨줘",
+      "query": "branch와 verification을 확인해서 handoff를 쓰고 열린 question도 남겨줘",
       "should_trigger": true,
       "facets": [
         "formal"
@@ -143,7 +143,7 @@
     {
       "id": "validation-negative-7",
       "split": "validation",
-      "query": "active tk-grill-me가 pending answer를 기다리고 있어",
+      "query": "활성 tk-grill-me가 pending answer를 기다리고 있어",
       "should_trigger": false,
       "facets": [
         "formal"

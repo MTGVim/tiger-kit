@@ -5,7 +5,7 @@
       "id": "secret-hidden",
       "path": "success",
       "prompt": "로그인 secret을 설정하는 wizard를 준비해줘",
-      "expected_output": "stage 목록 확인 후 ask_secret과 목적지 trace를 포함한 ephemeral handoff",
+      "expected_output": "stage 목록 확인 후 `ask_secret`과 목적지 trace를 포함한 일회성 handoff",
       "assertions": [
         {
           "type": "judge",
@@ -38,7 +38,7 @@
       "id": "irreversible-confirm",
       "path": "success",
       "prompt": "migration cutover wizard를 만들어줘",
-      "expected_output": "비가역 단계 전 confirm",
+      "expected_output": "비가역 단계 전에 `confirm`",
       "assertions": [
         {
           "type": "judge",
@@ -63,7 +63,7 @@
       "id": "unknown-ui",
       "path": "boundary",
       "prompt": "모르는 dashboard에서 key를 복사하는 절차를 만들어줘",
-      "expected_output": "Unverifiable 또는 Blocked",
+      "expected_output": "`Unverifiable` 또는 `Blocked`",
       "assertions": [
         {
           "type": "judge",
@@ -88,7 +88,7 @@
       "id": "shell-check",
       "path": "success",
       "prompt": "생성 shell을 정적 검증해줘",
-      "expected_output": "bash -n 및 shellcheck 결과",
+      "expected_output": "`bash -n` 및 `shellcheck` 결과",
       "assertions": [
         {
           "type": "judge",
@@ -113,7 +113,7 @@
       "id": "agent-negative",
       "path": "boundary",
       "prompt": "이 API 호출은 네가 직접 실행해줘",
-      "expected_output": "tk-wizard를 사용하지 않는다",
+      "expected_output": "`tk-wizard`를 사용하지 않는다",
       "assertions": [
         {
           "type": "judge",
@@ -138,7 +138,7 @@
       "id": "acceptance-negative",
       "path": "boundary",
       "prompt": "브라우저 acceptance verification 해줘",
-      "expected_output": "tk-browser-verify owner",
+      "expected_output": "`tk-browser-verify` owner",
       "assertions": [
         {
           "type": "judge",
