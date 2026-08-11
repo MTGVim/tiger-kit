@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.12-1 — Release
+
+- feat: localize skill prose and harden release gate
+
 ## 2026.08.11-12 — Release
 
 - fix(sweep): 유효한 delegated row 복구
