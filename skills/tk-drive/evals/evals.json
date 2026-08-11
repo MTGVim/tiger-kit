@@ -2,6 +2,11 @@
   "skill_name": "tk-drive",
   "migrations": [
     {
+      "from": "drive-starts-bounded-implementation-with-sdd-model",
+      "to": "drive-separates-direct-strategy-from-delegated-model-routing",
+      "reason": "Issue 298 corrects the impossible direct plus model-selector contract; direct inherits the session model and selector tiers are delegated-only."
+    },
+    {
       "from": "drive-skips-unneeded-tickets",
       "to": "drive-executes-approved-single-unit",
       "reason": "Issue 277 absorbs phase ownership into Drive and replaces split artifacts with the integrated fresh-worker lifecycle."
@@ -2066,7 +2071,7 @@
       ]
     },
     {
-      "id": "drive-starts-bounded-implementation-with-sdd-model",
+      "id": "drive-separates-direct-strategy-from-delegated-model-routing",
       "path": "success",
       "prompt": "[active tk-drive Prepare] U1은 격리 의무가 없는 기존 repository pattern의 bounded implementation이고 U2는 complete-evidence mechanical edit입니다. U3는 design-heavy unknown-cause security boundary입니다. 각 unit의 execution strategy와 model을 approval surface에 추천해 주세요.",
       "expected_output": "Drive가 U1과 U2에는 session model을 inherit하는 strategy=direct와 requested_selector=n/a를 제시하고, delegated인 U3에만 strongest selector/effort를 표시한다.",

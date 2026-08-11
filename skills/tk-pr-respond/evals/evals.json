@@ -2,6 +2,11 @@
   "skill_name": "tk-pr-respond",
   "migrations": [
     {
+      "from": "pr-respond-starts-bounded-implementation-with-sdd-model",
+      "to": "pr-respond-separates-direct-strategy-from-delegated-model-routing",
+      "reason": "Issue 298 corrects the impossible direct plus model-selector contract; direct inherits the session model and selector tiers are delegated-only."
+    },
+    {
       "from": "pr-respond-ci-processes-fresh-feedback-without-questions-actor",
       "to": "pr-respond-ci-processes-feedback-through-fresh-workers-v4",
       "reason": "Direct CI progress는 이제 orchestration marker를 사용한다."
@@ -385,7 +390,7 @@
       ]
     },
     {
-      "id": "pr-respond-starts-bounded-implementation-with-sdd-model",
+      "id": "pr-respond-separates-direct-strategy-from-delegated-model-routing",
       "path": "success",
       "prompt": "[active approved standalone tk-pr-respond] RU-1은 격리 의무가 없는 기존 repository pattern의 bounded implementation이고 RU-2는 mechanical test edit입니다. RU-3만 design-heavy unknown-cause security fix입니다. worker strategy와 model을 하나의 approval surface에 추천해 주세요.",
       "expected_output": "Respond가 RU-1과 RU-2에는 session model을 inherit하는 strategy=direct와 requested_selector=n/a를 제시하고, delegated인 RU-3에만 strongest selector/effort를 표시한다.",
