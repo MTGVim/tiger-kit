@@ -18,9 +18,10 @@ metadata:
 
 ## 출력 계약
 
-항상 repository root의 `.tigerkit/spec.md` 에 쓰고, 결과에 parse-safe absolute path
-`/home/tigeryoo/workspace/tiger-kit/.tigerkit/spec.md` 를 보고한다. 문서는 다음을
-직접 포함하는 self-contained Markdown이어야 한다.
+항상 현재 repository root의 `.tigerkit/spec.md` 에 쓰고, 먼저
+`git rev-parse --show-toplevel`로 root를 resolve한 뒤 결과에 그 root에서 파생한
+실제 absolute path를 보고한다. 문서는 다음을 직접 포함하는 self-contained Markdown이어야
+한다.
 
 - `Status: Pending` (사용자가 명시적으로 승인하기 전에는 downstream이 소비하지 않음)
 - source/R-AC와 lineage (각 주장과 출처의 연결)

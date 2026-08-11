@@ -107,13 +107,15 @@ loop가 아니다.
 
 각 fresh worker brief에는 one unit, exact R/AC, source/ticket scope, scope/exclusion,
 verification obligation 및 current Git ownership facts가 들어간다. 다음
-repository-root-derived absolute path를 verbatim으로 포함해야 한다:
+먼저 현재 target checkout에서 `git rev-parse --show-toplevel`로 `<repository-root>`를
+resolve한 뒤, repository-root-derived absolute path를 실제 결과로 치환해 verbatim으로
+포함해야 한다:
 
 ```text
-/home/tigeryoo/workspace/tiger-kit/.tigerkit/drive.md
-/home/tigeryoo/workspace/tiger-kit/.tigerkit/spec.md
-/home/tigeryoo/workspace/tiger-kit/.tigerkit/tickets.md
-/home/tigeryoo/workspace/tiger-kit/.tigerkit/implement.md
+<repository-root>/.tigerkit/drive.md
+<repository-root>/.tigerkit/spec.md
+<repository-root>/.tigerkit/tickets.md
+<repository-root>/.tigerkit/implement.md
 ```
 
 brief는 document body를 복사하지 않고 source/ticket scope를 식별한다. unrelated source,

@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import unittest
+import tempfile
+from pathlib import Path
 from unittest.mock import patch
 
 import run_release_gate
@@ -9,6 +11,15 @@ from run_skill_evals import load_catalog_contract, load_eval_contracts
 
 
 class ReleaseGateContractTest(unittest.TestCase):
+    def test_release_gate_rejects_non_portable_absolute_paths(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            artifact = root / "skills/tk-example/SKILL.md"
+            artifact.parent.mkdir(parents=True)
+            artifact.write_text("path = /" + "home/alice/private-app\n", encoding="utf-8")
+            errors = run_release_gate.validate_portable_artifacts(root)
+        self.assertTrue(any("non-portable absolute path" in error for error in errors))
+
     def test_release_gate_rejects_dirty_worktree(self) -> None:
         completed = run_release_gate.subprocess.CompletedProcess(
             args=["git", "status"], returncode=0, stdout=" M README.md\n", stderr=""

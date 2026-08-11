@@ -48,12 +48,13 @@ boundary를 지난 뒤에는 cursor나 lifecycle claim이 아니라 새 근거�
 
 ## 준비(Prepare)
 
-1. Complete source와 적용되는 repository instruction, 그리고 다음 absolute path를
-   모두 읽는다: `/home/tigeryoo/workspace/tiger-kit/.tigerkit/drive.md`,
-   `/home/tigeryoo/workspace/tiger-kit/.tigerkit/spec.md`,
-   `/home/tigeryoo/workspace/tiger-kit/.tigerkit/tickets.md`,
-   `/home/tigeryoo/workspace/tiger-kit/.tigerkit/implement.md`. `drive.md` 는
-   progress, approval, receipt만 소유한다. 상세 요구와 지시는 세 작업 문서에만 둔다.
+1. Complete source와 적용되는 repository instruction을 읽는다. 먼저 현재 target
+   checkout에서 `git rev-parse --show-toplevel`로 repository root를 resolve하고, 그
+   결과를 `<repository-root>`로 치환해 다음 네 absolute path를 파생하고 모두 읽는다:
+   `<repository-root>/.tigerkit/drive.md`, `<repository-root>/.tigerkit/spec.md`,
+   `<repository-root>/.tigerkit/tickets.md`, `<repository-root>/.tigerkit/implement.md`.
+   `drive.md` 는 progress, approval, receipt만 소유한다. 상세 요구와 지시는 세 작업
+   문서에만 둔다.
    [documents.md](references/documents.md)와
    [worker-source.md](references/worker-source.md)에 따라 누락 문서를 직접
    `Pending` 으로 발급하거나 complete/fresh/lineage-consistent `Ready` 문서를 generic
@@ -101,12 +102,9 @@ remote-state, verifier-prerequisite, irreversible-decision drift가 생기면
 각 dependency wave마다 frozen strategy를 적용한다. Delegated unit은 fresh worker가
 맡고, direct unit은 current context가 단 하나의 bounded executor로 맡는다.
 Executor에게는 ID/goal, exact R/AC, source/ticket scope, scope/exclusion, 관련
-path와 다음 네 absolute path, verification obligation, branch/head/diff ownership을
-전달한다: `/home/tigeryoo/workspace/tiger-kit/.tigerkit/drive.md`,
-`/home/tigeryoo/workspace/tiger-kit/.tigerkit/spec.md`,
-`/home/tigeryoo/workspace/tiger-kit/.tigerkit/tickets.md`,
-`/home/tigeryoo/workspace/tiger-kit/.tigerkit/implement.md`. Executor는 현재 근거를 확인하고 해당
-unit만 구현하며 focused check를 실행한다. 그 뒤 하나의 bounded
+path와 현재 target checkout에서 resolve한 `<repository-root>/.tigerkit/` 아래 네
+absolute path, verification obligation, branch/head/diff ownership을 전달한다.
+Executor는 현재 근거를 확인하고 해당 unit만 구현하며 focused check를 실행한다. 그 뒤 하나의 bounded
 behavior-preserving simplify/reuse pass를 수행하고 changed paths, candidate
 evidence, unresolved item을 반환한다. 다음 불변식을 지킨다.
 

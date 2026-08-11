@@ -1,8 +1,15 @@
 {
   "skill_name": "tk-to-tickets",
+  "migrations": [
+    {
+      "from": "positive-self-contained",
+      "to": "positive-self-contained-portable-path",
+      "reason": "Read and report the current consumer repository's resolved .tigerkit paths instead of the maintainer checkout literal."
+    }
+  ],
   "evals": [
     {
-      "id": "positive-self-contained",
+      "id": "positive-self-contained-portable-path",
       "path": "success",
       "prompt": "/tk-to-tickets Ready spec을 읽고 tickets.md를 작성해줘.",
       "expected_output": "absolute path의 self-contained tickets.md에 모든 필드, 단일 source/R-AC mapping, vertical observable ticket, symbolic model/effort rationale, approval boundary를 쓴다.",
@@ -13,7 +20,7 @@
         },
         {
           "type": "output_contains",
-          "text": "/home/tigeryoo/workspace/tiger-kit/.tigerkit/tickets.md"
+          "text": ".tigerkit/tickets.md"
         },
         {
           "type": "terminal_status",

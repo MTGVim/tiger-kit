@@ -62,6 +62,12 @@ CORE_FRONTMATTER_FIELDS = {
 HOST_EXTENSION_FIELDS = {"argument-hint", "disable-model-invocation"}
 KEBAB = re.compile(r"^tk-[a-z0-9]+(?:-[a-z0-9]+)*$")
 LINK = re.compile(r"\[[^]]*]\(([^)]+)\)")
+_PORTABLE_PATH_SEGMENT = r"[^\s\x60\x22\x27<>()\[\]{}]+"
+NON_PORTABLE_ABSOLUTE_PATH = re.compile(
+    rf"(?<![\w])(?:/(?:home|Users|private/var|workspace)/{_PORTABLE_PATH_SEGMENT}|"
+    rf"[A-Za-z]:[\\/]+Users[\\/]+{_PORTABLE_PATH_SEGMENT})"
+)
+NON_PORTABLE_PATH_SKIP_PARTS = {".git", ".tigerkit", ".codegraph", "__pycache__", "node_modules"}
 QUESTION_TOOL_TOKENS = (
     "AskUserQuestion",
     "request_user_input",
@@ -565,6 +571,36 @@ def validate_repo_links() -> list[str]:
     return errors
 
 
+def validate_portable_artifacts(root: Path) -> list[str]:
+    errors: list[str] = []
+    tracked: list[Path] | None = None
+    if (root / ".git").exists():
+        completed = subprocess.run(
+            ["git", "ls-files", "-z"],
+            cwd=root,
+            capture_output=True,
+            check=False,
+        )
+        if completed.returncode == 0:
+            tracked = [root / relative for relative in completed.stdout.decode().split("\0") if relative]
+    paths = tracked if tracked is not None else [path for path in root.rglob("*") if path.is_file()]
+    for path in sorted(paths):
+        if not path.is_file() or NON_PORTABLE_PATH_SKIP_PARTS.intersection(path.parts):
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeError):
+            continue
+        relative = path.relative_to(root)
+        for line_number, line in enumerate(text.splitlines(), 1):
+            match = NON_PORTABLE_ABSOLUTE_PATH.search(line)
+            if match:
+                errors.append(
+                    f"{relative}:{line_number}: remove non-portable absolute path {match.group(0)!r}"
+                )
+    return errors
+
+
 def parse_latest_changelog_version(text: str) -> str | None:
     match = re.search(
         r"(?m)^## ((?:\d{4}\.\d{2}\.\d{2}-\d+|\d+\.\d+\.\d+))(?:\s|$)",
@@ -626,6 +662,7 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
     for directory in SKILLS.glob("*/**"):
         if directory.is_dir() and directory.name in {"references", "scripts", "agents", "evals"} and not any(directory.iterdir()):
             errors.append(f"{directory.relative_to(ROOT)}: remove empty optional directory")
+    errors.extend(validate_portable_artifacts(ROOT))
     return errors
 
 

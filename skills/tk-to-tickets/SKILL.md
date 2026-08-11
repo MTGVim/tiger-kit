@@ -13,7 +13,8 @@ metadata:
 # Spec을 ticket으로 변환
 
 명시적으로 `/tk-to-tickets` 또는 `$tk-to-tickets` 를 선택한 경우에만 실행한다.
-먼저 `/home/tigeryoo/workspace/tiger-kit/.tigerkit/spec.md` 를 읽고, `Status: Ready` 이며
+먼저 현재 checkout에서 `git rev-parse --show-toplevel`로 repository root를 resolve하고
+`<repository-root>/.tigerkit/spec.md` 를 읽는다. `Status: Ready` 이며
 현재 요청과 lineage가 일치하는 fresh spec만 소비한다. required spec/evidence가
 누락되면 정확히 `Status: Unverifiable` 로 멈춘다. `Pending` 이면 정확히
 `Status: Blocked` 로 멈추고 downstream ticket을 생성하지 않는다. stale spec 또는
@@ -21,8 +22,8 @@ lineage mismatch도 각각 정확히 `Status: Blocked` 로 멈춘다.
 
 ## 출력 계약
 
-항상 `/home/tigeryoo/workspace/tiger-kit/.tigerkit/tickets.md` 에 self-contained
-Markdown을 쓰고 absolute path를 보고한다. ticket마다 다음 필드를 포함한다.
+항상 `<repository-root>/.tigerkit/tickets.md` 에 self-contained Markdown을 쓰고,
+root를 실제 absolute path로 치환해 보고한다. ticket마다 다음 필드를 포함한다.
 
 `Status`, `Goal`, `Coverage`(source/R-AC mapping), `Scope`, `Entry points`,
 `Dependencies`(`none` when absent), `Acceptance`, `Verification`, `model`,
