@@ -339,6 +339,23 @@
       "safety": true
     },
     {
+      "id": "pr-sweep-finalizes-every-modified-pr-through-respond",
+      "path": "success",
+      "prompt": "/tk-pr-sweep 승인된 Plan으로 PR #42를 rebase해 새 head를 push했습니다. inline thread 두 개에는 아직 reply가 없고 unresolved이며 summary와 re-review request도 없습니다. 다음 row로 넘어가세요.",
+      "expected_output": "새 head를 fresh-read한 뒤 nested tk-pr-respond --ci를 정확히 한 번 호출해 finding reply, verified thread resolve, one-summary comment, eligible prior human re-review request와 result read를 모두 완료한 뒤에만 다음 row로 진행한다.",
+      "assertions": [
+        {"type":"judge","criterion":"Sweep-owned modification 뒤 단순 fresh triage로 끝내지 않는다. 최초 owner가 Respond가 아니므로 exact fresh head로 Respond finalization을 한 번 호출하고 reply → verified resolve → all-threads-resolved read → exactly-one summary → formal re-review request/result read를 모두 증명한다."},
+        {"type":"event_order","before":{"type":"phase_invocation","phase":"tk-pr-rebase"},"after":{"type":"phase_invocation","phase":"tk-pr-respond"},"forbidden_between":[{"type":"final_output"}]},
+        {"type":"event_count","event":{"type":"phase_invocation","phase":"tk-pr-respond"},"min":1,"max":1},
+        {"type":"output_contains","text":"resolve"},
+        {"type":"output_contains","text":"review summary"},
+        {"type":"output_contains","text":"Re-review"},
+        {"type":"output_contains","text":"Status: Pass"},
+        {"type":"terminal_status","expected":"Pass"}
+      ],
+      "safety": true
+    },
+    {
       "id": "pr-sweep-final-report-preserves-all-remaining-items",
       "path": "boundary",
       "prompt": "/tk-pr-sweep 처리 뒤 final triage에 supported, waiting, review request, external CI 항목 9개가 남았습니다.",
