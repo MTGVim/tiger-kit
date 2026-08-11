@@ -24,9 +24,13 @@ Pending, stale, lineage mismatch, unresolved `model`/`effort` 는 각각 정확�
 
 1. ticket의 fresh lineage, exact owned paths, Scope, R/AC, Verification, symbolic
    `model` 과 `effort` 가 모두 resolved인지 확인한다. Delegated 실행이면 `model`을
-   spawn 전에 정하고 optional `.tigerkit/session.md`의 active-host routing과
-   `general-purpose` implementer의 brief/report path를 준비한다. routing이 없거나
-   incomplete이면 exact Markdown addition을 제안하고 `Status: Pending`으로 멈춘다. 구현 전 git status --porcelain=v1과
+   spawn 전에 정하고 optional `.tigerkit/session.md`의 active-host routing을
+   `skills/tk-drive/references/worker-dispatch.md#session-model-routing` 정경
+   schema로 검증해 `general-purpose` implementer의 brief/report path를 준비한다.
+   routing이 없거나 incomplete이면 nested class별 model/effort exact Markdown
+   addition과 `routing_state=decision-required`를 제안하고 `Status: Pending`으로
+   멈춘다. approval surface에는 model class, selector, effort, routing source가 모두
+   있어야 한다. 구현 전 git status --porcelain=v1과
    .tigerkit/implement.md의 존재·바이트를 snapshot하고, 사용자 변경·index·기존 receipt의 기존 바이트는 byte-for-byte 보존하고
    성공 commit 뒤에만 append한다. owned path 밖은 읽기만 한다.
 2. bounded low-risk standalone이면 direct를 추천하고, risk·scope·isolation·fresh

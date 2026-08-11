@@ -29,32 +29,61 @@ multi-file integration/debugging은 `standard`, architecture와 final review는
 ## Session model routing
 
 Delegated dispatch 전에 repository root의 optional `.tigerkit/session.md`를 읽는다.
-현재 host section에 `cheapest`, `standard`, `strongest` native selector가 모두 있고
-`Status: Ready`이면 선택한 class를 그 selector로 dispatch한다. 예시는 다음과 같다.
+현재 host section에 `cheapest`, `standard`, `strongest` class block이 모두 있고
+각 block에 `model`이 있으며 `Status: Ready`이면 선택한 class의 model/effort를
+spawn 전에 dispatch한다. 이 section의 schema가 정경이다.
 
 ```markdown
 # TigerKit session
 Status: Ready
 
 ## claude-code
-- cheapest: haiku
-- standard: sonnet
-- strongest: opus
+
+### cheapest
+- model: haiku
+- effort: low
+
+### standard
+- model: sonnet
+- effort: medium
+
+### strongest
+- model: opus
+- effort: high
 ```
 
 현재 host section이 없거나 incomplete이면 normal `👍 Recommendation:` 안에
 `.tigerkit/session.md`에 추가할 exact block과 근거를 제안한다. 기존 block을 조용히
-덮어쓰거나 approval 전에 파일을 쓰거나 worker를 dispatch하지 않는다. 사용자가 승인하면
-그 block만 merge하고 reread한 뒤 사용한다. Host catalog/config에서 selector를 확인할 수
-없으면 값을 발명하지 않고 user-owned selector decision으로 남긴다.
+덮어쓰거나 approval 전에 파일을 쓰거나 worker를 dispatch하지 않는다.
+`routing_state=decision-required`로 기록하고 사용자가 승인하면 그 block만 merge한 뒤
+`Status: Ready`, 세 class, 각 `model`을 reread해 검증한다. 실패하면 `Blocked`다.
+Host catalog/config에서 selector를 확인할 수 없으면 값을 발명하지 않고 user-owned
+selector decision으로 남긴다. 세 class의 confirmed `model`이 모이기 전에는
+`unavailable`, `USER_DECISION_REQUIRED` 같은 sentinel을 넣은 Markdown block을 보여
+주지 않는다. syntactically valid해 보이는 invalid file 대신 missing controls를 질문하고
+`Pending`으로 남긴다.
+
+전환 기간에는 기존 flat `- cheapest: haiku` 3종도 읽되
+`reasoning_effort=inherited`로 처리한다. 새로 제안하거나 쓰는 block은 항상 nested
+정경 schema다. `effort`가 생략됐거나 host가 지원하지 않으면 inherited로 기록하고,
+지원되면 native effort control에 spawn 전에 전달한다.
+
+Routing source는 repository-local `.tigerkit/session.md` 하나다. Host-global
+`CLAUDE.md`, `AGENTS.md`, `SOUL.md` 또는 다른 사용자 파일을 routing state로 읽거나
+쓰지 않는다. TigerKit의 runtime state를 repository/worktree 밖에 만들지 않는 product
+boundary를 유지한다.
+
+Actionable delegated unit이 하나라도 있으면 chat approval surface에 unit별
+`model_class`, resolved `model`, `effort`, routing source를 필수로 표시한다.
+누락된 approval surface로는 dispatch하지 않고 `Blocked`다.
 
 Host adapter는 다음 native control을 우선한다.
 
 | host | dispatch control | realized receipt |
 | --- | --- | --- |
-| `claude-code` | `Agent`의 explicit `model` selector | task/agent transcript가 노출한 model |
-| `codex` | spawned agent의 explicit model override | spawned-agent event/usage가 노출한 model |
-| `hermes-agent` | configured `delegation.model`; class별 selector가 필요하면 fresh `hermes -z -m <selector> --usage-file <path>` worker | usage file의 model |
+| `claude-code` | `Agent`의 explicit `model`과 지원되는 `effort` | task/agent transcript가 노출한 model |
+| `codex` | spawned agent의 explicit model/reasoning effort override | spawned-agent event/usage가 노출한 model |
+| `hermes-agent` | configured `delegation.model`; class별 control이 필요하면 fresh `hermes -z -m <selector> --reasoning <effort> --usage-file <path>` worker | usage file의 model |
 
 Ledger에는 `model_class`, `requested_selector`, `realized_model`, `reasoning_effort`,
 `worker_id`, `receipt_source`를 기록한다. Host가 realized model을 노출하지 않으면

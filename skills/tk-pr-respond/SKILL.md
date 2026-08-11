@@ -75,8 +75,12 @@ Prepare -> Execute -> Close gaps -> Finalize
    추천하고, fresh context·isolation·reviewer handoff·design-heavy reasoning이
    필요하면 `delegated`와 그 근거를 추천한다. Delegated는 fresh `general-purpose`
    implementer와 task reviewer를 함께 사용한다. active-host `.tigerkit/session.md` routing이
-   있으면 spawn 전에 사용하고, 없으면 exact Markdown addition을 같은 approval surface에
-   제안하며 approval 전에는 파일을 쓰거나 dispatch하지 않는다.
+   있으면 정경
+   `skills/tk-drive/references/worker-dispatch.md#session-model-routing` schema로
+   검증해 spawn 전에 사용한다. 없으면 nested class별 model/effort exact Markdown
+   addition과 `routing_state=decision-required`를 같은 approval surface에 제안하며
+   approval 전에는 파일을 쓰거나 dispatch하지 않는다. actionable delegated unit의
+   model class, selector, effort, routing source가 approval에 모두 보여야 한다.
    `general-purpose` 반환은 정상 결과다. Parent Sweep의 `--ci` handoff는 항상
    delegated이며 direct strategy로 바꾸지 않는다. `👍 Recommendation:` 에 strategy와
    model을 포함하고, 사용자가 표시된 plan을 승인하면 그것이 direct strategy에 대한
