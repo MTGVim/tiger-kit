@@ -131,7 +131,17 @@ Worker preflight가 실패하면 row를 `Blocked`로 남기고, `general-purpose
 realized model, reasoning effort, worker ID와 receipt source를 장부에 기록하며 미노출
 값은 `unavailable`로 둡니다.
 
-각 child result 후 exact PR을 fresh-triage하고 `continue`를 묻지 않은 채 frozen
+Sweep가 head, thread reply 또는 check-fix를 변경한 모든 PR은 row를 닫기 전에 정확히
+한 번의 nested `tk-pr-respond --ci` finalization을 거칩니다. 최초 owner가 Respond면
+그 child가 같은 호출 안에서 finalization까지 소유하고 두 번째 Respond를 만들지
+않습니다. Rebase 등 다른 owner가 변경했으면 fresh head를 넘겨 Respond를 한 번
+호출합니다. 이 finalization은 현재 finding별 reply를 게시하고, reply가 성공한 thread를
+fresh GraphQL evidence 뒤 resolve하고, 모든 thread가 resolved인지 재확인하고, PR-level
+summary budget을 정확히 한 번 소비한 뒤 eligible prior human reviewer에게 formal
+re-review를 요청·재확인해야 합니다. 어느 단계든 빠지거나 실패하면 row는
+`follow-up-queued` 또는 실패 상태이며 `Pass`/waiting으로 승격하지 않습니다.
+
+각 child/finalization result 후 exact PR을 fresh-triage하고 `continue`를 묻지 않은 채 frozen
 queue를 계속합니다. prompt-local bound를 유지합니다: exact base/head pair마다
 rebase 한 번, GitHub Actions corrective cycle 최대 세 번, fresh head마다 feedback
 response 한 번, sweep-owned follow-up head 최대 두 개입니다. 반복해서 unchanged
