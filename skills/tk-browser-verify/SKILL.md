@@ -92,6 +92,11 @@ criterion별 현재 근거와 실제 inspect한 screenshot이 없으면 `Pass` �
 6. **정리(Cleanup)** — run-owned resource만 닫고 [session lifecycle](references/session-lifecycle.md)을
    사용해 캡처/redaction residue를 확인합니다.
 
+`tk-drive`, `tk-implement`, `tk-pr-respond`, `tk-prototype`의 상위 작업자와
+작업자는 개발 서버를 직접 시작·대기·종료하지 않습니다. 이 스킬로 정확한
+`command`/`cwd`/대상 URL/`auth mode`/`readiness` 조건을 `handoff`받아 서버 생명주기를
+소유합니다.
+
 장시간 실행되는 검증 서버는 소유한 백그라운드 프로세스로 실행합니다.
 PID/cwd/port/명령과 bounded log 경로를 기록하고, timeout이 있는 구체적인
 readiness signal을 poll합니다. 프로세스 exit를 기다리지 말고 readiness 이후

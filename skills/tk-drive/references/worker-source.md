@@ -20,7 +20,9 @@ absolute 경로를 항상 넣는다. `<repository-root>`는 `git rev-parse --sho
 전달한다. 새 작업자가 시작하는 데 필요한 goal, 소스 anchor, 범위/exclusions,
 정확한 R/AC, 소유 경로, 구현 순서, verifier, 실패 경계, lineage는
 `spec.md`, `tickets.md`, `implement.md` 가 직접 제공한다. “위 대화”, “앞서 논의한
-pattern” 또는 receipt만 참조하는 소스는 incomplete다.
+`pattern` 또는 `receipt`만 참조하는 소스는 `incomplete`다. `browser-visible` AC의
+개발 서버가 필요하면 `implement.md`에 `tk-browser-verify` `handoff`와 정확한
+`command`/`cwd`/대상 URL/`auth mode`/`readiness` 조건이 있어야 한다.
 
 허용 소스는 대화/요청, 읽을 수 있는 이슈/티켓, spec, 티켓, 또는
 승인된 활성 실행이다. 현재 대화의 명시적 요청이 가장 최신이며, Drive는 그 원천이

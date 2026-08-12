@@ -36,7 +36,11 @@ Skill 필수 조건:
 - `tk-drive`와 `tk-pr-respond` 제어기는 제품 변경을 직접 작성하지 않습니다. 새 작업자가 한 번에 범위가 정해진 후보 하나를 만듭니다.
 - 필수 검증기와 R/AC 간극 해소 후 단위별 검증 커밋 하나를 만듭니다. 최상위 소유자는 마지막 기계적 Git 장부 처리만 수행할 수 있습니다.
 - `tk-drive`는 전체 추적성, 계보, 단위 간 검증, 마무리를 소유합니다.
-- 사용자 노출 동작용 브라우저 도구는 `tk-browser-verify` 안에서 실행합니다.
+- 사용자 노출 동작용 브라우저 도구와 `browser-visible` AC에 필요한 개발 서버의
+  시작·`readiness`·정리는 `tk-browser-verify` 안에서 실행·소유합니다. `tk-drive`,
+  `tk-implement`, `tk-pr-respond`, `tk-prototype` 및 작업자는 서버를 직접
+  시작·대기·종료하지 않고 정확한 `command`/`cwd`/URL/`auth mode`/`readiness` 조건을
+  `verifier handoff`로 전달합니다.
 - Push, PR, merge, tag, release, publish에는 각각 별도 명시적 권한이 필요합니다. 명시적 `tk-pr-sweep`는 문서화된 범위의 PR 유지보수 권한만 제공합니다.
 - `workspace_backend` 하나로 작업 트리 생성과 작업자 배정을 함께 선택·고정합니다. `git-native`는 이 저장소의 확인된 fallback입니다. `orca` 또는 `paseo`는 현재 호스트가 작업 트리·배정·receipt를 모두 증명할 때만 선택합니다. 서로 다른 backend를 조합하면 변경 전 row를 `Blocked`로 둡니다.
 - 기본 `tk-pr-sweep`는 원격 발행하지 않습니다. 작업·검증·commit 완료 후 호스트 권한 판정이 마지막 원격 쓰기만 막은 row는 사용자가 정확히 `--recover-publication`을 명시하고 별도 approval을 준 경우에만 처리합니다. 고정 refspec과 원격 HEAD를 재확인한 뒤 `git push --force-with-lease`를 한 번 수행합니다. guard 하나라도 없으면 direct fallback 없이 `Blocked`로 멈춥니다.

@@ -72,10 +72,11 @@ stacked다. simultaneous rendering이 concept 또는 minimum legibility를 해�
 않는다.
 
 `tk-browser-verify` Guard mode를 통해 web output을 검증하고 실제 interaction,
-run URL/command 및 success-criteria 스크린샷을 포함한다. hypothesis가
+`run URL`/`command` 및 `success-criteria` 스크린샷을 포함한다. 개발 서버가 필요하면
+정확한 `command`/`cwd`/대상 URL/`auth mode`/`readiness` 조건을 `handoff`하고 서버
+시작·대기·종료는 `tk-browser-verify`가 소유한다. `hypothesis`가
 responsiveness/layout에 관한 경우에만 wide와 narrow를 확인한다. run-owned tracked
-harness와 temporary server만 정리하며 existing route, dependency 및 production
-source는 보존한다.
+`harness`만 정리하며 `existing route`, `dependency` 및 `production source`는 보존한다.
 
 기본적으로 commit하지 않는다. production abstraction/error handling에 투자하지
 않고, output을 production-ready라고 부르거나 auto-promote하지 않으며, 다른 user
