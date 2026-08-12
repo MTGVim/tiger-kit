@@ -84,7 +84,7 @@ adapter의 selected-skill과 단계 event는 호스트 실행이 만든 eval-env
 
 ## State와 문서
 
-Runtime scratch는 저장소·작업 트리 로컬 `.tigerkit/`에 둡니다. 전역 archive, 현재 pointer, 자동 migration은 만들지 않습니다. branch 결정은 spec, tickets, commits, PRs, code, tests에 남깁니다. 장기 저장소 제약을 명시적으로 요청한 경우에만 ADR을 만듭니다.
+Runtime scratch는 저장소·작업 트리 로컬 `.tigerkit/`에 둡니다. 전역 archive, 현재 pointer, 자동 migration은 만들지 않습니다. branch 결정은 spec, tickets, commits, PRs, code, tests에 남깁니다. 별도 ADR 계층은 두지 않습니다. 장기 제약은 가장 가까운 현재 owner인 `AGENTS.md`, 해당 `SKILL.md`/reference, executable eval, code/test에 기록하고, 과거 설계 맥락은 issue/PR/CHANGELOG에 남깁니다.
 
 ## 필수 검사
 
