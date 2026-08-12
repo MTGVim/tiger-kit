@@ -30,8 +30,12 @@ Status: Ready
 - effort: high
 ```
 
-없거나 불완전하면 정확한 중첩 `block`과 `routing_state=decision-required`를 같은
-승인 표면에 제안하고, 승인 전에는 파일을 쓰거나 배정하지 않습니다. 확인되지 않은
+파일 또는 현재 `host section`이 없고 세 `class`의 제어값이 모두 확인되면 정확한 중첩
+`block`을 `.tigerkit/session.md`에 원자적으로 초안 생성하고 `Status: Pending`으로
+둡니다. 기존 불완전·충돌 `block`은 덮어쓰지 않고 보존하며, 필요한 보정안을 같은
+승인 표면에 제시합니다. 둘 다 `routing_state=review-required`로 기록하고 사용자가
+초안을 검토·승인하기 전에는 배정하거나 제품/Git/`remote`를 변경하지 않습니다.
+승인 뒤에만 `Status: Ready`로 바꾸고 세 `class`/`model`을 `reread`합니다. 확인되지 않은
 `selector`를 발명하거나 `unavailable`을 `model` 값으로 쓰지 않고 `Pending`으로
 남깁니다. 허용 `key`는 `model`, `effort`뿐입니다.
 

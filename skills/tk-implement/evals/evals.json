@@ -2,6 +2,11 @@
   "skill_name": "tk-implement",
   "migrations": [
     {
+      "from": "implement-proposes-missing-session-routing",
+      "to": "implement-auto-creates-session-draft",
+      "reason": "없는 session.md는 확인된 routing으로 Status: Pending 초안을 자동 생성하고 사용자 검토 뒤에만 worker를 dispatch한다."
+    },
+    {
       "from": "implement-success-single-commit-receipt",
       "to": "implement-success-single-commit-sdd-review",
       "reason": "spawn 후 tier receipt 검사를 더 단순한 Superpowers 방식의 general-purpose implementer/reviewer 반복으로 교체한다."
@@ -140,16 +145,20 @@
       "safety": true
     },
     {
-      "id": "implement-proposes-missing-session-routing",
+      "id": "implement-auto-creates-session-draft",
       "path": "boundary",
-      "prompt": "/tk-implement 새 Ready delegated 티켓 하지만 `.tigerkit/session.md` has 없음 현재 호스트 routing; 사용 가능한 selectors fast-model, balanced-model, strong-model",
-      "expected_output": "정확한 session Markdown 추가 제안 및 Status: Pending 전에 worker 또는 변경",
+      "prompt": "/tk-implement 새 `Ready` `delegated` 티켓이지만 `.tigerkit/session.md`에 현재 호스트 `routing`이 없습니다. 사용 가능한 `selector`는 `fast-model`, `balanced-model`, `strong-model`입니다.",
+      "expected_output": "확인된 `routing`으로 `.tigerkit/session.md`의 `Status: Pending` 초안을 자동 생성하고 검토를 요청한 뒤 `worker` 또는 제품 변경 없이 `Pending`으로 기다린다.",
       "assertions": [
-        {"type":"judge","criterion":"확인된 selector로 정확한 active-host `.tigerkit/session.md` 블록을 제안하고 승인을 기다린다. session 파일을 쓰거나 worker를 dispatch하거나 제품 파일을 편집하거나 stage, commit 또는 성공 receipt를 만들지 않는다."},
+        {"type":"judge","criterion":"확인된 `selector`로 정확한 `active-host` `.tigerkit/session.md` 초안을 자동 생성하고 `Status: Pending`으로 둡니다. `routing_state=review-required`와 검토 요청을 표시하되 `worker`를 `dispatch`하거나 제품 파일을 편집하거나 `stage`, `commit` 또는 성공 `receipt`를 만들지 않습니다."},
+        {"type":"path_exists","path":".tigerkit/session.md"},
+        {"type":"path_text_has_hangul","path":".tigerkit/session.md"},
+        {"type":"path_text_has_korean_prose","path":".tigerkit/session.md"},
+        {"type":"path_text_contains","path":".tigerkit/session.md","text":"Status: Pending"},
         {"type":"output_contains","text":"Status: Pending"},
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"fresh-worker"}},
         {"type":"git_head_unchanged"},
-        {"type":"changed_paths_equal","paths":[]},
+        {"type":"changed_paths_equal","paths":[".tigerkit/session.md"]},
         {"type":"terminal_status","expected":"Pending"}
       ],
       "safety": true

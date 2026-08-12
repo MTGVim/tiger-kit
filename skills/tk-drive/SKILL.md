@@ -110,14 +110,16 @@ Drive가 이 생명주기를 소유한다. Child receipt는 내부 자료이며 
    strategy와 최소 model을 선택한다. 티켓에 이미 확정된 `model`/`effort`가 있으면
    계획 metadata로 소비하고 조용히 덮어쓰지 않는다. 격리 없는 bounded known-pattern이면
    session model을 유지하는 `strategy=direct`를 우선 추천하고, 새 컨텍스트·격리·검토자
-   handoff·설계 중심 추론이면 `delegated`와 근거를 추천한다. Delegated는
-   현재 호스트 section이 있는 `.tigerkit/session.md` routing을
-   `skills/tk-drive/references/worker-dispatch.md#session-model-routing`의 정경
-   schema로 검증해 사용한다. section이 없거나 불완전하면 중첩된 class별
-   model/effort 정확한 Markdown 추가와 `routing_state=decision-required`를 같은
-   승인 표면에 제안하고 승인 전에는 파일을 쓰거나 작업자를 dispatch하지
-   않는다. 실행 가능한 delegated 단위의 승인에는 model class, selector, effort,
-   routing 소스가 모두 보여야 하며 누락되면 `Blocked`다. `general-purpose` implementer와
+   `handoff`·설계 중심 추론이면 `delegated`와 근거를 추천한다. `Delegated`는
+   현재 호스트 `section`이 있는 `.tigerkit/session.md` `routing`을
+   `skills/tk-drive/references/worker-dispatch.md#session-model-routing`의 정본
+   `schema`로 검증해 사용한다. 파일 또는 현재 호스트 `section`이 없고 세 `class`의 제어값이 모두
+   확인되면 정확한 중첩 `block`을 스스로 `.tigerkit/session.md`에 초안 생성하고
+   `Status: Pending`으로 둔다. 기존 불완전·충돌 `block`은 덮어쓰지 않고 보정안을
+   제안한다. `routing_state=review-required`를 기록하고 사용자가 초안을 검토·승인하기
+   전에는 파일 외의 `worker`, 제품, Git, `remote`를 변경하지 않는다. 승인 뒤에만
+   `Status: Ready`로 바꾸고 `reread` 검증한다. 실행 가능한 `delegated` 단위의 승인에는
+   `model class`, `selector`, `effort`, `routing` 소스가 모두 보여야 하며 누락되면 `Blocked`다. `general-purpose` `implementer`와
    새 task 검토자를 한 쌍으로 사용하며 반환 label은 tier 판정에 사용하지 않는다.
    Model class/selector/effort 선택은 delegated 전용이다. Direct 승인과 장부에는
    `cheapest | standard | strongest` tier를 어떤 label로도 붙이지 않고

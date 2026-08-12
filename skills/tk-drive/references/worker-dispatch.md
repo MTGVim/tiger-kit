@@ -70,11 +70,13 @@ Status: Ready
 - effort: high
 ```
 
-현재 호스트 section이 없거나 불완전하면 일반 `👍 Recommendation:` 안에
-`.tigerkit/session.md`에 추가할 정확한 block과 근거를 제안한다. 기존 block을 조용히
-덮어쓰거나 승인 전에 파일을 쓰거나 작업자를 dispatch하지 않는다.
-`routing_state=decision-required`로 기록하고 사용자가 승인하면 그 block만 merge한 뒤
-`Status: Ready`, 세 class, 각 `model`을 reread해 검증한다. 실패하면 `Blocked`다.
+파일 또는 현재 호스트 `section`이 없고 세 `class`의 제어값이 모두 확인되면 정확한
+중첩 `block`을 `.tigerkit/session.md`에 원자적으로 초안 생성하고 `Status: Pending`으로
+둔다. 기존 불완전·충돌 `block`은 조용히 덮어쓰지 않고 보존하며, 필요한 보정안을
+일반 `👍 Recommendation:` 안에 제시한다. 둘 다 `routing_state=review-required`로
+기록하고 사용자가 초안을 검토·승인하기 전에는 작업자를 `dispatch`하거나 제품/Git/
+`remote`를 변경하지 않는다. 승인 뒤에만 `Status: Ready`로 바꾸고 세 `class`, 각
+`model`을 `reread`해 검증한다. 실패하면 `Blocked`다.
 호스트 catalog/설정에서 selector를 확인할 수 없으면 값을 발명하지 않고 사용자 소유
 selector 결정으로 남긴다. 세 class의 confirmed `model`이 모이기 전에는
 `unavailable`, `USER_DECISION_REQUIRED` 같은 sentinel을 넣은 Markdown block을 보여
