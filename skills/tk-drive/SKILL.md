@@ -104,8 +104,13 @@ Drive가 이 생명주기를 소유한다. Child receipt는 내부 자료이며 
    스케줄러를 만들거나 작업자가 변경 가능한 작업 트리를 동시에 공유하게 하지 않는다.
 5. 테스트/검사를 분류한다. `browser-visible` AC라면 정확한
    시나리오, 대상, 민감하지 않은 인증 모드, prerequisite, limitation을
-   계획한다. 그 외에는 `not-required` 로 기록한다. 필수 headless auth를
-   사용할 수 없으면 mutation 전에 `Unverifiable` 이다.
+   계획하고 검증을 `tk-browser-verify`에 `handoff`한다. 해당 AC에 개발 서버가
+   필요하면 정확한 `command`/`cwd`/대상 URL/`auth mode`/`readiness` 조건도 함께
+   전달한다. `Drive`/`controller`/`worker`/`direct executor`는 브라우저 도구나 개발
+   서버를 직접 시작·대기·종료하지 않는다. 서버 `PID`/port/log/`readiness`와 정리는
+   `tk-browser-verify`가 소유하며, `verifier` 결과 전에는 `commit`하지 않는다. 그
+   외에는 `not-required` 로 기록한다. 필수 `headless auth`를 사용할 수 없거나
+   `verifier handoff`가 없으면 `mutation` 전에 `Unverifiable` 이다.
 6. [worker-dispatch.md](references/worker-dispatch.md)에 따라 각 단위의 실행
    strategy와 최소 model을 선택한다. 티켓에 이미 확정된 `model`/`effort`가 있으면
    계획 metadata로 소비하고 조용히 덮어쓰지 않는다. 격리 없는 bounded known-pattern이면

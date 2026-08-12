@@ -41,29 +41,42 @@ metadata:
    confirmed decisions, unresolved user-owned decisions, pending question을 바인딩한다.
 2. `사실 조사`: 소스 위치가 명시된
    `verified | inferred | unavailable` 사실을 생성한다.
-3. `공백 식별`: Scope, Constraints, Outputs, Verification 전반에서
-   사실과 decisions를 비교한다.
-4. `순위 지정`: 안전한 진행을 막는 blocker, 범위 또는 되돌릴 수 없는 영향,
-   검증 blocker, downstream 재작업 순으로 가장 영향이 큰 미해결
+3. `명시 제약 선별`: 소스 또는 요건 문장이 충돌 없이 결과를 직접 규정하면
+   사용자 선택으로 승격하지 않고 `Constraint`로 기록한다. 결과가 단지 추론되거나
+   다른 소스와 충돌하면 이 예외를 적용하지 않는다.
+4. `공백 식별`: `Scope`, `Constraints`, `Outputs`, `Verification` 전반에서
+   사실과 `decisions`를 비교한다.
+5. `순위 지정`: 안전한 진행을 막는 `blocker`, 범위 또는 되돌릴 수 없는 영향,
+   검증 `blocker`, `downstream` 재작업 순으로 가장 영향이 큰 미해결
    결정을 선택한다.
-5. `ask`: `🙋 grill-me · 응답 필요` 를 출력한 뒤, 정확히 하나의 `Question`,
-   `Recommendation`, `Evidence` 를 그 순서로 반환하고 `pending` 에서 멈춘다.
-6. `반영`: 명시적 답변을 일치하는 `Decision`, `Constraint`, `Out of scope`,
+6. `ask`: `🙋 grill-me · 응답 필요` 를 출력한 뒤, 정확히 하나의 `Question`,
+   `👍 Recommendation`, `Evidence` 를 그 순서로 반환하고 `pending` 에서 멈춘다.
+7. `반영`: 명시적 답변을 일치하는 `Decision`, `Constraint`, `Out of scope`,
    `Output`, 또는 `Verification` entry로 보존한다.
-7. `반복 또는 종료`: 이미 답한 질문은 반복하지 않는다. 네 축이 모두 정리되면,
+8. `반복 또는 종료`: 이미 답한 질문은 반복하지 않는다. 네 축이 모두 정리되면,
    명시적 승인을 위해 합의된 목표 문장 하나를 제시한다.
-8. `확정`: 그 문장을 명시적으로 승인한 뒤에만 `confirmed` 를 반환한다.
+9. `확정`: 그 문장을 명시적으로 승인한 뒤에만 `confirmed` 를 반환한다.
 
-독립 실행의 질문 turn에서는 아래 packet만 사용자에게 표시합니다. `Evidence` 는
-소스 위치가 명시된 사실만 담고, 없으면 `unavailable` 로 둡니다. 활성 drive에서는 이
-packet을 표시하지 않고 같은 상태를 호출자에게 직접 반환합니다.
+독립 실행의 질문 turn에서는 아래 `packet`만 사용자에게 표시합니다. 라벨은 `bold`로
+표시하고 각 항목 사이에 빈 줄을 둡니다. `Evidence` 는 사실 하나당 `bullet` 하나를
+사용하며 각 `bullet`에 `source`와 `verified | inferred | unavailable` 를 함께 적습니다.
+근거가 없으면 `unavailable` 사실을 하나의 bullet로 명시합니다. 활성 drive에서는
+이 `packet`을 표시하지 않고 같은 상태를 호출자에게 직접 반환합니다.
 
 ```text
 🙋 grill-me · 응답 필요
-Question: <정확히 하나의 user-owned decision>
-Recommendation: <safe default 또는 none>
-Evidence: <source와 verified | inferred | unavailable fact>
-Native status: pending
+
+**Question**
+<정확히 하나의 user-owned decision>
+
+**👍 Recommendation**
+<safe default 또는 none>
+
+**Evidence**
+- <fact> (`verified | inferred | unavailable`, <source>)
+- <fact> (`verified | inferred | unavailable`, <source>)
+
+**Native status**: pending
 ```
 
 ## 모호성 장부
@@ -84,6 +97,13 @@ Native status: pending
 - 정확한 저장소 또는 런타임 근거가 뒷받침하는 현재 사실만 자동 confirm하고; 소스를 cite한다.
 - 코드 패턴 결론에 판단이 필요하면 `inferred` 로 표시한다.
 - 사실과 선택이 섞인 질문을 묻기 전에 현재 사실을 먼저 조사한다.
+- 소스 또는 요건 문장이 결과를 직접 규정하고 충돌하지 않으면 이를 `confirmed Constraint`로
+  기록하고 다시 질문하지 않는다. 그 결과에서 파생된 부작용은 `Assumptions` 또는
+  `Remaining risks`에 남긴다.
+- 질문이나 선택지가 저장소 사용례 0건인 `domain term`(예: `dvh`, `svh`)에 의존하면,
+  옵션을 제시하기 전에 사용자에게 보이는 결과 차이를 1~3줄로 설명하고 사용례 근거를
+  `verified | inferred | unavailable`로 표시한다. 이 설명은 `Evidence` 안에 두어
+  packet 밖의 임의의 부연을 만들지 않는다.
 - 목표, 범위, 우선순위, 비즈니스 규칙, 성공 기준, 새로운 동작에 대해서는 항상 질문한다.
 - 필요한 근거에 접근할 수 없으면 `Unverifiable` 을 반환한다. 단, 독립적인 결정이 여전히 안전하면 예외다.
 - 확정된 출처가 충돌하면 양쪽을 보존하고 하나의 결정 질문을 묻는다; 묵묵히 선택하지 않는다.

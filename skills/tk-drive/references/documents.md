@@ -16,7 +16,9 @@ Prepare에서 세 작업 문서를 다음 순서로 검사하고 controller 준�
 2. `tickets.md` — 새 spec lineage를 참조하고 티켓별 커버리지, 범위, 소유 경로,
    의존성, acceptance, 검증, `model`, `effort` 를 가진다.
 3. `implement.md` — 새 Ready 티켓 lineage를 참조하고 현재 단위의 정확한 경로,
-   순서, R/AC, verifier, 허용/금지 범위, 실패 경계를 가진다.
+   순서, R/AC, `verifier`, 허용/금지 범위, 실패 경계를 가진다. `browser-visible`
+   AC면 `tk-browser-verify` `handoff`의 `command`/`cwd`/대상 URL/`auth mode`/
+   `readiness` 조건도 포함한다.
 
 누락 문서 또는 현재 원천과 계보가 다른 종료 문서는 사용 가능한 완전한
 현재 원천에서 위 필드를 채운 자체 완결형 `Status: Pending` 문서로 직접

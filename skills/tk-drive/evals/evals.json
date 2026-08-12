@@ -1487,11 +1487,11 @@
       "id": "drive-runs-approved-browser-verifier",
       "path": "success",
       "prompt": "[active tk-drive; approved R/AC에 known headless-capable environment에서 persistent checkout submit interaction과 network transition이 필요함] Execute한다.",
-      "expected_output": "Drive가 browser verification: required, exact scenario, non-sensitive auth mode, tk-browser-verify, and verifier-before-commit order를 보존한다.",
+      "expected_output": "`Drive`가 `browser verification: required`, `exact scenario`, `non-sensitive` `auth mode`, `tk-browser-verify`와 `verifier-before-commit` 순서를 보존하고, 개발 서버가 필요하면 서버 시작·`readiness`·정리를 `tk-browser-verify`에 맡긴다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "approved browser-visible AC를 fresh-worker candidate 뒤 tk-browser-verify로 검사하고 verifier result 전 commit하지 않으며 controller가 browser tool을 직접 선택하지 않는다."
+          "criterion": "승인된 `browser-visible` AC를 `fresh-worker` `candidate` 뒤 `tk-browser-verify`로 검사하고 `verifier result` 전 `commit`하지 않으며 `controller`가 `browser tool`이나 개발 서버를 직접 시작·대기·종료하지 않는다. 개발 서버의 `PID`/port/log/`readiness`와 정리는 `tk-browser-verify` 소유다."
         },
         {
           "type": "output_contains",
@@ -1508,6 +1508,10 @@
         {
           "type": "output_contains",
           "text": "auth mode"
+        },
+        {
+          "type": "output_contains",
+          "text": "readiness"
         },
         {
           "type": "terminal_status",

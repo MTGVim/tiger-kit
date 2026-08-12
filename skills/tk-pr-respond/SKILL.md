@@ -67,6 +67,10 @@ Prepare -> Execute -> Close gaps -> Finalize
 4. independently verifiable resolution unit과 dependency wave를 도출한다. coupled
    또는 uncertain work는 serialize한다. concurrent unit에는 host-provided isolated
    checkout/worktree와 proven independence가 필요하다. scheduler를 만들지 않는다.
+   `browser-visible` R/AC 검증은 `tk-browser-verify`에 `handoff`하며, 개발 서버가
+   필요하면 정확한 `command`/`cwd`/대상 URL/`auth mode`/`readiness` 조건을 함께
+   전달한다. `Respond`/`controller`/`worker`는 브라우저 도구나 개발 서버를 직접
+   시작·대기·종료하지 않고 `verifier` 결과 전에는 `commit`하지 않는다.
 5. `skills/tk-pr-respond/references/worker-dispatch.md`의 canonical worker-dispatch
    contract에 따라 unit별 `direct | delegated` strategy와 최소 model을 선택한다.
    ticket 또는 approved plan의 `model`/`effort`는 plan metadata로 보존한다. 격리 의무가

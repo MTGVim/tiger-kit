@@ -45,6 +45,13 @@ metadata:
    `delegated`는 새 `general-purpose` reviewer가 `Spec compliance`와 `Task quality`를
    확인하기 전 commit을 성공으로 처리하지 않는다.
 3. 구현자는 정확한 소유 경로만 수정하고 집중 검사를 먼저 실행한다.
+   `browser-visible` R/AC가 있으면 반드시 `tk-browser-verify`에 검증을 `handoff`한다.
+   검증에 개발 서버가 필요하면 정확한 `command`/`cwd`/대상 URL/`auth mode`/
+   `readiness` 조건을 전달하고, `implementer`/`controller`/`worker`는 브라우저 도구나
+   개발 서버를 직접 시작·대기·종료하지 않는다. 서버 `PID`/port/log/`readiness`,
+   `background` 실행과 정리는 `tk-browser-verify`가 소유한다. `verifier` 결과가
+   돌아오기 전에는 `commit`하지 않으며 `handoff`가 없거나 `verifier`를 사용할 수
+   없으면 `Status: Unverifiable`로 종료한다.
 4. `delegated` 또는 사용자/저장소 정책이 독립 검토를 요구할 때만 implementer
    이상의 capability를 가진 reviewer가 `Spec/AC` 및 `Standards/Style` 을 검사한다. 모든
    `direct` 실행에서는 이 reviewer를 생성하지 않는다. verbatim 또는 스타일 불일치는
