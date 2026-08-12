@@ -7,7 +7,7 @@
 
 다음 progress/승인/receipt만 간결하게 유지한다.
 
-- 저장소 snapshot과 네 작업 문서의 absolute 경로, status, lineage/freshness verdict;
+- 현재 원천 식별자, `supersedes` 대상, 저장소 snapshot과 네 작업 문서의 absolute 경로, status, lineage/freshness verdict;
 - 명시적 user 결정과 approved snapshot;
 - 단위 의존성/wave, execution strategy, 선택한 model class;
 - 선택적 `.tigerkit/session.md` 경로/status와 현재 호스트 routing 소스;

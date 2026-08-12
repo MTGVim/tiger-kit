@@ -70,6 +70,14 @@ eval 변경 규칙:
 
 adapter의 selected-skill과 단계 event는 호스트 실행이 만든 eval-envelope evidence입니다. 호스트가 telemetry를 직접 노출하지 않으면 하위 runtime telemetry로 제시하지 않습니다.
 
+기능 버그 수정과 동작 회귀 검증은 가능하면 `Codex`와 Claude 호스트를 모두 실행하고
+결과를 별도 기록합니다. Claude 호스트는 기본 `claude`를 사용하며,
+`TK_EVAL_CLAUDE_EXECUTABLE`로 `ccodex` 호환 실행 경로를 지정할 수 있습니다. 한 호스트의
+`Pass`로 다른 호스트를 대체하지 않으며, 실행 경로 미사용·인증 실패·백엔드 출력 오염은
+조용히 성공 처리하지 않고 `Advisory` 또는 `Unverifiable`로 남깁니다. 결정론적
+`release gate`는 계속 호스트와 무관한 정적 검사이고, 기능 변경 배포에는
+가능한 호스트 검증 행렬 근거를 함께 남깁니다.
+
 ## State와 문서
 
 Runtime scratch는 저장소·작업 트리 로컬 `.tigerkit/`에 둡니다. 전역 archive, 현재 pointer, 자동 migration은 만들지 않습니다. branch 결정은 spec, tickets, commits, PRs, code, tests에 남깁니다. 장기 저장소 제약을 명시적으로 요청한 경우에만 ADR을 만듭니다.

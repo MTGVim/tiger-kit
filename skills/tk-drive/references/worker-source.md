@@ -5,6 +5,10 @@ Drive가 dispatch하는 새 작업자는 원래 대화, 소스 조사, 다른 �
 absolute 경로를 항상 넣는다. `<repository-root>`는 `git rev-parse --show-toplevel`의 실제
 결과로 치환한다.
 
+현재 대화의 명시적 원천이 과거 종료 문서를 `supersede`하면 제어기가 그
+결정을 새 작업 문서의 원천 식별자와 계보에 기록한다. 작업자는 과거 문서의
+오래된 범위를 현재 요구로 되돌리지 않으며, 새 문서가 소유한 현재 R/AC만 소비한다.
+
 ```text
 <repository-root>/.tigerkit/drive.md
 <repository-root>/.tigerkit/spec.md
@@ -19,8 +23,9 @@ absolute 경로를 항상 넣는다. `<repository-root>`는 `git rev-parse --sho
 pattern” 또는 receipt만 참조하는 소스는 incomplete다.
 
 허용 소스는 대화/요청, 읽을 수 있는 이슈/티켓, spec, 티켓, 또는
-approved 활성 run이다. Drive는 소스가 complete한지 확인하고, 필요한 세 작업
-문서가 self-contained인지 확인한 뒤에만 dispatch한다. 소스 또는 문서가 missing,
-incomplete, stale, 또는 lineage mismatch이면 정확한 상태와 경로를 `drive.md` 에
-기록하고 `Status: Blocked` 로 멈춘다. controller는 그 경우 product를 수정하거나
-조용히 direct 대체 경로로 전환하지 않는다.
+승인된 활성 실행이다. 현재 대화의 명시적 요청이 가장 최신이며, Drive는 그 원천이
+완전한지 확인한 뒤 필요한 세 작업 문서를 자체 완결형으로 발급·갱신한다.
+과거 문서의 낡음/계보 불일치는 현재 원천이 완전하면 Blocked 사유가
+아니며 `supersession` 기록으로 남긴다. 현재 원천 또는 새 문서가 누락·불완전,
+모순·위험하면 정확한 상태와 경로를 `drive.md`에 기록하고 `Status: Blocked`로
+멈춘다. 제어기는 그 경우 제품을 수정하거나 조용히 직접 실행으로 전환하지 않는다.

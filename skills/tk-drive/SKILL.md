@@ -45,6 +45,30 @@ Drive가 이 생명주기를 소유한다. Child receipt는 내부 자료이며 
 경계를 지난 뒤에는 cursor나 lifecycle claim이 아니라 새 근거에서 다음
 행동을 도출한다.
 
+## 원천 우선순위
+
+현재 대화의 명시적 사용자 요구와 같은 대화에서 확정된 결정은 가장 최신의
+정본 원천이다. 우선순위는 다음과 같다.
+
+```text
+현재 대화의 명시적 요구
+> 같은 대화의 확정 결정
+> 승인된 활성 run
+> 현재 source와 일치하는 Ready 작업 문서
+> 과거 terminal 문서와 durable prior-art
+```
+
+과거 `Status: Pass` 장부나 완료 문서는 현재 요청을 덮어쓰지 못한다. 현재
+대화가 완전한 원천이고 목표·범위·R/AC·검증 의무를 도출할 수 있으면, 과거
+문서가 낡았거나 계보가 달라도 `supersedes` 근거를 기록하고 현재 작업
+문서 세 개를 새 계보로 발급한다. 현재 원천이 불완전·모순·위험하거나
+사용자 결정이 필요한 경우에만 `Blocked`다.
+
+작업자에게는 대화 자체가 아니라 현재 원천을 반영한 자체 완결형 작업 문서를
+전달한다. 따라서 과거 문서를 읽었다는 이유만으로 현재 요구를 누락하지 않으며,
+현재 원천이 대화 안에 있다는 이유만으로 작업 문서의 완전성 검사를 생략하지
+않는다.
+
 ## 준비(Prepare)
 
 1. 완전한 소스와 적용되는 저장소 지침을 읽는다. 먼저 현재 대상
@@ -55,21 +79,24 @@ Drive가 이 생명주기를 소유한다. Child receipt는 내부 자료이며 
    Optional `<repository-root>/.tigerkit/session.md`가 있으면 모델 라우팅 소스로 읽되,
    누락 자체는 작업 문서 차단 사유로 취급하지 않는다.
    `drive.md` 는 progress, 승인, receipt만 소유한다. 상세 요구와 지시는 세 작업
-   문서에만 둔다.
-   [documents.md](references/documents.md)와
-   [worker-source.md](references/worker-source.md)에 따라 누락 문서를 직접
-   `Pending` 으로 발급하거나 `complete/fresh/lineage-consistent`한 `Ready` 문서를 일반
-   소스로 소비한다. `Pending`, missing, incomplete, stale, lineage mismatch는 정확한
-   상태로 `Blocked`하고 작업자를 dispatch하거나 product를 수정하지 않는다. 브랜치,
-   기준선 `HEAD`, 작업 트리, `pre-existing` 변경 경로, 그리고 관련 durable prior-art를
-   최대 일곱 개까지 기록한다.
+   문서에만 둔다. 먼저 현재 대화 원천의 식별자와 명시적 지시를 고정하고,
+   과거 종료 문서는 선행 근거로 분류한다.
+   [문서 규칙](references/documents.md)과
+   [작업자 원천 규칙](references/worker-source.md)에 따라 현재 원천이 완전하면
+   누락 문서와 낡은/계보 불일치 종료 문서를 새 `Pending` 작업 문서로
+   발급하고 `supersedes`를 기록한다. 사용자가 표시된 계획을 승인하면 그 문서를
+   `Ready`로 갱신한다. 현재 원천이 불완전·모순·위험하거나 문서가 Pending인데
+   승인되지 않은 경우에만 정확한 상태로 `Blocked`하고 작업자를 배정하거나
+   제품을 수정하지 않는다. 브랜치, 기준선 `HEAD`, 작업 트리,
+   `pre-existing` 변경 경로, 그리고 관련 영속 선행 근거를 최대 일곱 개까지
+   기록한다.
 2. 근거와 안전한 기본값으로 되돌릴 수 있는 모호성을 해결한다. 모든
    중요한 controller 선택, 근거, 동작을 바꾸는 대안을 기록한다.
    사용자 소유 결정이 안전한 실행 계획을 막을 때만 `tk-grill-me` 를
    호출한다. 질문이 `pending`인 동안에는 `🙋 drive > grill-me · 응답 필요` 를
    출력하고 작업자를 dispatch하지 않는다. 제한된 비교로 해당
    결정을 닫을 수 있을 때만 `tk-prototype` 을 사용한다.
-3. 소스 기준점, 범위, 제외, 동결된 사용자 표시 리터럴, 검증
+3. 현재 원천 식별자와 대체 계보, 범위, 제외, 동결된 사용자 표시 리터럴, 검증
    의무를 포함해 `Ready` 요구사항과 acceptance criteria를 작성한다.
 4. 독립적으로 검증 가능한 `1..N` 단위, 의존성 그래프, wave를 도출한다.
    결합되었거나 불확실한 단위는 직렬화한다. 호스트가 이미 격리된
@@ -98,7 +125,7 @@ Drive가 이 생명주기를 소유한다. Child receipt는 내부 자료이며 
    `unavailable`, `reasoning_effort=inherited`를 기록한다.
 7. [ledger.md](references/ledger.md)에 따라 `.tigerkit/drive.md`의 현재 진행 상태를 원자적으로
    교체하고 다시 읽은 뒤 하나의 간결한 승인 표면을 제시한다. Ledger에는
-   저장소 snapshot, 네 작업 문서와 선택적 세션 경로/status, document
+   현재 원천 식별자, `supersedes` 대상, 저장소 상태, 네 작업 문서와 선택적 세션 경로와 상태, 문서
    status/lineage check, 승인 snapshot, 단위/dispatch/검증 receipt만 둔다. Goal, 범위, 동결된 리터럴,
    R/AC, 구현 지침은 세 작업 문서에서 소유하며 unknown은
    `unavailable` 로 둔다. `👍 Recommendation:` 에는 strategy, model class, selector,
