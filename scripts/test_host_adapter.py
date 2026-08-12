@@ -105,6 +105,14 @@ class HostAdapterTest(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "unavailable"):
                 adapter.executable_for("codex")
 
+    def test_claude_executable_can_use_a_shim(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            shim = Path(directory) / "claude-shim"
+            shim.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+            shim.chmod(0o755)
+            with patch.dict(os.environ, {"TK_EVAL_CLAUDE_EXECUTABLE": str(shim)}):
+                self.assertEqual(adapter.executable_for("claude-code"), str(shim))
+
 
 if __name__ == "__main__":
     unittest.main()

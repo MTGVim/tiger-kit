@@ -40,6 +40,8 @@ def executable_for(host: str) -> str:
     }.get(host)
     if candidate is None:
         raise RuntimeError(f"unsupported host {host}")
+    if host == "claude-code":
+        candidate = os.environ.get("TK_EVAL_CLAUDE_EXECUTABLE", candidate)
     resolved = shutil.which(candidate)
     if not resolved:
         raise RuntimeError(f"{host} executable unavailable")
