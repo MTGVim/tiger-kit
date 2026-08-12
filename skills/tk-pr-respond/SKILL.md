@@ -76,10 +76,14 @@ Prepare -> Execute -> Close gaps -> Finalize
    implementer와 task reviewer를 함께 사용한다. active-host `.tigerkit/session.md` routing이
    있으면 정본
    `skills/tk-pr-respond/references/worker-dispatch.md#session-model-routing` schema로
-   검증해 spawn 전에 사용한다. 없으면 nested class별 model/effort exact Markdown
-   addition과 `routing_state=decision-required`를 같은 approval surface에 제안하며
-   approval 전에는 파일을 쓰거나 dispatch하지 않는다. actionable delegated unit의
-   model class, selector, effort, routing source가 approval에 모두 보여야 한다.
+   검증해 `spawn` 전에 사용한다. 파일 또는 `current-host section`이 없고 세 `class`의
+   제어값이 모두 확인되면 중첩 `class`별 정확한 Markdown `block`을 스스로
+   `.tigerkit/session.md`에 초안 생성하고 `Status: Pending`으로 둔다. 기존 불완전·
+   충돌 `block`은 덮어쓰지 않고 보정안을 제안한다. `routing_state=review-required`를
+   기록하며 승인 전에는 파일 외의 `dispatch`, 제품, Git, `remote`를 변경하지 않는다.
+   사용자가 초안을 검토·승인한 뒤에만 `Status: Ready`로 바꾸고 `reread`해 `spawn`한다.
+   `actionable delegated unit`의 `model class`, `selector`, `effort`, `routing source`가 승인 화면에
+   모두 보여야 한다.
    Model class/selector/effort 선택은 `delegated` 전용이다. Direct approval과 ledger에는
    `cheapest | standard | strongest` tier를 어떤 label로도 붙이지 않고
    `model_class=n/a`, `requested_selector=n/a`, host가 노출한 session `realized_model` 또는

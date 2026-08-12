@@ -2,6 +2,11 @@
   "skill_name": "tk-drive",
   "migrations": [
     {
+      "from": "drive-proposes-missing-session-routing",
+      "to": "drive-auto-creates-session-draft",
+      "reason": "없는 session.md는 확인된 routing으로 Status: Pending 초안을 자동 생성하고 사용자 검토 뒤에만 worker를 dispatch한다."
+    },
+    {
       "from": "drive-starts-bounded-implementation-with-sdd-model",
       "to": "drive-separates-direct-strategy-from-delegated-model-routing",
       "reason": "Issue 298 corrects the impossible direct plus model-selector contract; direct inherits the session model and selector tiers are delegated-only."
@@ -2035,14 +2040,31 @@
       ]
     },
     {
-      "id": "drive-proposes-missing-session-routing",
+      "id": "drive-auto-creates-session-draft",
       "path": "boundary",
       "prompt": "[active tk-drive Prepare] delegated unit이 필요하지만 `.tigerkit/session.md`에 현재 host model routing이 없습니다. 사용 가능한 native selectors는 fast-model, balanced-model, strong-model입니다.",
-      "expected_output": "Drive가 exact `.tigerkit/session.md` host block을 하나의 Recommendation에 제안하고 approval 전에는 파일 쓰기, worker dispatch, product/Git 변경 없이 Pending으로 기다린다.",
+      "expected_output": "`Drive`가 확인된 `routing`으로 `.tigerkit/session.md`의 `Status: Pending` 초안을 자동 생성하고 사용자 검토를 요청하며, 승인 전에는 `worker dispatch`와 `product`/Git 변경 없이 `Pending`으로 기다린다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "missing active-host routing을 host-default로 조용히 collapse하지 않는다. 확인된 native selector로 exact session Markdown addition을 제안하고 approval 전에는 session file, worker, product, Git을 변경하지 않는다."
+          "criterion": "확인된 `native selector`로 정확한 `active-host routing draft`를 자동 생성하고 `Status: Pending`으로 둡니다. `routing_state=review-required`와 검토 요청을 표시하되 승인 전에는 `worker`, `product`, Git 변경을 하지 않고 충돌하는 기존 `block`은 보존합니다."
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/session.md"
+        },
+        {
+          "type": "path_text_has_hangul",
+          "path": ".tigerkit/session.md"
+        },
+        {
+          "type": "path_text_has_korean_prose",
+          "path": ".tigerkit/session.md"
+        },
+        {
+          "type": "path_text_contains",
+          "path": ".tigerkit/session.md",
+          "text": "Status: Pending"
         },
         {
           "type": "path_text_contains",

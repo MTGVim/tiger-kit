@@ -27,9 +27,12 @@ metadata:
    worker 생성 전에 정하고, 선택 사항인 `.tigerkit/session.md`의 호스트별 라우팅을
    `skills/tk-drive/references/worker-dispatch.md#session-model-routing`의 정해진
    스키마로 검증해 `general-purpose` 구현자의 brief/report 경로를 준비한다.
-   라우팅이 없거나 불완전하면 중첩 클래스별 `model`/`effort`의 정확한 Markdown
-   추가와 `routing_state=decision-required`를 제안하고 `Status: Pending`으로
-   멈춘다. 승인 화면에는 모델 클래스, 선택자, 노력 수준, 라우팅 출처가 모두
+   라우팅 파일 또는 현재 `host section`이 없고 세 `class`의 제어값이 모두 확인되면
+   정확한 중첩 `block`을 스스로 `.tigerkit/session.md`에 초안 생성하고
+   `Status: Pending`으로 둔다. 기존 불완전·충돌 `block`은 덮어쓰지 않고 보정안을
+   제안한다. `routing_state=review-required`를 기록하며 사용자가 초안을 검토·승인하기
+   전에는 `worker`, 제품, Git을 변경하지 않는다. 승인 뒤에만 `Status: Ready`로 바꾸고
+   `reread` 검증한다. 승인 화면에는 모델 클래스, 선택자, 노력 수준, 라우팅 출처가 모두
    있어야 한다. 구현 전 `git status --porcelain=v1`과
    `.tigerkit/implement.md`의 존재·바이트를 스냅샷하고, 사용자 변경·인덱스·기존 receipt의 기존 바이트는 바이트 단위로 보존하며
    성공 commit 뒤에만 덧붙인다. 소유 경로 밖은 읽기만 한다.

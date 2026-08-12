@@ -68,15 +68,21 @@ Prepare -> Execute -> Close gaps -> Finalize
 3. 되돌릴 수 있는 각 중요한 가정, 근거, 동작을 바꾸는 대안을 기록합니다. 계획이
    사용자 소유 결정으로 막힐 때만 `tk-grill-me`를
    사용합니다.
-4. 저장소/PR/head/범주/경로/범위/위험/검증/조치와 제외를 고정합니다. 독립성과
+4. 저장소/PR/`head`/범주/경로/범위/위험/검증/조치와 제외를 고정합니다. 각 `actionable`
+   항목에는 제한된 `feedback summary`, `apply direction`, `route/strategy`,
+   추천 `model`/`effort`, 추천 근거와 검증 영향을 붙입니다. 독립성과
    호스트가 제공하는 격리가 함께 증명될 때만 동시성을 허용하고 웨이브를 도출합니다.
    불확실성은 직렬화하며 스케줄러는 만들지 않습니다. 실행 가능한 `delegated` 항목이
    있으면 선택 사항인 `.tigerkit/session.md`의 호스트 모델 라우팅을
    `skills/tk-pr-sweep/references/worker-dispatch.md#session-model-routing` 정본
-   스키마로 검증합니다. 없거나 불완전하면 중첩 종류별 모델/노력도 정확한 Markdown
-   추가와 `routing_state=decision-required`를 권고에 포함하고 승인 전에는 파일을
-   쓰거나 하위 작업자를 배정하지 않습니다. 모든 실행 가능한 `delegated` 항목의
-   모델 종류, 선택자, 노력도, 라우팅 출처가 채팅 승인에 없으면 `Blocked`입니다.
+   스키마로 검증합니다. 파일 또는 현재 호스트 `section`이 없고 확인된 제어값이 모두
+   있으면 정확한 중첩 `block`을 `.tigerkit/session.md`에 원자적으로 초안 생성하고
+   `Status: Pending`으로 둡니다. 기존 불완전·충돌 `block`은 덮어쓰지 않고 보존하며,
+   정확한 보정안을 승인 표면에 제시합니다. 둘 다 `routing_state=review-required`로
+   기록하고 사용자가 초안을 검토·승인하기 전에는 `worker`, 제품 파일, Git 또는
+   `remote`를 변경하지 않습니다. 승인 뒤에만 `Status: Ready`로 바꾸고 `reread` 검증합니다.
+   확인되지 않은 `selector`를 발명하지 않으며, 모든 실행 가능한 `delegated` 항목의
+   모델 종류, 선택자, 노력도, 라우팅 출처를 추천 표면에 표시합니다.
 5. `.tigerkit/pr-sweep.md`를 원자적으로 교체한 뒤 다시 읽습니다. `actionable`/`held`/`report-only`
    항목, 가정/모호성, 경로 웨이브, 검증, 위험, 작업 트리 소유권,
    제한된 원격 조치와 `원격 변경: 아직 없음`을 파일에 보존합니다. 다음
@@ -84,9 +90,12 @@ Prepare -> Execute -> Close gaps -> Finalize
    `항목 (PR # | head SHA | category | route)`, `경로 / 웨이브`, `검증`,
    `위험 / 제외`, `Worktree 소유권`, `권한`, `승인`,
    `원격 변경: 아직 없음`, `workspace_backend`, `worktree_backend`,
-   `dispatch_backend`, `backend_evidence`, 호스트 라우팅 출처와 model
-   class/selector. unknown은 `unavailable`로 두고 경로/권한을 추측하지 않습니다.
-   채팅에는 plan 전문이나 이 evidence field를 반복하지 않습니다.
+   `dispatch_backend`, `backend_evidence`, 호스트 라우팅 출처와
+   `routing_state=review-required | ready`, `model class`/`selector`. `unknown`은
+   `unavailable`로 두고 경로/권한을 추측하지 않습니다.
+   각 `actionable`의 제한된 `feedback summary`와 `apply direction`, 추천 `model`/`effort`,
+   추천 이유/검증 영향은 채팅 승인 표면과 장부에 보존합니다. 채팅에는 계획 전문이나
+   `evidence field`를 반복하지 않습니다.
 
    산출물의 설명과 제목은 한국어로 작성하고, machine-readable key·status·ID·
    command·path·URL·exact literal만 원문으로 유지합니다. 산출물에는 work `Status`와
@@ -97,9 +106,13 @@ Prepare -> Execute -> Close gaps -> Finalize
    commit, remote mutation을 만들지 않습니다.
 
 `🙋 sweep > plan · 응답 필요`를 하나만 표시하고, 산출물의 절대 경로와 `Status`,
-`Disposition`, row/count 요약, 정확히 하나의 `👍 Recommendation:` 및 approval question만
-표시합니다. 사용자는 산출물을 열어 전체 계획을 검토하며, 채팅에 전문을 복사하지
-않습니다. 승인 전에는 작업 트리/커밋을 만들거나 원격 쓰기를 수행하지 않습니다.
+`Disposition`, 항목/개수 요약, 그리고 모든 `actionable`에 대한 다음 간결한 표를
+표시합니다: `PR/feedback ID` | `feedback summary` | `apply direction` | `route/strategy` |
+`recommended model/effort` | `rationale/verification`. 전체 인용문이나 계획 전문은
+복사하지 않습니다. 정확히 하나의 `👍 Recommendation:`과 하나의 일괄 승인
+질문만 표시하며, 항목별 모델을 다시 고르게 하지 않습니다. 사용자는 표시된
+추천을 일괄 승인하거나 한 번에 수정합니다. 승인 전에는 작업 트리/커밋을 만들거나
+원격 쓰기를 수행하지 않습니다.
 승인은 중첩된 Respond/Rebase에 정확히 제한된 권한을 제공하며, 중첩 소유자는 다시
 묻지 않습니다.
 

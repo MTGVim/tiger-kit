@@ -10,7 +10,8 @@
 - 현재 원천 식별자, `supersedes` 대상, 저장소 snapshot과 네 작업 문서의 absolute 경로, status, lineage/freshness verdict;
 - 명시적 user 결정과 approved snapshot;
 - 단위 의존성/wave, execution strategy, 선택한 model class;
-- 선택적 `.tigerkit/session.md` 경로/status와 현재 호스트 routing 소스;
+- `.tigerkit/session.md` 경로/상태, 현재 호스트 라우팅 소스와
+  `routing_state=review-required | ready`;
 - delegated 단위의 `requested_selector`, `realized_model`, `reasoning_effort`,
   `worker_id`, `receipt_source` (`unavailable` 허용);
 - direct 단위의 `requested_selector=n/a`, session `realized_model` 또는
