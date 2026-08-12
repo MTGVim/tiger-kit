@@ -97,7 +97,7 @@
       "id": "grill-me-renders-question-in-chat-compact-progress-v2",
       "path": "boundary",
       "prompt": "/tk-grill-me 저장 방식 A/B 중 하나가 확정되지 않았습니다. 근거를 조사하고 질문 하나만 제시한 뒤 제 답을 받기 전에는 downstream 작업을 하지 마세요.",
-      "expected_output": "pending procedure state에서 Question, Recommendation, Evidence 순서의 질문 하나를 chat response에 직접 표시하고 답변 전에는 mutation이나 다음 절차를 실행하지 않는다.",
+      "expected_output": "pending procedure state에서 가독성 있는 `Question`, `👍 Recommendation`, `Evidence` `packet` 하나를 chat response에 직접 표시하고 답변 전에는 mutation이나 다음 절차를 실행하지 않는다.",
       "assertions": [
         {
           "type": "judge",
@@ -110,6 +110,76 @@
         {
           "type": "output_contains",
           "text": "🙋 grill-me"
+        },
+        {
+          "type": "output_contains",
+          "text": "**Question**"
+        },
+        {
+          "type": "output_contains",
+          "text": "**👍 Recommendation**"
+        },
+        {
+          "type": "output_contains",
+          "text": "**Evidence**"
+        },
+        {
+          "type": "output_contains",
+          "text": "**Native status**"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pending"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true,
+      "darwin": true
+    },
+    {
+      "id": "grill-me-does-not-reask-explicit-constraint",
+      "path": "boundary",
+      "prompt": "/tk-grill-me 요구 문장에 콘텐츠 높이는 `100vh - header 높이`로 고정하고 `footer`는 스크롤 하단에 둔다고 명시되어 있습니다. 이 결과는 바꾸지 않을 `confirmed Constraint`입니다. 버튼 위치만 아직 `absolute`와 `fixed` 중 미결정입니다. 이 내용을 장부에 반영하고, 높이 계산을 다시 질문하지 말고 버튼 위치에 대한 질문 하나만 제시하세요.",
+      "expected_output": "요건이 직접 규정한 높이 결과를 `confirmed Constraint`로 보존하고, 그 결과를 다시 `user-owned decision`으로 묻지 않으며, 남은 버튼 위치 결정만 하나의 질문으로 제시한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "명시된 결과를 `Constraints`에 기록하고 그 결과 또는 `100vh` 선택을 다시 묻지 않으며 `absolute` 대 `fixed`만 질문한다. 파생 위험은 `Assumptions` 또는 `Remaining risks`로 남긴다."
+        },
+        {
+          "type": "output_contains",
+          "text": "Question"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pending"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true,
+      "darwin": true
+    },
+    {
+      "id": "grill-me-explains-unused-domain-terms",
+      "path": "boundary",
+      "prompt": "/tk-grill-me 모바일 `viewport` 처리 방식이 미결정입니다. 저장소에는 `vh` 사용례만 있고 `dvh`와 `svh` 사용례는 0건입니다. 옵션을 내기 전에 각 단위가 사용자에게 보이는 높이와 `스크롤/fold` 결과를 1~3줄로 설명하고, 그 다음 정확히 하나의 질문만 제시하세요.",
+      "expected_output": "저장소 사용례가 없는 `dvh`와 `svh`의 결과 차이를 먼저 설명하고 근거 상태를 표시한 뒤, 하나의 `user-owned decision`만 질문한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`dvh`와 `svh`를 설명 없이 선택지에 던지지 않고 1~3줄의 결과 중심 설명을 먼저 제공하며, 하나의 질문만 남긴다."
+        },
+        {
+          "type": "output_contains",
+          "text": "dvh"
+        },
+        {
+          "type": "output_contains",
+          "text": "svh"
         },
         {
           "type": "terminal_status",
