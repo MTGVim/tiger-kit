@@ -1,226 +1,37 @@
 {
-  "version": 2,
+  "version": 1,
   "critical_hosts": [
     "claude-code",
     "codex",
     "hermes-agent"
   ],
   "cases": [
-    {
-      "id": "prep-explicit",
-      "boundary": "tk-prep `explicit` `context` `preparation` `vs` `ordinary` `implementation`",
-      "prompt": "$tk-prep 이 `issue`를 `repository` `evidence`부터 인터뷰해서 실행 가능한 `Seed`로 준비해줘.",
-      "focus_skill": "tk-prep",
-      "expected_selected_skill": "tk-prep",
-      "critical": true
-    },
-    {
-      "id": "prep-generic-planning-negative",
-      "boundary": "tk-prep `explicit` `entry` `vs` `ordinary` `planning` `conversation`",
-      "prompt": "이 기능 어떻게 구현할지 간단히 같이 생각해보자.",
-      "focus_skill": "tk-prep",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "prep-vs-ask-repo",
-      "boundary": "tk-prep `task` `preparation` `vs` tk-ask-repo `read-only` `explanation`",
-      "prompt": "$tk-ask-repo 이 화면의 `status` 값이 어디서 오는지 근거로 설명해줘.",
-      "focus_skill": "tk-ask-repo",
-      "expected_selected_skill": "tk-ask-repo",
-      "critical": true
-    },
-    {
-      "id": "prep-vs-wizard",
-      "boundary": "tk-prep `engineering` `task` `context` `vs` tk-wizard `human-only` `procedure`",
-      "prompt": "MFA 등록과 `passkey` 로그인에서 내가 직접 해야 하는 단계를 안내해줘.",
-      "focus_skill": "tk-wizard",
-      "expected_selected_skill": "tk-wizard",
-      "critical": true
-    },
-    {
-      "id": "prep-vs-browser",
-      "boundary": "tk-prep `verification` `planning` `vs` tk-browser-verify `runtime` `evidence`",
-      "prompt": "승인된 AC대로 실제 페이지를 `headless` `browser`에서 검증하고 `screenshot` `evidence`를 남겨줘.",
-      "focus_skill": "tk-browser-verify",
-      "expected_selected_skill": "tk-browser-verify",
-      "critical": true
-    },
-    {
-      "id": "ask-repo-explicit-investigation",
-      "boundary": "tk-ask-repo `explicit` `repository` `Q`&`A` `vs` `generic` `Q`&`A`",
-      "prompt": "$tk-ask-repo `Display` `name` 값이 어디서 오는지 `path`:`line` 근거로 설명해줘.",
-      "focus_skill": "tk-ask-repo",
-      "expected_selected_skill": "tk-ask-repo",
-      "critical": true
-    },
-    {
-      "id": "ask-repo-ordinary-investigation",
-      "boundary": "tk-ask-repo `explicit` `invocation` `vs` `ordinary` `repository` `question`",
-      "prompt": "이 화면 `Display` `name` 값이 어디서 오는지 조사해줘.",
-      "focus_skill": "tk-ask-repo",
-      "expected_selected_skill": null,
-      "critical": false
-    },
-    {
-      "id": "ask-repo-vs-runtime-reproduction",
-      "boundary": "tk-ask-repo `explanation` `vs` `browser` `runtime` `reproduction`",
-      "prompt": "브라우저에서 QA 환경의 저장 실패를 직접 재현해줘.",
-      "focus_skill": "tk-browser-verify",
-      "expected_selected_skill": "tk-browser-verify",
-      "critical": true
-    },
-    {
-      "id": "pr-open-explicit",
-      "boundary": "tk-pr-open `exact` `publication` `vs` `other` PR `maintenance`",
-      "prompt": "/tk-pr-open 현재 브랜치로 PR `draft`를 준비해줘.",
-      "focus_skill": "tk-pr-open",
-      "expected_selected_skill": "tk-pr-open",
-      "critical": true
-    },
-    {
-      "id": "pr-open-natural-language",
-      "boundary": "tk-pr-open `natural` `single-PR` `intent` `vs` `generic` PR `question`",
-      "prompt": "현재 브랜치로 PR 열어줘.",
-      "focus_skill": "tk-pr-open",
-      "expected_selected_skill": "tk-pr-open",
-      "critical": true
-    },
-    {
-      "id": "pr-open-generic-question",
-      "boundary": "tk-pr-open `publication` `vs` PR `explanation`",
-      "prompt": "이 PR이 무엇을 바꾸는지 요약해줘.",
-      "focus_skill": "tk-pr-open",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "pr-respond-explicit",
-      "boundary": "tk-pr-respond `one-PR` `review` `resolution` `vs` `generic` `review`",
-      "prompt": "/tk-pr-respond 선택한 `review` `feedback`을 처리해줘.",
-      "focus_skill": "tk-pr-respond",
-      "expected_selected_skill": "tk-pr-respond",
-      "critical": true
-    },
-    {
-      "id": "pr-rebase-explicit",
-      "boundary": "tk-pr-rebase `exact` PR `rebase`",
-      "prompt": "/tk-pr-rebase PR #42를 최신 `base`로 `rebase`해줘.",
-      "focus_skill": "tk-pr-rebase",
-      "expected_selected_skill": "tk-pr-rebase",
-      "critical": true
-    },
-    {
-      "id": "pr-rebase-generic-block",
-      "boundary": "tk-pr-rebase `explicit` `invocation` `vs` `ordinary` `rebase`",
-      "prompt": "이 PR `branch`를 최신 `main`으로 `rebase`해줘.",
-      "focus_skill": "tk-pr-rebase",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "pr-sweep-explicit",
-      "boundary": "tk-pr-sweep `multi-PR` `maintenance` `vs` `single` PR",
-      "prompt": "/tk-pr-sweep `configured` `repositories`의 지금 처리 가능한 PR을 정리해줘.",
-      "focus_skill": "tk-pr-sweep",
-      "expected_selected_skill": "tk-pr-sweep",
-      "critical": true
-    },
-    {
-      "id": "pr-sweep-report-explicit",
-      "boundary": "tk-pr-sweep --`report` `read-only` `multi-PR` `briefing`",
-      "prompt": "/tk-pr-sweep --`report` `configured` `repositories` 상태만 읽어서 알려줘.",
-      "focus_skill": "tk-pr-sweep",
-      "expected_selected_skill": "tk-pr-sweep",
-      "critical": true
-    },
-    {
-      "id": "pr-sweep-generic-block",
-      "boundary": "tk-pr-sweep `explicit` `invocation` `vs` `ordinary` `multi-PR` `request`",
-      "prompt": "열린 PR들을 알아서 정리하고 CI도 고쳐줘.",
-      "focus_skill": "tk-pr-sweep",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "browser-headless-auth-verifier-explicit",
-      "boundary": "tk-browser-verify `headless` `authenticated` `runtime` `verification`",
-      "prompt": "승인된 `staging` AC를 `headless` `browser`에서 `transient` `session`으로 검증해줘.",
-      "focus_skill": "tk-browser-verify",
-      "expected_selected_skill": "tk-browser-verify",
-      "critical": true
-    },
-    {
-      "id": "audit-explicit-audit",
-      "boundary": "tk-audit `read-only` `audit` `vs` `generic` `improvement`",
-      "prompt": "$tk-audit `repository`의 `security`와 `test` `coverage`를 AUD `finding`으로 감사해줘.",
-      "focus_skill": "tk-audit",
-      "expected_selected_skill": "tk-audit",
-      "critical": true
-    },
-    {
-      "id": "audit-finding-to-prep",
-      "boundary": "tk-audit `finding` `source` `vs` tk-prep",
-      "prompt": "$tk-prep AUD-003 `finding`을 실행 가능한 `Seed`로 준비해줘.",
-      "focus_skill": "tk-prep",
-      "expected_selected_skill": "tk-prep",
-      "critical": true
-    },
-    {
-      "id": "grooming-vs-learn-audit",
-      "boundary": "tk-grooming `vs` tk-learn",
-      "prompt": "기존 `repository` `skill`의 중복·범위·배치를 감사해줘.",
-      "focus_skill": "tk-grooming",
-      "expected_selected_skill": "tk-grooming",
-      "critical": true
-    },
-    {
-      "id": "learn-vs-grooming-learn",
-      "boundary": "tk-learn `vs` tk-grooming",
-      "prompt": "이 반복 경험을 재사용 가능한 새 `repository` `skill`로 설계해줘.",
-      "focus_skill": "tk-learn",
-      "expected_selected_skill": "tk-learn",
-      "critical": true
-    },
-    {
-      "id": "skill-diagnose-vs-learn-ready",
-      "boundary": "tk-skill-diagnose `vs` tk-learn",
-      "prompt": "관찰된 `Agent` `Skill` `incident`를 재현하고 `verified` `learn-ready` `payload`로 `handoff`해줘.",
-      "focus_skill": "tk-skill-diagnose",
-      "expected_selected_skill": "tk-skill-diagnose",
-      "critical": true
-    },
-    {
-      "id": "merge-conflict-vs-marker-active",
-      "boundary": "tk-merge-conflict `vs` `ordinary` `marker` `edit`",
-      "prompt": "진행 중인 `rebase` `conflict`를 의도에 맞게 해결하고 `rebase`를 완료해줘.",
-      "focus_skill": "tk-merge-conflict",
-      "expected_selected_skill": "tk-merge-conflict",
-      "critical": true
-    },
-    {
-      "id": "handoff-vs-summary-handoff",
-      "boundary": "tk-handoff `explicit` `resume` `snapshot` `vs` `generic` `summary`",
-      "prompt": "/tk-handoff 현재 진행 중인 작업을 다음 `agent`가 재개할 `snapshot`으로 작성해줘.",
-      "focus_skill": "tk-handoff",
-      "expected_selected_skill": "tk-handoff",
-      "critical": true
-    },
-    {
-      "id": "tk-wizard-explicit-human-session",
-      "boundary": "tk-wizard `human` `procedure` `vs` `agent` `work`",
-      "prompt": "`credential` `provisioning` 절차를 대화형으로 안내해줘.",
-      "focus_skill": "tk-wizard",
-      "expected_selected_skill": "tk-wizard",
-      "critical": false
-    },
-    {
-      "id": "tk-mwhat-explicit-user-only",
-      "boundary": "tk-mwhat `explicit` `understanding` `correction`",
-      "prompt": "/tk-mwhat 방금 설명이 무슨 뜻인지 풀어줘.",
-      "focus_skill": "tk-mwhat",
-      "expected_selected_skill": "tk-mwhat",
-      "critical": false
-    }
+    {"id":"prep-explicit","boundary":"tk-prep `explicit` `context` `preparation` `vs` `ordinary` `implementation`","prompt":"$tk-prep 이 `issue`를 `repository` `evidence`부터 인터뷰해서 실행 가능한 `Seed`로 준비해줘.","focus_skill":"tk-prep","expected_selected_skill":"tk-prep","critical":true},
+    {"id":"prep-generic-planning-negative","boundary":"tk-prep `explicit` `entry` `vs` `ordinary` `planning` `conversation`","prompt":"이 기능 어떻게 구현할지 간단히 같이 생각해보자.","focus_skill":"tk-prep","expected_selected_skill":null,"critical":true},
+    {"id":"prep-vs-ask-repo","boundary":"tk-prep `task` `preparation` `vs` tk-ask-repo `read-only` `explanation`","prompt":"$tk-ask-repo 이 화면의 `status` 값이 어디서 오는지 근거로 설명해줘.","focus_skill":"tk-ask-repo","expected_selected_skill":"tk-ask-repo","critical":true},
+    {"id":"prep-vs-wizard","boundary":"tk-prep `engineering` `task` `context` `vs` tk-wizard `human-only` `procedure`","prompt":"MFA 등록과 `passkey` 로그인에서 내가 직접 해야 하는 단계를 안내해줘.","focus_skill":"tk-wizard","expected_selected_skill":"tk-wizard","critical":true},
+    {"id":"prep-vs-browser","boundary":"tk-prep `verification` `planning` `vs` tk-browser-verify `runtime` `evidence`","prompt":"승인된 AC대로 실제 페이지를 `headless` `browser`에서 검증하고 `screenshot` `evidence`를 남겨줘.","focus_skill":"tk-browser-verify","expected_selected_skill":"tk-browser-verify","critical":true},
+    {"id":"ask-repo-explicit-investigation","boundary":"tk-ask-repo `explicit` `repository` `Q&A` `vs` `generic` `Q&A`","prompt":"$tk-ask-repo `Display name` 값이 어디서 오는지 `path:line` 근거로 설명해줘.","focus_skill":"tk-ask-repo","expected_selected_skill":"tk-ask-repo","critical":true},
+    {"id":"ask-repo-ordinary-investigation","boundary":"tk-ask-repo `explicit` `invocation` `vs` `ordinary` `repository` `question`","prompt":"이 화면 `Display name` 값이 어디서 오는지 조사해줘.","focus_skill":"tk-ask-repo","expected_selected_skill":null,"critical":false},
+    {"id":"ask-repo-vs-runtime-reproduction","boundary":"tk-ask-repo `explanation` `vs` `browser` `runtime` `reproduction`","prompt":"브라우저에서 QA 환경의 저장 실패를 직접 재현해줘.","focus_skill":"tk-browser-verify","expected_selected_skill":"tk-browser-verify","critical":true},
+    {"id":"pr-open-explicit","boundary":"tk-pr-open `exact` `publication` `vs` `other` PR `maintenance`","prompt":"/tk-pr-open 현재 브랜치로 PR `draft`를 준비해줘.","focus_skill":"tk-pr-open","expected_selected_skill":"tk-pr-open","critical":true},
+    {"id":"pr-open-natural-language","boundary":"tk-pr-open `natural` `single-PR` `intent` `vs` `generic` PR `question`","prompt":"현재 브랜치로 PR 열어줘.","focus_skill":"tk-pr-open","expected_selected_skill":"tk-pr-open","critical":true},
+    {"id":"pr-open-generic-question","boundary":"tk-pr-open `publication` `vs` PR `explanation`","prompt":"이 PR이 무엇을 바꾸는지 요약해줘.","focus_skill":"tk-pr-open","expected_selected_skill":null,"critical":true},
+    {"id":"pr-respond-explicit","boundary":"tk-pr-respond `one-PR` `review` `resolution` `vs` `generic` `review`","prompt":"/tk-pr-respond 선택한 `review` `feedback`을 처리해줘.","focus_skill":"tk-pr-respond","expected_selected_skill":"tk-pr-respond","critical":true},
+    {"id":"pr-rebase-explicit","boundary":"tk-pr-rebase `exact` PR `rebase`","prompt":"/tk-pr-rebase PR #42를 최신 `base`로 `rebase`해줘.","focus_skill":"tk-pr-rebase","expected_selected_skill":"tk-pr-rebase","critical":true},
+    {"id":"pr-rebase-generic-block","boundary":"tk-pr-rebase `explicit` `invocation` `vs` `ordinary` `rebase`","prompt":"이 PR `branch`를 최신 `main`으로 `rebase`해줘.","focus_skill":"tk-pr-rebase","expected_selected_skill":null,"critical":true},
+    {"id":"pr-sweep-explicit","boundary":"tk-pr-sweep `multi-PR` `maintenance` `vs` `single` PR","prompt":"/tk-pr-sweep `configured repositories`의 지금 처리 가능한 PR을 정리해줘.","focus_skill":"tk-pr-sweep","expected_selected_skill":"tk-pr-sweep","critical":true},
+    {"id":"pr-sweep-report-explicit","boundary":"tk-pr-sweep --`report` `read-only` `multi-PR` `briefing`","prompt":"/tk-pr-sweep --report `configured repositories` 상태만 읽어서 알려줘.","focus_skill":"tk-pr-sweep","expected_selected_skill":"tk-pr-sweep","critical":true},
+    {"id":"pr-sweep-generic-block","boundary":"tk-pr-sweep `explicit` `invocation` `vs` `ordinary` `multi-PR` `request`","prompt":"열린 PR들을 알아서 정리하고 CI도 고쳐줘.","focus_skill":"tk-pr-sweep","expected_selected_skill":null,"critical":true},
+    {"id":"browser-headless-auth-verifier-explicit","boundary":"tk-browser-verify `headless` `authenticated` `runtime` `verification`","prompt":"승인된 `staging` AC를 `headless` `browser`에서 `transient session`으로 검증해줘.","focus_skill":"tk-browser-verify","expected_selected_skill":"tk-browser-verify","critical":true},
+    {"id":"audit-explicit-audit","boundary":"tk-audit `read-only` `audit` `vs` `generic` `improvement`","prompt":"$tk-audit `repository`의 `security`와 `test coverage`를 AUD `finding`으로 감사해줘.","focus_skill":"tk-audit","expected_selected_skill":"tk-audit","critical":true},
+    {"id":"audit-finding-to-prep","boundary":"tk-audit `finding source` `vs` tk-prep","prompt":"$tk-prep AUD-003 `finding`을 실행 가능한 `Seed`로 준비해줘.","focus_skill":"tk-prep","expected_selected_skill":"tk-prep","critical":true},
+    {"id":"grooming-vs-learn-audit","boundary":"tk-grooming `vs` tk-learn","prompt":"기존 `repository skill`의 중복·범위·배치를 감사해줘.","focus_skill":"tk-grooming","expected_selected_skill":"tk-grooming","critical":true},
+    {"id":"learn-vs-grooming-learn","boundary":"tk-learn `vs` tk-grooming","prompt":"이 반복 경험을 재사용 가능한 새 `repository skill`로 설계해줘.","focus_skill":"tk-learn","expected_selected_skill":"tk-learn","critical":true},
+    {"id":"skill-diagnose-vs-learn-ready","boundary":"tk-skill-diagnose `vs` tk-learn","prompt":"관찰된 `Agent Skill incident`를 재현하고 `verified learn-ready payload`로 `handoff`해줘.","focus_skill":"tk-skill-diagnose","expected_selected_skill":"tk-skill-diagnose","critical":true},
+    {"id":"merge-conflict-vs-marker-active","boundary":"tk-merge-conflict `vs` `ordinary marker edit`","prompt":"진행 중인 `rebase conflict`를 의도에 맞게 해결하고 `rebase`를 완료해줘.","focus_skill":"tk-merge-conflict","expected_selected_skill":"tk-merge-conflict","critical":true},
+    {"id":"handoff-vs-summary-handoff","boundary":"tk-handoff `explicit resume snapshot` `vs` `generic summary`","prompt":"/tk-handoff 현재 진행 중인 작업을 다음 `agent`가 재개할 `snapshot`으로 작성해줘.","focus_skill":"tk-handoff","expected_selected_skill":"tk-handoff","critical":true},
+    {"id":"tk-wizard-explicit-human-session","boundary":"tk-wizard `human procedure` `vs` `agent work`","prompt":"`credential provisioning` 절차를 대화형으로 안내해줘.","focus_skill":"tk-wizard","expected_selected_skill":"tk-wizard","critical":false},
+    {"id":"tk-mwhat-explicit-user-only","boundary":"tk-mwhat `explicit understanding correction`","prompt":"/tk-mwhat 방금 설명이 무슨 뜻인지 풀어줘.","focus_skill":"tk-mwhat","expected_selected_skill":"tk-mwhat","critical":false}
   ]
 }
