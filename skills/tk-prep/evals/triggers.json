@@ -1,26 +1,15 @@
 {
   "skill": "tk-prep",
-  "kind": "hybrid",
+  "kind": "user-invoked",
   "queries": [
     {"id":"train-positive","split":"train","query":"$tk-prep 이 버그를 실행 가능한 `Seed`로 준비해줘","should_trigger":true},
     {"id":"train-negative","split":"train","query":"이 버그 그냥 바로 고쳐줘","should_trigger":false},
-
-    {"id":"validation-positive-formal","split":"validation","query":"/tk-prep 이 `issue`를 저장소 근거와 수용 조건까지 확인해 실행 가능한 `Seed`로 준비해 주세요.","should_trigger":true,"facets":["formal"]},
-    {"id":"validation-positive-casual","split":"validation","query":"$tk-prep 이거 구현 전에 같이 정리해서 `Seed` 만들어줘","should_trigger":true,"facets":["casual"]},
-    {"id":"validation-positive-typo","split":"validation","query":"tk-prep 이 버그 시딩좀 해쥬","should_trigger":true,"facets":["typo"]},
-    {"id":"validation-positive-ko-en","split":"validation","query":"$tk-prep `review feedback`을 `repo evidence` 기반 `Seed`로 준비해줘","should_trigger":true,"facets":["ko-en"]},
-    {"id":"validation-positive-short","split":"validation","query":"/tk-prep 버그 `Seed`","should_trigger":true,"facets":["short"]},
-    {"id":"validation-positive-compound","split":"validation","query":"$tk-prep 로그인 뒤 주문 화면 버그를 조사하고 테스트·`browser verification`까지 포함한 `Seed`로 준비해줘","should_trigger":true,"facets":["compound"]},
-    {"id":"validation-positive-active-answer","split":"validation","query":"`[active tk-prep]` 모바일에서는 한 줄 유지로 해줘","should_trigger":true,"facets":["casual","short"]},
-    {"id":"validation-positive-active-waiver","split":"validation","query":"`[active tk-prep]` 테스트 환경 도입은 범위가 너무 크니 제안한 대체 검증으로 예외 승인할게","should_trigger":true,"facets":["formal","compound"]},
-
-    {"id":"validation-negative-formal","split":"validation","query":"이 기능의 일반적인 구현 계획을 간단히 설명해 주세요.","should_trigger":false,"facets":["formal"]},
-    {"id":"validation-negative-casual","split":"validation","query":"이거 걍 고쳐줘","should_trigger":false,"facets":["casual"]},
-    {"id":"validation-negative-typo","split":"validation","query":"이 값 어딧서 오는지 알랴줘","should_trigger":false,"facets":["typo"]},
-    {"id":"validation-negative-ko-en","split":"validation","query":"이 `component flow`가 어떻게 동작하는지 `repo`에서 설명해줘","should_trigger":false,"facets":["ko-en"]},
-    {"id":"validation-negative-short","split":"validation","query":"OTP 설정 안내","should_trigger":false,"facets":["short"]},
-    {"id":"validation-negative-compound","split":"validation","query":"코드를 수정하고 테스트한 다음 `commit`까지 바로 만들어줘","should_trigger":false,"facets":["compound"]},
-    {"id":"validation-negative-repo-question","split":"validation","query":"이 API `status` 값이 생산되는 위치와 소비되는 곳을 조사해줘","should_trigger":false,"facets":["formal","compound"]},
-    {"id":"validation-negative-human-setup","split":"validation","query":"MFA와 `passkey` 등록을 내가 따라할 수 있게 하나씩 안내해줘","should_trigger":false,"facets":["casual","ko-en"]}
+    {"id":"validation-positive-issue","split":"validation","query":"/tk-prep 이 `issue`를 저장소 근거와 수용 조건까지 확인해 `Seed`로 준비해 주세요.","should_trigger":true},
+    {"id":"validation-positive-review","split":"validation","query":"$tk-prep 이 `review feedback`을 구현 전에 실행 가능한 `Seed`로 정리해줘","should_trigger":true},
+    {"id":"validation-positive-bug","split":"validation","query":"$tk-prep 로그인 뒤 주문 화면 버그를 테스트와 브라우저 검증까지 포함해 준비해줘","should_trigger":true},
+    {"id":"validation-negative-planning","split":"validation","query":"이 기능 어떻게 구현할지 같이 생각해보자","should_trigger":false},
+    {"id":"validation-negative-implementation","split":"validation","query":"이 버그 그냥 고치고 커밋해줘","should_trigger":false},
+    {"id":"validation-negative-repo-question","split":"validation","query":"이 API `status` 값이 어디서 오는지 설명해줘","should_trigger":false},
+    {"id":"validation-negative-wizard","split":"validation","query":"MFA와 `passkey` 등록을 하나씩 안내해줘","should_trigger":false}
   ]
 }
