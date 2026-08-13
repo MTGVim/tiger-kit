@@ -165,8 +165,12 @@ class ReleaseGateContractTest(unittest.TestCase):
                 "name: tk-example\ndescription: 한국어 설명\ndisable-model-invocation: false\nkind: hybrid\nrelationship: native\ntrigger: user-invoked\nsource: tigerkit\n",
                 encoding="utf-8",
             )
+            (root / "skills/tk-example/SKILL.md").write_text(
+                "# English model-facing contract\nAlways verify the current head before publication.\n",
+                encoding="utf-8",
+            )
             report = run_release_gate.scan_language(root)
-        self.assertEqual(report["files"], 3)
+        self.assertEqual(report["files"], 4)
         rows = report["violations"]
         self.assertEqual(len(rows), 2)
         self.assertTrue(any("New English sentence" in row["fingerprint"] for row in rows))

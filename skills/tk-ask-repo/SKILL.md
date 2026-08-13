@@ -10,54 +10,52 @@ metadata:
     relationship: native
 ---
 
-# 저장소 질문에 답하기
+# Answering Repository Questions
 
-명시적으로 `/tk-ask-repo`, `$tk-ask-repo`, 또는 호스트 스킬 선택으로 들어온
-구체적인 저장소 질문만 다룹니다.
+Handle only concrete repository questions explicitly invoked through `/tk-ask-repo`, `$tk-ask-repo`, or host skill selection.
 
-소스, 테스트, 설정, 산출물, 이력, 원격 상태를 수정하지 않는 읽기 전용 조사입니다.
-구현, 사용자 결정 닫기, 실행 시간 추정, 실제 브라우저 재현은 소유하지 않습니다.
+This is a read-only investigation that does not modify source, tests, configuration, artifacts, history, or remote state.
+It does not own implementation, closing user decisions, runtime estimation, or real-browser reproduction.
 
-## 사용자 경험
+## User Experience
 
-내부 조사는 엄격하게 하되 결과는 보고서가 아니라 자연스러운 설명이어야 합니다.
+Keep the internal investigation rigorous, but present the result as a natural explanation rather than a report.
 
-- 질문에 대한 결론을 먼저 말합니다.
-- 사람이 이해하기 좋은 순서로 값이나 동작의 흐름을 설명합니다.
-- 중요한 저장소 주장 바로 옆에 `path:line` 근거를 붙입니다.
-- 내부 분류명, 체크포인트, 검색 장부를 기본 출력하지 않습니다.
-- 표가 꼭 필요한 비교가 아니면 짧은 산문이나 제한된 목록을 사용합니다.
-- 사용자가 “하나씩 따라가며 설명해줘”라고 한 경우에만 한 단계씩 대화형으로 설명합니다.
+- State the answer to the question first.
+- Explain the value or behavior flow in an order that is easy to understand.
+- Place `path:line` evidence next to each important repository claim.
+- Do not show internal classifications, checkpoints, or search ledgers by default.
+- Use short prose or a limited list unless a comparison truly requires a table.
+- Explain interactively one step at a time only when the user says “하나씩 따라가며 설명해줘”.
 
-## 조사 원칙
+## Investigation Principles
 
-질문의 보이는 문자열, 식별자, 경로, 주소, 심볼을 첫 기준점으로 사용합니다.
-기준점이 없으면 시도한 검색과 필요한 정보를 짧게 설명하고 `Status: Unverifiable`로 끝냅니다.
+Use the question’s visible string, identifier, path, address, or symbol as the first anchor.
+If there is no anchor, briefly explain the searches attempted and the information needed, then end with `Status: Unverifiable`.
 
-모든 저장소 상태 주장은 다음 중 하나여야 합니다.
+Every repository-state claim must have one of the following:
 
-- 정확한 `path:line` 또는 현재 상태 근거
-- 근거를 읽을 수 없다는 명시적인 제한
-- 판단이 필요한 경우 `추론`임을 분명히 한 설명
+- An exact `path:line` or current-state evidence
+- An explicit limitation that the evidence cannot be read
+- A clear indication that the explanation is an `inference` when judgment is required
 
-선언은 형태만 증명합니다.
-값의 출처를 묻는 경우 실제 대입, 저장된 입력, 변환, 외부 경계까지 추적합니다.
+A declaration proves only shape.
+When asked about a value’s origin, trace the actual assignment, stored input, transformation, and external boundary.
 
-`찾지 못함`을 곧바로 `없음`으로 바꾸지 않습니다.
-현재 기준선과 관련된 진행 중 변경, 조건부 경로, 동적 연결 가능성을 확인합니다.
+Do not turn `not found` directly into `absent`.
+Check the current baseline, relevant in-progress changes, conditional paths, and possible dynamic connections.
 
-영향 질문에서는 관련 읽기·쓰기 위치를 조사하고 다음 의미를 구분합니다.
+For impact questions, investigate related read and write locations and distinguish:
 
-- 바뀌어야 하는 소비자
-- 바뀌면 안 되는 소비자
-- 근거가 부족해 판단하지 못한 소비자
+- Consumers that must change
+- Consumers that must not change
+- Consumers that cannot be determined due to insufficient evidence
 
-책임 위치를 묻는 경우 생산자를 탓하기 전에 소비 측 변환, 권한, 기능 조건,
-조건부 표시와 환경 차이를 먼저 확인합니다.
+When asked about ownership, check consuming-side transformations, permissions, feature conditions, conditional rendering, and environment differences before blaming the producer.
 
-## 대표 추적
+## Representative Traces
 
-### 값의 출처
+### Value Origin
 
 ```text
 표시 값
@@ -69,7 +67,7 @@ metadata:
 → 실제 대입 또는 외부 경계
 ```
 
-### 구조
+### Structure
 
 ```text
 진입점
@@ -79,38 +77,38 @@ metadata:
 → 저장소 또는 외부 시스템
 ```
 
-### 존재 여부
+### Existence
 
 현재 기준선, 관련 진행 중 변경과 실제 연결 상태를 근거로
 `없음 | 아직 반영되지 않음 | 자리만 있음 | 실제 사용 중` 의미를 구분합니다.
 
-### 영향과 책임
+### Impact and Ownership
 
-모든 관련 소비자를 확인하고, 어떤 부분이 현재 문제를 만들며 어떤 부분은 보존해야 하는지 설명합니다.
+Check all relevant consumers and explain which parts cause the current issue and which parts must be preserved.
 
-## 질문이 범위를 벗어날 때
+## When the Question Is Out of Scope
 
-다음 요청은 계속 조사해서 억지로 답하지 않습니다.
+Do not keep investigating to force an answer for these requests:
 
-- 코드 구현이나 커밋
-- 제품 동작에 대한 사용자 결정
-- 실제 브라우저 재현
-- 일정 또는 며칠 단위 추정
-- 저장소와 무관한 일반 지식
+- Code implementation or commits
+- User decisions about product behavior
+- Real-browser reproduction
+- Schedule or day-level estimates
+- General knowledge unrelated to the repository
 
-가능하면 한 문장으로 적절한 다음 행동을 알려줍니다.
-일반 구현은 특정 TigerKit 스킬을 강제하지 않고 현재 실행자에게 넘깁니다.
-작업을 먼저 구체화해야 하면 `tk-prep`, 실제 브라우저 근거가 필요하면 `tk-browser-verify`가 적절합니다.
+When possible, state the appropriate next action in one sentence.
+Route general implementation to the current executor without requiring a specific TigerKit skill.
+Use `tk-prep` when the work must first be specified, or `tk-browser-verify` when real-browser evidence is required.
 
-## 답변 형식
+## Response Format
 
-답변은 고정된 `Answer`, `Evidence`, `Origin` 보고서로 시작하지 않습니다.
-질문에 가장 직접적인 답을 첫 문단에 둡니다.
+Do not begin with a fixed `Answer`, `Evidence`, `Origin` report.
+Put the most direct answer to the question in the first paragraph.
 
-그 뒤 필요한 만큼만 흐름, 영향, 제한을 설명합니다.
-중요한 근거는 설명 바로 옆에 배치합니다.
+Then explain only as much flow, impact, and limitation as needed.
+Place important evidence next to the corresponding explanation.
 
-답변 마지막에는 항상 `## 공유용 요약`을 둡니다.
+Always end the response with `## 공유용 요약`.
 
 공유용 요약은:
 

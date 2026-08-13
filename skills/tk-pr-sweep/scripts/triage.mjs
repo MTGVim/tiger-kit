@@ -79,23 +79,71 @@ export function computeReviewDecision(reviews, authorLogin) {
     const timestamp = review.submitted_at || review.created_at || '';
     const previous = latestByReviewer.get(login);
     if (state === 'APPROVED' || state === 'CHANGES_REQUESTED') {
-      latestByReviewer.set(login, { state, timestamp });
+      latestByReviewer.set(login, {
+        state,
+        timestamp,
+        bot: review.user?.type === 'Bot' || login.endsWith('[bot]'),
+      });
     } else if (state === 'DISMISSED') {
       latestByReviewer.delete(login);
     } else if (!previous) {
       latestByReviewer.set(login, { state, timestamp });
     }
   }
-  const entries = [...latestByReviewer.values()];
+  const entries = [...latestByReviewer.entries()].map(([login, entry]) => ({ login, ...entry }));
   const changes = entries.filter((entry) => entry.state === 'CHANGES_REQUESTED');
   if (changes.length) {
-    return { decision: 'CHANGES_REQUESTED', decisiveAt: changes.map((entry) => entry.timestamp).sort().at(-1) || null };
+    return {
+      decision: 'CHANGES_REQUESTED',
+      decisiveAt: changes.map((entry) => entry.timestamp).sort().at(-1) || null,
+      changeReviewers: changes
+        .filter((entry) => !entry.bot)
+        .map(({ login, timestamp }) => ({ login, timestamp })),
+    };
   }
   const approvals = entries.filter((entry) => entry.state === 'APPROVED');
   if (approvals.length) {
-    return { decision: 'APPROVED', decisiveAt: approvals.map((entry) => entry.timestamp).sort().at(-1) || null };
+    return {
+      decision: 'APPROVED',
+      decisiveAt: approvals.map((entry) => entry.timestamp).sort().at(-1) || null,
+      changeReviewers: [],
+    };
   }
-  return { decision: 'REVIEW_REQUIRED', decisiveAt: null };
+  return { decision: 'REVIEW_REQUIRED', decisiveAt: null, changeReviewers: [] };
+}
+
+export function summaryCommentMarker(headSha) {
+  return `<!-- tigerkit:pr-summary:${headSha} -->`;
+}
+
+export function computeReReviewEvidence(pull, review, unresolvedThreads = []) {
+  const requested = new Set((pull?.requested_reviewers || []).map((reviewer) => reviewer.login).filter(Boolean));
+  const expected = review?.decision === 'CHANGES_REQUESTED' && unresolvedThreads.length === 0
+    ? (review.changeReviewers || []).map((reviewer) => reviewer.login).filter(Boolean)
+    : [];
+  const missing = [...new Set(expected)].filter((login) => !requested.has(login));
+  return {
+    required: expected.length > 0,
+    expectedReviewers: [...new Set(expected)],
+    requestedReviewers: [...requested],
+    missingReviewers: missing,
+    verified: missing.length === 0,
+  };
+}
+
+export function computeSummaryCommentEvidence(issueComments, authorLogin, headSha, required = false) {
+  const marker = summaryCommentMarker(headSha);
+  const matching = issueComments.filter((comment) =>
+    comment.user?.login === authorLogin && normalizeGitHubText(comment.body).includes(marker));
+  return {
+    required,
+    marker,
+    count: matching.length,
+    verified: !required || matching.length === 1,
+    missing: required && matching.length === 0,
+    duplicate: required && matching.length > 1,
+    comments: matching.map((comment) => ({ id: comment.id || null, url: comment.html_url || null })),
+  };
 }
 
 export function flattenPages(pages, arrayField = null) {
@@ -192,12 +240,16 @@ export function classifyPullRequest({
   latestExternalActionable,
   authorRespondedToLatestExternal,
   unresolvedThreads = [],
+  missingReReview = false,
+  missingSummaryComment = false,
 }) {
   if (checksUnverifiable) return 'checks_unverifiable';
   if (conflict) return 'merge_conflict';
   if (checksFailed) return 'checks_failed';
   if (unresolvedThreads.length) return 'unresolved_threads';
   if (latestExternalActionable && !authorRespondedToLatestExternal) return 'needs_reply';
+  if (missingReReview) return 'missing_re_review';
+  if (missingSummaryComment) return 'missing_summary_comment';
   if (decision === 'CHANGES_REQUESTED') {
     return authorRespondedToChangeRequest ? 'awaiting_re_review' : 'changes_requested';
   }
@@ -374,7 +426,7 @@ async function triageRepository(repo, login, teamKeys) {
       continue;
     }
     const rows = collectRows(reviews.data, inlineComments.data, issueComments.data);
-    const unresolvedThreads = threads.data.filter((thread) => !thread.isResolved);
+    const unresolvedThreads = threads.data.filter((thread) => !thread.isResolved && !thread.isOutdated);
     const review = computeReviewDecision(reviews.data, login);
     const reply = computeReplyEvidence(
       rows,
@@ -384,6 +436,13 @@ async function triageRepository(repo, login, teamKeys) {
     const check = checkState(repo, pull.head.sha);
     const changeResponse = review.decisiveAt
       && reply.responded.some((item) => item.responseAt && new Date(item.responseAt) > new Date(review.decisiveAt));
+    const reReview = computeReReviewEvidence(detail.data, review, unresolvedThreads);
+    const summaryComment = computeSummaryCommentEvidence(
+      issueComments.data,
+      login,
+      detail.data.head?.sha || pull.head?.sha,
+      reReview.required,
+    );
     const category = classifyPullRequest({
       draft: pull.draft,
       conflict: detail.data.mergeable_state === 'dirty',
@@ -394,12 +453,16 @@ async function triageRepository(repo, login, teamKeys) {
       latestExternalActionable: reply.outstanding.length > 0 || reply.responded.length > 0,
       authorRespondedToLatestExternal: reply.outstanding.length === 0 && reply.responded.length > 0,
       unresolvedThreads,
+      missingReReview: reReview.required && !reReview.verified,
+      missingSummaryComment: summaryComment.required && !summaryComment.verified,
     });
     failures.push(...check.errors.map((error) => `#${pull.number}: ${error}`));
     if (!['approved', 'pending_review'].includes(category)) {
       items.push(pullItem(repo, pull, category, {
         reviewDecision: review.decision,
         decisiveAt: review.decisiveAt,
+        reReview,
+        summaryComment,
         replyEvidence: reply,
         failedChecks: check.failures,
         checkErrors: check.errors,

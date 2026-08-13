@@ -10,23 +10,23 @@ metadata:
     relationship: native
 ---
 
-# 스킬 학습
+# Skill learning
 
-명시적 `invocation` 또는 재사용 가능한 `skill`을 작성하려는 명확한 의도에
-적용합니다. 대화, 메모, 경로, URL, 반복 workflow 또는 skill-evolution 후보를
-`repo skill | user skill` 후보로 전환합니다. 규칙, 일회성 팁, 일반 구현은 범위
-밖이며 다른 사용자 호출 `skill`은 절대 호출하지 않습니다.
+Apply this to an explicit `invocation` or clear intent to author a reusable `skill`.
+Convert conversations, notes, paths, URLs, repeated workflows, or skill-evolution
+candidates into `repo skill | user skill` candidates. Rules, one-off tips, and general
+implementation are out of scope, and never invoke another user-invoked `skill`.
 
-새 `skill`과 의미 업데이트를 포함한 `skill` `create | improve | merge`의 유일한
-TigerKit 작성자입니다. 다른 `skill`에서 온 후보/대상도 증거, 중복 제거, 평가,
-호환성, 적용 게이트를 통과해야 합니다.
+This is the sole TigerKit author for `skill` `create | improve | merge`, including new
+`skill`s and semantic updates. Candidates or targets from other `skill`s must also pass
+evidence, deduplication, evaluation, compatibility, and apply gates.
 
-Draft와 apply는 분리됩니다.
+Draft and apply are separate.
 
-- `draft gate`: 검증된 증거와 확인하지 않은 사용자 진술을 구분하고 `pending`
-  후보를 설계합니다. 증거가 여전히 `unverified`여도 명확한 설계 요청은
-  `learn.md` 에 기록하되 채팅에 전문을 출력하지 않습니다.
-- `apply gate`: `skill` 경로에 쓰기 전에 모든 체크리스트 행이 통과해야 합니다.
+- `draft gate`: Distinguish verified evidence from unverified user claims and design a
+  `pending` candidate. Even when evidence remains `unverified`, record a clear design
+  request in `learn.md` without printing the full text in chat.
+- `apply gate`: Every checklist row must pass before writing to a `skill` path.
 
 ## Artifact-first draft checkpoint
 
@@ -52,51 +52,55 @@ Draft와 apply는 분리됩니다.
 다르면 `Blocked` 로 중지하고 정본 경로에는 쓰지 않습니다. 기존 장부가
 다른 후보/실행을 가리키면 덮어쓰지 말고 `Blocked` 로 보고합니다.
 
-## 작업 흐름
+## Workflow
 
-1. **증거 장부:** 각 사례/workflow에 ID, 주장, source, `verified | unverified` 를
-   배정합니다. 접근할 수 없는 산출물이 있는 사용자 진술 사례 두 개는 서로 다른
-   `unverified` 행으로 남기고 `learn.md` 에 `pending` 상태를 기록합니다. 승격에는
-   독립적으로 검증된 반복 2건 또는 산출물이 뒷받침하는 재사용 workflow가 필요합니다.
-   `Unverified` 행은 적용을 통과하지 못합니다. 일회성 실수, 원시 로그, 출처 없는
-   단일 주장은 `no-op` 으로 종료합니다.
-2. **승격 및 중복 제거:** [스킬 품질](references/skill-quality.md)을 적용한 뒤 기존
-   저장소/사용자 `skill`, 기본 모델 capability, 짧은 규칙과 비교합니다.
-   `merge | no-op | continue | pending` 중 하나를 선택합니다. 카탈로그를 읽을 수
-   없으면 `pending` 에 머물되 그 상태와 근거를 `learn.md` 에 기록합니다.
-3. **후보 제안:** 대상, 작업 이름, 호출 종류, 양성/음성 trigger를 제시합니다.
-   사용자 도메인/workflow 언어를 사용해 64자 이하의 소문자 하이픈 표기 동사형
-   이름을 정하고, 충돌을 확인한 뒤 `proposed` 로 표시합니다. 지원하지 않는 값은
-   `TBD` 로 남깁니다.
-4. **최소 초안:** 최소한의 SKILL.md 입력, workflow, 실패 분기, 승인 경계, 완료
-   기준, 출력 계약, 금지 목록을 `learn.md` 에 직접 기록합니다. train/validation
-   trigger, 성공/경계 assertion, 무-skill 또는 prior-skill baseline,
-   portable-core/host-extension 판정도 추가합니다.
-5. **승인 요약:** `learn.md` 를 다시 읽은 뒤 사용자에게 절대 `learn.md` 경로,
-   결정/상태/처리 상태, 짧은 요약과 한 번의 승인 질문만 보고하고 멈춥니다.
-6. **쓰기·검증·보고:** 적용 권한이 통과한 뒤에만 쓰기 전 내용을 보존하고,
-   같은 디렉터리의 임시 대상과 원자적 이름 변경을 사용해 씁니다. 이후
-   `applied` 전에 frontmatter, 링크, evals, 대상 호스트 호출을 다시 읽고 검증합니다.
+1. **Evidence ledger:** Assign each case/workflow an ID, claim, source, and
+   `verified | unverified`. Keep two user-claimed cases with inaccessible artifacts
+   as separate `unverified` rows and record `pending` status in `learn.md`. Promotion
+   requires two independently verified repetitions or a reusable workflow supported
+   by artifacts. `Unverified` rows cannot pass apply. End one-off mistakes, raw logs,
+   and single unsourced claims as `no-op`.
+2. **Promotion and deduplication:** Apply [Skill quality](references/skill-quality.md),
+   then compare against existing repository/user `skill`s, default model capability,
+   and a short rule. Choose one of `merge | no-op | continue | pending`. If the
+   catalog cannot be read, remain `pending` and record that status and rationale in
+   `learn.md`.
+3. **Candidate proposal:** Present the target, action name, invocation kind, and
+   positive/negative triggers. Use the user's domain/workflow language to choose a
+   lowercase, hyphenated, verb-form name of at most 64 characters; check for
+   collisions, then mark it `proposed`. Leave unsupported values as `TBD`.
+4. **Minimal draft:** Record the minimal SKILL.md inputs, workflow, failure branches,
+   approval boundaries, completion criteria, output contract, and prohibitions
+   directly in `learn.md`. Also add train/validation triggers, success/boundary
+   assertions, a no-skill or prior-skill baseline, and the
+   portable-core/host-extension determination.
+5. **Approval summary:** After rereading `learn.md`, report only the absolute
+   `learn.md` path, decision/status/disposition, a short summary, and exactly one
+   approval question to the user, then stop.
+6. **Write, verify, report:** Only after apply authority passes, preserve the pre-write
+   contents and write using a temporary target in the same directory followed by an
+   atomic rename. Before marking `applied`, reread and verify frontmatter, links,
+   evals, and target-host invocation.
 
-### Apply gate 체크리스트
+### Apply gate checklist
 
-| 검사 | 통과 증거 | 미통과 |
+| Check | Passing evidence | If not passed |
 |---|---|---|
-| 승격 기준 | 독립 사례/공통 workflow가 승격 기준을 충족함 | `no-op | pending` |
-| 중복 제거 | 기존 skill/기본 capability/짧은 규칙과의 차이 및 `merge | continue` 근거가 있음 | `no-op | pending` |
-| 후보 식별 | native target, 이름, kind, 양성/음성 trigger를 확인함 | `pending | Unverifiable` |
-| 동작 검증 | train/validation trigger와 성공/경계 assertion이 통과함 | `pending | Blocked` |
-| 기준선/호환성 | no-skill/prior baseline 및 portable-core/host-extension 판정을 검증함 | `pending | Unverifiable` |
-| 적용 권한 | 현재 턴 승인이 정확한 후보와 대상 경로를 지정함 | `pending`; 쓰지 않음 |
+| Promotion threshold | Independent cases/common workflow meet the promotion threshold | `no-op | pending` |
+| Deduplication | Differences from existing skill/default capability/short rule and rationale for `merge | continue` exist | `no-op | pending` |
+| Candidate identity | Native target, name, kind, and positive/negative triggers are confirmed | `pending | Unverifiable` |
+| Behavior validation | Train/validation triggers and success/boundary assertions pass | `pending | Blocked` |
+| Baseline/compatibility | No-skill/prior baseline and portable-core/host-extension determination are verified | `pending | Unverifiable` |
+| Apply authority | Current-turn approval names the exact candidate and target path | `pending`; do not write |
 
-실제 경로 또는 호스트 탐색으로 입증된 현재 호스트의 native repo/user `skill`
-경로만 사용합니다. 알 수 없는 호스트는 `Unverifiable`입니다. 위치를 지어내거나
-한 호스트의 경로를 다른 호스트에 강제하거나 호스트 간 fan-out/sync를 하거나
-`.tigerkit/` 을 영구 `skill` 레지스트리/전역 상태로 사용하지 않습니다.
+Use only the current host's native repo/user `skill` paths proven through actual path
+or host discovery. An unknown host is `Unverifiable`. Do not invent locations, force
+one host's paths onto another host, perform cross-host fan-out/sync, or use
+`.tigerkit/` as a permanent `skill` registry/global state.
 
-## 실패 경로
+## Failure paths
 
-| Trigger | 즉시 조치 | 계속 미해결인 내용 |
+| Trigger | Immediate action | What remains unresolved |
 |---|---|---|
 | 두 사례/workflow를 주장했지만 산출물을 읽을 수 없음 | 각각 `unverified` 로 기록하고 `learn.md` 를 `Blocked` 로 남김 | 정확한 산출물/검사를 요청함; 쓰지 않음 |
 | 일회성 사례 하나 또는 원시 로그만 있음 | 기준/개인정보와 `Decision: no-op`, `Status: Pending` 을 기록함 | 후보/경로를 만들지 않음 |
@@ -105,25 +109,27 @@ Draft와 apply는 분리됩니다.
 | 증거/대상/승인이 충돌함 | 충돌과 하나의 결정을 제시함 | `Blocked` 로 중지 |
 | 쓰기/쓰기 후 검사가 실패함 | 기존 대상과 실행 임시 파일을 보존하고, 실행 소유임이 입증된 경우에만 부분적으로 생성된 새 대상을 제거함 | 정확히 재현·검증할 수 있을 때만 복구함; 소유권/보존이 불확실하면 `Blocked | Unverifiable`, 그 외에는 실제 경로와 `Fail` 을 보고함 |
 
-## 🔴 CHECKPOINT · 🛑 STOP (승인·중단 지점)
+## 🔴 CHECKPOINT · 🛑 STOP (Approval and stop point)
 
-명시적 현재 턴 적용 승인 전에는 정본 경로나
-`.tigerkit/skill-drafts/<skill-name>/` 에 쓰지 않습니다. 과거 approval, implicit
-invocation, 일반적인 계속 요청은 충분한 권한이 아닙니다. 승인 전 후보는
-`pending` 이며 Target path에는 정확한 계획 경로와 `not created` 를 기록합니다.
+Do not write to the canonical path or
+`.tigerkit/skill-drafts/<skill-name>/` before explicit current-turn apply approval.
+Past approval, implicit `invocation`, and a generic request to continue are
+insufficient authority. Before approval, the candidate remains `pending`, and Target
+path records the exact planned path and `not created`.
 
-새 초안의 승인 체크포인트는 반드시 `.tigerkit/learn.md` 작성·재읽기 뒤에
-발생합니다. 채팅에 최소 초안 전문, 후보 표 전체, 정확한 계획 파일 본문을
-덤프하지 않습니다. 채팅은 장부의 절대 경로, 결정/상태, 1~3줄 요약, 승인 질문
-하나만 포함합니다. 장부 작성·재읽기가 실패하면 승인 질문을 내지 않고
-`Blocked` 를 보고합니다.
+The approval checkpoint for a new draft must occur after writing and rereading
+`.tigerkit/learn.md`. Do not dump the full minimal draft, the complete candidate
+table, or the exact planned file contents into chat. Chat must contain only the
+ledger's absolute path, decision/status, a 1–3-line summary, and one approval
+question. If writing or rereading the ledger fails, do not ask for approval; report
+`Blocked`.
 
-승인 후에도 체크리스트 행이 하나라도 통과하지 않았으면 `applied` 로 보고하지 않습니다.
+Even after approval, do not report `applied` if any checklist row has not passed.
 
-일회성 `no-op` 경로는 위 표의 `Status: Pending` 을 사용합니다. 이는 해당
-경계 결과에만 적용하며, 모든 초안을 `Pending` 으로 바꾸지 않습니다.
+The one-off `no-op` path uses `Status: Pending` from the table above. This applies
+only to that boundary outcome; do not change every draft to `Pending`.
 
-## 출력 계약
+## Output contract
 
 산출물 작성 후에는 절대 `learn.md` 경로와 `Decision`/`Status`/`Disposition` 를 먼저
 보고하고, 핵심 결과를 1~3줄로만 요약합니다. 마지막에는 승인 질문을
@@ -132,13 +138,17 @@ invocation, 일반적인 계속 요청은 충분한 권한이 아닙니다. 승�
 않습니다. threshold 실패 또는 중복으로 인한 no-op도 같은 artifact-first 규칙을
 따릅니다.
 
-## 금지 사항 / 안티패턴
+## Prohibitions / antipatterns
 
-- 일회성 사례, 자격 증명, 원시 로그, 스크린샷을 재사용 가능한 증거로 승격하거나 초안에 복사하지 않습니다.
-- 증거가 `unverified`라는 이유로 요청된 `pending` 초안을 생략하지 않습니다.
-- 중복 `skill`, 장황한 기본 capability 래퍼, 구분할 수 없는 trigger 쌍을 만들지 않습니다.
-- 승인 전에 쓰거나 암시적 `invocation`을 권한으로 취급하지 않습니다.
-- `pending` 초안을 채팅에 전문으로 덤프하고 `learn.md` 를 생략하지 않습니다.
-- `learn.md` 의 누락/오래됨/재읽기 실패를 성공 체크포인트로 취급하지 않습니다.
-- Receipt에 이름/종류/경로/검증/우려 사항을 중복하지 않습니다.
-- 자동 아카이브, `.gitignore` 편집, 다른 사용자 `skill` 호출, push, publish를 하지 않습니다.
+- Do not promote one-off cases, credentials, raw logs, or screenshots as reusable
+  evidence or copy them into a draft.
+- Do not omit a requested `pending` draft because evidence is `unverified`.
+- Do not create duplicate `skill`s, verbose wrappers around default capability, or
+  indistinguishable trigger pairs.
+- Do not write before approval or treat implicit `invocation` as authority.
+- Do not dump the full `pending` draft into chat and omit `learn.md`.
+- Do not treat a missing/stale `learn.md` or reread failure as a successful
+  checkpoint.
+- Do not duplicate the name/kind/path/verification/concerns in the Receipt.
+- Do not auto-archive, edit `.gitignore`, invoke another user `skill`, push, or
+  publish.

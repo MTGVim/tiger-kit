@@ -10,29 +10,29 @@ metadata:
     relationship: native
 ---
 
-# 하나의 PR 리베이스
+# Rebase One PR
 
-`/tk-pr-rebase`, `$tk-pr-rebase`, 호스트 스킬 선택기, 또는 활성 `tk-pr-sweep`의 정확한 `PR handoff`로만 시작합니다.
-일반 브랜치 `rebase`, 단순 `conflict marker edit`, 리뷰 응답에는 자동 적용하지 않습니다.
+Start only through `/tk-pr-rebase`, `$tk-pr-rebase`, the host skill picker, or an exact `PR handoff` from an active `tk-pr-sweep`.
+Do not auto-apply to a generic branch `rebase`, simple `conflict marker edit`, or review response.
 
-한 PR의 정확한 `base/head rebase`, `conflict resolution`, `verification`, 제한된 `force-with-lease`를 소유합니다.
-`merge`, `close`, `tag`, `release`, 무관한 피드백 구현은 하지 않습니다.
+Own the exact `base/head rebase`, `conflict resolution`, `verification`, and bounded `force-with-lease` for one PR.
+Do not perform `merge`, `close`, `tag`, `release`, or unrelated feedback implementation.
 
 ## Fresh identity
 
-시작할 때 다음을 fresh-read합니다.
+Fresh-read the following at the start.
 
-- repository와 authenticated identity
+- repository and authenticated identity
 - open PR number
 - head repository/ref/SHA
 - base repository/ref/SHA
 - local branch/HEAD/worktree
 - active Git operation
-- review/thread/check 상태
+- review/thread/check state
 
-identity/ownership이 모호하거나 fork publication boundary가 안전하게 입증되지 않으면 mutation 전에 `Blocked`입니다.
+If identity/ownership is ambiguous or the fork publication boundary cannot be proven safe, return `Blocked` before mutation.
 
-exact remote head와 latest base를 fetch하고 다음을 고정합니다.
+Fetch the exact remote head and latest base, then freeze the following.
 
 ```text
 old_head
@@ -42,45 +42,45 @@ remote
 expected force-with-lease
 ```
 
-local `HEAD == old_head`, remote PR head `== old_head`, clean worktree를 요구합니다.
+Require local `HEAD == old_head`, remote PR head `== old_head`, and a clean worktree.
 
-## Rebase와 conflict
+## Rebase and conflict
 
-정확한 `base_sha` 위로 rebase합니다.
-conflict가 나면 `tk-merge-conflict`의 intent/index/marker/verification contract를 적용합니다.
-semantic ambiguity를 임의 선택하지 않습니다.
+Rebase onto the exact `base_sha`.
+If a conflict occurs, apply the intent/index/marker/verification contract from `tk-merge-conflict`.
+Do not choose arbitrarily when semantic ambiguity exists.
 
-rebase 뒤에는 다음을 검증합니다.
+After the rebase, verify the following.
 
-- Git operation 종료
+- Git operation completed
 - worktree/index clean
-- `base_sha`가 새 HEAD의 ancestor
-- intended commit/diff 보존
-- relevant tests/checks 통과
+- `base_sha` is an ancestor of the new HEAD
+- intended commit/diff preserved
+- relevant tests/checks pass
 
-rewrite가 필요 없으면 force-push하지 않습니다.
+Do not force-push if no rewrite is needed.
 
 ## Standalone publication
 
-명시적 standalone invocation은 local rebase까지만 자동 권한을 줍니다.
-remote publication 전에는 `.tigerkit/pr-rebase.md`에 exact PR/base/head, old/new SHA,
-verification, exact lease/refspec, reply/thread action, exclusions를 기록하고 reread합니다.
+An explicit standalone invocation automatically authorizes only the local rebase.
+Before remote publication, record the exact PR/base/head, old/new SHA,
+verification, exact lease/refspec, reply/thread action, and exclusions in `.tigerkit/pr-rebase.md`, then reread it.
 
-사용자에게는 전체 ledger를 읽으라고 던지지 말고, 무엇이 바뀌었고 어떤 검증을 했으며
-어떤 exact publication을 하려는지 자연스럽게 요약한 뒤 현재 턴 승인 하나를 받습니다.
+Do not tell the user merely to read the entire ledger. Naturally summarize what changed, what was verified,
+and which exact publication will be performed, then obtain one current-turn approval.
 
-승인 뒤 remote write 직전에 repository/identity/open state/base/head/refspec/lease를 다시 확인합니다.
-하나라도 material drift면 승인을 무효화합니다.
+Immediately before the remote write after approval, recheck repository/identity/open state/base/head/refspec/lease.
+Invalidate the approval if any material drift exists.
 
-publish는 exact `--force-with-lease=<full-head-ref>:<old_head>`만 허용합니다.
-plain `--force`는 금지합니다.
+Only exact `--force-with-lease=<full-head-ref>:<old_head>` is allowed for publication.
+Plain `--force` is prohibited.
 
-## Sweep 아래에서 실행
+## Execution under Sweep
 
-활성 `tk-pr-sweep`이 exact repository/PR/base/head와 rebase route를 이미 승인했다면 publication 질문을 반복하지 않습니다.
+If an active `tk-pr-sweep` has already approved the exact repository/PR/base/head and rebase route, do not repeat the publication question.
 
-Sweep child는 `.tigerkit/pr-sweep.md`나 `.tigerkit/pr-rebase.md`를 만들지 않습니다.
-parent에 다음 compact evidence만 반환합니다.
+A Sweep child must not create `.tigerkit/pr-sweep.md` or `.tigerkit/pr-rebase.md`.
+Return only the following compact evidence to the parent.
 
 - repository/PR
 - consumed `base_sha` / `old_head`
@@ -90,19 +90,19 @@ parent에 다음 compact evidence만 반환합니다.
 - remaining conflict/finding
 - status
 
-child가 실행되기 직전 exact PR/base/head를 다시 확인합니다.
-parent 승인 뒤 head/base가 material하게 변했으면 해당 PR만 `Blocked`로 parent에 반환합니다.
+Recheck the exact PR/base/head immediately before child execution.
+If the head/base changed materially after parent approval, return only that PR to the parent as `Blocked`.
 
-## Publication 후
+## After publication
 
-remote PR head가 `new_head`인지 확인합니다.
-rebase로 실제 충족된 review thread만 reply/resolve할 수 있습니다.
-모든 thread/review/check를 fresh-read하고 unresolved finding을 완료로 숨기지 않습니다.
+Verify that the remote PR head is `new_head`.
+Reply to or resolve only review threads actually satisfied by the rebase.
+Fresh-read every thread/review/check and do not hide unresolved findings as complete.
 
-필요한 경우 기존 human reviewer에게 재검토를 요청할 수 있지만 author, authenticated user, bot, 여전히 유효한 approver는 제외합니다.
-생성 GitHub comment는 `_🤖 본 코멘트는 AI가 작성했습니다._`로 끝냅니다.
+If needed, re-request review from an existing human reviewer, excluding the author, authenticated user, bots, and still-valid approvers.
+End generated GitHub comments with `_🤖 본 코멘트는 AI가 작성했습니다._`.
 
-## 상태
+## Status
 
 | 상태 | 의미 |
 | --- | --- |
@@ -112,4 +112,4 @@ rebase로 실제 충족된 review thread만 reply/resolve할 수 있습니다.
 | `Unverifiable` | 필요한 Git/GitHub evidence를 읽을 수 없음 |
 | `Fail` | 일부 local/remote operation이 실패했고 적용 상태를 정확히 보고해야 함 |
 
-관찰하지 않은 reply/resolve/review/check 상태를 성공으로 주장하지 않습니다.
+Do not claim success for any reply/resolve/review/check state that was not observed.

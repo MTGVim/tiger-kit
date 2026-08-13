@@ -8,6 +8,8 @@ import {
   checkProvider,
   classifyPullRequest,
   computeReplyEvidence,
+  computeReReviewEvidence,
+  computeSummaryCommentEvidence,
   computeReviewDecision,
   formatLocalTimestamp,
   flattenPages,
@@ -20,6 +22,7 @@ import {
   parseRepoFromRemote,
   requestedTeamForUser,
   stripNoise,
+  summaryCommentMarker,
   teamKeysForUser,
   triageConfigPath,
 } from './triage.mjs';
@@ -84,6 +87,55 @@ test('review decision keeps a later COMMENTED review from clearing changes reque
     { user: { login: 'reviewer' }, state: 'CHANGES_REQUESTED', submitted_at: '2026-01-01T00:00:00Z' },
     { user: { login: 'reviewer' }, state: 'COMMENTED', submitted_at: '2026-01-02T00:00:00Z' },
   ], 'author').decision, 'CHANGES_REQUESTED');
+});
+
+test('detects a missing re-review request after all actionable threads close', () => {
+  const review = computeReviewDecision([
+    { user: { login: 'reviewer' }, state: 'CHANGES_REQUESTED', submitted_at: '2026-01-01T00:00:00Z' },
+  ], 'author');
+  const evidence = computeReReviewEvidence(
+    { requested_reviewers: [] },
+    review,
+    [],
+  );
+  assert.deepEqual(evidence.missingReviewers, ['reviewer']);
+  assert.equal(evidence.verified, false);
+  assert.equal(classifyPullRequest({
+    draft: false,
+    conflict: false,
+    checksFailed: false,
+    checksUnverifiable: false,
+    decision: review.decision,
+    authorRespondedToChangeRequest: true,
+    latestExternalActionable: false,
+    authorRespondedToLatestExternal: true,
+    missingReReview: true,
+  }), 'missing_re_review');
+});
+
+test('does not require re-review requests for bot change reviews', () => {
+  const review = computeReviewDecision([
+    { user: { login: 'dependabot[bot]', type: 'Bot' }, state: 'CHANGES_REQUESTED', submitted_at: '2026-01-01T00:00:00Z' },
+  ], 'author');
+  const evidence = computeReReviewEvidence({ requested_reviewers: [] }, review, []);
+  assert.equal(evidence.required, false);
+  assert.deepEqual(evidence.expectedReviewers, []);
+});
+
+test('requires exactly one current-head Korean summary comment', () => {
+  const headSha = 'abc123';
+  const marker = summaryCommentMarker(headSha);
+  const verified = computeSummaryCommentEvidence([
+    { id: 1, user: { login: 'author' }, body: `${marker}\n리뷰 대응 요약`, html_url: 'https://example.test/1' },
+  ], 'author', headSha, true);
+  assert.equal(verified.verified, true);
+  assert.equal(verified.count, 1);
+
+  const stale = computeSummaryCommentEvidence([
+    { id: 2, user: { login: 'author' }, body: `${summaryCommentMarker('oldsha')}\n리뷰 대응 요약` },
+  ], 'author', headSha, true);
+  assert.equal(stale.missing, true);
+  assert.equal(stale.verified, false);
 });
 
 test('latest external message is scoped per thread', () => {
