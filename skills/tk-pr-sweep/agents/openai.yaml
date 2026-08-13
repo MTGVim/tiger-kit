@@ -1,5 +1,5 @@
 interface:
-  short_description: "[user] 여러 PR을 fresh triage로 읽고 지금 할 일과 기다릴 일을 자연스럽게 브리핑합니다."
+  short_description: "[user] 여러 PR을 `fresh triage`로 읽고 지금 할 일과 기다릴 일을 자연스럽게 브리핑합니다."
   default_prompt: "`tk-pr-sweep`로 `configured repositories`를 `deterministic fresh triage`하고, 사용자에게는 지금 처리할 PR과 기다릴 PR을 이유와 함께 자연스럽게 설명하세요. 실행 모드는 `batch` 계획을 한 번 승인받고 각 PR을 `fresh-read`해 처리하며 `lifecycle ledger`나 `model routing state`를 만들지 마세요."
 
 policy:
