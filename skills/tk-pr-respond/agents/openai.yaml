@@ -1,3 +1,3 @@
 interface:
-  short_description: "[user/auto] 한 PR의 리뷰를 자연스럽게 해석하고 Seed 기반 수정·검증·제한된 발행까지 처리합니다."
-  default_prompt: "`tk-pr-respond`로 exact PR을 fresh-read하고, 리뷰 의미와 해결안·근거·검증 계획을 자연스럽게 설명하세요. 사용자 소유 결정만 묻고 한 번 승인받은 뒤 코드 변경은 `.tigerkit/seed.md`를 task context로 사용해 구현·검증·bounded publication까지 진행하세요."
+  short_description: "[user/auto] 한 PR의 리뷰를 자연스럽게 해석하고 `Seed` 기반 수정·검증·제한된 발행까지 처리합니다."
+  default_prompt: "`tk-pr-respond`로 `exact PR`을 `fresh-read`하고, 리뷰 의미와 해결안·근거·검증 계획을 자연스럽게 설명하세요. 사용자 소유 결정만 묻고 한 번 승인받은 뒤 코드 변경은 `.tigerkit/seed.md`를 `task context`로 사용해 구현·검증·`bounded publication`까지 진행하세요."

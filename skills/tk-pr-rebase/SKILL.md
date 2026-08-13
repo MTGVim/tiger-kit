@@ -1,6 +1,6 @@
 ---
 name: tk-pr-rebase
-description: "[user/auto] 하나의 open GitHub pull request를 exact 최신 base로 rebase하고 conflict를 해결한 뒤, standalone 승인 또는 active Sweep의 bounded authority로 검증된 force-with-lease publication을 수행합니다."
+description: "[user/auto] 하나의 `open` GitHub `pull request`를 정확한 최신 `base`로 `rebase`하고 `conflict`를 해결한 뒤, `standalone` 승인 또는 `active` `Sweep`의 `bounded authority`로 검증된 `force-with-lease publication`을 수행합니다."
 disable-model-invocation: false
 argument-hint: "<pull request or repository> [--ci]"
 metadata:
@@ -12,11 +12,11 @@ metadata:
 
 # 하나의 PR 리베이스
 
-`/tk-pr-rebase`, `$tk-pr-rebase`, host skill picker, 또는 활성 `tk-pr-sweep`의 exact PR handoff로만 시작합니다.
-일반 branch rebase, 단순 conflict marker edit, review response에는 자동 적용하지 않습니다.
+`/tk-pr-rebase`, `$tk-pr-rebase`, 호스트 스킬 선택기, 또는 활성 `tk-pr-sweep`의 정확한 `PR handoff`로만 시작합니다.
+일반 브랜치 `rebase`, 단순 `conflict marker edit`, 리뷰 응답에는 자동 적용하지 않습니다.
 
-한 PR의 exact base/head rebase, conflict resolution, verification, bounded force-with-lease를 소유합니다.
-merge, close, tag, release, unrelated feedback implementation은 하지 않습니다.
+한 PR의 정확한 `base/head rebase`, `conflict resolution`, `verification`, 제한된 `force-with-lease`를 소유합니다.
+`merge`, `close`, `tag`, `release`, 무관한 피드백 구현은 하지 않습니다.
 
 ## Fresh identity
 

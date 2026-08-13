@@ -8,19 +8,19 @@
     {"id":"validation-positive-formal","split":"validation","query":"/tk-pr-open 현재 브랜치의 검증된 커밋으로 PR을 준비해 주세요.","should_trigger":true,"facets":["formal"]},
     {"id":"validation-positive-casual","split":"validation","query":"PR 열어줘","should_trigger":true,"facets":["casual"]},
     {"id":"validation-positive-typo","split":"validation","query":"tk-pr-opne 지금 브랜치 PR 올려줘","should_trigger":true,"facets":["typo"]},
-    {"id":"validation-positive-ko-en","split":"validation","query":"현재 verified commit으로 PR draft 열고 title/body 준비해줘","should_trigger":true,"facets":["ko-en"]},
-    {"id":"validation-positive-short","split":"validation","query":"$tk-pr-open draft","should_trigger":true,"facets":["short"]},
-    {"id":"validation-positive-compound","split":"validation","query":"현재 브랜치로 PR을 만들고 Ready Seed의 browser evidence requirement도 반영해줘","should_trigger":true,"facets":["compound"]},
-    {"id":"validation-positive-update","split":"validation","query":"$tk-pr-open 이미 있는 같은 head PR의 본문과 evidence를 업데이트해줘","should_trigger":true,"facets":["formal","compound"]},
+    {"id":"validation-positive-ko-en","split":"validation","query":"현재 `verified commit`으로 PR `draft` 열고 `title/body` 준비해줘","should_trigger":true,"facets":["ko-en"]},
+    {"id":"validation-positive-short","split":"validation","query":"$tk-pr-open `draft`","should_trigger":true,"facets":["short"]},
+    {"id":"validation-positive-compound","split":"validation","query":"현재 브랜치로 PR을 만들고 Ready Seed의 `browser evidence requirement`도 반영해줘","should_trigger":true,"facets":["compound"]},
+    {"id":"validation-positive-update","split":"validation","query":"$tk-pr-open 이미 있는 같은 `head PR`의 본문과 `evidence`를 업데이트해줘","should_trigger":true,"facets":["formal","compound"]},
     {"id":"validation-positive-ready-work","split":"validation","query":"구현과 검증은 끝났어. 현재 커밋 그대로 PR 준비해줘","should_trigger":true,"facets":["casual","short"]},
 
     {"id":"validation-negative-summary","split":"validation","query":"이 PR 내용만 요약해 주세요.","should_trigger":false,"facets":["formal"]},
     {"id":"validation-negative-review","split":"validation","query":"리뷰 코멘트에 답변해줘","should_trigger":false,"facets":["casual"]},
     {"id":"validation-negative-typo","split":"validation","query":"PR 설먕해줘","should_trigger":false,"facets":["typo"]},
-    {"id":"validation-negative-ko-en","split":"validation","query":"이 PR review status만 읽어줘","should_trigger":false,"facets":["ko-en"]},
+    {"id":"validation-negative-ko-en","split":"validation","query":"이 PR `review status`만 읽어줘","should_trigger":false,"facets":["ko-en"]},
     {"id":"validation-negative-short","split":"validation","query":"PR 상태","should_trigger":false,"facets":["short"]},
-    {"id":"validation-negative-compound","split":"validation","query":"main에 merge하고 tag와 release까지 진행해줘","should_trigger":false,"facets":["compound"]},
-    {"id":"validation-negative-implementation","split":"validation","query":"아직 구현 안 했으니 코드를 고치고 commit부터 만들어줘","should_trigger":false,"facets":["formal","compound"]},
-    {"id":"validation-negative-multi-pr","split":"validation","query":"열린 PR 여러 개를 triage하고 문제 있는 것 전부 처리해줘","should_trigger":false,"facets":["casual","ko-en"]}
+    {"id":"validation-negative-compound","split":"validation","query":"main에 `merge`하고 `tag`와 `release`까지 진행해줘","should_trigger":false,"facets":["compound"]},
+    {"id":"validation-negative-implementation","split":"validation","query":"아직 구현 안 했으니 코드를 고치고 `commit`부터 만들어줘","should_trigger":false,"facets":["formal","compound"]},
+    {"id":"validation-negative-multi-pr","split":"validation","query":"열린 PR 여러 개를 `triage`하고 문제 있는 것 전부 처리해줘","should_trigger":false,"facets":["casual","ko-en"]}
   ]
 }

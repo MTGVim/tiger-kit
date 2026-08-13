@@ -312,8 +312,11 @@ def isolated_checkout(source: Path) -> Iterator[Path]:
 
 def load_eval_contracts(root: Path, selected: set[str] | None) -> dict[str, dict[str, object]]:
     contracts: dict[str, dict[str, object]] = {}
+    retired = load_retired_skill_contracts(root) if selected is None else set()
     for skill_dir in sorted((root / "skills").glob("tk-*")):
         if selected and skill_dir.name not in selected:
+            continue
+        if selected is None and skill_dir.name in retired:
             continue
         triggers = json.loads((skill_dir / "evals" / "triggers.json").read_text(encoding="utf-8"))
         behavior = json.loads((skill_dir / "evals" / "evals.json").read_text(encoding="utf-8"))
