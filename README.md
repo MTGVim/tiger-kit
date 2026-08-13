@@ -1,12 +1,8 @@
 # TigerKit
 
-<p align="center">
-  <img src="assets/tigerkit-cover.webp" width="960" alt="TigerKit Agent Skills 표지">
-</p>
-
-TigerKit은 Claude Code, Codex, Hermes Agent용 엔지니어링 Agent Skills 모음입니다.
-중앙 워크플로 실행기나 플러그인 없이 독립형 스킬을 `npx skills` 로
-배포합니다.
+TigerKit은 Claude Code, Codex, Hermes Agent용 독립 `Agent Skills` 모음입니다.
+중앙 `workflow runtime`, `plugin`, `scheduler`, `shared state framework`가 아닙니다.
+각 스킬은 `npx skills`로 배포합니다.
 
 ## 설치
 
@@ -19,160 +15,206 @@ npx skills add MTGVim/tiger-kit \
   --skill '*'
 ```
 
-설치된 skill을 갱신하려면 전역 update를 실행합니다.
+갱신:
 
 ```bash
 npx skills update --global --yes
-# 짧은 표기: npx skills update -g -y
 ```
 
-`npx skills add .` 또는 로컬 경로 설치는 저장소 검증·개발용입니다. 같은 checkout에
-전역 설치와 로컬 설치를 함께 두면 Codex가 두 skill root를 모두 발견해 picker에
-중복 표시할 수 있으므로 실제 사용자 설치에는 `MTGVim/tiger-kit` 를 사용하세요.
+Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 선택기를 사용합니다.
 
-Claude Code와 Hermes Agent에서는 `/tk-drive`, Codex에서는
-`$tk-drive` 또는 skill picker를 사용합니다.
-PR lifecycle은 `/tk-pr-open`, `/tk-pr-respond`, `/tk-pr-rebase`,
-`/tk-pr-sweep` 를 직접 선택하며 read-only inventory는 `/tk-pr-sweep --report` 를 사용합니다.
+## 기본 흐름
+
+```text
+요청 / issue / bug / review
+          ↓
+       tk-prep
+          ↓
+ .tigerkit/seed.md
+          ↓
+ ordinary agent work
+          ↓
+ review / verification
+          ↓
+       commit
+          ↓
+     tk-pr-open
+```
+
+`tk-prep`은 저장소 근거와 자연스러운 대화로 작업을 명확하게 만들고,
+새 세션이나 더 낮은 수준의 구현 모델이 원 대화 없이 읽을 수 있는 `.tigerkit/seed.md`를 만듭니다.
+
+Ready `Seed` 뒤의 `split`, 하위 에이전트 `fan-out`, 순차 실행, 실제 모델 선택은
+TigerKit 실행 규약이 아니라 현재 `agent`/`host`의 실행 판단입니다.
+같은 세션에서는 `Seed` 승인 뒤 “진행해”, 새 세션에서는 “`.tigerkit/seed.md` 읽고 진행해” 정도면 충분해야 합니다.
+
+작은 수정과 평범한 후속 의견은 스킬 없이 현재 대화에서 바로 처리합니다.
 
 ## 스킬 구성
 
-| Skill | 호출 | 소유 범위 |
+| 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
-| `tk-drive` | user | 명시 source를 한 번 준비·승인하고 fresh worker unit·R/AC gap closure·verified commits·finalization까지 진행 |
-| `tk-implement` | `user` | 하나의 새 `Ready` 티켓을 정확한 범위만 구현하고 필수 검토·검증 뒤 검증된 커밋을 만듦 |
-| `tk-to-spec` | `user` | 원본 증거를 저장소 로컬 `spec.md` 초안으로 변환하고 추측·구현·티켓 분해는 하지 않음 |
-| `tk-to-tickets` | `user` | `Ready` 사양을 독립적으로 관찰 가능한 세로형 티켓으로 분해하고 `tickets.md`를 작성 |
-| `tk-audit` | user | repository를 read-only audit하고 `.tigerkit/audit.md` 에 evidence-backed `AUD-*` finding을 기록 |
-| `tk-ask-repo` | user | repository 질문을 `path:line` 근거로 조사하는 read-only desk |
-| `tk-grill-me` | hybrid | material user decision을 evidence-first 질문 하나씩 닫음 |
-| `tk-pr-open` | hybrid | 명확한 단일 PR 요청으로 초안·publish plan을 작성하고 승인 후 create/update |
-| `tk-pr-respond` | hybrid | 단일 PR을 한 번 준비·승인하고 fresh-worker resolution unit·acceptance gap closure·bounded publish까지 처리 |
-| `tk-pr-rebase` | hybrid | 명시 호출 또는 sweep handoff에서 열린 PR을 최신 base에 rebase하고 bounded force-with-lease·review follow-up publish |
-| `tk-pr-sweep` | user | deterministic `--report` 또는 한 번 승인한 multi-PR maintenance batch와 bounded child routes를 소유 |
-| `tk-github-image-upload-to-pr` | user | 로컬 evidence image를 인증된 browser session으로 기존 PR 본문이나 요청된 comment에 upload |
-| `tk-prototype` | hybrid | 폐기 가능한 UI/logic 비교물을 실행 |
-| `tk-browser-verify` | hybrid | 승인된 browser-visible AC를 headless-only로 검증하고 compact evidence를 상위 owner에 반환 |
-| `tk-skill-diagnose` | hybrid | 관찰된 Agent Skill incident를 재현·격리하고 verified `learn-ready` objective를 handoff |
-| `tk-learn` | hybrid | `create | improve | merge` 를 유일하게 소유하는 repository/user skill 작성자; 승인 전에는 쓰지 않음 |
-| `tk-grooming` | hybrid | 기존 repository/user skill의 중복·범위·배치를 감사 |
-| `tk-handoff` | hybrid | 현재 evidence 기반 resume snapshot 작성·재개 |
-| `tk-merge-conflict` | hybrid | 진행 중인 Git conflict의 의도를 복원하고 operation 완료 |
-| `tk-mwhat` | `user` | 직전 설명이 이해되지 않을 때만 짧고 정확하게 다시 설명하며 파일 변경·실행은 하지 않음 |
-| `tk-wizard` | `hybrid` | 사용자가 직접 해야 하는 프로비저닝·자격 증명·로그인·권한·이관 절차를 임시 단계로 안내 |
+| `tk-prep` | `user` | 저장소 근거와 대화형 인터뷰로 실행 준비된 `Seed` 작성 |
+| `tk-audit` | `user` | 읽기 전용 저장소 감사와 `AUD-*` 발견 사항 |
+| `tk-ask-repo` | `user` | 저장소 동작·값·영향·귀속을 근거와 함께 설명 |
+| `tk-pr-open` | `hybrid` | 검증된 `commit`의 제한된 `push` + PR 생성/갱신 |
+| `tk-pr-respond` | `hybrid` | 한 PR의 리뷰/지원 CI 분석·수정·검증·`reply`/`resolve` |
+| `tk-pr-rebase` | `hybrid` | 정확한 PR의 최신 `base` `rebase`와 제한된 `force-with-lease` |
+| `tk-pr-sweep` | `user` | 여러 PR의 결정론적 분류와 승인된 유지보수 묶음 |
+| `tk-github-image-upload-to-pr` | `user` | 기존 PR에 로컬 근거 이미지 올리기 |
+| `tk-prototype` | `hybrid` | 폐기 가능한 UI/로직 비교물 |
+| `tk-browser-verify` | `hybrid` | 화면에 보이는 AC의 `headless` 실행 검증 |
+| `tk-skill-diagnose` | `hybrid` | `Agent Skill` 사고 재현·격리와 `learn-ready` 인계 |
+| `tk-learn` | `hybrid` | 재사용 가능한 스킬의 생성/개선/병합 작성자 |
+| `tk-grooming` | `hybrid` | 저장소/사용자 스킬 목록 감사 |
+| `tk-handoff` | `hybrid` | 진행 중 작업의 재개용 상태 사진 |
+| `tk-merge-conflict` | `hybrid` | 활성 Git 충돌 의도 복원 |
+| `tk-mwhat` | `user` | 직전 설명을 더 쉽게 다시 설명 |
+| `tk-wizard` | `hybrid` | 사람이 직접 해야 하는 설정·인증·이관 절차 안내 |
 
-작은 수정과 일반 후속 피드백은 skill 없이 현재 대화에서 처리합니다. 별도 artifact,
-commit, 검증 또는 안전 경계가 있을 때만 해당 skill을 선택합니다.
+`user`는 명시 호출 전용이고, `hybrid`는 해당 작업 의도가 명확할 때 자동 진입할 수 있습니다.
 
-## 출력 표시
+## `tk-prep`과 `Seed`
 
-일반적인 standalone skill은 진행 표기를 생략하고, 사용자 응답·외부 대기 또는
-긴 작업 경계에서만 선택적으로 표시합니다. 이모지 뒤에는 항상 공백을 둡니다.
+`tk-prep`은 고정 양식 위저드가 아닙니다.
+내부적으로는 명확도와 엔지니어링 준비도를 엄격하게 평가하지만,
+사용자에게는 현재 이해, 추천, 이유를 자연스러운 대화로 설명합니다.
 
-| 표기 | 의미 |
-| --- | --- |
-| `🤹 진행` | 의미 있는 긴 작업 경계 또는 부모 오케스트레이션 (`🤹 drive > child`) |
-| `🙋 응답 필요` | 사용자 질문·승인·조치 필요 |
-| `⏳ 대기` | 다음 행동이 CI·원격 작업·재리뷰 대기 |
+사용자에게 직접 묻는 것은 제품/범위 같은 사용자 소유 결정, 위험하거나 비가역적인 결정,
+충분히 개선한 뒤에도 남는 엔지니어링 예외 승인뿐입니다.
 
-정상 no-op 행은 생략하고, 표에는 한 번만 범례를 둡니다. PR·review thread 링크는
-클릭 가능한 Markdown 링크로 표시하며 GitHub의 `<br>`/`<br/>` 는 TUI용 실제 개행으로
-정규화합니다. terminal response에는 progress marker를 넣지 않으며, 최종 결과는
-`Status: <token>` 한 줄만 결과 토큰으로 사용합니다.
-
-## PR 수명 주기 안내
+이해 준비도는 다음 축을 봅니다.
 
 ```text
-/tk-pr-open
-→ repository·branch·HEAD·기존 PR 확인
-→ exact draft와 publish plan
-→ current-turn publish approval
+Goal          20%
+Context       20%
+Scope         15%
+Decisions     15%
+Acceptance    15%
+Verification  15%
+```
+
+점수는 `0 | 0.25 | 0.5 | 0.75 | 1`만 사용하며,
+가중 모호성이 `0.20` 이하이고 모든 축이 `0.75` 이상이어야 인터뷰를 끝낼 수 있습니다.
+이 기준은 사용자 승인으로 우회할 수 없습니다.
+
+엔지니어링 준비도는 각 축을 독립적으로 확인합니다.
+
+```text
+Reuse
+Simplicity
+Tests
+Security
+Experience
+```
+
+사용자 표시 상태는 `준비됨 | 보완 필요 | 개선 한계 | 예외 승인 | 해당 없음`입니다.
+미달 축은 먼저 추가 조사와 접근 개선을 시도하고, 더 끌어올릴 수 없을 때만 이유·남은 위험·완화책과 함께 예외 승인을 받습니다.
+
+Ready `.tigerkit/seed.md`는 현재 작업의 자체 완결 실행 맥락입니다.
+목표/배경, 현재 상태, 범위, 사용자 결정, 구현 안내, AC, 검증, 브라우저 계획, 엔지니어링 예외를 구현자가 원 대화 없이 이해할 수 있게 담습니다.
+
+`worker`/`wave` 진행 상태, 제공자 모델 선택자, 추론 강도, 영수증, 비밀 값은 `Seed`에 저장하지 않습니다.
+
+## 브라우저 검증
+
+`browser-visible` AC가 있으면 `tk-prep`에서 대상, `headless`, 인증, `viewport`, 개발 서버, `screenshot` 근거, 통과 조건을 정합니다.
+비밀번호, `token`, OTP, `cookie`, `session` 비밀 값은 `Seed`에 저장하지 않고 실행 시 일시 입력으로만 다룹니다.
+
+개발 서버가 필요하면 시작·준비 확인·정리는 `tk-browser-verify`가 소유합니다.
+
+## 대화형 사용 경험
+
+공통 원칙은 **대화는 자연스럽게, 상태는 엄격하게**입니다.
+
+- `tk-prep`: 함께 작업 맥락을 정리해 `Seed`를 만듭니다.
+- `tk-wizard`: 사람이 직접 해야 하는 일을 한 단계씩 자연스럽게 안내합니다.
+- `tk-ask-repo`: 질문에 먼저 답하고 코드 흐름을 설명한 뒤 `3~10`줄 공유용 요약을 제공합니다.
+- `tk-pr-respond`: 리뷰 의도를 해석하고 해결 방향과 이유를 합의합니다.
+- `tk-pr-sweep`: 여러 PR 중 지금 할 일과 기다릴 일을 최신 분류로 브리핑합니다.
+
+내부 분류, 실행 기반, 경로 상태, 영수증을 기본 사용자 화면에 덤프하지 않습니다.
+
+## PR 흐름
+
+```text
+tk-pr-open
+→ verified branch/HEAD/template/evidence preview
+→ current-turn publication approval
 → bounded push + PR create/update
 
-/tk-pr-respond
-→ fresh exact-PR evidence와 apply | reply | defer resolution units/waves 준비
-→ assumptions·verification·bounded publication을 포함한 한 번의 plan approval
-→ unit마다 fresh worker candidate → verifier → R/AC gap closure → verified commit
-→ fresh PR validation 뒤 이미 승인된 push·reply·resolve·re-review·summary
+tk-pr-respond
+→ fresh exact PR read
+→ review/CI 의미 설명 + 필요한 결정만 질문
+→ one approval
+→ code-changing task는 seed.md
+→ implement/review/verify
+→ bounded push/reply/resolve/re-review
 
-/tk-pr-rebase
-→ exact PR head와 최신 base SHA 고정
-→ local rebase; active conflict만 tk-merge-conflict로 해결
-→ verification과 exact force-with-lease·review follow-up plan
-→ current-turn approval 뒤 publish
-→ post-push review state에 따라 human re-review request
+tk-pr-rebase
+→ fresh exact PR/base/head
+→ rebase + conflict handling + verification
+→ bounded force-with-lease
 
-/tk-pr-sweep --report
-→ package-local deterministic triage를 read-only 실행
+tk-pr-sweep --report
+→ deterministic fresh triage 읽기 전용 briefing
 
-/tk-pr-sweep
-→ configured repositories deterministic triage와 actionable/held/report-only batch 준비
-→ assumptions·waves·bounded child/publication actions를 포함한 한 번의 plan approval
-→ conflict는 tk-pr-rebase --ci, Actions·feedback은 tk-pr-respond --ci
-→ nested routes는 competing Markdown ledger 없이 pr-sweep evidence로 반환
-→ final deterministic triage와 aggregate R/AC gap result
+tk-pr-sweep
+→ fresh multi-PR briefing + batch approval
+→ exact PR별 Respond/Rebase
+→ final fresh triage
 ```
 
-네 skill은 포괄 권한을 공유하지 않습니다. `tk-pr-sweep --report` 는 read-only이고,
-`tk-pr-open`, standalone `tk-pr-respond`, standalone `tk-pr-rebase` 는 각자의 exact
-plan 승인이 있기 전에는 remote write를 하지 않습니다. 명시적 interactive
-`tk-pr-sweep` plan만 fresh exact evidence 안에서 child의 bounded `--ci` route를
-한 번 승인합니다.
+PR 원격 권한은 서로 자동 확장되지 않습니다. `merge`, `tag`, `release`에는 별도 권한이 필요합니다.
 
-## `tk-drive`
+## 상태와 설정
+
+`.tigerkit/`은 저장소/작업 트리 로컬 임시 공간이며 전역 프로젝트 기억이 아닙니다.
+제품 작업의 기본 영구 맥락은 `.tigerkit/seed.md` 하나입니다.
+
+`tk-pr-sweep`의 장기 저장소 범위는 다음 사용자 설정을 사용할 수 있습니다.
 
 ```text
-explicit tk-drive <source>
-→ Prepare: Ready R/AC, assumptions, units/waves, verification obligations
-→ material blocking decision이 있을 때만 tk-grill-me
-→ 한 번의 final plan approval
-→ Execute: unit마다 fresh worker candidate
-→ required verifier 후 R/AC Close gaps
-→ unit마다 verified commit
-→ aggregate verification → Finalize
+$XDG_CONFIG_HOME/tigerkit/pr-triage.json
 ```
 
-`tk-learn`만 `create | improve | merge` skill 변경을 작성합니다.
-`tk-skill-diagnose` 는 검증된 목표를 `learn-ready` 로 handoff하고,
-`tk-grooming` 은 repository/user skill만 감사하며 rule lifecycle을 소유하지
-않습니다. `tk-browser-verify` 는 visible login이나 product source mutation 없이
-승인된 AC만 검증합니다. 인증이 필요하면 repository/application 근거가 있는
-transient token/session injection을 사용하고, 불가능하면 product mutation 전에
-`Unverifiable` 을 반환합니다. Nested verifier는 Markdown ledger를 만들지 않고
-상위 owner에 compact facts와 inspected binary evidence path만 반환합니다.
+모델 매핑, 선택자, 추론 강도, 작업자 경로, `fan-out` 선호, 함정 모음은 TigerKit 사용자 설정으로 만들지 않습니다.
 
-Continuation은 prompt-directed이며 durable scheduler나 cross-turn replay를
-보장하지 않습니다. Process 또는 host 경계를 넘으면 `.tigerkit/` artifact,
-Git, tests, browser evidence를 다시 읽어 다음 node를 선택합니다.
+## 학습과 반복 발견
 
-TigerKit은 이 한계를 문구로 숨기지 않습니다. `scripts/run_drive_experiment.py` 는
-동일한 source를 `tk-drive` arm과 ordinary host control arm으로 실행하여 terminal
-상태, phase continuation, commit, verification, token/time을 비교합니다. 측정된
-명확한 열세가 없으면 catalog에서 `tk-drive` 를 자동 삭제하지 않습니다.
+별도 `tk-evolve`, `pitfalls.md`, `troubleshooting.md`를 만들지 않습니다.
+
+```text
+Seed 계약을 바꾸는 새 evidence
+→ tk-prep revision + user reapproval
+
+repository에서 반복될 사실
+→ test/type/schema/policy/code invariant 같은 repo-native owner 개선 후보
+
+TigerKit skill 자체 반복 실패
+→ tk-skill-diagnose / tk-learn
+
+개인 cross-repo memory
+→ 외부 memory tool
+```
 
 ## 평가 정본
 
-각 package가 자신의 executable 계약을 소유합니다.
-
 ```text
-skills/<skill>/evals/triggers.json  trigger SSOT
-skills/<skill>/evals/evals.json     behavior SSOT
-evals/catalog-routing.json          cross-skill routing SSOT
-evals/release-critical.json         release quality subset
-evals/drive-ab.json                  drive A/B scenarios
+skills/<skill>/evals/triggers.json
+skills/<skill>/evals/evals.json
+evals/catalog-routing.json
+evals/release-critical.json
 ```
 
-생성된 `test-prompts.json`, root trigger/behavior 복제 fixture, Darwin projection
-동기화 단계는 없습니다. `scripts/validate_skills.py` 는 `skills/tk-*` 를 자동
-발견하고 canonical JSON schema, mechanical assertions, host metadata, links,
-release-critical references를 직접 검증합니다.
+검증기는 `skills/tk-*`를 자동 발견합니다.
 
 ## 로컬 검증
 
 ```bash
 python3 scripts/validate_skills.py
 python3 scripts/validate_skills.py --links-only
-python3 -m unittest discover -s scripts -p 'test_*.py'
+python3 -B -m unittest discover -s scripts -p 'test_*.py'
 python3 scripts/audit_catalog.py --check
 node --check skills/tk-pr-sweep/scripts/triage.mjs
 node --test skills/tk-pr-sweep/scripts/triage.test.mjs
@@ -181,47 +223,15 @@ npx --yes skills add . --list
 git diff --check
 ```
 
-릴리스 검증 게이트:
+호환성이 깨지는 스킬/평가 계약을 포함한 릴리스 검증:
 
 ```bash
-python3 scripts/run_release_gate.py \
+python3 scripts/run_seed_release_gate.py \
   --baseline "$(git describe --tags --abbrev=0)" \
   --candidate HEAD \
   --output /tmp/tigerkit-release-gate
 ```
 
-Release gate는 contract 비교, validator, test, package, diff를 로컬에서만 실행합니다.
-실제 host 품질 실험은 release 차단 조건이 아니며 별도의 목적별 실험으로 수행합니다.
+모든 검증은 로컬 전용입니다.
 
-Drive 비교 실험:
-
-```bash
-python3 scripts/run_drive_experiment.py \
-  --candidate HEAD \
-  --output /tmp/tigerkit-drive-ab
-```
-
-## 상태와 권한
-
-`.tigerkit/` 은 repo/worktree-local scratch이며 영구 project 문서나 전역 상태가
-아닙니다. TigerKit은 consumer `.gitignore` 를 수정하지 않습니다.
-
-`tk-learn` 은 reusable skill의 `create | improve | merge` 를 유일하게 소유합니다.
-Evidence, dedupe, trigger/eval, baseline/compatibility gate를 먼저 검증하고,
-현재 turn의 명시적 apply 승인이 있기 전에는 canonical skill path를 쓰지 않습니다.
-`tk-skill-diagnose` 와 `tk-grooming` 은 `tk-learn`용 proposal만 만들며 자동 invoke하지
-않습니다.
-
-`tk-drive` 의 명시 호출은 승인된 unit의 문서화된 current-branch commit까지만
-허용합니다. Controller는 product change를 직접 작성하지 않고 fresh worker
-candidate를 verifier와 R/AC gap closure 뒤 commit합니다. Push, PR, merge, tag,
-release, publish는 별도 명시 권한 없이는 수행하지 않습니다.
-
-`tk-pr-sweep --report` 는 repository와 GitHub를 변경하지 않습니다. `tk-pr-open` 은 PR create/update를,
-standalone `tk-pr-respond` 는 한 번 승인한 exact plan 안에서 push·reply·verified resolve를,
-`tk-pr-rebase` 는 exact lease를 고정한 force-with-lease와 review follow-up만 수행합니다.
-interactive `tk-pr-sweep` 는 승인된 batch 안에서 두 one-PR owner의 bounded `--ci` route만
-orchestration합니다. 네 mutation skill 모두 merge·tag·release 권한을 갖지 않습니다.
-
-이전 구조에서 갱신한다면 [MIGRATION.md](MIGRATION.md)를 읽으세요.
-저작자 표시는 [`NOTICE.md`](NOTICE.md)에 보존됩니다.
+이전 구조에서 갱신한다면 [MIGRATION.md](MIGRATION.md)를 참고하세요.

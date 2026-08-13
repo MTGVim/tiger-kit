@@ -1,6 +1,0 @@
-interface:
-  short_description: "[user] 승인된 direct 또는 새 작업자 변경 실행을 진행합니다."
-  default_prompt: "$tk-drive와 명시적 source를 사용해 하나의 승인 표면을 준비하고, bounded unit은 direct로 실행하며 필요한 delegated unit만 승인된 session model routing의 새 implementer/reviewer로 처리한 뒤 R/AC gap, 검증된 단위 커밋, 최종화까지 완료합니다."
-
-policy:
-  allow_implicit_invocation: false

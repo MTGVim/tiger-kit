@@ -1,0 +1,15 @@
+{
+  "skill": "tk-prep",
+  "kind": "user-invoked",
+  "queries": [
+    {"id":"train-positive","split":"train","query":"$tk-prep 이 버그를 실행 가능한 `Seed`로 준비해줘","should_trigger":true},
+    {"id":"train-negative","split":"train","query":"이 버그 그냥 바로 고쳐줘","should_trigger":false},
+    {"id":"validation-positive-issue","split":"validation","query":"/tk-prep 이 `issue`를 저장소 근거와 수용 조건까지 확인해 `Seed`로 준비해 주세요.","should_trigger":true},
+    {"id":"validation-positive-review","split":"validation","query":"$tk-prep 이 `review feedback`을 구현 전에 실행 가능한 `Seed`로 정리해줘","should_trigger":true},
+    {"id":"validation-positive-bug","split":"validation","query":"$tk-prep 로그인 뒤 주문 화면 버그를 테스트와 브라우저 검증까지 포함해 준비해줘","should_trigger":true},
+    {"id":"validation-negative-planning","split":"validation","query":"이 기능 어떻게 구현할지 같이 생각해보자","should_trigger":false},
+    {"id":"validation-negative-implementation","split":"validation","query":"이 버그 그냥 고치고 커밋해줘","should_trigger":false},
+    {"id":"validation-negative-repo-question","split":"validation","query":"이 API `status` 값이 어디서 오는지 설명해줘","should_trigger":false},
+    {"id":"validation-negative-wizard","split":"validation","query":"MFA와 `passkey` 등록을 하나씩 안내해줘","should_trigger":false}
+  ]
+}

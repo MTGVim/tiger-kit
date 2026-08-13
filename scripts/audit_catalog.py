@@ -5,39 +5,32 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from typing import Mapping
 
 import validate_skills
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def load_optional_experiment(path: str | None) -> dict[str, object] | None:
-    if not path:
-        return None
-    value = json.loads(Path(path).read_text(encoding="utf-8"))
-    if not isinstance(value, dict):
-        raise ValueError("drive experiment result must be an object")
-    return value
-
-
 def positive_trigger_count(skill_dir: Path) -> int:
     value = json.loads((skill_dir / "evals/triggers.json").read_text(encoding="utf-8"))
     rows = value.get("queries", [])
+    if not isinstance(rows, list):
+        return 0
     return sum(
         isinstance(row, dict) and row.get("should_trigger") is True
         for row in rows
-        if isinstance(rows, list)
     )
 
 
 def behavior_paths(skill_dir: Path) -> set[str]:
     value = json.loads((skill_dir / "evals/evals.json").read_text(encoding="utf-8"))
     rows = value.get("evals", [])
+    if not isinstance(rows, list):
+        return set()
     return {
         str(row.get("path"))
         for row in rows
-        if isinstance(rows, list) and isinstance(row, dict)
+        if isinstance(row, dict) and row.get("path")
     }
 
 
@@ -58,29 +51,30 @@ def catalog_consumers(skill_names: set[str]) -> dict[str, set[str]]:
     return result
 
 
-def drive_consumers(skill_names: set[str]) -> dict[str, bool]:
-    text = (ROOT / "skills/tk-drive/SKILL.md").read_text(encoding="utf-8")
-    return {name: f"`{name}`" in text for name in skill_names}
-
-
-def audit(experiment: Mapping[str, object] | None = None) -> dict[str, object]:
+def audit() -> dict[str, object]:
     skills = validate_skills.discover_skills()
     names = set(skills)
     catalog = catalog_consumers(names)
-    drive = drive_consumers(names)
     rows: list[dict[str, object]] = []
+
     for name, (skill_dir, data, _) in sorted(skills.items()):
         kind = validate_skills.nested(data, "metadata", "tigerkit", "kind")
         triggers = positive_trigger_count(skill_dir)
         paths = behavior_paths(skill_dir)
         consumers = sorted(catalog[name])
+
         independent = kind == "user-invoked" or triggers > 0
         objective = {"success", "boundary"}.issubset(paths)
-        referenced = bool(consumers) or drive[name]
+        # 명시 user skill은 자체 invocation이 consumer다. hybrid는 positive routing
+        # evidence 또는 catalog boundary가 필요하다.
+        referenced = kind == "user-invoked" or bool(consumers) or triggers > 0
+
         disposition = (
-            "ContractComplete" if independent and objective and referenced else "Review"
+            "ContractComplete"
+            if independent and objective and referenced
+            else "Review"
         )
-        basis = []
+        basis: list[str] = []
         if kind == "user-invoked":
             basis.append("explicit independent invocation")
         if triggers:
@@ -89,15 +83,7 @@ def audit(experiment: Mapping[str, object] | None = None) -> dict[str, object]:
             basis.append("success and boundary behavior")
         if consumers:
             basis.append(f"{len(consumers)} catalog boundaries")
-        if drive[name]:
-            basis.append("drive graph consumer")
-        if name == "tk-drive" and isinstance(experiment, Mapping):
-            decision = experiment.get("decision")
-            if decision == "RemoveCandidate":
-                disposition = "ReviewRemoval"
-                basis.append("measured composition advantage")
-            elif decision in {"Keep", "Experimental", "Review"}:
-                basis.append(f"drive experiment: {decision}")
+
         rows.append(
             {
                 "skill": name,
@@ -106,12 +92,12 @@ def audit(experiment: Mapping[str, object] | None = None) -> dict[str, object]:
                 "positive_triggers": triggers,
                 "behavior_paths": sorted(paths),
                 "catalog_consumers": consumers,
-                "drive_consumer": drive[name],
                 "basis": basis,
             }
         )
+
     review = [
-        row["skill"]
+        str(row["skill"])
         for row in rows
         if row["disposition"] != "ContractComplete"
     ]
@@ -126,7 +112,6 @@ def audit(experiment: Mapping[str, object] | None = None) -> dict[str, object]:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--drive-experiment")
     parser.add_argument("--output")
     parser.add_argument("--check", action="store_true")
     return parser.parse_args()
@@ -134,7 +119,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    result = audit(load_optional_experiment(args.drive_experiment))
+    result = audit()
     rendered = json.dumps(result, ensure_ascii=False, indent=2) + "\n"
     if args.output:
         Path(args.output).write_text(rendered, encoding="utf-8")

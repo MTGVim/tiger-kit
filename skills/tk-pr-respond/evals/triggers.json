@@ -3,22 +3,24 @@
   "kind": "hybrid",
   "queries": [
     {"id":"train-explicit","split":"train","query":"$tk-pr-respond","should_trigger":true},
-    {"id":"train-negative","split":"train","query":"리뷰 코멘트가 뭔지 설명해줘","should_trigger":false},
-    {"id":"validation-positive-1","split":"validation","query":"/tk-pr-respond 선택한 review feedback을 반영해줘","should_trigger":true,"facets":["formal"]},
-    {"id":"validation-positive-2","split":"validation","query":"tk-pr-respond PR 리뷰 답변 준비","should_trigger":true,"facets":["casual"]},
-    {"id":"validation-positive-3","split":"validation","query":"$tk-pr-respond thread 2와 3을 resolution unit으로 묶어줘","should_trigger":true,"facets":["compound"]},
-    {"id":"validation-positive-4","split":"validation","query":"PR respond","should_trigger":true,"facets":["short"]},
-    {"id":"validation-positive-ci","split":"validation","query":"$tk-pr-respond --ci PR #42의 GitHub Actions 실패를 고쳐줘","should_trigger":true,"facets":["compound"]},
-    {"id":"validation-positive-handoff-ko-en","split":"validation","query":"[active tk-pr-sweep handoff] exact PR head의 needs_reply를 tk-pr-respond --ci로 처리","should_trigger":true,"facets":["ko-en"]},
-    {"id":"validation-positive-typo","split":"validation","query":"tk-pr-respnd --ci PR #42 Actions 수정","should_trigger":true,"facets":["typo"]},
-    {"id":"validation-positive-handoff-short","split":"validation","query":"[active tk-pr-sweep → tk-pr-respond --ci] PR #42","should_trigger":true,"facets":["short"]},
-    {"id":"validation-negative-1","split":"validation","query":"PR 상태만 읽어줘","should_trigger":false,"facets":["formal"]},
-    {"id":"validation-negative-2","split":"validation","query":"새 PR을 열어줘","should_trigger":false,"facets":["casual"]},
-    {"id":"validation-negative-3","split":"validation","query":"이 코드를 그냥 고쳐줘","should_trigger":false,"facets":["ko-en"]},
-    {"id":"validation-negative-4","split":"validation","query":"리뷰를 요약만 해줘","should_trigger":false,"facets":["compound"]},
-    {"id":"validation-negative-ci-generic","split":"validation","query":"CI 깨졌으니 알아서 고쳐줘","should_trigger":false,"facets":["casual"]},
-    {"id":"validation-negative-short","split":"validation","query":"review reply","should_trigger":false,"facets":["short"]},
-    {"id":"validation-negative-typo","split":"validation","query":"리뷰 코멘트 설먕해줘","should_trigger":false,"facets":["typo"]},
-    {"id":"validation-negative-handoff-like","split":"validation","query":"active PR이니까 알아서 계속해","should_trigger":false,"facets":["ko-en"]}
+    {"id":"train-negative","split":"train","query":"리뷰 코멘트가 무슨 뜻인지 설명만 해줘","should_trigger":false},
+
+    {"id":"validation-positive-formal","split":"validation","query":"/tk-pr-respond 선택한 `review feedback`을 의미부터 확인해서 처리해 주세요.","should_trigger":true,"facets":["formal"]},
+    {"id":"validation-positive-casual","split":"validation","query":"tk-pr-respond 이 PR 리뷰들 대응해줘","should_trigger":true,"facets":["casual"]},
+    {"id":"validation-positive-typo","split":"validation","query":"tk-pr-respnd PR #42 리뷰 대응","should_trigger":true,"facets":["typo"]},
+    {"id":"validation-positive-ko-en","split":"validation","query":"$tk-pr-respond 이 `review thread`는 코드 수정하고 저 코멘트는 근거만 `reply`해줘","should_trigger":true,"facets":["ko-en"]},
+    {"id":"validation-positive-short","split":"validation","query":"/tk-pr-respond PR #42","should_trigger":true,"facets":["short"]},
+    {"id":"validation-positive-compound","split":"validation","query":"$tk-pr-respond PR #42의 리뷰와 GitHub Actions 실패를 확인해서 필요한 수정·검증·답변까지 처리해줘","should_trigger":true,"facets":["compound"]},
+    {"id":"validation-positive-sweep-child","split":"validation","query":"`[active tk-pr-sweep]` 승인된 PR #42 리뷰 대응을 이어서 처리해줘","should_trigger":true,"facets":["formal","compound"]},
+    {"id":"validation-positive-reply-only","split":"validation","query":"$tk-pr-respond 이 코멘트는 코드 안 바꾸고 저장소 근거로 답변만 해줘","should_trigger":true,"facets":["casual","short"]},
+
+    {"id":"validation-negative-status","split":"validation","query":"PR 상태만 읽어 주세요.","should_trigger":false,"facets":["formal"]},
+    {"id":"validation-negative-new-pr","split":"validation","query":"새 PR 열어줘","should_trigger":false,"facets":["casual"]},
+    {"id":"validation-negative-typo","split":"validation","query":"리뷰 코맨트 설먕해줘","should_trigger":false,"facets":["typo"]},
+    {"id":"validation-negative-ko-en","split":"validation","query":"이 `review`가 뭔 말인지 코드 수정 없이 설명해줘","should_trigger":false,"facets":["ko-en"]},
+    {"id":"validation-negative-short","split":"validation","query":"PR 요약","should_trigger":false,"facets":["short"]},
+    {"id":"validation-negative-compound","split":"validation","query":"이 코드를 일반 작업으로 고치고 커밋한 다음 새 PR도 열어줘","should_trigger":false,"facets":["compound"]},
+    {"id":"validation-negative-generic-ci","split":"validation","query":"CI 깨졌으니 저장소도 안 보고 알아서 고쳐줘","should_trigger":false,"facets":["casual","compound"]},
+    {"id":"validation-negative-multi-pr","split":"validation","query":"열린 PR 여러 개 리뷰를 전부 정리해줘","should_trigger":false,"facets":["formal","ko-en"]}
   ]
 }

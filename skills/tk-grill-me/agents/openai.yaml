@@ -1,3 +1,0 @@
-interface:
-  short_description: "[user/auto] 사용자 소유 결정을 한 번에 하나씩 닫습니다."
-  default_prompt: "$tk-grill-me를 사용해 근거를 조사하고, 한 번에 하나의 사용자 소유 결정을 질문하며, 산출물을 변경하지 않고 standalone 또는 active-drive 용도로 결과를 라우팅합니다."
