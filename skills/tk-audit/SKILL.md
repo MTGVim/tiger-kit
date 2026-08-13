@@ -36,6 +36,13 @@ Modifiers may be combined. Do not implement, write Seeds, publish issues, or cre
 4. Sort `finding`s by impact ÷ `effort`, then `confidence`, `fix risk`, and `dependency`.
 5. `.tigerkit/audit.md`를 원자적으로 갱신하고 안정적인 `AUD-*` ID와 상태를 보존합니다.
 
+## Failure Paths
+
+- If repository instructions, the selected reference, or required evidence is unavailable, stop that scope and record it as unaudited; do not infer coverage.
+- If cited evidence cannot be reproduced at the audited `HEAD`, mark the finding unverifiable or stale and do not claim verification.
+- If the scope or modifier is invalid, ask one clarifying question before reading beyond the minimum needed to identify the problem.
+- If the atomic `.tigerkit/audit.md` update fails, preserve the existing ledger, report the write failure, and do not fall back to an untracked or global copy.
+
 ## Finding Contract
 
 각 열린 finding에는 최소한 다음이 있어야 합니다.
