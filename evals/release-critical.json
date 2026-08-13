@@ -18,6 +18,7 @@
   "replaced_skill_eval_contracts": [
     "tk-ask-repo",
     "tk-wizard",
+    "tk-pr-open",
     "tk-pr-respond",
     "tk-pr-sweep",
     "tk-pr-rebase",
