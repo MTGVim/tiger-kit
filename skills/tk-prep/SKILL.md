@@ -16,15 +16,15 @@ metadata:
 현재 작업을 구현하지 않고 저장소 근거와 사용자 결정을 하나의 실행 가능한 `.tigerkit/seed.md`로 준비합니다.
 한 번 시작한 인터뷰는 같은 대화에서 자연스럽게 이어가며 매 답변마다 스킬을 다시 호출하게 하지 않습니다.
 
-**대화는 자연스럽게, 상태는 엄격하게.** 내부 점수·단계·분류를 기본 UI로 덤프하지 않습니다.
+**대화는 자연스럽게, 상태는 엄격하게.** 내부 점수·단계·분류를 기본 화면에 덤프하지 않습니다.
 이미 확인된 내용을 다시 묻지 않고, 중요한 판단은 계획과 이유를 설명해 사용자가 대화 중 수정할 수 있게 합니다.
 소스, 테스트, 설정, Git, 원격 상태는 수정하지 않습니다.
 
 ## 근거와 질문
 
-작업 원천, 저장소 지침, 관련 코드·테스트·검증 명령, 현재 branch/HEAD를 필요한 만큼 읽습니다.
-새로 만들기 전에 기존 component/hook/helper/token/type/schema/client/UX pattern과 저장소 관례를 찾습니다.
-근거 없는 사실은 만들지 않고 material한 저장소 주장은 가능한 경우 `path:line`, 명령 결과, current state에 연결합니다.
+작업 원천, 저장소 지침, 관련 코드·테스트·검증 명령, 현재 브랜치/HEAD를 필요한 만큼 읽습니다.
+새로 만들기 전에 기존 `component`, `hook`, `helper`, `token`, `type`, `schema`, `client`, 화면 패턴과 저장소 관례를 찾습니다.
+근거 없는 사실은 만들지 않고 중요한 저장소 주장은 가능한 경우 `path:line`, 명령 결과, 현재 상태에 연결합니다.
 
 사용자에게 직접 묻는 것은 다음뿐입니다.
 
@@ -67,65 +67,65 @@ material blockers == 0
 unresolved material conflicts == 0
 ```
 
-이 기준은 user override 불가입니다. 사용자가 점수나 계속 질문하는 이유를 물을 때만 진단을 간결하게 보여줍니다.
+이 기준은 사용자 승인으로 우회할 수 없습니다. 사용자가 점수나 계속 질문하는 이유를 물을 때만 진단을 간결하게 보여줍니다.
 
 ## 엔지니어링 준비도
 
 다음 다섯 축은 평균으로 상쇄하지 않고 각각 평가합니다.
 
-- **재사용** — existing primitive와 convention을 조사했는가
-- **단순성** — 현재 AC에 불필요한 speculative branch, 미래 abstraction, dependency, dead code를 피했는가
-- **테스트** — regression, bug reproduction, 새 non-trivial behavior와 기존 integration check를 계획했는가
-- **보안** — auth/authz/input/secret/upload/redirect/storage 등 applicable boundary를 안전하게 다뤘는가
-- **사용자 경험** — user-facing 변경의 responsive/state/keyboard/focus/semantic/a11y/visual fidelity를 고려했는가
+- **재사용** — 기존 구성 요소와 저장소 관례를 충분히 조사했는가
+- **단순성** — 현재 AC에 불필요한 추측성 분기, 미래 추상화, 의존성, 죽은 코드를 피했는가
+- **테스트** — 회귀, 버그 재현, 새 비자명 동작과 기존 통합 검사를 계획했는가
+- **보안** — `auth`, `authz`, 입력, 비밀 값, 업로드, 이동 주소, 저장 같은 적용 가능한 경계를 안전하게 다뤘는가
+- **사용자 경험** — 사용자 표시 변경의 반응형 상태, 키보드, 포커스, 의미 구조, 접근성, 시각 일관성을 고려했는가
 
 각 축은 같은 점수 단위와 다음 한국어 상태를 사용합니다.
 
 `준비됨 | 보완 필요 | 개선 한계 | 예외 승인 | 해당 없음`
 
 `준비됨`은 `0.75+`입니다. `해당 없음`에는 이유가 필요합니다.
-미달 축은 먼저 추가 조사 → 접근 개선 → 재평가합니다. 그래도 더 올릴 수 없을 때만 `개선 한계`와 gap·이유·완화책을 설명하고 사용자 예외 승인을 받습니다.
+미달 축은 먼저 추가 조사 → 접근 개선 → 재평가합니다. 그래도 더 올릴 수 없을 때만 `개선 한계`와 공백·이유·완화책을 설명하고 사용자 예외 승인을 받습니다.
 예외 승인 뒤에도 원래 점수를 높이지 않습니다.
 
 ## 브라우저 검증
 
-browser-visible AC가 있으면 Seed 전에 다음 전략을 닫습니다.
+`browser-visible` AC가 있으면 `Seed` 전에 다음 전략을 닫습니다.
 
-- target URL/environment와 Pass 조건
-- `headless` 여부와 viewport/state
-- auth 필요 여부와 안전한 session/token/non-interactive login 경로
-- dev server command/cwd/readiness
-- inspected screenshot evidence와 sensitive capture/redaction
+- 대상 URL/환경과 통과 조건
+- `headless` 여부와 `viewport`/상태
+- 인증 필요 여부와 안전한 `session`/`token`/비대화형 로그인 경로
+- 개발 서버 명령/작업 디렉터리/준비 완료 신호
+- 확인할 `screenshot` 근거와 민감 화면 가림 정책
 - `tk-browser-verify` 사용 여부
 
-기본은 `headless`입니다. username/password/token/OTP/cookie/session secret value는 Seed나 채팅에 저장하지 않고 실행 시 ephemeral input으로만 다룹니다.
-dev server가 필요하면 start/readiness/cleanup은 `tk-browser-verify`가 소유하도록 계획합니다.
+기본은 `headless`입니다. 사용자명, 비밀번호, `token`, OTP, `cookie`, `session` 비밀 값은 `Seed`나 채팅에 저장하지 않고 실행 시 일시 입력으로만 다룹니다.
+개발 서버가 필요하면 시작·준비 확인·정리는 `tk-browser-verify`가 소유하도록 계획합니다.
 
-## Seed 계약
+## `Seed` 계약
 
-저장소 루트의 `.tigerkit/seed.md` 하나만 현재 task context로 사용합니다.
-최종 Seed는 원 대화 없는 fresh lower-capability executor가 “진행해”라는 지시만으로 올바른 작업을 시작할 수 있어야 합니다.
+저장소 루트의 `.tigerkit/seed.md` 하나만 현재 작업 맥락으로 사용합니다.
+최종 `Seed`는 원 대화 없는 새 세션의 더 낮은 수준 실행자가 “진행해”라는 지시만으로 올바른 작업을 시작할 수 있어야 합니다.
 
-필요한 의미를 self-contained하게 보존합니다.
+필요한 의미를 자체 완결적으로 보존합니다.
 
-- 작업 원천·목표·배경과 current branch/HEAD 또는 exact PR head
-- 현재 상태, 주요 entry point, relevant repository evidence와 convention
+- 작업 원천·목표·배경과 현재 브랜치/HEAD 또는 정확한 `PR head`
+- 현재 상태, 주요 진입점, 관련 저장소 근거와 관례
 - 포함/제외/변경 금지 범위
-- 모든 user-approved material decision과 이유
-- 합의한 구현 접근, reuse/simplicity/tests/security/experience 판단
-- AC와 각 AC의 verification path
-- browser verification plan과 engineering waiver
-- 낮은 수준 executor에게 필요한 implementation guidance, 함정, 금지 접근
+- 모든 사용자 승인 중요 결정과 이유
+- 합의한 구현 접근, 재사용/단순성/테스트/보안/사용자 경험 판단
+- AC와 각 AC의 검증 경로
+- 브라우저 검증 계획과 엔지니어링 예외
+- 낮은 수준 실행자에게 필요한 구현 안내, 함정, 금지 접근
 - 실행 형태와 모델 수준에 대한 추천
-- unresolved item
+- 미해결 항목
 
-대화 transcript, worker/wave/progress, provider selector, model ID, reasoning effort, receipt, secret value는 넣지 않습니다.
-실행 추천은 “독립 작업 fan-out 가능”, “중간급 coding model 권장”, “더 강한 final review 권장” 수준의 advisory입니다.
-실제 실행 형태는 host/agent가 정하지만 AC와 Verification은 normative입니다.
+대화 전문, `worker`/`wave` 진행 상태, 제공자 모델 선택자, 모델 ID, 추론 강도, 영수증, 비밀 값은 넣지 않습니다.
+실행 추천은 “독립 작업 `fan-out` 가능”, “중간급 `coding model` 권장”, “더 강한 최종 검토 권장” 수준의 조언입니다.
+실제 실행 형태는 현재 `host`/`agent`가 정하지만 AC와 Verification은 반드시 지켜야 하는 계약입니다.
 
 ## Ready와 진화
 
-인터뷰 중 Seed는 `Status: Pending`입니다. 다음을 모두 만족하고 사용자가 마지막 자연어 요약을 승인한 뒤에만 `Status: Ready`로 바꿉니다.
+인터뷰 중 `Seed`는 `Status: Pending`입니다. 다음을 모두 만족하고 사용자가 마지막 자연어 요약을 승인한 뒤에만 `Status: Ready`로 바꿉니다.
 
 ```text
 Understanding Gate pass
@@ -135,8 +135,8 @@ user final approval
 seed write + reread + self-contained check
 ```
 
-Ready Seed를 구현 편의로 바꾸지 않습니다. 실행·검증 중 새 evidence가 goal/scope/decision/AC/required verification을 material하게 깨면 `tk-prep`으로 재진입해 영향 부분만 갱신하고 재승인합니다.
-반복될 repository pitfall은 test/type/schema/policy/code invariant 같은 repo-native owner 개선 후보로만 제안하고 자동 승격하지 않습니다.
-TigerKit skill 자체의 반복 실패는 `tk-skill-diagnose`/`tk-learn` 후보이며 별도 persistent pitfall corpus를 만들지 않습니다.
+Ready `Seed`를 구현 편의로 바꾸지 않습니다. 실행·검증 중 새 근거가 목표/범위/결정/AC/필수 검증을 중요하게 깨면 `tk-prep`으로 재진입해 영향 부분만 갱신하고 재승인합니다.
+반복될 저장소 함정은 테스트, 타입, 스키마, 정책, 코드 불변 조건 같은 저장소 고유 소유자 개선 후보로만 제안하고 자동 승격하지 않습니다.
+TigerKit 스킬 자체의 반복 실패는 `tk-skill-diagnose`/`tk-learn` 후보이며 별도 영구 함정 모음을 만들지 않습니다.
 
-완료 시 Seed 경로와 핵심 합의·검증·실행 추천을 짧게 알려주고 구현을 자동 시작하지 않습니다.
+완료 시 `Seed` 경로와 핵심 합의·검증·실행 추천을 짧게 알려주고 구현을 자동 시작하지 않습니다.
