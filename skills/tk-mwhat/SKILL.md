@@ -10,13 +10,13 @@ metadata:
     relationship: adapted
 ---
 
-# 직전 설명 다시 설명하기
+# Re-explain the Previous Explanation
 
-사용자가 `/tk-mwhat` 또는 “뭐라고?”, “뭐라는 거야?”, “무슨 말이죠?”처럼 **명시적으로** 요청할 때만 사용한다. 입력은 대화의 **즉시 앞선 explanation/source 하나**뿐이다. 없거나 무엇을 가리키는지 모호하면 정확히 `Unverifiable`만 출력하고 중단한다.
+Use only when the user **explicitly** requests it with `/tk-mwhat` or phrases such as “뭐라고?”, “뭐라는 거야?”, or “무슨 말이죠?”. The input is only the **immediately preceding explanation/source** in the conversation. If none exists or the reference is ambiguous, output exactly `Unverifiable` and stop.
 
-## 출력
+## Output
 
-두 블록만 출력한다.
+Output only these two blocks.
 
 ```md
 🤔 쉽게 말하면
@@ -26,13 +26,13 @@ metadata:
 [추천 또는 그대로 보낼 다음 문장 최대 2개의 짧은 줄]
 ```
 
-원문보다 짧게 쓰되 의미를 바꾸지 않는다. 경로, 명령, URL, 리터럴,
-`Status`/ID, 원본 저작자 표시는 정확히 보존한다. 추천을 만들 근거가 없으면
-`추천: 없음` 으로 둔다.
+Write more briefly than the source without changing its meaning. Preserve paths, commands, URLs, literals,
+`Status`/IDs, and original authorship attribution exactly. If there is no basis for a recommendation, use
+`추천: 없음`.
 
-재설명 뒤에는 **`hard stop`**한다. 파일을 변경하거나 구현·계획·요약을 만들거나 명령/도구를 실행하지 않는다. 새 작업·변경 요청·일반 요약 요청은 이 스킬의 대상이 아니므로 `NotApplicable` 로 중단한다.
+After the re-explanation, **`hard stop`**. Do not modify files, implement anything, create plans or summaries, or run commands or tools. New tasks, change requests, and general summary requests are outside this skill; stop with `NotApplicable`.
 
-## 출처
+## Source
 
 과거 선행 사례: TigerKit `mwhat` (커밋 `c6963e8`, `skills/mwhat/SKILL.md`)의
 두 블록 짧은 한국어 설명, 정확한 원본/리터럴 보존, 구현 계약 없음입니다.

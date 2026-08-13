@@ -10,45 +10,45 @@ metadata:
     relationship: native
 ---
 
-# 하나의 PR 리뷰 대응
+# Respond to a single PR review
 
-`/tk-pr-respond`, `$tk-pr-respond`, 호스트의 명시적 선택, 또는 활성 `tk-pr-sweep`이 넘긴
-정확한 PR 작업에 적용합니다. 일반 코드 수정, 단순 리뷰 요약, 여러 PR 작업에는 적용하지 않습니다.
+Apply this skill to `/tk-pr-respond`, `$tk-pr-respond`, explicit host selection, or an exact PR task handed off by an active `tk-pr-sweep`.
+Do not apply it to general code changes, simple review summaries, or work spanning multiple PRs.
 
-이 스킬은 하나의 PR에서 현재 feedback을 이해하고, 해결 방향을 사용자에게 자연스럽게 설명하고,
-승인된 범위 안에서 수정·검증·push·reply·resolve·필요한 재검토 요청을 수행합니다.
+This skill understands current feedback on one PR, explains the proposed resolution naturally to the user,
+and performs changes, verification, push, reply, resolve, and any required re-review request within the approved scope.
 
-**대화는 자연스럽게, 상태는 엄격하게.**
+**Keep the conversation natural and the state strict.**
 
-내부 `apply | reply | defer`, worker 배치, GitHub 상태를 그대로 보고서처럼 노출하지 않습니다.
-사용자가 알아야 하는 것은 “리뷰가 무엇을 뜻하는지, 어떻게 대응할지, 왜 그 방법인지, 무엇을 검증할지”입니다.
+Do not expose internal `apply | reply | defer` classifications, worker placement, or GitHub state as a raw report.
+The user needs to know what the review means, how it will be addressed, why that approach is appropriate, and what will be verified.
 
 ## Fresh state
 
-시작할 때 정확히 하나의 open PR을 fresh-read합니다.
+At the start, fresh-read exactly one open PR.
 
-- repository와 authenticated identity
-- PR author, base/head ref와 SHA
-- checks와 실패한 GitHub Actions 근거
-- reviews, inline thread, conversation comment
-- unresolved thread
-- requested reviewer
-- 정확한 push 대상
+- repository and authenticated identity
+- PR author, base/head ref, and SHA
+- checks and evidence from failed GitHub Actions
+- reviews, inline threads, and conversation comments
+- unresolved threads
+- requested reviewers
+- exact push target
 
-필요한 pagination을 끝까지 읽습니다. cached 목록이나 이전 Markdown 장부를 현재 truth로 사용하지 않습니다.
-identity, exact PR/head, remote authority가 모호하면 mutation 전에 `Blocked`로 멈춥니다.
+Complete all required pagination. Do not treat cached lists or previous Markdown ledgers as current truth.
+If identity, the exact PR/head, or remote authority is ambiguous, stop as `Blocked` before mutation.
 
-## Feedback 이해
+## Understand feedback
 
-현재 feedback을 내부적으로 다음 의미로 분류할 수 있습니다.
+Internally, current feedback may be classified by meaning as follows.
 
-- 코드 변경이 필요한 의견
-- 코드 변경 없이 근거 있는 답변이 적절한 의견
-- 현재 PR 범위를 벗어나거나 추가 결정이 필요한 의견
+- feedback requiring a code change
+- feedback appropriately handled with an evidence-based reply and no code change
+- feedback outside the current PR scope or requiring an additional decision
 
-하지만 사용자에게는 분류 토큰보다 의미를 설명합니다.
+Explain the meaning to the user instead of exposing classification tokens.
 
-예:
+Example:
 
 ```text
 리뷰 3건 확인했어요. 첫 번째는 실제 모바일 깨짐이라 수정이 필요합니다.
@@ -56,130 +56,132 @@ identity, exact PR/head, remote authority가 모호하면 mutation 전에 `Block
 마지막 건은 제품 동작 자체를 바꾸는 의견이라 이것만 확인이 필요합니다.
 ```
 
-리뷰 문구가 요구 결과를 이미 명시했다면 같은 내용을 다시 질문하지 않습니다.
-저장소 근거로 결정 가능한 재사용, 단순화, 테스트, 보안, 사용자 경험 판단은 스스로 조사해 추천과 이유를 설명합니다.
+If the review text already specifies the required outcome, do not ask the same question again.
+Investigate repository evidence independently, then explain the recommendation and rationale for decisions about reuse, simplification, testing, security, and user experience.
 
-사용자에게 직접 묻는 것은 다음뿐입니다.
+Ask the user directly only about:
 
-- 제품 동작이나 범위를 실제로 바꾸는 사용자 소유 결정
-- 보안·권한·데이터·호환성처럼 위험하거나 되돌리기 어려운 결정
-- 충분히 개선했지만 검증 준비도를 더 높일 수 없는 예외 승인
+- user-owned decisions that materially change product behavior or scope
+- risky or hard-to-reverse decisions involving security, permissions, data, or compatibility
+- exceptional approval when the work has been sufficiently improved but verification readiness cannot be raised further
 
-## 해결 계획과 승인
+## Resolution plan and approval
 
-mutation 전에는 현재 feedback에 대한 해결 계획을 자연스럽게 설명합니다.
+Before mutation, explain the resolution plan for the current feedback in natural language.
 
-최소 의미:
+At minimum, cover:
 
-- 어떤 feedback을 수정하고 어떤 것은 답변만 할지
-- 구현 접근과 재사용할 기존 코드
-- 불필요한 복잡성을 피하는 방법
-- 회귀/신규 테스트 계획
-- 보안·사용자 경험에서 특별히 확인할 점
-- browser-visible이면 `tk-browser-verify` 계획
-- push/reply/resolve/re-review의 bounded publication 범위
-- 실행 형태와 모델 수준에 대한 추천
+- which feedback will be fixed and which will receive replies only
+- implementation approach and existing code to reuse
+- how unnecessary complexity will be avoided
+- regression and new-test plan
+- any special security or user-experience concerns
+- the `tk-browser-verify` plan for browser-visible changes
+- bounded publication scope for push/reply/resolve/re-review
+- recommendation for execution mode and model level
 
-모델 추천은 “중간급 coding model”, “더 강한 final review”, “독립 작업 fan-out 권장”처럼
-사람 친화적인 조언으로만 표현합니다. provider selector, model class, reasoning effort, `session.md`를 만들지 않습니다.
-이 기능이 없다고 작업을 `Blocked` 처리하지 않습니다.
+Express model recommendations only as human-friendly guidance such as “mid-tier coding model,” “stronger final review,” or “independent work fan-out recommended.”
+Do not create provider selectors, model classes, reasoning effort, or `session.md`.
+Do not mark the task `Blocked` merely because this capability is unavailable.
 
-현재 계획에 대한 사용자 승인 하나를 받습니다. 같은 계획의 publication을 별도 두 번째 질문으로 쪼개지 않습니다.
-다만 승인 후 PR head/thread/check/identity가 material하게 변하면 기존 승인을 무효화하고 달라진 내용만 다시 설명합니다.
+Obtain one user approval for the current plan. Do not split publication for the same plan into a separate second question.
+However, if the PR head/thread/check/identity changes materially after approval, invalidate the approval and explain only what changed.
 
-## 코드 변경과 Seed
+## Code changes and Seed
 
-코드 변경이 필요한 Respond 작업은 해당 checkout/worktree의 `.tigerkit/seed.md`를 현재 작업 계약으로 사용합니다.
-`pr-respond.md` lifecycle 장부는 만들지 않습니다.
+Respond tasks requiring code changes use `.tigerkit/seed.md` in the relevant checkout/worktree as the current work contract.
+Do not create the `pr-respond.md` lifecycle ledger.
 
-Seed에는 최소한 다음 PR 맥락이 들어갑니다.
+The Seed must contain at least the following PR context. Keep user-facing Seed and ledger prose in Korean.
 
 - exact repository/PR/head
-- 처리 대상 feedback과 reviewer가 요구한 결과
-- 코드 변경/답변/보류에 대한 확정 판단
-- 작업 배경과 목적
-- 범위와 변경 금지 사항
-- 사용자 결정
-- 구현 접근과 repository evidence
-- Reuse / Simplicity / Tests / Security / Experience 판단
-- acceptance criteria와 각 verification path
+- feedback being handled and the outcome requested by the reviewer
+- confirmed decisions for code changes, replies, and deferrals
+- work background and objective
+- scope and forbidden changes
+- user decisions
+- implementation approach and repository evidence
+- Reuse / Simplicity / Tests / Security / Experience decisions
+- acceptance criteria and a verification path for each
 - browser verification plan
 - publication boundary
-- lower-capability executor에게 필요한 구현 안내
+- implementation guidance needed by a lower-capability executor
 
 이미 활성 Ready Seed가 같은 PR 작업과 정확히 일치하면 재작성하거나 같은 결정을 다시 묻지 않습니다.
 새 feedback이나 fresh state가 Seed의 goal/scope/decision/AC를 material하게 바꾸면 `Pending`으로 다시 열고 해당 부분만 재승인합니다.
 
 코드 변경 없이 reply만 하는 경우에는 새 Seed를 만들 필요가 없습니다.
 
-## 실행
+## Execution
 
-승인 뒤 현재 호스트가 제공하는 안전한 방식으로 실행합니다.
+After approval, execute through the safe mechanisms available in the current host.
 
-- 독립 작업과 안전한 격리가 있으면 subagent fan-out을 사용할 수 있습니다.
-- 격리가 없으면 순차 실행합니다.
-- 특정 모델 선택이 불가능하면 host default를 사용합니다.
-- parent가 실행 세부사항을 Markdown routing state로 영속화하지 않습니다.
+- Use subagent fan-out when work is independent and safely isolated.
+- Execute sequentially when isolation is unavailable.
+- Use the host default when a specific model cannot be selected.
+- The parent must not persist execution details as Markdown routing state.
 
-각 구현자는 Ready Seed와 자기 책임 범위를 읽습니다. parent가 전체 대화나 세부 계획을 다시 복사하지 않습니다.
+Each implementer reads the Ready Seed and its assigned scope. The parent does not copy the full conversation or detailed plan again.
 
-필수 순서:
+Required order:
 
 ```text
 implementation
 → focused tests/checks
-→ acceptance 기준 review
-→ browser-visible이면 tk-browser-verify
-→ 필요한 gap correction
+→ acceptance-criteria review
+→ tk-browser-verify for browser-visible changes
+→ required gap correction
 → verified commit
 ```
 
-browser 검증에 개발 서버가 필요하면 `tk-browser-verify`에 정확한 command/cwd/URL/auth/readiness를 넘기고,
-서버 시작·준비 확인·정리는 verifier가 소유합니다.
+If browser verification requires a development server, provide `tk-browser-verify` with the exact command/cwd/URL/auth/readiness;
+the verifier owns server startup, readiness checks, and cleanup.
 
-같은 실패를 무한 반복하지 않습니다. 3회의 유의미한 corrective attempt 뒤에도 같은 blocker가 남으면
-남은 증거와 함께 `Fail` 또는 `Unverifiable`로 멈춥니다.
+Do not repeat the same failure indefinitely. If the same blocker remains after three meaningful corrective attempts,
+stop with `Fail` or `Unverifiable` and include the remaining evidence.
 
 ## Publication
 
-remote write 직전에 exact repository, authenticated identity, open PR, fresh remote head,
-local ancestry, thread/check 상태와 승인 범위를 다시 확인합니다.
+Immediately before any remote write, recheck the exact repository, authenticated identity, open PR, fresh remote head,
+local ancestry, thread/check state, and approved scope.
 
-그 뒤 승인된 범위만 다음 순서로 처리합니다.
+Then perform only the approved actions in this order.
 
-1. 검증된 commit을 exact branch로 push합니다.
-2. 각 feedback에 정확한 reply를 게시합니다.
-3. reply가 성공하고 해결이 실제로 검증된 thread만 resolve합니다.
-4. reviews/threads/checks를 fresh-read합니다.
-5. 필요한 사람 reviewer에게만 재검토를 요청합니다.
-6. PR 수준 summary comment는 최대 하나만 작성합니다.
+1. Push the verified commit to the exact branch.
+2. Post an exact reply to each feedback item.
+3. Resolve only threads whose reply succeeded and whose resolution was actually verified.
+4. Fresh-read reviews/threads/checks.
+5. For every reviewer whose current review state is `CHANGES_REQUESTED`, fresh-verify that the reviewer remains eligible and that a re-review request is required for the exact current head. Request re-review from each such human reviewer, excluding the author, authenticated user, bots, and still-valid approvers.
+6. After all actionable threads are closed, fresh-read the exact current head and post exactly one current-head summary comment containing `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, with `<HEAD_SHA>` replaced by the exact observed head SHA. If that marker already exists exactly once for the current head, do not post another. A summary for an earlier head does not satisfy this requirement.
 
-unresolved inline thread가 하나라도 남으면 완료로 주장하지 않습니다.
-deferred, unverifiable, failed feedback은 open으로 유지합니다.
+Do not claim publication complete unless fresh evidence proves every required `CHANGES_REQUESTED` reviewer re-review request, zero actionable unresolved threads, and exactly one current-head summary comment after the threads were closed. Missing evidence is `Unverifiable`, not complete.
+Do not claim completion while any unresolved inline thread remains.
+Keep deferred, unverifiable, or failed feedback open.
 
-모든 생성 GitHub comment는 `_🤖 본 코멘트는 AI가 작성했습니다._`로 끝냅니다.
-merge, close, tag, release, plain force push, unrelated thread resolve는 하지 않습니다.
+Every generated GitHub comment must end with `_🤖 본 코멘트는 AI가 작성했습니다._`.
+Do not merge, close, tag, release, plain force push, or resolve unrelated threads.
 
-## Sweep 아래에서 실행
+## Execution under Sweep
 
-활성 `tk-pr-sweep`에서 넘어온 exact PR이면 parent가 이미 승인받은 material decision을 다시 묻지 않습니다.
-child는 PR fresh state와 parent-approved scope를 확인하고, 같으면 바로 진행합니다.
+For an exact PR handed off by an active `tk-pr-sweep`, do not ask again about material decisions already approved by the parent.
+The child confirms the PR fresh state and parent-approved scope, then proceeds immediately when they match.
 
-새 feedback/head drift가 승인 범위를 material하게 바꾸면 그 PR만 parent에 다시 올립니다.
-`pr-sweep.md`, `pr-respond.md`, worker receipt Markdown을 만들지 않습니다.
-코드 변경 PR이면 해당 isolated worktree의 `seed.md`만 task context로 사용할 수 있습니다.
+If new feedback or head drift materially changes the approved scope, escalate only that PR back to the parent.
+Do not create `pr-sweep.md`, `pr-respond.md`, or worker receipt Markdown.
+For a code-changing PR, only `seed.md` in the relevant isolated worktree may be used as task context.
 
-## 완료 응답
+## Completion response
 
-정상 protocol receipt를 출력하지 않습니다.
+Do not output a normal protocol receipt.
 
-예:
+Example:
 
 ```text
 리뷰 3건 처리했습니다. 2건은 코드 수정 후 검증했고 1건은 근거를 설명해 답변했습니다.
 모바일 변경은 browser verification까지 통과했고 관련 thread는 모두 resolve됐어요.
+현재 head의 검증 결과를 요약해 게시하고 reviewer에게 재검토를 요청했습니다.
 이제 reviewer 재확인만 기다리면 됩니다.
 ```
 
-문제가 남은 경우에만 해당 blocker와 다음 행동을 자세히 설명합니다.
-마지막 상태는 실제 결과에 따라 `Status: Pass | Pending | Blocked | Unverifiable | Fail` 중 하나만 사용합니다.
+Only when an issue remains, explain the blocker and next action in detail.
+Use exactly one final state matching the actual result: `Status: Pass | Pending | Blocked | Unverifiable | Fail`.

@@ -226,6 +226,11 @@ def scan_language(root: Path) -> dict[str, object]:
     targets = _language_targets(root)
     for path in targets:
         relative = str(path.relative_to(root))
+        # SKILL.md is the model-facing contract. User-facing output, evals,
+        # agent metadata, and ledger/artifact prose remain Korean and stay
+        # covered by this gate.
+        if path.name == "SKILL.md" and path.parent.parent.name == "skills" and path.parent.name.startswith("tk-"):
+            continue
         if path.suffix == ".json":
             try:
                 value = json.loads(path.read_text(encoding="utf-8"))

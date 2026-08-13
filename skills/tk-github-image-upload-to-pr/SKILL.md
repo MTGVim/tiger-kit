@@ -10,49 +10,50 @@ metadata:
     relationship: native
 ---
 
-# GitHub PR 이미지 업로드
+# GitHub PR Image Upload
 
-사용자가 `/tk-github-image-upload-to-pr` 또는
-`$tk-github-image-upload-to-pr` 를 선택하거나, 기존 GitHub PR에 로컬 이미지
-근거를 명시적으로 요청하거나, 활성 `tk-pr-open` 이
-`evidence_required: true`인 정확한 handoff를 보낼 때만 시작합니다. 상위 인계만 자동 trigger입니다. 스크린샷 캡처, 일반적인 GitHub 도움말,
-PR 생성, PR 검토 또는 이슈 triage에는 활성화하지 않습니다.
+Start only when the user selects `/tk-github-image-upload-to-pr` or
+`$tk-github-image-upload-to-pr`, explicitly requests local image evidence for an
+existing GitHub PR, or an active `tk-pr-open` sends an exact handoff with
+`evidence_required: true`. Only the parent handoff is an automatic trigger. Do not
+activate for screenshot capture, generic GitHub help, PR creation, PR review, or
+issue triage.
 
-## 범위
+## Scope
 
-하나의 제한된 업로드를 담당합니다: 로컬 이미지 검증 및 staging,
-저장소 범위의 GitHub attachment upload, 최소한의 PR body 또는 선택한
-comment update, 소스/render 검증입니다. 기본 대상은 PR body입니다.
+Handle one bounded upload: validate and stage local images, upload
+repository-scoped GitHub attachments, minimally update the PR body or selected
+comment, and verify source/render output. The default target is the PR body.
 
-`tk-pr-open` 에서는 `evidence_required: true`인 `tk-browser-verify` 또는
-`tk-prototype` 의 생산자 근거 handoff만 받습니다. 필수 근거가
-누락되거나 유효하지 않으면 근거 handoff를 `Blocked` 로 만들며, 이미
-생성된 `tk-pr-open` PR은 되돌리지 않습니다.
+For `tk-pr-open`, accept only producer evidence handoffs from `tk-browser-verify`
+or `tk-prototype` with `evidence_required: true`. If required evidence is missing
+or invalid, mark the evidence handoff `Blocked`; do not revert an already-created
+`tk-pr-open` PR.
 
-운영 계약은
-[references/upload-workflow.md](references/upload-workflow.md)를 사용합니다.
-브라우저 제어 런타임 검증에는 `tk-browser-verify` 를 사용합니다.
+Use
+[references/upload-workflow.md](references/upload-workflow.md) as the operational
+contract. Use `tk-browser-verify` for browser-controlled runtime verification.
 
-## 워크플로
+## Workflow
 
-1. `origin`, 현재 PR, 일반 로컬 이미지 파일(s) 또는 유효한 생산자
-   근거 handoff에서 실행 중인 저장소를 확인합니다. 기존 PR body를
-   읽습니다.
-2. 기존 `## 스크린샷` 제목을 재사용하고, 없으면 AI footer 앞에 삽입하거나
-   끝에 추가합니다. 관련 없는 본문 내용는 보존합니다.
-3. `gh attach --help`, 인증된 `gh` 접근 및 대상 저장소 쓰기
-   capability를 확인합니다. 저장소 visibility는 라우팅 신호이 아닙니다.
-4. 사용 가능하면 `--comment` 없이 검토된 extension을 사용하고 생성된
-   Markdown만 수집합니다. 없으면 브라우저 변경 전에 질문합니다: 정확히 고정된
-   `MTGVim/gh-attach` 설치를 권장하거나 CDP를 제시합니다.
-5. CDP를 선택했거나 대상 write capability를 사용할 수 없으면 `/tmp` 밖에
-   의미 있는 실행 소유 복사본을 staging하고, 기존 composer draft를 보호하며,
-   업로드 placeholder를 polling하고, run-owned composer content만 지웁니다.
-6. GitHub API 또는 equivalent를 통해 요청된 body 또는 comment만 업데이트합니다.
-   `Pass` 전에 소스 Markdown, rendered HTML/page 근거, 모든 asset link와
-   upload ref를 검증합니다.
-7. 모든 종료 경로에서 owned staging 파일만 제거합니다. 업로드 시도가
-   원격 상태를 만들었을 수 있으면 경로를 조용히 전환하지 않습니다.
+1. Confirm `origin`, the current PR, and the executing repository from regular
+   local image file(s) or a valid producer evidence handoff. Read the existing PR
+   body.
+2. Reuse the existing `## 스크린샷` heading. If absent, insert it before the AI
+   footer or append it at the end. Preserve unrelated body content.
+3. Check `gh attach --help`, authenticated `gh` access, and write capability for
+   the target repository. Repository visibility is not a routing signal.
+4. When available, use the reviewed extension without `--comment` and collect only
+   the generated Markdown. Otherwise, ask before browser mutation: recommend the
+   exact pinned `MTGVim/gh-attach` installation or offer CDP.
+5. If CDP is selected or target write capability is unavailable, stage a
+   meaningful run-owned copy outside `/tmp`, protect any existing composer draft,
+   poll the upload placeholder, and clear only run-owned composer content.
+6. Update only the requested body or comment through the GitHub API or equivalent.
+   Before `Pass`, verify the source Markdown, rendered HTML/page evidence, every
+   asset link, and the upload ref.
+7. Remove only owned staging files on every exit path. If an upload attempt may
+   have created remote state, do not silently switch routes.
 
 ## 실행 receipt · 단일 근거 record
 
@@ -91,35 +92,33 @@ Status: Pass | Fail | Blocked | Unverifiable
 않은 산출물은 거부합니다. 필수 근거가 없거나 유효하지 않으면
 업로드 전에 `Blocked` 를 반환합니다.
 
-## 금지 사항
+## Prohibitions
 
-- 사용자가 해당 comment 대상을 명시적으로 선택하지 않았다면 PR을 만들거나,
-  merge하거나, 검토자를 바꾸거나, release를 발행하거나, comment를
-  삽입하지 않습니다.
-- 명시적인 사용자 승인 없이 GitHub CLI extension을 install, update 또는
-  substitute하지 않습니다. 검토된 명령은
-  `gh extension install MTGVim/gh-attach --pin v0.7.0-mtgvim.1`입니다.
-- `tk-browser-verify` 를 우회하거나 Orca 또는 screen control을 automatic
-  브라우저 대체 경로로 사용하지 않습니다.
-- pre-existing draft를 덮어쓰거나 comment, close-with-comment 또는 다른
-  submit button을 클릭하지 않습니다.
-- public/private visibility로 경로를 정하거나 placeholder, Markdown
-  presence, fixed delay 또는 unrendered API 응답만으로 성공을 주장하지
-  않습니다.
-- signed URL JWT 또는 query string을 log하거나 반환하지 않습니다.
+- Do not create or merge a PR, change reviewers, publish a release, or insert a
+  comment unless the user explicitly selected that comment target.
+- Do not install, update, or substitute a GitHub CLI extension without explicit
+  user approval. The reviewed command is
+  `gh extension install MTGVim/gh-attach --pin v0.7.0-mtgvim.1`.
+- Do not bypass `tk-browser-verify` or use Orca or screen control as an automatic
+  browser fallback.
+- Do not overwrite a pre-existing draft or click comment, close-with-comment, or
+  any other submit button.
+- Do not choose a route based on public/private visibility or claim success from
+  only a placeholder, Markdown presence, fixed delay, or unrendered API response.
+- Do not log or return a signed URL JWT or query string.
 
-## 실패 처리
+## Failure Handling
 
-초안, 선택한 CDP 경로가 없는 거부된 설치 또는 다른 미해결
-사용자 소유 결정에는 `Blocked` 를 반환합니다. 어느 경로에도 authentication
-또는 렌더링 근거가 없으면 `Unverifiable` 을, upload, remote ref
-검증 또는 정리 오류면 `Fail` 을 반환합니다. selected body/comment가
-변경되었는지와 upload ref가 남을 수 있는지를 명시합니다. 시작된
-`gh attach` 가 실패한 뒤에는 CDP로 조용히 retry하지 않습니다.
+Return `Blocked` for a draft, a rejected installation without a selected CDP
+route, or any other unresolved user-owned decision. Return `Unverifiable` if
+neither route has authentication or render evidence, and `Fail` for upload,
+remote ref verification, or cleanup errors. State whether the selected
+body/comment changed and whether an upload ref may remain. After a started
+`gh attach` fails, do not silently retry with CDP.
 
-`tk-pr-open` 에서는 별도의 PR 작업 결과를 보존하고 근거 상태를
-`uploaded` 또는 `blocked` 로 반환합니다. 필수 근거가 계속 blocked인
-동안 상위는 전체 완료를 주장할 수 없습니다.
+For `tk-pr-open`, preserve the separate PR operation result and return the
+evidence state as `uploaded` or `blocked`. While required evidence remains
+blocked, the parent cannot claim full completion.
 
 ## 결과
 

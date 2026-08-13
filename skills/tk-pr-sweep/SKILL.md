@@ -10,55 +10,57 @@ metadata:
     relationship: native
 ---
 
-# 여러 PR 정리
+# Multi-PR cleanup
 
-명시적으로 `/tk-pr-sweep`, `$tk-pr-sweep`, 또는 호스트 스킬 선택으로만 시작합니다.
-일반적인 “열린 PR 정리해줘”, 한 PR 리뷰 대응, 일반 CI 수정에는 자동 적용하지 않습니다.
+Start only through an explicit `/tk-pr-sweep`, `$tk-pr-sweep`, or host skill selection.
+Do not invoke automatically for a generic request to clean up open PRs, respond to one PR review, or fix ordinary CI failures.
 
-Sweep는 여러 PR의 **fresh 상태를 읽고 정리하는 controller**입니다.
-장기 작업 상태를 Markdown ledger로 복제하지 않습니다. GitHub와 Git의 현재 상태가 truth입니다.
+Sweep is a controller that reads and organizes the **fresh state of multiple PRs**.
+Do not duplicate long-lived task state in a Markdown ledger. The current GitHub and Git state is the source of truth.
 
-**대화는 자연스럽게, 상태는 엄격하게.**
+**Keep the conversation natural and the state handling strict.**
 
-사용자에게 `actionable`, `held`, backend, routing state, worker receipt를 기본 출력하지 않습니다.
-대신 “지금 할 것 / 기다릴 것 / 왜 그런지 / 어떻게 처리할지”를 사람이 이해하기 쉽게 브리핑합니다.
+Do not expose `actionable`, `held`, backend details, routing state, or worker receipts by default.
+Instead, brief the user in plain language: what can be handled now, what must wait, why, and how the work will proceed.
 
-## 대상 repository
+## Target repositories
 
-기본 repository 범위는 다음 user-level 설정을 사용합니다.
+Use the following user-level configuration as the default repository scope:
 
 ```text
 $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 ```
 
-이 설정은 장기간 유지되는 repository 목록만 소유합니다.
-model mapping, selector, effort, worker routing, fan-out preference, task state는 저장하지 않습니다.
+This configuration owns only the long-lived repository list.
+Do not store model mappings, selectors, effort levels, worker routing, fan-out preferences, or task state there.
 
-설정이 없으면 현재 checkout의 origin을 안전하게 확인할 수 있을 때만 bootstrap할 수 있습니다.
-명시적 `--repo owner/name`은 해당 실행의 범위를 제한합니다.
+If the configuration does not exist, bootstrap it only when the current checkout’s origin can be identified safely.
+An explicit `--repo owner/name` limits the scope of that run.
 
 ## Deterministic triage
 
-`skills/tk-pr-sweep/scripts/triage.mjs`를 canonical fresh inventory로 사용합니다.
+Use `skills/tk-pr-sweep/scripts/triage.mjs` as the canonical fresh inventory.
 
-최소 확인 대상:
+At minimum, inspect:
 
-- open PR
-- author / requested review
-- exact base/head와 SHA
-- mergeability/conflict
-- GitHub Actions와 외부 check 구분
+- open PRs
+- author and requested reviews
+- exact base/head and SHA
+- mergeability and conflicts
+- GitHub Actions versus external checks
 - review decision
-- unresolved review thread
-- 최신 actionable feedback과 author response
+- unresolved review threads
+- latest actionable feedback and author response
+- current re-review request for every active `CHANGES_REQUESTED` reviewer
+- exactly one current-head summary marker after actionable threads close
 
-cached user supplied list나 이전 `.tigerkit/pr-sweep.md`를 current truth로 사용하지 않습니다.
+Do not treat a cached user-supplied list or a previous `.tigerkit/pr-sweep.md` as current truth.
 
 ## `--report`
 
-`--report`는 순수 읽기 전용입니다.
+`--report` is strictly read-only.
 
-예:
+Example:
 
 ```text
 지금 처리할 PR은 3개예요.
@@ -69,23 +71,23 @@ cached user supplied list나 이전 `.tigerkit/pr-sweep.md`를 current truth로 
 #130, #132는 사람 리뷰 대기이고 #135는 외부 CI 대기라 지금 손댈 필요 없습니다.
 ```
 
-기본 출력은 짧은 briefing입니다. lifecycle Markdown, Seed, worktree, commit, push, reply, resolve를 만들지 않습니다.
-실패한 repository가 있으면 성공한 repository 결과와 분리해 어떤 상태를 읽지 못했는지 설명합니다.
+Keep the default output to a short briefing. Do not create lifecycle Markdown, a Seed, worktree, commit, push, reply, or resolution.
+If a repository cannot be read, separate that failure from successful repository results and explain which state could not be retrieved.
 
-## 실행 계획
+## Execution plan
 
-실행 모드에서는 fresh triage를 바탕으로 지금 처리 가능한 PR만 계획합니다.
+In execution mode, plan only PRs that are currently actionable according to fresh triage.
 
-각 PR에 대해 사용자가 이해해야 할 수준으로 설명합니다.
+Explain each PR at the level the user needs to understand:
 
-- 왜 지금 처리 가능한지
-- 어떤 종류의 작업인지
-- 코드 변경이 필요한지
-- 필요한 검증
-- 위험하거나 사용자 결정이 필요한지
-- 서로 독립적인지
+- why it is actionable now
+- what kind of work it requires
+- whether code changes are required
+- what verification is required
+- whether it is risky or requires a user decision
+- whether it is independent of the other work
 
-예:
+Example:
 
 ```text
 PR 8개를 봤는데 지금 손댈 건 4개예요.
@@ -96,70 +98,82 @@ PR 8개를 봤는데 지금 손댈 건 4개예요.
 #128은 별도 rebase로 두는 걸 추천해요. 끝나면 전체 상태를 다시 확인하겠습니다.
 ```
 
-실행 모델은 “중간급 coding model”, “충돌은 더 강한 reasoning model” 같은 recommendation만 할 수 있습니다.
-구체 provider selector, tier, reasoning effort, `session.md`를 만들지 않습니다.
-이 제어를 사용할 수 없다는 이유로 전체 Sweep을 `Blocked` 처리하지 않습니다.
+The execution model may recommend only broad capability classes such as “중간급 coding model” or “충돌은 더 강한 reasoning model”.
+Do not create a specific provider selector, tier, reasoning effort, or `session.md`.
+Do not mark the entire Sweep as `Blocked` merely because these controls are unavailable.
 
-사용자가 batch 계획을 한 번 승인하면 그 exact PR/head/작업 유형/publication 범위에 대한 authority가 생깁니다.
-child마다 같은 내용을 다시 승인받지 않습니다.
+Once the user approves the batch plan, that approval grants authority only for the exact PRs, heads, work types, and publication scope in the plan.
+Do not request the same approval again for each child.
 
-## 실행 격리
+## Execution isolation
 
-여러 PR을 동시에 변경하려면 checkout isolation이 입증되어야 합니다.
-호스트가 isolated worktree/subagent를 제공하면 사용할 수 있습니다.
-안전한 병렬 격리가 없으면 PR을 순차 처리합니다.
+Prove checkout isolation before changing multiple PRs concurrently.
+Use isolated worktrees or subagents when the host provides them.
+If safe parallel isolation is unavailable, process the PRs sequentially.
 
-한 PR을 안전하게 현재 checkout에 결속할 수 없는 경우 그 PR만 hold하고 다른 독립 PR을 계속할 수 있습니다.
-worker/model control 부재 자체는 blocker가 아닙니다.
+If one PR cannot be bound safely to the current checkout, hold only that PR and continue with other independent PRs.
+The absence of worker or model controls is not itself a blocker.
 
-## PR별 처리
+## Per-PR handling
 
-각 PR을 실제 처리하기 직전에 fresh triage와 exact PR state를 다시 읽습니다.
+Immediately before handling each PR, reread fresh triage and the exact PR state.
 
-대표 route:
+Representative routes:
 
-- review feedback / repository-caused GitHub Actions → `tk-pr-respond` 절차
-- merge conflict / base drift → `tk-pr-rebase` 절차
-- 외부 CI, queued/flaky/infrastructure, 사람 리뷰 대기 → 지금은 기다림
-- 지원하지 않는 상태 → report-only
+- review feedback or repository-caused GitHub Actions failure → follow the `tk-pr-respond` procedure
+- merge conflict or base drift → follow the `tk-pr-rebase` procedure
+- external CI, queued/flaky/infrastructure failures, or pending human review → wait
+- unsupported state → report-only
 
-parent가 승인한 exact PR/head와 해결 방향이 그대로면 child가 같은 결정을 다시 묻지 않습니다.
-새 feedback, head drift, scope 변화처럼 material하게 달라졌을 때만 해당 PR을 사용자에게 다시 올립니다.
+If the parent-approved exact PR/head and resolution direction remain unchanged, the child must not ask for the same decision again.
+Return that PR to the user only when there is a material change, such as new feedback, head drift, or scope drift.
 
-## PR별 Seed
+## Per-PR Seed
 
-Sweep 전체를 하나의 giant Seed로 만들지 않습니다.
+Do not create one giant Seed for the entire Sweep.
 
-코드 변경이 필요한 각 PR은 자기 isolated checkout/worktree의 `.tigerkit/seed.md`를 사용할 수 있습니다.
-그 Seed는 해당 PR의 feedback, 목적, 결정, 접근, AC, verification, publication boundary를 self-contained하게 담습니다.
+Each PR requiring code changes may use `.tigerkit/seed.md` in its own isolated checkout or worktree.
+The Seed must be self-contained and include that PR’s feedback, objective, decisions, approach, AC, verification, and publication boundary.
 
-reply-only나 순수 rebase처럼 별도 구현 context가 필요하지 않은 작업에는 억지로 Seed를 만들지 않습니다.
+Do not force a Seed onto reply-only work or a pure rebase that does not require separate implementation context.
 
-`pr-sweep.md`, `pr-respond.md`, worker receipt Markdown은 만들지 않습니다.
+Do not create `pr-sweep.md`, `pr-respond.md`, or worker receipt Markdown.
 
 ## Publication
 
-각 child의 remote write 전 exact repository/PR/head/identity/refspec/thread/check를 fresh-read합니다.
-parent 승인 범위 안의 push/reply/resolve/re-review만 허용합니다.
+Before every child remote write, fresh-read and verify the exact repository, PR, head, identity, refspec, thread, and check.
+Permit only push, reply, resolve, and re-review actions within the parent-approved scope.
 
-일부 publication이 permission 문제로 차단되면 이미 검증된 local commit과 exact remote state를 보존해 보고합니다.
-같은 실행에서 exact target과 refspec을 다시 검증할 수 있으면 안전하게 재시도할 수 있습니다.
-별도 세션의 `--recover-publication`은 local commit/remote head/approved target을 fresh evidence로 재구성할 수 있을 때만 허용하며,
-그렇지 않으면 `Unverifiable`로 멈춥니다. plain force나 추정 refspec은 사용하지 않습니다.
+After all actionable review threads are closed, the publication contract additionally requires:
 
-## Queue 진행
+- For every reviewer whose current review decision is `CHANGES_REQUESTED`, fresh verification that a re-review request was sent to that exact reviewer for the current head.
+- Exactly one current-head summary comment containing the marker `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, where `<HEAD_SHA>` is the exact current head SHA.
+- Fresh verification that the marked summary comment exists on the exact PR and current head, and that no duplicate current-head summary comment with the same marker exists.
+- The summary comment must be published only after actionable threads are closed.
 
-한 PR의 local failure가 다른 독립 PR을 자동 중단시키지 않습니다.
-다만 identity/권한 오염, repository 범위 불명확, triage 자체 신뢰 불가처럼 systemic failure면 전체 Sweep을 중단합니다.
+Do not report a PR as complete when evidence is missing for any required `CHANGES_REQUESTED` reviewer re-review request, actionable-thread closure, or the single current-head summary comment.
 
-각 PR 성공/실패 뒤 그 PR을 다시 triage하여 실제 상태가 바뀌었는지 확인합니다.
-모든 planned row가 끝나면 configured repositories 전체를 final fresh triage합니다.
+If publication is partially blocked by permissions, preserve and report the already verified local commit and exact remote state.
+A retry in the same run is allowed only after re-verifying the exact target and refspec.
+A later-session `--recover-publication` is allowed only when the local commit, remote head, approved target, required re-review requests, actionable-thread state, and current-head summary-comment state can all be reconstructed from fresh evidence.
+Otherwise stop as `Unverifiable`.
+Never use plain force or a guessed refspec.
 
-## 완료 응답
+## Queue progress
 
-내부 category/receipt를 덤프하지 않습니다.
+A local failure in one PR does not automatically stop other independent PRs.
+Stop the entire Sweep only for a systemic failure, such as identity or permission contamination, ambiguous repository scope, or untrustworthy triage.
 
-예:
+After each PR succeeds or fails, triage that PR again to confirm that its actual state changed.
+After every planned row finishes, run final fresh triage across all configured repositories.
+
+A PR is not complete unless final fresh triage confirms the required checks, publication state, all required `CHANGES_REQUESTED` reviewer re-review requests, closed actionable threads, and exactly one current-head summary comment marked `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`.
+
+## Completion response
+
+Do not dump internal categories or receipts.
+
+Example:
 
 ```text
 이번 Sweep에서는 4개 중 3개를 처리했습니다.
@@ -167,5 +181,6 @@ parent 승인 범위 안의 push/reply/resolve/re-review만 허용합니다.
 #128은 새 conflict가 확인돼 보류했고, 나머지는 사람/외부 CI 대기 상태입니다.
 ```
 
-정상 처리 항목은 짧게, 문제 있는 PR만 필요한 만큼 자세히 설명합니다.
-마지막 상태는 실제 결과에 따라 `Status: Pass | Pending | Blocked | Unverifiable | Fail` 중 하나만 사용합니다.
+Keep successfully handled items brief and explain only problematic PRs in the necessary detail.
+Never describe an item as complete when required publication evidence is missing.
+Use exactly one final status based on the actual result: `Status: Pass | Pending | Blocked | Unverifiable | Fail`.
