@@ -14,7 +14,6 @@ LANGUAGE_EXACT_WORDS = {
     "Unverifiable", "Verification", "YAML", "aborted", "applied", "completed",
     "in_progress", "pending", "reported", "unavailable", "unknown", "unverified",
     "false", "true", "hybrid", "native", "user-invoked", "tigerkit",
-    "description", "license", "upstream-skill",
 }
 
 
