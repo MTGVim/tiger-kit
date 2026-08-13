@@ -1,0 +1,48 @@
+{
+  "skill": "tk-prep",
+  "kind": "hybrid",
+  "queries": [
+    {
+      "id": "positive-explicit",
+      "split": "train",
+      "query": "$tk-prep 이 버그를 구현 가능한 `Seed`로 준비해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "positive-command",
+      "split": "validation",
+      "query": "/tk-prep PR 리뷰 대응 작업을 조사하고 준비해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "positive-pending-answer",
+      "split": "validation",
+      "query": "[`active` tk-prep] 모바일에서는 한 줄 유지로 해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "negative-generic-plan",
+      "split": "validation",
+      "query": "이 기능 구현 계획 좀 짜줘",
+      "should_trigger": false
+    },
+    {
+      "id": "negative-implementation",
+      "split": "validation",
+      "query": "이 버그 바로 고치고 커밋해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "negative-repo-question",
+      "split": "validation",
+      "query": "이 값이 저장소 어디서 오는지 알려줘",
+      "should_trigger": false
+    },
+    {
+      "id": "negative-human-setup",
+      "split": "validation",
+      "query": "OTP 설정을 하나씩 안내해줘",
+      "should_trigger": false
+    }
+  ]
+}

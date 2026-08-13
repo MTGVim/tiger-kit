@@ -1,6 +1,6 @@
 interface:
-  short_description: "[user] 들어온 저장소 질문을 소스 위치가 명시된 근거와 함께 조사합니다."
-  default_prompt: "tk-ask-repo를 사용해 이 저장소 질문을 분류하고, 소스 위치가 명시된 근거까지 추적하며, 필요하면 영향받는 소비자를 전수 조사하고, 변경을 구현하지 않은 채 소유권을 보고하세요."
+  short_description: "[user] 저장소 질문을 근거와 함께 자연스럽게 설명하고 공유용 요약을 제공합니다."
+  default_prompt: "`tk-ask-repo`로 저장소 질문을 읽기 전용으로 끝까지 추적하세요. 질문에 먼저 직접 답하고 중요한 주장 옆에 `path:line` 근거를 붙이며, 마지막에는 본문에서 검증된 사실만 사용한 타팀 공유용 `3~10`줄 요약을 제공하세요."
 
 policy:
   allow_implicit_invocation: false

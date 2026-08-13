@@ -1,6 +1,6 @@
 interface:
-  short_description: "[user/auto] 사람이 수행할 host-session wizard를 안전하게 준비합니다."
-  default_prompt: "tk-wizard로 repository와 host를 먼저 조사하고 stage/value/source/destination/secret inventory를 보여준 뒤 확인받아 정적 검증된 user-run wizard와 handoff를 준비하세요."
+  short_description: "[user/auto] 사람이 직접 해야 하는 설정·인증 절차를 자연스러운 대화로 안전하게 안내합니다."
+  default_prompt: "tk-wizard로 저장소와 `host` 근거를 먼저 확인하고, 전체 여정은 짧게 설명한 뒤 사용자가 지금 해야 할 행동 하나씩만 자연스럽게 안내하세요. `secret`은 대화에 남기지 말고 비가역 작업만 명시 확인을 받으세요."
 
 policy:
   allow_implicit_invocation: true
