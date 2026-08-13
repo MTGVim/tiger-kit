@@ -1,6 +1,6 @@
 interface:
-  short_description: "[user/auto] 저장소 근거와 자연스러운 대화로 실행 가능한 `Seed`를 준비합니다."
+  short_description: "[user] 저장소 근거와 자연스러운 대화로 실행 가능한 `Seed`를 준비합니다."
   default_prompt: "`tk-prep`으로 작업 원천을 조사하고 필요한 결정만 자연스럽게 닫은 뒤, 이해 준비도와 엔지니어링 준비도를 검증해 새 실행자가 원 대화 없이 사용할 수 있는 `.tigerkit/seed.md`를 준비하세요."
 
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false
