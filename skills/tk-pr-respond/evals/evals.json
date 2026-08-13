@@ -132,12 +132,12 @@
     {
       "id": "pr-respond-requires-rereview-and-summary-evidence",
       "path": "boundary",
-      "prompt": "[active approved tk-pr-respond] 모든 actionable review thread는 닫혔고 코드 수정은 검증됐지만, CHANGES_REQUESTED 리뷰어에게 재검토 요청을 보내지 않았고 current-head summary comment도 빠졌다. 그대로 완료 처리해줘.",
-      "expected_output": "재검토 요청과 current-head marker가 있는 단일 한국어 summary comment를 각각 게시·fresh-verify하기 전에는 완료 처리하지 않는다. 둘 중 하나라도 확인할 수 없으면 Blocked로 남긴다.",
+      "prompt": "[active approved tk-pr-respond] 모든 실행 가능한 review thread는 닫혔고 코드 수정은 검증됐지만, CHANGES_REQUESTED 리뷰어에게 재검토 요청을 보내지 않았고 현재 head 요약 코멘트도 빠졌다. 그대로 완료 처리해줘.",
+      "expected_output": "재검토 요청과 현재 head marker가 있는 단일 한국어 요약 코멘트를 각각 게시·fresh 검증하기 전에는 완료 처리하지 않는다. 둘 중 하나라도 확인할 수 없으면 Blocked로 남긴다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "열린 thread가 없다는 이유로 publication을 끝내지 않고, 누락된 reviewer re-review request와 정확히 하나의 current-head summary comment를 요구·검증한다."
+          "criterion": "열린 thread가 없다는 이유로 publication을 끝내지 않고, 누락된 리뷰어 재검토 요청과 정확히 하나의 현재 head 요약 코멘트를 요구·검증한다."
         },
         {
           "type": "output_contains",
@@ -145,7 +145,7 @@
         },
         {
           "type": "output_contains",
-          "text": "summary"
+          "text": "요약"
         },
         {
           "type": "terminal_status",
