@@ -17,6 +17,10 @@ Handle only concrete repository questions explicitly invoked through `/tk-ask-re
 This is a read-only investigation that does not modify source, tests, configuration, artifacts, history, or remote state.
 It does not own implementation, closing user decisions, runtime estimation, or real-browser reproduction.
 
+## 🔴 CHECKPOINT · 🛑 STOP · Investigation boundary
+
+Do not implement, mutate, or turn incomplete evidence into a repository claim; when an anchor or evidence path cannot be established, stop with `Status: Unverifiable`.
+
 ## User Experience
 
 Keep the internal investigation rigorous, but present the result as a natural explanation rather than a report.
