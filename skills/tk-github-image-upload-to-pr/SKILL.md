@@ -34,6 +34,10 @@ Use
 [references/upload-workflow.md](references/upload-workflow.md) as the operational
 contract. Use `tk-browser-verify` for browser-controlled runtime verification.
 
+## 🔴 CHECKPOINT · 🛑 STOP · Upload mutation boundary
+
+Before any upload or PR body/comment update, reverify the explicitly selected target, valid local evidence or producer handoff, authenticated route, and requested write scope; stop as `Blocked` or `Unverifiable` when those preconditions cannot be established.
+
 ## Workflow
 
 1. Confirm `origin`, the current PR, and the executing repository from regular
