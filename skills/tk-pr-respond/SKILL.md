@@ -2,7 +2,7 @@
 name: tk-pr-respond
 description: "[user/auto] 하나의 pull request의 review feedback 또는 지원 가능한 GitHub Actions 실패를 fresh state로 읽고, 자연스러운 해결 계획을 합의한 뒤 필요 시 `seed.md`를 사용해 수정·검증·제한된 publication까지 처리합니다."
 disable-model-invocation: false
-argument-hint: "<pull request or repository> [--ci]"
+argument-hint: "<pull request or repository>"
 metadata:
   tigerkit:
     kind: hybrid

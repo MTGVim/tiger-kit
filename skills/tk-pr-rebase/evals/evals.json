@@ -31,7 +31,7 @@
     {
       "id": "pr-rebase-sweep-child-does-not-write-ledger",
       "path": "success",
-      "prompt": "[active approved tk-pr-sweep → tk-pr-rebase --ci] exact PR/base/head가 승인됐다. rebase 결과를 parent에 반환해줘.",
+      "prompt": "[active approved tk-pr-sweep → tk-pr-rebase] exact PR/base/head가 승인됐다. rebase 결과를 parent에 반환해줘.",
       "expected_output": "fresh refs를 다시 확인하고 rebase/verification/publication을 수행한 뒤 compact evidence만 parent에 반환하며 child Markdown ledger를 만들지 않는다.",
       "assertions": [
         {
