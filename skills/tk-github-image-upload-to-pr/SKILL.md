@@ -30,9 +30,10 @@ or `tk-prototype` with `evidence_required: true`. If required evidence is missin
 or invalid, mark the evidence handoff `Blocked`; do not revert an already-created
 `tk-pr-open` PR.
 
-Use
-[references/upload-workflow.md](references/upload-workflow.md) as the operational
-contract. Use `tk-browser-verify` for browser-controlled runtime verification.
+Use [references/gh-attach.md](references/gh-attach.md) to classify and run the
+extension route. Read [references/cdp-fallback.md](references/cdp-fallback.md)
+only after CDP is selected or the extension route cannot use target write
+capability. Use `tk-browser-verify` for browser-controlled runtime verification.
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Upload mutation boundary
 
@@ -45,18 +46,27 @@ Before any upload or PR body/comment update, reverify the explicitly selected ta
    body.
 2. Reuse the existing `## 스크린샷` heading. If absent, insert it before the AI
    footer or append it at the end. Preserve unrelated body content.
-3. Check `gh attach --help`, authenticated `gh` access, and write capability for
-   the target repository. Repository visibility is not a routing signal.
-4. When available, use the reviewed extension without `--comment` and collect only
-   the generated Markdown. Otherwise, ask before browser mutation: recommend the
-   exact pinned `MTGVim/gh-attach` installation or offer CDP.
-5. If CDP is selected or target write capability is unavailable, stage a
-   meaningful run-owned copy outside `/tmp`, protect any existing composer draft,
-   poll the upload placeholder, and clear only run-owned composer content.
-6. Update only the requested body or comment through the GitHub API or equivalent.
+3. Before any extension command, inspect the single `gh attach` row from
+   `gh extension list` and classify it as `reviewed-fork`, `reviewed-upstream`,
+   `unreviewed-upstream`, `unknown`, or `absent`. A successful list with no row is
+   `absent`; failed, incomplete, duplicate, or unsupported metadata is `unknown`.
+4. Use either exact reviewed distribution without another trust prompt. Warn and
+   obtain current-turn approval before another upstream version. Never execute an
+   `unknown` extension. For `absent`, recommend the pinned reviewed fork or CDP;
+   do not install automatically.
+5. Only after reviewed classification or explicit unreviewed-upstream approval,
+   check `gh attach --help`, authenticated `gh` access, and target write
+   capability. Reclassify after an approved install. Repository visibility is not
+   a routing signal. Use the extension without `--comment` and collect only the
+   generated Markdown.
+6. If CDP is selected, including after unavailable target write capability is
+   explained, stage a meaningful run-owned copy outside `/tmp`, protect any
+   existing composer draft, poll the upload placeholder, and clear only run-owned
+   composer content.
+7. Update only the requested body or comment through the GitHub API or equivalent.
    Before `Pass`, verify the source Markdown, rendered HTML/page evidence, every
    asset link, and the upload ref.
-7. Remove only owned staging files on every exit path. If an upload attempt may
+8. Remove only owned staging files on every exit path. If an upload attempt may
    have created remote state, do not silently switch routes.
 
 ## 실행 receipt · 단일 근거 record
@@ -77,7 +87,7 @@ Remote ref: <refs/uploads/issues/<pr-number> | none | unknown>
 Verification: <source body/comment | rendered HTML/page | unavailable>
 Changed: <body/comment changed | unchanged | unknown>
 Cleanup: <owned staging path removed | failed | not applicable>
-Status: Pass | Fail | Blocked | Unverifiable
+Status: Pass | Fail | Pending | Blocked | Unverifiable
 ```
 
 ## 생산자 근거 인계(생산자 증거 인계)
@@ -103,6 +113,9 @@ Status: Pass | Fail | Blocked | Unverifiable
 - Do not install, update, or substitute a GitHub CLI extension without explicit
   user approval. The reviewed command is
   `gh extension install MTGVim/gh-attach --pin v0.7.0-mtgvim.1`.
+- Do not run `gh attach --help` or any other extension command while provenance
+  is `unknown`, the extension is `absent`, or an unreviewed upstream version lacks
+  current-turn approval.
 - Do not bypass `tk-browser-verify` or use Orca or screen control as an automatic
   browser fallback.
 - Do not overwrite a pre-existing draft or click comment, close-with-comment, or
@@ -113,12 +126,13 @@ Status: Pass | Fail | Blocked | Unverifiable
 
 ## Failure Handling
 
-Return `Blocked` for a draft, a rejected installation without a selected CDP
-route, or any other unresolved user-owned decision. Return `Unverifiable` if
-neither route has authentication or render evidence, and `Fail` for upload,
-remote ref verification, or cleanup errors. State whether the selected
-body/comment changed and whether an upload ref may remain. After a started
-`gh attach` fails, do not silently retry with CDP.
+Return `Pending` while waiting for an absent-extension or unreviewed-upstream
+choice. Return `Blocked` for `unknown` provenance, a draft, or a rejected
+installation without a selected CDP route. Return `Unverifiable` if neither route
+has authentication or render evidence, and `Fail` for upload, remote ref
+verification, or cleanup errors. State whether the selected body/comment changed
+and whether an upload ref may remain. After a started `gh attach` fails, do not
+silently retry with CDP.
 
 For `tk-pr-open`, preserve the separate PR operation result and return the
 evidence state as `uploaded` or `blocked`. While required evidence remains
@@ -128,5 +142,5 @@ blocked, the parent cannot claim full completion.
 
 terminal 응답은 `## GitHub image upload` 로 시작합니다. 해당하는 경우
 `## Uploaded`, `## Verification` 및 `## Cleanup` 을 포함합니다. 결과를 소유하는 section의 끝에는 정확히 하나의
-`Status: Pass|Fail|Blocked|Unverifiable` 줄을 둡니다. 안전할 때만 asset URL을
+`Status: Pass|Fail|Pending|Blocked|Unverifiable` 줄을 둡니다. 안전할 때만 asset URL을
 노출하고 서명된 매개변수는 redact합니다.
