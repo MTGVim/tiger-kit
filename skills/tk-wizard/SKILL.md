@@ -75,7 +75,9 @@ If a `helper` is needed, create it as a one-time `user-run` `helper` and preserv
 - Statically validate with `bash -n` and, when possible, `shellcheck`
 - Explain how to delete or retain it afterward
 
-## Safety Confirmation
+## 🔴 CHECKPOINT · 🛑 STOP · Safety Confirmation
+
+Treat irreversible, production-affecting, or unverifiable steps below as hard stops; ordinary reversible steps remain frictionless.
 
 Do not ask for approval at every ordinary `reversible` step.
 Require explicit confirmation only for actions that change the user's decision, are difficult to reverse,
