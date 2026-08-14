@@ -61,6 +61,16 @@ Disposition: reported | applied | pending
 Do not copy the `Seed`’s `goal/scope/AC/implementation guidance` into the `Handoff`.
 When needed, reference the exact `Seed` `section/path`.
 
+## 🔴 CHECKPOINT · 🛑 STOP · Write/Resume Boundary
+
+Before writing a new `Handoff` or continuing a `--resume`:
+
+- STOP and report `Unverifiable` when the current `Seed`, `Handoff`, branch, `HEAD`, worktree, or required verification cannot be fresh-read.
+- STOP and mark `Blocked` when evidence conflicts or the `Seed` contract has drifted; do not resolve either condition inside the `Handoff`.
+- STOP before writing if atomic replacement cannot be completed or readback fails; use `.tigerkit/handoff.md` by default and honor an explicit `--output <path>` exactly.
+- STOP at any product, Git, or remote publication approval boundary; the artifact does not grant that permission.
+- If none of these conditions applies, continue without asking an extra question for a routine artifact update.
+
 ## Resume
 
 `--resume` requests resuming work by comparing the `handoff snapshot` against the current Git and files.

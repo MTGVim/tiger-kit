@@ -66,11 +66,12 @@ An explicit standalone invocation automatically authorizes only the local rebase
 Before remote publication, record the exact PR/base/head, old/new SHA,
 verification, exact lease/refspec, reply/thread action, and exclusions in `.tigerkit/pr-rebase.md`, then reread it.
 
+## 🔴 CHECKPOINT · 🛑 STOP · Standalone publication boundary
+
 Do not tell the user merely to read the entire ledger. Naturally summarize what changed, what was verified,
 and which exact publication will be performed, then obtain one current-turn approval.
-
-Immediately before the remote write after approval, recheck repository/identity/open state/base/head/refspec/lease.
-Invalidate the approval if any material drift exists.
+STOP immediately before the remote write if repository/identity/open state/base/head/refspec/lease cannot be rechecked
+or if any material drift invalidates the approval.
 
 Only exact `--force-with-lease=<full-head-ref>:<old_head>` is allowed for publication.
 Plain `--force` is prohibited.
