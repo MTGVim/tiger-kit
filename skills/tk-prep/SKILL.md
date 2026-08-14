@@ -123,7 +123,9 @@ Do not include the full conversation, `worker`/`wave` progress state, provider m
 Execution recommendations should remain advice at the level of “독립 작업 `fan-out` 가능”, “중간급 `coding model` 권장”, or “더 강한 최종 검토 권장”.
 The current `host`/`agent` determines the actual execution form, but AC and Verification are binding contracts.
 
-## Ready and Evolution
+## 🔴 CHECKPOINT · 🛑 STOP · Ready and Evolution
+
+Treat the following as a hard stop: do not write `Status: Ready` or begin implementation until every condition below is true.
 
 During the interview, the `Seed` remains `Status: Pending`. Change it to `Status: Ready` only after all of the following are satisfied and the user approves the final natural-language summary.
 
