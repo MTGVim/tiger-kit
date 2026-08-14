@@ -456,7 +456,7 @@
     {
       "id": "browser-emits-required-pr-evidence-handoff",
       "path": "success",
-      "prompt": "[active tk-drive browser handoff] Approved plan records PR evidence: required for AC-03. Headless screenshot을 inspect한 뒤 parent evidence를 반환해 주세요.",
+      "prompt": "[active parent verifier handoff] Ready Seed에 AC-03의 `PR evidence: required`가 기록되어 있습니다. `headless screenshot`을 검사한 뒤 상위 작업에 evidence를 반환해 주세요.",
       "expected_output": "upload하거나 Markdown을 작성하지 않고 compact result에 evidence_required: true, AC-03, producer, absolute evidence directory, inspected screenshot path를 포함합니다.",
       "assertions": [
         {
