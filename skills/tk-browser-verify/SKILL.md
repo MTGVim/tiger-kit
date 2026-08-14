@@ -36,6 +36,10 @@ Record only non-sensitive facts such as `auth mode: token-headless` or `authenti
 
 If safe headless authentication cannot be established, do not fall back to a visible browser; return `Unverifiable`.
 
+## 🔴 CHECKPOINT · 🛑 STOP · Verification readiness
+
+Before browser or server execution, treat unresolved target, criterion, authentication, readiness, or evidence inputs as a hard stop: return `Blocked` for a user-owned decision or `Unverifiable` when safe verification cannot be established.
+
 ## Parent Handoff
 
 When possible, the parent task provides:
