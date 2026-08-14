@@ -27,7 +27,7 @@ First, verify the following.
 - Current branch and `HEAD`
 - Base branch
 - Target `commit` and changed paths
-- Whether a `PR` already exists for the same `head`
+- 같은 `head`의 기존 `PR` 존재 여부와 `observed draft | ready` 상태
 - Unrelated dirty/staged paths
 - Target repository's `PR template`
 
@@ -68,6 +68,7 @@ Record and reread the following exact information.
 ```text
 Repository
 PR operation: create | update
+PR state: draft | ready
 Base
 Head ref + SHA
 Push refspec
@@ -80,30 +81,35 @@ Known exclusions
 ```
 
 This artifact owns only the current `PR` publication plan, not the product work plan or `worker` state.
+새 `PR`은 사용자가 `draft`를 명시할 때만 `draft`로 만들고, 상태를 명시하지 않으면 기존 `ready` 동작을 유지합니다.
+기존 같은 `head`의 `PR`은 상태 변경 요청이 없으면 `fresh-read`한 상태를 보존합니다.
 
 Present the following naturally to the user instead of hiding information behind a file they must open.
 
 - 포함되는 변경 요약
 - 정확한 제목/본문 또는 중요한 템플릿 섹션
 - 기준/헤드
+- 유효 `PR state`
 - 검사/증거 상태
 - 제외 범위/위험
 - 한 가지 발행 추천
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Publication boundary
 
-Before any remote write, reread the plan and obtain one exact current-turn approval; do not treat the natural-language request “PR 열어줘” itself as publication approval.
+Before any remote write, reread the plan and obtain one exact current-turn approval; do not treat the natural-language request “PR 열어줘” itself as publication approval. 승인에는 유효 `PR state`도 포함합니다.
 STOP if the plan, approved `commit`, template/evidence state, or current repository state cannot be reverified.
 
 ## Publication
 
 After approval, recheck the repository, account, branch, `HEAD`, base, existing `PR`, and template source.
+기존 `PR`의 `actual state`가 승인된 `plan`과 `material`하게 달라졌다면 승인을 무효화합니다.
 Invalidate the approval if any material `drift` exists.
 
 `push` only the exact approved `refspec`, and create or update only the specified `PR`.
+`Create`에서는 승인된 `PR state`를 적용하고, `update`에서는 명시적으로 승인된 경우에만 상태를 변경합니다.
 Do not `merge`, `close`, `tag`, or `release`.
 
-After creating or updating the `PR`, reread the remote `PR` and verify its URL, `head SHA`, template compliance, and evidence state.
+After creating or updating the `PR`, reread the remote `PR` and verify its URL, `head SHA`, actual `draft | ready` state, template compliance, and evidence state.
 If evidence is required, use the image uploader after the `PR` exists.
 If the `PR` was created but the required evidence upload fails, preserve the actual remote state and report completion as `Blocked`.
 
@@ -114,6 +120,7 @@ If the `PR` was created but the required evidence upload fails, preserve the act
 - `PR` URL
 - 생성/업데이트 여부
 - 현재 `head`
+- 현재 `PR state`
 - 검증/증거 결과
 - 남은 차단 요인
 
