@@ -150,7 +150,7 @@
     {
       "id": "prototype-emits-required-pr-evidence-handoff",
       "path": "success",
-      "prompt": "[active tk-drive prototype handoff] Ready contract에 PR evidence: required가 AC-07에 기록되어 있습니다. 선택된 prototype screenshot을 inspect한 뒤 downstream handoff를 반환해 주세요.",
+      "prompt": "[active parent prototype handoff] Ready Seed에 AC-07의 `PR evidence: required`가 기록되어 있습니다. 선택된 `prototype screenshot`을 검사한 뒤 downstream handoff를 반환해 주세요.",
       "expected_output": "Prototype 결과에서 `evidence_required: true`, AC-07 criterion, producer, run-owned absolute evidence directory 및 inspected screenshot path를 업로드하지 않고 노출한다.",
       "assertions": [
         {

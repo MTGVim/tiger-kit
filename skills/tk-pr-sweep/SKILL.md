@@ -87,17 +87,6 @@ Explain each PR at the level the user needs to understand:
 - whether it is risky or requires a user decision
 - whether it is independent of the other work
 
-Example:
-
-```text
-PR 8개를 봤는데 지금 손댈 건 4개예요.
-#121은 리뷰 수정, #124는 repository-caused Actions 실패, #128은 rebase,
-#130은 코드 변경 없이 답변만 하면 됩니다.
-
-#121/#124는 서로 독립적이라 격리된 subagent 병렬 처리가 가능하고,
-#128은 별도 rebase로 두는 걸 추천해요. 끝나면 전체 상태를 다시 확인하겠습니다.
-```
-
 The execution model may recommend only broad capability classes such as “중간급 coding model” or “충돌은 더 강한 reasoning model”.
 Do not create a specific provider selector, tier, reasoning effort, or `session.md`.
 Do not mark the entire Sweep as `Blocked` merely because these controls are unavailable.

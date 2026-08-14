@@ -36,6 +36,9 @@ are outside this skill's scope.
 
 ## Research and Planning
 
+`upstream provenance` 또는 `adaptation` 판단이 필요할 때만 [upstream 증류](references/upstream-distillation.md)를 읽고,
+일반 `wizard` 실행에서는 읽지 않습니다.
+
 First read the `repository` and current `host` `evidence` to build this internal state:
 
 - Full journey and sequence
