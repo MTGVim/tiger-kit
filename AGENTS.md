@@ -6,7 +6,8 @@ TigerKit은 `workflow` `runner`, `plugin`, `scheduler`, `shared-state` `framewor
 
 - 각 `skills/tk-*` `package`는 `self-contained`합니다.
 - `SKILL.md`가 현재 실행 `behavior`를 소유합니다.
-- `package-local` `references/`, `scripts/`, `agents/`, `evals/`는 조건부 세부사항과 `executable` `evidence`를 소유합니다.
+- `package-local` `references/`는 조건부 `readable knowledge`만 소유합니다.
+- `package-local` `scripts/`는 `executable helper`를, `agents/`와 `evals/`는 실행·검증 `evidence`를 소유합니다.
 - 전역 TigerKit `task` `state`, `host`별 `skill` `body` 복사본, GitHub `Actions` `validation`을 만들지 않습니다.
 - 중복 `protocol`보다 삭제와 `progressive` `disclosure`를 우선합니다.
 - 사용자-`facing`/운영 `prose`는 한국어를 기본으로 하고 `exact` ID/`path`/`status`/`command`/`technical` `literal`은 원문을 유지합니다.

@@ -160,7 +160,11 @@ def validate_routing_invariants(skills_root: Path = SKILLS) -> list[str]:
     paths = sorted(skills_root.glob("tk-*/SKILL.md"))
     paths.extend(sorted(skills_root.glob("tk-*/references/*.md")))
     for path in paths:
-        for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeError):
+            continue
+        for number, line in enumerate(text.splitlines(), 1):
             if DIRECT_MODEL_ROUTING.search(line.replace("`", "")):
                 errors.append(
                     f"{_display_path(path)}:{number}: direct inherits the session model; "
@@ -262,7 +266,10 @@ def validate_plain_chat_contract(skill_dir: Path) -> list[str]:
     for path in skill_dir.rglob("*"):
         if not path.is_file() or path.suffix not in {".md", ".json", ".yaml", ".yml", ".py", ".mjs"}:
             continue
-        text = path.read_text(encoding="utf-8")
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeError):
+            continue
         for token in QUESTION_TOOL_TOKENS:
             if token in text:
                 errors.append(
@@ -590,7 +597,11 @@ def validate_repo_links() -> list[str]:
         relative = path.relative_to(ROOT)
         if ".git" in path.parts or ".tigerkit" in path.parts or relative.parts[0] in {".agents", ".codex"}:
             continue
-        for target in LINK.findall(path.read_text(encoding="utf-8")):
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeError):
+            continue
+        for target in LINK.findall(text):
             target = target.split("#", 1)[0]
             if not target or re.match(r"^(?:[a-z]+:)?//", target) or target.startswith("#"):
                 continue
@@ -626,6 +637,23 @@ def validate_portable_artifacts(root: Path) -> list[str]:
                 errors.append(
                     f"{relative}:{line_number}: remove non-portable absolute path {match.group(0)!r}"
                 )
+    return errors
+
+
+def validate_reference_resources(skills_root: Path = SKILLS) -> list[str]:
+    errors: list[str] = []
+    for path in sorted(skills_root.glob("tk-*/references/**/*")):
+        if not path.is_file():
+            continue
+        try:
+            if path.stat().st_mode & 0o111:
+                errors.append(f"{_display_path(path)}: references must not be executable")
+            text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeError) as exc:
+            errors.append(f"{_display_path(path)}: references must be readable UTF-8 text: {exc}")
+            continue
+        if "\0" in text:
+            errors.append(f"{_display_path(path)}: references must not contain NUL bytes")
     return errors
 
 
@@ -691,6 +719,7 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
     for directory in SKILLS.glob("*/**"):
         if directory.is_dir() and directory.name in {"references", "scripts", "agents", "evals"} and not any(directory.iterdir()):
             errors.append(f"{directory.relative_to(ROOT)}: remove empty optional directory")
+    errors.extend(validate_reference_resources(SKILLS))
     errors.extend(validate_portable_artifacts(ROOT))
     return errors
 

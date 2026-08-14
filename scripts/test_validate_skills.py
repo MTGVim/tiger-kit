@@ -141,6 +141,29 @@ class EvalSotValidatorTest(unittest.TestCase):
             errors = validate_skills.validate_plain_chat_contract(root)
             self.assertTrue(any("render questions in plain chat" in error for error in errors))
 
+    def test_references_require_readable_non_executable_text(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            skills = Path(directory)
+            references = skills / "tk-example" / "references"
+            references.mkdir(parents=True)
+            note = references / "note.md"
+            note.write_text("readable knowledge\n", encoding="utf-8")
+            self.assertEqual(validate_skills.validate_reference_resources(skills), [])
+
+            executable = references / "helper.sh"
+            executable.write_text("#!/bin/sh\n", encoding="utf-8")
+            executable.chmod(0o755)
+            (references / "invalid.md").write_bytes(b"\x7fELF\x00\xff")
+            (references / "nul").write_bytes(b"text\x00")
+            errors = validate_skills.validate_reference_resources(skills)
+            self.assertTrue(any("must not be executable" in error for error in errors))
+            self.assertTrue(any("readable UTF-8 text" in error for error in errors))
+            self.assertTrue(any("must not contain NUL bytes" in error for error in errors))
+            self.assertEqual(validate_skills.validate_plain_chat_contract(skills / "tk-example"), [])
+            self.assertEqual(validate_skills.validate_routing_invariants(skills), [])
+            with patch.object(validate_skills, "ROOT", skills):
+                self.assertEqual(validate_skills.validate_repo_links(), [])
+
     def test_direct_strategy_rejects_model_tier_pairing(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             skills = Path(directory)
