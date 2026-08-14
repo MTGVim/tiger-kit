@@ -65,6 +65,10 @@ Ask the user directly only about:
 - risky or hard-to-reverse decisions involving security, permissions, data, or compatibility
 - exceptional approval when the work has been sufficiently improved but verification readiness cannot be raised further
 
+## 🔴 CHECKPOINT · 🛑 STOP · Plan and mutation boundary
+
+Before mutation, require fresh state plus one current approval for standalone work, or the exact parent `tk-pr-sweep` approval for a handed-off PR; invalidate it on material drift and stop before mutation.
+
 ## Resolution plan and approval
 
 Before mutation, explain the resolution plan for the current feedback in natural language.
