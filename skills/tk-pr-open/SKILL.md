@@ -90,8 +90,10 @@ Present the following naturally to the user instead of hiding information behind
 - 제외 범위/위험
 - 한 가지 발행 추천
 
-Then obtain one exact current-turn approval.
-Do not treat the natural-language request “PR 열어줘” itself as publication approval.
+## 🔴 CHECKPOINT · 🛑 STOP · Publication boundary
+
+Before any remote write, reread the plan and obtain one exact current-turn approval; do not treat the natural-language request “PR 열어줘” itself as publication approval.
+STOP if the plan, approved `commit`, template/evidence state, or current repository state cannot be reverified.
 
 ## Publication
 
