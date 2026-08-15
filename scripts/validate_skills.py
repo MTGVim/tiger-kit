@@ -63,6 +63,7 @@ CORE_FRONTMATTER_FIELDS = {
 }
 HOST_EXTENSION_FIELDS = {"argument-hint", "disable-model-invocation"}
 KEBAB = re.compile(r"^tk-[a-z0-9]+(?:-[a-z0-9]+)*$")
+LONG_OPTION = re.compile(r"--[a-z0-9]+(?:-[a-z0-9]+)*")
 LINK = re.compile(r"\[[^]]*]\(([^)]+)\)")
 _PORTABLE_PATH_SEGMENT = r"[^\s\x60\x22\x27<>()\[\]{}]+"
 NON_PORTABLE_ABSOLUTE_PATH = re.compile(
@@ -233,6 +234,15 @@ def validate_frontmatter_and_body(
             errors.append(f"{label}: hybrid Codex policy must not block implicit invocation")
         if openai_text and 'short_description: "[user/auto] ' not in openai_text:
             errors.append(f"{label}: Codex short_description must begin with [user/auto]")
+
+    argument_hint = data.get("argument-hint")
+    if isinstance(argument_hint, str):
+        body = text.split("---", 2)[-1]
+        for option in sorted(set(LONG_OPTION.findall(argument_hint))):
+            if option not in body:
+                errors.append(
+                    f"{label}: argument-hint option {option!r} must be defined in SKILL.md body"
+                )
 
     forbidden = {
         "commands/": "legacy command runtime",
