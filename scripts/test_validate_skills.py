@@ -60,6 +60,40 @@ class EvalSotValidatorTest(unittest.TestCase):
                 )
             self.assertTrue(any("requires disable-model-invocation: false" in error for error in errors))
 
+    def test_argument_hint_long_options_must_be_defined_in_body(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            skill_dir = root / "tk-example"
+            skill_dir.mkdir()
+            data = {
+                "name": "tk-example",
+                "description": "[user/auto] 예시 스킬",
+                "disable-model-invocation": False,
+                "argument-hint": "[--ci]",
+                "metadata": {
+                    "tigerkit": {
+                        "kind": "hybrid",
+                        "origin": "tigerkit",
+                        "relationship": "native",
+                    }
+                },
+            }
+            with patch.object(validate_skills, "ROOT", root):
+                missing, _ = validate_skills.validate_frontmatter_and_body(
+                    "tk-example",
+                    skill_dir,
+                    data,
+                    "---\nargument-hint: [--ci]\n---\n설명 없음\n",
+                )
+                defined, _ = validate_skills.validate_frontmatter_and_body(
+                    "tk-example",
+                    skill_dir,
+                    data,
+                    "---\nargument-hint: [--ci]\n---\n`--ci`를 사용한다.\n",
+                )
+            self.assertTrue(any("argument-hint option '--ci'" in error for error in missing))
+            self.assertFalse(any("argument-hint option '--ci'" in error for error in defined))
+
     def test_catalog_is_discovered_from_skill_directories(self) -> None:
         skills = validate_skills.discover_skills()
         self.assertGreater(len(skills), 0)

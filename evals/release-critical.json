@@ -15,16 +15,8 @@
     "adhd-explicit",
     "adhd-implicit-block"
   ],
-  "replaced_skill_eval_contracts": [
-    "tk-ask-repo",
-    "tk-wizard",
-    "tk-pr-open",
-    "tk-pr-respond",
-    "tk-pr-sweep",
-    "tk-pr-rebase",
-    "tk-skill-diagnose"
-  ],
-  "replace_catalog_contract": true,
+  "replaced_skill_eval_contracts": [],
+  "replace_catalog_contract": false,
   "behavior_cases": [
     "tk-prep:behavior:prep-ready-seed-self-contained",
     "tk-prep:behavior:prep-understanding-gate-cannot-be-waived",
