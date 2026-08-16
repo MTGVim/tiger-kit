@@ -73,11 +73,11 @@ User approval cannot bypass this gate. Show a concise diagnosis only when the us
 
 Evaluate these five dimensions individually; do not offset weaknesses by averaging.
 
-- **Reuse** — Were existing components and repository conventions investigated sufficiently?
-- **Simplicity** — Does the approach avoid speculative branches, future abstractions, dependencies, and dead code unnecessary for the current AC?
-- **Testing** — Does the plan cover regressions, bug reproduction, new non-trivial behavior, and existing integration checks?
-- **Security** — Does it safely address applicable boundaries such as `auth`, `authz`, input, secrets, uploads, redirects, and storage?
-- **User experience** — Does it consider responsive states, keyboard use, focus, semantic structure, accessibility, and visual consistency for user-visible changes?
+- **Reuse**: Were existing components and repository conventions investigated sufficiently?
+- **Simplicity**: Does the approach avoid speculative branches, future abstractions, dependencies, and dead code unnecessary for the current AC?
+- **Testing**: Does the plan cover regressions, bug reproduction, new non-trivial behavior, and existing integration checks?
+- **Security**: Does it safely address applicable boundaries such as `auth`, `authz`, input, secrets, uploads, redirects, and storage?
+- **User experience**: Does it consider responsive states, keyboard use, focus, semantic structure, accessibility, and visual consistency for user-visible changes?
 
 Use the same score units and these Korean statuses for every dimension.
 
