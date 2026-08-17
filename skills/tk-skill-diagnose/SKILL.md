@@ -35,18 +35,14 @@ Mark missing values as `unverified`. A missing incident or metric anchor does no
 the result is `Unverifiable | Blocked`, not permission to infer a cause.
 
 Accept a `learn-ready` handoff only once when it specifies the incident, exact target,
-host/invocation, prompt, expected and observed result, and evidence. Do not invoke
-`tk-learn` during diagnosis, and do not repeat the same target + incident + blocker cycle.
+host/invocation, prompt, expected and observed result, and evidence. Do not repeat
+the same target + incident + blocker cycle.
 
-## Evidence Order
+## Evidence
 
-Decide in this order:
-
-1. target provenance, description/body consistency, deterministic assertions,
-   repository state, and adapter/host evidence;
-2. reproduce the smallest fresh incident;
-3. check one adjacent control that distinguishes the suspected failure plane;
-4. run a run-owned minimum experiment only when needed to establish causality.
+Before reproduction, check target provenance, description/body consistency,
+deterministic assertions, repository state, and adapter/host evidence. Then follow
+the workflow order for reproduction, the adjacent control, and any minimum experiment.
 
 Classify reproduction as `Reproduced | Not reproduced | Inconclusive`. Self-report may
 suggest a hypothesis but does not prove root cause. Repeat a fresh run only when the first
@@ -85,8 +81,7 @@ a correctness or safety regression.
 6. **Route**: Choose one owner based on verified evidence.
 
 Stop at a conclusive cause or disposition. Allow a second experiment only if the first
-reveals a new concrete cause. Clean up only run-owned isolation; do not rewrite or patch
-the canonical target.
+reveals a new concrete cause. Clean up only run-owned isolation.
 
 ## 🔴 CHECKPOINT / STOP · Next-Step Gate
 
@@ -104,8 +99,8 @@ Do not begin the next step, experiment, or handoff until each checkpoint passes.
   `Unverifiable`.
 - **Routing checkpoint**: One concrete, testable objective and must-preserve boundary
   are verified. Otherwise, do not emit a `learn-ready` handoff.
-- **🛑 STOP**: After emitting `learn-ready`, this skill still does not invoke `tk-learn`
-  or mutate the canonical skill/catalog. Wait for a separate explicit invocation.
+- **🛑 STOP**: After emitting `learn-ready`, wait for a separate explicit invocation
+  of `tk-learn`.
 
 ## Routing
 
@@ -124,7 +119,7 @@ Metric: <actual measurement, labeled proxy, or unavailable>
 Incident: <stable ID or source reference>
 ```
 
-이는 이후 명시적으로 실행하는 `tk-learn`의 input이다. 여기서 호출하지 않는다.
+이는 이후 명시적으로 실행하는 `tk-learn`의 input이다.
 
 ### Other Dispositions
 
@@ -172,4 +167,3 @@ evidence refs, measurements 및 route와 함께 atomically replace한다. 채팅
 - Do not change correctness, safety, or holdout behavior to reduce resource usage.
 - Do not use fixed repeated runs or judge majority to manufacture confidence.
 - Do not expose expected answers, secrets, or private evidence in prompts.
-- Do not mutate the canonical skill or automatically invoke a downstream skill.

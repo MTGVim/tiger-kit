@@ -74,13 +74,11 @@ Draft and apply are separate.
    directly in `learn.md`. Also add train/validation triggers, success/boundary
    assertions, a no-skill or prior-skill baseline, and the
    portable-core/host-extension determination.
-5. **Approval summary:** After rereading `learn.md`, report only the absolute
-   `learn.md` path, decision/status/disposition, a short summary, and exactly one
-   approval question to the user, then stop.
-6. **Write, verify, report:** Only after apply authority passes, preserve the pre-write
-   contents and write using a temporary target in the same directory followed by an
-   atomic rename. Before marking `applied`, reread and verify frontmatter, links,
-   evals, and target-host invocation.
+5. **Approval checkpoint:** After rereading `learn.md`, follow the checkpoint and
+   output contract below, then stop.
+6. **Write, verify, report:** After every checklist row and apply authority pass,
+   preserve the pre-write contents, write with an atomic rename, then reread and
+   verify frontmatter, links, evals, and target-host invocation.
 
 ### Apply gate checklist
 
@@ -117,17 +115,9 @@ Past approval, implicit `invocation`, and a generic request to continue are
 insufficient authority. Before approval, the candidate remains `pending`, and Target
 path records the exact planned path and `not created`.
 
-The approval checkpoint for a new draft must occur after writing and rereading
-`.tigerkit/learn.md`. Do not dump the full minimal draft, the complete candidate
-table, or the exact planned file contents into chat. Chat must contain only the
-ledger's absolute path, decision/status, a 1–3-line summary, and one approval
-question. If writing or rereading the ledger fails, do not ask for approval; report
-`Blocked`.
-
-Even after approval, do not report `applied` if any checklist row has not passed.
-
-The one-off `no-op` path uses `Status: Pending` from the table above. This applies
-only to that boundary outcome; do not change every draft to `Pending`.
+The approval checkpoint for a new draft occurs only after writing and rereading
+`.tigerkit/learn.md`; a write or reread failure is `Blocked` and cannot request
+approval. The failure table owns the one-off `no-op` status.
 
 ## Output contract
 
@@ -145,10 +135,6 @@ only to that boundary outcome; do not change every draft to `Pending`.
 - Do not omit a requested `pending` draft because evidence is `unverified`.
 - Do not create duplicate `skill`s, verbose wrappers around default capability, or
   indistinguishable trigger pairs.
-- Do not write before approval or treat implicit `invocation` as authority.
-- Do not dump the full `pending` draft into chat and omit `learn.md`.
-- Do not treat a missing/stale `learn.md` or reread failure as a successful
-  checkpoint.
 - Do not duplicate the name/kind/path/verification/concerns in the Receipt.
 - Do not auto-archive, edit `.gitignore`, invoke another user `skill`, push, or
   publish.
