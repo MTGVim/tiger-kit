@@ -50,7 +50,8 @@ Drift rule: <scope/evidence/target change => Partial/Blocked>
 ```
 
 6. `apply/report`: In report-only mode, output the proposal/receipt. If authority
-   exists, reread the sources and modify only the approved receipt scope.
+   exists, reread the sources, search references before delete/move, preserve
+   managed/generated markings, and modify only the approved receipt scope.
 7. `revalidate`: Recheck links, duplication, and frontmatter, then report the
    results, unverified scope, and unresolved items.
 
@@ -80,20 +81,12 @@ target, unreferenced `delete`, and frontmatter/link `fix`. Leave semantic `merge
 proposals. These proposals may be handed off to `tk-learn`, but this skill does not
 invoke it. Keep vendor-managed candidates report-only in every apply mode.
 
-Apply only after a literal initial `--apply` or explicit current-turn approval
-specifies the exact scope. Past approval or general continuation is insufficient.
-Reread sources before modification, search for references before deletion,
-preserve managed/generated ownership markings, and do not mix broad repository/user
-changes. Do not invent knowledge or substitute for skill learning.
+Do not invent knowledge or substitute for skill learning.
 
 Continue excluding exclusions declared in the active conversation from subsequent
 grooming runs in that conversation. Continue excluding exclusions recorded in a
 governing repository/user rule or another requested durable source across sessions.
 Do not create hidden global state or store exclusions in `.tigerkit/`.
-
-A literal `--apply` does not bypass the checkpoint. It pre-approves only matching
-evidence/target receipts from the same run. If scope, evidence, or target drifts,
-stop as `Partial/Blocked` for a new decision.
 
 ## Failure Paths
 
@@ -140,21 +133,3 @@ actions solely for output. This is a budget, not a quota.
 Record the overall `report-only | applied` disposition in `## Disposition`, but do
 not repeat the table or append metadata. If there are no items, output one
 `— | None | keep | — | no finding` row. Use `keep (vendor)` for vendor rows.
-
-## CHECKPOINT / STOP (Approval/Stop Point)
-
-Do not begin `--apply` mutation before the audit receipt identifies the evidence
-and permitted scope. If the scope is ambiguous or reference evidence required for
-delete/move is missing, stop as `Partial/Blocked | Unverifiable`.
-
-## Prohibitions / Antipatterns
-
-- Do not make changes without apply authority or skip reference checks for
-  delete/move.
-- Do not silently mix in unrequested repository/user files.
-- Do not infer ownership from names or create edit proposals for unknown ownership,
-  and do not modify vendor-managed artifacts even when `--apply` is present.
-- Do not investigate or migrate legacy/global TigerKit state.
-- Do not apply semantic transformations/splits/rewrites or invoke `tk-learn`.
-- Do not omit, reuse, or renumber item IDs, and do not append a duplicate summary
-  after the `## Disposition` result.

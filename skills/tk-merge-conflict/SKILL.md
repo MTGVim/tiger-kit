@@ -99,17 +99,6 @@ the prior resolution is stale. Rebuild the inventory, evidence, and verification
 Unknown drift is `Unverifiable`; do not claim that a disappeared operation was completed
 by this run.
 
-## Failure Paths
-
-- Incomplete inventory/intent: Do not edit or stage; report the missing
-  state/hunks/sources as `Unverifiable | Blocked`.
-- Remaining markers/unmerged entries or staging failure: Do not continue. Recheck
-  status/index, then report commands, paths, and checks as `Fail`.
-- Unavailable verification: Do not mark it as passed; report required
-  commands, access, or environment as `Unverifiable`.
-- Continue failure or new conflict: Do not claim completion. Capture the output and
-  restart the inventory.
-
 Primary sources include commit messages, `issue`/`PR`, `spec`/`ticket`, adjacent tests,
 and established branch behavior. Preserve both intents when compatible. Otherwise,
 choose based on the operation goal/evidence, report the tradeoff, and do not invent new
@@ -133,10 +122,3 @@ does not automatically authorize `abort`, `reset --hard`, `clean`, force `push`,
 경로 묶음, 검증을 2~5개의 짧은 행/글머리표로 요약합니다. 경로가 8개 이상이면
 상위 5~7개의 의도/결과 행으로 묶고 정확한 나머지 경로를 인용합니다. 할당량이
 아니라 예산을 사용합니다.
-
-## Prohibitions / Antipatterns
-
-- Do not choose one side or invent behavior without evidence.
-- Do not automatically run `abort`, `reset --hard`, `clean`, force `push`, or `push`.
-- Do not claim completion after editing files without proving the unmerged state,
-  verification, and operation completion.

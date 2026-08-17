@@ -47,10 +47,10 @@ Screenshot: <absolute path | N/A>; actual inspection: yes | no | N/A
    items, and the next decision. If the parent contract records `PR evidence: required`,
    retain the run-owned absolute `Screenshot: <path>` and actual image inspection under
    `## Tested`, and expose a bounded handoff containing `evidence_required: true`, the
-   criterion, evidence directory, and producer `tk-prototype`.
-6. `terminal summary`: When applicable, return `## Confirmed`, `## Production implication`,
-   `## Tested`, `## Variants or harness`, and `## Still fake`.
-   Do not add a provenance/status block.
+   criterion, evidence directory, and producer `tk-prototype`. This proves the
+   comparison, not an official runtime verdict.
+6. `terminal summary`: Render the applicable sections under the output contract below;
+   do not add a separate provenance/status block.
 
 For unresolved UI comparisons, create 2–3 switchable, genuinely different rendered
 alternatives. Do not change only colors; vary information architecture, flow, hierarchy,
@@ -74,13 +74,6 @@ required, `handoff` the exact `command`/`cwd`/target URL/`auth mode`/`readiness`
 `tk-browser-verify` owns server start, wait, and shutdown. Check both wide and narrow only
 when the `hypothesis` concerns responsiveness/layout. Clean up only run-owned tracked
 `harness` files; preserve any `existing route`, `dependency`, and `production source`.
-
-Do not commit by default. Do not invest in production abstractions/error handling, call
-the output production-ready, auto-promote it, or invoke another user skill.
-
-For a PR evidence handoff, expose the screenshot path, run-owned evidence directory,
-criterion, and actual image inspection. This proves the prototype comparison, not an
-official runtime verdict.
 
 ## Failure Paths
 
@@ -125,7 +118,8 @@ This is a budget, not a quota.
 
 ## Prohibited Patterns
 
-- Do not call a prototype production-ready or auto-promote/commit it.
+- Do not call a prototype production-ready, auto-promote/commit it, or invoke
+  another user skill.
 - Do not report fake integration as real or claim success without run evidence.
 - Do not add color-only variants, dependencies, manifest/lockfile edits, unnecessary
   production abstractions, or a third option with no value.

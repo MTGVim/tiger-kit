@@ -1,6 +1,6 @@
 ---
 name: tk-github-image-upload-to-pr
-description: "[user/auto] 기존 GitHub PR body 또는 명시적으로 요청된 comment에 local evidence image를 reviewed gh-attach extension 또는 authenticated CDP browser로 업로드합니다. explicit selection, 명확한 local-image insertion request, active tk-pr-open의 정확한 evidence_required handoff에서 사용하며 generic PR, screenshot 또는 GitHub request에는 적용하지 않습니다."
+description: "[user/auto] 기존 GitHub PR body 또는 명시된 comment에 local evidence image를 업로드합니다. 명시적인 local-image 요청이나 active tk-pr-open의 정확한 evidence_required handoff에만 사용하며 generic PR·GitHub·screenshot 요청에는 적용하지 않습니다."
 disable-model-invocation: false
 argument-hint: "<PR and local image path(s)>"
 metadata:
@@ -46,28 +46,15 @@ Before any upload or PR body/comment update, reverify the explicitly selected ta
    body.
 2. Reuse the existing `## 스크린샷` heading. If absent, insert it before the AI
    footer or append it at the end. Preserve unrelated body content.
-3. Before any extension command, inspect the single `gh attach` row from
-   `gh extension list` and classify it as `reviewed-fork`, `reviewed-upstream`,
-   `unreviewed-upstream`, `unknown`, or `absent`. A successful list with no row is
-   `absent`; failed, incomplete, duplicate, or unsupported metadata is `unknown`.
-4. Use either exact reviewed distribution without another trust prompt. Warn and
-   obtain current-turn approval before another upstream version. Never execute an
-   `unknown` extension. For `absent`, recommend the pinned reviewed fork or CDP;
-   do not install automatically.
-5. Only after reviewed classification or explicit unreviewed-upstream approval,
-   check `gh attach --help`, authenticated `gh` access, and target write
-   capability. Reclassify after an approved install. Repository visibility is not
-   a routing signal. Use the extension without `--comment` and collect only the
-   generated Markdown.
-6. If CDP is selected, including after unavailable target write capability is
-   explained, stage a meaningful run-owned copy outside `/tmp`, protect any
-   existing composer draft, poll the upload placeholder, and clear only run-owned
-   composer content.
-7. Update only the requested body or comment through the GitHub API or equivalent.
+3. Select and execute an eligible route using
+   [gh-attach](references/gh-attach.md), or read
+   [CDP fallback](references/cdp-fallback.md) only after CDP is selected.
+   Repository visibility is not a routing signal, and a route that may have created
+   remote state cannot silently fall back to the other route.
+4. Update only the requested body or comment through the GitHub API or equivalent.
    Before `Pass`, verify the source Markdown, rendered HTML/page evidence, every
    asset link, and the upload ref.
-8. Remove only owned staging files on every exit path. If an upload attempt may
-   have created remote state, do not silently switch routes.
+5. Remove only owned staging files on every exit path.
 
 ## 실행 receipt · 단일 근거 record
 
@@ -110,12 +97,6 @@ Status: Pass | Fail | Pending | Blocked | Unverifiable
 
 - Do not create or merge a PR, change reviewers, publish a release, or insert a
   comment unless the user explicitly selected that comment target.
-- Do not install, update, or substitute a GitHub CLI extension without explicit
-  user approval. The reviewed command is
-  `gh extension install MTGVim/gh-attach --pin v0.7.0-mtgvim.1`.
-- Do not run `gh attach --help` or any other extension command while provenance
-  is `unknown`, the extension is `absent`, or an unreviewed upstream version lacks
-  current-turn approval.
 - Do not bypass `tk-browser-verify` or use Orca or screen control as an automatic
   browser fallback.
 - Do not overwrite a pre-existing draft or click comment, close-with-comment, or
@@ -131,8 +112,7 @@ choice. Return `Blocked` for `unknown` provenance, a draft, or a rejected
 installation without a selected CDP route. Return `Unverifiable` if neither route
 has authentication or render evidence, and `Fail` for upload, remote ref
 verification, or cleanup errors. State whether the selected body/comment changed
-and whether an upload ref may remain. After a started `gh attach` fails, do not
-silently retry with CDP.
+and whether an upload ref may remain.
 
 For `tk-pr-open`, preserve the separate PR operation result and return the
 evidence state as `uploaded` or `blocked`. While required evidence remains
