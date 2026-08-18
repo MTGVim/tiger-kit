@@ -27,6 +27,7 @@ This is read-only codebase advising and does not modify source, tests, configura
 - `next`: Separate evidence-backed direction candidates from defect findings.
 
 Modifiers may be combined. Do not implement, write Seeds, publish issues, or create worktrees.
+사용자 소유의 clarification이 필요하면 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). unavailable하면 한 번의 clarification을 plain chat으로 fallback하고 read-only boundary를 유지합니다.
 
 ## Workflow
 

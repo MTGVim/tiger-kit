@@ -22,6 +22,7 @@ and performs changes, verification, push, reply, resolve, and any required re-re
 
 Do not expose internal `apply | reply | defer` classifications, worker placement, or GitHub state as a raw report.
 The user needs to know what the review means, how it will be addressed, why that approach is appropriate, and what will be verified.
+resolution plan 또는 mutation/publication approval이 필요하면 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). unavailable하면 같은 plan을 plain chat으로 fallback하고 parent-approved exact decision은 다시 묻지 않습니다.
 
 ## Fresh state
 
@@ -93,7 +94,8 @@ However, if the PR head/thread/check/identity changes materially after approval,
 
 ## Code changes and Seed
 
-Respond tasks requiring code changes use `.tigerkit/seed.md` in the relevant checkout/worktree as the current work contract.
+Respond tasks requiring code changes use a newly created dedicated worktree with `.tigerkit/seed.md` as the current work contract.
+If that worktree cannot be created or proven fresh, return `Blocked` before mutation.
 Do not create the `pr-respond.md` lifecycle ledger.
 
 The Seed must contain at least the following PR context. Keep user-facing Seed and ledger prose in Korean.
@@ -170,9 +172,11 @@ Do not merge, close, tag, release, plain force push, or resolve unrelated thread
 For an exact PR handed off by an active `tk-pr-sweep`, do not ask again about material decisions already approved by the parent.
 The child confirms the PR fresh state and parent-approved scope, then proceeds immediately when they match.
 
+The handoff must include a newly created dedicated worktree path. If it is missing or not fresh, return `Blocked` before mutation. Run the child from that worktree; never switch the parent `main` or `develop` checkout to the PR branch.
+
 If new feedback or head drift materially changes the approved scope, escalate only that PR back to the parent.
 Do not create `pr-sweep.md`, `pr-respond.md`, or worker receipt Markdown.
-For a code-changing PR, only `seed.md` in the relevant isolated worktree may be used as task context.
+For a code-changing PR, only `seed.md` in the fresh dedicated worktree may be used as task context.
 
 ## Completion response
 

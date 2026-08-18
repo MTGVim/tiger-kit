@@ -18,6 +18,7 @@ existing GitHub PR, or an active `tk-pr-open` sends an exact handoff with
 `evidence_required: true`. Only the parent handoff is an automatic trigger. Do not
 activate for screenshot capture, generic GitHub help, PR creation, PR review, or
 issue triage.
+route 선택이나 설치 전 확인이 필요하면 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). unavailable하면 같은 선택을 plain chat으로 fallback하고 선택 전 mutation을 하지 않습니다.
 
 ## Scope
 

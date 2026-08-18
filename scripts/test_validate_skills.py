@@ -15,6 +15,17 @@ class EvalSotValidatorTest(unittest.TestCase):
         errors, _ = validate_skills.validate_all()
         self.assertEqual(errors, [])
 
+    def test_native_question_tool_contract_is_present(self) -> None:
+        targets = (
+            "tk-prep", "tk-audit", "tk-github-image-upload-to-pr", "tk-grooming",
+            "tk-learn", "tk-pr-open", "tk-pr-rebase", "tk-pr-respond", "tk-pr-sweep",
+            "tk-prototype", "tk-wizard",
+        )
+        required = ("AskUserQuestion", "request_user_input", "clarify", "unavailable", "plain chat")
+        for name in targets:
+            text = (validate_skills.ROOT / "skills" / name / "SKILL.md").read_text(encoding="utf-8")
+            self.assertTrue(all(token in text for token in required), name)
+
     def test_korean_canonical_prose_is_accepted(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -166,15 +177,6 @@ class EvalSotValidatorTest(unittest.TestCase):
             errors, _ = validate_skills.validate_trigger_contract("tk-example", "user-invoked", path)
             self.assertTrue(any("overlap" in error for error in errors))
 
-    def test_plain_chat_contract_rejects_question_tools(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            (root / "SKILL.md").write_text(
-                "Use AskUserQuestion for this decision.\n", encoding="utf-8"
-            )
-            errors = validate_skills.validate_plain_chat_contract(root)
-            self.assertTrue(any("render questions in plain chat" in error for error in errors))
-
     def test_references_require_readable_non_executable_text(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             skills = Path(directory)
@@ -193,7 +195,6 @@ class EvalSotValidatorTest(unittest.TestCase):
             self.assertTrue(any("must not be executable" in error for error in errors))
             self.assertTrue(any("readable UTF-8 text" in error for error in errors))
             self.assertTrue(any("must not contain NUL bytes" in error for error in errors))
-            self.assertEqual(validate_skills.validate_plain_chat_contract(skills / "tk-example"), [])
             self.assertEqual(validate_skills.validate_routing_invariants(skills), [])
             with patch.object(validate_skills, "ROOT", skills):
                 self.assertEqual(validate_skills.validate_repo_links(), [])

@@ -29,6 +29,7 @@ Draft and apply are separate.
 - `apply gate`: Every checklist row must pass before writing to a `skill` path.
 
 ## Artifact-first draft checkpoint
+candidate 또는 apply approval이 필요하면 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). unavailable하면 같은 approval packet을 plain chat으로 fallback하고 승인 전 canonical skill path를 쓰지 않습니다.
 
 새 초안을 만들 때는 승인 전 최소 초안 전체를 채팅에 출력하지
 않습니다. 먼저 저장소 루트의 `.tigerkit/learn.md` 에 `pending` 스크래치 장부를

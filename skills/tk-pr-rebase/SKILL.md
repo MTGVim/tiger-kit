@@ -17,8 +17,11 @@ Do not auto-apply to a generic branch `rebase`, simple `conflict marker edit`, o
 
 Own the exact `base/head rebase`, `conflict resolution`, `verification`, and bounded `force-with-lease` for one PR.
 Do not perform `merge`, `close`, `tag`, `release`, or unrelated feedback implementation.
+standalone rebase/publication approval이 필요하면 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). unavailable하면 같은 approval packet을 plain chat으로 fallback하고 parent-approved exact route는 다시 묻지 않습니다.
 
 ## Fresh identity
+
+Local rebase must start in a newly created dedicated worktree. If it cannot be created or proven fresh, return `Blocked` before mutation.
 
 Fresh-read the following at the start.
 
@@ -79,6 +82,8 @@ Plain `--force` is prohibited.
 ## Execution under Sweep
 
 If an active `tk-pr-sweep` has already approved the exact repository/PR/base/head and rebase route, do not repeat the publication question.
+
+The Sweep handoff must include a newly created dedicated worktree path. If it is missing or not fresh, return `Blocked` before mutation. Run the child from that worktree; never switch the parent `main` or `develop` checkout to the PR branch.
 
 A Sweep child must not create `.tigerkit/pr-sweep.md` or `.tigerkit/pr-rebase.md`.
 Return only the following compact evidence to the parent.

@@ -21,7 +21,7 @@ Do not duplicate long-lived task state in a Markdown ledger. The current GitHub 
 **Keep the conversation natural and the state handling strict.**
 
 Do not expose `actionable`, `held`, backend details, routing state, or worker receipts by default.
-Instead, brief the user in plain language: what can be handled now, what must wait, why, and how the work will proceed.
+Brief the user in plain language about what can proceed, what must wait, why, and how. Batch plan approval은 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). unavailable하면 plain chat으로 fallback하고 child마다 승인을 반복하지 않습니다.
 
 ## Target repositories
 
@@ -96,16 +96,15 @@ Do not request the same approval again for each child.
 
 ## Execution isolation
 
-Prove checkout isolation before changing multiple PRs concurrently.
-Use isolated worktrees or subagents when the host provides them.
-If safe parallel isolation is unavailable, process the PRs sequentially.
-
-If one PR cannot be bound safely to the current checkout, hold only that PR and continue with other independent PRs.
-The absence of worker or model controls is not itself a blocker.
+`--report` and pre-approval fresh triage are read-only and do not create worktrees.
+After batch approval, every PR child requires a newly created dedicated worktree before handling begins. The parent `main` or `develop` checkout is never used for child work and never branch-switched with `git switch` or `git checkout`.
+A subagent counts as isolation only when it receives and uses that fresh worktree. Do not reuse another PR's or a previous child's worktree.
+If a fresh worktree cannot be created or passed to the child, hold only that PR as `Held` or `Blocked`; do not fall back to sequential handling in the parent `main`/`develop` checkout. The absence of worker or model controls is not itself a blocker; inability to establish the worktree boundary is a PR-local blocker.
 
 ## Per-PR handling
 
 Immediately before handling each PR, reread fresh triage and the exact PR state.
+Before any mutating child route, verify the fresh dedicated worktree path for that PR and pass it to the child. If it is absent, hold or block before mutation.
 
 Representative routes:
 
@@ -121,7 +120,7 @@ Return that PR to the user only when there is a material change, such as new fee
 
 Do not create one giant Seed for the entire Sweep.
 
-Each PR requiring code changes may use `.tigerkit/seed.md` in its own isolated checkout or worktree.
+Each PR child must use its own newly created dedicated worktree. Code-changing PRs use `.tigerkit/seed.md` there; reply-only or pure rebase work still uses the worktree but does not require a Seed solely for that reason.
 The Seed must be self-contained and include that PR’s feedback, objective, decisions, approach, AC, verification, and publication boundary.
 
 Do not force a Seed onto reply-only work or a pure rebase that does not require separate implementation context.

@@ -18,6 +18,7 @@ Once the interview starts, continue it naturally in the same conversation withou
 
 **Keep conversation natural and state strict.** Do not dump internal scores, stages, or classifications into the default view.
 Do not ask again about confirmed information. Explain important judgments with the plan and rationale so the user can revise them during the conversation.
+사용자 소유의 질문·선택·승인이 필요하면 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). unavailable하면 같은 결정을 plain chat으로 fallback하고 secret을 넘기거나 parent-owned 결정을 다시 묻지 않습니다.
 Do not modify source, tests, configuration, Git, or remote state.
 
 ## Evidence and Questions
