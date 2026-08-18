@@ -18,6 +18,7 @@ The input is an already implemented and verified current-branch `commit`.
 If a prepared `.tigerkit/seed.md` exists, read the work `goal`, `acceptance`, and `browser evidence requirement`, but the `Seed` itself does not grant publication authority.
 
 Do not repeat implementation, create a `worker`, or add product `commit`s.
+template 선택 또는 remote publication approval이 필요하면 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). unavailable하면 같은 approval packet을 plain chat으로 fallback하고 exact current-turn approval 전 remote write를 하지 않습니다.
 
 ## Current state
 

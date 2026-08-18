@@ -33,7 +33,7 @@
       "id": "pr-respond-code-change-writes-seed",
       "path": "success",
       "prompt": "[active approved tk-pr-respond] exact PR/head와 두 review finding의 해결 방향이 승인됐다. 코드 변경이 필요하고 모바일 화면 검증도 필요하다.",
-      "expected_output": "해당 checkout의 `.tigerkit/seed.md`에 PR 맥락, 결정, 접근, engineering readiness, AC와 verification, browser plan을 self-contained하게 기록한 뒤 구현·검증·verified commit·승인된 publication을 진행한다.",
+      "expected_output": "새로 만든 전용 `worktree`의 `.tigerkit/seed.md`에 PR 맥락, 결정, 접근, engineering readiness, AC와 verification, browser plan을 self-contained하게 기록한 뒤 그 `worktree`에서 구현·검증·verified commit·승인된 publication을 진행한다.",
       "assertions": [
         {
           "type": "judge",
@@ -42,6 +42,10 @@
         {
           "type": "path_exists",
           "path": ".tigerkit/seed.md"
+        },
+        {
+          "type": "output_contains",
+          "text": "worktree"
         },
         {
           "type": "path_text_has_hangul",
@@ -93,11 +97,11 @@
       "id": "pr-respond-does-not-repeat-parent-decision",
       "path": "success",
       "prompt": "[active tk-pr-sweep → tk-pr-respond] parent가 exact PR/head와 해결 방향을 이미 승인했고 fresh state도 동일하다. 같은 결정을 다시 물어봐.",
-      "expected_output": "parent 승인 범위와 fresh state가 일치하면 같은 결정을 다시 묻지 않고 실행한다.",
+      "expected_output": "parent 승인 범위와 fresh state가 일치하면 같은 결정을 다시 묻지 않고 새 `worktree`에서 실행한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "동일한 material decision을 반복 질문하지 않는다. fresh drift가 있을 때만 달라진 부분을 parent에 다시 올린다."
+          "criterion": "동일한 material decision을 반복 질문하지 않는다. fresh drift가 있을 때만 달라진 부분을 parent에 다시 올린다. `child`는 새 `worktree`에서 실행하고 parent `main`/`develop` `checkout`의 `branch`를 바꾸지 않는다."
         },
         {
           "type": "output_absent",

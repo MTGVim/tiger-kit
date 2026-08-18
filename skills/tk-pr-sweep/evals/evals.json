@@ -61,11 +61,11 @@
       "id": "pr-sweep-does-not-write-lifecycle-ledger",
       "path": "success",
       "prompt": "[active approved tk-pr-sweep] #121 review 수정, #124 Actions 수정, #128 rebase를 처리하고 마지막에 전체 triage를 다시 해줘.",
-      "expected_output": "각 PR을 실행 직전 fresh-read하고 승인된 route만 처리한다. parent/child lifecycle Markdown을 만들지 않고 마지막 deterministic fresh triage로 결과를 집계한다.",
+      "expected_output": "각 PR을 실행 직전 fresh-read하고, 승인된 route를 새 `worktree`에서만 처리한다. parent `main`/`develop` `checkout`의 `branch`를 바꾸지 않고 parent/child lifecycle Markdown 없이 마지막 deterministic fresh triage로 집계한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "GitHub fresh state가 truth이며 `pr-sweep.md`, `session.md`, worker receipt에 queue를 복제하지 않는다. code-changing PR은 각 worktree의 Seed를 사용할 수 있고 parent 승인 내용을 child가 반복 질문하지 않는다."
+          "criterion": "GitHub fresh state가 truth이며 `pr-sweep.md`, `session.md`, worker receipt에 queue를 복제하지 않는다. 모든 child는 PR별로 새 `worktree`를 만들어 실행하고 parent `main`/`develop` `checkout`의 `branch`를 바꾸지 않는다. code-changing PR은 그 `worktree`의 Seed를 사용하고 parent 승인 내용을 child가 반복 질문하지 않는다."
         },
         {
           "type": "path_absent",
@@ -80,6 +80,10 @@
           "text": "final"
         },
         {
+          "type": "output_contains",
+          "text": "worktree"
+        },
+        {
           "type": "terminal_status",
           "expected": "Pass"
         }
@@ -90,11 +94,11 @@
       "id": "pr-sweep-holds-only-unsafe-row",
       "path": "success",
       "prompt": "[active approved tk-pr-sweep] #121은 안전하게 처리 가능하지만 #128은 격리된 checkout을 만들 수 없다. 전체 sweep을 막아줘.",
-      "expected_output": "안전하게 결속할 수 없는 #128만 hold하고 독립적인 #121은 계속 처리한다. worker/model control 부재만으로 전체 batch를 막지 않는다.",
+      "expected_output": "새 `worktree`를 만들 수 없는 #128만 hold하고 독립적인 #121은 새 `worktree`에서 계속 처리한다. `parent` `main`/`develop` `checkout`의 `branch`를 바꾸지 않으며 worker/model control 부재만으로 전체 batch를 막지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "systemic authority 문제가 아닌 PR-local isolation 문제는 해당 row에 국한하고 다른 독립 PR을 계속한다."
+          "criterion": "systemic authority 문제가 아닌 PR-local `worktree` isolation 문제는 해당 row에 국한하고 다른 독립 PR은 새 `worktree`에서 계속한다. `parent` `main`/`develop` `checkout`의 `branch`를 바꾸지 않는다."
         },
         {
           "type": "output_absent",
