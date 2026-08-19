@@ -26,10 +26,14 @@ mutation 전에 `Unverifiable` 을 반환합니다.
 
 ## 서버와 제공 소스
 
-long-running server는 정확한 PID, cwd, 명령, port, 제한된 log 경로를 가진
-run-owned 백그라운드 프로세스로 시작합니다. runner가 지원하면 auto-open을
-억제하고, bounded timeout의 구체적인 HTTP/port readiness signal을 poll합니다.
-프로세스 exit를 기다리지 말고 readiness 후 계속합니다.
+`standalone` 실행에서 가능한 `dev-server` 명령이 둘 이상이면 실행 전에 후보와
+선택을 사용자에게 제시하고 확인받습니다. `parent`가 정확한 명령을 넘긴 `nested`
+실행에서는 같은 결정을 다시 묻지 않습니다. `react-scripts`/CRA 서버는
+`BROWSER=NONE` 또는 저장소가 문서화한 동등한 `auto-open` 억제를 명령에 포함합니다.
+`long-running server`는 정확한 PID, `cwd`, 명령, `port`, 제한된 `log` 경로를 가진
+`run-owned` 백그라운드 프로세스로 시작하고, `bounded timeout`의 구체적인
+`HTTP`/`port` `readiness signal`을 주기적으로 확인합니다. 프로세스 종료를 기다리지
+말고 `readiness` 후 계속합니다.
 
 existing server는 cwd가 작업 트리와 일치하고 asset/watch pipeline이 현재이며
 bundle/응답 또는 changed render가 serving version을 증명할 때만 재사용합니다.
