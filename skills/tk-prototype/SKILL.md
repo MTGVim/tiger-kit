@@ -69,7 +69,7 @@ screens. Use an explicit A/B or A/B/C toggle only when simultaneous rendering wo
 the concept or minimum legibility. Stop at A/B when a third option adds no independent
 value. Do not create a prototype when repository evidence already resolves the decision.
 
-Verify web output through `tk-browser-verify` Guard mode, including actual interaction,
+Verify web output through `tk-browser-verify`, including actual interaction,
 the `run URL`/`command`, and `success-criteria` screenshots. If a development server is
 required, `handoff` the exact `command`/`cwd`/target URL/`auth mode`/`readiness` condition;
 `tk-browser-verify` owns server start, wait, and shutdown. Check both wide and narrow only
@@ -84,7 +84,7 @@ Record pre-existing temporary paths and run-created files before writing.
 |---|---|---|
 | interrupted/partial write | Clean up only incomplete artifacts proven to be run-owned | `Fail`; report the unsafe cleanup path and restart condition |
 | server/harness failure | Preserve the command, exit state, output, and fake/real boundary | `Fail`; do not expand into production/dependency scope |
-| Execution succeeds but output/screenshot evidence is unavailable | Retry capture once within the same boundary | `Unverifiable`; do not claim success/Complete |
+| Execution succeeds but output/screenshot evidence is unavailable | Retry capture once within the same boundary | `Unverifiable`; do not claim `Pass` |
 | ownership/state conflict with existing artifact | Preserve the existing path and record evidence | `Blocked`; choose another path before writing |
 | cleanup failure | Re-identify only run-owned resources and report the outcome | `Fail | Unverifiable`; preserve existing routes/processes |
 | Scope expands to production/promotion/commit | Stop the prototype and separate it into another implementation request | `Blocked`; do not auto-promote |
@@ -95,7 +95,7 @@ Before execution, confirm the temporary path, fake/real data, and verification q
 If environment or production-scope expansion occurs, stop at `Blocked | Unverifiable`.
 
 Before reporting, reconcile the command, actual output/screenshot, fake/real boundary, and
-unverified scope. If any are missing or execution failed, the result cannot be `Complete`.
+unverified scope. If any are missing or execution failed, the result cannot be `Pass`.
 Use `Fail | Blocked | Unverifiable`.
 
 ## Contract
@@ -107,6 +107,8 @@ followed by `## Production implication`, `## Tested`, `## Variants or harness`, 
 `Variants or harness` owns alternatives/paths/run URLs and final `kept | removed` state;
 and `Still fake` owns fake/real and unverified scope. Place command mechanics after the
 decision.
+
+Use exactly one terminal status: `Pass | Fail | Blocked | Unverifiable`.
 
 When comparing multiple criteria or variants, render `## Confirmed` as a concise
 `Criterion | A | B [| C] | Conclusion | Evidence` table. Use a sentence when there is only

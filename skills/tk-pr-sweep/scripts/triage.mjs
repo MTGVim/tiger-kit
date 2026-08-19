@@ -146,6 +146,15 @@ export function computeSummaryCommentEvidence(issueComments, authorLogin, headSh
   };
 }
 
+export function summaryCommentRequired(reReviewRequired, unresolvedThreads = [], reply = {}) {
+  return Boolean(reReviewRequired)
+    || (
+      unresolvedThreads.length === 0
+      && reply.outstanding?.length === 0
+      && reply.responded?.length > 0
+    );
+}
+
 export function flattenPages(pages, arrayField = null) {
   return pages.flatMap((page) => {
     if (Array.isArray(page)) return page;
@@ -207,9 +216,17 @@ function configuredRepositories(value, path) {
   return [...new Set(value.repositories)];
 }
 
-export function loadOrBootstrapConfig(path, fallbackRepositories = []) {
+export function loadOrBootstrapConfig(
+  path,
+  fallbackRepositories = [],
+  { allowBootstrap = true } = {},
+) {
   try {
-    return { repositories: configuredRepositories(JSON.parse(readFileSync(path, 'utf8')), path), bootstrapped: false };
+    return {
+      repositories: configuredRepositories(JSON.parse(readFileSync(path, 'utf8')), path),
+      bootstrapped: false,
+      source: 'config',
+    };
   } catch (error) {
     if (error.code !== 'ENOENT') {
       if (error instanceof SyntaxError) throw new Error(`Invalid JSON in triage config ${path}: ${error.message}`);
@@ -220,6 +237,7 @@ export function loadOrBootstrapConfig(path, fallbackRepositories = []) {
     throw new Error(`Cannot bootstrap triage config ${path}: supply --repo owner/name or run from a checkout with origin`);
   }
   const repositories = configuredRepositories({ repositories: fallbackRepositories }, path);
+  if (!allowBootstrap) return { repositories, bootstrapped: false, source: 'origin' };
   mkdirSync(dirname(path), { recursive: true });
   try {
     writeFileSync(path, `${JSON.stringify({ repositories }, null, 2)}\n`, { encoding: 'utf8', flag: 'wx' });
@@ -227,7 +245,7 @@ export function loadOrBootstrapConfig(path, fallbackRepositories = []) {
     if (error.code === 'EEXIST') return loadOrBootstrapConfig(path, fallbackRepositories);
     throw error;
   }
-  return { repositories, bootstrapped: true };
+  return { repositories, bootstrapped: true, source: 'config' };
 }
 
 export function classifyPullRequest({
@@ -441,7 +459,7 @@ async function triageRepository(repo, login, teamKeys) {
       issueComments.data,
       login,
       detail.data.head?.sha || pull.head?.sha,
-      reReview.required,
+      summaryCommentRequired(reReview.required, unresolvedThreads, reply),
     );
     const category = classifyPullRequest({
       draft: pull.draft,
@@ -476,28 +494,30 @@ async function triageRepository(repo, login, teamKeys) {
 
 function parseArgs(argv) {
   const repos = [];
+  let noBootstrap = false;
   for (let index = 0; index < argv.length; index += 1) {
     if (argv[index] === '--repo') {
       if (!argv[index + 1]) throw new Error('--repo requires owner/name');
       repos.push(argv[index + 1]);
       index += 1;
-    } else if (argv[index] === '--help' || argv[index] === '-h') return { help: true, repos: [] };
+    } else if (argv[index] === '--no-bootstrap') noBootstrap = true;
+    else if (argv[index] === '--help' || argv[index] === '-h') return { help: true, repos: [], noBootstrap: false };
     else throw new Error(`Unknown argument: ${argv[index]}`);
   }
-  return { help: false, repos };
+  return { help: false, repos, noBootstrap };
 }
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  if (args.help) { console.log('Usage: node triage.mjs [--repo owner/name]...'); return; }
+  if (args.help) { console.log('Usage: node triage.mjs [--no-bootstrap] [--repo owner/name]...'); return; }
   const user = ghObject('user');
   if (!user.ok) throw new Error(`Unable to resolve GitHub identity: ${user.error}`);
   const userTeams = ghList('user/teams?per_page=100');
   const teamKeys = userTeams.ok ? teamKeysForUser(userTeams.data) : new Set();
   const configPath = args.repos.length ? null : triageConfigPath();
   const target = args.repos.length
-    ? { repositories: configuredRepositories({ repositories: args.repos }, 'arguments'), bootstrapped: false }
-    : loadOrBootstrapConfig(configPath, [currentRepository()].filter(Boolean));
+    ? { repositories: configuredRepositories({ repositories: args.repos }, 'arguments'), bootstrapped: false, source: 'arguments' }
+    : loadOrBootstrapConfig(configPath, [currentRepository()].filter(Boolean), { allowBootstrap: !args.noBootstrap });
   const repos = target.repositories;
   const results = [];
   for (const repo of [...new Set(repos)]) results.push(await triageRepository(repo, user.data.login, teamKeys));
@@ -510,7 +530,7 @@ async function main() {
     generatedAt: generatedAt.toISOString(),
     generatedAtLocal: formatLocalTimestamp(generatedAt),
     login: user.data.login,
-    config: { path: configPath, source: configPath ? 'config' : 'arguments', bootstrapped: target.bootstrapped },
+    config: { path: configPath, source: target.source, bootstrapped: target.bootstrapped },
     repositories: repos,
     counts,
     items,

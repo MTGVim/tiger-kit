@@ -34,12 +34,11 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 This configuration owns only the long-lived repository list.
 Do not store model mappings, selectors, effort levels, worker routing, fan-out preferences, or task state there.
 
-If the configuration does not exist, bootstrap it only when the current checkout’s origin can be identified safely.
-An explicit `--repo owner/name` limits the scope of that run.
+If the configuration does not exist, bootstrap it only in execution mode when the current checkout’s origin can be identified safely. `--report` must use the helper's no-bootstrap path and keep the origin-derived repository list in memory; an explicit `--repo owner/name` limits the scope of that run.
 
 ## Deterministic triage
 
-Use `skills/tk-pr-sweep/scripts/triage.mjs` as the canonical fresh inventory.
+Use `skills/tk-pr-sweep/scripts/triage.mjs` as the canonical fresh inventory. Report-only runs use `--no-bootstrap`.
 
 At minimum, inspect:
 
@@ -59,6 +58,8 @@ Do not treat a cached user-supplied list or a previous `.tigerkit/pr-sweep.md` a
 ## `--report`
 
 `--report` is strictly read-only.
+
+When the user-level config is missing, read the current checkout's origin for this run only. Do not create the config directory/file; use an explicit `--repo owner/name` when no safe origin exists.
 
 Example:
 
@@ -135,11 +136,11 @@ Permit only push, reply, resolve, and re-review actions within the parent-approv
 After all actionable review threads are closed, the publication contract additionally requires:
 
 - For every reviewer whose current review decision is `CHANGES_REQUESTED`, fresh verification that a re-review request was sent to that exact reviewer for the current head.
-- Exactly one current-head summary comment containing the marker `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, where `<HEAD_SHA>` is the exact current head SHA.
-- Fresh verification that the marked summary comment exists on the exact PR and current head, and that no duplicate current-head summary comment with the same marker exists.
-- The summary comment must be published only after actionable threads are closed.
+- When a re-review is required or actionable feedback was answered with no outstanding request, exactly one current-head summary comment containing the marker `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, where `<HEAD_SHA>` is the exact current head SHA.
+- When that summary is required, fresh verification must prove it exists on the exact PR/current head and has no duplicate marker.
+- The summary comment, when required, must be published only after actionable threads are closed.
 
-Do not report a PR as complete when evidence is missing for any required `CHANGES_REQUESTED` reviewer re-review request, actionable-thread closure, or the single current-head summary comment.
+Do not report a PR as complete when evidence is missing for any required `CHANGES_REQUESTED` reviewer re-review request, actionable-thread closure, or required current-head summary comment.
 
 If publication is partially blocked by permissions, preserve and report the already verified local commit and exact remote state.
 A retry in the same run is allowed only after re-verifying the exact target and refspec.
@@ -155,7 +156,7 @@ Stop the entire Sweep only for a systemic failure, such as identity or permissio
 After each PR succeeds or fails, triage that PR again to confirm that its actual state changed.
 After every planned row finishes, run final fresh triage across all configured repositories.
 
-A PR is not complete unless final fresh triage confirms the required checks, publication state, all required `CHANGES_REQUESTED` reviewer re-review requests, closed actionable threads, and exactly one current-head summary comment marked `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`.
+A PR is not complete unless final fresh triage confirms the required checks, publication state, all required `CHANGES_REQUESTED` reviewer re-review requests, closed actionable threads, and any required current-head summary comment marked `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`.
 
 ## Completion response
 
