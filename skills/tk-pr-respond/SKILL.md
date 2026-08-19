@@ -60,6 +60,8 @@ Example:
 If the review text already specifies the required outcome, do not ask the same question again.
 Investigate repository evidence independently, then explain the recommendation and rationale for decisions about reuse, simplification, testing, security, and user experience.
 
+리뷰 원문이 명시적으로 코드 수정을 요구하면 이를 reply-only 또는 보류로 재분류하지 않습니다. 그렇게 override하려면 현재 턴의 명시적 사용자 재승인이나 확인 가능한 과거 승인 기록(대화 로그·메모리)이 필요하며, 과거 자기 답글의 승인 문구만으로는 증거가 되지 않습니다.
+
 Ask the user directly only about:
 
 - user-owned decisions that materially change product behavior or scope
