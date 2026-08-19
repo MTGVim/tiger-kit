@@ -9,7 +9,7 @@
       "assertions": [
         {
           "type": "judge",
-          "criterion": "내부 category/backend/routing receipt를 덤프하지 않고 사람이 이해하기 쉬운 PR별 이유와 현재 상태를 설명한다."
+          "criterion": "내부 category/backend/routing receipt를 덤프하지 않고 사람이 이해하기 쉬운 PR별 이유와 현재 상태를 설명한다. `config`가 없으면 현재 `origin`을 메모리에서만 읽고 `user-level triage config`를 만들지 않는다."
         },
         {
           "type": "path_absent",

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -23,6 +23,7 @@ import {
   requestedTeamForUser,
   stripNoise,
   summaryCommentMarker,
+  summaryCommentRequired,
   teamKeysForUser,
   triageConfigPath,
 } from './triage.mjs';
@@ -138,6 +139,18 @@ test('requires exactly one current-head Korean summary comment', () => {
   assert.equal(stale.verified, false);
 });
 
+test('requires a summary after all actionable feedback is answered', () => {
+  assert.equal(summaryCommentRequired(false, [], {
+    outstanding: [],
+    responded: [{ scope: 'inline:1' }],
+  }), true);
+  assert.equal(summaryCommentRequired(false, [{ id: 'thread-1' }], {
+    outstanding: [],
+    responded: [{ scope: 'inline:1' }],
+  }), false);
+  assert.equal(summaryCommentRequired(true, [], { outstanding: [], responded: [] }), true);
+});
+
 test('latest external message is scoped per thread', () => {
   const rows = [
     { scope: 'inline:1', login: 'reviewer', timestamp: '2026-01-01T00:00:00Z', body: 'Please rename this.' },
@@ -184,9 +197,33 @@ test('missing triage config bootstraps the current repository', async () => {
   try {
     const path = triageConfigPath({ XDG_CONFIG_HOME: root });
     const loaded = loadOrBootstrapConfig(path, ['MTGVim/tiger-kit']);
-    assert.deepEqual(loaded, { repositories: ['MTGVim/tiger-kit'], bootstrapped: true });
+    assert.deepEqual(loaded, { repositories: ['MTGVim/tiger-kit'], bootstrapped: true, source: 'config' });
     assert.deepEqual(JSON.parse(readFileSync(path, 'utf8')), { repositories: ['MTGVim/tiger-kit'] });
-    assert.deepEqual(loadOrBootstrapConfig(path), { repositories: ['MTGVim/tiger-kit'], bootstrapped: false });
+    assert.deepEqual(loadOrBootstrapConfig(path), {
+      repositories: ['MTGVim/tiger-kit'],
+      bootstrapped: false,
+      source: 'config',
+    });
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('report-only triage reads the origin without bootstrapping config', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'tk-pr-sweep-triage-report-'));
+  try {
+    const path = triageConfigPath({ XDG_CONFIG_HOME: root });
+    const loaded = loadOrBootstrapConfig(
+      path,
+      ['MTGVim/tiger-kit'],
+      { allowBootstrap: false },
+    );
+    assert.deepEqual(loaded, {
+      repositories: ['MTGVim/tiger-kit'],
+      bootstrapped: false,
+      source: 'origin',
+    });
+    assert.equal(existsSync(path), false);
   } finally {
     await rm(root, { recursive: true, force: true });
   }

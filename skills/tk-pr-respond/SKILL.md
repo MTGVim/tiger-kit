@@ -122,8 +122,9 @@ The Seed must contain at least the following PR context. Keep user-facing Seed a
 
 After approval, execute through the safe mechanisms available in the current host.
 
-- Use subagent fan-out when work is independent and safely isolated.
-- Execute sequentially when isolation is unavailable.
+- Use subagent fan-out only when work is independent and safely isolated.
+- If fan-out is unavailable, execute sequentially inside the already-created fresh dedicated worktree.
+- If a fresh dedicated worktree cannot be created or proven, return `Blocked`; never fall back to the parent `main`/`develop` checkout.
 - Use the host default when a specific model cannot be selected.
 - The parent must not persist execution details as Markdown routing state.
 
@@ -153,14 +154,14 @@ local ancestry, thread/check state, and approved scope.
 
 Then perform only the approved actions in this order.
 
-1. Push the verified commit to the exact branch.
+1. For a code-changing response, push the verified commit to the exact branch. For reply-only work, do not push.
 2. Post an exact reply to each feedback item.
 3. Resolve only threads whose reply succeeded and whose resolution was actually verified.
 4. Fresh-read reviews/threads/checks.
 5. For every reviewer whose current review state is `CHANGES_REQUESTED`, fresh-verify that the reviewer remains eligible and that a re-review request is required for the exact current head. Request re-review from each such human reviewer, excluding the author, authenticated user, bots, and still-valid approvers.
-6. After all actionable threads are closed, fresh-read the exact current head and post exactly one current-head summary comment containing `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, with `<HEAD_SHA>` replaced by the exact observed head SHA. If that marker already exists exactly once for the current head, do not post another. A summary for an earlier head does not satisfy this requirement.
+6. After all actionable threads are closed, when a re-review is required or actionable feedback was answered with no outstanding request, fresh-read the exact current head and post exactly one current-head summary comment containing `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, with `<HEAD_SHA>` replaced by the exact observed head SHA. If that marker already exists exactly once for the current head, do not post another. A summary for an earlier head does not satisfy this requirement.
 
-Do not claim publication complete unless fresh evidence proves every required `CHANGES_REQUESTED` reviewer re-review request, zero actionable unresolved threads, and exactly one current-head summary comment after the threads were closed. Missing evidence is `Unverifiable`, not complete.
+Do not claim publication complete unless fresh evidence proves every required `CHANGES_REQUESTED` reviewer re-review request, zero actionable unresolved threads, and any required current-head summary comment after the threads were closed. Missing evidence is `Unverifiable`, not complete.
 Do not claim completion while any unresolved inline thread remains.
 Keep deferred, unverifiable, or failed feedback open.
 
