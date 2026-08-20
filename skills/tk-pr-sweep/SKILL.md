@@ -92,6 +92,12 @@ The execution model may recommend only broad capability classes such as “중�
 Do not create a specific provider selector, tier, reasoning effort, or `session.md`.
 Do not mark the entire Sweep as `Blocked` merely because these controls are unavailable.
 
+## 🔴 CHECKPOINT · 🛑 STOP · Batch approval
+
+Do not create child worktrees, write Seeds, or perform any remote or product mutation until the user explicitly
+approves the exact PRs, heads, work types, and publication scope in the batch plan. If approval is missing or fresh
+state changes that scope, remain pending and ask again only for the affected decision.
+
 Once the user approves the batch plan, that approval grants authority only for the exact PRs, heads, work types, and publication scope in the plan.
 Do not request the same approval again for each child.
 
