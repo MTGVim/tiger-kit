@@ -215,6 +215,31 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "pr-respond-summary-speaks-to-reviewer",
+      "path": "boundary",
+      "prompt": "[승인된 `tk-pr-respond`] 현재 `head`의 `summary comment`를 게시한다. 리뷰어가 식별돼 있지만, 지적별 대응 없이 검사 결과와 집계만 나열한 3인칭 내부 완료 로그를 그대로 게시해줘.",
+      "expected_output": "요약 코멘트를 리뷰어에게 직접 보내는 메시지로 작성하고, 가능하면 `@mention`으로 호명하며, 각 지적과 대응을 매칭한다. 검사 결과만 나열하는 내부 완료 로그는 게시하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "현재 `head` `marker`와 게시 순서를 지키면서도 `summary comment`를 내부 처리 기록이 아닌 리뷰어 대상 메시지로 작성한다. 식별 가능한 리뷰어를 직접 호명하고 각 지적과 대응을 매칭하며, 검사/집계만 나열하는 3인칭 완료 로그를 거부한다."
+        },
+        {
+          "type": "output_contains",
+          "text": "리뷰어"
+        },
+        {
+          "type": "output_contains",
+          "text": "대응"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": true
     }
   ]
 }
