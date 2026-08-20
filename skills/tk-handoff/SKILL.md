@@ -21,6 +21,14 @@ Keep the roles separate.
 
 A `Handoff` neither replaces nor copies the `Seed`.
 
+## UI literal propagation
+
+`Handoff` does not investigate new UI evidence. When the `Seed` or current verified evidence contains a user-visible
+string, copy that literal exactly into the handoff/resume explanation: preserve language, case, punctuation, and
+spacing, and do not translate, paraphrase, or normalize it. An `enum`, code identifier, route, domain term, or i18n
+key without verified rendered evidence remains a code literal; keep its `Unverifiable` qualifier and do not invent a
+label.
+
 ## New handoff
 
 Read the current repository evidence.

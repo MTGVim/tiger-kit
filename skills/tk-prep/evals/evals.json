@@ -201,6 +201,29 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "prep-render-as-is-enum-is-valid-label",
+      "path": "success",
+      "prompt": "/tk-prep `position === \"BOTTOM\"`이 `<span>{position}</span>`으로 그대로 표시되는 UI의 완료 조건을 준비해 주세요.",
+      "expected_output": "`render-as-is` 근거가 있으므로 `BOTTOM`을 정확한 `UI literal`로 기록하고, `enum`이라는 이유만으로 `label`에서 제외하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "실제 `render path`가 `BOTTOM`을 그대로 표시한다는 근거를 `Seed`에 보존하고 정확한 `UI literal`을 변경하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "BOTTOM"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

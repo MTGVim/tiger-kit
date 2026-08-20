@@ -111,6 +111,36 @@
       "safety": true
     },
     {
+      "id": "wizard-keeps-verified-ui-literal",
+      "path": "success",
+      "prompt": "/tk-wizard 실제 `dashboard` 버튼이 `\"Generate new token\"`입니다. 한국어 안내에서도 정확한 버튼 `label`을 유지해줘.",
+      "expected_output": "주변 설명은 한국어로 하되 검증된 버튼 `label` `\"Generate new token\"`은 원문 그대로 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "검증된 `UI control`의 `language/case/punctuation/spacing`을 보존하고 `Generate new token`을 번역·의역하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "Generate new token"
+        },
+        {
+          "type": "output_absent",
+          "text": "새 토큰 생성"
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pending",
+            "Pass"
+          ],
+          "forbidden": [
+            "Fail"
+          ]
+        }
+      ]
+    },
+    {
       "id": "wizard-refuses-agent-executable-work",
       "path": "boundary",
       "prompt": "/tk-wizard 사람이 할 일은 없어. `repository`의 일반 API 호출 코드를 네가 직접 수정해줘.",

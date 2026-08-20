@@ -19,7 +19,9 @@ It does not own implementation, closing user decisions, runtime estimation, or r
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Investigation boundary
 
-Do not implement, mutate, or turn incomplete evidence into a repository claim; when an anchor or evidence path cannot be established, stop with `Status: Unverifiable`.
+Do not implement, mutate, or turn incomplete evidence into a repository claim. If multiple plausible interpretations
+remain and repository evidence cannot choose between them, stop with `Status: Blocked`; if an anchor or evidence path
+cannot be established, stop with `Status: Unverifiable`.
 
 ## User Experience
 
@@ -31,6 +33,19 @@ Keep the internal investigation rigorous, but present the result as a natural ex
 - Do not show internal classifications, checkpoints, or search ledgers by default.
 - Use short prose or a limited list unless a comparison truly requires a table.
 - Explain interactively one step at a time only when the user says “하나씩 따라가며 설명해줘”.
+
+## UI literal evidence
+
+When explaining a user-visible element, use the verified rendered string verbatim. Preserve its language, case,
+punctuation, and spacing; do not translate, paraphrase, or normalize it.
+
+- An `enum`, code identifier, i18n key, route, or domain term is code evidence, not a UI label, unless the current
+  render path proves that exact value is displayed as-is.
+- If the rendered string cannot be verified, mention the identifier only as a code literal and mark the UI label
+  `Unverifiable`; never fill the gap with a translation or inference.
+- Prefer evidence in this order: current target/environment/locale runtime text, a source connected to the current
+  render path, a supplied screenshot/reference with clear provenance, and ticket/spec wording. Report conflicting
+  provenance instead of silently choosing it.
 
 ## Investigation Principles
 

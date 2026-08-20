@@ -38,7 +38,23 @@ Ask only the single highest-impact decision at a time. First briefly explain the
 
 ## UI text evidence
 
-When a `Seed` or acceptance criterion names a user-visible element—field label, section title, tab, radio/checkbox option, button, modal title, or instruction—record the exact rendered string in quotes. Verify it from a component prop, i18n entry, option constant, or supplied screenshot; never paraphrase, use a code identifier, or infer a label from an enum. If no visible label exists, describe the entry path and end it with an exact visible title. A supplied screenshot wins over conflicting repository strings, and server-supplied or otherwise unverified labels remain unverified. Validate grouped UI claims against repository evidence before copying them into the `Seed`.
+When a `Seed` or acceptance criterion names a user-visible element—field label, section title, tab, radio/checkbox option, button, modal title, or instruction—record the exact rendered string in quotes. Preserve its language, case, punctuation, and spacing; never translate, paraphrase, or normalize it.
+
+Use this evidence precedence:
+
+1. Runtime-rendered text from the current target, environment, and locale
+2. A component prop, i18n entry, or option source connected to the current render path
+3. A supplied screenshot/reference with clear provenance
+4. Ticket/spec wording
+5. An identifier, `enum`, route, domain term, or i18n key inference — not label evidence
+
+Use the first applicable evidence. A source that cannot fully determine a server-supplied or dynamic label remains
+unverified; do not promote it to a verified fact. If no visible label exists, describe the entry path and end it with
+an exact visible title. Validate grouped UI claims against repository evidence before copying them into the `Seed`.
+
+After the `Seed` becomes `Ready`, every verified UI literal is canonical downstream evidence. The executor,
+verification, and user-facing explanation must copy it exactly rather than translate or paraphrase it. If downstream
+evidence conflicts, preserve the conflict and re-enter `tk-prep` instead of inventing a replacement label.
 
 ## Understanding Readiness
 

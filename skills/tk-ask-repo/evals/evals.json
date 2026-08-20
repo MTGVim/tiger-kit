@@ -88,6 +88,52 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "ask-repo-ui-keeps-rendered-label",
+      "path": "success",
+      "prompt": "/tk-ask-repo `PENDING` `enum`이 실제 `render path`에서 `\"Waiting for approval\"`로 표시됩니다. 두 값을 구분해 설명해줘.",
+      "expected_output": "코드 값 `PENDING`과 실제 `UI literal` `\"Waiting for approval\"`을 구분하고, 렌더된 문자열을 그대로 보존해 설명한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "검증된 `rendered string`을 번역·의역하지 않고 `PENDING`과 `Waiting for approval`의 역할을 구분한다."
+        },
+        {
+          "type": "output_contains",
+          "text": "Waiting for approval"
+        },
+        {
+          "type": "output_absent",
+          "text": "승인 대기"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "ask-repo-render-as-is-enum-is-ui-literal",
+      "path": "success",
+      "prompt": "/tk-ask-repo `position === \"BOTTOM\"`이 `<span>{position}</span>`으로 그대로 렌더링됩니다. 이 값을 `UI literal`로 인정해 설명해줘.",
+      "expected_output": "`enum` 값이라도 실제 `render-as-is` 근거가 있으면 `BOTTOM`을 정확한 `UI literal`로 인정하고, `enum`은 무조건 `label`이 아니라는 경계를 설명한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`render path`가 `BOTTOM`을 그대로 출력한다는 근거를 바탕으로 유효한 `UI literal`로 인정하며, `enum`을 무조건 `UI label`에서 제외하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "BOTTOM"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

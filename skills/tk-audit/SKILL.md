@@ -35,6 +35,14 @@ Modifiers may be combined. Do not implement, write Seeds, publish issues, or cre
 2. Check the selected categories using [audit-playbook.md](references/audit-playbook.md).
 3. Reopen cited evidence to remove duplicates, intended behavior, and incorrect attribution.
 4. Sort `finding`s by impact ÷ `effort`, then `confidence`, `fix risk`, and `dependency`.
+
+## 🔴 CHECKPOINT · 🛑 STOP · Ledger preflight
+
+Before writing `.tigerkit/audit.md`, freshly recheck the current `HEAD`, requested scope, existing `AUD-*` IDs,
+cited evidence, and the audited/unaudited boundary. If any of these changed, conflict, or cannot be read, stop with
+`Status: Blocked` or `Status: Unverifiable` and do not write the ledger. Only after the preflight passes, atomically
+update the ledger.
+
 5. `.tigerkit/audit.md`를 원자적으로 갱신하고 안정적인 `AUD-*` ID와 상태를 보존합니다.
 
 ## Failure Paths
