@@ -51,6 +51,7 @@ When possible, the parent task provides:
 - viewport/state
 - development server command/cwd/readiness
 - required screenshot evidence
+- exact verbatim strings or verified entry paths for UI `Content` criteria
 - sensitive capture/redaction rule
 - Pass condition
 
@@ -65,7 +66,7 @@ Return only outcome-changing user-owned decisions to the parent owner.
 3. **Execution setup**: Without installing new dependencies, use a native, Playwright-compatible, MCP, or verified CDP path. Any new Chrome/Chromium process must prove effective `--headless=new`.
 4. **Server**: If the parent requires a development server, this verifier owns starting the background process, readiness checks, and cleanup. For standalone execution, present multiple plausible commands and get the user's choice before starting; do not choose arbitrarily. When the selected server is `react-scripts`/CRA, include `BROWSER=NONE` or the repository-documented equivalent to suppress auto-open. Manage PID/cwd/port/command and bounded logs as run evidence, and wait for a readiness signal rather than process exit.
 5. **Verification**: Start from a known state and inspect the required interaction and final state. Capture and actually inspect at least one non-empty run-owned screenshot for every final state relevant to the decision.
-6. **Decision**: Map each criterion to current evidence and assign `Pass | Fail | Blocked | Unverifiable`. When visual comparison is required, cover asset/content/geometry/typography/color/imagery/responsive/state axes.
+6. **Decision**: Map each criterion to current evidence and assign `Pass | Fail | Blocked | Unverifiable`. When visual comparison is required, cover asset/content/geometry/typography/color/imagery/responsive/state axes. For UI `Content` criteria, require exact rendered strings or a verified entry path from the parent basis; if neither exists, do not infer the element from a paraphrase, code identifier, or enum and return `Unverifiable`.
 7. **Cleanup**: Close only run-owned browser/server/resources and check for residue according to [session lifecycle](references/session-lifecycle.md).
 
 ## Evidence

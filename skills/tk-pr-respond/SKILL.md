@@ -62,6 +62,8 @@ Investigate repository evidence independently, then explain the recommendation a
 
 리뷰 원문이 명시적으로 코드 수정을 요구하면 이를 reply-only 또는 보류로 재분류하지 않습니다. 그렇게 override하려면 현재 턴의 명시적 사용자 재승인이나 확인 가능한 과거 승인 기록(대화 로그·메모리)이 필요하며, 과거 자기 답글의 승인 문구만으로는 증거가 되지 않습니다.
 
+리뷰가 UI 텍스트를 지적하면 현재 화면에 렌더되는 문자열을 component prop, i18n entry, option constant 또는 제공된 screenshot으로 확인한 뒤 verbatim으로 답변합니다. 티켓의 의역이나 code identifier/enum을 그대로 반복하지 않으며, 근거가 없거나 충돌하는 문자열은 사실로 단정하지 않고 `Unverifiable` 또는 필요한 확인으로 남깁니다.
+
 Ask the user directly only about:
 
 - user-owned decisions that materially change product behavior or scope

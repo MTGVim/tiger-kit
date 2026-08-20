@@ -36,6 +36,10 @@ Ask the user directly only about:
 If the source already determines the outcome, do not turn it into another choice question.
 Ask only the single highest-impact decision at a time. First briefly explain the current understanding, recommendation, and rationale.
 
+## UI text evidence
+
+When a `Seed` or acceptance criterion names a user-visible element—field label, section title, tab, radio/checkbox option, button, modal title, or instruction—record the exact rendered string in quotes. Verify it from a component prop, i18n entry, option constant, or supplied screenshot; never paraphrase, use a code identifier, or infer a label from an enum. If no visible label exists, describe the entry path and end it with an exact visible title. A supplied screenshot wins over conflicting repository strings, and server-supplied or otherwise unverified labels remain unverified. Validate grouped UI claims against repository evidence before copying them into the `Seed`.
+
 ## Understanding Readiness
 
 Internally evaluate these six dimensions.

@@ -22,7 +22,9 @@ font-loading 완료 상태의 reference/candidate screenshot을 실제 inspect�
    보지 않고 rendered shape, `viewBox`, aspect ratio, fill/stroke와 clipping을 screenshot
    및 computed 근거로 확인합니다.
 2. **Content** — 표시되는 text, label, number, badge와 순서가 누락·추가·오타 없이
-   reference와 일치하는지 확인합니다.
+   `reference`와 일치하는지 확인합니다. 기준자료는 화면에 보이는 문자열을 그대로
+   담아야 하며, 요소명을 의역했거나 `code identifier`/`enum` 값만 있으면 요소를 추측하지
+   말고 `Unverifiable`로 기록합니다.
 3. **Geometry/layout** — position, dimensions, spacing, alignment, radius, border,
    overlap, clipping, wrapping, crop을 named region별로 비교합니다.
 4. **Typography** — loaded font family/fallback, weight, rendered font size,
