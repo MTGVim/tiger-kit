@@ -138,7 +138,7 @@ After all actionable review threads are closed, the publication contract additio
 - For every reviewer whose current review decision is `CHANGES_REQUESTED`, fresh verification that a re-review request was sent to that exact reviewer for the current head.
 - When a re-review is required or actionable feedback was answered with no outstanding request, exactly one current-head summary comment containing the marker `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, where `<HEAD_SHA>` is the exact current head SHA.
 - When that summary is required, fresh verification must prove it exists on the exact PR/current head and has no duplicate marker.
-- The summary comment, when required, must be published only after actionable threads are closed.
+- The summary comment, when required, must be published only after actionable threads are closed. 요약 코멘트는 내부 처리 기록이 아니라 리뷰어에게 보내는 실제 메시지로 작성한다. 리뷰어가 식별되면 `@mention`으로 직접 호명하고, 각 지적과 대응을 자연스러운 서술 또는 매칭되는 표로 설명한다. 검사 결과나 집계만 나열하는 3인칭 완료 로그는 금지한다.
 
 Do not report a PR as complete when evidence is missing for any required `CHANGES_REQUESTED` reviewer re-review request, actionable-thread closure, or required current-head summary comment.
 
