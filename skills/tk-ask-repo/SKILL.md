@@ -19,7 +19,9 @@ It does not own implementation, closing user decisions, runtime estimation, or r
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Investigation boundary
 
-Do not implement, mutate, or turn incomplete evidence into a repository claim; when an anchor or evidence path cannot be established, stop with `Status: Unverifiable`.
+Do not implement, mutate, or turn incomplete evidence into a repository claim. If multiple plausible interpretations
+remain and repository evidence cannot choose between them, stop with `Status: Blocked`; if an anchor or evidence path
+cannot be established, stop with `Status: Unverifiable`.
 
 ## User Experience
 
