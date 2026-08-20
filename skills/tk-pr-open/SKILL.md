@@ -47,6 +47,8 @@ If exactly one template applies, preserve its heading order, checklists, HTML co
 If multiple templates exist and there is no basis for choosing one, explain the candidates with one recommendation and ask the user to choose before publication approval.
 If the template cannot be read, do not invent a body.
 
+When the `PR body` or a QA table names a user-visible element, verify the exact rendered string from repository evidence before writing it. Do not copy a ticket paraphrase, code identifier, or enum value; quote the label verbatim. If no visible label exists, use the entry path ending in an exact visible title. If ticket, code, and screenshot disagree, preserve the verified source and tell the user about the mismatch; do not present an unverified server-supplied label as fact.
+
 ## Evidence
 
 Determine whether `PR evidence` is needed from the prepared `Seed` or the currently verified work.

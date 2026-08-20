@@ -182,6 +182,31 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "pr-sweep-carries-ui-verbatim-basis",
+      "path": "success",
+      "prompt": "[승인된 `tk-pr-sweep`] 자식 범위에 화면 라벨을 `enum` `BOTTOM`으로 적은 UI 변경이 있습니다. 저장소에는 실제 표시 문자열 `상단`이 확인됩니다.",
+      "expected_output": "자식 `Seed`와 `handoff`에 `상단` 또는 검증된 진입 경로를 그대로 전달하고, `enum`·의역·검증되지 않은 그룹 주장을 넘기지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "각 자식의 UI 범위에 렌더된 `상단` 또는 정확한 진입 경로와 근거를 포함하고, `BOTTOM` 같은 `enum`이나 의역된 이름을 재생산하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "상단"
+        },
+        {
+          "type": "output_contains",
+          "text": "근거"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": true
     }
   ]
 }

@@ -122,7 +122,7 @@ Return that PR to the user only when there is a material change, such as new fee
 Do not create one giant Seed for the entire Sweep.
 
 Each PR child must use its own newly created dedicated worktree. Code-changing PRs use `.tigerkit/seed.md` there; reply-only or pure rebase work still uses the worktree but does not require a Seed solely for that reason.
-The Seed must be self-contained and include that PR’s feedback, objective, decisions, approach, AC, verification, and publication boundary.
+The Seed must be self-contained and include that PR’s feedback, objective, decisions, approach, AC, verification, and publication boundary. If a child scope names a user-visible UI element, carry the verbatim constraint into that handoff: quote the exact rendered string or verified entry path, cite its repository or supplied-screenshot basis, and do not pass along paraphrases, code identifiers, enum-derived labels, or unverified grouped claims.
 
 Do not force a Seed onto reply-only work or a pure rebase that does not require separate implementation context.
 
