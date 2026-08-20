@@ -53,6 +53,11 @@ First read the `repository` and current `host` `evidence` to build this internal
 Do not invent unknown UI, buttons, URLs, or commands. Where evidence is unavailable, describe only that point
 as `Unverifiable`.
 
+Verified UI controls are literals, not prose to translate. Keep the exact language, case, punctuation, and spacing
+of a button, tab, menu, field, or modal title in every user instruction. An `enum`, code identifier, i18n key, route,
+or domain term is not a label unless the current render path proves that it is displayed as-is. If the rendered text
+is not verified, keep the code literal separate and mark the UI wording `Unverifiable`.
+
 For example, tell the user:
 
 ```text

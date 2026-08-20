@@ -27,7 +27,9 @@ Output only these two blocks.
 ```
 
 Write more briefly than the source without changing its meaning. Preserve paths, commands, URLs, literals,
-`Status`/IDs, and original authorship attribution exactly. If there is no basis for a recommendation, use
+verified UI strings, `Status`/IDs, and original authorship attribution exactly. Keep a verified UI string's language,
+case, punctuation, and spacing; do not translate, paraphrase, or normalize it. Do not turn an `enum`, code identifier,
+or i18n key into a UI label. If there is no basis for a recommendation, use
 `추천: 없음`.
 
 After the re-explanation, **`hard stop`**. Do not modify files, implement anything, create plans or summaries, or run commands or tools. New tasks, change requests, and general summary requests are outside this skill; stop with `NotApplicable`.

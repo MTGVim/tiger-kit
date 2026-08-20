@@ -230,6 +230,30 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "handoff-preserves-seed-ui-literal",
+      "path": "success",
+      "prompt": "/tk-handoff `Seed`의 검증된 `UI label` `\"정산 대기\"`를 다음 세션에 전달하되 다른 표현으로 바꾸지 말아 주세요.",
+      "expected_output": "새 `UI source`를 조사하지 않고 `Seed`의 검증된 `literal` `\"정산 대기\"`를 `handoff`/`resume` 설명에 그대로 전달한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`Seed`의 검증된 `UI literal` `정산 대기`를 `대기 중` 등으로 재작성하지 않고 그대로 전파하며, 새 조사를 시작하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "정산 대기"
+        },
+        {
+          "type": "output_absent",
+          "text": "대기 중"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ]
 }

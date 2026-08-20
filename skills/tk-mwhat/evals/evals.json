@@ -42,6 +42,30 @@
       ]
     },
     {
+      "id": "ui-literal-preservation",
+      "path": "success",
+      "prompt": "직전 설명에 있는 `UI` 버튼 `\"Save changes\"`를 쉽게 다시 설명하되 버튼 `label`은 그대로 보존해줘",
+      "expected_output": "주변 설명은 짧게 바꾸되 검증된 `UI literal` `\"Save changes\"`는 번역·의역하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "직전 `source`의 검증된 `UI string` `Save changes`를 `language/case/punctuation/spacing`까지 정확히 보존한다."
+        },
+        {
+          "type": "output_contains",
+          "text": "Save changes"
+        },
+        {
+          "type": "output_absent",
+          "text": "변경사항 저장"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
       "id": "missing-previous",
       "path": "boundary",
       "prompt": "앞선 설명 없이 /tk-mwhat",
