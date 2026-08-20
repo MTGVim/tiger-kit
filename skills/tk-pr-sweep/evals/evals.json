@@ -40,6 +40,11 @@
           "criterion": "사용자에게 `actionable`, backend, model selector 같은 내부 상태 대신 지금 할 일/기다릴 일과 추천 실행 형태를 설명한다."
         },
         {
+          "type": "path_text_contains",
+          "path": "skills/tk-pr-sweep/SKILL.md",
+          "text": "🔴 CHECKPOINT"
+        },
+        {
           "type": "git_head_unchanged"
         },
         {
