@@ -32,6 +32,7 @@
     "tk-ask-repo:behavior:ask-repo-conversational-origin-and-share-summary",
     "tk-wizard:behavior:wizard-keeps-secret-ephemeral",
     "tk-pr-open:behavior:pr-open-prepares-plan",
+    "tk-pr-open:behavior:pr-open-ignores-stale-seed-identity",
     "tk-pr-respond:behavior:pr-respond-conversational-plan-before-mutation",
     "tk-pr-respond:behavior:pr-respond-code-change-writes-seed",
     "tk-pr-respond:behavior:pr-respond-direct-tdd-route",
@@ -47,6 +48,7 @@
     "tk-browser-verify:behavior:browser-auth-unavailable-stops-before-mutation",
     "tk-browser-verify:behavior:browser-rereads-evidence-before-rerun",
     "tk-browser-verify:behavior:browser-composes-with-automated-regression",
+    "tk-handoff:behavior:handoff-resume-blocks-stale-seed-identity",
     "tk-mwhat:behavior:literal-source-preservation",
     "tk-mwhat:behavior:no-mutation-tools"
   ],

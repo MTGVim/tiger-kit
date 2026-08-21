@@ -70,6 +70,17 @@ Execution shape: SDD
 실행별 또는 계획별 계층은 만들지 않고 `Seed` 식별자, `Unit`, 범위가 포함된 고유 파일명을 사용합니다. 실행이 소유한
 파일만 정리하며 무관한 파일을 지우지 않습니다. 산출물에는 비밀을 넣지 않습니다.
 
+작업 요약과 검토 묶음은 제어기가 자유 형식으로 다시 쓰지 않습니다. 현재 설치된 패키지의 다음 helper를 사용해
+원본 요구사항과 Git 범위를 결정적으로 추출합니다.
+
+```text
+scripts/sdd-unit-brief.py <seed> <unit-number> <output>
+scripts/sdd-review-package.py <base> <head> <output>
+```
+
+helper가 없거나 실패하면 해당 요구사항/범위를 손으로 재구성해 계속하지 않고 `Blocked`로 돌려 패키지 또는 입력을
+고칩니다. 출력 경로만 위의 검증된 OS 임시 경로나 `.tigerkit/sdd-tmp/` transport 규칙에 따라 선택합니다.
+
 ## 증거가 있는 사전 점검
 
 `Unit` 1 전에 `Seed`를 한 번 읽고 다음 표를 `sdd.md`에 기록합니다.
@@ -95,10 +106,11 @@ Execution shape: SDD
 
 ## `Unit` 구현자
 
-분배 직전에 `BASE = git rev-parse HEAD`를 기록합니다. 구현자에게 전체 대화나 `Seed`가 아니라 다음을 줍니다.
+분배 직전에 `BASE = git rev-parse HEAD`를 기록합니다. 제어기는 검증된 transport 경로를 정한 뒤
+`scripts/sdd-unit-brief.py`로 해당 `Unit` 요약을 만들고, 구현자에게 전체 대화나 전체 `Seed` 대신 다음을 줍니다.
 
-- 작업 로컬 `Unit` 요약을 요구사항 정본으로 읽을 경로
-- 구속력 있는 전역 제약과 앞선 인터페이스 결정
+- helper가 생성한 작업 로컬 `Unit` 요약 경로를 요구사항 정본으로 읽으라는 지시
+- 앞선 `Unit`에서 새로 확정된 인터페이스 결정 중 요약만으로 알 수 없는 최소 추가 맥락
 - 보고 경로와 짧은 반환 계약
 - 말단이며 하위 에이전트가 없다는 규칙
 - 승인된 로컬 변경과 커밋 경계
@@ -110,14 +122,16 @@ Execution shape: SDD
 
 ## 정확한 `Unit` 검토
 
-구현 뒤 `HEAD`를 기록하고 항상 전체 `BASE..HEAD`를 검토합니다. `HEAD~1`을 가정하지 않습니다. 검토 묶음에는
-커밋 목록, 변경 통계, 충분한 맥락이 있는 전체 순변경을 넣습니다.
+구현 뒤 `HEAD`를 기록하고 항상 전체 `BASE..HEAD`를 검토합니다. `HEAD~1`을 가정하지 않습니다. 제어기는
+검증된 transport 경로를 정한 뒤 반드시 `scripts/sdd-review-package.py BASE HEAD OUTPUT`으로 검토 묶음을 만듭니다.
+검토 묶음에는 커밋 목록, 변경 통계, 충분한 맥락이 있는 전체 순변경이 들어갑니다. helper 실패 시 범위를 손으로
+대체하지 않습니다.
 
 검토자 입력은 다음과 같습니다.
 
 - `Unit` 요약과 구속력 있는 전역 제약
 - 구현자 보고와 신뢰하지 않은 주장
-- 정확한 `BASE..HEAD` 묶음
+- helper가 만든 정확한 `BASE..HEAD` 묶음
 
 검토자는 읽기 전용 말단으로 다음을 판정합니다.
 
@@ -136,7 +150,7 @@ Execution shape: SDD
 - 1–3회: 같은 구현자를 재개
 - 4–5회: 새 구현자와 사용 가능한 더 강한 의미 역량
 - 매회: `FIX_BASE = git rev-parse HEAD`, 열린 발견 전달, 수정 코드의 보호 테스트 재실행, 보고 추가,
-  정확한 `FIX_BASE..HEAD` 묶음 생성
+  `scripts/sdd-review-package.py FIX_BASE HEAD OUTPUT`으로 정확한 수정 묶음 생성
 - 범위 재검토: 원래 열린 발견과 수정 변경분만 읽고 각 발견을 `ADDRESSED | NOT ADDRESSED`로 판정
 - 수정 변경분의 새 `Critical`/`Important`만 열린 목록에 추가
 

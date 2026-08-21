@@ -15,7 +15,14 @@ metadata:
 Start when the intent to create or update one `PR` is explicit, such as `/tk-pr-open`, `$tk-pr-open`, selection through the host skill picker, or “현재 브랜치로 PR 열어줘”.
 
 The input is an already implemented and verified current-branch `commit`.
-If a prepared `.tigerkit/seed.md` exists, read the work `goal`, `acceptance`, and `browser evidence requirement`, but the `Seed` itself does not grant publication authority.
+A `.tigerkit/seed.md` is optional publication evidence, not authority. Treat it as the current task Seed only after fresh validation proves all of the following:
+
+- it contains `<!-- tigerkit:seed -->` and `Status: Ready`;
+- its repository/worktree/branch or exact PR identity matches the current checkout;
+- the current `HEAD` is the recorded implementation head or a descendant of the Seed's recorded base/head on the same task checkout;
+- the changed paths/evidence being published remain inside the Seed's approved scope.
+
+A marked Seed whose identity does not match is stale for this publication: do not delete or rewrite it, and do not use its goal, AC, or evidence requirement. An unmarked/legacy/identity-ambiguous Seed is never treated as current. Continue from independently verified current work only when the required goal/template/evidence state can still be proven; otherwise return `Unverifiable` instead of guessing.
 
 Do not repeat implementation, create a `worker`, or add product `commit`s.
 template 선택 또는 remote publication approval이 필요하면 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). unavailable하면 같은 approval packet을 plain chat으로 fallback하고 exact current-turn approval 전 remote write를 하지 않습니다.
@@ -31,6 +38,7 @@ First, verify the following.
 - 같은 `head`의 기존 `PR` 존재 여부와 `observed draft | ready` 상태
 - Unrelated dirty/staged paths
 - Target repository's `PR template`
+- `.tigerkit/seed.md`가 있으면 `current | stale | unmarked/ambiguous` 판정과 그 근거
 
 If the exact current `commit` cannot be proven or unrelated changes are mixed in, do not broaden scope; return `Blocked`/`Unverifiable`.
 
@@ -51,13 +59,13 @@ When the `PR body` or a QA table names a user-visible element, verify the exact 
 
 ## Evidence
 
-Determine whether `PR evidence` is needed from the prepared `Seed` or the currently verified work.
+Determine whether `PR evidence` is needed from the validated current Seed or the currently verified work.
 
 ```text
 required | optional | N/A | undecided
 ```
 
-If a prepared `Seed` marks `tk-browser-verify` screenshot evidence as required for `browser-visible acceptance`, use only validly inspected evidence.
+If a validated current Seed marks `tk-browser-verify` screenshot evidence as required for `browser-visible acceptance`, use only validly inspected evidence.
 Approved `tk-prototype` evidence may also be used.
 
 Do not upload actual secret-bearing screenshots or unverified captures.
@@ -104,7 +112,7 @@ STOP if the plan, approved `commit`, template/evidence state, or current reposit
 
 ## Publication
 
-After approval, recheck the repository, account, branch, `HEAD`, base, existing `PR`, and template source.
+After approval, recheck the repository, account, branch, `HEAD`, base, existing `PR`, template source, and any current Seed identity used by the plan.
 기존 `PR`의 `actual state`가 승인된 `plan`과 `material`하게 달라졌다면 승인을 무효화합니다.
 Invalidate the approval if any material `drift` exists.
 
