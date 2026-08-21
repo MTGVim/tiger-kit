@@ -21,9 +21,20 @@ Keep the roles separate.
 
 A `Handoff` neither replaces nor copies the `Seed`.
 
+## Current Seed identity
+
+A `.tigerkit/seed.md` is the current task contract only when fresh evidence proves all of the following:
+
+- it contains `<!-- tigerkit:seed -->` and `Status: Ready`;
+- its repository/worktree/branch or exact PR identity matches the current checkout;
+- current `HEAD` is the Seed's recorded implementation head or a descendant of its recorded base/head on that checkout;
+- current changed paths and the Handoff goal still fit the Seed's approved scope.
+
+A marked mismatch is `Seed` contract drift, not a harmless progress update. An unmarked/legacy/identity-ambiguous file is not a current Seed. Do not delete, overwrite, or silently adopt either form inside `tk-handoff`. A new handoff may use a verified current goal reference when no valid Seed is required; a resume whose snapshot names a Seed must prove that exact Seed identity before continuing.
+
 ## UI literal propagation
 
-`Handoff` does not investigate new UI evidence. When the `Seed` or current verified evidence contains a user-visible
+`Handoff` does not investigate new UI evidence. When the validated current `Seed` or current verified evidence contains a user-visible
 string, copy that literal exactly into the handoff/resume explanation: preserve language, case, punctuation, and
 spacing, and do not translate, paraphrase, or normalize it. An `enum`, code identifier, route, domain term, or i18n
 key without verified rendered evidence remains a code literal; keep its `Unverifiable` qualifier and do not invent a
@@ -34,12 +45,14 @@ label.
 Read the current repository evidence.
 
 - `branch` / `HEAD` / `worktree`
-- the exact `path` and `status` of the current `Seed`, if present
+- the exact `path`, marker, `Status`, and identity/ancestry result of `.tigerkit/seed.md`, if present
 - actual changed files
 - commands actually executed
 - actual verification results
 - completed and remaining work
 - current blockers and next action
+
+If a Seed exists but is stale or ambiguous, do not label it current. Use a verified current goal reference only when the handoff can be self-consistently grounded without that Seed; otherwise stop as `Blocked`/`Unverifiable` rather than attaching progress to the wrong contract.
 
 Mark only observed facts as `verified` and only decisions confirmed with the user as `confirmed`.
 Commands not executed, prior claims, and model inferences are `unverified`.
@@ -50,7 +63,7 @@ Creating the artifact itself does not grant permission to change the product, Gi
 Preserve at least the following meaning in the Handoff.
 
 ```text
-Goal/Seed: <seed path 또는 current goal reference>
+Goal/Seed: <validated seed path 또는 current goal reference>
 Status: pending | in_progress | completed | aborted | Blocked
 Repository state: <branch, HEAD, worktree>
 Decisions: <confirmed progress-relevant decisions>
@@ -67,29 +80,30 @@ Disposition: reported | applied | pending
 ```
 
 Do not copy the `Seed`’s `goal/scope/AC/implementation guidance` into the `Handoff`.
-When needed, reference the exact `Seed` `section/path`.
+When needed, reference the exact validated `Seed` `section/path`.
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Write/Resume Boundary
 
 Before writing a new `Handoff` or continuing a `--resume`:
 
-- STOP and report `Unverifiable` when the current `Seed`, `Handoff`, branch, `HEAD`, worktree, or required verification cannot be fresh-read.
-- STOP and mark `Blocked` when evidence conflicts or the `Seed` contract has drifted; do not resolve either condition inside the `Handoff`.
+- STOP and report `Unverifiable` when a required `Seed`, `Handoff`, branch, `HEAD`, worktree, or required verification cannot be fresh-read.
+- STOP and mark `Blocked` when a snapshot-referenced Seed is stale/mismatched, evidence conflicts, or the `Seed` contract has drifted; do not resolve those conditions inside the `Handoff`.
 - STOP before writing if atomic replacement cannot be completed or readback fails; use `.tigerkit/handoff.md` by default and honor an explicit `--output <path>` exactly.
 - STOP at any product, Git, or remote publication approval boundary; the artifact does not grant that permission.
 - If none of these conditions applies, continue without asking an extra question for a routine artifact update.
 
 ## Resume
 
-`--resume` requests resuming work by comparing the `handoff snapshot` against the current Git and files.
+`--resume` requests resuming work by comparing the handoff snapshot against current Git and files.
 
 First, fresh-read:
 
-- the current `Seed` and `handoff`
-- `branch`/`HEAD`/`worktree`
-- changed files
-- relevant verification evidence
-- current remote state, if a `PR` exists
+- the `handoff` and the exact Seed path it references, if any;
+- marker/Ready/identity/ancestry for that referenced Seed;
+- `branch`/`HEAD`/`worktree`;
+- changed files;
+- relevant verification evidence;
+- current remote state, if a `PR` exists.
 
 Then classify drift.
 
@@ -101,6 +115,8 @@ Then classify drift.
 | `Seed` contract `drift` | Do not resolve it in the `Handoff`; report that re-entering `tk-prep` is required |
 | Conflict | Show the incompatible evidence and mark `Blocked` |
 | unverified | If the required state cannot be confirmed, mark `Unverifiable` |
+
+A stale, unmarked, identity-mismatched, or unrelated Seed never qualifies as `None` drift merely because `.tigerkit/seed.md` exists.
 
 `--resume` may authorize continuing the work, but it does not replace approval to change the `Seed`’s `goal/scope/decision/AC` or permission to publish remotely.
 
