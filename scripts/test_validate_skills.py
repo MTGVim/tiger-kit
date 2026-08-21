@@ -271,6 +271,26 @@ class EvalSotValidatorTest(unittest.TestCase):
                 errors = validate_skills.validate_repository_contract(set())
             self.assertFalse(any("README.md" in error for error in errors))
 
+    def test_shared_execution_protocol_copies_must_match(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            skills = Path(directory)
+            canonical = skills / "tk-prep/references"
+            consumer = skills / "tk-pr-respond/references"
+            canonical.mkdir(parents=True)
+            consumer.mkdir(parents=True)
+            for name in validate_skills.SHARED_EXECUTION_PROTOCOLS:
+                (canonical / name).write_text(f"canonical {name}\n", encoding="utf-8")
+                (consumer / name).write_text(f"canonical {name}\n", encoding="utf-8")
+
+            self.assertEqual(validate_skills.validate_shared_execution_protocols(skills), [])
+            (consumer / "sdd.md").write_text("drift\n", encoding="utf-8")
+            self.assertTrue(
+                any(
+                    "sdd.md" in error and "sync_execution_protocol.py" in error
+                    for error in validate_skills.validate_shared_execution_protocols(skills)
+                )
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

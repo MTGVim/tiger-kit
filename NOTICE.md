@@ -45,6 +45,45 @@ TigerKit은 반복 0의 설명/본문 일관성, 고정 중앙값·대조군·�
 `Darwin` 방식의 광범위한 최적화를 대체하지 않습니다. 관계 메타데이터:
 `relationship: adapted`.
 
+`tk-prep`과 `tk-pr-respond`의 공유 SDD/TDD 절차는 `obra/superpowers` v6.3.0의
+다음 행동을 TigerKit의 적응형 준비, 패키지 로컬 참조, 최소 복구 경계로 적용했습니다.
+원본 스냅샷은 `b36e0829c6d0140e93cfef2ca599b1b07d4a7797`입니다.
+
+- `skills/subagent-driven-development/`
+- `skills/test-driven-development/`
+- `skills/using-superpowers/references/codex-tools.md`
+
+적용 범위는 행동 우선 RED/GREEN, 좋은 테스트와 변이 규율, 정확한 작업/수정 범위, 말단 역할,
+5회 수정 차단기, 증거 우선 검토, Codex `model`+`reasoning_effort` 짝입니다. TigerKit은 원본의
+공개 스킬, 실행 체계, 작업공간 계층을 복사하지 않고, `tk-prep`/`tk-pr-respond`의 자체 완결 패키지와
+기존 원격 권한 경계를 유지합니다. 관계 메타데이터: `origin: tigerkit`, `relationship: adapted`.
+
+`obra/superpowers` 상위 원본 라이선스:
+
+```text
+MIT License
+
+Copyright (c) 2025 Jesse Vincent
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
 `mattpocock/skills` 상위 원본 라이선스:
 
 ```text

@@ -12,24 +12,27 @@ TigerKit은 `workflow` `runner`, `plugin`, `scheduler`, `shared-state` `framewor
 - 중복 `protocol`보다 삭제와 `progressive` `disclosure`를 우선합니다.
 - 사용자-`facing`/운영 `prose`는 한국어를 기본으로 하고 `exact` ID/`path`/`status`/`command`/`technical` `literal`은 원문을 유지합니다.
 
-## `Seed-first` `product` `work`
+## `Adaptive prep` `product` `work`
 
 TigerKit의 `product-work` `owner`는 `tk-prep`입니다.
 
-`tk-prep`은 `implementation` `orchestrator`가 아니라 **`execution` `context` `preparer`**입니다.
+`tk-prep`은 중앙 `runtime`이 아니라 **대화형 준비 + 승인된 로컬 실행 담당자**입니다. 작업 크기에 따라
+`direct/no-Seed | Ready Seed direct | SDD | handoff`를 선택합니다.
 
 ```text
 request
 → conversational prep
-→ .tigerkit/seed.md
-→ ordinary agent execution
+→ final local-mutation approval
+→ direct/no-Seed | Ready Seed | SDD | handoff
+→ local implementation
 → review/verification
 → commit
 → tk-pr-open
 ```
 
-Ready `Seed` 이후 `split`, `worker` `assignment`, `fan-out`/`sequential`, `provider`/`model` `selection`은
-현재 `agent`/`host`의 `ephemeral` `execution` `decision`입니다.
+Ready `Seed`는 지속 가능한 맥락이 실제로 필요할 때만 만듭니다. `direct/no-Seed`는 SDD 상세 문서를 읽지 않습니다.
+SDD가 선택되면 `tk-prep`과 `tk-pr-respond`의 패키지 로컬 생성 참조가 하나의 행동 원천을
+공유하고, 실제 자식 `model`/`reasoning_effort`는 현재 호스트 기능과 허용 목록에서 실행 중에만 결정합니다.
 
 TigerKit은 다음 `runtime` `mapping`을 소유하지 않습니다.
 
@@ -40,11 +43,12 @@ TigerKit은 다음 `runtime` `mapping`을 소유하지 않습니다.
 - `durable` `worker`/`wave` `cursor`
 
 모델 수준과 `fan-out`은 `Seed`에서 사람 친화적인 추천으로만 표현할 수 있습니다.
-실행 `shape`는 `advisory`이고 `acceptance`/`verification`은 `normative`입니다.
+승인된 `execution shape`, `acceptance`, `verification`은 구속력이 있으며 제공자 값은 지속되는 산출물에 넣지 않습니다.
 
 ## `Seed` 계약
 
-`.tigerkit/seed.md`는 현재 작업의 `self-contained` `context`입니다.
+`.tigerkit/seed.md`는 **존재할 때만** 현재 작업으로 표시되고 식별자에 묶인 `self-contained` `context`입니다.
+인터뷰 중 `Pending Seed`를 만들지 않고 최종 승인 전 기존 Ready `Seed`를 보존합니다.
 
 Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다음을 이해할 수 있어야 합니다.
 
@@ -59,7 +63,8 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 - `known` `traps`/`do-not-change`
 - `execution` `recommendation`
 
-`Seed`는 `transcript`, `progress` `ledger`, `provider` `routing`, `secret` `store`가 아닙니다.
+`Seed`는 `transcript`, `progress` `ledger`, `provider` `routing`, `secret` `store`가 아닙니다. 활성 SDD 복구는
+현재 `Seed` 식별자와 해시가 일치하는 하나의 무시된 `.tigerkit/sdd.md`만 사용할 수 있습니다.
 
 실행 중 `material` `evidence`가 `Seed` `contract`를 깨면 임의 해석 변경 대신 `tk-prep`으로 돌아가
 `revision` + `user` `reapproval`을 거칩니다.
@@ -87,7 +92,7 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 
 ## 핵심 `authority`
 
-- `tk-prep`: `Seed`만 작성. 제품 구현/`commit`/`push` 금지.
+- `tk-prep`: 준비, 최종 승인, 승인된 격리 로컬 구현/검증/`commit`. `push`/발행 금지.
 - `tk-ask-repo`: `read-only` `repository` `investigation`.
 - `tk-audit`: `read-only` AUD `finding`.
 - `tk-browser-verify`: `browser-visible` `runtime` `evidence`와 `dev-server` `lifecycle`.
@@ -148,6 +153,7 @@ evals/release-critical.json
 ## 필수 검사
 
 ```bash
+python3 scripts/sync_execution_protocol.py --check
 python3 scripts/validate_skills.py
 python3 scripts/validate_skills.py --links-only
 python3 -B -m unittest discover -s scripts -p 'test_*.py'
