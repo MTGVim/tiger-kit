@@ -30,9 +30,9 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
           ↓
        tk-prep
           ↓
- .tigerkit/seed.md
+ final local-mutation approval
           ↓
- ordinary agent work
+ direct/no-Seed | Ready Seed | SDD | handoff
           ↓
  review / verification
           ↓
@@ -41,12 +41,9 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
      tk-pr-open
 ```
 
-`tk-prep`은 저장소 근거와 자연스러운 대화로 작업을 명확하게 만들고,
-새 세션이나 더 낮은 수준의 구현 모델이 원 대화 없이 읽을 수 있는 `.tigerkit/seed.md`를 만듭니다.
-
-Ready `Seed` 뒤의 `split`, 하위 에이전트 `fan-out`, 순차 실행, 실제 모델 선택은
-TigerKit 실행 규약이 아니라 현재 `agent`/`host`의 실행 판단입니다.
-같은 세션에서는 `Seed` 승인 뒤 “진행해”, 새 세션에서는 “`.tigerkit/seed.md` 읽고 진행해” 정도면 충분해야 합니다.
+`tk-prep`은 저장소 근거와 자연스러운 대화로 작업을 명확하게 만들고, 최종 승인 뒤 작업 크기에 맞는
+로컬 실행을 수행합니다. 작고 명확한 같은 세션 작업은 `Seed` 없이 직접 진행할 수 있고, 인계/압축/
+낮은 역량 실행/SDD에는 표시된 Ready `.tigerkit/seed.md`를 만듭니다. 원격 발행은 별도 담당자가 처리합니다.
 
 작은 수정과 평범한 후속 의견은 스킬 없이 현재 대화에서 바로 처리합니다.
 
@@ -54,7 +51,7 @@ TigerKit 실행 규약이 아니라 현재 `agent`/`host`의 실행 판단입니
 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
-| `tk-prep` | `user` | 저장소 근거와 대화형 인터뷰로 실행 준비된 `Seed` 작성 |
+| `tk-prep` | `user` | 적응형 준비 + 승인된 직접/Ready `Seed`/SDD/인계 로컬 실행 |
 | `tk-audit` | `user` | 읽기 전용 저장소 감사와 `AUD-*` 발견 사항 |
 | `tk-ask-repo` | `user` | 저장소 동작·값·영향·귀속을 근거와 함께 설명 |
 | `tk-pr-open` | `hybrid` | 검증된 `commit`의 제한된 `push` + PR 생성/갱신 |
@@ -74,7 +71,7 @@ TigerKit 실행 규약이 아니라 현재 `agent`/`host`의 실행 판단입니
 
 `user`는 명시 호출 전용이고, `hybrid`는 해당 작업 의도가 명확할 때 자동 진입할 수 있습니다.
 
-## `tk-prep`과 `Seed`
+## `tk-prep`, 직접 실행, `Seed`, SDD
 
 `tk-prep`은 고정 양식 위저드가 아닙니다.
 내부적으로는 명확도와 엔지니어링 준비도를 엄격하게 평가하지만,
@@ -111,10 +108,15 @@ Experience
 사용자 표시 상태는 `준비됨 | 보완 필요 | 개선 한계 | 예외 승인 | 해당 없음`입니다.
 미달 축은 먼저 추가 조사와 접근 개선을 시도하고, 더 끌어올릴 수 없을 때만 이유·남은 위험·완화책과 함께 예외 승인을 받습니다.
 
-Ready `.tigerkit/seed.md`는 현재 작업의 자체 완결 실행 맥락입니다.
+Ready `.tigerkit/seed.md`는 필요할 때만 만드는 현재 작업의 자체 완결 실행 맥락입니다. 인터뷰 중
+`Status: Pending` 파일은 만들지 않고, 새 `Seed`는 TigerKit 소유 표시와 현재 작업 식별자를 가집니다.
 목표/배경, 현재 상태, 범위, 사용자 결정, 구현 안내, AC, 검증, 브라우저 계획, 엔지니어링 예외를 구현자가 원 대화 없이 이해할 수 있게 담습니다.
 
 `worker`/`wave` 진행 상태, 제공자 모델 선택자, 추론 강도, 영수증, 비밀 값은 `Seed`에 저장하지 않습니다.
+
+코드 변경 직접/SDD 경로는 행동 우선 `RED → GREEN → REFACTOR`를 기본으로 하며 현실적인 변이를 잡는
+테스트를 남깁니다. SDD는 `tk-prep`과 `tk-pr-respond`가 공유하는 패키지 로컬 절차로 정확한 `Unit` 범위 검토와
+5회 수정 차단기를 사용합니다. 브라우저 증거는 자동 회귀 보호를 대체하지 않습니다.
 
 ## 브라우저 검증
 
@@ -127,7 +129,7 @@ Ready `.tigerkit/seed.md`는 현재 작업의 자체 완결 실행 맥락입니�
 
 공통 원칙은 **대화는 자연스럽게, 상태는 엄격하게**입니다.
 
-- `tk-prep`: 함께 작업 맥락을 정리해 `Seed`를 만듭니다.
+- `tk-prep`: 함께 준비하고 승인된 로컬 직접/`Seed`/SDD/인계 경로를 수행합니다.
 - `tk-wizard`: 사람이 직접 해야 하는 일을 한 단계씩 자연스럽게 안내합니다.
 - `tk-ask-repo`: 질문에 먼저 답하고 코드 흐름을 설명한 뒤 `3~10`줄 공유용 요약을 제공합니다.
 - `tk-pr-respond`: 리뷰 의도를 해석하고 해결 방향과 이유를 합의합니다.
@@ -147,8 +149,8 @@ tk-pr-respond
 → fresh exact PR read
 → review/CI 의미 설명 + 필요한 결정만 질문
 → one approval
-→ code-changing task는 seed.md
-→ implement/review/verify
+→ reply-only | code-changing Ready Seed + direct-TDD/SDD-TDD
+→ exact-range review/verify
 → bounded push/reply/resolve/re-review
 
 tk-pr-rebase
@@ -170,7 +172,8 @@ PR 원격 권한은 서로 자동 확장되지 않습니다. `merge`, `tag`, `re
 ## 상태와 설정
 
 `.tigerkit/`은 저장소/작업 트리 로컬 임시 공간이며 전역 프로젝트 기억이 아닙니다.
-제품 작업의 기본 영구 맥락은 `.tigerkit/seed.md` 하나입니다.
+제품 작업의 지속 가능한 맥락이 필요할 때는 `.tigerkit/seed.md` 하나를 사용합니다. 활성 SDD 복구는 현재 `Seed`
+식별자와 해시가 일치하는 무시된 `.tigerkit/sdd.md` 하나만 추가로 사용할 수 있습니다.
 
 `tk-pr-sweep`의 장기 저장소 범위는 다음 사용자 설정을 사용할 수 있습니다.
 
@@ -212,6 +215,7 @@ evals/release-critical.json
 ## 로컬 검증
 
 ```bash
+python3 scripts/sync_execution_protocol.py --check
 python3 scripts/validate_skills.py
 python3 scripts/validate_skills.py --links-only
 python3 -B -m unittest discover -s scripts -p 'test_*.py'

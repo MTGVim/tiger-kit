@@ -54,6 +54,7 @@ When possible, the parent task provides:
 - exact verbatim strings or verified entry paths for UI `Content` criteria
 - sensitive capture/redaction rule
 - Pass condition
+- automated regression evidence or explicit `N/A`/engineering-exception disposition owned by the parent
 
 If the Ready Seed already owns this information, do not ask for the same decisions again.
 If required values are missing but can be safely determined from repository evidence, fill them in.
@@ -61,13 +62,14 @@ Return only outcome-changing user-owned decisions to the parent owner.
 
 ## Execution
 
-1. **Scope**: Fix the exact criteria, target/environment, current candidate, and approved interaction boundary.
+1. **Scope**: Fix the exact criteria, target/environment, current candidate, and approved interaction boundary. Browser evidence is an independent acceptance oracle; it never substitutes for appropriate automated regression protection.
 2. **Preparation**: Read only the required references: [environment](references/environment.md), [behavior](references/behavior.md), [visual](references/visual.md), [accessibility](references/accessibility.md), [safety](references/safety.md).
-3. **Execution setup**: Without installing new dependencies, use a native, Playwright-compatible, MCP, or verified CDP path. Any new Chrome/Chromium process must prove effective `--headless=new`.
-4. **Server**: If the parent requires a development server, this verifier owns starting the background process, readiness checks, and cleanup. For standalone execution, present multiple plausible commands and get the user's choice before starting; do not choose arbitrarily. When the selected server is `react-scripts`/CRA, include `BROWSER=NONE` or the repository-documented equivalent to suppress auto-open. Manage PID/cwd/port/command and bounded logs as run evidence, and wait for a readiness signal rather than process exit.
-5. **Verification**: Start from a known state and inspect the required interaction and final state. Capture and actually inspect at least one non-empty run-owned screenshot for every final state relevant to the decision.
-6. **Decision**: Map each criterion to current evidence and assign `Pass | Fail | Blocked | Unverifiable`. When visual comparison is required, cover asset/content/geometry/typography/color/imagery/responsive/state axes. For UI `Content` criteria, require exact rendered strings or a verified entry path from the parent basis; if neither exists, do not infer the element from a paraphrase, code identifier, or enum and return `Unverifiable`.
-7. **Cleanup**: Close only run-owned browser/server/resources and check for residue according to [session lifecycle](references/session-lifecycle.md).
+3. **Evidence reuse**: Before starting a server/browser or rerunning an expensive scenario, reread supplied run-owned evidence and its current candidate/environment provenance. Reuse it only when it already proves the exact current criterion; stale, mismatched, incomplete, or uninspected evidence requires a justified fresh run. Do not rerun merely because a previous producer already returned evidence.
+4. **Execution setup**: Without installing new dependencies, use a native, Playwright-compatible, MCP, or verified CDP path. Any new Chrome/Chromium process must prove effective `--headless=new`.
+5. **Server**: If the parent requires a development server, this verifier owns starting the background process, readiness checks, and cleanup. For standalone execution, present multiple plausible commands and get the user's choice before starting; do not choose arbitrarily. When the selected server is `react-scripts`/CRA, include `BROWSER=NONE` or the repository-documented equivalent to suppress auto-open. Manage PID/cwd/port/command and bounded logs as run evidence, and wait for a readiness signal rather than process exit.
+6. **Verification**: Start from a known state and inspect the required interaction and final state. Capture and actually inspect at least one non-empty run-owned screenshot for every final state relevant to the decision.
+7. **Decision**: Map each criterion to current evidence and assign `Pass | Fail | Blocked | Unverifiable`. When visual comparison is required, cover asset/content/geometry/typography/color/imagery/responsive/state axes. For UI `Content` criteria, require exact rendered strings or a verified entry path from the parent basis; if neither exists, do not infer the element from a paraphrase, code identifier, or enum and return `Unverifiable`.
+8. **Cleanup**: Close only run-owned browser/server/resources and check for residue according to [session lifecycle](references/session-lifecycle.md).
 
 ## Evidence
 
@@ -83,6 +85,7 @@ user fixture를 이동하지 않고, 민감한 capture는 verified redaction과 
 - inspected screenshot path
 - limitation
 - cleanup fact
+- `automated_regression: protected | N/A | exception | unknown` as supplied/verified parent disposition
 
 PR evidence가 필수이면 `evidence_required: true`, 해당 criterion, producer `tk-browser-verify`도 반환하되 upload하지 않습니다.
 

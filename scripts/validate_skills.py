@@ -75,6 +75,7 @@ DIRECT_MODEL_ROUTING = re.compile(
     r"strategy\s*=\s*direct.*(?:model(?:_class)?|tier)\s*=\s*(?:cheapest|standard|strongest)",
     re.IGNORECASE,
 )
+SHARED_EXECUTION_PROTOCOLS = ("testing.md", "sdd.md")
 
 
 def scalar(value: str) -> object:
@@ -641,6 +642,27 @@ def validate_reference_resources(skills_root: Path = SKILLS) -> list[str]:
     return errors
 
 
+def validate_shared_execution_protocols(skills_root: Path = SKILLS) -> list[str]:
+    errors: list[str] = []
+    canonical_root = skills_root / "tk-prep/references"
+    consumer_root = skills_root / "tk-pr-respond/references"
+    for name in SHARED_EXECUTION_PROTOCOLS:
+        canonical = canonical_root / name
+        consumer = consumer_root / name
+        try:
+            canonical_text = canonical.read_text(encoding="utf-8")
+            consumer_text = consumer.read_text(encoding="utf-8")
+        except (OSError, UnicodeError) as exc:
+            errors.append(f"shared execution protocol {name}: unreadable copy: {exc}")
+            continue
+        if consumer_text != canonical_text:
+            errors.append(
+                f"{_display_path(consumer)}: sync from {_display_path(canonical)} "
+                "with scripts/sync_execution_protocol.py"
+            )
+    return errors
+
+
 def parse_latest_changelog_version(text: str) -> str | None:
     match = re.search(
         r"(?m)^## ((?:\d{4}\.\d{2}\.\d{2}-\d+|\d+\.\d+\.\d+))(?:\s|$)",
@@ -659,6 +681,7 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
         "LICENSE",
         ".gitignore",
         "scripts/validate_skills.py",
+        "scripts/sync_execution_protocol.py",
         "scripts/run_skill_evals.py",
         "scripts/run_release_gate.py",
         "scripts/language_contract.py",
@@ -704,6 +727,7 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
         if directory.is_dir() and directory.name in {"references", "scripts", "agents", "evals"} and not any(directory.iterdir()):
             errors.append(f"{directory.relative_to(ROOT)}: remove empty optional directory")
     errors.extend(validate_reference_resources(SKILLS))
+    errors.extend(validate_shared_execution_protocols(SKILLS))
     errors.extend(validate_portable_artifacts(ROOT))
     return errors
 

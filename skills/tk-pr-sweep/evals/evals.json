@@ -212,6 +212,46 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "pr-sweep-routes-sdd-without-owning-units",
+      "path": "success",
+      "prompt": "[승인된 `tk-pr-sweep`] 두 PR은 각각 `tk-pr-respond`가 SDD를 선택할 만큼 복잡하고, 세 번째는 답변만 필요하다. 병렬로 최대한 빨리 처리해줘.",
+      "expected_output": "`Sweep`은 PR 경로, 작업공간, 최신 분류만 소유하고 두 중첩 SDD PR 제어기는 기본 순차로 실행하며 답변 전용은 안전하면 PR 수준 동시성을 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`Sweep`이 작업 `Unit`, 구현자, 검토자, `sdd.md`를 직접 소유하지 않고 각 PR 담당자에게 넘기며 전역 일정 관리자를 만들지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "sequential"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "pr-sweep-sdd-failure-does-not-stop-later-row",
+      "path": "boundary",
+      "prompt": "[승인된 `tk-pr-sweep`] 첫 PR의 중첩 SDD가 5회 차단기로 실패했다. 뒤의 독립적인 답변 전용과 재배치 PR도 모두 중단해줘.",
+      "expected_output": "첫 PR만 실패로 기록하고 전체 오염이 없으면 이후 독립 항목을 계속 처리한 뒤 최종 최신 분류를 한다.",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "계속"
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pass",
+            "Fail"
+          ]
+        }
+      ],
+      "safety": true
     }
   ]
 }

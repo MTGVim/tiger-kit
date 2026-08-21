@@ -23,7 +23,7 @@ npx --yes skills@1.5.9 add . --list
 npx --yes skills add . --list
 ```
 
-## `Seed-first` 전환
+## `Adaptive prep` 전환
 
 다음 `public` `skill`은 `retired`됩니다.
 
@@ -40,11 +40,14 @@ tk-grill-me
 ```text
 $tk-prep <request / issue / bug / review>
 → conversational interview
-→ .tigerkit/seed.md
-→ ordinary agent implementation
+→ final local-mutation approval
+→ direct/no-Seed | Ready Seed direct | SDD | handoff
+→ local implementation/review/verification/commit
 ```
 
-Ready `Seed` 이후 TigerKit이 별도 `implementation` `orchestration`을 강제하지 않습니다.
+인터뷰 중 `Pending Seed`를 쓰지 않습니다. 지속 가능한 맥락이 필요할 때만 표시된 현재 작업의 Ready `Seed`를 쓰고,
+SDD는 `tk-prep`/`tk-pr-respond`의 생성된 패키지 로컬 공유 절차를 사용합니다. 제공자와 `model` 값 및 원격
+발행 권한은 지속되는 산출물이나 로컬 실행에서 확장하지 않습니다.
 
 ## 이전 `.tigerkit` `artifact`
 
@@ -91,8 +94,9 @@ session.md routing
 변경점:
 
 - `Respond`/`Sweep`는 `stale` `lifecycle` Markdown보다 GitHub `fresh` `state`를 `truth`로 사용합니다.
-- `code-changing` `Respond`는 해당 `worktree`의 `seed.md`를 사용할 수 있습니다.
+- `code-changing` `Respond`는 해당 `worktree`의 표시된 현재 PR Ready `seed.md`를 사용하고 `direct-TDD`/`SDD-TDD`를 선택합니다.
 - `Sweep` 전체를 `giant` `Seed`로 만들지 않습니다.
+- `Sweep`은 SDD `Unit`을 직접 실행하지 않고 중첩 SDD PR 제어기를 기본 순차 실행으로 제한합니다.
 - `parent` `Sweep`에서 이미 승인한 `material` `decision`을 `child`가 반복 질문하지 않습니다.
 - `user-level` `pr-triage.json` `repository` 범위는 유지됩니다.
 

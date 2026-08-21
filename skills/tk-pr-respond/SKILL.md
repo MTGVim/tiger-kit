@@ -1,13 +1,13 @@
 ---
 name: tk-pr-respond
-description: "[user/auto] 하나의 pull request의 review feedback 또는 지원 가능한 GitHub Actions 실패를 fresh state로 읽고, 자연스러운 해결 계획을 합의한 뒤 필요 시 `seed.md`를 사용해 수정·검증·제한된 publication까지 처리합니다."
+description: "[user/auto] 하나의 pull request의 feedback/지원 CI 실패를 fresh-read하고, reply-only/direct-TDD/SDD-TDD를 선택해 수정·검증·제한된 publication까지 처리합니다."
 disable-model-invocation: false
 argument-hint: "<pull request or repository>"
 metadata:
   tigerkit:
     kind: hybrid
     origin: tigerkit
-    relationship: native
+    relationship: adapted
 ---
 
 # Respond to a single PR review
@@ -64,6 +64,9 @@ Investigate repository evidence independently, then explain the recommendation a
 
 리뷰가 UI 텍스트를 지적하면 현재 화면에 렌더되는 문자열을 component prop, i18n entry, option constant 또는 제공된 screenshot으로 확인한 뒤 verbatim으로 답변합니다. 티켓의 의역이나 code identifier/enum을 그대로 반복하지 않으며, 근거가 없거나 충돌하는 문자열은 사실로 단정하지 않고 `Unverifiable` 또는 필요한 확인으로 남깁니다.
 
+리뷰가 test 추가를 요구하면 파일 존재나 source-text assertion으로 닫지 않습니다. 지적된 regression을 재현하고
+real behavior/side effect가 다시 깨질 때 실패하는 protection으로 만듭니다.
+
 Ask the user directly only about:
 
 - user-owned decisions that materially change product behavior or scope
@@ -89,6 +92,10 @@ At minimum, cover:
 - bounded publication scope for push/reply/resolve/re-review
 - recommendation for execution mode and model level
 
+Code-changing plan은 실제 repository test surface를 조사하고 [behavior-first testing](references/testing.md)에 따라
+RED 가능 여부, focused command, required suite, realistic mutation, `N/A` 또는 engineering exception을 닫습니다.
+Reply-only, direct+TDD, SDD+TDD 중 practical route를 설명하되 내부 classification form은 노출하지 않습니다.
+
 Express model recommendations only as human-friendly guidance such as “mid-tier coding model,” “stronger final review,” or “independent work fan-out recommended.”
 Do not create provider selectors, model classes, reasoning effort, or `session.md`.
 Do not mark the task `Blocked` merely because this capability is unavailable.
@@ -101,6 +108,10 @@ However, if the PR head/thread/check/identity changes materially after approval,
 Respond tasks requiring code changes use a newly created dedicated worktree with `.tigerkit/seed.md` as the current work contract.
 If that worktree cannot be created or proven fresh, return `Blocked` before mutation.
 Do not create the `pr-respond.md` lifecycle ledger.
+
+Before approval, preserve an existing Seed byte-for-byte and create no `Status: Pending` file. After approval write the
+Ready Seed atomically, reread it, and require `<!-- tigerkit:seed -->` plus deterministic PR/head/task identity. Replace
+only a proven TigerKit-owned Seed. Preserve an unmarked/legacy/identity-ambiguous file and return `Blocked` before mutation.
 
 The Seed must contain at least the following PR context. Keep user-facing Seed and ledger prose in Korean.
 
@@ -117,39 +128,36 @@ The Seed must contain at least the following PR context. Keep user-facing Seed a
 - publication boundary
 - implementation guidance needed by a lower-capability executor
 
-이미 활성 Ready Seed가 같은 PR 작업과 정확히 일치하면 재작성하거나 같은 결정을 다시 묻지 않습니다.
-새 feedback이나 fresh state가 Seed의 goal/scope/decision/AC를 material하게 바꾸면 `Pending`으로 다시 열고 해당 부분만 재승인합니다.
+이미 활성 Ready Seed가 같은 PR/head/feedback 작업과 정확히 일치하면 재작성하거나 같은 결정을 다시 묻지 않습니다.
+새 feedback이나 fresh state가 Seed의 goal/scope/decision/AC를 material하게 바꾸면 기존 파일을 보존하고 해당 부분을
+대화에서 다시 준비·승인한 뒤 새 Ready Seed로 atomic replace합니다.
 
 코드 변경 없이 reply만 하는 경우에는 새 Seed를 만들 필요가 없습니다.
 
 ## Execution
 
-After approval, execute through the safe mechanisms available in the current host.
+After approval, choose from the approved feedback shape:
 
-- Use subagent fan-out only when work is independent and safely isolated.
-- If fan-out is unavailable, execute sequentially inside the already-created fresh dedicated worktree.
-- If a fresh dedicated worktree cannot be created or proven, return `Blocked`; never fall back to the parent `main`/`develop` checkout.
-- Use the host default when a specific model cannot be selected.
-- The parent must not persist execution details as Markdown routing state.
+- reply-only: no Seed, production mutation, push, or ceremonial test;
+- direct+TDD: one coherent change/review surface; load only the testing reference and execute in the dedicated worktree;
+- SDD+TDD: multiple material Units; load [private SDD](references/sdd.md) and follow its exact grammar, recovery,
+  implementer/reviewer/fix-loop, model+effort, and final-review contract.
 
-Each implementer reads the Ready Seed and its assigned scope. The parent does not copy the full conversation or detailed plan again.
+Direct applies RED → verified failure → minimal GREEN → refactor while green → required relevant checks. SDD Unit reports
+carry their own test obligation and RED/GREEN evidence. If host fan-out is unavailable, preserve the same role/range gates
+sequentially; do not silently lower SDD to unreviewed direct work. The parent stores no provider routing/session ledger.
 
-Required order:
-
-```text
-implementation
-→ focused tests/checks
-→ acceptance-criteria review
-→ tk-browser-verify for browser-visible changes
-→ required gap correction
-→ verified commit
-```
+Both code-changing routes finish with acceptance-criteria review, `tk-browser-verify` for browser-visible changes, required
+gap correction, and verified local commit(s). SDD's one whole-change final review satisfies the broad review gate; do not
+run a redundant second generic review afterward.
 
 If browser verification requires a development server, provide `tk-browser-verify` with the exact command/cwd/URL/auth/readiness;
 the verifier owns server startup, readiness checks, and cleanup.
 
 Do not repeat the same failure indefinitely. If the same blocker remains after three meaningful corrective attempts,
-stop with `Fail` or `Unverifiable` and include the remaining evidence.
+direct work stops with `Fail` or `Unverifiable`; SDD uses its five-round breaker/adjudication. Material Goal/Scope/Decision/
+AC/security/required Verification drift returns to the owner preparation path; reversible engineering ambiguity gets an
+explicit `Ruling:`. Neither route expands publication authority.
 
 ## Publication
 
@@ -182,6 +190,9 @@ The handoff must include a newly created dedicated worktree path. If it is missi
 If new feedback or head drift materially changes the approved scope, escalate only that PR back to the parent.
 Do not create `pr-sweep.md`, `pr-respond.md`, or worker receipt Markdown.
 For a code-changing PR, only `seed.md` in the fresh dedicated worktree may be used as task context.
+
+The Respond controller may select SDD for its own PR. Normal implementer/reviewer/re-reviewer children remain leaf and may
+not recursively delegate. The parent Sweep decides cross-PR scheduling; this child never starts another PR controller.
 
 ## Completion response
 
