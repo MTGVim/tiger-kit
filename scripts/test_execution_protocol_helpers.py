@@ -102,8 +102,33 @@ Execution shape: SDD
             self.assertNotIn("Unit 99: fake", text)
             self.assertNotIn("## Verification", text)
 
-    def test_unit_brief_rejects_nonsequential_units(self) -> None:
+    def test_unit_brief_requires_owned_ready_seed(self) -> None:
         seed = """## Execution
+Execution shape: SDD
+### Global constraints
+- stable
+### Unit 1: One
+- Goal: one
+"""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            seed_path = root / "seed.md"
+            output = root / "unit.md"
+            seed_path.write_text(seed, encoding="utf-8")
+            completed = self.run_python(
+                PREP / "scripts/sdd-unit-brief.py",
+                str(seed_path),
+                "1",
+                str(output),
+            )
+            self.assertNotEqual(completed.returncode, 0)
+            self.assertFalse(output.exists())
+            self.assertIn("ownership marker", completed.stderr)
+
+    def test_unit_brief_rejects_nonsequential_units(self) -> None:
+        seed = """<!-- tigerkit:seed -->
+Status: Ready
+## Execution
 Execution shape: SDD
 ### Global constraints
 - stable

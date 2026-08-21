@@ -28,6 +28,12 @@ def outside_fence_lines(lines: list[str]) -> list[tuple[int, str]]:
 def extract(seed_text: str, unit_number: int) -> str:
     lines = seed_text.splitlines()
     outside = outside_fence_lines(lines)
+    outside_values = [line for _, line in outside]
+    if outside_values.count("<!-- tigerkit:seed -->") != 1:
+        raise ValueError("Seed must contain exactly one outside-fence TigerKit ownership marker")
+    if outside_values.count("Status: Ready") != 1:
+        raise ValueError("Seed must contain exactly one outside-fence 'Status: Ready'")
+
     execution_rows = [index for index, line in outside if line == "## Execution"]
     if len(execution_rows) != 1:
         raise ValueError("Seed must contain exactly one outside-fence '## Execution' heading")
