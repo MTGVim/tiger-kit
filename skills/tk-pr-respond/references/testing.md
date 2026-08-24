@@ -36,6 +36,11 @@
 4. **GREEN 확인**: 같은 집중 명령과 관련 기존 테스트가 통과하는지 확인합니다.
 5. **REFACTOR**: 통과 상태에서만 중복, 이름, 구조를 정리하고 다시 확인합니다.
 
+각 cycle은 한 번에 하나의 observable behavior slice를 보호합니다. 여기서 vertical은 UI→API→DB 전 계층을
+항상 관통한다는 뜻이 아니라 하나의 사용자/제품 행동을 독립 보호하는 가장 높은 practical seam입니다. 다수 테스트를
+먼저 쌓고 구현을 나중에 몰아서 하는 horizontal bulk cycle을 기본으로 삼지 않으며, 기존 public/observable seam이
+충분하면 새 seam을 만들거나 testability만을 위해 production API를 넓히지 않습니다.
+
 잘못된 이유로 실패하면 테스트를 고쳐 다시 RED를 확인합니다. 이미 통과한다면 새 동작을 실제로 보호하는지 또는
 제품 동작이 이미 존재하는지 조사합니다. 필요한 RED 없이 제품 코드부터 작성하지 않습니다.
 

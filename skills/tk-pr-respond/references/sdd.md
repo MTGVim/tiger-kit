@@ -36,6 +36,14 @@ Execution shape: SDD
 별도 판단, 테스트, 검토 표면이 필요 없는 같은 형태의 작은 수정은 한 `Unit`으로 묶습니다. 인터페이스, 위험,
 테스트 의무, 독립 판단이 다른 작업은 분리합니다.
 
+자연스러운 behavior slice가 있으면 independently reviewable/verifiable한 vertical `Unit`을 우선합니다. 이는
+vertical-first이지 vertical-only가 아닙니다. Cross-cutting refactor나 wide migration을 억지 behavior slice로
+만들지 않습니다.
+
+Wide migration은 안전할 때 `expand → migrate batch(es) → contract` 순서로 나누고 migrate batch는 blast radius와
+검증 가능성에 맞춥니다. 각 단계는 green을 유지합니다. 독립 green이 구조적으로 불가능한 경우에만 `Seed`에
+integration/final verification 경계를 명시하며 이를 일반 예외로 만들지 않습니다.
+
 ## 제어기와 말단 역할
 
 제어기만 `Unit` 분배, 검토 분배, 수정 반복 경로, `Ruling:`, 복구 상태를 소유합니다. 제어기끼리의 위임은
