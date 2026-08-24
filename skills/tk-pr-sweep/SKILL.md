@@ -21,7 +21,7 @@ Do not duplicate long-lived task state in a Markdown ledger. The current GitHub 
 **Keep the conversation natural and the state handling strict.**
 
 Do not expose `actionable`, `held`, backend details, routing state, or worker receipts by default.
-Brief the user in plain language about what can proceed, what must wait, why, and how. Batch plan approval은 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). unavailable하면 plain chat으로 fallback하고 child마다 승인을 반복하지 않습니다.
+Brief the user in plain language about what can proceed, what must wait, why, and how. For batch plan approval, prefer the host's native structured question surface (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). If unavailable, fall back to plain chat and do not repeat approval for every child.
 
 ## Target repositories
 
@@ -89,7 +89,7 @@ Explain each PR at the level the user needs to understand:
 - whether it is independent of the other work
 - whether the PR owner is likely to use direct execution or its shared SDD protocol
 
-The execution model may recommend only broad capability classes such as “중간급 coding model” or “충돌은 더 강한 reasoning model”.
+The execution model may recommend only broad capability classes such as `중간급 coding model` or `충돌은 더 강한 reasoning model`.
 Do not create a specific provider selector, tier, reasoning effort, or `session.md`.
 Do not mark the entire Sweep as `Blocked` merely because these controls are unavailable.
 
@@ -156,7 +156,7 @@ After all actionable review threads are closed, the publication contract additio
 - For every reviewer whose current review decision is `CHANGES_REQUESTED`, fresh verification that a re-review request was sent to that exact reviewer for the current head.
 - When a re-review is required or actionable feedback was answered with no outstanding request, exactly one current-head summary comment containing the marker `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, where `<HEAD_SHA>` is the exact current head SHA.
 - When that summary is required, fresh verification must prove it exists on the exact PR/current head and has no duplicate marker.
-- The summary comment, when required, must be published only after actionable threads are closed. 요약 코멘트는 내부 처리 기록이 아니라 리뷰어에게 보내는 실제 메시지로 작성한다. 리뷰어가 식별되면 `@mention`으로 직접 호명하고, 각 지적과 대응을 자연스러운 서술 또는 매칭되는 표로 설명한다. 검사 결과나 집계만 나열하는 3인칭 완료 로그는 금지한다.
+- The summary comment, when required, must be published only after actionable threads are closed. Write it as a real message to the reviewer, not an internal processing record. When the reviewer is identifiable, address them with `@mention` and explain each finding and response in natural prose or a matching table. Do not publish a third-person completion log that only lists checks or totals.
 
 Do not report a PR as complete when evidence is missing for any required `CHANGES_REQUESTED` reviewer re-review request, actionable-thread closure, or required current-head summary comment.
 

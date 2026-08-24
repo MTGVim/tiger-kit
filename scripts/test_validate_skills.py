@@ -26,7 +26,7 @@ class EvalSotValidatorTest(unittest.TestCase):
             text = (validate_skills.ROOT / "skills" / name / "SKILL.md").read_text(encoding="utf-8")
             self.assertTrue(all(token in text for token in required), name)
 
-    def test_korean_canonical_prose_is_accepted(self) -> None:
+    def test_skill_body_requires_english_narrative(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             skill_dir = root / "tk-example"
@@ -43,11 +43,21 @@ class EvalSotValidatorTest(unittest.TestCase):
                     }
                 },
             }
+            frontmatter = "---\ndescription: [user/auto] 예시 스킬\n---\n"
             with patch.object(validate_skills, "ROOT", root):
-                errors, _ = validate_skills.validate_frontmatter_and_body(
-                    "tk-example", skill_dir, data, "한국어 운영 지침\n"
+                rejected, _ = validate_skills.validate_frontmatter_and_body(
+                    "tk-example", skill_dir, data, frontmatter + "한국어 운영 지침\n"
                 )
-            self.assertEqual(errors, [])
+                accepted, _ = validate_skills.validate_frontmatter_and_body(
+                    "tk-example",
+                    skill_dir,
+                    data,
+                    frontmatter
+                    + "Use the exact literal `한국어 출력`.\n\n"
+                    + "```text\n한국어 출력\n```\n",
+                )
+            self.assertTrue(any("model-facing narrative must be English" in error for error in rejected))
+            self.assertFalse(any("model-facing narrative must be English" in error for error in accepted))
 
     def test_hybrid_requires_explicit_model_invocation_flag(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -67,7 +77,7 @@ class EvalSotValidatorTest(unittest.TestCase):
             }
             with patch.object(validate_skills, "ROOT", root):
                 errors, _ = validate_skills.validate_frontmatter_and_body(
-                    "tk-example", skill_dir, data, "한국어 운영 지침\n"
+                    "tk-example", skill_dir, data, "English operating instructions.\n"
                 )
             self.assertTrue(any("requires disable-model-invocation: false" in error for error in errors))
 
@@ -94,13 +104,13 @@ class EvalSotValidatorTest(unittest.TestCase):
                     "tk-example",
                     skill_dir,
                     data,
-                    "---\nargument-hint: [--ci]\n---\n설명 없음\n",
+                    "---\nargument-hint: [--ci]\n---\nNo option is documented.\n",
                 )
                 defined, _ = validate_skills.validate_frontmatter_and_body(
                     "tk-example",
                     skill_dir,
                     data,
-                    "---\nargument-hint: [--ci]\n---\n`--ci`를 사용한다.\n",
+                    "---\nargument-hint: [--ci]\n---\nUse `--ci`.\n",
                 )
             self.assertTrue(any("argument-hint option '--ci'" in error for error in missing))
             self.assertFalse(any("argument-hint option '--ci'" in error for error in defined))
@@ -198,6 +208,40 @@ class EvalSotValidatorTest(unittest.TestCase):
             self.assertEqual(validate_skills.validate_routing_invariants(skills), [])
             with patch.object(validate_skills, "ROOT", skills):
                 self.assertEqual(validate_skills.validate_repo_links(), [])
+
+    def test_reference_body_requires_english_narrative(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            skills = Path(directory)
+            references = skills / "tk-example" / "references"
+            references.mkdir(parents=True)
+            note = references / "note.md"
+            note.write_text("한국어 운영 지침\n", encoding="utf-8")
+
+            with patch.object(validate_skills, "ROOT", skills.parent):
+                rejected = validate_skills.validate_reference_resources(skills)
+            self.assertTrue(
+                any(
+                    "note.md:1" in error
+                    and "model-facing narrative must be English" in error
+                    for error in rejected
+                )
+            )
+
+            note.write_text(
+                "---\ntitle: 한국어 제목\n---\nEnglish reference.\n",
+                encoding="utf-8",
+            )
+            with patch.object(validate_skills, "ROOT", skills.parent):
+                rejected_frontmatter = validate_skills.validate_reference_resources(skills)
+            self.assertTrue(any("note.md:2" in error for error in rejected_frontmatter))
+
+            note.write_text(
+                "Use the exact literal `한국어 출력`.\n\n"
+                "```text\n한국어 출력\n```\n",
+                encoding="utf-8",
+            )
+            with patch.object(validate_skills, "ROOT", skills.parent):
+                self.assertEqual(validate_skills.validate_reference_resources(skills), [])
 
     def test_direct_strategy_rejects_model_tier_pairing(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

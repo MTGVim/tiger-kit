@@ -225,11 +225,18 @@ def scan_language(root: Path) -> dict[str, object]:
     violations: list[dict[str, object]] = []
     targets = _language_targets(root)
     for path in targets:
-        relative = str(path.relative_to(root))
-        # SKILL.md is the model-facing contract. User-facing output, evals,
-        # agent metadata, and ledger/artifact prose remain Korean and stay
-        # covered by this gate.
-        if path.name == "SKILL.md" and path.parent.parent.name == "skills" and path.parent.name.startswith("tk-"):
+        relative_path = path.relative_to(root)
+        relative = str(relative_path)
+        parts = relative_path.parts
+        # SKILL.md and package-local references are model-facing contracts.
+        # User-facing output, evals, agent metadata, and ledger/artifact prose
+        # remain Korean and stay covered by this gate.
+        if (
+            len(parts) >= 3
+            and parts[0] == "skills"
+            and parts[1].startswith("tk-")
+            and (parts[2] == "SKILL.md" or parts[2] == "references")
+        ):
             continue
         if path.suffix == ".json":
             try:

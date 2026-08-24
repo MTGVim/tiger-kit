@@ -1,23 +1,21 @@
-# 브라우저 안전성
+# Browser safety
 
-안전한 환경과 명시적 권한이 없으면 payment, 외부 communication,
-되돌릴 수 없는 삭제, production-data mutation, account change, permission
-change 또는 동등한 side effect를 일으키지 않습니다. approved UI 상태에는
-sending, saving, paying보다 정확한 repository 근거 기반 response mock을
-우선합니다.
+Without a safe environment and explicit authority, do not cause payment, external
+communication, irreversible deletion, production-data mutation, account changes,
+permission changes, or equivalent side effects. For an approved UI state, prefer an
+exact repository-evidence-based response mock over sending, saving, or paying.
 
-Headless-only는 절대 규칙입니다. Interactive authentication에도 visible-browser
-exception은 없습니다. 일반적인 chat에서 secret을 요청하거나 secret-bearing
-value/명령을 prompts, 출력, 장부, logs, screenshots, HAR, console
-캡처, receipts에 넣지 않습니다. 사용 가능한 임시 secret 입력 channel만
-사용하고 non-sensitive auth-mode 사실만 기록합니다.
+Headless-only is absolute. Interactive authentication has no visible-browser exception.
+Do not request secrets in ordinary chat or place secret-bearing values or commands in
+prompts, output, ledgers, logs, screenshots, HAR, console captures, or receipts. Use
+only an available temporary secret-input channel and record only non-sensitive
+authentication-mode facts.
 
-screenshots/video와 network/HAR/console inventory를 분리합니다. Authorization,
-cookies, tokens, credentials, sensitive bodies가 있으면 캡처는 sensitive입니다.
-검증된 redaction과 원본 및 이동 경로에 잔여물이 없음을 확인한 뒤에만
-사용합니다. 그렇지 않으면 소유한 캡처를 안전하게 삭제하고 `Unverifiable` 을
-반환합니다.
+Separate screenshot/video inventory from network/HAR/console inventory. A capture is
+sensitive if it contains Authorization data, cookies, tokens, credentials, or sensitive
+bodies. Use it only after verified redaction and confirmation that neither the original
+nor transfer path retains residue. Otherwise, safely delete owned captures and return
+`Unverifiable`.
 
-user screenshot, fixture, profile 또는 소유권을 알 수 없는 산출물을 절대
-move/delete하지 않습니다. 근거 처리를 위해 `.gitignore` 를 절대
-수정하지 않습니다.
+Never move or delete user screenshots, fixtures, profiles, or artifacts with unknown
+ownership. Never change `.gitignore` for evidence handling.

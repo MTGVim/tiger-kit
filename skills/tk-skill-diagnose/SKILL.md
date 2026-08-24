@@ -119,7 +119,7 @@ Metric: <actual measurement, labeled proxy, or unavailable>
 Incident: <stable ID or source reference>
 ```
 
-이는 이후 명시적으로 실행하는 `tk-learn`의 input이다.
+This becomes input to a later explicit `tk-learn` run.
 
 ### Other Dispositions
 
@@ -137,28 +137,25 @@ comment, label, or publish it.
 
 ## Results
 
-`## Diagnosis`로 시작하고 이어서 `## Action`을 출력한다. 필요할 때만
-`## Remaining uncertainty`를 추가한다.
+Start with `## Diagnosis`, followed by `## Action`. Add `## Remaining uncertainty` only when needed.
 
-하나의 incident에는 짧은 설명을 사용한다. 여러 symptom이 하나의 cause를 공유하면
-`ID | Incident | Root cause` 형식으로 cause마다 안정적인 `SD-##` row 하나를 유지한다.
-reproduction verdict, verified failure plane, evidence, route 및 정확한 next handoff를
-보고한다. raw log, transcript, screenshot, secret 또는 반복된 run narration을
-복사하지 않는다.
+Use a short explanation for one incident. When multiple symptoms share one cause, keep one stable
+`SD-##` row per cause in `ID | Incident | Root cause` format. Report the reproduction verdict,
+verified failure plane, evidence, route, and exact next handoff. Do not copy raw logs, transcripts,
+screenshots, secrets, or repeated run narration.
 
-experiment evidence가 다섯 row를 넘거나 이후 resume에 정확한 reference가 필요하면
-`.tigerkit/skill-diagnosis.md` 를 bounded incident IDs, candidate/control/holdout
-evidence refs, measurements 및 route와 함께 atomically replace한다. 채팅에는
-`## Diagnosis`, `## Action` 및 필요한 uncertainty만 남긴다. archive, lifecycle state
-또는 중복된 raw output은 만들지 않는다.
+When experiment evidence exceeds five rows or later resume needs an exact reference, atomically
+replace `.tigerkit/skill-diagnosis.md` with bounded incident IDs, candidate/control/holdout
+evidence refs, measurements, and route. Keep only `## Diagnosis`, `## Action`, and required
+uncertainty in chat. Do not create an archive, lifecycle state, or duplicate raw output.
 
-다음 terminal status 중 하나를 사용한다:
+Use one of these terminal statuses:
 
-- `Pass`: diagnosis와 routing이 완료되었다.
-- `Fail`: deterministic diagnosis/experiment claim이 gate를 위반했다.
-- `Blocked`: 필요한 permission, decision 또는 environment를 사용할 수 없다.
-- `Unverifiable`: provenance, reproduction, cause 또는 metric을 검증할 수 없다.
-- `NotApplicable`: 적격한 Agent Skill incident가 없다.
+- `Pass`: Diagnosis and routing are complete.
+- `Fail`: A deterministic diagnosis/experiment claim violated a gate.
+- `Blocked`: A required permission, decision, or environment is unavailable.
+- `Unverifiable`: Provenance, reproduction, cause, or metric cannot be verified.
+- `NotApplicable`: No eligible Agent Skill incident exists.
 
 ## Precautions
 

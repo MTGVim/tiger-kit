@@ -18,7 +18,7 @@ existing GitHub PR, or an active `tk-pr-open` sends an exact handoff with
 `evidence_required: true`. Only the parent handoff is an automatic trigger. Do not
 activate for screenshot capture, generic GitHub help, PR creation, PR review, or
 issue triage.
-route 선택이나 설치 전 확인이 필요하면 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). unavailable하면 같은 선택을 plain chat으로 fallback하고 선택 전 mutation을 하지 않습니다.
+When route selection or pre-installation confirmation is needed, prefer the host's native structured question surface (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). If unavailable, ask for the same choice in plain chat and do not mutate before selection.
 
 ## Scope
 
@@ -57,12 +57,11 @@ Before any upload or PR body/comment update, reverify the explicitly selected ta
    asset link, and the upload ref.
 5. Remove only owned staging files on every exit path.
 
-## 실행 receipt · 단일 근거 record
+## Execution Receipt · Single Evidence Record
 
-모든 업로드 시도는 아래 하나의 receipt로 남깁니다. 이는 별도 생명주기
-출력이 아니라 `## GitHub image upload` 결과와 승인/검증 판단에
-쓰는 단일 근거 기록입니다. 값이 없으면 `none` 또는 `unavailable` 로
-명시하고 추측하지 않습니다.
+Record every upload attempt in the single receipt below. It is not a separate lifecycle
+output; it is the sole evidence record used for the `## GitHub image upload` result and
+approval/verification decisions. Use `none` or `unavailable` for absent values; never guess.
 
 ```text
 Repository: <owner>/<repo>
@@ -78,21 +77,19 @@ Cleanup: <owned staging path removed | failed | not applicable>
 Status: Pass | Fail | Pending | Blocked | Unverifiable
 ```
 
-## 생산자 근거 인계(생산자 증거 인계)
+## Producer Evidence Handoff
 
-`evidence_required: true` 이면 다음을 요구합니다.
+When `evidence_required: true`, require all of the following:
 
-- `producer` 는 `tk-browser-verify` 또는 `tk-prototype` 중 하나여야 합니다.
-- 각 산출물은 비어 있지 않은 이미지, 절대 경로, 실행 소유 근거 디렉터리를
-  포함해야 합니다.
-- 각 image를 inspected 상태로 두고 criterion 또는 caption을 보존합니다.
-- `tk-browser-verify` 산출물은 `Pass` 결과에서 나와야 합니다.
-- `tk-prototype` 산출물은 테스트된 스크린샷 경로와 실제 이미지 검사을
-  포함해야 하며 공식 런타임 판정를 주장하지 않습니다.
+- `producer` is either `tk-browser-verify` or `tk-prototype`.
+- Every artifact has a non-empty image, absolute path, and run-owned evidence directory.
+- Every image is marked inspected and preserves its criterion or caption.
+- A `tk-browser-verify` artifact comes from a `Pass` result.
+- A `tk-prototype` artifact includes a tested screenshot path and actual image inspection,
+  without claiming an official runtime verdict.
 
-임의 screenshot, 누락된 경로, `Unverifiable` 결과 및 현재 실행에 연결되지
-않은 산출물은 거부합니다. 필수 근거가 없거나 유효하지 않으면
-업로드 전에 `Blocked` 를 반환합니다.
+Reject arbitrary screenshots, missing paths, `Unverifiable` results, and artifacts not tied
+to the current run. If required evidence is missing or invalid, return `Blocked` before upload.
 
 ## Prohibitions
 
@@ -119,9 +116,9 @@ For `tk-pr-open`, preserve the separate PR operation result and return the
 evidence state as `uploaded` or `blocked`. While required evidence remains
 blocked, the parent cannot claim full completion.
 
-## 결과
+## Result
 
-terminal 응답은 `## GitHub image upload` 로 시작합니다. 해당하는 경우
-`## Uploaded`, `## Verification` 및 `## Cleanup` 을 포함합니다. 결과를 소유하는 section의 끝에는 정확히 하나의
-`Status: Pass|Fail|Pending|Blocked|Unverifiable` 줄을 둡니다. 안전할 때만 asset URL을
-노출하고 서명된 매개변수는 redact합니다.
+Start the terminal response with `## GitHub image upload`. Include `## Uploaded`,
+`## Verification`, and `## Cleanup` when applicable. End the result-owning section with exactly
+one `Status: Pass|Fail|Pending|Blocked|Unverifiable` line. Expose asset URLs only when safe and
+redact signed parameters.

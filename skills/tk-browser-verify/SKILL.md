@@ -73,13 +73,13 @@ Return only outcome-changing user-owned decisions to the parent owner.
 
 ## Evidence
 
-이진 근거는 run-owned `.tigerkit/evidence/browser/<run-id>/`에 둘 수 있으며 Markdown file은 두지 않습니다.
-user fixture를 이동하지 않고, 민감한 capture는 verified redaction과 residue absence를 확인한 경우에만 evidence로 사용합니다.
+Binary evidence may be stored in run-owned `.tigerkit/evidence/browser/<run-id>/`; do not place Markdown files there.
+Do not move user fixtures. Use sensitive captures as evidence only after verifying redaction and absence of residue.
 
-중첩 결과는 다음 정도로 제한합니다.
+Limit nested results to:
 
 - status
-- criterion별 사실
+- Facts per criterion
 - non-sensitive auth mode
 - absolute evidence directory
 - inspected screenshot path
@@ -87,16 +87,16 @@ user fixture를 이동하지 않고, 민감한 capture는 verified redaction과 
 - cleanup fact
 - `automated_regression: protected | N/A | exception | unknown` as supplied/verified parent disposition
 
-PR evidence가 필수이면 `evidence_required: true`, 해당 criterion, producer `tk-browser-verify`도 반환하되 upload하지 않습니다.
+When PR evidence is required, also return `evidence_required: true`, the criterion, and producer `tk-browser-verify`; do not upload it.
 
-독립 실행 결과는 `## Verdict`와 정확한 `Status: <token>`으로 시작하고 verified facts, 필요한 limitation, evidence path, cleanup fact를 보여줍니다.
-필수 런타임 evidence가 없으면 절대 `Pass`로 올리지 않습니다.
+A standalone result starts with `## Verdict` and exact `Status: <token>`, then shows verified facts, required limitations, evidence paths, and the cleanup fact.
+Never promote a result to `Pass` without required runtime evidence.
 
-| 상태 | 의미 |
+| Status | Meaning |
 | --- | --- |
-| `Pass` | 승인된 모든 브라우저 기준에 현재 inspected evidence가 있음 |
-| `Fail` | 현재 런타임 evidence가 criterion을 위반함 |
-| `Blocked` | 실행 전에 user-owned safety/target decision이 필요함 |
-| `Unverifiable` | 필수 headless auth, environment, evidence를 확립할 수 없음 |
+| `Pass` | Current inspected evidence covers every approved browser criterion |
+| `Fail` | Current runtime evidence violates a criterion |
+| `Blocked` | A user-owned safety or target decision is required before execution |
+| `Unverifiable` | Required headless auth, environment, or evidence cannot be established |
 
 Do not cause unauthorized payments, external communications, destructive mutations, production-data mutations, or account/permission changes.

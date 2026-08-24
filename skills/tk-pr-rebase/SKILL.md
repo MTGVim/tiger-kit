@@ -17,7 +17,7 @@ Do not auto-apply to a generic branch `rebase`, simple `conflict marker edit`, o
 
 Own the exact `base/head rebase`, `conflict resolution`, `verification`, and bounded `force-with-lease` for one PR.
 Do not perform `merge`, `close`, `tag`, `release`, or unrelated feedback implementation.
-standalone rebase/publication approval이 필요하면 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). unavailable하면 같은 approval packet을 plain chat으로 fallback하고 parent-approved exact route는 다시 묻지 않습니다.
+When standalone rebase/publication approval is needed, prefer the host's native structured question surface (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). If unavailable, present the same approval packet in plain chat; do not ask again for an exact route already approved by the parent.
 
 ## Fresh identity
 
@@ -110,12 +110,12 @@ End generated GitHub comments with `_🤖 본 코멘트는 AI가 작성했습니
 
 ## Status
 
-| 상태 | 의미 |
+| Status | Meaning |
 | --- | --- |
-| `Pass` | exact rebase와 필요한 publication이 fresh evidence로 확인됨 |
-| `Pending` | standalone publication 승인을 기다림 |
-| `Blocked` | identity, authority, semantic conflict, freshness가 안전하게 닫히지 않음 |
-| `Unverifiable` | 필요한 Git/GitHub evidence를 읽을 수 없음 |
-| `Fail` | 일부 local/remote operation이 실패했고 적용 상태를 정확히 보고해야 함 |
+| `Pass` | Fresh evidence confirms the exact rebase and required publication |
+| `Pending` | Waiting for standalone publication approval |
+| `Blocked` | Identity, authority, semantic conflict, or freshness is not safely resolved |
+| `Unverifiable` | Required Git/GitHub evidence cannot be read |
+| `Fail` | A local or remote operation failed and the exact applied state must be reported |
 
 Do not claim success for any reply/resolve/review/check state that was not observed.

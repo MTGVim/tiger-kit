@@ -1,37 +1,36 @@
-# 스킬 품질
+# Skill quality
 
-명확한 이름, 좁은 범위의 설명, 입력, 핵심 동작, 경계,
-완료 기준, 최소 출력 형태를 요구합니다. 디렉터리는 자체 완결형으로
-유지합니다. 간결한 지침을 우선하고, 반복되는 누락, 비용이 큰 순서 오류,
-변경 안전성, 객관적인 완료 증명, 전문 절차, 제한된 위임/검토에만 세부사항을
-추가합니다.
+Require a clear name, narrow description, inputs, core behavior, boundaries, completion
+criteria, and minimal output shape. Keep the directory self-contained. Prefer concise
+instructions; add detail only for recurring omissions, costly ordering mistakes, change
+safety, objective completion proof, specialist procedures, or bounded delegation/review.
 
-## 승격 게이트
+## Promotion gate
 
-- 독립적인 반복 2건 또는 산출물이 뒷받침하는 재사용 workflow를 요구합니다. 출처
-  없는 주장을 일회성 사례는 승격 기준을 충족하지 못합니다.
-- 기존 skill, 기본 모델 capability, 짧은 규칙으로 충분한지 확인합니다. 중복
-  디렉터리보다 `merge | no-op` 을 우선합니다.
-- 구분 가능한 양성/음성 trigger를 제공합니다. 설명 훈련과 회귀 검증을
-  분리합니다. trigger가 불명확하면 생성을 중지합니다.
-- 관찰 가능한 assertion을 포함한 성공 및 경계/실패 동작 평가를 하나 이상
-  포함합니다. 원시 비밀, 자격 증명, 로그, 스크린샷을 저장하지 않습니다.
-- prior skill, no-skill 또는 이름이 있는 baseline과 비교하도록 정의합니다.
-  prose 점수만으로는 충분하지 않습니다.
-- Agent Skills portable-core 필드와 대상 호스트 확장을 분리하고 호스트별로
-  본문을 복사하지 않습니다. 알 수 없는 대상 호스트 `invocation`은 `pending` 으로
-  남깁니다.
-- 승인 전 후보 상태는 `reported | pending` 이며 어떤 파일도 적용하지 않습니다.
-  승인 후 성공만 `applied` 를 받습니다.
+- Require either two independent recurrences or an artifact-backed reusable workflow.
+  Unsourced claims and one-off cases do not satisfy promotion.
+- Check whether an existing skill, default model capability, or a short rule is enough.
+  Prefer `merge | no-op` over a duplicate directory.
+- Provide distinguishable positive and negative triggers. Separate description training
+  from regression validation. Stop creation when triggers remain ambiguous.
+- Include at least one success evaluation and one boundary/failure evaluation with
+  observable assertions. Do not store raw secrets, credentials, logs, or screenshots.
+- Define comparison against a prior skill, no-skill behavior, or another named baseline.
+  Prose scores alone are insufficient.
+- Separate portable-core Agent Skills fields from target-host extensions and do not copy
+  the body per host. Leave unknown target-host `invocation` as `pending`.
+- Before approval, candidate state is `reported | pending` and no files are applied.
+  Only post-approval success receives `applied`.
 
 ## Draft artifact checkpoint
 
-승인 전 초안은 저장소 루트의 `.tigerkit/learn.md` 에만 `pending` 스크래치
-장부로 기록합니다. 후보, 증거, 체크리스트, 대상 경로, 생성하지 않은 경로,
-다음 단계, 결정/상태를 기록하고 원자적으로 이름을 바꾼 뒤 다시 읽습니다.
-누락, 오래됨, 또는 재읽기 불일치면 `Blocked` 이며 승인 질문과 정본 쓰기를
-모두 중지합니다. 채팅은 절대 경로, 상태, 짧은 요약, 승인 질문 하나만 보여주고
-장부 전문이나 정확한 파일 본문을 복사하지 않습니다. 승인 전 정본 skill 경로와
-`.tigerkit/skill-drafts/<skill-name>/` 는 반드시 `not created`입니다.
+Before approval, record the draft only in `.tigerkit/learn.md` at the repository root as
+a `pending` scratch ledger. Record the candidate, evidence, checklist, target path,
+paths not created, next step, and decision/status; rename it atomically and read it back.
+If it is missing, stale, or mismatched on re-read, return `Blocked` and stop both the
+approval question and canonical write. Chat shows only the absolute path, status, short
+summary, and one approval question; do not copy the full ledger or exact file body.
+Before approval, the canonical skill path and `.tigerkit/skill-drafts/<skill-name>/`
+must remain `not created`.
 
-사용자에게 보이는 진행 상황과 receipt 문장은 사용자의 언어를 따릅니다.
+User-facing progress and receipt prose follow the user's language.

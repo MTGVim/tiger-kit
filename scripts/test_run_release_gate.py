@@ -169,8 +169,14 @@ class ReleaseGateContractTest(unittest.TestCase):
                 "# English model-facing contract\nAlways verify the current head before publication.\n",
                 encoding="utf-8",
             )
+            references = root / "skills/tk-example/references"
+            references.mkdir()
+            (references / "guide.md").write_text(
+                "# English model-facing reference\nFollow the verified procedure.\n",
+                encoding="utf-8",
+            )
             report = run_release_gate.scan_language(root)
-        self.assertEqual(report["files"], 4)
+        self.assertEqual(report["files"], 5)
         rows = report["violations"]
         self.assertEqual(len(rows), 2)
         self.assertTrue(any("New English sentence" in row["fingerprint"] for row in rows))

@@ -1,34 +1,40 @@
-# 조건부 설계 비교
+# Conditional design comparison
 
-`Repository precedent`와 `current evidence`가 결정을 충분히 정하지 못한
-`material architecture uncertainty`에서만 이 문서를 읽습니다. 다음 네 조건을 모두 만족하지 않으면 저장소
-선례 또는 가장 단순한 되돌릴 수 있는 선택을 추천하고 추가 절차 없이 준비를 계속합니다.
+Read this document only for `material architecture uncertainty` that
+`Repository precedent` and `current evidence` do not resolve. Unless all four conditions hold,
+recommend repository precedent or the simplest reversible choice and continue
+preparation without extra procedure.
 
-1. `interface/seam/schema/architecture/migration`처럼 선택을 되돌리기 어렵다.
-2. 실제로 가능한 설계가 둘 이상 존재한다.
-3. 틀렸을 때 재작업, 호환성, 데이터 또는 테스트 비용이 의미 있다.
-4. 현재 저장소 근거가 한 안을 충분히 결정하지 못한다.
+1. The choice is difficult to reverse, such as an `interface/seam/schema/architecture/migration`.
+2. At least two genuinely viable designs exist.
+3. A wrong choice has meaningful rework, compatibility, data, or testing cost.
+4. Current repository evidence does not sufficiently determine one option.
 
-## 비교
+## Comparison
 
-제어기가 최소 2개의 `materially different design`을 짧게 만듭니다. 이름만 다른 변형은 세지 않습니다.
-각 안을 다음 근거로 비교합니다.
+The controller creates at least two brief `materially different design`s. Renamed
+variants do not count. Compare each option using:
 
-- 기존 재사용과 저장소 적합성
-- 단순성과 숨기는 복잡성
-- 관찰 가능한 테스트 `seam`
-- `blast radius`와 의존성 영향
-- 마이그레이션, 되돌리기, 호환성 비용
-- `cost-if-wrong`
+- existing reuse and repository fit;
+- simplicity and the complexity it hides;
+- observable testing `seam`s;
+- `blast radius` and dependency impact;
+- migration, rollback, and compatibility cost;
+- `cost-if-wrong`.
 
-메뉴만 나열하지 않고 근거가 가장 강한 안과 이유를 추천합니다. 서로 다른 안의 장점을 결합한 혼합안이 실제로 더
-단순하면 허용합니다. 저장소 선례가 발견되면 비교를 중단하고 그 선례를 추천합니다.
+Recommend the option with the strongest evidence and explain why instead of listing a
+menu. A hybrid that combines advantages from different options is allowed when it is
+actually simpler. If repository precedent is found, stop the comparison and recommend
+that precedent.
 
-## 선택적 탐색과 검토 보호
+## Optional exploration and review protection
 
-2개 이상의 독립 탐색이 실제 신뢰도를 높이는 복잡한 경우에만 하위 에이전트 `fan-out`을 선택합니다. 현재 호스트가
-`fan-out`을 제공하지 않아도 제어기가 같은 비교를 수행하며 `Blocked`가 아닙니다. 에이전트 수, 제공자, 모델,
-추론 값은 이 참조나 `Seed`에 고정하지 않습니다.
+Choose subagent `fan-out` only for a complex case where at least two independent
+explorations materially improve confidence. If the current host lacks `fan-out`, the
+controller performs the same comparison; this is not `Blocked`. Do not persist agent
+count, provider, model, or reasoning values in this reference or the `Seed`.
 
-이 휴리스틱은 제안·탐색 도구입니다. 저장소 표준, 승인된 `Seed` 결정 또는 AC로 실제 승격되지 않은 설계 용어를
-검토자가 독립 실패 기준으로 사용하지 않습니다. TigerKit 소유 설계 장부나 새 공개 작업 흐름을 만들지 않습니다.
+This heuristic is a proposal and exploration aid. Reviewers do not use design terms as
+independent failure criteria unless they were actually promoted into repository
+standards, approved `Seed` decisions, or ACs. Do not create a TigerKit-owned design
+ledger or new public workflow.
