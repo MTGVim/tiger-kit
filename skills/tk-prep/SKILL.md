@@ -36,7 +36,7 @@ Ask one highest-impact question at a time only for:
 2. risky/hard-to-reverse security, permission, data, compatibility, or UX decisions;
 3. an engineering exception after evidence shows readiness cannot be improved further.
 
-If evidence already determines the answer, recommend it instead of creating another choice.
+If evidence or precedent decides, recommend it; only unresolved material hard-to-reverse choices lazy-load [design comparison](references/design.md), and optional fan-out never blocks.
 
 ## Workspace safety
 
