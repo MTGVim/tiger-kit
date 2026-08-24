@@ -89,10 +89,10 @@ Evaluate Reuse, Simplicity, Testing, Security, and User experience independently
 needs a reason. Investigate → improve → reassess before presenting `개선 한계`; only then explain gap/risk/mitigation
 and obtain an exception without inflating the score.
 
-For every code-changing path, inspect real tests and load [behavior-first testing](references/testing.md) before approval.
-Close observable behavior, regression/RED, focused command, required suite, mutation risk, and
-`N/A` versus engineering-exception disposition. Do not add ceremonial tests for trivial/prose-only work. Browser
-verification never substitutes for appropriate automated regression protection.
+For every code-changing path, inspect real tests and load [behavior-first testing](references/testing.md) before approval. Close
+observable behavior, regression/RED, focused command, required suite, mutation risk, and `N/A` versus engineering exception.
+Do not add ceremonial tests for trivial/prose-only work; browser verification never substitutes for automated protection.
+원인과 exact RED seam이 명백하면 직행하고, hard/flaky/perf/재현 난해 bug만 [diagnosis](references/diagnosis.md)를 lazy-load해 fix hypothesis 전에 red-capable loop를 확보합니다. 불가능하면 근거를 남기고 임의 fix는 금지합니다.
 
 ## Browser verification
 
