@@ -1,0 +1,147 @@
+{
+  "skill_name": "tk-eli5",
+  "evals": [
+    {
+      "id": "self-contained-visual-explainer",
+      "path": "success",
+      "prompt": "$tk-eli5 DNS가 동작하는 흐름을 `dns-eli5.html`에 만들어줘",
+      "expected_output": "오프라인에서 열리는 그림 중심 단일 HTML과 정확한 경로",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "하나의 자체 완결형 HTML이 3~5개 장면, 큰 내장 그림, 짧은 설명과 일관된 비유로 DNS 핵심 흐름을 정확하게 설명하며 외부 의존성이나 네트워크를 요구하지 않는다."
+        },
+        {
+          "type": "path_exists",
+          "path": "dns-eli5.html"
+        },
+        {
+          "type": "path_text_contains",
+          "path": "dns-eli5.html",
+          "text": "<svg"
+        },
+        {
+          "type": "path_text_contains",
+          "path": "dns-eli5.html",
+          "text": "🤖 본 설명 자료는 AI가 작성했습니다."
+        },
+        {
+          "type": "output_contains",
+          "text": "dns-eli5.html"
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": ["dns-eli5.html"]
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "accessible-offline-contract",
+      "path": "success",
+      "prompt": "$tk-eli5 광합성을 `photosynthesis-eli5.html`에 큰 그림과 적은 글로 설명해줘",
+      "expected_output": "접근성과 오프라인 계약을 지킨 HTML",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "HTML이 의미 구조, 충분한 명암비, SVG의 접근 가능한 제목, 색상 외 구분과 `reduced-motion`을 포함하며 외부 `asset/font/framework/script`를 참조하지 않는다."
+        },
+        {
+          "type": "path_exists",
+          "path": "photosynthesis-eli5.html"
+        },
+        {
+          "type": "path_text_contains",
+          "path": "photosynthesis-eli5.html",
+          "text": "prefers-reduced-motion"
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": ["photosynthesis-eli5.html"]
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "missing-topic",
+      "path": "boundary",
+      "prompt": "$tk-eli5",
+      "expected_output": "`Unverifiable`과 변경 없음",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "Unverifiable"
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Unverifiable"
+        }
+      ]
+    },
+    {
+      "id": "previous-text-explanation",
+      "path": "boundary",
+      "prompt": "직전 설명만 한 문단 텍스트로 쉽게 다시 말해줘",
+      "expected_output": "`NotApplicable`과 변경 없음",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "NotApplicable"
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "terminal_status",
+          "expected": "NotApplicable"
+        }
+      ]
+    },
+    {
+      "id": "comparison-prototype",
+      "path": "boundary",
+      "prompt": "두 레이아웃을 비교하는 폐기 가능한 HTML 시제품을 만들어줘",
+      "expected_output": "`NotApplicable`과 변경 없음",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "NotApplicable"
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "terminal_status",
+          "expected": "NotApplicable"
+        }
+      ]
+    }
+  ]
+}

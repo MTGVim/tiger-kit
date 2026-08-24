@@ -1,0 +1,6 @@
+interface:
+  short_description: "[user/auto] 큰 그림과 적은 글의 초보자용 HTML 설명 자료를 만듭니다."
+  default_prompt: "$tk-eli5를 사용해 요청한 주제를 `dependency` 없는 `self-contained HTML` 하나로 설명하고 정확한 `path`만 보고하세요."
+
+policy:
+  allow_implicit_invocation: true
