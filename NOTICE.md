@@ -26,6 +26,26 @@ TigerKit에는 `mattpocock/skills`에서 파생한 동작이 포함되어 있습
 배포되는 경우 TigerKit은 상위 원본 스킬 이름에 `tk-` 접두사를 유지하고, 동작은 현재
 TigerKit 사양에 맞게 다시 작성합니다.
 
+`tk-prep`, `tk-pr-respond`, shared testing/SDD와 `tk-audit`의 조건부 engineering 규율은
+`mattpocock/skills` 스냅샷 `5b15a47f2d7150f545fbcacbfe381787fc0230dc`에서 다음 원천을 검토해
+TigerKit의 기존 owner와 private reference에 재서술했습니다.
+
+- `skills/engineering/diagnosing-bugs/SKILL.md`
+- `skills/engineering/tdd/SKILL.md`
+- `skills/engineering/to-tickets/SKILL.md`
+- `skills/engineering/codebase-design/SKILL.md`
+- `skills/engineering/codebase-design/DEEPENING.md`
+- `skills/engineering/codebase-design/DESIGN-IT-TWICE.md`
+- `skills/engineering/improve-codebase-architecture/SKILL.md`
+- `skills/engineering/domain-modeling/SKILL.md`
+
+적용 범위는 hard/flaky/perf bug의 red-capable feedback loop, one-behavior vertical-first testing,
+`expand → migrate batch(es) → contract`, hard-to-reverse ambiguity의 alternative comparison,
+relevant repo-owned context 소비와 evidence-backed hotspot/locality/deletion-test 관점입니다. TigerKit은
+상위 원본의 mandatory subagent fan-out, architecture vocabulary 강제, public workflow,
+`CONTEXT.md`/ADR 생성·관리 lifecycle을 적용하지 않으며 기존 approval/Seed/secret/remote authority를
+유지합니다. 아래 `mattpocock/skills` MIT 라이선스가 이 증류에도 적용됩니다.
+
 `tk-merge-conflict`는 TigerKit 고유 스킬로 유지됩니다(`origin: tigerkit`,
 `relationship: native`). 검증된 원본 메타데이터에는 이것이 `mattpocock/skills`의
 `resolving-merge-conflicts`를 적용한 것이라고 확인할 근거가 없습니다.

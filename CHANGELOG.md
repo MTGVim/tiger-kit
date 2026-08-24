@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `feat(engineering)`: hard bug 진단, vertical-first SDD, material design 비교와 evidence-first architecture audit을 기존 `tk-prep`/`tk-pr-respond`/`tk-audit`에 조건부로 통합.
+
 ## 2026.08.24-1 — 릴리즈
 
 - `feat(tk-eli5)`: 큰 그림과 적은 글의 `self-contained HTML explainer skill` 추가.
