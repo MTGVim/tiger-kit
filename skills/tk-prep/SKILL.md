@@ -26,9 +26,9 @@ Codex: request_user_input; Hermes: clarify). unavailable하면 plain chat으로 
 
 ## Evidence and questions
 
-Read the task source, repository instructions, relevant code/callers, tests, verification commands, and current Git state.
-Before creating anything, find existing components, helpers, types, schemas, clients, patterns, and conventions. Tie
-important claims to `path:line`, command output, or fresh state; do not invent facts.
+Read the task source, instructions, code/callers, tests, commands, Git state, and only materially relevant existing `CONTEXT.md`/ADR/design/domain glossary.
+Do not scan or create a documentation lifecycle; if fresher code/test/runtime evidence conflicts, surface it and confirm the source of truth.
+Before creating anything, find existing components, helpers, schemas, clients, patterns, and conventions; tie claims to `path:line`, command output, or fresh state.
 
 Ask one highest-impact question at a time only for:
 

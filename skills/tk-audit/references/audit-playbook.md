@@ -14,8 +14,15 @@
   큐 경계, 느린 build/test 피드백을 확인한다.
 - **테스트**: 의미 있는 커버리지가 없는 critical 경로, 변경이 잦지만 테스트되지
   않은 모듈, 약한 assertion, flaky test, 누락된 검증 명령을 확인한다.
-- **아키텍처 / 기술 부채**: 중복, 계층 위반, dead code, god module,
-  일관되지 않은 패턴, 추상화 불일치를 확인한다.
+- **아키텍처 / 기술 부채**: 중복, 계층 위반, dead code, god module, 일관되지 않은 패턴,
+  추상화 불일치와 함께 다음 evidence heuristic을 확인한다.
+  - 사용자가 범위를 지정하지 않았으면 최근 변경 history와 반복 hotspot을 우선순위 근거로 사용한다.
+  - 한 개념의 이해·수정에 관련 없는 작은 파일 사이의 과도한 navigation이 필요한지 확인한다.
+  - orchestration에 실제 regression risk가 있는데 pure helper test만 있고 integration behavior 보호가 비는지 확인한다.
+  - abstraction이 locality를 높이는지 또는 단순 pass-through/indirection인지 확인한다.
+  - deletion thought experiment에서 제거 시 complexity가 caller로 흩어지면 value가 있고, complexity 자체가
+    사라지면 불필요한 indirection 후보인지 확인한다.
+  - 변경이 잦고 테스트하기 어려운 경계나 interface mismatch가 실제 maintenance/test cost를 만드는지 확인한다.
 - **의존성 / 마이그레이션**: EOL 또는 deprecated API, 방치된 핵심 의존성,
   중복된 해결책, lockfile drift, 영향 범위를 확인한다.
 - **DX / 도구**: 누락되었거나 깨진 typecheck/lint/format 설정, 온보딩,
@@ -24,6 +31,10 @@
   누락된 결정을 확인한다.
 - **방향**: 저장소 의도, TODO 묶음, flag, roadmap, 미완성 모듈이 뒷받침하는
   근거 있는 다음 단계 후보만 확인한다.
+
+Architecture 항목은 proposal/evidence heuristic이지 doctrine이나 독립 rejection gate가 아니다. `deep module`,
+fewer interfaces, thin adapter/wrapper, React composition 또는 framework idiom 자체를 defect로 취급하지 않는다.
+Matt식 vocabulary를 강제하지 않으며 현재 저장소의 path/symbol evidence와 concrete impact가 있을 때만 finding을 만든다.
 
 ## Finding 형식
 
