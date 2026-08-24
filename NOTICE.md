@@ -148,3 +148,42 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+`tk-eli5`는 `anthropics/claude-plugins-community`의 `eli5` v1.0.0을
+원본 스냅샷 `863e70dc7cff21a2facc749e40a7ecd1a5d19833`에서 적용했습니다.
+
+- `eli5/skills/eli5/SKILL.md`
+- `eli5/README.md`
+- `eli5/.claude-plugin/plugin.json`
+
+TigerKit은 큰 그림·적은 글의 `HTML artifact`와 `/eli5 <topic>` 동작을 유지하면서
+`offline self-contained output`, 충돌 없는 `path`, 접근성, `skill` 경계, 검증과 AI 작성자
+표시를 추가했습니다. 관계 메타데이터: `origin: anthropics/claude-plugins-community`,
+`relationship: adapted`, `upstream-skill: eli5`.
+
+`eli5` `manifest`는 MIT를 표시하며 최초 `package commit`
+`0d92c175da762e154c3000ccbc2da8464def3373`의 라이선스는 다음과 같습니다.
+
+```text
+MIT License
+
+Copyright (c) 2026 Thariq Shihipar
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```

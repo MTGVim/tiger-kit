@@ -60,6 +60,7 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-pr-sweep` | `user` | 여러 PR의 결정론적 분류와 승인된 유지보수 묶음 |
 | `tk-github-image-upload-to-pr` | `user` | 기존 PR에 로컬 근거 이미지 올리기 |
 | `tk-prototype` | `hybrid` | 폐기 가능한 UI/로직 비교물 |
+| `tk-eli5` | `hybrid` | 큰 그림과 적은 글의 초보자용 `self-contained HTML` 설명 자료 |
 | `tk-browser-verify` | `hybrid` | 화면에 보이는 AC의 `headless` 실행 검증 |
 | `tk-skill-diagnose` | `hybrid` | `Agent Skill` 사고 재현·격리와 `learn-ready` 인계 |
 | `tk-learn` | `hybrid` | 재사용 가능한 스킬의 생성/개선/병합 작성자 |

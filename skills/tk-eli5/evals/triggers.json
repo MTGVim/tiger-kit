@@ -1,0 +1,136 @@
+{
+  "skill": "tk-eli5",
+  "kind": "hybrid",
+  "queries": [
+    {
+      "id": "train-explicit",
+      "split": "train",
+      "query": "$tk-eli5 DNS가 어떻게 동작하는지 보여줘",
+      "should_trigger": true
+    },
+    {
+      "id": "train-natural",
+      "split": "train",
+      "query": "블록체인을 완전 초보도 알게 그림 중심 HTML로 설명해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "train-negative",
+      "split": "train",
+      "query": "이 코드를 한 문단으로 설명해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-positive-formal",
+      "split": "validation",
+      "query": "광합성을 초보자용 큰 그림과 적은 글의 `self-contained HTML`로 설명해 주세요.",
+      "should_trigger": true,
+      "facets": ["formal"]
+    },
+    {
+      "id": "validation-positive-casual",
+      "split": "validation",
+      "query": "양자컴퓨터가 뭔지 그림 위주로 완전 쉽게 보여줘",
+      "should_trigger": true,
+      "facets": ["casual"]
+    },
+    {
+      "id": "validation-positive-typo",
+      "split": "validation",
+      "query": "DNS가 어케되는지 큰그림 HTML로 설먕해줘",
+      "should_trigger": true,
+      "facets": ["typo"]
+    },
+    {
+      "id": "validation-positive-ko-en",
+      "split": "validation",
+      "query": "블록체인을 `dead-simple visual explainer HTML`로 만들어줘",
+      "should_trigger": true,
+      "facets": ["ko-en"]
+    },
+    {
+      "id": "validation-positive-short",
+      "split": "validation",
+      "query": "$tk-eli5 TCP",
+      "should_trigger": true,
+      "facets": ["short"]
+    },
+    {
+      "id": "validation-positive-compound",
+      "split": "validation",
+      "query": "API 인증 흐름을 초보자가 이해하게 큰 그림 몇 장과 짧은 문장으로 HTML 파일로 만들어줘",
+      "should_trigger": true,
+      "facets": ["compound"]
+    },
+    {
+      "id": "validation-positive-formal-2",
+      "split": "validation",
+      "query": "전기차 배터리의 충전 원리를 어린이도 이해할 시각적 HTML 설명 자료로 만들어 주세요.",
+      "should_trigger": true,
+      "facets": ["formal"]
+    },
+    {
+      "id": "validation-positive-compound-2",
+      "split": "validation",
+      "query": "CI/CD가 `commit`부터 배포까지 흐르는 과정을 처음 보는 사람용 그림 중심 HTML로 만들어줘",
+      "should_trigger": true,
+      "facets": ["compound"]
+    },
+    {
+      "id": "validation-negative-formal",
+      "split": "validation",
+      "query": "직전 답변만 한 문단의 쉬운 텍스트로 다시 설명해 주세요.",
+      "should_trigger": false,
+      "facets": ["formal"]
+    },
+    {
+      "id": "validation-negative-casual",
+      "split": "validation",
+      "query": "두 레이아웃 비교 `prototype` 만들어줘",
+      "should_trigger": false,
+      "facets": ["casual"]
+    },
+    {
+      "id": "validation-negative-typo",
+      "split": "validation",
+      "query": "기존 `landing page` HTML 버튼만 고처줘",
+      "should_trigger": false,
+      "facets": ["typo"]
+    },
+    {
+      "id": "validation-negative-ko-en",
+      "split": "validation",
+      "query": "이 `code`를 `step-by-step prose`로 설명해줘",
+      "should_trigger": false,
+      "facets": ["ko-en"]
+    },
+    {
+      "id": "validation-negative-short",
+      "split": "validation",
+      "query": "HTML이 뭐야?",
+      "should_trigger": false,
+      "facets": ["short"]
+    },
+    {
+      "id": "validation-negative-compound",
+      "split": "validation",
+      "query": "이 UI를 `production`으로 구현하고 테스트한 뒤 배포해줘",
+      "should_trigger": false,
+      "facets": ["compound"]
+    },
+    {
+      "id": "validation-negative-formal-2",
+      "split": "validation",
+      "query": "첨부한 보고서를 세 문장의 글로 요약해 주세요.",
+      "should_trigger": false,
+      "facets": ["formal"]
+    },
+    {
+      "id": "validation-negative-compound-2",
+      "split": "validation",
+      "query": "기존 대시보드 HTML의 `chart`를 수정하고 `production code`에 반영해줘",
+      "should_trigger": false,
+      "facets": ["compound"]
+    }
+  ]
+}
