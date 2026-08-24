@@ -177,10 +177,12 @@ def _safe_relative(value: object) -> bool:
     )
 
 
-def _validate_skill_body_language(text: str, label: str) -> list[str]:
+def _validate_model_facing_language(
+    text: str, path: str, *, allow_frontmatter: bool = False
+) -> list[str]:
     lines = text.splitlines()
     start = 0
-    if lines and lines[0] == "---":
+    if allow_frontmatter and lines and lines[0] == "---":
         try:
             start = lines.index("---", 1) + 1
         except ValueError:
@@ -194,8 +196,8 @@ def _validate_skill_body_language(text: str, label: str) -> list[str]:
             continue
         if not in_fence and HANGUL.search(INLINE_CODE.sub("", line)):
             errors.append(
-                f"{label}/SKILL.md:{number}: model-facing narrative must be English; "
-                "keep Korean only in frontmatter or exact inline/fenced literals"
+                f"{path}:{number}: model-facing narrative must be English; "
+                "keep Korean only in SKILL.md frontmatter or exact inline/fenced literals"
             )
     return errors
 
@@ -212,7 +214,11 @@ def validate_frontmatter_and_body(
     origin = nested(data, "metadata", "tigerkit", "origin")
     relationship = nested(data, "metadata", "tigerkit", "relationship")
 
-    errors.extend(_validate_skill_body_language(text, label))
+    errors.extend(
+        _validate_model_facing_language(
+            text, f"{label}/SKILL.md", allow_frontmatter=True
+        )
+    )
 
     unknown = sorted(set(data) - CORE_FRONTMATTER_FIELDS - HOST_EXTENSION_FIELDS)
     if unknown:
@@ -666,6 +672,7 @@ def validate_reference_resources(skills_root: Path = SKILLS) -> list[str]:
             continue
         if "\0" in text:
             errors.append(f"{_display_path(path)}: references must not contain NUL bytes")
+        errors.extend(_validate_model_facing_language(text, _display_path(path)))
     return errors
 
 

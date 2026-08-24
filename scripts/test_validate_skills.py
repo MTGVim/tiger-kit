@@ -209,6 +209,40 @@ class EvalSotValidatorTest(unittest.TestCase):
             with patch.object(validate_skills, "ROOT", skills):
                 self.assertEqual(validate_skills.validate_repo_links(), [])
 
+    def test_reference_body_requires_english_narrative(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            skills = Path(directory)
+            references = skills / "tk-example" / "references"
+            references.mkdir(parents=True)
+            note = references / "note.md"
+            note.write_text("한국어 운영 지침\n", encoding="utf-8")
+
+            with patch.object(validate_skills, "ROOT", skills.parent):
+                rejected = validate_skills.validate_reference_resources(skills)
+            self.assertTrue(
+                any(
+                    "note.md:1" in error
+                    and "model-facing narrative must be English" in error
+                    for error in rejected
+                )
+            )
+
+            note.write_text(
+                "---\ntitle: 한국어 제목\n---\nEnglish reference.\n",
+                encoding="utf-8",
+            )
+            with patch.object(validate_skills, "ROOT", skills.parent):
+                rejected_frontmatter = validate_skills.validate_reference_resources(skills)
+            self.assertTrue(any("note.md:2" in error for error in rejected_frontmatter))
+
+            note.write_text(
+                "Use the exact literal `한국어 출력`.\n\n"
+                "```text\n한국어 출력\n```\n",
+                encoding="utf-8",
+            )
+            with patch.object(validate_skills, "ROOT", skills.parent):
+                self.assertEqual(validate_skills.validate_reference_resources(skills), [])
+
     def test_direct_strategy_rejects_model_tier_pairing(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             skills = Path(directory)

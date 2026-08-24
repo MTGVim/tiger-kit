@@ -1,56 +1,56 @@
-# 시각적 근거
+# Visual evidence
 
-승인된 모든 visual claim에는 non-empty 런타임 screenshot과 실제 image
-inspection이 필요합니다. DOM, accessibility-tree, network, computed-style
-근거로 image를 대체할 수 없습니다. comparable 조건 또는 필수
-캡처가 없으면 `Unverifiable`입니다.
+Every approved visual claim requires a non-empty runtime screenshot and actual image
+inspection. DOM, accessibility-tree, network, or computed-style evidence cannot replace
+the image. Without comparable conditions or a required capture, return `Unverifiable`.
 
-design/screenshot basis가 있으면 승인된 viewport, DPR, browser, font, asset, zoom을
-재현한 뒤 named region/state만 비교합니다. difference는 `defect`, approved
-deviation, 환경 또는 `unverifiable`로 분류하며 design intent를 만들거나
-일반적인 critique로 넓히지 않습니다.
+When a design/screenshot basis exists, reproduce the approved viewport, DPR, browser,
+font, assets, and zoom before comparing only the named region/state. Classify a
+difference as a `defect`, approved deviation, environment issue, or `unverifiable`.
+Do not invent design intent or broaden the work into generic critique.
 
-## Verbatim visual 비교 축
+## Verbatim visual comparison axes
 
-승인된 reference와 그대로/fidelity 비교를 수행할 때는 같은 viewport, DPR, zoom,
-font-loading 완료 상태의 reference/candidate screenshot을 실제 inspect하고 아래 축을
-각각 `Pass | Fail | Unverifiable`로 기록합니다. 눈에 띄는 전체 인상이나 DOM 존재만으로
-축을 대체하지 않으며 필수 축 하나라도 unchecked이면 aggregate `Pass`가 아닙니다.
+For a verbatim/fidelity comparison against an approved reference, actually inspect
+reference and candidate screenshots under the same viewport, DPR, zoom, and completed
+font-loading state. Record each axis as `Pass | Fail | Unverifiable`. Do not replace an
+axis with a general visual impression or DOM presence. If any required axis remains
+unchecked, the aggregate result is not `Pass`.
 
-1. **Asset presence/integrity** — logo, SVG, icon, favicon, raster image,
-   background image가 누락·대체·중복되지 않았는지 확인합니다. SVG는 element 존재만
-   보지 않고 rendered shape, `viewBox`, aspect ratio, fill/stroke와 clipping을 screenshot
-   및 computed 근거로 확인합니다.
-2. **Content** — 표시되는 text, label, number, badge와 순서가 누락·추가·오타 없이
-   `reference`와 일치하는지 확인합니다. 기준자료는 화면에 보이는 문자열을 그대로
-   담아야 하며, 요소명을 의역했거나 `code identifier`/`enum` 값만 있으면 요소를 추측하지
-   말고 `Unverifiable`로 기록합니다.
-3. **Geometry/layout** — position, dimensions, spacing, alignment, radius, border,
-   overlap, clipping, wrapping, crop을 named region별로 비교합니다.
-4. **Typography** — loaded font family/fallback, weight, rendered font size,
-   line-height, letter-spacing, text transform와 줄바꿈을 비교합니다.
-5. **Color/paint** — foreground/background/border, SVG `fill`/`stroke`, opacity,
-   shadow와 gradient의 computed value 및 rendered appearance를 비교합니다.
-6. **Imagery** — image request/load 성공, source, intrinsic dimensions,
-   aspect ratio, `object-fit`/`object-position`, crop과 해상도를 확인합니다.
-7. **Responsive/state** — 승인된 viewport와 hover/focus/active/disabled/loading/error
-   state마다 위 축의 차이를 다시 확인합니다.
+1. **Asset presence/integrity**: Verify that logos, SVGs, icons, favicons, raster images,
+   and background images are not missing, substituted, or duplicated. For SVGs, inspect
+   the rendered shape, `viewBox`, aspect ratio, fill/stroke, and clipping through the
+   screenshot and computed evidence rather than checking only element presence.
+2. **Content**: Verify that visible text, labels, numbers, badges, and order match the
+   `reference` without omissions, additions, or typos. The basis must contain the exact
+   visible string. If it paraphrases an element name or contains only a `code identifier`
+   or `enum` value, do not guess the element; record `Unverifiable`.
+3. **Geometry/layout**: Compare position, dimensions, spacing, alignment, radius,
+   borders, overlap, clipping, wrapping, and crop for each named region.
+4. **Typography**: Compare loaded font family/fallback, weight, rendered font size,
+   line-height, letter-spacing, text transform, and wrapping.
+5. **Color/paint**: Compare computed values and rendered appearance for foreground,
+   background, border, SVG `fill`/`stroke`, opacity, shadow, and gradient.
+6. **Imagery**: Verify successful image request/load, source, intrinsic dimensions,
+   aspect ratio, `object-fit`/`object-position`, crop, and resolution.
+7. **Responsive/state**: Recheck the preceding axes for each approved viewport and
+   hover/focus/active/disabled/loading/error state.
 
-각 발견 사항에는 axis, named element/region, reference observation, 후보 observation,
-viewport/state와 inspected screenshot 경로를 연결합니다. Pixel-perfect tolerance가
-승인 criteria에 없으면 임의 threshold를 만들지 말고 명백한 mismatch를 보고하며
-미세 차이는 `Unverifiable`로 남깁니다.
+For every finding, connect the axis, named element/region, reference observation,
+candidate observation, viewport/state, and inspected screenshot path. When the approved
+criteria do not define pixel-perfect tolerance, do not invent a threshold. Report clear
+mismatches and leave subtle differences as `Unverifiable`.
 
-responsive AC에서는 실제 `window.innerWidth` 를 측정하고 named width와 breakpoint
-edge를 테스트합니다. 승인된 criteria가 요구하는 경우에만 overflow, clipping,
-overlap, wrapping, truncation, alignment, spacing, sticky/fixed element,
-off-screen control을 inspect합니다. trusted 입력 후 hover/focus를 측정합니다.
+For a responsive AC, measure the actual `window.innerWidth` and test the named width and
+breakpoint edge. Inspect overflow, clipping, overlap, wrapping, truncation, alignment,
+spacing, sticky/fixed elements, and off-screen controls only when approved criteria
+require them. Measure hover/focus after trusted input.
 
-temporary 런타임-only DOM/응답 mock은 저장소 근거가 정확한 production
-envelope를 증명하고 승인된 criterion이 mocked backend가 아닌 presentation에
-관한 경우에만 허용됩니다. bypass를 label하고 제거합니다. 검증을 위해
-소스를 절대 수정하지 않습니다.
+A temporary runtime-only DOM/response mock is allowed only when repository evidence
+proves the exact production envelope and the approved criterion concerns presentation
+rather than the mocked backend. Label and remove the bypass. Never modify source code
+for verification.
 
-viewport, screenshot 경로, inspected 결과, limitation을 간결한 사실로
-기록합니다. causal regression claim에는 comparable baseline 런타임 근거가
-필요합니다. 그렇지 않으면 현재 관찰된 실패만 보고합니다.
+Record the viewport, screenshot path, inspected result, and limitation as concise facts.
+A causal regression claim requires comparable baseline runtime evidence; otherwise,
+report only the currently observed failure.

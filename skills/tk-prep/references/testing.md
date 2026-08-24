@@ -1,78 +1,92 @@
 <!-- tigerkit:`shared-execution-protocol`; `canonical`=skills/tk-prep/references/testing.md -->
 
-# 행동 우선 테스트
+# Behavior-first testing
 
-코드를 바꾸는 작업에서만 이 문서를 읽습니다. 문서나 문구만 바꾸거나 관찰 가능한 동작이 없는 사소한 변경에는
-형식적인 테스트를 만들지 않습니다. 목표는 숫자 적용률이 아니라 바뀐 동작의 보호입니다.
+Read this document only for work that changes code. Do not create ceremonial tests for
+documentation or wording-only changes, or for trivial changes without observable
+behavior. The goal is protection for changed behavior, not a numeric adoption rate.
 
-## 준비도
+## Readiness
 
-승인 전에 실제 저장소 테스트 표면을 조사합니다.
+Before approval, inspect the actual repository test surface:
 
-- 관련 테스트 위치와 가장 빠른 집중 명령
-- 이번 변경이 보호해야 할 관찰 가능한 동작과 정확한 회귀
-- 기존 테스트가 그 동작을 실제로 깨뜨릴 수 있는지
-- 새 테스트가 필요한 경계, 오류, 상태
-- 구속력 있는 통합 검사와 브라우저 표시 AC 여부
+- related test locations and the fastest focused command;
+- the observable behavior and exact regression this change must protect;
+- whether existing tests can actually fail when that behavior breaks;
+- boundaries, errors, and states that need new tests;
+- binding integration checks and whether any AC is browser-visible.
 
-테스트가 존재한다는 사실만으로 충분한 보호라고 간주하지 않습니다. 버그는 가능하면 정확한 재현 테스트로 먼저 잡습니다.
+Do not treat test presence as sufficient protection. When possible, capture a bug first
+with an exact reproduction test.
 
-## `N/A`와 엔지니어링 예외
+## `N/A` and engineering exception
 
-- `N/A`: 문구만 바꿈, 시각 결과만 판정함, 단순 전달처럼 유용한 자동 동작 테스트 표면이 없음
-- 엔지니어링 예외: 의미 있는 동작은 있지만 테스트 기반이 없거나 부적절해 유용한 테스트를 만들 수 없음
+- `N/A`: wording-only changes, visual-only judgment, or no useful automated behavior
+  test surface, such as a simple pass-through.
+- Engineering exception: meaningful behavior exists, but the test foundation is absent
+  or unsuitable and no useful test can be built.
 
-예외에는 빈틈, 조사 근거, 위험, 완화책, 승인 여부를 기록합니다. 테스트 표면이 있는데 가짜 테스트를 추가하거나
-`N/A`로 숨기지 않습니다. 브라우저 검증은 자동 회귀 테스트를 대체하지 않으며, 시각 결과만 있는 AC는 브라우저
-증거로 판정할 수 있습니다.
+For an exception, record the gap, investigation evidence, risk, mitigation, and approval
+state. Do not add a fake test or hide behind `N/A` when a real test surface exists.
+Browser verification does not replace automated regression tests, although a visual-only
+AC may be judged with browser evidence.
 
 ## RED → GREEN → REFACTOR
 
-테스트 가능한 기능, 버그 수정, 동작 변경, 의미 있는 구조 개선의 기본 순서입니다.
+This is the default order for testable features, bug fixes, behavior changes, and
+meaningful structural improvements.
 
-1. **RED**: 원하는 동작을 가장 작은 행동 테스트로 작성합니다.
-2. **RED 확인**: 제품 동작 코드를 바꾸기 전에 실행해 의도한 이유로 실패하는지 확인합니다.
-3. **GREEN**: 테스트를 통과시키는 최소 구현만 작성합니다.
-4. **GREEN 확인**: 같은 집중 명령과 관련 기존 테스트가 통과하는지 확인합니다.
-5. **REFACTOR**: 통과 상태에서만 중복, 이름, 구조를 정리하고 다시 확인합니다.
+1. **RED**: Write the smallest behavior test for the desired behavior.
+2. **Confirm RED**: Run it before changing product behavior code and verify that it
+   fails for the intended reason.
+3. **GREEN**: Write only the minimum implementation that passes the test.
+4. **Confirm GREEN**: Verify the same focused command and related existing tests.
+5. **REFACTOR**: Clean up duplication, names, and structure only while green, then
+   verify again.
 
-각 주기는 한 번에 하나의 `observable behavior slice`를 보호합니다. 여기서 `vertical`은 UI→API→DB 전 계층을
-항상 관통한다는 뜻이 아니라 하나의 사용자/제품 행동을 독립 보호하는 가장 높은 `practical seam`입니다. 다수 테스트를
-먼저 쌓고 구현을 나중에 몰아서 하는 `horizontal bulk cycle`을 기본으로 삼지 않으며, 기존
-`public/observable seam`이 충분하면 새 `seam`을 만들거나 `testability`만을 위해 `production API`를 넓히지 않습니다.
+Each cycle protects one `observable behavior slice`. Here, `vertical` does not always
+mean crossing every UI→API→DB layer; it means the highest `practical seam` that
+independently protects one user/product behavior. Do not default to a
+`horizontal bulk cycle` that accumulates many tests before implementing them. When an existing
+`public/observable seam` is sufficient, do not create a new `seam` or widen a
+`production API` solely for `testability`.
 
-잘못된 이유로 실패하면 테스트를 고쳐 다시 RED를 확인합니다. 이미 통과한다면 새 동작을 실제로 보호하는지 또는
-제품 동작이 이미 존재하는지 조사합니다. 필요한 RED 없이 제품 코드부터 작성하지 않습니다.
+If the test fails for the wrong reason, fix it and confirm RED again. If it already
+passes, investigate whether it protects the new behavior or the product behavior
+already exists. Do not write product code first when a necessary RED is missing.
 
-## 좋은 테스트 관문
+## Good-test gate
 
-테스트 본문 전에 “어떤 현실적인 제품 코드 변이가 이 테스트를 실패시켜야 하는가?”를 답합니다. 가능한 한 직접
-확인한 기대값으로 실제 구성 요소, 통합 경계, 출력, 부수 효과를 검증합니다.
+Before writing a test body, answer: “What realistic product-code mutation should make
+this test fail?” Verify real components, integration boundaries, output, and side
+effects with independently checked expectations whenever possible.
 
-다음은 행동 보호가 아닙니다.
+These do not protect behavior:
 
-- 제품 보조 함수가 기대값과 실제값을 함께 계산하는 순환 단언
-- 원문, 기호 존재나 제거, 비공개 구조만 검색하는 테스트
-- 도구 자체 동작이나 모의 객체, 테스트 식별자 존재만 확인하는 테스트
-- 의도적인 상수나 메시지 변화에만 반응하는 변화 감지기
-- 제품 API에 테스트 전용 보조 함수를 추가하는 방식
-- 결과나 부수 효과 없이 적용률만 올리는 테스트
+- a circular assertion where a product helper computes both expected and actual values;
+- tests that search only for raw text, symbol presence/removal, or private structure;
+- tests that verify only tool behavior, mocks, or test identifier presence;
+- change detectors that react only to intentional constant or message changes;
+- test-only helpers added to the product API;
+- tests that increase adoption counts without checking results or side effects.
 
-완료 전에 다음 변이를 상상합니다. 적용 가능한 변이 중 아무 테스트도 깨지지 않으면 보호가 불완전합니다.
+Before completion, imagine these mutations. Protection is incomplete if no test fails
+for any applicable mutation:
 
-- 잘못된 분기, 처리기, 인자, 상수
-- 빠진 상태 변화나 부수 효과
-- 빈 값이나 기본값 반환
-- 제거된 검증 또는 정확한 버그 재발
+- a wrong branch, handler, argument, or constant;
+- a missing state change or side effect;
+- an empty or default return value;
+- removed validation or recurrence of the exact bug.
 
-## 증거 계약
+## Evidence contract
 
-구현자 보고에는 적용 가능한 경우 아래를 남깁니다.
+When applicable, the implementer report records:
 
-- RED 명령, 관련 실패, 예상한 실패 이유
-- GREEN 명령과 관련 통과 결과
-- 필수 관련 모음과 검사 결과
-- 테스트 판정이 `N/A` 또는 엔지니어링 예외이면 그 근거
+- the RED command, relevant failure, and expected reason;
+- the GREEN command and relevant passing result;
+- required related suites and check results;
+- the rationale when the test judgment is `N/A` or an engineering exception.
 
-검토자는 통과했다는 주장만 신뢰하지 않고 변경분과 테스트 의무를 대조합니다. 이미 제공된 증거는 재실행 전에
-먼저 읽고, 구체적으로 풀리지 않은 의문이 있을 때만 집중 테스트를 실행합니다.
+Reviewers compare the diff against testing obligations rather than trusting a passing
+claim alone. Read existing evidence before rerunning it, and run a focused test only for
+a specific unresolved question.

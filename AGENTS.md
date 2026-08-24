@@ -11,7 +11,7 @@ TigerKit은 `workflow` `runner`, `plugin`, `scheduler`, `shared-state` `framewor
 - 전역 TigerKit `task` `state`, `host`별 `skill` `body` 복사본, GitHub `Actions` `validation`을 만들지 않습니다.
 - 중복 `protocol`보다 삭제와 `progressive` `disclosure`를 우선합니다.
 - 사용자-`facing`/운영 `prose`는 한국어를 기본으로 하고 `exact` ID/`path`/`status`/`command`/`technical` `literal`은 원문을 유지합니다.
-- `SKILL.md`의 `model-facing` 제목과 지시문은 영어로 고정합니다. 한국어는 `frontmatter` `description`과 정확한 사용자 발화·출력 `literal`에만 두고 `inline code` 또는 `fenced block`으로 표시합니다.
+- `SKILL.md`와 `package-local` `references/`의 `model-facing` 제목과 지시문은 영어로 고정합니다. 한국어는 `SKILL.md`의 `frontmatter` `description`과 정확한 사용자 발화·출력 `literal`에만 두고 `inline code` 또는 `fenced block`으로 표시합니다.
 
 ## `Adaptive prep` `product` `work`
 

@@ -1,21 +1,21 @@
-# Failure plane와 evidence
+# Failure planes and evidence
 
-처음부터 문구 결함이라고 가정하지 않는다. 관찰된 모든 symptom을 evidence-backed
-plane 하나 이상에 따라 분류한다.
+Do not begin by assuming a wording defect. Classify every observed symptom against one
+or more evidence-backed planes.
 
-| Plane | 의미 | 대표 evidence |
+| Plane | Meaning | Representative evidence |
 |---|---|---|
-| `selection` | 필요하지 않을 때 skill이 선택되었거나, 필요할 때 선택되지 않음 | trigger train/validation result, selected skill |
-| `loading` | selection은 발생했지만 body가 load되지 않음 | adapter `skill_loaded`, loaded-skill list |
-| `understanding` | scope, terms 또는 input contract를 잘못 이해함 | fresh trace, output evidence |
-| `planning` | owner, branch, sequence 또는 decision loop가 잘못됨 | trace, retries, discretionary fill-in |
-| `execution` | tool, command, verification 또는 mutation이 실패함 | command, file, Git, runtime evidence |
-| `formatting` | output 또는 receipt ownership을 위반함 | output assertion, structured comparison |
-| `evaluation` | 올바른 output을 grader/assertion이 잘못 분류함 | deliverable versus criterion/mechanical evidence |
-| `compatibility` | host invocation, loading, tool 또는 metadata behavior가 다름 | Claude Code/Codex/Hermes matrix |
-| `efficiency` | 올바른 output에 피할 수 있는 resource가 소모됨 | matched baseline/candidate metrics |
+| `selection` | Skill selected when unnecessary, or not selected when required | trigger train/validation result, selected skill |
+| `loading` | Selection occurred but the body did not load | adapter `skill_loaded`, loaded-skill list |
+| `understanding` | Scope, terms, or input contract misunderstood | fresh trace, output evidence |
+| `planning` | Wrong owner, branch, sequence, or decision loop | trace, retries, discretionary fill-in |
+| `execution` | Tool, command, verification, or mutation failed | command, file, Git, runtime evidence |
+| `formatting` | Output or receipt ownership violated | output assertion, structured comparison |
+| `evaluation` | Grader/assertion misclassified correct output | deliverable versus criterion/mechanical evidence |
+| `compatibility` | Host invocation, loading, tool, or metadata behavior differs | Claude Code/Codex/Hermes matrix |
+| `efficiency` | Correct output consumed avoidable resources | matched baseline/candidate metrics |
 
-모든 plane에서 stability를 기록하되 하나의 causal plane으로 기록하지 않는다:
+Record stability for every plane, but do not record it as a separate causal plane:
 
 ```text
 reproduction rate
@@ -27,43 +27,50 @@ token/duration variance
 tool/nested-call/fan-out variance
 ```
 
-## 격리 규칙
+## Isolation rules
 
-- output은 올바르고 grading만 실패하면 skill body를 늘리기 전에 `evaluation`을 검사한다.
-- selection은 올바르지만 `skill_loaded` 가 다르면 `loading` 또는 `compatibility` 를 검사한다.
-- 같은 decision이 반복되면 execution을 탓하기 전에 가장 이른 weak phase와 blocker fingerprint를 찾는다.
-- resource use가 증가하면 증가한 phase, retry, reference descent, tool loop, nested call 또는 fan-out을 식별한다.
-- 모든 self-reported cause 옆에 deterministic evidence를 요구한다.
+- When output is correct and only grading fails, inspect `evaluation` before expanding
+  the skill body.
+- When selection is correct but `skill_loaded` differs, inspect `loading` or
+  `compatibility`.
+- When the same decision repeats, find the earliest weak phase and blocker fingerprint
+  before blaming execution.
+- When resource use grows, identify the increased phase, retry, reference descent, tool
+  loop, nested call, or fan-out.
+- Require deterministic evidence beside every self-reported cause.
 
-## 효율성 비교
+## Efficiency comparison
 
-최소 하나의 anchor를 검증해야 한다:
+Verify at least one anchor:
 
 - previous stable ref;
 - no-skill baseline;
-- 같은 prompt의 prior verified run;
-- 명시적 token/time/tool threshold;
-- 비교 중인 candidate.
+- a prior verified run of the same prompt;
+- explicit token/time/tool threshold;
+- the candidate under comparison.
 
-prompt, host, model/config, tools, repository state 및 최소 두 trial을 맞춘다. metric이
-없으면 `null`/`Unverifiable` 로 남긴다. 절대 추정하지 않는다.
+Match the prompt, host, model/config, tools, repository state, and at least two trials.
+If a metric is unavailable, leave it `null`/`Unverifiable`; never estimate it.
 
-Resource savings는 다음을 상쇄할 수 없다:
+Resource savings cannot offset:
 
-- critical 또는 mechanical assertion regression;
-- safety, routing 또는 mutation regression;
-- 반복되는 새로운 `stuck | skipped`;
-- zero baseline에서의 retry regression;
-- control 또는 holdout regression.
+- a critical or mechanical assertion regression;
+- a safety, routing, or mutation regression;
+- recurring new `stuck | skipped` states;
+- a retry regression from a zero baseline;
+- a control or holdout regression.
 
-matched anchor가 없으면 현재 measurement를 `Profile only`로 보고한다.
+Without a matched anchor, report the current measurement as `Profile only`.
 
-## 진단 판정(Diagnostic verdict)
+## Diagnostic verdict
 
-- `Fail`: deterministic/critical regression, 반복되는 새 weak phase, 반복되는 retry regression 또는 savings를 위해 correctness를 교환함.
-- `Concern`: 한 번 발생한 unclear point/fill-in 또는 unmatched resource 증가.
-- `Pass`: normal checks가 통과하고 새로운 phase/retry/holdout regression이 반복되지 않으며, claimed efficiency improvement가 matched되고 검증됨.
-- `Unverifiable`: bounded attempts 후 fresh execution, parse, provenance 또는 필요한 matched metric을 사용할 수 없음.
+- `Fail`: deterministic/critical regression, recurring new weak phase, recurring retry
+  regression, or trading correctness for savings.
+- `Concern`: one unclear point/fill-in or unmatched resource increase.
+- `Pass`: normal checks pass, no new phase/retry/holdout regression recurs, and any
+  claimed efficiency improvement is matched and verified.
+- `Unverifiable`: fresh execution, parsing, provenance, or a required matched metric is
+  unavailable after bounded attempts.
 
-Diagnostic verdict는 diagnosis receipt 안의 evidence이며 skill의 terminal status와는
-같지 않다.
+The diagnostic verdict is evidence inside the diagnosis receipt; it is not the skill's
+terminal status.

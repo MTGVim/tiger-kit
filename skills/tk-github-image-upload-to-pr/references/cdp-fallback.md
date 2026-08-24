@@ -1,52 +1,54 @@
-# `CDP` 대체 경로
+# `CDP` fallback
 
-`gh-attach` 대신 `CDP`가 명시적으로 선택되었거나 대상 쓰기 권한이 없어 사용자가
-`CDP`로 계속하기로 한 경우에만 이 참고 자료를 읽습니다.
+Read this reference only when `CDP` was explicitly selected instead of `gh-attach`, or
+when the user chose to continue with `CDP` after target write access was unavailable.
 
-## 준비와 브라우저 식별
+## Preparation and browser identification
 
-브라우저 자동화 작업 공간 아래에 실행 소유 디렉터리를 만듭니다. 브라우저가
-접근하지 못할 수 있으므로 `/tmp`를 기본 준비 위치로 사용하지 않습니다. 이미지
-대체 텍스트에는 안전하고 설명적인 파일명을 사용합니다.
+Create a run-owned directory under the browser automation workspace. Do not use `/tmp`
+as the default staging location because the browser may be unable to access it. Use a
+safe, descriptive filename as the image alt text.
 
-브라우저 순서는 다음과 같습니다.
+Use this browser order:
 
-1. `CDP` 또는 `Chrome DevTools MCP`를 통한 인증된 기존 `Chrome` 세션
-2. `CDP`와 `Playwright`를 통한 인증된 영구 브라우저 프로필
-3. `Unverifiable`로 중단하고 `CDP` 복구 방법 설명
+1. an authenticated existing `Chrome` session through `CDP` or `Chrome DevTools MCP`;
+2. an authenticated persistent browser profile through `CDP` and `Playwright`;
+3. stop as `Unverifiable` and explain how to restore `CDP` access.
 
-첫 번째 선택지에서는 `chrome://inspect/#remote-debugging`,
-`Chrome DevTools MCP`의 `--autoConnect` 및 일회성 `Chrome` 허용 알림이 필요할 수 있음을
-설명합니다. 쿠키, 토큰 또는 비공개 신원 세부사항을 출력하지 않습니다. `Orca`
-또는 다른 데스크톱 제어기를 대체 경로로 실행하지 않습니다.
+For the first option, explain that `chrome://inspect/#remote-debugging`, `--autoConnect`
+for `Chrome DevTools MCP`, and a one-time `Chrome` permission prompt may be required.
+Do not print cookies, tokens, or private identity details. Do not launch `Orca` or
+another desktop controller as a fallback.
 
-`Chrome 136+`는 기본 데이터 디렉터리에 대한 원격 디버깅 스위치를 무시합니다.
-직접 실행한 종단점에는 전용 `--user-data-dir`와 일회성 로그인이 필요합니다.
-지원되는 `--autoConnect`는 사용자의 명시적 허용 동작 뒤에만 기존 프로필에
-연결할 수 있습니다. `DevToolsActivePort` 파일만 믿지 않고 현재 소켓과 브라우저
-종단점을 확인합니다.
+`Chrome 136+` ignores remote-debugging switches for the default data directory. A
+directly launched endpoint requires a dedicated `--user-data-dir` and one-time login.
+Supported `--autoConnect` can connect to an existing profile only after the user's
+explicit permission action. Do not trust a `DevToolsActivePort` file alone; verify the
+current socket and browser endpoint.
 
-## 업로드와 작성기 보호
+## Upload and composer protection
 
-대상 PR 페이지의 보이는 첨부 제어를 사용하고 숨겨진 파일 입력에 의존하지
-않습니다. 각 `![Uploading ...]()` 자리표시자가 실제
-`user-attachments/assets/...` URL 또는 동등한 이미지 요소가 될 때까지 횟수
-제한을 두고 확인합니다. 시간 초과면 마지막으로 화면에 보인 진단을 보존합니다.
+Use the visible attachment control on the target PR page rather than relying on a
+hidden file input. Poll with a bounded retry count until every `![Uploading ...]()`
+placeholder becomes an actual `user-attachments/assets/...` URL or equivalent image
+element. On timeout, preserve the last visible diagnostic.
 
-입력 전에 작성기를 검사합니다. 비어 있지 않은 사용자 초안은 차단 사유이며
-덮어쓰거나 제출하지 않습니다. 자산 URL을 수집한 뒤 실행 소유 작성기 내용만
-지우고 텍스트 영역이 비어 있으며 댓글 단추가 비활성인지 확인합니다. 업로드를
-시험하려고 빈 댓글을 제출하지 않습니다.
+Inspect the composer before entering anything. A non-empty user draft is a blocker;
+do not overwrite or submit it. After collecting asset URLs, clear only run-owned
+composer content and verify that the text area is empty and the comment button is
+disabled. Do not submit an empty comment to test the upload.
 
-## 렌더링 검증과 정리
+## Rendering verification and cleanup
 
-스킬이 요청된 본문/댓글을 갱신한 뒤 렌더링된 PR 페이지에서 모든 자산이 예상
-이미지로 나타나는지 확인합니다. 자리표시자, 마크다운 존재 또는 고정 지연만으로
-성공 처리하지 않습니다. 서명된 URL의 JWT나 질의 문자열을 노출하지 않습니다.
+After the skill updates the requested body/comment, verify on the rendered PR page
+that every asset appears as the expected image. Do not treat a placeholder, Markdown
+presence, or fixed delay as success. Do not expose JWTs or query strings from signed
+URLs.
 
-실행 소유 준비 디렉터리만 삭제하고 없어졌는지 확인합니다. 정리 실패면 정확한
-소유 경로를 보고하고 `Pass`를 주장하지 않습니다. 업로드 또는 검증 실패 뒤
-댓글을 제출하거나 다른 경로로 조용히 재시도하지 않습니다.
+Delete only the run-owned staging directory and verify its removal. If cleanup fails,
+report the exact owned path and do not claim `Pass`. After an upload or verification
+failure, do not submit a comment or silently retry through another path.
 
-이 절차는 [`github-upload-image-to-pr`](https://github.com/tonkotsuboy/github-upload-image-to-pr)를
-개념적으로 참고했으며 상위 소스를 복사하지 않습니다.
+This procedure draws conceptually from
+[`github-upload-image-to-pr`](https://github.com/tonkotsuboy/github-upload-image-to-pr)
+without copying the upstream source.
