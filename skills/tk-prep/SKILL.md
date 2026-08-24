@@ -26,9 +26,9 @@ Codex: request_user_input; Hermes: clarify). unavailable하면 plain chat으로 
 
 ## Evidence and questions
 
-Read the task source, repository instructions, relevant code/callers, tests, verification commands, and current Git state.
-Before creating anything, find existing components, helpers, types, schemas, clients, patterns, and conventions. Tie
-important claims to `path:line`, command output, or fresh state; do not invent facts.
+Read the task source, instructions, code/callers, tests, commands, Git state, and only materially relevant existing `CONTEXT.md`/ADR/design/domain glossary.
+Do not scan or create a documentation lifecycle; if fresher code/test/runtime evidence conflicts, surface it and confirm the source of truth.
+Before creating anything, find existing components, helpers, schemas, clients, patterns, and conventions; tie claims to `path:line`, command output, or fresh state.
 
 Ask one highest-impact question at a time only for:
 
@@ -36,7 +36,7 @@ Ask one highest-impact question at a time only for:
 2. risky/hard-to-reverse security, permission, data, compatibility, or UX decisions;
 3. an engineering exception after evidence shows readiness cannot be improved further.
 
-If evidence already determines the answer, recommend it instead of creating another choice.
+If evidence or precedent decides, recommend it; only unresolved material hard-to-reverse choices lazy-load [design comparison](references/design.md), and optional fan-out never blocks.
 
 ## Workspace safety
 
@@ -89,10 +89,10 @@ Evaluate Reuse, Simplicity, Testing, Security, and User experience independently
 needs a reason. Investigate → improve → reassess before presenting `개선 한계`; only then explain gap/risk/mitigation
 and obtain an exception without inflating the score.
 
-For every code-changing path, inspect real tests and load [behavior-first testing](references/testing.md) before approval.
-Close observable behavior, regression/RED, focused command, required suite, mutation risk, and
-`N/A` versus engineering-exception disposition. Do not add ceremonial tests for trivial/prose-only work. Browser
-verification never substitutes for appropriate automated regression protection.
+For every code-changing path, inspect real tests and load [behavior-first testing](references/testing.md) before approval. Close
+observable behavior, regression/RED, focused command, required suite, mutation risk, and `N/A` versus engineering exception.
+Do not add ceremonial tests for trivial/prose-only work; browser verification never substitutes for automated protection.
+원인과 exact RED seam이 명백하면 직행하고, hard/flaky/perf/재현 난해 bug만 [diagnosis](references/diagnosis.md)를 lazy-load해 fix hypothesis 전에 red-capable loop를 확보합니다. 불가능하면 근거를 남기고 임의 fix는 금지합니다.
 
 ## Browser verification
 

@@ -96,6 +96,11 @@ Code-changing plan은 실제 repository test surface를 조사하고 [behavior-f
 RED 가능 여부, focused command, required suite, realistic mutation, `N/A` 또는 engineering exception을 닫습니다.
 Reply-only, direct+TDD, SDD+TDD 중 practical route를 설명하되 내부 classification form은 노출하지 않습니다.
 
+원인과 exact regression seam이 명백한 feedback/CI 실패는 바로 기존 testing 경로로 갑니다. 원인 불명,
+intermittent/flaky, performance regression 또는 재현 난해한 hard CI/regression만
+[shared diagnosis](references/diagnosis.md)를 lazy-load하고 fix hypothesis 전에 red-capable feedback loop를
+확보합니다. 확보 불가 근거 없이 첫 추측을 수정안으로 고정하지 않습니다.
+
 Express model recommendations only as human-friendly guidance such as “mid-tier coding model,” “stronger final review,” or “independent work fan-out recommended.”
 Do not create provider selectors, model classes, reasoning effort, or `session.md`.
 Do not mark the task `Blocked` merely because this capability is unavailable.

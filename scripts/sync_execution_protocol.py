@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "skills/tk-prep/references"
 TARGET = ROOT / "skills/tk-pr-respond/references"
-FILES = ("testing.md", "sdd.md")
+FILES = ("testing.md", "sdd.md", "diagnosis.md")
 
 
 def main() -> int:

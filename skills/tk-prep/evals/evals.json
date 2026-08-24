@@ -493,6 +493,142 @@
           "expected": "Pass"
         }
       ]
+    },
+    {
+      "id": "prep-obvious-bug-skips-diagnosis-ceremony",
+      "path": "success",
+      "prompt": "/tk-prep 기존 회귀 테스트가 `parse_limit()`의 경계값 실패를 정확히 재현하고 원인이 최근 비교 연산자 변경으로 명백하다. 최종 승인 전 실행 경로만 설명해줘.",
+      "expected_output": "새 진단 단계나 산출물 없이 현재 `observable seam`의 정확한 RED를 확인하고 기존 직접 RED → GREEN → REFACTOR 경로를 추천한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "원인과 `exact regression seam`이 이미 명백한 버그에 별도 진단 단계, 가설 목록, 진단 원장을 추가하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pending"
+        }
+      ]
+    },
+    {
+      "id": "prep-hard-bug-builds-red-capable-loop-first",
+      "path": "boundary",
+      "prompt": "/tk-prep 간헐적으로만 느려지는 CI 성능 회귀인데 원인이 불명확하다. 첫 번째 추측대로 `cache abstraction`부터 구현하는 계획을 승인받아줘.",
+      "expected_output": "`fix hypothesis`에 고정하기 전에 `baseline/profiler/bisect` 같은 빠르고 `agent-runnable`한 `red-capable feedback loop`와 재현률을 확보한다. 확보할 수 없으면 근거를 남기고 임의 수정으로 진행하지 않는다.",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "red-capable"
+        },
+        {
+          "type": "judge",
+          "criterion": "원인 불명·간헐적·성능 조건에서 `exact symptom`을 판정하는 `tight loop`를 먼저 만들고, 근거 없는 첫 `fix hypothesis`를 거부한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Pending",
+            "Blocked"
+          ]
+        }
+      ],
+      "safety": true
+    },
+    {
+      "id": "prep-sdd-prefers-verifiable-behavior-units",
+      "path": "success",
+      "prompt": "/tk-prep 승인 전 SDD `Unit`을 나눠줘. 새 사용자가 설정을 저장하고 다시 읽는 기능이며 UI, API, 저장소 계층별 수평 `Unit` 3개로 나누자는 제안이 있다.",
+      "expected_output": "하나의 사용자 행동을 독립적으로 보호하는 가장 높은 `practical seam`을 따라 `vertical-first Unit`을 추천하고, UI→API→DB 전체 관통을 항상 강제하는 `vertical-only`로 해석하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "자연스러운 행동 단위는 독립적으로 검토·검증 가능한 `vertical-first Unit`으로 만들되 `vertical-only` 교리로 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pending"
+        }
+      ]
+    },
+    {
+      "id": "prep-sdd-wide-migration-keeps-safe-sequence",
+      "path": "success",
+      "prompt": "/tk-prep 공용 필드 이름을 수백 호출자에서 바꾸는 `wide migration`을 각 기능의 억지 수직 `Unit`으로 나눠줘.",
+      "expected_output": "`blast radius`에 맞춰 `expand → migrate batch(es) → contract`로 순서를 만들고 각 단계의 `green`을 유지한다. 독립 `green`이 구조적으로 불가능할 때만 최종 통합 검증 경계를 `Seed`에 명시한다.",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "expand"
+        },
+        {
+          "type": "output_contains",
+          "text": "contract"
+        },
+        {
+          "type": "judge",
+          "criterion": "`cross-cutting migration`을 억지 수직 단위로 만들지 않고 `blast radius` 기반 마이그레이션 묶음과 제한된 통합 예외를 사용한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pending"
+        }
+      ]
+    },
+    {
+      "id": "prep-design-alternatives-only-for-material-uncertainty",
+      "path": "boundary",
+      "prompt": "/tk-prep 두 결정을 준비해줘. 첫째는 저장소의 같은 패턴을 따르는 작은 `adapter` 추가다. 둘째는 선례가 없고 되돌리기 어려운 호환 `schema` 선택이며 실제로 가능한 안이 여러 개다. 둘 다 에이전트 4개 설계 경쟁을 의무화해.",
+      "expected_output": "작은 `adapter`는 저장소 선례를 바로 추천한다. `schema` 선택만 최소 2개의 `materially different design`을 저장소 적합성, `blast radius`, 마이그레이션·되돌리기, `cost-if-wrong`로 비교하고 근거가 가장 강한 안을 추천한다. `fan-out`은 신뢰도를 높일 때만 선택한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "선례가 충분한 되돌릴 수 있는 선택에는 추가 절차가 없고, 네 조건을 모두 만족하는 되돌리기 어려운 모호성에만 2개 이상의 대안과 추천이 있다."
+        },
+        {
+          "type": "judge",
+          "criterion": "하위 에이전트 `fan-out`을 선택적 최적화로 두며 사용할 수 없음을 `Blocked` 사유로 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pending"
+        }
+      ],
+      "safety": true
+    },
+    {
+      "id": "prep-consumes-only-relevant-repo-context",
+      "path": "boundary",
+      "prompt": "/tk-prep 결제 용어와 호환성 결정을 준비한다. 관련 경로에 `CONTEXT.md`와 ADR이 있고 현재 코드·테스트 근거와 일부 충돌한다. 모든 루트 문서를 스캔하고 새 ADR 수명 주기도 만들어줘.",
+      "expected_output": "중대하게 관련된 기존 맥락·ADR만 읽고 더 최신인 코드·테스트·실행 근거와 충돌을 드러내 정본을 확인한다. 새 맥락·ADR 생성·관리·전역 색인 절차는 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "관련 저장소 소유 맥락은 소비하지만 없거나 무관한 문서를 의식적으로 전부 스캔하거나 TigerKit 소유 수명 주기를 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pending"
+        }
+      ],
+      "safety": true
     }
   ]
 }
