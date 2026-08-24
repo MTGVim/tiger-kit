@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2026.08.24-1 — 릴리즈
+
 - `feat(tk-eli5)`: 큰 그림과 적은 글의 `self-contained HTML explainer skill` 추가.
 
 ## 2026.08.21-1 — 릴리즈
