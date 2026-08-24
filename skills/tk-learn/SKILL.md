@@ -29,29 +29,29 @@ Draft and apply are separate.
 - `apply gate`: Every checklist row must pass before writing to a `skill` path.
 
 ## Artifact-first draft checkpoint
-candidate 또는 apply approval이 필요하면 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). unavailable하면 같은 approval packet을 plain chat으로 fallback하고 승인 전 canonical skill path를 쓰지 않습니다.
+When candidate or apply approval is needed, prefer the host's native structured question surface (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). If unavailable, present the same approval packet in plain chat; do not write a canonical skill path before approval.
 
-새 초안을 만들 때는 승인 전 최소 초안 전체를 채팅에 출력하지
-않습니다. 먼저 저장소 루트의 `.tigerkit/learn.md` 에 `pending` 스크래치 장부를
-원자적으로 작성하고 같은 경로를 다시 읽어 검증합니다. 이 파일은 정본
-`skill` 경로도 아니고 `.tigerkit/skill-drafts/<skill-name>/` 도 아닙니다.
+For a new draft, do not print the full minimal draft in chat before approval. First atomically
+write a `pending` scratch ledger at repository-root `.tigerkit/learn.md`, then reread that same
+path for verification. This file is neither a canonical `skill` path nor
+`.tigerkit/skill-drafts/<skill-name>/`.
 
-`learn.md` 는 다음 필드를 한 번씩 소유합니다: 작업 `Status` (`Pending | Blocked`),
+`learn.md` owns each of these fields exactly once: work `Status` (`Pending | Blocked`),
 `Disposition` (`reported | applied | pending`),
 `Decision` (`proposed | merge | no-op | continue | pending`), `Candidate`,
-`Evidence` (각 주장에 대한 ID/source/`verified | unverified`), `Checklist` (각
-적용 검사의 `passed | pending | failed` 와 근거), `Target path` (정확한
-계획 경로와 `not created`), `Not created` (두 정본 쓰기 경계),
-`Next step` (하나의 실행 가능한 행동), `Updated` (작성 시각 또는 run ID).
+`Evidence` (ID/source/`verified | unverified` for every claim), `Checklist` (each apply
+check's `passed | pending | failed` state and evidence), `Target path` (the exact planned
+path and `not created`), `Not created` (both canonical write boundaries),
+`Next step` (one executable action), and `Updated` (write time or run ID).
 
-원자적 쓰기와 재읽기가 현재 후보/실행과 일치하면 `Disposition: applied` 를
-사용할 수 있지만, 적용 승인 전 작업 `Status: Pending` 은 유지합니다.
-`Disposition` 은 장부 쓰기/재읽기 결과이고 `Status` 와 같은 의미가 아닙니다.
+Use `Disposition: applied` when the atomic write and reread match the current candidate/run,
+but preserve work `Status: Pending` before apply approval. `Disposition` describes the ledger
+write/reread result and is not synonymous with `Status`.
 
-같은 디렉터리의 임시 파일을 만든 뒤 원자적으로 이름을 바꾸고 즉시 다시 읽습니다.
-필수 필드가 없거나 장부가 오래됐거나 없거나 재읽기 내용이 작성 내용과
-다르면 `Blocked` 로 중지하고 정본 경로에는 쓰지 않습니다. 기존 장부가
-다른 후보/실행을 가리키면 덮어쓰지 말고 `Blocked` 로 보고합니다.
+Create a temporary file in the same directory, atomically rename it, and reread immediately.
+If required fields are absent, the ledger is stale or missing, or the reread differs from the
+written content, stop as `Blocked` and do not write canonical paths. If an existing ledger points
+to another candidate/run, do not overwrite it; report `Blocked`.
 
 ## Workflow
 
@@ -101,12 +101,12 @@ one host's paths onto another host, perform cross-host fan-out/sync, or use
 
 | Trigger | Immediate action | What remains unresolved |
 |---|---|---|
-| 두 사례/workflow를 주장했지만 산출물을 읽을 수 없음 | 각각 `unverified` 로 기록하고 `learn.md` 를 `Blocked` 로 남김 | 정확한 산출물/검사를 요청함; 쓰지 않음 |
-| 일회성 사례 하나 또는 원시 로그만 있음 | 기준/개인정보와 `Decision: no-op`, `Status: Pending` 을 기록함 | 후보/경로를 만들지 않음 |
-| skill/기본 capability와 중복됨 | `merge | no-op` 과 근거를 보고함 | 새 디렉터리를 만들지 않음 |
-| 대상/이름/trigger 일부를 알 수 없음 | 지원되는 값은 `proposed`, 나머지는 `TBD` 로 `learn.md` 에 기록함 | 후보 식별을 `pending` 으로 유지함; 쓰지 않음 |
-| 증거/대상/승인이 충돌함 | 충돌과 하나의 결정을 제시함 | `Blocked` 로 중지 |
-| 쓰기/쓰기 후 검사가 실패함 | 기존 대상과 실행 임시 파일을 보존하고, 실행 소유임이 입증된 경우에만 부분적으로 생성된 새 대상을 제거함 | 정확히 재현·검증할 수 있을 때만 복구함; 소유권/보존이 불확실하면 `Blocked | Unverifiable`, 그 외에는 실제 경로와 `Fail` 을 보고함 |
+| Two cases/workflows are claimed but artifacts cannot be read | Record each as `unverified` and leave `learn.md` `Blocked` | Request exact artifacts/checks; do not write |
+| Only one one-off case or raw log exists | Record the threshold/privacy basis with `Decision: no-op`, `Status: Pending` | Create no candidate or path |
+| Duplicate of a skill/default capability | Report `merge | no-op` and rationale | Create no new directory |
+| Some target/name/trigger is unknown | Record supported values as `proposed` and the rest as `TBD` in `learn.md` | Keep candidate identity `pending`; do not write |
+| Evidence, target, or approval conflicts | Present the conflict and one decision | Stop as `Blocked` |
+| Write/post-write verification fails | Preserve the existing target and run temporary file; remove a partially created new target only when run ownership is proven | Recover only when exactly reproducible/verifiable; report `Blocked | Unverifiable` when ownership/preservation is unclear, otherwise report the actual path and `Fail` |
 
 ## 🔴 CHECKPOINT · 🛑 STOP (Approval and stop point)
 
@@ -122,12 +122,11 @@ approval. The failure table owns the one-off `no-op` status.
 
 ## Output contract
 
-산출물 작성 후에는 절대 `learn.md` 경로와 `Decision`/`Status`/`Disposition` 를 먼저
-보고하고, 핵심 결과를 1~3줄로만 요약합니다. 마지막에는 승인 질문을
-정확히 하나만 둡니다. 장부가 소유하는 `Evidence`, `Dedupe`, `Candidate`,
-`Target path`, `Verification`, `Remaining concerns` 의 전문을 채팅에 복사하지
-않습니다. threshold 실패 또는 중복으로 인한 no-op도 같은 artifact-first 규칙을
-따릅니다.
+After writing the artifact, first report the exact `learn.md` path and
+`Decision`/`Status`/`Disposition`, then summarize the key result in only `1–3` lines. End with
+exactly one approval question. Do not copy the ledger's full `Evidence`, `Dedupe`, `Candidate`,
+`Target path`, `Verification`, or `Remaining concerns` into chat. A no-op caused by a threshold
+failure or duplicate follows the same artifact-first rule.
 
 ## Prohibitions / antipatterns
 

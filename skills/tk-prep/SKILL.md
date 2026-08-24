@@ -19,10 +19,10 @@ cover source/test/config edits, verification, isolated workspace setup, and loca
 merge, publication/release, destructive cleanup, secrets, or unrelated Git mutation.
 
 **Keep conversation natural and state strict.** Do not expose internal scores, durable-artifact classification, or
-execution routing as a form/report. Explain important judgments with recommendations and reasons. 사용자 소유 질문·선택·
-승인이 필요하면 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion;
-Codex: request_user_input; Hermes: clarify). unavailable하면 plain chat으로 fallback하고 secret이나 parent-owned
-결정을 다시 묻지 않습니다.
+execution routing as a form/report. Explain important judgments with recommendations and reasons. When a user-owned
+question, choice, or approval is needed, prefer the host's native structured question surface (Claude Code: AskUserQuestion;
+Codex: request_user_input; Hermes: clarify). If unavailable, fall back to plain chat; never ask again for a secret or a
+parent-owned decision.
 
 ## Evidence and questions
 
@@ -92,7 +92,7 @@ and obtain an exception without inflating the score.
 For every code-changing path, inspect real tests and load [behavior-first testing](references/testing.md) before approval. Close
 observable behavior, regression/RED, focused command, required suite, mutation risk, and `N/A` versus engineering exception.
 Do not add ceremonial tests for trivial/prose-only work; browser verification never substitutes for automated protection.
-원인과 exact RED seam이 명백하면 직행하고, hard/flaky/perf/재현 난해 bug만 [diagnosis](references/diagnosis.md)를 lazy-load해 fix hypothesis 전에 red-capable loop를 확보합니다. 불가능하면 근거를 남기고 임의 fix는 금지합니다.
+When the cause and exact RED seam are obvious, proceed directly. Lazy-load [diagnosis](references/diagnosis.md) only for hard, flaky, performance, or difficult-to-reproduce bugs and establish a red-capable loop before a fix hypothesis. If that is impossible, record why and do not apply a speculative fix.
 
 ## Browser verification
 

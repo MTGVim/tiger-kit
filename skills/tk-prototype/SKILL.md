@@ -19,7 +19,7 @@ Accept a `prompt`, idea, screenshot, `spec`, `ticket`, code, or design reference
 Write under `.tigerkit/prototypes/<slug>/` unless a temporary `route`/`harness` is more
 useful. Create parent directories only when needed, replace atomically when possible, and
 do not automatically archive or edit `.gitignore`. Warn if the `scratch` path is tracked.
-실행 전 temporary path, data boundary, verification question 또는 variant 선택이 필요하면 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). unavailable하면 같은 확인을 plain chat으로 fallback하고 실행 후 비교 보고에는 question surface를 호출하지 않습니다.
+Before execution, prefer the host's native structured question surface when a temporary path, data boundary, verification question, or variant choice is needed (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). If unavailable, ask the same question in plain chat; do not invoke the question surface for the post-execution comparison report.
 
 ## Workflow
 

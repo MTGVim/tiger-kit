@@ -22,7 +22,7 @@ and performs changes, verification, push, reply, resolve, and any required re-re
 
 Do not expose internal `apply | reply | defer` classifications, worker placement, or GitHub state as a raw report.
 The user needs to know what the review means, how it will be addressed, why that approach is appropriate, and what will be verified.
-resolution plan 또는 mutation/publication approval이 필요하면 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). unavailable하면 같은 plan을 plain chat으로 fallback하고 parent-approved exact decision은 다시 묻지 않습니다.
+When a resolution plan or mutation/publication approval is needed, prefer the host's native structured question surface (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). If unavailable, present the same plan in plain chat; do not ask again for an exact decision approved by the parent.
 
 ## Fresh state
 
@@ -60,12 +60,12 @@ Example:
 If the review text already specifies the required outcome, do not ask the same question again.
 Investigate repository evidence independently, then explain the recommendation and rationale for decisions about reuse, simplification, testing, security, and user experience.
 
-리뷰 원문이 명시적으로 코드 수정을 요구하면 이를 reply-only 또는 보류로 재분류하지 않습니다. 그렇게 override하려면 현재 턴의 명시적 사용자 재승인이나 확인 가능한 과거 승인 기록(대화 로그·메모리)이 필요하며, 과거 자기 답글의 승인 문구만으로는 증거가 되지 않습니다.
+When review text explicitly requires a code change, do not reclassify it as reply-only or deferred. Overriding that requirement needs explicit user reapproval in the current turn or a verifiable prior approval record (conversation log or memory); approval wording in the agent's own earlier reply is not evidence.
 
-리뷰가 UI 텍스트를 지적하면 현재 화면에 렌더되는 문자열을 component prop, i18n entry, option constant 또는 제공된 screenshot으로 확인한 뒤 verbatim으로 답변합니다. 티켓의 의역이나 code identifier/enum을 그대로 반복하지 않으며, 근거가 없거나 충돌하는 문자열은 사실로 단정하지 않고 `Unverifiable` 또는 필요한 확인으로 남깁니다.
+When review feedback concerns UI text, verify the currently rendered string through a component prop, i18n entry, option constant, or supplied screenshot, then reply verbatim. Do not repeat a ticket paraphrase or code identifier/enum as visible text. Leave an unsupported or conflicting string `Unverifiable` or request the needed confirmation.
 
-리뷰가 test 추가를 요구하면 파일 존재나 source-text assertion으로 닫지 않습니다. 지적된 regression을 재현하고
-real behavior/side effect가 다시 깨질 때 실패하는 protection으로 만듭니다.
+When feedback requests a test, do not close it with file-existence or source-text assertions. Reproduce the reported
+regression and add protection that fails when the real behavior or side effect breaks again.
 
 Ask the user directly only about:
 
@@ -92,14 +92,14 @@ At minimum, cover:
 - bounded publication scope for push/reply/resolve/re-review
 - recommendation for execution mode and model level
 
-Code-changing plan은 실제 repository test surface를 조사하고 [behavior-first testing](references/testing.md)에 따라
-RED 가능 여부, focused command, required suite, realistic mutation, `N/A` 또는 engineering exception을 닫습니다.
-Reply-only, direct+TDD, SDD+TDD 중 practical route를 설명하되 내부 classification form은 노출하지 않습니다.
+For a code-changing plan, inspect the actual repository test surface and use [behavior-first testing](references/testing.md)
+to resolve RED feasibility, the focused command, required suite, realistic mutation, and any `N/A` or engineering exception.
+Explain the practical route among reply-only, direct+TDD, and SDD+TDD without exposing an internal classification form.
 
-원인과 exact regression seam이 명백한 feedback/CI 실패는 바로 기존 testing 경로로 갑니다. 원인 불명,
-intermittent/flaky, performance regression 또는 재현 난해한 hard CI/regression만
-[shared diagnosis](references/diagnosis.md)를 lazy-load하고 fix hypothesis 전에 red-capable feedback loop를
-확보합니다. 확보 불가 근거 없이 첫 추측을 수정안으로 고정하지 않습니다.
+Send feedback/CI failures with an obvious cause and exact regression seam directly through the existing testing path.
+Lazy-load [shared diagnosis](references/diagnosis.md) only for unknown-cause, intermittent/flaky, performance, or
+difficult-to-reproduce hard CI/regression cases, and establish a red-capable feedback loop before a fix hypothesis.
+Do not lock the first guess into a change without evidence that such a loop cannot be established.
 
 Express model recommendations only as human-friendly guidance such as “mid-tier coding model,” “stronger final review,” or “independent work fan-out recommended.”
 Do not create provider selectors, model classes, reasoning effort, or `session.md`.
@@ -133,11 +133,11 @@ The Seed must contain at least the following PR context. Keep user-facing Seed a
 - publication boundary
 - implementation guidance needed by a lower-capability executor
 
-이미 활성 Ready Seed가 같은 PR/head/feedback 작업과 정확히 일치하면 재작성하거나 같은 결정을 다시 묻지 않습니다.
-새 feedback이나 fresh state가 Seed의 goal/scope/decision/AC를 material하게 바꾸면 기존 파일을 보존하고 해당 부분을
-대화에서 다시 준비·승인한 뒤 새 Ready Seed로 atomic replace합니다.
+If an active Ready Seed exactly matches the same PR/head/feedback work, do not rewrite it or ask the same decision again.
+If new feedback or fresh state materially changes the Seed's goal/scope/decision/AC, preserve the existing file,
+prepare and approve the changed portion in conversation, then atomically replace it with a new Ready Seed.
 
-코드 변경 없이 reply만 하는 경우에는 새 Seed를 만들 필요가 없습니다.
+A reply-only task with no code change does not need a new Seed.
 
 ## Execution
 
@@ -176,7 +176,7 @@ Then perform only the approved actions in this order.
 3. Resolve only threads whose reply succeeded and whose resolution was actually verified.
 4. Fresh-read reviews/threads/checks.
 5. For every human reviewer whose current review state is `CHANGES_REQUESTED`, or whose feedback included an item classified as requiring a code change that resulted in a verified code change regardless of current review state (including `COMMENTED`), fresh-verify eligibility and request re-review for the exact current head. Exclude the author, authenticated user, bots, and still-valid approvers. Reply-only feedback with no code change does not require re-review.
-6. After all actionable threads are closed, when a re-review is required or actionable feedback was answered with no outstanding request, fresh-read the exact current head and post exactly one current-head summary comment containing `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, with `<HEAD_SHA>` replaced by the exact observed head SHA. If that marker already exists exactly once for the current head, do not post another. A summary for an earlier head does not satisfy this requirement. 요약 코멘트는 내부 처리 기록이 아니라 리뷰어에게 보내는 실제 메시지로 작성한다. 리뷰어가 식별되면 `@mention`으로 직접 호명하고, 각 지적과 대응을 자연스러운 서술 또는 매칭되는 표로 설명한다. 검사 결과나 집계만 나열하는 3인칭 완료 로그는 금지한다.
+6. After all actionable threads are closed, when a re-review is required or actionable feedback was answered with no outstanding request, fresh-read the exact current head and post exactly one current-head summary comment containing `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, with `<HEAD_SHA>` replaced by the exact observed head SHA. If that marker already exists exactly once for the current head, do not post another. A summary for an earlier head does not satisfy this requirement. Write the summary as a real message to the reviewer, not an internal processing record. When the reviewer is identifiable, address them with `@mention` and explain each finding and response in natural prose or a matching table. Do not publish a third-person completion log that only lists checks or totals.
 
 Do not claim publication complete unless fresh evidence proves every required `CHANGES_REQUESTED` reviewer re-review request, zero actionable unresolved threads, and any required current-head summary comment after the threads were closed. Missing evidence is `Unverifiable`, not complete.
 Do not claim completion while any unresolved inline thread remains.

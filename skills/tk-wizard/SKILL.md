@@ -20,7 +20,7 @@ like an approval document.
 
 Initially describe the full journey in only 1–3 sentences, then naturally guide the user through
 one action they must take now. Do not repeatedly confirm already completed steps.
-사용자가 action이나 비가역 confirmation을 선택해야 하면 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). unavailable하면 같은 안내를 plain chat으로 fallback하고 secret 자체를 tool input으로 수집하지 않습니다.
+When the user must choose an action or irreversible confirmation, prefer the host's native structured question surface (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). If unavailable, give the same guidance in plain chat; never collect the secret itself as tool input.
 
 ## Scope
 
@@ -37,8 +37,8 @@ are outside this skill's scope.
 
 ## Research and Planning
 
-`upstream provenance` 또는 `adaptation` 판단이 필요할 때만 [upstream 증류](references/upstream-distillation.md)를 읽고,
-일반 `wizard` 실행에서는 읽지 않습니다.
+Read [upstream distillation](references/upstream-distillation.md) only when deciding `upstream provenance` or `adaptation`;
+do not read it during an ordinary `wizard` run.
 
 First read the `repository` and current `host` `evidence` to build this internal state:
 

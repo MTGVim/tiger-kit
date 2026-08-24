@@ -12,13 +12,13 @@ metadata:
 
 # Open a PR
 
-Start when the intent to create or update one `PR` is explicit, such as `/tk-pr-open`, `$tk-pr-open`, selection through the host skill picker, or “현재 브랜치로 PR 열어줘”.
+Start when the intent to create or update one `PR` is explicit, such as `/tk-pr-open`, `$tk-pr-open`, selection through the host skill picker, or `현재 브랜치로 PR 열어줘`.
 
 The input is an already implemented and verified current-branch `commit`.
 If a prepared `.tigerkit/seed.md` exists, read the work `goal`, `acceptance`, and `browser evidence requirement`, but the `Seed` itself does not grant publication authority.
 
 Do not repeat implementation, create a `worker`, or add product `commit`s.
-template 선택 또는 remote publication approval이 필요하면 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). unavailable하면 같은 approval packet을 plain chat으로 fallback하고 exact current-turn approval 전 remote write를 하지 않습니다.
+When template selection or remote publication approval is needed, prefer the host's native structured question surface (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). If unavailable, present the same approval packet in plain chat; do not write remotely before exact current-turn approval.
 
 ## Current state
 
@@ -28,7 +28,7 @@ First, verify the following.
 - Current branch and `HEAD`
 - Base branch
 - Target `commit` and changed paths
-- 같은 `head`의 기존 `PR` 존재 여부와 `observed draft | ready` 상태
+- Whether a `PR` already exists for the same `head`, and its `observed draft | ready` state
 - Unrelated dirty/staged paths
 - Target repository's `PR template`
 
@@ -84,32 +84,32 @@ Known exclusions
 ```
 
 This artifact owns only the current `PR` publication plan, not the product work plan or `worker` state.
-새 `PR`은 사용자가 `draft`를 명시할 때만 `draft`로 만들고, 상태를 명시하지 않으면 기존 `ready` 동작을 유지합니다.
-기존 같은 `head`의 `PR`은 상태 변경 요청이 없으면 `fresh-read`한 상태를 보존합니다.
+Create a new `PR` as `draft` only when the user explicitly requests `draft`; otherwise preserve the existing `ready` behavior.
+For an existing same-`head` `PR`, preserve its fresh-read state unless a state change was requested.
 
 Present the following naturally to the user instead of hiding information behind a file they must open.
 
-- 포함되는 변경 요약
-- 정확한 제목/본문 또는 중요한 템플릿 섹션
-- 기준/헤드
-- 유효 `PR state`
-- 검사/증거 상태
-- 제외 범위/위험
-- 한 가지 발행 추천
+- Summary of included changes
+- Exact title/body or important template sections
+- Base/head
+- Valid `PR state`
+- Check/evidence state
+- Exclusions/risks
+- One publication recommendation
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Publication boundary
 
-Before any remote write, reread the plan and obtain one exact current-turn approval; do not treat the natural-language request “PR 열어줘” itself as publication approval. 승인에는 유효 `PR state`도 포함합니다.
+Before any remote write, reread the plan and obtain one exact current-turn approval; do not treat the natural-language request `PR 열어줘` itself as publication approval. The approval must include a valid `PR state`.
 STOP if the plan, approved `commit`, template/evidence state, or current repository state cannot be reverified.
 
 ## Publication
 
 After approval, recheck the repository, account, branch, `HEAD`, base, existing `PR`, and template source.
-기존 `PR`의 `actual state`가 승인된 `plan`과 `material`하게 달라졌다면 승인을 무효화합니다.
+Invalidate approval when an existing `PR`'s `actual state` materially differs from the approved `plan`.
 Invalidate the approval if any material `drift` exists.
 
 `push` only the exact approved `refspec`, and create or update only the specified `PR`.
-`Create`에서는 승인된 `PR state`를 적용하고, `update`에서는 명시적으로 승인된 경우에만 상태를 변경합니다.
+For `create`, apply the approved `PR state`; for `update`, change state only when explicitly approved.
 Do not `merge`, `close`, `tag`, or `release`.
 
 After creating or updating the `PR`, reread the remote `PR` and verify its URL, `head SHA`, actual `draft | ready` state, template compliance, and evidence state.
@@ -118,13 +118,13 @@ If the `PR` was created but the required evidence upload fails, preserve the act
 
 ## Completion
 
-사용자에게 중요한 결과만 보여줍니다.
+Show only results important to the user.
 
 - `PR` URL
-- 생성/업데이트 여부
-- 현재 `head`
-- 현재 `PR state`
-- 검증/증거 결과
-- 남은 차단 요인
+- Whether it was created or updated
+- Current `head`
+- Current `PR state`
+- Verification/evidence result
+- Remaining blockers
 
 Do not show provenance dumps or product implementation receipts.

@@ -32,7 +32,7 @@ Keep the internal investigation rigorous, but present the result as a natural ex
 - Place `path:line` evidence next to each important repository claim.
 - Do not show internal classifications, checkpoints, or search ledgers by default.
 - Use short prose or a limited list unless a comparison truly requires a table.
-- Explain interactively one step at a time only when the user says “하나씩 따라가며 설명해줘”.
+- Explain interactively one step at a time only when the user says `하나씩 따라가며 설명해줘`.
 
 ## UI literal evidence
 
@@ -98,8 +98,8 @@ When asked about ownership, check consuming-side transformations, permissions, f
 
 ### Existence
 
-현재 기준선, 관련 진행 중 변경과 실제 연결 상태를 근거로
-`없음 | 아직 반영되지 않음 | 자리만 있음 | 실제 사용 중` 의미를 구분합니다.
+Use the current baseline, relevant in-progress changes, and actual connection state to distinguish
+`없음 | 아직 반영되지 않음 | 자리만 있음 | 실제 사용 중`.
 
 ### Impact and Ownership
 
@@ -129,13 +129,13 @@ Place important evidence next to the corresponding explanation.
 
 Always end the response with `## 공유용 요약`.
 
-공유용 요약은:
+The shareable summary must:
 
-- `3~10`줄
-- 본문에서 이미 검증된 사실만 사용
-- 새로운 추론이나 새 결론을 만들지 않음
-- 코드 내부 상세보다 결론, 영향, 책임 경계 중심
-- 타팀, 기획, 백엔드, 리뷰어에게 그대로 전달할 수 있는 자연스러운 문장
+- Use `3–10` lines
+- Use only facts already verified in the main response
+- Add no new inference or conclusion
+- Focus on conclusions, impact, and ownership boundaries rather than internal code details
+- Use natural sentences that can be forwarded unchanged to another team, product, backend, or reviewer
 
-조사가 실패한 경우에도 확인된 사실이 있다면 공유 가능한 범위만 요약하고,
-확인되지 않은 내용은 확인되지 않았다고 명시합니다.
+If the investigation fails but some facts were verified, summarize only the shareable portion and explicitly mark
+anything unverified as unverified.

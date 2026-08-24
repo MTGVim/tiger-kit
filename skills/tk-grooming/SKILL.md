@@ -15,7 +15,7 @@ metadata:
 Apply only upon an explicit invocation concerning existing rules or skills, or a clear
 audit request. Do not apply automatically to general cleanup or implementation requests.
 Implicit mode is report-only.
-ownership evidence나 apply approval을 물을 때 host별 native structured question surface를 우선 사용합니다 (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). unavailable하면 같은 결정을 plain chat으로 fallback하고 승인 범위를 넘겨 쓰지 않습니다.
+When ownership evidence or apply approval is needed, prefer the host's native structured question surface (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). If unavailable, ask the same decision in plain chat and do not write beyond the approved scope.
 
 ## Workflow
 

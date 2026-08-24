@@ -49,10 +49,9 @@ incompatible requirements, record the tradeoff and continue.
 
 ## Resolution `receipt` · Single Evidence Record
 
-모든 해결 실행은 아래 하나의 `receipt`로 남깁니다. 이는 별도 결과 섹션이
-아니라 `Operation` → `Resolution` → `Verification` → `Follow-up` 보고의 단일
-증거 기록입니다. 알 수 없는 값은 `unavailable` 또는 `not run` 으로 적고
-추측하지 않습니다.
+Record every resolution run in the single `receipt` below. It is not a separate result section,
+but the sole evidence record for the `Operation` → `Resolution` → `Verification` → `Follow-up`
+report. Use `unavailable` or `not run` for unknown values; never guess.
 
 ```text
 Operation: <merge | rebase | cherry-pick | revert> / <state + step>
@@ -110,15 +109,14 @@ does not automatically authorize `abort`, `reset --hard`, `clean`, force `push`,
 
 ## Completion Report
 
-비어 있지 않은 섹션만 `Operation`, `Resolution`, `Verification`, `Follow-up` 순서로
-사용합니다. `Operation` 은 `kind`, `state`, `stage`, `status`, 미검증 항목, `reference`,
-`continue` 결과를 소유하고, `Resolution` 은 충돌, 의도, 선택 결과를 소유하며,
-`Verification` 은 테스트·표식·인덱스 검사를 소유합니다. `Follow-up`에는 남은
-작업만 적습니다. 원격 반영에는 별도 요청이 필요합니다.
+Use only non-empty sections in `Operation`, `Resolution`, `Verification`, `Follow-up` order.
+`Operation` owns `kind`, `state`, `stage`, `status`, unverified items, `reference`, and the
+`continue` result. `Resolution` owns conflicts, intent, and chosen results; `Verification` owns
+tests, marker checks, and index checks. Put only remaining work in `Follow-up`. Remote publication
+requires a separate request.
 
-해결한 충돌 경로가 여러 개면 `Resolution` 을 간결한 `Path | Intent | Result`
-표로 표시하고, 사용자에게 중요한 행이 하나면 문장으로 씁니다. 해결 결과부터
-시작하며 해결 행을 반복하거나 메타데이터를 덧붙이지 않습니다. 복합 의도, 해결한
-경로 묶음, 검증을 2~5개의 짧은 행/글머리표로 요약합니다. 경로가 8개 이상이면
-상위 5~7개의 의도/결과 행으로 묶고 정확한 나머지 경로를 인용합니다. 할당량이
-아니라 예산을 사용합니다.
+For multiple resolved conflict paths, show `Resolution` as a concise `Path | Intent | Result`
+table; use a sentence when only one row matters to the user. Start with the resolution result and
+do not repeat rows or append metadata. Summarize compound intent, resolved path groups, and
+verification in `2–5` short rows/bullets. For `8+` paths, group the top `5–7` intent/result rows
+and cite the exact remaining paths. Treat these numbers as a budget, not a quota.

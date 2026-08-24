@@ -76,6 +76,8 @@ DIRECT_MODEL_ROUTING = re.compile(
     re.IGNORECASE,
 )
 SHARED_EXECUTION_PROTOCOLS = ("testing.md", "sdd.md")
+HANGUL = re.compile(r"[가-힣]")
+INLINE_CODE = re.compile(r"`+[^`]*`+")
 
 
 def scalar(value: str) -> object:
@@ -175,6 +177,29 @@ def _safe_relative(value: object) -> bool:
     )
 
 
+def _validate_skill_body_language(text: str, label: str) -> list[str]:
+    lines = text.splitlines()
+    start = 0
+    if lines and lines[0] == "---":
+        try:
+            start = lines.index("---", 1) + 1
+        except ValueError:
+            return []
+
+    errors: list[str] = []
+    in_fence = False
+    for number, line in enumerate(lines[start:], start + 1):
+        if line.lstrip().startswith(("```", "~~~")):
+            in_fence = not in_fence
+            continue
+        if not in_fence and HANGUL.search(INLINE_CODE.sub("", line)):
+            errors.append(
+                f"{label}/SKILL.md:{number}: model-facing narrative must be English; "
+                "keep Korean only in frontmatter or exact inline/fenced literals"
+            )
+    return errors
+
+
 def validate_frontmatter_and_body(
     name: str, skill_dir: Path, data: dict[str, object], text: str
 ) -> tuple[list[str], list[str]]:
@@ -186,6 +211,8 @@ def validate_frontmatter_and_body(
     kind = nested(data, "metadata", "tigerkit", "kind")
     origin = nested(data, "metadata", "tigerkit", "origin")
     relationship = nested(data, "metadata", "tigerkit", "relationship")
+
+    errors.extend(_validate_skill_body_language(text, label))
 
     unknown = sorted(set(data) - CORE_FRONTMATTER_FIELDS - HOST_EXTENSION_FIELDS)
     if unknown:

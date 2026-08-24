@@ -12,7 +12,7 @@ metadata:
 
 # Re-explain the Previous Explanation
 
-Use only when the user **explicitly** requests it with `/tk-mwhat` or phrases such as “뭐라고?”, “뭐라는 거야?”, or “무슨 말이죠?”. The input is only the **immediately preceding explanation/source** in the conversation. If none exists or the reference is ambiguous, output exactly `Unverifiable` and stop.
+Use only when the user **explicitly** requests it with `/tk-mwhat` or phrases such as `뭐라고?`, `뭐라는 거야?`, or `무슨 말이죠?`. The input is only the **immediately preceding explanation/source** in the conversation. If none exists or the reference is ambiguous, output exactly `Unverifiable` and stop.
 
 ## Output
 
@@ -36,7 +36,6 @@ After the re-explanation, **`hard stop`**. Do not modify files, implement anythi
 
 ## Source
 
-과거 선행 사례: TigerKit `mwhat` (커밋 `c6963e8`, `skills/mwhat/SKILL.md`)의
-두 블록 짧은 한국어 설명, 정확한 원본/리터럴 보존, 구현 계약 없음입니다.
-Matt Pocock의 `wait-what` 원본은 이 체크아웃/기록에서 확인되지 않아 동작을
-추정하지 않았다.
+Prior precedent is TigerKit `mwhat` (commit `c6963e8`, `skills/mwhat/SKILL.md`):
+two short Korean explanation blocks, exact source/literal preservation, and no implementation contract.
+Matt Pocock's original `wait-what` was not available in this checkout or its records, so no behavior was inferred.
