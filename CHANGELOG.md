@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- `feat(engineering)`: hard bug 진단, vertical-first SDD, material design 비교와 evidence-first architecture audit을 기존 `tk-prep`/`tk-pr-respond`/`tk-audit`에 조건부로 통합.
+- `feat(engineering)`: 난해한 버그 진단, 행동 단위 수직 우선 SDD, 중대한 설계 비교와 근거 우선 아키텍처 감사를 기존 `tk-prep`/`tk-pr-respond`/`tk-audit`에 조건부로 통합.
 
 ## 2026.08.24-1 — 릴리즈
 

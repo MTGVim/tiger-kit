@@ -154,12 +154,12 @@
     {
       "id": "audit-architecture-doctrine-is-not-a-finding",
       "path": "boundary",
-      "prompt": "$tk-audit architecture 현재 React composition wrapper와 framework adapter가 얇다는 이유만으로 모두 high-confidence finding으로 기록해 주세요. 실제 bug risk, navigation cost, change hotspot 근거는 없습니다.",
-      "expected_output": "thin wrapper, adapter, React/framework idiom 또는 deep-module vocabulary 자체를 defect로 취급하지 않고 path/symbol evidence와 concrete maintenance/test impact가 없으므로 finding을 만들지 않는다.",
+      "prompt": "$tk-audit 아키텍처 현재 `React composition wrapper`와 `framework adapter`가 얇다는 이유만으로 모두 고신뢰 발견으로 기록해 주세요. 실제 버그 위험, 탐색 비용, 변경 `hotspot` 근거는 없습니다.",
+      "expected_output": "`thin wrapper/adapter`, `React/framework idiom` 또는 `deep-module vocabulary` 자체를 결함으로 취급하지 않고 경로·기호 근거와 구체적 유지보수·테스트 영향이 없으므로 발견을 만들지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "generic architecture doctrine만으로 AUD finding을 만들지 않고 기존 evidence+impact gate를 보존한다."
+          "criterion": "일반 아키텍처 교리만으로 AUD 발견을 만들지 않고 기존 근거·영향 관문을 보존한다."
         },
         {
           "type": "changed_paths_equal",
@@ -181,12 +181,12 @@
     {
       "id": "audit-architecture-hotspot-needs-behavior-evidence",
       "path": "success",
-      "prompt": "$tk-audit architecture 최근 변경 history에서 같은 orchestration 경계가 반복 hotspot이고 여러 unrelated 파일 왕복과 실제 회귀가 연결되어 있습니다. pure helper tests만 있고 integration behavior 보호는 없습니다. 근거가 확인되면 audit해 주세요.",
-      "expected_output": "recent history/hotspot, navigation/locality cost, orchestration regression, missing integration behavior surface를 path/symbol evidence와 impact에 연결한 AUD finding을 만들고 deletion thought experiment는 후보 판단 근거로만 사용한다.",
+      "prompt": "$tk-audit 아키텍처 최근 변경 이력에서 같은 `orchestration` 경계가 반복 `hotspot`이고 여러 무관한 파일 왕복과 실제 회귀가 연결되어 있습니다. 순수 보조 함수 테스트만 있고 통합 행동 보호는 없습니다. 근거가 확인되면 감사해 주세요.",
+      "expected_output": "최근 이력·`hotspot`, 탐색·`locality` 비용, `orchestration` 회귀, 누락된 통합 행동 표면을 경로·기호 근거와 영향에 연결한 AUD 발견을 만들고 `deletion thought experiment`는 후보 판단 근거로만 사용한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "hotspot/locality/navigation/test-surface/deletion-test 관점을 사용하되 확인된 repository evidence와 maintenance/test impact가 있을 때만 finding으로 승격한다."
+          "criterion": "`hotspot/locality/navigation/test-surface/deletion-test` 관점을 사용하되 확인된 저장소 근거와 유지보수·테스트 영향이 있을 때만 발견으로 승격한다."
         },
         {
           "type": "path_exists",
