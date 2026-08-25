@@ -41,6 +41,27 @@ TigerKit procedure. When upstream evidence exists:
 - Before approval, candidate state is `reported | pending` and no files are applied.
   Only post-approval success receives `applied`.
 
+## Behavior-first evaluation
+
+Source-text presence, a successful grep, or proof that a file was loaded does not by
+itself prove skill behavior. Use observable outcomes and realistic judge criteria.
+
+- For a new skill, observe a no-skill baseline when practical. For a semantic edit to
+  an existing skill, compare the prior skill and candidate on the same scenarios.
+  If the required baseline cannot run, mark it `unverified` instead of substituting a
+  source-text check.
+- For a discipline-enforcing skill, use combined pressure and rationalization scenarios
+  that make violation tempting and require an observable choice.
+- For a technique skill, test new applications, variations, missing information, and
+  relevant edge cases rather than replaying only the source example.
+- For a pattern or mental-model skill, test recognition and application plus a
+  counter-example that establishes when not to apply it.
+- For a reference skill, verify that the agent finds the needed information and applies
+  it correctly to a realistic task; text retrieval alone is insufficient.
+- When a description changes, compare prior and candidate positive/negative routing,
+  including false-positive invocation, and verify that the candidate still follows the
+  body behavior rather than treating the description as the procedure.
+
 ## Draft artifact checkpoint
 
 Before approval, record the draft only in `.tigerkit/learn.md` at the repository root as

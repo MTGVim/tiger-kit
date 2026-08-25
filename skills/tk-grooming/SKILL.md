@@ -1,6 +1,6 @@
 ---
 name: tk-grooming
-description: "[user/auto] 기존 repository 또는 user skill의 중복·범위·배치·trigger를 감사합니다. 기본값은 report-only이며 literal --apply 또는 current-turn approval 전에는 절대 변경하지 않습니다."
+description: "[user/auto] 기존 repository 또는 user skill의 중복·범위·배치·trigger 또는 description/body shortcut risk를 감사할 때 사용합니다. 일반 code cleanup이나 신규 skill 작성에는 사용하지 않습니다."
 disable-model-invocation: false
 argument-hint: "[scope] [--apply]"
 metadata:
@@ -12,7 +12,7 @@ metadata:
 
 # Skill Grooming Audit
 
-Apply only upon an explicit invocation concerning existing rules or skills, or a clear
+Apply only upon an explicit invocation concerning existing repository or user skills, or a clear
 audit request. Do not apply automatically to general cleanup or implementation requests.
 Implicit mode is report-only.
 When ownership evidence or apply approval is needed, prefer the host's native structured question surface (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). If unavailable, ask the same decision in plain chat and do not write beyond the approved scope.
@@ -26,18 +26,21 @@ When ownership evidence or apply approval is needed, prefer the host's native st
    the requested area.
 3. `evidence`: Record area-specific observations, paths, verification status,
    and ownership evidence for every candidate.
-4. `classification/proposal`: Apply the
+4. `description shortcut audit`: Before any frontmatter description rewrite, identify
+   the exact process-summary phrase that could substitute for loading the body, preserve
+   the smallest routing discriminator, and compare prior/candidate routing and body behavior.
+5. `classification/proposal`: Apply the
    [placement criteria table](references/repository-placement.md) to skill candidates
    and classify them as `keep | keep (vendor) | tighten | merge | split | move
    | deprecate | delete | fix`.
-5. `🔴 CHECKPOINT · 🛑 STOP`: Summarize the exact scope, evidence, proposal, target paths, and permitted apply actions.
+6. `🔴 CHECKPOINT · 🛑 STOP`: Summarize the exact scope, evidence, proposal, target paths, and permitted apply actions.
    A literal initial `--apply` pre-approves only that verified mechanical scope; otherwise stop until explicit current-turn
    approval. Scope, evidence, or target drift invalidates approval.
 
-6. `apply/report`: In report-only mode, output the proposal/receipt. If authority
+7. `apply/report`: In report-only mode, output the proposal/receipt. If authority
    exists, reread the sources, search references before delete/move, preserve
    managed/generated markings, and modify only the approved receipt scope.
-7. `revalidate`: Recheck links, duplication, and frontmatter, then report the
+8. `revalidate`: Recheck links, duplication, and frontmatter, then report the
    results, unverified scope, and unresolved items.
 
 Investigate only the repository or user skill areas explicitly stated or implied
@@ -51,6 +54,20 @@ and use `split` when independent outcomes are mixed in one artifact. Use `tighte
 only when removing duplication/ambiguity without changing ownership, kind, scope,
 or meaning. Otherwise, use `keep`. If path or ownership evidence is missing or
 conflicting, treat only that area as `Partial/Blocked | Unverifiable`.
+
+For a description audit, quote the exact phrase that summarizes workflow order,
+internal routing, approval sequence, artifact lifecycle, or another procedure well
+enough to become a shortcut around body loading. Preserve only the smallest trigger,
+symptom, intended scope, and positive/negative routing discriminator needed to decide
+whether the skill should load. Do not shorten mechanically. If a longer description is
+necessary to avoid false-positive or false-negative invocation, return `keep`/no-op.
+
+Before proposing `tighten`, compare the prior and candidate descriptions against the
+existing train/validation trigger cases and body behavior cases. The candidate must not
+increase false-positive invocation or lose valid discovery, and an agent using it must
+still follow the body rather than the description as a procedure. Trigger success or
+source-text presence alone does not prove body compliance. Record this comparison as
+evidence and keep the candidate report-only unless the existing apply authority passes.
 
 Determine ownership from confirmed paths and link targets, package-manager
 installation locations, updater/version artifacts, and verifiable author history.
