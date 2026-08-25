@@ -410,6 +410,30 @@
           "expected": "Pending"
         }
       ]
+    },
+    {
+      "id": "learn-authors-trigger-first-description",
+      "path": "success",
+      "prompt": "/tk-learn 새 code-review skill 후보의 description 초안은 `code review가 필요할 때 diff를 읽고 reviewer를 한 번 호출한 뒤 결과를 publish합니다`이고, body는 spec compliance와 code quality를 순서대로 검토합니다. 일반 lint 요청에는 load되면 안 됩니다. 현재-turn apply approval 없이 후보를 정리해 주세요.",
+      "expected_output": "workflow summary를 description에 유지하지 않고 code-review trigger와 lint 제외 discriminator만 보존한 trigger-first description을 제안하며, workflow order는 body에 두고 positive/negative routing과 두 단계 body compliance를 behavior evidence로 비교한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "candidate description은 skill을 언제 load할지만 답하고 code-review trigger와 generic lint 제외 discriminator를 보존하며 diff/reviewer/publish workflow summary를 포함하지 않는다."
+        },
+        {
+          "type": "judge",
+          "criterion": "workflow order와 procedure는 body에 유지하고 positive/negative routing 및 spec-compliance/code-quality body behavior를 observable scenario로 검증한다."
+        },
+        {
+          "type": "judge",
+          "criterion": "source-text presence만으로 통과하지 않고 trigger-first candidate가 false-positive invocation을 늘리지 않으며 body를 계속 따르는지 비교한다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pending"
+        }
+      ]
     }
   ]
 }

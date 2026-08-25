@@ -71,9 +71,11 @@ to another candidate/run, do not overwrite it; report `Blocked`.
    catalog cannot be read, remain `pending` and record that status and rationale in
    `learn.md`.
 3. **Candidate proposal:** Present the target, action name, invocation kind, and
-   positive/negative triggers. Use the user's domain/workflow language to choose a
-   lowercase, hyphenated, verb-form name of at most 64 characters; check for
-   collisions, then mark it `proposed`. Leave unsupported values as `TBD`.
+   positive/negative triggers. Draft a trigger-first description that answers when to
+   load and preserves only the routing discriminators; keep procedure in the body.
+   Use the user's domain/workflow language to choose a lowercase, hyphenated,
+   verb-form name of at most 64 characters; check for collisions, then mark it
+   `proposed`. Leave unsupported values as `TBD`.
 4. **Minimal draft:** Record the minimal SKILL.md inputs, workflow, failure branches,
    approval boundaries, completion criteria, output contract, and prohibitions
    directly in `learn.md`. Also add train/validation triggers, success/boundary
@@ -92,7 +94,7 @@ to another candidate/run, do not overwrite it; report `Blocked`.
 |---|---|---|
 | Promotion threshold | One sufficient evidence route in Skill quality is verified | `no-op | pending` |
 | Deduplication | Differences from existing skill/default capability/short rule and rationale for `merge | continue` exist | `no-op | pending` |
-| Candidate identity | Native target, name, kind, and positive/negative triggers are confirmed | `pending | Unverifiable` |
+| Candidate identity | Native target, name, kind, trigger-first description, and positive/negative routing discriminators are confirmed | `pending | Unverifiable` |
 | Behavior validation | Observable train/validation routing and skill-type success/boundary behavior pass; source-text presence alone is insufficient | `pending | Blocked` |
 | Baseline/compatibility | A practical no-skill baseline for creation or prior-skill baseline for semantic edits and the portable-core/host-extension determination are verified | `pending | Unverifiable` |
 | Apply authority | Current-turn approval names the exact candidate and target path | `pending`; do not write |

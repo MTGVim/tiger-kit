@@ -5,6 +5,14 @@ criteria, and minimal output shape. Keep the directory self-contained. Prefer co
 instructions; add detail only for recurring omissions, costly ordering mistakes, change
 safety, objective completion proof, specialist procedures, or bounded delegation/review.
 
+## Trigger-first descriptions
+
+A description answers only whether the skill should load now. Preserve the smallest
+routing discriminators needed for positive and negative selection: concrete triggers,
+symptoms, intended scope, and exclusions. Keep workflow order, internal routing,
+approval sequence, artifact lifecycle, and procedure in the body. A process summary
+that could substitute for reading the body fails this rule even if routing cases pass.
+
 ## Upstream distillation
 
 For every `create | improve | merge`, check mature upstream practice before inventing a
