@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `fix(contracts)`: `tk-pr-open` 제목 근거, `tk-prep` 브라우저 검증 위임, `tk-skill-diagnose` 문서 근거·출처·산출물 안전 게이트를 보강.
+
 ## 2026.08.24-3 — 릴리즈
 
 - 자세한 변경 사항은 이 릴리즈의 변경 범위를 참조하세요.
