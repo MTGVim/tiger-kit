@@ -231,6 +231,32 @@
       ]
     },
     {
+      "id": "learn-mature-upstream-gap-is-sufficient-evidence",
+      "path": "success",
+      "prompt": "/tk-learn 검증된 `mature upstream` `obra/superpowers@b36e0829c6d0140e93cfef2ca599b1b07d4a7797`의 `skills/writing-skills/SKILL.md`, `skills/writing-skills/testing-skills-with-subagents.md`, `docs/testing.md`에서 `task self-review`와 `fresh review`의 `implementation`, `rationale`, `failure-mode eval`을 확인했습니다. 현재 `skills/tk-prep/SKILL.md`의 `direct path`에는 `simplification` 뒤 `fresh review`가 없는 구체적인 `gap`이 있습니다. TigerKit의 `approval boundary`는 보존하고 `provider/workspace framework`는 들이지 않는 개선 후보로 정리해 주세요.",
+      "expected_output": "고정된 `upstream` 출처와 구체적인 TigerKit `gap`을 충분한 `evidence`로 취급하고 `keep | adapt | omit` 및 `provenance`를 기록한 `pending improvement candidate`를 진행하되 반복 횟수만으로 거절하지 않는다.",
+      "assertions": [
+        {"type":"path_exists","path":".tigerkit/learn.md"},
+        {"type":"path_text_contains","path":".tigerkit/learn.md","text":"b36e0829c6d0140e93cfef2ca599b1b07d4a7797"},
+        {"type":"path_text_contains","path":".tigerkit/learn.md","text":"skills/tk-prep/SKILL.md"},
+        {"type":"path_text_contains","path":".tigerkit/learn.md","text":"fresh review"},
+        {"type":"path_text_contains","path":".tigerkit/learn.md","text":"keep"},
+        {"type":"path_text_contains","path":".tigerkit/learn.md","text":"adapt"},
+        {"type":"path_text_contains","path":".tigerkit/learn.md","text":"omit"},
+        {"type":"terminal_status","expected":"Pending"}
+      ]
+    },
+    {
+      "id": "learn-one-strongly-verified-reusable-incident-is-sufficient",
+      "path": "success",
+      "prompt": "/tk-learn `migration-lock-1` `incident`는 `source identity`, `exact reproduction`, `root cause`, 여러 저장소에 재사용 가능한 `migration lock-order correction`, 독립 `holdout verification`이 모두 `verified`입니다. 이 한 건의 `evidence`로 `repository skill candidate` `migration-lock-check`를 정리해 주세요.",
+      "expected_output": "강하게 검증된 단일 `incident`와 재사용 가능한 `correction evidence`를 충분한 `evidence`로 취급해 `pending improvement candidate`를 진행하되 발생 횟수만으로 거절하지 않는다.",
+      "assertions": [
+        {"type":"judge","criterion":"단일 `incident`라도 출처, 재현, `root cause`, `reusable correction`, 독립 `verification`이 강하게 검증되면 후보를 진행하고, 단순 `one-off` 횟수만으로 `no-op` 처리하지 않는다."},
+        {"type":"terminal_status","expected":"Pending"}
+      ]
+    },
+    {
       "id": "learn-artifact-readback-failure-blocks",
       "path": "boundary",
       "prompt": "/tk-learn draft ledger를 쓸 때 learn.md가 stale이거나 reread가 작성 내용과 다르면 계속 진행해 주세요.",

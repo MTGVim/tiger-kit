@@ -5,11 +5,29 @@ criteria, and minimal output shape. Keep the directory self-contained. Prefer co
 instructions; add detail only for recurring omissions, costly ordering mistakes, change
 safety, objective completion proof, specialist procedures, or bounded delegation/review.
 
+## Upstream distillation
+
+For every `create | improve | merge`, check mature upstream practice before inventing a
+TigerKit procedure. When upstream evidence exists:
+
+1. Pin the repository or URL, revision, and relevant paths or locations as provenance.
+2. Read the current implementation, its rationale, and behavior or failure-mode eval evidence.
+   Mark anything unavailable as `unverified`; a reputation or summary is not a substitute.
+3. Compare each transferable contract with TigerKit's existing owner and boundary. In
+   `learn.md`, give every applicable element a literal `keep`, `adapt`, or `omit` label plus
+   its reason; do not replace the disposition with a synonym.
+4. Distill behavior and failure modes. Do not copy provider routing, runtime state, workspace
+   machinery, helper frameworks, or other infrastructure outside TigerKit's Agent Skills boundary.
+5. Prefer the existing simpler TigerKit contract when the comparison reveals no concrete gap.
+
 ## Promotion gate
 
-- For incident-based improvement, require verified recurrence or equivalent artifact evidence. For explicit reusable
-  workflow authoring, clear user intent plus sufficient source material or repository evidence is enough; do not require
-  two independent incidents. Unsourced claims and one-off failures do not satisfy incident promotion.
+- One verified route is sufficient: mature upstream plus a concrete TigerKit gap; a strongly verified reusable incident;
+  explicit reusable workflow intent plus sufficient source material or repository evidence; or genuinely recurring
+  verified cases. Do not impose a universal incident count.
+- A strongly verified incident has attributable source evidence, an exact reproduction, a root cause, a correction that
+  generalizes beyond the event, and independent or holdout verification. A weak anecdote, raw log, or one-off mistake
+  without reusable correction evidence remains `no-op | pending`.
 - Check whether an existing skill, default model capability, or a short rule is enough.
   Prefer `merge | no-op` over a duplicate directory.
 - Provide distinguishable positive and negative triggers. Separate description training

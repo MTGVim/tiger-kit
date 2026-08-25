@@ -21,6 +21,11 @@ This is the sole TigerKit author for `skill` `create | improve | merge`, includi
 `skill`s and semantic updates. Candidates or targets from other `skill`s must also pass
 evidence, deduplication, evaluation, compatibility, and apply gates.
 
+For every `create | improve | merge`, check mature upstream practice first when available.
+Use [Skill quality](references/skill-quality.md) to verify provenance, distill behavior and
+failure modes, and record each applicable disposition with the literal `keep | adapt | omit`
+label; never copy an upstream framework wholesale.
+
 Draft and apply are separate.
 
 - `draft gate`: Distinguish verified evidence from unverified user claims and design a
@@ -55,10 +60,11 @@ to another candidate/run, do not overwrite it; report `Blocked`.
 
 ## Workflow
 
-1. **Evidence:** Separate two routes. Incident-based improvement requires verified recurrence or equivalent artifact
-   evidence; one-off mistakes, raw logs, and unsourced claims do not promote. Explicit reusable workflow authoring may
-   proceed from clear user intent plus sufficient source material or repository evidence without two independent
-   incidents. Unverified claims cannot pass apply.
+1. **Evidence:** Accept any sufficient route: mature upstream plus a concrete TigerKit gap; one strongly verified,
+   reusable incident; explicit reusable workflow intent plus sufficient source or repository evidence; or genuinely
+   recurring verified cases. Weak anecdotes, raw logs, unsourced claims, and one-off mistakes without reusable
+   correction evidence do not promote. Once one route is verified, advance to a pending candidate and the remaining
+   gates instead of requesting recurrence. Unverified claims cannot pass apply.
 2. **Promotion and deduplication:** Apply [Skill quality](references/skill-quality.md),
    then compare against existing repository/user `skill`s, default model capability,
    and a short rule. Choose one of `merge | no-op | continue | pending`. If the
@@ -83,7 +89,7 @@ to another candidate/run, do not overwrite it; report `Blocked`.
 
 | Check | Passing evidence | If not passed |
 |---|---|---|
-| Promotion threshold | Independent cases/common workflow meet the promotion threshold | `no-op | pending` |
+| Promotion threshold | One sufficient evidence route in Skill quality is verified | `no-op | pending` |
 | Deduplication | Differences from existing skill/default capability/short rule and rationale for `merge | continue` exist | `no-op | pending` |
 | Candidate identity | Native target, name, kind, and positive/negative triggers are confirmed | `pending | Unverifiable` |
 | Behavior validation | Train/validation triggers and success/boundary assertions pass | `pending | Blocked` |
@@ -99,8 +105,8 @@ one host's paths onto another host, perform cross-host fan-out/sync, or use
 
 | Trigger | Immediate action | What remains unresolved |
 |---|---|---|
-| Two cases/workflows are claimed but artifacts cannot be read | Record each as `unverified` and leave `learn.md` `Blocked` | Request exact artifacts/checks; do not write |
-| Only one one-off case or raw log exists | Record the threshold/privacy basis with `Decision: no-op`, `Status: Pending` | Create no candidate or path |
+| Cases/workflows are claimed but artifacts cannot be read | Record each as `unverified` and leave `learn.md` `Blocked` | Request exact artifacts/checks; do not write |
+| Only a weak one-off anecdote or raw log exists | Record the threshold/privacy basis with `Decision: no-op`, `Status: Pending` | Create no candidate or path |
 | Duplicate of a skill/default capability | Report `merge | no-op` and rationale | Create no new directory |
 | Some target/name/trigger is unknown | Record supported values as `proposed` and the rest as `TBD` in `learn.md` | Keep candidate identity `pending`; do not write |
 | Evidence, target, or approval conflicts | Present the conflict and one decision | Stop as `Blocked` |
@@ -128,8 +134,8 @@ failure or duplicate follows the same artifact-first rule.
 
 ## Prohibitions / antipatterns
 
-- Do not promote one-off cases, credentials, raw logs, or screenshots as reusable
-  evidence or copy them into a draft.
+- Do not promote weak one-off anecdotes, credentials, raw logs, or screenshots as
+  reusable evidence or copy them into a draft.
 - Do not omit a requested `pending` draft because evidence is `unverified`.
 - Do not create duplicate `skill`s, verbose wrappers around default capability, or
   indistinguishable trigger pairs.
