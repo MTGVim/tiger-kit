@@ -1,6 +1,6 @@
 ---
 name: tk-domain
-description: "[user/auto] repository 고유 용어와 되돌리기 어려운 domain 결정을 근거로 정리합니다. glossary와 sparse ADR을 구분해 기존 관례에 기록하고, bounded context 구조는 근거와 승인 후에만 확장합니다."
+description: "[user/auto] `repository` 고유 용어의 `canonical vocabulary`를 정하거나, `hard to reverse`·`surprising without context`·`real trade-off` 세 기준을 모두 충족하는 지속적 `domain` 결정을 `sparse ADR`로 남길 때 사용합니다. 일반 구현 이유나 쉽게 되돌릴 선택에는 사용하지 않습니다."
 disable-model-invocation: false
 argument-hint: "<domain term, durable decision, evidence, or context scope>"
 metadata:

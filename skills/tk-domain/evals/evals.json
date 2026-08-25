@@ -89,12 +89,49 @@
       ]
     },
     {
+      "id": "domain-adr-existing-convention-placement",
+      "path": "success",
+      "prompt": "$tk-domain 이 `repository`의 기존 `ADR` 관례는 `architecture/decisions/NNNN-<slug>.md`이고 다음 번호는 `0042`입니다. 외부 결제 요청의 `idempotency key`를 영구 저장하는 결정은 `migration`과 `rollback` 비용이 크고, 저장하지 않는 방식도 유효하며, 맥락이 없으면 미래 관리자가 되돌릴 수 있습니다. `# Persist payment idempotency keys` 제목과 `Retrying clients can resend a payment request after an unknown response. Persist each idempotency key with its payment result. This prevents duplicate charges while preserving safe retries.` 본문을 가진 정확한 `architecture/decisions/0042-payment-idempotency.md` 생성을 지금 승인합니다.",
+      "expected_output": "`fallback`인 `docs/adr/` 대신 `repository-native ADR` 관례를 따르고 승인된 정확한 파일 하나만 생성한다.",
+      "assertions": [
+        {"type":"judge","criterion":"세 `ADR` 기준을 모두 확인하고 기존 `repository convention`을 `fallback`보다 우선하여 승인된 정확한 대상만 작성한다."},
+        {"type":"path_text_equals","path":"architecture/decisions/0042-payment-idempotency.md","text":"# Persist payment idempotency keys\n\nRetrying clients can resend a payment request after an unknown response. Persist each idempotency key with its payment result. This prevents duplicate charges while preserving safe retries.\n"},
+        {"type":"path_absent","path":"docs/adr/0001-payment-idempotency.md"},
+        {"type":"changed_paths_equal","paths":["architecture/decisions/0042-payment-idempotency.md"]},
+        {"type":"terminal_status","expected":"Pass"}
+      ]
+    },
+    {
       "id": "domain-adr-hard-but-obvious-no-tradeoff",
       "path": "boundary",
       "prompt": "$tk-domain 운영 DB의 데이터를 무승인으로 삭제하지 않는 규칙은 되돌리기 어렵지만 당연하고 유효한 대안 사이의 trade-off가 없습니다. ADR로 남겨줘.",
       "expected_output": "세 기준이 모두 성립하지 않으므로 ADR을 만들지 않고 기존 안전 규칙의 repository-native owner를 유지한다.",
       "assertions": [
         {"type":"judge","criterion":"되돌리기 어렵다는 한 조건만으로 ADR을 만들지 않으며, 자명하고 실제 대안 trade-off가 없는 규칙을 ADR로 승격하지 않는다."},
+        {"type":"git_head_unchanged"},
+        {"type":"changed_paths_equal","paths":[]},
+        {"type":"terminal_status","expected":"NotApplicable"}
+      ]
+    },
+    {
+      "id": "domain-adr-hard-tradeoff-but-not-surprising",
+      "path": "boundary",
+      "prompt": "$tk-domain 이 `repository`의 표준 `ledger storage` 선택은 `migration`과 `rollback` 비용이 크고 `relational DB`와 `event store`라는 두 유효한 대안 사이의 `trade-off`가 있습니다. 하지만 업계와 `repository` 관례상 선택이 자명해 맥락이 없어도 미래 관리자에게 놀랍지 않습니다. `ADR`로 남겨줘.",
+      "expected_output": "`surprising without context` 기준이 성립하지 않으므로 `ADR`을 만들지 않고 기존 `repository-native owner`를 유지한다.",
+      "assertions": [
+        {"type":"judge","criterion":"`hard to reverse`이고 `real trade-off`가 있어도 맥락 없이 놀랍지 않으면 `ADR`을 만들지 않는다."},
+        {"type":"git_head_unchanged"},
+        {"type":"changed_paths_equal","paths":[]},
+        {"type":"terminal_status","expected":"NotApplicable"}
+      ]
+    },
+    {
+      "id": "domain-adr-hard-surprising-but-no-tradeoff",
+      "path": "boundary",
+      "prompt": "$tk-domain 규제상 결제 원장을 10년 보존해야 해서 변경과 `rollback` 비용이 크고, 배경을 모르는 미래 관리자에게는 의외입니다. 그러나 법적 요구사항 때문에 유효한 대안 사이에서 선택한 `real trade-off`는 없습니다. `ADR`로 남겨줘.",
+      "expected_output": "`real trade-off` 기준이 성립하지 않으므로 `ADR`을 만들지 않고 규제 요구사항의 `repository-native owner`를 유지한다.",
+      "assertions": [
+        {"type":"judge","criterion":"`hard to reverse`이고 `surprising without context`여도 두 유효한 대안 사이의 `real trade-off`가 없으면 `ADR`을 만들지 않는다."},
         {"type":"git_head_unchanged"},
         {"type":"changed_paths_equal","paths":[]},
         {"type":"terminal_status","expected":"NotApplicable"}

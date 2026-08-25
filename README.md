@@ -64,7 +64,7 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-browser-verify` | `hybrid` | 화면에 보이는 AC의 `headless` 실행 검증 |
 | `tk-skill-diagnose` | `hybrid` | `Agent Skill` 사고 재현·격리와 `learn-ready` 인계 |
 | `tk-learn` | `hybrid` | 재사용 가능한 스킬의 생성/개선/병합 작성자 |
-| `tk-domain` | `hybrid` | 저장소 고유 용어의 `canonical vocabulary` 작성·정제 |
+| `tk-domain` | `hybrid` | 저장소 고유 용어의 `canonical vocabulary`와 `sparse durable decision/ADR context` 작성·정제 |
 | `tk-grooming` | `hybrid` | 저장소/사용자 스킬 목록 감사 |
 | `tk-handoff` | `hybrid` | 진행 중 작업의 재개용 상태 사진 |
 | `tk-merge-conflict` | `hybrid` | 활성 Git 충돌 의도 복원 |
