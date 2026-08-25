@@ -116,7 +116,15 @@
     "tk-browser-verify:behavior:browser-composes-with-automated-regression",
     "tk-browser-verify:behavior:browser-focused-viewport-is-default",
     "tk-browser-verify:behavior:browser-scrolls-and-orders-separated-evidence",
-    "tk-browser-verify:behavior:browser-fullpage-only-for-page-wide-ac"
+    "tk-browser-verify:behavior:browser-fullpage-only-for-page-wide-ac",
+    "tk-grill:behavior:vague-idea-maps-current-frontier",
+    "tk-grill:behavior:prerequisite-aware-frontier-round",
+    "tk-grill:behavior:facts-are-researched-decisions-are-asked",
+    "tk-grill:behavior:user-owned-tradeoff-is-not-decided-silently",
+    "tk-grill:behavior:frontier-empty-requires-shared-understanding-confirmation",
+    "tk-grill:behavior:confirmed-understanding-yields-compact-synthesis",
+    "tk-grill:behavior:does-not-auto-transition-to-implementation",
+    "tk-grill:behavior:keeps-session-state-in-conversation"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",
@@ -129,6 +137,10 @@
     "catalog:behavior:pr-rebase-explicit",
     "catalog:behavior:pr-sweep-report-explicit",
     "catalog:behavior:browser-headless-auth-verifier-explicit",
-    "catalog:behavior:domain-explicit-authoring"
+    "catalog:behavior:domain-explicit-authoring",
+    "catalog:behavior:grill-explicit",
+    "catalog:behavior:grill-ordinary-brainstorm-negative",
+    "catalog:behavior:grill-vs-prep-engineering-ticket",
+    "catalog:behavior:grill-vs-ask-repo-fact"
   ]
 }

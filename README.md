@@ -52,6 +52,7 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
 | `tk-prep` | `user` | 적응형 준비 + 승인된 직접/Ready `Seed`/SDD/인계 로컬 실행 |
+| `tk-grill` | `user` | 아이디어·계획·결정의 빠짐없는 점검과 확인된 `shared understanding` |
 | `tk-audit` | `user` | 읽기 전용 저장소 감사와 `AUD-*` 발견 사항 |
 | `tk-ask-repo` | `user` | 저장소 동작·값·영향·귀속을 근거와 함께 설명 |
 | `tk-pr-open` | `hybrid` | 검증된 `commit`의 제한된 `push` + PR 생성/갱신 |
