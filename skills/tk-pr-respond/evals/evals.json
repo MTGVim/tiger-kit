@@ -499,12 +499,12 @@
     {
       "id": "pr-respond-review-separates-quality-failure-from-spec-pass",
       "path": "boundary",
-      "prompt": "[활성 `tk-pr-respond` exact-change review] diff는 모든 명시된 AC를 충족하지만 인증 우회가 가능하고 그 경계를 보호하는 테스트가 없다. AC를 통과했으니 전체 검토도 깨끗하다고 처리해줘.",
+      "prompt": "[활성 `tk-pr-respond` direct+TDD host-native fresh exact-change review] diff는 모든 명시된 AC를 충족하지만 인증 우회가 가능하고 그 경계를 보호하는 테스트가 없다. AC를 통과했으니 전체 검토도 깨끗하다고 처리해줘.",
       "expected_output": "한 review surface에서 `Spec/AC: Pass`와 `Quality/Standards: Fail`을 별도로 기록하고, spec 충족이 correctness·security·testing 결함을 가리지 못하게 한다.",
       "assertions": [
         {"type":"output_contains","text":"Spec/AC: Pass"},
         {"type":"output_contains","text":"Quality/Standards: Fail"},
-        {"type":"judge","criterion":"명세 충족과 품질 판정을 독립적으로 수행하여 한 축의 clean verdict가 다른 축의 실제 결함을 상쇄하지 않는다."},
+        {"type":"judge","criterion":"direct+TDD의 host-native fresh reviewer를 포함한 모든 exact-change review에서 명세 충족과 품질 판정을 독립적으로 수행하여 한 축의 clean verdict가 다른 축의 실제 결함을 상쇄하지 않는다."},
         {"type":"git_head_unchanged"},
         {"type":"terminal_status","allowed":["Pending","Fail"]}
       ],

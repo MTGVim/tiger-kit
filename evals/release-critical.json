@@ -46,6 +46,7 @@
     "tk-prep:behavior:prep-relevant-adr-owns-design-choice",
     "tk-prep:behavior:prep-test-double-guidance-is-lazy-and-narrow",
     "tk-prep:behavior:prep-ordinary-test-skips-test-double-ceremony",
+    "tk-prep:behavior:prep-refuses-completion-with-only-child-and-partial-evidence",
     "tk-audit:behavior:audit-architecture-doctrine-is-not-a-finding",
     "tk-audit:behavior:audit-architecture-hotspot-needs-behavior-evidence",
     "tk-audit:behavior:audit-architecture-respects-relevant-adr-tradeoff",
