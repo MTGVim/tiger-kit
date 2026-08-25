@@ -94,13 +94,14 @@ input. The verifier owns server startup, readiness, runtime acceptance evidence,
 
 ## Adaptive execution shape
 
-Choose internally; tell the user the practical consequence, not a classification report.
+Choose only after repository investigation establishes a concrete implementation topology; tell the user the practical consequence, not a classification report.
+Ticket length, raw file count, or the presence of both UI and API work never decides the shape.
 
 - durable context `none`: same-session task is small/clear and conversation + repository state are sufficient;
 - durable context `seed`: new-session handoff, compaction recovery, lower-capability execution, SDD, or complex
   verification benefits from a self-contained contract;
-- execution `direct`: one coherent change/review surface, with or without a Seed;
-- execution `sdd`: multiple material Units need independent implementation/review loops; requires a Ready Seed;
+- execution `direct`: one coherent implementation/test/review judgment surface, including small same-shape changes that can be reviewed together, with or without a Seed;
+- execution `sdd`: multiple material Units need independent implementation/test/review judgment loops; requires a Ready Seed;
 - execution `handoff`: prepare a Ready Seed and stop for another session/executor.
 
 Complexity may raise safeguards only: inline direct → Seed direct → SDD/re-prep. Never silently downgrade for convenience.
@@ -143,7 +144,12 @@ After approval:
 
 ## Local execution and completion
 
-Applicable direct changes follow RED → verified failure → minimal GREEN → refactor while green → required relevant checks.
+Applicable direct changes follow RED → verified failure → minimal GREEN → refactor while green → self-simplify → fresh
+read-only exact-change review → remediate confirmed important gaps with scoped re-review → binding verification → commit.
+Self-simplification removes unnecessary abstraction or indirection, speculative flexibility, dead or redundant branches,
+custom logic that replaces repository-native helpers, and production API expansion used only by tests. Prefer a host-native fresh reviewer when available.
+Otherwise perform a distinct exact-scope review serially and report that it was not independent; do not silently claim fresh independence or convert direct work to SDD.
+
 SDD follows the shared protocol. In both paths: preserve scope/UI literals, use the exact review range, run acceptance
 review, compose automated regression tests, and create only approved local commit(s). For every browser-visible AC,
 invoke `tk-browser-verify` during execution; do not replace the planned handoff with direct browser operation. Browser
@@ -153,5 +159,5 @@ becomes `Fail | Unverifiable | Blocked`, not an infinite loop.
 If material discovery changes Goal/Scope/approved Decision/AC/security/required Verification, stop and re-enter preparation
 for revision + reapproval. Reversible engineering ambiguity may be resolved with a visible reason and cost-if-wrong.
 
-Return a compact result: execution shape, Seed path or `none`, commits or handoff status, focused/required verification,
-browser evidence status, exceptions, and any blocker. Do not claim remote publication.
+Return a compact result: execution shape, Seed path or `none`, commits or handoff status, focused/required verification, browser evidence status, exceptions, and any blocker.
+For direct code changes, also report simplification and fresh or serial exact-scope review status, including whether the review was independent. Do not claim remote publication.
