@@ -146,6 +146,17 @@
         {"type":"git_head_unchanged"},
         {"type":"terminal_status","expected":"Pass"}
       ]
+    },
+    {
+      "id": "ask-repo-why-uses-current-code-and-relevant-adr",
+      "path": "success",
+      "prompt": "/tk-ask-repo 왜 checkout API가 synchronous write를 사용하나요? 관련 `ADR-0004`와 현재 code path를 근거로 설명하되 unrelated `docs/adr/` 문서는 읽지 마세요.",
+      "expected_output": "현재 code path와 직접 관련된 `ADR-0004` rationale를 함께 사용하고 stale 차이는 밝히며 unrelated ADR tree는 scan하지 않는다.",
+      "assertions": [
+        {"type":"judge","criterion":"`why` 질문에 현재 code evidence와 직접 관련된 ADR rationale를 결합하고 각각의 근거를 구분한다. 관련 없는 ADR이나 context tree는 읽지 않는다."},
+        {"type":"git_head_unchanged"},
+        {"type":"terminal_status","expected":"Pass"}
+      ]
     }
   ]
 }

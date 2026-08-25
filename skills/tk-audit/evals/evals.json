@@ -214,6 +214,17 @@
           "expected": "Pass"
         }
       ]
+    },
+    {
+      "id": "audit-architecture-respects-relevant-adr-tradeoff",
+      "path": "success",
+      "prompt": "$tk-audit architecture 관련 `ADR-0004`가 synchronous write의 latency와 consistency trade-off를 의도적으로 선택했고 현재 friction이나 제약 변경은 없습니다. unrelated ADR도 많습니다.",
+      "expected_output": "현재 code와 관련 `ADR-0004`만 확인하고 deliberate trade-off를 generic smell로 finding화하지 않으며 unrelated ADR tree를 scan하지 않는다.",
+      "assertions": [
+        {"type":"judge","criterion":"architecture evidence와 직접 관련된 ADR rationale만 읽고 deliberate trade-off 자체를 generic smell로 보고하지 않는다. 실제 friction 또는 changed constraint가 있을 때만 `revisit ADR` finding을 허용한다."},
+        {"type":"git_head_unchanged"},
+        {"type":"terminal_status","expected":"Pass"}
+      ]
     }
   ]
 }

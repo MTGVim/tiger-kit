@@ -29,7 +29,7 @@ parent-owned decision.
 Read the task source, instructions, code/callers, tests, commands, Git state, and only materially relevant existing
 domain context. Lazy-load [domain context](references/domain-context.md) only when the work uses project-specific terms.
 Do not scan or create a documentation lifecycle; if fresher code/test/runtime evidence conflicts, surface it and confirm the source of truth.
-Before creating anything, find existing components, helpers, schemas, clients, patterns, and conventions; tie claims to `path:line`, command output, or fresh state.
+Before creating anything, find existing components, helpers, schemas, clients, patterns, and conventions; tie claims to `path:line`, command output, or fresh state. Before comparing a hard-to-reverse design, interface, schema, or migration choice, read only relevant ADR rationale and current evidence. Do not reopen a decision whose premise still holds; surface `revisit ADR` only when it changed, and never scan an unrelated ADR or context tree.
 
 Ask one highest-impact question at a time only for:
 

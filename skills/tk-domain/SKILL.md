@@ -1,8 +1,8 @@
 ---
 name: tk-domain
-description: "[user/auto] repository 고유 용어의 canonical vocabulary를 근거로 정하고 root CONTEXT.md를 필요할 때만 생성·정제하며, 실제 bounded context가 입증된 경우에만 승인 후 CONTEXT-MAP.md로 확장합니다."
+description: "[user/auto] repository 고유 용어와 되돌리기 어려운 domain 결정을 근거로 정리합니다. glossary와 sparse ADR을 구분해 기존 관례에 기록하고, bounded context 구조는 근거와 승인 후에만 확장합니다."
 disable-model-invocation: false
-argument-hint: "<domain term, vocabulary evidence, or context scope>"
+argument-hint: "<domain term, durable decision, evidence, or context scope>"
 metadata:
   tigerkit:
     kind: hybrid
@@ -10,10 +10,11 @@ metadata:
     relationship: native
 ---
 
-# Repository Domain Language
+# Repository Domain Context
 
-Use this skill only to create or refine repository-owned ubiquitous language. It is not a generic memory store,
-rules corpus, architecture document, implementation guide, or troubleshooting archive.
+Use this skill only to create or refine repository-owned ubiquitous language and sparse durable decision context.
+Glossary entries and ADRs remain distinct artifacts. This is not a generic memory store, rules corpus, architecture
+document, implementation guide, or troubleshooting archive.
 
 ## Evidence
 
@@ -24,6 +25,11 @@ resolve.
 
 Do not create an artifact before the first real term is confirmed. Respect an existing repository glossary convention
 instead of duplicating it.
+
+Sharpen fuzzy or overloaded language only when the ambiguity changes an artifact or decision. Use one concrete edge
+case only when the relationship cannot otherwise be resolved. Fresher code or runtime evidence beats a stale glossary
+claim; surface the conflict instead of silently preserving stale wording. Ordinary wording ambiguity needs no domain
+ceremony.
 
 ## Artifact
 
@@ -56,15 +62,37 @@ explicit current-turn approval.
 The map contains only relevant context paths and relationships; it never duplicates glossary entries. After approval,
 place each glossary at the natural bounded-context path and verify every mapped path.
 
+## Sparse Durable Decisions
+
+Propose an ADR only when all three thresholds hold:
+
+1. **hard to reverse**: changing course has meaningful rollback or migration cost;
+2. **surprising without context**: a future maintainer may undo the choice without its rationale;
+3. **real trade-off**: at least two valid alternatives existed and the decision chose among them for a reason.
+
+Keep local implementation rationale in a code comment or its repository-native owner. Do not ADR-ize ticket plans,
+test methods, coding conventions, simple library selection, or easily reversible choices.
+
+Prefer an established repository ADR convention. When none exists, use the minimal fallback
+`docs/adr/0001-<slug>.md`, incrementing the highest filename number without reading unrelated files. Create
+`docs/adr/` lazily for the first real ADR. The fallback contains a title and usually one to three sentences stating
+the context, decision, and why. Add status, alternatives, consequences, or other fields only when they carry information.
+
+Before proposing a new ADR, read only existing ADR evidence relevant to that decision. Compare it with current code
+and decide whether the request is a duplicate, refinement, or supersession. Do not silently overwrite or contradict
+owned rationale: reuse an unchanged decision, or surface `revisit ADR` with the changed premise and propose an explicit
+`refine or supersede` path. Never scan an unrelated ADR or context tree.
+
 ## 🔴 CHECKPOINT · 🛑 STOP
 
-Before any write, present the term, evidence, exact target path, proposed wording, exclusions, and whether this is a
-root refinement or approved multi-context change. Require current-turn approval for the exact mutation. Evidence or
-scope drift invalidates approval.
+Before any write, present the term or durable decision, evidence, exact target path, proposed wording, exclusions, and
+whether this is a root refinement, approved multi-context change, new ADR, refinement, or supersession. Require
+current-turn approval for the exact mutation. Evidence or scope drift invalidates approval.
 
-After approval, write the minimum artifact atomically, reread it, and verify that canonical terms and `_Avoid_` values
-are exact and that no excluded implementation/rule content entered the glossary. Do not create central TigerKit state,
-host-specific memory, a learning corpus, or automatic repository scanning.
+After approval, write the minimum artifact atomically and reread it. Verify that glossary terms and `_Avoid_` values
+are exact, or that the ADR preserves its evidence, decision, why, and relationship to existing rationale. Ensure no
+excluded implementation/rule content entered either artifact. Do not create central TigerKit state, host-specific
+memory, a learning corpus, or automatic repository scanning.
 
-Return the changed path, canonical terms, evidence basis, verification, and one actual status:
+Return the changed path, canonical terms or decision, evidence basis, verification, and one actual status:
 `Pass | Blocked | Unverifiable | Fail`.

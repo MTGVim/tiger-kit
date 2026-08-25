@@ -477,6 +477,16 @@
         {"type":"output_absent","text":"오프라인 결제"},
         {"type":"terminal_status","expected":"Pass"}
       ]
+    },
+    {
+      "id": "pr-respond-loads-adr-only-for-related-feedback",
+      "path": "success",
+      "prompt": "[`active approved tk-pr-respond`] reviewer가 PR의 public API compatibility boundary가 기존 설계와 충돌한다고 지적했습니다. 관련 `ADR-0009`와 현재 diff를 확인해 답하고 unrelated ADR은 읽지 마세요.",
+      "expected_output": "feedback과 직접 관련된 architecture/compatibility ADR rationale만 현재 diff와 함께 읽고 generic review checklist나 ADR tree scan으로 확장하지 않는다.",
+      "assertions": [
+        {"type":"judge","criterion":"architecture, compatibility, boundary feedback에 직접 관련될 때만 해당 ADR rationale를 읽는다. 일반 feedback에는 ADR 확인을 강제하지 않고 unrelated tree를 scan하지 않는다."},
+        {"type":"terminal_status","expected":"Pass"}
+      ]
     }
   ]
 }

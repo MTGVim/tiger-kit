@@ -1,2 +1,2 @@
 interface:
-  short_description: "[user/auto] `repository`의 `canonical domain vocabulary`를 관리합니다."
+  short_description: "[user/auto] `repository`의 `canonical domain vocabulary`와 sparse ADR을 관리합니다."

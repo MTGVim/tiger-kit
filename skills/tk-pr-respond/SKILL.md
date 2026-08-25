@@ -59,6 +59,9 @@ When review feedback concerns UI text, verify the currently rendered string thro
 When feedback uses project-specific terminology, lazy-load [domain context](references/domain-context.md) and preserve
 canonical vocabulary without overriding verified user-visible UI literals.
 
+When feedback directly concerns architecture, compatibility, or a boundary decision, combine the current diff with
+only relevant ADR rationale. Do not make ADR review a generic checklist and never scan an unrelated ADR or context tree.
+
 When feedback requests a test, do not close it with file-existence or source-text assertions. Reproduce the reported
 regression and add protection that fails when the real behavior or side effect breaks again.
 
