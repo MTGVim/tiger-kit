@@ -1,3 +1,3 @@
-# Cache profile images
+# 프로필 이미지 캐시
 
-Use a `profile-image TTL` because image freshness is unrelated to public API envelope compatibility.
+이미지 최신성은 공개 `API` 응답 봉투 호환성과 관련이 없으므로 `profile-image TTL`을 사용합니다.

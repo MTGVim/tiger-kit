@@ -1,3 +1,3 @@
-# Keep cursor pagination opaque
+# 불투명한 커서 페이지네이션 유지
 
-Public clients must not infer database ordering from pagination state. Preserve the `opaque after-token` so storage ordering can change without breaking compatibility.
+공개 클라이언트는 페이지네이션 상태에서 데이터베이스 순서를 추론하면 안 됩니다. 호환성을 깨지 않고 저장 순서를 바꿀 수 있도록 `opaque after-token`을 보존합니다.

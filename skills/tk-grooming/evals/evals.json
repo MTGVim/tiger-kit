@@ -258,12 +258,12 @@
     {
       "id": "grooming-detects-description-workflow-shortcut",
       "path": "success",
-      "prompt": "/tk-grooming 기존 code-review skill의 description은 `code review가 필요할 때 diff를 읽고 reviewer를 한 번 호출한 뒤 결과를 publish합니다`이고 body는 spec compliance와 code quality를 순서대로 검토합니다. description/body shortcut risk를 report-only로 감사해 주세요.",
-      "expected_output": "body 대신 실행할 수 있는 process-summary phrase를 정확히 식별하고 `code review가 필요할 때`라는 최소 routing discriminator를 보존한 trigger-first 후보를 제안한 뒤 prior/candidate trigger와 두 단계 body compliance를 비교하며 수정하지 않는다.",
+      "prompt": "/tk-grooming 기존 `code-review` `skill`의 `description`은 `code review가 필요할 때 diff를 읽고 reviewer를 한 번 호출한 뒤 결과를 publish합니다`이고 `body`는 `spec` `compliance`와 `code` `quality`를 순서대로 검토합니다. `description`/`body` `shortcut` `risk`를 `report-only`로 감사해 주세요.",
+      "expected_output": "`body` 대신 실행할 수 있는 `process-summary` `phrase`를 정확히 식별하고 `code review가 필요할 때`라는 최소 `routing` `discriminator`를 보존한 `trigger-first` 후보를 제안한 뒤 `prior`/`candidate` `trigger`와 두 단계 `body` `compliance`를 비교하며 수정하지 않는다.",
       "assertions": [
-        {"type": "judge", "criterion": "description의 exact process-summary phrase가 body loading을 대체할 위험을 식별하고 최소 trigger/scope discriminator만 보존한 trigger-first candidate를 제안한다."},
-        {"type": "judge", "criterion": "prior와 candidate의 positive/negative trigger behavior 및 body의 spec-compliance/code-quality 두 단계 준수를 비교한다."},
-        {"type": "judge", "criterion": "literal --apply나 current-turn approval이 없으므로 report-only를 유지한다."},
+        {"type": "judge", "criterion": "`description`의 `exact` `process-summary` `phrase`가 `body` `loading`을 대체할 위험을 식별하고 최소 `trigger`/`scope` `discriminator`만 보존한 `trigger-first` `candidate`를 제안한다."},
+        {"type": "judge", "criterion": "`prior`와 `candidate`의 `positive`/`negative` `trigger` `behavior` 및 `body`의 `spec-compliance`/`code-quality` 두 단계 준수를 비교한다."},
+        {"type": "judge", "criterion": "`literal` --apply나 `current-turn` `approval`이 없으므로 `report-only`를 유지한다."},
         {"type": "terminal_status", "expected": "Pass"},
         {"type": "git_head_unchanged"}
       ]
@@ -271,10 +271,10 @@
     {
       "id": "grooming-keeps-long-description-for-negative-routing",
       "path": "success",
-      "prompt": "/tk-grooming browser verifier description의 passive web research, generic design critique, implementation, screenshot-only request 제외 문구가 길어 보입니다. 이를 모두 삭제해 짧게 만들지 report-only로 감사해 주세요.",
-      "expected_output": "각 negative-routing discriminator가 false-positive invocation을 막는 데 필요한지 비교하고 필요하면 긴 description을 그대로 keep/no-op하며 수정하지 않는다.",
+      "prompt": "/tk-grooming `browser` `verifier` `description`의 `passive` `web` `research`, `generic` `design` `critique`, `implementation`, `screenshot-only` `request` 제외 문구가 길어 보입니다. 이를 모두 삭제해 짧게 만들지 `report-only`로 감사해 주세요.",
+      "expected_output": "각 `negative-routing` `discriminator`가 `false-positive` `invocation`을 막는 데 필요한지 비교하고 필요하면 긴 `description`을 그대로 `keep`/`no-op`하며 수정하지 않는다.",
       "assertions": [
-        {"type": "judge", "criterion": "길이 자체를 finding으로 삼지 않고 negative-routing discriminator 제거가 false-positive invocation을 늘리면 기존 description을 keep/no-op한다."},
+        {"type": "judge", "criterion": "길이 자체를 `finding`으로 삼지 않고 `negative-routing` `discriminator` 제거가 `false-positive` `invocation`을 늘리면 기존 `description`을 `keep`/`no-op`한다."},
         {"type": "terminal_status", "expected": "Pass"},
         {"type": "git_head_unchanged"}
       ]

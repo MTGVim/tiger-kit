@@ -161,7 +161,7 @@
     {
       "id": "validation-positive-9",
       "split": "validation",
-      "query": "기존 repository skill의 description과 behavior contract를 semantic edit해줘",
+      "query": "기존 `repository` `skill`의 `description`과 `behavior` `contract`를 `semantic` `edit`해줘",
       "should_trigger": true,
       "facets": [
         "formal"

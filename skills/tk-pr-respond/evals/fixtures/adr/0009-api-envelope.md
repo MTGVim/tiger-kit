@@ -1,3 +1,3 @@
-# Version the public response envelope
+# 공개 응답 봉투의 버전 관리
 
-Clients may depend on existing response fields. Preserve the `versioned response envelope` so compatibility changes remain explicit at the public API boundary.
+클라이언트는 기존 응답 필드에 의존할 수 있습니다. 공개 `API` 경계의 호환성 변경을 명시적으로 유지하기 위해 `versioned response envelope`을 보존합니다.

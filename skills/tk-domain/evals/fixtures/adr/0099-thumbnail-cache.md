@@ -1,3 +1,3 @@
-# Cache reporting thumbnails
+# 보고용 섬네일 캐시
 
-Use a one-hour `thumbnail-cache TTL` for reporting previews because those images may be stale.
+보고 미리보기 이미지는 오래되어도 되므로 한 시간의 `thumbnail-cache TTL`을 사용합니다.

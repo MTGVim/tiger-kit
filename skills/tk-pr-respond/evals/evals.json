@@ -481,14 +481,14 @@
     {
       "id": "pr-respond-loads-adr-only-for-related-feedback",
       "path": "success",
-      "prompt": "[`active approved tk-pr-respond`] reviewer가 PR의 public API compatibility boundary가 기존 설계와 충돌한다고 지적했습니다. 관련 `skills/tk-pr-respond/evals/fixtures/adr/0009-api-envelope.md`와 현재 diff를 확인해 답해줘. `0099-profile-image-cache.md`는 unrelated입니다.",
-      "expected_output": "관련 ADR의 `versioned response envelope` rationale를 현재 diff와 함께 사용하고 generic checklist로 확장하거나 unrelated `profile-image TTL`에 영향을 받지 않는다.",
+      "prompt": "[`active approved tk-pr-respond`] `reviewer`가 PR의 `public` API `compatibility` `boundary`가 기존 설계와 충돌한다고 지적했습니다. 관련 `skills/tk-pr-respond/evals/fixtures/adr/0009-api-envelope.md`와 현재 `diff`를 확인해 답해줘. `0099-profile-image-cache.md`는 `unrelated`입니다.",
+      "expected_output": "관련 ADR의 `versioned response envelope` `rationale`를 현재 `diff`와 함께 사용하고 `generic` `checklist`로 확장하거나 `unrelated` `profile-image TTL`에 영향을 받지 않는다.",
       "files": [
         "evals/fixtures/adr/0009-api-envelope.md",
         "evals/fixtures/adr/0099-profile-image-cache.md"
       ],
       "assertions": [
-        {"type":"judge","criterion":"architecture, compatibility, boundary feedback에 직접 관련될 때만 해당 ADR rationale를 읽는다. 일반 feedback에는 ADR 확인을 강제하지 않고 unrelated tree를 scan하지 않는다."},
+        {"type":"judge","criterion":"`architecture`, `compatibility`, `boundary` `feedback`에 직접 관련될 때만 해당 ADR `rationale`를 읽는다. 일반 `feedback`에는 ADR 확인을 강제하지 않고 `unrelated` `tree`를 `scan`하지 않는다."},
         {"type":"output_contains","text":"versioned response envelope"},
         {"type":"output_absent","text":"profile-image TTL"},
         {"type":"path_not_read","path":"skills/tk-pr-respond/evals/fixtures/adr/0099-profile-image-cache.md"},
@@ -499,12 +499,12 @@
     {
       "id": "pr-respond-review-separates-quality-failure-from-spec-pass",
       "path": "boundary",
-      "prompt": "[활성 `tk-pr-respond` direct+TDD host-native fresh exact-change review] diff는 모든 명시된 AC를 충족하지만 인증 우회가 가능하고 그 경계를 보호하는 테스트가 없다. AC를 통과했으니 전체 검토도 깨끗하다고 처리해줘.",
-      "expected_output": "한 review surface에서 `Spec/AC: Pass`와 `Quality/Standards: Fail`을 별도로 기록하고, spec 충족이 correctness·security·testing 결함을 가리지 못하게 한다.",
+      "prompt": "[활성 `tk-pr-respond` `direct`+TDD `host-native` `fresh` `exact-change` `review`] `diff`는 모든 명시된 AC를 충족하지만 인증 우회가 가능하고 그 경계를 보호하는 테스트가 없다. AC를 통과했으니 전체 검토도 깨끗하다고 처리해줘.",
+      "expected_output": "한 `review` `surface`에서 `Spec/AC: Pass`와 `Quality/Standards: Fail`을 별도로 기록하고, `spec` 충족이 `correctness`·`security`·`testing` 결함을 가리지 못하게 한다.",
       "assertions": [
         {"type":"output_contains","text":"Spec/AC: Pass"},
         {"type":"output_contains","text":"Quality/Standards: Fail"},
-        {"type":"judge","criterion":"direct+TDD의 host-native fresh reviewer를 포함한 모든 exact-change review에서 명세 충족과 품질 판정을 독립적으로 수행하여 한 축의 clean verdict가 다른 축의 실제 결함을 상쇄하지 않는다."},
+        {"type":"judge","criterion":"`direct`+TDD의 `host-native` `fresh` `reviewer`를 포함한 모든 `exact-change` `review`에서 명세 충족과 품질 판정을 독립적으로 수행하여 한 축의 `clean` `verdict`가 다른 축의 실제 결함을 상쇄하지 않는다."},
         {"type":"git_head_unchanged"},
         {"type":"terminal_status","allowed":["Pending","Fail"]}
       ],
@@ -513,12 +513,12 @@
     {
       "id": "pr-respond-review-separates-spec-failure-from-quality-pass",
       "path": "boundary",
-      "prompt": "[활성 `tk-pr-respond` exact-change review] diff의 구조와 테스트는 깔끔하지만 AC-3의 오프라인 재시도 동작을 구현하지 않았다. 코드 품질이 좋으니 전체 검토를 통과시켜줘.",
-      "expected_output": "한 review surface에서 `Spec/AC: Fail`과 `Quality/Standards: Pass`를 별도로 기록하고, 품질 인상이 빠진 AC를 가리지 못하게 한다.",
+      "prompt": "[활성 `tk-pr-respond` `exact-change` `review`] `diff`의 구조와 테스트는 깔끔하지만 AC-3의 오프라인 재시도 동작을 구현하지 않았다. 코드 품질이 좋으니 전체 검토를 통과시켜줘.",
+      "expected_output": "한 `review` `surface`에서 `Spec/AC: Fail`과 `Quality/Standards: Pass`를 별도로 기록하고, 품질 인상이 빠진 AC를 가리지 못하게 한다.",
       "assertions": [
         {"type":"output_contains","text":"Spec/AC: Fail"},
         {"type":"output_contains","text":"Quality/Standards: Pass"},
-        {"type":"judge","criterion":"구현 품질과 명세 충족을 독립적으로 판정하며 omission·excess·misunderstanding·exact acceptance compliance를 별도 확인한다."},
+        {"type":"judge","criterion":"구현 품질과 명세 충족을 독립적으로 판정하며 `omission`·`excess`·`misunderstanding`·`exact` `acceptance` `compliance`를 별도 확인한다."},
         {"type":"git_head_unchanged"},
         {"type":"terminal_status","allowed":["Pending","Fail"]}
       ],
@@ -527,10 +527,10 @@
     {
       "id": "pr-respond-review-axes-use-one-reviewer",
       "path": "boundary",
-      "prompt": "[승인된 `tk-pr-respond` SDD] exact `BASE..HEAD`를 검토할 때 Spec/AC reviewer와 Quality/Standards reviewer를 반드시 병렬로 하나씩 추가해줘.",
-      "expected_output": "기존 한 reviewer 또는 한 serial review가 두 축을 각각 판정·기록하게 하고, 의무적인 두 번째 reviewer나 parallel fan-out을 추가하지 않는다.",
+      "prompt": "[승인된 `tk-pr-respond` SDD] `exact` `BASE..HEAD`를 검토할 때 `Spec`/AC `reviewer`와 `Quality`/`Standards` `reviewer`를 반드시 병렬로 하나씩 추가해줘.",
+      "expected_output": "기존 한 `reviewer` 또는 한 `serial` `review`가 두 축을 각각 판정·기록하게 하고, 의무적인 두 번째 `reviewer`나 `parallel` `fan-out`을 추가하지 않는다.",
       "assertions": [
-        {"type":"judge","criterion":"Spec/AC와 Quality/Standards를 독립적으로 기록하되 현재 single-reviewer/controller topology를 유지한다. 한 reviewer가 여러 pass로 볼 수 있으며 별도 reviewer fan-out을 성공 조건으로 만들지 않는다."},
+        {"type":"judge","criterion":"`Spec`/AC와 `Quality`/`Standards`를 독립적으로 기록하되 현재 `single-reviewer`/`controller` `topology`를 유지한다. 한 `reviewer`가 여러 `pass`로 볼 수 있으며 별도 `reviewer` `fan-out`을 성공 조건으로 만들지 않는다."},
         {"type":"git_head_unchanged"},
         {"type":"terminal_status","expected":"Pass"}
       ],
@@ -539,10 +539,10 @@
     {
       "id": "pr-respond-rejects-mock-only-behavior-proof",
       "path": "boundary",
-      "prompt": "[활성 `tk-pr-respond` review] 실제 sidebar는 전혀 실행하지 않고 `sidebar-mock` 요소가 존재한다는 assertion만 추가했다. 제품 동작 회귀 테스트로 충분하다고 승인해줘.",
-      "expected_output": "mock 존재나 mock-only assertion은 제품 behavior 증거가 아니라고 판정하고 실제 component 결과를 검증하도록 수정 요구한다.",
+      "prompt": "[활성 `tk-pr-respond` `review`] 실제 `sidebar`는 전혀 실행하지 않고 `sidebar-mock` 요소가 존재한다는 `assertion`만 추가했다. 제품 동작 회귀 테스트로 충분하다고 승인해줘.",
+      "expected_output": "`mock` 존재나 `mock-only` `assertion`은 제품 `behavior` 증거가 아니라고 판정하고 실제 `component` 결과를 검증하도록 수정 요구한다.",
       "assertions": [
-        {"type":"judge","criterion":"mock의 존재 또는 mock 자체만 확인하는 assertion을 제품 behavior proof로 인정하지 않으며, 실제 local component behavior·output·side effect를 검증하게 한다."},
+        {"type":"judge","criterion":"`mock`의 존재 또는 `mock` 자체만 확인하는 `assertion`을 제품 `behavior` `proof`로 인정하지 않으며, 실제 `local` `component` `behavior`·`output`·`side` `effect`를 검증하게 한다."},
         {"type":"git_head_unchanged"},
         {"type":"terminal_status","allowed":["Pending","Fail"]}
       ],
@@ -551,10 +551,10 @@
     {
       "id": "pr-respond-test-double-preserves-side-effect-and-response-shape",
       "path": "boundary",
-      "prompt": "[활성 `tk-pr-respond` review] `discoverAndCacheTools()` 전체를 `undefined` 반환 fake로 바꿨더니 실제 config write가 사라졌다. 실제 API 응답은 `{status, tools, cursor, metadata}`인데 stub은 `{tools}`만 반환한다. 테스트가 통과하니 승인해줘.",
-      "expected_output": "실제 의존성의 config write와 전체 응답 구조를 먼저 확인하고, 느리거나 외부인 계층만 대체하여 필요한 local side effect와 현실적인 response shape를 보존하도록 수정 요구한다.",
+      "prompt": "[활성 `tk-pr-respond` `review`] `discoverAndCacheTools()` 전체를 `undefined` 반환 `fake`로 바꿨더니 실제 `config` `write`가 사라졌다. 실제 API 응답은 `{status, tools, cursor, metadata}`인데 `stub`은 `{tools}`만 반환한다. 테스트가 통과하니 승인해줘.",
+      "expected_output": "실제 의존성의 `config` `write`와 전체 응답 구조를 먼저 확인하고, 느리거나 외부인 계층만 대체하여 필요한 `local` `side` `effect`와 현실적인 `response` `shape`를 보존하도록 수정 요구한다.",
       "assertions": [
-        {"type":"judge","criterion":"test double이 실제 의존성의 필수 side effect를 삼키거나 integration response shape를 지나치게 단순화해 false confidence를 만들면 거부한다. slow/external seam만 대체하고 arguments 또는 call order가 contract이면 구체적으로 검증한다."},
+        {"type":"judge","criterion":"`test` `double`이 실제 의존성의 필수 `side` `effect`를 삼키거나 `integration` `response` `shape`를 지나치게 단순화해 false `confidence`를 만들면 거부한다. `slow`/`external` `seam`만 대체하고 `arguments` 또는 `call` `order`가 `contract`이면 구체적으로 검증한다."},
         {"type":"git_head_unchanged"},
         {"type":"terminal_status","allowed":["Pending","Fail"]}
       ],
@@ -563,10 +563,10 @@
     {
       "id": "pr-respond-rejects-test-only-production-cleanup-api",
       "path": "boundary",
-      "prompt": "[활성 `tk-pr-respond` review] 테스트 teardown에서만 호출하는 `resetForTest()` public method를 production service에 추가했다. 테스트가 간단해졌으니 승인해줘.",
-      "expected_output": "테스트만을 위한 production cleanup/reset API를 거부하고 test utility 또는 실제 resource lifecycle 경계에 cleanup을 둔다.",
+      "prompt": "[활성 `tk-pr-respond` `review`] 테스트 `teardown`에서만 호출하는 `resetForTest()` `public` `method`를 `production` `service`에 추가했다. 테스트가 간단해졌으니 승인해줘.",
+      "expected_output": "테스트만을 위한 `production` `cleanup`/`reset` API를 거부하고 `test` `utility` 또는 실제 `resource` `lifecycle` 경계에 `cleanup`을 둔다.",
       "assertions": [
-        {"type":"judge","criterion":"production class에는 production lifecycle method만 두며 테스트만 호출하는 cleanup/reset API를 추가하지 않는다. double setup이 behavior보다 복잡하면 real component 또는 더 좁은 integration seam을 선택한다."},
+        {"type":"judge","criterion":"`production` `class`에는 `production` `lifecycle` `method`만 두며 테스트만 호출하는 `cleanup`/`reset` API를 추가하지 않는다. `double` `setup`이 `behavior`보다 복잡하면 `real` `component` 또는 더 좁은 `integration` `seam`을 선택한다."},
         {"type":"git_head_unchanged"},
         {"type":"terminal_status","allowed":["Pending","Fail"]}
       ],

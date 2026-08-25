@@ -150,14 +150,14 @@
     {
       "id": "ask-repo-why-uses-current-code-and-relevant-adr",
       "path": "success",
-      "prompt": "/tk-ask-repo 왜 checkout API가 synchronous write를 사용하나요? 관련 `skills/tk-ask-repo/evals/fixtures/adr/0004-synchronous-write.md`와 현재 code path를 근거로 설명해줘. `0099-avatar-cache.md`는 unrelated입니다.",
-      "expected_output": "현재 code path와 관련 ADR의 `write-before-ack` rationale를 함께 사용하고 stale 차이는 밝히며 unrelated `avatar-thumbnail TTL`에 영향을 받지 않는다.",
+      "prompt": "/tk-ask-repo 왜 `checkout` API가 `synchronous` `write`를 사용하나요? 관련 `skills/tk-ask-repo/evals/fixtures/adr/0004-synchronous-write.md`와 현재 `code` `path`를 근거로 설명해줘. `0099-avatar-cache.md`는 `unrelated`입니다.",
+      "expected_output": "현재 `code` `path`와 관련 ADR의 `write-before-ack` `rationale`를 함께 사용하고 `stale` 차이는 밝히며 `unrelated` `avatar-thumbnail TTL`에 영향을 받지 않는다.",
       "files": [
         "evals/fixtures/adr/0004-synchronous-write.md",
         "evals/fixtures/adr/0099-avatar-cache.md"
       ],
       "assertions": [
-        {"type":"judge","criterion":"`why` 질문에 현재 code evidence와 직접 관련된 ADR rationale를 결합하고 각각의 근거를 구분한다. 관련 없는 ADR이나 context tree는 읽지 않는다."},
+        {"type":"judge","criterion":"`why` 질문에 현재 `code` `evidence`와 직접 관련된 ADR `rationale`를 결합하고 각각의 근거를 구분한다. 관련 없는 ADR이나 `context` `tree`는 읽지 않는다."},
         {"type":"output_contains","text":"write-before-ack"},
         {"type":"output_absent","text":"avatar-thumbnail TTL"},
         {"type":"path_not_read","path":"skills/tk-ask-repo/evals/fixtures/adr/0099-avatar-cache.md"},

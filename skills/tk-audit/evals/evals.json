@@ -218,14 +218,14 @@
     {
       "id": "audit-architecture-respects-relevant-adr-tradeoff",
       "path": "success",
-      "prompt": "$tk-audit architecture 관련 `skills/tk-audit/evals/fixtures/adr/0004-synchronous-write.md`가 latency와 consistency trade-off를 소유하고 현재 friction이나 제약 변경은 없습니다. `0099-avatar-cache.md`는 unrelated입니다.",
-      "expected_output": "관련 ADR의 `write-before-ack`과 현재 code를 사용해 deliberate trade-off를 generic smell로 finding화하지 않고, unrelated `avatar-thumbnail TTL`에 영향을 받지 않는다.",
+      "prompt": "$tk-audit `architecture` 관련 `skills/tk-audit/evals/fixtures/adr/0004-synchronous-write.md`가 `latency`와 `consistency` `trade-off`를 소유하고 현재 `friction`이나 제약 변경은 없습니다. `0099-avatar-cache.md`는 `unrelated`입니다.",
+      "expected_output": "관련 ADR의 `write-before-ack`과 현재 `code`를 사용해 `deliberate` `trade-off`를 `generic` `smell`로 `finding`화하지 않고, `unrelated` `avatar-thumbnail TTL`에 영향을 받지 않는다.",
       "files": [
         "evals/fixtures/adr/0004-synchronous-write.md",
         "evals/fixtures/adr/0099-avatar-cache.md"
       ],
       "assertions": [
-        {"type":"judge","criterion":"architecture evidence와 직접 관련된 ADR rationale만 읽고 deliberate trade-off 자체를 generic smell로 보고하지 않는다. 실제 friction 또는 changed constraint가 있을 때만 `revisit ADR` finding을 허용한다."},
+        {"type":"judge","criterion":"`architecture` `evidence`와 직접 관련된 ADR `rationale`만 읽고 `deliberate` `trade-off` 자체를 `generic` `smell`로 보고하지 않는다. 실제 `friction` 또는 `changed` `constraint`가 있을 때만 `revisit ADR` `finding`을 허용한다."},
         {"type":"output_contains","text":"write-before-ack"},
         {"type":"output_absent","text":"avatar-thumbnail TTL"},
         {"type":"path_not_read","path":"skills/tk-audit/evals/fixtures/adr/0099-avatar-cache.md"},
