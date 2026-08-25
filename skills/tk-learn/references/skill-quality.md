@@ -5,6 +5,14 @@ criteria, and minimal output shape. Keep the directory self-contained. Prefer co
 instructions; add detail only for recurring omissions, costly ordering mistakes, change
 safety, objective completion proof, specialist procedures, or bounded delegation/review.
 
+## Trigger-first descriptions
+
+A description answers only whether the skill should load now. Preserve the smallest
+routing discriminators needed for positive and negative selection: concrete triggers,
+symptoms, intended scope, and exclusions. Keep workflow order, internal routing,
+approval sequence, artifact lifecycle, and procedure in the body. A process summary
+that could substitute for reading the body fails this rule even if routing cases pass.
+
 ## Upstream distillation
 
 For every `create | improve | merge`, check mature upstream practice before inventing a
@@ -40,6 +48,27 @@ TigerKit procedure. When upstream evidence exists:
   the body per host. Leave unknown target-host `invocation` as `pending`.
 - Before approval, candidate state is `reported | pending` and no files are applied.
   Only post-approval success receives `applied`.
+
+## Behavior-first evaluation
+
+Source-text presence, a successful grep, or proof that a file was loaded does not by
+itself prove skill behavior. Use observable outcomes and realistic judge criteria.
+
+- For a new skill, observe a no-skill baseline when practical. For a semantic edit to
+  an existing skill, compare the prior skill and candidate on the same scenarios.
+  If the required baseline cannot run, mark it `unverified` instead of substituting a
+  source-text check.
+- For a discipline-enforcing skill, use combined pressure and rationalization scenarios
+  that make violation tempting and require an observable choice.
+- For a technique skill, test new applications, variations, missing information, and
+  relevant edge cases rather than replaying only the source example.
+- For a pattern or mental-model skill, test recognition and application plus a
+  counter-example that establishes when not to apply it.
+- For a reference skill, verify that the agent finds the needed information and applies
+  it correctly to a realistic task; text retrieval alone is insufficient.
+- When a description changes, compare prior and candidate positive/negative routing,
+  including false-positive invocation, and verify that the candidate still follows the
+  body behavior rather than treating the description as the procedure.
 
 ## Draft artifact checkpoint
 

@@ -1,6 +1,6 @@
 ---
 name: tk-learn
-description: "[user/auto] 제공된 경험이나 자료에서 재사용 가능한 repository 또는 user skill을 설계합니다. 명확한 skill-authoring intent가 있으면 draft와 approval checkpoint까지만 진행하며, approval 전에는 쓰지 않습니다."
+description: "[user/auto] 제공된 경험이나 자료로 재사용 가능한 repository 또는 user skill을 만들거나 기존 skill을 semantic edit할 의도가 분명할 때 사용합니다. 일회성 팁 적용이나 일반 구현에는 사용하지 않습니다."
 disable-model-invocation: false
 argument-hint: "<conversation, note, path, URL, workflow, or skill-evolution candidate>"
 metadata:
@@ -71,13 +71,16 @@ to another candidate/run, do not overwrite it; report `Blocked`.
    catalog cannot be read, remain `pending` and record that status and rationale in
    `learn.md`.
 3. **Candidate proposal:** Present the target, action name, invocation kind, and
-   positive/negative triggers. Use the user's domain/workflow language to choose a
-   lowercase, hyphenated, verb-form name of at most 64 characters; check for
-   collisions, then mark it `proposed`. Leave unsupported values as `TBD`.
+   positive/negative triggers. Draft a trigger-first description that answers when to
+   load and preserves only the routing discriminators; keep procedure in the body.
+   Use the user's domain/workflow language to choose a lowercase, hyphenated,
+   verb-form name of at most 64 characters; check for collisions, then mark it
+   `proposed`. Leave unsupported values as `TBD`.
 4. **Minimal draft:** Record the minimal SKILL.md inputs, workflow, failure branches,
    approval boundaries, completion criteria, output contract, and prohibitions
    directly in `learn.md`. Also add train/validation triggers, success/boundary
-   assertions, a no-skill or prior-skill baseline, and the
+   assertions, behavior evidence designed for the candidate's skill type, a no-skill
+   or prior-skill baseline, and the
    portable-core/host-extension determination.
 5. **Approval checkpoint:** After rereading `learn.md`, follow the checkpoint and
    output contract below, then stop.
@@ -91,9 +94,9 @@ to another candidate/run, do not overwrite it; report `Blocked`.
 |---|---|---|
 | Promotion threshold | One sufficient evidence route in Skill quality is verified | `no-op | pending` |
 | Deduplication | Differences from existing skill/default capability/short rule and rationale for `merge | continue` exist | `no-op | pending` |
-| Candidate identity | Native target, name, kind, and positive/negative triggers are confirmed | `pending | Unverifiable` |
-| Behavior validation | Train/validation triggers and success/boundary assertions pass | `pending | Blocked` |
-| Baseline/compatibility | No-skill/prior baseline and portable-core/host-extension determination are verified | `pending | Unverifiable` |
+| Candidate identity | Native target, name, kind, trigger-first description, and positive/negative routing discriminators are confirmed | `pending | Unverifiable` |
+| Behavior validation | Observable train/validation routing and skill-type success/boundary behavior pass; source-text presence alone is insufficient | `pending | Blocked` |
+| Baseline/compatibility | A practical no-skill baseline for creation or prior-skill baseline for semantic edits and the portable-core/host-extension determination are verified | `pending | Unverifiable` |
 | Apply authority | Current-turn approval names the exact candidate and target path | `pending`; do not write |
 
 Use only the current host's native repo/user `skill` paths proven through actual path

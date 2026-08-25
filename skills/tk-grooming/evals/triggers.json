@@ -157,6 +157,15 @@
       "facets": [
         "compound"
       ]
+    },
+    {
+      "id": "validation-positive-9",
+      "split": "validation",
+      "query": "기존 `skill` `description`이 `body` `workflow`를 요약해 `shortcut`이 되는지 감사해줘",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
     }
   ]
 }

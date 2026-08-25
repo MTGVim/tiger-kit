@@ -113,7 +113,7 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 - `tk-pr-rebase`: `exact` `rebase` + `force-with-lease`.
 - `tk-pr-sweep`: `deterministic` `multi-PR` `triage`와 승인된 `child` `maintenance`.
 - `tk-learn`: `reusable` `skill`의 `semantic` `create | improve | merge` `writer`.
-- `tk-domain`: `repository` 고유 `canonical domain vocabulary`의 `CONTEXT.md` 작성·정제 담당자.
+- `tk-domain`: `repository` 고유 `canonical domain vocabulary`의 `CONTEXT.md`와 `sparse durable decision/ADR context` 작성·정제 담당자.
 
 `Push`/PR/`merge`/`tag`/`release`/`publish`는 각각 해당 `owner`의 명시 `authority` 없이는 확장하지 않습니다.
 

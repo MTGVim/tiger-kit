@@ -12,6 +12,7 @@
     {"id":"validation-positive-6","split":"validation","query":"`canonical domain term`","should_trigger":true,"facets":["compound"]},
     {"id":"validation-positive-7","split":"validation","query":"서로 다른 `bounded context`의 같은 용어를 분리할지 검토해줘","should_trigger":true,"facets":["formal"]},
     {"id":"validation-positive-8","split":"validation","query":"$tk-domain 기존 `glossary`를 `repository evidence`로 `refine`해줘","should_trigger":true,"facets":["compound"]},
+    {"id":"validation-positive-9","split":"validation","query":"되돌리기 어려운 `schema` `trade-off`를 기존 근거와 비교해 ADR로 남겨줘","should_trigger":true,"facets":["formal"]},
     {"id":"validation-negative-1","split":"validation","query":"일반 코딩 규칙을 `RULES.md`에 모아줘","should_trigger":false,"facets":["formal"]},
     {"id":"validation-negative-2","split":"validation","query":"이 오류 해결법을 기억해둬","should_trigger":false,"facets":["casual"]},
     {"id":"validation-negative-3","split":"validation","query":"아키텍처 문서 써조","should_trigger":false,"facets":["typo"]},
@@ -19,6 +20,7 @@
     {"id":"validation-negative-5","split":"validation","query":"현재 설정 버전을 기록해줘","should_trigger":false,"facets":["short"]},
     {"id":"validation-negative-6","split":"validation","query":"PR `body` 작성","should_trigger":false,"facets":["compound"]},
     {"id":"validation-negative-7","split":"validation","query":"모든 `repository knowledge`를 자동 수집해줘","should_trigger":false,"facets":["formal"]},
-    {"id":"validation-negative-8","split":"validation","query":"`CONTEXT.md`를 읽어 이 이슈 구현해줘","should_trigger":false,"facets":["compound"]}
+    {"id":"validation-negative-8","split":"validation","query":"`CONTEXT.md`를 읽어 이 이슈 구현해줘","should_trigger":false,"facets":["compound"]},
+    {"id":"validation-negative-9","split":"validation","query":"이 `local` `loop`가 빠른 이유를 코드 주석으로 남겨줘","should_trigger":false,"facets":["casual"]}
   ]
 }

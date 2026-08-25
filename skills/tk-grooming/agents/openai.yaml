@@ -1,2 +1,2 @@
 interface:
-  short_description: "[user/auto] 규칙과 스킬을 감사하고 선택적으로 변경합니다."
+  short_description: "[user/auto] 기존 `repository` 또는 `user` `skill`의 구조·`trigger`와 `description` `shortcut` `risk`를 감사할 때 사용합니다."

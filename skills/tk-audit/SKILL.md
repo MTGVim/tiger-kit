@@ -36,6 +36,10 @@ When user-owned clarification is needed, prefer the host's native structured que
 3. Reopen cited evidence to remove duplicates, intended behavior, and incorrect attribution.
 4. Sort `finding`s by impact ÷ `effort`, then `confidence`, `fix risk`, and `dependency`.
 
+For a potential architecture finding, read ADR rationale only when it directly owns the observed trade-off. Do not
+report a deliberate ADR trade-off as a generic smell. Surface `revisit ADR` only when current evidence shows real
+friction or changed constraints, and never scan an unrelated ADR or context tree.
+
 ## 🔴 CHECKPOINT · 🛑 STOP · Ledger preflight
 
 Before writing `.tigerkit/audit.md`, freshly recheck the current `HEAD`, requested scope, existing `AUD-*` IDs,

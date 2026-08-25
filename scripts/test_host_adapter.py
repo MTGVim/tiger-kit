@@ -113,6 +113,47 @@ class HostAdapterTest(unittest.TestCase):
             with patch.dict(os.environ, {"TK_EVAL_CLAUDE_EXECUTABLE": str(shim)}):
                 self.assertEqual(adapter.executable_for("claude-code"), str(shim))
 
+    def test_path_watch_reports_read_and_not_read(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            checkout = Path(directory)
+            (checkout / "read.md").write_text("read me\n", encoding="utf-8")
+            (checkout / "unread.md").write_text("leave me\n", encoding="utf-8")
+
+            watch = adapter.arm_path_watch(checkout, ["read.md", "unread.md"])
+            self.assertTrue(watch[0])
+            (checkout / "read.md").read_text(encoding="utf-8")
+            result = adapter.finish_path_watch(watch)
+
+            self.assertEqual(
+                result,
+                {"available": True, "read_paths": ["read.md"]},
+            )
+
+    def test_path_watch_is_unavailable_when_atime_cannot_be_armed(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            checkout = Path(directory)
+            (checkout / "watched.md").write_text("watch me\n", encoding="utf-8")
+            with patch.object(adapter.os, "utime", side_effect=OSError("no atime")):
+                watch = adapter.arm_path_watch(checkout, ["watched.md"])
+            self.assertEqual(
+                adapter.finish_path_watch(watch),
+                {"available": False, "read_paths": []},
+            )
+
+    def test_path_watch_rejects_paths_outside_checkout(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            checkout = Path(directory) / "repo"
+            checkout.mkdir()
+            outside = checkout.parent / "outside.md"
+            outside.write_text("secret\n", encoding="utf-8")
+
+            watch = adapter.arm_path_watch(checkout, ["../outside.md"])
+
+            self.assertEqual(
+                adapter.finish_path_watch(watch),
+                {"available": False, "read_paths": []},
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -59,6 +59,9 @@ When review feedback concerns UI text, verify the currently rendered string thro
 When feedback uses project-specific terminology, lazy-load [domain context](references/domain-context.md) and preserve
 canonical vocabulary without overriding verified user-visible UI literals.
 
+When feedback directly concerns architecture, compatibility, or a boundary decision, combine the current diff with
+only relevant ADR rationale. Do not make ADR review a generic checklist and never scan an unrelated ADR or context tree.
+
 When feedback requests a test, do not close it with file-existence or source-text assertions. Reproduce the reported
 regression and add protection that fails when the real behavior or side effect breaks again.
 
@@ -150,6 +153,10 @@ After approval, choose from the approved feedback shape:
 Direct applies RED → verified failure → minimal GREEN → refactor while green → required relevant checks. SDD Unit reports
 carry their own test obligation and RED/GREEN evidence. If host fan-out is unavailable, preserve the same role/range gates
 sequentially; do not silently lower SDD to unreviewed direct work. The parent stores no provider routing/session ledger.
+
+Every direct exact-change review and every SDD `Unit`/whole-change review records independent `Spec/AC` and `Quality/Standards`
+verdicts; a clean result on one axis never offsets failure on the other. One reviewer or one serial review may judge both axes;
+do not add a mandatory second reviewer or parallel reviewer fan-out.
 
 Both code-changing routes finish with acceptance-criteria review, `tk-browser-verify` for browser-visible changes, required
 gap correction, and verified local commit(s). SDD's one whole-change final review satisfies the broad review gate; do not

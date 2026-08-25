@@ -162,6 +162,85 @@ def run_process(
     return completed.stdout, completed.stderr, completed.returncode, duration_ms
 
 
+def _restore_path_watch(entries: list[tuple[str, Path, int, int, int]]) -> bool:
+    restored = True
+    for _, target, _, atime_ns, mtime_ns in entries:
+        try:
+            os.utime(target, ns=(atime_ns, mtime_ns))
+        except OSError:
+            restored = False
+    return restored
+
+
+def arm_path_watch(
+    checkout: Path, relatives: list[str]
+) -> tuple[bool, list[tuple[str, Path, int, int, int]]]:
+    root = checkout.resolve()
+    if len(set(relatives)) != len(relatives):
+        return False, []
+    targets: list[tuple[str, Path]] = []
+    for relative in relatives:
+        path = Path(relative)
+        target = (root / path).resolve()
+        if (
+            not relative
+            or path.is_absolute()
+            or ".." in path.parts
+            or root not in target.parents
+            or not target.is_file()
+        ):
+            return False, []
+        targets.append((relative, target))
+
+    entries: list[tuple[str, Path, int, int, int]] = []
+    try:
+        for relative, target in targets:
+            original = target.stat()
+            entries.append(
+                (relative, target, 0, original.st_atime_ns, original.st_mtime_ns)
+            )
+            os.utime(target, ns=(0, original.st_mtime_ns))
+            armed_atime = target.stat().st_atime_ns
+            with target.open("rb") as stream:
+                stream.read(1)
+            if target.stat().st_atime_ns == armed_atime:
+                _restore_path_watch(entries)
+                return False, []
+            os.utime(target, ns=(0, original.st_mtime_ns))
+            sentinel = target.stat().st_atime_ns
+            entries[-1] = (
+                relative,
+                target,
+                sentinel,
+                original.st_atime_ns,
+                original.st_mtime_ns,
+            )
+    except OSError:
+        _restore_path_watch(entries)
+        return False, []
+    return True, entries
+
+
+def finish_path_watch(
+    watch: tuple[bool, list[tuple[str, Path, int, int, int]]]
+) -> dict[str, object]:
+    available, entries = watch
+    if not available:
+        return {"available": False, "read_paths": []}
+    try:
+        read_paths = sorted(
+            relative
+            for relative, target, sentinel, _, _ in entries
+            if target.stat().st_atime_ns != sentinel
+        )
+    except OSError:
+        _restore_path_watch(entries)
+        return {"available": False, "read_paths": []}
+    if not _restore_path_watch(entries):
+        return {"available": False, "read_paths": []}
+    return {"available": True, "read_paths": read_paths}
+
+
 def codex_text(stdout: str) -> tuple[str, float | None]:
     messages: list[str] = []
     tokens: float | None = None
@@ -246,6 +325,14 @@ def main() -> int:
     installed = install_skills(host, checkout)
     wrapped = harness_prompt(prompt, installed)
     env = host_environment(host)
+    try:
+        watch_paths = json.loads(os.environ.get("TK_EVAL_WATCH_PATHS", "[]"))
+    except json.JSONDecodeError as exc:
+        raise RuntimeError("TK_EVAL_WATCH_PATHS must be a JSON list") from exc
+    if not isinstance(watch_paths, list) or not all(
+        isinstance(value, str) for value in watch_paths
+    ):
+        raise RuntimeError("TK_EVAL_WATCH_PATHS must be a string list")
 
     if host == "codex":
         command = [
@@ -281,11 +368,15 @@ def main() -> int:
             "terminal,skills",
         ]
 
-    stdout, stderr, returncode, duration_ms = run_process(
-        command,
-        cwd=checkout,
-        env=env,
-    )
+    watch = arm_path_watch(checkout, watch_paths)
+    try:
+        stdout, stderr, returncode, duration_ms = run_process(
+            command,
+            cwd=checkout,
+            env=env,
+        )
+    finally:
+        file_access = finish_path_watch(watch)
     if returncode != 0:
         raise RuntimeError(
             stderr.strip() or stdout.strip() or f"{host} exited {returncode}"
@@ -299,6 +390,8 @@ def main() -> int:
     payload = extract_payload(text)
     payload["duration_ms"] = duration_ms
     payload["total_tokens"] = total_tokens
+    if watch_paths:
+        payload["file_access"] = file_access
     print(json.dumps(payload, ensure_ascii=False))
     return 0
 

@@ -61,6 +61,10 @@ Every repository-state claim must have one of the following:
 When the question materially uses project-specific terminology, lazy-load
 [domain context](references/domain-context.md) and preserve canonical vocabulary without overriding verified UI literals.
 
+For a `why` question about a durable design choice, combine current code evidence with only directly relevant ADR rationale.
+Distinguish what the code proves from what the ADR explains, report stale or changed premises, and never
+scan an unrelated ADR or context tree.
+
 A declaration proves only shape.
 When asked about a value’s origin, trace the actual assignment, stored input, transformation, and external boundary.
 
