@@ -11,9 +11,14 @@ visible browser. A default user profile, stale port file, or prior UUID is not e
 of a reusable session.
 
 Place binary evidence in the parent-provided or standalone run-owned evidence
-directory. Do not create a Markdown file. Every cited screenshot must exist, be
-non-empty, and be actually inspected. If the directory cannot be resolved, the image
-is missing, or inspection fails, required browser evidence is `Unverifiable`.
+directory. Only a bounded `README.md` AC-to-file evidence index may accompany it; do not
+create a Markdown lifecycle ledger. Every cited screenshot must exist, be non-empty, and
+be actually inspected. If the directory cannot be resolved, the image is missing, or
+inspection fails, required browser evidence is `Unverifiable`.
+
+Immediately after file-mediated authentication injection, stop the exact run-owned
+loopback secret server, delete the mode-`0600` token file outside the repository, and
+verify that neither remains. Do not defer secret cleanup until browser-session cleanup.
 
 Clean up success, failure, interruption, and exception paths in this order:
 

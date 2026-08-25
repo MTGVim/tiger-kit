@@ -17,5 +17,10 @@ bodies. Use it only after verified redaction and confirmation that neither the o
 nor transfer path retains residue. Otherwise, safely delete owned captures and return
 `Unverifiable`.
 
+Do not use a request-inspection tool that returns raw `authorization`, `cookie`, or other
+headers merely to inspect a payload. When an approved non-secret request body is required,
+intercept only the body inside the page by wrapping `fetch` or `XMLHttpRequest.send`; do not
+return headers, cookies, or transient authentication material.
+
 Never move or delete user screenshots, fixtures, profiles, or artifacts with unknown
 ownership. Never change `.gitignore` for evidence handling.

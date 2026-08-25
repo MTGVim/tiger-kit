@@ -24,6 +24,19 @@ device approval. Request a short-lived token/session through the temporary secre
 channel. If no approved state can be established, return `Unverifiable` before a
 product mutation.
 
+When no safer temporary secret-input channel exists, use a file-mediated channel outside
+the repository. Create an empty run-owned file with mode `0600`, give the user its path
+and a host-appropriate clipboard-to-file command, and never ask for the value in chat.
+After the target hostname and port are final, a no-log one-shot server bound only to
+loopback may read that file and return `Access-Control-Allow-Origin: *`. Fetch it inside
+the page and apply only the repository/application-supported cookie, header, or storage
+bootstrap. Return only injection success and value length, never the value.
+
+Stop the loopback server and delete the token file immediately after injection, then
+verify both are absent. Cookie scope follows hostname rather than port: if the hostname
+changes, establish the approved state again. For OAuth plus OTP or any other interactive
+flow, use the approved transient injection path or return `Unverifiable`.
+
 ## Server and serving source
 
 In a `standalone` run with multiple viable `dev-server` commands, present the candidates
@@ -34,6 +47,17 @@ suppression, for a `react-scripts`/CRA server. Start a `long-running server` as 
 `run-owned` background process with an exact PID, `cwd`, command, `port`, and bounded
 `log` path. Poll a concrete `HTTP`/`port` `readiness signal` under a `bounded timeout`;
 continue after `readiness` instead of waiting for process exit.
+
+Before selecting or starting the server, inspect the relevant package script and environment
+file for the intended hostname, port, and API target without exposing secret values. Follow
+that repository convention instead of drifting to a default port. Readiness requires both a
+live response and a project-specific identity such as the expected `<title>`, page marker, or
+current bundle fingerprint; an open port alone may belong to another project.
+
+If the selected script uses `A && B` and `A` is the long-running server, `B` cannot execute.
+When repository evidence identifies `B` as a required asset/build step and its missing output
+causes the observed compile failure, run `B` once as a run-owned prerequisite and record it.
+Do not edit source or generalize this into an alternate server workflow.
 
 Reuse an existing server only when its cwd matches the worktree, its asset/watch
 pipeline is current, and a bundle/response or changed render proves the serving

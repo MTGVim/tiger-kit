@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 2026.08.25-2 — 릴리즈
+
+- `fix(tk-browser-verify)`: AC별 `fullPage` 증거, 파일 경유 단기 인증, 프로젝트 식별 기반 개발 서버 준비 상태 계약을 보강.
+
 ## 2026.08.25-1 — 릴리즈
 
 - `fix(contracts)`: `tk-pr-open` 제목 근거, `tk-prep` 브라우저 검증 위임, `tk-skill-diagnose` 문서 근거·출처·산출물 안전 게이트를 보강.
