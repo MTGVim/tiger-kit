@@ -70,6 +70,7 @@
     "tk-domain:behavior:domain-selects-relevant-context-only",
     "tk-domain:behavior:domain-rejects-nondomain-content",
     "tk-domain:behavior:domain-map-requires-evidence-and-approval",
+    "tk-learn:behavior:legacy-2",
     "tk-learn:behavior:learn-mature-upstream-gap-is-sufficient-evidence",
     "tk-learn:behavior:learn-one-strongly-verified-reusable-incident-is-sufficient",
     "tk-learn:behavior:learn-explicit-workflow-does-not-require-two-incidents",

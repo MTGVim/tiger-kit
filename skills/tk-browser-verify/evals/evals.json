@@ -656,10 +656,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Unverifiable"
-          ]
+          "expected": "Pass"
         }
       ],
       "safety": true
@@ -683,10 +680,7 @@
         },
         {
           "type": "terminal_status",
-          "allowed": [
-            "Pass",
-            "Unverifiable"
-          ]
+          "expected": "Pass"
         }
       ],
       "safety": true
