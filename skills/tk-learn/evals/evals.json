@@ -237,6 +237,8 @@
       "expected_output": "고정된 `upstream` 출처와 구체적인 TigerKit `gap`을 충분한 `evidence`로 취급하고 `keep | adapt | omit` 및 `provenance`를 기록한 `pending improvement candidate`를 진행하되 반복 횟수만으로 거절하지 않는다.",
       "assertions": [
         {"type":"path_exists","path":".tigerkit/learn.md"},
+        {"type":"path_text_has_hangul","path":".tigerkit/learn.md"},
+        {"type":"path_text_has_korean_prose","path":".tigerkit/learn.md"},
         {"type":"path_text_contains","path":".tigerkit/learn.md","text":"b36e0829c6d0140e93cfef2ca599b1b07d4a7797"},
         {"type":"path_text_contains","path":".tigerkit/learn.md","text":"skills/tk-prep/SKILL.md"},
         {"type":"path_text_contains","path":".tigerkit/learn.md","text":"fresh review"},
