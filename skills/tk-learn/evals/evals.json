@@ -223,10 +223,10 @@
     {
       "id": "learn-explicit-workflow-does-not-require-two-incidents",
       "path": "success",
-      "prompt": "/tk-learn 사용자가 명시적으로 reusable workflow skill을 만들고 싶어 하고 source material과 repository evidence가 충분하지만 incident는 한 건도 없습니다.",
-      "expected_output": "explicit workflow authoring route로 dedupe, trigger, eval, compatibility, approval gate를 진행하며 incident 두 건 부재만으로 no-op 처리하지 않는다.",
+      "prompt": "/tk-learn 사용자가 명시적으로 `reusable workflow skill`을 만들고 싶어 하고 `source material`과 `repository evidence`가 충분하지만 `incident`는 한 건도 없습니다.",
+      "expected_output": "`explicit workflow authoring route`로 `dedupe`, `trigger`, `eval`, `compatibility`, `approval gate`를 진행하며 `incident` 두 건 부재만으로 `no-op` 처리하지 않는다.",
       "assertions": [
-        {"type":"judge","criterion":"명시적인 reusable workflow authoring은 충분한 source/repository evidence가 있으면 두 incident를 요구하지 않되 dedupe, boundary eval, current-turn approval은 유지한다."},
+        {"type":"judge","criterion":"명시적인 `reusable workflow authoring`은 충분한 `source`/`repository evidence`가 있으면 두 `incident`를 요구하지 않되 `dedupe`, `boundary eval`, `current-turn approval`은 유지한다."},
         {"type":"terminal_status","expected":"Pending"}
       ]
     },

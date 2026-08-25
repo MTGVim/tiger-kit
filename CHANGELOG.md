@@ -2,8 +2,8 @@
 
 ## Unreleased
 
-- `refactor(skills)`: core skill의 numeric/model/worktree ceremony를 줄이고 `tk-mwhat`을 retire.
-- `feat(tk-domain)`: repository 고유 용어용 lazy `CONTEXT.md`/optional `CONTEXT-MAP.md` 계약과 consumer eval을 추가.
+- `refactor(skills)`: `core skill`의 `numeric`/`model`/`worktree` `ceremony`를 줄이고 `tk-mwhat`을 `retire`.
+- `feat(tk-domain)`: `repository` 고유 용어용 `lazy` `CONTEXT.md`/`optional` `CONTEXT-MAP.md` 계약과 `consumer eval`을 추가.
 
 ## 2026.08.25-2 — 릴리즈
 

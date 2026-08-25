@@ -135,8 +135,8 @@
     {
       "id": "pr-open-domain-context-keeps-canonical-term",
       "path": "boundary",
-      "prompt": "/tk-pr-open root `CONTEXT.md`의 canonical term `현장결제`를 PR title/body에 쓰고 `_Avoid_`인 `오프라인 결제`는 쓰지 마세요. 아직 publication 승인은 없습니다.",
-      "expected_output": "PR title/body에 `현장결제`를 그대로 사용하고 `_Avoid_` 표현을 쓰지 않은 계획을 제시한 뒤 `Pending`으로 멈춘다.",
+      "prompt": "/tk-pr-open `root` `CONTEXT.md`의 `canonical term` `현장결제`를 PR `title`/`body`에 쓰고 `_Avoid_`인 `오프라인 결제`는 쓰지 마세요. 아직 `publication` 승인은 없습니다.",
+      "expected_output": "PR `title`/`body`에 `현장결제`를 그대로 사용하고 `_Avoid_` 표현을 쓰지 않은 계획을 제시한 뒤 `Pending`으로 멈춘다.",
       "assertions": [
         {"type":"output_contains","text":"현장결제"},
         {"type":"output_absent","text":"오프라인 결제"},

@@ -216,10 +216,10 @@
     {
       "id": "pr-sweep-reply-only-skips-worktree",
       "path": "success",
-      "prompt": "[approved tk-pr-sweep] #121은 repository 근거 답변만 필요한 reply-only row이고 Git mutation은 없습니다.",
-      "expected_output": "fresh PR state를 확인하고 child owner에 넘기되 reply-only isolation만을 위한 worktree나 Seed를 만들지 않는다.",
+      "prompt": "[`approved tk-pr-sweep`] #121은 `repository` 근거 답변만 필요한 `reply-only row`이고 Git `mutation`은 없습니다.",
+      "expected_output": "`fresh PR state`를 확인하고 `child owner`에 넘기되 `reply-only isolation`만을 위한 `worktree`나 `Seed`를 만들지 않는다.",
       "assertions": [
-        {"type":"judge","criterion":"reply-only row에는 worktree와 Seed를 강제하지 않으며, code-changing 또는 Git-mutating child만 dedicated safe checkout을 사용한다."},
+        {"type":"judge","criterion":"`reply-only row`에는 `worktree`와 `Seed`를 강제하지 않으며, `code-changing` 또는 `Git-mutating child`만 `dedicated safe checkout`을 사용한다."},
         {"type":"terminal_status","expected":"Pass"}
       ]
     },

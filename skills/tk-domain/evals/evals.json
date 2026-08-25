@@ -4,30 +4,30 @@
     {
       "id": "domain-preserves-canonical-term-and-avoids-synonym",
       "path": "success",
-      "prompt": "$tk-domain repository evidence에서 canonical term은 `현장결제`, 피해야 할 표현은 `오프라인 결제`로 확인됐습니다. root glossary를 정리해줘.",
-      "expected_output": "승인 후 root `CONTEXT.md`에 `현장결제`를 그대로 기록하고 `_Avoid_`에 `오프라인 결제`를 넣으며 번역하거나 정규화하지 않는다.",
+      "prompt": "$tk-domain `repository evidence`에서 `canonical term`은 `현장결제`, 피해야 할 표현은 `오프라인 결제`로 확인됐습니다. `root glossary`를 정리해줘.",
+      "expected_output": "승인 후 `root` `CONTEXT.md`에 `현장결제`를 그대로 기록하고 `_Avoid_`에 `오프라인 결제`를 넣으며 번역하거나 정규화하지 않는다.",
       "assertions": [
-        {"type":"judge","criterion":"충분한 evidence와 current-turn approval 뒤 root `CONTEXT.md`에 canonical term과 `_Avoid_`를 정확히 기록하고 reread verification을 수행한다."},
+        {"type":"judge","criterion":"충분한 `evidence`와 `current-turn approval` 뒤 `root` `CONTEXT.md`에 `canonical term`과 `_Avoid_`를 정확히 기록하고 `reread verification`을 수행한다."},
         {"type":"terminal_status","expected":"Pass"}
       ]
     },
     {
       "id": "domain-ui-literal-precedence",
       "path": "success",
-      "prompt": "glossary의 domain term은 `현장결제`이고 실제 버튼 label은 `현장 결제`입니다. 두 표현을 설명과 UI 인용에 사용해줘.",
-      "expected_output": "domain concept prose에는 `현장결제`, quoted UI에는 검증된 `현장 결제`를 사용한다.",
+      "prompt": "`glossary`의 `domain term`은 `현장결제`이고 실제 버튼 `label`은 `현장 결제`입니다. 두 표현을 설명과 UI 인용에 사용해줘.",
+      "expected_output": "`domain concept prose`에는 `현장결제`, `quoted UI`에는 검증된 `현장 결제`를 사용한다.",
       "assertions": [
-        {"type":"judge","criterion":"domain concept와 rendered UI literal을 서로 다른 evidence class로 취급하고 각각 `현장결제`와 `현장 결제`를 정확히 사용한다."},
+        {"type":"judge","criterion":"`domain concept`와 `rendered UI literal`을 서로 다른 `evidence class`로 취급하고 각각 `현장결제`와 `현장 결제`를 정확히 사용한다."},
         {"type":"terminal_status","expected":"Pass"}
       ]
     },
     {
       "id": "domain-no-glossary-no-ceremony",
       "path": "boundary",
-      "prompt": "이 repository에는 domain glossary가 없고 지금 요청은 작은 일반 code fix입니다.",
-      "expected_output": "`CONTEXT.md` 생성이나 setup을 제안하지 않고 기존 작업을 조용히 계속한다.",
+      "prompt": "이 `repository`에는 `domain glossary`가 없고 지금 요청은 작은 일반 `code fix`입니다.",
+      "expected_output": "`CONTEXT.md` 생성이나 `setup`을 제안하지 않고 기존 작업을 조용히 계속한다.",
       "assertions": [
-        {"type":"judge","criterion":"glossary가 없고 실제 domain-authoring intent가 없으면 setup 질문이나 artifact 생성을 하지 않는다."},
+        {"type":"judge","criterion":"`glossary`가 없고 실제 `domain-authoring intent`가 없으면 `setup` 질문이나 `artifact` 생성을 하지 않는다."},
         {"type":"git_head_unchanged"},
         {"type":"terminal_status","expected":"NotApplicable"}
       ]
@@ -35,20 +35,20 @@
     {
       "id": "domain-selects-relevant-context-only",
       "path": "success",
-      "prompt": "root `CONTEXT-MAP.md`가 billing과 ordering glossary를 가리킵니다. billing PR의 canonical term만 확인해줘.",
-      "expected_output": "Map에서 billing context만 읽고 ordering vocabulary를 출력이나 작업 근거에 섞지 않는다.",
+      "prompt": "`root` `CONTEXT-MAP.md`가 `billing`과 `ordering glossary`를 가리킵니다. `billing` PR의 `canonical term`만 확인해줘.",
+      "expected_output": "`Map`에서 `billing context`만 읽고 `ordering vocabulary`를 출력이나 작업 근거에 섞지 않는다.",
       "assertions": [
-        {"type":"judge","criterion":"현재 작업과 materially relevant한 billing context만 선택하고 unrelated ordering glossary를 읽거나 출력에 섞지 않는다."},
+        {"type":"judge","criterion":"현재 작업과 `materially relevant`한 `billing context`만 선택하고 `unrelated ordering glossary`를 읽거나 출력에 섞지 않는다."},
         {"type":"terminal_status","expected":"Pass"}
       ]
     },
     {
       "id": "domain-rejects-nondomain-content",
       "path": "boundary",
-      "prompt": "$tk-domain `CONTEXT.md`에 파일 경로, 함수 이름, debugging tip, 현재 version, 일반 coding rule을 함께 저장해줘.",
-      "expected_output": "glossary 범위를 벗어난 implementation detail과 일반 rule을 거부하고 repo-native owner로 돌린다.",
+      "prompt": "$tk-domain `CONTEXT.md`에 파일 경로, 함수 이름, `debugging tip`, 현재 `version`, 일반 `coding rule`을 함께 저장해줘.",
+      "expected_output": "`glossary` 범위를 벗어난 `implementation detail`과 일반 `rule`을 거부하고 `repo-native owner`로 돌린다.",
       "assertions": [
-        {"type":"judge","criterion":"파일 경로, symbol, debugging tip, transient value, generic engineering rule을 `CONTEXT.md`에 쓰지 않는다."},
+        {"type":"judge","criterion":"파일 경로, `symbol`, `debugging tip`, `transient value`, `generic engineering rule`을 `CONTEXT.md`에 쓰지 않는다."},
         {"type":"git_head_unchanged"},
         {"type":"terminal_status","expected":"Blocked"}
       ],
@@ -57,10 +57,10 @@
     {
       "id": "domain-map-requires-evidence-and-approval",
       "path": "boundary",
-      "prompt": "package가 여러 개니까 근거 확인 없이 자동으로 `CONTEXT-MAP.md`와 child glossary를 만들어줘.",
-      "expected_output": "package 수만으로 multi-context를 만들지 않고 actual bounded-context evidence와 current-turn approval을 요구한다.",
+      "prompt": "`package`가 여러 개니까 근거 확인 없이 자동으로 `CONTEXT-MAP.md`와 `child glossary`를 만들어줘.",
+      "expected_output": "`package` 수만으로 `multi-context`를 만들지 않고 `actual bounded-context evidence`와 `current-turn approval`을 요구한다.",
       "assertions": [
-        {"type":"judge","criterion":"multi-context evidence가 없으면 구조 변경을 거부하고, evidence가 있어도 exact proposal에 대한 current-turn approval 전에는 쓰지 않는다."},
+        {"type":"judge","criterion":"`multi-context evidence`가 없으면 구조 변경을 거부하고, `evidence`가 있어도 `exact proposal`에 대한 `current-turn approval` 전에는 쓰지 않는다."},
         {"type":"git_head_unchanged"},
         {"type":"terminal_status","expected":"Blocked"}
       ],
@@ -69,10 +69,10 @@
     {
       "id": "domain-lazy-creates-first-term",
       "path": "success",
-      "prompt": "$tk-domain 첫 실제 project term의 canonical spelling과 의미가 source로 확정됐습니다. artifact가 아직 없으니 적용해줘.",
-      "expected_output": "승인 전에는 만들지 않고 exact mutation 승인 후 최소 root `CONTEXT.md`를 생성해 reread한다.",
+      "prompt": "$tk-domain 첫 실제 `project term`의 `canonical spelling`과 의미가 `source`로 확정됐습니다. `artifact`가 아직 없으니 적용해줘.",
+      "expected_output": "승인 전에는 만들지 않고 `exact mutation` 승인 후 최소 `root` `CONTEXT.md`를 생성해 `reread`한다.",
       "assertions": [
-        {"type":"judge","criterion":"첫 실제 term이 확정되고 current-turn approval이 있을 때만 최소 root `CONTEXT.md`를 lazy-create한다."},
+        {"type":"judge","criterion":"첫 실제 `term`이 확정되고 `current-turn approval`이 있을 때만 최소 `root` `CONTEXT.md`를 `lazy-create`한다."},
         {"type":"terminal_status","expected":"Pass"}
       ]
     }
