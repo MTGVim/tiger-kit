@@ -9,6 +9,25 @@ font, assets, and zoom before comparing only the named region/state. Classify a
 difference as a `defect`, approved deviation, environment issue, or `unverifiable`.
 Do not invent design intent or broaden the work into generic critique.
 
+## Capture method and evidence map
+
+Default to one `fullPage` screenshot per AC. Do not resize the viewport height to the
+document height, and do not reuse one or two undifferentiated page captures for unrelated
+criteria. Store a bounded `README.md` beside the images with an AC-to-file table and any
+capture-only element removal/hiding. This file is evidence metadata, not a progress ledger.
+
+Before capture, inspect whether an empty off-screen alert, toast, or similar framework
+container expands or contaminates the image. Remove only a verified empty, non-criterion
+container at runtime and disclose it in the evidence index. For annotations, attach an
+`outline` directly to the target element. Place the label as an absolute child of `body`
+and clamp its position to the page width so target `overflow: hidden` cannot clip it.
+Do not calculate a detached overlay from coordinates that may change during `fullPage`
+layout or capture.
+
+If fixed navigation obscures the criterion, first use the framework's compact/collapsed
+mode and verify that the content position remains unchanged. If it still obscures the
+criterion, hide only that navigation for capture and disclose the change in `README.md`.
+
 ## Verbatim visual comparison axes
 
 For a verbatim/fidelity comparison against an approved reference, actually inspect

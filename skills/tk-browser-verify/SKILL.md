@@ -50,7 +50,7 @@ When possible, the parent task provides:
 - auth strategy and secret-free bootstrap method
 - viewport/state
 - development server command/cwd/readiness
-- required screenshot evidence
+- required screenshot evidence, AC-to-file mapping, and allowed capture-only layout adjustments
 - exact verbatim strings or verified entry paths for UI `Content` criteria
 - sensitive capture/redaction rule
 - Pass condition
@@ -66,14 +66,16 @@ Return only outcome-changing user-owned decisions to the parent owner.
 2. **Preparation**: Read only the required references: [environment](references/environment.md), [behavior](references/behavior.md), [visual](references/visual.md), [accessibility](references/accessibility.md), [safety](references/safety.md).
 3. **Evidence reuse**: Before starting a server/browser or rerunning an expensive scenario, reread supplied run-owned evidence and its current candidate/environment provenance. Reuse it only when it already proves the exact current criterion; stale, mismatched, incomplete, or uninspected evidence requires a justified fresh run. Do not rerun merely because a previous producer already returned evidence.
 4. **Execution setup**: Without installing new dependencies, use a native, Playwright-compatible, MCP, or verified CDP path. Any new Chrome/Chromium process must prove effective `--headless=new`.
-5. **Server**: If the parent requires a development server, this verifier owns starting the background process, readiness checks, and cleanup. For standalone execution, present multiple plausible commands and get the user's choice before starting; do not choose arbitrarily. When the selected server is `react-scripts`/CRA, include `BROWSER=NONE` or the repository-documented equivalent to suppress auto-open. Manage PID/cwd/port/command and bounded logs as run evidence, and wait for a readiness signal rather than process exit.
+5. **Server**: If the parent requires a development server, this verifier owns starting the background process, readiness checks, and cleanup. For standalone execution, present multiple plausible commands and get the user's choice before starting; do not choose arbitrarily. Resolve the selected script and environment's host, port, and API target before launch, then prove project identity rather than accepting an open port alone. When the selected server is `react-scripts`/CRA, include `BROWSER=NONE` or the repository-documented equivalent to suppress auto-open. Manage PID/cwd/port/command and bounded logs as run evidence, and wait for a readiness signal rather than process exit.
 6. **Verification**: Start from a known state and inspect the required interaction and final state. Capture and actually inspect at least one non-empty run-owned screenshot for every final state relevant to the decision.
 7. **Decision**: Map each criterion to current evidence and assign `Pass | Fail | Blocked | Unverifiable`. When visual comparison is required, cover asset/content/geometry/typography/color/imagery/responsive/state axes. For UI `Content` criteria, require exact rendered strings or a verified entry path from the parent basis; if neither exists, do not infer the element from a paraphrase, code identifier, or enum and return `Unverifiable`.
 8. **Cleanup**: Close only run-owned browser/server/resources and check for residue according to [session lifecycle](references/session-lifecycle.md).
 
 ## Evidence
 
-Binary evidence may be stored in run-owned `.tigerkit/evidence/browser/<run-id>/`; do not place Markdown files there.
+Binary evidence may be stored in run-owned `.tigerkit/evidence/browser/<run-id>/`. A bounded `README.md` may map each
+AC to its screenshot and disclose capture-only hidden/removed elements; it is an evidence index, not a lifecycle ledger.
+Do not place other Markdown files there.
 Do not move user fixtures. Use sensitive captures as evidence only after verifying redaction and absence of residue.
 
 Limit nested results to:
