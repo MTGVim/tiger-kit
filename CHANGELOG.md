@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 2026.08.26-2 — 릴리즈
+
 - `feat(quality)`: 검증된 `upstream`의 현재 구현·근거·`eval`을 `keep | adapt | omit`으로 증류하고, 실제 `implementation topology`에 따른 실행 경로와 집중형 브라우저 증거를 채택.
 
 ## 2026.08.26-1 — 릴리즈
