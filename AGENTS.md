@@ -17,6 +17,7 @@ TigerKit은 `workflow` `runner`, `plugin`, `scheduler`, `shared-state` `framewor
 
 `SDD`, `skill`, `review`처럼 구현 품질에 영향을 주는 변경은 설계 전에 검증된 최신 `upstream`을 먼저 조사합니다.
 
+- `SDD`와 `subagent-development` 변경은 최신 `obra/superpowers`를 `primary upstream`으로 삼고, 다른 자료보다 먼저 현재 구현과 관련 설계 근거·`eval`을 확인합니다.
 - 고정된 `revision`에서 현재 구현, 설계 근거, 관련 `eval`을 함께 확인하고, 읽지 못한 근거는 `unverified`로 남깁니다.
 - 기존 TigerKit `owner`와 경계를 비교하여 출처와 `keep | adapt | omit` 판단을 기록합니다.
 - `behavior contract`와 `failure mode`만 증류하고, `runtime`, 제공자 선택, 작업 공간, `framework`는 복사하지 않습니다.

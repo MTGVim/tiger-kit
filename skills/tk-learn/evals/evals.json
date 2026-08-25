@@ -245,6 +245,7 @@
         {"type":"path_text_contains","path":".tigerkit/learn.md","text":"keep"},
         {"type":"path_text_contains","path":".tigerkit/learn.md","text":"adapt"},
         {"type":"path_text_contains","path":".tigerkit/learn.md","text":"omit"},
+        {"type":"judge","criterion":"`learn.md`에서 비교한 각 `upstream element`에 `literal` `keep | adapt | omit` 중 하나와 그 이유를 연결하며, `disposition` 단어만 나열하지 않는다."},
         {"type":"terminal_status","expected":"Pending"}
       ]
     },
