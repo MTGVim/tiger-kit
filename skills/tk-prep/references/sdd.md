@@ -151,13 +151,17 @@ Reviewer input is:
 - the implementer report and its untrusted claims;
 - the exact `BASE..HEAD` bundle.
 
-The read-only leaf reviewer judges:
+The read-only leaf reviewer records two independent verdicts in one review surface. A
+clean verdict on either axis never offsets a failure on the other:
 
-1. specification and AC compliance: omissions, excess, and misunderstanding;
-2. testing and TDD quality, changed-behavior protection, and mutation gaps;
-3. correctness, maintainability, structure, scope, and the same unnecessary-complexity
-   or test-only production-API risks required by implementer self-review;
-4. agreement between listed files and changes for a bundled `Unit`.
+1. **Spec/AC**: omissions, excess, misunderstanding, and exact acceptance compliance;
+2. **Quality/Standards**: correctness, maintainability, structure, testing/TDD
+   protection, mutation gaps, scope, agreement between listed files and changes, and
+   the same unnecessary-complexity or test-only production-API risks required by
+   implementer self-review.
+
+One reviewer or one serial review may judge both axes. Do not add a mandatory second
+reviewer or parallel reviewer fan-out.
 
 Do not sweep the whole repository without a specifically named risk or unconditionally
 rerun suites already present in the report. Re-read artifacts before concluding that
@@ -185,7 +189,8 @@ failure indefinitely.
 ## Completion
 
 Each `Unit` is complete only with a clean work review and recorded commit. After all
-`Unit`s, perform exactly one whole-change review for:
+`Unit`s, perform exactly one whole-change review and again record independent `Spec/AC`
+and `Quality/Standards` verdicts for:
 
 - cross-`Unit` integration and full AC/specification scope;
 - changed-behavior protection and mutation gaps;

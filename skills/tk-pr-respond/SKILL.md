@@ -157,6 +157,8 @@ sequentially; do not silently lower SDD to unreviewed direct work. The parent st
 Both code-changing routes finish with acceptance-criteria review, `tk-browser-verify` for browser-visible changes, required
 gap correction, and verified local commit(s). SDD's one whole-change final review satisfies the broad review gate; do not
 run a redundant second generic review afterward.
+That review records independent `Spec/AC` and `Quality/Standards` verdicts; a clean result on one axis never offsets failure on the other.
+One reviewer or one serial review may judge both axes; do not add a mandatory second reviewer or parallel reviewer fan-out.
 
 If browser verification requires a development server, provide `tk-browser-verify` with the exact command/cwd/URL/auth/readiness;
 the verifier owns server startup, readiness checks, and cleanup.

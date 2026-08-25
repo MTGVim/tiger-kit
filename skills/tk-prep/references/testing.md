@@ -61,6 +61,10 @@ Before writing a test body, answer: “What realistic product-code mutation shou
 this test fail?” Verify real components, integration boundaries, output, and side
 effects with independently checked expectations whenever possible.
 
+When the actual task uses or proposes a mock, fake, stub, spy, or another test double,
+lazy-load [test-double safeguards](test-doubles.md). Do not load them for ordinary tests
+that keep their dependencies real.
+
 These do not protect behavior:
 
 - a circular assertion where a product helper computes both expected and actual values;
@@ -90,3 +94,8 @@ When applicable, the implementer report records:
 Reviewers compare the diff against testing obligations rather than trusting a passing
 claim alone. Read existing evidence before rerunning it, and run a focused test only for
 a specific unresolved question.
+
+Before any success or completion claim, run the fresh complete command that proves it
+at the current candidate and read both its output and exit state. An implementer or
+child success report remains untrusted evidence, and a focused or partial check must not
+be extrapolated into full completion.

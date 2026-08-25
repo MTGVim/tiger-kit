@@ -702,6 +702,33 @@
         {"type":"changed_paths_equal","paths":[]},
         {"type":"terminal_status","expected":"Pending"}
       ]
+    },
+    {
+      "id": "prep-test-double-guidance-is-lazy-and-narrow",
+      "path": "boundary",
+      "prompt": "/tk-prep 결제 서비스 호출 테스트에서 외부 HTTP 전송만 `stub`으로 바꾸려고 한다. 실제 로컬 로직이 기록하는 결제 상태와 감사 이벤트는 유지하고, 응답의 `status`, `transaction_id`, `receipt` 구조도 현실적으로 재현해야 한다. 구현 전 테스트 계획만 준비해줘.",
+      "expected_output": "이 작업이 실제로 `stub`을 제안하므로 좁은 test-double 참고 자료를 조건부로 읽고, 외부 전송만 대체하면서 로컬 상태·감사 이벤트와 현실적인 응답 구조를 검증하는 계획을 세운다. 기존 behavior-first testing 규칙을 반복하지 않는다.",
+      "assertions": [
+        {"type":"judge","criterion":"실제 작업이 mock/fake/stub/spy 또는 다른 test double을 사용하거나 제안할 때만 좁은 참고 자료를 적용한다. 실제 의존성의 필요한 side effect를 먼저 이해하고 slow/external layer만 대체하며 local behavior와 realistic integration response shape는 유지한다."},
+        {"type":"git_head_unchanged"},
+        {"type":"terminal_status","expected":"Pending"}
+      ]
+    },
+    {
+      "id": "prep-ordinary-test-skips-test-double-ceremony",
+      "path": "boundary",
+      "prompt": "/tk-prep 순수 함수 `normalize_label`의 공백 제거와 소문자 변환을 입력·출력으로 검증하는 작은 회귀 테스트를 준비해줘. mock/fake/stub/spy 체크리스트도 항상 포함해.",
+      "expected_output": "실제 test double을 쓰거나 제안하지 않는 평범한 테스트이므로 추가 ceremony 없이 입력·출력 behavior와 RED seam만 준비한다.",
+      "assertions": [
+        {"type":"judge","criterion":"test double이 실제로 관련되지 않은 일반 테스트에는 test-double 참고 자료나 checklist를 노출하지 않고 behavior-first testing만 적용한다. 설치된 reference read 여부는 현재 eval instrumentation으로 직접 관찰할 수 없으므로 출력 행동으로 경계를 판정한다."},
+        {"type":"output_absent","text":"mock checklist"},
+        {"type":"output_absent","text":"fake checklist"},
+        {"type":"output_absent","text":"stub checklist"},
+        {"type":"output_absent","text":"spy checklist"},
+        {"type":"git_head_unchanged"},
+        {"type":"terminal_status","expected":"Pending"}
+      ],
+      "safety": true
     }
   ]
 }

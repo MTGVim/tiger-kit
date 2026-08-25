@@ -148,7 +148,7 @@ Applicable direct changes follow RED → verified failure → minimal GREEN → 
 read-only exact-change review → remediate confirmed important gaps with scoped re-review → binding verification → commit.
 Self-simplification removes unnecessary abstraction or indirection, speculative flexibility, dead or redundant branches,
 custom logic that replaces repository-native helpers, and production API expansion used only by tests. Prefer a host-native fresh reviewer when available.
-Otherwise perform a distinct exact-scope review serially and report that it was not independent; do not silently claim fresh independence or convert direct work to SDD.
+Otherwise perform a distinct exact-scope review serially and report that it was not independent; do not silently claim fresh independence or convert direct work to SDD. That review records independent `Spec/AC` and `Quality/Standards` verdicts; a clean result on one axis never offsets failure on the other. One reviewer or one serial review may judge both axes; do not add a mandatory second reviewer or parallel reviewer fan-out.
 
 SDD follows the shared protocol. In both paths: preserve scope/UI literals, use the exact review range, run acceptance
 review, compose automated regression tests, and create only approved local commit(s). For every browser-visible AC,
