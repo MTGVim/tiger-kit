@@ -12,31 +12,36 @@ Verify:
 4. reproduction against unmodified TigerKit source when possible;
 5. separation between local configuration and upstream contract behavior.
 
-A consumer-only reproduction is `local-only`. Local diagnosis may continue when the
-exact upstream source cannot be verified, but upstream disposition is
-`upstream-unverifiable`.
+When an installed skill has no Git ref or version but a canonical upstream source is known,
+retrieve the current upstream source and compare the target passage before downgrading provenance.
+If retrieval or comparison is unavailable, preserve the verified local evidence as an
+`installed snapshot observation`, ask the maintainer to verify current upstream `HEAD`, use
+`upstream-unverifiable`, and do not present it as an upstream contract proposal. A consumer-only
+behavioral reproduction remains `local-only`.
 
 ## Proposal eligibility gate
 
 Do not write a proposed title, body, or draft-template section before verifying all of:
 
-1. canonical origin and exact installed/candidate ref, snapshot, or content hash;
-2. two fresh matched reproductions against unmodified upstream source;
-3. a nearby control and unused holdout with no critical regression;
+1. canonical origin and exact current upstream ref, snapshot, or content hash;
+2. claim type `documentary | behavioral`;
+3. either exact current source location, quote, and adjacent contract contrast for a
+   documentary claim, or two fresh matched reproductions plus a nearby control and unused
+   holdout with no critical regression for a behavioral claim;
 4. an accessible open/closed upstream issue search for the same target, symptom, and
    root-cause theme;
 5. comparison of every match against the exact ref and known fix ancestry;
 6. final `upstream-draft-ready` disposition.
 
-If issue search is inaccessible, exact provenance is missing, upstream reproduction
-has fewer than two runs, or control/holdout evidence is incomplete, use
-`upstream-unverifiable` and omit proposal content. A consumer-only reproduction remains
-`local-only`.
+If issue search or exact current provenance is inaccessible, use `upstream-unverifiable` and
+omit proposal content. Apply the same disposition when documentary source/contrast evidence is
+incomplete, or when a behavioral claim has fewer than two upstream runs or incomplete
+control/holdout evidence. A consumer-only behavioral reproduction remains `local-only`.
 
 Do not rewrite a matching open issue as a new proposal; cite that issue and its evidence
 state. For a matching closed issue, classify a regression candidate only when an exact
-later unmodified upstream source satisfies the same two-run, control, and holdout gate.
-Otherwise, cite the closed issue and use `upstream-unverifiable`. An
+later unmodified upstream source satisfies the applicable documentary or behavioral evidence
+gate. Otherwise, cite the closed issue and use `upstream-unverifiable`. An
 `upstream-candidate` may identify a matching issue or remaining owner work, but does not
 include a new title/body proposal.
 
@@ -73,10 +78,9 @@ Use this template only after the proposal eligibility gate reaches
 - Invocation: explicit | automatic | handoff
 - Consumer repository: anonymized external repository
 
-## Minimal reproduction
+## Evidence method
 
-1. ...
-2. ...
+Documentary exact source/contrast | Behavioral minimal reproduction
 
 ## Expected
 
@@ -86,14 +90,16 @@ Use this template only after the proposal eligibility gate reaches
 
 ...
 
-## Reproduction evidence
+## Claim evidence
 
-- Runs: N/N
+- Current source/ref and location: ...
+- Exact quote and adjacent contrast: ...
+- Runs, when behavioral: N/N
 - Failure plane: ...
 - Stable/baseline: ...
 - Candidate/current: ...
-- Nearby control: ...
-- Holdout: ...
+- Nearby control, when behavioral: ...
+- Holdout, when behavioral: ...
 - Resource metrics: ...
 
 ## Root cause

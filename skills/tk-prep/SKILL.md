@@ -153,9 +153,11 @@ After approval:
 ## Local execution and completion
 
 Applicable direct changes follow RED → verified failure → minimal GREEN → refactor while green → required relevant checks.
-SDD follows the shared protocol. In both paths: preserve scope/UI literals, use exact review range, run acceptance review,
-compose automated regression tests with `tk-browser-verify` for browser-visible work, and create only approved local
-commit(s). A repeated blocker after meaningful correction becomes `Fail | Unverifiable | Blocked`, not an infinite loop.
+SDD follows the shared protocol. In both paths: preserve scope/UI literals, use the exact review range, run acceptance
+review, compose automated regression tests, and create only approved local commit(s). For every browser-visible AC,
+invoke `tk-browser-verify` during execution; do not replace the planned handoff with direct browser operation. Browser
+verification remains separate from automated regression protection. A repeated blocker after meaningful correction
+becomes `Fail | Unverifiable | Blocked`, not an infinite loop.
 
 If material discovery changes Goal/Scope/approved Decision/AC/security/required Verification, stop and re-enter preparation
 for revision + reapproval. Reversible engineering ambiguity may be resolved with a visible reason and cost-if-wrong.

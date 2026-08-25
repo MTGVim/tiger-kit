@@ -31,6 +31,7 @@ First, verify the following.
 - Whether a `PR` already exists for the same `head`, and its `observed draft | ready` state
 - Unrelated dirty/staged paths
 - Target repository's `PR template`
+- Recent merged `PR` title samples and any established prefix, ticket-position, or release-label convention
 
 If the exact current `commit` cannot be proven or unrelated changes are mixed in, do not broaden scope; return `Blocked`/`Unverifiable`.
 
@@ -46,6 +47,11 @@ Before creating the `PR body`, check supported template locations on the default
 If exactly one template applies, preserve its heading order, checklists, HTML comments, and required sections.
 If multiple templates exist and there is no basis for choosing one, explain the candidates with one recommendation and ask the user to choose before publication approval.
 If the template cannot be read, do not invent a body.
+
+Derive the title convention from recent merged `PR` titles, not from template guidance alone. If the
+merged history establishes a convention, follow it. If template title guidance conflicts with that
+history, prefer the verified merged-history convention and surface the mismatch. If no convention is
+observed, preserve the existing title behavior.
 
 When the `PR body` or a QA table names a user-visible element, verify the exact rendered string from repository evidence before writing it. Do not copy a ticket paraphrase, code identifier, or enum value; quote the label verbatim. If no visible label exists, use the entry path ending in an exact visible title. If ticket, code, and screenshot disagree, preserve the verified source and tell the user about the mismatch; do not present an unverified server-supplied label as fact.
 
@@ -76,6 +82,7 @@ Base
 Head ref + SHA
 Push refspec
 Title
+Title convention basis: <merged-title evidence | none observed>
 Body
 Template source/compliance
 PR evidence requirement/state
@@ -91,6 +98,7 @@ Present the following naturally to the user instead of hiding information behind
 
 - Summary of included changes
 - Exact title/body or important template sections
+- Title-convention evidence and any mismatch with template guidance
 - Base/head
 - Valid `PR state`
 - Check/evidence state

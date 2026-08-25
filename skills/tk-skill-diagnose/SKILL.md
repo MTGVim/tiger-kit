@@ -30,9 +30,12 @@ Record:
 - available transcript/event, file, Git, eval, or resource evidence;
 - known consumer override or host configuration.
 
-Mark missing values as `unverified`. A missing incident or metric anchor does not mean
-`NotApplicable`. If fresh execution is unavailable or required evidence is inaccessible,
-the result is `Unverifiable | Blocked`, not permission to infer a cause.
+Classify the claim as `documentary | behavioral`. A documentary claim requires an exact
+current source/ref, location, quote, and adjacent contrasting contract passage. A behavioral
+claim requires an incident or metric anchor. Mark other missing values as `unverified`.
+Unavailable fresh execution blocks a behavioral claim, but does not block a documentary claim
+that its current source directly proves. Inaccessible required evidence remains
+`Unverifiable | Blocked`, not permission to infer a cause.
 
 Accept a `learn-ready` handoff only once when it specifies the incident, exact target,
 host/invocation, prompt, expected and observed result, and evidence. Do not repeat
@@ -40,9 +43,11 @@ the same target + incident + blocker cycle.
 
 ## Evidence
 
-Before reproduction, check target provenance, description/body consistency,
-deterministic assertions, repository state, and adapter/host evidence. Then follow
-the workflow order for reproduction, the adjacent control, and any minimum experiment.
+First check target provenance, description/body consistency, deterministic assertions,
+repository state, and adapter/host evidence. For a documentary claim, compare the exact current
+source passage with its adjacent contrasting passage and do not require behavioral reproduction,
+control, or holdout evidence. For a behavioral claim, follow the workflow order for reproduction,
+the adjacent control, and any minimum experiment.
 
 Classify reproduction as `Reproduced | Not reproduced | Inconclusive`. Self-report may
 suggest a hypothesis but does not prove root cause. Repeat a fresh run only when the first
@@ -67,11 +72,12 @@ a correctness or safety regression.
 
 1. **Freeze**: Fix the exact incident, target ref, must-preserve behavior, affected host,
    and reliable evidence/metric.
-2. **Reproduce**: Reproduce once in a clean context and classify the result as
-   `Reproduced | Not reproduced | Inconclusive`.
-3. **Control**: Compare the nearest alternative. Distinguish loader from body, parent
-   from child, candidate from grader, one host from another, and correctness from
-   resource cost.
+2. **Establish evidence**: For a documentary claim, record the exact current source/ref,
+   location, quote, and adjacent contrast. For a behavioral claim, reproduce once in a
+   clean context and classify the result as `Reproduced | Not reproduced | Inconclusive`.
+3. **Control**: For a behavioral claim, compare the nearest alternative. Distinguish loader
+   from body, parent from child, candidate from grader, one host from another, and
+   correctness from resource cost. A documentary claim uses its adjacent contract contrast.
 4. **Isolate**: Select one verified failure plane from:
    `selection | loading | instruction | planning | execution | formatting |
    evaluation | compatibility | efficiency | local override`.
@@ -91,12 +97,13 @@ Do not begin the next step, experiment, or handoff until each checkpoint passes.
   evidence exist. If there is no eligible Agent Skill incident, such as an ordinary
   code bug, stop with `NotApplicable`. If a required incident or metric anchor is
   missing or unverified, stop with `Blocked | Unverifiable`, not `NotApplicable`.
-- **Reproduction checkpoint**: Record the fresh result as
-  `Reproduced | Not reproduced | Inconclusive`. If `Inconclusive`, do not finalize
-  the cause or route; stop with `Unverifiable`.
-- **Isolation checkpoint**: Evidence confirms one failure plane and an adjacent control
-  that distinguishes it. Otherwise, make no root-cause claim and stop with
-  `Unverifiable`.
+- **Evidence checkpoint**: A documentary claim has exact current source/ref, location,
+  quote, and adjacent contrast. A behavioral claim records a fresh result as
+  `Reproduced | Not reproduced | Inconclusive`; if `Inconclusive`, do not finalize the
+  cause or route and stop with `Unverifiable`.
+- **Isolation checkpoint**: Evidence confirms one failure plane and either an adjacent
+  contract contrast for a documentary claim or an adjacent behavioral control. Otherwise,
+  make no root-cause claim and stop with `Unverifiable`.
 - **Routing checkpoint**: One concrete, testable objective and must-preserve boundary
   are verified. Otherwise, do not emit a `learn-ready` handoff.
 - **🛑 STOP**: After emitting `learn-ready`, wait for a separate explicit invocation
@@ -144,10 +151,14 @@ Use a short explanation for one incident. When multiple symptoms share one cause
 verified failure plane, evidence, route, and exact next handoff. Do not copy raw logs, transcripts,
 screenshots, secrets, or repeated run narration.
 
-When experiment evidence exceeds five rows or later resume needs an exact reference, atomically
-replace `.tigerkit/skill-diagnosis.md` with bounded incident IDs, candidate/control/holdout
-evidence refs, measurements, and route. Keep only `## Diagnosis`, `## Action`, and required
-uncertainty in chat. Do not create an archive, lifecycle state, or duplicate raw output.
+When experiment evidence exceeds five rows or later resume needs an exact reference, use
+`.tigerkit/skill-diagnosis.md` only when `git check-ignore -v` identifies its ignore source and
+that source is proven by `git ls-files` to be repository-tracked. Global ignore files and
+`.git/info/exclude` are unsafe for repository-local reports. Otherwise, atomically write the
+bounded report to a temporary path outside the repository and tell the user that path. Include
+only incident IDs, applicable documentary or candidate/control/holdout evidence refs,
+measurements, and route. Keep only `## Diagnosis`, `## Action`, and required uncertainty in chat.
+Do not create an archive, lifecycle state, or duplicate raw output.
 
 Use one of these terminal statuses:
 
