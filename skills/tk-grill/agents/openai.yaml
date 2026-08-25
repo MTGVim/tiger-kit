@@ -1,0 +1,6 @@
+interface:
+  short_description: "[user] 아이디어·계획·결정을 빠짐없이 점검해 `shared understanding`을 만듭니다."
+  default_prompt: "`tk-grill`로 사실·가정·사용자 소유 결정을 분리하고, `prerequisite`가 해결된 현재 `frontier`만 추천과 함께 질문하세요. 모든 `branch`를 확인한 뒤 `shared understanding`을 확인하고 `compact synthesis`로 끝내며 파일이나 구현을 만들지 마세요."
+
+policy:
+  allow_implicit_invocation: false

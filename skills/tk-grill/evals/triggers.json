@@ -1,0 +1,74 @@
+{
+  "skill": "tk-grill",
+  "kind": "user-invoked",
+  "queries": [
+    {
+      "id": "train-explicit",
+      "split": "train",
+      "query": "$tk-grill 뉴스레터 아이디어를 빠짐없이 점검해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "train-negative",
+      "split": "train",
+      "query": "뉴스레터 아이디어 세 개만 추천해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-explicit-formal",
+      "split": "validation",
+      "query": "/tk-grill 이 발표 계획의 숨은 가정과 의사결정을 빠짐없이 점검해 주세요.",
+      "should_trigger": true,
+      "facets": ["formal"]
+    },
+    {
+      "id": "validation-explicit-casual",
+      "split": "validation",
+      "query": "tk-grill로 이직할지 말지 제대로 캐물어봐",
+      "should_trigger": true,
+      "facets": ["casual"]
+    },
+    {
+      "id": "validation-explicit-short",
+      "split": "validation",
+      "query": "$tk-grill 창업 고민",
+      "should_trigger": true,
+      "facets": ["short"]
+    },
+    {
+      "id": "validation-explicit-compound",
+      "split": "validation",
+      "query": "/tk-grill 새 팀 운영안을 `decision tree`로 점검하고 지금 답할 수 있는 질문부터 추천과 함께 물어봐",
+      "should_trigger": true,
+      "facets": ["compound"]
+    },
+    {
+      "id": "validation-negative-ordinary-brainstorm",
+      "split": "validation",
+      "query": "이번 발표에 넣을 재미있는 사례를 같이 생각해보자.",
+      "should_trigger": false,
+      "facets": ["casual"]
+    },
+    {
+      "id": "validation-negative-engineering-ticket",
+      "split": "validation",
+      "query": "$tk-prep `GitHub Issue` #351을 저장소 근거로 준비하고 구현해줘.",
+      "should_trigger": false,
+      "facets": ["formal"]
+    },
+    {
+      "id": "validation-negative-direct-implementation",
+      "split": "validation",
+      "query": "로그인 버튼의 색상을 바꾸고 테스트까지 실행해줘.",
+      "should_trigger": false,
+      "facets": ["compound"]
+    },
+    {
+      "id": "validation-negative-repository-question",
+      "split": "validation",
+      "query": "$tk-ask-repo 이 저장소의 `release tag` 형식을 근거와 함께 설명해줘.",
+      "should_trigger": false,
+      "facets": ["formal"]
+    }
+  ]
+}

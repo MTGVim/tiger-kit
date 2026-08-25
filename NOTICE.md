@@ -5,26 +5,34 @@ TigerKit에는 `mattpocock/skills`에서 파생한 동작이 포함되어 있습
 
 현재 적용된 스킬:
 
-- `grill-me`
+- `grilling`
 - `to-spec`
 - `to-tickets`
 - `implement`
 
 제거된 적용 스킬에서 병합한 동작:
 
-- `grilling` → `grill-me`
 - `tdd` → `implement`
 - `diagnosing-bugs` → `implement` 버그 조사 및 계약 계획
 - `code-review` → `implement` 내장 검토
 
 과거에 제거된 적용 작업 흐름:
 
+- `grill-me`
 - `grill-with-docs`
 - `domain-modeling`
 
 현재 적용 스킬의 관계 메타데이터: `relationship: adapted`. 해당 스킬이 계속
 배포되는 경우 TigerKit은 상위 원본 스킬 이름에 `tk-` 접두사를 유지하고, 동작은 현재
 TigerKit 사양에 맞게 다시 작성합니다.
+
+`tk-grill`은 `mattpocock/skills` 스냅샷
+`6654f6b60cd9d5be8b54c6fafe44346dabeb3b76`의
+`skills/productivity/grilling/SKILL.md`에서 의사결정 `tree`, 선행 조건을 반영한
+`frontier`, 한 차례의 독립 질문 묶음, 사실과 사용자 소유 결정의 분리, 추천 및
+`shared understanding` 확인을 적용했습니다. TigerKit은 의무적인 하위 에이전트
+`runtime`, `grill-me`/`grill-with-docs` `wrapper`, 자동 구현 전이와 영구 상태를 적용하지
+않습니다. 아래 `mattpocock/skills` MIT 라이선스가 이 적용에도 적용됩니다.
 
 `tk-prep`, `tk-pr-respond`, 공유 테스트/SDD와 `tk-audit`의 조건부 엔지니어링 규율은
 `mattpocock/skills` 스냅샷 `5b15a47f2d7150f545fbcacbfe381787fc0230dc`에서 다음 원천을 검토해
