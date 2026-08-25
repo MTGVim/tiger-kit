@@ -230,14 +230,18 @@
       "id": "prep-direct-no-seed-red-green",
       "path": "success",
       "prompt": "/tk-prep `evals/fixtures/normalize.py`의 `normalize_label`이 앞뒤 공백을 제거하고 소문자로 반환하도록 고쳐줘. 같은 세션의 작은 작업이며 로컬 수정·테스트·커밋을 승인한다.",
-      "expected_output": "`Seed`/SDD 원장 없이 격리 체크아웃에서 행동 테스트의 RED를 먼저 확인하고 최소 구현으로 GREEN을 만든 뒤 관련 검증과 로컬 커밋을 완료한다.",
+      "expected_output": "`Seed`/`SDD` 원장 없이 격리 체크아웃에서 행동 테스트의 `RED`를 먼저 확인하고 최소 구현으로 `GREEN`을 만든다. `refactor` 후 불필요한 복잡성을 제거하고, 지원되는 `host-native fresh reviewer`를 사용하거나 사용할 수 없을 때만 비독립 `serial exact-scope review`임을 명시한다. 확인된 중요 문제를 고친 뒤 구속력 있는 검증과 로컬 `commit`을 완료한다.",
       "files": [
         "evals/fixtures/normalize.py"
       ],
       "assertions": [
         {
           "type": "judge",
-          "criterion": "원문 검사가 아니라 입력과 출력 동작을 검증하는 테스트를 먼저 만들고 의도한 RED를 관찰한 뒤 제품 코드를 수정해 GREEN과 변이 보호를 확인한다."
+          "criterion": "원문 검사가 아니라 입력과 출력 동작을 검증하는 테스트를 먼저 만들고 의도한 `RED`를 관찰한 뒤 제품 코드를 수정해 `GREEN`과 변이 보호를 확인한다."
+        },
+        {
+          "type": "judge",
+          "criterion": "`refactor`가 `green`인 상태에서 불필요한 추상화·우회·추측성 유연성·중복 분기·저장소 기본 기능을 대체한 사용자 정의 로직·테스트만을 위한 제품 `API` 확장을 제거한다. `host-native fresh reviewer`를 지원하면 사용하고, 지원하지 않을 때만 별도의 `serial exact-scope review`를 수행하면서 결과에 비독립임을 명시한다. 확인된 중요 문제를 제한적으로 재검토한 뒤에만 구속력 있는 검증과 로컬 `commit`을 수행한다."
         },
         {
           "type": "path_absent",
@@ -261,6 +265,25 @@
         {
           "type": "terminal_status",
           "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "prep-multifile-same-shape-stays-direct",
+      "path": "boundary",
+      "prompt": "/tk-prep `skills/tk-prep/references/sdd.md`와 `skills/tk-pr-respond/references/sdd.md`에서 같은 `self-review` 문구를 더 명확하게 바꿔야 한다. 저장소를 조사해서 아직 수정하지 말고 실행 방식을 추천해줘.",
+      "expected_output": "`scripts/sync_execution_protocol.py`와 공유 `protocol` 표식을 조사해 하나의 정본이 두 복사본을 동기화하고 하나의 검사·검토 판단을 공유함을 확인한다. `raw file count`에 따라 실행 방식을 키우지 않고 작은 `same-shape` 변경을 `direct` 실행으로 추천한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`raw file count`가 아니라 실제 `owner script`, 정본 표식, 동기화 검사를 조사해 확인한 `implementation topology`를 근거로 두 복사본의 `same-shape` 변경을 하나의 `direct implementation/test/review surface`로 판단한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pending"
         }
       ]
     },
@@ -335,12 +358,12 @@
     {
       "id": "prep-complex-sdd-ready-seed-grammar",
       "path": "success",
-      "prompt": "/tk-prep 구문 분석기, API 소비자, UI 세 부분이 인터페이스를 공유하는 변경을 다음 세션 SDD 인계로 준비만 해줘. 같은 형태의 작은 구문 분석기 수정은 묶고 나머지는 분리하는 방향을 승인한다.",
-      "expected_output": "표시된 현재 작업의 Ready `Seed`에 정확한 `Execution shape`, `Global constraints`, 1부터 순차적인 `Unit` 문법을 기록하고 구현 없이 멈춘다.",
+      "prompt": "/tk-prep `tk-prep`이 저장소 구조를 조사해 실행 방식을 고르게 하고 `direct` 작업에는 단순화와 `fresh review`를 넣어줘. `tk-browser-verify`의 `screenshot` 기본값도 `focused viewport`로 바꾸고 `page-wide` 경우만 `fullPage`를 허용해줘. 저장소를 조사해서 다음 세션에서 구현할 계약을 준비만 해줘. 준비 작업과 그에 필요한 로컬 파일 작성을 승인한다.",
+      "expected_output": "저장소를 조사해 `tk-prep` 실행 계약과 `tk-browser-verify` 증거 계약이 서로 다른 구현·테스트·검토 판단을 요구함을 확인한 경우, 표시된 현재 작업의 `Ready` `Seed`에 정확한 `Execution shape`, `Global constraints`, 1부터 순차적인 `Unit` 문법을 기록하고 구현 없이 멈춘다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "같은 형태의 작은 수정은 한 `Unit`으로 묶고 서로 다른 인터페이스, 테스트, 검토 판단은 분리하며 각 `Unit`에 예상 파일과 인터페이스, 동작 보호, 예상 RED, AC를 둔다."
+          "criterion": "`ticket` 길이나 `UI/API` 동시 변경을 근거로 삼지 않고 실제 `repository investigation`에서 확인한 `implementation topology`를 근거로 독립적인 구현·테스트·검토 판단이 필요한 변경만 분리한다. 같은 형태의 작은 수정은 함께 묶고, 각 `Unit`에는 예상 파일과 인터페이스, 동작 보호, 예상 `RED`, `AC`를 둔다."
         },
         {
           "type": "path_text_contains",

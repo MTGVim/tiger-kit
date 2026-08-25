@@ -13,6 +13,17 @@ TigerKit은 `workflow` `runner`, `plugin`, `scheduler`, `shared-state` `framewor
 - 사용자-`facing`/운영 `prose`는 한국어를 기본으로 하고 `exact` ID/`path`/`status`/`command`/`technical` `literal`은 원문을 유지합니다.
 - `SKILL.md`와 `package-local` `references/`의 `model-facing` 제목과 지시문은 영어로 고정합니다. 한국어는 `SKILL.md`의 `frontmatter` `description`과 정확한 사용자 발화·출력 `literal`에만 두고 `inline code` 또는 `fenced block`으로 표시합니다.
 
+## `Upstream-first` `distillation`
+
+`SDD`, `skill`, `review`처럼 구현 품질에 영향을 주는 변경은 설계 전에 검증된 최신 `upstream`을 먼저 조사합니다.
+
+- `SDD`와 `subagent-development` 변경은 최신 `obra/superpowers`를 `primary upstream`으로 삼고, 다른 자료보다 먼저 현재 구현과 관련 설계 근거·`eval`을 확인합니다.
+- 고정된 `revision`에서 현재 구현, 설계 근거, 관련 `eval`을 함께 확인하고, 읽지 못한 근거는 `unverified`로 남깁니다.
+- 기존 TigerKit `owner`와 경계를 비교하여 출처와 `keep | adapt | omit` 판단을 기록합니다.
+- `behavior contract`와 `failure mode`만 증류하고, `runtime`, 제공자 선택, 작업 공간, `framework`는 복사하지 않습니다.
+- 충분한 근거는 성숙한 `upstream`과 구체적인 TigerKit `gap`, 강하게 검증된 재사용 가능 단일 사례, 충분한 자료가 있는 명시적 재사용 `workflow`, 또는 실제로 반복 검증된 사례 중 하나면 됩니다.
+- 출처 없는 일화, 원시 `log`, 재사용 가능한 교정 근거가 없는 일회성 실수는 승격하지 않습니다. 구체적인 차이가 입증되지 않으면 기존의 더 단순한 TigerKit 계약을 유지합니다.
+
 ## `Adaptive prep` `product` `work`
 
 TigerKit의 `product-work` `owner`는 `tk-prep`입니다.

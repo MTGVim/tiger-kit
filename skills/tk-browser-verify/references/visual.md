@@ -11,18 +11,34 @@ Do not invent design intent or broaden the work into generic critique.
 
 ## Capture method and evidence map
 
-Default to one `fullPage` screenshot per AC. Do not resize the viewport height to the
-document height, and do not reuse one or two undifferentiated page captures for unrelated
-criteria. Store a bounded `README.md` beside the images with an AC-to-file table and any
-capture-only element removal/hiding. This file is evidence metadata, not a progress ledger.
+Prefer the smallest readable evidence that proves the AC while retaining enough surrounding
+layout context. Default to a normal viewport screenshot containing the criterion and its
+necessary context. If the criterion is below the fold, scroll to it and capture that viewport.
+When one AC requires separated regions or states, use multiple ordered viewport captures and
+map every file to its AC, region/state, and order. Do not default to a context-destroying
+element-only crop or reuse undifferentiated captures for unrelated criteria.
+
+Use `fullPage` only as an explicit exception when the AC itself requires page-wide composition
+or long-page continuity and bounded viewport captures cannot prove it. Do not resize the
+viewport height to the document height. When applying the exception, label the capture method
+`fullPage` and state why bounded captures cannot prove the AC in both the evidence index and
+verification result. Store a bounded `README.md` beside the images with an
+AC-to-file/state table, capture order when relevant, viewport provenance, and any capture-only
+element removal/hiding. This file is evidence metadata, not a progress ledger.
+Return the same explicit AC/file/state mapping and capture order in the verification result.
+Do not compress multiple captures into an undifferentiated path list: report one ordered row
+per capture with its AC, file, viewport, state/region, and inspected result.
+Each result row must state that the screenshot was non-empty after actual image inspection.
+State any capture-only mutation in the index and result, including `none` when no element was
+hidden, removed, or annotated.
 
 Before capture, inspect whether an empty off-screen alert, toast, or similar framework
 container expands or contaminates the image. Remove only a verified empty, non-criterion
 container at runtime and disclose it in the evidence index. For annotations, attach an
 `outline` directly to the target element. Place the label as an absolute child of `body`
 and clamp its position to the page width so target `overflow: hidden` cannot clip it.
-Do not calculate a detached overlay from coordinates that may change during `fullPage`
-layout or capture.
+Do not calculate a detached overlay from coordinates that may change during scrolling,
+`fullPage` layout, or capture.
 
 If fixed navigation obscures the criterion, first use the framework's compact/collapsed
 mode and verify that the content position remains unchanged. If it still obscures the

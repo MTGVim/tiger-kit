@@ -132,6 +132,9 @@ the following rather than the full conversation or `Seed`:
 The implementer changes only the summary scope and performs applicable RED → GREEN →
 REFACTOR from [Behavior-first testing](testing.md). It runs focused tests and required
 related suites, performs self-review and mutation checks, then creates a local commit.
+Self-review removes unnecessary abstraction or indirection, speculative flexibility,
+dead or redundant branches, custom logic replacing repository-native helpers, and
+production API expansion used only by tests.
 The report records implementation, changed files, commit, concerns, test commands and
 output, and applicable RED/GREEN evidence; the parent receives only a short status.
 Remote publication is forbidden.
@@ -152,7 +155,8 @@ The read-only leaf reviewer judges:
 
 1. specification and AC compliance: omissions, excess, and misunderstanding;
 2. testing and TDD quality, changed-behavior protection, and mutation gaps;
-3. correctness, maintainability, structure, and scope;
+3. correctness, maintainability, structure, scope, and the same unnecessary-complexity
+   or test-only production-API risks required by implementer self-review;
 4. agreement between listed files and changes for a bundled `Unit`.
 
 Do not sweep the whole repository without a specifically named risk or unconditionally
