@@ -18,7 +18,7 @@ Use it for an explicit `$tk-eli5` invocation or a request for an HTML explanatio
 
 ## Boundaries
 
-- A text-only simplification of the immediately preceding explanation belongs to `tk-mwhat`; stop with `NotApplicable`.
+- A text-only simplification of the immediately preceding explanation is ordinary host/model capability; stop with `NotApplicable`.
 - An executable comparison of two or more UI/logic alternatives belongs to `tk-prototype`; stop with `NotApplicable`.
 - Do not apply this skill to a general prose explanation, code walkthrough, or edit of an existing HTML/page; stop with `NotApplicable`.
 - If the topic is missing or ambiguous, output exactly `Unverifiable` and create no file.

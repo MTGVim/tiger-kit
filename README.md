@@ -64,10 +64,10 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-browser-verify` | `hybrid` | 화면에 보이는 AC의 `headless` 실행 검증 |
 | `tk-skill-diagnose` | `hybrid` | `Agent Skill` 사고 재현·격리와 `learn-ready` 인계 |
 | `tk-learn` | `hybrid` | 재사용 가능한 스킬의 생성/개선/병합 작성자 |
+| `tk-domain` | `hybrid` | 저장소 고유 용어의 canonical vocabulary 작성·정제 |
 | `tk-grooming` | `hybrid` | 저장소/사용자 스킬 목록 감사 |
 | `tk-handoff` | `hybrid` | 진행 중 작업의 재개용 상태 사진 |
 | `tk-merge-conflict` | `hybrid` | 활성 Git 충돌 의도 복원 |
-| `tk-mwhat` | `user` | 직전 설명을 더 쉽게 다시 설명 |
 | `tk-wizard` | `hybrid` | 사람이 직접 해야 하는 설정·인증·이관 절차 안내 |
 
 `user`는 명시 호출 전용이고, `hybrid`는 해당 작업 의도가 명확할 때 자동 진입할 수 있습니다.
@@ -81,20 +81,9 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 사용자에게 직접 묻는 것은 제품/범위 같은 사용자 소유 결정, 위험하거나 비가역적인 결정,
 충분히 개선한 뒤에도 남는 엔지니어링 예외 승인뿐입니다.
 
-이해 준비도는 다음 축을 봅니다.
-
-```text
-Goal          20%
-Context       20%
-Scope         15%
-Decisions     15%
-Acceptance    15%
-Verification  15%
-```
-
-점수는 `0 | 0.25 | 0.5 | 0.75 | 1`만 사용하며,
-가중 모호성이 `0.20` 이하이고 모든 축이 `0.75` 이상이어야 인터뷰를 끝낼 수 있습니다.
-이 기준은 사용자 승인으로 우회할 수 없습니다.
+승인 전에는 목표와 범위가 실행 가능하게 명확하고, 중요한 제품 결정이 해결됐으며,
+AC와 검증 방법이 실행 가능하고, 중대한 근거 충돌이나 차단 요인이 없어야 합니다.
+사용자 승인으로 근거 충돌이나 준비 차단 요인을 우회할 수 없습니다.
 
 엔지니어링 준비도는 각 축을 독립적으로 확인합니다.
 

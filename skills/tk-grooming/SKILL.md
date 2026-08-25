@@ -30,25 +30,9 @@ When ownership evidence or apply approval is needed, prefer the host's native st
    [placement criteria table](references/repository-placement.md) to skill candidates
    and classify them as `keep | keep (vendor) | tighten | merge | split | move
    | deprecate | delete | fix`.
-5. `🔴 CHECKPOINT · 🛑 STOP`: Summarize the scope, evidence, proposal, and permitted
-   apply actions in the receipt. A literal initial `--apply` pre-approves only the
-   exact receipt scope that passed; otherwise, stop until explicit approval in the
-   current turn.
-
-Include every field below in the receipt. This is not a separate lifecycle output,
-but the single evidence record used for `.tigerkit/audit.md` and approval decisions.
-
-```text
-Scope: <exact repository/user skill scope>
-Target paths: <exact paths | none>
-Evidence refs: <path:line or unavailable>
-Proposal IDs: <GR-## list | none>
-Apply authority: report-only | literal --apply | current-turn approval
-Audited: <covered paths/categories>
-Unaudited: <excluded or incomplete paths/categories>
-Verification: <check results or unavailable>
-Drift rule: <scope/evidence/target change => Partial/Blocked>
-```
+5. `🔴 CHECKPOINT · 🛑 STOP`: Summarize the exact scope, evidence, proposal, target paths, and permitted apply actions.
+   A literal initial `--apply` pre-approves only that verified mechanical scope; otherwise stop until explicit current-turn
+   approval. Scope, evidence, or target drift invalidates approval.
 
 6. `apply/report`: In report-only mode, output the proposal/receipt. If authority
    exists, reread the sources, search references before delete/move, preserve

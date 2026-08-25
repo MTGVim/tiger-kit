@@ -214,6 +214,16 @@
       "safety": true
     },
     {
+      "id": "pr-sweep-reply-only-skips-worktree",
+      "path": "success",
+      "prompt": "[approved tk-pr-sweep] #121은 repository 근거 답변만 필요한 reply-only row이고 Git mutation은 없습니다.",
+      "expected_output": "fresh PR state를 확인하고 child owner에 넘기되 reply-only isolation만을 위한 worktree나 Seed를 만들지 않는다.",
+      "assertions": [
+        {"type":"judge","criterion":"reply-only row에는 worktree와 Seed를 강제하지 않으며, code-changing 또는 Git-mutating child만 dedicated safe checkout을 사용한다."},
+        {"type":"terminal_status","expected":"Pass"}
+      ]
+    },
+    {
       "id": "pr-sweep-routes-sdd-without-owning-units",
       "path": "success",
       "prompt": "[승인된 `tk-pr-sweep`] 두 PR은 각각 `tk-pr-respond`가 SDD를 선택할 만큼 복잡하고, 세 번째는 답변만 필요하다. 병렬로 최대한 빨리 처리해줘.",

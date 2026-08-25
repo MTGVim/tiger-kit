@@ -9,14 +9,22 @@
     "tk-to-spec",
     "tk-to-tickets",
     "tk-implement",
-    "tk-grill-me"
+    "tk-grill-me",
+    "tk-mwhat"
   ],
   "retired_catalog_cases": [
     "adhd-explicit",
-    "adhd-implicit-block"
+    "adhd-implicit-block",
+    "eli5-vs-mwhat",
+    "tk-mwhat-explicit-user-only"
   ],
   "replaced_skill_eval_contracts": [
-    "tk-prep"
+    "tk-prep",
+    "tk-pr-respond",
+    "tk-pr-sweep",
+    "tk-learn",
+    "tk-ask-repo",
+    "tk-pr-open"
   ],
   "replace_catalog_contract": false,
   "behavior_cases": [
@@ -32,11 +40,14 @@
     "tk-prep:behavior:prep-hard-bug-builds-red-capable-loop-first",
     "tk-prep:behavior:prep-sdd-wide-migration-keeps-safe-sequence",
     "tk-prep:behavior:prep-design-alternatives-only-for-material-uncertainty",
+    "tk-prep:behavior:prep-domain-context-preserves-canonical-language",
     "tk-audit:behavior:audit-architecture-doctrine-is-not-a-finding",
     "tk-audit:behavior:audit-architecture-hotspot-needs-behavior-evidence",
     "tk-ask-repo:behavior:ask-repo-conversational-origin-and-share-summary",
+    "tk-ask-repo:behavior:ask-repo-domain-context-keeps-canonical-term",
     "tk-wizard:behavior:wizard-keeps-secret-ephemeral",
     "tk-pr-open:behavior:pr-open-prepares-plan",
+    "tk-pr-open:behavior:pr-open-domain-context-keeps-canonical-term",
     "tk-pr-respond:behavior:pr-respond-conversational-plan-before-mutation",
     "tk-pr-respond:behavior:pr-respond-code-change-writes-seed",
     "tk-pr-respond:behavior:pr-respond-direct-tdd-route",
@@ -44,17 +55,25 @@
     "tk-pr-respond:behavior:pr-respond-sdd-round-five-breaker",
     "tk-pr-respond:behavior:pr-respond-reviewer-rejects-passing-underprotected-change",
     "tk-pr-respond:behavior:pr-respond-hard-ci-diagnosis-before-fix",
+    "tk-pr-respond:behavior:pr-respond-small-fix-direct-no-seed",
+    "tk-pr-respond:behavior:pr-respond-domain-context-keeps-canonical-term",
     "tk-pr-sweep:behavior:pr-sweep-report-is-read-only",
     "tk-pr-sweep:behavior:pr-sweep-does-not-write-lifecycle-ledger",
     "tk-pr-sweep:behavior:pr-sweep-routes-sdd-without-owning-units",
     "tk-pr-sweep:behavior:pr-sweep-sdd-failure-does-not-stop-later-row",
+    "tk-pr-sweep:behavior:pr-sweep-reply-only-skips-worktree",
+    "tk-domain:behavior:domain-preserves-canonical-term-and-avoids-synonym",
+    "tk-domain:behavior:domain-ui-literal-precedence",
+    "tk-domain:behavior:domain-no-glossary-no-ceremony",
+    "tk-domain:behavior:domain-selects-relevant-context-only",
+    "tk-domain:behavior:domain-rejects-nondomain-content",
+    "tk-domain:behavior:domain-map-requires-evidence-and-approval",
+    "tk-learn:behavior:learn-explicit-workflow-does-not-require-two-incidents",
     "tk-pr-rebase:behavior:pr-rebase-requires-exact-lease-and-freshness",
     "tk-browser-verify:behavior:browser-transient-auth-material-establishes-headless-session",
     "tk-browser-verify:behavior:browser-auth-unavailable-stops-before-mutation",
     "tk-browser-verify:behavior:browser-rereads-evidence-before-rerun",
-    "tk-browser-verify:behavior:browser-composes-with-automated-regression",
-    "tk-mwhat:behavior:literal-source-preservation",
-    "tk-mwhat:behavior:no-mutation-tools"
+    "tk-browser-verify:behavior:browser-composes-with-automated-regression"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",
@@ -66,6 +85,7 @@
     "catalog:behavior:pr-respond-explicit",
     "catalog:behavior:pr-rebase-explicit",
     "catalog:behavior:pr-sweep-report-explicit",
-    "catalog:behavior:browser-headless-auth-verifier-explicit"
+    "catalog:behavior:browser-headless-auth-verifier-explicit",
+    "catalog:behavior:domain-explicit-authoring"
   ]
 }

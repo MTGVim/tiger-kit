@@ -7,8 +7,9 @@ safety, objective completion proof, specialist procedures, or bounded delegation
 
 ## Promotion gate
 
-- Require either two independent recurrences or an artifact-backed reusable workflow.
-  Unsourced claims and one-off cases do not satisfy promotion.
+- For incident-based improvement, require verified recurrence or equivalent artifact evidence. For explicit reusable
+  workflow authoring, clear user intent plus sufficient source material or repository evidence is enough; do not require
+  two independent incidents. Unsourced claims and one-off failures do not satisfy incident promotion.
 - Check whether an existing skill, default model capability, or a short rule is enough.
   Prefer `merge | no-op` over a duplicate directory.
 - Provide distinguishable positive and negative triggers. Separate description training

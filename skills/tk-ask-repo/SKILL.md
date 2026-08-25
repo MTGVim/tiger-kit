@@ -58,6 +58,9 @@ Every repository-state claim must have one of the following:
 - An explicit limitation that the evidence cannot be read
 - A clear indication that the explanation is an `inference` when judgment is required
 
+When the question materially uses project-specific terminology, lazy-load
+[domain context](references/domain-context.md) and preserve canonical vocabulary without overriding verified UI literals.
+
 A declaration proves only shape.
 When asked about a value’s origin, trace the actual assignment, stored input, transformation, and external boundary.
 

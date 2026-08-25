@@ -55,6 +55,9 @@ observed, preserve the existing title behavior.
 
 When the `PR body` or a QA table names a user-visible element, verify the exact rendered string from repository evidence before writing it. Do not copy a ticket paraphrase, code identifier, or enum value; quote the label verbatim. If no visible label exists, use the entry path ending in an exact visible title. If ticket, code, and screenshot disagree, preserve the verified source and tell the user about the mismatch; do not present an unverified server-supplied label as fact.
 
+When the title or body materially uses project-specific terminology, lazy-load
+[domain context](references/domain-context.md), preserve canonical vocabulary, and never replace verified UI literals with glossary terms.
+
 ## Evidence
 
 Determine whether `PR evidence` is needed from the prepared `Seed` or the currently verified work.

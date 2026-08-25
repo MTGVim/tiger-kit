@@ -2,7 +2,7 @@
 name: tk-pr-sweep
 description: "[user] 설정된 repository들의 open pull request를 deterministic fresh triage로 읽고, 지금 처리할 일과 기다릴 일을 자연스럽게 브리핑한 뒤 한 번 승인된 범위에서 bounded multi-PR maintenance를 수행합니다."
 disable-model-invocation: true
-argument-hint: "[--report] [--recover-publication] [--repo <owner/name>]"
+argument-hint: "[--report] [--repo <owner/name>]"
 metadata:
   tigerkit:
     kind: user-invoked
@@ -61,17 +61,6 @@ Do not treat a cached user-supplied list or a previous `.tigerkit/pr-sweep.md` a
 
 When the user-level config is missing, read the current checkout's origin for this run only. Do not create the config directory/file; use an explicit `--repo owner/name` when no safe origin exists.
 
-Example:
-
-```text
-지금 처리할 PR은 3개예요.
-#121 — 리뷰 대응 필요
-#124 — GitHub Actions 수정 필요
-#128 — rebase 필요
-
-#130, #132는 사람 리뷰 대기이고 #135는 외부 CI 대기라 지금 손댈 필요 없습니다.
-```
-
 Keep the default output to a short briefing. Do not create lifecycle Markdown, a Seed, worktree, commit, push, reply, or resolution.
 If a repository cannot be read, separate that failure from successful repository results and explain which state could not be retrieved.
 
@@ -89,9 +78,8 @@ Explain each PR at the level the user needs to understand:
 - whether it is independent of the other work
 - whether the PR owner is likely to use direct execution or its shared SDD protocol
 
-The execution model may recommend only broad capability classes such as `중간급 coding model` or `충돌은 더 강한 reasoning model`.
-Do not create a specific provider selector, tier, reasoning effort, or `session.md`.
-Do not mark the entire Sweep as `Blocked` merely because these controls are unavailable.
+TigerKit decides only the execution shape. Model selection remains the host/user's responsibility and is never persisted.
+Do not mark the entire Sweep as `Blocked` merely because model controls are unavailable.
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Batch approval
 
@@ -105,7 +93,9 @@ Do not request the same approval again for each child.
 ## Execution isolation
 
 `--report` and pre-approval fresh triage are read-only and do not create worktrees.
-After batch approval, every PR child requires a newly created dedicated worktree before handling begins. The parent `main` or `develop` checkout is never used for child work and never branch-switched with `git switch` or `git checkout`.
+After batch approval, code-changing children and any child that performs Git mutation require a newly created dedicated
+worktree before handling begins. Reply-only children do not create a worktree solely for isolation. The parent `main` or
+`develop` checkout is never used for child Git mutation and never branch-switched with `git switch` or `git checkout`.
 A subagent counts as isolation only when it receives and uses that fresh worktree. Do not reuse another PR's or a previous child's worktree.
 If a fresh worktree cannot be created or passed to the child, hold only that PR as `Held` or `Blocked`; do not fall back to sequential handling in the parent `main`/`develop` checkout. The absence of worker or model controls is not itself a blocker; inability to establish the worktree boundary is a PR-local blocker.
 
@@ -121,7 +111,8 @@ rows; record that PR's result and continue.
 ## Per-PR handling
 
 Immediately before handling each PR, reread fresh triage and the exact PR state.
-Before any mutating child route, verify the fresh dedicated worktree path for that PR and pass it to the child. If it is absent, hold or block before mutation.
+Before a child route that needs Git mutation, verify the fresh dedicated worktree path for that PR and pass it to the
+child. If it is absent, hold or block before mutation.
 
 Representative routes:
 
@@ -137,8 +128,9 @@ Return that PR to the user only when there is a material change, such as new fee
 
 Do not create one giant Seed for the entire Sweep.
 
-Each PR child must use its own newly created dedicated worktree. Code-changing PRs use a marked, current-PR/head Ready
-`.tigerkit/seed.md` there; reply-only or pure rebase work still uses the worktree but does not require a Seed solely for that reason.
+Each code-changing or Git-mutating PR child uses its own newly created dedicated worktree. A code-changing child uses a
+marked, current-PR/head Ready `.tigerkit/seed.md` only when its owner selects durable context or SDD; reply-only work uses
+neither a Seed nor a worktree solely for isolation, and pure rebase follows `tk-pr-rebase` isolation.
 The Seed must be self-contained and include that PR’s feedback, objective, decisions, approach, AC, verification, and publication boundary. If a child scope names a user-visible UI element, carry the verbatim constraint into that handoff: quote the exact rendered string or verified entry path, cite its repository or supplied-screenshot basis, and do not pass along paraphrases, code identifiers, enum-derived labels, or unverified grouped claims.
 
 Do not force a Seed onto reply-only work or a pure rebase that does not require separate implementation context.
@@ -148,23 +140,13 @@ Do not reuse or resume a different PR/Seed identity's `sdd.md`.
 
 ## Publication
 
-Before every child remote write, fresh-read and verify the exact repository, PR, head, identity, refspec, thread, and check.
-Permit only push, reply, resolve, and re-review actions within the parent-approved scope.
+Child owners own their detailed publication order, reviewer semantics, replies, thread closure, summary format, refspec,
+and retry rules. Sweep passes only the parent-approved scope and never broadens it.
 
-After all actionable review threads are closed, the publication contract additionally requires:
-
-- For every reviewer whose current review decision is `CHANGES_REQUESTED`, fresh verification that a re-review request was sent to that exact reviewer for the current head.
-- When a re-review is required or actionable feedback was answered with no outstanding request, exactly one current-head summary comment containing the marker `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, where `<HEAD_SHA>` is the exact current head SHA.
-- When that summary is required, fresh verification must prove it exists on the exact PR/current head and has no duplicate marker.
-- The summary comment, when required, must be published only after actionable threads are closed. Write it as a real message to the reviewer, not an internal processing record. When the reviewer is identifiable, address them with `@mention` and explain each finding and response in natural prose or a matching table. Do not publish a third-person completion log that only lists checks or totals.
-
-Do not report a PR as complete when evidence is missing for any required `CHANGES_REQUESTED` reviewer re-review request, actionable-thread closure, or required current-head summary comment.
-
-If publication is partially blocked by permissions, preserve and report the already verified local commit and exact remote state.
-A retry in the same run is allowed only after re-verifying the exact target and refspec.
-A later-session `--recover-publication` is allowed only when the local commit, remote head, approved target, required re-review requests, actionable-thread state, and current-head summary-comment state can all be reconstructed from fresh evidence.
-Otherwise stop as `Unverifiable`.
-Never use plain force or a guessed refspec.
+After each child returns, fresh-read GitHub state and verify the required outcome: exact head, checks, actionable thread
+closure, required re-review request, and any owner-required current-head summary. Do not trust a child receipt or repeat
+the child procedure in Sweep. Missing or irreconstructible evidence is `Unverifiable`; one PR's partial publication does
+not broaden authority or stop independent rows.
 
 ## Queue progress
 
@@ -179,14 +161,6 @@ A PR is not complete unless final fresh triage confirms the required checks, pub
 ## Completion response
 
 Do not dump internal categories or receipts.
-
-Example:
-
-```text
-이번 Sweep에서는 4개 중 3개를 처리했습니다.
-#121과 #124는 수정·검증·push 완료, #130은 답변 완료입니다.
-#128은 새 conflict가 확인돼 보류했고, 나머지는 사람/외부 CI 대기 상태입니다.
-```
 
 Keep successfully handled items brief and explain only problematic PRs in the necessary detail.
 Never describe an item as complete when required publication evidence is missing.
