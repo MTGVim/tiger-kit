@@ -18,7 +18,7 @@ Own conversational preparation and, only after the final checkpoint, the approve
 cover source/test/config edits, verification, isolated workspace setup, and local task commit(s). It never covers push,
 merge, publication/release, destructive cleanup, secrets, or unrelated Git mutation.
 
-**Keep conversation natural and state strict.** Do not expose internal scores, durable-artifact classification, or
+**Keep conversation natural and state strict.** Do not expose durable-artifact classification or
 execution routing as a form/report. Explain important judgments with recommendations and reasons. When a user-owned
 question, choice, or approval is needed, prefer the host's native structured question surface (Claude Code: AskUserQuestion;
 Codex: request_user_input; Hermes: clarify). If unavailable, fall back to plain chat; never ask again for a secret or a
@@ -26,7 +26,8 @@ parent-owned decision.
 
 ## Evidence and questions
 
-Read the task source, instructions, code/callers, tests, commands, Git state, and only materially relevant existing `CONTEXT.md`/ADR/design/domain glossary.
+Read the task source, instructions, code/callers, tests, commands, Git state, and only materially relevant existing
+domain context. Lazy-load [domain context](references/domain-context.md) only when the work uses project-specific terms.
 Do not scan or create a documentation lifecycle; if fresher code/test/runtime evidence conflicts, surface it and confirm the source of truth.
 Before creating anything, find existing components, helpers, schemas, clients, patterns, and conventions; tie claims to `path:line`, command output, or fresh state.
 
@@ -69,25 +70,15 @@ All paths preserve verified literals exactly; conflicting downstream evidence re
 
 ## Understanding readiness
 
-Internally score Goal 20%, Context 20%, Scope 15%, Decisions 15%, Acceptance criteria 15%, Verification 15% using only
-`0.00 | 0.25 | 0.50 | 0.75 | 1.00`.
-
-```text
-ambiguity = 1 - (
-  goal*0.20 + context*0.20 + scope*0.15 +
-  decisions*0.15 + acceptance*0.15 + verification*0.15
-)
-```
-
-Do not reach approval until `ambiguity <= 0.20`, every dimension is at least `0.75`, and material blockers/conflicts
-are zero. User approval cannot waive this gate. Show scores only when asked why questions continue.
+Do not reach approval until the goal and scope are actionable, every material product/user-owned decision is resolved,
+acceptance and verification are executable, and no material evidence conflict or blocker remains. User approval cannot
+waive an evidence conflict or readiness blocker.
 
 ## Engineering and testing readiness
 
 Evaluate Reuse, Simplicity, Testing, Security, and User experience independently as
-`준비됨 | 보완 필요 | 개선 한계 | 예외 승인 | 해당 없음`. `준비됨` means at least `0.75`; `해당 없음`
-needs a reason. Investigate → improve → reassess before presenting `개선 한계`; only then explain gap/risk/mitigation
-and obtain an exception without inflating the score.
+`준비됨 | 보완 필요 | 개선 한계 | 예외 승인 | 해당 없음`. `해당 없음` needs a reason. Investigate → improve → reassess
+before presenting `개선 한계`; only then explain gap/risk/mitigation and obtain an exception.
 
 For every code-changing path, inspect real tests and load [behavior-first testing](references/testing.md) before approval. Close
 observable behavior, regression/RED, focused command, required suite, mutation risk, and `N/A` versus engineering exception.

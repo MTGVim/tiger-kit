@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 2026.08.26-1 — 릴리즈
+
+- `refactor(skills)`: `core skill`의 `numeric`/`model`/`worktree` `ceremony`를 줄이고 `tk-mwhat`을 `retire`.
+- `feat(tk-domain)`: `repository` 고유 용어용 `lazy` `CONTEXT.md`/`optional` `CONTEXT-MAP.md` 계약과 `consumer eval`을 추가.
+
 ## 2026.08.25-2 — 릴리즈
 
 - `fix(tk-browser-verify)`: AC별 `fullPage` 증거, 파일 경유 단기 인증, 프로젝트 식별 기반 개발 서버 준비 상태 계약을 보강.

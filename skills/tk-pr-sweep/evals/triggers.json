@@ -9,7 +9,7 @@
     {"id":"validation-positive-3","split":"validation","query":"$tk-pr-sweep conflict, Actions, review feedback까지 bounded 처리","should_trigger":true,"facets":["compound"]},
     {"id":"validation-positive-report","split":"validation","query":"$tk-pr-sweep --report configured repositories 상태만 읽어줘","should_trigger":true,"facets":["formal"]},
     {"id":"validation-positive-4","split":"validation","query":"PR sweep","should_trigger":true,"facets":["short"]},
-    {"id":"validation-positive-recover-publication","split":"validation","query":"$tk-pr-sweep --recover-publication으로 권한 차단된 마지막 발행을 안전하게 복구해줘","should_trigger":true,"facets":["formal"]},
+    {"id":"validation-positive-fresh-retry","split":"validation","query":"$tk-pr-sweep `fresh state`에서 미완료 발행을 다시 처리해줘","should_trigger":true,"facets":["formal"]},
     {"id":"validation-negative-1","split":"validation","query":"PR 상태만 triage해줘","should_trigger":false,"facets":["formal"]},
     {"id":"validation-negative-2","split":"validation","query":"PR #42 리뷰 코멘트 하나 고쳐줘","should_trigger":false,"facets":["casual"]},
     {"id":"validation-negative-3","split":"validation","query":"모든 PR을 merge하고 release해줘","should_trigger":false,"facets":["compound"]},

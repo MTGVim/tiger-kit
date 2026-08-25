@@ -55,12 +55,10 @@ to another candidate/run, do not overwrite it; report `Blocked`.
 
 ## Workflow
 
-1. **Evidence ledger:** Assign each case/workflow an ID, claim, source, and
-   `verified | unverified`. Keep two user-claimed cases with inaccessible artifacts
-   as separate `unverified` rows and record `pending` status in `learn.md`. Promotion
-   requires two independently verified repetitions or a reusable workflow supported
-   by artifacts. `Unverified` rows cannot pass apply. End one-off mistakes, raw logs,
-   and single unsourced claims as `no-op`.
+1. **Evidence:** Separate two routes. Incident-based improvement requires verified recurrence or equivalent artifact
+   evidence; one-off mistakes, raw logs, and unsourced claims do not promote. Explicit reusable workflow authoring may
+   proceed from clear user intent plus sufficient source material or repository evidence without two independent
+   incidents. Unverified claims cannot pass apply.
 2. **Promotion and deduplication:** Apply [Skill quality](references/skill-quality.md),
    then compare against existing repository/user `skill`s, default model capability,
    and a short rule. Choose one of `merge | no-op | continue | pending`. If the

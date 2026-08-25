@@ -78,11 +78,11 @@
       "id": "pr-respond-reply-only-does-not-create-seed",
       "path": "success",
       "prompt": "[active approved tk-pr-respond] 현재 feedback은 코드 변경 없이 저장소 근거를 설명하는 reply 하나뿐이다.",
-      "expected_output": "fresh PR state를 다시 확인하고 exact reply를 게시하되 새 Seed나 code commit을 만들지 않는다.",
+      "expected_output": "`fresh PR state`를 다시 확인하고 `exact reply`를 게시하되 새 `Seed`, `worktree`, `code commit`을 만들지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "코드 변경이 없는 reply-only 작업에서는 `seed.md`를 새로 만들 이유가 없으며, `push` 없이 승인된 reply와 검증된 thread action만 수행한다."
+          "criterion": "코드 변경이 없는 `reply-only` 작업에서는 `seed.md`나 `worktree`를 새로 만들 이유가 없으며, `push` 없이 승인된 `reply`와 검증된 `thread action`만 수행한다."
         },
         {
           "type": "git_head_unchanged"
@@ -388,6 +388,16 @@
       ]
     },
     {
+      "id": "pr-respond-small-fix-direct-no-seed",
+      "path": "success",
+      "prompt": "[`active approved tk-pr-respond`] `exact PR branch`의 `clean checkout`이고 한 줄 조건식 수정과 `focused test` 하나면 끝나는 작은 `review fix`입니다.",
+      "expected_output": "현재 `checkout`이 `exact PR branch`이고 `clean`/`safe`함을 검증한 뒤 불필요한 `Seed`나 새 `worktree` 없이 `direct TDD`로 수정·검증한다.",
+      "assertions": [
+        {"type":"judge","criterion":"작고 명백한 한 `review surface`는 `exact clean`/`safe PR checkout`에서 `direct`/`no-Seed`로 처리하며 `durable context`나 `isolation`이 실제로 필요할 때만 `Seed`/`worktree`를 만든다."},
+        {"type":"terminal_status","expected":"Pass"}
+      ]
+    },
+    {
       "id": "pr-respond-sdd-transport-probe-and-stale-ledger",
       "path": "boundary",
       "prompt": "[승인된 `tk-pr-respond` SDD] 운영체제 임시 경로가 자식에게 보인다고 확인하지 않았고 `.tigerkit/sdd.md`는 다른 `Seed` 해시를 가리킨다. 그대로 재개해줘.",
@@ -456,6 +466,17 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "pr-respond-domain-context-keeps-canonical-term",
+      "path": "success",
+      "prompt": "[`active approved tk-pr-respond`] 관련 `CONTEXT.md`의 `canonical term`은 `현장결제`, `_Avoid_`는 `오프라인 결제`입니다. `reviewer reply`를 작성해줘.",
+      "expected_output": "관련 `domain context`만 읽고 `reply`에 `현장결제`를 그대로 사용하며 `_Avoid_` 표현을 쓰지 않는다.",
+      "assertions": [
+        {"type":"output_contains","text":"현장결제"},
+        {"type":"output_absent","text":"오프라인 결제"},
+        {"type":"terminal_status","expected":"Pass"}
+      ]
     }
   ]
 }

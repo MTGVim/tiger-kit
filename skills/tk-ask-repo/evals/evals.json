@@ -134,6 +134,18 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "ask-repo-domain-context-keeps-canonical-term",
+      "path": "success",
+      "prompt": "/tk-ask-repo 관련 `CONTEXT.md`의 `canonical term`은 `현장결제`, `_Avoid_`는 `오프라인 결제`입니다. 값의 흐름을 설명해줘.",
+      "expected_output": "관련 `context`만 읽고 설명에 `현장결제`를 사용하며 `_Avoid_` 표현을 재생산하지 않는다.",
+      "assertions": [
+        {"type":"output_contains","text":"현장결제"},
+        {"type":"output_absent","text":"오프라인 결제"},
+        {"type":"git_head_unchanged"},
+        {"type":"terminal_status","expected":"Pass"}
+      ]
     }
   ]
 }

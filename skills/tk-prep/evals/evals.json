@@ -651,6 +651,16 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "prep-domain-context-preserves-canonical-language",
+      "path": "success",
+      "prompt": "/tk-prep `root` `CONTEXT.md`에서 `canonical term`은 `현장결제`, `_Avoid_`는 `오프라인 결제`로 정했습니다. 이 용어가 필요한 작업을 준비해줘.",
+      "expected_output": "관련 `glossary`만 `lazy-read`하고 `Seed`와 설명에 `현장결제`를 그대로 사용하며 `오프라인 결제`로 바꾸지 않는다.",
+      "assertions": [
+        {"type":"judge","criterion":"관련 `domain context`가 있을 때 `canonical spelling`을 보존하고 `_Avoid_` 표현을 사용하지 않으며, `glossary`가 없을 때는 `setup`을 요구하지 않는다."},
+        {"type":"terminal_status","expected":"Pending"}
+      ]
     }
   ]
 }

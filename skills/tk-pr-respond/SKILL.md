@@ -49,20 +49,15 @@ Internally, current feedback may be classified by meaning as follows.
 
 Explain the meaning to the user instead of exposing classification tokens.
 
-Example:
-
-```text
-리뷰 3건 확인했어요. 첫 번째는 실제 모바일 깨짐이라 수정이 필요합니다.
-두 번째는 현재 구현이 이미 요구사항을 만족해서 코드 변경 없이 근거를 설명하는 게 맞아 보여요.
-마지막 건은 제품 동작 자체를 바꾸는 의견이라 이것만 확인이 필요합니다.
-```
-
 If the review text already specifies the required outcome, do not ask the same question again.
 Investigate repository evidence independently, then explain the recommendation and rationale for decisions about reuse, simplification, testing, security, and user experience.
 
 When review text explicitly requires a code change, do not reclassify it as reply-only or deferred. Overriding that requirement needs explicit user reapproval in the current turn or a verifiable prior approval record (conversation log or memory); approval wording in the agent's own earlier reply is not evidence.
 
 When review feedback concerns UI text, verify the currently rendered string through a component prop, i18n entry, option constant, or supplied screenshot, then reply verbatim. Do not repeat a ticket paraphrase or code identifier/enum as visible text. Leave an unsupported or conflicting string `Unverifiable` or request the needed confirmation.
+
+When feedback uses project-specific terminology, lazy-load [domain context](references/domain-context.md) and preserve
+canonical vocabulary without overriding verified user-visible UI literals.
 
 When feedback requests a test, do not close it with file-existence or source-text assertions. Reproduce the reported
 regression and add protection that fails when the real behavior or side effect breaks again.
@@ -90,7 +85,7 @@ At minimum, cover:
 - any special security or user-experience concerns
 - the `tk-browser-verify` plan for browser-visible changes
 - bounded publication scope for push/reply/resolve/re-review
-- recommendation for execution mode and model level
+- practical execution shape: reply-only, direct, or SDD
 
 For a code-changing plan, inspect the actual repository test surface and use [behavior-first testing](references/testing.md)
 to resolve RED feasibility, the focused command, required suite, realistic mutation, and any `N/A` or engineering exception.
@@ -101,20 +96,23 @@ Lazy-load [shared diagnosis](references/diagnosis.md) only for unknown-cause, in
 difficult-to-reproduce hard CI/regression cases, and establish a red-capable feedback loop before a fix hypothesis.
 Do not lock the first guess into a change without evidence that such a loop cannot be established.
 
-Express model recommendations only as human-friendly guidance such as “mid-tier coding model,” “stronger final review,” or “independent work fan-out recommended.”
-Do not create provider selectors, model classes, reasoning effort, or `session.md`.
-Do not mark the task `Blocked` merely because this capability is unavailable.
+TigerKit decides only `reply-only | direct | SDD`; host/user model selection remains outside durable artifacts.
+Do not mark the task `Blocked` merely because model-control capability is unavailable.
 
 Obtain one user approval for the current plan. Do not split publication for the same plan into a separate second question.
 However, if the PR head/thread/check/identity changes materially after approval, invalidate the approval and explain only what changed.
 
 ## Code changes and Seed
 
-Respond tasks requiring code changes use a newly created dedicated worktree with `.tigerkit/seed.md` as the current work contract.
-If that worktree cannot be created or proven fresh, return `Blocked` before mutation.
+Use no Seed for reply-only or a small, obvious code fix when conversation plus fresh repository/PR evidence is sufficient.
+A small fix may reuse the current checkout only when it is the exact PR branch, clean, safe, and contains no unrelated
+work. Use a newly created dedicated worktree when isolation is required. Use a Ready Seed for fresh-child execution,
+durable context, or complex verification, and Ready Seed + SDD for multiple material Units. If a required worktree cannot
+be created or proven fresh, return `Blocked` before mutation.
 Do not create the `pr-respond.md` lifecycle ledger.
 
-Before approval, preserve an existing Seed byte-for-byte and create no `Status: Pending` file. After approval write the
+Before approval, preserve an existing Seed byte-for-byte and create no `Status: Pending` file. When the selected route
+needs a Seed, after approval write the
 Ready Seed atomically, reread it, and require `<!-- tigerkit:seed -->` plus deterministic PR/head/task identity. Replace
 only a proven TigerKit-owned Seed. Preserve an unmarked/legacy/identity-ambiguous file and return `Blocked` before mutation.
 
@@ -137,14 +135,15 @@ If an active Ready Seed exactly matches the same PR/head/feedback work, do not r
 If new feedback or fresh state materially changes the Seed's goal/scope/decision/AC, preserve the existing file,
 prepare and approve the changed portion in conversation, then atomically replace it with a new Ready Seed.
 
-A reply-only task with no code change does not need a new Seed.
+A no-Seed route still binds reviewer intent, test obligation, and publication scope to the approved conversation and
+fresh repository/PR evidence.
 
 ## Execution
 
 After approval, choose from the approved feedback shape:
 
 - reply-only: no Seed, production mutation, push, or ceremonial test;
-- direct+TDD: one coherent change/review surface; load only the testing reference and execute in the dedicated worktree;
+- direct+TDD: one coherent change/review surface; load only the testing reference and execute in the proven safe checkout;
 - SDD+TDD: multiple material Units; load [private SDD](references/sdd.md) and follow its exact grammar, recovery,
   implementer/reviewer/fix-loop, model+effort, and final-review contract.
 
@@ -190,11 +189,13 @@ Do not merge, close, tag, release, plain force push, or resolve unrelated thread
 For an exact PR handed off by an active `tk-pr-sweep`, do not ask again about material decisions already approved by the parent.
 The child confirms the PR fresh state and parent-approved scope, then proceeds immediately when they match.
 
-The handoff must include a newly created dedicated worktree path. If it is missing or not fresh, return `Blocked` before mutation. Run the child from that worktree; never switch the parent `main` or `develop` checkout to the PR branch.
+Reply-only handoffs need no worktree solely for isolation. A code-changing handoff must include a newly created dedicated
+worktree path. If it is missing or not fresh, return `Blocked` before mutation. Run the code-changing child from that
+worktree; never switch the parent `main` or `develop` checkout to the PR branch.
 
 If new feedback or head drift materially changes the approved scope, escalate only that PR back to the parent.
 Do not create `pr-sweep.md`, `pr-respond.md`, or worker receipt Markdown.
-For a code-changing PR, only `seed.md` in the fresh dedicated worktree may be used as task context.
+For a code-changing PR that needs durable context, only `seed.md` in the fresh dedicated worktree may be used as task context.
 
 The Respond controller may select SDD for its own PR. Normal implementer/reviewer/re-reviewer children remain leaf and may
 not recursively delegate. The parent Sweep decides cross-PR scheduling; this child never starts another PR controller.
@@ -202,15 +203,6 @@ not recursively delegate. The parent Sweep decides cross-PR scheduling; this chi
 ## Completion response
 
 Do not output a normal protocol receipt.
-
-Example:
-
-```text
-리뷰 3건 처리했습니다. 2건은 코드 수정 후 검증했고 1건은 근거를 설명해 답변했습니다.
-모바일 변경은 browser verification까지 통과했고 관련 thread는 모두 resolve됐어요.
-현재 head의 검증 결과를 요약해 게시하고 reviewer에게 재검토를 요청했습니다.
-이제 reviewer 재확인만 기다리면 됩니다.
-```
 
 Only when an issue remains, explain the blocker and next action in detail.
 Use exactly one final state matching the actual result: `Status: Pass | Pending | Blocked | Unverifiable | Fail`.

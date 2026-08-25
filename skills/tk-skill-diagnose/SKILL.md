@@ -59,7 +59,6 @@ Read the following references only when applicable:
 
 - [failure planes and evidence](references/failure-planes.md)
 - [empirical diagnostic method](references/empirical-method.md)
-- [upstream issue anonymization](references/upstream-issue-anonymization.md)
 
 ## Efficiency Gate
 
@@ -137,11 +136,6 @@ This becomes input to a later explicit `tk-learn` run.
 - `no-change`: Target behavior is correct or the incident is not reproduced.
 - `unverifiable`: Evidence cannot safely determine the result.
 
-In an external consumer repository, verify the upstream origin/ref and current upstream
-behavior before proposing an anonymized issue. Classify only a redacted proposal that
-has passed duplicate checking as `upstream-draft-ready`; do not automatically create,
-comment, label, or publish it.
-
 ## Results
 
 Start with `## Diagnosis`, followed by `## Action`. Add `## Remaining uncertainty` only when needed.
@@ -150,15 +144,6 @@ Use a short explanation for one incident. When multiple symptoms share one cause
 `SD-##` row per cause in `ID | Incident | Root cause` format. Report the reproduction verdict,
 verified failure plane, evidence, route, and exact next handoff. Do not copy raw logs, transcripts,
 screenshots, secrets, or repeated run narration.
-
-When experiment evidence exceeds five rows or later resume needs an exact reference, use
-`.tigerkit/skill-diagnosis.md` only when `git check-ignore -v` identifies its ignore source and
-that source is proven by `git ls-files` to be repository-tracked. Global ignore files and
-`.git/info/exclude` are unsafe for repository-local reports. Otherwise, atomically write the
-bounded report to a temporary path outside the repository and tell the user that path. Include
-only incident IDs, applicable documentary or candidate/control/holdout evidence refs,
-measurements, and route. Keep only `## Diagnosis`, `## Action`, and required uncertainty in chat.
-Do not create an archive, lifecycle state, or duplicate raw output.
 
 Use one of these terminal statuses:
 
