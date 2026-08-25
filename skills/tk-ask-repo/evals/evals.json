@@ -160,6 +160,7 @@
         {"type":"judge","criterion":"`why` 질문에 현재 code evidence와 직접 관련된 ADR rationale를 결합하고 각각의 근거를 구분한다. 관련 없는 ADR이나 context tree는 읽지 않는다."},
         {"type":"output_contains","text":"write-before-ack"},
         {"type":"output_absent","text":"avatar-thumbnail TTL"},
+        {"type":"path_not_read","path":"skills/tk-ask-repo/evals/fixtures/adr/0099-avatar-cache.md"},
         {"type":"git_head_unchanged"},
         {"type":"changed_paths_equal","paths":[]},
         {"type":"terminal_status","expected":"Pass"}

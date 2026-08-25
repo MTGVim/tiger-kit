@@ -20,6 +20,7 @@ if __package__:
         parse_diagnostic_output,
         summarize_diagnostic_records,
         summarize_trigger_outcomes,
+        assertion_watch_paths,
         validate_adapter_result,
         validate_case_filter,
         verify_mechanical_assertion,
@@ -39,6 +40,7 @@ else:
         parse_diagnostic_output,
         summarize_diagnostic_records,
         summarize_trigger_outcomes,
+        assertion_watch_paths,
         validate_adapter_result,
         validate_case_filter,
         verify_mechanical_assertion,
@@ -999,6 +1001,54 @@ class RunnerContractTest(unittest.TestCase):
             ]
 
             self.assertTrue(all(row["passed"] for row in rows))
+
+    def test_path_not_read_requires_available_adapter_evidence(self) -> None:
+        assertion = {"type": "path_not_read", "path": "unrelated.md"}
+        with tempfile.TemporaryDirectory() as directory:
+            checkout = Path(directory)
+            not_read = verify_mechanical_assertion(
+                assertion,
+                adapter_result={
+                    "file_access": {"available": True, "read_paths": []},
+                },
+                checkout=checkout,
+                initial_head=None,
+            )
+            read = verify_mechanical_assertion(
+                assertion,
+                adapter_result={
+                    "file_access": {
+                        "available": True,
+                        "read_paths": ["unrelated.md"],
+                    },
+                },
+                checkout=checkout,
+                initial_head=None,
+            )
+            unavailable = verify_mechanical_assertion(
+                assertion,
+                adapter_result={
+                    "file_access": {"available": False, "read_paths": []},
+                },
+                checkout=checkout,
+                initial_head=None,
+            )
+
+        self.assertTrue(not_read["passed"])
+        self.assertFalse(read["passed"])
+        self.assertFalse(unavailable["passed"])
+
+    def test_only_path_not_read_assertions_are_watched(self) -> None:
+        self.assertEqual(
+            assertion_watch_paths(
+                [
+                    {"type": "path_not_read", "path": "unrelated.md"},
+                    {"type": "path_exists", "path": "created.md"},
+                    {"type": "path_not_read", "path": "unrelated.md"},
+                ]
+            ),
+            ["unrelated.md"],
+        )
 
     def test_exact_content_and_commit_count_assertions_are_mechanical(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

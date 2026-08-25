@@ -137,6 +137,7 @@
         {"type":"judge","criterion":"새 ADR 전에 관련 기존 ADR만 확인하고 동일 결정이면 중복 생성하거나 기존 rationale를 덮어쓰지 않는다."},
         {"type":"output_contains","text":"single-writer append sequence"},
         {"type":"output_absent","text":"thumbnail-cache TTL"},
+        {"type":"path_not_read","path":"skills/tk-domain/evals/fixtures/adr/0099-thumbnail-cache.md"},
         {"type":"git_head_unchanged"},
         {"type":"changed_paths_equal","paths":[]},
         {"type":"terminal_status","expected":"NotApplicable"}
@@ -155,6 +156,7 @@
         {"type":"judge","criterion":"기존 ADR의 premise가 실제로 바뀌었으면 duplicate가 아니라 명시적인 `refine | supersede | revisit ADR` 경로와 이유를 제시하고 `current-turn approval`을 기다린다."},
         {"type":"output_contains","text":"single-writer append sequence"},
         {"type":"output_absent","text":"thumbnail-cache TTL"},
+        {"type":"path_not_read","path":"skills/tk-domain/evals/fixtures/adr/0099-thumbnail-cache.md"},
         {"type":"git_head_unchanged"},
         {"type":"changed_paths_equal","paths":[]},
         {"type":"terminal_status","expected":"Pending"}

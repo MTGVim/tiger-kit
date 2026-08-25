@@ -38,6 +38,7 @@ MECHANICAL_ASSERTION_TYPES = {
     "terminal_status",
     "path_exists",
     "path_absent",
+    "path_not_read",
     "git_head_changed",
     "git_head_unchanged",
     "output_contains",
@@ -470,6 +471,9 @@ def validate_behavior_contract(name: str, path: Path) -> tuple[list[str], set[st
                 maximum = assertion.get("max")
                 if minimum is None and maximum is None:
                     errors.append(f"{_display_path(path)}: event_count needs min or max")
+            elif assertion_type == "path_not_read":
+                if not _safe_relative(assertion.get("path")):
+                    errors.append(f"{_display_path(path)}: path_not_read needs safe path")
             elif assertion_type in {
                 "path_exists",
                 "path_absent",

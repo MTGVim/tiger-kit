@@ -132,6 +132,26 @@ def validate_adapter_result(
                     "adapter result final_output terminal_status must match "
                     "adapter result terminal_status"
                 )
+    if "file_access" in result:
+        file_access = result.get("file_access")
+        available = file_access.get("available") if isinstance(file_access, dict) else None
+        read_paths = file_access.get("read_paths") if isinstance(file_access, dict) else None
+        safe_paths = isinstance(read_paths, list) and all(
+            isinstance(value, str)
+            and bool(value)
+            and not Path(value).is_absolute()
+            and ".." not in Path(value).parts
+            for value in read_paths
+        )
+        if (
+            not isinstance(available, bool)
+            or not safe_paths
+            or len(set(read_paths)) != len(read_paths)
+            or (available is False and bool(read_paths))
+        ):
+            errors.append(
+                "adapter result file_access requires boolean available and unique safe read_paths"
+            )
     return errors
 
 
@@ -665,6 +685,24 @@ def run_json_command(command: str, env: dict[str, str], *, cwd: Path) -> dict[st
     return result
 
 
+def assertion_watch_paths(assertions: object) -> list[str]:
+    if not isinstance(assertions, list):
+        return []
+    paths: set[str] = set()
+    for assertion in assertions:
+        if not isinstance(assertion, dict) or assertion.get("type") != "path_not_read":
+            continue
+        value = assertion.get("path")
+        if (
+            isinstance(value, str)
+            and value
+            and not Path(value).is_absolute()
+            and ".." not in Path(value).parts
+        ):
+            paths.add(value)
+    return sorted(paths)
+
+
 def run_adapter(
     command: str,
     *,
@@ -673,6 +711,7 @@ def run_adapter(
     prompt: str,
     mode: str,
     host: str,
+    watch_paths: list[str] | None = None,
 ) -> dict[str, object]:
     with tempfile.TemporaryDirectory(prefix="tigerkit-eval-run-") as directory:
         run_dir = Path(directory)
@@ -691,6 +730,7 @@ def run_adapter(
                 "TK_EVAL_SKILL": skill,
                 "TK_EVAL_SKILL_DIR": str(checkout / "skills" / skill),
                 "TK_EVAL_RUN_DIR": str(run_dir),
+                "TK_EVAL_WATCH_PATHS": json.dumps(watch_paths or []),
             }
         )
         result = run_json_command(command, env, cwd=checkout)
@@ -991,6 +1031,25 @@ def verify_mechanical_assertion(
             "type": assertion_type,
             "passed": passed,
             "evidence": f"path={relative!r}; inside_checkout={inside}; exists={exists}",
+        }
+    if assertion_type == "path_not_read":
+        relative = assertion.get("path")
+        safe = (
+            isinstance(relative, str)
+            and bool(relative)
+            and not Path(relative).is_absolute()
+            and ".." not in Path(relative).parts
+        )
+        file_access = adapter_result.get("file_access")
+        available = file_access.get("available") if isinstance(file_access, dict) else None
+        read_paths = file_access.get("read_paths") if isinstance(file_access, dict) else None
+        read = isinstance(read_paths, list) and relative in read_paths
+        return {
+            "type": assertion_type,
+            "passed": safe and available is True and isinstance(read_paths, list) and not read,
+            "evidence": (
+                f"path={relative!r}; tracking_available={available!r}; read={read}"
+            ),
         }
     if assertion_type == "path_text_has_hangul":
         target, inside = _safe_checkout_path(checkout, assertion.get("path"))
@@ -1535,6 +1594,7 @@ def evaluate_diagnostic_checkout(
                     prompt=compose_diagnostic_prompt(str(case["prompt"]), suffix),
                     mode="diagnostic",
                     host=host,
+                    watch_paths=assertion_watch_paths(case.get("assertions")),
                 )
                 deliverable, diagnostic, parse_error = parse_diagnostic_output(
                     str(result["output"])
@@ -1866,6 +1926,7 @@ def evaluate_checkout(
                         prompt=case["prompt"],
                         mode="behavior",
                         host=host,
+                        watch_paths=assertion_watch_paths(case.get("assertions")),
                     )
                     assertion_results = grade_behavior(
                         grader_command,

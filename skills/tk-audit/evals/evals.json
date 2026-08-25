@@ -228,6 +228,7 @@
         {"type":"judge","criterion":"architecture evidence와 직접 관련된 ADR rationale만 읽고 deliberate trade-off 자체를 generic smell로 보고하지 않는다. 실제 friction 또는 changed constraint가 있을 때만 `revisit ADR` finding을 허용한다."},
         {"type":"output_contains","text":"write-before-ack"},
         {"type":"output_absent","text":"avatar-thumbnail TTL"},
+        {"type":"path_not_read","path":"skills/tk-audit/evals/fixtures/adr/0099-avatar-cache.md"},
         {"type":"git_head_unchanged"},
         {"type":"changed_paths_equal","paths":[]},
         {"type":"terminal_status","expected":"Pass"}

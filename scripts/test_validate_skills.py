@@ -156,6 +156,51 @@ class EvalSotValidatorTest(unittest.TestCase):
             errors, _ = validate_skills.validate_behavior_contract("tk-example", path)
             self.assertTrue(any("mechanical evidence" in error for error in errors))
 
+    def test_path_not_read_requires_a_safe_checkout_relative_path(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            skill = Path(directory) / "tk-example"
+            evals = skill / "evals"
+            evals.mkdir(parents=True)
+            path = evals / "evals.json"
+
+            def write(watched: str) -> None:
+                path.write_text(
+                    json.dumps(
+                        {
+                            "skill_name": "tk-example",
+                            "evals": [
+                                {
+                                    "id": "success",
+                                    "path": "success",
+                                    "prompt": "explain it",
+                                    "expected_output": "done",
+                                    "assertions": [
+                                        {"type": "path_not_read", "path": watched}
+                                    ],
+                                },
+                                {
+                                    "id": "boundary",
+                                    "path": "boundary",
+                                    "prompt": "stop",
+                                    "expected_output": "stopped",
+                                    "assertions": [
+                                        {"type": "terminal_status", "expected": "Blocked"}
+                                    ],
+                                },
+                            ],
+                        }
+                    ),
+                    encoding="utf-8",
+                )
+
+            write("fixtures/unrelated.md")
+            errors, _ = validate_skills.validate_behavior_contract("tk-example", path)
+            self.assertEqual(errors, [])
+
+            write("../outside.md")
+            errors, _ = validate_skills.validate_behavior_contract("tk-example", path)
+            self.assertTrue(any("path_not_read needs safe path" in error for error in errors))
+
     def test_trigger_contract_rejects_split_overlap(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "triggers.json"

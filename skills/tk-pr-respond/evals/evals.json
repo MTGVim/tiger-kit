@@ -491,6 +491,7 @@
         {"type":"judge","criterion":"architecture, compatibility, boundary feedback에 직접 관련될 때만 해당 ADR rationale를 읽는다. 일반 feedback에는 ADR 확인을 강제하지 않고 unrelated tree를 scan하지 않는다."},
         {"type":"output_contains","text":"versioned response envelope"},
         {"type":"output_absent","text":"profile-image TTL"},
+        {"type":"path_not_read","path":"skills/tk-pr-respond/evals/fixtures/adr/0099-profile-image-cache.md"},
         {"type":"changed_paths_equal","paths":[]},
         {"type":"terminal_status","expected":"Pass"}
       ]
