@@ -481,10 +481,17 @@
     {
       "id": "pr-respond-loads-adr-only-for-related-feedback",
       "path": "success",
-      "prompt": "[`active approved tk-pr-respond`] reviewer가 PR의 public API compatibility boundary가 기존 설계와 충돌한다고 지적했습니다. 관련 `ADR-0009`와 현재 diff를 확인해 답하고 unrelated ADR은 읽지 마세요.",
-      "expected_output": "feedback과 직접 관련된 architecture/compatibility ADR rationale만 현재 diff와 함께 읽고 generic review checklist나 ADR tree scan으로 확장하지 않는다.",
+      "prompt": "[`active approved tk-pr-respond`] reviewer가 PR의 public API compatibility boundary가 기존 설계와 충돌한다고 지적했습니다. 관련 `skills/tk-pr-respond/evals/fixtures/adr/0009-api-envelope.md`와 현재 diff를 확인해 답해줘. `0099-profile-image-cache.md`는 unrelated입니다.",
+      "expected_output": "관련 ADR의 `versioned response envelope` rationale를 현재 diff와 함께 사용하고 generic checklist로 확장하거나 unrelated `profile-image TTL`에 영향을 받지 않는다.",
+      "files": [
+        "evals/fixtures/adr/0009-api-envelope.md",
+        "evals/fixtures/adr/0099-profile-image-cache.md"
+      ],
       "assertions": [
         {"type":"judge","criterion":"architecture, compatibility, boundary feedback에 직접 관련될 때만 해당 ADR rationale를 읽는다. 일반 feedback에는 ADR 확인을 강제하지 않고 unrelated tree를 scan하지 않는다."},
+        {"type":"output_contains","text":"versioned response envelope"},
+        {"type":"output_absent","text":"profile-image TTL"},
+        {"type":"changed_paths_equal","paths":[]},
         {"type":"terminal_status","expected":"Pass"}
       ]
     }

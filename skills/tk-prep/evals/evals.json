@@ -688,10 +688,17 @@
     {
       "id": "prep-relevant-adr-owns-design-choice",
       "path": "success",
-      "prompt": "/tk-prep API pagination migration을 준비해줘. 관련 `ADR-0012`가 cursor pagination의 compatibility trade-off를 소유하고 전제는 현재 코드와 같습니다. `docs/adr/`에는 unrelated UI ADR도 많이 있습니다.",
-      "expected_output": "hard-to-reverse 선택을 비교하기 전에 관련 `ADR-0012`와 현재 code evidence만 읽고, 전제가 그대로면 결정을 다시 열거나 unrelated ADR tree를 scan하지 않는다.",
+      "prompt": "/tk-prep API pagination migration을 준비해줘. 관련 `skills/tk-prep/evals/fixtures/adr/0012-cursor-pagination.md`가 compatibility trade-off를 소유하고 전제는 현재 코드와 같습니다. `0099-dashboard-thumbnail.md`는 unrelated입니다.",
+      "expected_output": "관련 ADR의 `opaque after-token`과 현재 code evidence를 사용하고 전제가 그대로면 결정을 다시 열지 않으며, unrelated `dashboard-thumbnail TTL`에 영향을 받지 않는다.",
+      "files": [
+        "evals/fixtures/adr/0012-cursor-pagination.md",
+        "evals/fixtures/adr/0099-dashboard-thumbnail.md"
+      ],
       "assertions": [
         {"type":"judge","criterion":"design/interface/schema/migration 선택에 직접 관련된 ADR rationale만 현재 코드와 함께 읽는다. 기존 ADR 전제가 유지되면 선택을 재논의하지 않고, premise가 바뀐 경우에만 `revisit ADR`을 명시한다."},
+        {"type":"output_contains","text":"opaque after-token"},
+        {"type":"output_absent","text":"dashboard-thumbnail TTL"},
+        {"type":"changed_paths_equal","paths":[]},
         {"type":"terminal_status","expected":"Pending"}
       ]
     }
