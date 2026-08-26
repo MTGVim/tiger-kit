@@ -1,6 +1,6 @@
 ---
 name: tk-grooming
-description: "[user/auto] 기존 repository 또는 user skill의 중복·범위·배치·trigger 또는 description/body shortcut risk를 감사할 때 사용합니다. 일반 code cleanup이나 신규 skill 작성에는 사용하지 않습니다."
+description: "[user/auto] 기존 repository 또는 user skill의 중복·범위·배치·trigger, weak pointer, no-op/cache 또는 description/body shortcut risk를 감사할 때 사용합니다. 일반 code/doc cleanup이나 신규 skill 작성에는 사용하지 않습니다."
 disable-model-invocation: false
 argument-hint: "[scope] [--apply]"
 metadata:
@@ -29,24 +29,27 @@ When ownership evidence or apply approval is needed, prefer the host's native st
 4. `description shortcut audit`: Before any frontmatter description rewrite, identify
    the exact process-summary phrase that could substitute for loading the body, preserve
    the smallest routing discriminator, and compare prior/candidate routing and body behavior.
-5. `classification/proposal`: Apply the
+5. `instruction economy audit`: For the selected existing skills only, inspect conditional
+   reference pointers, duplicated environment facts, behavioral no-ops, stale sediment,
+   and branch-specific prose that unnecessarily stays on the main execution path.
+6. `classification/proposal`: Apply the
    [placement criteria table](references/repository-placement.md) to skill candidates
    and classify them as `keep | keep (vendor) | tighten | merge | split | move
    | deprecate | delete | fix`.
-6. `🔴 CHECKPOINT · 🛑 STOP`: Summarize the exact scope, evidence, proposal, target paths, and permitted apply actions.
+7. `🔴 CHECKPOINT · 🛑 STOP`: Summarize the exact scope, evidence, proposal, target paths, and permitted apply actions.
    A literal initial `--apply` pre-approves only that verified mechanical scope; otherwise stop until explicit current-turn
    approval. Scope, evidence, or target drift invalidates approval.
-
-7. `apply/report`: In report-only mode, output the proposal/receipt. If authority
+8. `apply/report`: In report-only mode, output the proposal/receipt. If authority
    exists, reread the sources, search references before delete/move, preserve
    managed/generated markings, and modify only the approved receipt scope.
-8. `revalidate`: Recheck links, duplication, and frontmatter, then report the
-   results, unverified scope, and unresolved items.
+9. `revalidate`: Recheck links, duplication, frontmatter, and any behavior comparison
+   that justified instruction pruning, then report the results, unverified scope, and unresolved items.
 
 Investigate only the repository or user skill areas explicitly stated or implied
 by the request. Use the actual host-native skill paths from
 [discovery](references/discovery.md). Do not create missing files or investigate,
 migrate, or create repository/user rule state or legacy/global TigerKit state.
+Do not expand this audit into generic `AGENTS.md`, `CLAUDE.md`, ticket, spec, or repository-doc cleanup.
 
 Evaluate repository/user skills as independently normative instruction/workflow
 units, not as whole files. Use `move` only when an exact native skill target exists,
@@ -62,12 +65,30 @@ symptom, intended scope, and positive/negative routing discriminator needed to d
 whether the skill should load. Do not shorten mechanically. If a longer description is
 necessary to avoid false-positive or false-negative invocation, return `keep`/no-op.
 
-Before proposing `tighten`, compare the prior and candidate descriptions against the
-existing train/validation trigger cases and body behavior cases. The candidate must not
-increase false-positive invocation or lose valid discovery, and an agent using it must
-still follow the body rather than the description as a procedure. Trigger success or
-source-text presence alone does not prove body compliance. Record this comparison as
-evidence and keep the candidate report-only unless the existing apply authority passes.
+For an instruction-economy audit:
+
+- Treat a description or conditional reference link as a context pointer. A useful
+  pointer names the material and the distinct branch/condition that needs it; body or
+  workflow summaries do not make the pointer stronger.
+- Treat a current package/config value, directory inventory, or host/tool capability as
+  an environment-cache candidate only when a cheap fresh lookup is the real source of
+  truth. Commands, paths, literals, or state that the skill intentionally owns as a
+  contract are not stale merely because they are concrete.
+- Call something a behavioral no-op only when removing it preserves the same observable
+  behavior against a no-skill/prior baseline. Do not infer no-op from prose style.
+- Move branch-specific reference out of the main path only when a precise pointer still
+  causes the branch that needs it to read and apply it. Always-needed safety/authority
+  guards stay inline.
+- Treat long-but-live instruction as `keep`; `sprawl` or `sediment` needs evidence that
+  the material is irrelevant, duplicated, stale, or on the wrong branch.
+
+Before proposing `tighten`, compare the prior and candidate against the relevant existing
+behavior cases. For a description change, include train/validation trigger cases and body
+behavior. For a pointer, cache, or no-op change, include the branch that needs the rule and
+a branch that does not. The candidate must preserve valid behavior and safety while
+removing only proven load. Trigger success, source-text presence, line count, or token
+reduction alone does not prove compliance. If semantic behavior would change, report an
+exact pending proposal for `tk-learn` instead of applying it here.
 
 Determine ownership from confirmed paths and link targets, package-manager
 installation locations, updater/version artifacts, and verifiable author history.
@@ -102,6 +123,8 @@ Do not create hidden global state or store exclusions in `.tigerkit/`.
   with the one required decision.
 - Referenced deletion/move target: Make no changes, change the proposal to
   `keep | tighten`, and cite the reference.
+- Unproven no-op/cache/pointer claim: Keep the existing behavior and report the exact
+  missing behavioral evidence; do not make a speculative tightening edit.
 - Target drift after checkpoint: Make no changes, return `Partial/Blocked` with
   current evidence, and require a new proposal.
 - Verification failure after apply: Never claim `Complete`. Restore/reverify only
