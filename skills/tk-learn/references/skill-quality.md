@@ -13,6 +13,32 @@ symptoms, intended scope, and exclusions. Keep workflow order, internal routing,
 approval sequence, artifact lifecycle, and procedure in the body. A process summary
 that could substitute for reading the body fails this rule even if routing cases pass.
 
+## Agent-facing instruction economy
+
+Treat a skill description and every conditional reference link as a **context pointer**:
+it should identify the material and the distinct branch/condition that makes reading it
+necessary. Do not repeat body identity or workflow in the pointer. Put behavior needed by
+every execution path in the body; move branch-specific reference behind a precise pointer
+only when doing so keeps the main path clearer without hiding a load-bearing guard.
+
+The environment is also a source of truth. Do not copy cheap, fresh facts such as current
+package/config values, directory inventory, or host/tool capability into prose unless the
+skill intentionally owns that value as a contract or the lookup is expensive/unreliable.
+A duplicated environmental fact is a stale-cache risk, not useful context.
+
+Invocation kind spends the same load budget. A model-invoked or hybrid skill pays an
+always-loaded model-facing description so the model or another skill can discover it;
+choose that reach only when autonomous discovery or composition is behaviorally useful.
+When a workflow is intentionally human-selected, prefer user invocation and let the human
+be the index. Do not change an existing invocation kind merely to reduce context: compare
+positive/negative routing and body behavior first.
+
+Prune behaviorally, not aesthetically. For every candidate removal or compression, compare
+no-skill/prior behavior on a realistic task. A sentence that is long but prevents a known
+pressure failure earns its load; a short sentence that changes no behavior is a no-op.
+Prefer positive steering for ordinary behavior, while preserving explicit hard stops for
+authority, destructive mutation, secrets, freshness, and cross-scope safety boundaries.
+
 ## Upstream distillation
 
 For every `create | improve | merge`, check mature upstream practice before inventing a
@@ -69,6 +95,11 @@ itself prove skill behavior. Use observable outcomes and realistic judge criteri
 - When a description changes, compare prior and candidate positive/negative routing,
   including false-positive invocation, and verify that the candidate still follows the
   body behavior rather than treating the description as the procedure.
+- For pointer/disclosure edits, verify both sides: the required reference is reached on
+  the branch that needs it, and unrelated branches do not pay the load or inherit rules
+  they never use.
+- For instruction pruning, a source-text deletion or smaller token count is not success;
+  the relevant task behavior and safety boundary must remain unchanged.
 
 ## Draft artifact checkpoint
 

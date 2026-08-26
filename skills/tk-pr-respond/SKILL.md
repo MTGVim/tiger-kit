@@ -105,13 +105,36 @@ Do not mark the task `Blocked` merely because model-control capability is unavai
 Obtain one user approval for the current plan. Do not split publication for the same plan into a separate second question.
 However, if the PR head/thread/check/identity changes materially after approval, invalidate the approval and explain only what changed.
 
+## Workspace isolation
+
+Reply-only work needs no workspace solely for isolation. For a code-changing route, first inspect the current Git
+checkout, including branch/HEAD, linked-worktree state, unrelated work, and whether
+`git rev-parse --show-superproject-working-tree` identifies a submodule. `GIT_DIR != GIT_COMMON` is only a linked-worktree
+signal after that submodule guard; it does not by itself prove the checkout belongs to this PR.
+
+A small direct fix may reuse the current checkout only when it is the exact PR branch, clean, safe, and contains no
+unrelated work. When dedicated isolation is required, detect existing task isolation before creating anything. Inspect
+the current tool surface for concrete native entry points such as `EnterWorktree`, `WorktreeCreate`, `/worktree`, or
+`--worktree`; these are capability examples, not durable provider routing. Prefer an available agent-callable native
+worktree/workspace mechanism and fresh-read the resulting path, branch or detached state, and HEAD. An approval that
+already authorizes the exact code-changing plan and isolated workspace setup also authorizes using that host-native
+mechanism; do not ask a duplicate workspace-consent question.
+
+Use manual `git worktree` only when no safe native mechanism is available. The fallback must start from the exact
+approved PR head, avoid path/branch collisions and unrelated work, and be fresh-read after creation. Do not edit
+`.gitignore` or create a setup commit merely to make manual isolation possible. If required isolation cannot be created
+and proven safe, return `Blocked` before mutation rather than falling back to an unsafe parent/default checkout.
+
+A host-managed workspace keeps its host-owned lifecycle. Do not remove, prune, relocate, or otherwise clean it as part of
+Respond completion. "Dedicated worktree" in this skill is a semantic isolation requirement, not a requirement to bypass
+a host-native workspace with raw `git worktree add`.
+
 ## Code changes and Seed
 
 Use no Seed for reply-only or a small, obvious code fix when conversation plus fresh repository/PR evidence is sufficient.
-A small fix may reuse the current checkout only when it is the exact PR branch, clean, safe, and contains no unrelated
-work. Use a newly created dedicated worktree when isolation is required. Use a Ready Seed for fresh-child execution,
-durable context, or complex verification, and Ready Seed + SDD for multiple material Units. If a required worktree cannot
-be created or proven fresh, return `Blocked` before mutation.
+Use a dedicated isolated workspace when the current checkout does not satisfy the preceding safety contract. Use a Ready
+Seed for fresh-child execution, durable context, or complex verification, and Ready Seed + SDD for multiple material Units.
+If a required isolated workspace cannot be created or proven fresh, return `Blocked` before mutation.
 Do not create the `pr-respond.md` lifecycle ledger.
 
 Before approval, preserve an existing Seed byte-for-byte and create no `Status: Pending` file. When the selected route
@@ -196,13 +219,15 @@ Do not merge, close, tag, release, plain force push, or resolve unrelated thread
 For an exact PR handed off by an active `tk-pr-sweep`, do not ask again about material decisions already approved by the parent.
 The child confirms the PR fresh state and parent-approved scope, then proceeds immediately when they match.
 
-Reply-only handoffs need no worktree solely for isolation. A code-changing handoff must include a newly created dedicated
-worktree path. If it is missing or not fresh, return `Blocked` before mutation. Run the code-changing child from that
-worktree; never switch the parent `main` or `develop` checkout to the PR branch.
+Reply-only handoffs need no workspace solely for isolation. A code-changing handoff must include a newly established
+dedicated workspace path, exact PR head, and enough provenance to prove it belongs to that row. "Newly established" may
+mean a host-native workspace or a safe manual Git fallback; it never requires a nested manual worktree inside an already
+proven host-managed workspace. If the path/HEAD/provenance is missing or not fresh, return `Blocked` before mutation. Run
+the code-changing child from that workspace; never switch the parent `main` or `develop` checkout to the PR branch.
 
 If new feedback or head drift materially changes the approved scope, escalate only that PR back to the parent.
 Do not create `pr-sweep.md`, `pr-respond.md`, or worker receipt Markdown.
-For a code-changing PR that needs durable context, only `seed.md` in the fresh dedicated worktree may be used as task context.
+For a code-changing PR that needs durable context, only `seed.md` in the proven dedicated workspace may be used as task context.
 
 The Respond controller may select SDD for its own PR. Normal implementer/reviewer/re-reviewer children remain leaf and may
 not recursively delegate. The parent Sweep decides cross-PR scheduling; this child never starts another PR controller.

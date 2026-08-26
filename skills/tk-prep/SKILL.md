@@ -43,15 +43,34 @@ If evidence or precedent decides, recommend it; only unresolved material hard-to
 
 Before the final approval, read-only establish:
 
-- repository root, current branch/HEAD, default branch, and linked-worktree state;
+- repository root, current branch/HEAD, default branch, linked-worktree state, and whether the checkout is a submodule;
 - staged, unstaged, and untracked paths;
 - whether unrelated user work exists;
 - the test commands and browser/server readiness required by the likely execution path.
 
 Never absorb, stage, commit, clean, stash, review, or overwrite unrelated work. Reuse an already safe non-default task
-checkout. If execution would start from the default branch, final approval must explicitly cover creation/use of a fresh
-isolated task checkout; if the host cannot create or prove one, return `Blocked` before product mutation. Review ranges
-and commits belong to that execution checkout only.
+checkout when its task identity and HEAD are proven. A linked worktree signal alone is not sufficient: when using
+`GIT_DIR != GIT_COMMON` to detect isolation, first exclude submodules with
+`git rev-parse --show-superproject-working-tree` or an equivalent Git-state check.
+
+When execution requires a fresh isolated task checkout, detect current isolation before creating anything. Inspect the
+current tool surface for concrete native entry points such as `EnterWorktree`, `WorktreeCreate`, `/worktree`, or
+`--worktree`; these are capability examples, not durable provider routing. If an agent-callable native worktree/workspace
+mechanism is available, prefer it and fresh-read the resulting path, branch/detached state, and HEAD. The final
+checkpoint's approved `isolated checkout setup` is authority to use that same host-native mechanism; do not ask a
+duplicate worktree-consent question solely because the tool has its own name.
+Use manual `git worktree` only when no safe native mechanism is available. Manual fallback must preserve the approved
+source HEAD, avoid unrelated user work and path/branch collisions, and be fresh-read after creation; do not edit
+`.gitignore` or create a setup commit merely to make the fallback possible. If neither native nor manual isolation can be
+created and proven safe, return `Blocked` before product mutation rather than working in an unsafe default checkout.
+
+Host-managed workspaces keep their host-owned lifecycle. TigerKit does not remove, prune, relocate, or otherwise clean an
+externally managed workspace merely because this task finishes. Review ranges and commits belong to the proven execution
+checkout only.
+
+If execution would start from the default branch, final approval must explicitly cover creation/use of a fresh isolated
+task checkout. Existing isolation can satisfy that boundary only when it is proven to be a safe task checkout rather than
+a submodule, unrelated workspace, or ambiguous externally managed state.
 
 ## UI text evidence
 
