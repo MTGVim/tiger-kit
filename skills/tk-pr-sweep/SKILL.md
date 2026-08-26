@@ -83,24 +83,43 @@ Do not mark the entire Sweep as `Blocked` merely because model controls are unav
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Batch approval
 
-Do not create child worktrees, write Seeds, or perform any remote or product mutation until the user explicitly
+Do not create child workspaces, write Seeds, or perform any remote or product mutation until the user explicitly
 approves the exact PRs, heads, work types, and publication scope in the batch plan. If approval is missing or fresh
 state changes that scope, remain pending and ask again only for the affected decision.
 
-Once the user approves the batch plan, that approval grants authority only for the exact PRs, heads, work types, and publication scope in the plan.
-Do not request the same approval again for each child.
+Once the user approves the batch plan, that approval grants authority only for the exact PRs, heads, work types, publication scope, and required child isolation in the plan.
+Do not request the same approval again for each child or for the host-native workspace mechanism used to realize that approved isolation.
 
 ## Execution isolation
 
-`--report` and pre-approval fresh triage are read-only and do not create worktrees.
-After batch approval, code-changing children and any child that performs Git mutation require a newly created dedicated
-worktree before handling begins. Reply-only children do not create a worktree solely for isolation. The parent `main` or
+`--report` and pre-approval fresh triage are read-only and do not create workspaces.
+After batch approval, code-changing children and any child that performs Git mutation require a newly established dedicated
+workspace before handling begins. Reply-only children do not create a workspace solely for isolation. The parent `main` or
 `develop` checkout is never used for child Git mutation and never branch-switched with `git switch` or `git checkout`.
-A subagent counts as isolation only when it receives and uses that fresh worktree. Do not reuse another PR's or a previous child's worktree.
-If a fresh worktree cannot be created or passed to the child, hold only that PR as `Held` or `Blocked`; do not fall back to sequential handling in the parent `main`/`develop` checkout. The absence of worker or model controls is not itself a blocker; inability to establish the worktree boundary is a PR-local blocker.
+
+For each mutating row, inspect the current Git state before creating anything. A linked-worktree signal such as
+`GIT_DIR != GIT_COMMON` counts only after excluding submodules with
+`git rev-parse --show-superproject-working-tree` or an equivalent check, and it does not prove that a workspace belongs to
+this PR. Reuse an already host-created workspace only when its path, exact PR head, row identity, and dedicated provenance
+are fresh and unambiguous.
+
+When a new child workspace is needed, prefer the current host's agent-callable native worktree/workspace mechanism and
+fresh-read the resulting path, branch or detached state, and HEAD. Use manual `git worktree` only when no safe native
+mechanism is available. Manual fallback must start from the exact approved head, avoid path/branch collisions and
+unrelated work, and be fresh-read after creation. Do not edit `.gitignore` or create a setup commit merely to make fallback
+isolation possible.
+
+A subagent counts as isolation only when it receives and uses the proven dedicated workspace. Do not reuse another PR's or
+a previous child's workspace. If a required workspace cannot be created or passed to the child, hold only that PR as
+`Held` or `Blocked`; do not fall back to sequential handling in the parent `main`/`develop` checkout. The absence of worker
+or model controls is not itself a blocker; inability to establish the workspace boundary is a PR-local blocker.
+
+Host-managed workspaces keep their host-owned lifecycle. Sweep does not remove, prune, relocate, or otherwise clean an
+externally managed workspace merely because a child finishes. A manual run-owned workspace may be cleaned only by an
+owner that explicitly has that cleanup authority; this skill does not add a general cleanup phase.
 
 Sweep remains a PR queue controller, not a task-level SDD controller. It never parses SDD Units, dispatches their
-implementers/reviewers, or writes `sdd.md`; the PR owner such as `tk-pr-respond` owns those semantics inside one worktree.
+implementers/reviewers, or writes `sdd.md`; the PR owner such as `tk-pr-respond` owns those semantics inside one workspace.
 PR-level fan-out is not SDD task decomposition.
 
 Rows whose PR owner selects shared SDD run **sequentially by default within this Sweep** so nested controllers do not
@@ -111,8 +130,8 @@ rows; record that PR's result and continue.
 ## Per-PR handling
 
 Immediately before handling each PR, reread fresh triage and the exact PR state.
-Before a child route that needs Git mutation, verify the fresh dedicated worktree path for that PR and pass it to the
-child. If it is absent, hold or block before mutation.
+Before a child route that needs Git mutation, verify the dedicated workspace path, exact head, and ownership/provenance for
+that PR and pass them to the child. If any are absent or stale, hold or block before mutation.
 
 Representative routes:
 
@@ -128,9 +147,10 @@ Return that PR to the user only when there is a material change, such as new fee
 
 Do not create one giant Seed for the entire Sweep.
 
-Each code-changing or Git-mutating PR child uses its own newly created dedicated worktree. A code-changing child uses a
-marked, current-PR/head Ready `.tigerkit/seed.md` only when its owner selects durable context or SDD; reply-only work uses
-neither a Seed nor a worktree solely for isolation, and pure rebase follows `tk-pr-rebase` isolation.
+Each code-changing or Git-mutating PR child uses its own proven dedicated workspace. A code-changing child uses a marked,
+current-PR/head Ready `.tigerkit/seed.md` only when its owner selects durable context or SDD; reply-only work uses neither a
+Seed nor a workspace solely for isolation, and pure rebase follows `tk-pr-rebase` isolation. The workspace may be
+host-native or a safe manual fallback; its creation mechanism does not expand publication or cleanup authority.
 The Seed must be self-contained and include that PR’s feedback, objective, decisions, approach, AC, verification, and publication boundary. If a child scope names a user-visible UI element, carry the verbatim constraint into that handoff: quote the exact rendered string or verified entry path, cite its repository or supplied-screenshot basis, and do not pass along paraphrases, code identifiers, enum-derived labels, or unverified grouped claims.
 
 Do not force a Seed onto reply-only work or a pure rebase that does not require separate implementation context.
