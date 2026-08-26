@@ -53,10 +53,12 @@ checkout when its task identity and HEAD are proven. A linked worktree signal al
 `GIT_DIR != GIT_COMMON` to detect isolation, first exclude submodules with
 `git rev-parse --show-superproject-working-tree` or an equivalent Git-state check.
 
-When execution requires a fresh isolated task checkout, detect current isolation before creating anything. If the current
-host provides an agent-callable native worktree/workspace mechanism, prefer it and fresh-read the resulting path,
-branch/detached state, and HEAD. The final checkpoint's approved `isolated checkout setup` is authority to use that same
-host-native mechanism; do not ask a duplicate worktree-consent question solely because the tool has its own name.
+When execution requires a fresh isolated task checkout, detect current isolation before creating anything. Inspect the
+current tool surface for concrete native entry points such as `EnterWorktree`, `WorktreeCreate`, `/worktree`, or
+`--worktree`; these are capability examples, not durable provider routing. If an agent-callable native worktree/workspace
+mechanism is available, prefer it and fresh-read the resulting path, branch/detached state, and HEAD. The final
+checkpoint's approved `isolated checkout setup` is authority to use that same host-native mechanism; do not ask a
+duplicate worktree-consent question solely because the tool has its own name.
 Use manual `git worktree` only when no safe native mechanism is available. Manual fallback must preserve the approved
 source HEAD, avoid unrelated user work and path/branch collisions, and be fresh-read after creation; do not edit
 `.gitignore` or create a setup commit merely to make the fallback possible. If neither native nor manual isolation can be
