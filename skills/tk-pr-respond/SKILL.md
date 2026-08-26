@@ -113,10 +113,12 @@ checkout, including branch/HEAD, linked-worktree state, unrelated work, and whet
 signal after that submodule guard; it does not by itself prove the checkout belongs to this PR.
 
 A small direct fix may reuse the current checkout only when it is the exact PR branch, clean, safe, and contains no
-unrelated work. When dedicated isolation is required, detect existing task isolation before creating anything. If the
-current host provides an agent-callable native worktree/workspace mechanism, prefer it and fresh-read the resulting
-path, branch or detached state, and HEAD. An approval that already authorizes the exact code-changing plan and isolated
-workspace setup also authorizes using that host-native mechanism; do not ask a duplicate workspace-consent question.
+unrelated work. When dedicated isolation is required, detect existing task isolation before creating anything. Inspect
+the current tool surface for concrete native entry points such as `EnterWorktree`, `WorktreeCreate`, `/worktree`, or
+`--worktree`; these are capability examples, not durable provider routing. Prefer an available agent-callable native
+worktree/workspace mechanism and fresh-read the resulting path, branch or detached state, and HEAD. An approval that
+already authorizes the exact code-changing plan and isolated workspace setup also authorizes using that host-native
+mechanism; do not ask a duplicate workspace-consent question.
 
 Use manual `git worktree` only when no safe native mechanism is available. The fallback must start from the exact
 approved PR head, avoid path/branch collisions and unrelated work, and be fresh-read after creation. Do not edit
