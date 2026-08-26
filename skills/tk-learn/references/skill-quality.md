@@ -26,6 +26,13 @@ package/config values, directory inventory, or host/tool capability into prose u
 skill intentionally owns that value as a contract or the lookup is expensive/unreliable.
 A duplicated environmental fact is a stale-cache risk, not useful context.
 
+Invocation kind spends the same load budget. A model-invoked or hybrid skill pays an
+always-loaded model-facing description so the model or another skill can discover it;
+choose that reach only when autonomous discovery or composition is behaviorally useful.
+When a workflow is intentionally human-selected, prefer user invocation and let the human
+be the index. Do not change an existing invocation kind merely to reduce context: compare
+positive/negative routing and body behavior first.
+
 Prune behaviorally, not aesthetically. For every candidate removal or compression, compare
 no-skill/prior behavior on a realistic task. A sentence that is long but prevents a known
 pressure failure earns its load; a short sentence that changes no behavior is a no-op.
