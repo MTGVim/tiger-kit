@@ -103,11 +103,12 @@ For each mutating row, inspect the current Git state before creating anything. A
 this PR. Reuse an already host-created workspace only when its path, exact PR head, row identity, and dedicated provenance
 are fresh and unambiguous.
 
-When a new child workspace is needed, prefer the current host's agent-callable native worktree/workspace mechanism and
-fresh-read the resulting path, branch or detached state, and HEAD. Use manual `git worktree` only when no safe native
-mechanism is available. Manual fallback must start from the exact approved head, avoid path/branch collisions and
-unrelated work, and be fresh-read after creation. Do not edit `.gitignore` or create a setup commit merely to make fallback
-isolation possible.
+When a new child workspace is needed, inspect the current tool surface for concrete native entry points such as
+`EnterWorktree`, `WorktreeCreate`, `/worktree`, or `--worktree`; these are capability examples, not durable provider
+routing. Prefer an available agent-callable native worktree/workspace mechanism and fresh-read the resulting path, branch
+or detached state, and HEAD. Use manual `git worktree` only when no safe native mechanism is available. Manual fallback
+must start from the exact approved head, avoid path/branch collisions and unrelated work, and be fresh-read after creation.
+Do not edit `.gitignore` or create a setup commit merely to make fallback isolation possible.
 
 A subagent counts as isolation only when it receives and uses the proven dedicated workspace. Do not reuse another PR's or
 a previous child's workspace. If a required workspace cannot be created or passed to the child, hold only that PR as
