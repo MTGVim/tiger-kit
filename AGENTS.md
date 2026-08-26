@@ -24,6 +24,16 @@ TigerKit은 `workflow` `runner`, `plugin`, `scheduler`, `shared-state` `framewor
 - 충분한 근거는 성숙한 `upstream`과 구체적인 TigerKit `gap`, 강하게 검증된 재사용 가능 단일 사례, 충분한 자료가 있는 명시적 재사용 `workflow`, 또는 실제로 반복 검증된 사례 중 하나면 됩니다.
 - 출처 없는 일화, 원시 `log`, 재사용 가능한 교정 근거가 없는 일회성 실수는 승격하지 않습니다. 구체적인 차이가 입증되지 않으면 기존의 더 단순한 TigerKit 계약을 유지합니다.
 
+## `Agent-facing` instruction economy
+
+Agent가 읽는 문서는 길이가 아니라 **행동 대비 load**로 판단합니다.
+
+- `description`과 `reference` pointer는 본문을 요약하지 않고, 어떤 distinct branch/condition에서 그 내용을 읽어야 하는지 encode합니다.
+- 모든 실행 경로가 필요한 step/guard는 inline으로 두고, 일부 branch만 필요한 reference는 정확한 pointer 뒤로 `progressive disclosure`합니다. Reference로 내리는 것 자체가 목표는 아닙니다.
+- `package.json`, config, directory layout, 현재 host/tool capability처럼 한 번의 cheap fresh lookup으로 알 수 있는 사실은 environment를 source of truth로 둡니다. 문서가 canonical contract이거나 lookup이 expensive/unreliable한 경우에만 의도적인 cache를 유지합니다.
+- 문장·블록 삭제는 미학적 축약이 아니라 no-skill/prior behavior 비교로 판단합니다. Pressure에서 실제 행동을 지키는 rationale/guard는 짧아진다는 이유로 제거하지 않습니다.
+- 일반 steering은 해야 할 행동을 직접 쓰는 positive form을 선호하되, publication authority, destructive mutation, secret, freshness, cross-scope safety boundary의 hard stop은 약화하지 않습니다.
+
 ## `Adaptive prep` `product` `work`
 
 TigerKit의 `product-work` `owner`는 `tk-prep`입니다.
