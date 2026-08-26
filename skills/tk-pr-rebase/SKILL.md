@@ -19,9 +19,27 @@ Own the exact `base/head rebase`, `conflict resolution`, `verification`, and bou
 Do not perform `merge`, `close`, `tag`, `release`, or unrelated feedback implementation.
 When standalone rebase/publication approval is needed, prefer the host's native structured question surface (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). If unavailable, present the same approval packet in plain chat; do not ask again for an exact route already approved by the parent.
 
-## Fresh identity
+## Fresh identity and workspace
 
-Local rebase must start in a newly created dedicated worktree. If it cannot be created or proven fresh, return `Blocked` before mutation.
+Local rebase must run in a newly established dedicated isolated workspace for the exact PR operation. "Newly established"
+is semantic: when the host has already placed this invocation in a fresh externally managed workspace dedicated to the
+exact PR/head, that boundary may be reused after provenance is proven; do not create a nested manual worktree merely to
+satisfy wording.
+
+Before creating anything, inspect repository root, branch/HEAD, `GIT_DIR`, `GIT_COMMON`, and
+`git rev-parse --show-superproject-working-tree` or equivalent. `GIT_DIR != GIT_COMMON` is a linked-worktree signal only
+after excluding a submodule, and a linked worktree is not automatically owned by this PR.
+
+When a new dedicated workspace is still required, prefer the current host's agent-callable native worktree/workspace
+mechanism and fresh-read its path, branch or detached state, and HEAD. The explicit rebase request or an approved Sweep
+handoff already authorizes the exact isolation needed for that operation; do not ask another workspace-consent question.
+Use manual `git worktree` only when no safe native mechanism is available. The fallback must start from the exact `old_head`,
+avoid path/branch collisions and unrelated work, and be fresh-read after creation. Do not edit `.gitignore` or create a
+setup commit merely to enable the fallback. If the dedicated boundary cannot be created and proven fresh, return `Blocked`
+before mutation.
+
+Host-managed workspaces keep their host-owned lifecycle. This skill does not remove, prune, relocate, or otherwise clean an
+externally managed workspace as part of rebase completion.
 
 Fresh-read the following at the start.
 
@@ -29,7 +47,7 @@ Fresh-read the following at the start.
 - open PR number
 - head repository/ref/SHA
 - base repository/ref/SHA
-- local branch/HEAD/worktree
+- local branch/HEAD/workspace provenance
 - active Git operation
 - review/thread/check state
 
@@ -45,7 +63,7 @@ remote
 expected force-with-lease
 ```
 
-Require local `HEAD == old_head`, remote PR head `== old_head`, and a clean worktree.
+Require local `HEAD == old_head`, remote PR head `== old_head`, and a clean dedicated workspace.
 
 ## Rebase and conflict
 
@@ -56,7 +74,7 @@ Do not choose arbitrarily when semantic ambiguity exists.
 After the rebase, verify the following.
 
 - Git operation completed
-- worktree/index clean
+- workspace/index clean
 - `base_sha` is an ancestor of the new HEAD
 - intended commit/diff preserved
 - relevant tests/checks pass
@@ -83,7 +101,11 @@ Plain `--force` is prohibited.
 
 If an active `tk-pr-sweep` has already approved the exact repository/PR/base/head and rebase route, do not repeat the publication question.
 
-The Sweep handoff must include a newly created dedicated worktree path. If it is missing or not fresh, return `Blocked` before mutation. Run the child from that worktree; never switch the parent `main` or `develop` checkout to the PR branch.
+The Sweep handoff must include a newly established dedicated workspace path, exact approved head, and provenance sufficient
+to prove that workspace belongs to this PR row. The workspace may be host-native or a safe manual Git fallback; the child
+must not replace a proven host-owned workspace with a nested manual one. If path/HEAD/provenance is missing or not fresh,
+return `Blocked` before mutation. Run the child from that workspace; never switch the parent `main` or `develop` checkout
+to the PR branch.
 
 A Sweep child must not create `.tigerkit/pr-sweep.md` or `.tigerkit/pr-rebase.md`.
 Return only the following compact evidence to the parent.
