@@ -30,9 +30,11 @@ Before creating anything, inspect repository root, branch/HEAD, `GIT_DIR`, `GIT_
 `git rev-parse --show-superproject-working-tree` or equivalent. `GIT_DIR != GIT_COMMON` is a linked-worktree signal only
 after excluding a submodule, and a linked worktree is not automatically owned by this PR.
 
-When a new dedicated workspace is still required, prefer the current host's agent-callable native worktree/workspace
-mechanism and fresh-read its path, branch or detached state, and HEAD. The explicit rebase request or an approved Sweep
-handoff already authorizes the exact isolation needed for that operation; do not ask another workspace-consent question.
+When a new dedicated workspace is still required, inspect the current tool surface for concrete native entry points such
+as `EnterWorktree`, `WorktreeCreate`, `/worktree`, or `--worktree`; these are capability examples, not durable provider
+routing. Prefer an available agent-callable native worktree/workspace mechanism and fresh-read its path, branch or
+detached state, and HEAD. The explicit rebase request or an approved Sweep handoff already authorizes the exact isolation
+needed for that operation; do not ask another workspace-consent question.
 Use manual `git worktree` only when no safe native mechanism is available. The fallback must start from the exact `old_head`,
 avoid path/branch collisions and unrelated work, and be fresh-read after creation. Do not edit `.gitignore` or create a
 setup commit merely to enable the fallback. If the dedicated boundary cannot be created and proven fresh, return `Blocked`
