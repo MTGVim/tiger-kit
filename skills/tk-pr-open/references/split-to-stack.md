@@ -60,15 +60,16 @@ Record:
 SOURCE_BRANCH=<current branch>
 ORIGINAL_HEAD=<exact approved HEAD>
 ORIGINAL_TREE=<git rev-parse "$ORIGINAL_HEAD^{tree}">
-BASE_REF=<approved base>
-BASE_SHA=<fresh merge/base anchor used by the plan>
+BASE_REF=<approved base ref after fresh fetch>
+BASE_TIP=<fresh base tip used to prove target drift>
+BASE_ANCHOR=<git merge-base "$ORIGINAL_HEAD" "$BASE_REF">
 ```
 
-Reverify these values immediately before reconstruction. Any source `HEAD` or base drift invalidates the approval.
+Reverify these values immediately before reconstruction. Any source `HEAD`, base ref, or base tip drift invalidates the approval. Reconstruct from `BASE_ANCHOR`, not from a newer base tip: this preserves the exact already-verified source tree even when the target branch advanced after the feature branch diverged.
 
 ## Design the layers
 
-Analyze the full `base...ORIGINAL_HEAD` diff and commit history for semantic ownership. Prefer boundaries such as:
+Analyze the full `BASE_ANCHOR...ORIGINAL_HEAD` diff and commit history for semantic ownership. Prefer boundaries such as:
 
 ```text
 foundation/types/schema
@@ -99,7 +100,7 @@ Only after exact approval, create new stack branches without mutating the source
 For path-owned layers, the safe shape is:
 
 ```text
-approved base
+BASE_ANCHOR
   └─ <topic>/<layer-1>
        └─ <topic>/<layer-2>
             └─ <topic>/<layer-3>
@@ -108,7 +109,7 @@ preserved separately:
 SOURCE_BRANCH -> ORIGINAL_HEAD
 ```
 
-Create the first branch from the approved base, then each later branch from the preceding layer. Restore only the approved source paths or reuse only the approved intact commits. Before every reconstruction commit, inspect staged paths and stop on anything outside that layer.
+Create the first branch from `BASE_ANCHOR`, then each later branch from the preceding layer. Restore only the approved source paths or reuse only the approved intact commits. Before every reconstruction commit, inspect staged paths and stop on anything outside that layer.
 
 A path-based restoration may use the source commit as the content authority, for example:
 
@@ -149,7 +150,7 @@ git config rerere.enabled true
 gh stack init <layer-1> <layer-2> <layer-3> [--base <non-default-base>]
 ```
 
-Use the exact current `--help` syntax rather than copying optional flags blindly.
+Use the exact current `--help` syntax rather than copying optional flags blindly. The first layer may be behind the current target tip because it starts at `BASE_ANCHOR`; do not run `gh stack sync` or an automatic rebase merely to make it current before the initial publication. Rebasing would change the verified source snapshot and requires a new exact plan if it is actually necessary.
 
 Submit only after `gh stack view --json` proves the expected local chain.
 
