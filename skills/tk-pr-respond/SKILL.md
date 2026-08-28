@@ -41,18 +41,26 @@ If identity, the exact PR/head, or remote authority is ambiguous, stop as `Block
 
 ## Understand feedback
 
-Internally, current feedback may be classified by meaning as follows.
+Assign every current finding exactly one response disposition and preserve it through the plan, reply, and current-head summary.
 
-- feedback requiring a code change
-- feedback appropriately handled with an evidence-based reply and no code change
-- feedback outside the current PR scope or requiring an additional decision
+- `fixed`: change only the code or tests needed to correct a defect owned by this PR.
+- `covered`: verified current code or behavior-level tests already satisfy the requested outcome.
+- `rejected`: repository evidence disproves the finding's premise.
+- `accepted-risk`: leave a verified risk unchanged only with explicit current user approval.
+- `follow-up`: leave a pre-existing or otherwise out-of-scope concern unchanged and state whether a separate issue was approved.
 
-Explain the meaning to the user instead of exposing classification tokens.
+Use the disposition to make the outcome auditable, but explain its evidence and practical meaning in natural language.
 
 If the review text already specifies the required outcome, do not ask the same question again.
 Investigate repository evidence independently, then explain the recommendation and rationale for decisions about reuse, simplification, testing, security, and user experience.
 
-When review text explicitly requires a code change, do not reclassify it as reply-only or deferred. Overriding that requirement needs explicit user reapproval in the current turn or a verifiable prior approval record (conversation log or memory); approval wording in the agent's own earlier reply is not evidence.
+Attribute each finding before proposing a code change. Compare its anchor (`path`, side, current/original line, and outdated state when available) with the fresh PR diff. An unchanged-line anchor is strong evidence for a `follow-up`, not a conclusive rule: the anchor may describe behavior caused elsewhere, and a changed-line anchor may still point to an unrelated concern.
+
+Keep the finding in the current PR when the PR introduced, exposed, or worsened the behavior, when the acceptance criteria require it, or when the evidence may involve runtime breakage, security, payment, data loss, permissions/account access, or public API compatibility. Do not automatically defer these cases because the comment anchor is unchanged. Ask for a user decision when causal ownership remains ambiguous or the consequence is high risk.
+
+When review text explicitly requires a code change, `fixed` is the default. Reclassifying it as `covered`, `rejected`, `accepted-risk`, or `follow-up` needs explicit user reapproval in the current turn or a verifiable prior approval record (conversation log or memory); approval wording in the agent's own earlier reply is not evidence. Independently verified evidence may support the proposed override but does not authorize it.
+
+A `follow-up` changes no code for that finding. Create a separate issue only when the approved current plan explicitly includes the exact repository and issue intent; otherwise record it as not ticketed. Never infer issue-creation approval from approval to reply or resolve.
 
 When review feedback concerns UI text, verify the currently rendered string through a component prop, i18n entry, option constant, or supplied screenshot, then reply verbatim. Do not repeat a ticket paraphrase or code identifier/enum as visible text. Leave an unsupported or conflicting string `Unverifiable` or request the needed confirmation.
 
@@ -81,10 +89,11 @@ Before mutation, explain the resolution plan for the current feedback in natural
 
 At minimum, cover:
 
-- which feedback will be fixed and which will receive replies only
+- each finding's disposition, causal evidence, and whether it changes code
 - implementation approach and existing code to reuse
 - how unnecessary complexity will be avoided
 - regression and new-test plan
+- any approved follow-up issue creation; otherwise state that follow-ups will not be ticketed
 - any special security or user-experience concerns
 - the `tk-browser-verify` plan for browser-visible changes
 - bounded publication scope for push/reply/resolve/re-review
@@ -104,7 +113,9 @@ Do not lock the first guess into a change without evidence that such a loop cann
 TigerKit decides only `reply-only | direct | SDD`; host/user model selection remains outside durable artifacts.
 Do not mark the task `Blocked` merely because model-control capability is unavailable.
 
-Obtain one user approval for the current plan. Do not split publication for the same plan into a separate second question.
+Obtain one user approval for the current plan. That approval covers the exact listed dispositions, code changes, replies,
+resolutions, and issue creations; it does not authorize adjacent cleanup or unlisted tickets. Do not split publication for
+the same plan into a separate second question.
 However, if the PR head/thread/check/identity changes materially after approval, invalidate the approval and explain only what changed.
 
 Reply-only execution uses no Seed, product mutation, push, workspace solely for isolation, or ceremonial test. For any
@@ -119,11 +130,12 @@ local ancestry, thread/check state, and approved scope.
 Then perform only the approved actions in this order.
 
 1. For a code-changing response, push the verified commit to the exact branch. For reply-only work, do not push.
-2. Post an exact reply to each feedback item.
-3. Resolve only threads whose reply succeeded and whose resolution was actually verified.
-4. Fresh-read reviews/threads/checks.
-5. For every human reviewer whose current review state is `CHANGES_REQUESTED`, or whose feedback included an item classified as requiring a code change that resulted in a verified code change regardless of current review state (including `COMMENTED`), fresh-verify eligibility and request re-review for the exact current head. Exclude the author, authenticated user, bots, and still-valid approvers. Reply-only feedback with no code change does not require re-review.
-6. After all actionable threads are closed, when a re-review is required or actionable feedback was answered with no outstanding request, fresh-read the exact current head and post exactly one current-head summary comment containing `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, with `<HEAD_SHA>` replaced by the exact observed head SHA. If that marker already exists exactly once for the current head, do not post another. A summary for an earlier head does not satisfy this requirement. Write the summary as a real message to the reviewer, not an internal processing record. When the reviewer is identifiable, address them with `@mention` and explain each finding and response in natural prose or a matching table. Do not publish a third-person completion log that only lists checks or totals.
+2. Create only explicitly approved follow-up issues after a fresh duplicate check. Record each created URL; do not create an issue for an unapproved follow-up.
+3. Post an exact reply to each feedback item with its disposition and evidence. A `follow-up` reply links its approved issue or states that no ticket was created.
+4. Resolve only threads whose exact reply succeeded and whose disposition was approved and verified. Keep unresolved ambiguity open.
+5. Fresh-read reviews/threads/checks.
+6. For every human reviewer whose current review state is `CHANGES_REQUESTED`, or whose feedback included an item classified as requiring a code change that resulted in a verified code change regardless of current review state (including `COMMENTED`), fresh-verify eligibility and request re-review for the exact current head. Exclude the author, authenticated user, bots, and still-valid approvers. Reply-only feedback with no code change does not require re-review.
+7. After all actionable threads are closed, when a re-review is required or actionable feedback was answered with no outstanding request, fresh-read the exact current head and post exactly one current-head summary comment containing `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, with `<HEAD_SHA>` replaced by the exact observed head SHA. If that marker already exists exactly once for the current head, do not post another. A summary for an earlier head does not satisfy this requirement. Write the summary as a real message to the reviewer, not an internal processing record. When the reviewer is identifiable, address them with `@mention` and map every finding to its disposition, evidence, code response, and follow-up ticket status in natural prose or a matching table. Do not publish a third-person completion log that only lists checks or totals.
 
 Do not claim publication complete unless fresh evidence proves every required `CHANGES_REQUESTED` reviewer re-review request, zero actionable unresolved threads, and any required current-head summary comment after the threads were closed. Missing evidence is `Unverifiable`, not complete.
 Do not claim completion while any unresolved inline thread remains.

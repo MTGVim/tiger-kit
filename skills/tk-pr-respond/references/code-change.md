@@ -30,10 +30,21 @@ needed Ready Seed atomically, reread it, and require `<!-- tigerkit:seed -->` pl
 Replace only a proven TigerKit-owned Seed; preserve an unmarked, legacy, or identity-ambiguous file and return `Blocked`.
 
 The Seed uses Korean user-facing prose and includes the exact repository/PR/head, feedback and requested outcome,
-confirmed fixes/replies/deferrals, objective, scope and exclusions, decisions, implementation evidence, Reuse/Simplicity/
+each finding's approved disposition and evidence, objective, scope and exclusions, decisions, implementation evidence, Reuse/Simplicity/
 Tests/Security/Experience judgments, per-AC verification, browser plan, publication boundary, and guidance for a
 lower-capability executor. Never rewrite an exact active Seed. Material feedback or state drift requires approval of the
 changed portion before atomic replacement. A no-Seed route remains bound to approved reviewer intent, tests, and publication.
+
+## Response delta discipline
+
+Before mutation, record `RESPONSE_BASE` as the exact approved PR head. Every production or test hunk in
+`RESPONSE_BASE..HEAD` must map to one approved `fixed` finding or to the minimum acceptance-criterion and regression
+protection needed for that fix. Supporting changes are allowed only when required to build, test, or verify that mapped
+response. Do not include opportunistic refactoring, cleanup, formatting, dependency updates, or neighboring fixes.
+
+Before commit and again before push, inspect the name-status, diffstat, and full `RESPONSE_BASE..HEAD` diff against the
+finding map. Remove run-owned unmapped changes safely. If an unmapped change cannot be separated without altering approved
+scope or unrelated work, stop for a changed plan instead of publishing it.
 
 ## Execution
 
