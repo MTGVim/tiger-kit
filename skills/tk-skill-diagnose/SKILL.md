@@ -1,6 +1,6 @@
 ---
 name: tk-skill-diagnose
-description: "[user/auto] 하나의 observed 또는 measured Agent Skill anomaly를 fresh context에서 재현·격리한 뒤, 검증된 skill objective를 tk-learn으로 라우팅한다. selection, instruction, output, host, eval, stability 또는 resource incident에 사용한다. ordinary code bug, static audit, new skill creation 또는 symptom-free optimization에는 사용하지 않는다."
+description: "[user/auto] 관찰되거나 측정된 하나의 Agent Skill 이상을 재현·격리하고, 검증된 개선 목표를 `tk-learn`으로 전달합니다. 일반 코드 버그, 정적 감사, 신규 skill 작성, 근거 없는 최적화에는 사용하지 않습니다."
 disable-model-invocation: false
 argument-hint: "<skill name/path> <incident prompt, expected, observed, host, metric, or trace>"
 metadata:
@@ -152,11 +152,3 @@ Use one of these terminal statuses:
 - `Blocked`: A required permission, decision, or environment is unavailable.
 - `Unverifiable`: Provenance, reproduction, cause, or metric cannot be verified.
 - `NotApplicable`: No eligible Agent Skill incident exists.
-
-## Precautions
-
-- Do not assume the skill body is the cause.
-- Do not patch an unreproduced incident based only on wording intuition.
-- Do not change correctness, safety, or holdout behavior to reduce resource usage.
-- Do not use fixed repeated runs or judge majority to manufacture confidence.
-- Do not expose expected answers, secrets, or private evidence in prompts.

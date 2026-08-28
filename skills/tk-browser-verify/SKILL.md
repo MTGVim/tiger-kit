@@ -1,6 +1,6 @@
 ---
 name: tk-browser-verify
-description: "[user/auto] 승인된 browser-visible acceptance criteria를 headless browser에서 검증합니다. 명시적 real-page verification 또는 정확한 parent verifier handoff에 사용하며 passive web research, generic design critique, implementation, screenshot-only request에는 사용하지 않습니다."
+description: "[user/auto] 승인된 browser-visible AC를 headless browser에서 검증하고 실행 근거를 반환합니다. real-page verification 또는 정확한 parent handoff에 사용하며 구현, 일반 웹 조사, 단순 screenshot 요청에는 사용하지 않습니다."
 disable-model-invocation: false
 metadata:
   tigerkit:
@@ -12,8 +12,8 @@ metadata:
 # Browser Verification
 
 Verify only `browser-visible` acceptance criteria that require runtime evidence.
-Explicit invocation provides the criteria directly. Nested execution uses the target, scenario, authentication, and evidence plan already defined by a parent task such as a Ready `seed.md`, `tk-pr-respond`,
-`tk-pr-sweep`, or `tk-prototype`.
+Explicit invocation provides the criteria directly. Nested execution uses the target,
+scenario, authentication, and evidence plan already defined by its parent.
 
 This is a read-only acceptance verifier. Do not modify product/test/configuration source, Git commits, or remote state.
 Do not create a Markdown lifecycle ledger. For nested execution, return only compact evidence to the parent task.
@@ -42,19 +42,14 @@ Before browser or server execution, treat unresolved target, criterion, authenti
 
 ## Parent Handoff
 
-When possible, the parent task provides:
+Use parent-provided values when available:
 
-- exact acceptance criterion
-- target URL/environment
-- headless requirement
-- auth strategy and secret-free bootstrap method
-- viewport/state
-- development server command/cwd/readiness
-- required screenshot evidence, AC-to-file mapping, and allowed capture-only layout adjustments
-- exact verbatim strings or verified entry paths for UI `Content` criteria
-- sensitive capture/redaction rule
-- Pass condition
-- automated regression evidence or explicit `N/A`/engineering-exception disposition owned by the parent
+- exact criterion, target/environment, and current candidate;
+- headless authentication and secret-free bootstrap method;
+- viewport, initial state, and server command/cwd/readiness;
+- screenshot mapping and allowed capture-only adjustments;
+- exact UI strings or verified entry paths;
+- redaction rule, `Pass` condition, and automated-regression disposition.
 
 If the Ready Seed already owns this information, do not ask for the same decisions again.
 If required values are missing but can be safely determined from repository evidence, fill them in.

@@ -1,6 +1,6 @@
 ---
 name: tk-eli5
-description: "[user/auto] 어떤 주제든 초보자가 이해하도록 큰 그림과 적은 글의 self-contained HTML picture explainer로 만든다. 명시적 /tk-eli5 또는 그림 중심 HTML 설명 요청에 사용하며, 직전 답변의 text 재설명·비교 prototype·기존 페이지 편집에는 사용하지 않는다."
+description: "[user/auto] 초보자가 이해할 수 있는 그림 중심의 self-contained HTML 설명 자료를 만듭니다. 텍스트 재설명, 비교 prototype, 기존 페이지 편집에는 사용하지 않습니다."
 disable-model-invocation: false
 argument-hint: "<topic and optional output path>"
 metadata:

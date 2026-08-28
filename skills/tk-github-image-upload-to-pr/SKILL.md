@@ -1,6 +1,6 @@
 ---
 name: tk-github-image-upload-to-pr
-description: "[user/auto] 기존 GitHub PR body 또는 명시된 comment에 local evidence image를 업로드합니다. 명시적인 local-image 요청이나 active tk-pr-open의 정확한 evidence_required handoff에만 사용하며 generic PR·GitHub·screenshot 요청에는 적용하지 않습니다."
+description: "[user/auto] 기존 GitHub PR body 또는 지정된 comment에 local evidence image를 업로드합니다. 명시적 이미지 요청이나 정확한 evidence handoff에만 사용합니다."
 disable-model-invocation: false
 argument-hint: "<PR and local image path(s)>"
 metadata:
@@ -12,12 +12,9 @@ metadata:
 
 # GitHub PR Image Upload
 
-Start only when the user selects `/tk-github-image-upload-to-pr` or
-`$tk-github-image-upload-to-pr`, explicitly requests local image evidence for an
-existing GitHub PR, or an active `tk-pr-open` sends an exact handoff with
-`evidence_required: true`. Only the parent handoff is an automatic trigger. Do not
-activate for screenshot capture, generic GitHub help, PR creation, PR review, or
-issue triage.
+Handle explicit local-image evidence requests for an existing GitHub PR or an exact
+`tk-pr-open` handoff with `evidence_required: true`. Only the parent handoff is an
+automatic trigger.
 When route selection or pre-installation confirmation is needed, prefer the host's native structured question surface (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). If unavailable, ask for the same choice in plain chat and do not mutate before selection.
 
 ## Scope

@@ -81,15 +81,15 @@ binding acceptance are clean, delete `sdd.md` and run-owned temporary artifacts.
 ## Artifact transport
 
 Place work summaries, implementer reports, `BASE..HEAD` review bundles, and remediation
-bundles in an operating-system temporary path first. Trust that path only after running
-a behavioral probe before the first dispatch in which a child reads an arbitrary value
-written by the parent and the parent reads a confirmation value written by the child
-on the current host.
+bundles in a flat `.tigerkit/sdd-tmp/`. Before the first write, prove with
+`git check-ignore -v` that a repository-tracked ignore rule covers the path; global
+excludes and `.git/info/exclude` are insufficient. If the path is not ignored, writable,
+or visible to the child, do not edit `.gitignore` or fall back to an operating-system
+temporary path; return `Blocked | Unverifiable` before dispatch.
 
-If the probe fails or the host has no child filesystem, use only a flat ignored
-`.tigerkit/sdd-tmp/` as fallback. Do not create per-run or per-plan hierarchies. Use
-unique filenames containing the `Seed` identifier, `Unit`, and scope. Clean up only
-run-owned files and never delete unrelated files. Do not put secrets in artifacts.
+Do not create per-run or per-plan hierarchies. Use unique filenames containing the
+`Seed` identifier, `Unit`, and scope. Clean up only run-owned files and never delete
+unrelated files. Do not put secrets in artifacts.
 
 ## Evidence-backed preflight
 

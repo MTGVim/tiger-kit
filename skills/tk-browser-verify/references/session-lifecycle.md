@@ -17,8 +17,10 @@ be actually inspected. If the directory cannot be resolved, the image is missing
 inspection fails, required browser evidence is `Unverifiable`.
 
 Immediately after file-mediated authentication injection, stop the exact run-owned
-loopback secret server, delete the mode-`0600` token file outside the repository, and
-verify that neither remains. Do not defer secret cleanup until browser-session cleanup.
+loopback secret server, delete the mode-`0600`
+`.tigerkit/secret-input/tk-browser-verify-<run-id>/token` file and its mode-`0700` run
+directory, and verify that none remains. Apply this cleanup on success, failure,
+interruption, and exception. Do not defer secret cleanup until browser-session cleanup.
 
 Clean up success, failure, interruption, and exception paths in this order:
 

@@ -149,6 +149,24 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 
 `password`/`token`/OTP/`cookie`/`session` `secret`을 `chat`, `Seed`, `logs`, `receipt`에 저장하지 않습니다.
 
+## 저장소 로컬 임시 공간
+
+사용자가 직접 열거나 값을 입력해야 하는 파일과 현재 저장소에 귀속되는 실행 산출물은 운영체제 임시 경로가
+아니라 무시된 `.tigerkit/` 아래에 둡니다.
+
+- 일반 실행 파일: `.tigerkit/tmp/<skill>/<run-id>/`
+- 비밀 입력: `.tigerkit/secret-input/<skill>-<run-id>/`
+- 검증 근거: `.tigerkit/evidence/<skill>/<run-id>/`
+- 소유자가 정한 산출물: `.tigerkit/<owner>.md`, `.tigerkit/prototypes/`, `.tigerkit/sdd-tmp/`
+
+새 임시파일을 쓰기 전에 `git check-ignore -v`로 저장소가 추적하는 `ignore` 규칙을 확인합니다. 전역 `ignore`와
+`.git/info/exclude`만으로는 충분하지 않습니다. 규칙이 없으면 `.gitignore`를 자동 수정하거나 접근하기 어려운
+외부 경로로 전환하지 않고, 해당 파일이 필요한 실행을 `Blocked | Unverifiable`로 끝냅니다. 비밀 입력은
+디렉터리 `0700`, 파일 `0600`을 사용하고, 주입 직후 삭제한 다음 잔여가 없는지 확인합니다.
+
+사용자가 직접 접근하지 않는 격리 `checkout`, `release`/`eval` 출력, 도구가 소유하는 `workspace`에는 운영체제 임시
+경로를 사용할 수 있습니다. 이 예외 경로로 사용자 입력을 받거나 지속 산출물을 보관하지 않습니다.
+
 ## 반복 발견
 
 TigerKit은 `persistent` `pitfall` `corpus`나 `memory` `backend`를 소유하지 않습니다.

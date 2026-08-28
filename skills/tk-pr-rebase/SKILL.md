@@ -1,6 +1,6 @@
 ---
 name: tk-pr-rebase
-description: "[user/auto] 하나의 `open` GitHub `pull request`를 정확한 최신 `base`로 `rebase`하고 `conflict`를 해결한 뒤, `standalone` 승인 또는 `active` `Sweep`의 `bounded authority`로 검증된 `force-with-lease publication`을 수행합니다."
+description: "[user/auto] 하나의 open GitHub PR을 최신 base로 rebase하고 충돌을 해결한 뒤, 승인된 범위에서 force-with-lease로 발행합니다."
 disable-model-invocation: false
 argument-hint: "<pull request or repository>"
 metadata:

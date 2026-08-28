@@ -1,6 +1,6 @@
 ---
 name: tk-wizard
-description: "[user/auto] 사용자가 직접 해야 하는 `provisioning`, `credential`·`secret`, `login`/MFA/OTP/CAPTCHA/`passkey`, `dashboard`, `permission`, `device` `pairing`, `migration`/`cutover` 절차를 근거 기반의 자연스러운 대화로 안전하게 안내한다."
+description: "[user/auto] 사용자가 직접 수행해야 하는 provisioning, 인증, 권한, device pairing, migration 절차를 근거 기반의 대화로 안전하게 안내합니다."
 disable-model-invocation: false
 argument-hint: "<사용자가 직접 해야 하는 설정·인증·이관 작업>"
 metadata:

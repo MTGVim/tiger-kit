@@ -1,6 +1,6 @@
 ---
 name: tk-prototype
-description: "[user/auto] 비교로 불확실성을 줄일 수 있을 때 disposable UI 또는 logic prototype을 만들고 실행한다. production implementation이나 대화형 아이디어 탐색에는 적용하지 않는다."
+description: "[user/auto] 비교가 필요한 일회성 UI 또는 로직 prototype을 만들고 실행합니다. production 구현이나 대화형 아이디어 탐색에는 사용하지 않습니다."
 disable-model-invocation: false
 argument-hint: "<idea, screenshot, spec, ticket, code, or design reference>"
 metadata:
@@ -12,14 +12,15 @@ metadata:
 
 # Comparison Prototype
 
-Apply to explicit `invocation` or executable `disposable` comparison/`harness` requests.
-Do not auto-apply to `production implementation` or conversational exploration.
-
 Accept a `prompt`, idea, screenshot, `spec`, `ticket`, code, or design reference as input.
-Write under `.tigerkit/prototypes/<slug>/` unless a temporary `route`/`harness` is more
-useful. Create parent directories only when needed, replace atomically when possible, and
-do not automatically archive or edit `.gitignore`. Warn if the `scratch` path is tracked.
-Before execution, prefer the host's native structured question surface when a temporary path, data boundary, verification question, or variant choice is needed (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). If unavailable, ask the same question in plain chat; do not invoke the question surface for the post-execution comparison report.
+Keep standalone artifacts under `.tigerkit/prototypes/<slug>/`. Before writing, prove
+that a repository-tracked ignore rule covers the path. Do not edit `.gitignore` or use an
+external scratch fallback. A repository-native route/harness is allowed only when the
+selected runtime requires it; record and clean up only run-owned files.
+
+Before execution, use the host's structured question surface when the user must choose a
+path, data boundary, verification question, or variant: Claude Code `AskUserQuestion`,
+Codex `request_user_input`, or Hermes `clarify`. If unavailable, ask in plain chat.
 
 ## Workflow
 

@@ -5,9 +5,11 @@ when the user chose to continue with `CDP` after target write access was unavail
 
 ## Preparation and browser identification
 
-Create a run-owned directory under the browser automation workspace. Do not use `/tmp`
-as the default staging location because the browser may be unable to access it. Use a
-safe, descriptive filename as the image alt text.
+After `git check-ignore -v` proves that a repository-tracked ignore rule covers it,
+create `.tigerkit/tmp/tk-github-image-upload-to-pr/<run-id>/` as the run-owned staging
+directory. Use a safe, descriptive filename as the image alt text. If the path is not
+ignored, writable, or accessible to the browser, do not edit `.gitignore` or switch to an
+external scratch path; return `Unverifiable`.
 
 Use this browser order:
 

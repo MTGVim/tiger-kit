@@ -1,2 +1,2 @@
 interface:
-  short_description: "[user/auto] `repository`의 `canonical vocabulary`를 정하거나 `hard to reverse`·`surprising without context`·`real trade-off`를 모두 충족하는 `sparse ADR authoring`에 사용합니다."
+  short_description: "[user/auto] 저장소 용어를 정립하거나 지속할 가치가 있는 결정을 `sparse ADR`로 남깁니다."

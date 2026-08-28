@@ -1,6 +1,6 @@
 ---
 name: tk-domain
-description: "[user/auto] `repository` 고유 용어의 `canonical vocabulary`를 정하거나, `hard to reverse`·`surprising without context`·`real trade-off` 세 기준을 모두 충족하는 지속적 `domain` 결정을 `sparse ADR`로 남길 때 사용합니다. 일반 구현 이유나 쉽게 되돌릴 선택에는 사용하지 않습니다."
+description: "[user/auto] 저장소 고유 용어를 정립하거나 되돌리기 어렵고 맥락 없이 의외이며 실제 절충이 있는 결정을 sparse ADR로 남깁니다. 일반 구현 설명에는 사용하지 않습니다."
 disable-model-invocation: false
 argument-hint: "<domain term, durable decision, evidence, or context scope>"
 metadata:

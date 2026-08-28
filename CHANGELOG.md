@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- `fix(scratch)`: 사용자가 접근하는 임시 입력·전달·`staging` 경로를 무시된 `.tigerkit/` 아래로 통일하고, 저장소가 추적하는 `ignore` 규칙과 비밀 입력 즉시 정리를 요구합니다.
+- `refactor(skills)`: 장황한 `description`과 반복 지시문을 줄이면서 기존 `trigger`·`authority`·호스트 계약을 보존합니다.
+
 ## 2026.08.26-4 — 릴리즈
 
 - 자세한 변경 사항은 이 릴리즈의 변경 범위를 참조하세요.

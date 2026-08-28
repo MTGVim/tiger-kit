@@ -24,16 +24,23 @@ device approval. Request a short-lived token/session through the temporary secre
 channel. If no approved state can be established, return `Unverifiable` before a
 product mutation.
 
-When no safer temporary secret-input channel exists, use a file-mediated channel outside
-the repository. Create an empty run-owned file with mode `0600`, give the user its path
-and a host-appropriate clipboard-to-file command, and never ask for the value in chat.
+When no safer temporary secret-input channel exists, first prove with `git check-ignore -v`
+that a repository-tracked ignore rule covers `.tigerkit/`; global excludes and
+`.git/info/exclude` are insufficient. Then create
+`.tigerkit/secret-input/tk-browser-verify-<run-id>/token` with directory mode `0700` and
+file mode `0600`. Give the user both the repository-relative path and a host-openable
+absolute path plus a host-appropriate clipboard-to-file command. Never ask for or accept
+the value in chat. If the path is not ignored, writable, or user-accessible, do not edit
+`.gitignore` or choose an external scratch path; return `Unverifiable`.
+
 After the target hostname and port are final, a no-log one-shot server bound only to
-loopback may read that file and return `Access-Control-Allow-Origin: *`. Fetch it inside
+loopback may read the file and return `Access-Control-Allow-Origin: *`. Fetch it inside
 the page and apply only the repository/application-supported cookie, header, or storage
 bootstrap. Return only injection success and value length, never the value.
 
-Stop the loopback server and delete the token file immediately after injection, then
-verify both are absent. Cookie scope follows hostname rather than port: if the hostname
+Stop the loopback server and delete the token file and its run directory immediately
+after injection, then verify all are absent. Perform the same cleanup after failure,
+interruption, or exception. Cookie scope follows hostname rather than port: if the hostname
 changes, establish the approved state again. For OAuth plus OTP or any other interactive
 flow, use the approved transient injection path or return `Unverifiable`.
 

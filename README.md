@@ -171,6 +171,13 @@ PR 원격 권한은 서로 자동 확장되지 않습니다. `merge`, `tag`, `re
 제품 작업의 지속 가능한 맥락이 필요할 때는 `.tigerkit/seed.md` 하나를 사용합니다. 활성 SDD 복구는 현재 `Seed`
 식별자와 해시가 일치하는 무시된 `.tigerkit/sdd.md` 하나만 추가로 사용할 수 있습니다.
 
+사용자가 직접 열거나 값을 입력하는 임시파일과 저장소별 실행 산출물도 무시된 `.tigerkit/` 아래에 둡니다.
+일반 실행 파일은 `.tigerkit/tmp/<skill>/<run-id>/`, 비밀 입력은
+`.tigerkit/secret-input/<skill>-<run-id>/`, 검증 근거는 `.tigerkit/evidence/<skill>/<run-id>/`를 사용합니다.
+쓰기 전에는 저장소가 추적하는 `ignore` 규칙을 확인하며, 규칙이 없으면 `.gitignore`를 자동으로 수정하거나
+접근하기 어려운 외부 임시 경로로 전환하지 않습니다. 격리 `checkout`, `release`/`eval` 출력처럼 사용자가 직접
+접근하지 않는 도구 내부 파일은 운영체제 임시 경로를 사용할 수 있습니다.
+
 `tk-pr-sweep`의 장기 저장소 범위는 다음 사용자 설정을 사용할 수 있습니다.
 
 ```text

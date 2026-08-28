@@ -1,6 +1,6 @@
 ---
 name: tk-grooming
-description: "[user/auto] 기존 repository 또는 user skill의 중복·범위·배치·trigger, weak pointer, no-op/cache 또는 description/body shortcut risk를 감사할 때 사용합니다. 일반 code/doc cleanup이나 신규 skill 작성에는 사용하지 않습니다."
+description: "[user/auto] 기존 repository 또는 user skill의 중복, 범위, trigger, reference, no-op 위험을 감사합니다. 일반 코드 정리나 신규 skill 작성에는 사용하지 않습니다."
 disable-model-invocation: false
 argument-hint: "[scope] [--apply]"
 metadata:
