@@ -30,7 +30,8 @@ import {
 
 test('formatLocalTimestamp renders a labeled host-local time', () => {
   const value = formatLocalTimestamp('2026-01-01T00:00:00Z');
-  assert.match(value, /^2026-\d{2}-\d{2} \d{2}:\d{2}:\d{2} \S+$/);
+  assert.match(value, /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} \S+$/);
+  assert.ok(value.endsWith(` ${Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'}`));
 });
 
 test('parseRepoFromRemote supports SSH and HTTPS remotes', () => {

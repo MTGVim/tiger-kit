@@ -153,6 +153,10 @@
           "criterion": "승인된 visual criterion 밖의 generic accessibility/design review를 추가하지 않습니다."
         },
         {
+          "type": "path_not_read",
+          "path": "skills/tk-browser-verify/references/accessibility.md"
+        },
+        {
           "type": "terminal_status",
           "expected": "Pass"
         }

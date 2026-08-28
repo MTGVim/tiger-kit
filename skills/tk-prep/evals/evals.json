@@ -252,6 +252,10 @@
           "path": ".tigerkit/sdd.md"
         },
         {
+          "type": "path_not_read",
+          "path": "skills/tk-prep/references/seed.md"
+        },
+        {
           "type": "output_contains",
           "text": "RED"
         },

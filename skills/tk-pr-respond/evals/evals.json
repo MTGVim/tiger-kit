@@ -88,6 +88,10 @@
           "type": "git_head_unchanged"
         },
         {
+          "type": "path_not_read",
+          "path": "skills/tk-pr-respond/references/code-change.md"
+        },
+        {
           "type": "terminal_status",
           "expected": "Pass"
         }

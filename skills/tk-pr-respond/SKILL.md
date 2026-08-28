@@ -93,6 +93,8 @@ At minimum, cover:
 For a code-changing plan, inspect the actual repository test surface and use [behavior-first testing](references/testing.md)
 to resolve RED feasibility, the focused command, required suite, realistic mutation, and any `N/A` or engineering exception.
 Explain the practical route among reply-only, direct+TDD, and SDD+TDD without exposing an internal classification form.
+Once a code-changing route is selected, read [code-change execution](references/code-change.md) before requesting approval;
+use its workspace and Seed sections for the plan, but perform no mutation until approval.
 
 Send feedback/CI failures with an obvious cause and exact regression seam directly through the existing testing path.
 Lazy-load [shared diagnosis](references/diagnosis.md) only for unknown-cause, intermittent/flaky, performance, or
@@ -105,93 +107,9 @@ Do not mark the task `Blocked` merely because model-control capability is unavai
 Obtain one user approval for the current plan. Do not split publication for the same plan into a separate second question.
 However, if the PR head/thread/check/identity changes materially after approval, invalidate the approval and explain only what changed.
 
-## Workspace isolation
-
-Reply-only work needs no workspace solely for isolation. For a code-changing route, first inspect the current Git
-checkout, including branch/HEAD, linked-worktree state, unrelated work, and whether
-`git rev-parse --show-superproject-working-tree` identifies a submodule. `GIT_DIR != GIT_COMMON` is only a linked-worktree
-signal after that submodule guard; it does not by itself prove the checkout belongs to this PR.
-
-A small direct fix may reuse the current checkout only when it is the exact PR branch, clean, safe, and contains no
-unrelated work. When dedicated isolation is required, detect existing task isolation before creating anything. Inspect
-the current tool surface for concrete native entry points such as `EnterWorktree`, `WorktreeCreate`, `/worktree`, or
-`--worktree`; these are capability examples, not durable provider routing. Prefer an available agent-callable native
-worktree/workspace mechanism and fresh-read the resulting path, branch or detached state, and HEAD. An approval that
-already authorizes the exact code-changing plan and isolated workspace setup also authorizes using that host-native
-mechanism; do not ask a duplicate workspace-consent question.
-
-Use manual `git worktree` only when no safe native mechanism is available. The fallback must start from the exact
-approved PR head, avoid path/branch collisions and unrelated work, and be fresh-read after creation. Do not edit
-`.gitignore` or create a setup commit merely to make manual isolation possible. If required isolation cannot be created
-and proven safe, return `Blocked` before mutation rather than falling back to an unsafe parent/default checkout.
-
-A host-managed workspace keeps its host-owned lifecycle. Do not remove, prune, relocate, or otherwise clean it as part of
-Respond completion. "Dedicated worktree" in this skill is a semantic isolation requirement, not a requirement to bypass
-a host-native workspace with raw `git worktree add`.
-
-## Code changes and Seed
-
-Use no Seed for reply-only or a small, obvious code fix when conversation plus fresh repository/PR evidence is sufficient.
-Use a dedicated isolated workspace when the current checkout does not satisfy the preceding safety contract. Use a Ready
-Seed for fresh-child execution, durable context, or complex verification, and Ready Seed + SDD for multiple material Units.
-If a required isolated workspace cannot be created or proven fresh, return `Blocked` before mutation.
-Do not create the `pr-respond.md` lifecycle ledger.
-
-Before approval, preserve an existing Seed byte-for-byte and create no `Status: Pending` file. When the selected route
-needs a Seed, after approval write the
-Ready Seed atomically, reread it, and require `<!-- tigerkit:seed -->` plus deterministic PR/head/task identity. Replace
-only a proven TigerKit-owned Seed. Preserve an unmarked/legacy/identity-ambiguous file and return `Blocked` before mutation.
-
-The Seed must contain at least the following PR context. Keep user-facing Seed and ledger prose in Korean.
-
-- exact repository/PR/head
-- feedback being handled and the outcome requested by the reviewer
-- confirmed decisions for code changes, replies, and deferrals
-- work background and objective
-- scope and forbidden changes
-- user decisions
-- implementation approach and repository evidence
-- Reuse / Simplicity / Tests / Security / Experience decisions
-- acceptance criteria and a verification path for each
-- browser verification plan
-- publication boundary
-- implementation guidance needed by a lower-capability executor
-
-If an active Ready Seed exactly matches the same PR/head/feedback work, do not rewrite it or ask the same decision again.
-If new feedback or fresh state materially changes the Seed's goal/scope/decision/AC, preserve the existing file,
-prepare and approve the changed portion in conversation, then atomically replace it with a new Ready Seed.
-
-A no-Seed route still binds reviewer intent, test obligation, and publication scope to the approved conversation and
-fresh repository/PR evidence.
-
-## Execution
-
-After approval, choose from the approved feedback shape:
-
-- reply-only: no Seed, production mutation, push, or ceremonial test;
-- direct+TDD: one coherent change/review surface; load only the testing reference and execute in the proven safe checkout;
-- SDD+TDD: multiple material Units; load [private SDD](references/sdd.md) and follow its exact grammar, recovery,
-  implementer/reviewer/fix-loop, model+effort, and final-review contract.
-
-Direct applies RED → verified failure → minimal GREEN → refactor while green → required relevant checks. SDD Unit reports
-carry their own test obligation and RED/GREEN evidence. If host fan-out is unavailable, preserve the same role/range gates
-sequentially; do not silently lower SDD to unreviewed direct work. The parent stores no provider routing/session ledger.
-
-Every direct exact-change review and every SDD `Unit`/whole-change review records independent `Spec/AC` and `Quality/Standards`
-verdicts; a clean result on one axis never offsets failure on the other. One reviewer or one serial review may judge both axes;
-do not add a mandatory second reviewer or parallel reviewer fan-out.
-
-Both code-changing routes finish with acceptance-criteria review, `tk-browser-verify` for browser-visible changes, required
-gap correction, and verified local commit(s). SDD's one whole-change final review satisfies the broad review gate; do not
-run a redundant second generic review afterward.
-
-If browser verification requires a development server, provide `tk-browser-verify` with the exact command/cwd/URL/auth/readiness;
-the verifier owns server startup, readiness checks, and cleanup.
-
-Do not repeat the same failure indefinitely. If the same blocker remains after three meaningful corrective attempts,
-direct work stops with `Fail` or `Unverifiable`; SDD uses its five-round breaker/adjudication. Material Goal/Scope/Decision/
-AC/security/required Verification drift returns to the owner preparation path; reversible engineering ambiguity gets an
-explicit `Ruling:`. Neither route expands publication authority.
+Reply-only execution uses no Seed, product mutation, push, workspace solely for isolation, or ceremonial test. For any
+code-changing route, follow the already loaded code-change reference after approval. It owns isolation, conditional Seed
+use, direct/SDD execution, review, and browser handoff.
 
 ## Publication
 

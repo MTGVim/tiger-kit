@@ -81,6 +81,35 @@ class EvalSotValidatorTest(unittest.TestCase):
                 )
             self.assertTrue(any("requires disable-model-invocation: false" in error for error in errors))
 
+    def test_openai_policy_must_be_top_level(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            skill_dir = root / "tk-example"
+            agents = skill_dir / "agents"
+            agents.mkdir(parents=True)
+            (agents / "openai.yaml").write_text(
+                'interface:\n  short_description: "[user/auto] Example"\n'
+                "  policy:\n    allow_implicit_invocation: true\n",
+                encoding="utf-8",
+            )
+            data = {
+                "name": "tk-example",
+                "description": "[user/auto] 예시 스킬",
+                "disable-model-invocation": False,
+                "metadata": {
+                    "tigerkit": {
+                        "kind": "hybrid",
+                        "origin": "tigerkit",
+                        "relationship": "native",
+                    }
+                },
+            }
+            with patch.object(validate_skills, "ROOT", root):
+                errors, _ = validate_skills.validate_frontmatter_and_body(
+                    "tk-example", skill_dir, data, "English operating instructions.\n"
+                )
+            self.assertTrue(any("policy must be top-level" in error for error in errors))
+
     def test_argument_hint_long_options_must_be_defined_in_body(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -377,6 +406,27 @@ class EvalSotValidatorTest(unittest.TestCase):
                 any(
                     "sdd.md" in error and "sync_execution_protocol.py" in error
                     for error in validate_skills.validate_shared_execution_protocols(skills)
+                )
+            )
+
+    def test_shared_domain_context_copies_must_match(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            skills = Path(directory)
+            canonical = skills / "tk-prep/references/domain-context.md"
+            canonical.parent.mkdir(parents=True)
+            canonical.write_text("canonical domain context\n", encoding="utf-8")
+            for skill_name in validate_skills.SHARED_DOMAIN_CONTEXT_CONSUMERS:
+                consumer = skills / skill_name / "references/domain-context.md"
+                consumer.parent.mkdir(parents=True)
+                consumer.write_text("canonical domain context\n", encoding="utf-8")
+
+            self.assertEqual(validate_skills.validate_shared_domain_context(skills), [])
+            drifted = skills / "tk-pr-open/references/domain-context.md"
+            drifted.write_text("drift\n", encoding="utf-8")
+            self.assertTrue(
+                any(
+                    "tk-pr-open" in error and "sync_execution_protocol.py" in error
+                    for error in validate_skills.validate_shared_domain_context(skills)
                 )
             )
 

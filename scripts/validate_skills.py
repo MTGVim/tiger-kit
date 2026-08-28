@@ -77,6 +77,7 @@ DIRECT_MODEL_ROUTING = re.compile(
     re.IGNORECASE,
 )
 SHARED_EXECUTION_PROTOCOLS = ("testing.md", "sdd.md")
+SHARED_DOMAIN_CONTEXT_CONSUMERS = ("tk-ask-repo", "tk-pr-open", "tk-pr-respond")
 HANGUL = re.compile(r"[가-힣]")
 INLINE_CODE = re.compile(r"`+[^`]*`+")
 
@@ -120,6 +121,34 @@ def frontmatter(path: Path) -> tuple[dict[str, object], str]:
         else:
             target[key] = scalar(raw_value)
     return data, text
+
+
+def yaml_mapping(text: str) -> dict[str, object]:
+    """Parse the mapping-only YAML subset used by agents/openai.yaml."""
+    data: dict[str, object] = {}
+    stack: list[tuple[int, dict[str, object]]] = [(-1, data)]
+    for number, raw in enumerate(text.splitlines(), 1):
+        if not raw.strip() or raw.lstrip().startswith("#"):
+            continue
+        if "\t" in raw[: len(raw) - len(raw.lstrip())]:
+            raise ValueError(f"line {number}: tabs are not supported for indentation")
+        indent = len(raw) - len(raw.lstrip(" "))
+        match = re.match(r"\s*([A-Za-z0-9_-]+):(?:\s*(.*))?$", raw)
+        if not match:
+            raise ValueError(f"line {number}: unsupported YAML syntax")
+        key, raw_value = match.groups()
+        while stack[-1][0] >= indent:
+            stack.pop()
+        target = stack[-1][1]
+        if key in target:
+            raise ValueError(f"line {number}: duplicate key {key}")
+        if raw_value in {None, ""}:
+            child: dict[str, object] = {}
+            target[key] = child
+            stack.append((indent, child))
+        else:
+            target[key] = scalar(raw_value)
+    return data
 
 
 def nested(data: Mapping[str, object], *keys: str) -> object | None:
@@ -239,26 +268,43 @@ def validate_frontmatter_and_body(
 
     openai_path = skill_dir / "agents/openai.yaml"
     openai_text = openai_path.read_text(encoding="utf-8") if openai_path.is_file() else ""
-    if "display_name:" in openai_text:
+    openai_data: dict[str, object] = {}
+    if openai_text:
+        try:
+            openai_data = yaml_mapping(openai_text)
+        except ValueError as exc:
+            errors.append(f"{label}: invalid agents/openai.yaml: {exc}")
+    if nested(openai_data, "interface", "display_name") is not None or "display_name" in openai_data:
         errors.append(f"{label}: agents/openai.yaml must use the canonical skill name")
     disabled = data.get("disable-model-invocation") is True
-    implicit_blocked = "allow_implicit_invocation: false" in openai_text
+    short_description = nested(openai_data, "interface", "short_description")
+    implicit_policy = nested(openai_data, "policy", "allow_implicit_invocation")
+    if nested(openai_data, "interface", "policy") is not None:
+        errors.append(f"{label}: agents/openai.yaml policy must be top-level, not under interface")
     if kind == "user-invoked":
         if not isinstance(data.get("argument-hint"), str) or not str(data.get("argument-hint")).strip():
             errors.append(f"{label}: user-invoked skill requires argument-hint")
         if not disabled:
             errors.append(f"{label}: user-invoked skill requires disable-model-invocation: true")
-        for token in ("interface:", "short_description:", "policy:", "allow_implicit_invocation: false"):
-            if token not in openai_text:
-                errors.append(f"{label}: agents/openai.yaml missing {token}")
-        if 'short_description: "[user] ' not in openai_text:
+        if not isinstance(openai_data.get("interface"), Mapping):
+            errors.append(f"{label}: agents/openai.yaml missing top-level interface")
+        if not isinstance(short_description, str):
+            errors.append(f"{label}: agents/openai.yaml missing interface.short_description")
+        if not isinstance(openai_data.get("policy"), Mapping):
+            errors.append(f"{label}: agents/openai.yaml missing top-level policy")
+        if implicit_policy is not False:
+            errors.append(f"{label}: agents/openai.yaml requires policy.allow_implicit_invocation: false")
+        if not isinstance(short_description, str) or not short_description.startswith("[user] "):
             errors.append(f"{label}: Codex short_description must begin with [user]")
     elif kind == "hybrid":
         if data.get("disable-model-invocation") is not False:
             errors.append(f"{label}: hybrid skill requires disable-model-invocation: false")
-        if implicit_blocked:
+        if implicit_policy is False:
             errors.append(f"{label}: hybrid Codex policy must not block implicit invocation")
-        if openai_text and 'short_description: "[user/auto] ' not in openai_text:
+        if openai_text and (
+            not isinstance(short_description, str)
+            or not short_description.startswith("[user/auto] ")
+        ):
             errors.append(f"{label}: Codex short_description must begin with [user/auto]")
 
     argument_hint = data.get("argument-hint")
@@ -701,6 +747,28 @@ def validate_shared_execution_protocols(skills_root: Path = SKILLS) -> list[str]
     return errors
 
 
+def validate_shared_domain_context(skills_root: Path = SKILLS) -> list[str]:
+    errors: list[str] = []
+    canonical = skills_root / "tk-prep/references/domain-context.md"
+    try:
+        canonical_text = canonical.read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as exc:
+        return [f"shared domain context: unreadable canonical copy: {exc}"]
+    for skill_name in SHARED_DOMAIN_CONTEXT_CONSUMERS:
+        consumer = skills_root / skill_name / "references/domain-context.md"
+        try:
+            consumer_text = consumer.read_text(encoding="utf-8")
+        except (OSError, UnicodeError) as exc:
+            errors.append(f"shared domain context: unreadable copy: {exc}")
+            continue
+        if consumer_text != canonical_text:
+            errors.append(
+                f"{_display_path(consumer)}: sync from {_display_path(canonical)} "
+                "with scripts/sync_execution_protocol.py"
+            )
+    return errors
+
+
 def parse_latest_changelog_version(text: str) -> str | None:
     match = re.search(
         r"(?m)^## ((?:\d{4}\.\d{2}\.\d{2}-\d+|\d+\.\d+\.\d+))(?:\s|$)",
@@ -766,6 +834,7 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
             errors.append(f"{directory.relative_to(ROOT)}: remove empty optional directory")
     errors.extend(validate_reference_resources(SKILLS))
     errors.extend(validate_shared_execution_protocols(SKILLS))
+    errors.extend(validate_shared_domain_context(SKILLS))
     errors.extend(validate_portable_artifacts(ROOT))
     return errors
 

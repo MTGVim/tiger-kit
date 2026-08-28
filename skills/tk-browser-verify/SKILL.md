@@ -63,7 +63,13 @@ Return only outcome-changing user-owned decisions to the parent owner.
 ## Execution
 
 1. **Scope**: Fix the exact criteria, target/environment, current candidate, and approved interaction boundary. Browser evidence is an independent acceptance oracle; it never substitutes for appropriate automated regression protection.
-2. **Preparation**: Read only the required references: [environment](references/environment.md), [behavior](references/behavior.md), [visual](references/visual.md), [accessibility](references/accessibility.md), [safety](references/safety.md).
+2. **Preparation**: Read only references whose branch applies:
+   - [environment](references/environment.md) when launching/attaching a browser, establishing authentication, or owning a development server;
+   - [behavior](references/behavior.md) for trusted interaction, network effects, dialogs, motion, or field clearing;
+   - [visual](references/visual.md) for visual/fidelity/responsive comparison or multi-capture evidence;
+   - [accessibility](references/accessibility.md) only for form, dialog, navigation, keyboard, shortcut, or focus criteria;
+   - [safety](references/safety.md) when the scenario can create external/data/account effects or sensitive captures;
+   - [session lifecycle](references/session-lifecycle.md) when creating, attaching, reusing, or cleaning browser/server/evidence resources.
 3. **Evidence reuse**: Before starting a server/browser or rerunning an expensive scenario, reread supplied run-owned evidence and its current candidate/environment provenance. Reuse it only when it already proves the exact current criterion; stale, mismatched, incomplete, or uninspected evidence requires a justified fresh run. Do not rerun merely because a previous producer already returned evidence.
 4. **Execution setup**: Without installing new dependencies, use a native, Playwright-compatible, MCP, or verified CDP path. Any new Chrome/Chromium process must prove effective `--headless=new`.
 5. **Server**: If the parent requires a development server, this verifier owns starting the background process, readiness checks, and cleanup. For standalone execution, present multiple plausible commands and get the user's choice before starting; do not choose arbitrarily. Resolve the selected script and environment's host, port, and API target before launch, then prove project identity rather than accepting an open port alone. When the selected server is `react-scripts`/CRA, include `BROWSER=NONE` or the repository-documented equivalent to suppress auto-open. Manage PID/cwd/port/command and bounded logs as run evidence, and wait for a readiness signal rather than process exit.

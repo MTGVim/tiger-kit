@@ -90,43 +90,9 @@ state changes that scope, remain pending and ask again only for the affected dec
 Once the user approves the batch plan, that approval grants authority only for the exact PRs, heads, work types, publication scope, and required child isolation in the plan.
 Do not request the same approval again for each child or for the host-native workspace mechanism used to realize that approved isolation.
 
-## Execution isolation
-
-`--report` and pre-approval fresh triage are read-only and do not create workspaces.
-After batch approval, code-changing children and any child that performs Git mutation require a newly established dedicated
-workspace before handling begins. Reply-only children do not create a workspace solely for isolation. The parent `main` or
-`develop` checkout is never used for child Git mutation and never branch-switched with `git switch` or `git checkout`.
-
-For each mutating row, inspect the current Git state before creating anything. A linked-worktree signal such as
-`GIT_DIR != GIT_COMMON` counts only after excluding submodules with
-`git rev-parse --show-superproject-working-tree` or an equivalent check, and it does not prove that a workspace belongs to
-this PR. Reuse an already host-created workspace only when its path, exact PR head, row identity, and dedicated provenance
-are fresh and unambiguous.
-
-When a new child workspace is needed, inspect the current tool surface for concrete native entry points such as
-`EnterWorktree`, `WorktreeCreate`, `/worktree`, or `--worktree`; these are capability examples, not durable provider
-routing. Prefer an available agent-callable native worktree/workspace mechanism and fresh-read the resulting path, branch
-or detached state, and HEAD. Use manual `git worktree` only when no safe native mechanism is available. Manual fallback
-must start from the exact approved head, avoid path/branch collisions and unrelated work, and be fresh-read after creation.
-Do not edit `.gitignore` or create a setup commit merely to make fallback isolation possible.
-
-A subagent counts as isolation only when it receives and uses the proven dedicated workspace. Do not reuse another PR's or
-a previous child's workspace. If a required workspace cannot be created or passed to the child, hold only that PR as
-`Held` or `Blocked`; do not fall back to sequential handling in the parent `main`/`develop` checkout. The absence of worker
-or model controls is not itself a blocker; inability to establish the workspace boundary is a PR-local blocker.
-
-Host-managed workspaces keep their host-owned lifecycle. Sweep does not remove, prune, relocate, or otherwise clean an
-externally managed workspace merely because a child finishes. A manual run-owned workspace may be cleaned only by an
-owner that explicitly has that cleanup authority; this skill does not add a general cleanup phase.
-
-Sweep remains a PR queue controller, not a task-level SDD controller. It never parses SDD Units, dispatches their
-implementers/reviewers, or writes `sdd.md`; the PR owner such as `tk-pr-respond` owns those semantics inside one workspace.
-PR-level fan-out is not SDD task decomposition.
-
-Rows whose PR owner selects shared SDD run **sequentially by default within this Sweep** so nested controllers do not
-multiply concurrently. Reply-only, wait/report, pure rebase, and non-SDD rows may retain existing safe PR-level
-concurrency. Do not create a global scheduler/capacity ledger. One PR-local SDD failure does not stop later independent
-rows; record that PR's result and continue.
+After approval, if any row mutates code/Git or dispatches child work, read [approved execution](references/execution.md)
+before starting the first child. It owns workspace isolation, conditional per-PR Seeds, nested SDD scheduling, row-local
+failure handling, and final queue triage. `--report` and pre-approval planning never load it.
 
 ## Per-PR handling
 
@@ -144,21 +110,6 @@ Representative routes:
 If the parent-approved exact PR/head and resolution direction remain unchanged, the child must not ask for the same decision again.
 Return that PR to the user only when there is a material change, such as new feedback, head drift, or scope drift.
 
-## Per-PR Seed
-
-Do not create one giant Seed for the entire Sweep.
-
-Each code-changing or Git-mutating PR child uses its own proven dedicated workspace. A code-changing child uses a marked,
-current-PR/head Ready `.tigerkit/seed.md` only when its owner selects durable context or SDD; reply-only work uses neither a
-Seed nor a workspace solely for isolation, and pure rebase follows `tk-pr-rebase` isolation. The workspace may be
-host-native or a safe manual fallback; its creation mechanism does not expand publication or cleanup authority.
-The Seed must be self-contained and include that PR’s feedback, objective, decisions, approach, AC, verification, and publication boundary. If a child scope names a user-visible UI element, carry the verbatim constraint into that handoff: quote the exact rendered string or verified entry path, cite its repository or supplied-screenshot basis, and do not pass along paraphrases, code identifiers, enum-derived labels, or unverified grouped claims.
-
-Do not force a Seed onto reply-only work or a pure rebase that does not require separate implementation context.
-
-Do not create `pr-sweep.md`, `pr-respond.md`, or worker receipt Markdown.
-Do not reuse or resume a different PR/Seed identity's `sdd.md`.
-
 ## Publication
 
 Child owners own their detailed publication order, reviewer semantics, replies, thread closure, summary format, refspec,
@@ -168,16 +119,6 @@ After each child returns, fresh-read GitHub state and verify the required outcom
 closure, required re-review request, and any owner-required current-head summary. Do not trust a child receipt or repeat
 the child procedure in Sweep. Missing or irreconstructible evidence is `Unverifiable`; one PR's partial publication does
 not broaden authority or stop independent rows.
-
-## Queue progress
-
-A local failure in one PR does not automatically stop other independent PRs.
-Stop the entire Sweep only for a systemic failure, such as identity or permission contamination, ambiguous repository scope, or untrustworthy triage.
-
-After each PR succeeds or fails, triage that PR again to confirm that its actual state changed.
-After every planned row finishes, run final fresh triage across all configured repositories.
-
-A PR is not complete unless final fresh triage confirms the required checks, publication state, all required `CHANGES_REQUESTED` reviewer re-review requests, closed actionable threads, and any required current-head summary comment marked `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`.
 
 ## Completion response
 

@@ -152,6 +152,8 @@
       "assertions": [
         {"type":"judge","criterion":"`references/split-to-stack.md`의 retrospective 경로를 적용해 source branch를 rewrite하지 않는 `stacked` 계획을 제시한다. 각 layer는 한 문장 concern과 parent 관계가 명확하고, stack tip tree가 original tree와 같아야 한다는 invariant를 승인 packet에 포함한다."},
         {"type":"path_exists","path":".tigerkit/pr-open.md"},
+        {"type":"path_text_has_hangul","path":".tigerkit/pr-open.md"},
+        {"type":"path_text_has_korean_prose","path":".tigerkit/pr-open.md"},
         {"type":"output_contains","text":"stacked"},
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"remote-publish"}},
         {"type":"git_head_unchanged"},

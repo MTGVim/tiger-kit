@@ -1,3 +1,3 @@
 interface:
   short_description: "[user/auto] 한 PR을 답변/직접-TDD/SDD-TDD로 해결합니다."
-  default_prompt: "`tk-pr-respond`로 정확한 PR을 새로 읽고 리뷰 의미와 해결안·근거·검증 계획을 자연스럽게 설명하세요. 한 번 승인받은 뒤 답변만, 직접+TDD, SDD+TDD 중 맞는 경로를 선택하고, 코드 변경은 현재 Ready `.tigerkit/seed.md`를 사용해 검증·제한된 발행까지 진행하세요."
+  default_prompt: "`tk-pr-respond`로 정확한 PR을 새로 읽고 리뷰 의미와 해결안·근거·검증 계획을 자연스럽게 설명하세요. 한 번 승인받은 뒤 답변만, 직접+TDD, SDD+TDD 중 맞는 경로를 선택하세요. 소규모 직접 수정은 `Seed` 없이 처리하고, 새로운 하위 실행자에게 인계하거나 복잡한 검증에 지속 맥락이 필요할 때만 Ready `.tigerkit/seed.md`를 사용해 검증·제한된 발행까지 진행하세요."

@@ -9,28 +9,40 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "skills/tk-prep/references"
 TARGET = ROOT / "skills/tk-pr-respond/references"
 FILES = ("testing.md", "sdd.md", "diagnosis.md", "test-doubles.md")
+DOMAIN_CONTEXT_TARGETS = (
+    ROOT / "skills/tk-ask-repo/references/domain-context.md",
+    ROOT / "skills/tk-pr-open/references/domain-context.md",
+    ROOT / "skills/tk-pr-respond/references/domain-context.md",
+)
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
+    pairs = [(SOURCE / name, TARGET / name) for name in FILES]
+    pairs.extend((SOURCE / "domain-context.md", target) for target in DOMAIN_CONTEXT_TARGETS)
     drift = [
-        name
-        for name in FILES
-        if not (TARGET / name).is_file()
-        or (TARGET / name).read_bytes() != (SOURCE / name).read_bytes()
+        (source, target)
+        for source, target in pairs
+        if not target.is_file() or target.read_bytes() != source.read_bytes()
     ]
     if args.check:
         if drift:
-            print("Out-of-sync shared execution protocol: " + ", ".join(drift))
+            print(
+                "Out-of-sync shared reference copies: "
+                + ", ".join(str(target.relative_to(ROOT)) for _, target in drift)
+            )
             return 1
-        print("Shared execution protocol copies are synchronized.")
+        print("Shared reference copies are synchronized.")
         return 0
-    TARGET.mkdir(parents=True, exist_ok=True)
-    for name in drift:
-        shutil.copyfile(SOURCE / name, TARGET / name)
-    print("Synchronized: " + (", ".join(drift) if drift else "no changes"))
+    for source, target in drift:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+    print(
+        "Synchronized: "
+        + (", ".join(str(target.relative_to(ROOT)) for _, target in drift) if drift else "no changes")
+    )
     return 0
 
 

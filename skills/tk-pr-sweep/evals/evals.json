@@ -20,6 +20,10 @@
           "path": ".tigerkit/seed.md"
         },
         {
+          "type": "path_not_read",
+          "path": "skills/tk-pr-sweep/references/execution.md"
+        },
+        {
           "type": "git_head_unchanged"
         },
         {
