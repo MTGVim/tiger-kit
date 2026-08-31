@@ -2,12 +2,13 @@
 
 Repository skills may live under `.agents/skills/`, `.claude/skills/`, or
 `.hermes/skills/`. User skills may live under the host's `.agents`, `.claude`, `.codex`,
-or `.hermes` skill directory. Repository and user rule files are outside this skill's
-scope.
+or `.hermes` skill directory. Repository and user rules, imported instruction files, and
+auto-memory directories are candidates only when their exact host-native path is verified.
 
 Identify the current host from actual paths or host-discovery evidence and interpret
-only that host's native targets. If the host is unknown, do not invent a target; leave
-it `Unverifiable`. Do not impose one host's location on another or fan out/synchronize
+only that host's native targets. Resolve imports and directory-scoped rule inheritance
+before comparing instructions. If the host is unknown, do not invent a target; leave it
+`Unverifiable`. Do not impose one host's location on another or fan out/synchronize
 across multiple hosts. Do not use `.tigerkit/` as a persistent registry.
 
 ## Ownership evidence

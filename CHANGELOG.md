@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `feat(tk-grooming)`: 최신 `skill`과 충돌하거나 잘못된 동작을 유발한 지속 `rule`·`auto memory`를 근거 기반으로 진단하고 승인 후 정리합니다.
 - `fix(tk-browser-verify)`: 모든 `launch`·`attach` 경로에서 `headless`와 실행 소유권을 선증명하고, `evidence ignore` 확인·`visual` 축별 실측·자연어 화면 검증 `routing`을 필수화합니다.
 - `fix(auth)`: `.tigerkit/`의 실제 `Git` `ignore` 판정에 상위·로컬·사용자 전역 규칙을 모두 인정하고, 비밀 입력 파일을 내용 노출 없이 감시하여 사용자 완료 응답 없이 인증 절차를 이어갑니다.
 - `feat(tk-prep)`: 저장소에서 확인할 사실과 현재 답할 독립 결정, 선행 결정에 막힌 질문, 아직 질문할 수 없는 불확실성을 구분하여 준비 대화를 현재 질문 묶음 단위로 수렴합니다.

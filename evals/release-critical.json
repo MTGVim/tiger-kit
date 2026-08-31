@@ -104,6 +104,9 @@
     "tk-grooming:behavior:grooming-detects-description-workflow-shortcut",
     "tk-grooming:behavior:grooming-keeps-long-description-for-negative-routing",
     "tk-grooming:behavior:grooming-domain-description-preserves-routing-and-body",
+    "tk-grooming:behavior:grooming-detects-stale-memory-override",
+    "tk-grooming:behavior:grooming-memory-semantic-edit-requires-item-approval",
+    "tk-grooming:behavior:grooming-unattributed-behavior-routes-to-diagnosis",
     "tk-learn:behavior:legacy-2",
     "tk-learn:behavior:learn-mature-upstream-gap-is-sufficient-evidence",
     "tk-learn:behavior:learn-one-strongly-verified-reusable-incident-is-sufficient",
@@ -155,6 +158,8 @@
     "catalog:behavior:grill-explicit",
     "catalog:behavior:grill-ordinary-brainstorm-negative",
     "catalog:behavior:grill-vs-prep-engineering-ticket",
-    "catalog:behavior:grill-vs-ask-repo-fact"
+    "catalog:behavior:grill-vs-ask-repo-fact",
+    "catalog:behavior:grooming-stale-memory-after-user-correction",
+    "catalog:behavior:skill-diagnose-unattributed-browser-failure"
   ]
 }

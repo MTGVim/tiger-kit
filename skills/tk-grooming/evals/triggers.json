@@ -166,6 +166,30 @@
       "facets": [
         "formal"
       ]
+    },
+    {
+      "id": "validation-positive-10",
+      "split": "validation",
+      "query": "예전에 저장한 메모리 때문에 최신 브라우저 검증 규칙과 다르게 동작했어. 낡은 지침을 찾아줘.",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-11",
+      "split": "validation",
+      "query": "사용자 규칙이나 자동 메모리가 현재 스킬과 충돌하는지 감사해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-9",
+      "split": "validation",
+      "query": "브라우저 검증이 실패했는데 원인은 아직 모르겠어.",
+      "should_trigger": false
     }
   ]
 }

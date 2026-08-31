@@ -1,2 +1,2 @@
 interface:
-  short_description: "[user/auto] 기존 `skill`의 구조, `trigger`, `reference`, `no-op` 위험을 감사합니다."
+  short_description: "[user/auto] 기존 `skill`·지속 `rule`·`memory`의 충돌과 낡은 지침을 감사합니다."
