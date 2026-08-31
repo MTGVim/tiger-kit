@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `fix(auth)`: 비밀 입력 파일을 무시된 `.tigerkit/secret-input/`에 빈 상태로 만들고 경로만 안내하며, 명시적 요청 전에는 편집기나 파일 열기 명령을 실행하지 않습니다.
 - `fix(tk-pr-respond)`: 리뷰 지적의 인과관계와 고위험 예외를 판정하고, 명시적 `disposition` 및 `RESPONSE_BASE..HEAD` 매핑으로 대응 `diff`와 후속 티켓 생성을 승인 범위에 제한합니다.
 - `fix(scratch)`: 사용자가 접근하는 임시 입력·전달·`staging` 경로를 무시된 `.tigerkit/` 아래로 통일하고, 저장소가 추적하는 `ignore` 규칙과 비밀 입력 즉시 정리를 요구합니다.
 - `refactor(skills)`: 장황한 `description`과 반복 지시문을 줄이면서 기존 `trigger`·`authority`·호스트 계약을 보존합니다.

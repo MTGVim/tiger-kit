@@ -28,9 +28,12 @@ When no safer temporary secret-input channel exists, first prove with `git check
 that a repository-tracked ignore rule covers `.tigerkit/`; global excludes and
 `.git/info/exclude` are insufficient. Then create
 `.tigerkit/secret-input/tk-browser-verify-<run-id>/token` with directory mode `0700` and
-file mode `0600`. Give the user both the repository-relative path and a host-openable
-absolute path plus a host-appropriate clipboard-to-file command. Never ask for or accept
-the value in chat. If the path is not ignored, writable, or user-accessible, do not edit
+file mode `0600`. Leave the file empty, then give the user both the repository-relative
+and absolute paths plus a host-appropriate clipboard-to-file command that does not place
+the secret in command arguments or shell history. Do not launch an editor, file opener,
+GUI, terminal UI, or focus-changing application merely to collect the secret. Open it
+only after the path is shown and the user explicitly asks. Never ask for or accept the
+value in chat. If the path is not ignored, writable, or user-accessible, do not edit
 `.gitignore` or choose an external scratch path; return `Unverifiable`.
 
 After the target hostname and port are final, a no-log one-shot server bound only to
