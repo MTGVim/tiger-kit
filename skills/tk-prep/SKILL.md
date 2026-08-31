@@ -21,8 +21,9 @@ merge, publication/release, destructive cleanup, secrets, or unrelated Git mutat
 **Keep conversation natural and state strict.** Do not expose durable-artifact classification or
 execution routing as a form/report. Explain important judgments with recommendations and reasons. When a user-owned
 question, choice, or approval is needed, prefer the host's native structured question surface (Claude Code: AskUserQuestion;
-Codex: request_user_input; Hermes: clarify). If unavailable, fall back to plain chat; never ask again for a secret or a
-parent-owned decision.
+Codex: request_user_input; Hermes: clarify) when it can represent the current question round without changing its meaning.
+If unavailable or unable to represent that round faithfully, use one scannable plain chat round; never ask again for a
+secret or a parent-owned decision.
 
 ## Evidence and questions
 
@@ -31,13 +32,28 @@ domain context. Lazy-load [domain context](references/domain-context.md) only wh
 Do not scan or create a documentation lifecycle; if fresher code/test/runtime evidence conflicts, surface it and confirm the source of truth.
 Before creating anything, find existing components, helpers, schemas, clients, patterns, and conventions; tie claims to `path:line`, command output, or fresh state. Before comparing a hard-to-reverse design, interface, schema, or migration choice, read only relevant ADR rationale and current evidence. Do not reopen a decision whose premise still holds; surface `revisit ADR` only when it changed, and never scan an unrelated ADR or context tree.
 
-Ask one highest-impact question at a time only for:
+Maintain a small preparation tree in the current conversation only. Recompute it after investigation and each user answer.
+
+- `fact`: safely answerable from repository, runtime, tool, or supplied evidence; investigate instead of asking.
+- `frontier`: a user-owned decision that is precise and answerable now without guessing another unresolved answer.
+- `blocked`: a question whose choices depend on an unresolved prerequisite; defer it until that prerequisite is resolved.
+- `fog`: uncertainty that is not yet precise enough to ask; gather the evidence needed to turn it into a fact or frontier decision.
+
+Ask the whole current frontier in one scannable round, grouping independent decisions with a recommendation and reason.
+Do not impose a fixed question count or include a downstream decision whose meaning depends on another answer. Split a
+round only when the questions are materially coupled or cannot be presented clearly together. Do not expose the internal
+labels as a form, persist the tree, invoke `tk-grill`, or automatically transition between the skills.
+
+Only these unresolved frontier decisions belong to the user:
 
 1. user-owned product behavior, scope, priority, or business rules;
 2. risky/hard-to-reverse security, permission, data, compatibility, or UX decisions;
 3. an engineering exception after evidence shows readiness cannot be improved further.
 
 If evidence or precedent decides, recommend it; only unresolved material hard-to-reverse choices lazy-load [design comparison](references/design.md), and optional fan-out never blocks.
+If material fog or an evidence conflict can change the implementation topology, do not request approval or commit to a
+Seed, SDD Unit structure, or execution shape. Investigate and recompute the frontier first. When facts and decisions are
+already complete, continue the ordinary preparation flow without frontier ceremony or invented questions.
 
 If the approved outcome may include local implementation, read [local execution](references/local-execution.md) before
 the final checkpoint. It owns checkout isolation, unrelated-work protection, direct execution, review, and local commit.
