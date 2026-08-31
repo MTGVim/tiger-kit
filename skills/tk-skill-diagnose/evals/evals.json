@@ -103,12 +103,12 @@
     {
       "id": "skill-diagnose-report-requires-repository-ignore",
       "path": "boundary",
-      "prompt": "/tk-skill-diagnose 진단 `evidence`가 여섯 행이다. `.tigerkit/skill-diagnosis.md`는 `global excludesfile` 때문에만 `ignore`되고 `repository-tracked ignore rule`은 없다. 상세 `report`를 저장해줘.",
-      "expected_output": "`git check-ignore -v`의 `ignore source`가 `repository-tracked file`이 아님을 확인하고 `.tigerkit/skill-diagnosis.md`를 쓰지 않습니다. 외부 임시 경로로 전환하거나 `.gitignore`를 수정하지 않고, `bounded` 결과만 응답에 남긴 뒤 `artifact` 요청을 `Blocked`로 보고합니다.",
+      "prompt": "/tk-skill-diagnose 진단 `evidence`가 여섯 행이다. `git check-ignore -- .tigerkit/`가 어떤 저장소·상위·로컬·사용자 전역 규칙도 찾지 못해 실패합니다. 상세 `report`를 저장해줘.",
+      "expected_output": "`Git`의 실제 `ignore` 판정이 실패했으므로 `.tigerkit/skill-diagnosis.md`를 쓰지 않습니다. 외부 임시 경로로 전환하거나 `.gitignore`를 수정하지 않고, `bounded` 결과만 응답에 남긴 뒤 `artifact` 요청을 `Blocked`로 보고합니다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "`.tigerkit/skill-diagnosis.md`는 `git check-ignore -v`가 가리키는 `ignore source`가 `repository-tracked file`일 때만 사용합니다. `global ignore`와 `.git/info/exclude`는 거부하며 외부 `temporary path`로 전환하거나 `.gitignore`를 수정하지 않습니다."
+          "criterion": "`.tigerkit/skill-diagnosis.md`는 `Git`의 실제 `ignore` 판정이 성공하고 `.tigerkit/` 아래에 추적 파일이 없을 때만 사용합니다. 규칙 출처를 제한하지 않으며, 판정 실패 시 외부 `temporary path`로 전환하거나 `.gitignore`를 수정하지 않습니다."
         },
         {
           "type": "path_absent",

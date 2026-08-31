@@ -95,6 +95,8 @@ wording changes after the same failure repeats.
 
 Write `.tigerkit/skill-diagnosis.md` only when actual telemetry or more than five
 evidence rows require a diagnostic artifact, and only after `git check-ignore -v` proves
-that a repository-tracked ignore rule covers the path. If not, keep the bounded result in
+that Git effectively ignores `.tigerkit/` and `git ls-files -- .tigerkit/` returns no
+tracked path. Accept per-directory, local-exclude, and user-level-exclude sources. If not,
+keep the bounded result in
 the response; do not edit `.gitignore` or write an external fallback. Do not create a
 persistent optimization ledger.

@@ -14,7 +14,9 @@ metadata:
 
 Accept a `prompt`, idea, screenshot, `spec`, `ticket`, code, or design reference as input.
 Keep standalone artifacts under `.tigerkit/prototypes/<slug>/`. Before writing, prove
-that a repository-tracked ignore rule covers the path. Do not edit `.gitignore` or use an
+that Git effectively ignores `.tigerkit/` and no path under it is tracked. The effective
+rule may come from per-directory, local-exclude, or user-level-exclude configuration.
+Do not edit `.gitignore` or use an
 external scratch fallback. A repository-native route/harness is allowed only when the
 selected runtime requires it; record and clean up only run-owned files.
 

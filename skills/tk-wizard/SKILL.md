@@ -75,8 +75,9 @@ When necessary, use only `hidden`/`ephemeral` `input` at execution time.
 Do not prompt users to paste OTP, `password`, `token`, `session` `value`, or `recovery` `code`
 into the conversation. Do not retain even non-secret `identifier` values unless needed for the task.
 
-For file-mediated input in a repository task, first prove that a repository-tracked `ignore`
-rule covers `.tigerkit/`. Create an empty
+For file-mediated input in a repository task, first prove that `git ls-files -- .tigerkit/`
+returns no tracked paths and `git check-ignore -q -- .tigerkit/` succeeds. Accept Git's
+effective per-directory, local-exclude, or user-level-exclude decision. Create an empty
 `.tigerkit/secret-input/tk-wizard-<run-id>/<credential-type>` with directory mode `0700`
 and file mode `0600`, then show both its repository-relative and absolute paths plus a
 clipboard-to-file command that does not expose the value in command arguments or shell
@@ -85,6 +86,12 @@ application to collect the value. Open the file only after showing the path and 
 an explicit user request. If the path cannot be proven safe and accessible, use an
 available host-native hidden input or return `Blocked | Unverifiable`; do not fall back to
 an external scratch path.
+
+After showing the path, start a bounded non-content watcher or poll for non-empty state.
+Do not ask the user to report completion. When input appears, recheck ownership and mode
+`0600`, continue the exact pending step, and remove the secret input immediately after use.
+Renew an expired wait window while the task remains active. Only when the runtime can no
+longer wait, preserve the run-owned input path and explain how to resume monitoring.
 
 If a `helper` is needed, create it as a one-time `user-run` `helper` and preserve these semantics:
 

@@ -24,9 +24,11 @@ device approval. Request a short-lived token/session through the temporary secre
 channel. If no approved state can be established, return `Unverifiable` before a
 product mutation.
 
-When no safer temporary secret-input channel exists, first prove with `git check-ignore -v`
-that a repository-tracked ignore rule covers `.tigerkit/`; global excludes and
-`.git/info/exclude` are insufficient. Then create
+When no safer temporary secret-input channel exists, first prove that
+`git ls-files -- .tigerkit/` returns no tracked paths and
+`git check-ignore -q -- .tigerkit/` succeeds. Accept Git's effective ignore decision
+whether it comes from a per-directory `.gitignore`, `.git/info/exclude`, or the configured
+user-level excludes file. Then create
 `.tigerkit/secret-input/tk-browser-verify-<run-id>/token` with directory mode `0700` and
 file mode `0600`. Leave the file empty, then give the user both the repository-relative
 and absolute paths plus a host-appropriate clipboard-to-file command that does not place
@@ -35,6 +37,14 @@ GUI, terminal UI, or focus-changing application merely to collect the secret. Op
 only after the path is shown and the user explicitly asks. Never ask for or accept the
 value in chat. If the path is not ignored, writable, or user-accessible, do not edit
 `.gitignore` or choose an external scratch path; return `Unverifiable`.
+
+After showing the paths, start a bounded watcher or poll for non-empty file state without
+reading, echoing, or reporting the content, size, or modification time. Do not ask the user
+to send a completion message. When the file becomes non-empty, recheck ownership and mode
+`0600`, then continue directly to the approved injection. Renew an expired wait window
+while the task remains active. Only when the runtime can no longer wait, leave the
+run-owned input path in place and report how monitoring can resume; never treat a timeout
+as proof that no value will be supplied.
 
 After the target hostname and port are final, a no-log one-shot server bound only to
 loopback may read the file and return `Access-Control-Allow-Origin: *`. Fetch it inside

@@ -14,8 +14,9 @@ facts. A user calling the value a development token does not relax this boundary
 
 Separate screenshot/video inventory from network/HAR/console inventory. A capture is
 sensitive if it contains Authorization data, cookies, tokens, credentials, or sensitive
-bodies. After proving the repository-tracked ignore rule, stage an unavoidable sensitive
-capture only in `.tigerkit/tmp/tk-browser-verify/<run-id>/sensitive/`. Use a redacted copy
+bodies. After proving Git's effective ignore decision for `.tigerkit/`, stage an
+unavoidable sensitive capture only in `.tigerkit/tmp/tk-browser-verify/<run-id>/sensitive/`.
+Use a redacted copy
 only after confirming that neither the original nor transfer path retains residue, then
 delete the staging directory and verify its absence. If the path cannot be used, do not
 choose an external fallback; safely delete owned captures and return `Unverifiable`.

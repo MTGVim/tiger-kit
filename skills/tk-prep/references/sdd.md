@@ -92,8 +92,9 @@ host can transport faithfully.
 Use a flat `.tigerkit/sdd-tmp/` only when a child requires a file path, an exact bundle
 cannot be transported reliably through the host surface, or bounded context size makes
 file transport necessary. Before the first write, prove with `git check-ignore -v` that
-a repository-tracked ignore rule covers the path; global excludes and
-`.git/info/exclude` are insufficient. If required file transport is not ignored,
+Git's effective ignore rules cover `.tigerkit/` and verify that `git ls-files -- .tigerkit/`
+returns no tracked paths. Per-directory `.gitignore`, `.git/info/exclude`, and configured
+user-level exclude sources are all valid. If required file transport is not ignored,
 writable, or visible to the child, do not edit `.gitignore` or fall back to an
 operating-system temporary path; return `Blocked | Unverifiable` before dispatch.
 
