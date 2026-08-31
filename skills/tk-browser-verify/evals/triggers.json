@@ -90,6 +90,21 @@
       ]
     },
     {
+      "id": "validation-positive-10",
+      "split": "validation",
+      "query": "로그인 화면은 `as-is/to-be`로 패딩 변경 차이도 알 수 있게 스샷 찍어줘.",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-11",
+      "split": "validation",
+      "query": "로컬 로그인 폼 하단이 첫 화면에서 접히는지 확인해줘.",
+      "should_trigger": true
+    },
+    {
       "id": "validation-negative-1",
       "split": "validation",
       "query": "서버 내부 로그 문구만 수정해줘",

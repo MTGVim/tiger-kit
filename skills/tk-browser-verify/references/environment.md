@@ -2,14 +2,16 @@
 
 Choose the simplest native, Playwright-compatible, MCP, or CDP path that can produce
 approved evidence. Do not install a new browser dependency for one run. Before the
-first browser call, prove the exact valid `--headless=new` argument, binary,
-PID/provider process ID, and isolated run-owned `user-data-dir` for every new
-Chrome/Chromium process.
+first browser call, classify the path as `launch | attach` and prove the live browser
+binary, PID/provider process ID, exact effective `--headless=new` argument, endpoint,
+and isolated run-owned `user-data-dir` from observed process state.
 
-For CDP, verify the live endpoint, actual process, port, and profile ownership. A saved
-port, prior browser UUID, `DevToolsActivePort`, provider default, or tool name is not
-evidence. Never attach to or change a browser whose ownership is unknown or belongs to
-the user.
+Apply the same proof to CDP and MCP attach paths. A fixed `--browserUrl` provider starts
+no browser, so its endpoint's launch arguments and ownership belong to the external
+launcher and must still be observed. A saved port, prior browser UUID,
+`DevToolsActivePort`, provider default, configuration claim, or tool name is not evidence.
+If the target process lacks `--headless=new`, belongs to another run or the user, or has
+unknown ownership, do not create a page or make any browser call; return `Unverifiable`.
 
 ## Authentication
 

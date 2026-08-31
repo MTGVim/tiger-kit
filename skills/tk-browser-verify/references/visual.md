@@ -68,8 +68,17 @@ unchecked, the aggregate result is not `Pass`.
    background, border, SVG `fill`/`stroke`, opacity, shadow, and gradient.
 6. **Imagery**: Verify successful image request/load, source, intrinsic dimensions,
    aspect ratio, `object-fit`/`object-position`, crop, and resolution.
-7. **Responsive/state**: Recheck the preceding axes for each approved viewport and
+7. **Responsive**: Recheck the preceding axes for each approved viewport and breakpoint
+   edge, including overflow, wrapping, clipping, and off-screen controls.
+8. **State**: Recheck the preceding axes for each approved
    hover/focus/active/disabled/loading/error state.
+
+For geometry and typography, record the reference value, candidate measurement, and
+delta for every named element whose value can be measured. Report every measured
+mismatch regardless of magnitude; when tolerance is absent, do not silently accept it.
+If the repository has an appropriate design token but the candidate uses a different
+token or computed value, record a `Color/paint` mismatch even when the colors look close.
+Only an explicit approved deviation can convert a measured mismatch into acceptance.
 
 For every finding, connect the axis, named element/region, reference observation,
 candidate observation, viewport/state, and inspected screenshot path. When the approved

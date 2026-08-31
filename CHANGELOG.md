@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `fix(tk-browser-verify)`: 모든 `launch`·`attach` 경로에서 `headless`와 실행 소유권을 선증명하고, `evidence ignore` 확인·`visual` 축별 실측·자연어 화면 검증 `routing`을 필수화합니다.
 - `fix(auth)`: `.tigerkit/`의 실제 `Git` `ignore` 판정에 상위·로컬·사용자 전역 규칙을 모두 인정하고, 비밀 입력 파일을 내용 노출 없이 감시하여 사용자 완료 응답 없이 인증 절차를 이어갑니다.
 - `feat(tk-prep)`: 저장소에서 확인할 사실과 현재 답할 독립 결정, 선행 결정에 막힌 질문, 아직 질문할 수 없는 불확실성을 구분하여 준비 대화를 현재 질문 묶음 단위로 수렴합니다.
 - `fix(auth)`: 비밀 입력 파일을 무시된 `.tigerkit/secret-input/`에 빈 상태로 만들고 경로만 안내하며, 명시적 요청 전에는 편집기나 파일 열기 명령을 실행하지 않습니다.

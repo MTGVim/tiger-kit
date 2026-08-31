@@ -10,6 +10,14 @@ to a directly started verified endpoint or return `Unverifiable`; do not retry w
 visible browser. A default user profile, stale port file, or prior UUID is not evidence
 of a reusable session.
 
+Before the first write to repository-local evidence, prove that
+`git ls-files -- .tigerkit/` returns no tracked path and
+`git check-ignore -q -- .tigerkit/` succeeds. Classify the matching rule from
+`git check-ignore -v` as `per-directory | info-exclude | user-level` and record the
+pattern without exposing an absolute user-level path. If the check fails, do not create
+the evidence directory, edit `.gitignore`, or switch to an external path; return
+`Unverifiable`.
+
 Place binary evidence in the parent-provided or standalone run-owned evidence
 directory. Only a bounded `README.md` AC-to-file evidence index may accompany it; do not
 create a Markdown lifecycle ledger. Every cited screenshot must exist, be non-empty, and

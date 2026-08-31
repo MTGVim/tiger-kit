@@ -83,6 +83,9 @@ For browser-visible ACs, close target URL/environment, pass conditions, headless
 server command/cwd/readiness, screenshot/redaction evidence, and the `tk-browser-verify` handoff. Default to headless.
 Never store usernames, passwords, token, OTP, cookie, or session values in chat/Seed/artifacts; use ephemeral runtime
 input. The verifier owns server startup, readiness, runtime acceptance evidence, and cleanup.
+If any implementation or verification step would open a local app/page to compare a design,
+inspect a render defect, test responsive or interaction behavior, or capture proof, invoke
+`tk-browser-verify` instead of performing browser calls inside the preparation/execution turn.
 
 ## Adaptive execution shape
 
