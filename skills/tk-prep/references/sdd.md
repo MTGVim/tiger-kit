@@ -37,8 +37,10 @@ gaps, empty names, or missing obligations, return `Blocked` before dispatch and 
 the `Seed`.
 
 Group small same-shape changes into one `Unit` when they need no separate judgment,
-testing, or review surface. Split work when interfaces, risk, testing obligations, or
-independent judgment differ.
+testing, or review surface. Split work only when interfaces, risk, testing obligations,
+or independent judgment genuinely differ. If two proposed Units would receive the same
+implementation/test/review judgment, keep them in one Unit instead of creating review
+ceremony.
 
 When natural behavior slices exist, prefer vertical `Unit`s that can be reviewed and
 verified independently. This is `vertical-first`, not `vertical-only`. Do not force a
@@ -63,53 +65,63 @@ direct execution.
 
 ## Recovery state
 
-An active SDD keeps at most one ignored `.tigerkit/sdd.md` in the repository. Its
-minimum record is:
+The Ready Seed, current controller context, and local commits are the normal recovery
+sources. Do not create a progress ledger merely because execution shape is SDD.
+
+Create at most one ignored `.tigerkit/sdd.md` only when execution is likely to outlive
+the current controller context, the host cannot reliably retain Unit/review state, or an
+interrupted run actually needs durable recovery. When a ledger is needed, keep only:
 
 - Ready `Seed` identifier and content hash;
-- preflight results;
+- preflight conflicts or rulings that are not already preserved in the Seed;
 - current `Unit` and completed commit SHAs;
-- review and remediation rounds plus open findings;
-- `Ruling: decision — reason — cost if wrong`;
-- temporary artifact identifiers and paths required for recovery.
+- open review findings and remediation round when active;
+- temporary artifact identifiers and paths that are required for recovery.
 
-Do not resume a ledger with a different `Seed` identifier/hash or one from completed
-work. If it does not match the current `Seed` exactly, return `Blocked` before new
-dispatch and return to the preparation owner. When all `Unit`s, final review, and
-binding acceptance are clean, delete `sdd.md` and run-owned temporary artifacts.
+Do not copy stable Seed content or completed reports into the ledger. Do not resume a
+ledger with a different Seed identifier/hash or one from completed work. If it does not
+match the current Seed exactly, return `Blocked` before new dispatch and return to the
+preparation owner. Delete a run-owned ledger when binding acceptance is clean.
 
 ## Artifact transport
 
-Place work summaries, implementer reports, `BASE..HEAD` review bundles, and remediation
-bundles in a flat `.tigerkit/sdd-tmp/`. Before the first write, prove with
-`git check-ignore -v` that a repository-tracked ignore rule covers the path; global
-excludes and `.git/info/exclude` are insufficient. If the path is not ignored, writable,
-or visible to the child, do not edit `.gitignore` or fall back to an operating-system
-temporary path; return `Blocked | Unverifiable` before dispatch.
+Prefer direct host payloads and child return values for Unit summaries, reports, and
+exact diffs. Do not materialize an artifact merely to pass information that the active
+host can transport faithfully.
+
+Use a flat `.tigerkit/sdd-tmp/` only when a child requires a file path, an exact bundle
+cannot be transported reliably through the host surface, or bounded context size makes
+file transport necessary. Before the first write, prove with `git check-ignore -v` that
+a repository-tracked ignore rule covers the path; global excludes and
+`.git/info/exclude` are insufficient. If required file transport is not ignored,
+writable, or visible to the child, do not edit `.gitignore` or fall back to an
+operating-system temporary path; return `Blocked | Unverifiable` before dispatch.
 
 Do not create per-run or per-plan hierarchies. Use unique filenames containing the
-`Seed` identifier, `Unit`, and scope. Clean up only run-owned files and never delete
+Seed identifier, `Unit`, and scope. Clean up only run-owned files and never delete
 unrelated files. Do not put secrets in artifacts.
 
 ## Evidence-backed preflight
 
-Before `Unit` 1, read the `Seed` once and record this table in `sdd.md`:
+Before `Unit` 1, read the Seed once and check:
 
 - every producer/consumer `Unit` pair sharing files or interfaces, and whether they agree;
 - internal consistency among requested files, code, tests, and AC for each `Unit`;
 - conflicts between global constraints and each `Unit`;
 - unresolved findings and decision rationale.
 
-Do not replace the table with one “clean” line. A conflict that changes the goal, scope,
-approved decisions, ACs, security, or required verification returns to the preparation
-owner and reapproval. The controller may resolve only reversible engineering ambiguity
-with a `Ruling:` that includes the cost if wrong.
+Keep this in controller state by default. Record only unresolved or recovery-relevant
+items when a durable ledger is actually active; do not create a table or ledger to say
+that everything is clean. A conflict that changes the goal, scope, approved decisions,
+ACs, security, or required verification returns to the preparation owner and reapproval.
+The controller may resolve only reversible engineering ambiguity with a `Ruling:` that
+includes the cost if wrong.
 
 ## Host and semantic routing
 
 The `Seed` may contain only semantic recommendations such as
 `cheap/mechanical | standard integration/debugging | strong architecture/final review`. Do not store
-provider model IDs or reasoning intensity in the `Seed` or ledger.
+provider model IDs or reasoning intensity in durable artifacts.
 
 On a host that supports child dispatch, read the current allowlist and capabilities and
 use explicit controls for every role. When Codex supports `model` and
@@ -120,12 +132,11 @@ not short polling loops.
 
 ## `Unit` implementer
 
-Immediately before dispatch, record `BASE = git rev-parse HEAD`. Give the implementer
-the following rather than the full conversation or `Seed`:
+Immediately before dispatch, record `BASE = git rev-parse HEAD`. Give the implementer:
 
-- the path to a task-local `Unit` summary that is the requirements canonical source;
+- the task-local `Unit` summary as direct content, or its path only when file transport is required;
 - binding global constraints and prior interface decisions;
-- report path and short return contract;
+- a short return contract, plus a report path only when durable/file transport is required;
 - the rule that the implementer is a leaf with no subagents;
 - approved local mutation and commit boundaries.
 
@@ -135,21 +146,21 @@ related suites, performs self-review and mutation checks, then creates a local c
 Self-review removes unnecessary abstraction or indirection, speculative flexibility,
 dead or redundant branches, custom logic replacing repository-native helpers, and
 production API expansion used only by tests.
-The report records implementation, changed files, commit, concerns, test commands and
-output, and applicable RED/GREEN evidence; the parent receives only a short status.
-Remote publication is forbidden.
+The return/report records implementation, changed files, commit, concerns, test commands
+and output, and applicable RED/GREEN evidence. Remote publication is forbidden.
 
 ## Exact `Unit` review
 
 After implementation, record `HEAD` and always review the complete `BASE..HEAD`. Do not
-assume `HEAD~1`. The review bundle contains the commit list, change statistics, and the
-full net diff with enough context.
+assume `HEAD~1`. Provide the commit list, change statistics, and full net diff with
+enough context directly when possible; materialize a bundle only when transport requires
+it.
 
 Reviewer input is:
 
 - the `Unit` summary and binding global constraints;
-- the implementer report and its untrusted claims;
-- the exact `BASE..HEAD` bundle.
+- the implementer report/return and its untrusted claims;
+- the exact `BASE..HEAD` evidence.
 
 The read-only leaf reviewer records two independent verdicts in one review surface. A
 clean verdict on either axis never offsets a failure on the other:
@@ -164,8 +175,8 @@ One reviewer or one serial review may judge both axes. Do not add a mandatory se
 reviewer or parallel reviewer fan-out.
 
 Do not sweep the whole repository without a specifically named risk or unconditionally
-rerun suites already present in the report. Re-read artifacts before concluding that
-claimed evidence is absent, and run only focused checks for concrete doubts.
+rerun suites already present in the report. Re-read available evidence before concluding
+that claimed evidence is absent, and run only focused checks for concrete doubts.
 
 ## Remediation loop
 
@@ -174,8 +185,8 @@ Handle `Critical`/`Important` findings or confirmed real gaps for at most five r
 - Rounds 1–3: resume the same implementer.
 - Rounds 4–5: use a fresh implementer with stronger available semantic capability.
 - Every round: record `FIX_BASE = git rev-parse HEAD`, provide open findings, rerun
-  protection tests for remediation code, append the report, and create the exact
-  `FIX_BASE..HEAD` bundle.
+  protection tests for remediation code, update the return/report, and provide the exact
+  `FIX_BASE..HEAD` evidence directly or through file transport only when required.
 - Scoped re-review: read only the original open findings and remediation diff, then
   classify each finding as `ADDRESSED | NOT ADDRESSED`.
 - Add only new `Critical`/`Important` findings introduced by the remediation diff to
@@ -200,5 +211,5 @@ and `Quality/Standards` verdicts for:
 Then run binding verification. For browser-visible targets, obtain `tk-browser-verify`
 execution evidence separately from automated regression protection. When the
 `tk-pr-respond` SDD path completed this final whole-change review, do not repeat a
-generic second review. No SDD or local commit expands `push`, `merge`, or publication
-authority.
+generic second review. Clean up only run-owned optional ledger/transport artifacts. No
+SDD or local commit expands `push`, `merge`, or publication authority.

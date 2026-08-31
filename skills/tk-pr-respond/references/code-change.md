@@ -30,10 +30,11 @@ needed Ready Seed atomically, reread it, and require `<!-- tigerkit:seed -->` pl
 Replace only a proven TigerKit-owned Seed; preserve an unmarked, legacy, or identity-ambiguous file and return `Blocked`.
 
 The Seed uses Korean user-facing prose and includes the exact repository/PR/head, feedback and requested outcome,
-each finding's approved disposition and evidence, objective, scope and exclusions, decisions, implementation evidence, Reuse/Simplicity/
-Tests/Security/Experience judgments, per-AC verification, browser plan, publication boundary, and guidance for a
-lower-capability executor. Never rewrite an exact active Seed. Material feedback or state drift requires approval of the
-changed portion before atomic replacement. A no-Seed route remains bound to approved reviewer intent, tests, and publication.
+each finding's approved disposition and evidence, objective, scope and exclusions, decisions, implementation evidence,
+material Reuse/Simplicity/Tests/Security/Experience gaps or exceptions, per-AC verification, browser plan, publication
+boundary, and guidance for a lower-capability executor. Do not add readiness rows merely to state that an axis is ready or
+irrelevant. Never rewrite an exact active Seed. Material feedback or state drift requires approval of the changed portion
+before atomic replacement. A no-Seed route remains bound to approved reviewer intent, tests, and publication.
 
 ## Response delta discipline
 

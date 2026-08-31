@@ -51,9 +51,10 @@ waive an evidence conflict or readiness blocker.
 
 ## Engineering and testing readiness
 
-Evaluate Reuse, Simplicity, Testing, Security, and User experience independently as
-`준비됨 | 보완 필요 | 개선 한계 | 예외 승인 | 해당 없음`. `해당 없음` needs a reason. Investigate → improve → reassess
-before presenting `개선 한계`; only then explain gap/risk/mitigation and obtain an exception.
+Consider Reuse, Simplicity, Testing, Security, and User experience independently, but do not create a mandatory five-axis
+status matrix when an axis is plainly ready or irrelevant. Surface only a material gap, exception, or decision that changes
+the plan. For a surfaced axis use `보완 필요 | 개선 한계 | 예외 승인`; investigate → improve → reassess before presenting
+`개선 한계`, then explain gap/risk/mitigation and obtain an exception when one is actually required.
 
 For every code-changing path, inspect real tests and load [behavior-first testing](references/testing.md) before approval. Close
 observable behavior, regression/RED, focused command, required suite, mutation risk, and `N/A` versus engineering exception.
