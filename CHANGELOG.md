@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `fix(tk-pr-respond)`: 코드 변경을 반영한 `COMMENTED` 리뷰어를 현재 `head` 증거로 보존하고, `tk-pr-sweep`이 재리뷰 요청 또는 후속 리뷰를 결정론적으로 검증합니다.
 - `fix(tk-prep)`: 정량·배타적 코드 주석과 외부 응답 타입의 필수성·`null`·생략·형태 단정을 최종 후보의 근거로 검증합니다.
 - `feat(tk-grooming)`: 최신 `skill`과 충돌하거나 잘못된 동작을 유발한 지속 `rule`·`auto memory`를 근거 기반으로 진단하고 승인 후 정리합니다.
 - `fix(tk-browser-verify)`: 모든 `launch`·`attach` 경로에서 `headless`와 실행 소유권을 선증명하고, `evidence ignore` 확인·`visual` 축별 실측·자연어 화면 검증 `routing`을 필수화합니다.

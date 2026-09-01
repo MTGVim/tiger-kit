@@ -50,7 +50,8 @@ At minimum, inspect:
 - review decision
 - unresolved review threads
 - latest actionable feedback and author response
-- current re-review request for every active `CHANGES_REQUESTED` reviewer
+- current re-review request or post-summary review for every active human `CHANGES_REQUESTED` reviewer and every
+  request-eligible reviewer named by the current-head `tigerkit:pr-rereview` evidence
 - exactly one current-head summary marker after actionable threads close
 
 Do not treat a cached user-supplied list or a previous `.tigerkit/pr-sweep.md` as current truth.
@@ -116,8 +117,9 @@ Child owners own their detailed publication order, reviewer semantics, replies, 
 and retry rules. Sweep passes only the parent-approved scope and never broadens it.
 
 After each child returns, fresh-read GitHub state and verify the required outcome: exact head, checks, actionable thread
-closure, required re-review request, and any owner-required current-head summary. Do not trust a child receipt or repeat
-the child procedure in Sweep. Missing or irreconstructible evidence is `Unverifiable`; one PR's partial publication does
+closure, the current-head summary's exact re-review target markers, each required current request or later review, and any
+owner-required current-head summary. Do not infer code-change targets from `COMMENTED` state alone, trust a child receipt,
+or repeat the child procedure in Sweep. Missing or irreconstructible evidence is `Unverifiable`; one PR's partial publication does
 not broaden authority or stop independent rows.
 
 ## Completion response

@@ -70,6 +70,7 @@ export function requestedTeamForUser(pull, teamKeys) {
 
 export function computeReviewDecision(reviews, authorLogin) {
   const latestByReviewer = new Map();
+  const latestSubmissionByReviewer = new Map();
   const ordered = [...reviews].sort((a, b) =>
     (a.submitted_at || a.created_at || '').localeCompare(b.submitted_at || b.created_at || ''));
   for (const review of ordered) {
@@ -77,12 +78,14 @@ export function computeReviewDecision(reviews, authorLogin) {
     const state = review.state;
     if (!login || login === authorLogin || state === 'PENDING') continue;
     const timestamp = review.submitted_at || review.created_at || '';
+    const bot = review.user?.type === 'Bot' || login.endsWith('[bot]');
+    if (state !== 'DISMISSED') latestSubmissionByReviewer.set(login, { login, state, timestamp, bot });
     const previous = latestByReviewer.get(login);
     if (state === 'APPROVED' || state === 'CHANGES_REQUESTED') {
       latestByReviewer.set(login, {
         state,
         timestamp,
-        bot: review.user?.type === 'Bot' || login.endsWith('[bot]'),
+        bot,
       });
     } else if (state === 'DISMISSED') {
       latestByReviewer.delete(login);
@@ -91,6 +94,10 @@ export function computeReviewDecision(reviews, authorLogin) {
     }
   }
   const entries = [...latestByReviewer.entries()].map(([login, entry]) => ({ login, ...entry }));
+  const latestReviews = [...latestSubmissionByReviewer.values()].filter((entry) => !entry.bot);
+  const approvedReviewers = entries
+    .filter((entry) => entry.state === 'APPROVED' && !entry.bot)
+    .map((entry) => entry.login);
   const changes = entries.filter((entry) => entry.state === 'CHANGES_REQUESTED');
   if (changes.length) {
     return {
@@ -99,6 +106,8 @@ export function computeReviewDecision(reviews, authorLogin) {
       changeReviewers: changes
         .filter((entry) => !entry.bot)
         .map(({ login, timestamp }) => ({ login, timestamp })),
+      latestReviews,
+      approvedReviewers,
     };
   }
   const approvals = entries.filter((entry) => entry.state === 'APPROVED');
@@ -107,25 +116,53 @@ export function computeReviewDecision(reviews, authorLogin) {
       decision: 'APPROVED',
       decisiveAt: approvals.map((entry) => entry.timestamp).sort().at(-1) || null,
       changeReviewers: [],
+      latestReviews,
+      approvedReviewers,
     };
   }
-  return { decision: 'REVIEW_REQUIRED', decisiveAt: null, changeReviewers: [] };
+  return {
+    decision: 'REVIEW_REQUIRED',
+    decisiveAt: null,
+    changeReviewers: [],
+    latestReviews,
+    approvedReviewers,
+  };
 }
 
 export function summaryCommentMarker(headSha) {
   return `<!-- tigerkit:pr-summary:${headSha} -->`;
 }
 
-export function computeReReviewEvidence(pull, review, unresolvedThreads = []) {
+export function reReviewReviewerMarker(headSha, login) {
+  return `<!-- tigerkit:pr-rereview:${headSha}:${login} -->`;
+}
+
+export function computeReReviewEvidence(pull, review, unresolvedThreads = [], summaryComment = {}) {
   const requested = new Set((pull?.requested_reviewers || []).map((reviewer) => reviewer.login).filter(Boolean));
-  const expected = review?.decision === 'CHANGES_REQUESTED' && unresolvedThreads.length === 0
-    ? (review.changeReviewers || []).map((reviewer) => reviewer.login).filter(Boolean)
+  const expected = unresolvedThreads.length === 0
+    ? [...new Set([
+      ...(review?.decision === 'CHANGES_REQUESTED'
+        ? (review.changeReviewers || []).map((reviewer) => reviewer.login)
+        : []),
+      ...(summaryComment.reviewers || []),
+    ])].filter((login) => login
+      && login !== pull?.user?.login
+      && !login.endsWith('[bot]')
+      && !(review?.approvedReviewers || []).includes(login))
     : [];
-  const missing = [...new Set(expected)].filter((login) => !requested.has(login));
+  const latestReviews = new Map((review?.latestReviews || []).map((entry) => [entry.login, entry.timestamp]));
+  const reviewedAfterSummary = new Set(summaryComment.createdAt
+    ? expected.filter((login) => {
+      const timestamp = latestReviews.get(login);
+      return timestamp && new Date(timestamp) > new Date(summaryComment.createdAt);
+    })
+    : []);
+  const missing = expected.filter((login) => !requested.has(login) && !reviewedAfterSummary.has(login));
   return {
     required: expected.length > 0,
-    expectedReviewers: [...new Set(expected)],
+    expectedReviewers: expected,
     requestedReviewers: [...requested],
+    reviewedAfterSummary: [...reviewedAfterSummary],
     missingReviewers: missing,
     verified: missing.length === 0,
   };
@@ -135,6 +172,10 @@ export function computeSummaryCommentEvidence(issueComments, authorLogin, headSh
   const marker = summaryCommentMarker(headSha);
   const matching = issueComments.filter((comment) =>
     comment.user?.login === authorLogin && normalizeGitHubText(comment.body).includes(marker));
+  const reviewerPattern = /<!--\s*tigerkit:pr-rereview:([^:\s>]+):([A-Za-z0-9-]+)\s*-->/g;
+  const reviewers = matching.flatMap((comment) => [...normalizeGitHubText(comment.body).matchAll(reviewerPattern)]
+    .filter((match) => match[1] === headSha)
+    .map((match) => match[2]));
   return {
     required,
     marker,
@@ -142,6 +183,8 @@ export function computeSummaryCommentEvidence(issueComments, authorLogin, headSh
     verified: !required || matching.length === 1,
     missing: required && matching.length === 0,
     duplicate: required && matching.length > 1,
+    reviewers: [...new Set(reviewers)],
+    createdAt: matching.length === 1 ? matching[0].created_at || null : null,
     comments: matching.map((comment) => ({ id: comment.id || null, url: comment.html_url || null })),
   };
 }
@@ -285,7 +328,7 @@ function reviewThreads(repo, number) {
     repository(owner:$owner,name:$name) {
       pullRequest(number:$number) {
         reviewThreads(first:100,after:$endCursor) {
-          nodes { id isResolved isOutdated path line comments(first:1) { nodes { url } } }
+          nodes { id isResolved isOutdated path line comments(first:1) { nodes { id url author { login } } } }
           pageInfo { hasNextPage endCursor }
         }
       }
@@ -454,13 +497,14 @@ async function triageRepository(repo, login, teamKeys) {
     const check = checkState(repo, pull.head.sha);
     const changeResponse = review.decisiveAt
       && reply.responded.some((item) => item.responseAt && new Date(item.responseAt) > new Date(review.decisiveAt));
-    const reReview = computeReReviewEvidence(detail.data, review, unresolvedThreads);
+    const initialReReview = computeReReviewEvidence(detail.data, review, unresolvedThreads);
     const summaryComment = computeSummaryCommentEvidence(
       issueComments.data,
       login,
       detail.data.head?.sha || pull.head?.sha,
-      summaryCommentRequired(reReview.required, unresolvedThreads, reply),
+      summaryCommentRequired(initialReReview.required, unresolvedThreads, reply),
     );
+    const reReview = computeReReviewEvidence(detail.data, review, unresolvedThreads, summaryComment);
     const category = classifyPullRequest({
       draft: pull.draft,
       conflict: detail.data.mergeable_state === 'dirty',

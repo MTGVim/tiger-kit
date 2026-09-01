@@ -20,6 +20,7 @@ import {
   collectRows,
   normalizeGitHubText,
   parseRepoFromRemote,
+  reReviewReviewerMarker,
   requestedTeamForUser,
   stripNoise,
   summaryCommentMarker,
@@ -85,10 +86,18 @@ test('actionable text does not revive an old request after an LGTM-like message'
 });
 
 test('review decision keeps a later COMMENTED review from clearing changes requested', () => {
-  assert.deepEqual(computeReviewDecision([
+  const review = computeReviewDecision([
     { user: { login: 'reviewer' }, state: 'CHANGES_REQUESTED', submitted_at: '2026-01-01T00:00:00Z' },
     { user: { login: 'reviewer' }, state: 'COMMENTED', submitted_at: '2026-01-02T00:00:00Z' },
-  ], 'author').decision, 'CHANGES_REQUESTED');
+  ], 'author');
+  assert.equal(review.decision, 'CHANGES_REQUESTED');
+  assert.deepEqual(review.latestReviews, [{
+    login: 'reviewer',
+    state: 'COMMENTED',
+    timestamp: '2026-01-02T00:00:00Z',
+    bot: false,
+  }]);
+  assert.deepEqual(review.approvedReviewers, []);
 });
 
 test('detects a missing re-review request after all actionable threads close', () => {
@@ -122,6 +131,58 @@ test('does not require re-review requests for bot change reviews', () => {
   const evidence = computeReReviewEvidence({ requested_reviewers: [] }, review, []);
   assert.equal(evidence.required, false);
   assert.deepEqual(evidence.expectedReviewers, []);
+});
+
+test('detects a missing re-review request for a COMMENTED code-change reviewer', () => {
+  const headSha = 'abc123';
+  const review = computeReviewDecision([
+    { id: 1, user: { login: 'reviewer' }, state: 'COMMENTED', submitted_at: '2026-01-01T00:00:00Z' },
+  ], 'author');
+  const summary = computeSummaryCommentEvidence([{
+    user: { login: 'author' },
+    created_at: '2026-01-02T00:00:00Z',
+    body: `${summaryCommentMarker(headSha)}\n${reReviewReviewerMarker(headSha, 'reviewer')}`,
+  }], 'author', headSha, true);
+  const evidence = computeReReviewEvidence({ user: { login: 'author' }, requested_reviewers: [] }, review, [], summary);
+  assert.deepEqual(evidence.expectedReviewers, ['reviewer']);
+  assert.deepEqual(evidence.missingReviewers, ['reviewer']);
+  assert.equal(evidence.verified, false);
+});
+
+test('a review submitted after the current-head summary satisfies re-review evidence', () => {
+  const headSha = 'abc123';
+  const review = computeReviewDecision([
+    { id: 1, user: { login: 'reviewer' }, state: 'COMMENTED', submitted_at: '2026-01-03T00:00:00Z' },
+  ], 'author');
+  const summary = computeSummaryCommentEvidence([{
+    user: { login: 'author' },
+    created_at: '2026-01-02T00:00:00Z',
+    body: `${summaryCommentMarker(headSha)}\n${reReviewReviewerMarker(headSha, 'reviewer')}`,
+  }], 'author', headSha, true);
+  const evidence = computeReReviewEvidence({ user: { login: 'author' }, requested_reviewers: [] }, review, [], summary);
+  assert.deepEqual(evidence.reviewedAfterSummary, ['reviewer']);
+  assert.deepEqual(evidence.missingReviewers, []);
+  assert.equal(evidence.verified, true);
+});
+
+test('re-review evidence excludes the author, bots, and still-valid approvers', () => {
+  const headSha = 'abc123';
+  const review = computeReviewDecision([
+    { user: { login: 'approver' }, state: 'APPROVED', submitted_at: '2026-01-01T00:00:00Z' },
+  ], 'author');
+  const summary = computeSummaryCommentEvidence([{
+    user: { login: 'author' },
+    created_at: '2026-01-02T00:00:00Z',
+    body: [
+      summaryCommentMarker(headSha),
+      reReviewReviewerMarker(headSha, 'author'),
+      reReviewReviewerMarker(headSha, 'dependabot[bot]'),
+      reReviewReviewerMarker(headSha, 'approver'),
+    ].join('\n'),
+  }], 'author', headSha, true);
+  const evidence = computeReReviewEvidence({ user: { login: 'author' }, requested_reviewers: [] }, review, [], summary);
+  assert.deepEqual(evidence.expectedReviewers, []);
+  assert.equal(evidence.required, false);
 });
 
 test('requires exactly one current-head Korean summary comment', () => {

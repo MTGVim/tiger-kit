@@ -127,6 +127,12 @@ use, direct/SDD execution, review, and browser handoff.
 Immediately before any remote write, recheck the exact repository, authenticated identity, open PR, fresh remote head,
 local ancestry, thread/check state, and approved scope.
 
+Before replying to or resolving anything, freeze the human reviewer set attached to approved findings that produced a
+verified code change. Keep each finding-to-reviewer mapping through publication; do not try to reconstruct it from only
+the remaining unresolved threads. Exclude the PR author, authenticated user, bots, and still-valid approvers. Fresh-check
+whether each remaining reviewer can be requested on the repository. A human who is not request-eligible is mention-only;
+report that downgrade instead of failing the whole publication.
+
 Then perform only the approved actions in this order.
 
 1. For a code-changing response, push the verified commit to the exact branch. For reply-only work, do not push.
@@ -134,10 +140,12 @@ Then perform only the approved actions in this order.
 3. Post an exact reply to each feedback item with its disposition and evidence. A `follow-up` reply links its approved issue or states that no ticket was created.
 4. Resolve only threads whose exact reply succeeded and whose disposition was approved and verified. Keep unresolved ambiguity open.
 5. Fresh-read reviews/threads/checks.
-6. For every human reviewer whose current review state is `CHANGES_REQUESTED`, or whose feedback included an item classified as requiring a code change that resulted in a verified code change regardless of current review state (including `COMMENTED`), fresh-verify eligibility and request re-review for the exact current head. Exclude the author, authenticated user, bots, and still-valid approvers. Reply-only feedback with no code change does not require re-review.
-7. After all actionable threads are closed, when a re-review is required or actionable feedback was answered with no outstanding request, fresh-read the exact current head and post exactly one current-head summary comment containing `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, with `<HEAD_SHA>` replaced by the exact observed head SHA. If that marker already exists exactly once for the current head, do not post another. A summary for an earlier head does not satisfy this requirement. Write the summary as a real message to the reviewer, not an internal processing record. When the reviewer is identifiable, address them with `@mention` and map every finding to its disposition, evidence, code response, and follow-up ticket status in natural prose or a matching table. Do not publish a third-person completion log that only lists checks or totals.
+6. After all actionable threads are closed, when a re-review is required or actionable feedback was answered with no outstanding request, fresh-read the exact current head and post exactly one current-head summary comment containing `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, with `<HEAD_SHA>` replaced by the exact observed head SHA. For each request-eligible reviewer in the frozen code-change set, include one hidden `<!-- tigerkit:pr-rereview:<HEAD_SHA>:<LOGIN> -->` marker in that same comment. Do not add this marker for a bot, author, authenticated user, still-valid approver, mention-only reviewer, or reply-only finding. If the summary marker already exists exactly once for the current head, verify that its re-review markers match the required set instead of posting another comment. A summary for an earlier head does not satisfy this requirement. Write the summary as a real message to the reviewer, not an internal processing record. Address every identifiable human reviewer with `@mention`, map each finding to its disposition, evidence, code response, and follow-up ticket status in natural prose or a matching table, and state when a reviewer is mention-only. Do not publish a third-person completion log that only lists checks or totals.
+7. For every request-eligible reviewer in the frozen code-change set, and every human reviewer with a still-active `CHANGES_REQUESTED` review, request re-review for the exact current head unless that reviewer is already requested or has submitted a review after the current-head summary. A current request or a later review is completion evidence; the absence of a current request alone is not. Reply-only feedback with no code change does not require re-review.
 
-Do not claim publication complete unless fresh evidence proves every required `CHANGES_REQUESTED` reviewer re-review request, zero actionable unresolved threads, and any required current-head summary comment after the threads were closed. Missing evidence is `Unverifiable`, not complete.
+Do not claim publication complete unless fresh evidence proves every required reviewer's current request or post-summary
+review, zero actionable unresolved threads, and any required current-head summary comment after the threads were closed.
+Missing evidence is `Unverifiable`, not complete.
 Do not claim completion while any unresolved inline thread remains.
 Keep deferred, unverifiable, or failed feedback open.
 
