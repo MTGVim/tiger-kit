@@ -43,6 +43,14 @@ automated regression protection, and create only approved local commits. Invoke 
 browser-visible AC; its runtime evidence does not replace automated protection. SDD's whole-change final review already
 satisfies the broad review gate.
 
+During final exact-scope review, when the actual diff changes a public command, path, configuration key, environment
+variable, API contract, or installation/build/deployment/onboarding procedure, compare it with an exact repository-owned
+document only if preparation already identified that document as the owner of the changed fact. Correct only stale factual
+content in the same approved local change, using the repository's generator instead of editing generated output directly.
+Do not search the documentation tree, invent a new document, or edit voice, structure, strategy, or nearby prose. Skip this
+check when the public fact did not change or no exact owner was already known. A correction that requires a new product
+decision or material scope expansion returns to preparation for revision and reapproval.
+
 Material Goal/Scope/approved Decision/AC/security/required Verification drift returns to preparation for revision and
 reapproval. A reversible engineering ambiguity may receive a visible `Ruling:` with its reason and cost if wrong.
 Repeated blockers end as `Fail | Unverifiable | Blocked`, not an infinite loop.

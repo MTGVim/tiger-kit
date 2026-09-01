@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `fix(tk-prep)`: 최종 `diff`가 공개 사실을 바꿀 때 준비 단계에서 이미 식별한 정확한 저장소 문서의 사실 관계만 조건부로 동기화합니다.
 - `fix(tk-pr-respond)`: 코드 변경을 반영한 `COMMENTED` 리뷰어를 현재 `head` 증거로 보존하고, `tk-pr-sweep`이 재리뷰 요청 또는 후속 리뷰를 결정론적으로 검증합니다.
 - `fix(tk-prep)`: 정량·배타적 코드 주석과 외부 응답 타입의 필수성·`null`·생략·형태 단정을 최종 후보의 근거로 검증합니다.
 - `feat(tk-grooming)`: 최신 `skill`과 충돌하거나 잘못된 동작을 유발한 지속 `rule`·`auto memory`를 근거 기반으로 진단하고 승인 후 정리합니다.
