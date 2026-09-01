@@ -58,6 +58,9 @@ already complete, continue the ordinary preparation flow without frontier ceremo
 If the approved outcome may include local implementation, read [local execution](references/local-execution.md) before
 the final checkpoint. It owns checkout isolation, unrelated-work protection, direct execution, review, and local commit.
 If user-visible text is in scope, read [UI text evidence](references/ui-text.md) before accepting or restating a label.
+If implementation adds or changes a factual code comment/JSDoc claim or models an
+external response contract, read [committed assertion evidence](references/artifact-claims.md)
+before approval and apply it again to the final candidate.
 
 ## Understanding readiness
 

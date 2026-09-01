@@ -147,10 +147,10 @@
     {
       "id": "pr-open-recommends-semantic-stack-before-publication",
       "path": "boundary",
-      "prompt": "/tk-pr-open 구현과 검증이 끝난 현재 브랜치 하나에 `schema/types → API/core → UI/integration` 세 관심사가 함께 있고 서로 선형 의존합니다. working tree는 clean이고 같은 head PR은 없습니다. 아직 publication 승인은 하지 않았습니다.",
-      "expected_output": "단순 LOC 기준이 아니라 독립적인 review concern과 선형 의존 근거로 `stacked`를 추천하고, 원본 source branch/HEAD/tree를 보존한 bottom-to-top layer plan과 각 PR의 title/body/check/evidence를 준비한 뒤 어떤 branch reconstruction이나 remote write도 하지 않고 `Pending`으로 멈춘다.",
+      "prompt": "/tk-pr-open 구현과 검증이 끝난 현재 브랜치 하나에 `schema/types → API/core → UI/integration` 세 관심사가 함께 있고 서로 선형 의존합니다. `working tree`는 `clean`이고 같은 `head PR`은 없습니다. 아직 `publication` 승인은 하지 않았습니다.",
+      "expected_output": "단순 `LOC` 기준이 아니라 독립적인 `review concern`과 선형 의존 근거로 `stacked`를 추천하고, 원본 `source branch/HEAD/tree`를 보존한 `bottom-to-top layer plan`과 각 PR의 `title/body/check/evidence`를 준비한 뒤 어떤 `branch reconstruction`이나 `remote write`도 하지 않고 `Pending`으로 멈춘다.",
       "assertions": [
-        {"type":"judge","criterion":"`references/split-to-stack.md`의 retrospective 경로를 적용해 source branch를 rewrite하지 않는 `stacked` 계획을 제시한다. 각 layer는 한 문장 concern과 parent 관계가 명확하고, stack tip tree가 original tree와 같아야 한다는 invariant를 승인 packet에 포함한다."},
+        {"type":"judge","criterion":"`references/split-to-stack.md`의 `retrospective` 경로를 적용해 `source branch`를 `rewrite`하지 않는 `stacked` 계획을 제시한다. 각 `layer`는 한 문장 `concern`과 `parent` 관계가 명확하고, `stack tip tree`가 `original tree`와 같아야 한다는 `invariant`를 승인 `packet`에 포함한다."},
         {"type":"path_exists","path":".tigerkit/pr-open.md"},
         {"type":"path_text_has_hangul","path":".tigerkit/pr-open.md"},
         {"type":"path_text_has_korean_prose","path":".tigerkit/pr-open.md"},
@@ -164,10 +164,10 @@
     {
       "id": "pr-open-does-not-stack-large-coherent-churn-by-loc",
       "path": "boundary",
-      "prompt": "/tk-pr-open 현재 검증된 브랜치는 raw diff가 1500 LOC지만 실제 변경은 하나의 일관된 refactor이고 대부분 snapshot/generated churn입니다. 같은 head PR은 없고 아직 publication 승인은 하지 않았습니다.",
-      "expected_output": "LOC 숫자만으로 분할하지 않고 review concern이 하나라는 근거로 `single` PR을 추천한 뒤 기존 publication preview와 승인 대기 흐름을 유지한다.",
+      "prompt": "/tk-pr-open 현재 검증된 브랜치는 `raw diff`가 1500 `LOC`지만 실제 변경은 하나의 일관된 `refactor`이고 대부분 `snapshot/generated churn`입니다. 같은 `head PR`은 없고 아직 `publication` 승인은 하지 않았습니다.",
+      "expected_output": "`LOC` 숫자만으로 분할하지 않고 `review concern`이 하나라는 근거로 `single` PR을 추천한 뒤 기존 `publication preview`와 승인 대기 흐름을 유지한다.",
       "assertions": [
-        {"type":"judge","criterion":"고정된 200/400/500 LOC 임계값을 규칙으로 적용하지 않는다. generated/snapshot churn은 stack layer 생성 근거로 사용하지 않고 하나의 coherent change면 `single`을 유지한다."},
+        {"type":"judge","criterion":"고정된 200/400/500 `LOC` 임계값을 규칙으로 적용하지 않는다. `generated/snapshot churn`은 `stack layer` 생성 근거로 사용하지 않고 하나의 `coherent change`면 `single`을 유지한다."},
         {"type":"output_contains","text":"single"},
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"remote-publish"}},
         {"type":"git_head_unchanged"},
@@ -178,10 +178,10 @@
     {
       "id": "pr-open-publishes-approved-stack-losslessly",
       "path": "success",
-      "prompt": "[`active approved tk-pr-open`] `stacked` publication plan의 source branch/HEAD/tree, bottom-to-top branch chain, exact title/body, `ready` state, template/evidence와 layer verification을 승인했습니다. 계획대로 발행해 주세요.",
-      "expected_output": "source branch를 rewrite하지 않고 승인된 새 layer branch들만 재구성하고 각 layer를 검증한다. remote write 전에 stack tip tree와 original tree의 equality와 empty diff를 확인한 뒤 verified `github/gh-stack`으로 exact chain을 submit하고, auto-generated metadata를 승인된 title/body로 맞춘 다음 machine-readable stack state와 각 PR을 다시 읽어 결과를 보고한다.",
+      "prompt": "[`active approved tk-pr-open`] `stacked publication plan`의 `source branch/HEAD/tree`, `bottom-to-top branch chain`, `exact title/body`, `ready state`, `template/evidence`와 `layer verification`을 승인했습니다. 계획대로 발행해 주세요.",
+      "expected_output": "`source branch`를 `rewrite`하지 않고 승인된 새 `layer branch`들만 재구성하고 각 `layer`를 검증한다. `remote write` 전에 `stack tip tree`와 `original tree`의 `equality`와 `empty diff`를 확인한 뒤 `verified github/gh-stack`으로 `exact chain`을 `submit`하고, `auto-generated metadata`를 승인된 `title/body`로 맞춘 다음 `machine-readable stack state`와 각 PR을 다시 읽어 결과를 보고한다.",
       "assertions": [
-        {"type":"judge","criterion":"새 제품 코드를 작성하지 않고 approved source snapshot의 내용만 재배치한다. 원본 branch는 보존하며 `ready` stack에는 non-interactive `gh stack submit --auto --open` 의미를 사용한다. final tree invariant가 실패하거나 gh-stack provenance/state에 drift가 있으면 publish하지 않는다. submit이 일부 적용된 뒤 실패하면 원격 상태를 숨기거나 임의 rollback하지 않는다."},
+        {"type":"judge","criterion":"새 제품 코드를 작성하지 않고 `approved source snapshot`의 내용만 재배치한다. 원본 `branch`는 보존하며 `ready stack`에는 `non-interactive gh stack submit --auto --open` 의미를 사용한다. `final tree invariant`가 실패하거나 `gh-stack provenance/state`에 `drift`가 있으면 `publish`하지 않는다. `submit`이 일부 적용된 뒤 실패하면 원격 상태를 숨기거나 임의 `rollback`하지 않는다."},
         {"type":"event_count","event":{"type":"phase_invocation","phase":"remote-publish"},"min":1,"max":1},
         {"type":"output_contains","text":"tree"},
         {"type":"terminal_status","expected":"Pass"}

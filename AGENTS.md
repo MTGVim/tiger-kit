@@ -118,7 +118,7 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 - `tk-ask-repo`: `read-only` `repository` `investigation`.
 - `tk-audit`: `read-only` AUD `finding`.
 - `tk-browser-verify`: `browser-visible` `runtime` `evidence`와 `dev-server` `lifecycle`.
-- `tk-pr-open`: `exact` single-PR `create`/`update` 또는 승인된 retrospective stacked-PR `publication`.
+- `tk-pr-open`: `exact` `single-PR` `create`/`update` 또는 승인된 `retrospective stacked-PR publication`.
 - `tk-pr-respond`: `exact` `one-PR` `feedback`/지원 CI `resolution`과 `bounded` `publication`.
 - `tk-pr-rebase`: `exact` `rebase` + `force-with-lease`.
 - `tk-pr-sweep`: `deterministic` `multi-PR` `triage`와 승인된 `child` `maintenance`.

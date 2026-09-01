@@ -55,7 +55,7 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-grill` | `user` | 아이디어·계획·결정의 빠짐없는 점검과 확인된 `shared understanding` |
 | `tk-audit` | `user` | 읽기 전용 저장소 감사와 `AUD-*` 발견 사항 |
 | `tk-ask-repo` | `user` | 저장소 동작·값·영향·귀속을 근거와 함께 설명 |
-| `tk-pr-open` | `hybrid` | 검증된 `commit`의 `single | stacked` 발행 계획 + 제한된 push/PR 생성·갱신 |
+| `tk-pr-open` | `hybrid` | 검증된 `commit`의 `single | stacked` 발행 계획 + 제한된 `push`/PR 생성·갱신 |
 | `tk-pr-respond` | `hybrid` | 한 PR의 리뷰/지원 CI 분석·수정·검증·`reply`/`resolve` |
 | `tk-pr-rebase` | `hybrid` | 정확한 PR의 최신 `base` `rebase`와 제한된 `force-with-lease` |
 | `tk-pr-sweep` | `user` | 여러 PR의 결정론적 분류와 승인된 유지보수 묶음 |
@@ -161,7 +161,7 @@ tk-pr-sweep
 → final fresh triage
 ```
 
-`tk-pr-open`의 stacked 경로는 raw LOC 임계값으로 자동 분할하지 않습니다. 이미 검증된 브랜치에 여러 독립적인 review concern이 있고 하나의 선형 의존 흐름으로 나눌 수 있을 때만 제안하며, 원본 브랜치는 rewrite하지 않고 최상단 tree가 원본 tree와 정확히 같은지 검증한 뒤 공식 `github/gh-stack`으로 발행합니다.
+`tk-pr-open`의 `stacked` 경로는 `raw LOC` 임계값으로 자동 분할하지 않습니다. 이미 검증된 브랜치에 여러 독립적인 `review concern`이 있고 하나의 선형 의존 흐름으로 나눌 수 있을 때만 제안하며, 원본 브랜치는 `rewrite`하지 않고 최상단 `tree`가 원본 `tree`와 정확히 같은지 검증한 뒤 공식 `github/gh-stack`으로 발행합니다.
 
 PR 원격 권한은 서로 자동 확장되지 않습니다. `merge`, `tag`, `release`에는 별도 권한이 필요합니다.
 

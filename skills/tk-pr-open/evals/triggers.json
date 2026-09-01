@@ -13,7 +13,7 @@
     {"id":"validation-positive-compound","split":"validation","query":"현재 브랜치로 PR을 만들고 Ready Seed의 `browser evidence requirement`도 반영해줘","should_trigger":true,"facets":["compound"]},
     {"id":"validation-positive-update","split":"validation","query":"$tk-pr-open 이미 있는 같은 `head PR`의 본문과 `evidence`를 업데이트해줘","should_trigger":true,"facets":["formal","compound"]},
     {"id":"validation-positive-ready-work","split":"validation","query":"구현과 검증은 끝났어. 현재 커밋 그대로 PR 준비해줘","should_trigger":true,"facets":["casual","short"]},
-    {"id":"validation-positive-stack-current-branch","split":"validation","query":"구현은 다 끝났는데 현재 브랜치가 너무 복잡해. 리뷰 가능한 단위의 stacked PR로 쪼개서 올릴 계획을 준비해줘","should_trigger":true,"facets":["casual","compound"]},
+    {"id":"validation-positive-stack-current-branch","split":"validation","query":"구현은 다 끝났는데 현재 브랜치가 너무 복잡해. 리뷰 가능한 단위의 `stacked PR`로 쪼개서 올릴 계획을 준비해줘","should_trigger":true,"facets":["casual","compound"]},
 
     {"id":"validation-negative-summary","split":"validation","query":"이 PR 내용만 요약해 주세요.","should_trigger":false,"facets":["formal"]},
     {"id":"validation-negative-review","split":"validation","query":"리뷰 코멘트에 답변해줘","should_trigger":false,"facets":["casual"]},
