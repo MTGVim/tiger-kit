@@ -11,6 +11,23 @@ import validate_skills
 
 
 class EvalSotValidatorTest(unittest.TestCase):
+    def test_frontmatter_requires_standard_yaml_scalars(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "SKILL.md"
+            path.write_text(
+                "---\nname: tk-example\ndescription: 'foo: bar'\n---\nBody\n",
+                encoding="utf-8",
+            )
+            data, _ = validate_skills.frontmatter(path)
+            self.assertEqual(data["description"], "foo: bar")
+
+            path.write_text(
+                "---\nname: tk-example\ndescription: foo: bar\n---\nBody\n",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "invalid YAML frontmatter"):
+                validate_skills.frontmatter(path)
+
     def test_current_repository_is_structurally_valid(self) -> None:
         errors, _ = validate_skills.validate_all()
         self.assertEqual(errors, [])

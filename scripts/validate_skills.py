@@ -9,6 +9,8 @@ import sys
 from pathlib import Path
 from typing import Mapping
 
+import yaml
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -100,6 +102,16 @@ def frontmatter(path: Path) -> tuple[dict[str, object], str]:
         end = lines.index("---", 1)
     except ValueError as exc:
         raise ValueError("unterminated YAML frontmatter") from exc
+
+    raw_frontmatter = "\n".join(lines[1:end])
+    try:
+        parsed = yaml.safe_load(raw_frontmatter)
+    except yaml.YAMLError as exc:
+        mark = getattr(exc, "problem_mark", None)
+        location = f"line {mark.line + 2}" if mark is not None else "unknown line"
+        raise ValueError(f"invalid YAML frontmatter at {location}: {exc}") from exc
+    if not isinstance(parsed, Mapping):
+        raise ValueError("YAML frontmatter must be a mapping")
 
     data: dict[str, object] = {}
     stack: list[tuple[int, dict[str, object]]] = [(-1, data)]

@@ -27,6 +27,12 @@ reproduction rate, run quickly, and be `agent-runnable`. Preserve the command ac
 run and de-identified result as evidence. If it is slow or `flaky`, pin the
 `seed/input/environment` and reduce it to a minimal reproduction.
 
+For intermittent behavior, a negative probe reports only the observed sample and rate,
+such as `0 failures in 40 trials`; without a known rate and adequate sample, classify it
+as not yet reproduced rather than refuted. When a rare failure occurs, preserve its run-owned
+logs, screenshots, dumps, and other artifacts before any rerun that could overwrite or delete
+them; without that evidence, keep the cause unproven.
+
 If no adequate loop can be built, record the attempted `seam`s, failure evidence, and
 remaining risk. A `Testability/architecture gap` may become a finding candidate, but do
 not replace it with an arbitrary abstraction or speculative fix.

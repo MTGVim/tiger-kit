@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `fix(validation)`: `SKILL.md` `frontmatter`를 표준 `YAML`로 선검증하여 `lenient parser`가 잘못된 `scalar`를 허용하지 않도록 합니다.
+- `fix(diagnosis)`: 간헐적 실패의 음성 결과에 표본 수와 관측 실패율을 남기고, 재실행 전 기존 실패 증거를 보존합니다.
 - `fix(tk-browser-verify)`: 최종 `AC` 스크린샷 근거가 비어 있지 않을 뿐 아니라 해당 `criterion`과 필요한 맥락을 실제로 포함하는지 확인합니다.
 - `fix(tk-prep)`: 최종 `diff`가 공개 사실을 바꿀 때 준비 단계에서 이미 식별한 정확한 저장소 문서의 사실 관계만 조건부로 동기화합니다.
 - `fix(tk-pr-respond)`: 코드 변경을 반영한 `COMMENTED` 리뷰어를 현재 `head` 증거로 보존하고, `tk-pr-sweep`이 재리뷰 요청 또는 후속 리뷰를 결정론적으로 검증합니다.
