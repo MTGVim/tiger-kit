@@ -136,6 +136,7 @@
     "tk-browser-verify:behavior:browser-auth-unavailable-stops-before-mutation",
     "tk-browser-verify:behavior:browser-rereads-evidence-before-rerun",
     "tk-browser-verify:behavior:browser-composes-with-automated-regression",
+    "tk-browser-verify:behavior:browser-rejects-off-capture-criterion-evidence",
     "tk-browser-verify:behavior:browser-focused-viewport-is-default",
     "tk-browser-verify:behavior:browser-scrolls-and-orders-separated-evidence",
     "tk-browser-verify:behavior:browser-fullpage-only-for-page-wide-ac",
