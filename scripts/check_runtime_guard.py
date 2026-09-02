@@ -13,6 +13,7 @@ RUNTIME_GUARD_CONSUMERS = (
     "tk-browser-verify",
     "tk-pr-respond",
     "tk-pr-sweep",
+    "tk-review",
     "tk-skill-diagnose",
 )
 RUNTIME_GUARD_MARKER = "<!-- tigerkit:retrieved-evidence-boundary -->"

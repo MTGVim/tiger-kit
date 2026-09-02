@@ -382,6 +382,44 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "grooming-instruction-economy-loads-branch-reference",
+      "path": "success",
+      "prompt": "/tk-grooming 기존 `skill` 본문에서 일부 분기만 쓰는 상세 절차와 `stale environment cache`를 줄일 수 있는지 `instruction economy`를 `report-only`로 감사해줘.",
+      "expected_output": "`instruction-economy reference`를 읽고 필요한 분기와 불필요한 분기를 비교해 근거가 있는 `tighten`만 제안한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`instruction economy branch`의 `no-skill/prior behavior`, `precise pointer`, `fresh source-of-truth`, `live safety guard` 기준을 적용하고 단순 길이나 `token` 감소를 성공으로 취급하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "grooming-memory-only-skips-instruction-economy-reference",
+      "path": "boundary",
+      "prompt": "/tk-grooming 사용자 자동 메모리 한 항목이 최신 `skill`과 충돌하는지 `freshness`와 `attribution`만 `report-only`로 확인해줘. `skill` 본문 길이나 `pointer` 최적화는 범위 밖이다.",
+      "expected_output": "`persistent-context` 근거만 사용하고 `instruction-economy reference`를 읽지 않는다.",
+      "assertions": [
+        {
+          "type": "path_not_read",
+          "path": "skills/tk-grooming/references/instruction-economy.md"
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "terminal_status",
+          "allowed": ["Pass", "Unverifiable", "Blocked"]
+        }
+      ]
     }
   ]
 }

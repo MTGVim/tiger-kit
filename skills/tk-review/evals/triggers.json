@@ -1,0 +1,36 @@
+{
+  "skill": "tk-review",
+  "kind": "user-invoked",
+  "queries": [
+    {
+      "id": "train-explicit-range",
+      "split": "train",
+      "query": "$tk-review HEAD^..HEAD 커밋 범위를 검토해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "train-implicit-block",
+      "split": "train",
+      "query": "HEAD^..HEAD 커밋 범위를 검토해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-explicit-pr",
+      "split": "validation",
+      "query": "/tk-review GitHub PR #42를 읽기 전용으로 검토해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-dirty-negative",
+      "split": "validation",
+      "query": "아직 커밋하지 않은 작업 트리 `diff`를 리뷰하고 고쳐줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-review-response-negative",
+      "split": "validation",
+      "query": "PR 리뷰 코멘트를 반영하고 답글과 재리뷰 요청까지 해줘",
+      "should_trigger": false
+    }
+  ]
+}

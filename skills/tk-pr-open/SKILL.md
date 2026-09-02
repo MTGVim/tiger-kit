@@ -117,17 +117,7 @@ Title convention basis: <merged-title evidence | none observed>
 Body
 
 Stacked publication:
-Source branch: <preserved original branch>
-Stack tooling/provenance: <verified github/gh-stack | unavailable>
-Layers bottom → top:
-- Branch
-- Parent/base
-- Reconstructed commit/tree
-- Exact title/body
-- Title convention basis
-- Template/evidence ownership
-- Layer verification
-Expected stack-tip tree: <original tree>
+See the required plan fields in [retrospective stack split](references/split-to-stack.md).
 ```
 
 This artifact owns only the current PR publication plan, not the product work plan or `worker` state.
@@ -138,10 +128,9 @@ Present the following naturally to the user instead of hiding information behind
 
 - Summary of included changes
 - Recommended `single | stacked` publication shape and why
-- For a stack, the exact bottom-to-top layer chain and the preserved original tree invariant
 - Exact title/body or important template sections for every PR being created or updated
 - Title-convention evidence and any mismatch with template guidance
-- Base/head or stack branches
+- Base/head; for a stack also present the exact bottom-to-top branches and preserved original tree invariant
 - Valid `PR state`
 - Check/evidence state
 - Exclusions/risks

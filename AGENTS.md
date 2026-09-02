@@ -119,6 +119,7 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 - `tk-prep`: 준비, 최종 승인, 승인된 격리 로컬 구현/검증/`commit`. `push`/발행 금지.
 - `tk-ask-repo`: `read-only` `repository` `investigation`.
 - `tk-audit`: `read-only` AUD `finding`.
+- `tk-review`: 명시된 `exact committed range/PR` 하나의 `read-only` `Spec/AC` + `Quality/Standards` 판정.
 - `tk-browser-verify`: `browser-visible` `runtime` `evidence`와 `dev-server` `lifecycle`.
 - `tk-pr-open`: `exact` `single-PR` `create`/`update` 또는 승인된 `retrospective stacked-PR publication`.
 - `tk-pr-respond`: `exact` `one-PR` `feedback`/지원 CI `resolution`과 `bounded` `publication`.
@@ -127,7 +128,8 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 - `tk-learn`: `reusable` `skill`의 `semantic` `create | improve | merge` `writer`.
 - `tk-domain`: `repository` 고유 `canonical domain vocabulary`의 `CONTEXT.md`와 `sparse durable decision/ADR context` 작성·정제 담당자.
 
-`Push`/PR/`merge`/`tag`/`release`/`publish`는 각각 해당 `owner`의 명시 `authority` 없이는 확장하지 않습니다.
+`Push`/PR/`merge`/`publish`는 각각 해당 `owner`의 명시 `authority` 없이는 확장하지 않습니다.
+TigerKit 저장소는 새 `tag`나 별도 `release`를 발행하지 않으며 기존 태그는 과거 이력으로만 보존합니다.
 
 ## PR `fresh-state` 원칙
 
@@ -222,7 +224,7 @@ git diff --check
 
 ```bash
 python3 scripts/run_seed_release_gate.py \
-  --baseline "$(git describe --tags --abbrev=0)" \
+  --baseline "$(git rev-parse origin/main)" \
   --candidate HEAD \
   --output /tmp/tigerkit-release-gate
 ```

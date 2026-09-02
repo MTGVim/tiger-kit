@@ -93,6 +93,24 @@ For every layer, record before approval:
 
 A file must have one deterministic state at each layer. If path-level reconstruction cannot express the intended intermediate state without authoring new product code, merge concerns until it can.
 
+Record the stacked section of `.tigerkit/pr-open.md` with these exact fields:
+
+```text
+Source branch: <preserved original branch>
+Stack tooling/provenance: <verified github/gh-stack | unavailable>
+Layers bottom → top:
+- Branch
+- Parent/base
+- Reconstructed commit/tree
+- Exact title/body
+- Title convention basis
+- Template/evidence ownership
+- Layer verification
+Expected stack-tip tree: <original tree>
+```
+
+Before approval, present the exact bottom-to-top chain and the preserved original tree invariant naturally to the user.
+
 ## Reconstruct beside the source branch
 
 Only after exact approval, create new stack branches without mutating the source branch.

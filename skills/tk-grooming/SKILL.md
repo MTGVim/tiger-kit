@@ -37,10 +37,10 @@ When ownership evidence or apply approval is needed, prefer the host's native st
 5. `description shortcut audit`: Before any frontmatter description rewrite, identify
    the exact process-summary phrase that could substitute for loading the body, preserve
    the smallest routing discriminator, and compare prior/candidate routing and body behavior.
-6. `instruction economy audit`: For the selected existing skills and persistent context,
-   inspect conditional
-   reference pointers, duplicated environment facts, behavioral no-ops, stale sediment,
-   and branch-specific prose that unnecessarily stays on the main execution path.
+6. `instruction economy audit`: When existing skill or persistent-instruction load is in
+   scope, read [instruction economy](references/instruction-economy.md) and apply its
+   branch-aware behavior comparison. Do not load it for a persistent-memory-only incident
+   whose question is solely freshness, conflict, or attribution.
 7. `classification/proposal`: Apply the
    [placement criteria table](references/repository-placement.md) to skill candidates.
    Classify skill actions as `keep | keep (vendor) | tighten | merge | split | move |
@@ -75,35 +75,6 @@ enough to become a shortcut around body loading. Preserve only the smallest trig
 symptom, intended scope, and positive/negative routing discriminator needed to decide
 whether the skill should load. Do not shorten mechanically. If a longer description is
 necessary to avoid false-positive or false-negative invocation, return `keep`/no-op.
-
-For an instruction-economy audit:
-
-- Treat a description or conditional reference link as a context pointer. A useful
-  pointer names the material and the distinct branch/condition that needs it; body or
-  workflow summaries do not make the pointer stronger.
-- Treat a current package/config value, directory inventory, or host/tool capability as
-  an environment-cache candidate only when a cheap fresh lookup is the real source of
-  truth. Commands, paths, literals, or state that the skill intentionally owns as a
-  contract are not stale merely because they are concrete.
-- Call something a behavioral no-op only when removing it preserves the same observable
-  behavior against a no-skill/prior baseline. Do not infer no-op from prose style.
-- Move branch-specific reference out of the main path only when a precise pointer still
-  causes the branch that needs it to read and apply it. Always-needed safety/authority
-  guards stay inline.
-- Treat long-but-live instruction as `keep`; `sprawl` or `sediment` needs evidence that
-  the material is irrelevant, duplicated, stale, or on the wrong branch.
-- Treat an active skill as the current behavior owner only when package and installation
-  evidence establish that status. Compare exact statements and applicability before
-  labeling persistent context `stale override`; recency, specificity, or load order alone
-  does not establish which instruction caused behavior.
-
-Before proposing `tighten`, compare the prior and candidate against the relevant existing
-behavior cases. For a description change, include train/validation trigger cases and body
-behavior. For a pointer, cache, or no-op change, include the branch that needs the rule and
-a branch that does not. The candidate must preserve valid behavior and safety while
-removing only proven load. Trigger success, source-text presence, line count, or token
-reduction alone does not prove compliance. If semantic behavior would change, report an
-exact pending proposal for `tk-learn` instead of applying it here.
 
 Determine ownership from confirmed paths and link targets, package-manager
 installation locations, updater/version artifacts, and verifiable author history.

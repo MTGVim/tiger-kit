@@ -38,6 +38,8 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
           ↓
        commit
           ↓
+ optional tk-review
+          ↓
      tk-pr-open
 ```
 
@@ -55,6 +57,7 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-grill` | `user` | 아이디어·계획·결정의 빠짐없는 점검과 확인된 `shared understanding` |
 | `tk-audit` | `user` | 읽기 전용 저장소 감사와 `AUD-*` 발견 사항 |
 | `tk-ask-repo` | `user` | 저장소 동작·값·영향·귀속을 근거와 함께 설명 |
+| `tk-review` | `user` | 정확한 커밋 범위/PR의 읽기 전용 `Spec/AC` + `Quality/Standards` 검토 |
 | `tk-pr-open` | `hybrid` | 검증된 `commit`의 `single | stacked` 발행 계획 + 제한된 `push`/PR 생성·갱신 |
 | `tk-pr-respond` | `hybrid` | 한 PR의 리뷰/지원 CI 분석·수정·검증·`reply`/`resolve` |
 | `tk-pr-rebase` | `hybrid` | 정확한 PR의 최신 `base` `rebase`와 제한된 `force-with-lease` |
@@ -66,7 +69,7 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-skill-diagnose` | `hybrid` | `Agent Skill` 사고 재현·격리와 `learn-ready` 인계 |
 | `tk-learn` | `hybrid` | 재사용 가능한 스킬의 생성/개선/병합 작성자 |
 | `tk-domain` | `hybrid` | 저장소 고유 용어의 `canonical vocabulary`와 `sparse durable decision/ADR context` 작성·정제 |
-| `tk-grooming` | `hybrid` | 저장소/사용자 스킬 목록 감사 |
+| `tk-grooming` | `hybrid` | 기존 스킬·지속 `rule`·`auto memory`의 중복·충돌·낡은 지침 감사 |
 | `tk-handoff` | `hybrid` | 진행 중 작업의 재개용 상태 사진 |
 | `tk-merge-conflict` | `hybrid` | 활성 Git 충돌 의도 복원 |
 | `tk-wizard` | `hybrid` | 사람이 직접 해야 하는 설정·인증·이관 절차 안내 |
@@ -90,18 +93,19 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 AC와 검증 방법이 실행 가능하고, 중대한 근거 충돌이나 차단 요인이 없어야 합니다.
 사용자 승인으로 근거 충돌이나 준비 차단 요인을 우회할 수 없습니다.
 
-엔지니어링 준비도는 각 축을 독립적으로 확인합니다.
+엔지니어링 준비도는 `Reuse`, `Simplicity`, `Testing`, `Security`, `User experience`를 독립적으로 확인하되,
+준비됐거나 무관한 축을 의례적인 상태표로 출력하지 않습니다. 계획을 바꾸는 공백·예외·결정만 드러냅니다.
 
 ```text
 Reuse
 Simplicity
-Tests
+Testing
 Security
-Experience
+User experience
 ```
 
-사용자 표시 상태는 `준비됨 | 보완 필요 | 개선 한계 | 예외 승인 | 해당 없음`입니다.
-미달 축은 먼저 추가 조사와 접근 개선을 시도하고, 더 끌어올릴 수 없을 때만 이유·남은 위험·완화책과 함께 예외 승인을 받습니다.
+드러난 축에는 `보완 필요 | 개선 한계 | 예외 승인`을 사용합니다. 먼저 추가 조사와 접근 개선을 시도하고,
+더 끌어올릴 수 없을 때만 이유·남은 위험·완화책과 함께 실제로 필요한 예외 승인을 받습니다.
 
 Ready `.tigerkit/seed.md`는 필요할 때만 만드는 현재 작업의 자체 완결 실행 맥락입니다. 인터뷰 중
 `Status: Pending` 파일은 만들지 않고, 새 `Seed`는 TigerKit 소유 표시와 현재 작업 식별자를 가집니다.
@@ -138,6 +142,10 @@ Ready `.tigerkit/seed.md`는 필요할 때만 만드는 현재 작업의 자체 
 
 ## PR 흐름
 
+`tk-review`는 구현 중 자동 절차가 아닙니다. 사용자가 명시적으로 호출했을 때만 깨끗하게 커밋된 정확한
+`BASE..HEAD` 또는 GitHub PR 하나를 읽기 전용으로 검토하고, `Spec/AC`와 `Quality/Standards`를 독립 판정합니다.
+작업 중인 `dirty diff`의 검토는 `tk-prep` 실행 경로가 계속 소유하며, 외부 리뷰 대응은 `tk-pr-respond`가 소유합니다.
+
 ```text
 tk-pr-open
 → verified branch/HEAD/template/evidence + reviewability preflight
@@ -171,7 +179,8 @@ tk-pr-sweep
 
 `tk-pr-open`의 `stacked` 경로는 `raw LOC` 임계값으로 자동 분할하지 않습니다. 이미 검증된 브랜치에 여러 독립적인 `review concern`이 있고 하나의 선형 의존 흐름으로 나눌 수 있을 때만 제안하며, 원본 브랜치는 `rewrite`하지 않고 최상단 `tree`가 원본 `tree`와 정확히 같은지 검증한 뒤 공식 `github/gh-stack`으로 발행합니다.
 
-PR 원격 권한은 서로 자동 확장되지 않습니다. `merge`, `tag`, `release`에는 별도 권한이 필요합니다.
+PR 원격 권한은 서로 자동 확장되지 않습니다. `merge`나 다른 발행 권한에는 별도 승인이 필요합니다.
+TigerKit은 새 `tag`나 별도 `release`를 발행하지 않으며 기존 태그는 과거 이력으로만 보존합니다.
 
 ## 상태와 설정
 
@@ -248,14 +257,13 @@ git diff --check
 
 ```bash
 python3 scripts/run_seed_release_gate.py \
-  --baseline "$(git describe --tags --abbrev=0)" \
+  --baseline "$(git rev-parse origin/main)" \
   --candidate HEAD \
   --output /tmp/tigerkit-release-gate
 ```
 
 모든 검증은 로컬 전용입니다.
 
-릴리스 이력은 Git 태그와 `commit` 기록을 기준으로 확인하며 별도 `CHANGELOG.md`를 유지하지 않습니다.
-필요한 경우 GitHub가 생성한 릴리스 노트를 사용합니다.
+변경 이력은 `commit` 기록으로 확인하며 별도 `CHANGELOG.md`, 신규 `tag`, 별도 `release`를 유지하지 않습니다.
 
 이전 구조에서 갱신한다면 [MIGRATION.md](MIGRATION.md)를 참고하세요.

@@ -1038,6 +1038,52 @@
           "expected": "Pass"
         }
       ]
+    },
+    {
+      "id": "prep-bounds-concurrent-pr-collision-preflight",
+      "path": "success",
+      "prompt": "/tk-prep `shared checkout response schema`와 `consumer`를 바꾸는 작업을 준비해줘. 계획 경로와 소유 계약은 확인됐고 `GitHub remote`에는 `open/draft PR`이 47개 있다. 현재 브랜치의 자기 PR도 있고, 일부 PR은 제목만 비슷하며, 최근 갱신/번호 순으로 정렬한 상위 30개 안의 PR #91은 같은 `schema symbol`과 다른 파일의 옛 패턴 `consumer`를 함께 바꾼다.",
+      "expected_output": "자기 PR을 제외하고 최근 갱신 순서의 30개 `metadata/changed-path`를 완전 조회한다. 약한 신호도 세부 후보에는 쓸 수 있으나 충돌 근거로 쓰지 않으며, 세부 5개·전체 `diff` 3개 예산 안에서 #91의 실제 계약 충돌에 `coordinate | sequence | replan`을 제안하고 미검토 범위를 공개한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`concurrent-prs.md`를 적용해 최근 갱신/번호 순서를 고정한다. 자기 PR은 저장소·번호·`base/head`가 정확할 때 하나만 제외하고 동일 `head` 복수 PR이면 제외하지 않는다. `exact path/symbol/producer-consumer`는 강한 후보이고 제목 같은 약한 신호도 제한된 상세 후보로 허용하되 충돌 판정에는 쓰지 않는다. 판정 직전 `top-30`과 조사한 모든 PR을 재확인하고, 관측한 30/5/3 사용량·완전 조회·미검토 범위를 밝히며 확인된 #91에는 `coordinate | sequence | replan`을 제시한다."
+        },
+        {
+          "type": "output_contains",
+          "text": "30/5/3"
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "terminal_status",
+          "allowed": ["Pending", "Pass"]
+        }
+      ]
+    },
+    {
+      "id": "prep-prose-change-skips-concurrent-pr-scan",
+      "path": "boundary",
+      "prompt": "/tk-prep `README`의 비규범 문장 하나의 오탈자만 고치는 작업을 준비해줘. `GitHub remote`는 있지만 구현 계약이나 공유 동작은 바뀌지 않는다.",
+      "expected_output": "`concurrent PR preflight`를 로드하거나 열린 PR을 조회하지 않고 비규범 문구 준비 흐름을 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "비규범 문구만 바꾸는 경우 열린 PR `collision scan` 세레모니를 추가하지 않고 생략 이유만 필요할 때 짧게 남긴다. `SKILL.md`, 평가 계약, 공개 명령/설정 소유 문서는 이 예외로 분류하지 않는다."
+        },
+        {
+          "type": "path_not_read",
+          "path": "skills/tk-prep/references/concurrent-prs.md"
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pending"
+        }
+      ]
     }
   ]
 }

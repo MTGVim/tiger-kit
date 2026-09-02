@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 
 import validate_skills
 
 ROOT = Path(__file__).resolve().parents[1]
+README_SKILL_ROW = re.compile(r"^\|\s*`(tk-[a-z0-9-]+)`\s*\|")
 
 
 def positive_trigger_count(skill_dir: Path) -> int:
@@ -34,6 +36,85 @@ def behavior_paths(skill_dir: Path) -> set[str]:
     }
 
 
+def readme_skill_rows(root: Path = ROOT) -> list[str]:
+    path = root / "README.md"
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeError):
+        return []
+
+    inside = False
+    fenced = False
+    comment = False
+    table = False
+    separator = False
+    result: list[str] = []
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith(("```", "~~~")):
+            fenced = not fenced
+            continue
+        if fenced:
+            continue
+        if comment:
+            if "-->" in line:
+                line = line.split("-->", 1)[1]
+                comment = False
+            else:
+                continue
+        while "<!--" in line:
+            before, after = line.split("<!--", 1)
+            if "-->" in after:
+                line = before + after.split("-->", 1)[1]
+            else:
+                line = before
+                comment = True
+                break
+        stripped = line.strip()
+
+        if stripped == "## 스킬 구성":
+            inside = True
+            continue
+        if inside and stripped.startswith("## "):
+            break
+        if not inside:
+            continue
+        if not table:
+            if stripped.startswith("| 스킬 |"):
+                table = True
+            continue
+        if not separator:
+            if re.match(r"^\|\s*:?-{3,}", stripped):
+                separator = True
+            elif stripped:
+                table = False
+            continue
+        if not stripped:
+            break
+        if stripped and not stripped.startswith("|"):
+            break
+        if match := README_SKILL_ROW.match(stripped):
+            result.append(match.group(1))
+    return result
+
+
+def readme_skill_names(root: Path = ROOT) -> set[str]:
+    return set(readme_skill_rows(root))
+
+
+def readme_catalog_parity(
+    skill_names: set[str], root: Path = ROOT
+) -> dict[str, list[str]]:
+    rows = readme_skill_rows(root)
+    documented = set(rows)
+    duplicates = sorted(name for name in documented if rows.count(name) != 1)
+    return {
+        "missing": sorted(skill_names - documented),
+        "stale": sorted(documented - skill_names),
+        "duplicates": duplicates,
+    }
+
+
 def catalog_consumers(skill_names: set[str]) -> dict[str, set[str]]:
     value = json.loads((ROOT / "evals/catalog-routing.json").read_text(encoding="utf-8"))
     result = {name: set() for name in skill_names}
@@ -55,6 +136,7 @@ def audit() -> dict[str, object]:
     skills = validate_skills.discover_skills()
     names = set(skills)
     catalog = catalog_consumers(names)
+    readme_parity = readme_catalog_parity(names)
     rows: list[dict[str, object]] = []
 
     for name, (skill_dir, data, _) in sorted(skills.items()):
@@ -101,11 +183,13 @@ def audit() -> dict[str, object]:
         for row in rows
         if row["disposition"] != "ContractComplete"
     ]
+    parity_ok = not any(readme_parity.values())
     return {
-        "status": "Pass" if not review else "Review",
+        "status": "Pass" if not review and parity_ok else "Review",
         "skill_count": len(rows),
         "contract_complete_count": len(rows) - len(review),
         "review": review,
+        "readme_catalog": readme_parity,
         "skills": rows,
     }
 

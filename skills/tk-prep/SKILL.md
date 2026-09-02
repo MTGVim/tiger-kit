@@ -67,6 +67,9 @@ If user-visible text is in scope, read [UI text evidence](references/ui-text.md)
 If implementation adds or changes a factual code comment/JSDoc claim or models an
 external response contract, read [committed assertion evidence](references/artifact-claims.md)
 before approval and apply it again to the final candidate.
+After planned paths, symbols, or owning contracts are known, read
+[concurrent PR preflight](references/concurrent-prs.md) only for a material code/contract/shared-pattern
+change with suitable GitHub read access. Keep non-normative prose, isolated-asset, offline, and unavailable-remote paths on the ordinary preparation flow.
 
 ## Understanding readiness
 

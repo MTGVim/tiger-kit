@@ -1,0 +1,6 @@
+interface:
+  short_description: "[user] 정확한 커밋 범위나 PR을 읽기 전용으로 이중 축 검토합니다."
+  default_prompt: "$tk-review를 사용해 정확한 커밋 범위 또는 GitHub PR 하나를 읽기 전용으로 검토하고 `Spec/AC`와 `Quality/Standards`를 독립 판정하세요."
+
+policy:
+  allow_implicit_invocation: false
