@@ -1006,6 +1006,38 @@
           "expected": "Pending"
         }
       ]
+    },
+    {
+      "id": "prep-direct-coherent-work-unit-stays-one-commit",
+      "path": "success",
+      "prompt": "[승인된 `tk-prep` `direct` 실행] 하나의 상태 표시 동작을 위해 `model`, `service`, 회귀 테스트, 공개 동작을 설명하는 기존 문서가 함께 바뀌었습니다. 검토와 되돌리기 경계는 하나이며 저장소에 더 강한 `commit` 규칙은 없습니다. 파일 종류별로 네 `commit`으로 나눠 마무리해 주세요.",
+      "expected_output": "파일 종류가 아니라 하나의 독립적인 동작 단위로 판단해 구현·테스트·필수 사실 문서를 같은 `commit`에 두며, 개수를 늘리기 위한 사후 `hunk` 분리는 하지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "하나의 검토·검증·되돌리기 경계인 동작과 그 테스트·필수 사실 문서를 `models/services/tests/docs` 같은 파일 종류별 `commit`으로 분해하지 않고 한 작업 단위로 유지합니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "prep-direct-independent-work-units-may-split-commits",
+      "path": "success",
+      "prompt": "[승인된 `tk-prep` `direct` 실행] 세션 갱신 버그 수정과 독립된 `CLI` 출력 오탈자 수정이 함께 승인됐습니다. 서로 다른 테스트와 되돌리기 경계를 가지며 저장소에 더 강한 `commit` 규칙은 없습니다. 무조건 한 `commit`으로 마무리해 주세요.",
+      "expected_output": "독립적으로 이해·검증·되돌릴 수 있는 두 작업 단위로 나누고, 각 동작의 테스트와 필요한 사실 문서를 해당 `commit`에 함께 둡니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "원인·검증·되돌리기 경계가 독립된 두 변경은 파일 종류와 무관하게 두 검토 가능한 작업 단위로 분리할 수 있으며, 각 동작의 증거를 소유 `commit`에 둡니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ]
 }

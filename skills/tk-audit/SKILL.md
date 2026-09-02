@@ -42,6 +42,12 @@ When user-owned clarification is needed, prefer the host's native structured que
 3. Reopen cited evidence to remove duplicates, intended behavior, and incorrect attribution.
 4. Sort `finding`s by impact ÷ `effort`, then `confidence`, `fix risk`, and `dependency`.
 
+Before assigning IDs, cluster candidates only when repository or runtime evidence verifies the same causal root,
+correction boundary, and failure class. Emit one root `finding` with its affected surfaces or manifestations when one
+correction can remove and verify them together. Keep separate `finding`s for independent causes, rollback boundaries,
+risks, or verification surfaces. Similar symptoms and a report's claimed mechanism are hypotheses, not clustering
+evidence; N reports do not imply N patches.
+
 For a potential architecture finding, read ADR rationale only when it directly owns the observed trade-off. Do not
 report a deliberate ADR trade-off as a generic smell. Surface `revisit ADR` only when current evidence shows real
 friction or changed constraints, and never scan an unrelated ADR or context tree.

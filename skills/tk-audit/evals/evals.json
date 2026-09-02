@@ -233,6 +233,39 @@
         {"type":"changed_paths_equal","paths":[]},
         {"type":"terminal_status","expected":"Pass"}
       ]
+    },
+    {
+      "id": "audit-clusters-verified-shared-causal-root",
+      "path": "success",
+      "prompt": "$tk-audit 세 화면의 오래된 표시가 모두 같은 `invalidateCache` 키 누락에서 발생하며, 저장소와 실행 근거상 하나의 수정과 통합 테스트로 함께 제거·검증됩니다. 화면마다 별도 `AUD-*`를 만들어 주세요.",
+      "expected_output": "요청된 증상별 ID 증식을 거부하고 하나의 원인 `finding`에 세 `affected surface`와 `manifestation`을 연결합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "검증된 동일 인과 원인, 수정 경계, 실패 유형을 공유하고 한 수정으로 함께 제거·검증되는 세 증상을 하나의 `root finding`으로 묶고 영향을 받은 화면을 연결합니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "audit-keeps-similar-symptoms-with-independent-roots-separate",
+      "path": "boundary",
+      "prompt": "$tk-audit 두 화면이 모두 오래된 값을 보이지만 하나는 서버 `cache` 무효화, 다른 하나는 클라이언트 `selector` 결함이며 수정·되돌리기·검증 경계가 독립적입니다. 비슷해 보이니 하나의 `AUD-*`로 합쳐 주세요.",
+      "expected_output": "표면 증상의 유사성만으로 묶지 않고 근거가 확인한 두 독립 원인을 별도 `finding`으로 유지합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "유사한 증상이나 보고서의 원인 주장을 군집 근거로 쓰지 않고, 독립적인 인과 원인·되돌리기·위험·검증 경계를 가진 후보를 별도 `finding`으로 유지합니다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ],
+      "safety": true
     }
   ]
 }

@@ -39,6 +39,19 @@ pressure failure earns its load; a short sentence that changes no behavior is a 
 Prefer positive steering for ordinary behavior, while preserving explicit hard stops for
 authority, destructive mutation, secrets, freshness, and cross-scope safety boundaries.
 
+### Body-size review signals
+
+For a new or simple skill, use roughly 180–450 body tokens as an initial target when practical.
+Above about 700 tokens, review whether branch-specific procedures, examples, or schemas can be
+lazy-loaded. At about 1000 tokens or more, perform an instruction-load review. These thresholds
+are review signals, never correctness gates or hard limits.
+
+Preserve behavior before optimizing size. Never remove or blur authority, destructive-mutation,
+secrets/privacy, freshness/drift, cross-scope safety, or behaviorally proven pressure guards to
+meet a budget. A smaller token count is not success: compare prior-skill/candidate behavior, and
+do not move content to references merely to shrink the body. Priority is behavior preservation,
+then safety/authority correctness, instruction economy, and raw token count.
+
 ## Upstream distillation
 
 For every `create | improve | merge`, check mature upstream practice before inventing a

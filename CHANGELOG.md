@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `feat(workflow)`: 직접 실행의 다중 `commit`을 검토 가능한 작업 단위로 구성하고, 감사 발견을 검증된 인과 원인으로 묶으며, `skill body` 크기를 비강제 검토 신호로 사용합니다.
 - `fix(validation)`: `SKILL.md` `frontmatter`를 표준 `YAML`로 선검증하여 `lenient parser`가 잘못된 `scalar`를 허용하지 않도록 합니다.
 - `fix(diagnosis)`: 간헐적 실패의 음성 결과에 표본 수와 관측 실패율을 남기고, 재실행 전 기존 실패 증거를 보존합니다.
 - `fix(tk-browser-verify)`: 최종 `AC` 스크린샷 근거가 비어 있지 않을 뿐 아니라 해당 `criterion`과 필요한 맥락을 실제로 포함하는지 확인합니다.

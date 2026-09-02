@@ -34,6 +34,11 @@ read-only review → scoped remediation/re-review → binding verification → c
 speculative flexibility, dead branches, custom replacements for repository-native helpers, and production APIs added
 only for tests.
 
+When direct execution needs multiple commits, prefer a stronger repository convention; otherwise split by independently
+understandable, verifiable, and revertible work units rather than file type or layer. Keep each behavior with the tests
+that prove it and factual documentation that must change with it when practical. Keep one coherent judgment surface in
+one commit, and do not perform fragile retrospective hunk surgery merely to increase the commit count.
+
 Record independent `Spec/AC` and `Quality/Standards` verdicts. One fresh reviewer may judge both axes; do not require a
 second reviewer. Prefer a host-native fresh reviewer. Otherwise perform a distinct serial exact-scope review and disclose
 that it was not independent.
