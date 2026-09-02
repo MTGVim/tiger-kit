@@ -33,6 +33,7 @@ Agent가 읽는 문서는 길이가 아니라 **행동 대비 load**로 판단�
 - `package.json`, config, directory layout, 현재 host/tool capability처럼 한 번의 cheap fresh lookup으로 알 수 있는 사실은 environment를 source of truth로 둡니다. 문서가 canonical contract이거나 lookup이 expensive/unreliable한 경우에만 의도적인 cache를 유지합니다.
 - 문장·블록 삭제는 미학적 축약이 아니라 no-skill/prior behavior 비교로 판단합니다. Pressure에서 실제 행동을 지키는 rationale/guard는 짧아진다는 이유로 제거하지 않습니다.
 - `Skill body` 크기는 정합성 관문이 아니라 검토 신호입니다. 새롭거나 단순한 `skill`은 가능하면 수백 `token` 안에 두고, 큰 본문은 `progressive disclosure`와 `instruction load`를 검토하되 필요한 행동·안전·권한 `guard`를 예산 때문에 제거하지 않습니다. 구체적인 기준의 단일 소유자는 `skills/tk-learn/references/skill-quality.md`입니다.
+- 최종 변경이 사용자에게 공개된 동작, 명령어, 경로, 설정, 계약, 설치·운영 절차를 바꾸고 기존 `README.md` 또는 저장소 문서가 그 사실을 소유한다면 같은 작업 단위에서 최신화합니다. 공개 사실이 바뀌지 않았거나 정확한 소유 문서가 없다면 의례적인 문서 수정, 광범위한 문서 검색, 새 문서 생성을 수행하지 않습니다.
 - 일반 steering은 해야 할 행동을 직접 쓰는 positive form을 선호하되, publication authority, destructive mutation, secret, freshness, cross-scope safety boundary의 hard stop은 약화하지 않습니다.
 - 설치된 `skill`의 `runtime behavior`나 `safety boundary`를 이 `AGENTS.md`에만 두지 않습니다. 설치 사용자에게 필요한 규칙은 `owning SKILL.md` 또는 `package-local reference`에 있어야 하며, 여러 `package`가 같은 `runtime guard`를 공유하면 `exact canonical block`과 `release validation`으로 누락·`drift`를 실패시킵니다.
 

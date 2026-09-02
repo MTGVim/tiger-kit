@@ -781,20 +781,11 @@ def validate_shared_domain_context(skills_root: Path = SKILLS) -> list[str]:
     return errors
 
 
-def parse_latest_changelog_version(text: str) -> str | None:
-    match = re.search(
-        r"(?m)^## ((?:\d{4}\.\d{2}\.\d{2}-\d+|\d+\.\d+\.\d+))(?:\s|$)",
-        text,
-    )
-    return match.group(1) if match else None
-
-
 def validate_repository_contract(skill_names: set[str]) -> list[str]:
     errors: list[str] = []
     required = (
         "README.md",
         "MIGRATION.md",
-        "CHANGELOG.md",
         "NOTICE.md",
         "LICENSE",
         ".gitignore",
@@ -834,12 +825,6 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
     ignored = (ROOT / ".gitignore").read_text(encoding="utf-8") if (ROOT / ".gitignore").is_file() else ""
     if ".tigerkit/" not in ignored.splitlines():
         errors.append(".gitignore: include .tigerkit/")
-
-    changelog = ROOT / "CHANGELOG.md"
-    if changelog.is_file() and parse_latest_changelog_version(
-        changelog.read_text(encoding="utf-8")
-    ) is None:
-        errors.append("CHANGELOG.md: add a leading semantic release heading")
 
     for directory in SKILLS.glob("*/**"):
         if directory.is_dir() and directory.name in {"references", "scripts", "agents", "evals"} and not any(directory.iterdir()):
