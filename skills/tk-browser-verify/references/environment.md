@@ -1,17 +1,64 @@
 # Headless environment
 
 Choose the simplest native, Playwright-compatible, MCP, or CDP path that can produce
-approved evidence. Do not install a new browser dependency for one run. Before the
-first browser call, classify the path as `launch | attach` and prove the live browser
-binary, PID/provider process ID, exact effective `--headless=new` argument, endpoint,
-and isolated run-owned `user-data-dir` from observed process state.
+approved evidence. Discover routes in this order: an available host-native or browser MCP
+provider, an installed Chrome DevTools CLI, a repository-provided Playwright/Puppeteer path,
+then another already available verified CDP route. Do not install a new browser dependency
+for one run. Classify the selected path as `managed launch | direct launch | attach`.
 
-Apply the same proof to CDP and MCP attach paths. A fixed `--browserUrl` provider starts
-no browser, so its endpoint's launch arguments and ownership belong to the external
-launcher and must still be observed. A saved port, prior browser UUID,
-`DevToolsActivePort`, provider default, configuration claim, or tool name is not evidence.
-If the target process lacks `--headless=new`, belongs to another run or the user, or has
-unknown ownership, do not create a page or make any browser call; return `Unverifiable`.
+For `managed launch`, inspect the current host configuration and require an effective
+headless option before product interaction. The provider may start lazily, so a missing live
+browser process before its first call is not a failure. Use one harmless discovery call to
+bootstrap it, then record available runtime browser/version, transport, and ownership facts.
+A provider-managed pipe or equivalent transport needs no TCP endpoint. Modern
+`--headless`, `headless: true`, and another installed-version-equivalent headless setting
+are valid; do not require the exact text `--headless=new`.
+
+Provider isolation is recommended, not a separate headless requirement. Prefer an ephemeral
+provider profile for a new configuration and use a scenario-isolated context when supported.
+An effectively headless provider-managed dedicated persistent profile remains usable when it
+is not the user's normal browsing profile; disclose that cookies, storage, and cache can
+survive provider restarts. Never treat `--isolated` as proof of scenario-level isolation.
+
+For `direct launch`, prove the effective headless option and run-owned browser/profile from
+the launch command and runtime state. For `attach`, prove the live endpoint, effective
+headless mode, and external browser/profile ownership before any browser call. A fixed
+`--browserUrl` provider starts no browser, so all of those facts belong to the external
+launcher. A saved port, prior browser UUID, `DevToolsActivePort`, provider default,
+configuration claim, or tool name is not sufficient attach evidence. If an attached process
+is headed, belongs to another run or the user, or has unknown ownership, return
+`Unverifiable` without creating a page.
+
+## Missing provider setup
+
+If no compatible route exists, do not install a provider or edit host configuration. Make no
+browser call. Invoke `tk-wizard` with the consumer `tk-browser-verify`, the exact blocked
+criterion, detected host/client and provider state, the missing capability, required
+effective headless mode, recommended provider isolation, completion signal, and exact resume
+action.
+
+For a new Chrome DevTools MCP configuration, pass this conceptual default to the wizard:
+
+```json
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest", "--headless", "--isolated"]
+    }
+  }
+}
+```
+
+The wizard must derive the exact host-supported file, scope, command shape, and restart step
+from current local or official evidence and preserve unrelated configuration. TigerKit skills
+do not install Chrome DevTools MCP, its CLI, or its upstream skills.
+
+Do not include `--browserUrl`, `--wsEndpoint`, a remote-debugging port, or port `9222` in the
+default. An attach route becomes eligible only after observed managed/direct launch failure or
+equivalent sandbox, VM, container, or host-boundary evidence. Pass that evidence to the
+wizard, explain the exposed-debugging and external-profile implications, and require the user
+to select attach before presenting its configuration.
 
 ## Authentication
 

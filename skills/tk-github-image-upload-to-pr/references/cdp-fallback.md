@@ -18,16 +18,20 @@ Use this browser order:
 2. an authenticated persistent browser profile through `CDP` and `Playwright`;
 3. stop as `Unverifiable` and explain how to restore `CDP` access.
 
-For the first option, explain that `chrome://inspect/#remote-debugging`, `--autoConnect`
-for `Chrome DevTools MCP`, and a one-time `Chrome` permission prompt may be required.
-Do not print cookies, tokens, or private identity details. Do not launch `Orca` or
-another desktop controller as a fallback.
+For the first option, `chrome://inspect/#remote-debugging`, `--autoConnect` for Chrome DevTools
+MCP, or a one-time Chrome permission prompt may be required. When the user must enable or
+approve that access, invoke `tk-wizard` with the selected CDP route, current host evidence,
+exact completion signal, and upload resume action. Do not duplicate an ad hoc setup wizard in
+this reference, and perform no upload until completion. Do not print cookies, tokens, or
+private identity details. Do not launch `Orca` or another desktop controller as a fallback.
 
 `Chrome 136+` ignores remote-debugging switches for the default data directory. A
 directly launched endpoint requires a dedicated `--user-data-dir` and one-time login.
-Supported `--autoConnect` can connect to an existing profile only after the user's
-explicit permission action. Do not trust a `DevToolsActivePort` file alone; verify the
-current socket and browser endpoint.
+Supported `--autoConnect` can connect to an existing profile only after the user's explicit
+permission action through the wizard handoff. After it completes without a required client
+restart, resume the exact PR/comment target and selected CDP route. If restart is required,
+return the exact resume action and do not claim an upload. Do not trust a `DevToolsActivePort`
+file alone; verify the current socket and browser endpoint.
 
 ## Upload and composer protection
 

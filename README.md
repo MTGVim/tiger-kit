@@ -127,6 +127,11 @@ Ready `.tigerkit/seed.md`는 필요할 때만 만드는 현재 작업의 자체 
 비밀번호, `token`, OTP, `cookie`, `session` 비밀 값은 `Seed`에 저장하지 않고 실행 시 일시 입력으로만 다룹니다.
 
 개발 서버가 필요하면 시작·준비 확인·정리는 `tk-browser-verify`가 소유합니다.
+TigerKit 설치 과정에서는 브라우저 제공자를 함께 설치하지 않습니다. 호환 제공자가 없으면
+`tk-browser-verify`가 `tk-wizard`로 현재 호스트에 맞는 설정과 재시작 절차를 안내합니다. 새
+`Chrome DevTools MCP` 설정에서는 `--headless --isolated`를 권장하며, 외부 `Chrome`에 연결하는
+`--browserUrl`과 `9222`는
+일반적인 기본값으로 사용하지 않습니다.
 
 ## 대화형 사용 경험
 

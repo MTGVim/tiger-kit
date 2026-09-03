@@ -4,11 +4,14 @@ Classify ownership before interaction. An owned browser/context/page/process was
 created by this run; an attached resource is independently proven to have existed
 before the run. Close only owned resources. If ownership is unknown, do not close it.
 
-Use a run-owned isolated profile and the exact `--headless=new` argument for every new
-owned Chrome/Chromium process. If provider launch arguments cannot be proven, attach
-to a directly started verified endpoint or return `Unverifiable`; do not retry with a
-visible browser. A default user profile, stale port file, or prior UUID is not evidence
-of a reusable session.
+For a direct run-owned Chrome/Chromium launch, use a run-owned isolated profile and an
+effective modern headless setting. For a managed provider, the provider owns its server,
+browser process, and provider profile; the verification run owns only the pages, scenario
+contexts, evidence, and development server that it creates. Prefer an ephemeral provider
+profile, but allow a headless dedicated persistent provider profile with a disclosed storage
+limitation. Never reuse the user's default browsing profile. If effective headless mode or
+ownership cannot be proven after the permitted managed-launch bootstrap, return
+`Unverifiable`; do not retry with a visible browser.
 
 Before the first write to repository-local evidence, prove that
 `git ls-files -- .tigerkit/` returns no tracked path and
@@ -34,10 +37,11 @@ Clean up success, failure, interruption, and exception paths in this order:
 
 1. run-created pages/tabs;
 2. run-created contexts;
-3. run-started browser instances;
+3. direct browser instances started by this run;
 4. exact owned processes, only when normal shutdown fails.
 
 Before forced termination, match the PID and profile against process arguments. Never
-use `killall`, broad `pkill`, or task-name bulk termination. Preserve attached browsers,
-user tabs/profiles, shared MCP/CDP instances, other verification runs, and user-owned
-servers. Report cleanup residue without changing the application verdict.
+use `killall`, broad `pkill`, or task-name bulk termination. Preserve provider-owned and
+attached browsers, user tabs/profiles, shared MCP/CDP instances, other verification runs,
+and user-owned servers. Provider shutdown owns cleanup of its browser and temporary profile.
+Report cleanup residue without changing the application verdict.

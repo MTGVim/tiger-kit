@@ -31,7 +31,9 @@ or invalid, mark the evidence handoff `Blocked`; do not revert an already-create
 Use [references/gh-attach.md](references/gh-attach.md) to classify and run the
 extension route. Read [references/cdp-fallback.md](references/cdp-fallback.md)
 only after CDP is selected or the extension route cannot use target write
-capability. Use `tk-browser-verify` for browser-controlled runtime verification.
+capability. Invoke `tk-wizard` only for an exact human-only host setup,
+authentication, permission, or restart step; preserve this skill's upload target and route
+across the handoff. Use `tk-browser-verify` for browser-controlled runtime verification.
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Upload mutation boundary
 
@@ -49,10 +51,14 @@ Before any upload or PR body/comment update, reverify the explicitly selected ta
    [CDP fallback](references/cdp-fallback.md) only after CDP is selected.
    Repository visibility is not a routing signal, and a route that may have created
    remote state cannot silently fall back to the other route.
-4. Update only the requested body or comment through the GitHub API or equivalent.
+4. When the selected route needs a human-only host action, pass a bounded handoff to
+   `tk-wizard` and perform no upload until its completion signal. Agent-approved reviewed
+   extension installation remains here. Resume the exact repository, target, image set, and
+   route after the wizard completes.
+5. Update only the requested body or comment through the GitHub API or equivalent.
    Before `Pass`, verify the source Markdown, rendered HTML/page evidence, every
    asset link, and the upload ref.
-5. Remove only owned staging files on every exit path.
+6. Remove only owned staging files on every exit path.
 
 ## Execution Receipt · Single Evidence Record
 
@@ -102,8 +108,8 @@ to the current run. If required evidence is missing or invalid, return `Blocked`
 
 ## Failure Handling
 
-Return `Pending` while waiting for an absent-extension or unreviewed-upstream
-choice. Return `Blocked` for `unknown` provenance, a draft, or a rejected
+Return `Pending` while waiting for an absent-extension or unreviewed-upstream choice or a
+human-only `tk-wizard` completion signal. Return `Blocked` for `unknown` provenance, a draft, or a rejected
 installation without a selected CDP route. Return `Unverifiable` if neither route
 has authentication or render evidence, and `Fail` for upload, remote ref
 verification, or cleanup errors. State whether the selected body/comment changed

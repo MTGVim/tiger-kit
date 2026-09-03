@@ -31,9 +31,16 @@ Applicable examples:
 - `login`, MFA, OTP, CAPTCHA, `passkey`
 - `permission`/`keychain`/`device` `pairing`
 - Human-only steps during `migration`/`cutover`
+- Exact consumer handoffs for host configuration, authentication, permission, or restart
+  actions that the invoking skill cannot perform safely
 
 Routine code/CLI tasks the `agent` can safely execute, product decisions, and `acceptance` `verification`
 are outside this skill's scope.
+
+When another skill supplies an exact setup handoff, read
+[consumer handoffs](references/consumer-handoffs.md). The invoking skill keeps ownership of
+its operation and verdict; this wizard owns only the current human action and its completion
+signal.
 
 ## Research and Planning
 
@@ -49,6 +56,10 @@ First read the `repository` and current `host` `evidence` to build this internal
 - Steps the user must perform
 - Irreversible steps
 - Verifiable `completion` `signal`
+
+For a consumer handoff, also preserve the consumer, exact pending criterion, detected host
+and capability state, required versus recommended properties, and resume action. Do not ask
+the user to restate values already present in the handoff.
 
 Do not invent unknown UI, buttons, URLs, or commands. Where evidence is unavailable, describe only that point
 as `Unverifiable`.

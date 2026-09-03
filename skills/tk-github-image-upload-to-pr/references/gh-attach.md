@@ -1,5 +1,17 @@
 # `gh-attach` path
 
+## Host CLI and authentication boundary
+
+First determine whether the host provides a working `gh` executable. If it is absent or needs
+host-level repair that the agent cannot safely perform, invoke `tk-wizard` with the exact
+installation/repair completion signal and upload resume action. Do not install the host CLI as
+an incidental upload dependency.
+
+Interactive `gh auth login`, account/repository permission changes, and another user-only
+authentication step also belong to `tk-wizard`. Perform no upload while that handoff is
+pending. Reuse an already authenticated CLI non-interactively when `gh auth status` proves it;
+ordinary auth inspection remains in this skill.
+
 ## Trust preflight without execution
 
 Read `gh extension list` before running any extension command, including
@@ -44,15 +56,17 @@ supply-chain risk and require one explicit current-turn choice before execution:
 Do not execute or replace the installed extension before approval. For `unknown`, do
 not execute the binary; offer provenance recovery, the reviewed fork, or `CDP`. For
 `absent`, recommend the reviewed pinned fork and also offer `CDP`, but do not install
-automatically. After an approved installation, read `gh extension list` again and
-reclassify.
+automatically. After the user selects and authorizes the reviewed fork, this skill may run the
+pinned `gh extension install` command once; do not delegate that agent-executable step to
+`tk-wizard`. Read `gh extension list` again and reclassify before executing the extension.
 
 ## Execution authority and operation
 
 Only after execution is authorized, check `gh attach --help`, `gh auth status`, and
 `.permissions.push` from `gh api repos/<owner>/<repo>`. Do not infer access from whether
-the target is public or private. If target write access is unavailable, do not execute
-the extension; explain the fact and switch to the user-selected `CDP` path.
+the target is public or private. If authentication or write access needs a human action, hand
+that exact action to `tk-wizard`; otherwise, if target write access is unavailable, do not
+execute the extension and switch only to the user-selected `CDP` path.
 
 Run:
 
