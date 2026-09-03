@@ -32,7 +32,7 @@ First, verify the following.
 - Whether a `PR` already exists for the same `head`, and its `observed draft | ready` state
 - Unrelated dirty/staged paths
 - Target repository's `PR template`
-- Recent merged `PR` title samples and any established prefix, ticket-position, or release-label convention
+- Current normative title guidance; only when absent, enough recent merged `PR` titles to establish a convention
 
 If the exact current `commit` cannot be proven or unrelated changes are mixed in, do not broaden scope; return `Blocked`/`Unverifiable`.
 
@@ -65,10 +65,9 @@ If exactly one template applies, preserve its heading order, checklists, HTML co
 If multiple templates exist and there is no basis for choosing one, explain the candidates with one recommendation and ask the user to choose before publication approval.
 If the template cannot be read, do not invent a body.
 
-Derive the title convention from recent merged `PR` titles, not from template guidance alone. If the
-merged history establishes a convention, follow it. If template title guidance conflicts with that
-history, prefer the verified merged-history convention and surface the mismatch. If no convention is
-observed, preserve the existing title behavior.
+Choose title guidance in this order: explicit repository instruction, normative current PR template or maintainer
+documentation, verified recent merged-PR convention, then the existing fallback. History can establish a convention only
+when no higher-authority current guidance applies. Surface a conflict instead of silently overriding the stronger source.
 
 When a `PR body` or QA table names a user-visible element, verify the exact rendered string from repository evidence before writing it. Do not copy a ticket paraphrase, code identifier, or enum value; quote the label verbatim. If no visible label exists, use the entry path ending in an exact visible title. If ticket, code, and screenshot disagree, preserve the verified source and tell the user about the mismatch; do not present an unverified server-supplied label as fact.
 
@@ -92,10 +91,13 @@ Do not upload actual secret-bearing screenshots or unverified captures.
 If an image is required, pass the exact evidence path to `tk-github-image-upload-to-pr` after the owning `PR` exists.
 For a stack, attach evidence to the layer that owns the browser-visible acceptance; do not copy the same evidence to unrelated lower layers.
 
-## Publication plan
+## Publication approval packet
 
-Maintain `.tigerkit/pr-open.md` as this skill's independent publication plan.
-Record and reread the following exact information.
+Record the following exact information in the active approval packet. Keep it in the current interaction when the host can
+faithfully retain and reread a simple single-PR packet. Use the singleton `.tigerkit/pr-open.md` only for a stack, an
+explicit `save`, a multi-turn handoff/recovery need, or when the exact approval state cannot otherwise be retained. Never
+create per-run publication files. When the artifact is used, atomically replace stale completed content for the same owner
+and reread it before approval.
 
 ```text
 Repository
@@ -113,14 +115,14 @@ Single publication:
 Head ref + SHA
 Push refspec
 Title
-Title convention basis: <merged-title evidence | none observed>
+Title convention basis: <repository instruction | normative template/docs | merged-title evidence | fallback>
 Body
 
 Stacked publication:
 See the required plan fields in [retrospective stack split](references/split-to-stack.md).
 ```
 
-This artifact owns only the current PR publication plan, not the product work plan or `worker` state.
+Any artifact owns only the current PR publication plan, not the product work plan or `worker` state.
 Create new PRs as `draft` only when the user explicitly requests `draft`; otherwise preserve the existing `ready` behavior.
 For an existing same-`head` PR, preserve its fresh-read state unless a state change was requested.
 
@@ -138,7 +140,7 @@ Present the following naturally to the user instead of hiding information behind
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Publication boundary
 
-Before any stack reconstruction or remote write, reread the plan and obtain one exact current-turn approval; do not treat the natural-language request `PR 열어줘` itself as publication approval. The approval must include a valid `PR state` and the exact `single | stacked` publication shape.
+Before any stack reconstruction or remote write, reread the active packet and, when present, its artifact, then obtain one exact current-turn approval; do not treat the natural-language request `PR 열어줘` itself as publication approval. The approval must include a valid `PR state` and the exact `single | stacked` publication shape.
 
 For `stacked`, the same approval also authorizes only the exact local publication-history reconstruction in the approved layer plan. It does not authorize product edits, rewriting the source branch, extra layers, or unrelated branch cleanup.
 STOP if the plan, approved `commit`, template/evidence state, stack tooling provenance, or current repository state cannot be reverified.

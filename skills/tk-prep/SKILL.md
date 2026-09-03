@@ -67,6 +67,9 @@ If user-visible text is in scope, read [UI text evidence](references/ui-text.md)
 If implementation adds or changes a factual code comment/JSDoc claim or models an
 external response contract, read [committed assertion evidence](references/artifact-claims.md)
 before approval and apply it again to the final candidate.
+When a version-sensitive external library/API/OAuth/provider contract cannot be established from the repository alone,
+read [external contract evidence](references/external-contracts.md) before accepting its fields, nullability, UI steps,
+or setup commands.
 After planned paths, symbols, or owning contracts are known, read
 [concurrent PR preflight](references/concurrent-prs.md) only for a material code/contract/shared-pattern
 change with suitable GitHub read access. Keep non-normative prose, isolated-asset, offline, and unavailable-remote paths on the ordinary preparation flow.
@@ -87,6 +90,9 @@ the plan. For a surfaced axis use `보완 필요 | 개선 한계 | 예외 승인
 For every code-changing path, inspect real tests and load [behavior-first testing](references/testing.md) before approval. Close
 observable behavior, regression/RED, focused command, required suite, mutation risk, and `N/A` versus engineering exception.
 Do not add ceremonial tests for trivial/prose-only work; browser verification never substitutes for automated protection.
+For every direct or SDD code review, load [finding quality](references/finding-quality.md). Load
+[TypeScript](references/typescript.md), [React](references/react.md), and [security](references/security.md) only when the
+review scope meets those references' stated conditions; do not add another reviewer or review pass.
 When the cause and exact RED seam are obvious, proceed directly. Lazy-load [diagnosis](references/diagnosis.md) only for hard, flaky, performance, or difficult-to-reproduce bugs and establish a red-capable loop before a fix hypothesis. If that is impossible, record why and do not apply a speculative fix.
 
 ## Browser verification

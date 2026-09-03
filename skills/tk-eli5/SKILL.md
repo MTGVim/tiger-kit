@@ -28,15 +28,18 @@ Use it for an explicit `$tk-eli5` invocation or a request for an HTML explanatio
 1. Confirm one clear topic and any user-specified output path. Without a path, use
    `eli5-<topic-slug>.html` in the current working directory; if it exists, choose a new path
    with a numeric suffix. Never overwrite an existing file without explicit approval.
-2. Divide the core mental model into `3–5` scenes and one consistent analogy. For topics where
+2. Normally divide a simple core mental model into about `3–5` scenes and one consistent analogy. Use fewer or more
+   scenes when that materially improves comprehension or preserves a required caveat; scene count is a design signal,
+   not a correctness gate. For topics where
    freshness or expert facts matter, verify available evidence first; simplification must not
    discard accuracy or required warnings.
 3. Create one self-contained HTML file. Inline CSS and SVG/CSS visuals; add no external asset,
    font, framework, dependency, build step, or network request.
-4. Use large visuals, short headings, and at most `35` words of explanation per scene. Preserve
+4. Use large visuals, short headings, and aim for at most about `35` words of explanation per scene. Exceed that target
+   only when splitting or deleting text would make the explanation inaccurate or less understandable. Preserve
    semantic HTML, sufficient contrast, accessible SVG titles, non-color-only distinctions, and
    `prefers-reduced-motion` by default.
-5. Verify that the HTML opens directly offline and contains `3–5` scenes, inline visuals, and the
+5. Verify that the HTML opens directly offline and contains a coherent scene sequence, inline visuals, and the
    AI-authorship footer. Do not start a server or automatically open a browser.
 
 End the HTML with this exact sentence:

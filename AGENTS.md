@@ -119,7 +119,7 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 - `tk-prep`: 준비, 최종 승인, 승인된 격리 로컬 구현/검증/`commit`. `push`/발행 금지.
 - `tk-ask-repo`: `read-only` `repository` `investigation`.
 - `tk-audit`: `read-only` AUD `finding`.
-- `tk-review`: 명시된 `exact committed range/PR` 하나의 `read-only` `Spec/AC` + `Quality/Standards` 판정.
+- `tk-review`: 명시된 `exact committed range/PR/current worktree` 하나의 `read-only` `Spec/AC` + `Quality/Standards` 판정.
 - `tk-browser-verify`: `browser-visible` `runtime` `evidence`와 `dev-server` `lifecycle`.
 - `tk-pr-open`: `exact` `single-PR` `create`/`update` 또는 승인된 `retrospective stacked-PR publication`.
 - `tk-pr-respond`: `exact` `one-PR` `feedback`/지원 CI `resolution`과 `bounded` `publication`.
@@ -161,7 +161,11 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 - 일반 실행 파일: `.tigerkit/tmp/<skill>/<run-id>/`
 - 비밀 입력: `.tigerkit/secret-input/<skill>-<run-id>/`
 - 검증 근거: `.tigerkit/evidence/<skill>/<run-id>/`
-- 소유자가 정한 산출물: `.tigerkit/<owner>.md`, `.tigerkit/prototypes/`, `.tigerkit/sdd-tmp/`
+- 복구·인계·승인 상태에 실제로 필요한 소유자 산출물: `.tigerkit/<owner>.md`, `.tigerkit/prototypes/`, `.tigerkit/sdd-tmp/`
+
+`Owner`별 `singleton Markdown`은 모든 실행의 선행조건이 아닙니다. 현재 대화와 `Git/GitHub` 상태로 정확히 복원되는
+단순 실행에는 만들지 않고, `explicit save`, `multi-turn handoff/recovery` 또는 정확한 승인 상태 보존이 필요할 때만
+사용합니다. `Artifact`가 필요한 경로의 `freshness`, `atomic write`, `secret/privacy`와 `no-accumulation` 경계는 유지합니다.
 
 새 임시파일을 쓰기 전에 `git ls-files -- .tigerkit/`에 추적 파일이 없고
 `git check-ignore -q -- .tigerkit/`가 성공하는지 확인합니다. `git check-ignore -v`의 출처가 작업 트리의

@@ -165,6 +165,17 @@
         {"type":"changed_paths_equal","paths":[]},
         {"type":"terminal_status","expected":"Pass"}
       ]
+    },
+    {
+      "id": "ask-repo-summary-keeps-material-boundary-over-line-target",
+      "path": "success",
+      "prompt": "/tk-ask-repo 이 값의 `producer`, 두 `consumer`, `permission boundary`, 환경별 차이와 아직 확인 불가한 외부 `API` 조건을 조사해줘. 공유 요약은 중요한 내용을 빼지 마.",
+      "expected_output": "공유용 요약을 보통 3–10줄로 유지하되 검증된 `ownership/permission` 환경 경계와 명시적 `uncertainty`를 줄 수에 맞추려고 삭제하지 않는다.",
+      "assertions": [
+        {"type":"judge","criterion":"`Summary line range`는 간결한 기본값이다. 검증된 중요한 `ownership`, 제한, 불확실성이 10줄 안에 충실히 들어가지 않으면 필요한 최소 추가 줄을 사용하고 `filler`는 만들지 않는다."},
+        {"type":"git_head_unchanged"},
+        {"type":"terminal_status","expected":"Pass"}
+      ]
     }
   ]
 }

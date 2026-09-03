@@ -144,7 +144,8 @@ Always end the response with `## 공유용 요약`.
 
 The shareable summary must:
 
-- Use `3–10` lines
+- Normally fit in `3–10` lines; use the fewest additional lines needed when a verified ownership boundary, material
+  limitation, or explicit uncertainty would otherwise be lost. Never add filler to reach the range.
 - Use only facts already verified in the main response
 - Add no new inference or conclusion
 - Focus on conclusions, impact, and ownership boundaries rather than internal code details

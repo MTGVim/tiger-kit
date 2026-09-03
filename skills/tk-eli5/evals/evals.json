@@ -9,7 +9,7 @@
       "assertions": [
         {
           "type": "judge",
-          "criterion": "하나의 자체 완결형 HTML이 3~5개 장면, 큰 내장 그림, 짧은 설명과 일관된 비유로 DNS 핵심 흐름을 정확하게 설명하며 외부 의존성이나 네트워크를 요구하지 않는다."
+          "criterion": "하나의 자체 완결형 HTML이 보통 3~5개인 간결한 장면, 큰 내장 그림, 짧은 설명과 일관된 비유로 DNS 핵심 흐름을 정확하게 설명하며 외부 의존성이나 네트워크를 요구하지 않는다. 장면/단어 수는 정확성을 자르는 `hard gate`가 아니다."
         },
         {
           "type": "path_exists",
@@ -141,6 +141,17 @@
           "type": "terminal_status",
           "expected": "NotApplicable"
         }
+      ]
+    },
+    {
+      "id": "complex-explainer-preserves-required-caveat-over-scene-cap",
+      "path": "success",
+      "prompt": "$tk-eli5 `OAuth authorization-code flow`와 `PKCE`를 설명해줘. 위협 모델과 `redirect` 검증 주의사항까지 정확히 남기려면 6개 장면이 필요해.",
+      "expected_output": "간결한 기본값을 유지하되 정확한 보안 주의사항을 삭제하거나 한 장면에 과밀하게 넣지 않고 필요한 6개 장면을 허용한다.",
+      "assertions": [
+        {"type":"judge","criterion":"`3–5 scenes`와 약 `35 words`를 `heuristic`으로 사용하며, 정확성, 필수 경고, 이해를 위해 필요한 추가 장면이나 문장을 숫자만으로 거부하지 않는다."},
+        {"type":"git_head_unchanged"},
+        {"type":"terminal_status","expected":"Pass"}
       ]
     }
   ]

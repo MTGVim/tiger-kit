@@ -57,7 +57,7 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-grill` | `user` | 아이디어·계획·결정의 빠짐없는 점검과 확인된 `shared understanding` |
 | `tk-audit` | `user` | 읽기 전용 저장소 감사와 `AUD-*` 발견 사항 |
 | `tk-ask-repo` | `user` | 저장소 동작·값·영향·귀속을 근거와 함께 설명 |
-| `tk-review` | `user` | 정확한 커밋 범위/PR의 읽기 전용 `Spec/AC` + `Quality/Standards` 검토 |
+| `tk-review` | `user` | 정확한 커밋 범위/`PR`/`current worktree`의 읽기 전용 `Spec/AC` + `Quality/Standards` 검토 |
 | `tk-pr-open` | `hybrid` | 검증된 `commit`의 `single | stacked` 발행 계획 + 제한된 `push`/PR 생성·갱신 |
 | `tk-pr-respond` | `hybrid` | 한 PR의 리뷰/지원 CI 분석·수정·검증·`reply`/`resolve` |
 | `tk-pr-rebase` | `hybrid` | 정확한 PR의 최신 `base` `rebase`와 제한된 `force-with-lease` |
@@ -123,7 +123,7 @@ Ready `.tigerkit/seed.md`는 필요할 때만 만드는 현재 작업의 자체 
 
 ## 브라우저 검증
 
-`browser-visible` AC가 있으면 `tk-prep`에서 대상, `headless`, 인증, `viewport`, 개발 서버, `screenshot` 근거, 통과 조건을 정합니다.
+`browser-visible` AC가 있으면 `tk-prep`에서 대상, `headless`, 인증, `viewport`, 개발 서버, `criterion`별 `runtime` 근거와 통과 조건을 정합니다. `Visual/visible-state` 근거는 검증 대상이 실제 담긴 `screenshot`을 사용합니다.
 비밀번호, `token`, OTP, `cookie`, `session` 비밀 값은 `Seed`에 저장하지 않고 실행 시 일시 입력으로만 다룹니다.
 
 개발 서버가 필요하면 시작·준비 확인·정리는 `tk-browser-verify`가 소유합니다.
@@ -134,7 +134,7 @@ Ready `.tigerkit/seed.md`는 필요할 때만 만드는 현재 작업의 자체 
 
 - `tk-prep`: 함께 준비하고 승인된 로컬 직접/`Seed`/SDD/인계 경로를 수행합니다.
 - `tk-wizard`: 사람이 직접 해야 하는 일을 한 단계씩 자연스럽게 안내합니다.
-- `tk-ask-repo`: 질문에 먼저 답하고 코드 흐름을 설명한 뒤 `3~10`줄 공유용 요약을 제공합니다.
+- `tk-ask-repo`: 질문에 먼저 답하고 코드 흐름을 설명한 뒤 보통 `3~10`줄의 공유용 요약을 제공합니다. 검증된 중요한 경계는 줄 수 때문에 생략하지 않습니다.
 - `tk-pr-respond`: 리뷰 의도를 해석하고 해결 방향과 이유를 합의합니다.
 - `tk-pr-sweep`: 여러 PR 중 지금 할 일과 기다릴 일을 최신 분류로 브리핑합니다.
 
@@ -142,9 +142,10 @@ Ready `.tigerkit/seed.md`는 필요할 때만 만드는 현재 작업의 자체 
 
 ## PR 흐름
 
-`tk-review`는 구현 중 자동 절차가 아닙니다. 사용자가 명시적으로 호출했을 때만 깨끗하게 커밋된 정확한
-`BASE..HEAD` 또는 GitHub PR 하나를 읽기 전용으로 검토하고, `Spec/AC`와 `Quality/Standards`를 독립 판정합니다.
-작업 중인 `dirty diff`의 검토는 `tk-prep` 실행 경로가 계속 소유하며, 외부 리뷰 대응은 `tk-pr-respond`가 소유합니다.
+`tk-review`는 구현 중 자동 절차가 아닙니다. 사용자가 명시적으로 호출했을 때 정확한 `BASE..HEAD`, GitHub PR,
+또는 현재 `worktree` 하나를 읽기 전용으로 검토하고 `Spec/AC`와 `Quality/Standards`를 독립 판정합니다. `Worktree`는
+`HEAD`와 `staged/unstaged/in-scope untracked content`를 메모리에서 고정하며 `drift` 시 판정하지 않습니다. 외부 리뷰
+대응은 `tk-pr-respond`가 소유합니다.
 
 ```text
 tk-pr-open
@@ -187,6 +188,10 @@ TigerKit은 새 `tag`나 별도 `release`를 발행하지 않으며 기존 태�
 `.tigerkit/`은 저장소/작업 트리 로컬 임시 공간이며 전역 프로젝트 기억이 아닙니다.
 제품 작업의 지속 가능한 맥락이 필요할 때는 `.tigerkit/seed.md` 하나를 사용합니다. 활성 SDD 복구는 현재 `Seed`
 식별자와 해시가 일치하는 무시된 `.tigerkit/sdd.md` 하나만 추가로 사용할 수 있습니다.
+
+`audit`, `PR publication/rebase`, `skill learning`의 `owner`별 `singleton Markdown`은 `explicit save`, `multi-turn handoff/recovery`,
+복잡한 승인 상태처럼 `durable state`가 실제로 필요할 때만 만듭니다. 같은 턴에 완결되는 단순 작업과 명확한 `no-op`은
+대화와 현재 `Git/GitHub` 상태를 사용하며, `run`별 `report` 파일을 쌓지 않습니다.
 
 사용자가 직접 열거나 값을 입력하는 임시파일과 저장소별 실행 산출물도 무시된 `.tigerkit/` 아래에 둡니다.
 일반 실행 파일은 `.tigerkit/tmp/<skill>/<run-id>/`, 비밀 입력은

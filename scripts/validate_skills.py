@@ -80,6 +80,8 @@ DIRECT_MODEL_ROUTING = re.compile(
 )
 SHARED_EXECUTION_PROTOCOLS = ("testing.md", "sdd.md")
 SHARED_DOMAIN_CONTEXT_CONSUMERS = ("tk-ask-repo", "tk-pr-open", "tk-pr-respond")
+SHARED_REVIEW_REFERENCES = ("finding-quality.md", "typescript.md", "react.md", "security.md")
+SHARED_REVIEW_CONSUMERS = ("tk-prep", "tk-pr-respond")
 HANGUL = re.compile(r"[가-힣]")
 INLINE_CODE = re.compile(r"`+[^`]*`+")
 
@@ -781,6 +783,47 @@ def validate_shared_domain_context(skills_root: Path = SKILLS) -> list[str]:
     return errors
 
 
+def validate_shared_review_references(skills_root: Path = SKILLS) -> list[str]:
+    errors: list[str] = []
+    canonical_root = skills_root / "tk-review/references"
+    for name in SHARED_REVIEW_REFERENCES:
+        canonical = canonical_root / name
+        try:
+            canonical_text = canonical.read_text(encoding="utf-8")
+        except (OSError, UnicodeError) as exc:
+            errors.append(f"shared review reference {name}: unreadable canonical: {exc}")
+            continue
+        for skill_name in SHARED_REVIEW_CONSUMERS:
+            consumer = skills_root / skill_name / f"references/{name}"
+            try:
+                consumer_text = consumer.read_text(encoding="utf-8")
+            except (OSError, UnicodeError) as exc:
+                errors.append(f"shared review reference {name}: unreadable copy: {exc}")
+                continue
+            if consumer_text != canonical_text:
+                errors.append(
+                    f"{_display_path(consumer)}: sync from {_display_path(canonical)} "
+                    "with scripts/sync_execution_protocol.py"
+                )
+    return errors
+
+
+def validate_shared_external_contracts(skills_root: Path = SKILLS) -> list[str]:
+    canonical = skills_root / "tk-prep/references/external-contracts.md"
+    consumer = skills_root / "tk-wizard/references/external-contracts.md"
+    try:
+        canonical_text = canonical.read_text(encoding="utf-8")
+        consumer_text = consumer.read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as exc:
+        return [f"shared external contract reference: unreadable copy: {exc}"]
+    if consumer_text != canonical_text:
+        return [
+            f"{_display_path(consumer)}: sync from {_display_path(canonical)} "
+            "with scripts/sync_execution_protocol.py"
+        ]
+    return []
+
+
 def validate_repository_contract(skill_names: set[str]) -> list[str]:
     errors: list[str] = []
     required = (
@@ -832,6 +875,8 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
     errors.extend(validate_reference_resources(SKILLS))
     errors.extend(validate_shared_execution_protocols(SKILLS))
     errors.extend(validate_shared_domain_context(SKILLS))
+    errors.extend(validate_shared_review_references(SKILLS))
+    errors.extend(validate_shared_external_contracts(SKILLS))
     errors.extend(validate_portable_artifacts(ROOT))
     return errors
 

@@ -61,7 +61,7 @@ TigerKit procedure. When upstream evidence exists:
 2. Read the current implementation, its rationale, and behavior or failure-mode eval evidence.
    Mark anything unavailable as `unverified`; a reputation or summary is not a substitute.
 3. Compare each transferable contract with TigerKit's existing owner and boundary. In
-   `learn.md`, give every applicable element a literal `keep`, `adapt`, or `omit` label plus
+   the active candidate packet, give every applicable element a literal `keep`, `adapt`, or `omit` label plus
    its reason; do not replace the disposition with a synonym.
 4. Distill behavior and failure modes. Do not copy provider routing, runtime state, workspace
    machinery, helper frameworks, or other infrastructure outside TigerKit's Agent Skills boundary.
@@ -114,14 +114,14 @@ itself prove skill behavior. Use observable outcomes and realistic judge criteri
 - For instruction pruning, a source-text deletion or smaller token count is not success;
   the relevant task behavior and safety boundary must remain unchanged.
 
-## Draft artifact checkpoint
+## Draft state checkpoint
 
-Before approval, record the draft only in `.tigerkit/learn.md` at the repository root as
-a `pending` scratch ledger. Record the candidate, evidence, checklist, target path,
-paths not created, next step, and decision/status; rename it atomically and read it back.
-If it is missing, stale, or mismatched on re-read, return `Blocked` and stop both the
-approval question and canonical write. Chat shows only the absolute path, status, short
-summary, and one approval question; do not copy the full ledger or exact file body.
+Before approval, retain one complete `pending` candidate packet with candidate, evidence, checklist, target path, paths
+not created, next step, and decision/status. Use `.tigerkit/learn.md` only when explicit persistence, handoff/recovery,
+candidate complexity, or host retention limits require it; rename it atomically and read it back. If that required
+artifact is missing, stale, or mismatched, return `Blocked` and stop both approval and canonical write. A clear same-turn
+candidate or `no-op` does not need a scratch file. Chat shows only status, a short summary, the path when one exists, and
+one approval question when apply is eligible; do not copy the full packet or exact file body.
 Before approval, the canonical skill path and `.tigerkit/skill-drafts/<skill-name>/`
 must remain `not created`.
 

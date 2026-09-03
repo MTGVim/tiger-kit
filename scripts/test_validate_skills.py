@@ -446,6 +446,46 @@ class EvalSotValidatorTest(unittest.TestCase):
                 )
             )
 
+    def test_shared_review_reference_copies_must_match(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            skills = Path(directory)
+            canonical_root = skills / "tk-review/references"
+            canonical_root.mkdir(parents=True)
+            for name in validate_skills.SHARED_REVIEW_REFERENCES:
+                (canonical_root / name).write_text(f"canonical {name}\n", encoding="utf-8")
+                for skill_name in validate_skills.SHARED_REVIEW_CONSUMERS:
+                    consumer = skills / skill_name / "references" / name
+                    consumer.parent.mkdir(parents=True, exist_ok=True)
+                    consumer.write_text(f"canonical {name}\n", encoding="utf-8")
+
+            self.assertEqual(validate_skills.validate_shared_review_references(skills), [])
+            drifted = skills / "tk-prep/references/security.md"
+            drifted.write_text("drift\n", encoding="utf-8")
+            self.assertTrue(
+                any(
+                    "security.md" in error and "sync_execution_protocol.py" in error
+                    for error in validate_skills.validate_shared_review_references(skills)
+                )
+            )
+
+    def test_shared_external_contract_copy_must_match(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            skills = Path(directory)
+            canonical = skills / "tk-prep/references/external-contracts.md"
+            consumer = skills / "tk-wizard/references/external-contracts.md"
+            canonical.parent.mkdir(parents=True)
+            consumer.parent.mkdir(parents=True)
+            canonical.write_text("canonical external contract\n", encoding="utf-8")
+            consumer.write_text("canonical external contract\n", encoding="utf-8")
+            self.assertEqual(validate_skills.validate_shared_external_contracts(skills), [])
+            consumer.write_text("drift\n", encoding="utf-8")
+            self.assertTrue(
+                any(
+                    "sync_execution_protocol.py" in error
+                    for error in validate_skills.validate_shared_external_contracts(skills)
+                )
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -29,19 +29,20 @@ label; never copy an upstream framework wholesale.
 Draft and apply are separate.
 
 - `draft gate`: Distinguish verified evidence from unverified user claims and design a
-  `pending` candidate. Even when evidence remains `unverified`, record a clear design
-  request in `learn.md` without printing the full text in chat.
+  `pending` candidate. Even when evidence remains `unverified`, keep a clear design
+  request in the active candidate packet without treating it as apply evidence.
 - `apply gate`: Every checklist row must pass before writing to a `skill` path.
 
-## Artifact-first draft checkpoint
+## Need-based draft checkpoint
 When candidate or apply approval is needed, prefer the host's native structured question surface (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). If unavailable, present the same approval packet in plain chat; do not write a canonical skill path before approval.
 
-For a new draft, do not print the full minimal draft in chat before approval. First atomically
-write a `pending` scratch ledger at repository-root `.tigerkit/learn.md`, then reread that same
-path for verification. This file is neither a canonical `skill` path nor
-`.tigerkit/skill-drafts/<skill-name>/`.
+Keep a straightforward same-turn candidate in the current interaction when the host can faithfully retain and reread it.
+Use the singleton repository-root `.tigerkit/learn.md` only for explicit `save`, multi-turn handoff/recovery, a complex
+candidate whose evidence/checklist cannot fit safely in the approval packet, or when the host cannot retain exact state.
+Do not create the artifact for a clear `no-op` merely to report that nothing should change. This file is neither a
+canonical `skill` path nor `.tigerkit/skill-drafts/<skill-name>/`.
 
-`learn.md` owns each of these fields exactly once: work `Status` (`Pending | Blocked`),
+The active candidate packet, and `learn.md` when used, owns each of these fields exactly once: work `Status` (`Pending | Blocked`),
 `Disposition` (`reported | applied | pending`),
 `Decision` (`proposed | merge | no-op | continue | pending`), `Candidate`,
 `Evidence` (ID/source/`verified | unverified` for every claim), `Checklist` (each apply
@@ -49,14 +50,14 @@ check's `passed | pending | failed` state and evidence), `Target path` (the exac
 path and `not created`), `Not created` (both canonical write boundaries),
 `Next step` (one executable action), and `Updated` (write time or run ID).
 
-Use `Disposition: applied` when the atomic write and reread match the current candidate/run,
-but preserve work `Status: Pending` before apply approval. `Disposition` describes the ledger
-write/reread result and is not synonymous with `Status`.
+Use `Disposition: applied` when a required ledger write and reread match the current candidate/run, while preserving work
+`Status: Pending` before apply approval. Without a ledger, use `reported | pending` for the in-memory packet.
+`Disposition` describes candidate-state recording and is not synonymous with `Status` or canonical skill application.
 
-Create a temporary file in the same directory, atomically rename it, and reread immediately.
-If required fields are absent, the ledger is stale or missing, or the reread differs from the
-written content, stop as `Blocked` and do not write canonical paths. If an existing ledger points
-to another candidate/run, do not overwrite it; report `Blocked`.
+When an artifact is required, create a temporary file in the same directory, atomically rename it, and reread
+immediately. If required fields are absent, the ledger is stale or missing, or the reread differs from the written
+content, stop as `Blocked` and do not write canonical paths. Do not overwrite a different active candidate; stale
+completed content may be invalidated and replaced, never archived into per-run files.
 
 ## Workflow
 
@@ -68,8 +69,7 @@ to another candidate/run, do not overwrite it; report `Blocked`.
 2. **Promotion and deduplication:** Apply [Skill quality](references/skill-quality.md),
    then compare against existing repository/user `skill`s, default model capability,
    and a short rule. Choose one of `merge | no-op | continue | pending`. If the
-   catalog cannot be read, remain `pending` and record that status and rationale in
-   `learn.md`.
+   catalog cannot be read, remain `pending` and record that status and rationale in the candidate packet.
 3. **Candidate proposal:** Present the target, action name, invocation kind, and
    positive/negative triggers. Draft a trigger-first description that answers when to
    load and preserves only the routing discriminators; keep procedure in the body.
@@ -78,11 +78,11 @@ to another candidate/run, do not overwrite it; report `Blocked`.
    `proposed`. Leave unsupported values as `TBD`.
 4. **Minimal draft:** Record the minimal SKILL.md inputs, workflow, failure branches,
    approval boundaries, completion criteria, output contract, and prohibitions
-   directly in `learn.md`. Also add train/validation triggers, success/boundary
+   directly in the candidate packet. Also add train/validation triggers, success/boundary
    assertions, behavior evidence designed for the candidate's skill type, a no-skill
    or prior-skill baseline, and the
    portable-core/host-extension determination.
-5. **Approval checkpoint:** After rereading `learn.md`, follow the checkpoint and
+5. **Approval checkpoint:** After rereading the active packet and any required `learn.md`, follow the checkpoint and
    output contract below, then stop.
 6. **Write, verify, report:** After every checklist row and apply authority pass,
    preserve the pre-write contents, write with an atomic rename, then reread and
@@ -108,10 +108,10 @@ one host's paths onto another host, perform cross-host fan-out/sync, or use
 
 | Trigger | Immediate action | What remains unresolved |
 |---|---|---|
-| Cases/workflows are claimed but artifacts cannot be read | Record each as `unverified` and leave `learn.md` `Blocked` | Request exact artifacts/checks; do not write |
-| Only a weak one-off anecdote or raw log exists | Record the threshold/privacy basis with `Decision: no-op`, `Status: Pending` | Create no candidate or path |
+| Cases/workflows are claimed but artifacts cannot be read | Record each as `unverified` and leave the candidate `Blocked` | Request exact artifacts/checks; do not write |
+| Only a weak one-off anecdote or raw log exists | Report the threshold/privacy basis with `Decision: no-op`, `Status: Pending` | Create no artifact, candidate, or path unless explicit `save` is requested |
 | Duplicate of a skill/default capability | Report `merge | no-op` and rationale | Create no new directory |
-| Some target/name/trigger is unknown | Record supported values as `proposed` and the rest as `TBD` in `learn.md` | Keep candidate identity `pending`; do not write |
+| Some target/name/trigger is unknown | Record supported values as `proposed` and the rest as `TBD` in the candidate packet | Keep candidate identity `pending`; do not write |
 | Evidence, target, or approval conflicts | Present the conflict and one decision | Stop as `Blocked` |
 | Write/post-write verification fails | Preserve the existing target and run temporary file; remove a partially created new target only when run ownership is proven | Recover only when exactly reproducible/verifiable; report `Blocked | Unverifiable` when ownership/preservation is unclear, otherwise report the actual path and `Fail` |
 
@@ -123,17 +123,17 @@ Past approval, implicit `invocation`, and a generic request to continue are
 insufficient authority. Before approval, the candidate remains `pending`, and Target
 path records the exact planned path and `not created`.
 
-The approval checkpoint for a new draft occurs only after writing and rereading
-`.tigerkit/learn.md`; a write or reread failure is `Blocked` and cannot request
-approval. The failure table owns the one-off `no-op` status.
+The approval checkpoint occurs only after rereading the complete active packet and any required `.tigerkit/learn.md`.
+When the artifact branch is required, a write or reread failure is `Blocked` and cannot request approval. A simple
+same-turn packet may proceed without the artifact; the one-off `no-op` branch creates neither.
 
 ## Output contract
 
-After writing the artifact, first report the exact `learn.md` path and
-`Decision`/`Status`/`Disposition`, then summarize the key result in only `1–3` lines. End with
-exactly one approval question. Do not copy the ledger's full `Evidence`, `Dedupe`, `Candidate`,
+Report `Decision`/`Status`/`Disposition` and, when created, the exact `learn.md` path, then summarize the key result in
+only `1–3` lines. End with exactly one approval question when apply is eligible. A `no-op` ends without an invented
+approval question. Do not copy the packet's full `Evidence`, `Dedupe`, `Candidate`,
 `Target path`, `Verification`, or `Remaining concerns` into chat. A no-op caused by a threshold
-failure or duplicate follows the same artifact-first rule.
+failure or duplicate remains concise and need not materialize an artifact.
 
 ## Prohibitions / antipatterns
 

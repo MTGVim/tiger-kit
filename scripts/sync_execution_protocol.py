@@ -9,6 +9,14 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "skills/tk-prep/references"
 TARGET = ROOT / "skills/tk-pr-respond/references"
 FILES = ("testing.md", "sdd.md", "diagnosis.md", "test-doubles.md")
+REVIEW_SOURCE = ROOT / "skills/tk-review/references"
+REVIEW_TARGETS = (
+    ROOT / "skills/tk-prep/references",
+    ROOT / "skills/tk-pr-respond/references",
+)
+REVIEW_FILES = ("finding-quality.md", "typescript.md", "react.md", "security.md")
+EXTERNAL_CONTRACT_SOURCE = ROOT / "skills/tk-prep/references/external-contracts.md"
+EXTERNAL_CONTRACT_TARGET = ROOT / "skills/tk-wizard/references/external-contracts.md"
 DOMAIN_CONTEXT_TARGETS = (
     ROOT / "skills/tk-ask-repo/references/domain-context.md",
     ROOT / "skills/tk-pr-open/references/domain-context.md",
@@ -22,6 +30,12 @@ def main() -> int:
     args = parser.parse_args()
     pairs = [(SOURCE / name, TARGET / name) for name in FILES]
     pairs.extend((SOURCE / "domain-context.md", target) for target in DOMAIN_CONTEXT_TARGETS)
+    pairs.extend(
+        (REVIEW_SOURCE / name, target / name)
+        for target in REVIEW_TARGETS
+        for name in REVIEW_FILES
+    )
+    pairs.append((EXTERNAL_CONTRACT_SOURCE, EXTERNAL_CONTRACT_TARGET))
     drift = [
         (source, target)
         for source, target in pairs

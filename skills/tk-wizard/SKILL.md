@@ -53,6 +53,10 @@ First read the `repository` and current `host` `evidence` to build this internal
 Do not invent unknown UI, buttons, URLs, or commands. Where evidence is unavailable, describe only that point
 as `Unverifiable`.
 
+When the journey depends on a version-sensitive external API, OAuth/SSO provider, or provider dashboard that repository
+evidence cannot establish, read [external contract evidence](references/external-contracts.md). Installed/local contract
+evidence stays authoritative over generic latest documentation.
+
 Verified UI controls are literals, not prose to translate. Keep the exact language, case, punctuation, and spacing
 of a button, tab, menu, field, or modal title in every user instruction. An `enum`, code identifier, i18n key, route,
 or domain term is not a label unless the current render path proves that it is displayed as-is. If the rendered text

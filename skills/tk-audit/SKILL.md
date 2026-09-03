@@ -22,7 +22,7 @@ Use recovered project/session context only when repository/task identity matches
 
 Use only when `$tk-audit` or `/tk-audit` is explicitly selected.
 This is read-only codebase advising and does not modify source, tests, configuration, or history.
-The only owned artifact is repository-local `.tigerkit/audit.md`.
+When durable findings are needed, the only owned artifact is repository-local `.tigerkit/audit.md`.
 
 ## Invocation
 
@@ -31,6 +31,7 @@ The only owned artifact is repository-local `.tigerkit/audit.md`.
 - `security | perf | tests | architecture`: Focus on one category.
 - `branch`: Inspect merge-base changes and direct consumers, and mark `introduced | pre-existing`.
 - `next`: Separate evidence-backed direction candidates from defect findings.
+- `save`: Persist the current findings for handoff or later reuse.
 
 Modifiers may be combined. Do not implement, write Seeds, publish issues, or create worktrees.
 When user-owned clarification is needed, prefer the host's native structured question surface (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). If unavailable, ask once in plain chat and preserve the read-only boundary.
@@ -39,6 +40,9 @@ When user-owned clarification is needed, prefer the host's native structured que
 
 1. Read repository instructions, root configuration, verification commands, structure, and relevant Git history.
 2. Check the selected categories using [audit-playbook.md](references/audit-playbook.md).
+   Also check empty catches or ignored exceptions, errors converted into unsupported empty/default success, lost error
+   context, partial mutation reported as success, and missing required propagation/rollback. Do not flag an intentional
+   fallback whose observable contract, telemetry, or caller handling makes it explicit and safe.
 3. Reopen cited evidence to remove duplicates, intended behavior, and incorrect attribution.
 4. Sort `finding`s by impact ÷ `effort`, then `confidence`, `fix risk`, and `dependency`.
 
@@ -52,14 +56,18 @@ For a potential architecture finding, read ADR rationale only when it directly o
 report a deliberate ADR trade-off as a generic smell. Surface `revisit ADR` only when current evidence shows real
 friction or changed constraints, and never scan an unrelated ADR or context tree.
 
+Use a conversational report by default when the result can be consumed in the current turn. Persist a ledger only when
+the user requests `save`/stable `AUD-*` IDs, a downstream handoff depends on it, or complex/interrupted coverage needs
+durable recovery. Audit depth alone does not require an artifact.
+
 ## 🔴 CHECKPOINT · 🛑 STOP · Ledger preflight
 
-Before writing `.tigerkit/audit.md`, freshly recheck the current `HEAD`, requested scope, existing `AUD-*` IDs,
+When persistence is required, before writing `.tigerkit/audit.md`, freshly recheck the current `HEAD`, requested scope, existing `AUD-*` IDs,
 cited evidence, and the audited/unaudited boundary. If any of these changed, conflict, or cannot be read, stop with
 `Status: Blocked` or `Status: Unverifiable` and do not write the ledger. Only after the preflight passes, atomically
 update the ledger.
 
-5. Atomically update `.tigerkit/audit.md` while preserving stable `AUD-*` IDs and statuses.
+5. If persistence is required, atomically update `.tigerkit/audit.md` while preserving stable `AUD-*` IDs and statuses.
 
 ## Failure Paths
 
@@ -70,7 +78,7 @@ update the ledger.
 
 ## Finding Contract
 
-Each open finding must contain at least:
+Each persisted open finding must contain at least:
 
 - A stable `AUD-*` ID and title
 - Category and exact `path/line` or `symbol` evidence
@@ -86,7 +94,7 @@ Never copy a `secret` value; record only its location and credential type.
 
 ## Next-Executor Handoff
 
-Apply [executor-handoff.md](references/executor-handoff.md) to every finding.
+Apply [executor-handoff.md](references/executor-handoff.md) to every persisted or downstream finding.
 Include the `audited HEAD`, exact paths/`symbol`s, current evidence, repository rules, `in/out` boundaries,
 assumptions, verification commands, and `drift handling` so the next executor can proceed without the audit conversation.
 

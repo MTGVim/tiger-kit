@@ -1043,11 +1043,11 @@
       "id": "prep-bounds-concurrent-pr-collision-preflight",
       "path": "success",
       "prompt": "/tk-prep `shared checkout response schema`와 `consumer`를 바꾸는 작업을 준비해줘. 계획 경로와 소유 계약은 확인됐고 `GitHub remote`에는 `open/draft PR`이 47개 있다. 현재 브랜치의 자기 PR도 있고, 일부 PR은 제목만 비슷하며, 최근 갱신/번호 순으로 정렬한 상위 30개 안의 PR #91은 같은 `schema symbol`과 다른 파일의 옛 패턴 `consumer`를 함께 바꾼다.",
-      "expected_output": "자기 PR을 제외하고 최근 갱신 순서의 30개 `metadata/changed-path`를 완전 조회한다. 약한 신호도 세부 후보에는 쓸 수 있으나 충돌 근거로 쓰지 않으며, 세부 5개·전체 `diff` 3개 예산 안에서 #91의 실제 계약 충돌에 `coordinate | sequence | replan`을 제안하고 미검토 범위를 공개한다.",
+      "expected_output": "자기 `PR`을 제외하고 30/5/3 초기 비용 예산에서 시작하되 같은 `schema/consumer` 의존 `frontier`가 남으므로 다음 `bounded batch`로 확장해 #91의 실제 계약 충돌을 확인하고 `coordinate | sequence | replan`을 제안한다. 확장 이유·관측 수·미검토 범위를 공개한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "`concurrent-prs.md`를 적용해 최근 갱신/번호 순서를 고정한다. 자기 PR은 저장소·번호·`base/head`가 정확할 때 하나만 제외하고 동일 `head` 복수 PR이면 제외하지 않는다. `exact path/symbol/producer-consumer`는 강한 후보이고 제목 같은 약한 신호도 제한된 상세 후보로 허용하되 충돌 판정에는 쓰지 않는다. 판정 직전 `top-30`과 조사한 모든 PR을 재확인하고, 관측한 30/5/3 사용량·완전 조회·미검토 범위를 밝히며 확인된 #91에는 `coordinate | sequence | replan`을 제시한다."
+          "criterion": "`concurrent-prs.md`를 적용해 30/5/3을 `initial cost budget`으로 사용한다. 동일 `schema symbol`과 `old-pattern consumer` 때문에 `plausible frontier`가 닫히지 않았으므로 `bounded metadata/detail/diff expansion`을 수행하고 이유와 관측 수를 기록한다. 약한 제목 신호만으로 충돌을 단정하지 않으며, 판정 직전 조사한 `frontier`를 재확인하고 미검토 범위를 밝힌다."
         },
         {
           "type": "output_contains",
@@ -1083,6 +1083,28 @@
           "type": "terminal_status",
           "expected": "Pending"
         }
+      ]
+    },
+    {
+      "id": "prep-external-contract-binds-installed-version",
+      "path": "success",
+      "prompt": "/tk-prep `lockfile`은 `SDK v2`를 설치했고 `generated types`도 `v2 optional field`를 선언하지만 `generic latest docs`는 `v3 required field`를 설명합니다. 외부 `response type` 변경을 준비해줘.",
+      "expected_output": "`Installed version/local contract`를 우선하고 일치하는 공식 `v2 docs`를 확인하며 일반 최신 `v3` 문서로 `field/nullability`를 덮어쓰지 않는다.",
+      "assertions": [
+        {"type":"judge","criterion":"`Version-sensitive external contract`는 `installed version`, `lockfile`, `generated types`, `repository integration`을 먼저 사용한다. `External docs`가 필요하면 일치하는 공식 버전을 확인하고 충돌하거나 확인 불가한 `field/nullability/omission`은 `Unverifiable`로 남긴다."},
+        {"type":"git_head_unchanged"},
+        {"type":"terminal_status","expected":"Pending"}
+      ]
+    },
+    {
+      "id": "prep-review-uses-conditional-security-and-silent-failure-lenses",
+      "path": "success",
+      "prompt": "[승인된 /tk-prep `direct review`] 변경은 `webhook signature/replay`와 `partial DB mutation error`를 다룹니다. 한 `fallback`은 `metric`과 `caller contract`로 명시돼 있습니다.",
+      "expected_output": "기존 한 `reviewer/two-axis pass`에서 조건부 `security`와 `finding-quality` 지식을 적용해 실제 `webhook/partial-success defect`만 찾고 의도된 `fallback`은 오탐하지 않는다.",
+      "assertions": [
+        {"type":"judge","criterion":"`Prep exact-change review`가 공유된 `finding/security knowledge`를 사용하되 새 `reviewer/pass`를 만들지 않는다. 구체적인 `exploit/error path`와 `guards`를 확인하고 명시적인 `fallback`은 제외한다."},
+        {"type":"event_count","event":{"type":"phase_invocation","phase":"review"},"min":1,"max":1},
+        {"type":"git_head_unchanged"}
       ]
     }
   ]

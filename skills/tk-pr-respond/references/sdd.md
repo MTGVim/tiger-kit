@@ -172,6 +172,10 @@ clean verdict on either axis never offsets a failure on the other:
    the same unnecessary-complexity or test-only production-API risks required by
    implementer self-review.
 
+Apply [finding quality](finding-quality.md) to every `Unit` and whole-change review. Read
+[TypeScript](typescript.md), [React](react.md), and [security](security.md) only when the reviewed scope meets those
+references' conditions. A conditional lens does not add a reviewer or pass.
+
 One reviewer or one serial review may judge both axes. Do not add a mandatory second
 reviewer or parallel reviewer fan-out.
 

@@ -62,6 +62,10 @@ One reviewer may judge both axes; do not require a second reviewer. Finish with 
 verified local commits, and `tk-browser-verify` for browser-visible changes. Provide the verifier with exact
 command/cwd/URL/auth/readiness; it owns server lifecycle. Do not repeat SDD's whole-change review with another generic review.
 
+Apply [finding quality](finding-quality.md) to every code review. Read [TypeScript](typescript.md),
+[React](react.md), and [security](security.md) only when the reviewed scope meets those references' conditions. These
+lenses do not change finding disposition, response-delta, re-review targets, or publication order.
+
 After three meaningful direct corrective attempts, stop as `Fail` or `Unverifiable`; SDD uses its five-round breaker.
 Material Goal/Scope/Decision/AC/security/required Verification drift returns to the preparation owner. Reversible
 engineering ambiguity receives an explicit `Ruling:`. Neither route expands publication authority.

@@ -43,6 +43,10 @@ Record independent `Spec/AC` and `Quality/Standards` verdicts. One fresh reviewe
 second reviewer. Prefer a host-native fresh reviewer. Otherwise perform a distinct serial exact-scope review and disclose
 that it was not independent.
 
+Every exact-change review applies [finding quality](finding-quality.md). Read [TypeScript](typescript.md),
+[React](react.md), and [security](security.md) only when the review scope meets those references' conditions. These lenses
+change review judgment, not the target, commit, remediation, or authority protocol.
+
 For direct and SDD execution, preserve scope and UI literals, use the exact review range, run acceptance review, retain
 automated regression protection, and create only approved local commits. Invoke `tk-browser-verify` for every
 browser-visible AC; its runtime evidence does not replace automated protection. SDD's whole-change final review already

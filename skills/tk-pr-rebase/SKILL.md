@@ -86,12 +86,15 @@ Do not force-push if no rewrite is needed.
 ## Standalone publication
 
 An explicit standalone invocation automatically authorizes only the local rebase.
-Before remote publication, record the exact PR/base/head, old/new SHA,
-verification, exact lease/refspec, reply/thread action, and exclusions in `.tigerkit/pr-rebase.md`, then reread it.
+Before remote publication, record the exact PR/base/head, old/new SHA, verification, exact lease/refspec,
+reply/thread action, and exclusions in an active approval packet. Keep a simple same-turn packet in the interaction when
+it can be faithfully retained and reread. Use the singleton `.tigerkit/pr-rebase.md` only for an explicit `save`,
+multi-turn handoff/recovery, complex conflict state, or when the host cannot retain the exact packet. Never create a
+per-run archive; when used, atomically replace stale completed content for this owner and reread it.
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Standalone publication boundary
 
-Do not tell the user merely to read the entire ledger. Naturally summarize what changed, what was verified,
+Do not tell the user merely to read an artifact. Naturally summarize what changed, what was verified,
 and which exact publication will be performed, then obtain one current-turn approval.
 STOP immediately before the remote write if repository/identity/open state/base/head/refspec/lease cannot be rechecked
 or if any material drift invalidates the approval.

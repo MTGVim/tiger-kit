@@ -21,6 +21,12 @@
       "should_trigger": true
     },
     {
+      "id": "validation-explicit-worktree",
+      "split": "validation",
+      "query": "$tk-review 현재 `staged/unstaged/untracked worktree`를 읽기 전용으로 검토해줘",
+      "should_trigger": true
+    },
+    {
       "id": "validation-dirty-negative",
       "split": "validation",
       "query": "아직 커밋하지 않은 작업 트리 `diff`를 리뷰하고 고쳐줘",
