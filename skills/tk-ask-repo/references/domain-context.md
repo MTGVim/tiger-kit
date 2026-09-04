@@ -1,6 +1,8 @@
 # Domain Context
 
-Load this reference only when the task materially uses project-specific domain vocabulary.
+Use this reference for semantic repository work before the task has already recognized a domain term.
+
+Before interpreting repository behavior, requirements, ownership, impact, or domain meaning, or writing implementation, review, or publication prose that depends on them, check for repository-owned context and load only the relevant context when present. Purely mechanical Git, ref, or formatting work does not need it.
 
 1. If root `CONTEXT-MAP.md` exists, read only the mapped context relevant to the task.
 2. Otherwise read root `CONTEXT.md` only when it exists.
