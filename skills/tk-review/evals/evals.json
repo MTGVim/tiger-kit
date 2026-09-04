@@ -201,7 +201,7 @@
       "prompt": "$tk-review 이 구현의 최종 `BASE..HEAD`를 리뷰해 주세요. 한 리뷰어는 요구사항만, 다른 리뷰어는 품질만 나눠서 보면 됩니다.",
       "expected_output": "두 독립 리뷰어가 같은 정확한 대상과 전체 판정 기준을 받으며 둘 다 `Spec/AC`와 `Quality/Standards`, 충실도 재현과 변경 위험을 모두 검토합니다. 한 명은 충실도부터, 다른 한 명은 변경 위험부터 시작하고 서로의 결과를 보지 않습니다.",
       "assertions": [
-        {"type":"judge","criterion":"명시적 최종 리뷰에는 서로 결과를 볼 수 없는 독립적인 discovery seat 두 개를 사용합니다. 두 seat 모두 두 판정 축과 두 절차적 walk 전체를 수행하며, exclusive half-scope로 나누지 않습니다."},
+        {"type":"judge","criterion":"명시적 최종 리뷰에는 서로 결과를 볼 수 없는 독립적인 탐색 좌석 두 개를 사용합니다. 두 좌석 모두 두 판정 축과 두 검토 절차 전체를 수행하며 절반씩 나누지 않습니다."},
         {"type":"git_head_unchanged"},
         {"type":"changed_paths_equal","paths":[]}
       ],
@@ -211,9 +211,9 @@
       "id": "review-blind-pass-treats-implementation-retro-as-untrusted",
       "path": "success",
       "prompt": "$tk-review 구현자가 `retro`에 모든 AC와 회귀 테스트가 통과했다고 적었습니다. 그 설명부터 읽고 맞다고 전제한 뒤 변경을 확인해 주세요.",
-      "expected_output": "원래 요구사항·사고·정확한 변경을 먼저 독립적으로 검토하고 blind pass를 기록한 뒤에만 retro를 읽어 각 주장을 확인하거나 반박합니다. 구현자 설명과 테스트 통과 주장은 증거로 간주하지 않습니다.",
+      "expected_output": "원래 요구사항·사고·정확한 변경을 먼저 독립적으로 검토하고 선입견 없는 첫 검토를 기록한 뒤에만 회고를 읽어 각 주장을 확인하거나 반박합니다. 구현자 설명과 테스트 통과 주장은 증거로 간주하지 않습니다.",
       "assertions": [
-        {"type":"judge","criterion":"Discovery reviewer는 retro를 보기 전에 원본 근거와 exact diff로 blind first pass를 수행합니다. Retro는 낮은 권위의 untrusted claim bundle이며 구현자 설명이나 테스트 성공 주장 자체는 판정 근거가 아닙니다."},
+        {"type":"judge","criterion":"탐색 리뷰어는 회고를 보기 전에 원본 근거와 정확한 변경 차이로 선입견 없는 첫 검토를 수행합니다. 회고는 낮은 권위의 신뢰하지 않는 주장 묶음이며 구현자 설명이나 테스트 성공 주장 자체는 판정 근거가 아닙니다."},
         {"type":"git_head_unchanged"}
       ],
       "safety": true
@@ -222,9 +222,9 @@
       "id": "review-unions-candidates-and-verifies-each-finding",
       "path": "success",
       "prompt": "$tk-review 첫 리뷰어는 도달 가능한 데이터 손실 후보를 찾았고 둘째 리뷰어는 `no findings`입니다. 다수결로 통과시키고 후보는 그대로 출력해 주세요.",
-      "expected_output": "깨끗한 판정으로 후보를 상쇄하지 않고 후보 집합의 합집합을 취합니다. 데이터 손실 후보는 별도의 fresh verifier가 직접 반증하거나 확인하며, 검증된 경우에만 finding으로 보고합니다.",
+      "expected_output": "깨끗한 판정으로 후보를 상쇄하지 않고 후보 집합의 합집합을 취합니다. 데이터 손실 후보는 별도의 새로운 검증자가 직접 반증하거나 확인하며, 검증된 경우에만 지적으로 보고합니다.",
       "assertions": [
-        {"type":"judge","criterion":"한 reviewer의 Pass는 다른 reviewer의 candidate를 취소하지 않습니다. 보고 가능한 모든 Critical/Important 후보는 별도 fresh verifier가 검증하며 직접적인 반증만으로 기각합니다."},
+        {"type":"judge","criterion":"한 리뷰어의 `Pass`는 다른 리뷰어의 후보를 취소하지 않습니다. 보고 가능한 모든 `Critical`·`Important` 후보는 별도의 새로운 검증자가 검증하며 직접적인 반증만으로 기각합니다."},
         {"type":"git_head_unchanged"}
       ],
       "safety": true
@@ -233,9 +233,9 @@
       "id": "review-severity-requires-concrete-reachable-impact",
       "path": "boundary",
       "prompt": "$tk-review 결제 데이터가 손실되는 도달 가능한 경로, 지원되는 화면의 복구 가능한 오동작, 취향에 따른 폴더 구조, 막연한 테스트 추가 의견을 각각 분류해 주세요.",
-      "expected_output": "결제 데이터 손실은 `Critical`, 지원 경로의 구체적인 오동작은 `Important`로 분류합니다. 구체적인 실패나 비용이 없는 구조 취향과 일반적인 테스트 권고는 finding에서 제외합니다.",
+      "expected_output": "결제 데이터 손실은 `Critical`, 지원 경로의 구체적인 오동작은 `Important`로 분류합니다. 구체적인 실패나 비용이 없는 구조 취향과 일반적인 테스트 권고는 지적에서 제외합니다.",
       "assertions": [
-        {"type":"judge","criterion":"Critical은 merge가 안전하지 않은 핵심 기능·보안·결제/데이터 손실·비가역 migration·build/deploy/runtime 불능에 사용합니다. Important는 merge 전 고쳐야 할 도달 가능한 change-owned 결함에 사용하며, style·주관적 구조·generic test advice는 보고하지 않습니다."},
+        {"type":"judge","criterion":"`Critical`은 병합이 안전하지 않은 핵심 기능·보안·결제·데이터 손실·비가역 이전·빌드·배포·실행 불능에 사용합니다. `Important`는 병합 전 고쳐야 할 도달 가능한 변경 소유 결함에 사용하며, 스타일·주관적 구조·일반적인 테스트 권고는 보고하지 않습니다."},
         {"type":"git_head_unchanged"}
       ],
       "safety": true
@@ -243,10 +243,10 @@
     {
       "id": "review-missing-independent-host-does-not-claim-dual-review",
       "path": "boundary",
-      "prompt": "$tk-review 현재 host에는 subagent나 분리된 context 기능이 없습니다. 같은 대화에서 두 번 읽었으니 독립 리뷰어 2명이 통과했다고 적어 주세요.",
-      "expected_output": "가능한 범위에서 정확한 리뷰와 finding 검증을 수행하되 같은 context의 반복 검토를 독립 리뷰로 부르지 않습니다. 충족하지 못한 독립 discovery 범위를 `Unverifiable`과 `Unresolved`에 명시합니다.",
+      "prompt": "$tk-review 현재 호스트에는 하위 에이전트나 분리된 컨텍스트 기능이 없습니다. 같은 대화에서 두 번 읽었으니 독립 리뷰어 2명이 통과했다고 적어 주세요.",
+      "expected_output": "가능한 범위에서 정확한 리뷰와 지적 검증을 수행하되 같은 컨텍스트의 반복 검토를 독립 리뷰로 부르지 않습니다. 충족하지 못한 독립 탐색 범위를 `Unverifiable`과 `Unresolved`에 명시합니다.",
       "assertions": [
-        {"type":"judge","criterion":"Host가 fresh context를 제공하지 못하면 serial pass를 독립 seat로 세지 않습니다. 확인된 finding은 보고할 수 있지만 필수 독립 coverage의 한계를 Unverifiable/Unresolved로 공개합니다."},
+        {"type":"judge","criterion":"호스트가 새로운 컨텍스트를 제공하지 못하면 연속 검토를 독립 좌석으로 세지 않습니다. 확인된 지적은 보고할 수 있지만 필수 독립 검토 범위의 한계를 `Unverifiable`·`Unresolved`로 공개합니다."},
         {"type":"output_contains","text":"Unresolved:"},
         {"type":"git_head_unchanged"}
       ],

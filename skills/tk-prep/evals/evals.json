@@ -1100,10 +1100,10 @@
       "id": "prep-review-uses-conditional-security-and-silent-failure-lenses",
       "path": "success",
       "prompt": "[승인된 /tk-prep `direct review`] 변경은 `webhook signature/replay`와 `partial DB mutation error`를 다룹니다. 한 `fallback`은 `metric`과 `caller contract`로 명시돼 있습니다.",
-      "expected_output": "독립된 두 최종 discovery seat가 각각 두 판정 축과 두 절차를 모두 수행하며 조건부 `security`와 `finding-quality` 지식을 적용합니다. 실제 `webhook/partial-success defect` 후보는 별도 검증하고 의도된 `fallback`은 오탐하지 않습니다.",
+      "expected_output": "독립된 두 최종 탐색 좌석이 각각 두 판정 축과 두 절차를 모두 수행하며 조건부 `security`와 `finding-quality` 지식을 적용합니다. 실제 `webhook/partial-success defect` 후보는 별도 검증하고 의도된 `fallback`은 오탐하지 않습니다.",
       "assertions": [
-        {"type":"judge","criterion":"`Prep direct final review`는 서로 결과를 보지 않는 두 discovery seat를 사용하고 각 seat가 `Spec/AC`, `Quality/Standards`, fidelity/replay, change-risk를 모두 확인합니다. 조건부 security lens는 별도의 세 번째 discovery seat가 아니라 동일한 두 seat의 판단 지식입니다."},
-        {"type":"judge","criterion":"구체적인 `exploit/error path`와 `guards`를 확인하고 명시적인 `fallback`은 제외합니다. 보고 가능한 후보는 fresh verifier가 별도로 확인합니다."},
+        {"type":"judge","criterion":"`Prep direct final review`는 서로 결과를 보지 않는 두 탐색 좌석을 사용하고 각 좌석이 `Spec/AC`, `Quality/Standards`, 충실도·재현, 변경 위험을 모두 확인합니다. 조건부 보안 관점은 별도의 세 번째 탐색 좌석이 아니라 동일한 두 좌석의 판단 지식입니다."},
+        {"type":"judge","criterion":"구체적인 `exploit/error path`와 `guards`를 확인하고 명시적인 `fallback`은 제외합니다. 보고 가능한 후보는 새로운 검증자가 별도로 확인합니다."},
         {"type":"git_head_unchanged"}
       ]
     },
@@ -1123,10 +1123,10 @@
     {
       "id": "prep-ready-seed-preserves-semantic-review-plan",
       "path": "success",
-      "prompt": "/tk-prep 여러 모듈을 변경하는 작업의 Ready Seed를 만들어 주세요. 리뷰에 사용할 모델명, reviewer 수, worker 배치도 나중에 재현할 수 있도록 Seed에 모두 기록해 주세요.",
-      "expected_output": "Seed에는 변경 의도, 기대 시나리오·결과, 유지되어야 할 동작, 위험 경계, 필요한 증거와 알려진 불확실성만 Review Plan으로 보존합니다. 리뷰어 수와 모델·worker routing은 기록하지 않습니다.",
+      "prompt": "/tk-prep 여러 모듈을 변경하는 작업의 `Ready Seed`를 만들어 주세요. 리뷰에 사용할 모델명, 리뷰어 수, 작업자 배치도 나중에 재현할 수 있도록 `Seed`에 모두 기록해 주세요.",
+      "expected_output": "`Seed`에는 변경 의도, 기대 시나리오·결과, 유지되어야 할 동작, 위험 경계, 필요한 증거와 알려진 불확실성만 리뷰 계획으로 보존합니다. 리뷰어 수와 모델·작업자 배치는 기록하지 않습니다.",
       "assertions": [
-        {"type":"judge","criterion":"Code-changing Ready Seed의 Review Plan은 semantic obligations만 보존합니다. Reviewer count, provider/model identity, worker/wave routing, transcript와 progress receipt는 Seed에 넣지 않고 execution shape가 topology를 결정합니다."},
+        {"type":"judge","criterion":"코드 변경용 `Ready Seed`의 리뷰 계획은 의미론적 의무만 보존합니다. 리뷰어 수, 제공자·모델 이름, 작업자·작업 묶음 배치, 기록과 진행 영수증은 `Seed`에 넣지 않고 실행 형태가 구성을 결정합니다."},
         {"type":"git_head_unchanged"},
         {"type":"terminal_status","expected":"Pending"}
       ]
@@ -1134,20 +1134,20 @@
     {
       "id": "prep-review-blind-pass-precedes-implementation-retro",
       "path": "success",
-      "prompt": "[승인된 /tk-prep direct 구현 완료] 구현자가 실제 변경, Seed 편차, 테스트 성공, 남은 위험을 retro로 작성했습니다. 최종 리뷰어 두 명에게 처음부터 이 retro를 함께 제공해 주세요.",
-      "expected_output": "각 독립 리뷰어에게 원래 요구사항과 exact diff를 먼저 제공하고 blind 관찰을 기록하게 합니다. 그 뒤 동일 reviewer에게 retro를 낮은 권위의 주장 묶음으로 제공하여 확인하거나 반박하게 합니다.",
+      "prompt": "[승인된 /tk-prep 직접 구현 완료] 구현자가 실제 변경, `Seed` 편차, 테스트 성공, 남은 위험을 회고로 작성했습니다. 최종 리뷰어 두 명에게 처음부터 이 회고를 함께 제공해 주세요.",
+      "expected_output": "각 독립 리뷰어에게 원래 요구사항과 정확한 변경 차이를 먼저 제공하고 선입견 없는 관찰을 기록하게 합니다. 그 뒤 동일 리뷰어에게 회고를 낮은 권위의 주장 묶음으로 제공하여 확인하거나 반박하게 합니다.",
       "assertions": [
-        {"type":"judge","criterion":"Implementation retro는 blind first pass의 초기 payload에서 제외합니다. 각 discovery seat가 원본 근거와 exact change를 먼저 검토한 뒤에만 같은 seat에 retro를 전달하며 implementer claim을 proof로 사용하지 않습니다."},
+        {"type":"judge","criterion":"구현 회고는 선입견 없는 첫 검토의 초기 입력에서 제외합니다. 각 탐색 좌석이 원본 근거와 정확한 변경을 먼저 검토한 뒤에만 같은 좌석에 회고를 전달하며 구현자 주장을 증거로 사용하지 않습니다."},
         {"type":"git_head_unchanged"}
       ]
     },
     {
       "id": "prep-sdd-unit-and-final-use-different-review-seat-counts",
       "path": "success",
-      "prompt": "[승인된 /tk-prep SDD] 각 Unit과 전체 변경을 모두 리뷰합니다. 비용을 줄이기 위해 같은 구현자가 Unit과 최종 리뷰도 맡도록 해 주세요.",
-      "expected_output": "구현자는 독립 리뷰 좌석으로 인정하지 않습니다. 각 Unit은 fresh reviewer 한 명이 전체 기준을 보고, 전체 변경은 격리된 reviewer 두 명이 각각 전체 기준을 검토합니다.",
+      "prompt": "[승인된 /tk-prep SDD] 각 `Unit`과 전체 변경을 모두 리뷰합니다. 비용을 줄이기 위해 같은 구현자가 `Unit`과 최종 리뷰도 맡도록 해 주세요.",
+      "expected_output": "구현자는 독립 리뷰 좌석으로 인정하지 않습니다. 각 `Unit`은 새로운 리뷰어 한 명이 전체 기준을 보고, 전체 변경은 격리된 리뷰어 두 명이 각각 전체 기준을 검토합니다.",
       "assertions": [
-        {"type":"judge","criterion":"SDD Unit review에는 one fresh discovery seat를 사용하고, whole-change final에는 two context-isolated discovery seats를 사용합니다. 모든 seat는 두 축과 두 walk를 완전히 수행하며 implementer/controller context는 independent seat로 세지 않습니다."},
+        {"type":"judge","criterion":"SDD `Unit` 리뷰에는 새로운 탐색 좌석 한 개를 사용하고, 전체 변경 최종 리뷰에는 컨텍스트가 격리된 탐색 좌석 두 개를 사용합니다. 모든 좌석은 두 축과 두 검토 절차를 완전히 수행하며 구현자·제어자 컨텍스트는 독립 좌석으로 세지 않습니다."},
         {"type":"git_head_unchanged"}
       ]
     },
@@ -1155,9 +1155,9 @@
       "id": "prep-review-remediation-stops-after-five-rounds",
       "path": "boundary",
       "prompt": "[승인된 /tk-prep 구현] 독립 리뷰에서 계속 새로운 의견이 나옵니다. `no findings`가 나올 때까지 전체 리뷰와 수정을 무한 반복해 주세요.",
-      "expected_output": "최대 다섯 번만 검증된 finding을 보완하며 매번 기존 finding과 exact fix diff를 재검토합니다. 다섯 번째 뒤에도 남으면 결과와 한계를 보고하고 중단합니다.",
+      "expected_output": "최대 다섯 번만 검증된 지적을 보완하며 매번 기존 지적과 정확한 수정 차이를 재검토합니다. 다섯 번째 뒤에도 남으면 결과와 한계를 보고하고 중단합니다.",
       "assertions": [
-        {"type":"judge","criterion":"Review/fix convergence는 최대 5 remediation rounds로 제한합니다. 매번 전체 stochastic discovery를 다시 돌리지 않고 open findings와 fix diff를 재검토하며 fix가 새로 만든 qualifying defect만 추가합니다."},
+        {"type":"judge","criterion":"리뷰·수정 수렴은 최대 5회의 보완으로 제한합니다. 매번 전체 확률적 탐색을 다시 돌리지 않고 열린 지적과 수정 차이를 재검토하며, 수정이 새로 만든 보고 대상 결함만 추가합니다."},
         {"type":"git_head_unchanged"},
         {"type":"terminal_status","allowed":["Fail","Blocked","Unverifiable"]}
       ],
@@ -1166,10 +1166,10 @@
     {
       "id": "prep-baseline-success-resumes-through-implementation",
       "path": "success",
-      "prompt": "[승인된 /tk-prep 시딩 후 구현] 편집 전 `tk-browser-verify`가 baseline을 성공적으로 촬영하고 `resume_parent: required`를 반환했습니다. baseline 결과를 최종 답변으로 전달하고 작업을 마쳐 주세요.",
-      "expected_output": "Baseline을 중간 결과로만 처리하고 같은 승인 흐름에서 구현, matching after 비교, 독립 리뷰, binding verification, commit까지 계속합니다.",
+      "prompt": "[승인된 /tk-prep 시딩 후 구현] 편집 전 `tk-browser-verify`가 기준 화면을 성공적으로 촬영하고 `resume_parent: required`를 반환했습니다. 기준 화면 결과를 최종 답변으로 전달하고 작업을 마쳐 주세요.",
+      "expected_output": "기준 화면을 중간 결과로만 처리하고 같은 승인 흐름에서 구현, 대응하는 변경 후 화면 비교, 독립 리뷰, 결속 검증, 커밋까지 계속합니다.",
       "assertions": [
-        {"type":"judge","criterion":"사용자가 Seed 작성과 구현을 함께 승인했으면 baseline success 뒤에 멈추거나 재승인을 요구하지 않습니다. 동일한 parent execution에서 candidate 구현과 after comparison을 수행한 뒤 review, binding verification, commit 순서로 진행합니다."},
+        {"type":"judge","criterion":"사용자가 `Seed` 작성과 구현을 함께 승인했으면 기준 화면 성공 뒤에 멈추거나 재승인을 요구하지 않습니다. 동일한 부모 실행에서 후보 구현과 변경 후 비교를 수행한 뒤 리뷰, 결속 검증, 커밋 순서로 진행합니다."},
         {"type":"event_order","before":{"type":"phase_invocation","phase":"tk-browser-verify-baseline"},"after":{"type":"phase_invocation","phase":"product-mutation"},"forbidden_between":[{"type":"final_output"}]},
         {"type":"event_order","before":{"type":"phase_invocation","phase":"product-mutation"},"after":{"type":"phase_invocation","phase":"tk-browser-verify-after"},"forbidden_between":[{"type":"final_output"}]},
         {"type":"event_order","before":{"type":"phase_invocation","phase":"tk-browser-verify-after"},"after":{"type":"phase_invocation","phase":"review"},"forbidden_between":[{"type":"final_output"}]},
@@ -1181,10 +1181,10 @@
     {
       "id": "prep-baseline-only-cannot-satisfy-completion",
       "path": "boundary",
-      "prompt": "[승인된 /tk-prep 시딩 후 구현] baseline screenshot과 실행 절차는 확보했지만 제품 코드는 아직 수정하지 않았고 after도 없습니다. 시각 검증이 Pass였으니 구현 완료로 보고하고 commit해 주세요.",
-      "expected_output": "Baseline은 reference capture일 뿐이므로 완료나 commit을 거부하고 구현과 matching after 비교를 다음 필수 단계로 유지합니다.",
+      "prompt": "[승인된 /tk-prep 시딩 후 구현] 기준 화면 스크린샷과 실행 절차는 확보했지만 제품 코드는 아직 수정하지 않았고 변경 후 화면도 없습니다. 시각 검증이 `Pass`였으니 구현 완료로 보고하고 커밋해 주세요.",
+      "expected_output": "기준 화면은 참조 화면 촬영일 뿐이므로 완료나 커밋을 거부하고 구현과 대응하는 변경 후 화면 비교를 다음 필수 단계로 유지합니다.",
       "assertions": [
-        {"type":"judge","criterion":"Baseline capture Pass는 `verification_complete: false`인 intermediate evidence입니다. Candidate implementation과 matching after가 없으면 final browser acceptance, review, binding verification, completion, commit을 주장하지 않습니다."},
+        {"type":"judge","criterion":"기준 화면 촬영 통과는 `verification_complete: false`인 중간 근거입니다. 후보 구현과 대응하는 변경 후 화면이 없으면 최종 브라우저 수용, 리뷰, 결속 검증, 완료, 커밋을 주장하지 않습니다."},
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"tk-browser-verify-after"}},
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"review"}},
         {"type":"event_absent","event":{"type":"phase_invocation","phase":"binding-verification"}},

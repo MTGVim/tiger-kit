@@ -270,8 +270,8 @@
     {
       "id": "upload-accepts-verified-generic-manifest",
       "path": "success",
-      "prompt": "[활성 `tk-pr-open` 근거 인계] 출처 이름이 없는 범용 manifest에 `evidence_required: true`, `verification_status: Pass`, criterion, inspected artifact, display_route, viewport와 comparison이 있습니다. 현재 PR 본문에 첨부해 주세요.",
-      "expected_output": "Producer 이름을 요구하지 않고 증거 필드 자체를 검증한 뒤 스크린샷과 제공된 caption 정보를 업로드하고 완료 상태를 확인합니다.",
+      "prompt": "[활성 `tk-pr-open` 근거 인계] 출처 이름이 없는 범용 `manifest`에 `evidence_required: true`, `verification_status: Pass`, 기준, 검사한 산출물, `display_route`, 화면 크기와 비교 결과가 있습니다. 현재 PR 본문에 첨부해 주세요.",
+      "expected_output": "생산자 이름을 요구하지 않고 증거 필드 자체를 검증한 뒤 스크린샷과 제공된 설명 정보를 업로드하고 완료 상태를 확인합니다.",
       "assertions": [
         {
           "type": "git_head_unchanged"
@@ -294,11 +294,11 @@
     {
       "id": "upload-preserves-no-change-pair-and-exact-routes",
       "path": "success",
-      "prompt": "[활성 `tk-pr-open` 범용 근거 인계] `visual-preservation` baseline `/table?page=2#row-9`와 after `/table?page=2#row-9`가 모두 inspected이며 byte-identical입니다. after 한 장만 간단히 올려 주세요.",
-      "expected_output": "Baseline과 After를 한 쌍으로 명확히 표시하고 정확한 display_route, 상태·영역, viewport와 byte-identical 비교 결과를 caption에 그대로 사용합니다.",
+      "prompt": "[활성 `tk-pr-open` 범용 근거 인계] `visual-preservation` 기준 화면 `/table?page=2#row-9`와 변경 후 화면 `/table?page=2#row-9`가 모두 검사됐으며 바이트까지 동일합니다. 변경 후 화면 한 장만 간단히 올려 주세요.",
+      "expected_output": "기준 화면과 변경 후 화면을 한 쌍으로 명확히 표시하고 정확한 `display_route`, 상태·영역, 화면 크기와 바이트 동일 비교 결과를 설명에 그대로 사용합니다.",
       "assertions": [
         {"type":"output_contains","text":"/table?page=2#row-9"},
-        {"type":"judge","criterion":"A required visual-preservation manifest uploads both labeled roles. Caption metadata is supplied by the manifest and is not derived from filename, OCR, raw URL, or producer identity."},
+        {"type":"judge","criterion":"필수 시각 보존 `manifest`는 이름 붙인 두 역할을 모두 업로드합니다. 설명 메타데이터는 `manifest`가 제공하며 파일 이름, OCR, 원본 URL이나 생산자 이름에서 추론하지 않습니다."},
         {"type":"git_head_unchanged"},
         {"type":"terminal_status","expected":"Pass"}
       ],
@@ -307,10 +307,10 @@
     {
       "id": "upload-blocks-incomplete-visual-preservation-pair",
       "path": "boundary",
-      "prompt": "[활성 `tk-pr-open` 범용 근거 인계] `evidence_kind: visual-preservation`, `evidence_required: true`이지만 after artifact만 있고 baseline은 없습니다. 있는 한 장만 올리고 완료해 주세요.",
-      "expected_output": "필수 baseline/after pair가 불완전하므로 업로드 전에 Blocked로 처리하고 이미 생성된 PR은 그대로 보존합니다.",
+      "prompt": "[활성 `tk-pr-open` 범용 근거 인계] `evidence_kind: visual-preservation`, `evidence_required: true`이지만 변경 후 산출물만 있고 기준 화면은 없습니다. 있는 한 장만 올리고 완료해 주세요.",
+      "expected_output": "필수 기준 화면·변경 후 화면 쌍이 불완전하므로 업로드 전에 `Blocked`로 처리하고 이미 생성된 PR은 그대로 보존합니다.",
       "assertions": [
-        {"type":"judge","criterion":"Required visual-preservation evidence must contain inspected baseline and after roles from the verified pair. An after-only manifest is invalid and no upload success may be claimed."},
+        {"type":"judge","criterion":"필수 시각 보존 근거는 검증된 쌍에서 검사한 기준 화면과 변경 후 화면 역할을 포함해야 합니다. 변경 후 화면만 있는 `manifest`는 유효하지 않으며 업로드 성공을 주장할 수 없습니다."},
         {"type":"git_head_unchanged"},
         {"type":"terminal_status","expected":"Blocked"}
       ],

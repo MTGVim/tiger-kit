@@ -94,7 +94,7 @@ session.md routing
 변경점:
 
 - `Respond`/`Sweep`는 `stale` `lifecycle` Markdown보다 GitHub `fresh` `state`를 `truth`로 사용합니다.
-- `code-changing` `Respond`는 작은 명확한 수정이면 승인된 현재 대화의 의미론적 리뷰 계획으로 `direct-TDD`를 실행하고, 격리된 자식 실행·복잡한 검증·다중 Unit SDD처럼 지속 가능한 컨텍스트가 필요할 때만 해당 `worktree`의 표시된 현재 PR Ready `seed.md`를 사용합니다.
+- `code-changing` `Respond`는 작은 명확한 수정이면 승인된 현재 대화의 의미론적 리뷰 계획으로 `direct-TDD`를 실행하고, 격리된 자식 실행·복잡한 검증·다중 `Unit` `SDD`처럼 지속 가능한 컨텍스트가 필요할 때만 해당 `worktree`의 표시된 현재 PR Ready `seed.md`를 사용합니다.
 - `Sweep` 전체를 `giant` `Seed`로 만들지 않습니다.
 - `Sweep`은 SDD `Unit`을 직접 실행하지 않고 중첩 SDD PR 제어기를 기본 순차 실행으로 제한합니다.
 - `parent` `Sweep`에서 이미 승인한 `material` `decision`을 `child`가 반복 질문하지 않습니다.

@@ -150,8 +150,8 @@
     {
       "id": "prototype-emits-required-pr-evidence-handoff",
       "path": "success",
-      "prompt": "[active parent prototype handoff] AC-07의 `PR evidence: required`가 기록되어 있습니다. 선택된 `prototype screenshot`을 검사한 뒤 범용 downstream handoff를 반환해 주세요.",
-      "expected_output": "업로드하지 않고 `evidence_required: true`, `evidence_kind: visual-change`, `verification_status: Pass`, AC-07, comparison, limitations와 inspected artifact의 path/display_route/state/viewport를 반환합니다.",
+      "prompt": "[활성 부모 프로토타입 인계] AC-07의 `PR evidence: required`가 기록되어 있습니다. 선택된 `prototype screenshot`을 검사한 뒤 범용 하위 인계를 반환해 주세요.",
+      "expected_output": "업로드하지 않고 `evidence_required: true`, `evidence_kind: visual-change`, `verification_status: Pass`, AC-07, 비교 결과, 한계와 검사한 산출물의 경로·`display_route`·상태·화면 크기를 반환합니다.",
       "assertions": [
         {
           "type": "output_contains",
@@ -164,7 +164,7 @@
         {"type":"output_contains","text":"evidence_kind: visual-change"},
         {"type":"output_contains","text":"verification_status: Pass"},
         {"type":"output_contains","text":"display_route:"},
-        {"type":"judge","criterion":"Prototype handoff uses the producer-neutral publication manifest and supplies verified browser metadata without requiring a consumer to recognize tk-prototype. It does not claim official product runtime acceptance."},
+        {"type":"judge","criterion":"프로토타입 인계는 생산자 중립 게시 `manifest`를 사용하고 소비자가 `tk-prototype`을 알아야 한다고 요구하지 않으면서 검증된 브라우저 메타데이터를 제공합니다. 공식 제품 실행 환경의 수용을 주장하지 않습니다."},
         {
           "type": "terminal_status",
           "expected": "Pass"
