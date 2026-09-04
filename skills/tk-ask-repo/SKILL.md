@@ -64,8 +64,9 @@ Every repository-state claim must have one of the following:
 - An explicit limitation that the evidence cannot be read
 - A clear indication that the explanation is an `inference` when judgment is required
 
-When the question materially uses project-specific terminology, lazy-load
-[domain context](references/domain-context.md) and preserve canonical vocabulary without overriding verified UI literals.
+Before interpreting repository behavior, requirements, ownership, impact, or domain meaning, lazy-load
+[domain context](references/domain-context.md) when repository-owned context exists. Read only the relevant mapped
+context, preserve canonical vocabulary, and never override verified UI literals; surface conflicts with fresher code or runtime evidence.
 
 For a `why` question about a durable design choice, combine current code evidence with only directly relevant ADR rationale.
 Distinguish what the code proves from what the ADR explains, report stale or changed premises, and never

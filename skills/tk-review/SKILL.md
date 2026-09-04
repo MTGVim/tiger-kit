@@ -45,6 +45,10 @@ surrounding code, imports, dependencies, call sites, tests, and contracts needed
 apply a fixed risk/check/file cap, but do not broaden into an audit: every extra read must remain causally relevant.
 Disclose unresolved coverage rather than claiming unobserved safety.
 
+Before judging Spec/AC, risk, ownership, impact, or semantics that depend on repository behavior or domain meaning,
+lazy-load [domain context](references/domain-context.md) when repository-owned context exists. Read only the relevant
+mapped context and surface conflicts with fresher code or runtime evidence instead of silently choosing.
+
 ## Judgment
 
 Read [independent review protocol](references/review-protocol.md) and

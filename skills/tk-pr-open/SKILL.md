@@ -72,8 +72,9 @@ when no higher-authority current guidance applies. Surface a conflict instead of
 
 When a `PR body` or QA table names a user-visible element, verify the exact rendered string from repository evidence before writing it. Do not copy a ticket paraphrase, code identifier, or enum value; quote the label verbatim. If no visible label exists, use the entry path ending in an exact visible title. If ticket, code, and screenshot disagree, preserve the verified source and tell the user about the mismatch; do not present an unverified server-supplied label as fact.
 
-When a title or body materially uses project-specific terminology, lazy-load
-[domain context](references/domain-context.md), preserve canonical vocabulary, and never replace verified UI literals with glossary terms.
+When a title or body summarizes or interprets repository behavior, requirements, ownership, impact, or domain meaning,
+lazy-load [domain context](references/domain-context.md) when repository-owned context exists. Read only the relevant
+mapped context, preserve canonical vocabulary, and never replace verified UI literals with glossary terms.
 
 For a stack, apply the same title/template rules to every layer. Each layer body must explain only that layer's review surface and, when useful, its dependency on the preceding layer rather than duplicating the full feature summary into every PR.
 

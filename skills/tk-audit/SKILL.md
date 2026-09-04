@@ -39,6 +39,9 @@ When user-owned clarification is needed, prefer the host's native structured que
 ## Workflow
 
 1. Read repository instructions, root configuration, verification commands, structure, and relevant Git history.
+   Before judging behavior, requirements, ownership, impact, or domain meaning, lazy-load
+   [domain context](references/domain-context.md) when repository-owned context exists. Read only the relevant mapped
+   context and surface conflicts with fresher code or runtime evidence instead of silently choosing.
 2. Check the selected categories using [audit-playbook.md](references/audit-playbook.md).
    Also check empty catches or ignored exceptions, errors converted into unsupported empty/default success, lost error
    context, partial mutation reported as success, and missing required propagation/rollback. Do not flag an intentional

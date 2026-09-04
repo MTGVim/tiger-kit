@@ -79,7 +79,7 @@ DIRECT_MODEL_ROUTING = re.compile(
     re.IGNORECASE,
 )
 SHARED_EXECUTION_PROTOCOLS = ("testing.md", "sdd.md")
-SHARED_DOMAIN_CONTEXT_CONSUMERS = ("tk-ask-repo", "tk-pr-open", "tk-pr-respond")
+SHARED_DOMAIN_CONTEXT_CONSUMERS = ("tk-ask-repo", "tk-audit", "tk-pr-open", "tk-pr-respond", "tk-review")
 SHARED_REVIEW_REFERENCES = (
     "review-protocol.md",
     "finding-quality.md",

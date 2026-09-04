@@ -70,8 +70,9 @@ A `follow-up` changes no code for that finding. Create a separate issue only whe
 
 When review feedback concerns UI text, verify the currently rendered string through a component prop, i18n entry, option constant, or supplied screenshot, then reply verbatim. Do not repeat a ticket paraphrase or code identifier/enum as visible text. Leave an unsupported or conflicting string `Unverifiable` or request the needed confirmation.
 
-When feedback uses project-specific terminology, lazy-load [domain context](references/domain-context.md) and preserve
-canonical vocabulary without overriding verified user-visible UI literals.
+Before interpreting feedback through repository behavior, requirements, ownership, impact, or domain meaning, lazy-load
+[domain context](references/domain-context.md) when repository-owned context exists. Read only the relevant mapped
+context, preserve canonical vocabulary, and never override verified user-visible UI literals.
 
 When feedback directly concerns architecture, compatibility, or a boundary decision, combine the current diff with
 only relevant ADR rationale. Do not make ADR review a generic checklist and never scan an unrelated ADR or context tree.
