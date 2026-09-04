@@ -98,7 +98,10 @@ When the cause and exact RED seam are obvious, proceed directly. Lazy-load [diag
 ## Browser verification
 
 For browser-visible ACs, close target URL/environment, pass conditions, headless viewport/state, safe auth bootstrap,
-server command/cwd/readiness, screenshot/redaction evidence, and the `tk-browser-verify` handoff. Default to headless.
+server command/cwd/readiness, screenshot/redaction evidence, and the `tk-browser-verify` handoff. If the implementation
+can affect rendered output, the browser plan must identify the exact pre-change provenance and schedule a comparable
+baseline capture before the first product edit, even when the intended visual result is unchanged. If that baseline
+cannot be acquired, surface the limitation before approval and forbid an absence-of-regression claim. Default to headless.
 Never store usernames, passwords, token, OTP, cookie, or session values in chat/Seed/artifacts; use ephemeral runtime
 input. The verifier owns server startup, readiness, runtime acceptance evidence, and cleanup.
 If any implementation or verification step would open a local app/page to compare a design,

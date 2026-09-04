@@ -34,6 +34,11 @@ read-only review → scoped remediation/re-review → binding verification → c
 speculative flexibility, dead branches, custom replacements for repository-native helpers, and production APIs added
 only for tests.
 
+When the approved browser plan says the candidate can affect rendered output, invoke `tk-browser-verify` to capture the
+planned pre-change baseline before the first product edit. Preserve its exact source and replay metadata for the after
+call. If the baseline call is `Blocked | Unverifiable`, continue only within the approved limitation and never convert
+candidate-only acceptance evidence into an absence-of-regression claim.
+
 When direct execution needs multiple commits, prefer a stronger repository convention; otherwise split by independently
 understandable, verifiable, and revertible work units rather than file type or layer. Keep each behavior with the tests
 that prove it and factual documentation that must change with it when practical. Keep one coherent judgment surface in

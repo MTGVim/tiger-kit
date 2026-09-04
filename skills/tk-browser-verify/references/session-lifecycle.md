@@ -38,10 +38,11 @@ Clean up success, failure, interruption, and exception paths in this order:
 1. run-created pages/tabs;
 2. run-created contexts;
 3. direct browser instances started by this run;
-4. exact owned processes, only when normal shutdown fails.
+4. exact owned processes, only when normal shutdown fails;
+5. run-owned OS temporary baseline source trees after their servers have stopped.
 
 Before forced termination, match the PID and profile against process arguments. Never
-use `killall`, broad `pkill`, or task-name bulk termination. Preserve provider-owned and
+use `killall`, broad `pkill`, or task-name bulk termination. Preserve evidence directories, provider-owned and
 attached browsers, user tabs/profiles, shared MCP/CDP instances, other verification runs,
 and user-owned servers. Provider shutdown owns cleanup of its browser and temporary profile.
 Report cleanup residue without changing the application verdict.

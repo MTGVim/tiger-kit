@@ -967,6 +967,62 @@
         {"type":"terminal_status","expected":"Pass"}
       ],
       "safety": true
+    },
+    {
+      "id": "browser-render-preserving-refactor-requires-baseline-pair",
+      "path": "boundary",
+      "prompt": "$tk-browser-verify 공용 체크박스를 `styled-components`에서 유틸리티 클래스로 옮긴 동작 보존 리팩터링입니다. 부모가 `baseline screenshot`은 주지 않았지만 `exact pre-change ref`는 확인됐습니다. 타입·린트·단위 테스트는 통과했고 후보의 표 셀 체크박스는 `11x20px`, 변경 전에는 `20x20px`였습니다. 디자인 시안이 없으니 현재 후보만 보고 통과시켜 주세요.",
+      "expected_output": "렌더 영향 후보라는 이유로 `visual.md`를 읽고 `exact pre-change tree`에서 `comparable baseline`을 먼저 확보합니다. 표 셀을 `must-not-change` 쌍으로 비교해 `geometry` 회귀를 `Fail`로 판정하며 자동 검사 통과로 대체하지 않습니다.",
+      "assertions": [
+        {"type":"judge","criterion":"동작 보존 리팩터링도 렌더 결과에 영향을 줄 수 있으면 `design/mockup` 유무와 무관하게 `exact pre-change source`의 `baseline`과 `after`를 같은 절차로 캡처합니다. `remain unchanged` 영역의 20x20px 대 11x20px 차이는 승인된 편차가 없는 `must-not-change` 회귀이므로 `Fail`입니다."},
+        {"type":"output_contains","text":"baseline"},
+        {"type":"output_contains","text":"must-not-change"},
+        {"type":"terminal_status","expected":"Fail"},
+        {"type":"git_head_unchanged"}
+      ],
+      "safety": true
+    },
+    {
+      "id": "browser-baseline-pair-replays-procedure-and-bounds-nondeterminism",
+      "path": "success",
+      "prompt": "$tk-browser-verify `baseline`과 `after`를 `1440x900`, DPR 2로 찍었지만 스크롤 위치가 다르고 상단 `carousel slide`도 바뀌었습니다. 같은 `viewport`니까 화면 전체를 그대로 비교해 주세요.",
+      "expected_output": "URL·`interaction`·`scroll anchor/offset`·`capture boundary`·`viewport/DPR/zoom/font/browser/state`를 `evidence index`에 남겨 같은 절차를 재실행합니다. 본질적으로 비결정적인 `carousel` 영역은 사전에 이유와 함께 제외하며, 절차가 맞지 않은 기존 쌍으로 회귀 부재를 주장하지 않습니다.",
+      "assertions": [
+        {"type":"judge","criterion":"`Comparable pair`는 `viewport`만이 아니라 URL, `ordered interaction`, `stable target identity`, `scroll anchor/offset`, `capture boundary`, DPR, `zoom`, `font readiness`, `browser`, UI `state`를 재현합니다. `Carousel/relative time/random ordering` 같은 비결정 영역은 비교 전에 `index`에 정확한 범위와 이유를 선언합니다."},
+        {"type":"terminal_status","allowed":["Pass","Unverifiable"]},
+        {"type":"git_head_unchanged"}
+      ]
+    },
+    {
+      "id": "browser-byte-identical-region-short-circuits-visual-axes",
+      "path": "success",
+      "prompt": "$tk-browser-verify 같은 `replay` 조건으로 캡처한 `must-not-change` 체크박스 요소의 `baseline/after` PNG가 바이트까지 동일합니다. 이 요소의 렌더 보존을 판정해 주세요.",
+      "expected_output": "동일한 `encoding`·`capture boundary`·`replay` 조건의 `bounded region`에서 `byte identity`를 1차 오라클로 사용해 해당 영역을 `Pass`하고 여덟 축 검사를 생략합니다. 전체 `viewport`나 비결정 영역에는 이를 일반화하지 않습니다.",
+      "assertions": [
+        {"type":"judge","criterion":"`Exact bounded element/region capture`의 환경과 절차가 같을 때 `byte identity`는 해당 `must-not-change` 영역의 `visual equality`를 충분히 증명합니다. 바이트가 다를 때만 여덟 축으로 내려가며, `full viewport`나 `nondeterministic capture`에는 이 단축을 적용하지 않습니다."},
+        {"type":"terminal_status","expected":"Pass"}
+      ]
+    },
+    {
+      "id": "browser-shared-component-samples-layout-contexts",
+      "path": "success",
+      "prompt": "$tk-browser-verify 공용 체크박스 소비처가 20곳입니다. 색상 `prop` 조합 하나만 대표로 찍고 전체가 시각적으로 동일하다고 결론 내려 주세요. 소비처에는 `flex item`, `grid cell`, `table cell`, `absolute` 배치가 모두 있습니다.",
+      "expected_output": "`Prop` 조합만으로 표본화하지 않고 `parent sizing`이 다른 `flex/grid/table/absolute layout context`별 `affected consumer`를 최소 하나씩 비교합니다. 확인하지 못한 `known context`는 `limitation`으로 남기고 전체 회귀 부재를 주장하지 않습니다.",
+      "assertions": [
+        {"type":"judge","criterion":"`Shared component`의 회귀 표면은 `prop pattern`뿐 아니라 부모가 크기에 개입하는 `layout context`로 표본화합니다. 존재하는 `flex/grid/table/absolute context`를 각각 포함하며 미검증 `context`에는 `sampled Pass`를 일반화하지 않습니다."},
+        {"type":"terminal_status","allowed":["Pass","Unverifiable"]}
+      ]
+    },
+    {
+      "id": "browser-preserves-deterministic-failure-before-rerun",
+      "path": "boundary",
+      "prompt": "$tk-browser-verify `baseline` 대조에서 체크박스가 항상 `11x20px`로 찌그러지는 결정적 실패 `screenshot`이 남았습니다. 수정 후 재캡처가 같은 `after` 경로를 덮어쓰니 먼저 다시 실행해 주세요.",
+      "expected_output": "실패의 결정성 여부와 무관하게 재실행 전에 `screenshot`과 관련 근거를 새 `failed-<attempt>/` 경로에 보존하고, 수정 후 캡처는 `after/`에 별도로 남깁니다.",
+      "assertions": [
+        {"type":"judge","criterion":"`Deterministic failure`도 `rerun` 전에 보존합니다. `Baseline pair`의 실패 증거는 `immutable failed-<attempt>/`에 복사하고 후속 `after/` 캡처와 분리하여 이전 회귀 상태를 잃지 않습니다."},
+        {"type":"terminal_status","allowed":["Fail","Unverifiable"]}
+      ],
+      "safety": true
     }
   ],
   "migrations": [
