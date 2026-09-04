@@ -22,7 +22,7 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         self.wizard = self.root / "skills/tk-wizard/references"
         self.domain_targets = tuple(
             self.root / f"skills/{name}/references/domain-context.md"
-            for name in ("tk-ask-repo", "tk-pr-open", "tk-pr-respond")
+            for name in ("tk-ask-repo", "tk-audit", "tk-pr-open", "tk-pr-respond", "tk-review")
         )
         for directory in (self.prep, self.respond, self.review, self.wizard):
             directory.mkdir(parents=True, exist_ok=True)
@@ -63,6 +63,9 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             expected = (self.review / name).read_bytes()
             self.assertEqual((self.prep / name).read_bytes(), expected)
             self.assertEqual((self.respond / name).read_bytes(), expected)
+        expected_domain = (self.prep / "domain-context.md").read_bytes()
+        for target in self.domain_targets:
+            self.assertEqual(target.read_bytes(), expected_domain)
         self.assertEqual(
             (self.wizard / "external-contracts.md").read_bytes(),
             (self.prep / "external-contracts.md").read_bytes(),
