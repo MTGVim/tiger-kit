@@ -109,6 +109,8 @@ not the later `after/` path. A later negative sample does not erase the observed
 Limit nested results to:
 
 - status
+- `phase: baseline | after | acceptance`; for a pre-edit baseline also return `baseline_capture: Pass`,
+  `verification_complete: false`, `resume_parent: required`, `run_id`, `replay_procedure`, and the exact `next_required`
 - Facts per criterion
 - non-sensitive auth mode
 - absolute evidence directory
@@ -117,6 +119,12 @@ Limit nested results to:
 - limitation
 - cleanup fact
 - `automated_regression: protected | N/A | exception | unknown` as supplied/verified parent disposition
+
+A successful pre-edit baseline proves only that the reference capture exists. Return
+`next_required: implement candidate, then capture after with the same run/replay`; do not use aggregate completion wording.
+Only the matching after comparison or standalone acceptance phase may set `verification_complete: true` when every
+criterion is covered. An after result binds the same `run_id`, `baseline_provenance`, and `replay_procedure`. A
+baseline-only result cannot satisfy final acceptance or authorize product edits, commits, or publication by itself.
 
 When PR evidence is required, also return `evidence_required: true`, the criterion, and producer `tk-browser-verify`; do not upload it.
 

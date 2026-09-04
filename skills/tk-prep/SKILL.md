@@ -150,6 +150,8 @@ After approval:
 - direct/Seed → write+reread Ready Seed, then execute directly;
 - SDD → write+reread grammar-valid Ready Seed, load the private protocol, and execute its Unit/review/fix loops.
 
+When the approved execution includes implementation and its browser plan requires a pre-edit baseline, a successful baseline capture is an intermediate child result. Resume the same approved direct or SDD path without another approval, implement the candidate, and obtain the matching after comparison before final review, binding verification, or commit. Pause only for material drift, an unapproved limitation, a required user-owned decision, or a safety boundary. Never return baseline-only evidence as implementation completion.
+
 For local execution, follow the already loaded local-execution reference. SDD additionally follows the private SDD
 protocol. Return a compact result with the execution shape, Seed path or `none`, commits or handoff status, focused and
 required verification, browser evidence, exceptions, review independence, and any blocker. Never claim remote publication.

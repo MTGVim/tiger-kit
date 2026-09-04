@@ -39,6 +39,13 @@ planned pre-change baseline before the first product edit. Preserve its exact so
 call. If the baseline call is `Blocked | Unverifiable`, continue only within the approved limitation and never convert
 candidate-only acceptance evidence into an absence-of-regression claim.
 
+For an approved execution that includes implementation, require a successful baseline child to return `phase: baseline`,
+`baseline_capture: Pass`, `verification_complete: false`, `resume_parent: required`, the run/evidence identity and replay
+metadata, and `next_required: implement candidate, then capture after with the same run/replay`. Treat this as an
+intermediate result and resume the same approved path immediately; do not ask for another implementation approval or
+return completion. After implementation, invoke the matching after capture/comparison. Baseline-only evidence cannot
+satisfy final browser acceptance, independent review, binding verification, or commit.
+
 When direct execution needs multiple commits, prefer a stronger repository convention; otherwise split by independently
 understandable, verifiable, and revertible work units rather than file type or layer. Keep each behavior with the tests
 that prove it and factual documentation that must change with it when practical. Keep one coherent judgment surface in
