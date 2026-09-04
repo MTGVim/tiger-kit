@@ -67,15 +67,21 @@ Produce a verdict, not a remediation loop or durable ledger. `tk-pr-respond` own
 
 ## Output
 
-Lead with severity-ordered findings, then state:
+Lead with severity-ordered findings. Then close with the verdict block below.
 
 ```text
 Spec/AC: Pass | Fail | Unverifiable
 Quality/Standards: Pass | Fail | Unverifiable
-Target: <repository + exact BASE..HEAD OIDs | PR + base/head SHAs>
-Coverage: <diff and any named focused outside-diff checks>
-Evidence consulted: <material repository/runtime/PR evidence>
-Unresolved coverage: <none | exact remaining uncertainty>
+Coverage: <what was reviewed, and what was not>
+Unresolved: <none | exact remaining uncertainty>
 ```
 
-With no findings, say so and still report both axes and coverage. Never turn missing evidence into a pass.
+Use four field lines as the default reader-cost budget, not a quota for findings or material limitations. Put each field
+on its own line. When coverage or unresolved uncertainty needs multiple items, explain them immediately above the block
+and keep the field to a concise conclusion; never concatenate a procedure or receipt with commas or semicolons.
+
+Write for the person who asked for the review, not an auditor: name the conclusion, not the procedure. Do not show
+provenance dumps or verification receipts. Show exact target ranges/SHAs, commands, and consulted files only when the
+user asks, when they change the verdict, or where a finding cites them.
+
+With no findings, say so and still report both axes and `Coverage`. Never turn missing evidence into a pass.

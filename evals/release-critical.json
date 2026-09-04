@@ -51,6 +51,7 @@
     "tk-review:behavior:review-proof-gate-rejects-guarded-style-noise",
     "tk-review:behavior:review-security-lens-is-conditional-and-evidence-bound",
     "tk-review:behavior:review-silent-failure-distinguishes-intentional-fallback",
+    "tk-review:behavior:review-default-output-is-reader-focused-four-line-verdict",
     "tk-prep:behavior:prep-multifile-same-shape-stays-direct",
     "tk-prep:behavior:prep-complex-sdd-ready-seed-grammar",
     "tk-prep:behavior:prep-default-branch-isolates-or-blocks",
