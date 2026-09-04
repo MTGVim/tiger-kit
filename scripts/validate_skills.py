@@ -80,7 +80,13 @@ DIRECT_MODEL_ROUTING = re.compile(
 )
 SHARED_EXECUTION_PROTOCOLS = ("testing.md", "sdd.md")
 SHARED_DOMAIN_CONTEXT_CONSUMERS = ("tk-ask-repo", "tk-pr-open", "tk-pr-respond")
-SHARED_REVIEW_REFERENCES = ("finding-quality.md", "typescript.md", "react.md", "security.md")
+SHARED_REVIEW_REFERENCES = (
+    "review-protocol.md",
+    "finding-quality.md",
+    "typescript.md",
+    "react.md",
+    "security.md",
+)
 SHARED_REVIEW_CONSUMERS = ("tk-prep", "tk-pr-respond")
 HANGUL = re.compile(r"[가-힣]")
 INLINE_CODE = re.compile(r"`+[^`]*`+")

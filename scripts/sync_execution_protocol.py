@@ -14,7 +14,13 @@ REVIEW_TARGETS = (
     ROOT / "skills/tk-prep/references",
     ROOT / "skills/tk-pr-respond/references",
 )
-REVIEW_FILES = ("finding-quality.md", "typescript.md", "react.md", "security.md")
+REVIEW_FILES = (
+    "review-protocol.md",
+    "finding-quality.md",
+    "typescript.md",
+    "react.md",
+    "security.md",
+)
 EXTERNAL_CONTRACT_SOURCE = ROOT / "skills/tk-prep/references/external-contracts.md"
 EXTERNAL_CONTRACT_TARGET = ROOT / "skills/tk-wizard/references/external-contracts.md"
 DOMAIN_CONTEXT_TARGETS = (

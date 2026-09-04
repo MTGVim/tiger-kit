@@ -47,21 +47,26 @@ Disclose unresolved coverage rather than claiming unobserved safety.
 
 ## Judgment
 
-Read [finding quality](references/finding-quality.md) for every review. Read
+Read [independent review protocol](references/review-protocol.md) and
+[finding quality](references/finding-quality.md) for every review. Read
 [TypeScript](references/typescript.md) only when JavaScript/TypeScript semantics are in scope,
 [React](references/react.md) only when React component/hook/JSX/RSC semantics are in scope, and
 [security](references/security.md) only when the diff reaches an authentication/authorization boundary,
 attacker-controlled input or file/path/command/URL, secrets or sensitive data, an API endpoint, payment, webhook,
 external integration, or security configuration.
 
-One reviewer independently decides:
+The controller applies the review protocol's required independent discovery topology and records:
 
 - `Spec/AC`: stated intent and acceptance criteria.
 - `Quality/Standards`: correctness, security, maintainability, and verification under repository standards.
 
 Give each `Pass | Fail | Unverifiable`; use `Blocked` for a failed target precondition. One axis cannot hide the other.
 
-Report only actionable `Critical | Important` findings with exact `path:line`, evidence, failure/risk, and why this change owns it. Zero findings is valid. Cluster manifestations only when evidence proves the same causal root, correction boundary, and failure class; otherwise keep them separate.
+Report only separately verified, actionable `Critical | Important` findings with exact `path:line`, evidence,
+failure/risk, and why this change owns it. Zero findings is valid. Aggregate the union of discovery candidates; one
+seat's clean verdict cannot cancel another candidate. Cluster manifestations only when evidence proves the same causal
+root, correction boundary, and failure class; otherwise keep them separate. Put material candidates that lack confirming
+or contradictory evidence under `Unresolved` rather than presenting them as verified findings.
 
 Produce a verdict, not a remediation loop or durable ledger. `tk-pr-respond` owns external feedback and re-review lifecycle.
 
