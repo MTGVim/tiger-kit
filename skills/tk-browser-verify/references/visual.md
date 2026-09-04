@@ -61,7 +61,8 @@ viewport height to the document height. When applying the exception, label the c
 `fullPage` and state why bounded captures cannot prove the AC in both the evidence index and
 verification result. Store a bounded `README.md` beside the images with an
 AC-to-file/state table, capture order when relevant, source provenance, and a replay procedure.
-For each paired capture, record the target URL, ordered navigation/input with stable selectors or
+For each paired capture, record the safe replay target and the exact origin-free `display_route` from
+[publication evidence](publication-evidence.md), ordered navigation/input with stable selectors or
 verified element identity, scroll anchor and offset, capture boundary, viewport, DPR, zoom,
 completed font-loading state, browser, and UI state. Declare carousel slides, relative-time text,
 random ordering, animation, or other intrinsically nondeterministic regions before comparison and
@@ -154,3 +155,7 @@ Record the baseline provenance, replay procedure, viewport, paired screenshot pa
 result, and limitation as concise facts.
 A causal regression claim requires comparable baseline runtime evidence; otherwise,
 report only the currently observed failure.
+
+When the pair materially supports acceptance or regression preservation, return the producer-neutral
+PR evidence manifest from [publication evidence](publication-evidence.md). A `remain unchanged` result
+requires a labeled baseline/after pair even when it is byte-identical or all inspected axes pass.

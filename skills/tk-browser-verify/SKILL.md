@@ -78,6 +78,8 @@ Return only outcome-changing user-owned decisions to the parent owner.
    - [visual](references/visual.md) whenever a design node, mockup, baseline screenshot,
      as-is/to-be comparison, visual/fidelity/responsive criterion, multi-capture evidence, or candidate that can affect
      rendered output exists, including a behavior-preserving refactor whose visual result must remain unchanged;
+   - [publication evidence](references/publication-evidence.md) whenever a screenshot is captured or browser evidence may
+     materially support PR acceptance or regression review;
    - [accessibility](references/accessibility.md) only for form, dialog, navigation, keyboard, shortcut, or focus criteria;
    - [safety](references/safety.md) when the scenario can create external/data/account effects or sensitive captures;
    - [session lifecycle](references/session-lifecycle.md) when creating, attaching, reusing, or cleaning browser/server/evidence resources.
@@ -98,8 +100,8 @@ fail, do not write, edit `.gitignore`, or use an external fallback; return `Unve
 
 Binary evidence may be stored in run-owned `.tigerkit/evidence/browser/<run-id>/`. Baseline comparisons use
 `baseline/`, `after/`, and immutable `failed-<attempt>/` subdirectories. A bounded `README.md` may map each
-AC to its screenshot, replay procedure, and disclosed capture-only or nondeterministic exclusions; it is an evidence
-index, not a lifecycle ledger.
+AC to its screenshot, exact publication-safe `display_route`, replay procedure, and disclosed capture-only or
+nondeterministic exclusions; it is an evidence index, not a lifecycle ledger.
 Do not place other Markdown files there.
 Do not move user fixtures. Use sensitive captures as evidence only after verifying redaction and absence of residue.
 If any failure appears, whether deterministic, rare, or flaky, preserve its run-owned screenshot, trace, log, or dump
@@ -115,7 +117,8 @@ Limit nested results to:
 - non-sensitive auth mode
 - absolute evidence directory
 - baseline provenance and replay procedure when a visual pair is required
-- inspected screenshot path when visual evidence is required, otherwise the direct trace/a11y/DOM/runtime/request evidence
+- one ordered row per inspected screenshot with its path, exact origin-free `display_route` or explicit omission,
+  criterion, state/region, viewport, role, and comparison result; otherwise the direct trace/a11y/DOM/runtime/request evidence
 - limitation
 - cleanup fact
 - `automated_regression: protected | N/A | exception | unknown` as supplied/verified parent disposition
@@ -126,7 +129,8 @@ Only the matching after comparison or standalone acceptance phase may set `verif
 criterion is covered. An after result binds the same `run_id`, `baseline_provenance`, and `replay_procedure`. A
 baseline-only result cannot satisfy final acceptance or authorize product edits, commits, or publication by itself.
 
-When PR evidence is required, also return `evidence_required: true`, the criterion, and producer `tk-browser-verify`; do not upload it.
+When PR evidence is required, return the producer-neutral manifest from
+[publication evidence](references/publication-evidence.md); do not upload it.
 
 A standalone result starts with `## Verdict` and exact `Status: <token>`, then shows verified facts, required limitations, evidence paths, and the cleanup fact.
 Never promote a result to `Pass` without required runtime evidence.
