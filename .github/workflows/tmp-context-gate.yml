@@ -1,0 +1,121 @@
+name: Temporary context contract gate
+
+on:
+  push:
+    branches:
+      - tmp/context-gate-runner-20260904
+
+permissions:
+  contents: write
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tmp/context-consumers-20260904
+          fetch-depth: 0
+
+      - name: Apply semantic context consumer contract
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              target = Path(path)
+              text = target.read_text(encoding="utf-8")
+              if old not in text:
+                  raise SystemExit(f"expected text missing in {path}: {old!r}")
+              target.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+          replace_once(
+              "skills/tk-prep/SKILL.md",
+              "Read the task source, instructions, code/callers, tests, commands, Git state, and only materially relevant existing\n"
+              "domain context. Lazy-load [domain context](references/domain-context.md) only when the work uses project-specific terms.\n",
+              "Read the task source, instructions, code/callers, tests, commands, and Git state. Before interpreting repository\n"
+              "behavior, requirements, ownership, impact, or domain meaning, or writing implementation/review prose that depends on\n"
+              "them, lazy-load [domain context](references/domain-context.md) when repository-owned context exists. Read only the\n"
+              "relevant mapped context; purely mechanical Git/ref/formatting work may skip it.\n",
+          )
+          replace_once(
+              "skills/tk-ask-repo/SKILL.md",
+              "When the question materially uses project-specific terminology, lazy-load\n"
+              "[domain context](references/domain-context.md) and preserve canonical vocabulary without overriding verified UI literals.\n",
+              "Before interpreting repository behavior, requirements, ownership, impact, or domain meaning, lazy-load\n"
+              "[domain context](references/domain-context.md) when repository-owned context exists. Read only the relevant mapped\n"
+              "context, preserve canonical vocabulary, and never override verified UI literals; surface conflicts with fresher code or runtime evidence.\n",
+          )
+          replace_once(
+              "skills/tk-pr-open/SKILL.md",
+              "When a title or body materially uses project-specific terminology, lazy-load\n"
+              "[domain context](references/domain-context.md), preserve canonical vocabulary, and never replace verified UI literals with glossary terms.\n",
+              "When a title or body summarizes or interprets repository behavior, requirements, ownership, impact, or domain meaning,\n"
+              "lazy-load [domain context](references/domain-context.md) when repository-owned context exists. Read only the relevant\n"
+              "mapped context, preserve canonical vocabulary, and never replace verified UI literals with glossary terms.\n",
+          )
+          replace_once(
+              "skills/tk-pr-respond/SKILL.md",
+              "When feedback uses project-specific terminology, lazy-load [domain context](references/domain-context.md) and preserve\n"
+              "canonical vocabulary without overriding verified user-visible UI literals.\n",
+              "Before interpreting feedback through repository behavior, requirements, ownership, impact, or domain meaning, lazy-load\n"
+              "[domain context](references/domain-context.md) when repository-owned context exists. Read only the relevant mapped\n"
+              "context, preserve canonical vocabulary, and never override verified user-visible UI literals.\n",
+          )
+          replace_once(
+              "skills/tk-review/SKILL.md",
+              "Disclose unresolved coverage rather than claiming unobserved safety.\n\n## Judgment\n",
+              "Disclose unresolved coverage rather than claiming unobserved safety.\n\n"
+              "Before judging Spec/AC, risk, ownership, impact, or semantics that depend on repository behavior or domain meaning,\n"
+              "lazy-load [domain context](references/domain-context.md) when repository-owned context exists. Read only the relevant\n"
+              "mapped context and surface conflicts with fresher code or runtime evidence instead of silently choosing.\n\n## Judgment\n",
+          )
+          replace_once(
+              "skills/tk-audit/SKILL.md",
+              "1. Read repository instructions, root configuration, verification commands, structure, and relevant Git history.\n"
+              "2. Check the selected categories using [audit-playbook.md](references/audit-playbook.md).\n",
+              "1. Read repository instructions, root configuration, verification commands, structure, and relevant Git history.\n"
+              "   Before judging behavior, requirements, ownership, impact, or domain meaning, lazy-load\n"
+              "   [domain context](references/domain-context.md) when repository-owned context exists. Read only the relevant mapped\n"
+              "   context and surface conflicts with fresher code or runtime evidence instead of silently choosing.\n"
+              "2. Check the selected categories using [audit-playbook.md](references/audit-playbook.md).\n",
+          )
+          replace_once(
+              "scripts/validate_skills.py",
+              'SHARED_DOMAIN_CONTEXT_CONSUMERS = ("tk-ask-repo", "tk-pr-open", "tk-pr-respond")\n',
+              'SHARED_DOMAIN_CONTEXT_CONSUMERS = ("tk-ask-repo", "tk-audit", "tk-pr-open", "tk-pr-respond", "tk-review")\n',
+          )
+          PY
+
+          python3 scripts/sync_execution_protocol.py
+          git diff --check
+          git status --short
+
+      - name: Commit candidate changes
+        shell: bash
+        run: |
+          git config user.name "TigerKit Gate"
+          git config user.email "tigerkit-gate@users.noreply.github.com"
+          git add skills scripts
+          git commit -m "feat(context): consume repository context in semantic workflows"
+          git push origin HEAD:tmp/context-consumers-20260904
+
+      - name: Verify shared context sync
+        run: python3 scripts/sync_execution_protocol.py --check
+
+      - name: Run release gate
+        run: |
+          rm -rf /tmp/tigerkit-release-gate
+          python3 scripts/run_release_gate.py \
+            --baseline 182f51d7b6c4c8ebbf34b548763fca0b44ea7d96 \
+            --candidate HEAD \
+            --output /tmp/tigerkit-release-gate
+
+      - name: Upload release gate result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: context-release-gate
+          path: /tmp/tigerkit-release-gate/release-gate.json
+          if-no-files-found: ignore
