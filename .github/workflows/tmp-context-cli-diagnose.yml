@@ -1,0 +1,29 @@
+name: Temporary skills CLI diagnosis
+
+on:
+  push:
+    branches:
+      - tmp/context-cli-diagnose-20260904
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    timeout-minutes: 8
+    runs-on: ubuntu-latest
+    env:
+      CI: "true"
+      DISABLE_TELEMETRY: "1"
+      DO_NOT_TRACK: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tmp/context-consumers-20260904
+          fetch-depth: 1
+
+      - name: Pinned CLI noninteractive list
+        run: timeout 120s npx --yes skills@1.5.9 add . --list --yes
+
+      - name: Latest CLI noninteractive list
+        run: timeout 120s npx --yes skills add . --list --yes
