@@ -37,8 +37,19 @@ Use the following user-level configuration as the default repository scope:
 $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 ```
 
-This configuration owns only the long-lived repository list.
+This configuration owns only long-lived repository scope: the repository list and optional per-comment tool-authorship
+marker prefixes.
 Do not store model mappings, selectors, effort levels, worker routing, fan-out preferences, or task state there.
+
+```json
+{
+  "repositories": ["owner/repository"],
+  "toolAuthoredCommentMarkers": ["<!-- review-tool:"]
+}
+```
+
+Marker values must be HTML-comment prefixes. They identify only the comment carrying the marker; they do not turn the
+account into a bot. With no marker list, triage falls back to account type and `[bot]` suffix evidence.
 
 If the configuration does not exist, bootstrap it only in execution mode when the current checkout’s origin can be identified safely. `--report` must use the helper's no-bootstrap path and keep the origin-derived repository list in memory; an explicit `--repo owner/name` limits the scope of that run.
 
@@ -56,6 +67,7 @@ At minimum, inspect:
 - review decision
 - unresolved review threads
 - latest actionable feedback and author response
+- per-comment authorship and its marker/account/fallback basis for reply confirmation
 - current re-review request or post-summary review for every active human `CHANGES_REQUESTED` reviewer and every
   request-eligible reviewer named by the current-head `tigerkit:pr-rereview` evidence
 - exactly one current-head summary marker after actionable threads close
@@ -114,6 +126,12 @@ Representative routes:
 - external CI, queued/flaky/infrastructure failures, or pending human review → wait
 - unsupported state → report-only
 
+For reply confirmation, preserve the per-comment authorship evidence from deterministic triage. A configured marker
+makes that one comment tool-authored even when a collaborator `User` account posted it; otherwise use account-bot
+evidence and conservatively default to human-authored. Do not apply comment authorship to finding disposition or to
+re-review targets, which remain account-based. Parent approval satisfies a human reply confirmation only when it covers
+the exact reply substance; do not repeat an already satisfied confirmation.
+
 If the parent-approved exact PR/head and resolution direction remain unchanged, the child must not ask for the same decision again.
 Return that PR to the user only when there is a material change, such as new feedback, head drift, or scope drift.
 
@@ -133,5 +151,8 @@ not broaden authority or stop independent rows.
 Do not dump internal categories or receipts.
 
 Keep successfully handled items brief and explain only problematic PRs in the necessary detail.
+When comment authorship changed whether confirmation was needed, include one concise basis line. Say that a configured
+marker established tool authorship, or that missing marker configuration caused the account-based human fallback;
+do not dump internal categories or the full marker list.
 Never describe an item as complete when required publication evidence is missing.
 Use exactly one final status based on the actual result: `Status: Pass | Pending | Blocked | Unverifiable | Fail`.

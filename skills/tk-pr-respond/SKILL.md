@@ -131,14 +131,36 @@ Reply-only execution uses no Seed, product mutation, push, workspace solely for 
 code-changing route, follow the already loaded code-change reference after approval. It owns isolation, conditional Seed
 use, direct/SDD execution, review, and browser handoff.
 
+## Comment authorship
+
+Comment authorship is a per-comment property, not an account property. Classify each feedback comment in this order:
+
+1. If its body carries a prefix from `toolAuthoredCommentMarkers` in the repository-scope
+   `$XDG_CONFIG_HOME/tigerkit/pr-triage.json`, classify it as `tool-authored` regardless of account type.
+2. Otherwise, if `user.type == "Bot"` or the login ends with `[bot]`, classify it as `tool-authored`.
+3. Otherwise classify it as `human-authored`.
+
+With no configured marker, apply only steps 2 and 3. Record that the human classification used no marker evidence;
+never invent a tool marker or infer tool authorship from writing style. A marker is comment-local: the same `User`
+account may have both tool-authored and human-authored comments.
+
+Use this classification only for the user-confirmation boundary before publishing a reply. A tool-authored finding needs
+no extra human-communication confirmation after the exact resolution/publication plan is approved. A human-authored
+finding requires current approval of the reply's exact substance, but the existing one-plan approval satisfies that
+requirement when it already covered that substance; never ask twice for the same decision.
+
+Authorship never changes whether a finding must be investigated or addressed. It also never controls re-review targets:
+`CHANGES_REQUESTED`, approval, and review-request capability belong to accounts, so those paths use account identity only.
+
 ## Publication
 
 Immediately before any remote write, recheck the exact repository, authenticated identity, open PR, fresh remote head,
 local ancestry, thread/check state, and approved scope.
 
-Before replying to or resolving anything, freeze the human reviewer set attached to approved findings that produced a
+Before replying to or resolving anything, freeze the account-based human reviewer set attached to approved findings that produced a
 verified code change. Keep each finding-to-reviewer mapping through publication; do not try to reconstruct it from only
-the remaining unresolved threads. Exclude the PR author, authenticated user, bots, and still-valid approvers. Fresh-check
+the remaining unresolved threads. Exclude the PR author, authenticated user, account bots (`user.type == "Bot"` or a
+`[bot]` login), and still-valid approvers. Do not use comment-authorship markers for this set. Fresh-check
 whether each remaining reviewer can be requested on the repository. A human who is not request-eligible is mention-only;
 report that downgrade instead of failing the whole publication.
 
@@ -149,7 +171,7 @@ Then perform only the approved actions in this order.
 3. Post an exact reply to each feedback item with its disposition and evidence. A `follow-up` reply links its approved issue or states that no ticket was created.
 4. Resolve only threads whose exact reply succeeded and whose disposition was approved and verified. Keep unresolved ambiguity open.
 5. Fresh-read reviews/threads/checks.
-6. After all actionable threads are closed, when a re-review is required or actionable feedback was answered with no outstanding request, fresh-read the exact current head and post exactly one current-head summary comment containing `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, with `<HEAD_SHA>` replaced by the exact observed head SHA. For each request-eligible reviewer in the frozen code-change set, include one hidden `<!-- tigerkit:pr-rereview:<HEAD_SHA>:<LOGIN> -->` marker in that same comment. Do not add this marker for a bot, author, authenticated user, still-valid approver, mention-only reviewer, or reply-only finding. If the summary marker already exists exactly once for the current head, verify that its re-review markers match the required set instead of posting another comment. A summary for an earlier head does not satisfy this requirement. Write the summary as a real message to the reviewer, not an internal processing record. Address every identifiable human reviewer with `@mention`, map each finding to its disposition, evidence, code response, and follow-up ticket status in natural prose or a matching table, and state when a reviewer is mention-only. Do not publish a third-person completion log that only lists checks or totals.
+6. After all actionable threads are closed, when a re-review is required or actionable feedback was answered with no outstanding request, fresh-read the exact current head and post exactly one current-head summary comment containing `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, with `<HEAD_SHA>` replaced by the exact observed head SHA. For each request-eligible reviewer in the frozen code-change set, include one hidden `<!-- tigerkit:pr-rereview:<HEAD_SHA>:<LOGIN> -->` marker in that same comment. Do not add this marker for an account bot, author, authenticated user, still-valid approver, mention-only reviewer, or reply-only finding. If the summary marker already exists exactly once for the current head, verify that its re-review markers match the required set instead of posting another comment. A summary for an earlier head does not satisfy this requirement. Write the summary as a real message to the reviewer, not an internal processing record. Address every identifiable human reviewer with `@mention`, map each finding to its disposition, evidence, code response, and follow-up ticket status in natural prose or a matching table, and state when a reviewer is mention-only. Do not publish a third-person completion log that only lists checks or totals.
 7. For every request-eligible reviewer in the frozen code-change set, and every human reviewer with a still-active `CHANGES_REQUESTED` review, request re-review for the exact current head unless that reviewer is already requested or has submitted a review after the current-head summary. A current request or a later review is completion evidence; the absence of a current request alone is not. Reply-only feedback with no code change does not require re-review.
 
 Do not claim publication complete unless fresh evidence proves every required reviewer's current request or post-summary
@@ -183,5 +205,7 @@ not recursively delegate. The parent Sweep decides cross-PR scheduling; this chi
 
 Do not output a normal protocol receipt.
 
+When authorship changed the reply-confirmation boundary, state its basis in one concise sentence: name the configured
+marker match, account-bot evidence, or absence of marker configuration without dumping the triage record.
 Only when an issue remains, explain the blocker and next action in detail.
 Use exactly one final state matching the actual result: `Status: Pass | Pending | Blocked | Unverifiable | Fail`.

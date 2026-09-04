@@ -34,6 +34,28 @@ export function normalizeGitHubText(body = '') {
   return String(body ?? '').replace(/<br\s*\/?\s*>/gi, '\n').replace(/\r\n?/g, '\n');
 }
 
+export function isBotAccount(user = {}) {
+  const login = String(user?.login || '');
+  return user?.type === 'Bot' || login.endsWith('[bot]');
+}
+
+export function classifyCommentAuthorship(comment = {}, toolAuthoredCommentMarkers = []) {
+  const body = normalizeGitHubText(comment.body);
+  const htmlComments = [...body.matchAll(/<!--[\s\S]*?-->/g)].map((match) => match[0]);
+  const matchedMarker = toolAuthoredCommentMarkers.find((marker) =>
+    htmlComments.some((htmlComment) => htmlComment.startsWith(marker))) || null;
+  if (matchedMarker) {
+    return { kind: 'tool-authored', basis: 'configured-marker', marker: matchedMarker };
+  }
+  const user = comment.user || { login: comment.login, type: comment.userType };
+  if (isBotAccount(user)) return { kind: 'tool-authored', basis: 'bot-account', marker: null };
+  return {
+    kind: 'human-authored',
+    basis: toolAuthoredCommentMarkers.length ? 'human-account-fallback' : 'no-marker-config',
+    marker: null,
+  };
+}
+
 export function stripNoise(body = '') {
   return normalizeGitHubText(body).replace(/<!--[\s\S]*?-->/g, '').replace(/<details>[\s\S]*?<\/details>/gi, '').trim();
 }
@@ -78,7 +100,7 @@ export function computeReviewDecision(reviews, authorLogin) {
     const state = review.state;
     if (!login || login === authorLogin || state === 'PENDING') continue;
     const timestamp = review.submitted_at || review.created_at || '';
-    const bot = review.user?.type === 'Bot' || login.endsWith('[bot]');
+    const bot = isBotAccount(review.user);
     if (state !== 'DISMISSED') latestSubmissionByReviewer.set(login, { login, state, timestamp, bot });
     const previous = latestByReviewer.get(login);
     if (state === 'APPROVED' || state === 'CHANGES_REQUESTED') {
@@ -225,7 +247,7 @@ export function latestAuthorResponseAfter(rows, authorLogin, timestamp, scope = 
     .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))[0] || null;
 }
 
-export function computeReplyEvidence(rows, authorLogin, afterTimestamp = null) {
+export function computeReplyEvidence(rows, authorLogin, afterTimestamp = null, toolAuthoredCommentMarkers = []) {
   const actionable = latestExternalMessagesByScope(rows, authorLogin)
     .filter((row) => isActionableText(row.body))
     .filter((row) => !afterTimestamp || new Date(row.timestamp) > new Date(afterTimestamp));
@@ -234,6 +256,7 @@ export function computeReplyEvidence(rows, authorLogin, afterTimestamp = null) {
   for (const row of actionable) {
     const response = latestAuthorResponseAfter(rows, authorLogin, row.timestamp, row.scope);
     const target = response ? responded : outstanding;
+    const authorship = classifyCommentAuthorship(row, toolAuthoredCommentMarkers);
     target.push({
       scope: row.scope,
       login: row.login,
@@ -241,6 +264,9 @@ export function computeReplyEvidence(rows, authorLogin, afterTimestamp = null) {
       id: row.id || null,
       url: row.url || null,
       responseAt: response?.timestamp || null,
+      authorship: authorship.kind,
+      authorshipBasis: authorship.basis,
+      matchedMarker: authorship.marker,
     });
   }
   return { outstanding, responded };
@@ -259,14 +285,39 @@ function configuredRepositories(value, path) {
   return [...new Set(value.repositories)];
 }
 
+function configuredToolAuthoredCommentMarkers(value, path) {
+  if (value?.toolAuthoredCommentMarkers === undefined) return [];
+  const markers = value.toolAuthoredCommentMarkers;
+  if (!Array.isArray(markers)
+      || markers.some((marker) => typeof marker !== 'string'
+        || !marker.startsWith('<!--')
+        || marker.length <= '<!--'.length
+        || /[\r\n]/.test(marker))) {
+    throw new Error(`Invalid triage config ${path}: toolAuthoredCommentMarkers must be HTML-comment prefix strings`);
+  }
+  return [...new Set(markers)];
+}
+
+export function loadToolAuthoredCommentMarkers(path) {
+  try {
+    return configuredToolAuthoredCommentMarkers(JSON.parse(readFileSync(path, 'utf8')), path);
+  } catch (error) {
+    if (error.code === 'ENOENT') return [];
+    if (error instanceof SyntaxError) throw new Error(`Invalid JSON in triage config ${path}: ${error.message}`);
+    throw error;
+  }
+}
+
 export function loadOrBootstrapConfig(
   path,
   fallbackRepositories = [],
   { allowBootstrap = true } = {},
 ) {
   try {
+    const value = JSON.parse(readFileSync(path, 'utf8'));
     return {
-      repositories: configuredRepositories(JSON.parse(readFileSync(path, 'utf8')), path),
+      repositories: configuredRepositories(value, path),
+      toolAuthoredCommentMarkers: configuredToolAuthoredCommentMarkers(value, path),
       bootstrapped: false,
       source: 'config',
     };
@@ -280,7 +331,12 @@ export function loadOrBootstrapConfig(
     throw new Error(`Cannot bootstrap triage config ${path}: supply --repo owner/name or run from a checkout with origin`);
   }
   const repositories = configuredRepositories({ repositories: fallbackRepositories }, path);
-  if (!allowBootstrap) return { repositories, bootstrapped: false, source: 'origin' };
+  if (!allowBootstrap) return {
+    repositories,
+    toolAuthoredCommentMarkers: [],
+    bootstrapped: false,
+    source: 'origin',
+  };
   mkdirSync(dirname(path), { recursive: true });
   try {
     writeFileSync(path, `${JSON.stringify({ repositories }, null, 2)}\n`, { encoding: 'utf8', flag: 'wx' });
@@ -288,7 +344,7 @@ export function loadOrBootstrapConfig(
     if (error.code === 'EEXIST') return loadOrBootstrapConfig(path, fallbackRepositories);
     throw error;
   }
-  return { repositories, bootstrapped: true, source: 'config' };
+  return { repositories, toolAuthoredCommentMarkers: [], bootstrapped: true, source: 'config' };
 }
 
 export function classifyPullRequest({
@@ -399,9 +455,9 @@ function currentRepository() {
 
 export function collectRows(reviews, inlineComments, issueComments) {
   return [
-    ...reviews.map((review) => ({ login: review.user?.login, timestamp: review.submitted_at || review.created_at, body: normalizeGitHubText(review.body), url: review.html_url || null, kind: 'review', state: review.state, replyEligible: false })),
-    ...inlineComments.map((comment) => ({ login: comment.user?.login, timestamp: comment.created_at, body: normalizeGitHubText(comment.body), url: comment.html_url || null, kind: 'inline_comment', id: comment.id, scope: `inline:${comment.in_reply_to_id || comment.id}` })),
-    ...issueComments.map((comment) => ({ login: comment.user?.login, timestamp: comment.created_at, body: normalizeGitHubText(comment.body), url: comment.html_url || null, kind: 'issue_comment', id: comment.id, scope: 'issue' })),
+    ...reviews.map((review) => ({ login: review.user?.login, userType: review.user?.type, timestamp: review.submitted_at || review.created_at, body: normalizeGitHubText(review.body), url: review.html_url || null, kind: 'review', state: review.state, replyEligible: false })),
+    ...inlineComments.map((comment) => ({ login: comment.user?.login, userType: comment.user?.type, timestamp: comment.created_at, body: normalizeGitHubText(comment.body), url: comment.html_url || null, kind: 'inline_comment', id: comment.id, scope: `inline:${comment.in_reply_to_id || comment.id}` })),
+    ...issueComments.map((comment) => ({ login: comment.user?.login, userType: comment.user?.type, timestamp: comment.created_at, body: normalizeGitHubText(comment.body), url: comment.html_url || null, kind: 'issue_comment', id: comment.id, scope: 'issue' })),
   ].filter((row) => row.timestamp);
 }
 
@@ -451,7 +507,7 @@ function pullItem(repo, pull, category, evidence = {}) {
   };
 }
 
-async function triageRepository(repo, login, teamKeys) {
+async function triageRepository(repo, login, teamKeys, toolAuthoredCommentMarkers = []) {
   const openPulls = ghList(`repos/${repo}/pulls?state=open&per_page=100`);
   if (!openPulls.ok) return { repository: repo, items: [], failures: [openPulls.error] };
   const items = [];
@@ -493,6 +549,7 @@ async function triageRepository(repo, login, teamKeys) {
       rows,
       login,
       review.decision === 'APPROVED' ? review.decisiveAt : null,
+      toolAuthoredCommentMarkers,
     );
     const check = checkState(repo, pull.head.sha);
     const changeResponse = review.decisiveAt
@@ -558,13 +615,21 @@ async function main() {
   if (!user.ok) throw new Error(`Unable to resolve GitHub identity: ${user.error}`);
   const userTeams = ghList('user/teams?per_page=100');
   const teamKeys = userTeams.ok ? teamKeysForUser(userTeams.data) : new Set();
-  const configPath = args.repos.length ? null : triageConfigPath();
+  const userConfigPath = triageConfigPath();
+  const configPath = args.repos.length ? null : userConfigPath;
   const target = args.repos.length
-    ? { repositories: configuredRepositories({ repositories: args.repos }, 'arguments'), bootstrapped: false, source: 'arguments' }
+    ? {
+      repositories: configuredRepositories({ repositories: args.repos }, 'arguments'),
+      toolAuthoredCommentMarkers: loadToolAuthoredCommentMarkers(userConfigPath),
+      bootstrapped: false,
+      source: 'arguments',
+    }
     : loadOrBootstrapConfig(configPath, [currentRepository()].filter(Boolean), { allowBootstrap: !args.noBootstrap });
   const repos = target.repositories;
   const results = [];
-  for (const repo of [...new Set(repos)]) results.push(await triageRepository(repo, user.data.login, teamKeys));
+  for (const repo of [...new Set(repos)]) {
+    results.push(await triageRepository(repo, user.data.login, teamKeys, target.toolAuthoredCommentMarkers));
+  }
   const items = results.flatMap((result) => result.items);
   const failures = results.flatMap((result) => result.failures.map((error) => ({ repository: result.repository, error })));
   if (!userTeams.ok) failures.unshift({ repository: null, error: `Unable to resolve team review membership: ${userTeams.error}` });
@@ -574,7 +639,12 @@ async function main() {
     generatedAt: generatedAt.toISOString(),
     generatedAtLocal: formatLocalTimestamp(generatedAt),
     login: user.data.login,
-    config: { path: configPath, source: target.source, bootstrapped: target.bootstrapped },
+    config: {
+      path: configPath,
+      source: target.source,
+      bootstrapped: target.bootstrapped,
+      toolAuthoredCommentMarkerCount: target.toolAuthoredCommentMarkers.length,
+    },
     repositories: repos,
     counts,
     items,

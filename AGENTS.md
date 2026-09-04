@@ -138,13 +138,16 @@ PR `state`의 `truth`는 GitHub `fresh` `state`입니다.
 `tk-pr-respond`와 `tk-pr-sweep`은 `lifecycle` Markdown `snapshot`을 `authority`로 사용하지 않습니다.
 각 `remote` `mutation` 전에 `exact` PR/`head`/`thread`/`check`/`identity`를 필요한 수준으로 다시 확인합니다.
 
-`Sweep`의 `deterministic` `triage` `script`와 `user-level` `repository` `config`는 유지합니다.
+`Sweep`의 `deterministic` `triage` `script`와 `user-level` `repository` 범위 및 선택적인 댓글별
+`toolAuthoredCommentMarkers` `config`는 유지합니다. 마커는 답글 컨펌에만 사용하고 재리뷰 대상은 계정
+상태로 판정합니다.
 
 ```text
 $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 ```
 
-`model`/`worker`/`session`/`pitfall` 설정은 `user-level` `config`로 만들지 않습니다.
+`toolAuthoredCommentMarkers`는 HTML 주석 접두어만 저장합니다. `model`/`worker`/`session`/`pitfall` 설정은
+`user-level` `config`로 만들지 않습니다.
 
 ## `Browser`
 

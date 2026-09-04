@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import {
   checkProvider,
+  classifyCommentAuthorship,
   classifyPullRequest,
   computeReplyEvidence,
   computeReReviewEvidence,
@@ -14,9 +15,11 @@ import {
   formatLocalTimestamp,
   flattenPages,
   isActionableText,
+  isBotAccount,
   latestAuthorResponseAfter,
   latestExternalMessagesByScope,
   loadOrBootstrapConfig,
+  loadToolAuthoredCommentMarkers,
   collectRows,
   normalizeGitHubText,
   parseRepoFromRemote,
@@ -77,6 +80,70 @@ test('collected review rows preserve clickable thread URLs and normalized bodies
   assert.equal(rows[0].body, 'Please add\ntest.');
   assert.equal(rows[0].url, 'https://github.com/example/repo/pull/1#discussion_r1');
   assert.equal(computeReplyEvidence(rows, 'author').outstanding[0].url, rows[0].url);
+});
+
+test('comment authorship prefers a configured body marker over a human account', () => {
+  const markers = ['<!-- review-tool:'];
+  const marked = classifyCommentAuthorship({
+    user: { login: 'collaborator', type: 'User' },
+    body: 'Please fix this.\n<!-- review-tool:rules/no-null -->',
+  }, markers);
+  assert.deepEqual(marked, {
+    kind: 'tool-authored',
+    basis: 'configured-marker',
+    marker: '<!-- review-tool:',
+  });
+
+  const unmarked = classifyCommentAuthorship({
+    user: { login: 'collaborator', type: 'User' },
+    body: 'Please fix this.',
+  }, markers);
+  assert.deepEqual(unmarked, {
+    kind: 'human-authored',
+    basis: 'human-account-fallback',
+    marker: null,
+  });
+});
+
+test('comment authorship falls back conservatively when marker config is absent', () => {
+  assert.deepEqual(classifyCommentAuthorship({
+    user: { login: 'collaborator', type: 'User' },
+    body: 'Please fix this.',
+  }), {
+    kind: 'human-authored',
+    basis: 'no-marker-config',
+    marker: null,
+  });
+  assert.equal(isBotAccount({ login: 'automation[bot]', type: 'User' }), true);
+  assert.equal(classifyCommentAuthorship({
+    user: { login: 'automation[bot]', type: 'User' },
+    body: 'Please fix this.',
+  }).kind, 'tool-authored');
+});
+
+test('reply evidence records marker-based authorship without changing account review state', () => {
+  const body = 'Please add a regression test.\n<!-- review-tool:rules/testing -->';
+  const rows = collectRows([], [{
+    user: { login: 'collaborator', type: 'User' },
+    created_at: '2026-01-01T00:00:00Z',
+    body,
+    id: 1,
+  }], []);
+  const reply = computeReplyEvidence(rows, 'author', null, ['<!-- review-tool:']);
+  assert.equal(reply.outstanding[0].authorship, 'tool-authored');
+  assert.equal(reply.outstanding[0].authorshipBasis, 'configured-marker');
+
+  const review = computeReviewDecision([{
+    user: { login: 'collaborator', type: 'User' },
+    state: 'CHANGES_REQUESTED',
+    submitted_at: '2026-01-01T00:00:00Z',
+    body,
+  }], 'author');
+  assert.deepEqual(review.changeReviewers, [{
+    login: 'collaborator',
+    timestamp: '2026-01-01T00:00:00Z',
+  }]);
+  assert.deepEqual(computeReReviewEvidence({ requested_reviewers: [] }, review, []).missingReviewers, ['collaborator']);
 });
 
 test('actionable text does not revive an old request after an LGTM-like message', () => {
@@ -259,10 +326,16 @@ test('missing triage config bootstraps the current repository', async () => {
   try {
     const path = triageConfigPath({ XDG_CONFIG_HOME: root });
     const loaded = loadOrBootstrapConfig(path, ['MTGVim/tiger-kit']);
-    assert.deepEqual(loaded, { repositories: ['MTGVim/tiger-kit'], bootstrapped: true, source: 'config' });
+    assert.deepEqual(loaded, {
+      repositories: ['MTGVim/tiger-kit'],
+      toolAuthoredCommentMarkers: [],
+      bootstrapped: true,
+      source: 'config',
+    });
     assert.deepEqual(JSON.parse(readFileSync(path, 'utf8')), { repositories: ['MTGVim/tiger-kit'] });
     assert.deepEqual(loadOrBootstrapConfig(path), {
       repositories: ['MTGVim/tiger-kit'],
+      toolAuthoredCommentMarkers: [],
       bootstrapped: false,
       source: 'config',
     });
@@ -282,10 +355,59 @@ test('report-only triage reads the origin without bootstrapping config', async (
     );
     assert.deepEqual(loaded, {
       repositories: ['MTGVim/tiger-kit'],
+      toolAuthoredCommentMarkers: [],
       bootstrapped: false,
       source: 'origin',
     });
     assert.equal(existsSync(path), false);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('triage config accepts optional tool-authorship marker prefixes', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'tk-pr-sweep-triage-markers-'));
+  try {
+    const path = triageConfigPath({ XDG_CONFIG_HOME: root });
+    loadOrBootstrapConfig(path, ['MTGVim/tiger-kit']);
+    const config = JSON.parse(readFileSync(path, 'utf8'));
+    config.toolAuthoredCommentMarkers = ['<!-- review-tool:', '<!-- review-tool:'];
+    writeFileSync(path, `${JSON.stringify(config, null, 2)}\n`);
+    assert.deepEqual(loadOrBootstrapConfig(path).toolAuthoredCommentMarkers, ['<!-- review-tool:']);
+    assert.deepEqual(loadToolAuthoredCommentMarkers(path), ['<!-- review-tool:']);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('an explicit repository can still load marker config without bootstrapping it', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'tk-pr-sweep-triage-explicit-repo-'));
+  try {
+    const path = triageConfigPath({ XDG_CONFIG_HOME: root });
+    assert.deepEqual(loadToolAuthoredCommentMarkers(path), []);
+    assert.equal(existsSync(path), false);
+
+    loadOrBootstrapConfig(path, ['different/repository']);
+    writeFileSync(path, JSON.stringify({
+      repositories: ['different/repository'],
+      toolAuthoredCommentMarkers: ['<!-- review-tool:'],
+    }));
+    assert.deepEqual(loadToolAuthoredCommentMarkers(path), ['<!-- review-tool:']);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('triage config rejects broad non-comment authorship markers', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'tk-pr-sweep-triage-invalid-marker-'));
+  try {
+    const path = triageConfigPath({ XDG_CONFIG_HOME: root });
+    loadOrBootstrapConfig(path, ['MTGVim/tiger-kit']);
+    writeFileSync(path, JSON.stringify({
+      repositories: ['MTGVim/tiger-kit'],
+      toolAuthoredCommentMarkers: ['review-tool:'],
+    }));
+    assert.throws(() => loadOrBootstrapConfig(path), /HTML-comment prefix strings/);
   } finally {
     await rm(root, { recursive: true, force: true });
   }

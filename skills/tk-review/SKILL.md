@@ -74,6 +74,18 @@ Produce a verdict, not a remediation loop or durable ledger. `tk-pr-respond` own
 
 Lead with severity-ordered findings. Then close with the verdict block below.
 
+Immediately before the verdict block, give one concise recommended next action based on the actual result. Choose it by
+precedence: failed target precondition, any `Fail`, any `Unverifiable`, then both axes `Pass`.
+
+- `Fail`: return the verified findings to the implementation-owning workflow, fix them, and review the new exact target.
+- `Unverifiable`: obtain the named missing evidence or stabilize the target, then rerun the review.
+- both axes `Pass`: say that no review-driven correction is needed and the caller may continue with its already approved
+  next step.
+- failed target precondition: name the prerequisite that must be restored before review can start.
+
+Recommend; do not execute, dispatch another skill, request publication, or imply that review grants mutation authority.
+Name a specific follow-up skill only when the user asks how to perform that action or the active caller already owns it.
+
 ```text
 Spec/AC: Pass | Fail | Unverifiable
 Quality/Standards: Pass | Fail | Unverifiable
