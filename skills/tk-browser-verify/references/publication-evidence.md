@@ -1,7 +1,9 @@
 # Publication evidence handoff
 
-Read this whenever a screenshot is captured or browser evidence may support PR review. This
-verifier produces evidence metadata only; it never uploads or publishes evidence.
+Read this whenever a screenshot is captured or an inspected image may support PR review. This
+verifier produces image-publication metadata only; it never uploads or publishes evidence. Direct
+trace, accessibility-tree, DOM/runtime, and request/response evidence stays in the ordinary verifier
+result and does not require an image manifest or a ceremonial screenshot.
 
 ## Exact display route
 
@@ -24,8 +26,8 @@ not be written to the evidence index or result.
 
 ## Producer-neutral manifest
 
-When browser evidence materially supports acceptance or regression preservation, return a
-producer-neutral PR evidence manifest entry with:
+When an inspected image materially supports a passing acceptance or regression-preservation claim,
+return a producer-neutral PR evidence manifest entry with:
 
 ```text
 evidence_required: true | false
@@ -43,13 +45,20 @@ comparison: <not-applicable | byte-identical bounded region | inspected axes and
 limitations: <none | exact limitation>
 ```
 
-The schema contains no implementation-controller or publication-skill fields. A consumer validates
+`behavior` means that the inspected image itself directly proves the behavior or visible final state;
+it is not a wrapper for a trace or other non-image evidence. The schema contains no
+implementation-controller or publication-skill fields. A consumer validates
 generic required entries and does not need to recognize the producing skill. Keep run provenance
 in the verifier result, outside the consumer branching contract.
 
-Set `evidence_required: true` when the evidence materially supports acceptance or regression
-preservation. Use `false` only for an inspected optional artifact that may help a reviewer but is
-not needed to support a claim. Do not represent an absent or uninspected image as optional evidence.
+Emit a publication manifest entry only when the represented criterion and image inspection are
+`Pass`. For `Fail | Blocked | Unverifiable`, preserve any run-owned failure artifact under the
+failure-evidence contract, return the real criterion status, and mark required image publication as
+blocked or unverifiable. Never encode a failed or incomplete run as `verification_status: Pass`.
+
+Set `evidence_required: true` when the inspected image materially supports acceptance or regression
+preservation. Use `false` only for an inspected optional image that may help a reviewer but is not
+needed to support a claim. Do not represent an absent or uninspected image as optional evidence.
 
 For a visual `preserve` claim, return the representative baseline and after as a labeled pair and
 set `evidence_kind: visual-preservation` plus `evidence_required: true`, even when the bounded files

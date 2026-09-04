@@ -104,7 +104,8 @@ and artifacts not tied to the current run. If required evidence is missing or in
   any other submit button.
 - Do not choose a route based on public/private visibility or claim success from
   only a placeholder, Markdown presence, fixed delay, or unrendered API response.
-- Do not log or return a signed URL JWT or query string.
+- Do not log or return a signed URL, JWT, or raw secret-bearing query string. This does not prohibit a verified-safe,
+  origin-free `display_route`; preserve its pathname, query, and fragment exactly as supplied by the manifest.
 
 ## Failure Handling
 

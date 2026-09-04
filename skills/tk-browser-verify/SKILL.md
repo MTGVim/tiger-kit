@@ -78,7 +78,7 @@ Return only outcome-changing user-owned decisions to the parent owner.
    - [visual](references/visual.md) whenever a design node, mockup, baseline screenshot,
      as-is/to-be comparison, visual/fidelity/responsive criterion, multi-capture evidence, or candidate that can affect
      rendered output exists, including a behavior-preserving refactor whose visual result must remain unchanged;
-   - [publication evidence](references/publication-evidence.md) whenever a screenshot is captured or browser evidence may
+   - [publication evidence](references/publication-evidence.md) whenever a screenshot is captured or an inspected image may
      materially support PR acceptance or regression review;
    - [accessibility](references/accessibility.md) only for form, dialog, navigation, keyboard, shortcut, or focus criteria;
    - [safety](references/safety.md) when the scenario can create external/data/account effects or sensitive captures;
@@ -129,8 +129,13 @@ Only the matching after comparison or standalone acceptance phase may set `verif
 criterion is covered. An after result binds the same `run_id`, `baseline_provenance`, and `replay_procedure`. A
 baseline-only result cannot satisfy final acceptance or authorize product edits, commits, or publication by itself.
 
-When PR evidence is required, return the producer-neutral manifest from
-[publication evidence](references/publication-evidence.md); do not upload it.
+When an inspected image is required for PR publication and its represented criterion is `Pass`, return the
+producer-neutral manifest from [publication evidence](references/publication-evidence.md); do not upload it. Direct
+trace, accessibility-tree, DOM/runtime, and request/response evidence remains in the ordinary verifier result and does
+not trigger the image uploader. If a parent specifically requires an image that cannot directly prove the criterion, do
+not create a ceremonial screenshot; return the image-publication requirement as `Blocked | Unverifiable`. For any
+non-`Pass` criterion, preserve owned failure evidence, return its real status, and never emit a `verification_status:
+Pass` manifest entry for it.
 
 A standalone result starts with `## Verdict` and exact `Status: <token>`, then shows verified facts, required limitations, evidence paths, and the cleanup fact.
 Never promote a result to `Pass` without required runtime evidence.

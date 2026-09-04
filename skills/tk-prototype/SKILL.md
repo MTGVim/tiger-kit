@@ -48,14 +48,18 @@ Screenshot: <absolute path | N/A>; actual inspection: yes | no | N/A
 ```
 
 5. `compare`: Map evidence to criteria and summarize verified differences, unverified
-   items, and the next decision. If the parent contract records `PR evidence: required`,
+   items, and the next decision. If the parent contract records image `PR evidence: required`, the
+   comparison is `Pass`, and the inspected screenshot directly proves it,
    retain the run-owned absolute `Screenshot: <path>` and actual image inspection under
    `## Tested`, and expose the same producer-neutral manifest consumed by publication:
    `evidence_required: true`, `evidence_kind: visual-change`, `verification_status: Pass`,
    the criterion, comparison, limitations, and an inspected artifact with role, absolute
    path, exact origin-free `display_route`, state/region, and viewport. Use the metadata
    returned by `tk-browser-verify`; do not derive it from a filename, raw URL, or producer
-   identity. This proves the prototype comparison, not official product runtime acceptance.
+   identity. This proves the prototype comparison, not official product runtime acceptance. For
+   `Fail | Blocked | Unverifiable`, preserve owned failure artifacts and return the real status, but
+   do not emit a `verification_status: Pass` publication manifest. If required image publication
+   cannot be satisfied, report that publication requirement as blocked or unverifiable.
 6. `terminal summary`: Render the applicable sections under the output contract below;
    do not add a separate provenance/status block.
 
