@@ -534,6 +534,7 @@
           "text": "Evidence directory:"
         },
         {"type":"output_contains","text":"evidence_kind:"},
+        {"type":"output_contains","text":"verification_status: Pass"},
         {"type":"output_contains","text":"display_route:"},
         {"type":"output_contains","text":"comparison:"},
         {"type":"judge","criterion":"PR evidence handoff uses the generic required/optional artifact schema and does not require a publication consumer to branch on tk-browser-verify or another producer identity."},

@@ -53,7 +53,7 @@
     {
       "id": "validation-positive-5",
       "split": "validation",
-      "query": "[active tk-pr-open evidence handoff] evidence_required: true, producer: tk-browser-verify, inspected Screenshot을 현재 PR body에 첨부해줘.",
+      "query": "[active tk-pr-open evidence handoff] 범용 manifest의 evidence_required: true, verification_status: Pass, inspected Screenshot을 현재 PR body에 첨부해줘.",
       "should_trigger": true,
       "facets": [
         "compound"

@@ -30,6 +30,7 @@ producer-neutral PR evidence manifest entry with:
 ```text
 evidence_required: true | false
 evidence_kind: behavior | visual-change | visual-preservation
+verification_status: Pass
 criterion: <exact criterion>
 artifacts:
   - role: baseline | after | acceptance

@@ -13,7 +13,7 @@ metadata:
 # GitHub PR Image Upload
 
 Handle explicit local-image evidence requests for an existing GitHub PR or an exact
-`tk-pr-open` handoff with `evidence_required: true`. Only the parent handoff is an
+`tk-pr-open` generic manifest handoff with `evidence_required: true`. Only the parent handoff is an
 automatic trigger.
 When route selection or pre-installation confirmation is needed, prefer the host's native structured question surface (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). If unavailable, ask for the same choice in plain chat and do not mutate before selection.
 
@@ -23,10 +23,9 @@ Handle one bounded upload: validate and stage local images, upload
 repository-scoped GitHub attachments, minimally update the PR body or selected
 comment, and verify source/render output. The default target is the PR body.
 
-For `tk-pr-open`, accept only producer evidence handoffs from `tk-browser-verify`
-or `tk-prototype` with `evidence_required: true`. If required evidence is missing
-or invalid, mark the evidence handoff `Blocked`; do not revert an already-created
-`tk-pr-open` PR.
+For `tk-pr-open`, validate the producer-neutral evidence fields and never branch on, whitelist, or require a producing
+skill name. If required evidence is missing or invalid, mark the evidence handoff `Blocked`; do not revert an
+already-created `tk-pr-open` PR.
 
 Use [references/gh-attach.md](references/gh-attach.md) to classify and run the
 extension route. Read [references/cdp-fallback.md](references/cdp-fallback.md)
@@ -45,7 +44,9 @@ Before any upload or PR body/comment update, reverify the explicitly selected ta
    local image file(s) or a valid producer evidence handoff. Read the existing PR
    body.
 2. Reuse the existing `## 스크린샷` heading. If absent, insert it before the AI
-   footer or append it at the end. Preserve unrelated body content.
+   footer or append it at the end. Preserve unrelated body content. For manifest artifacts, use the supplied criterion,
+   role, exact `display_route`, state/region, viewport, and comparison in the caption; never derive them from a filename,
+   OCR, raw URL, or producer identity. Keep `visual-preservation` baseline and after visibly labeled as one pair.
 3. Select and execute an eligible route using
    [gh-attach](references/gh-attach.md), or read
    [CDP fallback](references/cdp-fallback.md) only after CDP is selected.
@@ -80,19 +81,18 @@ Cleanup: <owned staging path removed | failed | not applicable>
 Status: Pass | Fail | Pending | Blocked | Unverifiable
 ```
 
-## Producer Evidence Handoff
+## Evidence Manifest Handoff
 
 When `evidence_required: true`, require all of the following:
 
-- `producer` is either `tk-browser-verify` or `tk-prototype`.
-- Every artifact has a non-empty image, absolute path, and run-owned evidence directory.
-- Every image is marked inspected and preserves its criterion or caption.
-- A `tk-browser-verify` artifact comes from a `Pass` result.
-- A `tk-prototype` artifact includes a tested screenshot path and actual image inspection,
-  without claiming an official runtime verdict.
+- `verification_status: Pass`, a non-empty criterion, evidence kind, comparison result, and limitations.
+- Every artifact has a role, non-empty image, absolute path, run-owned evidence directory, state/region, and viewport.
+- Every image is marked `inspected: true` and has an exact origin-free `display_route` or an explicit safe omission
+  limitation. Never reconstruct or mask a missing route.
+- `visual-preservation` contains both a baseline and after artifact from its verified pair.
 
-Reject arbitrary screenshots, missing paths, `Unverifiable` results, and artifacts not tied
-to the current run. If required evidence is missing or invalid, return `Blocked` before upload.
+Reject arbitrary screenshots, missing paths, non-`Pass` results, uninspected artifacts, incomplete preservation pairs,
+and artifacts not tied to the current run. If required evidence is missing or invalid, return `Blocked` before upload.
 
 ## Prohibitions
 

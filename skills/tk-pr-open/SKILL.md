@@ -14,8 +14,9 @@ metadata:
 
 Start when the intent to create or update PR publication is explicit, such as `/tk-pr-open`, `$tk-pr-open`, selection through the host skill picker, `현재 브랜치로 PR 열어줘`, or a request to split the already-implemented current branch into reviewable stacked PRs.
 
-The input is an already implemented and verified current-branch `commit`.
-If a prepared `.tigerkit/seed.md` exists, read the work `goal`, `acceptance`, and `browser evidence requirement`, but the `Seed` itself does not grant publication authority.
+The input is an already implemented and verified current-branch `commit`, plus any publication inputs supplied in the
+current interaction. Do not read `.tigerkit/seed.md`, inspect review state or implementation retros, invoke `tk-prep` or
+`tk-review`, or route remediation. Publication does not decide whether implementation review has converged.
 
 Do not repeat implementation, create a `worker`, or add new product changes.
 For an approved retrospective stack, this skill may create publication-only branches and commits that reconstruct the already-verified product tree exactly; those commits must not introduce, omit, or repair product behavior.
@@ -78,17 +79,22 @@ For a stack, apply the same title/template rules to every layer. Each layer body
 
 ## Evidence
 
-Determine whether `PR evidence` is needed from the prepared `Seed` or the currently verified work.
+Use a producer-neutral PR evidence manifest when the current publication input provides one.
 
 ```text
 required | optional | N/A | undecided
 ```
 
-If a prepared `Seed` marks `tk-browser-verify` screenshot evidence as required for `browser-visible acceptance`, use only validly inspected evidence.
-Approved `tk-prototype` evidence may also be used.
+Validate generic fields rather than producer identity: `evidence_required`, `evidence_kind`, `verification_status`,
+criterion, inspected artifact paths, `display_route` or its exact omission limitation, state/region, viewport, comparison,
+and limitations. Do not infer a requirement from visual differences, file names, a Seed, or a known producing skill.
+Before remote publication, stop as `Blocked` when a required entry is missing, not `Pass`, uninspected, or incomplete.
+An optional entry may be omitted; an absent or uninspected artifact is not valid optional evidence.
 
 Do not upload actual secret-bearing screenshots or unverified captures.
-If an image is required, pass the exact evidence path to `tk-github-image-upload-to-pr` after the owning `PR` exists.
+If an image is required, pass the exact generic manifest entry to `tk-github-image-upload-to-pr` after the owning `PR` exists.
+Publish every valid entry marked `evidence_required: true`; do not downgrade `visual-preservation` because its baseline and
+after are identical or show no unintended difference. Require both labeled roles for that evidence kind.
 For a stack, attach evidence to the layer that owns the browser-visible acceptance; do not copy the same evidence to unrelated lower layers.
 
 ## Publication approval packet
@@ -108,7 +114,7 @@ Base
 Original head ref + SHA + tree
 Template source/compliance
 PR evidence requirement/state
-Evidence producer/path
+Evidence manifest entries/paths
 Known exclusions
 
 Single publication:
