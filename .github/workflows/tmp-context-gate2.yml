@@ -1,0 +1,56 @@
+name: Temporary context release gate 2
+
+on:
+  push:
+    branches:
+      - tmp/context-gate-runner2-20260904
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    timeout-minutes: 12
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tmp/context-consumers-20260904
+          fetch-depth: 0
+
+      - name: Shared context sync
+        run: python3 scripts/sync_execution_protocol.py --check
+
+      - name: Structural validation
+        run: |
+          python3 scripts/validate_skills.py
+          python3 scripts/validate_skills.py --links-only
+          python3 -B -m unittest discover -s scripts -p 'test_*.py'
+          python3 scripts/audit_catalog.py --check
+          git diff --exit-code
+          git diff --check
+
+      - name: Release gate with bounded npx
+        shell: bash
+        run: |
+          REAL_NPX="$(command -v npx)"
+          mkdir -p /tmp/tigerkit-bin
+          cat > /tmp/tigerkit-bin/npx <<EOF
+          #!/usr/bin/env bash
+          exec timeout 120s "$REAL_NPX" "\$@"
+          EOF
+          chmod +x /tmp/tigerkit-bin/npx
+          export PATH="/tmp/tigerkit-bin:$PATH"
+          rm -rf /tmp/tigerkit-release-gate
+          python3 scripts/run_release_gate.py \
+            --baseline 182f51d7b6c4c8ebbf34b548763fca0b44ea7d96 \
+            --candidate HEAD \
+            --output /tmp/tigerkit-release-gate
+
+      - name: Upload release gate result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: context-release-gate-2
+          path: /tmp/tigerkit-release-gate/release-gate.json
+          if-no-files-found: ignore
