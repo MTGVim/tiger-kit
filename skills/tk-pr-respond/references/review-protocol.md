@@ -18,9 +18,10 @@ original behavior, approved decisions, repository contracts, exact code/diff, an
 evidence. A standalone review remains valid without a retro and discloses missing intent
 instead of inventing it.
 
-Each discovery seat first inspects the original evidence and exact change without the retro.
-Only after recording that blind pass may it read the retro and confirm or falsify its material
-claims. Do not use implementer rationale or claimed test success as proof.
+Each discovery seat first receives and inspects the original evidence and exact change without the
+retro. After the seat records its blind observations, the controller resumes that same read-only
+leaf with the retro so it can confirm or falsify the material claims. Do not place the retro in the
+initial discovery payload or use implementer rationale or claimed test success as proof.
 
 ## Discovery seats and walks
 

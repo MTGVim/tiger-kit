@@ -44,13 +44,23 @@ understandable, verifiable, and revertible work units rather than file type or l
 that prove it and factual documentation that must change with it when practical. Keep one coherent judgment surface in
 one commit, and do not perform fragile retrospective hunk surgery merely to increase the commit count.
 
-Record independent `Spec/AC` and `Quality/Standards` verdicts. One fresh reviewer may judge both axes; do not require a
-second reviewer. Prefer a host-native fresh reviewer. Otherwise perform a distinct serial exact-scope review and disclose
-that it was not independent.
+After candidate implementation and before final review, construct an implementation retro that records actual behavior
+changed, deviations from approved decisions and reasons, newly discovered risks, verification observations, and unresolved
+limitations. It is an untrusted claim bundle, not review proof.
 
-Every exact-change review applies [finding quality](finding-quality.md). Read [TypeScript](typescript.md),
+Every exact-change review applies [independent review protocol](review-protocol.md) and
+[finding quality](finding-quality.md). A direct final review uses two eligible context-isolated discovery seats; both
+record independent `Spec/AC` and `Quality/Standards` verdicts and complete both required walks. Withhold the implementation
+retro until each seat records its blind pass, aggregate the union, and separately verify every reportable candidate.
+If the required fresh contexts are unavailable, disclose the missing independent coverage as `Unverifiable`; repeated
+serial passes in one context do not satisfy it. Read [TypeScript](typescript.md),
 [React](react.md), and [security](security.md) only when the review scope meets those references' conditions. These lenses
 change review judgment, not the target, commit, remediation, or authority protocol.
+
+Handle verified `Critical | Important` findings for at most five remediation rounds. Recheck the original open findings
+and exact fix diff rather than rerunning broad discovery after every edit, and admit only new qualifying breakage caused
+by that fix. Stop with the exact unresolved result after round five; do not continue until a stochastic review happens to
+return no findings.
 
 For direct and SDD execution, preserve scope and UI literals, use the exact review range, run acceptance review, retain
 automated regression protection, and create only approved local commits. Invoke `tk-browser-verify` for every

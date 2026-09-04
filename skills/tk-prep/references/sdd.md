@@ -157,11 +157,15 @@ assume `HEAD~1`. Provide the commit list, change statistics, and full net diff w
 enough context directly when possible; materialize a bundle only when transport requires
 it.
 
-Reviewer input is:
+The one fresh Unit discovery seat first receives:
 
 - the `Unit` summary and binding global constraints;
-- the implementer report/return and its untrusted claims;
+- the original incident or expected scenario, approved decisions and AC, and relevant test/runtime/browser evidence;
 - the exact `BASE..HEAD` evidence.
+
+Do not include the implementer report in that initial payload. After the seat records its blind observations, resume the
+same read-only leaf with the implementer report as an untrusted retro claim bundle. The seat then confirms or falsifies
+its material claims without replacing the blind observations.
 
 The read-only leaf reviewer records two independent verdicts in one review surface. A
 clean verdict on either axis never offsets a failure on the other:
@@ -172,12 +176,13 @@ clean verdict on either axis never offsets a failure on the other:
    the same unnecessary-complexity or test-only production-API risks required by
    implementer self-review.
 
-Apply [finding quality](finding-quality.md) to every `Unit` and whole-change review. Read
+Apply [independent review protocol](review-protocol.md) and [finding quality](finding-quality.md) to every `Unit` and
+whole-change review. Read
 [TypeScript](typescript.md), [React](react.md), and [security](security.md) only when the reviewed scope meets those
 references' conditions. A conditional lens does not add a reviewer or pass.
 
-One reviewer or one serial review may judge both axes. Do not add a mandatory second
-reviewer or parallel reviewer fan-out.
+An SDD Unit uses this one fresh discovery seat for both axes and both walks. Aggregate its candidates and send every
+candidate that could be reported as `Critical | Important` to a separate fresh verifier before remediation or reporting.
 
 Do not sweep the whole repository without a specifically named risk or unconditionally
 rerun suites already present in the report. Re-read available evidence before concluding
@@ -204,14 +209,19 @@ failure indefinitely.
 
 ## Completion
 
-Each `Unit` is complete only with a clean work review and recorded commit. After all
-`Unit`s, perform exactly one whole-change review and again record independent `Spec/AC`
-and `Quality/Standards` verdicts for:
+Each `Unit` is complete only with a clean work review and recorded commit. After all `Unit`s, construct a whole-change
+implementation retro from the Unit returns and exact final diff, then perform exactly one whole-change review using two
+context-isolated discovery seats under [independent review protocol](review-protocol.md). Withhold the retro until each
+seat records its blind pass. Both seats record independent `Spec/AC` and `Quality/Standards` verdicts and inspect:
 
 - cross-`Unit` integration and full AC/specification scope;
 - changed-behavior protection and mutation gaps;
 - accidental scope expansion and cross-cutting risk;
 - preservation of UI strings that must remain verbatim.
+
+Aggregate the union of both result sets and send every reportable candidate to a separate fresh verifier. A clean seat
+cannot cancel another seat's candidate. Missing host support for the required independent contexts is `Unverifiable`, not
+a silently downgraded single-review success.
 
 Then run binding verification. For browser-visible targets, obtain `tk-browser-verify`
 execution evidence separately from automated regression protection. When the

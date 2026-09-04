@@ -32,9 +32,12 @@ Replace only a proven TigerKit-owned Seed; preserve an unmarked, legacy, or iden
 The Seed uses Korean user-facing prose and includes the exact repository/PR/head, feedback and requested outcome,
 each finding's approved disposition and evidence, objective, scope and exclusions, decisions, implementation evidence,
 material Reuse/Simplicity/Tests/Security/Experience gaps or exceptions, per-AC verification, browser plan, publication
-boundary, and guidance for a lower-capability executor. Do not add readiness rows merely to state that an axis is ready or
+boundary, a semantic Review Plan, and guidance for a lower-capability executor. The Review Plan records intent, expected
+scenario/outcome, `must-not-change` surfaces, change-owned risk edges, required evidence, and known uncertainty without
+reviewer count or provider/worker routing. Do not add readiness rows merely to state that an axis is ready or
 irrelevant. Never rewrite an exact active Seed. Material feedback or state drift requires approval of the changed portion
-before atomic replacement. A no-Seed route remains bound to approved reviewer intent, tests, and publication.
+before atomic replacement. A direct/no-Seed route preserves the same semantic Review Plan in the approved current
+interaction without creating Seed ceremony; it remains bound to approved reviewer intent, tests, and publication.
 
 ## Response delta discipline
 
@@ -57,8 +60,11 @@ Direct execution applies RED → verified failure → minimal GREEN → refactor
 reports retain RED/GREEN evidence. If fan-out is unavailable, preserve the same role and range gates sequentially; do not
 downgrade to unreviewed direct work or persist provider routing.
 
-Record independent `Spec/AC` and `Quality/Standards` verdicts for direct exact-change and SDD Unit/whole-change reviews.
-One reviewer may judge both axes; do not require a second reviewer. Finish with AC review, required gap correction,
+After implementation, construct the untrusted implementation retro required by
+[independent review protocol](review-protocol.md). Apply that protocol to direct exact-change and SDD Unit/whole-change
+reviews: direct final and SDD whole-change final use two context-isolated discovery seats, while each SDD Unit uses one
+fresh seat. Every seat judges both `Spec/AC` and `Quality/Standards` and completes both walks; withhold the retro until its
+blind pass, aggregate candidate unions, and separately verify every reportable candidate. Finish with AC review, required gap correction,
 verified local commits, and `tk-browser-verify` for browser-visible changes. Provide the verifier with exact
 command/cwd/URL/auth/readiness; it owns server lifecycle. Do not repeat SDD's whole-change review with another generic review.
 
@@ -66,6 +72,7 @@ Apply [finding quality](finding-quality.md) to every code review. Read [TypeScri
 [React](react.md), and [security](security.md) only when the reviewed scope meets those references' conditions. These
 lenses do not change finding disposition, response-delta, re-review targets, or publication order.
 
-After three meaningful direct corrective attempts, stop as `Fail` or `Unverifiable`; SDD uses its five-round breaker.
+Handle direct review remediation for at most five rounds, using the original open findings and exact fix diff rather than
+rerunning broad discovery after each edit. Stop as `Fail` or `Unverifiable` after round five; SDD uses the same maximum.
 Material Goal/Scope/Decision/AC/security/required Verification drift returns to the preparation owner. Reversible
 engineering ambiguity receives an explicit `Ruling:`. Neither route expands publication authority.

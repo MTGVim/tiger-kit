@@ -105,6 +105,9 @@ At minimum, cover:
 - bounded publication scope for push/reply/resolve/re-review
 - practical execution shape: reply-only, direct, or SDD
 
+For every code-changing route, keep the semantic Review Plan from the code-change reference in the approved current
+interaction even when no Seed is needed. Do not expose reviewer/model/worker routing as part of the user plan.
+
 For a code-changing plan, inspect the actual repository test surface and use [behavior-first testing](references/testing.md)
 to resolve RED feasibility, the focused command, required suite, realistic mutation, and any `N/A` or engineering exception.
 Explain the practical route among reply-only, direct+TDD, and SDD+TDD without exposing an internal classification form.

@@ -90,9 +90,10 @@ the plan. For a surfaced axis use `보완 필요 | 개선 한계 | 예외 승인
 For every code-changing path, inspect real tests and load [behavior-first testing](references/testing.md) before approval. Close
 observable behavior, regression/RED, focused command, required suite, mutation risk, and `N/A` versus engineering exception.
 Do not add ceremonial tests for trivial/prose-only work; browser verification never substitutes for automated protection.
-For every direct or SDD code review, load [finding quality](references/finding-quality.md). Load
+For every direct or SDD code review, load [independent review protocol](references/review-protocol.md) and
+[finding quality](references/finding-quality.md). Load
 [TypeScript](references/typescript.md), [React](references/react.md), and [security](references/security.md) only when the
-review scope meets those references' stated conditions; do not add another reviewer or review pass.
+review scope meets those references' stated conditions. Conditional lenses do not change the protocol's review seats.
 When the cause and exact RED seam are obvious, proceed directly. Lazy-load [diagnosis](references/diagnosis.md) only for hard, flaky, performance, or difficult-to-reproduce bugs and establish a red-capable loop before a fix hypothesis. If that is impossible, record why and do not apply a speculative fix.
 
 ## Browser verification
@@ -107,6 +108,12 @@ input. The verifier owns server startup, readiness, runtime acceptance evidence,
 If any implementation or verification step would open a local app/page to compare a design,
 inspect a render defect, test responsive or interaction behavior, or capture proof, invoke
 `tk-browser-verify` instead of performing browser calls inside the preparation/execution turn.
+
+## Review plan
+
+Before approval, keep a semantic review plan covering the change intent, original incident or expected scenario, expected changed outcome, `must-not-change` behavior or visual regions, change-owned risk edges, required automated/runtime/browser evidence, and known pre-implementation uncertainty. Preserve it in every code-changing Ready Seed; a direct/no-Seed path keeps the same approved obligations in the current interaction.
+
+Do not store reviewer count, provider/model identity, worker routing, or review transcripts in the Seed. The execution shape and [independent review protocol](references/review-protocol.md) determine the seats after the exact diff exists.
 
 ## Adaptive execution shape
 
@@ -129,7 +136,8 @@ before approval. Preserve any existing Seed before approval; direct/no-Seed does
 ## 🔴 CHECKPOINT · 🛑 STOP · Approval and local mutation
 
 Before approval perform no source/test/config/Seed/Git mutation. Present one natural summary covering goal, scope,
-decisions, approach, testing/TDD, browser plan, execution shape, workspace setup, and local commit consequence.
+decisions, approach, testing/TDD, browser plan, semantic review obligations, execution shape, workspace setup, and local
+commit consequence.
 
 Approval authorizes exactly the described local edits, verification, isolated checkout setup, and local task commit(s).
 It explicitly excludes push, merge, publication/release, destructive cleanup, secrets, and unrelated work. Material

@@ -105,7 +105,7 @@
     "tk-pr-respond:behavior:pr-respond-loads-adr-only-for-related-feedback",
     "tk-pr-respond:behavior:pr-respond-review-separates-quality-failure-from-spec-pass",
     "tk-pr-respond:behavior:pr-respond-review-separates-spec-failure-from-quality-pass",
-    "tk-pr-respond:behavior:pr-respond-review-axes-use-one-reviewer",
+    "tk-pr-respond:behavior:pr-respond-review-topology-distinguishes-unit-and-final",
     "tk-pr-respond:behavior:pr-respond-rejects-mock-only-behavior-proof",
     "tk-pr-respond:behavior:pr-respond-test-double-preserves-side-effect-and-response-shape",
     "tk-pr-respond:behavior:pr-respond-rejects-test-only-production-cleanup-api",
