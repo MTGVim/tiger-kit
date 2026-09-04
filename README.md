@@ -165,7 +165,7 @@ tk-pr-respond
 → fresh exact PR read
 → review/CI 의미 설명 + 필요한 결정만 질문
 → one approval
-→ reply-only | code-changing Ready Seed + direct-TDD/SDD-TDD
+→ reply-only | code-changing direct-TDD (no Seed) | Ready Seed + direct-TDD/SDD-TDD when durable context is needed
 → exact-range review/verify
 → bounded push/reply/resolve/re-review
 
