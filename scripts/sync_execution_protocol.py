@@ -25,8 +25,10 @@ EXTERNAL_CONTRACT_SOURCE = ROOT / "skills/tk-prep/references/external-contracts.
 EXTERNAL_CONTRACT_TARGET = ROOT / "skills/tk-wizard/references/external-contracts.md"
 DOMAIN_CONTEXT_TARGETS = (
     ROOT / "skills/tk-ask-repo/references/domain-context.md",
+    ROOT / "skills/tk-audit/references/domain-context.md",
     ROOT / "skills/tk-pr-open/references/domain-context.md",
     ROOT / "skills/tk-pr-respond/references/domain-context.md",
+    ROOT / "skills/tk-review/references/domain-context.md",
 )
 
 
