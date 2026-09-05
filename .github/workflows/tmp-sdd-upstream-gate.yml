@@ -1,0 +1,146 @@
+name: Temporary SDD upstream gate
+
+on:
+  push:
+    branches:
+      - tmp/sdd-gate-20260905
+
+permissions:
+  contents: write
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tmp/sdd-upstream-20260905
+          fetch-depth: 0
+
+      - name: Apply lightweight SDD upstream adaptations
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              target = Path(path)
+              text = target.read_text(encoding="utf-8")
+              if old not in text:
+                  raise SystemExit(f"expected text missing in {path}: {old!r}")
+              target.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+          replace_once(
+              "skills/tk-prep/references/sdd.md",
+              "When host-native multi-agent execution is unavailable, perform the same `Unit` and\n"
+              "review sequence serially in the current isolated execution checkout while preserving\n"
+              "role-specific evidence and exact scope. Do not silently downgrade SDD semantics into\n"
+              "direct execution.\n\n"
+              "## Recovery state\n",
+              "When host-native multi-agent execution is unavailable, perform the same `Unit` and\n"
+              "review sequence serially in the current isolated execution checkout while preserving\n"
+              "role-specific evidence and exact scope. Do not silently downgrade SDD semantics into\n"
+              "direct execution.\n\n"
+              "## Failure diagnosis routing\n\n"
+              "During a `Unit` check or binding verification, keep an obvious failure with an exact RED seam owned by the\n"
+              "current `Unit` in the existing implementer/testing path. If the cause is unknown, intermittent/flaky,\n"
+              "environment-dependent, or appears outside the current `Unit`, the controller records only the exact symptom,\n"
+              "failing evidence, and observed scope, then dispatches one fresh diagnostic leaf that follows\n"
+              "[Difficult bug diagnosis](diagnosis.md) through cause, ownership, and red-capable seam discovery. The leaf\n"
+              "returns those findings without product remediation or redispatch; the controller decides whether to route them\n"
+              "to current-Unit remediation or back to preparation/reapproval. Do not create diagnosis state merely for this\n"
+              "branch.\n\n"
+              "## Recovery state\n",
+          )
+
+          replace_once(
+              "skills/tk-prep/references/sdd.md",
+              "match the current Seed exactly, return `Blocked` before new dispatch and return to the\n"
+              "preparation owner. Delete a run-owned ledger when binding acceptance is clean.\n",
+              "match the current Seed exactly, return `Blocked` before new dispatch and return to the\n"
+              "preparation owner. Before deleting a run-owned ledger, inspect any material deferred or accepted `Ruling:` that\n"
+              "it uniquely preserves. Delete the ledger only when binding acceptance is clean and every such ruling already\n"
+              "exists in another durable owner; otherwise retain the existing ledger as the recovery record. Do not retain it\n"
+              "solely for style/minor findings, completed reports, or rulings already preserved elsewhere, and do not create a\n"
+              "follow-up artifact just to make cleanup possible.\n",
+          )
+
+          replace_once(
+              "skills/tk-prep/references/sdd.md",
+              "`tk-pr-respond` SDD path completed this final whole-change review, do not repeat a\n"
+              "generic second review. Clean up only run-owned optional ledger/transport artifacts. No\n"
+              "SDD or local commit expands `push`, `merge`, or publication authority.\n",
+              "`tk-pr-respond` SDD path completed this final whole-change review, do not repeat a\n"
+              "generic second review. Clean up only run-owned optional ledger/transport artifacts that satisfy the Recovery\n"
+              "state retention rule above. No SDD or local commit expands `push`, `merge`, or publication authority.\n",
+          )
+
+          replace_once(
+              "skills/tk-prep/references/diagnosis.md",
+              "Prefer `Targeted debugger/inspection`; add temporary logging only at required\n"
+              "boundaries. Give every temporary log a unique searchable `prefix`. For a performance\n"
+              "regression, prefer `baseline/profiler/bisect` over indiscriminate logging.\n\n"
+              "## TDD convergence and cleanup\n",
+              "Prefer `Targeted debugger/inspection`; add temporary logging only at required\n"
+              "boundaries. Give every temporary log a unique searchable `prefix`. For a performance\n"
+              "regression, prefer `baseline/profiler/bisect` over indiscriminate logging.\n\n"
+              "When this procedure runs as an SDD diagnostic leaf, stop after establishing the evidence-backed cause or\n"
+              "remaining uncertainty, ownership boundary, and red-capable seam. Return that bounded diagnosis to the\n"
+              "controller before any product remediation; the controller owns routing back to the current `Unit` or\n"
+              "preparation/reapproval.\n\n"
+              "## TDD convergence and cleanup\n",
+          )
+
+          replace_once(
+              "NOTICE.md",
+              "기존 원격 권한 경계를 유지합니다. 관계 메타데이터: `origin: tigerkit`, `relationship: adapted`.\n\n"
+              "`obra/superpowers` 상위 원본 라이선스:\n",
+              "기존 원격 권한 경계를 유지합니다. 관계 메타데이터: `origin: tigerkit`, `relationship: adapted`.\n\n"
+              "2026-09-05에는 `obra/superpowers#2253`의 recovery scratch 소실 사례와\n"
+              "`mattpocock/skills#1010`의 `implement-spec` retro finding을 추가로 검토했습니다. TigerKit은 material\n"
+              "deferred/accepted `Ruling:`의 유일한 durable copy를 cleanup으로 삭제하지 않는 조건과 SDD 중 새로\n"
+              "발생한 unknown/out-of-Unit verification failure만 기존 `diagnosis.md` 기반 fresh leaf에 넘기는 경계를\n"
+              "적용했습니다. 모든 minor finding의 PR checklist/export, session JSONL telemetry, 항상 실행되는 diagnosis\n"
+              "또는 merger subagent는 적용하지 않습니다.\n\n"
+              "`obra/superpowers` 상위 원본 라이선스:\n",
+          )
+
+          Path("scripts/test_sdd_upstream_boundaries.py").write_text(
+              '''from __future__ import annotations\n\nimport unittest\nfrom pathlib import Path\n\n\nROOT = Path(__file__).resolve().parents[1]\nPREP = ROOT / "skills/tk-prep/references"\nRESPOND = ROOT / "skills/tk-pr-respond/references"\n\n\nclass SddUpstreamBoundaryTest(unittest.TestCase):\n    def test_material_residual_ruling_blocks_destructive_cleanup(self) -> None:\n        text = (PREP / "sdd.md").read_text(encoding="utf-8")\n        self.assertIn("material deferred or accepted `Ruling:`", text)\n        self.assertIn("otherwise retain the existing ledger as the recovery record", text)\n        self.assertIn("solely for style/minor findings", text)\n        self.assertIn("do not create a\\nfollow-up artifact just to make cleanup possible", text)\n        self.assertIn("artifacts that satisfy the Recovery\\nstate retention rule above", text)\n\n    def test_unknown_failure_routes_to_one_fresh_diagnostic_leaf_only(self) -> None:\n        text = (PREP / "sdd.md").read_text(encoding="utf-8")\n        self.assertIn("obvious failure with an exact RED seam owned by the\\ncurrent `Unit`", text)\n        self.assertIn("dispatches one fresh diagnostic leaf", text)\n        self.assertIn("without product remediation or redispatch", text)\n        self.assertIn("Do not create diagnosis state merely for this\\nbranch", text)\n\n    def test_sdd_diagnostic_leaf_returns_before_product_remediation(self) -> None:\n        text = (PREP / "diagnosis.md").read_text(encoding="utf-8")\n        self.assertIn("When this procedure runs as an SDD diagnostic leaf", text)\n        self.assertIn("before any product remediation", text)\n        self.assertIn("controller owns routing back to the current `Unit`", text)\n\n    def test_shared_sdd_and_diagnosis_copies_remain_exact(self) -> None:\n        for name in ("sdd.md", "diagnosis.md"):\n            self.assertEqual((PREP / name).read_bytes(), (RESPOND / name).read_bytes(), name)\n\n\nif __name__ == "__main__":\n    unittest.main()\n''',
+              encoding="utf-8",
+          )
+          PY
+
+          python3 scripts/sync_execution_protocol.py
+          git diff --check
+
+      - name: Commit candidate changes
+        shell: bash
+        run: |
+          git config user.name "TigerKit Gate"
+          git config user.email "tigerkit-gate@users.noreply.github.com"
+          git add skills scripts NOTICE.md
+          git commit -m "fix(sdd): preserve residual rulings and isolate diagnosis"
+          git push origin HEAD:tmp/sdd-upstream-20260905
+
+      - name: Verify shared protocol sync
+        run: python3 scripts/sync_execution_protocol.py --check
+
+      - name: Run focused SDD boundary tests
+        run: python3 -B -m unittest scripts.test_sdd_upstream_boundaries
+
+      - name: Run release gate
+        run: |
+          rm -rf /tmp/tigerkit-release-gate
+          python3 scripts/run_release_gate.py \
+            --baseline b8a0f520e503d5a4c85b34e48017f82dae9531b2 \
+            --candidate HEAD \
+            --output /tmp/tigerkit-release-gate
+
+      - name: Upload release gate result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdd-upstream-release-gate
+          path: /tmp/tigerkit-release-gate/release-gate.json
+          if-no-files-found: ignore
