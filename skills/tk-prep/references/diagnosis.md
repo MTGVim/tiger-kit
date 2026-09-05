@@ -47,6 +47,11 @@ Prefer `Targeted debugger/inspection`; add temporary logging only at required
 boundaries. Give every temporary log a unique searchable `prefix`. For a performance
 regression, prefer `baseline/profiler/bisect` over indiscriminate logging.
 
+When this procedure runs as an SDD diagnostic leaf, stop after establishing the evidence-backed cause or
+remaining uncertainty, ownership boundary, and red-capable seam. Return that bounded diagnosis to the
+controller before any product remediation; the controller owns routing back to the current `Unit` or
+preparation/reapproval.
+
 ## TDD convergence and cleanup
 
 After finding the correct `regression seam`, join RED → GREEN → REFACTOR in

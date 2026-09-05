@@ -86,6 +86,13 @@ TigerKit은 반복 0의 설명/본문 일관성, 고정 중앙값·대조군·�
 공개 스킬, 실행 체계, 작업공간 계층을 복사하지 않고, `tk-prep`/`tk-pr-respond`의 자체 완결 패키지와
 기존 원격 권한 경계를 유지합니다. 관계 메타데이터: `origin: tigerkit`, `relationship: adapted`.
 
+2026-09-05에는 `obra/superpowers#2253`의 recovery scratch 소실 사례와
+`mattpocock/skills#1010`의 `implement-spec` retro finding을 추가로 검토했습니다. TigerKit은 material
+deferred/accepted `Ruling:`의 유일한 durable copy를 cleanup으로 삭제하지 않는 조건과 SDD 중 새로
+발생한 unknown/out-of-Unit verification failure만 기존 `diagnosis.md` 기반 fresh leaf에 넘기는 경계를
+적용했습니다. 모든 minor finding의 PR checklist/export, session JSONL telemetry, 항상 실행되는 diagnosis
+또는 merger subagent는 적용하지 않습니다.
+
 `obra/superpowers` 상위 원본 라이선스:
 
 ```text

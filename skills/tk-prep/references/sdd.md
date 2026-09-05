@@ -63,6 +63,17 @@ review sequence serially in the current isolated execution checkout while preser
 role-specific evidence and exact scope. Do not silently downgrade SDD semantics into
 direct execution.
 
+## Failure diagnosis routing
+
+During a `Unit` check or binding verification, keep an obvious failure with an exact RED seam owned by the
+current `Unit` in the existing implementer/testing path. If the cause is unknown, intermittent/flaky,
+environment-dependent, or appears outside the current `Unit`, the controller records only the exact symptom,
+failing evidence, and observed scope, then dispatches one fresh diagnostic leaf that follows
+[Difficult bug diagnosis](diagnosis.md) through cause, ownership, and red-capable seam discovery. The leaf
+returns those findings without product remediation or redispatch; the controller decides whether to route them
+to current-Unit remediation or back to preparation/reapproval. Do not create diagnosis state merely for this
+branch.
+
 ## Recovery state
 
 The Ready Seed, current controller context, and local commits are the normal recovery
@@ -81,7 +92,11 @@ interrupted run actually needs durable recovery. When a ledger is needed, keep o
 Do not copy stable Seed content or completed reports into the ledger. Do not resume a
 ledger with a different Seed identifier/hash or one from completed work. If it does not
 match the current Seed exactly, return `Blocked` before new dispatch and return to the
-preparation owner. Delete a run-owned ledger when binding acceptance is clean.
+preparation owner. Before deleting a run-owned ledger, inspect any material deferred or accepted `Ruling:` that
+it uniquely preserves. Delete the ledger only when binding acceptance is clean and every such ruling already
+exists in another durable owner; otherwise retain the existing ledger as the recovery record. Do not retain it
+solely for style/minor findings, completed reports, or rulings already preserved elsewhere, and do not create a
+follow-up artifact just to make cleanup possible.
 
 ## Artifact transport
 
@@ -233,5 +248,5 @@ a silently downgraded single-review success.
 Then run binding verification. For browser-visible targets, obtain `tk-browser-verify`
 execution evidence separately from automated regression protection. When the
 `tk-pr-respond` SDD path completed this final whole-change review, do not repeat a
-generic second review. Clean up only run-owned optional ledger/transport artifacts. No
-SDD or local commit expands `push`, `merge`, or publication authority.
+generic second review. Clean up only run-owned optional ledger/transport artifacts that satisfy the Recovery
+state retention rule above. No SDD or local commit expands `push`, `merge`, or publication authority.
