@@ -1,0 +1,71 @@
+name: Temporary SDD upstream gate 2
+
+on:
+  push:
+    branches:
+      - tmp/sdd-gate2-20260905
+
+permissions:
+  contents: write
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: tmp/sdd-upstream-20260905
+          fetch-depth: 0
+
+      - name: Remove unnecessary NOTICE expansion
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path("NOTICE.md")
+          text = path.read_text(encoding="utf-8")
+          paragraph = (
+              "2026-09-05에는 `obra/superpowers#2253`의 recovery scratch 소실 사례와\n"
+              "`mattpocock/skills#1010`의 `implement-spec` retro finding을 추가로 검토했습니다. TigerKit은 material\n"
+              "deferred/accepted `Ruling:`의 유일한 durable copy를 cleanup으로 삭제하지 않는 조건과 SDD 중 새로\n"
+              "발생한 unknown/out-of-Unit verification failure만 기존 `diagnosis.md` 기반 fresh leaf에 넘기는 경계를\n"
+              "적용했습니다. 모든 minor finding의 PR checklist/export, session JSONL telemetry, 항상 실행되는 diagnosis\n"
+              "또는 merger subagent는 적용하지 않습니다.\n\n"
+          )
+          if paragraph not in text:
+              raise SystemExit("temporary NOTICE paragraph not found")
+          path.write_text(text.replace(paragraph, "", 1), encoding="utf-8")
+          PY
+          git diff --check
+
+      - name: Commit NOTICE cleanup
+        shell: bash
+        run: |
+          git config user.name "TigerKit Gate"
+          git config user.email "tigerkit-gate@users.noreply.github.com"
+          git add NOTICE.md
+          git commit -m "docs: keep upstream adaptation notice minimal"
+          git push origin HEAD:tmp/sdd-upstream-20260905
+
+      - name: Verify shared protocol sync
+        run: python3 scripts/sync_execution_protocol.py --check
+
+      - name: Run focused SDD boundary tests
+        run: python3 -B -m unittest scripts.test_sdd_upstream_boundaries
+
+      - name: Run release gate
+        run: |
+          rm -rf /tmp/tigerkit-release-gate
+          python3 scripts/run_release_gate.py \
+            --baseline b8a0f520e503d5a4c85b34e48017f82dae9531b2 \
+            --candidate HEAD \
+            --output /tmp/tigerkit-release-gate
+
+      - name: Upload release gate result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdd-upstream-release-gate-2
+          path: /tmp/tigerkit-release-gate/release-gate.json
+          if-no-files-found: ignore
