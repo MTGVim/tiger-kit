@@ -111,6 +111,10 @@ itself prove skill behavior. Use observable outcomes and realistic judge criteri
 - For pointer/disclosure edits, verify both sides: the required reference is reached on
   the branch that needs it, and unrelated branches do not pay the load or inherit rules
   they never use.
+- When moving or extracting skill content across files or sections, revalidate both links
+  and positional prose references such as `above`, `below`, `earlier`, or `later`; replace
+  any location-dependent wording whose referent no longer survives at the new location
+  with an explicit target reference.
 - For instruction pruning, a source-text deletion or smaller token count is not success;
   the relevant task behavior and safety boundary must remain unchanged.
 
