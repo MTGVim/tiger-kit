@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Admin capture fixture</title>
+<style>
+body { margin: 0; font: 16px Arial; }
+main { padding: 24px 24px 160px; width: 960px; }
+nav { position: fixed; bottom: 0; left: 0; width: 160px; height: 100px; background: #ddd; z-index: 10; }
+table { border-collapse: collapse; width: 900px; table-layout: fixed; }
+th, td { border: 1px solid #aaa; height: 36px; text-align: left; padding: 0 14px; }
+.field { display: flex; align-items: center; gap: 16px; margin: 12px 0; }
+.field label { width: 100px; }
+.value { box-sizing: border-box; display: flex; align-items: center; width: 300px; height: 40px; padding: 0 14px; border: 1px solid #aaa; }
+.broken { border-color: transparent; justify-content: center; }
+</style>
+<nav>Fixed menu</nav><main><h1>Orders</h1><div id="filter">Legacy filter</div>
+<table><thead><tr><th>Order</th><th>Status</th><th id="code-header"></th></tr></thead><tbody></tbody></table>
+<h2>Details</h2><div class="field"><label>Status</label><div class="value">Ready</div></div><div id="new-field"></div></main>
+<script>
+const phase = new URLSearchParams(location.search).get('phase') || 'baseline';
+const changed = phase !== 'baseline';
+if (changed) {
+  // Preserve the surrounding region so the fixture has only approved visual deltas.
+  document.querySelector('#filter').style.visibility = 'hidden';
+  document.querySelector('#code-header').textContent = 'Code';
+  document.querySelector('#new-field').innerHTML = '<div class="field"><label>Code</label><div class="value ' + (phase === 'broken' ? 'broken' : '') + '">Ready</div></div>';
+}
+for (let i = 1; i <= 50; i++) {
+  const row = document.createElement('tr');
+  row.innerHTML = '<td>Order ' + i + '</td><td>Ready</td><td>' + (changed ? 'C' + i : '') + '</td>';
+  document.querySelector('tbody').appendChild(row);
+}
+</script></html>

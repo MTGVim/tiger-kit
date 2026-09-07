@@ -13,22 +13,9 @@ Do not invent design intent or broaden the work into generic critique.
 
 ## Visual intent and baseline pairs
 
-When a candidate can affect rendered output, visual regression coverage is required even
-when its stated behavior must remain unchanged. Classify every approved visual region by
-where its intended evidence exists:
-
-| Intent | Baseline evidence | After evidence | Outline location |
-| --- | --- | --- | --- |
-| appear | surrounding context before insertion | new target and context | after only |
-| disappear | old target and context | surrounding context after removal | baseline only |
-| change | old target and context | new target and context | both corresponding targets |
-| remain unchanged | complete comparison region | complete comparison region | none |
-
-The outlined `intended-change` region and the remaining `must-not-change` region are separate
-judgment surfaces. An observed difference in `must-not-change` is `Fail` by default. Only an
-explicit approved deviation may convert it to acceptance. A behavior-preserving refactor may
-consist entirely of `remain unchanged`; the absence of a design node, mockup, or changed visual
-AC never disables this branch.
+Apply the intent table and separate judgment surfaces in [the visual contract gate](../SKILL.md#visual-contract-gate).
+A behavior-preserving refactor may consist entirely of `remain unchanged`; the absence of a design
+node, mockup, or changed visual AC never disables this branch.
 
 Use a parent-supplied inspected baseline when its provenance and environment are comparable. When
 invoked before the first product edit, prove and record the current HEAD plus relevant worktree
@@ -56,10 +43,26 @@ map every file to its AC, region/state, and order. Do not default to a context-d
 element-only crop or reuse undifferentiated captures for unrelated criteria.
 
 Use `fullPage` only as an explicit exception when the AC itself requires page-wide composition
-or long-page continuity and bounded viewport captures cannot prove it. Do not resize the
-viewport height to the document height. When applying the exception, label the capture method
-`fullPage` and state why bounded captures cannot prove the AC in both the evidence index and
-verification result. Store a bounded `README.md` beside the images with an
+or long-page continuity and bounded viewport captures cannot prove it. When fixed navigation or a
+sticky region would obscure that page-wide criterion, `content-height` (fitting viewport height to
+content) is allowed and preferred over hiding navigation, provided the prerequisites below hold.
+This method changes the viewport without mutating DOM; it can still change layout and visible state.
+
+Before using `content-height`, verify from applicable styles, application code, and runtime behavior
+that the page does not depend on viewport-height units (`vh`, `svh`, `lvh`, `dvh`), height media queries,
+list virtualization, infinite scrolling, or scroll-triggered animation/reveal/lazy loading. Unknown
+or present dependencies rule out this method. Verify that the resize exposes the criterion without
+changing its layout/content/state; restore the approved viewport for responsive or sticky-behavior
+criteria, which an expanded capture cannot discharge. If the method cannot safely prove the AC,
+use bounded captures or the navigation procedure below, or return `Unverifiable`.
+
+Label every capture with `capture_method` (such as `viewport`, `fullPage`, or `content-height`) and
+its measured effective viewport in both the evidence index and result. For either page-wide exception,
+record why bounded captures cannot prove the AC; for `content-height`, also record the prerequisite
+checks, original viewport, and observed resize effect. Use the identical method and effective viewport
+for baseline and after. If content heights differ, reproduce both source states at one common safe
+height and recheck prerequisites; do not compare independently auto-fitted heights. Preserve earlier
+failure evidence and restore viewport/state after capture. Store a bounded `README.md` beside the images with an
 AC-to-file/state table, capture order when relevant, source provenance, and a replay procedure.
 For each paired capture, record the safe replay target and the exact origin-free `display_route` from
 [publication evidence](publication-evidence.md), ordered navigation/input with stable selectors or
@@ -73,8 +76,8 @@ Do not compress multiple captures into an undifferentiated path list: report one
 per capture with its AC, file, viewport, state/region, and inspected result.
 Each result row must state that the screenshot was non-empty after actual image inspection, or that
 the candidate bounded-region file was byte-identical to its named already-inspected baseline.
-State any capture-only mutation in the index and result, including `none` when no element was
-hidden, removed, or annotated.
+Use the mandatory `capture_only_mutation` field from [the evidence contract](../SKILL.md#evidence)
+in the index and result. An outline or label is an annotation, so annotated captures cannot report `none`.
 
 Replay the same indexed procedure for baseline and after. A matching viewport alone is insufficient
 when navigation, scroll, state, font readiness, capture boundary, or deterministic content differs.
@@ -89,9 +92,12 @@ and clamp its position to the page width so target `overflow: hidden` cannot cli
 Do not calculate a detached overlay from coordinates that may change during scrolling,
 `fullPage` layout, or capture.
 
-If fixed navigation obscures the criterion, first use the framework's compact/collapsed
-mode and verify that the content position remains unchanged. If it still obscures the
-criterion, hide only that navigation for capture and disclose the change in `README.md`.
+If fixed navigation obscures the criterion, first prefer bounded captures; for a page-wide AC,
+consider the qualified `content-height` method above before hiding navigation. Otherwise use the
+framework's compact/collapsed mode and verify that content position remains unchanged. If it still
+obscures the criterion, hide only non-criterion navigation for capture, verify that this does not
+alter the judged content geometry/state, and disclose the change in both index and result. Restore
+it afterward. Never hide navigation whose visibility or overlap is itself under test.
 
 ## Verbatim visual comparison axes
 
@@ -128,6 +134,10 @@ unchecked, the aggregate result is not `Pass`.
    edge, including overflow, wrapping, clipping, and off-screen controls.
 8. **State**: Recheck the preceding axes for each approved
    hover/focus/active/disabled/loading/error state.
+
+Complete all required axes in the first attempt even when one already fails. For a new field that
+must match approved sibling fields, measure box presence/dimensions and text alignment (including
+glyph inset) together against those siblings; a missing box does not excuse skipping alignment.
 
 For geometry and typography, record the reference value, candidate measurement, and
 delta for every named element whose value can be measured. Report every measured

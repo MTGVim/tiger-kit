@@ -126,6 +126,11 @@ Ready `.tigerkit/seed.md`는 필요할 때만 만드는 현재 작업의 자체 
 `browser-visible` AC가 있으면 `tk-prep`에서 대상, `headless`, 인증, `viewport`, 개발 서버, `criterion`별 `runtime` 근거와 통과 조건을 정합니다. `Visual/visible-state` 근거는 검증 대상이 실제 담긴 `screenshot`을 사용합니다.
 비밀번호, `token`, OTP, `cookie`, `session` 비밀 값은 `Seed`에 저장하지 않고 실행 시 일시 입력으로만 다룹니다.
 
+기준 화면과 변경 후 화면을 비교하거나 렌더링에 영향을 주는 후보를 검증할 때는 `visual.md` 계약을
+적용하고 `visual_contract: applied`를 반환해야 합니다. 의도한 변경 영역에는 의도별로 `outline`을 표시하며,
+촬영 방식·실제 화면 크기·촬영 전용 변경 사항을 근거 색인과 결과에 공개합니다. 콘텐츠 높이에 맞춘 캡처는
+페이지 전체 근거가 필요하고 높이 의존 레이아웃·가상 목록·스크롤 지연 로딩 등이 없음을 확인한 경우에만 허용합니다.
+
 개발 서버가 필요하면 시작·준비 확인·정리는 `tk-browser-verify`가 소유합니다.
 TigerKit 설치 과정에서는 브라우저 제공자를 함께 설치하지 않습니다. 호환 제공자가 없으면
 `tk-browser-verify`가 `tk-wizard`로 현재 호스트에 맞는 설정과 재시작 절차를 안내합니다. 새

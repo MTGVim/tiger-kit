@@ -251,7 +251,13 @@
     "tk-grill:behavior:frontier-empty-requires-shared-understanding-confirmation",
     "tk-grill:behavior:confirmed-understanding-yields-compact-synthesis",
     "tk-grill:behavior:does-not-auto-transition-to-implementation",
-    "tk-grill:behavior:keeps-session-state-in-conversation"
+    "tk-grill:behavior:keeps-session-state-in-conversation",
+    "tk-browser-verify:behavior:browser-pair-cannot-pass-without-visual-contract",
+    "tk-browser-verify:behavior:browser-content-height-mixed-intent-contract",
+    "tk-browser-verify:behavior:browser-height-dependent-fixture-rejects-content-fit",
+    "tk-browser-verify:behavior:browser-content-height-unknown-dependencies-stop-fit",
+    "tk-browser-verify:behavior:browser-first-attempt-reports-box-and-alignment",
+    "tk-browser-verify:behavior:browser-nonvisual-result-discloses-no-mutation"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",

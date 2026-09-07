@@ -87,8 +87,34 @@ Return only outcome-changing user-owned decisions to the parent owner.
 4. **Execution setup**: Without installing new dependencies, discover a native, installed Chrome DevTools CLI, repository-provided Playwright/Puppeteer-compatible, MCP, or verified CDP path. For a configured managed-launch provider, inspect its effective configuration first, then allow one harmless discovery call to start the provider-owned browser and complete runtime proof before product interaction. Require effective modern headless behavior, not the exact literal `--headless=new`; accept a managed pipe or equivalent transport without a TCP endpoint. Recommend provider isolation, but accept an effectively headless dedicated persistent provider profile with an explicit isolation limitation and use a scenario-isolated context when supported. Attach paths still require observed headless mode, endpoint, and ownership before any browser call. If no compatible provider exists, make no browser call and hand the bounded setup request in [environment](references/environment.md) to `tk-wizard`; keep the browser criterion `Blocked`. If an attached process is headed, belongs to another run or the user, or cannot be proven, make no browser call and return `Unverifiable`.
 5. **Server**: If the parent requires a development server, this verifier owns starting the background process, readiness checks, and cleanup. For standalone execution, use one canonical safe command without another question when repository scripts, documentation, and tooling identify it unambiguously. Ask the user only when materially different viable commands remain or the environment/product choice is user-owned; never choose among genuine alternatives arbitrarily. Resolve the selected script and environment's host, port, and API target before launch, then prove project identity rather than accepting an open port alone. When the selected server is `react-scripts`/CRA, include `BROWSER=NONE` or the repository-documented equivalent to suppress auto-open. Manage PID/cwd/port/command and bounded logs as run evidence, and wait for a readiness signal rather than process exit.
 6. **Verification**: Start from a known state and inspect the required interaction and final state with evidence that directly proves each criterion. Visual or visible-state criteria require a non-empty run-owned screenshot containing the exact criterion and necessary context. Inspect it directly unless [visual](references/visual.md) permits an exact byte-identical bounded-region candidate to inherit its named inspected baseline; a target outside the captured viewport or scroll position cannot support that AC. Interaction, network, accessibility, or runtime-semantic criteria may instead use a trusted trace, accessibility tree, DOM/runtime observation, or request/response evidence when that is more direct. Do not require a ceremonial screenshot that proves nothing about the criterion.
-7. **Decision**: Map each criterion to current evidence and assign `Pass | Fail | Blocked | Unverifiable`. When a visual reference or required baseline pair exists, apply the comparison contract in [visual](references/visual.md). Record `Pass | Fail | Unverifiable` for every required axis that was not discharged by byte-identical region evidence, include reference/candidate/delta measurements for geometry and typography, and report every measured mismatch. An unchecked axis or missing required measurement blocks aggregate `Pass`. For UI `Content` criteria, require exact rendered strings or a verified entry path from the parent basis; if neither exists, do not infer the element from a paraphrase, code identifier, or enum and return `Unverifiable`.
+7. **Decision**: A baseline/after pair without `visual_contract: applied` cannot aggregate to `Pass`. Map each criterion to current evidence and assign `Pass | Fail | Blocked | Unverifiable`. When a visual reference or required baseline pair exists, apply the comparison contract in [visual](references/visual.md). Record `Pass | Fail | Unverifiable` for every required axis that was not discharged by byte-identical region evidence, include reference/candidate/delta measurements for geometry and typography, and report every measured mismatch. An unchecked axis or missing required measurement blocks aggregate `Pass`. For UI `Content` criteria, require exact rendered strings or a verified entry path from the parent basis; if neither exists, do not infer the element from a paraphrase, code identifier, or enum and return `Unverifiable`.
 8. **Cleanup**: Close only run-owned browser/server/resources and check for residue according to [session lifecycle](references/session-lifecycle.md).
+
+## Visual contract gate
+
+Before any baseline, after, or failed-attempt capture, read and apply [visual](references/visual.md).
+The same gate applies to every render-affecting candidate, including visual-preservation refactors.
+`visual_contract: applied` certifies that the reference was read and its applicable current-phase
+capture, disclosure, judgment-surface, and axis checks were performed; it is not a synonym for `Pass`.
+A baseline applies capture checks now and defers candidate comparison to after. Missing required
+checks or disclosures block baseline capture success, aggregate `Pass`, and `verification_complete: true`.
+If the contract cannot be applied, return `Unverifiable` with the missing requirements and `next_required`;
+do not fabricate `applied` or use `n/a` to bypass this gate. In that incomplete result, explicitly
+report the unresolved `visual_contract` in `limitation` instead of emitting a completed contract field.
+
+Classify each approved visual region before capture:
+
+| Intent | Baseline evidence | After evidence | Outline location |
+| --- | --- | --- | --- |
+| appear | surrounding context before insertion | new target and context | after only |
+| disappear | old target and context | surrounding context after removal | baseline only |
+| change | old target and context | new target and context | both corresponding targets |
+| remain unchanged | complete comparison region | complete comparison region | none |
+
+Judge the outlined `intended-change` region separately from the remaining `must-not-change` region.
+An observed difference in `must-not-change` is `Fail` unless explicitly approved as a deviation.
+Use [visual](references/visual.md) for annotation mechanics, capture-method prerequisites, and all
+required comparison axes; finish those axes on the first attempt even after finding one mismatch.
 
 ## Evidence
 
@@ -108,17 +134,22 @@ If any failure appears, whether deterministic, rare, or flaky, preserve its run-
 before a rerun that could overwrite or delete it. Keep baseline comparison failures in a new unique `failed-<attempt>/` path,
 not the later `after/` path. A later negative sample does not erase the observed failure.
 
-Limit nested results to:
+Require these contract fields in nested and standalone results; keep nested results limited to:
 
 - status
-- `phase: baseline | after | acceptance`; for a pre-edit baseline also return `baseline_capture: Pass`,
+- `phase: baseline | after | acceptance`; for a successful pre-edit baseline also return `baseline_capture: Pass`,
   `verification_complete: false`, `resume_parent: required`, `run_id`, `replay_procedure`, and the exact `next_required`
+- `visual_contract: applied | n/a`; `n/a` requires a reason proving no visual-reference, baseline/after,
+  multi-capture, visual/responsive, or render-affecting branch applies
+- `capture_only_mutation: <description> | none`, also in the evidence index; include outlines/labels,
+  hiding/removal, and runtime mocks, or explicitly `none` when no capture-only mutation occurred
 - Facts per criterion
 - non-sensitive auth mode
 - absolute evidence directory
 - baseline provenance and replay procedure when a visual pair is required
 - one ordered row per inspected screenshot with its path, exact origin-free `display_route` or explicit omission,
-  criterion, state/region, viewport, role, and comparison result; otherwise the direct trace/a11y/DOM/runtime/request evidence
+  criterion, state/region, `capture_method`, effective viewport, role, and comparison result; otherwise the direct trace/a11y/DOM/runtime/request evidence
+- the same per-capture method/effective viewport in the evidence index, including reason and effect for exceptions
 - limitation
 - cleanup fact
 - `automated_regression: protected | N/A | exception | unknown` as supplied/verified parent disposition
