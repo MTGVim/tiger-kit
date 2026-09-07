@@ -72,7 +72,10 @@ Apply [finding quality](finding-quality.md) to every code review. Read [TypeScri
 [React](react.md), and [security](security.md) only when the reviewed scope meets those references' conditions. These
 lenses do not change finding disposition, response-delta, re-review targets, or publication order.
 
-Handle direct review remediation for at most five rounds, using the original open findings and exact fix diff rather than
-rerunning broad discovery after each edit. Stop as `Fail` or `Unverifiable` after round five; SDD uses the same maximum.
+Handle direct review remediation for at most five rounds, using the original open findings, exact fix diff, and only
+unchanged caller/callee or producer/consumer contracts that the remediation can directly affect rather than rerunning
+broad discovery after each edit. Add a new `Critical`/`Important` finding only when it is causally attributable to the
+remediation, including when its evidence is in that directly affected unchanged boundary. Stop as `Fail` or
+`Unverifiable` after round five; SDD uses the same maximum.
 Material Goal/Scope/Decision/AC/security/required Verification drift returns to the preparation owner. Reversible
 engineering ambiguity receives an explicit `Ruling:`. Neither route expands publication authority.

@@ -219,10 +219,12 @@ Handle `Critical`/`Important` findings or confirmed real gaps for at most five r
 - Every round: record `FIX_BASE = git rev-parse HEAD`, provide open findings, rerun
   protection tests for remediation code, update the return/report, and provide the exact
   `FIX_BASE..HEAD` evidence directly or through file transport only when required.
-- Scoped re-review: read only the original open findings and remediation diff, then
-  classify each finding as `ADDRESSED | NOT ADDRESSED`.
-- Add only new `Critical`/`Important` findings introduced by the remediation diff to
-  the open list.
+- Scoped re-review: read the original open findings, remediation diff, and only unchanged
+  caller/callee or producer/consumer contracts that the remediation can directly affect, then
+  classify each original finding as `ADDRESSED | NOT ADDRESSED`. Reuse the review protocol's
+  change-risk walk for that affected boundary; do not restart broad discovery.
+- Add only new `Critical`/`Important` findings causally attributable to the remediation to
+  the open list, whether the evidence is in the diff or its directly affected unchanged boundary.
 
 If findings remain after round five, stop dispatch and have the controller judge each
 one. A material `Seed` conflict returns for reapproval; a reversible residual issue may
