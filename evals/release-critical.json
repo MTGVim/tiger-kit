@@ -269,7 +269,8 @@
     "tk-browser-verify:behavior:browser-standalone-baseline-does-not-invent-parent",
     "tk-prep:behavior:prep-scope-answer-continues-to-reviewable-proposal",
     "tk-prep:behavior:prep-scope-answer-required-evidence-blocks",
-    "tk-prep:behavior:prep-scope-answer-user-stop-is-honored"
+    "tk-prep:behavior:prep-scope-answer-user-stop-is-honored",
+    "tk-prep:behavior:prep-direct-missing-independent-context-is-unverifiable"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",
