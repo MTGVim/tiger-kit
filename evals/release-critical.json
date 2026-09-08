@@ -274,7 +274,11 @@
     "tk-prep:behavior:prep-seed-dependent-ambiguous-identity-still-blocks",
     "tk-prep:behavior:prep-pure-refactor-uses-pre-and-post-green",
     "tk-prep:behavior:prep-refactor-label-does-not-waive-bug-red",
-    "tk-pr-respond:behavior:pr-respond-pure-refactor-keeps-green-evidence"
+    "tk-pr-respond:behavior:pr-respond-pure-refactor-keeps-green-evidence",
+    "tk-prep:behavior:prep-low-risk-direct-uses-one-complete-reviewer",
+    "tk-prep:behavior:prep-small-security-change-requires-two-reviewers",
+    "tk-prep:behavior:prep-unknown-impact-keeps-two-reviewers",
+    "tk-pr-respond:behavior:pr-respond-low-risk-direct-uses-shared-seat-rule"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",

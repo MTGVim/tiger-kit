@@ -57,8 +57,8 @@ changed, deviations from approved decisions and reasons, newly discovered risks,
 limitations. It is an untrusted claim bundle, not review proof.
 
 Every exact-change review applies [independent review protocol](review-protocol.md) and
-[finding quality](finding-quality.md). A direct final review uses two eligible context-isolated discovery seats; both
-record independent `Spec/AC` and `Quality/Standards` verdicts and complete both required walks. Withhold the implementation
+[finding quality](finding-quality.md). Use the protocol's risk-based direct seat count, established from the exact diff
+and evidence. Each eligible seat records `Spec/AC` and `Quality/Standards` verdicts and completes both required walks. Withhold the implementation
 retro until each seat records its blind pass, aggregate the union, and separately verify every reportable candidate.
 If the required fresh contexts are unavailable, disclose the missing independent coverage as `Unverifiable`; repeated
 serial passes in one context do not satisfy it. Read [TypeScript](typescript.md),

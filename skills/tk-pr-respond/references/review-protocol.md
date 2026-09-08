@@ -32,11 +32,21 @@ One seat completes both judgment axes and both procedural walks:
 2. **Change-risk**: inspect removed or `must-not-change` behavior, error/state/lifecycle paths,
    caller/callee and producer/consumer contracts, and change-owned cross-cutting risk.
 
-An SDD Unit review uses one fresh discovery seat. A direct final review, SDD whole-change final
-review, and explicit `tk-review` use two context-isolated discovery seats. Both final seats use
-the same target, evidence, axes, finding gate, and severity rubric and both complete both walks;
-one starts with fidelity/replay and the other starts with change-risk. Neither seat sees the
-other's findings or verdict before returning.
+An SDD Unit review uses one fresh discovery seat. A direct final review uses one fresh discovery
+seat only when the exact diff and evidence establish a bounded, reversible change with understood
+callers, focused behavior protection (or justified testing `N/A`), and no material unresolved risk.
+Use two context-isolated discovery seats for direct changes involving security/permissions,
+persisted data or migrations, public-contract compatibility, cross-boundary state/lifecycle,
+or complex interactions. Unknown impact or a required testing exception also requires two;
+small file count, a `direct` label, or unavailable reviewer capacity never proves low risk.
+Honor a stricter approved or repository review requirement. Reassess the exact candidate after
+material changes and increase coverage when the one-seat conditions no longer hold.
+
+SDD whole-change final review and explicit `tk-review` continue to use two context-isolated
+discovery seats. Every seat uses the same target, evidence, axes, finding gate, and severity
+rubric and completes both walks. With two seats, one starts with fidelity/replay and the other
+with change-risk; neither sees the other's findings or verdict before returning. One seat still
+requires the blind pass, retro check, and separate verification of reportable candidates below.
 
 A current invocation may occupy one final seat only when it did not author or modify the target
 and has not seen another seat's result. An implementation or controller context is never an

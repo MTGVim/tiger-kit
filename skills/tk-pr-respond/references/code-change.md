@@ -63,8 +63,8 @@ downgrade to unreviewed direct work or persist provider routing.
 
 After implementation, construct the untrusted implementation retro required by
 [independent review protocol](review-protocol.md). Apply that protocol to direct exact-change and SDD Unit/whole-change
-reviews: direct final and SDD whole-change final use two context-isolated discovery seats, while each SDD Unit uses one
-fresh seat. Every seat judges both `Spec/AC` and `Quality/Standards` and completes both walks; withhold the retro until its
+reviews: use its risk-based direct seat count; SDD whole-change final still uses two context-isolated discovery seats,
+while each SDD Unit uses one fresh seat. Every seat judges both `Spec/AC` and `Quality/Standards` and completes both walks; withhold the retro until its
 blind pass, aggregate candidate unions, and separately verify every reportable candidate. Finish with AC review, required gap correction,
 verified local commits, and `tk-browser-verify` for browser-visible changes. Provide the verifier with exact
 command/cwd/URL/auth/readiness; it owns server lifecycle. Do not repeat SDD's whole-change review with another generic review.
