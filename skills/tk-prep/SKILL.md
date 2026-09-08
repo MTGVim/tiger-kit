@@ -76,6 +76,19 @@ After planned paths, symbols, or owning contracts are known, read
 [concurrent PR preflight](references/concurrent-prs.md) only for a material code/contract/shared-pattern
 change with suitable GitHub read access. Keep non-normative prose, isolated-asset, offline, and unavailable-remote paths on the ordinary preparation flow.
 
+## Preparation continuation and exit gate
+
+After a scope or clarification answer, apply it and continue the remaining repository investigation in the same active
+turn. Acknowledgment or a promise to prepare is not a preparation result; the existing instruction to prepare remains
+active without another user request. A clarification answer resolves that decision, not final local-mutation approval.
+
+Before ending a preparation turn, either present the reviewable execution proposal at the final checkpoint and wait for
+approval, or identify an actual unresolved user-owned decision, inaccessible required evidence, safety boundary, or explicit
+user stop/change of scope and explain what remains. While evidence can still be gathered, continue gathering it instead of
+using missing investigation as a blocker. If the facts and decisions are complete, proceed to the proposal without another
+question round. The proposal may be in chat; preparation completion does not require a file, and the existing pre-approval
+mutation and Seed-preservation boundaries still apply.
+
 ## Understanding readiness
 
 Do not reach approval until the goal and scope are actionable, every material product/user-owned decision is resolved,
