@@ -278,7 +278,9 @@
     "tk-prep:behavior:prep-low-risk-direct-uses-one-complete-reviewer",
     "tk-prep:behavior:prep-small-security-change-requires-two-reviewers",
     "tk-prep:behavior:prep-unknown-impact-keeps-two-reviewers",
-    "tk-pr-respond:behavior:pr-respond-low-risk-direct-uses-shared-seat-rule"
+    "tk-pr-respond:behavior:pr-respond-low-risk-direct-uses-shared-seat-rule",
+    "tk-prep:behavior:prep-pr-keyword-miss-is-not-path-clearance",
+    "tk-prep:behavior:prep-pr-refresh-reuses-unchanged-diff"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",

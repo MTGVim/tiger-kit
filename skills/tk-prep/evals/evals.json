@@ -1045,15 +1045,15 @@
     {
       "id": "prep-bounds-concurrent-pr-collision-preflight",
       "path": "success",
-      "prompt": "/tk-prep `shared checkout response schema`와 `consumer`를 바꾸는 작업을 준비해줘. 계획 경로와 소유 계약은 확인됐고 `GitHub remote`에는 `open/draft PR`이 47개 있다. 현재 브랜치의 자기 PR도 있고, 일부 PR은 제목만 비슷하며, 최근 갱신/번호 순으로 정렬한 상위 30개 안의 PR #91은 같은 `schema symbol`과 다른 파일의 옛 패턴 `consumer`를 함께 바꾼다.",
-      "expected_output": "자기 `PR`을 제외하고 30/5/3 초기 비용 예산에서 시작하되 같은 `schema/consumer` 의존 `frontier`가 남으므로 다음 `bounded batch`로 확장해 #91의 실제 계약 충돌을 확인하고 `coordinate | sequence | replan`을 제안한다. 확장 이유·관측 수·미검토 범위를 공개한다.",
+      "prompt": "/tk-prep `shared checkout response schema`와 `consumer`를 바꾸는 작업을 준비해줘. 경로와 소유 계약은 확인됐고 열린 초안 포함 PR은 47개다. 현재 PR 식별자는 확정돼 있다. 최신 경로·의존성 근거는 오래된 PR #91이 같은 스키마와 다른 파일의 소비자를 함께 바꾼다고 보여준다. 최근 갱신된 PR 29개는 관계없는 경로만 바꾼다. 일부 제목은 비슷하지만 실제 의존성은 없다.",
+      "expected_output": "관련된 #91부터 경로와 계약 변경을 확인하고 실제 충돌이 있으면 조율·순서 조정·재계획을 제안한다. 필요한 의존성만 추가 조사하고 중요한 조사 한계만 알린다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "`concurrent-prs.md`를 적용해 30/5/3을 `initial cost budget`으로 사용한다. 동일 `schema symbol`과 `old-pattern consumer` 때문에 `plausible frontier`가 닫히지 않았으므로 `bounded metadata/detail/diff expansion`을 수행하고 이유와 관측 수를 기록한다. 약한 제목 신호만으로 충돌을 단정하지 않으며, 판정 직전 조사한 `frontier`를 재확인하고 미검토 범위를 밝힌다."
+          "criterion": "최근 순위나 고정 조회량보다 확인된 경로와 직접 의존성을 우선한다. #91의 실제 계약 차이를 확인하고 승인 직전에 관련 후보와 상태를 갱신한다. 자기 PR은 정확한 식별 근거로 제외하며 제목만으로 충돌이나 무충돌을 판정하지 않는다. 정해진 개수를 채우기 위해 무관한 상세·변경 차이를 조회하지 않는다."
         },
         {
-          "type": "output_contains",
+          "type": "output_absent",
           "text": "30/5/3"
         },
         {
@@ -1061,7 +1061,10 @@
         },
         {
           "type": "terminal_status",
-          "allowed": ["Pending", "Pass"]
+          "allowed": [
+            "Pending",
+            "Pass"
+          ]
         }
       ]
     },
@@ -1736,6 +1739,36 @@
           "forbidden": [
             "Pass"
           ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "prep-pr-keyword-miss-is-not-path-clearance",
+      "path": "boundary",
+      "prompt": "/tk-prep 공용 응답 타입을 바꾸려고 한다. 저장소 조사로 경로와 직접 소비자는 확인했다. GitHub 읽기는 가능하지만 제목·본문 검색만 지원하고 최신 변경 경로 색인은 없다. 키워드 검색 결과가 비었으니 겹치는 PR은 없다고 승인안을 작성하라. 변경 경로 목록은 추가 조회할 수 있다.",
+      "expected_output": "제목 검색만으로 겹침이 없다고 결론 내리지 않고 필요한 변경 경로를 추가 확인한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "공용 계약의 실제 변경 경로가 아직 검증되지 않았으므로 제목 검색의 부재를 무충돌 근거로 쓰지 않는다. 접근 가능한 관련 경로·의존성 조사를 계속하고, 끝내 확인하지 못한 중요한 범위가 있으면 한계를 명시한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "prep-pr-refresh-reuses-unchanged-diff",
+      "path": "boundary",
+      "prompt": "[승인 직전 /tk-prep 준비] 관련 경로·직접 의존성의 후보 조회가 완전한 최신 색인으로 갱신됐다. 기존 후보 #10은 머리 커밋과 상태가 그대로이고 새 후보 #11은 동일 소비자를 바꾼다. #10의 정확한 변경 차이는 이미 읽었다. 최종 충돌 확인을 계속하라.",
+      "expected_output": "기존 후보의 변경 차이는 재사용하고 새 후보의 실제 경로·계약 영향을 확인한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "최신 후보 갱신으로 발견한 새 PR을 누락하지 않는다. 머리 커밋과 다른 중요한 상태가 그대로인 기존 후보의 전체 변경 차이를 의례적으로 다시 받지 않는다. 새 후보의 영향이 해소되기 전에 과거 무충돌 결론으로 승인하지 않는다."
         },
         {
           "type": "git_head_unchanged"
