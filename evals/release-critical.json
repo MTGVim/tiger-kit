@@ -271,7 +271,10 @@
     "tk-prep:behavior:prep-scope-answer-required-evidence-blocks",
     "tk-prep:behavior:prep-scope-answer-user-stop-is-honored",
     "tk-prep:behavior:prep-direct-missing-independent-context-is-unverifiable",
-    "tk-prep:behavior:prep-seed-dependent-ambiguous-identity-still-blocks"
+    "tk-prep:behavior:prep-seed-dependent-ambiguous-identity-still-blocks",
+    "tk-prep:behavior:prep-pure-refactor-uses-pre-and-post-green",
+    "tk-prep:behavior:prep-refactor-label-does-not-waive-bug-red",
+    "tk-pr-respond:behavior:pr-respond-pure-refactor-keeps-green-evidence"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",

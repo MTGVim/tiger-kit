@@ -110,7 +110,8 @@ For every code-changing route, keep the semantic Review Plan from the code-chang
 interaction even when no Seed is needed. Do not expose reviewer/model/worker routing as part of the user plan.
 
 For a code-changing plan, inspect the actual repository test surface and use [behavior-first testing](references/testing.md)
-to resolve RED feasibility, the focused command, required suite, realistic mutation, and any `N/A` or engineering exception.
+to resolve RED feasibility or pre-edit GREEN for behavior-preserving refactoring, the focused command, required suite,
+realistic mutation, and any `N/A` or engineering exception.
 Explain the practical route among reply-only, direct+TDD, and SDD+TDD without exposing an internal classification form.
 Once a code-changing route is selected, read [code-change execution](references/code-change.md) before requesting approval;
 use its workspace and Seed sections for the plan, but perform no mutation until approval.

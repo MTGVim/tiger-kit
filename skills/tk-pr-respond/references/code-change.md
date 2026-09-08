@@ -56,8 +56,9 @@ scope or unrelated work, stop for a changed plan instead of publishing it.
 - `SDD+TDD`: multiple material Units; read [private SDD](sdd.md) and follow its grammar, recovery, role gates, model and
   effort contract, fix loop, and final review.
 
-Direct execution applies RED → verified failure → minimal GREEN → refactor while green → required checks. SDD Unit
-reports retain RED/GREEN evidence. If fan-out is unavailable, preserve the same role and range gates sequentially; do not
+Direct execution follows [behavior-first testing](testing.md): changed behavior requires RED → verified failure →
+minimal GREEN; behavior-preserving refactoring requires pre-edit GREEN → refactor → matching GREEN. Run required checks.
+SDD Unit reports retain the applicable RED/GREEN or pre/post GREEN evidence. If fan-out is unavailable, preserve the same role and range gates sequentially; do not
 downgrade to unreviewed direct work or persist provider routing.
 
 After implementation, construct the untrusted implementation retro required by

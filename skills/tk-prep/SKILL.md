@@ -103,7 +103,8 @@ the plan. For a surfaced axis use `보완 필요 | 개선 한계 | 예외 승인
 `개선 한계`, then explain gap/risk/mitigation and obtain an exception when one is actually required.
 
 For every code-changing path, inspect real tests and load [behavior-first testing](references/testing.md) before approval. Close
-observable behavior, regression/RED, focused command, required suite, mutation risk, and `N/A` versus engineering exception.
+observable behavior, regression/RED or pre-edit GREEN for behavior-preserving refactoring, focused command, required
+suite, mutation risk, and `N/A` versus engineering exception.
 Do not add ceremonial tests for trivial/prose-only work; browser verification never substitutes for automated protection.
 For every direct or SDD code review, load [independent review protocol](references/review-protocol.md) and
 [finding quality](references/finding-quality.md). Load

@@ -31,10 +31,24 @@ state. Do not add a fake test or hide behind `N/A` when a real test surface exis
 Browser verification does not replace automated regression tests, although a visual-only
 AC may be judged with browser evidence.
 
+## Behavior-preserving refactoring
+
+When the approved change preserves observable behavior and contracts, establish GREEN
+before product edits using existing focused tests and relevant boundary/error coverage.
+Add characterization tests before refactoring only for meaningful uncovered behavior;
+they may pass immediately because that behavior already exists. Check independently
+derived expectations and realistic mutation protection, then refactor while green and
+rerun the same protection plus required related suites.
+
+Do not manufacture RED by breaking correct code or asserting private structure. This is
+a normal testing path, not `N/A` or an engineering exception. If evidence reveals a bug
+or an intended behavior/contract change, separate that slice and use RED below; obtain
+reapproval when it changes the approved scope. Missing useful behavior protection still
+requires investigation and, when necessary, the engineering exception above.
+
 ## RED → GREEN → REFACTOR
 
-This is the default order for testable features, bug fixes, behavior changes, and
-meaningful structural improvements.
+This is the default order for testable features, bug fixes, and behavior changes.
 
 1. **RED**: Write the smallest behavior test for the desired behavior.
 2. **Confirm RED**: Run it before changing product behavior code and verify that it
@@ -86,7 +100,9 @@ for any applicable mutation:
 
 When applicable, the implementer report records:
 
-- the RED command, relevant failure, and expected reason;
+- the RED command, relevant failure, and expected reason for a changed behavior;
+- for behavior-preserving refactoring, the pre-edit GREEN command/result, protected
+  invariants, and matching post-edit result instead of an invented RED;
 - the GREEN command and relevant passing result;
 - required related suites and check results;
 - the rationale when the test judgment is `N/A` or an engineering exception.

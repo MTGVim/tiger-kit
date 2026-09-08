@@ -29,8 +29,9 @@ the lifecycle of host-managed workspaces; do not remove, prune, relocate, or cle
 
 ## Direct execution and completion
 
-Direct changes follow RED → verified failure → minimal GREEN → refactor while green → self-simplify → exact-change
-read-only review → scoped remediation/re-review → binding verification → commit. Remove unnecessary indirection,
+Direct changes follow the applicable path in [behavior-first testing](testing.md): RED → verified failure → minimal
+GREEN for changed behavior, or pre-edit GREEN → behavior-preserving refactor → matching GREEN. Then self-simplify →
+exact-change read-only review → scoped remediation/re-review → binding verification → commit. Remove unnecessary indirection,
 speculative flexibility, dead branches, custom replacements for repository-native helpers, and production APIs added
 only for tests.
 

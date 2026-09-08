@@ -29,6 +29,10 @@ Execution shape: SDD
 - Acceptance criteria
 ```
 
+For a behavior-preserving refactoring Unit, keep the `Expected RED` field and state that RED is not applicable,
+with the pre-edit GREEN command, protected invariants, and matching post-edit verification required by [testing](testing.md).
+This records the normal refactoring path, not a testing waiver.
+
 `## Execution` and `Execution shape: SDD` must each occur exactly once.
 `### Global constraints` must occur exactly once before `Unit` 1. `Unit` numbering must
 start at 1, be unique and contiguous, and each unit ends at the next `Unit` or next
@@ -177,8 +181,8 @@ Immediately before dispatch, record `BASE = git rev-parse HEAD`. Give the implem
 - the rule that the implementer is a leaf with no subagents;
 - approved local mutation and commit boundaries.
 
-The implementer changes only the summary scope and performs applicable RED → GREEN →
-REFACTOR from [Behavior-first testing](testing.md). It runs focused tests and required
+The implementer changes only the summary scope and follows [Behavior-first testing](testing.md):
+RED → GREEN → REFACTOR for changed behavior, or pre-edit GREEN → refactor → matching GREEN for preserved behavior. It runs focused tests and required
 related suites, performs self-review and mutation checks, then creates a local commit.
 Self-review removes unnecessary abstraction or indirection, speculative flexibility,
 dead or redundant branches, custom logic replacing repository-native helpers, and
