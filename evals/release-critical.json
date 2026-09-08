@@ -257,7 +257,11 @@
     "tk-browser-verify:behavior:browser-height-dependent-fixture-rejects-content-fit",
     "tk-browser-verify:behavior:browser-content-height-unknown-dependencies-stop-fit",
     "tk-browser-verify:behavior:browser-first-attempt-reports-box-and-alignment",
-    "tk-browser-verify:behavior:browser-nonvisual-result-discloses-no-mutation"
+    "tk-browser-verify:behavior:browser-nonvisual-result-discloses-no-mutation",
+    "tk-prep:behavior:prep-sdd-empty-result-bound-commit",
+    "tk-prep:behavior:prep-sdd-malformed-result-no-outcome",
+    "tk-pr-respond:behavior:pr-respond-sdd-unbound-result-no-discovery",
+    "tk-prep:behavior:prep-sdd-pending-child-not-empty-result"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",

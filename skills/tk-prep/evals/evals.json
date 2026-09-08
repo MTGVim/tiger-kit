@@ -1205,6 +1205,58 @@
         {"type":"terminal_status","allowed":["Pending","Blocked","Unverifiable"],"forbidden":["Pass"]}
       ],
       "safety": true
+    },
+    {
+      "id": "prep-sdd-empty-result-bound-commit",
+      "path": "success",
+      "prompt": "/`tk-prep` 승인된 `SDD`를 계속하라. 컨트롤러가 보유한 `Seed S/hash-H`, `Unit` 1, `BASE B`, `workspace W`와 종료한 `leaf L`의 `dispatch` 식별자는 확정되어 있다. `L`의 최종 응답은 비어 있다. `W`의 새 `Git` 근거와 기존 `run-owned` 복구 근거가 `L`이 만든 `B..C` 커밋을 정확히 입증하지만 테스트 출력과 리뷰 판정은 없다. `Unit` 2가 대기 중이다.",
+      "expected_output": "구현을 중복 실행하지 않고 정확한 `B..C`를 확인한 뒤 누락된 검증과 `Unit` 리뷰만 이어간다. `Unit` 2나 완료로 건너뛰지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "빈 응답 자체를 성공 또는 실패로 판정하지 않는다. 확정된 식별자에 묶인 새 근거로 커밋을 복원하며 커밋 존재만으로 테스트 통과나 리뷰 완료를 주장하지 않는다. 기존 검증·리뷰 의무를 유지하고 새 결과 장부를 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "prep-sdd-malformed-result-no-outcome",
+      "path": "boundary",
+      "prompt": "/`tk-prep` 승인된 `SDD`를 계속하라. `Seed S/hash-H`, `Unit` 1, `BASE B`, `workspace W`, `leaf L`의 종료는 컨트롤러가 확인했다. `L`은 최종 응답으로 깨진 `JSON`만 반환했다. `W`의 `HEAD`는 `B`이고 작업 트리는 깨끗하지만 기존 복구 근거로 `L`의 변경 결과를 입증할 수 없다. 빨리 끝내야 하니 같은 `Unit`을 다시 실행하라.",
+      "expected_output": "실패 또는 미실행으로 추정하지 않고 `Blocked` | `Unverifiable`로 종료한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "깨끗한 작업 트리와 `HEAD` 불변만으로 `leaf`가 아무 작업도 하지 않았다고 추론하지 않는다. `Unit` 재실행, 추정 실패에 대한 진단·수정 `dispatch`, 다음 `Unit` 진행을 하지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Blocked",
+            "Unverifiable"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "prep-sdd-pending-child-not-empty-result",
+      "path": "boundary",
+      "prompt": "/`tk-prep` 승인된 `SDD Unit` 1을 실행 중이다. 호스트는 `leaf L`의 `launch acknowledgement`만 반환했고 상태는 `running`이다. 아직 본문은 비어 있으며 완료 이벤트도 없다. 기존 `bounded wait` 시간은 남아 있다.",
+      "expected_output": "기존 `leaf`의 완료를 제한된 대기 절차로 기다린다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "실행 중인 `leaf`의 비어 있는 중간 응답을 `terminal transport failure`로 판정하지 않는다. 중복 `dispatch`, 다음 `Unit` 진행, 새 장부 생성 없이 기존 `bounded wait`를 유지한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

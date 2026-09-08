@@ -79,6 +79,20 @@ branch.
 The Ready Seed, current controller context, and local commits are the normal recovery
 sources. Do not create a progress ledger merely because execution shape is SDD.
 
+If a terminal leaf return is empty, malformed, or cannot be bound to the expected Unit and
+dispatch/review identity, treat the mutation outcome and progress as unknown, not success or failure.
+Reconcile only against the exact Seed identifier/hash, Unit, BASE (FIX_BASE for remediation), and
+workspace already owned by the controller, using fresh run-owned Git/recovery evidence. Never infer
+identity from `cwd`, recent activity, another ledger, or nearby task state. If identity is unavailable
+or that evidence cannot prove the outcome, terminate as `Blocked | Unverifiable`.
+
+Until reconciliation, do not blindly re-run the Unit, enter remediation/diagnosis on an assumed failure,
+or advance to the next Unit or phase. A recovered commit proves neither verification nor a clean review;
+resume only the remaining obligations supported by bound evidence. Reuse existing controller context
+and optional recovery/transport artifacts; add no result ledger, retry subsystem, or mandatory durable
+child report. A nonterminal launch acknowledgement or pending child is not an empty terminal result;
+continue the existing bounded wait.
+
 Create at most one ignored `.tigerkit/sdd.md` only when execution is likely to outlive
 the current controller context, the host cannot reliably retain Unit/review state, or an
 interrupted run actually needs durable recovery. When a ledger is needed, keep only:
