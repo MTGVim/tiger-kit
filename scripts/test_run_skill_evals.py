@@ -1164,6 +1164,39 @@ class RunnerContractTest(unittest.TestCase):
         self.assertFalse(korean_english["passed"])
         self.assertFalse(escaped["passed"])
 
+    def test_direct_baseline_contracts_reject_parent_turn_ending_before_mutation(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        contract = json.loads((root / "skills/tk-prep/evals/evals.json").read_text())
+        case_ids = {
+            "prep-direct-no-seed-inline-baseline-continues",
+            "prep-direct-no-seed-child-verdict-continues",
+        }
+        cases = [case for case in contract["evals"] if case["id"] in case_ids]
+        self.assertEqual(len(cases), len(case_ids))
+        phases = [
+            "tk-browser-verify-baseline", "product-mutation", "tk-browser-verify-after",
+            "review", "binding-verification", "commit",
+        ]
+        continued = [{"type": "phase_invocation", "phase": phase} for phase in phases]
+        final = {"type": "final_output", "terminal_status": "Pass"}
+        traces = {
+            "continued": (continued + [final], True),
+            "baseline_report_only": (continued[:1] + [final], False),
+            "resumed_after_user_message": (continued[:1] + [final] + continued[1:] + [final], False),
+            "promised_after_without_execution": (continued[:2] + [final], False),
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            for case in cases:
+                assertions = [a for a in case["assertions"] if a["type"] == "event_order"]
+                self.assertTrue(assertions)
+                for name, (events, expected) in traces.items():
+                    with self.subTest(case=case["id"], trace=name):
+                        results = [verify_mechanical_assertion(
+                            assertion, adapter_result={"events": events},
+                            checkout=Path(directory), initial_head=None,
+                        ) for assertion in assertions]
+                        self.assertEqual(all(result["passed"] for result in results), expected)
+
     def test_event_order_requires_consecutive_phases_without_final_output(self) -> None:
         assertion = {
             "type": "event_order",

@@ -24,6 +24,13 @@ scenario, authentication, and evidence plan already defined by its parent.
 This is a read-only acceptance verifier. Do not modify product/test/configuration source, Git commits, or remote state.
 Do not create a Markdown lifecycle ledger. For nested execution, return only compact evidence to the parent task.
 
+Nested means verification is a phase of an already active owner task, regardless of whether the host uses a separate
+agent or loads this skill into the owner's current conversation. Preserve that owner's approved scope and continuation.
+A separate verifier child ends its own invocation by returning phase evidence; it does not implement the candidate.
+With same-agent Skill loading, finish the read-only verifier procedure, retain its evidence internally, and resume the
+owner procedure in the same turn. Do not send a final user-facing answer or wait for a new user message at that boundary.
+Product mutation belongs to the resumed owner's existing approval, never to this verifier's authority.
+
 ## Headless Prerequisites
 
 All required scenarios must be executable headlessly. Use this priority order:
@@ -138,7 +145,8 @@ Require these contract fields in nested and standalone results; keep nested resu
 
 - status
 - `phase: baseline | after | acceptance`; for a successful pre-edit baseline also return `baseline_capture: Pass`,
-  `verification_complete: false`, `resume_parent: required`, `run_id`, `replay_procedure`, and the exact `next_required`
+  `verification_complete: false`, `run_id`, `replay_procedure`, and the exact `next_required`; include
+  `resume_parent: required` when the active parent has approved implementation remaining
 - `visual_contract: applied | n/a`; `n/a` requires a reason proving no visual-reference, baseline/after,
   multi-capture, visual/responsive, or render-affecting branch applies
 - `capture_only_mutation: <description> | none`, also in the evidence index; include outlines/labels,
@@ -156,6 +164,9 @@ Require these contract fields in nested and standalone results; keep nested resu
 
 A successful pre-edit baseline proves only that the reference capture exists. Return
 `next_required: implement candidate, then capture after with the same run/replay`; do not use aggregate completion wording.
+For nested results, use the phase fields without a standalone `## Verdict` or user-facing completion summary;
+`status: Pass` describes only the requested phase. `resume_parent` is an instruction to the owner, not a scheduler signal.
+When the user requested only standalone capture, finish that bounded request without inventing a parent or implementation approval.
 Only the matching after comparison or standalone acceptance phase may set `verification_complete: true` when every
 criterion is covered. An after result binds the same `run_id`, `baseline_provenance`, and `replay_procedure`. A
 baseline-only result cannot satisfy final acceptance or authorize product edits, commits, or publication by itself.
@@ -168,7 +179,7 @@ not create a ceremonial screenshot; return the image-publication requirement as 
 non-`Pass` criterion, preserve owned failure evidence, return its real status, and never emit a `verification_status:
 Pass` manifest entry for it.
 
-A standalone result starts with `## Verdict` and exact `Status: <token>`, then shows verified facts, required limitations, evidence paths, and the cleanup fact.
+A standalone result, with no active owner task to resume, starts with `## Verdict` and exact `Status: <token>`, then shows verified facts, required limitations, evidence paths, and the cleanup fact. Standalone baseline success remains capture-only with `verification_complete: false`.
 Never promote a result to `Pass` without required runtime evidence.
 
 | Status | Meaning |

@@ -261,7 +261,12 @@
     "tk-prep:behavior:prep-sdd-empty-result-bound-commit",
     "tk-prep:behavior:prep-sdd-malformed-result-no-outcome",
     "tk-pr-respond:behavior:pr-respond-sdd-unbound-result-no-discovery",
-    "tk-prep:behavior:prep-sdd-pending-child-not-empty-result"
+    "tk-prep:behavior:prep-sdd-pending-child-not-empty-result",
+    "tk-prep:behavior:prep-direct-no-seed-inline-baseline-continues",
+    "tk-prep:behavior:prep-direct-no-seed-child-verdict-continues",
+    "tk-prep:behavior:prep-direct-baseline-user-stop-is-honored",
+    "tk-browser-verify:behavior:browser-nested-baseline-return-stays-phase-local",
+    "tk-browser-verify:behavior:browser-standalone-baseline-does-not-invent-parent"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",
