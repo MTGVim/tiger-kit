@@ -73,7 +73,7 @@
     "tk-prep:behavior:prep-multifile-same-shape-stays-direct",
     "tk-prep:behavior:prep-complex-sdd-ready-seed-grammar",
     "tk-prep:behavior:prep-default-branch-isolates-or-blocks",
-    "tk-prep:behavior:prep-unmarked-seed-is-preserved-and-blocks",
+    "tk-prep:behavior:prep-unmarked-seed-is-preserved-without-blocking",
     "tk-prep:behavior:prep-sdd-parser-rejects-duplicate-and-ignores-fence",
     "tk-prep:behavior:prep-hard-bug-builds-red-capable-loop-first",
     "tk-prep:behavior:prep-flaky-negative-preserves-evidence-and-sample",
@@ -270,7 +270,8 @@
     "tk-prep:behavior:prep-scope-answer-continues-to-reviewable-proposal",
     "tk-prep:behavior:prep-scope-answer-required-evidence-blocks",
     "tk-prep:behavior:prep-scope-answer-user-stop-is-honored",
-    "tk-prep:behavior:prep-direct-missing-independent-context-is-unverifiable"
+    "tk-prep:behavior:prep-direct-missing-independent-context-is-unverifiable",
+    "tk-prep:behavior:prep-seed-dependent-ambiguous-identity-still-blocks"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",

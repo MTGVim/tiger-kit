@@ -161,7 +161,10 @@ evidence/HEAD/scope drift invalidates approval and returns to preparation.
 After approval:
 
 - preparation-only/handoff → write+reread the Ready Seed and stop;
-- direct/no-Seed → resolve marked stale Seed safely, then execute without `sdd.md`;
+- direct/no-Seed → preserve any existing Seed byte-for-byte and exclude it from this task; use the approved current
+  interaction and fresh repository evidence, then execute without `seed.md` or `sdd.md`. An unrelated or ambiguous Seed
+  alone does not block this path. If execution actually needs to consume or replace it, return to Seed preparation and
+  establish ownership and current-task identity first;
 - direct/Seed → write+reread Ready Seed, then execute directly;
 - SDD → write+reread grammar-valid Ready Seed, load the private protocol, and execute its Unit/review/fix loops.
 

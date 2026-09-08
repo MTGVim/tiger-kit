@@ -16,6 +16,7 @@ for a fresh lower-capability executor and preserve:
 
 Do not add readiness rows merely to state that an axis is ready or irrelevant. Never store reviewer count, transcript,
 provider/model ID, reasoning intensity, secrets, worker/wave routing, receipts, or progress in a Seed. Before approval, preserve an existing
-Ready Seed byte-for-byte and create no `Status: Pending` file. Replace only a proven TigerKit-owned Seed. For approved
-direct/no-Seed, remove only a marked stale TigerKit Seed after proving it is not current. Preserve an unmarked, legacy, or
-identity-ambiguous Seed and return `Blocked` before execution.
+Ready Seed byte-for-byte and create no `Status: Pending` file. Replace only a proven TigerKit-owned Seed.
+Before consuming an existing Seed, establish its current-task identity; before replacing it, also establish ownership.
+If that required evidence is missing or ambiguous, preserve the file and return `Blocked` for the Seed-dependent path.
+The owning SKILL.md handles direct/no-Seed without loading this reference or consuming an existing Seed.
