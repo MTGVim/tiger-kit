@@ -27,6 +27,41 @@ menu. A hybrid that combines advantages from different options is allowed when i
 actually simpler. If repository precedent is found, stop the comparison and recommend
 that precedent.
 
+## Runtime system lens
+
+When the material choice changes live traffic/data flow, asynchronous processing,
+distributed components, external dependencies, or failure containment, compare the
+candidate designs against the runtime requirements that can actually change topology
+or limits. Establish only relevant constraints and do not invent precision:
+
+- steady/peak/burst load, data volume, and bounded resource use;
+- latency or freshness expectations and acceptable degradation;
+- availability, durability, ordering, duplication, or loss guarantees when applicable;
+- security/privacy boundaries and sensitive-data retention;
+- observability, incident-debugging path, operational complexity, and cost.
+
+For each candidate, trace relevant failure modes instead of evaluating only the happy
+path. Consider component crash/restart, dependency latency/outage, overload and
+backpressure, retry amplification, queue lag, partial failure, duplicate/lost/out-of-order
+delivery, stale state, observability/notification failure, and abuse only when the design
+can realistically encounter them. For each material mode, establish:
+
+1. `effect`: what user/system behavior degrades or fails;
+2. `containment`: what prevents propagation or unbounded resource growth;
+3. `detection`: what runtime evidence lets an operator recognize it promptly;
+4. `recovery`: automatic recovery, fallback, rollback, replay, or explicit manual action;
+5. `validation`: a test, load experiment, fault injection, replay, or measurable production check.
+
+Prefer keeping telemetry, monitoring, notification, and other control-plane paths off the
+request critical path unless requirements demand otherwise. Reuse existing trustworthy
+telemetry/queues before creating a duplicate observation path. If incident response depends
+on delayed durable logs, identify what bounded, redacted evidence is available immediately
+and how it correlates with later durable records.
+
+Do not turn this lens into a mandatory distributed-systems checklist. Skip irrelevant
+constraints and failure modes, and surface only findings that change the recommendation,
+AC, validation plan, rollback, or accepted risk.
+
 ## Optional exploration and review protection
 
 Choose subagent `fan-out` only for a complex case where at least two independent
