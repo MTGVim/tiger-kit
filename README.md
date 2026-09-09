@@ -58,6 +58,7 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-audit` | `user` | 읽기 전용 저장소 감사와 `AUD-*` 발견 사항 |
 | `tk-ask-repo` | `user` | 저장소 동작·값·영향·귀속을 근거와 함께 설명 |
 | `tk-review` | `user` | 정확한 커밋 범위/`PR`/`current worktree`의 읽기 전용 `Spec/AC` + `Quality/Standards` 검토 |
+| `tk-refactor-policy` | `user` | 복잡한 비즈니스 정책 분기의 최소 충분한 선언형 구조 개선안 |
 | `tk-pr-open` | `hybrid` | 검증된 `commit`의 `single | stacked` 발행 계획 + 제한된 `push`/PR 생성·갱신 |
 | `tk-pr-respond` | `hybrid` | 한 PR의 리뷰/지원 CI 분석·수정·검증·`reply`/`resolve` |
 | `tk-pr-rebase` | `hybrid` | 정확한 PR의 최신 `base` `rebase`와 제한된 `force-with-lease` |
