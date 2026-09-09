@@ -208,9 +208,9 @@ evals/catalog-routing.json
 evals/release-critical.json
 ```
 
-`breaking` `release`에서 같은 이름의 `skill` `behavior` `contract`를 의도적으로 교체할 경우
-`evals/release-critical.json`의 `replaced_skill_eval_contracts`로 명시하고
-`run_seed_release_gate.py`로 `baseline` 보존/교체를 함께 검증합니다.
+`run_seed_release_gate.py`는 모든 활성 `skill`과 `catalog`의 `baseline` 계약을 보존합니다.
+과거의 `replaced_skill_eval_contracts`와 `replace_catalog_contract` 포괄 예외는 허용하지 않습니다.
+식별자 변경은 해당 평가의 명시적 `migration`으로 처리하고, 실제 폐기만 폐기 목록에 기록합니다.
 
 ## 필수 검사
 

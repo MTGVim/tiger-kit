@@ -2,13 +2,11 @@
 """Seed-first TigerKit release gate.
 
 기존 결정론적 release gate의 정적 검사와 language/ledger/package 검사를 재사용하면서,
-동일 skill 이름의 eval 계약을 의도적으로 전면 교체하는 breaking release를 명시적으로
-허용한다.
+모든 활성 skill의 baseline 계약 보존을 검증한다. 과거의 포괄적 교체 예외는 허용하지 않는다.
 """
 from __future__ import annotations
 
 import argparse
-import copy
 import json
 import os
 import subprocess
@@ -46,25 +44,22 @@ else:
     from validate_skills import validate_portable_artifacts
 
 ROOT = Path(__file__).resolve().parents[1]
-MANIFEST = ROOT / "evals/release-critical.json"
 
 
-def replaced_eval_contracts(manifest: dict[str, object]) -> set[str]:
-    rows = manifest.get("replaced_skill_eval_contracts", [])
-    if not isinstance(rows, list) or not all(isinstance(row, str) and row for row in rows):
-        raise ValueError("replaced_skill_eval_contracts must be a string list")
-    return set(rows)
-
-
-def filter_replaced_baseline(
+def preservation_errors(
     baseline: dict[str, dict[str, object]],
-    replaced: set[str],
-) -> dict[str, dict[str, object]]:
-    """Remove explicitly replaced same-name skill contracts from preservation comparison."""
-    result = copy.deepcopy(baseline)
-    for skill in replaced:
-        result.pop(skill, None)
-    return result
+    candidate: dict[str, dict[str, object]],
+    manifest: dict[str, object],
+    retired_skills: set[str],
+) -> list[str]:
+    """Preserve every active contract; historical blanket exemptions never apply."""
+    errors: list[str] = []
+    if manifest.get("replaced_skill_eval_contracts"):
+        errors.append("replaced_skill_eval_contracts is unsupported: use case migrations, not skill-wide exemptions")
+    if manifest.get("replace_catalog_contract"):
+        errors.append("replace_catalog_contract is unsupported: preserve or explicitly migrate cases")
+    errors.extend(compare_eval_contracts(baseline, candidate, retired_skills=retired_skills))
+    return errors
 
 
 def parse_args() -> argparse.Namespace:
@@ -83,8 +78,6 @@ def main() -> int:
         raise SystemExit("--output must be outside the repository")
     output.mkdir(parents=True, exist_ok=True)
 
-    manifest = base.load_manifest()
-    replaced = replaced_eval_contracts(manifest)
     baseline_sha = resolve_ref(args.baseline)
     candidate_sha = resolve_ref(args.candidate)
 
@@ -124,34 +117,19 @@ def main() -> int:
     with detached_worktree(args.baseline) as baseline_root, detached_worktree(args.candidate) as candidate_root:
         baseline_contracts = load_eval_contracts(baseline_root, None)
         candidate_contracts = load_eval_contracts(candidate_root, None)
-        filtered_baseline = filter_replaced_baseline(baseline_contracts, replaced)
+        manifest = json.loads((candidate_root / "evals/release-critical.json").read_text(encoding="utf-8"))
 
         candidate_catalog = load_catalog_contract(candidate_root)
         baseline_catalog = load_catalog_contract(baseline_root)
 
-        contract_errors.extend(
-            compare_eval_contracts(
-                filtered_baseline,
-                candidate_contracts,
-                retired_skills=load_retired_skill_contracts(candidate_root),
-            )
-        )
-        if manifest.get("replace_catalog_contract") is not True:
-            contract_errors.extend(
-                compare_catalog_contracts(
-                    baseline_catalog,
-                    candidate_catalog,
-                    retired_cases=load_retired_catalog_cases(candidate_root),
-                )
-            )
-
-        # 교체 대상으로 선언한 skill은 실제 candidate에 존재하고 정상적인 eval 계약을
-        # 가져야 한다. 삭제된 skill은 retired_skill_contracts를 사용해야 한다.
-        for skill in sorted(replaced):
-            if skill not in candidate_contracts:
-                contract_errors.append(
-                    f"replaced eval contract skill is missing from candidate: {skill}"
-                )
+        contract_errors.extend(preservation_errors(
+            baseline_contracts, candidate_contracts, manifest,
+            load_retired_skill_contracts(candidate_root),
+        ))
+        contract_errors.extend(compare_catalog_contracts(
+            baseline_catalog, candidate_catalog,
+            retired_cases=load_retired_catalog_cases(candidate_root),
+        ))
 
         contract_errors.extend(
             base.validate_manifest_cases(candidate_contracts, candidate_catalog, manifest)
@@ -179,7 +157,7 @@ def main() -> int:
         "release_blocked": bool(blockers),
         "baseline": baseline_sha,
         "candidate": candidate_sha,
-        "replaced_skill_eval_contracts": sorted(replaced),
+        "contract_preservation": "all active skills and catalog cases",
         "self_check": self_result,
         "contract_errors": contract_errors,
         "blocking_reasons": blockers,

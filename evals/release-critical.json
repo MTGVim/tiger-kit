@@ -18,20 +18,6 @@
     "eli5-vs-mwhat",
     "tk-mwhat-explicit-user-only"
   ],
-  "replaced_skill_eval_contracts": [
-    "tk-prep",
-    "tk-pr-respond",
-    "tk-pr-sweep",
-    "tk-learn",
-    "tk-audit",
-    "tk-ask-repo",
-    "tk-pr-open",
-    "tk-browser-verify",
-    "tk-github-image-upload-to-pr",
-    "tk-prototype",
-    "tk-review"
-  ],
-  "replace_catalog_contract": false,
   "behavior_cases": [
     "tk-prep:behavior:prep-ready-seed-self-contained",
     "tk-prep:behavior:prep-understanding-gate-cannot-be-waived",
