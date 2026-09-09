@@ -268,7 +268,7 @@
     "tk-prep:behavior:prep-pr-keyword-miss-is-not-path-clearance",
     "tk-prep:behavior:prep-pr-refresh-reuses-unchanged-diff",
     "tk-status:behavior:status-multiple-supplied-sessions",
-    "tk-status:behavior:status-active-work-continues",
+    "tk-status:behavior:status-active-work-stops",
     "tk-status:behavior:status-missing-context",
     "tk-status:behavior:status-current-session",
     "tk-prep:behavior:prep-upfront-approval-covers-baseline",

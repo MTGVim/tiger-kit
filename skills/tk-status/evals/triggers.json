@@ -62,7 +62,7 @@
     {
       "id": "validation-positive-6",
       "split": "validation",
-      "query": "현재 목표랑 끝난 일 알려주고 하던 구현은 계속해",
+      "query": "현재 목표랑 끝난 일을 알려주고 다음에 뭘 하면 좋을지 제안해줘",
       "should_trigger": true,
       "facets": [
         "compound"
