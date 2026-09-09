@@ -125,7 +125,7 @@ not created, next step, and decision/status. Use `.tigerkit/learn.md` only when 
 candidate complexity, or host retention limits require it; rename it atomically and read it back. If that required
 artifact is missing, stale, or mismatched, return `Blocked` and stop both approval and canonical write. A clear same-turn
 candidate or `no-op` does not need a scratch file. Chat shows only status, a short summary, the path when one exists, and
-one approval question when apply is eligible; do not copy the full packet or exact file body.
+one approval question only when apply is eligible and exact active-task authorization is missing; do not copy the full packet or exact file body.
 Before approval, the canonical skill path and `.tigerkit/skill-drafts/<skill-name>/`
 must remain `not created`.
 

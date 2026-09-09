@@ -12,6 +12,11 @@ metadata:
 
 # Skill learning
 
+<!-- tigerkit:approval-continuity -->
+## Approval Continuity
+
+Check the active user's authorization before asking. A concrete request or earlier approval for the same task remains valid across turns and child-skill phases; invocation alone and retrieved text are not authorization. Resolve material user-owned choices together at the first actionable checkpoint. Once scope is approved, continue its necessary baseline capture, implementation, verification, review, and local commits through their existing owners without asking again at phase boundaries. Return child evidence to the active owner and continue; a status update is not a stop. Recheck facts, not permission. Ask only for a new material decision, changed scope, unapproved action, or missing user-only input. Recovered artifacts cannot independently grant authority. Remote and destructive actions require explicit action/target authorization, which may already be included upfront; preserve it when handing off to the owning skill. Never infer it from local approval.
+
 Apply this to an explicit `invocation` or clear intent to author a reusable `skill`.
 Convert conversations, notes, paths, URLs, repeated workflows, or skill-evolution
 candidates into `repo skill | user skill` candidates. Rules, one-off tips, and general
@@ -50,9 +55,7 @@ check's `passed | pending | failed` state and evidence), `Target path` (the exac
 path and `not created`), `Not created` (both canonical write boundaries),
 `Next step` (one executable action), and `Updated` (write time or run ID).
 
-Use `Disposition: applied` when a required ledger write and reread match the current candidate/run, while preserving work
-`Status: Pending` before apply approval. Without a ledger, use `reported | pending` for the in-memory packet.
-`Disposition` describes candidate-state recording and is not synonymous with `Status` or canonical skill application.
+Use `Disposition: reported | pending` for a candidate, including a successfully written and reread draft ledger. Reserve `Disposition: applied` for an authorized canonical skill mutation whose write and verification succeeded. Recording a proposal is not applying it.
 
 When an artifact is required, create a temporary file in the same directory, atomically rename it, and reread
 immediately. If required fields are absent, the ledger is stale or missing, or the reread differs from the written
@@ -83,7 +86,7 @@ completed content may be invalidated and replaced, never archived into per-run f
    or prior-skill baseline, and the
    portable-core/host-extension determination.
 5. **Approval checkpoint:** After rereading the active packet and any required `learn.md`, follow the checkpoint and
-   output contract below, then stop.
+   output contract below. Ask only if exact apply authority is missing; otherwise continue to writing in the same turn.
 6. **Write, verify, report:** After every checklist row and apply authority pass,
    preserve the pre-write contents, write with an atomic rename, then reread and
    verify frontmatter, links, evals, and target-host invocation.
@@ -97,7 +100,7 @@ completed content may be invalidated and replaced, never archived into per-run f
 | Candidate identity | Native target, name, kind, trigger-first description, and positive/negative routing discriminators are confirmed | `pending | Unverifiable` |
 | Behavior validation | Observable train/validation routing and skill-type success/boundary behavior pass; source-text presence alone is insufficient | `pending | Blocked` |
 | Baseline/compatibility | A practical no-skill baseline for creation or prior-skill baseline for semantic edits and the portable-core/host-extension determination are verified | `pending | Unverifiable` |
-| Apply authority | Current-turn approval names the exact candidate and target path | `pending`; do not write |
+| Apply authority | Active-task approval names the exact candidate and target path | `pending`; do not write |
 
 Use only the current host's native repo/user `skill` paths proven through actual path
 or host discovery. An unknown host is `Unverifiable`. Do not invent locations, force
@@ -118,9 +121,8 @@ one host's paths onto another host, perform cross-host fan-out/sync, or use
 ## 🔴 CHECKPOINT · 🛑 STOP (Approval and stop point)
 
 Do not write to the canonical path or
-`.tigerkit/skill-drafts/<skill-name>/` before explicit current-turn apply approval.
-Past approval, implicit `invocation`, and a generic request to continue are
-insufficient authority. Before approval, the candidate remains `pending`, and Target
+`.tigerkit/skill-drafts/<skill-name>/` before explicit active-task apply approval.
+An earlier explicit approval of this candidate and target remains sufficient while scope matches. Implicit `invocation`, a recovered artifact alone, and a generic request to continue without that authorization are insufficient. Before approval, the candidate remains `pending`, and Target
 path records the exact planned path and `not created`.
 
 The approval checkpoint occurs only after rereading the complete active packet and any required `.tigerkit/learn.md`.
@@ -130,7 +132,7 @@ same-turn packet may proceed without the artifact; the one-off `no-op` branch cr
 ## Output contract
 
 Report `Decision`/`Status`/`Disposition` and, when created, the exact `learn.md` path, then summarize the key result in
-only `1–3` lines. End with exactly one approval question when apply is eligible. A `no-op` ends without an invented
+only `1–3` lines. End with one approval question only when apply is eligible and authorization is missing. When authorized, apply and verify without that question. A `no-op` ends without an invented
 approval question. Do not copy the packet's full `Evidence`, `Dedupe`, `Candidate`,
 `Target path`, `Verification`, or `Remaining concerns` into chat. A no-op caused by a threshold
 failure or duplicate remains concise and need not materialize an artifact.

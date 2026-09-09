@@ -122,6 +122,21 @@
           "expected": "Pass"
         }
       ]
+    },
+    {
+      "id": "merge-stage-before-empty-index",
+      "path": "boundary",
+      "prompt": "정책 시뮬레이션: 활성 `merge`에서 파일 내용의 모든 `conflict` `hunk`를 근거대로 해결했다. `git` `ls-files` -`u`에는 아직 3개 엔트리가 보이고 다른 `staged` 경로는 없다. 다음 명령 순서를 답해줘. 실제 `Git` 수정은 하지 마.",
+      "expected_output": "해결한 정확한 경로를 `stage`한 뒤 `index`와 `staged` `diff`를 확인한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "내용 해결만으로 `index`가 사라지길 기다리지 않는다. 실제 `marker` 확인 → 정확한 `git` `add` → `unmerged` 0과 `staged` `diff` 확인 → 관련 검증 → `merge` `continue` 순서를 지킨다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

@@ -24,7 +24,7 @@ current owner, and `keep` when no outcome-changing conflict is proven.
 ## Mutation boundary
 
 Default to report-only. Show the exact entry, path, ownership, conflicting current source,
-and proposed replacement or deletion. Require item-level current-turn approval before
+and proposed replacement or deletion. Require item-level active-task approval before
 deleting or semantically rewriting any rule or auto-memory entry, even with initial
 `--apply`. Preserve unrelated entries and file structure. Never rewrite generated,
 vendor-managed, or unknown-ownership context.

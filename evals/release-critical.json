@@ -266,7 +266,15 @@
     "tk-prep:behavior:prep-unknown-impact-keeps-two-reviewers",
     "tk-pr-respond:behavior:pr-respond-low-risk-direct-uses-shared-seat-rule",
     "tk-prep:behavior:prep-pr-keyword-miss-is-not-path-clearance",
-    "tk-prep:behavior:prep-pr-refresh-reuses-unchanged-diff"
+    "tk-prep:behavior:prep-pr-refresh-reuses-unchanged-diff",
+    "tk-prep:behavior:prep-upfront-approval-covers-baseline",
+    "tk-prep:behavior:prep-upfront-local-does-not-authorize-push",
+    "tk-pr-open:behavior:pr-open-upfront-publication-persists",
+    "tk-handoff:behavior:handoff-new-without-seed",
+    "tk-handoff:behavior:handoff-required-seed-unreadable",
+    "tk-learn:behavior:learn-draft-record-is-not-applied",
+    "tk-merge-conflict:behavior:merge-stage-before-empty-index",
+    "tk-prototype:behavior:prototype-color-comparison-controls-other-variables"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",
