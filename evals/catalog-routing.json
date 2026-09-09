@@ -53,6 +53,9 @@
     {"id":"skill-diagnose-vs-learn-ready","boundary":"tk-skill-diagnose `vs` tk-learn","prompt":"관찰된 `Agent Skill incident`를 재현하고 `verified learn-ready payload`로 `handoff`해줘.","focus_skill":"tk-skill-diagnose","expected_selected_skill":"tk-skill-diagnose","critical":true},
     {"id":"merge-conflict-vs-marker-active","boundary":"tk-merge-conflict `vs` `ordinary marker edit`","prompt":"진행 중인 `rebase conflict`를 의도에 맞게 해결하고 `rebase`를 완료해줘.","focus_skill":"tk-merge-conflict","expected_selected_skill":"tk-merge-conflict","critical":true},
     {"id":"handoff-vs-summary-handoff","boundary":"tk-handoff `explicit resume snapshot` `vs` `generic summary`","prompt":"/tk-handoff 현재 진행 중인 작업을 다음 `agent`가 재개할 `snapshot`으로 작성해줘.","focus_skill":"tk-handoff","expected_selected_skill":"tk-handoff","critical":true},
-    {"id":"tk-wizard-explicit-human-session","boundary":"tk-wizard `human procedure` `vs` `agent work`","prompt":"`credential provisioning` 절차를 대화형으로 안내해줘.","focus_skill":"tk-wizard","expected_selected_skill":"tk-wizard","critical":false}
+    {"id":"tk-wizard-explicit-human-session","boundary":"tk-wizard `human procedure` `vs` `agent work`","prompt":"`credential provisioning` 절차를 대화형으로 안내해줘.","focus_skill":"tk-wizard","expected_selected_skill":"tk-wizard","critical":false},
+    {"id":"status-orientation","boundary":"세션 현황 안내와 다른 작업 경계","prompt":"세션 여러 개라 헷갈려. 이 창 어디까지 했는지만 알려줘.","focus_skill":"tk-status","expected_selected_skill":"tk-status","critical":true},
+    {"id":"status-vs-handoff","boundary":"세션 현황 안내와 다른 작업 경계","prompt":"다음 세션용 `handoff` 파일을 작성해줘.","focus_skill":"tk-status","expected_selected_skill":"tk-handoff","critical":true},
+    {"id":"status-vs-code","boundary":"세션 현황 안내와 다른 작업 경계","prompt":"이 함수의 `status`가 무엇을 뜻하는지 설명해줘.","focus_skill":"tk-status","expected_selected_skill":null,"critical":true}
   ]
 }

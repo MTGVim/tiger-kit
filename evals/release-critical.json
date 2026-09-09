@@ -267,6 +267,10 @@
     "tk-pr-respond:behavior:pr-respond-low-risk-direct-uses-shared-seat-rule",
     "tk-prep:behavior:prep-pr-keyword-miss-is-not-path-clearance",
     "tk-prep:behavior:prep-pr-refresh-reuses-unchanged-diff",
+    "tk-status:behavior:status-multiple-supplied-sessions",
+    "tk-status:behavior:status-active-work-continues",
+    "tk-status:behavior:status-missing-context",
+    "tk-status:behavior:status-current-session",
     "tk-prep:behavior:prep-upfront-approval-covers-baseline",
     "tk-prep:behavior:prep-upfront-local-does-not-authorize-push",
     "tk-pr-open:behavior:pr-open-upfront-publication-persists",
@@ -299,6 +303,9 @@
     "catalog:behavior:grill-vs-prep-engineering-ticket",
     "catalog:behavior:grill-vs-ask-repo-fact",
     "catalog:behavior:grooming-stale-memory-after-user-correction",
-    "catalog:behavior:skill-diagnose-unattributed-browser-failure"
+    "catalog:behavior:skill-diagnose-unattributed-browser-failure",
+    "catalog:behavior:status-orientation",
+    "catalog:behavior:status-vs-handoff",
+    "catalog:behavior:status-vs-code"
   ]
 }

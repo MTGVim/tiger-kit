@@ -71,6 +71,7 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-domain` | `hybrid` | 저장소 고유 용어의 `canonical vocabulary`와 `sparse durable decision/ADR context` 작성·정제 |
 | `tk-grooming` | `hybrid` | 기존 스킬·지속 `rule`·`auto memory`의 중복·충돌·낡은 지침 감사 |
 | `tk-handoff` | `hybrid` | 진행 중 작업의 재개용 상태 사진 |
+| `tk-status` | `hybrid` | 세션 전환 후 목표·진행·다음 행동을 짧게 안내 |
 | `tk-merge-conflict` | `hybrid` | 활성 Git 충돌 의도 복원 |
 | `tk-wizard` | `hybrid` | 사람이 직접 해야 하는 설정·인증·이관 절차 안내 |
 
@@ -305,3 +306,7 @@ python3 scripts/run_seed_release_gate.py \
 변경 이력은 `commit` 기록으로 확인하며 별도 `CHANGELOG.md`, 신규 `tag`, 별도 `release`를 유지하지 않습니다.
 
 이전 구조에서 갱신한다면 [MIGRATION.md](MIGRATION.md)를 참고하세요.
+
+세션을 오가다 맥락을 놓치면 `/tk-status` 또는 “여기 어디까지 했어?”로 현재 작업을 확인할 수 있습니다.
+목표·완료·진행·다음 행동·사용자가 할 일만 짧게 보여줍니다. 진행 중인 승인 작업은 안내 뒤 계속하며,
+다른 세션이나 열린 PR을 찾아보거나 현황 파일을 만들지 않습니다.

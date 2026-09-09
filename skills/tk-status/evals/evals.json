@@ -1,0 +1,65 @@
+{
+  "skill_name": "tk-status",
+  "evals": [
+    {
+      "id": "status-current-session",
+      "path": "success",
+      "prompt": "$`tk-status` 이 창 뭐 하던 거야? 현재 대화에서 확인된 사실: `shop` 저장소 `fix/cart` 브랜치에서 장바구니 합계 버그 수정 중이다. 회귀 테스트 `RED`를 확인했고 구현은 진행 중이며 `GREEN`이나 커밋은 아직 없다. 지금은 상태만 알려줘.",
+      "expected_output": "확인된 현황만 짧게 안내한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "목표·`RED` 완료·구현 중·다음 검증을 구분하고 `GREEN/`커밋을 지어내지 않는다. 실제로 할 사용자 일이 없으면 없다고 쓴다. 별도 조사나 파일 작성을 하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "status-multiple-supplied-sessions",
+      "path": "boundary",
+      "prompt": "$`tk-status` 붙인 두 세션 현황을 비교해줘. `A`: `shop/fix-cart`, 테스트 통과·로컬 커밋 완료, `push` 미확인. `B`: `admin/fix-login`, `baseline` 캡처 완료, 구현 예정. 다른 세션 조회는 허용하지 않았어.",
+      "expected_output": "제공된 두 작업의 근거와 미확인 상태를 구분한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "다른 세션·저장소·`PR`을 조회하지 않는다. `A`의 원격 발행과 `B`의 구현/최종 검증을 완료로 과장하지 않고 각 다음 행동을 구분한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "status-active-work-continues",
+      "path": "boundary",
+      "prompt": "$`tk-status` 정책 시뮬레이션: 사용자는 카드 패딩 수정·`baseline/after` 검증·로컬 커밋을 이미 승인했다. `baseline`이 성공한 직후 사용자가 \"여기 뭐 하던 거지? 하던 건 계속해\"라고 묻는다. 다음 행동을 설명해줘. 실제 제품 파일은 수정하지 마.",
+      "expected_output": "짧은 현황 안내 뒤 기존 승인된 구현으로 이어지는 행동을 선택한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "사용자 할 일이 없다고 안내하고 `baseline`을 완료 검증으로 부풀리지 않는다. 진행할까요/캡처할까요 질문이나 작업 완료 선언을 하지 않고 구현·`after`·검증·커밋을 이어간다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "status-missing-context",
+      "path": "boundary",
+      "prompt": "$`tk-status` 새로 연 창이라 앞선 작업 대화나 저장소가 없다. 다른 세션에서 뭘 하던 건지 알려줘.",
+      "expected_output": "현재 접근 가능한 작업 맥락이 없음을 밝힌다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "다른 세션을 볼 수 있다고 주장하거나 탐색하지 않는다. 목표 또는 해당 세션 요약이라는 최소 입력 하나만 요청하고 임의 작업/진척을 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    }
+  ]
+}

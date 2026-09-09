@@ -1,0 +1,162 @@
+{
+  "skill": "tk-status",
+  "kind": "hybrid",
+  "queries": [
+    {
+      "id": "train-positive",
+      "split": "train",
+      "query": "$tk-status 이 창 현황만 짧게 보여줘",
+      "should_trigger": true
+    },
+    {
+      "id": "train-negative",
+      "split": "train",
+      "query": "이 오류 원인을 코드에서 찾아줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-positive-1",
+      "split": "validation",
+      "query": "현재 세션 작업이 어디까지 진행됐는지 간단히 안내해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-2",
+      "split": "validation",
+      "query": "여기 뭐 하던 거지? 딱 현황만",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-3",
+      "split": "validation",
+      "query": "세션 왓다갓다해서 헷갈림 지금 뭐함",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-positive-4",
+      "split": "validation",
+      "query": "이 `session goal`이랑 `next action`만 보여줘",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-5",
+      "split": "validation",
+      "query": "여기 어디까지 했어?",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-positive-6",
+      "split": "validation",
+      "query": "현재 목표랑 끝난 일 알려주고 하던 구현은 계속해",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-7",
+      "split": "validation",
+      "query": "위에 붙인 두 세션 요약으로 각각 뭐 하는 중인지 정리해줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-8",
+      "split": "validation",
+      "query": "이 창에서 내가 지금 해야 하는 게 있어? 진행 상황만 알려줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-1",
+      "split": "validation",
+      "query": "이 함수의 `status` 값이 어디서 오는지 설명해줘",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-2",
+      "split": "validation",
+      "query": "열린 PR들의 최신 CI 상태를 조사해줘",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-3",
+      "split": "validation",
+      "query": "다음 작업자를 위한 `handoff.md` 파일을 작성해줘",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-negative-4",
+      "split": "validation",
+      "query": "ADHD 치료법을 알려줘",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-negative-5",
+      "split": "validation",
+      "query": "계속 구현해줘",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-negative-6",
+      "split": "validation",
+      "query": "이 문서 내용 요약해줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-7",
+      "split": "validation",
+      "query": "두 레이아웃 비교용 프로토타입을 만들어줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-8",
+      "split": "validation",
+      "query": "프로젝트 전체 구조를 분석해줘",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    }
+  ]
+}

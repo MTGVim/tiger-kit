@@ -1,0 +1,2 @@
+interface:
+  short_description: "[user/auto] 현재 세션의 목표·완료·진행·다음 행동을 짧게 안내합니다."
