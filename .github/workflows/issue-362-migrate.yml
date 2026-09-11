@@ -24,6 +24,16 @@ jobs:
           set -euo pipefail
           BASE_SHA="$(git merge-base HEAD origin/main)"
           python3 -m pip install --quiet pyyaml
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('.github/issue_362_migrate.py')
+          text = path.read_text(encoding='utf-8')
+          old = '''    if 'skill_dir / "evals' in content or "skills/<skill>/evals" in content:\n'''
+          new = '''    if 'skill_dir / "evals' in content or re.search(r"(?<!evals/)skills/<skill>/evals", content):\n'''
+          if old not in text:
+              raise SystemExit('stale-path guard patch target missing')
+          path.write_text(text.replace(old, new), encoding='utf-8')
+          PY
           python3 .github/issue_362_migrate.py
           rm .github/issue_362_migrate.py .github/workflows/issue-362-migrate.yml
           git config user.name "chatgpt-codex-connector[bot]"
