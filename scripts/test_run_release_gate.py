@@ -118,8 +118,8 @@ class ReleaseGateContractTest(unittest.TestCase):
         candidate = {
             "violations": [
                 {
-                    "fingerprint": "skills/tk-example/evals/evals.json.evals[].prompt|English prose",
-                    "location": "skills/tk-example/evals/evals.json.evals[4].prompt:1",
+                    "fingerprint": "evals/skills/tk-example/evals.json.evals[].prompt|English prose",
+                    "location": "evals/skills/tk-example/evals.json.evals[4].prompt:1",
                 }
             ]
         }
@@ -153,7 +153,7 @@ class ReleaseGateContractTest(unittest.TestCase):
                 "argument-hint: \"[--recover-publication] [--repo owner/name]...\"\n한국어 설명\n\n`keep exact command`\n\n```text\nEnglish code sample\n```\n\nNew English sentence\n",
                 encoding="utf-8",
             )
-            evals = root / "skills/tk-example/evals"
+            evals = root / "evals/skills/tk-example"
             evals.mkdir(parents=True)
             (evals / "evals.json").write_text(
                 '{"evals":[{"assertions":[{"type":"judge","criterion":"English criterion"},{"type":"path_text_contains","text":"English literal"}]}]}',
@@ -181,6 +181,32 @@ class ReleaseGateContractTest(unittest.TestCase):
         self.assertEqual(len(rows), 2)
         self.assertTrue(any("New English sentence" in row["fingerprint"] for row in rows))
         self.assertTrue(any("English criterion" in row["fingerprint"] for row in rows))
+
+
+    def test_consumer_install_verification_keeps_runtime_files_and_rejects_evals(self) -> None:
+        with tempfile.TemporaryDirectory() as source_directory, tempfile.TemporaryDirectory() as installed_directory:
+            source_root = Path(source_directory)
+            installed_root = Path(installed_directory)
+            source = source_root / "skills/tk-example"
+            installed = installed_root / "tk-example"
+            for root in (source, installed):
+                root.mkdir(parents=True)
+                (root / "SKILL.md").write_text("skill\n", encoding="utf-8")
+                for optional in ("references", "scripts", "agents"):
+                    (root / optional).mkdir()
+                    (root / optional / "keep.txt").write_text("keep\n", encoding="utf-8")
+            self.assertEqual(
+                run_release_gate.consumer_install_errors(
+                    source_root, {"tk-example": installed}
+                ),
+                [],
+            )
+            (installed / "evals").mkdir()
+            (installed / "evals/evals.json").write_text("{}\n", encoding="utf-8")
+            errors = run_release_gate.consumer_install_errors(
+                source_root, {"tk-example": installed}
+            )
+            self.assertTrue(any("authoring evals" in error for error in errors))
 
 
 if __name__ == "__main__":

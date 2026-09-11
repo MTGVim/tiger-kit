@@ -270,8 +270,8 @@ TigerKit skill 자체 반복 실패
 ## 평가 정본
 
 ```text
-skills/<skill>/evals/triggers.json
-skills/<skill>/evals/evals.json
+evals/skills/<skill>/triggers.json
+evals/skills/<skill>/evals.json
 evals/catalog-routing.json
 evals/release-critical.json
 ```

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Audit the TigerKit catalog from canonical skill-local contracts."""
+"""Audit the TigerKit catalog from repository-owned eval contracts."""
 from __future__ import annotations
 
 import argparse
@@ -13,8 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 README_SKILL_ROW = re.compile(r"^\|\s*`(tk-[a-z0-9-]+)`\s*\|")
 
 
-def positive_trigger_count(skill_dir: Path) -> int:
-    value = json.loads((skill_dir / "evals/triggers.json").read_text(encoding="utf-8"))
+def positive_trigger_count(eval_dir: Path) -> int:
+    value = json.loads((eval_dir / "triggers.json").read_text(encoding="utf-8"))
     rows = value.get("queries", [])
     if not isinstance(rows, list):
         return 0
@@ -24,8 +24,8 @@ def positive_trigger_count(skill_dir: Path) -> int:
     )
 
 
-def behavior_paths(skill_dir: Path) -> set[str]:
-    value = json.loads((skill_dir / "evals/evals.json").read_text(encoding="utf-8"))
+def behavior_paths(eval_dir: Path) -> set[str]:
+    value = json.loads((eval_dir / "evals.json").read_text(encoding="utf-8"))
     rows = value.get("evals", [])
     if not isinstance(rows, list):
         return set()
@@ -141,8 +141,9 @@ def audit() -> dict[str, object]:
 
     for name, (skill_dir, data, _) in sorted(skills.items()):
         kind = validate_skills.nested(data, "metadata", "tigerkit", "kind")
-        triggers = positive_trigger_count(skill_dir)
-        paths = behavior_paths(skill_dir)
+        eval_dir = validate_skills.eval_dir_for(name)
+        triggers = positive_trigger_count(eval_dir)
+        paths = behavior_paths(eval_dir)
         consumers = sorted(catalog[name])
 
         independent = kind == "user-invoked" or triggers > 0

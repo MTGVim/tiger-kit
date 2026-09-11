@@ -330,7 +330,21 @@ def isolated_checkout(source: Path) -> Iterator[Path]:
         yield path
 
 
-def load_eval_contracts(root: Path, selected: set[str] | None) -> dict[str, dict[str, object]]:
+def eval_dir_for(
+    root: Path, skill_name: str, *, allow_legacy_skill_local: bool = False
+) -> Path:
+    canonical = root / "evals" / "skills" / skill_name
+    if canonical.is_dir() or not allow_legacy_skill_local:
+        return canonical
+    return root / "skills" / skill_name / "evals"
+
+
+def load_eval_contracts(
+    root: Path,
+    selected: set[str] | None,
+    *,
+    allow_legacy_skill_local: bool = False,
+) -> dict[str, dict[str, object]]:
     contracts: dict[str, dict[str, object]] = {}
     retired = load_retired_skill_contracts(root) if selected is None else set()
     for skill_dir in sorted((root / "skills").glob("tk-*")):
@@ -338,8 +352,13 @@ def load_eval_contracts(root: Path, selected: set[str] | None) -> dict[str, dict
             continue
         if selected is None and skill_dir.name in retired:
             continue
-        triggers = json.loads((skill_dir / "evals" / "triggers.json").read_text(encoding="utf-8"))
-        behavior = json.loads((skill_dir / "evals" / "evals.json").read_text(encoding="utf-8"))
+        eval_dir = eval_dir_for(
+            root,
+            skill_dir.name,
+            allow_legacy_skill_local=allow_legacy_skill_local,
+        )
+        triggers = json.loads((eval_dir / "triggers.json").read_text(encoding="utf-8"))
+        behavior = json.loads((eval_dir / "evals.json").read_text(encoding="utf-8"))
         contracts[skill_dir.name] = {"triggers": triggers, "behavior": behavior}
     if selected and set(contracts) != selected:
         missing = ", ".join(sorted(selected - set(contracts)))
@@ -449,6 +468,22 @@ def _terminal_forbidden(assertions: object) -> set[str]:
     return values
 
 
+def _canonical_eval_assertion_path(skill: str, value: object) -> object:
+    if isinstance(value, str):
+        return value.replace(
+            f"skills/{skill}/evals/fixtures/",
+            f"evals/skills/{skill}/fixtures/",
+        )
+    if isinstance(value, list):
+        return [_canonical_eval_assertion_path(skill, child) for child in value]
+    if isinstance(value, dict):
+        return {
+            key: _canonical_eval_assertion_path(skill, child)
+            for key, child in value.items()
+        }
+    return value
+
+
 def _compare_behavior_preservation(
     skill: str,
     case_id: str,
@@ -492,7 +527,11 @@ def _compare_behavior_preservation(
         )
     if exact_assertions:
         candidate_nonterminal = [
-            json.dumps(assertion, ensure_ascii=False, sort_keys=True)
+            json.dumps(
+                _canonical_eval_assertion_path(skill, assertion),
+                ensure_ascii=False,
+                sort_keys=True,
+            )
             for assertion in candidate_case.get("assertions", [])
             if isinstance(assertion, dict)
             and assertion.get("type") not in {"judge", "terminal_status"}
@@ -503,7 +542,11 @@ def _compare_behavior_preservation(
                 "terminal_status",
             }:
                 continue
-            fingerprint = json.dumps(assertion, ensure_ascii=False, sort_keys=True)
+            fingerprint = json.dumps(
+                _canonical_eval_assertion_path(skill, assertion),
+                ensure_ascii=False,
+                sort_keys=True,
+            )
             if fingerprint in candidate_nonterminal:
                 candidate_nonterminal.remove(fingerprint)
             else:
@@ -2114,7 +2157,9 @@ def main() -> int:
         with detached_worktree(args.baseline) as baseline_root, detached_worktree(
             args.candidate
         ) as candidate_root:
-            baseline_contracts = load_eval_contracts(baseline_root, selected)
+            baseline_contracts = load_eval_contracts(
+                baseline_root, selected, allow_legacy_skill_local=True
+            )
             candidate_contracts = load_eval_contracts(candidate_root, selected)
             baseline_catalog = load_catalog_contract(baseline_root)
             candidate_catalog = load_catalog_contract(candidate_root)

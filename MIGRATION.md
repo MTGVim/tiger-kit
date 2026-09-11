@@ -7,7 +7,7 @@
 
 1. `README.md`
 2. 현재 `skills/tk-*/SKILL.md`
-3. `skill-local` `eval` + `evals/catalog-routing.json`
+3. `evals/skills/<skill>/`의 저장소 전용 `eval` + `evals/catalog-routing.json`
 4. `AGENTS.md`
 
 ## 설치 갱신

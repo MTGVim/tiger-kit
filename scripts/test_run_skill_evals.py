@@ -17,6 +17,7 @@ if __package__:
         compose_diagnostic_prompt,
         evaluate_diagnostic_checkout,
         evaluate_checkout,
+        load_eval_contracts,
         parse_diagnostic_output,
         summarize_diagnostic_records,
         summarize_trigger_outcomes,
@@ -37,6 +38,7 @@ else:
         compose_diagnostic_prompt,
         evaluate_diagnostic_checkout,
         evaluate_checkout,
+        load_eval_contracts,
         parse_diagnostic_output,
         summarize_diagnostic_records,
         summarize_trigger_outcomes,
@@ -1166,7 +1168,7 @@ class RunnerContractTest(unittest.TestCase):
 
     def test_direct_baseline_contracts_reject_parent_turn_ending_before_mutation(self) -> None:
         root = Path(__file__).resolve().parents[1]
-        contract = json.loads((root / "skills/tk-prep/evals/evals.json").read_text())
+        contract = json.loads((root / "evals/skills/tk-prep/evals.json").read_text())
         case_ids = {
             "prep-direct-no-seed-inline-baseline-continues",
             "prep-direct-no-seed-child-verdict-continues",
@@ -1578,6 +1580,27 @@ class RunnerContractTest(unittest.TestCase):
                 candidate_records[0]["assertion_results"][0]["evidence"], "candidate"
             )
             self.assertEqual(baseline_records[0]["total_tokens"], 1)
+
+    def test_eval_loader_requires_canonical_path_unless_legacy_is_explicit(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            skill = root / "skills/tk-example"
+            legacy = skill / "evals"
+            legacy.mkdir(parents=True)
+            (skill / "SKILL.md").write_text("skill\n", encoding="utf-8")
+            (legacy / "triggers.json").write_text(
+                '{"skill":"tk-example","kind":"user-invoked","queries":[]}',
+                encoding="utf-8",
+            )
+            (legacy / "evals.json").write_text(
+                '{"skill_name":"tk-example","evals":[]}', encoding="utf-8"
+            )
+            with self.assertRaises(FileNotFoundError):
+                load_eval_contracts(root, {"tk-example"})
+            loaded = load_eval_contracts(
+                root, {"tk-example"}, allow_legacy_skill_local=True
+            )
+            self.assertIn("tk-example", loaded)
 
 
 if __name__ == "__main__":

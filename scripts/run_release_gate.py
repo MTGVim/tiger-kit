@@ -9,6 +9,7 @@ import os
 import re
 import shlex
 import subprocess
+import tempfile
 from pathlib import Path
 from typing import Mapping
 
@@ -133,6 +134,7 @@ def _language_targets(root: Path) -> list[Path]:
     paths.extend(sorted(root.glob("skills/tk-*/**/*.md")))
     paths.extend(sorted(root.glob("skills/tk-*/agents/*.yaml")))
     paths.extend(sorted(root.glob("skills/tk-*/evals/*.json")))
+    paths.extend(sorted(root.glob("evals/skills/tk-*/*.json")))
     paths.extend(sorted(root.glob("evals/*.json")))
     paths.extend(sorted(root.glob("evals/**/*.md")))
     return sorted({path for path in paths if path.is_file()})
@@ -268,25 +270,33 @@ def summarize_language(report: Mapping[str, object]) -> dict[str, object]:
     }
 
 
+def _canonical_language_identity(value: str) -> str:
+    return re.sub(
+        r"skills/(tk-[a-z0-9-]+)/evals/(triggers|evals)\.json",
+        r"evals/skills/\1/\2.json",
+        value,
+    )
+
+
 def compare_language_regression(
     baseline: Mapping[str, object], candidate: Mapping[str, object]
 ) -> list[str]:
     baseline_rows = baseline.get("violations", [])
     candidate_rows = candidate.get("violations", [])
     baseline_fingerprints = Counter(
-        str(row.get("fingerprint"))
+        _canonical_language_identity(str(row.get("fingerprint")))
         for row in baseline_rows
         if isinstance(row, dict) and row.get("fingerprint")
     )
     candidate_fingerprints = Counter(
-        str(row.get("fingerprint"))
+        _canonical_language_identity(str(row.get("fingerprint")))
         for row in candidate_rows
         if isinstance(row, dict) and row.get("fingerprint")
     )
     def file_name(row: object) -> str:
         if not isinstance(row, dict):
             return ""
-        location = str(row.get("location", "")).split(":", 1)[0]
+        location = _canonical_language_identity(str(row.get("location", ""))).split(":", 1)[0]
         return location.split(".json.", 1)[0] + ".json" if ".json." in location else location
 
     def word_weight(row: object) -> int:
@@ -428,6 +438,76 @@ def validate_manifest_cases(
     return errors
 
 
+
+def consumer_install_errors(
+    source_root: Path, installed_skills: Mapping[str, Path]
+) -> list[str]:
+    errors: list[str] = []
+    expected = {
+        source.name: source
+        for source in sorted((source_root / "skills").glob("tk-*"))
+        if (source / "SKILL.md").is_file()
+    }
+    missing = sorted(set(expected) - set(installed_skills))
+    if missing:
+        errors.append("consumer install is missing skills: " + ", ".join(missing))
+    for name, source in expected.items():
+        installed = installed_skills.get(name)
+        if installed is None:
+            continue
+        if not (installed / "SKILL.md").is_file():
+            errors.append(f"{name}: installed package is missing SKILL.md")
+            continue
+        for optional in ("references", "scripts", "agents"):
+            if (source / optional).is_dir() and not (installed / optional).is_dir():
+                errors.append(f"{name}: installed package is missing {optional}/")
+        if (installed / "evals").exists():
+            errors.append(f"{name}: installed package contains authoring evals/")
+        leaked = [
+            path.relative_to(installed)
+            for path in installed.rglob("*")
+            if path.is_file() and path.name in {"triggers.json", "evals.json"}
+        ]
+        if leaked:
+            errors.append(
+                f"{name}: installed package contains authoring eval files: "
+                + ", ".join(str(path) for path in leaked)
+            )
+    return errors
+
+
+def run_consumer_install(candidate_root: Path) -> dict[str, object]:
+    with tempfile.TemporaryDirectory(prefix="tigerkit-consumer-install-") as directory:
+        consumer = Path(directory)
+        record = run_checked(
+            [
+                "npx",
+                "--yes",
+                "skills@1.5.9",
+                "add",
+                str(candidate_root.resolve()),
+                "--agent",
+                "codex",
+                "--copy",
+                "--yes",
+            ],
+            cwd=consumer,
+        )
+        errors: list[str] = []
+        if bool(record["passed"]):
+            installed_skills: dict[str, Path] = {}
+            for skill_file in consumer.rglob("SKILL.md"):
+                if "node_modules" in skill_file.parts:
+                    continue
+                directory_path = skill_file.parent
+                if directory_path.name.startswith("tk-"):
+                    installed_skills.setdefault(directory_path.name, directory_path)
+            errors.extend(consumer_install_errors(candidate_root, installed_skills))
+        record["consumer_errors"] = errors
+        if errors:
+            record["passed"] = False
+        return record
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--baseline", required=True)
@@ -449,7 +529,9 @@ def main() -> int:
     static_records: list[dict[str, object]] = []
     contract_errors: list[str] = []
     with detached_worktree(args.baseline) as baseline_root, detached_worktree(args.candidate) as candidate_root:
-        baseline_contracts = load_eval_contracts(baseline_root, None)
+        baseline_contracts = load_eval_contracts(
+            baseline_root, None, allow_legacy_skill_local=True
+        )
         candidate_contracts = load_eval_contracts(candidate_root, None)
         baseline_catalog = load_catalog_contract(baseline_root)
         candidate_catalog = load_catalog_contract(candidate_root)
@@ -486,6 +568,7 @@ def main() -> int:
         ]
         for command in commands:
             static_records.append(run_checked(command, cwd=candidate_root))
+        static_records.append(run_consumer_install(candidate_root))
     static_failures = [str(row["command"]) for row in static_records if not bool(row["passed"])]
     blocking_reasons = sorted(set(contract_errors + static_failures))
     result = {

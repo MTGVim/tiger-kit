@@ -115,7 +115,9 @@ def main() -> int:
 
     contract_errors: list[str] = []
     with detached_worktree(args.baseline) as baseline_root, detached_worktree(args.candidate) as candidate_root:
-        baseline_contracts = load_eval_contracts(baseline_root, None)
+        baseline_contracts = load_eval_contracts(
+            baseline_root, None, allow_legacy_skill_local=True
+        )
         candidate_contracts = load_eval_contracts(candidate_root, None)
         manifest = json.loads((candidate_root / "evals/release-critical.json").read_text(encoding="utf-8"))
 

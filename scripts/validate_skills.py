@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate TigerKit Agent Skills from skill-local canonical contracts."""
+"""Validate TigerKit Agent Skills and repository-owned eval contracts."""
 from __future__ import annotations
 
 import json
@@ -12,6 +12,10 @@ from typing import Mapping
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def eval_dir_for(name: str, root: Path | None = None) -> Path:
+    return (ROOT if root is None else root) / "evals" / "skills" / name
 
 
 def _display_path(path: Path) -> str:
@@ -562,7 +566,7 @@ def validate_behavior_contract(name: str, path: Path) -> tuple[list[str], set[st
             errors.append(f"{_display_path(path)}: case {case_id or index} needs mechanical evidence")
         files = case.get("files", [])
         if not isinstance(files, list) or not all(
-            isinstance(relative, str) and (path.parent.parent / relative).is_file() for relative in files
+            isinstance(relative, str) and (path.parent / relative).is_file() for relative in files
         ):
             errors.append(f"{_display_path(path)}: case {case_id or index} has missing input files")
     if paths != {"success", "boundary"}:
@@ -663,8 +667,9 @@ def validate_invocation_graph(
         return []
 
     for owner, (skill_dir, _, _) in skills.items():
+        eval_path = eval_dir_for(owner) / "evals.json"
         try:
-            cases = json.loads((skill_dir / "evals/evals.json").read_text(encoding="utf-8")).get("evals", [])
+            cases = json.loads(eval_path.read_text(encoding="utf-8")).get("evals", [])
         except (OSError, UnicodeError, json.JSONDecodeError, AttributeError):
             continue
         for case in cases:
@@ -673,7 +678,7 @@ def validate_invocation_graph(
             for target in phases(case.get("assertions", [])):
                 if target != owner and kinds.get(target) == "user-invoked":
                     errors.append(
-                        f"{_display_path(skill_dir / 'evals/evals.json')}: case {case.get('id')} "
+                        f"{_display_path(eval_path)}: case {case.get('id')} "
                         f"cannot invoke user-invoked skill {target}; make the target hybrid or remove the handoff"
                     )
     return errors
@@ -850,6 +855,24 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
         if not (ROOT / relative).is_file():
             errors.append(f"{relative}: required repository file is missing")
 
+    eval_root = ROOT / "evals" / "skills"
+    if not eval_root.is_dir():
+        errors.append("evals/skills: canonical per-skill eval root is missing")
+    else:
+        eval_names = {path.name for path in eval_root.glob("tk-*") if path.is_dir()}
+        missing_evals = sorted(skill_names - eval_names)
+        stale_evals = sorted(eval_names - skill_names)
+        if missing_evals:
+            errors.append("evals/skills: missing contracts for " + ", ".join(missing_evals))
+        if stale_evals:
+            errors.append("evals/skills: stale contracts for " + ", ".join(stale_evals))
+    for name in sorted(skill_names):
+        runtime_evals = SKILLS / name / "evals"
+        if runtime_evals.exists():
+            errors.append(
+                f"{runtime_evals.relative_to(ROOT)}: authoring evals must stay outside runtime skill packages"
+            )
+
     obsolete = [
         "scripts/sync_eval_compat.py",
         "evals/trigger-cases.yaml",
@@ -876,7 +899,7 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
         errors.append(".gitignore: include .tigerkit/")
 
     for directory in SKILLS.glob("*/**"):
-        if directory.is_dir() and directory.name in {"references", "scripts", "agents", "evals"} and not any(directory.iterdir()):
+        if directory.is_dir() and directory.name in {"references", "scripts", "agents"} and not any(directory.iterdir()):
             errors.append(f"{directory.relative_to(ROOT)}: remove empty optional directory")
     errors.extend(validate_reference_resources(SKILLS))
     errors.extend(validate_shared_execution_protocols(SKILLS))
@@ -903,8 +926,9 @@ def validate_all() -> tuple[list[str], list[str]]:
         errors.extend(skill_errors)
         warnings.extend(skill_warnings)
         kind = nested(data, "metadata", "tigerkit", "kind")
-        trigger_path = skill_dir / "evals/triggers.json"
-        behavior_path = skill_dir / "evals/evals.json"
+        eval_dir = eval_dir_for(name)
+        trigger_path = eval_dir / "triggers.json"
+        behavior_path = eval_dir / "evals.json"
         if not trigger_path.is_file():
             errors.append(f"{_display_path(trigger_path)}: add canonical trigger contract")
         else:
@@ -948,7 +972,7 @@ def main() -> int:
         return 1
     count = len(discover_skills())
     print(f"Validated {count} auto-discovered Agent Skills with 0 errors.")
-    print("Validated skill-local trigger/behavior SSOT and catalog routing contracts.")
+    print("Validated repository-owned trigger/behavior SSOT and catalog routing contracts.")
     return 0
 
 
