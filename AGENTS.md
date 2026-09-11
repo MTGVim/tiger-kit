@@ -7,7 +7,7 @@ TigerKit은 `workflow` `runner`, `plugin`, `scheduler`, `shared-state` `framewor
 - 각 `skills/tk-*` `package`는 `self-contained`합니다.
 - `SKILL.md`가 현재 실행 `behavior`를 소유합니다.
 - `package-local` `references/`는 조건부 `readable knowledge`만 소유합니다.
-- `package-local` `scripts/`는 `executable helper`를, `agents/`와 `evals/`는 실행·검증 `evidence`를 소유합니다.
+- `package-local` `scripts/`는 `executable helper`를, `agents/`는 실행 메타데이터를 소유합니다. 검증용 `eval`은 `evals/skills/<skill>/`에서 저장소 전용 증거를 소유합니다.
 - 전역 TigerKit `task` `state`, `host`별 `skill` `body` 복사본, GitHub `Actions` `validation`을 만들지 않습니다.
 - 중복 `protocol`보다 삭제와 `progressive` `disclosure`를 우선합니다.
 - 사용자-`facing`/운영 `prose`는 한국어를 기본으로 하고 `exact` ID/`path`/`status`/`command`/`technical` `literal`은 원문을 유지합니다.
@@ -202,8 +202,8 @@ TigerKit은 `persistent` `pitfall` `corpus`나 `memory` `backend`를 소유하�
 ## `Eval` 정본
 
 ```text
-skills/<skill>/evals/triggers.json
-skills/<skill>/evals/evals.json
+evals/skills/<skill>/triggers.json
+evals/skills/<skill>/evals.json
 evals/catalog-routing.json
 evals/release-critical.json
 ```
@@ -236,4 +236,14 @@ python3 scripts/run_seed_release_gate.py \
   --output /tmp/tigerkit-release-gate
 ```
 
-모든 `validation`은 `local-only`입니다.
+### `main` 푸시 전 체크리스트
+
+- [ ] `origin/main`을 다시 확인하고 비교 기준이 최신인지 확인합니다.
+- [ ] 후보 변경을 모두 커밋하고 작업 트리가 깨끗한지 확인합니다.
+- [ ] 위의 필수 검사를 모두 통과합니다.
+- [ ] `run_seed_release_gate.py`를 최신 `origin/main` 기준으로 실행하고 최종 `status`가 `Pass`인지 확인합니다.
+- [ ] `blocking_reasons`, `contract_errors`, `Unverifiable` 상태가 남아 있지 않은지 확인합니다.
+- [ ] 검증 뒤 `origin/main`이 이동했다면 새 기준으로 릴리즈 게이트를 다시 실행합니다.
+- [ ] 이 체크리스트를 만족한 뒤에만 `main`을 갱신합니다. `GitHub Actions`나 다른 CI 성공은 이 체크를 대체하지 않습니다.
+
+모든 `validation`은 `local-only`입니다. 저장소에 `GitHub Actions` `validation`을 추가하지 않습니다.

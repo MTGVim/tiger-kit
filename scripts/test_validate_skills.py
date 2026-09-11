@@ -362,7 +362,7 @@ class EvalSotValidatorTest(unittest.TestCase):
         skills = validate_skills.discover_skills()
         behavior_ids: dict[str, set[str]] = {}
         for name, (skill_dir, _, _) in skills.items():
-            errors, ids = validate_skills.validate_behavior_contract(name, skill_dir / "evals/evals.json")
+            errors, ids = validate_skills.validate_behavior_contract(name, validate_skills.eval_dir_for(name) / "evals.json")
             self.assertEqual(errors, [])
             behavior_ids[name] = ids
         catalog_errors, catalog_ids = validate_skills.validate_catalog(set(skills), behavior_ids)
@@ -374,9 +374,10 @@ class EvalSotValidatorTest(unittest.TestCase):
             root = Path(directory)
             parent = root / "tk-parent"
             child = root / "tk-child"
-            (parent / "evals").mkdir(parents=True)
+            eval_dir = root / "evals/skills/tk-parent"
+            eval_dir.mkdir(parents=True)
             child.mkdir()
-            (parent / "evals/evals.json").write_text(
+            (eval_dir / "evals.json").write_text(
                 json.dumps({
                     "evals": [{
                         "id": "handoff",
@@ -392,7 +393,8 @@ class EvalSotValidatorTest(unittest.TestCase):
                 "tk-parent": (parent, {"metadata": {"tigerkit": {"kind": "hybrid"}}}, ""),
                 "tk-child": (child, {"metadata": {"tigerkit": {"kind": "user-invoked"}}}, ""),
             }
-            errors = validate_skills.validate_invocation_graph(skills)
+            with patch.object(validate_skills, "ROOT", root):
+                errors = validate_skills.validate_invocation_graph(skills)
             self.assertTrue(any("cannot invoke user-invoked skill tk-child" in error for error in errors))
 
     def test_changelog_is_not_a_repository_requirement(self) -> None:
