@@ -86,6 +86,20 @@ TigerKit은 반복 0의 설명/본문 일관성, 고정 중앙값·대조군·�
 공개 스킬, 실행 체계, 작업공간 계층을 복사하지 않고, `tk-prep`/`tk-pr-respond`의 자체 완결 패키지와
 기존 원격 권한 경계를 유지합니다. 관계 메타데이터: `origin: tigerkit`, `relationship: adapted`.
 
+2026-09-14에 현재 기본 브랜치의 위 스냅샷과 미병합
+[PR #2297](https://github.com/obra/superpowers/pull/2297)의
+`525a1265afd6b2dd9efbc90a04df5e205743ff40`을 비교했습니다. 원본 구현과 PR의 중단 후
+복구 설계·압박 평가 보고를 확인했으며, 원본의 작업 공간 평가
+`docs/superpowers/specs/2026-07-06-sdd-plan-scoped-workspace-eval-results.md`와
+`tests/claude-code/test-sdd-workspace.sh`도 검토했습니다. PR의 평가 실행 원본과 다중 세션
+재현은 `unverified`이며, 해당 PR에는 스킬 변경만 있습니다.
+
+- `keep`: 정확한 작업 식별자, 기존 변경 범위, 검증·리뷰 의무와 불명확한 결과의 차단을 유지합니다.
+- `adapt`: TigerKit #363에서 확인된 저장 누락을 보완하여, 선택적 복구 장부가 활성화된 경우에만
+  위임 전에 전체 `BASE`와 작업 공간·위임 식별자를 보존하고 입증된 기존 작업은 검증·리뷰부터 재개합니다.
+- `omit`: 필수 장부, 추가 작업 공간·보고서, 누적 이벤트 기록과 커밋 유무만으로 재위임을 결정하는 규칙은
+  도입하지 않습니다. 빈 범위도 미커밋 변경과 이전 자식의 종료 근거를 함께 확인합니다.
+
 `obra/superpowers` 상위 원본 라이선스:
 
 ```text

@@ -104,8 +104,26 @@ interrupted run actually needs durable recovery. When a ledger is needed, keep o
 - Ready `Seed` identifier and content hash;
 - preflight conflicts or rulings that are not already preserved in the Seed;
 - current `Unit` and completed commit SHAs;
+- active dispatch: full `BASE` SHA, exact workspace identity, and dispatch identity/phase bound to that Unit;
 - open review findings and remediation round when active;
 - temporary artifact identifiers and paths that are required for recovery.
+
+When this optional ledger is active, persist the active dispatch immediately before delegation;
+if that write fails, stop before dispatch. Keep its identity and BASE until the Unit outcome is
+reconciled, including remaining verification/review. For remediation, also persist `FIX_BASE` and
+the round before delegation; preserve the original Unit BASE for the complete Unit review.
+
+After interruption, validate the exact Seed identifier/hash, Unit, workspace, and dispatch identity
+before inspecting fresh run-owned Git evidence for the recorded `BASE..HEAD` (or `FIX_BASE..HEAD`).
+Verify that the recorded base exists and is an ancestor of the current HEAD; a missing base or
+ambiguous attribution is `Blocked | Unverifiable`, not permission to reconstruct it from recency.
+When applicable Unit work is proven, skip implementer re-dispatch and resume only the outstanding
+verification/review/remediation obligations. An empty commit range alone does not prove no work:
+check run-owned uncommitted changes and the prior child lifecycle as well. Re-dispatch only when
+bound evidence proves the prior dispatch produced no applicable work and cannot still mutate the
+workspace. A pending child uses the existing bounded wait; an unknown outcome remains
+`Blocked | Unverifiable`. Clear or advance active-dispatch state only after reconciliation, never
+merely on a child return or interruption. Do not create a ledger for ordinary same-context dispatch.
 
 Do not copy stable Seed content or completed reports into the ledger. Do not resume a
 ledger with a different Seed identifier/hash or one from completed work. If it does not
@@ -173,7 +191,8 @@ not short polling loops.
 
 ## `Unit` implementer
 
-Immediately before dispatch, record `BASE = git rev-parse HEAD`. Give the implementer:
+Immediately before dispatch, record `BASE = git rev-parse HEAD`; persist the active-dispatch
+identity first when the optional recovery ledger is active, as specified above. Give the implementer:
 
 - the task-local `Unit` summary as direct content, or its path only when file transport is required;
 - binding global constraints and prior interface decisions;

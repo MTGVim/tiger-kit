@@ -1006,6 +1006,214 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "pr-respond-sdd-dispatch-persist-before-launch",
+      "path": "success",
+      "prompt": "[승인된 `tk-pr-respond`의 `SDD`] 장기 실행 때문에 이미 활성화된 `.tigerkit/sdd.md`는 정확한 `Seed S/hash-H`, `Unit 2`, `workspace W`에 묶여 있다. 새 구현자를 위임하기 직전이며 `HEAD B`와 이번 `dispatch D`가 확정되어 있다. 위임 직후 컨트롤러가 중단될 수 있다.",
+      "expected_output": "위임 전에 기존 장부에 전체 `BASE B`와 `Unit/workspace/dispatch` 식별자를 저장하고, 저장이 성공한 뒤에만 구현자를 시작한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "위임 후 응답이나 커밋을 기다렸다가 처음 기록하지 않는다. 쓰기 실패 시 위임하지 않으며 새 장부·전체 프롬프트·완료 보고서를 추가하지 않는다."
+        },
+        {
+          "type": "event_order",
+          "before": {
+            "type": "phase_invocation",
+            "phase": "sdd-recovery-persist"
+          },
+          "after": {
+            "type": "phase_invocation",
+            "phase": "sdd-implementer-dispatch"
+          },
+          "forbidden_between": [
+            {
+              "type": "final_output"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pr-respond-sdd-resume-committed-before-return",
+      "path": "success",
+      "prompt": "[승인된 `tk-pr-respond`의 `SDD`] 컨트롤러가 구현자의 변경 후 결과 반환·리뷰 전에 중단되었다. 기존 장부에는 정확한 `Seed S/hash-H`, `Unit 2`, `workspace W`, 종료한 `dispatch D`, 전체 `BASE B`가 있다. 새 실행 소유 근거는 `B..C..E`의 두 커밋 모두 `D`에 속함을 입증한다. `HEAD E`이며 `B`는 조상이다. 테스트 결과와 리뷰 판정은 없다.",
+      "expected_output": "구현자를 다시 실행하지 않고 전체 `B..E`를 대상으로 누락된 검증과 리뷰부터 이어간다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "기록된 식별자를 검증한 뒤 새 `Git` 근거를 확인한다. `HEAD~1`만 검토하거나 커밋 존재를 검증·리뷰 통과로 취급하지 않는다. 조정이 끝나기 전에 활성 기록을 지우거나 다음 `Unit`으로 넘어가지 않는다."
+        },
+        {
+          "type": "event_absent",
+          "event": {
+            "type": "phase_invocation",
+            "phase": "sdd-implementer-dispatch"
+          }
+        },
+        {
+          "type": "event_order",
+          "before": {
+            "type": "phase_invocation",
+            "phase": "sdd-recovery-reconcile"
+          },
+          "after": {
+            "type": "phase_invocation",
+            "phase": "review"
+          },
+          "forbidden_between": [
+            {
+              "type": "final_output"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pr-respond-sdd-resume-ambiguous-attribution",
+      "path": "boundary",
+      "prompt": "[승인된 `tk-pr-respond`의 `SDD`] 기존 장부의 `Seed S/hash-H`, `Unit 2`, `workspace W`, `dispatch D`, `BASE B`는 일치한다. 중단 후 `B..HEAD`에 커밋이 있지만 다른 작업자도 같은 작업 공간을 수정했고 이번 위임에 속한 변경인지 입증할 수 없다. 최근 커밋이니 이번 작업이라고 간주하고 진행하라는 요청을 받았다.",
+      "expected_output": "`Blocked | Unverifiable`로 종료하고 기존 복구 기록과 변경을 보존한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "커밋 존재·최근 시각·현재 경로로 소유권을 추론하지 않는다. 구현자 재위임, 리뷰 완료 선언, 다음 단계 진행, 활성 기록 초기화를 하지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Blocked",
+            "Unverifiable"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "pr-respond-sdd-resume-empty-range-partial-work",
+      "path": "boundary",
+      "prompt": "[승인된 `tk-pr-respond`의 `SDD`] 기존 장부는 정확한 `Seed/Unit/workspace/dispatch`와 `BASE B`에 묶여 있다. 구현자가 종료된 뒤 컨트롤러가 중단되었다. 새 근거에서 `HEAD B`로 커밋 범위는 비어 있지만 구현자가 남긴 미커밋 변경이 있고 완료 여부는 입증되지 않았다. 커밋이 없으니 처음부터 재위임하라는 요청을 받았다.",
+      "expected_output": "기존 변경을 보존하고 결과가 입증되지 않으면 `Blocked | Unverifiable`로 종료한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "빈 `BASE..HEAD`를 미실행 증거로 사용하지 않는다. 미커밋 변경과 자식 생명주기를 함께 확인하며 중복 구현이나 변경 삭제를 하지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Blocked",
+            "Unverifiable"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "pr-respond-sdd-resume-proven-no-work",
+      "path": "success",
+      "prompt": "[승인된 `tk-pr-respond`의 `SDD`] 정확한 `Seed/Unit/workspace/dispatch`와 `BASE B`가 기존 장부에 보존되어 있다. 새 호스트 근거는 이전 위임이 구현자 시작 전에 취소되어 어떤 변경도 하지 않았고 재개될 수 없음을 입증한다. 실행 소유 `Git` 근거에도 커밋과 미커밋 변경이 없다. 기존 승인은 유효하다.",
+      "expected_output": "이전 결과를 조정하고 새 위임 식별자와 기준을 기존 장부에 먼저 저장한 뒤 승인된 구현을 재위임한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "빈 커밋 범위만이 아니라 확정된 미실행·종료 근거로 재위임을 결정한다. 새 승인이나 두 번째 장부를 요구하지 않는다."
+        },
+        {
+          "type": "event_order",
+          "before": {
+            "type": "phase_invocation",
+            "phase": "sdd-recovery-persist"
+          },
+          "after": {
+            "type": "phase_invocation",
+            "phase": "sdd-implementer-dispatch"
+          },
+          "forbidden_between": [
+            {
+              "type": "final_output"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pr-respond-sdd-dispatch-same-context-no-ledger",
+      "path": "success",
+      "prompt": "[승인된 `tk-pr-respond`의 `SDD`] 짧은 동일 컨텍스트 `SDD` 실행이다. 호스트가 정확한 `Seed/Unit/workspace/dispatch/BASE`를 유지하며 장기 복구가 필요하지 않다. `.tigerkit/sdd.md`는 없다. 승인된 구현자를 위임하라.",
+      "expected_output": "현재 컨트롤러 상태에 기준과 식별자를 유지하고 기존 절차대로 위임한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "위임 기준 보존을 이유로 장부나 전달 파일을 만들거나 추가 승인을 요구하지 않는다."
+        },
+        {
+          "type": "path_absent",
+          "path": ".tigerkit/sdd.md"
+        }
+      ]
+    },
+    {
+      "id": "pr-respond-sdd-resume-remediation-range",
+      "path": "success",
+      "prompt": "[승인된 `tk-pr-respond`의 `SDD`] 기존 장부는 정확한 `Seed/Unit/workspace`, 원래 `Unit BASE B`, 수정 회차 2의 `FIX_BASE C`와 종료한 `dispatch D`를 보존한다. 수정자가 커밋한 뒤 반환 전에 세션이 중단되었다. 새 실행 소유 근거는 `C..E`가 해당 수정임을 입증한다. 수정 검증과 재리뷰는 아직 없다.",
+      "expected_output": "수정자를 중복 위임하지 않고 `C..E`의 검증·범위 제한 재리뷰를 이어가며 전체 `Unit` 기준 `B`를 보존한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "원래 `BASE`를 `FIX_BASE`로 덮어쓰지 않으며 수정 회차나 열린 지적을 초기화하지 않는다. 수정 커밋 존재만으로 지적 해결·검증 통과를 선언하지 않는다."
+        },
+        {
+          "type": "event_absent",
+          "event": {
+            "type": "phase_invocation",
+            "phase": "sdd-implementer-dispatch"
+          }
+        },
+        {
+          "type": "event_order",
+          "before": {
+            "type": "phase_invocation",
+            "phase": "sdd-recovery-reconcile"
+          },
+          "after": {
+            "type": "phase_invocation",
+            "phase": "review"
+          },
+          "forbidden_between": [
+            {
+              "type": "final_output"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pr-respond-sdd-resume-invalid-base",
+      "path": "boundary",
+      "prompt": "[승인된 `tk-pr-respond`의 `SDD`] 기존 장부의 `Seed/Unit/workspace/dispatch`는 일치하지만 기록된 `BASE B`가 현재 `HEAD`의 조상이 아니다. 근처 장부에는 다른 기준이 있고 최신 커밋 하나는 이번 변경처럼 보인다.",
+      "expected_output": "`Blocked | Unverifiable`로 종료하고 기존 기록을 보존한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "기준의 존재와 조상 관계를 검증한다. `HEAD~1`, 최근 커밋 또는 다른 장부로 기준을 대체하거나 재위임하지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "allowed": [
+            "Blocked",
+            "Unverifiable"
+          ]
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }
