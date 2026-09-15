@@ -1,0 +1,162 @@
+{
+  "skill": "tk-plain-writing",
+  "kind": "hybrid",
+  "queries": [
+    {
+      "id": "train-positive",
+      "split": "train",
+      "query": "$tk-plain-writing 아래 초안을 재작성해줘.",
+      "should_trigger": true
+    },
+    {
+      "id": "train-negative",
+      "split": "train",
+      "query": "장바구니 계산 버그를 수정해줘.",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-positive-1",
+      "split": "validation",
+      "query": "이전 설명을 배경을 모르는 동료도 이해하도록 재작성해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-2",
+      "split": "validation",
+      "query": "뭔 소리야? 방금 설명을 배경부터 연결해서 다시 써줘.",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-3",
+      "split": "validation",
+      "query": "이 문서 뭔소린지 몰겟어 맥락 넣어서 다시써죠.",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-positive-4",
+      "split": "validation",
+      "query": "이 `PR description`을 프로젝트 모르는 독자용으로 재구성해줘.",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-5",
+      "split": "validation",
+      "query": "앞선 답변 무슨 뜻이야?",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-positive-6",
+      "split": "validation",
+      "query": "이 제안서를 결론부터 정리하고 필요한 배경도 붙여줘.",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-7",
+      "split": "validation",
+      "query": "`docs/plan.md` 전체를 처음 읽는 사람이 이해하도록 수정해줘.",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-8",
+      "split": "validation",
+      "query": "`$tk-plain-writing deslopify` 바로 위 답변",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-1",
+      "split": "validation",
+      "query": "이 창에서 뭐 하고 있었는지만 알려주세요.",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-2",
+      "split": "validation",
+      "query": "내용은 알아. 한국어 AI 말투만 빼줘.",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-3",
+      "split": "validation",
+      "query": "이 함수가 왜 틀렷는지 코드 조사해죠.",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-negative-4",
+      "split": "validation",
+      "query": "`$tk-eli5`로 그림 중심 `HTML` 설명을 만들어줘.",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-negative-5",
+      "split": "validation",
+      "query": "두 줄 요약만.",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-negative-6",
+      "split": "validation",
+      "query": "이 설명을 고치지 말고 실제 버그를 수정하고 테스트해줘.",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-7",
+      "split": "validation",
+      "query": "타이거킷의 `tk-plain-writing` 스킬 코드를 검토하고 수정해줘.",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-8",
+      "split": "validation",
+      "query": "주어진 문장을 영어로 번역해줘.",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    }
+  ]
+}

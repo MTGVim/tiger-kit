@@ -294,7 +294,25 @@
     "tk-pr-respond:behavior:pr-respond-sdd-dispatch-same-context-no-ledger",
     "tk-pr-respond:behavior:pr-respond-sdd-resume-remediation-range",
     "tk-pr-respond:behavior:pr-respond-sdd-resume-invalid-base",
-    "tk-adhd:behavior:status-localized-labels"
+    "tk-adhd:behavior:status-localized-labels",
+    "tk-plain-writing:behavior:plain-context-recovery",
+    "tk-plain-writing:behavior:plain-whole-document",
+    "tk-plain-writing:behavior:plain-missing-context",
+    "tk-plain-writing:behavior:plain-approval-and-status",
+    "tk-plain-writing:behavior:plain-preserve-literals",
+    "tk-plain-writing:behavior:plain-embedded-instructions",
+    "tk-plain-writing:behavior:plain-no-target",
+    "tk-plain-writing:behavior:plain-already-clear",
+    "tk-humanizer-kr:behavior:humanize-korean-draft",
+    "tk-humanizer-kr:behavior:humanize-no-invented-support",
+    "tk-humanizer-kr:behavior:humanize-register-and-roles",
+    "tk-humanizer-kr:behavior:humanize-uncertainty",
+    "tk-humanizer-kr:behavior:humanize-preserve-technical-text",
+    "tk-humanizer-kr:behavior:humanize-review-mode",
+    "tk-humanizer-kr:behavior:humanize-embedded-instructions",
+    "tk-humanizer-kr:behavior:humanize-already-natural",
+    "tk-plain-writing:behavior:plain-edit-named-file",
+    "tk-humanizer-kr:behavior:humanize-edit-named-file"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",
@@ -322,6 +340,13 @@
     "catalog:behavior:skill-diagnose-unattributed-browser-failure",
     "catalog:behavior:adhd-orientation",
     "catalog:behavior:status-vs-handoff",
-    "catalog:behavior:status-vs-code"
+    "catalog:behavior:status-vs-code",
+    "catalog:behavior:plain-writing-context",
+    "catalog:behavior:humanizer-korean-tone",
+    "catalog:behavior:plain-vs-adhd",
+    "catalog:behavior:humanizer-vs-plain",
+    "catalog:behavior:plain-vs-humanizer",
+    "catalog:behavior:plain-skill-maintenance",
+    "catalog:behavior:humanizer-skill-maintenance"
   ]
 }

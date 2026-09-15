@@ -57,6 +57,13 @@
     {"id":"tk-wizard-explicit-human-session","boundary":"tk-wizard `human procedure` `vs` `agent work`","prompt":"`credential provisioning` 절차를 대화형으로 안내해줘.","focus_skill":"tk-wizard","expected_selected_skill":"tk-wizard","critical":false},
     {"id":"adhd-orientation","boundary":"세션 현황 안내와 다른 작업 경계","prompt":"세션 여러 개라 헷갈려. 이 창 어디까지 했는지만 알려줘.","focus_skill":"tk-adhd","expected_selected_skill":"tk-adhd","critical":true},
     {"id":"status-vs-handoff","boundary":"세션 현황 안내와 다른 작업 경계","prompt":"다음 세션용 `handoff` 파일을 작성해줘.","focus_skill":"tk-adhd","expected_selected_skill":"tk-handoff","critical":true},
-    {"id":"status-vs-code","boundary":"세션 현황 안내와 다른 작업 경계","prompt":"이 함수의 `status`가 무엇을 뜻하는지 설명해줘.","focus_skill":"tk-adhd","expected_selected_skill":null,"critical":true}
+    {"id":"status-vs-code","boundary":"세션 현황 안내와 다른 작업 경계","prompt":"이 함수의 `status`가 무엇을 뜻하는지 설명해줘.","focus_skill":"tk-adhd","expected_selected_skill":null,"critical":true},
+    {"id":"plain-writing-context","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"이전 답변이 무슨 소린지 모르겠어. 배경을 모르는 동료에게 공유하도록 재작성해줘.","focus_skill":"tk-plain-writing","expected_selected_skill":"tk-plain-writing","critical":true},
+    {"id":"humanizer-korean-tone","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"내용은 이해했어. 앞선 한국어 답변의 AI 말투만 자연스럽게 다듬어줘.","focus_skill":"tk-humanizer-kr","expected_selected_skill":"tk-humanizer-kr","critical":true},
+    {"id":"plain-vs-adhd","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"이 세션에서 뭐 하고 있었지? 현황만 알려줘.","focus_skill":"tk-plain-writing","expected_selected_skill":"tk-adhd","critical":true},
+    {"id":"humanizer-vs-plain","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"이 문서의 배경과 설명 순서를 정리해서 처음 읽는 독자도 이해하도록 고쳐줘.","focus_skill":"tk-humanizer-kr","expected_selected_skill":"tk-plain-writing","critical":true},
+    {"id":"plain-vs-humanizer","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"이 한국어 초안은 내용과 순서가 충분해. 번역투와 과장만 줄여줘.","focus_skill":"tk-plain-writing","expected_selected_skill":"tk-humanizer-kr","critical":true},
+    {"id":"plain-skill-maintenance","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"타이거킷의 tk-plain-writing 스킬 구현을 고쳐줘.","focus_skill":"tk-plain-writing","expected_selected_skill":null,"critical":true},
+    {"id":"humanizer-skill-maintenance","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"타이거킷의 tk-humanizer-kr 스킬을 수정해줘.","focus_skill":"tk-humanizer-kr","expected_selected_skill":null,"critical":true}
   ]
 }
