@@ -1,6 +1,6 @@
 ---
-name: tk-status
-description: "[user/auto] 세션을 오가다 현재 작업의 맥락을 놓쳤거나 지금 어디까지 했는지 짧게 확인하고 턴을 끝낼 때 사용합니다. 코드 동작 설명, 원격 PR 현황 조사, 인수인계 파일 작성에는 사용하지 않습니다."
+name: tk-adhd
+description: "[user/auto] 세션을 오가다 현재 작업의 맥락을 놓쳤거나 지금 어디까지 했는지 짧게 확인하고 턴을 끝낼 때 사용합니다. 코드 동작 설명, 원격 PR 현황 조사, 스킬 자체 수정, 인수인계 파일 작성에는 사용하지 않습니다."
 disable-model-invocation: false
 argument-hint: "[현재 작업 | 제공한 세션 요약]"
 metadata:
@@ -14,7 +14,7 @@ metadata:
 
 Restore the reader's place in the current task, using only this conversation and evidence already available. If repository or branch identity is needed and not established, use one cheap read of current Git state. Do not investigate implementation details, enumerate other sessions/worktrees/repositories, or query remote PRs for a status recap. A requested comparison may use summaries the user supplied, with unknown or stale state labeled explicitly; never merge their goals or approvals.
 
-Give one compact card in the user's language. Prefer these five short lines, omitting an empty field rather than filling a quota:
+Give one compact card in the user's language; for a requested comparison, give one labeled card per supplied session. Translate the field labels to that language. Prefer these five short lines, omitting an empty field rather than filling a quota:
 
 ```text
 📍 <repository / branch when known> · <task goal>

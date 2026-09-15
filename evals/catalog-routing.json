@@ -5,6 +5,7 @@
     "codex",
     "hermes-agent"
   ],
+  "migrations": [{"from":"status-orientation","to":"adhd-orientation","reason":"현황 안내 담당 스킬을 tk-status에서 tk-adhd로 이름 변경합니다."}],
   "cases": [
     {"id":"prep-explicit","boundary":"tk-prep `explicit` `context` `preparation` `vs` `ordinary` `implementation`","prompt":"$tk-prep 이 `issue`를 `repository` `evidence`부터 인터뷰해서 실행 가능한 `Seed`로 준비해줘.","focus_skill":"tk-prep","expected_selected_skill":"tk-prep","critical":true},
     {"id":"prep-explicit-local-execution","boundary":"tk-prep `explicit` 적응형 준비와 로컬 실행 `vs` 일반 구현","prompt":"$tk-prep 이 작은 버그를 준비한 뒤 승인받아 RED/GREEN 검증과 로컬 커밋까지 진행해줘.","focus_skill":"tk-prep","expected_selected_skill":"tk-prep","critical":true},
@@ -54,8 +55,8 @@
     {"id":"merge-conflict-vs-marker-active","boundary":"tk-merge-conflict `vs` `ordinary marker edit`","prompt":"진행 중인 `rebase conflict`를 의도에 맞게 해결하고 `rebase`를 완료해줘.","focus_skill":"tk-merge-conflict","expected_selected_skill":"tk-merge-conflict","critical":true},
     {"id":"handoff-vs-summary-handoff","boundary":"tk-handoff `explicit resume snapshot` `vs` `generic summary`","prompt":"/tk-handoff 현재 진행 중인 작업을 다음 `agent`가 재개할 `snapshot`으로 작성해줘.","focus_skill":"tk-handoff","expected_selected_skill":"tk-handoff","critical":true},
     {"id":"tk-wizard-explicit-human-session","boundary":"tk-wizard `human procedure` `vs` `agent work`","prompt":"`credential provisioning` 절차를 대화형으로 안내해줘.","focus_skill":"tk-wizard","expected_selected_skill":"tk-wizard","critical":false},
-    {"id":"status-orientation","boundary":"세션 현황 안내와 다른 작업 경계","prompt":"세션 여러 개라 헷갈려. 이 창 어디까지 했는지만 알려줘.","focus_skill":"tk-status","expected_selected_skill":"tk-status","critical":true},
-    {"id":"status-vs-handoff","boundary":"세션 현황 안내와 다른 작업 경계","prompt":"다음 세션용 `handoff` 파일을 작성해줘.","focus_skill":"tk-status","expected_selected_skill":"tk-handoff","critical":true},
-    {"id":"status-vs-code","boundary":"세션 현황 안내와 다른 작업 경계","prompt":"이 함수의 `status`가 무엇을 뜻하는지 설명해줘.","focus_skill":"tk-status","expected_selected_skill":null,"critical":true}
+    {"id":"adhd-orientation","boundary":"세션 현황 안내와 다른 작업 경계","prompt":"세션 여러 개라 헷갈려. 이 창 어디까지 했는지만 알려줘.","focus_skill":"tk-adhd","expected_selected_skill":"tk-adhd","critical":true},
+    {"id":"status-vs-handoff","boundary":"세션 현황 안내와 다른 작업 경계","prompt":"다음 세션용 `handoff` 파일을 작성해줘.","focus_skill":"tk-adhd","expected_selected_skill":"tk-handoff","critical":true},
+    {"id":"status-vs-code","boundary":"세션 현황 안내와 다른 작업 경계","prompt":"이 함수의 `status`가 무엇을 뜻하는지 설명해줘.","focus_skill":"tk-adhd","expected_selected_skill":null,"critical":true}
   ]
 }

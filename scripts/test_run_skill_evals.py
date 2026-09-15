@@ -852,6 +852,35 @@ class RunnerContractTest(unittest.TestCase):
 
         self.assertEqual(errors, [])
 
+    def test_skill_rename_preserves_and_checks_original_cases(self) -> None:
+        baseline = self.contract([self.behavior("safe", {"type": "git_head_unchanged"})])
+        contract = self.contract([self.behavior("safe", {"type": "git_head_unchanged"})])["tk-sample"]
+        contract["behavior"]["renamed_from"] = {"skill": "tk-sample", "reason": "Public rename"}
+        candidate = {"tk-renamed": contract}
+        self.assertEqual(compare_eval_contracts(baseline, candidate), [])
+        self.assertEqual(compare_eval_contracts(candidate, candidate), [])
+        contract["behavior"]["evals"][0]["assertions"] = []
+        self.assertTrue(any("removed mechanical" in error for error in compare_eval_contracts(baseline, candidate)))
+        contract["behavior"]["evals"] = []
+        self.assertTrue(any("deleted behavior" in error for error in compare_eval_contracts(baseline, candidate)))
+
+    def test_skill_rename_rejects_missing_reason_and_ambiguous_source(self) -> None:
+        baseline = self.contract([self.behavior("safe", {"type": "git_head_unchanged"})])
+        contract = self.contract([self.behavior("safe", {"type": "git_head_unchanged"})])["tk-sample"]
+        contract["behavior"]["renamed_from"] = {"skill": "tk-sample", "reason": ""}
+        self.assertTrue(compare_eval_contracts(baseline, {"tk-renamed": contract}))
+        contract["behavior"]["renamed_from"]["reason"] = "Public rename"
+        self.assertTrue(compare_eval_contracts(baseline, {"tk-renamed": contract, **baseline}))
+        self.assertTrue(compare_eval_contracts(baseline, {"tk-renamed": contract, "tk-other": contract}))
+        self.assertTrue(compare_eval_contracts(baseline, {"tk-renamed": contract}, retired_skills={"tk-sample"}))
+
+    def test_skill_rename_cannot_weaken_trigger_routing(self) -> None:
+        baseline = self.contract([self.behavior("safe", {"type": "git_head_unchanged"})])
+        contract = self.contract([self.behavior("safe", {"type": "git_head_unchanged"})])["tk-sample"]
+        contract["behavior"]["renamed_from"] = {"skill": "tk-sample", "reason": "Public rename"}
+        contract["triggers"]["queries"][0]["should_trigger"] = False
+        self.assertTrue(any("changed expected routing" in error for error in compare_eval_contracts(baseline, {"tk-renamed": contract})))
+
     def test_contract_migration_preserves_safety_and_mechanical_shape(self) -> None:
         baseline_case = self.behavior(
             "old",

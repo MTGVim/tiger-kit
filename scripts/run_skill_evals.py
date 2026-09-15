@@ -576,8 +576,23 @@ def compare_eval_contracts(
     """Reject deleted or mechanically weakened eval coverage before model execution."""
     errors: list[str] = []
     retired = retired_skills or set()
+    renamed: dict[str, str] = {}
+    for target, contract in sorted(candidate.items()):
+        behavior = contract.get("behavior", {})
+        declaration = behavior.get("renamed_from") if isinstance(behavior, dict) else None
+        if declaration is None:
+            continue
+        source = declaration.get("skill") if isinstance(declaration, dict) else None
+        reason = declaration.get("reason") if isinstance(declaration, dict) else None
+        if not isinstance(source, str) or not source.strip() or not isinstance(reason, str) or not reason.strip():
+            errors.append(f"{target}: renamed_from needs a source skill and reason")
+            continue
+        if source in candidate or source in renamed or source in retired:
+            errors.append(f"{target}: ambiguous or retired renamed_from source {source!r}")
+            continue
+        renamed[source] = target
     for skill, baseline_contract in sorted(baseline.items()):
-        candidate_contract = candidate.get(skill)
+        candidate_contract = candidate.get(renamed.get(skill, skill))
         if candidate_contract is None:
             if skill in retired:
                 continue

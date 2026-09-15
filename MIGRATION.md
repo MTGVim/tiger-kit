@@ -23,6 +23,13 @@ npx --yes skills@1.5.9 add . --list
 npx --yes skills add . --list
 ```
 
+## 현황 안내 스킬 이름 변경
+
+`tk-status`는 `tk-adhd`로 이름이 바뀌었습니다. 설치를 갱신한 뒤 `/tk-adhd`로 호출하세요.
+선택 설치를 사용하는 경우 `tk-adhd`를 설치하고, 기존 `tk-status` 설치가 남아 있다면 제거하세요.
+별도의 `tk-status` 별칭은 제공하지 않습니다. 과거 폐기된 같은 이름의 스킬을 복원한 것이 아니라,
+현재의 현황 안내 기능을 이름만 바꾼 것입니다. 안내 후 턴을 종료하는 동작은 유지합니다.
+
 ## `Adaptive prep` 전환
 
 다음 `public` `skill`은 `retired`됩니다.

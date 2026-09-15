@@ -1,11 +1,11 @@
 {
-  "skill": "tk-status",
+  "skill": "tk-adhd",
   "kind": "hybrid",
   "queries": [
     {
       "id": "train-positive",
       "split": "train",
-      "query": "$tk-status 이 창 현황만 짧게 보여줘",
+      "query": "$tk-adhd 이 창 현황만 짧게 보여줘",
       "should_trigger": true
     },
     {
@@ -156,6 +156,15 @@
       "should_trigger": false,
       "facets": [
         "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-skill-maintenance",
+      "split": "validation",
+      "query": "타이거킷의 `tk-adhd` 스킬 구현을 검토하고 수정해서 `main`에 푸시해줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
       ]
     }
   ]

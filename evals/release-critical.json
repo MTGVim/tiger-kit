@@ -2,7 +2,6 @@
   "version": 2,
   "retired_skill_contracts": [
     "tk-reflect",
-    "tk-adhd",
     "tk-improve",
     "tk-pr-triage",
     "tk-drive",
@@ -267,10 +266,10 @@
     "tk-pr-respond:behavior:pr-respond-low-risk-direct-uses-shared-seat-rule",
     "tk-prep:behavior:prep-pr-keyword-miss-is-not-path-clearance",
     "tk-prep:behavior:prep-pr-refresh-reuses-unchanged-diff",
-    "tk-status:behavior:status-multiple-supplied-sessions",
-    "tk-status:behavior:status-active-work-stops",
-    "tk-status:behavior:status-missing-context",
-    "tk-status:behavior:status-current-session",
+    "tk-adhd:behavior:status-multiple-supplied-sessions",
+    "tk-adhd:behavior:status-active-work-stops",
+    "tk-adhd:behavior:status-missing-context",
+    "tk-adhd:behavior:status-current-session",
     "tk-prep:behavior:prep-upfront-approval-covers-baseline",
     "tk-prep:behavior:prep-upfront-local-does-not-authorize-push",
     "tk-pr-open:behavior:pr-open-upfront-publication-persists",
@@ -294,7 +293,8 @@
     "tk-pr-respond:behavior:pr-respond-sdd-resume-proven-no-work",
     "tk-pr-respond:behavior:pr-respond-sdd-dispatch-same-context-no-ledger",
     "tk-pr-respond:behavior:pr-respond-sdd-resume-remediation-range",
-    "tk-pr-respond:behavior:pr-respond-sdd-resume-invalid-base"
+    "tk-pr-respond:behavior:pr-respond-sdd-resume-invalid-base",
+    "tk-adhd:behavior:status-localized-labels"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",
@@ -320,7 +320,7 @@
     "catalog:behavior:grill-vs-ask-repo-fact",
     "catalog:behavior:grooming-stale-memory-after-user-correction",
     "catalog:behavior:skill-diagnose-unattributed-browser-failure",
-    "catalog:behavior:status-orientation",
+    "catalog:behavior:adhd-orientation",
     "catalog:behavior:status-vs-handoff",
     "catalog:behavior:status-vs-code"
   ]

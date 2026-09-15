@@ -230,7 +230,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-`tk-status`는 `ayghri/i-have-adhd`의 고정 커밋
+`tk-adhd`는 `ayghri/i-have-adhd`의 고정 커밋
 `24d22f783e57cb73c957848b588c6f651b6f9cd8`에서
 `skills/i-have-adhd/SKILL.md`, `README.md`, `evals/rubric.md`, `LICENSE`를 확인하여 증류했습니다.
 
@@ -241,4 +241,10 @@ SOFTWARE.
 원본 평가는 정확성·자율 수행·실행 가능성·안전·간결성을 구분합니다. 해당 평가 기준은 확인했지만
 원본 실행 결과의 재현은 `unverified`입니다. TigerKit의 새 평가는 세션별 근거 구분, 기존 작업 승인에도 현황 안내 후 종료하기,
 접근하지 않은 세션 상태를 지어내지 않는 경계에 맞췄습니다. 적용 부분의 MIT 고지는 설치 패키지의
-`skills/tk-status/LICENSE.txt`에 포함합니다.
+`skills/tk-adhd/LICENSE.txt`에 포함합니다.
+
+2026-09-15에 `ayghri/i-have-adhd`의 최신 커밋
+`4092de07ce3ed88389d77c0d623b7af89b40ac0e`에서 원본 스킬, README와 평가 기준을 다시 확인했습니다.
+기존 `keep | adapt | omit` 판단을 유지하며, `tk-status`를 `tk-adhd`로 이름 변경했습니다.
+복수 세션을 비교할 때 세션별 카드를 출력하도록 명확히 하고 사용자 언어에 맞춰 항목명을 표시합니다.
+최신 원본 평가 결과의 재현은 `unverified`입니다.
