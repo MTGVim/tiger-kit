@@ -43,6 +43,8 @@ Unsupported additions: 자주 발생합니다. 오류 화면을 보내 주세요
 
 Keep source-provided actions and deadlines explicit; do not invent support procedures to make a notice more actionable. Describe current behavior in product documentation, but preserve change history in release notes and migration guidance. Reduce overloaded parentheses, decorative emphasis, and repetitive short slogans without removing useful structure. Prefer conjunctions or separate sentences when punctuation compresses the relationship too far.
 
+In ordinary explanatory prose, prefer conjunctions, a colon, or separate sentences over an em dash (`—`), preserving the relationship between clauses. For section references, prefer a spelled-out section label such as `section 3` or `3절`, or the actual section title, over `§3`; retain the reference's target and precision. Apply these as writing preferences, not mechanical character deletion or evidence of AI authorship. Preserve code, commands, URLs, direct quotations, official names, and notation required by the document's format or an explicit user request.
+
 ## Sources
 
 - `docwriter-org/plain-writing-skill`, `f0d3630983ac7a82aa580f1c1509d72df739ee12`: relevant background, concrete subjects, coherent explanation, consistent terminology.
