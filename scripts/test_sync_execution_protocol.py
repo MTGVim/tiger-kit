@@ -20,6 +20,10 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         self.respond = self.root / "skills/tk-pr-respond/references"
         self.review = self.root / "skills/tk-review/references"
         self.wizard = self.root / "skills/tk-wizard/references"
+        self.clear_source = self.root / "skills/tk-rewrite/references/clear-writing.md"
+        self.clear_target = self.root / "skills/tk-explain/references/clear-writing.md"
+        self.clear_source.parent.mkdir(parents=True)
+        self.clear_source.write_text("Preserve context. 한국어 예시.\n", encoding="utf-8")
         self.domain_targets = tuple(
             self.root / f"skills/{name}/references/domain-context.md"
             for name in ("tk-ask-repo", "tk-audit", "tk-pr-open", "tk-pr-respond", "tk-review")
@@ -51,6 +55,8 @@ class SyncExecutionProtocolTest(unittest.TestCase):
                 self.wizard / "external-contracts.md",
             ),
             patch.object(sync_execution_protocol, "DOMAIN_CONTEXT_TARGETS", self.domain_targets),
+            patch.object(sync_execution_protocol, "CLEAR_WRITING_SOURCE", self.clear_source),
+            patch.object(sync_execution_protocol, "CLEAR_WRITING_TARGET", self.clear_target),
             patch.object(sys, "argv", ["sync_execution_protocol.py", *args]),
             redirect_stdout(io.StringIO()),
         ):
@@ -78,6 +84,20 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         self.assertEqual(self.run_main("--check"), 1)
         self.assertEqual(self.run_main(), 0)
         self.assertEqual(stale.read_bytes(), (self.review / "security.md").read_bytes())
+
+    def test_clear_writing_check_detects_both_sides_drift_and_missing_consumer(self) -> None:
+        self.assertEqual(self.run_main(), 0)
+        for mutation in ("consumer", "canonical", "missing"):
+            with self.subTest(mutation=mutation):
+                if mutation == "missing":
+                    self.clear_target.unlink()
+                else:
+                    changed = self.clear_source if mutation == "canonical" else self.clear_target
+                    changed.write_text(f"{mutation} change: 한국어 예시.\n", encoding="utf-8")
+                self.assertEqual(self.run_main("--check"), 1)
+                self.assertEqual(self.run_main(), 0)
+                self.assertEqual(self.clear_target.read_bytes(), self.clear_source.read_bytes())
+                self.assertEqual(self.run_main("--check"), 0)
 
 
 if __name__ == "__main__":

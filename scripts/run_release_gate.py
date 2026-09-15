@@ -461,6 +461,15 @@ def consumer_install_errors(
         for optional in ("references", "scripts", "agents"):
             if (source / optional).is_dir() and not (installed / optional).is_dir():
                 errors.append(f"{name}: installed package is missing {optional}/")
+        for source_file in sorted(source.rglob("*")):
+            if not source_file.is_file():
+                continue
+            relative = source_file.relative_to(source)
+            installed_file = installed / relative
+            if not installed_file.is_file():
+                errors.append(f"{name}: installed package is missing {relative}")
+            elif source_file.read_bytes() != installed_file.read_bytes():
+                errors.append(f"{name}: installed package differs at {relative}")
         if (installed / "evals").exists():
             errors.append(f"{name}: installed package contains authoring evals/")
         leaked = [

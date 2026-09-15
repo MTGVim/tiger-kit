@@ -577,20 +577,39 @@ def compare_eval_contracts(
     errors: list[str] = []
     retired = retired_skills or set()
     renamed: dict[str, str] = {}
+    merged: set[str] = set()
     for target, contract in sorted(candidate.items()):
         behavior = contract.get("behavior", {})
-        declaration = behavior.get("renamed_from") if isinstance(behavior, dict) else None
+        if not isinstance(behavior, dict):
+            continue
+        rename = behavior.get("renamed_from")
+        merge = behavior.get("merged_from")
+        if rename is not None and merge is not None:
+            errors.append(f"{target}: renamed_from and merged_from are mutually exclusive")
+            continue
+        declaration = merge if merge is not None else rename
         if declaration is None:
             continue
-        source = declaration.get("skill") if isinstance(declaration, dict) else None
+        kind = "merged_from" if merge is not None else "renamed_from"
+        sources = declaration.get("skills") if merge is not None and isinstance(declaration, dict) else [declaration.get("skill")] if isinstance(declaration, dict) else None
         reason = declaration.get("reason") if isinstance(declaration, dict) else None
-        if not isinstance(source, str) or not source.strip() or not isinstance(reason, str) or not reason.strip():
-            errors.append(f"{target}: renamed_from needs a source skill and reason")
+        if (not isinstance(sources, list) or len(sources) < (2 if merge is not None else 1)
+                or any(not isinstance(source, str) or not source.strip() for source in sources)
+                or not isinstance(reason, str) or not reason.strip()):
+            errors.append(f"{target}: {kind} needs source skill(s) and reason")
             continue
-        if source in candidate or source in renamed or source in retired:
-            errors.append(f"{target}: ambiguous or retired renamed_from source {source!r}")
+        if len(set(sources)) != len(sources) or any(source in candidate or source in renamed or source in retired for source in sources):
+            errors.append(f"{target}: ambiguous or retired {kind} source")
             continue
-        renamed[source] = target
+        # Historical declarations remain valid after the source disappears from baseline.
+        if target not in baseline and any(source not in baseline for source in sources):
+            errors.append(f"{target}: {kind} source is absent from baseline")
+            continue
+        for source in sources:
+            renamed[source] = target
+            if merge is not None:
+                merged.add(source)
+    merge_destinations: dict[tuple[str, str, str], tuple[str, str]] = {}
     for skill, baseline_contract in sorted(baseline.items()):
         candidate_contract = candidate.get(renamed.get(skill, skill))
         if candidate_contract is None:
@@ -606,7 +625,18 @@ def compare_eval_contracts(
                 continue
             baseline_cases = _contract_case_map(baseline_data, key)
             candidate_cases = _contract_case_map(candidate_data, key)
-            migrations = _migration_map(candidate_data)
+            rows = candidate_data.get("migrations", [])
+            scoped_rows = [row for row in rows if isinstance(row, dict) and row.get("source_skill", skill) == skill] if isinstance(rows, list) else []
+            migrations = _migration_map({"migrations": scoped_rows})
+            if skill in merged:
+                for row in scoped_rows:
+                    if (row.get("from") not in baseline_cases or row.get("to") not in candidate_cases
+                            or not isinstance(row.get("reason"), str) or not row["reason"].strip()):
+                        errors.append(f"{skill}: invalid {section} merge migration")
+            migration_rows = {row.get("from"): row for row in scoped_rows}
+            if len(migration_rows) != len(scoped_rows):
+                errors.append(f"{skill}: ambiguous {section} migration source")
+            destinations: set[str] = set()
             for case_id, baseline_case in sorted(baseline_cases.items()):
                 candidate_case = candidate_cases.get(case_id)
                 migrated = False
@@ -620,20 +650,43 @@ def compare_eval_contracts(
                         continue
                     candidate_case = candidate_cases[migrated_to]
                     migrated = True
+                    if skill in merged and migrated_to in destinations:
+                        errors.append(f"{skill}: colliding {section} migration destination")
+                    destinations.add(migrated_to)
+                if skill in merged:
+                    destination = (renamed[skill], section, str(candidate_case.get("id")))
+                    previous = merge_destinations.setdefault(destination, (skill, case_id))
+                    if previous != (skill, case_id):
+                        errors.append(f"{skill}: colliding {section} merge destination {destination[2]!r}")
                 if section == "trigger":
-                    if candidate_case.get("should_trigger") is not baseline_case.get("should_trigger"):
+                    routing_migration = migration_rows.get(case_id, {})
+                    explicit_union = (skill in merged and migrated
+                        and routing_migration.get("previous_should_trigger") is baseline_case.get("should_trigger")
+                        and isinstance(routing_migration.get("previous_should_trigger"), bool))
+                    if candidate_case.get("should_trigger") is not baseline_case.get("should_trigger") and not explicit_union:
                         errors.append(
                             f"{skill}: trigger case {case_id!r} changed expected routing "
                             "without an explicit migration"
                         )
                     continue
+                if skill in renamed:
+                    # Only relocate package fixture paths; preserve every other assertion value.
+                    def relocate(value: object) -> object:
+                        if isinstance(value, str):
+                            return value.replace(f"evals/skills/{skill}/fixtures/", f"evals/skills/{renamed[skill]}/fixtures/")
+                        if isinstance(value, list):
+                            return [relocate(child) for child in value]
+                        if isinstance(value, dict):
+                            return {key: relocate(child) for key, child in value.items()}
+                        return value
+                    baseline_case = relocate(baseline_case)
                 errors.extend(
                     _compare_behavior_preservation(
                         skill,
                         case_id,
                         baseline_case,
                         candidate_case,
-                        exact_assertions=not migrated,
+                        exact_assertions=skill in merged or not migrated,
                     )
                 )
     return errors

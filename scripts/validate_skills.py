@@ -835,6 +835,22 @@ def validate_shared_external_contracts(skills_root: Path = SKILLS) -> list[str]:
     return []
 
 
+def validate_shared_clear_writing(skills_root: Path = SKILLS) -> list[str]:
+    canonical = skills_root / "tk-rewrite/references/clear-writing.md"
+    consumer = skills_root / "tk-explain/references/clear-writing.md"
+    try:
+        canonical_bytes = canonical.read_bytes()
+        consumer_bytes = consumer.read_bytes()
+    except OSError as exc:
+        return [f"shared clear-writing reference: unreadable copy: {exc}"]
+    if consumer_bytes != canonical_bytes:
+        return [
+            f"{_display_path(consumer)}: sync from {_display_path(canonical)} "
+            "with scripts/sync_execution_protocol.py"
+        ]
+    return []
+
+
 def validate_repository_contract(skill_names: set[str]) -> list[str]:
     errors: list[str] = []
     required = (
@@ -906,6 +922,7 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
     errors.extend(validate_shared_domain_context(SKILLS))
     errors.extend(validate_shared_review_references(SKILLS))
     errors.extend(validate_shared_external_contracts(SKILLS))
+    errors.extend(validate_shared_clear_writing(SKILLS))
     errors.extend(validate_portable_artifacts(ROOT))
     return errors
 

@@ -23,6 +23,27 @@ npx --yes skills@1.5.9 add . --list
 npx --yes skills add . --list
 ```
 
+## 글 재작성과 시각 설명 스킬 개편
+
+| 이전 이름 | 현재 이름 | 달라진 동작 |
+|---|---|---|
+| `tk-plain-writing`, `tk-humanizer-kr` | `tk-rewrite` | 내용 재구성 후 표현을 정제하며 최종 본문 하나를 반환합니다. |
+| `tk-eli5` | `tk-explain` | 필요한 배경지식과 실제 작동 방식을 설명하며 비유와 분량 제한을 기본값에서 제거합니다. |
+
+기존 이름의 별칭은 제공하지 않습니다. 기존 설치의 업데이트만으로 새 이름이 추가되거나 구버전이 제거됐다고
+가정하지 마세요. 현재 사용 중인 에이전트를 대상으로 새 이름을 설치하고 발견되는지 확인한 뒤,
+남은 `tk-plain-writing`, `tk-humanizer-kr`, `tk-eli5` 설치를 제거합니다. 전역 설치 예시는 다음과 같습니다.
+
+```bash
+npx skills add MTGVim/tiger-kit --global --agent claude-code codex hermes-agent --skill tk-rewrite tk-explain --yes
+npx skills list --global
+npx skills remove tk-plain-writing tk-humanizer-kr tk-eli5 --global --agent claude-code codex hermes-agent
+```
+
+프로젝트에 설치했다면 같은 설치 범위에서 처리합니다. 확인 후 재작성 호출은 `/tk-rewrite`,
+시각 설명 자료 요청은 `/tk-explain`으로 변경합니다. `tk-adhd`와 외부 `fluent-korean`은 변경하지 않습니다.
+두 새 패키지는 공통 참조 문서와 라이선스를 각각 포함하므로 서로 따로 설치할 수 있습니다.
+
 ## 현황 안내 스킬 이름 변경
 
 `tk-status`는 `tk-adhd`로 이름이 바뀌었습니다. 설치를 갱신한 뒤 `/tk-adhd`로 호출하세요.

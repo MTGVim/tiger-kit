@@ -1,0 +1,6 @@
+interface:
+  short_description: "[user/auto] 배경지식과 실제 작동 방식을 시각화한 HTML 설명 자료를 만듭니다."
+  default_prompt: "$tk-explain을 사용해 필요한 배경지식과 실제 작동 방식을 자체 완결형 HTML로 설명해 주세요."
+
+policy:
+  allow_implicit_invocation: true

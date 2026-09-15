@@ -65,7 +65,7 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-pr-sweep` | `user` | 여러 PR의 결정론적 분류와 승인된 유지보수 묶음 |
 | `tk-github-image-upload-to-pr` | `user` | 기존 PR에 로컬 근거 이미지 올리기 |
 | `tk-prototype` | `hybrid` | 폐기 가능한 UI/로직 비교물 |
-| `tk-eli5` | `hybrid` | 큰 그림과 적은 글의 초보자용 `self-contained HTML` 설명 자료 |
+| `tk-explain` | `hybrid` | 배경지식과 실제 구조·동작을 시각화하는 자체 완결형 HTML 설명 자료 |
 | `tk-browser-verify` | `hybrid` | 화면에 보이는 AC의 `headless` 실행 검증 |
 | `tk-skill-diagnose` | `hybrid` | `Agent Skill` 사고 재현·격리와 `learn-ready` 인계 |
 | `tk-learn` | `hybrid` | 재사용 가능한 스킬의 생성/개선/병합 작성자 |
@@ -73,8 +73,7 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-grooming` | `hybrid` | 기존 스킬·지속 `rule`·`auto memory`의 중복·충돌·낡은 지침 감사 |
 | `tk-handoff` | `hybrid` | 진행 중 작업의 재개용 상태 사진 |
 | `tk-adhd` | `hybrid` | 세션 전환 후 목표·진행·다음 행동을 짧게 안내 |
-| `tk-plain-writing` | `hybrid` | 배경을 모르는 독자를 위한 설명·문서 재작성 |
-| `tk-humanizer-kr` | `hybrid` | 사실을 보존하는 한국어 AI 말투·번역투 교정 |
+| `tk-rewrite` | `hybrid` | 기존 글의 맥락·구조 재구성과 표현 정제 |
 | `tk-merge-conflict` | `hybrid` | 활성 Git 충돌 의도 복원 |
 | `tk-wizard` | `hybrid` | 사람이 직접 해야 하는 설정·인증·이관 절차 안내 |
 
@@ -314,8 +313,16 @@ python3 scripts/run_seed_release_gate.py \
 목표·완료·진행·다음 행동·사용자가 할 일만 짧게 보여줍니다. 진행 중인 작업의 기존 승인이 있어도 안내 뒤 턴을 끝내고 재개 지시를 기다립니다.
 다른 세션이나 열린 PR을 찾아보거나 현황 파일을 만들지 않습니다.
 
-설명을 읽어도 무슨 뜻인지 모르겠다면 `/tk-plain-writing`으로 앞선 답변이나 지정 문서를 재작성합니다.
-한국어 내용은 이해되지만 AI 말투나 번역투가 어색하다면 `/tk-humanizer-kr`로 표현을 다듬습니다.
-둘 다 기본적으로 재작성한 본문 하나만 반환하며, 파일 수정은 대상을 지정해 요청했을 때 수행합니다.
-세션 현황을 짧게 확인하고 멈추는 용도는 계속 `tk-adhd`가 담당합니다. 세 스킬을 순서대로 자동 실행하지 않습니다.
-기존 TigerKit 전체 설치를 갱신하면 두 스킬이 포함되며, 별도 외부 스킬 설치는 필요하지 않습니다.
+기존 글이 이해하기 어렵거나 표현이 어색하다면 `/tk-rewrite`로 재작성합니다.
+기본적으로 맥락과 설명 구조를 정리한 뒤 표현을 다듬으며, 중간 결과 없이 최종 본문 하나만 반환합니다.
+“말투만” 또는 “구조만”이라고 요청하면 해당 범위만 처리합니다. 파일 수정은 대상을 지정해 요청했을 때 수행합니다.
+
+개념을 배경지식부터 시각적으로 이해하려면 `/tk-explain`으로 HTML 설명 자료를 만듭니다.
+해당 분야를 모르는 성인을 기본 독자로 보고, 필요한 선행 개념을 소개한 뒤 실제 구성 요소와 작동 방식을 그립니다.
+비유와 장면·단어 수를 의무화하지 않으며, 일반 텍스트 질문에는 HTML을 만들지 않습니다.
+
+두 스킬은 같은 `references/clear-writing.md` 기준을 사용합니다. 정본은 `tk-rewrite`에 두고
+`tk-explain`에 동일한 사본을 동기화하며, 각 패키지에 참조 문서와 원본 라이선스를 포함합니다.
+외부 `fluent-korean` 설치 없이도 사용할 수 있으며, `tigeryoo-ai-setup`의 기존 공용 지침 설치는 별도로 유지됩니다.
+세션 현황을 짧게 확인하고 멈추는 용도는 계속 `tk-adhd`가 담당합니다.
+이전 이름으로 설치한 사용자는 [마이그레이션 안내](MIGRATION.md)에 따라 새 이름을 설치하고 남은 구버전을 제거하세요.

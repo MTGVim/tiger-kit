@@ -1,15 +1,15 @@
 {
-  "skill_name": "tk-eli5",
+  "skill_name": "tk-explain",
   "evals": [
     {
       "id": "self-contained-visual-explainer",
       "path": "success",
-      "prompt": "$tk-eli5 DNS가 동작하는 흐름을 `dns-eli5.html`에 만들어줘",
+      "prompt": "$tk-explain DNS가 동작하는 흐름을 `dns-eli5.html`에 만들어줘",
       "expected_output": "오프라인에서 열리는 그림 중심 단일 HTML과 정확한 경로",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "하나의 자체 완결형 HTML이 보통 3~5개인 간결한 장면, 큰 내장 그림, 짧은 설명과 일관된 비유로 DNS 핵심 흐름을 정확하게 설명하며 외부 의존성이나 네트워크를 요구하지 않는다. 장면/단어 수는 정확성을 자르는 `hard gate`가 아니다."
+          "criterion": "하나의 자체 완결형 HTML이 필요한 배경지식을 먼저 소개하고 도메인 이름, IP 주소, 리졸버, 권한 있는 DNS 서버 등 실제 구성 요소와 조회 관계를 설명한다. 그림과 본문 용어 및 순서가 일치하며 외부 의존성이나 네트워크를 요구하지 않는다. 비유나 장면 수를 강제하지 않는다."
         },
         {
           "type": "path_exists",
@@ -47,7 +47,7 @@
     {
       "id": "accessible-offline-contract",
       "path": "success",
-      "prompt": "$tk-eli5 광합성을 `photosynthesis-eli5.html`에 큰 그림과 적은 글로 설명해줘",
+      "prompt": "$tk-explain 광합성을 `photosynthesis-eli5.html`에 큰 그림과 적은 글로 설명해줘",
       "expected_output": "접근성과 오프라인 계약을 지킨 HTML",
       "assertions": [
         {
@@ -81,7 +81,7 @@
     {
       "id": "missing-topic",
       "path": "boundary",
-      "prompt": "$tk-eli5",
+      "prompt": "$tk-explain",
       "expected_output": "`Unverifiable`과 변경 없음",
       "assertions": [
         {
@@ -150,12 +150,12 @@
     {
       "id": "complex-explainer-preserves-required-caveat-over-scene-cap",
       "path": "success",
-      "prompt": "$tk-eli5 `OAuth authorization-code flow`와 `PKCE`를 설명해줘. 위협 모델과 `redirect` 검증 주의사항까지 정확히 남기려면 6개 장면이 필요해.",
+      "prompt": "$tk-explain `OAuth authorization-code flow`와 `PKCE`를 설명해줘. 위협 모델과 `redirect` 검증 주의사항까지 정확히 남기려면 6개 장면이 필요해.",
       "expected_output": "간결한 기본값을 유지하되 정확한 보안 주의사항을 삭제하거나 한 장면에 과밀하게 넣지 않고 필요한 6개 장면을 허용한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "`3–5 scenes`와 약 `35 words`를 `heuristic`으로 사용하며, 정확성, 필수 경고, 이해를 위해 필요한 추가 장면이나 문장을 숫자만으로 거부하지 않는다."
+          "criterion": "위협 모델과 `redirect` 검증, PKCE 역할을 설명하는 데 필요한 선행 개념과 문장을 보존한다. 고정 장면 수나 단어 수에 맞추기 위해 내용을 삭제하거나 과밀하게 배치하지 않는다."
         },
         {
           "type": "git_head_unchanged"
@@ -165,6 +165,78 @@
           "expected": "Pass"
         }
       ]
+    },
+    {
+      "id": "explain-prerequisites-real-components",
+      "path": "success",
+      "prompt": "$tk-explain 서버 캐시를 모르는 성인 개발자를 위해 HTTP 캐시를 `http-cache.html` 시각 설명 자료로 만들어줘. 바구니나 요리 비유 말고 배경지식부터 설명해줘.",
+      "expected_output": "요청과 응답 및 클라이언트·서버 역할을 먼저 설명하고 캐시, 유효성 확인, 재사용의 실제 구성 요소와 관계를 그린다. 그림과 본문에서 같은 이름과 조건을 사용하며 무관한 생활 비유를 추가하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "요청과 응답 및 클라이언트·서버 역할을 먼저 설명하고 캐시, 유효성 확인, 재사용의 실제 구성 요소와 관계를 그린다. 그림과 본문에서 같은 이름과 조건을 사용하며 무관한 생활 비유를 추가하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": "http-cache.html"
+        },
+        {
+          "type": "path_text_contains",
+          "path": "http-cache.html",
+          "text": "<svg"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": [
+            "http-cache.html"
+          ]
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "explain-korean-prose-and-diagram-labels",
+      "path": "success",
+      "prompt": "$tk-explain 메시지 큐를 `queue.html` 시각 설명 자료로 만들어줘. 생산자와 소비자를 모르는 성인 독자가 대상이야. 한국어 본문은 자연스럽게 쓰되 그림 라벨은 짧게 유지해줘.",
+      "expected_output": "생산자, 큐, 소비자의 역할과 메시지 이동 관계를 먼저 설명한다. 본문은 조사와 종결어미를 갖추고 그림에는 짧은 라벨을 허용한다. 그림과 본문의 이동 방향과 조건이 일치한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "생산자, 큐, 소비자의 역할과 메시지 이동 관계를 먼저 설명한다. 본문은 조사와 종결어미를 갖추고 그림에는 짧은 라벨을 허용한다. 그림과 본문의 이동 방향과 조건이 일치한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": "queue.html"
+        },
+        {
+          "type": "path_text_contains",
+          "path": "queue.html",
+          "text": "<svg"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": [
+            "queue.html"
+          ]
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
-  ]
+  ],
+  "renamed_from": {
+    "skill": "tk-eli5",
+    "reason": "성인 독자에게 필요한 배경지식과 실제 구성 요소를 설명하며 비유는 선택적으로 사용합니다."
+  }
 }

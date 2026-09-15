@@ -488,6 +488,30 @@ class EvalSotValidatorTest(unittest.TestCase):
                 )
             )
 
+    def test_clear_writing_validation_rejects_drift_and_missing_copies(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            skills = Path(directory)
+            canonical = skills / "tk-rewrite/references/clear-writing.md"
+            consumer = skills / "tk-explain/references/clear-writing.md"
+            canonical.parent.mkdir(parents=True)
+            consumer.parent.mkdir(parents=True)
+            expected = "Preserve context. 한국어 예시.\n".encode("utf-8")
+            for changed in (canonical, consumer):
+                for mutation in ("content", "line-endings", "missing"):
+                    with self.subTest(path=str(changed), mutation=mutation):
+                        canonical.write_bytes(expected)
+                        consumer.write_bytes(expected)
+                        self.assertEqual(validate_skills.validate_shared_clear_writing(skills), [])
+                        if mutation == "missing":
+                            changed.unlink()
+                        else:
+                            changed.write_bytes(
+                                expected.replace(b"\n", b"\r\n") if mutation == "line-endings" else b"drift\n"
+                            )
+                        errors = validate_skills.validate_shared_clear_writing(skills)
+                        self.assertTrue(errors)
+                        self.assertIn("clear-writing", errors[0])
+
 
 if __name__ == "__main__":
     unittest.main()

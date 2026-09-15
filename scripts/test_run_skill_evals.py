@@ -881,6 +881,72 @@ class RunnerContractTest(unittest.TestCase):
         contract["triggers"]["queries"][0]["should_trigger"] = False
         self.assertTrue(any("changed expected routing" in error for error in compare_eval_contracts(baseline, {"tk-renamed": contract})))
 
+    def merged_contracts(self):
+        import copy
+        baseline = {}
+        candidate = {"tk-combined": {"behavior": {"merged_from": {
+            "skills": ["tk-first", "tk-second"], "reason": "Combine complementary prose skills"
+        }, "evals": []}, "triggers": {"queries": [], "migrations": []}}}
+        for source in ("tk-first", "tk-second"):
+            contract = self.contract([self.behavior(source, {"type": "output_contains", "text": source})])["tk-sample"]
+            baseline[source] = contract
+            candidate["tk-combined"]["behavior"]["evals"].extend(copy.deepcopy(contract["behavior"]["evals"]))
+            candidate["tk-combined"]["triggers"]["queries"].append({"id": source, "should_trigger": True})
+            candidate["tk-combined"]["triggers"]["migrations"].append({"source_skill": source, "from": "trigger", "to": source, "reason": "Keep both source scenarios"})
+        return baseline, candidate
+
+    def test_merge_preserves_every_source_and_historical_declaration(self):
+        baseline, candidate = self.merged_contracts()
+        self.assertEqual(compare_eval_contracts(baseline, candidate), [])
+        self.assertEqual(compare_eval_contracts(candidate, candidate), [])
+        candidate["tk-combined"]["behavior"]["evals"].pop()
+        self.assertTrue(any("deleted behavior" in e for e in compare_eval_contracts(baseline, candidate)))
+
+    def test_merge_cannot_weaken_assertions_even_via_case_migration(self):
+        baseline, candidate = self.merged_contracts()
+        data = candidate["tk-combined"]["behavior"]
+        data["evals"][1]["id"] = "replacement"
+        data["evals"][1]["assertions"][0]["text"] = "weakened"
+        data["migrations"] = [{"source_skill": "tk-second", "from": "tk-second", "to": "replacement", "reason": "Rename case"}]
+        self.assertTrue(any("weakened assertion" in e for e in compare_eval_contracts(baseline, candidate)))
+
+    def test_merge_validates_sources_and_conflicts(self):
+        import copy
+        baseline, candidate = self.merged_contracts()
+        for declaration in ({"skills": ["tk-first"], "reason": "x"},
+                            {"skills": ["tk-first", "tk-first"], "reason": "x"},
+                            {"skills": ["tk-first", "missing"], "reason": "x"},
+                            {"skills": ["tk-first", "tk-second"], "reason": ""}):
+            broken = copy.deepcopy(candidate)
+            broken["tk-combined"]["behavior"]["merged_from"] = declaration
+            self.assertTrue(compare_eval_contracts(baseline, broken))
+        self.assertTrue(compare_eval_contracts(baseline, candidate, retired_skills={"tk-first"}))
+        self.assertTrue(compare_eval_contracts(baseline, {**candidate, "tk-first": baseline["tk-first"]}))
+        self.assertTrue(compare_eval_contracts(baseline, {**candidate, "tk-other": candidate["tk-combined"]}))
+        candidate["tk-combined"]["behavior"]["renamed_from"] = {"skill": "tk-first", "reason": "x"}
+        self.assertTrue(compare_eval_contracts(baseline, candidate))
+
+    def test_merge_requires_explicit_trigger_transition_and_rejects_collisions(self):
+        baseline, candidate = self.merged_contracts()
+        triggers = candidate["tk-combined"]["triggers"]
+        triggers["queries"][1]["should_trigger"] = False
+        self.assertTrue(any("changed expected routing" in e for e in compare_eval_contracts(baseline, candidate)))
+        triggers["migrations"][1]["previous_should_trigger"] = True
+        self.assertEqual(compare_eval_contracts(baseline, candidate), [])
+        triggers["migrations"][1]["to"] = "tk-first"
+        self.assertTrue(any("colliding" in e for e in compare_eval_contracts(baseline, candidate)))
+        triggers["migrations"][1]["to"] = "missing"
+        self.assertTrue(any("invalid" in e for e in compare_eval_contracts(baseline, candidate)))
+
+    def test_merge_relocates_only_fixture_paths(self):
+        baseline, candidate = self.merged_contracts()
+        baseline["tk-first"]["behavior"]["evals"][0]["assertions"] = [{"type": "path_text_contains", "path": "evals/skills/tk-first/fixtures/doc.md", "text": "keep"}]
+        case = candidate["tk-combined"]["behavior"]["evals"][0]
+        case["assertions"] = [{"type": "path_text_contains", "path": "evals/skills/tk-combined/fixtures/doc.md", "text": "keep"}]
+        self.assertEqual(compare_eval_contracts(baseline, candidate), [])
+        case["assertions"][0]["path"] = "evals/skills/tk-combined/fixtures/other.md"
+        self.assertTrue(compare_eval_contracts(baseline, candidate))
+
     def test_contract_migration_preserves_safety_and_mechanical_shape(self) -> None:
         baseline_case = self.behavior(
             "old",

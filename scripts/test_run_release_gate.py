@@ -201,6 +201,19 @@ class ReleaseGateContractTest(unittest.TestCase):
                 ),
                 [],
             )
+            reference = installed / "references/keep.txt"
+            reference.write_text("stale\n", encoding="utf-8")
+            self.assertTrue(any("differs at references/keep.txt" in error for error in
+                run_release_gate.consumer_install_errors(source_root, {"tk-example": installed})))
+            reference.unlink()
+            self.assertTrue(any("missing references/keep.txt" in error for error in
+                run_release_gate.consumer_install_errors(source_root, {"tk-example": installed})))
+            reference.write_text("keep\n", encoding="utf-8")
+            (source / "LICENSE.txt").write_text("notice\n", encoding="utf-8")
+            self.assertTrue(any("missing LICENSE.txt" in error for error in
+                run_release_gate.consumer_install_errors(source_root, {"tk-example": installed})))
+            (installed / "LICENSE.txt").write_text("notice\n", encoding="utf-8")
+            self.assertEqual(run_release_gate.consumer_install_errors(source_root, {"tk-example": installed}), [])
             (installed / "evals").mkdir()
             (installed / "evals/evals.json").write_text("{}\n", encoding="utf-8")
             errors = run_release_gate.consumer_install_errors(
