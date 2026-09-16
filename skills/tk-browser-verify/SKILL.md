@@ -11,6 +11,15 @@ metadata:
 
 # Browser Verification
 
+<!-- tigerkit:ui-evidence -->
+## UI Evidence
+
+Quote existing UI labels verbatim, preserving language, case, punctuation, and spacing. Navigation instructions require evidence for every menu/breadcrumb label and each connection in the path; a verified destination title or route does not prove its entry path. Identifiers, enums, i18n keys, domain terms, and ticket wording are not current UI evidence unless the current render path proves them. Keep proposed copy separate from existing labels. Report conflicting provenance instead of silently selecting a label or combining incompatible paths.
+
+For each claim, use target/environment/locale/role-matched runtime evidence, source connected to the render path, or a supplied capture with provenance. API text needs the actual response and its rendering/transformation binding; a schema proves only shape. If another repository, host shell, API, configuration, or permission controls a missing segment, state the known boundary and what remains unverified. Do not present a plausible path as guidance, even with an inference disclaimer.
+
+Within investigation authority, obtain missing evidence from accessible sources or attempt read-only browser inspection through the browser owner when the target and safe access are available. Do not stop at a repository miss or merely suggest browsing when an authorized inspection can proceed. If access or evidence is unavailable, mark the affected claim `Unverifiable`, explain the concrete limitation, and request the smallest missing input: a redacted menu API response with relevant label/hierarchy/route fields, owning source, or a screenshot showing the navigation. Never request credentials or an unredacted payload in chat. Preserve verified partial results and pending evidence in summaries, QA, and handoffs; propagation-only owners carry the request without opening a new investigation.
+
 <!-- tigerkit:approval-continuity -->
 ## Approval Continuity
 
@@ -80,6 +89,15 @@ Use parent-provided values when available:
 If the Ready Seed already owns this information, do not ask for the same decisions again.
 If required values are missing but can be safely determined from repository evidence, fill them in.
 Return only outcome-changing user-owned decisions to the parent owner.
+
+## Read-only UI evidence discovery
+
+An evidence-discovery request may identify a known target URL, environment, role, and the missing label/path as its
+question; the unknown label is not a prerequisite for this mode. Keep all provider, headless, authentication, readiness,
+and interaction boundaries. Inspect visible text and navigation connections without submitting business mutations.
+Return only observed literals and connections with provenance, plus unresolved segments. A successful locator match
+or accessible name alone does not prove visible wording; inspect the actual visible text. This discovery is not a
+Content comparison pass and never invents the parent's missing acceptance basis. Return evidence to the requesting owner.
 
 ## Execution
 

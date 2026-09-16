@@ -66,7 +66,7 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-github-image-upload-to-pr` | `user` | 기존 PR에 로컬 근거 이미지 올리기 |
 | `tk-prototype` | `hybrid` | 폐기 가능한 UI/로직 비교물 |
 | `tk-explain` | `hybrid` | 배경지식과 실제 구조·동작을 시각화하는 자체 완결형 HTML 설명 자료 |
-| `tk-browser-verify` | `hybrid` | 화면에 보이는 AC의 `headless` 실행 검증 |
+| `tk-browser-verify` | `hybrid` | 화면에 보이는 AC의 `headless` 실행 검증과 읽기 전용 라벨·진입 경로 조사 |
 | `tk-skill-diagnose` | `hybrid` | `Agent Skill` 사고 재현·격리와 `learn-ready` 인계 |
 | `tk-learn` | `hybrid` | 재사용 가능한 스킬의 생성/개선/병합 작성자 |
 | `tk-domain` | `hybrid` | 저장소 고유 용어의 `canonical vocabulary`와 `sparse durable decision/ADR context` 작성·정제 |
@@ -78,6 +78,11 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-wizard` | `hybrid` | 사람이 직접 해야 하는 설정·인증·이관 절차 안내 |
 
 `user`는 명시 호출 전용이고, `hybrid`는 해당 작업 의도가 명확할 때 자동 진입할 수 있습니다.
+
+UI 라벨과 진입 경로를 설명하는 스킬은 실제 표시 문자열과 경로의 각 연결을 근거로 확인합니다.
+`tk-ask-repo`는 저장소만으로 확인할 수 없으면 외부 결정 위치와 미확인 항목을 밝히고, 접근 가능한
+브라우저 근거를 조사하거나 메뉴명·계층·경로가 담긴 비밀정보를 제거한 API 응답 또는 화면을 요청합니다.
+확인하지 못한 경로는 요약·QA·인계에서도 실행 가능한 안내로 바꾸지 않습니다.
 
 `tk-audit`은 저장소·실행 근거로 동일한 인과 원인, 수정 경계, 실패 유형이 확인된 여러 증상을 하나의
 원인 `finding`으로 묶고 영향을 받은 표면을 연결합니다. 원인이나 되돌리기·위험·검증 경계가 독립적이면

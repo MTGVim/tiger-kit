@@ -12,6 +12,15 @@ metadata:
 
 # Respond to a single PR review
 
+<!-- tigerkit:ui-evidence -->
+## UI Evidence
+
+Quote existing UI labels verbatim, preserving language, case, punctuation, and spacing. Navigation instructions require evidence for every menu/breadcrumb label and each connection in the path; a verified destination title or route does not prove its entry path. Identifiers, enums, i18n keys, domain terms, and ticket wording are not current UI evidence unless the current render path proves them. Keep proposed copy separate from existing labels. Report conflicting provenance instead of silently selecting a label or combining incompatible paths.
+
+For each claim, use target/environment/locale/role-matched runtime evidence, source connected to the render path, or a supplied capture with provenance. API text needs the actual response and its rendering/transformation binding; a schema proves only shape. If another repository, host shell, API, configuration, or permission controls a missing segment, state the known boundary and what remains unverified. Do not present a plausible path as guidance, even with an inference disclaimer.
+
+Within investigation authority, obtain missing evidence from accessible sources or attempt read-only browser inspection through the browser owner when the target and safe access are available. Do not stop at a repository miss or merely suggest browsing when an authorized inspection can proceed. If access or evidence is unavailable, mark the affected claim `Unverifiable`, explain the concrete limitation, and request the smallest missing input: a redacted menu API response with relevant label/hierarchy/route fields, owning source, or a screenshot showing the navigation. Never request credentials or an unredacted payload in chat. Preserve verified partial results and pending evidence in summaries, QA, and handoffs; propagation-only owners carry the request without opening a new investigation.
+
 <!-- tigerkit:approval-continuity -->
 ## Approval Continuity
 
@@ -73,7 +82,7 @@ When review text explicitly requires a code change, `fixed` is the default. Recl
 
 A `follow-up` changes no code for that finding. Create a separate issue only when the approved current plan explicitly includes the exact repository and issue intent; otherwise record it as not ticketed. Never infer issue-creation approval from approval to reply or resolve.
 
-When review feedback concerns UI text, verify the currently rendered string through a component prop, i18n entry, option constant, or supplied screenshot, then reply verbatim. Do not repeat a ticket paraphrase or code identifier/enum as visible text. Leave an unsupported or conflicting string `Unverifiable` or request the needed confirmation.
+Apply UI Evidence to review replies as well as implementation claims; never repeat unsupported feedback wording as current UI text.
 
 Before interpreting feedback through repository behavior, requirements, ownership, impact, or domain meaning, lazy-load
 [domain context](references/domain-context.md) when repository-owned context exists. Read only the relevant mapped

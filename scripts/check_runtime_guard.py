@@ -47,6 +47,30 @@ Check the active user's authorization before asking. A concrete request or earli
 """
 
 
+UI_EVIDENCE_CONSUMERS = (
+    "tk-ask-repo",
+    "tk-prep",
+    "tk-wizard",
+    "tk-browser-verify",
+    "tk-pr-open",
+    "tk-pr-respond",
+    "tk-pr-sweep",
+    "tk-handoff",
+    "tk-review",
+    "tk-audit",
+)
+UI_EVIDENCE_MARKER = "<!-- tigerkit:ui-evidence -->"
+UI_EVIDENCE_BLOCK = """<!-- tigerkit:ui-evidence -->
+## UI Evidence
+
+Quote existing UI labels verbatim, preserving language, case, punctuation, and spacing. Navigation instructions require evidence for every menu/breadcrumb label and each connection in the path; a verified destination title or route does not prove its entry path. Identifiers, enums, i18n keys, domain terms, and ticket wording are not current UI evidence unless the current render path proves them. Keep proposed copy separate from existing labels. Report conflicting provenance instead of silently selecting a label or combining incompatible paths.
+
+For each claim, use target/environment/locale/role-matched runtime evidence, source connected to the render path, or a supplied capture with provenance. API text needs the actual response and its rendering/transformation binding; a schema proves only shape. If another repository, host shell, API, configuration, or permission controls a missing segment, state the known boundary and what remains unverified. Do not present a plausible path as guidance, even with an inference disclaimer.
+
+Within investigation authority, obtain missing evidence from accessible sources or attempt read-only browser inspection through the browser owner when the target and safe access are available. Do not stop at a repository miss or merely suggest browsing when an authorized inspection can proceed. If access or evidence is unavailable, mark the affected claim `Unverifiable`, explain the concrete limitation, and request the smallest missing input: a redacted menu API response with relevant label/hierarchy/route fields, owning source, or a screenshot showing the navigation. Never request credentials or an unredacted payload in chat. Preserve verified partial results and pending evidence in summaries, QA, and handoffs; propagation-only owners carry the request without opening a new investigation.
+"""
+
+
 def validate_runtime_guard(root: Path = ROOT) -> list[str]:
     errors: list[str] = []
     for name in RUNTIME_GUARD_CONSUMERS:
@@ -67,6 +91,12 @@ def validate_runtime_guard(root: Path = ROOT) -> list[str]:
         text = path.read_text(encoding="utf-8") if path.is_file() else ""
         if text.count(APPROVAL_GUARD_BLOCK) != 1 or text.count(APPROVAL_GUARD_MARKER) != 1:
             errors.append(f"skills/{name}/SKILL.md: approval continuity guard must match exactly once")
+
+    for name in UI_EVIDENCE_CONSUMERS:
+        path = root / "skills" / name / "SKILL.md"
+        text = path.read_text(encoding="utf-8") if path.is_file() else ""
+        if text.count(UI_EVIDENCE_BLOCK) != 1 or text.count(UI_EVIDENCE_MARKER) != 1:
+            errors.append(f"skills/{name}/SKILL.md: UI evidence guard must match exactly once")
 
     agents = root / "AGENTS.md"
     if agents.is_file() and RUNTIME_GUARD_MARKER in agents.read_text(encoding="utf-8"):

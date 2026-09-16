@@ -12,6 +12,15 @@ metadata:
 
 # User-Run Wizard
 
+<!-- tigerkit:ui-evidence -->
+## UI Evidence
+
+Quote existing UI labels verbatim, preserving language, case, punctuation, and spacing. Navigation instructions require evidence for every menu/breadcrumb label and each connection in the path; a verified destination title or route does not prove its entry path. Identifiers, enums, i18n keys, domain terms, and ticket wording are not current UI evidence unless the current render path proves them. Keep proposed copy separate from existing labels. Report conflicting provenance instead of silently selecting a label or combining incompatible paths.
+
+For each claim, use target/environment/locale/role-matched runtime evidence, source connected to the render path, or a supplied capture with provenance. API text needs the actual response and its rendering/transformation binding; a schema proves only shape. If another repository, host shell, API, configuration, or permission controls a missing segment, state the known boundary and what remains unverified. Do not present a plausible path as guidance, even with an inference disclaimer.
+
+Within investigation authority, obtain missing evidence from accessible sources or attempt read-only browser inspection through the browser owner when the target and safe access are available. Do not stop at a repository miss or merely suggest browsing when an authorized inspection can proceed. If access or evidence is unavailable, mark the affected claim `Unverifiable`, explain the concrete limitation, and request the smallest missing input: a redacted menu API response with relevant label/hierarchy/route fields, owning source, or a screenshot showing the navigation. Never request credentials or an unredacted payload in chat. Preserve verified partial results and pending evidence in summaries, QA, and handoffs; propagation-only owners carry the request without opening a new investigation.
+
 Guide `host-session` procedures that users must perform themselves. Internally, strictly track steps, value
 sources/destinations, secrecy, and safety boundaries, but do not dump them to the user
 like an approval document.
@@ -68,10 +77,7 @@ When the journey depends on a version-sensitive external API, OAuth/SSO provider
 evidence cannot establish, read [external contract evidence](references/external-contracts.md). Installed/local contract
 evidence stays authoritative over generic latest documentation.
 
-Verified UI controls are literals, not prose to translate. Keep the exact language, case, punctuation, and spacing
-of a button, tab, menu, field, or modal title in every user instruction. An `enum`, code identifier, i18n key, route,
-or domain term is not a label unless the current render path proves that it is displayed as-is. If the rendered text
-is not verified, keep the code literal separate and mark the UI wording `Unverifiable`.
+Apply UI Evidence to every user instruction, including provider-dashboard navigation.
 
 For example, tell the user:
 

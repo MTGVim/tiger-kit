@@ -1,17 +1,24 @@
 # UI Text Evidence
 
-Read this reference only when the task names or changes a user-visible label, title, tab, option, button, modal, or
-instruction.
+Read this when a task names or changes a user-visible label or navigation path. Apply the entrypoint UI Evidence guard.
 
-Record the exact rendered string in quotes, preserving language, case, punctuation, and spacing. Use the first applicable
-evidence:
+Distinguish the current verified string from proposed replacement copy. Record the source and target environment,
+locale, and role when they affect visibility. Trace source literals through the actual render path and transformations;
+a translation entry or API response alone does not prove the final displayed value or menu hierarchy.
 
-1. current runtime-rendered text for the target environment and locale;
-2. a component prop, i18n entry, or option source connected to the render path;
-3. a supplied screenshot or reference with provenance;
-4. ticket or specification wording;
-5. identifier, enum, route, domain term, or i18n key inference, which is not label evidence.
+When no visible label exists, use a verified structural description or verified path ending in an exact title.
+A destination title alone never verifies the preceding steps. Leave unknown segments unverified and obtain the
+missing source, redacted response, or scoped browser evidence before treating the route as executable QA guidance.
+Ticket/spec text establishes requested behavior, not proof of existing UI. Preserve conflicting provenance and resolve
+material conflicts in preparation instead of silently choosing a source.
 
-Dynamic or server text that source cannot determine remains unverified. If no visible label exists, record the entry path
-ending in an exact visible title. A value such as `BOTTOM` is valid only when the current render path displays it as-is.
-Preserve verified literals exactly. Conflicting downstream evidence returns to preparation instead of guessing.
+## Distillation basis
+
+Reviewed `microsoft/playwright` at `18205280b6112a4a08238195942c4fa30c199a62`:
+[locator guidance](https://github.com/microsoft/playwright/blob/18205280b6112a4a08238195942c4fa30c199a62/docs/src/locators.md),
+[implementation](https://github.com/microsoft/playwright/blob/18205280b6112a4a08238195942c4fa30c199a62/packages/playwright-core/src/client/locator.ts), and
+[text selector tests](https://github.com/microsoft/playwright/blob/18205280b6112a4a08238195942c4fa30c199a62/tests/page/selectors-text.spec.ts).
+Keep current DOM evidence and element-scoped lookup. Adapt the distinction between locator matching and actual text:
+exact text locators still normalize whitespace, so a match alone cannot establish a verbatim quote. Omit framework
+installation and runtime ownership changes. The TigerKit-specific correction is per-segment navigation evidence,
+explicit external boundaries, and concrete evidence requests when source cannot establish the rendered UI.

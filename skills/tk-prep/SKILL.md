@@ -12,6 +12,15 @@ metadata:
 
 # Adaptive Task Preparation
 
+<!-- tigerkit:ui-evidence -->
+## UI Evidence
+
+Quote existing UI labels verbatim, preserving language, case, punctuation, and spacing. Navigation instructions require evidence for every menu/breadcrumb label and each connection in the path; a verified destination title or route does not prove its entry path. Identifiers, enums, i18n keys, domain terms, and ticket wording are not current UI evidence unless the current render path proves them. Keep proposed copy separate from existing labels. Report conflicting provenance instead of silently selecting a label or combining incompatible paths.
+
+For each claim, use target/environment/locale/role-matched runtime evidence, source connected to the render path, or a supplied capture with provenance. API text needs the actual response and its rendering/transformation binding; a schema proves only shape. If another repository, host shell, API, configuration, or permission controls a missing segment, state the known boundary and what remains unverified. Do not present a plausible path as guidance, even with an inference disclaimer.
+
+Within investigation authority, obtain missing evidence from accessible sources or attempt read-only browser inspection through the browser owner when the target and safe access are available. Do not stop at a repository miss or merely suggest browsing when an authorized inspection can proceed. If access or evidence is unavailable, mark the affected claim `Unverifiable`, explain the concrete limitation, and request the smallest missing input: a redacted menu API response with relevant label/hierarchy/route fields, owning source, or a screenshot showing the navigation. Never request credentials or an unredacted payload in chat. Preserve verified partial results and pending evidence in summaries, QA, and handoffs; propagation-only owners carry the request without opening a new investigation.
+
 <!-- tigerkit:approval-continuity -->
 ## Approval Continuity
 
@@ -70,7 +79,7 @@ already complete, continue the ordinary preparation flow without frontier ceremo
 
 If the approved outcome may include local implementation, read [local execution](references/local-execution.md) before
 the final checkpoint. It owns checkout isolation, unrelated-work protection, direct execution, review, and local commit.
-If user-visible text is in scope, read [UI text evidence](references/ui-text.md) before accepting or restating a label.
+If user-visible text or navigation is in scope, read [UI text evidence](references/ui-text.md) before accepting or restating a label or path.
 If implementation adds or changes a factual code comment/JSDoc claim or models an
 external response contract, read [committed assertion evidence](references/artifact-claims.md)
 before approval and apply it again to the final candidate.

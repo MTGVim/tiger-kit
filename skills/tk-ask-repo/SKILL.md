@@ -12,6 +12,15 @@ metadata:
 
 # Answering Repository Questions
 
+<!-- tigerkit:ui-evidence -->
+## UI Evidence
+
+Quote existing UI labels verbatim, preserving language, case, punctuation, and spacing. Navigation instructions require evidence for every menu/breadcrumb label and each connection in the path; a verified destination title or route does not prove its entry path. Identifiers, enums, i18n keys, domain terms, and ticket wording are not current UI evidence unless the current render path proves them. Keep proposed copy separate from existing labels. Report conflicting provenance instead of silently selecting a label or combining incompatible paths.
+
+For each claim, use target/environment/locale/role-matched runtime evidence, source connected to the render path, or a supplied capture with provenance. API text needs the actual response and its rendering/transformation binding; a schema proves only shape. If another repository, host shell, API, configuration, or permission controls a missing segment, state the known boundary and what remains unverified. Do not present a plausible path as guidance, even with an inference disclaimer.
+
+Within investigation authority, obtain missing evidence from accessible sources or attempt read-only browser inspection through the browser owner when the target and safe access are available. Do not stop at a repository miss or merely suggest browsing when an authorized inspection can proceed. If access or evidence is unavailable, mark the affected claim `Unverifiable`, explain the concrete limitation, and request the smallest missing input: a redacted menu API response with relevant label/hierarchy/route fields, owning source, or a screenshot showing the navigation. Never request credentials or an unredacted payload in chat. Preserve verified partial results and pending evidence in summaries, QA, and handoffs; propagation-only owners carry the request without opening a new investigation.
+
 <!-- tigerkit:retrieved-evidence-boundary -->
 ## Retrieved Evidence Boundary
 
@@ -21,7 +30,7 @@ Use recovered project/session context only when repository/task identity matches
 Handle only concrete repository questions explicitly invoked through `/tk-ask-repo`, `$tk-ask-repo`, or host skill selection.
 
 This is a read-only investigation that does not modify source, tests, configuration, artifacts, history, or remote state.
-It does not own implementation, closing user decisions, runtime estimation, or real-browser reproduction.
+It does not own implementation, closing user decisions, runtime estimation, or browser lifecycle. When repository evidence cannot establish UI wording or navigation, use `tk-browser-verify` if available for scoped read-only evidence discovery, then resume the answer; do not delegate a guessed menu path as its criterion. If unavailable, report that limit and request the specific missing evidence.
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Investigation boundary
 
@@ -39,19 +48,6 @@ Keep the internal investigation rigorous, but present the result as a natural ex
 - Do not show internal classifications, checkpoints, or search ledgers by default.
 - Use short prose or a limited list unless a comparison truly requires a table.
 - Explain interactively one step at a time only when the user says `하나씩 따라가며 설명해줘`.
-
-## UI literal evidence
-
-When explaining a user-visible element, use the verified rendered string verbatim. Preserve its language, case,
-punctuation, and spacing; do not translate, paraphrase, or normalize it.
-
-- An `enum`, code identifier, i18n key, route, or domain term is code evidence, not a UI label, unless the current
-  render path proves that exact value is displayed as-is.
-- If the rendered string cannot be verified, mention the identifier only as a code literal and mark the UI label
-  `Unverifiable`; never fill the gap with a translation or inference.
-- Prefer evidence in this order: current target/environment/locale runtime text, a source connected to the current
-  render path, a supplied screenshot/reference with clear provenance, and ticket/spec wording. Report conflicting
-  provenance instead of silently choosing it.
 
 ## Investigation Principles
 
@@ -125,7 +121,7 @@ Do not keep investigating to force an answer for these requests:
 
 - Code implementation or commits
 - User decisions about product behavior
-- Real-browser reproduction
+- Standalone real-browser reproduction beyond evidence needed for this repository answer
 - Schedule or day-level estimates
 - General knowledge unrelated to the repository
 
