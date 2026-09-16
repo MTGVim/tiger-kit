@@ -31,6 +31,13 @@ Use [Skill quality](references/skill-quality.md) to verify provenance, distill b
 failure modes, and record each applicable disposition with the literal `keep | adapt | omit`
 label; never copy an upstream framework wholesale.
 
+A verified `learn-ready` from `tk-skill-diagnose` may enter candidate processing when the active user request
+already includes a semantic fix for the same target and scope. A bare request to write to a skill path without
+a reusable objective does not establish learning intent. Reuse that authorization at its actual extent;
+do not require a new invocation merely because diagnosis finished. A diagnosis-only handoff, generic skill
+discussion, one-off tip, or ordinary implementation does not activate this route. Recheck material target,
+scope, and evidence drift and every apply gate before canonical writes; the handoff itself is not authority.
+
 Draft and apply are separate.
 
 - `draft gate`: Distinguish verified evidence from unverified user claims and design a

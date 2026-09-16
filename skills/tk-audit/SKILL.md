@@ -2,7 +2,7 @@
 name: tk-audit
 description: "[user] 저장소를 읽기 전용으로 감사하고, 다른 실행자나 `tk-prep`이 재사용할 수 있는 우선순위가 있는 근거 기반 `AUD-*` `finding`을 작성합니다."
 license: MIT
-argument-hint: "[quick|standard|deep] [security|perf|tests|architecture|branch|next]"
+argument-hint: "[quick|standard|deep] [security|perf|tests|architecture|policy|branch|next]"
 disable-model-invocation: true
 metadata:
   tigerkit:
@@ -38,6 +38,7 @@ When durable findings are needed, the only owned artifact is repository-local `.
 - `bare`: Audit all categories at standard depth.
 - `quick | standard | deep`: Change the depth and bounded coverage.
 - `security | perf | tests | architecture`: Focus on one category.
+- `policy`: Focus on business-policy complexity using [policy-refactoring.md](references/policy-refactoring.md).
 - `branch`: Inspect merge-base changes and direct consumers, and mark `introduced | pre-existing`.
 - `next`: Separate evidence-backed direction candidates from defect findings.
 - `save`: Persist the current findings for handoff or later reuse.
@@ -52,6 +53,8 @@ When user-owned clarification is needed, prefer the host's native structured que
    [domain context](references/domain-context.md) when repository-owned context exists. Read only the relevant mapped
    context and surface conflicts with fresher code or runtime evidence instead of silently choosing.
 2. Check the selected categories using [audit-playbook.md](references/audit-playbook.md).
+   Read [policy-refactoring.md](references/policy-refactoring.md) only for explicit `policy` scope or when a
+   concrete complex business-policy branch is an actual audit candidate; generic architecture audits do not load it.
    Also check empty catches or ignored exceptions, errors converted into unsupported empty/default success, lost error
    context, partial mutation reported as success, and missing required propagation/rollback. Do not flag an intentional
    fallback whose observable contract, telemetry, or caller handling makes it explicit and safe.

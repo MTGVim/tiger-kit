@@ -1,0 +1,162 @@
+{
+  "skill": "tk-research",
+  "kind": "hybrid",
+  "queries": [
+    {
+      "id": "train-external",
+      "split": "train",
+      "query": "메시지 중복 방지를 다른 서비스들이 어떻게 해결하는지 공식 사례부터 조사해줘.",
+      "should_trigger": true
+    },
+    {
+      "id": "train-implementation",
+      "split": "train",
+      "query": "메시지 중복 제거 기능을 구현해줘.",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-positive-1",
+      "split": "validation",
+      "query": "`API` `abuse` `detection`을 업계에서는 어떻게 탐지하는지 사례와 접근법을 조사해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-2",
+      "split": "validation",
+      "query": "내 `threshold` 방식 말고 통계적·운영적으로 어떤 해법들이 있는지 `prior` `art`부터 봐줘.",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-3",
+      "split": "validation",
+      "query": "이 문제를 다른 회사들이 어떻게 풀었는지 `OSS`·논문·공식 자료로 비교해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-positive-4",
+      "split": "validation",
+      "query": "`$tk-research` 작업 큐 접근법 비교",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-positive-5",
+      "split": "validation",
+      "query": "외부 문헌과 알려진 해법을 조사해서 현재 데이터 조건에서 최소 충분한 탐지 방식 골라줘.",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-positive-6",
+      "split": "validation",
+      "query": "업계 사례 조사좀. 지금 아이디어 외에 다른 문제 정의도 알아봐줘.",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-positive-7",
+      "split": "validation",
+      "query": "/`tk-research` 캐시 무효화 접근 방식들의 한계와 실패 사례를 비교해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-positive-8",
+      "split": "validation",
+      "query": "분산 `rate` `limiting` `prior` `art` 조샤해서 구현 전에 장단점 알려줘.",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-negative-1",
+      "split": "validation",
+      "query": "이 값이 저장소 어디서 만들어지는지 찾아줘.",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-2",
+      "split": "validation",
+      "query": "`$tk-audit` 저장소의 성능 문제를 감사해줘.",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-3",
+      "split": "validation",
+      "query": "`$tk-grill` 이 아이디어에서 빠진 점을 질문으로 확인해줘.",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-negative-4",
+      "split": "validation",
+      "query": "이 기능 구현해줘.",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-negative-5",
+      "split": "validation",
+      "query": "평균과 중앙값은 뭐가 달라?",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-6",
+      "split": "validation",
+      "query": "이 프로젝트의 설정 파일만 보고 실행 방법을 설명해 주세요.",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-7",
+      "split": "validation",
+      "query": "이 `React` `bug` 고쳐줘.",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-8",
+      "split": "validation",
+      "query": "외부 조사는 필요 없고 버튼 색상만 바꿔줘.",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    }
+  ]
+}

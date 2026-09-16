@@ -64,6 +64,17 @@
     {"id":"rewrite-humanizer-vs-plain","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"이 문서의 배경과 설명 순서를 정리해서 처음 읽는 독자도 이해하도록 고쳐줘.","focus_skill":"tk-rewrite","expected_selected_skill":"tk-rewrite","critical":true},
     {"id":"rewrite-plain-vs-humanizer","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"이 한국어 초안은 내용과 순서가 충분해. 번역투와 과장만 줄여줘.","focus_skill":"tk-rewrite","expected_selected_skill":"tk-rewrite","critical":true},
     {"id":"rewrite-plain-skill-maintenance","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"타이거킷의 tk-rewrite 스킬 구현을 고쳐줘.","focus_skill":"tk-rewrite","expected_selected_skill":null,"critical":true},
-    {"id":"rewrite-humanizer-skill-maintenance","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"타이거킷의 tk-rewrite 스킬을 수정해줘.","focus_skill":"tk-rewrite","expected_selected_skill":null,"critical":true}
+    {"id":"rewrite-humanizer-skill-maintenance","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"타이거킷의 tk-rewrite 스킬을 수정해줘.","focus_skill":"tk-rewrite","expected_selected_skill":null,"critical":true},
+    {"id":"research-external-prior-art","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"`API` `abuse` `detection`을 업계에서는 어떻게 탐지하는지 사례와 접근법을 조사해 주세요.","focus_skill":"tk-research","expected_selected_skill":"tk-research","critical":true},
+    {"id":"research-threshold-alternatives","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"내 `threshold` 방식 말고 통계적·운영적으로 어떤 해법들이 있는지 `prior` `art`부터 봐줘.","focus_skill":"tk-research","expected_selected_skill":"tk-research","critical":true},
+    {"id":"research-vs-ask-repo","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"`$tk-ask-repo` 이 값이 어디서 만들어지는지 찾아줘.","focus_skill":"tk-research","expected_selected_skill":"tk-ask-repo","critical":true},
+    {"id":"research-vs-audit","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"`$tk-audit` 저장소의 성능 문제를 감사해줘.","focus_skill":"tk-research","expected_selected_skill":"tk-audit","critical":true},
+    {"id":"research-vs-grill","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"`$tk-grill` 이 아이디어에서 빠진 점을 질문으로 확인해줘.","focus_skill":"tk-research","expected_selected_skill":"tk-grill","critical":true},
+    {"id":"research-vs-prep","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"`$tk-prep` 이 기능을 구현해줘.","focus_skill":"tk-research","expected_selected_skill":"tk-prep","critical":true},
+    {"id":"research-generic-fact","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"평균과 중앙값은 뭐가 달라?","focus_skill":"tk-research","expected_selected_skill":null,"critical":true},
+    {"id":"audit-policy-explicit","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"`$tk-audit` `policy` 정책 분기의 최소 충분한 구조를 검토해줘.","focus_skill":"tk-audit","expected_selected_skill":"tk-audit","critical":true},
+    {"id":"learn-approved-diagnose-handoff","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"원인 확인 후 고쳐 달라고 승인한 동일 스킬의 `verified` `learn-ready`가 준비됐습니다. `semantic` `fix`를 계속해 주세요.","focus_skill":"tk-learn","expected_selected_skill":"tk-learn","critical":true},
+    {"id":"learn-diagnosis-only-handoff","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"진단만 요청한 스킬의 `learn-ready`를 받았습니다. 수정하지 말고 종료해 주세요.","focus_skill":"tk-learn","expected_selected_skill":null,"critical":true},
+    {"id":"learn-generic-skill-mention","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"`skill`이 뭔지 간단히 설명해줘.","focus_skill":"tk-learn","expected_selected_skill":null,"critical":true}
   ]
 }

@@ -55,10 +55,10 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | --- | --- | --- |
 | `tk-prep` | `user` | 적응형 준비 + 승인된 직접/Ready `Seed`/SDD/인계 로컬 실행 |
 | `tk-grill` | `user` | 아이디어·계획·결정의 빠짐없는 점검과 확인된 `shared understanding` |
-| `tk-audit` | `user` | 읽기 전용 저장소 감사와 `AUD-*` 발견 사항 |
+| `tk-audit` | `user` | 읽기 전용 저장소 감사와 `AUD-*` 발견 사항, `policy`로 비즈니스 정책 구조 검토 |
+| `tk-research` | `hybrid` | 외부 사례·접근법을 깊이 비교하고 최소 충분한 해결 방식 제안 |
 | `tk-ask-repo` | `user` | 저장소 동작·값·영향·귀속을 근거와 함께 설명 |
 | `tk-review` | `user` | 정확한 커밋 범위/`PR`/`current worktree`의 읽기 전용 `Spec/AC` + `Quality/Standards` 검토 |
-| `tk-refactor-policy` | `user` | 복잡한 비즈니스 정책 분기의 최소 충분한 선언형 구조 개선안 |
 | `tk-pr-open` | `hybrid` | 검증된 `commit`의 `single | stacked` 발행 계획 + 제한된 `push`/PR 생성·갱신 |
 | `tk-pr-respond` | `hybrid` | 한 PR의 리뷰/지원 CI 분석·수정·검증·`reply`/`resolve` |
 | `tk-pr-rebase` | `hybrid` | 정확한 PR의 최신 `base` `rebase`와 제한된 `force-with-lease` |
@@ -67,7 +67,7 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-prototype` | `hybrid` | 폐기 가능한 UI/로직 비교물 |
 | `tk-explain` | `hybrid` | 배경지식과 실제 구조·동작을 시각화하는 자체 완결형 HTML 설명 자료 |
 | `tk-browser-verify` | `hybrid` | 화면에 보이는 AC의 `headless` 실행 검증과 읽기 전용 라벨·진입 경로 조사 |
-| `tk-skill-diagnose` | `hybrid` | `Agent Skill` 사고 재현·격리와 `learn-ready` 인계 |
+| `tk-skill-diagnose` | `hybrid` | `Agent Skill` 사고 재현·격리와 `learn-ready` 인계, 승인된 수정은 `tk-learn`으로 연속 진행 |
 | `tk-learn` | `hybrid` | 재사용 가능한 스킬의 생성/개선/병합 작성자 |
 | `tk-domain` | `hybrid` | 저장소 고유 용어의 `canonical vocabulary`와 `sparse durable decision/ADR context` 작성·정제 |
 | `tk-grooming` | `hybrid` | 기존 스킬·지속 `rule`·`auto memory`의 중복·충돌·낡은 지침 감사 |

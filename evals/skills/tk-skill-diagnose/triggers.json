@@ -21,6 +21,7 @@
     {"id":"validation-negative-short","split":"validation","query":"skill 최적화","should_trigger":false,"facets":["short"]},
     {"id":"validation-negative-compound","split":"validation","query":"관찰된 incident 없이 모든 skill prompt를 줄이고 점수를 높이도록 catalog 전체를 최적화해줘","should_trigger":false,"facets":["compound"]},
     {"id":"validation-negative-prep","split":"validation","query":"이 버그 구현용 Seed를 준비해줘","should_trigger":false,"facets":["formal","short"]},
-    {"id":"validation-negative-explain","split":"validation","query":"이 저장소 skill이 무슨 기능인지 source 근거로 설명해줘","should_trigger":false,"facets":["casual","ko-en"]}
+    {"id":"validation-negative-explain","split":"validation","query":"이 저장소 skill이 무슨 기능인지 source 근거로 설명해줘","should_trigger":false,"facets":["casual","ko-en"]},
+    {"id":"validation-diagnose-and-fix","split":"validation","query":"`skills/tk-example`이 잘못 종료한 `prompt`와 `trace`가 있습니다. 원인을 진단한 뒤 스킬을 고쳐 주세요.","should_trigger":true}
   ]
 }

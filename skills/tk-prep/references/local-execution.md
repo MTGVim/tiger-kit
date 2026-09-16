@@ -65,7 +65,9 @@ serial passes in one context do not satisfy it. Read [TypeScript](typescript.md)
 [React](react.md), and [security](security.md) only when the review scope meets those references' conditions. These lenses
 change review judgment, not the target, commit, remediation, or authority protocol.
 
-Handle verified `Critical | Important` findings for at most five remediation rounds. Recheck the original open findings
+Handle verified `Critical | Important` findings for at most five remediation rounds. Before requiring a fix diff,
+apply the [evidence-only response](review-protocol.md#evidence-only-response-to-a-reported-finding) branch when the reviewed
+target is unchanged and concrete counter-evidence exists; only the fresh verifier may disprove that finding. Recheck the original open findings
 and exact fix diff rather than rerunning broad discovery after every edit, and admit only new qualifying breakage caused
 by that fix. Stop with the exact unresolved result after round five; do not continue until a stochastic review happens to
 return no findings.

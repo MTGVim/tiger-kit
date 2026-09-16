@@ -1,25 +1,4 @@
----
-name: tk-refactor-policy
-description: "[user] 저장소의 복잡한 boolean 비즈니스 규칙과 조건 분기를 읽기 전용으로 찾아, 현재 유지부터 predicate·Specification·Decision Table·Rules Engine까지 최소 충분한 구조 개선안을 제안합니다. 일반 코드 리뷰나 자동 리팩터링에는 사용하지 않습니다."
-disable-model-invocation: true
-argument-hint: "<repository scope | path | module | business rule>"
-metadata:
-  tigerkit:
-    kind: user-invoked
-    origin: tigerkit
-    relationship: native
----
-
-# Business Policy Refactoring
-
-Start only through an explicit `/tk-refactor-policy`, `$tk-refactor-policy`, or host skill
-selection. Never invoke automatically from `tk-review`, `tk-prep`, `tk-audit`, a generic
-refactoring request, or the mere presence of complex conditionals.
-
-This skill is read-only. Inspect the requested repository scope and propose refactoring
-candidates, but do not edit source, tests, configuration, Git state, issues, PRs, ledgers,
-or durable artifacts. Do not dispatch another skill. If the user later wants an accepted
-candidate implemented, `tk-prep` may own that separate execution request.
+# Business policy lens
 
 ## Target
 
@@ -92,23 +71,11 @@ maintenance property without creating a larger abstraction tax. Check whether it
 
 No candidate is a valid result. Do not produce a refactoring quota.
 
-## Output
+## Audit integration
 
-Lead with the recommendation, not the procedure. For each worthwhile candidate, report:
-
-```text
-<path:line> · <business policy>
-Current: <why the current shape is costly or error-prone>
-Recommendation: <keep | named predicates | predicate combinator | specification | decision table | rules engine/policy-as-code>
-Why: <material benefit and why a simpler option is insufficient>
-Verification: <existing invariant/tests or characterization tests needed before implementation>
-```
-
-Add `Caution:` only when explainability, ordering, side effects, policy ownership, or another
-constraint could make the obvious declarative rewrite unsafe. Keep low-value style cleanup
-out of the result.
-
-Close with whether a repository-wide abstraction is justified or whether each candidate
-should remain local. If implementation is requested in the same prompt, state that this
-skill has completed the read-only policy analysis and present the accepted candidate as an
-optional input to a separately selected implementation owner; do not mutate or auto-route.
+Use the owning audit's `AUD-*` finding contract, including evidence, impact, effort, fix risk, confidence,
+verification baseline and next route. Put the chosen minimal structure and why simpler options are insufficient
+in the fix sketch. Include explainability, evaluation order, side effects and characterization tests when relevant.
+A sound policy with no material maintenance problem yields no finding, not a style or abstraction quota.
+Keep recommendations local unless multiple policies justify a repository-wide abstraction. This lens grants no
+implementation or automatic dispatch authority and creates no separate report, ID system or durable lifecycle.

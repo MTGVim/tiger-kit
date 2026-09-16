@@ -118,7 +118,8 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 
 - `tk-prep`: 준비, 최종 승인, 승인된 격리 로컬 구현/검증/`commit`. `push`/발행 금지.
 - `tk-ask-repo`: `read-only` `repository` `investigation`.
-- `tk-audit`: `read-only` AUD `finding`.
+- `tk-audit`: `read-only` AUD `finding`, 조건부 `policy` 구조 분석.
+- `tk-research`: 외부 `prior art`와 접근법 비교, `read-only` 조사 및 추천.
 - `tk-review`: 명시된 `exact committed range/PR/current worktree` 하나의 `read-only` `Spec/AC` + `Quality/Standards` 판정.
 - `tk-browser-verify`: `browser-visible` `runtime` `evidence`와 `dev-server` `lifecycle`.
 - `tk-pr-open`: `exact` `single-PR` `create`/`update` 또는 승인된 `retrospective stacked-PR publication`.

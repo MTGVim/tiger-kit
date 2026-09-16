@@ -330,7 +330,26 @@
     "tk-pr-sweep:behavior:pr-sweep-keeps-unverified-navigation-boundary",
     "tk-handoff:behavior:handoff-keeps-unverified-navigation-boundary",
     "tk-review:behavior:review-keeps-unverified-navigation-boundary",
-    "tk-audit:behavior:audit-keeps-unverified-navigation-boundary"
+    "tk-audit:behavior:audit-keeps-unverified-navigation-boundary",
+    "tk-research:behavior:research-reframes-before-ranking",
+    "tk-research:behavior:research-simple-approach-can-win",
+    "tk-research:behavior:research-unavailable-evidence-stays-unknown",
+    "tk-research:behavior:research-counterevidence-and-injection",
+    "tk-audit:behavior:policy-reference-is-conditional",
+    "tk-audit:behavior:policy-preserves-order-effects-and-reasons",
+    "tk-prep:behavior:remediation-evidence-only-disproved",
+    "tk-prep:behavior:remediation-insufficient-rebuttal",
+    "tk-prep:behavior:remediation-uncommitted-change-is-not-evidence-only",
+    "tk-prep:behavior:remediation-rejected-or-unverifiable-rebuttal",
+    "tk-pr-respond:behavior:remediation-evidence-only-disproved",
+    "tk-pr-respond:behavior:remediation-insufficient-rebuttal",
+    "tk-pr-respond:behavior:remediation-uncommitted-change-is-not-evidence-only",
+    "tk-pr-respond:behavior:remediation-rejected-or-unverifiable-rebuttal",
+    "tk-skill-diagnose:behavior:diagnose-approved-fix-continues",
+    "tk-skill-diagnose:behavior:diagnose-only-stops",
+    "tk-skill-diagnose:behavior:diagnose-target-drift-stops",
+    "tk-learn:behavior:learn-verified-approved-handoff-continues",
+    "tk-learn:behavior:learn-handoff-without-apply-authority"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",
@@ -365,6 +384,17 @@
     "catalog:behavior:rewrite-humanizer-vs-plain",
     "catalog:behavior:rewrite-plain-vs-humanizer",
     "catalog:behavior:rewrite-plain-skill-maintenance",
-    "catalog:behavior:rewrite-humanizer-skill-maintenance"
+    "catalog:behavior:rewrite-humanizer-skill-maintenance",
+    "catalog:behavior:research-external-prior-art",
+    "catalog:behavior:research-threshold-alternatives",
+    "catalog:behavior:research-vs-ask-repo",
+    "catalog:behavior:research-vs-audit",
+    "catalog:behavior:research-vs-grill",
+    "catalog:behavior:research-vs-prep",
+    "catalog:behavior:research-generic-fact",
+    "catalog:behavior:audit-policy-explicit",
+    "catalog:behavior:learn-approved-diagnose-handoff",
+    "catalog:behavior:learn-diagnosis-only-handoff",
+    "catalog:behavior:learn-generic-skill-mention"
   ]
 }

@@ -73,3 +73,26 @@ rejection reason.
 Report verified candidates. When verification can neither confirm nor contradict a material
 candidate, retain the exact uncertainty under `Unresolved`; do not lower severity to encode
 confidence.
+
+## Evidence-only response to a reported finding
+
+During bounded remediation, the controller may send concrete direct counter-evidence for one existing finding
+back through the fresh-verifier boundary above. First verify that `HEAD` still equals the reviewed revision
+and that the reviewed working-tree/index content has not changed; an uncommitted fix is still a code change.
+Bind the original finding, reviewed target, and cited current guard, invariant, source contract, runtime witness,
+or focused test output. Preference or an unsupported denial does not qualify.
+
+Keep the finding open while the fresh verifier independently checks only that finding and its new evidence,
+including reachable callers or contracts needed to decide it. The implementer and controller cannot self-dismiss.
+If accepted, close only the disproved finding as `DISPROVED`, with the verifier's contradictory evidence; keep
+unrelated findings unchanged. Rejected or unverifiable rebuttals return to normal remediation with the exact
+reason or uncertainty. Missing independent verification leaves the finding open, never implicitly accepted.
+
+This branch needs no empty fix commit, empty `FIX_BASE..HEAD` package, or protection-test rerun solely for
+ceremony. A focused check may resolve a concrete remaining doubt. Any actual code change, including an
+uncommitted one, follows normal protection tests and scoped fix review. Do not restart broad discovery.
+Use this branch at most once per finding at that reviewed revision, count it within the existing five-round
+remediation cap, and retain the existing stop after the cap. Keep pending identity/verdict in transient controller
+state. Only if optional recovery is already active and interruption requires persistence, retain the minimum
+finding reference, reviewed revision, pending verifier identity and consumed attempt in that existing state;
+reconcile before redispatch. Add no new finding-ID scheme, ledger, artifact, or reviewer lifecycle.

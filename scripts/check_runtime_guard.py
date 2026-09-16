@@ -15,6 +15,7 @@ RUNTIME_GUARD_CONSUMERS = (
     "tk-pr-sweep",
     "tk-review",
     "tk-skill-diagnose",
+    "tk-research",
 )
 RUNTIME_GUARD_MARKER = "<!-- tigerkit:retrieved-evidence-boundary -->"
 RUNTIME_GUARD_BLOCK = """<!-- tigerkit:retrieved-evidence-boundary -->
@@ -34,6 +35,7 @@ APPROVAL_GUARD_CONSUMERS = (
     "tk-pr-rebase",
     "tk-merge-conflict",
     "tk-learn",
+    "tk-skill-diagnose",
     "tk-domain",
     "tk-grooming",
     "tk-handoff",

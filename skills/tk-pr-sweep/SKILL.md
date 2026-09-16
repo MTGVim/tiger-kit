@@ -69,7 +69,10 @@ If the configuration does not exist, bootstrap it only in execution mode when th
 
 ## Deterministic triage
 
-Use `skills/tk-pr-sweep/scripts/triage.mjs` as the canonical fresh inventory. Report-only runs use `--no-bootstrap`.
+Run `node skills/tk-pr-sweep/scripts/triage.mjs` for the canonical fresh inventory; report-only runs use
+`node skills/tk-pr-sweep/scripts/triage.mjs --no-bootstrap`. Resolve the helper from the installed skill package
+when outside this source checkout and preserve the existing arguments. Always invoke through `node`: installers
+may discard executable bits, and this helper requires no executable permission or `chmod` repair.
 
 At minimum, inspect:
 

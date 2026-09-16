@@ -253,7 +253,8 @@ Handle `Critical`/`Important` findings or confirmed real gaps for at most five r
 
 - Rounds 1–3: resume the same implementer.
 - Rounds 4–5: use a fresh implementer with stronger available semantic capability.
-- Every round: record `FIX_BASE = git rev-parse HEAD`, provide open findings, rerun
+- Evidence-only responses at an unchanged reviewed target follow the [review protocol](review-protocol.md#evidence-only-response-to-a-reported-finding). Accepted counter-evidence closes only that finding as `DISPROVED`; it does not manufacture a fix round.
+- Every code-change round: record `FIX_BASE = git rev-parse HEAD`, provide open findings, rerun
   protection tests for remediation code, update the return/report, and provide the exact
   `FIX_BASE..HEAD` evidence directly or through file transport only when required.
 - Scoped re-review: read the original open findings, remediation diff, and only unchanged

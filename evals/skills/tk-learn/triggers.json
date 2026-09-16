@@ -166,6 +166,30 @@
       "facets": [
         "formal"
       ]
+    },
+    {
+      "id": "train-fix-continuity",
+      "split": "train",
+      "query": "`tk-example`의 관찰된 스킬 문제를 진단한 뒤 고쳐줘. 동일 대상의 `verified` `learn-ready`가 준비됐고 `semantic` `fix`도 승인했어.",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-approved-handoff",
+      "split": "validation",
+      "query": "`skills/tk-example`의 관찰된 실패를 원인 확인 후 수정해 달라는 요청이 진행 중이며, 동일 범위의 `verified` `learn-ready`를 받았습니다. 다음 처리를 계속해 주세요.",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-diagnosis-only",
+      "split": "validation",
+      "query": "진단만 요청했던 `skills/tk-example`의 `learn-ready`를 받았어. 수정은 하지 말고 여기서 끝내.",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-generic-skill-discussion",
+      "split": "validation",
+      "query": "스킬을 쓰면 뭐가 좋아?",
+      "should_trigger": false
     }
   ]
 }
