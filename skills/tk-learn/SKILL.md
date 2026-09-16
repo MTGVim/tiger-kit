@@ -80,6 +80,11 @@ completed content may be invalidated and replaced, never archived into per-run f
    then compare against existing repository/user `skill`s, default model capability,
    and a short rule. Choose one of `merge | no-op | continue | pending`. If the
    catalog cannot be read, remain `pending` and record that status and rationale in the candidate packet.
+   Before skill/rule promotion, use the mechanical-enforceability gate in Skill quality.
+   If a repository-native check is the better owner, stop skill promotion with `no-op`
+   and propose its smallest useful extension. This does not authorize repository edits:
+   change lint/CI/hooks/code only when the active request explicitly includes that change
+   and existing authority permits it. Do not create a handoff artifact just for this decision.
 3. **Candidate proposal:** Present the target, action name, invocation kind, and
    positive/negative triggers. Draft a trigger-first description that answers when to
    load and preserves only the routing discriminators; keep procedure in the body.

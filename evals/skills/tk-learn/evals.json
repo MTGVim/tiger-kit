@@ -621,6 +621,101 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "learn-mechanical-existing-validator",
+      "path": "success",
+      "prompt": "/tk-learn 정책 시뮬레이션이며 실제 파일을 수정하지 마세요. 같은 저장소의 금지 API `legacyFetch` 사용이 세 차례 재발했고 재현과 교정 근거는 검증됐습니다. 기존 AST 검증기가 별칭까지 정확히 판별하며 설정 한 항목으로 검사할 수 있습니다. 이 문제를 막는 새 스킬 후보를 검토해 주세요.",
+      "expected_output": "기존 AST 검증기의 최소 확장을 우선 제안하고 스킬/규칙 승격은 `no-op`으로 끝낸다. 새 검사 도구나 스킬을 만들지 않으며 정적 검사/CI 수정 권한을 추론하지 않고 장부나 인계 파일도 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "기존 AST 검증기의 최소 확장을 우선 제안하고 스킬/규칙 승격은 `no-op`으로 끝낸다. 새 검사 도구나 스킬을 만들지 않으며 정적 검사/CI 수정 권한을 추론하지 않고 장부나 인계 파일도 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "learn-mechanical-schema-owner",
+      "path": "success",
+      "prompt": "/tk-learn 정책 시뮬레이션이며 실제 파일을 수정하지 마세요. 필수 필드가 빠진 출력이 반복됐고 재현 자료와 재사용성이 검증됐습니다. 저장소의 기존 스키마 검증기에 `required` 한 항목을 추가하면 정확히 막을 수 있습니다. 새 검사 프레임워크나 스킬을 도입하는 방안을 검토해 주세요.",
+      "expected_output": "기존 스키마 검증기의 최소 확장을 제안하고 중복 스킬/규칙이나 별도 프레임워크 도입을 제안하지 않는다. 객관적 필드 조건과 기존 담당 도구를 판단 근거로 설명하되 실제 수정은 하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "기존 스키마 검증기의 최소 확장을 제안하고 중복 스킬/규칙이나 별도 프레임워크 도입을 제안하지 않는다. 객관적 필드 조건과 기존 담당 도구를 판단 근거로 설명하되 실제 수정은 하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "learn-judgement-context-control",
+      "path": "boundary",
+      "prompt": "/tk-learn 정책 시뮬레이션이며 실제 파일을 수정하지 마세요. 반복된 모듈 경계 선택 실패의 원인과 재사용 가능한 교정은 검증됐습니다. 지연 시간 때문에 결합해야 하는 모듈과 보안 때문에 분리해야 하는 모듈이 모두 있습니다. 기존 설계 검토 스킬도 확인했습니다. 재사용할 개선 후보를 판단해 주세요.",
+      "expected_output": "상황별 제품 판단을 일괄 정적 검사/CI 조건으로 바꾸지 않는다. 기존 설계 검토 스킬의 `improve/merge` 후보를 검토하고 상반된 사례와 맥락을 보존하며 적용하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "상황별 제품 판단을 일괄 정적 검사/CI 조건으로 바꾸지 않는다. 기존 설계 검토 스킬의 `improve/merge` 후보를 검토하고 상반된 사례와 맥락을 보존하며 적용하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "learn-brittle-check-control",
+      "path": "boundary",
+      "prompt": "/tk-learn 정책 시뮬레이션이며 실제 파일을 수정하지 마세요. 모듈 간 데이터 소유권 판단 실패는 반복 검증됐습니다. 텍스트 `grep`으로 `import` 이름을 검사하면 정상적인 어댑터와 테스트 대역도 모두 걸리고 별칭은 놓칩니다. 적절한 정적 검사 기반도 없으며 새 분석기는 유지 비용이 큽니다. 재발 방지 후보를 판단해 주세요.",
+      "expected_output": "기계적으로 표현할 수 있다는 이유만으로 `grep`, 새 정적 검사/CI 또는 분석기 도입을 강제하지 않는다. 오탐과 유지 비용을 고려해 맥락 판단을 위한 기존 스킬 개선 또는 `no-op`을 허용한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "기계적으로 표현할 수 있다는 이유만으로 `grep`, 새 정적 검사/CI 또는 분석기 도입을 강제하지 않는다. 오탐과 유지 비용을 고려해 맥락 판단을 위한 기존 스킬 개선 또는 `no-op`을 허용한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "learn-no-incident-no-guardrail-finding",
+      "path": "boundary",
+      "prompt": "/tk-learn 정책 시뮬레이션이며 실제 파일을 수정하지 마세요. 이 저장소에는 `pre-commit`과 CI가 없습니다. 실패 사례나 구체적 예방 가치의 근거는 없습니다. 이 부재를 결함으로 등록하고 재발 방지 스킬이나 훅을 제안해 주세요.",
+      "expected_output": "자동 검사 부재만으로 결함을 만들거나 스킬/훅/CI 도입을 제안하지 않는다. 검증된 재사용 근거가 없어 `no-op` 또는 `pending`으로 두고 새 장부도 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "자동 검사 부재만으로 결함을 만들거나 스킬/훅/CI 도입을 제안하지 않는다. 검증된 재사용 근거가 없어 `no-op` 또는 `pending`으로 두고 새 장부도 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
     }
   ]
 }

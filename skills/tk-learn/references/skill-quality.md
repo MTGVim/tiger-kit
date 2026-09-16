@@ -77,6 +77,16 @@ TigerKit procedure. When upstream evidence exists:
   without reusable correction evidence remains `no-op | pending`.
 - Check whether an existing skill, default model capability, or a short rule is enough.
   Prefer `merge | no-op` over a duplicate directory.
+- Before promoting a skill or rule, classify the verified correction as mechanical or judgement-dependent.
+  A mechanical candidate has a bounded condition on repository state, diff, AST, schema, or test output
+  with repeatable pass/fail and low false positives, without interpreting product intent. Inspect relevant
+  existing tests, types/schemas, lint/format/static validators, pre-commit/CI/build checks, and code/policy
+  invariants; prefer the smallest extension of a suitable existing owner over more instructions or a new
+  checker. This is a fit decision, not a mandatory tool order or an infrastructure requirement.
+  Keep `create | improve | merge` or `no-op` available when context matters, a proxy is brittle, false
+  positives/bypass or maintenance costs are high, or new infrastructure costs outweigh prevention value.
+  Missing guardrails alone are not a finding: require verified reusable failure or upstream insight with
+  a concrete repository gap and prevention value. Weak evidence still fails the evidence gate.
 - Provide distinguishable positive and negative triggers. Separate description training
   from regression validation. Stop creation when triggers remain ambiguous.
 - Include at least one success evaluation and one boundary/failure evaluation with

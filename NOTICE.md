@@ -336,3 +336,34 @@ TigerKit 평가는 배경 누락, 전체 문서의 조건 보존, 결정 권한,
 
 정본을 소비하는 `tk-explain`에도 동일 참조를 동기화합니다. 원본은 MIT이며 두 설치 패키지의
 `LICENSE.txt`에 `Copyright (c) 2026 epoko77-ai`와 원본 허가·면책 문구를 보존합니다.
+
+## tk-learn: 기계적 검증 우선 판단 (#368)
+
+`mattpocock/skills`의 최신 고정 커밋 `959a8e9f1edc3adbe2f7e3054bb6fbefa6696260`에서
+`skills/in-progress/retro/SKILL.md`, `LICENSE`와 병합된 PR #1083의 설계 근거를 확인했습니다.
+
+- `keep`: 반복 가능한 객관적 조건과 맥락 판단을 구분하고 기존 검사 명령과 담당 도구를 먼저 확인합니다.
+- `adapt`: 기존 승격 관문에서 적합한 저장소 검사 도구의 최소 확장을 우선 제안합니다.
+  스킬 승격 중단은 저장소 수정 권한을 부여하지 않으며 비용과 오탐에 따라 판단 경로를 유지합니다.
+- `omit`: 자동 검사 부재 자체의 결함 판정, 무조건적인 검사 도입, 전체 회고 절차와 전역 규칙 작성은 가져오지 않습니다.
+
+원본 PR은 자동 행동 평가가 없다고 명시합니다. 원본 행동 재현성은 `unverified`이며 TigerKit의
+기계적 조건, 기존 도구, 맥락 판단, 취약한 검사, 사건 부재 경계는 별도 행동 평가로 검증합니다.
+원본 MIT 고지는 `skills/tk-learn/LICENSE.txt`에 포함합니다.
+
+## tk-rewrite: 관계와 문체 결함의 역주입 방지 (#369)
+
+`evergreentree97/K-Humanizer`의 최신 고정 커밋 `324435d561ba48d53de6b7d3fb3dd72cf77030dc`에서
+`skills/k-humanizer/SKILL.md`의 문단 연결·자체 검수, `references/evaluation.md`,
+`evals/fixtures/golden_set.v0.jsonl`의 인과 미확인 사례와 `LICENSE`를 확인했습니다.
+`epoko77-ai/im-not-ai`는 기존 고정 커밋 `9747f036cdc28a1a8aea4dc71fef1f7846eb96f7`이 최신입니다.
+`skills/humanize-korean/references/ai-tell-taxonomy.md`의 `C-11`·`D` 역주입 근거와
+`tests/test_strip_injected_commas.py`의 신규 표현·원문 보존 대조군을 확인했습니다.
+
+- `keep`: 원문에 명시된 관계, 정상적인 연결어, 의미·표기 절대 규칙과 문맥에 따른 강도·밀도 판단을 유지합니다.
+- `adapt`: 없는 관계를 새로 만들거나 다른 문체 결함을 추가하지 않는 검수를 공통 정제 기준과 행동 평가에 반영합니다.
+- `omit`: 원본 전체 분류, 쉼표 개수 제한, 접속사 금칙어, 변경 비율 예산, 별도 후처리와 AI 작성 판정은 가져오지 않습니다.
+
+원본 모델 평가의 수치와 재현성은 자체 재검증하지 않았으므로 `unverified`입니다.
+`K-Humanizer`의 MIT 고지는 `tk-rewrite`와 공통 참조를 소비하는 `tk-explain`의 `LICENSE.txt`에
+추가하며, 기존 `im-not-ai` MIT 고지는 보존합니다.

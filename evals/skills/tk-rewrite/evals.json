@@ -654,6 +654,139 @@
           "paths": []
         }
       ]
+    },
+    {
+      "id": "no-invented-causality",
+      "path": "boundary",
+      "prompt": "$tk-rewrite 자연스럽게 다듬어줘. 원문: 어제 안내문을 수정했습니다. 오늘 문의가 줄었습니다.",
+      "expected_output": "어제 수정과 오늘 문의 감소를 모두 보존하되 수정 때문에 문의가 줄었다는 인과를 접속사나 서술로 추가하지 않는다. 단순 시간 순서 연결은 허용한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "어제 수정과 오늘 문의 감소를 모두 보존하되 수정 때문에 문의가 줄었다는 인과를 접속사나 서술로 추가하지 않는다. 단순 시간 순서 연결은 허용한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "no-invented-contrast",
+      "path": "boundary",
+      "prompt": "$tk-rewrite 문장을 자연스럽게 이어줘. 원문: 운영팀은 월요일에 공지를 확인했습니다. 개발팀은 월요일에 로그를 확인했습니다.",
+      "expected_output": "두 팀의 병렬 행동과 월요일을 보존한다. 하지만, 반면 등의 단어 여부만 검사하지 말고 두 행동 사이에 원문에 없는 대립이나 의외성을 새로 부여했는지 판단한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "두 팀의 병렬 행동과 월요일을 보존한다. 하지만, 반면 등의 단어 여부만 검사하지 말고 두 행동 사이에 원문에 없는 대립이나 의외성을 새로 부여했는지 판단한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "no-invented-conclusion",
+      "path": "boundary",
+      "prompt": "$tk-rewrite 읽기 쉽게 정리해줘. 원문: 이번 달 문의는 12건입니다. 담당자는 두 명입니다. 응답 시간은 아직 측정하지 않았습니다.",
+      "expected_output": "12건, 두 명, 응답 시간 미측정을 보존한다. 인력 추가, 자동화, 응답 지연 같은 원문에 없는 결론이나 권고를 추가하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "12건, 두 명, 응답 시간 미측정을 보존한다. 인력 추가, 자동화, 응답 지연 같은 원문에 없는 결론이나 권고를 추가하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "no-invented-temporal-order",
+      "path": "boundary",
+      "prompt": "$tk-rewrite 한 문단으로 다듬어줘. 원문: 이번 주에 안내문을 수정했습니다. 이번 주에 서버를 점검했습니다.",
+      "expected_output": "두 작업이 이번 주에 이루어졌다는 사실을 보존한다. 원문의 나열 순서를 실제 실행 순서나 동시성으로 단정하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "두 작업이 이번 주에 이루어졌다는 사실을 보존한다. 원문의 나열 순서를 실제 실행 순서나 동시성으로 단정하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "no-new-style-defect",
+      "path": "success",
+      "prompt": "$tk-rewrite 불필요한 군더더기만 덜어줘. 원문: 말씀드리고자 하는 부분은, 관리자는 이 기능으로 신청 상태를 확인할 수 있다는 점입니다. 고객은 처리 결과를 이메일로 받습니다.",
+      "expected_output": "군더더기를 덜고 관리자와 고객, 신청 상태 확인 가능성, 이메일 수신을 보존한다. 새 추상어, 번역투, 상투어, 근거 없는 수식이나 기계적 연결어로 대체하지 않는다. 특정 단어를 금칙어로 취급하거나 AI 작성 여부를 판정하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "군더더기를 덜고 관리자와 고객, 신청 상태 확인 가능성, 이메일 수신을 보존한다. 새 추상어, 번역투, 상투어, 근거 없는 수식이나 기계적 연결어로 대체하지 않는다. 특정 단어를 금칙어로 취급하거나 AI 작성 여부를 판정하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "preserve-explicit-relation",
+      "path": "success",
+      "prompt": "$tk-rewrite 자연스럽게 다듬어줘. 원문: 결제가 실패했기 때문에 신청은 대기 상태로 남습니다. 하지만 신청 내역은 조회할 수 있습니다. 관리자가 취소를 승인하면 신청을 취소합니다.",
+      "expected_output": "결제 실패가 대기의 원인이라는 인과, 대기에도 조회 가능하다는 대조, 관리자 취소 승인이라는 조건을 모두 보존한다. 단순 독립 사실로 약화하거나 인과를 반대로 바꾸지 않는다. 정상적인 접속사는 필요하면 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "결제 실패가 대기의 원인이라는 인과, 대기에도 조회 가능하다는 대조, 관리자 취소 승인이라는 조건을 모두 보존한다. 단순 독립 사실로 약화하거나 인과를 반대로 바꾸지 않는다. 정상적인 접속사는 필요하면 유지한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "preserve-contextual-vocabulary",
+      "path": "boundary",
+      "prompt": "$tk-rewrite 명확하고 자연스러우면 그대로 둬. 원문: 검색 결과가 없기 때문에 필터를 해제해야 합니다. 하지만 날짜 필터는 유지해 주세요. 남은 공간은 임시 보관함으로 활용합니다.",
+      "expected_output": "명시된 원인과 대조, 날짜 필터 유지, 임시 보관함 용도를 보존한다. 때문에, 하지만, 활용처럼 정상적으로 쓰인 단어를 금칙어처럼 제거하지 않고 새 수식이나 결론을 덧붙이지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "명시된 원인과 대조, 날짜 필터 유지, 임시 보관함 용도를 보존한다. 때문에, 하지만, 활용처럼 정상적으로 쓰인 단어를 금칙어처럼 제거하지 않고 새 수식이나 결론을 덧붙이지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
     }
   ]
 }
