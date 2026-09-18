@@ -349,7 +349,17 @@
     "tk-skill-diagnose:behavior:diagnose-only-stops",
     "tk-skill-diagnose:behavior:diagnose-target-drift-stops",
     "tk-learn:behavior:learn-verified-approved-handoff-continues",
-    "tk-learn:behavior:learn-handoff-without-apply-authority"
+    "tk-learn:behavior:learn-handoff-without-apply-authority",
+    "tk-prep:behavior:prep-sdd-interaction-browser-auth",
+    "tk-prep:behavior:prep-sdd-interaction-mcp-reviewer",
+    "tk-prep:behavior:prep-sdd-interaction-permission-diagnostic",
+    "tk-prep:behavior:prep-sdd-interaction-noninteractive-control",
+    "tk-prep:behavior:prep-sdd-interaction-bounded-judgement",
+    "tk-prep:behavior:prep-sdd-interaction-controller-fact-and-decision",
+    "tk-prep:behavior:prep-sdd-interaction-recovery-after-mutation",
+    "tk-prep:behavior:prep-sdd-interaction-resume-remaining-work",
+    "tk-pr-respond:behavior:pr-respond-sdd-interaction-nested-controller",
+    "tk-prep:behavior:prep-sdd-interaction-replacement-continues-partial-work"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",

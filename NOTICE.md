@@ -367,3 +367,26 @@ TigerKit 평가는 배경 누락, 전체 문서의 조건 보존, 결정 권한,
 원본 모델 평가의 수치와 재현성은 자체 재검증하지 않았으므로 `unverified`입니다.
 `K-Humanizer`의 MIT 고지는 `tk-rewrite`와 공통 참조를 소비하는 `tk-explain`의 `LICENSE.txt`에
 추가하며, 기존 `im-not-ai` MIT 고지는 보존합니다.
+
+## `SDD`: 사용자 상호작용의 `root` 소유권 (#370)
+
+`obra/superpowers`의 최신 고정 커밋 `b36e0829c6d0140e93cfef2ca599b1b07d4a7797`에서
+`SDD` 본문과 `implementer-prompt.md`, `2026-07-30-codex-efficiency-fixes-design.md`,
+`tests/claude-code/test-subagent-driven-development.sh` 및 `integration` 테스트를 먼저 확인했습니다.
+기존 `controller/leaf` 경계는 유지하며, 이 문서들에 없는 사용자 상호작용 소유권만 보완합니다.
+
+이어서 `openai/codex`의 병합된 [PR #46066](https://github.com/openai/codex/pull/46066),
+고정 커밋 `40584fad87aa2cd63e03db4784ccfd5b50a59bed`에서
+`codex-rs/codex-mcp/src/elicitation.rs`와 관련 `elicitation/connection-manager` 테스트,
+`codex-rs/core/tests/suite/mcp_subagent_elicitation.rs`, 인증 테스트와 `handoff` `snapshot`을 확인했습니다.
+확인 당시 `elicitation.rs`와 `core/src/mcp_tool_call.rs`의 최신 변경은 이 `PR`이며,
+`PR` `timeline`과 해당 `PR` 번호 검색에서는 후속 수정이 확인되지 않았습니다.
+
+- `keep`: 기존 `controller/leaf` 역할, 승인 범위, 자동 `permission` 처리와 제한된 구현 판단을 유지합니다.
+- `adapt`: 실제 사용자 입력만 `root`에서 처리하도록 하고 기존 `child` `return`에 `blocker`, 비밀이 없는 근거,
+  `mutation` 상태와 재개 조건을 포함합니다. 빈 `form`의 인증 요청도 같은 경계를 적용하며,
+  해결 확인 뒤 기존 `Unit`과 복구 식별자를 유지하여 남은 작업을 재개합니다.
+- `omit`: `Codex`의 런타임·이벤트·연결 관리 구현, 새 스킬·장부·상태 체계는 가져오지 않습니다.
+  코드를 복사하지 않고 행동 경계만 `TigerKit`의 `shared` `SDD` 계약과 평가에 적용합니다.
+
+`Upstream` 테스트를 직접 실행하거나 외부 원시 평가 결과를 재현하지 않았으므로 해당 성과는 `unverified`입니다.

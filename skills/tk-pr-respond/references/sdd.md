@@ -67,6 +67,42 @@ review sequence serially in the current isolated execution checkout while preser
 role-specific evidence and exact scope. Do not silently downgrade SDD semantics into
 direct execution.
 
+### User interaction ownership
+
+The root controller owns interactions that require actual user input. Implementer,
+reviewer, re-reviewer, and diagnostic leaves return the blocker to their controller;
+a delegated controller forwards unresolved human-input needs to the root. Do not ask
+the user directly, answer an interactive MCP elicitation on their behalf, approve a
+user-only permission, or decide a new user-owned product/scope choice in a child.
+Browser sign-in, OTP, SSO, and device approval follow the same boundary even when a
+host prompt has an empty form or automatic permission handling is otherwise enabled.
+
+Include in the existing child return: Unit and role, exact blocker, requested user
+action or decision, non-secret evidence/current state, whether mutation already
+occurred (or is unknown), and the safe resume condition. Stop the blocked action;
+never include credentials, OTPs, tokens, or session secrets in the handoff.
+The controller supplies this boundary and return requirement in each child brief.
+
+Before asking the user, the controller checks existing authorization and resolves
+repository/host facts from available evidence. Handle genuine user input in the root
+context, using `tk-wizard` only for its existing provisioning/authentication/permission
+scope; product decisions stay with the preparation owner. Existing approval avoids
+reapproval of the same intent, but does not supply missing human input or override a
+host denial. Preserve the browser owner's headless and secret-handling constraints.
+
+After the blocker is verifiably resolved, resume the existing child within the same
+approved Unit. If it cannot resume, reconcile prior mutations and child lifecycle
+under Recovery state before dispatching only the remaining bounded work. Preserve
+Seed/Unit/BASE/workspace identity and existing review/verification obligations; an
+unknown outcome blocks retry. Reuse active optional recovery state without creating
+an interaction ledger, durable receipt, or new lifecycle state.
+
+Approved non-interactive tool calls, host-authorized automatic permission handling,
+read-only reviewer judgments, repository facts available within the brief, and
+reversible engineering choices within leaf authority continue locally. They do not
+require parent mediation or user reapproval; existing controller `Ruling:` boundaries
+still apply.
+
 ## Failure diagnosis routing
 
 During a `Unit` check or binding verification, keep an obvious failure with an exact RED seam owned by the
@@ -117,9 +153,15 @@ After interruption, validate the exact Seed identifier/hash, Unit, workspace, an
 before inspecting fresh run-owned Git evidence for the recorded `BASE..HEAD` (or `FIX_BASE..HEAD`).
 Verify that the recorded base exists and is an ancestor of the current HEAD; a missing base or
 ambiguous attribution is `Blocked | Unverifiable`, not permission to reconstruct it from recency.
-When applicable Unit work is proven, skip implementer re-dispatch and resume only the outstanding
-verification/review/remediation obligations. An empty commit range alone does not prove no work:
-check run-owned uncommitted changes and the prior child lifecycle as well. Re-dispatch only when
+When applicable Unit work is proven, do not replay it; resume only the outstanding obligations.
+For an interaction-blocked partial implementation, prefer resuming the same child. If it cannot
+resume, a replacement may continue only the remaining approved implementation after bound evidence
+proves the prior mutations, exact remaining scope, and that the old child cannot still mutate the
+workspace. Preserve the original Unit BASE for the complete review, and bind the replacement dispatch
+to that same Unit/workspace; persist it before launch only when optional recovery state is active.
+Completed implementation resumes verification/review/remediation, never implementation replay.
+An empty commit range alone does not prove no work:
+check run-owned uncommitted changes and the prior child lifecycle as well. Re-dispatch the whole implementation only when
 bound evidence proves the prior dispatch produced no applicable work and cannot still mutate the
 workspace. A pending child uses the existing bounded wait; an unknown outcome remains
 `Blocked | Unverifiable`. Clear or advance active-dispatch state only after reconciliation, never
