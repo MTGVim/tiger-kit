@@ -85,7 +85,7 @@ operation target/replayed commit, and record commit IDs/paths. Especially for
 |---|---|---|---|
 | Operation state | Check `MERGE_HEAD`, `rebase-merge`, `rebase-apply`, `CHERRY_PICK_HEAD`, and `REVERT_HEAD` via `git rev-parse --git-path`, then inspect only resolved paths. | Exactly one active operation kind and step match the status/worktree metadata. | Conflicting or unreadable markers are `Unverifiable`; do not infer from `.git/` paths. |
 | Operation/index | Inspect `git status --short --branch`, `git diff --name-only --diff-filter=U`, and `git ls-files -u` together. | Kind, step, and HEAD match the freshness anchor, with no unreviewed paths. | Rebuild the inventory; unexplained state is `Unverifiable`. |
-| Markers | Search every tracked conflict path for `^(<<<<<<<|=======|>>>>>>>)`. | No real conflict markers remain; inspect matches in context because a legitimate Markdown separator is not a conflict. | Remaining conflict hunks are `Fail`; do not continue. |
+| Markers | Search every tracked conflict path for `^(<<<<<<<\|=======\|>>>>>>>)`. | No real conflict markers remain; inspect matches in context because a legitimate Markdown separator is not a conflict. | Remaining conflict hunks are `Fail`; do not continue. |
 | Staging | Run `git add -- <supported-path...>`, then recheck the `staged diff` and unmerged index. | Only evidence-supported paths are staged, and unmerged entries are zero. | Staging failure or remaining entries are `Fail`; do not continue. |
 | Verification | Run relevant tests, builds, and static checks. | Record commands, results, and scope, with no change-related failures. | If unavailable, `Unverifiable`; if failed, `Fail`. |
 | Continue | Run exactly one matching `git merge --continue`, `git rebase --continue`, `git cherry-pick --continue`, or `git revert --continue`. | The operation finishes as intended without new conflicts. | Record the failure/new inventory and restart. |
@@ -124,3 +124,8 @@ table; use a sentence when only one row matters to the user. Start with the reso
 do not repeat rows or append metadata. Summarize compound intent, resolved path groups, and
 verification in `2–5` short rows/bullets. For `8+` paths, group the top `5–7` intent/result rows
 and cite the exact remaining paths. Treat these numbers as a budget, not a quota.
+
+<!-- tigerkit:artifact-paths -->
+## Artifact Paths
+
+Default repository-owned output to `.tigerkit/`: transient files in `tmp/<skill>/<run-id>/`, verification evidence in `evidence/<skill>/<run-id>/`, explanations in `explanations/`, and lessons in `study/<topic>/`. Preserve existing owner-specific paths and explicit user-selected final destinations. This policy grants no new write authority or mandatory artifact. Before using `.tigerkit/`, verify the repository root, no tracked files under it, and effective Git ignore coverage. Reject symlink escapes; preserve unrelated existing files. If unsafe or no repository is identified, stop the file branch as `Blocked | Unverifiable`, without editing ignore rules or falling back to OS temp. Atomic replacement may use a run-owned sibling temporary file on the destination filesystem; clean it after success. External tool caches and isolated test fixtures retain their tool-owned lifecycle.

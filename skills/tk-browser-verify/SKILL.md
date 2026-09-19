@@ -154,7 +154,7 @@ Before the first write under `.tigerkit/evidence/`, verify that
 pattern from `git check-ignore -v`, redacting an absolute user-level path. If the checks
 fail, do not write, edit `.gitignore`, or use an external fallback; return `Unverifiable`.
 
-Binary evidence may be stored in run-owned `.tigerkit/evidence/browser/<run-id>/`. Baseline comparisons use
+Binary evidence may be stored in run-owned `.tigerkit/evidence/tk-browser-verify/<run-id>/`. Baseline comparisons use
 `baseline/`, `after/`, and immutable `failed-<attempt>/` subdirectories. A bounded `README.md` may map each
 AC to its screenshot, exact publication-safe `display_route`, replay procedure, and disclosed capture-only or
 nondeterministic exclusions; it is an evidence index, not a lifecycle ledger.
@@ -213,3 +213,8 @@ Never promote a result to `Pass` without required runtime evidence.
 | `Unverifiable` | Required headless auth, environment, or evidence cannot be established |
 
 Do not cause unauthorized payments, external communications, destructive mutations, production-data mutations, or account/permission changes.
+
+<!-- tigerkit:artifact-paths -->
+## Artifact Paths
+
+Default repository-owned output to `.tigerkit/`: transient files in `tmp/<skill>/<run-id>/`, verification evidence in `evidence/<skill>/<run-id>/`, explanations in `explanations/`, and lessons in `study/<topic>/`. Preserve existing owner-specific paths and explicit user-selected final destinations. This policy grants no new write authority or mandatory artifact. Before using `.tigerkit/`, verify the repository root, no tracked files under it, and effective Git ignore coverage. Reject symlink escapes; preserve unrelated existing files. If unsafe or no repository is identified, stop the file branch as `Blocked | Unverifiable`, without editing ignore rules or falling back to OS temp. Atomic replacement may use a run-owned sibling temporary file on the destination filesystem; clean it after success. External tool caches and isolated test fixtures retain their tool-owned lifecycle.

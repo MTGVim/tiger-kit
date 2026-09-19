@@ -1,6 +1,6 @@
 ---
 name: tk-explain
-description: "[user/auto] 개념의 배경지식과 실제 구조·동작을 설명하는 시각 자료나 자체 완결형 HTML 설명 자료를 요청할 때 사용합니다. 일반 텍스트 질문, 기존 글 교정, 제품 비교 시제품에는 사용하지 않습니다."
+description: "[user/auto] 개념의 배경지식과 실제 구조·동작을 설명하는 시각 자료나 자체 완결형 HTML 설명 자료를 요청할 때 사용합니다. 특정 변경 설명, 조사 후 학습, 일반 텍스트 질문, 기존 글 교정, 제품 비교 시제품에는 사용하지 않습니다."
 disable-model-invocation: false
 argument-hint: "<topic and optional audience/output path>"
 metadata:
@@ -27,7 +27,7 @@ General knowledge and clearly labeled hypothetical examples may supply prerequis
 
 Choose visuals that expose structure, event order, state changes, or cause and effect. Match labels and relationships to the prose; distinguish prerequisites from steps and illustrations from measured data. Explanatory text must carry the mechanism and caveats, not merely name a picture. Use concise labels with complete explanatory sentences beside them. Choose section count and length from reader needs, not a scene/word quota. Optional details may be expandable, but required background and conclusions must remain visible.
 
-Use the user-specified output path, or `explain-<topic-slug>.html` in the current working directory. If the default exists, choose a numeric suffix. Do not overwrite an existing explicit target without authorization for that overwrite.
+Use the user-specified output path, or `.tigerkit/explanations/<topic-slug>.html`. If the default exists, choose a numeric suffix. Do not overwrite an existing explicit target without authorization for that overwrite.
 
 Inline all CSS, SVG, and any JavaScript in one HTML file, with no external assets, fonts, frameworks, build step, or runtime network requests. Plain source hyperlinks are allowed; the explanation must remain readable offline. Use semantic HTML, sufficient contrast, accessible visual titles, non-color-only distinctions, and `prefers-reduced-motion`. Add interaction only if it clarifies the concept and works with a keyboard; default to readable static visuals. Include the exact footer:
 
@@ -42,3 +42,8 @@ Inspect the generated HTML for self-containment, prerequisites before use, factu
 Return `Pass` only when the file exists and its content satisfies the explanation and offline artifact requirements; surface unresolved content or execution failures instead. Return a concise link/path identifying the explanation, plus a brief material verification limitation if any. Do not append a second full text explanation or a review ledger.
 
 Adapted from `anthropics/claude-plugins-community` `eli5` at `a727be1c7bd6064419b6f60d71993a19198adc17`, with shared writing criteria from the sources in the reference. Original notices are in [LICENSE.txt](LICENSE.txt).
+
+<!-- tigerkit:artifact-paths -->
+## Artifact Paths
+
+Default repository-owned output to `.tigerkit/`: transient files in `tmp/<skill>/<run-id>/`, verification evidence in `evidence/<skill>/<run-id>/`, explanations in `explanations/`, and lessons in `study/<topic>/`. Preserve existing owner-specific paths and explicit user-selected final destinations. This policy grants no new write authority or mandatory artifact. Before using `.tigerkit/`, verify the repository root, no tracked files under it, and effective Git ignore coverage. Reject symlink escapes; preserve unrelated existing files. If unsafe or no repository is identified, stop the file branch as `Blocked | Unverifiable`, without editing ignore rules or falling back to OS temp. Atomic replacement may use a run-owned sibling temporary file on the destination filesystem; clean it after success. External tool caches and isolated test fixtures retain their tool-owned lifecycle.

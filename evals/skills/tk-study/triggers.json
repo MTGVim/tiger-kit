@@ -1,0 +1,162 @@
+{
+  "skill": "tk-study",
+  "kind": "hybrid",
+  "queries": [
+    {
+      "id": "train-explicit",
+      "split": "train",
+      "query": "$tk-study 요청한 주제를 처리해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "train-negative",
+      "split": "train",
+      "query": "이 버튼 색상만 수정해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-True-0",
+      "split": "validation",
+      "query": "`Kafka`를 처음 배우는데 조사해서 배경부터 가르쳐 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-True-1",
+      "split": "validation",
+      "query": "처음 보는 `Raft` 조사해서 학습 자료 만들어줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-True-2",
+      "split": "validation",
+      "query": "분산합의 배워보고 싶어 조사해서 갈쳐줘",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-True-3",
+      "split": "validation",
+      "query": "`OAuth`를 조사하고 필요한 배경부터 가르쳐줘",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-True-4",
+      "split": "validation",
+      "query": "TCP 조사해서 가르쳐줘",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-True-5",
+      "split": "validation",
+      "query": "`React`는 아는데 브라우저 스케줄링을 조사해서 예측 문제와 함께 가르쳐줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-True-6",
+      "split": "validation",
+      "query": "양자 오류 정정을 처음 배우는 성인에게 근거를 조사하고 학습 자료를 만들어 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-True-7",
+      "split": "validation",
+      "query": "MVCC를 조사하고 배경과 실제 예외를 배울 자료를 만들어줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-False-0",
+      "split": "validation",
+      "query": "`Kafka`와 `RabbitMQ` 중 도입할 것을 비교 조사해 주세요.",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-False-1",
+      "split": "validation",
+      "query": "`Kafka` 동작을 시각적으로 설명해줘",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-False-2",
+      "split": "validation",
+      "query": "맞춤법 고처줘",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-False-3",
+      "split": "validation",
+      "query": "이 PR `diff`를 설명해줘",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-False-4",
+      "split": "validation",
+      "query": "DNS가 뭐야?",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-False-5",
+      "split": "validation",
+      "query": "이 경험을 재사용할 `Agent Skill`로 만들어줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-False-6",
+      "split": "validation",
+      "query": "기존 학습 자료의 표현만 교정해 주세요.",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-False-7",
+      "split": "validation",
+      "query": "이 PR에서 `consumer`가 바뀐 흐름을 설명해줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    }
+  ]
+}

@@ -186,8 +186,13 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 현재 작업이 활성 상태라면 자동으로 갱신합니다. 실행 환경이 더 이상 대기할 수 없을 때에만 파일을 다시 만들지
 않고 중단 사실과 재개 방법을 안내합니다.
 
-사용자가 직접 접근하지 않는 격리 `checkout`, `release`/`eval` 출력, 도구가 소유하는 `workspace`에는 운영체제 임시
-경로를 사용할 수 있습니다. 이 예외 경로로 사용자 입력을 받거나 지속 산출물을 보관하지 않습니다.
+격리 `checkout`, 설치 검사, `release`/`eval` 실행 중간 파일도 `.tigerkit/tmp/`에 둡니다.
+`release`/`eval` 결과는 `.tigerkit/evidence/`를 기본으로 사용합니다. 외부 도구 자체 캐시와
+격리 단위 테스트용 데이터는 저장소를 흉내 내거나 손상시켜 검증해야 하므로 도구의 임시 공간을 유지합니다.
+원자적 교체에 필요한 동일 디렉터리의 임시 파일은 같은 파일시스템에서 실행 소유권을 확인하고 성공 후 정리합니다.
+설명은 `.tigerkit/explanations/`, 학습은 `.tigerkit/study/<topic>/`, 저장한 조사는 `.tigerkit/research/`를
+기본으로 사용합니다. 명시한 최종 목적지는 존중합니다. `scripts/artifact_policy.py`가 공통 정책을 소유하며
+모든 설치 스킬의 동일한 계약과 실행 도구를 릴리즈 게이트에서 검사합니다.
 
 ## 반복 발견
 
@@ -221,6 +226,7 @@ python3 scripts/validate_skills.py
 python3 scripts/validate_skills.py --links-only
 python3 -B -m unittest discover -s scripts -p 'test_*.py'
 python3 scripts/audit_catalog.py --check
+python3 scripts/check_docs.py
 node --check skills/tk-pr-sweep/scripts/triage.mjs
 node --test skills/tk-pr-sweep/scripts/triage.test.mjs
 npx --yes skills@1.5.9 add . --list
@@ -233,15 +239,14 @@ git diff --check
 ```bash
 python3 scripts/run_seed_release_gate.py \
   --baseline "$(git rev-parse origin/main)" \
-  --candidate HEAD \
-  --output /tmp/tigerkit-release-gate
+  --candidate HEAD
 ```
 
 ### `main` 푸시 전 체크리스트
 
 - [ ] `origin/main`을 다시 확인하고 비교 기준이 최신인지 확인합니다.
 - [ ] 후보 변경을 모두 커밋하고 작업 트리가 깨끗한지 확인합니다.
-- [ ] 위의 필수 검사를 모두 통과합니다.
+- [ ] 위의 필수 검사를 모두 통과합니다. 문서 표·링크·스킬 목록·호출 방식·공유 정책을 검사하고, 변경된 공개 동작의 설명은 독립 검수로 대조합니다.
 - [ ] `run_seed_release_gate.py`를 최신 `origin/main` 기준으로 실행하고 최종 `status`가 `Pass`인지 확인합니다.
 - [ ] `blocking_reasons`, `contract_errors`, `Unverifiable` 상태가 남아 있지 않은지 확인합니다.
 - [ ] 검증 뒤 `origin/main`이 이동했다면 새 기준으로 릴리즈 게이트를 다시 실행합니다.

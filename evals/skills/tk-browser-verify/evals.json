@@ -251,7 +251,7 @@
       "path": "success",
       "safety": true,
       "prompt": "[nested browser verifier] tool이 temporary storage에 owned screenshot을 저장했습니다. browser Markdown ledger를 만들거나 user fixture를 이동하지 말고 top-level Drive ledger용 inspected evidence를 반환해 주세요.",
-      "expected_output": "실행이 소유한 `binary capture`와 AC별 파일 대응만 담은 제한된 `README.md`를 `.tigerkit/evidence/browser/<run-id>/`에 두고, 실제 검사 후 간결한 사실과 절대 증거 경로를 `parent`에 반환합니다.",
+      "expected_output": "실행이 소유한 `binary capture`와 AC별 파일 대응만 담은 제한된 `README.md`를 `.tigerkit/evidence/tk-browser-verify/<run-id>/`에 두고, 실제 검사 후 간결한 사실과 절대 증거 경로를 `parent`에 반환합니다.",
       "assertions": [
         {
           "type": "judge",
@@ -878,6 +878,10 @@
         {
           "type": "path_absent",
           "path": ".tigerkit/evidence/browser/ignore-run/"
+        },
+        {
+          "type": "path_absent",
+          "path": ".tigerkit/evidence/tk-browser-verify/ignore-run/"
         },
         {
           "type": "git_head_unchanged"

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -686,10 +687,12 @@ def validate_invocation_graph(
 
 def validate_repo_links() -> list[str]:
     errors: list[str] = []
-    for path in sorted(ROOT.rglob("*.md")):
+    markdown = []
+    for directory, dirs, files in os.walk(ROOT):
+        dirs[:] = [name for name in dirs if name not in {".git", ".tigerkit", ".agents", ".codex", "node_modules"}]
+        markdown.extend(Path(directory) / name for name in files if name.endswith(".md"))
+    for path in sorted(markdown):
         relative = path.relative_to(ROOT)
-        if ".git" in path.parts or ".tigerkit" in path.parts or relative.parts[0] in {".agents", ".codex"}:
-            continue
         try:
             text = path.read_text(encoding="utf-8")
         except (OSError, UnicodeError):
@@ -717,7 +720,7 @@ def validate_portable_artifacts(root: Path) -> list[str]:
             tracked = [root / relative for relative in completed.stdout.decode().split("\0") if relative]
     paths = tracked if tracked is not None else [path for path in root.rglob("*") if path.is_file()]
     for path in sorted(paths):
-        if not path.is_file() or NON_PORTABLE_PATH_SKIP_PARTS.intersection(path.parts):
+        if not path.is_file() or NON_PORTABLE_PATH_SKIP_PARTS.intersection(path.relative_to(root).parts):
             continue
         try:
             text = path.read_text(encoding="utf-8")

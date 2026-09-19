@@ -107,11 +107,11 @@ completed content may be invalidated and replaced, never archived into per-run f
 
 | Check | Passing evidence | If not passed |
 |---|---|---|
-| Promotion threshold | One sufficient evidence route in Skill quality is verified | `no-op | pending` |
-| Deduplication | Differences from existing skill/default capability/short rule and rationale for `merge | continue` exist | `no-op | pending` |
-| Candidate identity | Native target, name, kind, trigger-first description, and positive/negative routing discriminators are confirmed | `pending | Unverifiable` |
-| Behavior validation | Observable train/validation routing and skill-type success/boundary behavior pass; source-text presence alone is insufficient | `pending | Blocked` |
-| Baseline/compatibility | A practical no-skill baseline for creation or prior-skill baseline for semantic edits and the portable-core/host-extension determination are verified | `pending | Unverifiable` |
+| Promotion threshold | One sufficient evidence route in Skill quality is verified | `no-op \| pending` |
+| Deduplication | Differences from existing skill/default capability/short rule and rationale for `merge \| continue` exist | `no-op \| pending` |
+| Candidate identity | Native target, name, kind, trigger-first description, and positive/negative routing discriminators are confirmed | `pending \| Unverifiable` |
+| Behavior validation | Observable train/validation routing and skill-type success/boundary behavior pass; source-text presence alone is insufficient | `pending \| Blocked` |
+| Baseline/compatibility | A practical no-skill baseline for creation or prior-skill baseline for semantic edits and the portable-core/host-extension determination are verified | `pending \| Unverifiable` |
 | Apply authority | Active-task approval names the exact candidate and target path | `pending`; do not write |
 
 Use only the current host's native repo/user `skill` paths proven through actual path
@@ -125,10 +125,10 @@ one host's paths onto another host, perform cross-host fan-out/sync, or use
 |---|---|---|
 | Cases/workflows are claimed but artifacts cannot be read | Record each as `unverified` and leave the candidate `Blocked` | Request exact artifacts/checks; do not write |
 | Only a weak one-off anecdote or raw log exists | Report the threshold/privacy basis with `Decision: no-op`, `Status: Pending` | Create no artifact, candidate, or path unless explicit `save` is requested |
-| Duplicate of a skill/default capability | Report `merge | no-op` and rationale | Create no new directory |
+| Duplicate of a skill/default capability | Report `merge \| no-op` and rationale | Create no new directory |
 | Some target/name/trigger is unknown | Record supported values as `proposed` and the rest as `TBD` in the candidate packet | Keep candidate identity `pending`; do not write |
 | Evidence, target, or approval conflicts | Present the conflict and one decision | Stop as `Blocked` |
-| Write/post-write verification fails | Preserve the existing target and run temporary file; remove a partially created new target only when run ownership is proven | Recover only when exactly reproducible/verifiable; report `Blocked | Unverifiable` when ownership/preservation is unclear, otherwise report the actual path and `Fail` |
+| Write/post-write verification fails | Preserve the existing target and run temporary file; remove a partially created new target only when run ownership is proven | Recover only when exactly reproducible/verifiable; report `Blocked \| Unverifiable` when ownership/preservation is unclear, otherwise report the actual path and `Fail` |
 
 ## 🔴 CHECKPOINT · 🛑 STOP (Approval and stop point)
 
@@ -159,3 +159,8 @@ failure or duplicate remains concise and need not materialize an artifact.
 - Do not duplicate the name/kind/path/verification/concerns in the Receipt.
 - Do not auto-archive, edit `.gitignore`, invoke another user `skill`, push, or
   publish.
+
+<!-- tigerkit:artifact-paths -->
+## Artifact Paths
+
+Default repository-owned output to `.tigerkit/`: transient files in `tmp/<skill>/<run-id>/`, verification evidence in `evidence/<skill>/<run-id>/`, explanations in `explanations/`, and lessons in `study/<topic>/`. Preserve existing owner-specific paths and explicit user-selected final destinations. This policy grants no new write authority or mandatory artifact. Before using `.tigerkit/`, verify the repository root, no tracked files under it, and effective Git ignore coverage. Reject symlink escapes; preserve unrelated existing files. If unsafe or no repository is identified, stop the file branch as `Blocked | Unverifiable`, without editing ignore rules or falling back to OS temp. Atomic replacement may use a run-owned sibling temporary file on the destination filesystem; clean it after success. External tool caches and isolated test fixtures retain their tool-owned lifecycle.

@@ -47,6 +47,9 @@ def main() -> int:
     )
     pairs.append((EXTERNAL_CONTRACT_SOURCE, EXTERNAL_CONTRACT_TARGET))
     pairs.append((CLEAR_WRITING_SOURCE, CLEAR_WRITING_TARGET))
+    for name in ("tk-explain-diff", "tk-study"):
+        if (ROOT / "skills" / name).is_dir():
+            pairs.append((CLEAR_WRITING_SOURCE, ROOT / "skills" / name / "references/clear-writing.md"))
     drift = [
         (source, target)
         for source, target in pairs

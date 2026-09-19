@@ -155,6 +155,5 @@ session.md routing
 ```bash
 python3 scripts/run_seed_release_gate.py \
   --baseline "<previous-tag-or-commit>" \
-  --candidate HEAD \
-  --output /tmp/tigerkit-release-gate
+  --candidate HEAD
 ```

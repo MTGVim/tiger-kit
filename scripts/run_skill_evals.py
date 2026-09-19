@@ -9,6 +9,11 @@ import shlex
 import shutil
 import subprocess
 import tempfile
+
+try:
+    from .artifact_policy import scratch_directory, output_directory
+except ImportError:
+    from artifact_policy import scratch_directory, output_directory
 import time
 from collections import Counter
 from contextlib import contextmanager
@@ -301,7 +306,7 @@ def resolve_ref(ref: str) -> str:
 
 @contextmanager
 def detached_worktree(ref: str) -> Iterator[Path]:
-    with tempfile.TemporaryDirectory(prefix="tigerkit-eval-worktree-") as directory:
+    with scratch_directory("eval-worktree", ROOT) as directory:
         path = Path(directory) / "repo"
         run_checked(["git", "worktree", "add", "--detach", str(path), ref])
         try:
@@ -319,14 +324,14 @@ def detached_worktree(ref: str) -> Iterator[Path]:
 @contextmanager
 def isolated_checkout(source: Path) -> Iterator[Path]:
     """Give one eval run a disposable checkout so runs cannot contaminate each other."""
-    with tempfile.TemporaryDirectory(prefix="tigerkit-eval-checkout-") as directory:
+    with scratch_directory("eval-checkout", ROOT) as directory:
         path = Path(directory) / "repo"
         if (source / ".git").exists():
             sha = run_checked(["git", "rev-parse", "HEAD"], cwd=source).stdout.strip()
             run_checked(["git", "clone", "--quiet", "--shared", "--no-checkout", str(ROOT), str(path)])
             run_checked(["git", "checkout", "--quiet", "--detach", sha], cwd=path)
         else:
-            shutil.copytree(source, path)
+            shutil.copytree(source, path, ignore=shutil.ignore_patterns(".tigerkit"))
         yield path
 
 
@@ -824,7 +829,7 @@ def run_adapter(
     host: str,
     watch_paths: list[str] | None = None,
 ) -> dict[str, object]:
-    with tempfile.TemporaryDirectory(prefix="tigerkit-eval-run-") as directory:
+    with scratch_directory("eval-run", ROOT) as directory:
         run_dir = Path(directory)
         home = run_dir / "home"
         home.mkdir()
@@ -2204,12 +2209,11 @@ def main() -> int:
     if args.diagnostic_max_iterations < 1:
         raise SystemExit("--diagnostic-max-iterations must be positive")
     output: Path | None = None
-    if args.output:
-        output = Path(args.output).resolve()
-        if output == ROOT or ROOT in output.parents:
-            raise SystemExit("--output must be outside the repository; use a temporary directory")
-    elif not args.dry_run:
-        raise SystemExit("live eval requires --output outside the repository")
+    if args.output or not args.dry_run:
+        try:
+            output = output_directory(args.output, "skill-evals", ROOT)
+        except ValueError as exc:
+            raise SystemExit(str(exc)) from exc
     try:
         baseline_sha = resolve_ref(args.baseline)
         candidate_sha = resolve_ref(args.candidate)

@@ -42,6 +42,11 @@ else:
     )
     from validate_skills import validate_portable_artifacts
 
+try:
+    from .artifact_policy import output_directory, scratch_directory, validate_artifact_guards
+except ImportError:
+    from artifact_policy import output_directory, scratch_directory, validate_artifact_guards
+
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "evals/release-critical.json"
 LEDGER_PATH = re.compile(r"\.tigerkit/[A-Za-z0-9_.-]+\.md")
@@ -486,7 +491,7 @@ def consumer_install_errors(
 
 
 def run_consumer_install(candidate_root: Path) -> dict[str, object]:
-    with tempfile.TemporaryDirectory(prefix="tigerkit-consumer-install-") as directory:
+    with scratch_directory("consumer-install", ROOT) as directory:
         consumer = Path(directory)
         record = run_checked(
             [
@@ -521,17 +526,17 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--baseline", required=True)
     parser.add_argument("--candidate", default="HEAD")
-    parser.add_argument("--output", required=True)
+    parser.add_argument("--output")
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
     ensure_clean_worktree()
-    output = Path(args.output).resolve()
-    if output == ROOT or ROOT in output.parents:
-        raise SystemExit("--output must be outside the repository")
-    output.mkdir(parents=True, exist_ok=True)
+    try:
+        output = output_directory(args.output, "release-gate", ROOT)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
     manifest = load_manifest()
     baseline_sha = resolve_ref(args.baseline)
     candidate_sha = resolve_ref(args.candidate)
@@ -565,7 +570,12 @@ def main() -> int:
         contract_errors.extend(ledger_errors)
         contract_errors.extend(compare_language_regression(baseline_language, candidate_language))
         contract_errors.extend(validate_portable_artifacts(candidate_root))
+        contract_errors.extend(validate_artifact_guards(candidate_root))
         commands = [
+            ["python3", "scripts/sync_execution_protocol.py", "--check"],
+            ["python3", "scripts/check_docs.py"],
+            ["node", "--check", "skills/tk-pr-sweep/scripts/triage.mjs"],
+            ["node", "--test", "skills/tk-pr-sweep/scripts/triage.test.mjs"],
             ["python3", "scripts/validate_skills.py"],
             ["python3", "scripts/validate_skills.py", "--links-only"],
             ["python3", "-B", "-m", "unittest", "discover", "-s", "scripts", "-p", "test_*.py"],

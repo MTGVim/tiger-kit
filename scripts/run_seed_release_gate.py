@@ -43,6 +43,11 @@ else:
     )
     from validate_skills import validate_portable_artifacts
 
+try:
+    from .artifact_policy import output_directory, scratch_directory, validate_artifact_guards
+except ImportError:
+    from artifact_policy import output_directory, scratch_directory, validate_artifact_guards
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -66,17 +71,17 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--baseline", required=True)
     parser.add_argument("--candidate", default="HEAD")
-    parser.add_argument("--output", required=True)
+    parser.add_argument("--output")
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
     base.ensure_clean_worktree()
-    output = Path(args.output).resolve()
-    if output == ROOT or ROOT in output.parents:
-        raise SystemExit("--output must be outside the repository")
-    output.mkdir(parents=True, exist_ok=True)
+    try:
+        output = output_directory(args.output, "release-gate", ROOT)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
 
     baseline_sha = resolve_ref(args.baseline)
     candidate_sha = resolve_ref(args.candidate)
@@ -145,6 +150,7 @@ def main() -> int:
         ledger_errors, _ = base.validate_ledger_eval_coverage(candidate_contracts)
         contract_errors.extend(ledger_errors)
         contract_errors.extend(validate_portable_artifacts(candidate_root))
+        contract_errors.extend(validate_artifact_guards(candidate_root))
         contract_errors.extend(validate_runtime_guard(candidate_root))
 
     self_blockers = [

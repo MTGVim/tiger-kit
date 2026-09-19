@@ -1,6 +1,6 @@
 ---
 name: tk-research
-description: "[user/auto] 외부 prior art, 업계·학계 접근법, OSS·논문·공식 사례 또는 해결 방식 비교를 명시적으로 요청할 때 사용합니다. 저장소 동작 질문, 일반 사실 설명, 구현 요청에는 자동으로 사용하지 않습니다."
+description: "[user/auto] 외부 prior art, 업계·학계 접근법, OSS·논문·공식 사례 또는 해결 방식 비교를 명시적으로 요청할 때 사용합니다. 배경부터 배우려는 학습 요청, 저장소 동작 질문, 일반 사실 설명, 구현 요청에는 자동으로 사용하지 않습니다."
 disable-model-invocation: false
 argument-hint: "<problem or decision> [constraints] [save <path>]"
 metadata:
@@ -52,7 +52,12 @@ Make the result self-contained enough to become `tk-prep` input without granting
 Research is read-only for repository/source/tests/configuration, Git and remote state. Do not install dependencies,
 run a proposed experiment or implement the recommendation. Default to a conversational report, with no mandatory
 workspace or run lifecycle. Only for explicit save, handoff, or genuinely interrupted/long-running research may you
-write a standalone report to a permitted path after checking existing content; never overwrite unrelated work.
+write a standalone report to `.tigerkit/research/<topic>.md` by default, or the explicit final destination, after checking existing content; never overwrite unrelated work.
 That report is the sole artifact exception, not permission to modify product or repository instructions.
 When required evidence is unavailable, preserve verified partial findings and report `Unverifiable` for the affected
 conclusion. Never send private code, logs, secrets or identifying project details to external search; generalize queries.
+
+<!-- tigerkit:artifact-paths -->
+## Artifact Paths
+
+Default repository-owned output to `.tigerkit/`: transient files in `tmp/<skill>/<run-id>/`, verification evidence in `evidence/<skill>/<run-id>/`, explanations in `explanations/`, and lessons in `study/<topic>/`. Preserve existing owner-specific paths and explicit user-selected final destinations. This policy grants no new write authority or mandatory artifact. Before using `.tigerkit/`, verify the repository root, no tracked files under it, and effective Git ignore coverage. Reject symlink escapes; preserve unrelated existing files. If unsafe or no repository is identified, stop the file branch as `Blocked | Unverifiable`, without editing ignore rules or falling back to OS temp. Atomic replacement may use a run-owned sibling temporary file on the destination filesystem; clean it after success. External tool caches and isolated test fixtures retain their tool-owned lifecycle.

@@ -99,7 +99,7 @@ Record pre-existing temporary paths and run-created files before writing.
 | server/harness failure | Preserve the command, exit state, output, and fake/real boundary | `Fail`; do not expand into production/dependency scope |
 | Execution succeeds but output/screenshot evidence is unavailable | Retry capture once within the same boundary | `Unverifiable`; do not claim `Pass` |
 | ownership/state conflict with existing artifact | Preserve the existing path and record evidence | `Blocked`; choose another path before writing |
-| cleanup failure | Re-identify only run-owned resources and report the outcome | `Fail | Unverifiable`; preserve existing routes/processes |
+| cleanup failure | Re-identify only run-owned resources and report the outcome | `Fail \| Unverifiable`; preserve existing routes/processes |
 | Scope expands to production/promotion/commit | Stop the prototype and separate it into another implementation request | `Blocked`; do not auto-promote |
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Execution Boundary
@@ -139,3 +139,8 @@ This is a budget, not a quota.
 - Do not report fake integration as real or claim success without run evidence.
 - Do not add irrelevant variants, dependencies, manifest/lockfile edits, unnecessary
   production abstractions, or a third option with no value.
+
+<!-- tigerkit:artifact-paths -->
+## Artifact Paths
+
+Default repository-owned output to `.tigerkit/`: transient files in `tmp/<skill>/<run-id>/`, verification evidence in `evidence/<skill>/<run-id>/`, explanations in `explanations/`, and lessons in `study/<topic>/`. Preserve existing owner-specific paths and explicit user-selected final destinations. This policy grants no new write authority or mandatory artifact. Before using `.tigerkit/`, verify the repository root, no tracked files under it, and effective Git ignore coverage. Reject symlink escapes; preserve unrelated existing files. If unsafe or no repository is identified, stop the file branch as `Blocked | Unverifiable`, without editing ignore rules or falling back to OS temp. Atomic replacement may use a run-owned sibling temporary file on the destination filesystem; clean it after success. External tool caches and isolated test fixtures retain their tool-owned lifecycle.

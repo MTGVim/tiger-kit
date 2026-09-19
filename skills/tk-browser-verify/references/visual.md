@@ -22,7 +22,7 @@ invoked before the first product edit, prove and record the current HEAD plus re
 fingerprint, capture that exact current tree directly under `baseline/`, and preserve the run ID for
 the after call. When invoked after candidate edits without a baseline, identify the exact pre-change
 source from the approved change range and repository evidence, safely materialize it in a run-owned
-OS temporary tree without modifying the current checkout, commits, refs, or shared Git metadata,
+`.tigerkit/tmp/tk-browser-verify/<run-id>/baseline-source/` tree without modifying the current checkout, commits, refs, or shared Git metadata,
 and capture the baseline first. Do not guess the pre-change ref or silently compare against an
 unrelated branch. If pre-existing work makes that source ambiguous, the pre-change tree cannot be
 run, or comparable conditions cannot be reproduced, record that limitation and do not claim absence

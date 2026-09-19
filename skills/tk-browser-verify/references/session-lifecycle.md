@@ -39,7 +39,7 @@ Clean up success, failure, interruption, and exception paths in this order:
 2. run-created contexts;
 3. direct browser instances started by this run;
 4. exact owned processes, only when normal shutdown fails;
-5. run-owned OS temporary baseline source trees after their servers have stopped.
+5. run-owned `.tigerkit/tmp/tk-browser-verify/<run-id>/baseline-source/` trees after their servers have stopped.
 
 Before forced termination, match the PID and profile against process arguments. Never
 use `killall`, broad `pkill`, or task-name bulk termination. Preserve evidence directories, provider-owned and

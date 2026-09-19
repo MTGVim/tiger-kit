@@ -1,0 +1,6 @@
+interface:
+  short_description: "[user/auto] 코드 변경의 배경과 실행 흐름을 근거와 함께 설명합니다."
+  default_prompt: "$tk-explain-diff을 사용해 요청한 내용을 학습 자료로 만들어 주세요."
+
+policy:
+  allow_implicit_invocation: true

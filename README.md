@@ -59,13 +59,15 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-research` | `hybrid` | 외부 사례·접근법을 깊이 비교하고 최소 충분한 해결 방식 제안 |
 | `tk-ask-repo` | `user` | 저장소 동작·값·영향·귀속을 근거와 함께 설명 |
 | `tk-review` | `user` | 정확한 커밋 범위/`PR`/`current worktree`의 읽기 전용 `Spec/AC` + `Quality/Standards` 검토 |
-| `tk-pr-open` | `hybrid` | 검증된 `commit`의 `single | stacked` 발행 계획 + 제한된 `push`/PR 생성·갱신 |
+| `tk-pr-open` | `hybrid` | 검증된 `commit`의 `single` 또는 `stacked` 발행 계획 + 제한된 `push`/PR 생성·갱신 |
 | `tk-pr-respond` | `hybrid` | 한 PR의 리뷰/지원 CI 분석·수정·검증·`reply`/`resolve` |
 | `tk-pr-rebase` | `hybrid` | 정확한 PR의 최신 `base` `rebase`와 제한된 `force-with-lease` |
 | `tk-pr-sweep` | `user` | 여러 PR의 결정론적 분류와 승인된 유지보수 묶음 |
-| `tk-github-image-upload-to-pr` | `user` | 기존 PR에 로컬 근거 이미지 올리기 |
+| `tk-github-image-upload-to-pr` | `hybrid` | 기존 PR에 로컬 근거 이미지 올리기 |
 | `tk-prototype` | `hybrid` | 폐기 가능한 UI/로직 비교물 |
 | `tk-explain` | `hybrid` | 배경지식과 실제 구조·동작을 시각화하는 자체 완결형 HTML 설명 자료 |
+| `tk-explain-diff` | `hybrid` | 특정 코드 변경을 기존 구조와 실행 흐름부터 설명하는 자료 |
+| `tk-study` | `hybrid` | 낯선 주제를 조사하고 배경·동작·응용 문제 순서로 가르치는 학습 자료 |
 | `tk-browser-verify` | `hybrid` | 화면에 보이는 AC의 `headless` 실행 검증과 읽기 전용 라벨·진입 경로 조사 |
 | `tk-skill-diagnose` | `hybrid` | `Agent Skill` 사고 재현·격리와 `learn-ready` 인계, 승인된 수정은 `tk-learn`으로 연속 진행 |
 | `tk-learn` | `hybrid` | 재사용 가능한 스킬의 생성/개선/병합 작성자. 기존 검사 도구로 막을 수 있는 문제는 해당 도구의 최소 확장을 우선 제안 |
@@ -237,8 +239,12 @@ TigerKit은 새 `tag`나 별도 `release`를 발행하지 않으며 기존 태�
 쓰기 전에는 추적 파일이 없고 `Git`이 `.tigerkit/`을 실제로 무시하는지 `git ls-files`와 `git check-ignore`로
 확인합니다. 작업 트리의 상위 `.gitignore`·저장소 로컬 `exclude`·사용자 전역 `exclude` 중 어느 규칙이 적용되었는지는
 제한하지 않습니다. 실제로 무시되지 않으면 `.gitignore`를 자동으로 수정하거나 접근하기 어려운 외부 임시
-경로로 전환하지 않습니다. 격리 `checkout`, `release`/`eval` 출력처럼 사용자가 직접 접근하지 않는 도구 내부
-파일은 운영체제 임시 경로를 사용할 수 있습니다.
+경로로 전환하지 않습니다. 설명 자료는 `.tigerkit/explanations/`, 학습 자료는 `.tigerkit/study/<topic>/`,
+저장을 요청한 조사 자료는 `.tigerkit/research/`를 기본으로 사용합니다. 사용자가 지정한 최종 경로는 존중합니다.
+격리 `checkout`·설치 검사·평가 실행도 `.tigerkit/tmp/`를 사용하고, `release`/`eval` 결과는
+`.tigerkit/evidence/`에 남깁니다. 외부 도구 자체 캐시와 격리 단위 테스트용 데이터만 도구의 임시 공간을 유지합니다.
+원자적 교체에 필요한 임시 파일은 대상과 같은 파일시스템의 실행이 소유하는 임시 파일을 사용할 수 있습니다.
+공통 실행 정책은 `scripts/artifact_policy.py`가 소유하며, 각 설치 스킬에 동일한 계약을 포함합니다.
 
 비밀 입력 파일은 빈 상태로 생성하고 상대·절대 경로와 안전한 입력 명령만 안내합니다. 편집기나 파일 열기
 명령은 자동으로 실행하지 않으므로, 사용자는 원하는 시점과 도구를 직접 선택할 수 있습니다. 에이전트는 파일
@@ -292,6 +298,7 @@ python3 scripts/validate_skills.py
 python3 scripts/validate_skills.py --links-only
 python3 -B -m unittest discover -s scripts -p 'test_*.py'
 python3 scripts/audit_catalog.py --check
+python3 scripts/check_docs.py
 node --check skills/tk-pr-sweep/scripts/triage.mjs
 node --test skills/tk-pr-sweep/scripts/triage.test.mjs
 npx --yes skills@1.5.9 add . --list
@@ -304,8 +311,7 @@ git diff --check
 ```bash
 python3 scripts/run_seed_release_gate.py \
   --baseline "$(git rev-parse origin/main)" \
-  --candidate HEAD \
-  --output /tmp/tigerkit-release-gate
+  --candidate HEAD
 ```
 
 모든 검증은 로컬 전용입니다.
@@ -326,10 +332,20 @@ python3 scripts/run_seed_release_gate.py \
 해당 분야를 모르는 성인을 기본 독자로 보고, 필요한 선행 개념을 소개한 뒤 실제 구성 요소와 작동 방식을 그립니다.
 비유와 장면·단어 수를 의무화하지 않으며, 일반 텍스트 질문에는 HTML을 만들지 않습니다.
 
-두 스킬은 같은 `references/clear-writing.md` 기준을 사용합니다. 정본은 `tk-rewrite`에 두고
-`tk-explain`에 동일한 사본을 동기화하며, 각 패키지에 참조 문서와 원본 라이선스를 포함합니다.
+코드 변경을 이해하려면 `/tk-explain-diff`, 낯선 주제를 조사해서 배우려면 `/tk-study`를 사용합니다.
+두 신규 스킬은 기본적으로 Markdown 자료 하나를 만들며, HTML 등 명시한 형식과 최종 경로를 존중합니다.
+
+글쓰기와 설명·학습 스킬은 같은 `references/clear-writing.md` 기준을 사용합니다. 정본은 `tk-rewrite`에 두고
+`tk-explain`, `tk-explain-diff`, `tk-study`에 동일한 사본을 동기화하며, 각 패키지에 참조 문서와 원본 라이선스를 포함합니다.
 의미와 필수 문장 성분을 보존하고, 일반 설명문의 엠대시와 절 기호은 빈도와 무관하게 교정합니다.
 코드·인용 등은 보존하며, 자연스러운 단발 표현은 유지하고 반복·밀집된 표현만 선택적으로 정리합니다.
 외부 `fluent-korean` 설치 없이도 사용할 수 있으며, `tigeryoo-ai-setup`의 기존 공용 지침 설치는 별도로 유지됩니다.
 세션 현황을 짧게 확인하고 멈추는 용도는 계속 `tk-adhd`가 담당합니다.
 이전 이름으로 설치한 사용자는 [마이그레이션 안내](MIGRATION.md)에 따라 새 이름을 설치하고 남은 구버전을 제거하세요.
+
+### 문서 정합성 검사 범위
+
+릴리즈 게이트는 기존 Markdown 상대 링크, README 스킬 목록, 공유 참조 동기화에 더해
+표의 열 수, README 호출 방식과 실제 스킬 메타데이터, 설치 스킬의 산출물 정책 일치를 검사합니다.
+`python3 scripts/check_docs.py`로 따로 실행할 수 있습니다. 자연어 설명의 의미까지 자동으로 보장하지는
+않으므로 공개 동작을 바꾸면 해당 문서를 함께 갱신하고 독립 검수에서 실제 계약과 대조합니다.
