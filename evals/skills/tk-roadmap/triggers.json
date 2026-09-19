@@ -1,0 +1,60 @@
+{
+  "skill": "tk-roadmap",
+  "kind": "user-invoked",
+  "queries": [
+    {
+      "id": "train-empty",
+      "split": "train",
+      "query": "$tk-roadmap",
+      "should_trigger": true
+    },
+    {
+      "id": "train-negative",
+      "split": "train",
+      "query": "아이디어 세 개만 추천해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "empty-slash",
+      "split": "validation",
+      "query": "/tk-roadmap",
+      "should_trigger": true
+    },
+    {
+      "id": "context",
+      "split": "validation",
+      "query": "tk-roadmap으로 지금까지 얘기한 제약 안에서 계획을 세우자",
+      "should_trigger": true
+    },
+    {
+      "id": "nontechnical",
+      "split": "validation",
+      "query": "$tk-roadmap 자원봉사 프로그램 운영을 개선하고 싶어",
+      "should_trigger": true
+    },
+    {
+      "id": "prep",
+      "split": "validation",
+      "query": "$tk-prep 로그인 오류를 수정해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "research",
+      "split": "validation",
+      "query": "업계 탐지 기법을 조사해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "grill",
+      "split": "validation",
+      "query": "$tk-grill 이 결정의 숨은 가정을 점검해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "generic",
+      "split": "validation",
+      "query": "다음 분기 로드맵을 간단히 설명해줘",
+      "should_trigger": false
+    }
+  ]
+}

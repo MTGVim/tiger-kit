@@ -81,6 +81,10 @@
     {"id":"study-vs-explain","boundary":"조사·학습·변경 설명·리뷰 소유권 구분","prompt":"`Kafka` 동작을 시각적으로 설명해줘.","focus_skill":"tk-study","expected_selected_skill":"tk-explain","critical":true},
     {"id":"diff-understanding","boundary":"조사·학습·변경 설명·리뷰 소유권 구분","prompt":"이 PR에서 `Kafka` `consumer`가 왜 이렇게 바뀌었어?","focus_skill":"tk-explain-diff","expected_selected_skill":"tk-explain-diff","critical":true},
     {"id":"diff-vs-review","boundary":"조사·학습·변경 설명·리뷰 소유권 구분","prompt":"이 PR 리뷰해줘.","focus_skill":"tk-explain-diff","expected_selected_skill":null,"critical":true},
-    {"id":"study-vs-learn","boundary":"조사·학습·변경 설명·리뷰 소유권 구분","prompt":"이 경험을 재사용 가능한 스킬로 만들어줘.","focus_skill":"tk-study","expected_selected_skill":"tk-learn","critical":true}
+    {"id":"study-vs-learn","boundary":"조사·학습·변경 설명·리뷰 소유권 구분","prompt":"이 경험을 재사용 가능한 스킬로 만들어줘.","focus_skill":"tk-study","expected_selected_skill":"tk-learn","critical":true},
+    {"id":"roadmap-empty","boundary":"단계별 기획 인터뷰와 구현 준비·결정 점검·일반 대화 구분","prompt":"$tk-roadmap","focus_skill":"tk-roadmap","expected_selected_skill":"tk-roadmap","critical":true},
+    {"id":"roadmap-prep","boundary":"단계별 기획 인터뷰와 구현 준비·결정 점검·일반 대화 구분","prompt":"$tk-prep 이 버그를 수정해줘","focus_skill":"tk-roadmap","expected_selected_skill":"tk-prep","critical":true},
+    {"id":"roadmap-grill","boundary":"단계별 기획 인터뷰와 구현 준비·결정 점검·일반 대화 구분","prompt":"$tk-grill 이 계획을 점검해줘","focus_skill":"tk-roadmap","expected_selected_skill":"tk-grill","critical":true},
+    {"id":"roadmap-ordinary","boundary":"단계별 기획 인터뷰와 구현 준비·결정 점검·일반 대화 구분","prompt":"개선 아이디어 세 개만 알려줘","focus_skill":"tk-roadmap","expected_selected_skill":null,"critical":true}
   ]
 }

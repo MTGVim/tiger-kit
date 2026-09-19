@@ -1,0 +1,6 @@
+interface:
+  short_description: "[user] 목표와 제약을 인터뷰로 구체화하고 성과 중심 마일스톤을 수립합니다."
+  default_prompt: "$tk-roadmap으로 현재 맥락을 활용해 단계별 인터뷰를 시작하고, 목표와 제약 안에서 추진 방향과 마일스톤을 함께 정리해 주세요."
+
+policy:
+  allow_implicit_invocation: false

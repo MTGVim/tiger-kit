@@ -359,7 +359,14 @@
     "tk-prep:behavior:prep-sdd-interaction-recovery-after-mutation",
     "tk-prep:behavior:prep-sdd-interaction-resume-remaining-work",
     "tk-pr-respond:behavior:pr-respond-sdd-interaction-nested-controller",
-    "tk-prep:behavior:prep-sdd-interaction-replacement-continues-partial-work"
+    "tk-prep:behavior:prep-sdd-interaction-replacement-continues-partial-work",
+    "tk-roadmap:behavior:empty-start",
+    "tk-roadmap:behavior:context-next-question",
+    "tk-roadmap:behavior:nontechnical-options",
+    "tk-roadmap:behavior:unknown-demand-investigation",
+    "tk-roadmap:behavior:roadmap-not-execution",
+    "tk-roadmap:behavior:authority-and-constraint-pressure",
+    "tk-roadmap:behavior:no-repo-chat-completion"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",

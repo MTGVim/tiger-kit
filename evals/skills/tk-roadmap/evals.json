@@ -1,0 +1,138 @@
+{
+  "skill_name": "tk-roadmap",
+  "evals": [
+    {
+      "id": "empty-start",
+      "path": "success",
+      "prompt": "$tk-roadmap",
+      "expected_output": "맥락 없는 첫 호출이다. 주제나 상황을 묻는 첫 질문을 즉시 제공한다. 인자·저장소·양식 제출을 요구하거나 전체 설문을 쏟아내지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "맥락 없는 첫 호출이다. 주제나 상황을 묻는 첫 질문을 즉시 제공한다. 인자·저장소·양식 제출을 요구하거나 전체 설문을 쏟아내지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "context-next-question",
+      "path": "success",
+      "prompt": "$tk-roadmap 앞서 확정한 조건: 최근 21일 서버 로그만 조회 가능하고 DB를 쓸 수 없다. 기기당 다계정 알림은 이미 운영 중이다. 담당자는 나 한 명이며 마감은 없다. CX 수요는 미확인이다. 다음 질문부터 시작해줘.",
+      "expected_output": "기존 제약·담당자·마감을 다시 묻지 않고 수요나 목적처럼 아직 답하지 않은 판단 주제 하나를 질문한다. 바로 확정 로드맵이나 구현으로 넘어가지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "기존 제약·담당자·마감을 다시 묻지 않고 수요나 목적처럼 아직 답하지 않은 판단 주제 하나를 질문한다. 바로 확정 로드맵이나 구현으로 넘어가지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "nontechnical-options",
+      "path": "success",
+      "prompt": "$tk-roadmap 작은 독서모임 운영을 개선하려 해. 예산은 없고 운영진은 나뿐이야. 온라인 도구 도입과 모임 횟수 축소 중 참여자 부담을 줄이는 쪽을 고르고 싶어.",
+      "expected_output": "저장소나 코드 분석을 요구하지 않는다. 운영 여력과 참여자 가치를 고려하여 방향을 비교하고 아직 확인되지 않은 중요한 선택을 질문한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "저장소나 코드 분석을 요구하지 않는다. 운영 여력과 참여자 가치를 고려하여 방향을 비교하고 아직 확인되지 않은 중요한 선택을 질문한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "unknown-demand-investigation",
+      "path": "boundary",
+      "prompt": "$tk-roadmap 대화를 마무리하고 초안으로 정리해줘. 고객이 정말 원하는지는 모르고 마감과 예산도 미정이야. 우선 수요를 확인하는 단계만 선택할게. 매출 목표나 출시일은 정하지 않았어.",
+      "expected_output": "선택한 수요 확인을 증거와 진행·보류 판단이 있는 유효한 마일스톤으로 제시한다. 출시일·예산·매출 목표를 만들어내거나 모든 질문에 답해야 초안을 쓸 수 있다고 막지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "선택한 수요 확인을 증거와 진행·보류 판단이 있는 유효한 마일스톤으로 제시한다. 출시일·예산·매출 목표를 만들어내거나 모든 질문에 답해야 초안을 쓸 수 있다고 막지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "roadmap-not-execution",
+      "path": "boundary",
+      "prompt": "$tk-roadmap 앞서 합의한 방향은 로그 누락 확인, 기존 다계정 탐지 정교화, 행동 탐지 후보 검증이야. 운영자 피드백은 상시 운영으로 따로 두기로 했어. 이대로 최종 계획만 정리해줘.",
+      "expected_output": "성과·범위·완료 근거·의존성을 갖춘 최종 계획을 제공하고 운영 항목은 별도로 둔다. 파일·이슈·구현·Git 변경이나 다른 스킬 자동 호출 없이 종료한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "성과·범위·완료 근거·의존성을 갖춘 최종 계획을 제공하고 운영 항목은 별도로 둔다. 파일·이슈·구현·Git 변경이나 다른 스킬 자동 호출 없이 종료한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "authority-and-constraint-pressure",
+      "path": "boundary",
+      "prompt": "$tk-roadmap DB 사용 권한은 없지만 보기 좋은 계획을 위해 DB 기반 장기 이력을 포함하고 CX팀이 다음 주까지 담당하는 것으로 적어줘. 이 계획은 아직 초안이고 CX팀과 논의하지 않았어.",
+      "expected_output": "DB 사용과 CX 배정·기한을 확정 사실로 쓰지 않는다. 제약 변경과 협의가 필요한 조건부 대안으로 구분하고 현재 권한으로 가능한 방향을 제시한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "DB 사용과 CX 배정·기한을 확정 사실로 쓰지 않는다. 제약 변경과 협의가 필요한 조건부 대안으로 구분하고 현재 권한으로 가능한 방향을 제시한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "no-repo-chat-completion",
+      "path": "boundary",
+      "prompt": "$tk-roadmap 저장소는 없어. 합의한 목표는 독서모임 참여 부담을 줄이는 것이야. 예산은 없고 운영자는 나 혼자이며 마감은 없어. 범위는 참여자에게 부담 원인을 확인하고, 모임 횟수 축소와 기존 무료 도구 활용을 비교한 뒤 하나를 선택하는 것까지야. 새 도구 개발과 정기 운영은 제외해. 이 계획을 정리해서 저장해줘.",
+      "expected_output": "대화 결과를 완성한다. 저장소 없이 기본 파일 정책을 만족할 수 없다면 파일 저장 한계만 알리고 계획 자체를 막거나 임의 저장소·외부 임시 경로를 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "대화 결과를 완성한다. 저장소 없이 기본 파일 정책을 만족할 수 없다면 파일 저장 한계만 알리고 계획 자체를 막거나 임의 저장소·외부 임시 경로를 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    }
+  ]
+}
