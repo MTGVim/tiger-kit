@@ -268,7 +268,7 @@
     {
       "id": "wizard-handles-interactive-gh-auth-handoff",
       "path": "boundary",
-      "prompt": "[`tk-github-image-upload-to-pr` 인계] 저장소, `PR` 본문 대상, 이미지 집합, 검토된 `gh-attach` 경로는 확정됐지만 대화형 `gh auth login`이 필요합니다. 업로드는 소비자가 계속 소유합니다.",
+      "prompt": "[`tk-pr-image` 인계] 저장소, `PR` 본문 대상, 이미지 집합, 검토된 `gh-attach` 경로는 확정됐지만 대화형 `gh auth login`이 필요합니다. 업로드는 소비자가 계속 소유합니다.",
       "expected_output": "현재 호스트가 증명하는 대화형 인증 행동 하나와 완료 신호를 안내합니다. 이미지 업로드, 확장 설치, `PR` 변경을 수행하지 않고 원래 대상과 경로를 보존한 재개 행동과 `Pending`을 반환합니다.",
       "assertions": [
         {
@@ -292,7 +292,7 @@
     {
       "id": "wizard-handles-selected-cdp-permission-handoff",
       "path": "boundary",
-      "prompt": "[`tk-github-image-upload-to-pr` 인계] 사용자가 `CDP` 경로를 명시적으로 선택했고 현재 `Chrome` 근거에 따르면 원격 디버깅 권한 행동과 클라이언트 재시작이 필요합니다. 정확한 `PR` 댓글 대상과 이미지를 보존해 주세요.",
+      "prompt": "[`tk-pr-image` 인계] 사용자가 `CDP` 경로를 명시적으로 선택했고 현재 `Chrome` 근거에 따르면 원격 디버깅 권한 행동과 클라이언트 재시작이 필요합니다. 정확한 `PR` 댓글 대상과 이미지를 보존해 주세요.",
       "expected_output": "검증된 `UI` 문구와 호스트 근거로 현재 `Chrome` 권한 행동 하나를 안내합니다. 재시작 뒤 정확한 `PR` 댓글 대상, 이미지, `CDP` 경로를 재개하는 행동을 반환하며 업로드 성공을 주장하지 않고 `Pending`으로 끝냅니다.",
       "assertions": [
         {

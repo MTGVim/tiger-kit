@@ -64,7 +64,7 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-pr-respond` | `hybrid` | 한 PR의 리뷰/지원 CI 분석·수정·검증·`reply`/`resolve` |
 | `tk-pr-rebase` | `hybrid` | 정확한 PR의 최신 `base` `rebase`와 제한된 `force-with-lease` |
 | `tk-pr-sweep` | `user` | 여러 PR의 결정론적 분류와 승인된 유지보수 묶음 |
-| `tk-github-image-upload-to-pr` | `hybrid` | 기존 PR에 로컬 근거 이미지 올리기 |
+| `tk-pr-image` | `hybrid` | 기존 PR에 로컬 근거 이미지 올리기 |
 | `tk-prototype` | `hybrid` | 폐기 가능한 UI/로직 비교물 |
 | `tk-explain` | `hybrid` | 배경지식과 실제 구조·동작을 시각화하는 자체 완결형 HTML 설명 자료 |
 | `tk-explain-diff` | `hybrid` | 특정 코드 변경을 기존 구조와 실행 흐름부터 설명하는 자료 |
@@ -79,6 +79,8 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-rewrite` | `hybrid` | 기존 글의 맥락·구조 재구성과 표현 정제 |
 | `tk-merge-conflict` | `hybrid` | 활성 Git 충돌 의도 복원 |
 | `tk-wizard` | `hybrid` | 사람이 직접 해야 하는 설정·인증·이관 절차 안내 |
+
+기존 `tk-github-image-upload-to-pr`의 이름은 `tk-pr-image`로 변경했습니다.
 
 `user`는 명시 호출 전용이고, `hybrid`는 해당 작업 의도가 명확할 때 자동 진입할 수 있습니다.
 

@@ -107,7 +107,7 @@ Before remote publication, stop as `Blocked` when a required entry is missing, n
 An optional entry may be omitted; an absent or uninspected artifact is not valid optional evidence.
 
 Do not upload actual secret-bearing screenshots or unverified captures.
-If an image is required, pass the exact generic manifest entry to `tk-github-image-upload-to-pr` after the owning `PR` exists.
+If an image is required, pass the exact generic manifest entry to `tk-pr-image` after the owning `PR` exists.
 Publish every valid entry marked `evidence_required: true`; do not downgrade `visual-preservation` because its baseline and
 after are identical or show no unintended difference. Require both labeled roles for that evidence kind.
 For a stack, attach evidence to the layer that owns the browser-visible acceptance; do not copy the same evidence to unrelated lower layers.

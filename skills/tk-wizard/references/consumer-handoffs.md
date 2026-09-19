@@ -58,6 +58,6 @@ explicitly selected CDP route's Chrome permission/restart step. Do not take over
 extension selection or installation, image staging/upload, PR mutation, or render verification.
 
 After a completion signal that needs no client restart, return control to
-`tk-github-image-upload-to-pr` with its original repository, PR/comment target, image set, and
+`tk-pr-image` with its original repository, PR/comment target, image set, and
 selected route intact. If restart is required, return `Status: Pending` and an exact resume
 action without claiming that any image was uploaded.

@@ -34,7 +34,7 @@ class EvalSotValidatorTest(unittest.TestCase):
 
     def test_native_question_tool_contract_is_present(self) -> None:
         targets = (
-            "tk-prep", "tk-audit", "tk-github-image-upload-to-pr", "tk-grooming",
+            "tk-prep", "tk-audit", "tk-pr-image", "tk-grooming",
             "tk-learn", "tk-pr-open", "tk-pr-rebase", "tk-pr-respond", "tk-pr-sweep",
             "tk-prototype", "tk-wizard",
         )

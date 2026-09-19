@@ -1,11 +1,11 @@
 {
-  "skill": "tk-github-image-upload-to-pr",
+  "skill": "tk-pr-image",
   "kind": "hybrid",
   "queries": [
     {
       "id": "train-explicit",
       "split": "train",
-      "query": "$tk-github-image-upload-to-pr",
+      "query": "$tk-pr-image",
       "should_trigger": true
     },
     {
@@ -17,7 +17,7 @@
     {
       "id": "validation-positive-1",
       "split": "validation",
-      "query": "/tk-github-image-upload-to-pr 이 PNG를 현재 PR 본문에 넣어줘",
+      "query": "/tk-pr-image 이 PNG를 현재 PR 본문에 넣어줘",
       "should_trigger": true,
       "facets": [
         "formal"
@@ -26,7 +26,7 @@
     {
       "id": "validation-positive-2",
       "split": "validation",
-      "query": "로컬 screenshot 두 장을 GitHub PR에 첨부해줘",
+      "query": "로컬 `screenshot` 두 장을 GitHub PR에 첨부해줘",
       "should_trigger": true,
       "facets": [
         "casual"
@@ -35,7 +35,7 @@
     {
       "id": "validation-positive-3",
       "split": "validation",
-      "query": "PR comment에 이 이미지 올려줘",
+      "query": "PR `comment`에 이 이미지 올려줘",
       "should_trigger": true,
       "facets": [
         "compound"
@@ -53,7 +53,7 @@
     {
       "id": "validation-positive-5",
       "split": "validation",
-      "query": "[active tk-pr-open evidence handoff] 범용 manifest의 evidence_required: true, verification_status: Pass, inspected Screenshot을 현재 PR body에 첨부해줘.",
+      "query": "[`active tk-pr-open evidence handoff`] 범용 `manifest`의 `evidence_required: true`, `verification_status: Pass`, `inspected Screenshot`을 현재 PR `body`에 첨부해줘.",
       "should_trigger": true,
       "facets": [
         "compound"
@@ -62,7 +62,7 @@
     {
       "id": "validation-positive-6",
       "split": "validation",
-      "query": "검증된 local image evidence를 기존 PR 본문에 업로드해 주세요.",
+      "query": "검증된 `local image evidence`를 기존 PR 본문에 업로드해 주세요.",
       "should_trigger": true,
       "facets": [
         "ko-en"
@@ -71,7 +71,7 @@
     {
       "id": "validation-positive-7",
       "split": "validation",
-      "query": "pr에 이 로컬 imgae 넣어줘",
+      "query": "`pr`에 이 로컬 `imgae` 넣어줘",
       "should_trigger": true,
       "facets": [
         "typo"
@@ -107,7 +107,7 @@
     {
       "id": "validation-negative-3",
       "split": "validation",
-      "query": "열린 PR의 review와 checks를 triage해줘",
+      "query": "열린 PR의 `review`와 `checks`를 `triage`해줘",
       "should_trigger": false,
       "facets": [
         "compound"
@@ -125,7 +125,7 @@
     {
       "id": "validation-negative-5",
       "split": "validation",
-      "query": "이 이미지를 GitHub issue에 올려줘",
+      "query": "이 이미지를 GitHub `issue`에 올려줘",
       "should_trigger": false,
       "facets": [
         "casual"
@@ -152,7 +152,7 @@
     {
       "id": "validation-negative-8",
       "split": "validation",
-      "query": "pr imgae 업로드 스크립트가 어디 있는지 설명해줘",
+      "query": "`pr imgae` 업로드 스크립트가 어디 있는지 설명해줘",
       "should_trigger": false,
       "facets": [
         "typo"

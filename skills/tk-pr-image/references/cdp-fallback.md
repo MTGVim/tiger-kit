@@ -7,7 +7,7 @@ when the user chose to continue with `CDP` after target write access was unavail
 
 After `git check-ignore` proves that Git effectively ignores `.tigerkit/` and `git ls-files`
 shows no tracked path under it,
-create `.tigerkit/tmp/tk-github-image-upload-to-pr/<run-id>/` as the run-owned staging
+create `.tigerkit/tmp/tk-pr-image/<run-id>/` as the run-owned staging
 directory. Use a safe, descriptive filename as the image alt text. If the path is not
 ignored, apply the owning SKILL.md Artifact Paths setup and recheck. If it remains
 unignored, unwritable, or inaccessible to the browser, use no external scratch path;
