@@ -15,7 +15,8 @@ host-created workspace only when path, exact PR head, row identity, and dedicate
 Prefer an available agent-callable native mechanism such as `EnterWorktree`, `WorktreeCreate`, `/worktree`, or
 `--worktree`, then fresh-read its path, branch or detached state, and HEAD. Use manual `git worktree` only when no safe
 native mechanism exists. Start from the approved head, avoid collisions and unrelated work, and verify the result. Do not
-edit `.gitignore` or create a setup commit for isolation.
+make unrelated ignore edits or create a setup commit for isolation. Use the owning SKILL.md
+Artifact Paths setup only when an authorized `.tigerkit/` workspace needs ignore coverage.
 
 A child is isolated only when it receives and uses the proven workspace. Never reuse another row's workspace. If
 isolation cannot be proven, hold only that PR as `Held` or `Blocked`; do not mutate in the parent checkout. Preserve

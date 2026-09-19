@@ -15,7 +15,8 @@ work. Otherwise detect existing task isolation, prefer an available agent-callab
 state, and HEAD. Current approval for the exact plan and isolation also authorizes that mechanism without another question.
 
 Use manual `git worktree` only when no safe native mechanism exists. Start from the exact approved PR head, avoid
-collisions and unrelated work, and verify the result. Do not edit `.gitignore` or create a setup commit for isolation.
+collisions and unrelated work, and verify the result. Use the owning SKILL.md Artifact Paths setup only for missing `.tigerkit/` coverage;
+do not make unrelated ignore edits or create a setup commit for isolation.
 If isolation cannot be proven, return `Blocked` before mutation. Preserve host-managed workspace lifecycle; do not remove,
 prune, relocate, or clean it on completion.
 

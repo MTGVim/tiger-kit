@@ -23,8 +23,8 @@ Use manual `git worktree` only when no safe native mechanism exists. Start from 
 work and path/branch collisions, and verify the result. When creating a task branch from any ref other than current HEAD,
 prevent inherited upstream tracking (for example, `git worktree add ... -b <branch> --no-track <base-ref>`). Before product
 mutation, verify the task branch does not track a shared integration branch such as `origin/main`, `origin/dev`, or
-`origin/production`; unset that upstream or return `Blocked` if safe isolation cannot be proven. Do not edit `.gitignore`
-or create a setup commit for isolation. If isolation cannot be proven, return `Blocked` before product mutation. Preserve
+`origin/production`; unset that upstream or return `Blocked` if safe isolation cannot be proven. Use the owning SKILL.md Artifact Paths setup only for missing `.tigerkit/` coverage;
+do not make unrelated ignore edits or create a setup commit for isolation. If isolation cannot be proven, return `Blocked` before product mutation. Preserve
 the lifecycle of host-managed workspaces; do not remove, prune, relocate, or clean them on completion.
 
 ## Direct execution and completion

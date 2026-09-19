@@ -17,9 +17,9 @@ Before the first write to repository-local evidence, prove that
 `git ls-files -- .tigerkit/` returns no tracked path and
 `git check-ignore -q -- .tigerkit/` succeeds. Classify the matching rule from
 `git check-ignore -v` as `per-directory | info-exclude | user-level` and record the
-pattern without exposing an absolute user-level path. If the check fails, do not create
-the evidence directory, edit `.gitignore`, or switch to an external path; return
-`Unverifiable`.
+pattern without exposing an absolute user-level path. Use the owning SKILL.md Artifact Paths
+setup when ignore coverage is missing. If checks still fail, do not create evidence or
+switch to an external path; return `Unverifiable`.
 
 Place binary evidence in the parent-provided or standalone run-owned evidence
 directory. Only a bounded `README.md` AC-to-file evidence index may accompany it; do not

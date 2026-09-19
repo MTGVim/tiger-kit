@@ -27,4 +27,4 @@ intercept only the body inside the page by wrapping `fetch` or `XMLHttpRequest.s
 return headers, cookies, or transient authentication material.
 
 Never move or delete user screenshots, fixtures, profiles, or artifacts with unknown
-ownership. Never change `.gitignore` for evidence handling.
+ownership. Limit ignore edits to the owning SKILL.md Artifact Paths setup; verify coverage before evidence writes.

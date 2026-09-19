@@ -239,8 +239,11 @@ TigerKit은 새 `tag`나 별도 `release`를 발행하지 않으며 기존 태�
 `.tigerkit/secret-input/<skill>-<run-id>/`, 검증 근거는 `.tigerkit/evidence/<skill>/<run-id>/`를 사용합니다.
 쓰기 전에는 추적 파일이 없고 `Git`이 `.tigerkit/`을 실제로 무시하는지 `git ls-files`와 `git check-ignore`로
 확인합니다. 작업 트리의 상위 `.gitignore`·저장소 로컬 `exclude`·사용자 전역 `exclude` 중 어느 규칙이 적용되었는지는
-제한하지 않습니다. 실제로 무시되지 않으면 `.gitignore`를 자동으로 수정하거나 접근하기 어려운 외부 임시
-경로로 전환하지 않습니다. 설명 자료는 `.tigerkit/explanations/`, 학습 자료는 `.tigerkit/study/<topic>/`,
+제한하지 않습니다. 실제로 무시되지 않으면 저장소 루트 `.gitignore`를 생성하거나 끝에 `/.tigerkit/`를
+추가하고, Git의 무시 판정을 다시 확인한 뒤 저장을 계속합니다. 기존 내용과 줄바꿈은 보존하며, 이미 다른
+규칙으로 무시된다면 수정하지 않습니다. 이 설정은 요청된 산출물 작성에 포함되므로 별도 확인을 요구하지
+않습니다. 추적 중인 파일을 자동으로 추적 해제하거나 설정만을 위해 스테이징·커밋하지 않습니다. 수정 내용을
+간단히 알리고, 경로가 안전하지 않거나 설정을 쓸 수 없으면 해당 파일 저장만 중단합니다. 설명 자료는 `.tigerkit/explanations/`, 학습 자료는 `.tigerkit/study/<topic>/`,
 저장을 요청한 조사 자료는 `.tigerkit/research/`를 기본으로 사용합니다. 사용자가 지정한 최종 경로는 존중합니다.
 격리 `checkout`·설치 검사·평가 실행도 `.tigerkit/tmp/`를 사용하고, `release`/`eval` 결과는
 `.tigerkit/evidence/`에 남깁니다. 외부 도구 자체 캐시와 격리 단위 테스트용 데이터만 도구의 임시 공간을 유지합니다.

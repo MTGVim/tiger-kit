@@ -3,6 +3,7 @@ from __future__ import annotations
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 import artifact_policy as policy
@@ -36,18 +37,72 @@ class ArtifactPolicyTests(unittest.TestCase):
         local = self.root / '.tigerkit/evidence/chosen'
         self.assertEqual(policy.output_directory(str(local), 'release-gate', self.root), local)
 
-    def test_unignored_and_tracked_artifacts_fail_without_repair(self):
+    def test_missing_ignore_is_created_before_artifact_write(self):
         (self.root / '.gitignore').unlink()
-        with self.assertRaises(ValueError):
-            policy.checked_artifact_root(self.root)
+        path = policy.artifact_directory('tmp/new', self.root)
+        self.assertTrue(path.is_dir())
+        self.assertEqual((self.root / '.gitignore').read_bytes(), b'/.tigerkit/\n')
+        self.assertEqual(self.git('ls-files').stdout, b'')
+        self.assertEqual(self.git('check-ignore', '.tigerkit/tmp/new').stdout.strip(), b'.tigerkit/tmp/new')
+
+    def test_existing_bytes_preserved_and_rule_not_duplicated(self):
+        p = self.root / '.gitignore'
+        original = b'# keep\r\nnode_modules/\r\n!/.tigerkit/'
+        p.write_bytes(original)
+        policy.artifact_directory('tmp/one', self.root)
+        first = p.read_bytes()
+        self.assertEqual(first, original + b'\r\n/.tigerkit/\r\n')
+        policy.artifact_directory('tmp/two', self.root)
+        self.assertEqual(p.read_bytes(), first)
+
+    def test_existing_local_exclude_needs_no_gitignore(self):
+        (self.root / '.gitignore').unlink()
+        (self.root / '.git/info/exclude').write_text('/.tigerkit/\n')
+        policy.artifact_directory('tmp/one', self.root)
         self.assertFalse((self.root / '.gitignore').exists())
-        (self.root / '.gitignore').write_text('.tigerkit/\n')
+
+    def test_symlinked_ignore_is_not_modified(self):
+        p = self.root / '.gitignore'
+        p.unlink()
+        outside = Path(self.temp.name) / 'external-ignore'
+        outside.write_text('keep\n')
+        p.symlink_to(outside)
+        with self.assertRaises(ValueError):
+            policy.artifact_directory('tmp/one', self.root)
+        self.assertEqual(outside.read_text(), 'keep\n')
+        self.assertFalse((self.root / '.tigerkit').exists())
+
+    def test_tracked_artifacts_fail_without_ignore_repair(self):
+        (self.root / '.gitignore').unlink()
         target = self.root / '.tigerkit'
         target.mkdir()
         (target / 'tracked').write_text('keep')
         self.git('add', '-f', '.tigerkit/tracked')
         with self.assertRaises(ValueError):
             policy.checked_artifact_root(self.root)
+        self.assertFalse((self.root / '.gitignore').exists())
+
+    def test_failed_ignore_write_creates_no_artifacts(self):
+        (self.root / '.gitignore').unlink()
+        with patch.object(policy.os, 'open', side_effect=PermissionError('read only')):
+            with self.assertRaises(ValueError):
+                policy.artifact_directory('tmp/one', self.root)
+        self.assertFalse((self.root / '.tigerkit').exists())
+
+    def test_invalid_destination_does_not_bootstrap_ignore(self):
+        (self.root / '.gitignore').unlink()
+        with self.assertRaises(ValueError):
+            policy.artifact_directory('../escape', self.root)
+        self.assertFalse((self.root / '.gitignore').exists())
+        with self.assertRaises(ValueError):
+            policy.output_directory(str(self.root / 'docs'), 'eval', self.root)
+        self.assertFalse((self.root / '.gitignore').exists())
+        base = self.root / '.tigerkit'
+        base.mkdir()
+        (base / 'outside').symlink_to(Path(self.temp.name), target_is_directory=True)
+        with self.assertRaises(ValueError):
+            policy.output_directory(str(base / 'outside/result'), 'eval', self.root)
+        self.assertFalse((self.root / '.gitignore').exists())
 
     def test_escape_and_symlink_are_rejected(self):
         with self.assertRaises(ValueError):

@@ -151,8 +151,9 @@ required comparison axes; finish those axes on the first attempt even after find
 Before the first write under `.tigerkit/evidence/`, verify that
 `git ls-files -- .tigerkit/` returns no tracked path and
 `git check-ignore -q -- .tigerkit/` succeeds. Record only the matching source class and
-pattern from `git check-ignore -v`, redacting an absolute user-level path. If the checks
-fail, do not write, edit `.gitignore`, or use an external fallback; return `Unverifiable`.
+pattern from `git check-ignore -v`, redacting an absolute user-level path. Apply Artifact Paths
+ignore setup when coverage is missing. If checks still fail, do not write or use an external
+fallback; return `Unverifiable`.
 
 Binary evidence may be stored in run-owned `.tigerkit/evidence/tk-browser-verify/<run-id>/`. Baseline comparisons use
 `baseline/`, `after/`, and immutable `failed-<attempt>/` subdirectories. A bounded `README.md` may map each
@@ -217,4 +218,4 @@ Do not cause unauthorized payments, external communications, destructive mutatio
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Default repository-owned output to `.tigerkit/`: transient files in `tmp/<skill>/<run-id>/`, verification evidence in `evidence/<skill>/<run-id>/`, explanations in `explanations/`, and lessons in `study/<topic>/`. Preserve existing owner-specific paths and explicit user-selected final destinations. This policy grants no new write authority or mandatory artifact. Before using `.tigerkit/`, verify the repository root, no tracked files under it, and effective Git ignore coverage. Reject symlink escapes; preserve unrelated existing files. If unsafe or no repository is identified, stop the file branch as `Blocked | Unverifiable`, without editing ignore rules or falling back to OS temp. Atomic replacement may use a run-owned sibling temporary file on the destination filesystem; clean it after success. External tool caches and isolated test fixtures retain their tool-owned lifecycle.
+Default repository-owned output to `.tigerkit/`: transient files in `tmp/<skill>/<run-id>/`, verification evidence in `evidence/<skill>/<run-id>/`, explanations in `explanations/`, and lessons in `study/<topic>/`. Preserve existing owner-specific paths and explicit user-selected final destinations. Create artifacts only when the active task calls for them. Before writing, verify the repository root, no tracked `.tigerkit` paths, and safe nonsymlink destinations. Check effective Git ignore coverage; if missing, create the root `.gitignore` or append `/.tigerkit/`, preserving existing bytes and line endings, then recheck coverage before creating artifacts. This narrow ignore setup is part of an authorized artifact write even for a read-only task; it grants no other source/config/index/commit/publication authority. Existing effective ignore rules need no edit. Do not untrack files or follow a symlinked/nonregular `.gitignore`; if unsafe, unwritable, still unignored, or no repository is identified, stop only the file branch as `Blocked | Unverifiable`, without an OS-temp fallback. Briefly report an ignore edit; never stage or commit it solely for setup. Atomic replacement may use a run-owned sibling temporary file on the destination filesystem; clean it after success. External tool caches and isolated test fixtures retain their tool-owned lifecycle.

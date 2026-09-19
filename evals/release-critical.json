@@ -366,7 +366,10 @@
     "tk-roadmap:behavior:unknown-demand-investigation",
     "tk-roadmap:behavior:roadmap-not-execution",
     "tk-roadmap:behavior:authority-and-constraint-pressure",
-    "tk-roadmap:behavior:no-repo-chat-completion"
+    "tk-roadmap:behavior:no-repo-chat-completion",
+    "tk-browser-verify:behavior:artifact-ignore-bootstrap-continues",
+    "tk-skill-diagnose:behavior:artifact-ignore-bootstrap-continues",
+    "tk-github-image-upload-to-pr:behavior:artifact-ignore-bootstrap-continues"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",

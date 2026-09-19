@@ -187,9 +187,10 @@ cannot be transported reliably through the host surface, or bounded context size
 file transport necessary. Before the first write, prove with `git check-ignore -v` that
 Git's effective ignore rules cover `.tigerkit/` and verify that `git ls-files -- .tigerkit/`
 returns no tracked paths. Per-directory `.gitignore`, `.git/info/exclude`, and configured
-user-level exclude sources are all valid. If required file transport is not ignored,
-writable, or visible to the child, do not edit `.gitignore` or fall back to an
-operating-system temporary path; return `Blocked | Unverifiable` before dispatch.
+user-level exclude sources are all valid. Apply the owning SKILL.md Artifact Paths setup
+when ignore coverage is missing, then recheck. If required file transport remains
+unignored, unwritable, or invisible to the child, use no operating-system temporary
+fallback; return `Blocked | Unverifiable` before dispatch.
 
 Do not create per-run or per-plan hierarchies. Use unique filenames containing the
 Seed identifier, `Unit`, and scope. Clean up only run-owned files and never delete

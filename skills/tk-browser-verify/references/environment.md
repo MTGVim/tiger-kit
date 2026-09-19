@@ -84,8 +84,9 @@ and absolute paths plus a host-appropriate clipboard-to-file command that does n
 the secret in command arguments or shell history. Do not launch an editor, file opener,
 GUI, terminal UI, or focus-changing application merely to collect the secret. Open it
 only after the path is shown and the user explicitly asks. Never ask for or accept the
-value in chat. If the path is not ignored, writable, or user-accessible, do not edit
-`.gitignore` or choose an external scratch path; return `Unverifiable`.
+value in chat. Use the owning SKILL.md Artifact Paths setup when ignore coverage is missing.
+If the path remains unignored, unwritable, or inaccessible, use no external scratch path;
+return `Unverifiable`.
 
 After showing the paths, start a bounded watcher or poll for non-empty file state without
 reading, echoing, or reporting the content, size, or modification time. Do not ask the user
