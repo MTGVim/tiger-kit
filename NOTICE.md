@@ -414,3 +414,26 @@ TigerKit 평가는 배경 누락, 전체 문서의 조건 보존, 결정 권한,
 원본의 평가 수치와 모델별 재현성은 자체 재검증하지 않았으므로 `unverified`입니다.
 원본 MIT 고지를 `tk-rewrite`와 공유 참조를 소비하는 `tk-explain`, `tk-explain-diff`, `tk-study`의
 `LICENSE.txt`에 보존합니다. TigerKit의 기존 두 단계 처리와 최종 본문 하나만 반환하는 형식은 유지합니다.
+
+## `SDD`: 검증된 자식 상호작용 경로 (#373)
+
+우선 `obra/superpowers`의 최신 고정 커밋 `5bf4e78011075bcfc0dc295f0724994cd123ee71`에서
+`subagent-driven-development/SKILL.md`, `implementer-prompt.md`,
+`2026-07-30-codex-efficiency-fixes-design.md`와 관련 설명·통합 테스트를 확인했습니다.
+기존 부모의 위임·리뷰 소유권은 유지하고, 자식의 사용자 입력 경로는 다음 호스트 근거로 좁힙니다.
+
+`openai/codex`의 병합된 [PR #46877](https://github.com/openai/codex/pull/46877),
+고정 커밋 `c45ea25ffb72d5f7324489d824d0c677283aa0b4`에서 `elicitation.rs`, `mcp_tool_call.rs`,
+`connection_manager_tests.rs`, `mcp_subagent_elicitation.rs`, `mcp_auth_elicitation.rs`의 구현과 테스트를
+확인했습니다. 정확한 대기 요청으로 응답을 전달하는 경로, 취소된 요청 제거, 연결 재사용 시 승인 정책 갱신,
+자식의 양식·인증 수락/거절과 재개, 기존 `request_user_input` 승인 경로의 `root-only` 제한을 대조했습니다.
+확인 당시 두 구현 파일의 최신 내용은 병합 커밋과 같았고, 해당 PR 토론과 번호 검색,
+`elicitation` 커밋 검색에서는 후속 변경을 확인하지 못했습니다. 원본 테스트를 직접 실행하지는 않았으므로
+호스트별 실행 재현성은 `unverified`입니다.
+
+- `keep`: 사용자 의도·범위·완료 기준과 새 권한은 부모가 소유하며, 기존 승인·발행·복구·비밀 처리 경계를 유지합니다.
+- `adapt`: 현재 호스트 근거가 자식 지원, 정확한 요청·응답 연결, 동일 정책, 동일 자식 재개와 승인 범위를
+  모두 입증할 때만 제한된 상호작용을 자식에서 처리합니다. 불명확하면 #370의 부모 전달 경로를 사용합니다.
+- `omit`: 원본 런타임 코드, 제공자별 지원 목록, 새 상호작용 장부·상태 체계·스킬·승인 단계는 가져오지 않습니다.
+
+원본 코드를 복사하지 않고 행동 경계만 기존 공유 참조와 평가에 독자적으로 반영합니다.

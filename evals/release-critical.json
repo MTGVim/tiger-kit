@@ -369,7 +369,17 @@
     "tk-roadmap:behavior:no-repo-chat-completion",
     "tk-browser-verify:behavior:artifact-ignore-bootstrap-continues",
     "tk-skill-diagnose:behavior:artifact-ignore-bootstrap-continues",
-    "tk-pr-image:behavior:artifact-ignore-bootstrap-continues"
+    "tk-pr-image:behavior:artifact-ignore-bootstrap-continues",
+    "tk-prep:behavior:prep-sdd-child-safe-form",
+    "tk-prep:behavior:prep-sdd-child-safe-browser-auth",
+    "tk-prep:behavior:prep-sdd-child-safe-product-decision",
+    "tk-prep:behavior:prep-sdd-child-safe-root-only-permission",
+    "tk-prep:behavior:prep-sdd-child-safe-capability-unknown",
+    "tk-prep:behavior:prep-sdd-child-safe-binding-mismatch",
+    "tk-prep:behavior:prep-sdd-child-safe-policy-denied",
+    "tk-prep:behavior:prep-sdd-child-safe-interrupted-resume",
+    "tk-pr-respond:behavior:pr-respond-sdd-child-safe-connector",
+    "tk-pr-respond:behavior:pr-respond-sdd-child-safe-connector-declined"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",
