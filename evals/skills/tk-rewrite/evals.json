@@ -787,6 +787,188 @@
           "paths": []
         }
       ]
+    },
+    {
+      "id": "mixed-mostly-clear",
+      "path": "boundary",
+      "prompt": "$tk-rewrite 다음 안내문을 자연스럽게 다듬어줘.\n\n고객은 앱에서 환불을 요청할 수 있습니다.\n\n관리자는 요청일로부터 3일 이내에 신청을 확인합니다.\n\n이 혁신적이고 획기적인 기능을 통해 담당자는 중복 요청 여부를 확인할 수 있는 부분입니다.\n\n환불 승인은 팀장이 결정합니다. 승인 전에는 환불하지 않습니다.\n\n운영 환경의 처리 시간은 아직 측정하지 않았습니다.",
+      "expected_output": "세 번째 문단의 불필요한 수식과 번역투만 수정한다. 담당자의 중복 요청 확인 가능성을 보존한다. 나머지 네 문단은 표현·순서·문단 구분까지 그대로 유지하며 전체 어조 변경, 요약, 감사 기록을 추가하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "세 번째 문단의 불필요한 수식과 번역투만 수정한다. 담당자의 중복 요청 확인 가능성을 보존한다. 나머지 네 문단은 표현·순서·문단 구분까지 그대로 유지하며 전체 어조 변경, 요약, 감사 기록을 추가하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "고객은 앱에서 환불을 요청할 수 있습니다."
+        },
+        {
+          "type": "output_contains",
+          "text": "관리자는 요청일로부터 3일 이내에 신청을 확인합니다."
+        },
+        {
+          "type": "output_contains",
+          "text": "환불 승인은 팀장이 결정합니다. 승인 전에는 환불하지 않습니다."
+        },
+        {
+          "type": "output_contains",
+          "text": "운영 환경의 처리 시간은 아직 측정하지 않았습니다."
+        },
+        {
+          "type": "output_absent",
+          "text": "혁신적이고 획기적인"
+        },
+        {
+          "type": "output_absent",
+          "text": "있는 부분입니다"
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "zero-edit-clear-input",
+      "path": "boundary",
+      "prompt": "$tk-rewrite 다음 안내문을 다듬어줘.\n\n운영팀은 매주 월요일에 신청 내역을 확인합니다.\n\n오류가 있으면 담당자에게 알립니다. 수정 일정은 담당자가 확인한 뒤 안내합니다.\n\n현재 추가로 결정된 사항은 없습니다.",
+      "expected_output": "실제 수정 근거가 없는 입력은 본문 전체를 그대로 반환한다. 동의어 교체, 문장 병합, 순서 변경, 서문이나 진단표를 추가하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "실제 수정 근거가 없는 입력은 본문 전체를 그대로 반환한다. 동의어 교체, 문장 병합, 순서 변경, 서문이나 진단표를 추가하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "운영팀은 매주 월요일에 신청 내역을 확인합니다.\n\n오류가 있으면 담당자에게 알립니다. 수정 일정은 담당자가 확인한 뒤 안내합니다.\n\n현재 추가로 결정된 사항은 없습니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "tone-only-edit-scope",
+      "path": "boundary",
+      "prompt": "$tk-rewrite `tone only`: 존댓말로 바꿔줘. 내용과 순서는 그대로 둬.\n\n관리자는 `requestId`로 요청을 조회해.\n\n결제가 실패하면 신청을 대기로 남겨. 예를 들어 네트워크 오류가 나면 같은 ID로 재시도해.\n\n환불은 팀장이 승인한 뒤 진행해. 처리 시간은 아직 몰라.",
+      "expected_output": "존댓말만 조정한다. 관리자 조회 → 결제 실패 시 대기와 네트워크 오류 예시 → 팀장 승인 후 환불과 처리 시간 미확인의 순서, 세 문단과 모든 정보를 유지한다. 용어를 바꾸거나 배경·제목·절차를 추가하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "존댓말만 조정한다. 관리자 조회 → 결제 실패 시 대기와 네트워크 오류 예시 → 팀장 승인 후 환불과 처리 시간 미확인의 순서, 세 문단과 모든 정보를 유지한다. 용어를 바꾸거나 배경·제목·절차를 추가하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "`requestId`"
+        },
+        {
+          "type": "output_contains",
+          "text": "네트워크 오류"
+        },
+        {
+          "type": "output_contains",
+          "text": "같은 ID"
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "structure-request-allows-rewrite",
+      "path": "boundary",
+      "prompt": "$tk-rewrite `structure only`: 처음 읽는 운영자가 이해하도록 아래 문장을 배경 → 준비 조건 → 실행 → 실패 처리 순서로 재배열해줘. 표현은 유지해.\n\n고객은 앱에서 환불을 요청합니다.\n결제가 실패하면 신청은 대기 상태로 남습니다.\n이 문서는 운영자가 환불 요청 절차를 안내할 때 사용합니다.\n관리자가 환불 기능을 활성화해야 고객이 요청할 수 있습니다.",
+      "expected_output": "문자 수정 최소화나 정상 문장 보존을 이유로 구조 재작성을 거부하지 않는다. 배경 문장, 관리자 활성화 조건, 고객 요청, 결제 실패 시 대기 순서로 실제 재배열한다. 네 문장의 표현과 의미는 유지하며 없는 시간·인과 관계를 추가하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "문자 수정 최소화나 정상 문장 보존을 이유로 구조 재작성을 거부하지 않는다. 배경 문장, 관리자 활성화 조건, 고객 요청, 결제 실패 시 대기 순서로 실제 재배열한다. 네 문장의 표현과 의미는 유지하며 없는 시간·인과 관계를 추가하지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "고객은 앱에서 환불을 요청합니다."
+        },
+        {
+          "type": "output_contains",
+          "text": "결제가 실패하면 신청은 대기 상태로 남습니다."
+        },
+        {
+          "type": "output_contains",
+          "text": "이 문서는 운영자가 환불 요청 절차를 안내할 때 사용합니다."
+        },
+        {
+          "type": "output_contains",
+          "text": "관리자가 환불 기능을 활성화해야 고객이 요청할 수 있습니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "localized-style-defect",
+      "path": "boundary",
+      "prompt": "$tk-rewrite 다음 문단을 다듬어줘: 고객은 앱에서 신청 내역을 확인합니다. 말씀드리고자 하는 부분은, 관리자는 중복 요청을 확인할 수 있다는 점입니다. 운영자는 결과를 이메일로 안내합니다.",
+      "expected_output": "가운데 문장의 군더더기만 제거하고 관리자 확인 가능성을 보존한다. 앞뒤 문장은 표현과 순서를 그대로 유지한다. 주변 문장을 문체 통일이나 다양성을 이유로 다시 쓰지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "가운데 문장의 군더더기만 제거하고 관리자 확인 가능성을 보존한다. 앞뒤 문장은 표현과 순서를 그대로 유지한다. 주변 문장을 문체 통일이나 다양성을 이유로 다시 쓰지 않는다."
+        },
+        {
+          "type": "output_contains",
+          "text": "고객은 앱에서 신청 내역을 확인합니다."
+        },
+        {
+          "type": "output_contains",
+          "text": "운영자는 결과를 이메일로 안내합니다."
+        },
+        {
+          "type": "output_absent",
+          "text": "말씀드리고자 하는 부분은"
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "review-only-edit-scope",
+      "path": "boundary",
+      "prompt": "$tk-rewrite `review`: 문제점만 검토해줘. 재작성은 하지 마.\n\n고객은 앱에서 신청합니다.\n\n이 혁신적이고 획기적인 기능을 통해 관리자는 신청 내역을 조회할 수 있는 부분입니다.\n\n승인 여부는 팀장이 결정합니다.",
+      "expected_output": "두 번째 문단의 불필요한 수식과 번역투를 구체적으로 지적한다. 전체 수정본을 반환하지 않으며 정상 문단은 문제로 지목하지 않는다. 요청하지 않은 파일 수정이나 외부 행동을 하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "두 번째 문단의 불필요한 수식과 번역투를 구체적으로 지적한다. 전체 수정본을 반환하지 않으며 정상 문단은 문제로 지목하지 않는다. 요청하지 않은 파일 수정이나 외부 행동을 하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
     }
   ]
 }

@@ -399,3 +399,18 @@ TigerKit 평가는 배경 누락, 전체 문서의 조건 보존, 결정 권한,
 미정 사항과 제외 범위를 구분하는 원칙만 보완했습니다. 관계는 `adapted`입니다.
 세부 `keep | adapt | omit` 판단은 [출처 기록](skills/tk-roadmap/references/sources.md)에 있으며,
 원본 MIT 저작권·라이선스 전문은 설치 패키지의 [고지 파일](skills/tk-roadmap/UPSTREAM-LICENSES.txt)에 포함합니다.
+
+## tk-rewrite: 편집 정당성과 요청 범위 (#372)
+
+`conorbronsdon/avoid-ai-writing`의 최신 고정 커밋 `c4783463cf019a8943364c1ef5f80e0a4c8bff94`에서
+`SKILL.md`의 `Editing contract`와 `Output format`, `evals/rewrite/output-contract-scenarios.md`의
+`Clean no-op` 사례, `PROOF.md`의 검증 한계와 `LICENSE`를 확인했습니다.
+
+- `keep`: 의미·관계·조건·역할·불확실성과 보호된 리터럴, 기존 표기 절대 규칙을 유지합니다.
+- `adapt`: 패턴 후보를 문맥상 문제로 확인한 뒤 요청 범위 안에서만 편집하는 계약을 표현 정제에 적용합니다.
+  수정할 이유가 없는 부분은 유지하며, 근거가 전혀 없으면 원문을 반환합니다. 구조 변경은 독자 이해라는 목적에 따라 허용합니다.
+- `omit`: 전체 분류 체계, 탐지기, 런타임, 반복 횟수 제한, 공개 감사 기록과 AI 작성 판정은 가져오지 않습니다.
+
+원본의 평가 수치와 모델별 재현성은 자체 재검증하지 않았으므로 `unverified`입니다.
+원본 MIT 고지를 `tk-rewrite`와 공유 참조를 소비하는 `tk-explain`, `tk-explain-diff`, `tk-study`의
+`LICENSE.txt`에 보존합니다. TigerKit의 기존 두 단계 처리와 최종 본문 하나만 반환하는 형식은 유지합니다.

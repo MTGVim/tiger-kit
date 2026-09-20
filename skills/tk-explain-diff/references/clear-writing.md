@@ -47,7 +47,7 @@ Only after the hard invariants are satisfied, assess expression in its actual ge
 - **Repetition-sensitive expression:** preserve one or two natural uses; when a repeated connector or construction dominates a paragraph or document, revise only enough occurrences to restore readable rhythm.
 - **Weak signal:** edit only when it combines with other patterns or makes the overall rhythm mechanical. An isolated occurrence needs no correction.
 
-When fixing an expression, check that the replacement does not introduce another contextual defect: translationese, stock phrasing, vague abstraction, unnecessary modifiers, or mechanical connectors. Judge the revised passage in context, not by a word blacklist. Keep already clear prose. Normal expressions such as `~를 통해`, `~것이다`, passive voice, and capability wording are not banned words. When empirical evidence weakens a presumed style rule, narrow its application rather than adding prohibitions; observations from one genre or model do not establish a universal defect. Never change possibility into certainty to reduce repetition.
+When fixing an expression, check that the replacement does not introduce another contextual defect: translationese, stock phrasing, vague abstraction, unnecessary modifiers, or mechanical connectors. Judge the revised passage in context, not by a word blacklist. In expression refinement, a pattern match is only a candidate: edit a span only after confirming a contextual problem and authority within the current request, treating a requested register change as a valid reason. Keep unaffected passages unchanged rather than varying them for style alone, and return the source unchanged when no justified edit or requested structural transformation remains; the hard invariants above still apply. Normal expressions such as `~를 통해`, `~것이다`, passive voice, and capability wording are not banned words. When empirical evidence weakens a presumed style rule, narrow its application rather than adding prohibitions; observations from one genre or model do not establish a universal defect. Never change possibility into certainty to reduce repetition.
 
 Remove unsupported praise, vague authority, generic optimism, fake candor, and ceremonial padding when they add no meaning. Keep politeness and necessary uncertainty. Replace abstract or metaphor-swapped vocabulary with literal actions when clearer; retain established idioms and useful domain terminology.
 
@@ -67,5 +67,7 @@ Keep source-provided actions and deadlines explicit; do not invent support proce
 
 - `evergreentree97/K-Humanizer`, `324435d561ba48d53de6b7d3fb3dd72cf77030dc`: preserve useful paragraph links without inventing relationships.
 - `epoko77-ai/im-not-ai`, `9747f036cdc28a1a8aea4dc71fef1f7846eb96f7`: contextual strength, selective density-based editing, avoiding newly introduced style defects, and conservative correction when empirical evidence contradicts a presumed pattern. Taxonomy, authorship judgments, and numeric thresholds are not imported.
+
+- `conorbronsdon/avoid-ai-writing`, `c4783463cf019a8943364c1ef5f80e0a4c8bff94`: candidate-to-justified-edit scope, preservation of unaffected passages, and valid zero-edit outcomes; no detector, taxonomy, pass budget, or public audit trail is imported.
 
 Original MIT notices are in the calling package's `LICENSE.txt`.
