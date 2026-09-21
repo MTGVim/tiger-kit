@@ -87,6 +87,117 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "study-scoped-course-html",
+      "path": "boundary",
+      "prompt": "$tk-study 비로그인 웹 식별과 어뷰즈 방어를 체계적으로 공부하고 싶다. `React`는 실무에서 쓰지만 HTTP와 보안 배경은 모른다. 목표와 시간은 아직 말하지 않았다.",
+      "expected_output": "질문 전에 얕은 사전 조사로 선수 개념과 깊이 분기를 파악한다. 목표·제약 등 학습자만 답할 정보를 간결하게 질문하며 의존 질문을 미룬다. 이름을 안다는 이유로 숙달을 추정하거나 tk-grill을 자동 호출하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "질문 전에 얕은 사전 조사로 선수 개념과 깊이 분기를 파악한다. 목표·제약 등 학습자만 답할 정보를 간결하게 질문하며 의존 질문을 미룬다. 이름을 안다는 이유로 숙달을 추정하거나 tk-grill을 자동 호출하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "study-answers-resume-research",
+      "path": "success",
+      "prompt": "$tk-study 앞선 인터뷰 답변: HTTP 쿠키는 설명할 수 있고 핑거프린팅은 이름만 안다. 목표는 방어 설계 비교, 시간은 두 시간, 실습은 설계 문제다. 공식 자료는 접근 가능하다. 이제 만들어줘. 주제는 브라우저 식별이며 새 주제 폴더 이름은 `browser-identity`로 해줘.",
+      "expected_output": "추가 확인 관문 없이 범위를 갱신하고 심층 재조사를 수행한다. 이름만 아는 개념을 기초에서 제외하지 않는다. .tigerkit/study/<topic>/에 출처가 있는 `learner-profile.md`, `curriculum.md`, `sources.md`, `chapters/` 및 `index.html`을 만든다. 선수 순서·인출·전이 문제·체크포인트를 포함하며 숙달을 기록하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "추가 확인 관문 없이 범위를 갱신하고 심층 재조사를 수행한다. 이름만 아는 개념을 기초에서 제외하지 않는다. .tigerkit/study/<topic>/에 출처가 있는 `learner-profile.md`, `curriculum.md`, `sources.md`, `chapters/` 및 `index.html`을 만든다. 선수 순서·인출·전이 문제·체크포인트를 포함하며 숙달을 기록하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/study/browser-identity/index.html"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/study/browser-identity/learner-profile.md"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/study/browser-identity/curriculum.md"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/study/browser-identity/sources.md"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/study/browser-identity/chapters"
+        }
+      ]
+    },
+    {
+      "id": "study-sufficient-context",
+      "path": "boundary",
+      "prompt": "$tk-study HTTP 캐시의 기초부터 조건부 요청까지 챕터별로 배우고 싶다. 요청·응답과 헤더는 이해하지만 캐시 검증자는 모른다. 90분 분량이며 구현보다 요청 결과 예측이 목표다. 질문 없이 기본 형식으로 만들어줘. 새 주제 폴더 이름은 `http-cache`로 해줘.",
+      "expected_output": "이미 충분한 학습 범위를 재질문하지 않는다. 조사로 선수 의존성을 확인하고 심층 자료를 읽어 다중 챕터의 오프라인 `index.html`과 재사용 원고·커리큘럼·출처를 만든다. 불필요한 확인이나 고정 챕터 수를 강제하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "이미 충분한 학습 범위를 재질문하지 않는다. 조사로 선수 의존성을 확인하고 심층 자료를 읽어 다중 챕터의 오프라인 `index.html`과 재사용 원고·커리큘럼·출처를 만든다. 불필요한 확인이나 고정 챕터 수를 강제하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/study/http-cache/index.html"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/study/http-cache/curriculum.md"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/study/http-cache/sources.md"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/study/http-cache/chapters"
+        }
+      ]
+    },
+    {
+      "id": "study-profile-collision",
+      "path": "boundary",
+      "prompt": "$tk-study `OAuth` 학습 프로필과 `index.html`이 같은 이름의 주제 폴더에 남아 있다. 이번 목표는 `OAuth` 보안 설계이며 이전 목표와 작성 출처는 알 수 없다. 새 과정을 만들어줘.",
+      "expected_output": "주제 이름만으로 프로필을 재사용하지 않는다. 목표·출처를 검증하며 새 실행은 폴더 전체에 숫자 접미사를 써 기존 자료를 보존한다. 전역 학습자 기억이나 추정 숙달을 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "주제 이름만으로 프로필을 재사용하지 않는다. 목표·출처를 검증하며 새 실행은 폴더 전체에 숫자 접미사를 써 기존 자료를 보존한다. 전역 학습자 기억이나 추정 숙달을 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "study-offline-answer-separation",
+      "path": "success",
+      "prompt": "$tk-study 기본 HTML 과정에 공식 문서의 코드 예제와 챕터별 연습문제를 넣어줘. 인용 코드에 </script><script>alert(1)</script> 문자열이 있다.",
+      "expected_output": "코드 문자열을 실행하지 않고 문맥에 맞게 이스케이프한다. 외부 런타임 요청 없이 읽을 수 있으며 챕터 이동과 답안 공개를 키보드로 사용할 수 있다. 답안은 사용자가 공개하기 전 표시하지 않고 실제 렌더링 미수행을 숨기지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "코드 문자열을 실행하지 않고 문맥에 맞게 이스케이프한다. 외부 런타임 요청 없이 읽을 수 있으며 챕터 이동과 답안 공개를 키보드로 사용할 수 있다. 답안은 사용자가 공개하기 전 표시하지 않고 실제 렌더링 미수행을 숨기지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

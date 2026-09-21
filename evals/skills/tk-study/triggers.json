@@ -157,6 +157,24 @@
       "facets": [
         "compound"
       ]
+    },
+    {
+      "id": "course-dependent-chapters",
+      "split": "validation",
+      "query": "브라우저 식별과 어뷰즈 방어를 선수지식부터 여러 챕터로 공부할 과정을 만들어줘.",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "focused-concept-html",
+      "split": "validation",
+      "query": "캐시 검증자 하나의 동작을 HTML 그림으로 설명해줘.",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
     }
   ]
 }

@@ -51,10 +51,14 @@ actual components and prose; analogy must not replace the mechanism. Respect the
 
 ## Deliver
 
-Default to one Markdown artifact at `.tigerkit/explanations/<target-slug>.md`; honor the user's
-format and final destination. Use a numeric suffix for a default collision. For HTML only, read
-[HTML output](references/html-output.md); reuse an available renderer without requiring one or
-regenerating a fixed design as part of every explanation. Keep content independent of presentation.
+Default to one self-contained offline HTML artifact at `.tigerkit/explanations/<target-slug>.html`.
+Read [HTML output](references/html-output.md) for HTML; honor explicit Markdown and custom final
+paths. Use a numeric suffix for default collisions; an existing explicit target needs overwrite
+authorization. Keep content independent of presentation. When supported by verified evidence,
+use before/after structure, request/data/event flows, state transitions, boundary changes or a
+compact file map to clarify the change. Never invent edges, runtime behavior or rationale to fill
+a diagram; preserve snapshot identity, version-qualified `path:line` anchors and uncertainty in
+both visuals and prose.
 An inaccessible target is `Unverifiable`; verified partial context is not a complete explanation.
 Return a concise artifact link, snapshot identity, and actual verification limitations. `Pass`
 requires an existing readable artifact with all four teaching parts and rechecked source anchors;

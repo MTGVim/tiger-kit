@@ -1,6 +1,6 @@
 ---
 name: tk-explain
-description: "[user/auto] 개념의 배경지식과 실제 구조·동작을 설명하는 시각 자료나 자체 완결형 HTML 설명 자료를 요청할 때 사용합니다. 특정 변경 설명, 조사 후 학습, 일반 텍스트 질문, 기존 글 교정, 제품 비교 시제품에는 사용하지 않습니다."
+description: "[user/auto] 개념의 배경지식과 실제 구조·동작을 설명하는 시각 자료나 자체 완결형 HTML 설명 자료를 요청할 때 사용합니다. 특정 변경 설명, 여러 챕터로 구성하는 학습 과정, 일반 텍스트 질문, 기존 글 교정, 제품 비교 시제품에는 사용하지 않습니다."
 disable-model-invocation: false
 argument-hint: "<topic and optional audience/output path>"
 metadata:
@@ -29,7 +29,7 @@ Choose visuals that expose structure, event order, state changes, or cause and e
 
 Use the user-specified output path, or `.tigerkit/explanations/<topic-slug>.html`. If the default exists, choose a numeric suffix. Do not overwrite an existing explicit target without authorization for that overwrite.
 
-Inline all CSS, SVG, and any JavaScript in one HTML file, with no external assets, fonts, frameworks, build step, or runtime network requests. Plain source hyperlinks are allowed; the explanation must remain readable offline. Use semantic HTML, sufficient contrast, accessible visual titles, non-color-only distinctions, and `prefers-reduced-motion`. Add interaction only if it clarifies the concept and works with a keyboard; default to readable static visuals. Include the exact footer:
+Read [HTML output](references/html-output.md) for the shared offline and accessible renderer contract. Keep this artifact focused on one concept or system; prerequisite background does not authorize a course or learner-progress workflow. Include the exact footer:
 
 ```text
 🤖 본 설명 자료는 AI가 작성했습니다.

@@ -379,7 +379,18 @@
     "tk-prep:behavior:prep-sdd-child-safe-policy-denied",
     "tk-prep:behavior:prep-sdd-child-safe-interrupted-resume",
     "tk-pr-respond:behavior:pr-respond-sdd-child-safe-connector",
-    "tk-pr-respond:behavior:pr-respond-sdd-child-safe-connector-declined"
+    "tk-pr-respond:behavior:pr-respond-sdd-child-safe-connector-declined",
+    "tk-rewrite:behavior:claim-evidence-pairing",
+    "tk-rewrite:behavior:figure-table-binding",
+    "tk-rewrite:behavior:shared-evidence-scope",
+    "tk-rewrite:behavior:reordering-preserves-binding",
+    "tk-rewrite:behavior:no-evidence-invention",
+    "tk-study:behavior:study-scoped-course-html",
+    "tk-study:behavior:study-answers-resume-research",
+    "tk-study:behavior:study-sufficient-context",
+    "tk-study:behavior:study-profile-collision",
+    "tk-study:behavior:study-offline-answer-separation",
+    "tk-explain-diff:behavior:explain-default-html-evidence"
   ],
   "catalog_cases": [
     "catalog:behavior:prep-explicit",

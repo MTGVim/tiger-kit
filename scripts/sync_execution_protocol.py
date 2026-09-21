@@ -50,6 +50,7 @@ def main() -> int:
     for name in ("tk-explain-diff", "tk-study"):
         if (ROOT / "skills" / name).is_dir():
             pairs.append((CLEAR_WRITING_SOURCE, ROOT / "skills" / name / "references/clear-writing.md"))
+            pairs.append((ROOT / "skills/tk-explain/references/html-output.md", ROOT / "skills" / name / "references/html-output.md"))
     drift = [
         (source, target)
         for source, target in pairs

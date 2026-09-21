@@ -87,6 +87,25 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "explain-default-html-evidence",
+      "path": "success",
+      "prompt": "$tk-explain-diff HEAD^..HEAD의 요청 경로 변경을 기본 형식으로 설명해줘. 런타임 테스트는 실행할 수 없고 일부 호출 관계는 미확인이다. 출력 이름에 쓸 대상 식별자는 `request-flow`로 해줘.",
+      "expected_output": "SHA와 `path:line` 근거를 고정하고 .tigerkit/explanations/<target-slug>.html을 만든다. 네 교육 요소와 오프라인 계약을 지킨다. 근거가 있는 변경 전후 흐름만 시각화하고 미확인 관계·추정 근거를 확정하거나 런타임 테스트를 주장하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "SHA와 `path:line` 근거를 고정하고 .tigerkit/explanations/<target-slug>.html을 만든다. 네 교육 요소와 오프라인 계약을 지킨다. 근거가 있는 변경 전후 흐름만 시각화하고 미확인 관계·추정 근거를 확정하거나 런타임 테스트를 주장하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/explanations/request-flow.html"
+        }
+      ]
     }
   ]
 }

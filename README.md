@@ -68,7 +68,7 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-prototype` | `hybrid` | 폐기 가능한 UI/로직 비교물 |
 | `tk-explain` | `hybrid` | 배경지식과 실제 구조·동작을 시각화하는 자체 완결형 HTML 설명 자료 |
 | `tk-explain-diff` | `hybrid` | 특정 코드 변경을 기존 구조와 실행 흐름부터 설명하는 자료 |
-| `tk-study` | `hybrid` | 낯선 주제를 조사하고 배경·동작·응용 문제 순서로 가르치는 학습 자료 |
+| `tk-study` | `hybrid` | 선수지식과 목표에 맞춰 조사하고 여러 챕터로 구성하는 HTML 학습 과정 |
 | `tk-browser-verify` | `hybrid` | 화면에 보이는 AC의 `headless` 실행 검증과 읽기 전용 라벨·진입 경로 조사 |
 | `tk-skill-diagnose` | `hybrid` | `Agent Skill` 사고 재현·격리와 `learn-ready` 인계, 승인된 수정은 `tk-learn`으로 연속 진행 |
 | `tk-learn` | `hybrid` | 재사용 가능한 스킬의 생성/개선/병합 작성자. 기존 검사 도구로 막을 수 있는 문제는 해당 도구의 최소 확장을 우선 제안 |
@@ -345,7 +345,12 @@ python3 scripts/run_seed_release_gate.py \
 비유와 장면·단어 수를 의무화하지 않으며, 일반 텍스트 질문에는 HTML을 만들지 않습니다.
 
 코드 변경을 이해하려면 `/tk-explain-diff`, 낯선 주제를 조사해서 배우려면 `/tk-study`를 사용합니다.
-두 신규 스킬은 기본적으로 Markdown 자료 하나를 만들며, HTML 등 명시한 형식과 최종 경로를 존중합니다.
+`tk-explain-diff`는 비교 근거와 변경 전후 흐름을 담은 HTML을 `.tigerkit/explanations/<target-slug>.html`에 만듭니다.
+`tk-study`는 사전 조사, 필요한 선수지식 질문, 범위를 반영한 재조사와 커리큘럼 구성을 거쳐
+`.tigerkit/study/<topic>/index.html`을 만듭니다. 질문으로 확인한 학습자 프로필과 커리큘럼·출처·챕터 원고도
+같은 주제 폴더에 보관하며, 기존 지식이나 숙달 여부를 추측하지 않습니다.
+두 스킬 모두 오프라인 HTML을 기본으로 하며, 명시한 Markdown 형식과 최종 경로를 존중합니다.
+세 설명·학습 스킬은 `tk-explain`의 HTML 참조 문서를 각 패키지에 동기화하여 사용합니다.
 
 글쓰기와 설명·학습 스킬은 같은 `references/clear-writing.md` 기준을 사용합니다. 정본은 `tk-rewrite`에 두고
 `tk-explain`, `tk-explain-diff`, `tk-study`에 동일한 사본을 동기화하며, 각 패키지에 참조 문서와 원본 라이선스를 포함합니다.

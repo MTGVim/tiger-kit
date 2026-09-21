@@ -12,7 +12,9 @@ A reader should identify the subject, what happens, why, under what conditions, 
 
 The calling skill determines which facts may be added. Rewriting preserves supplied facts and may restore supplied context; explaining may introduce supported general knowledge and clearly labeled illustrative examples. Neither may invent project history, measurements, decisions, causes, or evidence. Distinguish hypotheses, proposals, observed results, and completed actions. Keep numbers, negation, conditions, alternatives, decision owners, and certainty intact. Do not improve apparent clarity by deleting a limitation or adding a benefit. When rewriting, preserve supported causal, contrastive, temporal, conditional, and conclusion relationships without strengthening, weakening, or inventing them through connectors, reordering, or new assertions. Mere adjacency is not evidence of a relationship.
 
-After polishing, compare the text with its source or supported explanation outline. Restore background or qualifications lost through shortening. Use existing technical terms, defining unfamiliar ones when needed. Keep code, commands, identifiers, links, quotations, and mandatory attribution exact. Do not treat AI-style removal as authorship concealment or AI-authorship detection.
+Preserve the binding of each explicit citation, figure/table reference, number, result or measurement to the claim it supports, not just its literal text. When reordering, move evidence with its claim and retain its original scope; proximity to a different sentence never reassigns support. If the source scope is ambiguous, keep that uncertainty rather than broadening support. Ordinary prose without evidence pointers gains no new citation requirement or invented authority.
+
+After polishing, compare each claim-evidence binding and the text with its source or supported explanation outline. Restore background or qualifications lost through shortening. Use existing technical terms, defining unfamiliar ones when needed. Keep code, commands, identifiers, links, quotations, and mandatory attribution exact. Do not treat AI-style removal as authorship concealment or AI-authorship detection.
 
 ### Korean Sentence Clarity
 
@@ -71,3 +73,6 @@ Keep source-provided actions and deadlines explicit; do not invent support proce
 - `conorbronsdon/avoid-ai-writing`, `c4783463cf019a8943364c1ef5f80e0a4c8bff94`: candidate-to-justified-edit scope, preservation of unaffected passages, and valid zero-edit outcomes; no detector, taxonomy, pass budget, or public audit trail is imported.
 
 Original MIT notices are in the calling package's `LICENSE.txt`.
+
+Claim-evidence binding also draws on `AIScientists-Dev/academic-humanizer`,
+`94b88b23703bed7df507acae7d6d5876209a0cdf`; evidence addition, academic taxonomy and venue rules are omitted.
