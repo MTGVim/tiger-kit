@@ -61,6 +61,47 @@ class ArtifactPolicyTests(unittest.TestCase):
         policy.artifact_directory('tmp/one', self.root)
         self.assertFalse((self.root / '.gitignore').exists())
 
+    def test_global_exclude_preserves_repository_ignore(self):
+        global_ignore = Path(self.temp.name) / 'global-ignore'
+        global_ignore.write_text('/.tigerkit/\n')
+        self.git('config', 'core.excludesFile', str(global_ignore))
+        for original in (None, b'# unrelated\r\nnode_modules/\r\n'):
+            with self.subTest(original=original):
+                p = self.root / '.gitignore'
+                if original is None:
+                    p.unlink(missing_ok=True)
+                else:
+                    p.write_bytes(original)
+                policy.artifact_directory('tmp/global', self.root)
+                self.assertEqual(p.read_bytes() if p.exists() else None, original)
+                self.assertEqual(global_ignore.read_text(), '/.tigerkit/\n')
+
+    def test_local_negation_overrides_global_exclude(self):
+        global_ignore = Path(self.temp.name) / 'global-ignore'
+        global_ignore.write_text('/.tigerkit/\n')
+        self.git('config', 'core.excludesFile', str(global_ignore))
+        p = self.root / '.gitignore'
+        p.write_text('!/.tigerkit/\n')
+        policy.artifact_directory('tmp/negated', self.root)
+        self.assertEqual(p.read_text(), '!/.tigerkit/\n/.tigerkit/\n')
+        self.git('check-ignore', '-q', '--', '.tigerkit/')
+
+    def test_ignore_command_error_does_not_edit_ignore(self):
+        p = self.root / '.gitignore'
+        p.unlink()
+        run = subprocess.run
+
+        def fail_ignore(command, **kwargs):
+            if command[:2] == ['git', 'check-ignore']:
+                return subprocess.CompletedProcess(command, 128, b'', b'fatal error')
+            return run(command, **kwargs)
+
+        with patch.object(policy.subprocess, 'run', side_effect=fail_ignore):
+            with self.assertRaises(ValueError):
+                policy.artifact_directory('tmp/error', self.root)
+        self.assertFalse(p.exists())
+        self.assertFalse((self.root / '.tigerkit').exists())
+
     def test_symlinked_ignore_is_not_modified(self):
         p = self.root / '.gitignore'
         p.unlink()

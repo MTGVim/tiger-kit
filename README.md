@@ -243,7 +243,9 @@ TigerKit은 새 `tag`나 별도 `release`를 발행하지 않으며 기존 태�
 일반 실행 파일은 `.tigerkit/tmp/<skill>/<run-id>/`, 비밀 입력은
 `.tigerkit/secret-input/<skill>-<run-id>/`, 검증 근거는 `.tigerkit/evidence/<skill>/<run-id>/`를 사용합니다.
 쓰기 전에는 추적 파일이 없고 `Git`이 `.tigerkit/`을 실제로 무시하는지 `git ls-files`와 `git check-ignore`로
-확인합니다. 작업 트리의 상위 `.gitignore`·저장소 로컬 `exclude`·사용자 전역 `exclude` 중 어느 규칙이 적용되었는지는
+확인합니다. 저장소 `.gitignore`의 파일 존재 여부나 문자열 검색만으로 판단하지 않습니다.
+`git check-ignore -q -- .tigerkit/`가 `0`을 반환하면 수정하지 않고, `1`일 때만 아래 설정을 수행합니다.
+명령 실행 오류는 규칙 누락으로 취급하지 않고 파일 작성을 중단합니다. 작업 트리의 상위 `.gitignore`·저장소 로컬 `exclude`·사용자 전역 `exclude` 중 어느 규칙이 적용되었는지는
 제한하지 않습니다. 실제로 무시되지 않으면 저장소 루트 `.gitignore`를 생성하거나 끝에 `/.tigerkit/`를
 추가하고, Git의 무시 판정을 다시 확인한 뒤 저장을 계속합니다. 기존 내용과 줄바꿈은 보존하며, 이미 다른
 규칙으로 무시된다면 수정하지 않습니다. 이 설정은 요청된 산출물 작성에 포함되므로 별도 확인을 요구하지
