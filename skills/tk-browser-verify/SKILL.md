@@ -18,7 +18,13 @@ Quote existing UI labels verbatim, preserving language, case, punctuation, and s
 
 For each claim, use target/environment/locale/role-matched runtime evidence, source connected to the render path, or a supplied capture with provenance. API text needs the actual response and its rendering/transformation binding; a schema proves only shape. If another repository, host shell, API, configuration, or permission controls a missing segment, state the known boundary and what remains unverified. Do not present a plausible path as guidance, even with an inference disclaimer.
 
+During authorized browser inspection, collect `document.body.innerText` once after entry and initial rendering, before guessing labels or querying them one selector at a time. Treat it as an inventory of currently rendered text, not a complete menu tree; expand safe collapsed navigation or inspect omitted regions only as needed. Keep secrets and unrelated sensitive page data out of tool output, saved evidence, and reports; if a full-body dump cannot be safely returned, inspect the relevant navigation/header region and record that limitation. Preserve relevant literals with target/environment/locale/role and capture provenance for later PR/QA use.
+
+Use visible breadcrumbs and page headers as the first source for the labels they actually show. Breadcrumbs support displayed label strings and destination hierarchy; a page title alone supports only that title. Neither proves a traversed menu path, nor that sidebar labels match breadcrumb labels. For instructions to click from one menu to another, verify each actual step and capture its label and resulting connection; with breadcrumb-only evidence, describe only the displayed hierarchy.
+
 Within investigation authority, obtain missing evidence from accessible sources or attempt read-only browser inspection through the browser owner when the target and safe access are available. Do not stop at a repository miss or merely suggest browsing when an authorized inspection can proceed. If access or evidence is unavailable, mark the affected claim `Unverifiable`, explain the concrete limitation, and request the smallest missing input: a redacted menu API response with relevant label/hierarchy/route fields, owning source, or a screenshot showing the navigation. Never request credentials or an unredacted payload in chat. Preserve verified partial results and pending evidence in summaries, QA, and handoffs; propagation-only owners carry the request without opening a new investigation.
+
+In completion reports and pre-publication preparation, explicitly list every required label or navigation connection that remains unverified: affected claim, available evidence/provenance, concrete limitation, and the smallest input needed to resolve it. Do not silently omit gaps or count them as verified. Accept user-supplied exact labels or captures item by item with target/environment/locale/role context; mark text-only labels as user-provided, not independently observed. Preserve their exact wording, resolve only the supported claim, and keep unsupported connections `Unverifiable`. Carry unresolved items into PR/QA limitations and handoffs so the user can supply each missing item.
 
 <!-- tigerkit:approval-continuity -->
 ## Approval Continuity
@@ -95,7 +101,8 @@ Return only outcome-changing user-owned decisions to the parent owner.
 An evidence-discovery request may identify a known target URL, environment, role, and the missing label/path as its
 question; the unknown label is not a prerequisite for this mode. Keep all provider, headless, authentication, readiness,
 and interaction boundaries. Inspect visible text and navigation connections without submitting business mutations.
-Return only observed literals and connections with provenance, plus unresolved segments. A successful locator match
+After entry and initial rendering, perform the UI Evidence text inventory before selector-level lookup; use the safe scoped fallback when full-body output would expose sensitive data. Capture visible breadcrumbs/headers, then verify actual menu clicks separately when a traversed path is required.
+Return observed literals, displayed hierarchy, and actually traversed connections separately with provenance, plus an itemized list of unresolved labels/connections, limitations, and requested inputs. A successful locator match
 or accessible name alone does not prove visible wording; inspect the actual visible text. This discovery is not a
 Content comparison pass and never invents the parent's missing acceptance basis. Return evidence to the requesting owner.
 
