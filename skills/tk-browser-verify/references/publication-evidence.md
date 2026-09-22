@@ -52,7 +52,9 @@ generic required entries and does not need to recognize the producing skill. Kee
 in the verifier result, outside the consumer branching contract.
 
 Emit a publication manifest entry only when the represented criterion and image inspection are
-`Pass`. For `Fail | Blocked | Unverifiable`, preserve any run-owned failure artifact under the
+`Pass`, including the required per-region outline checks from the visual contract gate. A passing
+geometry comparison or explanatory PR text cannot qualify an image missing a required outline.
+For `Fail | Blocked | Unverifiable`, preserve any run-owned failure artifact under the
 failure-evidence contract, return the real criterion status, and mark required image publication as
 blocked or unverifiable. Never encode a failed or incomplete run as `verification_status: Pass`.
 

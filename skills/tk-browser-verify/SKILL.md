@@ -141,6 +141,18 @@ Classify each approved visual region before capture:
 | change | old target and context | new target and context | both corresponding targets |
 | remain unchanged | complete comparison region | complete comparison region | none |
 
+Treat the table's outline placement as required evidence, not optional reviewer decoration.
+Before capture, apply a visible red outline to every target required in that phase. After capture,
+inspect the saved image and record each region's intent, required outline side, and observed outline
+in its evidence row. A DOM style assignment or a readable change alone does not prove this check.
+Missing, clipped, wrong-target, or uninspected required outlines keep the visual contract incomplete:
+preserve the deficient capture, repair and recapture within existing authority, then reinspect.
+If recovery is unavailable, return `Unverifiable` with `next_required`; do not claim baseline success,
+aggregate `Pass`, `verification_complete: true`, or emit a passing publication manifest.
+Geometry measurements, obvious differences, user-supplied screenshots, and PR prose do not waive
+this requirement. `capture_only_mutation: none` truthfully describes an unannotated capture but
+cannot make that capture eligible. Do not ask whether to perform an already-required annotation.
+
 Judge the outlined `intended-change` region separately from the remaining `must-not-change` region.
 An observed difference in `must-not-change` is `Fail` unless explicitly approved as a deviation.
 Use [visual](references/visual.md) for annotation mechanics, capture-method prerequisites, and all

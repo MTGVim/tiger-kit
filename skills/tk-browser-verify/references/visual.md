@@ -17,7 +17,10 @@ Apply the intent table and separate judgment surfaces in [the visual contract ga
 A behavior-preserving refactor may consist entirely of `remain unchanged`; the absence of a design
 node, mockup, or changed visual AC never disables this branch.
 
-Use a parent-supplied inspected baseline when its provenance and environment are comparable. When
+Use a parent-supplied inspected baseline only when its provenance, environment, and required
+annotation evidence are comparable. Preserve supplied originals. An unannotated supplied image
+may guide investigation but cannot discharge a required outline side; obtain a compliant runtime
+capture from the proven source, or return `Unverifiable` if replay is unavailable. When
 invoked before the first product edit, prove and record the current HEAD plus relevant worktree
 fingerprint, capture that exact current tree directly under `baseline/`, and preserve the run ID for
 the after call. When invoked after candidate edits without a baseline, identify the exact pre-change
@@ -87,8 +90,14 @@ preserve the complete failing evidence in a new unique immutable `failed-<attemp
 Before capture, inspect whether an empty off-screen alert, toast, or similar framework
 container expands or contaminates the image. Remove only a verified empty, non-criterion
 container at runtime and disclose it in the evidence index. For annotations, attach an
-`outline` directly to the target element. Place the label as an absolute child of `body`
+`outline: 2px solid #ff0000` directly to the target element, preserving its prior inline style.
+Place the label as an absolute child of `body`
 and clamp its position to the page width so target `overflow: hidden` cannot clip it.
+Inspect the saved image for a visible red outline on the correct target, without clipping or
+obscuring criterion content. If an annotation obscures a border, focus ring, or another tested detail,
+retain a matching unannotated companion capture for that judgment; the annotated evidence remains
+required. Record annotation details in `capture_only_mutation`, restore prior styles and remove
+run-owned labels after capture, and verify that judged geometry/state was not changed.
 Do not calculate a detached overlay from coordinates that may change during scrolling,
 `fullPage` layout, or capture.
 

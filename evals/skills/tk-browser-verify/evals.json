@@ -1660,6 +1660,86 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "browser-change-missing-outline-is-incomplete",
+      "path": "boundary",
+      "prompt": "쿠폰명 `change`의 전후 이미지는 검사했고 차이가 뚜렷하며 `geometry`도 측정했다. 두 이미지 모두 `outline`은 없고 `capture_only_mutation: none`은 정확하다. 브라우저 재실행은 불가능하다. 최종 검증 결과와 `PR` 근거를 반환해 줘.",
+      "expected_output": "필수 양쪽 빨간 `outline` 누락을 검출하고 `Unverifiable`을 반환한다. `none`의 정확성이나 측정값으로 `visual_contract: applied`, `verification_complete: true`, 성공 `manifest`를 정당화하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "필수 양쪽 빨간 `outline` 누락을 검출하고 `Unverifiable`을 반환한다. `none`의 정확성이나 측정값으로 `visual_contract: applied`, `verification_complete: true`, 성공 `manifest`를 정당화하지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Unverifiable"
+        }
+      ]
+    },
+    {
+      "id": "browser-change-after-outline-recovery",
+      "path": "success",
+      "prompt": "승인된 `change` 비교에서 `baseline`은 빨간 `outline`이 있지만 `after`에는 없다. 같은 `run`의 안전한 `headless replay`가 가능하고 촬영과 비교는 이미 승인됐다. 다음 절차를 수행해 줘.",
+      "expected_output": "누락된 `after`를 보존하고 추가 허락 없이 올바른 대상에 빨간 `outline`을 적용해 재촬영한다. 저장된 이미지의 표시와 모든 비교 조건을 확인하고 `annotation` 공개 및 원상복구 후에만 `Pass`를 반환한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "누락된 `after`를 보존하고 추가 허락 없이 올바른 대상에 빨간 `outline`을 적용해 재촬영한다. 저장된 이미지의 표시와 모든 비교 조건을 확인하고 `annotation` 공개 및 원상복구 후에만 `Pass`를 반환한다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
+    },
+    {
+      "id": "browser-user-captures-do-not-waive-outline",
+      "path": "boundary",
+      "prompt": "사용자가 `PR`에 쓸 전후 이미지를 제공했다. `change` 영역에 `outline`은 없지만 설명문으로 위치를 짚을 수 있다. 원본 앱과 `baseline replay`에는 접근할 수 없다. 검증 결과를 반환해 줘.",
+      "expected_output": "사용자 원본을 보존하고 필수 `runtime outline` 근거를 대체할 수 없음을 알린다. 재촬영 불가로 `Unverifiable`과 `next_required`를 반환하며 `PR` 설명이나 후처리로 검증 완료를 주장하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "사용자 원본을 보존하고 필수 `runtime outline` 근거를 대체할 수 없음을 알린다. 재촬영 불가로 `Unverifiable`과 `next_required`를 반환하며 `PR` 설명이나 후처리로 검증 완료를 주장하지 않는다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Unverifiable"
+        }
+      ]
+    },
+    {
+      "id": "browser-outline-style-does-not-prove-image",
+      "path": "boundary",
+      "prompt": "`change` 전후 `DOM`에 빨간 `outline`을 적용했다. 저장 이미지를 검사하니 `after`의 `outline`이 잘려 보이지 않는다. 측정값은 모두 맞고 이 호출에서는 재촬영할 수 없다. 판정해 줘.",
+      "expected_output": "`DOM style` 적용만으로 표시를 입증하지 않는다. 누락된 이미지 근거를 보존하고 재촬영을 `next_required`로 남기며 완료나 성공 `manifest` 없이 `Unverifiable`을 반환한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`DOM style` 적용만으로 표시를 입증하지 않는다. 누락된 이미지 근거를 보존하고 재촬영을 `next_required`로 남기며 완료나 성공 `manifest` 없이 `Unverifiable`을 반환한다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Unverifiable"
+        }
+      ]
+    },
+    {
+      "id": "browser-unchanged-no-outline-required",
+      "path": "success",
+      "prompt": "`remain unchanged`만 있는 `bounded-region` 전후 파일은 `byte-identical`이고 `baseline` 검사 및 `replay` 조건과 다른 필수 검사는 모두 충족한다. `outline`은 없으며 `capture_only_mutation: none`이다. 결과를 반환해 줘.",
+      "expected_output": "`remain unchanged`에는 `outline`이 필요 없으므로 불필요한 `annotation`이나 재촬영 없이 `Pass`와 `labeled baseline`/`after` 근거를 반환한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`remain unchanged`에는 `outline`이 필요 없으므로 불필요한 `annotation`이나 재촬영 없이 `Pass`와 `labeled baseline`/`after` 근거를 반환한다."
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ],
   "migrations": [
