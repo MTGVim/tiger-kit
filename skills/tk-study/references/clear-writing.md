@@ -8,7 +8,7 @@ Apply these within the calling skill's authorized editing scope, before and afte
 
 ### Meaning Before Polish
 
-A reader should identify the subject, what happens, why, under what conditions, and what remains unknown. Introduce prerequisites this audience needs before relying on them. Use concrete actors, stable terms, and actual causal or temporal relationships. Connect each main point with supporting facts or explanation. Keep useful headings, sequences, comparisons, and domain examples; avoid slogans and decorative structure.
+A reader should identify the subject, what happens, why, under what conditions, and what remains unknown. Introduce prerequisites this audience needs before relying on them. Use concrete actors, stable terms, and actual causal or temporal relationships. When supplied context identifies a department or position, name it instead of an ambiguous umbrella such as `현업`; preserve each actor's distinct responsibility. If the actor or cause is unknown, keep it unknown rather than guessing a department or position. Connect each main point with supporting facts or explanation. Keep useful headings, sequences, comparisons, and domain examples; avoid slogans and decorative structure.
 
 The calling skill determines which facts may be added. Rewriting preserves supplied facts and may restore supplied context; explaining may introduce supported general knowledge and clearly labeled illustrative examples. Neither may invent project history, measurements, decisions, causes, or evidence. Distinguish hypotheses, proposals, observed results, and completed actions. Keep numbers, negation, conditions, alternatives, decision owners, and certainty intact. Do not improve apparent clarity by deleting a limitation or adding a benefit. When rewriting, preserve supported causal, contrastive, temporal, conditional, and conclusion relationships without strengthening, weakening, or inventing them through connectors, reordering, or new assertions. Mere adjacency is not evidence of a relationship.
 
@@ -41,6 +41,16 @@ Examples show relationships, not permission to infer absent details. If the acto
 
 In ordinary explanatory prose, always replace an em dash (`—`) with a conjunction, colon, parentheses, or separate sentences that retain the relationship. Always replace a section sign such as `§3` with `section 3`, `3절`, or the actual section title, retaining the reference's target and precision. Even one occurrence requires correction; low severity or sparse use is not an exception. Preserve code, commands, URLs, direct quotations, official names, and notation required by the document's format or an explicit user request. Correct the prose relationship, not characters inside protected literals.
 
+In Korean prose, always replace middle-dot (`·`) noun stacking with an explicit relationship: commas for enumeration, `및` or `과/와` for conjunction, and a slash for an established pair such as `조회/취소`. Even one occurrence requires correction; sparse use is no exception. Apply the protected-literal exceptions above, including official names and format-required notation, and preserve verified UI labels. Do not mechanically substitute a slash when the relationship is unclear; retain the uncertainty or ask for the missing context.
+
+In Korean prose, always correct empty modifiers such as `주요`, `핵심`, `가장 중요한`, and `다양한` when they assert importance or scale without identifying the subjects or providing support. This includes modifiers already in the source, even a single occurrence. Put supplied concrete examples or the stated basis first; if neither is available, remove only the empty emphasis without inventing examples or broadening a limited subset into all items. Preserve a source-supported importance claim with its supporting reason, as well as protected literals and established technical terms. These are contextual judgments with mandatory correction, not a word blacklist.
+
+```text
+Before: 주요 운영 화면의 언어별 입력 구조를 전환했습니다.
+Context: 대상은 목록, 상세, 등록 화면입니다.
+After: 목록, 상세, 등록 화면의 언어별 입력 구조를 전환했습니다.
+```
+
 For generated item markers in headings, lists, choices, tables, diagrams, and summaries, use ASCII `(1) Item`, `1. Item`, or `- Item`, with a space after the marker. Replace Unicode circled/enclosed numbers, single-character parenthesized numbers, and keycap emoji used as editable item markers; terminal renderers can overlap them with adjacent text. Keep the item order and reference targets intact. Protected literals and verified UI labels remain exact; use plain markers in the surrounding explanation.
 
 ## Contextual Patterns
@@ -65,7 +75,7 @@ Keep source-provided actions and deadlines explicit; do not invent support proce
 
 ## Sources
 
-- `docwriter-org/plain-writing-skill`, `f0d3630983ac7a82aa580f1c1509d72df739ee12`: relevant background, concrete subjects, coherent explanation, consistent terminology.
+- `docwriter-org/plain-writing-skill`, `f0d3630983ac7a82aa580f1c1509d72df739ee12`: relevant background, concrete subjects, coherent explanation, consistent terminology. Rules 3 and 15 also inform the Korean empty-emphasis and middle-dot requirements; adapt them to supported specifics and protected literals, without importing unrelated formatting bans.
 - `hjongc/humanizer-kr`, `a1a7069a32f669afe4b10e35e9522ff504a13263`: reader/register fit, contextual editing, restrained claims, internal naturalness review.
 - `snflkd/fluent-korean`, `ce8683f0eba8cddb91de4dcd151425ff73e60498`: Korean sentence components, particles/endings, accurate vocabulary, literal-expression boundaries. This is a selective adaptation with rationale and examples, not a replacement for the upstream global output style.
 

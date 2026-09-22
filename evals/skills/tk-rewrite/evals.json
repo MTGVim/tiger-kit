@@ -1044,6 +1044,81 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "korean-middle-dot-relations",
+      "path": "success",
+      "prompt": "`$tk-rewrite` 다음 보고를 다듬어줘. 타입 정비와 보안 대응을 각각 완료했고, 조회와 취소는 짝을 이루는 기능이다. 원문: '타입·보안 기반 정비를 완료했습니다. 조회·취소 프로세스도 개선했습니다.'",
+      "expected_output": "명사 사이의 관계를 명시하고 가운뎃점 나열을 교정한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "일반 산문의 가운뎃점 나열을 남기지 않는다. 타입 기반 보안이라는 인과나 수식 관계를 만들지 않고 타입 정비 및 보안 대응을 구분한다. 조회/취소처럼 짝 표기 또는 명시적인 접속 표현을 사용한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "korean-empty-modifiers-supported-specifics",
+      "path": "success",
+      "prompt": "`$tk-rewrite` 문서를 다듬어줘. 원문: '주요 운영 화면의 언어별 입력 구조를 전환했습니다. 대상은 목록, 상세, 등록 화면입니다. 핵심 성과는 저장 오류 수정입니다. 다양한 요청을 처리했습니다. 요청은 등록과 취소입니다.'",
+      "expected_output": "근거 없는 강조 대신 원문에 있는 대상과 작업을 명시한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "주요, 핵심, 다양한이라는 공허한 수식어를 단 한 번이어도 교정한다. 목록, 상세, 등록 화면과 저장 오류 수정, 등록과 취소 요청을 보존하고 실제 대상 앞에 추측성 예시나 성과 수치를 추가하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "korean-notation-supported-claims-and-literals",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 설명문만 다듬어줘. 원문: '매출 비중이 80%인 결제가 가장 중요한 검토 대상입니다. 공식 문서명은 「주요 정책·절차」입니다. 화면에서 검증한 버튼 라벨은 `조회·취소`입니다. 직접 인용은 “다양한 핵심 과제”입니다. 코드는 `const name = \"기획·디자인\"`입니다.'",
+      "expected_output": "근거 있는 중요도 주장과 보호된 표기는 보존한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "매출 비중 80%와 결제의 중요도 관계를 보존하며 숫자를 바꾸거나 중요도를 다른 대상에 옮기지 않는다. 공식 문서명, 검증된 UI 라벨, 직접 인용, 코드를 문자 그대로 보존한다. 주요나 가운뎃점이 있다는 이유만으로 보호된 문자열을 수정하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "korean-specific-actors-from-context",
+      "path": "success",
+      "prompt": "`$tk-rewrite` 원문을 다듬어줘. 각 문장의 현업은 순서대로 영업팀, 정산팀, 고객지원팀이다. 원문: '현업은 계약을 확인합니다. 현업은 정산을 승인합니다. 현업은 문의에 답변합니다.'",
+      "expected_output": "근거가 있는 부서명을 각 역할에 대응시킨다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "영업팀의 계약 확인, 정산팀의 정산 승인, 고객지원팀의 문의 응답을 각각 명시한다. 현업으로 다시 뭉뚱그리거나 세 부서의 권한을 합치지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "korean-missing-specifics-no-invention",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 다음 문장을 다듬어줘. 추가 정보는 없다. 원문: '주요 운영 화면의 언어별 입력 구조를 전환했습니다. 현업이 확인합니다.'",
+      "expected_output": "빈 강조를 교정하되 대상 범위와 행위자의 미확인 상태를 보존한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "주요라는 근거 없는 중요도 주장은 교정하지만 모든 운영 화면을 전환했다고 확대하지 않는다. 목록/상세/등록 화면이나 특정 부서 및 직책을 지어내지 않는다. 일부 화면 등 한정된 범위를 유지하거나 정확한 대상을 확인하며 현업의 정체를 미확인 상태로 남긴다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }
