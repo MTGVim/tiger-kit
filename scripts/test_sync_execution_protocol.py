@@ -100,5 +100,37 @@ class SyncExecutionProtocolTest(unittest.TestCase):
                 self.assertEqual(self.run_main("--check"), 0)
 
 
+class OutputNotationTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.path = self.root / "skills/tk-example/SKILL.md"
+        self.path.parent.mkdir(parents=True)
+        self.path.write_text("# Example\n\nKeep this behavior.\n", encoding="utf-8")
+
+    def test_missing_guard_is_rejected_and_sync_is_idempotent(self) -> None:
+        self.assertTrue(sync_execution_protocol.output_notation_errors(self.root / "skills"))
+        sync_execution_protocol.sync_output_notation(self.root / "skills")
+        before = self.path.read_bytes()
+        sync_execution_protocol.sync_output_notation(self.root / "skills")
+        self.assertEqual(self.path.read_bytes(), before)
+        self.assertEqual(sync_execution_protocol.output_notation_errors(self.root / "skills"), [])
+
+    def test_drift_is_rejected_and_repaired_without_losing_adjacent_guard(self) -> None:
+        sync_execution_protocol.sync_output_notation(self.root / "skills")
+        original = self.path.read_text()
+        suffix = "\n## Other behavior\nKeep this instruction.\n\n<!-- tigerkit:other -->\n## Other\nKeep this guard.\n"
+        self.path.write_text(original.replace("ASCII numbering", "emoji numbering") + suffix)
+        self.assertTrue(sync_execution_protocol.output_notation_errors(self.root / "skills"))
+        sync_execution_protocol.sync_output_notation(self.root / "skills")
+        self.assertEqual(self.path.read_text(), original + suffix)
+        self.assertEqual(sync_execution_protocol.output_notation_errors(self.root / "skills"), [])
+
+    def test_duplicate_guard_is_rejected(self) -> None:
+        self.path.write_text(sync_execution_protocol.OUTPUT_NOTATION_BLOCK * 2)
+        self.assertTrue(sync_execution_protocol.output_notation_errors(self.root / "skills"))
+
+
 if __name__ == "__main__":
     unittest.main()

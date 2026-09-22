@@ -41,6 +41,8 @@ Examples show relationships, not permission to infer absent details. If the acto
 
 In ordinary explanatory prose, always replace an em dash (`—`) with a conjunction, colon, parentheses, or separate sentences that retain the relationship. Always replace a section sign such as `§3` with `section 3`, `3절`, or the actual section title, retaining the reference's target and precision. Even one occurrence requires correction; low severity or sparse use is not an exception. Preserve code, commands, URLs, direct quotations, official names, and notation required by the document's format or an explicit user request. Correct the prose relationship, not characters inside protected literals.
 
+For generated item markers in headings, lists, choices, tables, diagrams, and summaries, use ASCII `(1) Item`, `1. Item`, or `- Item`, with a space after the marker. Replace Unicode circled/enclosed numbers, single-character parenthesized numbers, and keycap emoji used as editable item markers; terminal renderers can overlap them with adjacent text. Keep the item order and reference targets intact. Protected literals and verified UI labels remain exact; use plain markers in the surrounding explanation.
+
 ## Contextual Patterns
 
 Only after the hard invariants are satisfied, assess expression in its actual genre and local context. These are editing decisions, not authorship signals or runtime scores:

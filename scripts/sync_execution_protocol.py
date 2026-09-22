@@ -34,6 +34,42 @@ DOMAIN_CONTEXT_TARGETS = (
 )
 
 
+OUTPUT_NOTATION_MARKER = "<!-- tigerkit:output-notation -->"
+OUTPUT_NOTATION_END = "<!-- /tigerkit:output-notation -->"
+OUTPUT_NOTATION_BLOCK = OUTPUT_NOTATION_MARKER + """
+## Output Notation
+
+Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
+""" + OUTPUT_NOTATION_END + "\n"
+
+
+def output_notation_errors(skills_root: Path) -> list[str]:
+    errors = []
+    for path in sorted(skills_root.glob("tk-*/SKILL.md")):
+        text = path.read_text(encoding="utf-8")
+        if text.count(OUTPUT_NOTATION_MARKER) != 1 or text.count(OUTPUT_NOTATION_END) != 1 or OUTPUT_NOTATION_BLOCK not in text:
+            errors.append(f"{path.parent.name}: sync the exact output notation block with scripts/sync_execution_protocol.py")
+    return errors
+
+
+def sync_output_notation(skills_root: Path) -> None:
+    for path in sorted(skills_root.glob("tk-*/SKILL.md")):
+        text = path.read_text(encoding="utf-8")
+        if OUTPUT_NOTATION_MARKER in text:
+            start = text.index(OUTPUT_NOTATION_MARKER)
+            end = text.find(OUTPUT_NOTATION_END, start + len(OUTPUT_NOTATION_MARKER))
+            if end == -1 or text.count(OUTPUT_NOTATION_MARKER) != 1 or text.count(OUTPUT_NOTATION_END) != 1:
+                raise ValueError(f"{path}: malformed output notation block; repair its delimiters before syncing")
+            end += len(OUTPUT_NOTATION_END)
+            if text[end:end + 1] == "\n":
+                end += 1
+            text = text[:start] + OUTPUT_NOTATION_BLOCK + text[end:]
+        else:
+            text = text.rstrip() + "\n\n" + OUTPUT_NOTATION_BLOCK
+        if text != path.read_text(encoding="utf-8"):
+            path.write_text(text, encoding="utf-8")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
@@ -57,14 +93,20 @@ def main() -> int:
         if not target.is_file() or target.read_bytes() != source.read_bytes()
     ]
     if args.check:
+        notation_errors = output_notation_errors(ROOT / "skills")
+        if notation_errors:
+            print("\n".join(notation_errors))
         if drift:
             print(
                 "Out-of-sync shared reference copies: "
                 + ", ".join(str(target.relative_to(ROOT)) for _, target in drift)
             )
             return 1
+        if notation_errors:
+            return 1
         print("Shared reference copies are synchronized.")
         return 0
+    sync_output_notation(ROOT / "skills")
     for source, target in drift:
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, target)
