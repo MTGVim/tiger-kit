@@ -1266,6 +1266,120 @@
           "paths": []
         }
       ]
+    },
+    {
+      "id": "rewrite-preserves-ranking-without-rationale",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 말투만 다듬고 최종 본문만 줘. 원문: 세 후보 중 `A`가 가장 중요한 선택지입니다. 별도의 선정 근거는 제공되지 않았습니다.",
+      "expected_output": "순위 주장과 근거 부재를 모두 보존한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`A`가 세 후보 가운데 최우선이라는 원문 주장을 유지한다. 이유가 없다는 이유로 순위를 삭제하거나 객관적 검증을 지어내지 않는다. 단순히 중요하다고만 쓰면 실패다. 같은 의미의 우선순위 표현으로 바꿔도 된다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "rewrite-removes-emphasis-without-relation",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 공유용으로 다듬고 최종 본문만 줘. 원문: 이것은 가장 중요한 핵심 포인트입니다. 저장 버튼을 누르면 입력값을 저장합니다. 문맥: 비교 대상이나 순위 주장은 없고 첫 문장은 관성적으로 붙인 강조입니다.",
+      "expected_output": "실제 동작을 남기고 공허한 강조를 제거한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "저장 버튼의 동작을 보존하되 빈 강조를 남기지 않는다. 특정 단어를 보호하거나 순위, 비교 대상, 선정 근거를 만들어 내지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "rewrite-preserves-simultaneous-properties",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 말투만 다듬고 최종 본문만 줘. 원문: 이 검사가 실패한 동일 시점에 배포가 차단되고 감사 기록이 생성됩니다. 두 동작이 동시에 일어난다는 점이 요구사항입니다.",
+      "expected_output": "동일 시점에 두 동작이 발생한다는 관계를 보존한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "배포 차단과 감사 기록 생성을 단순한 두 기능의 나열 또는 순차 발생으로 바꾸지 않는다. 같은 시점이라는 의미를 보존하며 특정 부사를 그대로 쓸 필요는 없다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "rewrite-does-not-invent-simultaneity",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 문장을 자연스럽게 다듬고 최종 본문만 줘. 원문: `A`와 `B`를 이번 주에 처리했습니다. 추가 시간 정보는 없습니다.",
+      "expected_output": "주 단위 처리 사실만 보존한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "동시에 또는 순차적으로 처리했다는 정보를 새로 넣지 않는다. 같은 주라는 범위는 같은 시점의 증거가 아니다. 원문 유지도 허용한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "rewrite-preserves-comparison-scope",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 공유용으로 다듬고 최종 본문만 줘. 원문: 현재 세 구현안 가운데 `A`의 지연 시간이 가장 낮습니다.",
+      "expected_output": "현재 세 구현안이라는 비교 범위와 최솟값 관계를 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`A`의 지연 시간이 낮다고만 축약하거나 모든 구현안 중 가장 낮다고 확장하지 않는다. 현재와 세 구현안의 범위 및 최솟값 의미를 보존한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "rewrite-preserves-exclusivity",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 말투만 다듬고 최종 본문만 줘. 원문: 현재 세 후보 중 `A`만 오프라인 실행을 지원합니다.",
+      "expected_output": "비교 집합 안에서의 배타성을 보존한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`A`가 지원한다고만 쓰거나 세 후보 밖의 구현까지 지원하지 않는다고 확장하지 않는다. 오직 `A`라는 뜻을 자연스럽게 재표현해도 된다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
     }
   ]
 }

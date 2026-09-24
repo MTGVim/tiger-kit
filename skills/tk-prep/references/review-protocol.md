@@ -5,6 +5,32 @@ Read this for every direct exact-change, SDD Unit, SDD whole-change, or explicit
 candidate verification, remediation routing, and final output. Discovery reviewers and
 finding verifiers are read-only leaves and never redispatch.
 
+## Delegation permissions
+
+Before dispatching any implementer, reviewer, verifier, diagnostic leaf, or delegated controller,
+verify from current host/tool evidence that its effective tool and data access is the same as or
+narrower than the parent/controller's for the same target environment. Preserve `deny | ask | allow`,
+read/path restrictions, approval scope, and publication/destructive-action authority. A read-only
+role, prompt instruction, provider name, or static allowlist alone does not prove enforcement.
+
+Bind that evidence to the actual workspace/worktree, repository root, sandbox/container, filesystem
+restrictions, remote target, and account/connector context as applicable. Recheck when the environment,
+policy, or requested access changes, including on resume. Prior approval, cached decisions, and
+review results do not transfer automatically across environments or authorize wider subsequent access.
+Do not turn parent `deny` or `ask` into child `allow`; preserve the existing supported approval route
+or stop the affected action, without adding automatic elevation or a new approval lifecycle.
+
+Read restrictions cover indirect shell/Git reads and material embedded in prompts, diffs, or tool
+results as well as direct file tools. Reuse existing bounded review transport with only authorized
+material; filtering a brief does not make broader child tool access safe. Include the applicable
+boundary and current evidence in the child brief; leaves stop and return a mismatch to the controller.
+
+If safe inheritance/narrowing cannot be established and broader access is possible, do not dispatch.
+Use an already-authorized controller path only when it preserves the restrictions and role obligations;
+otherwise return `Blocked | Unverifiable` for the affected work. Controller self-review cannot satisfy
+required independent coverage. With verified same-or-narrower access, proceed without extra approval,
+a permission registry, durable environment ledger, or re-dispatch ceremony.
+
 ## Inputs and evidence authority
 
 Bind every seat to the same exact repository/range or worktree fingerprint, original task or

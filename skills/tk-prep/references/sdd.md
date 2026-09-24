@@ -67,6 +67,10 @@ review sequence serially in the current isolated execution checkout while preser
 role-specific evidence and exact scope. Do not silently downgrade SDD semantics into
 direct execution.
 
+Before every child dispatch or resumed action with changed access/environment, apply
+[delegation permissions](review-protocol.md#delegation-permissions) to implementers, reviewers,
+verifiers, diagnostic leaves, and delegated controllers. Include the verified boundary in the brief.
+
 ### User interaction ownership
 
 The root controller owns user intent, product/scope/acceptance decisions, Seed changes,
