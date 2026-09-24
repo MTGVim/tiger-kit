@@ -1119,6 +1119,153 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "modality-strength-increase",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 표현을 부드럽게 다듬어줘. 원문: 서버가 혼잡하면 응답이 늦어질 수 있습니다. 자동 재시도로 복구될 가능성이 있습니다.",
+      "expected_output": "서법의 의미와 강도를 보존하면서 요청된 표현을 정제한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "두 문장의 가능성과 혼잡 조건을 보존한다. 늦어진다, 복구된다, 복구하면 된다처럼 확정하거나 조치의 충분성을 새로 주장하지 않는다. 다른 완곡어를 쓰더라도 원문보다 확신도를 높이지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "modality-strength-decrease",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 단정적으로 들리는 어투를 자연스럽게 다듬되 내용은 바꾸지 마. 원문: 이번 측정에서 응답 시간이 20% 줄었습니다. 이 설정은 관리자만 변경할 수 있습니다.",
+      "expected_output": "서법의 의미와 강도를 보존하면서 요청된 표현을 정제한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "관측된 20% 감소를 가능성이나 추정으로 약화하지 않는다. 관리자만 변경할 수 있다는 권한 제한을 권장이나 불확실한 접근 가능성으로 바꾸지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "modality-obligation-to-recommendation",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 안내문을 친근하게 고쳐줘. 원문: 운영자는 배포 전에 승인을 받아야 합니다. 승인을 받지 않으면 배포할 수 없습니다.",
+      "expected_output": "서법의 의미와 강도를 보존하면서 요청된 표현을 정제한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "사전 승인의 의무와 미승인 배포 금지를 보존한다. 승인을 권장한다, 받으면 좋다, 가급적 받아 달라처럼 의무를 약화하지 않는다. 친근한 표현은 의무를 유지하는 범위에서 허용한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "modality-recommendation-to-obligation",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 안내문을 명료하게 다듬어줘. 원문: 작업 전에 백업을 권장합니다. 백업 여부는 담당자가 선택합니다.",
+      "expected_output": "서법의 의미와 강도를 보존하면서 요청된 표현을 정제한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "백업 권고와 담당자의 선택권을 보존한다. 백업해야 한다, 반드시 백업한다, 백업 후에만 작업한다처럼 의무나 선행조건으로 강화하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "modality-equivalent-capability",
+      "path": "success",
+      "prompt": "`$tk-rewrite` 제품 안내를 짧게 다듬어줘. 이 문맥에서 가능은 기능 지원을 뜻한다. 원문: 관리자는 설정 화면에서 알림을 끌 수 있습니다. 요청한 표현: 관리자는 설정 화면에서 알림 끄기가 가능합니다.",
+      "expected_output": "서법의 의미와 강도를 보존하면서 요청된 표현을 정제한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "요청한 동등한 기능 표현을 허용한다. 끌 수 있습니다를 보호된 리터럴로 취급하여 변경을 거부하지 않는다. 관리자, 설정 화면, 알림 끄기 기능을 보존하고 권고나 의무로 바꾸지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "modality-repetition-pressure",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 반복되는 할 수 있습니다를 줄여 매끄럽게 다듬되 내용을 유지해줘. 원문: 요청이 몰리면 응답이 늦어질 수 있습니다. 연결이 끊기면 업로드가 중단될 수 있습니다. 저장 공간이 부족하면 저장에 실패할 수 있습니다. 이전 버전을 쓰면 화면이 다르게 보일 수 있습니다.",
+      "expected_output": "서법의 의미와 강도를 보존하면서 요청된 표현을 정제한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "네 조건과 각 결과의 가능성을 모두 보존한다. 반복을 줄이려고 확정하거나 더 약한 추측 또는 조치 지침으로 바꾸지 않는다. 동등성을 확신하기 어려우면 가능형을 남기고 주변 구조만 바꾸어도 된다. 가능형 횟수 감소를 성공 조건으로 삼지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "reader-context-actor-condition",
+      "path": "boundary",
+      "prompt": "$tk-rewrite 처음 보는 운영자에게 공유할 안내문을 재작성해줘. 확인된 배경: 배포 담당자는 프론트엔드 당번이다. 팀장이 승인하고 전체 릴리즈 게이트가 통과했을 때만 `main`에 `push`한다. 원문: 승인 후 담당자가 검증하고 올린다.",
+      "expected_output": "최종 본문만으로 프론트엔드 당번, 팀장 승인, 전체 릴리즈 게이트 통과 조건과 `main`에 `push`를 복원할 수 있어야 한다. 검증 실행을 통과로 대체하거나 승인자를 생략하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "최종 본문만으로 프론트엔드 당번, 팀장 승인, 전체 릴리즈 게이트 통과 조건과 `main`에 `push`를 복원할 수 있어야 한다. 검증 실행을 통과로 대체하거나 승인자를 생략하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "reader-context-unknown-prerequisite",
+      "path": "boundary",
+      "prompt": "$tk-rewrite 처음 보는 운영자에게 공유할 안내문을 다듬어줘. 원문: 준비가 끝나면 담당자가 가져오기를 실행합니다. 추가 정보는 없다.",
+      "expected_output": "준비 사항과 담당자를 지어내지 않는다. 필요한 정보가 미확인임을 본문 또는 짧은 별도 메모로 표시하거나 그 두 정보를 묻는다. 배경을 알고 있는 것처럼 그대로 완결된 안내로 반환하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "준비 사항과 담당자를 지어내지 않는다. 필요한 정보가 미확인임을 본문 또는 짧은 별도 메모로 표시하거나 그 두 정보를 묻는다. 배경을 알고 있는 것처럼 그대로 완결된 안내로 반환하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
+    },
+    {
+      "id": "reader-context-defined-reference",
+      "path": "boundary",
+      "prompt": "$tk-rewrite 처음 보는 운영자에게 공유할 문서를 다듬어줘. 원문: 배포 담당자는 프론트엔드 당번입니다. 팀장이 승인하면 담당자가 배포합니다. 도입 일정은 아직 결정되지 않았습니다.",
+      "expected_output": "문서에 정의된 담당자를 모호하다고 지적하지 않는다. 프론트엔드 당번, 팀장 승인, 일정 미확정을 그대로 유지한다. 정상적인 지시어를 일괄 치환하거나 같은 배경을 반복하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "문서에 정의된 담당자를 모호하다고 지적하지 않는다. 프론트엔드 당번, 팀장 승인, 일정 미확정을 그대로 유지한다. 정상적인 지시어를 일괄 치환하거나 같은 배경을 반복하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        }
+      ]
     }
   ]
 }

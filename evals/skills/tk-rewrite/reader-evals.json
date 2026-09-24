@@ -1,0 +1,124 @@
+{
+  "cases": [
+    {
+      "id": "missing-actor",
+      "reader_input": {
+        "document": "승인 후 담당자가 배포합니다.",
+        "purpose": "처음 읽는 운영자를 위한 작업 안내",
+        "questions": [
+          "누가 배포합니까?"
+        ]
+      },
+      "expected": {
+        "answer": "unknown",
+        "document_status": "incomplete",
+        "criterion": "담당자의 신원이 문서에 없습니다."
+      }
+    },
+    {
+      "id": "missing-condition",
+      "reader_input": {
+        "document": "검증 후 main에 push합니다.",
+        "purpose": "처음 읽는 운영자를 위한 작업 안내",
+        "questions": [
+          "main에 push하려면 검증 결과가 어떤 조건을 만족해야 합니까?"
+        ]
+      },
+      "expected": {
+        "answer": "unknown",
+        "document_status": "incomplete",
+        "criterion": "검증 실행과 모든 게이트 통과를 혼동하지 않습니다."
+      }
+    },
+    {
+      "id": "missing-uncertainty",
+      "reader_input": {
+        "document": "OCR 도입을 검토합니다.",
+        "purpose": "처음 읽는 운영자를 위한 작업 안내",
+        "questions": [
+          "OCR 도입이 확정되었습니까?"
+        ]
+      },
+      "expected": {
+        "answer": "unknown",
+        "document_status": "incomplete",
+        "criterion": "검토 사실만으로 도입이 확정되었다거나 미확정이라고 단정하지 않는다. 확정 여부가 명시되지 않았음을 구분한다."
+      }
+    },
+    {
+      "id": "hidden-prerequisite",
+      "reader_input": {
+        "document": "준비가 끝나면 운영자가 가져오기를 실행합니다.",
+        "purpose": "처음 읽는 운영자를 위한 작업 안내",
+        "questions": [
+          "가져오기를 실행하기 위해 무엇을 준비해야 합니까?"
+        ]
+      },
+      "expected": {
+        "answer": "unknown",
+        "document_status": "incomplete",
+        "criterion": "준비 사항을 추측하지 않습니다."
+      }
+    },
+    {
+      "id": "defined-actor",
+      "reader_input": {
+        "document": "배포 담당자는 프론트엔드 당번입니다. 팀장이 승인하면 담당자가 배포합니다.",
+        "purpose": "처음 읽는 운영자를 위한 작업 안내",
+        "questions": [
+          "누가 배포하며 누구의 승인이 필요합니까?"
+        ]
+      },
+      "expected": {
+        "answer": "프론트엔드 당번; 팀장",
+        "document_status": "sufficient",
+        "criterion": "앞서 정의된 담당자는 정상적인 지시어입니다."
+      }
+    },
+    {
+      "id": "defined-condition",
+      "reader_input": {
+        "document": "릴리즈 게이트는 전체 필수 검사의 통과를 뜻합니다. 이 조건을 만족할 때만 main에 push합니다.",
+        "purpose": "처음 읽는 운영자를 위한 작업 안내",
+        "questions": [
+          "main에 push하려면 어떤 조건이 필요합니까?"
+        ]
+      },
+      "expected": {
+        "answer": "전체 필수 검사 통과",
+        "document_status": "sufficient",
+        "criterion": "이 조건은 같은 문서에 정의되어 있습니다."
+      }
+    },
+    {
+      "id": "explicit-unknown",
+      "reader_input": {
+        "document": "운영팀은 OCR 비용을 검토합니다. 도입 여부와 일정은 아직 결정되지 않았습니다.",
+        "purpose": "처음 읽는 운영자를 위한 작업 안내",
+        "questions": [
+          "무엇이 진행 중이고 무엇이 미확정입니까?"
+        ]
+      },
+      "expected": {
+        "answer": "운영팀 비용 검토; 도입 여부와 일정 미확정",
+        "document_status": "sufficient",
+        "criterion": "명시된 미확정 상태는 맥락 누락이 아닙니다."
+      }
+    },
+    {
+      "id": "explained-prerequisite",
+      "reader_input": {
+        "document": "관리자가 가져오기 권한을 부여한 뒤 운영자가 CSV 파일을 업로드합니다. 이것이 끝나면 가져오기를 실행합니다.",
+        "purpose": "처음 읽는 운영자를 위한 작업 안내",
+        "questions": [
+          "가져오기를 실행하기 전 필요한 준비는 무엇입니까?"
+        ]
+      },
+      "expected": {
+        "answer": "관리자 권한 부여; 운영자 CSV 업로드",
+        "document_status": "sufficient",
+        "criterion": "불필요한 배경을 요구하지 않습니다."
+      }
+    }
+  ]
+}
