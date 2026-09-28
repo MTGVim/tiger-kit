@@ -22,7 +22,7 @@ After polishing, compare each claim-evidence binding and the text with its sourc
 
 ### Korean Sentence Clarity
 
-Apply this section only to Korean prose. Respect explicit user style requirements and the reader relationship; casual chat is not a writing sample. A supplied sample guides voice within those requirements. Keep formal endings consistent when the genre needs them, varying sentence structure rather than mechanically alternating registers.
+Apply this section only to Korean prose. Respect explicit user style requirements and the reader relationship; casual chat is not a writing sample. A supplied sample guides voice within those requirements. Keep formal endings consistent when the genre needs them, varying sentence structure rather than mechanically alternating registers. Sentence-ending variety is not itself an error: normalize it only for an explicit register request or a concrete audience, genre or consistency problem. Compare source and revision for unnecessary flattening and preserve the actor and force of commands, requests, questions, advice and obligations even when normalization is justified. Already uniform prose needs no artificial variety.
 
 Retain sentence components, particles, and endings needed to express the relationship. Replace noun piles and vague possessives with an explicit subject and verb. Concrete Sino-Korean and established technical vocabulary are useful when accurate; do not replace them just to use simpler words. Use customary translations or transliterations when clearer, and retain original terms otherwise. These rules do not translate code, comments, logs, commands, or commit messages.
 

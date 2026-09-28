@@ -40,6 +40,15 @@ level-two heading. Ignore fake headings inside code fences. On duplicates, numbe
 gaps, empty names, or missing obligations, return `Blocked` before dispatch and repair
 the `Seed`.
 
+Keep Unit content decision-dense within this unchanged grammar: exact interfaces, spec-fixed values,
+invariants, dependencies, test assertions, acceptance and verification commands/results. Reference
+current paths/symbols instead of duplicating ordinary implementation bodies or another Unit's code.
+Retain minimal algorithm/ordering structure only when it is itself an approved material decision.
+Before finalizing Execution, compare it with the issue/spec and compress code-dominated, unusually
+expanded or repeated implementation prose while preserving self-contained scope, identity, BASE and
+recovery obligations. Use no fixed size ratio, new reviewer or artifact. Executors reread current
+source; ordinary detail drift does not trigger reapproval, but approved-contract drift still does.
+
 Group small same-shape changes into one `Unit` when they need no separate judgment,
 testing, or review surface. Split work only when interfaces, risk, testing obligations,
 or independent judgment genuinely differ. If two proposed Units would receive the same

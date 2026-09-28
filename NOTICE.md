@@ -514,3 +514,25 @@ SDD 본문과 구현자 프롬프트, `2026-06-09-sdd-task-scoped-review-dispatc
 배포된 보장으로 취급하지 않습니다. #47830의 후속 결합은 확인했으나 그 밖의 전체 후속 이력은
 검증하지 않았습니다. 실제 위임에서는 현재 호스트 근거가 필요합니다. 공통 리뷰 계약을 정본으로
 사용하고 SDD가 이를 참조하며, 기존 동기화 검사와 회귀 평가 13개로 해당 경계를 보호합니다.
+
+## 2026-09-28: `Seed` 결정 밀도와 윤문 회귀 보호
+
+`obra/superpowers`의 `8ca22dba9a94f28898bbce59f2537ff4d87c747d`에서
+`skills/writing-plans/SKILL.md`를 확인했습니다. 병합된 PR #2333
+(`71069323964d12f2dca6a1c52066165f4e43ade0`)의 실패 재현, 변형 비교와 `downstream`
+실행 결과를 읽었습니다. 해당 평가를 여기서 재실행하지는 않았습니다.
+결정과 인터페이스를 남기는 원칙 및 비례 검사를 기존 `Seed/SDD` 계약에 맞게 증류했습니다.
+상위 `plan` 형식, 별도 `reviewer`, 고정 예산과 `runtime`은 가져오지 않았습니다.
+
+`devswha/patina`의 `fb3bd7e9c671436c1d2bd7a78eeace4882a9ee8d`에서
+`docs/research/2026-ko-overcorrection-flattening.md`, 한국어 구조 `fingerprint` 구현/단위 테스트와
+`tests/unit/over-editing-guard.test.js`, 현재 배포된
+`src/cli/overcorrection-advisory.js`를 확인했습니다. 원문 대비 불필요한 평탄화와
+사용자가 요청한 문체 변경을 구분하는 원칙만 기존 `clear-writing`에 적용했습니다.
+종결형 `classifier`, 임계값, `fixture`와 실행 코드는 복제하지 않았습니다. TigerKit 평가는
+이슈의 사례와 독립 입력으로 작성했으며 `upstream`의 측정 결과를 TigerKit 성능으로 주장하지 않습니다.
+
+`Lum1104/video-to-skill`의 `5e9f97e89855a8a0ea998ba85e179fbc1765d4b7`에서
+제품 감사 및 `docs/generated-skill-v2.md`를 읽고 지정 출처 누락 방지를 기존 `sources.md`에
+적용했습니다. 세부 `keep/adapt/omit` 판단은 `tk-study`의 `distillation` 참조에 기록했습니다.
+새 코드, `fixture`, `semantic` `ledger`나 `manifest`를 복제하지 않았습니다.

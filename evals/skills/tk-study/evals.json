@@ -198,6 +198,117 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "study-finite-unavailable",
+      "path": "boundary",
+      "prompt": "$tk-study 가상 `QueueLab`의 상태와 운영을 배우는 짧은 Markdown 과정을 만들어줘. 선수지식은 충분하며 인터뷰는 필요 없다. 지정된 전체 자료 목록은 `evals/skills/tk-study/fixtures/corpus/a.md`, `evals/skills/tk-study/fixtures/corpus/b.md`, `evals/skills/tk-study/fixtures/corpus/c.md`. 추가 지정 자료 `D`는 unavailable://`queuelab/permissions`이며 제공자가 접근 권한 오류라고 확인했다. 내용은 제공되지 않았고 다른 출처로 대체하지 마라. 외부 조사는 필요 없다. 결과는 .`tigerkit/study/queuelab/lesson.md`에 저장해줘.",
+      "expected_output": "`sources.md`에 네 자료를 모두 기록하고 `D`는 unavailable과 권한 오류를 남긴다. 가능한 자료로 계속하되 최종 답변에 `D` 미확인을 밝히고 전체 자료를 검토했다고 주장하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`sources.md`에 네 자료를 모두 기록하고 `D`는 unavailable과 권한 오류를 남긴다. 가능한 자료로 계속하되 최종 답변에 `D` 미확인을 밝히고 전체 자료를 검토했다고 주장하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/study/queuelab/sources.md"
+        }
+      ],
+      "files": [
+        "fixtures/corpus/a.md",
+        "fixtures/corpus/b.md",
+        "fixtures/corpus/c.md"
+      ]
+    },
+    {
+      "id": "study-finite-omission",
+      "path": "success",
+      "prompt": "$tk-study 가상 `QueueLab`의 상태와 운영을 배우는 짧은 Markdown 과정을 만들어줘. 선수지식은 충분하며 인터뷰는 필요 없다. 지정된 전체 자료 목록은 `evals/skills/tk-study/fixtures/corpus/a.md`, `evals/skills/tk-study/fixtures/corpus/b.md`, `evals/skills/tk-study/fixtures/corpus/c.md`, `evals/skills/tk-study/fixtures/corpus/duplicate.md`. 외부 조사는 필요 없다. 결과는 .`tigerkit/study/queuelab/lesson.md`에 저장해줘.",
+      "expected_output": "`duplicate.md`를 `omitted-with-reason`으로 기록하고 `b.md`와 중복이라는 이유를 남긴다. `D` 전용 챕터나 동일 분량을 강제하지 않고 기존 `curriculum.md/sources.md/chapters`/ 구조를 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`duplicate.md`를 `omitted-with-reason`으로 기록하고 `b.md`와 중복이라는 이유를 남긴다. `D` 전용 챕터나 동일 분량을 강제하지 않고 기존 `curriculum.md/sources.md/chapters`/ 구조를 유지한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/study/queuelab/sources.md"
+        }
+      ],
+      "files": [
+        "fixtures/corpus/a.md",
+        "fixtures/corpus/b.md",
+        "fixtures/corpus/c.md",
+        "fixtures/corpus/duplicate.md"
+      ]
+    },
+    {
+      "id": "study-finite-partial",
+      "path": "boundary",
+      "prompt": "$tk-study 가상 `QueueLab`의 상태와 운영을 배우는 짧은 Markdown 과정을 만들어줘. 선수지식은 충분하며 인터뷰는 필요 없다. 지정된 전체 자료 목록은 `evals/skills/tk-study/fixtures/corpus/a.md`, `evals/skills/tk-study/fixtures/corpus/partial.md`. `partial.md`는 원본 자료 `B`의 1~3절만 추출된 사본이다. 4절 예외 조건은 미확인이며 다른 출처가 없다. 외부 조사는 필요 없다. 결과는 .`tigerkit/study/queuelab/lesson.md`에 저장해줘.",
+      "expected_output": "`partial.md`를 `partial`로 표시하고 확인한 1~3절 및 미확인 4절을 `sources.md`와 완료 한계에 밝힌다. 예외 조건을 지어내거나 전체 자료 반영을 주장하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`partial.md`를 `partial`로 표시하고 확인한 1~3절 및 미확인 4절을 `sources.md`와 완료 한계에 밝힌다. 예외 조건을 지어내거나 전체 자료 반영을 주장하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/study/queuelab/sources.md"
+        }
+      ],
+      "files": [
+        "fixtures/corpus/a.md",
+        "fixtures/corpus/partial.md"
+      ]
+    },
+    {
+      "id": "study-open-research-no-inventory",
+      "path": "boundary",
+      "prompt": "$tk-study `React` `Query` 캐시 전략을 공식 자료에서 조사해 학습자료를 만들어줘. 대상 자료 목록은 지정하지 않았어.",
+      "expected_output": "기존 `claim-level` 출처를 남기며 검색 결과마다 `used/partial` 등을 기록하는 목록, 별도 `ledger`나 `coverage` `percentage`를 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "기존 `claim-level` 출처를 남기며 검색 결과마다 `used/partial` 등을 기록하는 목록, 별도 `ledger`나 `coverage` `percentage`를 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "study-finite-complete",
+      "path": "success",
+      "prompt": "$tk-study 가상 `QueueLab`의 상태와 운영을 배우는 짧은 Markdown 과정을 만들어줘. 선수지식은 충분하며 인터뷰는 필요 없다. 지정된 전체 자료 목록은 `evals/skills/tk-study/fixtures/corpus/a.md`, `evals/skills/tk-study/fixtures/corpus/b.md`, `evals/skills/tk-study/fixtures/corpus/c.md`. 외부 조사는 필요 없다. 결과는 .`tigerkit/study/queuelab/lesson.md`에 저장해줘.",
+      "expected_output": "기존 `sources.md`에 각 자료를 `used`로 기록하고 출처와 학습 내용을 연결한다. 추가 `manifest`, `source` ID나 별도 승인 없이 기존 학습자료 구조로 완료한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "기존 `sources.md`에 각 자료를 `used`로 기록하고 출처와 학습 내용을 연결한다. 추가 `manifest`, `source` ID나 별도 승인 없이 기존 학습자료 구조로 완료한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/study/queuelab/sources.md"
+        }
+      ],
+      "files": [
+        "fixtures/corpus/a.md",
+        "fixtures/corpus/b.md",
+        "fixtures/corpus/c.md"
+      ]
     }
   ]
 }

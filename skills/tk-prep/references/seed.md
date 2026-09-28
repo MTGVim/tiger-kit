@@ -20,3 +20,23 @@ Ready Seed byte-for-byte and create no `Status: Pending` file. Replace only a pr
 Before consuming an existing Seed, establish its current-task identity; before replacing it, also establish ownership.
 If that required evidence is missing or ambiguous, preserve the file and return `Blocked` for the Seed-dependent path.
 The owning SKILL.md handles direct/no-Seed without loading this reference or consuming an existing Seed.
+
+## Decision density
+
+Persist decisions the executor cannot safely reconstruct: exact interfaces/signatures, schemas,
+spec-fixed values, invariants, compatibility/migration constraints, test names and assertions,
+observable acceptance, verification commands and passing results, review risks and Unit dependencies.
+Point to current paths and symbols rather than copying ordinary function/component bodies, glue,
+mechanical mappings or the same implementation sequence into multiple Units. Self-contained means
+unambiguous constraints, not prewritten implementation. If an approved algorithm or ordering is
+itself material to correctness, security or compatibility, retain its minimum pseudocode,
+transitions or invariants without expanding unrelated boilerplate.
+
+Before finalizing a Ready Seed or its Execution section, compare it with the source issue/spec:
+unusual growth, dominant code blocks, repeated decisions or fresh-readable source details call for
+compression into interfaces, invariants, assertions and verification. Preserve exact identity,
+scope, acceptance and recovery obligations; impose no fixed line/token budget or ratio and add no
+reviewer, skeleton or preview artifact. This check does not create a Seed for direct/no-Seed work.
+At execution, reread current repository evidence instead of following stale copied implementation
+prose. Implementation-detail drift alone needs no reapproval; material approved-contract drift
+still follows the existing re-prep/reapproval boundary.

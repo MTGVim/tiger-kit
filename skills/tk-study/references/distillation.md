@@ -49,3 +49,18 @@ benchmark results and runtime execution remain unverified, not evidence of Tiger
 The existing `tk-grill` question frontier informs prerequisite-aware scoping only; its separate
 shared-understanding gate and product-decision workflow are not imported. `tk-explain` remains
 focused; `tk-explain-diff` retains exact comparison evidence while sharing HTML conventions.
+
+## Finite corpus coverage (#380)
+
+Reviewed `Lum1104/video-to-skill` at `5e9f97e89855a8a0ea998ba85e179fbc1765d4b7`:
+`docs/ambitious-startups-v1-v2-product-audit.md` and `docs/generated-skill-v2.md`.
+The artifact audit separates source retention from instructional quality; the current design
+requires explicit dispositions and reasons. Upstream runtime/eval execution was not reproduced.
+
+- **keep:** material source omissions must be visible and completeness claims evidence-bounded.
+- **adapt:** record source-level dispositions only for a user-specified finite set in existing
+  `sources.md`; retain the open-ended research path and useful partial teaching.
+- **omit:** semantic-unit ledgers, evidence database, compiler, IDs, manifests and coverage metrics.
+
+TigerKit fixtures independently cover unavailable, partial, intentional omission, complete-corpus
+and open-ended cases; no upstream implementation or fixture is copied.
