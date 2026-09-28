@@ -96,6 +96,22 @@ for any applicable mutation:
 - an empty or default return value;
 - removed validation or recurrence of the exact bug.
 
+## String-derived identity
+
+When new or changed code derives identity, ownership, provenance, or routing from a
+name, prefix/suffix, delimiter split, path position, concatenated key, or normalized
+string, construct two distinct valid entities that collide under the actual decision
+rule. Trace both through production logic; a prefix match can misassign ownership even
+when the full strings differ. Put the pair in a focused regression that asserts the
+observable separation or correct routing, with expectations independent of the derivation.
+Prefer an existing canonical ID, explicit fields/tuple, or an unambiguous escaping contract
+when a collision is possible; protect the fix with that regression.
+
+Skip this exercise for display-only formatting, directly compared canonical typed IDs,
+or a repository invariant that demonstrably makes the representation injective. Verify
+that invariant rather than inventing an invalid pair. Add no identity registry, generic
+fuzz framework, or separate testing phase.
+
 ## Evidence contract
 
 When applicable, the implementer report records:

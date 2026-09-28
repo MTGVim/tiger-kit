@@ -58,6 +58,16 @@ One seat completes both judgment axes and both procedural walks:
 2. **Change-risk**: inspect removed or `must-not-change` behavior, error/state/lifecycle paths,
    caller/callee and producer/consumer contracts, and change-owned cross-cutting risk.
 
+During change-risk inspection, when the diff derives identity, ownership, provenance,
+or routing from a string's shape (name equality, prefix/suffix, split, path position,
+compound or normalized key), construct two distinct valid entities that the actual
+predicate conflates and trace their decisions. Do not stop at a yes/no collision question
+or accept a misidentification because the brief requested that lookup. Check that focused
+regression evidence protects observable separation; prefer existing canonical identity,
+explicit fields, or an unambiguous representation. Display-only formatting, directly
+compared canonical typed IDs, and a verified injective repository contract need no
+collision exercise. Keep this within the existing walk, without a new review phase.
+
 An SDD Unit review uses one fresh discovery seat. A direct final review uses one fresh discovery
 seat only when the exact diff and evidence establish a bounded, reversible change with understood
 callers, focused behavior protection (or justified testing `N/A`), and no material unresolved risk.
