@@ -11,12 +11,12 @@ RESPOND = ROOT / "skills/tk-pr-respond/references"
 
 class SddUpstreamBoundaryTest(unittest.TestCase):
     def test_material_residual_ruling_blocks_destructive_cleanup(self) -> None:
-        text = (PREP / "sdd.md").read_text(encoding="utf-8")
+        text = (PREP / "sdd-recovery.md").read_text(encoding="utf-8")
         self.assertIn("material deferred or accepted `Ruling:`", text)
         self.assertIn("otherwise retain the existing ledger as the recovery record", text)
         self.assertIn("solely for style/minor findings", text)
         self.assertIn("do not create a\nfollow-up artifact just to make cleanup possible", text)
-        self.assertIn("artifacts that satisfy the Recovery\nstate retention rule above", text)
+        self.assertIn("[recovery](sdd-recovery.md) retention rule", (PREP / "sdd.md").read_text())
 
     def test_unknown_failure_routes_to_one_fresh_diagnostic_leaf_only(self) -> None:
         text = (PREP / "sdd.md").read_text(encoding="utf-8")
@@ -32,7 +32,7 @@ class SddUpstreamBoundaryTest(unittest.TestCase):
         self.assertIn("controller owns routing back to the current `Unit`", text)
 
     def test_shared_sdd_and_diagnosis_copies_remain_exact(self) -> None:
-        for name in ("sdd.md", "diagnosis.md"):
+        for name in ("sdd.md", "sdd-interaction.md", "sdd-recovery.md", "sdd-transport.md", "diagnosis.md"):
             self.assertEqual((PREP / name).read_bytes(), (RESPOND / name).read_bytes(), name)
 
 

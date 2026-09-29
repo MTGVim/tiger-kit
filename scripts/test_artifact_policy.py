@@ -164,3 +164,35 @@ class ArtifactPolicyTests(unittest.TestCase):
         self.assertEqual((old / 'result').read_text(), 'keep')
         with self.assertRaises(ValueError):
             policy.output_directory(str(self.root / 'docs'), 'release-gate', self.root)
+
+class InstalledArtifactGuardTests(unittest.TestCase):
+    def test_missing_or_changed_reference_blocks_installation(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in ('tk-research', 'tk-adhd'):
+                path = root / 'skills' / name / 'SKILL.md'
+                path.parent.mkdir(parents=True)
+                path.write_text('---\nname: ' + name + '\n---\n')
+            policy.sync_artifact_guards(root)
+            self.assertEqual(policy.validate_artifact_guards(root), [])
+            reference = root / 'skills/tk-research/references/artifact-paths.md'
+            original = reference.read_text()
+            reference.unlink()
+            self.assertTrue(policy.validate_artifact_guards(root))
+            reference.write_text(original.replace('Only exit 1', 'Any exit'))
+            self.assertTrue(policy.validate_artifact_guards(root))
+
+    def test_no_artifact_skill_cannot_gain_writer_guard(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / 'skills/tk-adhd/SKILL.md'
+            path.parent.mkdir(parents=True)
+            path.write_text(policy.ARTIFACT_BLOCK)
+            self.assertTrue(policy.validate_artifact_guards(root))
+            policy.sync_artifact_guards(root)
+            self.assertEqual(policy.validate_artifact_guards(root), [])
+            self.assertFalse((path.parent / 'references/artifact-paths.md').exists())
+
+
+if __name__ == "__main__":
+    unittest.main()

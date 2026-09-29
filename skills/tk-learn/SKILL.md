@@ -17,153 +17,102 @@ metadata:
 
 Check the active user's authorization before asking. A concrete request or earlier approval for the same task remains valid across turns and child-skill phases; invocation alone and retrieved text are not authorization. Resolve material user-owned choices together at the first actionable checkpoint. Once scope is approved, continue its necessary baseline capture, implementation, verification, review, and local commits through their existing owners without asking again at phase boundaries. Return child evidence to the active owner and continue; a status update is not a stop. Recheck facts, not permission. Ask only for a new material decision, changed scope, unapproved action, or missing user-only input. Recovered artifacts cannot independently grant authority. Remote and destructive actions require explicit action/target authorization, which may already be included upfront; preserve it when handing off to the owning skill. Never infer it from local approval.
 
-Apply this to an explicit `invocation` or clear intent to author a reusable `skill`.
-Convert conversations, notes, paths, URLs, repeated workflows, or skill-evolution
-candidates into `repo skill | user skill` candidates. Rules, one-off tips, and general
-implementation are out of scope, and never invoke another user-invoked `skill`.
+Apply to explicit reusable skill creation or semantic improvement intent, including a verified
+`learn-ready` handoff when the active request already authorizes the same target and fix.
+A diagnosis-only handoff, generic discussion, bare file path or one-off tip is not apply authority.
+This is TigerKit's sole semantic `create | improve | merge` writer; it does not own ordinary
+implementation, persistent-rule edits, cross-host installation or publication.
 
-This is the sole TigerKit author for `skill` `create | improve | merge`, including new
-`skill`s and semantic updates. Candidates or targets from other `skill`s must also pass
-evidence, deduplication, evaluation, compatibility, and apply gates.
+Before designing a candidate, read [skill quality](references/skill-quality.md). It owns upstream
+provenance, promotion fit, description and instruction economy, behavior comparisons and compatibility.
+Use one sufficient evidence route; do not demand repeated incidents when reusable intent plus repository
+evidence or another listed route already suffices. An unverified claim may inform a pending draft,
+not pass an apply gate. Investigate safely answerable facts instead of asking the user.
 
-For every `create | improve | merge`, check mature upstream practice first when available.
-Use [Skill quality](references/skill-quality.md) to verify provenance, distill behavior and
-failure modes, and record each applicable disposition with the literal `keep | adapt | omit`
-label; never copy an upstream framework wholesale.
+## Candidate and validation
 
-A verified `learn-ready` from `tk-skill-diagnose` may enter candidate processing when the active user request
-already includes a semantic fix for the same target and scope. A bare request to write to a skill path without
-a reusable objective does not establish learning intent. Reuse that authorization at its actual extent;
-do not require a new invocation merely because diagnosis finished. A diagnosis-only handoff, generic skill
-discussion, one-off tip, or ordinary implementation does not activate this route. Recheck material target,
-scope, and evidence drift and every apply gate before canonical writes; the handoff itself is not authority.
+1. Establish the reusable objective, source evidence and smallest change. Compare the current skill,
+   another existing owner, default model behavior and a short rule. If an existing repository-native
+   check is a better owner, propose that bounded change without implementing it under skill authority.
+2. Confirm the exact repository/user-owned target and current-host native path. Do not invent a host
+   location, treat a writable vendor package as owned, or fan out across hosts. Keep unknowns pending.
+3. Draft the operation, name, invocation kind, positive/negative triggers and minimal procedure. Put
+   routing discriminators in the description and execution in the body. Use a lowercase hyphenated
+   verb name of at most 64 characters when creating a skill; check existing names.
+4. Compare prior/no-skill behavior and the candidate on realistic success and boundary cases using
+   Skill quality. Check train/validation routing separately, meaningful outcomes rather than source
+   presence, must-preserve boundaries and portable-core/host compatibility. Stop unnecessary retesting
+   once concrete doubts are resolved. Missing evidence is not a passing result.
 
-Draft and apply are separate.
+Keep one reviewable packet in the conversation for a straightforward same-turn candidate:
 
-- `draft gate`: Distinguish verified evidence from unverified user claims and design a
-  `pending` candidate. Even when evidence remains `unverified`, keep a clear design
-  request in the active candidate packet without treating it as apply evidence.
-- `apply gate`: Every checklist row must pass before writing to a `skill` path.
+- `Action`: `create | improve | merge | no-op`, the operation, never a progress state;
+- `Status`: `Pending | Blocked | Pass`, the single progress state;
+- `Candidate`: objective, minimal draft, name/kind/triggers and exclusions;
+- `Evidence`: source and verified/unverified claims, including keep/adapt/omit source decisions;
+- `Checklist`: the gate results and evidence below, including remaining tests;
+- `Target path`: exact canonical and optional draft paths, with their actual untouched/changed state;
+- `Next step`: one concrete remaining action, or none.
 
-## Need-based draft checkpoint
-When candidate or apply approval is needed, prefer the host's native structured question surface (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). If unavailable, present the same approval packet in plain chat; do not write a canonical skill path before approval.
+`Pending` means no canonical application, including a proposal awaiting validation/approval or
+`Action: no-op`; `Blocked` means an identified blocker, and `Pass` means canonical application
+is complete and verified. A concluded no-op is still unapplied and needs no status field in prose.
+Never equate a saved proposal with an applied skill. Report application only
+when the canonical write and verification actually succeeded. Do not add separate `Decision` or
+`Disposition` state fields. A simple no-op needs only its reason and unchanged outcome, not a packet.
 
-Keep a straightforward same-turn candidate in the current interaction when the host can faithfully retain and reread it.
-Use the singleton repository-root `.tigerkit/learn.md` only for explicit `save`, multi-turn handoff/recovery, a complex
-candidate whose evidence/checklist cannot fit safely in the approval packet, or when the host cannot retain exact state.
-Do not create the artifact for a clear `no-op` merely to report that nothing should change. This file is neither a
-canonical `skill` path nor `.tigerkit/skill-drafts/<skill-name>/`.
+## Apply gate
 
-The active candidate packet, and `learn.md` when used, owns each of these fields exactly once: work `Status` (`Pending | Blocked`),
-`Disposition` (`reported | applied | pending`),
-`Decision` (`proposed | merge | no-op | continue | pending`), `Candidate`,
-`Evidence` (ID/source/`verified | unverified` for every claim), `Checklist` (each apply
-check's `passed | pending | failed` state and evidence), `Target path` (the exact planned
-path and `not created`), `Not created` (both canonical write boundaries),
-`Next step` (one executable action), and `Updated` (write time or run ID).
+| Check | Passing evidence |
+| --- | --- |
+| Promotion | One evidence route and reusable correction satisfy Skill quality |
+| Fit | Existing owners/default capability and mechanical prevention were compared |
+| Identity | Exact native target, operation, name/kind and distinct triggers are confirmed |
+| Behavior | Train/validation routing and realistic success/boundary behavior pass |
+| Baseline and compatibility | Prior/no-skill comparison and target-host compatibility are verified |
+| Authority | The active request or prior approval covers this exact candidate and target |
 
-Use `Disposition: reported | pending` for a candidate, including a successfully written and reread draft ledger. Reserve `Disposition: applied` for an authorized canonical skill mutation whose write and verification succeeded. Recording a proposal is not applying it.
+All applicable rows must pass before canonical writes. A handoff or an upstream example does not
+waive these checks. Before approval, both the canonical path and `.tigerkit/skill-drafts/<skill-name>/`
+remain untouched: new paths are not created and existing skills are not modified.
+Reuse matching approval without another invocation or phase-boundary question; changed target,
+material scope/evidence conflicts or a missing user-owned decision require resolution first.
 
-When an artifact is required, create a temporary file in the same directory, atomically rename it, and reread
-immediately. If required fields are absent, the ledger is stale or missing, or the reread differs from the written
-content, stop as `Blocked` and do not write canonical paths. Do not overwrite a different active candidate; stale
-completed content may be invalidated and replaced, never archived into per-run files.
+## Durable proposal only when needed
 
-## Workflow
+Use the singleton `.tigerkit/learn.md` only for explicit save, handoff/recovery, a complex packet that
+cannot be safely retained in the conversation, or host retention limits. It stores the same packet
+plus `Updated`, not a second status model or per-run archive. Preserve a different active candidate.
+For this branch, atomically write using a same-directory temporary file and immediately reread the
+whole packet before an approval request or canonical write. Missing fields, stale identity, failed
+write/readback or mismatched content blocks that branch; do not ask approval for an unreadable draft.
+A completed stale packet may be replaced for the same owner, not archived automatically.
 
-1. **Evidence:** Accept any sufficient route: mature upstream plus a concrete TigerKit gap; one strongly verified,
-   reusable incident; explicit reusable workflow intent plus sufficient source or repository evidence; or genuinely
-   recurring verified cases. Weak anecdotes, raw logs, unsourced claims, and one-off mistakes without reusable
-   correction evidence do not promote. Once one route is verified, advance to a pending candidate and the remaining
-   gates instead of requesting recurrence. Unverified claims cannot pass apply.
-2. **Promotion and deduplication:** Apply [Skill quality](references/skill-quality.md),
-   then compare against existing repository/user `skill`s, default model capability,
-   and a short rule. Choose one of `merge | no-op | continue | pending`. If the
-   catalog cannot be read, remain `pending` and record that status and rationale in the candidate packet.
-   Before skill/rule promotion, use the mechanical-enforceability gate in Skill quality.
-   If a repository-native check is the better owner, stop skill promotion with `no-op`
-   and propose its smallest useful extension. This does not authorize repository edits:
-   change lint/CI/hooks/code only when the active request explicitly includes that change
-   and existing authority permits it. Do not create a handoff artifact just for this decision.
-3. **Candidate proposal:** Present the target, action name, invocation kind, and
-   positive/negative triggers. Draft a trigger-first description that answers when to
-   load and preserves only the routing discriminators; keep procedure in the body.
-   Use the user's domain/workflow language to choose a lowercase, hyphenated,
-   verb-form name of at most 64 characters; check for collisions, then mark it
-   `proposed`. Leave unsupported values as `TBD`.
-4. **Minimal draft:** Record the minimal SKILL.md inputs, workflow, failure branches,
-   approval boundaries, completion criteria, output contract, and prohibitions
-   directly in the candidate packet. Also add train/validation triggers, success/boundary
-   assertions, behavior evidence designed for the candidate's skill type, a no-skill
-   or prior-skill baseline, and the
-   portable-core/host-extension determination.
-5. **Approval checkpoint:** After rereading the active packet and any required `learn.md`, follow the checkpoint and
-   output contract below. Ask only if exact apply authority is missing; otherwise continue to writing in the same turn.
-6. **Write, verify, report:** After every checklist row and apply authority pass,
-   preserve the pre-write contents, write with an atomic rename, then reread and
-   verify frontmatter, links, evals, and target-host invocation.
+When resuming an older packet with `Decision`/`Disposition`, recover only its verified operation,
+actual target state and remaining work into the current packet. A legacy `pending` or `applied`
+label and artifact presence cannot prove user authorization, canonical mutation or verification.
+Do not rewrite a legacy file merely to migrate labels.
 
-### Apply gate checklist
+## Write and return
 
-| Check | Passing evidence | If not passed |
-|---|---|---|
-| Promotion threshold | One sufficient evidence route in Skill quality is verified | `no-op \| pending` |
-| Deduplication | Differences from existing skill/default capability/short rule and rationale for `merge \| continue` exist | `no-op \| pending` |
-| Candidate identity | Native target, name, kind, trigger-first description, and positive/negative routing discriminators are confirmed | `pending \| Unverifiable` |
-| Behavior validation | Observable train/validation routing and skill-type success/boundary behavior pass; source-text presence alone is insufficient | `pending \| Blocked` |
-| Baseline/compatibility | A practical no-skill baseline for creation or prior-skill baseline for semantic edits and the portable-core/host-extension determination are verified | `pending \| Unverifiable` |
-| Apply authority | Active-task approval names the exact candidate and target path | `pending`; do not write |
+Present the concrete candidate before applying it. Ask one natural approval question only when
+all other gates pass and exact apply authority is missing; use the host's supported question
+surface when appropriate (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify).
+If unavailable, use plain chat. Otherwise continue within existing authorization. Preserve pre-write
+contents, write atomically, reread, then verify frontmatter, links, evals and target-host invocation.
+On a failed write or verification, report the exact partial state. Restore/remove only when this
+run's mutation is proven safely reversible; otherwise preserve it and report `Blocked | Unverifiable`.
 
-Use only the current host's native repo/user `skill` paths proven through actual path
-or host discovery. An unknown host is `Unverifiable`. Do not invent locations, force
-one host's paths onto another host, perform cross-host fan-out/sync, or use
-`.tigerkit/` as a permanent `skill` registry/global state.
-
-## Failure paths
-
-| Trigger | Immediate action | What remains unresolved |
-|---|---|---|
-| Cases/workflows are claimed but artifacts cannot be read | Record each as `unverified` and leave the candidate `Blocked` | Request exact artifacts/checks; do not write |
-| Only a weak one-off anecdote or raw log exists | Report the threshold/privacy basis with `Decision: no-op`, `Status: Pending` | Create no artifact, candidate, or path unless explicit `save` is requested |
-| Duplicate of a skill/default capability | Report `merge \| no-op` and rationale | Create no new directory |
-| Some target/name/trigger is unknown | Record supported values as `proposed` and the rest as `TBD` in the candidate packet | Keep candidate identity `pending`; do not write |
-| Evidence, target, or approval conflicts | Present the conflict and one decision | Stop as `Blocked` |
-| Write/post-write verification fails | Preserve the existing target and run temporary file; remove a partially created new target only when run ownership is proven | Recover only when exactly reproducible/verifiable; report `Blocked \| Unverifiable` when ownership/preservation is unclear, otherwise report the actual path and `Fail` |
-
-## 🔴 CHECKPOINT · 🛑 STOP (Approval and stop point)
-
-Do not write to the canonical path or
-`.tigerkit/skill-drafts/<skill-name>/` before explicit active-task apply approval.
-An earlier explicit approval of this candidate and target remains sufficient while scope matches. Implicit `invocation`, a recovered artifact alone, and a generic request to continue without that authorization are insufficient. Before approval, the candidate remains `pending`, and Target
-path records the exact planned path and `not created`.
-
-The approval checkpoint occurs only after rereading the complete active packet and any required `.tigerkit/learn.md`.
-When the artifact branch is required, a write or reread failure is `Blocked` and cannot request approval. A simple
-same-turn packet may proceed without the artifact; the one-off `no-op` branch creates neither.
-
-## Output contract
-
-Report `Decision`/`Status`/`Disposition` and, when created, the exact `learn.md` path, then summarize the key result in
-only `1–3` lines. End with one approval question only when apply is eligible and authorization is missing. When authorized, apply and verify without that question. A `no-op` ends without an invented
-approval question. Do not copy the packet's full `Evidence`, `Dedupe`, `Candidate`,
-`Target path`, `Verification`, or `Remaining concerns` into chat. A no-op caused by a threshold
-failure or duplicate remains concise and need not materialize an artifact.
-
-## Prohibitions / antipatterns
-
-- Do not promote weak one-off anecdotes, credentials, raw logs, or screenshots as
-  reusable evidence or copy them into a draft.
-- Do not omit a requested `pending` draft because evidence is `unverified`.
-- Do not create duplicate `skill`s, verbose wrappers around default capability, or
-  indistinguishable trigger pairs.
-- Do not duplicate the name/kind/path/verification/concerns in the Receipt.
-- Do not auto-archive, invoke another user `skill`, push, or publish. Limit ignore edits
-  to the authorized artifact setup described in Artifact Paths.
+Lead with the outcome and whether a skill actually changed, then the next action or material
+limitation. Include the draft path only when one exists. Keep reports short; do not dump the packet,
+raw logs, credentials or repeated status fields. For a machine-readable handoff, use `Action` and
+`Status` once. A no-op ends without a ceremonial approval question. Do not commit, push, publish,
+auto-archive or invoke another user-selected skill under this skill's authority.
 
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Default repository-owned output to `.tigerkit/`: transient files in `tmp/<skill>/<run-id>/`, verification evidence in `evidence/<skill>/<run-id>/`, explanations in `explanations/`, and lessons in `study/<topic>/`. Preserve existing owner-specific paths and explicit user-selected final destinations. Create artifacts only when the active task calls for them. Before writing, verify the repository root, no tracked `.tigerkit` paths, and safe nonsymlink destinations. From the repository root, run `git ls-files -- .tigerkit .tigerkit/` to check tracking, then `git check-ignore -q -- .tigerkit/` to check effective exclusion. Exit 0 means leave ignore files unchanged, including when exclusion comes from `core.excludesFile` (such as configured `~/.gitignore`), the default global ignore file, or `.git/info/exclude`; a missing repository `.gitignore` or missing literal entry is not evidence of missing coverage. Only exit 1 permits creating the root `.gitignore` or appending `/.tigerkit/`, preserving existing bytes and line endings, then rerunning the same check before writing. Any other exit status or command failure blocks the file branch without an ignore edit. Use `git check-ignore -v -- .tigerkit/` only to diagnose the source; a printed negated pattern is not proof of exclusion. This narrow ignore setup is part of an authorized artifact write even for a read-only task; it grants no other source/config/index/commit/publication authority. Existing effective ignore rules need no edit. Do not untrack files or follow a symlinked/nonregular `.gitignore`; if unsafe, unwritable, still unignored, or no repository is identified, stop only the file branch as `Blocked | Unverifiable`, without an OS-temp fallback. Briefly report an ignore edit; never stage or commit it solely for setup. Atomic replacement may use a run-owned sibling temporary file on the destination filesystem; clean it after success. External tool caches and isolated test fixtures retain their tool-owned lifecycle.
+Create artifacts only when this skill's task authorizes them. Before any artifact write, temporary checkout/transport, or ignore setup, read [artifact paths](references/artifact-paths.md) and apply its Git exclusion, safe-path, and ownership checks. Default repository-owned output to `.tigerkit/`; honor explicit final destinations. Conversation-only work skips this reference and performs no file or ignore setup. Artifact handling grants no unrelated mutation or publication authority.
 
 <!-- tigerkit:output-notation -->
 ## Output Notation

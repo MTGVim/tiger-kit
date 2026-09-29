@@ -65,6 +65,16 @@ UI_EVIDENCE_MARKER = "<!-- tigerkit:ui-evidence -->"
 UI_EVIDENCE_BLOCK = """<!-- tigerkit:ui-evidence -->
 ## UI Evidence
 
+Quote existing UI labels verbatim, including language, case, punctuation and spacing. Navigation instructions need evidence for every menu/breadcrumb label and connection; a title, route, identifier, enum, schema, glossary or ticket wording alone does not prove the entry path. Keep proposed copy separate. Bind claims to target/environment/locale/role and actual rendering evidence; preserve conflicting or missing provenance rather than guessing.
+
+Before collecting or verifying UI labels/paths within this skill's investigation authority, read [UI evidence collection](references/ui-evidence.md). Skip collection guidance for non-UI work and propagation-only tasks. A handoff or publication-only phase carries supplied evidence and pending requests without starting a new investigation.
+
+In reports and publication preparation, preserve exact verified literals and explicitly list required unverified labels/connections, available evidence, the concrete limitation and smallest missing input. User-supplied text is user-provided, not independently observed; it resolves only the supported claim. Never turn an unverified path into navigation instructions or hide uncertainty in PR/QA/handoff output.
+"""
+UI_EVIDENCE_REFERENCE = """# UI Evidence Collection
+
+Read only within the calling skill's existing UI investigation authority. This reference grants no new browser, mutation, or publication permission.
+
 Quote existing UI labels verbatim, preserving language, case, punctuation, and spacing. Navigation instructions require evidence for every menu/breadcrumb label and each connection in the path; a verified destination title or route does not prove its entry path. Identifiers, enums, i18n keys, domain terms, and ticket wording are not current UI evidence unless the current render path proves them. Keep proposed copy separate from existing labels. Report conflicting provenance instead of silently selecting a label or combining incompatible paths.
 
 For each claim, use target/environment/locale/role-matched runtime evidence, source connected to the render path, or a supplied capture with provenance. API text needs the actual response and its rendering/transformation binding; a schema proves only shape. If another repository, host shell, API, configuration, or permission controls a missing segment, state the known boundary and what remains unverified. Do not present a plausible path as guidance, even with an inference disclaimer.
@@ -105,6 +115,10 @@ def validate_runtime_guard(root: Path = ROOT) -> list[str]:
         text = path.read_text(encoding="utf-8") if path.is_file() else ""
         if text.count(UI_EVIDENCE_BLOCK) != 1 or text.count(UI_EVIDENCE_MARKER) != 1:
             errors.append(f"skills/{name}/SKILL.md: UI evidence guard must match exactly once")
+
+        reference = path.parent / "references/ui-evidence.md"
+        if not reference.is_file() or reference.read_text(encoding="utf-8") != UI_EVIDENCE_REFERENCE:
+            errors.append(f"skills/{name}/references/ui-evidence.md: UI evidence collection reference must match")
 
     agents = root / "AGENTS.md"
     if agents.is_file() and RUNTIME_GUARD_MARKER in agents.read_text(encoding="utf-8"):

@@ -195,7 +195,7 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 원자적 교체에 필요한 동일 디렉터리의 임시 파일은 같은 파일시스템에서 실행 소유권을 확인하고 성공 후 정리합니다.
 설명은 `.tigerkit/explanations/`, 학습은 `.tigerkit/study/<topic>/`, 저장한 조사는 `.tigerkit/research/`를
 기본으로 사용합니다. 명시한 최종 목적지는 존중합니다. `scripts/artifact_policy.py`가 공통 정책을 소유하며
-모든 설치 스킬의 동일한 계약과 실행 도구를 릴리즈 게이트에서 검사합니다.
+파일을 쓰지 않는 스킬의 쓰기 금지 경계, 파일을 쓰는 스킬의 조건부 본문·패키지 로컬 참조와 실행 도구를 릴리즈 게이트에서 검사합니다.
 
 ## 반복 발견
 

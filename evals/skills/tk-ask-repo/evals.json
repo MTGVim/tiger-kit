@@ -2,10 +2,10 @@
   "skill_name": "tk-ask-repo",
   "evals": [
     {
-      "id": "ask-repo-conversational-origin-and-share-summary",
+      "id": "ask-repo-multipart-origin-and-share-summary",
       "path": "success",
       "prompt": "/tk-ask-repo `evals/skills/tk-ask-repo/fixtures/value_flow/`의 `Display name` 값이 어디서 오고 어느 쪽을 고쳐야 하는지 설명해줘.",
-      "expected_output": "값의 실제 대입 원점까지 추적해 자연스러운 산문으로 설명하고 각 핵심 주장에 `path:line` 근거를 붙이며 마지막에 타팀 공유용 `3~10`줄 요약을 제공한다.",
+      "expected_output": "값의 실제 대입 원점까지 추적해 자연스러운 산문으로 설명하고 각 핵심 주장에 `path:line` 근거를 붙이며 마지막에 검증된 경계를 보존한 간결한 타팀 공유용 요약을 제공한다.",
       "files": [
         "fixtures/value_flow/consumer.py",
         "fixtures/value_flow/transport.py",
@@ -14,7 +14,7 @@
       "assertions": [
         {
           "type": "judge",
-          "criterion": "질문에 먼저 직접 답하고, `producer.py`의 실제 대입과 소비 흐름을 `path:line` 근거로 설명한다. 고정 보고서 양식을 덤프하지 않고 마지막 `공유용 요약`은 본문에서 검증된 사실만 `3~10`줄로 압축한다."
+          "criterion": "질문에 먼저 직접 답하고, `producer.py`의 실제 대입과 소비 흐름을 `path:line` 근거로 설명한다. 고정 보고서 양식을 덤프하지 않고 마지막 `공유용 요약`은 본문에서 검증된 사실만 필요한 최소 줄로 압축한다."
         },
         {
           "type": "output_contains",
@@ -198,14 +198,14 @@
       ]
     },
     {
-      "id": "ask-repo-summary-keeps-material-boundary-over-line-target",
+      "id": "ask-repo-summary-keeps-material-boundary-without-line-quota",
       "path": "success",
       "prompt": "/tk-ask-repo 이 값의 `producer`, 두 `consumer`, `permission boundary`, 환경별 차이와 아직 확인 불가한 외부 `API` 조건을 조사해줘. 공유 요약은 중요한 내용을 빼지 마.",
-      "expected_output": "공유용 요약을 보통 3–10줄로 유지하되 검증된 `ownership/permission` 환경 경계와 명시적 `uncertainty`를 줄 수에 맞추려고 삭제하지 않는다.",
+      "expected_output": "공유용 요약은 검증된 소유권·권한과 환경 경계, 불확실성을 보존하고 불필요한 채움 문장을 만들지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "`Summary line range`는 간결한 기본값이다. 검증된 중요한 `ownership`, 제한, 불확실성이 10줄 안에 충실히 들어가지 않으면 필요한 최소 추가 줄을 사용하고 `filler`는 만들지 않는다."
+          "criterion": "검증된 중요한 소유권, 제한, 불확실성을 빠뜨리지 않고 필요한 최소 줄로 요약한다. 줄 수를 채우기 위한 채움 문장를 만들지 않는다."
         },
         {
           "type": "git_head_unchanged"
@@ -277,6 +277,68 @@
       "files": [
         "fixtures/dynamic_navigation.ts"
       ]
+    },
+    {
+      "id": "ask-repo-single-fact-without-duplicate-summary",
+      "path": "success",
+      "prompt": "정책 시뮬레이션: 추가 도구 없이 확인된 사실로 답하세요. 재시도 기본 횟수는? `src/retry.ts:4`에서 `export const DEFAULT_RETRIES = 3`을 확인했습니다. UI와 무관한 내부 상수입니다.",
+      "expected_output": "기본값 3과 코드 근거만 직접 답하고 공유용 요약·UI 조사·파일을 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "3"
+        },
+        {
+          "type": "output_absent",
+          "text": "공유용 요약"
+        },
+        {
+          "type": "path_not_read",
+          "path": "skills/tk-ask-repo/references/ui-evidence.md"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "ask-repo-single-fact-explicit-share",
+      "path": "success",
+      "prompt": "정책 시뮬레이션: `src/retry.ts:4`에서 DEFAULT_RETRIES = 3을 확인했습니다. 재시도 기본 횟수를 답하고 팀에 복사할 공유용 요약도 붙여 주세요. 다른 사실이나 UI 조사는 필요 없습니다.",
+      "expected_output": "기본값 3과 근거를 답하고 명시적으로 요청한 짧은 공유용 요약을 포함한다.",
+      "assertions": [
+        {
+          "type": "output_contains",
+          "text": "공유용 요약"
+        },
+        {
+          "type": "judge",
+          "criterion": "공유 요약은 확인된 기본값만 전달하며 3줄을 채우려고 사실이나 설명을 만들지 않는다."
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    }
+  ],
+  "migrations": [
+    {
+      "from": "ask-repo-conversational-origin-and-share-summary",
+      "to": "ask-repo-multipart-origin-and-share-summary",
+      "reason": "복합 원점·소유권 조사의 공유 요약은 유지하되 최소 3줄을 채우는 요구를 제거합니다."
+    },
+    {
+      "from": "ask-repo-summary-keeps-material-boundary-over-line-target",
+      "to": "ask-repo-summary-keeps-material-boundary-without-line-quota",
+      "reason": "줄 수 목표를 제거하고 검증된 소유권·제한·불확실성을 보존하는 행동을 유지합니다."
     }
   ]
 }

@@ -95,8 +95,8 @@ TigerKit procedure. When upstream evidence exists:
   Prose scores alone are insufficient.
 - Separate portable-core Agent Skills fields from target-host extensions and do not copy
   the body per host. Leave unknown target-host `invocation` as `pending`.
-- Before approval, candidate state is `reported | pending` and no files are applied.
-  Only post-approval success receives `applied`.
+- Before approval, the candidate is `Pending` and canonical paths remain untouched.
+  Report application only after an authorized canonical write and successful verification.
 
 ## Behavior-first evaluation
 
@@ -128,15 +128,8 @@ itself prove skill behavior. Use observable outcomes and realistic judge criteri
 - For instruction pruning, a source-text deletion or smaller token count is not success;
   the relevant task behavior and safety boundary must remain unchanged.
 
-## Draft state checkpoint
+## Candidate state
 
-Before approval, retain one complete `pending` candidate packet with candidate, evidence, checklist, target path, paths
-not created, next step, and decision/status. Use `.tigerkit/learn.md` only when explicit persistence, handoff/recovery,
-candidate complexity, or host retention limits require it; rename it atomically and read it back. If that required
-artifact is missing, stale, or mismatched, return `Blocked` and stop both approval and canonical write. A clear same-turn
-candidate or `no-op` does not need a scratch file. Chat shows only status, a short summary, the path when one exists, and
-one approval question only when apply is eligible and exact active-task authorization is missing; do not copy the full packet or exact file body.
-Before approval, the canonical skill path and `.tigerkit/skill-drafts/<skill-name>/`
-must remain `not created`.
-
-User-facing progress and receipt prose follow the user's language.
+The calling SKILL.md owns the candidate packet, apply checkpoint and optional durable proposal.
+Use its one progress state and distinguish a saved draft from verified canonical application.
+Keep user-facing progress and result prose in the user's language.

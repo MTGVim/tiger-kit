@@ -9,11 +9,21 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACT_MARKER = '<!-- tigerkit:artifact-paths -->'
-ARTIFACT_BLOCK = '''<!-- tigerkit:artifact-paths -->
+NO_ARTIFACT_SKILLS = frozenset(("tk-adhd", "tk-grill", "tk-ask-repo", "tk-review"))
+ARTIFACT_BLOCK = """<!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
+Create artifacts only when this skill's task authorizes them. Before any artifact write, temporary checkout/transport, or ignore setup, read [artifact paths](references/artifact-paths.md) and apply its Git exclusion, safe-path, and ownership checks. Default repository-owned output to `.tigerkit/`; honor explicit final destinations. Conversation-only work skips this reference and performs no file or ignore setup. Artifact handling grants no unrelated mutation or publication authority.
+"""
+NO_ARTIFACT_BLOCK = """<!-- tigerkit:artifact-paths -->
+## Artifact Paths
+
+This skill creates no artifacts. Do not create temporary files, write reports, or edit ignore rules for this invocation; return the result in the conversation.
+"""
+ARTIFACT_REFERENCE = """# Artifact Paths
+
 Default repository-owned output to `.tigerkit/`: transient files in `tmp/<skill>/<run-id>/`, verification evidence in `evidence/<skill>/<run-id>/`, explanations in `explanations/`, and lessons in `study/<topic>/`. Preserve existing owner-specific paths and explicit user-selected final destinations. Create artifacts only when the active task calls for them. Before writing, verify the repository root, no tracked `.tigerkit` paths, and safe nonsymlink destinations. From the repository root, run `git ls-files -- .tigerkit .tigerkit/` to check tracking, then `git check-ignore -q -- .tigerkit/` to check effective exclusion. Exit 0 means leave ignore files unchanged, including when exclusion comes from `core.excludesFile` (such as configured `~/.gitignore`), the default global ignore file, or `.git/info/exclude`; a missing repository `.gitignore` or missing literal entry is not evidence of missing coverage. Only exit 1 permits creating the root `.gitignore` or appending `/.tigerkit/`, preserving existing bytes and line endings, then rerunning the same check before writing. Any other exit status or command failure blocks the file branch without an ignore edit. Use `git check-ignore -v -- .tigerkit/` only to diagnose the source; a printed negated pattern is not proof of exclusion. This narrow ignore setup is part of an authorized artifact write even for a read-only task; it grants no other source/config/index/commit/publication authority. Existing effective ignore rules need no edit. Do not untrack files or follow a symlinked/nonregular `.gitignore`; if unsafe, unwritable, still unignored, or no repository is identified, stop only the file branch as `Blocked | Unverifiable`, without an OS-temp fallback. Briefly report an ignore edit; never stage or commit it solely for setup. Atomic replacement may use a run-owned sibling temporary file on the destination filesystem; clean it after success. External tool caches and isolated test fixtures retain their tool-owned lifecycle.
-'''
+"""
 
 
 def checked_artifact_root(root: Path = ROOT) -> Path:
@@ -87,10 +97,37 @@ def output_directory(value: str | None, owner: str, root: Path = ROOT) -> Path:
 
 
 
+def artifact_block(name: str) -> str:
+    return NO_ARTIFACT_BLOCK if name in NO_ARTIFACT_SKILLS else ARTIFACT_BLOCK
+
+
+def sync_artifact_guards(root: Path = ROOT) -> None:
+    for path in sorted((root / 'skills').glob('tk-*/SKILL.md')):
+        text = path.read_text(encoding='utf-8')
+        start = text.find(ARTIFACT_MARKER)
+        if start >= 0:
+            end = text.find('<!-- tigerkit:', start + len(ARTIFACT_MARKER))
+            end = len(text) if end < 0 else end
+            text = text[:start] + artifact_block(path.parent.name) + '\n' + text[end:]
+        else:
+            text = text.rstrip() + '\n\n' + artifact_block(path.parent.name)
+        path.write_text(text, encoding='utf-8')
+        if path.parent.name not in NO_ARTIFACT_SKILLS:
+            reference = path.parent / 'references/artifact-paths.md'
+            reference.parent.mkdir(exist_ok=True)
+            reference.write_text(ARTIFACT_REFERENCE, encoding='utf-8')
+
+
 def validate_artifact_guards(root: Path = ROOT) -> list[str]:
     errors = []
     for path in sorted((root / 'skills').glob('tk-*/SKILL.md')):
         text = path.read_text(encoding='utf-8')
-        if text.count(ARTIFACT_BLOCK) != 1 or text.count(ARTIFACT_MARKER) != 1:
+        if text.count(artifact_block(path.parent.name)) != 1 or text.count(ARTIFACT_MARKER) != 1:
             errors.append(f'{path.relative_to(root)}: artifact guard must match exactly once')
+        reference = path.parent / 'references/artifact-paths.md'
+        if path.parent.name not in NO_ARTIFACT_SKILLS:
+            if not reference.is_file() or reference.read_text(encoding='utf-8') != ARTIFACT_REFERENCE:
+                errors.append(f'{reference.relative_to(root)}: artifact reference must match canonical checks')
+        elif reference.exists():
+            errors.append(f'{reference.relative_to(root)}: non-writing skill must not carry a writer reference')
     return errors

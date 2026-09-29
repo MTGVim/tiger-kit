@@ -12,6 +12,7 @@
     {"id":"validation-positive-short","split":"validation","query":"/tk-pr-respond PR #42","should_trigger":true,"facets":["short"]},
     {"id":"validation-positive-compound","split":"validation","query":"$tk-pr-respond PR #42의 리뷰와 GitHub Actions 실패를 확인해서 필요한 수정·검증·답변까지 처리해줘","should_trigger":true,"facets":["compound"]},
     {"id":"validation-positive-sweep-child","split":"validation","query":"`[active tk-pr-sweep]` 승인된 PR #42 리뷰 대응을 이어서 처리해줘","should_trigger":true,"facets":["formal","compound"]},
+    {"id":"validation-positive-single-pr-natural","split":"validation","query":"PR #17의 리뷰 수정 요청에 대응해줘.","should_trigger":true,"facets":["casual"]},
     {"id":"validation-positive-reply-only","split":"validation","query":"$tk-pr-respond 이 코멘트는 코드 안 바꾸고 저장소 근거로 답변만 해줘","should_trigger":true,"facets":["casual","short"]},
 
     {"id":"validation-negative-status","split":"validation","query":"PR 상태만 읽어 주세요.","should_trigger":false,"facets":["formal"]},

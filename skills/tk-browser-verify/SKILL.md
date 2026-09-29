@@ -14,17 +14,11 @@ metadata:
 <!-- tigerkit:ui-evidence -->
 ## UI Evidence
 
-Quote existing UI labels verbatim, preserving language, case, punctuation, and spacing. Navigation instructions require evidence for every menu/breadcrumb label and each connection in the path; a verified destination title or route does not prove its entry path. Identifiers, enums, i18n keys, domain terms, and ticket wording are not current UI evidence unless the current render path proves them. Keep proposed copy separate from existing labels. Report conflicting provenance instead of silently selecting a label or combining incompatible paths.
+Quote existing UI labels verbatim, including language, case, punctuation and spacing. Navigation instructions need evidence for every menu/breadcrumb label and connection; a title, route, identifier, enum, schema, glossary or ticket wording alone does not prove the entry path. Keep proposed copy separate. Bind claims to target/environment/locale/role and actual rendering evidence; preserve conflicting or missing provenance rather than guessing.
 
-For each claim, use target/environment/locale/role-matched runtime evidence, source connected to the render path, or a supplied capture with provenance. API text needs the actual response and its rendering/transformation binding; a schema proves only shape. If another repository, host shell, API, configuration, or permission controls a missing segment, state the known boundary and what remains unverified. Do not present a plausible path as guidance, even with an inference disclaimer.
+Before collecting or verifying UI labels/paths within this skill's investigation authority, read [UI evidence collection](references/ui-evidence.md). Skip collection guidance for non-UI work and propagation-only tasks. A handoff or publication-only phase carries supplied evidence and pending requests without starting a new investigation.
 
-During authorized browser inspection, collect `document.body.innerText` once after entry and initial rendering, before guessing labels or querying them one selector at a time. Treat it as an inventory of currently rendered text, not a complete menu tree; expand safe collapsed navigation or inspect omitted regions only as needed. Keep secrets and unrelated sensitive page data out of tool output, saved evidence, and reports; if a full-body dump cannot be safely returned, inspect the relevant navigation/header region and record that limitation. Preserve relevant literals with target/environment/locale/role and capture provenance for later PR/QA use.
-
-Use visible breadcrumbs and page headers as the first source for the labels they actually show. Breadcrumbs support displayed label strings and destination hierarchy; a page title alone supports only that title. Neither proves a traversed menu path, nor that sidebar labels match breadcrumb labels. For instructions to click from one menu to another, verify each actual step and capture its label and resulting connection; with breadcrumb-only evidence, describe only the displayed hierarchy.
-
-Within investigation authority, obtain missing evidence from accessible sources or attempt read-only browser inspection through the browser owner when the target and safe access are available. Do not stop at a repository miss or merely suggest browsing when an authorized inspection can proceed. If access or evidence is unavailable, mark the affected claim `Unverifiable`, explain the concrete limitation, and request the smallest missing input: a redacted menu API response with relevant label/hierarchy/route fields, owning source, or a screenshot showing the navigation. Never request credentials or an unredacted payload in chat. Preserve verified partial results and pending evidence in summaries, QA, and handoffs; propagation-only owners carry the request without opening a new investigation.
-
-In completion reports and pre-publication preparation, explicitly list every required label or navigation connection that remains unverified: affected claim, available evidence/provenance, concrete limitation, and the smallest input needed to resolve it. Do not silently omit gaps or count them as verified. Accept user-supplied exact labels or captures item by item with target/environment/locale/role context; mark text-only labels as user-provided, not independently observed. Preserve their exact wording, resolve only the supported claim, and keep unsupported connections `Unverifiable`. Carry unresolved items into PR/QA limitations and handoffs so the user can supply each missing item.
+In reports and publication preparation, preserve exact verified literals and explicitly list required unverified labels/connections, available evidence, the concrete limitation and smallest missing input. User-supplied text is user-provided, not independently observed; it resolves only the supported claim. Never turn an unverified path into navigation instructions or hide uncertainty in PR/QA/handoff output.
 
 <!-- tigerkit:approval-continuity -->
 ## Approval Continuity
@@ -139,93 +133,28 @@ If the contract cannot be applied, return `Unverifiable` with the missing requir
 do not fabricate `applied` or use `n/a` to bypass this gate. In that incomplete result, explicitly
 report the unresolved `visual_contract` in `limitation` instead of emitting a completed contract field.
 
-Classify each approved visual region before capture:
+Before capture, classify `appear | disappear | change | remain unchanged` in [visual](references/visual.md).
+Apply the corresponding outline placement and judge intended changes separately from preserved regions.
+An unapproved difference in a preserved region is `Fail`; complete every required comparison axis.
 
-| Intent | Baseline evidence | After evidence | Outline location |
-| --- | --- | --- | --- |
-| appear | surrounding context before insertion | new target and context | after only |
-| disappear | old target and context | surrounding context after removal | baseline only |
-| change | old target and context | new target and context | both corresponding targets |
-| remain unchanged | complete comparison region | complete comparison region | none |
+## Evidence and phase return
 
-Judge the outlined `intended-change` region separately from the remaining `must-not-change` region.
-An observed difference in `must-not-change` is `Fail` unless explicitly approved as a deviation.
-Use [visual](references/visual.md) for annotation mechanics, capture-method prerequisites, and all
-required comparison axes; finish those axes on the first attempt even after finding one mismatch.
+Before storing runtime evidence or returning an executed phase, read [evidence and results](references/results.md).
+It owns evidence paths, per-capture metadata, phase-specific fields and publication-manifest handoff.
+Preserve observed failure evidence before any rerun that could overwrite it. A baseline is capture-only,
+never final acceptance: keep `verification_complete: false` and resume the approved parent implementation.
+Only a fully verified after/acceptance phase may claim completion. Record capture-only mutations,
+including outlines, and preserve secret redaction, provenance and cleanup facts.
 
-## Evidence
-
-Before the first write under `.tigerkit/evidence/`, verify that
-`git ls-files -- .tigerkit/` returns no tracked path and
-`git check-ignore -q -- .tigerkit/` succeeds. Record only the matching source class and
-pattern from `git check-ignore -v`, redacting an absolute user-level path. Apply Artifact Paths
-ignore setup when coverage is missing. If checks still fail, do not write or use an external
-fallback; return `Unverifiable`.
-
-Binary evidence may be stored in run-owned `.tigerkit/evidence/tk-browser-verify/<run-id>/`. Baseline comparisons use
-`baseline/`, `after/`, and immutable `failed-<attempt>/` subdirectories. A bounded `README.md` may map each
-AC to its screenshot, exact publication-safe `display_route`, replay procedure, and disclosed capture-only or
-nondeterministic exclusions; it is an evidence index, not a lifecycle ledger.
-Do not place other Markdown files there.
-Do not move user fixtures. Use sensitive captures as evidence only after verifying redaction and absence of residue.
-If any failure appears, whether deterministic, rare, or flaky, preserve its run-owned screenshot, trace, log, or dump
-before a rerun that could overwrite or delete it. Keep baseline comparison failures in a new unique `failed-<attempt>/` path,
-not the later `after/` path. A later negative sample does not erase the observed failure.
-
-Require these contract fields in nested and standalone results; keep nested results limited to:
-
-- status
-- `phase: baseline | after | acceptance`; for a successful pre-edit baseline also return `baseline_capture: Pass`,
-  `verification_complete: false`, `run_id`, `replay_procedure`, and the exact `next_required`; include
-  `resume_parent: required` when the active parent has approved implementation remaining
-- `visual_contract: applied | n/a`; `n/a` requires a reason proving no visual-reference, baseline/after,
-  multi-capture, visual/responsive, or render-affecting branch applies
-- `capture_only_mutation: <description> | none`, also in the evidence index; include outlines/labels,
-  hiding/removal, and runtime mocks, or explicitly `none` when no capture-only mutation occurred
-- Facts per criterion
-- non-sensitive auth mode
-- absolute evidence directory
-- baseline provenance and replay procedure when a visual pair is required
-- one ordered row per inspected screenshot with its path, exact origin-free `display_route` or explicit omission,
-  criterion, state/region, `capture_method`, effective viewport, role, and comparison result; otherwise the direct trace/a11y/DOM/runtime/request evidence
-- the same per-capture method/effective viewport in the evidence index, including reason and effect for exceptions
-- limitation
-- cleanup fact
-- `automated_regression: protected | N/A | exception | unknown` as supplied/verified parent disposition
-
-A successful pre-edit baseline proves only that the reference capture exists. Return
-`next_required: implement candidate, then capture after with the same run/replay`; do not use aggregate completion wording.
-For nested results, use the phase fields without a standalone `## Verdict` or user-facing completion summary;
-`status: Pass` describes only the requested phase. `resume_parent` is an instruction to the owner, not a scheduler signal.
-When the user requested only standalone capture, finish that bounded request without inventing a parent or implementation approval.
-Only the matching after comparison or standalone acceptance phase may set `verification_complete: true` when every
-criterion is covered. An after result binds the same `run_id`, `baseline_provenance`, and `replay_procedure`. A
-baseline-only result cannot satisfy final acceptance or authorize product edits, commits, or publication by itself.
-
-When an inspected image is required for PR publication and its represented criterion is `Pass`, return the
-producer-neutral manifest from [publication evidence](references/publication-evidence.md); do not upload it. Direct
-trace, accessibility-tree, DOM/runtime, and request/response evidence remains in the ordinary verifier result and does
-not trigger the image uploader. If a parent specifically requires an image that cannot directly prove the criterion, do
-not create a ceremonial screenshot; return the image-publication requirement as `Blocked | Unverifiable`. For any
-non-`Pass` criterion, preserve owned failure evidence, return its real status, and never emit a `verification_status:
-Pass` manifest entry for it.
-
-A standalone result, with no active owner task to resume, starts with `## Verdict` and exact `Status: <token>`, then shows verified facts, required limitations, evidence paths, and the cleanup fact. Standalone baseline success remains capture-only with `verification_complete: false`.
-Never promote a result to `Pass` without required runtime evidence.
-
-| Status | Meaning |
-| --- | --- |
-| `Pass` | Current inspected evidence covers every approved browser criterion |
-| `Fail` | Current runtime evidence violates a criterion |
-| `Blocked` | A user-owned safety or target decision is required before execution |
-| `Unverifiable` | Required headless auth, environment, or evidence cannot be established |
-
-Do not cause unauthorized payments, external communications, destructive mutations, production-data mutations, or account/permission changes.
+For a preflight blocked before runtime evidence exists, return the real `Blocked | Unverifiable`
+status, missing prerequisite and next required input; do not invent capture or success fields.
+Do not cause unauthorized payments, external communications, destructive/production-data mutations,
+or account/permission changes. Never promote incomplete runtime evidence to `Pass`.
 
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
-Default repository-owned output to `.tigerkit/`: transient files in `tmp/<skill>/<run-id>/`, verification evidence in `evidence/<skill>/<run-id>/`, explanations in `explanations/`, and lessons in `study/<topic>/`. Preserve existing owner-specific paths and explicit user-selected final destinations. Create artifacts only when the active task calls for them. Before writing, verify the repository root, no tracked `.tigerkit` paths, and safe nonsymlink destinations. From the repository root, run `git ls-files -- .tigerkit .tigerkit/` to check tracking, then `git check-ignore -q -- .tigerkit/` to check effective exclusion. Exit 0 means leave ignore files unchanged, including when exclusion comes from `core.excludesFile` (such as configured `~/.gitignore`), the default global ignore file, or `.git/info/exclude`; a missing repository `.gitignore` or missing literal entry is not evidence of missing coverage. Only exit 1 permits creating the root `.gitignore` or appending `/.tigerkit/`, preserving existing bytes and line endings, then rerunning the same check before writing. Any other exit status or command failure blocks the file branch without an ignore edit. Use `git check-ignore -v -- .tigerkit/` only to diagnose the source; a printed negated pattern is not proof of exclusion. This narrow ignore setup is part of an authorized artifact write even for a read-only task; it grants no other source/config/index/commit/publication authority. Existing effective ignore rules need no edit. Do not untrack files or follow a symlinked/nonregular `.gitignore`; if unsafe, unwritable, still unignored, or no repository is identified, stop only the file branch as `Blocked | Unverifiable`, without an OS-temp fallback. Briefly report an ignore edit; never stage or commit it solely for setup. Atomic replacement may use a run-owned sibling temporary file on the destination filesystem; clean it after success. External tool caches and isolated test fixtures retain their tool-owned lifecycle.
+Create artifacts only when this skill's task authorizes them. Before any artifact write, temporary checkout/transport, or ignore setup, read [artifact paths](references/artifact-paths.md) and apply its Git exclusion, safe-path, and ownership checks. Default repository-owned output to `.tigerkit/`; honor explicit final destinations. Conversation-only work skips this reference and performs no file or ignore setup. Artifact handling grants no unrelated mutation or publication authority.
 
 <!-- tigerkit:output-notation -->
 ## Output Notation

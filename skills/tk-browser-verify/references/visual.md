@@ -13,7 +13,18 @@ Do not invent design intent or broaden the work into generic critique.
 
 ## Visual intent and baseline pairs
 
-Apply the intent table and separate judgment surfaces in [the visual contract gate](../SKILL.md#visual-contract-gate).
+Classify each approved visual region before capture:
+
+| Intent | Baseline evidence | After evidence | Outline location |
+| --- | --- | --- | --- |
+| appear | surrounding context before insertion | new target and context | after only |
+| disappear | old target and context | surrounding context after removal | baseline only |
+| change | old target and context | new target and context | both corresponding targets |
+| remain unchanged | complete comparison region | complete comparison region | none |
+
+Judge the outlined `intended-change` region separately from the remaining `must-not-change` region.
+An observed difference in `must-not-change` is `Fail` unless explicitly approved as a deviation.
+Apply the capture-method prerequisites, annotation mechanics and comparison axes in this reference; finish every axis on the first attempt even after finding a mismatch.
 A behavior-preserving refactor may consist entirely of `remain unchanged`; the absence of a design
 node, mockup, or changed visual AC never disables this branch.
 
@@ -76,7 +87,7 @@ Do not compress multiple captures into an undifferentiated path list: report one
 per capture with its AC, file, viewport, state/region, and inspected result.
 Each result row must state that the screenshot was non-empty after actual image inspection, or that
 the candidate bounded-region file was byte-identical to its named already-inspected baseline.
-Use the mandatory `capture_only_mutation` field from [the evidence contract](../SKILL.md#evidence)
+Use the mandatory `capture_only_mutation` field from [the evidence contract](results.md)
 in the index and result. An outline or label is an annotation, so annotated captures cannot report `none`.
 
 Replay the same indexed procedure for baseline and after. A matching viewport alone is insufficient

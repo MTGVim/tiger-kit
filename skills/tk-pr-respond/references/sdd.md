@@ -82,65 +82,15 @@ verifiers, diagnostic leaves, and delegated controllers. Include the verified bo
 
 ### User interaction ownership
 
-The root controller owns user intent, product/scope/acceptance decisions, Seed changes,
-new authority (including destructive or publication authority), and host-defined root-only
-permission/approval APIs. Leaves return these needs to their controller; a delegated
-controller forwards unresolved root-owned needs to the root. A tool form does not turn
-such a decision into leaf authority, even on a host with child-safe elicitation.
-
-For a bounded interaction within the approved Unit, a leaf may use the host's supported
-child-local elicitation only when current host/tool evidence establishes all of:
-
-- the exact interaction route supports child elicitation;
-- the prompt belongs to this leaf's exact pending request;
-- the response is bound only to that request, without expanding scope or authority;
-- the same approval/security policy applies on the child path;
-- the same child execution can safely resume after the response;
-- the interaction stays within the approved Unit and the leaf's role authority.
-
-Read the current host/tool contract or verified runtime evidence; provider names, an
-empty form, automatic permission settings, or an upstream implementation alone do not
-prove that this route is supported here. Do not create a durable capability registry.
-When all conditions hold, let the host surface the connector authentication, browser
-sign-in continuation, or tool-defined form and receive its bound response; never answer
-for the user or collect credentials/OTPs in chat or handoff. Honor decline, cancellation,
-and policy denial without retrying or changing routes to bypass them. After a verified
-successful outcome, continue the same Unit in the same child without a parent round-trip,
-extra approval, or re-dispatch. Authentication acceptance alone does not prove successful
-sign-in: follow the supported continuation and verify the resulting state. Preserve the
-browser owner's headless and secret-handling constraints and remaining review obligations.
-
-If any condition is unknown or unmet, stop the affected interaction and use the existing
-controller handoff below. This also applies when request/response provenance or safe
-resume becomes uncertain after interruption; use Recovery state to reconcile mutations
-before retry or replacement. Normal same-child continuation needs no durable state.
-The controller includes these boundaries, available capability evidence, and the fallback
-return requirement in each child brief.
-
-Include in the existing child return: Unit and role, exact blocker, requested user
-action or decision, non-secret evidence/current state, whether mutation already
-occurred (or is unknown), and the safe resume condition. Stop the blocked action;
-never include credentials, OTPs, tokens, or session secrets in the handoff.
-
-For escalated interactions, the controller checks existing authorization and resolves
-repository/host facts before asking the user. Handle root-owned or unsupported child input
-in the root context, using `tk-wizard` only for its existing provisioning/authentication/permission
-scope; product decisions stay with the preparation owner. Existing approval avoids
-reapproval of the same intent, but does not supply missing human input or override a
-host denial. Preserve the browser owner's headless and secret-handling constraints.
-
-After the blocker is verifiably resolved, resume the existing child within the same
-approved Unit. If it cannot resume, reconcile prior mutations and child lifecycle
-under Recovery state before dispatching only the remaining bounded work. Preserve
-Seed/Unit/BASE/workspace identity and existing review/verification obligations; an
-unknown outcome blocks retry. Reuse active optional recovery state without creating
-an interaction ledger, durable receipt, or new lifecycle state.
-
-Approved non-interactive tool calls, host-authorized automatic permission handling,
-read-only reviewer judgments, repository facts available within the brief, and
-reversible engineering choices within leaf authority continue locally. They do not
-require parent mediation or user reapproval; existing controller `Ruling:` boundaries
-still apply.
+The root controller owns intent, scope/AC, Seed changes and new authority. Ordinary approved
+non-interactive tool calls and reversible leaf decisions proceed locally. Before any child asks
+for user input or continues a host interaction, read [child interaction](sdd-interaction.md):
+verify the supported route, request binding, same-or-narrower permissions and safe continuation.
+Unknown capability stops only that interaction and returns it to the controller. Never answer
+for the user, collect secrets in a handoff or treat authentication as new task authority.
+Every child brief must carry these boundaries, known capability evidence (or its unknown state),
+the exact accessible path to that reference with its before-input read condition, and the controller
+fallback for unsupported input. An isolated child must read it before any elicitation or continuation.
 
 ## Failure diagnosis routing
 
@@ -155,85 +105,19 @@ branch.
 
 ## Recovery state
 
-The Ready Seed, current controller context, and local commits are the normal recovery
-sources. Do not create a progress ledger merely because execution shape is SDD.
-
-If a terminal leaf return is empty, malformed, or cannot be bound to the expected Unit and
-dispatch/review identity, treat the mutation outcome and progress as unknown, not success or failure.
-Reconcile only against the exact Seed identifier/hash, Unit, BASE (FIX_BASE for remediation), and
-workspace already owned by the controller, using fresh run-owned Git/recovery evidence. Never infer
-identity from `cwd`, recent activity, another ledger, or nearby task state. If identity is unavailable
-or that evidence cannot prove the outcome, terminate as `Blocked | Unverifiable`.
-
-Until reconciliation, do not blindly re-run the Unit, enter remediation/diagnosis on an assumed failure,
-or advance to the next Unit or phase. A recovered commit proves neither verification nor a clean review;
-resume only the remaining obligations supported by bound evidence. Reuse existing controller context
-and optional recovery/transport artifacts; add no result ledger, retry subsystem, or mandatory durable
-child report. A nonterminal launch acknowledgement or pending child is not an empty terminal result;
-continue the existing bounded wait.
-
-Create at most one ignored `.tigerkit/sdd.md` only when execution is likely to outlive
-the current controller context, the host cannot reliably retain Unit/review state, or an
-interrupted run actually needs durable recovery. When a ledger is needed, keep only:
-
-- Ready `Seed` identifier and content hash;
-- preflight conflicts or rulings that are not already preserved in the Seed;
-- current `Unit` and completed commit SHAs;
-- active dispatch: full `BASE` SHA, exact workspace identity, and dispatch identity/phase bound to that Unit;
-- open review findings and remediation round when active;
-- temporary artifact identifiers and paths that are required for recovery.
-
-When this optional ledger is active, persist the active dispatch immediately before delegation;
-if that write fails, stop before dispatch. Keep its identity and BASE until the Unit outcome is
-reconciled, including remaining verification/review. For remediation, also persist `FIX_BASE` and
-the round before delegation; preserve the original Unit BASE for the complete Unit review.
-
-After interruption, validate the exact Seed identifier/hash, Unit, workspace, and dispatch identity
-before inspecting fresh run-owned Git evidence for the recorded `BASE..HEAD` (or `FIX_BASE..HEAD`).
-Verify that the recorded base exists and is an ancestor of the current HEAD; a missing base or
-ambiguous attribution is `Blocked | Unverifiable`, not permission to reconstruct it from recency.
-When applicable Unit work is proven, do not replay it; resume only the outstanding obligations.
-For an interaction-blocked partial implementation, prefer resuming the same child. If it cannot
-resume, a replacement may continue only the remaining approved implementation after bound evidence
-proves the prior mutations, exact remaining scope, and that the old child cannot still mutate the
-workspace. Preserve the original Unit BASE for the complete review, and bind the replacement dispatch
-to that same Unit/workspace; persist it before launch only when optional recovery state is active.
-Completed implementation resumes verification/review/remediation, never implementation replay.
-An empty commit range alone does not prove no work:
-check run-owned uncommitted changes and the prior child lifecycle as well. Re-dispatch the whole implementation only when
-bound evidence proves the prior dispatch produced no applicable work and cannot still mutate the
-workspace. A pending child uses the existing bounded wait; an unknown outcome remains
-`Blocked | Unverifiable`. Clear or advance active-dispatch state only after reconciliation, never
-merely on a child return or interruption. Do not create a ledger for ordinary same-context dispatch.
-
-Do not copy stable Seed content or completed reports into the ledger. Do not resume a
-ledger with a different Seed identifier/hash or one from completed work. If it does not
-match the current Seed exactly, return `Blocked` before new dispatch and return to the
-preparation owner. Before deleting a run-owned ledger, inspect any material deferred or accepted `Ruling:` that
-it uniquely preserves. Delete the ledger only when binding acceptance is clean and every such ruling already
-exists in another durable owner; otherwise retain the existing ledger as the recovery record. Do not retain it
-solely for style/minor findings, completed reports, or rulings already preserved elsewhere, and do not create a
-follow-up artifact just to make cleanup possible.
+Seed, current context and local commits are the normal recovery sources; create no routine ledger.
+Before enabling durable recovery, resuming an interrupted run, or handling an empty/malformed/unbound
+terminal child return, read [recovery](sdd-recovery.md). Until identity, prior mutations and child lifecycle
+are reconciled, never replay work, assume success/failure, advance or replace an implementer. A pending
+child is not a terminal empty result. Unknown outcomes remain `Blocked | Unverifiable`.
+Read that same reference before updating or deleting an active recovery ledger; retain uniquely owned
+material rulings and preserve all remaining review/verification obligations.
 
 ## Artifact transport
 
-Prefer direct host payloads and child return values for Unit summaries, reports, and
-exact diffs. Do not materialize an artifact merely to pass information that the active
-host can transport faithfully.
-
-Use a flat `.tigerkit/sdd-tmp/` only when a child requires a file path, an exact bundle
-cannot be transported reliably through the host surface, or bounded context size makes
-file transport necessary. Before the first write, prove with `git check-ignore -v` that
-Git's effective ignore rules cover `.tigerkit/` and verify that `git ls-files -- .tigerkit/`
-returns no tracked paths. Per-directory `.gitignore`, `.git/info/exclude`, and configured
-user-level exclude sources are all valid. Apply the owning SKILL.md Artifact Paths setup
-when ignore coverage is missing, then recheck. If required file transport remains
-unignored, unwritable, or invisible to the child, use no operating-system temporary
-fallback; return `Blocked | Unverifiable` before dispatch.
-
-Do not create per-run or per-plan hierarchies. Use unique filenames containing the
-Seed identifier, `Unit`, and scope. Clean up only run-owned files and never delete
-unrelated files. Do not put secrets in artifacts.
+Prefer faithful direct host payloads and child returns. Only when a file path or bounded file transport
+is actually required, read [artifact transport](sdd-transport.md) before writing. Keep it run-owned and
+ignored under `.tigerkit/`, with no secrets or external temporary fallback; transport grants no new authority.
 
 ## Evidence-backed preflight
 
@@ -274,7 +158,7 @@ not short polling loops.
 ## `Unit` implementer
 
 Immediately before dispatch, record `BASE = git rev-parse HEAD`; persist the active-dispatch
-identity first when the optional recovery ledger is active, as specified above. Give the implementer:
+identity first when the optional recovery ledger is active, as specified in [recovery](sdd-recovery.md). Give the implementer:
 
 - the task-local `Unit` summary as direct content, or its path only when file transport is required;
 - binding global constraints and prior interface decisions;
@@ -370,5 +254,4 @@ a silently downgraded single-review success.
 Then run binding verification. For browser-visible targets, obtain `tk-browser-verify`
 execution evidence separately from automated regression protection. When the
 `tk-pr-respond` SDD path completed this final whole-change review, do not repeat a
-generic second review. Clean up only run-owned optional ledger/transport artifacts that satisfy the Recovery
-state retention rule above. No SDD or local commit expands `push`, `merge`, or publication authority.
+generic second review. Clean up only run-owned optional ledger/transport artifacts that satisfy the [recovery](sdd-recovery.md) retention rule. No SDD or local commit expands `push`, `merge`, or publication authority.

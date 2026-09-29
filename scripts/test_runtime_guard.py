@@ -15,6 +15,9 @@ class RuntimeGuardTest(unittest.TestCase):
             path.parent.mkdir(parents=True, exist_ok=True)
             prior = path.read_text() if path.exists() else ""
             path.write_text(prior + check_runtime_guard.UI_EVIDENCE_BLOCK)
+            reference = path.parent / "references/ui-evidence.md"
+            reference.parent.mkdir(exist_ok=True)
+            reference.write_text(check_runtime_guard.UI_EVIDENCE_REFERENCE)
 
     def test_current_repository_runtime_guards_are_synchronized(self) -> None:
         self.assertEqual(check_runtime_guard.validate_runtime_guard(), [])
@@ -94,6 +97,22 @@ class RuntimeGuardTest(unittest.TestCase):
                         errors = check_runtime_guard.validate_runtime_guard(root)
                         self.assertTrue(any(name in error and "UI evidence" in error for error in errors), errors)
                 path.write_text(original)
+
+    def test_missing_or_drifted_ui_reference_fails_each_consumer(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.add_ui_guards(root)
+            for name in check_runtime_guard.UI_EVIDENCE_CONSUMERS:
+                reference = root / "skills" / name / "references/ui-evidence.md"
+                for content in (None, "# UI Evidence Collection\nIncomplete\n"):
+                    with self.subTest(consumer=name, content=content):
+                        if content is None:
+                            reference.unlink()
+                        else:
+                            reference.write_text(content)
+                        errors = check_runtime_guard.validate_runtime_guard(root)
+                        self.assertTrue(any(name in error and "reference" in error for error in errors), errors)
+                        reference.write_text(check_runtime_guard.UI_EVIDENCE_REFERENCE)
 
     def test_agents_cannot_own_runtime_guard_block(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

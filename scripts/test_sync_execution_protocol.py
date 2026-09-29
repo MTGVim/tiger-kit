@@ -9,6 +9,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import sync_execution_protocol
+import check_runtime_guard
 
 
 class SyncExecutionProtocolTest(unittest.TestCase):
@@ -36,6 +37,16 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         for name in sync_execution_protocol.REVIEW_FILES:
             (self.review / name).write_text(f"review {name}\n", encoding="utf-8")
         (self.prep / "external-contracts.md").write_text("external\n", encoding="utf-8")
+        # Build installed packages because sync now validates their conditional guards too.
+        for consumers, block in (
+            (check_runtime_guard.RUNTIME_GUARD_CONSUMERS, check_runtime_guard.RUNTIME_GUARD_BLOCK),
+            (check_runtime_guard.APPROVAL_GUARD_CONSUMERS, check_runtime_guard.APPROVAL_GUARD_BLOCK),
+            (check_runtime_guard.UI_EVIDENCE_CONSUMERS, check_runtime_guard.UI_EVIDENCE_BLOCK),
+        ):
+            for name in consumers:
+                path = self.root / "skills" / name / "SKILL.md"
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text((path.read_text() if path.exists() else "") + block)
 
     def run_main(self, *args: str) -> int:
         with (

@@ -3,12 +3,19 @@ from __future__ import annotations
 
 import argparse
 import shutil
+
+try:
+    from .artifact_policy import sync_artifact_guards, validate_artifact_guards
+    from .check_runtime_guard import UI_EVIDENCE_CONSUMERS, UI_EVIDENCE_REFERENCE, validate_runtime_guard
+except ImportError:
+    from artifact_policy import sync_artifact_guards, validate_artifact_guards
+    from check_runtime_guard import UI_EVIDENCE_CONSUMERS, UI_EVIDENCE_REFERENCE, validate_runtime_guard
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "skills/tk-prep/references"
 TARGET = ROOT / "skills/tk-pr-respond/references"
-FILES = ("testing.md", "sdd.md", "diagnosis.md", "test-doubles.md")
+FILES = ("testing.md", "sdd.md", "sdd-interaction.md", "sdd-recovery.md", "sdd-transport.md", "diagnosis.md", "test-doubles.md")
 REVIEW_SOURCE = ROOT / "skills/tk-review/references"
 REVIEW_TARGETS = (
     ROOT / "skills/tk-prep/references",
@@ -87,13 +94,20 @@ def main() -> int:
         if (ROOT / "skills" / name).is_dir():
             pairs.append((CLEAR_WRITING_SOURCE, ROOT / "skills" / name / "references/clear-writing.md"))
             pairs.append((ROOT / "skills/tk-explain/references/html-output.md", ROOT / "skills" / name / "references/html-output.md"))
+    for name in UI_EVIDENCE_CONSUMERS:
+        path = ROOT / "skills" / name / "references/ui-evidence.md"
+        if not args.check:
+            path.parent.mkdir(exist_ok=True)
+            path.write_text(UI_EVIDENCE_REFERENCE, encoding="utf-8")
+    if not args.check:
+        sync_artifact_guards(ROOT)
     drift = [
         (source, target)
         for source, target in pairs
         if not target.is_file() or target.read_bytes() != source.read_bytes()
     ]
     if args.check:
-        notation_errors = output_notation_errors(ROOT / "skills")
+        notation_errors = output_notation_errors(ROOT / "skills") + validate_artifact_guards(ROOT) + validate_runtime_guard(ROOT)
         if notation_errors:
             print("\n".join(notation_errors))
         if drift:
