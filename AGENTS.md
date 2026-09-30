@@ -62,7 +62,7 @@ SDD가 선택되면 `tk-prep`과 `tk-pr-respond`의 패키지 로컬 생성 참�
 TigerKit은 다음 `runtime` `mapping`을 소유하지 않습니다.
 
 - `cheapest | standard | strongest`
-- `provider`/`model` `selector`
+- 모델 및 에이전트 제공자의 자동 선택·`routing`
 - `reasoning` `effort` `mapping`
 - `.tigerkit/session.md`
 - `durable` `worker`/`wave` `cursor`
@@ -122,6 +122,7 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 - `tk-research`: 외부 `prior art`와 접근법 비교, `read-only` 조사 및 추천.
 - `tk-review`: 명시된 `exact committed range/PR/current worktree` 하나의 `read-only` `Spec/AC` + `Quality/Standards` 판정.
 - `tk-browser-verify`: `browser-visible` `runtime` `evidence`와 `dev-server` `lifecycle`.
+- `tk-app-verify`: 데스크톱 앱의 창과 입력 방식, 포커스 영향, 실행 근거 및 실행 소유 자원 정리.
 - `tk-pr-open`: `exact` `single-PR` `create`/`update` 또는 승인된 `retrospective stacked-PR publication`.
 - `tk-pr-respond`: `exact` `one-PR` `feedback`/지원 CI `resolution`과 `bounded` `publication`.
 - `tk-pr-rebase`: `exact` `rebase` + `force-with-lease`.
@@ -148,7 +149,9 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 ```
 
 `toolAuthoredCommentMarkers`는 HTML 주석 접두어만 저장합니다. `model`/`worker`/`session`/`pitfall` 설정은
-`user-level` `config`로 만들지 않습니다.
+`user-level` `config`로 만들지 않습니다. 검증에 한정된 명시적 `provider` 선택과 문서 URL 및 재검증한
+환경별 문제 해결 메모는 `verify.json`에 저장할 수 있습니다. 이 예외는 모델 선택, 세션 상태,
+원시 로그, 자동 실행이나 범용 기억 저장소를 허용하지 않습니다.
 
 ## `Browser`
 
@@ -200,6 +203,8 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 ## 반복 발견
 
 TigerKit은 `persistent` `pitfall` `corpus`나 `memory` `backend`를 소유하지 않습니다.
+검증 `provider`의 제한된 로컬 문제 해결 메모는 예외이며, 진단·해결·재검증을 거친 사례만
+`provider`당 최대 20건으로 관리합니다. 실제 행동 계약은 각 검증 패키지의 공통 참조가 소유합니다.
 
 - 현재 `Seed`를 바꾸는 발견 → `Seed` `revision`
 - `repository` `reusable` `invariant` → `repo-native` `owner` 개선 후보

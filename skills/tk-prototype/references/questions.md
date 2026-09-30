@@ -13,6 +13,18 @@ shared-understanding gate, or new authority to its caller.
 
 Use the caller's language and this scannable format:
 
+When handing control back for answers, finish analysis, context, recommendations, limitations and
+plans before the frontier. The question frontier must be the final substantive block. Keep each
+question's choices and recommendation inside that block, and put any short reply-format hint at
+its end. Add no analysis, reference note, suggestion, execution plan, or redundant promise after
+it. This also applies to a single clarification or approval question; preserve `Q1`, `Q2`, ...
+and the prerequisite-aware batching above.
+
+If the narrow structured-input exception below applies, complete explanatory text before the
+required tool call and append no follow-up explanation afterward. A technically required fixed
+host/system warning may follow only when its exact source mandates that placement; ordinary
+writing convenience is not an exception.
+
 ```text
 ❓ **Q1 · <short title>**: <question and relevant choices>
 

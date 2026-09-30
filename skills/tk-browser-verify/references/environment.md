@@ -1,10 +1,10 @@
 # Headless environment
 
-Choose the simplest native, Playwright-compatible, MCP, or CDP path that can produce
-approved evidence. Discover routes in this order: an available host-native or browser MCP
-provider, an installed Chrome DevTools CLI, a repository-provided Playwright/Puppeteer path,
-then another already available verified CDP route. Do not install a new browser dependency
-for one run. Classify the selected path as `managed launch | direct launch | attach`.
+Use the explicit preference/session choice under [provider selection](provider-selection.md).
+Discover native, Playwright-compatible, MCP and installed CLI/CDP paths without silently routing
+between them. When a required capability is missing, present the deficit and eligible alternatives
+in the final question frontier. Do not install a browser dependency for one run. Classify the
+selected path as `managed launch | direct launch | attach`; selection never waives the checks below.
 
 For `managed launch`, inspect the current host configuration and require an effective
 headless option before product interaction. The provider may start lazily, so a missing live

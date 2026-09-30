@@ -56,6 +56,8 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 사용자에게 결정이나 승인을 물어야 할 때는 근거로 확인할 사실을 먼저 조사합니다. 그다음 다른 미해결
 답변에 의존하지 않고 지금 답할 수 있는 질문 전체를 한 번의 일반 채팅에 묶어 제시합니다.
 `tk-grill`과 같은 `❓ Q1` 형식과 추천 이유를 사용하고, 선행 답변이 필요한 질문은 다음 라운드로 미룹니다.
+분석, 설명, 주의사항과 실행 계획을 먼저 마친 뒤 질문 묶음을 메시지의 마지막에 둡니다.
+질문 뒤에는 새로운 본문을 덧붙이지 않으며, 짧은 응답 형식 안내는 질문 묶음 안에 포함합니다.
 일반 질문에는 `AskUserQuestion`, `request_user_input`, `clarify`를 사용하지 않습니다. 일반 채팅으로
 동일한 의미와 권한을 표현할 수 없는 호스트의 필수 구조화 입력만 예외로 인정합니다.
 
@@ -81,6 +83,7 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-explain-diff` | `hybrid` | 특정 코드 변경을 기존 구조와 실행 흐름부터 설명하는 자료 |
 | `tk-study` | `hybrid` | 선수지식과 목표에 맞춰 조사하고 여러 챕터로 구성하는 HTML 학습 과정 |
 | `tk-browser-verify` | `hybrid` | 화면에 보이는 AC의 `headless` 실행 검증과 읽기 전용 라벨·진입 경로 조사 |
+| `tk-app-verify` | `hybrid` | 데스크톱 앱의 창, 상호작용, 시각적 변경과 접근성을 선택한 `provider`로 읽기 전용 검증 |
 | `tk-skill-diagnose` | `hybrid` | `Agent Skill` 사고 재현·격리와 `learn-ready` 인계, 승인된 수정은 `tk-learn`으로 연속 진행 |
 | `tk-learn` | `hybrid` | 재사용 가능한 스킬의 생성/개선/병합 작성자. 기존 검사 도구로 막을 수 있는 문제는 해당 도구의 최소 확장을 우선 제안 |
 | `tk-domain` | `hybrid` | 저장소 고유 용어의 `canonical vocabulary`와 `sparse durable decision/ADR context` 작성·정제 |
@@ -188,6 +191,34 @@ Ready `.tigerkit/seed.md`는 필요할 때만 만드는 현재 작업의 자체 
 페이지 전체 근거가 필요하고 높이 의존 레이아웃·가상 목록·스크롤 지연 로딩 등이 없음을 확인한 경우에만 허용합니다.
 
 개발 서버가 필요하면 시작·준비 확인·정리는 `tk-browser-verify`가 소유합니다.
+
+브라우저와 데스크톱 앱은 검증 절차와 실제 조작 `provider`를 분리합니다. 두 스킬은 UI 원문 근거,
+변경 전후 대조, 의도별 윤곽선, 실제 이미지 확인과 미확인 항목 보고 규칙을 공유합니다.
+`tk-app-verify`는 앱과 빌드, 프로세스 및 창을 식별하고 접근성 트리와 창 캡처를 사용합니다.
+앱 검증 결과에는 입력 방식과 포커스 영향도 기록하며, 사용자 소유 창이나 프로세스는 종료하지 않습니다.
+
+처음 실행할 때는 호출 가능한 도구, 설치된 실행 파일, 버전, 권한과 지원 환경을 확인하고 가용 후보를
+한 번의 질문 묶음으로 제시합니다. 선택은 기본적으로 `~/.config/tigerkit/verify.json`에 저장합니다.
+`XDG_CONFIG_HOME`이 설정되어 있으면 그 아래 `tigerkit/verify.json`을 사용합니다.
+이번 실행에만 적용하는 선택도 가능하며, 저장된 선택이 없거나 필요한 기능이 부족하면 사용자의
+선택을 받습니다. 저장된 `fallbacks`는 대안 제시 순서이며 자동 실행 목록이 아닙니다.
+브라우저의 기존 `headless` 및 실행 소유권 조건은 선택한 `provider`와 관계없이 유지합니다.
+
+각 패키지에 포함된 [제공자 목록](skills/tk-browser-verify/references/providers.json)는
+공식 사용 문서 URL, 탐지 정보, 가능한 기능과 입력·프로필 경계를 관리합니다.
+[설정 계약](skills/tk-browser-verify/references/provider-selection.md)에 따라 불확실한 사용법은
+공식 문서에서 다시 확인합니다. `docsOverrides`로 문서 URL을 지정할 수도 있습니다.
+`Cua Driver`, `Orca`, `Codex` 및 `Claude` 내장 기능은 실제 호스트와 행동별 지원을 확인하며,
+백그라운드 입력 실패를 전경 입력이나 전역 마우스·키보드 조작으로 자동 전환하지 않습니다.
+로그인된 사용자 프로필 연결과 외부 상태 변경도 정확한 대상 및 행동에 대한 승인이 필요합니다.
+
+패키지의 `scripts/verify_preferences.py`는 선택과 문서 URL, 검증된 문제 해결 메모만 원자적으로
+저장하는 보조 도구입니다. 도구 자체는 `provider`를 실행하거나 조작하지 않습니다.
+`select --scope app --provider cua-driver`처럼 명시적으로 선택하며, `--session-only`는 파일을
+쓰지 않습니다. 잘못된 설정이나 저장 실패는 기존 파일을 보존한 채 보고합니다.
+`providerNotes`에는 진단과 해결 뒤 재검증한 재현 가능한 사례만 환경·조건·증상·해결법과 함께
+저장합니다. 같은 환경 및 조건의 메모는 교체하고, `provider`당 최대 20건으로 제한합니다.
+비밀정보, 개인 화면 내용과 원시 로그는 저장하지 않습니다.
 TigerKit 설치 과정에서는 브라우저 제공자를 함께 설치하지 않습니다. 호환 제공자가 없으면
 `tk-browser-verify`가 `tk-wizard`로 현재 호스트에 맞는 설정과 재시작 절차를 안내합니다. 새
 `Chrome DevTools MCP` 설정에서는 `--headless --isolated`를 권장하며, 외부 `Chrome`에 연결하는

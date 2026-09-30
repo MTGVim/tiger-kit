@@ -11,6 +11,7 @@ RUNTIME_GUARD_CONSUMERS = (
     "tk-ask-repo",
     "tk-audit",
     "tk-browser-verify",
+    "tk-app-verify",
     "tk-pr-respond",
     "tk-pr-sweep",
     "tk-review",
@@ -29,6 +30,7 @@ Use recovered project/session context only when repository/task identity matches
 APPROVAL_GUARD_CONSUMERS = (
     "tk-prep",
     "tk-browser-verify",
+    "tk-app-verify",
     "tk-pr-open",
     "tk-pr-respond",
     "tk-pr-sweep",
@@ -54,6 +56,7 @@ UI_EVIDENCE_CONSUMERS = (
     "tk-prep",
     "tk-wizard",
     "tk-browser-verify",
+    "tk-app-verify",
     "tk-pr-open",
     "tk-pr-respond",
     "tk-pr-sweep",

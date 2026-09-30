@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import io
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -11,6 +12,7 @@ from unittest.mock import patch
 
 import sync_execution_protocol
 import check_runtime_guard
+import verification_policy
 
 
 class SyncExecutionProtocolTest(unittest.TestCase):
@@ -57,6 +59,13 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         research = self.root / "skills/tk-research/references/evidence.md"
         research.parent.mkdir(parents=True)
         research.write_text("Primary evidence\n", encoding="utf-8")
+        canonical = Path(__file__).resolve().parents[1] / "skills/tk-browser-verify"
+        fixture = self.root / "skills/tk-browser-verify"
+        for directory, names in (("references", verification_policy.REFERENCES),
+                                 ("scripts", (verification_policy.SCRIPT,))):
+            (fixture / directory).mkdir(parents=True, exist_ok=True)
+            for name in names:
+                shutil.copyfile(canonical / directory / name, fixture / directory / name)
         # Build installed packages because sync now validates their conditional guards too.
         for consumers, block in (
             (check_runtime_guard.RUNTIME_GUARD_CONSUMERS, check_runtime_guard.RUNTIME_GUARD_BLOCK),
@@ -115,6 +124,14 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         self.assertEqual(self.run_main("--check"), 1)
         self.assertEqual(self.run_main(), 0)
         self.assertEqual(stale.read_bytes(), (self.review / "security.md").read_bytes())
+
+    def test_app_provider_contract_drift_blocks_check_and_sync_repairs_it(self) -> None:
+        self.assertEqual(self.run_main(), 0)
+        stale = self.root / "skills/tk-app-verify/references/providers.json"
+        stale.write_text('{"version":1,"providers":[]}')
+        self.assertEqual(self.run_main("--check"), 1)
+        self.assertEqual(self.run_main(), 0)
+        self.assertEqual(self.run_main("--check"), 0)
 
     def test_clear_writing_check_detects_both_sides_drift_and_missing_consumer(self) -> None:
         self.assertEqual(self.run_main(), 0)

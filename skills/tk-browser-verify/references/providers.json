@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "providers": [
+    {
+      "id": "chrome-devtools-mcp", "scope": "browser", "display_name": "Chrome DevTools MCP", "recommendation": "recommended",
+      "detection": {"surface": "exposed MCP tools and effective launch/attach configuration", "hosts": ["mcp-client"], "platforms": ["macos", "windows", "linux"]},
+      "capabilities": ["inspect_dom", "inspect_network", "inspect_console", "screenshot", "interact", "performance_trace", "headless_or_isolated"],
+      "safety": {"input_modes": ["browser-scoped"], "profile_boundary": "observe isolated, dedicated or attached profile ownership", "focus": "prove effective headless launch"},
+      "docs": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+      "notes": "provider-knowledge.md#chrome-devtools-mcp"
+    },
+    {
+      "id": "playwright", "scope": "browser", "display_name": "Playwright / Playwright MCP", "recommendation": "recommended",
+      "detection": {"surface": "exposed MCP tools or installed repository Playwright adapter", "hosts": ["mcp-client", "shell"], "platforms": ["macos", "windows", "linux"]},
+      "capabilities": ["inspect_dom", "inspect_network", "inspect_console", "screenshot", "interact", "headless_or_isolated"],
+      "safety": {"input_modes": ["browser-scoped"], "profile_boundary": "prove context/profile ownership and configuration", "focus": "require observed headless mode"},
+      "docs": "https://github.com/microsoft/playwright-mcp",
+      "reference_docs": ["https://playwright.dev/docs/intro"],
+      "notes": "provider-knowledge.md#playwright"
+    },
+    {
+      "id": "browser-cdp", "scope": "browser", "display_name": "Installed browser CLI / CDP adapter", "recommendation": "optional",
+      "detection": {"surface": "installed documented CLI, repository Puppeteer adapter or verified CDP endpoint", "hosts": ["shell", "mcp-client"], "platforms": ["macos", "windows", "linux"]},
+      "capabilities": ["inspect_dom", "inspect_network", "inspect_console", "screenshot", "interact", "headless_or_isolated"],
+      "safety": {"input_modes": ["browser-scoped"], "profile_boundary": "attach needs observed endpoint and external run ownership", "focus": "prove effective headless mode before browser calls"},
+      "docs": "https://chromedevtools.github.io/devtools-protocol/",
+      "reference_docs": ["https://pptr.dev/"],
+      "notes": "provider-knowledge.md#browser-cdp"
+    },
+    {
+      "id": "browserskill", "scope": "browser", "display_name": "BrowserSkill", "recommendation": "optional",
+      "detection": {"surface": "bsk CLI plus connected extension/daemon and selected browser profile", "hosts": ["shell"], "platforms": ["macos", "windows", "linux"]},
+      "capabilities": ["inspect_dom", "inspect_network", "inspect_console", "screenshot", "interact", "authenticated_profile"],
+      "safety": {"input_modes": ["browser-scoped"], "profile_boundary": "signed-in Chrome/Edge with extension and daemon trust boundary", "focus": "visible agent window; not eligible for headless-only acceptance"},
+      "docs": "https://github.com/Tencent/BrowserSkill",
+      "notes": "provider-knowledge.md#browserskill"
+    },
+    {
+      "id": "browsermcp", "scope": "browser", "display_name": "BrowserMCP", "recommendation": "reference",
+      "detection": {"surface": "reference-only; excluded from default discovery recommendations", "hosts": ["mcp-client"], "platforms": ["macos", "windows", "linux"]},
+      "capabilities": ["screenshot", "interact", "authenticated_profile"],
+      "safety": {"input_modes": ["browser-scoped"], "profile_boundary": "user browser extension; no headless claim", "focus": "inspect current maintenance and runtime before explicit use"},
+      "docs": "https://github.com/BrowserMCP/mcp",
+      "notes": "provider-knowledge.md#browsermcp"
+    },
+    {
+      "id": "cua-driver", "scope": "app", "display_name": "Cua Driver", "recommendation": "recommended",
+      "detection": {"surface": "cua-driver version, doctor, daemon status, permission status and exposed tools", "hosts": ["shell", "mcp-client"], "platforms": ["macos", "windows", "linux"]},
+      "capabilities": ["accessibility_tree", "background_click", "background_type", "screenshot", "window_select", "launch_app", "foreground_input", "off_space_window", "cross_platform"],
+      "safety": {"input_modes": ["background-semantic", "window-routed", "foreground-global"], "profile_boundary": "native app/window and runtime permission policy", "focus": "best-effort background; foreground escalation is action-specific"},
+      "docs": "https://cua.ai/docs/how-to-guides/driver/install",
+      "reference_docs": ["https://cua.ai/docs/concepts/the-no-foreground-contract", "https://cua.ai/docs/reference/cua-driver/platform-support"],
+      "notes": "provider-knowledge.md#cua-driver"
+    },
+    {
+      "id": "orca-computer", "scope": "app", "display_name": "Orca Computer Use", "recommendation": "optional",
+      "detection": {"surface": "version-matched computer-use guide, status, permissions and capabilities from the resolved Orca executable", "hosts": ["orca", "shell"], "platforms": ["macos", "windows", "linux"]},
+      "capabilities": ["accessibility_tree", "screenshot", "window_select", "foreground_input", "cross_platform"],
+      "safety": {"input_modes": ["background-semantic", "foreground-global"], "profile_boundary": "native app/window", "focus": "check each action; raw input and restore-window may change foreground"},
+      "docs": "https://www.onorca.dev/docs/cli/computer-use",
+      "reference_docs": ["https://github.com/stablyai/orca/blob/main/skills/computer-use/SKILL.md"],
+      "notes": "provider-knowledge.md#orca-computer"
+    },
+    {
+      "id": "codex-native", "scope": "app", "display_name": "Codex / ChatGPT host-native Computer Use", "recommendation": "optional",
+      "detection": {"surface": "actual exposed enabled native computer capability and host-provided guidance", "hosts": ["codex-desktop", "chatgpt-work"], "platforms": ["macos", "windows"]},
+      "capabilities": ["screenshot", "window_select", "interact"],
+      "safety": {"input_modes": ["host-declared"], "profile_boundary": "actual host capability and grants", "focus": "observe host action delivery; do not infer background from branding"},
+      "docs": "https://learn.chatgpt.com/codex/computer-use",
+      "notes": "provider-knowledge.md#codex-native"
+    },
+    {
+      "id": "claude-native", "scope": "app", "display_name": "Claude host-native Computer Use", "recommendation": "optional",
+      "detection": {"surface": "exposed enabled computer-use tools, current host eligibility and app grants", "hosts": ["claude-desktop", "claude-code-interactive"], "platforms": ["macos", "windows"]},
+      "capabilities": ["screenshot", "window_select", "interact", "foreground_input"],
+      "safety": {"input_modes": ["host-declared", "foreground-global"], "profile_boundary": "host/app grants; Desktop and CLI differ", "focus": "CLI may hide other apps and hold a desktop lock"},
+      "docs": "https://code.claude.com/docs/en/computer-use",
+      "notes": "provider-knowledge.md#claude-native"
+    },
+    {
+      "id": "open-computer-use", "scope": "app", "display_name": "open-computer-use", "recommendation": "optional",
+      "detection": {"surface": "exposed local MCP tools and platform permissions", "hosts": ["mcp-client"], "platforms": ["macos", "windows", "linux"]},
+      "capabilities": ["accessibility_tree", "screenshot", "window_select", "interact", "foreground_input", "cross_platform"],
+      "safety": {"input_modes": ["background-semantic", "foreground-global"], "profile_boundary": "native app/window", "focus": "background paths are platform/action-dependent"},
+      "docs": "https://github.com/opensymph/open-computer-use",
+      "notes": "provider-knowledge.md#open-computer-use"
+    },
+    {
+      "id": "munim-computer-use", "scope": "app", "display_name": "munim-computer-use", "recommendation": "optional",
+      "detection": {"surface": "exposed local MCP tools, platform permissions and optional browser extension", "hosts": ["mcp-client"], "platforms": ["macos", "windows", "linux"]},
+      "capabilities": ["accessibility_tree", "screenshot", "window_select", "interact", "foreground_input", "cross_platform"],
+      "safety": {"input_modes": ["background-semantic", "window-routed", "foreground-global"], "profile_boundary": "native window; signed-in extension is a separate boundary", "focus": "macOS routed input differs from Windows/Linux global paths"},
+      "docs": "https://github.com/munimtechnologies/munim-computer-use",
+      "notes": "provider-knowledge.md#munim-computer-use"
+    }
+  ]
+}

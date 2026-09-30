@@ -1,0 +1,87 @@
+{
+  "scope": "browser",
+  "fixture_only": true,
+  "required_capabilities": [
+    "inspect_network",
+    "headless_or_isolated"
+  ],
+  "candidate": {
+    "head": "1111111111111111111111111111111111111111",
+    "dirty": false,
+    "build": "fixture-build"
+  },
+  "target": {
+    "url": "http://127.0.0.1:43191/fixture",
+    "environment": "local-fixture",
+    "locale": "en-US",
+    "role": "anonymous",
+    "auth_mode": "none",
+    "viewport": [
+      1280,
+      800
+    ]
+  },
+  "criterion": {
+    "id": "AC1",
+    "kind": "nonvisual-network",
+    "expected": "one request with a 204 response"
+  },
+  "providers": {
+    "chrome-devtools-mcp": {
+      "version": "fixture-version",
+      "host": "linux-mcp-fixture",
+      "installed": true,
+      "callable": true,
+      "ready": true,
+      "permissions": "granted",
+      "headless": true,
+      "profile": "isolated-run-owned",
+      "capabilities": [
+        "inspect_network",
+        "headless_or_isolated"
+      ],
+      "parent_evidence": {
+        "phase": "after",
+        "run_id": "browser-provider-fixture",
+        "candidate_matches": true,
+        "target_matches": true,
+        "current": true,
+        "directly_inspected": true,
+        "request_count": 1,
+        "response_status": 204,
+        "render_affecting": false,
+        "visual_criteria": false,
+        "capture_only_mutation": "none",
+        "cleanup": "run-owned session closed; no residue"
+      }
+    },
+    "playwright": {
+      "version": "fixture-version",
+      "host": "linux-mcp-fixture",
+      "installed": true,
+      "callable": true,
+      "ready": true,
+      "permissions": "granted",
+      "headless": true,
+      "profile": "isolated-run-owned",
+      "capabilities": [
+        "inspect_network",
+        "headless_or_isolated"
+      ],
+      "parent_evidence": {
+        "phase": "after",
+        "run_id": "browser-provider-fixture",
+        "candidate_matches": true,
+        "target_matches": true,
+        "current": true,
+        "directly_inspected": true,
+        "request_count": 1,
+        "response_status": 204,
+        "render_affecting": false,
+        "visual_criteria": false,
+        "capture_only_mutation": "none",
+        "cleanup": "run-owned session closed; no residue"
+      }
+    }
+  }
+}

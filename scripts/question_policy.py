@@ -7,7 +7,7 @@ END = "<!-- /tigerkit:questions -->"
 BLOCK = MARKER + """
 ## User Questions
 
-When a user-owned clarification, choice, or approval is actually needed, read [question rounds](references/questions.md). Ask the whole currently answerable frontier in one plain-chat round; resolve facts first and preserve existing authorization. Do not use question tools for ordinary TigerKit questions.
+When a user-owned clarification, choice, or approval is actually needed, read [question rounds](references/questions.md). Ask the whole currently answerable frontier in one plain-chat round; resolve facts first and preserve existing authorization. Put all context before the questions and make the question frontier the final substantive block of the handoff message. Do not use question tools for ordinary TigerKit questions.
 """ + END + "\n"
 
 

@@ -1,0 +1,138 @@
+{
+  "skill": "tk-app-verify",
+  "kind": "hybrid",
+  "queries": [
+    {
+      "id": "train-native",
+      "split": "train",
+      "query": "로컬 데스크톱 창의 승인된 조건을 검사해줘 (학습 표현)",
+      "should_trigger": true
+    },
+    {
+      "id": "train-web-negative",
+      "split": "train",
+      "query": "웹 `URL`의 반응형 조건을 확인해줘 (학습 표현)",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-native-1",
+      "split": "validation",
+      "query": "데스크톱 앱의 저장 버튼이 실제 동작하는지 검증해줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-native-2",
+      "split": "validation",
+      "query": "`macOS` 네이티브 앱의 창 크기별 레이아웃과 접근성을 확인해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-native-3",
+      "split": "validation",
+      "query": "`Electron` `native` `dialog`의 `focus` `return`을 검증해줘",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-native-4",
+      "split": "validation",
+      "query": "앱 검즈하고 변경 전후 스크린샷도 대조해줘",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-native-5",
+      "split": "validation",
+      "query": "이 네이티브 앱 화면 검증해줘",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-native-6",
+      "split": "validation",
+      "query": "데스크톱 앱 저장 흐름, 최종 상태와 시각적 회귀를 확인해줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-native-7",
+      "split": "validation",
+      "query": "`Cua` `Driver`로 앱 창의 승인된 조건을 백그라운드에서 검사해줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-native-8",
+      "split": "validation",
+      "query": "`Orca` `Computer`로 선택한 앱의 실제 접근성 상태를 검증해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-1",
+      "split": "validation",
+      "query": "브라우저 `URL`을 `headless`로 검증해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-2",
+      "split": "validation",
+      "query": "이 앱에 새 버튼을 구현해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-3",
+      "split": "validation",
+      "query": "앱 화면 이미지를 저장만 해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-4",
+      "split": "validation",
+      "query": "컴퓨터에서 메일을 작성하고 보내줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-5",
+      "split": "validation",
+      "query": "앱 접근성 원칙만 설명해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-6",
+      "split": "validation",
+      "query": "서버 로그를 조사해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-7",
+      "split": "validation",
+      "query": "`PWA` 웹 페이지를 `Playwright`로 검증해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-negative-8",
+      "split": "validation",
+      "query": "`UI`를 실행하지 말고 코드만 리뷰해줘",
+      "should_trigger": false
+    }
+  ]
+}

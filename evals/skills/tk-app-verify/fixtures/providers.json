@@ -1,0 +1,33 @@
+{
+  "scope": "app",
+  "required_capabilities": [
+    "accessibility_tree",
+    "background_click",
+    "screenshot"
+  ],
+  "required_delivery": "background-semantic",
+  "providers": {
+    "cua-driver": {
+      "installed": true,
+      "version": "fixture-version",
+      "platform": "windows",
+      "callable": false,
+      "interactive_session": false,
+      "permissions": "unknown"
+    },
+    "orca-computer": {
+      "installed": true,
+      "version": "fixture-version",
+      "callable": true,
+      "permissions": "granted",
+      "available_delivery": [
+        "foreground-global"
+      ],
+      "capabilities": [
+        "accessibility_tree",
+        "screenshot",
+        "window_select"
+      ]
+    }
+  }
+}

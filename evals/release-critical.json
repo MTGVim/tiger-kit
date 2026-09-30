@@ -18,6 +18,27 @@
     "tk-mwhat-explicit-user-only"
   ],
   "behavior_cases": [
+    "tk-app-verify:behavior:app-cua-refuses-foreground-escalation",
+    "tk-app-verify:behavior:app-orca-snapshot-refresh",
+    "tk-app-verify:behavior:app-native-host-disabled",
+    "tk-app-verify:behavior:app-missing-window-build-provenance",
+    "tk-app-verify:behavior:app-visual-missing-outline",
+    "tk-app-verify:behavior:app-uncertain-action-checks-postcondition",
+    "tk-app-verify:behavior:app-local-note-unverified-secret",
+    "tk-app-verify:behavior:app-cua-platform-fixture-selection",
+    "tk-browser-verify:behavior:browser-selected-chrome-reuses-current-fixture",
+    "tk-browser-verify:behavior:browser-selected-playwright-reuses-current-fixture",
+    "tk-browser-verify:behavior:browser-first-provider-selection-final-frontier",
+    "tk-browser-verify:behavior:browser-saved-provider-capability-deficit",
+    "tk-browser-verify:behavior:browser-signedin-extension-headless-conflict",
+    "tk-prep:behavior:handoff-question-frontier-is-final",
+    "tk-grill:behavior:handoff-question-frontier-is-final",
+    "tk-study:behavior:handoff-question-frontier-is-final",
+    "tk-research:behavior:handoff-question-frontier-is-final",
+    "tk-wizard:behavior:handoff-question-frontier-is-final",
+    "tk-discover:behavior:handoff-question-frontier-is-final",
+    "tk-roadmap:behavior:handoff-question-frontier-is-final",
+
     "tk-prep:behavior:prep-ready-seed-self-contained",
     "tk-prep:behavior:prep-understanding-gate-cannot-be-waived",
     "tk-prep:behavior:prep-engineering-waiver-after-improvement-limit",
@@ -412,6 +433,10 @@
     "tk-pr-respond:behavior:pr-respond-sdd-permissions-delegated-controller"
   ],
   "catalog_cases": [
+    "catalog:behavior:native-app-runtime-verify",
+    "catalog:behavior:native-app-vs-browser-url",
+    "catalog:behavior:native-app-vs-generic-desktop-task",
+
     "catalog:behavior:prep-explicit",
     "catalog:behavior:prep-explicit-local-execution",
     "catalog:behavior:prep-generic-planning-negative",

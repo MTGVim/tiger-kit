@@ -937,6 +937,10 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
 
 
 def validate_all() -> tuple[list[str], list[str]]:
+    try:
+        from .verification_policy import verification_errors
+    except ImportError:
+        from verification_policy import verification_errors
     errors: list[str] = []
     warnings: list[str] = []
     try:
@@ -975,6 +979,7 @@ def validate_all() -> tuple[list[str], list[str]]:
     errors.extend(validate_routing_invariants())
     errors.extend(validate_repository_contract(set(skills)))
     errors.extend(validate_repo_links())
+    errors.extend(verification_errors(ROOT))
     return errors, warnings
 
 

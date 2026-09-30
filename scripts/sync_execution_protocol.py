@@ -5,10 +5,12 @@ import argparse
 import shutil
 
 try:
+    from .verification_policy import verification_errors, sync_verification
     from .question_policy import question_errors, sync_questions
     from .artifact_policy import sync_artifact_guards, validate_artifact_guards
     from .check_runtime_guard import UI_EVIDENCE_CONSUMERS, UI_EVIDENCE_REFERENCE, validate_runtime_guard
 except ImportError:
+    from verification_policy import verification_errors, sync_verification
     from question_policy import question_errors, sync_questions
     from artifact_policy import sync_artifact_guards, validate_artifact_guards
     from check_runtime_guard import UI_EVIDENCE_CONSUMERS, UI_EVIDENCE_REFERENCE, validate_runtime_guard
@@ -103,6 +105,7 @@ def main() -> int:
             path.parent.mkdir(exist_ok=True)
             path.write_text(UI_EVIDENCE_REFERENCE, encoding="utf-8")
     if not args.check:
+        sync_verification(ROOT)
         sync_artifact_guards(ROOT)
         sync_questions(ROOT)
     drift = [
@@ -111,7 +114,7 @@ def main() -> int:
         if not target.is_file() or target.read_bytes() != source.read_bytes()
     ]
     if args.check:
-        notation_errors = output_notation_errors(ROOT / "skills") + validate_artifact_guards(ROOT) + validate_runtime_guard(ROOT) + question_errors(ROOT)
+        notation_errors = output_notation_errors(ROOT / "skills") + validate_artifact_guards(ROOT) + validate_runtime_guard(ROOT) + question_errors(ROOT) + verification_errors(ROOT)
         if notation_errors:
             print("\n".join(notation_errors))
         if drift:

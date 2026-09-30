@@ -1,0 +1,104 @@
+# Provider Integration Knowledge
+
+Read only the selected provider's section. Registry capabilities are possible features, not a
+runtime matrix. Confirm current version, host/platform, permissions and per-action semantics.
+Installation and missing permissions belong to a bounded `tk-wizard` setup handoff; do not
+install, enable unrestricted modes or open focus-changing settings during verification discovery.
+Use the registry's canonical docs and supplied host guidance rather than remembered API names.
+
+## Distillation provenance
+
+For contract maintenance, use these reviewed sources (2026-09-30), then refresh canonical docs
+for the installed provider version. Keep TigerKit's existing headless/evidence ownership; adapt
+independent postcondition checks and background/escalation boundaries. Omit upstream installers,
+global-input examples and automatic runtime/permission expansion.
+
+- Cua [independent-postcondition example](https://github.com/trycua/cua/blob/0f29c142d7fe3e05ea0ce276cee11b3a9725ba01/libs/cua-driver/examples/agent-sdks/native_driver.py),
+  plus official background/platform and verification guides. The example's global desktop input
+  is not an approved background adapter; retain only its uncertain-response verification behavior.
+- Orca [version-matched guide loader](https://github.com/stablyai/orca/blob/f4068747ac96cb526c7233683fc1cd89cad5f289/skills/computer-use/SKILL.md)
+  and official computer-use guide: adapt executable identity and fresh-window snapshot guards;
+  omit automatic app opening/restarting and unapproved coordinate fallback.
+- Provider registry URLs were reviewed as maintainer/official sources. Host-native support remains
+  conditional on actual tool exposure; no native-host live verification is claimed by these docs.
+
+## Chrome DevTools MCP
+
+Inspect configured launch/attach mode and effective headless setting. A managed pipe needs no
+TCP endpoint; a dedicated persistent profile needs an isolation limitation. Network/console/DOM
+and performance tools depend on the installed version and exposed tool inventory. Preserve the
+browser environment reference's attach, ownership and authentication requirements.
+
+## Playwright
+
+Distinguish installed repository Playwright from MCP. Confirm headless option, browser binary,
+context isolation, transport and actual network/console tools. An isolated profile is not proof
+of a scenario-isolated context. Resolve selectors from fresh page evidence. Never download a
+browser or npm package just to detect readiness.
+
+## Browser CDP
+
+An installed browser CLI or Puppeteer adapter must expose its current documented entry point;
+use its version-matched help/repository guidance in addition to the protocol URL. Do not infer
+one CLI's flags from another. A live CDP endpoint requires headless and run-ownership proof
+before any browser call, and explicit attach selection after observed launch-boundary evidence.
+
+## BrowserSkill
+
+The `bsk` CLI requires an extension/daemon and a selected Chrome/Edge profile. Current upstream
+uses a visible agent window and can borrow a user tab. This is optional signed-in automation,
+not eligible for TigerKit's headless-only browser acceptance. Never borrow a user profile or
+start its extension connection as an automatic fallback. Report the mismatch and alternatives.
+
+## BrowserMCP
+
+Keep as historical/reference metadata, outside default recommendations. Recheck maintainer
+activity and current docs before an explicit request; do not claim current readiness from the
+reference entry or treat an extension connection as a headless provider.
+
+## Cua Driver
+
+Check binary, daemon, doctor warnings and actual driver permissions separately. A version string
+alone does not prove desktop access. On macOS check Accessibility and Screen Recording; Windows
+requires an interactive user session, and Linux paths depend on accessibility/display support.
+Background is best effort. Prefer a fresh semantic token; window-scoped coordinates still need
+current capture/scale and observed safe delivery. Off-Space SwiftUI/canvas and Wayland raw-key
+limits may block a scenario. Never enable foreground delivery automatically. Verify independent
+postconditions after uncertain responses rather than blindly replaying input.
+
+## Orca Computer
+
+Resolve the session's executable from the current upstream guide before any Orca command. Outside
+an Orca terminal on Linux, bare `orca` may be the GNOME screen reader; do not run it to detect the
+IDE. Load the resolved executable's version-matched `skills get computer-use` guide, then check
+status, permissions and capabilities. Refresh app/window snapshots after state changes; indexes
+belong to that snapshot. Semantic actions may be direct, while raw keyboard/coordinates or
+window restoration may steal focus. Verify the actual path and seek exact escalation authority.
+
+## Codex Native
+
+Read the current official computer-use document and the actual host's advertised API. Expose
+this provider only when native app access is enabled and callable. Browser-only capabilities
+cannot verify native windows. Standalone Codex CLI, an app name or an installed SDK does not
+prove built-in desktop access. Unknown/disabled delivery or permissions blocks the scenario.
+
+## Claude Native
+
+Read the official CLI guide and its linked Desktop guide for the actual host. Current CLI
+eligibility differs from Desktop and non-interactive sessions. Per-app grants and tool exposure
+must be observed. CLI computer use can hide other apps and lock desktop access for a session;
+never advertise it as guaranteed background interaction. Follow host prompts and exact task
+authorization; do not bypass app denials or assume Cowork/CLI/Desktop share every capability.
+
+## Open Computer Use
+
+Use the maintainer README and exposed tool schemas. Accessibility, routed/background input,
+screen capture and global actions differ per OS. Keep it optional; prove fresh app/window identity
+and actual delivery before choosing it for a background-only criterion.
+
+## Munim Computer Use
+
+Use the maintainer README and actual platform/tool schemas. Some Windows paths and Linux pointer
+input can move the real pointer despite background-capable paths elsewhere. Signed-in browser
+extension attachment is an independent trust boundary. Keep optional and avoid blanket background
+or cross-platform capability claims.
