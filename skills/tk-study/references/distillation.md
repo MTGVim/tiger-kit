@@ -64,3 +64,20 @@ requires explicit dispositions and reasons. Upstream runtime/eval execution was 
 
 TigerKit fixtures independently cover unavailable, partial, intentional omission, complete-corpus
 and open-ended cases; no upstream implementation or fixture is copied.
+
+## Executable exercise discrimination (#386)
+
+Reviewed `matlab/agent-skills-playground` at `7b14a7756bf2765a31840699bc27c8d7240083ac`:
+`demos/course-generation/skills/matlab-create-course-activity/references/matlab-validation-rules.md`,
+`demos/assessment-generation-for-matlab-grader/evals/README.md` (EV-G3, G4, G7, G9),
+and merged PR #26 (`3fc3d57a1568d0dcf8f9b59b5186accdb075e779`). The implementation,
+PR design rationale and scenario criteria were inspected; upstream MATLAB execution is unverified.
+
+- **keep:** a passing reference alone does not establish discrimination of the intended outcome.
+- **adapt:** actual reference-pass plus at least one valid-running plausible-wrong-fail, conditional
+  on an already available safe runtime; repair weak checks, tie feedback to observed failure,
+  preserve honest unavailable execution and use existing transient scratch.
+- **omit:** MATLAB MCP requirement, fixed two mutants, grader profile, instructor gate, line locks,
+  assessment ledger, runtime installation and durable validation report.
+
+The focused Python fixtures are independently authored; no upstream code or fixtures are copied.

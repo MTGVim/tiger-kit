@@ -32,16 +32,23 @@ class EvalSotValidatorTest(unittest.TestCase):
         errors, _ = validate_skills.validate_all()
         self.assertEqual(errors, [])
 
-    def test_native_question_tool_contract_is_present(self) -> None:
-        targets = (
-            "tk-prep", "tk-audit", "tk-pr-image", "tk-grooming",
-            "tk-learn", "tk-pr-open", "tk-pr-rebase", "tk-pr-respond", "tk-pr-sweep",
-            "tk-prototype", "tk-wizard",
-        )
-        required = ("AskUserQuestion", "request_user_input", "clarify", "unavailable", "plain chat")
-        for name in targets:
-            text = (validate_skills.ROOT / "skills" / name / "SKILL.md").read_text(encoding="utf-8")
-            self.assertTrue(all(token in text for token in required), name)
+    def test_plain_chat_question_contract_is_present(self) -> None:
+        from question_policy import question_errors
+        self.assertEqual(question_errors(validate_skills.ROOT), [])
+
+    def test_question_reference_drift_is_rejected(self) -> None:
+        from question_policy import BLOCK, question_errors
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "skills/tk-grill/references/questions.md"
+            source.parent.mkdir(parents=True)
+            source.write_text("Canonical frontier protocol\n", encoding="utf-8")
+            (source.parent.parent / "SKILL.md").write_text(BLOCK, encoding="utf-8")
+            target = root / "skills/tk-example"
+            (target / "references").mkdir(parents=True)
+            (target / "SKILL.md").write_text(BLOCK, encoding="utf-8")
+            (target / "references/questions.md").write_text("Ask one question by tool\n", encoding="utf-8")
+            self.assertTrue(any("tk-example: question rounds reference drift" in e for e in question_errors(root)))
 
     def test_skill_body_requires_english_narrative(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

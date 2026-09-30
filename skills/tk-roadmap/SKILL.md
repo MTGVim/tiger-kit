@@ -25,8 +25,8 @@ ask immediately what situation or improvement the user wants to explore; require
 brief, repository, or setup. If context exists, briefly reflect it and ask the next
 material unanswered question. Never restart an already answered interview.
 
-Ask one decision topic at a time by default, with a recommendation and reason when
-supported. Prefer available native question controls when useful, otherwise plain chat.
+Ask the whole currently answerable frontier in one plain-chat round, with a recommendation
+and reason when supported. Defer decisions whose choices depend on another unresolved answer.
 Adapt to answers spanning several topics; the sequence below is a guide, not a mandatory
 questionnaire. After each answer, incorporate it and advance to the next question or
 proposal rather than ending with acknowledgment alone.
@@ -67,6 +67,8 @@ every step. When the direction is agreed or the user requests a draft, return:
 
 A justified no-go, deferral, or investigation outcome is a valid endpoint. Do not force a
 fixed milestone count or turn a roadmap into a promise to deliver every candidate.
+`tk-discover` owns a continuing investigation whose questions and dependencies emerge from evidence;
+this skill may plan one investigation milestone but does not repeatedly resolve its discovery map.
 Stop after the planning result. Do not automatically invoke skills, create tickets,
 implement, assign work, change source/config/Git, or publish. `tk-grill` owns exhaustive
 decision stress-testing, `tk-research` external approach research, and `tk-prep` selected
@@ -95,3 +97,9 @@ Create artifacts only when this skill's task authorizes them. Before any artifac
 
 Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
 <!-- /tigerkit:output-notation -->
+
+<!-- tigerkit:questions -->
+## User Questions
+
+When a user-owned clarification, choice, or approval is actually needed, read [question rounds](references/questions.md). Ask the whole currently answerable frontier in one plain-chat round; resolve facts first and preserve existing authorization. Do not use question tools for ordinary TigerKit questions.
+<!-- /tigerkit:questions -->

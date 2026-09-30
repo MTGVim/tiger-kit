@@ -39,11 +39,7 @@ cover source/test/config edits, verification, isolated workspace setup, and loca
 merge, publication/release, destructive cleanup, secrets, or unrelated Git mutation.
 
 **Keep conversation natural and state strict.** Do not expose durable-artifact classification or
-execution routing as a form/report. Explain important judgments with recommendations and reasons. When a user-owned
-question, choice, or approval is needed, prefer the host's native structured question surface (Claude Code: AskUserQuestion;
-Codex: request_user_input; Hermes: clarify) when it can represent the current question round without changing its meaning.
-If unavailable or unable to represent that round faithfully, use one scannable plain chat round; never ask again for a
-secret or a parent-owned decision.
+execution routing as a form/report. Explain important judgments with recommendations and reasons.
 
 ## Evidence and questions
 
@@ -63,7 +59,7 @@ Maintain a small preparation tree in the current conversation only. Recompute it
 
 Ask the whole current frontier in one scannable round, grouping independent decisions with a recommendation and reason.
 Do not impose a fixed question count or include a downstream decision whose meaning depends on another answer. Split a
-round only when the questions are materially coupled or cannot be presented clearly together. Do not expose the internal
+round only by deferring decisions with unresolved prerequisites; shorten wording instead of splitting independent decisions. Do not expose the internal
 labels as a form, persist the tree, invoke `tk-grill`, or automatically transition between the skills.
 
 Only these unresolved frontier decisions belong to the user:
@@ -212,3 +208,9 @@ Create artifacts only when this skill's task authorizes them. Before any artifac
 
 Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
 <!-- /tigerkit:output-notation -->
+
+<!-- tigerkit:questions -->
+## User Questions
+
+When a user-owned clarification, choice, or approval is actually needed, read [question rounds](references/questions.md). Ask the whole currently answerable frontier in one plain-chat round; resolve facts first and preserve existing authorization. Do not use question tools for ordinary TigerKit questions.
+<!-- /tigerkit:questions -->

@@ -5,9 +5,11 @@ import argparse
 import shutil
 
 try:
+    from .question_policy import question_errors, sync_questions
     from .artifact_policy import sync_artifact_guards, validate_artifact_guards
     from .check_runtime_guard import UI_EVIDENCE_CONSUMERS, UI_EVIDENCE_REFERENCE, validate_runtime_guard
 except ImportError:
+    from question_policy import question_errors, sync_questions
     from artifact_policy import sync_artifact_guards, validate_artifact_guards
     from check_runtime_guard import UI_EVIDENCE_CONSUMERS, UI_EVIDENCE_REFERENCE, validate_runtime_guard
 from pathlib import Path
@@ -90,6 +92,7 @@ def main() -> int:
     )
     pairs.append((EXTERNAL_CONTRACT_SOURCE, EXTERNAL_CONTRACT_TARGET))
     pairs.append((CLEAR_WRITING_SOURCE, CLEAR_WRITING_TARGET))
+    pairs.append((ROOT / "skills/tk-research/references/evidence.md", ROOT / "skills/tk-discover/references/evidence.md"))
     for name in ("tk-explain-diff", "tk-study"):
         if (ROOT / "skills" / name).is_dir():
             pairs.append((CLEAR_WRITING_SOURCE, ROOT / "skills" / name / "references/clear-writing.md"))
@@ -101,13 +104,14 @@ def main() -> int:
             path.write_text(UI_EVIDENCE_REFERENCE, encoding="utf-8")
     if not args.check:
         sync_artifact_guards(ROOT)
+        sync_questions(ROOT)
     drift = [
         (source, target)
         for source, target in pairs
         if not target.is_file() or target.read_bytes() != source.read_bytes()
     ]
     if args.check:
-        notation_errors = output_notation_errors(ROOT / "skills") + validate_artifact_guards(ROOT) + validate_runtime_guard(ROOT)
+        notation_errors = output_notation_errors(ROOT / "skills") + validate_artifact_guards(ROOT) + validate_runtime_guard(ROOT) + question_errors(ROOT)
         if notation_errors:
             print("\n".join(notation_errors))
         if drift:

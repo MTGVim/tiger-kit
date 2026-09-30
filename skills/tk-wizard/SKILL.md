@@ -29,7 +29,6 @@ like an approval document.
 
 Initially describe the full journey in only 1–3 sentences, then naturally guide the user through
 one action they must take now. Do not repeatedly confirm already completed steps.
-When the user must choose an action or irreversible confirmation, prefer the host's native structured question surface (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify). If unavailable, give the same guidance in plain chat; never collect the secret itself as tool input.
 
 ## Scope
 
@@ -158,3 +157,9 @@ Create artifacts only when this skill's task authorizes them. Before any artifac
 
 Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
 <!-- /tigerkit:output-notation -->
+
+<!-- tigerkit:questions -->
+## User Questions
+
+When a user-owned clarification, choice, or approval is actually needed, read [question rounds](references/questions.md). Ask the whole currently answerable frontier in one plain-chat round; resolve facts first and preserve existing authorization. Do not use question tools for ordinary TigerKit questions.
+<!-- /tigerkit:questions -->

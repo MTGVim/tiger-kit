@@ -25,9 +25,6 @@ Use Artifact Paths setup for missing ignore coverage; recheck before writing. Do
 external scratch fallback. A repository-native route/harness is allowed only when the
 selected runtime requires it; record and clean up only run-owned files.
 
-Before execution, use the host's structured question surface when the user must choose a
-path, data boundary, verification question, or variant: Claude Code `AskUserQuestion`,
-Codex `request_user_input`, or Hermes `clarify`. If unavailable, ask in plain chat.
 
 ## Workflow
 
@@ -150,3 +147,9 @@ Create artifacts only when this skill's task authorizes them. Before any artifac
 
 Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
 <!-- /tigerkit:output-notation -->
+
+<!-- tigerkit:questions -->
+## User Questions
+
+When a user-owned clarification, choice, or approval is actually needed, read [question rounds](references/questions.md). Ask the whole currently answerable frontier in one plain-chat round; resolve facts first and preserve existing authorization. Do not use question tools for ordinary TigerKit questions.
+<!-- /tigerkit:questions -->

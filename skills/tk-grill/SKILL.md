@@ -59,20 +59,6 @@ to the user. Never silently choose one. When a useful recommendation is possible
 the recommendation and its reason instead of presenting neutral options and delegating all
 judgment.
 
-Keep each round scannable in the user's language:
-
-```text
-❓ **Q1 · <short title>**: <question and relevant choices>
-
-➡️ <recommended answer and why>
-
----
-
-❓ **Q2 · <short title>**: <independent frontier question>
-
-➡️ <recommended answer and why>
-```
-
 Do not ask downstream questions merely to appear thorough. Relentless means leaving no
 silent decision branch, not maximizing question volume.
 
@@ -111,3 +97,9 @@ This skill creates no artifacts. Do not create temporary files, write reports, o
 
 Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
 <!-- /tigerkit:output-notation -->
+
+<!-- tigerkit:questions -->
+## User Questions
+
+When a user-owned clarification, choice, or approval is actually needed, read [question rounds](references/questions.md). Ask the whole currently answerable frontier in one plain-chat round; resolve facts first and preserve existing authorization. Do not use question tools for ordinary TigerKit questions.
+<!-- /tigerkit:questions -->

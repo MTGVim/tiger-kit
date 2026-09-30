@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import io
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -13,6 +14,19 @@ import check_runtime_guard
 
 
 class SyncExecutionProtocolTest(unittest.TestCase):
+    def test_package_entry_points_remain_executable(self) -> None:
+        for module in ("scripts.validate_skills", "scripts.run_seed_release_gate"):
+            with self.subTest(module=module):
+                result = subprocess.run(
+                    [sys.executable, "-B", "-m", module, "--help"],
+                    cwd=Path(__file__).resolve().parents[1],
+                    text=True,
+                    capture_output=True,
+                    check=False,
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertTrue(result.stdout.strip())
+
     def setUp(self) -> None:
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
@@ -37,6 +51,12 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         for name in sync_execution_protocol.REVIEW_FILES:
             (self.review / name).write_text(f"review {name}\n", encoding="utf-8")
         (self.prep / "external-contracts.md").write_text("external\n", encoding="utf-8")
+        questions = self.root / "skills/tk-grill/references/questions.md"
+        questions.parent.mkdir(parents=True)
+        questions.write_text("Canonical frontier protocol\n", encoding="utf-8")
+        research = self.root / "skills/tk-research/references/evidence.md"
+        research.parent.mkdir(parents=True)
+        research.write_text("Primary evidence\n", encoding="utf-8")
         # Build installed packages because sync now validates their conditional guards too.
         for consumers, block in (
             (check_runtime_guard.RUNTIME_GUARD_CONSUMERS, check_runtime_guard.RUNTIME_GUARD_BLOCK),

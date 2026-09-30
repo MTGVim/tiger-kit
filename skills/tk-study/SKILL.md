@@ -91,7 +91,10 @@ TigerKit-owned intermediates and state still stay inside `.tigerkit/study/<topic
 existing final file needs overwrite authorization. Transient work uses `.tigerkit/tmp/tk-study/<run-id>/`.
 
 Verify prerequisite order, outcome coverage, claim support, examples, chapter navigation and
-question/answer separation. `Pass` requires existing readable sourced material, curriculum and
+question/answer separation. For executable coding exercises, read [exercise verification](references/exercise-verification.md)
+before claiming validation; when safe runtime is available, require actual reference-pass and
+plausible-wrong-fail. Conceptual and open-ended questions keep the lightweight checks.
+`Pass` requires existing readable sourced material, curriculum and
 chapter content, retrieval/transfer practice and a profile when interviewed; it never certifies
 learner mastery. Return a concise final artifact link and material verification limitations.
 Do not launch the user's browser, run exercises in production, install tools, commit or publish.
@@ -110,3 +113,9 @@ Create artifacts only when this skill's task authorizes them. Before any artifac
 
 Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
 <!-- /tigerkit:output-notation -->
+
+<!-- tigerkit:questions -->
+## User Questions
+
+When a user-owned clarification, choice, or approval is actually needed, read [question rounds](references/questions.md). Ask the whole currently answerable frontier in one plain-chat round; resolve facts first and preserve existing authorization. Do not use question tools for ordinary TigerKit questions.
+<!-- /tigerkit:questions -->

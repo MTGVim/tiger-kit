@@ -1,0 +1,5 @@
+interface:
+  short_description: "[user] 조사 결과로 드러나는 질문과 연구 마일스톤을 계속 갱신합니다."
+  default_prompt: "$tk-discover로 현재 탐색 과제의 목적과 제약을 확인하고, 근거를 조사하면서 다음 질문과 연구 마일스톤을 조정해 주세요."
+policy:
+  allow_implicit_invocation: false

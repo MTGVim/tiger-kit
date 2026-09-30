@@ -133,6 +133,36 @@
           "paths": []
         }
       ]
+    },
+    {
+      "id": "roadmap-whole-frontier",
+      "path": "success",
+      "prompt": "$tk-roadmap 독서모임 참여 부담을 줄이는 목표는 정했어. 개최 빈도와 알림 채널은 서로 독립적인 선택이고 둘 다 미정이야. 다른 제약은 이미 정했어.",
+      "expected_output": "빈도와 채널을 하나의 일반 채팅 라운드에 함께 묻고 추천 이유를 제공한다. 한 주제씩 질문 도구로 나누거나 이미 확정한 제약을 다시 묻지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "빈도와 채널을 하나의 일반 채팅 라운드에 함께 묻고 추천 이유를 제공한다. 한 주제씩 질문 도구로 나누거나 이미 확정한 제약을 다시 묻지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "roadmap-discovery-boundary",
+      "path": "boundary",
+      "prompt": "$tk-roadmap 현재 데이터 접근 가능성을 조사하는 일만 첫 마일스톤으로 선택할게. 결과에 따라 다음 질문을 계속 조사하는 것은 별도로 할 거야. 최종 계획을 정리해줘.",
+      "expected_output": "조사 완료 근거와 진행 또는 보류 판단을 포함한 마일스톤을 정리한 뒤 종료한다. 계속되는 탐색 지도를 만들거나 자동으로 `tk-discover`를 호출하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "조사 완료 근거와 진행 또는 보류 판단을 포함한 마일스톤을 정리한 뒤 종료한다. 계속되는 탐색 지도를 만들거나 자동으로 `tk-discover`를 호출하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

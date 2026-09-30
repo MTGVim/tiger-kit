@@ -96,9 +96,7 @@ Do not rewrite a legacy file merely to migrate labels.
 ## Write and return
 
 Present the concrete candidate before applying it. Ask one natural approval question only when
-all other gates pass and exact apply authority is missing; use the host's supported question
-surface when appropriate (Claude Code: AskUserQuestion; Codex: request_user_input; Hermes: clarify).
-If unavailable, use plain chat. Otherwise continue within existing authorization. Preserve pre-write
+all other gates pass and exact apply authority is missing. Otherwise continue within existing authorization. Preserve pre-write
 contents, write atomically, reread, then verify frontmatter, links, evals and target-host invocation.
 On a failed write or verification, report the exact partial state. Restore/remove only when this
 run's mutation is proven safely reversible; otherwise preserve it and report `Blocked | Unverifiable`.
@@ -119,3 +117,9 @@ Create artifacts only when this skill's task authorizes them. Before any artifac
 
 Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
 <!-- /tigerkit:output-notation -->
+
+<!-- tigerkit:questions -->
+## User Questions
+
+When a user-owned clarification, choice, or approval is actually needed, read [question rounds](references/questions.md). Ask the whole currently answerable frontier in one plain-chat round; resolve facts first and preserve existing authorization. Do not use question tools for ordinary TigerKit questions.
+<!-- /tigerkit:questions -->

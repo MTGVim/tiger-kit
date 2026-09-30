@@ -1,0 +1,66 @@
+{
+  "skill": "tk-discover",
+  "kind": "user-invoked",
+  "queries": [
+    {
+      "id": "train-explicit",
+      "split": "train",
+      "query": "$tk-discover 조사하면서 새 질문을 찾고 연구 마일스톤을 계속 갱신해줘.",
+      "should_trigger": true
+    },
+    {
+      "id": "train-one-shot",
+      "split": "train",
+      "query": "`CrowdSec`와 `AWS WAF`를 이 조건에서 비교 조사해줘.",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-context",
+      "split": "validation",
+      "query": "$tk-discover 무엇을 먼저 알아야 할지 모르는 연구 목적을 결정과 근거 수집 단계로 구체화해줘.",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-emerging",
+      "split": "validation",
+      "query": "/tk-discover 조사 결과로 새 질문이 나타나는 탐색을 이어가자.",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-empty",
+      "split": "validation",
+      "query": "$tk-discover",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-roadmap",
+      "split": "validation",
+      "query": "$tk-roadmap 이미 선택한 방향으로 마일스톤을 정리해줘.",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-research",
+      "split": "validation",
+      "query": "$tk-research 익명 식별의 업계 사례만 한 번 비교해줘.",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-prep",
+      "split": "validation",
+      "query": "$tk-prep 선택한 기능을 구현해줘.",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-repo",
+      "split": "validation",
+      "query": "$tk-ask-repo 이 로그 필드가 어디서 만들어지는지 찾아줘.",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-generic",
+      "split": "validation",
+      "query": "연구 과제가 뭔지 짧게 설명해줘.",
+      "should_trigger": false
+    }
+  ]
+}
