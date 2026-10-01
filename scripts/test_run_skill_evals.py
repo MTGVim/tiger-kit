@@ -49,6 +49,13 @@ else:
     )
 
 
+def observed_runs():
+    """Matched metadata fixture for tests of unrelated verdict policies."""
+    return [{"host": "codex", "case": "fixture", "run": 1,
+             "prompt_sha256": "a" * 64,
+             "execution_identity": {"model": "fixture-model"}}]
+
+
 class AdapterResultTest(unittest.TestCase):
     def test_requires_skill_loaded_and_output(self) -> None:
         self.assertEqual(
@@ -89,7 +96,7 @@ class AdapterResultTest(unittest.TestCase):
 
         self.assertEqual(validate_adapter_result(result), [])
         self.assertIn(
-            "adapter result tool_uses must be numeric or null",
+            "adapter result tool_uses must be finite non-negative numeric or null",
             validate_adapter_result(result, diagnostic=True),
         )
 
@@ -155,12 +162,14 @@ class AdapterResultTest(unittest.TestCase):
 class VerdictTest(unittest.TestCase):
     def test_candidate_regression_fails(self) -> None:
         baseline = {
+            "execution_runs": observed_runs(),
             "trigger_accuracy": 0.9,
             "behavior_pass_rate": 0.8,
             "total_tokens": 10,
             "duration_ms": 10,
         }
         candidate = {
+            "execution_runs": observed_runs(),
             "trigger_accuracy": 0.8,
             "behavior_pass_rate": 0.8,
             "safety_failures": 0,
@@ -172,12 +181,14 @@ class VerdictTest(unittest.TestCase):
 
     def test_candidate_safety_failure_fails(self) -> None:
         baseline = {
+            "execution_runs": observed_runs(),
             "trigger_accuracy": 0.5,
             "behavior_pass_rate": 0.5,
             "total_tokens": 10,
             "duration_ms": 10,
         }
         candidate = {
+            "execution_runs": observed_runs(),
             "trigger_accuracy": 1.0,
             "behavior_pass_rate": 1.0,
             "safety_failures": 1,
@@ -189,12 +200,14 @@ class VerdictTest(unittest.TestCase):
 
     def test_non_regressing_candidate_passes(self) -> None:
         baseline = {
+            "execution_runs": observed_runs(),
             "trigger_accuracy": 0.5,
             "behavior_pass_rate": 0.5,
             "total_tokens": 10,
             "duration_ms": 10,
         }
         candidate = {
+            "execution_runs": observed_runs(),
             "trigger_accuracy": 0.75,
             "behavior_pass_rate": 0.75,
             "safety_failures": 0,
@@ -206,12 +219,14 @@ class VerdictTest(unittest.TestCase):
 
     def test_unjustified_resource_regression_fails(self) -> None:
         baseline = {
+            "execution_runs": observed_runs(),
             "trigger_accuracy": 1.0,
             "behavior_pass_rate": 1.0,
             "total_tokens": 100,
             "duration_ms": 100,
         }
         candidate = {
+            "execution_runs": observed_runs(),
             "trigger_accuracy": 1.0,
             "behavior_pass_rate": 1.0,
             "safety_failures": 0,
@@ -231,12 +246,14 @@ class VerdictTest(unittest.TestCase):
 
     def test_missing_token_comparison_is_unverifiable(self) -> None:
         baseline = {
+            "execution_runs": observed_runs(),
             "trigger_accuracy": 1.0,
             "behavior_pass_rate": 1.0,
             "total_tokens": None,
             "duration_ms": 100,
         }
         candidate = {
+            "execution_runs": observed_runs(),
             "trigger_accuracy": 1.0,
             "behavior_pass_rate": 1.0,
             "safety_failures": 0,
@@ -248,6 +265,7 @@ class VerdictTest(unittest.TestCase):
 
     def test_validation_regression_is_gated_per_invocation_kind(self) -> None:
         baseline = {
+            "execution_runs": observed_runs(),
             "trigger_metrics": {
                 "hybrid": {
                     "validation": {"accuracy": 1.0, "precision": 1.0, "recall": 1.0}
@@ -261,6 +279,7 @@ class VerdictTest(unittest.TestCase):
             "duration_ms": 100,
         }
         candidate = {
+            "execution_runs": observed_runs(),
             "trigger_metrics": {
                 "hybrid": {
                     "validation": {"accuracy": 0.9, "precision": 1.0, "recall": 0.8}
@@ -459,6 +478,9 @@ class DiagnosticRunnerTest(unittest.TestCase):
             ]
         )
 
+        # These tests isolate diagnostic policy after observed identity was matched.
+        baseline["execution_runs"] = observed_runs()
+        candidate["execution_runs"] = observed_runs()
         verdict = compare_diagnostics(baseline, candidate)
 
         self.assertEqual(verdict["status"], "Fail")
@@ -475,6 +497,9 @@ class DiagnosticRunnerTest(unittest.TestCase):
             ]
         )
 
+        # These tests isolate diagnostic policy after observed identity was matched.
+        baseline["execution_runs"] = observed_runs()
+        candidate["execution_runs"] = observed_runs()
         verdict = compare_diagnostics(baseline, candidate)
 
         self.assertEqual(verdict["status"], "Fail")
@@ -492,6 +517,9 @@ class DiagnosticRunnerTest(unittest.TestCase):
             ]
         )
 
+        # These tests isolate diagnostic policy after observed identity was matched.
+        baseline["execution_runs"] = observed_runs()
+        candidate["execution_runs"] = observed_runs()
         verdict = compare_diagnostics(baseline, candidate)
 
         self.assertEqual(verdict["status"], "Concern")
@@ -552,6 +580,9 @@ class DiagnosticRunnerTest(unittest.TestCase):
         baseline = summarize_diagnostic_records([self.record(self.payload())])
         candidate = summarize_diagnostic_records([self.record(self.payload(), tokens=1)])
 
+        # These tests isolate diagnostic policy after observed identity was matched.
+        baseline["execution_runs"] = observed_runs()
+        candidate["execution_runs"] = observed_runs()
         verdict = compare_diagnostics(baseline, candidate)
 
         self.assertEqual(verdict["resource_comparison_status"], "Unverifiable")
@@ -573,9 +604,12 @@ class DiagnosticRunnerTest(unittest.TestCase):
         for record in candidate_records:
             record["tool_uses"] = 2
 
+        baseline = summarize_diagnostic_records(baseline_records)
+        candidate = summarize_diagnostic_records(candidate_records)
+        baseline["execution_runs"] = observed_runs()
+        candidate["execution_runs"] = observed_runs()
         verdict = compare_diagnostics(
-            summarize_diagnostic_records(baseline_records),
-            summarize_diagnostic_records(candidate_records),
+            baseline, candidate,
         )
 
         self.assertEqual(verdict["resource_comparison_status"], "verified")
@@ -663,6 +697,7 @@ class DiagnosticRunnerTest(unittest.TestCase):
                 "    'duration_ms': 11 if mode == 'diagnostic' else 5,\n"
                 "    'tool_uses': 1,\n"
                 "    'nested_calls': 0,\n"
+                "    'execution_identity': {'model': 'fixture-model'},\n"
                 "}))\n",
                 encoding="utf-8",
             )

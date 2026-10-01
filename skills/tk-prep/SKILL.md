@@ -98,9 +98,13 @@ mutation and Seed-preservation boundaries still apply.
 
 ## Understanding readiness
 
-Do not reach approval until the goal and scope are actionable, every material product/user-owned decision is resolved,
+Do not execute on approval until the goal and scope are actionable, every material product/user-owned decision is resolved,
 acceptance and verification are executable, and no material evidence conflict or blocker remains. User approval cannot
 waive an evidence conflict or readiness blocker.
+An approval question may share the frontier round only when its fully described local scope,
+approach and verification remain valid for every offered independent choice. Wait for all material
+answers and approval before mutation. If any answer could change that proposal, defer approval,
+incorporate the answer and present the revised concrete scope first.
 
 ## Engineering and testing readiness
 
@@ -158,6 +162,8 @@ before approval. Preserve any existing Seed before approval; direct/no-Seed does
 
 ## 🔴 CHECKPOINT · 🛑 STOP · Approval and local mutation
 
+Before presenting any frontier question or missing approval, read [question rounds](references/questions.md) in this turn and apply its format. Make the approval request itself a separate numbered `Q` in the final question block; preserve existing approval and defer a dependent approval until its scope is actionable.
+
 First check whether the active request or an earlier decision already authorizes the concrete scope. If not, perform no source/test/config/Seed/Git mutation and present one natural summary covering goal, scope,
 decisions, approach, testing/TDD, browser plan, semantic review obligations, execution shape, workspace setup, and local
 commit consequence. If already authorized, state the resolved approach briefly and proceed without another approval question. Planned baseline capture and its return to implementation are included, not separate checkpoints.
@@ -212,5 +218,15 @@ Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the mark
 <!-- tigerkit:questions -->
 ## User Questions
 
-When a user-owned clarification, choice, or approval is actually needed, read [question rounds](references/questions.md). Ask the whole currently answerable frontier in one plain-chat round; resolve facts first and preserve existing authorization. Put all context before the questions and make the question frontier the final substantive block of the handoff message. Do not use question tools for ordinary TigerKit questions.
+Before sending any user-owned clarification, choice, or approval, read [question rounds](references/questions.md) in this turn. Ask the whole answerable frontier in one plain-chat round; resolve facts first, preserve existing authorization, and skip question ceremony when no decision remains. Do not use question tools for ordinary TigerKit questions.
+
+Minimum shape, even when already familiar:
+
+```text
+❓ **Q1 · <short title>**: <question and relevant choices>
+
+➡️ <recommendation and reason, when supported>
+```
+
+Separate questions with `---`. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
 <!-- /tigerkit:questions -->

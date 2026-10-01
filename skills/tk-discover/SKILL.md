@@ -32,7 +32,15 @@ Name an optional route when relevant, without automatically invoking it.
    a bounded, decision-relevant evidence batch; a blocked branch does not halt independent work.
    Resolve researchable facts before asking the whole user-decision frontier using User Questions.
 4. Use the right resolution mode. For external research, read [research evidence](references/evidence.md).
-   For repository facts, inspect relevant source/tests read-only. For user decisions, preserve
+   For repository facts, inspect relevant source/tests read-only. Bind material findings to the
+   repository identity and revision; for dirty worktrees include the relevant content snapshot.
+   Treat README, architecture docs, comments and PR prose as intent evidence to reconcile with
+   implementation, tests and configuration. Start with the minimum runtime/domain boundaries
+   and smallest representative vertical slice needed for the current frontier. Expand only for
+   a dependency, contradiction, dynamic edge or unresolved hypothesis. Keep unavailable runtime
+   edges and unsupported claims unresolved; static inference is not observed behavior. Carry
+   this provenance in the existing finding, not a new ledger or repository manifest.
+   For user decisions, preserve
    authorization and wait for the actual user. For a prototype/experiment, define the hypothesis,
    observable pass/fail criterion, data/environment boundary and required authority. Discovery itself
    grants no experiment execution or mutation; accept verified results or propose the separate owner.
@@ -69,7 +77,17 @@ Create artifacts only when this skill's task authorizes them. Before any artifac
 <!-- tigerkit:questions -->
 ## User Questions
 
-When a user-owned clarification, choice, or approval is actually needed, read [question rounds](references/questions.md). Ask the whole currently answerable frontier in one plain-chat round; resolve facts first and preserve existing authorization. Put all context before the questions and make the question frontier the final substantive block of the handoff message. Do not use question tools for ordinary TigerKit questions.
+Before sending any user-owned clarification, choice, or approval, read [question rounds](references/questions.md) in this turn. Ask the whole answerable frontier in one plain-chat round; resolve facts first, preserve existing authorization, and skip question ceremony when no decision remains. Do not use question tools for ordinary TigerKit questions.
+
+Minimum shape, even when already familiar:
+
+```text
+❓ **Q1 · <short title>**: <question and relevant choices>
+
+➡️ <recommendation and reason, when supported>
+```
+
+Separate questions with `---`. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
 <!-- /tigerkit:questions -->
 <!-- tigerkit:output-notation -->
 ## Output Notation

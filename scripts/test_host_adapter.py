@@ -17,6 +17,28 @@ SPEC.loader.exec_module(adapter)
 
 
 class HostAdapterTest(unittest.TestCase):
+    def test_observed_model_uses_host_metadata_not_agent_envelope(self) -> None:
+        self.assertEqual(adapter.observed_execution_identity("claude-code", json.dumps({
+            "modelUsage": {"actual-model": {"inputTokens": 10}},
+            "result": "agent says another model"})), {"model": "actual-model"})
+        for value in ({"model": "requested-only"}, {"modelUsage": {}},
+                      {"modelUsage": {"a": {}, "b": {}}}):
+            self.assertIsNone(adapter.observed_execution_identity("claude-code", json.dumps(value)))
+        stream = json.dumps({"type": "session_meta", "payload": {
+            "model": "actual-model", "reasoning_effort": "high"}})
+        self.assertEqual(adapter.observed_execution_identity("codex", stream),
+                         {"model": "actual-model", "config": {"reasoning_effort": "high"}})
+        self.assertIsNone(adapter.observed_execution_identity("codex", json.dumps({
+            "type": "item.completed", "item": {"text": '{"model":"claimed"}'}})))
+
+    def test_missing_and_invalid_tokens_are_not_zero(self) -> None:
+        self.assertIsNone(adapter.claude_text('{"usage":{}}')[1])
+        self.assertIsNone(adapter.claude_text('{"usage":{"input_tokens":10}}')[1])
+        self.assertEqual(adapter.claude_text('{"usage":{"input_tokens":10,"output_tokens":2,"cache_read_input_tokens":3}}')[1], 15)
+        for value in (-1, True, float("nan"), float("inf"), "10"):
+            with self.subTest(value=value), self.assertRaises(RuntimeError):
+                adapter.claude_text(json.dumps({"usage": {"input_tokens": value, "output_tokens": 1}}))
+
     def test_extracts_marker_delimited_payload(self) -> None:
         payload = {
             "output": "done",

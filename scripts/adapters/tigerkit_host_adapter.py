@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import getpass
 import json
+import math
 import os
 import re
 import shutil
@@ -259,9 +260,11 @@ def codex_text(stdout: str) -> tuple[str, float | None]:
                     messages.append(text)
         usage = event.get("usage")
         if isinstance(usage, dict):
-            value = usage.get("total_tokens")
-            if isinstance(value, (int, float)) and not isinstance(value, bool):
-                tokens = float(value)
+            if "total_tokens" in usage:
+                tokens = token_count(usage.get("total_tokens"))
+            else:
+                parts = [token_count(usage.get(key)) for key in ("input_tokens", "output_tokens")]
+                tokens = sum(parts) if all(part is not None for part in parts) else None
     return "\n".join(messages) if messages else stdout, tokens
 
 
@@ -276,14 +279,52 @@ def claude_text(stdout: str) -> tuple[str, float | None]:
     usage = value.get("usage")
     tokens: float | None = None
     if isinstance(usage, dict):
-        input_tokens = usage.get("input_tokens", 0)
-        output_tokens = usage.get("output_tokens", 0)
-        if all(
-            isinstance(item, (int, float)) and not isinstance(item, bool)
-            for item in (input_tokens, output_tokens)
-        ):
-            tokens = float(input_tokens) + float(output_tokens)
+        parts = [token_count(usage.get(key)) for key in ("input_tokens", "output_tokens")]
+        parts += [token_count(usage.get(key, 0)) for key in ("cache_creation_input_tokens", "cache_read_input_tokens")]
+        if all(part is not None for part in parts):
+            tokens = token_count(sum(parts))
     return result if isinstance(result, str) else stdout, tokens
+
+
+def token_count(value: object) -> float | None:
+    if value is None:
+        return None
+    try:
+        valid = isinstance(value, (int, float)) and not isinstance(value, bool) and value >= 0 and math.isfinite(value)
+    except OverflowError:
+        valid = False
+    if not valid:
+        raise RuntimeError("host token measurement must be finite and non-negative")
+    return float(value)
+
+
+def observed_execution_identity(host: str, stdout: str) -> dict[str, object] | None:
+    """Read host metadata only; never trust the agent envelope or requested settings."""
+    try:
+        if host == "claude-code":
+            value = json.loads(stdout)
+            usage = value.get("modelUsage") if isinstance(value, dict) else None
+            if isinstance(usage, dict) and len(usage) == 1:
+                model = next(iter(usage))
+                if isinstance(model, str) and model.strip():
+                    return {"model": model}
+        elif host == "codex":
+            identities = []
+            for line in stdout.splitlines():
+                event = json.loads(line)
+                if isinstance(event, dict) and event.get("type") in {"session_meta", "session.started"}:
+                    data = event.get("payload", event)
+                    if isinstance(data, dict) and isinstance(data.get("model"), str) and data["model"].strip():
+                        identity = {"model": data["model"]}
+                        config = {key: data[key] for key in ("reasoning_effort", "mode", "temperature") if key in data}
+                        if config:
+                            identity["config"] = config
+                        identities.append(identity)
+            if identities and all(item == identities[0] for item in identities):
+                return identities[0]
+    except (json.JSONDecodeError, TypeError):
+        pass
+    return None
 
 
 def extract_payload(text: str) -> dict[str, object]:
@@ -390,6 +431,15 @@ def main() -> int:
     payload = extract_payload(text)
     payload["duration_ms"] = duration_ms
     payload["total_tokens"] = total_tokens
+    payload["execution_identity"] = observed_execution_identity(host, stdout)
+    payload["cost_usd"] = None
+    if host == "claude-code":
+        try:
+            metadata = json.loads(stdout)
+            if isinstance(metadata, dict):
+                payload["cost_usd"] = metadata.get("total_cost_usd")
+        except json.JSONDecodeError:
+            pass
     if watch_paths:
         payload["file_access"] = file_access
     print(json.dumps(payload, ensure_ascii=False))

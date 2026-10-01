@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import math
 import os
 import shlex
 import shutil
@@ -71,21 +73,18 @@ def validate_adapter_result(
     if not isinstance(result.get("output"), str):
         errors.append("adapter result requires string output")
     metric_fields = (
-        ("total_tokens", "duration_ms", "tool_uses", "nested_calls")
+        ("total_tokens", "duration_ms", "tool_uses", "nested_calls", "cost_usd")
         if diagnostic
-        else ("total_tokens", "duration_ms")
+        else ("total_tokens", "duration_ms", "cost_usd")
     )
     for field in metric_fields:
         value = result.get(field)
-        invalid = (
-            isinstance(value, bool)
-            or not isinstance(value, (int, float))
-            or value < 0
-            if diagnostic
-            else not isinstance(value, (int, float))
-        )
+        invalid = not valid_measurement(value)
         if value is not None and invalid:
-            errors.append(f"adapter result {field} must be numeric or null")
+            errors.append(f"adapter result {field} must be finite non-negative numeric or null")
+    identity = result.get("execution_identity")
+    if identity is not None and not valid_execution_identity(identity):
+        errors.append("adapter result execution_identity requires an observed model and narrow config")
     terminal_status = result.get("terminal_status")
     if terminal_status not in TERMINAL_STATUSES:
         errors.append(
@@ -160,12 +159,82 @@ def validate_adapter_result(
     return errors
 
 
+def valid_measurement(value: object) -> bool:
+    try:
+        return (isinstance(value, (int, float)) and not isinstance(value, bool)
+                and value >= 0 and math.isfinite(value))
+    except OverflowError:
+        return False
+
+
+def valid_execution_identity(value: object) -> bool:
+    if not isinstance(value, dict) or set(value) - {"model", "config"}:
+        return False
+    model = value.get("model")
+    if not isinstance(model, str) or not model.strip() or model.strip().lower() in {"unknown", "unavailable"}:
+        return False
+    config = value.get("config", {})
+    return (isinstance(config, dict)
+            and not set(config) - {"reasoning_effort", "mode", "temperature"}
+            and all(isinstance(item, (str, bool)) or valid_measurement(item)
+                    for item in config.values()))
+
+
+def execution_record(result: Mapping[str, object], prompt: str) -> dict[str, object]:
+    return {"execution_identity": result.get("execution_identity"),
+            "prompt_sha256": hashlib.sha256(prompt.encode()).hexdigest()}
+
+
+def execution_runs(records: list[dict[str, object]]) -> list[dict[str, object]]:
+    return [{key: row.get(key) for key in
+             ("case", "host", "run", "prompt_sha256", "execution_identity")}
+            for row in records]
+
+
+def comparison_errors(baseline: Mapping[str, object], candidate: Mapping[str, object]) -> list[str]:
+    """Observe comparability; an adapter command or requested model is never proof."""
+    maps = []
+    for summary in (baseline, candidate):
+        rows = summary.get("execution_runs")
+        if not isinstance(rows, list) or not rows:
+            return ["execution identity evidence is unavailable"]
+        indexed = {}
+        for row in rows:
+            if not isinstance(row, dict):
+                return ["invalid execution record"]
+            key = (row.get("host"), row.get("case"), row.get("run"))
+            if (not all(isinstance(item, str) and item.strip() for item in key[:2])
+                    or type(key[2]) is not int or key[2] < 1 or key in indexed):
+                return ["invalid or duplicate case/trial identity"]
+            indexed[key] = row
+        maps.append(indexed)
+    if maps[0].keys() != maps[1].keys():
+        return ["host/case/trial set mismatch; aggregate comparison unavailable"]
+    errors = []
+    for key, before in maps[0].items():
+        after = maps[1][key]
+        prompt = before.get("prompt_sha256")
+        if not isinstance(prompt, str) or len(prompt) != 64 or prompt != after.get("prompt_sha256"):
+            errors.append("prompt identity missing or mismatched")
+        left, right = before.get("execution_identity"), after.get("execution_identity")
+        if not valid_execution_identity(left) or not valid_execution_identity(right):
+            errors.append("actual model identity unavailable; individual runs are profile evidence only")
+        elif left["model"] != right["model"] or left.get("config", {}) != right.get("config", {}):
+            errors.append("actual model/config identity mismatch")
+    return sorted(set(errors))
+
+
 def build_verdict(
     baseline: dict[str, object],
     candidate: dict[str, object],
     *,
     resource_regression_reason: str | None = None,
 ) -> dict[str, object]:
+    identity_errors = comparison_errors(baseline, candidate)
+    if identity_errors:
+        failures = ["candidate has safety assertion failures"] if int(candidate.get("safety_failures", 0)) > 0 else []
+        return {"status": "Fail" if failures else "Unverifiable", "reasons": failures, "unverifiable": identity_errors,
+                "resource_regression_reason": resource_regression_reason}
     reasons: list[str] = []
     unverifiable: list[str] = []
     if int(candidate.get("safety_failures", 0)) > 0:
@@ -1508,12 +1577,12 @@ def _diagnostic_resource_metrics(
             sum(float(value) for value in values if isinstance(value, (int, float)))
             if values
             and all(
-                not isinstance(value, bool) and isinstance(value, (int, float))
+                valid_measurement(value)
                 for value in values
             )
             else None
         )
-    return result
+    return {key: value if valid_measurement(value) else None for key, value in result.items()}
 
 
 def summarize_diagnostic_records(
@@ -1649,6 +1718,7 @@ def summarize_diagnostic_records(
         "holdout_failures": sorted(holdout_failures),
         "discretionary_fill_ins": fill_in_count,
         "resource_metrics": _diagnostic_resource_metrics(records),
+        "execution_runs": execution_runs(records),
     }
 
 
@@ -1728,6 +1798,7 @@ def evaluate_diagnostic_checkout(
             records.append(
                 {
                     "case": case_id,
+                    **execution_record(result, compose_diagnostic_prompt(str(case["prompt"]), suffix)),
                     "host": host,
                     "scenario_role": role,
                     "run": run_number,
@@ -1764,6 +1835,19 @@ def compare_diagnostics(
     *,
     resource_regression_reason: str | None = None,
 ) -> dict[str, object]:
+    identity_errors = comparison_errors(baseline, candidate)
+    if identity_errors:
+        failures = []
+        if candidate.get("safety_failures"):
+            failures.append("candidate has diagnostic safety assertion failures")
+        if candidate.get("holdout_failures"):
+            failures.append("candidate has diagnostic holdout assertion failures")
+        return {"status": "Fail" if failures else "Unverifiable", "reasons": failures, "concerns": [],
+                "unverifiable": identity_errors, "new_unclear_points": [],
+                "repeated_unclear_points": [], "phase_regressions": [], "retry_regressions": [],
+                "resource_metrics": candidate.get("resource_metrics", {}),
+                "resource_comparison_status": "Unverifiable", "unavailable_resource_metrics": [],
+                "approved_resource_increases": [], "resource_regression_reason": resource_regression_reason}
     baseline_points = _diagnostic_point_map(baseline)
     candidate_points = _diagnostic_point_map(candidate)
     new_points = [
@@ -1977,6 +2061,7 @@ def evaluate_checkout(
     routing_passed = 0
     safety_failures = 0
     tokens_available = True
+    duration_available = True
     total_tokens = 0.0
     total_duration = 0.0
     trigger_outcomes: dict[tuple[str, str, str], dict[str, object]] = {}
@@ -2006,7 +2091,10 @@ def evaluate_checkout(
                 trigger_outcome["values"].append(result["skill_loaded"])  # type: ignore[union-attr]
                 trigger_total += 1
                 trigger_passed += int(passed)
-                total_duration += float(result["duration_ms"])
+                if result.get("duration_ms") is None:
+                    duration_available = False
+                else:
+                    total_duration += float(result["duration_ms"])
                 if result.get("total_tokens") is None:
                     tokens_available = False
                 else:
@@ -2014,6 +2102,7 @@ def evaluate_checkout(
                 records.append(
                     {
                         "case": case_id,
+                        **execution_record(result, str(query["query"])),
                         "host": host,
                         "kind": kind,
                         "split": query["split"],
@@ -2024,6 +2113,7 @@ def evaluate_checkout(
                         "evidence": f"adapter skill_loaded={result['skill_loaded']!r}",
                         "duration_ms": result["duration_ms"],
                         "total_tokens": result.get("total_tokens"),
+                        "cost_usd": result.get("cost_usd"),
                     }
                 )
         for case in behavior:
@@ -2057,7 +2147,10 @@ def evaluate_checkout(
                 behavior_passed += int(passed)
                 if case.get("safety") is True and not passed:
                     safety_failures += 1
-                total_duration += float(result["duration_ms"])
+                if result.get("duration_ms") is None:
+                    duration_available = False
+                else:
+                    total_duration += float(result["duration_ms"])
                 if result.get("total_tokens") is None:
                     tokens_available = False
                 else:
@@ -2065,6 +2158,7 @@ def evaluate_checkout(
                 records.append(
                     {
                         "case": case_id,
+                        **execution_record(result, str(case["prompt"])),
                         "host": host,
                         "run": run_number,
                         "passed": passed,
@@ -2074,6 +2168,7 @@ def evaluate_checkout(
                         "events": result.get("events"),
                         "duration_ms": result["duration_ms"],
                         "total_tokens": result.get("total_tokens"),
+                        "cost_usd": result.get("cost_usd"),
                     }
                 )
     if catalog_contract is not None:
@@ -2108,7 +2203,10 @@ def evaluate_checkout(
                 routing_passed += int(passed)
                 if case.get("critical") is True and not passed:
                     safety_failures += 1
-                total_duration += float(result["duration_ms"])
+                if result.get("duration_ms") is None:
+                    duration_available = False
+                else:
+                    total_duration += float(result["duration_ms"])
                 if result.get("total_tokens") is None:
                     tokens_available = False
                 else:
@@ -2116,6 +2214,7 @@ def evaluate_checkout(
                 records.append(
                     {
                         "case": case_id,
+                        **execution_record(result, str(case["prompt"])),
                         "host": host,
                         "kind": "catalog-routing",
                         "run": run_number,
@@ -2130,6 +2229,7 @@ def evaluate_checkout(
                         ),
                         "duration_ms": result["duration_ms"],
                         "total_tokens": result.get("total_tokens"),
+                        "cost_usd": result.get("cost_usd"),
                     }
                 )
     trigger_metrics, trigger_case_metrics = summarize_trigger_outcomes(trigger_outcomes)
@@ -2143,8 +2243,9 @@ def evaluate_checkout(
         "trigger_runs": trigger_total,
         "behavior_runs": behavior_total,
         "routing_runs": routing_total,
-        "duration_ms": total_duration,
-        "total_tokens": total_tokens if tokens_available else None,
+        "duration_ms": total_duration if duration_available and valid_measurement(total_duration) else None,
+        "total_tokens": total_tokens if tokens_available and valid_measurement(total_tokens) else None,
+        "execution_runs": execution_runs(records),
         "token_metric_status": "verified" if tokens_available else "Unverifiable",
     }
     return summary, records
