@@ -464,10 +464,13 @@
     "tk-research:behavior:research-primary-source-resolution",
     "tk-research:behavior:research-live-source-faithfulness",
     "tk-autoresearch:behavior:autoresearch-short-goal-does-not-require-policy-prompt",
-    "tk-autoresearch:behavior:autoresearch-defers-mutation-authority-until-needed",
     "tk-autoresearch:behavior:autoresearch-resume-restores-frontier",
     "tk-autoresearch:behavior:autoresearch-resume-missing-state-does-not-guess",
-    "tk-autoresearch:behavior:autoresearch-invocation-authorizes-state-not-experiment"
+    "tk-autoresearch:behavior:autoresearch-uses-local-research-authority-without-checkpoint",
+    "tk-autoresearch:behavior:autoresearch-invocation-authorizes-local-research-not-remote",
+    "tk-autoresearch:behavior:autoresearch-auto-isolates-research-worktree",
+    "tk-autoresearch:behavior:autoresearch-resume-reestablishes-local-authority",
+    "tk-autoresearch:behavior:autoresearch-multiple-resume-states-asks-once"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",
