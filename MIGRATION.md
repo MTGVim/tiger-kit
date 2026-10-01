@@ -22,7 +22,7 @@ npx skills list --global
 npx skills remove tk-discover --global --agent claude-code codex hermes-agent
 ```
 
-기존 `.tigerkit/discover.md`를 자동 이관하거나 권한 원장으로 사용하지 않습니다. 필요한 연구라면 현재 목표와 저장소/worktree를 다시 확인한 뒤 `.tigerkit/autoresearch/state.md`로 새 상태를 만듭니다.
+기존 `.tigerkit/discover.md`를 자동 이관하거나 권한 원장으로 사용하지 않습니다. 필요한 연구라면 현재 목표와 저장소와 작업 트리를 다시 확인한 뒤 `.tigerkit/autoresearch/state.md`로 새 상태를 만듭니다.
 
 ## 설치 갱신
 
