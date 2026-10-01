@@ -1,0 +1,50 @@
+name: temporary-autoresearch-local-authority-gate
+on:
+  push:
+    branches:
+      - verify/autoresearch-local-authority
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+        with:
+          ref: 2c80c252403f4ee940e0b31a21b04ba4017bb310
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Python validation dependency
+        run: python3 -m pip install --disable-pip-version-check PyYAML
+      - name: Shared execution protocol
+        run: python3 scripts/sync_execution_protocol.py --check
+      - name: Validate skills
+        run: python3 scripts/validate_skills.py
+      - name: Validate links
+        run: python3 scripts/validate_skills.py --links-only
+      - name: Unit tests
+        run: python3 -B -m unittest discover -s scripts -p 'test_*.py'
+      - name: Audit catalog
+        run: python3 scripts/audit_catalog.py --check
+      - name: Check docs
+        run: python3 scripts/check_docs.py
+      - name: Check PR sweep syntax
+        run: node --check skills/tk-pr-sweep/scripts/triage.mjs
+      - name: Test PR sweep
+        run: node --test skills/tk-pr-sweep/scripts/triage.test.mjs
+      - name: Skills catalog pinned
+        run: npx --yes skills@1.5.9 add . --list
+      - name: Skills catalog latest
+        run: npx --yes skills add . --list
+      - name: Diff check
+        run: git diff --check
+      - name: Release gate
+        run: python3 scripts/run_seed_release_gate.py --baseline 357207d0326535e69fe7efb641d1feabdbfeb648 --candidate HEAD
