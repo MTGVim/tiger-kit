@@ -78,30 +78,36 @@ When no safer temporary secret-input channel exists, first prove that
 `git check-ignore -q -- .tigerkit/` succeeds. Accept Git's effective ignore decision
 whether it comes from a per-directory `.gitignore`, `.git/info/exclude`, or the configured
 user-level excludes file. Then create
-`.tigerkit/secret-input/tk-browser-verify-<run-id>/token` with directory mode `0700` and
-file mode `0600`. Leave the file empty, then give the user both the repository-relative
-and absolute paths plus a host-appropriate clipboard-to-file command that does not place
-the secret in command arguments or shell history. Do not launch an editor, file opener,
+`.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json` with directory mode `0700` and
+file mode `0600`. Apply the user-editable input branch in [artifact paths](artifact-paths.md):
+seed a plain JSON object such as `{"token": ""}`, using only the exact required fields.
+Give the user both the repository-relative and absolute paths, the secret-free template,
+and instructions to fill and save it. A clipboard command must JSON-serialize into the
+named field, preserve other fields and keep secrets out of arguments/history.
+Do not launch an editor, file opener,
 GUI, terminal UI, or focus-changing application merely to collect the secret. Open it
 only after the path is shown and the user explicitly asks. Never ask for or accept the
 value in chat. Use the owning SKILL.md Artifact Paths setup when ignore coverage is missing.
 If the path remains unignored, unwritable, or inaccessible, use no external scratch path;
 return `Unverifiable`.
 
-After showing the paths, start a bounded watcher or poll for non-empty file state without
-reading, echoing, or reporting the content, size, or modification time. Do not ask the user
-to send a completion message. When the file becomes non-empty, recheck ownership and mode
-`0600`, then continue directly to the approved injection. Renew an expired wait window
+After showing the paths, start bounded metadata-change polling without reporting content,
+size or modification time. The initial JSON is non-empty and must remain `Pending`.
+On change, use a trusted local reader to validate JSON and all required fields without
+returning values or parser excerpts; malformed, blank or partial input remains `Pending`.
+Recheck safe path, ownership and mode `0600`, then validate and consume the same current
+snapshot and continue directly to the approved injection. Do not ask for a completion
+message. Renew an expired wait window
 while the task remains active. Only when the runtime can no longer wait, leave the
 run-owned input path in place and report how monitoring can resume; never treat a timeout
 as proof that no value will be supplied.
 
 After the target hostname and port are final, a no-log one-shot server bound only to
-loopback may read the file and return `Access-Control-Allow-Origin: *`. Fetch it inside
+loopback may extract only the validated credential field and return `Access-Control-Allow-Origin: *`. Fetch it inside
 the page and apply only the repository/application-supported cookie, header, or storage
-bootstrap. Return only injection success and value length, never the value.
+bootstrap. Return only injection success, never the value or the JSON wrapper.
 
-Stop the loopback server and delete the token file and its run directory immediately
+Stop the loopback server and delete the JSON input file and its run directory immediately
 after injection, then verify all are absent. Perform the same cleanup after failure,
 interruption, or exception. Cookie scope follows hostname rather than port: if the hostname
 changes, establish the approved state again. For OAuth plus OTP or any other interactive

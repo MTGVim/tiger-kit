@@ -29,7 +29,7 @@ inspection fails, required browser evidence is `Unverifiable`.
 
 Immediately after file-mediated authentication injection, stop the exact run-owned
 loopback secret server, delete the mode-`0600`
-`.tigerkit/secret-input/tk-browser-verify-<run-id>/token` file and its mode-`0700` run
+`.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json` file and its mode-`0700` run
 directory, and verify that none remains. Apply this cleanup on success, failure,
 interruption, and exception. Do not defer secret cleanup until browser-session cleanup.
 

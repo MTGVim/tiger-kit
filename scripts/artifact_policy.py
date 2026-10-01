@@ -24,6 +24,27 @@ LEARN_ARTIFACT_BLOCK = ARTIFACT_BLOCK.replace(
     "Default repository-owned output to `.tigerkit/`; honor explicit final destinations.",
     "Default the single transient learn proposal to the host scratchpad or a run-owned OS temporary directory, with safe-path and readback checks. This exception needs no repository ignore setup. Durable repository-owned output still uses `.tigerkit/`; honor explicit destinations.",
 )
+USER_INPUT_REFERENCE = '''
+## User-editable temporary input
+
+Apply this branch only when the task requires the user to supply values through a newly created temporary file. Use a UTF-8 `input.json` containing a pretty-printed plain JSON object with double-quoted, task-specific keys; initialize missing text values to `""` and prefill only confirmed non-secret defaults. Include only fields needed for the pending step. For a single token, create:
+
+```json
+{
+  "token": ""
+}
+```
+
+Use the same object shape for one or several fields. Keep field meanings, required types and editing instructions outside the file; do not use JSON-LD, comments, trailing commas, instructional placeholder values or a zero-byte/raw-text file. This rule does not convert existing user files, final documents, code/config files, machine transport, or conversational questions into JSON and grants no new write authority.
+
+Put ordinary input in `.tigerkit/tmp/<skill>/<run-id>/input.json`. If any field is secret, keep the entire object in `.tigerkit/secret-input/<skill>-<run-id>/input.json` with directory `0700` and file `0600`. Apply the exclusion, nonsymlink and ownership checks above; create exclusively and never overwrite an unrelated existing file. Require a regular file with one hard link, inside the safe run-owned directory. Reuse an existing run-owned pending file without resetting entered values. Never prefill secrets or expose their contents in chat, commands, logs, receipts or parser errors.
+
+Show both repository-relative and absolute paths, the secret-free initial template, and which fields the user must fill and save. Offer a host-appropriate clipboard-to-field command only when useful; it must JSON-serialize the clipboard value into the named field while preserving other fields, never overwrite the object with raw clipboard text or place values in arguments/history. Do not automatically launch an editor, opener, GUI, terminal UI or change focus. Open the shown path only on explicit user request.
+
+Record the initial file metadata privately, then use bounded metadata-change polling. File existence, non-zero size or modification alone is not completion: the seeded template is already non-empty. After a change, a trusted local reader may parse without returning contents, validate the exact requested keys/types and nonblank required text fields, and report only `Pending | Ready | Unsafe`. Reject duplicate or unexpected keys. An unchanged template, missing/blank field, malformed or partly saved JSON stays `Pending`; preserve the user's bytes and wait for the next change. Explain only the missing field name or syntax requirement, never raw values or parser excerpts. Before use, recheck safe path, ownership and secret permissions and reparse the current file; validate and consume the same snapshot. Unsafe replacement stops the file branch as `Blocked | Unverifiable`.
+
+When ready, resume the exact authorized pending step without a separate completion message. Renew bounded waits while the task remains active; if the host cannot wait, preserve the same run-owned path and explain resumption. On resumption, privately validate the existing run-owned file once before waiting for another change. Pass only validated fields to the approved consumer, never the JSON wrapper as a credential. Delete secret input and its run directory immediately after consumption on success, failure or exception and verify no residue; ordinary input follows its run-owned temporary lifecycle. Preserve the existing host-native hidden-input option when safer.
+'''
 ARTIFACT_REFERENCE = """# Artifact Paths
 
 Default repository-owned output to `.tigerkit/`: transient files in `tmp/<skill>/<run-id>/`, verification evidence in `evidence/<skill>/<run-id>/`, explanations in `explanations/`, and lessons in `study/<topic>/`. Preserve existing owner-specific paths and explicit user-selected final destinations. Create artifacts only when the active task calls for them. Before writing, verify the repository root, no tracked `.tigerkit` paths, and safe nonsymlink destinations. From the repository root, run `git ls-files -- .tigerkit .tigerkit/` to check tracking, then `git check-ignore -q -- .tigerkit/` to check effective exclusion. Exit 0 means leave ignore files unchanged, including when exclusion comes from `core.excludesFile` (such as configured `~/.gitignore`), the default global ignore file, or `.git/info/exclude`; a missing repository `.gitignore` or missing literal entry is not evidence of missing coverage. Only exit 1 permits creating the root `.gitignore` or appending `/.tigerkit/`, preserving existing bytes and line endings, then rerunning the same check before writing. Any other exit status or command failure blocks the file branch without an ignore edit. Use `git check-ignore -v -- .tigerkit/` only to diagnose the source; a printed negated pattern is not proof of exclusion. This narrow ignore setup is part of an authorized artifact write even for a read-only task; it grants no other source/config/index/commit/publication authority. Existing effective ignore rules need no edit. Do not untrack files or follow a symlinked/nonregular `.gitignore`; if unsafe, unwritable, still unignored, or no repository is identified, stop only the file branch as `Blocked | Unverifiable`, without an OS-temp fallback. Briefly report an ignore edit; never stage or commit it solely for setup. Atomic replacement may use a run-owned sibling temporary file on the destination filesystem; clean it after success. External tool caches and isolated test fixtures retain their tool-owned lifecycle.
@@ -111,8 +132,8 @@ def artifact_reference(name: str) -> str:
     if name == 'tk-learn':
         return ("# Transient Learn Proposal Exception\n\n"
                 "The default single transient Markdown proposal uses the host scratchpad, or a run-owned OS temporary directory when unavailable. Verify safe nonsymlink ownership, write atomically and reread before reporting. Do not edit repository ignore rules for this branch. An explicit no-file request stays in conversation. The repository checks below apply only to durable repository-owned output; a failed durable write never falls back to OS temp.\n\n"
-                + ARTIFACT_REFERENCE)
-    return ARTIFACT_REFERENCE
+                + ARTIFACT_REFERENCE + USER_INPUT_REFERENCE)
+    return ARTIFACT_REFERENCE + USER_INPUT_REFERENCE
 
 
 def sync_artifact_guards(root: Path = ROOT) -> None:

@@ -97,19 +97,26 @@ into the conversation. Do not retain even non-secret `identifier` values unless 
 
 For file-mediated input in a repository task, first prove that `git ls-files -- .tigerkit/`
 returns no tracked paths and `git check-ignore -q -- .tigerkit/` succeeds. Accept Git's
-effective per-directory, local-exclude, or user-level-exclude decision. Create an empty
-`.tigerkit/secret-input/tk-wizard-<run-id>/<credential-type>` with directory mode `0700`
-and file mode `0600`, then show both its repository-relative and absolute paths plus a
-clipboard-to-file command that does not expose the value in command arguments or shell
-history. Do not launch an editor, file opener, GUI, terminal UI, or focus-changing
+effective per-directory, local-exclude, or user-level-exclude decision. Read the user-editable
+input branch in [artifact paths](references/artifact-paths.md) before creation or consumption.
+Create `.tigerkit/secret-input/tk-wizard-<run-id>/input.json` with directory mode `0700`
+and file mode `0600`, seeded with a plain JSON object such as `{"token": ""}` or the exact
+required credential fields. Show both paths, the secret-free template, and fields to fill
+and save. A clipboard command must JSON-serialize into the named field, preserve other
+fields and expose no value in arguments or shell history.
+Do not launch an editor, file opener, GUI, terminal UI, or focus-changing
 application to collect the value. Open the file only after showing the path and receiving
 an explicit user request. If the path cannot be proven safe and accessible, use an
 available host-native hidden input or return `Blocked | Unverifiable`; do not fall back to
 an external scratch path.
 
-After showing the path, start a bounded non-content watcher or poll for non-empty state.
-Do not ask the user to report completion. When input appears, recheck ownership and mode
-`0600`, continue the exact pending step, and remove the secret input immediately after use.
+After showing the path, use bounded metadata-change polling; the non-empty initial template
+is still `Pending`. On change, a trusted local reader validates JSON and all required fields
+without returning content or parser excerpts. Blank, missing or partly saved values stay
+`Pending` without rewriting the file. Before use, recheck safe path, ownership and mode
+`0600`, validate and consume the same snapshot, then continue the exact pending step without
+a completion message. Remove the secret input and its run directory immediately after use
+on success, failure or exception, and verify no residue.
 Renew an expired wait window while the task remains active. Only when the runtime can no
 longer wait, preserve the run-owned input path and explain how to resume monitoring.
 
@@ -156,6 +163,8 @@ Create artifacts only when this skill's task authorizes them. Before any artifac
 ## Output Notation
 
 Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
+
+For an authorized user-editable temporary input file, consistently provide a plain JSON object template with the needed keys and empty strings for missing text values, rather than an empty or raw-text file. The initial template's non-zero size is not an input-completion signal. Apply the owning package's Artifact Paths input branch before creation and consumption; this notation rule grants no artifact-writing authority.
 <!-- /tigerkit:output-notation -->
 
 <!-- tigerkit:questions -->
