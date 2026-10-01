@@ -109,6 +109,10 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             expected = (self.review / name).read_bytes()
             self.assertEqual((self.prep / name).read_bytes(), expected)
             self.assertEqual((self.respond / name).read_bytes(), expected)
+        self.assertEqual(
+            (self.root / "skills/tk-autoresearch/references/evidence.md").read_bytes(),
+            (self.root / "skills/tk-research/references/evidence.md").read_bytes(),
+        )
         expected_domain = (self.prep / "domain-context.md").read_bytes()
         for target in self.domain_targets:
             self.assertEqual(target.read_bytes(), expected_domain)

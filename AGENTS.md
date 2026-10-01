@@ -120,6 +120,7 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 - `tk-ask-repo`: `read-only` `repository` `investigation`.
 - `tk-audit`: `read-only` AUD `finding`, 조건부 `policy` 구조 분석.
 - `tk-research`: 외부 `prior art`와 접근법 비교, `read-only` 조사 및 추천.
+- `tk-autoresearch`: 지속 연구의 방향·`frontier`·승인된 연구 `workspace` 실험과 수렴. 제품 적용·원격 발행 금지.
 - `tk-review`: 명시된 `exact committed range/PR/current worktree` 하나의 `read-only` `Spec/AC` + `Quality/Standards` 판정.
 - `tk-browser-verify`: `browser-visible` `runtime` `evidence`와 `dev-server` `lifecycle`.
 - `tk-app-verify`: 데스크톱 앱의 창과 입력 방식, 포커스 영향, 실행 근거 및 실행 소유 자원 정리.

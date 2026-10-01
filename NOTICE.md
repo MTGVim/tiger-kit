@@ -675,3 +675,18 @@ TigerKit 검증 결과로 사용하지 않습니다. 패키지에 원본 MIT 고
 `worktree` 소실 원인에 대한 추정을 제외합니다. 소실 사례와 기존 성공 횟수는 사용자 보고이며 이 작업에서
 회수 주체를 검증하지 않았습니다. 검증 시나리오는 `evals/skills/tk-pr-respond/evals.json`과
 `evals/skills/tk-pr-sweep/evals.json`에 추가했습니다.
+
+## #398 지속 연구와 근거 검증 증류
+
+`tk-discover`의 공개 담당자는 `tk-autoresearch`로 승격했습니다. 과거 `tk-discover`의 출처 이력은 삭제하지 않고 새 패키지 `references/sources.md`에 고정 커밋 기반 계보로 이관했습니다.
+
+`tk-autoresearch`는 다음 원본을 2026-10-01에 고정 커밋으로 비교했습니다.
+
+- `Orchestra-Research/AI-Research-SKILLs` `773a52944ba4747a18bd4ae9ade53fff041adcbc`: 세션을 넘어 유지되는 연구 결과, 내부 실험 반복과 외부 종합 반복, 정체 시 연구 방향 전환을 적용했습니다. 필수 `/loop`, `never stop`, 논문 작성 수명 주기와 실행 체계는 제외했습니다.
+- `uditgoenka/autoresearch` `050e30dc4ba0974b03f2873111b9901ec3211390`: 검증 뒤 유지 또는 폐기, 기계적으로 판정 가능한 경우의 명시적 완료 기준, 정체 감지를 연구의 반증 기준·정보 가치·수렴 경계로 적용했습니다. 배포·출시 실행 체계는 제외했습니다.
+- `Companion-Inc/feynman` `4d62d07a7e8eb1fba1b02d6547e6425e456715eb`: 범위가 제한된 실험과 의미 있는 진행·실패·검증·차단 요인을 남기는 연구 일지 원칙을 적용했습니다. 원본 실행 체계와 일반 작업 공간 체계는 제외했습니다.
+- `bryanshake/autoresearch` `0fa9a9336fc84a6b069111adb03ca21fabb5394b` (Apache-2.0): 소규모 사전 실험 뒤 확대 또는 중단, 부정 결과 보존, 독립 비판·정보를 가린 검토와 종료 판정 설계를 비교 자료로 사용했습니다. 조정 실행기, 실행 체계, 대기열 구현, 제공자 설정과 지시문·코드는 복제하지 않았습니다.
+
+`tk-research`는 `rohankgeorge/the-researcher` `1184d246c290a4ff772ea669ac6b9f9914d3f7da`에서 1차 출처 추적, 출처 접근 가능성과 주장 충실도의 분리, 모순·검증 불가·철회 결과 보존을 증류했습니다. 원본의 지속 연구 기록과 심층 조사 플랫폼 분기 체계는 가져오지 않았습니다.
+
+각 적용·비적용 판단, 검토한 파일, 검증 한계와 반영 위치는 각 패키지 `references/sources.md`가 정본입니다. 원본 라이선스는 해당 `UPSTREAM-LICENSES.txt`에 보존합니다. 원본 시연·평가의 성능을 TigerKit에서 재현했다고 주장하지 않습니다.

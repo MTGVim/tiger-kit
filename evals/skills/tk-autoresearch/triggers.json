@@ -1,11 +1,11 @@
 {
-  "skill": "tk-discover",
+  "skill": "tk-autoresearch",
   "kind": "user-invoked",
   "queries": [
     {
       "id": "train-explicit",
       "split": "train",
-      "query": "$tk-discover 조사하면서 새 질문을 찾고 연구 마일스톤을 계속 갱신해줘.",
+      "query": "$tk-autoresearch 조사하면서 새 질문과 가설을 찾고, 근거와 실험 결과에 따라 연구 방향을 계속 갱신해줘.",
       "should_trigger": true
     },
     {
@@ -17,19 +17,19 @@
     {
       "id": "validation-context",
       "split": "validation",
-      "query": "$tk-discover 무엇을 먼저 알아야 할지 모르는 연구 목적을 결정과 근거 수집 단계로 구체화해줘.",
+      "query": "$tk-autoresearch 무엇을 먼저 알아야 할지 모르는 연구 목적을 결정과 근거 수집 단계로 구체화해줘.",
       "should_trigger": true
     },
     {
       "id": "validation-emerging",
       "split": "validation",
-      "query": "/tk-discover 조사 결과로 새 질문이 나타나는 탐색을 이어가자.",
+      "query": "/tk-autoresearch 조사 결과로 새 질문이 나타나는 탐색을 이어가자.",
       "should_trigger": true
     },
     {
       "id": "validation-empty",
       "split": "validation",
-      "query": "$tk-discover",
+      "query": "$tk-autoresearch",
       "should_trigger": true
     },
     {

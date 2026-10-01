@@ -20,7 +20,7 @@ Use recovered project/session context only when repository/task identity matches
 
 Select automatically only for a clear external prior-art, industry-practice, literature/OSS-case,
 or solution-comparison request. A continuing initiative with newly emerging questions belongs to
-`tk-discover`; agreed-direction milestones belong to `tk-roadmap`. Repository behavior belongs to `tk-ask-repo`, repository defects to
+`tk-autoresearch`; agreed-direction milestones belong to `tk-roadmap`. Repository behavior belongs to `tk-ask-repo`, repository defects to
 `tk-audit`, questioning a plan to `tk-grill`, and implementation preparation to `tk-prep`.
 Do not dispatch those owners merely because this report names them.
 
@@ -37,7 +37,7 @@ Do not dispatch those owners merely because this report names them.
 
 Lead with the recommendation and confidence, then explain the reframed problem, baseline and alternatives,
 which lessons transfer from the deeply read cases, decisive trade-offs, counter-evidence and unknowns.
-Cite source links beside claims, including relevant revision/date. If evidence cannot decide, say so and
+Cite source links beside claims, including relevant revision/date. A reachable source is not enough: verify that material cited content actually supports the claim, and resolve decision-relevant secondary claims toward an accessible primary source when practical. If evidence cannot decide, say so and
 name the smallest experiment or missing input that would decide; do not force a winner or substitute a link dump.
 Make the result self-contained enough to become `tk-prep` input without granting implementation authority.
 
@@ -48,6 +48,8 @@ write a standalone report to `.tigerkit/research/<topic>.md` by default, or the 
 That report is the sole artifact exception, not permission to modify product or repository instructions.
 When required evidence is unavailable, preserve verified partial findings and report `Unverifiable` for the affected
 conclusion. Never send private code, logs, secrets or identifying project details to external search; generalize queries.
+
+For maintenance provenance and source-verification donors, see [sources](references/sources.md).
 
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths

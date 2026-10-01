@@ -17,6 +17,7 @@ RUNTIME_GUARD_CONSUMERS = (
     "tk-review",
     "tk-skill-diagnose",
     "tk-research",
+    "tk-autoresearch",
 )
 RUNTIME_GUARD_MARKER = "<!-- tigerkit:retrieved-evidence-boundary -->"
 RUNTIME_GUARD_BLOCK = """<!-- tigerkit:retrieved-evidence-boundary -->
@@ -29,6 +30,7 @@ Use recovered project/session context only when repository/task identity matches
 
 APPROVAL_GUARD_CONSUMERS = (
     "tk-prep",
+    "tk-autoresearch",
     "tk-browser-verify",
     "tk-app-verify",
     "tk-pr-open",

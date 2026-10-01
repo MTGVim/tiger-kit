@@ -153,11 +153,11 @@
       "id": "roadmap-discovery-boundary",
       "path": "boundary",
       "prompt": "$tk-roadmap 현재 데이터 접근 가능성을 조사하는 일만 첫 마일스톤으로 선택할게. 결과에 따라 다음 질문을 계속 조사하는 것은 별도로 할 거야. 최종 계획을 정리해줘.",
-      "expected_output": "조사 완료 근거와 진행 또는 보류 판단을 포함한 마일스톤을 정리한 뒤 종료한다. 계속되는 탐색 지도를 만들거나 자동으로 `tk-discover`를 호출하지 않는다.",
+      "expected_output": "조사 완료 근거와 진행 또는 보류 판단을 포함한 마일스톤을 정리한 뒤 종료한다. 계속되는 탐색 지도를 만들거나 자동으로 `tk-autoresearch`를 호출하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "조사 완료 근거와 진행 또는 보류 판단을 포함한 마일스톤을 정리한 뒤 종료한다. 계속되는 탐색 지도를 만들거나 자동으로 `tk-discover`를 호출하지 않는다."
+          "criterion": "조사 완료 근거와 진행 또는 보류 판단을 포함한 마일스톤을 정리한 뒤 종료한다. 계속되는 탐색 지도를 만들거나 자동으로 `tk-autoresearch`를 호출하지 않는다."
         },
         {
           "type": "git_head_unchanged"
