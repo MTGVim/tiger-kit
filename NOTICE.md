@@ -654,3 +654,18 @@ TigerKit 검증 결과로 사용하지 않습니다. 패키지에 원본 MIT 고
 `keep`, 구체적인 복구 가능성과 영향 범위 설명은 `adapt`, 필수 `Merge Danger` 템플릿과 장식적인
 라벨은 `omit`입니다. 기존 템플릿에 내용을 반영하고 템플릿이 없을 때에만 유용한 설명을 추가합니다.
 원본 MIT 고지는 설치 패키지의 `skills/tk-pr-open/LICENSE.txt`에 포함했습니다.
+
+## #398 지속 연구와 근거 검증 증류
+
+`tk-discover`의 공개 owner는 `tk-autoresearch`로 승격했습니다. 과거 `tk-discover` provenance는 삭제하지 않고 새 패키지 `references/sources.md`에 revision-bound 계보로 이관했습니다.
+
+`tk-autoresearch`는 다음 원본을 2026-10-01에 고정 revision으로 비교했습니다.
+
+- `Orchestra-Research/AI-Research-SKILLs` `773a52944ba4747a18bd4ae9ade53fff041adcbc`: persistent findings, inner experiment/outer synthesis, stalled research pivot을 adapt했습니다. mandatory `/loop`, `never stop`, paper lifecycle과 runtime orchestration은 omit했습니다.
+- `uditgoenka/autoresearch` `050e30dc4ba0974b03f2873111b9901ec3211390`: verify 후 keep/discard, mechanical predicate가 가능한 경우의 명시적 완료 기준, plateau 개념을 연구의 falsifier·정보 가치·수렴 경계로 adapt했습니다. ship/deploy orchestration은 omit했습니다.
+- `Companion-Inc/feynman` `4d62d07a7e8eb1fba1b02d6547e6425e456715eb`: bounded experiment와 의미 있는 진행·실패·검증·blocker를 남기는 lab-notebook 원칙을 adapt했습니다. Feynman runtime과 일반 workspace 체계는 omit했습니다.
+- `bryanshake/autoresearch` `0fa9a9336fc84a6b069111adb03ca21fabb5394b` (Apache-2.0): pilot→scale/stop, negative-result 보존, critic/blind-review와 closure 설계를 비교 자료로 사용했습니다. coordinator/runtime, queue 구현, provider 설정과 prompt/code는 복제하지 않았습니다.
+
+`tk-research`는 `rohankgeorge/the-researcher` `1184d246c290a4ff772ea669ac6b9f9914d3f7da`에서 primary-source resolution, source liveness와 claim faithfulness의 분리, contradiction/unverifiable/retraction 보존을 증류했습니다. 원본의 persistent research-log와 deep-research platform routing은 가져오지 않았습니다.
+
+각 적용·비적용 판단, inspected file, 검증 한계와 destination은 각 패키지 `references/sources.md`가 정본입니다. 원본 라이선스는 해당 `UPSTREAM-LICENSES.txt`에 보존합니다. 원본 demo/eval의 성능을 TigerKit에서 재현했다고 주장하지 않습니다.
