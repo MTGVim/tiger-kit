@@ -484,7 +484,15 @@
     "tk-autoresearch:behavior:autoresearch-tracked-knowledge-redacts-sensitive-evidence",
     "tk-autoresearch:behavior:autoresearch-detects-concurrent-checkpoint-drift",
     "tk-autoresearch:behavior:autoresearch-tracked-root-owner-collision",
-    "tk-autoresearch:behavior:autoresearch-resume-uses-hot-index-not-full-journal"
+    "tk-autoresearch:behavior:autoresearch-resume-uses-hot-index-not-full-journal",
+    "tk-review:behavior:review-reuses-exact-target-evidence",
+    "tk-review:behavior:review-missing-evidence-does-not-license-heavy-rerun",
+    "tk-review:behavior:review-focused-checks-use-controller-reservation",
+    "tk-review:behavior:review-waiting-inspects-and-cleans-owned-stall",
+    "tk-review:behavior:review-idle-cpu-is-not-stall-proof",
+    "tk-review:behavior:review-uninspectable-wait-is-unverifiable",
+    "tk-prep:behavior:prep-review-focused-checks-use-controller-reservation",
+    "tk-pr-respond:behavior:pr-respond-review-missing-evidence-does-not-license-heavy-rerun"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",

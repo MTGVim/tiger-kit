@@ -35,7 +35,9 @@ a permission registry, durable environment ledger, or re-dispatch ceremony.
 
 Bind every seat to the same exact repository/range or worktree fingerprint, original task or
 incident when one exists, expected scenario, approved decisions and AC, repository rules,
-exact diff, and relevant test/runtime/browser evidence.
+exact diff, and already-collected test/build/runtime/browser evidence for that exact
+target, including command, output, and exit state. Read that evidence before considering
+a rerun; stale or missing evidence is a gap, not a passing claim.
 
 For implementation-owning flows, add a post-implementation retro that states the behavior
 actually changed, Seed deviations and reasons, newly discovered risks, verification
@@ -48,6 +50,24 @@ Each discovery seat first receives and inspects the original evidence and exact 
 retro. After the seat records its blind observations, the controller resumes that same read-only
 leaf with the retro so it can confirm or falsify the material claims. Do not place the retro in the
 initial discovery payload or use implementer rationale or claimed test success as proof.
+
+Keep context-isolated seats parallel, but serialize shared heavyweight execution through
+the controller. Discovery seats and finding verifiers must not start full-suite tests,
+builds, dev servers, or other shared heavyweight processes in the same workspace.
+A narrowly focused check may resolve one specific unanswered question only after the
+controller reserves execution for that leaf and confirms no other seat or controller
+check/heavyweight process overlaps; release that reservation after exit/cleanup. Generic
+permission to run tests does not waive this boundary. When needed evidence is unavailable
+or a check cannot safely run, request it from the controller or retain `Unverifiable`;
+the controller collects necessary broader evidence serially within existing authority.
+
+When a leaf reports waiting on a long-running process, inspect its actual process/session,
+elapsed time, CPU and output progress before relaying the status or waiting again.
+CPU inactivity alone does not prove a stall. If a review-owned process is confirmed
+stalled, stop it through its owning session, confirm cleanup, and continue from valid
+exact-target evidence or retain the missing evidence as `Unverifiable`. Do not terminate
+unrelated processes. If liveness cannot be inspected, disclose that gap instead of
+repeating an unverified waiting claim or ending the turn with an unmanaged review process.
 
 ## Discovery seats and walks
 

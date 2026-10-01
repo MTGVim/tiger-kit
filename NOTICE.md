@@ -690,3 +690,22 @@ TigerKit 검증 결과로 사용하지 않습니다. 패키지에 원본 MIT 고
 `tk-research`는 `rohankgeorge/the-researcher` `1184d246c290a4ff772ea669ac6b9f9914d3f7da`에서 1차 출처 추적, 출처 접근 가능성과 주장 충실도의 분리, 모순·검증 불가·철회 결과 보존을 증류했습니다. 원본의 지속 연구 기록과 심층 조사 플랫폼 분기 체계는 가져오지 않았습니다.
 
 각 적용·비적용 판단, 검토한 파일, 검증 한계와 반영 위치는 각 패키지 `references/sources.md`가 정본입니다. 원본 라이선스는 해당 `UPSTREAM-LICENSES.txt`에 보존합니다. 원본 시연·평가의 성능을 TigerKit에서 재현했다고 주장하지 않습니다.
+
+## 병렬 리뷰의 공유 실행 자원
+
+2026-10-01에 `obra/superpowers` 최신 `main`의 고정 커밋
+`8ca22dba9a94f28898bbce59f2537ff4d87c747d`에서 `requesting-code-review/SKILL.md`,
+`requesting-code-review/code-reviewer.md`, `verification-before-completion/SKILL.md`,
+`subagent-driven-development/SKILL.md`와
+`docs/superpowers/specs/2026-06-09-sdd-task-scoped-review-dispatch-design.md`를 확인했습니다.
+이 설계 문서는 동일 코드의 테스트 중복 실행을 줄이고, 기존 근거가 답하지 못하는 구체적인 의문에만
+집중 검사를 실행하는 원칙과 원본 평가 결과를 보고합니다. 원본 평가 실행 결과의 재현은 `unverified`입니다.
+
+- `keep`: `context`가 분리된 독립 리뷰와 정확한 대상의 테스트 근거를 먼저 읽는 원칙을 유지합니다.
+- `adapt`: `tk-review` 정본과 `tk-prep`·`tk-pr-respond` 생성 사본에서 모든 `leaf`에 테스트·빌드·실행 근거를
+  전달하고 공유 실행은 `controller`가 직렬로 조율하도록 합니다. 대기 보고는 실제 프로세스 상태를 확인하고,
+  멈춘 리뷰 소유 프로세스만 정리합니다. `CPU` 0%만으로 중단을 판정하지 않습니다.
+- `omit`: 호스트별 잠금 도구, 실행 체계와 `Jest` 정지 원인에 대한 추정은 가져오지 않습니다.
+
+19분 정지와 빌드 동시 실행 사례는 사용자 제공 근거이며 이 작업에서 실제 프로젝트의 `Jest` 증상을
+재현하지 않았습니다. `tk-prep/references/testing.md`의 기존 근거 우선 원칙을 공유 리뷰 계약에 적용합니다.
