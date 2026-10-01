@@ -462,7 +462,12 @@
     "tk-autoresearch:behavior:autoresearch-research-mutation-boundary",
     "tk-autoresearch:behavior:autoresearch-program-convergence",
     "tk-research:behavior:research-primary-source-resolution",
-    "tk-research:behavior:research-live-source-faithfulness"
+    "tk-research:behavior:research-live-source-faithfulness",
+    "tk-autoresearch:behavior:autoresearch-short-goal-does-not-require-policy-prompt",
+    "tk-autoresearch:behavior:autoresearch-defers-mutation-authority-until-needed",
+    "tk-autoresearch:behavior:autoresearch-resume-restores-frontier",
+    "tk-autoresearch:behavior:autoresearch-resume-missing-state-does-not-guess",
+    "tk-autoresearch:behavior:autoresearch-invocation-authorizes-state-not-experiment"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",
