@@ -96,7 +96,7 @@ def main() -> int:
     )
     pairs.append((EXTERNAL_CONTRACT_SOURCE, EXTERNAL_CONTRACT_TARGET))
     pairs.append((CLEAR_WRITING_SOURCE, CLEAR_WRITING_TARGET))
-    pairs.append((ROOT / "skills/tk-research/references/evidence.md", ROOT / "skills/tk-discover/references/evidence.md"))
+    pairs.append((ROOT / "skills/tk-research/references/evidence.md", ROOT / "skills/tk-autoresearch/references/evidence.md"))
     for name in ("tk-explain-diff", "tk-study"):
         if (ROOT / "skills" / name).is_dir():
             pairs.append((CLEAR_WRITING_SOURCE, ROOT / "skills" / name / "references/clear-writing.md"))
