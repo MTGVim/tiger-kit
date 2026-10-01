@@ -79,6 +79,28 @@ Research-only local mutation uses the standard authority granted by explicit aut
 Never use research authority to mutate another product worktree, production data/configuration, external services, secrets, or remote Git state. Do not push, create or update issues/PRs, merge, release or deploy. A promising experiment is evidence, not production approval. Promote an accepted product direction to `tk-prep`.
 After an experiment, record `KEEP`, `REJECT`, `INCONCLUSIVE` or `BLOCKED` with evidence and reason. Keep rejected and inconclusive results visible. For consequential conclusions, use an independent/adversarial verification pass when available without widening authority; otherwise state the verification limit.
 
+## Run budget and checkpoint
+
+Each explicit invocation is a bounded research batch, not a daemon. Choose the highest-value current frontier
+item and continue through the tightly coupled research/experiment/verification actions required to interpret
+it. Do not stop after every search, finding or experiment, and do not ask whether to continue inside the
+standard local authority.
+
+After at least one material research-state change, stop at the first natural batch boundary where the current
+result is verified enough to preserve and the next frontier can be resumed independently. Before stopping,
+read [autoresearch persistence](references/persistence.md) and complete its checkpoint transaction.
+
+Return exactly one natural run outcome:
+
+- `CHECKPOINT`: the research program should continue, but this invocation produced a durable meaningful
+  batch and a clear next frontier;
+- `CONCLUDE`: program convergence is reached;
+- `BLOCKED`: progress now depends on user/external authority or evidence that this skill cannot obtain;
+- `NO-ACTION` / `NO-DELTA`: no useful new research action/evidence is currently available.
+
+Do not use a fixed iteration, token or experiment count. A checkpoint is a knowledge boundary, not an arbitrary
+counter and not an approval gate.
+
 ## Convergence
 
 Convergence exists at three levels: a finding closes one concrete item; a direction becomes supported, rejected, deferred or blocked strongly enough that more work has low decision value; and program convergence means the research goal has enough evidence for a next action, justified no-go/deferral, or an essential unavailable input.
@@ -86,9 +108,17 @@ After material findings, update premises and dependencies and choose `DEEPEN`, `
 
 ## Durable research
 
-A normal new autoresearch run persists its resumable research state after the research identity is established; an explicit conversation-only/no-save request remains in chat. Before creating or updating state, read [durable autoresearch](references/state.md) and apply Artifact Paths. Update state after material findings, direction changes, experiment verdicts, blockers and convergence changes, not as a per-message transcript.
+A normal new autoresearch run persists resumable research state after the research identity is established;
+an explicit conversation-only/no-save request remains in chat. Before initializing or changing persistence,
+read [autoresearch persistence](references/persistence.md), then [durable autoresearch](references/state.md)
+and apply Artifact Paths.
 
-On `--resume`, restore that state first and continue the current frontier. Saved state is a resume aid, never a scheduler, mutation approval source or remote authority.
+Use the default `hybrid` persistence policy without a setup questionnaire unless a valid existing config or
+explicit user preference says otherwise. Update state after material findings, direction changes, experiment
+verdicts, blockers and convergence changes, not as a per-message transcript.
+
+On `--resume`, restore state first and continue the current frontier. Saved state/config are resume and
+persistence inputs, never schedulers or authority beyond this skill's current invocation.
 
 For maintenance provenance and donor comparison, see [sources](references/sources.md).
 
