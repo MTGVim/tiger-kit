@@ -33,8 +33,8 @@ The user should not need to write the operating protocol. Accept a short goal su
 Invocation modes:
 
 - New run: `$tk-autoresearch <goal>` starts from the supplied goal and current context. An empty invocation interviews for the missing research goal instead of asking for a prewritten brief.
-- Resume: `$tk-autoresearch --resume` reads the canonical `.tigerkit/autoresearch/state.md`, verifies repository/worktree and research identity, refreshes material evidence, then continues from the stored frontier. Do not repeat the setup interview or ask for ceremonial confirmation.
-- `--resume` with no matching state never reconstructs a project from memory or unrelated files. Report the missing/mismatched state and ask one material question: start a new program here or use the worktree that owns the state.
+- Resume: `$tk-autoresearch --resume` resolves the canonical `.tigerkit/autoresearch/state.md` from the current or matching linked research home, verifies repository/worktree and research identity, refreshes material evidence, then continues from the stored frontier. Do not repeat the setup interview or ask for ceremonial confirmation.
+- `--resume` with no matching research home never reconstructs a project from memory or unrelated files. Report the missing/mismatched state and ask one material question: start a new program here or choose an actual state-owning research home.
 
 ### Standard local research authority
 
