@@ -411,7 +411,7 @@
       "id": "autoresearch-bounded-batch-checkpoints",
       "path": "success",
       "prompt": "$tk-autoresearch --resume 정책 시뮬레이션입니다. Q7 조사와 EXP-014 검증으로 D3가 유망하다는 새 근거를 얻었고 다음 질문 Q8은 독립적으로 이어갈 수 있어. 전체 연구는 아직 안 끝났어.",
-      "expected_output": "이번 호출을 무한 반복하지 않고 현재 묶음의 근거를 durable하게 기록한 뒤 `CHECKPOINT`로 종료하고 Q8을 다음 frontier로 남긴다.",
+      "expected_output": "이번 호출을 무한 반복하지 않고 현재 묶음의 근거를 지속 가능하게 기록한 뒤 `CHECKPOINT`로 종료하고 Q8을 다음 탐색 가능 항목로 남긴다.",
       "assertions": [
         {
           "type": "judge",
@@ -426,11 +426,11 @@
       "id": "autoresearch-checkpoint-persists-negative-results",
       "path": "success",
       "prompt": "$tk-autoresearch 정책 시뮬레이션입니다. EXP-021의 실험 코드는 폐기할 예정이지만 오탐이 높아 가설을 REJECT했다는 근거는 새롭고 중요해. 이번 연구 묶음은 여기서 닫을 수 있어.",
-      "expected_output": "실패 코드를 없애기 전에 EXP-021의 질문·절차·근거·REJECT 이유와 영향받은 finding을 기록하고 checkpoint journal에 남긴다.",
+      "expected_output": "실패 코드를 없애기 전에 EXP-021의 질문·절차·근거·REJECT 이유와 영향받은 연구 결과를 기록하고 체크포인트 연구 일지에 남긴다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "실패 코드를 보존할 의무와 실패 지식을 보존할 의무를 구분한다. run-owned 실패 코드는 되돌릴 수 있지만 EXP-021과 REJECT 근거, 폐기한 가정, 다음 영향은 durable knowledge에 남긴 뒤 checkpoint를 완료한다."
+          "criterion": "실패 코드를 보존할 의무와 실패 지식을 보존할 의무를 구분한다. 실행이 만든 실패 코드는 되돌릴 수 있지만 EXP-021과 REJECT 근거, 폐기한 가정, 다음 영향은 지속 가능한 연구 지식에 남긴 뒤 체크포인트를 완료한다."
         },
         {
           "type": "git_head_unchanged"
@@ -440,12 +440,12 @@
     {
       "id": "autoresearch-default-hybrid-persistence",
       "path": "success",
-      "prompt": "$tk-autoresearch 새로운 연구를 시작해. persistence 설정은 따로 정한 적 없어.",
+      "prompt": "$tk-autoresearch 새로운 연구를 시작해. 저장 정책은 따로 정한 적 없어.",
       "expected_output": "설정 인터뷰를 열지 않고 기본 hybrid 정책을 초기화해 실행 상태는 `.tigerkit/autoresearch/`에 두고 연구 지식은 `docs/autoresearch/<slug>/` 아래 추적 대상으로 준비한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "설정이 없다는 이유로 사용자에게 local/hybrid/tracked를 먼저 고르게 하지 않는다. 기본 `hybrid` config를 만들고 상태는 ignored 영역에, README/findings/journal/experiments는 안전한 trackedRoot에 두는 계약을 사용한다."
+          "criterion": "설정이 없다는 이유로 사용자에게 `local`/`hybrid`/`tracked`를 먼저 고르게 하지 않는다. 기본 `hybrid` 설정을 만들고 상태는 무시되는 로컬 영역에, README·연구 결과·연구 일지·실험 기록은 안전한 추적 경로에 두는 계약을 사용한다."
         },
         {
           "type": "git_head_unchanged"
@@ -455,12 +455,12 @@
     {
       "id": "autoresearch-checkpoint-commits-tracked-knowledge",
       "path": "success",
-      "prompt": "$tk-autoresearch 정책 시뮬레이션입니다. mode=hybrid, commitOnCheckpoint=true이고 CHK-004의 finding·journal·EXP-009 문서와 이 실험에 속한 로컬 코드 변경만 있어. 관련 없는 사용자 변경도 하나 있어.",
-      "expected_output": "관련 없는 사용자 변경은 제외하고 CHK-004 연구 문서와 해당 실험 코드만 로컬 commit으로 묶어 checkpoint한다.",
+      "prompt": "$tk-autoresearch 정책 시뮬레이션입니다. `mode=hybrid`, `commitOnCheckpoint=true`이고 CHK-004의 연구 결과·연구 일지·EXP-009 문서와 이 실험에 속한 로컬 코드 변경만 있어. 관련 없는 사용자 변경도 하나 있어.",
+      "expected_output": "관련 없는 사용자 변경은 제외하고 CHK-004 연구 문서와 해당 실험 코드만 로컬 커밋으로 묶어 체크포인트한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "configured trackedRoot의 run-owned 문서와 같은 연구 묶음의 실험 코드만 stage한다. 관련 없는 사용자 변경은 건드리지 않고 `research(CHK-004): <short outcome>` 형태의 로컬 commit을 만든 뒤 canonical state에 commit을 기록한다."
+          "criterion": "설정된 추적 경로의 실행 소유 문서와 같은 연구 묶음의 실험 코드만 스테이징한다. 관련 없는 사용자 변경은 건드리지 않고 `research(CHK-004): <short outcome>` 형태의 로컬 커밋을 만든 뒤 정본 상태에 커밋을 기록한다."
         },
         {
           "type": "git_head_unchanged"
@@ -471,12 +471,12 @@
     {
       "id": "autoresearch-local-mode-keeps-knowledge-untracked",
       "path": "success",
-      "prompt": "$tk-autoresearch 정책 시뮬레이션입니다. config mode는 local이야. EXP-003이 REJECT됐고 이번 batch는 checkpoint할 수 있어.",
-      "expected_output": "실패 근거와 checkpoint history를 `.tigerkit/autoresearch/` 아래 durable local knowledge로 남기되 docs나 checkpoint knowledge commit을 만들지 않는다.",
+      "prompt": "$tk-autoresearch 정책 시뮬레이션입니다. `mode=local`이야. EXP-003이 REJECT됐고 이번 연구 묶음은 체크포인트할 수 있어.",
+      "expected_output": "실패 근거와 체크포인트 이력을 `.tigerkit/autoresearch/` 아래 지속 가능한 로컬 연구 지식으로 남기되 추적 문서나 지식 보존만을 위한 체크포인트 커밋을 만들지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "local mode에서도 시행착오를 잃지 않는다. ignored local knowledge에 finding/journal/experiment를 기록하지만 trackedRoot 문서를 만들거나 지식 보존만을 위한 checkpoint commit을 만들지 않는다."
+          "criterion": "`local` 모드에서도 시행착오를 잃지 않는다. 무시되는 로컬 연구 지식에 연구 결과·연구 일지·실험 기록을 남기지만 추적 문서 경로를 만들거나 지식 보존만을 위한 체크포인트 커밋을 만들지 않는다."
         },
         {
           "type": "git_head_unchanged"
@@ -487,11 +487,11 @@
       "id": "autoresearch-no-delta-does-not-spam-journal",
       "path": "boundary",
       "prompt": "$tk-autoresearch --resume 정책 시뮬레이션입니다. 새 자료도 없고 실행 가능한 실험도 없으며 기존 결론을 바꿀 근거가 하나도 추가되지 않았어.",
-      "expected_output": "실행했다는 사실만으로 CHK 항목이나 tracked commit을 만들지 않고 `NO-ACTION` 또는 `NO-DELTA`로 끝낸다.",
+      "expected_output": "실행했다는 사실만으로 CHK 항목이나 추적 커밋을 만들지 않고 `NO-ACTION` 또는 `NO-DELTA`로 끝낸다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "heartbeat용 journal/commit을 생성하지 않는다. 새 negative evidence도 없다면 기존 연구 lineage를 그대로 두고 `NO-ACTION` 또는 `NO-DELTA`를 반환한다."
+          "criterion": "실행 흔적만 남기는 연구 일지나 커밋을 생성하지 않는다. 새 부정 근거도 없다면 기존 연구 계보를 그대로 두고 `NO-ACTION` 또는 `NO-DELTA`를 반환한다."
         },
         {
           "type": "git_head_unchanged"
@@ -501,12 +501,12 @@
     {
       "id": "autoresearch-tracked-mode-mirrors-state-snapshot",
       "path": "success",
-      "prompt": "$tk-autoresearch 정책 시뮬레이션입니다. mode=tracked이고 track.state/config가 true야. CHK-006을 완료하려 해.",
-      "expected_output": "canonical local config/state를 권한 원장으로 유지하면서 trackedRoot에 sanitized config/state snapshot도 갱신하고 다른 configured research docs와 함께 checkpoint commit에 포함한다.",
+      "prompt": "$tk-autoresearch 정책 시뮬레이션입니다. `mode=tracked`이고 `track.state=true`, `track.config=true`야. CHK-006을 완료하려 해.",
+      "expected_output": "정본 로컬 설정·상태를 권한 원장으로 유지하면서 추적 경로에 정제한 설정·상태 스냅샷도 갱신하고 다른 설정된 연구 문서와 함께 체크포인트 커밋에 포함한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "tracked copy를 실행 권한 정본으로 승격하지 않는다. canonical local config/state를 유지하면서 설정된 tracked config/state snapshot과 findings/journal/experiments를 checkpoint 지식으로 기록한다."
+          "criterion": "추적 사본을 실행 권한 정본으로 승격하지 않는다. 정본 로컬 설정·상태를 유지하면서 설정된 추적 설정·상태 스냅샷과 연구 결과·연구 일지·실험 기록을 체크포인트 지식으로 기록한다."
         },
         {
           "type": "git_head_unchanged"
