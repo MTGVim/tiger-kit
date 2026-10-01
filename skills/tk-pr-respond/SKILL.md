@@ -58,6 +58,10 @@ At the start, fresh-read exactly one open PR.
 Complete all required pagination. Do not treat cached lists or previous Markdown ledgers as current truth.
 If identity, the exact PR/head, or remote authority is ambiguous, stop as `Blocked` before mutation.
 
+When the same approved response resumes after interruption, read [partial publication recovery](references/publication-resume.md)
+before another fix pass or remote write. Reconcile fresh remote successes and continue only missing approved actions;
+ambiguous identity, ancestry, authorization or completion evidence is `Blocked | Unverifiable`.
+
 ## Understand feedback
 
 Assign every current finding exactly one response disposition and preserve it through the plan, reply, and current-head summary.
