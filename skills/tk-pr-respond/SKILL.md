@@ -203,7 +203,9 @@ Do not merge, close, tag, release, plain force push, or resolve unrelated thread
 For an exact PR handed off by an active `tk-pr-sweep`, do not ask again about material decisions already approved by the parent.
 The child confirms the PR fresh state and parent-approved scope, then proceeds immediately when they match.
 
-Reply-only handoffs need no workspace solely for isolation. A code-changing handoff must include a newly established
+Reply-only handoffs need no workspace solely for isolation. An explicitly approved index-only handoff uses the exact
+PR/head/row identity and run ownership under [code-change execution](references/code-change.md), without a workspace path.
+Other code-changing handoffs must include a newly established
 dedicated workspace path, exact PR head, and enough provenance to prove it belongs to that row. "Newly established" may
 mean a host-native workspace or a safe manual Git fallback; it never requires a nested manual worktree inside an already
 proven host-managed workspace. If the path/HEAD/provenance is missing or not fresh, return `Blocked` before mutation. Run
