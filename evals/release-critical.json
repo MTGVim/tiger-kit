@@ -492,7 +492,22 @@
     "tk-review:behavior:review-idle-cpu-is-not-stall-proof",
     "tk-review:behavior:review-uninspectable-wait-is-unverifiable",
     "tk-prep:behavior:prep-review-focused-checks-use-controller-reservation",
-    "tk-pr-respond:behavior:pr-respond-review-missing-evidence-does-not-license-heavy-rerun"
+    "tk-pr-respond:behavior:pr-respond-review-missing-evidence-does-not-license-heavy-rerun",
+    "tk-pr-respond:behavior:pr-respond-publication-resume-before-reply",
+    "tk-pr-respond:behavior:pr-respond-publication-resume-after-reply-before-resolve",
+    "tk-pr-respond:behavior:pr-respond-publication-resume-fully-published-no-writes",
+    "tk-pr-respond:behavior:pr-respond-publication-resume-normal-fast-forward",
+    "tk-pr-respond:behavior:pr-respond-publication-resume-rewrite-or-identity-drift",
+    "tk-pr-respond:behavior:pr-respond-publication-resume-same-text-other-thread",
+    "tk-pr-respond:behavior:pr-respond-publication-resume-unknown-post-visibility",
+    "tk-pr-respond:behavior:pr-respond-publication-resume-ancestor-response-invalid",
+    "tk-pr-respond:behavior:pr-respond-publication-resume-resolved-without-reply",
+    "tk-pr-respond:behavior:pr-respond-publication-resume-wrong-author-or-draft",
+    "tk-rewrite:behavior:rewrite-evaluation-intensity-preserved",
+    "tk-rewrite:behavior:rewrite-certainty-is-not-effect-size",
+    "tk-rewrite:behavior:rewrite-no-added-intensity",
+    "tk-rewrite:behavior:rewrite-real-concession-not-flattened",
+    "tk-rewrite:behavior:rewrite-concession-concrete-second-clause"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",

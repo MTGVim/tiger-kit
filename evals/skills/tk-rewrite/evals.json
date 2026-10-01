@@ -1764,116 +1764,77 @@
       ]
     },
     {
-      "id": "evaluation-intensity-preserved",
+      "id": "rewrite-evaluation-intensity-preserved",
       "path": "success",
-      "prompt": "`$tk-rewrite` 아래 사용 후기를 자연스럽게 다듬어줘. 원문: 한 달 동안 쓴 키보드에 매우 만족합니다. 키감은 매우 부드럽고 무선 연결도 대단히 안정적이었습니다. 다만 키 간격이 좁아서 적응하는 데 시간이 걸렸습니다.",
-      "expected_output": "매우 높은 만족도, 매우 부드러운 키감, 대단히 안정적인 연결이라는 작성자의 평가 강도를 자연스러운 동등 표현으로 보존한다. 꽤 괜찮다, 나쁘지 않다 등의 약한 평가로 낮추지 않는다. 한 달 사용과 좁은 키 간격, 적응에 시간이 걸린 조건을 유지하고 비교 순위나 수치를 추가하지 않는다.",
+      "prompt": "`$tk-rewrite` 제품 사용 후기를 자연스럽게 다듬어 줘. 원문: 새 키보드에 매우 만족했다. 이전 모델보다 타건감이 압도적으로 좋았다. 무게는 이전 모델과 같았다.",
+      "expected_output": "매우 높은 만족도와 이전 모델 대비 강한 타건감 평가를 같은 강도의 자연스러운 표현으로 보존한다. 꽤 괜찮다/나쁘지 않다처럼 약화하지 않고, 무게 동등성과 비교 범위를 유지하며 근거 없는 성능이나 순위를 추가하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "매우 높은 만족도, 매우 부드러운 키감, 대단히 안정적인 연결이라는 작성자의 평가 강도를 자연스러운 동등 표현으로 보존한다. 꽤 괜찮다, 나쁘지 않다 등의 약한 평가로 낮추지 않는다. 한 달 사용과 좁은 키 간격, 적응에 시간이 걸린 조건을 유지하고 비교 순위나 수치를 추가하지 않는다."
+          "criterion": "매우 높은 만족도와 이전 모델 대비 강한 타건감 평가를 같은 강도의 자연스러운 표현으로 보존한다. 꽤 괜찮다/나쁘지 않다처럼 약화하지 않고, 무게 동등성과 비교 범위를 유지하며 근거 없는 성능이나 순위를 추가하지 않는다."
         },
         {
           "type": "git_head_unchanged"
-        },
-        {
-          "type": "changed_paths_equal",
-          "paths": []
         }
       ]
     },
     {
-      "id": "certainty-not-effect-magnitude",
+      "id": "rewrite-certainty-is-not-effect-size",
       "path": "boundary",
-      "prompt": "`$tk-rewrite` 번역투만 다듬어줘. 원문: 저는 이 방식이 도움이 될 것이라 확신합니다. 다만 기대하는 효과는 작습니다. 아직 실험하지는 않았습니다.",
-      "expected_output": "도움이 될 것이라는 강한 확신과 작은 기대 효과를 각각 보존한다. 매우 큰 효과, 획기적인 성과, 이미 효과가 확인됐다는 주장으로 바꾸지 않으며 강한 확신을 단순한 가능성으로 약화하지 않는다. 아직 실험하지 않았다는 상태를 유지한다.",
+      "prompt": "`$tk-rewrite` 과장된 표현을 줄이고 자연스럽게 다듬어 줘. 원문: 이 방식이 효과가 있을 것이라고 확신한다. 효과의 크기는 아직 측정하지 않았다.",
+      "expected_output": "효과 존재에 대한 확신과 효과량 미측정을 별도 의미로 보존한다. 확신을 큰 효과/매우 효과적이라는 효과량으로 바꾸거나 미측정을 삭제하지 않으며, 확신을 가능성 정도로 약화하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "도움이 될 것이라는 강한 확신과 작은 기대 효과를 각각 보존한다. 매우 큰 효과, 획기적인 성과, 이미 효과가 확인됐다는 주장으로 바꾸지 않으며 강한 확신을 단순한 가능성으로 약화하지 않는다. 아직 실험하지 않았다는 상태를 유지한다."
+          "criterion": "효과 존재에 대한 확신과 효과량 미측정을 별도 의미로 보존한다. 확신을 큰 효과/매우 효과적이라는 효과량으로 바꾸거나 미측정을 삭제하지 않으며, 확신을 가능성 정도로 약화하지 않는다."
         },
         {
           "type": "git_head_unchanged"
-        },
-        {
-          "type": "changed_paths_equal",
-          "paths": []
         }
       ]
     },
     {
-      "id": "large-effect-remains-uncertain",
+      "id": "rewrite-no-added-intensity",
       "path": "boundary",
-      "prompt": "`$tk-rewrite` 자연스럽게 다듬어줘. 원문: 이 방식은 효과가 매우 클 수도 있습니다. 다만 실제 효과가 있을지는 아직 확신하지 못합니다.",
-      "expected_output": "기대 효과가 매우 클 수 있다는 크기와 가능성, 실제 효과 발생에 대한 확신이 없다는 상태를 각각 보존한다. 효과 크기를 작거나 보통으로 낮추지 않고 큰 효과가 확실히 난다는 주장으로 강화하지 않는다.",
+      "prompt": "`$tk-rewrite` 홍보 문구처럼 읽기 좋게 다듬어 줘. 원문: 테스트에서 처리 시간이 `100ms`에서 `90ms`로 줄었다. 만족도는 조사하지 않았다.",
+      "expected_output": "`100ms`에서 `90ms`로 감소한 관찰과 만족도 미조사를 보존한다. 압도적/혁신적/매우 만족 같은 원문에 없는 평가나 확신을 추가하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "기대 효과가 매우 클 수 있다는 크기와 가능성, 실제 효과 발생에 대한 확신이 없다는 상태를 각각 보존한다. 효과 크기를 작거나 보통으로 낮추지 않고 큰 효과가 확실히 난다는 주장으로 강화하지 않는다."
+          "criterion": "`100ms`에서 `90ms`로 감소한 관찰과 만족도 미조사를 보존한다. 압도적/혁신적/매우 만족 같은 원문에 없는 평가나 확신을 추가하지 않는다."
         },
         {
           "type": "git_head_unchanged"
-        },
-        {
-          "type": "changed_paths_equal",
-          "paths": []
         }
       ]
     },
     {
-      "id": "neutral-assessment-no-hype",
-      "path": "boundary",
-      "prompt": "`$tk-rewrite` 읽기 쉽게 다듬어줘. 원문: 일주일 써 보니 만족합니다. 첫 설정에 시간이 걸렸습니다. 성능은 다른 제품과 비교하지 않았습니다.",
-      "expected_output": "작성자의 만족 평가와 일주일 사용, 첫 설정에 시간이 걸렸다는 사실, 성능 비교를 하지 않았다는 상태를 유지한다. 매우 만족, 압도적 성능, 동급 최고, 혁신적이라는 원문에 없는 강도나 순위를 추가하지 않는다. 평가를 나쁘지 않다는 수준으로 낮추지도 않는다.",
-      "assertions": [
-        {
-          "type": "judge",
-          "criterion": "작성자의 만족 평가와 일주일 사용, 첫 설정에 시간이 걸렸다는 사실, 성능 비교를 하지 않았다는 상태를 유지한다. 매우 만족, 압도적 성능, 동급 최고, 혁신적이라는 원문에 없는 강도나 순위를 추가하지 않는다. 평가를 나쁘지 않다는 수준으로 낮추지도 않는다."
-        },
-        {
-          "type": "git_head_unchanged"
-        },
-        {
-          "type": "changed_paths_equal",
-          "paths": []
-        }
-      ]
-    },
-    {
-      "id": "real-concession-korean-preserved",
+      "id": "rewrite-real-concession-not-flattened",
       "path": "success",
-      "prompt": "`$tk-rewrite` AI 말투를 줄여줘. 원문: 테스트 장비가 고장 났습니다. 그럼에도 팀은 대체 장비로 검증을 마치고 약속한 금요일에 출시했습니다. 다만 결제 연동 검증은 아직 끝나지 않았습니다.",
-      "expected_output": "장비 고장이라는 장애에도 대체 장비로 검증을 마치고 금요일에 출시했다는 양보 관계와 아직 끝나지 않은 결제 연동 검증의 제한을 보존한다. 연결어 자체를 의무적으로 보존할 필요는 없지만 단순 병렬로 바꾸어 장애를 극복했다는 관계를 없애거나 모든 검증 완료로 확대하지 않는다. 출시 때문에 장비가 고장 났다는 인과도 추가하지 않는다.",
+      "prompt": "`$tk-rewrite` `AI` 말투를 없애 줘. 원문: 비록 담당자 두 명이 휴가 중이었지만, 팀은 금요일에 예정대로 배포했다. 다음 배포는 월요일이다.",
+      "expected_output": "휴가와 일정 준수 사이의 실제 양보 관계, 담당자 두 명, 금요일 예정대로 배포 및 다음 월요일 배포를 보존한다. 양보 연결어만 보고 독립 병렬 문장으로 평탄화하거나 휴가가 배포를 지연했다는 관계를 만들지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "장비 고장이라는 장애에도 대체 장비로 검증을 마치고 금요일에 출시했다는 양보 관계와 아직 끝나지 않은 결제 연동 검증의 제한을 보존한다. 연결어 자체를 의무적으로 보존할 필요는 없지만 단순 병렬로 바꾸어 장애를 극복했다는 관계를 없애거나 모든 검증 완료로 확대하지 않는다. 출시 때문에 장비가 고장 났다는 인과도 추가하지 않는다."
+          "criterion": "휴가와 일정 준수 사이의 실제 양보 관계, 담당자 두 명, 금요일 예정대로 배포 및 다음 월요일 배포를 보존한다. 양보 연결어만 보고 독립 병렬 문장으로 평탄화하거나 휴가가 배포를 지연했다는 관계를 만들지 않는다."
         },
         {
           "type": "git_head_unchanged"
-        },
-        {
-          "type": "changed_paths_equal",
-          "paths": []
         }
       ]
     },
     {
-      "id": "real-concession-english-preserved",
-      "path": "success",
-      "prompt": "`$tk-rewrite` 아래 영어 원문에서 어색한 AI 표현을 다듬어줘. 요약하지 말고 영어를 유지해줘. 원문: `Despite the failed load test, the team shipped on Friday after reducing traffic to one region. While the cache improved response time, it increased memory use. Deployment remains a challenge.`",
-      "expected_output": "부하 테스트가 실패했는데도 금요일에 출시했다는 양보 관계, 트래픽을 한 지역으로 줄였다는 조건, 캐시가 응답 시간을 개선했지만 메모리 사용량을 늘렸다는 대조 관계를 보존한다. 뒤에 나오는 모호한 배포 어려움이 앞의 구체적인 양보나 대조 관계를 없애는 근거가 되지 않는다. 같은 의미의 연결어로 바꿀 수 있으나 관계를 단순 병렬로 바꾸거나 측정값을 지어내거나 배포 준비가 모두 끝났다고 주장하지 않는다.",
+      "id": "rewrite-concession-concrete-second-clause",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 영어 원문을 영어로 유지하며 `AI` 말투를 줄여 줘. 원문: `Despite these challenges, the team shipped on schedule. While the model is impressive and remains a challenge to maintain, we plan to replace it next month.`",
+      "expected_output": "양보 `opener`와 같은 절 안의 `challenge` 표현만으로 `false` `concession`으로 판정하지 않는다. 실제 본절인 일정 준수와 다음 달 교체 계획 및 각 양보 관계를 보존하고, 원문에 없는 구체적 도전이나 해결을 만들지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "부하 테스트가 실패했는데도 금요일에 출시했다는 양보 관계, 트래픽을 한 지역으로 줄였다는 조건, 캐시가 응답 시간을 개선했지만 메모리 사용량을 늘렸다는 대조 관계를 보존한다. 뒤에 나오는 모호한 배포 어려움이 앞의 구체적인 양보나 대조 관계를 없애는 근거가 되지 않는다. 같은 의미의 연결어로 바꿀 수 있으나 관계를 단순 병렬로 바꾸거나 측정값을 지어내거나 배포 준비가 모두 끝났다고 주장하지 않는다."
+          "criterion": "양보 `opener`와 같은 절 안의 `challenge` 표현만으로 `false` `concession`으로 판정하지 않는다. 실제 본절인 일정 준수와 다음 달 교체 계획 및 각 양보 관계를 보존하고, 원문에 없는 구체적 도전이나 해결을 만들지 않는다."
         },
         {
           "type": "git_head_unchanged"
-        },
-        {
-          "type": "changed_paths_equal",
-          "paths": []
         }
       ]
     }

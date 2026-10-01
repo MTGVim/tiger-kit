@@ -58,9 +58,9 @@ At the start, fresh-read exactly one open PR.
 Complete all required pagination. Do not treat cached lists or previous Markdown ledgers as current truth.
 If identity, the exact PR/head, or remote authority is ambiguous, stop as `Blocked` before mutation.
 
-When the same approved response resumes after interruption, read [partial publication recovery](references/publication-resume.md)
-before another fix pass or remote write. Reconcile fresh remote successes and continue only missing approved actions;
-ambiguous identity, ancestry, authorization or completion evidence is `Blocked | Unverifiable`.
+When re-entering after any attempted publication, including an uncertain POST/push result, read
+[publication recovery](references/publication-recovery.md) before planning mutations. Reconcile already
+successful actions against fresh remote state and continue only the approved missing actions.
 
 ## Understand feedback
 
@@ -145,6 +145,8 @@ Obtain one user approval for the current plan. That approval covers the exact li
 resolutions, and issue creations; it does not authorize adjacent cleanup or unlisted tickets. Do not split publication for
 the same plan into a separate second question.
 However, if the PR head/thread/check/identity changes materially after approval, invalidate the approval and explain only what changed.
+A verified normal fast-forward during publication recovery may retain approval only under the recovery reference's
+ancestry, unchanged response validity, and exact action-scope checks; it does not authorize new fixes or feedback.
 
 Reply-only execution uses no Seed, product mutation, push, workspace solely for isolation, or ceremonial test. For any
 code-changing route, follow the already loaded code-change reference after approval. It owns isolation, conditional Seed
@@ -185,10 +187,10 @@ report that downgrade instead of failing the whole publication.
 
 Then perform only the approved actions in this order.
 
-1. For a code-changing response, push the verified commit to the exact branch. For reply-only work, do not push.
+1. For a code-changing response, push the verified commit to the exact branch only if fresh ancestry evidence shows it is still unpublished. If it is already the current head or its verified ancestor, adopt that successful push after checking current response validity. For reply-only work, do not push.
 2. Create only explicitly approved follow-up issues after a fresh duplicate check. Record each created URL; do not create an issue for an unapproved follow-up.
-3. Post an exact reply to each feedback item with its disposition and evidence. A `follow-up` reply links its approved issue or states that no ticket was created.
-4. Resolve only threads whose exact reply succeeded and whose disposition was approved and verified. Keep unresolved ambiguity open.
+3. Post an exact reply to each feedback item with its disposition and evidence only when no matching submitted reply is already visible under the recovery identity checks. A `follow-up` reply links its approved issue or states that no ticket was created.
+4. Resolve only still-unresolved threads whose exact reply succeeded or was independently verified remotely and whose disposition was approved and verified. Keep unresolved ambiguity open.
 5. Fresh-read reviews/threads/checks.
 6. After all actionable threads are closed, when a re-review is required or actionable feedback was answered with no outstanding request, fresh-read the exact current head and post exactly one current-head summary comment containing `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`, with `<HEAD_SHA>` replaced by the exact observed head SHA. For each request-eligible reviewer in the frozen code-change set, include one hidden `<!-- tigerkit:pr-rereview:<HEAD_SHA>:<LOGIN> -->` marker in that same comment. Do not add this marker for an account bot, author, authenticated user, still-valid approver, mention-only reviewer, or reply-only finding. If the summary marker already exists exactly once for the current head, verify that its re-review markers match the required set instead of posting another comment. A summary for an earlier head does not satisfy this requirement. Write the summary as a real message to the reviewer, not an internal processing record. Address every identifiable human reviewer with `@mention`, map each finding to its disposition, evidence, code response, and follow-up ticket status in natural prose or a matching table, and state when a reviewer is mention-only. Do not publish a third-person completion log that only lists checks or totals.
 7. For every request-eligible reviewer in the frozen code-change set, and every human reviewer with a still-active `CHANGES_REQUESTED` review, request re-review for the exact current head unless that reviewer is already requested or has submitted a review after the current-head summary. A current request or a later review is completion evidence; the absence of a current request alone is not. Reply-only feedback with no code change does not require re-review.
