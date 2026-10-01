@@ -447,7 +447,16 @@
     "tk-pr-respond:behavior:pr-respond-index-only-ci-pending",
     "tk-pr-respond:behavior:pr-respond-index-only-head-drift-before-commit",
     "tk-pr-sweep:behavior:pr-sweep-owner-index-only-isolation",
-    "tk-pr-respond:behavior:pr-respond-index-only-missing-ignore-blocks"
+    "tk-pr-respond:behavior:pr-respond-index-only-missing-ignore-blocks",
+    "tk-pr-open:behavior:pr-evidence-undecided-before-remote-write",
+    "tk-pr-open:behavior:pr-evidence-sensitive-offers-bounded-derivative",
+    "tk-pr-open:behavior:pr-evidence-required-manifest-no-extra-question",
+    "tk-pr-open:behavior:pr-evidence-docs-without-images-na",
+    "tk-pr-open:behavior:pr-evidence-explicit-no-images-reuses-choice",
+    "tk-pr-image:behavior:upload-preserves-generated-markdown-verbatim",
+    "tk-pr-image:behavior:upload-redacts-only-secret-values-in-display",
+    "tk-pr-image:behavior:upload-fails-blob-html-despite-img-element",
+    "tk-pr-image:behavior:upload-unverifiable-without-browser-render"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",

@@ -56,8 +56,8 @@ Before any upload or PR body/comment update, reverify the explicitly selected ta
    extension installation remains here. Resume the exact repository, target, image set, and
    route after the wizard completes.
 5. Update only the requested body or comment through the GitHub API or equivalent.
-   Before `Pass`, verify the source Markdown, rendered HTML/page evidence, every
-   asset link, and the upload ref.
+   Before `Pass`, verify the source Markdown, every asset's image bytes and actual browser-session rendering, and the
+   upload ref. An image element in API-rendered HTML alone is insufficient.
 6. Remove only owned staging files on every exit path.
 
 ## Execution Receipt · Single Evidence Record
@@ -105,6 +105,10 @@ and artifacts not tied to the current run. If required evidence is missing or in
   only a placeholder, Markdown presence, fixed delay, or unrendered API response.
 - Do not log or return a signed URL, JWT, or raw secret-bearing query string. This does not prohibit a verified-safe,
   origin-free `display_route`; preserve its pathname, query, and fragment exactly as supplied by the manifest.
+- Redact only secret-bearing values (signed parameters, JWTs, tokens) in displayed output; preserve rendering parameters
+  such as `raw=true`. Keep the extension's generated Markdown privately for the authorized body/comment mutation and
+  insert it verbatim, with captions outside that block; never rebuild links from redacted or summarized output. Do not
+  copy secret-bearing originals into logs, receipts, or evidence artifacts.
 
 ## Failure Handling
 
