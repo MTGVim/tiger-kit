@@ -61,6 +61,12 @@
       "split": "validation",
       "query": "연구 과제가 뭔지 짧게 설명해줘.",
       "should_trigger": false
+    },
+    {
+      "id": "validation-resume",
+      "split": "validation",
+      "query": "$tk-autoresearch --resume",
+      "should_trigger": true
     }
   ]
 }
