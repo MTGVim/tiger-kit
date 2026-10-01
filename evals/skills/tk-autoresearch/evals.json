@@ -582,12 +582,12 @@
     {
       "id": "autoresearch-detects-concurrent-checkpoint-drift",
       "path": "boundary",
-      "prompt": "$tk-autoresearch --resume 정책 시뮬레이션입니다. 실행 시작 때 상태 지문은 A, 연구 HEAD는 H1이었는데 체크포인트 직전 다시 읽으니 다른 실행이 상태 B와 HEAD H2를 이미 기록했어.",
+      "prompt": "$tk-autoresearch --resume 정책 시뮬레이션입니다. 실행 시작 때 상태 지문은 `state-a`, 연구 HEAD는 `head-1`이었는데 체크포인트 직전 다시 읽으니 다른 실행이 상태 `state-b`와 HEAD `head-2`를 이미 기록했어.",
       "expected_output": "기존 번호로 연구 일지·상태를 덮어쓰지 않고 최신 상태를 재읽어 안전하게 재조정할 수 있을 때만 진행하며 그렇지 않으면 실행 소유 근거를 보존하고 BLOCKED한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "오래된 CHK/EXP ID를 추가하거나 더 최신 상태를 덮어쓰지 않는다. 최신 상태·HEAD와 현재 실행 결과를 안전하게 합칠 수 없으면 무시되는 임시 근거를 보존하고 정확한 drift를 이유로 `Blocked`한다."
+          "criterion": "오래된 CHK/EXP ID를 추가하거나 더 최신 상태를 덮어쓰지 않는다. 최신 상태·HEAD와 현재 실행 결과를 안전하게 합칠 수 없으면 무시되는 임시 근거를 보존하고 정확한 동시 변경을 이유로 `Blocked`한다."
         },
         {
           "type": "git_head_unchanged"
@@ -607,7 +607,7 @@
       "assertions": [
         {
           "type": "judge",
-          "criterion": "slug만 같다는 이유로 다른 연구의 `trackedRoot`를 재사용하지 않는다. 안정적인 `researchId` 소유권을 확인하고 충돌 시 안전한 형제 경로를 선택하며 기존 연구 이력을 삭제·이동하지 않는다."
+          "criterion": "경로용 짧은 이름만 같다는 이유로 다른 연구의 `trackedRoot`를 재사용하지 않는다. 안정적인 `researchId` 소유권을 확인하고 충돌 시 안전한 형제 경로를 선택하며 기존 연구 이력을 삭제·이동하지 않는다."
         },
         {
           "type": "git_head_unchanged"
@@ -618,12 +618,12 @@
     {
       "id": "autoresearch-resume-uses-hot-index-not-full-journal",
       "path": "success",
-      "prompt": "$tk-autoresearch --resume 연구가 수개월 진행되어 journal.md와 experiments가 매우 커졌지만 state.md와 README/findings에 현재 탐색 가능 항목과 관련 ID가 있어.",
+      "prompt": "$tk-autoresearch --resume 연구가 수개월 진행되어 `journal.md`와 `experiments/`가 매우 커졌지만 `state.md`와 `README.md`/`findings.md`에 현재 탐색 가능 항목과 관련 ID가 있어.",
       "expected_output": "상태와 현재 종합·연구 결과를 먼저 읽고 필요한 연구 일지·실험 ID만 선택적으로 확인하며 전체 연구 이력을 매번 다시 읽지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "`--resume`이 append-only 연구 일지 전체를 기본 입력으로 요구하지 않는다. 정본 상태 + README/연구 결과를 빠른 색인으로 사용하고 현재 결정에 필요한 과거 체크포인트·실험만 ID로 읽는다."
+          "criterion": "`--resume`이 추가 전용 연구 일지 전체를 기본 입력으로 요구하지 않는다. 정본 상태 + `README.md`/연구 결과를 빠른 색인으로 사용하고 현재 결정에 필요한 과거 체크포인트·실험만 ID로 읽는다."
         },
         {
           "type": "git_head_unchanged"
