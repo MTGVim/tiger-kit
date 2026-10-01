@@ -115,11 +115,11 @@
       "id": "research-live-source-faithfulness",
       "path": "boundary",
       "prompt": "$tk-research 인용 URL은 정상적으로 열리지만 본문은 우리 주장과 반대 조건에서만 효과가 있었다고 써 있어. 링크가 살아 있으니 지원 근거로 처리해도 돼?",
-      "expected_output": "링크 접근 가능성과 claim faithfulness를 분리하고, 실제 내용이 주장을 지지하지 않으면 지원 근거로 처리하지 않는다.",
+      "expected_output": "링크 접근 가능성과 인용 내용의 주장 충실도를 분리하고, 실제 내용이 주장을 지지하지 않으면 지원 근거로 처리하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "source liveness와 claim faithfulness를 별개로 판정한다. 실제 본문이 주장을 지지하지 않으면 `CONTRADICTED`, `UNSUPPORTED` 또는 문맥상 동등한 판정으로 남기고 살아 있는 URL이라는 이유만으로 `SUPPORTED`로 바꾸지 않는다."
+          "criterion": "출처 접근 가능성과 주장 충실도를 별개로 판정한다. 실제 본문이 주장을 지지하지 않으면 `CONTRADICTED`, `UNSUPPORTED` 또는 문맥상 동등한 판정으로 남기고 살아 있는 URL이라는 이유만으로 `SUPPORTED`로 바꾸지 않는다."
         },
         {
           "type": "git_head_unchanged"
