@@ -647,7 +647,28 @@ TigerKit 검증 결과로 사용하지 않습니다. 패키지에 원본 MIT 고
 지원 관측과 격리 미입증 시 비교 차단은 `adapt`, 인증 복사, 모델 선택과 설정 전체 덤프는
 `omit`입니다. `--ignore-user-config`는 사용자 설정 파일의 제외를 위한 옵션이며 전체 행동 격리를
 입증하지 않습니다. 현재 기본 Codex 어댑터의 상대 비교는 `Unverifiable`입니다. 실제 CLI 실행은
-환경에 바이너리가 없어 미검증이며 제어된 회귀 테스트를 실제 모델 실행으로 보고하지 않습니다.
+당시 환경에 바이너리가 없어 미검증이었으며 제어된 회귀 테스트를 실제 모델 실행으로 보고하지 않습니다.
+
+`2026-10-02`에는 `edonadei/caliper@c2f222b5161afdb3bc986572236cfe0b34ab6881`의
+`caliper/harness/codex.py`, 격리 작업 디렉터리 및 계정 연결 제외 ADR, 관련 테스트를 비교했습니다.
+시도별 `fresh HOME`과 작업 디렉터리와 계정 앱·플러그인 제외 원칙은 검토 대상으로 `keep`, 최소 인증과
+설정 재구성 및 모델에 실제로 활성화된 기능 관측은 미입증 상태로 `adapt` 후보에 남겼으며, 사용자 설정 전체 복제와
+런타임 의존성 도입은 `omit`입니다. 실제 `codex-cli 0.159.2`로 실행한 `fresh HOME` 개념 검증은 45초 동안
+모델 응답을 얻지 못했습니다. 별도의 네이티브 앱 서버에서 후보와 제거 환경의 스킬 목록을 확인했으며,
+대상 스킬 하나만 목록에서 달랐고 공통 내장 스킬 5개, 앱·플러그인·훅 비활성 설정과 빈 MCP 설정을
+관측했습니다. 이 결과는 발견 가능한 목록과 설정에 한정되며 실제 모델 활성화를 증명하지 않습니다.
+실행 소유 인증 사본과 임시 HOME을 정리했으며 정본 어댑터와 `Unverifiable` 제한은 유지합니다. 파일 배치나 옵션 지원만으로 `true ablation`이 검증되었다고 주장하지 않습니다.
+
+글쓰기에서는 `dotoricode/korean-humanizer@4fc566b7d7ded76887f7a85c0886e44796e5e38c`의
+의미 보존 지침과 `native-skill` QA 및 `conorbronsdon/avoid-ai-writing@bdeb726580634868b254972d8eab1a9340d9db16`의
+`FALSE_CONCESSION` 수정과 회귀 `fixture`를 확인했습니다. 기존 의미 보존과 과장 금지는 `keep`, 평가 강도와
+확신 강도의 분리 및 정상 양보 보존은 `adapt`, `detector`와 정규식·분류 체계·출력 양식 이식은 `omit`입니다.
+공유 `clear-writing` 소비 패키지에도 MIT 고지와 동일한 계약을 반영했습니다.
+
+PR 재실행에서는 `EveryInc/compound-engineering-plugin@7fe624d36a5a12253165ebf6400acf20624ae7c5`의
+`ce-resolve-pr-feedback/references/resume.md`, `caller-publication` 계획과 `pending/reply` 테스트를 확인했습니다.
+최신 원격 상태와 피드백별 제출된 답글 근거는 `keep`, 기존 수정 커밋의 `ancestry` 및 답글과 스레드 해결을
+각각 확인하는 복구는 `adapt`, 별도 JSON `handoff`와 장부, `checkpoint helper` 및 `return-to-caller` 모드는 `omit`입니다.
 
 `mattpocock/skills@d81f3a183412e71a5b1e84ca21bc1a35eea03a60`의
 `skills/engineering/pr/SKILL.md`와 MIT 고지를 확인했습니다. 저장소 템플릿, 검증 및 발행 권한은

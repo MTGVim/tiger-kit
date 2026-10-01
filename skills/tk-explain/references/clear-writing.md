@@ -14,6 +14,8 @@ The calling skill determines which facts may be added. Rewriting preserves suppl
 
 Preserve explicit ranking, comparison scope, simultaneity, and exclusivity when removing stylistic emphasis; restate the relation naturally rather than protecting particular words. A source-stated ranking is still a claim when its rationale is absent. Empty emphasis with no actual relation remains removable. Check both for lost relations and for relations introduced by the rewrite.
 
+Preserve evaluative intensity separately from epistemic certainty. A strongly positive or negative source evaluation must retain its degree in natural wording; do not weaken it merely to remove emphasis. Confidence that an effect exists does not establish its magnitude, and a large observed effect does not establish certainty. Preserve only the intensity actually supplied: add no unsupported praise, scale, or confidence. For example, `매우 만족했다` must not become `꽤 괜찮았다`, and `효과가 있을 것이라 확신한다` must not become `효과가 매우 크다`.
+
 Preserve meaningful modality in either direction: possibility, capability, permission, obligation, recommendation, and the strength of a claim or hedge are part of its meaning. A different hedge can still strengthen or weaken a claim; a recommendation must not become a requirement, nor a requirement optional advice. Repetition does not authorize either change. When equivalence is uncertain, retain the original modality and improve surrounding word order or sentence boundaries instead. Equivalent capability wording may change when the same actor, action, conditions, and strength remain intact; this is a semantic check, not a protected-word list. Compare each revised claim with its source, including meaning carried by endings and scope, rather than counting hedge markers.
 
 Preserve the binding of each explicit citation, figure/table reference, number, result or measurement to the claim it supports, not just its literal text. When reordering, move evidence with its claim and retain its original scope; proximity to a different sentence never reassigns support. If the source scope is ambiguous, keep that uncertainty rather than broadening support. Ordinary prose without evidence pointers gains no new citation requirement or invented authority.
@@ -71,6 +73,8 @@ When fixing an expression, check that the replacement does not introduce another
 
 Remove unsupported praise, vague authority, generic optimism, fake candor, and ceremonial padding when they add no meaning. Keep politeness and necessary uncertainty. Replace abstract or metaphor-swapped vocabulary with literal actions when clearer; retain established idioms and useful domain terminology.
 
+Inspect both clauses before revising a concession or contrast. Openers such as `다만`, `하지만`, `그럼에도`, or `Despite these challenges` alone establish no defect. Preserve a genuine source-supported concession and its concrete outcome; do not flatten it into unrelated parallel statements. Edit a hollow rhetorical frame only when its actual context warrants it, without inventing the missing challenge or response.
+
 ```text
 Before: 또한 해당 이슈는 초기 설정 과정에서 발생할 수 있는 부분이므로 이용에 참고 부탁드립니다.
 After: 이 문제는 처음 설정할 때 발생할 수 있습니다.
@@ -93,6 +97,8 @@ Keep source-provided actions and deadlines explicit; do not invent support proce
 - `conorbronsdon/avoid-ai-writing`, `5dd2e4ab72b9e0b7e125e5cb592af87033da4fda` (compared with `9b8d030ce5c846af9520a4f6e5eb7d3b8d80ff43`): separate mechanical and semantic preservation, equivalent numeric notation, and honest incomplete verification. Keep the two internal passes and one final result; adapt only these safeguards. Omit the upstream validator, detector, handoff envelope, repair budget, and public verification report.
 
 Original MIT notices are in the calling package's `LICENSE.txt`.
+
+Evaluative intensity versus certainty draws on `dotoricode/korean-humanizer`, `4fc566b7d7ded76887f7a85c0886e44796e5e38c` (`references/ko-ai-signals.md` and native-skill QA). Concession preservation draws on `conorbronsdon/avoid-ai-writing`, `bdeb726580634868b254972d8eab1a9340d9db16` (`FALSE_CONCESSION`, PR #359 and its fixtures). Adapt semantic preservation and must-not-overcorrect cases; omit detector regexes, taxonomy, output templates and runtime tooling.
 
 Claim-evidence binding also draws on `AIScientists-Dev/academic-humanizer`,
 `94b88b23703bed7df507acae7d6d5876209a0cdf`; evidence addition, academic taxonomy and venue rules are omitted.

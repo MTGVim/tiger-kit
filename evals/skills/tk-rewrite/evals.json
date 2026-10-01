@@ -1762,6 +1762,81 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "rewrite-evaluation-intensity-preserved",
+      "path": "success",
+      "prompt": "`$tk-rewrite` 제품 사용 후기를 자연스럽게 다듬어 줘. 원문: 새 키보드에 매우 만족했다. 이전 모델보다 타건감이 압도적으로 좋았다. 무게는 이전 모델과 같았다.",
+      "expected_output": "매우 높은 만족도와 이전 모델 대비 강한 타건감 평가를 같은 강도의 자연스러운 표현으로 보존한다. 꽤 괜찮다/나쁘지 않다처럼 약화하지 않고, 무게 동등성과 비교 범위를 유지하며 근거 없는 성능이나 순위를 추가하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "매우 높은 만족도와 이전 모델 대비 강한 타건감 평가를 같은 강도의 자연스러운 표현으로 보존한다. 꽤 괜찮다/나쁘지 않다처럼 약화하지 않고, 무게 동등성과 비교 범위를 유지하며 근거 없는 성능이나 순위를 추가하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "rewrite-certainty-is-not-effect-size",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 과장된 표현을 줄이고 자연스럽게 다듬어 줘. 원문: 이 방식이 효과가 있을 것이라고 확신한다. 효과의 크기는 아직 측정하지 않았다.",
+      "expected_output": "효과 존재에 대한 확신과 효과량 미측정을 별도 의미로 보존한다. 확신을 큰 효과/매우 효과적이라는 효과량으로 바꾸거나 미측정을 삭제하지 않으며, 확신을 가능성 정도로 약화하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "효과 존재에 대한 확신과 효과량 미측정을 별도 의미로 보존한다. 확신을 큰 효과/매우 효과적이라는 효과량으로 바꾸거나 미측정을 삭제하지 않으며, 확신을 가능성 정도로 약화하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "rewrite-no-added-intensity",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 홍보 문구처럼 읽기 좋게 다듬어 줘. 원문: 테스트에서 처리 시간이 `100ms`에서 `90ms`로 줄었다. 만족도는 조사하지 않았다.",
+      "expected_output": "`100ms`에서 `90ms`로 감소한 관찰과 만족도 미조사를 보존한다. 압도적/혁신적/매우 만족 같은 원문에 없는 평가나 확신을 추가하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`100ms`에서 `90ms`로 감소한 관찰과 만족도 미조사를 보존한다. 압도적/혁신적/매우 만족 같은 원문에 없는 평가나 확신을 추가하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "rewrite-real-concession-not-flattened",
+      "path": "success",
+      "prompt": "`$tk-rewrite` `AI` 말투를 없애 줘. 원문: 비록 담당자 두 명이 휴가 중이었지만, 팀은 금요일에 예정대로 배포했다. 다음 배포는 월요일이다.",
+      "expected_output": "휴가와 일정 준수 사이의 실제 양보 관계, 담당자 두 명, 금요일 예정대로 배포 및 다음 월요일 배포를 보존한다. 양보 연결어만 보고 독립 병렬 문장으로 평탄화하거나 휴가가 배포를 지연했다는 관계를 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "휴가와 일정 준수 사이의 실제 양보 관계, 담당자 두 명, 금요일 예정대로 배포 및 다음 월요일 배포를 보존한다. 양보 연결어만 보고 독립 병렬 문장으로 평탄화하거나 휴가가 배포를 지연했다는 관계를 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "rewrite-concession-concrete-second-clause",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 영어 원문을 영어로 유지하며 `AI` 말투를 줄여 줘. 원문: `Despite these challenges, the team shipped on schedule. While the model is impressive and remains a challenge to maintain, we plan to replace it next month.`",
+      "expected_output": "양보 `opener`와 같은 절 안의 `challenge` 표현만으로 `false` `concession`으로 판정하지 않는다. 실제 본절인 일정 준수와 다음 달 교체 계획 및 각 양보 관계를 보존하고, 원문에 없는 구체적 도전이나 해결을 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "양보 `opener`와 같은 절 안의 `challenge` 표현만으로 `false` `concession`으로 판정하지 않는다. 실제 본절인 일정 준수와 다음 달 교체 계획 및 각 양보 관계를 보존하고, 원문에 없는 구체적 도전이나 해결을 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }
