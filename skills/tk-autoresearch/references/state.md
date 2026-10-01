@@ -2,7 +2,7 @@
 
 A new explicit autoresearch run normally owns one resumable state file at `.tigerkit/autoresearch/state.md` after the research identity is clear. An explicit conversation-only/no-save request skips it. Before any write, apply Artifact Paths. If experiments create evidence that must survive, keep only those artifacts under `.tigerkit/autoresearch/experiments/<EXP-ID>/`; do not create a directory for every run.
 
-The canonical state retains:
+The canonical state retains the active persistence config path, last checkpoint ID and last checkpoint commit when available, plus:
 
 - repository/worktree identity and research identity;
 - research goal, downstream decision, constraints and excluded scope;
@@ -22,6 +22,6 @@ If no valid state exists in the current or linked worktrees, or a found state be
 
 `--resume` is itself a fresh explicit autoresearch invocation, so the same standard local research authority applies again in the owning worktree without replaying old approvals. The saved state identifies the research program and prior evidence; it does not expand authority beyond the standard local boundary. Protected/operational data, secrets, paid or state-changing external services, remote Git publication and destructive/irreversible actions still require explicit authority when needed.
 
-Write state atomically and reread it. When no frontier action has realistic information gain, persist the unchanged/converged state only if needed and return `NO-ACTION` or `NO-DELTA`.
+Write state atomically and reread it. Use monotonically increasing `CHK-<NNN>` and `EXP-<NNN>` identifiers from the current research program; never reuse an ID after a rejected or reverted attempt. Checkpoint knowledge persistence is defined by [autoresearch persistence](persistence.md). When no frontier action has realistic information gain, persist the unchanged/converged state only if needed and return `NO-ACTION` or `NO-DELTA` without fabricating a checkpoint.
 
 Do not maintain a database, scheduler, execution cursor, worker queue, per-run transcript or global cross-repository research memory. Do not use GitHub issues or PRs as the raw research ledger. Promote a converged engineering action separately through its owning TigerKit workflow.
