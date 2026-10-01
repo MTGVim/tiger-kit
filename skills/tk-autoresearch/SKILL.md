@@ -28,7 +28,7 @@ Check the active user's authorization before asking. A concrete request or earli
 
 Start only through explicit `/tk-autoresearch`, `$tk-autoresearch`, or host selection. Own a continuing research program whose questions, hypotheses and direction can change as evidence arrives. `tk-research` owns one bounded external evidence question; `tk-roadmap` owns delivery-oriented planning after a direction is chosen; `tk-prep` owns production implementation.
 
-The user should not need to write the operating protocol. Accept a short goal such as `$tk-autoresearch investigate anonymous web abuse`; the skill owns persistence, frontier management, experiment discipline, convergence and stop rules.
+The user should not need to write the operating protocol. Accept a short goal such as `$tk-autoresearch investigate anonymous web abuse`; the skill owns persistence, frontier management, experiment discipline, convergence and stop rules. Explicit invocation also grants the standard local research authority defined below for this repository.
 
 Invocation modes:
 
@@ -36,15 +36,28 @@ Invocation modes:
 - Resume: `$tk-autoresearch --resume` reads the canonical `.tigerkit/autoresearch/state.md`, verifies repository/worktree and research identity, refreshes material evidence, then continues from the stored frontier. Do not repeat the setup interview or ask for ceremonial confirmation.
 - `--resume` with no matching state never reconstructs a project from memory or unrelated files. Report the missing/mismatched state and ask one material question: start a new program here or use the worktree that owns the state.
 
-A new explicit autoresearch invocation authorizes creation and maintenance of only its canonical ignored resume state after Artifact Paths checks, unless the user asks for conversation-only/no-save work. This narrow artifact authority does not authorize source changes, experiment execution, external data access, Git publication or production mutation.
+### Standard local research authority
+
+An explicit autoresearch invocation authorizes reversible local research work inside the current repository without another approval round. This standard authority includes:
+
+- create or reuse an isolated local `research/<slug>` branch/worktree when source mutation becomes useful;
+- create/update the canonical `.tigerkit/autoresearch/` state and experiment artifacts;
+- edit code, tests, fixtures, parsers, benchmarks, prototypes and research-only configuration inside the owned research worktree;
+- install project-local or disposable experiment dependencies when they do not alter global/user configuration;
+- run local commands, tests, benchmarks and simulations;
+- make local research commits and revert/discard only run-owned experimental changes.
+
+Do not ask merely to exercise this standard local authority. If the current checkout is a product/default worktree, dirty with unrelated user changes, or otherwise unsafe for experiments, create/reuse a dedicated linked research worktree automatically when Git permits. Never overwrite, reset, clean, stash, commit or otherwise absorb unrelated user work. If safe isolation is impossible, continue independent read-only directions and ask only if local mutation becomes the sole remaining decision-relevant action.
+
+This authority ends at the local repository boundary. It never includes `push`, issue/PR publication, merge, release, deploy, production mutation, protected/operational data access, secrets, paid or state-changing external services, or destructive/irreversible actions. Those actions require their existing explicit authority when they become necessary.
 
 ## Lightweight setup interview
 
 1. Reuse the research goal, downstream decision and constraints already present in the invocation or conversation. If the goal is absent or materially ambiguous, ask only the smallest current user-owned question that makes useful research possible. Never require the user to restate this skill's workflow, persistence format, pilot-first rule, stop conditions or output schema.
 2. Resolve answerable facts before asking choices. Ask the whole currently answerable user-decision frontier in one question round using the shared question contract. Do not front-load a permissions questionnaire.
-3. Start with read-only external/repository evidence when it can reduce uncertainty. Ask for research-workspace mutation or protected data/service authority only when a pilot/experiment has become the highest-value next action and that authority is not already active in the conversation.
-4. For nontrivial research mutation, prefer a dedicated research worktree and present concise choices such as: authorize the named research worktree, stay read-only for now, or point to another approved workspace. Do not make the user compose a policy prompt.
-5. Once the research identity is clear, initialize or update the canonical durable state. If an unrelated state already occupies the worktree, never overwrite it silently; ask the user to resume it or use another worktree for the new program.
+3. Start with read-only external/repository evidence when it is the cheapest way to reduce uncertainty; this is an efficiency choice, not a permission gate. When a pilot/experiment becomes the highest-value next action, use the standard local research authority automatically.
+4. For nontrivial source mutation, prefer a dedicated research worktree. Create/reuse it without asking when it can be done safely and without touching unrelated user work. Ask only when the required action crosses the standard local boundary or safe isolation is impossible and mutation is essential.
+5. Once the research identity is clear, initialize or update the canonical durable state. If an unrelated state already occupies the selected research worktree, never overwrite it silently; reuse another safe worktree automatically when unambiguous, otherwise ask the user to choose the intended research program.
 
 Autoresearch may implement and run research-only experiments inside an authorized research workspace, but it never turns that authority into product integration or remote publication.
 
@@ -62,7 +75,7 @@ Use the smallest mode that can resolve the current frontier item: external evide
 ## Experiment contract
 
 Before execution, state the question or hypothesis, baseline when applicable, observable evidence, falsifier or equivalent pass/fail criterion, environment/data boundary, stop condition and current authority. Prefer the smallest pilot that can invalidate feasibility before scaling an expensive experiment. A negative result is progress when it rules out a direction.
-Research-only mutation is allowed only when the active user has already authorized that local research workspace and scope. A concrete request to experiment in a named worktree can supply that authority; invocation alone cannot. Within scope, code, fixtures, parsers, replay harnesses, simulations, benchmarks, prototypes and throwaway implementations may be changed and local commands may run. Preserve unrelated work and prefer reversible changes.
+Research-only local mutation uses the standard authority granted by explicit autoresearch invocation; do not request a second approval merely because the next research step needs code changes. Within the owned research worktree, code, fixtures, parsers, replay harnesses, simulations, benchmarks, prototypes and throwaway implementations may be changed, tested, locally committed and reverted when doing so can resolve a research item. Preserve unrelated work and keep experiments reversible.
 Never use research authority to mutate another product worktree, production data/configuration, external services, secrets, or remote Git state. Do not push, create or update issues/PRs, merge, release or deploy. A promising experiment is evidence, not production approval. Promote an accepted product direction to `tk-prep`.
 After an experiment, record `KEEP`, `REJECT`, `INCONCLUSIVE` or `BLOCKED` with evidence and reason. Keep rejected and inconclusive results visible. For consequential conclusions, use an independent/adversarial verification pass when available without widening authority; otherwise state the verification limit.
 
