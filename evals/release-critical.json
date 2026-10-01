@@ -477,7 +477,14 @@
     "tk-autoresearch:behavior:autoresearch-checkpoint-commits-tracked-knowledge",
     "tk-autoresearch:behavior:autoresearch-local-mode-keeps-knowledge-untracked",
     "tk-autoresearch:behavior:autoresearch-no-delta-does-not-spam-journal",
-    "tk-autoresearch:behavior:autoresearch-tracked-mode-mirrors-state-snapshot"
+    "tk-autoresearch:behavior:autoresearch-tracked-mode-mirrors-state-snapshot",
+    "tk-autoresearch:behavior:autoresearch-establishes-single-research-home",
+    "tk-autoresearch:behavior:autoresearch-terminal-conclude-persists-final-batch",
+    "tk-autoresearch:behavior:autoresearch-blocked-with-evidence-persists-delta",
+    "tk-autoresearch:behavior:autoresearch-tracked-knowledge-redacts-sensitive-evidence",
+    "tk-autoresearch:behavior:autoresearch-detects-concurrent-checkpoint-drift",
+    "tk-autoresearch:behavior:autoresearch-tracked-root-owner-collision",
+    "tk-autoresearch:behavior:autoresearch-resume-uses-hot-index-not-full-journal"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",
