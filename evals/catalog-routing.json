@@ -5,797 +5,96 @@
     "codex",
     "hermes-agent"
   ],
-  "migrations": [
-    {
-      "from": "upload-vs-pr-open-existing-pr",
-      "to": "pr-image-vs-pr-open-existing-pr",
-      "reason": "기존 이미지 첨부 스킬의 호출명을 tk-pr-image로 단축하며 선택 조건을 유지합니다."
-    },
-    {
-      "from": "status-orientation",
-      "to": "adhd-orientation",
-      "reason": "현황 안내 담당 스킬을 tk-status에서 tk-adhd로 이름 변경합니다."
-    },
-    {
-      "from": "eli5-explicit",
-      "to": "explain-explicit",
-      "reason": "Migrate visual explain and merged rewrite public skill names while preserving routing scenario."
-    },
-    {
-      "from": "eli5-natural-visual",
-      "to": "explain-natural-visual",
-      "reason": "Migrate visual explain and merged rewrite public skill names while preserving routing scenario."
-    },
-    {
-      "from": "eli5-vs-prototype",
-      "to": "explain-vs-prototype",
-      "reason": "Migrate visual explain and merged rewrite public skill names while preserving routing scenario."
-    },
-    {
-      "from": "eli5-generic-explanation-negative",
-      "to": "explain-generic-explanation-negative",
-      "reason": "Migrate visual explain and merged rewrite public skill names while preserving routing scenario."
-    },
-    {
-      "from": "plain-writing-context",
-      "to": "rewrite-plain-writing-context",
-      "reason": "Migrate visual explain and merged rewrite public skill names while preserving routing scenario."
-    },
-    {
-      "from": "humanizer-korean-tone",
-      "to": "rewrite-humanizer-korean-tone",
-      "reason": "Migrate visual explain and merged rewrite public skill names while preserving routing scenario."
-    },
-    {
-      "from": "plain-vs-adhd",
-      "to": "rewrite-plain-vs-adhd",
-      "reason": "Migrate visual explain and merged rewrite public skill names while preserving routing scenario."
-    },
-    {
-      "from": "humanizer-vs-plain",
-      "to": "rewrite-humanizer-vs-plain",
-      "reason": "Migrate visual explain and merged rewrite public skill names while preserving routing scenario."
-    },
-    {
-      "from": "plain-vs-humanizer",
-      "to": "rewrite-plain-vs-humanizer",
-      "reason": "Migrate visual explain and merged rewrite public skill names while preserving routing scenario."
-    },
-    {
-      "from": "plain-skill-maintenance",
-      "to": "rewrite-plain-skill-maintenance",
-      "reason": "Migrate visual explain and merged rewrite public skill names while preserving routing scenario."
-    },
-    {
-      "from": "humanizer-skill-maintenance",
-      "to": "rewrite-humanizer-skill-maintenance",
-      "reason": "Migrate visual explain and merged rewrite public skill names while preserving routing scenario."
-    },
-    {
-      "from": "discovery-continuing",
-      "to": "autoresearch-continuing",
-      "reason": "tk-discover의 지속 탐색 계약을 tk-autoresearch의 수렴형 연구 owner로 승격하며 routing 경계를 보존합니다."
-    },
-    {
-      "from": "discovery-bounded-comparison",
-      "to": "autoresearch-bounded-comparison",
-      "reason": "tk-discover의 지속 탐색 계약을 tk-autoresearch의 수렴형 연구 owner로 승격하며 routing 경계를 보존합니다."
-    },
-    {
-      "from": "discovery-agreed-roadmap",
-      "to": "autoresearch-agreed-roadmap",
-      "reason": "tk-discover의 지속 탐색 계약을 tk-autoresearch의 수렴형 연구 owner로 승격하며 routing 경계를 보존합니다."
-    },
-    {
-      "from": "discovery-selected-implementation",
-      "to": "autoresearch-selected-implementation",
-      "reason": "tk-discover의 지속 탐색 계약을 tk-autoresearch의 수렴형 연구 owner로 승격하며 routing 경계를 보존합니다."
-    }
-  ],
+  "migrations": [{"from": "upload-vs-pr-open-existing-pr", "to": "pr-image-vs-pr-open-existing-pr", "reason": "기존 이미지 첨부 스킬의 호출명을 tk-pr-image로 단축하며 선택 조건을 유지합니다."},{"from":"status-orientation","to":"adhd-orientation","reason":"현황 안내 담당 스킬을 tk-status에서 tk-adhd로 이름 변경합니다."},{"from":"eli5-explicit","to":"explain-explicit","reason":"Migrate visual explain and merged rewrite public skill names while preserving routing scenario."},{"from":"eli5-natural-visual","to":"explain-natural-visual","reason":"Migrate visual explain and merged rewrite public skill names while preserving routing scenario."},{"from":"eli5-vs-prototype","to":"explain-vs-prototype","reason":"Migrate visual explain and merged rewrite public skill names while preserving routing scenario."},{"from":"eli5-generic-explanation-negative","to":"explain-generic-explanation-negative","reason":"Migrate visual explain and merged rewrite public skill names while preserving routing scenario."},{"from":"plain-writing-context","to":"rewrite-plain-writing-context","reason":"Migrate visual explain and merged rewrite public skill names while preserving routing scenario."},{"from":"humanizer-korean-tone","to":"rewrite-humanizer-korean-tone","reason":"Migrate visual explain and merged rewrite public skill names while preserving routing scenario."},{"from":"plain-vs-adhd","to":"rewrite-plain-vs-adhd","reason":"Migrate visual explain and merged rewrite public skill names while preserving routing scenario."},{"from":"humanizer-vs-plain","to":"rewrite-humanizer-vs-plain","reason":"Migrate visual explain and merged rewrite public skill names while preserving routing scenario."},{"from":"plain-vs-humanizer","to":"rewrite-plain-vs-humanizer","reason":"Migrate visual explain and merged rewrite public skill names while preserving routing scenario."},{"from":"plain-skill-maintenance","to":"rewrite-plain-skill-maintenance","reason":"Migrate visual explain and merged rewrite public skill names while preserving routing scenario."},{"from":"humanizer-skill-maintenance","to":"rewrite-humanizer-skill-maintenance","reason":"Migrate visual explain and merged rewrite public skill names while preserving routing scenario."},{"from":"discovery-continuing","to":"autoresearch-continuing","reason":"tk-discover의 지속 탐색 계약을 tk-autoresearch의 수렴형 연구 owner로 승격하며 routing 경계를 보존합니다."},{"from":"discovery-bounded-comparison","to":"autoresearch-bounded-comparison","reason":"tk-discover의 지속 탐색 계약을 tk-autoresearch의 수렴형 연구 owner로 승격하며 routing 경계를 보존합니다."},{"from":"discovery-agreed-roadmap","to":"autoresearch-agreed-roadmap","reason":"tk-discover의 지속 탐색 계약을 tk-autoresearch의 수렴형 연구 owner로 승격하며 routing 경계를 보존합니다."},{"from":"discovery-selected-implementation","to":"autoresearch-selected-implementation","reason":"tk-discover의 지속 탐색 계약을 tk-autoresearch의 수렴형 연구 owner로 승격하며 routing 경계를 보존합니다."}],
   "cases": [
-    {
-      "id": "native-app-runtime-verify",
-      "boundary": "네이티브 앱 실행 검증과 웹 검증을 구분합니다.",
-      "prompt": "`Electron` 앱의 `native` `dialog`와 창 포커스가 동작하는지 실제 앱에서 검증해줘.",
-      "focus_skill": "tk-app-verify",
-      "expected_selected_skill": "tk-app-verify",
-      "critical": true
-    },
-    {
-      "id": "native-app-vs-browser-url",
-      "boundary": "네이티브 앱 실행 검증과 웹 검증을 구분합니다.",
-      "prompt": "승인된 웹 `URL`의 `DOM`과 네트워크를 `headless`로 검증해줘.",
-      "focus_skill": "tk-app-verify",
-      "expected_selected_skill": "tk-browser-verify",
-      "critical": true
-    },
-    {
-      "id": "native-app-vs-generic-desktop-task",
-      "boundary": "네이티브 앱 검증과 일반 작업 대행을 구분합니다.",
-      "prompt": "앱에서 문서를 작성하고 메일로 보내줘.",
-      "focus_skill": "tk-app-verify",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "prep-explicit",
-      "boundary": "tk-prep `explicit` `context` `preparation` `vs` `ordinary` `implementation`",
-      "prompt": "$tk-prep 이 `issue`를 `repository` `evidence`부터 인터뷰해서 실행 가능한 `Seed`로 준비해줘.",
-      "focus_skill": "tk-prep",
-      "expected_selected_skill": "tk-prep",
-      "critical": true
-    },
-    {
-      "id": "prep-explicit-local-execution",
-      "boundary": "tk-prep `explicit` 적응형 준비와 로컬 실행 `vs` 일반 구현",
-      "prompt": "$tk-prep 이 작은 버그를 준비한 뒤 승인받아 RED/GREEN 검증과 로컬 커밋까지 진행해줘.",
-      "focus_skill": "tk-prep",
-      "expected_selected_skill": "tk-prep",
-      "critical": true
-    },
-    {
-      "id": "prep-generic-planning-negative",
-      "boundary": "tk-prep `explicit` `entry` `vs` `ordinary` `planning` `conversation`",
-      "prompt": "이 기능 어떻게 구현할지 간단히 같이 생각해보자.",
-      "focus_skill": "tk-prep",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "prep-vs-ask-repo",
-      "boundary": "tk-prep `task` `preparation` `vs` tk-ask-repo `read-only` `explanation`",
-      "prompt": "$tk-ask-repo 이 화면의 `status` 값이 어디서 오는지 근거로 설명해줘.",
-      "focus_skill": "tk-ask-repo",
-      "expected_selected_skill": "tk-ask-repo",
-      "critical": true
-    },
-    {
-      "id": "prep-vs-wizard",
-      "boundary": "tk-prep `engineering` `task` `context` `vs` tk-wizard `human-only` `procedure`",
-      "prompt": "MFA 등록과 `passkey` 로그인에서 내가 직접 해야 하는 단계를 안내해줘.",
-      "focus_skill": "tk-wizard",
-      "expected_selected_skill": "tk-wizard",
-      "critical": true
-    },
-    {
-      "id": "prep-vs-browser",
-      "boundary": "tk-prep `verification` `planning` `vs` tk-browser-verify `runtime` `evidence`",
-      "prompt": "승인된 AC대로 실제 페이지를 `headless` `browser`에서 검증하고 `screenshot` `evidence`를 남겨줘.",
-      "focus_skill": "tk-browser-verify",
-      "expected_selected_skill": "tk-browser-verify",
-      "critical": true
-    },
-    {
-      "id": "grill-explicit",
-      "boundary": "tk-grill 명시적 아이디어·계획·결정 점검",
-      "prompt": "$tk-grill 새 교육 프로그램 아이디어의 숨은 가정과 의사결정을 빠짐없이 점검해줘.",
-      "focus_skill": "tk-grill",
-      "expected_selected_skill": "tk-grill",
-      "critical": true
-    },
-    {
-      "id": "grill-ordinary-brainstorm-negative",
-      "boundary": "tk-grill 명시 호출 `vs` 일반적인 짧은 `brainstorming`",
-      "prompt": "새 교육 프로그램 이름 아이디어를 세 개만 추천해줘.",
-      "focus_skill": "tk-grill",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "grill-vs-prep-engineering-ticket",
-      "boundary": "tk-grill `rough idea` 점검 `vs` tk-prep 구현 대상 준비",
-      "prompt": "$tk-prep `GitHub Issue` #351을 저장소 근거로 준비하고 구현해줘.",
-      "focus_skill": "tk-grill",
-      "expected_selected_skill": "tk-prep",
-      "critical": true
-    },
-    {
-      "id": "grill-vs-ask-repo-fact",
-      "boundary": "tk-grill 사용자 소유 결정 `vs` tk-ask-repo 저장소 사실 조사",
-      "prompt": "$tk-ask-repo 이 저장소의 `release tag` 형식을 근거와 함께 설명해줘.",
-      "focus_skill": "tk-grill",
-      "expected_selected_skill": "tk-ask-repo",
-      "critical": true
-    },
-    {
-      "id": "ask-repo-explicit-investigation",
-      "boundary": "tk-ask-repo `explicit` `repository` `Q&A` `vs` `generic` `Q&A`",
-      "prompt": "$tk-ask-repo `Display name` 값이 어디서 오는지 `path:line` 근거로 설명해줘.",
-      "focus_skill": "tk-ask-repo",
-      "expected_selected_skill": "tk-ask-repo",
-      "critical": true
-    },
-    {
-      "id": "ask-repo-ordinary-investigation",
-      "boundary": "tk-ask-repo `explicit` `invocation` `vs` `ordinary` `repository` `question`",
-      "prompt": "이 화면 `Display name` 값이 어디서 오는지 조사해줘.",
-      "focus_skill": "tk-ask-repo",
-      "expected_selected_skill": null,
-      "critical": false
-    },
-    {
-      "id": "ask-repo-vs-runtime-reproduction",
-      "boundary": "tk-ask-repo `explanation` `vs` `browser` `runtime` `reproduction`",
-      "prompt": "브라우저에서 QA 환경의 저장 실패를 직접 재현해줘.",
-      "focus_skill": "tk-browser-verify",
-      "expected_selected_skill": "tk-browser-verify",
-      "critical": true
-    },
-    {
-      "id": "review-explicit-range",
-      "boundary": "tk-review 명시적 `exact committed range` `read-only review` `vs` 일반 코드 검토",
-      "prompt": "$tk-review `HEAD^..HEAD`를 `Spec/AC`와 `Quality/Standards`로 나눠 검토해줘.",
-      "focus_skill": "tk-review",
-      "expected_selected_skill": "tk-review",
-      "critical": true
-    },
-    {
-      "id": "review-explicit-worktree",
-      "boundary": "tk-review 명시적 `current worktree` `read-only review` `vs` 수정 요청",
-      "prompt": "$tk-review 현재 `staged/unstaged/untracked worktree`를 변경 없이 검토해줘.",
-      "focus_skill": "tk-review",
-      "expected_selected_skill": "tk-review",
-      "critical": true
-    },
-    {
-      "id": "review-implicit-block",
-      "boundary": "tk-review 명시 호출 `vs` 일반 리뷰 요청",
-      "prompt": "현재 커밋의 코드 품질을 검토해줘.",
-      "focus_skill": "tk-review",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "review-vs-pr-respond",
-      "boundary": "tk-review `read-only verdict` `vs` tk-pr-respond 리뷰 피드백 반영과 `publication`",
-      "prompt": "/tk-pr-respond PR 리뷰 지적을 고치고 답글·`resolve`·재리뷰 요청까지 해줘.",
-      "focus_skill": "tk-review",
-      "expected_selected_skill": "tk-pr-respond",
-      "critical": true
-    },
-    {
-      "id": "pr-open-explicit",
-      "boundary": "tk-pr-open `exact` `publication` `vs` `other` PR `maintenance`",
-      "prompt": "/tk-pr-open 현재 브랜치로 PR `draft`를 준비해줘.",
-      "focus_skill": "tk-pr-open",
-      "expected_selected_skill": "tk-pr-open",
-      "critical": true
-    },
-    {
-      "id": "pr-open-natural-language",
-      "boundary": "tk-pr-open `natural PR/stack publication intent` `vs` `generic` PR `question`",
-      "prompt": "현재 브랜치로 PR 열어줘.",
-      "focus_skill": "tk-pr-open",
-      "expected_selected_skill": "tk-pr-open",
-      "critical": true
-    },
-    {
-      "id": "pr-open-retrospective-stack",
-      "boundary": "tk-pr-open 이미 구현된 현재 브랜치의 `retrospective stacked PR publication` `vs` 기존 여러 PR 유지보수",
-      "prompt": "현재 브랜치 구현은 끝났어. 변경이 여러 관심사라 리뷰 가능한 `stacked PR`로 쪼개서 올려줘.",
-      "focus_skill": "tk-pr-open",
-      "expected_selected_skill": "tk-pr-open",
-      "critical": true
-    },
-    {
-      "id": "pr-open-generic-question",
-      "boundary": "tk-pr-open `publication` `vs` PR `explanation`",
-      "prompt": "이 PR이 무엇을 바꾸는지 요약해줘.",
-      "focus_skill": "tk-pr-open",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "pr-image-vs-pr-open-existing-pr",
-      "boundary": "tk-pr-image 기존 `PR` 이미지 첨부 `vs` tk-pr-open `PR` 생성",
-      "prompt": "현재 PR 본문에 이 로컬 `screenshot` 파일을 첨부해줘.",
-      "focus_skill": "tk-pr-image",
-      "expected_selected_skill": "tk-pr-image",
-      "critical": true
-    },
-    {
-      "id": "pr-respond-explicit",
-      "boundary": "tk-pr-respond `one-PR` `review` `resolution` `vs` `generic` `review`",
-      "prompt": "/tk-pr-respond 선택한 `review` `feedback`을 처리해줘.",
-      "focus_skill": "tk-pr-respond",
-      "expected_selected_skill": "tk-pr-respond",
-      "critical": true
-    },
-    {
-      "id": "pr-rebase-explicit",
-      "boundary": "tk-pr-rebase `exact` PR `rebase`",
-      "prompt": "/tk-pr-rebase PR #42를 최신 `base`로 `rebase`해줘.",
-      "focus_skill": "tk-pr-rebase",
-      "expected_selected_skill": "tk-pr-rebase",
-      "critical": true
-    },
-    {
-      "id": "pr-rebase-generic-block",
-      "boundary": "tk-pr-rebase `explicit` `invocation` `vs` `ordinary` `rebase`",
-      "prompt": "이 PR `branch`를 최신 `main`으로 `rebase`해줘.",
-      "focus_skill": "tk-pr-rebase",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "pr-sweep-explicit",
-      "boundary": "tk-pr-sweep `multi-PR` `maintenance` `vs` `single` PR",
-      "prompt": "/tk-pr-sweep `configured repositories`의 지금 처리 가능한 PR을 정리해줘.",
-      "focus_skill": "tk-pr-sweep",
-      "expected_selected_skill": "tk-pr-sweep",
-      "critical": true
-    },
-    {
-      "id": "pr-sweep-report-explicit",
-      "boundary": "tk-pr-sweep --`report` `read-only` `multi-PR` `briefing`",
-      "prompt": "/tk-pr-sweep --report `configured repositories` 상태만 읽어서 알려줘.",
-      "focus_skill": "tk-pr-sweep",
-      "expected_selected_skill": "tk-pr-sweep",
-      "critical": true
-    },
-    {
-      "id": "pr-sweep-generic-block",
-      "boundary": "tk-pr-sweep `explicit` `invocation` `vs` `ordinary` `multi-PR` `request`",
-      "prompt": "열린 PR들을 알아서 정리하고 CI도 고쳐줘.",
-      "focus_skill": "tk-pr-sweep",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "browser-headless-auth-verifier-explicit",
-      "boundary": "tk-browser-verify `headless` `authenticated` `runtime` `verification`",
-      "prompt": "승인된 `staging` AC를 `headless` `browser`에서 `transient session`으로 검증해줘.",
-      "focus_skill": "tk-browser-verify",
-      "expected_selected_skill": "tk-browser-verify",
-      "critical": true
-    },
-    {
-      "id": "browser-natural-design-comparison",
-      "boundary": "tk-browser-verify 자연어 `design comparison`과 근거 캡처 `vs` 단순 이미지 저장",
-      "prompt": "로그인 화면은 `as-is/to-be`로 패딩 변경 차이도 알 수 있게 스샷 찍어줘.",
-      "focus_skill": "tk-browser-verify",
-      "expected_selected_skill": "tk-browser-verify",
-      "critical": true
-    },
-    {
-      "id": "browser-natural-render-defect",
-      "boundary": "tk-browser-verify 자연어 로컬 화면 결함 확인 `vs` 일반 코드 질문",
-      "prompt": "로컬 로그인 폼 하단이 첫 화면에서 접히는지 확인해줘.",
-      "focus_skill": "tk-browser-verify",
-      "expected_selected_skill": "tk-browser-verify",
-      "critical": true
-    },
-    {
-      "id": "prototype-disposable-comparison",
-      "boundary": "tk-prototype `executable` `disposable` `comparison` `vs` `production implementation`",
-      "prompt": "두 레이아웃을 비교할 수 있는 폐기용 웹 프로토타입을 만들어 주세요.",
-      "focus_skill": "tk-prototype",
-      "expected_selected_skill": "tk-prototype",
-      "critical": true
-    },
-    {
-      "id": "explain-explicit",
-      "boundary": "tk-explain `explicit` 초보자용 그림 중심 HTML 설명 자료",
-      "prompt": "$tk-explain DNS가 동작하는 흐름을 큰 그림과 적은 글의 HTML로 만들어줘.",
-      "focus_skill": "tk-explain",
-      "expected_selected_skill": "tk-explain",
-      "critical": true
-    },
-    {
-      "id": "explain-natural-visual",
-      "boundary": "tk-explain `visual explainer` `vs` 일반 `prose` 설명",
-      "prompt": "양자컴퓨터를 처음 보는 사람도 알게 큰 그림 몇 장과 짧은 글의 HTML로 설명해줘.",
-      "focus_skill": "tk-explain",
-      "expected_selected_skill": "tk-explain",
-      "critical": true
-    },
-    {
-      "id": "explain-vs-prototype",
-      "boundary": "tk-explain 단일 교육 자료 `vs` tk-prototype 대안 비교물",
-      "prompt": "$tk-prototype 두 레이아웃을 비교하는 `disposable HTML`을 만들어줘.",
-      "focus_skill": "tk-explain",
-      "expected_selected_skill": "tk-prototype",
-      "critical": true
-    },
-    {
-      "id": "explain-generic-explanation-negative",
-      "boundary": "tk-explain 그림 중심 `HTML artifact` `vs` 일반 질문",
-      "prompt": "HTML이 무엇인지 짧게 설명해줘.",
-      "focus_skill": "tk-explain",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "audit-explicit-audit",
-      "boundary": "tk-audit `read-only` `audit` `vs` `generic` `improvement`",
-      "prompt": "$tk-audit `repository`의 `security`와 `test coverage`를 AUD `finding`으로 감사해줘.",
-      "focus_skill": "tk-audit",
-      "expected_selected_skill": "tk-audit",
-      "critical": true
-    },
-    {
-      "id": "audit-finding-to-prep",
-      "boundary": "tk-audit `finding source` `vs` tk-prep",
-      "prompt": "$tk-prep AUD-003 `finding`을 실행 가능한 `Seed`로 준비해줘.",
-      "focus_skill": "tk-prep",
-      "expected_selected_skill": "tk-prep",
-      "critical": true
-    },
-    {
-      "id": "grooming-vs-learn-audit",
-      "boundary": "tk-grooming `vs` tk-learn",
-      "prompt": "기존 `repository skill`의 중복·범위·배치를 감사해줘.",
-      "focus_skill": "tk-grooming",
-      "expected_selected_skill": "tk-grooming",
-      "critical": true
-    },
-    {
-      "id": "grooming-stale-memory-after-user-correction",
-      "boundary": "tk-grooming 지속 지침 충돌 `vs` tk-skill-diagnose 원인 미상 행동 사고",
-      "prompt": "예전 자동 메모리대로 브라우저를 검증했는데 사용자가 틀렸다고 했어. 최신 `tk-browser-verify`와 충돌하는 낡은 지침을 찾아줘.",
-      "focus_skill": "tk-grooming",
-      "expected_selected_skill": "tk-grooming",
-      "critical": true
-    },
-    {
-      "id": "skill-diagnose-unattributed-browser-failure",
-      "boundary": "tk-skill-diagnose 원인 미상 행동 사고 `vs` tk-grooming 입증된 지속 지침 충돌",
-      "prompt": "브라우저 검증 결과가 틀렸는데 어떤 규칙이나 메모리가 관여했는지는 모르겠어. 행동을 재현하고 원인을 진단해줘.",
-      "focus_skill": "tk-skill-diagnose",
-      "expected_selected_skill": "tk-skill-diagnose",
-      "critical": true
-    },
-    {
-      "id": "learn-vs-grooming-learn",
-      "boundary": "tk-learn `vs` tk-grooming",
-      "prompt": "이 반복 경험을 재사용 가능한 새 `repository skill`로 설계해줘.",
-      "focus_skill": "tk-learn",
-      "expected_selected_skill": "tk-learn",
-      "critical": true
-    },
-    {
-      "id": "domain-explicit-authoring",
-      "boundary": "tk-domain `repository` 고유 `vocabulary` 작성 `vs` 일반 문서화",
-      "prompt": "$tk-domain `현장결제`를 `canonical term`으로 정하고 피해야 할 동의어를 `repository glossary`에 기록해줘.",
-      "focus_skill": "tk-domain",
-      "expected_selected_skill": "tk-domain",
-      "critical": true
-    },
-    {
-      "id": "domain-generic-explanation-negative",
-      "boundary": "tk-domain `vocabulary` 작성 `vs` 일반 설명",
-      "prompt": "도메인 모델링이 무엇인지 간단히 설명해줘.",
-      "focus_skill": "tk-domain",
-      "expected_selected_skill": null,
-      "critical": false
-    },
-    {
-      "id": "skill-diagnose-vs-learn-ready",
-      "boundary": "tk-skill-diagnose `vs` tk-learn",
-      "prompt": "관찰된 `Agent Skill incident`를 재현하고 `verified learn-ready payload`로 `handoff`해줘.",
-      "focus_skill": "tk-skill-diagnose",
-      "expected_selected_skill": "tk-skill-diagnose",
-      "critical": true
-    },
-    {
-      "id": "merge-conflict-vs-marker-active",
-      "boundary": "tk-merge-conflict `vs` `ordinary marker edit`",
-      "prompt": "진행 중인 `rebase conflict`를 의도에 맞게 해결하고 `rebase`를 완료해줘.",
-      "focus_skill": "tk-merge-conflict",
-      "expected_selected_skill": "tk-merge-conflict",
-      "critical": true
-    },
-    {
-      "id": "handoff-vs-summary-handoff",
-      "boundary": "tk-handoff `explicit resume snapshot` `vs` `generic summary`",
-      "prompt": "/tk-handoff 현재 진행 중인 작업을 다음 `agent`가 재개할 `snapshot`으로 작성해줘.",
-      "focus_skill": "tk-handoff",
-      "expected_selected_skill": "tk-handoff",
-      "critical": true
-    },
-    {
-      "id": "tk-wizard-explicit-human-session",
-      "boundary": "tk-wizard `human procedure` `vs` `agent work`",
-      "prompt": "`credential provisioning` 절차를 대화형으로 안내해줘.",
-      "focus_skill": "tk-wizard",
-      "expected_selected_skill": "tk-wizard",
-      "critical": false
-    },
-    {
-      "id": "adhd-orientation",
-      "boundary": "세션 현황 안내와 다른 작업 경계",
-      "prompt": "세션 여러 개라 헷갈려. 이 창 어디까지 했는지만 알려줘.",
-      "focus_skill": "tk-adhd",
-      "expected_selected_skill": "tk-adhd",
-      "critical": true
-    },
-    {
-      "id": "status-vs-handoff",
-      "boundary": "세션 현황 안내와 다른 작업 경계",
-      "prompt": "다음 세션용 `handoff` 파일을 작성해줘.",
-      "focus_skill": "tk-adhd",
-      "expected_selected_skill": "tk-handoff",
-      "critical": true
-    },
-    {
-      "id": "status-vs-code",
-      "boundary": "세션 현황 안내와 다른 작업 경계",
-      "prompt": "이 함수의 `status`가 무엇을 뜻하는지 설명해줘.",
-      "focus_skill": "tk-adhd",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "rewrite-plain-writing-context",
-      "boundary": "설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분",
-      "prompt": "이전 답변이 무슨 소린지 모르겠어. 배경을 모르는 동료에게 공유하도록 재작성해줘.",
-      "focus_skill": "tk-rewrite",
-      "expected_selected_skill": "tk-rewrite",
-      "critical": true
-    },
-    {
-      "id": "rewrite-humanizer-korean-tone",
-      "boundary": "설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분",
-      "prompt": "내용은 이해했어. 앞선 한국어 답변의 AI 말투만 자연스럽게 다듬어줘.",
-      "focus_skill": "tk-rewrite",
-      "expected_selected_skill": "tk-rewrite",
-      "critical": true
-    },
-    {
-      "id": "rewrite-plain-vs-adhd",
-      "boundary": "설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분",
-      "prompt": "이 세션에서 뭐 하고 있었지? 현황만 알려줘.",
-      "focus_skill": "tk-rewrite",
-      "expected_selected_skill": "tk-adhd",
-      "critical": true
-    },
-    {
-      "id": "rewrite-humanizer-vs-plain",
-      "boundary": "설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분",
-      "prompt": "이 문서의 배경과 설명 순서를 정리해서 처음 읽는 독자도 이해하도록 고쳐줘.",
-      "focus_skill": "tk-rewrite",
-      "expected_selected_skill": "tk-rewrite",
-      "critical": true
-    },
-    {
-      "id": "rewrite-plain-vs-humanizer",
-      "boundary": "설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분",
-      "prompt": "이 한국어 초안은 내용과 순서가 충분해. 번역투와 과장만 줄여줘.",
-      "focus_skill": "tk-rewrite",
-      "expected_selected_skill": "tk-rewrite",
-      "critical": true
-    },
-    {
-      "id": "rewrite-plain-skill-maintenance",
-      "boundary": "설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분",
-      "prompt": "타이거킷의 tk-rewrite 스킬 구현을 고쳐줘.",
-      "focus_skill": "tk-rewrite",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "rewrite-humanizer-skill-maintenance",
-      "boundary": "설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분",
-      "prompt": "타이거킷의 tk-rewrite 스킬을 수정해줘.",
-      "focus_skill": "tk-rewrite",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "research-external-prior-art",
-      "boundary": "외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.",
-      "prompt": "`API` `abuse` `detection`을 업계에서는 어떻게 탐지하는지 사례와 접근법을 조사해 주세요.",
-      "focus_skill": "tk-research",
-      "expected_selected_skill": "tk-research",
-      "critical": true
-    },
-    {
-      "id": "research-threshold-alternatives",
-      "boundary": "외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.",
-      "prompt": "내 `threshold` 방식 말고 통계적·운영적으로 어떤 해법들이 있는지 `prior` `art`부터 봐줘.",
-      "focus_skill": "tk-research",
-      "expected_selected_skill": "tk-research",
-      "critical": true
-    },
-    {
-      "id": "research-vs-ask-repo",
-      "boundary": "외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.",
-      "prompt": "`$tk-ask-repo` 이 값이 어디서 만들어지는지 찾아줘.",
-      "focus_skill": "tk-research",
-      "expected_selected_skill": "tk-ask-repo",
-      "critical": true
-    },
-    {
-      "id": "research-vs-audit",
-      "boundary": "외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.",
-      "prompt": "`$tk-audit` 저장소의 성능 문제를 감사해줘.",
-      "focus_skill": "tk-research",
-      "expected_selected_skill": "tk-audit",
-      "critical": true
-    },
-    {
-      "id": "research-vs-grill",
-      "boundary": "외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.",
-      "prompt": "`$tk-grill` 이 아이디어에서 빠진 점을 질문으로 확인해줘.",
-      "focus_skill": "tk-research",
-      "expected_selected_skill": "tk-grill",
-      "critical": true
-    },
-    {
-      "id": "research-vs-prep",
-      "boundary": "외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.",
-      "prompt": "`$tk-prep` 이 기능을 구현해줘.",
-      "focus_skill": "tk-research",
-      "expected_selected_skill": "tk-prep",
-      "critical": true
-    },
-    {
-      "id": "research-generic-fact",
-      "boundary": "외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.",
-      "prompt": "평균과 중앙값은 뭐가 달라?",
-      "focus_skill": "tk-research",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "audit-policy-explicit",
-      "boundary": "외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.",
-      "prompt": "`$tk-audit` `policy` 정책 분기의 최소 충분한 구조를 검토해줘.",
-      "focus_skill": "tk-audit",
-      "expected_selected_skill": "tk-audit",
-      "critical": true
-    },
-    {
-      "id": "learn-approved-diagnose-handoff",
-      "boundary": "외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.",
-      "prompt": "원인 확인 후 고쳐 달라고 승인한 동일 스킬의 `verified` `learn-ready`가 준비됐습니다. `semantic` `fix`를 계속해 주세요.",
-      "focus_skill": "tk-learn",
-      "expected_selected_skill": "tk-learn",
-      "critical": true
-    },
-    {
-      "id": "learn-diagnosis-only-handoff",
-      "boundary": "외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.",
-      "prompt": "진단만 요청한 스킬의 `learn-ready`를 받았습니다. 수정하지 말고 종료해 주세요.",
-      "focus_skill": "tk-learn",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "learn-generic-skill-mention",
-      "boundary": "외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.",
-      "prompt": "`skill`이 뭔지 간단히 설명해줘.",
-      "focus_skill": "tk-learn",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "study-learning",
-      "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
-      "prompt": "`Kafka` 처음 배우는데 조사해서 가르쳐줘.",
-      "focus_skill": "tk-study",
-      "expected_selected_skill": "tk-study",
-      "critical": true
-    },
-    {
-      "id": "study-vs-research",
-      "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
-      "prompt": "`Kafka`와 `RabbitMQ` 비교해줘.",
-      "focus_skill": "tk-study",
-      "expected_selected_skill": "tk-research",
-      "critical": true
-    },
-    {
-      "id": "study-vs-explain",
-      "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
-      "prompt": "`Kafka` 동작을 시각적으로 설명해줘.",
-      "focus_skill": "tk-study",
-      "expected_selected_skill": "tk-explain",
-      "critical": true
-    },
-    {
-      "id": "diff-understanding",
-      "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
-      "prompt": "이 PR에서 `Kafka` `consumer`가 왜 이렇게 바뀌었어?",
-      "focus_skill": "tk-explain-diff",
-      "expected_selected_skill": "tk-explain-diff",
-      "critical": true
-    },
-    {
-      "id": "diff-vs-review",
-      "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
-      "prompt": "이 PR 리뷰해줘.",
-      "focus_skill": "tk-explain-diff",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "study-vs-learn",
-      "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
-      "prompt": "이 경험을 재사용 가능한 스킬로 만들어줘.",
-      "focus_skill": "tk-study",
-      "expected_selected_skill": "tk-learn",
-      "critical": true
-    },
-    {
-      "id": "roadmap-empty",
-      "boundary": "단계별 기획 인터뷰와 구현 준비·결정 점검·일반 대화 구분",
-      "prompt": "$tk-roadmap",
-      "focus_skill": "tk-roadmap",
-      "expected_selected_skill": "tk-roadmap",
-      "critical": true
-    },
-    {
-      "id": "roadmap-prep",
-      "boundary": "단계별 기획 인터뷰와 구현 준비·결정 점검·일반 대화 구분",
-      "prompt": "$tk-prep 이 버그를 수정해줘",
-      "focus_skill": "tk-roadmap",
-      "expected_selected_skill": "tk-prep",
-      "critical": true
-    },
-    {
-      "id": "roadmap-grill",
-      "boundary": "단계별 기획 인터뷰와 구현 준비·결정 점검·일반 대화 구분",
-      "prompt": "$tk-grill 이 계획을 점검해줘",
-      "focus_skill": "tk-roadmap",
-      "expected_selected_skill": "tk-grill",
-      "critical": true
-    },
-    {
-      "id": "roadmap-ordinary",
-      "boundary": "단계별 기획 인터뷰와 구현 준비·결정 점검·일반 대화 구분",
-      "prompt": "개선 아이디어 세 개만 알려줘",
-      "focus_skill": "tk-roadmap",
-      "expected_selected_skill": null,
-      "critical": true
-    },
-    {
-      "id": "study-course-vs-explain",
-      "boundary": "다중 챕터 학습 과정과 한 개념 설명의 경계",
-      "prompt": "HTTP와 브라우저 식별을 선수지식 확인부터 여러 챕터로 공부할 학습 과정을 만들어줘.",
-      "focus_skill": "tk-study",
-      "expected_selected_skill": "tk-study",
-      "critical": true
-    },
-    {
-      "id": "explain-focused-vs-study",
-      "boundary": "다중 챕터 학습 과정과 한 개념 설명의 경계",
-      "prompt": "HTTP 캐시 검증자 하나의 작동 원리를 HTML 시각 자료로 설명해줘.",
-      "focus_skill": "tk-study",
-      "expected_selected_skill": "tk-explain",
-      "critical": true
-    },
-    {
-      "id": "autoresearch-continuing",
-      "boundary": "지속 자동연구와 일회성 조사, delivery 계획 및 제품 구현을 구분합니다.",
-      "prompt": "$tk-autoresearch 목적은 있지만 다음 질문을 몰라. 조사와 필요한 pilot 결과를 반영하며 연구 방향을 계속 갱신해줘.",
-      "focus_skill": "tk-autoresearch",
-      "expected_selected_skill": "tk-autoresearch",
-      "critical": true
-    },
-    {
-      "id": "autoresearch-bounded-comparison",
-      "boundary": "지속 자동연구와 일회성 외부 비교를 구분합니다.",
-      "prompt": "`CrowdSec`와 `AWS WAF`를 주어진 조건으로 한 번 비교 조사해줘.",
-      "focus_skill": "tk-autoresearch",
-      "expected_selected_skill": "tk-research",
-      "critical": true
-    },
-    {
-      "id": "autoresearch-agreed-roadmap",
-      "boundary": "지속 자동연구와 이미 합의한 방향의 delivery 계획을 구분합니다.",
-      "prompt": "$tk-roadmap 선택한 방향의 우선순위와 delivery 마일스톤을 정리해줘.",
-      "focus_skill": "tk-autoresearch",
-      "expected_selected_skill": "tk-roadmap",
-      "critical": true
-    },
-    {
-      "id": "autoresearch-selected-implementation",
-      "boundary": "지속 자동연구와 선택한 제품 구현을 구분합니다.",
-      "prompt": "$tk-prep 연구에서 채택한 설계로 제품 기능을 구현해줘.",
-      "focus_skill": "tk-autoresearch",
-      "expected_selected_skill": "tk-prep",
-      "critical": true
-    }
+    {"id":"native-app-runtime-verify","boundary":"네이티브 앱 실행 검증과 웹 검증을 구분합니다.","prompt":"`Electron` 앱의 `native` `dialog`와 창 포커스가 동작하는지 실제 앱에서 검증해줘.","focus_skill":"tk-app-verify","expected_selected_skill":"tk-app-verify","critical":true},
+    {"id":"native-app-vs-browser-url","boundary":"네이티브 앱 실행 검증과 웹 검증을 구분합니다.","prompt":"승인된 웹 `URL`의 `DOM`과 네트워크를 `headless`로 검증해줘.","focus_skill":"tk-app-verify","expected_selected_skill":"tk-browser-verify","critical":true},
+    {"id":"native-app-vs-generic-desktop-task","boundary":"네이티브 앱 검증과 일반 작업 대행을 구분합니다.","prompt":"앱에서 문서를 작성하고 메일로 보내줘.","focus_skill":"tk-app-verify","expected_selected_skill":null,"critical":true},
+
+    {"id":"prep-explicit","boundary":"tk-prep `explicit` `context` `preparation` `vs` `ordinary` `implementation`","prompt":"$tk-prep 이 `issue`를 `repository` `evidence`부터 인터뷰해서 실행 가능한 `Seed`로 준비해줘.","focus_skill":"tk-prep","expected_selected_skill":"tk-prep","critical":true},
+    {"id":"prep-explicit-local-execution","boundary":"tk-prep `explicit` 적응형 준비와 로컬 실행 `vs` 일반 구현","prompt":"$tk-prep 이 작은 버그를 준비한 뒤 승인받아 RED/GREEN 검증과 로컬 커밋까지 진행해줘.","focus_skill":"tk-prep","expected_selected_skill":"tk-prep","critical":true},
+    {"id":"prep-generic-planning-negative","boundary":"tk-prep `explicit` `entry` `vs` `ordinary` `planning` `conversation`","prompt":"이 기능 어떻게 구현할지 간단히 같이 생각해보자.","focus_skill":"tk-prep","expected_selected_skill":null,"critical":true},
+    {"id":"prep-vs-ask-repo","boundary":"tk-prep `task` `preparation` `vs` tk-ask-repo `read-only` `explanation`","prompt":"$tk-ask-repo 이 화면의 `status` 값이 어디서 오는지 근거로 설명해줘.","focus_skill":"tk-ask-repo","expected_selected_skill":"tk-ask-repo","critical":true},
+    {"id":"prep-vs-wizard","boundary":"tk-prep `engineering` `task` `context` `vs` tk-wizard `human-only` `procedure`","prompt":"MFA 등록과 `passkey` 로그인에서 내가 직접 해야 하는 단계를 안내해줘.","focus_skill":"tk-wizard","expected_selected_skill":"tk-wizard","critical":true},
+    {"id":"prep-vs-browser","boundary":"tk-prep `verification` `planning` `vs` tk-browser-verify `runtime` `evidence`","prompt":"승인된 AC대로 실제 페이지를 `headless` `browser`에서 검증하고 `screenshot` `evidence`를 남겨줘.","focus_skill":"tk-browser-verify","expected_selected_skill":"tk-browser-verify","critical":true},
+    {"id":"grill-explicit","boundary":"tk-grill 명시적 아이디어·계획·결정 점검","prompt":"$tk-grill 새 교육 프로그램 아이디어의 숨은 가정과 의사결정을 빠짐없이 점검해줘.","focus_skill":"tk-grill","expected_selected_skill":"tk-grill","critical":true},
+    {"id":"grill-ordinary-brainstorm-negative","boundary":"tk-grill 명시 호출 `vs` 일반적인 짧은 `brainstorming`","prompt":"새 교육 프로그램 이름 아이디어를 세 개만 추천해줘.","focus_skill":"tk-grill","expected_selected_skill":null,"critical":true},
+    {"id":"grill-vs-prep-engineering-ticket","boundary":"tk-grill `rough idea` 점검 `vs` tk-prep 구현 대상 준비","prompt":"$tk-prep `GitHub Issue` #351을 저장소 근거로 준비하고 구현해줘.","focus_skill":"tk-grill","expected_selected_skill":"tk-prep","critical":true},
+    {"id":"grill-vs-ask-repo-fact","boundary":"tk-grill 사용자 소유 결정 `vs` tk-ask-repo 저장소 사실 조사","prompt":"$tk-ask-repo 이 저장소의 `release tag` 형식을 근거와 함께 설명해줘.","focus_skill":"tk-grill","expected_selected_skill":"tk-ask-repo","critical":true},
+    {"id":"ask-repo-explicit-investigation","boundary":"tk-ask-repo `explicit` `repository` `Q&A` `vs` `generic` `Q&A`","prompt":"$tk-ask-repo `Display name` 값이 어디서 오는지 `path:line` 근거로 설명해줘.","focus_skill":"tk-ask-repo","expected_selected_skill":"tk-ask-repo","critical":true},
+    {"id":"ask-repo-ordinary-investigation","boundary":"tk-ask-repo `explicit` `invocation` `vs` `ordinary` `repository` `question`","prompt":"이 화면 `Display name` 값이 어디서 오는지 조사해줘.","focus_skill":"tk-ask-repo","expected_selected_skill":null,"critical":false},
+    {"id":"ask-repo-vs-runtime-reproduction","boundary":"tk-ask-repo `explanation` `vs` `browser` `runtime` `reproduction`","prompt":"브라우저에서 QA 환경의 저장 실패를 직접 재현해줘.","focus_skill":"tk-browser-verify","expected_selected_skill":"tk-browser-verify","critical":true},
+    {"id":"review-explicit-range","boundary":"tk-review 명시적 `exact committed range` `read-only review` `vs` 일반 코드 검토","prompt":"$tk-review `HEAD^..HEAD`를 `Spec/AC`와 `Quality/Standards`로 나눠 검토해줘.","focus_skill":"tk-review","expected_selected_skill":"tk-review","critical":true},
+    {"id":"review-explicit-worktree","boundary":"tk-review 명시적 `current worktree` `read-only review` `vs` 수정 요청","prompt":"$tk-review 현재 `staged/unstaged/untracked worktree`를 변경 없이 검토해줘.","focus_skill":"tk-review","expected_selected_skill":"tk-review","critical":true},
+    {"id":"review-implicit-block","boundary":"tk-review 명시 호출 `vs` 일반 리뷰 요청","prompt":"현재 커밋의 코드 품질을 검토해줘.","focus_skill":"tk-review","expected_selected_skill":null,"critical":true},
+    {"id":"review-vs-pr-respond","boundary":"tk-review `read-only verdict` `vs` tk-pr-respond 리뷰 피드백 반영과 `publication`","prompt":"/tk-pr-respond PR 리뷰 지적을 고치고 답글·`resolve`·재리뷰 요청까지 해줘.","focus_skill":"tk-review","expected_selected_skill":"tk-pr-respond","critical":true},
+    {"id":"pr-open-explicit","boundary":"tk-pr-open `exact` `publication` `vs` `other` PR `maintenance`","prompt":"/tk-pr-open 현재 브랜치로 PR `draft`를 준비해줘.","focus_skill":"tk-pr-open","expected_selected_skill":"tk-pr-open","critical":true},
+    {"id":"pr-open-natural-language","boundary":"tk-pr-open `natural PR/stack publication intent` `vs` `generic` PR `question`","prompt":"현재 브랜치로 PR 열어줘.","focus_skill":"tk-pr-open","expected_selected_skill":"tk-pr-open","critical":true},
+    {"id":"pr-open-retrospective-stack","boundary":"tk-pr-open 이미 구현된 현재 브랜치의 `retrospective stacked PR publication` `vs` 기존 여러 PR 유지보수","prompt":"현재 브랜치 구현은 끝났어. 변경이 여러 관심사라 리뷰 가능한 `stacked PR`로 쪼개서 올려줘.","focus_skill":"tk-pr-open","expected_selected_skill":"tk-pr-open","critical":true},
+    {"id":"pr-open-generic-question","boundary":"tk-pr-open `publication` `vs` PR `explanation`","prompt":"이 PR이 무엇을 바꾸는지 요약해줘.","focus_skill":"tk-pr-open","expected_selected_skill":null,"critical":true},
+    {"id":"pr-image-vs-pr-open-existing-pr","boundary":"tk-pr-image 기존 `PR` 이미지 첨부 `vs` tk-pr-open `PR` 생성","prompt":"현재 PR 본문에 이 로컬 `screenshot` 파일을 첨부해줘.","focus_skill":"tk-pr-image","expected_selected_skill":"tk-pr-image","critical":true},
+    {"id":"pr-respond-explicit","boundary":"tk-pr-respond `one-PR` `review` `resolution` `vs` `generic` `review`","prompt":"/tk-pr-respond 선택한 `review` `feedback`을 처리해줘.","focus_skill":"tk-pr-respond","expected_selected_skill":"tk-pr-respond","critical":true},
+    {"id":"pr-rebase-explicit","boundary":"tk-pr-rebase `exact` PR `rebase`","prompt":"/tk-pr-rebase PR #42를 최신 `base`로 `rebase`해줘.","focus_skill":"tk-pr-rebase","expected_selected_skill":"tk-pr-rebase","critical":true},
+    {"id":"pr-rebase-generic-block","boundary":"tk-pr-rebase `explicit` `invocation` `vs` `ordinary` `rebase`","prompt":"이 PR `branch`를 최신 `main`으로 `rebase`해줘.","focus_skill":"tk-pr-rebase","expected_selected_skill":null,"critical":true},
+    {"id":"pr-sweep-explicit","boundary":"tk-pr-sweep `multi-PR` `maintenance` `vs` `single` PR","prompt":"/tk-pr-sweep `configured repositories`의 지금 처리 가능한 PR을 정리해줘.","focus_skill":"tk-pr-sweep","expected_selected_skill":"tk-pr-sweep","critical":true},
+    {"id":"pr-sweep-report-explicit","boundary":"tk-pr-sweep --`report` `read-only` `multi-PR` `briefing`","prompt":"/tk-pr-sweep --report `configured repositories` 상태만 읽어서 알려줘.","focus_skill":"tk-pr-sweep","expected_selected_skill":"tk-pr-sweep","critical":true},
+    {"id":"pr-sweep-generic-block","boundary":"tk-pr-sweep `explicit` `invocation` `vs` `ordinary` `multi-PR` `request`","prompt":"열린 PR들을 알아서 정리하고 CI도 고쳐줘.","focus_skill":"tk-pr-sweep","expected_selected_skill":null,"critical":true},
+    {"id":"browser-headless-auth-verifier-explicit","boundary":"tk-browser-verify `headless` `authenticated` `runtime` `verification`","prompt":"승인된 `staging` AC를 `headless` `browser`에서 `transient session`으로 검증해줘.","focus_skill":"tk-browser-verify","expected_selected_skill":"tk-browser-verify","critical":true},
+    {"id":"browser-natural-design-comparison","boundary":"tk-browser-verify 자연어 `design comparison`과 근거 캡처 `vs` 단순 이미지 저장","prompt":"로그인 화면은 `as-is/to-be`로 패딩 변경 차이도 알 수 있게 스샷 찍어줘.","focus_skill":"tk-browser-verify","expected_selected_skill":"tk-browser-verify","critical":true},
+    {"id":"browser-natural-render-defect","boundary":"tk-browser-verify 자연어 로컬 화면 결함 확인 `vs` 일반 코드 질문","prompt":"로컬 로그인 폼 하단이 첫 화면에서 접히는지 확인해줘.","focus_skill":"tk-browser-verify","expected_selected_skill":"tk-browser-verify","critical":true},
+    {"id":"prototype-disposable-comparison","boundary":"tk-prototype `executable` `disposable` `comparison` `vs` `production implementation`","prompt":"두 레이아웃을 비교할 수 있는 폐기용 웹 프로토타입을 만들어 주세요.","focus_skill":"tk-prototype","expected_selected_skill":"tk-prototype","critical":true},
+    {"id":"explain-explicit","boundary":"tk-explain `explicit` 초보자용 그림 중심 HTML 설명 자료","prompt":"$tk-explain DNS가 동작하는 흐름을 큰 그림과 적은 글의 HTML로 만들어줘.","focus_skill":"tk-explain","expected_selected_skill":"tk-explain","critical":true},
+    {"id":"explain-natural-visual","boundary":"tk-explain `visual explainer` `vs` 일반 `prose` 설명","prompt":"양자컴퓨터를 처음 보는 사람도 알게 큰 그림 몇 장과 짧은 글의 HTML로 설명해줘.","focus_skill":"tk-explain","expected_selected_skill":"tk-explain","critical":true},
+    {"id":"explain-vs-prototype","boundary":"tk-explain 단일 교육 자료 `vs` tk-prototype 대안 비교물","prompt":"$tk-prototype 두 레이아웃을 비교하는 `disposable HTML`을 만들어줘.","focus_skill":"tk-explain","expected_selected_skill":"tk-prototype","critical":true},
+    {"id":"explain-generic-explanation-negative","boundary":"tk-explain 그림 중심 `HTML artifact` `vs` 일반 질문","prompt":"HTML이 무엇인지 짧게 설명해줘.","focus_skill":"tk-explain","expected_selected_skill":null,"critical":true},
+    {"id":"audit-explicit-audit","boundary":"tk-audit `read-only` `audit` `vs` `generic` `improvement`","prompt":"$tk-audit `repository`의 `security`와 `test coverage`를 AUD `finding`으로 감사해줘.","focus_skill":"tk-audit","expected_selected_skill":"tk-audit","critical":true},
+    {"id":"audit-finding-to-prep","boundary":"tk-audit `finding source` `vs` tk-prep","prompt":"$tk-prep AUD-003 `finding`을 실행 가능한 `Seed`로 준비해줘.","focus_skill":"tk-prep","expected_selected_skill":"tk-prep","critical":true},
+    {"id":"grooming-vs-learn-audit","boundary":"tk-grooming `vs` tk-learn","prompt":"기존 `repository skill`의 중복·범위·배치를 감사해줘.","focus_skill":"tk-grooming","expected_selected_skill":"tk-grooming","critical":true},
+    {"id":"grooming-stale-memory-after-user-correction","boundary":"tk-grooming 지속 지침 충돌 `vs` tk-skill-diagnose 원인 미상 행동 사고","prompt":"예전 자동 메모리대로 브라우저를 검증했는데 사용자가 틀렸다고 했어. 최신 `tk-browser-verify`와 충돌하는 낡은 지침을 찾아줘.","focus_skill":"tk-grooming","expected_selected_skill":"tk-grooming","critical":true},
+    {"id":"skill-diagnose-unattributed-browser-failure","boundary":"tk-skill-diagnose 원인 미상 행동 사고 `vs` tk-grooming 입증된 지속 지침 충돌","prompt":"브라우저 검증 결과가 틀렸는데 어떤 규칙이나 메모리가 관여했는지는 모르겠어. 행동을 재현하고 원인을 진단해줘.","focus_skill":"tk-skill-diagnose","expected_selected_skill":"tk-skill-diagnose","critical":true},
+    {"id":"learn-vs-grooming-learn","boundary":"tk-learn `vs` tk-grooming","prompt":"이 반복 경험을 재사용 가능한 새 `repository skill`로 설계해줘.","focus_skill":"tk-learn","expected_selected_skill":"tk-learn","critical":true},
+    {"id":"domain-explicit-authoring","boundary":"tk-domain `repository` 고유 `vocabulary` 작성 `vs` 일반 문서화","prompt":"$tk-domain `현장결제`를 `canonical term`으로 정하고 피해야 할 동의어를 `repository glossary`에 기록해줘.","focus_skill":"tk-domain","expected_selected_skill":"tk-domain","critical":true},
+    {"id":"domain-generic-explanation-negative","boundary":"tk-domain `vocabulary` 작성 `vs` 일반 설명","prompt":"도메인 모델링이 무엇인지 간단히 설명해줘.","focus_skill":"tk-domain","expected_selected_skill":null,"critical":false},
+    {"id":"skill-diagnose-vs-learn-ready","boundary":"tk-skill-diagnose `vs` tk-learn","prompt":"관찰된 `Agent Skill incident`를 재현하고 `verified learn-ready payload`로 `handoff`해줘.","focus_skill":"tk-skill-diagnose","expected_selected_skill":"tk-skill-diagnose","critical":true},
+    {"id":"merge-conflict-vs-marker-active","boundary":"tk-merge-conflict `vs` `ordinary marker edit`","prompt":"진행 중인 `rebase conflict`를 의도에 맞게 해결하고 `rebase`를 완료해줘.","focus_skill":"tk-merge-conflict","expected_selected_skill":"tk-merge-conflict","critical":true},
+    {"id":"handoff-vs-summary-handoff","boundary":"tk-handoff `explicit resume snapshot` `vs` `generic summary`","prompt":"/tk-handoff 현재 진행 중인 작업을 다음 `agent`가 재개할 `snapshot`으로 작성해줘.","focus_skill":"tk-handoff","expected_selected_skill":"tk-handoff","critical":true},
+    {"id":"tk-wizard-explicit-human-session","boundary":"tk-wizard `human procedure` `vs` `agent work`","prompt":"`credential provisioning` 절차를 대화형으로 안내해줘.","focus_skill":"tk-wizard","expected_selected_skill":"tk-wizard","critical":false},
+    {"id":"adhd-orientation","boundary":"세션 현황 안내와 다른 작업 경계","prompt":"세션 여러 개라 헷갈려. 이 창 어디까지 했는지만 알려줘.","focus_skill":"tk-adhd","expected_selected_skill":"tk-adhd","critical":true},
+    {"id":"status-vs-handoff","boundary":"세션 현황 안내와 다른 작업 경계","prompt":"다음 세션용 `handoff` 파일을 작성해줘.","focus_skill":"tk-adhd","expected_selected_skill":"tk-handoff","critical":true},
+    {"id":"status-vs-code","boundary":"세션 현황 안내와 다른 작업 경계","prompt":"이 함수의 `status`가 무엇을 뜻하는지 설명해줘.","focus_skill":"tk-adhd","expected_selected_skill":null,"critical":true},
+    {"id":"rewrite-plain-writing-context","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"이전 답변이 무슨 소린지 모르겠어. 배경을 모르는 동료에게 공유하도록 재작성해줘.","focus_skill":"tk-rewrite","expected_selected_skill":"tk-rewrite","critical":true},
+    {"id":"rewrite-humanizer-korean-tone","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"내용은 이해했어. 앞선 한국어 답변의 AI 말투만 자연스럽게 다듬어줘.","focus_skill":"tk-rewrite","expected_selected_skill":"tk-rewrite","critical":true},
+    {"id":"rewrite-plain-vs-adhd","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"이 세션에서 뭐 하고 있었지? 현황만 알려줘.","focus_skill":"tk-rewrite","expected_selected_skill":"tk-adhd","critical":true},
+    {"id":"rewrite-humanizer-vs-plain","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"이 문서의 배경과 설명 순서를 정리해서 처음 읽는 독자도 이해하도록 고쳐줘.","focus_skill":"tk-rewrite","expected_selected_skill":"tk-rewrite","critical":true},
+    {"id":"rewrite-plain-vs-humanizer","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"이 한국어 초안은 내용과 순서가 충분해. 번역투와 과장만 줄여줘.","focus_skill":"tk-rewrite","expected_selected_skill":"tk-rewrite","critical":true},
+    {"id":"rewrite-plain-skill-maintenance","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"타이거킷의 tk-rewrite 스킬 구현을 고쳐줘.","focus_skill":"tk-rewrite","expected_selected_skill":null,"critical":true},
+    {"id":"rewrite-humanizer-skill-maintenance","boundary":"설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분","prompt":"타이거킷의 tk-rewrite 스킬을 수정해줘.","focus_skill":"tk-rewrite","expected_selected_skill":null,"critical":true},
+    {"id":"research-external-prior-art","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"`API` `abuse` `detection`을 업계에서는 어떻게 탐지하는지 사례와 접근법을 조사해 주세요.","focus_skill":"tk-research","expected_selected_skill":"tk-research","critical":true},
+    {"id":"research-threshold-alternatives","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"내 `threshold` 방식 말고 통계적·운영적으로 어떤 해법들이 있는지 `prior` `art`부터 봐줘.","focus_skill":"tk-research","expected_selected_skill":"tk-research","critical":true},
+    {"id":"research-vs-ask-repo","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"`$tk-ask-repo` 이 값이 어디서 만들어지는지 찾아줘.","focus_skill":"tk-research","expected_selected_skill":"tk-ask-repo","critical":true},
+    {"id":"research-vs-audit","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"`$tk-audit` 저장소의 성능 문제를 감사해줘.","focus_skill":"tk-research","expected_selected_skill":"tk-audit","critical":true},
+    {"id":"research-vs-grill","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"`$tk-grill` 이 아이디어에서 빠진 점을 질문으로 확인해줘.","focus_skill":"tk-research","expected_selected_skill":"tk-grill","critical":true},
+    {"id":"research-vs-prep","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"`$tk-prep` 이 기능을 구현해줘.","focus_skill":"tk-research","expected_selected_skill":"tk-prep","critical":true},
+    {"id":"research-generic-fact","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"평균과 중앙값은 뭐가 달라?","focus_skill":"tk-research","expected_selected_skill":null,"critical":true},
+    {"id":"audit-policy-explicit","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"`$tk-audit` `policy` 정책 분기의 최소 충분한 구조를 검토해줘.","focus_skill":"tk-audit","expected_selected_skill":"tk-audit","critical":true},
+    {"id":"learn-approved-diagnose-handoff","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"원인 확인 후 고쳐 달라고 승인한 동일 스킬의 `verified` `learn-ready`가 준비됐습니다. `semantic` `fix`를 계속해 주세요.","focus_skill":"tk-learn","expected_selected_skill":"tk-learn","critical":true},
+    {"id":"learn-diagnosis-only-handoff","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"진단만 요청한 스킬의 `learn-ready`를 받았습니다. 수정하지 말고 종료해 주세요.","focus_skill":"tk-learn","expected_selected_skill":null,"critical":true},
+    {"id":"learn-generic-skill-mention","boundary":"외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.","prompt":"`skill`이 뭔지 간단히 설명해줘.","focus_skill":"tk-learn","expected_selected_skill":null,"critical":true},
+    {"id":"study-learning","boundary":"조사·학습·변경 설명·리뷰 소유권 구분","prompt":"`Kafka` 처음 배우는데 조사해서 가르쳐줘.","focus_skill":"tk-study","expected_selected_skill":"tk-study","critical":true},
+    {"id":"study-vs-research","boundary":"조사·학습·변경 설명·리뷰 소유권 구분","prompt":"`Kafka`와 `RabbitMQ` 비교해줘.","focus_skill":"tk-study","expected_selected_skill":"tk-research","critical":true},
+    {"id":"study-vs-explain","boundary":"조사·학습·변경 설명·리뷰 소유권 구분","prompt":"`Kafka` 동작을 시각적으로 설명해줘.","focus_skill":"tk-study","expected_selected_skill":"tk-explain","critical":true},
+    {"id":"diff-understanding","boundary":"조사·학습·변경 설명·리뷰 소유권 구분","prompt":"이 PR에서 `Kafka` `consumer`가 왜 이렇게 바뀌었어?","focus_skill":"tk-explain-diff","expected_selected_skill":"tk-explain-diff","critical":true},
+    {"id":"diff-vs-review","boundary":"조사·학습·변경 설명·리뷰 소유권 구분","prompt":"이 PR 리뷰해줘.","focus_skill":"tk-explain-diff","expected_selected_skill":null,"critical":true},
+    {"id":"study-vs-learn","boundary":"조사·학습·변경 설명·리뷰 소유권 구분","prompt":"이 경험을 재사용 가능한 스킬로 만들어줘.","focus_skill":"tk-study","expected_selected_skill":"tk-learn","critical":true},
+    {"id":"roadmap-empty","boundary":"단계별 기획 인터뷰와 구현 준비·결정 점검·일반 대화 구분","prompt":"$tk-roadmap","focus_skill":"tk-roadmap","expected_selected_skill":"tk-roadmap","critical":true},
+    {"id":"roadmap-prep","boundary":"단계별 기획 인터뷰와 구현 준비·결정 점검·일반 대화 구분","prompt":"$tk-prep 이 버그를 수정해줘","focus_skill":"tk-roadmap","expected_selected_skill":"tk-prep","critical":true},
+    {"id":"roadmap-grill","boundary":"단계별 기획 인터뷰와 구현 준비·결정 점검·일반 대화 구분","prompt":"$tk-grill 이 계획을 점검해줘","focus_skill":"tk-roadmap","expected_selected_skill":"tk-grill","critical":true},
+    {"id":"roadmap-ordinary","boundary":"단계별 기획 인터뷰와 구현 준비·결정 점검·일반 대화 구분","prompt":"개선 아이디어 세 개만 알려줘","focus_skill":"tk-roadmap","expected_selected_skill":null,"critical":true},
+    {"id":"study-course-vs-explain","boundary":"다중 챕터 학습 과정과 한 개념 설명의 경계","prompt":"HTTP와 브라우저 식별을 선수지식 확인부터 여러 챕터로 공부할 학습 과정을 만들어줘.","focus_skill":"tk-study","expected_selected_skill":"tk-study","critical":true},
+    {"id":"explain-focused-vs-study","boundary":"다중 챕터 학습 과정과 한 개념 설명의 경계","prompt":"HTTP 캐시 검증자 하나의 작동 원리를 HTML 시각 자료로 설명해줘.","focus_skill":"tk-study","expected_selected_skill":"tk-explain","critical":true},
+    {"id":"autoresearch-continuing","boundary":"지속 자동연구와 일회성 조사, delivery 계획 및 제품 구현을 구분합니다.","prompt":"$tk-autoresearch 목적은 있지만 다음 질문을 몰라. 조사와 필요한 pilot 결과를 반영하며 연구 방향을 계속 갱신해줘.","focus_skill":"tk-autoresearch","expected_selected_skill":"tk-autoresearch","critical":true},
+    {"id":"autoresearch-bounded-comparison","boundary":"지속 자동연구와 일회성 외부 비교를 구분합니다.","prompt":"`CrowdSec`와 `AWS WAF`를 주어진 조건으로 한 번 비교 조사해줘.","focus_skill":"tk-autoresearch","expected_selected_skill":"tk-research","critical":true},
+    {"id":"autoresearch-agreed-roadmap","boundary":"지속 자동연구와 이미 합의한 방향의 delivery 계획을 구분합니다.","prompt":"$tk-roadmap 선택한 방향의 우선순위와 delivery 마일스톤을 정리해줘.","focus_skill":"tk-autoresearch","expected_selected_skill":"tk-roadmap","critical":true},
+    {"id":"autoresearch-selected-implementation","boundary":"지속 자동연구와 선택한 제품 구현을 구분합니다.","prompt":"$tk-prep 연구에서 채택한 설계로 제품 기능을 구현해줘.","focus_skill":"tk-autoresearch","expected_selected_skill":"tk-prep","critical":true}
   ]
 }
