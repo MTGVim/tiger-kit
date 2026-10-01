@@ -465,7 +465,7 @@ python3 scripts/run_seed_release_gate.py \
 `python3 scripts/check_docs.py`로 따로 실행할 수 있습니다. 자연어 설명의 의미까지 자동으로 보장하지는
 않으므로 공개 동작을 바꾸면 해당 문서를 함께 갱신하고 독립 검수에서 실제 계약과 대조합니다.
 
-### Planning: 기획과 마일스톤 수립
+### 기획과 마일스톤 수립
 
 `/tk-roadmap` 또는 `$tk-roadmap`을 인자 없이 호출하면 인터뷰를 시작합니다. 대화에 관련 맥락이 있으면
 이미 답한 내용을 재질문하지 않고 현재 독립적으로 답할 수 있는 판단 주제를 함께 묻습니다. 기술·데이터뿐 아니라 인력·예산·권한·협업·운영
@@ -479,13 +479,13 @@ python3 scripts/run_seed_release_gate.py \
 담당합니다. `tk-roadmap`은 개발 작업의 필수 선행 단계가 아닙니다.
 
 
-### Research & Discovery: 지속 연구
+### 연구와 탐색: 지속 연구
 
-`/tk-autoresearch` 또는 `$tk-autoresearch`는 연구 목표는 있지만 필요한 질문·가설·접근 방향이 결과에 따라 계속 바뀌는 과제를 담당합니다. 확인된 사실, 구체적인 연구 항목과 아직 질문으로 정리하기 어려운 불확실성을 구분하고, 현재 결정을 바꿀 정보 가치가 가장 높은 질문·pilot·실험부터 진행합니다.
+`/tk-autoresearch` 또는 `$tk-autoresearch`는 연구 목표는 있지만 필요한 질문·가설·접근 방향이 결과에 따라 계속 바뀌는 과제를 담당합니다. 확인된 사실, 구체적인 연구 항목과 아직 질문으로 정리하기 어려운 불확실성을 구분하고, 현재 결정을 바꿀 정보 가치가 가장 높은 질문·소규모 사전 실험·본 실험부터 진행합니다.
 
-연구 진행률은 검색 횟수가 아니라 상태 변화로 판단합니다. finding을 닫거나 방향을 지지·반증·보류하고, 새 근거가 기존 전제를 깨면 `DEEPEN`·`BROADEN`·`PIVOT`·`CONCLUDE` 중 다음 방향을 다시 정합니다. 같은 자료를 반복해도 결론이 바뀔 가능성이 낮으면 `NO-ACTION` 또는 `NO-DELTA`로 끝낼 수 있습니다. 연구 목적의 PoC·parser·fixture·benchmark·replay harness 등은 승인된 전용 research workspace 안에서 실행할 수 있지만, 제품 적용·다른 worktree·main·push·PR·운영 데이터 권한으로 확대하지 않습니다.
+연구 진행률은 검색 횟수가 아니라 상태 변화로 판단합니다. 연구 결과를 닫거나 방향을 지지·반증·보류하고, 새 근거가 기존 전제를 깨면 `DEEPEN`·`BROADEN`·`PIVOT`·`CONCLUDE` 중 다음 방향을 다시 정합니다. 같은 자료를 반복해도 결론이 바뀔 가능성이 낮으면 `NO-ACTION` 또는 `NO-DELTA`로 끝낼 수 있습니다. 연구 목적의 개념 검증·파서·검증용 입력·벤치마크·재현 도구 등은 승인된 연구 전용 작업 공간 안에서 실행할 수 있지만, 제품 적용·다른 작업 트리·기본 브랜치·원격 전송·PR·운영 데이터 권한으로 확대하지 않습니다.
 
-질문이 정해진 일회성 외부 비교와 prior art 조사는 `tk-research`, 선택한 방향의 delivery 마일스톤은 `tk-roadmap`, 제품 구현은 `tk-prep`이 담당합니다. 작은 연구는 대화에만 남기고, 장기 재개가 실제로 필요할 때만 `.tigerkit/autoresearch/state.md`를 정본으로 사용하며 실험 근거는 필요한 항목만 `.tigerkit/autoresearch/experiments/<EXP-ID>/`에 보존합니다. 이 상태는 scheduler나 승인 원장이 아닙니다.
+질문이 정해진 일회성 외부 비교와 선행 사례 조사는 `tk-research`, 선택한 방향의 실행 마일스톤은 `tk-roadmap`, 제품 구현은 `tk-prep`이 담당합니다. 작은 연구는 대화에만 남기고, 장기 재개가 실제로 필요할 때만 `.tigerkit/autoresearch/state.md`를 정본으로 사용하며 실험 근거는 필요한 항목만 `.tigerkit/autoresearch/experiments/<EXP-ID>/`에 보존합니다. 이 상태는 예약 실행기나 승인 원장이 아닙니다.
 
 `tk-study`의 실행 가능한 코딩 연습문제는 이미 사용 가능한 안전한 실행 환경에서 기준 해답의 통과와
 학습 목표에 관련된 그럴듯한 오답의 실패를 확인합니다. 오답도 통과하면 검사나 문제를 보완하고
