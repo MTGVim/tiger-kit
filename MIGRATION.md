@@ -12,7 +12,7 @@
 
 ## 연구 스킬 개편
 
-`tk-discover`는 `tk-autoresearch`로 승격되었습니다. 기존의 질문·의존성·근거 기반 탐색을 유지하면서 승인된 연구 workspace의 pilot/실험, 실패 결과 보존, 방향별 수렴과 `NO-ACTION`/`NO-DELTA` 종료를 추가합니다. `tk-research`는 정해진 일회성 외부 조사 담당으로 유지되고, `tk-roadmap`은 연구와 독립적인 Planning 담당입니다.
+`tk-discover`는 `tk-autoresearch`로 승격되었습니다. 기존의 질문·의존성·근거 기반 탐색을 유지하면서 승인된 연구 전용 작업 공간의 소규모 사전 실험과 본 실험, 실패 결과 보존, 방향별 수렴과 `NO-ACTION`/`NO-DELTA` 종료를 추가합니다. `tk-research`는 정해진 일회성 외부 조사 담당으로 유지되고, `tk-roadmap`은 연구와 독립적인 기획 담당입니다.
 
 기존 이름의 별칭은 제공하지 않습니다. 선택 설치에서는 새 스킬을 설치하고 기존 `tk-discover`를 제거하세요.
 
