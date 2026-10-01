@@ -485,7 +485,7 @@ python3 scripts/run_seed_release_gate.py \
 
 연구 진행률은 검색 횟수가 아니라 상태 변화로 판단합니다. 연구 결과를 닫거나 방향을 지지·반증·보류하고, 새 근거가 기존 전제를 깨면 `DEEPEN`·`BROADEN`·`PIVOT`·`CONCLUDE` 중 다음 방향을 다시 정합니다. 같은 자료를 반복해도 결론이 바뀔 가능성이 낮으면 `NO-ACTION` 또는 `NO-DELTA`로 끝낼 수 있습니다. 명시적인 `tk-autoresearch` 호출은 해당 저장소의 가역적인 로컬 연구 변경을 기본 허용하므로, 필요하면 별도 `research/<slug>` 작업 트리를 자동으로 만들고 개념 검증·파서·검증용 입력·벤치마크·재현 도구·테스트·로컬 커밋까지 중간 승인 없이 수행할 수 있습니다. 사용자 미커밋 변경은 건드리지 않으며, `push`·PR·병합·릴리스·배포, 운영/보호 데이터, 비밀정보, 유료·상태 변경 외부 서비스, 파괴적·비가역 작업은 별도 권한으로 남깁니다.
 
-기본 저장 정책은 `hybrid`입니다. 실행 상태와 설정은 `.tigerkit/autoresearch/`에 두고, 현재 요약·findings·checkpoint journal·실험 기록은 `docs/autoresearch/<slug>/`에 추적합니다. checkpoint마다 해당 연구 문서와 같은 묶음의 실험 코드만 로컬 커밋하며, 실패 코드를 버리더라도 실패 근거와 판정은 반드시 기록합니다. `local | hybrid | tracked`, 추적할 문서와 checkpoint 커밋 여부는 `.tigerkit/autoresearch/config.json`에서 바꿀 수 있습니다.
+기본 저장 정책은 `hybrid`입니다. 실행 상태와 설정은 `.tigerkit/autoresearch/`에 두고, 현재 요약·연구 결과·체크포인트 연구 일지·실험 기록은 `docs/autoresearch/<slug>/`에 추적합니다. 체크포인트마다 해당 연구 문서와 같은 묶음의 실험 코드만 로컬 커밋하며, 실패 코드를 버리더라도 실패 근거와 판정은 반드시 기록합니다. `local | hybrid | tracked`, 추적할 문서와 체크포인트 커밋 여부는 `.tigerkit/autoresearch/config.json`에서 바꿀 수 있습니다.
 
 질문이 정해진 일회성 외부 비교와 선행 사례 조사는 `tk-research`, 선택한 방향의 실행 마일스톤은 `tk-roadmap`, 제품 구현은 `tk-prep`이 담당합니다. 일반적인 자동연구는 연구 식별이 정해지면 `.tigerkit/autoresearch/state.md`를 재개 정본으로 유지합니다. 다음 세션이나 다음날에는 `$tk-autoresearch --resume`만으로 현재 작업 트리의 상태를 복원해 기존 현재 탐색 가능 항목부터 이어갑니다. 현재 작업 트리에 상태가 없으면 같은 저장소의 연결된 작업 트리를 확인하고, 유효한 연구 상태가 하나뿐이면 그 작업 트리에서 자동으로 재개합니다. 여러 상태가 있거나 상태가 전혀 없을 때만 필요한 선택을 한 번 묻습니다. 한 번의 호출은 무한 실행하지 않고 의미 있는 연구 묶음이 자연스럽게 닫히면 `CHECKPOINT`로 상태와 시행착오를 보존하고 종료합니다.
 
