@@ -75,7 +75,8 @@ gh attach --repo <owner>/<repo> <pr-number> <image>...
 ```
 
 Do not pass `--comment`. Collect only the generated image Markdown so the skill can
-preserve exact body/comment placement. Reject empty output, unexpected non-Markdown
+preserve exact body/comment placement. Insert that Markdown verbatim; add captions outside the generated block.
+Keep display redaction separate from the private mutation input. Reject empty output, unexpected non-Markdown
 output, links for another repository or reference, and output that omits any input
 image.
 
@@ -86,15 +87,28 @@ the upload reference may remain.
 
 ## Verification
 
-Re-read the raw selected body/comment and verify in `GitHub`-rendered HTML, such as
-`REST body_html` or `GraphQL bodyHTML`, that every asset appears as an image element or
-link. Inspect `git/ref/uploads/issues/<pr-number>` in the target repository and verify
-that each generated link names that reference.
+Re-read the raw selected body/comment and compare the inserted Markdown byte-for-byte with the extension's generated
+Markdown. For every asset, verify all of the following before `Pass`:
 
-Allow `GitHub` to rewrite asset URLs to `private-user-images.githubusercontent.com`.
-Do not claim `Pass` from Markdown presence or a successful update response alone. Do
-not expose JWTs or query strings from signed URLs in logs, artifacts, or the final
-response.
+- The inserted URL resolves to image content, not a file-view HTML page. A `blob` page without a rendering parameter
+  such as `raw=true` is not image content; that parameter is an example, not a required URL format for every route.
+- An authenticated fetch of the same uploaded object returns non-empty, decodable image bytes with an `image/*` content
+  type. A raw content endpoint at the upload ref is one option; verify the exact repository, commit/object and path match
+  the inserted asset. A JSON metadata response, filename extension or successful HTTP status is insufficient.
+- The authenticated browser session's rendered PR/comment actually loads each expected image; inspect the image itself
+  and its load state (for example, nonzero natural dimensions and no broken-image state). `REST body_html` or
+  `GraphQL bodyHTML` can establish markup presence, but an `<img>` element alone is not render proof.
+
+Inspect `git/ref/uploads/issues/<pr-number>` in the target repository and verify that every linked upload commit/object
+is reachable from that ref, including immutable commit URLs. The "commit does not belong to any branch" notice for an
+upload ref is expected and does not by itself indicate failure.
+
+Allow `GitHub` to rewrite rendered asset URLs to `private-user-images.githubusercontent.com`; compare the raw inserted
+Markdown with the original output, not with rewritten browser URLs. Return `Fail` for altered Markdown, non-image bytes
+or a known broken image. If authenticated fetching or browser-session rendering cannot be checked, report the concrete
+limitation as `Unverifiable` instead of `Pass`, and preserve the actual remote state.
+Redact only secret-bearing values in displayed diagnostics; preserve safe rendering parameters. Never expose signed
+values in logs, artifacts, or the final response, and never feed redacted diagnostics back into the body/comment.
 
 ## Reviewed dependencies
 

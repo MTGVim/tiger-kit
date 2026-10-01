@@ -106,6 +106,16 @@ Use a producer-neutral PR evidence manifest when the current publication input p
 required | optional | N/A | undecided
 ```
 
+Resolve `undecided` before any remote write; never treat it as `N/A` by default.
+When the active task holds inspected run-owned images that bear on a publication claim but no manifest classifies them,
+list their paths and claim/pair in the approval packet and ask once at the publication checkpoint whether to upload each
+pair or individual image. A template limiting screenshots to UI changes is recommendation input, not a reason to skip
+the question. If sensitive content motivates withholding, offer a bounded crop or redaction of the same inspected image
+alongside "do not upload"; create only the selected derivative, preserve its claim and pair, and re-inspect it before upload.
+An explicit active-task image choice resolves this ambiguity without another question. With no images or image-backed
+claim, use `N/A`. A selected upload authorizes the exact image set through `tk-pr-image` after the owning PR exists;
+do not fabricate a required manifest for it.
+
 Validate generic fields rather than producer identity: `evidence_required`, `evidence_kind`, `verification_status`,
 criterion, inspected artifact paths, `display_route` or its exact omission limitation, state/region, viewport, comparison,
 and limitations. Do not infer a requirement from visual differences, file names, a Seed, or a known producing skill.
@@ -165,9 +175,15 @@ Present the following naturally to the user instead of hiding information behind
 - Exclusions/risks
 - One publication recommendation
 
+If `PR evidence requirement/state` remains `undecided`, include its image choices in the final question block at this
+checkpoint, after the concrete publication preview and before any write. Keep the existing packet fields.
+
 ## 🔴 CHECKPOINT · 🛑 STOP · Publication boundary
 
 Before any stack reconstruction or remote write, reread the active packet and any required artifact. Reuse explicit active-task publication authorization when repository, source/base, publication shape and PR state are settled. A direct request to open this branch as a single PR authorizes that action when these facts are resolved from the request and repository conventions; drafting its title/body and collecting evidence do not require a second approval. Show the concrete publication result before writing. If state, target or shape remains materially ambiguous, ask once. A stacked reconstruction still requires the exact layer plan; never infer it from a single-PR request.
+
+An unresolved `undecided` evidence state is a material ambiguity: ask once at this checkpoint even for a direct single-PR
+request. Preserve existing publication authorization; wait only for the unresolved evidence choice.
 
 For `stacked`, the same approval also authorizes only the exact local publication-history reconstruction in the approved layer plan. It does not authorize product edits, rewriting the source branch, extra layers, or unrelated branch cleanup.
 STOP if the plan, approved `commit`, template/evidence state, stack tooling provenance, or current repository state cannot be reverified.
@@ -186,8 +202,9 @@ For `stacked`, follow [retrospective stack split](references/split-to-stack.md).
 Do not `merge`, `close`, `tag`, `release`, delete the preserved source branch, or clean up unrelated refs.
 
 After creating or updating publication, reread the remote state. For `single`, verify its URL, `head SHA`, actual `draft | ready` state, template compliance, and evidence state. For `stacked`, use machine-readable stack state and reread every PR URL, head/base relation, state, exact title/body, template compliance, and evidence state.
-If evidence is required, use the image uploader after the owning PR exists.
-If any PR was created but required metadata/evidence publication fails, preserve the actual remote state and report completion as `Blocked` rather than hiding partial publication.
+If evidence is required or its upload was explicitly selected, use the image uploader after the owning PR exists.
+If any PR was created but required metadata/evidence or selected image publication fails, preserve the actual remote state
+and report completion as `Blocked` rather than hiding partial publication.
 
 ## Completion
 
