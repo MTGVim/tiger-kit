@@ -46,8 +46,8 @@ worktree only when its canonical state has the same `researchId`. Otherwise crea
 
 For `local`, the current worktree may be the research home while it is safe and no source mutation requires
 isolation. If source mutation becomes useful in a dirty/default/product worktree, move the research program
-to a safe linked research worktree before mutation and migrate only this run-owned canonical autoresearch
-state.
+to a safe linked research worktree before mutation and migrate only this run-owned autoresearch config,
+state, local knowledge and experiment artifacts.
 
 Canonical config/state, tracked research documents, experiment code and checkpoint commits for one research
 program should live in the same research home. Do not leave canonical state in one worktree while research
