@@ -655,6 +655,27 @@ TigerKit 검증 결과로 사용하지 않습니다. 패키지에 원본 MIT 고
 라벨은 `omit`입니다. 기존 템플릿에 내용을 반영하고 템플릿이 없을 때에만 유용한 설명을 추가합니다.
 원본 MIT 고지는 설치 패키지의 `skills/tk-pr-open/LICENSE.txt`에 포함했습니다.
 
+## PR 응답의 임시 인덱스 격리
+
+2026-10-01 기준 Git 공식 문서와 `git/git` `v2.56.0`의
+[`git-hash-object.adoc`](https://github.com/git/git/blob/v2.56.0/Documentation/git-hash-object.adoc)
+및 [`commit-tree.c`](https://github.com/git/git/blob/v2.56.0/builtin/commit-tree.c)를 확인했습니다.
+태그 객체는 `2478544319491bbd2a42cc57a83e3d2f4730a280`이며, 확인한 파일 객체는 각각
+`ef4719ae41c700f5dde933a69ae6c8cf8c5fd3bf`, `30535db131eaa6a3309e6e4383d17dbd8ce4fb57`입니다.
+[`GIT_INDEX_FILE`](https://git-scm.com/docs/git),
+[`read-tree`](https://git-scm.com/docs/git-read-tree),
+[`update-index`](https://git-scm.com/docs/git-update-index),
+[`write-tree`](https://git-scm.com/docs/git-write-tree),
+[`commit-tree`](https://git-scm.com/docs/git-commit-tree),
+[`push`](https://git-scm.com/docs/git-push)의 계약을 참조했습니다. 코드나 도우미는 복사하지 않았습니다.
+
+`keep`: 임시 인덱스에 승인된 `tree`를 채우고 `blob`/`tree`/단일 부모 `commit`을 만드는 Git `plumbing` 순서를 유지합니다.
+`adapt`: 일반 비실행 텍스트에만 적용하고, 부모 상태 보존, 정확한 경로의 포매터, `hook`·서명 의무,
+독립 범위 검토와 현재 `head` CI를 요구합니다. `omit`: 별도 도우미, 동작 변경·로컬 테스트·`rebase` 경로 확장,
+`worktree` 소실 원인에 대한 추정을 제외합니다. 소실 사례와 기존 성공 횟수는 사용자 보고이며 이 작업에서
+회수 주체를 검증하지 않았습니다. 검증 시나리오는 `evals/skills/tk-pr-respond/evals.json`과
+`evals/skills/tk-pr-sweep/evals.json`에 추가했습니다.
+
 ## #398 지속 연구와 근거 검증 증류
 
 `tk-discover`의 공개 owner는 `tk-autoresearch`로 승격했습니다. 과거 `tk-discover` provenance는 삭제하지 않고 새 패키지 `references/sources.md`에 revision-bound 계보로 이관했습니다.

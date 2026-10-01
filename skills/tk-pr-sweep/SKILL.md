@@ -133,8 +133,10 @@ failure handling, and final queue triage. `--report` and pre-approval planning n
 ## Per-PR handling
 
 Immediately before handling each PR, reread fresh triage and the exact PR state.
-Before a child route that needs Git mutation, verify the dedicated workspace path, exact head, and ownership/provenance for
-that PR and pass them to the child. If any are absent or stale, hold or block before mutation.
+Before a child route that needs Git mutation, verify and pass the isolation evidence required by its owner under
+[approved execution](references/execution.md): dedicated workspace path/head/provenance, or an explicitly approved
+Respond index-only route with exact PR/head/row identity and run ownership. If required evidence is absent or stale,
+hold or block before mutation.
 
 Representative routes:
 

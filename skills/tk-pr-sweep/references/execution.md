@@ -5,8 +5,11 @@ Report-only and pre-approval paths do not need it.
 
 ## Isolation
 
-Code-changing and Git-mutating children require a newly established dedicated workspace. Reply-only children do not
-create one solely for isolation. Never mutate or branch-switch the parent `main` or `develop` checkout.
+The child owner's explicitly approved index-only route in `tk-pr-respond` code-change execution also counts as isolation;
+pass exact PR/head/row identity and run ownership, and let that owner prove its guards without requiring a workspace path.
+Other code-changing and Git-mutating children require a newly established dedicated workspace. Reply-only children do not
+create one solely for isolation. Preserve the parent `main` or `develop` work files, real index, HEAD and local branch
+refs; index-only permits only its owner's ignored run files and object-store writes.
 
 Before creating a workspace, inspect the row's Git state. Treat `GIT_DIR != GIT_COMMON` as a linked-worktree signal only
 after excluding submodules with `git rev-parse --show-superproject-working-tree`; it does not prove row ownership. Reuse a
@@ -18,7 +21,7 @@ native mechanism exists. Start from the approved head, avoid collisions and unre
 make unrelated ignore edits or create a setup commit for isolation. Use the owning SKILL.md
 Artifact Paths setup only when an authorized `.tigerkit/` workspace needs ignore coverage.
 
-A child is isolated only when it receives and uses the proven workspace. Never reuse another row's workspace. If
+A workspace child is isolated only when it receives and uses the proven workspace. Never reuse another row's workspace. If
 isolation cannot be proven, hold only that PR as `Held` or `Blocked`; do not mutate in the parent checkout. Preserve
 host-managed workspace lifecycle and do not add general cleanup authority.
 

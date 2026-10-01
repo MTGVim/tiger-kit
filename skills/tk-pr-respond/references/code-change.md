@@ -9,7 +9,8 @@ Inspect branch/HEAD, linked-worktree state, unrelated work, and submodule status
 linked-worktree signal only after excluding submodules with `git rev-parse --show-superproject-working-tree`; it does not
 prove that the checkout belongs to this PR.
 
-A small direct fix may reuse the current checkout only when it is the exact PR branch, clean, safe, and free of unrelated
+For eligible text-only work, the approved index-only route below also proves isolation, including under Sweep.
+For other work, a small direct fix may reuse the current checkout only when it is the exact PR branch, clean, safe, and free of unrelated
 work. Otherwise detect existing task isolation, prefer an available agent-callable native mechanism such as
 `EnterWorktree`, `WorktreeCreate`, `/worktree`, or `--worktree`, and fresh-read the resulting path, branch or detached
 state, and HEAD. Current approval for the exact plan and isolation also authorizes that mechanism without another question.
@@ -19,6 +20,46 @@ collisions and unrelated work, and verify the result. Use the owning SKILL.md Ar
 do not make unrelated ignore edits or create a setup commit for isolation.
 If isolation cannot be proven, return `Blocked` before mutation. Preserve host-managed workspace lifecycle; do not remove,
 prune, relocate, or clean it on completion.
+
+### Index-only commit
+
+Use this direct route only for ordinary comments, documentation, or other provably behavior-preserving text excluding
+string literals, when no local build/test or runtime verification is needed. Executable documentation, agent instructions,
+compiler/linter directives, configuration, behavior changes, uncertain impact, multiple response commits, and rebase use
+the workspace route. State index-only isolation in the resolution plan and require approval covering that exact route;
+matching current standalone or parent approval already satisfies it. Never describe a worktree plan and silently switch.
+
+1. Pin the approved PR head as `RESPONSE_BASE`; fresh-read repository/PR/branch/identity and require the remote head to
+   match before construction. Record the parent's HEAD/branch, real index bytes, and tracked/untracked work state without
+   refreshing its index. Existing unrelated changes remain untouched and are never input to this commit.
+2. Require existing effective `.tigerkit/` exclusion and pass Artifact Paths safety/ownership checks before any write.
+   If exclusion is absent, use the workspace route or return `Blocked`; never run parent ignore setup for index-only.
+   Use a unique run-owned `.tigerkit/tmp/tk-pr-respond/<run-id>/` for candidate bytes and an initially absent, absolute
+   `GIT_INDEX_FILE`. Scope that variable to each index command or a subshell and restore the
+   caller environment afterward. Populate it with `git read-tree "$RESPONSE_BASE"` without `-u`. Read source bytes and
+   file modes from that exact Git tree, not the parent's checkout; never checkout, stage, reset, stash, switch branches,
+   or update the parent's HEAD, real index, or local branch refs.
+3. Since `commit-tree` bypasses commit hooks (including Husky/commitlint), verify repository commit-message and signing
+   requirements explicitly. Run the repository formatter on candidate stdin with `--stdin-filepath <original-path>` or
+   its supported equivalent, using configuration/dependencies verified against `RESPONSE_BASE`; compare the formatted
+   bytes and keep only mapped changes. If required formatting, signing, or other hook obligations cannot be satisfied
+   without a checkout, use the workspace route. Run no build/test against the unrelated parent's files.
+4. Store only approved candidate bytes with `git hash-object -w`: use `--no-filters` for edits made in canonical stored
+   blob form; for working-form bytes, use `--path=<original-path>` only with attributes/filters verified against
+   `RESPONSE_BASE`. Never apply the dirty parent's attributes or clean an already canonical blob twice. Replace entries with `git update-index --cacheinfo <original-mode>,<blob>,<path>` using the temporary index.
+   Create the tree with `git write-tree`. Inspect its exact name-status, diffstat, full diff and finding map, and apply the
+   existing independent review protocol. Recheck head drift before `git commit-tree <tree> -p "$RESPONSE_BASE"` creates
+   one commit; record its SHA as `COMMIT`. Compare `RESPONSE_BASE..COMMIT` and verify parent state is unchanged before push
+   and after publication, excluding only owned ignored run files and the allowed object-store writes.
+5. Use `COMMIT`, not the unrelated parent's `HEAD`, for review ranges, ancestry, publication and current-head evidence.
+   Recheck all existing publication guards and require the remote head still equals `RESPONSE_BASE`. Push only a normal
+   fast-forward with `git push <remote> "${COMMIT}:refs/heads/<approved-branch>"`; braces prevent zsh's `$C:r` modifier
+   from corrupting a refspec. Never force, rebase, or overwrite drift. Preserve the candidate and stop for a changed plan
+   on drift/rejection instead of retrying against a new head without approval.
+6. After push, fresh-read the exact remote head and its CI build/test results. Pending checks mean `Pending`; failed
+   checks mean `Fail`, and absent/unverifiable required coverage means `Unverifiable`. Claim `Pass` only after current-head
+   build/test success and every existing reply/thread/summary/re-review obligation. This route grants no extra publication
+   or cleanup authority. Preserve unpublished candidate recovery data; remove only owned temporary files after success.
 
 ## Seed selection
 
@@ -43,16 +84,18 @@ interaction without creating Seed ceremony; it remains bound to approved reviewe
 ## Response delta discipline
 
 Before mutation, record `RESPONSE_BASE` as the exact approved PR head. Every production or test hunk in
-`RESPONSE_BASE..HEAD` must map to one approved `fixed` finding or to the minimum acceptance-criterion and regression
-protection needed for that fix. Supporting changes are allowed only when required to build, test, or verify that mapped
+`RESPONSE_BASE..HEAD` (or `RESPONSE_BASE..COMMIT` for index-only) must map to one approved `fixed` finding or the minimum
+acceptance-criterion and regression protection needed for that fix. Supporting changes are allowed only when required to build, test, or verify that mapped
 response. Do not include opportunistic refactoring, cleanup, formatting, dependency updates, or neighboring fixes.
 
-Before commit and again before push, inspect the name-status, diffstat, and full `RESPONSE_BASE..HEAD` diff against the
-finding map. Remove run-owned unmapped changes safely. If an unmapped change cannot be separated without altering approved
+Before commit and again before push, inspect the name-status, diffstat, and full response diff against the finding map:
+`RESPONSE_BASE..HEAD` for a workspace, the candidate tree before index-only commit and `RESPONSE_BASE..COMMIT` afterward. Remove run-owned unmapped changes safely. If an unmapped change cannot be separated without altering approved
 scope or unrelated work, stop for a changed plan instead of publishing it.
 
 ## Execution
 
+- Index-only remains direct: use the guards above with testing `N/A` for provably non-executable text, exact-tree/range
+  independent review, and post-push current-head CI. The checkout/TDD/local-commit steps below apply to workspace routes.
 - `direct+TDD`: one coherent change and review surface; use the testing reference and the proven safe checkout.
 - `SDD+TDD`: multiple material Units; read [private SDD](sdd.md) and follow its grammar, recovery, role gates, model and
   effort contract, fix loop, and final review.
