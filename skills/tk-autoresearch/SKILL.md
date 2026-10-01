@@ -28,7 +28,7 @@ Check the active user's authorization before asking. A concrete request or earli
 
 Start only through explicit `/tk-autoresearch`, `$tk-autoresearch`, or host selection. Own a continuing research program whose questions, hypotheses and direction can change as evidence arrives. `tk-research` owns one bounded external evidence question; `tk-roadmap` owns delivery-oriented planning after a direction is chosen; `tk-prep` owns production implementation.
 
-The user should not need to write the operating protocol. Accept a short goal such as `$tk-autoresearch investigate anonymous web abuse`; the skill owns persistence, frontier management, experiment discipline, convergence and stop rules. Explicit invocation also grants the standard local research authority defined below for this repository.
+The user should not need to write the operating protocol. Accept a short goal such as `$tk-autoresearch investigate anonymous web abuse`; the skill owns persistence, frontier management, experiment discipline, convergence and stop rules. For this skill, that explicit user invocation is the concrete request that includes the standard local research authority defined below; a recovered mention or saved artifact is not.
 
 Invocation modes:
 
@@ -57,7 +57,7 @@ This authority ends at the local repository boundary. It never includes `push`, 
 2. Resolve answerable facts before asking choices. Ask the whole currently answerable user-decision frontier in one question round using the shared question contract. Do not front-load a permissions questionnaire.
 3. Start with read-only external/repository evidence when it is the cheapest way to reduce uncertainty; this is an efficiency choice, not a permission gate. When a pilot/experiment becomes the highest-value next action, use the standard local research authority automatically.
 4. For nontrivial source mutation, prefer a dedicated research worktree. Create/reuse it without asking when it can be done safely and without touching unrelated user work. Ask only when the required action crosses the standard local boundary or safe isolation is impossible and mutation is essential.
-5. Once the research identity is clear, initialize or update the canonical durable state. If an unrelated state already occupies the selected research worktree, never overwrite it silently; reuse another safe worktree automatically when unambiguous, otherwise ask the user to choose the intended research program.
+5. Once the research identity is clear, read the persistence policy and establish the research home before creating canonical config/state. For the default `hybrid`/`tracked` modes this means one dedicated linked research worktree that owns state, tracked knowledge, experiment code and research commits. Never split one research program across multiple canonical homes.
 
 Autoresearch may implement and run research-only experiments inside an authorized research workspace, but it never turns that authority into product integration or remote publication.
 
@@ -87,15 +87,14 @@ it. Do not stop after every search, finding or experiment, and do not ask whethe
 standard local authority.
 
 After at least one material research-state change, stop at the first natural batch boundary where the current
-result is verified enough to preserve and the next frontier can be resumed independently. Before stopping,
-read [autoresearch persistence](references/persistence.md) and complete its checkpoint transaction.
+result is verified enough to preserve and the next frontier can be resumed independently. Before stopping, read [autoresearch persistence](references/persistence.md). For any material `CHECKPOINT`, `CONCLUDE`, or evidence-producing `BLOCKED` outcome, complete its durable outcome transaction.
 
 Return exactly one natural run outcome:
 
 - `CHECKPOINT`: the research program should continue, but this invocation produced a durable meaningful
   batch and a clear next frontier;
-- `CONCLUDE`: program convergence is reached;
-- `BLOCKED`: progress now depends on user/external authority or evidence that this skill cannot obtain;
+- `CONCLUDE`: program convergence is reached after final durable synthesis/handoff;
+- `BLOCKED`: progress now depends on user/external authority or evidence that this skill cannot obtain; persist any material delta before stopping;
 - `NO-ACTION` / `NO-DELTA`: no useful new research action/evidence is currently available.
 
 Do not use a fixed iteration, token or experiment count. A checkpoint is a knowledge boundary, not an arbitrary
@@ -113,9 +112,7 @@ an explicit conversation-only/no-save request remains in chat. Before initializi
 read [autoresearch persistence](references/persistence.md), then [durable autoresearch](references/state.md)
 and apply Artifact Paths.
 
-Use the default `hybrid` persistence policy without a setup questionnaire unless a valid existing config or
-explicit user preference says otherwise. Update state after material findings, direction changes, experiment
-verdicts, blockers and convergence changes, not as a per-message transcript.
+Use the default `hybrid` persistence policy without a setup questionnaire unless a valid existing config or explicit user preference says otherwise. Keep the config schema minimal: `mode`, `trackedRoot`, and `commitOnCheckpoint` only. Establish the single research home before canonical state for `hybrid`/`tracked`. Update state after material findings, direction changes, experiment verdicts, blockers and convergence changes, not as a per-message transcript.
 
 On `--resume`, restore state first and continue the current frontier. Saved state/config are resume and
 persistence inputs, never schedulers or authority beyond this skill's current invocation.
