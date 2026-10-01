@@ -12,7 +12,7 @@ jobs:
       - name: Checkout exact candidate
         uses: actions/checkout@v4
         with:
-          ref: fd399ab5ab1f8f537f4769b793d17ae2cb0c4653
+          ref: 06aeb0fa1ad4b1b7d698d47d8b2308f327fb988b
           fetch-depth: 0
       - name: Setup Python
         uses: actions/setup-python@v5
