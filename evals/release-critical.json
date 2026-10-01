@@ -436,7 +436,10 @@
     "tk-learn:behavior:installed-copy-target-frontier",
     "tk-learn:behavior:original-identifiers-never-secrets",
     "tk-discover:behavior:unavailable-dynamic-edge-remains-unknown",
-    "tk-explain-diff:behavior:invariant-verification-limit"
+    "tk-explain-diff:behavior:invariant-verification-limit",
+    "tk-rewrite:behavior:semantic-added-mechanism-review",
+    "tk-rewrite:behavior:semantic-requested-verification-unavailable",
+    "tk-pr-open:behavior:pr-risk-irreversible-data-and-side-effects"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",

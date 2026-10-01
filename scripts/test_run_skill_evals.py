@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 import json
+import os
+import shlex
 import subprocess
+import sys
 import tempfile
 import unittest
+from contextlib import nullcontext
 from pathlib import Path
+from unittest.mock import patch
 
 if __package__:
     from scripts.run_skill_evals import (
@@ -53,7 +58,10 @@ def observed_runs():
     """Matched metadata fixture for tests of unrelated verdict policies."""
     return [{"host": "codex", "case": "fixture", "run": 1,
              "prompt_sha256": "a" * 64,
-             "execution_identity": {"model": "fixture-model"}}]
+             "execution_identity": {"model": "fixture-model"},
+             "execution_provenance": {"host_version": "codex-cli fixture",
+                                      "isolation_status": "Pass", "project_fixture_status": "Pass",
+                                      "isolation_mechanism": "controlled-fixture"}}]
 
 
 class AdapterResultTest(unittest.TestCase):
@@ -301,6 +309,153 @@ class VerdictTest(unittest.TestCase):
 
 
 class TriggerMetricTest(unittest.TestCase):
+    def test_unavailable_later_host_preserves_completed_failures_and_records(self) -> None:
+        runner = sys.modules[build_verdict.__module__]
+        root = Path(__file__).resolve().parents[1]
+        baseline = {"execution_runs": observed_runs(), "trigger_accuracy": 1.0,
+                    "behavior_pass_rate": 1.0, "safety_failures": 0,
+                    "total_tokens": 10, "duration_ms": 10}
+        baseline["execution_runs"][0]["host"] = "claude-code"
+        for change, diagnostic_holdout, expected_status, expected_code in (
+            ({"safety_failures": 1}, False, "Fail", 1),
+            ({"behavior_pass_rate": 0.0}, False, "Fail", 1),
+            ({}, False, "Unverifiable", 2),
+            ({}, True, "Fail", 1),
+        ):
+            with self.subTest(change=change, diagnostic_holdout=diagnostic_holdout), tempfile.TemporaryDirectory() as directory:
+                output = Path(directory) / "evidence"
+                candidate = {**baseline, **change}
+                completed_calls = []
+                diagnostic_calls = []
+
+                def evaluate(*args, host, **kwargs):
+                    if host == "codex":
+                        raise RuntimeError("Codex isolation capability unavailable; evaluation was not run")
+                    summary = baseline if not completed_calls else candidate
+                    completed_calls.append(host)
+                    return summary, [{"host": host, "output": "completed fixture"}]
+
+                def diagnose(*args, host, **kwargs):
+                    summary = {"execution_runs": baseline["execution_runs"],
+                               "holdout_failures": ["fixture-holdout"] if diagnostic_calls else [],
+                               "resource_metrics": {}}
+                    diagnostic_calls.append(host)
+                    return summary, []
+
+                argv = ["run_skill_evals.py", "--baseline", "HEAD", "--candidate", "HEAD",
+                        "--host", "all", "--runs", "1",
+                        "--case", "catalog:behavior:native-app-runtime-verify",
+                        "--adapter-command", "fixture", "--grader-command", "fixture",
+                        "--output", str(output)]
+                if diagnostic_holdout:
+                    argv.append("--diagnose")
+                with patch.object(sys, "argv", argv), \
+                     patch.object(runner, "detached_worktree", side_effect=lambda ref: nullcontext(root)), \
+                     patch.object(runner, "evaluate_checkout", side_effect=evaluate), \
+                     patch.object(runner, "evaluate_diagnostic_checkout", side_effect=diagnose), \
+                     patch("builtins.print"):
+                    self.assertEqual(runner.main(), expected_code)
+                result = json.loads((output / "summary.json").read_text())
+                self.assertEqual(result["status"], expected_status)
+                self.assertEqual(result["host_verdicts"]["claude-code"]["status"],
+                                 "Pass" if not change else "Fail")
+                self.assertIn("host coverage incomplete", result["unverifiable"][-1])
+                self.assertIn("evaluation was not run", result["error"])
+                self.assertEqual(result["candidate"]["claude-code"]["safety_failures"],
+                                 candidate["safety_failures"])
+                self.assertEqual(json.loads((output / "candidate-records.json").read_text()),
+                                 [{"host": "claude-code", "output": "completed fixture"}])
+                if diagnostic_holdout:
+                    self.assertEqual(result["diagnostics"]["status"], "Fail")
+                    self.assertTrue(any("holdout" in reason for reason in result["reasons"]))
+
+    def test_unsupported_codex_preflight_is_unverifiable_before_critical_catalog_grading(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as directory:
+            fixture = Path(directory)
+            codex = fixture / "codex"
+            codex.write_text("#!/usr/bin/env python3\nimport sys\n"
+                             "print('codex-cli 0.1.0' if '--version' in sys.argv else '--ephemeral')\n")
+            codex.chmod(0o755)
+            output = fixture / "evidence"
+            env = os.environ.copy()
+            env["PATH"] = str(fixture) + os.pathsep + env.get("PATH", "")
+            completed = subprocess.run([
+                sys.executable, str(root / "scripts/run_skill_evals.py"),
+                "--baseline", "HEAD", "--candidate", "HEAD", "--host", "codex", "--runs", "1",
+                "--case", "catalog:behavior:native-app-runtime-verify",
+                "--adapter-command", shlex.join([sys.executable, str(root / "scripts/adapters/tigerkit_host_adapter.py")]),
+                "--grader-command", "unused", "--output", str(output)
+            ], cwd=root, env=env, text=True, capture_output=True, check=False)
+            self.assertEqual(completed.returncode, 2, completed.stderr + completed.stdout)
+            summary = json.loads((output / "summary.json").read_text())
+            self.assertEqual(summary["status"], "Unverifiable")
+            self.assertIn("unavailable; evaluation was not run", summary["error"])
+            self.assertNotIn("safety assertion failures", completed.stdout)
+
+    def test_codex_requires_version_isolation_and_project_loading_for_comparison(self) -> None:
+        baseline = {"execution_runs": observed_runs(), "trigger_accuracy":1.0,
+                    "behavior_pass_rate":1.0, "total_tokens":10, "duration_ms":10}
+        for mutation in (lambda row: row.pop("execution_provenance"),
+                         lambda row: row["execution_provenance"].update(host_version=None),
+                         lambda row: row["execution_provenance"].update(host_version="codex-cli different"),
+                         lambda row: row["execution_provenance"].update(isolation_status="Unverifiable"),
+                         lambda row: row["execution_provenance"].update(project_fixture_status="installed"),
+                         lambda row: row["execution_provenance"].update(isolation_mechanism="different")):
+            candidate = json.loads(json.dumps(baseline))
+            mutation(candidate["execution_runs"][0])
+            self.assertEqual(build_verdict(baseline, candidate)["status"], "Unverifiable")
+            candidate["safety_failures"] = 1
+            self.assertEqual(build_verdict(baseline, candidate)["status"], "Fail")
+        for host in ("claude-code", "hermes-agent"):
+            before = json.loads(json.dumps(baseline))
+            before["execution_runs"][0]["host"] = host
+            before["execution_runs"][0].pop("execution_provenance")
+            self.assertEqual(build_verdict(before, before)["status"], "Pass")
+
+    def test_provenance_validation_rejects_full_config_dump_and_false_pass(self) -> None:
+        result = {"output":"ok", "loaded_skills":[], "terminal_status":"Pass"}
+        for proof in ({"host_version":"x", "isolation_status":"Pass", "project_fixture_status":"Pass"},
+                      {**observed_runs()[0]["execution_provenance"], "full_user_config":{}},
+                      {**observed_runs()[0]["execution_provenance"], "limitations":["unproven"]}):
+            result["execution_provenance"] = proof
+            self.assertTrue(any("execution_provenance" in error for error in validate_adapter_result(result)))
+        result["execution_provenance"] = observed_runs()[0]["execution_provenance"]
+        self.assertEqual(validate_adapter_result(result), [])
+        for field in ("isolation_status", "project_fixture_status"):
+            for value in ([], {}, False, 1, None):
+                result["execution_provenance"] = {**observed_runs()[0]["execution_provenance"], field:value}
+                self.assertTrue(any("execution_provenance" in error for error in validate_adapter_result(result)))
+
+    def test_diagnostic_comparison_preserves_unverifiable_isolation_and_safety_failure(self) -> None:
+        before = {"execution_runs": observed_runs()}
+        after = {"execution_runs": observed_runs()}
+        after["execution_runs"][0]["execution_provenance"]["isolation_status"] = "Unverifiable"
+        self.assertEqual(compare_diagnostics(before, after)["status"], "Unverifiable")
+        after["safety_failures"] = ["unsafe-task"]
+        self.assertEqual(compare_diagnostics(before, after)["status"], "Fail")
+
+    def test_runner_preserves_original_custom_auth_path_without_copying_auth(self) -> None:
+        if __package__:
+            from scripts import run_skill_evals as runner
+        else:
+            import run_skill_evals as runner
+        with tempfile.TemporaryDirectory() as directory:
+            checkout = Path(directory) / "repo"
+            checkout.mkdir()
+            auth = Path(directory) / "custom-auth"
+            auth.mkdir()
+            (auth / "auth.json").write_text("synthetic-auth")
+            def result(command, env, *, cwd):
+                self.assertEqual(env["TK_EVAL_AUTH_CODEX_HOME"], str(auth))
+                self.assertNotEqual(env["CODEX_HOME"], str(auth))
+                self.assertNotEqual(env["HOME"], str(auth.parent))
+                self.assertFalse((Path(env["CODEX_HOME"]) / "auth.json").exists())
+                return {"loaded_skills":[], "output":"profile", "terminal_status":"Unverifiable"}
+            with patch.dict(os.environ, {"CODEX_HOME":str(auth)}), patch.object(runner, "run_json_command", side_effect=result):
+                runner.run_adapter("adapter", checkout=checkout, skill="tk-example", prompt="task", mode="behavior", host="codex")
+            self.assertEqual(list(Path(directory).rglob("auth.json")), [auth / "auth.json"])
+
     def test_separates_invocation_kinds_and_reports_run_variance(self) -> None:
         outcomes = {
             ("hybrid", "validation", "tk-auto:trigger:positive"): {
@@ -698,6 +853,7 @@ class DiagnosticRunnerTest(unittest.TestCase):
                 "    'tool_uses': 1,\n"
                 "    'nested_calls': 0,\n"
                 "    'execution_identity': {'model': 'fixture-model'},\n"
+                "    'execution_provenance': {'host_version': 'codex-cli fixture', 'isolation_status': 'Pass', 'project_fixture_status': 'Pass', 'isolation_mechanism': 'controlled-fixture'},\n"
                 "}))\n",
                 encoding="utf-8",
             )

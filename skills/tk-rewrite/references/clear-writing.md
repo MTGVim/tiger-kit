@@ -18,6 +18,8 @@ Preserve meaningful modality in either direction: possibility, capability, permi
 
 Preserve the binding of each explicit citation, figure/table reference, number, result or measurement to the claim it supports, not just its literal text. When reordering, move evidence with its claim and retain its original scope; proximity to a different sentence never reassigns support. If the source scope is ambiguous, keep that uncertainty rather than broadening support. Ordinary prose without evidence pointers gains no new citation requirement or invented authority.
 
+Check quantitative and qualitative meaning separately from literal preservation. Without an explicit user-requested correction, do not add or drop a supplied quantity, date, duration, mechanism, actor, condition, or causal relationship even when the revised wording passes mechanical checks. Verify a requested correction against its supplied scope while preserving remaining meaning and attribution. Equivalent number spelling or unit notation may change in editable prose when the value and meaning stay the same; protected literals remain exact. A literal match or mechanical pass does not prove semantic fidelity. Compare the source and revision claim by claim within the existing internal passes. When the user explicitly requests a verification method that is unavailable or incomplete, state that limitation briefly; do not claim that method ran or report a full verification pass. Ordinary rewriting still returns one result without an audit report or an additional verification workflow.
+
 After polishing, compare each claim-evidence binding and the text with its source or supported explanation outline. Restore background or qualifications lost through shortening. Use existing technical terms, defining unfamiliar ones when needed. Keep code, commands, identifiers, links, quotations, and mandatory attribution exact. Do not treat AI-style removal as authorship concealment or AI-authorship detection.
 
 ### Korean Sentence Clarity
@@ -87,6 +89,8 @@ Keep source-provided actions and deadlines explicit; do not invent support proce
 - `epoko77-ai/im-not-ai`, `9747f036cdc28a1a8aea4dc71fef1f7846eb96f7`: contextual strength, selective density-based editing, avoiding newly introduced style defects, and conservative correction when empirical evidence contradicts a presumed pattern. Taxonomy, authorship judgments, and numeric thresholds are not imported.
 
 - `conorbronsdon/avoid-ai-writing`, `c4783463cf019a8943364c1ef5f80e0a4c8bff94`: candidate-to-justified-edit scope, preservation of unaffected passages, and valid zero-edit outcomes; no detector, taxonomy, pass budget, or public audit trail is imported.
+
+- `conorbronsdon/avoid-ai-writing`, `5dd2e4ab72b9e0b7e125e5cb592af87033da4fda` (compared with `9b8d030ce5c846af9520a4f6e5eb7d3b8d80ff43`): separate mechanical and semantic preservation, equivalent numeric notation, and honest incomplete verification. Keep the two internal passes and one final result; adapt only these safeguards. Omit the upstream validator, detector, handoff envelope, repair budget, and public verification report.
 
 Original MIT notices are in the calling package's `LICENSE.txt`.
 

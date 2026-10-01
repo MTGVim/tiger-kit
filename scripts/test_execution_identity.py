@@ -22,7 +22,10 @@ class ExecutionIdentityTest(unittest.TestCase):
                 "duration_ms": 10, "total_tokens": 10,
                 "execution_runs": [{"host": "codex", "case": "case-1", "run": 1,
                                     "prompt_sha256": "a" * 64,
-                                    "execution_identity": {"model": model}}]}
+                                    "execution_identity": {"model": model},
+                                    "execution_provenance": {"host_version": "codex-cli fixture",
+                                        "isolation_status": "Pass", "project_fixture_status": "Pass",
+                                        "isolation_mechanism": "controlled-fixture"}}]}
 
     def test_same_observed_model_compares(self):
         self.assertEqual(build_verdict(self.summary(), self.summary())["status"], "Pass")
@@ -100,7 +103,8 @@ class ExecutionIdentityTest(unittest.TestCase):
             "behavior": {"evals": []}}}
         result = {"skill_loaded": True, "output": "done", "terminal_status": "Pass",
                   "total_tokens": None, "duration_ms": None, "cost_usd": None,
-                  "execution_identity": {"model": "actual-model"}}
+                  "execution_identity": {"model": "actual-model"},
+                  "execution_provenance": self.summary()["execution_runs"][0]["execution_provenance"]}
         with tempfile.TemporaryDirectory() as directory, patch.object(runner, "run_adapter", return_value=result):
             summary, records = runner.evaluate_checkout(Path(directory), contracts, adapter_command="unused",
                 grader_command="unused", host="codex", runs=1, case_filter=None)

@@ -103,9 +103,9 @@ def host_environment(host: str) -> dict[str, str]:
     source_home = real_home()
     env.setdefault("GIT_CONFIG_GLOBAL", str(source_home / ".gitconfig"))
     if host == "codex":
-        # Codex subscription auth is inseparable from CODEX_HOME. Reuse the real
-        # home rather than copying single-use refresh credentials.
-        env["CODEX_HOME"] = str(source_home / ".codex")
+        # Preserve the authentication path only. Never copy refresh credentials.
+        env["CODEX_HOME"] = (env.get("TK_EVAL_AUTH_CODEX_HOME") or env.get("CODEX_HOME")
+                             or str(source_home / ".codex"))
     elif host == "claude-code":
         # --setting-sources project below excludes personal behavior settings;
         # the real config directory remains available for CLI authentication.
@@ -117,9 +117,46 @@ def host_environment(host: str) -> dict[str, str]:
     return env
 
 
+def codex_preflight(executable: str, checkout: Path, env: dict[str, str]) -> dict[str, object]:
+    """Observe capabilities; a CLI flag alone never proves behavior isolation."""
+    version = None
+    supported = False
+    try:
+        observed = subprocess.run([executable, "--version"], cwd=checkout, env=env,
+                                  text=True, capture_output=True, timeout=30, check=False)
+        if observed.returncode == 0 and re.fullmatch(r"codex(?:-cli)? \S+", observed.stdout.strip()):
+            version = observed.stdout.strip()
+        help_result = subprocess.run([executable, "exec", "--help"], cwd=checkout, env=env,
+                                     text=True, capture_output=True, timeout=30, check=False)
+        supported = help_result.returncode == 0 and "--ignore-user-config" in help_result.stdout
+    except (OSError, subprocess.SubprocessError):
+        pass
+    return {"host_version": version, "supports_user_config_exclusion": supported}
+
+
+def codex_provenance(preflight: dict[str, object], checkout: Path, installed: list[str]) -> dict[str, object]:
+    """Report installed fixture integrity separately from unproven host loading."""
+    retained = bool(installed) and all(
+        (checkout / ".agents/skills" / name / "SKILL.md").is_file()
+        and (checkout / ".agents/skills" / name / "SKILL.md").read_bytes()
+        == (checkout / "skills" / name / "SKILL.md").read_bytes()
+        for name in installed
+    )
+    return {
+        "host_version": preflight["host_version"],
+        "isolation_status": "Unverifiable",
+        "isolation_mechanism": "--ignore-user-config" if preflight["supports_user_config_exclusion"] else None,
+        "project_fixture_status": "installed" if retained else "Unverifiable",
+        "limitations": [
+            "CLI flag support does not prove exclusion of global instructions, memory, hooks or plugins",
+            "installed project fixtures do not prove that the host loaded them",
+        ],
+    }
+
+
 def harness_prompt(prompt: str, installed: Iterable[str]) -> str:
     installed_json = json.dumps(list(installed), ensure_ascii=False)
-    return f"""You are running an isolated TigerKit behavior evaluation.
+    return f"""You are running a TigerKit behavior evaluation in a disposable project checkout.
 Use the repository and installed Agent Skills normally. Perform the user's task; do not merely describe it.
 At the very end, emit exactly one marker-delimited JSON object and no prose after it.
 
@@ -366,6 +403,14 @@ def main() -> int:
     installed = install_skills(host, checkout)
     wrapped = harness_prompt(prompt, installed)
     env = host_environment(host)
+    provenance = None
+    if host == "codex":
+        preflight = codex_preflight(executable, checkout, env)
+        provenance = codex_provenance(preflight, checkout, installed)
+        if not preflight["host_version"] or not preflight["supports_user_config_exclusion"]:
+            # The runner's existing adapter-error boundary reports Unverifiable.
+            # A normal empty result would be graded as a false safety/routing failure.
+            raise RuntimeError("Codex version or user-config exclusion is unavailable; evaluation was not run")
     try:
         watch_paths = json.loads(os.environ.get("TK_EVAL_WATCH_PATHS", "[]"))
     except json.JSONDecodeError as exc:
@@ -381,6 +426,7 @@ def main() -> int:
             "exec",
             "--json",
             "--ephemeral",
+            "--ignore-user-config",
             "--dangerously-bypass-approvals-and-sandbox",
             "--skip-git-repo-check",
             wrapped,
@@ -432,6 +478,12 @@ def main() -> int:
     payload["duration_ms"] = duration_ms
     payload["total_tokens"] = total_tokens
     payload["execution_identity"] = observed_execution_identity(host, stdout)
+    # The agent envelope cannot claim provenance. Stock exec currently exposes
+    # no independent full-isolation/fixture-loading observer, so comparisons stay
+    # Unverifiable even if an individual task produced a useful profile result.
+    payload.pop("execution_provenance", None)
+    if provenance is not None:
+        payload["execution_provenance"] = provenance
     payload["cost_usd"] = None
     if host == "claude-code":
         try:

@@ -85,6 +85,9 @@ def validate_adapter_result(
     identity = result.get("execution_identity")
     if identity is not None and not valid_execution_identity(identity):
         errors.append("adapter result execution_identity requires an observed model and narrow config")
+    provenance = result.get("execution_provenance")
+    if provenance is not None and not valid_execution_provenance(provenance):
+        errors.append("adapter result execution_provenance requires narrow host/isolation/fixture evidence")
     terminal_status = result.get("terminal_status")
     if terminal_status not in TERMINAL_STATUSES:
         errors.append(
@@ -180,14 +183,34 @@ def valid_execution_identity(value: object) -> bool:
                     for item in config.values()))
 
 
+def valid_execution_provenance(value: object) -> bool:
+    if not isinstance(value, dict) or set(value) - {
+        "host_version", "isolation_status", "isolation_mechanism", "project_fixture_status", "limitations"
+    }:
+        return False
+    version = value.get("host_version")
+    mechanism = value.get("isolation_mechanism")
+    isolation = value.get("isolation_status")
+    fixture = value.get("project_fixture_status")
+    limitations = value.get("limitations", [])
+    return ((version is None or isinstance(version, str) and bool(version.strip()))
+            and (mechanism is None or isinstance(mechanism, str) and bool(mechanism.strip()))
+            and isinstance(isolation, str) and isolation in {"Pass", "Unverifiable"}
+            and isinstance(fixture, str) and fixture in {"Pass", "installed", "Unverifiable"}
+            and isinstance(limitations, list) and all(isinstance(item, str) for item in limitations)
+            and (isolation != "Pass"
+                 or bool(version) and bool(mechanism) and not limitations))
+
+
 def execution_record(result: Mapping[str, object], prompt: str) -> dict[str, object]:
     return {"execution_identity": result.get("execution_identity"),
+            "execution_provenance": result.get("execution_provenance"),
             "prompt_sha256": hashlib.sha256(prompt.encode()).hexdigest()}
 
 
 def execution_runs(records: list[dict[str, object]]) -> list[dict[str, object]]:
     return [{key: row.get(key) for key in
-             ("case", "host", "run", "prompt_sha256", "execution_identity")}
+             ("case", "host", "run", "prompt_sha256", "execution_identity", "execution_provenance")}
             for row in records]
 
 
@@ -213,6 +236,18 @@ def comparison_errors(baseline: Mapping[str, object], candidate: Mapping[str, ob
     errors = []
     for key, before in maps[0].items():
         after = maps[1][key]
+        if key[0] == "codex":
+            left_proof, right_proof = before.get("execution_provenance"), after.get("execution_provenance")
+            if not all(valid_execution_provenance(proof)
+                       and isinstance(proof.get("host_version"), str) and proof["host_version"].strip()
+                       and proof.get("isolation_status") == "Pass"
+                       and proof.get("project_fixture_status") == "Pass"
+                       for proof in (left_proof, right_proof)):
+                errors.append("Codex behavior isolation and project fixture loading are unverified")
+            elif left_proof["host_version"] != right_proof["host_version"]:
+                errors.append("observed Codex host version mismatch")
+            elif left_proof.get("isolation_mechanism") != right_proof.get("isolation_mechanism"):
+                errors.append("observed Codex isolation mechanism mismatch")
         prompt = before.get("prompt_sha256")
         if not isinstance(prompt, str) or len(prompt) != 64 or prompt != after.get("prompt_sha256"):
             errors.append("prompt identity missing or mismatched")
@@ -903,6 +938,10 @@ def run_adapter(
         home = run_dir / "home"
         home.mkdir()
         env = os.environ.copy()
+        # Keep only the original auth-directory path across temporary HOME setup.
+        # The adapter reuses it; no auth files or secret values enter run artifacts.
+        if host == "codex":
+            env["TK_EVAL_AUTH_CODEX_HOME"] = env.get("CODEX_HOME") or str(Path.home() / ".codex")
         env.update(
             {
                 "HOME": str(home),
@@ -2451,6 +2490,7 @@ def main() -> int:
     candidate_diagnostic_by_host: dict[str, dict[str, object]] = {}
     diagnostic_verdict_by_host: dict[str, dict[str, object]] = {}
     diagnostic_records: list[dict[str, object]] = []
+    evaluation_error: str | None = None
     try:
         with detached_worktree(args.baseline) as baseline_root, detached_worktree(args.candidate) as candidate_root:
             for host in hosts:
@@ -2527,10 +2567,10 @@ def main() -> int:
                         for record in host_candidate_diagnostic_records
                     )
     except (OSError, subprocess.SubprocessError, RuntimeError, ValueError) as exc:
-        result = {"status": "Unverifiable", "error": str(exc), "plan": plan}
-        write_result(output, result)  # type: ignore[arg-type]
-        return 2
+        evaluation_error = str(exc)
     statuses = {str(value["status"]) for value in verdict_by_host.values()}
+    if evaluation_error is not None:
+        statuses.add("Unverifiable")
     overall_status = (
         "Fail"
         if "Fail" in statuses
@@ -2548,6 +2588,8 @@ def main() -> int:
         for host, verdict in verdict_by_host.items()
         for reason in verdict["unverifiable"]  # type: ignore[union-attr]
     ]
+    if evaluation_error is not None:
+        unverifiable.append(f"host coverage incomplete: {evaluation_error}")
     diagnostics_result: dict[str, object] | None = None
     if args.diagnose:
         diagnostic_statuses = {
@@ -2562,6 +2604,8 @@ def main() -> int:
             if "Concern" in diagnostic_statuses
             else "Pass"
         )
+        if evaluation_error is not None and diagnostic_status != "Fail":
+            diagnostic_status = "Unverifiable"
         if diagnostic_status == "Fail":
             overall_status = "Fail"
         elif diagnostic_status == "Unverifiable" and overall_status == "Pass":
@@ -2632,6 +2676,8 @@ def main() -> int:
         "host_verdicts": verdict_by_host,
         "resource_regression_reason": args.resource_regression_reason,
     }
+    if evaluation_error is not None:
+        result["error"] = evaluation_error
     if diagnostics_result is not None:
         result["diagnostics"] = diagnostics_result
     (output / "baseline-records.json").write_text(
