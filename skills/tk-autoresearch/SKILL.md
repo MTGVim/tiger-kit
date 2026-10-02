@@ -1,11 +1,11 @@
 ---
 name: tk-autoresearch
-description: "[user] 열린 연구 목표를 지속적으로 맡아 근거에 따라 연구 방향, 질문, 가설과 실험을 갱신하고 유의미한 상태 변화가 있을 때만 다음 반복을 진행합니다. 정해진 일회성 외부 비교 조사나 이미 선택한 제품 구현에는 사용하지 않습니다."
-disable-model-invocation: true
+description: "[user/auto] 열린 목표의 지속 연구를 요청하거나 기존 자동연구의 재개를 요청할 때 사용합니다. 근거에 따라 연구 방향, 질문, 가설과 실험을 갱신하고 유의미한 상태 변화가 있을 때만 다음 반복을 진행합니다. 일회성 외부 비교 조사나 이미 선택한 제품 구현에는 사용하지 않습니다."
+disable-model-invocation: false
 argument-hint: "[--resume] [research goal or current research context]"
 metadata:
   tigerkit:
-    kind: user-invoked
+    kind: hybrid
     origin: tigerkit
     relationship: adapted
 ---
@@ -26,9 +26,9 @@ Check the active user's authorization before asking. A concrete request or earli
 
 ## Start and resume
 
-Start only through explicit `/tk-autoresearch`, `$tk-autoresearch`, or host selection. Own a continuing research program whose questions, hypotheses and direction can change as evidence arrives. `tk-research` owns one bounded external evidence question; `tk-roadmap` owns delivery-oriented planning after a direction is chosen; `tk-prep` owns production implementation.
+Start through `/tk-autoresearch`, `$tk-autoresearch`, host selection, or model invocation for a concrete user request to conduct a continuing research program or resume its matching state, including a user-configured external loop. Own a continuing research program whose questions, hypotheses and direction can change as evidence arrives. Generic research mentions, recovered artifacts and a scheduler tick without that request do not start a program. `tk-research` owns one bounded external evidence question; `tk-roadmap` owns delivery-oriented planning after a direction is chosen; `tk-prep` owns production implementation.
 
-The user should not need to write the operating protocol. Accept a short goal such as `$tk-autoresearch investigate anonymous web abuse`; the skill owns persistence, frontier management, experiment discipline, convergence and stop rules. For this skill, that explicit user invocation is the concrete request that includes the standard local research authority defined below; a recovered mention or saved artifact is not.
+The user should not need to write the operating protocol. Accept a short goal such as `$tk-autoresearch investigate anonymous web abuse`; the skill owns persistence, frontier management, experiment discipline, convergence and stop rules. An explicit invocation or concrete user request for continuing research includes the standard local research authority defined below. Model selection alone, a recovered mention or a saved artifact is not authorization.
 
 Invocation modes:
 
@@ -38,7 +38,7 @@ Invocation modes:
 
 ### Standard local research authority
 
-An explicit autoresearch invocation authorizes reversible local research work inside the current repository without another approval round. This standard authority includes:
+An explicit autoresearch invocation or concrete user request to conduct/resume the research program authorizes reversible local research work inside the current repository without another approval round. This standard authority includes:
 
 - create or reuse an isolated local `research/<slug>` branch/worktree when source mutation becomes useful;
 - create/update the canonical `.tigerkit/autoresearch/` state and experiment artifacts;
@@ -70,6 +70,7 @@ Autoresearch may implement and run research-only experiments inside an authorize
 3. Recompute the frontier from unresolved items whose prerequisites are satisfied. Resolve researchable facts before asking the whole user-decision frontier. A blocked direction never halts independent work. Retire stale or out-of-scope items with reasons instead of keeping them as artificial backlog.
 4. Before each new research action, ask whether it can realistically change a finding, direction, prerequisite, confidence, blocker or next decision. If no useful information gain is available, stop that iteration as `NO-ACTION` or `NO-DELTA` instead of searching or experimenting for activity.
 5. When the frontier empties or every remaining item is blocked, regenerate it before judging convergence (`BROADEN`). Derive candidates from: each finding's next implication; counter-signals for identified evasion or failure paths; retired items whose premises have changed; external plan or research documents the user supplied; generalization of a confirmed mechanism to other paths, types or populations; observations the current findings do not explain; and gaps between the program goal or its metrics and current evidence. Rank candidates by expected information gain for the downstream decision. The source list says where to look, not how many to find: one candidate with realistic information gain is enough to continue, and surplus candidates stay in the portfolio with their rank instead of being discarded. Record candidates set aside with reasons. Generating directions is this skill's job; do not wait for the user to supply the next one.
+6. When a candidate derives from an existing finding, observation or direction and the relationship matters to future work, retain one optional `parent` or `derivedFrom` link using stable source IDs. Carry reusable evidence-backed lessons into the parent direction's findings/provenance and consult them before proposing siblings. Apply the lightweight lineage rules in [durable autoresearch](references/state.md); simple standalone research needs no tree ceremony.
 
 ## Resolution modes
 
@@ -78,9 +79,10 @@ Use the smallest mode that can resolve the current frontier item: external evide
 ## Experiment contract
 
 Before execution, state the question or hypothesis, baseline when applicable, observable evidence, falsifier or equivalent pass/fail criterion, environment/data boundary, stop condition and current authority. Prefer the smallest pilot that can invalidate feasibility before scaling an expensive experiment. A negative result is progress when it rules out a direction.
-Research-only local mutation uses the standard authority granted by explicit autoresearch invocation; do not request a second approval merely because the next research step needs code changes. Within the owned research worktree, code, fixtures, parsers, replay harnesses, simulations, benchmarks, prototypes and throwaway implementations may be changed, tested, locally committed and reverted when doing so can resolve a research item. Preserve unrelated work and keep experiments reversible.
+For metric/mechanically evaluated experiments or consequential noisy results, read [experiment integrity](references/experiments.md) before execution and verdict selection. Keep qualitative/external research on its existing evidence criteria without manufacturing metric or split questions.
+Research-only local mutation uses the standard authority granted by the concrete research request; do not request a second approval merely because the next research step needs code changes. Within the owned research worktree, code, fixtures, parsers, replay harnesses, simulations, benchmarks, prototypes and throwaway implementations may be changed, tested, locally committed and reverted when doing so can resolve a research item. Preserve unrelated work and keep experiments reversible.
 Never use research authority to mutate another product worktree, production data/configuration, external services, secrets, or remote Git state. Do not push, create or update issues/PRs, merge, release or deploy. A promising experiment is evidence, not production approval. Promote an accepted product direction to `tk-prep`.
-After an experiment, record `KEEP`, `REJECT`, `INCONCLUSIVE` or `BLOCKED` with evidence and reason. Keep rejected and inconclusive results visible. For consequential conclusions, use an independent/adversarial verification pass when available without widening authority; otherwise state the verification limit.
+After an experiment, record `KEEP`, `REJECT`, `INCONCLUSIVE` or `BLOCKED` with evidence and reason. Keep rejected and inconclusive results visible. Candidates not executed because of budget, time, priority or batch resource limits remain deferred/set aside with reasons and observed evidence, if any; the selection decision itself is not a tested endpoint, `REJECT`, failure insight or reason to lower hypothesis confidence. Only actual attributable failure evidence can support a negative verdict; infrastructure failure or unavailable evidence stays `INCONCLUSIVE` or `BLOCKED`. For consequential conclusions, use an independent/adversarial verification pass when available without widening authority. Give the verifier the objective contract, primary evidence and necessary diff/artifacts; withhold proposer conclusions, self-assessment and preferred directions unless essential to the verification question. Repeating a conclusion in the same context is not independent verification; otherwise state the verification limit.
 
 ## Run budget and checkpoint
 
@@ -107,6 +109,7 @@ Continuous operation is scheduled outside this skill, never by it. On hosts with
 ## Convergence
 
 Convergence exists at three levels: a finding closes one concrete item; a direction becomes supported, rejected, deferred or blocked strongly enough that more work has low decision value; and program convergence means the research goal has enough evidence for a next action or justified no-go/deferral. An essential unavailable input is a blocker, not evidence of program convergence.
+Budget or priority deferral alone does not show that a direction failed or has low information value. Preserve viable untested candidates for later reactivation when resources or priorities change; never use their nonexecution as scientific convergence evidence.
 After material findings, update premises and dependencies and choose `DEEPEN`, `BROADEN`, `PIVOT` or `CONCLUDE` from evidence. Do not protect stale research plans. Learning milestones may describe uncertainty reduction; delivery milestones remain `tk-roadmap` territory. Stop with `CONCLUDE` only after frontier regeneration has run and either the user has stated that the downstream decision is made, or regeneration produced no candidate with realistic information gain. An empty hand-written frontier is not convergence; an essential blocker is `BLOCKED`, not `CONCLUDE`.
 
 ## Durable research

@@ -828,6 +828,22 @@
       "focus_skill": "tk-qa-sheet",
       "expected_selected_skill": "tk-explain",
       "critical": true
+    },
+    {
+      "id": "autoresearch-natural-continuing",
+      "boundary": "구체적인 지속 연구·재개 요청은 모델 호출이 가능하되 일회성 비교·구현과 구분합니다.",
+      "prompt": "비로그인 웹 어뷰즈를 지속적으로 연구해줘. 조사와 소규모 실험으로 새 질문을 발견하면서 연구 방향을 갱신하자.",
+      "focus_skill": "tk-autoresearch",
+      "expected_selected_skill": "tk-autoresearch",
+      "critical": true
+    },
+    {
+      "id": "autoresearch-model-loop-resume",
+      "boundary": "구체적인 지속 연구·재개 요청은 모델 호출이 가능하되 일회성 비교·구현과 구분합니다.",
+      "prompt": "사용자가 설정한 바깥 /loop 작업으로 tk-autoresearch --resume을 호출하여 일치하는 기존 연구를 이어가라.",
+      "focus_skill": "tk-autoresearch",
+      "expected_selected_skill": "tk-autoresearch",
+      "critical": true
     }
   ]
 }

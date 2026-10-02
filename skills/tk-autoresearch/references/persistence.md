@@ -90,7 +90,8 @@ Roles:
   never silently delete negative results.
 - `journal.md`: append-only research lineage, one `CHK-<NNN>` per material completed batch.
 - `experiments/EXP-<NNN>.md`: question/hypothesis, baseline, procedure, evidence, verdict, invalidated
-  assumptions, implementation evidence and next implication.
+  assumptions, implementation evidence and next implication; when applicable, evaluation-contract identity,
+  dev/acceptance and replication evidence/limits, and source lineage IDs.
 - tracked config/state: sanitized snapshots only and never an authority source.
 
 For `local`, keep equivalent knowledge under `.tigerkit/autoresearch/knowledge/`.
@@ -133,6 +134,8 @@ transaction before `CHECKPOINT`, `CONCLUDE`, or a `BLOCKED` outcome that produce
 2. finalize every attempted experiment, including `REJECT`, `INCONCLUSIVE` and evidence-producing
    `BLOCKED` attempts;
 3. update durable findings;
+   preserve relevant source links and evidence-backed parent lessons, keeping untested deferrals separate
+   from negative evidence;
 4. append exactly one checkpoint journal entry describing question, actions, evidence, verdicts, retired
    directions, new directions and next implication;
 5. refresh the current synthesis/direction portfolio;

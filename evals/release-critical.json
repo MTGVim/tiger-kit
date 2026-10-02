@@ -541,7 +541,24 @@
     "tk-qa-sheet:behavior:qa-manual-is-not-product-pass",
     "tk-qa-sheet:behavior:qa-storage-unverifiable",
     "tk-qa-sheet:behavior:qa-links-list-fallback",
-    "tk-qa-sheet:behavior:qa-links-unknown-or-secret"
+    "tk-qa-sheet:behavior:qa-links-unknown-or-secret",
+    "tk-autoresearch:behavior:autoresearch-protected-evaluator-drift",
+    "tk-autoresearch:behavior:autoresearch-dev-gain-fails-acceptance",
+    "tk-autoresearch:behavior:autoresearch-evaluator-correction-rebaselines",
+    "tk-autoresearch:behavior:autoresearch-qualitative-without-heldout",
+    "tk-autoresearch:behavior:autoresearch-budget-deferral-is-not-failure",
+    "tk-autoresearch:behavior:autoresearch-attributable-falsifier-survives",
+    "tk-autoresearch:behavior:autoresearch-noisy-critical-result-replicates",
+    "tk-autoresearch:behavior:autoresearch-replication-unavailable-qualifies",
+    "tk-autoresearch:behavior:autoresearch-deterministic-no-ceremonial-repeat",
+    "tk-autoresearch:behavior:autoresearch-blind-verifier-primary-evidence",
+    "tk-autoresearch:behavior:autoresearch-sibling-lineage-inherits-lesson",
+    "tk-autoresearch:behavior:autoresearch-child-failure-keeps-parent-scope",
+    "tk-autoresearch:behavior:autoresearch-resume-lineage-by-id",
+    "tk-autoresearch:behavior:autoresearch-simple-item-no-lineage-ceremony",
+    "tk-autoresearch:behavior:autoresearch-exposed-heldout-not-independent",
+    "tk-autoresearch:behavior:autoresearch-model-loop-resume-authorized",
+    "tk-autoresearch:behavior:autoresearch-model-selection-not-authority"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",
@@ -598,6 +615,8 @@
     "catalog:behavior:qa-sheet-explicit",
     "catalog:behavior:qa-sheet-user-only",
     "catalog:behavior:qa-sheet-vs-browser",
-    "catalog:behavior:qa-sheet-vs-explain"
+    "catalog:behavior:qa-sheet-vs-explain",
+    "catalog:behavior:autoresearch-natural-continuing",
+    "catalog:behavior:autoresearch-model-loop-resume"
   ]
 }

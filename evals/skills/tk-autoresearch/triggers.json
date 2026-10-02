@@ -1,6 +1,6 @@
 {
   "skill": "tk-autoresearch",
-  "kind": "user-invoked",
+  "kind": "hybrid",
   "queries": [
     {
       "id": "train-explicit",
@@ -67,6 +67,86 @@
       "split": "validation",
       "query": "$tk-autoresearch --resume",
       "should_trigger": true
+    },
+    {
+      "id": "train-natural-continuing",
+      "split": "train",
+      "query": "비로그인 어뷰즈 탐지를 지속적으로 연구하고 근거가 생길 때마다 가설과 실험 방향을 갱신해줘.",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-natural-resume",
+      "split": "validation",
+      "query": "진행하던 자동연구를 일치하는 연구 상태에서 재개해줘.",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-model-loop-resume",
+      "split": "validation",
+      "query": "사용자가 설정한 /loop의 작업: tk-`autoresearch` --resume으로 기존 연구를 이어가라.",
+      "should_trigger": true
+    },
+    {
+      "id": "validation-unrequested-autoresearch",
+      "split": "validation",
+      "query": "이 파일에 자동연구 상태가 있네. `autoresearch`가 무슨 뜻인지 설명해줘.",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-natural-formal",
+      "split": "validation",
+      "query": "현재 탐지 가설을 지속적으로 조사하고 실험 결과에 따라 다음 연구 질문을 갱신해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal",
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-natural-casual",
+      "split": "validation",
+      "query": "어뷰즈 연구 계속 맡아서 가설 틀리면 방향도 바꿔줘.",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-natural-mixed-typo",
+      "split": "validation",
+      "query": "`research frontier` 조샤를 이어가고 새로운 가설도 실험해줘.",
+      "should_trigger": true,
+      "facets": [
+        "ko-en",
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-short-explanation",
+      "split": "validation",
+      "query": "자동연구 뜻?",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-one-shot-formal",
+      "split": "validation",
+      "query": "공식 자료로 익명 식별의 저장 방식을 한 번만 비교해 주세요.",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-learning-not-research",
+      "split": "validation",
+      "query": "`clientId` 개념을 선수 지식부터 배우고 싶으니 학습 자료를 만들어줘.",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
     }
   ]
 }

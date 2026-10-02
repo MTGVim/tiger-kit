@@ -712,6 +712,16 @@ PR 재실행에서는 `EveryInc/compound-engineering-plugin@7fe624d36a5a12253165
 
 각 적용·비적용 판단, 검토한 파일, 검증 한계와 반영 위치는 각 패키지 `references/sources.md`가 정본입니다. 원본 라이선스는 해당 `UPSTREAM-LICENSES.txt`에 보존합니다. 원본 시연·평가의 성능을 TigerKit에서 재현했다고 주장하지 않습니다.
 
+## #409-#411 자동연구 평가 무결성과 파생 근거
+
+2026-10-02에 다음 최신 기본 브랜치의 고정 커밋과 라이선스를 확인했습니다.
+
+- `RUC-NLPIR/Arbor` `7cdaf1fa6d779b3d5e340052357bf3fe55dfed93` (Apache-2.0): 평가 기준 보호, 탐색용 근거와 채택용 근거의 조건부 분리, 선택적인 파생 근거 링크와 상위 방향의 교훈 보존을 증류했습니다. 전체 트리 실행 체계와 병합 동작은 가져오지 않았습니다.
+- `Gyubin/autoresearch` `1e2830d9f35853d7eee580b7333a3c91e6259c0d` (Apache-2.0): 예산상 보류와 실제 반증의 분리, 중요한 확률적 결과의 독립 재현 원칙을 증류했습니다. 고정 후보·반복 개수와 별도 실행 체계는 제외했습니다.
+- `Muuuun/luxas` `9f77cefe7f47b05b1334ec8778e642deef13da82` (MIT): 객관적인 계약과 원래 근거를 중심으로 독립 검증 입력을 구성하는 원칙을 증류했습니다. 에이전트 구성과 코드·지시문은 복제하지 않았습니다.
+
+`karpathy/autoresearch`는 해당 커밋에 라이선스 파일이 없고, `SakanaAI/AI-Scientist-v2`는 별도 조건이 있는 사용자 정의 라이선스이므로 증류 원본으로 편입하지 않았습니다. 비교 위치·적용·제외 판단과 검증 한계는 `skills/tk-autoresearch/references/sources.md`에 기록했습니다. 채택한 원본의 라이선스는 패키지 `UPSTREAM-LICENSES.txt`에 보존합니다.
+
 ## 병렬 리뷰의 공유 실행 자원
 
 2026-10-01에 `obra/superpowers` 최신 `main`의 고정 커밋

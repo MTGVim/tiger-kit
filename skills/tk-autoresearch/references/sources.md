@@ -42,6 +42,46 @@ The three donor revisions above were rechecked against their latest default-bran
 - `adapt`: bryanshake's evidence-bound closure checks into convergence after regeneration, with essential unavailable evidence kept `BLOCKED`; `omit`: coordinator/runtime and queues.
 - `adapt`: the user's safe current-worktree designation into the existing single-home persistence contract, including a new researchId without another linked worktree; `keep`: ownership, clean-checkout, default/product-branch and unrelated-work safeguards.
 
+## Evaluation and lineage revision reviewed 2026-10-02
+
+The following default-branch revisions were fetched fresh before this revision. These are behavior/design
+comparisons, not reproduced runtime performance or copied implementations.
+
+- `RUC-NLPIR/Arbor`, Apache-2.0, `7cdaf1fa6d779b3d5e340052357bf3fe55dfed93`:
+  inspected `docs/how-it-works.md`, `docs/preparing-a-benchmark.md`,
+  `skills/arbor-agent-orchestrator/SKILL.md`, `skills/arbor-agent-merge-eval/SKILL.md`,
+  `skills/arbor-agent-ideate/SKILL.md`, `tests/test_executor_tamper.py` and LICENSE.
+  `adapt`: protected evaluator/metric/data boundaries, dev versus independent acceptance where feasible,
+  optional origin links, and evidence-backed parent lessons consumed by sibling ideation.
+  `keep`: TigerKit's general research scope, single home and information-value convergence.
+  `omit`: Idea Tree runtime, mandatory node schema/depth, executor topology, dashboard and merge thresholds.
+- `Gyubin/autoresearch`, Apache-2.0, `1e2830d9f35853d7eee580b7333a3c91e6259c0d`:
+  inspected README's evaluation/halving/assurance design, `tests/test_phase4.py` pruning cases, LICENSE and NOTICE.
+  `adapt`: budget pruning is separate from scientific negative evidence; preserve unexecuted candidates
+  without failure insights or confidence penalties. Its smoke-evaluated endpoint deduplication does not
+  make TigerKit's unexecuted candidates tested endpoints. `adapt`: decision-critical noisy evidence merits
+  cost-sensitive independent replication and protected acceptance signals.
+  `omit`: successive halving, fixed K/seeds, pairwise panel, ledger, sandbox and statistics runtime.
+- `Muuuun/luxas`, MIT, `9f77cefe7f47b05b1334ec8778e642deef13da82`:
+  inspected README's blind implementation/test split and self-circular failure example, plus LICENSE.
+  `adapt`: independent verifier inputs emphasize the objective contract and primary artifacts while
+  withholding unnecessary proposer conclusions. `omit`: agent topology, fixed retry cap and paper workflow.
+  The reported live failure and multi-agent efficacy were not reproduced.
+- `karpathy/autoresearch`, `228791fb499afffb54b46200aca536f79142f117`:
+  inspected `program.md` for the fixed `prepare.py` versus editable `train.py` example. No LICENSE/NOTICE
+  file was present at this revision; no source text/code is incorporated and it is not a distillation donor.
+  The protected-evaluation rule above is independently supported by Apache-2.0 Arbor/Gyubin.
+- `SakanaAI/AI-Scientist-v2`, `96bd51617cfdbb494a9fc283af00fe090edfae48`:
+  checked LICENSE, which is the custom AI Scientist Source Code License v1.0, not MIT/Apache-2.0.
+  It is not a distillation donor and no implementation or prompt text is incorporated. Arbor/Gyubin supply
+  the lineage and replication principles without importing this runtime or its licence terms.
+
+Installed behavior is owned by SKILL.md, `experiments.md`, `state.md` and `persistence.md`.
+Pressure scenarios are in `evals/skills/tk-autoresearch/evals.json`; donor tests were inspected as design
+evidence, not executed or claimed as TigerKit validation. Original donor licences are retained below.
+The user's loop-invocation correction changes the package to `hybrid` with model invocation enabled;
+selection requires a concrete continuing-research/resume request and never grants authority by itself.
+
 ## Owner boundary
 
 `tk-research` remains bounded external evidence and supplies synchronized `evidence.md`. `tk-autoresearch` owns evolving directions, frontier, authorized local research experiments and convergence. `tk-roadmap` owns delivery planning; `tk-prep` owns production implementation. Original licence texts are in [upstream licenses](../UPSTREAM-LICENSES.txt).
