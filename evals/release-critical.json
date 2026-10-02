@@ -533,7 +533,13 @@
     "tk-autoresearch:behavior:autoresearch-designated-home-new-identity",
     "tk-autoresearch:behavior:autoresearch-designation-does-not-bypass-safety",
     "tk-autoresearch:behavior:autoresearch-designation-preserves-other-program",
-    "tk-autoresearch:behavior:autoresearch-concludes-after-regeneration"
+    "tk-autoresearch:behavior:autoresearch-concludes-after-regeneration",
+    "tk-qa-sheet:behavior:qa-auth-unavailable",
+    "tk-qa-sheet:behavior:qa-missing-connection",
+    "tk-qa-sheet:behavior:qa-manual-is-not-product-pass",
+    "tk-qa-sheet:behavior:qa-storage-unverifiable",
+    "tk-qa-sheet:behavior:qa-links-list-fallback",
+    "tk-qa-sheet:behavior:qa-links-unknown-or-secret"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",
@@ -586,6 +592,10 @@
     "catalog:behavior:autoresearch-continuing",
     "catalog:behavior:autoresearch-bounded-comparison",
     "catalog:behavior:autoresearch-agreed-roadmap",
-    "catalog:behavior:autoresearch-selected-implementation"
+    "catalog:behavior:autoresearch-selected-implementation",
+    "catalog:behavior:qa-sheet-explicit",
+    "catalog:behavior:qa-sheet-user-only",
+    "catalog:behavior:qa-sheet-vs-browser",
+    "catalog:behavior:qa-sheet-vs-explain"
   ]
 }

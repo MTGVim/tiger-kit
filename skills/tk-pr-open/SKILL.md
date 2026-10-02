@@ -98,6 +98,8 @@ For a stack, apply the same title/template rules to every layer. Each layer body
 
 Source: the reversibility/blast-radius safeguard adapts `mattpocock/skills@d81f3a183412e71a5b1e84ca21bc1a35eea03a60`, `skills/engineering/pr/SKILL.md`. Keep TigerKit's template, evidence and publication contracts; omit the mandatory upstream body and labels. Original MIT notice: [LICENSE.txt](LICENSE.txt).
 
+For a user-owned QA inventory, recommend explicit `/tk-qa-sheet` outside this publication-only phase and consume only its returned Markdown section; never auto-invoke the user-only skill or start its investigation here.
+
 ## Evidence
 
 Use a producer-neutral PR evidence manifest when the current publication input provides one.

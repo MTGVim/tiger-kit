@@ -796,6 +796,38 @@
       "focus_skill": "tk-autoresearch",
       "expected_selected_skill": "tk-prep",
       "critical": true
+    },
+    {
+      "id": "qa-sheet-explicit",
+      "boundary": "사용자 직접 QA 목록과 에이전트 검증 및 설명 스킬을 구분합니다.",
+      "prompt": "$tk-qa-sheet 직접 확인할 HTML 체크리스트를 만들어줘",
+      "focus_skill": "tk-qa-sheet",
+      "expected_selected_skill": "tk-qa-sheet",
+      "critical": true
+    },
+    {
+      "id": "qa-sheet-user-only",
+      "boundary": "사용자 직접 QA 목록과 에이전트 검증 및 설명 스킬을 구분합니다.",
+      "prompt": "내가 직접 확인할게. 영향 위치를 정리해줘",
+      "focus_skill": "tk-qa-sheet",
+      "expected_selected_skill": null,
+      "critical": true
+    },
+    {
+      "id": "qa-sheet-vs-browser",
+      "boundary": "사용자 직접 QA 목록과 에이전트 검증 및 설명 스킬을 구분합니다.",
+      "prompt": "$tk-browser-verify 이 화면을 에이전트가 확인해줘",
+      "focus_skill": "tk-qa-sheet",
+      "expected_selected_skill": "tk-browser-verify",
+      "critical": true
+    },
+    {
+      "id": "qa-sheet-vs-explain",
+      "boundary": "사용자 직접 QA 목록과 에이전트 검증 및 설명 스킬을 구분합니다.",
+      "prompt": "$tk-explain 이 코드가 동작하는 원리를 HTML로 설명해줘",
+      "focus_skill": "tk-qa-sheet",
+      "expected_selected_skill": "tk-explain",
+      "critical": true
     }
   ]
 }

@@ -1,0 +1,48 @@
+{
+  "skill": "tk-qa-sheet",
+  "kind": "user-invoked",
+  "queries": [
+    {
+      "id": "train-sheet",
+      "split": "train",
+      "query": "$tk-qa-sheet 직접 확인할 HTML 시트를 만들어줘",
+      "should_trigger": true
+    },
+    {
+      "id": "train-generic",
+      "split": "train",
+      "query": "내가 직접 확인할게",
+      "should_trigger": false
+    },
+    {
+      "id": "slash",
+      "split": "validation",
+      "query": "/tk-qa-sheet",
+      "should_trigger": true
+    },
+    {
+      "id": "markdown",
+      "split": "validation",
+      "query": "$tk-qa-sheet PR 본문용 목록만 줘",
+      "should_trigger": true
+    },
+    {
+      "id": "browser",
+      "split": "validation",
+      "query": "$tk-browser-verify 화면을 직접 검증해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "natural-sheet",
+      "split": "validation",
+      "query": "QA 시트를 만들어 줘",
+      "should_trigger": false
+    },
+    {
+      "id": "explain",
+      "split": "validation",
+      "query": "$tk-explain 이 변경을 설명해줘",
+      "should_trigger": false
+    }
+  ]
+}

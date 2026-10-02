@@ -212,6 +212,8 @@ verification, review, or commit obligation remains actionable, continue executio
 limitation, a required user-owned decision, a safety boundary, or an explicit user stop/change of scope; name the actual
 reason and remaining work. Never end the parent turn merely to report baseline success.
 
+When the user wants to perform manual QA, recommend explicit `/tk-qa-sheet` for the requested checklist or HTML sheet; this does not replace required implementation verification or auto-invoke the user-only skill.
+
 For local execution, follow the already loaded local-execution reference. SDD additionally follows the private SDD
 protocol. Only after the final-response gate permits completion or a justified pause, return a compact result with the execution shape, Seed path or `none`, commits or handoff status, focused and
 required verification, runtime evidence, exceptions, review independence, and any blocker. Claim remote publication only after the separately authorized publication owner verifies it.

@@ -1,0 +1,6 @@
+interface:
+  short_description: "[user] 직접 점검할 영향 화면과 진입 경로를 QA 목록이나 단일 HTML 시트로 정리합니다."
+  default_prompt: "$tk-qa-sheet으로 현재 변경의 영향 화면과 진입 경로를 근거에 맞춰 정리하고, 직접 점검할 단일 HTML QA 시트를 만들어 주세요."
+
+policy:
+  allow_implicit_invocation: false

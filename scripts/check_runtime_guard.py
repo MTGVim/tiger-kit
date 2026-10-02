@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RUNTIME_GUARD_CONSUMERS = (
+    "tk-qa-sheet",
     "tk-prep",
     "tk-ask-repo",
     "tk-audit",
@@ -29,6 +30,7 @@ Use recovered project/session context only when repository/task identity matches
 
 
 APPROVAL_GUARD_CONSUMERS = (
+    "tk-qa-sheet",
     "tk-prep",
     "tk-autoresearch",
     "tk-browser-verify",
@@ -54,6 +56,7 @@ Check the active user's authorization before asking. A concrete request or earli
 
 
 UI_EVIDENCE_CONSUMERS = (
+    "tk-qa-sheet",
     "tk-ask-repo",
     "tk-prep",
     "tk-wizard",

@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QA 시트</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --text: #1d2129; --muted: #6b7280; --line: #e3e6ea;
+    --done: #1f9d55; --code-bg: #f1f2f5; --hover: #f8f9fb; --badge: #b45309; --badge-bg: #fef3c7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #15171c; --panel: #1d2027; --text: #e6e8ec; --muted: #9aa1ad; --line: #2e323b;
+      --done: #4cc38a; --code-bg: #272b34; --hover: #232731; --badge: #fbbf24; --badge-bg: #3a2f12;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #15171c; --panel: #1d2027; --text: #e6e8ec; --muted: #9aa1ad; --line: #2e323b;
+    --done: #4cc38a; --code-bg: #272b34; --hover: #232731; --badge: #fbbf24; --badge-bg: #3a2f12;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
+  header { position: sticky; top: 0; z-index: 2; background: var(--panel); border-bottom: 1px solid var(--line);
+    padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  header h1 { font-size: 16px; margin: 0; }
+  .progress { flex: 1 1 200px; display: flex; align-items: center; gap: 10px; min-width: 200px; }
+  .bar { flex: 1; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; width: 0; background: var(--done); transition: width .2s; }
+  .count { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  header label, header button { font-size: 13px; }
+  button { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  button:hover { background: var(--hover); }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; padding: 16px 20px; align-items: start; }
+  main { min-width: 0; }
+  details.legend { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; margin-bottom: 14px; }
+  details.legend summary { cursor: pointer; color: var(--muted); }
+  details.legend ul { margin: 8px 0 4px; padding-left: 18px; }
+  .group { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 14px 10px; margin-bottom: 12px; }
+  .group h2 { font-size: 15px; margin: 8px 0; display: flex; gap: 8px; align-items: baseline; }
+  .gcount { font-size: 12px; font-weight: 400; color: var(--muted); }
+  .group.complete h2 { color: var(--done); }
+  ul.items, ul.checks, ul.notes { list-style: none; margin: 0; padding: 0; }
+  ul.items > li { padding: 6px 0; border-top: 1px solid var(--line); }
+  ul.items > li:first-child { border-top: 0; }
+  .ititle { font-weight: 600; margin-bottom: 4px; }
+  ul.notes { padding-left: 18px; color: var(--muted); }
+  ul.notes li::before { content: "· "; }
+  li.subhead { color: var(--muted); margin: 4px 0 2px; }
+  li.check label { display: flex; gap: 8px; align-items: flex-start; padding: 3px 4px; border-radius: 4px; cursor: pointer; }
+  li.check label:hover { background: var(--hover); }
+  li.check input { margin-top: 3px; accent-color: var(--done); flex: none; }
+  li.check.checked .ctext { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--muted); }
+  .lv1 { margin-left: 18px; } .lv2 { margin-left: 36px; } .lv3 { margin-left: 54px; }
+  code { background: var(--code-bg); border-radius: 4px; padding: 0 4px; font-size: 12.5px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .badge { font-size: 11px; color: var(--badge); background: var(--badge-bg); border-radius: 4px; padding: 0 5px; margin-left: 6px; white-space: nowrap; }
+  .screen-link { display: inline-block; margin-left: 12px; color: var(--text); text-underline-offset: 3px; font-weight: 400; }
+  .environment { overflow-wrap: anywhere; }
+  body.only-open li.check.checked { display: none; }
+  body.only-open .group.complete { display: none; }
+  aside { position: sticky; top: 64px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+    padding: 12px; display: flex; flex-direction: column; gap: 8px; height: calc(100vh - 84px); }
+  aside h3 { margin: 0; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
+  aside .saved { font-size: 12px; font-weight: 400; color: var(--muted); }
+  aside textarea { flex: 1; resize: none; width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--line);
+    border-radius: 6px; padding: 10px; font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+  aside .hint { font-size: 12px; color: var(--muted); }
+  .error { background: var(--badge-bg); color: var(--badge); padding: 12px 20px; }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside { position: static; height: 360px; }
+  }
+</style>
+</head>
+<body>
+<!--
+  사용법: 아래 qa-data JSON 만 채운다. 렌더링, 항목 id, 저장은 이 파일의 스크립트가 맡는다.
+  - storageKey: 작업 단위로 고유하게 (예: "<task>-<topic>"). 바꾸면 이전 체크와 메모를 읽지 않는다.
+  - text 안의 `백틱` 은 화면에서 그대로 확인한 표기, 그 밖의 글은 설명이다.
+  - provenance: "observed"(화면 확인) | "code-only"(기본)(코드 문자열만 확인, "코드 기준" 배지 표시)
+  - checks 가 없는 item 은 item 자체가 체크 항목이다. heading: true 인 check 는 체크 없는 소제목이다.
+-->
+<script type="application/json" id="qa-data">
+{
+  "title": "예시 작업 QA 시트",
+  "storageKey": "example-task-qa",
+  "legend": [
+    "백틱 안의 메뉴, 탭, 버튼 문구는 대상 환경 화면에서 그대로 확인한 표기입니다.",
+    "`코드 기준` 배지는 화면에서 보지 못하고 코드 문자열만 확인한 항목입니다.",
+    "(아이콘), (행 클릭)처럼 괄호로 쓴 것은 글자가 없는 트리거입니다."
+  ],
+  "groups": [
+    {
+      "title": "영역 A",
+      "items": [
+        {
+          "title": "`상위 메뉴 > 하위 메뉴` → 상세 `탭 이름` (`/area/detail/:id/tab`)",
+          "provenance": "observed",
+          "checks": [
+            { "text": "`버튼 문구 1` (컴포넌트 이름)", "provenance": "observed" },
+            { "text": "`버튼 문구 2` (컴포넌트 이름). 조건이 맞을 때만 보입니다.", "provenance": "code-only" }
+          ]
+        },
+        { "title": "`상위 메뉴 > 다른 메뉴` (`/area/list`): `신규 버튼`, 행 (아이콘)", "provenance": "observed" }
+      ]
+    },
+    {
+      "title": "영역 B",
+      "items": [
+        {
+          "title": "공통 패턴 화면은 아래 트리거를 똑같이 가집니다.",
+          "provenance": "observed",
+          "notes": ["(행 클릭) 상세", "행 (아이콘) 수정"],
+          "checks": [
+            { "text": "해당 화면", "heading": true },
+            { "text": "`메뉴 > 화면 1` (`/b/one`)", "indent": 1, "provenance": "observed" },
+            { "text": "`메뉴 > 화면 2` (`/b/two`)", "indent": 1, "provenance": "observed" }
+          ]
+        }
+      ]
+    }
+  ]
+}
+</script>
+<div id="storage-warning" class="error" role="status" hidden></div>
+<header>
+  <h1 id="title"></h1>
+  <span id="environment" class="count environment" hidden></span>
+  <div class="progress"><div class="bar"><i id="bar"></i></div><span class="count" id="count">0 / 0</span></div>
+  <label><input type="checkbox" id="onlyOpen"> 미확인만 보기</label>
+  <button type="button" id="reset">체크 초기화</button>
+</header>
+<div class="layout">
+  <main id="main"></main>
+  <aside>
+    <h3>메모 <span class="saved" id="saved"></span></h3>
+    <textarea aria-label="메모" id="notes" placeholder="특이사항을 적어 두세요. 입력하면 자동 저장됩니다."></textarea>
+    <div class="hint">체크와 메모는 이 브라우저의 localStorage 에만 저장됩니다.</div>
+  </aside>
+</div>
+<script>
+(() => {
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const fmt = (s) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>");
+
+  const object = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+  const nonblank = (v) => typeof v === "string" && v.trim().length > 0;
+  const strings = (v) => v === undefined || (Array.isArray(v) && v.every((s) => typeof s === "string"));
+  const provenance = (v) => v === undefined || v === "observed" || v === "code-only";
+  const safeUrl = (v) => {
+    if (!nonblank(v) || !/^https?:\/\//.test(v)) return false;
+    try { const u = new URL(v); return !u.username && !u.password; } catch { return false; }
+  };
+  const validCheck = (c) => object(c) && nonblank(c.text) && provenance(c.provenance)
+    && (c.heading === undefined || typeof c.heading === "boolean")
+    && (c.indent === undefined || (Number.isInteger(c.indent) && c.indent >= 0 && c.indent <= 3));
+  const validItem = (it) => object(it) && nonblank(it.title) && provenance(it.provenance) && strings(it.notes)
+    && (it.checks === undefined || (Array.isArray(it.checks) && it.checks.every(validCheck)
+      && (!it.checks.length || it.checks.some((c) => !c.heading))));
+  const validData = (d) => object(d) && nonblank(d.title) && nonblank(d.storageKey) && strings(d.legend)
+    && (d.environment === undefined || (object(d.environment) && nonblank(d.environment.label) && safeUrl(d.environment.baseUrl)))
+    && Array.isArray(d.groups) && d.groups.length > 0 && d.groups.every((g) => object(g)
+      && nonblank(g.title) && Array.isArray(g.items) && g.items.length > 0 && g.items.every(it => validItem(it)
+        && (it.url === undefined || (safeUrl(it.url) && d.environment
+          && new URL(it.url).origin === new URL(d.environment.baseUrl).origin))));
+  const fail = (message) => {
+    document.body.insertAdjacentHTML("afterbegin", `<div class="error" role="alert">${esc(message)}</div>`);
+    document.querySelector(".layout").hidden = true;
+    document.querySelector("header").hidden = true;
+  };
+  let data;
+  try {
+    data = JSON.parse(document.getElementById("qa-data").textContent);
+    if (!validData(data)) throw new Error("제목, 저장 키, 영역과 체크 항목의 형식을 확인해 주세요.");
+  } catch { fail("qa-data JSON 또는 데이터 형식이 올바르지 않습니다."); return; }
+
+  const storageKey = role => JSON.stringify(["tk-qa-sheet", data.storageKey, role, 1]);
+  const KEY = storageKey("checks"), NOTES = storageKey("notes"), ONLY = storageKey("onlyOpen");
+  const read = (k, f) => { try { const v = localStorage.getItem(k); return v === null ? f : JSON.parse(v); } catch { return f; } };
+  const warning = document.getElementById("storage-warning");
+  const write = (k, v) => {
+    try { localStorage.setItem(k, JSON.stringify(v)); return true; }
+    catch {
+      warning.hidden = false;
+      warning.textContent = "저장 실패: 이 브라우저에서는 체크와 메모를 복원하지 못할 수 있습니다.";
+      return false;
+    }
+  };
+
+  document.title = data.title;
+  document.getElementById("title").textContent = data.title;
+  if (data.environment) {
+    const environment = document.getElementById("environment");
+    environment.textContent = `환경: ${data.environment.label} (${data.environment.baseUrl})`;
+    environment.hidden = false;
+  }
+  const screenLink = it => it.url
+    ? `<a class="screen-link" href="${esc(it.url)}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">화면 열기</a>` : "";
+  const checkId = (group, item, text = null) => "i" + encodeURIComponent(JSON.stringify([
+    data.environment ? new URL(data.environment.baseUrl).href : null,
+    item.url ? new URL(item.url).href : null, group.title, item.title, text,
+  ]));
+
+  const seen = new Set();
+  const checkLi = (id, text, prov, indent) => {
+    if (seen.has(id)) throw new Error("체크 항목 ID가 중복됩니다. 항목을 구별할 화면과 조건을 추가해 주세요.");
+    seen.add(id);
+    const badge = prov !== "observed" ? '<span class="badge">코드 기준</span>' : "";
+    return `<li class="check lv${Math.min(indent || 0, 3)}"><label><input type="checkbox" data-id="${id}"><span class="ctext">${fmt(text)}</span>${badge}</label></li>`;
+  };
+
+  let html = "";
+  try {
+  if (data.legend && data.legend.length) {
+    html += `<details class="legend"><summary>표기 규칙과 영향 범위</summary><ul>${data.legend.map((l) => `<li>${fmt(l)}</li>`).join("")}</ul></details>`;
+  }
+  for (const g of data.groups) {
+    html += `<section class="group"><h2>${fmt(g.title)} <span class="gcount"></span></h2><ul class="items">`;
+    for (const it of g.items) {
+      if (!it.checks || !it.checks.length) {
+        html += `<li><ul class="checks">${checkLi(checkId(g, it), it.title, it.provenance, 0)}</ul>`;
+        html += screenLink(it);
+        if (it.notes && it.notes.length) html += `<ul class="notes">${it.notes.map((n) => `<li>${fmt(n)}</li>`).join("")}</ul>`;
+        html += `</li>`;
+        continue;
+      }
+      html += `<li><div class="ititle">${fmt(it.title)}${screenLink(it)}</div>`;
+      if (it.notes && it.notes.length) html += `<ul class="notes">${it.notes.map((n) => `<li>${fmt(n)}</li>`).join("")}</ul>`;
+      html += `<ul class="checks">`;
+      for (const c of it.checks) {
+        html += c.heading
+          ? `<li class="subhead lv${Math.min(c.indent || 0, 3)}">${fmt(c.text)}</li>`
+          : checkLi(checkId(g, it, c.text), c.text,
+            it.provenance === "observed" && c.provenance === "observed" ? "observed" : "code-only", c.indent);
+      }
+      html += `</ul></li>`;
+    }
+    html += `</ul></section>`;
+  }
+  } catch (e) { fail(e.message); return; }
+  document.getElementById("main").innerHTML = html;
+
+  const stored = read(KEY, {});
+  const state = Object.create(null);
+  if (object(stored)) for (const [id, timestamp] of Object.entries(stored)) {
+    if (seen.has(id) && Number.isFinite(timestamp) && timestamp > 0) state[id] = timestamp;
+  }
+  const boxes = [...document.querySelectorAll("li.check input")];
+  const render = () => {
+    let done = 0;
+    for (const b of boxes) {
+      b.checked = !!state[b.dataset.id];
+      b.closest("li.check").classList.toggle("checked", b.checked);
+      if (b.checked) done++;
+    }
+    document.getElementById("count").textContent = `${done} / ${boxes.length}`;
+    document.getElementById("bar").style.width = boxes.length ? `${(done / boxes.length) * 100}%` : "0";
+    for (const g of document.querySelectorAll(".group")) {
+      const gb = [...g.querySelectorAll("li.check input")];
+      const gd = gb.filter((b) => b.checked).length;
+      g.querySelector(".gcount").textContent = `${gd} / ${gb.length}`;
+      g.classList.toggle("complete", gb.length > 0 && gd === gb.length);
+    }
+  };
+  for (const b of boxes) b.addEventListener("change", () => {
+    if (b.checked) state[b.dataset.id] = Date.now(); else delete state[b.dataset.id];
+    write(KEY, state); render();
+  });
+  document.getElementById("reset").addEventListener("click", () => {
+    if (!confirm("체크 상태를 모두 지울까요? 메모는 그대로 둡니다.")) return;
+    for (const k of Object.keys(state)) delete state[k];
+    write(KEY, state); render();
+  });
+
+  const only = document.getElementById("onlyOpen");
+  only.checked = read(ONLY, false) === true;
+  document.body.classList.toggle("only-open", only.checked);
+  only.addEventListener("change", () => { document.body.classList.toggle("only-open", only.checked); write(ONLY, only.checked); });
+
+  const notes = document.getElementById("notes"), saved = document.getElementById("saved");
+  const storedNotes = read(NOTES, "");
+  notes.value = typeof storedNotes === "string" ? storedNotes : "";
+  let t, pending = false;
+  const saveNotes = () => {
+    clearTimeout(t);
+    pending = false;
+    saved.textContent = write(NOTES, notes.value)
+      ? `저장됨 ${new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}`
+      : "저장 실패 (localStorage 사용 불가)";
+  };
+  notes.addEventListener("input", () => {
+    clearTimeout(t);
+    pending = true;
+    t = setTimeout(saveNotes, 400);
+  });
+  window.addEventListener("pagehide", () => { if (pending) saveNotes(); });
+  document.addEventListener("visibilitychange", () => { if (document.hidden && pending) saveNotes(); });
+
+  render();
+})();
+</script>
+</body>
+</html>
