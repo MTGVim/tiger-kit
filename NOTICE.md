@@ -743,3 +743,19 @@ PR 재실행에서는 `EveryInc/compound-engineering-plugin@7fe624d36a5a12253165
 - `omit`: 원본 실행 체계와 `provider`별 조작 절차를 복제하지 않습니다. 익명화 최소화 규칙은 사용자 제공 사례와 TigerKit의 기존 초안 계약에서 도출했으며 외부 원본에 같은 규칙이 있다고 주장하지 않습니다.
 
 실제 데스크톱 앱에서 발생한 사례는 사용자 제공 근거입니다. 이번 검증은 `verifier` 계획과 익명 초안 행동을 대상으로 하며 실제 앱의 캡처 실행을 재현했다고 주장하지 않습니다.
+
+## 비활성 앱 실행과 소유 대상 초안
+
+2026-10-02에 `trycua/cua` 최신 `main`의 고정 커밋
+`8d4e7a08618611453794035f7ff6187f99f0c1e9`에서
+`libs/cua-driver/rust/Skills/cua-driver/MACOS.md`,
+`libs/cua-driver/rust/crates/platform-macos/src/tools/launch_app.rs`,
+`libs/cua-driver/rust/crates/cua-driver-e2e/tests/installed_app_launch_macos_test.rs`를 확인했습니다.
+비활성 실행 도구, 자체 활성화 억제 결과와 실행 후 포커스 확인을 비교했습니다.
+`obra/superpowers@8ca22dba9a94f28898bbce59f2537ff4d87c747d`의 스킬 작성·독립 행동 비교 원칙도 재확인했습니다.
+
+- `keep`: 제공자의 버전에 맞는 실행 계약과 실행 후 독립 포커스 확인, 기존 스킬의 소유권·정확한 적용 승인 경계를 유지합니다.
+- `adapt`: `tk-app-verify`는 실행과 입력 능력을 분리하고 비활성 실행을 먼저 조사합니다. 원래 후보를 보존하는 격리 래퍼·고유 식별자·등록 조회·실행 소유 정리 절차는 사용자 제공 사례를 조건부 지식으로 적용합니다. `tk-learn`은 소유하지 않은 설치본을 초안으로 끝내며 저장소가 확인되면 기존 산출물 검사를 거쳐 저장소 내부 임시 초안을 사용합니다.
+- `omit`: 제공자의 실행 구현과 운영 체계를 복제하지 않습니다. 특정 위치에서의 래퍼 등록 성공을 모든 버전·플랫폼의 보장으로 일반화하지 않으며, 사용자 계정의 기여·발행 선택지를 자동 제안하지 않습니다.
+
+이번 검증은 독립 실행자의 계획·실제 초안 저장 행동과 저장소 검사에 한정합니다. 실제 `macOS` 앱 실행과 원본의 네이티브 테스트 재실행은 `unverified`입니다.

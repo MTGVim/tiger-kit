@@ -62,11 +62,21 @@ approved secret channel or return `Unverifiable` for a required unavailable auth
    the build. Select a stable window ID where available and distinguish native/modal dialogs.
    Observe fresh accessibility tree and capture state without activating/restoring a user window.
 2. **Lifecycle**: Reuse an existing matching window without taking ownership of its process.
-   Launch an app only within task authorization using the exact parent/repository-supported
-   executable/command and run-owned process. Verify readiness by app/window identity and actual
-   state rather than process existence. Do not build, install, restart or quit user apps as a
-   workaround. Record initial focus and window ownership; launching/focusing effects need matching
-   authority and must be disclosed.
+   Otherwise default to a non-activating launch of the exact candidate: the user's frontmost app
+   and focus must remain unchanged. Before launch, inspect all applicable routes in the selected
+   provider's exposed schemas, version-matched docs and bundled skill pack, not just the repository
+   command. Background input support does not prove background launch; a self-activating dev
+   command is not an acceptable default. Apply the selected [provider knowledge](references/provider-knowledge.md)
+   launch branch; a run-owned bundle wrapper for an already compiled executable is allowed only
+   when it preserves candidate/runtime identity, dependencies and the provider's supported route.
+   Do not rebuild merely to obtain a bundle. If no non-activating route can be established, do not
+   launch: return `Blocked` with evidence and alternatives. Non-native evidence cannot satisfy a
+   native AC; a foreground launch requires disclosed interruption and exact explicit authorization,
+   which may already exist. Generic actual-app verification approval does not grant it.
+   Record initial focus and ownership, then independently verify post-launch focus and exact
+   build/window readiness. An unexpected focus change stops verification; do not continue with
+   a claimed background success. Do not install, restart or quit user apps as a workaround.
+   Clean up only run-owned launches, wrappers and registrations, preserving user-owned resources.
 3. **Baseline**: For a render-affecting candidate, capture comparable pre-change evidence before
    implementation or use an exact parent-supplied inspected baseline. If the old build/state cannot
    be established safely, report the limitation instead of claiming visual preservation. Read
