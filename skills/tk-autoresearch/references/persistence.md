@@ -39,10 +39,11 @@ Assign one stable `researchId` after the repository and research goal are clear.
 repository identity plus the normalized initial research goal, persist it, and do not change it for ordinary
 wording refinements. Never derive it from secrets or user identifiers.
 
-For the default `hybrid` mode and for `tracked`, establish one dedicated linked research worktree before
+For the default `hybrid` mode and for `tracked`, establish one dedicated research worktree before
 creating canonical config/state, tracked research documents, or research source changes. Reuse an existing
-worktree only when its canonical state has the same `researchId`. Otherwise create/reuse a safe
-`research/<slug>` branch/worktree and make it the research home.
+home when its canonical state has the same `researchId`.
+
+Honor an explicit user designation of the current worktree as the research home when it is clean, not the default/product branch and not shared with unrelated work, even for a new `researchId`; create a linked `research/<slug>` worktree only when no such designation exists or the current checkout is unsafe. Record the designation in canonical state. An existing canonical state for another research program is an ownership conflict; preserve it and choose a separate safe home rather than overwriting it.
 
 For `local`, the current worktree may be the research home while it is safe and no source mutation requires
 isolation. If source mutation becomes useful in a dirty/default/product worktree, move the research program
