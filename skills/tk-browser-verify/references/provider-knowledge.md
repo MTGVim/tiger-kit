@@ -66,6 +66,39 @@ current capture/scale and observed safe delivery. Off-Space SwiftUI/canvas and W
 limits may block a scenario. Never enable foreground delivery automatically. Verify independent
 postconditions after uncertain responses rather than blindly replaying input.
 
+### macOS launch
+
+For native app launch, read the installed version's `launch_app` schema and bundled `MACOS.md`.
+Use its documented `launch_app({bundle_id})` path; the reviewed macOS implementation guards
+target self-activation and may return `self_activation_suppressed`. A true result supports the
+guard outcome, not a universal guarantee: independently compare the prior frontmost app/focus
+with fresh post-launch state. A false/missing field is not positive proof. Shell `open` in any
+form, AppleScript activation and a self-activating repository command are not background launch
+substitutes. Do not use them to bypass the selected provider's launch contract.
+
+For a raw already-compiled candidate without a bundle, a run-owned `.app` wrapper may copy
+(not symlink) that exact executable and use a distinct `CFBundleIdentifier` so an installed
+release cannot win lookup. Preserve required resources, libraries, working directory and runtime
+configuration; if relocation changes the candidate or requires an unsupported signing/setup
+workaround, stop instead of claiming equivalence. Verify the registered identifier resolves to
+this wrapper's exact path and candidate before `launch_app`, then bind returned process/window
+to it. Registration alone does not prove lookup. If the platform ignores system temporary paths,
+use a checked run-owned non-system-temp location such as repository `.tigerkit/tmp/`; an unresolved
+registration is `Blocked`. Registration is temporary and run-owned, not an app installation or
+replacement of an existing identifier. Unregister only this run's registration and delete its
+wrapper during cleanup; never unregister or remove the installed release.
+
+Source comparison (2026-10-02): `trycua/cua` revision
+`8d4e7a08618611453794035f7ff6187f99f0c1e9`,
+`libs/cua-driver/rust/Skills/cua-driver/MACOS.md`,
+`libs/cua-driver/rust/crates/platform-macos/src/tools/launch_app.rs` and
+`libs/cua-driver/rust/crates/cua-driver-e2e/tests/installed_app_launch_macos_test.rs`.
+Keep provider-owned launch and independent focus checks; adapt the user-supplied raw-executable
+wrapper case with exact identity and cleanup checks; omit activation workarounds. System-temp
+lookup and wrapper success are supplied incident evidence, not a universal upstream claim.
+The native tests were inspected, not rerun here. Other providers/platforms require their own
+current launch evidence; these macOS semantics do not establish their compatibility.
+
 ## Orca Computer
 
 Resolve the session's executable from the current upstream guide before any Orca command. Outside

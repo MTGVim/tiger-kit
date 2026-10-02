@@ -9,7 +9,7 @@ for a fresh lower-capability executor and preserve:
 - source, goal/background, exact checkout or PR head, and current evidence/entry points;
 - scope, exclusions, do-not-change constraints, and approved material decisions with reasons;
 - implementation direction and only material Reuse/Simplicity/Tests/Security/Experience gaps, exceptions, or decisions;
-- AC with per-AC verification, browser plan, exceptions, traps, and exact UI literals;
+- AC with per-AC verification, runtime verification plan (verifier, baseline/replay, evidence location), exceptions, traps, and exact UI literals;
 - a semantic Review Plan: change intent, original incident or expected scenario, expected changed outcome,
   `must-not-change` behavior or visual regions, change-owned risk edges, required evidence, and known uncertainty;
 - execution recommendation and, for SDD, the private protocol's exact `## Execution` grammar.

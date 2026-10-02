@@ -116,25 +116,37 @@ the plan. For a surfaced axis use `보완 필요 | 개선 한계 | 예외 승인
 For every code-changing path, inspect real tests and load [behavior-first testing](references/testing.md) before approval. Close
 observable behavior, regression/RED or pre-edit GREEN for behavior-preserving refactoring, focused command, required
 suite, mutation risk, and `N/A` versus engineering exception.
-Do not add ceremonial tests for trivial/prose-only work; browser verification never substitutes for automated protection.
+Do not add ceremonial tests for trivial/prose-only work; runtime verification never substitutes for automated protection.
 For every direct or SDD code review, load [independent review protocol](references/review-protocol.md) and
 [finding quality](references/finding-quality.md). Load
 [TypeScript](references/typescript.md), [React](references/react.md), and [security](references/security.md) only when the
 review scope meets those references' stated conditions. Conditional lenses do not change the protocol's review seats.
 When the cause and exact RED seam are obvious, proceed directly. Lazy-load [diagnosis](references/diagnosis.md) only for hard, flaky, performance, or difficult-to-reproduce bugs and establish a red-capable loop before a fix hypothesis. If that is impossible, record why and do not apply a speculative fix.
 
-## Browser verification
+## Runtime verification
+
+Route each runtime AC by its target: URL-based UI that works in a normal browser goes to
+`tk-browser-verify`; desktop app windows, native menus/dialogs, and UI that cannot run in a browser
+go to `tk-app-verify`. Native window behavior belongs to `tk-app-verify` even when the same UI also
+works in a browser. Skip runtime verification when neither the change nor its AC affects runtime UI.
+
+Before approval, bind the selected verifier, target/build/environment, pass conditions, comparable
+baseline/replay and evidence location in the runtime verification plan. For a render-affecting
+candidate, identify exact pre-change provenance and schedule that verifier's baseline before the
+first product edit, followed by the matching after capture under
+`.tigerkit/evidence/<verifier>/<run-id>/baseline|after/`. If a baseline cannot be acquired, surface
+the limitation before approval and forbid an absence-of-regression claim. For native targets,
+include app/window identity, dimensions/scale, initial state and allowed interaction; the app
+verifier owns provider selection, lifecycle and foreground escalation decisions within existing authority.
 
 For browser-visible ACs, close target URL/environment, pass conditions, headless viewport/state, safe auth bootstrap,
-server command/cwd/readiness, screenshot/redaction evidence, and the `tk-browser-verify` handoff. If the implementation
-can affect rendered output, the browser plan must identify the exact pre-change provenance and schedule a comparable
-baseline capture before the first product edit, even when the intended visual result is unchanged. If that baseline
-cannot be acquired, surface the limitation before approval and forbid an absence-of-regression claim. Default to headless.
+server command/cwd/readiness, screenshot/redaction evidence, and the `tk-browser-verify` handoff. Default to headless.
 Never store usernames, passwords, token, OTP, cookie, or session values in chat/Seed/artifacts; use ephemeral runtime
 input. The verifier owns server startup, readiness, runtime acceptance evidence, and cleanup.
 If any implementation or verification step would open a local app/page to compare a design,
-inspect a render defect, test responsive or interaction behavior, or capture proof, invoke
-`tk-browser-verify` instead of performing browser calls inside the preparation/execution turn.
+inspect a render defect, test responsive or interaction behavior, or capture proof, invoke the
+planned verifier. Do not call browser or desktop provider tools (trees, clicks, screenshots)
+directly inside the preparation/execution turn; provider selection and interaction belong to the verifier.
 
 ## Review plan
 
@@ -165,7 +177,7 @@ before approval. Preserve any existing Seed before approval; direct/no-Seed does
 Before presenting any frontier question or missing approval, read [question rounds](references/questions.md) in this turn and apply its format. Make the approval request itself a separate numbered `Q` in the final question block; preserve existing approval and defer a dependent approval until its scope is actionable.
 
 First check whether the active request or an earlier decision already authorizes the concrete scope. If not, perform no source/test/config/Seed/Git mutation and present one natural summary covering goal, scope,
-decisions, approach, testing/TDD, browser plan, semantic review obligations, execution shape, workspace setup, and local
+decisions, approach, testing/TDD, runtime verification plan (verifier, baseline, evidence location), semantic review obligations, execution shape, workspace setup, and local
 commit consequence. If already authorized, state the resolved approach briefly and proceed without another approval question. Planned baseline capture and its return to implementation are included, not separate checkpoints.
 
 Approval authorizes exactly the described local edits, verification, isolated checkout setup, and local task commit(s).
@@ -190,7 +202,7 @@ When that baseline succeeds, bind its run/replay evidence to this task and execu
 in the same active turn. A progress update may precede that action; a final answer or a promise to resume cannot replace it.
 Then obtain the matching after comparison before final review, binding verification, or commit.
 
-This applies both when the host loads `tk-browser-verify` through a Skill tool in the same agent and when a separate child
+This applies both when the host loads the planned verifier (`tk-browser-verify` or `tk-app-verify`) through a Skill tool in the same agent and when a separate child
 returns. In the first case, resume the retained owner procedure yourself; do not wait for a nonexistent parent process.
 In the second, consume the child's terminal response as phase-local evidence. `Status: Pass`, `## Verdict`, or
 `resume_parent: required` in a child report never means the approved parent task is complete or triggers host scheduling.
@@ -202,7 +214,7 @@ reason and remaining work. Never end the parent turn merely to report baseline s
 
 For local execution, follow the already loaded local-execution reference. SDD additionally follows the private SDD
 protocol. Only after the final-response gate permits completion or a justified pause, return a compact result with the execution shape, Seed path or `none`, commits or handoff status, focused and
-required verification, browser evidence, exceptions, review independence, and any blocker. Claim remote publication only after the separately authorized publication owner verifies it.
+required verification, runtime evidence, exceptions, review independence, and any blocker. Claim remote publication only after the separately authorized publication owner verifies it.
 
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths

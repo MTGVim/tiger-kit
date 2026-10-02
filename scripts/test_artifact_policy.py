@@ -169,7 +169,7 @@ class InstalledArtifactGuardTests(unittest.TestCase):
     def test_missing_or_changed_reference_blocks_installation(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            for name in ('tk-research', 'tk-adhd'):
+            for name in ('tk-research', 'tk-adhd', 'tk-learn'):
                 path = root / 'skills' / name / 'SKILL.md'
                 path.parent.mkdir(parents=True)
                 path.write_text('---\nname: ' + name + '\n---\n')
@@ -180,6 +180,10 @@ class InstalledArtifactGuardTests(unittest.TestCase):
             reference.unlink()
             self.assertTrue(policy.validate_artifact_guards(root))
             reference.write_text(original.replace('Only exit 1', 'Any exit'))
+            self.assertTrue(policy.validate_artifact_guards(root))
+            reference.write_text(original)
+            learn_reference = root / 'skills/tk-learn/references/artifact-paths.md'
+            learn_reference.write_text(policy.ARTIFACT_REFERENCE + policy.USER_INPUT_REFERENCE)
             self.assertTrue(policy.validate_artifact_guards(root))
 
     def test_no_artifact_skill_cannot_gain_writer_guard(self):

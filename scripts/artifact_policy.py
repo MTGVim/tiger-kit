@@ -22,7 +22,7 @@ This skill creates no artifacts. Do not create temporary files, write reports, o
 """
 LEARN_ARTIFACT_BLOCK = ARTIFACT_BLOCK.replace(
     "Default repository-owned output to `.tigerkit/`; honor explicit final destinations.",
-    "Default the single transient learn proposal to the host scratchpad or a run-owned OS temporary directory, with safe-path and readback checks. This exception needs no repository ignore setup. Durable repository-owned output still uses `.tigerkit/`; honor explicit destinations.",
+    "Default the single learn proposal to `.tigerkit/tmp/tk-learn/<run-id>/proposal.md` in the current repository and report its absolute path. Only when no repository is identified, use a safe host scratchpad or run-owned OS temporary directory and explain why. Failed repository checks or writes never permit that fallback. Durable output still uses `.tigerkit/learn.md`; honor explicit destinations.",
 )
 USER_INPUT_REFERENCE = '''
 ## User-editable temporary input
@@ -130,9 +130,13 @@ def artifact_block(name: str) -> str:
 
 def artifact_reference(name: str) -> str:
     if name == 'tk-learn':
-        return ("# Transient Learn Proposal Exception\n\n"
-                "The default single transient Markdown proposal uses the host scratchpad, or a run-owned OS temporary directory when unavailable. Verify safe nonsymlink ownership, write atomically and reread before reporting. Do not edit repository ignore rules for this branch. An explicit no-file request stays in conversation. The repository checks below apply only to durable repository-owned output; a failed durable write never falls back to OS temp.\n\n"
-                + ARTIFACT_REFERENCE + USER_INPUT_REFERENCE)
+        return (ARTIFACT_REFERENCE.replace(
+                    "or no repository is identified, stop only the file branch",
+                    "stop only the file branch",
+                )
+                + "\n## Learn proposal destination\n\n"
+                "Default the single proposal to `.tigerkit/tmp/tk-learn/<run-id>/proposal.md` in the identified current repository after the checks above. Report the absolute path. Honor an explicit destination or no-file request; preserve `.tigerkit/learn.md` for explicit durable save or handoff. Only when no repository is identified, use a safe nonsymlink host scratchpad or run-owned OS temporary directory and explain why. This does not waive ownership, atomic write, full readback, anonymization or secret checks. Never use that fallback after failed repository checks or writes.\n"
+                + USER_INPUT_REFERENCE)
     return ARTIFACT_REFERENCE + USER_INPUT_REFERENCE
 
 

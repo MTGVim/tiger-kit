@@ -84,7 +84,7 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 - `implementation` `direction`
 - `engineering` `readiness`
 - AC와 `per-AC` `verification`
-- `browser` `plan`
+- `runtime verification plan` (`verifier`, `baseline/replay`, `evidence location`)
 - `known` `traps`/`do-not-change`
 - `execution` `recommendation`
 
@@ -171,7 +171,7 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 - 검증 근거: `.tigerkit/evidence/<skill>/<run-id>/`
 - 복구·인계·승인 상태에 실제로 필요한 소유자 산출물: `.tigerkit/<owner>.md`, `.tigerkit/prototypes/`, `.tigerkit/sdd-tmp/`
 
-`tk-learn`의 기본 익명 Markdown 초안 하나는 예외로 호스트 `scratchpad`를 사용하고, 없으면 실행 소유 OS 임시 폴더에 저장합니다. 지속 저장·인계는 기존 `.tigerkit/learn.md` 계약을 따릅니다. 이 예외는 정본 수정 권한이나 실패한 저장의 임시 경로 우회를 허용하지 않습니다.
+`tk-learn`의 기본 익명 Markdown 초안은 현재 저장소의 `.tigerkit/tmp/tk-learn/<run-id>/proposal.md`에 저장하고 절대경로를 안내합니다. 저장소가 확인되지 않은 경우에만 안전한 호스트 `scratchpad` 또는 실행 소유 `OS` 임시 폴더를 사용하며 사유를 알립니다. 저장소 검사·쓰기 실패에는 이 대안을 사용하지 않습니다. 지속 저장·인계는 기존 `.tigerkit/learn.md` 계약을 따릅니다. 소유하지 않은 외부 설치·`vendor` 스킬은 초안으로만 정리하고 적용·기여 선택지를 묻지 않습니다.
 
 `Owner`별 `singleton Markdown`은 모든 실행의 선행조건이 아닙니다. 현재 대화와 `Git/GitHub` 상태로 정확히 복원되는
 단순 실행에는 만들지 않고, `explicit save`, `multi-turn handoff/recovery` 또는 정확한 승인 상태 보존이 필요할 때만

@@ -35,7 +35,8 @@ exact-change read-only review → scoped remediation/re-review → binding verif
 speculative flexibility, dead branches, custom replacements for repository-native helpers, and production APIs added
 only for tests.
 
-When the approved browser plan says the candidate can affect rendered output, invoke `tk-browser-verify` to capture the
+When the approved runtime verification plan says the candidate can affect rendered output, invoke its planned verifier
+(`tk-browser-verify` or `tk-app-verify`) to capture the
 planned pre-change baseline before the first product edit. Preserve its exact source and replay metadata for the after
 call. If the baseline call is `Blocked | Unverifiable`, continue only within the approved limitation and never convert
 candidate-only acceptance evidence into an absence-of-regression claim.
@@ -45,7 +46,7 @@ For an approved execution that includes implementation, require a successful bas
 metadata, and `next_required: implement candidate, then capture after with the same run/replay`. Treat this as an
 intermediate result and apply the owning SKILL.md's baseline continuation and final-response gate, including for
 direct/no-Seed and same-agent Skill loading. After implementation, invoke the matching after capture/comparison. Baseline-only evidence cannot
-satisfy final browser acceptance, independent review, binding verification, or commit.
+satisfy final runtime acceptance, independent review, binding verification, or commit.
 
 When direct execution needs multiple commits, prefer a stronger repository convention; otherwise split by independently
 understandable, verifiable, and revertible work units rather than file type or layer. Keep each behavior with the tests
@@ -73,8 +74,8 @@ by that fix. Stop with the exact unresolved result after round five; do not cont
 return no findings.
 
 For direct and SDD execution, preserve scope and UI literals, use the exact review range, run acceptance review, retain
-automated regression protection, and create only approved local commits. Invoke `tk-browser-verify` for every
-browser-visible AC; its runtime evidence does not replace automated protection. SDD's whole-change final review already
+automated regression protection, and create only approved local commits. Invoke the planned verifier (`tk-browser-verify`
+or `tk-app-verify`) for every applicable runtime AC; its evidence does not replace automated protection. SDD's whole-change final review already
 satisfies the broad review gate.
 
 During final exact-scope review, when the actual diff changes a public command, path, configuration key, environment
