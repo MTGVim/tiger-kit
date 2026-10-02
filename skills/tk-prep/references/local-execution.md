@@ -34,6 +34,16 @@ GREEN for changed behavior, or pre-edit GREEN → behavior-preserving refactor �
 exact-change read-only review → scoped remediation/re-review → binding verification → commit. Remove unnecessary indirection,
 speculative flexibility, dead branches, custom replacements for repository-native helpers, and production APIs added
 only for tests.
+For meaningful abstractions introduced by this change, align names with existing
+repository vocabulary for the same concept; use a plain, accurate name when the
+concept is genuinely new. Limit this pass to shared domain-like objects, workflow,
+service and data/request/result concepts, not ordinary local variables. Rename a
+clearly equivalent internal symbol within approved scope without a new checkpoint.
+Before renaming, check public APIs, serialized values, schema names, URLs/paths,
+config/environment keys and externally consumed event fields; preserve those
+contracts unless their change is already approved, and use a symbol-aware refactor
+rather than blind text replacement. Raise a naming choice through the existing
+question contract only when its meaning requires a product/domain decision.
 
 When the approved runtime verification plan says the candidate can affect rendered output, invoke its planned verifier
 (`tk-browser-verify` or `tk-app-verify`) to capture the

@@ -173,6 +173,16 @@ related suites, performs self-review and mutation checks, then creates a local c
 Self-review removes unnecessary abstraction or indirection, speculative flexibility,
 dead or redundant branches, custom logic replacing repository-native helpers, and
 production API expansion used only by tests.
+For meaningful abstractions introduced by this change, align names with existing
+repository vocabulary for the same concept; use a plain, accurate name when the
+concept is genuinely new. Limit this pass to shared domain-like objects, workflow,
+service and data/request/result concepts, not ordinary local variables. Rename a
+clearly equivalent internal symbol within approved scope without a new checkpoint.
+Before renaming, check public APIs, serialized values, schema names, URLs/paths,
+config/environment keys and externally consumed event fields; preserve those
+contracts unless their change is already approved, and use a symbol-aware refactor
+rather than blind text replacement. Raise a naming choice through the existing
+question contract only when its meaning requires a product/domain decision.
 The return/report records implementation, changed files, commit, concerns, test commands
 and output, and applicable RED/GREEN evidence. Remote publication is forbidden.
 

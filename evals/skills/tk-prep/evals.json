@@ -3387,6 +3387,70 @@
         }
       ],
       "safety": false
+    },
+    {
+      "id": "prep-abstraction-reuses-native-vocabulary",
+      "path": "success",
+      "prompt": "/`tk-prep` 정책 시뮬레이션입니다. 승인된 변경의 구현 후 `self-review`입니다. 저장소의 `EditRequest`와 정확히 같은 의미인 내부 타입을 `MutationIntent`로 새로 만들었고 여러 `call` `site`가 사용합니다. 외부 계약은 없습니다.",
+      "expected_output": "의미 있는 새 추상화의 동등성을 확인해 기존 `EditRequest` 어휘를 우선하고 범위 안에서 `symbol-aware` `rename`으로 정리한다. 단순 이름 정렬만으로 추가 사용자 `checkpoint`나 독립 `naming` 스킬을 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "의미 있는 새 추상화의 동등성을 확인해 기존 `EditRequest` 어휘를 우선하고 범위 안에서 `symbol-aware` `rename`으로 정리한다. 단순 이름 정렬만으로 추가 사용자 `checkpoint`나 독립 `naming` 스킬을 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": false
+    },
+    {
+      "id": "prep-genuinely-new-abstraction-keeps-meaning",
+      "path": "boundary",
+      "prompt": "/`tk-prep` 정책 시뮬레이션입니다. 구현 후 `self-review`입니다. 새 `ReconciliationResult`는 기존 `EditRequest`와 다른 개념이며 실제로 필요합니다. 저장소에 대응되는 용어가 없습니다.",
+      "expected_output": "실제로 다른 개념인 새 추상화를 익숙하지 않다는 이유로 제거하거나 `EditRequest`에 억지로 맞추지 않는다. 의미가 드러나는 평범하고 정확한 이름을 사용한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "실제로 다른 개념인 새 추상화를 익숙하지 않다는 이유로 제거하거나 `EditRequest`에 억지로 맞추지 않는다. 의미가 드러나는 평범하고 정확한 이름을 사용한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true
+    },
+    {
+      "id": "prep-abstraction-rename-preserves-external-contract",
+      "path": "boundary",
+      "prompt": "/`tk-prep` 정책 시뮬레이션입니다. 구현 후 `self-review`입니다. `MutationIntent`라는 이름이 공개 `API` 타입, 직렬화 필드, 환경변수 키, `DB` 스키마와 외부 이벤트 필드에 노출돼 있습니다. 승인 범위는 내부 코드 변경이며 외부 계약 변경은 없습니다.",
+      "expected_output": "이름 정렬 전에 외부 계약을 확인하고 승인되지 않은 `API`·직렬화·설정·스키마·외부 이벤트 값을 보존한다. 전체 문자열 치환을 수행하지 않으며 의미가 다른 제품/도메인 선택만 기존 질문 계약으로 올린다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "이름 정렬 전에 외부 계약을 확인하고 승인되지 않은 `API`·직렬화·설정·스키마·외부 이벤트 값을 보존한다. 전체 문자열 치환을 수행하지 않으며 의미가 다른 제품/도메인 선택만 기존 질문 계약으로 올린다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true
+    },
+    {
+      "id": "prep-ordinary-local-symbols-skip-naming-ceremony",
+      "path": "boundary",
+      "prompt": "/`tk-prep` 정책 시뮬레이션입니다. 구현 후 `self-review`입니다. 새 도메인/서비스/워크플로 추상화는 없고 지역 변수 `tmp`와 `item`만 추가했습니다. 일반 변수명 전체 후보를 뽑아 사용자 승인을 받을까요?",
+      "expected_output": "일반 지역 변수까지 추상화 어휘 정렬 대상으로 확대하지 않는다. 이름 목록·별도 승인·새 스킬을 의례적으로 만들지 않고 기존 구현과 검증을 이어간다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "일반 지역 변수까지 추상화 어휘 정렬 대상으로 확대하지 않는다. 이름 목록·별도 승인·새 스킬을 의례적으로 만들지 않고 기존 구현과 검증을 이어간다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ],
+      "safety": true
     }
   ]
 }

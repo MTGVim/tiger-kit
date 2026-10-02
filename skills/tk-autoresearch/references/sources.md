@@ -36,7 +36,7 @@ The removed public `tk-discover` owner is continued here rather than reset.
 
 The three donor revisions above were rechecked against their latest default-branch commits and remained current. Reread Orchestra's `0-autoresearch-skill/SKILL.md` and `references/agent-continuity.md`, uditgoenka's `.claude/skills/autoresearch/SKILL.md`, and bryanshake's `ARCHITECTURE.md` before this revision. Donor demos, runtime outcomes and empirical evaluation claims remain unverified.
 
-- `adapt`: Orchestra's outer synthesis and pivot-on-stall into required frontier regeneration before program convergence, plus direction-level batches spanning coupled experiments, verification and synthesis. The seven candidate-source categories and no candidate-count quota come from the user's explicit reusable workflow proposal; they are TigerKit adaptations, not quoted upstream requirements.
+- `adapt`: Orchestra's outer synthesis and pivot-on-stall into required frontier regeneration before project convergence, plus direction-level batches spanning coupled experiments, verification and synthesis. The seven candidate-source categories and no candidate-count quota come from the user's explicit reusable workflow proposal; they are TigerKit adaptations, not quoted upstream requirements.
 - `adapt`: Orchestra's wall-clock continuity into guidance for a user-owned scheduler on a host that actually supports `/loop`; the skill never schedules or re-invokes itself. The one-hour recommendation is TigerKit load-control guidance, not an upstream default.
 - `keep`: uditgoenka's plateau/no-progress safeguard as unchanged-resume `NO-DELTA`; `omit`: fixed iteration counts and shell orchestration.
 - `adapt`: bryanshake's evidence-bound closure checks into convergence after regeneration, with essential unavailable evidence kept `BLOCKED`; `omit`: coordinator/runtime and queues.
@@ -81,6 +81,28 @@ Pressure scenarios are in `evals/skills/tk-autoresearch/evals.json`; donor tests
 evidence, not executed or claimed as TigerKit validation. Original donor licences are retained below.
 The user's loop-invocation correction changes the package to `hybrid` with model invocation enabled;
 selection requires a concrete continuing-research/resume request and never grants authority by itself.
+
+## Continuing-project revision reviewed 2026-10-02
+
+Fresh default-branch checks still matched Orchestra `773a529`, uditgoenka `050e30d`
+and bryanshake `0fa9a93`. Reread Orchestra's agent-continuity reference, uditgoenka's
+autoresearch SKILL.md and bryanshake's ARCHITECTURE.md before this revision.
+
+- `adapt`: outer synthesis/pivot-on-stall into same-batch regeneration when only
+  waiting, blocked or low-value items remain. Consuming the last actionable
+  candidate invalidates a candidate-bearing result; an unchanged no-candidate
+  proof remains reusable after reopen and evidence checks.
+- `adapt`: recoverable work into handoff candidates and checkable reopen conditions
+  inside existing canonical state. Selected handoffs preserve the research frontier;
+  observed operating outcomes become evidence, not implementation authority.
+- `keep`: meaningful no-progress outcomes, the single research home, stable
+  researchId/state paths and current-session authority boundaries.
+- `omit`: mandatory heartbeat, endless busywork, queues/coordinators and automatic
+  product implementation. Donor runtime demonstrations remain unverified.
+
+The terminology, steered resume, partial handoff, recorded user premises/questions
+and fresh-session local-first authority checks come from the user's explicit
+reusable operating proposal. No new donor text or code is incorporated.
 
 ## Owner boundary
 

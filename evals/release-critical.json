@@ -558,7 +558,22 @@
     "tk-autoresearch:behavior:autoresearch-simple-item-no-lineage-ceremony",
     "tk-autoresearch:behavior:autoresearch-exposed-heldout-not-independent",
     "tk-autoresearch:behavior:autoresearch-model-loop-resume-authorized",
-    "tk-autoresearch:behavior:autoresearch-model-selection-not-authority"
+    "tk-autoresearch:behavior:autoresearch-model-selection-not-authority",
+    "tk-autoresearch:behavior:autoresearch-waiting-frontier-regenerates",
+    "tk-autoresearch:behavior:autoresearch-consumed-regeneration-invalidates",
+    "tk-autoresearch:behavior:autoresearch-actionable-cache-continues",
+    "tk-autoresearch:behavior:autoresearch-partial-handoff-keeps-project",
+    "tk-autoresearch:behavior:autoresearch-reopen-conditions-first",
+    "tk-autoresearch:behavior:autoresearch-steered-resume-preserves-identity",
+    "tk-autoresearch:behavior:autoresearch-different-goal-preserves-old-project",
+    "tk-autoresearch:behavior:autoresearch-fresh-session-local-before-authority",
+    "tk-autoresearch:behavior:autoresearch-restores-premises-and-pending-questions",
+    "tk-autoresearch:behavior:autoresearch-korean-project-terminology",
+    "tk-autoresearch:behavior:autoresearch-steering-invalidates-no-candidate-proof",
+    "tk-prep:behavior:prep-abstraction-reuses-native-vocabulary",
+    "tk-prep:behavior:prep-genuinely-new-abstraction-keeps-meaning",
+    "tk-prep:behavior:prep-abstraction-rename-preserves-external-contract",
+    "tk-prep:behavior:prep-ordinary-local-symbols-skip-naming-ceremony"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",

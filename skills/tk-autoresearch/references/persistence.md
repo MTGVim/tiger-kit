@@ -43,15 +43,15 @@ For the default `hybrid` mode and for `tracked`, establish one dedicated researc
 creating canonical config/state, tracked research documents, or research source changes. Reuse an existing
 home when its canonical state has the same `researchId`.
 
-Honor an explicit user designation of the current worktree as the research home when it is clean, not the default/product branch and not shared with unrelated work, even for a new `researchId`; create a linked `research/<slug>` worktree only when no such designation exists or the current checkout is unsafe. Record the designation in canonical state. An existing canonical state for another research program is an ownership conflict; preserve it and choose a separate safe home rather than overwriting it.
+Honor an explicit user designation of the current worktree as the research home when it is clean, not the default/product branch and not shared with unrelated work, even for a new `researchId`; create a linked `research/<slug>` worktree only when no such designation exists or the current checkout is unsafe. Record the designation in canonical state. An existing canonical state for another research project is an ownership conflict; preserve it and choose a separate safe home rather than overwriting it.
 
 For `local`, the current worktree may be the research home while it is safe and no source mutation requires
-isolation. If source mutation becomes useful in a dirty/default/product worktree, move the research program
+isolation. If source mutation becomes useful in a dirty/default/product worktree, move the research project
 to a safe linked research worktree before mutation and migrate only this run-owned autoresearch config,
 state, local knowledge and experiment artifacts.
 
 Canonical config/state, tracked research documents, experiment code and checkpoint commits for one research
-program should live in the same research home. Do not leave canonical state in one worktree while research
+project should live in the same research home. Do not leave canonical state in one worktree while research
 knowledge and commits advance in another.
 
 Derive `<slug>` deterministically from the research goal using a short filesystem-safe lowercase slug.
@@ -84,8 +84,8 @@ For `tracked`, also mirror sanitized snapshots:
 
 Roles:
 
-- `README.md`: current synthesis, direction portfolio, researchId, limitations, current frontier and
-  terminal handoff when concluded.
+- `README.md`: current synthesis, direction portfolio, handoff portfolio, researchId, limitations,
+  current frontier and terminal handoff when concluded.
 - `findings.md`: supported, rejected, inconclusive and blocked findings. Supersede with reason/provenance;
   never silently delete negative results.
 - `journal.md`: append-only research lineage, one `CHK-<NNN>` per material completed batch.
