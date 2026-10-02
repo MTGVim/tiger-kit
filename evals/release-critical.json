@@ -507,7 +507,13 @@
     "tk-rewrite:behavior:rewrite-certainty-is-not-effect-size",
     "tk-rewrite:behavior:rewrite-no-added-intensity",
     "tk-rewrite:behavior:rewrite-real-concession-not-flattened",
-    "tk-rewrite:behavior:rewrite-concession-concrete-second-clause"
+    "tk-rewrite:behavior:rewrite-concession-concrete-second-clause",
+    "tk-prep:behavior:prep-native-render-plan-and-handoff",
+    "tk-prep:behavior:prep-native-ac-overrides-web-capability",
+    "tk-prep:behavior:prep-web-runtime-route-preserved",
+    "tk-prep:behavior:prep-no-ui-effect-skips-runtime-verifier",
+    "tk-learn:behavior:learn-anonymous-draft-minimizes-handoff-details",
+    "tk-learn:behavior:learn-anonymous-draft-preserves-causal-platform"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",

@@ -730,3 +730,16 @@ PR 재실행에서는 `EveryInc/compound-engineering-plugin@7fe624d36a5a12253165
 
 19분 정지와 빌드 동시 실행 사례는 사용자 제공 근거이며 이 작업에서 실제 프로젝트의 `Jest` 증상을
 재현하지 않았습니다. `tk-prep/references/testing.md`의 기존 근거 우선 원칙을 공유 리뷰 계약에 적용합니다.
+
+## 런타임 검증 라우팅과 익명 초안 최소화
+
+2026-10-02에 `obra/superpowers` 최신 `main`의 고정 커밋
+`8ca22dba9a94f28898bbce59f2537ff4d87c747d`에서 `skills/writing-skills/SKILL.md`와
+`skills/writing-skills/testing-skills-with-subagents.md`를 확인했습니다. 조건에 따른 분기,
+누락된 산출물 계약과 실제 행동 비교 원칙을 검토했습니다. 원본 평가의 재실행은 `unverified`입니다.
+
+- `keep`: 기존 브라우저 검증의 `baseline`·`after`·재개 계약과 비밀값 배제, 공개 업스트림·스킬 식별자 보존을 유지합니다.
+- `adapt`: 실제 AC를 기준으로 기존 `tk-app-verify` 계약에 연결하고, 익명 초안은 재현·수정 판단에 필요한 사실만 남깁니다. 필요성 판단은 호출자 예시에도 적용하며 필수 버전·플랫폼 조건은 보존합니다. 수정 전후 독립 입력의 계획·초안을 비교합니다.
+- `omit`: 원본 실행 체계와 `provider`별 조작 절차를 복제하지 않습니다. 익명화 최소화 규칙은 사용자 제공 사례와 TigerKit의 기존 초안 계약에서 도출했으며 외부 원본에 같은 규칙이 있다고 주장하지 않습니다.
+
+실제 데스크톱 앱에서 발생한 사례는 사용자 제공 근거입니다. 이번 검증은 `verifier` 계획과 익명 초안 행동을 대상으로 하며 실제 앱의 캡처 실행을 재현했다고 주장하지 않습니다.

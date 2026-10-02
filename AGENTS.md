@@ -84,7 +84,7 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 - `implementation` `direction`
 - `engineering` `readiness`
 - AC와 `per-AC` `verification`
-- `browser` `plan`
+- `runtime verification plan` (`verifier`, `baseline/replay`, `evidence location`)
 - `known` `traps`/`do-not-change`
 - `execution` `recommendation`
 

@@ -135,7 +135,8 @@ ACs, security, or required verification returns to the preparation owner and rea
 The controller may resolve only reversible engineering ambiguity with a `Ruling:` that
 includes the cost if wrong.
 
-When the approved browser plan requires a pre-edit baseline, run that phase before the first
+When the approved runtime verification plan requires a pre-edit baseline, invoke its planned verifier
+(`tk-browser-verify` or `tk-app-verify`) before the first
 Unit implementation. A successful baseline result must carry `phase: baseline`, `baseline_capture: Pass`,
 `verification_complete: false`, `resume_parent: required`, the run/replay identity, and `next_required`, after which the controller resumes
 Unit 1 in the same approved execution. It is never a completed Unit or completed SDD result.

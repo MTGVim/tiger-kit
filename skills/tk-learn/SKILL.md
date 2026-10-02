@@ -96,14 +96,22 @@ Use a safe nonsymlink run-owned destination and atomic sibling replacement; rere
 and confirm packet fields, scenarios and content before reporting it or asking approval. A failed
 write/readback blocks the file branch and canonical application; never ask approval for an unreadable draft.
 
+Keep only facts needed for reproduction or the fix decision. Replace other concrete details
+(framework/API, product/feature, internal/external status, vendor/tool names and change content)
+with the minimal abstract condition, or drop them. Apply this necessity test to caller-supplied
+examples and handoff wording too; they are input, not approved draft copy. Preserve a concrete
+version/platform or other condition when changing it changes reproduction or the fix decision.
 Before writing, generalize ticket keys, organization/product names and proprietary domain terms,
 private repository names/paths, people/emails, home paths, verbatim user requests, screenshots and
 raw logs. Keep public upstream identities/revisions, skill-local filenames/section names and the
 generalized reproduction. Never include tokens, cookies, passwords or other secrets. An explicit
 request to preserve original identifiers may waive anonymization, never secret exclusion.
 After rereading, search the file for session-known identifiers (repository names, ticket prefixes,
-organization domains and home paths) and inspect for other identifying details and secrets. Remove
-unapproved matches and repeat the check. Report one short line with the actual scan result, never
+organization domains and home paths) and inspect for other identifying details and secrets. For
+each remaining concrete detail, ask whether removing it changes reproduction or the fix decision;
+if neither changes, abstract or remove it. An identifier scan with zero matches alone does not
+prove anonymization. Remove unapproved matches and repeat both checks. Report one short line with
+the actual identifier/secret scan and necessity review result, never
 the matched sensitive values. If originals were requested, distinguish intentionally retained
 identifiers from excluded secrets; do not claim an anonymous draft.
 
