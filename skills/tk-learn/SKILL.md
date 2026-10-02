@@ -95,6 +95,10 @@ ignore and safe-path checks. Report its absolute path. Only when no repository i
 use a safe host scratchpad or run-owned OS temporary directory and explain that reason. Failed
 repository checks or writes never permit a temporary-directory fallback. Honor an explicit
 destination or no-file request.
+
+Write the proposal's prose in the user's language. Keep only exact replacement text, identifiers
+and code in the target skill's language, and say so beside it.
+
 Use `.tigerkit/learn.md` only for explicit durable save or handoff/recovery, preserving a different
 active candidate. Keep the same packet plus `Updated`, without another state model or archive.
 Use a safe nonsymlink run-owned destination and atomic sibling replacement; reread the entire file

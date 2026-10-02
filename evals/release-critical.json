@@ -518,6 +518,8 @@
     "tk-learn:behavior:learn-failed-repository-check-no-fallback",
     "tk-learn:behavior:learn-owned-source-target-remains-eligible",
     "tk-learn:behavior:learn-conversation-only-skips-proposal",
+    "tk-learn:behavior:learn-proposal-prose-follows-user-language",
+    "tk-learn:behavior:learn-proposal-preserves-replacement-identifiers-code",
     "tk-app-verify:behavior:app-cua-nonactivating-candidate-wrapper",
     "tk-app-verify:behavior:app-launch-input-capabilities-separated",
     "tk-app-verify:behavior:app-launch-suppression-not-proof",
