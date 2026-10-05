@@ -11,6 +11,8 @@ checklist, not as quotas.
 - **Security**: Check accessible credentials, interpreter/filesystem boundaries,
   authorization, validation, dependency advisories, production configuration,
   and sensitive logging. Record only the location and credential type.
+  For dependency advisories in the selected security scope, read
+  [dependency evidence](dependency-audit.md).
 - **Performance**: Check N+1 work, repeated scans, unbounded payloads, caching gaps,
   queue boundaries, and slow build/test feedback.
 - **Testing**: Check critical paths without meaningful coverage, frequently changed
@@ -33,6 +35,7 @@ checklist, not as quotas.
     create measurable maintenance or testing cost.
 - **Dependencies / migration**: Check EOL or deprecated APIs, neglected critical
   dependencies, duplicate solutions, lockfile drift, and blast radius.
+  For a selected dependency audit, read [dependency evidence](dependency-audit.md).
 - **DX / tooling**: Check missing or broken typecheck/lint/format configuration,
   onboarding, environment documentation, and executable diagnostics.
 - **Documentation**: Check stale public/API/setup documentation or missing decisions
