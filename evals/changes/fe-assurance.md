@@ -1,114 +1,129 @@
-# FE 감사·검증 비교 근거
+# FE 감사와 검증의 비교 근거
 
-## Unit 1: actor mechanical 판정 보존
+## 1단계: 실행자 상태에서 판정한 기계적 검사 결과 보존
 
-`grade_behavior`가 judge 실행 전에 actor 상태에서 mechanical assertion을 평가합니다.
-원래 assertion 순서에 따라 결과를 반환하며 judge 결과와 오류 전파를 보존합니다.
-grader가 파일을 생성·삭제·덮어쓰거나 Git HEAD를 commit/reset으로 바꾸는 사례를
-두 assertion 순서에서 실제 함수의 actor-only oracle과 대조했습니다.
+`grade_behavior`가 판정자 실행 전에 실행자 상태에서 기계적 검증 조건을 평가합니다.
+원래 검증 조건 순서에 따라 결과를 반환하며 판정자 결과와 오류 전파를 보존합니다.
+판정자가 파일을 생성, 삭제, 덮어쓰거나 Git HEAD를 커밋이나 초기화로 바꾸는 사례를
+두 검증 조건 순서에서 실제 함수의 실행자 전용 정답 기준과 대조했습니다.
 
-수정 전 focused 검사는 67개 중 10개가 실패하여 exit 1을 반환했습니다. 수정 후에는
-68개가 모두 통과하여 exit 0을 반환했고, 독립 검수자가 같은 committed HEAD에서
-동일한 결과를 재확인했습니다. judge-only, no-judge, grader 실행 오류와 schema 오류도
-회귀로 보호했습니다. 이 변경은 actor mechanical 판정을 미리 계산하며 grader의
-checkout 변경 자체나 host isolation을 차단하지 않습니다.
+수정 전 집중 검사는 67개 중 10개가 실패하여 종료 코드 1을 반환했습니다. 수정 후에는
+68개가 모두 통과하여 종료 코드 0을 반환했고, 독립 검수자가 같은 커밋의 HEAD에서
+동일한 결과를 재확인했습니다. 판정자만 있는 경우, 판정자가 없는 경우, 판정자 실행 오류와
+스키마 오류도 회귀로 보호했습니다. 이 변경은 실행자의 기계적 판정을 미리 계산하며
+판정자가 체크아웃을 변경하는 행동 자체나 호스트 격리를 차단하지 않습니다.
 
-## Unit 2: 미해결 Dependabot backlog
+## 2단계: 미해결 `Dependabot` 알림
 
-기존 `tk-audit`의 Security/Dependencies 분기에만
-[dependency reference](../../skills/tk-audit/references/dependency-audit.md)를 연결했습니다.
-GitHub의 [REST alerts 계약](https://docs.github.com/en/rest/dependabot/alerts#list-dependabot-alerts-for-a-repository)과
-[pagination 계약](https://docs.github.com/en/rest/using-the-rest-api/using-pagination-in-the-rest-api)을
-근거로 `state=open`, 반환 cursor, manifest instance, 수집 범위와 실패를 보존합니다.
-로컬 resolved dependency와 default-branch advisory backlog를 구별하며,
-PR merge나 dismissal만으로 fixed를 확정하지 않습니다. 기존 owner의 read-only 판단이
-필요한 절차이므로 별도 scanner·provider·runtime을 추가하지 않았습니다.
+기존 `tk-audit`의 `Security/Dependencies` 분기에만
+[의존성 참조](../../skills/tk-audit/references/dependency-audit.md)를 연결했습니다.
+GitHub의 [REST 알림 계약](https://docs.github.com/en/rest/dependabot/alerts#list-dependabot-alerts-for-a-repository)과
+[페이지 순회 계약](https://docs.github.com/en/rest/using-the-rest-api/using-pagination-in-the-rest-api)을
+근거로 `state=open`, 반환 커서, 의존성 명세 파일별 영향 대상, 수집 범위와 실패를 보존합니다.
+로컬에서 해결된 의존성과 기본 브랜치의 미해결 보안 권고를 구별하며,
+PR 병합이나 기각만으로 수정 완료를 확정하지 않습니다. 기존 담당 스킬의 읽기 전용
+판단에 필요한 절차이므로 별도 스캐너, 제공자나 런타임을 추가하지 않았습니다.
 
-같은 고정 사례 7개를 fresh-context prior/candidate actor에 주고 조건 이름을 모르는
-독립 judge가 action·verdict·boundary를 의미로 판정했습니다. 보호 입력과 oracle은
-비교 뒤 수정하지 않았습니다.
+같은 고정 사례 7개를 새로운 대화 맥락에서 기존 지침과 후보 지침의 실행자에게 주고,
+조건 이름을 모르는 독립 판정자가 행동, 판정과 경계를 의미로 평가했습니다.
+보호 입력과 정답 기준은 비교 뒤 수정하지 않았습니다.
 
-| 사례 | 관찰할 행동 | prior | candidate |
+| 사례 | 관찰할 행동 | 기존 지침 | 후보 지침 |
 | --- | --- | --- | --- |
-| A1 | 로컬 검사 뒤 남은 provider 보안 근거에서 open Dependabot backlog와 전체 pagination을 선택합니다. | fail | pass |
-| A2 | 빈 첫 페이지의 next cursor를 따르며 전체 zero를 확정하지 않습니다. | pass | pass |
-| A3 | 5개와 timeout을 partial/전체 unknown으로 보존하고 로컬 findings를 유지합니다. | pass | pass |
-| A4 | 두 manifest 및 direct/transitive 관계와 local/default revision 경계를 유지합니다. | pass | pass |
-| A5 | merged version PR과 dismissed/open 상태를 분리하고 연결·수정을 추정하지 않습니다. | pass | pass |
-| A6 | 403을 provider 미감사로 남기고 새 credential이나 접근 확대를 하지 않습니다. | pass | pass |
-| A7 | perf-only에서는 dependency reference와 provider 수집을 생략합니다. | pass | pass |
+| A1 | 로컬 검사 뒤 남은 제공자 보안 근거에서 미해결 `Dependabot` 알림 전체를 페이지 끝까지 수집하도록 선택합니다. | `fail` | `pass` |
+| A2 | 빈 첫 페이지의 다음 커서를 따르며 전체 0개를 확정하지 않습니다. | `pass` | `pass` |
+| A3 | 5개와 시간 초과를 부분 수집 및 전체 개수 미확정으로 보존하고 로컬 발견 사항을 유지합니다. | `pass` | `pass` |
+| A4 | 두 의존성 명세 파일의 직접 및 전이 의존성 관계와 로컬/기본 브랜치 리비전 경계를 유지합니다. | `pass` | `pass` |
+| A5 | 병합된 버전 업데이트 PR과 `dismissed` 및 `open` 상태를 분리하고 연결이나 수정을 추정하지 않습니다. | `pass` | `pass` |
+| A6 | 403을 제공자 미감사로 남기고 새 인증 정보나 접근 확대를 추가하지 않습니다. | `pass` | `pass` |
+| A7 | 성능만 다루는 범위에서는 의존성 참조와 제공자 수집을 생략합니다. | `pass` | `pass` |
 
-A1의 prior는 generic provider 조회를 선택했지만 수집할 정보의 종류를 특정하지 않아
-unresolved Dependabot backlog의 완전 수집으로 판정할 수 없었습니다. candidate는
-해당 endpoint·open 상태·전체 cursor 수집을 명시했습니다. A5–A7은 별도로 고정한
-heldout 사례이며 양쪽 모두 통과했습니다. 기존 21개 canonical eval을 보존하고
-[7개 회귀 계약](../skills/tk-audit/evals.json)을 추가했습니다.
+A1의 기존 지침은 일반적인 제공자 조회를 선택했지만 수집할 정보의 종류를 특정하지 않아
+미해결 `Dependabot` 알림의 완전 수집으로 판정할 수 없었습니다. 후보 지침은
+해당 엔드포인트, 미해결 상태와 전체 커서 수집을 명시했습니다. A5–A7은 후보 개발과
+분리하여 고정한 검증 사례이며 양쪽 모두 통과했습니다. 기존 정본 평가 21개를 보존하고
+[회귀 계약 7개](../skills/tk-audit/evals.json)를 추가했습니다.
 
-## Unit 3: FE 성능 근거의 조건부 no-op
+## 3단계: FE 성능 근거에 따라 기존 지침을 유지한 조건부 판단
 
-Unit 2와 같은 방식으로 고정한 FE 사례 7개를 fresh-context prior/candidate actor에
-주고 조건 이름을 모르는 독립 judge가 action·verdict·boundary를 의미로 판정했습니다.
-기존 `tk-browser-verify`와 `tk-prep` 지침은 6개 pass와 1개 unclear였고 candidate는
-7개 pass였습니다. 현재 판정을 잘못 내린 prior 사례는 없었습니다. P5–P7은 별도로
-고정한 heldout이며 양쪽 모두 pass였습니다. 비교 입력·oracle·응답·assessment는
-비교 뒤 변경하지 않았습니다.
+2단계와 같은 방식으로 고정한 FE 사례 7개를 새로운 대화 맥락에서 기존 지침과 후보
+지침의 실행자에게 주고, 조건 이름을 모르는 독립 판정자가 행동, 판정과 경계를 의미로
+평가했습니다. 기존 `tk-browser-verify`와 `tk-prep` 지침은 `pass` 6개와 `unclear`
+1개였고 후보는 `pass` 7개였습니다. 현재 판정을 잘못 내린 기존 지침 사례는 없었습니다.
+P5–P7은 후보 개발과 분리하여 고정한 검증 사례이며 양쪽 모두 `pass`였습니다.
+비교 입력, 정답 기준, 응답과 평가 결과는 비교 뒤 변경하지 않았습니다.
 
-| 사례 | 관찰할 행동 | prior | candidate |
+| 사례 | 관찰할 행동 | 기존 지침 | 후보 지침 |
 | --- | --- | --- | --- |
-| P1 | cache를 맞추고 baseline/after 양쪽의 반복 samples와 spread로 비교합니다. | unclear | pass |
-| P2 | static scanner hint를 observed hot path로 승격하지 않고 증상과 profiler 근거를 먼저 확보합니다. | pass | pass |
-| P3 | 초기-load LCP와 실제 late dropdown interaction 및 관찰 구간을 구별합니다. | pass | pass |
-| P4 | matched local 반복 samples의 criterion 충족을 인정하고 해당 조건에 한정합니다. | pass | pass |
-| P5 | lab/field·origin/route population·percentile·수집 window가 다른 값을 차감하지 않습니다. | pass | pass |
-| P6 | deployment/error/failed request를 분리하고 comparable request/transition 근거를 bundle 가설보다 먼저 확보합니다. | pass | pass |
-| P7 | focus-only AC에 무관한 performance trace나 RUM 계정 연결을 추가하지 않습니다. | pass | pass |
+| P1 | 캐시를 맞추고 변경 전과 변경 후 양쪽의 반복 측정값과 변동 폭으로 비교합니다. | `unclear` | `pass` |
+| P2 | 정적 스캐너 권고를 비용이 집중되는 관측된 실행 경로로 승격하지 않고 증상과 프로파일러 근거를 먼저 확보합니다. | `pass` | `pass` |
+| P3 | 초기 로드 LCP와 뒤늦게 수행하는 실제 드롭다운 조작 및 관찰 구간을 구별합니다. | `pass` | `pass` |
+| P4 | 동일 조건의 로컬 반복 측정값이 기준을 충족함을 인정하고 해당 조건에 한정합니다. | `pass` | `pass` |
+| P5 | 실험실/실사용자 측정, `origin`/경로의 모집단, 백분위수와 수집 기간이 다른 값을 차감하지 않습니다. | `pass` | `pass` |
+| P6 | 배포, 오류와 실패한 요청을 분리하고 비교 가능한 요청/전환 근거를 번들 가설보다 먼저 확보합니다. | `pass` | `pass` |
+| P7 | 포커스만 다루는 AC에 무관한 성능 추적이나 RUM 계정 연결을 추가하지 않습니다. | `pass` | `pass` |
 
-P1의 prior도 cold/warm cache와 단일 sample의 한계를 확인하여 개선이나 AC Pass를
-선언하지 않았습니다. 다음 계획은 after 반복을 지정했지만 baseline은 기존 단일
-측정값이므로, 양쪽 반복 sample 집단과 spread를 확보하는지 확정할 수 없었습니다.
-이 unclear는 다음 행동의 완전성에 관한 해석 경계이며 확정된 잘못된 판정이나
-production 결함이 아닙니다. candidate는 양쪽의 matching replay와 반복·분산 확인을
-명시했지만, 이 차이만으로 기존 owner의 실행 지침이 부족하다고 확정하지 않았습니다.
+P1의 기존 지침도 빈 캐시와 채워진 캐시 및 단일 측정값의 한계를 확인하여 개선이나
+AC Pass를 선언하지 않았습니다. 다음 계획은 변경 후 반복을 지정했지만 변경 전은
+기존 단일 측정값이므로, 양쪽 반복 측정 집단과 변동 폭을 확보하는지 확정할 수 없었습니다.
+이 `unclear`는 다음 행동의 완전성에 관한 해석 경계이며 확정된 잘못된 판정이나
+운영 환경 결함이 아닙니다. 후보는 양쪽의 동일 조건 재현과 반복 및 분산 확인을
+명시했지만, 이 차이만으로 기존 담당 스킬의 실행 지침이 부족하다고 확정하지 않았습니다.
 
-따라서 `SKILL.md`, references, description과 frontmatter를 모두 유지했습니다.
-기존 browser의 criterion별 직접 근거·provenance·불완전 증거 경계와 prep의
-증상 자체를 판별하는 loop·한 변수씩 반증하는 진단 절차를 보존합니다. 새로운
-performance reference/loader, 일반 threshold, scanner, field collector나 runtime은
-추가하지 않았습니다. 이는 승인된 Seed의 조건부 유지 분기이며 Seed deviation은 없습니다.
+따라서 `SKILL.md`, 참조 문서, `description`과 프런트매터를 모두 유지했습니다.
+기존 브라우저 검증의 기준별 직접 근거, 출처와 불완전 증거 경계 및 준비 스킬의
+증상 자체를 판별하는 반복 절차와 한 변수씩 반증하는 진단 절차를 보존합니다.
+새로운 성능 참조나 읽기 분기, 일반 임계값, 스캐너, 실사용자 자료 수집기 또는
+런타임은 추가하지 않았습니다. 이는 승인된 `Seed`의 조건부 유지 분기이며 `Seed`에서
+벗어난 변경은 없습니다.
 
-기존 browser 77개와 prep 146개 records 및 metadata를 보존하고
-[browser 회귀 계약 5개](../skills/tk-browser-verify/evals.json)에 P1/P3/P4/P5/P7을,
-[prep 회귀 계약 2개](../skills/tk-prep/evals.json)에 P2/P6을 추가했습니다.
-각 계약은 제공된 입력에 대한 observable 판단과 다음 행동을 judge로 보호하며
-실제 browser/API 실행이나 파일·Git 변경을 요구하지 않습니다. P4는 모든 after
-samples가 명시된 local LCP<=2.0s criterion을 충족하는 정상 대조입니다. 양쪽 sample
-범위와 수를 보고하고 local criterion Pass를 허용하되, 미제공 visual contract·다른 AC나
-전체 verifier의 visual/runtime Pass 및 `verification_complete`로 확대하지 않습니다.
-전체 terminal Pass를 강제하는 assertion은 넣지 않았습니다.
+기존 브라우저 평가 77개와 준비 평가 146개 및 메타데이터를 보존하고
+[브라우저 회귀 계약 5개](../skills/tk-browser-verify/evals.json)에 P1/P3/P4/P5/P7을,
+[준비 회귀 계약 2개](../skills/tk-prep/evals.json)에 P2/P6을 추가했습니다.
+각 계약은 제공된 입력에 대한 관찰 가능한 판단과 다음 행동을 판정자로 보호하며
+실제 브라우저/API 실행이나 파일/Git 변경을 요구하지 않습니다. P4는 모든 변경 후
+측정값이 명시된 로컬 `LCP<=2.0s` 기준을 충족하는 정상 대조입니다. 양쪽 측정 범위와
+횟수를 보고하고 로컬 기준의 Pass를 허용하되, 미제공 시각 검증 계약, 다른 AC나
+전체 검증자의 시각/런타임 Pass 및 `verification_complete`로 확대하지 않습니다.
+전체 최종 상태를 Pass로 강제하는 검증 조건은 넣지 않았습니다.
 
 ## 검증 범위와 한계
 
-Unit 2의 GREEN 근거는 위 의미 비교와 canonical schema·link 검사입니다. 새 canonical
-eval은 이후 실행할 observable 회귀 계약이며, 이번에 실제 API와 native skill loading으로
-실행한 결과는 아닙니다. Canonical 계약에 포함한 추가 metadata·HTTP404·malformed·disabled
-변형도 7개 policy simulation에서 직접 관찰한 결과와 구별합니다. 실제 pagination 수집,
-계정 권한, production 효능이나 모델·호스트 전반의 개선율을 입증하지 않습니다.
-`validate_skills.py`는 29개 skill에서 오류 0개, 기존 길이 경고 5개로 exit 0을 반환했고,
-`validate_skills.py --links-only`도 링크 오류 0개로 exit 0을 반환했습니다.
-`git diff --check`는 exit 0이며 reference의 exact readback, 기존 21개 eval·metadata와
-고정 비교 입력의 hash 보존을 확인했습니다.
-Unit 3은 실제 production 동작 변경이 없는 회귀 계약 추가이므로 production RED를
-만들지 않았습니다. 위 비교는 batched fresh-context 정책 시뮬레이션이며 실제
-browser measurement, native skill loading, API 수집, production RUM 또는 모델·호스트
-격리 효능을 입증하지 않습니다. 7개 신규 canonical 계약을 실제 actor/grader로 실행한
-결과도 아닙니다. P6의 sparse/음성 probe 한계와 P4의 전체 visual/runtime 판정 경계처럼
-새 계약에 명시한 보호 범위는 고정 응답에서 직접 관찰한 결과와 구별합니다.
-Unit 3의 `validate_skills.py`는 29개 skill에서 오류 0개와 기존 길이 경고 5개로
-exit 0을 반환했습니다. `validate_skills.py --links-only`는 링크 오류 0개로 exit 0이며
-`git diff --check`도 exit 0입니다. BASE의 기존 browser 77개·prep 146개 records와
-metadata를 직렬화한 의미 객체가 byte-equivalent임을 확인했습니다. Self-review에서는
-7개 계약의 observable 판단·local positive control·판정 범위 및 기존 owner 본문 유지와
-Unit 1/Unit 2 설명·AI footer 보존을 대조했습니다.
-전체 suite·release gate와 최종 통합 검증은 controller가 별도로 수행합니다.
+2단계의 GREEN 근거는 위 의미 비교와 정본 스키마 및 링크 검사입니다. 새 정본
+평가는 이후 실행할 관찰 가능한 회귀 계약이며, 이번에 실제 API와 네이티브 스킬
+로딩으로 실행한 결과는 아닙니다. 정본 계약에 포함한 추가 메타데이터, HTTP404,
+형식 오류와 비활성화 변형도 정책 시뮬레이션 7개에서 직접 관찰한 결과와 구별합니다.
+실제 페이지 순회 수집, 계정 권한, 운영 환경 효능이나 모델/호스트 전반의 개선율을
+입증하지 않습니다. `validate_skills.py`는 29개 스킬에서 오류 0개와 기존 길이 경고
+5개로 종료 코드 0을 반환했고, `validate_skills.py --links-only`도 링크 오류 0개로
+종료 코드 0을 반환했습니다. `git diff --check`는 종료 코드 0이며 참조의 정확한
+재확인, 기존 평가 21개 및 메타데이터와 고정 비교 입력의 해시 보존을 확인했습니다.
+
+3단계는 실제 운영 환경 동작 변경이 없는 회귀 계약 추가이므로 운영 환경 RED를
+만들지 않았습니다. 위 비교는 새로운 대화 맥락에서 사례들을 묶어 수행한 정책
+시뮬레이션이며 실제 브라우저 측정, 네이티브 스킬 로딩, API 수집, 운영 환경 RUM
+또는 모델/호스트 격리 효능을 입증하지 않습니다. 신규 정본 계약 7개를 실제 실행자와
+판정자로 실행한 결과도 아닙니다. P6의 희소한 근거와 문제가 재현되지 않은 검사 한계 및 P4의 전체
+시각/런타임 판정 경계처럼 새 계약에 명시한 보호 범위는 고정 응답에서 직접 관찰한
+결과와 구별합니다.
+
+3단계의 `validate_skills.py`는 29개 스킬에서 오류 0개와 기존 길이 경고 5개로
+종료 코드 0을 반환했습니다. `validate_skills.py --links-only`는 링크 오류 0개로 종료
+코드 0이며 `git diff --check`도 종료 코드 0입니다. BASE의 기존 브라우저 평가 77개와
+준비 평가 146개 및 메타데이터를 직렬화한 의미 객체가 바이트 단위로 동등함을
+확인했습니다. 자체 검토에서는 계약 7개의 관찰 가능한 판단, 로컬 정상 대조와 판정
+범위, 기존 담당 스킬 본문 유지, 1단계/2단계 설명 및 AI 출처 문구 보존을 대조했습니다.
+전체 검사 모음, 릴리즈 게이트와 최종 통합 검증은 조정자가 별도로 수행합니다.
+
+## 릴리즈 검사에서 확인한 언어 회귀 교정
+
+릴리즈 게이트의 필수 실행 검사와 자체 검사는 통과했지만, 이 문서와 신규 평가
+14개의 서술 필드 42곳에 일반 영어 서술이 남아 최종 판정은 Fail이었습니다.
+교정 전 언어 위반 540건과 기준 410건의 차이를 집중 검사로 재현했으며 종료 코드는
+1이었습니다. 일반 서술을 한국어로 교정하고 정확한 기술 표기에만 코드 표기를
+적용한 뒤 위반 410건으로 기준과 같아졌고 종료 코드 0을 확인했습니다.
+평가 의미, 정상 및 음성 대조, 압박 조건, 기존 평가와 실행 안전 검증 조건을
+유지했습니다. 언어 검사기나 제외 규칙은 변경하지 않았습니다. 전체 릴리즈 게이트는
+교정 커밋에서 조정자가 다시 실행합니다.
 
 🤖 본 검증 근거 문서는 AI가 작성했습니다.
