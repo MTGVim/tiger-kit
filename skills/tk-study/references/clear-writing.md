@@ -12,6 +12,8 @@ A reader should identify the subject, what happens, why, under what conditions, 
 
 The calling skill determines which facts may be added. Rewriting preserves supplied facts and may restore supplied context; explaining may introduce supported general knowledge and clearly labeled illustrative examples. Neither may invent project history, measurements, decisions, causes, or evidence. Distinguish hypotheses, proposals, observed results, and completed actions. Keep numbers, negation, conditions, alternatives, decision owners, and certainty intact. Do not improve apparent clarity by deleting a limitation or adding a benefit. When rewriting, preserve supported causal, contrastive, temporal, conditional, and conclusion relationships without strengthening, weakening, or inventing them through connectors, reordering, or new assertions. Mere adjacency is not evidence of a relationship.
 
+For rewriting-only requests, keep the result within the supplied text and context: do not invent recipients, delivery circumstances, follow-up operational advice, or predicted reactions or effects. Provide advice separately only when the user explicitly requests it, and keep unknown circumstances unknown.
+
 Assess technical knowledge and familiarity with this project separately: an expert may still need supplied project purpose and change context, while an explicitly familiar reader needs no repeated introduction. A style or voice sample guides expression, not facts: borrow rhythm, vocabulary, register and information order without importing sample-only events, numbers, experiences, claims, citations or project context unless separately supplied as factual source material for this task.
 
 Preserve explicit ranking, comparison scope, simultaneity, and exclusivity when removing stylistic emphasis; restate the relation naturally rather than protecting particular words. A source-stated ranking is still a claim when its rationale is absent. Empty emphasis with no actual relation remains removable. Check both for lost relations and for relations introduced by the rewrite.
@@ -114,3 +116,5 @@ Claim-evidence binding also draws on `AIScientists-Dev/academic-humanizer`,
 
 Meaningful modality also draws on `epoko77-ai/im-not-ai`,
 `92b2936956d65d62ff4b19b75cccad8e3429bf43`: A-10/G-2 and their correction history motivate preserving claim strength even under repetition. Apply semantic equivalence across genres; omit domain-only exceptions, fixed repetition thresholds, hedge dictionaries, marker counts, and runtime restoration.
+
+Rewriting-only scope draws on `dotoricode/korean-humanizer`, `93580567d4c965024e5b9eb1fb96ace3e7b45907` (`SKILL.md`, PR #6 and package-skill QA). Adapt the editing-only boundary while preserving explicitly requested advice; omit fixed output sections and distribution/runtime tooling.

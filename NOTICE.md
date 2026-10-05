@@ -676,6 +676,17 @@ PR 재실행에서는 `EveryInc/compound-engineering-plugin@7fe624d36a5a12253165
 라벨은 `omit`입니다. 기존 템플릿에 내용을 반영하고 템플릿이 없을 때에만 유용한 설명을 추가합니다.
 원본 MIT 고지는 설치 패키지의 `skills/tk-pr-open/LICENSE.txt`에 포함했습니다.
 
+## tk-rewrite: 교정 요청의 범위 보존 (#417)
+
+`dotoricode/korean-humanizer@93580567d4c965024e5b9eb1fb96ace3e7b45907`의 `SKILL.md`,
+[PR #6](https://github.com/dotoricode/korean-humanizer/pull/6) 변경과 공개 QA 및
+`eval/model-runs/package-skill-2026-10-02.json`을 확인했습니다.
+원문과 요청 범위 보존은 `keep`, 교정만 요청받았을 때 수신자나 전달 상황, 운영 조언과
+예상 반응을 추가하지 않으며 명시적으로 요청한 조언은 별도로 허용하는 경계는 `adapt`,
+고정 출력 섹션, 카탈로그, ZIP 배포 및 모델 실행 체계는 `omit`입니다.
+공개 실행 기록은 상류가 관찰한 작은 표본이며 TigerKit의 성능 근거로 사용하지 않습니다.
+원본 MIT 고지는 기존 공유 참조 소비 패키지의 `LICENSE.txt`에 유지합니다.
+
 ## PR 응답의 임시 인덱스 격리
 
 2026-10-01 기준 Git 공식 문서와 `git/git` `v2.56.0`의
