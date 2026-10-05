@@ -27,6 +27,8 @@ General knowledge and clearly labeled hypothetical examples may supply prerequis
 
 Choose visuals that expose structure, event order, state changes, or cause and effect. Match labels and relationships to the prose; distinguish prerequisites from steps and illustrations from measured data. Explanatory text must carry the mechanism and caveats, not merely name a picture. Use concise labels with complete explanatory sentences beside them. Choose section count and length from reader needs, not a scene/word quota. Optional details may be expandable, but required background and conclusions must remain visible.
 
+When understanding depends on changing inputs, identity, state, or event order, read [interactive examples](references/interactive-examples.md). For a stateful concept, let the reader edit local state and separately change the data or event that affects it. For identity/history or other ordered mechanisms, also provide a manual replay of intermediate mechanism states with previous/next, current stage, and reset; an outcome toggle alone is insufficient. Static structure explanations need neither simulation nor playback controls.
+
 Use the user-specified output path, or `.tigerkit/explanations/<topic-slug>.html`. If the default exists, choose a numeric suffix. Do not overwrite an existing explicit target without authorization for that overwrite.
 
 Read [HTML output](references/html-output.md) for the shared offline and accessible renderer contract. Keep this artifact focused on one concept or system; prerequisite background does not authorize a course or learner-progress workflow. Include the exact footer:
@@ -38,6 +40,8 @@ Read [HTML output](references/html-output.md) for the shared offline and accessi
 ## Verify and Return
 
 Inspect the generated HTML for self-containment, prerequisites before use, factual qualifications, matching diagram/prose terminology and arrows, readable text, accessibility, and the footer. When local rendering is available, inspect the rendered artifact and any interaction without starting a server or automatically opening the user's browser. Report what was actually checked; never claim a render or browser test that did not run. Keep file edits within the artifact; creation grants no commits, publication, or unrelated implementation.
+
+For an interactive example, replay an input change, its expected visible consequence, and a complete reset; include alternate modes when present. For a sequence, check step boundaries, backward navigation, and pause/resume when implemented. Preserve readable static content and manual control under reduced motion. When a local browser runtime is available, execute initial load and every exposed action before returning; a screenshot or syntax check alone does not verify interaction. Treat uncaught startup/action errors, inert controls, and mismatched current-result prose as failures to repair, then replay the checks. Distinguish source inspection from executed behavior checks, and disclose missing runtime verification.
 
 Return `Pass` only when the file exists and its content satisfies the explanation and offline artifact requirements; surface unresolved content or execution failures instead. Return a concise link/path identifying the explanation, plus a brief material verification limitation if any. Do not append a second full text explanation or a review ledger.
 
