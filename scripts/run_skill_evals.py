@@ -1472,6 +1472,18 @@ def grade_behavior(
     initial_head: str | None,
     host: str | None = None,
 ) -> list[dict[str, object]]:
+    # Observe actor state before the grader can mutate the checkout.
+    mechanical_rows = iter([
+        verify_mechanical_assertion(
+            assertion,
+            adapter_result=adapter_result,
+            checkout=checkout,
+            initial_head=initial_head,
+            host=host,
+        )
+        for assertion in assertions
+        if assertion.get("type") != "judge"
+    ])
     judge_assertions = [
         str(assertion["criterion"])
         for assertion in assertions
@@ -1501,15 +1513,7 @@ def grade_behavior(
                 }
             )
         else:
-            results.append(
-                verify_mechanical_assertion(
-                    assertion,
-                    adapter_result=adapter_result,
-                    checkout=checkout,
-                    initial_head=initial_head,
-                    host=host,
-                )
-            )
+            results.append(next(mechanical_rows))
     return results
 
 

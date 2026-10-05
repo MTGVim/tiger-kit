@@ -22,6 +22,7 @@ if __package__:
         compose_diagnostic_prompt,
         evaluate_diagnostic_checkout,
         evaluate_checkout,
+        grade_behavior,
         load_eval_contracts,
         parse_diagnostic_output,
         summarize_diagnostic_records,
@@ -43,6 +44,7 @@ else:
         compose_diagnostic_prompt,
         evaluate_diagnostic_checkout,
         evaluate_checkout,
+        grade_behavior,
         load_eval_contracts,
         parse_diagnostic_output,
         summarize_diagnostic_records,
@@ -955,6 +957,231 @@ class DiagnosticRunnerTest(unittest.TestCase):
 
         self.assertNotEqual(completed.returncode, 0)
         self.assertIn("--output must be outside the repository", completed.stderr)
+
+
+class BehaviorGradingTest(unittest.TestCase):
+    def grader_command(self, effect: str = "") -> str:
+        return shlex.join([
+            sys.executable,
+            "-c",
+            "import json, os, subprocess\n"
+            "from pathlib import Path\n"
+            "assert os.environ['TK_EVAL_OUTPUT'] == 'actor output'\n"
+            "criteria = json.loads(os.environ['TK_EVAL_ASSERTIONS'])\n"
+            "assert criteria == ['judge pass', 'judge fail']\n"
+            f"{effect}\n"
+            "print(json.dumps({'assertion_results': [\n"
+            "    {'passed': criterion == 'judge pass', 'evidence': criterion}\n"
+            "    for criterion in criteria\n"
+            "]}))\n",
+        ])
+
+    def grade_with_judges(
+        self, checkout, mechanical, effect, initial_head, judge_first
+    ):
+        judges = [
+            {"type": "judge", "criterion": "judge pass"},
+            {"type": "judge", "criterion": "judge fail"},
+        ]
+        assertions = (
+            [judges[0], *mechanical, judges[1]]
+            if judge_first else [*mechanical, *judges]
+        )
+        rows = grade_behavior(
+            self.grader_command(effect),
+            {"output": "actor output", "terminal_status": "Pass"},
+            assertions,
+            checkout=checkout,
+            initial_head=initial_head,
+        )
+        self.assertEqual(
+            [row["type"] for row in rows],
+            [assertion["type"] for assertion in assertions],
+        )
+        self.assertEqual(
+            [row for row in rows if row["type"] == "judge"],
+            [
+                {"type": "judge", "criterion": "judge pass", "passed": True,
+                 "evidence": "judge pass"},
+                {"type": "judge", "criterion": "judge fail", "passed": False,
+                 "evidence": "judge fail"},
+            ],
+        )
+        return [row for row in rows if row["type"] != "judge"]
+
+    def test_grader_file_side_effects_preserve_actor_verdicts(self) -> None:
+        cases = [
+            ("creation", None, "Path('result.txt').write_text('grader text')",
+             "grader text", [False, True]),
+            ("deletion", "actor text", "Path('result.txt').unlink()",
+             None, [True, False]),
+            ("overwrite", "actor text", "Path('result.txt').write_text('grader text')",
+             "grader text", [True, False, True, False]),
+        ]
+        for name, actor_text, effect, grader_text, expected in cases:
+            for judge_first in (False, True):
+                with self.subTest(effect=name, judge_first=judge_first):
+                    with tempfile.TemporaryDirectory() as directory:
+                        checkout = Path(directory)
+                        target = checkout / "result.txt"
+                        if actor_text is not None:
+                            target.write_text(actor_text, encoding="utf-8")
+                        mechanical = (
+                            [
+                                {"type": kind, "path": "result.txt", "text": text}
+                                for kind in ("path_text_equals", "path_text_contains")
+                                for text in ("actor text", "grader text")
+                            ]
+                            if name == "overwrite" else [
+                                {"type": "path_exists", "path": "result.txt"},
+                                {"type": "path_absent", "path": "result.txt"},
+                            ]
+                        )
+                        rows = self.grade_with_judges(
+                            checkout, mechanical, effect, None, judge_first
+                        )
+                        self.assertEqual(
+                            target.read_text(encoding="utf-8") if target.exists() else None,
+                            grader_text,
+                        )
+                        self.assertEqual([row["passed"] for row in rows], expected)
+                        if name != "overwrite":
+                            self.assertTrue(all(
+                                f"exists={actor_text is not None}" in row["evidence"]
+                                for row in rows
+                            ))
+
+    def test_grader_git_side_effects_preserve_actor_head(self) -> None:
+        for actor_changed in (False, True):
+            for judge_first in (False, True):
+                with self.subTest(actor_changed=actor_changed, judge_first=judge_first):
+                    with tempfile.TemporaryDirectory() as directory:
+                        checkout = Path(directory)
+
+                        def git(*args):
+                            return subprocess.run(
+                                ["git", *args], cwd=checkout, text=True,
+                                capture_output=True, check=True,
+                            ).stdout.strip()
+
+                        git("init", "-q")
+                        git("config", "user.email", "test@example.com")
+                        git("config", "user.name", "Test")
+                        git("commit", "--allow-empty", "-qm", "initial")
+                        initial_head = git("rev-parse", "HEAD")
+                        if actor_changed:
+                            git("commit", "--allow-empty", "-qm", "actor")
+                        actor_head = git("rev-parse", "HEAD")
+                        effect = (
+                            f"subprocess.run(['git', 'reset', '--hard', {initial_head!r}], "
+                            "check=True, capture_output=True)"
+                            if actor_changed else
+                            "subprocess.run(['git', 'commit', '--allow-empty', '-qm', "
+                            "'grader'], check=True, capture_output=True)"
+                        )
+                        rows = self.grade_with_judges(
+                            checkout,
+                            [
+                                {"type": "git_head_changed"},
+                                {"type": "git_head_unchanged"},
+                                {"type": "git_commit_count_delta", "expected": 0},
+                                {"type": "git_commit_count_delta", "expected": 1},
+                            ],
+                            effect, initial_head, judge_first,
+                        )
+                        self.assertNotEqual(git("rev-parse", "HEAD"), actor_head)
+                        self.assertEqual(
+                            [row["passed"] for row in rows],
+                            [actor_changed, not actor_changed, not actor_changed, actor_changed],
+                        )
+                        self.assertTrue(all(
+                            f"final_head={actor_head!r}" in row["evidence"]
+                            for row in rows
+                        ))
+
+    def test_normal_grading_preserves_interleaved_assertion_order(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            assertions = [
+                {"type": "output_contains", "text": "actor"},
+                {"type": "judge", "criterion": "judge pass"},
+                {"type": "terminal_status", "expected": "Blocked"},
+                {"type": "judge", "criterion": "judge fail"},
+                {"type": "output_absent", "text": "grader"},
+            ]
+            for selected in (assertions, [assertions[1], assertions[3]]):
+                with self.subTest(judge_only=len(selected) == 2):
+                    rows = grade_behavior(
+                        self.grader_command(),
+                        {"output": "actor output", "terminal_status": "Pass"},
+                        selected, checkout=Path(directory), initial_head=None,
+                    )
+                    self.assertEqual(
+                        [row["type"] for row in rows],
+                        [assertion["type"] for assertion in selected],
+                    )
+                    self.assertEqual(
+                        [row["passed"] for row in rows],
+                        [True, False] if len(selected) == 2 else [True, True, False, False, True],
+                    )
+                    self.assertEqual(
+                        [row["criterion"] for row in rows if row["type"] == "judge"],
+                        ["judge pass", "judge fail"],
+                    )
+
+    def test_no_judge_preserves_positive_negative_and_host_scoped_assertions(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            rows = grade_behavior(
+                "nonexistent-grader-command",
+                {"output": "actor output", "terminal_status": "Pass"},
+                [
+                    {"type": "terminal_status", "expected": "Pass"},
+                    {"type": "terminal_status", "expected": "Blocked"},
+                    {"type": "output_contains", "text": "actor"},
+                    {"type": "output_absent", "text": "actor"},
+                    {"type": "event_count", "hosts": ["hermes"],
+                     "event": {"type": "tool_call"}, "min": 1},
+                    {"type": "unsupported"},
+                ],
+                checkout=Path(directory), initial_head=None, host="codex",
+            )
+            self.assertEqual(
+                [row["passed"] for row in rows], [True, False, True, False, True, False]
+            )
+            self.assertIn("host='codex'", rows[4]["evidence"])
+            self.assertEqual(grade_behavior(
+                "nonexistent-grader-command", {}, [],
+                checkout=Path(directory), initial_head=None,
+            ), [])
+
+    def test_grader_execution_and_schema_errors_still_propagate(self) -> None:
+        cases = [
+            ("import sys; sys.stderr.write('grader failed'); sys.exit(7)",
+             r"command failed \(7\): grader failed"),
+            ("print('not JSON')", "command did not emit one JSON object"),
+            ("print('[]')", "command result must be a JSON object"),
+            ("print('{}')", "one assertion_results row per assertion"),
+            ("print(json.dumps({'assertion_results': "
+             "[{'passed': 'true', 'evidence': 'bad'}]}))", "boolean passed and string evidence"),
+            ("print(json.dumps({'assertion_results': "
+             "[{'passed': True, 'evidence': None}]}))", "boolean passed and string evidence"),
+        ]
+        for source, error in cases:
+            with self.subTest(source=source):
+                with tempfile.TemporaryDirectory() as directory:
+                    checkout = Path(directory)
+                    command = shlex.join([
+                        sys.executable, "-c",
+                        "import json\nfrom pathlib import Path\n"
+                        "Path('grader-ran').write_text('ran')\n" + source,
+                    ])
+                    with self.assertRaisesRegex(RuntimeError, error):
+                        grade_behavior(
+                            command, {"output": "actor output"},
+                            [{"type": "path_exists", "path": "missing"},
+                             {"type": "judge", "criterion": "criterion"}],
+                            checkout=checkout, initial_head=None,
+                        )
+                    self.assertTrue((checkout / "grader-ran").is_file())
 
 
 class RunnerContractTest(unittest.TestCase):
