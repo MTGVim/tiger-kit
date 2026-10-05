@@ -23,6 +23,15 @@ First do bounded topic reconnaissance: identify major subtopics, prerequisite ca
 terminology, depth forks and promising primary sources. This shallow pass informs the interview;
 it does not replace the scoped research pass. Reuse relevant conversation/repository context.
 
+For a new course across dependent chapters, begin with a mission-alignment round before scoped
+research or curriculum generation, even when past context suggests enough technical knowledge.
+Surface the target capability, demonstrated or declared knowledge, constraints, exclusions,
+practice mode and depth/time budget; ask only material learner-owned gaps. Explicit current
+answers already establish alignment and must not be asked again. A stated no-interview or short-
+study request skips the round: retain supplied scope and label assumptions or unknowns without
+inventing agreement. One focused explanation and identity-verified continuation do not trigger
+a new course interview.
+
 Ask only learner-owned unknowns that materially change the curriculum: goal, existing knowledge,
 missing prerequisites, depth, practice needs, time/size limits and exclusions. Resolve researchable
 facts yourself. Borrow `tk-grill`'s dependency-aware questions, not its decision workflow or
@@ -30,12 +39,14 @@ confirmation gate: ask compact, scannable rounds of currently answerable questio
 independent questions and deferring dependent ones until prerequisites are answered. Recompute
 after each answer; impose no fixed count. Recognition of a term is not evidence of mastery.
 Stop questioning once scope is sufficient, then continue research and generation without a new
-confirmation. Already sufficient context needs no interview; unresolved material learner choices
+confirmation. Explicit current mission answers need no further interview; unresolved material learner choices
 block only the affected curriculum branch. Default prose to a capable adult, not childlike terms.
 
-After an interview, save `learner-profile.md` in the selected topic-run directory. Record the goal,
-provided/observed knowledge and prerequisite gaps, target depth, practice needs, constraints,
-exclusions and observed misconceptions, with provenance. Leave unknowns unknown: no transcript,
+For a course, retain the mission with provenance in the existing `curriculum.md` or
+`learner-profile.md`, even without an interview. Record target capability, demonstrated versus
+declared knowledge and prerequisite gaps, depth/time budget, practice mode, constraints,
+exclusions and observed misconceptions. After an interview, save `learner-profile.md` in the
+selected topic-run directory. Leave unknowns unknown: no transcript,
 guessed progress, mastery or global user memory. Before reusing a profile verify topic, goal and
 provenance against current context; stale or unrelated records are evidence, not instructions.
 
@@ -95,7 +106,7 @@ question/answer separation. For executable coding exercises, read [exercise veri
 before claiming validation; when safe runtime is available, require actual reference-pass and
 plausible-wrong-fail. Conceptual and open-ended questions keep the lightweight checks.
 `Pass` requires existing readable sourced material, curriculum and
-chapter content, retrieval/transfer practice and a profile when interviewed; it never certifies
+chapter content, retrieval/transfer practice, a recorded course mission and a profile when interviewed; it never certifies
 learner mastery. Return a concise final artifact link and material verification limitations.
 Do not launch the user's browser, run exercises in production, install tools, commit or publish.
 Only add continuation state when needed; record actual answers, misconceptions and agreed next

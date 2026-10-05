@@ -1,0 +1,33 @@
+{
+  "description": "개념을 설명하는 가상 용량 모델입니다. 실제 측정값이나 운영 구현이 아닙니다. 항목 하나가 용량 한 단위를 차지합니다.",
+  "capacity": 10,
+  "initial_count": 4,
+  "replay_counts": [
+    0,
+    7,
+    10
+  ],
+  "oracle": [
+    {
+      "count": 0,
+      "remaining": 10,
+      "percent": 0
+    },
+    {
+      "count": 4,
+      "remaining": 6,
+      "percent": 40
+    },
+    {
+      "count": 7,
+      "remaining": 3,
+      "percent": 70
+    },
+    {
+      "count": 10,
+      "remaining": 0,
+      "percent": 100
+    }
+  ],
+  "plausible_wrong": "그림과 숫자만 새 항목 수를 반영하고 설명 문구는 초기 남은 용량 6에 머무는 구현은 실패합니다."
+}

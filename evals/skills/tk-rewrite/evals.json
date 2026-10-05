@@ -1837,6 +1837,67 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "rewrite-voice-sample-factual-boundary",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 아래 대상 글을 짧은 공식 문체로 다듬어줘. 문체 참고 샘플: '작년 부산 배포 때 37분을 기다렸습니다. 저는 직접 복구했습니다. 운영 문서는 «재시도가 안전하다»고 했습니다.' 대상 글: '스키마 검사 실패로 이관을 보류했습니다. 금요일에 재검사할 예정입니다.' 샘플은 문체 예시로만 제공했습니다.",
+      "expected_output": "샘플의 간결한 문체만 참고하고 대상 글의 사실과 예정 상태를 보존합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "샘플에만 있는 사건, 장소, 시간, 개인 경험, 주장, 인용을 대상 글에 추가하지 않는다. 스키마 검사 실패, 이관 보류와 금요일 재검사 예정은 보존하며 완료로 바꾸지 않는다. 원문이 충분하면 그대로 반환해도 된다."
+        },
+        {
+          "type": "output_absent",
+          "text": "부산"
+        },
+        {
+          "type": "output_absent",
+          "text": "37분"
+        },
+        {
+          "type": "output_absent",
+          "text": "직접 복구"
+        },
+        {
+          "type": "output_absent",
+          "text": "재시도가 안전하다"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "rewrite-technical-expert-new-project",
+      "path": "success",
+      "prompt": "`$tk-rewrite` `React` 전문가이지만 이 프로젝트를 처음 보는 독자에게 공유할 글을 고쳐줘. 제공된 맥락: 이 프로젝트는 신청 승인 화면입니다. 중복 클릭으로 같은 신청이 여러 번 처리되므로 신청 ID별 처리가 끝날 때까지 버튼을 잠급니다. 승인 요청 실패 시 버튼을 다시 풀고 실패를 표시합니다. 원문: '처리 중 잠금 적용. 실패면 해제.'",
+      "expected_output": "기술 용어의 초보 설명 없이 프로젝트 목적과 변경 이유 및 실패 동작을 복원합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`React`를 안다는 이유로 신청 승인 화면이라는 목적, 중복 처리 문제, 신청 ID별 잠금 범위와 실패 시 해제, 표시를 생략하지 않는다. 제공된 맥락만 사용하며 `React` 입문이나 다른 실패 원인을 새로 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "rewrite-project-familiar-reader",
+      "path": "success",
+      "prompt": "`$tk-rewrite` 이 신청 승인 프로젝트와 신청 ID별 잠금 규칙을 이미 아는 내부 담당자에게 보내는 변경 안내를 다듬어줘. 공유된 목적과 용어를 다시 소개하지 마. 원문: '승인 요청 실패 시 버튼 잠금 해제 및 실패 메시지 표시. 같은 신청 ID로 재시도 가능. 결제 실패 처리는 범위 밖.'",
+      "expected_output": "이미 아는 배경은 반복하지 않고 새 실패 처리, 재시도, 제외 범위를 보존합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "프로젝트 소개나 초보자용 용어 설명을 강제하지 않는다. 승인 요청 실패 시 잠금 해제와 실패 표시, 같은 신청 ID 재시도와 결제 실패 처리 제외를 모두 보존한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

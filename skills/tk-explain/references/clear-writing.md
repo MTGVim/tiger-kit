@@ -12,6 +12,8 @@ A reader should identify the subject, what happens, why, under what conditions, 
 
 The calling skill determines which facts may be added. Rewriting preserves supplied facts and may restore supplied context; explaining may introduce supported general knowledge and clearly labeled illustrative examples. Neither may invent project history, measurements, decisions, causes, or evidence. Distinguish hypotheses, proposals, observed results, and completed actions. Keep numbers, negation, conditions, alternatives, decision owners, and certainty intact. Do not improve apparent clarity by deleting a limitation or adding a benefit. When rewriting, preserve supported causal, contrastive, temporal, conditional, and conclusion relationships without strengthening, weakening, or inventing them through connectors, reordering, or new assertions. Mere adjacency is not evidence of a relationship.
 
+Assess technical knowledge and familiarity with this project separately: an expert may still need supplied project purpose and change context, while an explicitly familiar reader needs no repeated introduction. A style or voice sample guides expression, not facts: borrow rhythm, vocabulary, register and information order without importing sample-only events, numbers, experiences, claims, citations or project context unless separately supplied as factual source material for this task.
+
 Preserve explicit ranking, comparison scope, simultaneity, and exclusivity when removing stylistic emphasis; restate the relation naturally rather than protecting particular words. A source-stated ranking is still a claim when its rationale is absent. Empty emphasis with no actual relation remains removable. Check both for lost relations and for relations introduced by the rewrite.
 
 Preserve evaluative intensity separately from epistemic certainty. A strongly positive or negative source evaluation must retain its degree in natural wording; do not weaken it merely to remove emphasis. Confidence that an effect exists does not establish its magnitude, and a large observed effect does not establish certainty. Preserve only the intensity actually supplied: add no unsupported praise, scale, or confidence. For example, `매우 만족했다` must not become `꽤 괜찮았다`, and `효과가 있을 것이라 확신한다` must not become `효과가 매우 크다`.
@@ -95,6 +97,13 @@ Keep source-provided actions and deadlines explicit; do not invent support proce
 - `conorbronsdon/avoid-ai-writing`, `c4783463cf019a8943364c1ef5f80e0a4c8bff94`: candidate-to-justified-edit scope, preservation of unaffected passages, and valid zero-edit outcomes; no detector, taxonomy, pass budget, or public audit trail is imported.
 
 - `conorbronsdon/avoid-ai-writing`, `5dd2e4ab72b9e0b7e125e5cb592af87033da4fda` (compared with `9b8d030ce5c846af9520a4f6e5eb7d3b8d80ff43`): separate mechanical and semantic preservation, equivalent numeric notation, and honest incomplete verification. Keep the two internal passes and one final result; adapt only these safeguards. Omit the upstream validator, detector, handoff envelope, repair budget, and public verification report.
+
+Style-sample factual boundaries also draw on `addyosmani/clarity`,
+`e27ceeff60368cf6966b4ea00a5b9b36418ee9a0`: `SKILL.md`, `references/edit.md` and
+`evals/cases.json` (`voice_sample_controls_style_not_facts`). Keep truth preservation;
+adapt expression-only sample use; omit co-writing, detectors and public review reports.
+Project familiarity is an independently authored extension of the existing audience/context
+contract, not a claim of a verified upstream project-familiarity rule.
 
 Original MIT notices are in the calling package's `LICENSE.txt`.
 

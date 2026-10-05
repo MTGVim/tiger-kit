@@ -66,6 +66,28 @@ current capture/scale and observed safe delivery. Off-Space SwiftUI/canvas and W
 limits may block a scenario. Never enable foreground delivery automatically. Verify independent
 postconditions after uncertain responses rather than blindly replaying input.
 
+### macOS drag
+
+On macOS, Cua window-scoped pixel `drag` is foreground-only, not a best-effort
+background action. Do not attempt background drag first: it is refused with
+`background_unavailable` and sends nothing. When the gesture itself is required,
+reuse exact existing foreground authority or request it before input; otherwise
+return `Blocked`. Bind exact `window_id` and fresh capture coordinates, disclose
+the temporary frontmost window and physical pointer movement, and verify fresh
+state, focus and independent postconditions after the driver's attempted restoration.
+For a value-change outcome, prefer a supported semantic action when equivalent;
+macOS AX has no generic semantic drag. Keep other actions and platforms under
+their own observed delivery contract; never substitute global desktop input.
+
+Source comparison (2026-10-05): `trycua/cua` revision
+`61ec8ac1d80df191bccd7fc9e9275123a809b2f7`,
+`libs/cua-driver/rust/crates/platform-macos/src/tools/drag.rs` (implementation,
+schema and refusal tests), `libs/cua-driver/rust/Skills/cua-driver/MACOS.md`,
+`docs/content/docs/cua-driver/reference/mcp-tools/pointer.mdx` and commit rationale.
+Keep independent postconditions and exact authority; adapt the foreground-only
+exception; omit desktop-scope input and automatic escalation. Native tests were
+inspected, not rerun. This revision supplements, not replaces, launch provenance below.
+
 ### macOS launch
 
 For native app launch, read the installed version's `launch_app` schema and bundled `MACOS.md`.

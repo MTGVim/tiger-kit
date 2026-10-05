@@ -13,12 +13,32 @@ were not verified. This is independent distillation, not copied code or a worksp
   topic-local learner profile. Prior records require topic, goal and provenance checks.
 - **adapt:** research becomes a prerequisite-aware course rather than a recommendation report.
   Rendering follows teaching design; `.tigerkit/study/` owns automatic output.
-- **omit:** mandatory mission interviews, root-level workspace scaffolding, automatic browser
+- **omit:** at this snapshot, mandatory mission interviews; see the scoped reassessment below.
+  Root-level workspace scaffolding, automatic browser
   launch, default background dispatch and rigid HTML/quiz formats.
 
 `tk-research` owns decision support; `tk-explain` owns a known concept visualization;
 `tk-learn` authors skills. Neither subsumes unfamiliar-topic research followed by teaching
 and observed retrieval feedback. Repository evals cover this distinction and unavailable sources.
+
+## Course mission alignment (#416)
+
+Reviewed 2026-10-05 at `mattpocock/skills` revision
+`24fe0ef7737efae15c87225755e9f6f5965e4888`,
+`skills/productivity/teach/SKILL.md` (The Mission) and `MISSION-FORMAT.md`.
+Both the current implementation and the rationale connecting mission to teaching
+choices were read. Separate upstream behavior evals and learning efficacy remain
+unverified. This reassessment supersedes only the old mandatory-interview omission.
+
+- `keep`: capability-led goals, explicit constraints/exclusions and teaching tied to the mission.
+- `adapt`: a default mission-alignment round for a new dependent-chapter course;
+  current explicit answers satisfy it, no fixed questionnaire or extra confirmation follows.
+  Save the mission and declared versus demonstrated knowledge with provenance in
+  the existing topic-local curriculum/profile, then connect it to prerequisites and checks.
+- `omit`: a mandatory interview for explicit short/no-interview requests, focused
+  explanations or identity-verified continuation; never invent agreement when skipped.
+  Retain existing omissions of root workspace scaffolding, automatic opening,
+  background dispatch and rigid lesson formats.
 
 ## Course redesign (#375)
 

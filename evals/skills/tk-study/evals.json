@@ -446,6 +446,78 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "study-course-mission-before-curriculum",
+      "path": "boundary",
+      "prompt": "`$tk-study` TypeScript 제네릭을 여러 의존 챕터로 제대로 배우고 싶습니다. 과거 대화에서는 제가 `React` 전문가라는 사실만 확인했습니다. 이번 학습 목표와 제네릭 수준, 범위, 시간, 연습 방식은 아직 정하지 않았습니다. .tigerkit/study/generics-course/index.html을 최종 경로로 생각하고 있습니다.",
+      "expected_output": "코스 미션을 정렬하는 첫 질문을 하고 미정 범위를 확정한 커리큘럼으로 만들지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "배울 주제와 `React` 전문성을 실제 제네릭 능력이나 프로젝트 목표로 간주하지 않는다. 학습 후 수행 능력, 실제 선언, 관찰 지식, 필요한 범위, 깊이, 제약, 연습 방식을 현재 답할 수 있는 질문으로 정렬하며 고정 개수를 강제하지 않는다. 자료로 조사할 수 있는 사실은 사용자에게 넘기지 않고 답 전에 완성된 코스나 숙달을 주장하지 않는다."
+        },
+        {
+          "type": "path_absent",
+          "path": ".tigerkit/study/generics-course/index.html"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "study-course-mission-explicit-answers-reused",
+      "path": "success",
+      "prompt": "`$tk-study` 여러 의존 챕터를 설계해줘. 현재 목표는 기존 `generic` 함수의 타입 오류를 스스로 설명하고 수정하는 것입니다. 함수와 `union`은 쓸 수 있다고 선언하지만 `inference`와 `constraint`는 잘 모릅니다. 고급 `conditional types`는 제외합니다. 중급 수준에서 2시간 실습으로 배우고 싶습니다. 먼저 `curriculum.md`에 제공된 목표와 지식 출처 및 범위를 기록하고 선수지식, 챕터, 응용 점검의 연결을 설계하는 단계까지만 수행해줘. .tigerkit/study/generics-mission/ 안에 저장하고 자료 조사와 강의 작성은 아직 하지 마.",
+      "expected_output": "명시된 답을 다시 묻지 않고 미션과 출처를 기록하여 범위에 맞는 설계를 만듭니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "별도 확인 승인을 요구하지 않는다. 목표, 선언 지식, 미정 또는 부족한 지식, 제외 범위, 실습 방식, 중급 깊이, 2시간을 기존 `curriculum.md` 또는 `learner-profile.md`에 출처와 함께 보존한다. 선언 지식을 실제 숙달로 바꾸지 않는다. 알려진 기초는 압축하고 `inference`, `constraint`를 선수 순서로 배치하며 새 타입 오류의 설명, 수정을 확인하는 응용 점검을 연결한다. 범위 밖 고급 주제와 미요청 전체 코스를 생성하지 않는다."
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/study/generics-mission/curriculum.md"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "study-short-no-interview-not-course",
+      "path": "boundary",
+      "prompt": "`$tk-study` `closure` 한 개념만 짧은 Markdown으로 배우고 싶습니다. 인터뷰는 생략하고 이미 제공한 코드의 동작만 설명해줘. 코드: `function makeCounter() { let n = 0; return () => ++n; } const next = makeCounter(); next(); next();` 결과는 `.tigerkit/study/closure-short/lesson.md`에 저장해줘.",
+      "expected_output": "짧은 범위와 인터뷰 생략을 존중하고 필요한 내용만 설명합니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "새 코스용 미션 인터뷰나 여러 챕터를 강제하지 않고 제공된 코드의 렉시컬 환경과 두 호출 관계를 짧게 설명한다. 학습자의 목표, 지식, 숙달에 대한 없는 합의를 만들지 않으며 지정 형식과 경로를 따른다."
+        },
+        {
+          "type": "path_exists",
+          "path": ".tigerkit/study/closure-short/lesson.md"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "study-course-continuation-mission-reused",
+      "path": "boundary",
+      "prompt": "`$tk-study` 현재 TypeScript 과정의 둘째 챕터를 계속 배우고 싶습니다. 기존 프로필의 주제, 목표, 출처를 현재 요청과 대조했고 일치합니다. 목표와 제약은 그대로이며 앞선 연습 답은 아직 제출하지 않았습니다. 다음 학습 계획만 반환하세요.",
+      "expected_output": "검증한 기존 미션을 재사용하고 인터뷰나 숙달 판정을 새로 만들지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "계속하는 과정에 새 코스 미션 인터뷰를 반복하지 않는다. 실제 답이 없으므로 선수 챕터 숙달을 추정하지 않으며 필요한 재확인이나 연습 점검을 계획할 수 있다. 전역 기억이나 브라우저 자동 실행을 추가하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }
