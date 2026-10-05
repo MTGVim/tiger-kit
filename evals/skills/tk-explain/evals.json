@@ -440,6 +440,35 @@
           "expected": "Pass"
         }
       ]
+    },
+    {
+      "id": "explain-topic-title-and-plain-copy",
+      "path": "success",
+      "prompt": "$tk-explain `React reconciliation`에서 `key`가 왜 중요한지 초급~중급 프론트엔드 개발자를 위한 `react-key.html`로 설명해줘. 직접 예시를 조작하며 상태 보존을 확인할 수 있게 해줘.",
+      "expected_output": "설명할 개념이나 질문을 제목에서 바로 식별할 수 있고 본문과 조작 문구가 구체적인 HTML을 만듭니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "문서 제목과 화면의 주 제목만 읽어도 `React`의 `reconciliation`과 `key` 또는 컴포넌트 정체성이라는 설명 대상을 식별할 수 있다. 작은 상단 문구, 부제나 본문을 읽어야 주제를 알 수 있는 슬로건 제목은 통과시키지 않는다. 제목을 평문으로 바꾸면서 본문의 실제 동작, 조건, 출처와 작성 표시를 보존한다. 본문, 소제목, 캡션과 버튼은 실제 항목과 동작을 명시하고 장식적인 구호나 추상적인 말로 관계를 대신하지 않는다. 이미 명확한 기술 용어를 지우거나 단어 금지표로 과도하게 교정하지 않는다. 실제 입력과 조작의 실행 순서를 안내하고 각 조작 뒤 설명이 현재 결과와 일치한다."
+        },
+        {
+          "type": "path_exists",
+          "path": "react-key.html"
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": [
+            "react-key.html"
+          ]
+        },
+        {
+          "type": "terminal_status",
+          "expected": "Pass"
+        }
+      ]
     }
   ],
   "renamed_from": {
