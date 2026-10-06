@@ -50,8 +50,8 @@ Do not silently switch providers, enable disabled native APIs or infer support f
 Bind exact app identity, process/build/candidate, environment, role/locale, target window,
 criteria, initial state, authentication, dimensions/scale, evidence plan and allowed interaction.
 Fill safe researchable facts from current evidence; reuse parent approvals and do not ask again.
-Missing user-owned target or delivery choices are `Blocked`; unprovable access/evidence is
-`Unverifiable`. Resolve app permissions/setup through a bounded `tk-wizard` handoff.
+Missing user-owned target or delivery choices are `Blocked`; an unavailable selected native
+provider or unprovable access/evidence is `Unverifiable`. Resolve app permissions/setup through a bounded `tk-wizard` handoff.
 Credentials and private screen content stay out of chat, notes, logs and receipts; use the host's
 approved secret channel or return `Unverifiable` for a required unavailable authentication path.
 
