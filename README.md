@@ -524,7 +524,7 @@ python3 scripts/run_seed_release_gate.py \
 
 연구 단위는 연구 프로젝트로 부릅니다. 방향별로 준비된 인계 후보는 `HO-<NNN>` ID, 연구·실험 근거, 사양 위치, 의존성·중복과 `ready | handed-off | deferred | superseded` 상태를 정본 상태와 현재 요약에 모읍니다. 사용자가 일부 후보만 `tk-prep`으로 넘겨도 다른 후보와 연구는 이어지며, 인계 자체가 제품 구현 승인이나 프로젝트 종료를 뜻하지 않습니다.
 
-기본 저장 정책은 `hybrid`입니다. 연구 식별이 정해지면 하나의 전용 연구 작업 트리를 연구 홈으로 잡고, 그 홈의 `.tigerkit/autoresearch/`에 실행 상태와 간단한 `config.json`을 둡니다. 현재 요약·연구 결과·체크포인트 연구 일지·실험 기록은 `docs/autoresearch/<slug>/`에 추적하며 체크포인트마다 같은 연구 묶음만 로컬 커밋합니다. 설정은 `mode`, `trackedRoot`, `commitOnCheckpoint`만 유지합니다. `local`은 전부 무시되는 로컬 상태, `hybrid`는 연구 지식만 추적, `tracked`는 여기에 정제한 설정·상태 스냅샷을 더합니다.
+기본 저장 정책은 `hybrid`입니다. 연구 식별이 정해지면 하나의 전용 연구 작업 트리를 연구 홈으로 잡고, 그 홈의 `.tigerkit/autoresearch/`에 실행 상태와 간단한 `config.json`을 둡니다. 현재 요약·연구 결과·체크포인트 연구 일지·실험 기록은 `docs/autoresearch/<slug>/`에 추적하며 체크포인트마다 같은 연구 묶음만 로컬 커밋합니다. 설정 스키마는 [저장 정책](skills/tk-autoresearch/references/persistence.md#minimal-configuration)을 기준으로 유지합니다. `local`은 전부 무시되는 로컬 상태, `hybrid`는 연구 지식만 추적, `tracked`는 여기에 정제한 설정·상태 스냅샷을 더합니다.
 
 사용자가 현재 작업 트리를 연구 홈으로 지정했다면 새 `researchId`에도 그곳을 사용합니다. 작업 트리가 깨끗하고 기본·제품 브랜치가 아니며 다른 작업이나 별개 연구의 정본 상태와 섞이지 않아야 합니다. 지정을 정본 상태에 기록하며, 지정이 없거나 안전하지 않을 때만 별도 연결 작업 트리를 만듭니다.
 

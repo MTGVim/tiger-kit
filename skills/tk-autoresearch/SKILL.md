@@ -122,7 +122,7 @@ an explicit conversation-only/no-save request remains in chat. Before initializi
 read [autoresearch persistence](references/persistence.md), then [durable autoresearch](references/state.md)
 and apply Artifact Paths.
 
-Use the default `hybrid` persistence policy without a setup questionnaire unless a valid existing config or explicit user preference says otherwise. Keep the config schema minimal: `mode`, `trackedRoot`, and `commitOnCheckpoint` only. Establish the single research home before canonical state for `hybrid`/`tracked`. Update state after material findings, direction changes, experiment verdicts, blockers and convergence changes, not as a per-message transcript.
+Use the default `hybrid` persistence policy and its canonical config schema without a setup questionnaire unless a valid existing config or explicit user preference says otherwise. Establish the single research home before canonical state for `hybrid`/`tracked`. Update state after material findings, direction changes, experiment verdicts, blockers and convergence changes, not as a per-message transcript.
 
 On `--resume`, restore state first and continue the current frontier. Saved state/config are resume and
 persistence inputs, never schedulers or authority beyond this skill's current invocation.
