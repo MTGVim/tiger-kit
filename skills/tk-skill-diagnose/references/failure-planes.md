@@ -7,12 +7,13 @@ or more evidence-backed planes.
 |---|---|---|
 | `selection` | Skill selected when unnecessary, or not selected when required | trigger train/validation result, selected skill |
 | `loading` | Selection occurred but the body did not load | adapter `skill_loaded`, loaded-skill list |
-| `understanding` | Scope, terms, or input contract misunderstood | fresh trace, output evidence |
+| `instruction` | Scope, terms, or input contract misunderstood | fresh trace, output evidence |
 | `planning` | Wrong owner, branch, sequence, or decision loop | trace, retries, discretionary fill-in |
 | `execution` | Tool, command, verification, or mutation failed | command, file, Git, runtime evidence |
 | `formatting` | Output or receipt ownership violated | output assertion, structured comparison |
 | `evaluation` | Grader/assertion misclassified correct output | deliverable versus criterion/mechanical evidence |
 | `compatibility` | Host invocation, loading, tool, or metadata behavior differs | Claude Code/Codex/Hermes matrix |
+| `local override` | Consumer override or local configuration causes the incident | exact override/configuration and adjacent package control |
 | `efficiency` | Correct output consumed avoidable resources | matched baseline/candidate metrics |
 
 Record stability for every plane, but do not record it as a separate causal plane:
