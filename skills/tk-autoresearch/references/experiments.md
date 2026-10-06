@@ -40,6 +40,24 @@ If separate acceptance evidence is unavailable or unreasonable to create, contin
 that limitation in the finding/final synthesis. Do not require a fixed number of splits or a benchmark
 scaffold for all research, and do not invent validation evidence.
 
+## Cost-aware measurement order
+
+Start candidate exploration with the cheapest valid smoke/probe under the protected evaluation
+contract. Stop clear, consistent inferiority without spending the full benchmark; a smoke failure
+establishes only the check it actually exercised. Escalate independent samples/runs selectively
+when evidence is promising or borderline. Choose measurement strength by cost, variability,
+effect size and decision importance, not a fixed count or futility threshold.
+
+Before a metric-based `KEEP`, confirm the fixed candidate more strongly than its exploratory
+probe against the same comparable baseline and acceptance criterion; use independent acceptance
+evidence when available under the rules above. A noisy single win cannot skip confirmation.
+For a deterministic decisive result, use an existing acceptance check or broader relevant check
+when informative, rather than repeating identical output. Once the evidence is sufficient,
+stop: neither clear early rejection nor deterministic confirmation needs ceremonial repetition.
+If useful confirmation is unavailable or unaffordable, qualify the result as `INCONCLUSIVE` or
+`BLOCKED`, not confirmed `KEEP` or falsification. Preserve the measurement limit and outcomes
+in the existing experiment record; add no schema, benchmark scaffold or quota.
+
 ## Decision-critical noise and replication
 
 When meaningful stochasticity/noise could change an important `KEEP`, direction adoption/rejection,

@@ -33,3 +33,13 @@ Meaningful modality also draws on `epoko77-ai/im-not-ai`,
 `92b2936956d65d62ff4b19b75cccad8e3429bf43`: A-10/G-2 and their correction history motivate preserving claim strength even under repetition. Apply semantic equivalence across genres; omit domain-only exceptions, fixed repetition thresholds, hedge dictionaries, marker counts, and runtime restoration.
 
 Rewriting-only scope draws on `dotoricode/korean-humanizer`, `93580567d4c965024e5b9eb1fb96ace3e7b45907` (`SKILL.md`, PR #6 and package-skill QA). Adapt the editing-only boundary while preserving explicitly requested advice; omit fixed output sections and distribution/runtime tooling.
+
+## Literal versus rhetorical expression regression (2026-10-07)
+
+`conorbronsdon/avoid-ai-writing@1f187c049c1cac4d70fa555b4e3c0a413e25f2ee`,
+verified against current `main@0469c977d65a2c264c198bfb59eb4c699cb4584c`:
+commit rationale, `references/patterns.md`, `detector/patterns.js` and
+`detector/patterns.test.js` true-positive/false-positive fixtures. Tests were inspected,
+not rerun. `keep`: existing contextual editing and valid zero-edit results. `adapt`:
+paired literal/rhetorical regression cases into repository evals only. `omit`: detector
+regexes, word lists, severity/density taxonomy and runtime. `clear-writing.md` is unchanged.

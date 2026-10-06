@@ -1943,6 +1943,66 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "rewrite-evolution-rhetorical-positive",
+      "path": "success",
+      "prompt": "`$tk-rewrite` 영어 원문을 영어로 유지하며 문체만 다듬어 주세요. 원문: `The update adds CSV export. It marks a new chapter in the evolution of software.` 이 문장에서 시대적 의미에 대한 구체적인 근거나 추가 맥락은 없습니다.",
+      "expected_output": "`in the evolution of`가 쓰인 추상적 시대 강조를 문맥상 상투적 표현으로 교정하고 실제 변경인 CSV 내보내기는 보존한다. 새로운 성과, 역사적 의미 또는 측정치를 발명하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`in the evolution of`가 쓰인 추상적 시대 강조를 문맥상 상투적 표현으로 교정하고 실제 변경인 CSV 내보내기는 보존한다. 새로운 성과, 역사적 의미 또는 측정치를 발명하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "rewrite-evolution-literal-negative",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 영어 원문을 영어로 유지하며 문체만 다듬어 주세요. 원문: `The fossil record documents changes in the evolution of the vertebrate eye.` 이 문장은 구체적인 생물학적 변화와 증거 대상을 서술하며 다른 맥락은 없습니다.",
+      "expected_output": "같은 표면 표현인 `in the evolution of`를 구체적인 생물학적 의미로 보존한다. 원문이 충분히 자연스러우므로 그대로 반환하며 표현 문자열만으로 과교정하거나 새로운 발견을 추가하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "같은 표면 표현인 `in the evolution of`를 구체적인 생물학적 의미로 보존한다. 원문이 충분히 자연스러우므로 그대로 반환하며 표현 문자열만으로 과교정하거나 새로운 발견을 추가하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "rewrite-step-rhetorical-positive",
+      "path": "success",
+      "prompt": "`$tk-rewrite` 영어 원문을 영어로 유지하며 문체만 다듬어 주세요. 원문: `We added CSV export. This is a crucial step towards a better future for everyone.` 미래의 이점이나 중요성을 뒷받침할 추가 정보는 없습니다.",
+      "expected_output": "`step towards`가 쓰인 추상적인 미래와 근거 없는 중요성 강조를 교정한다. CSV 내보내기 추가를 보존하고 미래 이점이나 새 결과를 발명하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`step towards`가 쓰인 추상적인 미래와 근거 없는 중요성 강조를 교정한다. CSV 내보내기 추가를 보존하고 미래 이점이나 새 결과를 발명하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "rewrite-step-literal-negative",
+      "path": "boundary",
+      "prompt": "`$tk-rewrite` 영어 원문을 영어로 유지하며 문체만 다듬어 주세요. 원문: `Shipping the read-only endpoint was a first step towards the full API.` 첫 단계라는 구체적인 순서와 읽기 전용 `endpoint` 및 전체 API 범위를 보존해 주세요.",
+      "expected_output": "같은 표면 표현인 `step towards`를 구체적인 단계 관계로 보존하고 자연스러운 원문을 그대로 반환한다. 단계, 대상과 범위를 지우거나 완성됐다고 바꾸지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "같은 표면 표현인 `step towards`를 구체적인 단계 관계로 보존하고 자연스러운 원문을 그대로 반환한다. 단계, 대상과 범위를 지우거나 완성됐다고 바꾸지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

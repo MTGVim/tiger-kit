@@ -107,3 +107,16 @@ reusable operating proposal. No new donor text or code is incorporated.
 ## Owner boundary
 
 `tk-research` remains bounded external evidence and supplies synchronized `evidence.md`. `tk-autoresearch` owns evolving directions, frontier, authorized local research experiments and convergence. `tk-roadmap` owns delivery planning; `tk-prep` owns production implementation. Original licence texts are in [upstream licenses](../UPSTREAM-LICENSES.txt).
+
+## Cost-aware measurement order (2026-10-07)
+
+`EveryInc/compound-engineering-plugin@142dbabc23c86884f2e353502eb20a5fdd2a6d3d`:
+`skills/ce-optimize/references/measurement.md` (baseline versus exploration rationale),
+`scripts/decide.mjs` and `tests/skills/ce-optimize-decide.test.ts` (smoke refusal, clear
+inferiority, borderline escalation and pre-keep confirmation). Tests were inspected, not rerun.
+
+- `keep`: the protected evaluator, comparable baseline and acceptance boundary already owned here.
+- `adapt`: cheap exploration, selective evidence escalation and stronger pre-`KEEP` confirmation
+  into `experiments.md`; measurement strength remains cost/noise/effect/decision-dependent.
+- `omit`: fixed sample counts/futility factors, donor scripts, orchestration, worktrees,
+  experiment-log schema and dashboard. No new runtime or persistent policy is imported.

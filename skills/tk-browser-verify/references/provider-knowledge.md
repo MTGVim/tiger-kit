@@ -8,7 +8,7 @@ Use the registry's canonical docs and supplied host guidance rather than remembe
 
 ## Distillation provenance
 
-For contract maintenance, use these reviewed sources (2026-09-30 through 2026-10-05), then refresh canonical docs
+For contract maintenance, use these reviewed sources (2026-09-30 through 2026-10-07), then refresh canonical docs
 for the installed provider version. Keep TigerKit's existing headless/evidence ownership; adapt
 independent postcondition checks and background/escalation boundaries. Omit upstream installers,
 global-input examples and automatic runtime/permission expansion.
@@ -35,6 +35,14 @@ global-input examples and automatic runtime/permission expansion.
   case with exact identity and cleanup checks; omit activation workarounds. System-temp lookup and
   wrapper success are supplied incident evidence, not a universal upstream claim. Native tests were
   inspected, not rerun.
+
+- Cua scroll/token/snapshot (2026-10-07): `trycua/cua` revision
+  `5227ad637590a15976413b1a33f8693fac0e9a7e`, macOS `tools/scroll.rs`, `tools/mod.rs`
+  and `tools/get_window_state.rs`, core `snapshot_store.rs` and `window_state_view.rs`.
+  Keep independent postconditions and foreground authority; adapt explicit scroll refusal,
+  token-owned process identity and optional scoped diff reads; omit global input, automatic
+  escalation and cross-provider assumptions. Shared token/window-view tests were inspected,
+  not rerun; macOS live delivery remains unverified here.
 
 ## Chrome DevTools MCP
 
@@ -79,6 +87,34 @@ Background is best effort. Prefer a fresh semantic token; window-scoped coordina
 current capture/scale and observed safe delivery. Off-Space SwiftUI/canvas and Wayland raw-key
 limits may block a scenario. Never enable foreground delivery automatically. Verify independent
 postconditions after uncertain responses rather than blindly replaying input.
+
+### Semantic identity and snapshot reads
+
+When the installed action schema permits it, a current `element_token` resolves its own
+process/window identity; omit redundant `pid` only after matching that snapshot to the exact
+candidate. An explicit conflicting `pid` or window ID stops input; do not let either identity
+silently win. Unknown/stale tokens require a fresh read, not guessed identity. Snapshot reads
+and coordinate actions retain their own required process/window fields.
+
+For supported Cua `get_window_state`, start with a full read (no `since`), using one compact
+tree representation when sufficient. In a stable same-process/window and query/node/depth
+scope, optionally use `since:<snapshot_id>` against a known full base and coherent diff chain.
+Check `since_status`, truncation and reindexing; consume the new snapshot ID and current
+tokens, never reuse superseded tokens. Scope changes, stale/unknown bases, truncation,
+uncertain chains or insufficient evidence require a full read with enough scope to observe
+the criterion. Full means no diff base, not necessarily `full_output:true`. A diff can provide
+independent current state evidence, but an empty diff or action success does not establish
+the criterion; visual criteria still need inspected current pixels. Do not infer this
+capability for other providers.
+
+### macOS Electron/Chromium scroll
+
+When current Cua evidence identifies macOS Electron/Chromium scroll as unsupported in
+background, skip that attempt; an observed `background_unavailable` refusal ends identical
+background retries. Reuse exact foreground authority or request it before escalation;
+without it, leave the required scroll `Blocked`. A token does not bypass this delivery
+restriction. Keep click/type/drag, other app surfaces and platforms under their own observed
+action contracts; do not generalize this scroll exception.
 
 ### macOS drag
 

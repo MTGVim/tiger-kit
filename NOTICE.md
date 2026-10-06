@@ -865,3 +865,29 @@ POSIX에서는 실행 소유 프로세스 그룹을 종료해 시간 초과, 중
 선택한 MIT 원본의 저작권과 라이선스 전문을 해당 설치 패키지의 `LICENSE.txt`에 보존했습니다.
 상류 네이티브 테스트, 학습 효과, 호스트 전반의 성공률은 재현하지 않았습니다.
 기존 정책과 후보의 독립 재생은 대부분 양쪽 모두 성공했으며, 이를 실패율 개선 근거로 사용하지 않습니다.
+
+## `Cua` 거절 및 `snapshot` 경량화와 문맥별 교정 평가, 단계적 연구 측정 (#418–#420)
+
+2026-10-07에 다음 고정 커밋의 구현, 설계 근거와 관련 회귀 테스트를 확인했습니다.
+
+- `trycua/cua@5227ad637590a15976413b1a33f8693fac0e9a7e`: `platform-macos/src/tools/scroll.rs`,
+  `tools/mod.rs`, `tools/get_window_state.rs`와 `cua-driver-core/src/snapshot_store.rs`,
+  `window_state_view.rs`를 확인했습니다. 독립 사후 조건과 전경 승인은 `keep`, `macOS`
+  `Electron`/`Chromium` 스크롤 거절, 토큰에 결합된 프로세스 식별과 범위가 같은 `snapshot` `diff`는
+  `adapt`, 전체 화면 입력, 자동 권한 확대와 다른 제공자로의 일반화는 `omit`입니다.
+  제공자 지식 정본과 앱 검증 사본을 함께 갱신합니다. native 테스트는 읽었으며 실행하지 않았습니다.
+- `conorbronsdon/avoid-ai-writing@1f187c049c1cac4d70fa555b4e3c0a413e25f2ee`: 현재
+  `main@0469c977d65a2c264c198bfb59eb4c699cb4584c`와 비교해 커밋 설명,
+  `references/patterns.md`, `detector/patterns.js`, `detector/patterns.test.js`를 확인했습니다.
+  기존 문맥 판단과 무수정 결과는 `keep`, 같은 표면 표현의 상투적 용례와 문자적 정상 용례를
+  나눈 평가 쌍은 `adapt`, `detector`, 금지 목록, 밀도와 `severity` 체계는 `omit`입니다.
+  `clear-writing.md`는 바꾸지 않습니다. 기존 MIT 고지는 유지합니다.
+- `EveryInc/compound-engineering-plugin@142dbabc23c86884f2e353502eb20a5fdd2a6d3d`:
+  `skills/ce-optimize/references/measurement.md`, `scripts/decide.mjs`와
+  `tests/skills/ce-optimize-decide.test.ts`를 확인했습니다. 기존 평가 보호와 수락 기준은
+  `keep`, 값싼 탐색 뒤 선택적 확대와 `KEEP` 전 강화 확인은 `adapt`, 고정 표본 수,
+  `futility` `threshold`, 상류 실행 도구, 별도 로그와 `orchestration`은 `omit`입니다.
+  기존 실험 기록과 비용 및 변동성에 따른 반복 원칙을 유지합니다. 상류 테스트는 실행하지 않았습니다.
+
+각 수정은 기존 패키지 경계 안에서 독립적으로 작성한 행동 계약과 저장소 평가에 한정합니다.
+새 스킬, 실행 체계, 설정이나 CI를 추가하지 않습니다.
