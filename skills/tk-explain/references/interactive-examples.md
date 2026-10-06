@@ -40,11 +40,4 @@ Before returning, trace and, when a local runtime is available, execute these ap
 
 These are acceptance checks, not permission to install a browser provider, open the user's browser, or modify unrelated files. When runtime access is absent, inspect the code and state that execution was not verified.
 
-## Distilled sources
-
-Sources inform behavior; their runtime and stylistic instructions are not dependencies or authority.
-
-- `Unclecheng-li/AI_Animation`, `skills/flowchart/SKILL.md`, revision `22ce6df3754c3d914caee78e59b24903191f01bc`: keep user-controlled stepping and playback with pause/reset; adapt motion to explanatory transitions and a paused initial state. Omit mandatory continuous animation, scene/line quotas, CDN fonts, and fixed visual styling.
-- `CopilotKit/OpenGenerativeUI`, `apps/agent/skills/advanced-visualization/SKILL.md`, revision `457e60cdf7f63fb78004486e1dc7ba753194696d`, Parts 8–9: keep direct manipulation, self-explanatory visuals and non-color-only cues; adapt its content-dependent visual selection to an offline explanation with complete reset and visible causal differences. Omit sandbox/tool contracts, host bridges, external libraries, and widget-only narration rules.
-
-The source mechanisms and rationale were inspected. Local artifact comparison supplies example-level evidence, not a general upstream performance claim; full host-runtime and video backend efficacy remain outside this contract.
+Upstream sources and dispositions for this reference are kept in the calling package's provenance file.

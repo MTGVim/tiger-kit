@@ -8,7 +8,7 @@ Use the registry's canonical docs and supplied host guidance rather than remembe
 
 ## Distillation provenance
 
-For contract maintenance, use these reviewed sources (2026-09-30), then refresh canonical docs
+For contract maintenance, use these reviewed sources (2026-09-30 through 2026-10-05), then refresh canonical docs
 for the installed provider version. Keep TigerKit's existing headless/evidence ownership; adapt
 independent postcondition checks and background/escalation boundaries. Omit upstream installers,
 global-input examples and automatic runtime/permission expansion.
@@ -21,6 +21,20 @@ global-input examples and automatic runtime/permission expansion.
   omit automatic app opening/restarting and unapproved coordinate fallback.
 - Provider registry URLs were reviewed as maintainer/official sources. Host-native support remains
   conditional on actual tool exposure; no native-host live verification is claimed by these docs.
+- Cua macOS drag (2026-10-05): `trycua/cua` revision `61ec8ac1d80df191bccd7fc9e9275123a809b2f7`,
+  `libs/cua-driver/rust/crates/platform-macos/src/tools/drag.rs` (implementation, schema and refusal
+  tests), `libs/cua-driver/rust/Skills/cua-driver/MACOS.md`,
+  `docs/content/docs/cua-driver/reference/mcp-tools/pointer.mdx` and commit rationale. Keep independent
+  postconditions and exact authority; adapt the foreground-only exception; omit desktop-scope input
+  and automatic escalation. Native tests were inspected, not rerun.
+- Cua macOS launch (2026-10-02): `trycua/cua` revision `8d4e7a08618611453794035f7ff6187f99f0c1e9`,
+  `libs/cua-driver/rust/Skills/cua-driver/MACOS.md`,
+  `libs/cua-driver/rust/crates/platform-macos/src/tools/launch_app.rs` and
+  `libs/cua-driver/rust/crates/cua-driver-e2e/tests/installed_app_launch_macos_test.rs`. Keep
+  provider-owned launch and independent focus checks; adapt the user-supplied raw-executable wrapper
+  case with exact identity and cleanup checks; omit activation workarounds. System-temp lookup and
+  wrapper success are supplied incident evidence, not a universal upstream claim. Native tests were
+  inspected, not rerun.
 
 ## Chrome DevTools MCP
 
@@ -79,15 +93,6 @@ For a value-change outcome, prefer a supported semantic action when equivalent;
 macOS AX has no generic semantic drag. Keep other actions and platforms under
 their own observed delivery contract; never substitute global desktop input.
 
-Source comparison (2026-10-05): `trycua/cua` revision
-`61ec8ac1d80df191bccd7fc9e9275123a809b2f7`,
-`libs/cua-driver/rust/crates/platform-macos/src/tools/drag.rs` (implementation,
-schema and refusal tests), `libs/cua-driver/rust/Skills/cua-driver/MACOS.md`,
-`docs/content/docs/cua-driver/reference/mcp-tools/pointer.mdx` and commit rationale.
-Keep independent postconditions and exact authority; adapt the foreground-only
-exception; omit desktop-scope input and automatic escalation. Native tests were
-inspected, not rerun. This revision supplements, not replaces, launch provenance below.
-
 ### macOS launch
 
 For native app launch, read the installed version's `launch_app` schema and bundled `MACOS.md`.
@@ -110,16 +115,8 @@ registration is `Blocked`. Registration is temporary and run-owned, not an app i
 replacement of an existing identifier. Unregister only this run's registration and delete its
 wrapper during cleanup; never unregister or remove the installed release.
 
-Source comparison (2026-10-02): `trycua/cua` revision
-`8d4e7a08618611453794035f7ff6187f99f0c1e9`,
-`libs/cua-driver/rust/Skills/cua-driver/MACOS.md`,
-`libs/cua-driver/rust/crates/platform-macos/src/tools/launch_app.rs` and
-`libs/cua-driver/rust/crates/cua-driver-e2e/tests/installed_app_launch_macos_test.rs`.
-Keep provider-owned launch and independent focus checks; adapt the user-supplied raw-executable
-wrapper case with exact identity and cleanup checks; omit activation workarounds. System-temp
-lookup and wrapper success are supplied incident evidence, not a universal upstream claim.
-The native tests were inspected, not rerun here. Other providers/platforms require their own
-current launch evidence; these macOS semantics do not establish their compatibility.
+Other providers/platforms require their own current launch evidence; these macOS semantics
+do not establish their compatibility.
 
 ## Orca Computer
 

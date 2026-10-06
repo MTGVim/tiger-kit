@@ -45,9 +45,8 @@ checklist, not as quotas.
 
 Architecture items are proposal-and-evidence heuristics, not doctrine or an independent
 rejection gate. Do not treat `deep module`, `fewer interfaces`, `thin adapter/wrapper`,
-`React composition`, or a `framework idiom` as defects by themselves. Do not impose
-`Matt` terminology; create a finding only when current repository paths or symbols show
-a concrete impact.
+`React composition`, or a `framework idiom` as defects by themselves. Create a finding
+only when current repository paths or symbols show a concrete impact.
 
 ## Finding format
 

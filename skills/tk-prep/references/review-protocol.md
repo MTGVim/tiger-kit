@@ -147,8 +147,9 @@ reason or uncertainty. Missing independent verification leaves the finding open,
 This branch needs no empty fix commit, empty `FIX_BASE..HEAD` package, or protection-test rerun solely for
 ceremony. A focused check may resolve a concrete remaining doubt. Any actual code change, including an
 uncommitted one, follows normal protection tests and scoped fix review. Do not restart broad discovery.
-Use this branch at most once per finding at that reviewed revision, count it within the existing five-round
-remediation cap, and retain the existing stop after the cap. Keep pending identity/verdict in transient controller
+Use this branch at most once per finding at that reviewed revision. When an active remediation owner has a
+round cap, count the attempt within that owner's cap and stop under its contract. A standalone `tk-review`
+does not start a remediation loop. Keep pending identity/verdict in transient controller
 state. Only if optional recovery is already active and interruption requires persistence, retain the minimum
 finding reference, reviewed revision, pending verifier identity and consumed attempt in that existing state;
 reconcile before redispatch. Add no new finding-ID scheme, ledger, artifact, or reviewer lifecycle.

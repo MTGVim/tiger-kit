@@ -4,6 +4,28 @@ from pathlib import Path
 
 MARKER = "<!-- tigerkit:questions -->"
 END = "<!-- /tigerkit:questions -->"
+QUESTION_NOTICE = """MIT License
+
+Copyright (c) 2026 Matt Pocock
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
 BLOCK = MARKER + """
 ## User Questions
 
@@ -26,6 +48,13 @@ def question_errors(root: Path) -> list[str]:
     if not source.is_file():
         return ["missing canonical tk-grill question rounds reference"]
     errors = []
+    notice = root / "skills/tk-grill/LICENSE.txt"
+    notice_text = QUESTION_NOTICE.strip()
+    if not notice.is_file():
+        errors.append("missing canonical tk-grill question rounds license notice")
+    else:
+        if notice_text not in notice.read_text(encoding="utf-8"):
+            errors.append("invalid canonical tk-grill question rounds license notice")
     for path in sorted((root / "skills").glob("tk-*/SKILL.md")):
         text = path.read_text(encoding="utf-8")
         reference = path.parent / "references/questions.md"
@@ -35,12 +64,16 @@ def question_errors(root: Path) -> list[str]:
             errors.append(f"{path.parent.name}: question tool policy belongs only in the canonical reference")
         if not reference.is_file() or reference.read_bytes() != source.read_bytes():
             errors.append(f"{path.parent.name}: question rounds reference drift")
+        package_notice = path.parent / "LICENSE.txt"
+        if not package_notice.is_file() or notice_text not in package_notice.read_text(encoding="utf-8"):
+            errors.append(f"{path.parent.name}: installed question rounds license notice is missing or incomplete")
     return errors
 
 
 def sync_questions(root: Path) -> None:
     source = root / "skills/tk-grill/references/questions.md"
     content = source.read_bytes()
+    notice_text = QUESTION_NOTICE.strip()
     for path in sorted((root / "skills").glob("tk-*/SKILL.md")):
         text = path.read_text(encoding="utf-8")
         if MARKER in text:
@@ -54,3 +87,7 @@ def sync_questions(root: Path) -> None:
         reference = path.parent / "references/questions.md"
         reference.parent.mkdir(exist_ok=True)
         reference.write_bytes(content)
+        package_notice = path.parent / "LICENSE.txt"
+        existing = package_notice.read_text(encoding="utf-8") if package_notice.is_file() else ""
+        if notice_text not in existing:
+            package_notice.write_text(existing.rstrip() + ("\n\n" if existing else "") + notice_text + "\n", encoding="utf-8")

@@ -56,6 +56,9 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         questions = self.root / "skills/tk-grill/references/questions.md"
         questions.parent.mkdir(parents=True)
         questions.write_text("Canonical frontier protocol\n", encoding="utf-8")
+        (questions.parent.parent / "SKILL.md").write_text("# Grill\n", encoding="utf-8")
+        notice = Path(__file__).resolve().parents[1] / "skills/tk-grill/LICENSE.txt"
+        shutil.copyfile(notice, questions.parent.parent / "LICENSE.txt")
         research = self.root / "skills/tk-research/references/evidence.md"
         research.parent.mkdir(parents=True)
         research.write_text("Primary evidence\n", encoding="utf-8")
@@ -128,6 +131,27 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         self.assertEqual(self.run_main("--check"), 1)
         self.assertEqual(self.run_main(), 0)
         self.assertEqual(stale.read_bytes(), (self.review / "security.md").read_bytes())
+
+    def test_installed_notice_is_required_and_sync_preserves_other_attribution(self) -> None:
+        self.assertEqual(self.run_main(), 0)
+        notice = self.root / "skills/tk-prep/LICENSE.txt"
+        notice.write_text("Existing unrelated attribution\n", encoding="utf-8")
+        self.assertEqual(self.run_main("--check"), 1)
+        self.assertEqual(self.run_main(), 0)
+        restored = notice.read_bytes()
+        self.assertTrue(restored.startswith(b"Existing unrelated attribution\n"))
+        self.assertIn(b"Copyright (c) 2026 Matt Pocock", restored)
+        self.assertEqual(self.run_main(), 0)
+        self.assertEqual(notice.read_bytes(), restored)
+        self.assertEqual(self.run_main("--check"), 0)
+
+    def test_incomplete_canonical_notice_is_rejected_and_repaired(self) -> None:
+        self.assertEqual(self.run_main(), 0)
+        notice = self.root / "skills/tk-grill/LICENSE.txt"
+        notice.write_text("MIT License\nCopyright (c) 2026 Matt Pocock\n", encoding="utf-8")
+        self.assertEqual(self.run_main("--check"), 1)
+        self.assertEqual(self.run_main(), 0)
+        self.assertEqual(self.run_main("--check"), 0)
 
     def test_app_provider_contract_drift_blocks_check_and_sync_repairs_it(self) -> None:
         self.assertEqual(self.run_main(), 0)

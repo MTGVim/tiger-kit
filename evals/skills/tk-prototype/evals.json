@@ -128,10 +128,10 @@
       ]
     },
     {
-      "id": "prototype-bounds-result-cardinality",
+      "id": "prototype-summarizes-selection-without-numeric-cap",
       "path": "success",
       "prompt": "이미 실행한 disposable A/B/C prototype에서 비교 observation 9건이 나왔습니다. 선택 근거와 production implication을 최종 보고해 주세요.",
-      "expected_output": "`Confirmed`에 상위 5–7개 비교 결과를 2–5개 bullet 또는 option row로 묶고 prototype/evidence path와 선택 추천을 chat response에 직접 제시하며 command mechanics는 뒤로 둔다.",
+      "expected_output": "Confirmed에서 선택에 영향을 주는 비교 결과와 추천 이유를 간결히 설명하고 각 variant preview 및 prototype/evidence 경로를 직접 제시한다. 임의의 항목 수로 자르거나 production-ready로 주장하지 않는다.",
       "assertions": [
         {
           "type": "judge",
@@ -221,6 +221,13 @@
           "type": "git_head_unchanged"
         }
       ]
+    }
+  ],
+  "migrations": [
+    {
+      "from": "prototype-bounds-result-cardinality",
+      "to": "prototype-summarizes-selection-without-numeric-cap",
+      "reason": "출력 숫자 상한을 제거하되 선택 또는 해결 의도와 검증 근거를 보존합니다."
     }
   ]
 }

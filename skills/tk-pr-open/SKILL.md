@@ -162,7 +162,7 @@ See the required plan fields in [retrospective stack split](references/split-to-
 ```
 
 Any artifact owns only the current PR publication plan, not the product work plan or `worker` state.
-Create new PRs as `draft` only when the user explicitly requests `draft`; otherwise preserve the existing `ready` behavior.
+Create new PRs as `ready` unless the user explicitly requests `draft`.
 For an existing same-`head` PR, preserve its fresh-read state unless a state change was requested.
 
 Present the following naturally to the user instead of hiding information behind a file they must open.

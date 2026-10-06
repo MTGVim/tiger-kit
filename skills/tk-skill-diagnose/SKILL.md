@@ -71,6 +71,8 @@ Read the following references only when applicable:
 - [failure planes and evidence](references/failure-planes.md)
 - [empirical diagnostic method](references/empirical-method.md)
 
+For maintenance provenance, see [sources](references/sources.md).
+
 ## Efficiency Gate
 
 A resource claim requires a matched baseline, historical run, repository threshold, or

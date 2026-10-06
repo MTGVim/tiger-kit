@@ -122,8 +122,8 @@ requires a separate request.
 For multiple resolved conflict paths, show `Resolution` as a concise `Path | Intent | Result`
 table; use a sentence when only one row matters to the user. Start with the resolution result and
 do not repeat rows or append metadata. Summarize compound intent, resolved path groups, and
-verification in `2–5` short rows/bullets. For `8+` paths, group the top `5–7` intent/result rows
-and cite the exact remaining paths. Treat these numbers as a budget, not a quota.
+verification in short rows/bullets. When many paths share an intent, group them into one
+intent/result row and cite the exact paths it covers.
 
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths

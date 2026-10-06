@@ -94,9 +94,10 @@ wording changes after the same failure repeats.
 - decisive evidence missing → `unverifiable`.
 
 Write `.tigerkit/skill-diagnosis.md` only when actual telemetry or more than five
-evidence rows require a diagnostic artifact, and only after `git check-ignore -v` proves
-that Git effectively ignores `.tigerkit/` and `git ls-files -- .tigerkit/` returns no
+evidence rows require a diagnostic artifact, and only after `git check-ignore -q -- .tigerkit/`
+returns exit 0 and `git ls-files -- .tigerkit/` returns no
 tracked path. Accept per-directory, local-exclude, and user-level-exclude sources. Use
+`git check-ignore -v` only to diagnose the source; a printed negated pattern is not proof.
 the owning SKILL.md Artifact Paths setup for missing ignore coverage. If checks still
 fail, keep the bounded result in the response without an external fallback. Do not
 create a persistent optimization ledger.

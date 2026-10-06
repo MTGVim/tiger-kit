@@ -45,17 +45,20 @@ Implicit mode is report-only.
    scope, read [instruction economy](references/instruction-economy.md) and apply its
    branch-aware behavior comparison. Do not load it for a persistent-memory-only incident
    whose question is solely freshness, conflict, or attribution.
-7. `classification/proposal`: Apply the
+7. `model-fit audit`: When the request asks about target-model fit, a model change, or dated or
+   over-specified prompting, read [model fit](references/model-fit.md). Skip this branch
+   for a persistent-memory-only freshness, conflict, or attribution question.
+8. `classification/proposal`: Apply the
    [placement criteria table](references/repository-placement.md) to skill candidates.
    Classify skill actions as `keep | keep (vendor) | tighten | merge | split | move |
    deprecate | delete | fix`; persistent context may also use `duplicate | conflict |
    stale override` as a finding before proposing an action.
-8. `🔴 CHECKPOINT · 🛑 STOP`: Summarize the exact scope, evidence, proposal, target paths, and permitted apply actions.
+9. `🔴 CHECKPOINT · 🛑 STOP`: Summarize the exact scope, evidence, proposal, target paths, and permitted apply actions.
    A literal initial `--apply` pre-approves only that verified mechanical scope; otherwise reuse an explicit active-task request covering the same mechanical edits or ask once if it is absent. Scope, evidence, or target drift invalidates approval.
-9. `apply/report`: In report-only mode, output the proposal/receipt. If authority
+10. `apply/report`: In report-only mode, output the proposal/receipt. If authority
    exists, reread the sources, search references before delete/move, preserve
    managed/generated markings, and modify only the approved receipt scope.
-10. `revalidate`: Recheck links, duplication, frontmatter, persistent-context conflicts,
+11. `revalidate`: Recheck links, duplication, frontmatter, persistent-context conflicts,
     and any behavior comparison that justified instruction pruning, then report the
     results, unverified scope, and unresolved items.
 
@@ -145,14 +148,17 @@ first.
 
 Reuse the same IDs for applied changes and verification. Add `## Exceptions` only
 when there are evidence gaps, ownership conflicts, unresolved scope, or failed
-verification. Add `## Applied` and `## Verification` only after mutation. Show
-findings in two to seven rows. If there are eight or more, show the top five to
-seven and group the rest by audited target path. Do not create artifact/lifecycle
-actions solely for output. This is a budget, not a quota.
+verification. Add `## Applied` and `## Verification` only after mutation. Keep the
+table scannable: give each high-impact finding its own row and group lower-impact
+findings by audited target path while retaining each item's ID, action, target, and basis.
+Do not impose a minimum or maximum row count. Do not create artifact/lifecycle actions solely
+for output.
 
 Record the overall `report-only | applied` disposition in `## Disposition`, but do
 not repeat the table or append metadata. If there are no items, output one
 `— | None | keep | — | no finding` row. Use `keep (vendor)` for vendor rows.
+
+For distillation maintenance, see [sources](references/sources.md); ordinary audits do not need it.
 
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths

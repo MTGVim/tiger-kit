@@ -2,7 +2,7 @@
 name: tk-audit
 description: "[user] 저장소를 읽기 전용으로 감사하고, 다른 실행자나 `tk-prep`이 재사용할 수 있는 우선순위가 있는 근거 기반 `AUD-*` `finding`을 작성합니다."
 license: MIT
-argument-hint: "[quick|standard|deep] [security|perf|tests|architecture|policy|branch|next]"
+argument-hint: "[quick|standard|deep] [security|perf|tests|architecture|policy|branch|next] [save]"
 disable-model-invocation: true
 metadata:
   tigerkit:

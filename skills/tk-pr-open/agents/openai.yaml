@@ -1,2 +1,2 @@
 interface:
-  short_description: "[user/auto] 승인 후 하나의 `pull request`를 열거나 업데이트합니다."
+  short_description: "[user/auto] 승인 후 단일 PR 또는 기존 커밋으로 구성한 `stacked PR`을 발행합니다."

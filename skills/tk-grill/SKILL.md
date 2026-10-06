@@ -85,7 +85,7 @@ fact-versus-decision ownership, recommendations, and shared-understanding gate f
 
 TigerKit removes mandatory subagent runtime assumptions, wrappers such as `grill-me` and
 `grill-with-docs`, automatic implementation transition, and persistent state. The original
-copyright and MIT notice are in repository `NOTICE.md`.
+copyright and MIT notice are in [LICENSE.txt](LICENSE.txt).
 
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths

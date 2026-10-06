@@ -40,7 +40,7 @@ and performs changes, verification, push, reply, resolve, and any required re-re
 
 **Keep the conversation natural and the state strict.**
 
-Do not expose internal `apply | reply | defer` classifications, worker placement, or GitHub state as a raw report.
+Do not expose worker placement or GitHub state as a raw report.
 The user needs to know what the review means, how it will be addressed, why that approach is appropriate, and what will be verified.
 
 ## Fresh state
@@ -199,7 +199,9 @@ Do not claim publication complete unless fresh evidence proves every required re
 review, zero actionable unresolved threads, and any required current-head summary comment after the threads were closed.
 Missing evidence is `Unverifiable`, not complete.
 Do not claim completion while any unresolved inline thread remains.
-Keep deferred, unverifiable, or failed feedback open.
+An approved and verified `follow-up` may be resolved after its exact reply succeeds or is remotely verified;
+include the approved issue URL or explicitly state that no ticket was created. Keep unapproved,
+unverifiable, or failed feedback open.
 
 Every generated GitHub comment must end with `_🤖 본 코멘트는 AI가 작성했습니다._`.
 Do not merge, close, tag, release, plain force push, or resolve unrelated threads.

@@ -47,7 +47,7 @@ Keep the internal investigation rigorous, but present the result as a natural ex
 - Place `path:line` evidence next to each important repository claim.
 - Do not show internal classifications, checkpoints, or search ledgers by default.
 - Use short prose or a limited list unless a comparison truly requires a table.
-- Explain interactively one step at a time only when the user says `하나씩 따라가며 설명해줘`.
+- Explain interactively one step at a time only when the user asks for a guided walkthrough, such as `하나씩 따라가며 설명해줘`.
 
 ## Investigation Principles
 

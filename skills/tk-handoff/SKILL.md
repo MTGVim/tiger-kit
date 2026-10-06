@@ -63,7 +63,7 @@ Preserve at least the following meaning in the Handoff.
 
 ```text
 Goal/Seed: <seed path 또는 current goal reference>
-Status: pending | in_progress | completed | aborted | Blocked
+Status: pending | in_progress | completed | aborted | Blocked | Unverifiable
 Repository state: <branch, HEAD, worktree>
 Decisions: <confirmed progress-relevant decisions>
 Changed files: <observed paths | none>
@@ -77,6 +77,9 @@ Next step: <one executable immediate action>
 Resume hints: <environment/order/command hints>
 Disposition: reported | applied | pending
 ```
+
+`Disposition` describes the work recorded by this handoff: `reported` for investigation/report-only work,
+`applied` for authorized changes already made, and `pending` for an unapplied proposal. It grants no authority.
 
 For a task with a Seed, reference the exact contract section/path. For direct/no-Seed, record the minimal self-contained contract above and explicitly identify `Seed: none`; exclude unrelated or ambiguous old Seeds.
 

@@ -1,5 +1,14 @@
 # 고지
 
+`tk-grooming`의 대상 모델 적합성 감사는 `anthropics/skills`의
+`683bc88e56f3e09ba94f7055977f3d3aa499f202`에서 `skills/claude-api/shared/prompt-audit.md`와
+`shared/model-migration.md`를 비교했습니다. Apache-2.0 원본은 비교 자료로만 사용했으며,
+원본 지시문, 코드, 실행 체계 및 평가용 데이터는 복제하지 않았습니다. 대상 모델 근거와
+저장소 모순의 구분은 `keep`, 기존 GR 분류 및 승인 경계에 따른 적용은 `adapt`, API 요청
+코드 및 도구 정의 감사는 `omit`입니다. 별도 상류 행동 평가 결과는 `unverified`입니다.
+각 설치 패키지의 질문 참조에서 사용하는 `mattpocock/skills` MIT 고지는 해당 패키지의
+`LICENSE.txt`에도 포함되며, 공유 정책 검사에서 고지의 누락을 확인합니다.
+
 TigerKit에는 `mattpocock/skills`에서 파생한 동작이 포함되어 있습니다(원본 스냅샷은
 커밋 `391a2701dd948f94f56a39f7533f8eea9a859c87`에서 확인됨).
 

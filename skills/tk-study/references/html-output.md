@@ -34,11 +34,5 @@ Inspect saved HTML for self-containment, anchor targets, escaping and answer sep
 local renderer is available, inspect the rendered result and keyboard interactions without
 starting a server or launching the user's browser; disclose any unperformed rendering or checks.
 
-Live-figure provenance (2026-10-05): `nicobailon/visual-explainer` at
-`5846f5aef34a23c8fea389d2f23ce56224cbf840`, `plugins/visual-explainer/SKILL.md`,
-`references/diagrams.md` (Live figure) and `templates/page.html` under that package.
-Keep lightweight interaction and readable static state; adapt shared pure-model
-calculation, small controls, verified defaults and simplified-model disclosure.
-Omit upstream templates, external dependencies, forced figure-first presentation
-and automatic opening. Separate upstream behavior evals and runtime efficacy are
-unverified; the calling package's `LICENSE.txt` preserves the MIT notice.
+Live-figure provenance is kept in the calling package's provenance file; the calling package's
+`LICENSE.txt` preserves the MIT notice.

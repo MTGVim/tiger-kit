@@ -45,4 +45,4 @@ Before using it, identify that exact requirement and document and verify its bou
 Convenient controls, option display and ordinary approval confirmation do not qualify.
 
 Distilled from TigerKit's `tk-grill` and `mattpocock/skills` grilling at
-`d81f3a183412e71a5b1e84ca21bc1a35eea03a60`; retain the existing MIT notice in `NOTICE.md`.
+`d81f3a183412e71a5b1e84ca21bc1a35eea03a60`; the original MIT notice is in the calling package's `LICENSE.txt`.

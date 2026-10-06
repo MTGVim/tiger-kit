@@ -49,7 +49,7 @@ For an interactive example, replay an input change, its expected visible consequ
 
 Return `Pass` only when the file exists and its content satisfies the explanation and offline artifact requirements; surface unresolved content or execution failures instead. Return a concise link/path identifying the explanation, plus a brief material verification limitation if any. Do not append a second full text explanation or a review ledger.
 
-Adapted from `anthropics/claude-plugins-community` `eli5` at `a727be1c7bd6064419b6f60d71993a19198adc17`, with shared writing criteria from the sources in the reference. Original notices are in [LICENSE.txt](LICENSE.txt).
+Adapted from `anthropics/claude-plugins-community` `eli5` at `a727be1c7bd6064419b6f60d71993a19198adc17`, with shared writing criteria whose sources are recorded in `references/sources.md`. Original notices are in [LICENSE.txt](LICENSE.txt).
 
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths

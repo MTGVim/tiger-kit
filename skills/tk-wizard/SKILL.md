@@ -27,7 +27,7 @@ like an approval document.
 
 **Keep the conversation natural and the state strict.**
 
-Initially describe the full journey in only 1–3 sentences, then naturally guide the user through
+Open with a brief overview of the full journey, then naturally guide the user through
 one action they must take now. Do not repeatedly confirm already completed steps.
 
 ## Scope

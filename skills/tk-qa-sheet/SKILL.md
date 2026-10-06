@@ -88,11 +88,10 @@ automated test generation, or PR publication. A parent's recommendation is not i
 
 ## Source and boundaries
 
-Source: the user-supplied `qa-sheet-20261002122904` proposal and anonymized template,
-dated 2026-10-02, with one reported successful manual QA session and explicit reuse intent.
+Source: the user-supplied `qa-sheet-20261002122904` proposal and anonymized template.
 Keep the single-file layout and local persistence; adapt evidence, artifact safety,
 data validation and stable identity to TigerKit; omit repository-specific collectors,
-auth injection, server sharing and generation scripts. External precedent is unverified.
+auth injection, server sharing and generation scripts.
 
 An inaccessible UI does not block a source-based inventory: mark every unsupported
 label/path `code-only`, carry the gaps, and continue the requested output. Missing diff or
@@ -119,7 +118,6 @@ Minimum shape, even when already familiar:
 
 Separate questions with `---`. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
 <!-- /tigerkit:questions -->
-
 <!-- tigerkit:output-notation -->
 ## Output Notation
 

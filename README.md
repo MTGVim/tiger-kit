@@ -88,7 +88,7 @@ Claude Code/Hermes에서는 `/tk-prep`, Codex에서는 `$tk-prep` 또는 스킬 
 | `tk-skill-diagnose` | `hybrid` | `Agent Skill` 사고 재현·격리와 `learn-ready` 인계, 승인된 수정은 `tk-learn`으로 연속 진행 |
 | `tk-learn` | `hybrid` | 재사용 가능한 스킬의 익명 이슈·PRD 초안을 임시 공간에 먼저 저장하고, 승인한 대상만 생성/개선/병합. 기존 검사 도구로 막을 수 있는 문제는 해당 도구의 최소 확장을 우선 제안 |
 | `tk-domain` | `hybrid` | 저장소 고유 용어의 `canonical vocabulary`와 `sparse durable decision/ADR context` 작성·정제 |
-| `tk-grooming` | `hybrid` | 기존 스킬·지속 `rule`·`auto memory`의 중복·충돌·낡은 지침 감사 |
+| `tk-grooming` | `hybrid` | 기존 스킬·지속 `rule`·`auto memory`의 중복·충돌·낡은 지침 및 대상 모델 적합성 감사 |
 | `tk-handoff` | `hybrid` | 진행 중 작업의 재개용 상태 사진 |
 | `tk-adhd` | `hybrid` | 세션 전환 후 목표·진행·다음 행동을 짧게 안내 |
 | `tk-rewrite` | `hybrid` | 기존 글의 맥락·구조 재구성과 표현 정제 |

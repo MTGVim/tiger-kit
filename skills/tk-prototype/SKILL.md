@@ -125,9 +125,9 @@ When comparing multiple criteria or variants, render `## Confirmed` as a concise
 one user-relevant row. Record whether content/data/state remained identical. Use
 `not observed` for differences that were not observed and `unverifiable` when evidence is
 absent. Do not elevate unaudited aesthetic preferences into conclusions. Summarize the
-result and selection rationale in 2–5 bullets or option rows. If there are 8 or more
-observations, show the top 5–7 and cite the prototype or evidence path that owns the rest.
-This is a budget, not a quota.
+result and selection rationale as short bullets or option rows that answer the comparison
+question; show the decision-relevant observations and cite the prototype or evidence path
+that owns the rest.
 
 ## Prohibited Patterns
 

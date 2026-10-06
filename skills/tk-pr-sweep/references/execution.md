@@ -45,6 +45,7 @@ A row-local failure does not stop later independent rows. Stop the Sweep only fo
 permission contamination, ambiguous repository scope, or untrustworthy triage. Triage each PR after its child returns.
 After all rows finish, run fresh triage across every configured repository.
 
-A PR is complete only when final triage proves required checks and publication state, all required `CHANGES_REQUESTED`
-re-review requests, closed actionable threads, and any required current-head summary marker
-`<!-- tigerkit:pr-summary:<HEAD_SHA> -->`.
+A PR is complete only when final triage proves required checks and publication state, closed actionable threads, a
+current re-review request or post-summary review for every required reviewer (active `CHANGES_REQUESTED` reviewers and
+those named by current-head `<!-- tigerkit:pr-rereview:<HEAD_SHA>:<LOGIN> -->` markers), and any required current-head
+summary marker `<!-- tigerkit:pr-summary:<HEAD_SHA> -->`.
