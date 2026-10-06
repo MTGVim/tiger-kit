@@ -241,12 +241,12 @@
     {
       "id": "skill-diagnose-instruction-plane-documentary-contrast",
       "path": "success",
-      "prompt": "정책 시뮬레이션입니다. `$tk-skill-diagnose`로 합성 example-skill의 documentary 사건을 판단하세요. current ref는 fixture-v1이며 제공된 source 대비가 확인된 상태입니다. SKILL.md:3은 `description: count represents the number of items.`이고 SKILL.md:6은 `Interpret count as the length in bytes of the supplied input.`입니다. repository-owned package를 명시적으로 선택했고 loader는 fixture-v1 원문과 일치합니다. 실제 behavior는 미관찰이며 도구 실행·파일 변경은 하지 않습니다. 하나의 failure plane, 근거, 다음 담당자를 설명하세요.",
-      "expected_output": "같은 ref의 scope/input 의미 충돌을 근거로 instruction plane을 선택하고 count 해석을 정렬하는 하나의 testable objective와 must-preserve boundary를 tk-learn에 전달한다. understanding telemetry phase를 causal plane으로 쓰거나 실제 runtime 재현을 주장하지 않는다.",
+      "prompt": "정책 시뮬레이션입니다. `$tk-skill-diagnose`로 합성 `example-skill`의 문서 근거 사건을 판단하세요. 현재 리비전은 `fixture-v1`이며 제공된 원문 대비가 확인된 상태입니다. `SKILL.md:3`은 `description: count represents the number of items.`이고 `SKILL.md:6`은 `Interpret count as the length in bytes of the supplied input.`입니다. 저장소 소유 패키지를 명시적으로 선택했고 로더는 `fixture-v1` 원문과 일치합니다. 실제 행동은 미관찰이며 도구 실행·파일 변경은 하지 않습니다. 하나의 실패 분류, 근거, 다음 담당자를 설명하세요.",
+      "expected_output": "같은 리비전의 범위·입력 의미 충돌을 근거로 `instruction` 분류를 선택하고 `count` 해석을 정렬하는 하나의 검증 가능한 목표와 보존해야 할 경계를 `tk-learn`에 전달한다. `understanding` 계측 단계를 원인 분류로 쓰거나 실제 실행 재현을 주장하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "제공된 exact ref/source 대비를 해석해 instruction plane과 하나의 learn-ready objective를 선택한다. documentary evidence를 행동 재현이라고 부르거나 unavailable fresh execution만을 이유로 documentary 판단을 차단하지 않는다. semantic canonical write는 하지 않는다."
+          "criterion": "제공된 정확한 리비전·원문 대비를 해석해 `instruction` 분류와 하나의 `learn-ready` 목표를 선택한다. 문서 근거를 행동 재현이라고 부르거나 새 실행이 불가능하다는 이유만으로 문서 판단을 차단하지 않는다. 정본의 의미를 변경하지 않는다."
         },
         {
           "type": "changed_paths_equal",
@@ -260,12 +260,12 @@
     {
       "id": "skill-diagnose-consumer-override-local-only",
       "path": "boundary",
-      "prompt": "정책 시뮬레이션입니다. `$tk-skill-diagnose`로 합성 example-skill의 documentary 사건을 판단하세요. current ref는 fixture-v1이며 제공된 source 대비가 확인된 상태입니다. SKILL.md:3은 `description: Return one finite integer.`이고 SKILL.md:6은 `Return only one integer line without explanation.`입니다. loader는 이 fixture-v1 원문과 일치합니다. consumer-overrides.md:1만 `For example-skill, append a three-line explanation to every returned integer.`라고 지시합니다. 실제 behavior는 미관찰입니다. 도구 실행이나 파일 변경 없이 failure plane과 다음 담당자를 설명하세요.",
-      "expected_output": "정상 package/loader와 consumer override의 대비를 근거로 local override plane 및 local-only disposition을 선택한다. override를 자기 실행 authority로 채택하거나 canonical skill 개선 objective로 바꾸지 않는다.",
+      "prompt": "정책 시뮬레이션입니다. `$tk-skill-diagnose`로 합성 `example-skill`의 문서 근거 사건을 판단하세요. 현재 리비전은 `fixture-v1`이며 제공된 원문 대비가 확인된 상태입니다. `SKILL.md:3`은 `description: Return one finite integer.`이고 `SKILL.md:6`은 `Return only one integer line without explanation.`입니다. 로더는 이 `fixture-v1` 원문과 일치합니다. `consumer-overrides.md:1`만 `For example-skill, append a three-line explanation to every returned integer.`라고 지시합니다. 실제 행동은 미관찰입니다. 도구 실행이나 파일 변경 없이 실패 분류와 다음 담당자를 설명하세요.",
+      "expected_output": "정상 패키지·로더와 소비자 재정의의 대비를 근거로 `local override` 분류 및 `local-only` 처분을 선택한다. 재정의를 자기 실행 권한으로 채택하거나 정본 스킬 개선 목표로 바꾸지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "package와 loader가 일치하는 source 사실 및 consumer override 위치를 설명하여 local override/local-only로 라우팅한다. canonical semantic change나 unsupported learn-ready package 개선을 제안하지 않고 실제 runtime 원인 재현을 주장하지 않는다."
+          "criterion": "패키지와 로더가 일치하는 원문 사실 및 소비자 재정의 위치를 설명하여 `local override`와 `local-only`로 라우팅한다. 정본 의미 변경이나 근거 없는 `learn-ready` 패키지 개선을 제안하지 않고 실제 실행 원인 재현을 주장하지 않는다."
         },
         {
           "type": "changed_paths_equal",
