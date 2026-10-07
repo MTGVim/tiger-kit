@@ -154,7 +154,7 @@ Use `tk-browser-verify` with the exact generated file, no auth/server, a disposa
 headless profile, and all mandatory [HTML output](html-output.md) render checks, plus any
 requested layout criteria. Every short sheet still needs desktop/mobile and light/dark coverage
 with numerical readability checks and inspected/missing-check reporting. Verify the visible
-theme buttons is ordered `system / light / dark`: `system` leaves `data-theme` unset and
+segmented theme radios are ordered `system / light / dark`: `system` leaves `data-theme` unset and
 follows emulated light/dark OS preference, while manual light/dark choices override it and
 restore after reload when storage is available. Confirm check reset preserves the theme and
 storage refusal leaves the sheet readable with `system` as the next-load fallback. Two
