@@ -182,8 +182,8 @@ class InstalledArtifactGuardTests(unittest.TestCase):
             reference.write_text(original.replace('Only exit 1', 'Any exit'))
             self.assertTrue(policy.validate_artifact_guards(root))
             reference.write_text(original)
-            learn_reference = root / 'skills/tk-retro/references/artifact-paths.md'
-            learn_reference.write_text((policy.ARTIFACT_REFERENCE + policy.USER_INPUT_REFERENCE).replace('Only exit 1', 'Any exit'))
+            retro_reference = root / 'skills/tk-retro/references/artifact-paths.md'
+            retro_reference.write_text((policy.ARTIFACT_REFERENCE + policy.USER_INPUT_REFERENCE).replace('Only exit 1', 'Any exit'))
             self.assertTrue(policy.validate_artifact_guards(root))
 
     def test_no_artifact_skill_cannot_gain_writer_guard(self):
