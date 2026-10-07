@@ -28,6 +28,20 @@ Check quantitative and qualitative meaning separately from literal preservation.
 
 After polishing, compare each claim-evidence binding and the text with its source or supported explanation outline. Restore background or qualifications lost through shortening. Use existing technical terms, defining unfamiliar ones when needed. Keep code, commands, identifiers, links, quotations, and mandatory attribution exact. Do not treat AI-style removal as authorship concealment or AI-authorship detection.
 
+### Content-led headings and labels
+
+Headings, labels, captions, callouts, and navigation text should name the content or action they
+represent. Do not use assistant narration or generic reading-order metadata as a substitute for
+the subject. Phrases such as `먼저 볼 것`, `먼저 확인할 것`, `처음 읽는 분께`, `여기서 중요한 점`
+or similar meta-headings are inappropriate when a specific heading such as the actual decision,
+background, constraint, evidence, or next action can be stated. A phrase is not banned from normal
+prose when it carries real meaning; the problem is using it as decorative structure.
+
+For generated Korean reader-facing copy, run the final headings and prose through the same sentence
+clarity checks as the body text. A short heading may be a noun phrase, but the surrounding prose must
+still identify the subject and relation. Do not create fragmentary explanatory sentences merely to
+sound concise or polished.
+
 ### Korean Sentence Clarity
 
 Apply this section only to Korean prose. Respect explicit user style requirements and the reader relationship; casual chat is not a writing sample. A supplied sample guides voice within those requirements. Keep formal endings consistent when the genre needs them, varying sentence structure rather than mechanically alternating registers. Sentence-ending variety is not itself an error: normalize it only for an explicit register request or a concrete audience, genre or consistency problem. Compare source and revision for unnecessary flattening and preserve the actor and force of commands, requests, questions, advice and obligations even when normalization is justified. Already uniform prose needs no artificial variety.
