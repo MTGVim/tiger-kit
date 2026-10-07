@@ -13,10 +13,16 @@ edits back from HTML. Bind goal/research identity, evidence revision/date and pr
 Check ownership before overwrite; atomically replace only this project's report and reread it.
 
 Use [the offline template](../assets/report.html) as a minimal starting point, replacing illustrative
-content and removing irrelevant sections rather than adding empty ceremony. Core content answers:
-goal/downstream decision; recommendation/confidence/why; current stage; baseline and directions;
-actual investigations/experiments and their links/verdicts; rejected alternatives and evidence versus
-untested budget deferrals; unknowns/limits; next frontier/action and ready handoff candidates; sources.
+content and removing irrelevant sections rather than adding empty ceremony. The report is decision-ready
+at the evidence available now, including the first material persistent checkpoint: it should let the
+reader decide whether more research is needed, whether a candidate should become implementation work,
+or whether to stop. Core content answers: goal/downstream decision; recommendation/confidence/why;
+the strongest evidence; assumptions or evidence that could reverse the recommendation; current stage;
+baseline and directions; actual investigations/experiments and their links/verdicts; rejected alternatives
+and evidence versus untested budget deferrals; unknowns/limits; the smallest plausible implementation
+scope if the recommendation is accepted; the consequence of doing nothing when material; next
+frontier/action and ready handoff candidates; sources. Do not add a comprehension quiz by default:
+`tk-explain` and `tk-study` own teaching checks, while this report owns decision readiness.
 Show meaningful changes in a timeline only when they exist. Preserve direction/experiment/source IDs
 and relationships when relevant. A short report can combine these into a few sections. Label proposed
 tests as proposed, never executed. Escape untrusted text/attributes, validate source links and use no
