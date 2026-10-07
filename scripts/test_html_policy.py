@@ -30,13 +30,15 @@ class HTMLPolicyTest(unittest.TestCase):
             text = (ROOT / relative).read_text()
             self.assertIn('data-default-theme="system"', text)
 
-    def test_templates_use_touch_friendly_theme_buttons(self):
+    def test_templates_use_native_segmented_theme_radios(self):
         for relative in ('skills/tk-research/assets/report.html', 'skills/tk-qa-sheet/assets/qa-sheet-template.html'):
             text = (ROOT / relative).read_text()
+            self.assertIn('<fieldset class="ht-theme-control"', text)
             self.assertIn('data-ht-theme-control', text)
+            self.assertIn('name="ht-theme"', text)
             self.assertNotIn('<select id="ht-theme"', text)
             for value in ('system', 'light', 'dark'):
-                self.assertIn(f'data-theme-choice="{value}"', text)
+                self.assertIn(f'value="{value}"', text)
 
     def test_templates_avoid_page_level_mobile_overflow_patterns(self):
         report = (ROOT / 'skills/tk-research/assets/report.html').read_text()
@@ -45,6 +47,20 @@ class HTMLPolicyTest(unittest.TestCase):
         self.assertNotIn('flex-wrap: wrap', qa)
         self.assertIn('grid-template-columns:repeat(2,minmax(0,1fr))', report)
         self.assertIn('header > * { min-width: 0; max-width: 100%; }', qa)
+        self.assertIn('.environment { white-space: normal; overflow-wrap: anywhere; }', qa)
+
+    def test_shared_contract_contains_render_safe_authoring_rules(self):
+        text = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
+        self.assertIn('## Render-safe authoring', text)
+        self.assertIn('at least 11 CSS px after scaling', text)
+        self.assertIn('emulated mobile CSS viewport width matching `innerWidth`', text)
+        self.assertIn('`.ht-token`', text)
+
+    def test_clear_writing_rejects_fragmentary_korean_headings(self):
+        text = (ROOT / 'skills/tk-rewrite/references/clear-writing.md').read_text()
+        self.assertIn('요청 함수의 이동 위치', text)
+        self.assertIn('colloquial interrogative ending', text)
+        self.assertIn('dangling connective ending', text)
 
     def test_missing_canonical_theme_blocks_release_check(self):
         self.check_mutation(lambda root: (root / 'skills/tk-explain/assets/html-theme.css').unlink())
