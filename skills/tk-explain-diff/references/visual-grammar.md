@@ -28,13 +28,20 @@ reasoning effort, or turn an exact numeric comparison into a less precise diagra
 | Dated events | Timeline |
 | Ownership and handoffs across participants | Swimlane |
 | Parent/child hierarchy | Tree |
-| Prerequisites or dependencies | Dependency graph |
+| Dependencies or change-centered blast radius | Dependency graph |
 | Added, removed or rewired system relationships | Architecture delta |
 
 Use one primary grammar for one question. When two grammars need substantial treatment,
 split an overview and detail rather than mixing their conventions. Preserve source identities,
 edge direction, timing, guards, outcomes and unknown connections; never invent an edge to
 complete the layout. Name the visual's scope so a focused view does not imply full coverage.
+
+For a change-centered blast-radius view, start from verified changed nodes and include only the
+unchanged callers, dependencies or downstream consumers needed to explain material impact.
+Distinguish changed, related unchanged, removed and moved elements without implying that every
+visible neighbor changed. When deletion or movement rewires relationships, use separate base/head
+views when an overlay would obscure which edge belongs to which version. Prefer this bounded
+neighborhood over a whole-repository dependency map.
 
 ## Bound complexity without shrinking meaning
 

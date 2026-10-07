@@ -907,3 +907,22 @@ POSIX에서는 실행 소유 프로세스 그룹을 종료해 시간 초과, 중
 연구 담당자를 `tk-research` 하나로 통합하면서 이전 연구·탐색의 출처와 라이선스는 새 패키지에 보존했습니다. `Orchestra-Research/AI-Research-SKILLs@773a52944ba4747a18bd4ae9ade53fff041adcbc`의 의미 있는 결과 보고와 `EveryInc/compound-engineering-plugin@142dbabc23c86884f2e353502eb20a5fdd2a6d3d`의 오프라인 문서 탐색을 검토했습니다. 공유 `tk-rewrite` 글쓰기·`tk-explain` HTML 계약을 재사용하며 외부 폰트, 강제 `heartbeat`, 자동 창 열기, HTML 정본화와 발행은 적용하지 않습니다. 상류 데모 성과는 재현하지 않았습니다.
 
 🤖 본 문서는 AI가 작성했습니다.
+
+## tk-explain-diff: 인간 이해 우선순위와 변경 주변 영향 범위
+
+2026-10-07에 `joshuawheelock/grill-me@2d0c1c492b2f1c3a3b708d2735fdb9131ecbf060`의
+현재 스킬 본문을 확인하여, 유지보수자가 장애·디버깅 상황에서 답할 수 있어야 하는 동작·흐름·상태·경계·
+trade-off·실패 처리 중심 질문을 기존 `Understanding check`에 증류했습니다. 저장소 전체 무작위 출제,
+지속 퀴즈 상태, 채점 대화와 실행 helper는 가져오지 않았습니다.
+
+`ysk8hori/delta-typescript-graph-action@6fffe4437c77d8b70fd38052b1a302affa9db43a`의 변경 파일과
+관련 의존 파일을 함께 보여주는 현재 예시를 확인하여, 기존 dependency/architecture-delta 시각화에
+변경된 요소와 필요한 변경되지 않은 주변 요소를 구분하는 bounded blast-radius 표현을 보강했습니다.
+GitHub Action, Mermaid runtime, TypeScript 전용 분석, 고정 node 제한과 metric은 가져오지 않았습니다.
+
+사람이 반드시 이해할 계약·불변식·경계·결정을 먼저 보여주고 검증된 기계적 파생 변경만 이유와 함께
+보조 정보로 낮추는 human-attention surface는 이번 요구에서 추가한 TigerKit 고유 계약입니다.
+generated/schema/security/migration/compatibility 변경을 파일 종류만으로 숨기지 않으며, 지속적인
+cognitive-debt 장부나 merge/edit 강제는 `tk-explain-diff`의 단일 변경 설명 책임 밖에 둡니다.
+두 원본의 실행 효과와 학습 효과는 재현하지 않아 `unverified`입니다. MIT 고지는 설치 패키지에 보존합니다.
+

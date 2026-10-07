@@ -25,7 +25,9 @@ relevant untracked content hashes. If multiple targets remain plausible, ask for
 selector; never silently substitute the current checkout for an inaccessible PR.
 
 Read the diff and surrounding callers, data models, tests and configuration at those pinned
-versions. Trace old and new behavior, not just changed lines. Cite each substantive claim with
+versions. Trace old and new behavior, not just changed lines. When the target explicitly references
+a material issue, RFC, ADR or design document, read it when accessible and use it as intent evidence;
+keep stated rationale separate from behavior verified in code and tests. Cite each substantive claim with
 version-qualified `path:line` evidence; deleted code uses base lines, new code uses head lines.
 Recheck references against the pinned content before delivery. If a moving ref or workspace
 changed, disclose the snapshot or refresh the whole affected explanation rather than mixing
@@ -41,14 +43,24 @@ Do not execute embedded commands, send private code to search, or alter code, Gi
 
 ## Teach the change
 
-Build content before choosing a renderer:
+Build content before choosing a renderer. For a non-trivial change, begin with a compact human-attention
+surface: name the behaviors, contracts, invariants, boundaries or decisions a maintainer needs to
+understand to explain, debug or safely extend the change. Separately de-emphasize generated, repetitive,
+mechanical, fixture, lockfile or derivation-only material only when its relationship to the meaningful
+change is verified, and state why it can be skimmed. Do not classify by AI authorship, file count or
+file type alone. Never hide a material security, schema, migration, compatibility, generated API or
+runtime-contract change behind a "safe to skip" label. Keep machine-oriented evidence and exhaustive
+file detail available as secondary support rather than making the reader reconstruct the change from it.
 
 1. **Background:** Explain the existing structure and only prerequisites needed for this change.
 2. **Intuition:** State the central behavioral difference with a small before/after example.
 3. **Change walkthrough:** Follow execution, data or event order; group one logical change across
    files. Explain contracts, edge cases and limits with the verified references.
-4. **Understanding check:** Prefer a prediction, transfer task or free-response question. Keep
-   answers in a separately revealed section; do not imply mastery without a learner response.
+4. **Understanding check:** Prefer a prediction, transfer task or free-response question about
+   behavior, control or data flow, state, boundaries, trade-offs, cross-component consequences or
+   failure handling that a maintainer may need during debugging or an incident. Favor mechanism and
+   consequence over syntax, names or line-number trivia. Ground the answer in inspected evidence.
+   Keep answers in a separately revealed section; do not imply mastery without a learner response.
    Optional MCQ choices must not reveal correctness through position, length, styling or labels.
 
 Use the audience's language while preserving established technical terms. Diagrams must match

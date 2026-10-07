@@ -187,6 +187,51 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "human-attention-separates-mechanical-noise",
+      "path": "success",
+      "prompt": "/tk-explain-diff 정책 시뮬레이션이며 파일 작성은 하지 마세요. 한 PR에서 인증 헤더 주입 위치가 바뀌었고 import-only 변경 8개, lockfile 1개, 생성된 API 타입 14개가 따라왔습니다. 그런데 생성된 타입 중 한 필드는 nullable에서 required로 바뀌어 외부 계약에도 영향을 줍니다. 사람이 무엇을 읽어야 하는지 정리해 설명하세요.",
+      "expected_output": "사람이 반드시 이해할 인증 책임 이동과 실제 계약 변경을 먼저 보여주고, 검증된 기계적 파생 변경만 이유와 함께 보조 정보로 낮춘다. generated/lockfile이라는 이유만으로 중요한 schema·API 계약 변경을 읽지 않아도 된다고 표시하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "사람이 반드시 이해할 인증 책임 이동과 실제 계약 변경을 먼저 보여주고, 검증된 기계적 파생 변경만 이유와 함께 보조 정보로 낮춘다. generated/lockfile이라는 이유만으로 중요한 schema·API 계약 변경을 읽지 않아도 된다고 표시하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "maintainer-level-understanding-check",
+      "path": "success",
+      "prompt": "/tk-explain-diff 정책 시뮬레이션이며 파일 작성은 하지 마세요. 변경은 feature별 retry를 shared client로 이동했고 호출자는 그대로입니다. 이해 확인 문제를 하나 만들어 주세요. 코드의 함수명과 줄 번호를 외우는 문제는 원하지 않습니다.",
+      "expected_output": "장애나 디버깅 상황에서 필요한 동작·실패 처리·컴포넌트 관계를 확인하는 예측 또는 자유응답 문제를 만든다. 함수명, 문법, 줄 번호 암기 문제나 정답 힌트를 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "장애나 디버깅 상황에서 필요한 동작·실패 처리·컴포넌트 관계를 확인하는 예측 또는 자유응답 문제를 만든다. 함수명, 문법, 줄 번호 암기 문제나 정답 힌트를 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "blast-radius-keeps-unchanged-context",
+      "path": "success",
+      "prompt": "/tk-explain-diff 정책 시뮬레이션이며 파일 작성은 하지 마세요. 검증된 변경은 `client.ts` 한 파일이고, 변경되지 않은 `query.ts`가 이를 호출하며 `screen.tsx`가 `query.ts`의 결과를 소비합니다. 저장소에는 이 흐름과 무관한 파일이 300개 있습니다. 영향 범위를 그림으로 설명하세요.",
+      "expected_output": "변경된 client와 영향 설명에 필요한 변경되지 않은 query/screen만 구분해서 보여주고 전체 저장소를 그래프에 넣지 않는다. 확인되지 않은 관계를 추가하거나 주변 노드도 변경된 것처럼 표현하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "변경된 client와 영향 설명에 필요한 변경되지 않은 query/screen만 구분해서 보여주고 전체 저장소를 그래프에 넣지 않는다. 확인되지 않은 관계를 추가하거나 주변 노드도 변경된 것처럼 표현하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

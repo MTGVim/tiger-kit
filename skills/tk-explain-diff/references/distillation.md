@@ -1,5 +1,31 @@
 # Distillation Provenance
 
+## Human comprehension and blast-radius review
+
+Reviewed 2026-10-07 at `joshuawheelock/grill-me@2d0c1c492b2f1c3a3b708d2735fdb9131ecbf060`:
+`skills/grill-me/SKILL.md`. The current implementation and question-quality rules were read.
+Keep maintainer-relevant mental-model checks; adapt behavior/control/data flow, state, boundary,
+trade-off, cross-component consequence and failure-handling questions to this skill's existing
+single-artifact understanding check. Omit repository-wide random sampling, persistent quiz state,
+grading dialogue and helper executables.
+
+Reviewed 2026-10-07 at
+`ysk8hori/delta-typescript-graph-action@6fffe4437c77d8b70fd38052b1a302affa9db43a`:
+`README.md` and the demonstrated changed-file dependency views. Keep the idea that a reviewer
+benefits from changed nodes plus their verified related context; adapt it to TigerKit's existing
+Dependency graph and Architecture delta grammar, including distinct base/head views when deletion
+or movement would make one overlay ambiguous. Omit the GitHub Action, Mermaid runtime, TypeScript-only
+analysis, node quotas, metrics and PR-comment publication.
+
+The human-attention surface is a TigerKit extension motivated by the user requirement to preserve
+human comprehension under AI-generated change volume. It does not classify files by AI authorship
+and does not treat generated or repetitive files as automatically safe to skip. Persistent cognitive
+debt ledgers, forced merge gates and edit blocking remain outside `tk-explain-diff`; this skill
+explains one pinned change and leaves durable debt tracking to a distinct owner if TigerKit adds one.
+
+Separate upstream runtime efficacy and learning outcomes were not reproduced and remain unverified.
+No upstream runtime, templates or implementation code are copied.
+
 ## Preserved invariants
 
 Reviewed 2026-10-01: `Data-System-School/agent-skills` at
