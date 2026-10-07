@@ -104,6 +104,7 @@ pre { max-width: 100%; overflow-x: auto; }
   .badge { font-size: 11px; color: var(--warn); background: var(--warn-bg); border-radius: 4px; padding: 0 5px; margin-left: 6px; white-space: nowrap; }
   .badge.auto { color: var(--good); background: var(--hover); }
   .badge.partial { color: var(--accent); background: var(--hover); }
+  .badge.demoted { color: var(--muted); background: var(--hover); }
   .evidence { color: var(--muted); font-size: 11px; margin-left: 6px; overflow-wrap: anywhere; }
   details.automated { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 14px; margin-bottom: 12px; }
   details.automated > summary { cursor: pointer; font-weight: 700; }
@@ -253,8 +254,10 @@ pre { max-width: 100%; overflow-x: auto; }
   const validVerification = (v) => {
     if (!verification(v.verification)) return false;
     const mode = v.verification || "manual";
-    if (mode === "manual") return v.evidence === undefined;
-    return evidence(v.evidence);
+    if (mode === "manual") {
+      return v.evidence === undefined && (v.previousEvidence === undefined || evidence(v.previousEvidence));
+    }
+    return v.previousEvidence === undefined && evidence(v.evidence);
   };
   const safeUrl = (v) => {
     if (!nonblank(v) || !/^https?:\/\//.test(v)) return false;
@@ -263,14 +266,14 @@ pre { max-width: 100%; overflow-x: auto; }
   const validCheck = (c) => object(c) && nonblank(c.text) && provenance(c.provenance)
     && (c.heading === undefined || typeof c.heading === "boolean")
     && (c.indent === undefined || (Number.isInteger(c.indent) && c.indent >= 0 && c.indent <= 3))
-    && (c.heading ? c.verification === undefined && c.evidence === undefined : validVerification(c));
+    && (c.heading ? c.verification === undefined && c.evidence === undefined && c.previousEvidence === undefined : validVerification(c));
   const validItem = (it) => {
     if (!object(it) || !nonblank(it.title) || !provenance(it.provenance) || !strings(it.notes)) return false;
     if (it.checks !== undefined && (!Array.isArray(it.checks) || !it.checks.every(validCheck))) return false;
     const children = Array.isArray(it.checks) && it.checks.length > 0;
     if (children && !it.checks.some((c) => !c.heading)) return false;
     return children
-      ? it.verification === undefined && it.evidence === undefined
+      ? it.verification === undefined && it.evidence === undefined && it.previousEvidence === undefined
       : validVerification(it);
   };
   const validData = (d) => object(d) && nonblank(d.title) && nonblank(d.storageKey) && strings(d.legend)
@@ -319,27 +322,29 @@ pre { max-width: 100%; overflow-x: auto; }
 
   const seen = new Set();
   const verificationMode = (v) => v || "manual";
-  const evidenceHtml = (value) => value
-    ? `<span class="evidence">근거: <code>${esc(value.ref)}</code> @ <code>${esc(value.head)}</code></span>`
+  const evidenceHtml = (value, label = "근거") => value
+    ? `<span class="evidence">${label}: <code>${esc(value.ref)}</code> @ <code class="ht-token">${esc(value.head)}</code></span>`
     : "";
-  const checkLi = (id, text, prov, indent, mode = "manual", evidenceValue) => {
+  const checkLi = (id, text, prov, indent, mode = "manual", evidenceValue, previousEvidenceValue) => {
     if (seen.has(id)) throw new Error("체크 항목 ID가 중복됩니다. 항목을 구별할 화면과 조건을 추가해 주세요.");
     seen.add(id);
     const provenanceBadge = prov !== "observed" ? '<span class="badge">코드 기준</span>' : "";
     const verificationBadge = mode === "auto-verified"
       ? '<span class="badge auto">자동 검증</span>'
-      : mode === "partial" ? '<span class="badge partial">부분 자동 확인</span>' : "";
+      : mode === "partial"
+        ? '<span class="badge partial">부분 자동 확인</span>'
+        : previousEvidenceValue ? '<span class="badge demoted">이전 head 검증</span>' : "";
     const auto = mode === "auto-verified";
     const attrs = auto ? ' checked disabled data-auto="true"' : "";
     const classes = auto ? " checked auto-verified" : mode === "partial" ? " partial" : "";
-    return `<li class="check${classes} lv${Math.min(indent || 0, 3)}"><label><input type="checkbox" data-id="${id}"${attrs}><span class="ctext">${fmt(text)}</span>${provenanceBadge}${verificationBadge}${evidenceHtml(evidenceValue)}</label></li>`;
+    return `<li class="check${classes} lv${Math.min(indent || 0, 3)}"><label><input type="checkbox" data-id="${id}"${attrs}><span class="ctext">${fmt(text)}</span>${provenanceBadge}${verificationBadge}${evidenceHtml(evidenceValue)}${evidenceHtml(previousEvidenceValue, "이전 근거")}</label></li>`;
   };
   const modeMatches = (mode, automated) => automated ? mode === "auto-verified" : mode !== "auto-verified";
   const renderItem = (g, it, automated) => {
     if (!it.checks || !it.checks.length) {
       const mode = verificationMode(it.verification);
       if (!modeMatches(mode, automated)) return "";
-      let row = `<li><ul class="checks">${checkLi(checkId(g, it), it.title, it.provenance, 0, mode, it.evidence)}</ul>`;
+      let row = `<li><ul class="checks">${checkLi(checkId(g, it), it.title, it.provenance, 0, mode, it.evidence, it.previousEvidence)}</ul>`;
       row += screenLink(it);
       if (it.notes && it.notes.length) row += `<ul class="notes">${it.notes.map((n) => `<li>${fmt(n)}</li>`).join("")}</ul>`;
       return row + "</li>";
@@ -358,7 +363,7 @@ pre { max-width: 100%; overflow-x: auto; }
       if (!modeMatches(mode, automated)) continue;
       row += checkLi(checkId(g, it, c.text), c.text,
         it.provenance === "observed" && c.provenance === "observed" ? "observed" : "code-only",
-        c.indent, mode, c.evidence);
+        c.indent, mode, c.evidence, c.previousEvidence);
     }
     return row + "</ul></li>";
   };
