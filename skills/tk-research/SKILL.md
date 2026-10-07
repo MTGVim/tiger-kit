@@ -41,16 +41,21 @@ next owner never dispatches it automatically.
    read [repository context](references/repository-context.md) when configuration or a work source
    is supplied. Verify material claim-source pairs, not just reachable links; preserve contradiction
    and uncertainty. Generalize external queries; never send private code/logs/secrets/identifiers.
-4. Start with bounded read-only external/repository evidence. If sufficient, conclude here with
-   recommendation, confidence, baseline/alternatives, transfer limits, counter-evidence, unknowns
-   and the smallest next action. Short research creates no durable state, worktree, tracked tree
-   or research commit. At completion provide the [HTML report](references/report.md).
+4. Start with a bounded read-only evidence pass that doubles as the first research batch and an
+   internal continuity check. Never ask the user to choose short, long or persistent mode. If the
+   evidence is sufficient, conclude without durable state and provide the [HTML report](references/report.md).
+   If the result opens an evolving frontier, needs negative-result/history reuse, or a later batch must
+   depend on this evidence, escalate to persistent research automatically and continue this invocation
+   to its first material knowledge boundary. The persistence choice is an implementation detail, not a
+   user checkpoint.
 
 ## Lazy escalation and resume
 
 Use [persistent research](references/persistent-research.md) only when resume, evolving frontier/history,
-material negative-result preservation or next-batch evidence reuse needs durable local state. Add
-an experiment workspace only when a benchmark, prototype, replay harness or source mutation actually
+material negative-result preservation or next-batch evidence reuse needs durable local state. A concrete
+research request already authorizes this bounded local state escalation; do not stop to ask permission
+merely because the first batch became persistent. An explicit no-save/no-file request still wins.
+Add an experiment workspace only when a benchmark, prototype, replay harness or source mutation actually
 resolves a question. Read [experiment discipline](references/experiments.md) before experiments;
 preserve protected evaluators, `KEEP | REJECT | INCONCLUSIVE | BLOCKED`, pilot-before-scale and the
 cost-aware measurement ladder. No fixed experiment quota or mandatory metric applies.
@@ -80,8 +85,10 @@ Essential unavailable evidence is `BLOCKED`, never convergence. No self-scheduli
 Lead with the recommendation and confidence. Explain decisive evidence, what was actually researched
 or tested, failed directions, current stage, unknowns and the next frontier/action. Cite sources beside
 claims with revision/date. Keep the result self-contained for `tk-prep` without implementation authority.
-Write the offline [report](references/report.md) once at short-research conclusion or after a material
-persistent checkpoint; `NO-ACTION | NO-DELTA` skips regeneration. If the user explicitly requests no
+Every initial research request returns a current, decision-ready offline [report](references/report.md)
+before the research turn completes: at short-research conclusion, or at the first material persistent
+checkpoint/conclusion/blocker after automatic escalation. Later persistent runs regenerate it only at
+material outcomes; `NO-ACTION | NO-DELTA` skips regeneration. If the user explicitly requests no
 files, return the same core facts in chat. An unsafe/unwritable report path makes only the artifact
 branch `Unverifiable`; preserve findings and never claim report success. For provenance see
 [sources](references/sources.md).
