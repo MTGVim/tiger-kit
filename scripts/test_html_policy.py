@@ -25,6 +25,11 @@ class HTMLPolicyTest(unittest.TestCase):
                                 cwd=ROOT, text=True, capture_output=True, timeout=30)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_templates_declare_system_generation_default(self):
+        for relative in ('skills/tk-research/assets/report.html', 'skills/tk-qa-sheet/assets/qa-sheet-template.html'):
+            text = (ROOT / relative).read_text()
+            self.assertIn('data-default-theme="system"', text)
+
     def test_missing_canonical_theme_blocks_release_check(self):
         self.check_mutation(lambda root: (root / 'skills/tk-explain/assets/html-theme.css').unlink())
 
