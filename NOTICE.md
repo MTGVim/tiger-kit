@@ -207,10 +207,10 @@ SOFTWARE.
 - `eli5/README.md`
 - `eli5/.claude-plugin/plugin.json`
 
-TigerKit은 큰 그림·적은 글의 `HTML artifact`와 `/eli5 <topic>` 동작을 유지하면서
-`offline self-contained output`, 충돌 없는 `path`, 접근성, `skill` 경계, 검증과 AI 작성자
-표시를 추가했습니다. 관계 메타데이터: `origin: anthropics/claude-plugins-community`,
-`relationship: adapted`, `upstream-skill: eli5`.
+TigerKit은 큰 그림·적은 글의 `HTML artifact`와 `/eli5 <topic>` 동작을 출발점으로 삼았고,
+현재 `tk-explain`은 성인 독자 기본값, 선행 개념, 실제 동작·인과관계, 출처 결합, 오프라인 HTML,
+상호작용·접근성·렌더 검증까지 TigerKit 자체 계약이 정의합니다. `eli5`는 역사적 provenance로만
+보존하며 현재 관계 메타데이터는 `origin: tigerkit`, `relationship: adapted`입니다.
 
 `eli5` `manifest`는 MIT를 표시하며 최초 `package commit`
 `0d92c175da762e154c3000ccbc2da8464def3373`의 라이선스는 다음과 같습니다.
@@ -415,7 +415,9 @@ TigerKit 평가는 배경 누락, 전체 문서의 조건 보존, 결정 권한,
 `phuryn/pm-skills`의 `outcome-roadmap`, `opportunity-solution-tree`, `prioritize-features`를
 커밋 `8607e3b077817f89bf4a9b623246219734ac3be0`에서 확인하여 성과 중심 기획과 대안 비교를 증류했습니다.
 `mattpocock/skills`의 `wayfinder`는 커밋 `c55ee46073ed923f86ce59a5eb3b6d895095d1b7`에서 확인하여
-미정 사항과 제외 범위를 구분하는 원칙만 보완했습니다. 관계는 `adapted`입니다.
+미정 사항과 제외 범위를 구분하는 원칙만 보완했습니다. 두 출처는 현재 `tk-roadmap`의
+active upstream이 아니라 역사적 provenance이며, 현재 관계 메타데이터는 `origin: tigerkit`,
+`relationship: adapted`입니다.
 세부 `keep | adapt | omit` 판단은 [출처 기록](skills/tk-roadmap/references/sources.md)에 있으며,
 원본 MIT 저작권·라이선스 전문은 설치 패키지의 [고지 파일](skills/tk-roadmap/UPSTREAM-LICENSES.txt)에 포함합니다.
 
