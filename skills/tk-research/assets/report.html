@@ -43,16 +43,19 @@ pre { max-width: 100%; overflow-x: auto; }
 .ht-table-scroll table { width: 100%; border-collapse: collapse; }
 .ht-table-scroll th, .ht-table-scroll td { text-align: left; vertical-align: top; padding: var(--space); border-bottom: 1px solid var(--line); font-size: var(--font-body); }
 .ht-table-scroll th[scope="row"] { min-width: 8em; overflow-wrap: normal; }
-.ht-theme-control { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px; min-width: 0; max-width: 100%; font-size: var(--font-body); }
-.ht-theme-label { color: var(--muted); white-space: nowrap; }
-.ht-theme-buttons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: min(18rem, 100%); min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
-.ht-theme-button { min-width: 0; min-height: 40px; padding: 6px 10px; border: 0; border-left: 1px solid var(--line); border-radius: 0; cursor: pointer; white-space: nowrap; }
-.ht-theme-button:first-child { border-left: 0; }
-.ht-theme-button:hover { background: var(--hover); }
-.ht-theme-button[aria-pressed="true"] { background: var(--accent); color: var(--panel); font-weight: 700; }
+.ht-theme-control { min-inline-size: 0; width: min(22rem, 100%); max-width: 100%; margin: 0; padding: 0; border: 0; font-size: var(--font-body); }
+.ht-theme-label { padding: 0 0 4px; color: var(--muted); font-size: var(--font-small); }
+.ht-theme-buttons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.ht-theme-option { position: relative; min-width: 0; cursor: pointer; }
+.ht-theme-option + .ht-theme-option { border-left: 1px solid var(--line); }
+.ht-theme-option input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.ht-theme-option span { display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 40px; padding: 6px 10px; background: var(--panel); color: var(--text); white-space: nowrap; }
+.ht-theme-option:hover span { background: var(--hover); }
+.ht-theme-option input:checked + span { background: var(--accent); color: var(--panel); font-weight: 700; }
+.ht-theme-option input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: -3px; }
+.ht-token { white-space: nowrap; overflow-wrap: normal; }
 @media (max-width: 480px) {
-  .ht-theme-control { grid-template-columns: 1fr; }
-  .ht-theme-buttons { width: 100%; }
+  .ht-theme-control { width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
@@ -78,7 +81,7 @@ pre { max-width: 100%; overflow-x: auto; }
 </ul>
 </nav>
 <main id="main" tabindex="-1">
-<header><div class="ht-theme-control" data-ht-theme-control hidden role="group" aria-label="테마"><span class="ht-theme-label">테마</span><div class="ht-theme-buttons"><button class="ht-theme-button" type="button" data-theme-choice="system" aria-pressed="false">시스템</button><button class="ht-theme-button" type="button" data-theme-choice="light" aria-pressed="false">라이트</button><button class="ht-theme-button" type="button" data-theme-choice="dark" aria-pressed="false">다크</button></div></div><p class="kicker">RESEARCH · 작성 템플릿</p><h1>연구 목표를 적습니다</h1><p class="meta">이 파일의 예시 문구는 연구 결과가 아닙니다. 검증한 현재 사실로 교체하세요.</p></header>
+<header><fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-theme-label">테마</legend><div class="ht-theme-buttons"><label class="ht-theme-option"><input type="radio" name="ht-theme" value="system" data-theme-choice="system"><span>시스템</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="light" data-theme-choice="light"><span>라이트</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="dark" data-theme-choice="dark"><span>다크</span></label></div></fieldset><p class="kicker">RESEARCH · 작성 템플릿</p><h1>연구 목표를 적습니다</h1><p class="meta">이 파일의 예시 문구는 연구 결과가 아닙니다. 검증한 현재 사실로 교체하세요.</p></header>
 <section id="overview"><h2>목표와 결론</h2><p class="lead">가장 중요한 결론과 근거를 먼저 적습니다.</p><dl><dt>판단할 문제</dt><dd>결과가 어떤 다음 결정을 도와야 하는지 적습니다.</dd><dt>신뢰도</dt><dd>높음·보통·낮음과 그 이유를 적습니다.</dd><dt>근거 시점</dt><dd>실제로 확인한 날짜와 리비전을 적습니다.</dd></dl></section>
 <section id="context"><h2>문제와 배경</h2><p>이 연구가 해결하려는 문제와 필요한 배경을 설명합니다. 분야 밖 독자를 위해 용어와 통계의 의미를 짧게 풀이합니다.</p></section>
 <section id="status"><h2>현재 상태</h2><p><span class="badge">작성 전</span> 현재 연구 단계와 의미 있는 진행 경과를 적습니다. 지속 연구에서는 전체 발견·실험·인계 내역의 개수를 정본과 대조합니다.</p></section>
@@ -105,8 +108,8 @@ let pending=false;addEventListener('scroll',()=>{if(!pending){pending=true;reque
 (() => {
   const control = document.querySelector('[data-ht-theme-control]');
   if (!control) return;
-  const buttons = [...control.querySelectorAll('[data-theme-choice]')];
-  if (!buttons.length) return;
+  const inputs = [...control.querySelectorAll('input[name="ht-theme"]')];
+  if (!inputs.length) return;
   const root = document.documentElement;
   const key = 'tigerkit-html-theme';
   const valid = value => ['system', 'light', 'dark'].includes(value);
@@ -115,16 +118,15 @@ let pending=false;addEventListener('scroll',()=>{if(!pending){pending=true;reque
   const apply = value => {
     if (value === 'system') root.removeAttribute('data-theme');
     else root.setAttribute('data-theme', value);
-    for (const button of buttons) {
-      button.setAttribute('aria-pressed', button.dataset.themeChoice === value ? 'true' : 'false');
-    }
+    for (const input of inputs) input.checked = input.value === value;
   };
   let saved = configured;
   try { const value = localStorage.getItem(key); if (valid(value)) saved = value; } catch {}
   apply(saved);
-  for (const button of buttons) {
-    button.addEventListener('click', () => {
-      const value = valid(button.dataset.themeChoice) ? button.dataset.themeChoice : 'system';
+  for (const input of inputs) {
+    input.addEventListener('change', () => {
+      if (!input.checked) return;
+      const value = valid(input.value) ? input.value : 'system';
       apply(value);
       try { localStorage.setItem(key, value); } catch {}
     });
