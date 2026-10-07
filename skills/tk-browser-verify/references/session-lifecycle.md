@@ -37,9 +37,12 @@ For a successful nested run, the parent may explicitly report that commits or re
 verified render/request path and that a final-head replay may be required. In that case, defer normal cleanup of the
 run-owned page/context, direct browser, development server, and other replay state until the parent reports its final
 head and either requests the replay or confirms that the intervening diff does not affect the verified path. This hold
-applies only to successful nested continuation; failure, interruption, exception, abandonment, or an expired parent
-continuation still follows normal cleanup. Never retain the secret-input file or loopback secret server while holding
-replay state. Record the held state as run-owned and bounded so a later replay or cleanup targets exactly the same run.
+applies only while the active parent continues directly through its pending review/remediation and final-head decision.
+It is not a background wait: if the parent cannot continue in the active workflow, or on failure, interruption,
+exception, abandonment, or an expired parent continuation, perform normal cleanup and record that a later replay will
+need a new runtime/authentication state. Never retain the secret-input file or loopback secret server while holding
+replay state. Record the held state as run-owned and bounded so the immediate replay or cleanup targets exactly the
+same run.
 
 Clean up success, failure, interruption, and exception paths in this order:
 
