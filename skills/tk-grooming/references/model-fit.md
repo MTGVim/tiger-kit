@@ -59,7 +59,7 @@ for untested idiom or age. Low-confidence candidates are observations only, with
 A clean surface gets the existing no-finding result, not manufactured edits.
 
 Use `tighten` or `move` only for meaning-preserving changes and `fix` for a mechanical broken link.
-Semantic changes and conflicts remain exact `pending` proposals for `tk-learn`, even with `--apply`.
+Semantic changes and conflicts remain exact `pending` proposals for the responsible implementation owner, even with `--apply`. A session incident can be reviewed with `tk-retro`.
 Vendor-owned material remains `keep (vendor)` with quality observations only; uncertain ownership
 blocks proposals for that area. A pattern match does not grant mutation authority.
 

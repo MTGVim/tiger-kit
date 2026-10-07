@@ -1,0 +1,153 @@
+{
+  "skill": "tk-retro",
+  "kind": "hybrid",
+  "queries": [
+    {
+      "id": "train-positive",
+      "split": "train",
+      "query": "$tk-retro 이번 코딩 세션에서 비효율과 재발 방지 개선안을 찾아줘",
+      "should_trigger": true
+    },
+    {
+      "id": "train-negative",
+      "split": "train",
+      "query": "이번 변경 diff 코드 리뷰해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-formal",
+      "split": "validation",
+      "query": "지난 개발 세션의 실행 과정과 불필요한 tool calls를 근거로 회고해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-casual",
+      "split": "validation",
+      "query": "아까 세션 삽질한거 복기해서 다음엔 안그러게 개선점 찾아줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-typo",
+      "split": "validation",
+      "query": "세션 레트로 해주셈",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-ko-en",
+      "split": "validation",
+      "query": "Agent Skill incident에서 baseline과 observed failure 비교해서 retro 해줘",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-short",
+      "split": "validation",
+      "query": "$tk-retro 세션 회고",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-compound",
+      "split": "validation",
+      "query": "tk-prep에서 잘못된 결정을 반복했어. 로그를 조사해 원인을 격리하고 개선안을 제안하되 수정하지 마",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-skill-feedback",
+      "split": "validation",
+      "query": "이 사용자 피드백을 바탕으로 재발 방지할 스킬 개선 후보를 제안해줘",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-missing-log",
+      "split": "validation",
+      "query": "이전 대화 로그가 없어도 현재 확인 가능한 근거로 회고해 줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-code",
+      "split": "validation",
+      "query": "이 React 렌더링 버그를 코드로 고쳐줘",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-review",
+      "split": "validation",
+      "query": "이 PR diff에 보안 취약점이 있는지 리뷰해 줘",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-negative-grooming",
+      "split": "validation",
+      "query": "설치된 스킬 전부의 중복과 배치를 정적으로 감사해줘",
+      "should_trigger": false,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-negative-author",
+      "split": "validation",
+      "query": "새 repository Agent Skill을 실제 파일로 작성하고 설치해줘",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-negative-doc",
+      "split": "validation",
+      "query": "이 책의 내용을 공부하고 설명해줘",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-negative-general",
+      "split": "validation",
+      "query": "skill이 뭔지 궁금해",
+      "should_trigger": false,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-negative-standalone",
+      "split": "validation",
+      "query": "그냥 이 문장 한국어로 다듬어줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    }
+  ]
+}

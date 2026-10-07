@@ -20,10 +20,6 @@ NO_ARTIFACT_BLOCK = """<!-- tigerkit:artifact-paths -->
 
 This skill creates no artifacts. Do not create temporary files, write reports, or edit ignore rules for this invocation; return the result in the conversation.
 """
-LEARN_ARTIFACT_BLOCK = ARTIFACT_BLOCK.replace(
-    "Default repository-owned output to `.tigerkit/`; honor explicit final destinations.",
-    "Default the single learn proposal to `.tigerkit/tmp/tk-learn/<run-id>/proposal.md` in the current repository and report its absolute path. Only when no repository is identified, use a safe host scratchpad or run-owned OS temporary directory and explain why. Failed repository checks or writes never permit that fallback. Durable output still uses `.tigerkit/learn.md`; honor explicit destinations.",
-)
 USER_INPUT_REFERENCE = '''
 ## User-editable temporary input
 
@@ -123,20 +119,10 @@ def output_directory(value: str | None, owner: str, root: Path = ROOT) -> Path:
 
 
 def artifact_block(name: str) -> str:
-    if name == 'tk-learn':
-        return LEARN_ARTIFACT_BLOCK
     return NO_ARTIFACT_BLOCK if name in NO_ARTIFACT_SKILLS else ARTIFACT_BLOCK
 
 
 def artifact_reference(name: str) -> str:
-    if name == 'tk-learn':
-        return (ARTIFACT_REFERENCE.replace(
-                    "or no repository is identified, stop only the file branch",
-                    "stop only the file branch",
-                )
-                + "\n## Learn proposal destination\n\n"
-                "Default the single proposal to `.tigerkit/tmp/tk-learn/<run-id>/proposal.md` in the identified current repository after the checks above. Report the absolute path. Honor an explicit destination or no-file request; preserve `.tigerkit/learn.md` for explicit durable save or handoff. Only when no repository is identified, use a safe nonsymlink host scratchpad or run-owned OS temporary directory and explain why. This does not waive ownership, atomic write, full readback, anonymization or secret checks. Never use that fallback after failed repository checks or writes.\n"
-                + USER_INPUT_REFERENCE)
     return ARTIFACT_REFERENCE + USER_INPUT_REFERENCE
 
 

@@ -447,35 +447,35 @@
       "critical": true
     },
     {
-      "id": "grooming-vs-learn-audit",
-      "boundary": "tk-grooming `vs` tk-learn",
-      "prompt": "기존 `repository skill`의 중복·범위·배치를 감사해줘.",
+      "id": "grooming-vs-retro-audit",
+      "boundary": "tk-grooming `vs` tk-retro",
+      "prompt": "기존 repository skill의 중복·범위·배치를 정적으로 감사해줘.",
       "focus_skill": "tk-grooming",
       "expected_selected_skill": "tk-grooming",
       "critical": true
     },
     {
       "id": "grooming-stale-memory-after-user-correction",
-      "boundary": "tk-grooming 지속 지침 충돌 `vs` tk-skill-diagnose 원인 미상 행동 사고",
+      "boundary": "tk-grooming 지속 지침 충돌 `vs` tk-retro 원인 미상 행동 사고",
       "prompt": "예전 자동 메모리대로 브라우저를 검증했는데 사용자가 틀렸다고 했어. 최신 `tk-browser-verify`와 충돌하는 낡은 지침을 찾아줘.",
       "focus_skill": "tk-grooming",
       "expected_selected_skill": "tk-grooming",
       "critical": true
     },
     {
-      "id": "skill-diagnose-unattributed-browser-failure",
-      "boundary": "tk-skill-diagnose 원인 미상 행동 사고 `vs` tk-grooming 입증된 지속 지침 충돌",
-      "prompt": "브라우저 검증 결과가 틀렸는데 어떤 규칙이나 메모리가 관여했는지는 모르겠어. 행동을 재현하고 원인을 진단해줘.",
-      "focus_skill": "tk-skill-diagnose",
-      "expected_selected_skill": "tk-skill-diagnose",
+      "id": "retro-unattributed-browser-failure",
+      "boundary": "tk-retro 원인 미상 행동 사고 `vs` tk-grooming 입증된 지속 지침 충돌",
+      "prompt": "브라우저 검증 결과가 틀렸지만 어떤 지시가 원인인지 모르겠어. 지난 세션 증거와 재현 가능한 행동으로 원인을 진단해줘.",
+      "focus_skill": "tk-retro",
+      "expected_selected_skill": "tk-retro",
       "critical": true
     },
     {
-      "id": "learn-vs-grooming-learn",
-      "boundary": "tk-learn `vs` tk-grooming",
-      "prompt": "이 반복 경험을 재사용 가능한 새 `repository skill`로 설계해줘.",
-      "focus_skill": "tk-learn",
-      "expected_selected_skill": "tk-learn",
+      "id": "retro-vs-grooming-learning",
+      "boundary": "tk-retro `vs` tk-grooming",
+      "prompt": "이 반복 경험을 회고해 새 repository skill을 만드는 게 타당한지 제안만 해줘.",
+      "focus_skill": "tk-retro",
+      "expected_selected_skill": "tk-retro",
       "critical": true
     },
     {
@@ -495,11 +495,11 @@
       "critical": false
     },
     {
-      "id": "skill-diagnose-vs-learn-ready",
-      "boundary": "tk-skill-diagnose `vs` tk-learn",
-      "prompt": "관찰된 `Agent Skill incident`를 재현하고 `verified learn-ready payload`로 `handoff`해줘.",
-      "focus_skill": "tk-skill-diagnose",
-      "expected_selected_skill": "tk-skill-diagnose",
+      "id": "retro-skill-incident",
+      "boundary": "tk-retro `vs` tk-retro",
+      "prompt": "관찰된 Agent Skill incident를 근거로 재현하고 근접 대조를 수행해 개선책을 제안해줘. 직접 수정하지 마.",
+      "focus_skill": "tk-retro",
+      "expected_selected_skill": "tk-retro",
       "critical": true
     },
     {
@@ -671,26 +671,26 @@
       "critical": true
     },
     {
-      "id": "learn-approved-diagnose-handoff",
+      "id": "retro-proposal-only",
       "boundary": "외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.",
-      "prompt": "원인 확인 후 고쳐 달라고 승인한 동일 스킬의 `verified` `learn-ready`가 준비됐습니다. `semantic` `fix`를 계속해 주세요.",
-      "focus_skill": "tk-learn",
-      "expected_selected_skill": "tk-learn",
+      "prompt": "이번 세션의 재발 방지책을 증거와 검증 시나리오를 바탕으로 제안해줘. 스킬은 직접 수정하지 마.",
+      "focus_skill": "tk-retro",
+      "expected_selected_skill": "tk-retro",
       "critical": true
     },
     {
-      "id": "learn-diagnosis-only-handoff",
+      "id": "retro-diagnosis-only",
       "boundary": "외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.",
-      "prompt": "진단만 요청한 스킬의 `learn-ready`를 받았습니다. 수정하지 말고 종료해 주세요.",
-      "focus_skill": "tk-learn",
-      "expected_selected_skill": null,
+      "prompt": "특정 Agent Skill 사고의 원인을 조사한 후 개선안만 보고하고 실행은 하지 마.",
+      "focus_skill": "tk-retro",
+      "expected_selected_skill": "tk-retro",
       "critical": true
     },
     {
-      "id": "learn-generic-skill-mention",
+      "id": "retro-generic-skill-mention",
       "boundary": "외부 조사, 저장소 작업, 승인된 수정 연속 실행을 구분합니다.",
-      "prompt": "`skill`이 뭔지 간단히 설명해줘.",
-      "focus_skill": "tk-learn",
+      "prompt": "skill이 뭔지 간단히 설명해줘.",
+      "focus_skill": "tk-retro",
       "expected_selected_skill": null,
       "critical": true
     },
@@ -735,11 +735,11 @@
       "critical": true
     },
     {
-      "id": "study-vs-learn",
+      "id": "study-vs-retro",
       "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
-      "prompt": "이 경험을 재사용 가능한 스킬로 만들어줘.",
+      "prompt": "지난 작업에서 얻은 경험을 회고하고 다음 세션의 스킬 개선 후보를 제안해줘.",
       "focus_skill": "tk-study",
-      "expected_selected_skill": "tk-learn",
+      "expected_selected_skill": "tk-retro",
       "critical": true
     },
     {
@@ -884,6 +884,22 @@
       "prompt": "세션이 헷갈려. 이 창에서 어디까지 했는지 현황만 알려줘.",
       "focus_skill": "tk-adhd",
       "expected_selected_skill": "tk-handoff",
+      "critical": true
+    },
+    {
+      "id": "retro-session-vs-review",
+      "boundary": "session process retrospective vs diff code review",
+      "prompt": "$tk-retro 이 세션에서 도구 호출과 파일 탐색이 왜 낭비됐는지 회고해줘.",
+      "focus_skill": "tk-retro",
+      "expected_selected_skill": "tk-retro",
+      "critical": true
+    },
+    {
+      "id": "review-vs-retro",
+      "boundary": "diff code review vs session process retrospective",
+      "prompt": "이번 PR의 변경 코드 품질을 리뷰해줘.",
+      "focus_skill": "tk-retro",
+      "expected_selected_skill": null,
       "critical": true
     }
   ]

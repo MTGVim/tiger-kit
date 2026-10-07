@@ -14,7 +14,7 @@ metadata:
 
 Own a personalized course across dependent chapters, not a longer concept explanation.
 `tk-explain` owns one focused concept/system explanation, `tk-explain-diff` one concrete change,
-`tk-research` approach selection, and `tk-learn` Agent Skills. Do not invoke these or `tk-grill`
+`tk-research` approach selection, and `tk-retro` session learning. Skill implementation belongs to its authorized owner. Do not invoke these or `tk-grill`
 automatically. Honor an explicitly requested short study or format without inflating its scope.
 
 ## Reconnaissance and learner scope
@@ -150,5 +150,5 @@ Separate questions with `---`. Put context before the question block and make it
 <!-- tigerkit:skill-feedback -->
 ## Skill Feedback
 
-Skill-improvement feedback from any skill run becomes a `tk-learn` draft only, using its Anonymous draft checkpoint and anonymization checks. Do not edit installed skill copies, open issues or PRs, push, or offer those actions unless the user explicitly requests that exact action and target. An explicit request to apply a candidate to an owned source checkout continues through the existing owner and authority gates.
+When a skill run reveals a reusable incident, preserve only minimal non-secret evidence and suggest a `tk-retro` review. Do not silently invoke it, create improvement artifacts, edit installed skills, or publish issues/PRs. Explicit implementation requests belong to the authorized change owner; this pointer grants no mutation authority.
 <!-- /tigerkit:skill-feedback -->

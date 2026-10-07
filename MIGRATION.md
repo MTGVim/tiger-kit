@@ -10,6 +10,18 @@
 3. `evals/skills/<skill>/`의 저장소 전용 `eval` + `evals/catalog-routing.json`
 4. `AGENTS.md`
 
+## 세션 회고 통합 (`tk-retro`)
+
+`tk-learn`과 `tk-skill-diagnose`를 `tk-retro` 하나로 통합했습니다. 세션 회고·스킬 장애 원인 조사·개선안 제안은 `tk-retro`가 맡고, 기존 `tk-learn`의 스킬 생성·수정/적용 권한은 폐기했습니다. 구현은 별도 승인된 변경 담당자가 수행합니다.
+
+```bash
+npx skills add MTGVim/tiger-kit --global --agent claude-code codex hermes-agent --skill tk-retro --yes
+npx skills list --global
+npx skills remove tk-learn tk-skill-diagnose --global --agent claude-code codex hermes-agent
+```
+
+옛 이름에 대한 실행 별칭은 없습니다. 진행 중인 `learn-ready` 핸드오프는 이전 권한의 증거가 아니며 현재 근거를 다시 확인해 회고 요청으로 변환합니다.
+
 ## 연구 스킬 통합
 
 `tk-autoresearch`와 기존 일회성 `tk-research`를 하나의 `tk-research`로 통합했습니다. 이전 `tk-discover`의 연구 계보도 이어집니다. 일회성 비교부터 지속 연구·실험·재개까지 같은 이름으로 호출하고 연구 과정에서 필요한 단계만 승격합니다. 별칭은 제공하지 않습니다.
@@ -165,7 +177,7 @@ session.md routing
 
 - `current` `task` `contract`가 틀림 → `Seed` `revision`
 - `repository` `reusable` `fact` → `repo-native` `owner` 개선 후보
-- TigerKit `skill` 반복 `failure` → `tk-skill-diagnose` / `tk-learn`
+- TigerKit `skill` 반복 `failure`·세션 비효율 → `tk-retro` 진단 및 예방안 제안
 - 개인 `cross-repo` `memory` → 외부 `memory`
 
 ## `Release` `validation`

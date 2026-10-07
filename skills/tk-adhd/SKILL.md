@@ -38,7 +38,7 @@ harness instructions, evidence, authorization or the requested depth/format.
 A request for current-session orientation belongs to `tk-handoff`'s conversation-only branch;
 durable handoff writing/resume belongs to its artifact branch. Do not inspect repositories,
 other sessions or remote state merely to shape an answer, create a status ledger, or impose
-an orientation card on unrelated future replies. Skill maintenance belongs to `tk-learn`
+an orientation card on unrelated future replies. Session learning and improvement diagnosis belong to `tk-retro`; implementation belongs to the authorized change owner
 and its authorized implementation owner, not this output-shaping invocation.
 
 For maintenance provenance, see [distillation](references/distillation.md).
@@ -74,5 +74,5 @@ Separate questions with `---`. Put context before the question block and make it
 <!-- tigerkit:skill-feedback -->
 ## Skill Feedback
 
-Skill-improvement feedback from any skill run becomes a `tk-learn` draft only, using its Anonymous draft checkpoint and anonymization checks. Do not edit installed skill copies, open issues or PRs, push, or offer those actions unless the user explicitly requests that exact action and target. An explicit request to apply a candidate to an owned source checkout continues through the existing owner and authority gates.
+When a skill run reveals a reusable incident, preserve only minimal non-secret evidence and suggest a `tk-retro` review. Do not silently invoke it, create improvement artifacts, edit installed skills, or publish issues/PRs. Explicit implementation requests belong to the authorized change owner; this pointer grants no mutation authority.
 <!-- /tigerkit:skill-feedback -->

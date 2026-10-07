@@ -64,7 +64,7 @@
     {
       "from": "grooming-semantic-convert-is-proposal-only",
       "to": "grooming-semantic-merge-is-proposal-only",
-      "reason": "Issue 224에서 rule-to-skill conversion을 제거하고 semantic skill change는 tk-learn proposal로 유지합니다."
+      "reason": "Issue 224에서 rule-to-skill conversion을 제거하고 semantic skill change는 tk-retro proposal로 유지합니다."
     },
     {
       "from": "grooming-vendor-artifact-remains-report-only",
@@ -298,11 +298,11 @@
       "id": "grooming-semantic-merge-is-proposal-only",
       "path": "success",
       "prompt": "/tk-grooming --apply 이 skill을 다른 skill로 merge하고 workflow를 split한 뒤 semantic rewrite까지 적용해 주세요.",
-      "expected_output": "exact candidate/target proposal만 만들고 semantic merge, split, rewrite를 직접 적용하거나 tk-learn을 자동 호출하지 않는다.",
+      "expected_output": "시맨틱 병합·분할·재작성은 정확한 제안만 남기고 직접 적용하거나 tk-retro를 자동 호출하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "semantic skill change는 정확한 proposal로만 남기고 tk-learn을 자동 호출하지 않는다."
+          "criterion": "기존 스킬의 semantic change는 대상·범위가 있는 제안으로만 남기며 구현 담당자에게 전달한다. tk-retro를 자동 호출하지 않는다."
         },
         {
           "type": "terminal_status",
@@ -546,11 +546,11 @@
       "id": "grooming-unattributed-behavior-routes-to-diagnosis",
       "path": "boundary",
       "prompt": "/tk-grooming 브라우저 검증 결과가 틀렸다는 피드백만 있고, 사용된 규칙·메모리·활성 스킬 문구나 실행 근거는 확인되지 않았습니다. 낡아 보이는 메모리를 추측해서 정리해 주세요.",
-      "expected_output": "지속 지침이 동작에 관여했다는 근거가 없으므로 메모리를 보존하고, 행동 사고를 `tk-skill-diagnose`에서 진단할 후속 제안으로 남깁니다.",
+      "expected_output": "지속 지침에 원인을 귀속할 증거가 없으면 메모리를 보존하고 tk-retro에서 세션 행동 사고를 진단하도록 제안한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "사용자 피드백만으로 임의 메모리를 원인이나 `stale override`로 분류하지 않습니다. 귀속 근거가 없으면 정리하지 않고 정확한 진단 후속 항목만 제안하며 `tk-skill-diagnose`를 자동 호출하지 않습니다."
+          "criterion": "지속 규칙이나 자동 메모리를 증거 없이 원인으로 분류·수정하지 않고, 불확실한 세션 행동은 tk-retro 진단 제안만 남긴다. 자동 실행은 금지한다."
         },
         {
           "type": "terminal_status",
@@ -666,7 +666,7 @@
       "assertions": [
         {
           "type": "judge",
-          "criterion": "외부에서 관리하는 후보에 `keep (vendor)`를 사용하고 모델 기준 품질 관측만 보고한다. 편집안, tk-learn 제안 또는 파일 변경을 만들지 않는다."
+          "criterion": "확인된 외부 관리 후보는 keep (vendor)로 품질 관측만 남기며 편집안·직접 변경·자동 재진단을 만들지 않는다."
         },
         {
           "type": "git_head_unchanged"

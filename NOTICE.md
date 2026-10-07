@@ -356,7 +356,7 @@ TigerKit 평가는 배경 누락, 전체 문서의 조건 보존, 결정 권한,
 정본을 소비하는 `tk-explain`에도 동일 참조를 동기화합니다. 원본은 MIT이며 두 설치 패키지의
 `LICENSE.txt`에 `Copyright (c) 2026 epoko77-ai`와 원본 허가·면책 문구를 보존합니다.
 
-## tk-learn: 기계적 검증 우선 판단 (#368)
+## 과거 tk-learn: 기계적 검증 우선 판단 (#368)
 
 `mattpocock/skills`의 최신 고정 커밋 `959a8e9f1edc3adbe2f7e3054bb6fbefa6696260`에서
 `skills/in-progress/retro/SKILL.md`, `LICENSE`와 병합된 PR #1083의 설계 근거를 확인했습니다.
@@ -368,7 +368,7 @@ TigerKit 평가는 배경 누락, 전체 문서의 조건 보존, 결정 권한,
 
 원본 PR은 자동 행동 평가가 없다고 명시합니다. 원본 행동 재현성은 `unverified`이며 TigerKit의
 기계적 조건, 기존 도구, 맥락 판단, 취약한 검사, 사건 부재 경계는 별도 행동 평가로 검증합니다.
-원본 MIT 고지는 `skills/tk-learn/LICENSE.txt`에 포함합니다.
+원본 MIT 고지는 `skills/tk-retro/LICENSE.txt`에 포함합니다.
 
 ## tk-rewrite: 관계와 문체 결함의 역주입 방지 (#369)
 
@@ -797,7 +797,7 @@ PR 재실행에서는 `EveryInc/compound-engineering-plugin@7fe624d36a5a12253165
 `obra/superpowers@8ca22dba9a94f28898bbce59f2537ff4d87c747d`의 스킬 작성·독립 행동 비교 원칙도 재확인했습니다.
 
 - `keep`: 제공자의 버전에 맞는 실행 계약과 실행 후 독립 포커스 확인, 기존 스킬의 소유권·정확한 적용 승인 경계를 유지합니다.
-- `adapt`: `tk-app-verify`는 실행과 입력 능력을 분리하고 비활성 실행을 먼저 조사합니다. 원래 후보를 보존하는 격리 래퍼·고유 식별자·등록 조회·실행 소유 정리 절차는 사용자 제공 사례를 조건부 지식으로 적용합니다. `tk-learn`은 소유하지 않은 설치본을 초안으로 끝내며 저장소가 확인되면 기존 산출물 검사를 거쳐 저장소 내부 임시 초안을 사용합니다.
+- `adapt`: `tk-app-verify`는 실행과 입력 능력을 분리하고 비활성 실행을 먼저 조사합니다. 원래 후보를 보존하는 격리 래퍼·고유 식별자·등록 조회·실행 소유 정리 절차는 사용자 제공 사례를 조건부 지식으로 적용합니다. 과거 `tk-learn`은 소유하지 않은 설치본을 초안으로 끝냈으며 저장소가 확인되면 기존 산출물 검사를 거쳐 임시 초안을 사용했습니다.
 - `omit`: 제공자의 실행 구현과 운영 체계를 복제하지 않습니다. 특정 위치에서의 래퍼 등록 성공을 모든 버전·플랫폼의 보장으로 일반화하지 않으며, 사용자 계정의 기여·발행 선택지를 자동 제안하지 않습니다.
 
 이번 검증은 독립 실행자의 계획·실제 초안 저장 행동과 저장소 검사에 한정합니다. 실제 `macOS` 앱 실행과 원본의 네이티브 테스트 재실행은 `unverified`입니다.
@@ -821,7 +821,7 @@ POSIX에서는 실행 소유 프로세스 그룹을 종료해 시간 초과, 중
 정리합니다. 지원하지 않거나 정리가 불확실한 환경에서는 정리 결과를 성공으로 보고하지 않습니다.
 관련 회귀 테스트는 종료 신호를 무시하는 자식 프로세스와 세 종료 경로를 검사합니다.
 
-## tk-learn 초안의 설명 언어와 정확한 교체 문장
+## 과거 tk-learn 초안의 설명 언어와 정확한 교체 문장
 
 2026-10-02 사용자 제공 사례와 기존 초안 절·품질 참조를 비교했습니다.
 `obra/superpowers@8ca22dba9a94f28898bbce59f2537ff4d87c747d`의
@@ -928,3 +928,12 @@ generated/schema/security/migration/compatibility 변경을 파일 종류만으�
 cognitive-debt 장부나 merge/edit 강제는 `tk-explain-diff`의 단일 변경 설명 책임 밖에 둡니다.
 두 원본의 실행 효과와 학습 효과는 재현하지 않아 `unverified`입니다. MIT 고지는 설치 패키지에 보존합니다.
 
+
+## tk-retro: 세션 회고·장애 진단 통합 (#430)
+
+`mattpocock/skills`의 `skills/engineering/retro/SKILL.md`를 2026-10-08에 확인했고, 본문 blob SHA는 `12149acf2dd23b4514dec57b04a6293eaa1352fa`입니다.
+- `keep`: 실제 세션 기록 중심의 회고, 심각도 순 문제 분류, navigation/automated checks/tool economy/no-ops/information access 영역 및 구현자·리뷰어의 컨텍스트 차이.
+- `adapt`: `tk-skill-diagnose`의 근거 기반 재현·인접 대조 방법과 `tk-learn`의 스킬 후보 검증을 조건부 참조로 통합. 기존 검증 도구를 먼저 검토하고 예방 효과가 불명확한 신규 규칙은 제안하지 않습니다.
+- `omit`: 이전 `learn-ready` 인계 상태, 스킬 작성·수정·승인 적용 권한, 자동 임시 초안, 불필요한 고정 시험 횟수 및 외부 제공자 구현 세부사항.
+
+기존 두 스킬의 역사적 설계 근거와 테스트는 Git 기록에 남기며, 현행 배포·적용 계약은 `tk-retro`가 담당합니다. 이 증류의 MIT 고지는 `skills/tk-retro/LICENSE.txt`에 있습니다.
