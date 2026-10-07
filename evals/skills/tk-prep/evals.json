@@ -3491,6 +3491,21 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "prep-proposal-stays-conversational-not-html",
+      "path": "boundary",
+      "prompt": "/`tk-prep` 정책 시뮬레이션입니다. 작업 목표와 범위는 이미 사용자가 알고 있고 구현안을 검토해 승인하려고 합니다. 계획을 보기 좋게 만들기 위해 별도 HTML 보고서를 기본 생성해야 하나요?",
+      "expected_output": "준비안과 승인 질문은 대화를 기본으로 유지하고 같은 내용을 반복하는 HTML을 만들지 않습니다. 이해가 필요한 별도 개념 설명은 tk-explain의 다른 요청으로 구분하며, prep이 이를 자동 호출하거나 Seed와 HTML의 이중 정본을 만들지 않습니다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`tk-prep`은 사용자가 작업 목표 맥락을 공유하는 준비·결정 흐름이므로 검토안을 채팅에 제시합니다. HTML을 기본 산출물이나 Seed의 사람용 복제본으로 만들지 않습니다. 사용자가 별도로 모르는 개념의 설명 자료를 요청하면 `tk-explain`의 소유 범위임을 구분하되 자동 호출하지 않습니다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }
