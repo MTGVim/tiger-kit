@@ -620,7 +620,11 @@
     "tk-study:behavior:visual-question-and-geometry",
     "tk-research:behavior:visual-question-and-geometry",
     "tk-explain-diff:behavior:visual-delta-correspondence",
-    "tk-explain:behavior:visual-exact-comparison-table"
+    "tk-explain:behavior:visual-exact-comparison-table",
+    "tk-explain:behavior:understanding-check-mechanism-transfer",
+    "tk-explain:behavior:html-theme-user-default-bootstrap",
+    "tk-research:behavior:research-automation-suggestion-needs-opt-in",
+    "tk-prep:behavior:prep-proposal-stays-conversational-not-html"
   ],
   "catalog_cases": [
     "catalog:behavior:native-app-runtime-verify",
