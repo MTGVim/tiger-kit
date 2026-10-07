@@ -64,7 +64,9 @@ class QAStaticInventoryTest(unittest.TestCase):
                     {'text':'Check A', 'provenance':'observed', 'verification':'auto-verified',
                      'evidence':{'ref':'browser-run-7', 'head':'abc123'}},
                     {'text':'Check B', 'provenance':'observed', 'verification':'partial',
-                     'evidence':{'ref':'.tigerkit/evidence/run-7', 'head':'abc123'}}]},
+                     'evidence':{'ref':'.tigerkit/evidence/run-7', 'head':'abc123'}},
+                    {'text':'Check C', 'provenance':'observed', 'verification':'manual',
+                     'previousEvidence':{'ref':'browser-run-6', 'head':'old456'}}]},
                 {'title':'Second', 'notes':['Note'], 'provenance':'observed'}]}]}
             replacement = json.dumps(data).replace('<', '\\u003c')
             html = re.sub(r'(id="qa-data">)(.*?)(</script>)', lambda m: m[1] + replacement + m[3], html, flags=re.S)
@@ -72,9 +74,10 @@ class QAStaticInventoryTest(unittest.TestCase):
             result = subprocess.run([sys.executable, str(HELPER), str(path)], capture_output=True, text=True)
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             actual = path.read_text(); text = static_text(actual)
-            self.assertIn('Check A', text); self.assertIn('Check B', text); self.assertIn('Second', text); self.assertIn('Note', text)
-            self.assertIn('자동 검증', text); self.assertIn('부분 자동 확인', text)
+            self.assertIn('Check A', text); self.assertIn('Check B', text); self.assertIn('Check C', text); self.assertIn('Second', text); self.assertIn('Note', text)
+            self.assertIn('자동 검증', text); self.assertIn('부분 자동 확인', text); self.assertIn('이전 head 검증', text)
             self.assertIn('browser-run-7', text); self.assertIn('.tigerkit/evidence/run-7', text)
+            self.assertIn('browser-run-6', text); self.assertIn('old456', text); self.assertIn('이전 근거', text)
             self.assertIn('QA environment (https://qa.example.test)', text)
             self.assertIn('<img src=x onerror=alert(1)> Literal', text)
             region = re.search(r'<noscript id="qa-static">(.*?)</noscript>', actual, re.S)[1]
