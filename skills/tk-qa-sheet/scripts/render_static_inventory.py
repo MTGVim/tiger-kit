@@ -25,20 +25,33 @@ def status(item: dict, parent: dict | None = None) -> str:
     parts = [] if observed else ['<span class="badge">코드 기준</span>']
     verification = item.get('verification', 'manual')
     evidence = item.get('evidence')
+    previous = item.get('previousEvidence')
     if verification not in ('manual', 'auto-verified', 'partial'):
         raise ValueError('invalid QA verification state')
+
+    def valid_evidence(value):
+        return isinstance(value, dict) and isinstance(value.get('ref'), str) and value['ref'].strip() \
+            and isinstance(value.get('head'), str) and value['head'].strip()
+
     if verification == 'manual':
         if evidence is not None:
-            raise ValueError('manual QA rows cannot carry automated evidence')
+            raise ValueError('manual QA rows cannot carry current automated evidence')
+        if previous is not None and not valid_evidence(previous):
+            raise ValueError('previous QA evidence needs nonblank ref and head')
+        if previous is not None:
+            parts.append('<span class="badge demoted">이전 head 검증</span>')
+            parts.append('<span class="evidence">이전 근거: <code>' + html.escape(previous['ref']) +
+                         '</code> @ <code class="ht-token">' + html.escape(previous['head']) + '</code></span>')
     else:
-        if not isinstance(evidence, dict) or not isinstance(evidence.get('ref'), str) or not evidence['ref'].strip() \
-                or not isinstance(evidence.get('head'), str) or not evidence['head'].strip():
+        if previous is not None:
+            raise ValueError('automated QA rows cannot carry previous evidence')
+        if not valid_evidence(evidence):
             raise ValueError('automated QA evidence needs nonblank ref and head')
         label = '자동 검증' if verification == 'auto-verified' else '부분 자동 확인'
         klass = 'auto' if verification == 'auto-verified' else 'partial'
         parts.append(f'<span class="badge {klass}">' + label + '</span>')
         parts.append('<span class="evidence">근거: <code>' + html.escape(evidence['ref']) +
-                     '</code> @ <code>' + html.escape(evidence['head']) + '</code></span>')
+                     '</code> @ <code class="ht-token">' + html.escape(evidence['head']) + '</code></span>')
     return (' ' + ' '.join(parts)) if parts else ''
 
 
