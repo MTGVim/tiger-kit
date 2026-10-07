@@ -1,5 +1,0 @@
-interface:
-  short_description: "[user/auto] 지속 연구나 재개 요청에서 근거·실험·수렴 상태를 갱신합니다."
-  default_prompt: "$tk-autoresearch로 현재 연구 목표와 제약을 확인하고, 가장 정보 가치가 높은 다음 질문이나 실험을 검증해 연구 방향과 수렴 상태를 갱신해 주세요."
-policy:
-  allow_implicit_invocation: true

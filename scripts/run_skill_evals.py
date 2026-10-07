@@ -707,7 +707,8 @@ def compare_eval_contracts(
                 or not isinstance(reason, str) or not reason.strip()):
             errors.append(f"{target}: {kind} needs source skill(s) and reason")
             continue
-        if len(set(sources)) != len(sources) or any(source in candidate or source in renamed or source in retired for source in sources):
+        if len(set(sources)) != len(sources) or any((source in candidate and not (merge is not None and source == target))
+                or source in renamed or source in retired for source in sources):
             errors.append(f"{target}: ambiguous or retired {kind} source")
             continue
         # Historical declarations remain valid after the source disappears from baseline.
@@ -739,7 +740,7 @@ def compare_eval_contracts(
             migrations = _migration_map({"migrations": scoped_rows})
             if skill in merged:
                 for row in scoped_rows:
-                    if (row.get("from") not in baseline_cases or row.get("to") not in candidate_cases
+                    if ((row.get("from") not in baseline_cases and row not in baseline_data.get("migrations", [])) or row.get("to") not in candidate_cases
                             or not isinstance(row.get("reason"), str) or not row["reason"].strip()):
                         errors.append(f"{skill}: invalid {section} merge migration")
             migration_rows = {row.get("from"): row for row in scoped_rows}
@@ -747,8 +748,9 @@ def compare_eval_contracts(
                 errors.append(f"{skill}: ambiguous {section} migration source")
             destinations: set[str] = set()
             for case_id, baseline_case in sorted(baseline_cases.items()):
-                candidate_case = candidate_cases.get(case_id)
-                migrated = False
+                case_target = migrations.get(case_id, case_id) if skill in merged else case_id
+                candidate_case = candidate_cases.get(case_target)
+                migrated = case_target != case_id
                 if candidate_case is None:
                     migrated_to = migrations.get(case_id)
                     if not migrated_to or migrated_to not in candidate_cases:

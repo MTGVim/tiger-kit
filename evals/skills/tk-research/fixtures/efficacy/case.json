@@ -1,0 +1,31 @@
+{
+  "goal": "distinct IDs and frequency; then independent spoofing evidence",
+  "observations": [
+    {
+      "id": "Aa",
+      "signed": true
+    },
+    {
+      "id": "aa",
+      "signed": false
+    },
+    {
+      "id": "Aa",
+      "signed": true
+    },
+    {
+      "id": "bb",
+      "signed": false
+    }
+  ],
+  "prior_rejections": {
+    "lower-case": "identity collision Aa/aa",
+    "set": "frequency loss"
+  },
+  "expected_decision": "exact-ID dictionary; signed-session evidence is a separate direction",
+  "must_preserve": [
+    "source contract",
+    "negative evidence",
+    "no product mutation or publication"
+  ]
+}

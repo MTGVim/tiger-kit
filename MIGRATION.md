@@ -10,19 +10,23 @@
 3. `evals/skills/<skill>/`의 저장소 전용 `eval` + `evals/catalog-routing.json`
 4. `AGENTS.md`
 
-## 연구 스킬 개편
+## 연구 스킬 통합
 
-`tk-discover`는 `tk-autoresearch`로 승격되었습니다. 기존의 질문·의존성·근거 기반 탐색을 유지하면서 승인된 연구 전용 작업 공간의 소규모 사전 실험과 본 실험, 실패 결과 보존, 방향별 수렴과 `NO-ACTION`/`NO-DELTA` 종료를 추가합니다. `tk-research`는 정해진 일회성 외부 조사 담당으로 유지되고, `tk-roadmap`은 연구와 독립적인 기획 담당입니다.
+`tk-autoresearch`와 기존 일회성 `tk-research`를 하나의 `tk-research`로 통합했습니다. 이전 `tk-discover`의 연구 계보도 이어집니다. 일회성 비교부터 지속 연구·실험·재개까지 같은 이름으로 호출하고 연구 과정에서 필요한 단계만 승격합니다. 별칭은 제공하지 않습니다.
 
-기존 이름의 별칭은 제공하지 않습니다. 선택 설치에서는 새 스킬을 설치하고 기존 `tk-discover`를 제거하세요.
+전역 설치 예시는 다음과 같습니다. 프로젝트 설치는 기존과 같은 범위에서 처리합니다. 새 스킬이 발견되는지 확인한 뒤 구버전을 제거하세요.
 
 ```bash
-npx skills add MTGVim/tiger-kit --global --agent claude-code codex hermes-agent --skill tk-autoresearch --yes
+npx skills add MTGVim/tiger-kit --global --agent claude-code codex hermes-agent --skill tk-research --yes
 npx skills list --global
-npx skills remove tk-discover --global --agent claude-code codex hermes-agent
+npx skills remove tk-autoresearch tk-discover --global --agent claude-code codex hermes-agent
 ```
 
-기존 `.tigerkit/discover.md`를 자동 이관하거나 권한 원장으로 사용하지 않습니다. 필요한 연구라면 현재 목표와 저장소와 작업 트리를 다시 확인한 뒤 `.tigerkit/autoresearch/state.md`로 새 상태를 만듭니다.
+새 호출은 `$tk-research <goal>` 또는 `$tk-research --resume`이며 외부 예약에도 `/tk-research --resume`을 사용합니다. 기본 상태는 필요할 때만 `.tigerkit/research/<slug>/state.md`에 만들고 HTML은 같은 홈의 `report.html`에 제공합니다. 기본 `hybrid` 설정·자동 추적 사본·지식 체크포인트 커밋을 제거했습니다. 명시적인 공유 요청만 정제한 지식을 추적 경로로 저장하며 HTML은 실행 정본이 아닙니다.
+
+기존 `.tigerkit/autoresearch/state.md`는 [이관 계약](skills/tk-research/references/persistence.md#legacy-migration)에 따라 저장소·연구 식별·홈 소유권을 검증한 뒤 실패 근거·실험·출처·전제·질문·현재 탐색 가능 항목·재개 조건·인계 후보와 안정적인 ID를 보존하여 새 로컬 정본으로 옮깁니다. 원자적 저장과 전체 핵심 필드 재확인 성공 전 원본을 삭제하지 않습니다. 성공 후 이전 정본을 역사 자료로 표시하여 중복 재개를 방지합니다. 기존 `local | hybrid | tracked` 설정은 검증하는 이관 입력이며 새 실행 권한이 아닙니다. 알 수 없는 키·모드·버전, 안전하지 않은 경로, 식별 불일치와 여러 소유 후보는 입력을 고치거나 추측하지 않고 중단합니다. 추적 문서·상태 사본은 역사 자료로 보존하며 자동 갱신·삭제하지 않습니다.
+
+옛 `.tigerkit/discover.md`만 있는 경우에는 목표와 저장소를 확인해 새 연구로 준비하며 실행 상태나 권한을 추측하지 않습니다. 운영·보호 데이터와 원격 발행 권한은 기존과 마찬가지로 별도입니다.
 
 ## 설치 갱신
 
@@ -171,3 +175,5 @@ python3 scripts/run_seed_release_gate.py \
   --baseline "<previous-tag-or-commit>" \
   --candidate HEAD
 ```
+
+🤖 본 문서는 AI가 작성했습니다.

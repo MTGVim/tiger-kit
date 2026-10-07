@@ -53,3 +53,13 @@ Sources inform behavior; their runtime and stylistic instructions are not depend
 - `CopilotKit/OpenGenerativeUI`, `apps/agent/skills/advanced-visualization/SKILL.md`, revision `457e60cdf7f63fb78004486e1dc7ba753194696d`, Parts 8–9: keep direct manipulation, self-explanatory visuals and non-color-only cues; adapt its content-dependent visual selection to an offline explanation with complete reset and visible causal differences. Omit sandbox/tool contracts, host bridges, external libraries, and widget-only narration rules.
 
 The source mechanisms and rationale were inspected. Local artifact comparison supplies example-level evidence, not a general upstream performance claim; full host-runtime and video backend efficacy remain outside this contract.
+
+## Document navigation (2026-10-07)
+
+Reviewed `EveryInc/compound-engineering-plugin@142dbabc23c86884f2e353502eb20a5fdd2a6d3d`,
+`skills/ce-ideate/references/html-rendering.md` (navigation/self-contained invariants) and
+`docs/plans/2026-05-11-001-feat-output-html-mode-plan.md` (single-file and package-local
+copy rationale). Adapt semantic sections, sticky/compact native navigation, hashes and details;
+omit donor templates/styles, CDN fonts, default tracked commits and orchestration. Runtime
+efficacy was not reproduced. The canonical contract is `tk-explain/references/html-output.md`;
+installed copies are synchronized and the MIT notice is in this package's `LICENSE.txt`.

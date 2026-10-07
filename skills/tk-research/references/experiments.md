@@ -3,6 +3,8 @@
 Read this only for metric/mechanically evaluated research or consequential noisy results.
 Ordinary qualitative research uses its observable evidence and falsifier without extra metric setup.
 
+For a small deterministic fixture, prefer one existing or stdlib check and a concise outcome over a new evaluator harness. Create a harness only when it resolves a real reproducibility/evaluation gap. A contract can be a fixed command, input revision/hash and success predicate in the existing record; it needs no separate JSON schema, directory or duplicate narrative. Ordinary source-supported conclusions do not need a mechanical experiment merely to restate the source.
+
 ## Protected evaluation contract
 
 Before comparing candidates, reuse an existing evaluation contract or establish the smallest feasible one:
@@ -13,7 +15,7 @@ Before comparing candidates, reuse an existing evaluation contract or establish 
 - candidate-editable surface and acceptance criteria;
 - dev/search versus independent acceptance evidence roles, when available.
 
-Keep this identity in canonical research state and the applicable experiment record, not new config keys.
+Keep one contract definition in canonical state or the applicable experiment record, and its verified identity/reference in the other; do not duplicate full definitions or add config keys.
 Check protected surfaces before execution and again before accepting the result, including indirect changes
 through imports, configuration, data selection or command overrides. A better score obtained by changing the
 evaluation contract is invalid improvement evidence and cannot support `KEEP`. Preserve the drift and its

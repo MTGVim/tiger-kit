@@ -1320,6 +1320,26 @@ class RunnerContractTest(unittest.TestCase):
         candidate["tk-combined"]["behavior"]["evals"].pop()
         self.assertTrue(any("deleted behavior" in e for e in compare_eval_contracts(baseline, candidate)))
 
+    def test_merge_same_case_ids_resolve_source_qualified_migrations(self):
+        baseline, candidate = self.merged_contracts()
+        for source, contract in baseline.items():
+            contract["behavior"]["evals"][0]["id"] = "same-id"
+        candidate["tk-combined"]["behavior"]["migrations"] = [
+            {"source_skill": source, "from": "same-id", "to": source, "reason": "Retain distinct source cases"}
+            for source in baseline
+        ]
+        self.assertEqual(compare_eval_contracts(baseline, candidate), [])
+        candidate["tk-combined"]["behavior"]["migrations"][1]["to"] = "tk-first"
+        self.assertTrue(any("colliding" in error for error in compare_eval_contracts(baseline, candidate)))
+
+    def test_merge_can_absorb_into_existing_owner_without_losing_either_contract(self):
+        baseline, candidate = self.merged_contracts()
+        candidate["tk-first"] = candidate.pop("tk-combined")
+        self.assertEqual(compare_eval_contracts(baseline, candidate), [])
+        self.assertEqual(compare_eval_contracts(candidate, candidate), [])
+        candidate["tk-first"]["behavior"]["evals"].pop(0)
+        self.assertTrue(any("deleted behavior" in error for error in compare_eval_contracts(baseline, candidate)))
+
     def test_merge_cannot_weaken_assertions_even_via_case_migration(self):
         baseline, candidate = self.merged_contracts()
         data = candidate["tk-combined"]["behavior"]

@@ -62,6 +62,11 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         research = self.root / "skills/tk-research/references/evidence.md"
         research.parent.mkdir(parents=True)
         research.write_text("Primary evidence\n", encoding="utf-8")
+        self.clear_target.parent.mkdir(parents=True, exist_ok=True)
+        (self.clear_target.parent / "html-output.md").write_text("Offline native navigation\n", encoding="utf-8")
+        discovery = self.root / "skills/tk-audit/references/repository-context.md"
+        discovery.parent.mkdir(parents=True, exist_ok=True)
+        discovery.write_text("Optional context, not authority\n", encoding="utf-8")
         canonical = Path(__file__).resolve().parents[1] / "skills/tk-browser-verify"
         fixture = self.root / "skills/tk-browser-verify"
         for directory, names in (("references", verification_policy.REFERENCES),
@@ -112,10 +117,13 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             expected = (self.review / name).read_bytes()
             self.assertEqual((self.prep / name).read_bytes(), expected)
             self.assertEqual((self.respond / name).read_bytes(), expected)
-        self.assertEqual(
-            (self.root / "skills/tk-autoresearch/references/evidence.md").read_bytes(),
-            (self.root / "skills/tk-research/references/evidence.md").read_bytes(),
-        )
+        self.assertFalse((self.root / "skills/tk-autoresearch").exists())
+        for name in ("clear-writing.md", "html-output.md"):
+            self.assertEqual((self.root / "skills/tk-research/references" / name).read_bytes(),
+                             (self.root / "skills/tk-explain/references" / name).read_bytes())
+        context = (self.root / "skills/tk-audit/references/repository-context.md").read_bytes()
+        for name in ("tk-prep", "tk-research"):
+            self.assertEqual((self.root / "skills" / name / "references/repository-context.md").read_bytes(), context)
         expected_domain = (self.prep / "domain-context.md").read_bytes()
         for target in self.domain_targets:
             self.assertEqual(target.read_bytes(), expected_domain)
@@ -123,6 +131,15 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             (self.wizard / "external-contracts.md").read_bytes(),
             (self.prep / "external-contracts.md").read_bytes(),
         )
+
+    def test_research_and_repository_context_drift_fail_and_repair(self) -> None:
+        self.assertEqual(self.run_main(), 0)
+        for name in ("html-output.md", "clear-writing.md", "repository-context.md"):
+            stale = self.root / "skills/tk-research/references" / name
+            stale.write_text("stale\n", encoding="utf-8")
+            self.assertEqual(self.run_main("--check"), 1)
+            self.assertEqual(self.run_main(), 0)
+            self.assertEqual(self.run_main("--check"), 0)
 
     def test_check_fails_for_stale_copy_and_sync_repairs_it(self) -> None:
         self.assertEqual(self.run_main(), 0)

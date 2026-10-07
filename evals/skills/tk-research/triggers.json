@@ -157,6 +157,283 @@
       "facets": [
         "typo"
       ]
+    },
+    {
+      "id": "persistent-train-explicit",
+      "split": "train",
+      "query": "$tk-research 조사하면서 새 질문과 가설을 찾고, 근거와 실험 결과에 따라 연구 방향을 계속 갱신해줘.",
+      "should_trigger": true
+    },
+    {
+      "id": "persistent-train-one-shot",
+      "split": "train",
+      "query": "`CrowdSec`와 `AWS WAF`를 이 조건에서 비교 조사해줘.",
+      "should_trigger": true
+    },
+    {
+      "id": "persistent-validation-context",
+      "split": "validation",
+      "query": "$tk-research 무엇을 먼저 알아야 할지 모르는 연구 목적을 결정과 근거 수집 단계로 구체화해줘.",
+      "should_trigger": true
+    },
+    {
+      "id": "persistent-validation-emerging",
+      "split": "validation",
+      "query": "/tk-research 조사 결과로 새 질문이 나타나는 탐색을 이어가자.",
+      "should_trigger": true
+    },
+    {
+      "id": "persistent-validation-empty",
+      "split": "validation",
+      "query": "$tk-research",
+      "should_trigger": true
+    },
+    {
+      "id": "persistent-validation-roadmap",
+      "split": "validation",
+      "query": "$tk-roadmap 이미 선택한 방향으로 마일스톤을 정리해줘.",
+      "should_trigger": false
+    },
+    {
+      "id": "persistent-validation-research",
+      "split": "validation",
+      "query": "$tk-research 익명 식별의 업계 사례만 한 번 비교해줘.",
+      "should_trigger": true
+    },
+    {
+      "id": "persistent-validation-prep",
+      "split": "validation",
+      "query": "$tk-prep 선택한 기능을 구현해줘.",
+      "should_trigger": false
+    },
+    {
+      "id": "persistent-validation-repo",
+      "split": "validation",
+      "query": "$tk-ask-repo 이 로그 필드가 어디서 만들어지는지 찾아줘.",
+      "should_trigger": false
+    },
+    {
+      "id": "persistent-validation-generic",
+      "split": "validation",
+      "query": "연구 과제가 뭔지 짧게 설명해줘.",
+      "should_trigger": false
+    },
+    {
+      "id": "persistent-validation-resume",
+      "split": "validation",
+      "query": "$tk-research --resume",
+      "should_trigger": true
+    },
+    {
+      "id": "persistent-train-natural-continuing",
+      "split": "train",
+      "query": "비로그인 어뷰즈 탐지를 지속적으로 연구하고 근거가 생길 때마다 가설과 실험 방향을 갱신해줘.",
+      "should_trigger": true
+    },
+    {
+      "id": "persistent-validation-natural-resume",
+      "split": "validation",
+      "query": "진행하던 자동연구를 일치하는 연구 상태에서 재개해줘.",
+      "should_trigger": true
+    },
+    {
+      "id": "persistent-validation-model-loop-resume",
+      "split": "validation",
+      "query": "사용자가 설정한 /loop의 작업: tk-`research` --resume으로 기존 연구를 이어가라.",
+      "should_trigger": true
+    },
+    {
+      "id": "persistent-validation-unrequested-autoresearch",
+      "split": "validation",
+      "query": "이 파일에 자동연구 상태가 있네. `autoresearch`가 무슨 뜻인지 설명해줘.",
+      "should_trigger": false
+    },
+    {
+      "id": "persistent-validation-natural-formal",
+      "split": "validation",
+      "query": "현재 탐지 가설을 지속적으로 조사하고 실험 결과에 따라 다음 연구 질문을 갱신해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal",
+        "compound"
+      ]
+    },
+    {
+      "id": "persistent-validation-natural-casual",
+      "split": "validation",
+      "query": "어뷰즈 연구 계속 맡아서 가설 틀리면 방향도 바꿔줘.",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "persistent-validation-natural-mixed-typo",
+      "split": "validation",
+      "query": "`research frontier` 조샤를 이어가고 새로운 가설도 실험해줘.",
+      "should_trigger": true,
+      "facets": [
+        "ko-en",
+        "typo"
+      ]
+    },
+    {
+      "id": "persistent-validation-short-explanation",
+      "split": "validation",
+      "query": "자동연구 뜻?",
+      "should_trigger": false,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "persistent-validation-one-shot-formal",
+      "split": "validation",
+      "query": "공식 자료로 익명 식별의 저장 방식을 한 번만 비교해 주세요.",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "persistent-validation-learning-not-research",
+      "split": "validation",
+      "query": "`clientId` 개념을 선수 지식부터 배우고 싶으니 학습 자료를 만들어줘.",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    }
+  ],
+  "migrations": [
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "train-explicit",
+      "to": "persistent-train-explicit",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다."
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "train-one-shot",
+      "to": "persistent-train-one-shot",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다.",
+      "previous_should_trigger": false
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "validation-context",
+      "to": "persistent-validation-context",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다."
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "validation-emerging",
+      "to": "persistent-validation-emerging",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다."
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "validation-empty",
+      "to": "persistent-validation-empty",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다."
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "validation-roadmap",
+      "to": "persistent-validation-roadmap",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다."
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "validation-research",
+      "to": "persistent-validation-research",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다.",
+      "previous_should_trigger": false
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "validation-prep",
+      "to": "persistent-validation-prep",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다."
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "validation-repo",
+      "to": "persistent-validation-repo",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다."
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "validation-generic",
+      "to": "persistent-validation-generic",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다."
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "validation-resume",
+      "to": "persistent-validation-resume",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다."
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "train-natural-continuing",
+      "to": "persistent-train-natural-continuing",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다."
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "validation-natural-resume",
+      "to": "persistent-validation-natural-resume",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다."
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "validation-model-loop-resume",
+      "to": "persistent-validation-model-loop-resume",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다."
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "validation-unrequested-autoresearch",
+      "to": "persistent-validation-unrequested-autoresearch",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다."
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "validation-natural-formal",
+      "to": "persistent-validation-natural-formal",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다."
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "validation-natural-casual",
+      "to": "persistent-validation-natural-casual",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다."
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "validation-natural-mixed-typo",
+      "to": "persistent-validation-natural-mixed-typo",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다."
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "validation-short-explanation",
+      "to": "persistent-validation-short-explanation",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다."
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "validation-one-shot-formal",
+      "to": "persistent-validation-one-shot-formal",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다.",
+      "previous_should_trigger": false
+    },
+    {
+      "source_skill": "tk-autoresearch",
+      "from": "validation-learning-not-research",
+      "to": "persistent-validation-learning-not-research",
+      "reason": "지속 연구 호출을 단일 연구 담당자에게 옮기고 일회성 외부 조사도 같은 담당자가 선택하도록 통합합니다."
     }
   ]
 }

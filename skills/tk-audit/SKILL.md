@@ -40,7 +40,7 @@ When durable findings are needed, the only owned artifact is repository-local `.
 - `security | perf | tests | architecture`: Focus on one category.
 - `policy`: Focus on business-policy complexity using [policy-refactoring.md](references/policy-refactoring.md).
 - `branch`: Inspect merge-base changes and direct consumers, and mark `introduced | pre-existing`.
-- `next`: Separate evidence-backed direction candidates from defect findings.
+- `next`: Discover evidence-backed technical work and check existing trackers using [work discovery](references/work-discovery.md); separate opportunities from defects.
 - `save`: Persist the current findings for handoff or later reuse.
 
 Modifiers may be combined. Do not implement, write Seeds, publish issues, or create worktrees.
@@ -102,6 +102,7 @@ Each persisted open finding must contain at least:
 - A short `fix sketch`
 - `dependency/order hint`
 - A recommended next route: `prep | investigate | no-action`
+- For `next`, why-now evidence, dedupe status/references and verified/unavailable tracker coverage
 
 A `finding` is only a candidate, not a `Seed`, ticket, implementation plan, or approval.
 Never copy a `secret` value; record only its location and credential type.

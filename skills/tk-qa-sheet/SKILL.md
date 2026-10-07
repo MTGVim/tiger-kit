@@ -98,6 +98,8 @@ label/path `code-only`, carry the gaps, and continue the requested output. Missi
 repository identity blocks inventory; missing HTML self-check evidence blocks only its
 verified status. Questions and file handling grant no implementation/publication authority.
 
+For long document sections in an HTML QA sheet, read [HTML output](references/html-output.md); preserve the QA interface and use document navigation only for its document portions.
+
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 

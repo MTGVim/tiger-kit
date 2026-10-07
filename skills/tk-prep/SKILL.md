@@ -84,6 +84,8 @@ read [external contract evidence](references/external-contracts.md) before accep
 or setup commands.
 Use the current repository and explicitly supplied task sources. Do not list or investigate other open PRs as a background collision preflight. Read another PR only when the user explicitly requests that comparison or supplies it as necessary task evidence; keep that read bounded to the stated question.
 
+For tracker-backed work or repository discovery scope, read [repository context](references/repository-context.md) when configuration or a work source is supplied. Recheck the actual source; context never grants mutation authority.
+
 ## Preparation continuation and exit gate
 
 After a scope or clarification answer, apply it and continue the remaining repository investigation in the same active

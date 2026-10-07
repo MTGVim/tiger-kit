@@ -719,9 +719,9 @@ PR 재실행에서는 `EveryInc/compound-engineering-plugin@7fe624d36a5a12253165
 
 ## #398 지속 연구와 근거 검증 증류
 
-`tk-discover`의 공개 담당자는 `tk-autoresearch`로 승격했습니다. 과거 `tk-discover`의 출처 이력은 삭제하지 않고 새 패키지 `references/sources.md`에 고정 커밋 기반 계보로 이관했습니다.
+`tk-discover`의 공개 담당자는 `tk-research`로 승격했습니다. 과거 `tk-discover`의 출처 이력은 삭제하지 않고 새 패키지 `references/sources.md`에 고정 커밋 기반 계보로 이관했습니다.
 
-`tk-autoresearch`는 다음 원본을 2026-10-01에 고정 커밋으로 비교했습니다.
+`tk-research`는 다음 원본을 2026-10-01에 고정 커밋으로 비교했습니다.
 
 - `Orchestra-Research/AI-Research-SKILLs` `773a52944ba4747a18bd4ae9ade53fff041adcbc`: 세션을 넘어 유지되는 연구 결과, 내부 실험 반복과 외부 종합 반복, 정체 시 연구 방향 전환을 적용했습니다. 필수 `/loop`, `never stop`, 논문 작성 수명 주기와 실행 체계는 제외했습니다.
 - `uditgoenka/autoresearch` `050e30dc4ba0974b03f2873111b9901ec3211390`: 검증 뒤 유지 또는 폐기, 기계적으로 판정 가능한 경우의 명시적 완료 기준, 정체 감지를 연구의 반증 기준·정보 가치·수렴 경계로 적용했습니다. 배포·출시 실행 체계는 제외했습니다.
@@ -891,3 +891,9 @@ POSIX에서는 실행 소유 프로세스 그룹을 종료해 시간 초과, 중
 
 각 수정은 기존 패키지 경계 안에서 독립적으로 작성한 행동 계약과 저장소 평가에 한정합니다.
 새 스킬, 실행 체계, 설정이나 CI를 추가하지 않습니다.
+
+`tk-audit next`는 `tomzx/agents@2803bc10448a6a5b30b0c9cf767707eb28f49c14`의 근거 기반 기술 일감 발굴과 본문 수준 중복 비교를 적용합니다. 필수 스캐너·전체 이력 장부·할당량·티켓 발행은 적용하지 않습니다. 해당 MIT 고지는 설치 패키지 `skills/tk-audit/LICENSE.txt`에 포함합니다. 상류의 중복 검증 효과는 실행 자료가 없어 `unverified`입니다.
+
+연구 담당자를 `tk-research` 하나로 통합하면서 이전 연구·탐색의 출처와 라이선스는 새 패키지에 보존했습니다. `Orchestra-Research/AI-Research-SKILLs@773a52944ba4747a18bd4ae9ade53fff041adcbc`의 의미 있는 결과 보고와 `EveryInc/compound-engineering-plugin@142dbabc23c86884f2e353502eb20a5fdd2a6d3d`의 오프라인 문서 탐색을 검토했습니다. 공유 `tk-rewrite` 글쓰기·`tk-explain` HTML 계약을 재사용하며 외부 폰트, 강제 heartbeat, 자동 창 열기, HTML 정본화와 발행은 적용하지 않습니다. 상류 데모 성과는 재현하지 않았습니다.
+
+🤖 본 문서는 AI가 작성했습니다.

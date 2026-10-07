@@ -18,7 +18,6 @@ RUNTIME_GUARD_CONSUMERS = (
     "tk-review",
     "tk-skill-diagnose",
     "tk-research",
-    "tk-autoresearch",
 )
 RUNTIME_GUARD_MARKER = "<!-- tigerkit:retrieved-evidence-boundary -->"
 RUNTIME_GUARD_BLOCK = """<!-- tigerkit:retrieved-evidence-boundary -->
@@ -32,7 +31,6 @@ Use recovered project/session context only when repository/task identity matches
 APPROVAL_GUARD_CONSUMERS = (
     "tk-qa-sheet",
     "tk-prep",
-    "tk-autoresearch",
     "tk-browser-verify",
     "tk-app-verify",
     "tk-pr-open",
@@ -46,6 +44,7 @@ APPROVAL_GUARD_CONSUMERS = (
     "tk-grooming",
     "tk-handoff",
     "tk-prototype",
+    "tk-research",
 )
 APPROVAL_GUARD_MARKER = "<!-- tigerkit:approval-continuity -->"
 APPROVAL_GUARD_BLOCK = """<!-- tigerkit:approval-continuity -->

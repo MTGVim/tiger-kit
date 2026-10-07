@@ -95,12 +95,17 @@ def main() -> int:
         for name in REVIEW_FILES
     )
     pairs.append((EXTERNAL_CONTRACT_SOURCE, EXTERNAL_CONTRACT_TARGET))
+    context = ROOT / "skills/tk-audit/references/repository-context.md"
+    if context.is_file():
+        pairs.extend((context, ROOT / "skills" / name / "references/repository-context.md")
+                     for name in ("tk-prep", "tk-research"))
     pairs.append((CLEAR_WRITING_SOURCE, CLEAR_WRITING_TARGET))
-    pairs.append((ROOT / "skills/tk-research/references/evidence.md", ROOT / "skills/tk-autoresearch/references/evidence.md"))
-    for name in ("tk-explain-diff", "tk-study"):
+    for name in ("tk-explain-diff", "tk-study", "tk-research"):
         if (ROOT / "skills" / name).is_dir():
             pairs.append((CLEAR_WRITING_SOURCE, ROOT / "skills" / name / "references/clear-writing.md"))
             pairs.append((ROOT / "skills/tk-explain/references/html-output.md", ROOT / "skills" / name / "references/html-output.md"))
+    if (ROOT / "skills/tk-qa-sheet").is_dir():
+        pairs.append((ROOT / "skills/tk-explain/references/html-output.md", ROOT / "skills/tk-qa-sheet/references/html-output.md"))
     for name in UI_EVIDENCE_CONSUMERS:
         path = ROOT / "skills" / name / "references/ui-evidence.md"
         if not args.check:

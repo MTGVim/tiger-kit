@@ -36,3 +36,20 @@ starting a server or launching the user's browser; disclose any unperformed rend
 
 Live-figure provenance is kept in the calling package's provenance file; the calling package's
 `LICENSE.txt` preserves the MIT notice.
+
+## Document navigation
+
+For long document-like artifacts, keep meaningful stable `<section id="...">` elements in the DOM
+and native links whose URL hashes support direct access, browser history and browser Find. Provide
+a desktop sticky TOC/sidebar or equally fast section navigation, switching on narrow screens to a
+compact accessible sticky top navigation or collapsible TOC. Indicate the current section, using
+`:target` as the no-JavaScript cue and optional progressive `aria-current` updates for the TOC.
+Use `<details><summary>` for long secondary evidence/logs, keeping required background/conclusions
+expanded and searchable. Preserve keyboard order, visible focus, semantic navigation labels, readable
+contrast and reduced motion. Navigation must not remove inactive sections or require JavaScript to
+read core facts. Verify desktop/mobile layout, hash deep links, keyboard navigation, no-JS readability
+and reduced-motion behavior when a renderer is available; disclose missing checks.
+
+Experimental prototype UIs are not document viewers: do not force this navigation shell onto them.
+Their offline/accessibility principles still apply. Document portions of QA sheets can use these
+navigation rules without changing the behavior of their test/checklist interface.

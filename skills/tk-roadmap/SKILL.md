@@ -67,7 +67,7 @@ every step. When the direction is agreed or the user requests a draft, return:
 
 A justified no-go, deferral, or investigation outcome is a valid endpoint. Do not force a
 fixed milestone count or turn a roadmap into a promise to deliver every candidate.
-`tk-autoresearch` owns a continuing investigation whose questions and dependencies emerge from evidence;
+`tk-research` owns a continuing investigation whose questions and dependencies emerge from evidence;
 this skill may plan one investigation milestone but does not repeatedly resolve its discovery map.
 Stop after the planning result. Do not automatically invoke skills, create tickets,
 implement, assign work, change source/config/Git, or publish. `tk-grill` owns exhaustive
