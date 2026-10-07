@@ -146,13 +146,13 @@
     {
       "id": "discovery-train-next-trackers",
       "split": "train",
-      "query": "$tk-audit next 기존 일감과 겹치지 않는 기술 개선을 찾아 주세요.",
+      "query": "`$tk-audit next` 기존 일감과 겹치지 않는 기술 개선을 찾아 주세요.",
       "should_trigger": true
     },
     {
       "id": "discovery-validation-implicit-tracker",
       "split": "validation",
-      "query": "Jira와 겹치지 않는 일감을 찾아 주세요.",
+      "query": "`Jira`와 겹치지 않는 일감을 찾아 주세요.",
       "should_trigger": false
     }
   ],

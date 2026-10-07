@@ -894,6 +894,6 @@ POSIX에서는 실행 소유 프로세스 그룹을 종료해 시간 초과, 중
 
 `tk-audit next`는 `tomzx/agents@2803bc10448a6a5b30b0c9cf767707eb28f49c14`의 근거 기반 기술 일감 발굴과 본문 수준 중복 비교를 적용합니다. 필수 스캐너·전체 이력 장부·할당량·티켓 발행은 적용하지 않습니다. 해당 MIT 고지는 설치 패키지 `skills/tk-audit/LICENSE.txt`에 포함합니다. 상류의 중복 검증 효과는 실행 자료가 없어 `unverified`입니다.
 
-연구 담당자를 `tk-research` 하나로 통합하면서 이전 연구·탐색의 출처와 라이선스는 새 패키지에 보존했습니다. `Orchestra-Research/AI-Research-SKILLs@773a52944ba4747a18bd4ae9ade53fff041adcbc`의 의미 있는 결과 보고와 `EveryInc/compound-engineering-plugin@142dbabc23c86884f2e353502eb20a5fdd2a6d3d`의 오프라인 문서 탐색을 검토했습니다. 공유 `tk-rewrite` 글쓰기·`tk-explain` HTML 계약을 재사용하며 외부 폰트, 강제 heartbeat, 자동 창 열기, HTML 정본화와 발행은 적용하지 않습니다. 상류 데모 성과는 재현하지 않았습니다.
+연구 담당자를 `tk-research` 하나로 통합하면서 이전 연구·탐색의 출처와 라이선스는 새 패키지에 보존했습니다. `Orchestra-Research/AI-Research-SKILLs@773a52944ba4747a18bd4ae9ade53fff041adcbc`의 의미 있는 결과 보고와 `EveryInc/compound-engineering-plugin@142dbabc23c86884f2e353502eb20a5fdd2a6d3d`의 오프라인 문서 탐색을 검토했습니다. 공유 `tk-rewrite` 글쓰기·`tk-explain` HTML 계약을 재사용하며 외부 폰트, 강제 `heartbeat`, 자동 창 열기, HTML 정본화와 발행은 적용하지 않습니다. 상류 데모 성과는 재현하지 않았습니다.
 
 🤖 본 문서는 AI가 작성했습니다.
