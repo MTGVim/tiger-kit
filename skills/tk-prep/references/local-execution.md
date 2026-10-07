@@ -83,6 +83,19 @@ and exact fix diff rather than rerunning broad discovery after every edit, and a
 by that fix. Stop with the exact unresolved result after round five; do not continue until a stochastic review happens to
 return no findings.
 
+After review remediation settles, compare every runtime-evidence head with the final candidate head before binding
+verification. If the intervening diff touches a runtime-verified screen's render path or request path, replay the same
+run's after procedure on the final head before reporting completion or creating the final completion commit. Reuse the
+existing replay metadata and held run-owned browser/server state when it is still valid. If the intervening diff does not
+touch those paths, keep the earlier runtime evidence and record the path-based carry-forward reason instead of recapturing
+it. A commit that only records already-verified content does not require replay merely because the commit SHA changed.
+
+When a nested browser verifier returns successful after evidence before the parent has finished review/remediation,
+tell it that the verified path may still receive commits and keep its replay state available until the parent establishes
+the final head. Secret input files and one-shot secret servers are never retained for this purpose. If authentication
+expires before a required final-head replay, request new transient input through the verifier's ordinary authentication
+path and explain why the previous state can no longer satisfy that replay.
+
 For direct and SDD execution, preserve scope and UI literals, use the exact review range, run acceptance review, retain
 automated regression protection, and create only approved local commits. Invoke the planned verifier (`tk-browser-verify`
 or `tk-app-verify`) for every applicable runtime AC; its evidence does not replace automated protection. SDD's whole-change final review already
