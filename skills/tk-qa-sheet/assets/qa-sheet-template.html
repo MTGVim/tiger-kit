@@ -33,15 +33,28 @@
 [hidden] { display: none !important; }
 body { margin: 0; background: var(--bg); color: var(--text); font: var(--font-body)/1.65 var(--font-family); }
 h1 { font-size: var(--font-h1); } h2 { font-size: var(--font-h2); }
-a { color: var(--accent); overflow-wrap: anywhere; }
+a, p, li, dd, dt { overflow-wrap: anywhere; }
+a { color: var(--accent); }
 button, select, textarea { font: inherit; color: var(--text); background: var(--panel); }
+img, svg, video, canvas { max-width: 100%; height: auto; }
+pre { max-width: 100%; overflow-x: auto; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.ht-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: calc(2 * var(--space)); }
+.ht-card { min-width: 0; max-width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: calc(2 * var(--space)); }
 .ht-table-scroll { position: relative; max-width: 100%; overflow-x: auto; }
 .ht-table-scroll table { width: 100%; border-collapse: collapse; }
 .ht-table-scroll th, .ht-table-scroll td { text-align: left; vertical-align: top; padding: var(--space); border-bottom: 1px solid var(--line); font-size: var(--font-body); }
 .ht-table-scroll th[scope="row"] { min-width: 8em; overflow-wrap: normal; }
-.ht-theme-control { font-size: var(--font-small); }
+.ht-theme-control { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px; min-width: 0; max-width: 100%; font-size: var(--font-body); }
+.ht-theme-label { color: var(--muted); white-space: nowrap; }
+.ht-theme-buttons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: min(18rem, 100%); min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.ht-theme-button { min-width: 0; min-height: 40px; padding: 6px 10px; border: 0; border-left: 1px solid var(--line); border-radius: 0; cursor: pointer; white-space: nowrap; }
+.ht-theme-button:first-child { border-left: 0; }
+.ht-theme-button:hover { background: var(--hover); }
+.ht-theme-button[aria-pressed="true"] { background: var(--accent); color: var(--panel); font-weight: 700; }
+@media (max-width: 480px) {
+  .ht-theme-control { grid-template-columns: 1fr; }
+  .ht-theme-buttons { width: 100%; }
+}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
 }
@@ -51,9 +64,10 @@ button, select, textarea { font: inherit; color: var(--text); background: var(--
   body { margin: 0; background: var(--bg); color: var(--text);
     font: var(--font-body)/1.55 var(--font-family); }
   header { position: sticky; top: 0; z-index: 2; background: var(--panel); border-bottom: 1px solid var(--line);
-    padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-  header h1 { font-size: 16px; margin: 0; }
-  .progress { flex: 1 1 200px; display: flex; align-items: center; gap: 10px; min-width: 200px; }
+    padding: 12px 20px; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 12px; align-items: center; max-width: 100%; }
+  header > * { min-width: 0; max-width: 100%; }
+  header h1 { font-size: 16px; margin: 0; overflow-wrap: anywhere; }
+  .progress { display: flex; align-items: center; gap: 10px; min-width: 0; width: 100%; }
   .bar { flex: 1; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
   .bar > i { display: block; height: 100%; width: 0; background: var(--good); transition: width .2s; }
   .count { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -66,7 +80,7 @@ button, select, textarea { font: inherit; color: var(--text); background: var(--
   details.legend summary { cursor: pointer; color: var(--muted); }
   details.legend ul { margin: 8px 0 4px; padding-left: 18px; }
   .group { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 14px 10px; margin-bottom: 12px; }
-  .group h2 { font-size: 15px; margin: 8px 0; display: flex; gap: 8px; align-items: baseline; }
+  .group h2 { font-size: 15px; margin: 8px 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: baseline; }
   .gcount { font-size: 12px; font-weight: 400; color: var(--muted); }
   .group.complete h2 { color: var(--good); }
   ul.items, ul.checks, ul.notes { list-style: none; margin: 0; padding: 0; }
@@ -76,7 +90,8 @@ button, select, textarea { font: inherit; color: var(--text); background: var(--
   ul.notes { padding-left: 18px; color: var(--muted); }
   ul.notes li::before { content: "· "; }
   li.subhead { color: var(--muted); margin: 4px 0 2px; }
-  li.check label { display: flex; gap: 8px; align-items: flex-start; padding: 3px 4px; border-radius: 4px; cursor: pointer; }
+  li.check label { display: flex; gap: 8px; align-items: flex-start; min-width: 0; max-width: 100%; padding: 3px 4px; border-radius: 4px; cursor: pointer; }
+  .ctext { min-width: 0; overflow-wrap: anywhere; }
   li.check label:hover { background: var(--hover); }
   li.check input { margin-top: 3px; accent-color: var(--good); flex: none; }
   li.check.checked .ctext { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--muted); }
@@ -108,8 +123,19 @@ button, select, textarea { font: inherit; color: var(--text); background: var(--
   aside .hint { font-size: 12px; color: var(--muted); }
   .error { background: var(--warn-bg); color: var(--warn); padding: 12px 20px; }
   @media (max-width: 900px) {
-    .layout { grid-template-columns: 1fr; }
+    header { grid-template-columns: minmax(0, 1fr) auto; padding: 10px 12px; }
+    header h1, header .environment, header .progress, header .ht-theme-control { grid-column: 1 / -1; }
+    header .ht-theme-control { width: 100%; }
+    header .ht-theme-buttons { width: 100%; }
+    .layout { grid-template-columns: minmax(0, 1fr); padding: 12px; max-width: 100%; }
+    .layout > * { min-width: 0; max-width: 100%; }
     aside { position: static; height: 360px; }
+  }
+  @media (max-width: 480px) {
+    header { grid-template-columns: minmax(0, 1fr); }
+    header > label, header > button { width: 100%; }
+    .progress { gap: 6px; }
+    .lv1 { margin-left: 10px; } .lv2 { margin-left: 20px; } .lv3 { margin-left: 30px; }
   }
 </style>
 </head>
@@ -199,7 +225,7 @@ button, select, textarea { font: inherit; color: var(--text); background: var(--
   <span id="environment" class="count environment" hidden></span>
   <div class="progress"><div class="bar"><i id="bar"></i></div><span class="count" id="count">0 / 0</span></div>
   <label><input type="checkbox" id="onlyOpen"> 미확인만 보기</label>
-  <label class="ht-theme-control" hidden>테마 <select id="ht-theme"><option value="system">시스템</option><option value="light">라이트</option><option value="dark">다크</option></select></label>
+  <div class="ht-theme-control" data-ht-theme-control hidden role="group" aria-label="테마"><span class="ht-theme-label">테마</span><div class="ht-theme-buttons"><button class="ht-theme-button" type="button" data-theme-choice="system" aria-pressed="false">시스템</button><button class="ht-theme-button" type="button" data-theme-choice="light" aria-pressed="false">라이트</button><button class="ht-theme-button" type="button" data-theme-choice="dark" aria-pressed="false">다크</button></div></div>
   <button type="button" id="reset">체크 초기화</button>
 </header>
 <div class="layout">
@@ -436,8 +462,10 @@ button, select, textarea { font: inherit; color: var(--text); background: var(--
 <script>
 /* tigerkit:html-theme.js */
 (() => {
-  const select = document.getElementById('ht-theme');
-  if (!select) return;
+  const control = document.querySelector('[data-ht-theme-control]');
+  if (!control) return;
+  const buttons = [...control.querySelectorAll('[data-theme-choice]')];
+  if (!buttons.length) return;
   const root = document.documentElement;
   const key = 'tigerkit-html-theme';
   const valid = value => ['system', 'light', 'dark'].includes(value);
@@ -446,17 +474,21 @@ button, select, textarea { font: inherit; color: var(--text); background: var(--
   const apply = value => {
     if (value === 'system') root.removeAttribute('data-theme');
     else root.setAttribute('data-theme', value);
-    select.value = value;
+    for (const button of buttons) {
+      button.setAttribute('aria-pressed', button.dataset.themeChoice === value ? 'true' : 'false');
+    }
   };
   let saved = configured;
   try { const value = localStorage.getItem(key); if (valid(value)) saved = value; } catch {}
   apply(saved);
-  select.addEventListener('change', () => {
-    const value = valid(select.value) ? select.value : 'system';
-    apply(value);
-    try { localStorage.setItem(key, value); } catch {}
-  });
-  select.parentElement.hidden = false;
+  for (const button of buttons) {
+    button.addEventListener('click', () => {
+      const value = valid(button.dataset.themeChoice) ? button.dataset.themeChoice : 'system';
+      apply(value);
+      try { localStorage.setItem(key, value); } catch {}
+    });
+  }
+  control.hidden = false;
 })();
 /* /tigerkit:html-theme.js */
 </script>
