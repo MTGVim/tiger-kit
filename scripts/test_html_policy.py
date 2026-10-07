@@ -48,6 +48,9 @@ class HTMLPolicyTest(unittest.TestCase):
         self.assertIn('grid-template-columns:repeat(2,minmax(0,1fr))', report)
         self.assertIn('header > * { min-width: 0; max-width: 100%; }', qa)
         self.assertIn('.environment { white-space: normal; overflow-wrap: anywhere; }', qa)
+        self.assertIn('grid-template-areas: "title environment environment environment" "progress filter theme reset"', qa)
+        self.assertIn('min-width: min(14rem, 100%)', qa)
+        self.assertIn('class="only-open-filter"', qa)
 
     def test_shared_contract_contains_render_safe_authoring_rules(self):
         text = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
@@ -61,6 +64,20 @@ class HTMLPolicyTest(unittest.TestCase):
         self.assertIn('요청 함수의 이동 위치', text)
         self.assertIn('colloquial interrogative ending', text)
         self.assertIn('dangling connective ending', text)
+
+    def test_final_head_replay_and_reason_first_auth_contracts(self):
+        local = (ROOT / 'skills/tk-prep/references/local-execution.md').read_text()
+        lifecycle = (ROOT / 'skills/tk-browser-verify/references/session-lifecycle.md').read_text()
+        environment = (ROOT / 'skills/tk-browser-verify/references/environment.md').read_text()
+        qa = (ROOT / 'skills/tk-qa-sheet/SKILL.md').read_text()
+        self.assertIn("intervening diff touches a runtime-verified screen's render path or request path", local)
+        self.assertIn('replay the same', local)
+        self.assertIn('defer normal cleanup', lifecycle)
+        self.assertIn('Never retain the secret-input file', lifecycle)
+        self.assertIn('Before showing paths or input mechanics', environment)
+        self.assertIn('why the existing evidence or authenticated state cannot satisfy it', environment)
+        self.assertIn('what a recapture needs', qa)
+        self.assertIn('why the old evidence/session cannot satisfy it', qa)
 
     def test_missing_canonical_theme_blocks_release_check(self):
         self.check_mutation(lambda root: (root / 'skills/tk-explain/assets/html-theme.css').unlink())
