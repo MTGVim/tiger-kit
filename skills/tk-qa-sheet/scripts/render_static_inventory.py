@@ -22,7 +22,24 @@ def text(value: object) -> str:
 
 def status(item: dict, parent: dict | None = None) -> str:
     observed = item.get('provenance') == 'observed' and (parent is None or parent.get('provenance') == 'observed')
-    return '' if observed else ' <span class="badge">코드 기준</span>'
+    parts = [] if observed else ['<span class="badge">코드 기준</span>']
+    verification = item.get('verification', 'manual')
+    evidence = item.get('evidence')
+    if verification not in ('manual', 'auto-verified', 'partial'):
+        raise ValueError('invalid QA verification state')
+    if verification == 'manual':
+        if evidence is not None:
+            raise ValueError('manual QA rows cannot carry automated evidence')
+    else:
+        if not isinstance(evidence, dict) or not isinstance(evidence.get('ref'), str) or not evidence['ref'].strip() \
+                or not isinstance(evidence.get('head'), str) or not evidence['head'].strip():
+            raise ValueError('automated QA evidence needs nonblank ref and head')
+        label = '자동 검증' if verification == 'auto-verified' else '부분 자동 확인'
+        klass = 'auto' if verification == 'auto-verified' else 'partial'
+        parts.append(f'<span class="badge {klass}">' + label + '</span>')
+        parts.append('<span class="evidence">근거: <code>' + html.escape(evidence['ref']) +
+                     '</code> @ <code>' + html.escape(evidence['head']) + '</code></span>')
+    return (' ' + ' '.join(parts)) if parts else ''
 
 
 def inventory(data: dict) -> str:

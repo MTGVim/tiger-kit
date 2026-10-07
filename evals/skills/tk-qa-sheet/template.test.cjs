@@ -37,8 +37,14 @@ function run(data = sample, storage = new Map(), denied = false) {
       html = value;
       groups = [...value.matchAll(/<section class="group">([\s\S]*?)<\/section>/g)].map(match => {
         const group = new Element(); group.count = new Element();
-        group.boxes = [...match[1].matchAll(/data-id="([^"]+)"/g)].map(input => {
-          const box = new Element(); box.dataset.id = input[1]; box.row = new Element(); return box;
+        group.boxes = [...match[1].matchAll(/<input type="checkbox"([^>]*)>/g)].map(input => {
+          const attrs = input[1];
+          const id = attrs.match(/data-id="([^"]+)"/)?.[1];
+          const box = new Element(); box.dataset.id = id; box.row = new Element();
+          box.dataset.auto = /data-auto="true"/.test(attrs) ? "true" : undefined;
+          box.checked = /\schecked(?:\s|>|$)/.test(attrs);
+          box.disabled = /\sdisabled(?:\s|>|$)/.test(attrs);
+          return box;
         });
         return group;
       });
@@ -62,7 +68,7 @@ function run(data = sample, storage = new Map(), denied = false) {
     flush: () => { for (const fn of timers.values()) fn(); timers.clear(); } };
 }
 const clone = value => JSON.parse(JSON.stringify(value));
-const toggle = box => { box.checked = !box.checked; box.emit('change'); };
+const toggle = box => { if (box.disabled) return; box.checked = !box.checked; box.emit('change'); };
 const make = groups => ({ title: 'QA', storageKey: 'qa', groups });
 
 test('two checks, notes and filter survive reload; reset preserves notes', () => {
@@ -109,8 +115,47 @@ test('source-only parent and omitted provenance stay source-only', () => {
   assert.equal((run().html.match(/class="badge"/g) || []).length, 1);
 });
 
+test('auto-verified rows are separated, pre-checked and immutable while partial stays manual', () => {
+  const data = make([{ title: 'Area', items: [{ title: 'Screen', provenance: 'observed', checks: [
+    { text: 'Already exercised', provenance: 'observed', verification: 'auto-verified', evidence: { ref: 'run-1', head: 'abc123' } },
+    { text: 'Remaining path only', provenance: 'observed', verification: 'partial', evidence: { ref: '.tigerkit/evidence/run-1', head: 'abc123' } },
+    { text: 'Manual save', provenance: 'code-only' }
+  ] }]}]);
+  const result = run(data);
+  assert.match(result.html, /<details class="automated">/);
+  assert.match(result.html, /run-1/);
+  assert.match(result.html, /부분 자동 확인/);
+  const auto = result.boxes.find(box => box.dataset.auto === 'true');
+  assert.ok(auto); assert.equal(auto.checked, true); assert.equal(auto.disabled, true);
+  assert.equal(result.ids.count.textContent, '1 / 3');
+  toggle(auto);
+  assert.equal(result.ids.count.textContent, '1 / 3');
+  result.ids.reset.emit('click');
+  assert.equal(result.ids.count.textContent, '1 / 3');
+});
+
+test('promoting a stored manual row to auto clears stale completion before later demotion', () => {
+  const manual = make([{ title: 'Area', items: [{ title: 'Screen' }] }]);
+  const first = run(manual); toggle(first.boxes[0]);
+  assert.equal(first.ids.count.textContent, '1 / 1');
+  const promoted = clone(manual);
+  promoted.groups[0].items[0].verification = 'auto-verified';
+  promoted.groups[0].items[0].evidence = { ref: 'run-2', head: 'head-a' };
+  const second = run(promoted, first.storage);
+  assert.equal(second.ids.count.textContent, '1 / 1');
+  const demoted = clone(manual);
+  const third = run(demoted, first.storage);
+  assert.equal(third.ids.count.textContent, '0 / 1');
+});
+
 test('malformed data and schema show an error without a partial sheet', () => {
-  for (const data of ['{', null, {}, { ...sample, groups: null }, make([{ title: 'Area', items: [{ title: 'Only headings', checks: [{ text: 'Heading', heading: true }] }] }])]) {
+  for (const data of [
+    '{', null, {}, { ...sample, groups: null },
+    make([{ title: 'Area', items: [{ title: 'Only headings', checks: [{ text: 'Heading', heading: true }] }] }]),
+    make([{ title: 'Area', items: [{ title: 'Bad mode', verification: 'done' }] }]),
+    make([{ title: 'Area', items: [{ title: 'Missing evidence', verification: 'auto-verified' }] }]),
+    make([{ title: 'Area', items: [{ title: 'Manual with evidence', evidence: { ref: 'run', head: 'abc' } }] }])
+  ]) {
     const result = run(data);
     assert.match(result.body.error, /qa-data/);
     assert.equal(result.boxes.length, 0);

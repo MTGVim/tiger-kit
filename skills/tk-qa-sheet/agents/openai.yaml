@@ -1,5 +1,5 @@
 interface:
-  short_description: "[user] 직접 점검할 영향 화면과 진입 경로를 QA 목록이나 단일 HTML 시트로 정리합니다."
+  short_description: "[user] 직접 점검할 영향 화면을 기본 단일 HTML 시트로 만들고, 같은 세션의 자동 검증 체크를 수동 목록과 분리합니다."
   default_prompt: "$tk-qa-sheet으로 현재 변경의 영향 화면과 진입 경로를 근거에 맞춰 정리하고, 직접 점검할 단일 HTML QA 시트를 만들어 주세요."
 
 policy:

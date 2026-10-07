@@ -1,7 +1,7 @@
 ---
 name: tk-qa-sheet
-description: "[user] 사용자가 직접 점검할 영향 화면과 진입 경로를 QA 목록으로 정리합니다. 요청한 경우에만 체크와 메모가 저장되는 단일 HTML 시트를 만듭니다. 에이전트의 브라우저 검증이나 PR 발행에는 사용하지 않습니다."
-argument-hint: "<diff, PR, or affected UI scope; HTML sheet or Markdown list>"
+description: "[user] 사용자가 직접 점검할 영향 화면과 진입 경로를 정리하고 기본적으로 체크와 메모가 저장되는 단일 HTML QA 시트를 만듭니다. 같은 세션의 자동 검증 근거는 수동 체크와 분리하며, Markdown이나 파일 없는 목록은 명시적으로 요청한 경우에만 반환합니다. 제품 승인이나 PR 발행에는 사용하지 않습니다."
+argument-hint: "<diff, PR, or affected UI scope; optional Markdown/no-file override>"
 disable-model-invocation: true
 metadata:
   tigerkit:
@@ -68,17 +68,29 @@ automated test generation, or PR publication. A parent's recommendation is not i
    exclude credentials, tokens, signed values and sensitive personal data. A landing link
    is not proof of a traversed menu path or product acceptance. Markdown-only output may
    use the same safe links; opening a link belongs to the human, not automatic QA execution.
-4. For a Markdown-only request, return the inventory and limitations without creating HTML.
-   For every explicitly requested HTML sheet, read [HTML output](references/html-output.md)
-   and [data and rendering](references/qa-sheet-data.md),
-   then copy [the template](assets/qa-sheet-template.html) to
+
+   Before listing checks, bind each check to session evidence. Mark a check `auto-verified`
+   only when run-owned automated runtime evidence (for example a `tk-browser-verify` run)
+   bound to the current head exercised the same screen, entry path, trigger and expected
+   result. Evidence from a different screen or entry path makes the check `partial`; keep
+   only its unexercised part. Unit tests alone do not make a screen check `auto-verified`.
+   Keep data-changing checks `manual`. A moved head resets affected checks to `manual`.
+   Show `auto-verified` rows pre-checked and non-editable in a collapsed `Automated`
+   group with their evidence reference. Keep `partial` and `manual` rows in the manual
+   list while preserving their independent `observed | code-only` provenance. An
+   `auto-verified` label is runtime evidence reuse, not product acceptance.
+4. Default to the HTML sheet: read [HTML output](references/html-output.md) and
+   [data and rendering](references/qa-sheet-data.md), then copy
+   [the template](assets/qa-sheet-template.html) to
    `.tigerkit/qa/<task>-<topic>.html` after Artifact Paths checks. Replace `qa-data` JSON,
    then run `python3 <package>/scripts/render_static_inventory.py <generated-file>` to
-   regenerate its no-JS inventory from that same data. Keep the runtime renderer unchanged.
-   Preserve the same storage key and content identity when
-   regenerating the same task; use a new key for an independent task/revision. Preserve an
-   unrelated existing file and choose a new destination. Keep credentials, sensitive records,
-   secret-bearing URLs/query values and internal source locations out of the deliverable.
+   regenerate its no-JS inventory from that same data. Keep the bundled runtime renderer
+   unchanged while generating a task sheet. Preserve the same storage key and content
+   identity when regenerating the same task; use a new key for an independent task/revision.
+   Preserve an unrelated existing file and choose a new destination. Keep credentials,
+   sensitive records, secret-bearing URLs/query values and internal source locations out of
+   the deliverable. Return Markdown instead only when the user explicitly asks for Markdown,
+   a list without a file, or the optional PR section in step 6.
 5. For HTML, ask `tk-browser-verify` to verify the local file headlessly in a disposable
    run-owned profile: check two independent rows, enter a note, reload, and observe restoration;
    also verify unique IDs, counts, code-only badges, reset preserving notes, and no sample
@@ -86,9 +98,10 @@ automated test generation, or PR publication. A parent's recommendation is not i
    checks even for a short checklist; no-JS reading must expose the final inventory while explaining
    that check/note persistence needs JavaScript. Close and delete only that profile. If the check cannot run, preserve the
    sheet and disclose `Unverifiable`; never claim persistence verification from source alone.
-6. Return the absolute file path (HTML only), check count, code-only count, fixed target,
-   unverified screens/connections and reasons, actual self-check status and inspected viewports/themes
-   or the exact unavailable render checks. Optional PR
+6. Return the absolute file path (HTML only), total check count, `auto-verified`,
+   `partial`, `manual` and code-only counts, fixed target, unverified screens/connections
+   and reasons, actual self-check status and inspected viewports/themes or the exact
+   unavailable render checks. Optional PR
    Markdown uses the same inventory and limitations. Hand that section to `tk-pr-open`;
    do not push, publish, edit a PR, or start QA investigation inside publication-only work.
 

@@ -1,6 +1,6 @@
 # QA Sheet Data and Rendering
 
-Read only for a requested HTML sheet. Copy the bundled template, replace the
+Read for the default HTML sheet or an explicitly requested HTML sheet. Copy the bundled template, replace the
 `script#qa-data` JSON, then use the bundled helper to regenerate its static reading
 inventory from that data. The final file needs no external assets or runtime generator.
 
@@ -22,7 +22,20 @@ inventory from that data. The final file needs no external assets or runtime gen
           "url": "http://localhost:3000/orders",
           "notes": ["Shared pattern or missing connection"],
           "checks": [
-            {"text": "Observed trigger and expected behavior", "provenance": "observed", "indent": 0},
+            {
+              "text": "Observed trigger and expected behavior",
+              "provenance": "observed",
+              "verification": "auto-verified",
+              "evidence": {"ref": "browser-run-123", "head": "abc123"},
+              "indent": 0
+            },
+            {
+              "text": "Only the unexercised branch remains",
+              "provenance": "observed",
+              "verification": "partial",
+              "evidence": {"ref": ".tigerkit/evidence/tk-browser-verify/run-123", "head": "abc123"},
+              "indent": 1
+            },
             {"text": "Source-only trigger and expected behavior", "provenance": "code-only", "indent": 1},
             {"text": "Subheading", "heading": true}
           ]
@@ -46,6 +59,22 @@ Use backticks only for exact observed UI labels; source-only labels use plain te
 when the source contains an exact string. Known routes may appear
 in code formatting as technical literals; disclose their status separately from navigation.
 List user-provided text and missing click connections explicitly in notes/legend/limitations.
+
+`verification` is `manual | auto-verified | partial`; missing values default to `manual`.
+It applies to a standalone item or a non-heading child check and is independent from
+`provenance`. Items that contain child checks do not carry their own verification state.
+`auto-verified` and `partial` rows require an `evidence` object with nonblank `ref`
+and `head`: `ref` is the run ID or evidence path, and `head` is the commit head that
+evidence was bound to. Manual rows omit `evidence`.
+
+Use `auto-verified` only for run-owned automated runtime evidence on the current head that
+exercised the same screen, entry path, trigger and expected result. Evidence from another
+screen or entry path is `partial`; rewrite that row so its text describes only the
+unexercised part. Unit tests alone do not promote a screen check, data-changing checks stay
+`manual`, and a moved head demotes affected rows to `manual`. The HTML renderer places
+`auto-verified` rows in a collapsed `Automated` group as checked, disabled controls with
+their evidence reference. `partial` and `manual` rows remain editable in the manual list;
+`partial` rows also show their evidence reference. Neither state is product acceptance.
 
 ## Screen links
 
@@ -83,8 +112,10 @@ environment or independently tested revision uses a new key for notes/filter as 
 
 Storage keys serialize `["tk-qa-sheet", storageKey, role, 1]` as JSON, with role `checks`,
 `notes`, or `onlyOpen`. Keeping task and role as separate tuple fields prevents one task's
-name from aliasing another task's note/check key. Reads/writes tolerate unavailable storage and malformed stored data.
-Failed writes display a warning without preventing in-memory interaction. Notes save after
+name from aliasing another task's note/check key. Reads/writes tolerate unavailable storage and malformed stored data. Auto-verified rows are
+not persisted as user completion: the renderer clears any old stored completion for an item
+while it is auto-verified, so a later demotion to manual cannot resurrect a stale manual
+check. Failed writes display a warning without preventing in-memory interaction. Notes save after
 400 ms and flush on page exit. Reset confirms before clearing checks and preserves notes.
 Storage is local to the browser/profile and file/origin; moving the file or changing browser
 may lose access to existing state. Do not promise cross-file or multi-user persistence.
@@ -101,8 +132,10 @@ the static view. Compare static coverage with the final JSON, not the bundled ex
 Use `tk-browser-verify` with the exact generated file, no auth/server, a disposable
 headless profile, and all mandatory [HTML output](html-output.md) render checks, plus any
 requested layout criteria. Every short sheet still needs desktop/mobile and light/dark coverage
-with numerical readability checks and inspected/missing-check reporting. Two rows plus a note
-must survive reload; IDs must be unique, counts accurate, code-only status visible, and reset
-must retain the note. Verify the final data, not just the bundled sample. Preserve actual
+with numerical readability checks and inspected/missing-check reporting. Two editable rows plus a note
+must survive reload; IDs must be unique, counts accurate, code-only status visible, reset
+must retain the note, auto-verified rows must stay checked after reset without becoming
+editable, and partial/manual rows must remain in the manual list. Verify evidence references
+and the collapsed Automated grouping from the final data, not just the bundled sample. Preserve actual
 failure/limitation evidence; remove only the run-owned profile. Storage-denied environments
 render normally but cannot satisfy persistence acceptance.

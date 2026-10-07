@@ -84,11 +84,21 @@ button, select, textarea { font: inherit; color: var(--text); background: var(--
   code { background: var(--code-bg); border-radius: 4px; padding: 0 4px; font-size: 12.5px;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
   .badge { font-size: 11px; color: var(--warn); background: var(--warn-bg); border-radius: 4px; padding: 0 5px; margin-left: 6px; white-space: nowrap; }
+  .badge.auto { color: var(--good); background: var(--hover); }
+  .badge.partial { color: var(--accent); background: var(--hover); }
+  .evidence { color: var(--muted); font-size: 11px; margin-left: 6px; overflow-wrap: anywhere; }
+  details.automated { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 14px; margin-bottom: 12px; }
+  details.automated > summary { cursor: pointer; font-weight: 700; }
+  details.automated > .group { margin: 8px 0 0; }
+  details.automated li.check label { cursor: default; }
+  details.automated li.check label:hover { background: transparent; }
+  details.automated li.check input:disabled { opacity: 1; }
   .screen-link { display: inline-block; margin-left: 12px; color: var(--text); text-underline-offset: 3px; font-weight: 400; }
   .environment { overflow-wrap: anywhere; }
   .qa-static { max-width: 960px; margin: auto; padding: 20px; overflow-wrap: anywhere; }
   body.only-open li.check.checked { display: none; }
   body.only-open .group.complete { display: none; }
+  body.only-open details.automated { display: none; }
   aside { position: sticky; top: 64px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
     padding: 12px; display: flex; flex-direction: column; gap: 8px; height: calc(100vh - 84px); }
   aside h3 { margin: 0; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
@@ -110,6 +120,8 @@ button, select, textarea { font: inherit; color: var(--text); background: var(--
   - storageKey: 작업 단위로 고유하게 (예: "<task>-<topic>"). 바꾸면 이전 체크와 메모를 읽지 않는다.
   - text 안의 `백틱` 은 화면에서 그대로 확인한 표기, 그 밖의 글은 설명이다.
   - provenance: "observed"(화면 확인) | "code-only"(기본)(코드 문자열만 확인, "코드 기준" 배지 표시)
+  - verification: "manual"(기본) | "auto-verified" | "partial"
+  - auto-verified/partial 은 evidence: {"ref":"run id 또는 evidence path","head":"근거가 묶인 head"} 를 가진다.
   - checks 가 없는 item 은 item 자체가 체크 항목이다. heading: true 인 check 는 체크 없는 소제목이다.
 -->
 <script type="application/json" id="qa-data">
@@ -207,16 +219,31 @@ button, select, textarea { font: inherit; color: var(--text); background: var(--
   const nonblank = (v) => typeof v === "string" && v.trim().length > 0;
   const strings = (v) => v === undefined || (Array.isArray(v) && v.every((s) => typeof s === "string"));
   const provenance = (v) => v === undefined || v === "observed" || v === "code-only";
+  const verification = (v) => v === undefined || v === "manual" || v === "auto-verified" || v === "partial";
+  const evidence = (v) => object(v) && nonblank(v.ref) && nonblank(v.head);
+  const validVerification = (v) => {
+    if (!verification(v.verification)) return false;
+    const mode = v.verification || "manual";
+    if (mode === "manual") return v.evidence === undefined;
+    return evidence(v.evidence);
+  };
   const safeUrl = (v) => {
     if (!nonblank(v) || !/^https?:\/\//.test(v)) return false;
     try { const u = new URL(v); return !u.username && !u.password; } catch { return false; }
   };
   const validCheck = (c) => object(c) && nonblank(c.text) && provenance(c.provenance)
     && (c.heading === undefined || typeof c.heading === "boolean")
-    && (c.indent === undefined || (Number.isInteger(c.indent) && c.indent >= 0 && c.indent <= 3));
-  const validItem = (it) => object(it) && nonblank(it.title) && provenance(it.provenance) && strings(it.notes)
-    && (it.checks === undefined || (Array.isArray(it.checks) && it.checks.every(validCheck)
-      && (!it.checks.length || it.checks.some((c) => !c.heading))));
+    && (c.indent === undefined || (Number.isInteger(c.indent) && c.indent >= 0 && c.indent <= 3))
+    && (c.heading ? c.verification === undefined && c.evidence === undefined : validVerification(c));
+  const validItem = (it) => {
+    if (!object(it) || !nonblank(it.title) || !provenance(it.provenance) || !strings(it.notes)) return false;
+    if (it.checks !== undefined && (!Array.isArray(it.checks) || !it.checks.every(validCheck))) return false;
+    const children = Array.isArray(it.checks) && it.checks.length > 0;
+    if (children && !it.checks.some((c) => !c.heading)) return false;
+    return children
+      ? it.verification === undefined && it.evidence === undefined
+      : validVerification(it);
+  };
   const validData = (d) => object(d) && nonblank(d.title) && nonblank(d.storageKey) && strings(d.legend)
     && (d.environment === undefined || (object(d.environment) && nonblank(d.environment.label) && safeUrl(d.environment.baseUrl)))
     && Array.isArray(d.groups) && d.groups.length > 0 && d.groups.every((g) => object(g)
@@ -262,41 +289,76 @@ button, select, textarea { font: inherit; color: var(--text); background: var(--
   ]));
 
   const seen = new Set();
-  const checkLi = (id, text, prov, indent) => {
+  const verificationMode = (v) => v || "manual";
+  const evidenceHtml = (value) => value
+    ? `<span class="evidence">근거: <code>${esc(value.ref)}</code> @ <code>${esc(value.head)}</code></span>`
+    : "";
+  const checkLi = (id, text, prov, indent, mode = "manual", evidenceValue) => {
     if (seen.has(id)) throw new Error("체크 항목 ID가 중복됩니다. 항목을 구별할 화면과 조건을 추가해 주세요.");
     seen.add(id);
-    const badge = prov !== "observed" ? '<span class="badge">코드 기준</span>' : "";
-    return `<li class="check lv${Math.min(indent || 0, 3)}"><label><input type="checkbox" data-id="${id}"><span class="ctext">${fmt(text)}</span>${badge}</label></li>`;
+    const provenanceBadge = prov !== "observed" ? '<span class="badge">코드 기준</span>' : "";
+    const verificationBadge = mode === "auto-verified"
+      ? '<span class="badge auto">자동 검증</span>'
+      : mode === "partial" ? '<span class="badge partial">부분 자동 확인</span>' : "";
+    const auto = mode === "auto-verified";
+    const attrs = auto ? ' checked disabled data-auto="true"' : "";
+    const classes = auto ? " checked auto-verified" : mode === "partial" ? " partial" : "";
+    return `<li class="check${classes} lv${Math.min(indent || 0, 3)}"><label><input type="checkbox" data-id="${id}"${attrs}><span class="ctext">${fmt(text)}</span>${provenanceBadge}${verificationBadge}${evidenceHtml(evidenceValue)}</label></li>`;
+  };
+  const modeMatches = (mode, automated) => automated ? mode === "auto-verified" : mode !== "auto-verified";
+  const renderItem = (g, it, automated) => {
+    if (!it.checks || !it.checks.length) {
+      const mode = verificationMode(it.verification);
+      if (!modeMatches(mode, automated)) return "";
+      let row = `<li><ul class="checks">${checkLi(checkId(g, it), it.title, it.provenance, 0, mode, it.evidence)}</ul>`;
+      row += screenLink(it);
+      if (it.notes && it.notes.length) row += `<ul class="notes">${it.notes.map((n) => `<li>${fmt(n)}</li>`).join("")}</ul>`;
+      return row + "</li>";
+    }
+    const matching = it.checks.filter((c) => !c.heading && modeMatches(verificationMode(c.verification), automated));
+    if (!matching.length) return "";
+    let row = `<li><div class="ititle">${fmt(it.title)}${screenLink(it)}</div>`;
+    if (it.notes && it.notes.length) row += `<ul class="notes">${it.notes.map((n) => `<li>${fmt(n)}</li>`).join("")}</ul>`;
+    row += '<ul class="checks">';
+    for (const c of it.checks) {
+      if (c.heading) {
+        row += `<li class="subhead lv${Math.min(c.indent || 0, 3)}">${fmt(c.text)}</li>`;
+        continue;
+      }
+      const mode = verificationMode(c.verification);
+      if (!modeMatches(mode, automated)) continue;
+      row += checkLi(checkId(g, it, c.text), c.text,
+        it.provenance === "observed" && c.provenance === "observed" ? "observed" : "code-only",
+        c.indent, mode, c.evidence);
+    }
+    return row + "</ul></li>";
   };
 
   let html = "";
   try {
-  if (data.legend && data.legend.length) {
-    html += `<details class="legend"><summary>표기 규칙과 영향 범위</summary><ul>${data.legend.map((l) => `<li>${fmt(l)}</li>`).join("")}</ul></details>`;
-  }
-  for (const g of data.groups) {
-    html += `<section class="group"><h2>${fmt(g.title)} <span class="gcount"></span></h2><ul class="items">`;
-    for (const it of g.items) {
-      if (!it.checks || !it.checks.length) {
-        html += `<li><ul class="checks">${checkLi(checkId(g, it), it.title, it.provenance, 0)}</ul>`;
-        html += screenLink(it);
-        if (it.notes && it.notes.length) html += `<ul class="notes">${it.notes.map((n) => `<li>${fmt(n)}</li>`).join("")}</ul>`;
-        html += `</li>`;
-        continue;
-      }
-      html += `<li><div class="ititle">${fmt(it.title)}${screenLink(it)}</div>`;
-      if (it.notes && it.notes.length) html += `<ul class="notes">${it.notes.map((n) => `<li>${fmt(n)}</li>`).join("")}</ul>`;
-      html += `<ul class="checks">`;
-      for (const c of it.checks) {
-        html += c.heading
-          ? `<li class="subhead lv${Math.min(c.indent || 0, 3)}">${fmt(c.text)}</li>`
-          : checkLi(checkId(g, it, c.text), c.text,
-            it.provenance === "observed" && c.provenance === "observed" ? "observed" : "code-only", c.indent);
-      }
-      html += `</ul></li>`;
+    if (data.legend && data.legend.length) {
+      html += `<details class="legend"><summary>표기 규칙과 영향 범위</summary><ul>${data.legend.map((l) => `<li>${fmt(l)}</li>`).join("")}</ul></details>`;
     }
-    html += `</ul></section>`;
-  }
+
+    let automated = "", automatedCount = 0;
+    for (const g of data.groups) {
+      const items = g.items.map((it) => renderItem(g, it, true)).filter(Boolean);
+      if (!items.length) continue;
+      automatedCount += g.items.reduce((count, it) => {
+        if (!it.checks || !it.checks.length) return count + (verificationMode(it.verification) === "auto-verified" ? 1 : 0);
+        return count + it.checks.filter((c) => !c.heading && verificationMode(c.verification) === "auto-verified").length;
+      }, 0);
+      automated += `<section class="group"><h2>${fmt(g.title)} <span class="gcount"></span></h2><ul class="items">${items.join("")}</ul></section>`;
+    }
+    if (automatedCount) {
+      html += `<details class="automated"><summary>Automated <span class="gcount">${automatedCount} auto-verified</span></summary>${automated}</details>`;
+    }
+
+    for (const g of data.groups) {
+      const items = g.items.map((it) => renderItem(g, it, false)).filter(Boolean);
+      if (!items.length) continue;
+      html += `<section class="group"><h2>${fmt(g.title)} <span class="gcount"></span></h2><ul class="items">${items.join("")}</ul></section>`;
+    }
   } catch (e) { fail(e.message); return; }
   document.getElementById("main").innerHTML = html;
 
@@ -306,10 +368,18 @@ button, select, textarea { font: inherit; color: var(--text); background: var(--
     if (seen.has(id) && Number.isFinite(timestamp) && timestamp > 0) state[id] = timestamp;
   }
   const boxes = [...document.querySelectorAll("li.check input")];
+  let prunedAuto = false;
+  for (const b of boxes) {
+    if (b.dataset.auto === "true" && state[b.dataset.id]) {
+      delete state[b.dataset.id];
+      prunedAuto = true;
+    }
+  }
+  if (prunedAuto) write(KEY, state);
   const render = () => {
     let done = 0;
     for (const b of boxes) {
-      b.checked = !!state[b.dataset.id];
+      b.checked = b.dataset.auto === "true" || !!state[b.dataset.id];
       b.closest("li.check").classList.toggle("checked", b.checked);
       if (b.checked) done++;
     }
@@ -322,10 +392,13 @@ button, select, textarea { font: inherit; color: var(--text); background: var(--
       g.classList.toggle("complete", gb.length > 0 && gd === gb.length);
     }
   };
-  for (const b of boxes) b.addEventListener("change", () => {
-    if (b.checked) state[b.dataset.id] = Date.now(); else delete state[b.dataset.id];
-    write(KEY, state); render();
-  });
+  for (const b of boxes) {
+    if (b.dataset.auto === "true") continue;
+    b.addEventListener("change", () => {
+      if (b.checked) state[b.dataset.id] = Date.now(); else delete state[b.dataset.id];
+      write(KEY, state); render();
+    });
+  }
   document.getElementById("reset").addEventListener("click", () => {
     if (!confirm("체크 상태를 모두 지울까요? 메모는 그대로 둡니다.")) return;
     for (const k of Object.keys(state)) delete state[k];
