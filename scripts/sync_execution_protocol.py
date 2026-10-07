@@ -96,6 +96,9 @@ def html_policy_errors(root: Path) -> list[str]:
             target = root / "skills" / name / relative
             if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
                 errors.append(f"{target.relative_to(root)}: shared HTML contract/asset drift")
+        clear_target = root / "skills" / name / "references/clear-writing.md"
+        if not CLEAR_WRITING_SOURCE.is_file() or not clear_target.is_file() or clear_target.read_bytes() != CLEAR_WRITING_SOURCE.read_bytes():
+            errors.append(f"{clear_target.relative_to(root)}: shared clear-writing drift")
     for relative in HTML_TEMPLATES:
         target = root / relative
         text = target.read_text(encoding="utf-8") if target.is_file() else ""
@@ -163,15 +166,11 @@ def main() -> int:
     if context.is_file():
         pairs.extend((context, ROOT / "skills" / name / "references/repository-context.md")
                      for name in ("tk-prep", "tk-research"))
-    pairs.append((CLEAR_WRITING_SOURCE, CLEAR_WRITING_TARGET))
-    for name in ("tk-explain-diff", "tk-study", "tk-research"):
+    for name in HTML_CONSUMERS:
         if (ROOT / "skills" / name).is_dir():
             pairs.append((CLEAR_WRITING_SOURCE, ROOT / "skills" / name / "references/clear-writing.md"))
-            pairs.append((ROOT / "skills/tk-explain/references/html-output.md", ROOT / "skills" / name / "references/html-output.md"))
-    if (ROOT / "skills/tk-qa-sheet").is_dir():
-        pairs.append((ROOT / "skills/tk-explain/references/html-output.md", ROOT / "skills/tk-qa-sheet/references/html-output.md"))
-    if (ROOT / "skills/tk-prototype").is_dir():
-        pairs.append((ROOT / "skills/tk-explain/references/html-output.md", ROOT / "skills/tk-prototype/references/html-output.md"))
+            if name != "tk-explain":
+                pairs.append((ROOT / "skills/tk-explain/references/html-output.md", ROOT / "skills" / name / "references/html-output.md"))
     for name in HTML_CONSUMERS:
         if (ROOT / "skills" / name).is_dir():
             for asset in HTML_ASSETS:
