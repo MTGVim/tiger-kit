@@ -25,15 +25,28 @@
 [hidden] { display: none !important; }
 body { margin: 0; background: var(--bg); color: var(--text); font: var(--font-body)/1.65 var(--font-family); }
 h1 { font-size: var(--font-h1); } h2 { font-size: var(--font-h2); }
-a { color: var(--accent); overflow-wrap: anywhere; }
+a, p, li, dd, dt { overflow-wrap: anywhere; }
+a { color: var(--accent); }
 button, select, textarea { font: inherit; color: var(--text); background: var(--panel); }
+img, svg, video, canvas { max-width: 100%; height: auto; }
+pre { max-width: 100%; overflow-x: auto; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.ht-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: calc(2 * var(--space)); }
+.ht-card { min-width: 0; max-width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: calc(2 * var(--space)); }
 .ht-table-scroll { position: relative; max-width: 100%; overflow-x: auto; }
 .ht-table-scroll table { width: 100%; border-collapse: collapse; }
 .ht-table-scroll th, .ht-table-scroll td { text-align: left; vertical-align: top; padding: var(--space); border-bottom: 1px solid var(--line); font-size: var(--font-body); }
 .ht-table-scroll th[scope="row"] { min-width: 8em; overflow-wrap: normal; }
-.ht-theme-control { font-size: var(--font-small); }
+.ht-theme-control { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px; min-width: 0; max-width: 100%; font-size: var(--font-body); }
+.ht-theme-label { color: var(--muted); white-space: nowrap; }
+.ht-theme-buttons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: min(18rem, 100%); min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.ht-theme-button { min-width: 0; min-height: 40px; padding: 6px 10px; border: 0; border-left: 1px solid var(--line); border-radius: 0; cursor: pointer; white-space: nowrap; }
+.ht-theme-button:first-child { border-left: 0; }
+.ht-theme-button:hover { background: var(--hover); }
+.ht-theme-button[aria-pressed="true"] { background: var(--accent); color: var(--panel); font-weight: 700; }
+@media (max-width: 480px) {
+  .ht-theme-control { grid-template-columns: 1fr; }
+  .ht-theme-buttons { width: 100%; }
+}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
 }
