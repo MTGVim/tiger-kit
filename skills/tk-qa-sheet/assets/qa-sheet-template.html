@@ -67,14 +67,20 @@ pre { max-width: 100%; overflow-x: auto; }
   body { margin: 0; background: var(--bg); color: var(--text);
     font: var(--font-body)/1.55 var(--font-family); }
   header { position: sticky; top: 0; z-index: 2; background: var(--panel); border-bottom: 1px solid var(--line);
-    padding: 12px 20px; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 12px; align-items: center; max-width: 100%; }
+    padding: 12px 20px; display: grid;
+    grid-template-columns: minmax(14rem, 1fr) auto minmax(18rem, 22rem) auto;
+    grid-template-areas: "title environment environment environment" "progress filter theme reset";
+    gap: 10px 12px; align-items: center; max-width: 100%; }
   header > * { min-width: 0; max-width: 100%; }
-  header h1 { font-size: 16px; margin: 0; overflow-wrap: anywhere; }
-  .progress { display: flex; align-items: center; gap: 10px; min-width: 0; width: 100%; }
+  header h1 { grid-area: title; font-size: 16px; margin: 0; overflow-wrap: anywhere; }
+  .progress { grid-area: progress; display: flex; align-items: center; gap: 10px; min-width: min(14rem, 100%); width: 100%; }
   .bar { flex: 1; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
   .bar > i { display: block; height: 100%; width: 0; background: var(--good); transition: width .2s; }
   .count { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
-  header label, header button { font-size: 13px; }
+  .only-open-filter, #reset { font-size: 13px; }
+  .only-open-filter { grid-area: filter; }
+  .ht-theme-control { grid-area: theme; width: 100%; }
+  #reset { grid-area: reset; }
   button { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
   button:hover { background: var(--hover); }
   .layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; padding: 16px 20px; align-items: start; }
@@ -113,7 +119,7 @@ pre { max-width: 100%; overflow-x: auto; }
   details.automated li.check label:hover { background: transparent; }
   details.automated li.check input:disabled { opacity: 1; }
   .screen-link { display: inline-block; margin-left: 12px; color: var(--text); text-underline-offset: 3px; font-weight: 400; }
-  .environment { white-space: normal; overflow-wrap: anywhere; }
+  .environment { grid-area: environment; white-space: normal; overflow-wrap: anywhere; }
   .qa-static { max-width: 960px; margin: auto; padding: 20px; overflow-wrap: anywhere; }
   body.only-open li.check.checked { display: none; }
   body.only-open .group.complete { display: none; }
@@ -127,8 +133,11 @@ pre { max-width: 100%; overflow-x: auto; }
   aside .hint { font-size: 12px; color: var(--muted); }
   .error { background: var(--warn-bg); color: var(--warn); padding: 12px 20px; }
   @media (max-width: 900px) {
-    header { grid-template-columns: minmax(0, 1fr) auto; padding: 10px 12px; }
-    header h1, header .environment, header .progress, header .ht-theme-control { grid-column: 1 / -1; }
+    header {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas: "title title" "environment environment" "progress progress" "filter reset" "theme theme";
+      padding: 10px 12px;
+    }
     header .ht-theme-control { width: 100%; }
     header .ht-theme-buttons { width: 100%; }
     .layout { grid-template-columns: minmax(0, 1fr); padding: 12px; max-width: 100%; }
@@ -136,8 +145,11 @@ pre { max-width: 100%; overflow-x: auto; }
     aside { position: static; height: 360px; }
   }
   @media (max-width: 480px) {
-    header { grid-template-columns: minmax(0, 1fr); }
-    header > label, header > button { width: 100%; }
+    header {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "title" "environment" "progress" "filter" "theme" "reset";
+    }
+    .only-open-filter, #reset { width: 100%; }
     .progress { gap: 6px; }
     .lv1 { margin-left: 10px; } .lv2 { margin-left: 20px; } .lv3 { margin-left: 30px; }
   }
@@ -228,7 +240,7 @@ pre { max-width: 100%; overflow-x: auto; }
   <h1 id="title"></h1>
   <span id="environment" class="count environment" hidden></span>
   <div class="progress"><div class="bar"><i id="bar"></i></div><span class="count" id="count">0 / 0</span></div>
-  <label><input type="checkbox" id="onlyOpen"> 미확인만 보기</label>
+  <label class="only-open-filter"><input type="checkbox" id="onlyOpen"> 미확인만 보기</label>
   <fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-theme-label">테마</legend><div class="ht-theme-buttons"><label class="ht-theme-option"><input type="radio" name="ht-theme" value="system" data-theme-choice="system"><span>시스템</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="light" data-theme-choice="light"><span>라이트</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="dark" data-theme-choice="dark"><span>다크</span></label></div></fieldset>
   <button type="button" id="reset">체크 초기화</button>
 </header>
