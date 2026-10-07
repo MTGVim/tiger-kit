@@ -65,16 +65,26 @@ It applies to a standalone item or a non-heading child check and is independent 
 `provenance`. Items that contain child checks do not carry their own verification state.
 `auto-verified` and `partial` rows require an `evidence` object with nonblank `ref`
 and `head`: `ref` is the run ID or evidence path, and `head` is the commit head that
-evidence was bound to. Manual rows omit `evidence`.
+evidence was bound to. Manual rows omit `evidence`. A manual row that was demoted because a
+later diff affected its screen may instead carry `previousEvidence` with the same `ref` and
+`head` shape. Never-exercised manual rows omit both fields, and `previousEvidence` never
+promotes a row to automatic verification.
 
-Use `auto-verified` only for run-owned automated runtime evidence on the current head that
-exercised the same screen, entry path, trigger and expected result. Evidence from another
-screen or entry path is `partial`; rewrite that row so its text describes only the
-unexercised part. Unit tests alone do not promote a screen check, data-changing checks stay
-`manual`, and a moved head demotes affected rows to `manual`. The HTML renderer places
-`auto-verified` rows in a collapsed `Automated` group as checked, disabled controls with
-their evidence reference. `partial` and `manual` rows remain editable in the manual list;
-`partial` rows also show their evidence reference. Neither state is product acceptance.
+Use `auto-verified` only for run-owned automated runtime evidence that exercised the same
+screen, entry path, trigger and expected result. Normally that evidence is on the current head.
+When the target head moves, inspect the diff from the evidence head to the current head. Treat a
+row as affected only when the diff touches that screen's render path or request path. If those
+paths are unchanged, the old evidence may remain `auto-verified`; keep its original head and
+report the path-based carry-forward rationale. If the row is affected, prefer recapturing it on
+the current head while the runtime session remains available. Otherwise demote it to `manual`
+and move the old run to `previousEvidence`. Evidence from another screen or entry path is
+`partial`; rewrite that row so its text describes only the unexercised part. Unit tests alone
+do not promote a screen check, and data-changing checks stay `manual`.
+
+The HTML renderer places `auto-verified` rows in a collapsed `Automated` group as checked,
+disabled controls with their evidence reference. `partial` and `manual` rows remain editable
+in the manual list; `partial` rows show current evidence, while head-demoted manual rows show
+`previousEvidence` with an explicit previous-head label. Neither state is product acceptance.
 
 ## Screen links
 
