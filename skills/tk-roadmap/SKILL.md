@@ -6,9 +6,8 @@ argument-hint: "[topic or context]"
 metadata:
   tigerkit:
     kind: user-invoked
-    origin: phuryn/pm-skills
+    origin: tigerkit
     relationship: adapted
-    upstream-skill: outcome-roadmap
 ---
 
 # Constraint-aware Roadmap
