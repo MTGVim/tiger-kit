@@ -78,19 +78,17 @@ function runTheme(saved, denied = false, configured = 'system') {
   attributes.set('data-default-theme', configured);
   if (configured === 'light' || configured === 'dark') attributes.set('data-theme', configured);
   if (saved !== undefined) storage.set('tigerkit-html-theme', saved);
-  const buttons = ['system', 'light', 'dark'].map(value => {
-    const attrs = new Map([['aria-pressed', 'false']]);
+  const inputs = ['system', 'light', 'dark'].map(value => {
     const item = {
-      dataset: { themeChoice: value },
-      addEventListener: (_, fn) => { item.click = fn; },
-      setAttribute: (key, val) => attrs.set(key, val),
-      getAttribute: key => attrs.get(key),
+      value,
+      checked: false,
+      addEventListener: (_, fn) => { item.change = fn; },
     };
     return item;
   });
   const control = {
     hidden: true,
-    querySelectorAll: selector => selector === '[data-theme-choice]' ? buttons : [],
+    querySelectorAll: selector => selector === 'input[name="ht-theme"]' ? inputs : [],
   };
   const root = {
     setAttribute: (key, value) => attributes.set(key, value),
@@ -107,27 +105,33 @@ function runTheme(saved, denied = false, configured = 'system') {
       setItem: (key, value) => { if (denied) throw Error('denied'); storage.set(key, value); }
     }
   });
-  return { attributes, storage, control, buttons };
+  return { attributes, storage, control, inputs };
 }
-const themeButton = (result, value) => result.buttons.find(item => item.dataset.themeChoice === value);
+const themeInput = (result, value) => result.inputs.find(item => item.value === value);
+const chooseTheme = (result, value) => {
+  const target = themeInput(result, value);
+  for (const item of result.inputs) item.checked = item === target;
+  target.change();
+};
 
 test('QA template exposes persistent system light dark theme without coupling it to task reset', () => {
-  assert.match(template, /data-ht-theme-control/);
+  assert.match(template, /<fieldset class="ht-theme-control"/);
+  assert.match(template, /name="ht-theme"/);
   for (const value of ['system', 'light', 'dark']) {
-    assert.match(template, new RegExp(`data-theme-choice="${value}"`));
+    assert.match(template, new RegExp(`value="${value}"`));
   }
 
   const first = runTheme();
-  assert.equal(themeButton(first, 'system').getAttribute('aria-pressed'), 'true');
+  assert.equal(themeInput(first, 'system').checked, true);
   assert.equal(first.attributes.has('data-theme'), false);
   assert.equal(first.control.hidden, false);
 
-  themeButton(first, 'dark').click();
+  chooseTheme(first, 'dark');
   assert.equal(first.attributes.get('data-theme'), 'dark');
   assert.equal(first.storage.get('tigerkit-html-theme'), 'dark');
 
   const reloaded = runTheme(first.storage.get('tigerkit-html-theme'));
-  assert.equal(themeButton(reloaded, 'dark').getAttribute('aria-pressed'), 'true');
+  assert.equal(themeInput(reloaded, 'dark').checked, true);
   assert.equal(reloaded.attributes.get('data-theme'), 'dark');
 
   const storage = new Map([['tigerkit-html-theme', 'dark']]);
@@ -136,11 +140,11 @@ test('QA template exposes persistent system light dark theme without coupling it
   assert.equal(storage.get('tigerkit-html-theme'), 'dark');
 
   const denied = runTheme('dark', true);
-  assert.equal(themeButton(denied, 'system').getAttribute('aria-pressed'), 'true');
+  assert.equal(themeInput(denied, 'system').checked, true);
   assert.equal(denied.attributes.has('data-theme'), false);
-  themeButton(denied, 'light').click();
+  chooseTheme(denied, 'light');
   assert.equal(denied.attributes.get('data-theme'), 'light');
-  assert.equal(themeButton(runTheme('dark', true), 'system').getAttribute('aria-pressed'), 'true');
+  assert.equal(themeInput(runTheme('dark', true), 'system').checked, true);
 });
 
 test('two checks, notes and filter survive reload; reset preserves notes', () => {
@@ -220,13 +224,32 @@ test('promoting a stored manual row to auto clears stale completion before later
   assert.equal(third.ids.count.textContent, '0 / 1');
 });
 
+test('head-demoted manual rows keep previous evidence but remain editable', () => {
+  const data = make([{ title: 'Area', items: [{
+    title: 'Screen', provenance: 'observed', verification: 'manual',
+    previousEvidence: { ref: 'run-old', head: 'old-head' }
+  }] }]);
+  const result = run(data);
+  assert.match(result.html, /이전 head 검증/);
+  assert.match(result.html, /이전 근거/);
+  assert.match(result.html, /run-old/);
+  assert.match(result.html, /old-head/);
+  assert.equal(result.boxes.length, 1);
+  assert.equal(result.boxes[0].disabled, false);
+  assert.equal(result.boxes[0].checked, false);
+  toggle(result.boxes[0]);
+  assert.equal(result.ids.count.textContent, '1 / 1');
+});
+
 test('malformed data and schema show an error without a partial sheet', () => {
   for (const data of [
     '{', null, {}, { ...sample, groups: null },
     make([{ title: 'Area', items: [{ title: 'Only headings', checks: [{ text: 'Heading', heading: true }] }] }]),
     make([{ title: 'Area', items: [{ title: 'Bad mode', verification: 'done' }] }]),
     make([{ title: 'Area', items: [{ title: 'Missing evidence', verification: 'auto-verified' }] }]),
-    make([{ title: 'Area', items: [{ title: 'Manual with evidence', evidence: { ref: 'run', head: 'abc' } }] }])
+    make([{ title: 'Area', items: [{ title: 'Manual with evidence', evidence: { ref: 'run', head: 'abc' } }] }]),
+    make([{ title: 'Area', items: [{ title: 'Auto with previous evidence', verification: 'auto-verified', evidence: { ref: 'run', head: 'abc' }, previousEvidence: { ref: 'old', head: 'def' } }] }]),
+    make([{ title: 'Area', items: [{ title: 'Bad previous evidence', previousEvidence: { ref: '', head: 'abc' } }] }])
   ]) {
     const result = run(data);
     assert.match(result.body.error, /qa-data/);
