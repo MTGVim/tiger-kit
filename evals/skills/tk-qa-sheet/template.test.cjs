@@ -73,35 +73,61 @@ const clone = value => JSON.parse(JSON.stringify(value));
 const toggle = box => { if (box.disabled) return; box.checked = !box.checked; box.emit('change'); };
 const make = groups => ({ title: 'QA', storageKey: 'qa', groups });
 
-function runTheme(saved, denied = false) {
+function runTheme(saved, denied = false, configured = 'system') {
   const attributes = new Map(), storage = new Map();
+  attributes.set('data-default-theme', configured);
+  if (configured === 'light' || configured === 'dark') attributes.set('data-theme', configured);
   if (saved !== undefined) storage.set('tigerkit-html-theme', saved);
-  const select = { value: '', parentElement: { hidden: true }, addEventListener: (_, fn) => { select.change = fn; } };
-  const root = { setAttribute: (key, value) => attributes.set(key, value), removeAttribute: key => attributes.delete(key) };
+  const buttons = ['system', 'light', 'dark'].map(value => {
+    const attrs = new Map([['aria-pressed', 'false']]);
+    const item = {
+      dataset: { themeChoice: value },
+      addEventListener: (_, fn) => { item.click = fn; },
+      setAttribute: (key, val) => attrs.set(key, val),
+      getAttribute: key => attrs.get(key),
+    };
+    return item;
+  });
+  const control = {
+    hidden: true,
+    querySelectorAll: selector => selector === '[data-theme-choice]' ? buttons : [],
+  };
+  const root = {
+    setAttribute: (key, value) => attributes.set(key, value),
+    removeAttribute: key => attributes.delete(key),
+    getAttribute: key => attributes.has(key) ? attributes.get(key) : null,
+  };
   vm.runInNewContext(themeScript, {
-    document: { documentElement: root, getElementById: id => id === 'ht-theme' ? select : null },
+    document: {
+      documentElement: root,
+      querySelector: selector => selector === '[data-ht-theme-control]' ? control : null,
+    },
     localStorage: {
       getItem: key => { if (denied) throw Error('denied'); return storage.get(key) ?? null; },
       setItem: (key, value) => { if (denied) throw Error('denied'); storage.set(key, value); }
     }
   });
-  return { attributes, storage, select };
+  return { attributes, storage, control, buttons };
 }
+const themeButton = (result, value) => result.buttons.find(item => item.dataset.themeChoice === value);
 
 test('QA template exposes persistent system light dark theme without coupling it to task reset', () => {
-  assert.match(template, /<select id="ht-theme"><option value="system">시스템<\/option><option value="light">라이트<\/option><option value="dark">다크<\/option><\/select>/);
+  assert.match(template, /data-ht-theme-control/);
+  for (const value of ['system', 'light', 'dark']) {
+    assert.match(template, new RegExp(`data-theme-choice="${value}"`));
+  }
 
   const first = runTheme();
-  assert.equal(first.select.value, 'system');
+  assert.equal(themeButton(first, 'system').getAttribute('aria-pressed'), 'true');
   assert.equal(first.attributes.has('data-theme'), false);
-  assert.equal(first.select.parentElement.hidden, false);
+  assert.equal(first.control.hidden, false);
 
-  first.select.value = 'dark'; first.select.change();
+  themeButton(first, 'dark').click();
   assert.equal(first.attributes.get('data-theme'), 'dark');
   assert.equal(first.storage.get('tigerkit-html-theme'), 'dark');
 
   const reloaded = runTheme(first.storage.get('tigerkit-html-theme'));
-  assert.equal(reloaded.select.value, 'dark');
+  assert.equal(themeButton(reloaded, 'dark').getAttribute('aria-pressed'), 'true');
   assert.equal(reloaded.attributes.get('data-theme'), 'dark');
 
   const storage = new Map([['tigerkit-html-theme', 'dark']]);
@@ -110,11 +136,11 @@ test('QA template exposes persistent system light dark theme without coupling it
   assert.equal(storage.get('tigerkit-html-theme'), 'dark');
 
   const denied = runTheme('dark', true);
-  assert.equal(denied.select.value, 'system');
+  assert.equal(themeButton(denied, 'system').getAttribute('aria-pressed'), 'true');
   assert.equal(denied.attributes.has('data-theme'), false);
-  denied.select.value = 'light'; denied.select.change();
+  themeButton(denied, 'light').click();
   assert.equal(denied.attributes.get('data-theme'), 'light');
-  assert.equal(runTheme('dark', true).select.value, 'system');
+  assert.equal(themeButton(runTheme('dark', true), 'system').getAttribute('aria-pressed'), 'true');
 });
 
 test('two checks, notes and filter survive reload; reset preserves notes', () => {
