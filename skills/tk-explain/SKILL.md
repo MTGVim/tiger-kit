@@ -6,9 +6,8 @@ argument-hint: "<topic and optional audience/output path>"
 metadata:
   tigerkit:
     kind: hybrid
-    origin: anthropics/claude-plugins-community
+    origin: tigerkit
     relationship: adapted
-    upstream-skill: eli5
 ---
 
 # Visual Concept Explanation
