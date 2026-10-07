@@ -77,9 +77,11 @@ Inline [theme CSS](../assets/html-theme.css) and [theme control](../assets/html-
 single HTML file; these are package assets, not runtime dependencies. Keep their canonical tokens,
 font stack, scale, spacing and card/table styles together. Existing product/design-reference tokens
 remain authoritative for a prototype comparison; use this neutral default for standalone output
-without such a basis. Add an initially hidden `[data-ht-theme-control]` button group with three
-large, touch-friendly buttons carrying `data-theme-choice="system|light|dark"` and `aria-pressed`;
-the script reveals it only when functional. Do not collapse this control into a small select.
+without such a basis. Add an initially hidden `fieldset[data-ht-theme-control]` with a `legend`
+and three native radio inputs named `ht-theme` whose values are `system`, `light`, `dark` in
+that order. Style the labels as one segmented control with body-size text and at least 40px target
+height. Keep the native radio semantics so Tab enters the group and arrow keys change the selected
+value. The script reveals it only when functional. Do not collapse this control into a small select.
 
 Before writing a TigerKit standalone HTML artifact, resolve its generation default from
 `${XDG_CONFIG_HOME:-~/.config}/tigerkit/settings.json`. Treat this file as bounded user preference
@@ -103,8 +105,9 @@ Define colors as root tokens. Give body an explicit background and text color an
 Dark values belong in both `@media (prefers-color-scheme: dark)` under `:root:not([data-theme="light"])`
 and `:root[data-theme="dark"]`, so a manual choice wins. Default to gray surfaces with one accent
 hue; reserve good/warn/bad colors for status with a text/icon cue. Offer system/light/dark as a
-three-button control with at least 40px control height and a layout that stays within the viewport;
-wrap every localStorage operation in try/catch. Never let storage refusal break reading or controls.
+three-segment native radio control with at least 40px control height and a layout that stays within
+the viewport; wrap every localStorage operation in try/catch. Never let storage refusal break
+reading or controls.
 
 ## Data visualization
 
@@ -119,13 +122,36 @@ including units and the comparison's meaning. Check contrast and color-vision-de
 use an appropriately licensed tool or independently authored check, never copy a proprietary bundle.
 Do not invent charts, measurements or a passing palette check when the content/evidence lacks them.
 
+## Render-safe authoring
+
+Apply these rules before the first render check so common layout defects are prevented instead of
+discovered one by one.
+
+- Grid or flex tracks that can contain `pre`, tables, long code, or unbounded prose use
+  `minmax(0, 1fr)` and the child uses `min-width: 0`; do not use page-level clipping or
+  `overflow-x: hidden` to hide an overflow defect.
+- Size inline SVG for the narrowest required viewport. The smallest readable label must remain at
+  least 11 CSS px after scaling (`font-size * rendered-width / viewBox-width`). If a before/after
+  or multi-panel figure cannot meet that threshold, use one SVG per panel and stack panels on narrow
+  screens instead of shrinking the text.
+- Short identifiers in table cells, such as commit SHAs, IDs, and status tokens, stay on one line.
+  Use `.ht-token` or an equivalent local rule for them. Long paths and URLs may wrap or use their
+  own bounded horizontal scroller.
+- Text using `white-space: nowrap` in a header or toolbar must have a proven bounded width or
+  switch back to wrapping at the mobile breakpoint. A shared utility class must not accidentally
+  force a longer environment label or title to stay on one line.
+- Programmatic scrolling performed only to position a verification capture uses instant behavior.
+  Smooth scrolling must not leave the intended target outside the captured viewport.
+
 ## Render verification
 
 Before delivery, inspect rendered desktop (at least 1280px) and mobile (390–500px), in light and dark.
 Delegate browser-visible checks to `tk-browser-verify` within its provider, headless and evidence
 boundaries. Do not launch the user's browser or silently install/switch verification providers.
 Check actual keyboard use, hashes, static/no-JS core reading and reduced motion. Required numerical
-checks are `document.documentElement.scrollWidth <= innerWidth`; table overflow confined to a
+checks are the emulated mobile CSS viewport width matching `innerWidth` and
+`document.documentElement.scrollWidth <= innerWidth`; a wider `innerWidth` under mobile
+emulation means content widened the layout viewport and fails the check. Table overflow is confined to a
 `position:relative` scrolling wrapper; body/table/definition-list non-heading sizes at most body
 size (KPI/hero exceptions only); and row headers retaining readable multi-character widths.
 Off-screen absolute helper text and measurement elements must not widen the document. Fix failed
