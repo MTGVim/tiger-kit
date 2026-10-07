@@ -114,7 +114,11 @@ automated test generation, or PR publication. A parent's recommendation is not i
    `partial`, `manual`, head-demoted and code-only counts, fixed target, previous evidence
    head(s) for demoted rows, any evidence carried forward across an irrelevant diff and its
    path-based rationale, unverified screens/connections and reasons, actual self-check status
-   and inspected viewports/themes or the exact unavailable render checks. Optional PR
+   and inspected viewports/themes or the exact unavailable render checks. When previously
+   exercised rows remain `manual` because their evidence belongs to an older affected head,
+   report that count, the evidence head and current head, and exactly what a recapture needs.
+   If recapture requires user-only authentication or other input, state the pending step and
+   why the old evidence/session cannot satisfy it before giving any input-file mechanics. Optional PR
    Markdown uses the same inventory and limitations. Hand that section to `tk-pr-open`;
    do not push, publish, edit a PR, or start QA investigation inside publication-only work.
 
