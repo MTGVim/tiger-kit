@@ -30,6 +30,22 @@ class HTMLPolicyTest(unittest.TestCase):
             text = (ROOT / relative).read_text()
             self.assertIn('data-default-theme="system"', text)
 
+    def test_templates_use_touch_friendly_theme_buttons(self):
+        for relative in ('skills/tk-research/assets/report.html', 'skills/tk-qa-sheet/assets/qa-sheet-template.html'):
+            text = (ROOT / relative).read_text()
+            self.assertIn('data-ht-theme-control', text)
+            self.assertNotIn('<select id="ht-theme"', text)
+            for value in ('system', 'light', 'dark'):
+                self.assertIn(f'data-theme-choice="{value}"', text)
+
+    def test_templates_avoid_page_level_mobile_overflow_patterns(self):
+        report = (ROOT / 'skills/tk-research/assets/report.html').read_text()
+        qa = (ROOT / 'skills/tk-qa-sheet/assets/qa-sheet-template.html').read_text()
+        self.assertNotIn('nav ul{display:flex;overflow:auto', report)
+        self.assertNotIn('flex-wrap: wrap', qa)
+        self.assertIn('grid-template-columns:repeat(2,minmax(0,1fr))', report)
+        self.assertIn('header > * { min-width: 0; max-width: 100%; }', qa)
+
     def test_missing_canonical_theme_blocks_release_check(self):
         self.check_mutation(lambda root: (root / 'skills/tk-explain/assets/html-theme.css').unlink())
 
@@ -47,6 +63,18 @@ class HTMLPolicyTest(unittest.TestCase):
             path.parent.mkdir(exist_ok=True)
             path.write_text(':root { --bg: red; }\n')
         self.check_mutation(mutate)
+
+    def test_clear_writing_drift_blocks_release_check(self):
+        def mutate(root):
+            path = root / 'skills/tk-qa-sheet/references/clear-writing.md'
+            path.write_text('# drift\n')
+        self.check_mutation(mutate)
+
+    def test_templates_avoid_generic_reader_order_headings(self):
+        for relative in ('skills/tk-research/assets/report.html', 'skills/tk-qa-sheet/assets/qa-sheet-template.html'):
+            text = (ROOT / relative).read_text()
+            for phrase in ('먼저 볼 것', '먼저 확인할 것', '처음 읽는 분께'):
+                self.assertNotIn(phrase, text)
 
     def test_feedback_guard_loss_blocks_release_check(self):
         def mutate(root):
