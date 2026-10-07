@@ -81,6 +81,11 @@ user-level excludes file. Then create
 `.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json` with directory mode `0700` and
 file mode `0600`. Apply the user-editable input branch in [artifact paths](artifact-paths.md):
 seed a plain JSON object such as `{"token": ""}`, using only the exact required fields.
+Before showing paths or input mechanics, state in one sentence which pending verification step
+needs this user-only input and why the existing evidence or authenticated state cannot satisfy it,
+using the user's terms. For example, say that the earlier run verified a different head or that
+the previous authenticated session expired. Do not lead with SSO, token-file, provider, or storage
+mechanics when the reason is the missing final-head verification.
 Give the user both the repository-relative and absolute paths, the secret-free template,
 and instructions to fill and save it. A clipboard command must JSON-serialize into the
 named field, preserve other fields and keep secrets out of arguments/history.
