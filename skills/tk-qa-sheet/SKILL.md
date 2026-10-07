@@ -94,7 +94,7 @@ automated test generation, or PR publication. A parent's recommendation is not i
 5. For HTML, ask `tk-browser-verify` to verify the local file headlessly in a disposable
    run-owned profile: check two independent rows, enter a note, reload, and observe restoration;
    also verify unique IDs, counts, code-only badges, reset preserving notes and theme, and no sample
-   placeholders. Exercise the visible theme selector in `system / light / dark` order: system
+   placeholders. Exercise the visible theme buttons in `system / light / dark` order: system
    must follow emulated OS light/dark preference without `data-theme`, manual choices must
    override it and restore after reload when storage is available, and storage refusal must
    leave the sheet readable with system as the next-load fallback. Apply the shared mandatory
