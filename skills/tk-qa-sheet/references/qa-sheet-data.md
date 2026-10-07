@@ -114,8 +114,10 @@ Storage keys serialize `["tk-qa-sheet", storageKey, role, 1]` as JSON, with role
 `notes`, or `onlyOpen`. Keeping task and role as separate tuple fields prevents one task's
 name from aliasing another task's note/check key. Theme is intentionally outside task
 identity: the canonical shared theme control stores the raw `system | light | dark` value
-under `tigerkit-html-theme`, independent of `storageKey`. This lets the reader's preference
-carry to other TigerKit HTML outputs that share the same browser/localStorage origin. Do not
+under `tigerkit-html-theme`, independent of `storageKey`. This lets the reader's explicit
+browser preference carry to other TigerKit HTML outputs that share the same browser/localStorage
+origin. The generated default comes separately from the shared user `settings.json` contract in
+`html-output.md`; a stored reader preference overrides that default at runtime. Do not
 promise cross-file persistence for `file:` URLs or across browsers because storage scoping is
 browser-defined there. Missing, invalid or unreadable theme storage starts in `system`;
 changing theme can still update the current page if a write is refused, but a reload may
