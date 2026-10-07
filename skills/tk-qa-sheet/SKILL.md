@@ -93,9 +93,13 @@ automated test generation, or PR publication. A parent's recommendation is not i
    a list without a file, or the optional PR section in step 6.
 5. For HTML, ask `tk-browser-verify` to verify the local file headlessly in a disposable
    run-owned profile: check two independent rows, enter a note, reload, and observe restoration;
-   also verify unique IDs, counts, code-only badges, reset preserving notes, and no sample
-   placeholders. Apply the shared mandatory desktop/mobile, light/dark and numerical readability
-   checks even for a short checklist; no-JS reading must expose the final inventory while explaining
+   also verify unique IDs, counts, code-only badges, reset preserving notes and theme, and no sample
+   placeholders. Exercise the visible theme selector in `system / light / dark` order: system
+   must follow emulated OS light/dark preference without `data-theme`, manual choices must
+   override it and restore after reload when storage is available, and storage refusal must
+   leave the sheet readable with system as the next-load fallback. Apply the shared mandatory
+   desktop/mobile, light/dark and numerical readability checks even for a short checklist;
+   no-JS reading must expose the final inventory while explaining
    that check/note persistence needs JavaScript. Close and delete only that profile. If the check cannot run, preserve the
    sheet and disclose `Unverifiable`; never claim persistence verification from source alone.
 6. Return the absolute file path (HTML only), total check count, `auto-verified`,

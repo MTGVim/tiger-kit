@@ -5,7 +5,9 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 const template = fs.readFileSync(path.join(__dirname, '../../../skills/tk-qa-sheet/assets/qa-sheet-template.html'), 'utf8');
-const script = template.match(/<script>\s*([\s\S]*?)<\/script>/)[1];
+const scripts = [...template.matchAll(/<script>\s*([\s\S]*?)<\/script>/g)].map(match => match[1]);
+const script = scripts[0];
+const themeScript = scripts.at(-1);
 const sample = JSON.parse(template.match(/id="qa-data">\s*([\s\S]*?)<\/script>/)[1]);
 
 // Run the actual renderer with a small DOM/storage seam; browser layout is checked separately.
@@ -70,6 +72,50 @@ function run(data = sample, storage = new Map(), denied = false) {
 const clone = value => JSON.parse(JSON.stringify(value));
 const toggle = box => { if (box.disabled) return; box.checked = !box.checked; box.emit('change'); };
 const make = groups => ({ title: 'QA', storageKey: 'qa', groups });
+
+function runTheme(saved, denied = false) {
+  const attributes = new Map(), storage = new Map();
+  if (saved !== undefined) storage.set('tigerkit-html-theme', saved);
+  const select = { value: '', parentElement: { hidden: true }, addEventListener: (_, fn) => { select.change = fn; } };
+  const root = { setAttribute: (key, value) => attributes.set(key, value), removeAttribute: key => attributes.delete(key) };
+  vm.runInNewContext(themeScript, {
+    document: { documentElement: root, getElementById: id => id === 'ht-theme' ? select : null },
+    localStorage: {
+      getItem: key => { if (denied) throw Error('denied'); return storage.get(key) ?? null; },
+      setItem: (key, value) => { if (denied) throw Error('denied'); storage.set(key, value); }
+    }
+  });
+  return { attributes, storage, select };
+}
+
+test('QA template exposes persistent system light dark theme without coupling it to task reset', () => {
+  assert.match(template, /<select id="ht-theme"><option value="system">시스템<\/option><option value="light">라이트<\/option><option value="dark">다크<\/option><\/select>/);
+
+  const first = runTheme();
+  assert.equal(first.select.value, 'system');
+  assert.equal(first.attributes.has('data-theme'), false);
+  assert.equal(first.select.parentElement.hidden, false);
+
+  first.select.value = 'dark'; first.select.change();
+  assert.equal(first.attributes.get('data-theme'), 'dark');
+  assert.equal(first.storage.get('tigerkit-html-theme'), 'dark');
+
+  const reloaded = runTheme(first.storage.get('tigerkit-html-theme'));
+  assert.equal(reloaded.select.value, 'dark');
+  assert.equal(reloaded.attributes.get('data-theme'), 'dark');
+
+  const storage = new Map([['tigerkit-html-theme', 'dark']]);
+  const qa = run(sample, storage);
+  qa.ids.reset.emit('click');
+  assert.equal(storage.get('tigerkit-html-theme'), 'dark');
+
+  const denied = runTheme('dark', true);
+  assert.equal(denied.select.value, 'system');
+  assert.equal(denied.attributes.has('data-theme'), false);
+  denied.select.value = 'light'; denied.select.change();
+  assert.equal(denied.attributes.get('data-theme'), 'light');
+  assert.equal(runTheme('dark', true).select.value, 'system');
+});
 
 test('two checks, notes and filter survive reload; reset preserves notes', () => {
   const first = run();

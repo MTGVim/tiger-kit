@@ -112,7 +112,16 @@ environment or independently tested revision uses a new key for notes/filter as 
 
 Storage keys serialize `["tk-qa-sheet", storageKey, role, 1]` as JSON, with role `checks`,
 `notes`, or `onlyOpen`. Keeping task and role as separate tuple fields prevents one task's
-name from aliasing another task's note/check key. Reads/writes tolerate unavailable storage and malformed stored data. Auto-verified rows are
+name from aliasing another task's note/check key. Theme is intentionally outside task
+identity: the canonical shared theme control stores the raw `system | light | dark` value
+under `tigerkit-html-theme`, independent of `storageKey`. This lets the reader's preference
+carry to other TigerKit HTML outputs that share the same browser/localStorage origin. Do not
+promise cross-file persistence for `file:` URLs or across browsers because storage scoping is
+browser-defined there. Missing, invalid or unreadable theme storage starts in `system`;
+changing theme can still update the current page if a write is refused, but a reload may
+return to `system`. Check reset never clears the theme preference.
+
+Reads/writes tolerate unavailable storage and malformed stored data. Auto-verified rows are
 not persisted as user completion: the renderer clears any old stored completion for an item
 while it is auto-verified, so a later demotion to manual cannot resurrect a stale manual
 check. Failed writes display a warning without preventing in-memory interaction. Notes save after
@@ -132,10 +141,15 @@ the static view. Compare static coverage with the final JSON, not the bundled ex
 Use `tk-browser-verify` with the exact generated file, no auth/server, a disposable
 headless profile, and all mandatory [HTML output](html-output.md) render checks, plus any
 requested layout criteria. Every short sheet still needs desktop/mobile and light/dark coverage
-with numerical readability checks and inspected/missing-check reporting. Two editable rows plus a note
-must survive reload; IDs must be unique, counts accurate, code-only status visible, reset
-must retain the note, auto-verified rows must stay checked after reset without becoming
-editable, and partial/manual rows must remain in the manual list. Verify evidence references
-and the collapsed Automated grouping from the final data, not just the bundled sample. Preserve actual
+with numerical readability checks and inspected/missing-check reporting. Verify the visible
+theme selector is ordered `system / light / dark`: `system` leaves `data-theme` unset and
+follows emulated light/dark OS preference, while manual light/dark choices override it and
+restore after reload when storage is available. Confirm check reset preserves the theme and
+storage refusal leaves the sheet readable with `system` as the next-load fallback. Two
+editable rows plus a note must survive reload; IDs must be unique, counts accurate, code-only
+status visible, reset must retain the note, auto-verified rows must stay checked after reset
+without becoming editable, and partial/manual rows must remain in the manual list. Verify
+evidence references and the collapsed Automated grouping from the final data, not just the
+bundled sample. Preserve actual
 failure/limitation evidence; remove only the run-owned profile. Storage-denied environments
 render normally but cannot satisfy persistence acceptance.

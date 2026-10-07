@@ -606,6 +606,7 @@
     "tk-qa-sheet:behavior:qa-default-html",
     "tk-qa-sheet:behavior:qa-session-verification-split",
     "tk-qa-sheet:behavior:qa-moved-head-demotes-automation",
+    "tk-qa-sheet:behavior:qa-theme-choice-persistence",
     "tk-adhd:behavior:shape-complete-reasoning",
     "tk-adhd:behavior:shape-agent-owned-work",
     "tk-adhd:behavior:shape-observed-result",
