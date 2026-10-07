@@ -44,6 +44,70 @@ DOMAIN_CONTEXT_TARGETS = (
     ROOT / "skills/tk-review/references/domain-context.md",
 )
 
+HTML_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-study", "tk-research", "tk-qa-sheet", "tk-prototype")
+VISUAL_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-study", "tk-research")
+HTML_ASSETS = ("html-theme.css", "html-theme.js")
+HTML_TEMPLATES = ("skills/tk-research/assets/report.html", "skills/tk-qa-sheet/assets/qa-sheet-template.html")
+FEEDBACK_MARKER = "<!-- tigerkit:skill-feedback -->"
+FEEDBACK_END = "<!-- /tigerkit:skill-feedback -->"
+FEEDBACK_BLOCK = FEEDBACK_MARKER + """
+## Skill Feedback
+
+Skill-improvement feedback from any skill run becomes a `tk-learn` draft only, using its Anonymous draft checkpoint and anonymization checks. Do not edit installed skill copies, open issues or PRs, push, or offer those actions unless the user explicitly requests that exact action and target. An explicit request to apply a candidate to an owned source checkout continues through the existing owner and authority gates.
+""" + FEEDBACK_END + "\n"
+
+
+def feedback_errors(root: Path) -> list[str]:
+    return [f"{path.relative_to(root)}: skill feedback guard must match exactly once"
+            for path in sorted((root / "skills").glob("tk-*/SKILL.md"))
+            if path.read_text(encoding="utf-8").count(FEEDBACK_MARKER) != 1
+            or path.read_text(encoding="utf-8").count(FEEDBACK_END) != 1
+            or path.read_text(encoding="utf-8").count(FEEDBACK_BLOCK) != 1]
+
+
+def sync_feedback(root: Path) -> None:
+    for path in sorted((root / "skills").glob("tk-*/SKILL.md")):
+        text = path.read_text(encoding="utf-8")
+        if FEEDBACK_MARKER in text:
+            if text.count(FEEDBACK_MARKER) != 1 or text.count(FEEDBACK_END) != 1:
+                raise ValueError(f"{path}: malformed skill feedback guard")
+            start = text.index(FEEDBACK_MARKER)
+            end = text.index(FEEDBACK_END, start) + len(FEEDBACK_END)
+            if text[end:end + 1] == "\n":
+                end += 1
+            text = text[:start] + FEEDBACK_BLOCK + text[end:]
+        else:
+            text = text.rstrip() + "\n\n" + FEEDBACK_BLOCK
+        if text != path.read_text(encoding="utf-8"):
+            path.write_text(text, encoding="utf-8")
+
+
+def html_policy_errors(root: Path) -> list[str]:
+    errors = []
+    source = root / "skills/tk-explain"
+    for name in VISUAL_CONSUMERS:
+        canonical = source / "references/visual-grammar.md"
+        target = root / "skills" / name / "references/visual-grammar.md"
+        if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
+            errors.append(f"{target.relative_to(root)}: shared visual grammar drift")
+    for name in HTML_CONSUMERS:
+        for relative in ("references/html-output.md", *(f"assets/{asset}" for asset in HTML_ASSETS)):
+            canonical = source / relative
+            target = root / "skills" / name / relative
+            if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
+                errors.append(f"{target.relative_to(root)}: shared HTML contract/asset drift")
+    for relative in HTML_TEMPLATES:
+        target = root / relative
+        text = target.read_text(encoding="utf-8") if target.is_file() else ""
+        for asset in HTML_ASSETS:
+            canonical = source / "assets" / asset
+            start, end = f"/* tigerkit:{asset} */", f"/* /tigerkit:{asset} */"
+            if text.count(start) != 1 or text.count(end) != 1 or not canonical.is_file():
+                errors.append(f"{relative}: missing canonical {asset} block")
+            elif text.split(start, 1)[1].split(end, 1)[0] != "\n" + canonical.read_text(encoding="utf-8"):
+                errors.append(f"{relative}: inline {asset} drift")
+    return errors
+
 
 OUTPUT_NOTATION_MARKER = "<!-- tigerkit:output-notation -->"
 OUTPUT_NOTATION_END = "<!-- /tigerkit:output-notation -->"
@@ -106,6 +170,18 @@ def main() -> int:
             pairs.append((ROOT / "skills/tk-explain/references/html-output.md", ROOT / "skills" / name / "references/html-output.md"))
     if (ROOT / "skills/tk-qa-sheet").is_dir():
         pairs.append((ROOT / "skills/tk-explain/references/html-output.md", ROOT / "skills/tk-qa-sheet/references/html-output.md"))
+    if (ROOT / "skills/tk-prototype").is_dir():
+        pairs.append((ROOT / "skills/tk-explain/references/html-output.md", ROOT / "skills/tk-prototype/references/html-output.md"))
+    for name in HTML_CONSUMERS:
+        if (ROOT / "skills" / name).is_dir():
+            for asset in HTML_ASSETS:
+                source = ROOT / "skills/tk-explain/assets" / asset
+                if source.is_file():
+                    pairs.append((source, ROOT / "skills" / name / "assets" / asset))
+    for name in VISUAL_CONSUMERS:
+        source = ROOT / "skills/tk-explain/references/visual-grammar.md"
+        if name != "tk-explain" and source.is_file():
+            pairs.append((source, ROOT / "skills" / name / "references/visual-grammar.md"))
     for name in UI_EVIDENCE_CONSUMERS:
         path = ROOT / "skills" / name / "references/ui-evidence.md"
         if not args.check:
@@ -115,13 +191,15 @@ def main() -> int:
         sync_verification(ROOT)
         sync_artifact_guards(ROOT)
         sync_questions(ROOT)
+        sync_feedback(ROOT)
     drift = [
         (source, target)
         for source, target in pairs
         if not target.is_file() or target.read_bytes() != source.read_bytes()
     ]
     if args.check:
-        notation_errors = output_notation_errors(ROOT / "skills") + validate_artifact_guards(ROOT) + validate_runtime_guard(ROOT) + question_errors(ROOT) + verification_errors(ROOT)
+        notation_errors = output_notation_errors(ROOT / "skills") + validate_artifact_guards(ROOT) + validate_runtime_guard(ROOT) + question_errors(ROOT) + verification_errors(ROOT) + feedback_errors(ROOT)
+        notation_errors.extend(html_policy_errors(ROOT))
         if notation_errors:
             print("\n".join(notation_errors))
         if drift:
@@ -138,6 +216,20 @@ def main() -> int:
     for source, target in drift:
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, target)
+    for relative in HTML_TEMPLATES:
+        path = ROOT / relative
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8")
+        for asset in HTML_ASSETS:
+            source = ROOT / "skills/tk-explain/assets" / asset
+            start, end = f"/* tigerkit:{asset} */", f"/* /tigerkit:{asset} */"
+            if source.is_file() and text.count(start) == 1 and text.count(end) == 1:
+                before, rest = text.split(start, 1)
+                _, after = rest.split(end, 1)
+                text = before + start + "\n" + source.read_text(encoding="utf-8") + end + after
+        if text != path.read_text(encoding="utf-8"):
+            path.write_text(text, encoding="utf-8")
     print(
         "Synchronized: "
         + (", ".join(str(target.relative_to(ROOT)) for _, target in drift) if drift else "no changes")

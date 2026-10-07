@@ -1,2 +1,2 @@
 interface:
-  short_description: "[user/auto] 현재 세션의 목표·완료·진행·다음 행동을 짧게 안내합니다."
+  short_description: "[user/auto] 답변의 핵심·필요한 단계·확인된 결과를 쉽게 찾도록 정리합니다."

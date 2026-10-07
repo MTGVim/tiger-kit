@@ -3,88 +3,10 @@
   "kind": "hybrid",
   "queries": [
     {
-      "id": "train-positive",
-      "split": "train",
-      "query": "$tk-adhd 이 창 현황만 짧게 보여줘",
-      "should_trigger": true
-    },
-    {
       "id": "train-negative",
       "split": "train",
       "query": "이 오류 원인을 코드에서 찾아줘",
       "should_trigger": false
-    },
-    {
-      "id": "validation-positive-1",
-      "split": "validation",
-      "query": "현재 세션 작업이 어디까지 진행됐는지 간단히 안내해 주세요",
-      "should_trigger": true,
-      "facets": [
-        "formal"
-      ]
-    },
-    {
-      "id": "validation-positive-2",
-      "split": "validation",
-      "query": "여기 뭐 하던 거지? 딱 현황만",
-      "should_trigger": true,
-      "facets": [
-        "casual"
-      ]
-    },
-    {
-      "id": "validation-positive-3",
-      "split": "validation",
-      "query": "세션 왓다갓다해서 헷갈림 지금 뭐함",
-      "should_trigger": true,
-      "facets": [
-        "typo"
-      ]
-    },
-    {
-      "id": "validation-positive-4",
-      "split": "validation",
-      "query": "이 `session goal`이랑 `next action`만 보여줘",
-      "should_trigger": true,
-      "facets": [
-        "ko-en"
-      ]
-    },
-    {
-      "id": "validation-positive-5",
-      "split": "validation",
-      "query": "여기 어디까지 했어?",
-      "should_trigger": true,
-      "facets": [
-        "short"
-      ]
-    },
-    {
-      "id": "validation-positive-6",
-      "split": "validation",
-      "query": "현재 목표랑 끝난 일을 알려주고 다음에 뭘 하면 좋을지 제안해줘",
-      "should_trigger": true,
-      "facets": [
-        "compound"
-      ]
-    },
-    {
-      "id": "validation-positive-7",
-      "split": "validation",
-      "query": "위에 붙인 두 세션 요약으로 각각 뭐 하는 중인지 정리해줘",
-      "should_trigger": true,
-      "facets": [
-        "compound"
-      ]
-    },
-    {
-      "id": "validation-positive-8",
-      "split": "validation",
-      "query": "이 창에서 내가 지금 해야 하는 게 있어? 진행 상황만 알려줘",
-      "should_trigger": true,
-      "facets": [
-        "casual"
-      ]
     },
     {
       "id": "validation-negative-1",
@@ -166,6 +88,158 @@
       "facets": [
         "compound"
       ]
+    },
+    {
+      "id": "shape-train-positive",
+      "split": "train",
+      "query": "$tk-adhd 답변의 핵심과 실행할 단계를 쉽게 찾도록 정리해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "shape-validation-positive-1",
+      "split": "validation",
+      "query": "이 답변에서 핵심 결과와 제가 수행할 단계를 쉽게 찾도록 출력 구조를 정리해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "shape-validation-positive-2",
+      "split": "validation",
+      "query": "설명은 충분히 하고 핵심이랑 해야 할 일을 찾기 쉽게 보여줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "shape-validation-positive-3",
+      "split": "validation",
+      "query": "핵심이랑 다음할일 찾기쉽게 정리좀ㅎ",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "shape-validation-positive-4",
+      "split": "validation",
+      "query": "이 답변을 `actionable output`으로 구조화해줘",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "shape-validation-positive-5",
+      "split": "validation",
+      "query": "답변을 행동하기 쉽게 정리해줘",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "shape-validation-positive-6",
+      "split": "validation",
+      "query": "열두 선택지를 빠뜨리지 않고 묶어서 추천과 조건을 찾기 쉽게 보여줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "shape-validation-positive-7",
+      "split": "validation",
+      "query": "에이전트가 맡은 작업은 계속하고 필요한 사용자 조치만 눈에 띄게 알려줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "shape-validation-positive-8",
+      "split": "validation",
+      "query": "오류 원인과 영향, 확인된 해결 방법을 차분하게 보여줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "orientation-negative-validation-negative-1",
+      "split": "validation",
+      "query": "현재 상태를 한 문단으로 요약해 주세요",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "orientation-negative-validation-negative-6",
+      "split": "validation",
+      "query": "상태 알려줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    }
+  ],
+  "migrations": [
+    {
+      "from": "train-positive",
+      "to": "orientation-train-positive",
+      "target_skill": "tk-handoff",
+      "reason": "#424: 현황 조회의 단일 담당자를 tk-handoff로 바꿉니다."
+    },
+    {
+      "from": "validation-positive-1",
+      "to": "orientation-validation-positive-1",
+      "target_skill": "tk-handoff",
+      "reason": "#424: 현황 조회의 단일 담당자를 tk-handoff로 바꿉니다."
+    },
+    {
+      "from": "validation-positive-2",
+      "to": "orientation-validation-positive-2",
+      "target_skill": "tk-handoff",
+      "reason": "#424: 현황 조회의 단일 담당자를 tk-handoff로 바꿉니다."
+    },
+    {
+      "from": "validation-positive-3",
+      "to": "orientation-validation-positive-3",
+      "target_skill": "tk-handoff",
+      "reason": "#424: 현황 조회의 단일 담당자를 tk-handoff로 바꿉니다."
+    },
+    {
+      "from": "validation-positive-4",
+      "to": "orientation-validation-positive-4",
+      "target_skill": "tk-handoff",
+      "reason": "#424: 현황 조회의 단일 담당자를 tk-handoff로 바꿉니다."
+    },
+    {
+      "from": "validation-positive-5",
+      "to": "orientation-validation-positive-5",
+      "target_skill": "tk-handoff",
+      "reason": "#424: 현황 조회의 단일 담당자를 tk-handoff로 바꿉니다."
+    },
+    {
+      "from": "validation-positive-6",
+      "to": "orientation-validation-positive-6",
+      "target_skill": "tk-handoff",
+      "reason": "#424: 현황 조회의 단일 담당자를 tk-handoff로 바꿉니다."
+    },
+    {
+      "from": "validation-positive-7",
+      "to": "orientation-validation-positive-7",
+      "target_skill": "tk-handoff",
+      "reason": "#424: 현황 조회의 단일 담당자를 tk-handoff로 바꿉니다."
+    },
+    {
+      "from": "validation-positive-8",
+      "to": "orientation-validation-positive-8",
+      "target_skill": "tk-handoff",
+      "reason": "#424: 현황 조회의 단일 담당자를 tk-handoff로 바꿉니다."
     }
   ]
 }

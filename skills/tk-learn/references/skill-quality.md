@@ -133,3 +133,10 @@ itself prove skill behavior. Use observable outcomes and realistic judge criteri
 The calling SKILL.md owns the candidate packet, apply checkpoint and optional durable proposal.
 Use its one progress state and distinguish a saved draft from verified canonical application.
 Keep user-facing progress and result prose in the user's language.
+
+## Generated artifact quality
+
+For HTML-producing candidates, compare the package-local `html-output.md` Reader contract, Shared
+theme and Render verification against real artifacts. Readability, whole-project coverage where
+applicable, theme/overflow/typography and required render evidence are acceptance boundaries, with
+unavailable checks explicit. An unreadable artifact is a functional failure, not cosmetic polish.

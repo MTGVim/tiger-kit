@@ -63,3 +63,13 @@ copy rationale). Adapt semantic sections, sticky/compact native navigation, hash
 omit donor templates/styles, CDN fonts, default tracked commits and orchestration. Runtime
 efficacy was not reproduced. The canonical contract is `tk-explain/references/html-output.md`;
 installed copies are synchronized and the MIT notice is in this package's `LICENSE.txt`.
+
+## HTML quality extension (2026-10-07)
+
+The supplied recurring-artifact proposal and TigerKit baseline `56c8a50603bd1649465a74b2e8af373a0e51a8a9`
+provide explicit reusable intent and inspectable contract/template gaps. Keep offline reading and
+hash navigation; adapt neutral QA theme structure and whole-project projections; omit domain-specific
+scripts and raw session details. The reported proprietary `dataviz` bundle is reference-only:
+no wording, code, palettes or validation script is included. Its distribution/license and upstream
+behavior were not independently verified here; the general chart rules and neutral tokens are
+independently authored. Runtime/provider observations remain conditional, not compatibility claims.

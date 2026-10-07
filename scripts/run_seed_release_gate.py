@@ -17,6 +17,7 @@ os.environ.setdefault("PYTHONDONTWRITEBYTECODE", "1")
 if __package__:
     from . import run_release_gate as base
     from .check_runtime_guard import validate_runtime_guard
+    from .sync_execution_protocol import feedback_errors, html_policy_errors
     from .run_skill_evals import (
         compare_catalog_contracts,
         compare_eval_contracts,
@@ -31,6 +32,7 @@ if __package__:
 else:
     import run_release_gate as base
     from check_runtime_guard import validate_runtime_guard
+    from sync_execution_protocol import feedback_errors, html_policy_errors
     from run_skill_evals import (
         compare_catalog_contracts,
         compare_eval_contracts,
@@ -152,6 +154,8 @@ def main() -> int:
         contract_errors.extend(validate_portable_artifacts(candidate_root))
         contract_errors.extend(validate_artifact_guards(candidate_root))
         contract_errors.extend(validate_runtime_guard(candidate_root))
+        contract_errors.extend(feedback_errors(candidate_root))
+        contract_errors.extend(html_policy_errors(candidate_root))
 
     self_blockers = [
         str(value)

@@ -1185,6 +1185,68 @@ class BehaviorGradingTest(unittest.TestCase):
 
 
 class RunnerContractTest(unittest.TestCase):
+    def transferred_contracts(self):
+        import copy
+        baseline = self.contract([self.behavior('old', {'type':'output_contains', 'text':'keep marker'})], safety=True)
+        candidate = copy.deepcopy(baseline)
+        case = candidate['tk-sample']['behavior']['evals'].pop()
+        case['id'] = 'orientation-old'
+        candidate['tk-owner'] = {'behavior': {'evals':[case]}, 'triggers': {'queries':[]}}
+        candidate['tk-sample']['behavior']['migrations'] = [
+            {'from':'old', 'to':'orientation-old', 'target_skill':'tk-owner', 'reason':'Move one responsibility'}]
+        return baseline, candidate
+
+    def test_partial_owner_transfer_preserves_exact_contract(self):
+        baseline, candidate = self.transferred_contracts()
+        self.assertEqual(compare_eval_contracts(baseline, candidate), [])
+        self.assertEqual(compare_eval_contracts(candidate, candidate), [])
+
+    def test_partial_owner_transfer_rejects_missing_or_weakened_destination(self):
+        import copy
+        baseline, candidate = self.transferred_contracts()
+        for effect in ('missing', 'assertion', 'safety', 'duplicate'):
+            with self.subTest(effect=effect):
+                broken = copy.deepcopy(candidate)
+                case = broken['tk-owner']['behavior']['evals'][0]
+                if effect == 'missing': broken.pop('tk-owner')
+                elif effect == 'assertion': case['assertions'][0]['text'] = 'weakened'
+                elif effect == 'safety': case['safety'] = False
+                else: broken['tk-sample']['behavior']['evals'] = copy.deepcopy(baseline['tk-sample']['behavior']['evals'])
+                self.assertTrue(compare_eval_contracts(baseline, broken))
+
+    def test_partial_trigger_transfer_preserves_selection(self):
+        baseline, candidate = self.transferred_contracts()
+        candidate['tk-sample']['triggers'] = {'queries':[], 'migrations':[
+            {'from':'trigger', 'to':'orientation-trigger', 'target_skill':'tk-owner', 'reason':'Move orientation'}]}
+        candidate['tk-owner']['triggers']['queries'] = [{'id':'orientation-trigger', 'should_trigger':True}]
+        self.assertEqual(compare_eval_contracts(baseline, candidate), [])
+        candidate['tk-owner']['triggers']['queries'][0]['should_trigger'] = False
+        self.assertTrue(compare_eval_contracts(baseline, candidate))
+
+    def test_partial_transfer_cannot_replace_another_baseline_scenario(self):
+        import copy
+        baseline, candidate = self.transferred_contracts()
+        baseline['tk-owner'] = copy.deepcopy(candidate['tk-owner'])
+        self.assertTrue(any('colliding' in error for error in compare_eval_contracts(baseline, candidate)))
+
+    def test_partial_transfer_rejects_collisions_with_migrations(self):
+        import copy
+        for section, key in (("behavior", "evals"), ("triggers", "queries")):
+            with self.subTest(section=section):
+                baseline, candidate = self.transferred_contracts()
+                if section == "triggers":
+                    candidate['tk-sample']['triggers'] = {'queries': [], 'migrations': [
+                        {'from': 'trigger', 'to': 'orientation-trigger', 'target_skill': 'tk-owner', 'reason': 'Transfer scenario'}]}
+                    candidate['tk-owner']['triggers'] = {'queries': [{'id': 'orientation-trigger', 'should_trigger': True}]}
+                destination = candidate['tk-owner'][section][key][0]['id']
+                baseline['tk-owner'] = {'behavior': {'evals': []}, 'triggers': {'queries': []}}
+                baseline['tk-owner'][section] = copy.deepcopy(candidate['tk-owner'][section])
+                baseline['tk-owner'][section][key][0]['id'] = 'existing'
+                baseline['tk-owner'][section][key][0]['prompt' if section == 'behavior' else 'query'] = 'Distinct retained scenario'
+                candidate['tk-owner'][section]['migrations'] = [
+                    {'from': 'existing', 'to': destination, 'reason': 'Rename retained scenario'}]
+                self.assertTrue(any('colliding' in error for error in compare_eval_contracts(baseline, candidate)))
+
     def behavior(self, case_id: str, terminal: dict[str, object]) -> dict[str, object]:
         return {
             "id": case_id,

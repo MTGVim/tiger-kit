@@ -69,20 +69,26 @@ automated test generation, or PR publication. A parent's recommendation is not i
    is not proof of a traversed menu path or product acceptance. Markdown-only output may
    use the same safe links; opening a link belongs to the human, not automatic QA execution.
 4. For a Markdown-only request, return the inventory and limitations without creating HTML.
-   For an explicitly requested HTML sheet, read [data and rendering](references/qa-sheet-data.md),
+   For every explicitly requested HTML sheet, read [HTML output](references/html-output.md)
+   and [data and rendering](references/qa-sheet-data.md),
    then copy [the template](assets/qa-sheet-template.html) to
-   `.tigerkit/qa/<task>-<topic>.html` after Artifact Paths checks. Replace only `qa-data` JSON;
-   keep the renderer unchanged. Preserve the same storage key and content identity when
+   `.tigerkit/qa/<task>-<topic>.html` after Artifact Paths checks. Replace `qa-data` JSON,
+   then run `python3 <package>/scripts/render_static_inventory.py <generated-file>` to
+   regenerate its no-JS inventory from that same data. Keep the runtime renderer unchanged.
+   Preserve the same storage key and content identity when
    regenerating the same task; use a new key for an independent task/revision. Preserve an
    unrelated existing file and choose a new destination. Keep credentials, sensitive records,
    secret-bearing URLs/query values and internal source locations out of the deliverable.
 5. For HTML, ask `tk-browser-verify` to verify the local file headlessly in a disposable
    run-owned profile: check two independent rows, enter a note, reload, and observe restoration;
    also verify unique IDs, counts, code-only badges, reset preserving notes, and no sample
-   placeholders. Close and delete only that profile. If the check cannot run, preserve the
+   placeholders. Apply the shared mandatory desktop/mobile, light/dark and numerical readability
+   checks even for a short checklist; no-JS reading must expose the final inventory while explaining
+   that check/note persistence needs JavaScript. Close and delete only that profile. If the check cannot run, preserve the
    sheet and disclose `Unverifiable`; never claim persistence verification from source alone.
 6. Return the absolute file path (HTML only), check count, code-only count, fixed target,
-   unverified screens/connections and reasons, and actual self-check status. Optional PR
+   unverified screens/connections and reasons, actual self-check status and inspected viewports/themes
+   or the exact unavailable render checks. Optional PR
    Markdown uses the same inventory and limitations. Hand that section to `tk-pr-open`;
    do not push, publish, edit a PR, or start QA investigation inside publication-only work.
 
@@ -98,7 +104,9 @@ label/path `code-only`, carry the gaps, and continue the requested output. Missi
 repository identity blocks inventory; missing HTML self-check evidence blocks only its
 verified status. Questions and file handling grant no implementation/publication authority.
 
-For long document sections in an HTML QA sheet, read [HTML output](references/html-output.md); preserve the QA interface and use document navigation only for its document portions.
+For long document sections in an HTML QA sheet, apply the shared document navigation rules only
+to those portions; preserve the checklist interface. This navigation exception never waives the
+HTML reading, theme or render requirements for a short sheet.
 
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
@@ -127,3 +135,9 @@ Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the mark
 
 For an authorized user-editable temporary input file, consistently provide a plain JSON object template with the needed keys and empty strings for missing text values, rather than an empty or raw-text file. The initial template's non-zero size is not an input-completion signal. Apply the owning package's Artifact Paths input branch before creation and consumption; this notation rule grants no artifact-writing authority.
 <!-- /tigerkit:output-notation -->
+
+<!-- tigerkit:skill-feedback -->
+## Skill Feedback
+
+Skill-improvement feedback from any skill run becomes a `tk-learn` draft only, using its Anonymous draft checkpoint and anonymization checks. Do not edit installed skill copies, open issues or PRs, push, or offer those actions unless the user explicitly requests that exact action and target. An explicit request to apply a candidate to an owned source checkout continues through the existing owner and authority gates.
+<!-- /tigerkit:skill-feedback -->

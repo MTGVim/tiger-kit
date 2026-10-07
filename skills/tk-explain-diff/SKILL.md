@@ -54,6 +54,9 @@ Build content before choosing a renderer:
 Use the audience's language while preserving established technical terms. Diagrams must match
 actual components and prose; analogy must not replace the mechanism. Respect the package's
 [clear writing](references/clear-writing.md) criteria when composing the explanation.
+When a before/change/after structure, state, data or event relationship benefits from a
+figure, read [visual grammar](references/visual-grammar.md); retain component correspondence
+across topology views and expose the change ledger rather than independently rearranging them.
 
 ## Deliver
 
@@ -101,3 +104,8 @@ Minimum shape, even when already familiar:
 
 Separate questions with `---`. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
 <!-- /tigerkit:questions -->
+<!-- tigerkit:skill-feedback -->
+## Skill Feedback
+
+Skill-improvement feedback from any skill run becomes a `tk-learn` draft only, using its Anonymous draft checkpoint and anonymization checks. Do not edit installed skill copies, open issues or PRs, push, or offer those actions unless the user explicitly requests that exact action and target. An explicit request to apply a candidate to an owned source checkout continues through the existing owner and authority gates.
+<!-- /tigerkit:skill-feedback -->

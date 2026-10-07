@@ -1,7 +1,8 @@
 # QA Sheet Data and Rendering
 
-Read only for a requested HTML sheet. Copy the bundled template and replace only the
-`script#qa-data` JSON. No generator or external assets are needed.
+Read only for a requested HTML sheet. Copy the bundled template, replace the
+`script#qa-data` JSON, then use the bundled helper to regenerate its static reading
+inventory from that data. The final file needs no external assets or runtime generator.
 
 ## Data
 
@@ -90,8 +91,17 @@ may lose access to existing state. Do not promise cross-file or multi-user persi
 
 ## Self-check
 
+After filling `qa-data`, run the package's `scripts/render_static_inventory.py` on the generated
+file. It replaces only `noscript#qa-static` from that same JSON, escaping prose and preserving
+the runtime renderer. Regenerate it whenever data changes; never maintain a second inventory.
+With JavaScript disabled, verify the final groups/items/checks are readable and controls are
+not presented as functional. Persistence remains a JavaScript-only capability, disclosed in
+the static view. Compare static coverage with the final JSON, not the bundled example.
+
 Use `tk-browser-verify` with the exact generated file, no auth/server, a disposable
-headless profile, and the requested desktop/mobile layout criteria. Two rows plus a note
+headless profile, and all mandatory [HTML output](html-output.md) render checks, plus any
+requested layout criteria. Every short sheet still needs desktop/mobile and light/dark coverage
+with numerical readability checks and inspected/missing-check reporting. Two rows plus a note
 must survive reload; IDs must be unique, counts accurate, code-only status visible, and reset
 must retain the note. Verify the final data, not just the bundled sample. Preserve actual
 failure/limitation evidence; remove only the run-owned profile. Storage-denied environments

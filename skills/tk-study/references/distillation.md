@@ -104,6 +104,17 @@ The focused Python fixtures are independently authored; no upstream code or fixt
 
 # Shared writing and HTML provenance
 
+## Optional revisit reference artifacts (#425)
+
+Reviewed 2026-10-07 at `mattpocock/skills@6fd947921b935b7e1e69293a200400f0fdd5c15f`,
+`skills/productivity/teach/SKILL.md`, including its lessons/reference distinction and rationale.
+Separate upstream behavior evals and learning efficacy remain unverified.
+Keep useful quick-lookup aids for already taught material; adapt optional course-local
+`reference/` units, links, essential caveats and provenance to the existing topic identity,
+continuation and HTML contracts. Omit per-chapter quotas, empty scaffolding, root workspace
+framework, flashcards, reminders, mastery inference and new rendering dependencies.
+The source's original MIT notice is already included in this package's `LICENSE.txt`.
+
 Maintenance record for upstream distillation; not part of the skill's reading path.
 
 ## clear-writing.md

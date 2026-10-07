@@ -82,6 +82,8 @@ chapter count. Store reusable chapter content in `chapters/`; introduce needed t
 Each chapter should teach a motivating problem, real mechanism, worked example and relevant
 limits. Use [clear writing](references/clear-writing.md) when composing; analogy cannot replace
 the mechanism. Keep teaching content independent of renderer logic.
+When a prerequisite structure or mechanism benefits from a figure, read
+[visual grammar](references/visual-grammar.md); never require a diagram in every chapter.
 
 Include retrieval and transfer practice matched to outcomes and checkpoints across dependencies.
 Use explanation from memory, prediction or a new-context task, with answers separately revealed.
@@ -97,6 +99,9 @@ Default to `.tigerkit/study/<topic>/index.html`, using the [HTML output](referen
 contract. Keep `curriculum.md`, `sources.md`, `chapters/`, any learner profile and renderer `assets/`
 inside that topic-run directory. For a new run colliding with an existing directory, choose a
 numeric suffix for the whole run; reuse only an explicitly continued, identity-verified run.
+When taught material has clear recurring lookup value, read
+[revisit references](references/reference-artifacts.md) and selectively create `reference/`
+inside the same run. Keep lesson and lookup purposes distinct; no reference quota applies.
 Honor explicit Markdown (default `lesson.md` when no filename is given) or custom final destination;
 TigerKit-owned intermediates and state still stay inside `.tigerkit/study/<topic>/`. An explicit
 existing final file needs overwrite authorization. Transient work uses `.tigerkit/tmp/tk-study/<run-id>/`.
@@ -142,3 +147,8 @@ Minimum shape, even when already familiar:
 
 Separate questions with `---`. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
 <!-- /tigerkit:questions -->
+<!-- tigerkit:skill-feedback -->
+## Skill Feedback
+
+Skill-improvement feedback from any skill run becomes a `tk-learn` draft only, using its Anonymous draft checkpoint and anonymization checks. Do not edit installed skill copies, open issues or PRs, push, or offer those actions unless the user explicitly requests that exact action and target. An explicit request to apply a candidate to an owned source checkout continues through the existing owner and authority gates.
+<!-- /tigerkit:skill-feedback -->

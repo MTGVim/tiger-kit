@@ -204,3 +204,9 @@ Minimum shape, even when already familiar:
 
 Separate questions with `---`. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
 <!-- /tigerkit:questions -->
+
+<!-- tigerkit:skill-feedback -->
+## Skill Feedback
+
+Skill-improvement feedback from any skill run becomes a `tk-learn` draft only, using its Anonymous draft checkpoint and anonymization checks. Do not edit installed skill copies, open issues or PRs, push, or offer those actions unless the user explicitly requests that exact action and target. An explicit request to apply a candidate to an owned source checkout continues through the existing owner and authority gates.
+<!-- /tigerkit:skill-feedback -->

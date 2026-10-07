@@ -1,8 +1,8 @@
 ---
 name: tk-adhd
-description: "[user/auto] 세션을 오가다 현재 작업의 맥락을 놓쳤거나 지금 어디까지 했는지 짧게 확인하고 턴을 끝낼 때 사용합니다. 코드 동작 설명, 원격 PR 현황 조사, 스킬 자체 수정, 인수인계 파일 작성에는 사용하지 않습니다."
+description: "[user/auto] 답변과 작업 결과에서 핵심·실행할 단계·확인된 완료 상태를 쉽게 찾도록 출력 구조를 정리할 때 사용합니다. 세션 현황 복원, 인수인계 작성, 작업 실행, 의료 조언이나 스킬 유지보수의 담당자는 아닙니다."
 disable-model-invocation: false
-argument-hint: "[현재 작업 | 제공한 세션 요약]"
+argument-hint: "<answer or task output to make actionable>"
 metadata:
   tigerkit:
     kind: hybrid
@@ -10,25 +10,38 @@ metadata:
     relationship: adapted
 ---
 
-# Session Orientation
+# Actionable output
 
-Restore the reader's place in the current task, using only this conversation and evidence already available. If repository or branch identity is needed and not established, use one cheap read of current Git state. Do not investigate implementation details, enumerate other sessions/worktrees/repositories, or query remote PRs for a status recap. A requested comparison may use summaries the user supplied, with unknown or stale state labeled explicitly; never merge their goals or approvals.
+Shape the requested answer or the active owner's progress/result so the reader can find
+what matters and act on it. This is presentation assistance, not a workflow, task executor,
+medical inference or a session-status owner. Apply it to this response only; it neither stays
+on across turns nor changes the active task's authority, checks or continuation rules.
 
-Give one compact card in the user's language; for a requested comparison, give one labeled card per supplied session. Translate the field labels to that language. Prefer these five short lines, omitting an empty field rather than filling a quota:
+Lead with the answer, verified result or the one user action actually needed. If the agent
+already has authority and capability to do the work, keep doing it through its owner; do not
+turn its tasks into commands the user must carry out or add a routine permission question.
+For several user-performed steps, use a short numbered sequence of bounded actions. Group
+long lists by relevance while retaining every requested item, material risk, caveat and source.
+A small visible working set must not cap investigation, candidate generation or completeness.
 
-```text
-📍 <repository / branch when known> · <task goal>
-완료: <latest verified outcome, or no verified completion yet>
-지금: <paused task position or exact blocker>
-다음: <one suggested action after the user resumes, not an action started now; or completed>
-내가 할 일: <only required user action, or 없음>
-```
+Keep the task position and concrete verified completion easy to find when relevant, without
+repeating a whole plan. Distinguish plans from execution, baseline capture from acceptance,
+and local commits from confirmed publication. Describe an error's cause, impact and supported
+next action calmly; retain uncertainty and blockers. Do not invent times, progress or success.
+When no user action remains, end with the result; do not manufacture a follow-up task.
 
-Distinguish executed work from a plan, capture success from final verification, and local commits from confirmed publication. If context is missing, say what is unknown; ask only for the minimal task identifier needed for a useful answer. Do not invent percentages, timings, completed tests, or access to other sessions. Never infer medical status from this request.
+Explain fully when requested, using clear sections when useful. Suppress unrelated tangents
+without silently omitting necessary alternatives or safety information. Preserve exact code,
+commands, URLs, UI labels, terms and source qualifications. Output shaping never overrides
+harness instructions, evidence, authorization or the requested depth/format.
 
-A status request pauses task execution for orientation. Present the card as the final response and end the turn, even when an earlier task approval includes implementation, verification, commits or publication. Do not resume that work, dispatch workers, start checks, or schedule background continuation after the card. The next-action line is a suggestion for later, not execution authority. Wait for a subsequent user instruction to resume; do not add a routine approval question. This explicit reporting boundary takes precedence over an owner's ordinary phase-continuation rule. It does not revoke earlier scope approval: a later resume instruction can reuse it when the task still matches. This format does not persist to every future reply or truncate a requested detailed explanation.
+A request for current-session orientation belongs to `tk-handoff`'s conversation-only branch;
+durable handoff writing/resume belongs to its artifact branch. Do not inspect repositories,
+other sessions or remote state merely to shape an answer, create a status ledger, or impose
+an orientation card on unrelated future replies. Skill maintenance belongs to `tk-learn`
+and its authorized implementation owner, not this output-shaping invocation.
 
-Create no status ledger or handoff file, mutate no repository/remote state for the recap, and grant no additional authority. Durable handoff creation/resume belongs to `tk-handoff`; this skill only restores conversational orientation.
+For maintenance provenance, see [distillation](references/distillation.md).
 
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
@@ -58,3 +71,8 @@ Minimum shape, even when already familiar:
 
 Separate questions with `---`. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
 <!-- /tigerkit:questions -->
+<!-- tigerkit:skill-feedback -->
+## Skill Feedback
+
+Skill-improvement feedback from any skill run becomes a `tk-learn` draft only, using its Anonymous draft checkpoint and anonymization checks. Do not edit installed skill copies, open issues or PRs, push, or offer those actions unless the user explicitly requests that exact action and target. An explicit request to apply a candidate to an owned source checkout continues through the existing owner and authority gates.
+<!-- /tigerkit:skill-feedback -->

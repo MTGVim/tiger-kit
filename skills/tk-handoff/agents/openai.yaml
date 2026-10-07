@@ -1,2 +1,2 @@
 interface:
-  short_description: "[user/auto] 검증된 작업 인수인계를 작성하거나 재개합니다."
+  short_description: "[user/auto] 현재 현황을 확인하거나 인수인계를 작성·재개합니다."

@@ -89,6 +89,12 @@ material scope/evidence conflicts or a missing user-owned decision require resol
 
 ## Anonymous draft checkpoint
 
+Receive reusable skill feedback from every skill run here, including user corrections and repeated
+artifact defects. Keep unsolicited feedback draft-only; explicit application requests for an owned
+source checkout continue through the Apply gate. One proposal may group a shared session lesson by
+package. Make it directly usable as `tk-prep` input: problem, evidence, exact files, proposed contract
+text, eval scenarios, acceptance criteria and exclusions, within the existing packet fields.
+
 For a reusable candidate, default to one GitHub issue or PRD Markdown draft at
 `.tigerkit/tmp/tk-learn/<run-id>/proposal.md` in the current repository after the shared tracking,
 ignore and safe-path checks. Report its absolute path. Only when no repository is identified,
@@ -189,3 +195,9 @@ Minimum shape, even when already familiar:
 
 Separate questions with `---`. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
 <!-- /tigerkit:questions -->
+
+<!-- tigerkit:skill-feedback -->
+## Skill Feedback
+
+Skill-improvement feedback from any skill run becomes a `tk-learn` draft only, using its Anonymous draft checkpoint and anonymization checks. Do not edit installed skill copies, open issues or PRs, push, or offer those actions unless the user explicitly requests that exact action and target. An explicit request to apply a candidate to an owned source checkout continues through the existing owner and authority gates.
+<!-- /tigerkit:skill-feedback -->

@@ -13,9 +13,9 @@ from typing import Mapping
 import yaml
 
 try:
-    from .sync_execution_protocol import output_notation_errors
+    from .sync_execution_protocol import output_notation_errors, feedback_errors, html_policy_errors
 except ImportError:
-    from sync_execution_protocol import output_notation_errors
+    from sync_execution_protocol import output_notation_errors, feedback_errors, html_policy_errors
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -932,6 +932,8 @@ def validate_repository_contract(skill_names: set[str]) -> list[str]:
     errors.extend(validate_shared_external_contracts(SKILLS))
     errors.extend(validate_shared_clear_writing(SKILLS))
     errors.extend(output_notation_errors(SKILLS))
+    errors.extend(feedback_errors(ROOT))
+    errors.extend(html_policy_errors(ROOT))
     errors.extend(validate_portable_artifacts(ROOT))
     return errors
 

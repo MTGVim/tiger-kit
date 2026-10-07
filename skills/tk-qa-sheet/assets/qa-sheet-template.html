@@ -5,43 +5,70 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>QA 시트</title>
 <style>
-  :root {
-    --bg: #f6f7f9; --panel: #ffffff; --text: #1d2129; --muted: #6b7280; --line: #e3e6ea;
-    --done: #1f9d55; --code-bg: #f1f2f5; --hover: #f8f9fb; --badge: #b45309; --badge-bg: #fef3c7;
+/* tigerkit:html-theme.css */
+:root {
+  color-scheme: light;
+  --bg: #f6f7f9; --panel: #ffffff; --text: #1d2129; --muted: #596273; --line: #d6dae1;
+  --accent: #3559a4; --good: #187644; --warn: #895000; --bad: #b32636;
+  --code-bg: #eef0f4; --hover: #eef1f6; --warn-bg: #fff1ce;
+  --font-body: 14px; --font-small: 12px; --font-h1: 28px; --font-h2: 20px;
+  --space: 8px; --radius: 8px;
+  --font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #15171c; --panel: #1d2027; --text: #e6e8ec; --muted: #a6adba; --line: #414753;
+    --accent: #9ebcff; --good: #68d59c; --warn: #f3c26b; --bad: #ff98a4;
+    --code-bg: #272b34; --hover: #2a303c; --warn-bg: #3a2f12;
   }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #15171c; --panel: #1d2027; --text: #e6e8ec; --muted: #9aa1ad; --line: #2e323b;
-      --done: #4cc38a; --code-bg: #272b34; --hover: #232731; --badge: #fbbf24; --badge-bg: #3a2f12;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #15171c; --panel: #1d2027; --text: #e6e8ec; --muted: #9aa1ad; --line: #2e323b;
-    --done: #4cc38a; --code-bg: #272b34; --hover: #232731; --badge: #fbbf24; --badge-bg: #3a2f12;
-  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #15171c; --panel: #1d2027; --text: #e6e8ec; --muted: #a6adba; --line: #414753;
+  --accent: #9ebcff; --good: #68d59c; --warn: #f3c26b; --bad: #ff98a4;
+  --code-bg: #272b34; --hover: #2a303c; --warn-bg: #3a2f12;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--text); font: var(--font-body)/1.65 var(--font-family); }
+h1 { font-size: var(--font-h1); } h2 { font-size: var(--font-h2); }
+a { color: var(--accent); overflow-wrap: anywhere; }
+button, select, textarea { font: inherit; color: var(--text); background: var(--panel); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.ht-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: calc(2 * var(--space)); }
+.ht-table-scroll { position: relative; max-width: 100%; overflow-x: auto; }
+.ht-table-scroll table { width: 100%; border-collapse: collapse; }
+.ht-table-scroll th, .ht-table-scroll td { text-align: left; vertical-align: top; padding: var(--space); border-bottom: 1px solid var(--line); font-size: var(--font-body); }
+.ht-table-scroll th[scope="row"] { min-width: 8em; overflow-wrap: normal; }
+.ht-theme-control { font-size: var(--font-small); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
+}
+/* /tigerkit:html-theme.css */
   * { box-sizing: border-box; }
   [hidden] { display: none !important; }
   body { margin: 0; background: var(--bg); color: var(--text);
-    font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
+    font: var(--font-body)/1.55 var(--font-family); }
   header { position: sticky; top: 0; z-index: 2; background: var(--panel); border-bottom: 1px solid var(--line);
     padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
   header h1 { font-size: 16px; margin: 0; }
   .progress { flex: 1 1 200px; display: flex; align-items: center; gap: 10px; min-width: 200px; }
   .bar { flex: 1; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
-  .bar > i { display: block; height: 100%; width: 0; background: var(--done); transition: width .2s; }
+  .bar > i { display: block; height: 100%; width: 0; background: var(--good); transition: width .2s; }
   .count { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
   header label, header button { font-size: 13px; }
   button { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
   button:hover { background: var(--hover); }
   .layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; padding: 16px 20px; align-items: start; }
   main { min-width: 0; }
-  details.legend { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; margin-bottom: 14px; }
+  details.legend { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 14px; margin-bottom: 14px; }
   details.legend summary { cursor: pointer; color: var(--muted); }
   details.legend ul { margin: 8px 0 4px; padding-left: 18px; }
-  .group { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 14px 10px; margin-bottom: 12px; }
+  .group { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 14px 10px; margin-bottom: 12px; }
   .group h2 { font-size: 15px; margin: 8px 0; display: flex; gap: 8px; align-items: baseline; }
   .gcount { font-size: 12px; font-weight: 400; color: var(--muted); }
-  .group.complete h2 { color: var(--done); }
+  .group.complete h2 { color: var(--good); }
   ul.items, ul.checks, ul.notes { list-style: none; margin: 0; padding: 0; }
   ul.items > li { padding: 6px 0; border-top: 1px solid var(--line); }
   ul.items > li:first-child { border-top: 0; }
@@ -51,24 +78,25 @@
   li.subhead { color: var(--muted); margin: 4px 0 2px; }
   li.check label { display: flex; gap: 8px; align-items: flex-start; padding: 3px 4px; border-radius: 4px; cursor: pointer; }
   li.check label:hover { background: var(--hover); }
-  li.check input { margin-top: 3px; accent-color: var(--done); flex: none; }
+  li.check input { margin-top: 3px; accent-color: var(--good); flex: none; }
   li.check.checked .ctext { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--muted); }
   .lv1 { margin-left: 18px; } .lv2 { margin-left: 36px; } .lv3 { margin-left: 54px; }
   code { background: var(--code-bg); border-radius: 4px; padding: 0 4px; font-size: 12.5px;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-  .badge { font-size: 11px; color: var(--badge); background: var(--badge-bg); border-radius: 4px; padding: 0 5px; margin-left: 6px; white-space: nowrap; }
+  .badge { font-size: 11px; color: var(--warn); background: var(--warn-bg); border-radius: 4px; padding: 0 5px; margin-left: 6px; white-space: nowrap; }
   .screen-link { display: inline-block; margin-left: 12px; color: var(--text); text-underline-offset: 3px; font-weight: 400; }
   .environment { overflow-wrap: anywhere; }
+  .qa-static { max-width: 960px; margin: auto; padding: 20px; overflow-wrap: anywhere; }
   body.only-open li.check.checked { display: none; }
   body.only-open .group.complete { display: none; }
-  aside { position: sticky; top: 64px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+  aside { position: sticky; top: 64px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
     padding: 12px; display: flex; flex-direction: column; gap: 8px; height: calc(100vh - 84px); }
   aside h3 { margin: 0; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
   aside .saved { font-size: 12px; font-weight: 400; color: var(--muted); }
   aside textarea { flex: 1; resize: none; width: 100%; background: var(--bg); color: var(--text); border: 1px solid var(--line);
     border-radius: 6px; padding: 10px; font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
   aside .hint { font-size: 12px; color: var(--muted); }
-  .error { background: var(--badge-bg); color: var(--badge); padding: 12px 20px; }
+  .error { background: var(--warn-bg); color: var(--warn); padding: 12px 20px; }
   @media (max-width: 900px) {
     .layout { grid-template-columns: 1fr; }
     aside { position: static; height: 360px; }
@@ -77,7 +105,8 @@
 </head>
 <body>
 <!--
-  사용법: 아래 qa-data JSON 만 채운다. 렌더링, 항목 id, 저장은 이 파일의 스크립트가 맡는다.
+  사용법: 아래 qa-data JSON을 채운 뒤 render_static_inventory.py로 정적 목록을 재생성한다.
+  대화형 렌더링, 항목 id, 저장은 이 파일의 스크립트가 맡는다.
   - storageKey: 작업 단위로 고유하게 (예: "<task>-<topic>"). 바꾸면 이전 체크와 메모를 읽지 않는다.
   - text 안의 `백틱` 은 화면에서 그대로 확인한 표기, 그 밖의 글은 설명이다.
   - provenance: "observed"(화면 확인) | "code-only"(기본)(코드 문자열만 확인, "코드 기준" 배지 표시)
@@ -125,12 +154,40 @@
   ]
 }
 </script>
+<noscript id="qa-static">
+<style>header,.layout{display:none}</style>
+<main class="qa-static"><h1>예시 작업 QA 시트</h1>
+<p>체크 목록은 아래에서 읽을 수 있습니다. 체크·메모 저장과 필터를 사용하려면 JavaScript를 켜 주세요.</p>
+<ul><li>백틱 안의 메뉴, 탭, 버튼 문구는 대상 환경 화면에서 그대로 확인한 표기입니다.</li><li><code>코드 기준</code> 배지는 화면에서 보지 못하고 코드 문자열만 확인한 항목입니다.</li><li>(아이콘), (행 클릭)처럼 괄호로 쓴 것은 글자가 없는 트리거입니다.</li></ul>
+<section class="group"><h2>영역 A</h2><ul>
+<li><code>상위 메뉴 &gt; 하위 메뉴</code> → 상세 <code>탭 이름</code> (<code>/area/detail/:id/tab</code>)
+<ul>
+<li><span><code>버튼 문구 1</code> (컴포넌트 이름)</span></li>
+<li><span><code>버튼 문구 2</code> (컴포넌트 이름). 조건이 맞을 때만 보입니다.</span> <span class="badge">코드 기준</span></li>
+</ul>
+</li>
+<li><code>상위 메뉴 &gt; 다른 메뉴</code> (<code>/area/list</code>): <code>신규 버튼</code>, 행 (아이콘)
+</li>
+</ul></section>
+<section class="group"><h2>영역 B</h2><ul>
+<li>공통 패턴 화면은 아래 트리거를 똑같이 가집니다.
+<ul><li>(행 클릭) 상세</li><li>행 (아이콘) 수정</li></ul>
+<ul>
+<li><strong>해당 화면</strong></li>
+<li><span><code>메뉴 &gt; 화면 1</code> (<code>/b/one</code>)</span></li>
+<li><span><code>메뉴 &gt; 화면 2</code> (<code>/b/two</code>)</span></li>
+</ul>
+</li>
+</ul></section>
+</main>
+</noscript>
 <div id="storage-warning" class="error" role="status" hidden></div>
 <header>
   <h1 id="title"></h1>
   <span id="environment" class="count environment" hidden></span>
   <div class="progress"><div class="bar"><i id="bar"></i></div><span class="count" id="count">0 / 0</span></div>
   <label><input type="checkbox" id="onlyOpen"> 미확인만 보기</label>
+  <label class="ht-theme-control" hidden>테마 <select id="ht-theme"><option value="system">시스템</option><option value="light">라이트</option><option value="dark">다크</option></select></label>
   <button type="button" id="reset">체크 초기화</button>
 </header>
 <div class="layout">
@@ -301,6 +358,32 @@
 
   render();
 })();
+</script>
+
+<script>
+/* tigerkit:html-theme.js */
+(() => {
+  const select = document.getElementById('ht-theme');
+  if (!select) return;
+  const root = document.documentElement;
+  const key = 'tigerkit-html-theme';
+  const valid = value => ['system', 'light', 'dark'].includes(value);
+  const apply = value => {
+    if (value === 'system') root.removeAttribute('data-theme');
+    else root.setAttribute('data-theme', value);
+    select.value = value;
+  };
+  let saved = 'system';
+  try { const value = localStorage.getItem(key); if (valid(value)) saved = value; } catch {}
+  apply(saved);
+  select.addEventListener('change', () => {
+    const value = valid(select.value) ? select.value : 'system';
+    apply(value);
+    try { localStorage.setItem(key, value); } catch {}
+  });
+  select.parentElement.hidden = false;
+})();
+/* /tigerkit:html-theme.js */
 </script>
 </body>
 </html>

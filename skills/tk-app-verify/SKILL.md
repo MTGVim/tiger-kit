@@ -131,3 +131,9 @@ Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the mark
 
 For an authorized user-editable temporary input file, consistently provide a plain JSON object template with the needed keys and empty strings for missing text values, rather than an empty or raw-text file. The initial template's non-zero size is not an input-completion signal. Apply the owning package's Artifact Paths input branch before creation and consumption; this notation rule grants no artifact-writing authority.
 <!-- /tigerkit:output-notation -->
+
+<!-- tigerkit:skill-feedback -->
+## Skill Feedback
+
+Skill-improvement feedback from any skill run becomes a `tk-learn` draft only, using its Anonymous draft checkpoint and anonymization checks. Do not edit installed skill copies, open issues or PRs, push, or offer those actions unless the user explicitly requests that exact action and target. An explicit request to apply a candidate to an owned source checkout continues through the existing owner and authority gates.
+<!-- /tigerkit:skill-feedback -->

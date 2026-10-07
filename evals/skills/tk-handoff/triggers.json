@@ -87,15 +87,6 @@
       ]
     },
     {
-      "id": "validation-negative-1",
-      "split": "validation",
-      "query": "현재 상태를 한 문단으로 요약해 주세요",
-      "should_trigger": false,
-      "facets": [
-        "formal"
-      ]
-    },
-    {
       "id": "validation-negative-2",
       "split": "validation",
       "query": "그대로 계속 진행해",
@@ -132,15 +123,6 @@
       ]
     },
     {
-      "id": "validation-negative-6",
-      "split": "validation",
-      "query": "상태 알려줘",
-      "should_trigger": false,
-      "facets": [
-        "compound"
-      ]
-    },
-    {
       "id": "validation-negative-7",
       "split": "validation",
       "query": "활성 tk-grill-me가 pending answer를 기다리고 있어",
@@ -157,6 +139,116 @@
       "facets": [
         "compound"
       ]
+    },
+    {
+      "id": "orientation-train-positive",
+      "split": "train",
+      "query": "$tk-handoff 이 창 현황만 짧게 보여줘",
+      "should_trigger": true
+    },
+    {
+      "id": "orientation-validation-positive-1",
+      "split": "validation",
+      "query": "현재 세션 작업이 어디까지 진행됐는지 간단히 안내해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "orientation-validation-positive-2",
+      "split": "validation",
+      "query": "여기 뭐 하던 거지? 딱 현황만",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "orientation-validation-positive-3",
+      "split": "validation",
+      "query": "세션 왓다갓다해서 헷갈림 지금 뭐함",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "orientation-validation-positive-4",
+      "split": "validation",
+      "query": "이 `session goal`이랑 `next action`만 보여줘",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "orientation-validation-positive-5",
+      "split": "validation",
+      "query": "여기 어디까지 했어?",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "orientation-validation-positive-6",
+      "split": "validation",
+      "query": "현재 목표랑 끝난 일을 알려주고 다음에 뭘 하면 좋을지 제안해줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "orientation-validation-positive-7",
+      "split": "validation",
+      "query": "위에 붙인 두 세션 요약으로 각각 뭐 하는 중인지 정리해줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "orientation-validation-positive-8",
+      "split": "validation",
+      "query": "이 창에서 내가 지금 해야 하는 게 있어? 진행 상황만 알려줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "orientation-new-negative-1",
+      "split": "validation",
+      "query": "이 보고서의 도입부만 짧게 요약해 주세요",
+      "should_trigger": false,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "orientation-new-negative-2",
+      "split": "validation",
+      "query": "다음 배포에서 지연시간을 줄이는 코드를 고쳐줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    }
+  ],
+  "migrations": [
+    {
+      "from": "validation-negative-1",
+      "to": "orientation-negative-validation-negative-1",
+      "target_skill": "tk-adhd",
+      "reason": "#424: 현황 요청의 비선택 평가는 현황 담당자에서 출력 구조 담당자로 이관합니다. 요청·판정은 보존합니다."
+    },
+    {
+      "from": "validation-negative-6",
+      "to": "orientation-negative-validation-negative-6",
+      "target_skill": "tk-adhd",
+      "reason": "#424: 현황 요청의 비선택 평가는 현황 담당자에서 출력 구조 담당자로 이관합니다. 요청·판정은 보존합니다."
     }
   ]
 }

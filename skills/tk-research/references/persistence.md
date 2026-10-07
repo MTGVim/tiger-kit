@@ -87,3 +87,7 @@ No action or no new decision-relevant evidence means `NO-ACTION | NO-DELTA`, not
 knowledge commit, journal heartbeat or HTML regeneration. New negative evidence is a material delta.
 Resume reads state/current findings first and history only by relevant IDs, never the full journal
 every invocation. A new no-candidate regeneration can update its proof in state without a checkpoint.
+
+When migrating run-owned scripts or generators, check changed path depth, relative imports and
+input/output resolution from the destination working directory. Replay a safe import/path check
+before retiring the old pointer; a moved file is not proof that its dependencies still resolve.

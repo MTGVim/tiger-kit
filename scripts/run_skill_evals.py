@@ -719,7 +719,7 @@ def compare_eval_contracts(
             renamed[source] = target
             if merge is not None:
                 merged.add(source)
-    merge_destinations: dict[tuple[str, str, str], tuple[str, str]] = {}
+    resolved_destinations: dict[tuple[str, str, str], tuple[str, str]] = {}
     for skill, baseline_contract in sorted(baseline.items()):
         candidate_contract = candidate.get(renamed.get(skill, skill))
         if candidate_contract is None:
@@ -751,6 +751,30 @@ def compare_eval_contracts(
                 case_target = migrations.get(case_id, case_id) if skill in merged else case_id
                 candidate_case = candidate_cases.get(case_target)
                 migrated = case_target != case_id
+                transfer = migration_rows.get(case_id, {})
+                target_skill = transfer.get("target_skill")
+                transferred = target_skill is not None
+                destination_skill = renamed.get(skill, skill)
+                if transferred:
+                    if (not isinstance(target_skill, str) or target_skill == destination_skill
+                            or target_skill not in candidate or case_id in candidate_cases
+                            or case_id not in migrations):
+                        errors.append(f"{skill}: invalid or ambiguous {section} owner transfer for {case_id!r}")
+                        continue
+                    destination_skill = target_skill
+                    target_data = candidate[target_skill].get(f"{section}s" if section == "trigger" else "behavior", {})
+                    target_cases = _contract_case_map(target_data, key) if isinstance(target_data, dict) else {}
+                    case_target = migrations[case_id]
+                    baseline_target_data = baseline.get(target_skill, {}).get(f"{section}s" if section == "trigger" else "behavior", {})
+                    if (isinstance(baseline_target_data, dict)
+                            and case_target in _contract_case_map(baseline_target_data, key)):
+                        errors.append(f"{skill}: colliding {section} owner-transfer destination {target_skill}:{case_target}")
+                        continue
+                    candidate_case = target_cases.get(case_target)
+                    migrated = True
+                    if candidate_case is None:
+                        errors.append(f"{skill}: missing {section} owner-transfer destination {target_skill}:{case_target}")
+                        continue
                 if candidate_case is None:
                     migrated_to = migrations.get(case_id)
                     if not migrated_to or migrated_to not in candidate_cases:
@@ -764,11 +788,10 @@ def compare_eval_contracts(
                     if skill in merged and migrated_to in destinations:
                         errors.append(f"{skill}: colliding {section} migration destination")
                     destinations.add(migrated_to)
-                if skill in merged:
-                    destination = (renamed[skill], section, str(candidate_case.get("id")))
-                    previous = merge_destinations.setdefault(destination, (skill, case_id))
-                    if previous != (skill, case_id):
-                        errors.append(f"{skill}: colliding {section} merge destination {destination[2]!r}")
+                destination = (destination_skill, section, str(candidate_case.get("id")))
+                previous = resolved_destinations.setdefault(destination, (skill, case_id))
+                if previous != (skill, case_id):
+                    errors.append(f"{skill}: colliding {section} migration destination {destination[2]!r}")
                 if section == "trigger":
                     routing_migration = migration_rows.get(case_id, {})
                     explicit_union = (skill in merged and migrated
@@ -780,11 +803,11 @@ def compare_eval_contracts(
                             "without an explicit migration"
                         )
                     continue
-                if skill in renamed:
+                if skill in renamed or transferred:
                     # Only relocate package fixture paths; preserve every other assertion value.
                     def relocate(value: object) -> object:
                         if isinstance(value, str):
-                            return value.replace(f"evals/skills/{skill}/fixtures/", f"evals/skills/{renamed[skill]}/fixtures/")
+                            return value.replace(f"evals/skills/{skill}/fixtures/", f"evals/skills/{destination_skill}/fixtures/")
                         if isinstance(value, list):
                             return [relocate(child) for child in value]
                         if isinstance(value, dict):
@@ -797,7 +820,7 @@ def compare_eval_contracts(
                         case_id,
                         baseline_case,
                         candidate_case,
-                        exact_assertions=skill in merged or not migrated,
+                        exact_assertions=skill in merged or transferred or not migrated,
                     )
                 )
     return errors

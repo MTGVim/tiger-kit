@@ -64,6 +64,7 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         research.write_text("Primary evidence\n", encoding="utf-8")
         self.clear_target.parent.mkdir(parents=True, exist_ok=True)
         (self.clear_target.parent / "html-output.md").write_text("Offline native navigation\n", encoding="utf-8")
+        (self.clear_target.parent / "visual-grammar.md").write_text("Question-led representation\n", encoding="utf-8")
         discovery = self.root / "skills/tk-audit/references/repository-context.md"
         discovery.parent.mkdir(parents=True, exist_ok=True)
         discovery.write_text("Optional context, not authority\n", encoding="utf-8")
@@ -84,6 +85,14 @@ class SyncExecutionProtocolTest(unittest.TestCase):
                 path = self.root / "skills" / name / "SKILL.md"
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text((path.read_text() if path.exists() else "") + block)
+        repo = Path(__file__).resolve().parents[1]
+        for name in sync_execution_protocol.HTML_CONSUMERS:
+            assets = self.root / "skills" / name / "assets"
+            assets.mkdir(parents=True, exist_ok=True)
+            for asset in sync_execution_protocol.HTML_ASSETS:
+                shutil.copyfile(repo / "skills/tk-explain/assets" / asset, assets / asset)
+        for relative in sync_execution_protocol.HTML_TEMPLATES:
+            shutil.copyfile(repo / relative, self.root / relative)
 
     def run_main(self, *args: str) -> int:
         with (
@@ -118,7 +127,7 @@ class SyncExecutionProtocolTest(unittest.TestCase):
             self.assertEqual((self.prep / name).read_bytes(), expected)
             self.assertEqual((self.respond / name).read_bytes(), expected)
         self.assertFalse((self.root / "skills/tk-autoresearch").exists())
-        for name in ("clear-writing.md", "html-output.md"):
+        for name in ("clear-writing.md", "html-output.md", "visual-grammar.md"):
             self.assertEqual((self.root / "skills/tk-research/references" / name).read_bytes(),
                              (self.root / "skills/tk-explain/references" / name).read_bytes())
         context = (self.root / "skills/tk-audit/references/repository-context.md").read_bytes()
@@ -190,6 +199,22 @@ class SyncExecutionProtocolTest(unittest.TestCase):
                 self.assertEqual(self.run_main("--check"), 1)
                 self.assertEqual(self.run_main(), 0)
                 self.assertEqual(self.clear_target.read_bytes(), self.clear_source.read_bytes())
+                self.assertEqual(self.run_main("--check"), 0)
+
+
+    def test_visual_grammar_drift_missing_copy_and_canonical_change_fail_check(self) -> None:
+        self.assertEqual(self.run_main(), 0)
+        canonical = self.clear_target.parent / "visual-grammar.md"
+        consumer = self.root / "skills/tk-study/references/visual-grammar.md"
+        for mutation in ("consumer", "missing", "canonical"):
+            with self.subTest(mutation=mutation):
+                if mutation == "missing":
+                    consumer.unlink()
+                else:
+                    (consumer if mutation == "consumer" else canonical).write_text("Altered geometry\n")
+                self.assertEqual(self.run_main("--check"), 1)
+                self.assertEqual(self.run_main(), 0)
+                self.assertEqual(consumer.read_bytes(), canonical.read_bytes())
                 self.assertEqual(self.run_main("--check"), 0)
 
 

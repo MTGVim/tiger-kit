@@ -65,6 +65,17 @@ use its version-matched help/repository guidance in addition to the protocol URL
 one CLI's flags from another. A live CDP endpoint requires headless and run-ownership proof
 before any browser call, and explicit attach selection after observed launch-boundary evidence.
 
+### Installed Chrome CLI capture caveats
+
+A supplied 2026-10-07 incident observed CLI `--screenshot` capturing a blank scrolled region,
+a 20000px-tall capture hanging, and effective width clamped to 500px. These are environment-specific
+observations, not universal Chrome/CDP limits; verify actual viewport and installed-version behavior.
+Prefer bounded captures and a provider-supported region capture when available. Hiding preceding
+content for a capture is allowed only as an explicitly recorded `capture_only_mutation`, with exact
+source/state retained and the product view restored; it cannot prove unchanged geometry. Measurement
+helpers can themselves increase document width: measure first, keep helpers contained, and remove
+them before final overflow checks. Blank or truncated pixels never prove acceptance.
+
 ## BrowserSkill
 
 The `bsk` CLI requires an extension/daemon and a selected Chrome/Edge profile. Current upstream

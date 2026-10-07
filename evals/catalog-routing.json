@@ -105,6 +105,16 @@
       "from": "autoresearch-model-loop-resume",
       "to": "unified-autoresearch-model-loop-resume",
       "reason": "통합 연구 담당자로 변경하고 지속 연구 선택 조건을 보존합니다."
+    },
+    {
+      "from": "adhd-orientation",
+      "to": "handoff-conversation-orientation",
+      "reason": "#424: 세션 현황 안내를 tk-handoff의 대화 전용 경로로 이관합니다."
+    },
+    {
+      "from": "rewrite-plain-vs-adhd",
+      "to": "rewrite-vs-handoff-orientation",
+      "reason": "#424: 일반 윤문과 현황 조회의 구분을 유지하고 현황 조회 담당자만 변경합니다."
     }
   ],
   "cases": [
@@ -517,18 +527,18 @@
       "critical": false
     },
     {
-      "id": "adhd-orientation",
+      "id": "handoff-conversation-orientation",
       "boundary": "세션 현황 안내와 다른 작업 경계",
       "prompt": "세션 여러 개라 헷갈려. 이 창 어디까지 했는지만 알려줘.",
-      "focus_skill": "tk-adhd",
-      "expected_selected_skill": "tk-adhd",
+      "focus_skill": "tk-handoff",
+      "expected_selected_skill": "tk-handoff",
       "critical": true
     },
     {
       "id": "status-vs-handoff",
       "boundary": "세션 현황 안내와 다른 작업 경계",
       "prompt": "다음 세션용 `handoff` 파일을 작성해줘.",
-      "focus_skill": "tk-adhd",
+      "focus_skill": "tk-handoff",
       "expected_selected_skill": "tk-handoff",
       "critical": true
     },
@@ -536,7 +546,7 @@
       "id": "status-vs-code",
       "boundary": "세션 현황 안내와 다른 작업 경계",
       "prompt": "이 함수의 `status`가 무엇을 뜻하는지 설명해줘.",
-      "focus_skill": "tk-adhd",
+      "focus_skill": "tk-handoff",
       "expected_selected_skill": null,
       "critical": true
     },
@@ -557,11 +567,11 @@
       "critical": true
     },
     {
-      "id": "rewrite-plain-vs-adhd",
+      "id": "rewrite-vs-handoff-orientation",
       "boundary": "설명 재구성, 한국어 윤문, 세션 현황, 스킬 유지보수의 구분",
       "prompt": "이 세션에서 뭐 하고 있었지? 현황만 알려줘.",
       "focus_skill": "tk-rewrite",
-      "expected_selected_skill": "tk-adhd",
+      "expected_selected_skill": "tk-handoff",
       "critical": true
     },
     {
@@ -858,6 +868,22 @@
       "prompt": "사용자가 설정한 바깥 /loop 작업으로 tk-research --resume을 호출하여 일치하는 기존 연구를 이어가라.",
       "focus_skill": "tk-research",
       "expected_selected_skill": "tk-research",
+      "critical": true
+    },
+    {
+      "id": "adhd-actionable-output",
+      "boundary": "답변 구조와 현황·실행 구분",
+      "prompt": "답변의 상세 내용은 모두 보존하고 핵심과 내가 실행할 단계를 쉽게 찾게 구성해줘.",
+      "focus_skill": "tk-adhd",
+      "expected_selected_skill": "tk-adhd",
+      "critical": true
+    },
+    {
+      "id": "adhd-not-orientation",
+      "boundary": "답변 구조와 현황·실행 구분",
+      "prompt": "세션이 헷갈려. 이 창에서 어디까지 했는지 현황만 알려줘.",
+      "focus_skill": "tk-adhd",
+      "expected_selected_skill": "tk-handoff",
       "critical": true
     }
   ]
