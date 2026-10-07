@@ -33,6 +33,14 @@ loopback secret server, delete the mode-`0600`
 directory, and verify that none remains. Apply this cleanup on success, failure,
 interruption, and exception. Do not defer secret cleanup until browser-session cleanup.
 
+For a successful nested run, the parent may explicitly report that commits or remediation are still pending on the
+verified render/request path and that a final-head replay may be required. In that case, defer normal cleanup of the
+run-owned page/context, direct browser, development server, and other replay state until the parent reports its final
+head and either requests the replay or confirms that the intervening diff does not affect the verified path. This hold
+applies only to successful nested continuation; failure, interruption, exception, abandonment, or an expired parent
+continuation still follows normal cleanup. Never retain the secret-input file or loopback secret server while holding
+replay state. Record the held state as run-owned and bounded so a later replay or cleanup targets exactly the same run.
+
 Clean up success, failure, interruption, and exception paths in this order:
 
 1. run-created pages/tabs;
