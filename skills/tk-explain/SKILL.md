@@ -32,6 +32,8 @@ Choose visuals that expose structure, event order, state changes, or cause and e
 
 When understanding depends on changing inputs, identity, state, or event order, read [interactive examples](references/interactive-examples.md). Let the reader cause a change and see its consequence on the affected entities. Choose direct comparison, an animated transition, or controlled intermediate states according to what reveals the mechanism; identity/history alone does not require a separate replay section. Static structure explanations need neither simulation nor playback controls.
 
+Include one compact **Understanding check** by default unless the user explicitly asks for explanation without exercises. Prefer a prediction, transfer task or free-response question that tests the mechanism, consequence, state, boundary or failure behavior rather than names, syntax or wording trivia. Keep the grounded answer in a separately revealed section such as `<details>`; initial styling, wording and optional choices must not leak correctness. The check helps the reader test a mental model, but passive reading, revealing the answer or agreeing with it never establishes mastery.
+
 Use the user-specified output path, or `.tigerkit/explanations/<topic-slug>.html`. If the default exists, choose a numeric suffix. Do not overwrite an existing explicit target without authorization for that overwrite.
 
 When structure, flow, state or causality may become clearer in a figure, read
