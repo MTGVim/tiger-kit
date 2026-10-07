@@ -95,7 +95,10 @@ active without another user request. A clarification answer resolves that decisi
 Before ending a preparation turn, either continue already authorized execution, present a reviewable proposal for genuinely missing approval, or identify an actual unresolved user-owned decision, inaccessible required evidence, safety boundary, or explicit
 user stop/change of scope and explain what remains. While evidence can still be gathered, continue gathering it instead of
 using missing investigation as a blocker. If the facts and decisions are complete, proceed to the proposal without another
-question round. The proposal may be in chat; preparation completion does not require a file, and the existing pre-approval
+question round. The proposal belongs in the conversation by default; do not generate an HTML copy merely to restate the
+preparation plan or Seed. Preparation assumes the user already owns the task goal and is deciding scope/implementation.
+If the user separately needs to learn an unfamiliar concept or system, `tk-explain` owns that teaching artifact; naming
+that owner does not invoke it automatically. Preparation completion does not require a file, and the existing pre-approval
 mutation and Seed-preservation boundaries still apply.
 
 ## Understanding readiness
