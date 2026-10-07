@@ -74,11 +74,19 @@ automated test generation, or PR publication. A parent's recommendation is not i
    bound to the current head exercised the same screen, entry path, trigger and expected
    result. Evidence from a different screen or entry path makes the check `partial`; keep
    only its unexercised part. Unit tests alone do not make a screen check `auto-verified`.
-   Keep data-changing checks `manual`. A moved head resets affected checks to `manual`.
+   Keep data-changing checks `manual`. When the target head moves, inspect the diff from
+   each evidence head to the current head before changing verification state. A row is affected
+   when that diff touches the screen's render path or request path. If the relevant paths are
+   unchanged, keep the row `auto-verified` with its original evidence head and record the
+   carry-forward reason in the result. If the row is affected and the runtime session is still
+   available, prefer recapturing it on the current head. Otherwise demote it to `manual` and
+   preserve the old run as `previousEvidence`; never treat that previous evidence as current
+   verification.
    Show `auto-verified` rows pre-checked and non-editable in a collapsed `Automated`
    group with their evidence reference. Keep `partial` and `manual` rows in the manual
-   list while preserving their independent `observed | code-only` provenance. An
-   `auto-verified` label is runtime evidence reuse, not product acceptance.
+   list while preserving their independent `observed | code-only` provenance. Demoted manual
+   rows also show their previous evidence so they remain distinguishable from never-exercised
+   checks. An `auto-verified` label is runtime evidence reuse, not product acceptance.
 4. Default to the HTML sheet: read [HTML output](references/html-output.md) and
    [data and rendering](references/qa-sheet-data.md), then copy
    [the template](assets/qa-sheet-template.html) to
@@ -103,9 +111,10 @@ automated test generation, or PR publication. A parent's recommendation is not i
    that check/note persistence needs JavaScript. Close and delete only that profile. If the check cannot run, preserve the
    sheet and disclose `Unverifiable`; never claim persistence verification from source alone.
 6. Return the absolute file path (HTML only), total check count, `auto-verified`,
-   `partial`, `manual` and code-only counts, fixed target, unverified screens/connections
-   and reasons, actual self-check status and inspected viewports/themes or the exact
-   unavailable render checks. Optional PR
+   `partial`, `manual`, head-demoted and code-only counts, fixed target, previous evidence
+   head(s) for demoted rows, any evidence carried forward across an irrelevant diff and its
+   path-based rationale, unverified screens/connections and reasons, actual self-check status
+   and inspected viewports/themes or the exact unavailable render checks. Optional PR
    Markdown uses the same inventory and limitations. Hand that section to `tk-pr-open`;
    do not push, publish, edit a PR, or start QA investigation inside publication-only work.
 
