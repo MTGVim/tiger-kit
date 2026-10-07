@@ -32,7 +32,7 @@ Agent가 읽는 문서는 길이가 아니라 **행동 대비 load**로 판단�
 - 모든 실행 경로가 필요한 step/guard는 inline으로 두고, 일부 branch만 필요한 reference는 정확한 pointer 뒤로 `progressive disclosure`합니다. Reference로 내리는 것 자체가 목표는 아닙니다.
 - `package.json`, config, directory layout, 현재 host/tool capability처럼 한 번의 cheap fresh lookup으로 알 수 있는 사실은 environment를 source of truth로 둡니다. 문서가 canonical contract이거나 lookup이 expensive/unreliable한 경우에만 의도적인 cache를 유지합니다.
 - 문장·블록 삭제는 미학적 축약이 아니라 no-skill/prior behavior 비교로 판단합니다. Pressure에서 실제 행동을 지키는 rationale/guard는 짧아진다는 이유로 제거하지 않습니다.
-- `Skill body` 크기는 정합성 관문이 아니라 검토 신호입니다. 새롭거나 단순한 `skill`은 가능하면 수백 `token` 안에 두고, 큰 본문은 `progressive disclosure`와 `instruction load`를 검토하되 필요한 행동·안전·권한 `guard`를 예산 때문에 제거하지 않습니다. 구체적인 기준의 단일 소유자는 `skills/tk-learn/references/skill-quality.md`입니다.
+- `Skill body` 크기는 정합성 관문이 아니라 검토 신호입니다. 새롭거나 단순한 `skill`은 가능하면 수백 `token` 안에 두고, 큰 본문은 `progressive disclosure`와 `instruction load`를 검토하되 필요한 행동·안전·권한 `guard`를 예산 때문에 제거하지 않습니다. 스킬 개선 후보의 적합성과 검증 기준은 `skills/tk-retro/references/skill-candidates.md`를 참고합니다.
 - 최종 변경이 사용자에게 공개된 동작, 명령어, 경로, 설정, 계약, 설치·운영 절차를 바꾸고 기존 `README.md` 또는 저장소 문서가 그 사실을 소유한다면 같은 작업 단위에서 최신화합니다. 공개 사실이 바뀌지 않았거나 정확한 소유 문서가 없다면 의례적인 문서 수정, 광범위한 문서 검색, 새 문서 생성을 수행하지 않습니다.
 - 일반 steering은 해야 할 행동을 직접 쓰는 positive form을 선호하되, publication authority, destructive mutation, secret, freshness, cross-scope safety boundary의 hard stop은 약화하지 않습니다.
 - 설치된 `skill`의 `runtime behavior`나 `safety boundary`를 이 `AGENTS.md`에만 두지 않습니다. 설치 사용자에게 필요한 규칙은 `owning SKILL.md` 또는 `package-local reference`에 있어야 하며, 여러 `package`가 같은 `runtime guard`를 공유하면 `exact canonical block`과 `release validation`으로 누락·`drift`를 실패시킵니다.
@@ -127,7 +127,7 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 - `tk-pr-respond`: `exact` `one-PR` `feedback`/지원 CI `resolution`과 `bounded` `publication`.
 - `tk-pr-rebase`: `exact` `rebase` + `force-with-lease`.
 - `tk-pr-sweep`: `deterministic` `multi-PR` `triage`와 승인된 `child` `maintenance`.
-- `tk-learn`: `reusable` `skill`의 `semantic` `create | improve | merge` `writer`.
+- `tk-retro`: 세션 회고, 관찰된 Agent Skill 사고 진단과 재발 방지 제안 전용. 실제 수정은 별도 구현 담당자가 맡습니다.
 - `tk-adhd`: 현재 답변·결과의 출력 구조 정리. 실행과 지속 상태의 담당자는 아닙니다.
 - `tk-handoff`: 현재 대화의 현황 확인과 지속 인수인계 작성·재개.
 - `tk-domain`: `repository` 고유 `canonical domain vocabulary`의 `CONTEXT.md`와 `sparse durable decision/ADR context` 작성·정제 담당자.
@@ -172,7 +172,7 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 - 검증 근거: `.tigerkit/evidence/<skill>/<run-id>/`
 - 복구·인계·승인 상태에 실제로 필요한 소유자 산출물: `.tigerkit/<owner>.md`, `.tigerkit/prototypes/`, `.tigerkit/sdd-tmp/`
 
-`tk-learn`의 기본 익명 Markdown 초안은 현재 저장소의 `.tigerkit/tmp/tk-learn/<run-id>/proposal.md`에 저장하고 절대경로를 안내합니다. 저장소가 확인되지 않은 경우에만 안전한 호스트 `scratchpad` 또는 실행 소유 `OS` 임시 폴더를 사용하며 사유를 알립니다. 저장소 검사·쓰기 실패에는 이 대안을 사용하지 않습니다. 지속 저장·인계는 기존 `.tigerkit/learn.md` 계약을 따릅니다. 소유하지 않은 외부 설치·`vendor` 스킬은 초안으로만 정리하고 적용·기여 선택지를 묻지 않습니다.
+`tk-retro`는 기본적으로 대화에만 제안을 반환합니다. 명시적으로 요청된 회고 보고서만 저장소의 무시된 `.tigerkit/`에 저장하고, 구현·설치본 수정·GitHub 게시를 직접 수행하지 않습니다.
 
 `Owner`별 `singleton Markdown`은 모든 실행의 선행조건이 아닙니다. 현재 대화와 `Git/GitHub` 상태로 정확히 복원되는
 단순 실행에는 만들지 않고, `explicit save`, `multi-turn handoff/recovery` 또는 정확한 승인 상태 보존이 필요할 때만
@@ -223,7 +223,7 @@ TigerKit은 `persistent` `pitfall` `corpus`나 `memory` `backend`를 소유하�
 
 - 현재 `Seed`를 바꾸는 발견 → `Seed` `revision`
 - `repository` `reusable` `invariant` → `repo-native` `owner` 개선 후보
-- TigerKit `skill` 반복 실패 → `tk-skill-diagnose` / `tk-learn`
+- TigerKit `skill` 사고·세션 비효율 → `tk-retro` 근거 진단·개선안 제안
 - 개인 `cross-repo` `memory` → 외부 `memory`
 
 자동 승격하지 않습니다.

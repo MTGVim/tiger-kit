@@ -18,7 +18,7 @@ were not verified. This is independent distillation, not copied code or a worksp
   launch, default background dispatch and rigid HTML/quiz formats.
 
 `tk-research` owns decision support; `tk-explain` owns a known concept visualization;
-`tk-learn` authors skills. Neither subsumes unfamiliar-topic research followed by teaching
+`tk-retro` analyzes session learning but does not author skills. None subsumes unfamiliar-topic research followed by teaching
 and observed retrieval feedback. Repository evals cover this distinction and unavailable sources.
 
 ## Course mission alignment (#416)

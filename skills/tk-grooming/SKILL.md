@@ -94,13 +94,13 @@ directly own only meaning-preserving `tighten`, mechanical `move` with an exact
 target, unreferenced `delete`, and frontmatter/link `fix`. A rule or auto-memory deletion
 or semantic rewrite always requires exact item-level active-task approval. Leave semantic `merge`,
 `deprecate`, workflow `split`, and semantic skill rewrites only as exact `pending`
-proposals. These proposals may be handed off to `tk-learn`, but this skill does not
-invoke it. Keep vendor-managed candidates report-only in every apply mode.
+proposals. These proposals may inform `tk-retro` evidence review; approved semantic changes belong
+to their implementation owner. This skill does not invoke other skills. Keep vendor-managed candidates report-only in every apply mode.
 
 If no persistent instruction can be tied to the corrected behavior, preserve the candidate
-and hand the behavioral incident to `tk-skill-diagnose`. If the active skill contract itself
-needs semantic change, leave an exact `tk-learn` proposal. Do not invoke either skill
-automatically.
+and recommend `tk-retro` incident review. If the active skill contract itself
+needs semantic change, leave an exact proposal for its implementation owner. Do not
+automatically invoke other skills.
 
 Do not invent knowledge or substitute for skill learning.
 
@@ -109,26 +109,9 @@ grooming runs in that conversation. Continue excluding exclusions recorded in a
 governing repository/user rule or another requested durable source across sessions.
 Do not create hidden global state or store exclusions in `.tigerkit/`.
 
-## Failure Paths
-
-- Missing/unreadable path: Mark only that area `Unverifiable`, keep other areas
-  read-only, and report the required access.
-- Unknown ownership: Do not create edit proposals or changes; return
-  `Partial/Blocked` with one ownership question.
-- Vendor ownership confirmed after classification: Convert every edit action to
-  `keep (vendor)`, preserve the artifact, and report the evidence.
-- Conflicting scope/apply authority: Make no changes and return `Partial/Blocked`
-  with the one required decision.
-- Referenced deletion/move target: Make no changes, change the proposal to
-  `keep | tighten`, and cite the reference.
-- Unproven no-op/cache/pointer claim: Keep the existing behavior and report the exact
-  missing behavioral evidence; do not make a speculative tightening edit.
-- Target drift after checkpoint: Make no changes, return `Partial/Blocked` with
-  current evidence, and require a new proposal.
-- Verification failure after apply: Never claim `Complete`. Restore/reverify only
-  when this run's delta is exactly reversible, then return `Fail` with evidence.
-  If preservation or restoration is uncertain, halt the mutation as `Unverifiable`
-  and report the checks, paths, and observed state.
+When an access, ownership, scope, reference, drift or verification checkpoint fails,
+read [failure handling](references/failure-paths.md) before deciding to stop,
+preserve or restore state. Do not treat an unchecked edit as complete.
 
 ## Contract
 
@@ -192,5 +175,5 @@ Separate questions with `---`. Put context before the question block and make it
 <!-- tigerkit:skill-feedback -->
 ## Skill Feedback
 
-Skill-improvement feedback from any skill run becomes a `tk-learn` draft only, using its Anonymous draft checkpoint and anonymization checks. Do not edit installed skill copies, open issues or PRs, push, or offer those actions unless the user explicitly requests that exact action and target. An explicit request to apply a candidate to an owned source checkout continues through the existing owner and authority gates.
+When a skill run reveals a reusable incident, preserve only minimal non-secret evidence and suggest a `tk-retro` review. Do not silently invoke it, create improvement artifacts, edit installed skills, or publish issues/PRs. Explicit implementation requests belong to the authorized change owner; this pointer grants no mutation authority.
 <!-- /tigerkit:skill-feedback -->

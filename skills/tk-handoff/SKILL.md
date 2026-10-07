@@ -29,8 +29,9 @@ Check the active user's authorization before asking. A concrete request or earli
 Select one branch from the request. For a current-session status/orientation request, read
 [conversation-only orientation](references/orientation.md), return its compact recap and end
 that turn without writing artifacts or resuming work. This reporting boundary does not revoke
-prior approval; a later resume instruction may reuse it. For explicit handoff creation or
-`--resume`, continue the artifact workflow below. General document summaries and ordinary
+prior approval; a later resume instruction may reuse it. For explicit handoff creation, continue the artifact workflow below. For `--resume`,
+read [resume and drift classification](references/resume.md) after the write/resume
+checkpoint and verify fresh state before continuing. General document summaries and ordinary
 “continue” requests do not select either branch. Do not create a durable handoff for a status
 recap or query other sessions/remote PRs to fill it.
 
@@ -40,12 +41,6 @@ Keep the roles separate.
 - `.tigerkit/handoff.md`: the progress `snapshot` recording what has been done and the current state
 
 When a current task Seed exists, reference it rather than copying its contract. A legitimate direct/no-Seed task needs no Seed creation: put its minimal goal, scope/exclusions, AC and confirmed approval boundary in the Handoff itself so another session can understand it.
-
-## UI literal propagation
-
-`Handoff` does not investigate new UI evidence. Carry exact verified labels and path segments with their provenance,
-unknown segments, external ownership boundaries, and the pending evidence request. Resuming does not upgrade an
-unverified path into executable navigation. Apply UI Evidence to the handoff/resume explanation.
 
 ## New handoff
 
@@ -99,31 +94,6 @@ Before writing a new `Handoff` or continuing a `--resume`:
 - STOP at any product, Git, or remote publication approval boundary; the artifact does not grant that permission.
 - If none of these conditions applies, continue without asking an extra question for a routine artifact update.
 
-## Resume
-
-`--resume` requests resuming work by comparing the `handoff snapshot` against the current Git and files.
-
-First, fresh-read:
-
-- the exact `handoff` and its task-bound Seed when referenced; otherwise its self-contained no-Seed contract
-- `branch`/`HEAD`/`worktree`
-- changed files
-- relevant verification evidence
-- exact current remote state only when the next approved action depends on that PR; do not discover other open PRs
-
-Then classify drift.
-
-| Classification | Action |
-| --- | --- |
-| None | Continue from `Next step` without additional questions |
-| Nonessential `drift` | Record it and continue |
-| Significant progress `drift` | Update the `Handoff` from current evidence and confirm only the necessary decisions |
-| `Seed` contract `drift` | Do not resolve it in the `Handoff`; report that re-entering `tk-prep` is required |
-| Conflict | Show the incompatible evidence and mark `Blocked` |
-| unverified | If the required state cannot be confirmed, mark `Unverifiable` |
-
-`--resume` may authorize continuing the work, but it does not replace approval to change the `Seed`’s `goal/scope/decision/AC` or permission to publish remotely.
-
 ## Output
 
 After successfully creating a new `handoff`, show only the path, current status, and next action briefly in chat.
@@ -165,5 +135,5 @@ Separate questions with `---`. Put context before the question block and make it
 <!-- tigerkit:skill-feedback -->
 ## Skill Feedback
 
-Skill-improvement feedback from any skill run becomes a `tk-learn` draft only, using its Anonymous draft checkpoint and anonymization checks. Do not edit installed skill copies, open issues or PRs, push, or offer those actions unless the user explicitly requests that exact action and target. An explicit request to apply a candidate to an owned source checkout continues through the existing owner and authority gates.
+When a skill run reveals a reusable incident, preserve only minimal non-secret evidence and suggest a `tk-retro` review. Do not silently invoke it, create improvement artifacts, edit installed skills, or publish issues/PRs. Explicit implementation requests belong to the authorized change owner; this pointer grants no mutation authority.
 <!-- /tigerkit:skill-feedback -->

@@ -16,7 +16,7 @@ or more evidence-backed planes.
 | `local override` | Consumer override or local configuration causes the incident | exact override/configuration and adjacent package control |
 | `efficiency` | Correct output consumed avoidable resources | matched baseline/candidate metrics |
 
-Record stability for every plane, but do not record it as a separate causal plane:
+Record variability only when observed; do not invent numeric metrics:
 
 ```text
 reproduction rate
@@ -50,7 +50,7 @@ Verify at least one anchor:
 - explicit token/time/tool threshold;
 - the candidate under comparison.
 
-Match the prompt, host, model/config, tools, repository state, and at least two trials.
+Match the prompt, host, observed model/config, tools and repository state. Repeat trials only when variability or a threshold matters.
 The eval adapter reports `execution_identity` from actual host metadata, never a
 requested model or an agent's self-report. The common runner pairs exact host,
 case, trial and prompt hashes before comparative claims. Missing/different model

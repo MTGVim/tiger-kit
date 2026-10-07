@@ -34,5 +34,6 @@ scenario. A text deletion alone does not prove that the stale behavior is gone. 
 same behavior remains, report `Fail` without broadening cleanup.
 
 When no persistent statement is attributable, keep the context and propose
-`tk-skill-diagnose`. When the current skill is the defective owner, preserve persistent
-context and propose `tk-learn`. Do not invoke either automatically.
+`tk-retro`. When the current skill is the defective owner, preserve persistent
+context and use `tk-retro` for evidence-backed prevention proposals, not mutation.
+Do not invoke it automatically.
