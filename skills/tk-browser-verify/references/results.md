@@ -37,8 +37,13 @@ Require these contract fields in nested and standalone results; keep nested resu
   criterion, state/region, `capture_method`, effective viewport, role, and comparison result; otherwise the direct trace/a11y/DOM/runtime/request evidence
 - the same per-capture method/effective viewport in the evidence index, including reason and effect for exceptions
 - limitation
-- cleanup fact
+- cleanup fact; when [session lifecycle](session-lifecycle.md) is intentionally holding a successful nested run for
+  an immediate final-head replay, report `cleanup: deferred for final-head replay` rather than claiming cleanup
 - `automated_regression: protected | N/A | exception | unknown` as supplied/verified parent disposition
+
+A deferred-cleanup nested result is intermediate even when its inspected phase passes. The active parent must either
+resume the same run for final-head replay or explicitly release it after proving the intervening diff does not affect
+the verified path; the verifier then performs normal cleanup and reports the final cleanup fact.
 
 Missing required identity/provenance or return metadata makes the phase `Unverifiable`, even when a screenshot
 was inspected. Report the missing fields and collect them before returning phase `Pass`; a limitation note
