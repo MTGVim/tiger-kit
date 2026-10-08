@@ -181,15 +181,57 @@ interruption, or exception. Cookie scope follows hostname rather than port: if t
 changes, establish the approved state again. For OAuth plus OTP or any other interactive
 flow, use the approved transient injection path or return `Unverifiable`.
 
+## Project-scoped agent development-server exclusion
+
+When an agent must launch a development server (including baseline and final-HEAD replay),
+use the bundled `scripts/dev_server_guard.py` instead of an uncoordinated background
+`Popen`. This is a per-Git-common-directory exclusive **runtime server lease**;
+linked worktrees serialize even if their ports, source revisions and cwd differ. Separate
+clones retain independent locks. An existing user-owned server is not an agent-owned lease
+and must never be stopped, attached to, or reclassified merely because it occupies a port.
+
+1. Resolve the actual worktree root, exact repository-proven server command, command cwd,
+   host/port, API target, verification target and browser provider first. Do not put
+   secrets in command arguments, logs, status metadata or the Git common directory.
+2. Call `python3 <package>/scripts/dev_server_guard.py start --repo <worktree-root>
+   --cwd <verified-server-cwd> --wait-seconds 120 --max-seconds 900 -- <server-command> [args...]`.
+   Save the returned random `run_id` in this verification phase only. A `queued` result
+   never means the server is running; poll `status --repo <worktree-root> --run-id <id>`
+   within a bounded wait. A second worktree's request remains queued until the first
+   releases the OS lock. Do not bypass a busy lock with a new port or manual process.
+3. Only after status becomes `running`, independently prove HTTP readiness and the
+   expected current-project build identity. `running` is a process fact, not an HTTP-ready
+   or authenticated application. A timeout, `blocked-orphan`, failed launch, stale process
+   or uncertain ownership is `Blocked | Unverifiable`; disclose the exact non-secret
+   limitation rather than silently taking another route.
+4. After the last browser action in this phase, call `stop --repo <same-worktree-root>
+   --run-id <id> --seconds 10` and check the returned terminal state, then `status`
+   again when necessary. `stopped` or `server-exited` with no cleanup residue releases
+   the lease. If shutdown is unconfirmed, do not claim cleanup succeeded. Never stop
+   another worktree's run, a user-owned development server or a provider-owned process.
+
+The supervisor lives only for this bounded run: on POSIX it holds a `flock` and
+manages its own child process group; on native Windows it uses `msvcrt.locking` and
+a kill-on-close Job Object assigned to its newly launched child. Assignment can race
+with a child starting its own descendants, so failed assignment or uncertain cleanup
+must not be reported as fully contained. No long-lived service, global scheduler,
+external lock package, or background task is installed. The supervisor times out its
+lock wait and running lifetime; this is not an authorization to leave a server alive
+during model/user interaction. An abrupt supervisor death can leave a POSIX child;
+before a new launch, suspected live orphans block the next run rather than being
+killed by name or port. Windows-native and WSL instances do not automatically share
+a compatible lock protocol, even when they access the same filesystem. Do not claim
+cross-boundary exclusion there without separately verified coordination.
+
 ## Server and serving source
 
 In a `standalone` run with multiple viable `dev-server` commands, present the candidates
 and selection to the user and obtain confirmation before starting one. In a `nested`
 run where the `parent` supplied the exact command, do not ask for the same decision
 again. Include `BROWSER=NONE`, or the repository-documented equivalent `auto-open`
-suppression, for a `react-scripts`/CRA server. Start a `long-running server` as a
-`run-owned` background process with an exact PID, `cwd`, command, `port`, and bounded
-`log` path. Poll a concrete `HTTP`/`port` `readiness signal` under a `bounded timeout`;
+suppression, for a `react-scripts`/CRA server. Start a `long-running server` through the project-scoped run-owned supervisor above;
+record its run ID, owned PID, `cwd`, command basis, `port`, and bounded `log` path.
+Poll a concrete `HTTP`/`port` `readiness signal` under a `bounded timeout`;
 continue after `readiness` instead of waiting for process exit.
 
 Before selecting or starting the server, inspect the relevant package script and environment

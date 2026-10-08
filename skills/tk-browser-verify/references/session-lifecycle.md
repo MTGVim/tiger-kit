@@ -38,7 +38,12 @@ temporary secret input as well; release only this run's pending claim where poss
 Do not defer secret cleanup until browser-session cleanup.
 
 After any baseline, after, or acceptance capture, close run-owned browser resources and stop the
-run-owned development server immediately. Persist the inspected evidence and a replay recipe, not
+run-owned development server immediately through the exact supervisor run ID when using the
+project-scoped guard. Do not release or assume release of the Git-common-dir lock until the
+run-owned child shutdown is confirmed; never delete a held lock file to break a wait.
+Waiting for an active user's input or token update is not an excuse to retain the lease.
+If an abnormal exit leaves a suspected server orphan, report it for ownership-based
+recovery without broad process termination. Persist the inspected evidence and a replay recipe, not
 live processes or an authenticated browser profile. A parent continuing to implement or review
 must never hold these processes merely to avoid a later startup; an immediate final-head replay
 starts a fresh owned browser/server and reestablishes the scoped authentication state if required.
