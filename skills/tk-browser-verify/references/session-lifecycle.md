@@ -27,11 +27,15 @@ create a Markdown lifecycle ledger. Every cited screenshot must exist, be non-em
 be actually inspected. If the directory cannot be resolved, the image is missing, or
 inspection fails, required browser evidence is `Unverifiable`.
 
-Immediately after file-mediated authentication injection, stop the exact run-owned
-loopback secret server, delete the mode-`0600`
+After file-mediated authentication injection, independently verify the authenticated state.
+For an explicitly authorized shared development cache, commit the verified token atomically
+from the *same* validated input file and owned refresh claim; do not retain or cache a token
+that did not authenticate successfully. Whether cache commit succeeds or fails, immediately
+stop the exact run-owned loopback secret server, delete the mode-`0600`
 `.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json` file and its mode-`0700` run
-directory, and verify that none remains. Apply this cleanup on success, failure,
-interruption, and exception. Do not defer secret cleanup until browser-session cleanup.
+directory, and verify none remains. On failure, interruption or exception, always remove
+temporary secret input as well; release only this run's pending claim where possible.
+Do not defer secret cleanup until browser-session cleanup.
 
 After any baseline, after, or acceptance capture, close run-owned browser resources and stop the
 run-owned development server immediately. Persist the inspected evidence and a replay recipe, not
