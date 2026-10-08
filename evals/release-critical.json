@@ -12,9 +12,7 @@
     "tk-mwhat",
     "tk-learn",
     "tk-skill-diagnose",
-    "tk-study",
-    "tk-triage",
-    "tk-wt"
+    "tk-study"
   ],
   "retired_catalog_cases": [
     "adhd-explicit",
