@@ -227,8 +227,11 @@ def _stop_child(process: subprocess.Popen, job: int | None) -> bool:
     """Stop only this supervisor's child; do not kill processes based on stale PIDs."""
     if os.name == "nt":
         if job is not None:
+            # Closing the last kill-on-close job handle terminates its owned tree.
             ctypes.WinDLL("kernel32", use_last_error=True).CloseHandle(ctypes.c_void_p(job))
         elif process.poll() is None:
+            # Assignment may have failed after the child started. Only terminate
+            # the direct child and report that descendants are unverified.
             process.terminate()
     else:
         if process.poll() is None:
@@ -312,7 +315,11 @@ def supervise(checkout: Path, runtime: Path, run_id: str, cwd: Path,
             options["start_new_session"] = True
         child = subprocess.Popen(command, **options)
         if os.name == "nt":
-            job = _windows_job(child)
+            try:
+                job = _windows_job(child)
+            except BaseException:
+                metadata["state"] = "cleanup-unverifiable"
+                raise
         assert child.stdout is not None
         drain = threading.Thread(target=_log_drain, args=(child.stdout, run / "server.log"), daemon=True)
         drain.start()
@@ -327,7 +334,8 @@ def supervise(checkout: Path, runtime: Path, run_id: str, cwd: Path,
         else:
             metadata["state"] = "server-exited"
     except BaseException:
-        metadata["state"] = "failed"
+        if metadata.get("state") != "cleanup-unverifiable":
+            metadata["state"] = "failed"
     finally:
         if child is not None:
             try:
@@ -354,7 +362,7 @@ def _status(run: Path) -> dict:
         "supervisor_pid": metadata.get("supervisor_pid"),
         "server_pid": metadata.get("server_pid"),
         "worktree": metadata.get("worktree"),
-        "server_ready": False if state == "running" else None,
+        "server_ready": None,  # This manager never substitutes for HTTP/app identity readiness.
     }
 
 
