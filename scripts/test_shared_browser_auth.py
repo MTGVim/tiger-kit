@@ -22,6 +22,8 @@ class SharedBrowserAuthTests(unittest.TestCase):
         self.root = self.base / "repo"
         self.root.mkdir()
         subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        (self.root / ".gitignore").write_text("/.tigerkit/\n", encoding="utf-8")
+        subprocess.run(["git", "-C", str(self.root), "add", ".gitignore"], check=True)
         subprocess.run(["git", "-C", str(self.root), "-c", "user.email=test@example.invalid",
                         "-c", "user.name=Tester", "commit", "--allow-empty", "-qm", "seed"], check=True)
         self.other = self.base / "another"
@@ -44,8 +46,9 @@ class SharedBrowserAuthTests(unittest.TestCase):
         folder = base / "tk-browser-verify-test"
         folder.mkdir(mode=0o700)
         path = folder / "input.json"
-        path.write_text(content, encoding="utf-8")
-        path.chmod(0o600)
+        fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(content)
         return path
 
     def test_share_between_worktrees_and_compare_revision(self):
@@ -65,6 +68,32 @@ class SharedBrowserAuthTests(unittest.TestCase):
         self.assertEqual(self.call("invalidate", repo=self.other,
                                   extras=("--revision", stored["revision"]))["status"], "invalidated")
         self.assertEqual(self.call("inspect")["status"], "missing")
+
+    def test_created_input_paths_and_no_overwrite(self):
+        claim = self.call("claim")
+        receipt = self.call("prepare-input", extras=("--claim-id", claim["claim_id"],
+                                                      "--run-id", "baseline-1"))
+        self.assertEqual(receipt["status"], "input-pending")
+        self.assertEqual(receipt["template"], {"token": ""})
+        self.assertEqual(receipt["relative_path"],
+                         ".tigerkit/secret-input/tk-browser-verify-baseline-1/input.json")
+        file = Path(receipt["absolute_path"])
+        self.assertEqual(file.read_text(), '{"token":""}')
+        self.assertEqual(stat.S_IMODE(file.stat().st_mode), 0o600)
+        self.assertEqual(stat.S_IMODE(file.parent.stat().st_mode), 0o700)
+        file.write_text('{"token":"TOP_SECRET"}')
+        second = self.call("prepare-input", extras=("--claim-id", claim["claim_id"],
+                                                     "--run-id", "baseline-1"))
+        self.assertEqual(second["absolute_path"], receipt["absolute_path"])
+        self.assertEqual(file.read_text(), '{"token":"TOP_SECRET"}')
+        self.assertEqual(second["template"], {"token": ""})
+
+    def test_prepare_input_refuses_unignored_git_paths(self):
+        claim = self.call("claim")
+        (self.root / ".gitignore").write_text("", encoding="utf-8")
+        result = self.call("prepare-input", extras=("--claim-id", claim["claim_id"],
+                                                     "--run-id", "baseline-2"), code=3)
+        self.assertEqual(result["status"], "blocked")
 
     def test_one_claim_until_release(self):
         first = self.call("claim")
