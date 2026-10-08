@@ -179,7 +179,7 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 - 검증 근거: `.tigerkit/evidence/<skill>/<run-id>/`
 - 복구·인계·승인 상태에 실제로 필요한 소유자 산출물: `.tigerkit/<owner>.md`, `.tigerkit/prototypes/`, `.tigerkit/sdd-tmp/`
 
-`tk-retro`는 기본적으로 대화에만 제안을 반환합니다. 명시적으로 요청된 회고 보고서만 저장소의 무시된 `.tigerkit/`에 저장하고, 구현·설치본 수정·GitHub 게시를 직접 수행하지 않습니다.
+`tk-retro`는 기본적으로 익명화한 회고를 `.tigerkit/retro/<YYYY-MM-DD>-<topic-slug>.md`에 저장하고 대화에 요약과 경로를 반환합니다. 대화 전용 요청이나 산출물 경로 검사 실패 시에는 파일 작성을 생략합니다. 저장 후 세션의 비공개 식별자가 남았는지 검사하며, 구현·설치본 수정·GitHub 게시를 직접 수행하지 않습니다.
 
 `Owner`별 `singleton Markdown`은 모든 실행의 선행조건이 아닙니다. 현재 대화와 `Git/GitHub` 상태로 정확히 복원되는
 단순 실행에는 만들지 않고, `explicit save`, `multi-turn handoff/recovery` 또는 정확한 승인 상태 보존이 필요할 때만

@@ -93,4 +93,8 @@ wording changes after the same failure repeats.
 - not reproduced or target correct → `no-change`;
 - decisive evidence missing → `unverifiable`.
 
-Do not create a diagnostic artifact by default. Save a sanitized report only on an explicit request and under the owning SKILL.md Artifact Paths rules.
+Write the sanitized report by default to `.tigerkit/retro/<YYYY-MM-DD>-<topic-slug>.md`
+under the owning SKILL.md Artifact Paths rules, then return a concise summary and its
+path. Skip the file only for explicit conversation-only output or blocked Artifact
+Paths checks. Apply the owning SKILL.md anonymization and post-write identifier scan;
+diagnostic evidence does not authorize retaining raw logs or private identifiers.

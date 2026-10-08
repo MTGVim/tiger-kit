@@ -12,8 +12,10 @@
   handoff; **omit** `learn-ready` states and semantic writer delegation machinery.
 - Former TigerKit `tk-learn`: **keep** skill-candidate fit, prior/no-skill comparison,
   positive/negative routing and secrets/anonymization boundaries;
-  **adapt** to proposals only; **omit** canonical skill write, approval/apply
-  gates, mandatory proposal artifact, promotion state machine and auto-publication.
+  **adapt** to proposals only, with a sanitized report saved by default and a
+  post-write private-identifier scan; **omit** canonical skill write, approval/apply
+  gates, promotion state machine and auto-publication. The 2026-10-08 user-supplied
+  retrospective grounds this local output-policy change; it adds no upstream runtime.
 
 The MIT source notice is in `LICENSE.txt`. The previous skill packages and
 their historical changes remain traceable through Git.

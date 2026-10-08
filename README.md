@@ -80,7 +80,7 @@ npx skills update --global --yes
 
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
-| [tk-retro](skills/tk-retro/SKILL.md) | `hybrid` | 세션 과정과 스킬 사고를 회고해 개선안을 제안합니다. |
+| [tk-retro](skills/tk-retro/SKILL.md) | `hybrid` | 세션 과정과 스킬 사고를 회고하고, 익명화한 개선안을 기본적으로 `.tigerkit/retro/`에 저장합니다. |
 | [tk-grooming](skills/tk-grooming/SKILL.md) | `hybrid` | 스킬·지속 규칙·자동 기억의 중복·충돌·낡은 지침을 감사합니다. |
 | [tk-handoff](skills/tk-handoff/SKILL.md) | `hybrid` | 현재 대화의 현황을 확인하거나 재개용 인수인계를 작성·복원합니다. |
 | [tk-wizard](skills/tk-wizard/SKILL.md) | `hybrid` | 사람이 직접 해야 하는 설정·인증·이관 절차를 안내합니다. |

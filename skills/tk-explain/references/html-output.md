@@ -69,7 +69,12 @@ or `처음 읽는 분께` when the actual topic can be named. Keep table cells t
 into `<details>` without hiding essential background. Embed needed local content; show an external
 local path as code rather than a broken file link. Use unique component classes for distinct roles.
 Body text is the largest non-heading text, except KPI values and hero figures. Define domain and
-statistical terms for a capable reader outside the field, using a short glossary when needed.
+statistical terms for a capable reader outside the field. When the document uses reader-unfamiliar
+terms before the section that explains them, add a compact term list immediately after the opening
+conclusion: one-line definitions linked to their detailed sections, expanded and searchable.
+Place it after the gist in explain/explain-diff, the summary in research, and the learning objectives
+in teach. Still define each term at first use; the list supports, not replaces, definitions.
+Omit the list when no such term precedes its explanation; do not use a fixed term-count threshold.
 
 ## Shared theme
 
@@ -82,6 +87,14 @@ and three native radio inputs named `ht-theme` whose values are `system`, `light
 that order. Style the labels as one segmented control with body-size text and at least 40px target
 height. Keep the native radio semantics so Tab enters the group and arrow keys change the selected
 value. The script reveals it only when functional. Do not collapse this control into a small select.
+
+In document-like artifacts, place the theme control at the right end of a top bar that spans the
+page; keep it sticky on desktop and in normal flow on narrow screens so it does not stack with
+section navigation. The top-bar title is a short content title that stays meaningful while
+scrolling: name the subject and its central change or conclusion in reader terms. Put ticket keys,
+branch names and other identifiers in secondary metadata; do not use them or generic words such
+as `설명`, `explanation` or `report` as the title. The existing prototype UI exception applies;
+apply this document shell only to document portions of QA sheets, preserving their checklist UI.
 
 Before writing a TigerKit standalone HTML artifact, resolve its generation default from
 `${XDG_CONFIG_HOME:-~/.config}/tigerkit/settings.json`. Treat this file as bounded user preference
@@ -158,3 +171,8 @@ Off-screen absolute helper text and measurement elements must not widen the docu
 checks in the generator/template and replay. Completion reports name inspected viewports/themes
 and results, or `Unverifiable` with the unavailable renderer/check. Saving HTML alone is not proof
 of readability; unreadable output is a functional defect and cannot pass the affected acceptance.
+
+For document-like artifacts, verify that the theme control is inside the top bar and visible in
+the initial viewport. On desktop, its `getBoundingClientRect().top` must fall within the top bar's
+vertical bounds. Check that the title still identifies the subject without ticket keys or generic
+labels, and that any required term list follows the opening conclusion, expanded with working links.

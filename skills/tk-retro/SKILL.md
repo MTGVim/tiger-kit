@@ -77,9 +77,20 @@ a fix. A short review that finds nothing worth changing is valid.
 rules, tests, Git state, or remote issues/PRs. Do not auto-invoke an implementation
 skill or silently route a handoff. Provide an exact recommendation for the owning
 workflow; a request to actually perform the change is a separate implementation
-task. Create a sanitized report file only when explicitly requested, after the
-Artifact Paths checks; otherwise return in conversation. Keep secrets, raw logs,
+task. Always write the sanitized report to `.tigerkit/retro/<YYYY-MM-DD>-<topic-slug>.md`
+after the Artifact Paths checks, then return a concise summary and the file path in
+conversation. Skip the file only when the user asks for conversation-only output or
+the Artifact Paths checks block it; report a blocked file branch without losing the
+conversational findings. Honor an explicit final destination. Keep secrets, raw logs,
 private identifiers and unnecessary user details out of reusable proposals.
+
+Anonymize by default, including the topic slug: replace ticket keys, private organization,
+product and domain terms, private repository names and paths, people's names, local home
+paths and verbatim user requests with neutral descriptions. Public upstream names,
+revisions and skill-internal file names may stay. After writing, scan the saved report
+for identifiers seen in the session with fixed-string search (for example `rg -n -F`),
+remove any that remain, and repeat until no private identifiers match. Do not include
+secrets in search arguments or output. Apply the same sanitization to conversational output.
 
 For upstream rationale, read [sources](references/sources.md) only when comparing
 or maintaining this skill.

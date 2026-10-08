@@ -1,16 +1,78 @@
 """Exercise shared-contract validation with installed-package mutations."""
+import json
 import re
 import shutil
 import subprocess
 import sys
 import tempfile
 import unittest
+from html.parser import HTMLParser
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class HTMLPolicyTest(unittest.TestCase):
+    def test_research_current_section_excludes_sticky_bar(self):
+        text = (ROOT / 'skills/tk-research/assets/report.html').read_text()
+        source = re.findall(r'<script>(.*?)</script>', text, re.S)[0]
+        harness = r'''
+const vm = require('node:vm');
+const assert = require('node:assert/strict');
+const links = ['unknowns', 'frontier'].map(id => ({
+  hash: '#' + id, selected: false,
+  setAttribute() { this.selected = true; },
+  removeAttribute() { this.selected = false; }
+}));
+const sections = [
+  {id: 'unknowns', getBoundingClientRect: () => ({top: 20, bottom: 120})},
+  {id: 'frontier', getBoundingClientRect: () => ({top: 140, bottom: 230})}
+];
+let mobile = false;
+const context = vm.createContext({
+  location: {hash: ''}, innerHeight: 900,
+  matchMedia: () => ({matches: mobile}), addEventListener() {},
+  document: {
+    querySelectorAll: s => s === 'nav a' ? links : sections,
+    querySelector: s => ({getBoundingClientRect: () => ({bottom: s === 'nav' ? 200 : 100})})
+  }
+});
+vm.runInContext(SOURCE, context);
+for (mobile of [false, true]) {
+  vm.runInContext('current()', context);
+  assert.deepEqual(links.filter(a => a.selected).map(a => a.hash), ['#frontier']);
+}
+'''
+        result = subprocess.run(['node', '-e', harness.replace('SOURCE', json.dumps(source))],
+                                text=True, capture_output=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_research_theme_control_belongs_to_page_top_bar(self):
+        class ThemeLocation(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.stack = []
+                self.locations = []
+
+            def handle_starttag(self, tag, attrs):
+                attrs = dict(attrs)
+                if 'data-ht-theme-control' in attrs:
+                    self.locations.append(list(self.stack))
+                if tag not in ('meta', 'link', 'br', 'hr', 'input', 'img'):
+                    self.stack.append((tag, attrs))
+
+            def handle_endtag(self, tag):
+                if self.stack and self.stack[-1][0] == tag:
+                    self.stack.pop()
+
+        parser = ThemeLocation()
+        parser.feed((ROOT / 'skills/tk-research/assets/report.html').read_text())
+        self.assertEqual(len(parser.locations), 1)
+        ancestors = parser.locations[0]
+        self.assertNotIn('main', [tag for tag, _ in ancestors])
+        self.assertTrue(any(tag == 'header' and 'ht-topbar' in attrs.get('class', '').split()
+                            for tag, attrs in ancestors))
+
     def check_mutation(self, mutate):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
