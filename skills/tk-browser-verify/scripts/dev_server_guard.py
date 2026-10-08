@@ -396,8 +396,16 @@ def main() -> int:
     parser.add_argument("--wait-seconds", type=int, default=120)
     parser.add_argument("--max-seconds", type=int, default=900)
     parser.add_argument("--seconds", type=int, default=10)
-    parser.add_argument("command", nargs=argparse.REMAINDER)
-    args = parser.parse_args()
+    # parse_known_args keeps options after the action visible while preserving
+    # the exact server argv after the explicit "--" boundary.
+    args, remainder = parser.parse_known_args()
+    if "--" in remainder:
+        boundary = remainder.index("--")
+        if boundary != 0:
+            parser.error("unexpected arguments before the server command boundary")
+        args.command = remainder[1:]
+    else:
+        args.command = remainder
     try:
         checkout, runtime = _paths(args.repo)
         if args.action == "start":
