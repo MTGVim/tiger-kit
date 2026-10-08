@@ -5,7 +5,7 @@
     {
       "id": "train-positive",
       "split": "train",
-      "query": "$tk-wt 새 작업 worktree 생성해줘",
+      "query": "$tk-wt 새 작업 `worktree` 생성해줘",
       "should_trigger": true
     },
     {
@@ -17,7 +17,7 @@
     {
       "id": "validation-formal",
       "split": "validation",
-      "query": "/tk-wt bug-34 isolated workspace를 만들어 주세요",
+      "query": "/tk-wt `bug-34` `isolated` `workspace`를 만들어 주세요",
       "should_trigger": true,
       "facets": [
         "formal"
@@ -44,7 +44,7 @@
     {
       "id": "validation-ko-en",
       "split": "validation",
-      "query": "/tk-wt use Orca CLI to create worktree",
+      "query": "/tk-wt `use` Orca CLI `to` `create` `worktree`",
       "should_trigger": true,
       "facets": [
         "ko-en"

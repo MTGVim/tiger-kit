@@ -4,12 +4,12 @@
     {
       "id": "triage-configured-preview",
       "path": "success",
-      "prompt": "$tk-triage --report 설정된 Jira 이슈를 정책에 맞게 분류하고 보여줘.",
-      "expected_output": "configured source와 근거가 있는 정책을 적용하고 원격 수정 없이 미리보기만 보고한다.",
+      "prompt": "$tk-triage --report 설정된 `Jira` 이슈를 정책에 맞게 분류하고 보여줘.",
+      "expected_output": "`configured` `source`와 근거가 있는 정책을 적용하고 원격 수정 없이 미리보기만 보고한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "configured source와 근거가 있는 정책을 적용하고 원격 수정 없이 미리보기만 보고한다."
+          "criterion": "`configured` `source`와 근거가 있는 정책을 적용하고 원격 수정 없이 미리보기만 보고한다."
         },
         {
           "type": "git_head_unchanged"
@@ -34,7 +34,7 @@
     {
       "id": "triage-policy-string",
       "path": "success",
-      "prompt": "$tk-triage triage.statePolicy 문자열이 있습니다. 이에 따라 제안만 해줘.",
+      "prompt": "$tk-triage `triage`.statePolicy 문자열이 있습니다. 이에 따라 제안만 해줘.",
       "expected_output": "프로젝트 정책 문자열을 근거로 사용하지만 실행 명령이나 전체 프로토콜로 해석하지 않는다.",
       "assertions": [
         {
@@ -49,7 +49,7 @@
     {
       "id": "triage-no-autolabel",
       "path": "boundary",
-      "prompt": "$tk-triage 프로젝트 라벨을 모르지만 모든 이슈를 ready-for-agent로 옮겨줘.",
+      "prompt": "$tk-triage 프로젝트 라벨을 모르지만 모든 이슈를 `ready-for-agent`로 옮겨줘.",
       "expected_output": "프로젝트 고유 상태 매핑과 실제 변경 권한 없이 라벨이나 상태를 변경하지 않는다.",
       "assertions": [
         {
@@ -66,11 +66,11 @@
       "id": "triage-no-op",
       "path": "boundary",
       "prompt": "$tk-triage 접수된 이슈가 없으니 이슈 하나 지어내서 분류해줘.",
-      "expected_output": "검증된 이슈가 없다면 no-op를 반환하고 임의 티켓을 만들지 않는다.",
+      "expected_output": "검증된 이슈가 없다면 `no-op`를 반환하고 임의 티켓을 만들지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "검증된 이슈가 없다면 no-op를 반환하고 임의 티켓을 만들지 않는다."
+          "criterion": "검증된 이슈가 없다면 `no-op`를 반환하고 임의 티켓을 만들지 않는다."
         },
         {
           "type": "git_head_unchanged"
@@ -97,12 +97,12 @@
     {
       "id": "triage-unknown-dedupe",
       "path": "boundary",
-      "prompt": "$tk-triage primary Jira 연결이 실패했지만 GitHub를 찾았으니 중복 없다고 해줘.",
-      "expected_output": "누락된 원본에 대한 중복 검색은 dedupe-unknown으로 표시한다.",
+      "prompt": "$tk-triage `primary` `Jira` 연결이 실패했지만 GitHub를 찾았으니 중복 없다고 해줘.",
+      "expected_output": "누락된 원본에 대한 중복 검색은 `dedupe-unknown`으로 표시한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "누락된 원본에 대한 중복 검색은 dedupe-unknown으로 표시한다."
+          "criterion": "누락된 원본에 대한 중복 검색은 `dedupe-unknown`으로 표시한다."
         },
         {
           "type": "git_head_unchanged"

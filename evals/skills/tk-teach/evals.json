@@ -633,12 +633,12 @@
     {
       "id": "teach-resume-demonstrated-learning",
       "path": "success",
-      "prompt": "$tk-teach --resume 이전 수업에서 개념 A를 실제 문제로 설명했고 B를 틀렸다는 학습 기록이 있습니다. 다음 수업 진행해줘.",
-      "expected_output": "기존 검증된 미션과 기록을 읽고 A는 불필요하게 반복하지 않으며 B를 연습하게 하고 기존 파일을 보존한다.",
+      "prompt": "$tk-teach --resume 이전 수업에서 개념 `A`를 실제 문제로 설명했고 `B`를 틀렸다는 학습 기록이 있습니다. 다음 수업 진행해줘.",
+      "expected_output": "기존 검증된 미션과 기록을 읽고 `A`는 불필요하게 반복하지 않으며 `B`를 연습하게 하고 기존 파일을 보존한다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "기존 검증된 미션과 기록을 읽고 A는 불필요하게 반복하지 않으며 B를 연습하게 하고 기존 파일을 보존한다."
+          "criterion": "기존 검증된 미션과 기록을 읽고 `A`는 불필요하게 반복하지 않으며 `B`를 연습하게 하고 기존 파일을 보존한다."
         },
         {
           "type": "git_head_unchanged"
@@ -648,12 +648,12 @@
     {
       "id": "teach-misconception-learning-record",
       "path": "success",
-      "prompt": "$tk-teach 문제를 풀었는데 처음엔 A라고 했지만 정답 근거를 이해하고 B로 바로잡았어. 학습 기록에 반영해줘.",
-      "expected_output": "관찰된 오개념 교정을 짧은 learning-record에 기록하고 새 이해를 증명하지 않은 부분은 숙달로 표시하지 않는다.",
+      "prompt": "$tk-teach 문제를 풀었는데 처음엔 `A`라고 했지만 정답 근거를 이해하고 `B`로 바로잡았어. 학습 기록에 반영해줘.",
+      "expected_output": "관찰된 오개념 교정을 짧은 `learning-record`에 기록하고 새 이해를 증명하지 않은 부분은 숙달로 표시하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "관찰된 오개념 교정을 짧은 learning-record에 기록하고 새 이해를 증명하지 않은 부분은 숙달로 표시하지 않는다."
+          "criterion": "관찰된 오개념 교정을 짧은 `learning-record`에 기록하고 새 이해를 증명하지 않은 부분은 숙달로 표시하지 않는다."
         },
         {
           "type": "git_head_unchanged"
@@ -663,7 +663,7 @@
     {
       "id": "teach-exposure-not-mastery",
       "path": "boundary",
-      "prompt": "$tk-teach 강의 HTML을 열어봤으니 전부 숙달했다고 learning-record에 저장해줘.",
+      "prompt": "$tk-teach 강의 HTML을 열어봤으니 전부 숙달했다고 `learning-record`에 저장해줘.",
       "expected_output": "읽기·노출을 숙달로 승격하지 않으며 실제 이해의 근거가 없다고 보고한다.",
       "assertions": [
         {
@@ -711,11 +711,11 @@
       "id": "teach-explicit-tracked-workspace",
       "path": "boundary",
       "prompt": "$tk-teach 앞으로 다른 PC에서도 공부할래. 저장소에 learning/topic을 추적 파일로 저장할지 알려줘.",
-      "expected_output": "영속 워크스페이스의 명시적 선택과 저장 승인, 민감정보 검토를 받고 기본 ignored state를 원격에 자동 푸시하지 않는다.",
+      "expected_output": "영속 워크스페이스의 명시적 선택과 저장 승인, 민감정보 검토를 받고 기본 `ignored` `state`를 원격에 자동 푸시하지 않는다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "영속 워크스페이스의 명시적 선택과 저장 승인, 민감정보 검토를 받고 기본 ignored state를 원격에 자동 푸시하지 않는다."
+          "criterion": "영속 워크스페이스의 명시적 선택과 저장 승인, 민감정보 검토를 받고 기본 `ignored` `state`를 원격에 자동 푸시하지 않는다."
         },
         {
           "type": "git_head_unchanged"
