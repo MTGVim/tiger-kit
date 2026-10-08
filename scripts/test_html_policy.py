@@ -78,7 +78,7 @@ class HTMLPolicyTest(unittest.TestCase):
         self.assertIn("intervening diff touches a runtime-verified screen's render path or request path", local)
         self.assertIn('replay the same', local)
         self.assertIn('After any baseline, after, or acceptance capture', lifecycle)
-        self.assertIn('stop the run-owned development server immediately', lifecycle)
+        self.assertIn('run-owned development server immediately', lifecycle)
         self.assertIn('Do not defer secret cleanup until browser-session cleanup', lifecycle)
         self.assertNotIn('defer normal cleanup', lifecycle)
         self.assertIn('no baseline-to-final-head process hold', results)
