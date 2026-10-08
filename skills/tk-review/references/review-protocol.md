@@ -113,6 +113,23 @@ coverage `Unverifiable`; never claim that serial passes in one context are indep
 Use `appear | disappear | change | preserve | defect-fix` intent. Do not fabricate a prior
 incident for a new feature or refactor; use expected scenarios and `must-not-change` surfaces.
 
+## Reviewer evidence and bounded recovery
+
+Starting a review leaf is not a review result. Before accepting a seat, verify it
+actually inspected the exact bound diff or target (for example: observed diff read,
+target-linked findings, or a supported inspection receipt); a generic success,
+empty completion, unrelated response or process startup is not evidence. Do not
+promote a seat with missing/incorrect target evidence to Pass.
+
+If a leaf fails before inspecting the target, one fresh independent substitute may
+be attempted within the **same approved scope and effective permissions**, provided
+that host capacity genuinely supports an independent seat. Do not rerun the same
+failed seat, expand to parallel seat storms or consume another owner's worktree.
+If the substitute also fails or exact inspection cannot be observed, keep missing
+coverage `Unverifiable`; do not claim two independent reviews, block needed
+findings, or quietly fall back to controller self-review. Recover only the missing
+seat, not completed verified work.
+
 ## Aggregation and candidate verification
 
 Aggregate the union of discovery candidates. A clean seat cannot cancel another seat's

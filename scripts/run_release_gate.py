@@ -13,6 +13,11 @@ import tempfile
 from pathlib import Path
 from typing import Mapping
 
+try:
+    from .check_docs import readme_freshness_errors
+except ImportError:
+    from check_docs import readme_freshness_errors
+
 os.environ.setdefault("PYTHONDONTWRITEBYTECODE", "1")
 
 if __package__:
@@ -569,6 +574,7 @@ def main() -> int:
         ledger_errors, ledger_coverage = validate_ledger_eval_coverage(candidate_contracts)
         contract_errors.extend(ledger_errors)
         contract_errors.extend(compare_language_regression(baseline_language, candidate_language))
+        contract_errors.extend(readme_freshness_errors(baseline_root, candidate_root))
         contract_errors.extend(validate_portable_artifacts(candidate_root))
         contract_errors.extend(validate_artifact_guards(candidate_root))
         commands = [

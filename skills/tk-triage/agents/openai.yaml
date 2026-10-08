@@ -1,0 +1,6 @@
+interface:
+  short_description: "[user] 여러 이슈 추적기의 분류와 다음 조치를 제안합니다."
+  default_prompt: "현재 프로젝트 이슈를 tk-triage로 분류해 주세요."
+
+policy:
+  allow_implicit_invocation: false

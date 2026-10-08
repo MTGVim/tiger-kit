@@ -1,0 +1,3 @@
+interface:
+  short_description: "[user/auto] 외부 협업 채널에서 다른 담당자에게 묻는 질문 초안을 작성합니다."
+  default_prompt: "상대 담당자에게 보낼 질문 초안을 tk-to-questionnaire로 작성해 주세요."

@@ -47,6 +47,14 @@ Read the task source, instructions, code/callers, tests, commands, and Git state
 behavior, requirements, ownership, impact, or domain meaning, or writing implementation/review prose that depends on
 them, lazy-load [domain context](references/domain-context.md) when repository-owned context exists. Read only the
 relevant mapped context; purely mechanical Git/ref/formatting work may skip it.
+When issue-tracker identity, project selection or discovery scope is material to
+this request and not confirmed by source or active instructions, read
+[repository configuration](references/repository-context.md) even if no
+settings file exists. Inspect available facts first, then ask only the
+remaining project-owned decisions and offer an exact approved settings
+draft. Never select a guessed issue source as an implementation contract.
+Ordinary local fixes require no tracker onboarding.
+
 Do not scan or create a documentation lifecycle; if fresher code/test/runtime evidence conflicts, surface it and confirm the source of truth.
 Before creating anything, find existing components, helpers, schemas, clients, patterns, and conventions; tie claims to `path:line`, command output, or fresh state. Before comparing a hard-to-reverse design, interface, schema, or migration choice, read only relevant ADR rationale and current evidence. Do not reopen a decision whose premise still holds; surface `revisit ADR` only when it changed, and never scan an unrelated ADR or context tree.
 

@@ -298,7 +298,7 @@ TigerKit 평가는 배경 누락, 전체 문서의 조건 보존, 결정 권한,
 
 - `cathrynlavery/diagram-design@d1376371965f513d99cc9ec388835d255c5c88d5`: 독자의 질문에 맞는 표현 선택, 선·라벨 검증과 전후 대응을 증류했습니다. `tk-explain` 정본을 네 소비 패키지에 동기화하며 원본 MIT 고지를 각각 포함합니다. 세부 `keep | adapt | omit` 판단은 [공통 참조](skills/tk-explain/references/visual-grammar.md#distillation-provenance)에 있습니다.
 - `ayghri/i-have-adhd@723af7d9afaf43eb871dbcce6129e2bf80de90d5`: 본문·`README.md`·`evals/rubric.md`·라이선스를 읽었습니다. 출력 구조를 정리하는 `tk-adhd`의 역할을 복구하고 현황 확인 절차와 기존 회귀 평가는 `tk-handoff`로 옮깁니다. [출처 기록](skills/tk-adhd/references/distillation.md)이 이전의 현황 전용 해석을 대체합니다. 두 패키지에 원본 MIT 고지를 보존합니다.
-- `mattpocock/skills@6fd947921b935b7e1e69293a200400f0fdd5c15f`: `teach` 본문의 수업과 참조 자료 구분을 읽고, 반복 조회 가치가 있는 배운 내용만 기존 과정 안에 선택적으로 제공합니다. [출처 기록](skills/tk-study/references/distillation.md#optional-revisit-reference-artifacts-425)에 판단을 기록했습니다.
+- `mattpocock/skills@6fd947921b935b7e1e69293a200400f0fdd5c15f`: `teach` 본문의 수업과 참조 자료 구분을 읽고, 반복 조회 가치가 있는 배운 내용만 기존 과정 안에 선택적으로 제공합니다. [출처 기록](skills/tk-teach/references/distillation.md#optional-revisit-reference-artifacts-425)에 판단을 기록했습니다.
 
 원본의 실행·학습 효과와 상대 성능은 재현하지 않아 `unverified`로 남깁니다. 원본의 제공자·렌더러·상태 체계나 고정 분량 기준을 가져오지 않습니다.
 
@@ -473,7 +473,7 @@ active upstream이 아니라 역사적 provenance이며, 현재 관계 메타데
 `MisterBrookT/vividoc`의 `32c7cf963e90c06b00143330f2ad5c6e2366b549`에서는
 내용과 상호작용 설계, 내용 검증과 렌더링 검증의 분리를 참고했습니다.
 읽은 구현·설계·평가와 `keep | adapt | omit` 판단은
-[학습 과정 출처](skills/tk-study/references/distillation.md)에 기록했습니다.
+[학습 과정 출처](skills/tk-teach/references/distillation.md)에 기록했습니다.
 원본의 실행 성능이나 학습 효과는 자체 재현하지 않았으므로 `unverified`입니다.
 원본 코드·템플릿·런타임은 복사하지 않았으며, 참고한 MIT 고지를 해당 설치 패키지에 보존합니다.
 
@@ -937,3 +937,12 @@ cognitive-debt 장부나 merge/edit 강제는 `tk-explain-diff`의 단일 변경
 - `omit`: 이전 `learn-ready` 인계 상태, 스킬 작성·수정·승인 적용 권한, 자동 임시 초안, 불필요한 고정 시험 횟수 및 외부 제공자 구현 세부사항.
 
 기존 두 스킬의 역사적 설계 근거와 테스트는 Git 기록에 남기며, 현행 배포·적용 계약은 `tk-retro`가 담당합니다. 이 증류의 MIT 고지는 `skills/tk-retro/LICENSE.txt`에 있습니다.
+
+## 2026-10-08: `Pocock` 참고 신규 스킬·`tk-teach` 전환 (#435)
+
+- `tk-triage`: `Matt Pocock` `skills/engineering/triage/SKILL.md` (MIT)의 이슈 증거 우선과 수동 의사결정 철학을 **`keep`**; 프로젝트별 자유 형식 문자열 정책·최초 설정 인터뷰·기본 제안 전용를 **`adapt`**; 고정 라벨·자동 댓글 게시 및 별도 런타임을 **`omit`**.
+- `tk-to-questionnaire`: `Matt Pocock` `skills/productivity/to-questionnaire/SKILL.md` (MIT)의 사용자에게 질문 내용이 아닌 발송 목적·수신자를 묻는 인터뷰를 **`keep`**; `Slack`/`Jira`/이메일/`Markdown`용 문자열 템플릿을 **`adapt`**; 항상 파일 생성, 자동 전송을 **`omit`**.
+- `tk-teach`: `Matt Pocock` `skills/productivity/teach/SKILL.md`, `MISSION-FORMAT.md`, `LEARNING-RECORD-FORMAT.md` (MIT)의 실제 학습 기록 기반 맞춤 진도를 **`keep`**; 기존 TigerKit 오프라인 HTML 코스·출처·검증과 주제별 영속 학습 공간 지원으로 **`adapt`**; 루트 workspace 프레임워크, 학습 진도 추측·자동 알림을 **`omit`**. 기존 `tk-study` 코드·증류 이력은 Git 역사에서 확인할 수 있습니다.
+- `tk-wt`: Orca `docs/site/content/docs/cli/reference.mdx`와 `docs/site/content/docs/model/orca-yaml.mdx`를 기능의 근거로 참고했습니다. Orca 코드를 복제하지 않으며 CLI가 제공하지 않는 브랜치명 오버라이드·조건부 이벤트 콜백은 지원되는 것으로 간주하지 않습니다. 비-Orca 종료의 안전 경계는 TigerKit 고유 설계입니다.
+
+외부 소스 실행 검증과 각 새 스킬의 에이전트 행동 평가는 별도 실제 호스트 실행이 필요한 미검증 영역입니다. 각 설치 패키지의 MIT 원저작자 고지는 `LICENSE.txt`에 보존됩니다.

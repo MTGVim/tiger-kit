@@ -95,7 +95,7 @@ class HTMLPolicyTest(unittest.TestCase):
 
     def test_package_theme_drift_blocks_release_check(self):
         def mutate(root):
-            path = root / 'skills/tk-study/assets/html-theme.css'
+            path = root / 'skills/tk-teach/assets/html-theme.css'
             path.parent.mkdir(exist_ok=True)
             path.write_text(':root { --bg: red; }\n')
         self.check_mutation(mutate)
@@ -114,7 +114,7 @@ class HTMLPolicyTest(unittest.TestCase):
 
     def test_feedback_guard_loss_blocks_release_check(self):
         def mutate(root):
-            path = root / 'skills/tk-study/SKILL.md'
+            path = root / 'skills/tk-teach/SKILL.md'
             text = path.read_text()
             start = text.find('<!-- tigerkit:skill-feedback -->')
             end = text.find('<!-- /tigerkit:skill-feedback -->', start)

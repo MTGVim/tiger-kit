@@ -1,0 +1,6 @@
+interface:
+  short_description: "[user] Orca 중심 worktree 생성과 비-Orca Git worktree 안전 종료를 관리합니다."
+  default_prompt: "tk-wt로 현재 작업의 격리 worktree를 준비해 주세요."
+
+policy:
+  allow_implicit_invocation: false

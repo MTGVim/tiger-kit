@@ -13,7 +13,7 @@ metadata:
 # Explain a Change
 
 Teach how one change alters the existing system. A defect review belongs to `tk-review`,
-a concept artifact to `tk-explain`, and researched topic learning to `tk-study`; naming
+a concept artifact to `tk-explain`, and researched topic learning to `tk-teach`; naming
 these owners does not invoke them. Return `NotApplicable` for a review-only or implementation request.
 
 ## Establish the evidence

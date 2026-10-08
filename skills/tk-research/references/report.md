@@ -22,7 +22,7 @@ baseline and directions; actual investigations/experiments and their links/verdi
 and evidence versus untested budget deferrals; unknowns/limits; the smallest plausible implementation
 scope if the recommendation is accepted; the consequence of doing nothing when material; next
 frontier/action and ready handoff candidates; sources. Do not add a comprehension quiz by default:
-`tk-explain` and `tk-study` own teaching checks, while this report owns decision readiness.
+`tk-explain` and `tk-teach` own teaching checks, while this report owns decision readiness.
 Show meaningful changes in a timeline only when they exist. Preserve direction/experiment/source IDs
 and relationships when relevant. A short report can combine these into a few sections. Label proposed
 tests as proposed, never executed. Escape untrusted text/attributes, validate source links and use no

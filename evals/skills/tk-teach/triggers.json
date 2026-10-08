@@ -1,11 +1,11 @@
 {
-  "skill": "tk-study",
+  "skill": "tk-teach",
   "kind": "hybrid",
   "queries": [
     {
       "id": "train-explicit",
       "split": "train",
-      "query": "$tk-study 요청한 주제를 처리해줘",
+      "query": "$tk-teach 요청한 주제를 처리해줘",
       "should_trigger": true
     },
     {
@@ -171,6 +171,33 @@
       "id": "focused-concept-html",
       "split": "validation",
       "query": "캐시 검증자 하나의 동작을 HTML 그림으로 설명해줘.",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "resume-positive",
+      "split": "validation",
+      "query": "$tk-teach --resume 이전 학습 기록 불러와서 이어서 가르쳐줘",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "short-lesson-positive",
+      "split": "validation",
+      "query": "tk-teach 이번에는 한 챕터만 이어서 가르쳐줘",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "negative-retro",
+      "split": "validation",
+      "query": "이번 코딩 에이전트 세션의 실수를 회고해줘",
       "should_trigger": false,
       "facets": [
         "compound"

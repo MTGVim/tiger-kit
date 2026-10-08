@@ -303,6 +303,24 @@
       "facets": [
         "compound"
       ]
+    },
+    {
+      "id": "research-skill-distillation",
+      "split": "validation",
+      "query": "사내 worktree 운영 스킬을 범용 TigerKit 스킬로 증류할지 조사해줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "research-negative-session-retro",
+      "split": "validation",
+      "query": "이 세션에서 왜 같은 실수를 했는지 회고해줘",
+      "should_trigger": false,
+      "facets": [
+        "casual"
+      ]
     }
   ],
   "migrations": [

@@ -148,6 +148,15 @@
       "facets": [
         "compound"
       ]
+    },
+    {
+      "id": "validation-negative-external-distillation",
+      "split": "validation",
+      "query": "사내 스킬 원본을 다른 프로젝트에서도 쓰도록 공통 패턴을 조사하고 증류 제안을 만들어줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
     }
   ]
 }

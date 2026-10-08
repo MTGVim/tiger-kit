@@ -1,3 +1,14 @@
+# Teach: longitudinal learning state upgrade (2026-10-08)
+
+Source: Matt Pocock `mattpocock/skills`, `skills/productivity/teach/SKILL.md`,
+`MISSION-FORMAT.md` and `LEARNING-RECORD-FORMAT.md` as inspected.
+Keep mission-first teaching, evidence-triggered learning records, retrieval,
+adaptive next lessons, trusted resources and quick reference.
+Adapt to existing offline HTML course assets and identity-proven private or
+explicit tracked workspace; preserve legacy `.tigerkit/study` without automatic
+migration. Omit universal root scaffold, activity diary, assumed mastery,
+new scheduler and automatic external publication.
+
 # Distillation Provenance
 
 Reviewed 2026-09-19 at Matt Pocock skills revision

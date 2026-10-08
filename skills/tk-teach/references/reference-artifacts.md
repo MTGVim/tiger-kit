@@ -10,8 +10,9 @@ versions, assumptions, material limitations and source links needed to avoid mis
 Add no new facts solely in a reference; first research and teach them in the course if they
 belong in the approved scope. Preserve canonical terminology and claim provenance.
 
-When useful, create `.tigerkit/study/<topic>/reference/<slug>.html` inside the same
-identity-verified topic run and link it from `index.html` and relevant chapters. Honor an
+When useful, create a `reference/<slug>.html` file under the current
+identity-verified course home (new `.tigerkit/teach/<topic>/`, explicitly selected
+workspace, or legacy `.tigerkit/study/<topic>/`) and link it from `index.html` and relevant chapters. Honor an
 explicit Markdown-only format with reference Markdown files rather than forcing HTML.
 Use no per-chapter quota or minimum count; if there is no recurring lookup value, create
 neither files nor an empty reference directory. A continuation reuses only that course's

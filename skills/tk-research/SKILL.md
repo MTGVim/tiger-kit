@@ -1,6 +1,6 @@
 ---
 name: tk-research
-description: "[user/auto] 외부 사례·접근법 비교, 열린 목표의 지속 연구 또는 기존 연구 재개를 요청할 때 사용합니다. 근거에 따라 필요한 경우에만 상태·실험으로 승격합니다. 일반 사실 설명, 저장소 동작 질문, 학습 자료나 이미 선택한 제품 구현에는 자동 적용하지 않습니다."
+description: "[user/auto] 외부 선행 사례와 접근법 비교, 사내·외 스킬·워크플로 범용화 및 증류 제안, 지속 연구 또는 이전 연구 재개에 사용합니다. 스킬 정본 생성·수정이나 제품 구현은 담당하지 않습니다."
 disable-model-invocation: false
 argument-hint: "[--resume] <research goal or decision> [constraints] [save <path>]"
 metadata:
@@ -29,7 +29,7 @@ Select for a clear external prior-art/solution-comparison request, an evolving r
 or an explicit matching resume. Short and continuing research share this owner: the user need not
 choose a mode. Generic mentions, recovered artifacts and scheduler ticks without an active research
 request do not authorize work. `tk-ask-repo` owns repository behavior, `tk-audit` defects/discovery,
-`tk-study` learning, `tk-roadmap` delivery planning and `tk-prep` product implementation. Naming a
+`tk-teach` learning, `tk-roadmap` delivery planning and `tk-prep` product implementation. Naming a
 next owner never dispatches it automatically.
 
 1. Reuse the goal, downstream decision, constraints and success criteria. Resolve facts first;
@@ -38,8 +38,9 @@ next owner never dispatches it automatically.
 2. Reframe independently of a proposed implementation. Find established terminology and adjacent
    problem families; keep the user's/simple baseline and materially different alternatives.
 3. Read [evidence](references/evidence.md) before comparing sources. For tracker-backed scope,
-   read [repository context](references/repository-context.md) when configuration or a work source
-   is supplied. Verify material claim-source pairs, not just reachable links; preserve contradiction
+   read [repository context](references/repository-context.md) when configuration,
+   a work source, or a missing material tracker policy is relevant. If that policy is
+   unavailable, inspect current project facts and ask only the unresolved choices. Verify material claim-source pairs, not just reachable links; preserve contradiction
    and uncertainty. Generalize external queries; never send private code/logs/secrets/identifiers.
 4. Start with a bounded read-only evidence pass that doubles as the first research batch and an
    internal continuity check. Never ask the user to choose short, long or persistent mode. If the
@@ -48,6 +49,21 @@ next owner never dispatches it automatically.
    depend on this evidence, escalate to persistent research automatically and continue this invocation
    to its first material knowledge boundary. The persistence choice is an implementation detail, not a
    user checkpoint.
+
+## Source-driven skill distillation
+
+When the input is a private/public Agent Skill, internal workflow, source
+document or an explicit request to generalize reusable team practice,
+read [skill distillation](references/skill-distillation.md) before giving
+adoption advice. This is **research and design recommendation**: identify
+the common decision/process kernel, distinguish changeable project policy
+from machine fields and authorization, compare current TigerKit owners
+and verified upstream approaches, then recommend keep/adapt/omit,
+integration into an existing skill, an independently justified new skill
+or no change. Do not implement canonical skills, copy private source text
+or publish a ticket merely because a candidate exists. `tk-retro` owns
+session-specific process review and skill incidents; `tk-grooming` owns
+static existing-skill/rule/memory conflict audits.
 
 ## Lazy escalation and resume
 

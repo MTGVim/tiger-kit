@@ -119,7 +119,7 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 - `tk-prep`: 준비, 최종 승인, 승인된 격리 로컬 구현/검증/`commit`. `push`/발행 금지.
 - `tk-ask-repo`: `read-only` `repository` `investigation`.
 - `tk-audit`: `read-only` AUD `finding`, 조건부 `policy` 구조 분석.
-- `tk-research`: 외부 `prior art`와 접근법 비교부터 조건부 지속 상태·`frontier`·승인된 연구 `workspace` 실험과 수렴. 기본 조사는 `read-only`이며 제품 적용·원격 발행 금지.
+- `tk-research`: 사내·외 스킬과 워크플로의 근거 기반 증류 제안, 외부 `prior art`와 접근법 비교부터 조건부 지속 상태·`frontier`·승인된 연구 `workspace` 실험과 수렴. 기본 조사는 `read-only`이며 제품 적용·원격 발행 금지.
 - `tk-review`: 명시된 `exact committed range/PR/current worktree` 하나의 `read-only` `Spec/AC` + `Quality/Standards` 판정.
 - `tk-browser-verify`: `browser-visible` `runtime` `evidence`와 `dev-server` `lifecycle`.
 - `tk-app-verify`: 데스크톱 앱의 창과 입력 방식, 포커스 영향, 실행 근거 및 실행 소유 자원 정리.
@@ -127,6 +127,10 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 - `tk-pr-respond`: `exact` `one-PR` `feedback`/지원 CI `resolution`과 `bounded` `publication`.
 - `tk-pr-rebase`: `exact` `rebase` + `force-with-lease`.
 - `tk-pr-sweep`: `deterministic` `multi-PR` `triage`와 승인된 `child` `maintenance`.
+- `tk-to-questionnaire`: 외부 담당자에게 보낼 질문 초안 작성만 담당하며 게시·전송 권한 없음.
+- `tk-triage`: 프로젝트 이슈 분류·중복·처리 제안 및 설정 인터뷰. 기본 읽기 전용이며 원격 적용은 정확한 승인 필요.
+- `tk-wt`: Orca 우선 작업 공간 생성. `--close`는 비-Orca Git에만 적용하며 브랜치 보존 기본.
+- `tk-teach`: 미션·실제 학습 기록에 따라 다음 수업을 선택하고 검증된 자료를 유지하며, 과거 tk-study 과정은 보존.
 - `tk-retro`: 세션 회고, 관찰된 Agent Skill 사고 진단과 재발 방지 제안 전용. 실제 수정은 별도 구현 담당자가 맡습니다.
 - `tk-adhd`: 현재 답변·결과의 출력 구조 정리. 실행과 지속 상태의 담당자는 아닙니다.
 - `tk-handoff`: 현재 대화의 현황 확인과 지속 인수인계 작성·재개.
@@ -161,6 +165,10 @@ $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 실제 검증과 `dev-server` `lifecycle`은 `tk-browser-verify`가 소유합니다.
 
 `password`/`token`/OTP/`cookie`/`session` `secret`을 `chat`, `Seed`, `logs`, `receipt`에 저장하지 않습니다.
+
+## 프로젝트 정책과 설정
+
+프로젝트마다 달라지는 분류·메시지·워크트리 규칙은 먼저 증거를 확인하고, 모르는 결정만 사용자 인터뷰로 확정합니다. Git 추적형 `tigerkit.config.json`과 무시된 `.tigerkit/repository.json`에서 기계적으로 소비하는 필드는 엄격한 타입을 유지하고 모델만 해석하는 항목은 `key: string`을 허용합니다. 공개 정책 작성 승인은 원격 수정·스크립트 실행·발행 권한이 아닙니다. `orca.yaml`은 Orca 콜백과 UI/환경 설정의 정본입니다. 실제 런타임 판단과 안전 조건은 설치 패키지 참조에 둡니다.
 
 ## 저장소 로컬 임시 공간
 
@@ -237,7 +245,7 @@ evals/catalog-routing.json
 evals/release-critical.json
 ```
 
-`run_seed_release_gate.py`는 모든 활성 `skill`과 `catalog`의 `baseline` 계약을 보존합니다.
+`run_seed_release_gate.py`는 모든 활성 `skill`과 `catalog`의 `baseline` 계약을 보존합니다. 또한 `SKILL.md`의 공개 계약을 변경한 후보에 README 갱신이 없으면 차단합니다. 공개 변화가 없는 예외는 해당 릴리즈에서 변경한 `evals/changes/*.md`에 `README: no public change`와 정확한 대상 경로·이유를 기록해야 합니다.
 과거의 `replaced_skill_eval_contracts`와 `replace_catalog_contract` 포괄 예외는 허용하지 않습니다.
 식별자 변경은 해당 평가의 명시적 `migration`으로 처리하고, 실제 폐기만 폐기 목록에 기록합니다.
 

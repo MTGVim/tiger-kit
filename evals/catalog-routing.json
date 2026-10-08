@@ -115,6 +115,11 @@
       "from": "rewrite-plain-vs-adhd",
       "to": "rewrite-vs-handoff-orientation",
       "reason": "#424: 일반 윤문과 현황 조회의 구분을 유지하고 현황 조회 담당자만 변경합니다."
+    },
+    {
+      "from": "study-learning",
+      "to": "teach-learning",
+      "reason": "tk-study를 장기학습 기반 tk-teach로 전환한다. 구 스킬은 별칭을 유지하지 않는다."
     }
   ],
   "cases": [
@@ -695,26 +700,26 @@
       "critical": true
     },
     {
-      "id": "study-learning",
+      "id": "teach-learning",
       "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
       "prompt": "`Kafka` 처음 배우는데 조사해서 가르쳐줘.",
-      "focus_skill": "tk-study",
-      "expected_selected_skill": "tk-study",
+      "focus_skill": "tk-teach",
+      "expected_selected_skill": "tk-teach",
       "critical": true
     },
     {
-      "id": "study-vs-research",
+      "id": "teach-vs-research",
       "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
       "prompt": "`Kafka`와 `RabbitMQ` 비교해줘.",
-      "focus_skill": "tk-study",
+      "focus_skill": "tk-teach",
       "expected_selected_skill": "tk-research",
       "critical": true
     },
     {
-      "id": "study-vs-explain",
+      "id": "teach-vs-explain",
       "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
       "prompt": "`Kafka` 동작을 시각적으로 설명해줘.",
-      "focus_skill": "tk-study",
+      "focus_skill": "tk-teach",
       "expected_selected_skill": "tk-explain",
       "critical": true
     },
@@ -735,10 +740,10 @@
       "critical": true
     },
     {
-      "id": "study-vs-retro",
+      "id": "teach-vs-retro",
       "boundary": "조사·학습·변경 설명·리뷰 소유권 구분",
       "prompt": "지난 작업에서 얻은 경험을 회고하고 다음 세션의 스킬 개선 후보를 제안해줘.",
-      "focus_skill": "tk-study",
+      "focus_skill": "tk-teach",
       "expected_selected_skill": "tk-retro",
       "critical": true
     },
@@ -775,18 +780,18 @@
       "critical": true
     },
     {
-      "id": "study-course-vs-explain",
+      "id": "teach-course-vs-explain",
       "boundary": "다중 챕터 학습 과정과 한 개념 설명의 경계",
       "prompt": "HTTP와 브라우저 식별을 선수지식 확인부터 여러 챕터로 공부할 학습 과정을 만들어줘.",
-      "focus_skill": "tk-study",
-      "expected_selected_skill": "tk-study",
+      "focus_skill": "tk-teach",
+      "expected_selected_skill": "tk-teach",
       "critical": true
     },
     {
-      "id": "explain-focused-vs-study",
+      "id": "explain-focused-vs-teach",
       "boundary": "다중 챕터 학습 과정과 한 개념 설명의 경계",
       "prompt": "HTTP 캐시 검증자 하나의 작동 원리를 HTML 시각 자료로 설명해줘.",
-      "focus_skill": "tk-study",
+      "focus_skill": "tk-teach",
       "expected_selected_skill": "tk-explain",
       "critical": true
     },
@@ -900,6 +905,62 @@
       "prompt": "이번 PR의 변경 코드 품질을 리뷰해줘.",
       "focus_skill": "tk-retro",
       "expected_selected_skill": null,
+      "critical": true
+    },
+    {
+      "id": "teach-resume-learning-records",
+      "boundary": "tk-teach longitudinal learning vs one-off generated course",
+      "prompt": "$tk-teach --resume 이전 학습 기록을 읽어 다음 수업 이어서 해줘.",
+      "focus_skill": "tk-teach",
+      "expected_selected_skill": "tk-teach",
+      "critical": true
+    },
+    {
+      "id": "questionnaire-other-stakeholder",
+      "boundary": "external respondent questions vs user interview",
+      "prompt": "$tk-to-questionnaire 다른 담당자가 답해야 할 Jira 확인 질문을 댓글 초안으로 작성해줘.",
+      "focus_skill": "tk-to-questionnaire",
+      "expected_selected_skill": "tk-to-questionnaire",
+      "critical": true
+    },
+    {
+      "id": "grill-vs-questionnaire",
+      "boundary": "current user decision interview vs absent recipient message",
+      "prompt": "$tk-grill 내 설계 결정을 같이 검토해줘.",
+      "focus_skill": "tk-to-questionnaire",
+      "expected_selected_skill": "tk-grill",
+      "critical": true
+    },
+    {
+      "id": "triage-issues-vs-pr-sweep",
+      "boundary": "project issue intake vs PR review batch",
+      "prompt": "$tk-triage 설정된 프로젝트 이슈의 분류·중복·우선순위 초안을 만들어줘.",
+      "focus_skill": "tk-triage",
+      "expected_selected_skill": "tk-triage",
+      "critical": true
+    },
+    {
+      "id": "pr-sweep-vs-triage",
+      "boundary": "PR batch review vs general issue intake",
+      "prompt": "$tk-pr-sweep --report 열린 PR들의 리뷰와 CI 상태를 정리해줘.",
+      "focus_skill": "tk-triage",
+      "expected_selected_skill": "tk-pr-sweep",
+      "critical": true
+    },
+    {
+      "id": "wt-create-orca",
+      "boundary": "task worktree creation vs product implementation",
+      "prompt": "$tk-wt 현재 작업용 Orca worktree를 생성해줘.",
+      "focus_skill": "tk-wt",
+      "expected_selected_skill": "tk-wt",
+      "critical": true
+    },
+    {
+      "id": "wt-close-git-only",
+      "boundary": "Git-owned worktree cleanup vs Orca-owned workspace",
+      "prompt": "$tk-wt --close Orca 미사용 Git worktree의 완료한 작업공간을 정리해줘.",
+      "focus_skill": "tk-wt",
+      "expected_selected_skill": "tk-wt",
       "critical": true
     }
   ]

@@ -1,0 +1,99 @@
+{
+  "skill": "tk-triage",
+  "kind": "user-invoked",
+  "queries": [
+    {
+      "id": "train-positive",
+      "split": "train",
+      "query": "$tk-triage Jira 버그 분류해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "train-negative",
+      "split": "train",
+      "query": "이 PR 코드 리뷰해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "validation-formal",
+      "split": "validation",
+      "query": "$tk-triage 기존 이슈들의 분류와 후속 조치를 정리해 주세요",
+      "should_trigger": true,
+      "facets": [
+        "formal"
+      ]
+    },
+    {
+      "id": "validation-casual",
+      "split": "validation",
+      "query": "/tk-triage 이번에 들어온 버그들 뭐할까요",
+      "should_trigger": true,
+      "facets": [
+        "casual"
+      ]
+    },
+    {
+      "id": "validation-typo",
+      "split": "validation",
+      "query": "$tk-triage 티켓 트리아쥬",
+      "should_trigger": true,
+      "facets": [
+        "typo"
+      ]
+    },
+    {
+      "id": "validation-ko-en",
+      "split": "validation",
+      "query": "$tk-triage classify incoming Jira tickets",
+      "should_trigger": true,
+      "facets": [
+        "ko-en"
+      ]
+    },
+    {
+      "id": "validation-short",
+      "split": "validation",
+      "query": "/tk-triage",
+      "should_trigger": true,
+      "facets": [
+        "short"
+      ]
+    },
+    {
+      "id": "validation-compound",
+      "split": "validation",
+      "query": "$tk-triage 설정 없는 프로젝트에서 인터뷰부터 진행해줘",
+      "should_trigger": true,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-pr",
+      "split": "validation",
+      "query": "tk-pr-sweep로 여러 PR을 처리해줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-code",
+      "split": "validation",
+      "query": "React 버그를 구현해줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    },
+    {
+      "id": "validation-negative-audit",
+      "split": "validation",
+      "query": "tk-audit로 코드베이스 보안 취약점을 조사해줘",
+      "should_trigger": false,
+      "facets": [
+        "compound"
+      ]
+    }
+  ]
+}
