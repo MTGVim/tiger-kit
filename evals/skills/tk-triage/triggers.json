@@ -5,7 +5,7 @@
     {
       "id": "train-positive",
       "split": "train",
-      "query": "$tk-triage Jira 버그 분류해줘",
+      "query": "$tk-triage `Jira` 버그 분류해줘",
       "should_trigger": true
     },
     {
@@ -44,7 +44,7 @@
     {
       "id": "validation-ko-en",
       "split": "validation",
-      "query": "$tk-triage classify incoming Jira tickets",
+      "query": "$tk-triage `classify` `incoming` `Jira` `tickets`",
       "should_trigger": true,
       "facets": [
         "ko-en"
@@ -80,7 +80,7 @@
     {
       "id": "validation-negative-code",
       "split": "validation",
-      "query": "React 버그를 구현해줘",
+      "query": "`React` 버그를 구현해줘",
       "should_trigger": false,
       "facets": [
         "compound"

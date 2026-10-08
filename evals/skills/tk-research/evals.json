@@ -1638,7 +1638,7 @@
     {
       "id": "research-internal-triage-distillation",
       "path": "success",
-      "prompt": "$tk-research 사내용 개인 triage 스킬을 회사 비밀 없이 다른 프로젝트에도 적용 가능한 템플릿 패턴으로 일반화할지 검토해줘.",
+      "prompt": "$tk-research 사내용 개인 `triage` 스킬을 회사 비밀 없이 다른 프로젝트에도 적용 가능한 템플릿 패턴으로 일반화할지 검토해줘.",
       "expected_output": "공통 알고리즘과 회사별 정책을 분리하고 기본 정책 문자열/기계적 스키마를 구분하며 기존 TigerKit 자산과 비교해 새 스킬 필요성을 제안할 뿐 직접 쓰지 않는다.",
       "assertions": [
         {
@@ -1654,11 +1654,11 @@
       "id": "research-no-skill-when-simple",
       "path": "success",
       "prompt": "$tk-research 한 번만 수행했던 텍스트 복붙을 사내 스킬로 바꿀지 조사해줘.",
-      "expected_output": "반복·독립 가치 근거가 없으면 기존 모델/작업으로 충분하다고 no-op할 수 있다.",
+      "expected_output": "반복·독립 가치 근거가 없으면 기존 모델/작업으로 충분하다고 `no-op`할 수 있다.",
       "assertions": [
         {
           "type": "judge",
-          "criterion": "반복·독립 가치 근거가 없으면 기존 모델/작업으로 충분하다고 no-op할 수 있다."
+          "criterion": "반복·독립 가치 근거가 없으면 기존 모델/작업으로 충분하다고 `no-op`할 수 있다."
         },
         {
           "type": "git_head_unchanged"
