@@ -1,6 +1,0 @@
-interface:
-  short_description: "[user/auto] 선수지식과 목표에 맞춘 여러 챕터의 HTML 학습 과정을 만듭니다."
-  default_prompt: "$tk-study을 사용해 요청한 내용을 학습 자료로 만들어 주세요."
-
-policy:
-  allow_implicit_invocation: true

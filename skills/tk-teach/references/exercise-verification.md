@@ -14,7 +14,7 @@ Improve the wording, assertion, inputs or expected behavior, then rerun both ref
 plausible-wrong-fail. For misconception-specific feedback, verify that the linked misconception
 actually fails the checker; avoid invented feedback categories.
 
-Keep mutant/driver/temporary solutions in `.tigerkit/tmp/tk-study/<run-id>/`, using Artifact Paths.
+Keep mutant/driver/temporary solutions in `.tigerkit/tmp/tk-teach/<run-id>/`, using Artifact Paths.
 Report the actual reference and wrong-variant results and material limits in existing course delivery,
 without adding a durable validation report, ledger or mutation framework.
 When safe execution is unavailable, continue useful course generation and explicitly mark that

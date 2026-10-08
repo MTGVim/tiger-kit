@@ -52,6 +52,10 @@ Modifiers may be combined. Do not implement, write Seeds, publish issues, or cre
    [domain context](references/domain-context.md) when repository-owned context exists. Read only the relevant mapped
    context and surface conflicts with fresher code or runtime evidence instead of silently choosing.
 2. Check the selected categories using [audit-playbook.md](references/audit-playbook.md).
+   For `next` when a tracker matters and its policy/source is unknown,
+   read [repository configuration](references/repository-context.md) and
+   establish user-owned scope by a minimal interview before claiming
+   full duplicate coverage. Ordinary technical audits need no config.
    Read [policy-refactoring.md](references/policy-refactoring.md) only for explicit `policy` scope or when a
    concrete complex business-policy branch is an actual audit candidate; generic architecture audits do not load it.
    Also check empty catches or ignored exceptions, errors converted into unsupported empty/default success, lost error

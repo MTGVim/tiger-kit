@@ -58,14 +58,27 @@ Do not store model mappings, selectors, effort levels, worker routing, fan-out p
 ```json
 {
   "repositories": ["owner/repository"],
-  "toolAuthoredCommentMarkers": ["<!-- review-tool:"]
+  "toolAuthoredCommentMarkers": ["<!-- review-tool:"],
+  "policy": "Focus on review requests and blocked CI; describe project decisions in concise Korean."
 }
 ```
 
 Marker values must be HTML-comment prefixes. They identify only the comment carrying the marker; they do not turn the
 account into a bot. With no marker list, triage falls back to account type and `[bot]` suffix evidence.
 
-If the configuration does not exist, bootstrap it only in execution mode when the current checkout’s origin can be identified safely. `--report` must use the helper's no-bootstrap path and keep the origin-derived repository list in memory; an explicit `--repo owner/name` limits the scope of that run.
+If this configuration is absent, inspect the current checkout's verified origin
+and supplied repository scope first. For a material choice of repositories,
+comment authorship semantics, or action scope, ask a short interview and
+preview the exact settings before approved persistence. The helper's
+execution-mode bootstrap is a low-level mechanism, **not** permission to
+skip a required first-run interview. An unambiguous single-repository
+read-only `--report` may keep origin-derived scope in memory with
+`--no-bootstrap`, without a file or ceremony; for unknown/multiple scope
+ask the user. If a configured repo list is needed for execution, settle it
+before calling the script. Existing `--repo owner/name` always narrows
+the scope of a single run. A user-level optional `policy` string can guide
+the briefing tone or question phrasing but is never consumed by the
+deterministic script or treated as permission to post.
 
 ## Deterministic triage
 

@@ -1,3 +1,27 @@
+## 장기 학습 스킬 전환 (tk-teach)
+
+기존 `tk-study`는 `tk-teach`로 이름을 변경했습니다. 기존 HTML 강의·커리큘럼 생성은 유지하면서, 학습 미션과 실제 답변·오개념을 `learning-records/`에 누적해 다음 수업과 복습에 반영합니다. 자동 숙달 추정이나 글로벌 학습자 DB는 없습니다. 새 기본 과정은 무시된 `.tigerkit/teach/<topic>/`에 저장하며, 이전 `.tigerkit/study/<topic>/`는 신원을 확인한 경우 그 자리에서 이어서 학습할 수 있습니다. 타 장비/팀 공유가 필요하면 명시한 Git 추적 학습 워크스페이스에 승인하여 저장합니다. 기존 자료를 자동 이동·삭제하지 않습니다.
+
+```bash
+npx skills add MTGVim/tiger-kit --global --agent claude-code codex hermes-agent --skill tk-teach --yes
+npx skills list --global
+npx skills remove tk-study --global --agent claude-code codex hermes-agent
+```
+
+## 신규 tk-to-questionnaire, tk-triage, tk-wt
+
+- `tk-to-questionnaire`: `Slack`·`Jira`·이메일·`Markdown` 등 상대 담당자가 답해야 할 질문 초안. 자동 게시·전송 없음. 설정의 `questionnaire.templates`는 채널별 문자열 템플릿입니다.
+- `tk-triage`: 프로젝트별 이슈 분류·중복/우선순위 제안. 설정이 없으면 근거 조사 후 필요한 상태·정책만 인터뷰합니다. 기본 미리보기, 정확한 이슈 변경은 별도 승인.
+- `tk-wt`: Orca CLI를 우선하여 작업별 `worktree` 생성. `--close`는 비-Orca Git `worktree`만 지원하고 브랜치 삭제는 별도 승인. Orca의 종료·`archive`는 Orca에서 합니다.
+
+프로젝트별 공유 정책은 Git 추적형 `tigerkit.config.json`, 개인/로컬 정책은 무시된 `.tigerkit/repository.json`로 선택할 수 있습니다. 스크립트가 소비하는 신원/ID/파일 경로는 기존 정형 타입을 유지하고, 프로젝트 판단은 `policy`, `namingPolicy`, `formatPolicy` 등의 `key: string` 필드로 기술할 수 있습니다. 기존 `orca.yaml`의 `setup`·`archive`·`defaultTabs`·`worktree` 공유 설정은 Orca가 계속 소유합니다. 설정 저장은 외부 권한 승인으로 확대되지 않습니다.
+
+## 문서 최신화 릴리즈 게이트
+
+공개 `SKILL.md`가 변경되면 README도 업데이트하거나 변경된 `evals/changes/*.md`에 `README: no public change`를 명시하고 영향받는 스킬 경로와 이유를 남겨야 합니다. `scripts/check_docs.py` 정적 목록·호출 검사와 `run_seed_release_gate.py`의 기준 버전 비교 기반 최신화 검사를 함께 통과해야 합니다.
+
+---
+
 # TigerKit 마이그레이션
 
 이 문서는 이전 TigerKit 설치를 `Seed-first` 구조로 갱신할 때 필요한 현재 절차만 다룹니다.

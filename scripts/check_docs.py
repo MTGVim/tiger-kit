@@ -103,6 +103,43 @@ def catalog_kind_errors(text: str, kinds: dict[str, str]) -> list[str]:
     return errors
 
 
+def readme_freshness_errors(baseline_root: Path, candidate_root: Path) -> list[str]:
+    """Check README review decisions for skill behavior changes."""
+    def normalized(text: str) -> str:
+        for marker in ("artifact-paths", "output-notation", "questions", "skill-feedback"):
+            start, end = "<!-- tigerkit:" + marker + " -->", "<!-- /tigerkit:" + marker + " -->"
+            if start in text and end in text:
+                text = text[:text.index(start)] + text[text.index(end) + len(end):]
+        return text.strip()
+
+    def skill_bodies(root: Path) -> dict[str, str]:
+        return {
+            p.relative_to(root).as_posix(): normalized(p.read_text(encoding="utf-8"))
+            for p in (root / "skills").glob("tk-*/SKILL.md")
+        }
+
+    before, after = skill_bodies(baseline_root), skill_bodies(candidate_root)
+    changed = {p for p in before.keys() | after.keys() if before.get(p) != after.get(p)}
+    if not changed or (baseline_root / "README.md").read_bytes() != (candidate_root / "README.md").read_bytes():
+        return []
+
+    note_root = candidate_root / "evals/changes"
+    accepted = set()
+    for note in note_root.glob("*.md"):
+        previous = baseline_root / "evals/changes" / note.name
+        if previous.is_file() and previous.read_bytes() == note.read_bytes():
+            continue
+        content = note.read_text(encoding="utf-8")
+        if "README: no public change" in content:
+            accepted.update(path for path in changed if path in content)
+    missing = sorted(changed - accepted)
+    if missing:
+        return ["README.md must be updated, or a new/changed evals/changes/*.md "
+                "must explain 'README: no public change' with each affected path: "
+                + ", ".join(missing)]
+    return []
+
+
 def main() -> int:
     errors = []
     files = subprocess.run(['git', 'ls-files', '--cached', '--others', '--exclude-standard', '-z', '--', '*.md'], cwd=ROOT, capture_output=True, check=True).stdout.decode().split('\0')

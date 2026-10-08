@@ -151,6 +151,7 @@ def main() -> int:
         )
         ledger_errors, _ = base.validate_ledger_eval_coverage(candidate_contracts)
         contract_errors.extend(ledger_errors)
+        contract_errors.extend(base.readme_freshness_errors(baseline_root, candidate_root))
         contract_errors.extend(validate_portable_artifacts(candidate_root))
         contract_errors.extend(validate_artifact_guards(candidate_root))
         contract_errors.extend(validate_runtime_guard(candidate_root))

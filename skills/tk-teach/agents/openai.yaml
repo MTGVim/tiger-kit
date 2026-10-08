@@ -1,0 +1,6 @@
+interface:
+  short_description: "[user/auto] 선수지식과 목표에 맞춘 실제 학습 기록으로 수업을 이어가거나 여러 챕터의 HTML 강의를 만듭니다."
+  default_prompt: "$tk-teach을 사용해 요청한 내용을 학습 자료로 만들어 주세요."
+
+policy:
+  allow_implicit_invocation: true

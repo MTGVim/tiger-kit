@@ -205,7 +205,7 @@ class SyncExecutionProtocolTest(unittest.TestCase):
     def test_visual_grammar_drift_missing_copy_and_canonical_change_fail_check(self) -> None:
         self.assertEqual(self.run_main(), 0)
         canonical = self.clear_target.parent / "visual-grammar.md"
-        consumer = self.root / "skills/tk-study/references/visual-grammar.md"
+        consumer = self.root / "skills/tk-teach/references/visual-grammar.md"
         for mutation in ("consumer", "missing", "canonical"):
             with self.subTest(mutation=mutation):
                 if mutation == "missing":

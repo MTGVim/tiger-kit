@@ -88,6 +88,17 @@ These do not protect behavior:
 - test-only helpers added to the product API;
 - tests that increase adoption counts without checking results or side effects.
 
+When testing a proposed product-code mutation, prove it **landed** before treating the
+test outcome as protection evidence. Capture the target file/content fingerprint or
+relevant diff before and after the mutation command, independently inspect the
+intended changed region, and check the final source state after any formatter or
+rewriter. Command exit 0 is not proof. A no-change/reverted mutation is invalid
+evidence; repeat only with a different demonstrably applicable mutation or mark
+`Unverifiable` / a documented engineering exception. An applied mutation that
+leaves the focused test GREEN shows insufficient protection, never Pass. Restore only
+run-owned mutation edits and verify the original source bytes/working state, without
+touching unrelated changes.
+
 Before completion, imagine these mutations. Protection is incomplete if no test fails
 for any applicable mutation:
 

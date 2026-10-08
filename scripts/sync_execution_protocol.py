@@ -44,8 +44,8 @@ DOMAIN_CONTEXT_TARGETS = (
     ROOT / "skills/tk-review/references/domain-context.md",
 )
 
-HTML_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-study", "tk-research", "tk-qa-sheet", "tk-prototype")
-VISUAL_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-study", "tk-research")
+HTML_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research", "tk-qa-sheet", "tk-prototype")
+VISUAL_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research")
 HTML_ASSETS = ("html-theme.css", "html-theme.js")
 HTML_TEMPLATES = ("skills/tk-research/assets/report.html", "skills/tk-qa-sheet/assets/qa-sheet-template.html")
 FEEDBACK_MARKER = "<!-- tigerkit:skill-feedback -->"

@@ -1,6 +1,6 @@
 import unittest
 
-from check_docs import catalog_kind_errors, table_errors
+from check_docs import catalog_kind_errors, table_errors, readme_freshness_errors
 
 
 class DocumentationTests(unittest.TestCase):
@@ -18,6 +18,28 @@ class DocumentationTests(unittest.TestCase):
         text = '## 스킬 구성\n\n| 스킬 | 호출 | 소유 범위 |\n| --- | --- | --- |\n| `tk-test` | `user` | scope |\n'
         self.assertTrue(catalog_kind_errors(text, {'tk-test':'hybrid'}))
         self.assertFalse(catalog_kind_errors(text, {'tk-test':'user-invoked'}))
+
+class ReadmeFreshnessTests(unittest.TestCase):
+    def test_changed_skill_needs_readme_or_explicit_noop(self):
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp) / 'before'
+            current = Path(tmp) / 'after'
+            for root in (base, current):
+                (root / 'skills/tk-example').mkdir(parents=True)
+                (root / 'evals/changes').mkdir(parents=True)
+                (root / 'README.md').write_text('# Skills\n')
+                (root / 'skills/tk-example/SKILL.md').write_text('---\nname: tk-example\n---\nOld behavior\n')
+            (current / 'skills/tk-example/SKILL.md').write_text('---\nname: tk-example\n---\nNew behavior\n')
+            self.assertTrue(readme_freshness_errors(base, current))
+            (current / 'evals/changes/decision.md').write_text(
+                'README: no public change\nAffected: skills/tk-example/SKILL.md\nReason: internal guidance only.\n'
+            )
+            self.assertEqual(readme_freshness_errors(base, current), [])
+            (current / 'README.md').write_text('# Skills\nPublic change reviewed\n')
+            self.assertEqual(readme_freshness_errors(base, current), [])
+
 
 class NestedCheckoutTests(unittest.TestCase):
     def test_ignore_filters_are_relative_to_checkout_not_ancestors(self):

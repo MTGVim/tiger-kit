@@ -1,7 +1,9 @@
 # Repository work discovery
 
-Use this only for `next`. First read [repository context](repository-context.md) when optional
-configuration exists or a work source is supplied. Default to technical improvement: reproduced
+Use this only for `next`. First read [repository context](repository-context.md) when configuration,
+a work source, or unresolved tracker-backed deduplication changes the actual
+requested result. Missing material tracker decisions call for scoped
+onboarding after facts are checked; do not default to a presumed team source. Default to technical improvement: reproduced
 defects, costly maintenance, missing verification, dependency/security risk, or evidence-backed
 architecture/DX friction. Ground each candidate in current paths/symbols/history and an observable
 payoff. Respect discovery exclusions. Settled ADR trade-offs and generic style preferences are not

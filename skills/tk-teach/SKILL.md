@@ -1,8 +1,8 @@
 ---
-name: tk-study
-description: "[user/auto] 여러 개념을 선수지식에 맞춰 챕터별로 배우는 학습 과정이나 심화 학습 자료를 요청할 때 사용합니다. 접근법 선택을 위한 비교 조사, 짧은 개념 질문, 코드 변경 설명, 스킬 작성에는 사용하지 않습니다."
+name: tk-teach
+description: "[user/auto] 사용자의 목표·실제 학습 기록·오개념을 바탕으로 다음 수업을 선택하며 주제별 장기 학습을 이어갑니다. 처음 학습할 때는 신뢰할 만한 출처에서 조사하고 여러 챕터의 오프라인 HTML 강의도 생성합니다. 짧은 개념 설명이나 제품 구현에는 사용하지 않습니다."
 disable-model-invocation: false
-argument-hint: "<topic and learning goal> [current knowledge] [output path]"
+argument-hint: "[topic or --resume [topic]] [learning goal] [output path]"
 metadata:
   tigerkit:
     kind: hybrid
@@ -10,12 +10,45 @@ metadata:
     relationship: adapted
 ---
 
-# Research to Build a Course
+# Stateful Teaching
 
-Own a personalized course across dependent chapters, not a longer concept explanation.
+Own a topic-bound teaching relationship across sessions: evidence-based lessons, review,
+learner progress and (when requested) a complete course. Do not make a large course
+merely because a short next lesson was requested.
 `tk-explain` owns one focused concept/system explanation, `tk-explain-diff` one concrete change,
 `tk-research` approach selection, and `tk-retro` session learning. Skill implementation belongs to its authorized owner. Do not invoke these or `tk-grill`
 automatically. Honor an explicitly requested short study or format without inflating its scope.
+
+## Restore learning state before planning a lesson
+
+When the learner asks to continue or invokes `--resume`, consult
+[learning state](references/learning-state.md) before a new interview or
+source research. Verify topic, goal, workspace identity and provenance
+against the actual current request. If exactly one identity-matching
+workspace exists, resume it; with multiple choices or unclear ownership,
+ask one question rather than selecting on basename alone. Distinguish
+claimed previous knowledge from demonstrated understanding and unknown
+progress. **Never infer mastery from reading, a lesson being generated, or
+an unverified session summary.**
+
+For an established learning path, read its mission, prior answers,
+misconceptions and previous learning records. Design the next **small,
+meaningful lesson** just beyond demonstrated ability, with retrieval of
+relevant earlier content when justified. Save a new learning record only
+for demonstrated understanding, a corrected misconception, a concrete
+prior-knowledge disclosure or a user-confirmed mission change. A session
+without evidence may update a next-step note but must not advance
+mastery. Preserve learning records across sessions; do not create a
+per-session diary or inferred proficiency score.
+
+The active learner owns whether a course should persist across devices.
+Default private generated artifacts to ignored `.tigerkit/teach/<topic>/`;
+an expressly selected and authorized tracked workspace (e.g.
+`learning/<topic>/`) can be durable across Git clones. Existing
+`.tigerkit/study/<topic>/` is a **readable legacy home** and remains
+there for identity-verified continuation; do not delete, relocate,
+overwrite or reset it automatically. Store future state in the verified
+course home, never in unrelated global memory.
 
 ## Reconnaissance and learner scope
 
@@ -93,9 +126,16 @@ from taught prerequisites and must not leak answers through wording, order, leng
 Give feedback only on actual answers, address the misconception and offer a retry; do not infer
 mastery from passive reading or agreement. An optional glossary supports, not replaces, definitions.
 
+Do not regenerate every chapter and `index.html` on a simple continuation.
+Keep verified earlier lessons and append or revise one focused lesson at a time;
+refresh the index/links only when material content changes. For an explicitly
+requested full course retain the existing multi-chapter generation and HTML,
+exercises, research provenance and rendering checks. Avoid reminders or automatic
+community invitations unless requested.
+
 ## Deliver a reusable course
 
-Default to `.tigerkit/study/<topic>/index.html`, using the [HTML output](references/html-output.md)
+Default to `.tigerkit/teach/<topic>/index.html` for newly created courses, using the [HTML output](references/html-output.md)
 contract. Keep `curriculum.md`, `sources.md`, `chapters/`, any learner profile and renderer `assets/`
 inside that topic-run directory. For a new run colliding with an existing directory, choose a
 numeric suffix for the whole run; reuse only an explicitly continued, identity-verified run.
@@ -103,8 +143,8 @@ When taught material has clear recurring lookup value, read
 [revisit references](references/reference-artifacts.md) and selectively create `reference/`
 inside the same run. Keep lesson and lookup purposes distinct; no reference quota applies.
 Honor explicit Markdown (default `lesson.md` when no filename is given) or custom final destination;
-TigerKit-owned intermediates and state still stay inside `.tigerkit/study/<topic>/`. An explicit
-existing final file needs overwrite authorization. Transient work uses `.tigerkit/tmp/tk-study/<run-id>/`.
+TigerKit-owned intermediate and learning-state files stay in the current identity-verified learning workspace (new `.tigerkit/teach/<topic>/`, explicit authorized path or continued legacy `.tigerkit/study/<topic>/`). An explicit
+existing final file needs overwrite authorization. Transient work uses `.tigerkit/tmp/tk-teach/<run-id>/`.
 
 Verify prerequisite order, outcome coverage, claim support, examples, chapter navigation and
 question/answer separation. For executable coding exercises, read [exercise verification](references/exercise-verification.md)
@@ -114,8 +154,9 @@ plausible-wrong-fail. Conceptual and open-ended questions keep the lightweight c
 chapter content, retrieval/transfer practice, a recorded course mission and a profile when interviewed; it never certifies
 learner mastery. Return a concise final artifact link and material verification limitations.
 Do not launch the user's browser, run exercises in production, install tools, commit or publish.
-Only add continuation state when needed; record actual answers, misconceptions and agreed next
-steps in the same topic-run directory. Preserve unrelated existing files.
+For a genuinely resumed learning session, read and maintain only necessary evidence-backed
+learning records, observed answers, misconceptions and one next-step pointer in the
+same verified workspace. A generated course without user responses does not prove learning. Preserve unrelated existing files.
 
 For maintenance provenance, see [distillation](references/distillation.md).
 
