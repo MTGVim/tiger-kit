@@ -101,7 +101,9 @@ effective per-directory, local-exclude, or user-level-exclude decision. Read the
 input branch in [artifact paths](references/artifact-paths.md) before creation or consumption.
 Create `.tigerkit/secret-input/tk-wizard-<run-id>/input.json` with directory mode `0700`
 and file mode `0600`, seeded with a plain JSON object such as `{"token": ""}` or the exact
-required credential fields. Show both paths, the secret-free template, and fields to fill
+required credential fields. Before waiting for input, verify the exact file still exists
+at the reported path, then visibly show both the repository-relative and absolute paths
+as well as the secret-free template and fields to fill
 and save. A clipboard command must JSON-serialize into the named field, preserve other
 fields and expose no value in arguments or shell history.
 Do not launch an editor, file opener, GUI, terminal UI, or focus-changing
@@ -117,6 +119,10 @@ without returning content or parser excerpts. Blank, missing or partly saved val
 `0600`, validate and consume the same snapshot, then continue the exact pending step without
 a completion message. Remove the secret input and its run directory immediately after use
 on success, failure or exception, and verify no residue.
+Never return a user-input `Pending` state unless both actual paths have appeared in the
+user-visible answer; absence of an actual created file is `Blocked | Unverifiable`,
+not an instruction to guess a path. If a parent verifier has already created and shown
+its run-owned input file, reuse its path and do not silently create a second wizard file.
 Renew an expired wait window while the task remains active. Only when the runtime can no
 longer wait, preserve the run-owned input path and explain how to resume monitoring.
 
