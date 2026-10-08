@@ -248,6 +248,26 @@ def prepare_input(repo: str, run_id: str) -> dict:
 
 def execute(args: argparse.Namespace) -> int:
     home = location(args.repo, args.authority, args.environment, args.role, args.profile)
+    if args.action == "await-input":
+        end = time.monotonic() + args.seconds
+        while time.monotonic() < end:
+            with locked(home):
+                pending = _read(home / "pending.json")
+                if pending.get("claim_id") != args.claim_id or parse_time(pending["lease_until"]) <= now():
+                    raise UnsafeAuth("Refresh claim expired or replaced")
+                try:
+                    _secret_input(args.input, args.repo)
+                except json.JSONDecodeError:
+                    pass  # A partially saved JSON file is still pending.
+                except UnsafeAuth as exc:
+                    if str(exc) != "Input token is absent or invalid":
+                        raise  # Permissions and ownership failures must never be masked.
+                else:
+                    _result(status="ready")
+                    return 0
+            time.sleep(min(POLL_SECONDS, max(0, end - time.monotonic())))
+        _result(status="pending")
+        return 2
     if args.action == "wait":
         end = time.monotonic() + args.seconds
         while time.monotonic() < end:
@@ -315,7 +335,7 @@ def execute(args: argparse.Namespace) -> int:
 
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("action", choices=("inspect", "claim", "prepare-input", "renew", "commit", "release", "wait", "invalidate"))
+    p.add_argument("action", choices=("inspect", "claim", "prepare-input", "await-input", "renew", "commit", "release", "wait", "invalidate"))
     p.add_argument("--repo", default=".")
     p.add_argument("--authority", required=True, help="Exact trusted auth origin, not a development-server port")
     p.add_argument("--environment", required=True)
@@ -329,15 +349,15 @@ def main() -> int:
     p.add_argument("--since", default="")
     p.add_argument("--seconds", type=int, default=60)
     args = p.parse_args()
-    if args.action in ("prepare-input", "renew", "commit", "release") and not args.claim_id:
+    if args.action in ("prepare-input", "await-input", "renew", "commit", "release") and not args.claim_id:
         p.error("--claim-id is required")
     if args.action == "prepare-input" and not args.run_id:
         p.error("--run-id is required")
-    if args.action == "commit" and not args.input:
+    if args.action in ("commit", "await-input") and not args.input:
         p.error("--input is required")
     if args.action == "invalidate" and not args.revision:
         p.error("--revision is required")
-    if args.action == "wait" and not 0 < args.seconds <= 180:
+    if args.action in ("wait", "await-input") and not 0 < args.seconds <= 180:
         p.error("--seconds must be within 1..180")
     try:
         return execute(args)
