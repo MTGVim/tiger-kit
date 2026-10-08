@@ -114,7 +114,12 @@ exact paused verification and how to fill and save `{"token": ""}`.
 Never enter `Pending` or start polling without showing both paths from a successful
 `prepare-input` result. Failure to create/read back the path is `Blocked | Unverifiable`,
 not a guessed example path. The seeded blank file is `Pending`, never `Ready`.
-Use the existing bounded metadata-change polling, validate the same private file snapshot,
+Run `await-input --claim-id <id> --input <absolute-input-json> --seconds <1..180>`
+with the same scope arguments for bounded, no-output-of-secrets readiness polling.
+The helper returns only `ready | pending | blocked`. A partial JSON save or empty token remains
+`pending`; a permission, ownership or symlink failure blocks immediately. If the active host
+permits another bounded wait, renew the owned claim and continue without asking the user for
+a completion message. Privately validate and consume the latest safe input snapshot,
 inject into the actual target and verify authenticated state; only then invoke
 `commit --claim-id <id> --input <absolute-input-json>` to atomically store the shared token.
 Pass an `--expires-at` only when verified from the application's contract. Immediately delete
