@@ -142,10 +142,15 @@ class SharedBrowserAuthTests(unittest.TestCase):
         stored = self.call("commit", extras=("--claim-id", claim["claim_id"], "--input", str(self.input())))
         self.assertEqual(stored["status"], "stored")
         args = self.args
-        self.args = ("--authority", "https://auth.example.invalid", "--environment", "production",
+        self.args = ("--authority", "https://auth.example.invalid", "--environment", "staging",
                      "--role", "admin", "--profile", "tester")
         self.assertEqual(self.call("inspect")["status"], "missing")
         self.args = args
+
+    def test_production_cache_explicitly_blocked(self):
+        self.args = ("--authority", "https://auth.example.invalid", "--environment", "production",
+                     "--role", "admin", "--profile", "tester")
+        self.assertEqual(self.call("inspect", code=3)["status"], "blocked")
 
     def test_untrusted_origin_is_blocked(self):
         self.args = ("--authority", "http://not-local.invalid", "--environment", "dev",
