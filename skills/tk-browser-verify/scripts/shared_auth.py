@@ -17,6 +17,7 @@ except ImportError:  # Never silently fall back to an unverified Windows ACL bac
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import secrets
 import stat
@@ -203,6 +204,48 @@ def _secret_input(path_text: str, repo: str) -> str:
     return data["token"]
 
 
+
+def prepare_input(repo: str, run_id: str) -> dict:
+    """Create/reuse a private input file; return only actual paths and blank template."""
+    if not re.fullmatch(r"[a-zA-Z0-9_-]{1,64}", run_id):
+        raise UnsafeAuth("Invalid run identifier")
+    root = Path(repo).resolve(strict=True)
+    top = subprocess.run(["git", "-C", str(root), "rev-parse", "--show-toplevel"],
+                         check=True, capture_output=True, text=True).stdout.strip()
+    if root != Path(top).resolve():
+        raise UnsafeAuth("--repo must be the actual worktree root")
+    tracked = subprocess.run(["git", "-C", str(root), "ls-files", "--",
+                              ".tigerkit", ".tigerkit/"], check=True,
+                             capture_output=True, text=True).stdout
+    ignored = subprocess.run(["git", "-C", str(root), "check-ignore", "-q", "--",
+                              ".tigerkit/"], check=False).returncode
+    if tracked or ignored != 0:
+        raise UnsafeAuth("Ignored and untracked .tigerkit/ must be established first")
+    base = root / ".tigerkit"
+    if base.is_symlink():
+        raise UnsafeAuth("Symlinked artifact root")
+    if not base.exists():
+        base.mkdir(mode=0o700)
+    if not base.is_dir():
+        raise UnsafeAuth("Artifact root is not a directory")
+    secret = base / "secret-input"
+    _private_dir(secret)
+    folder = secret / ("tk-browser-verify-" + run_id)
+    _private_dir(folder)
+    path = folder / "input.json"
+    if path.exists() or path.is_symlink():
+        _private_file(path)
+    else:
+        _write(path, {"token": ""})
+    return {
+        "status": "input-pending",
+        "relative_path": str(path.relative_to(root)),
+        "absolute_path": str(path),
+        "template": {"token": ""},
+        "fields": ["token"],
+    }
+
+
 def execute(args: argparse.Namespace) -> int:
     home = location(args.repo, args.authority, args.environment, args.role, args.profile)
     if args.action == "wait":
@@ -227,6 +270,11 @@ def execute(args: argparse.Namespace) -> int:
                 claim_id = secrets.token_hex(16)
                 _write(home / "pending.json", {"version": VERSION, "claim_id": claim_id, "lease_until": iso(now() + timedelta(seconds=LEASE_SECONDS))})
                 _result(status="claimed", claim_id=claim_id, lease_seconds=LEASE_SECONDS)
+        elif args.action == "prepare-input":
+            pending = _read(home / "pending.json")
+            if pending.get("claim_id") != args.claim_id or parse_time(pending["lease_until"]) <= now():
+                raise UnsafeAuth("Refresh claim is no longer owned by this run")
+            _result(**prepare_input(args.repo, args.run_id))
         elif args.action == "renew":
             pending = _read(home / "pending.json")
             if pending.get("claim_id") != args.claim_id or parse_time(pending["lease_until"]) <= now():
@@ -267,21 +315,24 @@ def execute(args: argparse.Namespace) -> int:
 
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("action", choices=("inspect", "claim", "renew", "commit", "release", "wait", "invalidate"))
+    p.add_argument("action", choices=("inspect", "claim", "prepare-input", "renew", "commit", "release", "wait", "invalidate"))
     p.add_argument("--repo", default=".")
     p.add_argument("--authority", required=True, help="Exact trusted auth origin, not a development-server port")
     p.add_argument("--environment", required=True)
     p.add_argument("--role", required=True)
     p.add_argument("--profile", required=True, help="Non-secret account/profile label")
     p.add_argument("--claim-id")
+    p.add_argument("--run-id")
     p.add_argument("--input")
     p.add_argument("--expires-at", help="UTC RFC3339 expiry from a verified source, otherwise omit")
     p.add_argument("--revision")
     p.add_argument("--since", default="")
     p.add_argument("--seconds", type=int, default=60)
     args = p.parse_args()
-    if args.action in ("renew", "commit", "release") and not args.claim_id:
+    if args.action in ("prepare-input", "renew", "commit", "release") and not args.claim_id:
         p.error("--claim-id is required")
+    if args.action == "prepare-input" and not args.run_id:
+        p.error("--run-id is required")
     if args.action == "commit" and not args.input:
         p.error("--input is required")
     if args.action == "invalidate" and not args.revision:
