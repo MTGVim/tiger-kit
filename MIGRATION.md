@@ -8,13 +8,13 @@ npx skills list --global
 npx skills remove tk-study --global --agent claude-code codex hermes-agent
 ```
 
-## 신규 tk-to-questionnaire, tk-triage, tk-wt
+## 질문 초안 (`tk-to-questionnaire`)
 
-- `tk-to-questionnaire`: `Slack`·`Jira`·이메일·`Markdown` 등 상대 담당자가 답해야 할 질문 초안. 자동 게시·전송 없음. 설정의 `questionnaire.templates`는 채널별 문자열 템플릿입니다.
-- `tk-triage`: 프로젝트별 이슈 분류·중복/우선순위 제안. 설정이 없으면 근거 조사 후 필요한 상태·정책만 인터뷰합니다. 기본 미리보기, 정확한 이슈 변경은 별도 승인.
-- `tk-wt`: Orca CLI를 우선하여 작업별 `worktree` 생성. `--close`는 비-Orca Git `worktree`만 지원하고 브랜치 삭제는 별도 승인. Orca의 종료·`archive`는 Orca에서 합니다.
+`Slack`·`Jira`·이메일 등 다른 담당자에게 보낼 질문 초안을 만듭니다. 게시나 전송은 수행하지 않습니다. 선택적인 `questionnaire.templates`에 채널별 문자열 템플릿을 저장할 수 있습니다.
 
-프로젝트별 공유 정책은 Git 추적형 `tigerkit.config.json`, 개인/로컬 정책은 무시된 `.tigerkit/repository.json`로 선택할 수 있습니다. 스크립트가 소비하는 신원/ID/파일 경로는 기존 정형 타입을 유지하고, 프로젝트 판단은 `policy`, `namingPolicy`, `formatPolicy` 등의 `key: string` 필드로 기술할 수 있습니다. 기존 `orca.yaml`의 `setup`·`archive`·`defaultTabs`·`worktree` 공유 설정은 Orca가 계속 소유합니다. 설정 저장은 외부 권한 승인으로 확대되지 않습니다.
+프로젝트 공유 정책은 `tigerkit.config.json`, 개인 정책은 무시된 `.tigerkit/repository.json`에 둡니다. 스크립트가 소비하는 ID와 경로는 정형 타입을 유지하고, 모델이 판단하는 정책은 `key: string`으로 작성합니다. 설정 저장은 원격 변경 권한이 아닙니다.
+
+격리 체크아웃은 기존 `tk-prep` 절차를 사용합니다. `Orca` 작업 공간은 `Orca`가 계속 관리하며, 여러 PR의 분류와 사용자 단위 `pr-triage.json` 설정은 `tk-pr-sweep`이 유지합니다. 기존 설정에 남은 이슈 분류·워크트리 예시는 자동 실행하거나 다른 설정으로 옮기지 않습니다.
 
 ## 문서 최신화 릴리즈 게이트
 

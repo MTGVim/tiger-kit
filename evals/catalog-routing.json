@@ -930,38 +930,6 @@
       "focus_skill": "tk-to-questionnaire",
       "expected_selected_skill": "tk-grill",
       "critical": true
-    },
-    {
-      "id": "triage-issues-vs-pr-sweep",
-      "boundary": "project issue intake vs PR review batch",
-      "prompt": "$tk-triage 설정된 프로젝트 이슈의 분류·중복·우선순위 초안을 만들어줘.",
-      "focus_skill": "tk-triage",
-      "expected_selected_skill": "tk-triage",
-      "critical": true
-    },
-    {
-      "id": "pr-sweep-vs-triage",
-      "boundary": "PR batch review vs general issue intake",
-      "prompt": "$tk-pr-sweep --report 열린 PR들의 리뷰와 CI 상태를 정리해줘.",
-      "focus_skill": "tk-triage",
-      "expected_selected_skill": "tk-pr-sweep",
-      "critical": true
-    },
-    {
-      "id": "wt-create-orca",
-      "boundary": "task worktree creation vs product implementation",
-      "prompt": "$tk-wt 현재 작업용 Orca worktree를 생성해줘.",
-      "focus_skill": "tk-wt",
-      "expected_selected_skill": "tk-wt",
-      "critical": true
-    },
-    {
-      "id": "wt-close-git-only",
-      "boundary": "Git-owned worktree cleanup vs Orca-owned workspace",
-      "prompt": "$tk-wt --close Orca 미사용 Git worktree의 완료한 작업공간을 정리해줘.",
-      "focus_skill": "tk-wt",
-      "expected_selected_skill": "tk-wt",
-      "critical": true
     }
   ]
 }

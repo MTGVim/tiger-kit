@@ -128,8 +128,6 @@ Ready `Seed`는 `fresh` `lower-capability` `executor`가 원 대화 없이 다�
 - `tk-pr-rebase`: `exact` `rebase` + `force-with-lease`.
 - `tk-pr-sweep`: `deterministic` `multi-PR` `triage`와 승인된 `child` `maintenance`.
 - `tk-to-questionnaire`: 외부 담당자에게 보낼 질문 초안 작성만 담당하며 게시·전송 권한 없음.
-- `tk-triage`: 프로젝트 이슈 분류·중복·처리 제안 및 설정 인터뷰. 기본 읽기 전용이며 원격 적용은 정확한 승인 필요.
-- `tk-wt`: Orca 우선 작업 공간 생성. `--close`는 비-Orca Git에만 적용하며 브랜치 보존 기본.
 - `tk-teach`: 미션·실제 학습 기록에 따라 다음 수업을 선택하고 검증된 자료를 유지하며, 과거 tk-study 과정은 보존.
 - `tk-retro`: 세션 회고, 관찰된 Agent Skill 사고 진단과 재발 방지 제안 전용. 실제 수정은 별도 구현 담당자가 맡습니다.
 - `tk-adhd`: 현재 답변·결과의 출력 구조 정리. 실행과 지속 상태의 담당자는 아닙니다.

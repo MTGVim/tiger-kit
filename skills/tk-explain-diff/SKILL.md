@@ -70,6 +70,13 @@ When a before/change/after structure, state, data or event relationship benefits
 figure, read [visual grammar](references/visual-grammar.md); retain component correspondence
 across topology views and expose the change ledger rather than independently rearranging them.
 
+For a change-centered dependency graph, start from verified changed nodes and include only the
+unchanged callers, dependencies or downstream consumers needed to explain material impact.
+Distinguish changed, related unchanged, removed and moved elements without implying that every
+visible neighbor changed. When deletion or movement rewires relationships, use separate base/head
+views when an overlay would obscure which edge belongs to which version. Prefer this bounded
+neighborhood over a whole-repository dependency map.
+
 ## Deliver
 
 Default to one self-contained offline HTML artifact at `.tigerkit/explanations/<target-slug>.html`.

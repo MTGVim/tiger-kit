@@ -18,8 +18,6 @@ RUNTIME_GUARD_CONSUMERS = (
     "tk-review",
     "tk-retro",
     "tk-research",
-    "tk-triage",
-    "tk-wt",
 )
 RUNTIME_GUARD_MARKER = "<!-- tigerkit:retrieved-evidence-boundary -->"
 RUNTIME_GUARD_BLOCK = """<!-- tigerkit:retrieved-evidence-boundary -->
@@ -46,8 +44,6 @@ APPROVAL_GUARD_CONSUMERS = (
     "tk-handoff",
     "tk-prototype",
     "tk-research",
-    "tk-triage",
-    "tk-wt",
 )
 APPROVAL_GUARD_MARKER = "<!-- tigerkit:approval-continuity -->"
 APPROVAL_GUARD_BLOCK = """<!-- tigerkit:approval-continuity -->

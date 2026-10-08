@@ -940,9 +940,13 @@ cognitive-debt 장부나 merge/edit 강제는 `tk-explain-diff`의 단일 변경
 
 ## 2026-10-08: `Pocock` 참고 신규 스킬·`tk-teach` 전환 (#435)
 
-- `tk-triage`: `Matt Pocock` `skills/engineering/triage/SKILL.md` (MIT)의 이슈 증거 우선과 수동 의사결정 철학을 **`keep`**; 프로젝트별 자유 형식 문자열 정책·최초 설정 인터뷰·기본 제안 전용를 **`adapt`**; 고정 라벨·자동 댓글 게시 및 별도 런타임을 **`omit`**.
 - `tk-to-questionnaire`: `Matt Pocock` `skills/productivity/to-questionnaire/SKILL.md` (MIT)의 사용자에게 질문 내용이 아닌 발송 목적·수신자를 묻는 인터뷰를 **`keep`**; `Slack`/`Jira`/이메일/`Markdown`용 문자열 템플릿을 **`adapt`**; 항상 파일 생성, 자동 전송을 **`omit`**.
 - `tk-teach`: `Matt Pocock` `skills/productivity/teach/SKILL.md`, `MISSION-FORMAT.md`, `LEARNING-RECORD-FORMAT.md` (MIT)의 실제 학습 기록 기반 맞춤 진도를 **`keep`**; 기존 TigerKit 오프라인 HTML 코스·출처·검증과 주제별 영속 학습 공간 지원으로 **`adapt`**; 루트 workspace 프레임워크, 학습 진도 추측·자동 알림을 **`omit`**. 기존 `tk-study` 코드·증류 이력은 Git 역사에서 확인할 수 있습니다.
-- `tk-wt`: Orca `docs/site/content/docs/cli/reference.mdx`와 `docs/site/content/docs/model/orca-yaml.mdx`를 기능의 근거로 참고했습니다. Orca 코드를 복제하지 않으며 CLI가 제공하지 않는 브랜치명 오버라이드·조건부 이벤트 콜백은 지원되는 것으로 간주하지 않습니다. 비-Orca 종료의 안전 경계는 TigerKit 고유 설계입니다.
 
 외부 소스 실행 검증과 각 새 스킬의 에이전트 행동 평가는 별도 실제 호스트 실행이 필요한 미검증 영역입니다. 각 설치 패키지의 MIT 원저작자 고지는 `LICENSE.txt`에 보존됩니다.
+
+## 2026-10-08: README 탐색 구조
+
+`mattpocock/skills@f3fc5632f401156837ee3872f14fe33ccf1024ea`의 `README.md`를 확인했습니다.
+짧은 목적 설명·설치 안내·주제별 스킬 링크와 호출 구분을 참고하되 TigerKit의 실제 28개 스킬과
+승인 경계를 직접 설명합니다. 상류의 필수 초기 설정, 플러그인 설치, 홍보 문구는 가져오지 않습니다.

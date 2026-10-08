@@ -1,4 +1,5 @@
 """Exercise shared-contract validation with installed-package mutations."""
+import re
 import shutil
 import subprocess
 import sys
@@ -47,7 +48,10 @@ class HTMLPolicyTest(unittest.TestCase):
         self.assertNotIn('flex-wrap: wrap', qa)
         self.assertIn('grid-template-columns:repeat(2,minmax(0,1fr))', report)
         self.assertIn('header > * { min-width: 0; max-width: 100%; }', qa)
-        self.assertIn('.environment { white-space: normal; overflow-wrap: anywhere; }', qa)
+        environment = re.search(r'\.environment\s*\{([^}]*)\}', qa)
+        self.assertIsNotNone(environment)
+        self.assertRegex(environment.group(1), r'white-space\s*:\s*normal\s*;')
+        self.assertRegex(environment.group(1), r'overflow-wrap\s*:\s*anywhere\s*;')
         self.assertIn('grid-template-areas: "title environment environment environment" "progress filter theme reset"', qa)
         self.assertIn('min-width: min(14rem, 100%)', qa)
         self.assertIn('class="only-open-filter"', qa)

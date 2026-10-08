@@ -12,7 +12,9 @@
     "tk-mwhat",
     "tk-learn",
     "tk-skill-diagnose",
-    "tk-study"
+    "tk-study",
+    "tk-triage",
+    "tk-wt"
   ],
   "retired_catalog_cases": [
     "adhd-explicit",
@@ -32,7 +34,11 @@
     "study-vs-explain",
     "study-vs-retro",
     "study-course-vs-explain",
-    "explain-focused-vs-study"
+    "explain-focused-vs-study",
+    "triage-issues-vs-pr-sweep",
+    "pr-sweep-vs-triage",
+    "wt-create-orca",
+    "wt-close-git-only"
   ],
   "behavior_cases": [
     "tk-app-verify:behavior:app-cua-refuses-foreground-escalation",
@@ -631,18 +637,6 @@
     "tk-teach:behavior:teach-explicit-tracked-workspace",
     "tk-teach:behavior:teach-next-lesson-not-full-regenerate",
     "tk-teach:behavior:teach-no-evidence-record",
-    "tk-triage:behavior:triage-configured-preview",
-    "tk-triage:behavior:triage-unconfigured-interview",
-    "tk-triage:behavior:triage-no-autolabel",
-    "tk-triage:behavior:triage-injection",
-    "tk-triage:behavior:triage-unknown-dedupe",
-    "tk-triage:behavior:triage-config-not-issue-approval",
-    "tk-wt:behavior:wt-orca-first",
-    "tk-wt:behavior:wt-orca-close-refused",
-    "tk-wt:behavior:wt-git-clean-close-retains-branch",
-    "tk-wt:behavior:wt-git-dirty-close-blocks",
-    "tk-wt:behavior:wt-orca-branch-override-unsupported",
-    "tk-wt:behavior:wt-config-string-not-executable",
     "tk-to-questionnaire:behavior:jira-formats-copy-draft",
     "tk-to-questionnaire:behavior:slack-template-style",
     "tk-to-questionnaire:behavior:template-prompt-injection",
@@ -712,10 +706,6 @@
     "catalog:behavior:review-vs-retro",
     "catalog:behavior:teach-resume-learning-records",
     "catalog:behavior:questionnaire-other-stakeholder",
-    "catalog:behavior:grill-vs-questionnaire",
-    "catalog:behavior:triage-issues-vs-pr-sweep",
-    "catalog:behavior:pr-sweep-vs-triage",
-    "catalog:behavior:wt-create-orca",
-    "catalog:behavior:wt-close-git-only"
+    "catalog:behavior:grill-vs-questionnaire"
   ]
 }

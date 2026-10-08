@@ -6,9 +6,13 @@ import re
 import subprocess
 from pathlib import Path
 
-import audit_catalog
-import validate_skills
-from artifact_policy import validate_artifact_guards
+if __package__:
+    from . import audit_catalog, validate_skills
+    from .artifact_policy import validate_artifact_guards
+else:
+    import audit_catalog
+    import validate_skills
+    from artifact_policy import validate_artifact_guards
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -91,15 +95,23 @@ def catalog_kind_errors(text: str, kinds: dict[str, str]) -> list[str]:
             inside = True
         elif inside and line.startswith('## '):
             break
-        elif inside and line.startswith('|'):
+        elif inside and '|' in line:
             cells = table_cells(line)
             if len(cells) < 2:
                 continue
-            name = cells[0].strip('`')
+            if cells == ['스킬', '호출', '소유 범위'] or all(re.fullmatch(r':?-{3,}:?', c) for c in cells):
+                continue
+            match = audit_catalog.README_SKILL_ROW.match(line)
+            if not match:
+                errors.append(f'README.md:{number}: unrecognized catalog skill cell: {cells[0]}')
+                continue
+            name = match.group('linked') or match.group('plain')
             if name in kinds:
                 expected = 'user' if kinds[name] == 'user-invoked' else kinds[name]
                 if cells[1].strip('`') != expected:
                     errors.append(f'README.md:{number}: {name} invocation must be {expected}')
+                if match.group('target') != f'skills/{name}/SKILL.md':
+                    errors.append(f'README.md:{number}: {name} link must point to its owning SKILL.md')
     return errors
 
 

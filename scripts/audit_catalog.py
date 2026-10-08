@@ -7,10 +7,16 @@ import json
 import re
 from pathlib import Path
 
-import validate_skills
+if __package__:
+    from . import validate_skills
+else:
+    import validate_skills
 
 ROOT = Path(__file__).resolve().parents[1]
-README_SKILL_ROW = re.compile(r"^\|\s*`(tk-[a-z0-9-]+)`\s*\|")
+README_SKILL_ROW = re.compile(
+    r"^\|?\s*(?:\[`?(?P<linked>tk-[a-z0-9-]+)`?\]\((?P<target>[^)]+)\)"
+    r"|`(?P<plain>tk-[a-z0-9-]+)`)\s*\|"
+)
 
 
 def positive_trigger_count(eval_dir: Path) -> int:
@@ -79,22 +85,25 @@ def readme_skill_rows(root: Path = ROOT) -> list[str]:
             break
         if not inside:
             continue
+        if stripped.startswith("### "):
+            table = separator = False
+            continue
         if not table:
-            if stripped.startswith("| 스킬 |"):
+            if re.match(r"^\|?\s*스킬\s*\|", stripped):
                 table = True
             continue
         if not separator:
-            if re.match(r"^\|\s*:?-{3,}", stripped):
+            if re.match(r"^\|?\s*:?-{3,}", stripped):
                 separator = True
             elif stripped:
                 table = False
             continue
-        if not stripped:
-            break
-        if stripped and not stripped.startswith("|"):
-            break
+        if not stripped or '|' not in stripped:
+            # A new topic starts another catalog table. Other tables are not catalog rows.
+            table = separator = False
+            continue
         if match := README_SKILL_ROW.match(stripped):
-            result.append(match.group(1))
+            result.append(match.group("linked") or match.group("plain"))
     return result
 
 

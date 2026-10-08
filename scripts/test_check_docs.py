@@ -15,9 +15,39 @@ class DocumentationTests(unittest.TestCase):
         self.assertFalse(table_errors('<!--\n| a | b |\n| --- | --- |\n| one |\n-->\n'))
 
     def test_invocation_drift_is_rejected(self):
-        text = '## 스킬 구성\n\n| 스킬 | 호출 | 소유 범위 |\n| --- | --- | --- |\n| `tk-test` | `user` | scope |\n'
+        text = '## 스킬 구성\n\n| 스킬 | 호출 | 소유 범위 |\n| --- | --- | --- |\n| [tk-test](skills/tk-test/SKILL.md) | `user` | scope |\n'
         self.assertTrue(catalog_kind_errors(text, {'tk-test':'hybrid'}))
         self.assertFalse(catalog_kind_errors(text, {'tk-test':'user-invoked'}))
+
+    def test_linked_catalog_checks_kind_and_exact_owner(self):
+        text = ('## 스킬 구성\n\n### 개발\n\n'
+                '| 스킬 | 호출 | 소유 범위 |\n| --- | --- | --- |\n'
+                '| [tk-test](skills/tk-other/SKILL.md) | `user` | scope |\n')
+        self.assertEqual(len(catalog_kind_errors(text, {'tk-test': 'hybrid'})), 2)
+        fixed = text.replace('tk-other/SKILL.md', 'tk-test/SKILL.md').replace('`user`', '`hybrid`')
+        self.assertFalse(catalog_kind_errors(fixed, {'tk-test': 'hybrid'}))
+
+    def test_catalog_cannot_silently_drop_its_direct_link(self):
+        text = ('## 스킬 구성\n\n| 스킬 | 호출 | 소유 범위 |\n| --- | --- | --- |\n'
+                '| `tk-test` | `user` | scope |\n')
+        self.assertTrue(catalog_kind_errors(text, {'tk-test': 'user-invoked'}))
+
+    def test_unrecognized_catalog_cells_are_rejected(self):
+        text = ('## 스킬 구성\n\n| 스킬 | 호출 | 소유 범위 |\n| --- | --- | --- |\n'
+                '| [tk-test](skills/tk-test/SKILL.md) | `user` | scope |\n')
+        for cell in ('tk-old', '**tk-old**', 'tk-test'):
+            with self.subTest(cell=cell):
+                self.assertTrue(catalog_kind_errors(text + f'| {cell} | user | stale |\n',
+                                                   {'tk-test': 'user-invoked'}))
+
+    def test_catalog_checks_gfm_rows_without_a_leading_pipe(self):
+        text = ('## 스킬 구성\n\n스킬 | 호출 | 소유 범위\n--- | --- | ---\n'
+                '[tk-test](skills/tk-test/SKILL.md) | `user` | scope\n')
+        self.assertFalse(catalog_kind_errors(text, {'tk-test': 'user-invoked'}))
+        for row in ('tk-old | user | stale', '**tk-old** | user | stale',
+                    '[tk-test](skills/tk-test/SKILL.md) | hybrid | wrong kind'):
+            with self.subTest(row=row):
+                self.assertTrue(catalog_kind_errors(text + row + '\n', {'tk-test': 'user-invoked'}))
 
 class ReadmeFreshnessTests(unittest.TestCase):
     def test_changed_skill_needs_readme_or_explicit_noop(self):

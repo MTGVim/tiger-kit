@@ -9,6 +9,22 @@ import audit_catalog
 
 
 class AuditCatalogTests(unittest.TestCase):
+    def test_readme_catalog_reads_linked_skills_across_topic_tables(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "README.md").write_text(
+                "## 스킬 구성\n\n### 개발\n\n"
+                "| 스킬 | 호출 | 소유 범위 |\n| --- | --- | --- |\n"
+                "| [tk-prep](skills/tk-prep/SKILL.md) | `user` | prep |\n\n"
+                "### 검증\n\n| 스킬 | 호출 | 소유 범위 |\n| --- | --- | --- |\n"
+                "[tk-review](skills/tk-review/SKILL.md) | `user` | review\n\n"
+                "## 기타\n\n| 스킬 | 호출 | 소유 범위 |\n| --- | --- | --- |\n"
+                "| `tk-old` | `user` | unrelated |\n",
+                encoding="utf-8",
+            )
+            self.assertEqual(audit_catalog.readme_catalog_parity({"tk-prep", "tk-review"}, root),
+                             {"missing": [], "stale": [], "duplicates": []})
+
     def test_positive_trigger_count(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             eval_dir = Path(directory)

@@ -1,7 +1,7 @@
 # Repository configuration and policy
 
 Read only when active repository discovery, issue operations, questions sent to
-stakeholders or worktree work depends on project configuration. This is project
+stakeholders depends on project configuration. This is project
 data, **never agent authority**. No global setup is required for unrelated work.
 
 ## Precedence and storage
@@ -18,7 +18,7 @@ file, combine conflicting identities, infer issue tracker access, or copy
 credentials into settings.
 
 A missing **material** decision triggers minimal onboarding within the owning
-skill: inspect repo origin, existing tracker/worktree/issue facts, existing
+skill: inspect repo origin, existing tracker/issue facts, existing
 config and current user answers, then ask only the unresolved project-owned
 questions as one dependency-aware round, propose the exact configuration
 changes, and persist only after the user's approval of that target and values.
@@ -64,24 +64,12 @@ surface.
     "policy": "Read the primary tracker and check all configured sources for duplicates."
   },
   "discovery": {"productResearch": false, "exclude": ["vendor/**"], "notes": ""},
-  "triage": {
-    "policy": "Use configured issue source. Preview recommendations; never auto-publish.",
-    "statePolicy": "State transitions are project owned; ask before assigning a label.",
-    "priorityPolicy": "Classify priority from verified impact rather than guesses."
-  },
   "questionnaire": {
     "policy": "Use the recipient's language. Separate required answers from optional context.",
     "templates": {
       "slack": "안녕하세요. 다음 내용을 확인 부탁드립니다.\n{questions}",
       "jira": "확인 요청\n{questions}"
     }
-  },
-  "worktree": {
-    "policy": "Use Orca-managed worktrees when available.",
-    "namingPolicy": "Derive a human-readable worktree name from issue and subject.",
-    "workspacePolicy": "Preserve Orca workspace ancestry and its own lifecycle.",
-    "onCreatePolicy": "After creation, use repo-owned setup scripts only when approved.",
-    "onClosePolicy": "In Git fallback, verify branch and dirty state before cleanup."
   }
 }
 ```
