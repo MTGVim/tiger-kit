@@ -10,7 +10,10 @@ from __future__ import annotations
 import argparse
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
-import fcntl
+try:
+    import fcntl
+except ImportError:  # Never silently fall back to an unverified Windows ACL backend.
+    fcntl = None
 import hashlib
 import json
 import os
@@ -114,10 +117,12 @@ def _origin(value: str) -> str:
 
 
 def location(repo: str, authority: str, environment: str, role: str, profile: str) -> Path:
-    if os.name != "posix":
+    if os.name != "posix" or fcntl is None:
         raise UnsafeAuth("No validated private-file ACL backend on this host")
     if not all(x and x.strip() and "\0" not in x for x in (environment, role, profile)):
         raise UnsafeAuth("Environment, role and non-secret profile identity are required")
+    if environment.strip().casefold() in ("production", "prod", "live"):
+        raise UnsafeAuth("Production credentials are not eligible for this development cache")
     cwd = Path(repo).resolve(strict=True)
     cp = subprocess.run(
         ["git", "-C", str(cwd), "rev-parse", "--path-format=absolute", "--git-common-dir"],
@@ -186,6 +191,8 @@ def _secret_input(path_text: str, repo: str) -> str:
         path.relative_to(base)
     except ValueError as exc:
         raise UnsafeAuth("Input must be within worktree .tigerkit/secret-input") from exc
+    if (root / ".tigerkit").is_symlink() or base.is_symlink():
+        raise UnsafeAuth("Symlinked input ancestors are not allowed")
     if not path.parent.parent.samefile(base):
         raise UnsafeAuth("Invalid input directory")
     _private_dir(path.parent)
@@ -283,7 +290,7 @@ def main() -> int:
         p.error("--seconds must be within 1..180")
     try:
         return execute(args)
-    except (UnsafeAuth, ValueError, OSError, subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+    except (UnsafeAuth, ValueError, KeyError, OSError, subprocess.CalledProcessError, json.JSONDecodeError) as exc:
         # No untrusted exception text: it may include user paths or credentials.
         print(json.dumps({"status": "blocked", "reason": type(exc).__name__}))
         return 3
