@@ -154,8 +154,14 @@ verifier owns provider selection, lifecycle and foreground escalation decisions 
 
 For browser-visible ACs, close target URL/environment, pass conditions, headless viewport/state, safe auth bootstrap,
 server command/cwd/readiness, screenshot/redaction evidence, and the `tk-browser-verify` handoff. Default to headless.
-Never store usernames, passwords, token, OTP, cookie, or session values in chat/Seed/artifacts; use ephemeral runtime
-input. The verifier owns server startup, readiness, runtime acceptance evidence, and cleanup.
+Never store usernames, passwords, token, OTP, cookie, or session values in chat/Seed/artifacts.
+Use ephemeral runtime input; an explicitly user-authorized, protected worktree-shared local
+development cache is handled only through tk-browser-verify's scoped authentication contract.
+The verifier owns server startup, readiness, runtime acceptance evidence, and cleanup.
+Keep the approved order: authorization, authentication readiness and pre-edit baseline,
+then immediately release owned browser/server resources before implementing. Preserve
+baseline evidence/replay state, not the live process; the final-head check relaunches only
+what it needs and releases it again.
 If any implementation or verification step would open a local app/page to compare a design,
 inspect a render defect, test responsive or interaction behavior, or capture proof, invoke the
 planned verifier. Do not call browser or desktop provider tools (trees, clicks, screenshots)

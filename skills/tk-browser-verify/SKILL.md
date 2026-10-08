@@ -57,8 +57,9 @@ All required scenarios must be executable headlessly. Use this priority order:
 
 1. no authentication required
 2. reuse an existing safe, verifiable, run-owned authenticated session/profile
-3. temporarily inject user-supplied short-lived token/session material through a repository/application-supported header, cookie, or storage bootstrap
-4. use username/password only for fully non-interactive login without OTP, MFA, SSO, CAPTCHA, passkey, or device approval
+3. when explicitly authorized, reuse verified, scoped development authentication from another linked worktree through [environment](references/environment.md) and the protected shared-auth helper; never reuse a foreign live browser/profile
+4. temporarily inject user-supplied short-lived token/session material through a repository/application-supported header, cookie, or storage bootstrap
+5. use username/password only for fully non-interactive login without OTP, MFA, SSO, CAPTCHA, passkey, or device approval
 
 Do not guess the authentication injection method. Tie it to repository/application evidence or a user-specified method and
 verify the resulting authenticated state.
@@ -66,6 +67,11 @@ verify the resulting authenticated state.
 Do not store usernames, passwords, tokens, OTPs, cookies, session values, recovery codes, or sensitive identities in
 the conversation, `.tigerkit/*.md`, prompts, logs, summaries, or child receipts.
 Record only non-sensitive facts such as `auth mode: token-headless` or `authenticated state established`.
+The optional development credential cache is the only explicitly authorized exception for
+short-lived token bytes at rest; it is outside the source/worktree and only available under
+the permission, scope, user-consent and production-exclusion guards in [environment](references/environment.md).
+Do not cache credentials in Seed, README, screenshots, child receipts or preferences.
+A cache path is not an instruction to print its contents.
 
 If safe headless authentication cannot be established, do not fall back to a visible browser; return `Unverifiable`.
 
@@ -125,7 +131,7 @@ Content comparison pass and never invents the parent's missing acceptance basis.
 5. **Server**: If the parent requires a development server, this verifier owns starting the background process, readiness checks, and cleanup. For standalone execution, use one canonical safe command without another question when repository scripts, documentation, and tooling identify it unambiguously. Ask the user only when materially different viable commands remain or the environment/product choice is user-owned; never choose among genuine alternatives arbitrarily. Resolve the selected script and environment's host, port, and API target before launch, then prove project identity rather than accepting an open port alone. When the selected server is `react-scripts`/CRA, include `BROWSER=NONE` or the repository-documented equivalent to suppress auto-open. Manage PID/cwd/port/command and bounded logs as run evidence, and wait for a readiness signal rather than process exit.
 6. **Verification**: Start from a known state and inspect the required interaction and final state with evidence that directly proves each criterion. Visual or visible-state criteria require a non-empty run-owned screenshot containing the exact criterion and necessary context. Inspect it directly unless [visual](references/visual.md) permits an exact byte-identical bounded-region candidate to inherit its named inspected baseline; a target outside the captured viewport or scroll position cannot support that AC. Interaction, network, accessibility, or runtime-semantic criteria may instead use a trusted trace, accessibility tree, DOM/runtime observation, or request/response evidence when that is more direct. Do not require a ceremonial screenshot that proves nothing about the criterion.
 7. **Decision**: A baseline/after pair without `visual_contract: applied` cannot aggregate to `Pass`. Map each criterion to current evidence and assign `Pass | Fail | Blocked | Unverifiable`. When a visual reference or required baseline pair exists, apply the comparison contract in [visual](references/visual.md). Record `Pass | Fail | Unverifiable` for every required axis that was not discharged by byte-identical region evidence, include reference/candidate/delta measurements for geometry and typography, and report every measured mismatch. An unchecked axis or missing required measurement blocks aggregate `Pass`. For UI `Content` criteria, require exact rendered strings or a verified entry path from the parent basis; if neither exists, do not infer the element from a paraphrase, code identifier, or enum and return `Unverifiable`.
-8. **Cleanup**: Close only run-owned browser/server/resources and check for residue according to [session lifecycle](references/session-lifecycle.md).
+8. **Cleanup**: After baseline as well as after/acceptance, immediately close all run-owned browser/server/resources and check for residue according to [session lifecycle](references/session-lifecycle.md). Preserve baseline screenshots and replay settings, not live processes. After final HEAD the verifier starts a fresh run-owned server/browser only when evidence needs replay.
 
 ## Visual contract gate
 

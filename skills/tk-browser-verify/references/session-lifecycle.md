@@ -27,29 +27,35 @@ create a Markdown lifecycle ledger. Every cited screenshot must exist, be non-em
 be actually inspected. If the directory cannot be resolved, the image is missing, or
 inspection fails, required browser evidence is `Unverifiable`.
 
-Immediately after file-mediated authentication injection, stop the exact run-owned
-loopback secret server, delete the mode-`0600`
+After file-mediated authentication injection, independently verify the authenticated state.
+For an explicitly authorized shared development cache, commit the verified token atomically
+from the *same* validated input file and owned refresh claim; do not retain or cache a token
+that did not authenticate successfully. Whether cache commit succeeds or fails, immediately
+stop the exact run-owned loopback secret server, delete the mode-`0600`
 `.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json` file and its mode-`0700` run
-directory, and verify that none remains. Apply this cleanup on success, failure,
-interruption, and exception. Do not defer secret cleanup until browser-session cleanup.
+directory, and verify none remains. On failure, interruption or exception, always remove
+temporary secret input as well; release only this run's pending claim where possible.
+Do not defer secret cleanup until browser-session cleanup.
 
-For a successful nested run, the parent may explicitly report that commits or remediation are still pending on the
-verified render/request path and that a final-head replay may be required. In that case, defer normal cleanup of the
-run-owned page/context, direct browser, development server, and other replay state until the parent reports its final
-head and either requests the replay or confirms that the intervening diff does not affect the verified path. This hold
-applies only while the active parent continues directly through its pending review/remediation and final-head decision.
-It is not a background wait: if the parent cannot continue in the active workflow, or on failure, interruption,
-exception, abandonment, or an expired parent continuation, perform normal cleanup and record that a later replay will
-need a new runtime/authentication state. Never retain the secret-input file or loopback secret server while holding
-replay state. Record the held state as run-owned and bounded so the immediate replay or cleanup targets exactly the
-same run.
+After any baseline, after, or acceptance capture, close run-owned browser resources and stop the
+run-owned development server immediately. Persist the inspected evidence and a replay recipe, not
+live processes or an authenticated browser profile. A parent continuing to implement or review
+must never hold these processes merely to avoid a later startup; an immediate final-head replay
+starts a fresh owned browser/server and reestablishes the scoped authentication state if required.
+The immutable baseline provenance stays usable for comparable after capture when viewport,
+DPR, fonts, UI state, target environment, and replay conditions are independently reproduced.
+When those conditions cannot be reproduced, report `Unverifiable`, not a silently comparable pair.
+
+On interruption, timeout, failed capture, or parent handoff, perform the same owned-resource
+cleanup; do not keep background dev servers during a suspended workflow. Cleanup failures and
+unowned/provider-owned resources are reported rather than terminated blindly.
 
 Clean up success, failure, interruption, and exception paths in this order:
 
 1. run-created pages/tabs;
 2. run-created contexts;
 3. direct browser instances started by this run;
-4. exact owned processes, only when normal shutdown fails;
+4. run-owned development server (graceful stop first, then exact verified process group if needed);
 5. run-owned `.tigerkit/tmp/tk-browser-verify/<run-id>/baseline-source/` trees after their servers have stopped.
 
 Before forced termination, match the PID and profile against process arguments. Never

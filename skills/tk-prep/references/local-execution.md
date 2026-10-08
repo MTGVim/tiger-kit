@@ -53,9 +53,12 @@ candidate-only acceptance evidence into an absence-of-regression claim.
 
 For an approved execution that includes implementation, require a successful baseline child to return `phase: baseline`,
 `baseline_capture: Pass`, `verification_complete: false`, `resume_parent: required`, the run/evidence identity and replay
-metadata, and `next_required: implement candidate, then capture after with the same run/replay`. Treat this as an
+metadata, and `next_required: implement candidate, then start fresh runtime resources and capture after with the saved baseline/replay`. Treat this as an
 intermediate result and apply the owning SKILL.md's baseline continuation and final-response gate, including for
-direct/no-Seed and same-agent Skill loading. After implementation, invoke the matching after capture/comparison. Baseline-only evidence cannot
+direct/no-Seed and same-agent Skill loading. After baseline evidence is saved, confirm owned headless browser and development server
+cleanup before implementation; keep the evidence identity and replay recipe only. Do not keep a
+server running while implementation, review, or a paused human step proceeds. After implementation,
+invoke the matching after capture/comparison with freshly owned runtime resources. Baseline-only evidence cannot
 satisfy final runtime acceptance, independent review, binding verification, or commit.
 
 When direct execution needs multiple commits, prefer a stronger repository convention; otherwise split by independently

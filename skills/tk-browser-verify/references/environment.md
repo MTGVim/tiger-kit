@@ -73,6 +73,69 @@ device approval. Request a short-lived token/session through the temporary secre
 channel. If no approved state can be established, return `Unverifiable` before a
 product mutation.
 
+## Worktree-shared development credentials (opt-in only)
+
+For an explicitly authorized local/development task, prefer a previously verified token in
+the same Git common directory before creating another secret-input file. Resolve the exact
+application authentication **authority** (not the worktree-specific dev-server port), environment,
+role and non-secret account/profile label from repository facts and the user; never merge scopes
+or infer a role. Use `python3 <package>/scripts/shared_auth.py inspect --repo <worktree-root>
+--authority <auth-origin> --environment <environment> --role <role> --profile <label>`.
+It resolves `git rev-parse --git-common-dir`, so linked worktrees share a protected scope even
+when their `.tigerkit` directories differ. The helper prints only status, timestamps, revision
+and an optional **local** credential-file path; it never prints token contents.
+
+The default cache backend is a **local 0700 directory / 0600 file under Git's common directory**,
+not encrypted OS Keychain storage. Other processes running as the same OS user and filesystem
+backups may still access its contents. Never claim encryption. Use it only when the user has
+authorized development credential retention and local plaintext-at-rest is acceptable; if the
+organization requires keychain-backed or nonpersisted credentials, do not create this cache.
+An unsupported host ACL/backend, insecure permission, symlink, linked file or ambiguous Git
+identity is `Blocked | Unverifiable`, never a reason to downgrade protection. The helper blocks
+known production environment labels; never cache actual production credentials under an alias.
+The cache is outside the source tree and must never be committed, summarized or used for
+publication. Manual deletion/revocation is required when worktree sharing is no longer wanted.
+
+A status of `ready` only means the *known expiration* has not passed;
+`needs-verification` means expiration is unknown. Neither proves authenticated access. Verify
+the actual target state through the existing approved, no-log header/cookie/storage bootstrap.
+A proven authentication failure invalidates only the exact observed cache revision using
+`invalidate --revision <observed-revision>`; reread before requesting user input, since another
+session may already have refreshed it. Never infer expiry from an arbitrary HTTP failure.
+
+For a missing/expired/invalidated scoped token, invoke `claim` before prompting the user.
+A `claimed` response gives a non-secret claim ID. Its owner invokes
+`prepare-input --claim-id <id> --run-id <run-id>` with the same trusted scope arguments,
+after the normal Artifact Paths ignore checks. This command creates or reuses the exact
+private `.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json`, then reports the
+**actual absolute and relative paths**, blank JSON template and required field without
+printing stored contents. Copy those real paths into the user-visible reply, explain the
+exact paused verification and how to fill and save `{"token": ""}`.
+Never enter `Pending` or start polling without showing both paths from a successful
+`prepare-input` result. Failure to create/read back the path is `Blocked | Unverifiable`,
+not a guessed example path. The seeded blank file is `Pending`, never `Ready`.
+Run `await-input --claim-id <id> --input <absolute-input-json> --seconds <1..180>`
+with the same scope arguments for bounded, no-output-of-secrets readiness polling.
+The helper returns only `ready | pending | blocked`. A partial JSON save or empty token remains
+`pending`; a permission, ownership or symlink failure blocks immediately. If the active host
+permits another bounded wait, renew the owned claim and continue without asking the user for
+a completion message. Privately validate and consume the latest safe input snapshot,
+inject into the actual target and verify authenticated state; only then invoke
+`commit --claim-id <id> --input <absolute-input-json>` to atomically store the shared token.
+Pass an `--expires-at` only when verified from the application's contract. Immediately delete
+the one-shot input and loopback server on all exit paths regardless of cache write success.
+
+While an input prompt remains active, periodically `renew --claim-id <id>` within its reported
+lease. Another worktree receiving `pending` must NOT create its own input; it can use bounded
+`wait --since <last-revision> --seconds <1..180>` and re-inspect before using new credentials.
+This is live, bounded polling in the **active** agent workflow, not a daemon, background job,
+or a promise to restart an ended conversation. On interruption release the owned claim when
+possible; after lease expiry another run can claim. Do not overwrite another run's pending
+file, renew its claim or delete its tokens. An expired user input wait that can no longer
+remain active must report the exact existing input path and resumption procedure. If secure
+cache input fails, preserve the verifier's existing transient-only mode without making false
+shared-state claims. Project-specific refresh-token/API automation is out of scope.
+
 When no safer temporary secret-input channel exists, first prove that
 `git ls-files -- .tigerkit/` returns no tracked paths and
 `git check-ignore -q -- .tigerkit/` succeeds. Accept Git's effective ignore decision

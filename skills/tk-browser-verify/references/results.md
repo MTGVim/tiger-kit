@@ -37,20 +37,20 @@ Require these contract fields in nested and standalone results; keep nested resu
   criterion, state/region, `capture_method`, effective viewport, role, and comparison result; otherwise the direct trace/a11y/DOM/runtime/request evidence
 - the same per-capture method/effective viewport in the evidence index, including reason and effect for exceptions
 - limitation
-- cleanup fact; when [session lifecycle](session-lifecycle.md) is intentionally holding a successful nested run for
-  an immediate final-head replay, report `cleanup: deferred for final-head replay` rather than claiming cleanup
+- cleanup fact, including exact run-owned server/browser shutdown and any verified residue; no baseline-to-final-head process hold
 - `automated_regression: protected | N/A | exception | unknown` as supplied/verified parent disposition
 
-A deferred-cleanup nested result is intermediate even when its inspected phase passes. The active parent must either
-resume the same run for final-head replay or explicitly release it after proving the intervening diff does not affect
-the verified path; the verifier then performs normal cleanup and reports the final cleanup fact.
+A successful baseline is intermediate evidence, never acceptance. The verifier must release
+its owned server, context and browser before returning phase evidence to the parent. A later
+final-head replay uses new run-owned runtime resources and the saved baseline/replay conditions;
+the parent must preserve evidence provenance, not PID or live browser handles.
 
 Missing required identity/provenance or return metadata makes the phase `Unverifiable`, even when a screenshot
 was inspected. Report the missing fields and collect them before returning phase `Pass`; a limitation note
 or `verification_complete: false` does not waive the required evidence contract.
 
 A successful pre-edit baseline proves only that the reference capture exists. Return
-`next_required: implement candidate, then capture after with the same run/replay`; do not use aggregate completion wording.
+`next_required: implement candidate, then start fresh runtime resources and capture after with the saved baseline/replay`; do not use aggregate completion wording.
 For nested results, use the phase fields without a standalone `## Verdict` or user-facing completion summary;
 `status: Pass` describes only the requested phase. `resume_parent` is an instruction to the owner, not a scheduler signal.
 When the user requested only standalone capture, finish that bounded request without inventing a parent or implementation approval.
