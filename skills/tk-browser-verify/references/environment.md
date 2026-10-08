@@ -104,10 +104,16 @@ A proven authentication failure invalidates only the exact observed cache revisi
 session may already have refreshed it. Never infer expiry from an arbitrary HTTP failure.
 
 For a missing/expired/invalidated scoped token, invoke `claim` before prompting the user.
-A `claimed` response gives a non-secret claim ID; only its owner creates the normal
-`.tigerkit/secret-input/<skill>-<run-id>/input.json` and **must show the actual absolute and
-relative paths** before starting input polling. Explain the exact paused verification and show
-`{"token": ""}` with the field to fill. The seeded blank file is `Pending`, never `Ready`.
+A `claimed` response gives a non-secret claim ID. Its owner invokes
+`prepare-input --claim-id <id> --run-id <run-id>` with the same trusted scope arguments,
+after the normal Artifact Paths ignore checks. This command creates or reuses the exact
+private `.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json`, then reports the
+**actual absolute and relative paths**, blank JSON template and required field without
+printing stored contents. Copy those real paths into the user-visible reply, explain the
+exact paused verification and how to fill and save `{"token": ""}`.
+Never enter `Pending` or start polling without showing both paths from a successful
+`prepare-input` result. Failure to create/read back the path is `Blocked | Unverifiable`,
+not a guessed example path. The seeded blank file is `Pending`, never `Ready`.
 Use the existing bounded metadata-change polling, validate the same private file snapshot,
 inject into the actual target and verify authenticated state; only then invoke
 `commit --claim-id <id> --input <absolute-input-json>` to atomically store the shared token.
