@@ -92,6 +92,14 @@ in the index and result. An outline or label is an annotation, so annotated capt
 
 Replay the same indexed procedure for baseline and after. A matching viewport alone is insufficient
 when navigation, scroll, state, font readiness, capture boundary, or deterministic content differs.
+When each phase builds from a worktree, verify parity of non-product untracked/ignored inputs and
+build-scan exclusions, including run-owned `.tigerkit/` files generated between phases. Prefer
+excluding those artifacts through existing repository-approved scan boundaries; otherwise record
+the identical scanned paths/content and disclose any difference from a clean CI checkout. Record
+the exclusion or input-parity evidence in the replay index and result. Git ignore success alone
+does not prove build-scan exclusion. Unproven parity makes the pair `Unverifiable`; restore
+comparable inputs through the implementation owner and rebuild both phases before comparing.
+The verifier does not edit source/config or move evidence to an external temporary path.
 Store paired captures under `baseline/` and `after/`. Before replacing a failed after capture,
 preserve the complete failing evidence in a new unique immutable `failed-<attempt>/` directory.
 

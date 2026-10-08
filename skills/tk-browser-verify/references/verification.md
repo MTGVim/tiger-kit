@@ -27,6 +27,11 @@ criterion and surrounding context. Direct trace/a11y/runtime evidence can prove 
 without a ceremonial image. A render-affecting candidate, including a visual-preservation
 refactor, requires comparable baseline/after evidence and a replay procedure bound to the same
 candidate provenance, window/viewport, scale/DPR, zoom, fonts, UI state and capture boundary.
+For worktree-built phases, comparability also requires evidenced parity of non-product
+untracked/ignored build inputs and scan exclusions, including run-owned artifacts created between
+phases. Record their exclusion or identical scanned paths/content in replay evidence; an identical
+polluted pair does not prove equivalence to a clean CI build. Git exclusion alone is insufficient,
+and repository-local scan changes belong to the implementation owner.
 Declare nondeterministic exclusions before comparison; preserve immutable failure evidence
 before any rerun. Missing provenance or comparable conditions is `Unverifiable`.
 
