@@ -84,6 +84,12 @@ Choose title guidance in this order: explicit repository instruction, normative 
 documentation, verified recent merged-PR convention, then the existing fallback. History can establish a convention only
 when no higher-authority current guidance applies. Surface a conflict instead of silently overriding the stronger source.
 
+Describe the change by reviewable concern (behavior, module or contract), derived from `base...HEAD`,
+not by commit order. Do not list commit SHAs or one bullet per commit unless the template or repository
+instruction asks for it; the PR's commit list already carries that history. Recent merged-PR bodies
+inform tone and section use, not commit-by-commit structure. When updating an existing PR after new
+commits, re-derive the affected sections from the current `base...HEAD` instead of appending per-commit lines.
+
 Before finalizing the body, assess material reversibility and blast radius from the verified publication input: affected callers, users, surfaces, data and contracts; the concrete rollback or recovery path; and any destructive migration, irreversible external side effect or compatibility break. Reverting code does not restore deleted data or undo external actions. Preserve unknown recovery evidence instead of describing the change as cheaply reversible. Put useful facts in the template's existing risk, rollback, migration or deployment section; preserve its headings, order, comments and checklists, without adding a duplicate section. If no template or stronger format applies, the fallback body may include a compact risk/recovery section when it adds information. Low-risk changes need no empty risk prose or decorative one-way/two-way labels. This assessment grants no implementation or new investigation authority.
 
 Apply UI Evidence to PR bodies and QA steps. Before publication, reconcile each required UI literal and navigation claim against the supplied evidence. Include a compact UI evidence gap report in the preparation output: item, source/status (observed, render-bound source, user-provided, or `Unverifiable`), limitation, and requested input. State explicitly when no required gaps remain; use N/A only when there are no UI claims. Keep user-provided text distinct from independent observation and retain unresolved items in the PR/QA limitations. Ask for the missing exact label, contextual capture, or connection evidence item by item; incorporate supplied answers only for the claims they support. Do not start a new investigation from this publication-only phase.
@@ -165,11 +171,17 @@ Any artifact owns only the current PR publication plan, not the product work pla
 Create new PRs as `ready` unless the user explicitly requests `draft`.
 For an existing same-`head` PR, preserve its fresh-read state unless a state change was requested.
 
-Present the following naturally to the user instead of hiding information behind a file they must open.
+Present the following naturally to the user. Content the user must read before approval appears inline
+in the conversation, or in the repository `.tigerkit/` artifact when the packet rules require a file.
+Never cite a session-private scratchpad path as reading material. Keep the exact full title/body in the
+active packet even when the user-facing preview omits boilerplate.
 
 - Summary of included changes
 - Recommended `single | stacked` publication shape and why
-- Exact title/body or important template sections for every PR being created or updated
+- Preview the title and the sections this publication fills or changes for every PR being created or
+  updated. Omit template boilerplate (HTML comments, unchanged headings and unchanged checklists)
+  from the preview; preserve it verbatim in the published body. Keep material changes to checklist
+  items visible. Show the full body only on request.
 - Title-convention evidence and any mismatch with template guidance
 - Base/head; for a stack also present the exact bottom-to-top branches and preserved original tree invariant
 - Valid `PR state`
