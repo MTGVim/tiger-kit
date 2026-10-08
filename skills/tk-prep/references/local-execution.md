@@ -89,13 +89,13 @@ return no findings.
 After review remediation settles, compare every runtime-evidence head with the final candidate head before binding
 verification. If the intervening diff touches a runtime-verified screen's render path or request path, replay the same
 run's after procedure on the final head before reporting completion or creating the final completion commit. Reuse the
-existing replay metadata and held run-owned browser/server state when it is still valid. If the intervening diff does not
+existing replay metadata and launch a fresh run-owned browser/server through its project-scoped guard; never hold live server or browser processes across phases. If the intervening diff does not
 touch those paths, keep the earlier runtime evidence and record the path-based carry-forward reason instead of recapturing
 it. A commit that only records already-verified content does not require replay merely because the commit SHA changed.
 
 When a nested browser verifier returns successful after evidence before the parent has finished review/remediation,
-tell it that the verified path may still receive commits and keep its replay state available until the parent establishes
-the final head. Secret input files and one-shot secret servers are never retained for this purpose. If authentication
+tell it that the verified path may still receive commits and preserve its replay metadata only until the parent establishes
+the final head. The verifier releases its run-owned browser/server and project lock after each capture; secret input files and one-shot secret servers are never retained for this purpose. If authentication
 expires before a required final-head replay, request new transient input through the verifier's ordinary authentication
 path and explain why the previous state can no longer satisfy that replay.
 
