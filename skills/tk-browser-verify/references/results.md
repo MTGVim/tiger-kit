@@ -37,7 +37,7 @@ Require these contract fields in nested and standalone results; keep nested resu
   criterion, state/region, `capture_method`, effective viewport, role, and comparison result; otherwise the direct trace/a11y/DOM/runtime/request evidence
 - the same per-capture method/effective viewport in the evidence index, including reason and effect for exceptions
 - limitation
-- cleanup fact, including exact run-owned server/browser shutdown and any verified residue; no baseline-to-final-head process hold
+- cleanup fact, including exact run-owned server/browser shutdown, development-server guard run ID, lock-release outcome and any verified residue; no baseline-to-final-head process hold
 - `automated_regression: protected | N/A | exception | unknown` as supplied/verified parent disposition
 
 A successful baseline is intermediate evidence, never acceptance. The verifier must release
