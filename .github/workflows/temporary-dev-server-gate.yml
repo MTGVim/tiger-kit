@@ -2,6 +2,8 @@ name: Temporary TigerKit release gate
 on:
   push:
     branches: [fix/browser-cross-platform-server-lock]
+  pull_request:
+    branches: [main]
 permissions:
   contents: read
 jobs:
