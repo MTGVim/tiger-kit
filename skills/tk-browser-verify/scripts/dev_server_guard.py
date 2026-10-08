@@ -223,6 +223,18 @@ def _windows_job(process: subprocess.Popen) -> int:
     return int(job)
 
 
+def _group_alive(pgid: int) -> bool:
+    if os.name == "nt":
+        return False
+    try:
+        os.killpg(pgid, 0)
+        return True
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+
+
 def _stop_child(process: subprocess.Popen, job: int | None) -> bool:
     """Stop only this supervisor's child; do not kill processes based on stale PIDs."""
     if os.name == "nt":
@@ -244,6 +256,10 @@ def _stop_child(process: subprocess.Popen, job: int | None) -> bool:
     try:
         process.wait(timeout=TERMINATE_GRACE)
     except subprocess.TimeoutExpired:
+        return False
+    if os.name != "nt" and _group_alive(process.pid):
+        # The direct parent can exit while its grandchildren still serve requests.
+        # Never report successful cleanup of a live process group.
         return False
     return process.poll() is not None
 
@@ -271,9 +287,11 @@ def _leftover(runtime: Path, current_id: str) -> bool:
         if item.name == current_id or item.is_symlink() or not item.is_dir():
             continue
         state = _read(item / "state.json")
-        if state.get("state") in ("starting", "running", "stopping"):
-            if not _alive(state.get("supervisor_pid")) and _alive(state.get("server_pid")):
-                return True
+        if state.get("state") in ("starting", "running", "stopping", "cleanup-unverifiable", "orphaned-or-exited"):
+            if not _alive(state.get("supervisor_pid")):
+                pid = state.get("server_pid")
+                if _alive(pid) or (os.name != "nt" and isinstance(pid, int) and _group_alive(pid)):
+                    return True
     return False
 
 
@@ -319,6 +337,7 @@ def supervise(checkout: Path, runtime: Path, run_id: str, cwd: Path,
                 job = _windows_job(child)
             except BaseException:
                 metadata["state"] = "cleanup-unverifiable"
+                metadata["server_pid"] = child.pid
                 raise
         assert child.stdout is not None
         drain = threading.Thread(target=_log_drain, args=(child.stdout, run / "server.log"), daemon=True)
@@ -354,8 +373,10 @@ def supervise(checkout: Path, runtime: Path, run_id: str, cwd: Path,
 def _status(run: Path) -> dict:
     metadata = _read(run / "state.json")
     state = metadata.get("state", "unknown")
-    if state in ("queued", "starting", "running", "stopping") and not _alive(metadata.get("supervisor_pid")):
-        state = "orphaned-or-exited"
+    if state in ("queued", "starting", "running", "stopping"):
+        # The launcher can return before the supervisor has written its PID.
+        if metadata.get("supervisor_pid") is not None and not _alive(metadata.get("supervisor_pid")):
+            state = "orphaned-or-exited"
     return {
         "status": state,
         "run_id": run.name,
