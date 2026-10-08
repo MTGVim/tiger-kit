@@ -9,6 +9,7 @@ TigerKit은 `workflow` `runner`, `plugin`, `scheduler`, `shared-state` `framewor
 - `package-local` `references/`는 조건부 `readable knowledge`만 소유합니다.
 - `package-local` `scripts/`는 `executable helper`를, `agents/`는 실행 메타데이터를 소유합니다. 검증용 `eval`은 `evals/skills/<skill>/`에서 저장소 전용 증거를 소유합니다.
 - 이 저장소는 CI를 사용하지 않습니다. `.github/workflows/`를 만들지 않고 원격 자동 검증을 운영하지 않습니다.
+- 로컬 검증 환경에 필요한 명령이나 도구가 없더라도 GitHub Actions에 임시·일회성 워크플로를 생성·푸시·실행·삭제하여 우회하지 않습니다. 원격 Runner는 임시 검증 수단도 아닙니다. 허용된 로컬 또는 간접 검증만 수행하고 실행하지 못한 항목은 `Unverifiable`로 보고합니다.
 - 중복 `protocol`보다 삭제와 `progressive` `disclosure`를 우선합니다.
 - 사용자-`facing`/운영 `prose`는 한국어를 기본으로 하고 `exact` ID/`path`/`status`/`command`/`technical` `literal`은 원문을 유지합니다.
 - `SKILL.md`와 `package-local` `references/`의 `model-facing` 제목과 지시문은 영어로 고정합니다. 한국어는 `SKILL.md`의 `frontmatter` `description`과 정확한 사용자 발화·출력 `literal`에만 두고 `inline code` 또는 `fenced block`으로 표시합니다.

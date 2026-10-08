@@ -28,6 +28,19 @@ class ReleaseGateContractTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "clean worktree"):
                 run_release_gate.ensure_clean_worktree()
 
+    def test_release_gate_forbids_ci_workflows(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.assertEqual(run_release_gate.validate_no_ci_workflows(root), [])
+            workflows = root / ".github" / "workflows"
+            workflows.mkdir(parents=True)
+            self.assertTrue(run_release_gate.validate_no_ci_workflows(root))
+            (workflows / "temporary-release-gate.yml").write_text(
+                "name: temporary-release-gate\n", encoding="utf-8"
+            )
+            errors = run_release_gate.validate_no_ci_workflows(root)
+            self.assertTrue(any("temporary verification workflows" in error for error in errors), errors)
+
     def test_manifest_is_closed_and_references_existing_cases(self) -> None:
         manifest = run_release_gate.load_manifest()
         contracts = load_eval_contracts(run_release_gate.ROOT, None)

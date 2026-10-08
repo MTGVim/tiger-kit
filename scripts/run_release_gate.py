@@ -121,6 +121,13 @@ def ensure_clean_worktree(root: Path = ROOT) -> None:
         raise ValueError("release gate requires a clean worktree; commit candidate changes first")
 
 
+def validate_no_ci_workflows(root: Path) -> list[str]:
+    workflows = root / ".github" / "workflows"
+    if workflows.exists() or workflows.is_symlink():
+        return ["CI policy violation: .github/workflows/ is forbidden, including temporary verification workflows"]
+    return []
+
+
 def load_manifest() -> dict[str, object]:
     value = json.loads(MANIFEST.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
@@ -576,6 +583,7 @@ def main() -> int:
         contract_errors.extend(compare_language_regression(baseline_language, candidate_language))
         contract_errors.extend(readme_freshness_errors(baseline_root, candidate_root))
         contract_errors.extend(validate_portable_artifacts(candidate_root))
+        contract_errors.extend(validate_no_ci_workflows(candidate_root))
         contract_errors.extend(validate_artifact_guards(candidate_root))
         commands = [
             ["python3", "scripts/sync_execution_protocol.py", "--check"],
