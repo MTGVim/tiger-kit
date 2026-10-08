@@ -88,6 +88,18 @@ class SharedBrowserAuthTests(unittest.TestCase):
         self.assertEqual(file.read_text(), '{"token":"TOP_SECRET"}')
         self.assertEqual(second["template"], {"token": ""})
 
+    def test_await_input_stays_pending_until_nonblank_secret(self):
+        claim = self.call("claim")
+        receipt = self.call("prepare-input", extras=("--claim-id", claim["claim_id"],
+                                                      "--run-id", "monitor"))
+        file = Path(receipt["absolute_path"])
+        pending = self.call("await-input", extras=("--claim-id", claim["claim_id"],
+                           "--input", str(file), "--seconds", "1"), code=2)
+        self.assertEqual(pending["status"], "pending")
+        file.write_text('{"token":"TOP_SECRET"}', encoding="utf-8")
+        self.assertEqual(self.call("await-input", extras=("--claim-id", claim["claim_id"],
+                         "--input", str(file), "--seconds", "2"))["status"], "ready")
+
     def test_prepare_input_refuses_unignored_git_paths(self):
         claim = self.call("claim")
         (self.root / ".gitignore").write_text("", encoding="utf-8")
