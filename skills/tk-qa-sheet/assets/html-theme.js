@@ -98,3 +98,63 @@
   addEventListener('resize', () => { offset(); schedule(); });
   hash();
 })();
+
+(() => {
+  const citations = [...(document.querySelectorAll?.('.ht-document sup[id^="cite-"] > a[href^="#ref-"]') || [])];
+  if (!citations.length) return;
+  const preview = document.createElement('div');
+  preview.id = 'ht-citation-preview';
+  preview.className = 'ht-citation-preview';
+  preview.setAttribute('role', 'tooltip');
+  preview.hidden = true;
+  document.body.append(preview);
+  let active = null;
+  const hide = () => {
+    if (active) {
+      const described = (active.getAttribute('aria-describedby') || '').split(/\s+/).filter(id => id && id !== preview.id);
+      if (described.length) active.setAttribute('aria-describedby', described.join(' '));
+      else active.removeAttribute('aria-describedby');
+    }
+    active = null;
+    preview.hidden = true;
+  };
+  const position = () => {
+    if (!active || preview.hidden) return;
+    const anchor = active.getBoundingClientRect();
+    if (anchor.bottom < 0 || anchor.top > innerHeight) { hide(); return; }
+    const box = preview.getBoundingClientRect();
+    const margin = 12;
+    preview.style.left = Math.max(margin, Math.min(anchor.left, innerWidth - box.width - margin)) + 'px';
+    const above = anchor.top - box.height - 8;
+    const below = Math.min(anchor.bottom + 8, innerHeight - box.height - margin);
+    preview.style.top = Math.max(margin, above >= margin ? above : below) + 'px';
+  };
+  const show = link => {
+    let reference;
+    try { reference = document.getElementById(decodeURIComponent(link.hash.slice(1))); } catch { return; }
+    if (!reference?.matches('li[id]')) return;
+    const content = reference.cloneNode(true);
+    for (const back of content.querySelectorAll('a[href^="#cite-"]')) back.remove();
+    const text = content.textContent.replace(/\s+/g, ' ').trim();
+    if (!text) return;
+    hide();
+    active = link;
+    preview.textContent = text;
+    preview.hidden = false;
+    const described = link.getAttribute('aria-describedby');
+    link.setAttribute('aria-describedby', [described, preview.id].filter(Boolean).join(' '));
+    position();
+  };
+  for (const link of citations) {
+    link.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') show(link); });
+    link.addEventListener('pointerleave', () => { if (document.activeElement !== link) hide(); });
+    link.addEventListener('focus', () => show(link));
+    link.addEventListener('blur', hide);
+    link.addEventListener('click', hide);
+  }
+  document.addEventListener('keydown', event => { if (event.key === 'Escape') hide(); });
+  addEventListener('hashchange', hide);
+  addEventListener('scroll', position, {passive: true});
+  addEventListener('resize', position);
+})();
+

@@ -72,10 +72,22 @@ async function atHash(page, id) {
       await page.waitForFunction(() => scrollY < 2);
       await page.locator('.ht-doc-nav > a[href="#document-bottom"]').click(); await atHash(page, 'document-bottom');
       await page.waitForFunction(() => innerHeight + scrollY >= document.documentElement.scrollHeight - 2);
+      const firstCitation = page.locator('#cite-1-1 a');
+      await firstCitation.hover();
+      assert.equal(await page.locator('.ht-citation-preview').isVisible(), true);
+      assert.match(await page.locator('.ht-citation-preview').innerText(), /실제로 읽은 근거/);
+      assert.doesNotMatch(await page.locator('.ht-citation-preview').innerText(), /↩/);
+      await page.mouse.move(0, 0);
+      assert.equal(await page.locator('.ht-citation-preview').isHidden(), true);
+      await firstCitation.focus();
+      assert.equal(await firstCitation.getAttribute('aria-describedby'), 'ht-citation-preview');
+      await page.keyboard.press('Escape');
+      assert.equal(await page.locator('.ht-citation-preview').isHidden(), true);
       for (const cite of ['cite-1-1', 'cite-1-2']) {
         await page.goto(url + '#' + cite); await atHash(page, cite);
         await page.locator(`#${cite} a`).click(); await atHash(page, 'ref-1');
         await page.locator(`#ref-1 a[href="#${cite}"]`).click(); await atHash(page, cite);
+        assert.equal(await page.locator(`#${cite}`).evaluate(el => getComputedStyle(el).outlineStyle), "none");
       }
       await page.reload(); await atHash(page, 'cite-1-2');
       await page.locator('#cite-1-2 a').click(); await atHash(page, 'ref-1');

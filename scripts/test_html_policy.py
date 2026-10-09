@@ -34,6 +34,16 @@ class HTMLPolicyTest(unittest.TestCase):
         self.assertIn('href="#cite-1-2"', text)
         self.assertNotIn('grid-template-columns:15rem', text)
 
+    def test_shared_citation_preview_contract(self):
+        css = (ROOT / 'skills/tk-explain/assets/html-theme.css').read_text()
+        script = (ROOT / 'skills/tk-explain/assets/html-theme.js').read_text()
+        self.assertIn('sup[id^="cite-"]:is(:target, :focus-visible) { outline: none; }', css)
+        self.assertIn('sup[id^="cite-"] > a[href^="#ref-"]', script)
+        self.assertIn("preview.setAttribute('role', 'tooltip')", script)
+        self.assertIn("if (event.pointerType !== 'touch') show(link)", script)
+        self.assertIn("link.addEventListener('focus', () => show(link))", script)
+        self.assertIn("back.remove()", script)
+
     def test_research_theme_control_belongs_to_page_top_bar(self):
         class ThemeLocation(HTMLParser):
             def __init__(self):

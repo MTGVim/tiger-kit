@@ -66,6 +66,19 @@ pre { max-width: 100%; overflow-x: auto; }
 html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scroll-padding-top: var(--ht-anchor-offset); }
 .ht-document :is(section[id], li[id], sup[id], footer[id]) { scroll-margin-top: 1rem; }
 .ht-document :target { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+/* A return link may focus the citation superscript; keep link keyboard focus visible. */
+.ht-document sup[id^="cite-"]:is(:target, :focus-visible) { outline: none; }
+.ht-citation-preview {
+  position: fixed; z-index: 20; width: max-content;
+  max-width: min(28rem, calc(100vw - 1.5rem));
+  max-height: min(18rem, calc(100dvh - 1.5rem));
+  overflow: auto; padding: .75rem 1rem;
+  background: var(--panel); color: var(--text); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: 0 6px 24px #0003;
+  font-size: var(--font-body); line-height: 1.5; overflow-wrap: anywhere;
+  pointer-events: none;
+}
 .ht-doc-nav { position: fixed; inset-inline-end: calc(1rem + env(safe-area-inset-right, 0px)); bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); z-index: 10; display: grid; gap: .35rem; width: 3.5rem; }
 .ht-doc-nav > a, .ht-doc-toc > summary { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: .45rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); color: var(--text); text-decoration: none; cursor: pointer; }
 .ht-doc-nav > a:hover, .ht-doc-toc > summary:hover { background: var(--hover); }
@@ -225,6 +238,66 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
   addEventListener('resize', () => { offset(); schedule(); });
   hash();
 })();
+
+(() => {
+  const citations = [...(document.querySelectorAll?.('.ht-document sup[id^="cite-"] > a[href^="#ref-"]') || [])];
+  if (!citations.length) return;
+  const preview = document.createElement('div');
+  preview.id = 'ht-citation-preview';
+  preview.className = 'ht-citation-preview';
+  preview.setAttribute('role', 'tooltip');
+  preview.hidden = true;
+  document.body.append(preview);
+  let active = null;
+  const hide = () => {
+    if (active) {
+      const described = (active.getAttribute('aria-describedby') || '').split(/\s+/).filter(id => id && id !== preview.id);
+      if (described.length) active.setAttribute('aria-describedby', described.join(' '));
+      else active.removeAttribute('aria-describedby');
+    }
+    active = null;
+    preview.hidden = true;
+  };
+  const position = () => {
+    if (!active || preview.hidden) return;
+    const anchor = active.getBoundingClientRect();
+    if (anchor.bottom < 0 || anchor.top > innerHeight) { hide(); return; }
+    const box = preview.getBoundingClientRect();
+    const margin = 12;
+    preview.style.left = Math.max(margin, Math.min(anchor.left, innerWidth - box.width - margin)) + 'px';
+    const above = anchor.top - box.height - 8;
+    const below = Math.min(anchor.bottom + 8, innerHeight - box.height - margin);
+    preview.style.top = Math.max(margin, above >= margin ? above : below) + 'px';
+  };
+  const show = link => {
+    let reference;
+    try { reference = document.getElementById(decodeURIComponent(link.hash.slice(1))); } catch { return; }
+    if (!reference?.matches('li[id]')) return;
+    const content = reference.cloneNode(true);
+    for (const back of content.querySelectorAll('a[href^="#cite-"]')) back.remove();
+    const text = content.textContent.replace(/\s+/g, ' ').trim();
+    if (!text) return;
+    hide();
+    active = link;
+    preview.textContent = text;
+    preview.hidden = false;
+    const described = link.getAttribute('aria-describedby');
+    link.setAttribute('aria-describedby', [described, preview.id].filter(Boolean).join(' '));
+    position();
+  };
+  for (const link of citations) {
+    link.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') show(link); });
+    link.addEventListener('pointerleave', () => { if (document.activeElement !== link) hide(); });
+    link.addEventListener('focus', () => show(link));
+    link.addEventListener('blur', hide);
+    link.addEventListener('click', hide);
+  }
+  document.addEventListener('keydown', event => { if (event.key === 'Escape') hide(); });
+  addEventListener('hashchange', hide);
+  addEventListener('scroll', position, {passive: true});
+  addEventListener('resize', position);
+})();
+
 /* /tigerkit:html-theme.js */
 </script>
 </body>

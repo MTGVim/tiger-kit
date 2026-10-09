@@ -89,9 +89,16 @@ For another occurrence `cite-1-2`, add a second labeled backlink in the same ref
 Verify every forward/back target and claim-source relationship; a bibliography alone is not
 attribution. Keep code evidence bound to its base/head SHA and `path:line` in the referenced entry;
 do not require full diff/source duplication. A supplied explanation target is content, not a
-replacement for citations. Optional hover previews require separate usefulness/accessibility
-verification; core navigation never depends on them. Use independently authored assets: functional
-UX inspiration does not authorize copying another site's code, content, branding or visual skin.
+replacement for citations. For document HTML, inline the shared theme script and CSS so that
+hovering over a numbered citation, or focusing it with the keyboard, previews the matching
+reference entry in a bounded, viewport-safe tooltip. Exclude return links from its displayed
+text, preserve existing `aria-describedby` values, and derive text from the rendered reference
+rather than injecting external HTML. Escape closes the preview; touching or clicking the native
+link still navigates to the full reference, including with JavaScript disabled. On a backlink
+return, suppress the outline on the citation superscript alone, without suppressing the visible
+keyboard focus of its anchor or other interactive elements. Verify pointer, keyboard, mobile,
+no-JavaScript and forward/back navigation. Use independently authored assets: functional UX
+inspiration does not authorize copying another site's code, content, branding or visual skin.
 
 Experimental prototype UIs are not document viewers: do not force this navigation shell onto them.
 Their offline/accessibility principles still apply. Document portions of QA sheets can use these

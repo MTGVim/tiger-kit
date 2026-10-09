@@ -59,6 +59,19 @@ pre { max-width: 100%; overflow-x: auto; }
 html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scroll-padding-top: var(--ht-anchor-offset); }
 .ht-document :is(section[id], li[id], sup[id], footer[id]) { scroll-margin-top: 1rem; }
 .ht-document :target { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+/* A return link may focus the citation superscript; keep link keyboard focus visible. */
+.ht-document sup[id^="cite-"]:is(:target, :focus-visible) { outline: none; }
+.ht-citation-preview {
+  position: fixed; z-index: 20; width: max-content;
+  max-width: min(28rem, calc(100vw - 1.5rem));
+  max-height: min(18rem, calc(100dvh - 1.5rem));
+  overflow: auto; padding: .75rem 1rem;
+  background: var(--panel); color: var(--text); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: 0 6px 24px #0003;
+  font-size: var(--font-body); line-height: 1.5; overflow-wrap: anywhere;
+  pointer-events: none;
+}
 .ht-doc-nav { position: fixed; inset-inline-end: calc(1rem + env(safe-area-inset-right, 0px)); bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); z-index: 10; display: grid; gap: .35rem; width: 3.5rem; }
 .ht-doc-nav > a, .ht-doc-toc > summary { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: .45rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); color: var(--text); text-decoration: none; cursor: pointer; }
 .ht-doc-nav > a:hover, .ht-doc-toc > summary:hover { background: var(--hover); }
