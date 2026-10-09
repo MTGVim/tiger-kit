@@ -1,0 +1,6 @@
+{
+  "source_kind": "faithful transcription of supplied image",
+  "claim": "For every real a > 0 and every real M, there exists a positive integer n such that n*a > M.",
+  "request": "Explain why this claim is wrong and relate it to Zeno’s paradox.",
+  "input_available": true
+}

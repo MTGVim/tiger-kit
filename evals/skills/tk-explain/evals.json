@@ -564,6 +564,59 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "supplied-image-claim-preserved",
+      "path": "success",
+      "prompt": "`$tk-explain` `evals/skills/tk-explain/fixtures/supplied-claim.json`은 첨부 이미지를 충실하게 전사한 내용입니다. 이 주장이 왜 잘못됐는지 제논의 역설과 함께 `claim.html`에 설명해줘. 원래 대화와 이미지를 못 보는 사람도 읽을 예정입니다.",
+      "expected_output": "`claim.html`만 읽어도 모든 실수 `a>0` 및 `M`에 대해 양의 정수 `n`이 존재하여 `n*a>M`이라는 대상과 조건, 참이라는 판단 및 이유를 복원한다. 사용자의 거짓 전제를 그대로 수용하지 않는다. 텍스트로 재현했다면 이미지 삽입을 요구하지 않고 원문을 매 단락 반복하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`claim.html`만 읽어도 모든 실수 `a>0` 및 `M`에 대해 양의 정수 `n`이 존재하여 `n*a>M`이라는 대상과 조건, 참이라는 판단 및 이유를 복원한다. 사용자의 거짓 전제를 그대로 수용하지 않는다. 텍스트로 재현했다면 이미지 삽입을 요구하지 않고 원문을 매 단락 반복하지 않는다."
+        },
+        {
+          "type": "path_exists",
+          "path": "claim.html"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "contextless-claim-fixtures",
+      "path": "boundary",
+      "prompt": "`evals/skills/tk-explain/fixtures/claim-omitted.html`, `evals/skills/tk-explain/fixtures/claim-preserved.html`, `evals/skills/tk-explain/fixtures/ordinary-concept.html`만 읽고 각 문서가 설명하는 대상, 전제, 결론 및 이유를 진술해줘. 작성 대화나 이미지에 접근하지 마세요.",
+      "expected_output": "`claim-omitted.html`에서는 원래 명제를 추측해 복원하지 않고 설명 대상 누락을 지적한다. `claim-preserved.html`에서는 `a>0`, 임의의 실수 `M`, 양의 정수 `n` 존재와 `n*a>M`을 정확히 복원하고 참과 이유를 보존한다. `ordinary-concept.html`에서는 `LIFO`를 복원하며 사용자 원문이나 추가 서론이 없다는 이유만으로 실패시키지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`claim-omitted.html`에서는 원래 명제를 추측해 복원하지 않고 설명 대상 누락을 지적한다. `claim-preserved.html`에서는 `a>0`, 임의의 실수 `M`, 양의 정수 `n` 존재와 `n*a>M`을 정확히 복원하고 참과 이유를 보존한다. `ordinary-concept.html`에서는 `LIFO`를 복원하며 사용자 원문이나 추가 서론이 없다는 이유만으로 실패시키지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "floating-navigation-and-citation-roundtrip",
+      "path": "success",
+      "prompt": "`$tk-explain` `DNS`의 긴 설명을 `dns-navigation.html`에 만들어줘. 같은 출처를 두 군데 인용하고 본문 각주와 참고문헌을 왕복할 수 있게 해줘. 모바일에서도 목차를 열고 위아래로 이동할 수 있어야 합니다.",
+      "expected_output": "공통 자산을 인라인한 우측 플로팅 목차/상단/하단 링크, 계층형 `TOC` 및 번호순 하단 참고문헌을 제공한다. 동일 출처는 한 번호 및 각 인용 지점별 고유 `ID`와 복귀 링크를 사용한다. 핵심 탐색은 `no-JS`에서도 가능하며 `hash/history`, 키보드, `Esc/focus`, `motion`, `1280/390px` 및 테마의 실제 검증 여부를 정직하게 구별한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "공통 자산을 인라인한 우측 플로팅 목차/상단/하단 링크, 계층형 `TOC` 및 번호순 하단 참고문헌을 제공한다. 동일 출처는 한 번호 및 각 인용 지점별 고유 `ID`와 복귀 링크를 사용한다. 핵심 탐색은 `no-JS`에서도 가능하며 `hash/history`, 키보드, `Esc/focus`, `motion`, `1280/390px` 및 테마의 실제 검증 여부를 정직하게 구별한다."
+        },
+        {
+          "type": "path_exists",
+          "path": "dns-navigation.html"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "renamed_from": {

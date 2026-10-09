@@ -18,6 +18,7 @@ npx skills update --global --yes
 ## 어디서 시작하나요?
 
 - **만들기:** `tk-prep`에서 준비·승인·로컬 구현을 진행합니다. 작업 크기에 따라 직접 수정, `Ready Seed`, `SDD`, 인계를 선택하고 기본 브랜치에서는 작업 공간을 격리합니다.
+- **HTML 문서:** 긴 설명·연구·학습 자료는 우측 플로팅 목차와 위·아래 이동을 제공하며, 본문 각주 `[1]`과 하단 참고문헌 사이를 왕복할 수 있습니다. JavaScript 없이도 핵심 탐색이 가능하고, 시스템·라이트·다크 테마와 동작 감소 설정을 지원합니다. 짧은 문서와 제품 시제품에는 탐색기를 강제하지 않습니다.
 - **이해하기:** `tk-ask-repo`에서 현재 코드의 근거를 찾고, `tk-explain`·`tk-explain-diff`에서 배경지식부터 읽을 수 있는 오프라인 HTML 설명을 만듭니다.
 - **발굴·연구:** `tk-audit`에서 기술 일감을 감사하고, `tk-research`에서 접근법을 비교합니다.
 - **검증·발행:** `tk-review`와 필요한 실행 검증을 거쳐 `tk-pr-open`으로 발행합니다. 로컬 실행 승인은 원격 푸시나 PR 발행 승인으로 확대되지 않습니다.
@@ -62,7 +63,7 @@ npx skills update --global --yes
 | 스킬 | 호출 | 소유 범위 |
 | --- | --- | --- |
 | [tk-ask-repo](skills/tk-ask-repo/SKILL.md) | `user` | 현재 저장소의 동작·값·영향·귀속을 근거와 함께 설명합니다. |
-| [tk-explain](skills/tk-explain/SKILL.md) | `hybrid` | 배경지식과 실제 구조·동작을 자체 완결형 HTML로 설명합니다. |
+| [tk-explain](skills/tk-explain/SKILL.md) | `hybrid` | 입력 명제와 조건을 보존하고 배경지식과 실제 구조·동작을 자체 완결형 HTML로 설명합니다. |
 | [tk-explain-diff](skills/tk-explain-diff/SKILL.md) | `hybrid` | 특정 코드 변경을 기존 구조와 실행 흐름부터 설명합니다. |
 | [tk-research](skills/tk-research/SKILL.md) | `hybrid` | 외부 비교부터 지속 연구·실험·재개까지 필요한 단계만 수행하고 HTML 결과를 제공합니다. |
 | [tk-teach](skills/tk-teach/SKILL.md) | `hybrid` | 실제 학습 기록으로 맞춤 수업·복습과 HTML 강의를 구성합니다. |

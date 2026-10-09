@@ -53,3 +53,23 @@ pre { max-width: 100%; overflow-x: auto; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
 }
+
+/* Document navigation is opt-in; prototype/checklist interfaces retain their own shell. */
+.ht-document { --ht-nav-gutter: 5rem; padding-inline-end: calc(var(--ht-nav-gutter) + env(safe-area-inset-right, 0px)); padding-block-end: calc(6rem + env(safe-area-inset-bottom, 0px)); }
+html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scroll-padding-top: var(--ht-anchor-offset); }
+.ht-document :is(section[id], li[id], sup[id], footer[id]) { scroll-margin-top: 1rem; }
+.ht-document :target { outline: 2px solid var(--accent); outline-offset: 4px; }
+.ht-doc-nav { position: fixed; inset-inline-end: calc(1rem + env(safe-area-inset-right, 0px)); bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); z-index: 10; display: grid; gap: .35rem; width: 3.5rem; }
+.ht-doc-nav > a, .ht-doc-toc > summary { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: .45rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); color: var(--text); text-decoration: none; cursor: pointer; }
+.ht-doc-nav > a:hover, .ht-doc-toc > summary:hover { background: var(--hover); }
+.ht-doc-toc { margin: 0; padding: 0; border: 0; }
+.ht-doc-toc > summary { list-style: none; }
+.ht-doc-toc > summary::-webkit-details-marker { display: none; }
+.ht-doc-toc[open] > summary { border-color: var(--accent); font-weight: 700; }
+.ht-doc-toc-panel { position: absolute; inset-inline-end: 0; bottom: calc(100% + .5rem); width: min(22rem, calc(100vw - 2rem - env(safe-area-inset-right, 0px) - env(safe-area-inset-left, 0px))); max-height: calc(100dvh - 12rem - env(safe-area-inset-bottom, 0px) - env(safe-area-inset-top, 0px)); overflow: auto; overscroll-behavior: contain; padding: .75rem; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 4px 18px #0002; }
+.ht-doc-toc-panel ol { margin: 0; padding-inline-start: 1.5rem; }
+.ht-doc-toc-panel a { display: block; padding: .4rem; text-decoration: none; }
+.ht-doc-toc-panel a[aria-current="location"] { font-weight: 700; text-decoration: underline; background: var(--hover); }
+.ht-document sup[id], .ht-document li[id] { scroll-margin-bottom: 2rem; }
+@media (max-width: 760px) { html:has(.ht-document) { --ht-anchor-offset: 1rem; } .ht-document { --ht-nav-gutter: 4.5rem; } .ht-doc-nav { inset-inline-end: calc(.5rem + env(safe-area-inset-right, 0px)); } }
+@media (prefers-reduced-motion: reduce) { html:has(.ht-document) { scroll-behavior: auto; } }

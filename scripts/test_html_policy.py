@@ -13,39 +13,26 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class HTMLPolicyTest(unittest.TestCase):
-    def test_research_current_section_excludes_sticky_bar(self):
+    def test_research_native_navigation_and_reference_targets(self):
+        class Targets(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.ids, self.links = [], []
+            def handle_starttag(self, tag, attrs):
+                attrs = dict(attrs)
+                if 'id' in attrs: self.ids.append(attrs['id'])
+                if tag == 'a' and attrs.get('href', '').startswith('#'):
+                    self.links.append(attrs['href'][1:])
         text = (ROOT / 'skills/tk-research/assets/report.html').read_text()
-        source = re.findall(r'<script>(.*?)</script>', text, re.S)[0]
-        harness = r'''
-const vm = require('node:vm');
-const assert = require('node:assert/strict');
-const links = ['unknowns', 'frontier'].map(id => ({
-  hash: '#' + id, selected: false,
-  setAttribute() { this.selected = true; },
-  removeAttribute() { this.selected = false; }
-}));
-const sections = [
-  {id: 'unknowns', getBoundingClientRect: () => ({top: 20, bottom: 120})},
-  {id: 'frontier', getBoundingClientRect: () => ({top: 140, bottom: 230})}
-];
-let mobile = false;
-const context = vm.createContext({
-  location: {hash: ''}, innerHeight: 900,
-  matchMedia: () => ({matches: mobile}), addEventListener() {},
-  document: {
-    querySelectorAll: s => s === 'nav a' ? links : sections,
-    querySelector: s => ({getBoundingClientRect: () => ({bottom: s === 'nav' ? 200 : 100})})
-  }
-});
-vm.runInContext(SOURCE, context);
-for (mobile of [false, true]) {
-  vm.runInContext('current()', context);
-  assert.deepEqual(links.filter(a => a.selected).map(a => a.hash), ['#frontier']);
-}
-'''
-        result = subprocess.run(['node', '-e', harness.replace('SOURCE', json.dumps(source))],
-                                text=True, capture_output=True, timeout=30)
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        parser = Targets()
+        parser.feed(text)
+        self.assertEqual(len(parser.ids), len(set(parser.ids)))
+        self.assertTrue(set(parser.links) <= set(parser.ids))
+        self.assertIn('class="ht-doc-toc"', text)
+        self.assertIn('<summary aria-label="목차 열기 또는 닫기">', text)
+        self.assertIn('id="cite-1-2"', text)
+        self.assertIn('href="#cite-1-2"', text)
+        self.assertNotIn('grid-template-columns:15rem', text)
 
     def test_research_theme_control_belongs_to_page_top_bar(self):
         class ThemeLocation(HTMLParser):
@@ -108,7 +95,7 @@ for (mobile of [false, true]) {
         qa = (ROOT / 'skills/tk-qa-sheet/assets/qa-sheet-template.html').read_text()
         self.assertNotIn('nav ul{display:flex;overflow:auto', report)
         self.assertNotIn('flex-wrap: wrap', qa)
-        self.assertIn('grid-template-columns:repeat(2,minmax(0,1fr))', report)
+        self.assertIn('class="ht-doc-nav"', report)
         self.assertIn('header > * { min-width: 0; max-width: 100%; }', qa)
         environment = re.search(r'\.environment\s*\{([^}]*)\}', qa)
         self.assertIsNotNone(environment)

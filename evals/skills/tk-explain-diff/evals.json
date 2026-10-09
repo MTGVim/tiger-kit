@@ -248,6 +248,25 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "citation-source-binding-without-code-copy",
+      "path": "success",
+      "prompt": "`$tk-explain-diff` 현재 변경을 `change-evidence.html`로 설명해줘. 코드 근거는 본문 각주와 하단 참고문헌으로 연결하고 같은 근거를 두 번 참조해줘.",
+      "expected_output": "독립적인 배경과 변경 전후 동작/영향을 설명하고 각주는 정확한 `base/head` `SHA`와 `path:line`에 연결한다. 동일 근거 번호 재사용 및 각 지점별 복귀 링크를 유지하며 전체 `diff`나 소스 복제는 강제하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "독립적인 배경과 변경 전후 동작/영향을 설명하고 각주는 정확한 `base/head` `SHA`와 `path:line`에 연결한다. 동일 근거 번호 재사용 및 각 지점별 복귀 링크를 유지하며 전체 `diff`나 소스 복제는 강제하지 않는다."
+        },
+        {
+          "type": "path_exists",
+          "path": "change-evidence.html"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

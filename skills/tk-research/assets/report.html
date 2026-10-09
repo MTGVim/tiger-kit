@@ -60,19 +60,56 @@ pre { max-width: 100%; overflow-x: auto; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
 }
+
+/* Document navigation is opt-in; prototype/checklist interfaces retain their own shell. */
+.ht-document { --ht-nav-gutter: 5rem; padding-inline-end: calc(var(--ht-nav-gutter) + env(safe-area-inset-right, 0px)); padding-block-end: calc(6rem + env(safe-area-inset-bottom, 0px)); }
+html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scroll-padding-top: var(--ht-anchor-offset); }
+.ht-document :is(section[id], li[id], sup[id], footer[id]) { scroll-margin-top: 1rem; }
+.ht-document :target { outline: 2px solid var(--accent); outline-offset: 4px; }
+.ht-doc-nav { position: fixed; inset-inline-end: calc(1rem + env(safe-area-inset-right, 0px)); bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); z-index: 10; display: grid; gap: .35rem; width: 3.5rem; }
+.ht-doc-nav > a, .ht-doc-toc > summary { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: .45rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); color: var(--text); text-decoration: none; cursor: pointer; }
+.ht-doc-nav > a:hover, .ht-doc-toc > summary:hover { background: var(--hover); }
+.ht-doc-toc { margin: 0; padding: 0; border: 0; }
+.ht-doc-toc > summary { list-style: none; }
+.ht-doc-toc > summary::-webkit-details-marker { display: none; }
+.ht-doc-toc[open] > summary { border-color: var(--accent); font-weight: 700; }
+.ht-doc-toc-panel { position: absolute; inset-inline-end: 0; bottom: calc(100% + .5rem); width: min(22rem, calc(100vw - 2rem - env(safe-area-inset-right, 0px) - env(safe-area-inset-left, 0px))); max-height: calc(100dvh - 12rem - env(safe-area-inset-bottom, 0px) - env(safe-area-inset-top, 0px)); overflow: auto; overscroll-behavior: contain; padding: .75rem; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 4px 18px #0002; }
+.ht-doc-toc-panel ol { margin: 0; padding-inline-start: 1.5rem; }
+.ht-doc-toc-panel a { display: block; padding: .4rem; text-decoration: none; }
+.ht-doc-toc-panel a[aria-current="location"] { font-weight: 700; text-decoration: underline; background: var(--hover); }
+.ht-document sup[id], .ht-document li[id] { scroll-margin-bottom: 2rem; }
+@media (max-width: 760px) { html:has(.ht-document) { --ht-anchor-offset: 1rem; } .ht-document { --ht-nav-gutter: 4.5rem; } .ht-doc-nav { inset-inline-end: calc(.5rem + env(safe-area-inset-right, 0px)); } }
+@media (prefers-reduced-motion: reduce) { html:has(.ht-document) { scroll-behavior: auto; } }
 /* /tigerkit:html-theme.css */
-*{box-sizing:border-box}html{scroll-padding-top:7rem}body{margin:0;background:var(--bg);color:var(--text);font:var(--font-body)/1.7 var(--font-family)}a{color:var(--accent);overflow-wrap:anywhere}a:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:4px}.skip{position:absolute;left:1rem;top:-5rem}.skip:focus{top:1rem;z-index:5;background:var(--panel);padding:1rem}.layout{display:grid;grid-template-columns:15rem minmax(0,55rem);gap:3rem;max-width:80rem;margin:auto;padding:3rem 2rem}nav{position:sticky;top:7rem;align-self:start}nav h2{font-size:var(--font-body)}nav ul{list-style:none;padding:0}nav a{display:block;padding:.45rem .7rem;border-left:3px solid transparent;text-decoration:none}nav a[aria-current="location"]{border-color:var(--accent);font-weight:700;background:var(--panel)}main{min-width:0}h1{font-size:var(--font-h1);line-height:1.2;letter-spacing:-.04em}h2{line-height:1.4}section{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:calc(3 * var(--space));margin:1.5rem 0;scroll-margin-top:7rem}section:target{outline:3px solid var(--accent)}.kicker,.meta{color:var(--muted)}.kicker{letter-spacing:.12em;font-size:.85rem}.lead{font-size:1em}.badge{display:inline-block;border:1px solid var(--accent);border-radius:1rem;padding:0 .7rem;color:var(--accent)}dl{display:grid;grid-template-columns:8rem minmax(0,1fr);gap:.5rem}dt{font-weight:700}dd{margin:0}details{border-top:1px solid var(--line);margin-top:1rem;padding-top:1rem}summary{cursor:pointer;font-weight:600}pre{overflow:auto;max-width:100%}footer{color:var(--muted);font-size:.85rem;margin:2rem 0}
+*{box-sizing:border-box}.skip{position:absolute;left:1rem;top:-5rem}.skip:focus{top:1rem;z-index:20;background:var(--panel);padding:1rem}.layout{max-width:70rem;margin:auto;padding:3rem 2rem}main{min-width:0}h1{line-height:1.2;letter-spacing:-.04em}h2{line-height:1.4}section{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:calc(3 * var(--space));margin:1.5rem 0}.kicker,.meta{color:var(--muted)}.kicker{letter-spacing:.12em;font-size:.85rem}.lead{font-size:1em}.badge{display:inline-block;border:1px solid var(--accent);border-radius:1rem;padding:0 .7rem;color:var(--accent)}dl{display:grid;grid-template-columns:8rem minmax(0,1fr);gap:.5rem}dt{font-weight:700}dd{margin:0}main details{border-top:1px solid var(--line);margin-top:1rem;padding-top:1rem}summary{cursor:pointer;font-weight:600}footer{color:var(--muted);font-size:.85rem;margin:2rem 0}
 .ht-topbar{position:sticky;top:0;z-index:3;display:grid;grid-template-columns:minmax(0,1fr) minmax(18rem,22rem);align-items:center;gap:1rem;padding:.75rem 2rem;background:var(--panel);border-bottom:1px solid var(--line)}.ht-topbar>*{min-width:0;max-width:100%}.ht-topbar-title{margin:0;font-weight:700;overflow-wrap:anywhere}.ht-topbar .ht-theme-control{margin:0;width:100%}
-@media(max-width:760px){.ht-topbar{position:static;grid-template-columns:minmax(0,1fr);padding:.75rem 1.2rem;gap:.5rem}.layout{display:block;padding:1.2rem;max-width:100%}.layout>*{min-width:0;max-width:100%}nav{top:0;z-index:2;background:var(--bg);border-bottom:1px solid var(--line);padding:.4rem 0;max-width:100%}nav h2{margin:.2rem 0}nav ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem;margin:.2rem 0}nav li{min-width:0}nav a{border-left:0;border-bottom:3px solid transparent;padding:.45rem;overflow-wrap:anywhere}.layout>nav{position:sticky}html{scroll-padding-top:12rem}section{scroll-margin-top:12rem;padding:1.1rem;max-width:100%}dl{grid-template-columns:1fr}dd{margin-bottom:.6rem}}@media(max-width:430px){nav ul{grid-template-columns:1fr}html{scroll-padding-top:20rem}section{scroll-margin-top:20rem}}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+@media(max-width:760px){.ht-topbar{position:static;grid-template-columns:minmax(0,1fr);padding:.75rem 1.2rem;gap:.5rem}.layout{padding:1.2rem;max-width:100%}.layout>*{min-width:0;max-width:100%}section{padding:1.1rem;max-width:100%}dl{grid-template-columns:1fr}dd{margin-bottom:.6rem}}
+
 </style>
+<body class="ht-document" id="document-top">
 <a class="skip" href="#main">본문으로 이동</a>
 <!-- Replace the top-bar title with the subject and conclusion; put identifiers in secondary metadata. -->
 <header class="ht-topbar"><p class="ht-topbar-title">연구 주제와 결론을 적습니다</p><fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-theme-label">테마</legend><div class="ht-theme-buttons"><label class="ht-theme-option"><input type="radio" name="ht-theme" value="system" data-theme-choice="system"><span>시스템</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="light" data-theme-choice="light"><span>라이트</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="dark" data-theme-choice="dark"><span>다크</span></label></div></fieldset></header>
 <div class="layout">
-<nav aria-label="연구 보고서 목차">
-<h2>RESEARCH / 목차</h2>
-<ul>
+
+<main id="main" tabindex="-1">
+<header><p class="kicker">RESEARCH · 작성 템플릿</p><h1>연구 목표를 적습니다</h1><p class="meta">이 파일의 예시 문구는 연구 결과가 아닙니다. 검증한 현재 사실로 교체하세요.</p></header>
+<section id="overview"><h2>목표와 결론</h2><p class="lead">가장 중요한 결론과 근거를 먼저 적습니다.<sup id="cite-1-1"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup></p><dl><dt>판단할 문제</dt><dd>결과가 어떤 다음 결정을 도와야 하는지 적습니다.</dd><dt>신뢰도</dt><dd>높음·보통·낮음과 그 이유를 적습니다.</dd><dt>근거 시점</dt><dd>실제로 확인한 날짜와 리비전을 적습니다.</dd></dl></section>
+<!-- If reader-unfamiliar terms precede their explanations, insert an expanded term list here: one-line definitions linked to detailed sections. Still define each term at first use. Omit the list otherwise. -->
+<section id="context"><h2>문제와 배경</h2><p>이 연구가 해결하려는 문제와 필요한 배경을 설명합니다. 분야 밖 독자를 위해 용어와 통계의 의미를 짧게 풀이합니다.</p></section>
+<section id="status"><h2>현재 상태</h2><p><span class="badge">작성 전</span> 현재 연구 단계와 의미 있는 진행 경과를 적습니다. 지속 연구에서는 전체 발견·실험·인계 내역의 개수를 정본과 대조합니다.</p></section>
+<section id="directions"><h2>검토한 방향</h2><p>기준안, 다른 접근법, 지지하거나 제외한 방향과 근거를 적습니다. 실행하지 않은 자원 보류는 반증과 구분합니다.<sup id="cite-1-2"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup></p></section>
+<section id="experiments"><h2>조사와 실험</h2><p>모든 발견과 실험의 ID, 주제, 판정을 짧게 표시하고 상세 근거는 펼쳐 볼 수 있게 적습니다. 실제로 읽은 자료와 수행한 테스트를 구별합니다. 수행하지 않은 실험은 계획으로 표시합니다.</p><details><summary>상세 근거와 절차</summary><p>긴 부가 근거를 여기에 적습니다. 핵심 결론과 필요한 배경은 접지 않습니다.</p></details></section>
+<section id="unknowns"><h2>불확실성과 한계</h2><p>상충 근거, 확인하지 못한 범위, 측정 한계와 다음 결정을 바꿀 조건을 적습니다.</p></section>
+<section id="frontier"><h2>다음 행동</h2><p>가장 정보 가치가 높은 다음 질문과 재개 조건, 준비된 인계 후보, 대기 조건과 승인 상태를 적습니다.</p></section>
+<section id="sources"><h2>참고문헌</h2><!-- Replace citation examples with verified claim/source bindings; reuse numbers for repeated sources. -->
+<ol><li id="ref-1">실제로 읽은 근거의 제목·링크·날짜·리비전으로 교체합니다. 이 항목은 인용 형식 예시이며 연구 근거가 아닙니다. <a href="#cite-1-1" aria-label="인용 1의 첫 위치로 복귀">↩ 1</a> <a href="#cite-1-2" aria-label="인용 1의 두 번째 위치로 복귀">↩ 2</a></li></ol></section>
+<footer id="document-bottom">HTML은 연구 사실을 읽기 쉽게 표시한 사본이며 실행 상태의 정본이 아닙니다.<br>🤖 본 보고서는 AI가 작성했습니다.</footer>
+</main>
+</div>
+<nav class="ht-doc-nav" aria-label="문서 탐색">
+<details class="ht-doc-toc"><summary aria-label="목차 열기 또는 닫기">목차</summary>
+<div class="ht-doc-toc-panel" tabindex="-1"><ol>
 <li><a href="#overview">목표와 결론</a></li>
 <li><a href="#context">문제와 배경</a></li>
 <li><a href="#status">현재 상태</a></li>
@@ -80,33 +117,12 @@ pre { max-width: 100%; overflow-x: auto; }
 <li><a href="#experiments">조사와 실험</a></li>
 <li><a href="#unknowns">불확실성과 한계</a></li>
 <li><a href="#frontier">다음 행동</a></li>
-<li><a href="#sources">출처</a></li>
-</ul>
+<li><a href="#sources">참고문헌</a></li>
+</ol></div></details>
+<a href="#document-top" aria-label="맨 위로 이동">↑</a>
+<a href="#document-bottom" aria-label="맨 아래로 이동">↓</a>
 </nav>
-<main id="main" tabindex="-1">
-<header><p class="kicker">RESEARCH · 작성 템플릿</p><h1>연구 목표를 적습니다</h1><p class="meta">이 파일의 예시 문구는 연구 결과가 아닙니다. 검증한 현재 사실로 교체하세요.</p></header>
-<section id="overview"><h2>목표와 결론</h2><p class="lead">가장 중요한 결론과 근거를 먼저 적습니다.</p><dl><dt>판단할 문제</dt><dd>결과가 어떤 다음 결정을 도와야 하는지 적습니다.</dd><dt>신뢰도</dt><dd>높음·보통·낮음과 그 이유를 적습니다.</dd><dt>근거 시점</dt><dd>실제로 확인한 날짜와 리비전을 적습니다.</dd></dl></section>
-<!-- If reader-unfamiliar terms precede their explanations, insert an expanded term list here: one-line definitions linked to detailed sections. Still define each term at first use. Omit the list otherwise. -->
-<section id="context"><h2>문제와 배경</h2><p>이 연구가 해결하려는 문제와 필요한 배경을 설명합니다. 분야 밖 독자를 위해 용어와 통계의 의미를 짧게 풀이합니다.</p></section>
-<section id="status"><h2>현재 상태</h2><p><span class="badge">작성 전</span> 현재 연구 단계와 의미 있는 진행 경과를 적습니다. 지속 연구에서는 전체 발견·실험·인계 내역의 개수를 정본과 대조합니다.</p></section>
-<section id="directions"><h2>검토한 방향</h2><p>기준안, 다른 접근법, 지지하거나 제외한 방향과 근거를 적습니다. 실행하지 않은 자원 보류는 반증과 구분합니다.</p></section>
-<section id="experiments"><h2>조사와 실험</h2><p>모든 발견과 실험의 ID, 주제, 판정을 짧게 표시하고 상세 근거는 펼쳐 볼 수 있게 적습니다. 실제로 읽은 자료와 수행한 테스트를 구별합니다. 수행하지 않은 실험은 계획으로 표시합니다.</p><details><summary>상세 근거와 절차</summary><p>긴 부가 근거를 여기에 적습니다. 핵심 결론과 필요한 배경은 접지 않습니다.</p></details></section>
-<section id="unknowns"><h2>불확실성과 한계</h2><p>상충 근거, 확인하지 못한 범위, 측정 한계와 다음 결정을 바꿀 조건을 적습니다.</p></section>
-<section id="frontier"><h2>다음 행동</h2><p>가장 정보 가치가 높은 다음 질문과 재개 조건, 준비된 인계 후보, 대기 조건과 승인 상태를 적습니다.</p></section>
-<section id="sources"><h2>출처</h2><p>각 주장 옆의 출처 링크와 함께 실제로 읽은 근거의 제목·날짜·리비전을 적습니다.</p></section>
-<footer>HTML은 연구 사실을 읽기 쉽게 표시한 사본이며 실행 상태의 정본이 아닙니다.<br>🤖 본 보고서는 AI가 작성했습니다.</footer>
-</main>
-</div>
-<script>
-const links=[...document.querySelectorAll('nav a')];
-function mark(id){for(const a of links){if(a.hash==='#'+id)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current')}}
-function hash(){const id=location.hash.slice(1);if(links.some(a=>a.hash==='#'+id))mark(id)}
-addEventListener('hashchange',hash);hash();
-if(!location.hash)mark('overview');
-const sections=[...document.querySelectorAll('main section')];
-function current(){let active=sections[0],largest=0;const top=matchMedia('(max-width:760px)').matches?document.querySelector('nav').getBoundingClientRect().bottom:document.querySelector('.ht-topbar').getBoundingClientRect().bottom;for(const section of sections){const r=section.getBoundingClientRect(),visible=Math.max(0,Math.min(r.bottom,innerHeight)-Math.max(r.top,top));if(visible>largest){largest=visible;active=section}}if(active)mark(active.id)}
-let pending=false;addEventListener('scroll',()=>{if(!pending){pending=true;requestAnimationFrame(()=>{current();pending=false})}},{passive:true});
-</script>
+
 <script>
 /* tigerkit:html-theme.js */
 (() => {
@@ -137,6 +153,79 @@ let pending=false;addEventListener('scroll',()=>{if(!pending){pending=true;reque
   }
   control.hidden = false;
 })();
+
+(() => {
+  const nav = document.querySelector('.ht-doc-nav');
+  if (!nav) return;
+  const toc = nav.querySelector('.ht-doc-toc');
+  const summary = toc?.querySelector('summary');
+  const links = [...nav.querySelectorAll('.ht-doc-toc-panel a[href^="#"]')];
+  const targetFor = hash => {
+    try { return document.getElementById(decodeURIComponent(hash.slice(1))); } catch { return null; }
+  };
+  const sections = links.map(link => targetFor(link.hash)).filter(Boolean);
+  const close = (returnFocus = false) => {
+    if (!toc?.open) return;
+    toc.open = false;
+    if (returnFocus) summary?.focus({preventScroll: true});
+  };
+  nav.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && toc?.open) { event.preventDefault(); close(true); }
+  });
+  document.addEventListener('click', event => { if (!nav.contains(event.target)) close(); });
+  nav.addEventListener('focusout', () => {
+    requestAnimationFrame(() => { if (!nav.contains(document.activeElement)) close(); });
+  });
+  // Native anchor navigation owns hashes, history and scrolling; only enhance focus.
+  document.addEventListener('click', event => {
+    const link = event.target.closest?.('a[href^="#"]');
+    if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const target = targetFor(link.hash);
+    if (!target) return;
+    close();
+    const added = !target.hasAttribute('tabindex');
+    if (added) target.setAttribute('tabindex', '-1');
+    target.focus({preventScroll: true});
+    if (added) target.addEventListener('blur', () => target.removeAttribute('tabindex'), {once: true});
+  });
+  const bar = document.querySelector('.ht-topbar');
+  const offset = () => {
+    const height = bar && getComputedStyle(bar).position === 'sticky' ? bar.getBoundingClientRect().height : 0;
+    document.documentElement.style.setProperty('--ht-anchor-offset', `${height + 16}px`);
+  };
+  offset();
+  if (bar && typeof ResizeObserver !== 'undefined') new ResizeObserver(offset).observe(bar);
+  const mark = id => {
+    for (const link of links) {
+      if (targetFor(link.hash)?.id === id) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    }
+  };
+  const current = () => {
+    const top = bar && getComputedStyle(bar).position === 'sticky' ? Math.max(0, bar.getBoundingClientRect().bottom) : 0;
+    // Select the deepest section at the reading edge, not its enclosing area.
+    const edge = top + 48;
+    let active = null, upcoming = null, nearest = Infinity;
+    for (const section of sections) {
+      const r = section.getBoundingClientRect();
+      if (r.top <= edge && r.bottom > edge) {
+        if (!active || active.contains(section)) active = section;
+      } else if (r.top > edge && r.top < innerHeight && r.top < nearest) {
+        upcoming = section; nearest = r.top;
+      }
+    }
+    active ||= upcoming;
+    if (active) mark(active.id);
+  };
+  const hash = () => { const target = targetFor(location.hash); if (target && sections.includes(target)) mark(target.id); else current(); };
+  let pending = false;
+  const schedule = () => { if (!pending) { pending = true; requestAnimationFrame(() => { current(); pending = false; }); } };
+  addEventListener('hashchange', hash);
+  addEventListener('scroll', schedule, {passive: true});
+  addEventListener('resize', () => { offset(); schedule(); });
+  hash();
+})();
 /* /tigerkit:html-theme.js */
 </script>
+</body>
 </html>

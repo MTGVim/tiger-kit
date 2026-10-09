@@ -38,19 +38,60 @@ Live-figure provenance is kept in the calling package's provenance file; the cal
 
 ## Document navigation
 
-For long document-like artifacts, keep meaningful stable `<section id="...">` elements in the DOM
-and native links whose URL hashes support direct access, browser history and browser Find. Provide
-a desktop sticky TOC/sidebar or equally fast section navigation, switching on narrow screens to a
-compact accessible sticky top navigation or collapsible TOC. Indicate the current section, using
-`:target` as the no-JavaScript cue and optional progressive `aria-current` updates for the TOC.
-Use `<details><summary>` for long secondary evidence/logs, keeping required background/conclusions
-expanded and searchable. Preserve keyboard order, visible focus, semantic navigation labels, readable
-contrast and reduced motion. Navigation must not remove inactive sections or require JavaScript to
-read core facts. On narrow screens, keep navigation inside the viewport rather than creating a page-level
-horizontal scroller. Flex/grid children that contain prose or controls must be shrinkable with `min-width: 0`;
-use a bounded table/code wrapper for genuinely wide content instead of clipping the page or relying on a flex
-row that extends past the viewport. Include hash deep links, keyboard navigation, no-JS readability and reduced
-motion in the required render checks; disclose missing checks.
+For long document-like artifacts, preserve meaningful stable `<section id="...">` elements and
+native hash links for deep access, browser history and Find. Default to a compact lower-right
+floating navigator (TOC toggle, top, bottom), reserving a narrow control gutter and bottom space
+so controls do not cover prose or important actions. Use the shared `.ht-document`, `.ht-doc-nav`
+and `.ht-doc-toc` styles in the theme assets; omit navigation when a short document gains nothing.
+Use native `<details><summary>` with a bounded, scrollable hierarchical TOC above the controls.
+This disclosure and its links must work without JavaScript. For example, adapt the labels/IDs:
+
+```html
+<body class="ht-document" id="document-top">
+<!-- Document content, with meaningful section IDs. -->
+<footer id="document-bottom">...</footer>
+<nav class="ht-doc-nav" aria-label="문서 탐색">
+  <details class="ht-doc-toc">
+    <summary aria-label="목차 열기 또는 닫기">목차</summary>
+    <div class="ht-doc-toc-panel" tabindex="-1"><ol>
+      <li><a href="#overview">목표와 결론</a><ol>
+        <li><a href="#conditions">판단 조건</a></li>
+      </ol></li>
+      <li><a href="#sources">참고문헌</a></li>
+    </ol></div>
+  </details>
+  <a href="#document-top" aria-label="맨 위로 이동">↑</a>
+  <a href="#document-bottom" aria-label="맨 아래로 이동">↓</a>
+</nav>
+```
+
+Inline the existing theme script after the markup for optional current-section marking,
+Escape/outside dismissal, focus return and focus transfer to native anchor targets. Do not
+intercept hash navigation or replace browser history. Use `:target` as the no-JS cue; expose
+`aria-current="location"` with a non-color-only cue when JS is available. Keep the popup within
+viewport and safe-area bounds at desktop/mobile widths. Keep keyboard order and visible focus.
+Smooth anchor scrolling is the default; reduced motion uses immediate scrolling. Set the
+`--ht-anchor-offset` to the actual sticky header height plus breathing room, and verify targets
+remain visible. Verification-only positioning uses instant scrolling. Required background and
+conclusions stay expanded, readable and searchable; only secondary evidence may collapse.
+Keep flex/grid children shrinkable with `min-width: 0`; wide tables/code need bounded scrolling
+wrappers, never page-level clipping. Verify TOC open/close, all links, top/bottom, hash reload/back,
+keyboard, no-JS, reduced motion and unobscured control/target geometry.
+
+## Citations and references
+
+For document prose, place numbered superscript citations immediately beside supported claims,
+then collect verified source titles, links and relevant date/revision metadata in a numbered
+bottom `참고문헌` section. Reuse a source number, assigning a unique ID to each citation occurrence.
+Use native `<sup id="cite-1-1"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup>` and
+`<li id="ref-1">... <a href="#cite-1-1" aria-label="인용 1의 첫 위치로 복귀">↩ 1</a></li>`.
+For another occurrence `cite-1-2`, add a second labeled backlink in the same reference entry.
+Verify every forward/back target and claim-source relationship; a bibliography alone is not
+attribution. Keep code evidence bound to its base/head SHA and `path:line` in the referenced entry;
+do not require full diff/source duplication. A supplied explanation target is content, not a
+replacement for citations. Optional hover previews require separate usefulness/accessibility
+verification; core navigation never depends on them. Use independently authored assets: functional
+UX inspiration does not authorize copying another site's code, content, branding or visual skin.
 
 Experimental prototype UIs are not document viewers: do not force this navigation shell onto them.
 Their offline/accessibility principles still apply. Document portions of QA sheets can use these
