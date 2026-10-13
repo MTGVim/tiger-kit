@@ -13,6 +13,13 @@ shared-understanding gate, or new authority to its caller.
 
 Use the caller's language and this scannable format:
 
+Always start the question block with a fixed level-two section title in that language:
+`## Questions` in English or `## 질문` in Korean. Keep the same title for every round,
+including a single clarification or approval question. Do not open the block with `---`
+or nest its title under the preceding section. Use `---` only between questions, with
+a blank line on both sides; without the preceding blank line Markdown may turn the
+previous paragraph into a setext heading.
+
 When handing control back for answers, finish analysis, context, recommendations, limitations and
 plans before the frontier. The question frontier must be the final substantive block. Keep each
 question's choices and recommendation inside that block, and put any short reply-format hint at
@@ -26,6 +33,8 @@ host/system warning may follow only when its exact source mandates that placemen
 writing convenience is not an exception.
 
 ```text
+## Questions
+
 ❓ **Q1 · <short title>**: <question and relevant choices>
 
 ➡️ <recommended answer and reason, when supported>

@@ -5,6 +5,11 @@ communication, irreversible deletion, production-data mutation, account changes,
 permission changes, or equivalent side effects. For an approved UI state, prefer an
 exact repository-evidence-based response mock over sending, saving, or paying.
 
+Protect local user shared state as well: apply [user shared-state safety](verification.md#user-shared-state)
+before clipboard, file or notification writes. Do not use those actions as default diagnostic
+controls. Necessary clipboard mutation requires a complete protected backup before execution,
+restoration and independent verification afterward, and disclosure of unsupported type coverage.
+
 Headless-only is absolute. Interactive authentication has no visible-browser exception.
 Do not request secrets in ordinary chat or place secret-bearing values or commands in
 prompts, output, ledgers, logs, screenshots, HAR, console captures, or receipts. Use

@@ -82,7 +82,8 @@ approved secret channel or return `Unverifiable` for a required unavailable auth
    be established safely, report the limitation instead of claiming visual preservation. Read
    [native evidence](references/app-evidence.md) before capture; return baseline phase evidence
    and resume the approved parent implementation.
-4. **Interaction**: Use fresh accessibility tokens/indices from this exact app/window snapshot.
+4. **Interaction**: Before acting, apply the [shared-state safety contract](references/verification.md#user-shared-state): list user shared-state writes, choose side-effect-free diagnostic controls, and bind necessary clipboard/file/notification actions to exact authority and verified preservation/restoration. A prefix clipboard read is not a backup; preserve the full contents/type coverage before a necessary write and report verified restoration afterward.
+   Use fresh accessibility tokens/indices from this exact app/window snapshot.
    Refresh after navigation, resize, focus, scroll or rerender. Prefer semantic press/set-value;
    coordinates require the same window's current screenshot, capture origin, dimensions and scale.
    Check actual delivery for each action. Background-to-foreground/global input, window restoration,
@@ -117,12 +118,14 @@ Before sending any user-owned clarification, choice, or approval, read [question
 Minimum shape, even when already familiar:
 
 ```text
+## Questions
+
 ❓ **Q1 · <short title>**: <question and relevant choices>
 
 ➡️ <recommendation and reason, when supported>
 ```
 
-Separate questions with `---`. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
+Always start the question block with the fixed level-two section title in the caller's language (`## Questions` in English, `## 질문` in Korean), even for one question; do not open with a separator or nest it under the preceding section. Separate questions with `---`, with a blank line before and after each separator to avoid a setext heading. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
 <!-- /tigerkit:questions -->
 <!-- tigerkit:output-notation -->
 ## Output Notation

@@ -34,20 +34,41 @@ Before sending any user-owned clarification, choice, or approval, read [question
 Minimum shape, even when already familiar:
 
 ```text
+## Questions
+
 ❓ **Q1 · <short title>**: <question and relevant choices>
 
 ➡️ <recommendation and reason, when supported>
 ```
 
-Separate questions with `---`. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
+Always start the question block with the fixed level-two section title in the caller's language (`## Questions` in English, `## 질문` in Korean), even for one question; do not open with a separator or nest it under the preceding section. Separate questions with `---`, with a blank line before and after each separator to avoid a setext heading. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
 """ + END + "\n"
+
+
+def question_template_errors(text: str, label: str) -> list[str]:
+    """Reject missing round boundaries and Markdown setext traps in examples."""
+    templates = [body for body in re.findall(r"```text\n(.*?)```", text, re.DOTALL)
+                 if re.search(r"❓ \*\*Q\d+", body)]
+    if not templates:
+        return [f"{label}: missing question example template"]
+    errors = []
+    for body in templates:
+        lines = body.splitlines()
+        if not lines or lines[0] not in ("## Questions", "## 질문"):
+            errors.append(f"{label}: question example must start with a fixed level-two section title")
+        for index, line in enumerate(lines):
+            if line.strip() == "---" and (index == 0 or index == len(lines) - 1
+                    or lines[index - 1].strip() or lines[index + 1].strip()):
+                errors.append(f"{label}: question separator needs blank lines before and after")
+    return errors
 
 
 def question_errors(root: Path) -> list[str]:
     source = root / "skills/tk-grill/references/questions.md"
     if not source.is_file():
         return ["missing canonical tk-grill question rounds reference"]
-    errors = []
+    errors = question_template_errors(source.read_text(encoding="utf-8"), "canonical question rounds")
+    errors.extend(question_template_errors(BLOCK, "canonical question guard"))
     notice = root / "skills/tk-grill/LICENSE.txt"
     notice_text = QUESTION_NOTICE.strip()
     if not notice.is_file():

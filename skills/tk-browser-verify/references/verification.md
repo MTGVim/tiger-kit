@@ -20,6 +20,34 @@ implementation. Only a complete after/acceptance phase may set `verification_com
 Return compact phase evidence to an active owner; never end its approved work at a child boundary.
 Do not modify product/test/config source, Git state, or remote state as a verifier.
 
+## User shared state
+
+Before interaction, list planned writes to user shared state such as the system clipboard,
+user files and notifications. The list must be empty or bind each necessary action to exact
+authorization and a verified preservation/restoration plan. Choose side-effect-free controls
+for diagnostic comparisons; a Copy, Save/Export or notification control is not a default
+control merely to prove click delivery. Background input and headless execution do not isolate
+these side effects. Prefer a verified run-owned destination or isolated mock when it can prove
+the criterion; do not send notifications or overwrite user files as a diagnostic shortcut.
+
+When clipboard mutation is necessary, before acting back up the entire current clipboard,
+not a prefix or preview, preserving all available formats/types and bytes when supported.
+Apply Artifact Paths checks to a run-owned `.tigerkit/tmp/<skill>/<run-id>/` backup with
+directory `0700` and file `0600` (or equivalent verified access restrictions); never print
+clipboard contents or include them in prompts, logs, screenshots or publication evidence.
+Verify backup completeness and the restore capability before any write. If only text is
+supported, disclose that limitation before execution; proceed only if current evidence proves
+the clipboard is text-only or the user has explicitly authorized that exact limited coverage.
+Otherwise choose a safe alternative or return `Blocked | Unverifiable` without writing.
+
+After checking the postcondition, restore the backup on success, failure or interruption and
+independently verify the restored content and type coverage without exposing values. If the
+user or another process has replaced the test clipboard meanwhile, do not overwrite the newer
+state; preserve the protected backup and report restoration as incomplete. Report backup
+coverage, restoration outcome and any residue. Failed or unverified restoration prevents
+aggregate `Pass`; retain the protected backup for recovery, and remove it after verified
+restoration. Never report partial or unavailable restoration as complete.
+
 ## Visual comparison
 
 Visible-state claims require a non-empty, actually inspected runtime screenshot containing the

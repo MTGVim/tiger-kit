@@ -210,14 +210,15 @@ Before sending any user-owned clarification, choice, or approval, read [question
 Minimum shape, even when already familiar:
 
 ```text
+## Questions
+
 ❓ **Q1 · <short title>**: <question and relevant choices>
 
 ➡️ <recommendation and reason, when supported>
 ```
 
-Separate questions with `---`. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
+Always start the question block with the fixed level-two section title in the caller's language (`## Questions` in English, `## 질문` in Korean), even for one question; do not open with a separator or nest it under the preceding section. Separate questions with `---`, with a blank line before and after each separator to avoid a setext heading. Put context before the question block and make it the final substantive block: no plan, promise, or “answer and I will proceed” line afterward, except one short reply-format hint. An approval request is its own numbered `Q`, never buried in the proposal. Defer approval whose scope still depends on an unresolved answer.
 <!-- /tigerkit:questions -->
-
 <!-- tigerkit:skill-feedback -->
 ## Skill Feedback
 

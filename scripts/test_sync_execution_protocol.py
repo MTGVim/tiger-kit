@@ -55,7 +55,7 @@ class SyncExecutionProtocolTest(unittest.TestCase):
         (self.prep / "external-contracts.md").write_text("external\n", encoding="utf-8")
         questions = self.root / "skills/tk-grill/references/questions.md"
         questions.parent.mkdir(parents=True)
-        questions.write_text("Canonical frontier protocol\n", encoding="utf-8")
+        shutil.copyfile(Path(__file__).resolve().parents[1] / "skills/tk-grill/references/questions.md", questions)
         (questions.parent.parent / "SKILL.md").write_text("# Grill\n", encoding="utf-8")
         notice = Path(__file__).resolve().parents[1] / "skills/tk-grill/LICENSE.txt"
         shutil.copyfile(notice, questions.parent.parent / "LICENSE.txt")

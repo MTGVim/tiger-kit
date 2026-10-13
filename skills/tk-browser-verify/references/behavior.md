@@ -5,6 +5,10 @@
 Identify the exact control. If it is missing, inspect the mode, tab, scroll, and toggle
 state instead of repeatedly searching for a button with a similar label.
 
+Choose side-effect-free controls for click-delivery comparisons. Before any clipboard,
+file or notification write, apply [user shared-state safety](verification.md#user-shared-state);
+headless input does not isolate the user's system clipboard or files.
+
 Use provider-native trusted pointer and keyboard APIs. Use `evaluate_script` only to
 observe state, computed values, or coordinates. Never treat `element.click()`,
 `form.submit()`, or `dispatchEvent()` as interaction evidence.
