@@ -47,6 +47,7 @@ DOMAIN_CONTEXT_TARGETS = (
 HTML_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research", "tk-qa-sheet", "tk-prototype")
 VISUAL_CONSUMERS = ("tk-explain", "tk-explain-diff", "tk-teach", "tk-research")
 HTML_ASSETS = ("html-theme.css", "html-theme.js")
+CHART_FILES = ("references/chart-design.md", "assets/chart-examples.html")
 HTML_TEMPLATES = ("skills/tk-research/assets/report.html", "skills/tk-qa-sheet/assets/qa-sheet-template.html")
 FEEDBACK_MARKER = "<!-- tigerkit:skill-feedback -->"
 FEEDBACK_END = "<!-- /tigerkit:skill-feedback -->"
@@ -91,7 +92,7 @@ def html_policy_errors(root: Path) -> list[str]:
         if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
             errors.append(f"{target.relative_to(root)}: shared visual grammar drift")
     for name in HTML_CONSUMERS:
-        for relative in ("references/html-output.md", *(f"assets/{asset}" for asset in HTML_ASSETS)):
+        for relative in ("references/html-output.md", *CHART_FILES, *(f"assets/{asset}" for asset in HTML_ASSETS)):
             canonical = source / relative
             target = root / "skills" / name / relative
             if not canonical.is_file() or not target.is_file() or target.read_bytes() != canonical.read_bytes():
@@ -173,6 +174,8 @@ def main() -> int:
             pairs.append((CLEAR_WRITING_SOURCE, ROOT / "skills" / name / "references/clear-writing.md"))
             if name != "tk-explain":
                 pairs.append((ROOT / "skills/tk-explain/references/html-output.md", ROOT / "skills" / name / "references/html-output.md"))
+                for relative in CHART_FILES:
+                    pairs.append((ROOT / "skills/tk-explain" / relative, ROOT / "skills" / name / relative))
     for name in HTML_CONSUMERS:
         if (ROOT / "skills" / name).is_dir():
             for asset in HTML_ASSETS:

@@ -775,6 +775,22 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "polished-offline-chart",
+      "path": "success",
+      "prompt": "$tk-explain 합성 처리량 데이터 0, 12.5, 28건/초를 비교하는 HTML을 만들어줘. 마지막 항목명은 길게 쓰고 마우스·키보드 툴팁과 모바일·다크 모드도 지원해줘. 파일명은 `chart.html`로 해줘.",
+      "expected_output": "실제 값과 0 기준선을 보존한 자체 완결형 차트",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "차트 참조와 예제를 확인하고 원본 값·단위·합성 출처를 보존한다. 0 값도 포커스와 툴팁으로 확인할 수 있고 긴 레이블을 자르지 않는다. 외부 자원 없이 정적 차트와 데이터 대체 표현을 유지하며 실제 브라우저 검증 여부를 정직하게 보고한다."
+        },
+        {
+          "type": "path_exists",
+          "path": "chart.html"
+        }
+      ]
     }
   ],
   "renamed_from": {

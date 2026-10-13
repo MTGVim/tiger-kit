@@ -86,6 +86,10 @@ class SyncExecutionProtocolTest(unittest.TestCase):
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text((path.read_text() if path.exists() else "") + block)
         repo = Path(__file__).resolve().parents[1]
+        for relative in sync_execution_protocol.CHART_FILES:
+            target = self.root / "skills/tk-explain" / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(repo / "skills/tk-explain" / relative, target)
         for name in sync_execution_protocol.HTML_CONSUMERS:
             assets = self.root / "skills" / name / "assets"
             assets.mkdir(parents=True, exist_ok=True)
@@ -201,6 +205,20 @@ class SyncExecutionProtocolTest(unittest.TestCase):
                 self.assertEqual(self.clear_target.read_bytes(), self.clear_source.read_bytes())
                 self.assertEqual(self.run_main("--check"), 0)
 
+
+    def test_chart_reference_and_recipe_drift_are_repaired(self) -> None:
+        self.assertEqual(self.run_main(), 0)
+        for relative in sync_execution_protocol.CHART_FILES:
+            consumer = self.root / "skills/tk-research" / relative
+            canonical = self.root / "skills/tk-explain" / relative
+            consumer.write_text("Stale chart recipe\n", encoding="utf-8")
+            self.assertEqual(self.run_main("--check"), 1)
+            self.assertEqual(self.run_main(), 0)
+            self.assertEqual(consumer.read_bytes(), canonical.read_bytes())
+            consumer.unlink()
+            self.assertEqual(self.run_main("--check"), 1)
+            self.assertEqual(self.run_main(), 0)
+        self.assertEqual(self.run_main("--check"), 0)
 
     def test_visual_grammar_drift_missing_copy_and_canonical_change_fail_check(self) -> None:
         self.assertEqual(self.run_main(), 0)
