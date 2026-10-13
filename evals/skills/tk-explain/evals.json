@@ -655,6 +655,126 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "explain-grouped-card-flow",
+      "path": "success",
+      "prompt": "`$tk-explain` 입력 한 묶음이 중앙 처리 하나를 거쳐 서로 다른 네 개의 결과를 동시에 만들고, 네 결과 모두를 후속 자료에서 재사용하는 구조를 오프라인 `HTML`로 설명해줘. 관계는 모두 확인됐다.",
+      "expected_output": "입력·중심 처리·동시 결과 그룹·재사용 순서를 `semantic` `HTML`로 표현한다. 네 결과는 `desktop` 2열/`mobile` 1열이며 결과 사이에 순서나 조건을 만들지 않는다. `long` `labels`, `no-JS` `reading`, `light/dark/system`과 `overflow/clip`의 실제 검증 여부를 구별한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "입력·중심 처리·동시 결과 그룹·재사용 순서를 `semantic` `HTML`로 표현한다. 네 결과는 `desktop` 2열/`mobile` 1열이며 결과 사이에 순서나 조건을 만들지 않는다. `long` `labels`, `no-JS` `reading`, `light/dark/system`과 `overflow/clip`의 실제 검증 여부를 구별한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "explain-card-flow-alternatives-subset",
+      "path": "success",
+      "prompt": "`$tk-explain` 입력을 분류해서 검증에 성공하면 보고서를, 실패하면 오류 목록을 만든다. 둘 중 하나만 나오며 보고서만 다음 공유 단계에 쓰인다. 실패 이후 단계는 확인하지 못했다. 이 흐름을 `HTML`로 설명해줘.",
+      "expected_output": "동시 결과와 대안을 구별하고 성공/실패 조건을 명시한다. 보고서만 공유 단계에 연결하며 오류 목록의 재사용이나 모든 결과를 공유한다는 연결을 꾸며내지 않는다. 적합하면 카드 대신 `flowchart`를 사용한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "동시 결과와 대안을 구별하고 성공/실패 조건을 명시한다. 보고서만 공유 단계에 연결하며 오류 목록의 재사용이나 모든 결과를 공유한다는 연결을 꾸며내지 않는다. 적합하면 카드 대신 `flowchart`를 사용한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "explain-card-flow-one-result-long-labels",
+      "path": "success",
+      "prompt": "`$tk-explain` 입력 → 긴 한국어·영문 이름의 검증 처리 → 결과 한 개 → 해당 결과의 재사용을 `HTML`로 보여줘. 이름과 설명은 의미를 유지해 줄바꿈해도 된다.",
+      "expected_output": "결과가 하나면 빈 슬롯을 만들지 않고 충분한 너비를 쓴다. 긴 `label`을 자르거나 `fixed` `height`로 겹치게 하지 않는다. 모바일 읽기 순서와 카드/관계 설명의 가시성을 검증하며 확인하지 못한 렌더를 통과로 보고하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "결과가 하나면 빈 슬롯을 만들지 않고 충분한 너비를 쓴다. 긴 `label`을 자르거나 `fixed` `height`로 겹치게 하지 않는다. 모바일 읽기 순서와 카드/관계 설명의 가시성을 검증하며 확인하지 못한 렌더를 통과로 보고하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "explain-card-flow-negative-simple-comparison",
+      "path": "boundary",
+      "prompt": "`$tk-explain` `A`는 월요일, `B`는 화요일에 실행된다는 사실만 짧게 설명해줘. 데이터 처리 관계나 재사용 단계는 없다.",
+      "expected_output": "짧은 문장이나 단순 표로 설명한다. 카드 흐름을 장식으로 강제하거나 입력·중앙 처리·결과·재사용 관계를 만들어 넣지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "짧은 문장이나 단순 표로 설명한다. 카드 흐름을 장식으로 강제하거나 입력·중앙 처리·결과·재사용 관계를 만들어 넣지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "explain-icon-criteria",
+      "path": "success",
+      "prompt": "`$tk-explain` 긴 한국어·영문 문장이 포함된 완료 기준 네 개를 하나의 오프라인 `HTML`에서 읽기 쉽게 표현해줘. 완료 여부는 아직 점검하지 않았어.",
+      "expected_output": "네 기준을 `semantic` `list`와 보조 아이콘으로 표현하되 미점검을 완료로 표시하지 않는다. 아이콘/`CSS` 없이 번호·의미·순서를 유지하며 `narrow` `viewport`, `themes`, `keyboard`, `no-JS` 확인 사실과 한계를 구분한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "네 기준을 `semantic` `list`와 보조 아이콘으로 표현하되 미점검을 완료로 표시하지 않는다. 아이콘/`CSS` 없이 번호·의미·순서를 유지하며 `narrow` `viewport`, `themes`, `keyboard`, `no-JS` 확인 사실과 한계를 구분한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "explain-diagnostic-kpi",
+      "path": "success",
+      "prompt": "`$tk-explain` 제공된 진단 데이터로 `HTML` 보고서를 만들어줘: 실제 검토한 `PR` 3개, 접근 불가 1개, 중복 제거 후보 2개 중 현재 해결 확인 1개. 각 후보에는 `PR`·커밋 근거와 다음 조치가 있어.",
+      "expected_output": "`KPI`는 분석 `PR` 3개·후보 2개·해결 1개처럼 단위와 범위를 정의하고 접근 불가 `PR`을 분석 수에 넣지 않는다. 항목별 근거·상태 정의·조치를 연결하고 반응형 정렬과 색상 없는 의미를 보존한다. 별도 데이터 없이 심각도를 꾸미지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`KPI`는 분석 `PR` 3개·후보 2개·해결 1개처럼 단위와 범위를 정의하고 접근 불가 `PR`을 분석 수에 넣지 않는다. 항목별 근거·상태 정의·조치를 연결하고 반응형 정렬과 색상 없는 의미를 보존한다. 별도 데이터 없이 심각도를 꾸미지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "explain-diagnostic-empty-partial",
+      "path": "boundary",
+      "prompt": "`$tk-explain` 검토 가능한 `PR` 2개에는 확정된 개선 후보가 없어. 나머지 `PR`은 접근할 수 없어. 이 부분 수집 결과를 짧은 `HTML`로 보여줘.",
+      "expected_output": "`No change`를 접근 가능한 범위에 한정하고 미확인 범위를 표시한다. 가짜 `finding`, 빈 카드, 과장된 전체 정상 판정이나 `KPI`를 생성하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`No change`를 접근 가능한 범위에 한정하고 미확인 범위를 표시한다. 가짜 `finding`, 빈 카드, 과장된 전체 정상 판정이나 `KPI`를 생성하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "explain-icon-negative",
+      "path": "boundary",
+      "prompt": "`$tk-explain` 단순히 오늘 검토한 항목은 `A`와 `B`라고 한 문장으로 알려줘.",
+      "expected_output": "간단한 문장으로 답하고 아이콘·`KPI`·`callout`·카드를 강제하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "간단한 문장으로 답하고 아이콘·`KPI`·`callout`·카드를 강제하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "renamed_from": {

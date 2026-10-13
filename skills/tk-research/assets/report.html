@@ -39,6 +39,30 @@ img, svg, video, canvas { max-width: 100%; height: auto; }
 pre { max-width: 100%; overflow-x: auto; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .ht-card { min-width: 0; max-width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: calc(2 * var(--space)); }
+/* Opt-in document flow; outputs are a group, never a horizontal sequence. */
+.ht-flow { display: grid; gap: var(--space); min-width: 0; padding: 0; margin: 1rem 0; list-style: none; }
+.ht-flow > li { min-width: 0; }
+.ht-flow :is(h3, h4) { margin-block: 0 .5rem; }
+.ht-flow .ht-card > :last-child { margin-block-end: 0; }
+.ht-flow-focus { border-inline-start: 4px solid var(--accent); }
+.ht-flow-results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(2 * var(--space)); min-width: 0; padding: 0; margin: 0; list-style: none; }
+.ht-flow-results > :only-child { grid-column: 1 / -1; }
+.ht-flow-link { margin: var(--space) 0 0; text-align: center; color: var(--muted); }
+@media (max-width: 600px) { .ht-flow-results { grid-template-columns: minmax(0, 1fr); } }
+.ht-info-list { list-style: none; padding: 0; margin: 0; }
+.ht-info-row { display: grid; grid-template-columns: 1.5rem minmax(0, 1fr); gap: .75rem; padding-block: 1rem; }
+.ht-info-row + .ht-info-row { border-block-start: 1px solid var(--line); }
+.ht-info-row > * { min-width: 0; }
+.ht-info-row :is(h3, h4, p) { margin-block: 0 .5rem; }
+.ht-info-row > :last-child > :last-child { margin-block-end: 0; }
+.ht-info-icon { color: var(--accent); line-height: 1.65; }
+.ht-info-icon svg { display: block; width: 1.5rem; height: 1.5rem; }
+.ht-status { display: inline; font-size: var(--font-small); font-weight: 600; overflow-wrap: anywhere; }
+.ht-callout { min-width: 0; padding: 1rem; border-inline-start: 3px solid var(--accent); background: var(--hover); }
+.ht-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: 1rem; margin-block: 1rem; }
+.ht-kpis > div { min-width: 0; padding: .75rem; border-block-end: 1px solid var(--line); }
+.ht-kpis dt { color: var(--muted); }
+.ht-kpis dd { margin: .25rem 0 0; font-size: 1.5rem; font-weight: 700; }
 .ht-table-scroll { position: relative; max-width: 100%; overflow-x: auto; }
 .ht-table-scroll table { width: 100%; border-collapse: collapse; }
 .ht-table-scroll th, .ht-table-scroll td { text-align: left; vertical-align: top; padding: var(--space); border-bottom: 1px solid var(--line); font-size: var(--font-body); }

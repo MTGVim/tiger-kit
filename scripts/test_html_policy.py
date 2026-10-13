@@ -1,5 +1,6 @@
 """Exercise shared-contract validation with installed-package mutations."""
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -13,6 +14,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class HTMLPolicyTest(unittest.TestCase):
+    @unittest.skipUnless(os.environ.get('TK_PLAYWRIGHT_MODULE') and os.environ.get('TK_CHROMIUM_EXECUTABLE'),
+                         'Document render regression requires an explicitly configured local browser')
+    def test_document_pattern_render_regression(self):
+        result = subprocess.run(['node', '--test', 'evals/skills/tk-explain/card-flow.test.cjs'],
+                                cwd=ROOT, text=True, capture_output=True, timeout=60)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_research_native_navigation_and_reference_targets(self):
         class Targets(HTMLParser):
             def __init__(self):

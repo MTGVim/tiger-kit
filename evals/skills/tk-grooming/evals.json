@@ -768,6 +768,141 @@
           "expected": "Pass"
         }
       ]
+    },
+    {
+      "id": "grooming-mixed-tier-first-checkpoint",
+      "path": "success",
+      "prompt": "`$tk-grooming` 기존 지침을 감사하고 승인받아 정리해줘. 현재 근거는 저장소 밖 사용자 `memory` 한 항목, `checkout` 안의 `ignored` `local` `rule` 한 항목, `Git` 추적 `rule` 한 항목이다. 모두 사용자 관리이며 기계적 중복 제거 후보이고 아직 적용 승인하지 않았다.",
+      "expected_output": "처음 전체 `Disposition`에 `Tier`와 모든 `GR` `ID`를 표시한다. 첫 승인 질문은 `T1` 항목만 대상으로 하고 `T2/T3`를 함께 묻지 않는다. `vendor/action` 권한을 유지하며 아직 수정하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "처음 전체 `Disposition`에 `Tier`와 모든 `GR` `ID`를 표시한다. 첫 승인 질문은 `T1` 항목만 대상으로 하고 `T2/T3`를 함께 묻지 않는다. `vendor/action` 권한을 유지하며 아직 수정하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "grooming-linked-worktree-real-target",
+      "path": "success",
+      "prompt": "`$tk-grooming` `local` `rule` 중복 제거를 제안해줘. 현재 `linked` `worktree`의 `rule`은 `main` `checkout` 안의 `ignored` `rule`을 가리키는 `symlink`다. 두 `checkout`의 `git` `common` `directory`가 같고 실제 파일은 `git` `ls-files`에서 미추적이며 `git` `check-ignore`에서 `ignored`로 확인됐다.",
+      "expected_output": "링크와 실제 대상 경로를 기록하고 실제 대상의 `Git` `root`에서 `T2`로 판정한다. 저장소 밖 `T1`이나 팀 공유 `T3`로 오분류하지 않는다. 연결된 작업 트리에 미치는 영향과 별도 백업 필요성을 밝힌다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "링크와 실제 대상 경로를 기록하고 실제 대상의 `Git` `root`에서 `T2`로 판정한다. 저장소 밖 `T1`이나 팀 공유 `T3`로 오분류하지 않는다. 연결된 작업 트리에 미치는 영향과 별도 백업 필요성을 밝힌다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "grooming-recomputes-dependent-tiers",
+      "path": "success",
+      "prompt": "`$tk-grooming` `T1`의 정확한 `memory` 중복 삭제는 이미 승인했고 `durable` `backup` 및 `byte` `equality`와 적용 후 검증이 완료됐다. 남은 `T2` `rule`의 `symlink` 대상은 이전 표와 달라졌고 `T3`와의 충돌 근거도 영향을 받는다. 다음 단계를 진행해줘.",
+      "expected_output": "`T1` 승인이나 전체 표를 반복하지 않고 `T2/T3`의 실제 경로·소유권·범위·충돌 근거를 다시 확인한다. `drift`가 난 항목을 기존 승인으로 적용하지 않는다. 다음 승인 질문은 재확인된 `T2`만 포함한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`T1` 승인이나 전체 표를 반복하지 않고 `T2/T3`의 실제 경로·소유권·범위·충돌 근거를 다시 확인한다. `drift`가 난 항목을 기존 승인으로 적용하지 않는다. 다음 승인 질문은 재확인된 `T2`만 포함한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "grooming-preapproved-mechanical-tiers",
+      "path": "success",
+      "prompt": "`$tk-grooming` `--apply` 정확히 지정하고 이미 확인한 사용자 관리 `T1` `skill` 링크 수정과 `T2` `local` `skill` 오탈자 수정만 진행해줘. 두 항목은 기계적 `fix`이고 `durable` `backup` 경로가 승인 범위 안에서 확인됐으며 바이트 복사 검증도 가능하다. `T3`는 이번 작업 범위 밖이다.",
+      "expected_output": "현재 승인에 포함된 기계적 `T1/T2`를 단계별로 수행·검증하며 단계 경계에서 재승인을 요구하지 않는다. `durable` `backup` 경로와 바이트 일치 검증을 보고한다. `T3`는 담당자 인계 제안만 남기며 원격 작업을 만들지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "현재 승인에 포함된 기계적 `T1/T2`를 단계별로 수행·검증하며 단계 경계에서 재승인을 요구하지 않는다. `durable` `backup` 경로와 바이트 일치 검증을 보고한다. `T3`는 담당자 인계 제안만 남기며 원격 작업을 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "grooming-backup-refuses-temp-and-autoload",
+      "path": "boundary",
+      "prompt": "`$tk-grooming` `--apply` 정확히 승인한 `T1` `memory` 한 항목을 삭제해줘. 사용 가능한 백업 경로는 세션 종료 시 삭제되는 `temp`와 자동 로드하는 `memory` 디렉터리뿐이다. `durable` 외부 저장소는 쓸 수 없다.",
+      "expected_output": "삭제 전에 대상 작업을 `Blocked`로 보고한다. `temp`나 자동 로드 경로에 복사해 놓고 `reversible` 또는 `Complete`라고 주장하지 않는다. 백업 경로와 `byte` `equality`를 확인하지 못했음을 밝힌다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "삭제 전에 대상 작업을 `Blocked`로 보고한다. `temp`나 자동 로드 경로에 복사해 놓고 `reversible` 또는 `Complete`라고 주장하지 않는다. 백업 경로와 `byte` `equality`를 확인하지 못했음을 밝힌다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "grooming-tracked-handoff-vendor-empty-tier",
+      "path": "boundary",
+      "prompt": "`$tk-grooming` 기존 지침을 감사하고 적용 제안해줘. `T1`은 없고 `T2`는 `updater`가 관리하는 `vendor` 설치본이며 `T3`는 현재 구현 범위 밖의 `tracked` `rule`이다.",
+      "expected_output": "`T1`에 대한 빈 승인 질문을 만들지 않는다. `T2`는 `keep` (`vendor`)로 유지하며 수정·백업 승인으로 바꾸지 않는다. `T3`는 정확한 담당 작업 인계 제안만 하고 `issue/branch/PR`을 자동 생성하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`T1`에 대한 빈 승인 질문을 만들지 않는다. `T2`는 `keep` (`vendor`)로 유지하며 수정·백업 승인으로 바꾸지 않는다. `T3`는 정확한 담당 작업 인계 제안만 하고 `issue/branch/PR`을 자동 생성하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "grooming-broken-link-is-evidence-gap",
+      "path": "boundary",
+      "prompt": "`$tk-grooming` `--apply` `local` `rule`을 정리해줘. 실제 `symlink` 대상은 사라졌으며 `Git` `tracking` `probe`는 `repository` 접근 오류로 실패했다. 원래 경로는 `checkout` 안에 있다.",
+      "expected_output": "`broken` `link`나 `Git` 오류를 `untracked`로 단정하지 않고 해당 `Tier`를 `Unverifiable`로 남긴다. 수정하거나 `stale` `evidence`로 다음 `tier` 승인을 받지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "`broken` `link`나 `Git` 오류를 `untracked`로 단정하지 않고 해당 `Tier`를 `Unverifiable`로 남긴다. 수정하거나 `stale` `evidence`로 다음 `tier` 승인을 받지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "grooming-restore-preserves-concurrent-edits",
+      "path": "boundary",
+      "prompt": "`$tk-grooming` `T2` 적용 후 검증이 실패했다. `durable` `backup`의 `byte` `equality`는 확인했지만 대상에 다른 프로세스의 새로운 편집이 있다. 복구하고 다음 `tier`로 진행해줘.",
+      "expected_output": "현재 대상·실행 `delta`를 재확인하며 `concurrent` `edit`를 백업으로 덮어쓰지 않는다. 정확히 되돌릴 수 없으면 `Unverifiable`로 보존하고 `backup` 절대경로와 복구 상태를 보고한다. 종속 `tier`를 계속 적용하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "현재 대상·실행 `delta`를 재확인하며 `concurrent` `edit`를 백업으로 덮어쓰지 않는다. 정확히 되돌릴 수 없으면 `Unverifiable`로 보존하고 `backup` 절대경로와 복구 상태를 보고한다. 종속 `tier`를 계속 적용하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "grooming-user-only-without-repository",
+      "path": "success",
+      "prompt": "`$tk-grooming` 저장소와 무관한 사용자 전역 스킬 하나만 `report-only`로 감사해줘. 실제 경로와 사용자 소유권은 확인했고 `Git` 저장소는 작업 범위에 없다.",
+      "expected_output": "저장소 없는 정상 `scope`를 `Git` 오류와 구별하여 `T1`로 분류하고 `report-only` 감사를 완료한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "사용자 전역 감사에 불필요한 `Git` `root`를 요구하지 않으며 확인된 `T1` 경로·소유권과 `report-only` 경계를 유지한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }

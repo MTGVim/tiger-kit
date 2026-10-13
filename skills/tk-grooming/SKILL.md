@@ -53,14 +53,50 @@ Implicit mode is report-only.
    Classify skill actions as `keep | keep (vendor) | tighten | merge | split | move |
    deprecate | delete | fix`; persistent context may also use `duplicate | conflict |
    stale override` as a finding before proposing an action.
-9. `🔴 CHECKPOINT · 🛑 STOP`: Summarize the exact scope, evidence, proposal, target paths, and permitted apply actions.
-   A literal initial `--apply` pre-approves only that verified mechanical scope; otherwise reuse an explicit active-task request covering the same mechanical edits or ask once if it is absent. Scope, evidence, or target drift invalidates approval.
-10. `apply/report`: In report-only mode, output the proposal/receipt. If authority
+9. `mutation tiers`: Resolve symlinks before classifying the actual mutation target.
+   When a repository is in scope, record its root with `git rev-parse --show-toplevel`; for a target in a
+   linked worktree, verify the same Git common directory and use that target's root.
+   Classify `T1` outside those repository roots, `T2` inside but untracked, or `T3`
+   tracked, using `git ls-files --error-unmatch -- <relative-target>` at the owning root
+   (exit 0: tracked; exit 1: no match; other errors: evidence gap). A confirmed user-only
+   audit with no repository needs no Git root; its targets are T1. Distinguish that
+   scope from an inaccessible repository rather than silently treating errors as T1.
+   For T2, inspect `git check-ignore -v -- <relative-target>` and distinguish ignored
+   from ordinary untracked files. Record both link and real paths and shared-worktree
+   impact. Missing paths, broken links or failed Git probes are evidence gaps, not T1/T2.
+   Tier describes mutation location; vendor ownership and action authority still apply.
+10. `🔴 CHECKPOINT · 🛑 STOP`: Show the complete Disposition once, then handle only
+    the next nonempty tier in `T1 -> T2 -> T3` order. Summarize its exact items,
+    evidence, targets, shared impact and permitted actions. Reuse existing matching
+    approval; a literal initial `--apply` pre-approves only its verified mechanical
+    scope. Otherwise ask for that tier alone. Later-tier approval is a dependent
+    question under [question rounds](references/questions.md): applying an earlier
+    tier can change links, sources or conflicts. Skip empty tiers and do not invent
+    a checkpoint when authorization already covers the next step.
+    T3 defaults to an exact handoff proposal for the tracked change's owner unless
+    the active task already covers it; do not create an issue, branch or PR merely
+    to hand off. Scope, evidence or target drift invalidates only affected approval.
+11. `apply/report`: In report-only mode, output the proposal/receipt. If authority
    exists, reread the sources, search references before delete/move, preserve
    managed/generated markings, and modify only the approved receipt scope.
-11. `revalidate`: Recheck links, duplication, frontmatter, persistent-context conflicts,
+    Before mutating T1/T2, copy each real target to a durable, run-identifiable backup
+    outside session-temp storage and auto-loaded directories. Verify byte equality,
+    preserve restoration metadata and protect sensitive contents; report the absolute
+    backup path and equality result without its contents. If durable storage or a
+    verifiable copy is unavailable, block that mutation rather than using temp storage.
+    This recovery backup is not a temporary artifact; keep it available after the run.
+    Recovery-backup exception to Artifact Paths: a user-owned durable backup needs
+    no Git root or `.tigerkit/` exclusion. Before writing, verify an absolute,
+    nonsymlink destination, user ownership, restrictive permissions, persistence
+    beyond this session and exclusion from automatic instruction loading. Create
+    only a unique recovery copy, never overwrite another backup. If those facts
+    cannot be established, block the mutation. Repository reports/scratch still
+    follow the ordinary artifact policy; this exception grants no other write.
+12. `revalidate`: Recheck links, duplication, frontmatter, persistent-context conflicts,
     and any behavior comparison that justified instruction pruning, then report the
-    results, unverified scope, and unresolved items.
+    results, unverified scope, and unresolved items. After applying and verifying a
+    tier, recompute remaining tiers' path, ownership, scope and conflict evidence
+    before their checkpoint. Stop dependent mutation if verification fails.
 
 Investigate only the repository or user skill, rule, and auto-memory areas explicitly
 stated or implicated by the request. Use the actual host-native paths from
@@ -125,9 +161,9 @@ Assign `GR-01`, `GR-02`, ... once, in initial identification order, to each
 independently normative instruction/workflow. Output one `## Disposition` table
 first.
 
-| ID | Item | Action | Target | Basis |
-| --- | --- | --- | --- | --- |
-| GR-01 | `<short name>` | `<classification>` | `<target>` | `<evidence refs>` |
+| ID | Item | Tier | Action | Target | Basis |
+| --- | --- | --- | --- | --- | --- |
+| GR-01 | `<short name>` | `T1/T2/T3` | `<classification>` | `<real target>` | `<path/tracking/ownership evidence>` |
 
 Reuse the same IDs for applied changes and verification. Add `## Exceptions` only
 when there are evidence gaps, ownership conflicts, unresolved scope, or failed
@@ -139,7 +175,9 @@ for output.
 
 Record the overall `report-only | applied` disposition in `## Disposition`, but do
 not repeat the table or append metadata. If there are no items, output one
-`— | None | keep | — | no finding` row. Use `keep (vendor)` for vendor rows.
+`— | None | — | keep | — | no finding` row. Use `keep (vendor)` for vendor rows;
+use `Unverifiable` in Tier when classification evidence is missing. Preserve IDs
+across tier checkpoints without repeating the complete table.
 
 For distillation maintenance, see [sources](references/sources.md); ordinary audits do not need it.
 

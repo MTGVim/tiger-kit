@@ -16,7 +16,16 @@ Read only when a grooming checkpoint fails.
   missing behavioral evidence; do not make a speculative tightening edit.
 - Target drift after checkpoint: Make no changes, return `Partial/Blocked` with
   current evidence, and require a new proposal.
+- Broken symlink, unknown shared target, or failed tracking probe: Mark the affected
+  tier `Unverifiable`; do not equate a Git error with an untracked file or approve
+  later tiers using stale evidence.
+- Missing durable T1/T2 backup or failed byte-equality check: Make no changes to that
+  target. Report the backup/access deficit; session-temp or auto-loaded storage is
+  not a recovery backup. Keep other approved independent targets within their scope.
 - Verification failure after apply: Never claim `Complete`. Restore/reverify only
   when this run's delta is exactly reversible, then return `Fail` with evidence.
   If preservation or restoration is uncertain, halt the mutation as `Unverifiable`
   and report the checks, paths, and observed state.
+  Recheck the current real target and this run's delta before restoring; preserve
+  concurrent edits. Retain the durable backup and report its path and restoration
+  result. Do not continue dependent tiers after failed verification.

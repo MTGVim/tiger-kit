@@ -1,0 +1,54 @@
+{
+  "skill": "tk-compound",
+  "kind": "user-invoked",
+  "queries": [
+    {
+      "id": "explicit-default",
+      "split": "train",
+      "query": "`$tk-compound` 최근 리뷰에서 반복되는 문제를 진단해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "explicit-window",
+      "split": "validation",
+      "query": "`/tk-compound` `--since` `14d` `--focus` `testing` 완료 `PR`을 진단해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "explicit-prs",
+      "split": "validation",
+      "query": "`$tk-compound` `PR` 12, 15, 18의 반복 원인을 확인해줘",
+      "should_trigger": true
+    },
+    {
+      "id": "implicit",
+      "split": "train",
+      "query": "최근 `PR` 문제를 진단해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "single-review",
+      "split": "validation",
+      "query": "`$tk-review` 현재 `diff`를 검토해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "one-session",
+      "split": "validation",
+      "query": "`$tk-retro` 이번 세션의 도구 오류를 회고해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "instruction-hygiene",
+      "split": "validation",
+      "query": "`$tk-grooming` 기존 규칙의 충돌을 확인해줘",
+      "should_trigger": false
+    },
+    {
+      "id": "implementation",
+      "split": "validation",
+      "query": "발견한 테스트 누락을 고치고 `main`에 푸시해줘",
+      "should_trigger": false
+    }
+  ]
+}

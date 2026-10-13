@@ -930,6 +930,54 @@
       "focus_skill": "tk-to-questionnaire",
       "expected_selected_skill": "tk-grill",
       "critical": true
+    },
+    {
+      "id": "compound-explicit",
+      "boundary": "여러 `PR`의 회고적 진단과 단일 세션·변경·지침·도메인 작업을 구별합니다.",
+      "prompt": "`$tk-compound` 여러 완료 `PR`의 반복 원인을 진단해줘",
+      "focus_skill": "tk-compound",
+      "expected_selected_skill": "tk-compound",
+      "critical": true
+    },
+    {
+      "id": "compound-implicit-block",
+      "boundary": "여러 `PR`의 회고적 진단과 단일 세션·변경·지침·도메인 작업을 구별합니다.",
+      "prompt": "최근 `PR`들의 반복 원인을 진단해줘",
+      "focus_skill": "tk-compound",
+      "expected_selected_skill": null,
+      "critical": true
+    },
+    {
+      "id": "compound-vs-retro",
+      "boundary": "여러 `PR`의 회고적 진단과 단일 세션·변경·지침·도메인 작업을 구별합니다.",
+      "prompt": "`$tk-retro` 이번 세션의 실행 실수를 회고해줘",
+      "focus_skill": "tk-compound",
+      "expected_selected_skill": "tk-retro",
+      "critical": true
+    },
+    {
+      "id": "compound-vs-grooming",
+      "boundary": "여러 `PR`의 회고적 진단과 단일 세션·변경·지침·도메인 작업을 구별합니다.",
+      "prompt": "`$tk-grooming` 기존 지침의 중복을 감사해줘",
+      "focus_skill": "tk-compound",
+      "expected_selected_skill": "tk-grooming",
+      "critical": true
+    },
+    {
+      "id": "compound-vs-review",
+      "boundary": "여러 `PR`의 회고적 진단과 단일 세션·변경·지침·도메인 작업을 구별합니다.",
+      "prompt": "`$tk-review` 현재 `diff`만 검토해줘",
+      "focus_skill": "tk-compound",
+      "expected_selected_skill": "tk-review",
+      "critical": true
+    },
+    {
+      "id": "compound-vs-domain",
+      "boundary": "여러 `PR`의 회고적 진단과 단일 세션·변경·지침·도메인 작업을 구별합니다.",
+      "prompt": "`$tk-domain` 이 도메인 용어와 중요 결정을 정리해줘",
+      "focus_skill": "tk-compound",
+      "expected_selected_skill": "tk-domain",
+      "critical": true
     }
   ]
 }

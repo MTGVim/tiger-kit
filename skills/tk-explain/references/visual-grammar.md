@@ -36,7 +36,38 @@ split an overview and detail rather than mixing their conventions. Preserve sour
 edge direction, timing, guards, outcomes and unknown connections; never invent an edge to
 complete the layout. Name the visual's scope so a focused view does not imply full coverage.
 
+## Card flow for grouped processing
+
+Use a vertical card flow when the question is how one input set passes through a central
+process, produces several distinct results, and feeds a verified reuse stage. Keep stage
+order visible and label result groups as simultaneous outputs or alternative choices;
+an alternative needs its condition and must not imply every choice executes. The results
+share a parent stage, not a sequence between neighboring cards. Draw only supported
+input/process/result/reuse relationships; omit an unknown downstream connection rather
+than implying every output feeds it. Name a subset explicitly when only some outputs are reused.
+
+Prefer semantic HTML cards for short prose and grouped outcomes; use a flowchart when
+branch guards, cross-links or edge tracing need explicit geometry. Keep a simple statement
+as prose and dense exact comparisons as a table. Do not force this pattern into every
+document or replace prototype/checklist interfaces. [HTML output](html-output.md) owns
+the opt-in markup, shared styles and responsive checks.
+
 ## Bound complexity without shrinking meaning
+
+For criteria or diagnostic findings, prefer a compact icon-led list in one container when
+aligned labels and supporting evidence improve scanning. A list is not a flow: do not imply
+sequence or causal edges. Keep ordinary prose/list/table when it conveys the same information
+more clearly. Icons supplement visible wording; never use them as the only criterion or status.
+Use a callout only for a material note, limitation or recommendation, not decoration.
+
+For a diagnostic overview, pair optional KPI label/value groups with populated finding areas.
+Derive counts from actual inspected records and define units and overlap: analyzed PRs,
+deduplicated candidates and currently solved candidates are different measures. Identify the
+time window and observed, illustrative or partially collected data. A finding connects its
+area, evidence-backed status, judgment, short basis and next action to the existing citation
+contract. Unknown is not solved. Zero findings or missing access needs plain coverage/No change
+text, not fabricated metrics or empty cards. Do not mandate three KPIs, six areas, an icon per
+paragraph, severity colors or a particular skill's report format.
 
 Include only relationships needed for the question. Combine elements only when the distinction
 is irrelevant to that question, with the grouping named. If labels, spacing or traceability

@@ -1,5 +1,11 @@
 # 고지
 
+`tk-compound`는 `EveryInc/compound-engineering-plugin`의 MIT 스냅샷
+`50532b00de523980010d97fe950965b35382a3b7`에서 유효한 교훈의 선별과 근거 검증 원칙을
+참고했습니다. 자동 문서 작성·기억 저장소·세션 종료 실행은 도입하지 않았습니다.
+세부 채택·변형·제외 판단과 원본 고지는 해당 패키지의 `references/sources.md`와
+`LICENSE.txt`에 보존합니다.
+
 `tk-grooming`의 대상 모델 적합성 감사는 `anthropics/skills`의
 `683bc88e56f3e09ba94f7055977f3d3aa499f202`에서 `skills/claude-api/shared/prompt-audit.md`와
 `shared/model-migration.md`를 비교했습니다. Apache-2.0 원본은 비교 자료로만 사용했으며,
