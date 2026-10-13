@@ -36,6 +36,38 @@ split an overview and detail rather than mixing their conventions. Preserve sour
 edge direction, timing, guards, outcomes and unknown connections; never invent an edge to
 complete the layout. Name the visual's scope so a focused view does not imply full coverage.
 
+## Plan an evidence-backed visual storyboard
+
+For a nontrivial document, plan visuals only after establishing the prose claims and their evidence.
+For each candidate figure, write a compact internal storyboard: the reader's specific question,
+the one claim the figure should make easier to understand, the verified entities and links,
+the chosen static visual grammar, and the source location or assumption behind each material
+label, edge, value and transition. This is a planning check, not a required user-facing
+worksheet, file, JSON schema, new approval gate, or separate agent. Omit it for obvious
+single-fact presentations and straightforward semantic tables.
+
+Choose the view by the cognitive task: compare alternatives side by side, orient a hierarchy
+with a stable spatial map, trace causal order with directed connections, show temporal change
+with shared identities and scales, or explore a stateful mechanism with controlled steps.
+Use one central takeaway per figure and a caption that states what the marks demonstrate,
+including important scope limits. If multiple claims compete for attention, divide the view
+into an overview and one focused detail rather than shrinking everything or producing
+ornamental cards. Do not translate unsupported prose into apparently factual graphics.
+
+Before rendering a stepper or interactive sequence, specify each frame's same entity IDs,
+actual state, guard/event, and outgoing transition. Render each frame from those facts, not
+from independently improvised captions or decorative motion. Only introduce progression if
+intermediate states expose a cause that before/after alone hides; start paused, allow backward
+steps and reset, and retain the meaningful static baseline. Follow the calling skill's
+interactive-examples contract when one exists.
+
+After rendering, audit the storyboard against the actual figure: every arrow, number, label,
+highlight and step must be supported by the cited source or marked illustrative/inferred.
+Inspect whether the reader can answer the original question from the visual plus caption
+without guessing a hidden legend. A visually attractive but ambiguous or unsupported figure
+fails this check. Reuse existing browser/HTML verification rather than creating another
+runtime, image service or verification harness.
+
 ## Card flow for grouped processing
 
 Use a vertical card flow when the question is how one input set passes through a central
