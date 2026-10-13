@@ -270,6 +270,15 @@ Check card text and relationship labels for overlap/clipping as well as page wid
 
 ## Render verification
 
+Present verification outcomes in a visible lower-document summary before references. Give each
+check its own paragraph, list item, or term/description pair, with a bold label (`<strong>` or a
+bold `<dt>`), explicit outcome and supporting evidence or limitation. Keep completed static checks
+separate from unperformed, failed or unverifiable screen checks; static success cannot establish
+render success. Keep a single outcome as one item without inventing extra checks. Preserve this
+structure when injecting final results, then inspect the final saved markup for item separation,
+label emphasis and outcome honesty. The research template demonstrates two distinct check items;
+replace its placeholders only with observed outcomes.
+
 Before delivery, inspect rendered desktop (at least 1280px) and mobile (390–500px), in light and dark.
 Delegate browser-visible checks to `tk-browser-verify` within its provider, headless and evidence
 boundaries. Do not launch the user's browser or silently install/switch verification providers.

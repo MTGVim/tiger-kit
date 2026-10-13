@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import shutil
+from html.parser import HTMLParser
 
 try:
     from .verification_policy import verification_errors, sync_verification
@@ -83,6 +84,52 @@ def sync_feedback(root: Path) -> None:
             path.write_text(text, encoding="utf-8")
 
 
+def research_verification_errors(text: str) -> list[str]:
+    """Protect the report template's separately labeled verification outcomes."""
+    class Summary(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.active = False
+            self.items = []
+            self.item = None
+            self.emphasis = False
+
+        def handle_starttag(self, tag, attrs):
+            if tag == 'section' and dict(attrs).get('id') == 'verification':
+                self.active = True
+            if not self.active:
+                return
+            if tag == 'li':
+                self.item = {'label': '', 'body': '', 'label_finished': False}
+                self.items.append(self.item)
+            if tag == 'strong':
+                self.emphasis = True
+
+        def handle_data(self, value):
+            if self.active and self.item is not None:
+                is_label = self.emphasis and not self.item['label_finished']
+                self.item['label' if is_label else 'body'] += value
+
+        def handle_endtag(self, tag):
+            if tag == 'strong':
+                self.emphasis = False
+                if self.item is not None:
+                    self.item['label_finished'] = True
+            if tag == 'li':
+                self.item = None
+            if tag == 'section':
+                self.active = False
+
+    parser = Summary()
+    parser.feed(text)
+    labels = [item['label'].strip() for item in parser.items]
+    if labels != ['정적 검증:', '화면 검증:'] or any(
+        not item['label'].strip() or not item['body'].strip() for item in parser.items
+    ):
+        return ['research report template: static and screen verification need separate items with bold labels and outcomes']
+    return []
+
+
 def html_policy_errors(root: Path) -> list[str]:
     errors = []
     source = root / "skills/tk-explain"
@@ -110,6 +157,8 @@ def html_policy_errors(root: Path) -> list[str]:
                 errors.append(f"{relative}: missing canonical {asset} block")
             elif text.split(start, 1)[1].split(end, 1)[0] != "\n" + canonical.read_text(encoding="utf-8"):
                 errors.append(f"{relative}: inline {asset} drift")
+        if relative == 'skills/tk-research/assets/report.html':
+            errors.extend(research_verification_errors(text))
     return errors
 
 

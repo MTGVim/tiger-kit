@@ -78,6 +78,48 @@ class HTMLPolicyTest(unittest.TestCase):
         self.assertTrue(any(tag == 'header' and 'ht-topbar' in attrs.get('class', '').split()
                             for tag, attrs in ancestors))
 
+    def test_research_verification_summary_is_last_content_section(self):
+        text = (ROOT / 'skills/tk-research/assets/report.html').read_text()
+        sections = re.findall(r'<section\b[^>]*id="([^"]+)"', text)
+        self.assertEqual(sections[-2:], ['verification', 'sources'])
+
+    def test_merged_verification_items_block_release_check(self):
+        def mutate(root):
+            path = root / 'skills/tk-research/assets/report.html'
+            text = path.read_text()
+            text, replaced = re.subn(
+                r'<section id="verification">.*?</section>',
+                '<section id="verification"><h2>검증 및 예외</h2>'
+                '<p>정적 검증: 완료. 화면 검증: 확인하지 못했습니다.</p></section>',
+                text, flags=re.S)
+            self.assertEqual(replaced, 1)
+            path.write_text(text)
+        self.check_mutation(mutate)
+
+    def test_unemphasized_verification_label_blocks_release_check(self):
+        def mutate(root):
+            path = root / 'skills/tk-research/assets/report.html'
+            text = path.read_text()
+            self.assertIn('<strong>정적 검증:</strong>', text)
+            path.write_text(text.replace('<strong>정적 검증:</strong>', '정적 검증:', 1))
+        self.check_mutation(mutate)
+
+    def test_bold_outcomes_do_not_replace_bold_check_labels(self):
+        from scripts.sync_execution_protocol import research_verification_errors
+        text = ('<section id="verification"><ul>'
+                '<li>정적 검증: <strong>완료.</strong></li>'
+                '<li>화면 검증: <strong>검증 불가.</strong></li>'
+                '</ul></section>')
+        self.assertTrue(research_verification_errors(text))
+
+    def test_bold_outcomes_are_allowed_after_bold_check_labels(self):
+        from scripts.sync_execution_protocol import research_verification_errors
+        text = ('<section id="verification"><ul>'
+                '<li><strong>정적 검증:</strong> <strong>완료.</strong></li>'
+                '<li><strong>화면 검증:</strong> <strong>검증 불가.</strong></li>'
+                '</ul></section>')
+        self.assertEqual(research_verification_errors(text), [])
+
     def check_mutation(self, mutate):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

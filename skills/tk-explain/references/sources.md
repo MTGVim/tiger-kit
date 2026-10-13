@@ -73,3 +73,14 @@ scripts and raw session details. The reported proprietary `dataviz` bundle is re
 no wording, code, palettes or validation script is included. Its distribution/license and upstream
 behavior were not independently verified here; the general chart rules and neutral tokens are
 independently authored. Runtime/provider observations remain conditional, not compatibility claims.
+
+## Verification outcome structure (2026-10-13)
+
+The inspected report-generation incident and explicit reusable-output request establish the gap:
+final status injection merged static success and unavailable screen verification into one plain
+paragraph. W3C WAI [Content Structure](https://www.w3.org/WAI/tutorials/page-structure/content/),
+retrieved 2026-10-13, supports semantic paragraphs and separate list items for related information.
+Keep semantic grouping; adapt independently authored bold check labels and a lower-document summary
+to the user's scanning needs. Omit upstream example content, styles and runtime machinery. The WAI
+guidance does not itself mandate bold labels or summary placement. Template markup and mutation
+checks establish structural protection only, not browser rendering or model compliance rates.
