@@ -8,7 +8,7 @@ Use the registry's canonical docs and supplied host guidance rather than remembe
 
 ## Distillation provenance
 
-For contract maintenance, use these reviewed sources (2026-09-30 through 2026-10-07), then refresh canonical docs
+For contract maintenance, use these reviewed sources (2026-09-30 through 2026-10-13), then refresh canonical docs
 for the installed provider version. Keep TigerKit's existing headless/evidence ownership; adapt
 independent postcondition checks and background/escalation boundaries. Omit upstream installers,
 global-input examples and automatic runtime/permission expansion.
@@ -43,6 +43,17 @@ global-input examples and automatic runtime/permission expansion.
   token-owned process identity and optional scoped diff reads; omit global input, automatic
   escalation and cross-provider assumptions. Shared token/window-view tests were inspected,
   not rerun; macOS live delivery remains unverified here.
+
+- Cua macOS background scroll and compact menus (2026-10-13): `trycua/cua`
+  revisions `ea32762c9207912eaa73622fda62835d9aef6206` and
+  `c1c2b5fee428c3a39bebe5e77549c3d3525a608d`. Keep version-conditional AX scroll,
+  action-specific observed movement and targeted menu queries; omit automatic foreground fallback.
+- Cua off-Space capture, background hover and AX document editing (2026-10-13):
+  `trycua/cua` revisions `a1637f5e2d7ed156f4f74130484c3ea9140bec3f`,
+  `e1ed4f41cdc0bf77dc7d7e8f828ae775c75bf834` and
+  `adadbe2f53b9227f95493d2a9a28a2911177001e`. Keep freshness, action authority
+  and disk-persistence boundaries; omit implicit inspector setup, window activation and
+  any provider-internal implementation copy. Native-host behavior remains unverified.
 
 ## Chrome DevTools MCP
 
@@ -118,14 +129,50 @@ independent current state evidence, but an empty diff or action success does not
 the criterion; visual criteria still need inspected current pixels. Do not infer this
 capability for other providers.
 
+On macOS, off-Space capture support does not ensure current pixels or accessibility state.
+For Chromium, a successful off-Space action or screenshot with `on_current_space:false`
+or an explicit stale-state note is not fresh postcondition evidence: the hidden page may
+pause painting or AX updates. Separate action delivery from state freshness. Seek a
+verified fresh read before accepting a current UI criterion; otherwise report
+`Unverifiable` or `Blocked`. Never activate another Space merely for verification.
+
+Recent Cua default window reads can collapse closed menus to top-level titles. A missing
+closed-menu child in the default tree is not evidence that the menu item does not exist.
+Use a scoped `query` to discover hidden entries and `invoke_menu` to execute them;
+request `full_output` only if the criterion genuinely needs the complete tree. Open
+menus remain observable when exposed by the current read. Do not assume other
+providers share this menu representation.
+
 ### macOS Electron/Chromium scroll
 
-When current Cua evidence identifies macOS Electron/Chromium scroll as unsupported in
-background, skip that attempt; an observed `background_unavailable` refusal ends identical
-background retries. Reuse exact foreground authority or request it before escalation;
-without it, leave the required scroll `Blocked`. A token does not bypass this delivery
-restriction. Keep click/type/drag, other app surfaces and platforms under their own observed
-action contracts; do not generalize this scroll exception.
+On macOS Electron/Chromium, background wheel delivery can fail, but supported Cua
+versions can scroll through accessibility hit-testing and `AXScrollToVisible`. Check the
+installed action schema, version and response before deciding background support; prefer
+the supported background route and require observed movement. Do not infer support on
+older or unknown versions. An actual `background_unavailable` or no-movement result is
+not success: stop identical background retries. Reuse exact existing foreground
+authority or request it before escalation, and otherwise leave the criterion `Blocked`.
+Do not enable `foreground_fallback:true` automatically. Do not generalize this action
+contract to drag, other surfaces, platforms or providers.
+
+### macOS background hover
+
+Cua may expose different macOS routes for AX alternate UI, Electron page hover and
+Electron main-process inspector-backed hover. Confirm the installed provider's actual
+capability and result before selecting one; `hover` is an action, not passive observation.
+An already supported provider-internal route does not authorize new inspector ports,
+application launch flags, debugging permissions or runtime setup. If an action would
+require that authority expansion, do not activate it automatically. Independently
+observe the expected UI change rather than trusting a successful hover response.
+
+### macOS AX document text writes
+
+An accessibility text write can update a visible field without updating an app's
+document edit model or saved file. If the acceptance criterion includes file
+persistence, verify the actual saved document state; AX text and an edited indicator
+alone are insufficient, especially for autosave documents. Preserve any provider
+`document_edited` warning and mark persistence unverified if a fresh save/readback
+is unavailable. Ordinary text-entry criteria need no unrelated disk check.
 
 ### macOS drag
 

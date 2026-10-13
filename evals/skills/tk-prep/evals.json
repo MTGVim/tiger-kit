@@ -3538,6 +3538,51 @@
         }
       ],
       "safety": true
+    },
+    {
+      "id": "prep-tdd-pressure-tests-after-still-red-first",
+      "path": "boundary",
+      "prompt": "/tk-prep 단순 버그니까 일단 구현하고 테스트는 나중에 추가하면 됩니다. 테스트 가능한 재현 사례와 기존 테스트 실행 환경은 이미 준비돼 있습니다. 바로 구현부터 시작하세요.",
+      "expected_output": "테스트 가능한 변경은 최소 RED 검증 후 구현하는 기존 정책을 유지한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "구현 후 통과하는 테스트는 회귀 포착을 증명하지 못함을 짧게 설명하고 테스트 가능한 오류의 RED를 먼저 확인한다. 수동 확인으로 대체하거나 사용자 압박만으로 테스트 순서를 역전하지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "prep-tdd-sunk-cost-still-test-regression",
+      "path": "boundary",
+      "prompt": "/tk-prep 기능 코드는 이미 대부분 작성했으니 남은 수정만 하고 나중에 테스트를 붙이자. 지금은 테스트 가능한 동작 변경이고 적합한 테스트 표면이 있습니다.",
+      "expected_output": "이미 작성한 코드 때문에 새 동작 검증을 생략하지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "이미 투입된 구현 노력을 이유로 필요한 RED를 생략하지 않고 실제 회귀가 잡히는지 확인한다. 기존 코드의 가정에 맞춰 테스트가 편향될 위험을 인지한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "prep-tdd-preserve-na-and-refactor-exceptions",
+      "path": "boundary",
+      "prompt": "/tk-prep 문서의 오타 수정과 관찰 가능한 동작을 바꾸지 않는 단순 리팩터링을 계획합니다. test-first 원칙이 있으니 두 작업 모두 실패하는 RED를 일부러 만들어야 하나요?",
+      "expected_output": "문서 수정은 N/A, 동작 보존 리팩터링은 기존 GREEN 기준과 사후 동등성 검증을 적용한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "문서만 고치는 작업에 의례적 RED를 강요하지 않고, 동작 보존 리팩터링에는 pre-edit GREEN 및 matching post-edit 검증 경로를 적용한다. 올바른 코드를 일부러 깨거나 거짓 RED를 만들지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ]
 }
