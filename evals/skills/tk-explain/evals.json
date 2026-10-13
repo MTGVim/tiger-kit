@@ -617,6 +617,44 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "explain-fixed-span-value-on-diagram",
+      "path": "success",
+      "prompt": "$tk-explain 요청 발생 뒤 정확히 30초 동안 기다렸다가 재시도하는 동작을 `interval-diagram.html`로 설명해 주세요. 30초는 실제 요구사항으로 확정되었습니다. 다이어그램에 대기 시작과 끝을 구별해 주세요.",
+      "expected_output": "30초 대기 구간과 양 끝 지점이 연결된 단일 오프라인 HTML 설명.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "그림에서 실제 대기 구간을 따라 `30초` 값이 직접 읽힌다. 시작·끝이 식별되고, 원문에 없는 시간·상태를 보태지 않는다. 수치를 별도 범례나 문장에만 둔 결과는 실패로 평가한다. 모바일 뷰포트에서도 잘림·라벨 겹침이 없어야 하며 렌더 검증이 불가하면 확인했다고 주장하지 않는다."
+        },
+        {
+          "type": "path_exists",
+          "path": "interval-diagram.html"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
+    },
+    {
+      "id": "explain-unmeasured-span-does-not-invent-duration",
+      "path": "boundary",
+      "prompt": "$tk-explain 인증 요청부터 응답까지의 흐름을 `unknown-duration.html`로 설명해 주세요. 단계 순서만 확인되었고 실제 지연 시간이나 TTL은 측정하지 않았습니다.",
+      "expected_output": "시간값을 만들어 내지 않고 순서와 미확인 시간을 구분한 HTML 설명.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "단계 순서만 관찰된 흐름에 근거 없는 ms·초·TTL·유효기간 숫자를 만들어 넣지 않는다. 모든 숫자에 치수선이나 그림을 강제하지 않고, 미확인 시간을 미확인으로 남긴다."
+        },
+        {
+          "type": "path_exists",
+          "path": "unknown-duration.html"
+        },
+        {
+          "type": "git_head_unchanged"
+        }
+      ]
     }
   ],
   "renamed_from": {

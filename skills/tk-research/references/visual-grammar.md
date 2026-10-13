@@ -53,6 +53,14 @@ clear routes and enough separation; an orthogonal path is useful when it improve
 not a mandatory brand style. Label the relationship when direction alone cannot explain it.
 Keep readable labels and use text or shape as well as color for status distinctions.
 
+When a source-supported duration, TTL, distance, or validity window measures one fixed span,
+label that value on or directly beside the measured span and make its endpoints clear. A
+remote legend alone should not require readers to infer which span the value measures.
+Distinguish illustrative values from observed or required values; never invent a measurement.
+Use a table or chart instead when direct labels would obscure precise comparison or crowd
+the drawing. Verify the span and label together at narrow viewports without clipping,
+overlap, or horizontal overflow.
+
 For structure changes, keep the same component identities and spatial correspondence in
 Before and After wherever practical. Pair the views with a Changes ledger identifying
 added, removed, changed, moved and rewired elements as applicable. Preserve unchanged context;
@@ -64,6 +72,12 @@ diagram content is reachable: check clipping and any local scroller. Correct geo
 failures before claiming visual acceptance; report unavailable checks honestly.
 
 ## Distillation provenance
+
+Reviewed 2026-10-13 at `nicobailon/visual-explainer@1829e4f61ee804dff3651eb9ffdec4dfb779dbfc`
+(MIT): keep only source-supported dimension labels on meaningful spans; adapt to TigerKit's
+existing HTML and viewport checks. Omit every-number-as-picture, figure-first prose,
+numbered callout infrastructure and renderer-specific markup. Upstream runtime and model
+behavior were not rerun in TigerKit.
 
 Reviewed 2026-10-07 at `cathrynlavery/diagram-design@d1376371965f513d99cc9ec388835d255c5c88d5`:
 `skills/diagram-design/SKILL.md` and relevant sections of `references/layout-budget.md`,
