@@ -69,6 +69,13 @@ If the test fails for the wrong reason, fix it and confirm RED again. If it alre
 passes, investigate whether it protects the new behavior or the product behavior
 already exists. Do not write product code first when a necessary RED is missing.
 
+When pressured to implement first and add tests later, remember why RED matters:
+a test that first passes against finished code has not shown it catches the intended
+regression and can inherit that implementation's assumptions. A manual spot check
+is not repeatable regression protection. Keep RED first for testable behavior changes
+even under time or sunk-cost pressure; continue to honor the `N/A`, engineering
+exception and behavior-preserving refactor paths above rather than manufacturing RED.
+
 ## Good-test gate
 
 Before writing a test body, answer: “What realistic product-code mutation should make
