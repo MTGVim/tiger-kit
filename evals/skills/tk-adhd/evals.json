@@ -99,6 +99,80 @@
           "type": "git_head_unchanged"
         }
       ]
+    },
+    {
+      "id": "shape-chat-comparison-table",
+      "path": "boundary",
+      "prompt": "$tk-adhd 다음 두 배포 옵션을 채팅에서 비교해 주세요. `A`의 월 비용은 1만 원, 복구 방식은 자동, 오프라인 지원은 없음입니다. `B`의 월 비용은 2만 원, 복구 방식은 수동, 오프라인 지원은 있음입니다. 이 채팅 화면에서는 Markdown 문법이 원문으로 보일 수도 있습니다.",
+      "expected_output": "옵션 두 행과 비용·복구·오프라인 지원 세 속성을 머리글이 있는 4열 GFM 파이프 표로 비교한다. 셀은 짧게 쓰고 제공된 값을 보존한다. 원문 표시 가능성을 표 금지로 해석하지 않으며 박스 문자나 코드 펜스 없이 표를 출력한다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "옵션 두 행과 비용·복구·오프라인 지원 세 속성을 머리글이 있는 4열 GFM 파이프 표로 비교한다. 셀은 짧게 쓰고 제공된 값을 보존한다. 원문 표시 가능성을 표 금지로 해석하지 않으며 박스 문자나 코드 펜스 없이 표를 출력한다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "output_contains",
+          "text": "|"
+        },
+        {
+          "type": "output_absent",
+          "text": "```"
+        },
+        {
+          "type": "output_absent",
+          "text": "┌"
+        },
+        {
+          "type": "output_absent",
+          "text": "│"
+        }
+      ]
+    },
+    {
+      "id": "shape-chat-single-attribute-list",
+      "path": "boundary",
+      "prompt": "$tk-adhd 챙길 준비물은 노트북, 충전기, 출입증입니다. 다른 정보는 추가하지 말고 채팅에서 보기 좋게 정리해 주세요.",
+      "expected_output": "준비물 이름만 세 개 있는 단일 속성 나열은 표 없이 목록으로 출력한다. 표를 채우기 위해 번호·설명·상태 같은 속성을 만들어내지 않는다.",
+      "assertions": [
+        {
+          "type": "judge",
+          "criterion": "준비물 이름만 세 개 있는 단일 속성 나열은 표 없이 목록으로 출력한다. 표를 채우기 위해 번호·설명·상태 같은 속성을 만들어내지 않는다."
+        },
+        {
+          "type": "git_head_unchanged"
+        },
+        {
+          "type": "changed_paths_equal",
+          "paths": []
+        },
+        {
+          "type": "output_absent",
+          "text": "|"
+        },
+        {
+          "type": "output_absent",
+          "text": "```"
+        },
+        {
+          "type": "output_contains",
+          "text": "노트북"
+        },
+        {
+          "type": "output_contains",
+          "text": "충전기"
+        },
+        {
+          "type": "output_contains",
+          "text": "출입증"
+        }
+      ]
     }
   ],
   "migrations": [
