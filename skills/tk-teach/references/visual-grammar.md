@@ -68,6 +68,30 @@ without guessing a hidden legend. A visually attractive but ambiguous or unsuppo
 fails this check. Reuse existing browser/HTML verification rather than creating another
 runtime, image service or verification harness.
 
+## Decision evolution versus dated event timeline
+
+A dated event timeline answers what happened and when. A decision-evolution view answers
+which *documented* finding changed an assessment and why. Choose the latter only with
+actual prior and revised judgments on record; final conclusions, file order and publication
+dates alone do not prove an intervening decision. Without that history, use an evidence-to-
+recommendation map or comparison table instead.
+
+For each supported change, retain the previous assessment, newly discovered evidence,
+revised assessment, affected candidate/condition and source link. Label the order as
+recorded decision sequence when calendar times are unavailable; never invent timestamps
+or imply that mere succession establishes causality. Do not show rejected candidates as
+failed experiments when they were never tried. Clearly distinguish facts, inference,
+recommendations and still-open limits. Give each change one concise takeaway and keep
+long source detail available without hiding material caveats.
+
+In offline HTML, use semantic ordered steps or compact cards before custom SVG. Where
+the relationship cannot be understood without interacting, progressive enhancement
+may reveal source details or toggle verified views, but full conclusions and essential
+evidence remain visible without JS. Prefer a static figure if interaction adds no insight.
+Verify keyboard navigation, narrow-screen reading, source anchors and matching captions
+under the existing HTML contract. Apply `clear-writing.md` to labels and sentences;
+emojis are optional semantic signposts, never the only status cue or a compulsory decoration.
+
 ## Card flow for grouped processing
 
 Use a vertical card flow when the question is how one input set passes through a central

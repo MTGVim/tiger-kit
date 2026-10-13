@@ -34,6 +34,22 @@ make unchanged canonical facts fresh. Report failure leaves canonical facts inta
 artifact branch `Unverifiable`; do not fall back outside the identified repository. Return the file
 link and a concise conclusion without automatically opening a browser or changing user focus.
 
+## Evidence-backed decision evolution
+
+When the research has actual recorded changes of assessment, show a compact decision
+timeline only if it helps the reader understand the recommendation. Each stop links
+the prior assessment, newly verified evidence, resulting changed judgment and its
+consequence. Preserve source IDs, experiment/decision dates when recorded, and whether
+a claim is observed, inferred or proposed. Do not infer an earlier opinion from the
+final recommendation or convert the order of sources into the order of decisions.
+
+When only final findings are known, prefer a candidate comparison or evidence-to-conclusion
+map, not a fabricated chronological narrative. Distinguish candidate exclusion from
+untested budget deferral and maintain the report's core evidence and limitations.
+Use brief content-specific headings and captions under `clear-writing.md`; optional
+semantic emoji in chat summaries must not be imported as decorative HTML requirements.
+Reuse the existing `visual-grammar.md` and offline verification requirements.
+
 ## Persistent-project coverage
 
 Project the whole research project, never only its latest batch or a paragraph replacing earlier

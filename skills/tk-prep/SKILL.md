@@ -213,6 +213,33 @@ After approval:
 - direct/Seed → write+reread Ready Seed, then execute directly;
 - SDD → write+reread grammar-valid Ready Seed, load the private protocol, and execute its Unit/review/fix loops.
 
+## Reader-facing completion summary
+
+Use the existing clear-writing criteria for final chat prose. In a substantive result,
+distinguish actual implementation, verified checks, recommendations, decisions and material
+limitations with content-specific short headings. Optional semantic emoji (for example,
+`🛠️` changed behavior, `✅` executed verification, `💭` a documented decision,
+`💡` an actionable recommendation, `⚠️` an exception) may prefix a heading only
+when the distinction helps scanning. Emoji never replace the status or evidence, and do
+not require a section when no such content exists. Never present a generated inner
+monologue as internal reasoning or invent a decision history.
+
+Reconcile the approved goal, decisions, acceptance conditions, required verification and
+implementation retro against the final candidate. Explain any material deviations,
+unmet conditions, skipped/failed verification, unresolved findings or unapproved exception
+with expected-versus-actual behavior, reason, consequence and next action. Keep success and
+failure distinct: local implementation may be complete while runtime verification remains
+unverified; do not imply overall Pass or remote publication. Put the material exception
+summary as the **last substantive block** of an ordinary completion response so a reader
+at the end of a long conversation can find it. Omit the block when no material exceptions
+exist; do not tack on a casual postscript or optional suggestion after it.
+
+Preserve owner-specific output boundaries: a mandatory last question block, approval
+checkpoint, exact verdict/status footer or publication preview takes precedence over
+this placement. When such a boundary applies, surface exceptional status in its owning
+required field/block rather than appending text after it. Do not turn a blocked action
+into an implicitly approved engineering exception.
+
 ## Baseline continuation and final-response gate
 
 Before invoking a pre-edit baseline, retain the approved execution shape, remaining implementation/verification/commit
