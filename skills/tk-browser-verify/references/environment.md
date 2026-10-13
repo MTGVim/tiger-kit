@@ -70,8 +70,10 @@ target state.
 
 There is no browser bypass for interactive login, OTP, MFA, SSO, CAPTCHA, passkey, or
 device approval. Request a short-lived token/session through the temporary secret-input
-channel. If no approved state can be established, return `Unverifiable` before a
-product mutation.
+channel. State the exact target environment and repository-verified login origin the token
+must come from; do not substitute another environment or infer it from token validity alone.
+If that origin is unknown, resolve it before requesting the token. If no approved state
+can be established, return `Unverifiable` before a product mutation.
 
 ## Worktree-shared development credentials (opt-in only)
 
@@ -109,13 +111,16 @@ A `claimed` response gives a non-secret claim ID. Its owner invokes
 after the normal Artifact Paths ignore checks. This command creates or reuses the exact
 private `.tigerkit/secret-input/tk-browser-verify-<run-id>/input.json`, then reports the
 **actual absolute and relative paths**, blank JSON template and required field without
-printing stored contents. Copy those real paths into the user-visible reply, explain the
-exact paused verification and how to fill and save `{"token": ""}`.
-Never enter `Pending` or start polling without showing both paths from a successful
+printing stored contents. Use those real paths in the final-text handoff under
+[artifact paths](artifact-paths.md), including the exact paused verification, target
+environment/login origin and how to fill and save `{"token": ""}`.
+Never start polling or request input without obtaining both paths from a successful
 `prepare-input` result. Failure to create/read back the path is `Blocked | Unverifiable`,
 not a guessed example path. The seeded blank file is `Pending`, never `Ready`.
-Run `await-input --claim-id <id> --input <absolute-input-json> --seconds <1..180>`
-with the same scope arguments for bounded, no-output-of-secrets readiness polling.
+Before the final path message, start `await-input --claim-id <id>
+--input <absolute-input-json> --seconds <1..180>` with the same scope arguments
+as a bounded background wait only when supported by the host. Apply the artifact-paths
+fallback otherwise. No server/browser or development-server lease may be held while waiting.
 The helper returns only `ready | pending | blocked`. A partial JSON save or empty token remains
 `pending`; a permission, ownership or symlink failure blocks immediately. If the active host
 permits another bounded wait, renew the owned claim and continue without asking the user for
@@ -128,9 +133,10 @@ the one-shot input and loopback server on all exit paths regardless of cache wri
 While an input prompt remains active, periodically `renew --claim-id <id>` within its reported
 lease. Another worktree receiving `pending` must NOT create its own input; it can use bounded
 `wait --since <last-revision> --seconds <1..180>` and re-inspect before using new credentials.
-This is live, bounded polling in the **active** agent workflow, not a daemon, background job,
-or a promise to restart an ended conversation. On interruption release the owned claim when
-possible; after lease expiry another run can claim. Do not overwrite another run's pending
+This is a finite, run-owned background wait when supported, not a daemon, scheduler
+or promise to restart an ended conversation. The authentication claim is not a server
+lease; renew only the owned claim within a supported active wait. On interruption
+release the owned claim when possible; after lease expiry another run can claim. Do not overwrite another run's pending
 file, renew its claim or delete its tokens. An expired user input wait that can no longer
 remain active must report the exact existing input path and resumption procedure. If secure
 cache input fails, preserve the verifier's existing transient-only mode without making false
@@ -159,8 +165,12 @@ value in chat. Use the owning SKILL.md Artifact Paths setup when ignore coverage
 If the path remains unignored, unwritable, or inaccessible, use no external scratch path;
 return `Unverifiable`.
 
-After showing the paths, start bounded metadata-change polling without reporting content,
-size or modification time. The initial JSON is non-empty and must remain `Pending`.
+Before showing the paths, start bounded metadata-change polling in the background
+when supported; the path message is the final text message of the turn, with no tool
+calls after it (see [artifact paths](artifact-paths.md), including the unsupported-host fallback).
+Release this run's server/browser resources and development-server lease before waiting;
+do not launch replacements until input is ready. Never report content, size or
+modification time. The initial JSON is non-empty and must remain `Pending`.
 On change, use a trusted local reader to validate JSON and all required fields without
 returning values or parser excerpts; malformed, blank or partial input remains `Pending`.
 Recheck safe path, ownership and mode `0600`, then validate and consume the same current

@@ -71,7 +71,11 @@ Combine:
 - actual token, duration, tool, nested-call, or retry metrics when available.
 
 Self-report is one observation, not sufficient proof of cause. Every causal claim needs
-an instruction, routing, runtime, repository, or evaluation anchor.
+an instruction, routing, runtime, repository, or evaluation anchor. For user-visible
+delivery incidents, inspect reachable current-session emitted text and block/display
+metadata before using the agent's context as evidence of delivery. Record access limits;
+do not read hidden reasoning or unrelated logs. A block type alone does not prove what
+the user saw without its display contract or visible payload.
 
 ## 5. Minimal experiment
 
@@ -89,9 +93,17 @@ wording changes after the same failure repeats.
 - independently useful new skill → a proposed skill candidate;
 - grader/harness/fixture defect → `eval-owner`;
 - loader/adapter/host defect → `host-owner`;
-- consumer override/configuration → `local-only`;
+- independently verified consumer override/configuration → `local-only`, not a
+  repository-only substitute for a shared skill fix;
 - not reproduced or target correct → `no-change`;
-- decisive evidence missing → `unverifiable`.
+- decisive evidence missing → `unverifiable`, plus a hypothesis-independent prevention
+  with owner and deciding check, or the reason none exists. Attempt the decisive evidence
+  first when reachable within the authorized current-session scope. A missing cause
+  does not by itself justify ending without a prevention assessment.
+
+For skill-level incidents, propose the owning skill/document change rather than personal
+agent-memory writes or current-repository-only workarounds. Do not mutate those layers.
+Keep a reasoned `no-change` when no safe useful intervention is supported.
 
 Write the sanitized report by default to `.tigerkit/retro/<YYYY-MM-DD>-<topic-slug>.md`
 under the owning SKILL.md Artifact Paths rules, then return a concise summary and its
