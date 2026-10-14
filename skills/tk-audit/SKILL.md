@@ -117,50 +117,37 @@ Apply [executor-handoff.md](references/executor-handoff.md) to every persisted o
 Include the `audited HEAD`, exact paths/`symbol`s, current evidence, repository rules, `in/out` boundaries,
 assumptions, verification commands, and `drift handling` so the next executor can proceed without the audit conversation.
 
-The quality criteria in [plan-template.md](references…9629 tokens truncated…ric document index or troubleshooting corpus. Existing skill/tool defects go to their
-   authorized implementation owner. Do not assume a historical skill name still exists.
-9. For a knowledge proposal, inspect established canonical paths and when the next implementer
-   or reviewer would discover it through existing `AGENTS.md`, `CLAUDE.md`, a document index
-   or test path. State the relevant conditional trigger and link; Git tracking alone does not
-   prove consumption. If documentation is declined or no suitable convention exists, propose
-   no new folder/index. Do not create an always-loaded rule, corpus or memory adapter.
+The quality criteria in [plan-template.md](references/plan-template.md) supplement this contract, but
+`tk-audit` does not create a separate plan lifecycle.
 
-For one-session execution incidents, leave a bounded `tk-retro` suggestion; for current
-instruction duplication/conflict, suggest `tk-grooming`; for a single diff verdict, suggest
-`tk-review`. These boundaries never automatically transfer execution or mutation authority.
+To prepare actual work, the user may provide the current `finding` as a source, such as `$tk-prep AUD-003`.
+`tk-prep` rechecks the `finding` against current repository evidence and prepares an executable `Seed`.
+An `Audit finding` alone grants no product-change or remote authority.
 
-## Report
+## Safety
 
-Report inspected repository/HEAD, time window, completed-PR coverage and missing evidence first.
-Show only populated diagnostic areas: `Testing & Regression`, `Review & Quality`,
-`Troubleshooting`, `Architecture & Contracts`, `Domain & Decisions`, `Workflow & Tooling`.
-Use security/performance/accessibility as secondary tags when relevant. Check documentation
-and discoverability across areas; areas are diagnostic categories, not storage destinations.
+During a partial audit, do not delete existing findings; mark unaudited scope.
+Do not claim verification when the evidence cannot be reproduced at the current HEAD.
+`.tigerkit/` is local scratch; do not create a global archive or current pointer.
 
-Each finding needs problem and actual impact; independent incident identities and source
-URLs/revisions/times; verification status and uncertainty; common cause or explicit unknown;
-current safeguards and whether it is already solved; smallest recommended action and owner;
-and a relevant discovery path only when proposing reusable knowledge. Separate unresolved
-investigation from confirmed prevention and rejected opinions. Never fill categories to a quota.
-
-If reporting counts, define units: unique PRs actually inspected, deduplicated candidates and
-candidates demonstrably solved at current HEAD. Do not sum overlapping categories as independent
-failures or count inaccessible PRs as analyzed. Severity/status needs evidence and a definition.
-With zero actionable candidates, say `No change` and explain coverage; partial coverage is not
-proof that no problem exists. Do not invent KPI values, findings, HTML output or status badges.
-
-A file is optional and requires an explicit artifact request and purpose. Honor the requested
-format/path; apply Artifact Paths only for that branch. `.tigerkit/` is disposable scratch,
-never a permanent compound archive or accumulated report database. Report writing grants no
-project-knowledge edit, hidden state, scheduled run, commit or publication authority.
-
-For provenance maintenance, read [source dispositions](references/sources.md); ordinary diagnosis
-needs no upstream research.
+At completion, concisely summarize the key `finding`s and any unaudited scope.
 
 <!-- tigerkit:artifact-paths -->
 ## Artifact Paths
 
 Create artifacts only when this skill's task authorizes them. Before any artifact write, temporary checkout/transport, or ignore setup, read [artifact paths](references/artifact-paths.md) and apply its Git exclusion, safe-path, and ownership checks. Default repository-owned output to `.tigerkit/`; honor explicit final destinations. Conversation-only work skips this reference and performs no file or ignore setup. Artifact handling grants no unrelated mutation or publication authority.
+
+<!-- tigerkit:output-notation -->
+## Output Notation
+
+Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
+
+In chat responses, use a GFM pipe table for comparisons where several rows share at least two comparable attributes. Use a list for single-attribute enumerations. Keep tables narrow (about four columns or fewer), with a header row and short cells so they remain readable when the host shows raw pipes. Do not draw tables with box-drawing characters, wrap a table in a code fence, or emit an empty or ceremonial table. An owner-specific preview rule, such as summarizing a publication body's table in one line, takes precedence. These chat-table rules do not govern tables inside publication bodies or file artifacts.
+
+In Markdown-rendered chat, documents and PR/issue bodies, write ranges with a hyphen (`146-149`) or spell out both endpoints. Escape a literal tilde as `\~` outside inline code and fenced code; preserve exact quotations and identifiers. Do not use unescaped tildes for prose ranges: GFM may render intervening text as strikethrough.
+
+For authorized user-editable temporary input files, follow the owning skill's Artifact Paths input branch before creation and consumption. A prefilled template does not signal completed input; this rule grants no write authority.
+<!-- /tigerkit:output-notation -->
 
 <!-- tigerkit:questions -->
 ## User Questions
@@ -184,15 +171,3 @@ Start the question block with a standalone horizontal rule (`---`) after the pre
 
 When a skill run reveals a reusable incident, preserve only minimal non-secret evidence and suggest a `tk-retro` review. Do not silently invoke it, create improvement artifacts, edit installed skills, or publish issues/PRs. Explicit implementation requests belong to the authorized change owner; this pointer grants no mutation authority.
 <!-- /tigerkit:skill-feedback -->
-
-<!-- tigerkit:output-notation -->
-## Output Notation
-
-Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
-
-In chat responses, use a GFM pipe table for comparisons where several rows share at least two comparable attributes. Use a list for single-attribute enumerations. Keep tables narrow (about four columns or fewer), with a header row and short cells so they remain readable when the host shows raw pipes. Do not draw tables with box-drawing characters, wrap a table in a code fence, or emit an empty or ceremonial table. An owner-specific preview rule, such as summarizing a publication body's table in one line, takes precedence. These chat-table rules do not govern tables inside publication bodies or file artifacts.
-
-In Markdown-rendered chat, documents and PR/issue bodies, write ranges with a hyphen (`146-149`) or spell out both endpoints. Escape a literal tilde as `\~` outside inline code and fenced code; preserve exact quotations and identifiers. Do not use unescaped tildes for prose ranges: GFM may render intervening text as strikethrough.
-
-For authorized user-editable temporary input files, follow the owning skill's Artifact Paths input branch before creation and consumption. A prefilled template does not signal completed input; this rule grants no write authority.
-<!-- /tigerkit:output-notation -->

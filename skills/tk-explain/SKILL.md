@@ -62,49 +62,6 @@ Create artifacts only when this skill's task authorizes them. Before any artifac
 <!-- tigerkit:output-notation -->
 ## Output Notation
 
-Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanati…7221 tokens truncated…d) before deciding to stop,
-preserve or restore state. Do not treat an unchecked edit as complete.
-
-## Contract
-
-Evidence records the actual path/content for each area. If required evidence is
-missing, treat that area as `Unverifiable`. If any area is blocked, overall
-completion cannot be claimed; use `Complete | Fail | Partial/Blocked | Unverifiable`.
-
-## Output Contract
-
-Assign `GR-01`, `GR-02`, ... once, in initial identification order, to each
-independently normative instruction/workflow. Output one `## Disposition` table
-first.
-
-| ID | Item | Tier | Action | Target | Basis |
-| --- | --- | --- | --- | --- | --- |
-| GR-01 | `<short name>` | `T1/T2/T3` | `<classification>` | `<real target>` | `<path/tracking/ownership evidence>` |
-
-Reuse the same IDs for applied changes and verification. Add `## Exceptions` only
-when there are evidence gaps, ownership conflicts, unresolved scope, or failed
-verification. Add `## Applied` and `## Verification` only after mutation. Keep the
-table scannable: give each high-impact finding its own row and group lower-impact
-findings by audited target path while retaining each item's ID, action, target, and basis.
-Do not impose a minimum or maximum row count. Do not create artifact/lifecycle actions solely
-for output.
-
-Record the overall `report-only | applied` disposition in `## Disposition`, but do
-not repeat the table or append metadata. If there are no items, output one
-`— | None | — | keep | — | no finding` row. Use `keep (vendor)` for vendor rows;
-use `Unverifiable` in Tier when classification evidence is missing. Preserve IDs
-across tier checkpoints without repeating the complete table.
-
-For distillation maintenance, see [sources](references/sources.md); ordinary audits do not need it.
-
-<!-- tigerkit:artifact-paths -->
-## Artifact Paths
-
-Create artifacts only when this skill's task authorizes them. Before any artifact write, temporary checkout/transport, or ignore setup, read [artifact paths](references/artifact-paths.md) and apply its Git exclusion, safe-path, and ownership checks. Default repository-owned output to `.tigerkit/`; honor explicit final destinations. Conversation-only work skips this reference and performs no file or ignore setup. Artifact handling grants no unrelated mutation or publication authority.
-
-<!-- tigerkit:output-notation -->
-## Output Notation
-
 Use ASCII numbering such as `(1) Item` or `1. Item`, with a space after the marker, in generated headings, lists, choices, tables, diagrams, and summaries. Use `- Item` for unordered items. Do not generate Unicode circled/enclosed numbers, single-character parenthesized numbers, or keycap emoji as item markers; they can overlap adjacent text in terminal renderers. Preserve exact code, commands, URLs, quotations, identifiers, and verified UI labels unless explicitly authorized to edit them; apply this rule to the surrounding explanation instead.
 
 In chat responses, use a GFM pipe table for comparisons where several rows share at least two comparable attributes. Use a list for single-attribute enumerations. Keep tables narrow (about four columns or fewer), with a header row and short cells so they remain readable when the host shows raw pipes. Do not draw tables with box-drawing characters, wrap a table in a code fence, or emit an empty or ceremonial table. An owner-specific preview rule, such as summarizing a publication body's table in one line, takes precedence. These chat-table rules do not govern tables inside publication bodies or file artifacts.
