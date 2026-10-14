@@ -9,30 +9,31 @@ from question_policy import BLOCK, question_errors, question_template_errors, sy
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SINGLE = "```text\n## Questions\n\n❓ **Q1 · Scope**: Which scope?\n\n➡️ Keep the current scope.\n```\n"
+SINGLE = "```text\n---\n\n❓ **Q1 · Scope**: Which scope?\n\n➡️ Keep the current scope.\n```\n"
 MULTIPLE = SINGLE.replace("\n```", "\n\n❓ **Q2 · Approval**: Approve?\n```")
 
 
 class QuestionTemplateTests(unittest.TestCase):
-    def test_single_and_multiple_rounds_start_with_the_same_heading(self):
-        for text in (SINGLE, MULTIPLE, SINGLE.replace("## Questions", "## 질문"), BLOCK):
+    def test_single_and_multiple_rounds_start_with_a_divider(self):
+        for text in (SINGLE, MULTIPLE, BLOCK):
             with self.subTest(text=text):
                 self.assertEqual(question_template_errors(text, "example"), [])
 
-    def test_missing_heading_in_a_single_round_is_rejected(self):
-        self.assertTrue(question_template_errors(SINGLE.replace("## Questions\n\n", ""), "example"))
+    def test_missing_opening_divider_is_rejected(self):
+        self.assertTrue(question_template_errors(SINGLE.replace("---\n\n", ""), "example"))
 
-    def test_separator_cannot_replace_the_round_heading(self):
-        self.assertTrue(question_template_errors(SINGLE.replace("## Questions", "---"), "example"))
+    def test_question_heading_is_rejected(self):
+        invalid = SINGLE.replace("---\n\n", "---\n\n## Questions\n\n")
+        self.assertTrue(question_template_errors(invalid, "example"))
 
-    def test_horizontal_rules_are_rejected_even_with_blank_lines(self):
+    def test_horizontal_rules_are_rejected_between_questions(self):
         for separator in ("---", "***", "___"):
             with self.subTest(separator=separator):
                 errors = question_template_errors(MULTIPLE.replace("❓ **Q2", separator + "\n\n❓ **Q2"), "example")
                 self.assertTrue(any("horizontal rules" in error for error in errors), errors)
 
     def test_synced_invalid_source_cannot_pass_by_matching_all_copies(self):
-        for invalid in (SINGLE.replace("## Questions\n\n", ""),
+        for invalid in (SINGLE.replace("---\n\n", ""),
                         MULTIPLE.replace("❓ **Q2", "---\n\n❓ **Q2")):
             with self.subTest(invalid=invalid), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
