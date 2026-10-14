@@ -51,20 +51,23 @@ Use the following user-level configuration as the default repository scope:
 $XDG_CONFIG_HOME/tigerkit/pr-triage.json
 ```
 
-This configuration owns only long-lived repository scope: the repository list and optional per-comment tool-authorship
-marker prefixes.
+This configuration owns only long-lived repository scope and optional per-comment markers: the repository list,
+tool-authorship marker prefixes, and informational-comment marker prefixes.
 Do not store model mappings, selectors, effort levels, worker routing, fan-out preferences, or task state there.
 
 ```json
 {
   "repositories": ["owner/repository"],
   "toolAuthoredCommentMarkers": ["<!-- review-tool:"],
+  "informationalCommentMarkers": ["<!-- status-report:"],
   "policy": "Focus on review requests and blocked CI; describe project decisions in concise Korean."
 }
 ```
 
 Marker values must be HTML-comment prefixes. They identify only the comment carrying the marker; they do not turn the
 account into a bot. With no marker list, triage falls back to account type and `[bot]` suffix evidence.
+Informational markers exclude only matching comments from reply triage; they do not change reviewer identity,
+review decisions, or re-review targets. Configure a marker only when the repository's reporting tool emits it.
 
 If this configuration is absent, inspect the current checkout's verified origin
 and supplied repository scope first. For a material choice of repositories,

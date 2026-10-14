@@ -140,6 +140,8 @@ KPI로 요약합니다. 숫자의 단위·수집 범위·상태 의미를 밝히
 
 `Orca` 작업 공간과 콜백은 `orca.yaml`·`.worktreeinclude`를 따릅니다.
 `tk-prep`의 격리 절차와 `tk-pr-sweep`의 사용자 단위 `pr-triage.json` 설정은 각 스킬이 유지합니다.
+`tk-pr-sweep`은 계정별로 최신 PR 대화 코멘트를 추적합니다. 필요하면 `informationalCommentMarkers`에 리포트
+도구의 `HTML` 주석 접두어를 등록해 상태 코멘트만 답글 분류에서 제외할 수 있습니다.
 
 ## 브라우저 검증의 인증 및 실행 자원
 

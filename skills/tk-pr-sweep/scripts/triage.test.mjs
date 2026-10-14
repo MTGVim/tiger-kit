@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -19,6 +19,7 @@ import {
   latestAuthorResponseAfter,
   latestExternalMessagesByScope,
   latestSummaryPrerequisite,
+  loadCommentMarkers,
   loadOrBootstrapConfig,
   loadToolAuthoredCommentMarkers,
   collectRows,
@@ -354,6 +355,7 @@ test('missing triage config bootstraps the current repository', async () => {
     assert.deepEqual(loaded, {
       repositories: ['MTGVim/tiger-kit'],
       toolAuthoredCommentMarkers: [],
+      informationalCommentMarkers: [],
       bootstrapped: true,
       source: 'config',
     });
@@ -361,6 +363,7 @@ test('missing triage config bootstraps the current repository', async () => {
     assert.deepEqual(loadOrBootstrapConfig(path), {
       repositories: ['MTGVim/tiger-kit'],
       toolAuthoredCommentMarkers: [],
+      informationalCommentMarkers: [],
       bootstrapped: false,
       source: 'config',
     });
@@ -381,6 +384,7 @@ test('report-only triage reads the origin without bootstrapping config', async (
     assert.deepEqual(loaded, {
       repositories: ['MTGVim/tiger-kit'],
       toolAuthoredCommentMarkers: [],
+      informationalCommentMarkers: [],
       bootstrapped: false,
       source: 'origin',
     });
@@ -403,6 +407,95 @@ test('triage config accepts optional tool-authorship marker prefixes', async () 
   } finally {
     await rm(root, { recursive: true, force: true });
   }
+});
+
+test('issue comments from different accounts remain independently visible', () => {
+  const request = {
+    user: { login: 'review-bot[bot]', type: 'Bot' },
+    created_at: '2026-01-01T00:00:00Z',
+    body: 'Review skipped. Please re-run with the command.',
+    id: 1,
+  };
+  const status = {
+    user: { login: 'ci-bot[bot]', type: 'Bot' },
+    created_at: '2026-01-01T00:01:00Z',
+    body: 'Deployment preview ready.',
+    id: 2,
+  };
+  const reply = computeReplyEvidence(collectRows([], [], [request, status]), 'author');
+  assert.deepEqual(reply.outstanding.map((item) => item.id), [1]);
+  assert.equal(reply.outstanding[0].scope, 'issue');
+
+  const retracted = { ...request, created_at: '2026-01-01T00:02:00Z', body: 'LGTM, no action.', id: 3 };
+  assert.equal(computeReplyEvidence(collectRows([], [], [request, retracted]), 'author').outstanding.length, 0);
+
+  const answer = { user: { login: 'author' }, created_at: '2026-01-01T00:03:00Z', body: 'Re-ran the review.', id: 4 };
+  const answered = computeReplyEvidence(collectRows([], [], [request, status, answer]), 'author');
+  assert.equal(answered.outstanding.length, 0);
+  assert.deepEqual(answered.responded.map((item) => item.id), [1]);
+});
+
+test('informational markers exclude only matching comments from reply triage', () => {
+  const report = {
+    user: { login: 'ci-bot[bot]', type: 'Bot' },
+    created_at: '2026-01-02T00:00:00Z',
+    body: '<!-- status-report:coverage -->\nTest suite run success',
+    id: 2,
+  };
+  const request = {
+    user: { login: 'review-bot[bot]', type: 'Bot' },
+    created_at: '2026-01-01T00:00:00Z',
+    body: 'Please re-run this review.',
+    id: 1,
+  };
+  const rows = collectRows([], [], [request, report]);
+  assert.deepEqual(computeReplyEvidence(rows, 'author').outstanding.map((item) => item.id), [1, 2]);
+  assert.deepEqual(computeReplyEvidence(rows, 'author', null, [], ['<!-- status-report:']).outstanding.map((item) => item.id), [1]);
+  assert.equal(computeReplyEvidence(collectRows([], [], [report]), 'author', null, [], ['<!-- status-report:']).outstanding.length, 0);
+  assert.equal(computeReplyEvidence(collectRows([], [], [report]), 'author').outstanding.length, 1);
+});
+
+test('informational comment markers use the same strict config validation', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'tk-pr-sweep-informational-markers-'));
+  try {
+    const path = triageConfigPath({ XDG_CONFIG_HOME: root });
+    mkdirSync(join(root, 'tigerkit'), { recursive: true });
+    writeFileSync(path, JSON.stringify({
+      repositories: ['MTGVim/tiger-kit'],
+      informationalCommentMarkers: ['<!-- status-report:', '<!-- status-report:'],
+    }));
+    assert.deepEqual(loadCommentMarkers(path, 'informationalCommentMarkers'), ['<!-- status-report:']);
+    assert.deepEqual(loadOrBootstrapConfig(path).informationalCommentMarkers, ['<!-- status-report:']);
+    writeFileSync(path, JSON.stringify({
+      repositories: ['MTGVim/tiger-kit'],
+      informationalCommentMarkers: ['status-report:'],
+    }));
+    assert.throws(() => loadOrBootstrapConfig(path), /HTML-comment prefix strings/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('a current-head summary remains verified when it is also the only reply', () => {
+  const headSha = 'abc123';
+  const summary = {
+    user: { login: 'author' },
+    created_at: '2026-01-02T00:00:00Z',
+    body: `${summaryCommentMarker(headSha)}\nSummary`,
+    id: 2,
+  };
+  const request = {
+    user: { login: 'review-bot[bot]', type: 'Bot' },
+    created_at: '2026-01-01T00:00:00Z',
+    body: 'Please fix this.',
+    id: 1,
+  };
+  const reply = computeReplyEvidence(collectRows([], [], [request, summary]), 'author');
+  assert.equal(reply.responded.length, 1);
+  assert.equal(summaryCommentRequired(false, [], reply), true);
+  const evidence = computeSummaryCommentEvidence([summary], 'author', headSha, true);
+  assert.equal(evidence.verified, true);
+  assert.equal(evidence.count, 1);
 });
 
 test('an explicit repository can still load marker config without bootstrapping it', async () => {
@@ -470,4 +563,37 @@ test('classification priority is checks, conflict, outstanding reply, changes re
   assert.equal(classifyPullRequest({ ...base, conflict: false, authorRespondedToChangeRequest: true }), 'needs_reply');
   assert.equal(classifyPullRequest({ ...base, conflict: false, draft: false, decision: 'APPROVED' }), 'needs_reply');
   assert.equal(classifyPullRequest({ ...base, conflict: false, draft: false, decision: 'APPROVED', latestExternalActionable: false }), 'approved');
+});
+
+test('a summary that is itself the only response is not stale against itself', () => {
+  const headSha = 'abc123';
+  const marker = summaryCommentMarker(headSha);
+  const summary = {
+    user: { login: 'author' }, created_at: '2026-01-02T00:00:00Z', body: `${marker}\nSummary`, id: 2,
+  };
+  const botComment = {
+    user: { login: 'review-bot[bot]', type: 'Bot' }, created_at: '2026-01-01T00:00:00Z', body: 'Please fix this.', id: 1,
+  };
+  const selfResponse = computeReplyEvidence(collectRows([], [], [botComment, summary]), 'author');
+  assert.equal(selfResponse.responded.length, 1);
+  assert.equal(selfResponse.responded[0].responseIsSummary, true);
+  const verified = computeSummaryCommentEvidence(
+    [summary], 'author', headSha, true, latestSummaryPrerequisite(selfResponse),
+  );
+  assert.equal(verified.stale, false);
+  assert.equal(verified.verified, true);
+
+  const laterReply = {
+    user: { login: 'author' }, created_at: '2026-01-03T00:00:00Z', body: 'Done.', id: 3,
+  };
+  const laterBot = { ...botComment, created_at: '2026-01-02T12:00:00Z', id: 4 };
+  const stale = computeSummaryCommentEvidence(
+    [summary],
+    'author',
+    headSha,
+    true,
+    latestSummaryPrerequisite(computeReplyEvidence(collectRows([], [], [botComment, summary, laterBot, laterReply]), 'author')),
+  );
+  assert.equal(stale.stale, true);
+  assert.equal(stale.verified, false);
 });

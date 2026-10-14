@@ -39,11 +39,13 @@ export function isBotAccount(user = {}) {
   return user?.type === 'Bot' || login.endsWith('[bot]');
 }
 
+export function matchCommentMarker(body = '', markers = []) {
+  const htmlComments = [...normalizeGitHubText(body).matchAll(/<!--[\s\S]*?-->/g)].map((match) => match[0]);
+  return markers.find((marker) => htmlComments.some((htmlComment) => htmlComment.startsWith(marker))) || null;
+}
+
 export function classifyCommentAuthorship(comment = {}, toolAuthoredCommentMarkers = []) {
-  const body = normalizeGitHubText(comment.body);
-  const htmlComments = [...body.matchAll(/<!--[\s\S]*?-->/g)].map((match) => match[0]);
-  const matchedMarker = toolAuthoredCommentMarkers.find((marker) =>
-    htmlComments.some((htmlComment) => htmlComment.startsWith(marker))) || null;
+  const matchedMarker = matchCommentMarker(comment.body, toolAuthoredCommentMarkers);
   if (matchedMarker) {
     return { kind: 'tool-authored', basis: 'configured-marker', marker: matchedMarker };
   }
@@ -225,7 +227,11 @@ export function summaryCommentRequired(reReviewRequired, unresolvedThreads = [],
 }
 
 export function latestSummaryPrerequisite(reply = {}) {
-  const timestamps = (reply.responded || []).map((item) => item.responseAt).filter(Boolean);
+  // A summary comment that is itself the response cannot be a prerequisite of that summary.
+  const timestamps = (reply.responded || [])
+    .filter((item) => !item.responseIsSummary)
+    .map((item) => item.responseAt)
+    .filter(Boolean);
   const valid = timestamps.filter((value) => !Number.isNaN(new Date(value).getTime()));
   return valid.sort((left, right) => new Date(left) - new Date(right)).at(-1) || null;
 }
@@ -242,7 +248,8 @@ export function latestExternalMessagesByScope(rows, authorLogin) {
   const latest = new Map();
   for (const row of [...rows].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))) {
     if (row.replyEligible !== false && row.scope && row.login && row.login !== authorLogin && stripNoise(row.body)) {
-      latest.set(row.scope, row);
+      // Issue comments share one conversation, so another account cannot hide this account's latest comment.
+      latest.set(row.scope === 'issue' ? `issue:${row.login}` : row.scope, row);
     }
   }
   return [...latest.values()];
@@ -257,8 +264,15 @@ export function latestAuthorResponseAfter(rows, authorLogin, timestamp, scope = 
     .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))[0] || null;
 }
 
-export function computeReplyEvidence(rows, authorLogin, afterTimestamp = null, toolAuthoredCommentMarkers = []) {
-  const actionable = latestExternalMessagesByScope(rows, authorLogin)
+export function computeReplyEvidence(
+  rows,
+  authorLogin,
+  afterTimestamp = null,
+  toolAuthoredCommentMarkers = [],
+  informationalCommentMarkers = [],
+) {
+  const eligibleRows = rows.filter((row) => !matchCommentMarker(row.body, informationalCommentMarkers));
+  const actionable = latestExternalMessagesByScope(eligibleRows, authorLogin)
     .filter((row) => isActionableText(row.body))
     .filter((row) => !afterTimestamp || new Date(row.timestamp) > new Date(afterTimestamp));
   const outstanding = [];
@@ -274,6 +288,7 @@ export function computeReplyEvidence(rows, authorLogin, afterTimestamp = null, t
       id: row.id || null,
       url: row.url || null,
       responseAt: response?.timestamp || null,
+      responseIsSummary: Boolean(response && /<!--\s*tigerkit:pr-summary:/.test(normalizeGitHubText(response.body))),
       authorship: authorship.kind,
       authorshipBasis: authorship.basis,
       matchedMarker: authorship.marker,
@@ -296,21 +311,29 @@ function configuredRepositories(value, path) {
 }
 
 function configuredToolAuthoredCommentMarkers(value, path) {
-  if (value?.toolAuthoredCommentMarkers === undefined) return [];
-  const markers = value.toolAuthoredCommentMarkers;
+  return configuredCommentMarkers(value, 'toolAuthoredCommentMarkers', path);
+}
+
+function configuredCommentMarkers(value, key, path) {
+  if (value?.[key] === undefined) return [];
+  const markers = value[key];
   if (!Array.isArray(markers)
       || markers.some((marker) => typeof marker !== 'string'
         || !marker.startsWith('<!--')
         || marker.length <= '<!--'.length
         || /[\r\n]/.test(marker))) {
-    throw new Error(`Invalid triage config ${path}: toolAuthoredCommentMarkers must be HTML-comment prefix strings`);
+    throw new Error(`Invalid triage config ${path}: ${key} must be HTML-comment prefix strings`);
   }
   return [...new Set(markers)];
 }
 
 export function loadToolAuthoredCommentMarkers(path) {
+  return loadCommentMarkers(path, 'toolAuthoredCommentMarkers');
+}
+
+export function loadCommentMarkers(path, key) {
   try {
-    return configuredToolAuthoredCommentMarkers(JSON.parse(readFileSync(path, 'utf8')), path);
+    return configuredCommentMarkers(JSON.parse(readFileSync(path, 'utf8')), key, path);
   } catch (error) {
     if (error.code === 'ENOENT') return [];
     if (error instanceof SyntaxError) throw new Error(`Invalid JSON in triage config ${path}: ${error.message}`);
@@ -328,6 +351,7 @@ export function loadOrBootstrapConfig(
     return {
       repositories: configuredRepositories(value, path),
       toolAuthoredCommentMarkers: configuredToolAuthoredCommentMarkers(value, path),
+      informationalCommentMarkers: configuredCommentMarkers(value, 'informationalCommentMarkers', path),
       bootstrapped: false,
       source: 'config',
     };
@@ -344,6 +368,7 @@ export function loadOrBootstrapConfig(
   if (!allowBootstrap) return {
     repositories,
     toolAuthoredCommentMarkers: [],
+    informationalCommentMarkers: [],
     bootstrapped: false,
     source: 'origin',
   };
@@ -354,7 +379,7 @@ export function loadOrBootstrapConfig(
     if (error.code === 'EEXIST') return loadOrBootstrapConfig(path, fallbackRepositories);
     throw error;
   }
-  return { repositories, toolAuthoredCommentMarkers: [], bootstrapped: true, source: 'config' };
+  return { repositories, toolAuthoredCommentMarkers: [], informationalCommentMarkers: [], bootstrapped: true, source: 'config' };
 }
 
 export function classifyPullRequest({
@@ -517,7 +542,7 @@ function pullItem(repo, pull, category, evidence = {}) {
   };
 }
 
-async function triageRepository(repo, login, teamKeys, toolAuthoredCommentMarkers = []) {
+async function triageRepository(repo, login, teamKeys, toolAuthoredCommentMarkers = [], informationalCommentMarkers = []) {
   const openPulls = ghList(`repos/${repo}/pulls?state=open&per_page=100`);
   if (!openPulls.ok) return { repository: repo, items: [], failures: [openPulls.error] };
   const items = [];
@@ -560,6 +585,7 @@ async function triageRepository(repo, login, teamKeys, toolAuthoredCommentMarker
       login,
       review.decision === 'APPROVED' ? review.decisiveAt : null,
       toolAuthoredCommentMarkers,
+      informationalCommentMarkers,
     );
     const check = checkState(repo, pull.head.sha);
     const changeResponse = review.decisiveAt
@@ -632,6 +658,7 @@ async function main() {
     ? {
       repositories: configuredRepositories({ repositories: args.repos }, 'arguments'),
       toolAuthoredCommentMarkers: loadToolAuthoredCommentMarkers(userConfigPath),
+      informationalCommentMarkers: loadCommentMarkers(userConfigPath, 'informationalCommentMarkers'),
       bootstrapped: false,
       source: 'arguments',
     }
@@ -639,7 +666,13 @@ async function main() {
   const repos = target.repositories;
   const results = [];
   for (const repo of [...new Set(repos)]) {
-    results.push(await triageRepository(repo, user.data.login, teamKeys, target.toolAuthoredCommentMarkers));
+    results.push(await triageRepository(
+      repo,
+      user.data.login,
+      teamKeys,
+      target.toolAuthoredCommentMarkers,
+      target.informationalCommentMarkers,
+    ));
   }
   const items = results.flatMap((result) => result.items);
   const failures = results.flatMap((result) => result.failures.map((error) => ({ repository: result.repository, error })));
@@ -655,6 +688,7 @@ async function main() {
       source: target.source,
       bootstrapped: target.bootstrapped,
       toolAuthoredCommentMarkerCount: target.toolAuthoredCommentMarkers.length,
+      informationalCommentMarkerCount: target.informationalCommentMarkers.length,
     },
     repositories: repos,
     counts,

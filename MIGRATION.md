@@ -183,7 +183,8 @@ session.md routing
 - `Sweep`은 SDD `Unit`을 직접 실행하지 않고 중첩 SDD PR 제어기를 기본 순차 실행으로 제한합니다.
 - `parent` `Sweep`에서 이미 승인한 `material` `decision`을 `child`가 반복 질문하지 않습니다.
 - `user-level` `pr-triage.json`은 `repository` 범위와 선택적인 댓글별
-  `toolAuthoredCommentMarkers` HTML 주석 접두어만 유지합니다. 마커는 답글 컨펌에만 사용하며 재리뷰 대상은
+  `toolAuthoredCommentMarkers` 및 `informationalCommentMarkers` HTML 주석 접두어를 유지합니다. 작성자
+  마커는 답글 컨펌에만 사용하고, 정보성 마커는 해당 댓글만 답글 대상에서 제외합니다. 재리뷰 대상은
   계속 계정 상태로 판정합니다.
 
 ## 대화형 UX
