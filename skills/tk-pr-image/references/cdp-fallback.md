@@ -46,12 +46,12 @@ do not overwrite or submit it. After collecting asset URLs, clear only run-owned
 composer content and verify that the text area is empty and the comment button is
 disabled. Do not submit an empty comment to test the upload.
 
-## Rendering verification and cleanup
+## Verification and cleanup
 
-After the skill updates the requested body/comment, verify on the rendered PR page
-that every asset appears as the expected image. Do not treat a placeholder, Markdown
-presence, or fixed delay as success. Do not expose JWTs or query strings from signed
-URLs.
+After the skill updates the requested body/comment, preserve the exact generated Markdown and verify the uploaded
+objects through authenticated image-byte checks and upload-ref reachability. Inspect the rendered PR page only when
+requested or when it is needed to investigate a concrete rendering concern. Do not treat a placeholder, Markdown
+presence, or fixed delay as proof of image bytes. Do not expose JWTs or query strings from signed URLs.
 
 Delete only the run-owned staging directory and verify its removal. If cleanup fails,
 report the exact owned path and do not claim `Pass`. After an upload or verification

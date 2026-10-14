@@ -20,7 +20,7 @@ automatic trigger.
 
 Handle one bounded upload: validate and stage local images, upload
 repository-scoped GitHub attachments, minimally update the PR body or selected
-comment, and verify source/render output. The default target is the PR body.
+comment, and verify the source Markdown and uploaded image objects. The default target is the PR body.
 
 For `tk-pr-open`, validate the producer-neutral evidence fields and never branch on, whitelist, or require a producing
 skill name. If required evidence is missing or invalid, mark the evidence handoff `Blocked`; do not revert an
@@ -56,8 +56,9 @@ Before any upload or PR body/comment update, reverify the explicitly selected ta
    extension installation remains here. Resume the exact repository, target, image set, and
    route after the wizard completes.
 5. Update only the requested body or comment through the GitHub API or equivalent.
-   Before `Pass`, verify the source Markdown, every asset's image bytes and actual browser-session rendering, and the
-   upload ref. An image element in API-rendered HTML alone is insufficient.
+   Before `Pass`, verify byte-for-byte Markdown preservation, decodable `image/*` bytes from an authenticated fetch for
+   every asset, and reachability of every linked upload object from the upload ref. Browser-session rendering is
+   optional; report whether it was checked in the receipt without making it a `Pass` prerequisite.
 6. Remove only owned staging files on every exit path.
 
 ## Execution Receipt · Single Evidence Record
@@ -74,7 +75,7 @@ Route: gh-attach | CDP
 Entry: <exact reviewed command | browser route>
 Generated Markdown: <asset refs | none>
 Remote ref: <refs/uploads/issues/<pr-number> | none | unknown>
-Verification: <source body/comment | rendered HTML/page | unavailable>
+Verification: Markdown byte match: <Pass | Fail | unavailable>; image bytes/type: <Pass | Fail | unavailable>; upload ref reachability: <Pass | Fail | unavailable>; rendering: <checked | not performed | unavailable>
 Changed: <body/comment changed | unchanged | unknown>
 Cleanup: <owned staging path removed | failed | not applicable>
 Status: Pass | Fail | Pending | Blocked | Unverifiable
@@ -114,8 +115,9 @@ and artifacts not tied to the current run. If required evidence is missing or in
 
 Return `Pending` while waiting for an absent-extension or unreviewed-upstream choice or a
 human-only `tk-wizard` completion signal. Return `Blocked` for `unknown` provenance, a draft, or a rejected
-installation without a selected CDP route. Return `Unverifiable` if neither route
-has authentication or render evidence, and `Fail` for upload, remote ref
+installation without a selected CDP route. Return `Unverifiable` if authentication,
+image-byte validation, or upload-ref reachability cannot be verified; rendered-page
+evidence is optional. Return `Fail` for upload, remote ref
 verification, or cleanup errors. State whether the selected body/comment changed
 and whether an upload ref may remain.
 

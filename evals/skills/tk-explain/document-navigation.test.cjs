@@ -14,20 +14,24 @@ async function geometry(page, width) {
   const measured = await page.evaluate(() => {
     const nav = document.querySelector('.ht-doc-nav').getBoundingClientRect();
     const panel = document.querySelector('.ht-doc-toc-panel').getBoundingClientRect();
+    const controls = document.querySelector('.ht-doc-controls').getBoundingClientRect();
     const content = document.querySelector('main').getBoundingClientRect();
     const bar = document.querySelector('.ht-topbar').getBoundingClientRect();
     const theme = document.querySelector('[data-ht-theme-control]').getBoundingClientRect();
     return {width: innerWidth, scrollWidth: document.documentElement.scrollWidth,
       nav: {left: nav.left, right: nav.right, top: nav.top, bottom: nav.bottom},
+      controls: {left: controls.left, right: controls.right, top: controls.top, bottom: controls.bottom},
       panel: {left: panel.left, right: panel.right, top: panel.top, bottom: panel.bottom},
-      contentRight: content.right, height: innerHeight,
+      contentLeft: content.left, height: innerHeight,
       themeInBar: theme.top >= bar.top && theme.bottom <= bar.bottom};
   });
   assert.equal(measured.width, width);
   assert.ok(measured.scrollWidth <= width, JSON.stringify(measured));
-  assert.ok(measured.nav.right <= width && measured.nav.left >= measured.contentRight);
+  assert.ok(measured.nav.left >= 0 && measured.nav.right <= width);
   assert.ok(measured.nav.top >= 0 && measured.nav.bottom <= measured.height);
-  assert.ok(measured.panel.left >= 0 && measured.panel.right <= width && measured.panel.top >= 0 && measured.panel.bottom <= measured.height);
+  assert.ok(measured.controls.left >= 0 && measured.controls.right <= width && measured.controls.top >= 0 && measured.controls.bottom <= measured.height);
+  if (width > 960) assert.ok(measured.nav.right < measured.contentLeft, JSON.stringify(measured));
+  if (width <= 960) assert.ok(measured.panel.left >= 0 && measured.panel.right <= width && measured.panel.top >= 0 && measured.panel.bottom <= measured.height);
   if (width >= 1280) assert.ok(measured.themeInBar);
   return measured;
 }
@@ -52,25 +56,34 @@ async function atHash(page, id) {
       await page.route('**/*', route => { if (/^https?:/.test(route.request().url())) {requests.push(route.request().url()); return route.abort();} return route.continue(); });
       await page.goto(url);
       const summary = page.locator('.ht-doc-toc > summary');
-      await summary.focus(); await page.keyboard.press('Enter');
-      assert.equal(await page.locator('.ht-doc-toc').getAttribute('open'), '');
+      if (width <= 960) {
+        await summary.focus(); await page.keyboard.press('Enter');
+        assert.equal(await page.locator('.ht-doc-toc').getAttribute('open'), '');
+      } else {
+        assert.equal(await page.locator('.ht-doc-toc-panel').isVisible(), true);
+      }
       const measured = await geometry(page, width);
       await page.screenshot({path: path.join(evidence, `after-${width}-${colorScheme}.png`)});
-      await page.keyboard.press('Tab');
-      assert.equal(await page.evaluate(() => document.activeElement.hash), '#overview');
-      await page.keyboard.press('Escape');
-      assert.ok(await summary.evaluate(el => document.activeElement === el));
-      assert.equal(await page.locator('.ht-doc-toc').getAttribute('open'), null);
-      await summary.press('Space');
+      if (width <= 960) {
+        await page.keyboard.press('Tab');
+        assert.equal(await page.evaluate(() => document.activeElement.hash), '#overview');
+        await page.keyboard.press('Escape');
+        assert.ok(await summary.evaluate(el => document.activeElement === el));
+        assert.equal(await page.locator('.ht-doc-toc').getAttribute('open'), null);
+        await summary.press('Space');
+      } else {
+        await page.locator('.ht-doc-toc-panel a').first().focus();
+      }
       await page.locator('.ht-doc-toc-panel a').first().press('Enter'); await atHash(page, 'overview');
       assert.ok(await page.locator('#overview').evaluate(el => document.activeElement === el));
-      assert.equal(await page.locator('.ht-doc-toc').getAttribute('open'), null);
+      if (width <= 960) assert.equal(await page.locator('.ht-doc-toc').getAttribute('open'), null);
       for (const id of ['context', 'status', 'directions', 'experiments', 'unknowns', 'frontier', 'sources']) {
-        await summary.click(); await page.locator(`.ht-doc-toc-panel a[href="#${id}"]`).click(); await atHash(page, id);
+        if (width <= 960) await summary.click();
+        await page.locator(`.ht-doc-toc-panel a[href="#${id}"]`).click(); await atHash(page, id);
       }
-      await page.locator('.ht-doc-nav > a[href="#document-top"]').click(); await atHash(page, 'document-top');
+      await page.locator('.ht-doc-controls > a[href="#document-top"]').click(); await atHash(page, 'document-top');
       await page.waitForFunction(() => scrollY < 2);
-      await page.locator('.ht-doc-nav > a[href="#document-bottom"]').click(); await atHash(page, 'document-bottom');
+      await page.locator('.ht-doc-controls > a[href="#document-bottom"]').click(); await atHash(page, 'document-bottom');
       await page.waitForFunction(() => innerHeight + scrollY >= document.documentElement.scrollHeight - 2);
       const firstCitation = page.locator('#cite-1-1 a');
       await firstCitation.hover();
@@ -92,8 +105,10 @@ async function atHash(page, id) {
       await page.reload(); await atHash(page, 'cite-1-2');
       await page.locator('#cite-1-2 a').click(); await atHash(page, 'ref-1');
       await page.goBack(); await atHash(page, 'cite-1-2');
-      await summary.click(); await page.locator('h1').click();
-      assert.equal(await page.locator('.ht-doc-toc').getAttribute('open'), null);
+      if (width <= 960) {
+        await summary.click(); await page.locator('h1').click();
+        assert.equal(await page.locator('.ht-doc-toc').getAttribute('open'), null);
+      }
       for (const theme of ['dark', 'light', 'system']) {
         await page.locator(`label:has(input[name="ht-theme"][value="${theme}"])`).click();
         assert.equal(await page.locator('html').getAttribute('data-theme'), theme === 'system' ? null : theme);
@@ -117,12 +132,12 @@ async function atHash(page, id) {
     for (const width of [1280, 390]) {
       const context = await browser.newContext({viewport:{width, height:900}, reducedMotion:'reduce'});
       const page = await context.newPage(); await page.goto(pathToFileURL(nested).href);
-      await page.locator('.ht-doc-toc summary').click();
+      if (width <= 960) await page.locator('.ht-doc-toc summary').click();
       await page.locator('.ht-doc-toc-panel a[href="#conditions"]').click(); await atHash(page, 'conditions');
       await page.waitForFunction(() => document.querySelector('.ht-doc-toc-panel [aria-current]').hash === '#conditions');
       await page.evaluate(() => scrollBy({top:100, behavior:'instant'}));
       await page.waitForFunction(() => document.querySelector('.ht-doc-toc-panel [aria-current]').hash === '#conditions');
-      await page.locator('.ht-doc-toc summary').click();
+      if (width <= 960) await page.locator('.ht-doc-toc summary').click();
       await geometry(page, width);
       await page.screenshot({path:path.join(evidence, `nested-after-${width}.png`)});
       results.push({width, nestedTOC:true, status:'Pass'}); await context.close();
@@ -130,11 +145,12 @@ async function atHash(page, id) {
     for (const width of [1280, 390]) {
       const context = await browser.newContext({javaScriptEnabled: false, viewport: {width, height: 900}, reducedMotion: 'reduce'});
       const page = await context.newPage(); await page.goto(url);
-      await page.locator('.ht-doc-toc > summary').focus(); await page.keyboard.press('Enter');
+      assert.equal(await page.locator('.ht-doc-toc').getAttribute('open'), '');
       await geometry(page, width);
-      await page.keyboard.press('Tab'); await page.keyboard.press('Enter'); await atHash(page, 'overview');
-      // Native no-JS disclosure can be closed with its summary; Escape is an enhancement.
-      await page.locator('.ht-doc-toc > summary').click();
+      await page.locator('.ht-doc-toc-panel a[href="#overview"]').focus();
+      await page.keyboard.press('Enter'); await atHash(page, 'overview');
+      // Native no-JS disclosure can be toggled with its summary; Escape is an enhancement.
+      if (width <= 960) await page.locator('.ht-doc-toc > summary').click();
       await page.goto(url + '#cite-1-2'); await atHash(page, 'cite-1-2');
       await page.locator('#cite-1-2 a').click(); await atHash(page, 'ref-1');
       await page.locator('#ref-1 a[href="#cite-1-2"]').click(); await atHash(page, 'cite-1-2');

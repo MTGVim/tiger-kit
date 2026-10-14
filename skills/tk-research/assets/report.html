@@ -7,7 +7,7 @@
 /* tigerkit:html-theme.css */
 :root {
   color-scheme: light;
-  --bg: #f6f7f9; --panel: #ffffff; --text: #1d2129; --muted: #596273; --line: #d6dae1;
+  --bg: #e9edf3; --panel: #ffffff; --text: #1d2129; --muted: #596273; --line: #d6dae1;
   --accent: #3559a4; --good: #187644; --warn: #895000; --bad: #b32636;
   --code-bg: #eef0f4; --hover: #eef1f6; --warn-bg: #fff1ce;
   --font-body: 14px; --font-small: 12px; --font-h1: 28px; --font-h2: 20px;
@@ -17,14 +17,14 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --bg: #15171c; --panel: #1d2027; --text: #e6e8ec; --muted: #a6adba; --line: #414753;
+    --bg: #101319; --panel: #1c222c; --text: #e6e8ec; --muted: #a6adba; --line: #414753;
     --accent: #9ebcff; --good: #68d59c; --warn: #f3c26b; --bad: #ff98a4;
     --code-bg: #272b34; --hover: #2a303c; --warn-bg: #3a2f12;
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #15171c; --panel: #1d2027; --text: #e6e8ec; --muted: #a6adba; --line: #414753;
+  --bg: #101319; --panel: #1c222c; --text: #e6e8ec; --muted: #a6adba; --line: #414753;
   --accent: #9ebcff; --good: #68d59c; --warn: #f3c26b; --bad: #ff98a4;
   --code-bg: #272b34; --hover: #2a303c; --warn-bg: #3a2f12;
 }
@@ -86,8 +86,11 @@ pre { max-width: 100%; overflow-x: auto; }
 }
 
 /* Document navigation is opt-in; prototype/checklist interfaces retain their own shell. */
-.ht-document { --ht-nav-gutter: 5rem; padding-inline-end: calc(var(--ht-nav-gutter) + env(safe-area-inset-right, 0px)); padding-block-end: calc(6rem + env(safe-area-inset-bottom, 0px)); }
+.ht-document { --ht-nav-width: 15rem; --ht-nav-gap: 2rem; padding: 1.5rem calc(1.5rem + env(safe-area-inset-right, 0px)) calc(6rem + env(safe-area-inset-bottom, 0px)) 1.5rem; }
 html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scroll-padding-top: var(--ht-anchor-offset); }
+.ht-doc-content { min-width: 0; width: calc(100% - var(--ht-nav-width) - var(--ht-nav-gap)); max-width: 76rem; margin: 1.5rem auto 1.5rem calc(var(--ht-nav-width) + var(--ht-nav-gap)); padding: clamp(1.25rem, 3vw, 2.5rem); background: var(--panel); border: 1px solid var(--line); border-radius: calc(1.5 * var(--radius)); box-shadow: 0 12px 36px #10131912; }
+.ht-doc-content > :first-child { margin-block-start: 0; }
+.ht-doc-content > :last-child { margin-block-end: 0; }
 .ht-document :is(section[id], li[id], sup[id], footer[id]) { scroll-margin-top: 1rem; }
 .ht-document :target { outline: 2px solid var(--accent); outline-offset: 4px; }
 
@@ -103,33 +106,46 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
   font-size: var(--font-body); line-height: 1.5; overflow-wrap: anywhere;
   pointer-events: none;
 }
-.ht-doc-nav { position: fixed; inset-inline-end: calc(1rem + env(safe-area-inset-right, 0px)); bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); z-index: 10; display: grid; gap: .35rem; width: 3.5rem; }
-.ht-doc-nav > a, .ht-doc-toc > summary { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: .45rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); color: var(--text); text-decoration: none; cursor: pointer; }
-.ht-doc-nav > a:hover, .ht-doc-toc > summary:hover { background: var(--hover); }
+.ht-doc-nav { position: fixed; inset-inline-start: calc(1rem + env(safe-area-inset-left, 0px)); top: calc(var(--ht-anchor-offset) + 1rem); z-index: 10; width: var(--ht-nav-width); max-height: calc(100dvh - var(--ht-anchor-offset) - 2rem); overflow: auto; padding: 1rem; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 8px 24px #10131918; }
+.ht-doc-nav-heading { margin: 0 0 .75rem; font-size: 1rem; }
 .ht-doc-toc { margin: 0; padding: 0; border: 0; }
-.ht-doc-toc > summary { list-style: none; }
-.ht-doc-toc > summary::-webkit-details-marker { display: none; }
-.ht-doc-toc[open] > summary { border-color: var(--accent); font-weight: 700; }
-.ht-doc-toc-panel { position: absolute; inset-inline-end: 0; bottom: calc(100% + .5rem); width: min(22rem, calc(100vw - 2rem - env(safe-area-inset-right, 0px) - env(safe-area-inset-left, 0px))); max-height: calc(100dvh - 12rem - env(safe-area-inset-bottom, 0px) - env(safe-area-inset-top, 0px)); overflow: auto; overscroll-behavior: contain; padding: .75rem; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 4px 18px #0002; }
+.ht-doc-toc > summary { display: none; }
+.ht-doc-toc-panel { display: block; max-height: inherit; overflow: visible; }
 .ht-doc-toc-panel ol { margin: 0; padding-inline-start: 1.5rem; }
-.ht-doc-toc-panel a { display: block; padding: .4rem; text-decoration: none; }
+.ht-doc-toc-panel ol ol { padding-inline-start: 1rem; }
+.ht-doc-toc-panel li + li { margin-block-start: .2rem; }
+.ht-doc-toc-panel a { display: block; padding: .4rem .5rem; border-radius: calc(.75 * var(--radius)); color: var(--text); text-decoration: none; }
+.ht-doc-toc-panel a:hover { background: var(--hover); }
 .ht-doc-toc-panel a[aria-current="location"] { font-weight: 700; text-decoration: underline; background: var(--hover); }
+.ht-doc-controls { position: fixed; inset-inline-end: calc(1rem + env(safe-area-inset-right, 0px)); bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); z-index: 10; display: flex; gap: .35rem; }
+.ht-doc-controls > a { display: flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: .45rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); color: var(--text); text-decoration: none; }
+.ht-doc-controls > a:hover { background: var(--hover); }
 .ht-document sup[id], .ht-document li[id] { scroll-margin-bottom: 2rem; }
-@media (max-width: 760px) { html:has(.ht-document) { --ht-anchor-offset: 1rem; } .ht-document { --ht-nav-gutter: 4.5rem; } .ht-doc-nav { inset-inline-end: calc(.5rem + env(safe-area-inset-right, 0px)); } }
+@media (max-width: 960px) {
+  .ht-document { --ht-nav-width: 0rem; --ht-nav-gap: 0rem; padding: 1rem .75rem calc(6rem + env(safe-area-inset-bottom, 0px)); }
+  html:has(.ht-document) { --ht-anchor-offset: 1rem; }
+  .ht-doc-content { width: auto; margin: .75rem 0; padding: clamp(1rem, 4vw, 1.5rem); }
+  .ht-doc-nav { inset-inline-start: calc(.5rem + env(safe-area-inset-left, 0px)); top: auto; bottom: calc(.5rem + env(safe-area-inset-bottom, 0px)); width: auto; max-width: calc(100vw - 7.5rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)); max-height: none; overflow: visible; padding: 0; background: transparent; border: 0; box-shadow: none; }
+  .ht-doc-nav-heading { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+  .ht-doc-toc > summary { display: flex; align-items: center; min-height: 44px; padding: .5rem .75rem; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 4px 14px #10131920; cursor: pointer; list-style: none; }
+  .ht-doc-toc > summary::-webkit-details-marker { display: none; }
+  .ht-doc-toc[open] > summary { border-color: var(--accent); font-weight: 700; }
+  .ht-doc-toc-panel { display: none; position: absolute; inset-inline-start: 0; bottom: calc(100% + .5rem); width: min(22rem, calc(100vw - 2rem - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px))); max-height: calc(100dvh - 8rem - env(safe-area-inset-bottom, 0px) - env(safe-area-inset-top, 0px)); overflow: auto; overscroll-behavior: contain; padding: .75rem; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 4px 18px #0002; }
+  .ht-doc-toc[open] > .ht-doc-toc-panel { display: block; }
+  .ht-doc-controls { inset-inline-end: calc(.5rem + env(safe-area-inset-right, 0px)); bottom: calc(.5rem + env(safe-area-inset-bottom, 0px)); }
+}
 @media (prefers-reduced-motion: reduce) { html:has(.ht-document) { scroll-behavior: auto; } }
 /* /tigerkit:html-theme.css */
-*{box-sizing:border-box}.skip{position:absolute;left:1rem;top:-5rem}.skip:focus{top:1rem;z-index:20;background:var(--panel);padding:1rem}.layout{max-width:70rem;margin:auto;padding:3rem 2rem}main{min-width:0}h1{line-height:1.2;letter-spacing:-.04em}h2{line-height:1.4}section{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:calc(3 * var(--space));margin:1.5rem 0}.kicker,.meta{color:var(--muted)}.kicker{letter-spacing:.12em;font-size:.85rem}.lead{font-size:1em}.badge{display:inline-block;border:1px solid var(--accent);border-radius:1rem;padding:0 .7rem;color:var(--accent)}dl{display:grid;grid-template-columns:8rem minmax(0,1fr);gap:.5rem}dt{font-weight:700}dd{margin:0}main details{border-top:1px solid var(--line);margin-top:1rem;padding-top:1rem}summary{cursor:pointer;font-weight:600}footer{color:var(--muted);font-size:.85rem;margin:2rem 0}
+*{box-sizing:border-box}.skip{position:absolute;left:1rem;top:-5rem}.skip:focus{top:1rem;z-index:20;background:var(--panel);padding:1rem}main{min-width:0}h1{line-height:1.2;letter-spacing:-.04em}h2{line-height:1.4}section{background:var(--hover);border:1px solid var(--line);border-radius:var(--radius);padding:calc(3 * var(--space));margin:1.5rem 0}.kicker,.meta{color:var(--muted)}.kicker{letter-spacing:.12em;font-size:.85rem}.lead{font-size:1em}.badge{display:inline-block;border:1px solid var(--accent);border-radius:1rem;padding:0 .7rem;color:var(--accent)}dl{display:grid;grid-template-columns:8rem minmax(0,1fr);gap:.5rem}dt{font-weight:700}dd{margin:0}main details{border-top:1px solid var(--line);margin-top:1rem;padding-top:1rem}summary{cursor:pointer;font-weight:600}footer{color:var(--muted);font-size:.85rem;margin:2rem 0}
 .ht-topbar{position:sticky;top:0;z-index:3;display:grid;grid-template-columns:minmax(0,1fr) minmax(18rem,22rem);align-items:center;gap:1rem;padding:.75rem 2rem;background:var(--panel);border-bottom:1px solid var(--line)}.ht-topbar>*{min-width:0;max-width:100%}.ht-topbar-title{margin:0;font-weight:700;overflow-wrap:anywhere}.ht-topbar .ht-theme-control{margin:0;width:100%}
-@media(max-width:760px){.ht-topbar{position:static;grid-template-columns:minmax(0,1fr);padding:.75rem 1.2rem;gap:.5rem}.layout{padding:1.2rem;max-width:100%}.layout>*{min-width:0;max-width:100%}section{padding:1.1rem;max-width:100%}dl{grid-template-columns:1fr}dd{margin-bottom:.6rem}}
+@media(max-width:760px){.ht-topbar{position:static;grid-template-columns:minmax(0,1fr);padding:.75rem 1.2rem;gap:.5rem}section{padding:1.1rem;max-width:100%}dl{grid-template-columns:1fr}dd{margin-bottom:.6rem}}
 
 </style>
 <body class="ht-document" id="document-top">
 <a class="skip" href="#main">본문으로 이동</a>
 <!-- Replace the top-bar title with the subject and conclusion; put identifiers in secondary metadata. -->
 <header class="ht-topbar"><p class="ht-topbar-title">연구 주제와 결론을 적습니다</p><fieldset class="ht-theme-control" data-ht-theme-control hidden><legend class="ht-theme-label">테마</legend><div class="ht-theme-buttons"><label class="ht-theme-option"><input type="radio" name="ht-theme" value="system" data-theme-choice="system"><span>시스템</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="light" data-theme-choice="light"><span>라이트</span></label><label class="ht-theme-option"><input type="radio" name="ht-theme" value="dark" data-theme-choice="dark"><span>다크</span></label></div></fieldset></header>
-<div class="layout">
-
-<main id="main" tabindex="-1">
+<main id="main" class="ht-doc-content" tabindex="-1">
 <header><p class="kicker">RESEARCH · 작성 템플릿</p><h1>연구 목표를 적습니다</h1><p class="meta">이 파일의 예시 문구는 연구 결과가 아닙니다. 검증한 현재 사실로 교체하세요.</p></header>
 <section id="overview"><h2>목표와 결론</h2><p class="lead">가장 중요한 결론과 근거를 먼저 적습니다.<sup id="cite-1-1"><a href="#ref-1" aria-label="참고문헌 1">[1]</a></sup></p><dl><dt>판단할 문제</dt><dd>결과가 어떤 다음 결정을 도와야 하는지 적습니다.</dd><dt>신뢰도</dt><dd>높음·보통·낮음과 그 이유를 적습니다.</dd><dt>근거 시점</dt><dd>실제로 확인한 날짜와 리비전을 적습니다.</dd></dl></section>
 <!-- If reader-unfamiliar terms precede their explanations, insert an expanded term list here: one-line definitions linked to detailed sections. Still define each term at first use. Omit the list otherwise. -->
@@ -149,9 +165,9 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
 <ol><li id="ref-1">실제로 읽은 근거의 제목·링크·날짜·리비전으로 교체합니다. 이 항목은 인용 형식 예시이며 연구 근거가 아닙니다. <a href="#cite-1-1" aria-label="인용 1의 첫 위치로 복귀">↩ 1</a> <a href="#cite-1-2" aria-label="인용 1의 두 번째 위치로 복귀">↩ 2</a></li></ol></section>
 <footer id="document-bottom">HTML은 연구 사실을 읽기 쉽게 표시한 사본이며 실행 상태의 정본이 아닙니다.<br>🤖 본 보고서는 AI가 작성했습니다.</footer>
 </main>
-</div>
 <nav class="ht-doc-nav" aria-label="문서 탐색">
-<details class="ht-doc-toc"><summary aria-label="목차 열기 또는 닫기">목차</summary>
+<h2 class="ht-doc-nav-heading">목차</h2>
+<details class="ht-doc-toc" open><summary aria-label="목차 열기 또는 닫기">목차</summary>
 <div class="ht-doc-toc-panel" tabindex="-1"><ol>
 <li><a href="#overview">목표와 결론</a></li>
 <li><a href="#context">문제와 배경</a></li>
@@ -163,6 +179,8 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
 <li><a href="#verification">검증 및 예외</a></li>
 <li><a href="#sources">참고문헌</a></li>
 </ol></div></details>
+</nav>
+<nav class="ht-doc-controls" aria-label="문서 이동">
 <a href="#document-top" aria-label="맨 위로 이동">↑</a>
 <a href="#document-bottom" aria-label="맨 아래로 이동">↓</a>
 </nav>
@@ -203,13 +221,17 @@ html:has(.ht-document) { --ht-anchor-offset: 7rem; scroll-behavior: smooth; scro
   if (!nav) return;
   const toc = nav.querySelector('.ht-doc-toc');
   const summary = toc?.querySelector('summary');
+  const narrowNavigation = globalThis.matchMedia?.('(max-width: 960px)');
+  const syncNavigationMode = () => { if (toc && narrowNavigation) toc.open = !narrowNavigation.matches; };
+  syncNavigationMode();
+  narrowNavigation?.addEventListener('change', syncNavigationMode);
   const links = [...nav.querySelectorAll('.ht-doc-toc-panel a[href^="#"]')];
   const targetFor = hash => {
     try { return document.getElementById(decodeURIComponent(hash.slice(1))); } catch { return null; }
   };
   const sections = links.map(link => targetFor(link.hash)).filter(Boolean);
   const close = (returnFocus = false) => {
-    if (!toc?.open) return;
+    if (!toc?.open || !narrowNavigation?.matches) return;
     toc.open = false;
     if (returnFocus) summary?.focus({preventScroll: true});
   };

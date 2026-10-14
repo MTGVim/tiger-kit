@@ -95,18 +95,18 @@ Markdown. For every asset, verify all of the following before `Pass`:
 - An authenticated fetch of the same uploaded object returns non-empty, decodable image bytes with an `image/*` content
   type. A raw content endpoint at the upload ref is one option; verify the exact repository, commit/object and path match
   the inserted asset. A JSON metadata response, filename extension or successful HTTP status is insufficient.
-- The authenticated browser session's rendered PR/comment actually loads each expected image; inspect the image itself
-  and its load state (for example, nonzero natural dimensions and no broken-image state). `REST body_html` or
-  `GraphQL bodyHTML` can establish markup presence, but an `<img>` element alone is not render proof.
 
 Inspect `git/ref/uploads/issues/<pr-number>` in the target repository and verify that every linked upload commit/object
 is reachable from that ref, including immutable commit URLs. The "commit does not belong to any branch" notice for an
 upload ref is expected and does not by itself indicate failure.
 
 Allow `GitHub` to rewrite rendered asset URLs to `private-user-images.githubusercontent.com`; compare the raw inserted
-Markdown with the original output, not with rewritten browser URLs. Return `Fail` for altered Markdown, non-image bytes
-or a known broken image. If authenticated fetching or browser-session rendering cannot be checked, report the concrete
-limitation as `Unverifiable` instead of `Pass`, and preserve the actual remote state.
+Markdown with the original output, not with rewritten browser URLs. Browser-session rendering is optional. When it is
+requested or performed, inspect each image's load state; `REST body_html`, `GraphQL bodyHTML`, or an `<img>` element alone
+does not prove rendering. Record `rendering: checked | not performed | unavailable` in the receipt's `Verification`
+field. Return `Fail` for altered Markdown, non-image bytes, an unreachable upload object, or a known broken image. If
+authenticated fetching or upload-ref reachability cannot be checked, report the concrete limitation as `Unverifiable`
+instead of `Pass`, and preserve the actual remote state.
 Redact only secret-bearing values in displayed diagnostics; preserve safe rendering parameters. Never expose signed
 values in logs, artifacts, or the final response, and never feed redacted diagnostics back into the body/comment.
 

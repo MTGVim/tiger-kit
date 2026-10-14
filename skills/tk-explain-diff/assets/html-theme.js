@@ -32,13 +32,17 @@
   if (!nav) return;
   const toc = nav.querySelector('.ht-doc-toc');
   const summary = toc?.querySelector('summary');
+  const narrowNavigation = globalThis.matchMedia?.('(max-width: 960px)');
+  const syncNavigationMode = () => { if (toc && narrowNavigation) toc.open = !narrowNavigation.matches; };
+  syncNavigationMode();
+  narrowNavigation?.addEventListener('change', syncNavigationMode);
   const links = [...nav.querySelectorAll('.ht-doc-toc-panel a[href^="#"]')];
   const targetFor = hash => {
     try { return document.getElementById(decodeURIComponent(hash.slice(1))); } catch { return null; }
   };
   const sections = links.map(link => targetFor(link.hash)).filter(Boolean);
   const close = (returnFocus = false) => {
-    if (!toc?.open) return;
+    if (!toc?.open || !narrowNavigation?.matches) return;
     toc.open = false;
     if (returnFocus) summary?.focus({preventScroll: true});
   };

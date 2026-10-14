@@ -18,6 +18,7 @@ import {
   isBotAccount,
   latestAuthorResponseAfter,
   latestExternalMessagesByScope,
+  latestSummaryPrerequisite,
   loadOrBootstrapConfig,
   loadToolAuthoredCommentMarkers,
   collectRows,
@@ -268,6 +269,26 @@ test('requires exactly one current-head Korean summary comment', () => {
   assert.equal(stale.verified, false);
 });
 
+test('rejects duplicate markers and summaries posted before the latest reply', () => {
+  const headSha = 'abc123';
+  const marker = summaryCommentMarker(headSha);
+  const afterReply = latestSummaryPrerequisite({responded:[{responseAt:'2026-01-03T00:00:00Z'}]});
+  const early = computeSummaryCommentEvidence([{
+    user:{login:'author'}, created_at:'2026-01-02T00:00:00Z', body:marker,
+  }], 'author', headSha, true, afterReply);
+  assert.equal(early.stale, true);
+  assert.equal(early.verified, false);
+  const duplicate = computeSummaryCommentEvidence([{
+    user:{login:'author'}, created_at:'2026-01-04T00:00:00Z', body:`${marker}\n${marker}`,
+  }], 'author', headSha, true, afterReply);
+  assert.equal(duplicate.duplicate, true);
+  assert.equal(duplicate.verified, false);
+  const current = computeSummaryCommentEvidence([{
+    user:{login:'author'}, created_at:'2026-01-04T00:00:00Z', body:marker,
+  }], 'author', headSha, true, afterReply);
+  assert.equal(current.verified, true);
+});
+
 test('requires a summary after all actionable feedback is answered', () => {
   assert.equal(summaryCommentRequired(false, [], {
     outstanding: [],
@@ -278,6 +299,10 @@ test('requires a summary after all actionable feedback is answered', () => {
     responded: [{ scope: 'inline:1' }],
   }), false);
   assert.equal(summaryCommentRequired(true, [], { outstanding: [], responded: [] }), true);
+});
+
+test('skips a summary when no actionable reply or re-review was published', () => {
+  assert.equal(summaryCommentRequired(false, [], { outstanding: [], responded: [] }), false);
 });
 
 test('latest external message is scoped per thread', () => {

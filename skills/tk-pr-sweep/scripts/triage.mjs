@@ -190,10 +190,13 @@ export function computeReReviewEvidence(pull, review, unresolvedThreads = [], su
   };
 }
 
-export function computeSummaryCommentEvidence(issueComments, authorLogin, headSha, required = false) {
+export function computeSummaryCommentEvidence(issueComments, authorLogin, headSha, required = false, afterTimestamp = null) {
   const marker = summaryCommentMarker(headSha);
   const matching = issueComments.filter((comment) =>
     comment.user?.login === authorLogin && normalizeGitHubText(comment.body).includes(marker));
+  const markerCount = matching.reduce((count, comment) => count + normalizeGitHubText(comment.body).split(marker).length - 1, 0);
+  const createdAt = matching.length === 1 ? matching[0].created_at || null : null;
+  const afterRequiredPublication = !afterTimestamp || Boolean(createdAt && new Date(createdAt) > new Date(afterTimestamp));
   const reviewerPattern = /<!--\s*tigerkit:pr-rereview:([^:\s>]+):([A-Za-z0-9-]+)\s*-->/g;
   const reviewers = matching.flatMap((comment) => [...normalizeGitHubText(comment.body).matchAll(reviewerPattern)]
     .filter((match) => match[1] === headSha)
@@ -202,11 +205,12 @@ export function computeSummaryCommentEvidence(issueComments, authorLogin, headSh
     required,
     marker,
     count: matching.length,
-    verified: !required || matching.length === 1,
-    missing: required && matching.length === 0,
-    duplicate: required && matching.length > 1,
+    verified: !required || (matching.length === 1 && markerCount === 1 && afterRequiredPublication),
+    missing: required && markerCount === 0,
+    duplicate: required && (matching.length > 1 || markerCount > 1),
+    stale: required && markerCount === 1 && !afterRequiredPublication,
     reviewers: [...new Set(reviewers)],
-    createdAt: matching.length === 1 ? matching[0].created_at || null : null,
+    createdAt,
     comments: matching.map((comment) => ({ id: comment.id || null, url: comment.html_url || null })),
   };
 }
@@ -218,6 +222,12 @@ export function summaryCommentRequired(reReviewRequired, unresolvedThreads = [],
       && reply.outstanding?.length === 0
       && reply.responded?.length > 0
     );
+}
+
+export function latestSummaryPrerequisite(reply = {}) {
+  const timestamps = (reply.responded || []).map((item) => item.responseAt).filter(Boolean);
+  const valid = timestamps.filter((value) => !Number.isNaN(new Date(value).getTime()));
+  return valid.sort((left, right) => new Date(left) - new Date(right)).at(-1) || null;
 }
 
 export function flattenPages(pages, arrayField = null) {
@@ -560,6 +570,7 @@ async function triageRepository(repo, login, teamKeys, toolAuthoredCommentMarker
       login,
       detail.data.head?.sha || pull.head?.sha,
       summaryCommentRequired(initialReReview.required, unresolvedThreads, reply),
+      latestSummaryPrerequisite(reply),
     );
     const reReview = computeReReviewEvidence(detail.data, review, unresolvedThreads, summaryComment);
     const category = classifyPullRequest({

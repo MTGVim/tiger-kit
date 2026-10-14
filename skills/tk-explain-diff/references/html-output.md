@@ -39,19 +39,24 @@ Live-figure provenance is kept in the calling package's provenance file; the cal
 ## Document navigation
 
 For long document-like artifacts, preserve meaningful stable `<section id="...">` elements and
-native hash links for deep access, browser history and Find. Default to a compact lower-right
-floating navigator (TOC toggle, top, bottom), reserving a narrow control gutter and bottom space
-so controls do not cover prose or important actions. Use the shared `.ht-document`, `.ht-doc-nav`
-and `.ht-doc-toc` styles in the theme assets; omit navigation when a short document gains nothing.
-Use native `<details><summary>` with a bounded, scrollable hierarchical TOC above the controls.
-This disclosure and its links must work without JavaScript. For example, adapt the labels/IDs:
+native hash links for deep access, browser history and Find. Put the hierarchical table of contents
+in a fixed left rail on desktop, with a separate lower-right top/bottom control. On narrow screens,
+collapse the table of contents into a native disclosure at the lower left; keep the top/bottom
+control at the lower right. Short documents may omit both navigators when they add no value. Use the
+shared `.ht-document`, `.ht-doc-content`, `.ht-doc-nav`, `.ht-doc-toc` and `.ht-doc-controls`
+styles in the theme assets. The left rail and mobile disclosure must work without JavaScript.
+For example, adapt the labels/IDs:
 
 ```html
 <body class="ht-document" id="document-top">
 <!-- Document content, with meaningful section IDs. -->
+<main class="ht-doc-content">
+  <!-- Sections and footer. -->
+</main>
 <footer id="document-bottom">...</footer>
 <nav class="ht-doc-nav" aria-label="문서 탐색">
-  <details class="ht-doc-toc">
+  <h2 class="ht-doc-nav-heading">목차</h2>
+  <details class="ht-doc-toc" open>
     <summary aria-label="목차 열기 또는 닫기">목차</summary>
     <div class="ht-doc-toc-panel" tabindex="-1"><ol>
       <li><a href="#overview">목표와 결론</a><ol>
@@ -60,6 +65,8 @@ This disclosure and its links must work without JavaScript. For example, adapt t
       <li><a href="#sources">참고문헌</a></li>
     </ol></div>
   </details>
+</nav>
+<nav class="ht-doc-controls" aria-label="문서 이동">
   <a href="#document-top" aria-label="맨 위로 이동">↑</a>
   <a href="#document-bottom" aria-label="맨 아래로 이동">↓</a>
 </nav>
@@ -75,8 +82,12 @@ Smooth anchor scrolling is the default; reduced motion uses immediate scrolling.
 remain visible. Verification-only positioning uses instant scrolling. Required background and
 conclusions stay expanded, readable and searchable; only secondary evidence may collapse.
 Keep flex/grid children shrinkable with `min-width: 0`; wide tables/code need bounded scrolling
-wrappers, never page-level clipping. Verify TOC open/close, all links, top/bottom, hash reload/back,
+wrappers, never page-level clipping. Give the page canvas and `.ht-doc-content` visibly distinct
+surface colors in light and dark themes; keep the content surface readable when cards or section
+surfaces are nested inside it. Verify TOC open/close, all links, top/bottom, hash reload/back,
 keyboard, no-JS, reduced motion and unobscured control/target geometry.
+Keep the native disclosure open in the HTML so the left rail remains available without JavaScript;
+the theme script may collapse it by default on narrow screens.
 
 ## Citations and references
 
@@ -268,7 +279,20 @@ Check card text and relationship labels for overlap/clipping as well as page wid
 - Programmatic scrolling performed only to position a verification capture uses instant behavior.
   Smooth scrolling must not leave the intended target outside the captured viewport.
 
-## Render verification
+## Static checks and render verification
+
+For document-like HTML, make deterministic static checks the default before delivery:
+
+- Every local fragment `href` resolves to exactly one ID, and IDs are unique.
+- No runtime-loaded external `<script>`, stylesheet `<link>`, or image source is present. Ordinary source links remain allowed.
+- The document has one valid `html[data-default-theme]` value and a working theme control with the `system`, `light`, and `dark` choices.
+- Every `<details>` has a first-child `<summary>`; answer reveals and secondary evidence start collapsed, while required conclusions and background remain outside collapsed sections.
+- There is exactly one non-empty, subject-specific `<title>`; it does not use a generic label or transient generated value.
+
+Use `tk-browser-verify` for a document only when it contains a hand-authored SVG whose visual rendering matters,
+an interactive figure, browser-specific behavior that static checks cannot establish, or the user requests screen
+verification. Keep the browser checks for prototype UI and QA-sheet interactions under their owning skill. A
+document that meets its static checks does not need a browser run solely to repeat those checks.
 
 Present verification outcomes in a visible lower-document summary before references. Give each
 check its own paragraph, list item, or term/description pair, with a bold label (`<strong>` or a
@@ -279,7 +303,7 @@ structure when injecting final results, then inspect the final saved markup for 
 label emphasis and outcome honesty. The research template demonstrates two distinct check items;
 replace its placeholders only with observed outcomes.
 
-Before delivery, inspect rendered desktop (at least 1280px) and mobile (390–500px), in light and dark.
+When browser verification is required, inspect desktop (at least 1280px) and mobile (390–500px), in light and dark.
 Delegate browser-visible checks to `tk-browser-verify` within its provider, headless and evidence
 boundaries. Do not launch the user's browser or silently install/switch verification providers.
 Check actual keyboard use, hashes, static/no-JS core reading and reduced motion. Required numerical

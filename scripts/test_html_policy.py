@@ -37,10 +37,42 @@ class HTMLPolicyTest(unittest.TestCase):
         self.assertEqual(len(parser.ids), len(set(parser.ids)))
         self.assertTrue(set(parser.links) <= set(parser.ids))
         self.assertIn('class="ht-doc-toc"', text)
+        self.assertIn('class="ht-doc-controls"', text)
+        self.assertIn('class="ht-doc-content"', text)
+        self.assertIn('class="ht-doc-nav-heading"', text)
         self.assertIn('<summary aria-label="목차 열기 또는 닫기">', text)
         self.assertIn('id="cite-1-2"', text)
         self.assertIn('href="#cite-1-2"', text)
         self.assertNotIn('grid-template-columns:15rem', text)
+
+    def test_document_surface_and_left_navigation_contract(self):
+        css = (ROOT / 'skills/tk-explain/assets/html-theme.css').read_text()
+        report = (ROOT / 'skills/tk-research/assets/report.html').read_text()
+        surfaces = re.findall(r'--bg:\s*(#[0-9a-fA-F]{6});\s*--panel:\s*(#[0-9a-fA-F]{6})', css)
+        self.assertGreaterEqual(len(surfaces), 3)
+        for page, content in surfaces:
+            self.assertNotEqual(page.lower(), content.lower())
+        self.assertIn('.ht-doc-content {', css)
+        self.assertIn('background: var(--panel)', css)
+        self.assertIn('.ht-doc-nav { position: fixed; inset-inline-start:', css)
+        self.assertIn('@media (max-width: 960px)', css)
+        self.assertIn('.ht-doc-toc[open] > .ht-doc-toc-panel { display: block; }', css)
+        self.assertIn('class="ht-doc-content"', report)
+        self.assertIn('class="ht-doc-controls"', report)
+        self.assertIn('<details class="ht-doc-toc" open>', report)
+
+    def test_document_static_checks_and_conditional_browser_verification_contract(self):
+        text = (ROOT / 'skills/tk-explain/references/html-output.md').read_text()
+        for requirement in (
+            'Every local fragment `href` resolves',
+            'No runtime-loaded external `<script>`',
+            '`html[data-default-theme]`',
+            'Every `<details>` has a first-child `<summary>`',
+            'subject-specific `<title>`',
+            'an interactive figure',
+            'Keep the browser checks for prototype UI and QA-sheet interactions',
+        ):
+            self.assertIn(requirement, text)
 
     def test_shared_citation_preview_contract(self):
         css = (ROOT / 'skills/tk-explain/assets/html-theme.css').read_text()
